@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function sync(): void {
-	const sourceDir = path.join(__dirname, "..", "..", "claude", "commands");
+	const sourceDir = path.join(__dirname, "..", "claude", "commands");
 	const targetDir = path.join(os.homedir(), ".claude", "commands");
 
 	// Ensure target directory exists
