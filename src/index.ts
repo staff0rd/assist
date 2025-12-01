@@ -38,7 +38,7 @@ const refactorCommand = program
 	.description("Run refactoring checks for code quality");
 
 refactorCommand
-	.command("check")
+	.command("check [pattern]")
 	.description("Check for files that exceed 100 lines")
 	.action(refactorCheck);
 

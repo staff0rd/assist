@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
+import { minimatch } from "minimatch";
 import { getIgnoredFiles } from "./getIgnoredFiles.js";
 
 const EXTENSIONS = [".ts", ".tsx"];
@@ -35,9 +36,13 @@ function countLines(filePath: string): number {
 	return content.split("\n").length;
 }
 
-export function check(): void {
-	const sourceFiles = findAllSourceFiles("src");
+export function check(pattern?: string): void {
+	let sourceFiles = findAllSourceFiles("src");
 	const ignoredFiles = getIgnoredFiles();
+
+	if (pattern) {
+		sourceFiles = sourceFiles.filter((f) => minimatch(f, pattern));
+	}
 
 	const violations: { file: string; lines: number }[] = [];
 
