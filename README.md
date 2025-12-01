@@ -23,7 +23,7 @@ After installation, the `assist` command will be available globally.
 
 ## Commands
 
-- `assist sync` - Copy command files to ~/.claude/commands
+- `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit <message>` - Create a git commit with validation
 - `assist verify` - Run all verify:* scripts from package.json in parallel
 
