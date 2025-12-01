@@ -17,7 +17,7 @@
 		"rules": {
 			"recommended": true,
 			"style": {
-				"useConsistentTypeDefinitions":{
+				"useConsistentTypeDefinitions": {
 					"level": "error",
 					"options": {
 						"style": "type"
