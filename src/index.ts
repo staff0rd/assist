@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import { commit } from "./commands/commit.js";
-import { sync } from "./commands/sync.js";
-import { verify } from "./commands/verify.js";
+import { commit } from "./commands/commit";
+import { refactor } from "./commands/refactor";
+import { sync } from "./commands/sync";
+import { verify } from "./commands/verify";
 
 const program = new Command();
 
@@ -22,5 +23,10 @@ program
 	.command("verify")
 	.description("Run all verify:* scripts from package.json in parallel")
 	.action(verify);
+
+program
+	.command("refactor")
+	.description("Run refactoring checks for code quality")
+	.action(refactor);
 
 program.parse();
