@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { commit } from "./commands/commit";
-import { refactor } from "./commands/refactor";
+import { refactor } from "./commands/refactor/refactor";
 import { sync } from "./commands/sync";
 import { verify } from "./commands/verify";
 
