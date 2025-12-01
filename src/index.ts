@@ -2,7 +2,10 @@
 import { Command } from "commander";
 import { commit } from "./commands/commit";
 import { lint } from "./commands/lint/lint";
-import { refactor } from "./commands/refactor/refactor";
+import {
+	check as refactorCheck,
+	ignore as refactorIgnore,
+} from "./commands/refactor/refactor";
 import { sync } from "./commands/sync";
 import { verify } from "./commands/verify";
 
@@ -30,9 +33,19 @@ program
 	.description("Run lint checks for conventions not enforced by biomejs")
 	.action(lint);
 
-program
+const refactorCommand = program
 	.command("refactor")
-	.description("Run refactoring checks for code quality")
-	.action(refactor);
+	.description("Run refactoring checks for code quality");
+
+refactorCommand
+	.command("check")
+	.description("Check for files that exceed 100 lines")
+	.action(refactorCheck);
+
+refactorCommand
+	.command("ignore <file>")
+	.description("Add a file to the refactor ignore list")
+	.requiredOption("--reason <reason>", "Reason for ignoring the file")
+	.action(refactorIgnore);
 
 program.parse();
