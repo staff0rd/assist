@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { commit } from "./commands/commit";
+import { lint } from "./commands/lint";
 import { refactor } from "./commands/refactor/refactor";
 import { sync } from "./commands/sync";
 import { verify } from "./commands/verify";
@@ -23,6 +24,11 @@ program
 	.command("verify")
 	.description("Run all verify:* scripts from package.json in parallel")
 	.action(verify);
+
+program
+	.command("lint")
+	.description("Run lint checks for conventions not enforced by biomejs")
+	.action(lint);
 
 program
 	.command("refactor")
