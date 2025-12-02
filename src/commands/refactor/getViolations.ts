@@ -1,9 +1,46 @@
 import fs from "node:fs";
+import chalk from "chalk";
 import { minimatch } from "minimatch";
 import { findSourceFiles } from "../../findSourceFiles";
 import { getIgnoredFiles } from "./getIgnoredFiles.js";
 
-export const MAX_LINES = 100;
+const MAX_LINES = 100;
+
+export function logViolations(
+	violations: { file: string; lines: number }[],
+): void {
+	if (violations.length === 0) {
+		if (!process.env.CLAUDECODE) {
+			console.log(`Refactor check passed. No files exceed ${MAX_LINES} lines.`);
+		}
+		return;
+	}
+
+	if (process.env.CLAUDECODE) {
+		for (const violation of violations) {
+			console.log(violation.file);
+		}
+		return;
+	}
+
+	console.error(chalk.red(`\nRefactor check failed:\n`));
+	console.error(
+		chalk.red(`  The following files exceed ${MAX_LINES} lines:\n`),
+	);
+
+	for (const violation of violations) {
+		console.error(chalk.red(`  ${violation.file} (${violation.lines} lines)`));
+	}
+
+	console.error(
+		chalk.yellow(
+			`\n  Each file needs to be sensibly refactored, or if there is no sensible\n  way to refactor it, ignore it with:\n`,
+		),
+	);
+	console.error(
+		chalk.gray(`    assist refactor ignore <file> --reason "<reason>"\n`),
+	);
+}
 
 function countLines(filePath: string): number {
 	const content = fs.readFileSync(filePath, "utf-8");
