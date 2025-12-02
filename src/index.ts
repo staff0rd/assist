@@ -51,7 +51,6 @@ refactorCheckCommand
 refactorCommand
 	.command("ignore <file>")
 	.description("Add a file to the refactor ignore list")
-	.requiredOption("--reason <reason>", "Reason for ignoring the file")
 	.action(refactorIgnore);
 
 program.parse();

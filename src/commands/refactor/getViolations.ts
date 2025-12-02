@@ -30,9 +30,7 @@ export function logViolations(
 			`\n  Each file needs to be sensibly refactored, or if there is no sensible\n  way to refactor it, ignore it with:\n`,
 		),
 	);
-	console.error(
-		chalk.gray(`    assist refactor ignore <file> --reason "<reason>"\n`),
-	);
+	console.error(chalk.gray(`    assist refactor ignore <file>\n`));
 
 	if (process.env.CLAUDECODE) {
 		console.error(chalk.cyan(`\n  ## Extracting Code to New Files\n`));
@@ -73,7 +71,8 @@ export function getViolations(
 
 	for (const filePath of sourceFiles) {
 		const lineCount = countLines(filePath);
-		if (lineCount > MAX_LINES && !ignoredFiles.has(filePath)) {
+		const maxAllowed = ignoredFiles.get(filePath) ?? MAX_LINES;
+		if (lineCount > maxAllowed) {
 			violations.push({ file: filePath, lines: lineCount });
 		}
 	}

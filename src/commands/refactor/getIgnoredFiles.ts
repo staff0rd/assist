@@ -4,8 +4,7 @@ const REFACTOR_YML_PATH = "refactor.yml";
 
 type IgnoreEntry = {
 	file: string;
-	commit: string;
-	reason: string;
+	maxLines: number;
 };
 
 function parseRefactorYml(): IgnoreEntry[] {
@@ -26,10 +25,11 @@ function parseRefactorYml(): IgnoreEntry[] {
 				entries.push(currentEntry as IgnoreEntry);
 			}
 			currentEntry = { file: trimmed.replace("- file:", "").trim() };
-		} else if (trimmed.startsWith("commit:")) {
-			currentEntry.commit = trimmed.replace("commit:", "").trim();
-		} else if (trimmed.startsWith("reason:")) {
-			currentEntry.reason = trimmed.replace("reason:", "").trim();
+		} else if (trimmed.startsWith("maxLines:")) {
+			currentEntry.maxLines = parseInt(
+				trimmed.replace("maxLines:", "").trim(),
+				10,
+			);
 		}
 	}
 
@@ -40,7 +40,7 @@ function parseRefactorYml(): IgnoreEntry[] {
 	return entries;
 }
 
-export function getIgnoredFiles(): Set<string> {
+export function getIgnoredFiles(): Map<string, number> {
 	const entries = parseRefactorYml();
-	return new Set(entries.map((e) => e.file));
+	return new Map(entries.map((e) => [e.file, e.maxLines]));
 }
