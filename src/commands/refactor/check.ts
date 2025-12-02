@@ -1,57 +1,8 @@
-import fs from "node:fs";
-import path from "node:path";
 import chalk from "chalk";
-import { minimatch } from "minimatch";
-import { getIgnoredFiles } from "./getIgnoredFiles.js";
-
-const EXTENSIONS = [".ts", ".tsx"];
-const MAX_LINES = 100;
-
-function findAllSourceFiles(dir: string): string[] {
-	const results: string[] = [];
-
-	if (!fs.existsSync(dir)) {
-		return results;
-	}
-
-	const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-	for (const entry of entries) {
-		const fullPath = path.join(dir, entry.name);
-		if (entry.isDirectory() && entry.name !== "node_modules") {
-			results.push(...findAllSourceFiles(fullPath));
-		} else if (
-			entry.isFile() &&
-			EXTENSIONS.some((ext) => entry.name.endsWith(ext))
-		) {
-			results.push(fullPath);
-		}
-	}
-
-	return results;
-}
-
-function countLines(filePath: string): number {
-	const content = fs.readFileSync(filePath, "utf-8");
-	return content.split("\n").length;
-}
+import { getViolations, MAX_LINES } from "./getViolations.js";
 
 export function check(pattern?: string): void {
-	let sourceFiles = findAllSourceFiles("src");
-	const ignoredFiles = getIgnoredFiles();
-
-	if (pattern) {
-		sourceFiles = sourceFiles.filter((f) => minimatch(f, pattern));
-	}
-
-	const violations: { file: string; lines: number }[] = [];
-
-	for (const filePath of sourceFiles) {
-		const lineCount = countLines(filePath);
-		if (lineCount > MAX_LINES && !ignoredFiles.has(filePath)) {
-			violations.push({ file: filePath, lines: lineCount });
-		}
-	}
+	const violations = getViolations(pattern);
 
 	if (violations.length === 0) {
 		if (!process.env.CLAUDECODE) {

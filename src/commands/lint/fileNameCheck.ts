@@ -1,32 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
-
-const EXTENSIONS = [".ts", ".tsx"];
+import { findSourceFiles } from "../../findSourceFiles";
 
 type FileNameViolation = {
 	filePath: string;
 	fileName: string;
 };
-
-function findAllSourceFiles(dir: string): string[] {
-	const results: string[] = [];
-	const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-	for (const entry of entries) {
-		const fullPath = path.join(dir, entry.name);
-		if (entry.isDirectory() && entry.name !== "node_modules") {
-			results.push(...findAllSourceFiles(fullPath));
-		} else if (
-			entry.isFile() &&
-			EXTENSIONS.some((ext) => entry.name.endsWith(ext))
-		) {
-			results.push(fullPath);
-		}
-	}
-
-	return results;
-}
 
 function hasClassOrComponent(content: string): boolean {
 	const classPattern = /^(export\s+)?(abstract\s+)?class\s+\w+/m;
@@ -42,7 +22,7 @@ function hasClassOrComponent(content: string): boolean {
 }
 
 function checkFileNames(): FileNameViolation[] {
-	const sourceFiles = findAllSourceFiles("src");
+	const sourceFiles = findSourceFiles("src");
 	const violations: FileNameViolation[] = [];
 
 	for (const filePath of sourceFiles) {
