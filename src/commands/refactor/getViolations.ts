@@ -62,7 +62,7 @@ function countLines(filePath: string): number {
 export function getViolations(
 	pattern?: string,
 ): { file: string; lines: number }[] {
-	let sourceFiles = findSourceFiles("src");
+	let sourceFiles = findSourceFiles("src", { includeTests: false });
 	const ignoredFiles = getIgnoredFiles();
 
 	if (pattern) {
