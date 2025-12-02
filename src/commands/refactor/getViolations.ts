@@ -16,13 +16,6 @@ export function logViolations(
 		return;
 	}
 
-	if (process.env.CLAUDECODE) {
-		for (const violation of violations) {
-			console.log(violation.file);
-		}
-		return;
-	}
-
 	console.error(chalk.red(`\nRefactor check failed:\n`));
 	console.error(
 		chalk.red(`  The following files exceed ${MAX_LINES} lines:\n`),
@@ -40,6 +33,25 @@ export function logViolations(
 	console.error(
 		chalk.gray(`    assist refactor ignore <file> --reason "<reason>"\n`),
 	);
+
+	if (process.env.CLAUDECODE) {
+		console.error(chalk.cyan(`\n  ## Extracting Code to New Files\n`));
+		console.error(
+			chalk.cyan(
+				`  When extracting logic from one file to another, consider where the extracted code belongs:\n`,
+			),
+		);
+		console.error(
+			chalk.cyan(
+				`  1. Keep related logic together: If the extracted code is tightly coupled to the\n     original file's domain, create a new folder containing both the original and extracted files.\n`,
+			),
+		);
+		console.error(
+			chalk.cyan(
+				`  2. Share common utilities: If the extracted code can be reused across multiple\n     domains, move it to a common/shared folder.\n`,
+			),
+		);
+	}
 }
 
 function countLines(filePath: string): number {
