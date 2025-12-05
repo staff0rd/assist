@@ -40,6 +40,9 @@ const refactorCommand = program
 refactorCommand
 	.command("check [pattern]")
 	.description("Check for files that exceed 100 lines")
+	.option("--modified", "Check only staged and unstaged files")
+	.option("--staged", "Check only staged files")
+	.option("--unstaged", "Check only unstaged files")
 	.action(refactorCheck);
 
 refactorCommand
