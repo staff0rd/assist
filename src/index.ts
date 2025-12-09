@@ -39,10 +39,15 @@ const refactorCommand = program
 
 refactorCommand
 	.command("check [pattern]")
-	.description("Check for files that exceed 100 lines")
+	.description("Check for files that exceed the maximum line count")
 	.option("--modified", "Check only staged and unstaged files")
 	.option("--staged", "Check only staged files")
 	.option("--unstaged", "Check only unstaged files")
+	.option(
+		"--max-lines <number>",
+		"Maximum lines allowed per file (default: 100)",
+		Number.parseInt,
+	)
 	.action(refactorCheck);
 
 refactorCommand

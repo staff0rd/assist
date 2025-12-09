@@ -11,22 +11,21 @@ export type GitFilterOptions = {
 	unstaged?: boolean;
 };
 
-const MAX_LINES = 100;
+export const DEFAULT_MAX_LINES = 100;
 
 export function logViolations(
 	violations: { file: string; lines: number }[],
+	maxLines: number = DEFAULT_MAX_LINES,
 ): void {
 	if (violations.length === 0) {
 		if (!process.env.CLAUDECODE) {
-			console.log(`Refactor check passed. No files exceed ${MAX_LINES} lines.`);
+			console.log(`Refactor check passed. No files exceed ${maxLines} lines.`);
 		}
 		return;
 	}
 
 	console.error(chalk.red(`\nRefactor check failed:\n`));
-	console.error(
-		chalk.red(`  The following files exceed ${MAX_LINES} lines:\n`),
-	);
+	console.error(chalk.red(`  The following files exceed ${maxLines} lines:\n`));
 
 	for (const violation of violations) {
 		console.error(chalk.red(`  ${violation.file} (${violation.lines} lines)`));
@@ -93,6 +92,7 @@ function getGitFiles(options: GitFilterOptions): Set<string> | null {
 export function getViolations(
 	pattern?: string,
 	options: GitFilterOptions = {},
+	maxLines: number = DEFAULT_MAX_LINES,
 ): { file: string; lines: number }[] {
 	let sourceFiles = findSourceFiles("src", { includeTests: false });
 	const ignoredFiles = getIgnoredFiles();
@@ -110,7 +110,7 @@ export function getViolations(
 
 	for (const filePath of sourceFiles) {
 		const lineCount = countLines(filePath);
-		const maxAllowed = ignoredFiles.get(filePath) ?? MAX_LINES;
+		const maxAllowed = ignoredFiles.get(filePath) ?? maxLines;
 		if (lineCount > maxAllowed) {
 			violations.push({ file: filePath, lines: lineCount });
 		}
