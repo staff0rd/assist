@@ -1,6 +1,6 @@
 # assist
 
-A CLI tool for development workflow automation.
+A CLI tool for enforcing determinism in LLM development workflow automation.
 
 ## Installation
 
