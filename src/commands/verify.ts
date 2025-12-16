@@ -2,25 +2,45 @@ import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-export async function verify(): Promise<void> {
-	const packageJsonPath = path.join(process.cwd(), "package.json");
+function findPackageJsonWithVerifyScripts(startDir: string): {
+	packageJsonPath: string;
+	verifyScripts: string[];
+} | null {
+	let currentDir = startDir;
 
-	if (!fs.existsSync(packageJsonPath)) {
-		console.error("No package.json found in current directory");
-		process.exit(1);
+	while (true) {
+		const packageJsonPath = path.join(currentDir, "package.json");
+
+		if (fs.existsSync(packageJsonPath)) {
+			const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+			const scripts = packageJson.scripts || {};
+			const verifyScripts = Object.keys(scripts).filter((name) =>
+				name.startsWith("verify:"),
+			);
+
+			if (verifyScripts.length > 0) {
+				return { packageJsonPath, verifyScripts };
+			}
+		}
+
+		const parentDir = path.dirname(currentDir);
+		if (parentDir === currentDir) {
+			return null;
+		}
+		currentDir = parentDir;
 	}
+}
 
-	const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-	const scripts = packageJson.scripts || {};
+export async function verify(): Promise<void> {
+	const result = findPackageJsonWithVerifyScripts(process.cwd());
 
-	const verifyScripts = Object.keys(scripts).filter((name) =>
-		name.startsWith("verify:"),
-	);
-
-	if (verifyScripts.length === 0) {
-		console.log("No verify:* scripts found in package.json");
+	if (!result) {
+		console.log("No package.json with verify:* scripts found");
 		return;
 	}
+
+	const { packageJsonPath, verifyScripts } = result;
+	const packageDir = path.dirname(packageJsonPath);
 
 	console.log(`Running ${verifyScripts.length} verify script(s) in parallel:`);
 	for (const script of verifyScripts) {
@@ -34,6 +54,7 @@ export async function verify(): Promise<void> {
 					const child = spawn("npm", ["run", script], {
 						stdio: "inherit",
 						shell: true,
+						cwd: packageDir,
 					});
 					child.on("close", (code) => {
 						resolve({ script, code: code ?? 1 });
