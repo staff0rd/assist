@@ -26,7 +26,8 @@ program
 program
 	.command("verify")
 	.description("Run all verify:* scripts from package.json in parallel")
-	.action(verify);
+	.option("--timer", "Show timing information for each task as they complete")
+	.action((options) => verify(options));
 
 program
 	.command("lint")

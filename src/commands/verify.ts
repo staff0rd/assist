@@ -2,6 +2,36 @@ import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 
+type TaskStatus = {
+	script: string;
+	startTime: number;
+	endTime?: number;
+	code?: number;
+};
+
+function formatDuration(ms: number): string {
+	if (ms < 1000) {
+		return `${ms}ms`;
+	}
+	const seconds = (ms / 1000).toFixed(1);
+	return `${seconds}s`;
+}
+
+function printTaskStatuses(tasks: TaskStatus[]): void {
+	console.log("\n--- Task Status ---");
+	for (const task of tasks) {
+		if (task.endTime !== undefined) {
+			const duration = formatDuration(task.endTime - task.startTime);
+			const status = task.code === 0 ? "✓" : "✗";
+			console.log(`  ${status} ${task.script}: ${duration}`);
+		} else {
+			const elapsed = formatDuration(Date.now() - task.startTime);
+			console.log(`  ⋯ ${task.script}: running (${elapsed})`);
+		}
+	}
+	console.log("-------------------\n");
+}
+
 function findPackageJsonWithVerifyScripts(startDir: string): {
 	packageJsonPath: string;
 	verifyScripts: string[];
@@ -31,7 +61,8 @@ function findPackageJsonWithVerifyScripts(startDir: string): {
 	}
 }
 
-export async function verify(): Promise<void> {
+export async function verify(options: { timer?: boolean } = {}): Promise<void> {
+	const { timer = false } = options;
 	const result = findPackageJsonWithVerifyScripts(process.cwd());
 
 	if (!result) {
@@ -47,9 +78,14 @@ export async function verify(): Promise<void> {
 		console.log(`  - ${script}`);
 	}
 
+	const taskStatuses: TaskStatus[] = verifyScripts.map((script) => ({
+		script,
+		startTime: Date.now(),
+	}));
+
 	const results = await Promise.all(
 		verifyScripts.map(
-			(script) =>
+			(script, index) =>
 				new Promise<{ script: string; code: number }>((resolve) => {
 					const child = spawn("npm", ["run", script], {
 						stdio: "inherit",
@@ -57,7 +93,13 @@ export async function verify(): Promise<void> {
 						cwd: packageDir,
 					});
 					child.on("close", (code) => {
-						resolve({ script, code: code ?? 1 });
+						const exitCode = code ?? 1;
+						if (timer) {
+							taskStatuses[index].endTime = Date.now();
+							taskStatuses[index].code = exitCode;
+							printTaskStatuses(taskStatuses);
+						}
+						resolve({ script, code: exitCode });
 					});
 				}),
 		),
