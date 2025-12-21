@@ -1,113 +1,19 @@
 import { execSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { basename, join } from "node:path";
+import { basename } from "node:path";
 import chalk from "chalk";
-import semver from "semver";
-import { parse as parseYaml } from "yaml";
+import {
+	getCommitFiles,
+	loadConfig,
+	loadDevlogEntries,
+	shouldIgnoreCommit,
+} from "./shared";
+import type { Commit } from "./types";
 
 type DiffOptions = {
 	days?: number;
 	ignore?: string[];
 	since?: string;
 	verbose?: boolean;
-};
-
-type DevlogEntry = {
-	version: string;
-	title: string;
-	filename: string;
-};
-
-type AssistConfig = {
-	devlog?: {
-		diff?: {
-			ignore?: string[];
-		};
-	};
-};
-
-function loadConfig(): AssistConfig {
-	const configPath = join(process.cwd(), "assist.yml");
-	if (!existsSync(configPath)) {
-		return {};
-	}
-	try {
-		const content = readFileSync(configPath, "utf-8");
-		return parseYaml(content) || {};
-	} catch {
-		return {};
-	}
-}
-
-function loadDevlogEntries(repoName: string): Map<string, DevlogEntry[]> {
-	const devlogDir = join(homedir(), "git/blog/src/content/devlog");
-	const entries = new Map<string, DevlogEntry[]>();
-
-	try {
-		const files = readdirSync(devlogDir).filter((f) => f.endsWith(".md"));
-
-		for (const file of files) {
-			const content = readFileSync(join(devlogDir, file), "utf-8");
-			const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-
-			if (frontmatterMatch) {
-				const frontmatter = frontmatterMatch[1];
-				const dateMatch = frontmatter.match(/date:\s*"?(\d{4}-\d{2}-\d{2})"?/);
-				const versionMatch = frontmatter.match(/version:\s*(.+)/);
-				const titleMatch = frontmatter.match(/title:\s*(.+)/);
-				const tagsMatch = frontmatter.match(/tags:\s*\[([^\]]*)\]/);
-
-				if (dateMatch && versionMatch && titleMatch && tagsMatch) {
-					const tags = tagsMatch[1].split(",").map((t) => t.trim());
-					const firstTag = tags[0];
-
-					if (firstTag !== repoName) {
-						continue;
-					}
-
-					const date = dateMatch[1];
-					const version = versionMatch[1].trim();
-					const title = titleMatch[1].trim();
-
-					const existing = entries.get(date) || [];
-					existing.push({ version, title, filename: file });
-					entries.set(date, existing);
-				}
-			}
-		}
-	} catch {
-		// Directory doesn't exist or can't be read
-	}
-
-	return entries;
-}
-
-function getCommitFiles(hash: string): string[] {
-	try {
-		const output = execSync(`git show --name-only --format="" ${hash}`, {
-			encoding: "utf-8",
-		});
-		return output.trim().split("\n").filter(Boolean);
-	} catch {
-		return [];
-	}
-}
-
-function shouldIgnoreCommit(files: string[], ignorePaths: string[]): boolean {
-	if (ignorePaths.length === 0 || files.length === 0) {
-		return false;
-	}
-	return files.every((file) =>
-		ignorePaths.some((ignorePath) => file.startsWith(ignorePath)),
-	);
-}
-
-type Commit = {
-	date: string;
-	hash: string;
-	message: string;
-	files: string[];
 };
 
 export function diff(options: DiffOptions): void {
@@ -182,74 +88,4 @@ export function diff(options: DiffOptions): void {
 			}
 		}
 	}
-}
-
-function getRepoName(): string {
-	const packageJsonPath = join(process.cwd(), "package.json");
-	if (existsSync(packageJsonPath)) {
-		try {
-			const content = readFileSync(packageJsonPath, "utf-8");
-			const pkg = JSON.parse(content);
-			if (pkg.name) {
-				return pkg.name;
-			}
-		} catch {
-			// Fall through to directory name
-		}
-	}
-	return basename(process.cwd());
-}
-
-function getLatestVersion(repoName: string): string | null {
-	const devlogDir = join(homedir(), "git/blog/src/content/devlog");
-
-	try {
-		const files = readdirSync(devlogDir)
-			.filter((f) => f.endsWith(".md"))
-			.sort()
-			.reverse();
-
-		for (const file of files) {
-			const content = readFileSync(join(devlogDir, file), "utf-8");
-			const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-
-			if (frontmatterMatch) {
-				const frontmatter = frontmatterMatch[1];
-				const versionMatch = frontmatter.match(/version:\s*(.+)/);
-				const tagsMatch = frontmatter.match(/tags:\s*\[([^\]]*)\]/);
-
-				if (versionMatch && tagsMatch) {
-					const tags = tagsMatch[1].split(",").map((t) => t.trim());
-					const firstTag = tags[0];
-
-					if (firstTag === repoName) {
-						return versionMatch[1].trim();
-					}
-				}
-			}
-		}
-	} catch {
-		// Directory doesn't exist or can't be read
-	}
-
-	return null;
-}
-
-function bumpPatchVersion(version: string): string {
-	const cleaned = semver.clean(version) ?? semver.coerce(version)?.version;
-	if (!cleaned) {
-		return version;
-	}
-	const bumped = semver.inc(cleaned, "patch");
-	return bumped ? `v${bumped}` : version;
-}
-
-export function version(): void {
-	const name = getRepoName();
-	const lastVersion = getLatestVersion(name);
-	const nextVersion = lastVersion ? bumpPatchVersion(lastVersion) : null;
-
-	console.log(`${chalk.bold("name:")} ${name}`);
-	console.log(`${chalk.bold("last:")} ${lastVersion ?? chalk.dim("none")}`);
-	console.log(`${chalk.bold("next:")} ${nextVersion ?? chalk.dim("none")}`);
 }
