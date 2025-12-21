@@ -27,6 +27,7 @@ title: <short descriptive title>
 date: YYYY-MM-DD
 version: <selected version>
 tags: [<name from the next command output>]
+ai-generated: <model name, e.g., "claude-opus-4-5">
 ---
 
 <First-person summary of the day's work. Group related commits into cohesive paragraphs. Focus on what was accomplished and why, not implementation details.>
