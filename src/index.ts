@@ -69,6 +69,7 @@ devlogCommand
 		"Number of days to show (default: 30)",
 		Number.parseInt,
 	)
+	.option("-v, --verbose", "Show file names for each commit")
 	.action(devlogDiff);
 
 program.parse();
