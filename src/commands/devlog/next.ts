@@ -65,14 +65,9 @@ export function next(options: NextOptions): void {
 	const repoName = getRepoName();
 
 	const lastInfo = getLastVersionInfo(repoName);
-	if (!lastInfo) {
-		console.log(chalk.yellow("No versioned devlog entries found"));
-		return;
-	}
-
-	const lastDate = lastInfo.date;
-	const patchVersion = bumpVersion(lastInfo.version, "patch");
-	const minorVersion = bumpVersion(lastInfo.version, "minor");
+	const lastDate = lastInfo?.date ?? null;
+	const patchVersion = lastInfo ? bumpVersion(lastInfo.version, "patch") : null;
+	const minorVersion = lastInfo ? bumpVersion(lastInfo.version, "minor") : null;
 
 	const output = execSync(
 		"git log --pretty=format:'%ad|%h|%s' --date=short -n 500",
@@ -86,7 +81,7 @@ export function next(options: NextOptions): void {
 		const [date, hash, ...messageParts] = line.split("|");
 		const message = messageParts.join("|");
 
-		if (date <= lastDate) {
+		if (lastDate && date <= lastDate) {
 			continue;
 		}
 
@@ -105,16 +100,24 @@ export function next(options: NextOptions): void {
 	const targetDate = dates[0];
 
 	if (!targetDate) {
-		console.log(chalk.dim("No commits after last versioned entry"));
+		if (lastInfo) {
+			console.log(chalk.dim("No commits after last versioned entry"));
+		} else {
+			console.log(chalk.dim("No commits found"));
+		}
 		return;
 	}
 
 	const commits = commitsByDate.get(targetDate) ?? [];
 
 	console.log(`${chalk.bold("name:")} ${repoName}`);
-	console.log(
-		`${chalk.bold("version:")} ${patchVersion} (patch) or ${minorVersion} (minor)`,
-	);
+	if (patchVersion && minorVersion) {
+		console.log(
+			`${chalk.bold("version:")} ${patchVersion} (patch) or ${minorVersion} (minor)`,
+		);
+	} else {
+		console.log(`${chalk.bold("version:")} v0.1 (initial)`);
+	}
 	console.log(`${chalk.bold.blue(targetDate)}`);
 
 	for (const commit of commits) {
