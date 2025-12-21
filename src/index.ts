@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { commit } from "./commands/commit";
-import { diff as devlogDiff } from "./commands/devlog/devlog";
+import {
+	diff as devlogDiff,
+	version as devlogVersion,
+} from "./commands/devlog/devlog";
 import { lint } from "./commands/lint/lint";
 import {
 	check as refactorCheck,
@@ -72,5 +75,10 @@ devlogCommand
 	.option("--since <date>", "Only show commits since this date (YYYY-MM-DD)")
 	.option("-v, --verbose", "Show file names for each commit")
 	.action(devlogDiff);
+
+devlogCommand
+	.command("version")
+	.description("Show current repo name and version info")
+	.action(devlogVersion);
 
 program.parse();
