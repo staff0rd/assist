@@ -3,6 +3,7 @@ import { Command } from "commander";
 import { commit } from "./commands/commit";
 import {
 	diff as devlogDiff,
+	next as devlogNext,
 	version as devlogVersion,
 } from "./commands/devlog/devlog";
 import { lint } from "./commands/lint/lint";
@@ -80,5 +81,11 @@ devlogCommand
 	.command("version")
 	.description("Show current repo name and version info")
 	.action(devlogVersion);
+
+devlogCommand
+	.command("next")
+	.description("Show commits for the day after the last versioned entry")
+	.option("-v, --verbose", "Show file names for each commit")
+	.action(devlogNext);
 
 program.parse();
