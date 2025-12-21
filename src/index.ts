@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { commit } from "./commands/commit";
+import { diff as devlogDiff } from "./commands/devlog/devlog";
 import { lint } from "./commands/lint/lint";
 import {
 	check as refactorCheck,
@@ -55,5 +56,19 @@ refactorCommand
 	.command("ignore <file>")
 	.description("Add a file to the refactor ignore list")
 	.action(refactorIgnore);
+
+const devlogCommand = program
+	.command("devlog")
+	.description("Development log utilities");
+
+devlogCommand
+	.command("diff")
+	.description("Group git commits by date")
+	.option(
+		"--days <number>",
+		"Number of days to show (default: 30)",
+		Number.parseInt,
+	)
+	.action(devlogDiff);
 
 program.parse();
