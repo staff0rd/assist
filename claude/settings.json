@@ -1,0 +1,6 @@
+{
+	"permissions": {
+		"allow": ["Bash(assist:*)", "Bash(git add:*)", "SlashCommand(/verify)"],
+		"deny": ["Bash(git commit:*)", "Bash(npm run:*)"]
+	}
+}

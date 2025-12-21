@@ -2,23 +2,28 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+import { syncSettings } from "./sync/syncSettings";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function sync(): void {
-	const sourceDir = path.join(__dirname, "..", "claude", "commands");
-	const targetDir = path.join(os.homedir(), ".claude", "commands");
+export async function sync(): Promise<void> {
+	const claudeDir = path.join(__dirname, "..", "claude");
+	const targetBase = path.join(os.homedir(), ".claude");
 
-	// Ensure target directory exists
+	syncCommands(claudeDir, targetBase);
+	await syncSettings(claudeDir, targetBase);
+}
+
+function syncCommands(claudeDir: string, targetBase: string): void {
+	const sourceDir = path.join(claudeDir, "commands");
+	const targetDir = path.join(targetBase, "commands");
+
 	fs.mkdirSync(targetDir, { recursive: true });
 
-	// Copy all files from commands directory
 	const files = fs.readdirSync(sourceDir);
 	for (const file of files) {
-		const sourcePath = path.join(sourceDir, file);
-		const targetPath = path.join(targetDir, file);
-		fs.copyFileSync(sourcePath, targetPath);
+		fs.copyFileSync(path.join(sourceDir, file), path.join(targetDir, file));
 		console.log(`Copied ${file} to ${targetDir}`);
 	}
 
