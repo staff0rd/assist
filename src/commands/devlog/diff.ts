@@ -19,7 +19,8 @@ type DiffOptions = {
 export function diff(options: DiffOptions): void {
 	const config = loadConfig();
 	const days = options.days ?? 30;
-	const ignore = options.ignore ?? config.devlog?.diff?.ignore ?? [];
+	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
+	const skipDays = new Set(config.devlog?.skip?.days ?? []);
 	const repoName = basename(process.cwd());
 	const devlogEntries = loadDevlogEntries(repoName);
 
@@ -67,7 +68,9 @@ export function diff(options: DiffOptions): void {
 		isFirst = false;
 
 		const entries = devlogEntries.get(date);
-		if (entries && entries.length > 0) {
+		if (skipDays.has(date)) {
+			console.log(`${chalk.bold.blue(date)} ${chalk.dim("skipped")}`);
+		} else if (entries && entries.length > 0) {
 			const entryInfo = entries
 				.map((e) => `${chalk.green(e.version)} ${e.title}`)
 				.join(" | ");

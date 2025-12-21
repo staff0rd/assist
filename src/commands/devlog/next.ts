@@ -26,7 +26,8 @@ type NextOptions = {
 
 export function next(options: NextOptions): void {
 	const config = loadConfig();
-	const ignore = options.ignore ?? config.devlog?.diff?.ignore ?? [];
+	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
+	const skipDays = new Set(config.devlog?.skip?.days ?? []);
 	const repoName = getRepoName();
 
 	const lastDate = getLastVersionedDate(repoName);
@@ -59,8 +60,10 @@ export function next(options: NextOptions): void {
 		}
 	}
 
-	// Find the earliest date after lastDate
-	const dates = Array.from(commitsByDate.keys()).sort();
+	// Find the earliest date after lastDate that isn't skipped
+	const dates = Array.from(commitsByDate.keys())
+		.filter((d) => !skipDays.has(d))
+		.sort();
 	const targetDate = dates[0];
 
 	if (!targetDate) {

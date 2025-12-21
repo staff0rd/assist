@@ -4,6 +4,7 @@ import { commit } from "./commands/commit";
 import {
 	diff as devlogDiff,
 	next as devlogNext,
+	skip as devlogSkip,
 	version as devlogVersion,
 } from "./commands/devlog/devlog";
 import { lint } from "./commands/lint/lint";
@@ -87,5 +88,10 @@ devlogCommand
 	.description("Show commits for the day after the last versioned entry")
 	.option("-v, --verbose", "Show file names for each commit")
 	.action(devlogNext);
+
+devlogCommand
+	.command("skip <date>")
+	.description("Add a date (YYYY-MM-DD) to the skip list")
+	.action(devlogSkip);
 
 program.parse();

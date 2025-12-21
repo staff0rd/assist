@@ -1,8 +1,8 @@
 import { execSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join } from "node:path";
-import { parse as parseYaml } from "yaml";
+import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import type { AssistConfig, DevlogEntry } from "./types";
 
 export const DEVLOG_DIR = join(homedir(), "git/blog/src/content/devlog");
@@ -18,6 +18,11 @@ export function loadConfig(): AssistConfig {
 	} catch {
 		return {};
 	}
+}
+
+export function saveConfig(config: AssistConfig): void {
+	const configPath = join(process.cwd(), "assist.yml");
+	writeFileSync(configPath, stringifyYaml(config));
 }
 
 export function getRepoName(): string {

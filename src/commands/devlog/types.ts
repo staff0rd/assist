@@ -6,8 +6,9 @@ export type DevlogEntry = {
 
 export type AssistConfig = {
 	devlog?: {
-		diff?: {
-			ignore?: string[];
+		ignore?: string[];
+		skip?: {
+			days?: string[];
 		};
 	};
 };
