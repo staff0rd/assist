@@ -8,6 +8,7 @@ import { parse as parseYaml } from "yaml";
 type DiffOptions = {
 	days?: number;
 	ignore?: string[];
+	since?: string;
 	verbose?: boolean;
 };
 
@@ -143,7 +144,11 @@ export function diff(options: DiffOptions): void {
 	let isFirst = true;
 
 	for (const [date, dateCommits] of commitsByDate) {
-		if (dateCount >= days) {
+		if (options.since) {
+			if (date < options.since) {
+				break;
+			}
+		} else if (dateCount >= days) {
 			break;
 		}
 		dateCount++;
