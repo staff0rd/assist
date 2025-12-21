@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
+import semver from "semver";
 import {
 	getCommitFiles,
 	getRepoName,
@@ -9,14 +10,47 @@ import {
 } from "./shared";
 import type { Commit } from "./types";
 
-function getLastVersionedDate(repoName: string): string | null {
+type LastVersionInfo = {
+	date: string;
+	version: string;
+};
+
+function getLastVersionInfo(repoName: string): LastVersionInfo | null {
 	const entries = loadDevlogEntries(repoName);
 	if (entries.size === 0) {
 		return null;
 	}
 
 	const dates = Array.from(entries.keys()).sort().reverse();
-	return dates[0] ?? null;
+	const lastDate = dates[0];
+	if (!lastDate) {
+		return null;
+	}
+
+	const lastEntries = entries.get(lastDate);
+	const lastVersion = lastEntries?.[0]?.version;
+	if (!lastVersion) {
+		return null;
+	}
+
+	return { date: lastDate, version: lastVersion };
+}
+
+function bumpVersion(version: string, type: "patch" | "minor"): string {
+	const cleaned = semver.clean(version) ?? semver.coerce(version)?.version;
+	if (!cleaned) {
+		return version;
+	}
+	const bumped = semver.inc(cleaned, type);
+	if (!bumped) {
+		return version;
+	}
+	if (type === "minor") {
+		// Remove patch number for minor versions (v1.3.0 -> v1.3)
+		const parsed = semver.parse(bumped);
+		return parsed ? `v${parsed.major}.${parsed.minor}` : `v${bumped}`;
+	}
+	return `v${bumped}`;
 }
 
 type NextOptions = {
@@ -30,11 +64,15 @@ export function next(options: NextOptions): void {
 	const skipDays = new Set(config.devlog?.skip?.days ?? []);
 	const repoName = getRepoName();
 
-	const lastDate = getLastVersionedDate(repoName);
-	if (!lastDate) {
+	const lastInfo = getLastVersionInfo(repoName);
+	if (!lastInfo) {
 		console.log(chalk.yellow("No versioned devlog entries found"));
 		return;
 	}
+
+	const lastDate = lastInfo.date;
+	const patchVersion = bumpVersion(lastInfo.version, "patch");
+	const minorVersion = bumpVersion(lastInfo.version, "minor");
 
 	const output = execSync(
 		"git log --pretty=format:'%ad|%h|%s' --date=short -n 500",
@@ -73,6 +111,10 @@ export function next(options: NextOptions): void {
 
 	const commits = commitsByDate.get(targetDate) ?? [];
 
+	console.log(`${chalk.bold("name:")} ${repoName}`);
+	console.log(
+		`${chalk.bold("version:")} ${patchVersion} (patch) or ${minorVersion} (minor)`,
+	);
 	console.log(`${chalk.bold.blue(targetDate)}`);
 
 	for (const commit of commits) {
