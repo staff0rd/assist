@@ -3,6 +3,8 @@
 		"allow": [
 			"Bash(assist:*)",
 			"Bash(git add:*)",
+			"Bash(git show:*)",
+			"Bash(git diff:*)",
 			"SlashCommand(/verify)",
 			"Skill(verify)",
 			"SlashCommand(/commit)",
