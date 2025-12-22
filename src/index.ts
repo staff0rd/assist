@@ -75,6 +75,7 @@ devlogCommand
 		Number.parseInt,
 	)
 	.option("--since <date>", "Only show commits since this date (YYYY-MM-DD)")
+	.option("-r, --reverse", "Show earliest commits first")
 	.option("-v, --verbose", "Show file names for each commit")
 	.action(devlogDiff);
 

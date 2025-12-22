@@ -12,6 +12,7 @@ import type { Commit } from "./types";
 type DiffOptions = {
 	days?: number;
 	ignore?: string[];
+	reverse?: boolean;
 	since?: string;
 	verbose?: boolean;
 };
@@ -24,8 +25,10 @@ export function diff(options: DiffOptions): void {
 	const repoName = basename(process.cwd());
 	const devlogEntries = loadDevlogEntries(repoName);
 
+	const reverseFlag = options.reverse ? "--reverse " : "";
+	const limitFlag = options.reverse ? "" : "-n 500 ";
 	const output = execSync(
-		"git log --pretty=format:'%ad|%h|%s' --date=short -n 500",
+		`git log ${reverseFlag}${limitFlag}--pretty=format:'%ad|%h|%s' --date=short`,
 		{ encoding: "utf-8" },
 	);
 
