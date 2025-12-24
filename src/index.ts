@@ -34,6 +34,7 @@ program
 	.command("update")
 	.description("Update claude-code to the latest version")
 	.action(() => {
+		console.log("Updating claude-code...");
 		execSync("npm install -g @anthropic-ai/claude-code", { stdio: "inherit" });
 	});
 
