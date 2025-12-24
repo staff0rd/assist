@@ -14,7 +14,7 @@ import {
 	ignore as refactorIgnore,
 } from "./commands/refactor/refactor";
 import { sync } from "./commands/sync";
-import { verify } from "./commands/verify";
+import { init as verifyInit, run as verifyRun } from "./commands/verify/verify";
 
 const program = new Command();
 
@@ -38,11 +38,16 @@ program
 		execSync("npm install -g @anthropic-ai/claude-code", { stdio: "inherit" });
 	});
 
-program
+const verifyCommand = program
 	.command("verify")
 	.description("Run all verify:* scripts from package.json in parallel")
 	.option("--timer", "Show timing information for each task as they complete")
-	.action((options) => verify(options));
+	.action((options) => verifyRun(options));
+
+verifyCommand
+	.command("init")
+	.description("Add verify scripts to a project")
+	.action(verifyInit);
 
 program
 	.command("lint")

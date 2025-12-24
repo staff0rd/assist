@@ -61,7 +61,7 @@ function findPackageJsonWithVerifyScripts(startDir: string): {
 	}
 }
 
-export async function verify(options: { timer?: boolean } = {}): Promise<void> {
+export async function run(options: { timer?: boolean } = {}): Promise<void> {
 	const { timer = false } = options;
 	const result = findPackageJsonWithVerifyScripts(process.cwd());
 
