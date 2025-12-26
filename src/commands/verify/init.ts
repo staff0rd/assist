@@ -141,11 +141,17 @@ async function setupDuplicateCode(pkg: PackageJson): Promise<PackageJson> {
 async function setupBuild(
 	pkg: PackageJson,
 	hasVite: boolean,
+	hasTypescript: boolean,
 ): Promise<PackageJson> {
 	console.log(chalk.blue("\nSetting up build verification..."));
-	const command = hasVite
-		? "tsc -b && vite build --logLevel error"
-		: "tsc --noEmit";
+	let command: string;
+	if (hasVite && hasTypescript) {
+		command = "tsc -b && vite build --logLevel error";
+	} else if (hasVite) {
+		command = "vite build --logLevel error";
+	} else {
+		command = "tsc --noEmit";
+	}
 	console.log(chalk.dim(`Using: ${command}`));
 	return addScript(pkg, "verify:build", command);
 }
@@ -187,13 +193,16 @@ export async function init(): Promise<void> {
 		});
 	}
 
-	if (needsSetup(setup.build) && setup.hasTypescript) {
+	if (needsSetup(setup.build) && (setup.hasTypescript || setup.hasVite)) {
+		const description = setup.hasVite
+			? setup.hasTypescript
+				? "TypeScript + Vite build verification"
+				: "Vite build verification"
+			: "TypeScript type checking";
 		availableOptions.push({
 			name: `build${getStatusLabel(setup.build)}`,
 			value: "build",
-			description: setup.hasVite
-				? "TypeScript + Vite build verification"
-				: "TypeScript type checking",
+			description,
 		});
 	}
 
@@ -231,7 +240,7 @@ export async function init(): Promise<void> {
 				pkg = await setupDuplicateCode(pkg);
 				break;
 			case "build":
-				pkg = await setupBuild(pkg, setup.hasVite);
+				pkg = await setupBuild(pkg, setup.hasVite, setup.hasTypescript);
 				break;
 		}
 	}
