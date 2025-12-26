@@ -19,6 +19,7 @@ type ExistingSetup = {
 	knip: ToolStatus;
 	biome: ToolStatus;
 	jscpd: ToolStatus;
+	test: ToolStatus;
 	hasVite: boolean;
 	hasTypescript: boolean;
 	build: ToolStatus;
@@ -59,6 +60,10 @@ function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 		jscpd: {
 			hasPackage: !!pkg.dependencies?.jscpd || !!pkg.devDependencies?.jscpd,
 			hasScript: !!pkg.scripts?.["verify:duplicate-code"],
+		},
+		test: {
+			hasPackage: !!pkg.devDependencies?.vitest,
+			hasScript: !!pkg.scripts?.["verify:test"],
 		},
 		hasVite: !!pkg.devDependencies?.vite || !!pkg.dependencies?.vite,
 		hasTypescript: !!pkg.devDependencies?.typescript,
@@ -138,6 +143,12 @@ async function setupDuplicateCode(pkg: PackageJson): Promise<PackageJson> {
 	);
 }
 
+async function setupTest(pkg: PackageJson): Promise<PackageJson> {
+	console.log(chalk.blue("\nSetting up vitest..."));
+	installPackage("vitest");
+	return addScript(pkg, "verify:test", "vitest run --silent");
+}
+
 async function setupBuild(
 	pkg: PackageJson,
 	hasVite: boolean,
@@ -193,6 +204,14 @@ export async function init(): Promise<void> {
 		});
 	}
 
+	if (needsSetup(setup.test) && setup.test.hasPackage) {
+		availableOptions.push({
+			name: `test${getStatusLabel(setup.test)}`,
+			value: "test",
+			description: "Run tests with vitest",
+		});
+	}
+
 	if (needsSetup(setup.build) && (setup.hasTypescript || setup.hasVite)) {
 		const description = setup.hasVite
 			? setup.hasTypescript
@@ -238,6 +257,9 @@ export async function init(): Promise<void> {
 				break;
 			case "duplicate-code":
 				pkg = await setupDuplicateCode(pkg);
+				break;
+			case "test":
+				pkg = await setupTest(pkg);
 				break;
 			case "build":
 				pkg = await setupBuild(pkg, setup.hasVite, setup.hasTypescript);
