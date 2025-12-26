@@ -84,10 +84,10 @@ function getStatusLabel(status: ToolStatus): string {
 	return "";
 }
 
-function installPackage(name: string): boolean {
+function installPackage(name: string, cwd: string): boolean {
 	console.log(chalk.dim(`Installing ${name}...`));
 	try {
-		execSync(`npm install -D ${name}`, { stdio: "inherit" });
+		execSync(`npm install -D ${name}`, { stdio: "inherit", cwd });
 		return true;
 	} catch {
 		console.error(chalk.red(`Failed to install ${name}`));
@@ -95,10 +95,10 @@ function installPackage(name: string): boolean {
 	}
 }
 
-function runInit(command: string): boolean {
+function runInit(command: string, cwd: string): boolean {
 	console.log(chalk.dim(`Running ${command}...`));
 	try {
-		execSync(command, { stdio: "inherit" });
+		execSync(command, { stdio: "inherit", cwd });
 		return true;
 	} catch {
 		console.error(chalk.yellow(`Warning: ${command} failed`));
@@ -120,40 +120,68 @@ function addScript(
 	};
 }
 
-async function setupKnip(pkg: PackageJson): Promise<PackageJson> {
+async function setupKnip(packageJsonPath: string): Promise<void> {
 	console.log(chalk.blue("\nSetting up knip..."));
-	installPackage("knip");
-	return addScript(pkg, "verify:knip", "knip --no-progress");
-}
-
-async function setupLint(pkg: PackageJson): Promise<PackageJson> {
-	console.log(chalk.blue("\nSetting up biome..."));
-	installPackage("@biomejs/biome");
-	runInit("npx biome init");
-	return addScript(pkg, "verify:lint", "biome check --write .");
-}
-
-async function setupDuplicateCode(pkg: PackageJson): Promise<PackageJson> {
-	console.log(chalk.blue("\nSetting up jscpd..."));
-	installPackage("jscpd");
-	return addScript(
-		pkg,
-		"verify:duplicate-code",
-		"jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' src",
+	const cwd = path.dirname(packageJsonPath);
+	if (!installPackage("knip", cwd)) {
+		return;
+	}
+	const pkg = readPackageJson(packageJsonPath);
+	writePackageJson(
+		packageJsonPath,
+		addScript(pkg, "verify:knip", "knip --no-progress"),
 	);
 }
 
-async function setupTest(pkg: PackageJson): Promise<PackageJson> {
+async function setupLint(packageJsonPath: string): Promise<void> {
+	console.log(chalk.blue("\nSetting up biome..."));
+	const cwd = path.dirname(packageJsonPath);
+	if (!installPackage("@biomejs/biome", cwd)) {
+		return;
+	}
+	runInit("npx biome init", cwd);
+	const pkg = readPackageJson(packageJsonPath);
+	writePackageJson(
+		packageJsonPath,
+		addScript(pkg, "verify:lint", "biome check --write ."),
+	);
+}
+
+async function setupDuplicateCode(packageJsonPath: string): Promise<void> {
+	console.log(chalk.blue("\nSetting up jscpd..."));
+	const cwd = path.dirname(packageJsonPath);
+	if (!installPackage("jscpd", cwd)) {
+		return;
+	}
+	const pkg = readPackageJson(packageJsonPath);
+	writePackageJson(
+		packageJsonPath,
+		addScript(
+			pkg,
+			"verify:duplicate-code",
+			"jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' src",
+		),
+	);
+}
+
+async function setupTest(packageJsonPath: string): Promise<void> {
 	console.log(chalk.blue("\nSetting up vitest..."));
-	installPackage("vitest");
-	return addScript(pkg, "verify:test", "vitest run --silent");
+	const cwd = path.dirname(packageJsonPath);
+	if (!installPackage("vitest", cwd)) {
+		return;
+	}
+	const pkg = readPackageJson(packageJsonPath);
+	writePackageJson(
+		packageJsonPath,
+		addScript(pkg, "verify:test", "vitest run --silent"),
+	);
 }
 
 async function setupBuild(
-	pkg: PackageJson,
+	packageJsonPath: string,
 	hasVite: boolean,
 	hasTypescript: boolean,
-): Promise<PackageJson> {
+): Promise<void> {
 	console.log(chalk.blue("\nSetting up build verification..."));
 	let command: string;
 	if (hasVite && hasTypescript) {
@@ -164,7 +192,8 @@ async function setupBuild(
 		command = "tsc --noEmit";
 	}
 	console.log(chalk.dim(`Using: ${command}`));
-	return addScript(pkg, "verify:build", command);
+	const pkg = readPackageJson(packageJsonPath);
+	writePackageJson(packageJsonPath, addScript(pkg, "verify:build", command));
 }
 
 export async function init(): Promise<void> {
@@ -175,7 +204,7 @@ export async function init(): Promise<void> {
 		process.exit(1);
 	}
 
-	let pkg = readPackageJson(packageJsonPath);
+	const pkg = readPackageJson(packageJsonPath);
 	const setup = detectExistingSetup(pkg);
 
 	const availableOptions: VerifyOption[] = [];
@@ -250,24 +279,22 @@ export async function init(): Promise<void> {
 	for (const choice of selected) {
 		switch (choice) {
 			case "knip":
-				pkg = await setupKnip(pkg);
+				await setupKnip(packageJsonPath);
 				break;
 			case "lint":
-				pkg = await setupLint(pkg);
+				await setupLint(packageJsonPath);
 				break;
 			case "duplicate-code":
-				pkg = await setupDuplicateCode(pkg);
+				await setupDuplicateCode(packageJsonPath);
 				break;
 			case "test":
-				pkg = await setupTest(pkg);
+				await setupTest(packageJsonPath);
 				break;
 			case "build":
-				pkg = await setupBuild(pkg, setup.hasVite, setup.hasTypescript);
+				await setupBuild(packageJsonPath, setup.hasVite, setup.hasTypescript);
 				break;
 		}
 	}
-
-	writePackageJson(packageJsonPath, pkg);
 
 	console.log(chalk.green(`\nAdded ${selected.length} verify script(s):`));
 	for (const choice of selected) {
