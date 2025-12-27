@@ -8,6 +8,7 @@ import {
 	skip as devlogSkip,
 	version as devlogVersion,
 } from "./commands/devlog/devlog";
+import { init } from "./commands/init";
 import { lint } from "./commands/lint/lint";
 import {
 	check as refactorCheck,
@@ -19,6 +20,7 @@ import {
 	init as verifyInit,
 	run as verifyRun,
 } from "./commands/verify/verify";
+import { init as vscodeInit } from "./commands/vscode/vscode";
 
 const program = new Command();
 
@@ -28,6 +30,11 @@ program
 	.command("sync")
 	.description("Copy command files to ~/.claude/commands")
 	.action(sync);
+
+program
+	.command("init")
+	.description("Initialize VS Code and verify configurations")
+	.action(init);
 
 program
 	.command("commit <message>")
@@ -117,5 +124,14 @@ devlogCommand
 	.command("skip <date>")
 	.description("Add a date (YYYY-MM-DD) to the skip list")
 	.action(devlogSkip);
+
+const vscodeCommand = program
+	.command("vscode")
+	.description("VS Code configuration utilities");
+
+vscodeCommand
+	.command("init")
+	.description("Add VS Code configuration files")
+	.action(vscodeInit);
 
 program.parse();
