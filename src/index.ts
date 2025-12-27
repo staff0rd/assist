@@ -14,7 +14,11 @@ import {
 	ignore as refactorIgnore,
 } from "./commands/refactor/refactor";
 import { sync } from "./commands/sync";
-import { init as verifyInit, run as verifyRun } from "./commands/verify/verify";
+import {
+	hardcodedColors as verifyHardcodedColors,
+	init as verifyInit,
+	run as verifyRun,
+} from "./commands/verify/verify";
 
 const program = new Command();
 
@@ -48,6 +52,11 @@ verifyCommand
 	.command("init")
 	.description("Add verify scripts to a project")
 	.action(verifyInit);
+
+verifyCommand
+	.command("hardcoded-colors")
+	.description("Check for hardcoded hex colors in src/")
+	.action(verifyHardcodedColors);
 
 program
 	.command("lint")

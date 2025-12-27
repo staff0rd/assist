@@ -23,6 +23,8 @@ type ExistingSetup = {
 	hasVite: boolean;
 	hasTypescript: boolean;
 	build: ToolStatus;
+	hardcodedColors: ToolStatus;
+	hasOpenColor: boolean;
 };
 
 type VerifyOption = {
@@ -71,6 +73,13 @@ function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 			hasPackage: true, // build uses typescript which we check separately
 			hasScript: !!pkg.scripts?.["verify:build"],
 		},
+		hardcodedColors: {
+			hasPackage: true, // uses assist CLI
+			hasScript: !!pkg.scripts?.["verify:hardcoded-colors"],
+		},
+		hasOpenColor:
+			!!pkg.dependencies?.["open-color"] ||
+			!!pkg.devDependencies?.["open-color"],
 	};
 }
 
@@ -177,6 +186,47 @@ async function setupTest(packageJsonPath: string): Promise<void> {
 	);
 }
 
+function addToKnipIgnoreBinaries(cwd: string, binary: string): void {
+	const knipJsonPath = path.join(cwd, "knip.json");
+	try {
+		let knipConfig: Record<string, unknown>;
+		if (fs.existsSync(knipJsonPath)) {
+			knipConfig = JSON.parse(fs.readFileSync(knipJsonPath, "utf-8"));
+		} else {
+			knipConfig = { $schema: "https://unpkg.com/knip@5/schema.json" };
+		}
+		const ignoreBinaries: string[] =
+			(knipConfig.ignoreBinaries as string[]) ?? [];
+		if (!ignoreBinaries.includes(binary)) {
+			knipConfig.ignoreBinaries = [...ignoreBinaries, binary];
+			fs.writeFileSync(
+				knipJsonPath,
+				`${JSON.stringify(knipConfig, null, "\t")}\n`,
+			);
+			console.log(chalk.dim(`Added '${binary}' to knip.json ignoreBinaries`));
+		}
+	} catch {
+		console.log(chalk.yellow("Warning: Could not update knip.json"));
+	}
+}
+
+async function setupHardcodedColors(
+	packageJsonPath: string,
+	hasOpenColor: boolean,
+): Promise<void> {
+	console.log(chalk.blue("\nSetting up hardcoded colors check..."));
+	const cwd = path.dirname(packageJsonPath);
+	if (!hasOpenColor) {
+		installPackage("open-color", cwd);
+	}
+	addToKnipIgnoreBinaries(cwd, "assist");
+	const pkg = readPackageJson(packageJsonPath);
+	writePackageJson(
+		packageJsonPath,
+		addScript(pkg, "verify:hardcoded-colors", "assist verify hardcoded-colors"),
+	);
+}
+
 async function setupBuild(
 	packageJsonPath: string,
 	hasVite: boolean,
@@ -254,6 +304,14 @@ export async function init(): Promise<void> {
 		});
 	}
 
+	if (needsSetup(setup.hardcodedColors)) {
+		availableOptions.push({
+			name: `hardcoded-colors${getStatusLabel(setup.hardcodedColors)}`,
+			value: "hardcoded-colors",
+			description: "Detect hardcoded hex colors (use open-color instead)",
+		});
+	}
+
 	if (availableOptions.length === 0) {
 		console.log(chalk.green("All verify scripts are already configured!"));
 		return;
@@ -292,6 +350,9 @@ export async function init(): Promise<void> {
 				break;
 			case "build":
 				await setupBuild(packageJsonPath, setup.hasVite, setup.hasTypescript);
+				break;
+			case "hardcoded-colors":
+				await setupHardcodedColors(packageJsonPath, setup.hasOpenColor);
 				break;
 		}
 	}
