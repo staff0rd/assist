@@ -8,7 +8,8 @@
 			"SlashCommand(/verify)",
 			"Skill(verify)",
 			"SlashCommand(/commit)",
-			"Skill(commit)"
+			"Skill(commit)",
+			"Skill(devlog)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)"]
 	}
