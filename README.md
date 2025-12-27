@@ -23,6 +23,8 @@ After installation, the `assist` command will be available globally.
 
 ## Commands
 
+- `assist init` - Initialize project with VS Code and verify configurations
+- `assist vscode init` - Initialize VS Code settings (Biome formatter, Vite debug config)
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit <message>` - Create a git commit with validation
 - `assist update` - Update claude-code to the latest version
