@@ -30,6 +30,7 @@ After installation, the `assist` command will be available globally.
 - `assist update` - Update claude-code to the latest version
 - `assist verify` - Run all verify:* scripts from package.json in parallel
 - `assist verify init` - Initialize verify scripts in package.json based on project dependencies
+- `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/
 - `assist lint` - Run lint checks for conventions not enforced by biomejs
 - `assist refactor check [pattern]` - Check for files that exceed 100 lines
 - `assist refactor ignore <file> --reason <reason>` - Add a file to the refactor ignore list
