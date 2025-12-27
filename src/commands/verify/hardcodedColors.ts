@@ -24,6 +24,10 @@ export function hardcodedColors(): void {
 
 		console.log(`\nTotal: ${lines.length} hardcoded color(s)`);
 		console.log("\nUse colors from the 'open-color' (oc) library instead.");
+		console.log("\nExample fix:");
+		console.log("  Before: color: '#228be6'");
+		console.log("  After:  color: oc.blue[6]");
+		console.log("\nImport open-color with: import oc from 'open-color'");
 		process.exit(1);
 	} catch {
 		console.log("No hardcoded colors found.");
