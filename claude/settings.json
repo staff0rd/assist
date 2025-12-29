@@ -6,10 +6,13 @@
 			"Bash(git show:*)",
 			"Bash(git diff:*)",
 			"SlashCommand(/verify)",
-			"Skill(verify)",
 			"SlashCommand(/commit)",
+			"SlashCommand(/devlog)",
+			"SlashCommand(/refactor)",
+			"Skill(verify)",
 			"Skill(commit)",
-			"Skill(devlog)"
+			"Skill(devlog)",
+			"Skill(refactor)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)"]
 	}
