@@ -13,7 +13,7 @@
 		"verify:build": "tsup",
 		"verify:types": "tsc --noEmit",
 		"verify:knip": "knip --no-progress",
-		"verify:duplicate-code": "jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' src"
+		"verify:duplicate-code": "jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src"
 	},
 	"keywords": [],
 	"author": "",

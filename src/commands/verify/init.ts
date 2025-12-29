@@ -12,6 +12,16 @@ import {
 type ToolStatus = {
 	hasPackage: boolean;
 	hasScript: boolean;
+	isOutdated: boolean;
+};
+
+const EXPECTED_SCRIPTS: Record<string, string> = {
+	"verify:knip": "knip --no-progress",
+	"verify:lint": "biome check --write .",
+	"verify:duplicate-code":
+		"jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src",
+	"verify:test": "vitest run --silent",
+	"verify:hardcoded-colors": "assist verify hardcoded-colors",
 };
 
 type ExistingSetup = {
@@ -36,33 +46,69 @@ function writePackageJson(filePath: string, pkg: PackageJson): void {
 	fs.writeFileSync(filePath, `${JSON.stringify(pkg, null, 2)}\n`);
 }
 
+function isScriptOutdated(
+	pkg: PackageJson,
+	scriptName: string,
+	expectedCommand: string | undefined,
+): boolean {
+	const currentScript = pkg.scripts?.[scriptName];
+	if (!currentScript || !expectedCommand) return false;
+	return currentScript !== expectedCommand;
+}
+
 function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 	return {
 		knip: {
 			hasPackage: !!pkg.devDependencies?.knip,
 			hasScript: !!pkg.scripts?.["verify:knip"],
+			isOutdated: isScriptOutdated(
+				pkg,
+				"verify:knip",
+				EXPECTED_SCRIPTS["verify:knip"],
+			),
 		},
 		biome: {
 			hasPackage: !!pkg.devDependencies?.["@biomejs/biome"],
 			hasScript: !!pkg.scripts?.["verify:lint"],
+			isOutdated: isScriptOutdated(
+				pkg,
+				"verify:lint",
+				EXPECTED_SCRIPTS["verify:lint"],
+			),
 		},
 		jscpd: {
 			hasPackage: !!pkg.dependencies?.jscpd || !!pkg.devDependencies?.jscpd,
 			hasScript: !!pkg.scripts?.["verify:duplicate-code"],
+			isOutdated: isScriptOutdated(
+				pkg,
+				"verify:duplicate-code",
+				EXPECTED_SCRIPTS["verify:duplicate-code"],
+			),
 		},
 		test: {
 			hasPackage: !!pkg.devDependencies?.vitest,
 			hasScript: !!pkg.scripts?.["verify:test"],
+			isOutdated: isScriptOutdated(
+				pkg,
+				"verify:test",
+				EXPECTED_SCRIPTS["verify:test"],
+			),
 		},
 		hasVite: !!pkg.devDependencies?.vite || !!pkg.dependencies?.vite,
 		hasTypescript: !!pkg.devDependencies?.typescript,
 		build: {
 			hasPackage: true, // build uses typescript which we check separately
 			hasScript: !!pkg.scripts?.["verify:build"],
+			isOutdated: false, // build command varies by project
 		},
 		hardcodedColors: {
 			hasPackage: true, // uses assist CLI
 			hasScript: !!pkg.scripts?.["verify:hardcoded-colors"],
+			isOutdated: isScriptOutdated(
+				pkg,
+				"verify:hardcoded-colors",
+				EXPECTED_SCRIPTS["verify:hardcoded-colors"],
+			),
 		},
 		hasOpenColor:
 			!!pkg.dependencies?.["open-color"] ||
@@ -71,10 +117,11 @@ function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 }
 
 function needsSetup(status: ToolStatus): boolean {
-	return !status.hasScript || !status.hasPackage;
+	return !status.hasScript || !status.hasPackage || status.isOutdated;
 }
 
 function getStatusLabel(status: ToolStatus): string {
+	if (status.isOutdated) return " (outdated)";
 	if (!status.hasScript) return "";
 	if (!status.hasPackage) return " (package missing)";
 	return "";
@@ -119,43 +166,54 @@ function addScript(
 async function setupKnip(packageJsonPath: string): Promise<void> {
 	console.log(chalk.blue("\nSetting up knip..."));
 	const cwd = path.dirname(packageJsonPath);
-	if (!installPackage("knip", cwd)) {
+	const pkg = readPackageJson(packageJsonPath);
+	if (!pkg.devDependencies?.knip && !installPackage("knip", cwd)) {
 		return;
 	}
-	const pkg = readPackageJson(packageJsonPath);
 	writePackageJson(
 		packageJsonPath,
-		addScript(pkg, "verify:knip", "knip --no-progress"),
+		addScript(
+			readPackageJson(packageJsonPath),
+			"verify:knip",
+			EXPECTED_SCRIPTS["verify:knip"],
+		),
 	);
 }
 
 async function setupLint(packageJsonPath: string): Promise<void> {
 	console.log(chalk.blue("\nSetting up biome..."));
 	const cwd = path.dirname(packageJsonPath);
-	if (!installPackage("@biomejs/biome", cwd)) {
-		return;
-	}
-	runInit("npx biome init", cwd);
 	const pkg = readPackageJson(packageJsonPath);
+	if (!pkg.devDependencies?.["@biomejs/biome"]) {
+		if (!installPackage("@biomejs/biome", cwd)) {
+			return;
+		}
+		runInit("npx biome init", cwd);
+	}
 	writePackageJson(
 		packageJsonPath,
-		addScript(pkg, "verify:lint", "biome check --write ."),
+		addScript(
+			readPackageJson(packageJsonPath),
+			"verify:lint",
+			EXPECTED_SCRIPTS["verify:lint"],
+		),
 	);
 }
 
 async function setupDuplicateCode(packageJsonPath: string): Promise<void> {
 	console.log(chalk.blue("\nSetting up jscpd..."));
 	const cwd = path.dirname(packageJsonPath);
-	if (!installPackage("jscpd", cwd)) {
+	const pkg = readPackageJson(packageJsonPath);
+	const hasJscpd = !!pkg.dependencies?.jscpd || !!pkg.devDependencies?.jscpd;
+	if (!hasJscpd && !installPackage("jscpd", cwd)) {
 		return;
 	}
-	const pkg = readPackageJson(packageJsonPath);
 	writePackageJson(
 		packageJsonPath,
 		addScript(
-			pkg,
+			readPackageJson(packageJsonPath),
 			"verify:duplicate-code",
-			"jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' src",
+			EXPECTED_SCRIPTS["verify:duplicate-code"],
 		),
 	);
 }
@@ -163,13 +221,17 @@ async function setupDuplicateCode(packageJsonPath: string): Promise<void> {
 async function setupTest(packageJsonPath: string): Promise<void> {
 	console.log(chalk.blue("\nSetting up vitest..."));
 	const cwd = path.dirname(packageJsonPath);
-	if (!installPackage("vitest", cwd)) {
+	const pkg = readPackageJson(packageJsonPath);
+	if (!pkg.devDependencies?.vitest && !installPackage("vitest", cwd)) {
 		return;
 	}
-	const pkg = readPackageJson(packageJsonPath);
 	writePackageJson(
 		packageJsonPath,
-		addScript(pkg, "verify:test", "vitest run --silent"),
+		addScript(
+			readPackageJson(packageJsonPath),
+			"verify:test",
+			EXPECTED_SCRIPTS["verify:test"],
+		),
 	);
 }
 
@@ -207,10 +269,13 @@ async function setupHardcodedColors(
 		installPackage("open-color", cwd);
 	}
 	addToKnipIgnoreBinaries(cwd, "assist");
-	const pkg = readPackageJson(packageJsonPath);
 	writePackageJson(
 		packageJsonPath,
-		addScript(pkg, "verify:hardcoded-colors", "assist verify hardcoded-colors"),
+		addScript(
+			readPackageJson(packageJsonPath),
+			"verify:hardcoded-colors",
+			EXPECTED_SCRIPTS["verify:hardcoded-colors"],
+		),
 	);
 }
 
