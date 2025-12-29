@@ -1,12 +1,8 @@
 import { spawn } from "node:child_process";
 import * as path from "node:path";
 import { findPackageJsonWithVerifyScripts } from "../../shared/readPackageJson.js";
-import {
-	DEFAULT_MAX_LINES,
-	type GitFilterOptions,
-	getViolations,
-	logViolations,
-} from "./getViolations.js";
+import { type GitFilterOptions, getViolations } from "./getViolations.js";
+import { DEFAULT_MAX_LINES, logViolations } from "./logViolations.js";
 
 type CheckOptions = GitFilterOptions & {
 	maxLines?: number;

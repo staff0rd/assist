@@ -1,0 +1,48 @@
+import chalk from "chalk";
+
+export const DEFAULT_MAX_LINES = 100;
+
+export function logViolations(
+	violations: { file: string; lines: number }[],
+	maxLines: number = DEFAULT_MAX_LINES,
+): void {
+	if (violations.length === 0) {
+		if (!process.env.CLAUDECODE) {
+			console.log(`Refactor check passed. No files exceed ${maxLines} lines.`);
+		}
+		return;
+	}
+
+	console.error(chalk.red(`\nRefactor check failed:\n`));
+	console.error(chalk.red(`  The following files exceed ${maxLines} lines:\n`));
+
+	for (const violation of violations) {
+		console.error(chalk.red(`  ${violation.file} (${violation.lines} lines)`));
+	}
+
+	console.error(
+		chalk.yellow(
+			`\n  Each file needs to be sensibly refactored, or if there is no sensible\n  way to refactor it, ignore it with:\n`,
+		),
+	);
+	console.error(chalk.gray(`    assist refactor ignore <file>\n`));
+
+	if (process.env.CLAUDECODE) {
+		console.error(chalk.cyan(`\n  ## Extracting Code to New Files\n`));
+		console.error(
+			chalk.cyan(
+				`  When extracting logic from one file to another, consider where the extracted code belongs:\n`,
+			),
+		);
+		console.error(
+			chalk.cyan(
+				`  1. Keep related logic together: If the extracted code is tightly coupled to the\n     original file's domain, create a new folder containing both the original and extracted files.\n`,
+			),
+		);
+		console.error(
+			chalk.cyan(
+				`  2. Share common utilities: If the extracted code can be reused across multiple\n     domains, move it to a common/shared folder.\n`,
+			),
+		);
+	}
+}

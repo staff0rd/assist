@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import chalk from "chalk";
-import { findSourceFiles } from "../../findSourceFiles";
+import { findSourceFiles } from "../../shared/findSourceFiles";
 
 type ImportViolation = {
 	filePath: string;

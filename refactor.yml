@@ -1,0 +1,2 @@
+- file: src/index.ts
+  maxLines: 300
