@@ -7,7 +7,7 @@ import {
 	type PackageJson,
 	readPackageJson,
 	requirePackageJson,
-} from "../../shared/package-json.js";
+} from "../../shared/readPackageJson.js";
 
 type ToolStatus = {
 	hasPackage: boolean;

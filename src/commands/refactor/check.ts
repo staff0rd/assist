@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import * as path from "node:path";
-import { findPackageJsonWithVerifyScripts } from "../../shared/package-json.js";
+import { findPackageJsonWithVerifyScripts } from "../../shared/readPackageJson.js";
 import {
 	DEFAULT_MAX_LINES,
 	type GitFilterOptions,

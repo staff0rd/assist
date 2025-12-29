@@ -5,7 +5,7 @@ import enquirer from "enquirer";
 import {
 	type PackageJson,
 	requirePackageJson,
-} from "../../shared/package-json.js";
+} from "../../shared/readPackageJson.js";
 
 type ExistingSetup = {
 	hasVscodeFolder: boolean;

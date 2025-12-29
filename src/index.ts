@@ -7,20 +7,20 @@ import {
 	next as devlogNext,
 	skip as devlogSkip,
 	version as devlogVersion,
-} from "./commands/devlog/devlog";
+} from "./commands/devlog";
 import { init } from "./commands/init";
 import { lint } from "./commands/lint/lint";
 import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
-} from "./commands/refactor/refactor";
+} from "./commands/refactor";
 import { sync } from "./commands/sync";
 import {
 	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
 	run as verifyRun,
-} from "./commands/verify/verify";
-import { init as vscodeInit } from "./commands/vscode/vscode";
+} from "./commands/verify";
+import { init as vscodeInit } from "./commands/vscode";
 
 const program = new Command();
 

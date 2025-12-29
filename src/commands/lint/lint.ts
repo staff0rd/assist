@@ -1,6 +1,6 @@
 // Implements conventions not enforced by biomejs
-import { runFileNameCheck } from "./fileNameCheck";
-import { runStaticImportCheck } from "./staticImportCheck";
+import { runFileNameCheck } from "./runFileNameCheck";
+import { runStaticImportCheck } from "./runStaticImportCheck";
 
 export function lint(): void {
 	const fileNamePassed = runFileNameCheck();

@@ -17,16 +17,45 @@
 		"rules": {
 			"recommended": true,
 			"style": {
-				"noNonNullAssertion": "error",
+				"useFilenamingConvention": {
+					"level": "error",
+					"options": {
+						"filenameCases": ["export"],
+						"requireAscii": true
+					}
+				},
 				"useConsistentTypeDefinitions": {
 					"level": "error",
 					"options": {
 						"style": "type"
 					}
+				},
+				"useConsistentMemberAccessibility": {
+					"level": "error",
+					"options": {
+						"accessibility": "noPublic"
+					}
 				}
 			}
 		}
 	},
+	"overrides": [
+		{
+			"includes": [
+				"tsup.config.ts",
+				"**/index.ts",
+				"**/shared.ts",
+				"**/types.ts"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"useFilenamingConvention": "off"
+					}
+				}
+			}
+		}
+	],
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"
