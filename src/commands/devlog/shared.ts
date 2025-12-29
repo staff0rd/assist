@@ -2,8 +2,9 @@ import { execSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join } from "node:path";
+import chalk from "chalk";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import type { AssistConfig, DevlogEntry } from "./types";
+import type { AssistConfig, Commit, DevlogEntry } from "./types";
 
 export const DEVLOG_DIR = join(homedir(), "git/blog/src/content/devlog");
 
@@ -106,4 +107,22 @@ export function loadDevlogEntries(
 	}
 
 	return entries;
+}
+
+export function printCommitsWithFiles(
+	commits: Commit[],
+	ignore: string[],
+	verbose: boolean,
+): void {
+	for (const commit of commits) {
+		console.log(`  ${chalk.yellow(commit.hash)} ${commit.message}`);
+		if (verbose) {
+			const visibleFiles = commit.files.filter(
+				(file) => !ignore.some((p) => file.startsWith(p)),
+			);
+			for (const file of visibleFiles) {
+				console.log(`    ${chalk.dim(file)}`);
+			}
+		}
+	}
 }

@@ -5,6 +5,7 @@ import {
 	getCommitFiles,
 	loadConfig,
 	loadDevlogEntries,
+	printCommitsWithFiles,
 	shouldIgnoreCommit,
 } from "./shared";
 import type { Commit } from "./types";
@@ -82,16 +83,6 @@ export function diff(options: DiffOptions): void {
 			console.log(`${chalk.bold.blue(date)} ${chalk.red("⚠ devlog missing")}`);
 		}
 
-		for (const commit of dateCommits) {
-			console.log(`  ${chalk.yellow(commit.hash)} ${commit.message}`);
-			if (options.verbose) {
-				const visibleFiles = commit.files.filter(
-					(file) => !ignore.some((p) => file.startsWith(p)),
-				);
-				for (const file of visibleFiles) {
-					console.log(`    ${chalk.dim(file)}`);
-				}
-			}
-		}
+		printCommitsWithFiles(dateCommits, ignore, options.verbose ?? false);
 	}
 }

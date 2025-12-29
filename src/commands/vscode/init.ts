@@ -2,12 +2,10 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import chalk from "chalk";
 import enquirer from "enquirer";
-
-type PackageJson = {
-	scripts?: Record<string, string>;
-	dependencies?: Record<string, string>;
-	devDependencies?: Record<string, string>;
-};
+import {
+	type PackageJson,
+	requirePackageJson,
+} from "../../shared/package-json.js";
 
 type ExistingSetup = {
 	hasVscodeFolder: boolean;
@@ -21,18 +19,6 @@ type ConfigOption = {
 	value: string;
 	description: string;
 };
-
-function findPackageJson(): string | null {
-	const packageJsonPath = path.join(process.cwd(), "package.json");
-	if (fs.existsSync(packageJsonPath)) {
-		return packageJsonPath;
-	}
-	return null;
-}
-
-function readPackageJson(filePath: string): PackageJson {
-	return JSON.parse(fs.readFileSync(filePath, "utf-8"));
-}
 
 function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 	const vscodeDir = path.join(process.cwd(), ".vscode");
@@ -119,14 +105,7 @@ function createExtensionsJson(): void {
 }
 
 export async function init(): Promise<void> {
-	const packageJsonPath = findPackageJson();
-
-	if (!packageJsonPath) {
-		console.error(chalk.red("No package.json found in current directory"));
-		process.exit(1);
-	}
-
-	const pkg = readPackageJson(packageJsonPath);
+	const { pkg } = requirePackageJson();
 	const setup = detectExistingSetup(pkg);
 
 	const availableOptions: ConfigOption[] = [];

@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
-import * as fs from "node:fs";
 import * as path from "node:path";
+import { findPackageJsonWithVerifyScripts } from "../../shared/package-json.js";
 
 type TaskStatus = {
 	script: string;
@@ -30,35 +30,6 @@ function printTaskStatuses(tasks: TaskStatus[]): void {
 		}
 	}
 	console.log("-------------------\n");
-}
-
-function findPackageJsonWithVerifyScripts(startDir: string): {
-	packageJsonPath: string;
-	verifyScripts: string[];
-} | null {
-	let currentDir = startDir;
-
-	while (true) {
-		const packageJsonPath = path.join(currentDir, "package.json");
-
-		if (fs.existsSync(packageJsonPath)) {
-			const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-			const scripts = packageJson.scripts || {};
-			const verifyScripts = Object.keys(scripts).filter((name) =>
-				name.startsWith("verify:"),
-			);
-
-			if (verifyScripts.length > 0) {
-				return { packageJsonPath, verifyScripts };
-			}
-		}
-
-		const parentDir = path.dirname(currentDir);
-		if (parentDir === currentDir) {
-			return null;
-		}
-		currentDir = parentDir;
-	}
 }
 
 export async function run(options: { timer?: boolean } = {}): Promise<void> {

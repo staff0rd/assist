@@ -6,6 +6,7 @@ import {
 	getRepoName,
 	loadConfig,
 	loadDevlogEntries,
+	printCommitsWithFiles,
 	shouldIgnoreCommit,
 } from "./shared";
 import type { Commit } from "./types";
@@ -120,15 +121,5 @@ export function next(options: NextOptions): void {
 	}
 	console.log(`${chalk.bold.blue(targetDate)}`);
 
-	for (const commit of commits) {
-		console.log(`  ${chalk.yellow(commit.hash)} ${commit.message}`);
-		if (options.verbose) {
-			const visibleFiles = commit.files.filter(
-				(file) => !ignore.some((p) => file.startsWith(p)),
-			);
-			for (const file of visibleFiles) {
-				console.log(`    ${chalk.dim(file)}`);
-			}
-		}
-	}
+	printCommitsWithFiles(commits, ignore, options.verbose ?? false);
 }
