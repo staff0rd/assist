@@ -11,6 +11,7 @@ export async function newProject(): Promise<void> {
 
 	removeEslintFromPackageJson();
 	removeEslintConfigFile();
+	addViteBaseConfig();
 	await init();
 	await deployInit();
 }
@@ -62,6 +63,30 @@ function removeEslintFromPackageJson(): void {
 	if (modified) {
 		writeFileSync(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 		console.log("Removed eslint references from package.json");
+	}
+}
+
+function addViteBaseConfig(): void {
+	const viteConfigPath = "vite.config.ts";
+	if (!existsSync(viteConfigPath)) {
+		console.log("No vite.config.ts found, skipping base config");
+		return;
+	}
+
+	const content = readFileSync(viteConfigPath, "utf-8");
+	if (content.includes("base:")) {
+		console.log("vite.config.ts already has base config");
+		return;
+	}
+
+	const updated = content.replace(
+		/defineConfig\(\{/,
+		'defineConfig({\n\tbase: "./",',
+	);
+
+	if (updated !== content) {
+		writeFileSync(viteConfigPath, updated);
+		console.log('Added base: "./" to vite.config.ts');
 	}
 }
 
