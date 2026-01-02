@@ -36,17 +36,6 @@ export function installPackage(name: string, cwd: string): boolean {
 	}
 }
 
-export function runInit(command: string, cwd: string): boolean {
-	console.log(chalk.dim(`Running ${command}...`));
-	try {
-		execSync(command, { stdio: "inherit", cwd });
-		return true;
-	} catch {
-		console.error(chalk.yellow(`Warning: ${command} failed`));
-		return false;
-	}
-}
-
 export function addToKnipIgnoreBinaries(cwd: string, binary: string): void {
 	const knipJsonPath = path.join(cwd, "knip.json");
 	try {

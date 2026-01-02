@@ -9,7 +9,9 @@ import {
 	version as devlogVersion,
 } from "./commands/devlog";
 import { init } from "./commands/init";
+import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
+import { newProject } from "./commands/new/newProject";
 import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
@@ -49,6 +51,11 @@ program
 		execSync("npm install -g @anthropic-ai/claude-code", { stdio: "inherit" });
 	});
 
+program
+	.command("new")
+	.description("Initialize a new Vite React TypeScript project")
+	.action(newProject);
+
 const verifyCommand = program
 	.command("verify")
 	.description("Run all verify:* scripts from package.json in parallel")
@@ -65,10 +72,15 @@ verifyCommand
 	.description("Check for hardcoded hex colors in src/")
 	.action(verifyHardcodedColors);
 
-program
+const lintCommand = program
 	.command("lint")
 	.description("Run lint checks for conventions not enforced by biomejs")
 	.action(lint);
+
+lintCommand
+	.command("init")
+	.description("Initialize Biome with standard linter config")
+	.action(lintInit);
 
 const refactorCommand = program
 	.command("refactor")
