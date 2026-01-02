@@ -2,6 +2,7 @@
 import { execSync } from "node:child_process";
 import { Command } from "commander";
 import { commit } from "./commands/commit";
+import { init as deployInit } from "./commands/deploy/init";
 import {
 	diff as devlogDiff,
 	next as devlogNext,
@@ -145,5 +146,14 @@ vscodeCommand
 	.command("init")
 	.description("Add VS Code configuration files")
 	.action(vscodeInit);
+
+const deployCommand = program
+	.command("deploy")
+	.description("Netlify deployment utilities");
+
+deployCommand
+	.command("init")
+	.description("Initialize Netlify project and configure deployment")
+	.action(deployInit);
 
 program.parse();

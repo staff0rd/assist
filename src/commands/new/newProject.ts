@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { init as deployInit } from "../deploy/init";
 import { init as lintInit } from "../lint/init";
 
 export async function newProject(): Promise<void> {
@@ -11,6 +12,7 @@ export async function newProject(): Promise<void> {
 	removeEslintFromPackageJson();
 	removeEslintConfigFile();
 	await lintInit();
+	await deployInit();
 }
 
 function removeEslintFromPackageJson(): void {

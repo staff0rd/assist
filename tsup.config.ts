@@ -11,5 +11,6 @@ export default defineConfig({
 	silent: true,
 	onSuccess: async () => {
 		cpSync("src/commands/lint", "dist/commands/lint", { recursive: true });
+		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });
 	},
 });
