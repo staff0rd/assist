@@ -24,18 +24,21 @@ After installation, the `assist` command will be available globally.
 ## Commands
 
 - `assist init` - Initialize project with VS Code and verify configurations
-- `assist vscode init` - Initialize VS Code settings (Biome formatter, Vite debug config)
+- `assist new` - Initialize a new Vite React TypeScript project
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit <message>` - Create a git commit with validation
 - `assist update` - Update claude-code to the latest version
 - `assist verify` - Run all verify:* scripts from package.json in parallel
-- `assist verify init` - Initialize verify scripts in package.json based on project dependencies
+- `assist verify init` - Add verify scripts to a project
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/
 - `assist lint` - Run lint checks for conventions not enforced by biomejs
-- `assist refactor check [pattern]` - Check for files that exceed 100 lines
-- `assist refactor ignore <file> --reason <reason>` - Add a file to the refactor ignore list
-- `assist devlog diff` - Show git commits grouped by date with devlog status
-- `assist devlog next` - Show commits for the next unversioned day
+- `assist lint init` - Initialize Biome with standard linter config
+- `assist refactor check [pattern]` - Check for files that exceed the maximum line count
+- `assist refactor ignore <file>` - Add a file to the refactor ignore list
+- `assist devlog diff` - Group git commits by date
+- `assist devlog next` - Show commits for the day after the last versioned entry
 - `assist devlog skip <date>` - Add a date to the skip list
-- `assist devlog version` - Show current and next version info
+- `assist devlog version` - Show current repo name and version info
+- `assist vscode init` - Add VS Code configuration files
+- `assist deploy init` - Initialize Netlify project and configure deployment
 
