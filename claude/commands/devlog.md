@@ -4,8 +4,6 @@ description: Generate devlog entry for the next unversioned day
 
 Run `assist devlog next` to get the next unversioned day's commits and version options.
 
-Fetch existing tags from https://staffordwilliams.com/tags.json for use when selecting tags.
-
 Analyze the commits for that day to determine the appropriate action:
 
 1. **Trivial changes** (typos, formatting, config tweaks, dependency updates): Run `assist devlog skip YYYY-MM-DD` and stop. Check the diff before skipping to ensure no meaningful changes were made.
@@ -36,6 +34,8 @@ ai-generated: <model name, e.g., "claude-opus-4-5">
 ```
 
 ## Tag Selection
+
+Fetch existing tags from https://staffordwilliams.com/tags.json for use when selecting tags.
 
 - The **first tag must always be the repo name** from the `assist devlog next` output
 - Add 1-3 additional tags relevant to the day's work (technologies, patterns, topics)
