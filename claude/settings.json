@@ -12,7 +12,8 @@
 			"Skill(verify)",
 			"Skill(commit)",
 			"Skill(devlog)",
-			"Skill(refactor)"
+			"Skill(refactor)",
+			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)"]
 	}

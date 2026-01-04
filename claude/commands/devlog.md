@@ -4,6 +4,8 @@ description: Generate devlog entry for the next unversioned day
 
 Run `assist devlog next` to get the next unversioned day's commits and version options.
 
+Fetch existing tags from https://staffordwilliams.com/tags.json for use when selecting tags.
+
 Analyze the commits for that day to determine the appropriate action:
 
 1. **Trivial changes** (typos, formatting, config tweaks, dependency updates): Run `assist devlog skip YYYY-MM-DD` and stop.
@@ -26,11 +28,19 @@ Each devlog file should follow this format:
 title: <short descriptive title>
 date: YYYY-MM-DD
 version: <selected version>
-tags: [<name from the next command output>]
+tags: [<name from the next command output>, <additional-tag>, ...]
 ai-generated: <model name, e.g., "claude-opus-4-5">
 ---
 
 <First-person summary of the day's work. Group related commits into cohesive paragraphs. Focus on what was accomplished and why, not implementation details.>
 ```
+
+## Tag Selection
+
+- The **first tag must always be the repo name** from the `assist devlog next` output
+- Add 1-3 additional tags relevant to the day's work (technologies, patterns, topics)
+- **Strongly prefer existing tags** from the fetched list over creating new ones
+- If a candidate tag is semantically similar to an existing tag, use the existing one (e.g., use `selenium` instead of creating `webdriver` or `selenium-webdriver`)
+- Only create a new tag when no existing tag adequately covers the topic
 
 Read existing devlogs in `~/git/blog/src/content/devlog/` for style inspiration if needed. The tone should be conversational and concise.
