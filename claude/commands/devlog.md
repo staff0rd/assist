@@ -8,7 +8,7 @@ Fetch existing tags from https://staffordwilliams.com/tags.json for use when sel
 
 Analyze the commits for that day to determine the appropriate action:
 
-1. **Trivial changes** (typos, formatting, config tweaks, dependency updates): Run `assist devlog skip YYYY-MM-DD` and stop.
+1. **Trivial changes** (typos, formatting, config tweaks, dependency updates): Run `assist devlog skip YYYY-MM-DD` and stop. Check the diff before skipping to ensure no meaningful changes were made.
 
 2. **Bug fixes** (fixing broken behavior, error handling, corrections): Use the **patch** version.
 
