@@ -35,7 +35,7 @@ After installation, the `assist` command will be available globally.
 - `assist lint init` - Initialize Biome with standard linter config
 - `assist refactor check [pattern]` - Check for files that exceed the maximum line count
 - `assist refactor ignore <file>` - Add a file to the refactor ignore list
-- `assist devlog diff` - Group git commits by date
+- `assist devlog list` - Group git commits by date
 - `assist devlog next` - Show commits for the day after the last versioned entry
 - `assist devlog skip <date>` - Add a date to the skip list
 - `assist devlog version` - Show current repo name and version info

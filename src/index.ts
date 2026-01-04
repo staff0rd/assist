@@ -4,7 +4,7 @@ import { Command } from "commander";
 import { commit } from "./commands/commit";
 import { init as deployInit } from "./commands/deploy/init";
 import {
-	diff as devlogDiff,
+	list as devlogList,
 	next as devlogNext,
 	skip as devlogSkip,
 	version as devlogVersion,
@@ -110,7 +110,7 @@ const devlogCommand = program
 	.description("Development log utilities");
 
 devlogCommand
-	.command("diff")
+	.command("list")
 	.description("Group git commits by date")
 	.option(
 		"--days <number>",
@@ -120,7 +120,7 @@ devlogCommand
 	.option("--since <date>", "Only show commits since this date (YYYY-MM-DD)")
 	.option("-r, --reverse", "Show earliest commits first")
 	.option("-v, --verbose", "Show file names for each commit")
-	.action(devlogDiff);
+	.action(devlogList);
 
 devlogCommand
 	.command("version")

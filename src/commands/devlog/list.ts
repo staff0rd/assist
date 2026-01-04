@@ -10,7 +10,7 @@ import {
 } from "./shared";
 import type { Commit } from "./types";
 
-type DiffOptions = {
+type ListOptions = {
 	days?: number;
 	ignore?: string[];
 	reverse?: boolean;
@@ -18,7 +18,7 @@ type DiffOptions = {
 	verbose?: boolean;
 };
 
-export function diff(options: DiffOptions): void {
+export function list(options: ListOptions): void {
 	const config = loadConfig();
 	const days = options.days ?? 30;
 	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
