@@ -22,6 +22,11 @@ export function saveConfig(config: AssistConfig): void {
 }
 
 export function getRepoName(): string {
+	const config = loadConfig();
+	if (config.devlog?.name) {
+		return config.devlog.name;
+	}
+
 	const packageJsonPath = join(process.cwd(), "package.json");
 	if (existsSync(packageJsonPath)) {
 		try {

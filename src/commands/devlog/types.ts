@@ -6,6 +6,7 @@ export type DevlogEntry = {
 
 export type AssistConfig = {
 	devlog?: {
+		name?: string;
 		ignore?: string[];
 		skip?: {
 			days?: string[];
