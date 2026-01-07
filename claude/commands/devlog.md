@@ -42,5 +42,6 @@ Fetch existing tags from https://staffordwilliams.com/tags.json for use when sel
 - **Strongly prefer existing tags** from the fetched list over creating new ones
 - If a candidate tag is semantically similar to an existing tag, use the existing one (e.g., use `selenium` instead of creating `webdriver` or `selenium-webdriver`)
 - Only create a new tag when no existing tag adequately covers the topic
+- Do not include tags that are too broad or generic (e.g., `javascript`, `web`, `tooling`)
 
 Read existing devlogs in `~/git/blog/src/content/devlog/` for style inspiration if needed. The tone should be conversational and concise.
