@@ -30,7 +30,7 @@ tags: [<name from the next command output>, <additional-tag>, ...]
 ai-generated: <model name, e.g., "claude-opus-4-5">
 ---
 
-<First-person summary of the day's work. Group related commits into cohesive paragraphs. Focus on what was accomplished and why, not implementation details.>
+<First-person summary of the day's work. Group related commits into cohesive paragraphs. Focus on what was accomplished and why, not implementation details. Wrap code symbols (function names, variable names, file names, commands, etc.) in backticks.>
 ```
 
 ## Tag Selection
