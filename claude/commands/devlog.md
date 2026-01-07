@@ -45,3 +45,7 @@ Fetch existing tags from https://staffordwilliams.com/tags.json for use when sel
 - Do not include tags that are too broad or generic (e.g., `javascript`, `web`, `tooling`)
 
 Read existing devlogs in `~/git/blog/src/content/devlog/` for style inspiration if needed. The tone should be conversational and concise.
+
+## Important
+
+- Do not commit entries, these will be manually reviewed before publishing.
