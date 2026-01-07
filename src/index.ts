@@ -9,6 +9,7 @@ import {
 	skip as devlogSkip,
 	version as devlogVersion,
 } from "./commands/devlog";
+import { enableRalph } from "./commands/enable-ralph";
 import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
@@ -155,5 +156,10 @@ deployCommand
 	.command("init")
 	.description("Initialize Netlify project and configure deployment")
 	.action(deployInit);
+
+program
+	.command("enable-ralph")
+	.description("Enable ralph-wiggum plugin for spacetraders")
+	.action(enableRalph);
 
 program.parse();
