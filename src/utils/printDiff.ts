@@ -1,8 +1,19 @@
 import chalk from "chalk";
 import * as diff from "diff";
 
+function normalizeJson(content: string): string {
+	try {
+		return JSON.stringify(JSON.parse(content), null, 2);
+	} catch {
+		return content;
+	}
+}
+
 export function printDiff(oldContent: string, newContent: string): void {
-	const changes = diff.diffLines(oldContent, newContent);
+	const changes = diff.diffLines(
+		normalizeJson(oldContent),
+		normalizeJson(newContent),
+	);
 
 	for (const change of changes) {
 		const lines = change.value.replace(/\n$/, "").split("\n");

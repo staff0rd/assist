@@ -11,10 +11,12 @@ export async function syncSettings(
 	const source = path.join(claudeDir, "settings.json");
 	const target = path.join(targetBase, "settings.json");
 	const sourceContent = fs.readFileSync(source, "utf-8");
+	const normalizedSource = JSON.stringify(JSON.parse(sourceContent), null, 2);
 
 	if (fs.existsSync(target)) {
 		const targetContent = fs.readFileSync(target, "utf-8");
-		if (sourceContent !== targetContent) {
+		const normalizedTarget = JSON.stringify(JSON.parse(targetContent), null, 2);
+		if (normalizedSource !== normalizedTarget) {
 			console.log(
 				chalk.yellow("\n⚠️  Warning: settings.json differs from existing file"),
 			);
