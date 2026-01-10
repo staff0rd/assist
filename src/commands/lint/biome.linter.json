@@ -1,4 +1,22 @@
 {
+	"overrides": [
+		{
+			"includes": ["**/constants.ts"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useFilenamingConvention": {
+							"level": "error",
+							"options": {
+								"filenameCases": ["kebab-case"],
+								"requireAscii": true
+							}
+						}
+					}
+				}
+			}
+		}
+	],
 	"linter": {
 		"enabled": true,
 		"rules": {

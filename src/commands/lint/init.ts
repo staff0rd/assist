@@ -27,6 +27,9 @@ export async function init(): Promise<void> {
 
 	const oldContent = `${JSON.stringify(biomeConfig, null, 2)}\n`;
 	biomeConfig.linter = linterConfig.linter;
+	if (linterConfig.overrides) {
+		biomeConfig.overrides = linterConfig.overrides;
+	}
 	const newContent = `${JSON.stringify(biomeConfig, null, 2)}\n`;
 
 	if (oldContent === newContent) {
