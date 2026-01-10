@@ -1,5 +1,5 @@
 import type { PackageJson } from "../../shared/readPackageJson.js";
-import { EXPECTED_SCRIPTS } from "./setupKnip.js";
+import { EXPECTED_SCRIPTS } from "./setup/index.js";
 
 type ToolStatus = {
 	hasPackage: boolean;

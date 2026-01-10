@@ -10,7 +10,7 @@ import {
 	setupKnip,
 	setupLint,
 	setupTest,
-} from "./setupKnip.js";
+} from "./setup/index.js";
 
 export async function init(): Promise<void> {
 	const { packageJsonPath, pkg } = requirePackageJson();
