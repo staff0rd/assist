@@ -14,6 +14,7 @@ import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
 import { newProject } from "./commands/new/newProject";
+import { prs } from "./commands/prs";
 import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
@@ -52,6 +53,13 @@ program
 		console.log("Updating claude-code...");
 		execSync("npm install -g @anthropic-ai/claude-code", { stdio: "inherit" });
 	});
+
+program
+	.command("prs")
+	.description("List pull requests for the current repository")
+	.option("--open", "List only open pull requests")
+	.option("--closed", "List only closed pull requests")
+	.action(prs);
 
 program
 	.command("new")
