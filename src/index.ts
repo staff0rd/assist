@@ -19,6 +19,7 @@ import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
 } from "./commands/refactor";
+import { run, add as runAdd } from "./commands/run";
 import { sync } from "./commands/sync";
 import {
 	hardcodedColors as verifyHardcodedColors,
@@ -60,6 +61,21 @@ program
 	.option("--open", "List only open pull requests")
 	.option("--closed", "List only closed pull requests")
 	.action(prs);
+
+const runCommand = program
+	.command("run")
+	.description("Run a configured command from assist.yml")
+	.argument("<name>", "Name of the configured command")
+	.argument("[args...]", "Arguments to pass to the command")
+	.allowUnknownOption()
+	.action((name, args) => {
+		run(name, args);
+	});
+
+runCommand
+	.command("add <name> <command> [args...]")
+	.description("Add a new run configuration to assist.yml")
+	.action(runAdd);
 
 program
 	.command("new")

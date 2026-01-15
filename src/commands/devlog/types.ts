@@ -4,16 +4,6 @@ export type DevlogEntry = {
 	filename: string;
 };
 
-export type AssistConfig = {
-	devlog?: {
-		name?: string;
-		ignore?: string[];
-		skip?: {
-			days?: string[];
-		};
-	};
-};
-
 export type Commit = {
 	date: string;
 	hash: string;
