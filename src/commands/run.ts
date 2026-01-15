@@ -24,8 +24,12 @@ export function run(name: string, args: string[]): void {
 		: runConfig.command;
 
 	const allArgs = [...(runConfig.args ?? []), ...args];
+	const quotedArgs = allArgs.map((arg) =>
+		arg.includes(" ") ? `"${arg}"` : arg,
+	);
+	const fullCommand = [command, ...quotedArgs].join(" ");
 
-	const child = spawn(command, allArgs, {
+	const child = spawn(fullCommand, [], {
 		stdio: "inherit",
 		shell: true,
 	});
@@ -40,7 +44,19 @@ export function run(name: string, args: string[]): void {
 	});
 }
 
-export function add(name: string, command: string, args: string[]): void {
+export function add(): void {
+	// Parse process.argv directly to avoid Commander mangling args with colons
+	// Format: assist run add <name> <command> [args...]
+	const addIndex = process.argv.indexOf("add");
+	if (addIndex === -1 || addIndex + 2 >= process.argv.length) {
+		console.error("Usage: assist run add <name> <command> [args...]");
+		process.exit(1);
+	}
+
+	const name = process.argv[addIndex + 1];
+	const command = process.argv[addIndex + 2];
+	const args = process.argv.slice(addIndex + 3);
+
 	const config = loadConfig();
 
 	if (!config.run) {

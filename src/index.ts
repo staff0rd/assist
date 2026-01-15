@@ -73,9 +73,11 @@ const runCommand = program
 	});
 
 runCommand
-	.command("add <name> <command> [args...]")
+	.command("add")
 	.description("Add a new run configuration to assist.yml")
-	.action(runAdd);
+	.allowUnknownOption()
+	.allowExcessArguments()
+	.action(() => runAdd());
 
 program
 	.command("new")

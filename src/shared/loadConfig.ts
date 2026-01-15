@@ -26,7 +26,7 @@ export function loadConfig(): AssistConfig {
 
 export function saveConfig(config: AssistConfig): void {
 	const configPath = getConfigPath();
-	writeFileSync(configPath, stringifyYaml(config));
+	writeFileSync(configPath, stringifyYaml(config, { lineWidth: 0 }));
 }
 
 export function getRepoName(): string {
