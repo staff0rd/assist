@@ -3,8 +3,16 @@ import { basename, join } from "node:path";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import type { AssistConfig } from "./types";
 
+function getConfigPath(): string {
+	const claudeConfigPath = join(process.cwd(), ".claude", "assist.yml");
+	if (existsSync(claudeConfigPath)) {
+		return claudeConfigPath;
+	}
+	return join(process.cwd(), "assist.yml");
+}
+
 export function loadConfig(): AssistConfig {
-	const configPath = join(process.cwd(), "assist.yml");
+	const configPath = getConfigPath();
 	if (!existsSync(configPath)) {
 		return {};
 	}
@@ -17,7 +25,7 @@ export function loadConfig(): AssistConfig {
 }
 
 export function saveConfig(config: AssistConfig): void {
-	const configPath = join(process.cwd(), "assist.yml");
+	const configPath = getConfigPath();
 	writeFileSync(configPath, stringifyYaml(config));
 }
 
