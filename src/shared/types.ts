@@ -5,6 +5,9 @@ type RunConfig = {
 };
 
 export type AssistConfig = {
+	commit?: {
+		conventional?: boolean;
+	};
 	devlog?: {
 		name?: string;
 		ignore?: string[];

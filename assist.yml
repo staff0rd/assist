@@ -1,3 +1,5 @@
+commit:
+  conventional: true
 devlog:
   skip:
     days:
