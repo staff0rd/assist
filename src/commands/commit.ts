@@ -28,10 +28,15 @@ export function commit(message: string): void {
 	}
 
 	try {
-		execSync("git pull", { stdio: "inherit" });
+		if (config.commit?.pull) {
+			execSync("git pull", { stdio: "inherit" });
+		}
 		execSync(`git commit -m "${message.replace(/"/g, '\\"')}"`, {
 			stdio: "inherit",
 		});
+		if (config.commit?.push) {
+			execSync("git push", { stdio: "inherit" });
+		}
 		process.exit(0);
 	} catch (_error) {
 		process.exit(1);

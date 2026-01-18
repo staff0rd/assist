@@ -7,6 +7,8 @@ type RunConfig = {
 export type AssistConfig = {
 	commit?: {
 		conventional?: boolean;
+		pull?: boolean;
+		push?: boolean;
 	};
 	devlog?: {
 		name?: string;

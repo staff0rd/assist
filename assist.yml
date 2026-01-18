@@ -1,5 +1,7 @@
 commit:
   conventional: true
+  push: true
+  pull: true
 devlog:
   skip:
     days:
