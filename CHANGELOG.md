@@ -1,3 +1,10 @@
+## [0.13.2](https://github.com/staff0rd/assist/compare/v0.13.1...v0.13.2) (2026-01-18)
+
+
+### Bug Fixes
+
+* remove model prefix from status ([1a88a5a](https://github.com/staff0rd/assist/commit/1a88a5a74ccbb680d965965ae6556e225e0710cd))
+
 ## [0.13.1](https://github.com/staff0rd/assist/compare/v0.13.0...v0.13.1) (2026-01-18)
 
 
