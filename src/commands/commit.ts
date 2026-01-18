@@ -36,6 +36,7 @@ export function commit(message: string): void {
 		});
 		if (config.commit?.push) {
 			execSync("git push", { stdio: "inherit" });
+			console.log("Pushed to remote");
 		}
 		process.exit(0);
 	} catch (_error) {
