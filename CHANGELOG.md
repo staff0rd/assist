@@ -1,0 +1,18 @@
+# 1.0.0 (2026-01-18)
+
+
+### Bug Fixes
+
+* run add handles special args ([d48c43b](https://github.com/staff0rd/assist/commit/d48c43b2dcb1eef00e8afc2c06ba9a934a8cb27b))
+* use [x]/[ ] for WSL compat ([709971e](https://github.com/staff0rd/assist/commit/709971ee508b8daa9de3ffa7bf937acc9180efd5))
+
+
+### Features
+
+* add conventional commit validation ([4cb641a](https://github.com/staff0rd/assist/commit/4cb641abcca2fbc2342ffe4f6f09841cc8edc2fc))
+* add prs command to list PRs ([6207875](https://github.com/staff0rd/assist/commit/62078752e1662e651a4a4fe84ff62f187656edbb))
+* add run command ([30a9944](https://github.com/staff0rd/assist/commit/30a9944e8c241faa4eade287f9ea9f1c994958d1))
+* extract removeEslint to shared ([f6c9b82](https://github.com/staff0rd/assist/commit/f6c9b82fc6b1b200d6cf795be1091ae8371b2fea))
+* npm publish via semantic-release ([a265e2b](https://github.com/staff0rd/assist/commit/a265e2b8f05a32aa5cc2a2bd89e260e1c8a2aa6d))
+* prompt to install netlify-cli ([84967e3](https://github.com/staff0rd/assist/commit/84967e34e9c498fe7d281c9b0ea01f5b31b85d51))
+* support alternate config location ([f921ab6](https://github.com/staff0rd/assist/commit/f921ab6a3385a3ad390687f1dbe4634bab759118))
