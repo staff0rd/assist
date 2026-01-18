@@ -3,6 +3,13 @@
 A CLI tool for enforcing determinism in LLM development workflow automation.
 
 ## Installation
+You can install `assist` globally using npm:
+
+```bash
+npm install -g @staff0rd/assist
+```
+
+## Local Development
 
 ```bash
 # Clone the repository
