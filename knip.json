@@ -1,0 +1,8 @@
+{
+	"ignoreBinaries": ["semantic-release"],
+	"ignoreDependencies": [
+		"semantic-release",
+		"@semantic-release/changelog",
+		"@semantic-release/git"
+	]
+}
