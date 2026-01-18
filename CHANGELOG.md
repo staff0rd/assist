@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/staff0rd/assist/compare/v0.12.0...v0.13.0) (2026-01-18)
+
+
+### Features
+
+* add commit pull/push config ([8d31beb](https://github.com/staff0rd/assist/commit/8d31bebff1d26adfbbaae8c8a18d413f304862df))
+
 # [0.12.0](https://github.com/staff0rd/assist/compare/v0.11.0...v0.12.0) (2026-01-18)
 
 
