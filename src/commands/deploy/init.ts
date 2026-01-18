@@ -73,9 +73,38 @@ export async function init(): Promise<void> {
 	}
 
 	console.log("Creating Netlify site...\n");
-	execSync("netlify sites:create --disable-linking", {
-		stdio: "inherit",
-	});
+	try {
+		execSync("netlify sites:create --disable-linking", {
+			stdio: "inherit",
+		});
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("command not found")) {
+			console.error(chalk.red("\nNetlify CLI is not installed.\n"));
+			const { install } = await enquirer.prompt<{ install: boolean }>({
+				type: "confirm",
+				name: "install",
+				message: "Would you like to install it now?",
+				initial: true,
+			});
+			if (install) {
+				console.log(chalk.dim("\nInstalling netlify-cli...\n"));
+				execSync("npm install -g netlify-cli", { stdio: "inherit" });
+				console.log();
+				execSync("netlify sites:create --disable-linking", {
+					stdio: "inherit",
+				});
+			} else {
+				console.log(
+					chalk.yellow(
+						"\nInstall it manually with: npm install -g netlify-cli\n",
+					),
+				);
+				process.exit(1);
+			}
+		} else {
+			throw error;
+		}
+	}
 
 	const { siteId } = await enquirer.prompt<{ siteId: string }>({
 		type: "input",
