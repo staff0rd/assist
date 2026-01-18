@@ -20,6 +20,7 @@ import {
 	ignore as refactorIgnore,
 } from "./commands/refactor";
 import { run, add as runAdd } from "./commands/run";
+import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import {
 	hardcodedColors as verifyHardcodedColors,
@@ -187,5 +188,10 @@ program
 	.command("enable-ralph")
 	.description("Enable ralph-wiggum plugin for spacetraders")
 	.action(enableRalph);
+
+program
+	.command("status-line")
+	.description("Format Claude Code status line from JSON stdin")
+	.action(statusLine);
 
 program.parse();

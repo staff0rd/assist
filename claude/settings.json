@@ -1,4 +1,8 @@
 {
+	"statusLine": {
+		"type": "command",
+		"command": "assist status-line"
+	},
 	"permissions": {
 		"allow": [
 			"Bash(assist:*)",
