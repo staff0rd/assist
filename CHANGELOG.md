@@ -1,3 +1,10 @@
+# [0.14.0](https://github.com/staff0rd/assist/compare/v0.13.3...v0.14.0) (2026-01-18)
+
+
+### Features
+
+* add deploy redirect command ([7dd6e80](https://github.com/staff0rd/assist/commit/7dd6e80167761e047ba22986e82bdc1eb79d4b58))
+
 ## [0.13.3](https://github.com/staff0rd/assist/compare/v0.13.2...v0.13.3) (2026-01-18)
 
 
