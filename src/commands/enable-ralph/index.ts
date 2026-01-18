@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
-import enquirer from "enquirer";
+import { promptConfirm } from "../../shared/promptConfirm";
 import { printDiff } from "../../utils/printDiff";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -66,12 +66,7 @@ export async function enableRalph(): Promise<void> {
 	console.log();
 	printDiff(targetContent, mergedContent);
 
-	const { confirm } = await enquirer.prompt<{ confirm: boolean }>({
-		type: "confirm",
-		name: "confirm",
-		message: "Apply these changes?",
-		initial: true,
-	});
+	const confirm = await promptConfirm("Apply these changes?");
 
 	if (!confirm) {
 		console.log("Skipped");

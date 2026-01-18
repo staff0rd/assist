@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import chalk from "chalk";
-import enquirer from "enquirer";
+import { promptConfirm } from "../../shared/promptConfirm";
 import { printDiff } from "../../utils/printDiff";
 
 export async function syncSettings(
@@ -23,12 +23,10 @@ export async function syncSettings(
 			console.log();
 			printDiff(targetContent, sourceContent);
 
-			const { confirm } = await enquirer.prompt<{ confirm: boolean }>({
-				type: "confirm",
-				name: "confirm",
-				message: chalk.red("Overwrite existing settings.json?"),
-				initial: false,
-			});
+			const confirm = await promptConfirm(
+				chalk.red("Overwrite existing settings.json?"),
+				false,
+			);
 
 			if (!confirm) {
 				console.log("Skipped settings.json");

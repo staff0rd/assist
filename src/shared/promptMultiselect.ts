@@ -19,6 +19,13 @@ export async function promptMultiselect(
 			name: opt.value,
 			message: `${opt.name} - ${chalk.dim(opt.description)}`,
 		})),
+		// @ts-expect-error - enquirer types don't include symbols but it's supported
+		symbols: {
+			indicator: {
+				on: "[x]",
+				off: "[ ]",
+			},
+		},
 	});
 	return selected;
 }

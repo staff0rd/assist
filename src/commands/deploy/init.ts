@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import enquirer from "enquirer";
+import { promptConfirm } from "../../shared/promptConfirm";
 import { printDiff } from "../../utils/printDiff";
 
 const WORKFLOW_PATH = ".github/workflows/build.yml";
@@ -44,12 +45,7 @@ async function updateWorkflow(siteId: string): Promise<void> {
 		console.log();
 		printDiff(oldContent, newContent);
 
-		const { confirm } = await enquirer.prompt<{ confirm: boolean }>({
-			type: "confirm",
-			name: "confirm",
-			message: chalk.red("Update build.yml?"),
-			initial: true,
-		});
+		const confirm = await promptConfirm(chalk.red("Update build.yml?"));
 
 		if (!confirm) {
 			console.log("Skipped build.yml update");
@@ -80,12 +76,7 @@ export async function init(): Promise<void> {
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("command not found")) {
 			console.error(chalk.red("\nNetlify CLI is not installed.\n"));
-			const { install } = await enquirer.prompt<{ install: boolean }>({
-				type: "confirm",
-				name: "install",
-				message: "Would you like to install it now?",
-				initial: true,
-			});
+			const install = await promptConfirm("Would you like to install it now?");
 			if (install) {
 				console.log(chalk.dim("\nInstalling netlify-cli...\n"));
 				execSync("npm install -g netlify-cli", { stdio: "inherit" });

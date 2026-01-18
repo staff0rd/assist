@@ -3,7 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
-import enquirer from "enquirer";
+import { promptConfirm } from "../../shared/promptConfirm";
 import { removeEslint } from "../../shared/removeEslint";
 import { printDiff } from "../../utils/printDiff";
 
@@ -44,12 +44,7 @@ export async function init(): Promise<void> {
 	console.log();
 	printDiff(oldContent, newContent);
 
-	const { confirm } = await enquirer.prompt<{ confirm: boolean }>({
-		type: "confirm",
-		name: "confirm",
-		message: chalk.red("Update biome.json?"),
-		initial: true,
-	});
+	const confirm = await promptConfirm(chalk.red("Update biome.json?"));
 
 	if (!confirm) {
 		console.log("Skipped biome.json update");
