@@ -4,11 +4,14 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import enquirer from "enquirer";
+import { removeEslint } from "../../shared/removeEslint";
 import { printDiff } from "../../utils/printDiff";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export async function init(): Promise<void> {
+	removeEslint();
+
 	const biomeConfigPath = "biome.json";
 
 	if (!existsSync(biomeConfigPath)) {
