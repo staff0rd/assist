@@ -28,6 +28,7 @@ export function commit(message: string): void {
 	}
 
 	try {
+		execSync("git pull", { stdio: "inherit" });
 		execSync(`git commit -m "${message.replace(/"/g, '\\"')}"`, {
 			stdio: "inherit",
 		});
