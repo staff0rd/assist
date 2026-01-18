@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/staff0rd/assist/compare/v0.11.0...v0.12.0) (2026-01-18)
+
+
+### Features
+
+* pull before commit ([df75336](https://github.com/staff0rd/assist/commit/df75336c158c3caaf43edb7f7592d71a5f2882d8))
+
 # [0.11.0](https://github.com/staff0rd/assist/compare/v0.10.1...v0.11.0) (2026-01-18)
 
 
