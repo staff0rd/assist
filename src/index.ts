@@ -3,6 +3,7 @@ import { execSync } from "node:child_process";
 import { Command } from "commander";
 import { commit } from "./commands/commit";
 import { init as deployInit } from "./commands/deploy/init";
+import { redirect as deployRedirect } from "./commands/deploy/redirect";
 import {
 	list as devlogList,
 	next as devlogNext,
@@ -183,6 +184,11 @@ deployCommand
 	.command("init")
 	.description("Initialize Netlify project and configure deployment")
 	.action(deployInit);
+
+deployCommand
+	.command("redirect")
+	.description("Add trailing slash redirect script to index.html")
+	.action(deployRedirect);
 
 program
 	.command("enable-ralph")
