@@ -27,6 +27,9 @@ After installation, the `assist` command will be available globally.
 - `assist new` - Initialize a new Vite React TypeScript project
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit <message>` - Create a git commit with validation
+- `assist prs` - List pull requests for the current repository
+- `assist run <name>` - Run a configured command from assist.yml
+- `assist run add` - Add a new run configuration to assist.yml
 - `assist update` - Update claude-code to the latest version
 - `assist verify` - Run all verify:* scripts from package.json in parallel
 - `assist verify init` - Add verify scripts to a project
