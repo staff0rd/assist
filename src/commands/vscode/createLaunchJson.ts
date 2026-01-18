@@ -49,14 +49,8 @@ export function createSettingsJson(): void {
 	const settings = {
 		"editor.defaultFormatter": "biomejs.biome",
 		"editor.formatOnSave": true,
-		"[json]": {
-			"editor.defaultFormatter": "biomejs.biome",
-		},
-		"[typescript]": {
-			"editor.defaultFormatter": "biomejs.biome",
-		},
-		"[typescriptreact]": {
-			"editor.defaultFormatter": "biomejs.biome",
+		"editor.codeActionsOnSave": {
+			"source.organizeImports.biome": "explicit",
 		},
 	};
 	const settingsPath = path.join(process.cwd(), ".vscode", "settings.json");
