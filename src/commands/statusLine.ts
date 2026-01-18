@@ -39,6 +39,6 @@ export async function statusLine(): Promise<void> {
 	const formattedOutput = formatNumber(totalOutput);
 
 	console.log(
-		`Model - ${model} | Tokens - ${formattedOutput} ↑ : ${formattedInput} ↓ | Context - ${usedPct}%`,
+		`${model} | Tokens - ${formattedOutput} ↑ : ${formattedInput} ↓ | Context - ${usedPct}%`,
 	);
 }
