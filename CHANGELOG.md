@@ -1,3 +1,10 @@
+# [0.15.0](https://github.com/staff0rd/assist/compare/v0.14.0...v0.15.0) (2026-01-18)
+
+
+### Features
+
+* add organize imports on save ([8d64c00](https://github.com/staff0rd/assist/commit/8d64c00a63f81e06aec73ea70fdc667ee566c8f7))
+
 # [0.14.0](https://github.com/staff0rd/assist/compare/v0.13.3...v0.14.0) (2026-01-18)
 
 
