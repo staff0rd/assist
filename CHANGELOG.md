@@ -1,3 +1,19 @@
+# [0.11.0](https://github.com/staff0rd/assist/compare/v0.10.1...v0.11.0) (2026-01-18)
+
+
+### Bug Fixes
+
+* npm publish and add knip config ([54e7219](https://github.com/staff0rd/assist/commit/54e721919693347197a4c00a9292b6a1b4dc9bc6))
+* use [x]/[ ] for WSL compat ([709971e](https://github.com/staff0rd/assist/commit/709971ee508b8daa9de3ffa7bf937acc9180efd5))
+
+
+### Features
+
+* add conventional commit validation ([4cb641a](https://github.com/staff0rd/assist/commit/4cb641abcca2fbc2342ffe4f6f09841cc8edc2fc))
+* add status-line command ([e7b23cb](https://github.com/staff0rd/assist/commit/e7b23cbad18b0f2a357f12a1dbe507da33070532))
+* extract removeEslint to shared ([f6c9b82](https://github.com/staff0rd/assist/commit/f6c9b82fc6b1b200d6cf795be1091ae8371b2fea))
+* prompt to install netlify-cli ([84967e3](https://github.com/staff0rd/assist/commit/84967e34e9c498fe7d281c9b0ea01f5b31b85d51))
+
 # 1.0.0 (2026-01-18)
 
 
