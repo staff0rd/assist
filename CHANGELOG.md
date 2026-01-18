@@ -1,3 +1,10 @@
+## [0.13.1](https://github.com/staff0rd/assist/compare/v0.13.0...v0.13.1) (2026-01-18)
+
+
+### Bug Fixes
+
+* log after push completes ([9180e5d](https://github.com/staff0rd/assist/commit/9180e5de9543f46f974d01d5b6348a1f4601b696))
+
 # [0.13.0](https://github.com/staff0rd/assist/compare/v0.12.0...v0.13.0) (2026-01-18)
 
 
