@@ -1,3 +1,10 @@
+## [0.13.3](https://github.com/staff0rd/assist/compare/v0.13.2...v0.13.3) (2026-01-18)
+
+
+### Bug Fixes
+
+* add repository url for npm ([009903e](https://github.com/staff0rd/assist/commit/009903ea9adc455ab35bff7b0d67486f8e206224))
+
 ## [0.13.2](https://github.com/staff0rd/assist/compare/v0.13.1...v0.13.2) (2026-01-18)
 
 
