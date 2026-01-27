@@ -38,6 +38,7 @@
 		"minimatch": "^10.1.1",
 		"node-notifier": "^10.0.1",
 		"semver": "^7.7.3",
+		"typescript": "^5.9.3",
 		"yaml": "^2.8.2"
 	},
 	"devDependencies": {
@@ -50,7 +51,6 @@
 		"jscpd": "^4.0.5",
 		"knip": "^5.71.0",
 		"semantic-release": "^25.0.2",
-		"tsup": "^8.5.1",
-		"typescript": "^5.9.3"
+		"tsup": "^8.5.1"
 	}
 }

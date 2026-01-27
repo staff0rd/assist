@@ -9,6 +9,7 @@ export default defineConfig({
 	clean: true,
 	shims: true,
 	silent: true,
+	external: ["typescript"],
 	onSuccess: async () => {
 		cpSync("src/commands/lint", "dist/commands/lint", { recursive: true });
 		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });
