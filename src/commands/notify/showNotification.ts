@@ -11,6 +11,7 @@ type NotificationOptions = {
 type NotifierOptions = notifier.Notification & {
 	appID?: string;
 	sound?: string;
+	timeout?: number;
 };
 
 export function showNotification(options: NotificationOptions): boolean {
@@ -33,6 +34,8 @@ export function showNotification(options: NotificationOptions): boolean {
 
 	if (platform === "macos") {
 		notificationOptions.sound = sound === "Alarm" ? "Basso" : "Submarine";
+		notificationOptions.timeout = 99999999999;
+		notificationOptions.wait = true;
 	}
 
 	notifier.notify(notificationOptions);
