@@ -1,3 +1,10 @@
+# [0.20.0](https://github.com/staff0rd/assist/compare/v0.19.0...v0.20.0) (2026-01-27)
+
+
+### Features
+
+* add complexity command ([b081237](https://github.com/staff0rd/assist/commit/b0812379b40206aedb3bf3be2a3f6317e503a2f5))
+
 # [0.19.0](https://github.com/staff0rd/assist/compare/v0.18.2...v0.19.0) (2026-01-27)
 
 
