@@ -1,3 +1,10 @@
+## [0.18.1](https://github.com/staff0rd/assist/compare/v0.18.0...v0.18.1) (2026-01-27)
+
+
+### Bug Fixes
+
+* biome filename convention rules ([73003af](https://github.com/staff0rd/assist/commit/73003af89ea64f26aad751e7f648106d8029bc3f))
+
 # [0.18.0](https://github.com/staff0rd/assist/compare/v0.17.0...v0.18.0) (2026-01-27)
 
 
