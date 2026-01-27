@@ -55,7 +55,7 @@ export async function enableRalph(): Promise<void> {
 	}
 
 	const merged = deepMerge(targetData, sourceData);
-	const mergedContent = JSON.stringify(merged, null, "\t") + "\n";
+	const mergedContent = `${JSON.stringify(merged, null, "\t")}\n`;
 
 	if (mergedContent === targetContent) {
 		console.log(chalk.green("settings.local.json already has ralph enabled"));

@@ -1,7 +1,13 @@
 {
 	"overrides": [
 		{
-			"includes": ["**/constants.ts"],
+			"includes": [
+				"**/index.ts",
+				"**/shared.ts",
+				"**/types.ts",
+				"**/constants.ts",
+				"tsup.config.ts"
+			],
 			"linter": {
 				"rules": {
 					"style": {
@@ -32,6 +38,9 @@
 		"rules": {
 			"recommended": true,
 			"style": {
+				"useTemplate": {
+					"level": "error"
+				},
 				"useFilenamingConvention": {
 					"level": "error",
 					"options": {

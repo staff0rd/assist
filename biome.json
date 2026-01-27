@@ -17,6 +17,9 @@
 		"rules": {
 			"recommended": true,
 			"style": {
+				"useTemplate": {
+					"level": "error"
+				},
 				"useFilenamingConvention": {
 					"level": "error",
 					"options": {
@@ -42,11 +45,28 @@
 	"overrides": [
 		{
 			"includes": [
-				"tsup.config.ts",
 				"**/index.ts",
 				"**/shared.ts",
-				"**/types.ts"
+				"**/types.ts",
+				"**/constants.ts",
+				"tsup.config.ts"
 			],
+			"linter": {
+				"rules": {
+					"style": {
+						"useFilenamingConvention": {
+							"level": "error",
+							"options": {
+								"filenameCases": ["kebab-case"],
+								"requireAscii": true
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": ["**/*.test.ts"],
 			"linter": {
 				"rules": {
 					"style": {
