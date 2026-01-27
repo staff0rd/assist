@@ -1,3 +1,15 @@
+# [0.18.0](https://github.com/staff0rd/assist/compare/v0.17.0...v0.18.0) (2026-01-27)
+
+
+### Bug Fixes
+
+* remove .js import extensions ([b724424](https://github.com/staff0rd/assist/commit/b7244240e1fba51aa1895f9ce622a7518c03a20c))
+
+
+### Features
+
+* lint rule for import extensions ([d84de0d](https://github.com/staff0rd/assist/commit/d84de0d4b735daabcc35c8081da4e06c7b4d8f3c))
+
 # [0.17.0](https://github.com/staff0rd/assist/compare/v0.16.1...v0.17.0) (2026-01-27)
 
 
