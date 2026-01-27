@@ -4,8 +4,8 @@ import {
 	addToKnipIgnoreBinaries,
 	installPackage,
 	setupVerifyScript,
-} from "../installPackage.js";
-import { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS.js";
+} from "../installPackage";
+import { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS";
 
 export async function setupHardcodedColors(
 	packageJsonPath: string,

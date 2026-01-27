@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { loadConfig, saveConfig } from "../shared/loadConfig.js";
+import { loadConfig, saveConfig } from "../shared/loadConfig";
 
 export function run(name: string, args: string[]): void {
 	const config = loadConfig();

@@ -5,7 +5,7 @@ import chalk from "chalk";
 import {
 	type PackageJson,
 	readPackageJson,
-} from "../../shared/readPackageJson.js";
+} from "../../shared/readPackageJson";
 
 export function writePackageJson(filePath: string, pkg: PackageJson): void {
 	fs.writeFileSync(filePath, `${JSON.stringify(pkg, null, 2)}\n`);

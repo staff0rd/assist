@@ -1,18 +1,18 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import chalk from "chalk";
-import { promptMultiselect } from "../../shared/promptMultiselect.js";
+import { promptMultiselect } from "../../shared/promptMultiselect";
 import {
 	type PackageJson,
 	requirePackageJson,
-} from "../../shared/readPackageJson.js";
+} from "../../shared/readPackageJson";
 import {
 	createExtensionsJson,
 	createLaunchJson,
 	createSettingsJson,
 	ensureVscodeFolder,
 	removeVscodeFromGitignore,
-} from "./createLaunchJson.js";
+} from "./createLaunchJson";
 
 type ExistingSetup = {
 	hasVscodeFolder: boolean;

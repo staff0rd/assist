@@ -1,8 +1,8 @@
 import * as path from "node:path";
 import chalk from "chalk";
-import { readPackageJson } from "../../../shared/readPackageJson.js";
-import { installPackage, setupVerifyScript } from "../installPackage.js";
-import { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS.js";
+import { readPackageJson } from "../../../shared/readPackageJson";
+import { installPackage, setupVerifyScript } from "../installPackage";
+import { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS";
 
 export async function setupDuplicateCode(
 	packageJsonPath: string,

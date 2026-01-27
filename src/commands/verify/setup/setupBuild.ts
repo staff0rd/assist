@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { readPackageJson } from "../../../shared/readPackageJson.js";
-import { addScript, writePackageJson } from "../installPackage.js";
+import { readPackageJson } from "../../../shared/readPackageJson";
+import { addScript, writePackageJson } from "../installPackage";
 
 export async function setupBuild(
 	packageJsonPath: string,

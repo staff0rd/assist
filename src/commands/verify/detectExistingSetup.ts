@@ -1,5 +1,5 @@
-import type { PackageJson } from "../../shared/readPackageJson.js";
-import { EXPECTED_SCRIPTS } from "./setup/index.js";
+import type { PackageJson } from "../../shared/readPackageJson";
+import { EXPECTED_SCRIPTS } from "./setup/index";
 
 type ToolStatus = {
 	hasPackage: boolean;
@@ -89,4 +89,4 @@ export function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 	};
 }
 
-export { getStatusLabel, needsSetup } from "./needsSetup.js";
+export { getStatusLabel, needsSetup } from "./needsSetup";

@@ -6,8 +6,8 @@ export {
 	getRepoName,
 	loadConfig,
 	saveConfig,
-} from "../../shared/loadConfig.js";
-export { loadDevlogEntries } from "./loadDevlogEntries.js";
+} from "../../shared/loadConfig";
+export { loadDevlogEntries } from "./loadDevlogEntries";
 
 export function getCommitFiles(hash: string): string[] {
 	try {

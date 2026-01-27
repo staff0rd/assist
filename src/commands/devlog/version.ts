@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { bumpVersion, getLastVersionInfo } from "./getLastVersionInfo.js";
+import { bumpVersion, getLastVersionInfo } from "./getLastVersionInfo";
 import { getRepoName, loadConfig } from "./shared";
 
 export function version(): void {

@@ -2,7 +2,7 @@ import {
 	type ExistingSetup,
 	getStatusLabel,
 	needsSetup,
-} from "./detectExistingSetup.js";
+} from "./detectExistingSetup";
 
 type VerifyOption = {
 	name: string;

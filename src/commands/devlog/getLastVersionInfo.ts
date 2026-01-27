@@ -1,14 +1,14 @@
 import { execSync } from "node:child_process";
 import semver from "semver";
-import type { AssistConfig } from "../../shared/types.js";
-import { loadDevlogEntries } from "./loadDevlogEntries.js";
+import type { AssistConfig } from "../../shared/types";
+import { loadDevlogEntries } from "./loadDevlogEntries";
 
 type LastVersionInfo = {
 	date: string;
 	version: string;
 };
 
-function getVersionAtCommit(hash: string): string | null {
+export function getVersionAtCommit(hash: string): string | null {
 	try {
 		const content = execSync(`git show ${hash}:package.json`, {
 			encoding: "utf-8",
@@ -20,7 +20,7 @@ function getVersionAtCommit(hash: string): string | null {
 	}
 }
 
-function stripToMinor(version: string): string {
+export function stripToMinor(version: string): string {
 	const parsed = semver.parse(semver.coerce(version));
 	return parsed ? `v${parsed.major}.${parsed.minor}` : `v${version}`;
 }
@@ -50,10 +50,6 @@ export function getLastVersionInfo(
 	repoName: string,
 	config?: AssistConfig,
 ): LastVersionInfo | null {
-	if (config?.commit?.conventional) {
-		return getLastVersionInfoFromGit();
-	}
-
 	const entries = loadDevlogEntries(repoName);
 	if (entries.size === 0) {
 		return null;
@@ -63,6 +59,14 @@ export function getLastVersionInfo(
 	const lastDate = dates[0];
 	if (!lastDate) {
 		return null;
+	}
+
+	// Use package.json version when conventional commits enabled
+	if (config?.commit?.conventional) {
+		const gitInfo = getLastVersionInfoFromGit();
+		if (gitInfo) {
+			return { date: lastDate, version: gitInfo.version };
+		}
 	}
 
 	const lastEntries = entries.get(lastDate);

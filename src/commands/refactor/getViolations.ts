@@ -2,8 +2,8 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import { minimatch } from "minimatch";
 import { findSourceFiles } from "../../shared/findSourceFiles";
-import { getIgnoredFiles } from "./getIgnoredFiles.js";
-import { DEFAULT_MAX_LINES } from "./logViolations.js";
+import { getIgnoredFiles } from "./getIgnoredFiles";
+import { DEFAULT_MAX_LINES } from "./logViolations";
 
 export type GitFilterOptions = {
 	modified?: boolean;

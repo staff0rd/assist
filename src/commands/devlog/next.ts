@@ -1,6 +1,11 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
-import { bumpVersion, getLastVersionInfo } from "./getLastVersionInfo.js";
+import {
+	bumpVersion,
+	getLastVersionInfo,
+	getVersionAtCommit,
+	stripToMinor,
+} from "./getLastVersionInfo";
 import {
 	getCommitFiles,
 	getRepoName,
@@ -68,7 +73,16 @@ export function next(options: NextOptions): void {
 	const commits = commitsByDate.get(targetDate) ?? [];
 
 	console.log(`${chalk.bold("name:")} ${repoName}`);
-	if (patchVersion && minorVersion) {
+
+	// For conventional commits, get version from package.json at that day's commit
+	if (config.commit?.conventional && commits.length > 0) {
+		const version = getVersionAtCommit(commits[0].hash);
+		if (version) {
+			console.log(`${chalk.bold("version:")} ${stripToMinor(version)}`);
+		} else {
+			console.log(`${chalk.bold("version:")} ${chalk.red("unknown")}`);
+		}
+	} else if (patchVersion && minorVersion) {
 		console.log(
 			`${chalk.bold("version:")} ${patchVersion} (patch) or ${minorVersion} (minor)`,
 		);
