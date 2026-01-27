@@ -1,3 +1,10 @@
+## [0.18.2](https://github.com/staff0rd/assist/compare/v0.18.1...v0.18.2) (2026-01-27)
+
+
+### Bug Fixes
+
+* fail verify on knip config hints ([772b819](https://github.com/staff0rd/assist/commit/772b81957d4a80fa520a04371d468bb7d4c59fe9))
+
 ## [0.18.1](https://github.com/staff0rd/assist/compare/v0.18.0...v0.18.1) (2026-01-27)
 
 
