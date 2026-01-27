@@ -1,3 +1,10 @@
+# [0.17.0](https://github.com/staff0rd/assist/compare/v0.16.1...v0.17.0) (2026-01-27)
+
+
+### Features
+
+* devlog reads version from package.json ([93ec3a6](https://github.com/staff0rd/assist/commit/93ec3a65408db2ccd5ca7a3ba967325e3f8cbd28))
+
 ## [0.16.1](https://github.com/staff0rd/assist/compare/v0.16.0...v0.16.1) (2026-01-27)
 
 
