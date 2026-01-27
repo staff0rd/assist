@@ -51,5 +51,6 @@ After installation, the `assist` command will be available globally.
 - `assist devlog version` - Show current repo name and version info
 - `assist vscode init` - Add VS Code configuration files
 - `assist deploy init` - Initialize Netlify project and configure deployment
+- `assist notify` - Show desktop notification from JSON stdin (supports macOS, Windows, WSL)
 - `assist status-line` - Format Claude Code status line from JSON stdin
 
