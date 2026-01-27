@@ -1,3 +1,10 @@
+# [0.16.0](https://github.com/staff0rd/assist/compare/v0.15.0...v0.16.0) (2026-01-27)
+
+
+### Features
+
+* add notify command for WSL ([e4e7e45](https://github.com/staff0rd/assist/commit/e4e7e459c2d741317af37dec8836e3a5b25de337))
+
 # [0.15.0](https://github.com/staff0rd/assist/compare/v0.14.0...v0.15.0) (2026-01-18)
 
 
