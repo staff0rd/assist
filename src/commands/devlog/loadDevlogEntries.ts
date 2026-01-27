@@ -3,7 +3,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import type { DevlogEntry } from "./types";
 
-export const DEVLOG_DIR = join(homedir(), "git/blog/src/content/devlog");
+const DEVLOG_DIR = join(homedir(), "git/blog/src/content/devlog");
 
 export function loadDevlogEntries(
 	repoName: string,

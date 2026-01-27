@@ -7,7 +7,7 @@ export {
 	loadConfig,
 	saveConfig,
 } from "../../shared/loadConfig.js";
-export { DEVLOG_DIR, loadDevlogEntries } from "./loadDevlogEntries.js";
+export { loadDevlogEntries } from "./loadDevlogEntries.js";
 
 export function getCommitFiles(hash: string): string[] {
 	try {

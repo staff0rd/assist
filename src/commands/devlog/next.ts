@@ -21,7 +21,7 @@ export function next(options: NextOptions): void {
 	const skipDays = new Set(config.devlog?.skip?.days ?? []);
 	const repoName = getRepoName();
 
-	const lastInfo = getLastVersionInfo(repoName);
+	const lastInfo = getLastVersionInfo(repoName, config);
 	const lastDate = lastInfo?.date ?? null;
 	const patchVersion = lastInfo ? bumpVersion(lastInfo.version, "patch") : null;
 	const minorVersion = lastInfo ? bumpVersion(lastInfo.version, "minor") : null;
