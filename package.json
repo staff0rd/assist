@@ -18,7 +18,7 @@
 		"verify:lint": "biome check --write .",
 		"verify:build": "tsup",
 		"verify:types": "tsc --noEmit",
-		"verify:knip": "knip --no-progress",
+		"verify:knip": "knip --no-progress --treat-config-hints-as-errors",
 		"verify:duplicate-code": "jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src"
 	},
 	"keywords": [],
