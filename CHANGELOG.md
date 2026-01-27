@@ -1,3 +1,10 @@
+## [0.16.1](https://github.com/staff0rd/assist/compare/v0.16.0...v0.16.1) (2026-01-27)
+
+
+### Bug Fixes
+
+* macos notifications now popup ([900c000](https://github.com/staff0rd/assist/commit/900c000af39eb7f47e19c65889e561eec55d6019))
+
 # [0.16.0](https://github.com/staff0rd/assist/compare/v0.15.0...v0.16.0) (2026-01-27)
 
 
