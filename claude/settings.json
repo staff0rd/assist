@@ -17,14 +17,17 @@
 			"Bash(git add:*)",
 			"Bash(git show:*)",
 			"Bash(git diff:*)",
+			"Bash(gh repo view:*)",
 			"SlashCommand(/verify)",
 			"SlashCommand(/commit)",
 			"SlashCommand(/devlog)",
 			"SlashCommand(/refactor)",
+			"SlashCommand(/review-comments)",
 			"Skill(verify)",
 			"Skill(commit)",
 			"Skill(devlog)",
 			"Skill(refactor)",
+			"Skill(review-comments)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)"]
