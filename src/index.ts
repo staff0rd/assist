@@ -15,6 +15,7 @@ import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
 import { newProject } from "./commands/new/newProject";
+import { notify } from "./commands/notify";
 import { prs } from "./commands/prs";
 import {
 	check as refactorCheck,
@@ -199,5 +200,12 @@ program
 	.command("status-line")
 	.description("Format Claude Code status line from JSON stdin")
 	.action(statusLine);
+
+program
+	.command("notify")
+	.description(
+		"Show notification from Claude Code hook (reads JSON from stdin)",
+	)
+	.action(notify);
 
 program.parse();

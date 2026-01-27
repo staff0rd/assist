@@ -1,4 +1,4 @@
-import * as readline from "node:readline";
+import { readStdin } from "../lib/readStdin";
 
 type StatusInput = {
 	model: {
@@ -16,18 +16,7 @@ function formatNumber(num: number): string {
 }
 
 export async function statusLine(): Promise<void> {
-	const rl = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-		terminal: false,
-	});
-
-	let inputData = "";
-
-	for await (const line of rl) {
-		inputData += line;
-	}
-
+	const inputData = await readStdin();
 	const data: StatusInput = JSON.parse(inputData);
 
 	const model = data.model.display_name;

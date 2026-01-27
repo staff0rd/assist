@@ -3,6 +3,14 @@
 		"type": "command",
 		"command": "assist status-line"
 	},
+	"hooks": {
+		"Notification": [
+			{
+				"matcher": "",
+				"hooks": [{ "type": "command", "command": "assist notify" }]
+			}
+		]
+	},
 	"permissions": {
 		"allow": [
 			"Bash(assist:*)",
