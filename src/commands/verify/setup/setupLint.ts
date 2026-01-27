@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { readPackageJson } from "../../../shared/readPackageJson";
 import { init as lintInit } from "../../lint/init";
 import { installPackage, setupVerifyScript } from "../installPackage";
-import { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS";
+import { expectedScripts } from "./expectedScripts";
 
 export async function setupLint(packageJsonPath: string): Promise<void> {
 	console.log(chalk.blue("\nSetting up biome..."));
@@ -18,6 +18,6 @@ export async function setupLint(packageJsonPath: string): Promise<void> {
 	setupVerifyScript(
 		packageJsonPath,
 		"verify:lint",
-		EXPECTED_SCRIPTS["verify:lint"],
+		expectedScripts["verify:lint"],
 	);
 }

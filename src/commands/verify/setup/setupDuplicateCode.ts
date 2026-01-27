@@ -2,7 +2,7 @@ import * as path from "node:path";
 import chalk from "chalk";
 import { readPackageJson } from "../../../shared/readPackageJson";
 import { installPackage, setupVerifyScript } from "../installPackage";
-import { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS";
+import { expectedScripts } from "./expectedScripts";
 
 export async function setupDuplicateCode(
 	packageJsonPath: string,
@@ -17,6 +17,6 @@ export async function setupDuplicateCode(
 	setupVerifyScript(
 		packageJsonPath,
 		"verify:duplicate-code",
-		EXPECTED_SCRIPTS["verify:duplicate-code"],
+		expectedScripts["verify:duplicate-code"],
 	);
 }

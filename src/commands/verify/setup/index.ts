@@ -1,4 +1,4 @@
-export { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS";
+export { expectedScripts as EXPECTED_SCRIPTS } from "./expectedScripts";
 export { setupBuild } from "./setupBuild";
 export { setupDuplicateCode } from "./setupDuplicateCode";
 export { setupHardcodedColors } from "./setupHardcodedColors";

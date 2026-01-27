@@ -5,7 +5,7 @@ import {
 	installPackage,
 	setupVerifyScript,
 } from "../installPackage";
-import { EXPECTED_SCRIPTS } from "./EXPECTED_SCRIPTS";
+import { expectedScripts } from "./expectedScripts";
 
 export async function setupHardcodedColors(
 	packageJsonPath: string,
@@ -20,6 +20,6 @@ export async function setupHardcodedColors(
 	setupVerifyScript(
 		packageJsonPath,
 		"verify:hardcoded-colors",
-		EXPECTED_SCRIPTS["verify:hardcoded-colors"],
+		expectedScripts["verify:hardcoded-colors"],
 	);
 }

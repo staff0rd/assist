@@ -1,4 +1,4 @@
-export const EXPECTED_SCRIPTS: Record<string, string> = {
+export const expectedScripts: Record<string, string> = {
 	"verify:knip": "knip --no-progress",
 	"verify:lint": "biome check --write .",
 	"verify:duplicate-code":
