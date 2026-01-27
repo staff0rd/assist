@@ -1,3 +1,10 @@
+# [0.19.0](https://github.com/staff0rd/assist/compare/v0.18.2...v0.19.0) (2026-01-27)
+
+
+### Features
+
+* add /review command for PR comments ([a6fc46c](https://github.com/staff0rd/assist/commit/a6fc46c577c1cc33741759a972a19b4ecaa35190))
+
 ## [0.18.2](https://github.com/staff0rd/assist/compare/v0.18.1...v0.18.2) (2026-01-27)
 
 
