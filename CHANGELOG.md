@@ -1,3 +1,10 @@
+## [0.22.1](https://github.com/staff0rd/assist/compare/v0.22.0...v0.22.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* remove enable-ralph, update readme ([9043a2a](https://github.com/staff0rd/assist/commit/9043a2afd18a95fce77a0f7e05740d856f45df3d))
+
 # [0.22.0](https://github.com/staff0rd/assist/compare/v0.21.2...v0.22.0) (2026-01-28)
 
 
