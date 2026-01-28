@@ -1,67 +1,10 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
 import enquirer from "enquirer";
-
-type PullRequest = {
-	number: number;
-	title: string;
-	url: string;
-	author: { login: string };
-	createdAt: string;
-	mergedAt: string | null;
-	closedAt: string | null;
-	state: "OPEN" | "CLOSED" | "MERGED";
-	changedFiles: number;
-};
-
-type LineComment = {
-	type: "line";
-	id: number;
-	user: string;
-	path: string;
-	line: number | null;
-	body: string;
-	diff_hunk: string;
-};
-
-type ReviewComment = {
-	type: "review";
-	id: number;
-	user: string;
-	state: string;
-	body: string;
-};
-
-type PrComment = LineComment | ReviewComment;
-
-type PrsOptions = {
-	open?: boolean;
-	closed?: boolean;
-};
+import { isGhNotInstalled } from "./shared";
+import type { PrsOptions, PullRequest } from "./types";
 
 const PAGE_SIZE = 10;
-
-function isGhNotInstalled(error: unknown): boolean {
-	if (error instanceof Error) {
-		const msg = error.message.toLowerCase();
-		return msg.includes("enoent") || msg.includes("command not found");
-	}
-	return false;
-}
-
-function isNotFound(error: unknown): boolean {
-	if (error instanceof Error) {
-		return error.message.includes("HTTP 404");
-	}
-	return false;
-}
-
-function getRepoInfo(): { org: string; repo: string } {
-	const repoInfo = JSON.parse(
-		execSync("gh repo view --json owner,name", { encoding: "utf-8" }),
-	);
-	return { org: repoInfo.owner.login, repo: repoInfo.name };
-}
 
 export async function prs(options: PrsOptions): Promise<void> {
 	const state = options.open ? "open" : options.closed ? "closed" : "all";
@@ -159,67 +102,5 @@ async function displayPaginated(pullRequests: PullRequest[]): Promise<void> {
 		} else {
 			break;
 		}
-	}
-}
-
-export async function comments(prNumber: number): Promise<PrComment[]> {
-	try {
-		const { org, repo } = getRepoInfo();
-		const allComments: PrComment[] = [];
-
-		// Fetch review-level comments
-		const reviewResult = execSync(
-			`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews`,
-			{ encoding: "utf-8" },
-		);
-
-		if (reviewResult.trim()) {
-			const reviews = JSON.parse(reviewResult);
-			for (const review of reviews) {
-				if (review.body) {
-					allComments.push({
-						type: "review",
-						id: review.id,
-						user: review.user.login,
-						state: review.state,
-						body: review.body,
-					});
-				}
-			}
-		}
-
-		// Fetch line-level comments
-		const lineResult = execSync(
-			`gh api repos/${org}/${repo}/pulls/${prNumber}/comments`,
-			{ encoding: "utf-8" },
-		);
-
-		if (lineResult.trim()) {
-			const lineComments = JSON.parse(lineResult);
-			for (const comment of lineComments) {
-				allComments.push({
-					type: "line",
-					id: comment.id,
-					user: comment.user.login,
-					path: comment.path,
-					line: comment.line,
-					body: comment.body,
-					diff_hunk: comment.diff_hunk,
-				});
-			}
-		}
-
-		return allComments;
-	} catch (error) {
-		if (isGhNotInstalled(error)) {
-			console.error("Error: GitHub CLI (gh) is not installed.");
-			console.error("Install it from https://cli.github.com/");
-			return [];
-		}
-		if (isNotFound(error)) {
-			console.error("Error: Pull request not found.");
-			return [];
-		}
-		throw error;
 	}
 }

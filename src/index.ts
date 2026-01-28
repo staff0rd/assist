@@ -22,7 +22,11 @@ import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
 import { newProject } from "./commands/new/newProject";
 import { notify } from "./commands/notify";
-import { prs, comments as prsComments } from "./commands/prs";
+import {
+	prs,
+	comments as prsComments,
+	printComments as prsPrintComments,
+} from "./commands/prs/index";
 import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
@@ -75,11 +79,7 @@ prsCommand
 	.command("comments <pr-number>")
 	.description("List all comments on a pull request")
 	.action((prNumber: string) => {
-		prsComments(Number.parseInt(prNumber, 10)).then((comments) => {
-			for (const comment of comments) {
-				console.log(JSON.stringify(comment));
-			}
-		});
+		prsComments(Number.parseInt(prNumber, 10)).then(prsPrintComments);
 	});
 
 const runCommand = program
