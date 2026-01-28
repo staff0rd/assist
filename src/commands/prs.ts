@@ -49,6 +49,13 @@ function isGhNotInstalled(error: unknown): boolean {
 	return false;
 }
 
+function isNotFound(error: unknown): boolean {
+	if (error instanceof Error) {
+		return error.message.includes("HTTP 404");
+	}
+	return false;
+}
+
 function getRepoInfo(): { org: string; repo: string } {
 	const repoInfo = JSON.parse(
 		execSync("gh repo view --json owner,name", { encoding: "utf-8" }),
@@ -207,6 +214,10 @@ export async function comments(prNumber: number): Promise<PrComment[]> {
 		if (isGhNotInstalled(error)) {
 			console.error("Error: GitHub CLI (gh) is not installed.");
 			console.error("Install it from https://cli.github.com/");
+			return [];
+		}
+		if (isNotFound(error)) {
+			console.error("Error: Pull request not found.");
 			return [];
 		}
 		throw error;
