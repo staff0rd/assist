@@ -13,8 +13,5 @@ export default defineConfig({
 	onSuccess: async () => {
 		cpSync("src/commands/lint", "dist/commands/lint", { recursive: true });
 		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });
-		cpSync("src/commands/enable-ralph", "dist/commands/enable-ralph", {
-			recursive: true,
-		});
 	},
 });

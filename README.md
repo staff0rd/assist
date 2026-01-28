@@ -35,6 +35,7 @@ After installation, the `assist` command will be available globally.
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit <message>` - Create a git commit with validation
 - `assist prs` - List pull requests for the current repository
+- `assist prs comments <pr-number>` - List all comments on a pull request
 - `assist run <name>` - Run a configured command from assist.yml
 - `assist run add` - Add a new run configuration to assist.yml
 - `assist update` - Update claude-code to the latest version
@@ -51,6 +52,11 @@ After installation, the `assist` command will be available globally.
 - `assist devlog version` - Show current repo name and version info
 - `assist vscode init` - Add VS Code configuration files
 - `assist deploy init` - Initialize Netlify project and configure deployment
+- `assist deploy redirect` - Add trailing slash redirect script to index.html
 - `assist notify` - Show desktop notification from JSON stdin (supports macOS, Windows, WSL)
 - `assist status-line` - Format Claude Code status line from JSON stdin
+- `assist complexity cyclomatic [pattern]` - Calculate cyclomatic complexity per function
+- `assist complexity halstead [pattern]` - Calculate Halstead metrics per function
+- `assist complexity maintainability [pattern]` - Calculate maintainability index per file
+- `assist complexity sloc [pattern]` - Count source lines of code per file
 

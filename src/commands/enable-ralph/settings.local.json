@@ -1,8 +1,0 @@
-{
-	"permissions": {
-		"allow": ["Bash"]
-	},
-	"enabledPlugins": {
-		"ralph-wiggum@claude-plugins-official": true
-	}
-}

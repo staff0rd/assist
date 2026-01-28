@@ -16,7 +16,6 @@ import {
 	skip as devlogSkip,
 	version as devlogVersion,
 } from "./commands/devlog";
-import { enableRalph } from "./commands/enable-ralph";
 import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
@@ -207,11 +206,6 @@ deployCommand
 	.command("redirect")
 	.description("Add trailing slash redirect script to index.html")
 	.action(deployRedirect);
-
-program
-	.command("enable-ralph")
-	.description("Enable ralph-wiggum plugin for spacetraders")
-	.action(enableRalph);
 
 program
 	.command("status-line")
