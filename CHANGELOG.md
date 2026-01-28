@@ -1,3 +1,10 @@
+# [0.22.0](https://github.com/staff0rd/assist/compare/v0.21.2...v0.22.0) (2026-01-28)
+
+
+### Features
+
+* human-readable prs comments output ([12eb62a](https://github.com/staff0rd/assist/commit/12eb62aeeeabc335b2b1fd7d18d1de8cbae288b4))
+
 ## [0.21.2](https://github.com/staff0rd/assist/compare/v0.21.1...v0.21.2) (2026-01-28)
 
 
