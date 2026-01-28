@@ -162,29 +162,43 @@ export async function comments(prNumber: number): Promise<PrComment[]> {
 
 		// Fetch review-level comments
 		const reviewResult = execSync(
-			`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews --jq '.[] | select(.body != "") | {id: .id, user: .user.login, state: .state, body: .body}'`,
+			`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews`,
 			{ encoding: "utf-8" },
 		);
 
 		if (reviewResult.trim()) {
-			for (const line of reviewResult.trim().split("\n")) {
-				if (line.trim()) {
-					allComments.push({ type: "review", ...JSON.parse(line) });
+			const reviews = JSON.parse(reviewResult);
+			for (const review of reviews) {
+				if (review.body) {
+					allComments.push({
+						type: "review",
+						id: review.id,
+						user: review.user.login,
+						state: review.state,
+						body: review.body,
+					});
 				}
 			}
 		}
 
 		// Fetch line-level comments
 		const lineResult = execSync(
-			`gh api repos/${org}/${repo}/pulls/${prNumber}/comments --jq '.[] | {id: .id, user: .user.login, path: .path, line: .line, body: .body, diff_hunk: .diff_hunk}'`,
+			`gh api repos/${org}/${repo}/pulls/${prNumber}/comments`,
 			{ encoding: "utf-8" },
 		);
 
 		if (lineResult.trim()) {
-			for (const line of lineResult.trim().split("\n")) {
-				if (line.trim()) {
-					allComments.push({ type: "line", ...JSON.parse(line) });
-				}
+			const lineComments = JSON.parse(lineResult);
+			for (const comment of lineComments) {
+				allComments.push({
+					type: "line",
+					id: comment.id,
+					user: comment.user.login,
+					path: comment.path,
+					line: comment.line,
+					body: comment.body,
+					diff_hunk: comment.diff_hunk,
+				});
 			}
 		}
 
