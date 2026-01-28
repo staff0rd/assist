@@ -1,3 +1,10 @@
+## [0.21.2](https://github.com/staff0rd/assist/compare/v0.21.1...v0.21.2) (2026-01-28)
+
+
+### Bug Fixes
+
+* handle 404 in prs comments ([28984fc](https://github.com/staff0rd/assist/commit/28984fce82f483d7a927b11101abd9082bdf1e8f))
+
 ## [0.21.1](https://github.com/staff0rd/assist/compare/v0.21.0...v0.21.1) (2026-01-28)
 
 
