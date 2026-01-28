@@ -22,7 +22,7 @@ import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
 import { newProject } from "./commands/new/newProject";
 import { notify } from "./commands/notify";
-import { prs } from "./commands/prs";
+import { prs, comments as prsComments } from "./commands/prs";
 import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
@@ -64,12 +64,23 @@ program
 		execSync("npm install -g @anthropic-ai/claude-code", { stdio: "inherit" });
 	});
 
-program
+const prsCommand = program
 	.command("prs")
-	.description("List pull requests for the current repository")
+	.description("Pull request utilities")
 	.option("--open", "List only open pull requests")
 	.option("--closed", "List only closed pull requests")
 	.action(prs);
+
+prsCommand
+	.command("comments <pr-number>")
+	.description("List all comments on a pull request")
+	.action((prNumber: string) => {
+		prsComments(Number.parseInt(prNumber, 10)).then((comments) => {
+			for (const comment of comments) {
+				console.log(JSON.stringify(comment));
+			}
+		});
+	});
 
 const runCommand = program
 	.command("run")

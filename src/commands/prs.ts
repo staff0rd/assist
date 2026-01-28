@@ -14,12 +14,47 @@ type PullRequest = {
 	changedFiles: number;
 };
 
+type LineComment = {
+	type: "line";
+	id: number;
+	user: string;
+	path: string;
+	line: number | null;
+	body: string;
+	diff_hunk: string;
+};
+
+type ReviewComment = {
+	type: "review";
+	id: number;
+	user: string;
+	state: string;
+	body: string;
+};
+
+type PrComment = LineComment | ReviewComment;
+
 type PrsOptions = {
 	open?: boolean;
 	closed?: boolean;
 };
 
 const PAGE_SIZE = 10;
+
+function isGhNotInstalled(error: unknown): boolean {
+	if (error instanceof Error) {
+		const msg = error.message.toLowerCase();
+		return msg.includes("enoent") || msg.includes("command not found");
+	}
+	return false;
+}
+
+function getRepoInfo(): { org: string; repo: string } {
+	const repoInfo = JSON.parse(
+		execSync("gh repo view --json owner,name", { encoding: "utf-8" }),
+	);
+	return { org: repoInfo.owner.login, repo: repoInfo.name };
+}
 
 export async function prs(options: PrsOptions): Promise<void> {
 	const state = options.open ? "open" : options.closed ? "closed" : "all";
@@ -41,13 +76,10 @@ export async function prs(options: PrsOptions): Promise<void> {
 
 		await displayPaginated(pullRequests);
 	} catch (error) {
-		if (error instanceof Error) {
-			const msg = error.message.toLowerCase();
-			if (msg.includes("enoent") || msg.includes("command not found")) {
-				console.error("Error: GitHub CLI (gh) is not installed.");
-				console.error("Install it from https://cli.github.com/");
-				return;
-			}
+		if (isGhNotInstalled(error)) {
+			console.error("Error: GitHub CLI (gh) is not installed.");
+			console.error("Install it from https://cli.github.com/");
+			return;
 		}
 		throw error;
 	}
@@ -120,5 +152,49 @@ async function displayPaginated(pullRequests: PullRequest[]): Promise<void> {
 		} else {
 			break;
 		}
+	}
+}
+
+export async function comments(prNumber: number): Promise<PrComment[]> {
+	try {
+		const { org, repo } = getRepoInfo();
+		const allComments: PrComment[] = [];
+
+		// Fetch review-level comments
+		const reviewResult = execSync(
+			`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews --jq '.[] | select(.body != "") | {id: .id, user: .user.login, state: .state, body: .body}'`,
+			{ encoding: "utf-8" },
+		);
+
+		if (reviewResult.trim()) {
+			for (const line of reviewResult.trim().split("\n")) {
+				if (line.trim()) {
+					allComments.push({ type: "review", ...JSON.parse(line) });
+				}
+			}
+		}
+
+		// Fetch line-level comments
+		const lineResult = execSync(
+			`gh api repos/${org}/${repo}/pulls/${prNumber}/comments --jq '.[] | {id: .id, user: .user.login, path: .path, line: .line, body: .body, diff_hunk: .diff_hunk}'`,
+			{ encoding: "utf-8" },
+		);
+
+		if (lineResult.trim()) {
+			for (const line of lineResult.trim().split("\n")) {
+				if (line.trim()) {
+					allComments.push({ type: "line", ...JSON.parse(line) });
+				}
+			}
+		}
+
+		return allComments;
+	} catch (error) {
+		if (isGhNotInstalled(error)) {
+			console.error("Error: GitHub CLI (gh) is not installed.");
+			console.error("Install it from https://cli.github.com/");
+			return [];
+		}
+		throw error;
 	}
 }

@@ -6,12 +6,7 @@ Process review comments for PR #$ARGUMENTS.
 
 ## Fetching Comments
 
-Use `gh` to fetch all review comments:
-
-1. **Review-level comments**: `gh api repos/{owner}/{repo}/pulls/$ARGUMENTS/reviews --jq '.[] | select(.body != "") | {id: .id, user: .user.login, state: .state, body: .body}'`
-2. **Line-level comments**: `gh api repos/{owner}/{repo}/pulls/$ARGUMENTS/comments --jq '.[] | {id: .id, user: .user.login, path: .path, line: .line, body: .body, diff_hunk: .diff_hunk}'`
-
-Get the owner/repo from `gh repo view --json owner,name`.
+Fetch all review comments using `assist prs comments $ARGUMENTS`. This returns both review-level and line-level comments, each with a `type` field ("review" or "line").
 
 ## Processing Comments
 
