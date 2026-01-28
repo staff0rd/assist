@@ -1,3 +1,10 @@
+## [0.21.1](https://github.com/staff0rd/assist/compare/v0.21.0...v0.21.1) (2026-01-28)
+
+
+### Bug Fixes
+
+* windows compat for prs comments ([27df831](https://github.com/staff0rd/assist/commit/27df831b33f75d786609c1175c82bf698259ddfe))
+
 # [0.21.0](https://github.com/staff0rd/assist/compare/v0.20.0...v0.21.0) (2026-01-28)
 
 
