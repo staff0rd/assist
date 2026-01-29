@@ -1,3 +1,10 @@
+# [0.23.0](https://github.com/staff0rd/assist/compare/v0.22.1...v0.23.0) (2026-01-29)
+
+
+### Features
+
+* add gh pr checks permission ([784b530](https://github.com/staff0rd/assist/commit/784b5307bbe0affaf86565ddaef4360bbd08d41c))
+
 ## [0.22.1](https://github.com/staff0rd/assist/compare/v0.22.0...v0.22.1) (2026-01-28)
 
 
