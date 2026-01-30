@@ -19,6 +19,7 @@
 			"Bash(git diff:*)",
 			"Bash(gh repo view:*)",
 			"Bash(gh pr checks:*)",
+			"Bash(gh run view:*)",
 			"SlashCommand(/verify)",
 			"SlashCommand(/commit)",
 			"SlashCommand(/devlog)",
