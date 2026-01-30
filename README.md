@@ -28,7 +28,15 @@ npm install -g .
 
 After installation, the `assist` command will be available globally.
 
-## Commands
+## Claude Commands
+
+- `/commit` - Commit only relevant files from the session
+- `/devlog` - Generate devlog entry for the next unversioned day
+- `/refactor` - Run refactoring checks for code quality
+- `/review-comments` - Process PR review comments one by one
+- `/verify` - Run all verification commands in parallel
+
+## CLI Commands
 
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new` - Initialize a new Vite React TypeScript project
