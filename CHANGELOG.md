@@ -1,3 +1,10 @@
+# [0.24.0](https://github.com/staff0rd/assist/compare/v0.23.0...v0.24.0) (2026-01-30)
+
+
+### Features
+
+* add gh run view permission ([310f5c6](https://github.com/staff0rd/assist/commit/310f5c606413efeb9dce8707450b4246f45a81af))
+
 # [0.23.0](https://github.com/staff0rd/assist/compare/v0.22.1...v0.23.0) (2026-01-29)
 
 
