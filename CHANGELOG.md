@@ -1,3 +1,10 @@
+# [0.25.0](https://github.com/staff0rd/assist/compare/v0.24.0...v0.25.0) (2026-02-02)
+
+
+### Features
+
+* add prs reply and resolve commands ([b884263](https://github.com/staff0rd/assist/commit/b88426326238806d5fd41688231753fd3ec196c6))
+
 # [0.24.0](https://github.com/staff0rd/assist/compare/v0.23.0...v0.24.0) (2026-01-30)
 
 
