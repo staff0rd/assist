@@ -13,6 +13,7 @@ export type PullRequest = {
 type LineComment = {
 	type: "line";
 	id: number;
+	threadId: string;
 	user: string;
 	path: string;
 	line: number | null;

@@ -2,11 +2,11 @@
 description: Process PR review comments one by one
 ---
 
-Process review comments for PR #$ARGUMENTS.
+Process review comments for the current branch's pull request.
 
 ## Fetching Comments
 
-Fetch all review comments using `assist prs comments $ARGUMENTS`. This returns both review-level and line-level comments, each with a `type` field ("review" or "line").
+Fetch all review comments using `assist prs list-comments`. This returns both review-level and line-level comments, each with a `type` field ("review" or "line"). Comments are also cached to `.assist/pr-{prNumber}-comments.yaml` for use by reply and resolve commands.
 
 ## Processing Comments
 
@@ -26,8 +26,15 @@ Create a task for each comment found. For each comment:
    - **Do not address**: Display your reasoning for why the comment should not be addressed (e.g., already handled, out of scope, incorrect suggestion)
 
 4. **Act on the user's choice**:
-   - If addressing: implement the fix
-   - If not addressing: move on to the next comment
+   - If addressing:
+     1. Implement the fix
+     2. Run `/commit` to commit changes - parse the 6-char SHA from the output line "Committed: <sha>"
+     3. Run `assist prs reply <comment-id> "Fixed in <sha>"` to reply with the commit reference
+     4. Run `assist prs resolve <comment-id>` to resolve the thread
+   - If not addressing:
+     1. Write a concise summary of why (must not contain "claude" or "opus")
+     2. Run `assist prs reply <comment-id> "<reason>"` to reply with the explanation
+     3. Run `assist prs resolve <comment-id>` to resolve the thread
 
 5. **Repeat** until all comments have been processed
 
@@ -37,3 +44,4 @@ Create a task for each comment found. For each comment:
 - Always show the comment content before asking for a decision
 - Provide clear, actionable recommendations
 - If a comment is unclear, note this in your analysis
+- Reply messages must not contain "claude" or "opus" (case-insensitive) - the command will reject them

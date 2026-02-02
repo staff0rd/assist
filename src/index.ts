@@ -23,8 +23,10 @@ import { newProject } from "./commands/new/newProject";
 import { notify } from "./commands/notify";
 import {
 	prs,
-	comments as prsComments,
+	listComments as prsListComments,
 	printComments as prsPrintComments,
+	reply as prsReply,
+	resolve as prsResolve,
 } from "./commands/prs/index";
 import {
 	check as refactorCheck,
@@ -75,10 +77,24 @@ const prsCommand = program
 	.action(prs);
 
 prsCommand
-	.command("comments <pr-number>")
-	.description("List all comments on a pull request")
-	.action((prNumber: string) => {
-		prsComments(Number.parseInt(prNumber, 10)).then(prsPrintComments);
+	.command("list-comments")
+	.description("List all comments on the current branch's pull request")
+	.action(() => {
+		prsListComments().then(prsPrintComments);
+	});
+
+prsCommand
+	.command("reply <comment-id> <message>")
+	.description("Reply to a comment on the current branch's pull request")
+	.action((commentId: string, message: string) => {
+		prsReply(Number.parseInt(commentId, 10), message);
+	});
+
+prsCommand
+	.command("resolve <comment-id>")
+	.description("Resolve a review thread on the current branch's pull request")
+	.action((commentId: string) => {
+		prsResolve(Number.parseInt(commentId, 10));
 	});
 
 const runCommand = program

@@ -21,3 +21,18 @@ export function getRepoInfo(): { org: string; repo: string } {
 	);
 	return { org: repoInfo.owner.login, repo: repoInfo.name };
 }
+
+export function getCurrentPrNumber(): number {
+	try {
+		const prInfo = JSON.parse(
+			execSync("gh pr view --json number", { encoding: "utf-8" }),
+		);
+		return prInfo.number;
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("no pull requests")) {
+			console.error("Error: No pull request found for the current branch.");
+			process.exit(1);
+		}
+		throw error;
+	}
+}

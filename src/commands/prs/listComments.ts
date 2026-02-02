@@ -1,7 +1,16 @@
 import { execSync } from "node:child_process";
+import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import chalk from "chalk";
+import { stringify } from "yaml";
 import { isClaudeCode } from "../../lib/isClaudeCode";
-import { getRepoInfo, isGhNotInstalled, isNotFound } from "./shared";
+import {
+	getCurrentPrNumber,
+	getRepoInfo,
+	isGhNotInstalled,
+	isNotFound,
+} from "./shared";
 import type { PrComment } from "./types";
 
 function formatForHuman(comment: PrComment): string {
@@ -43,10 +52,80 @@ export function printComments(comments: PrComment[]): void {
 	}
 }
 
-export async function comments(prNumber: number): Promise<PrComment[]> {
+type ThreadNode = {
+	id: string;
+	comments: {
+		nodes: Array<{ databaseId: number }>;
+	};
+};
+
+type GraphQLResponse = {
+	data: {
+		repository: {
+			pullRequest: {
+				reviewThreads: {
+					nodes: ThreadNode[];
+				};
+			};
+		};
+	};
+};
+
+function fetchThreadIds(
+	org: string,
+	repo: string,
+	prNumber: number,
+): Map<number, string> {
+	const query = `query($owner: String!, $repo: String!, $prNumber: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $prNumber) { reviewThreads(first: 100) { nodes { id comments(first: 100) { nodes { databaseId } } } } } } }`;
+
+	const queryFile = join(tmpdir(), `gh-query-${Date.now()}.graphql`);
+	writeFileSync(queryFile, query);
+
 	try {
+		const result = execSync(
+			`gh api graphql -F query=@${queryFile} -F owner="${org}" -F repo="${repo}" -F prNumber=${prNumber}`,
+			{ encoding: "utf-8" },
+		);
+
+		const response: GraphQLResponse = JSON.parse(result);
+		const threadMap = new Map<number, string>();
+
+		for (const thread of response.data.repository.pullRequest.reviewThreads
+			.nodes) {
+			for (const comment of thread.comments.nodes) {
+				threadMap.set(comment.databaseId, thread.id);
+			}
+		}
+
+		return threadMap;
+	} finally {
+		unlinkSync(queryFile);
+	}
+}
+
+function writeCommentsCache(prNumber: number, comments: PrComment[]): void {
+	const assistDir = join(process.cwd(), ".assist");
+	if (!existsSync(assistDir)) {
+		mkdirSync(assistDir, { recursive: true });
+	}
+
+	const cacheData = {
+		prNumber,
+		fetchedAt: new Date().toISOString(),
+		comments,
+	};
+
+	const cachePath = join(assistDir, `pr-${prNumber}-comments.yaml`);
+	writeFileSync(cachePath, stringify(cacheData));
+}
+
+export async function listComments(): Promise<PrComment[]> {
+	try {
+		const prNumber = getCurrentPrNumber();
 		const { org, repo } = getRepoInfo();
 		const allComments: PrComment[] = [];
+
+		const threadMap = fetchThreadIds(org, repo, prNumber);
 
 		const reviewResult = execSync(
 			`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews`,
@@ -79,6 +158,7 @@ export async function comments(prNumber: number): Promise<PrComment[]> {
 				allComments.push({
 					type: "line",
 					id: comment.id,
+					threadId: threadMap.get(comment.id) ?? "",
 					user: comment.user.login,
 					path: comment.path,
 					line: comment.line,
@@ -87,6 +167,8 @@ export async function comments(prNumber: number): Promise<PrComment[]> {
 				});
 			}
 		}
+
+		writeCommentsCache(prNumber, allComments);
 
 		return allComments;
 	} catch (error) {

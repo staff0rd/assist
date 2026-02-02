@@ -34,6 +34,10 @@ export function commit(message: string): void {
 		execSync(`git commit -m "${message.replace(/"/g, '\\"')}"`, {
 			stdio: "inherit",
 		});
+		const sha = execSync("git rev-parse --short=6 HEAD", {
+			encoding: "utf-8",
+		}).trim();
+		console.log(`Committed: ${sha}`);
 		if (config.commit?.push) {
 			execSync("git push", { stdio: "inherit" });
 			console.log("Pushed to remote");
