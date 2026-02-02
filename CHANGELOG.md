@@ -1,3 +1,10 @@
+## [0.25.1](https://github.com/staff0rd/assist/compare/v0.25.0...v0.25.1) (2026-02-02)
+
+
+### Bug Fixes
+
+* use 7-char SHA in commit output ([8057eb9](https://github.com/staff0rd/assist/commit/8057eb9718ba0c8bf5a7dc67e2eda17f86c5a04c))
+
 # [0.25.0](https://github.com/staff0rd/assist/compare/v0.24.0...v0.25.0) (2026-02-02)
 
 
