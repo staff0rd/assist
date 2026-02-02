@@ -43,7 +43,9 @@ After installation, the `assist` command will be available globally.
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit <message>` - Create a git commit with validation
 - `assist prs` - List pull requests for the current repository
-- `assist prs comments <pr-number>` - List all comments on a pull request
+- `assist prs list-comments` - List all comments on the current branch's pull request
+- `assist prs reply <comment-id> <message>` - Reply to a comment on the current branch's pull request
+- `assist prs resolve <comment-id>` - Resolve a review thread on the current branch's pull request
 - `assist run <name>` - Run a configured command from assist.yml
 - `assist run add` - Add a new run configuration to assist.yml
 - `assist update` - Update claude-code to the latest version
