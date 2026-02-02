@@ -34,7 +34,7 @@ export function commit(message: string): void {
 		execSync(`git commit -m "${message.replace(/"/g, '\\"')}"`, {
 			stdio: "inherit",
 		});
-		const sha = execSync("git rev-parse --short=6 HEAD", {
+		const sha = execSync("git rev-parse --short=7 HEAD", {
 			encoding: "utf-8",
 		}).trim();
 		console.log(`Committed: ${sha}`);

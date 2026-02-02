@@ -28,7 +28,7 @@ Create a task for each comment found. For each comment:
 4. **Act on the user's choice**:
    - If addressing:
      1. Implement the fix
-     2. Run `/commit` to commit changes - parse the 6-char SHA from the output line "Committed: <sha>"
+     2. Run `/commit` to commit changes - parse the 7-char SHA from the output line "Committed: <sha>"
      3. Run `assist prs reply <comment-id> "Fixed in <sha>"` to reply with the commit reference
      4. Run `assist prs resolve <comment-id>` to resolve the thread
    - If not addressing:
