@@ -1,3 +1,10 @@
+# [0.27.0](https://github.com/staff0rd/assist/compare/v0.26.0...v0.27.0) (2026-02-02)
+
+
+### Features
+
+* add readme check command ([dc4838a](https://github.com/staff0rd/assist/commit/dc4838ab2f883e9d91baaab4f2b75f996526cd0d))
+
 # [0.26.0](https://github.com/staff0rd/assist/compare/v0.25.1...v0.26.0) (2026-02-02)
 
 
