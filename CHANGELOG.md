@@ -1,3 +1,10 @@
+# [0.26.0](https://github.com/staff0rd/assist/compare/v0.25.1...v0.26.0) (2026-02-02)
+
+
+### Features
+
+* filter out resolved PR threads ([961bdc9](https://github.com/staff0rd/assist/commit/961bdc9d3e0a6fd2ecf030f36e4fcb68a9a9c958))
+
 ## [0.25.1](https://github.com/staff0rd/assist/compare/v0.25.0...v0.25.1) (2026-02-02)
 
 
