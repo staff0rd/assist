@@ -54,6 +54,7 @@ export function printComments(comments: PrComment[]): void {
 
 type ThreadNode = {
 	id: string;
+	isResolved: boolean;
 	comments: {
 		nodes: Array<{ databaseId: number }>;
 	};
@@ -71,12 +72,17 @@ type GraphQLResponse = {
 	};
 };
 
+type ThreadInfo = {
+	threadMap: Map<number, string>;
+	resolvedThreadIds: Set<string>;
+};
+
 function fetchThreadIds(
 	org: string,
 	repo: string,
 	prNumber: number,
-): Map<number, string> {
-	const query = `query($owner: String!, $repo: String!, $prNumber: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $prNumber) { reviewThreads(first: 100) { nodes { id comments(first: 100) { nodes { databaseId } } } } } } }`;
+): ThreadInfo {
+	const query = `query($owner: String!, $repo: String!, $prNumber: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $prNumber) { reviewThreads(first: 100) { nodes { id isResolved comments(first: 100) { nodes { databaseId } } } } } } }`;
 
 	const queryFile = join(tmpdir(), `gh-query-${Date.now()}.graphql`);
 	writeFileSync(queryFile, query);
@@ -89,15 +95,19 @@ function fetchThreadIds(
 
 		const response: GraphQLResponse = JSON.parse(result);
 		const threadMap = new Map<number, string>();
+		const resolvedThreadIds = new Set<string>();
 
 		for (const thread of response.data.repository.pullRequest.reviewThreads
 			.nodes) {
+			if (thread.isResolved) {
+				resolvedThreadIds.add(thread.id);
+			}
 			for (const comment of thread.comments.nodes) {
 				threadMap.set(comment.databaseId, thread.id);
 			}
 		}
 
-		return threadMap;
+		return { threadMap, resolvedThreadIds };
 	} finally {
 		unlinkSync(queryFile);
 	}
@@ -125,7 +135,11 @@ export async function listComments(): Promise<PrComment[]> {
 		const { org, repo } = getRepoInfo();
 		const allComments: PrComment[] = [];
 
-		const threadMap = fetchThreadIds(org, repo, prNumber);
+		const { threadMap, resolvedThreadIds } = fetchThreadIds(
+			org,
+			repo,
+			prNumber,
+		);
 
 		const reviewResult = execSync(
 			`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews`,
@@ -155,10 +169,14 @@ export async function listComments(): Promise<PrComment[]> {
 		if (lineResult.trim()) {
 			const lineComments = JSON.parse(lineResult);
 			for (const comment of lineComments) {
+				const threadId = threadMap.get(comment.id) ?? "";
+				if (resolvedThreadIds.has(threadId)) {
+					continue;
+				}
 				allComments.push({
 					type: "line",
 					id: comment.id,
-					threadId: threadMap.get(comment.id) ?? "",
+					threadId,
 					user: comment.user.login,
 					path: comment.path,
 					line: comment.line,

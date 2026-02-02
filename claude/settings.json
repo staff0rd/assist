@@ -13,7 +13,13 @@
 	},
 	"permissions": {
 		"allow": [
-			"Bash(assist:*)",
+			"Bash(assist status-line:*)",
+			"Bash(assist notify:*)",
+			"Bash(assist commit:*)",
+			"Bash(assist devlog:*)",
+			"Bash(assist refactor:*)",
+			"Bash(assist prs list-comments:*)",
+			"Bash(assist verify:*)",
 			"Bash(git add:*)",
 			"Bash(git show:*)",
 			"Bash(git diff:*)",
