@@ -51,6 +51,10 @@ export function printComments(comments: PrComment[]): void {
 			console.log(formatForHuman(comment));
 		}
 	}
+	const lineComments = comments.filter((c) => c.type === "line");
+	if (lineComments.length === 0) {
+		console.log("No line comments to process.");
+	}
 }
 
 type ThreadNode = {
