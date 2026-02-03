@@ -1,3 +1,10 @@
+# [0.30.0](https://github.com/staff0rd/assist/compare/v0.29.0...v0.30.0) (2026-02-03)
+
+
+### Features
+
+* print message when no line comments ([51a9112](https://github.com/staff0rd/assist/commit/51a91120672aea9e499b34bf1b66765cd2de7783))
+
 # [0.29.0](https://github.com/staff0rd/assist/compare/v0.28.0...v0.29.0) (2026-02-03)
 
 
