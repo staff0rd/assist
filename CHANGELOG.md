@@ -1,3 +1,10 @@
+# [0.28.0](https://github.com/staff0rd/assist/compare/v0.27.0...v0.28.0) (2026-02-03)
+
+
+### Features
+
+* add prs fixed/wontfix commands ([7785189](https://github.com/staff0rd/assist/commit/7785189c019f42655b3d6ec0a7a25cb87c3d4923))
+
 # [0.27.0](https://github.com/staff0rd/assist/compare/v0.26.0...v0.27.0) (2026-02-02)
 
 
