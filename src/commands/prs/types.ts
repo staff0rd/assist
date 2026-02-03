@@ -19,6 +19,7 @@ type LineComment = {
 	line: number | null;
 	body: string;
 	diff_hunk: string;
+	html_url: string;
 };
 
 type ReviewComment = {

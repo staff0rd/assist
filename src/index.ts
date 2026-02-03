@@ -23,10 +23,10 @@ import { newProject } from "./commands/new/newProject";
 import { notify } from "./commands/notify";
 import {
 	prs,
+	fixed as prsFixed,
 	listComments as prsListComments,
 	printComments as prsPrintComments,
-	reply as prsReply,
-	resolve as prsResolve,
+	wontfix as prsWontfix,
 } from "./commands/prs/index";
 import {
 	check as refactorCheck,
@@ -84,17 +84,17 @@ prsCommand
 	});
 
 prsCommand
-	.command("reply <comment-id> <message>")
-	.description("Reply to a comment on the current branch's pull request")
-	.action((commentId: string, message: string) => {
-		prsReply(Number.parseInt(commentId, 10), message);
+	.command("fixed <comment-id> <sha>")
+	.description("Reply with commit link and resolve thread")
+	.action((commentId: string, sha: string) => {
+		prsFixed(Number.parseInt(commentId, 10), sha);
 	});
 
 prsCommand
-	.command("resolve <comment-id>")
-	.description("Resolve a review thread on the current branch's pull request")
-	.action((commentId: string) => {
-		prsResolve(Number.parseInt(commentId, 10));
+	.command("wontfix <comment-id> <reason>")
+	.description("Reply with reason and resolve thread")
+	.action((commentId: string, reason: string) => {
+		prsWontfix(Number.parseInt(commentId, 10), reason);
 	});
 
 const runCommand = program

@@ -8,6 +8,8 @@ Process review comments for the current branch's pull request.
 
 Fetch all review comments using `assist prs list-comments`. This returns both review-level and line-level comments, each with a `type` field ("review" or "line"). Comments are also cached to `.assist/pr-{prNumber}-comments.yaml` for use by reply and resolve commands.
 
+**Note:** Review-level comments (type: "review") may mention a count of comments generated (e.g., "generated 4 comments"). Do not use this count - it reflects the original number of comments, not the current count. Resolved threads are filtered out, so the actual line comments returned are the authoritative list of comments to process.
+
 ## Processing Comments
 
 Create a task for each comment found. For each comment:
@@ -22,6 +24,7 @@ Create a task for each comment found. For each comment:
    - Prepare a recommended fix if you believe the comment should be addressed
 
 3. **Present options to the user** using AskUserQuestion:
+   - Include the comment URL (from `html_url` field) so the user can view it on GitHub
    - **Address the comment**: Display your recommended fix and explain why it addresses the feedback
    - **Do not address**: Display your reasoning for why the comment should not be addressed (e.g., already handled, out of scope, incorrect suggestion)
 
@@ -29,12 +32,10 @@ Create a task for each comment found. For each comment:
    - If addressing:
      1. Implement the fix
      2. Run `/commit` to commit changes - parse the 7-char SHA from the output line "Committed: <sha>"
-     3. Run `assist prs reply <comment-id> "Fixed in <sha>"` to reply with the commit reference
-     4. Run `assist prs resolve <comment-id>` to resolve the thread
+     3. Run `assist prs fixed <comment-id> <sha>` to reply with commit link and resolve the thread
    - If not addressing:
      1. Write a concise summary of why (must not contain "claude" or "opus")
-     2. Run `assist prs reply <comment-id> "<reason>"` to reply with the explanation
-     3. Run `assist prs resolve <comment-id>` to resolve the thread
+     2. Run `assist prs wontfix <comment-id> "<reason>"` to reply and resolve the thread
 
 5. **Repeat** until all comments have been processed
 

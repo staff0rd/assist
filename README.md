@@ -44,8 +44,8 @@ After installation, the `assist` command will be available globally.
 - `assist commit <message>` - Create a git commit with validation
 - `assist prs` - List pull requests for the current repository
 - `assist prs list-comments` - List all comments on the current branch's pull request
-- `assist prs reply <comment-id> <message>` - Reply to a comment on the current branch's pull request
-- `assist prs resolve <comment-id>` - Resolve a review thread on the current branch's pull request
+- `assist prs fixed <comment-id> <sha>` - Reply with commit link and resolve thread
+- `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
 - `assist run <name>` - Run a configured command from assist.yml
 - `assist run add` - Add a new run configuration to assist.yml
 - `assist update` - Update claude-code to the latest version

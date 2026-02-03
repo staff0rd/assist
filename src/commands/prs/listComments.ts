@@ -182,6 +182,7 @@ export async function listComments(): Promise<PrComment[]> {
 					line: comment.line,
 					body: comment.body,
 					diff_hunk: comment.diff_hunk,
+					html_url: comment.html_url,
 				});
 			}
 		}
