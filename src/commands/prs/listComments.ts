@@ -6,6 +6,7 @@ import chalk from "chalk";
 import { stringify } from "yaml";
 import { isClaudeCode } from "../../lib/isClaudeCode";
 import {
+	deleteCommentsCache,
 	getCurrentPrNumber,
 	getRepoInfo,
 	isGhNotInstalled,
@@ -187,7 +188,12 @@ export async function listComments(): Promise<PrComment[]> {
 			}
 		}
 
-		writeCommentsCache(prNumber, allComments);
+		const hasLineComments = allComments.some((c) => c.type === "line");
+		if (hasLineComments) {
+			writeCommentsCache(prNumber, allComments);
+		} else {
+			deleteCommentsCache(prNumber);
+		}
 
 		return allComments;
 	} catch (error) {

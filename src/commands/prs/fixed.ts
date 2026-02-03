@@ -1,4 +1,5 @@
 import {
+	deleteCommentsCache,
 	getCurrentPrNumber,
 	getRepoInfo,
 	isGhNotInstalled,
@@ -43,6 +44,13 @@ export function fixed(commentId: number, sha: string): void {
 
 		resolveThread(comment.threadId);
 		console.log("Thread resolved successfully.");
+
+		const remainingLineComments = cache.comments.filter(
+			(c) => c.type === "line" && c.id !== commentId,
+		);
+		if (remainingLineComments.length === 0) {
+			deleteCommentsCache(prNumber);
+		}
 	} catch (error) {
 		if (isGhNotInstalled(error)) {
 			console.error("Error: GitHub CLI (gh) is not installed.");
