@@ -1,3 +1,10 @@
+# [0.29.0](https://github.com/staff0rd/assist/compare/v0.28.0...v0.29.0) (2026-02-03)
+
+
+### Features
+
+* drop cache when no line comments ([031b12c](https://github.com/staff0rd/assist/commit/031b12cc32cf0af06d16ddfd5cabbc45ee68021c))
+
 # [0.28.0](https://github.com/staff0rd/assist/compare/v0.27.0...v0.28.0) (2026-02-03)
 
 
