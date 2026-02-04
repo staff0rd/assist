@@ -1,3 +1,10 @@
+# [0.32.0](https://github.com/staff0rd/assist/compare/v0.31.1...v0.32.0) (2026-02-04)
+
+
+### Features
+
+* staged summary workflow ([089cfbb](https://github.com/staff0rd/assist/commit/089cfbbea8f7bab7e43ca99125dd30e6d8a548ed))
+
 ## [0.31.1](https://github.com/staff0rd/assist/compare/v0.31.0...v0.31.1) (2026-02-04)
 
 
