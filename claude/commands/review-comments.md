@@ -47,3 +47,4 @@ Create a task for each comment found. For each comment:
 - Provide clear, actionable recommendations
 - If a comment is unclear, note this in your analysis
 - Reply messages must not contain "claude" or "opus" (case-insensitive) - the command will reject them
+- When referencing previous comments, use markdown link syntax: `[previous comment](url)`
