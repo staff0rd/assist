@@ -44,6 +44,7 @@ export function summarise() {
 		return;
 	}
 
+	console.log(`Summary directory: ${summaryDir}\n`);
 	console.log(`Missing summaries (${missing.length}):\n`);
 	for (const file of missing) {
 		console.log(`  - ${file.absolutePath}`);

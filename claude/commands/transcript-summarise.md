@@ -19,6 +19,6 @@ For each transcript file listed that does not have a summary:
      - Important Insights
    - Use bullet points for readability
    - Keep it concise but comprehensive
-4. Write the summary to the summary directory with the filename matching the date prefix but using a cleaner title (remove "Transcription" suffix if present)
+4. Write the summary to the summary directory printed in the command output, with the filename matching the date prefix but using a cleaner title (remove "Transcription" suffix if present)
 
 Run each sub-agent in parallel for efficiency if there are multiple transcripts to summarise.
