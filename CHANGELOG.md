@@ -1,3 +1,10 @@
+# [0.31.0](https://github.com/staff0rd/assist/compare/v0.30.0...v0.31.0) (2026-02-04)
+
+
+### Features
+
+* add transcript commands ([596bcd5](https://github.com/staff0rd/assist/commit/596bcd58fd11b7fd969f8d9675be91523bc1f06c))
+
 # [0.30.0](https://github.com/staff0rd/assist/compare/v0.29.0...v0.30.0) (2026-02-03)
 
 
