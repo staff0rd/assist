@@ -20,6 +20,7 @@ type LineComment = {
 	body: string;
 	diff_hunk: string;
 	html_url: string;
+	resolved: boolean;
 };
 
 type ReviewComment = {

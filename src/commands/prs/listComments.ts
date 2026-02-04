@@ -175,9 +175,7 @@ export async function listComments(): Promise<PrComment[]> {
 			const lineComments = JSON.parse(lineResult);
 			for (const comment of lineComments) {
 				const threadId = threadMap.get(comment.id) ?? "";
-				if (resolvedThreadIds.has(threadId)) {
-					continue;
-				}
+				const resolved = resolvedThreadIds.has(threadId);
 				allComments.push({
 					type: "line",
 					id: comment.id,
@@ -188,6 +186,7 @@ export async function listComments(): Promise<PrComment[]> {
 					body: comment.body,
 					diff_hunk: comment.diff_hunk,
 					html_url: comment.html_url,
+					resolved,
 				});
 			}
 		}

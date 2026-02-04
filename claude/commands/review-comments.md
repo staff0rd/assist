@@ -8,7 +8,7 @@ Process review comments for the current branch's pull request.
 
 Fetch all review comments using `assist prs list-comments`. This returns both review-level and line-level comments, each with a `type` field ("review" or "line"). Comments are also cached to `.assist/pr-{prNumber}-comments.yaml` for use by reply and resolve commands.
 
-**Note:** Review-level comments (type: "review") may mention a count of comments generated (e.g., "generated 4 comments"). Do not use this count - it reflects the original number of comments, not the current count. Resolved threads are filtered out, so the actual line comments returned are the authoritative list of comments to process.
+**Note:** Line comments include a `resolved` field - only process comments where `resolved: false`. Resolved comments are included for reference when addressing subsequent comments.
 
 ## Processing Comments
 
