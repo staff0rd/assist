@@ -1,24 +1,40 @@
 # Summarise Meeting Transcripts
 
-Run the summarise command to list transcripts that need summaries:
+Run the summarise command:
 
 ```bash
 assist transcript summarise
 ```
-For each transcript file listed that does not have a summary:
 
-1. Use a sub-agent (Task tool) to generate a summary of the meeting
-2. Read the transcript file from the transcripts directory
-3. The summary should follow this format:
-   - Title as H1 heading
-   - Date and Participants metadata
-   - Key sections with H2 headings covering:
-     - Key Outcomes/Decisions
-     - Discussion Topics
-     - Action Items (if any)
-     - Important Insights
-   - Use bullet points for readability
-   - Keep it concise but comprehensive
-4. Write the summary to the summary directory printed in the command output, with the filename matching the date prefix but using a cleaner title (remove "Transcription" suffix if present)
+This command operates in two modes:
 
-Run each sub-agent in parallel for efficiency if there are multiple transcripts to summarise.
+## Mode 1: Process Staged Summary
+
+If a file exists in `./.assist/transcript/`, the command validates and moves it:
+- Checks the first line has `[Full Transcript](<path>)` linking to the original transcript
+- Checks there is summary content after the link
+- Moves the file to the configured summary directory, preserving the folder structure
+
+## Mode 2: Present Next Transcript
+
+If no staged file exists, the command shows:
+- The next transcript that needs summarising
+- The path where you should write the summary
+
+When summarising:
+
+1. Read the transcript file shown in the output
+2. Write a summary to the staging path shown, with this format:
+   - First line MUST be: `[Full Transcript](<absolute-path-to-transcript>)`
+   - Then a blank line
+   - Then the summary content:
+     - Title as H1 heading
+     - Date and Participants metadata
+     - Key sections with H2 headings covering:
+       - Key Outcomes/Decisions
+       - Discussion Topics
+       - Action Items (if any)
+       - Important Insights
+     - Use bullet points for readability
+     - Keep it concise but comprehensive
+3. Run `assist transcript summarise` again to validate and move the summary to its final location
