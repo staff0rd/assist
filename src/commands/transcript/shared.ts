@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { basename, join, relative } from "node:path";
+import * as readline from "node:readline";
 import type { MdFileInfo, VttFileInfo } from "./types";
 
 const DATE_PREFIX_REGEX = /^\d{4}-\d{2}-\d{2}/;
@@ -17,11 +18,17 @@ export function isValidDatePrefix(filename: string): boolean {
 	return DATE_PREFIX_REGEX.test(filename);
 }
 
-export function findVttFilesRecursive(
+function findFilesRecursive<T extends { absolutePath: string }>(
 	dir: string,
-	baseDir: string = dir,
-): VttFileInfo[] {
-	const results: VttFileInfo[] = [];
+	baseDir: string,
+	extension: string,
+	createEntry: (fullPath: string, relativePath: string, filename: string) => T,
+): T[] {
+	if (!existsSync(dir)) {
+		return [];
+	}
+
+	const results: T[] = [];
 	const entries = readdirSync(dir);
 
 	for (const entry of entries) {
@@ -29,48 +36,57 @@ export function findVttFilesRecursive(
 		const stat = statSync(fullPath);
 
 		if (stat.isDirectory()) {
-			results.push(...findVttFilesRecursive(fullPath, baseDir));
-		} else if (entry.endsWith(".vtt")) {
-			results.push({
-				absolutePath: fullPath,
-				relativePath: relative(baseDir, fullPath),
-				filename: entry,
-			});
+			results.push(
+				...findFilesRecursive(fullPath, baseDir, extension, createEntry),
+			);
+		} else if (entry.endsWith(extension)) {
+			results.push(createEntry(fullPath, relative(baseDir, fullPath), entry));
 		}
 	}
 
 	return results;
+}
+
+export function findVttFilesRecursive(
+	dir: string,
+	baseDir: string = dir,
+): VttFileInfo[] {
+	return findFilesRecursive(dir, baseDir, ".vtt", (abs, rel, name) => ({
+		absolutePath: abs,
+		relativePath: rel,
+		filename: name,
+	}));
 }
 
 export function findMdFilesRecursive(
 	dir: string,
 	baseDir: string = dir,
 ): MdFileInfo[] {
-	if (!existsSync(dir)) {
-		return [];
-	}
-
-	const results: MdFileInfo[] = [];
-	const entries = readdirSync(dir);
-
-	for (const entry of entries) {
-		const fullPath = join(dir, entry);
-		const stat = statSync(fullPath);
-
-		if (stat.isDirectory()) {
-			results.push(...findMdFilesRecursive(fullPath, baseDir));
-		} else if (entry.endsWith(".md")) {
-			results.push({
-				absolutePath: fullPath,
-				relativePath: relative(baseDir, fullPath),
-				filename: entry,
-			});
-		}
-	}
-
-	return results;
+	return findFilesRecursive(dir, baseDir, ".md", (abs, rel, name) => ({
+		absolutePath: abs,
+		relativePath: rel,
+		filename: name,
+	}));
 }
 
 export function getTranscriptBaseName(transcriptFile: string): string {
 	return basename(transcriptFile, ".md").replace(/ Transcription$/, "");
+}
+
+export function createReadlineInterface(): readline.Interface {
+	return readline.createInterface({
+		input: process.stdin,
+		output: process.stdout,
+	});
+}
+
+export function askQuestion(
+	rl: readline.Interface,
+	question: string,
+): Promise<string> {
+	return new Promise((resolve) => {
+		rl.question(question, (answer) => {
+			resolve(answer.trim());
+		});
+	});
 }

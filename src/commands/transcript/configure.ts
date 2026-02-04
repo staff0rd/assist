@@ -1,23 +1,5 @@
-import * as readline from "node:readline";
 import { loadConfig, saveConfig } from "../../shared/loadConfig";
-
-function createReadlineInterface(): readline.Interface {
-	return readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-	});
-}
-
-function askQuestion(
-	rl: readline.Interface,
-	question: string,
-): Promise<string> {
-	return new Promise((resolve) => {
-		rl.question(question, (answer) => {
-			resolve(answer.trim());
-		});
-	});
-}
+import { askQuestion, createReadlineInterface } from "./shared";
 
 export async function configure(): Promise<void> {
 	const rl = createReadlineInterface();

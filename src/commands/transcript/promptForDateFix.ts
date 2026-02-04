@@ -1,25 +1,6 @@
 import { renameSync } from "node:fs";
 import { join } from "node:path";
-import * as readline from "node:readline";
-import { getDatePrefix } from "./shared";
-
-function createReadlineInterface(): readline.Interface {
-	return readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-	});
-}
-
-function askQuestion(
-	rl: readline.Interface,
-	question: string,
-): Promise<string> {
-	return new Promise((resolve) => {
-		rl.question(question, (answer) => {
-			resolve(answer.trim());
-		});
-	});
-}
+import { askQuestion, createReadlineInterface, getDatePrefix } from "./shared";
 
 export async function promptForDateFix(
 	vttFile: string,
