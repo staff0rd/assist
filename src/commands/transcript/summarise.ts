@@ -127,8 +127,16 @@ export function summarise() {
 	// Only show the first missing transcript
 	const next = missing[0];
 	const outputFilename = `${getTranscriptBaseName(next.filename)}.md`;
+	const outputPath = join(STAGING_DIR, outputFilename);
 
 	console.log(`Missing summaries: ${missing.length}\n`);
-	console.log(`Next transcript to summarise: ${next.absolutePath}`);
-	console.log(`Write summary to: ${join(STAGING_DIR, outputFilename)}`);
+	console.log("1. Read and summarise this transcript:");
+	console.log(`   ${next.absolutePath}\n`);
+	console.log("2. Write the summary to:");
+	console.log(`   ${outputPath}\n`);
+	console.log("   The summary must start with:");
+	console.log(`   [Full Transcript](${next.absolutePath})\n`);
+	console.log(
+		"3. Run 'assist transcript summarise' again to validate and move the summary.",
+	);
 }
