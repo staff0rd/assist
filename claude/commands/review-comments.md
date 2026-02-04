@@ -48,3 +48,4 @@ Create a task for each comment found. For each comment:
 - If a comment is unclear, note this in your analysis
 - Reply messages must not contain "claude" or "opus" (case-insensitive) - the command will reject them
 - When referencing previous comments, use markdown link syntax: `[previous comment](url)`
+- Use backticks to wrap inline code or keywords (e.g., `functionName`, `variable`)
