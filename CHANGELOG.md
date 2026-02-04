@@ -1,3 +1,10 @@
+## [0.31.1](https://github.com/staff0rd/assist/compare/v0.31.0...v0.31.1) (2026-02-04)
+
+
+### Bug Fixes
+
+* output summaryDir path in summarise ([d3d0beb](https://github.com/staff0rd/assist/commit/d3d0bebd79b7ac4bf2a9aba66409f54c23d9d192))
+
 # [0.31.0](https://github.com/staff0rd/assist/compare/v0.30.0...v0.31.0) (2026-02-04)
 
 
