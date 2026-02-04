@@ -1,3 +1,10 @@
+## [0.32.5](https://github.com/staff0rd/assist/compare/v0.32.4...v0.32.5) (2026-02-04)
+
+
+### Bug Fixes
+
+* strip Transcription from filename ([b693e5c](https://github.com/staff0rd/assist/commit/b693e5cb1324bf70923a4cc2df1da92a0f760d3a))
+
 ## [0.32.4](https://github.com/staff0rd/assist/compare/v0.32.3...v0.32.4) (2026-02-04)
 
 
