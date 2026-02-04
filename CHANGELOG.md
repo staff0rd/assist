@@ -1,3 +1,10 @@
+## [0.32.4](https://github.com/staff0rd/assist/compare/v0.32.3...v0.32.4) (2026-02-04)
+
+
+### Bug Fixes
+
+* url encode transcript link ([0004720](https://github.com/staff0rd/assist/commit/00047203e1a65204645c230c6e2142b828e18465))
+
 ## [0.32.3](https://github.com/staff0rd/assist/compare/v0.32.2...v0.32.3) (2026-02-04)
 
 
