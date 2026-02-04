@@ -36,7 +36,7 @@ After installation, the `assist` command will be available globally.
 - `/review-comments` - Process PR review comments one by one
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
-- `/transcript-summarise` - List transcripts missing summaries
+- `/transcript-summarise` - Summarise transcripts missing summaries
 
 ## CLI Commands
 
