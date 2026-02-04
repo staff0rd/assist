@@ -1,3 +1,10 @@
+# [0.33.0](https://github.com/staff0rd/assist/compare/v0.32.6...v0.33.0) (2026-02-04)
+
+
+### Features
+
+* include resolved comments ([5c639ec](https://github.com/staff0rd/assist/commit/5c639ec7c1b846f444d29f2db4c60dccfd36d068))
+
 ## [0.32.6](https://github.com/staff0rd/assist/compare/v0.32.5...v0.32.6) (2026-02-04)
 
 
