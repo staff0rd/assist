@@ -5,7 +5,7 @@ import {
 	renameSync,
 	rmSync,
 } from "node:fs";
-import { basename, dirname, join, relative, resolve } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import chalk from "chalk";
 import { getTranscriptConfig } from "../../shared/loadConfig";
 import { findMdFilesRecursive, getTranscriptBaseName } from "./shared";
@@ -38,7 +38,6 @@ function processStagedFile(): boolean {
 		process.exit(1);
 	}
 
-	const transcriptPath = resolve(process.cwd(), match[1]);
 	const contentAfterLink = content.slice(firstLine.length).trim();
 	if (!contentAfterLink) {
 		console.error(
@@ -49,15 +48,23 @@ function processStagedFile(): boolean {
 		process.exit(1);
 	}
 
-	const relativePath = relative(transcriptsDir, transcriptPath);
-	if (relativePath.startsWith("..")) {
+	// Find transcript by matching basename
+	const stagedBaseName = getTranscriptBaseName(stagedFile.filename);
+	const transcriptFiles = findMdFilesRecursive(transcriptsDir);
+	const matchingTranscript = transcriptFiles.find(
+		(t) => getTranscriptBaseName(t.filename) === stagedBaseName,
+	);
+
+	if (!matchingTranscript) {
 		console.error(
 			chalk.red(
-				`Transcript path ${transcriptPath} is not within configured transcripts directory.`,
+				`No transcript found matching staged file: ${stagedFile.filename}`,
 			),
 		);
 		process.exit(1);
 	}
+
+	const relativePath = matchingTranscript.relativePath;
 
 	const destPath = join(summaryDir, relativePath);
 	const destDir = dirname(destPath);
@@ -67,7 +74,6 @@ function processStagedFile(): boolean {
 	}
 
 	renameSync(stagedFile.absolutePath, destPath);
-	console.log(chalk.green(`Moved summary to: ${destPath}`));
 
 	// Clean up staging dir if empty
 	const remaining = findMdFilesRecursive(STAGING_DIR);
@@ -80,9 +86,7 @@ function processStagedFile(): boolean {
 
 export function summarise() {
 	// First check for staged files to process
-	if (processStagedFile()) {
-		return;
-	}
+	processStagedFile();
 
 	const { transcriptsDir, summaryDir } = getTranscriptConfig();
 
@@ -128,7 +132,10 @@ export function summarise() {
 	const next = missing[0];
 	const outputFilename = `${getTranscriptBaseName(next.filename)}.md`;
 	const outputPath = join(STAGING_DIR, outputFilename);
-	const relativeTranscriptPath = relative(process.cwd(), next.absolutePath);
+	const summaryFileDir = join(summaryDir, dirname(next.relativePath));
+	const relativeTranscriptPath = encodeURI(
+		relative(summaryFileDir, next.absolutePath).replace(/\\/g, "/"),
+	);
 
 	console.log(`Missing summaries: ${missing.length}\n`);
 	console.log("Read and summarise this transcript:");
