@@ -130,13 +130,10 @@ export function summarise() {
 	const outputPath = join(STAGING_DIR, outputFilename);
 
 	console.log(`Missing summaries: ${missing.length}\n`);
-	console.log("1. Read and summarise this transcript:");
+	console.log("Read and summarise this transcript:");
 	console.log(`   ${next.absolutePath}\n`);
-	console.log("2. Write the summary to:");
+	console.log("Write the summary to:");
 	console.log(`   ${outputPath}\n`);
-	console.log("   The summary must start with:");
-	console.log(`   [Full Transcript](${next.absolutePath})\n`);
-	console.log(
-		"3. Run 'assist transcript summarise' again to validate and move the summary.",
-	);
+	console.log("The summary must start with:");
+	console.log(`   [Full Transcript](${next.absolutePath})`);
 }
