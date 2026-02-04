@@ -4,6 +4,12 @@ type RunConfig = {
 	args?: string[];
 };
 
+export type TranscriptConfig = {
+	vttDir: string;
+	transcriptsDir: string;
+	summaryDir: string;
+};
+
 export type AssistConfig = {
 	commit?: {
 		conventional?: boolean;
@@ -18,4 +24,5 @@ export type AssistConfig = {
 		};
 	};
 	run?: RunConfig[];
+	transcript?: TranscriptConfig;
 };

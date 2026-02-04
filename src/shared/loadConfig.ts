@@ -1,7 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
+import chalk from "chalk";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import type { AssistConfig } from "./types";
+import type { AssistConfig, TranscriptConfig } from "./types";
 
 function getConfigPath(): string {
 	const claudeConfigPath = join(process.cwd(), ".claude", "assist.yml");
@@ -48,4 +49,17 @@ export function getRepoName(): string {
 		}
 	}
 	return basename(process.cwd());
+}
+
+export function getTranscriptConfig(): TranscriptConfig {
+	const config = loadConfig();
+	if (!config.transcript) {
+		console.error(
+			chalk.red(
+				"Transcript directories not configured. Run 'assist transcript configure' first.",
+			),
+		);
+		process.exit(1);
+	}
+	return config.transcript;
 }

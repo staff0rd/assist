@@ -36,6 +36,11 @@ import { run, add as runAdd } from "./commands/run";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import {
+	configure as transcriptConfigure,
+	format as transcriptFormat,
+	summarise as transcriptSummarise,
+} from "./commands/transcript";
+import {
 	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
 	run as verifyRun,
@@ -266,5 +271,24 @@ complexityCommand
 	.description("Count source lines of code per file")
 	.option("--threshold <number>", "Max lines threshold", Number.parseInt)
 	.action(complexitySloc);
+
+const transcriptCommand = program
+	.command("transcript")
+	.description("Meeting transcript utilities");
+
+transcriptCommand
+	.command("configure")
+	.description("Configure transcript directories")
+	.action(transcriptConfigure);
+
+transcriptCommand
+	.command("format")
+	.description("Convert VTT files to formatted markdown transcripts")
+	.action(transcriptFormat);
+
+transcriptCommand
+	.command("summarise")
+	.description("List transcripts that do not have summaries")
+	.action(transcriptSummarise);
 
 program.parse();

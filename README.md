@@ -35,6 +35,8 @@ After installation, the `assist` command will be available globally.
 - `/refactor` - Run refactoring checks for code quality
 - `/review-comments` - Process PR review comments one by one
 - `/verify` - Run all verification commands in parallel
+- `/transcript-format` - Format meeting transcripts from VTT files
+- `/transcript-summarise` - List transcripts missing summaries
 
 ## CLI Commands
 
@@ -69,4 +71,7 @@ After installation, the `assist` command will be available globally.
 - `assist complexity halstead [pattern]` - Calculate Halstead metrics per function
 - `assist complexity maintainability [pattern]` - Calculate maintainability index per file
 - `assist complexity sloc [pattern]` - Count source lines of code per file
+- `assist transcript configure` - Configure transcript directories
+- `assist transcript format` - Convert VTT files to formatted markdown transcripts
+- `assist transcript summarise` - List transcripts that do not have summaries
 
