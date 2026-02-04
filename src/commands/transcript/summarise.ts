@@ -5,7 +5,7 @@ import {
 	renameSync,
 	rmSync,
 } from "node:fs";
-import { basename, dirname, join, relative } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import chalk from "chalk";
 import { getTranscriptConfig } from "../../shared/loadConfig";
 import { findMdFilesRecursive, getTranscriptBaseName } from "./shared";
@@ -38,7 +38,7 @@ function processStagedFile(): boolean {
 		process.exit(1);
 	}
 
-	const transcriptPath = match[1];
+	const transcriptPath = resolve(process.cwd(), match[1]);
 	const contentAfterLink = content.slice(firstLine.length).trim();
 	if (!contentAfterLink) {
 		console.error(
@@ -128,6 +128,7 @@ export function summarise() {
 	const next = missing[0];
 	const outputFilename = `${getTranscriptBaseName(next.filename)}.md`;
 	const outputPath = join(STAGING_DIR, outputFilename);
+	const relativeTranscriptPath = relative(process.cwd(), next.absolutePath);
 
 	console.log(`Missing summaries: ${missing.length}\n`);
 	console.log("Read and summarise this transcript:");
@@ -135,5 +136,5 @@ export function summarise() {
 	console.log("Write the summary to:");
 	console.log(`   ${outputPath}\n`);
 	console.log("The summary must start with:");
-	console.log(`   [Full Transcript](${next.absolutePath})`);
+	console.log(`   [Full Transcript](${relativeTranscriptPath})`);
 }
