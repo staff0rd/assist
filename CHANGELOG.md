@@ -1,3 +1,10 @@
+## [0.32.6](https://github.com/staff0rd/assist/compare/v0.32.5...v0.32.6) (2026-02-04)
+
+
+### Bug Fixes
+
+* validate commit SHAs in wontfix ([88174d2](https://github.com/staff0rd/assist/commit/88174d2999b86340e1f0289238925b107ef5928c))
+
 ## [0.32.5](https://github.com/staff0rd/assist/compare/v0.32.4...v0.32.5) (2026-02-04)
 
 
