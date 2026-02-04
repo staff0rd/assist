@@ -77,7 +77,8 @@ export async function format() {
 	let skipped = 0;
 
 	for (const vttFile of vttFiles) {
-		const baseName = basename(vttFile.filename, ".vtt");
+		let baseName = basename(vttFile.filename, ".vtt");
+		baseName = baseName.replace(/\s*Transcription\s*/g, " ").trim();
 		const mdFile = `${baseName}.md`;
 		const relativeDir = dirname(vttFile.relativePath);
 		const outputDir =
