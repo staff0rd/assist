@@ -1,3 +1,10 @@
+## [0.32.3](https://github.com/staff0rd/assist/compare/v0.32.2...v0.32.3) (2026-02-04)
+
+
+### Bug Fixes
+
+* use relative path in transcript link ([e256108](https://github.com/staff0rd/assist/commit/e256108af1b60020c522d6fb7d4502a76394be8c))
+
 ## [0.32.2](https://github.com/staff0rd/assist/compare/v0.32.1...v0.32.2) (2026-02-04)
 
 
