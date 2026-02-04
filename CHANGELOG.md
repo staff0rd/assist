@@ -1,3 +1,10 @@
+## [0.32.1](https://github.com/staff0rd/assist/compare/v0.32.0...v0.32.1) (2026-02-04)
+
+
+### Bug Fixes
+
+* simplify summarise instructions ([45116af](https://github.com/staff0rd/assist/commit/45116af970a37cfb14fabca95afb8badecbb37b9))
+
 # [0.32.0](https://github.com/staff0rd/assist/compare/v0.31.1...v0.32.0) (2026-02-04)
 
 
