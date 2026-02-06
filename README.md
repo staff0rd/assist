@@ -50,6 +50,9 @@ After installation, the `assist` command will be available globally.
 - `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
 - `assist run <name>` - Run a configured command from assist.yml
 - `assist run add` - Add a new run configuration to assist.yml
+- `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
+- `assist config get <key>` - Get a config value
+- `assist config list` - List all config values
 - `assist update` - Update claude-code to the latest version
 - `assist verify` - Run all verify:* scripts from package.json in parallel
 - `assist verify init` - Add verify scripts to a project
