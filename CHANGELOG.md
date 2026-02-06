@@ -1,3 +1,10 @@
+# [0.36.0](https://github.com/staff0rd/assist/compare/v0.35.0...v0.36.0) (2026-02-06)
+
+
+### Features
+
+* apply schema defaults in config list ([2705bf6](https://github.com/staff0rd/assist/commit/2705bf61c105ce81f0e15105ce857b103af0e727))
+
 # [0.35.0](https://github.com/staff0rd/assist/compare/v0.34.0...v0.35.0) (2026-02-06)
 
 
