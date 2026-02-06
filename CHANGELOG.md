@@ -1,3 +1,10 @@
+## [0.36.1](https://github.com/staff0rd/assist/compare/v0.36.0...v0.36.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* build with correct version in CI ([b3c99d9](https://github.com/staff0rd/assist/commit/b3c99d9cf6240446b49913db94e18ffe5c4fa9b5))
+
 # [0.36.0](https://github.com/staff0rd/assist/compare/v0.35.0...v0.36.0) (2026-02-06)
 
 
