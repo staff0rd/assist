@@ -7,7 +7,8 @@
 		"assist": "./dist/index.js"
 	},
 	"files": [
-		"dist"
+		"dist",
+		"claude"
 	],
 	"publishConfig": {
 		"access": "public"
