@@ -1,4 +1,5 @@
 import { readStdin } from "../../lib/readStdin";
+import { loadConfig } from "../../shared/loadConfig";
 import { showNotification } from "./showNotification";
 
 type NotificationInput = {
@@ -9,6 +10,11 @@ type NotificationInput = {
 };
 
 export async function notify(): Promise<void> {
+	const config = loadConfig();
+	if (!config.notify?.enabled) {
+		return;
+	}
+
 	const inputData = await readStdin();
 	const data: NotificationInput = JSON.parse(inputData);
 	const { notification_type, cwd, message } = data;
