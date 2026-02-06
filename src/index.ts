@@ -9,6 +9,7 @@ import {
 	maintainability as complexityMaintainability,
 	sloc as complexitySloc,
 } from "./commands/complexity";
+import { configGet, configList, configSet } from "./commands/config";
 import { init as deployInit } from "./commands/deploy/init";
 import { redirect as deployRedirect } from "./commands/deploy/redirect";
 import {
@@ -77,6 +78,25 @@ program
 		console.log("Updating claude-code...");
 		execSync("npm install -g @anthropic-ai/claude-code", { stdio: "inherit" });
 	});
+
+const configCommand = program
+	.command("config")
+	.description("View and modify assist.yml configuration");
+
+configCommand
+	.command("set <key> <value>")
+	.description("Set a config value (e.g. commit.push true)")
+	.action(configSet);
+
+configCommand
+	.command("get <key>")
+	.description("Get a config value")
+	.action(configGet);
+
+configCommand
+	.command("list")
+	.description("List all config values")
+	.action(configList);
 
 const prsCommand = program
 	.command("prs")

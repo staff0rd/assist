@@ -1,28 +1,39 @@
-type RunConfig = {
-	name: string;
-	command: string;
-	args?: string[];
-};
+import { z } from "zod";
 
-export type TranscriptConfig = {
-	vttDir: string;
-	transcriptsDir: string;
-	summaryDir: string;
-};
+const runConfigSchema = z.strictObject({
+	name: z.string(),
+	command: z.string(),
+	args: z.array(z.string()).optional(),
+});
 
-export type AssistConfig = {
-	commit?: {
-		conventional?: boolean;
-		pull?: boolean;
-		push?: boolean;
-	};
-	devlog?: {
-		name?: string;
-		ignore?: string[];
-		skip?: {
-			days?: string[];
-		};
-	};
-	run?: RunConfig[];
-	transcript?: TranscriptConfig;
-};
+const transcriptConfigSchema = z.strictObject({
+	vttDir: z.string(),
+	transcriptsDir: z.string(),
+	summaryDir: z.string(),
+});
+
+export const assistConfigSchema = z.strictObject({
+	commit: z
+		.strictObject({
+			conventional: z.boolean().optional(),
+			pull: z.boolean().optional(),
+			push: z.boolean().optional(),
+		})
+		.optional(),
+	devlog: z
+		.strictObject({
+			name: z.string().optional(),
+			ignore: z.array(z.string()).optional(),
+			skip: z
+				.strictObject({
+					days: z.array(z.string()).optional(),
+				})
+				.optional(),
+		})
+		.optional(),
+	run: z.array(runConfigSchema).optional(),
+	transcript: transcriptConfigSchema.optional(),
+});
+
+export type AssistConfig = z.infer<typeof assistConfigSchema>;
+export type TranscriptConfig = z.infer<typeof transcriptConfigSchema>;
