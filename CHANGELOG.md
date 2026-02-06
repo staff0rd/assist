@@ -1,3 +1,10 @@
+# [0.34.0](https://github.com/staff0rd/assist/compare/v0.33.1...v0.34.0) (2026-02-06)
+
+
+### Features
+
+* add config command with Zod validation ([175e611](https://github.com/staff0rd/assist/commit/175e6118d5f63bbdc14f97ff6c8a203fe64eaf6c))
+
 ## [0.33.1](https://github.com/staff0rd/assist/compare/v0.33.0...v0.33.1) (2026-02-06)
 
 
