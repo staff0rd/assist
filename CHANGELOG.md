@@ -1,3 +1,10 @@
+# [0.35.0](https://github.com/staff0rd/assist/compare/v0.34.0...v0.35.0) (2026-02-06)
+
+
+### Features
+
+* add notify config, default enabled ([075c89e](https://github.com/staff0rd/assist/commit/075c89eae14c0b8d9ad25edd3dede8bb4baadf83))
+
 # [0.34.0](https://github.com/staff0rd/assist/compare/v0.33.1...v0.34.0) (2026-02-06)
 
 
