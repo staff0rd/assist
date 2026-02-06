@@ -1,3 +1,11 @@
+## [0.33.1](https://github.com/staff0rd/assist/compare/v0.33.0...v0.33.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* include commands in package ([9d28cd7](https://github.com/staff0rd/assist/commit/9d28cd7009a8e18a9f0cc52b71df6b6397bd4209))
+* include commands in package ([1911605](https://github.com/staff0rd/assist/commit/191160552539be8f27d2d79fe4bfb5488cf268e5))
+
 # [0.33.0](https://github.com/staff0rd/assist/compare/v0.32.6...v0.33.0) (2026-02-04)
 
 
