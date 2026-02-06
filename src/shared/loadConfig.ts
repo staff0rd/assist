@@ -2,7 +2,11 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import chalk from "chalk";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import type { AssistConfig, TranscriptConfig } from "./types";
+import {
+	type AssistConfig,
+	assistConfigSchema,
+	type TranscriptConfig,
+} from "./types";
 
 function getConfigPath(): string {
 	const claudeConfigPath = join(process.cwd(), ".claude", "assist.yml");
@@ -14,15 +18,16 @@ function getConfigPath(): string {
 
 export function loadConfig(): AssistConfig {
 	const configPath = getConfigPath();
-	if (!existsSync(configPath)) {
-		return {};
+	let raw: unknown = {};
+	if (existsSync(configPath)) {
+		try {
+			const content = readFileSync(configPath, "utf-8");
+			raw = parseYaml(content) || {};
+		} catch {
+			// use empty default
+		}
 	}
-	try {
-		const content = readFileSync(configPath, "utf-8");
-		return parseYaml(content) || {};
-	} catch {
-		return {};
-	}
+	return assistConfigSchema.parse(raw);
 }
 
 export function saveConfig(config: AssistConfig): void {

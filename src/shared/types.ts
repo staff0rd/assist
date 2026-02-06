@@ -35,7 +35,7 @@ export const assistConfigSchema = z.strictObject({
 		.strictObject({
 			enabled: z.boolean().default(true),
 		})
-		.optional(),
+		.default({ enabled: true }),
 	run: z.array(runConfigSchema).optional(),
 	transcript: transcriptConfigSchema.optional(),
 });
