@@ -1,3 +1,10 @@
+# [0.37.0](https://github.com/staff0rd/assist/compare/v0.36.1...v0.37.0) (2026-02-06)
+
+
+### Features
+
+* sync user instructions to home ([a30e687](https://github.com/staff0rd/assist/commit/a30e687b12a50523b9d40a4623681eed93ae9d1c))
+
 ## [0.36.1](https://github.com/staff0rd/assist/compare/v0.36.0...v0.36.1) (2026-02-06)
 
 
