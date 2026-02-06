@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+import { syncClaudeMd } from "./sync/syncClaudeMd";
 import { syncSettings } from "./sync/syncSettings";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,6 +14,7 @@ export async function sync(): Promise<void> {
 
 	syncCommands(claudeDir, targetBase);
 	await syncSettings(claudeDir, targetBase);
+	await syncClaudeMd(claudeDir, targetBase);
 }
 
 function syncCommands(claudeDir: string, targetBase: string): void {
