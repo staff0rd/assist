@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { execSync } from "node:child_process";
 import { Command } from "commander";
+import packageJson from "../package.json";
 import { commit } from "./commands/commit";
 import {
 	cyclomatic as complexityCyclomatic,
@@ -49,7 +50,10 @@ import { init as vscodeInit } from "./commands/vscode";
 
 const program = new Command();
 
-program.name("assist").description("CLI application").version("1.0.0");
+program
+	.name("assist")
+	.description("CLI application")
+	.version(packageJson.version);
 
 program
 	.command("sync")
