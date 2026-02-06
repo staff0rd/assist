@@ -1,7 +1,7 @@
 commit:
   conventional: true
-  push: true
   pull: true
+  push: true
 devlog:
   name: assist
   skip:
@@ -9,3 +9,5 @@ devlog:
       - 2025-12-03
       - 2025-12-24
       - 2026-01-07
+notify:
+  enabled: false
