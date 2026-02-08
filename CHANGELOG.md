@@ -1,3 +1,10 @@
+# [0.41.0](https://github.com/staff0rd/assist/compare/v0.40.0...v0.41.0) (2026-02-08)
+
+
+### Features
+
+* add MI explanation on failure ([32e7e6c](https://github.com/staff0rd/assist/commit/32e7e6cef237f03ba9f4b17ddd5384f78517fb44))
+
 # [0.40.0](https://github.com/staff0rd/assist/compare/v0.39.0...v0.40.0) (2026-02-08)
 
 
