@@ -1,10 +1,10 @@
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
 import { stringify } from "yaml";
 import { isClaudeCode } from "../../lib/isClaudeCode";
+import { fetchThreadIds, type ThreadInfo } from "./fetchThreadIds.js";
 import {
 	deleteCommentsCache,
 	getCurrentPrNumber,
@@ -57,67 +57,6 @@ export function printComments(comments: PrComment[]): void {
 	}
 }
 
-type ThreadNode = {
-	id: string;
-	isResolved: boolean;
-	comments: {
-		nodes: Array<{ databaseId: number }>;
-	};
-};
-
-type GraphQLResponse = {
-	data: {
-		repository: {
-			pullRequest: {
-				reviewThreads: {
-					nodes: ThreadNode[];
-				};
-			};
-		};
-	};
-};
-
-type ThreadInfo = {
-	threadMap: Map<number, string>;
-	resolvedThreadIds: Set<string>;
-};
-
-function fetchThreadIds(
-	org: string,
-	repo: string,
-	prNumber: number,
-): ThreadInfo {
-	const query = `query($owner: String!, $repo: String!, $prNumber: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $prNumber) { reviewThreads(first: 100) { nodes { id isResolved comments(first: 100) { nodes { databaseId } } } } } } }`;
-
-	const queryFile = join(tmpdir(), `gh-query-${Date.now()}.graphql`);
-	writeFileSync(queryFile, query);
-
-	try {
-		const result = execSync(
-			`gh api graphql -F query=@${queryFile} -F owner="${org}" -F repo="${repo}" -F prNumber=${prNumber}`,
-			{ encoding: "utf-8" },
-		);
-
-		const response: GraphQLResponse = JSON.parse(result);
-		const threadMap = new Map<number, string>();
-		const resolvedThreadIds = new Set<string>();
-
-		for (const thread of response.data.repository.pullRequest.reviewThreads
-			.nodes) {
-			if (thread.isResolved) {
-				resolvedThreadIds.add(thread.id);
-			}
-			for (const comment of thread.comments.nodes) {
-				threadMap.set(comment.databaseId, thread.id);
-			}
-		}
-
-		return { threadMap, resolvedThreadIds };
-	} finally {
-		unlinkSync(queryFile);
-	}
-}
-
 function writeCommentsCache(prNumber: number, comments: PrComment[]): void {
 	const assistDir = join(process.cwd(), ".assist");
 	if (!existsSync(assistDir)) {
@@ -134,65 +73,85 @@ function writeCommentsCache(prNumber: number, comments: PrComment[]): void {
 	writeFileSync(cachePath, stringify(cacheData));
 }
 
+function fetchReviewComments(
+	org: string,
+	repo: string,
+	prNumber: number,
+): PrComment[] {
+	const result = execSync(
+		`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews`,
+		{ encoding: "utf-8" },
+	);
+	if (!result.trim()) return [];
+	const reviews = JSON.parse(result);
+	return reviews
+		.filter((r: { body: string }) => r.body)
+		.map(
+			(r: {
+				id: number;
+				user: { login: string };
+				state: string;
+				body: string;
+			}): PrComment => ({
+				type: "review",
+				id: r.id,
+				user: r.user.login,
+				state: r.state,
+				body: r.body,
+			}),
+		);
+}
+
+function fetchLineComments(
+	org: string,
+	repo: string,
+	prNumber: number,
+	threadInfo: ThreadInfo,
+): PrComment[] {
+	const result = execSync(
+		`gh api repos/${org}/${repo}/pulls/${prNumber}/comments`,
+		{ encoding: "utf-8" },
+	);
+	if (!result.trim()) return [];
+	const comments = JSON.parse(result);
+	return comments.map(
+		(c: {
+			id: number;
+			user: { login: string };
+			path: string;
+			line: number;
+			body: string;
+			diff_hunk: string;
+			html_url: string;
+		}): PrComment => {
+			const threadId = threadInfo.threadMap.get(c.id) ?? "";
+			return {
+				type: "line",
+				id: c.id,
+				threadId,
+				user: c.user.login,
+				path: c.path,
+				line: c.line,
+				body: c.body,
+				diff_hunk: c.diff_hunk,
+				html_url: c.html_url,
+				resolved: threadInfo.resolvedThreadIds.has(threadId),
+			};
+		},
+	);
+}
+
 export async function listComments(): Promise<PrComment[]> {
 	try {
 		const prNumber = getCurrentPrNumber();
 		const { org, repo } = getRepoInfo();
-		const allComments: PrComment[] = [];
+		const threadInfo = fetchThreadIds(org, repo, prNumber);
+		const allComments = [
+			...fetchReviewComments(org, repo, prNumber),
+			...fetchLineComments(org, repo, prNumber, threadInfo),
+		];
 
-		const { threadMap, resolvedThreadIds } = fetchThreadIds(
-			org,
-			repo,
-			prNumber,
-		);
-
-		const reviewResult = execSync(
-			`gh api repos/${org}/${repo}/pulls/${prNumber}/reviews`,
-			{ encoding: "utf-8" },
-		);
-
-		if (reviewResult.trim()) {
-			const reviews = JSON.parse(reviewResult);
-			for (const review of reviews) {
-				if (review.body) {
-					allComments.push({
-						type: "review",
-						id: review.id,
-						user: review.user.login,
-						state: review.state,
-						body: review.body,
-					});
-				}
-			}
-		}
-
-		const lineResult = execSync(
-			`gh api repos/${org}/${repo}/pulls/${prNumber}/comments`,
-			{ encoding: "utf-8" },
-		);
-
-		if (lineResult.trim()) {
-			const lineComments = JSON.parse(lineResult);
-			for (const comment of lineComments) {
-				const threadId = threadMap.get(comment.id) ?? "";
-				const resolved = resolvedThreadIds.has(threadId);
-				allComments.push({
-					type: "line",
-					id: comment.id,
-					threadId,
-					user: comment.user.login,
-					path: comment.path,
-					line: comment.line,
-					body: comment.body,
-					diff_hunk: comment.diff_hunk,
-					html_url: comment.html_url,
-					resolved,
-				});
-			}
-		}
-
-		const hasLineComments = allComments.some((c) => c.type === "line");
-		if (hasLineComments) {
+		if (allComments.some((c) => c.type === "line")) {
 			writeCommentsCache(prNumber, allComments);
 		} else {
 			deleteCommentsCache(prNumber);

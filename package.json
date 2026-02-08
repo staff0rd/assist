@@ -20,7 +20,8 @@
 		"verify:build": "tsup",
 		"verify:types": "tsc --noEmit",
 		"verify:knip": "knip --no-progress --treat-config-hints-as-errors",
-		"verify:duplicate-code": "jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src"
+		"verify:duplicate-code": "jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src",
+		"verify:maintainability": "assist complexity maintainability ./src --threshold 50"
 	},
 	"keywords": [],
 	"author": "",
