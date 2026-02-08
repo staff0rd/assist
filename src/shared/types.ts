@@ -36,6 +36,11 @@ export const assistConfigSchema = z.strictObject({
 			enabled: z.boolean().default(true),
 		})
 		.default({ enabled: true }),
+	complexity: z
+		.strictObject({
+			ignore: z.array(z.string()).default(["**/*test.ts*"]),
+		})
+		.default({ ignore: ["**/*test.ts*"] }),
 	run: z.array(runConfigSchema).optional(),
 	transcript: transcriptConfigSchema.optional(),
 });

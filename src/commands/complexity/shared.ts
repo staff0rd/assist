@@ -3,6 +3,7 @@ import path from "node:path";
 import chalk from "chalk";
 import { minimatch } from "minimatch";
 import ts from "typescript";
+import { loadConfig } from "../../shared/loadConfig";
 
 export type ThresholdOptions = {
 	threshold?: number;
@@ -83,6 +84,13 @@ export function forEachFunction(
 	}
 }
 
+function applyIgnoreGlobs(files: string[]): string[] {
+	const { complexity } = loadConfig();
+	return files.filter(
+		(f) => !complexity.ignore.some((glob) => minimatch(f, glob)),
+	);
+}
+
 function findSourceFilesWithPattern(pattern: string, baseDir = "."): string[] {
 	const results: string[] = [];
 	const extensions = [".ts", ".tsx"];
@@ -109,7 +117,7 @@ function findSourceFilesWithPattern(pattern: string, baseDir = "."): string[] {
 
 	if (pattern.includes("*")) {
 		walk(baseDir);
-		return results.filter((f) => minimatch(f, pattern));
+		return applyIgnoreGlobs(results.filter((f) => minimatch(f, pattern)));
 	}
 
 	if (fs.existsSync(pattern) && fs.statSync(pattern).isFile()) {
@@ -118,11 +126,11 @@ function findSourceFilesWithPattern(pattern: string, baseDir = "."): string[] {
 
 	if (fs.existsSync(pattern) && fs.statSync(pattern).isDirectory()) {
 		walk(pattern);
-		return results;
+		return applyIgnoreGlobs(results);
 	}
 
 	walk(baseDir);
-	return results.filter((f) => minimatch(f, pattern));
+	return applyIgnoreGlobs(results.filter((f) => minimatch(f, pattern)));
 }
 
 function hasFunctionBody(
