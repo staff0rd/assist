@@ -1,3 +1,10 @@
+# [0.38.0](https://github.com/staff0rd/assist/compare/v0.37.0...v0.38.0) (2026-02-08)
+
+
+### Features
+
+* filter maintainability output by threshold ([47aeb3d](https://github.com/staff0rd/assist/commit/47aeb3d3962b6273c5a25b71bead8b3f5f1160d5))
+
 # [0.37.0](https://github.com/staff0rd/assist/compare/v0.36.1...v0.37.0) (2026-02-06)
 
 
