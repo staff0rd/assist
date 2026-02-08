@@ -1,3 +1,10 @@
+# [0.39.0](https://github.com/staff0rd/assist/compare/v0.38.0...v0.39.0) (2026-02-08)
+
+
+### Features
+
+* add maintainability verify ([77256fc](https://github.com/staff0rd/assist/commit/77256fc714f8abe0072e291f9efa735cbf21484c))
+
 # [0.38.0](https://github.com/staff0rd/assist/compare/v0.37.0...v0.38.0) (2026-02-08)
 
 
