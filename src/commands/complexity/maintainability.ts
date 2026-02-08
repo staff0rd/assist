@@ -90,6 +90,11 @@ export async function maintainability(
 		console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
 
 		if (filtered.length > 0 && threshold !== undefined) {
+			console.log(
+				chalk.red(
+					`\nFail: ${filtered.length} file(s) below threshold ${threshold}. Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code.`,
+				),
+			);
 			process.exit(1);
 		}
 	});
