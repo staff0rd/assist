@@ -39,7 +39,7 @@ export function runStaticImportCheck(): boolean {
 	return reportViolations(
 		checkStaticImports(),
 		"Static import check",
-		"Dynamic imports (require() and import()) are not allowed. Use static imports instead.",
+		"Dynamic imports are not allowed. Use static imports instead.",
 		"Static import check passed. No dynamic imports found.",
 	);
 }

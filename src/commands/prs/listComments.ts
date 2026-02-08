@@ -4,7 +4,7 @@ import { join } from "node:path";
 import chalk from "chalk";
 import { stringify } from "yaml";
 import { isClaudeCode } from "../../lib/isClaudeCode";
-import { fetchThreadIds, type ThreadInfo } from "./fetchThreadIds.js";
+import { fetchThreadIds, type ThreadInfo } from "./fetchThreadIds";
 import {
 	deleteCommentsCache,
 	getCurrentPrNumber,

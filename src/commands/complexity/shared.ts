@@ -149,9 +149,9 @@ function hasFunctionBody(
 	return false;
 }
 
-export { calculateCyclomaticComplexity } from "./calculateCyclomaticComplexity.js";
+export { calculateCyclomaticComplexity } from "./calculateCyclomaticComplexity";
 export {
 	calculateHalstead,
 	type HalsteadMetrics,
-} from "./calculateHalstead.js";
-export { countSloc } from "./countSloc.js";
+} from "./calculateHalstead";
+export { countSloc } from "./countSloc";
