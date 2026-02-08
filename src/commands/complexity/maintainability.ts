@@ -58,7 +58,7 @@ export async function maintainability(
 			avgMaintainability: number;
 			minMaintainability: number;
 		}[] = [];
-		let hasViolation = false;
+		const { threshold } = options;
 
 		for (const [file, metrics] of fileMetrics) {
 			if (metrics.functions.length === 0) continue;
@@ -67,30 +67,29 @@ export async function maintainability(
 				metrics.functions.reduce((a, b) => a + b, 0) / metrics.functions.length;
 			const minMaintainability = Math.min(...metrics.functions);
 			results.push({ file, avgMaintainability, minMaintainability });
-
-			if (
-				options.threshold !== undefined &&
-				minMaintainability < options.threshold
-			) {
-				hasViolation = true;
-			}
 		}
 
 		results.sort((a, b) => a.minMaintainability - b.minMaintainability);
 
-		for (const { file, avgMaintainability, minMaintainability } of results) {
-			const exceedsThreshold =
-				options.threshold !== undefined &&
-				minMaintainability < options.threshold;
-			const color = exceedsThreshold ? chalk.red : chalk.white;
-			console.log(
-				`${color(file)} → avg: ${chalk.cyan(avgMaintainability.toFixed(1))}, min: ${chalk.yellow(minMaintainability.toFixed(1))}`,
-			);
+		const filtered =
+			threshold !== undefined
+				? results.filter((r) => r.minMaintainability < threshold)
+				: results;
+
+		if (threshold !== undefined && filtered.length === 0) {
+			console.log(chalk.green("All files pass maintainability threshold"));
+		} else {
+			for (const { file, avgMaintainability, minMaintainability } of filtered) {
+				const color = threshold !== undefined ? chalk.red : chalk.white;
+				console.log(
+					`${color(file)} → avg: ${chalk.cyan(avgMaintainability.toFixed(1))}, min: ${chalk.yellow(minMaintainability.toFixed(1))}`,
+				);
+			}
 		}
 
 		console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
 
-		if (hasViolation) {
+		if (filtered.length > 0 && threshold !== undefined) {
 			process.exit(1);
 		}
 	});
