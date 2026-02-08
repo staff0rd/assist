@@ -1,3 +1,10 @@
+# [0.40.0](https://github.com/staff0rd/assist/compare/v0.39.0...v0.40.0) (2026-02-08)
+
+
+### Features
+
+* add custom lint verify script ([e93085b](https://github.com/staff0rd/assist/commit/e93085be1166aa207faabc9f4eaa83a0f5eae48b))
+
 # [0.39.0](https://github.com/staff0rd/assist/compare/v0.38.0...v0.39.0) (2026-02-08)
 
 
