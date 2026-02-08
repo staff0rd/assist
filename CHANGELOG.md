@@ -1,3 +1,10 @@
+# [0.42.0](https://github.com/staff0rd/assist/compare/v0.41.0...v0.42.0) (2026-02-08)
+
+
+### Features
+
+* add complexity.ignore config ([c1eb3b0](https://github.com/staff0rd/assist/commit/c1eb3b000c6b6edb2ca36b321ff4893508ee50a0))
+
 # [0.41.0](https://github.com/staff0rd/assist/compare/v0.40.0...v0.41.0) (2026-02-08)
 
 
