@@ -1,8 +1,5 @@
-import {
-	getRepoInfo,
-	isGhNotInstalled,
-	resolveCommentWithReply,
-} from "./shared";
+import { resolveCommentWithReply } from "./resolveCommentWithReply";
+import { getRepoInfo, isGhNotInstalled } from "./shared";
 
 export function fixed(commentId: number, sha: string): void {
 	try {

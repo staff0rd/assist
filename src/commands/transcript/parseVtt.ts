@@ -64,4 +64,5 @@ export function parseVtt(content: string): VttCue[] {
 	return cues;
 }
 
-export { cleanText, deduplicateCues } from "./deduplicateCues";
+export { cleanText } from "./cleanText";
+export { deduplicateCues } from "./deduplicateCues";

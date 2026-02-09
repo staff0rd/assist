@@ -2,13 +2,11 @@ import { execSync } from "node:child_process";
 import { basename } from "node:path";
 import chalk from "chalk";
 import {
-	getCommitFiles,
 	loadConfig,
 	loadDevlogEntries,
+	parseGitLogCommits,
 	printCommitsWithFiles,
-	shouldIgnoreCommit,
 } from "./shared";
-import type { Commit } from "./types";
 
 type ListOptions = {
 	days?: number;
@@ -33,25 +31,7 @@ export function list(options: ListOptions): void {
 		{ encoding: "utf-8" },
 	);
 
-	const lines = output.trim().split("\n");
-	const commits: Commit[] = [];
-
-	for (const line of lines) {
-		const [date, hash, ...messageParts] = line.split("|");
-		const message = messageParts.join("|");
-
-		const files = getCommitFiles(hash);
-		if (!shouldIgnoreCommit(files, ignore)) {
-			commits.push({ date, hash, message, files });
-		}
-	}
-
-	const commitsByDate = new Map<string, Commit[]>();
-	for (const commit of commits) {
-		const existing = commitsByDate.get(commit.date) || [];
-		existing.push(commit);
-		commitsByDate.set(commit.date, existing);
-	}
+	const commitsByDate = parseGitLogCommits(output, ignore);
 
 	let dateCount = 0;
 	let isFirst = true;

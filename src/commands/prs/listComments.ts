@@ -5,8 +5,8 @@ import { stringify } from "yaml";
 import { isClaudeCode } from "../../lib/isClaudeCode";
 import { fetchLineComments, fetchReviewComments } from "./fetchReviewComments";
 import { fetchThreadIds } from "./fetchThreadIds";
+import { deleteCommentsCache } from "./resolveCommentWithReply";
 import {
-	deleteCommentsCache,
 	getCurrentPrNumber,
 	getRepoInfo,
 	isGhNotInstalled,

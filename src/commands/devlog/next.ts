@@ -7,18 +7,38 @@ import {
 	stripToMinor,
 } from "./getLastVersionInfo";
 import {
-	getCommitFiles,
 	getRepoName,
 	loadConfig,
+	parseGitLogCommits,
 	printCommitsWithFiles,
-	shouldIgnoreCommit,
 } from "./shared";
-import type { Commit } from "./types";
 
 type NextOptions = {
 	ignore?: string[];
 	verbose?: boolean;
 };
+
+function displayVersion(
+	conventional: boolean,
+	firstHash: string | undefined,
+	patchVersion: string | null,
+	minorVersion: string | null,
+): void {
+	if (conventional && firstHash) {
+		const version = getVersionAtCommit(firstHash);
+		if (version) {
+			console.log(`${chalk.bold("version:")} ${stripToMinor(version)}`);
+		} else {
+			console.log(`${chalk.bold("version:")} ${chalk.red("unknown")}`);
+		}
+	} else if (patchVersion && minorVersion) {
+		console.log(
+			`${chalk.bold("version:")} ${patchVersion} (patch) or ${minorVersion} (minor)`,
+		);
+	} else {
+		console.log(`${chalk.bold("version:")} v0.1 (initial)`);
+	}
+}
 
 export function next(options: NextOptions): void {
 	const config = loadConfig();
@@ -36,24 +56,7 @@ export function next(options: NextOptions): void {
 		{ encoding: "utf-8" },
 	);
 
-	const lines = output.trim().split("\n");
-	const commitsByDate = new Map<string, Commit[]>();
-
-	for (const line of lines) {
-		const [date, hash, ...messageParts] = line.split("|");
-		const message = messageParts.join("|");
-
-		if (lastDate && date <= lastDate) {
-			continue;
-		}
-
-		const files = getCommitFiles(hash);
-		if (!shouldIgnoreCommit(files, ignore)) {
-			const existing = commitsByDate.get(date) || [];
-			existing.push({ date, hash, message, files });
-			commitsByDate.set(date, existing);
-		}
-	}
+	const commitsByDate = parseGitLogCommits(output, ignore, lastDate);
 
 	// Find the earliest date after lastDate that isn't skipped
 	const dates = Array.from(commitsByDate.keys())
@@ -73,22 +76,12 @@ export function next(options: NextOptions): void {
 	const commits = commitsByDate.get(targetDate) ?? [];
 
 	console.log(`${chalk.bold("name:")} ${repoName}`);
-
-	// For conventional commits, get version from package.json at that day's commit
-	if (config.commit?.conventional && commits.length > 0) {
-		const version = getVersionAtCommit(commits[0].hash);
-		if (version) {
-			console.log(`${chalk.bold("version:")} ${stripToMinor(version)}`);
-		} else {
-			console.log(`${chalk.bold("version:")} ${chalk.red("unknown")}`);
-		}
-	} else if (patchVersion && minorVersion) {
-		console.log(
-			`${chalk.bold("version:")} ${patchVersion} (patch) or ${minorVersion} (minor)`,
-		);
-	} else {
-		console.log(`${chalk.bold("version:")} v0.1 (initial)`);
-	}
+	displayVersion(
+		!!config.commit?.conventional,
+		commits[0]?.hash,
+		patchVersion,
+		minorVersion,
+	);
 	console.log(`${chalk.bold.blue(targetDate)}`);
 
 	printCommitsWithFiles(commits, ignore, options.verbose ?? false);

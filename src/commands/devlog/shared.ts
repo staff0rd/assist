@@ -9,7 +9,7 @@ export {
 } from "../../shared/loadConfig";
 export { loadDevlogEntries } from "./loadDevlogEntries";
 
-export function getCommitFiles(hash: string): string[] {
+function getCommitFiles(hash: string): string[] {
 	try {
 		const output = execSync(`git show --name-only --format="" ${hash}`, {
 			encoding: "utf-8",
@@ -20,10 +20,7 @@ export function getCommitFiles(hash: string): string[] {
 	}
 }
 
-export function shouldIgnoreCommit(
-	files: string[],
-	ignorePaths: string[],
-): boolean {
+function shouldIgnoreCommit(files: string[], ignorePaths: string[]): boolean {
 	if (ignorePaths.length === 0 || files.length === 0) {
 		return false;
 	}
@@ -48,4 +45,31 @@ export function printCommitsWithFiles(
 			}
 		}
 	}
+}
+
+export function parseGitLogCommits(
+	output: string,
+	ignore: string[],
+	afterDate?: string | null,
+): Map<string, Commit[]> {
+	const lines = output.trim().split("\n");
+	const commitsByDate = new Map<string, Commit[]>();
+
+	for (const line of lines) {
+		const [date, hash, ...messageParts] = line.split("|");
+		const message = messageParts.join("|");
+
+		if (afterDate && date <= afterDate) {
+			continue;
+		}
+
+		const files = getCommitFiles(hash);
+		if (!shouldIgnoreCommit(files, ignore)) {
+			const existing = commitsByDate.get(date) || [];
+			existing.push({ date, hash, message, files });
+			commitsByDate.set(date, existing);
+		}
+	}
+
+	return commitsByDate;
 }

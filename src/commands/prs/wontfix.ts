@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
-import { isGhNotInstalled, resolveCommentWithReply } from "./shared";
+import { resolveCommentWithReply } from "./resolveCommentWithReply";
+import { isGhNotInstalled } from "./shared";
 
 function validateReason(reason: string): void {
 	const lowerReason = reason.toLowerCase();

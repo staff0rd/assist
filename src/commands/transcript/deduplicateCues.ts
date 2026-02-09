@@ -1,3 +1,4 @@
+import { cleanText } from "./cleanText";
 import type { VttCue } from "./types";
 
 function removeSubstringDuplicates(cues: VttCue[]): VttCue[] {
@@ -28,6 +29,17 @@ function removeSubstringDuplicates(cues: VttCue[]): VttCue[] {
 	return cues.filter((_, i) => !toRemove.has(i));
 }
 
+function findWordOverlap(currentWords: string[], nextWords: string[]): number {
+	for (let j = Math.min(5, currentWords.length); j >= 1; j--) {
+		const suffix = currentWords.slice(-j).join(" ");
+		const prefix = nextWords.slice(0, j).join(" ");
+		if (suffix === prefix) {
+			return j;
+		}
+	}
+	return 0;
+}
+
 function mergeOverlappingCues(cues: VttCue[]): VttCue[] {
 	if (cues.length === 0) return [];
 
@@ -43,16 +55,7 @@ function mergeOverlappingCues(cues: VttCue[]): VttCue[] {
 		if (sameSpeaker && overlaps) {
 			const currentWords = current.text.toLowerCase().split(/\s+/);
 			const nextWords = next.text.toLowerCase().split(/\s+/);
-
-			let overlapIndex = -1;
-			for (let j = Math.min(5, currentWords.length); j >= 1; j--) {
-				const suffix = currentWords.slice(-j).join(" ");
-				const prefix = nextWords.slice(0, j).join(" ");
-				if (suffix === prefix) {
-					overlapIndex = j;
-					break;
-				}
-			}
+			const overlapIndex = findWordOverlap(currentWords, nextWords);
 
 			if (overlapIndex > 0) {
 				const nextOriginalWords = next.text.split(/\s+/);
@@ -70,37 +73,6 @@ function mergeOverlappingCues(cues: VttCue[]): VttCue[] {
 
 	result.push(current);
 	return result;
-}
-
-export function cleanText(text: string): string {
-	const words = text.split(/\s+/);
-	const cleaned: string[] = [];
-
-	for (let i = 0; i < words.length; i++) {
-		let isRepeat = false;
-
-		for (let len = 3; len <= 8 && i + len <= words.length; len++) {
-			const phrase = words
-				.slice(i, i + len)
-				.join(" ")
-				.toLowerCase();
-			const remaining = words
-				.slice(i + len)
-				.join(" ")
-				.toLowerCase();
-
-			if (remaining.startsWith(phrase)) {
-				isRepeat = true;
-				break;
-			}
-		}
-
-		if (!isRepeat) {
-			cleaned.push(words[i]);
-		}
-	}
-
-	return cleaned.join(" ").replace(/\s+/g, " ").trim();
 }
 
 export function deduplicateCues(cues: VttCue[]): VttCue[] {
