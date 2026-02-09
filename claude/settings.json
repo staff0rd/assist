@@ -44,6 +44,6 @@
 			"Skill(transcript-summarise)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
-		"deny": ["Bash(git commit:*)", "Bash(npm run:*)"]
+		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]
 	}
 }

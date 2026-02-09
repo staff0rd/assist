@@ -90,9 +90,9 @@ export async function maintainability(
 		console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
 
 		if (filtered.length > 0 && threshold !== undefined) {
-			console.log(
+			console.error(
 				chalk.red(
-					`\nFail: ${filtered.length} file(s) below threshold ${threshold}. Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code.`,
+					`\nFail: ${filtered.length} file(s) below threshold ${threshold}. Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code. Try 'complexity cyclomatic', 'complexity halstead', or 'complexity sloc' to help identify which metric is contributing most. For larger files, start by extracting responsibilities into smaller files.`,
 				),
 			);
 			process.exit(1);
