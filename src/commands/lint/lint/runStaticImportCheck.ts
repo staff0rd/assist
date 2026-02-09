@@ -1,6 +1,6 @@
 import fs from "node:fs";
-import { findSourceFiles } from "../../shared/findSourceFiles";
-import { type LintViolation, reportViolations } from "./shared";
+import { findSourceFiles } from "../../../shared/findSourceFiles";
+import { type LintViolation, reportViolations } from "../shared";
 
 function checkForDynamicImports(filePath: string): LintViolation[] {
 	const content = fs.readFileSync(filePath, "utf-8");

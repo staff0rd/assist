@@ -2,8 +2,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
-import { promptConfirm } from "../../shared/promptConfirm";
-import { printDiff } from "../../utils/printDiff";
+import { promptConfirm } from "../../../shared/promptConfirm";
+import { printDiff } from "../../../utils/printDiff";
 
 const WORKFLOW_PATH = ".github/workflows/build.yml";
 const __dirname = dirname(fileURLToPath(import.meta.url));

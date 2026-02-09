@@ -2,17 +2,17 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
 import { stringify } from "yaml";
-import { isClaudeCode } from "../../lib/isClaudeCode";
-import { fetchLineComments, fetchReviewComments } from "./fetchReviewComments";
-import { fetchThreadIds } from "./fetchThreadIds";
-import { deleteCommentsCache } from "./resolveCommentWithReply";
+import { isClaudeCode } from "../../../lib/isClaudeCode";
+import { fetchThreadIds } from "../fetchThreadIds";
+import { deleteCommentsCache } from "../resolveCommentWithReply";
 import {
 	getCurrentPrNumber,
 	getRepoInfo,
 	isGhNotInstalled,
 	isNotFound,
-} from "./shared";
-import type { PrComment } from "./types";
+} from "../shared";
+import type { PrComment } from "../types";
+import { fetchLineComments, fetchReviewComments } from "./fetchReviewComments";
 
 function formatForHuman(comment: PrComment): string {
 	if (comment.type === "review") {

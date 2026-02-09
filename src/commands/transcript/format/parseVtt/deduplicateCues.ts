@@ -1,5 +1,5 @@
-import { cleanText } from "./cleanText";
-import type { VttCue } from "./types";
+import { cleanText } from "../../cleanText";
+import type { VttCue } from "../../types";
 
 function removeSubstringDuplicates(cues: VttCue[]): VttCue[] {
 	const toRemove = new Set<number>();

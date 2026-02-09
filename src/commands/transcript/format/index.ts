@@ -1,11 +1,11 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { getTranscriptConfig } from "../../shared/loadConfig";
-import { cuesToChatMessages, formatChatLog } from "./formatChatLog";
+import { getTranscriptConfig } from "../../../shared/loadConfig";
 import { deduplicateCues, parseVtt } from "./parseVtt";
+import { findVttFilesRecursive, isValidDatePrefix } from "../shared";
+import type { VttFileInfo } from "../types";
+import { cuesToChatMessages, formatChatLog } from "./formatChatLog";
 import { promptForDateFix } from "./promptForDateFix";
-import { findVttFilesRecursive, isValidDatePrefix } from "./shared";
-import type { VttFileInfo } from "./types";
 
 function processFile(inputPath: string, outputPath: string): void {
 	console.log(`Reading: ${inputPath}`);

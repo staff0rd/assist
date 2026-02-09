@@ -1,6 +1,6 @@
 import { renameSync } from "node:fs";
 import { join } from "node:path";
-import { askQuestion, createReadlineInterface, getDatePrefix } from "./shared";
+import { askQuestion, createReadlineInterface, getDatePrefix } from "../shared";
 
 export async function promptForDateFix(
 	vttFile: string,

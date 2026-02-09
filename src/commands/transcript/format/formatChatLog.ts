@@ -1,5 +1,5 @@
 import { cleanText } from "./parseVtt";
-import type { ChatMessage, VttCue } from "./types";
+import type { ChatMessage, VttCue } from "../types";
 
 export function cuesToChatMessages(cues: VttCue[]): ChatMessage[] {
 	const messages: ChatMessage[] = [];

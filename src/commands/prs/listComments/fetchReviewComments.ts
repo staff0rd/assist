@@ -1,6 +1,6 @@
 import { execSync } from "node:child_process";
-import type { ThreadInfo } from "./fetchThreadIds";
-import type { PrComment } from "./types";
+import type { ThreadInfo } from "../fetchThreadIds";
+import type { PrComment } from "../types";
 
 export function fetchReviewComments(
 	org: string,

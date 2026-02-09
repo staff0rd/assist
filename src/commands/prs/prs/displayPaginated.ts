@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
-import type { PullRequest } from "./types";
+import type { PullRequest } from "../types";
 
 const PAGE_SIZE = 10;
 

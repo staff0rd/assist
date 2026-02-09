@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
 import ts from "typescript";
-import { findSourceFiles } from "./findSourceFiles";
+import { findSourceFiles } from "../findSourceFiles";
 import { getNodeName, hasFunctionBody } from "./getNodeName";
 
 export type ThresholdOptions = {

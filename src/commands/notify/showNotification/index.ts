@@ -1,5 +1,5 @@
 import notifier from "node-notifier";
-import { detectPlatform } from "../../lib/detectPlatform";
+import { detectPlatform } from "../../../lib/detectPlatform";
 import { showWindowsNotificationFromWsl } from "./showWindowsNotificationFromWsl";
 
 type NotificationOptions = {

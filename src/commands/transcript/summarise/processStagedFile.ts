@@ -7,8 +7,8 @@ import {
 } from "node:fs";
 import { dirname, join } from "node:path";
 import chalk from "chalk";
-import { getTranscriptConfig } from "../../shared/loadConfig";
-import { findMdFilesRecursive, getTranscriptBaseName } from "./shared";
+import { getTranscriptConfig } from "../../../shared/loadConfig";
+import { findMdFilesRecursive, getTranscriptBaseName } from "../shared";
 
 export const STAGING_DIR = join(process.cwd(), ".assist", "transcript");
 const FULL_TRANSCRIPT_REGEX = /^\[Full Transcript\]\(([^)]+)\)/;

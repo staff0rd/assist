@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
+import { isGhNotInstalled } from "../shared";
+import type { PrsOptions, PullRequest } from "../types";
 import { displayPaginated } from "./displayPaginated";
-import { isGhNotInstalled } from "./shared";
-import type { PrsOptions, PullRequest } from "./types";
 
 export async function prs(options: PrsOptions): Promise<void> {
 	const state = options.open ? "open" : options.closed ? "closed" : "all";

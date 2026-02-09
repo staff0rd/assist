@@ -1,8 +1,7 @@
 import chalk from "chalk";
-import { promptMultiselect } from "../../shared/promptMultiselect";
-import { requirePackageJson } from "../../shared/readPackageJson";
+import { promptMultiselect } from "../../../shared/promptMultiselect";
+import { requirePackageJson } from "../../../shared/readPackageJson";
 import { detectExistingSetup } from "./detectExistingSetup";
-import { getAvailableOptions } from "./getAvailableOptions";
 import {
 	setupBuild,
 	setupDuplicateCode,
@@ -10,7 +9,8 @@ import {
 	setupKnip,
 	setupLint,
 	setupTest,
-} from "./setup/index";
+} from "../setup";
+import { getAvailableOptions } from "./getAvailableOptions";
 
 export async function init(): Promise<void> {
 	const { packageJsonPath, pkg } = requirePackageJson();

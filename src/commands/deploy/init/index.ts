@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
 import enquirer from "enquirer";
-import { promptConfirm } from "../../shared/promptConfirm";
+import { promptConfirm } from "../../../shared/promptConfirm";
 import { getExistingSiteId, updateWorkflow } from "./updateWorkflow";
 
 export async function init(): Promise<void> {

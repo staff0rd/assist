@@ -1,4 +1,4 @@
-import type { VttCue } from "./types";
+import type { VttCue } from "../../types";
 
 function parseTimestamp(ts: string): number {
 	const parts = ts.split(":");
@@ -64,5 +64,5 @@ export function parseVtt(content: string): VttCue[] {
 	return cues;
 }
 
-export { cleanText } from "./cleanText";
+export { cleanText } from "../../cleanText";
 export { deduplicateCues } from "./deduplicateCues";

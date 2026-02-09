@@ -1,5 +1,5 @@
-import type { PackageJson } from "../../shared/readPackageJson";
-import { EXPECTED_SCRIPTS } from "./setup/index";
+import type { PackageJson } from "../../../../shared/readPackageJson";
+import { EXPECTED_SCRIPTS } from "../../setup";
 
 type ToolStatus = {
 	hasPackage: boolean;

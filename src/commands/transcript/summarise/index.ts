@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { basename, dirname, join, relative } from "node:path";
-import { getTranscriptConfig } from "../../shared/loadConfig";
+import { getTranscriptConfig } from "../../../shared/loadConfig";
+import { findMdFilesRecursive, getTranscriptBaseName } from "../shared";
 import { processStagedFile, STAGING_DIR } from "./processStagedFile";
-import { findMdFilesRecursive, getTranscriptBaseName } from "./shared";
 
 export function summarise() {
 	// First check for staged files to process
