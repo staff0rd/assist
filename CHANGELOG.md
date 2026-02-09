@@ -1,3 +1,10 @@
+## [0.42.1](https://github.com/staff0rd/assist/compare/v0.42.0...v0.42.1) (2026-02-09)
+
+
+### Bug Fixes
+
+* cap wontfix reason to 15 words ([c6cde93](https://github.com/staff0rd/assist/commit/c6cde9345dd17068c9d41abf2daeababc3b1d2b4))
+
 # [0.42.0](https://github.com/staff0rd/assist/compare/v0.41.0...v0.42.0) (2026-02-08)
 
 
