@@ -1,3 +1,10 @@
+# [0.44.0](https://github.com/staff0rd/assist/compare/v0.43.1...v0.44.0) (2026-02-09)
+
+
+### Features
+
+* add readme check command ([e3fc508](https://github.com/staff0rd/assist/commit/e3fc508daff3efccf55ecaaf323137a8bf5a0cc9))
+
 ## [0.43.1](https://github.com/staff0rd/assist/compare/v0.43.0...v0.43.1) (2026-02-09)
 
 
