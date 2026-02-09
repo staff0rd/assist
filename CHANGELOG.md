@@ -1,3 +1,10 @@
+# [0.46.0](https://github.com/staff0rd/assist/compare/v0.45.0...v0.46.0) (2026-02-09)
+
+
+### Features
+
+* allow gh pr view and diff ([583dc30](https://github.com/staff0rd/assist/commit/583dc30b2e1af1f327597d6a500f6956440e7d6f))
+
 # [0.45.0](https://github.com/staff0rd/assist/compare/v0.44.0...v0.45.0) (2026-02-09)
 
 
