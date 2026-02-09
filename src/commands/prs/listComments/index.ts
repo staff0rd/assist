@@ -1,10 +1,9 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import chalk from "chalk";
 import { stringify } from "yaml";
 import { isClaudeCode } from "../../../lib/isClaudeCode";
 import { fetchThreadIds } from "../fetchThreadIds";
-import { deleteCommentsCache } from "../resolveCommentWithReply";
+import { deleteCommentsCache } from "../loadCommentsCache";
 import {
 	getCurrentPrNumber,
 	getRepoInfo,
@@ -13,29 +12,7 @@ import {
 } from "../shared";
 import type { PrComment } from "../types";
 import { fetchLineComments, fetchReviewComments } from "./fetchReviewComments";
-
-function formatForHuman(comment: PrComment): string {
-	if (comment.type === "review") {
-		const stateColor =
-			comment.state === "APPROVED"
-				? chalk.green
-				: comment.state === "CHANGES_REQUESTED"
-					? chalk.red
-					: chalk.yellow;
-		return [
-			`${chalk.cyan("Review")} by ${chalk.bold(comment.user)} ${stateColor(`[${comment.state}]`)}`,
-			comment.body,
-			"",
-		].join("\n");
-	}
-	const location = comment.line ? `:${comment.line}` : "";
-	return [
-		`${chalk.cyan("Line comment")} by ${chalk.bold(comment.user)} on ${chalk.dim(`${comment.path}${location}`)}`,
-		chalk.dim(comment.diff_hunk.split("\n").slice(-3).join("\n")),
-		comment.body,
-		"",
-	].join("\n");
-}
+import { formatForHuman } from "./formatForHuman";
 
 export function printComments(comments: PrComment[]): void {
 	if (comments.length === 0) {

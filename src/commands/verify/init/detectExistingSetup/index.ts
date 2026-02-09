@@ -19,54 +19,35 @@ export type ExistingSetup = {
 	hasOpenColor: boolean;
 };
 
-function isScriptOutdated(
+function toolStatus(
 	pkg: PackageJson,
 	scriptName: string,
-	expectedCommand: string | undefined,
-): boolean {
+	hasPackage: boolean,
+): ToolStatus {
 	const currentScript = pkg.scripts?.[scriptName];
-	if (!currentScript || !expectedCommand) return false;
-	return currentScript !== expectedCommand;
+	const expectedCommand = EXPECTED_SCRIPTS[scriptName];
+	return {
+		hasPackage,
+		hasScript: !!currentScript,
+		isOutdated:
+			!!currentScript && !!expectedCommand && currentScript !== expectedCommand,
+	};
 }
 
 export function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 	return {
-		knip: {
-			hasPackage: !!pkg.devDependencies?.knip,
-			hasScript: !!pkg.scripts?.["verify:knip"],
-			isOutdated: isScriptOutdated(
-				pkg,
-				"verify:knip",
-				EXPECTED_SCRIPTS["verify:knip"],
-			),
-		},
-		biome: {
-			hasPackage: !!pkg.devDependencies?.["@biomejs/biome"],
-			hasScript: !!pkg.scripts?.["verify:lint"],
-			isOutdated: isScriptOutdated(
-				pkg,
-				"verify:lint",
-				EXPECTED_SCRIPTS["verify:lint"],
-			),
-		},
-		jscpd: {
-			hasPackage: !!pkg.dependencies?.jscpd || !!pkg.devDependencies?.jscpd,
-			hasScript: !!pkg.scripts?.["verify:duplicate-code"],
-			isOutdated: isScriptOutdated(
-				pkg,
-				"verify:duplicate-code",
-				EXPECTED_SCRIPTS["verify:duplicate-code"],
-			),
-		},
-		test: {
-			hasPackage: !!pkg.devDependencies?.vitest,
-			hasScript: !!pkg.scripts?.["verify:test"],
-			isOutdated: isScriptOutdated(
-				pkg,
-				"verify:test",
-				EXPECTED_SCRIPTS["verify:test"],
-			),
-		},
+		knip: toolStatus(pkg, "verify:knip", !!pkg.devDependencies?.knip),
+		biome: toolStatus(
+			pkg,
+			"verify:lint",
+			!!pkg.devDependencies?.["@biomejs/biome"],
+		),
+		jscpd: toolStatus(
+			pkg,
+			"verify:duplicate-code",
+			!!pkg.dependencies?.jscpd || !!pkg.devDependencies?.jscpd,
+		),
+		test: toolStatus(pkg, "verify:test", !!pkg.devDependencies?.vitest),
 		hasVite: !!pkg.devDependencies?.vite || !!pkg.dependencies?.vite,
 		hasTypescript: !!pkg.devDependencies?.typescript,
 		build: {
@@ -74,15 +55,7 @@ export function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 			hasScript: !!pkg.scripts?.["verify:build"],
 			isOutdated: false,
 		},
-		hardcodedColors: {
-			hasPackage: true,
-			hasScript: !!pkg.scripts?.["verify:hardcoded-colors"],
-			isOutdated: isScriptOutdated(
-				pkg,
-				"verify:hardcoded-colors",
-				EXPECTED_SCRIPTS["verify:hardcoded-colors"],
-			),
-		},
+		hardcodedColors: toolStatus(pkg, "verify:hardcoded-colors", true),
 		hasOpenColor:
 			!!pkg.dependencies?.["open-color"] ||
 			!!pkg.devDependencies?.["open-color"],

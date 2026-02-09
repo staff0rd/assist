@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import { promptMultiselect } from "../../../shared/promptMultiselect";
 import { requirePackageJson } from "../../../shared/readPackageJson";
-import { detectExistingSetup } from "./detectExistingSetup";
 import {
 	setupBuild,
 	setupDuplicateCode,
@@ -10,6 +9,7 @@ import {
 	setupLint,
 	setupTest,
 } from "../setup";
+import { detectExistingSetup } from "./detectExistingSetup";
 import { getAvailableOptions } from "./getAvailableOptions";
 
 export async function init(): Promise<void> {

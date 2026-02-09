@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import chalk from "chalk";
 import {
 	calculateCyclomaticComplexity,
 	calculateHalstead,
@@ -7,7 +6,11 @@ import {
 	forEachFunction,
 	type ThresholdOptions,
 	withSourceFiles,
-} from "./shared";
+} from "../shared";
+import {
+	displayMaintainabilityResults,
+	type ResultEntry,
+} from "./displayMaintainabilityResults";
 
 function calculateMaintainabilityIndex(
 	halsteadVolume: number,
@@ -26,11 +29,6 @@ function calculateMaintainabilityIndex(
 }
 
 type FileMetrics = Map<string, { sloc: number; functions: number[] }>;
-type ResultEntry = {
-	file: string;
-	avgMaintainability: number;
-	minMaintainability: number;
-};
 
 function collectFileMetrics(files: string[]): FileMetrics {
 	const fileMetrics: FileMetrics = new Map();
@@ -72,38 +70,6 @@ function aggregateResults(fileMetrics: FileMetrics): ResultEntry[] {
 	return results;
 }
 
-function displayResults(
-	results: ResultEntry[],
-	threshold: number | undefined,
-): void {
-	const filtered =
-		threshold !== undefined
-			? results.filter((r) => r.minMaintainability < threshold)
-			: results;
-
-	if (threshold !== undefined && filtered.length === 0) {
-		console.log(chalk.green("All files pass maintainability threshold"));
-	} else {
-		for (const { file, avgMaintainability, minMaintainability } of filtered) {
-			const color = threshold !== undefined ? chalk.red : chalk.white;
-			console.log(
-				`${color(file)} → avg: ${chalk.cyan(avgMaintainability.toFixed(1))}, min: ${chalk.yellow(minMaintainability.toFixed(1))}`,
-			);
-		}
-	}
-
-	console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
-
-	if (filtered.length > 0 && threshold !== undefined) {
-		console.error(
-			chalk.red(
-				`\nFail: ${filtered.length} file(s) below threshold ${threshold}. Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code. Try 'complexity cyclomatic', 'complexity halstead', or 'complexity sloc' to help identify which metric is contributing most. For larger files, start by extracting responsibilities into smaller files.`,
-			),
-		);
-		process.exit(1);
-	}
-}
-
 export async function maintainability(
 	pattern = "**/*.ts",
 	options: ThresholdOptions = {},
@@ -111,6 +77,6 @@ export async function maintainability(
 	withSourceFiles(pattern, (files) => {
 		const fileMetrics = collectFileMetrics(files);
 		const results = aggregateResults(fileMetrics);
-		displayResults(results, options.threshold);
+		displayMaintainabilityResults(results, options.threshold);
 	});
 }

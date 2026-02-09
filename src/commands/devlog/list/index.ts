@@ -1,12 +1,12 @@
 import { execSync } from "node:child_process";
 import { basename } from "node:path";
-import chalk from "chalk";
 import {
 	loadConfig,
 	loadDevlogEntries,
 	parseGitLogCommits,
 	printCommitsWithFiles,
-} from "./shared";
+} from "../shared";
+import { printDateHeader } from "./printDateHeader";
 
 type ListOptions = {
 	days?: number;
@@ -51,18 +51,7 @@ export function list(options: ListOptions): void {
 		}
 		isFirst = false;
 
-		const entries = devlogEntries.get(date);
-		if (skipDays.has(date)) {
-			console.log(`${chalk.bold.blue(date)} ${chalk.dim("skipped")}`);
-		} else if (entries && entries.length > 0) {
-			const entryInfo = entries
-				.map((e) => `${chalk.green(e.version)} ${e.title}`)
-				.join(" | ");
-			console.log(`${chalk.bold.blue(date)} ${entryInfo}`);
-		} else {
-			console.log(`${chalk.bold.blue(date)} ${chalk.red("⚠ devlog missing")}`);
-		}
-
+		printDateHeader(date, skipDays.has(date), devlogEntries.get(date));
 		printCommitsWithFiles(dateCommits, ignore, options.verbose ?? false);
 	}
 }

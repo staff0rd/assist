@@ -1,10 +1,9 @@
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parse } from "yaml";
+import { deleteCommentsCache, loadCommentsCache } from "./loadCommentsCache";
 import { getCurrentPrNumber, getRepoInfo } from "./shared";
-import type { PrComment } from "./types";
 
 function replyToComment(
 	org: string,
@@ -31,33 +30,6 @@ function resolveThread(threadId: string): void {
 		);
 	} finally {
 		unlinkSync(queryFile);
-	}
-}
-
-type CacheData = {
-	prNumber: number;
-	fetchedAt: string;
-	comments: PrComment[];
-};
-
-function getCachePath(prNumber: number): string {
-	return join(process.cwd(), ".assist", `pr-${prNumber}-comments.yaml`);
-}
-
-function loadCommentsCache(prNumber: number): CacheData | null {
-	const cachePath = getCachePath(prNumber);
-	if (!existsSync(cachePath)) {
-		return null;
-	}
-	const content = readFileSync(cachePath, "utf-8");
-	return parse(content) as CacheData;
-}
-
-export function deleteCommentsCache(prNumber: number): void {
-	const cachePath = getCachePath(prNumber);
-	if (existsSync(cachePath)) {
-		unlinkSync(cachePath);
-		console.log("No more unresolved line comments. Cache dropped.");
 	}
 }
 

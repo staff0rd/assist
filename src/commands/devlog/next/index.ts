@@ -1,44 +1,18 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
-import {
-	bumpVersion,
-	getLastVersionInfo,
-	getVersionAtCommit,
-	stripToMinor,
-} from "./getLastVersionInfo";
+import { bumpVersion, getLastVersionInfo } from "../getLastVersionInfo";
 import {
 	getRepoName,
 	loadConfig,
 	parseGitLogCommits,
 	printCommitsWithFiles,
-} from "./shared";
+} from "../shared";
+import { displayVersion } from "./displayVersion";
 
 type NextOptions = {
 	ignore?: string[];
 	verbose?: boolean;
 };
-
-function displayVersion(
-	conventional: boolean,
-	firstHash: string | undefined,
-	patchVersion: string | null,
-	minorVersion: string | null,
-): void {
-	if (conventional && firstHash) {
-		const version = getVersionAtCommit(firstHash);
-		if (version) {
-			console.log(`${chalk.bold("version:")} ${stripToMinor(version)}`);
-		} else {
-			console.log(`${chalk.bold("version:")} ${chalk.red("unknown")}`);
-		}
-	} else if (patchVersion && minorVersion) {
-		console.log(
-			`${chalk.bold("version:")} ${patchVersion} (patch) or ${minorVersion} (minor)`,
-		);
-	} else {
-		console.log(`${chalk.bold("version:")} v0.1 (initial)`);
-	}
-}
 
 export function next(options: NextOptions): void {
 	const config = loadConfig();
@@ -58,7 +32,6 @@ export function next(options: NextOptions): void {
 
 	const commitsByDate = parseGitLogCommits(output, ignore, lastDate);
 
-	// Find the earliest date after lastDate that isn't skipped
 	const dates = Array.from(commitsByDate.keys())
 		.filter((d) => !skipDays.has(d))
 		.sort();

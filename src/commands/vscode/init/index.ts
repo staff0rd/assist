@@ -1,11 +1,6 @@
-import * as fs from "node:fs";
-import * as path from "node:path";
 import chalk from "chalk";
 import { promptMultiselect } from "../../../shared/promptMultiselect";
-import {
-	type PackageJson,
-	requirePackageJson,
-} from "../../../shared/readPackageJson";
+import { requirePackageJson } from "../../../shared/readPackageJson";
 import {
 	createExtensionsJson,
 	createLaunchJson,
@@ -13,13 +8,7 @@ import {
 	ensureVscodeFolder,
 	removeVscodeFromGitignore,
 } from "./createLaunchJson";
-
-type ExistingSetup = {
-	hasVscodeFolder: boolean;
-	hasLaunchJson: boolean;
-	hasSettingsJson: boolean;
-	hasVite: boolean;
-};
+import { detectVscodeSetup } from "./detectVscodeSetup";
 
 type ConfigOption = {
 	name: string;
@@ -27,19 +16,9 @@ type ConfigOption = {
 	description: string;
 };
 
-function detectExistingSetup(pkg: PackageJson): ExistingSetup {
-	const vscodeDir = path.join(process.cwd(), ".vscode");
-	return {
-		hasVscodeFolder: fs.existsSync(vscodeDir),
-		hasLaunchJson: fs.existsSync(path.join(vscodeDir, "launch.json")),
-		hasSettingsJson: fs.existsSync(path.join(vscodeDir, "settings.json")),
-		hasVite: !!pkg.devDependencies?.vite || !!pkg.dependencies?.vite,
-	};
-}
-
 export async function init(): Promise<void> {
 	const { pkg } = requirePackageJson();
-	const setup = detectExistingSetup(pkg);
+	const setup = detectVscodeSetup(pkg);
 
 	const availableOptions: ConfigOption[] = [];
 
