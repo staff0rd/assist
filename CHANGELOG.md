@@ -1,3 +1,10 @@
+## [0.42.2](https://github.com/staff0rd/assist/compare/v0.42.1...v0.42.2) (2026-02-09)
+
+
+### Bug Fixes
+
+* tweak maintainability failure message ([cc807f0](https://github.com/staff0rd/assist/commit/cc807f0b277cf7500649fbbfe062506a2bd945d2))
+
 ## [0.42.1](https://github.com/staff0rd/assist/compare/v0.42.0...v0.42.1) (2026-02-09)
 
 
