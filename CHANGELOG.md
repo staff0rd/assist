@@ -1,3 +1,10 @@
+# [0.43.0](https://github.com/staff0rd/assist/compare/v0.42.2...v0.43.0) (2026-02-09)
+
+
+### Features
+
+* add refactor restructure command ([b8e3a71](https://github.com/staff0rd/assist/commit/b8e3a710ddf4df1ec29124bd58b381e53f14a797))
+
 ## [0.42.2](https://github.com/staff0rd/assist/compare/v0.42.1...v0.42.2) (2026-02-09)
 
 
