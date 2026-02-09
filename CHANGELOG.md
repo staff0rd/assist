@@ -1,3 +1,10 @@
+# [0.45.0](https://github.com/staff0rd/assist/compare/v0.44.0...v0.45.0) (2026-02-09)
+
+
+### Features
+
+* add restructure command ([5551478](https://github.com/staff0rd/assist/commit/5551478ee738cfefe290069543ad8f24a63c7561))
+
 # [0.44.0](https://github.com/staff0rd/assist/compare/v0.43.1...v0.44.0) (2026-02-09)
 
 
