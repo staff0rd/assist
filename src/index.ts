@@ -33,6 +33,7 @@ import {
 import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
+	restructure as refactorRestructure,
 } from "./commands/refactor";
 import { run, add as runAdd } from "./commands/run";
 import { statusLine } from "./commands/statusLine";
@@ -195,6 +196,19 @@ refactorCommand
 	.command("ignore <file>")
 	.description("Add a file to the refactor ignore list")
 	.action(refactorIgnore);
+
+refactorCommand
+	.command("restructure [pattern]")
+	.description(
+		"Analyze import graph and restructure tightly-coupled files into nested directories",
+	)
+	.option("--apply", "Execute the restructuring (default: dry-run)")
+	.option(
+		"--max-depth <number>",
+		"Maximum nesting iterations (default: 3)",
+		Number.parseInt,
+	)
+	.action(refactorRestructure);
 
 const devlogCommand = program
 	.command("devlog")

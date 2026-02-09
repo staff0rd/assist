@@ -41,6 +41,11 @@ export const assistConfigSchema = z.strictObject({
 			ignore: z.array(z.string()).default(["**/*test.ts*"]),
 		})
 		.default({ ignore: ["**/*test.ts*"] }),
+	restructure: z
+		.strictObject({
+			ignore: z.array(z.string()).default([]),
+		})
+		.optional(),
 	run: z.array(runConfigSchema).optional(),
 	transcript: transcriptConfigSchema.optional(),
 });
