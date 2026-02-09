@@ -34,7 +34,7 @@ Create a task for each comment found. For each comment:
      2. Run `/commit` to commit changes - parse the 7-char SHA from the output line "Committed: <sha>"
      3. Run `assist prs fixed <comment-id> <sha>` to reply with commit link and resolve the thread
    - If not addressing:
-     1. Write a **very concise** summary of why (must not contain "claude" or "opus")
+     1. Write a **1-sentence** summary of why, max 15 words (must not contain "claude" or "opus")
      2. Run `assist prs wontfix <comment-id> "<reason>"` to reply and resolve the thread
    - **Commit references**: Always use full markdown links (e.g., `[abc1234](https://github.com/owner/repo/commit/abc1234)`), never bare SHAs
 
