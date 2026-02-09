@@ -1,3 +1,10 @@
+## [0.43.1](https://github.com/staff0rd/assist/compare/v0.43.0...v0.43.1) (2026-02-09)
+
+
+### Bug Fixes
+
+* update cli message ([71f09ac](https://github.com/staff0rd/assist/commit/71f09ac0d4d0ffd5b356f0cd7bc75c8a2253b2b8))
+
 # [0.43.0](https://github.com/staff0rd/assist/compare/v0.42.2...v0.43.0) (2026-02-09)
 
 
