@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import {
+	analyze as complexityAnalyze,
 	cyclomatic as complexityCyclomatic,
 	halstead as complexityHalstead,
 	maintainability as complexityMaintainability,
@@ -9,7 +10,15 @@ import {
 export function registerComplexity(program: Command): void {
 	const complexityCommand = program
 		.command("complexity")
-		.description("Analyze TypeScript code complexity metrics");
+		.description("Analyze TypeScript code complexity metrics")
+		.argument("[pattern]")
+		.action((pattern?: string) => {
+			if (!pattern) {
+				complexityCommand.help();
+				return;
+			}
+			return complexityAnalyze(pattern);
+		});
 
 	complexityCommand
 		.command("cyclomatic [pattern]")

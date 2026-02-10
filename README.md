@@ -72,6 +72,7 @@ After installation, the `assist` command will be available globally.
 - `assist deploy redirect` - Add trailing slash redirect script to index.html
 - `assist notify` - Show desktop notification from JSON stdin (supports macOS, Windows, WSL)
 - `assist status-line` - Format Claude Code status line from JSON stdin
+- `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)
 - `assist complexity cyclomatic [pattern]` - Calculate cyclomatic complexity per function
 - `assist complexity halstead [pattern]` - Calculate Halstead metrics per function
 - `assist complexity maintainability [pattern]` - Calculate maintainability index per file
