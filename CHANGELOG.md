@@ -1,3 +1,10 @@
+## [0.47.1](https://github.com/staff0rd/assist/compare/v0.47.0...v0.47.1) (2026-02-10)
+
+
+### Bug Fixes
+
+* improve maintainability error message ([5692835](https://github.com/staff0rd/assist/commit/569283546f2617f17482097b3ebea04f870e57e3))
+
 # [0.47.0](https://github.com/staff0rd/assist/compare/v0.46.0...v0.47.0) (2026-02-10)
 
 
