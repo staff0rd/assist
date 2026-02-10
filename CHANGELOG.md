@@ -1,3 +1,10 @@
+# [0.48.0](https://github.com/staff0rd/assist/compare/v0.47.1...v0.48.0) (2026-02-10)
+
+
+### Features
+
+* validate sha in prs fixed ([49f5575](https://github.com/staff0rd/assist/commit/49f557567d7b8bf303ce13a24e49511ff715969c))
+
 ## [0.47.1](https://github.com/staff0rd/assist/compare/v0.47.0...v0.47.1) (2026-02-10)
 
 
