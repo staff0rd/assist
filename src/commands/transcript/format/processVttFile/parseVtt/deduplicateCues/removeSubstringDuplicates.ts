@@ -1,4 +1,4 @@
-import type { VttCue } from "../../../types";
+import type { VttCue } from "../../../../types";
 
 function normalizeText(text: string): string {
 	return text.toLowerCase().trim();

@@ -1,4 +1,4 @@
-import type { VttCue } from "../../types";
+import type { VttCue } from "../../../types";
 
 function parseHMS(h: string, m: string, s: string): number {
 	return (
@@ -106,5 +106,5 @@ export function parseVtt(content: string): VttCue[] {
 	return cues;
 }
 
-export { cleanText } from "../../cleanText";
+export { cleanText } from "../../../cleanText";
 export { deduplicateCues } from "./deduplicateCues";

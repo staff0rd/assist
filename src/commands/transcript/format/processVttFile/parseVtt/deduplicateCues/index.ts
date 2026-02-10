@@ -1,5 +1,5 @@
-import { cleanText } from "../../../cleanText";
-import type { VttCue } from "../../../types";
+import { cleanText } from "../../../../cleanText";
+import type { VttCue } from "../../../../types";
 import { removeSubstringDuplicates } from "./removeSubstringDuplicates";
 
 function findWordOverlap(currentWords: string[], nextWords: string[]): number {
