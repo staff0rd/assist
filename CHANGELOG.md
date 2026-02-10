@@ -1,3 +1,10 @@
+# [0.47.0](https://github.com/staff0rd/assist/compare/v0.46.0...v0.47.0) (2026-02-10)
+
+
+### Features
+
+* add complexity default action ([9874797](https://github.com/staff0rd/assist/commit/987479717995c1d728588c5999c7e7eb2268c1e8))
+
 # [0.46.0](https://github.com/staff0rd/assist/compare/v0.45.0...v0.46.0) (2026-02-09)
 
 
