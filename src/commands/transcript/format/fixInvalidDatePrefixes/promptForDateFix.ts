@@ -1,10 +1,38 @@
 import { renameSync } from "node:fs";
 import { join } from "node:path";
+import type readline from "node:readline";
 import {
 	askQuestion,
 	createReadlineInterface,
 	getDatePrefix,
 } from "../../shared";
+
+async function resolveDate(
+	rl: readline.Interface,
+	choice: string,
+): Promise<string | null> {
+	if (choice === "1") return getDatePrefix(0);
+	if (choice === "2") return getDatePrefix(-1);
+	if (choice === "3") {
+		const customDate = await askQuestion(rl, "Enter date (YYYY-MM-DD): ");
+		if (/^\d{4}-\d{2}-\d{2}$/.test(customDate)) return customDate;
+		console.log("Invalid date format. Cancelling.");
+		return null;
+	}
+	console.log("Cancelled.");
+	return null;
+}
+
+function renameWithPrefix(
+	vttDir: string,
+	vttFile: string,
+	prefix: string,
+): string {
+	const newFilename = `${prefix}.${vttFile}`;
+	renameSync(join(vttDir, vttFile), join(vttDir, newFilename));
+	console.log(`Renamed to: ${newFilename}`);
+	return newFilename;
+}
 
 export async function promptForDateFix(
 	vttFile: string,
@@ -23,46 +51,10 @@ export async function promptForDateFix(
 
 	try {
 		const choice = await askQuestion(rl, "\nSelect an option (1/2/3/4): ");
-
-		let newPrefix: string | null = null;
-
-		switch (choice) {
-			case "1":
-				newPrefix = getDatePrefix(0);
-				break;
-			case "2":
-				newPrefix = getDatePrefix(-1);
-				break;
-			case "3": {
-				const customDate = await askQuestion(rl, "Enter date (YYYY-MM-DD): ");
-				if (/^\d{4}-\d{2}-\d{2}$/.test(customDate)) {
-					newPrefix = customDate;
-				} else {
-					console.log("Invalid date format. Cancelling.");
-					rl.close();
-					return null;
-				}
-				break;
-			}
-			default:
-				console.log("Cancelled.");
-				rl.close();
-				return null;
-		}
-
+		const prefix = await resolveDate(rl, choice);
 		rl.close();
 
-		if (newPrefix) {
-			const newFilename = `${newPrefix}.${vttFile}`;
-			const oldPath = join(vttDir, vttFile);
-			const newPath = join(vttDir, newFilename);
-
-			renameSync(oldPath, newPath);
-			console.log(`Renamed to: ${newFilename}`);
-			return newFilename;
-		}
-
-		return null;
+		return prefix ? renameWithPrefix(vttDir, vttFile, prefix) : null;
 	} catch (error) {
 		rl.close();
 		throw error;

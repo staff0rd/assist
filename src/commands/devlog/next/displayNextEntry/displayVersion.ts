@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getVersionAtCommit, stripToMinor } from "../getLastVersionInfo";
+import { getVersionAtCommit, stripToMinor } from "../../getLastVersionInfo";
 
 export function displayVersion(
 	conventional: boolean,

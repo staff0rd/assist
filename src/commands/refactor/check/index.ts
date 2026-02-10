@@ -8,53 +8,55 @@ type CheckOptions = GitFilterOptions & {
 	maxLines?: number;
 };
 
+function runScript(
+	script: string,
+	cwd: string,
+): Promise<{ script: string; code: number; output: string }> {
+	return new Promise((resolve) => {
+		const child = spawn("npm", ["run", script], {
+			stdio: "pipe",
+			shell: true,
+			cwd,
+		});
+		let output = "";
+		child.stdout?.on("data", (data) => {
+			output += data.toString();
+		});
+		child.stderr?.on("data", (data) => {
+			output += data.toString();
+		});
+		child.on("close", (code) => {
+			resolve({ script, code: code ?? 1, output });
+		});
+	});
+}
+
+function logFailures(
+	failed: { script: string; code: number; output: string }[],
+): void {
+	for (const f of failed) {
+		console.error(f.output);
+	}
+	console.error(`\n${failed.length} verify script(s) failed:`);
+	for (const f of failed) {
+		console.error(`  - ${f.script} (exit code ${f.code})`);
+	}
+}
+
 async function runVerifyQuietly(): Promise<boolean> {
 	const result = findPackageJsonWithVerifyScripts(process.cwd());
+	if (!result) return true;
 
-	if (!result) {
-		return true;
-	}
-
-	const { packageJsonPath, verifyScripts } = result;
-	const packageDir = path.dirname(packageJsonPath);
-
+	const packageDir = path.dirname(result.packageJsonPath);
 	const results = await Promise.all(
-		verifyScripts.map(
-			(script) =>
-				new Promise<{ script: string; code: number; output: string }>(
-					(resolve) => {
-						const child = spawn("npm", ["run", script], {
-							stdio: "pipe",
-							shell: true,
-							cwd: packageDir,
-						});
-						let output = "";
-						child.stdout?.on("data", (data) => {
-							output += data.toString();
-						});
-						child.stderr?.on("data", (data) => {
-							output += data.toString();
-						});
-						child.on("close", (code) => {
-							resolve({ script, code: code ?? 1, output });
-						});
-					},
-				),
-		),
+		result.verifyScripts.map((script) => runScript(script, packageDir)),
 	);
 
 	const failed = results.filter((r) => r.code !== 0);
 	if (failed.length > 0) {
-		for (const f of failed) {
-			console.error(f.output);
-		}
-		console.error(`\n${failed.length} verify script(s) failed:`);
-		for (const f of failed) {
-			console.error(`  - ${f.script} (exit code ${f.code})`);
-		}
+		logFailures(failed);
 		return false;
 	}
-
 	return true;
 }
 

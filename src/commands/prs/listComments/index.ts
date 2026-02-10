@@ -14,22 +14,19 @@ import type { PrComment } from "../types";
 import { fetchLineComments, fetchReviewComments } from "./fetchReviewComments";
 import { formatForHuman } from "./formatForHuman";
 
+function formatComment(comment: PrComment): string {
+	return isClaudeCode() ? JSON.stringify(comment) : formatForHuman(comment);
+}
+
 export function printComments(comments: PrComment[]): void {
 	if (comments.length === 0) {
 		console.log("No comments found.");
 		return;
 	}
-	if (isClaudeCode()) {
-		for (const comment of comments) {
-			console.log(JSON.stringify(comment));
-		}
-	} else {
-		for (const comment of comments) {
-			console.log(formatForHuman(comment));
-		}
+	for (const comment of comments) {
+		console.log(formatComment(comment));
 	}
-	const lineComments = comments.filter((c) => c.type === "line");
-	if (lineComments.length === 0) {
+	if (!comments.some((c) => c.type === "line")) {
 		console.log("No line comments to process.");
 	}
 }
@@ -50,6 +47,27 @@ function writeCommentsCache(prNumber: number, comments: PrComment[]): void {
 	writeFileSync(cachePath, stringify(cacheData));
 }
 
+function handleKnownErrors(error: unknown): PrComment[] | null {
+	if (isGhNotInstalled(error)) {
+		console.error("Error: GitHub CLI (gh) is not installed.");
+		console.error("Install it from https://cli.github.com/");
+		return [];
+	}
+	if (isNotFound(error)) {
+		console.error("Error: Pull request not found.");
+		return [];
+	}
+	return null;
+}
+
+function updateCache(prNumber: number, comments: PrComment[]): void {
+	if (comments.some((c) => c.type === "line")) {
+		writeCommentsCache(prNumber, comments);
+	} else {
+		deleteCommentsCache(prNumber);
+	}
+}
+
 export async function listComments(): Promise<PrComment[]> {
 	try {
 		const prNumber = getCurrentPrNumber();
@@ -59,24 +77,11 @@ export async function listComments(): Promise<PrComment[]> {
 			...fetchReviewComments(org, repo, prNumber),
 			...fetchLineComments(org, repo, prNumber, threadInfo),
 		];
-
-		if (allComments.some((c) => c.type === "line")) {
-			writeCommentsCache(prNumber, allComments);
-		} else {
-			deleteCommentsCache(prNumber);
-		}
-
+		updateCache(prNumber, allComments);
 		return allComments;
 	} catch (error) {
-		if (isGhNotInstalled(error)) {
-			console.error("Error: GitHub CLI (gh) is not installed.");
-			console.error("Install it from https://cli.github.com/");
-			return [];
-		}
-		if (isNotFound(error)) {
-			console.error("Error: Pull request not found.");
-			return [];
-		}
+		const handled = handleKnownErrors(error);
+		if (handled !== null) return handled;
 		throw error;
 	}
 }

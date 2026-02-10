@@ -4,6 +4,20 @@ import { getTranscriptConfig } from "../../../shared/loadConfig";
 import { findMdFilesRecursive, getTranscriptBaseName } from "../shared";
 import { processStagedFile, STAGING_DIR } from "./processStagedFile";
 
+function buildRelativeKey(relativePath: string, baseName: string): string {
+	const relDir = dirname(relativePath);
+	return relDir === "." ? baseName : join(relDir, baseName);
+}
+
+function buildSummaryIndex(summaryDir: string): Set<string> {
+	const summaryFiles = findMdFilesRecursive(summaryDir);
+	return new Set(
+		summaryFiles.map((f) =>
+			buildRelativeKey(f.relativePath, basename(f.filename, ".md")),
+		),
+	);
+}
+
 export function summarise() {
 	// First check for staged files to process
 	processStagedFile();
@@ -22,26 +36,13 @@ export function summarise() {
 		return;
 	}
 
-	const summaryFiles = findMdFilesRecursive(summaryDir);
-	const summaryRelativePaths = new Set(
-		summaryFiles.map((f) => {
-			const relDir = dirname(f.relativePath);
-			const baseName = basename(f.filename, ".md");
-			return relDir === "." ? baseName : join(relDir, baseName);
-		}),
+	const summaryIndex = buildSummaryIndex(summaryDir);
+	const missing = transcriptFiles.filter(
+		(t) =>
+			!summaryIndex.has(
+				buildRelativeKey(t.relativePath, getTranscriptBaseName(t.filename)),
+			),
 	);
-
-	const missing: typeof transcriptFiles = [];
-	for (const transcript of transcriptFiles) {
-		const transcriptBaseName = getTranscriptBaseName(transcript.filename);
-		const relDir = dirname(transcript.relativePath);
-		const fullKey =
-			relDir === "." ? transcriptBaseName : join(relDir, transcriptBaseName);
-
-		if (!summaryRelativePaths.has(fullKey)) {
-			missing.push(transcript);
-		}
-	}
 
 	if (missing.length === 0) {
 		console.log("All transcripts have summaries.");

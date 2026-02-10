@@ -1,83 +1,64 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, dirname, join } from "node:path";
+import { existsSync } from "node:fs";
 import { getTranscriptConfig } from "../../../shared/loadConfig";
 import { findVttFilesRecursive } from "../shared";
 import { fixInvalidDatePrefixes } from "./fixInvalidDatePrefixes";
-import { cuesToChatMessages, formatChatLog } from "./formatChatLog";
-import { deduplicateCues, parseVtt } from "./parseVtt";
+import { ensureDirectory, processVttFile } from "./processVttFile";
 
-function processFile(inputPath: string, outputPath: string): void {
-	console.log(`Reading: ${inputPath}`);
-	const content = readFileSync(inputPath, "utf-8");
-
-	const cues = parseVtt(content);
-	console.log(`Parsed ${cues.length} cues`);
-
-	const dedupedCues = deduplicateCues(cues);
-	console.log(`After deduplication: ${dedupedCues.length} cues`);
-
-	const chatMessages = cuesToChatMessages(dedupedCues);
-	console.log(`Consolidated to ${chatMessages.length} chat messages`);
-
-	const output = formatChatLog(chatMessages);
-	writeFileSync(outputPath, output, "utf-8");
-	console.log(`Written: ${outputPath}`);
-
+function logSummary(counts: { processed: number; skipped: number }): void {
 	console.log(
-		`Reduction: ${cues.length} cues -> ${chatMessages.length} messages\n`,
+		`\nSummary: ${counts.processed} processed, ${counts.skipped} skipped`,
 	);
 }
 
-export async function format() {
-	const { vttDir, transcriptsDir } = getTranscriptConfig();
+function processAllFiles(
+	vttFiles: { filename: string; relativePath: string; absolutePath: string }[],
+	transcriptsDir: string,
+): void {
+	const counts = { processed: 0, skipped: 0 };
+	for (const vttFile of vttFiles) {
+		counts[processVttFile(vttFile, transcriptsDir)]++;
+	}
+	logSummary(counts);
+}
 
+function requireVttDir(vttDir: string): void {
 	if (!existsSync(vttDir)) {
 		console.error(`VTT directory not found: ${vttDir}`);
 		process.exit(1);
 	}
+}
 
-	if (!existsSync(transcriptsDir)) {
-		mkdirSync(transcriptsDir, { recursive: true });
-		console.log(`Created output directory: ${transcriptsDir}`);
-	}
+function logFoundFiles(
+	files: ReturnType<typeof findVttFilesRecursive>,
+	vttDir: string,
+): void {
+	console.log(`Found ${files.length} VTT file(s) in ${vttDir}\n`);
+}
 
-	let vttFiles = findVttFilesRecursive(vttDir);
+function logNoVttFiles(): null {
+	console.log("No VTT files found in vtt directory.");
+	return null;
+}
 
-	if (vttFiles.length === 0) {
-		console.log("No VTT files found in vtt directory.");
-		return;
-	}
+function loadVttFiles(vttDir: string) {
+	const files = findVttFilesRecursive(vttDir);
+	if (files.length === 0) return logNoVttFiles();
+	logFoundFiles(files, vttDir);
+	return files;
+}
 
-	console.log(`Found ${vttFiles.length} VTT file(s) in ${vttDir}\n`);
+async function formatLoadedFiles(
+	vttFiles: NonNullable<ReturnType<typeof loadVttFiles>>,
+	transcriptsDir: string,
+): Promise<void> {
+	const fixed = await fixInvalidDatePrefixes(vttFiles);
+	processAllFiles(fixed, transcriptsDir);
+}
 
-	vttFiles = await fixInvalidDatePrefixes(vttFiles);
-
-	let processed = 0;
-	let skipped = 0;
-
-	for (const vttFile of vttFiles) {
-		let baseName = basename(vttFile.filename, ".vtt");
-		baseName = baseName.replace(/\s*Transcription\s*/g, " ").trim();
-		const mdFile = `${baseName}.md`;
-		const relativeDir = dirname(vttFile.relativePath);
-		const outputDir =
-			relativeDir === "." ? transcriptsDir : join(transcriptsDir, relativeDir);
-		const outputPath = join(outputDir, mdFile);
-
-		if (!existsSync(outputDir)) {
-			mkdirSync(outputDir, { recursive: true });
-			console.log(`Created output directory: ${outputDir}`);
-		}
-
-		if (existsSync(outputPath)) {
-			console.log(`Skipping (already exists): ${join(relativeDir, mdFile)}`);
-			skipped++;
-			continue;
-		}
-
-		processFile(vttFile.absolutePath, outputPath);
-		processed++;
-	}
-
-	console.log(`\nSummary: ${processed} processed, ${skipped} skipped`);
+export async function format() {
+	const { vttDir, transcriptsDir } = getTranscriptConfig();
+	requireVttDir(vttDir);
+	ensureDirectory(transcriptsDir, "output directory");
+	const vttFiles = loadVttFiles(vttDir);
+	if (vttFiles) await formatLoadedFiles(vttFiles, transcriptsDir);
 }

@@ -10,61 +10,85 @@ type VerifyOption = {
 	description: string;
 };
 
-export function getAvailableOptions(setup: ExistingSetup): VerifyOption[] {
-	const options: VerifyOption[] = [];
+function getBuildDescription(setup: ExistingSetup): string {
+	if (setup.hasVite && setup.hasTypescript)
+		return "TypeScript + Vite build verification";
+	if (setup.hasVite) return "Vite build verification";
+	return "TypeScript type checking";
+}
 
-	if (needsSetup(setup.knip)) {
-		options.push({
-			name: `knip${getStatusLabel(setup.knip)}`,
-			value: "knip",
-			description: "Dead code and unused dependency detection",
-		});
-	}
+function shouldInclude(setup: ExistingSetup, def: OptionDef): boolean {
+	return needsSetup(setup[def.toolKey]) && (def.extraCondition ?? true);
+}
 
-	if (needsSetup(setup.biome)) {
-		options.push({
-			name: `lint${getStatusLabel(setup.biome)}`,
-			value: "lint",
-			description: "Code linting and formatting with Biome",
-		});
-	}
+function toVerifyOption(setup: ExistingSetup, def: OptionDef): VerifyOption {
+	return {
+		name: `${def.label}${getStatusLabel(setup[def.toolKey])}`,
+		value: def.value,
+		description: def.description,
+	};
+}
 
-	if (needsSetup(setup.jscpd)) {
-		options.push({
-			name: `duplicate-code${getStatusLabel(setup.jscpd)}`,
-			value: "duplicate-code",
-			description: "Duplicate code detection with jscpd",
-		});
-	}
+type OptionDef = {
+	toolKey: "knip" | "biome" | "jscpd" | "test" | "build" | "hardcodedColors";
+	value: string;
+	label: string;
+	description: string;
+	extraCondition?: boolean;
+};
 
-	if (needsSetup(setup.test) && setup.test.hasPackage) {
-		options.push({
-			name: `test${getStatusLabel(setup.test)}`,
+const STATIC_OPTIONS: OptionDef[] = [
+	{
+		toolKey: "knip",
+		value: "knip",
+		label: "knip",
+		description: "Dead code and unused dependency detection",
+	},
+	{
+		toolKey: "biome",
+		value: "lint",
+		label: "lint",
+		description: "Code linting and formatting with Biome",
+	},
+	{
+		toolKey: "jscpd",
+		value: "duplicate-code",
+		label: "duplicate-code",
+		description: "Duplicate code detection with jscpd",
+	},
+	{
+		toolKey: "hardcodedColors",
+		value: "hardcoded-colors",
+		label: "hardcoded-colors",
+		description: "Detect hardcoded hex colors (use open-color instead)",
+	},
+];
+
+function getConditionalOptions(setup: ExistingSetup): OptionDef[] {
+	return [
+		{
+			toolKey: "test",
 			value: "test",
+			label: "test",
 			description: "Run tests with vitest",
-		});
-	}
-
-	if (needsSetup(setup.build) && (setup.hasTypescript || setup.hasVite)) {
-		const description = setup.hasVite
-			? setup.hasTypescript
-				? "TypeScript + Vite build verification"
-				: "Vite build verification"
-			: "TypeScript type checking";
-		options.push({
-			name: `build${getStatusLabel(setup.build)}`,
+			extraCondition: setup.test.hasPackage,
+		},
+		{
+			toolKey: "build",
 			value: "build",
-			description,
-		});
-	}
+			label: "build",
+			description: getBuildDescription(setup),
+			extraCondition: setup.hasTypescript || setup.hasVite,
+		},
+	];
+}
 
-	if (needsSetup(setup.hardcodedColors)) {
-		options.push({
-			name: `hardcoded-colors${getStatusLabel(setup.hardcodedColors)}`,
-			value: "hardcoded-colors",
-			description: "Detect hardcoded hex colors (use open-color instead)",
-		});
-	}
+function getAllOptionDefs(setup: ExistingSetup): OptionDef[] {
+	return [...STATIC_OPTIONS, ...getConditionalOptions(setup)];
+}
 
-	return options;
+export function getAvailableOptions(setup: ExistingSetup): VerifyOption[] {
+	return getAllOptionDefs(setup)
+		.filter((def) => shouldInclude(setup, def))
+		.map((def) => toVerifyOption(setup, def));
 }

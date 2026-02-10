@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { deleteCommentsCache, loadCommentsCache } from "./loadCommentsCache";
 import { getCurrentPrNumber, getRepoInfo } from "./shared";
+import type { PrComment } from "./types";
 
 function replyToComment(
 	org: string,
@@ -33,13 +34,7 @@ function resolveThread(threadId: string): void {
 	}
 }
 
-export function resolveCommentWithReply(
-	commentId: number,
-	message: string,
-): void {
-	const prNumber = getCurrentPrNumber();
-	const { org, repo } = getRepoInfo();
-
+function requireCache(prNumber: number) {
 	const cache = loadCommentsCache(prNumber);
 	if (!cache) {
 		console.error(
@@ -47,19 +42,49 @@ export function resolveCommentWithReply(
 		);
 		process.exit(1);
 	}
+	return cache;
+}
 
-	const comment = cache.comments.find(
-		(c) => c.type === "line" && c.id === commentId,
+function findLineComment(
+	comments: PrComment[],
+	commentId: number,
+): PrComment | undefined {
+	return comments.find((c) => c.type === "line" && c.id === commentId);
+}
+
+function requireLineComment(
+	cache: NonNullable<ReturnType<typeof loadCommentsCache>>,
+	commentId: number,
+) {
+	const comment = findLineComment(cache.comments, commentId);
+	if (!comment || comment.type !== "line" || !comment.threadId) {
+		console.error(
+			`Error: Comment #${commentId} not found or has no thread ID.`,
+		);
+		process.exit(1);
+	}
+	return comment as PrComment & { threadId: string };
+}
+
+function cleanupCacheIfDone(
+	cache: NonNullable<ReturnType<typeof loadCommentsCache>>,
+	prNumber: number,
+	commentId: number,
+): void {
+	const hasRemaining = cache.comments.some(
+		(c) => c.type === "line" && c.id !== commentId,
 	);
-	if (!comment || comment.type !== "line") {
-		console.error(`Error: Comment #${commentId} not found in cached data.`);
-		process.exit(1);
-	}
+	if (!hasRemaining) deleteCommentsCache(prNumber);
+}
 
-	if (!comment.threadId) {
-		console.error(`Error: Comment #${commentId} has no associated thread ID.`);
-		process.exit(1);
-	}
+export function resolveCommentWithReply(
+	commentId: number,
+	message: string,
+): void {
+	const prNumber = getCurrentPrNumber();
+	const { org, repo } = getRepoInfo();
+	const cache = requireCache(prNumber);
+	const comment = requireLineComment(cache, commentId);
 
 	replyToComment(org, repo, prNumber, commentId, message);
 	console.log("Reply posted successfully.");
@@ -67,10 +92,5 @@ export function resolveCommentWithReply(
 	resolveThread(comment.threadId);
 	console.log("Thread resolved successfully.");
 
-	const remainingLineComments = cache.comments.filter(
-		(c) => c.type === "line" && c.id !== commentId,
-	);
-	if (remainingLineComments.length === 0) {
-		deleteCommentsCache(prNumber);
-	}
+	cleanupCacheIfDone(cache, prNumber, commentId);
 }

@@ -3,28 +3,46 @@ import ts from "typescript";
 import type { ImportEdge, ImportGraph } from "../types";
 import { getImportSpecifiers } from "./getImportSpecifiers";
 
-function loadCompilerOptions(tsConfigPath: string): ts.CompilerOptions {
+function loadParsedConfig(tsConfigPath: string): ts.ParsedCommandLine {
 	const configFile = ts.readConfigFile(tsConfigPath, ts.sys.readFile);
-	const parsed = ts.parseJsonConfigFileContent(
+	return ts.parseJsonConfigFileContent(
 		configFile.config,
 		ts.sys,
 		path.dirname(tsConfigPath),
 	);
-	return parsed.options;
+}
+
+function addToSetMap(
+	map: Map<string, Set<string>>,
+	key: string,
+	value: string,
+): void {
+	let set = map.get(key);
+	if (!set) {
+		set = new Set<string>();
+		map.set(key, set);
+	}
+	set.add(value);
+}
+
+function resolveImport(
+	specifier: string,
+	filePath: string,
+	options: ts.CompilerOptions,
+): string | null {
+	if (!specifier.startsWith(".")) return null;
+	const resolved = ts.resolveModuleName(specifier, filePath, options, ts.sys);
+	const resolvedPath = resolved.resolvedModule?.resolvedFileName;
+	if (!resolvedPath || resolvedPath.includes("node_modules")) return null;
+	return path.resolve(resolvedPath);
 }
 
 export function buildImportGraph(
 	candidateFiles: Set<string>,
 	tsConfigPath: string,
 ): ImportGraph {
-	const options = loadCompilerOptions(tsConfigPath);
-	const configFile = ts.readConfigFile(tsConfigPath, ts.sys.readFile);
-	const parsed = ts.parseJsonConfigFileContent(
-		configFile.config,
-		ts.sys,
-		path.dirname(tsConfigPath),
-	);
-	const program = ts.createProgram(parsed.fileNames, options);
+	const parsed = loadParsedConfig(tsConfigPath);
+	const program = ts.createProgram(parsed.fileNames, parsed.options);
 	const edges: ImportEdge[] = [];
 	const importedBy = new Map<string, Set<string>>();
 	const imports = new Map<string, Set<string>>();
@@ -34,26 +52,12 @@ export function buildImportGraph(
 		if (filePath.includes("node_modules")) continue;
 
 		for (const specifier of getImportSpecifiers(sourceFile)) {
-			if (!specifier.startsWith(".")) continue;
-			const resolved = ts.resolveModuleName(
-				specifier,
-				filePath,
-				options,
-				ts.sys,
-			);
-			const resolvedPath = resolved.resolvedModule?.resolvedFileName;
-			if (!resolvedPath || resolvedPath.includes("node_modules")) continue;
+			const absTarget = resolveImport(specifier, filePath, parsed.options);
+			if (!absTarget) continue;
 
-			const absTarget = path.resolve(resolvedPath);
 			edges.push({ source: filePath, target: absTarget, specifier });
-
-			const targetSet = importedBy.get(absTarget) ?? new Set<string>();
-			if (!importedBy.has(absTarget)) importedBy.set(absTarget, targetSet);
-			targetSet.add(filePath);
-
-			const sourceSet = imports.get(filePath) ?? new Set<string>();
-			if (!imports.has(filePath)) imports.set(filePath, sourceSet);
-			sourceSet.add(absTarget);
+			addToSetMap(importedBy, absTarget, filePath);
+			addToSetMap(imports, filePath, absTarget);
 		}
 	}
 

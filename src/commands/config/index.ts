@@ -2,45 +2,7 @@ import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
 import { loadConfig, saveConfig } from "../../shared/loadConfig";
 import { assistConfigSchema } from "../../shared/types";
-
-function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
-	const keys = path.split(".");
-	let current: unknown = obj;
-	for (const key of keys) {
-		if (
-			current === null ||
-			current === undefined ||
-			typeof current !== "object"
-		) {
-			return undefined;
-		}
-		current = (current as Record<string, unknown>)[key];
-	}
-	return current;
-}
-
-function setNestedValue(
-	obj: Record<string, unknown>,
-	path: string,
-	value: unknown,
-): Record<string, unknown> {
-	const keys = path.split(".");
-	const result = { ...obj };
-	let current = result;
-	for (let i = 0; i < keys.length - 1; i++) {
-		const key = keys[i];
-		current[key] =
-			current[key] !== null &&
-			current[key] !== undefined &&
-			typeof current[key] === "object" &&
-			!Array.isArray(current[key])
-				? { ...(current[key] as Record<string, unknown>) }
-				: {};
-		current = current[key] as Record<string, unknown>;
-	}
-	current[keys[keys.length - 1]] = value;
-	return result;
-}
+import { getNestedValue, setNestedValue } from "./getNestedValue";
 
 function coerceValue(value: string): string | boolean {
 	if (value === "true") return true;
@@ -48,40 +10,76 @@ function coerceValue(value: string): string | boolean {
 	return value;
 }
 
-export function configSet(key: string, value: string): void {
-	const config = loadConfig();
-	const coerced = coerceValue(value);
+function formatIssuePath(issue: { path: PropertyKey[] }, key: string): string {
+	return issue.path.length > 0 ? issue.path.join(".") : key;
+}
+
+function printValidationErrors(
+	issues: { path: PropertyKey[]; message: string }[],
+	key: string,
+): void {
+	for (const issue of issues) {
+		console.error(
+			chalk.red(`${formatIssuePath(issue, key)}: ${issue.message}`),
+		);
+	}
+}
+
+function exitValidationFailed(
+	issues: { path: PropertyKey[]; message: string }[],
+	key: string,
+): never {
+	printValidationErrors(issues, key);
+	process.exit(1);
+}
+
+function validateConfig(updated: Record<string, unknown>, key: string) {
+	const result = assistConfigSchema.safeParse(updated);
+	if (!result.success) return exitValidationFailed(result.error.issues, key);
+	return result.data;
+}
+
+function applyConfigSet(key: string, coerced: string | boolean): void {
 	const updated = setNestedValue(
-		config as Record<string, unknown>,
+		loadConfig() as Record<string, unknown>,
 		key,
 		coerced,
 	);
+	saveConfig(validateConfig(updated, key));
+}
 
-	const result = assistConfigSchema.safeParse(updated);
-	if (!result.success) {
-		for (const issue of result.error.issues) {
-			const path = issue.path.length > 0 ? issue.path.join(".") : key;
-			console.error(chalk.red(`${path}: ${issue.message}`));
-		}
-		process.exit(1);
-	}
-
-	saveConfig(result.data);
+export function configSet(key: string, value: string): void {
+	const coerced = coerceValue(value);
+	applyConfigSet(key, coerced);
 	console.log(chalk.green(`Set ${key} = ${JSON.stringify(coerced)}`));
 }
 
+function formatOutput(value: unknown): string {
+	return typeof value === "object" && value !== null
+		? JSON.stringify(value, null, 2)
+		: String(value);
+}
+
+function exitKeyNotSet(key: string): never {
+	console.error(chalk.red(`Key "${key}" is not set`));
+	process.exit(1);
+}
+
+function requireNestedValue(
+	config: Record<string, unknown>,
+	key: string,
+): unknown {
+	const value = getNestedValue(config, key);
+	if (value === undefined) return exitKeyNotSet(key);
+	return value;
+}
+
 export function configGet(key: string): void {
-	const config = loadConfig();
-	const value = getNestedValue(config as Record<string, unknown>, key);
-	if (value === undefined) {
-		console.error(chalk.red(`Key "${key}" is not set`));
-		process.exit(1);
-	}
-	if (typeof value === "object" && value !== null) {
-		console.log(JSON.stringify(value, null, 2));
-	} else {
-		console.log(String(value));
-	}
+	console.log(
+		formatOutput(
+			requireNestedValue(loadConfig() as Record<string, unknown>, key),
+		),
+	);
 }
 
 export function configList(): void {

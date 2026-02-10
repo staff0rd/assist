@@ -16,27 +16,37 @@ type ConfigOption = {
 	description: string;
 };
 
-export async function init(): Promise<void> {
-	const { pkg } = requirePackageJson();
-	const setup = detectVscodeSetup(pkg);
+const SETUP_HANDLERS: Record<string, () => void> = {
+	launch: () => createLaunchJson(),
+	settings: () => {
+		createSettingsJson();
+		createExtensionsJson();
+	},
+};
 
-	const availableOptions: ConfigOption[] = [];
-
-	if (!setup.hasLaunchJson && setup.hasVite) {
-		availableOptions.push({
+function getAvailableOptions(
+	setup: ReturnType<typeof detectVscodeSetup>,
+): ConfigOption[] {
+	const options: ConfigOption[] = [];
+	if (!setup.hasLaunchJson && setup.hasVite)
+		options.push({
 			name: "launch",
 			value: "launch",
 			description: "Debug configuration for Vite dev server",
 		});
-	}
-
-	if (!setup.hasSettingsJson) {
-		availableOptions.push({
+	if (!setup.hasSettingsJson)
+		options.push({
 			name: "settings",
 			value: "settings",
 			description: "Biome formatter configuration",
 		});
-	}
+	return options;
+}
+
+export async function init(): Promise<void> {
+	const { pkg } = requirePackageJson();
+	const setup = detectVscodeSetup(pkg);
+	const availableOptions = getAvailableOptions(setup);
 
 	if (availableOptions.length === 0) {
 		console.log(chalk.green("VS Code configuration already exists!"));
@@ -44,7 +54,6 @@ export async function init(): Promise<void> {
 	}
 
 	console.log(chalk.bold("Available VS Code configurations to add:\n"));
-
 	const selected = await promptMultiselect(
 		"Select configurations to add:",
 		availableOptions,
@@ -57,18 +66,7 @@ export async function init(): Promise<void> {
 
 	removeVscodeFromGitignore();
 	ensureVscodeFolder();
-
-	for (const choice of selected) {
-		switch (choice) {
-			case "launch":
-				createLaunchJson();
-				break;
-			case "settings":
-				createSettingsJson();
-				createExtensionsJson();
-				break;
-		}
-	}
+	for (const choice of selected) SETUP_HANDLERS[choice]?.();
 
 	console.log(
 		chalk.green(`\nAdded ${selected.length} VS Code configuration(s)`),

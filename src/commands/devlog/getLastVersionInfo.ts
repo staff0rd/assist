@@ -46,51 +46,39 @@ function getLastVersionInfoFromGit(): LastVersionInfo | null {
 	}
 }
 
+function findLastDate(entries: Map<string, unknown[]>): string | null {
+	const dates = Array.from(entries.keys()).sort().reverse();
+	return dates[0] ?? null;
+}
+
 export function getLastVersionInfo(
 	repoName: string,
 	config?: AssistConfig,
 ): LastVersionInfo | null {
 	const entries = loadDevlogEntries(repoName);
-	if (entries.size === 0) {
-		return null;
-	}
+	const lastDate = findLastDate(entries);
+	if (!lastDate) return null;
 
-	const dates = Array.from(entries.keys()).sort().reverse();
-	const lastDate = dates[0];
-	if (!lastDate) {
-		return null;
-	}
-
-	// Use package.json version when conventional commits enabled
 	if (config?.commit?.conventional) {
 		const gitInfo = getLastVersionInfoFromGit();
-		if (gitInfo) {
-			return { date: lastDate, version: gitInfo.version };
-		}
+		if (gitInfo) return { date: lastDate, version: gitInfo.version };
 	}
 
-	const lastEntries = entries.get(lastDate);
-	const lastVersion = lastEntries?.[0]?.version;
-	if (!lastVersion) {
-		return null;
-	}
+	const lastVersion = entries.get(lastDate)?.[0]?.version;
+	return lastVersion ? { date: lastDate, version: lastVersion } : null;
+}
 
-	return { date: lastDate, version: lastVersion };
+function cleanVersion(version: string): string | null {
+	return semver.clean(version) ?? semver.coerce(version)?.version ?? null;
 }
 
 export function bumpVersion(version: string, type: "patch" | "minor"): string {
-	const cleaned = semver.clean(version) ?? semver.coerce(version)?.version;
-	if (!cleaned) {
-		return version;
-	}
+	const cleaned = cleanVersion(version);
+	if (!cleaned) return version;
+
 	const bumped = semver.inc(cleaned, type);
-	if (!bumped) {
-		return version;
-	}
-	if (type === "minor") {
-		// Remove patch number for minor versions (v1.3.0 -> v1.3)
-		const parsed = semver.parse(bumped);
-		return parsed ? `v${parsed.major}.${parsed.minor}` : `v${bumped}`;
-	}
+	if (!bumped) return version;
+
+	if (type === "minor") return stripToMinor(bumped);
 	return `v${bumped}`;
 }

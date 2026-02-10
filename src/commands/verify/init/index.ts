@@ -12,6 +12,41 @@ import {
 import { detectExistingSetup } from "./detectExistingSetup";
 import { getAvailableOptions } from "./getAvailableOptions";
 
+type SetupHandler = (
+	packageJsonPath: string,
+	...args: boolean[]
+) => Promise<void>;
+
+function getSetupHandlers(
+	hasVite: boolean,
+	hasTypescript: boolean,
+	hasOpenColor: boolean,
+): Record<string, SetupHandler> {
+	return {
+		knip: (p) => setupKnip(p),
+		lint: (p) => setupLint(p),
+		"duplicate-code": (p) => setupDuplicateCode(p),
+		test: (p) => setupTest(p),
+		build: (p) => setupBuild(p, hasVite, hasTypescript),
+		"hardcoded-colors": (p) => setupHardcodedColors(p, hasOpenColor),
+	};
+}
+
+async function runSelectedSetups(
+	selected: string[],
+	packageJsonPath: string,
+	handlers: Record<string, SetupHandler>,
+): Promise<void> {
+	for (const choice of selected) {
+		await handlers[choice]?.(packageJsonPath);
+	}
+	console.log(chalk.green(`\nAdded ${selected.length} verify script(s):`));
+	for (const choice of selected) {
+		console.log(chalk.green(`  - verify:${choice}`));
+	}
+	console.log(chalk.dim("\nRun 'assist verify' to run all verify scripts"));
+}
+
 export async function init(): Promise<void> {
 	const { packageJsonPath, pkg } = requirePackageJson();
 	const setup = detectExistingSetup(pkg);
@@ -34,32 +69,10 @@ export async function init(): Promise<void> {
 		return;
 	}
 
-	for (const choice of selected) {
-		switch (choice) {
-			case "knip":
-				await setupKnip(packageJsonPath);
-				break;
-			case "lint":
-				await setupLint(packageJsonPath);
-				break;
-			case "duplicate-code":
-				await setupDuplicateCode(packageJsonPath);
-				break;
-			case "test":
-				await setupTest(packageJsonPath);
-				break;
-			case "build":
-				await setupBuild(packageJsonPath, setup.hasVite, setup.hasTypescript);
-				break;
-			case "hardcoded-colors":
-				await setupHardcodedColors(packageJsonPath, setup.hasOpenColor);
-				break;
-		}
-	}
-
-	console.log(chalk.green(`\nAdded ${selected.length} verify script(s):`));
-	for (const choice of selected) {
-		console.log(chalk.green(`  - verify:${choice}`));
-	}
-	console.log(chalk.dim("\nRun 'assist verify' to run all verify scripts"));
+	const handlers = getSetupHandlers(
+		setup.hasVite,
+		setup.hasTypescript,
+		setup.hasOpenColor,
+	);
+	await runSelectedSetups(selected, packageJsonPath, handlers);
 }

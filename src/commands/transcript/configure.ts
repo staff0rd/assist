@@ -1,56 +1,72 @@
+import type { Interface as ReadlineInterface } from "node:readline";
 import { loadConfig, saveConfig } from "../../shared/loadConfig";
 import { askQuestion, createReadlineInterface } from "./shared";
+
+type TranscriptDirs = {
+	vttDir: string;
+	transcriptsDir: string;
+	summaryDir: string;
+};
+
+function buildPrompt(label: string, current?: string): string {
+	return current ? `${label} [${current}]: ` : `${label}: `;
+}
+
+function printExisting(existing: TranscriptDirs): void {
+	console.log("Current configuration:");
+	console.log(`  VTT directory:         ${existing.vttDir}`);
+	console.log(`  Transcripts directory: ${existing.transcriptsDir}`);
+	console.log(`  Summary directory:     ${existing.summaryDir}`);
+	console.log();
+}
+
+async function promptDirectories(
+	rl: ReadlineInterface,
+	existing?: TranscriptDirs,
+): Promise<TranscriptDirs> {
+	const vttDir = await askQuestion(
+		rl,
+		buildPrompt("VTT directory", existing?.vttDir),
+	);
+	const transcriptsDir = await askQuestion(
+		rl,
+		buildPrompt("Transcripts directory", existing?.transcriptsDir),
+	);
+	const summaryDir = await askQuestion(
+		rl,
+		buildPrompt("Summary directory", existing?.summaryDir),
+	);
+	return {
+		vttDir: vttDir || existing?.vttDir || "",
+		transcriptsDir: transcriptsDir || existing?.transcriptsDir || "",
+		summaryDir: summaryDir || existing?.summaryDir || "",
+	};
+}
+
+function validateDirectories(transcript: TranscriptDirs): void {
+	if (
+		!transcript.vttDir ||
+		!transcript.transcriptsDir ||
+		!transcript.summaryDir
+	) {
+		console.error("\nError: All directories must be specified.");
+		process.exit(1);
+	}
+}
 
 export async function configure(): Promise<void> {
 	const rl = createReadlineInterface();
 	const config = loadConfig();
+	const existing = config.transcript;
 
 	console.log("Configure transcript directories\n");
-
-	if (config.transcript) {
-		console.log("Current configuration:");
-		console.log(`  VTT directory:         ${config.transcript.vttDir}`);
-		console.log(`  Transcripts directory: ${config.transcript.transcriptsDir}`);
-		console.log(`  Summary directory:     ${config.transcript.summaryDir}`);
-		console.log();
-	}
+	if (existing) printExisting(existing);
 
 	try {
-		const vttDir = await askQuestion(
-			rl,
-			`VTT directory${config.transcript?.vttDir ? ` [${config.transcript.vttDir}]` : ""}: `,
-		);
-		const transcriptsDir = await askQuestion(
-			rl,
-			`Transcripts directory${config.transcript?.transcriptsDir ? ` [${config.transcript.transcriptsDir}]` : ""}: `,
-		);
-		const summaryDir = await askQuestion(
-			rl,
-			`Summary directory${config.transcript?.summaryDir ? ` [${config.transcript.summaryDir}]` : ""}: `,
-		);
-
+		const transcript = await promptDirectories(rl, existing);
 		rl.close();
-
-		const newConfig = {
-			...config,
-			transcript: {
-				vttDir: vttDir || config.transcript?.vttDir || "",
-				transcriptsDir:
-					transcriptsDir || config.transcript?.transcriptsDir || "",
-				summaryDir: summaryDir || config.transcript?.summaryDir || "",
-			},
-		};
-
-		if (
-			!newConfig.transcript.vttDir ||
-			!newConfig.transcript.transcriptsDir ||
-			!newConfig.transcript.summaryDir
-		) {
-			console.error("\nError: All directories must be specified.");
-			process.exit(1);
-		}
-
-		saveConfig(newConfig);
+		validateDirectories(transcript);
+		saveConfig({ ...config, transcript });
 		console.log("\nConfiguration saved.");
 	} catch (error) {
 		rl.close();

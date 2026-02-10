@@ -18,55 +18,41 @@ export function isValidDatePrefix(filename: string): boolean {
 	return DATE_PREFIX_REGEX.test(filename);
 }
 
-function findFilesRecursive<T extends { absolutePath: string }>(
-	dir: string,
-	baseDir: string,
-	extension: string,
-	createEntry: (fullPath: string, relativePath: string, filename: string) => T,
-): T[] {
-	if (!existsSync(dir)) {
-		return [];
-	}
+function collectFiles(dir: string, extension: string): string[] {
+	if (!existsSync(dir)) return [];
 
-	const results: T[] = [];
-	const entries = readdirSync(dir);
-
-	for (const entry of entries) {
+	const results: string[] = [];
+	for (const entry of readdirSync(dir)) {
 		const fullPath = join(dir, entry);
-		const stat = statSync(fullPath);
-
-		if (stat.isDirectory()) {
-			results.push(
-				...findFilesRecursive(fullPath, baseDir, extension, createEntry),
-			);
+		if (statSync(fullPath).isDirectory()) {
+			results.push(...collectFiles(fullPath, extension));
 		} else if (entry.endsWith(extension)) {
-			results.push(createEntry(fullPath, relative(baseDir, fullPath), entry));
+			results.push(fullPath);
 		}
 	}
-
 	return results;
+}
+
+function toFileInfo(baseDir: string, fullPath: string) {
+	return {
+		absolutePath: fullPath,
+		relativePath: relative(baseDir, fullPath),
+		filename: basename(fullPath),
+	};
 }
 
 export function findVttFilesRecursive(
 	dir: string,
 	baseDir: string = dir,
 ): VttFileInfo[] {
-	return findFilesRecursive(dir, baseDir, ".vtt", (abs, rel, name) => ({
-		absolutePath: abs,
-		relativePath: rel,
-		filename: name,
-	}));
+	return collectFiles(dir, ".vtt").map((f) => toFileInfo(baseDir, f));
 }
 
 export function findMdFilesRecursive(
 	dir: string,
 	baseDir: string = dir,
 ): MdFileInfo[] {
-	return findFilesRecursive(dir, baseDir, ".md", (abs, rel, name) => ({
-		absolutePath: abs,
-		relativePath: rel,
-		filename: name,
-	}));
+	return collectFiles(dir, ".md").map((f) => toFileInfo(baseDir, f));
 }
 
 export function getTranscriptBaseName(transcriptFile: string): string {
