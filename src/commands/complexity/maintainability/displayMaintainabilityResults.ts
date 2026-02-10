@@ -31,7 +31,7 @@ export function displayMaintainabilityResults(
 	if (filtered.length > 0 && threshold !== undefined) {
 		console.error(
 			chalk.red(
-				`\nFail: ${filtered.length} file(s) below threshold ${threshold}. Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code. Try 'complexity cyclomatic', 'complexity halstead', or 'complexity sloc' to help identify which metric is contributing most. For larger files, start by extracting responsibilities into smaller files.`,
+				`\nFail: ${filtered.length} file(s) below threshold ${threshold}. Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code. Focus on one file at a time — run 'assist complexity <file>' to see all metrics. For larger files, start by extracting responsibilities into smaller files.`,
 			),
 		);
 		process.exit(1);
