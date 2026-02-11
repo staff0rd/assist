@@ -1,3 +1,10 @@
+# [0.49.0](https://github.com/staff0rd/assist/compare/v0.48.0...v0.49.0) (2026-02-11)
+
+
+### Features
+
+* add new cli command ([a60b40a](https://github.com/staff0rd/assist/commit/a60b40a5952ffde1fd94b6bb9b578a456479bb0b))
+
 # [0.48.0](https://github.com/staff0rd/assist/compare/v0.47.1...v0.48.0) (2026-02-10)
 
 
