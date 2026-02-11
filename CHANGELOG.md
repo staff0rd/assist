@@ -1,3 +1,10 @@
+# [0.55.0](https://github.com/staff0rd/assist/compare/v0.54.0...v0.55.0) (2026-02-11)
+
+
+### Features
+
+* add next-backlog-item command ([c4b42c8](https://github.com/staff0rd/assist/commit/c4b42c8302431b455fc0e98d9c2703d9ad42216c))
+
 # [0.54.0](https://github.com/staff0rd/assist/compare/v0.53.0...v0.54.0) (2026-02-11)
 
 
