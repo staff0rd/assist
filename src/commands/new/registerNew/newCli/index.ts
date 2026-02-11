@@ -2,12 +2,14 @@ import { execSync } from "node:child_process";
 import { basename, resolve } from "node:path";
 import { init } from "../../../init";
 import { run as verifyRun } from "../../../verify";
+import { initGit } from "../initGit";
 import { initPackageJson } from "./initPackageJson";
 import { writeCliTemplate } from "./writeCliTemplate";
 
 export async function newCli(): Promise<void> {
 	const name = basename(resolve("."));
 
+	initGit();
 	initPackageJson(name);
 
 	console.log("Installing dependencies...");
