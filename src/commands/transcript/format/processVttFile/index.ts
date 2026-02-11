@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { deduplicateCues, parseVtt } from "./parseVtt";
 import { cuesToChatMessages, formatChatLog } from "./formatChatLog";
+import { deduplicateCues, parseVtt } from "./parseVtt";
 
 function toMdFilename(vttFilename: string): string {
 	return `${basename(vttFilename, ".vtt")

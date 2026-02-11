@@ -9,65 +9,47 @@ import {
 	removeVscodeFromGitignore,
 } from "./createLaunchJson";
 import { detectVscodeSetup } from "./detectVscodeSetup";
+import { type ConfigOption, getAvailableOptions } from "./getAvailableOptions";
 
-type ConfigOption = {
-	name: string;
-	value: string;
-	description: string;
-};
-
-const SETUP_HANDLERS: Record<string, () => void> = {
-	launch: () => createLaunchJson(),
-	settings: () => {
-		createSettingsJson();
-		createExtensionsJson();
-	},
-};
-
-function getAvailableOptions(
+function applySelections(
+	selected: string[],
 	setup: ReturnType<typeof detectVscodeSetup>,
-): ConfigOption[] {
-	const options: ConfigOption[] = [];
-	if (!setup.hasLaunchJson && setup.hasVite)
-		options.push({
-			name: "launch",
-			value: "launch",
-			description: "Debug configuration for Vite dev server",
-		});
-	if (!setup.hasSettingsJson)
-		options.push({
-			name: "settings",
-			value: "settings",
-			description: "Biome formatter configuration",
-		});
-	return options;
+): void {
+	removeVscodeFromGitignore();
+	ensureVscodeFolder();
+	const launchType = setup.hasVite ? "vite" : "tsup";
+	const handlers: Record<string, () => void> = {
+		launch: () => createLaunchJson(launchType),
+		settings: () => {
+			createSettingsJson();
+			createExtensionsJson();
+		},
+	};
+	for (const choice of selected) handlers[choice]?.();
+}
+
+async function promptForOptions(options: ConfigOption[]): Promise<string[]> {
+	console.log(chalk.bold("Available VS Code configurations to add:\n"));
+	return promptMultiselect("Select configurations to add:", options);
 }
 
 export async function init(): Promise<void> {
 	const { pkg } = requirePackageJson();
 	const setup = detectVscodeSetup(pkg);
-	const availableOptions = getAvailableOptions(setup);
+	const options = getAvailableOptions(setup);
 
-	if (availableOptions.length === 0) {
+	if (options.length === 0) {
 		console.log(chalk.green("VS Code configuration already exists!"));
 		return;
 	}
 
-	console.log(chalk.bold("Available VS Code configurations to add:\n"));
-	const selected = await promptMultiselect(
-		"Select configurations to add:",
-		availableOptions,
-	);
-
+	const selected = await promptForOptions(options);
 	if (selected.length === 0) {
 		console.log(chalk.yellow("No configurations selected"));
 		return;
 	}
 
-	removeVscodeFromGitignore();
-	ensureVscodeFolder();
-	for (const choice of selected) SETUP_HANDLERS[choice]?.();
-
+	applySelections(selected, setup);
 	console.log(
 		chalk.green(`\nAdded ${selected.length} VS Code configuration(s)`),
 	);

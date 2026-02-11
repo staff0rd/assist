@@ -1,8 +1,8 @@
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { removeEslint } from "../../shared/removeEslint";
-import { init as deployInit } from "../deploy/init";
-import { init } from "../init";
+import { removeEslint } from "../../../shared/removeEslint";
+import { init as deployInit } from "../../deploy/init";
+import { init } from "../../init";
 
 export async function newProject(): Promise<void> {
 	console.log("Initializing Vite with react-ts template...");

@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import { basename, resolve } from "node:path";
-import { init } from "../init";
-import { run as verifyRun } from "../verify";
+import { init } from "../../../init";
+import { run as verifyRun } from "../../../verify";
 import { initPackageJson } from "./initPackageJson";
 import { writeCliTemplate } from "./writeCliTemplate";
 

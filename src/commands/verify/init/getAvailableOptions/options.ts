@@ -1,4 +1,4 @@
-import type { ExistingSetup } from "./detectExistingSetup";
+import type { ExistingSetup } from "../detectExistingSetup";
 
 export type OptionDef = {
 	toolKey: keyof {

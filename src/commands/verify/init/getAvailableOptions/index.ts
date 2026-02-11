@@ -2,7 +2,7 @@ import {
 	type ExistingSetup,
 	getStatusLabel,
 	needsSetup,
-} from "./detectExistingSetup";
+} from "../detectExistingSetup";
 import { type OptionDef, options } from "./options";
 
 type VerifyOption = {

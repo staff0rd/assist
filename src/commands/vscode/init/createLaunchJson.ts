@@ -28,15 +28,16 @@ export function removeVscodeFromGitignore(): void {
 	}
 }
 
-export function createLaunchJson(): void {
+export function createLaunchJson(type: "vite" | "tsup"): void {
+	const command = type === "vite" ? "npm run dev -- --open" : "npm run start";
 	const launchConfig = {
 		version: "0.2.0",
 		configurations: [
 			{
-				name: "npm run dev",
+				name: command,
 				type: "node-terminal",
 				request: "launch",
-				command: "npm run dev -- --open",
+				command,
 			},
 		],
 	};
