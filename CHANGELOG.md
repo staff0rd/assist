@@ -1,3 +1,10 @@
+# [0.51.0](https://github.com/staff0rd/assist/compare/v0.50.0...v0.51.0) (2026-02-11)
+
+
+### Features
+
+* add tsup support to vscode init ([9d7ffde](https://github.com/staff0rd/assist/commit/9d7ffdeee78f6a487abb80d5a923b648529f17d0))
+
 # [0.50.0](https://github.com/staff0rd/assist/compare/v0.49.0...v0.50.0) (2026-02-11)
 
 
