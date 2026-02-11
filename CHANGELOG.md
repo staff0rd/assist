@@ -1,3 +1,10 @@
+# [0.52.0](https://github.com/staff0rd/assist/compare/v0.51.0...v0.52.0) (2026-02-11)
+
+
+### Features
+
+* add git init to new commands ([1c087a2](https://github.com/staff0rd/assist/commit/1c087a2deb9b6208dcef3b7ef3c989fcae1f3515))
+
 # [0.51.0](https://github.com/staff0rd/assist/compare/v0.50.0...v0.51.0) (2026-02-11)
 
 
