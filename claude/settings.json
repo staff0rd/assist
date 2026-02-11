@@ -17,6 +17,7 @@
 			"Bash(assist notify:*)",
 			"Bash(assist commit:*)",
 			"Bash(assist devlog:*)",
+			"Bash(assist complexity:*)",
 			"Bash(assist refactor:*)",
 			"Bash(assist prs list-comments:*)",
 			"Bash(assist verify:*)",
