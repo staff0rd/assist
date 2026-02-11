@@ -14,9 +14,20 @@ export async function setupBuild(
 	} else if (hasVite) {
 		command = "vite build --logLevel error";
 	} else {
-		command = "tsc --noEmit";
+		command = "npm run build";
 	}
 	console.log(chalk.dim(`Using: ${command}`));
 	const pkg = readPackageJson(packageJsonPath);
 	writePackageJson(packageJsonPath, addScript(pkg, "verify:build", command));
+}
+
+export async function setupTypecheck(packageJsonPath: string): Promise<void> {
+	console.log(chalk.blue("\nSetting up typecheck verification..."));
+	const command = "tsc --noEmit";
+	console.log(chalk.dim(`Using: ${command}`));
+	const pkg = readPackageJson(packageJsonPath);
+	writePackageJson(
+		packageJsonPath,
+		addScript(pkg, "verify:typecheck", command),
+	);
 }

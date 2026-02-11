@@ -15,6 +15,7 @@ export type ExistingSetup = {
 	hasVite: boolean;
 	hasTypescript: boolean;
 	build: ToolStatus;
+	typecheck: ToolStatus;
 	hardcodedColors: ToolStatus;
 	hasOpenColor: boolean;
 };
@@ -50,11 +51,8 @@ export function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 		test: toolStatus(pkg, "verify:test", !!pkg.devDependencies?.vitest),
 		hasVite: !!pkg.devDependencies?.vite || !!pkg.dependencies?.vite,
 		hasTypescript: !!pkg.devDependencies?.typescript,
-		build: {
-			hasPackage: true,
-			hasScript: !!pkg.scripts?.["verify:build"],
-			isOutdated: false,
-		},
+		build: toolStatus(pkg, "verify:build", true),
+		typecheck: toolStatus(pkg, "verify:typecheck", true),
 		hardcodedColors: toolStatus(pkg, "verify:hardcoded-colors", true),
 		hasOpenColor:
 			!!pkg.dependencies?.["open-color"] ||

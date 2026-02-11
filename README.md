@@ -42,7 +42,8 @@ After installation, the `assist` command will be available globally.
 ## CLI Commands
 
 - `assist init` - Initialize project with VS Code and verify configurations
-- `assist new` - Initialize a new Vite React TypeScript project
+- `assist new vite` - Initialize a new Vite React TypeScript project
+- `assist new cli` - Initialize a new tsup CLI project
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit <message>` - Create a git commit with validation
 - `assist prs` - List pull requests for the current repository

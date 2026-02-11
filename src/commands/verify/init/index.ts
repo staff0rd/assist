@@ -8,6 +8,7 @@ import {
 	setupKnip,
 	setupLint,
 	setupTest,
+	setupTypecheck,
 } from "../setup";
 import { detectExistingSetup } from "./detectExistingSetup";
 import { getAvailableOptions } from "./getAvailableOptions";
@@ -28,6 +29,7 @@ function getSetupHandlers(
 		"duplicate-code": (p) => setupDuplicateCode(p),
 		test: (p) => setupTest(p),
 		build: (p) => setupBuild(p, hasVite, hasTypescript),
+		typecheck: (p) => setupTypecheck(p),
 		"hardcoded-colors": (p) => setupHardcodedColors(p, hasOpenColor),
 	};
 }

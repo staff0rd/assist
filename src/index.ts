@@ -7,7 +7,7 @@ import { configGet, configList, configSet } from "./commands/config";
 import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
-import { newProject } from "./commands/new/newProject";
+import { registerNew } from "./commands/new/registerNew";
 import { notify } from "./commands/notify";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerDeploy } from "./commands/registerDeploy";
@@ -87,10 +87,7 @@ runCommand
 	.allowExcessArguments()
 	.action(() => runAdd());
 
-program
-	.command("new")
-	.description("Initialize a new Vite React TypeScript project")
-	.action(newProject);
+registerNew(program);
 
 const lintCommand = program
 	.command("lint")

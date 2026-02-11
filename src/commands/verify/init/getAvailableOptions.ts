@@ -3,6 +3,7 @@ import {
 	getStatusLabel,
 	needsSetup,
 } from "./detectExistingSetup";
+import { type OptionDef, options } from "./options";
 
 type VerifyOption = {
 	name: string;
@@ -10,85 +11,26 @@ type VerifyOption = {
 	description: string;
 };
 
-function getBuildDescription(setup: ExistingSetup): string {
-	if (setup.hasVite && setup.hasTypescript)
-		return "TypeScript + Vite build verification";
-	if (setup.hasVite) return "Vite build verification";
-	return "TypeScript type checking";
+function resolveDescription(
+	desc: string | ((setup: ExistingSetup) => string),
+	setup: ExistingSetup,
+): string {
+	return typeof desc === "function" ? desc(setup) : desc;
 }
 
-function shouldInclude(setup: ExistingSetup, def: OptionDef): boolean {
-	return needsSetup(setup[def.toolKey]) && (def.extraCondition ?? true);
-}
-
-function toVerifyOption(setup: ExistingSetup, def: OptionDef): VerifyOption {
+function toVerifyOption(def: OptionDef, setup: ExistingSetup): VerifyOption {
 	return {
 		name: `${def.label}${getStatusLabel(setup[def.toolKey])}`,
 		value: def.value,
-		description: def.description,
+		description: resolveDescription(def.description, setup),
 	};
 }
 
-type OptionDef = {
-	toolKey: "knip" | "biome" | "jscpd" | "test" | "build" | "hardcodedColors";
-	value: string;
-	label: string;
-	description: string;
-	extraCondition?: boolean;
-};
-
-const STATIC_OPTIONS: OptionDef[] = [
-	{
-		toolKey: "knip",
-		value: "knip",
-		label: "knip",
-		description: "Dead code and unused dependency detection",
-	},
-	{
-		toolKey: "biome",
-		value: "lint",
-		label: "lint",
-		description: "Code linting and formatting with Biome",
-	},
-	{
-		toolKey: "jscpd",
-		value: "duplicate-code",
-		label: "duplicate-code",
-		description: "Duplicate code detection with jscpd",
-	},
-	{
-		toolKey: "hardcodedColors",
-		value: "hardcoded-colors",
-		label: "hardcoded-colors",
-		description: "Detect hardcoded hex colors (use open-color instead)",
-	},
-];
-
-function getConditionalOptions(setup: ExistingSetup): OptionDef[] {
-	return [
-		{
-			toolKey: "test",
-			value: "test",
-			label: "test",
-			description: "Run tests with vitest",
-			extraCondition: setup.test.hasPackage,
-		},
-		{
-			toolKey: "build",
-			value: "build",
-			label: "build",
-			description: getBuildDescription(setup),
-			extraCondition: setup.hasTypescript || setup.hasVite,
-		},
-	];
-}
-
-function getAllOptionDefs(setup: ExistingSetup): OptionDef[] {
-	return [...STATIC_OPTIONS, ...getConditionalOptions(setup)];
-}
-
 export function getAvailableOptions(setup: ExistingSetup): VerifyOption[] {
-	return getAllOptionDefs(setup)
-		.filter((def) => shouldInclude(setup, def))
-		.map((def) => toVerifyOption(setup, def));
+	return options
+		.filter(
+			(def) =>
+				needsSetup(setup[def.toolKey]) && (def.extraCondition?.(setup) ?? true),
+		)
+		.map((def) => toVerifyOption(def, setup));
 }
