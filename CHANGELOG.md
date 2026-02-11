@@ -1,3 +1,10 @@
+# [0.54.0](https://github.com/staff0rd/assist/compare/v0.53.0...v0.54.0) (2026-02-11)
+
+
+### Features
+
+* add verbose flag to backlog list ([0c8902c](https://github.com/staff0rd/assist/commit/0c8902c1618245c3416457ae1f1968c3a52d01c7))
+
 # [0.53.0](https://github.com/staff0rd/assist/compare/v0.52.0...v0.53.0) (2026-02-11)
 
 
