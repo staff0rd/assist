@@ -1,3 +1,10 @@
+# [0.56.0](https://github.com/staff0rd/assist/compare/v0.55.0...v0.56.0) (2026-02-11)
+
+
+### Features
+
+* add editor support for backlog descriptions ([9026570](https://github.com/staff0rd/assist/commit/9026570054956aa9ca91a6962fe2b9f9210d0b02))
+
 # [0.55.0](https://github.com/staff0rd/assist/compare/v0.54.0...v0.55.0) (2026-02-11)
 
 
