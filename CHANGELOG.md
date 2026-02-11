@@ -1,3 +1,10 @@
+# [0.50.0](https://github.com/staff0rd/assist/compare/v0.49.0...v0.50.0) (2026-02-11)
+
+
+### Features
+
+* add maintainability to verify init ([cf03af1](https://github.com/staff0rd/assist/commit/cf03af13e307e256a9fbd3fd9a0a1ecdfdf2f323))
+
 # [0.49.0](https://github.com/staff0rd/assist/compare/v0.48.0...v0.49.0) (2026-02-11)
 
 
