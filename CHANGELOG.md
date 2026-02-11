@@ -1,3 +1,10 @@
+# [0.53.0](https://github.com/staff0rd/assist/compare/v0.52.0...v0.53.0) (2026-02-11)
+
+
+### Features
+
+* add backlog command ([fd6cdd5](https://github.com/staff0rd/assist/commit/fd6cdd569831e52716c5f77d3a54eeed9ddceedc))
+
 # [0.52.0](https://github.com/staff0rd/assist/compare/v0.51.0...v0.52.0) (2026-02-11)
 
 
