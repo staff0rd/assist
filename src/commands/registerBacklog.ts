@@ -1,0 +1,41 @@
+import type { Command } from "commander";
+import {
+	add as backlogAdd,
+	done as backlogDone,
+	init as backlogInit,
+	list as backlogList,
+	start as backlogStart,
+} from "./backlog";
+
+export function registerBacklog(program: Command): void {
+	const backlogCommand = program
+		.command("backlog")
+		.description("Manage a backlog of work items")
+		.action(backlogList);
+
+	backlogCommand
+		.command("init")
+		.description("Create an empty assist.backlog.yml")
+		.action(backlogInit);
+
+	backlogCommand
+		.command("list")
+		.description("List all backlog items")
+		.option("--status <type>", "Filter by status (todo, in-progress, done)")
+		.action(backlogList);
+
+	backlogCommand
+		.command("add")
+		.description("Add a new backlog item")
+		.action(backlogAdd);
+
+	backlogCommand
+		.command("start <id>")
+		.description("Set a backlog item to in-progress")
+		.action(backlogStart);
+
+	backlogCommand
+		.command("done <id>")
+		.description("Set a backlog item to done")
+		.action(backlogDone);
+}

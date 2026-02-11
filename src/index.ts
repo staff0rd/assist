@@ -9,6 +9,7 @@ import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
 import { registerNew } from "./commands/new/registerNew";
 import { notify } from "./commands/notify";
+import { registerBacklog } from "./commands/registerBacklog";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
@@ -121,6 +122,7 @@ program
 	.action(notify);
 
 registerPrs(program);
+registerBacklog(program);
 registerVerify(program);
 registerRefactor(program);
 registerDevlog(program);
