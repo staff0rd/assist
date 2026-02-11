@@ -14,7 +14,10 @@ function statusIcon(status: BacklogStatus): string {
 	}
 }
 
-export async function list(options: { status?: string }): Promise<void> {
+export async function list(options: {
+	status?: string;
+	verbose?: boolean;
+}): Promise<void> {
 	const backlogPath = getBacklogPath();
 	if (!existsSync(backlogPath)) {
 		console.log(
@@ -34,7 +37,19 @@ export async function list(options: { status?: string }): Promise<void> {
 	}
 	for (const item of items) {
 		console.log(
-			`${statusIcon(item.status)} ${item.name} ${chalk.dim(`#${item.id}`)}`,
+			`${statusIcon(item.status)} ${chalk.dim(`#${item.id}`)} ${item.name}`,
 		);
+		if (options.verbose) {
+			if (item.description) {
+				console.log(`  ${chalk.dim("Description:")} ${item.description}`);
+			}
+			if (item.acceptanceCriteria.length > 0) {
+				console.log(`  ${chalk.dim("Acceptance criteria:")}`);
+				for (const criterion of item.acceptanceCriteria) {
+					console.log(`    - ${criterion}`);
+				}
+			}
+			console.log();
+		}
 	}
 }

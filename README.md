@@ -52,7 +52,7 @@ After installation, the `assist` command will be available globally.
 - `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
 - `assist backlog` - List all backlog items (same as `backlog list`)
 - `assist backlog init` - Create an empty assist.backlog.yml
-- `assist backlog list [--status <type>]` - List all backlog items with status icons
+- `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
