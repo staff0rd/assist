@@ -1,3 +1,7 @@
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import enquirer from "enquirer";
 
 export async function promptName(): Promise<string> {
@@ -11,12 +15,40 @@ export async function promptName(): Promise<string> {
 }
 
 export async function promptDescription(): Promise<string | undefined> {
-	const { description } = await enquirer.prompt<{ description: string }>({
-		type: "input",
-		name: "description",
-		message: "Description (optional):",
+	const { useEditor } = await enquirer.prompt<{ useEditor: boolean }>({
+		type: "confirm",
+		name: "useEditor",
+		message: "Open editor for description?",
+		initial: false,
 	});
-	return description.trim() || undefined;
+
+	if (!useEditor) {
+		const { description } = await enquirer.prompt<{ description: string }>({
+			type: "input",
+			name: "description",
+			message: "Description (optional):",
+		});
+		return description.trim() || undefined;
+	}
+
+	return openEditor();
+}
+
+function openEditor(): string | undefined {
+	const editor = process.env.EDITOR || process.env.VISUAL || "vi";
+	const dir = mkdtempSync(join(tmpdir(), "assist-"));
+	const filePath = join(dir, "description.md");
+	writeFileSync(filePath, "");
+
+	const result = spawnSync(editor, [filePath], { stdio: "inherit" });
+	if (result.status !== 0) {
+		unlinkSync(filePath);
+		return undefined;
+	}
+
+	const content = readFileSync(filePath, "utf-8").trim();
+	unlinkSync(filePath);
+	return content || undefined;
 }
 
 export async function promptAcceptanceCriteria(): Promise<string[]> {
