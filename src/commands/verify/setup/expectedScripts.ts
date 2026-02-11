@@ -5,4 +5,6 @@ export const expectedScripts: Record<string, string> = {
 		"jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src",
 	"verify:test": "vitest run --reporter=dot --silent",
 	"verify:hardcoded-colors": "assist verify hardcoded-colors",
+	"verify:maintainability":
+		"assist complexity maintainability ./src --threshold 60",
 };

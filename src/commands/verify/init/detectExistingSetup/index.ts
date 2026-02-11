@@ -17,6 +17,7 @@ export type ExistingSetup = {
 	build: ToolStatus;
 	typecheck: ToolStatus;
 	hardcodedColors: ToolStatus;
+	maintainability: ToolStatus;
 	hasOpenColor: boolean;
 };
 
@@ -54,6 +55,7 @@ export function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 		build: toolStatus(pkg, "verify:build", true),
 		typecheck: toolStatus(pkg, "verify:typecheck", true),
 		hardcodedColors: toolStatus(pkg, "verify:hardcoded-colors", true),
+		maintainability: toolStatus(pkg, "verify:maintainability", true),
 		hasOpenColor:
 			!!pkg.dependencies?.["open-color"] ||
 			!!pkg.devDependencies?.["open-color"],

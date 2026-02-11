@@ -4,4 +4,5 @@ export { setupDuplicateCode } from "./setupDuplicateCode";
 export { setupHardcodedColors } from "./setupHardcodedColors";
 export { setupKnip } from "./setupKnip";
 export { setupLint } from "./setupLint";
+export { setupMaintainability } from "./setupMaintainability";
 export { setupTest } from "./setupTest";

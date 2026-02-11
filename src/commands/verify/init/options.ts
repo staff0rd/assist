@@ -65,4 +65,10 @@ export const options: OptionDef[] = [
 		description: "TypeScript type checking",
 		extraCondition: (s) => s.hasTypescript && !s.hasVite,
 	},
+	{
+		toolKey: "maintainability",
+		value: "maintainability",
+		label: "maintainability",
+		description: "Maintainability index threshold check",
+	},
 ];

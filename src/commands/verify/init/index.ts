@@ -7,6 +7,7 @@ import {
 	setupHardcodedColors,
 	setupKnip,
 	setupLint,
+	setupMaintainability,
 	setupTest,
 	setupTypecheck,
 } from "../setup";
@@ -31,6 +32,7 @@ function getSetupHandlers(
 		build: (p) => setupBuild(p, hasVite, hasTypescript),
 		typecheck: (p) => setupTypecheck(p),
 		"hardcoded-colors": (p) => setupHardcodedColors(p, hasOpenColor),
+		maintainability: (p) => setupMaintainability(p),
 	};
 }
 
@@ -49,14 +51,12 @@ async function runSelectedSetups(
 	console.log(chalk.dim("\nRun 'assist verify' to run all verify scripts"));
 }
 
-export async function init(): Promise<void> {
-	const { packageJsonPath, pkg } = requirePackageJson();
-	const setup = detectExistingSetup(pkg);
-	const availableOptions = getAvailableOptions(setup);
-
+async function promptForScripts(
+	availableOptions: { name: string; value: string; description: string }[],
+): Promise<string[] | null> {
 	if (availableOptions.length === 0) {
 		console.log(chalk.green("All verify scripts are already configured!"));
-		return;
+		return null;
 	}
 
 	console.log(chalk.bold("Available verify scripts to add:\n"));
@@ -68,8 +68,18 @@ export async function init(): Promise<void> {
 
 	if (selected.length === 0) {
 		console.log(chalk.yellow("No scripts selected"));
-		return;
+		return null;
 	}
+
+	return selected;
+}
+
+export async function init(): Promise<void> {
+	const { packageJsonPath, pkg } = requirePackageJson();
+	const setup = detectExistingSetup(pkg);
+	const selected = await promptForScripts(getAvailableOptions(setup));
+
+	if (!selected) return;
 
 	const handlers = getSetupHandlers(
 		setup.hasVite,
