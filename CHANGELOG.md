@@ -1,3 +1,10 @@
+## [0.56.1](https://github.com/staff0rd/assist/compare/v0.56.0...v0.56.1) (2026-02-12)
+
+
+### Bug Fixes
+
+* remove update command ([450c933](https://github.com/staff0rd/assist/commit/450c933ec1014ca3f7c445bb48dd8c55eba2f714))
+
 # [0.56.0](https://github.com/staff0rd/assist/compare/v0.55.0...v0.56.0) (2026-02-11)
 
 
