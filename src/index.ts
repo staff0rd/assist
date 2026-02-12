@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { execSync } from "node:child_process";
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { commit } from "./commands/commit";
@@ -43,14 +42,6 @@ program
 	.command("commit <message>")
 	.description("Create a git commit with validation")
 	.action(commit);
-
-program
-	.command("update")
-	.description("Update claude-code to the latest version")
-	.action(() => {
-		console.log("Updating claude-code...");
-		execSync("npm install -g @anthropic-ai/claude-code", { stdio: "inherit" });
-	});
 
 const configCommand = program
 	.command("config")

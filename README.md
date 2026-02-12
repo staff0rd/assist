@@ -62,7 +62,6 @@ After installation, the `assist` command will be available globally.
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
 - `assist config get <key>` - Get a config value
 - `assist config list` - List all config values
-- `assist update` - Update claude-code to the latest version
 - `assist verify` - Run all verify:* scripts from package.json in parallel
 - `assist verify init` - Add verify scripts to a project
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/
