@@ -74,6 +74,7 @@ After installation, the `assist` command will be available globally.
 - `assist devlog next` - Show commits for the day after the last versioned entry
 - `assist devlog skip <date>` - Add a date to the skip list
 - `assist devlog version` - Show current repo name and version info
+- `assist update` - Update assist to the latest version and sync commands
 - `assist vscode init` - Add VS Code configuration files
 - `assist deploy init` - Initialize Netlify project and configure deployment
 - `assist deploy redirect` - Add trailing slash redirect script to index.html

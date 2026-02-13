@@ -19,6 +19,7 @@ import { registerVerify } from "./commands/registerVerify";
 import { run, add as runAdd } from "./commands/run";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
+import { update } from "./commands/update";
 import { init as vscodeInit } from "./commands/vscode";
 
 const program = new Command();
@@ -111,6 +112,11 @@ program
 		"Show notification from Claude Code hook (reads JSON from stdin)",
 	)
 	.action(notify);
+
+program
+	.command("update")
+	.description("Update assist to the latest version and sync commands")
+	.action(update);
 
 registerPrs(program);
 registerBacklog(program);
