@@ -25,6 +25,7 @@
 			"Bash(assist backlog start:*)",
 			"Bash(assist backlog done:*)",
 			"Bash(assist transcript summarise:*)",
+			"Bash(assist complexity:*)",
 			"Bash(assist transcript format:*)",
 			"Bash(git add:*)",
 			"Bash(git show:*)",
