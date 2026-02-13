@@ -27,6 +27,7 @@ Create a task for each comment found. For each comment:
    - Include the comment URL (from `html_url` field) so the user can view it on GitHub
    - **Address the comment**: Display your recommended fix and explain why it addresses the feedback
    - **Do not address**: Display your reasoning for why the comment should not be addressed (e.g., already handled, out of scope, incorrect suggestion)
+   - **Skip**: Move on to the next comment without taking any action
 
 4. **Act on the user's choice**:
    - If addressing:
@@ -36,6 +37,8 @@ Create a task for each comment found. For each comment:
    - If not addressing:
      1. Write a **1-sentence** summary of why, max 15 words (must not contain "claude" or "opus")
      2. Run `assist prs wontfix <comment-id> "<reason>"` to reply and resolve the thread
+   - If skipping:
+     1. Do nothing — move on to the next comment immediately
    - **Commit references**: Always use full markdown links (e.g., `[abc1234](https://github.com/owner/repo/commit/abc1234)`), never bare SHAs
 
 5. **Repeat** until all comments have been processed
