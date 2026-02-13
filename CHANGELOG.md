@@ -1,3 +1,10 @@
+# [0.57.0](https://github.com/staff0rd/assist/compare/v0.56.2...v0.57.0) (2026-02-13)
+
+
+### Features
+
+* add skip option to review-comments ([4365541](https://github.com/staff0rd/assist/commit/4365541cb491ba8334d1a952d490f3d697161120))
+
 ## [0.56.2](https://github.com/staff0rd/assist/compare/v0.56.1...v0.56.2) (2026-02-13)
 
 
