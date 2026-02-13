@@ -1,3 +1,10 @@
+## [0.56.2](https://github.com/staff0rd/assist/compare/v0.56.1...v0.56.2) (2026-02-13)
+
+
+### Bug Fixes
+
+* allow complexity commands ([f070bc8](https://github.com/staff0rd/assist/commit/f070bc897840002dd4d2217e9d8ec416e51042ad))
+
 ## [0.56.1](https://github.com/staff0rd/assist/compare/v0.56.0...v0.56.1) (2026-02-12)
 
 
