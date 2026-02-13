@@ -1,3 +1,10 @@
+# [0.58.0](https://github.com/staff0rd/assist/compare/v0.57.0...v0.58.0) (2026-02-13)
+
+
+### Features
+
+* add update command ([c2fcb01](https://github.com/staff0rd/assist/commit/c2fcb011f8e4f6e78c4a9f7504b9ee22856c0490))
+
 # [0.57.0](https://github.com/staff0rd/assist/compare/v0.56.2...v0.57.0) (2026-02-13)
 
 
