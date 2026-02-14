@@ -1,3 +1,10 @@
+## [0.58.1](https://github.com/staff0rd/assist/compare/v0.58.0...v0.58.1) (2026-02-14)
+
+
+### Bug Fixes
+
+* bold one-file-at-a-time advice ([c2171a8](https://github.com/staff0rd/assist/commit/c2171a86092d665fde7a18f332a679d1e0cc78df))
+
 # [0.58.0](https://github.com/staff0rd/assist/compare/v0.57.0...v0.58.0) (2026-02-13)
 
 
