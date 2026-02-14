@@ -1,3 +1,10 @@
+## [0.58.2](https://github.com/staff0rd/assist/compare/v0.58.1...v0.58.2) (2026-02-14)
+
+
+### Bug Fixes
+
+* clarify one-at-a-time guidance ([92fb9a4](https://github.com/staff0rd/assist/commit/92fb9a48ae592b2c06aa0999258d38c8e5bb04ee))
+
 ## [0.58.1](https://github.com/staff0rd/assist/compare/v0.58.0...v0.58.1) (2026-02-14)
 
 
