@@ -16,6 +16,7 @@ import { registerPrs } from "./commands/registerPrs";
 import { registerRefactor } from "./commands/registerRefactor";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
+import { registerRoam } from "./commands/roam/registerRoam";
 import { run, add as runAdd } from "./commands/run";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
@@ -119,6 +120,7 @@ program
 	.action(update);
 
 registerPrs(program);
+registerRoam(program);
 registerBacklog(program);
 registerVerify(program);
 registerRefactor(program);

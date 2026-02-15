@@ -46,6 +46,12 @@ export const assistConfigSchema = z.strictObject({
 			ignore: z.array(z.string()).default([]),
 		})
 		.optional(),
+	roam: z
+		.strictObject({
+			clientId: z.string(),
+			clientSecret: z.string(),
+		})
+		.optional(),
 	run: z.array(runConfigSchema).optional(),
 	transcript: transcriptConfigSchema.optional(),
 });
