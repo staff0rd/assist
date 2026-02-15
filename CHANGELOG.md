@@ -1,3 +1,10 @@
+# [0.63.0](https://github.com/staff0rd/assist/compare/v0.62.0...v0.63.0) (2026-02-15)
+
+
+### Features
+
+* roam OAuth authorization flow ([14b9db0](https://github.com/staff0rd/assist/commit/14b9db03241c87441695cb2983195438b16aa0aa))
+
 # [0.62.0](https://github.com/staff0rd/assist/compare/v0.61.0...v0.62.0) (2026-02-15)
 
 
