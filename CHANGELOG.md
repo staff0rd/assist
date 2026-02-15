@@ -1,3 +1,10 @@
+# [0.60.0](https://github.com/staff0rd/assist/compare/v0.59.0...v0.60.0) (2026-02-15)
+
+
+### Features
+
+* allow git status permission ([78d35e2](https://github.com/staff0rd/assist/commit/78d35e22a445c6867ade1a4b71023dae8626985a))
+
 # [0.59.0](https://github.com/staff0rd/assist/compare/v0.58.2...v0.59.0) (2026-02-15)
 
 
