@@ -36,6 +36,7 @@
 			"Bash(gh repo view:*)",
 			"Bash(gh pr checks:*)",
 			"Bash(gh pr view:*)",
+			"Bash(gh pr list:*)",
 			"Bash(gh pr diff:*)",
 			"Bash(gh run view:*)",
 			"SlashCommand(/next-backlog-item)",
