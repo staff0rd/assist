@@ -31,6 +31,7 @@
 			"Bash(git status:*)",
 			"Bash(git show:*)",
 			"Bash(git diff:*)",
+			"Bash(git grep:*)",
 			"Bash(gh repo view:*)",
 			"Bash(gh pr checks:*)",
 			"Bash(gh pr view:*)",
