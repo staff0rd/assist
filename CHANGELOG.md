@@ -1,3 +1,10 @@
+# [0.59.0](https://github.com/staff0rd/assist/compare/v0.58.2...v0.59.0) (2026-02-15)
+
+
+### Features
+
+* add roam auth command ([ed27dd7](https://github.com/staff0rd/assist/commit/ed27dd73269333436597631650bfd44b4a21e068))
+
 ## [0.58.2](https://github.com/staff0rd/assist/compare/v0.58.1...v0.58.2) (2026-02-14)
 
 
