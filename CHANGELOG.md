@@ -1,3 +1,10 @@
+# [0.62.0](https://github.com/staff0rd/assist/compare/v0.61.0...v0.62.0) (2026-02-15)
+
+
+### Features
+
+* allow git log permission ([c115888](https://github.com/staff0rd/assist/commit/c1158886ff7895273c6d9bc72ade506a4d6c23c7))
+
 # [0.61.0](https://github.com/staff0rd/assist/compare/v0.60.0...v0.61.0) (2026-02-15)
 
 
