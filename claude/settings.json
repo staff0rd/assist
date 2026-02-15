@@ -32,6 +32,7 @@
 			"Bash(git show:*)",
 			"Bash(git diff:*)",
 			"Bash(git grep:*)",
+			"Bash(git log:*)",
 			"Bash(gh repo view:*)",
 			"Bash(gh pr checks:*)",
 			"Bash(gh pr view:*)",
