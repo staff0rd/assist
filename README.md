@@ -57,7 +57,7 @@ After installation, the `assist` command will be available globally.
 - `assist backlog add` - Add a new backlog item interactively
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
-- `assist roam auth` - Configure Roam API credentials (saved to ~/.assist.yml)
+- `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist run <name>` - Run a configured command from assist.yml
 - `assist run add` - Add a new run configuration to assist.yml
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)

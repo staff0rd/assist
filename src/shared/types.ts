@@ -50,6 +50,9 @@ export const assistConfigSchema = z.strictObject({
 		.strictObject({
 			clientId: z.string(),
 			clientSecret: z.string(),
+			accessToken: z.string().optional(),
+			refreshToken: z.string().optional(),
+			tokenExpiresAt: z.number().optional(),
 		})
 		.optional(),
 	run: z.array(runConfigSchema).optional(),
