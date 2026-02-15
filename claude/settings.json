@@ -28,6 +28,7 @@
 			"Bash(assist complexity:*)",
 			"Bash(assist transcript format:*)",
 			"Bash(git add:*)",
+			"Bash(git status:*)",
 			"Bash(git show:*)",
 			"Bash(git diff:*)",
 			"Bash(gh repo view:*)",
