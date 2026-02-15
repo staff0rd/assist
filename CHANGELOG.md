@@ -1,3 +1,10 @@
+# [0.61.0](https://github.com/staff0rd/assist/compare/v0.60.0...v0.61.0) (2026-02-15)
+
+
+### Features
+
+* allow git grep permission ([2634eee](https://github.com/staff0rd/assist/commit/2634eeeccdf4e68cec972395db124e4a4b35ccbd))
+
 # [0.60.0](https://github.com/staff0rd/assist/compare/v0.59.0...v0.60.0) (2026-02-15)
 
 
