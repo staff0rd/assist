@@ -1,3 +1,10 @@
+# [0.64.0](https://github.com/staff0rd/assist/compare/v0.63.0...v0.64.0) (2026-02-17)
+
+
+### Features
+
+* add journal and standup commands ([73d7e76](https://github.com/staff0rd/assist/commit/73d7e76f85ec5c0c76f3ff82634b4b1c1f9d9df3))
+
 # [0.63.0](https://github.com/staff0rd/assist/compare/v0.62.0...v0.63.0) (2026-02-15)
 
 
