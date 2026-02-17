@@ -15,11 +15,11 @@ const transcriptConfigSchema = z.strictObject({
 export const assistConfigSchema = z.strictObject({
 	commit: z
 		.strictObject({
-			conventional: z.boolean().optional(),
-			pull: z.boolean().optional(),
-			push: z.boolean().optional(),
+			conventional: z.boolean().default(false),
+			pull: z.boolean().default(false),
+			push: z.boolean().default(false),
 		})
-		.optional(),
+		.default({ conventional: false, pull: false, push: false }),
 	devlog: z
 		.strictObject({
 			name: z.string().optional(),
