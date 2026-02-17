@@ -27,6 +27,7 @@
 			"Bash(assist transcript summarise:*)",
 			"Bash(assist complexity:*)",
 			"Bash(assist transcript format:*)",
+			"Bash(date:*)",
 			"Bash(git add:*)",
 			"Bash(git status:*)",
 			"Bash(git show:*)",
@@ -47,6 +48,8 @@
 			"SlashCommand(/review-comments)",
 			"SlashCommand(/transcript-format)",
 			"SlashCommand(/transcript-summarise)",
+			"SlashCommand(/journal)",
+			"SlashCommand(/standup)",
 			"Skill(next-backlog-item)",
 			"Skill(verify)",
 			"Skill(commit)",
@@ -55,6 +58,8 @@
 			"Skill(review-comments)",
 			"Skill(transcript-format)",
 			"Skill(transcript-summarise)",
+			"Skill(journal)",
+			"Skill(standup)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]

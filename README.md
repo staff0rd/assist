@@ -36,6 +36,8 @@ After installation, the `assist` command will be available globally.
 - `/refactor` - Run refactoring checks for code quality
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
+- `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
+- `/standup` - Summarise recent journal entries as a standup update
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
 - `/transcript-summarise` - Summarise transcripts missing summaries
