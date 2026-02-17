@@ -1,3 +1,10 @@
+## [0.64.1](https://github.com/staff0rd/assist/compare/v0.64.0...v0.64.1) (2026-02-17)
+
+
+### Bug Fixes
+
+* add defaults to commit config ([22d2a5a](https://github.com/staff0rd/assist/commit/22d2a5adb7b44a901949e2178f67a91a6b232ab4))
+
 # [0.64.0](https://github.com/staff0rd/assist/compare/v0.63.0...v0.64.0) (2026-02-17)
 
 
