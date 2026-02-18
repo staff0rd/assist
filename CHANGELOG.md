@@ -1,3 +1,10 @@
+## [0.64.2](https://github.com/staff0rd/assist/compare/v0.64.1...v0.64.2) (2026-02-18)
+
+
+### Bug Fixes
+
+* normalize path compare in update ([d7ea054](https://github.com/staff0rd/assist/commit/d7ea0545309cca1c76b838d7d1479cb3fe337738))
+
 ## [0.64.1](https://github.com/staff0rd/assist/compare/v0.64.0...v0.64.1) (2026-02-17)
 
 
