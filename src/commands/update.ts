@@ -27,7 +27,10 @@ function isGlobalNpmInstall(dir: string): boolean {
 		const globalPrefix = execSync("npm prefix -g", { stdio: "pipe" })
 			.toString()
 			.trim();
-		return dir.startsWith(globalPrefix);
+		return path
+			.resolve(dir)
+			.toLowerCase()
+			.startsWith(path.resolve(globalPrefix).toLowerCase());
 	} catch {
 		return false;
 	}
