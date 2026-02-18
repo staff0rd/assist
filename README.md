@@ -7,6 +7,7 @@ You can install `assist` globally using npm:
 
 ```bash
 npm install -g @staff0rd/assist
+assist sync
 ```
 
 ## Local Development
