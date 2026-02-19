@@ -8,7 +8,7 @@ import {
 export function registerVerify(program: Command): void {
 	const verifyCommand = program
 		.command("verify")
-		.description("Run all verify:* scripts from package.json in parallel")
+		.description("Run all verify:* commands in parallel")
 		.option("--timer", "Show timing information for each task as they complete")
 		.action((options) => verifyRun(options));
 

@@ -1,62 +1,44 @@
-import { spawn } from "node:child_process";
-import * as path from "node:path";
-import { findPackageJsonWithVerifyScripts } from "../../../shared/readPackageJson";
 import {
 	createTimerCallback,
 	initTaskStatuses,
 	logFailedScripts,
 } from "./createTimerCallback";
+import { resolveEntries, type VerifyEntry } from "./resolveEntries";
+import { collectOutput, flushIfFailed, spawnCommand } from "./spawnCommand";
 
-function spawnScript(script: string, cwd: string) {
-	return spawn("npm", ["run", script], { stdio: "inherit", shell: true, cwd });
-}
-
-function onScriptClose(
-	script: string,
-	onComplete: ((code: number) => void) | undefined,
-	resolve: (value: { script: string; code: number }) => void,
-) {
-	return (code: number | null) => {
-		const exitCode = code ?? 1;
-		onComplete?.(exitCode);
-		resolve({ script, code: exitCode });
-	};
-}
-
-function runScript(
-	script: string,
-	cwd: string,
+function runEntry(
+	entry: VerifyEntry,
 	onComplete?: (code: number) => void,
 ): Promise<{ script: string; code: number }> {
 	return new Promise((resolve) => {
-		spawnScript(script, cwd).on(
-			"close",
-			onScriptClose(script, onComplete, resolve),
-		);
+		const child = spawnCommand(entry.fullCommand, entry.cwd);
+		const chunks = collectOutput(child);
+
+		child.on("close", (code) => {
+			const exitCode = code ?? 1;
+			flushIfFailed(exitCode, chunks);
+			onComplete?.(exitCode);
+			resolve({ script: entry.name, code: exitCode });
+		});
 	});
 }
 
-function runAllScripts(
-	verifyScripts: string[],
-	packageDir: string,
-	timer: boolean,
-) {
-	const taskStatuses = initTaskStatuses(verifyScripts);
+function runAllEntries(entries: VerifyEntry[], timer: boolean) {
+	const taskStatuses = initTaskStatuses(entries.map((e) => e.name));
 	return Promise.all(
-		verifyScripts.map((script, index) =>
-			runScript(
-				script,
-				packageDir,
+		entries.map((entry, index) =>
+			runEntry(
+				entry,
 				timer ? createTimerCallback(taskStatuses, index) : undefined,
 			),
 		),
 	);
 }
 
-function printScriptList(scripts: string[]): void {
-	console.log(`Running ${scripts.length} verify script(s) in parallel:`);
-	for (const script of scripts) {
-		console.log(`  - ${script}`);
+function printEntryList(entries: VerifyEntry[]): void {
+	console.log(`Running ${entries.length} verify command(s) in parallel:`);
+	for (const entry of entries) {
+		console.log(`  - ${entry.name}`);
 	}
 }
 
@@ -71,39 +53,18 @@ function handleResults(
 	totalCount: number,
 ): void {
 	exitIfFailed(results.filter((r) => r.code !== 0));
-	console.log(`\nAll ${totalCount} verify script(s) passed`);
-}
-
-function resolveVerifyScripts() {
-	const result = findPackageJsonWithVerifyScripts(process.cwd());
-	if (!result) {
-		console.log("No package.json with verify:* scripts found");
-		return null;
-	}
-	return result;
-}
-
-function getPackageDir(
-	found: NonNullable<ReturnType<typeof resolveVerifyScripts>>,
-): string {
-	return path.dirname(found.packageJsonPath);
-}
-
-async function executeVerifyScripts(
-	found: NonNullable<ReturnType<typeof resolveVerifyScripts>>,
-	timer: boolean,
-): Promise<void> {
-	printScriptList(found.verifyScripts);
-	const results = await runAllScripts(
-		found.verifyScripts,
-		getPackageDir(found),
-		timer,
-	);
-	handleResults(results, found.verifyScripts.length);
+	console.log(`\nAll ${totalCount} verify command(s) passed`);
 }
 
 export async function run(options: { timer?: boolean } = {}): Promise<void> {
-	const found = resolveVerifyScripts();
-	if (!found) return;
-	await executeVerifyScripts(found, options.timer ?? false);
+	const allEntries = resolveEntries();
+
+	if (allEntries.length === 0) {
+		console.log("No verify commands found");
+		return;
+	}
+
+	printEntryList(allEntries);
+	const results = await runAllEntries(allEntries, options.timer ?? false);
+	handleResults(results, allEntries.length);
 }
