@@ -62,7 +62,7 @@ After installation, the `assist` command will be available globally.
 - `assist backlog done <id>` - Set a backlog item to done
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist run <name>` - Run a configured command from assist.yml
-- `assist run add` - Add a new run configuration to assist.yml
+- `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
 - `assist config get <key>` - Get a config value
 - `assist config list` - List all config values

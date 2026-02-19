@@ -1,3 +1,5 @@
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { loadConfig, saveConfig } from "../../shared/loadConfig";
 
 function findAddIndex(): number {
@@ -61,9 +63,19 @@ function saveNewRunConfig(name: string, command: string, args: string[]): void {
 	saveConfig(config);
 }
 
+function createCommandFile(name: string): void {
+	const dir = join(".claude", "commands");
+	mkdirSync(dir, { recursive: true });
+	const content = `---\ndescription: Run ${name}\n---\n\nRun \`assist run ${name} $ARGUMENTS 2>&1\`.\n`;
+	const filePath = join(dir, `${name}.md`);
+	writeFileSync(filePath, content);
+	console.log(`Created command file: ${filePath}`);
+}
+
 export function add(): void {
 	const { name, command, args } = requireParsedArgs();
 	saveNewRunConfig(name, command, args);
+	createCommandFile(name);
 	console.log(
 		`Added run configuration: ${name} -> ${formatDisplay(command, args)}`,
 	);
