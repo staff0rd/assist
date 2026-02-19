@@ -1,3 +1,10 @@
+# [0.66.0](https://github.com/staff0rd/assist/compare/v0.65.0...v0.66.0) (2026-02-19)
+
+
+### Features
+
+* verify from run configs and scripts ([1171997](https://github.com/staff0rd/assist/commit/1171997eeaf4208f6882dad669a200556427e1a4))
+
 # [0.65.0](https://github.com/staff0rd/assist/compare/v0.64.2...v0.65.0) (2026-02-19)
 
 
