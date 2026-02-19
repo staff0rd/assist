@@ -1,3 +1,10 @@
+# [0.65.0](https://github.com/staff0rd/assist/compare/v0.64.2...v0.65.0) (2026-02-19)
+
+
+### Features
+
+* generate command file on run add ([ad1b095](https://github.com/staff0rd/assist/commit/ad1b09528a01dac27d77c0da39f967d52ff9baf3))
+
 ## [0.64.2](https://github.com/staff0rd/assist/compare/v0.64.1...v0.64.2) (2026-02-18)
 
 
