@@ -5,6 +5,7 @@ import type { Commit } from "./types";
 export {
 	getRepoName,
 	loadConfig,
+	loadProjectConfig,
 	saveConfig,
 } from "../../shared/loadConfig";
 export { loadDevlogEntries } from "./loadDevlogEntries";

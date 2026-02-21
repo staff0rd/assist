@@ -1,15 +1,18 @@
 import { randomBytes } from "node:crypto";
 import chalk from "chalk";
-import { loadGlobalConfig, saveGlobalConfig } from "../../shared/loadConfig";
+import { loadGlobalConfigRaw, saveGlobalConfig } from "../../shared/loadConfig";
 import { authorizeInBrowser } from "./authorizeInBrowser";
 import { exchangeToken } from "./exchangeToken";
 import { promptCredentials } from "./promptCredentials";
 
 export async function auth(): Promise<void> {
-	const config = loadGlobalConfig();
-	const { clientId, clientSecret } = await promptCredentials(config.roam);
+	const config = loadGlobalConfigRaw();
+	const { clientId, clientSecret } = await promptCredentials(
+		config.roam as { clientId?: string; clientSecret?: string } | undefined,
+	);
 
-	config.roam = { ...config.roam, clientId, clientSecret };
+	const existingRoam = (config.roam ?? {}) as Record<string, unknown>;
+	config.roam = { ...existingRoam, clientId, clientSecret };
 	saveGlobalConfig(config);
 
 	const state = randomBytes(16).toString("hex");

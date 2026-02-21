@@ -1,6 +1,10 @@
 import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
-import { loadConfig, saveConfig } from "../../shared/loadConfig";
+import {
+	loadConfig,
+	loadProjectConfig,
+	saveConfig,
+} from "../../shared/loadConfig";
 import { assistConfigSchema } from "../../shared/types";
 import { getNestedValue, setNestedValue } from "./getNestedValue";
 
@@ -33,18 +37,17 @@ function exitValidationFailed(
 	process.exit(1);
 }
 
-function validateConfig(updated: Record<string, unknown>, key: string) {
+function validateConfig(
+	updated: Record<string, unknown>,
+	key: string,
+): Record<string, unknown> {
 	const result = assistConfigSchema.safeParse(updated);
 	if (!result.success) return exitValidationFailed(result.error.issues, key);
-	return result.data;
+	return updated;
 }
 
 function applyConfigSet(key: string, coerced: string | boolean): void {
-	const updated = setNestedValue(
-		loadConfig() as Record<string, unknown>,
-		key,
-		coerced,
-	);
+	const updated = setNestedValue(loadProjectConfig(), key, coerced);
 	saveConfig(validateConfig(updated, key));
 }
 

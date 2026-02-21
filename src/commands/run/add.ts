@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { loadConfig, saveConfig } from "../../shared/loadConfig";
+import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
 
 function findAddIndex(): number {
 	const addIndex = process.argv.indexOf("add");
@@ -51,9 +51,9 @@ function requireParsedArgs() {
 }
 
 function getOrInitRunList() {
-	const config = loadConfig();
+	const config = loadProjectConfig();
 	if (!config.run) config.run = [];
-	return { config, runList: config.run };
+	return { config, runList: config.run as { name: string }[] };
 }
 
 function saveNewRunConfig(name: string, command: string, args: string[]): void {

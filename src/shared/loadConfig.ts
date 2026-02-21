@@ -38,16 +38,19 @@ export function loadConfig(): AssistConfig {
 	return assistConfigSchema.parse(merged);
 }
 
-export function loadGlobalConfig(): AssistConfig {
-	const raw = loadRawConfig(getGlobalConfigPath());
-	return assistConfigSchema.parse(raw);
+export function loadProjectConfig(): Record<string, unknown> {
+	return loadRawConfig(getConfigPath());
 }
 
-export function saveGlobalConfig(config: AssistConfig): void {
+export function loadGlobalConfigRaw(): Record<string, unknown> {
+	return loadRawConfig(getGlobalConfigPath());
+}
+
+export function saveGlobalConfig(config: Record<string, unknown>): void {
 	writeFileSync(getGlobalConfigPath(), stringifyYaml(config, { lineWidth: 0 }));
 }
 
-export function saveConfig(config: AssistConfig): void {
+export function saveConfig(config: Record<string, unknown>): void {
 	const configPath = getConfigPath();
 	writeFileSync(configPath, stringifyYaml(config, { lineWidth: 0 }));
 }

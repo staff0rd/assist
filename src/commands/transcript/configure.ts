@@ -1,5 +1,5 @@
 import type { Interface as ReadlineInterface } from "node:readline";
-import { loadConfig, saveConfig } from "../../shared/loadConfig";
+import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
 import { askQuestion, createReadlineInterface } from "./shared";
 
 type TranscriptDirs = {
@@ -56,8 +56,8 @@ function validateDirectories(transcript: TranscriptDirs): void {
 
 export async function configure(): Promise<void> {
 	const rl = createReadlineInterface();
-	const config = loadConfig();
-	const existing = config.transcript;
+	const config = loadProjectConfig();
+	const existing = config.transcript as TranscriptDirs | undefined;
 
 	console.log("Configure transcript directories\n");
 	if (existing) printExisting(existing);
