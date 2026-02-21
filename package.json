@@ -22,7 +22,8 @@
 		"verify:knip": "knip --no-progress --treat-config-hints-as-errors",
 		"verify:duplicate-code": "jscpd --format 'typescript,tsx' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src",
 		"verify:maintainability": "assist complexity maintainability ./src --threshold 70",
-		"verify:custom-lint": "assist lint"
+		"verify:custom-lint": "assist lint",
+		"verify:react-build": "esbuild src/commands/backlog/web/ui/App.tsx --bundle --minify --format=iife --target=es2020 --outfile=dist/commands/backlog/web/bundle.js --jsx=automatic --jsx-import-source=react \"--define:process.env.NODE_ENV=\\\"production\\\"\""
 	},
 	"keywords": [],
 	"author": "",
@@ -52,9 +53,15 @@
 		"@semantic-release/git": "^10.0.1",
 		"@types/node": "^24.10.1",
 		"@types/node-notifier": "^8.0.5",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
 		"@types/semver": "^7.7.1",
+		"esbuild": "^0.27.3",
 		"jscpd": "^4.0.5",
 		"knip": "^5.71.0",
+		"marked": "^15.0.12",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
 		"semantic-release": "^25.0.2",
 		"tsup": "^8.5.1"
 	}

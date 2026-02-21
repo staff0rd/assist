@@ -5,6 +5,7 @@ import {
 	init as backlogInit,
 	list as backlogList,
 	start as backlogStart,
+	web as backlogWeb,
 } from "./backlog";
 
 export function registerBacklog(program: Command): void {
@@ -39,4 +40,10 @@ export function registerBacklog(program: Command): void {
 		.command("done <id>")
 		.description("Set a backlog item to done")
 		.action(backlogDone);
+
+	backlogCommand
+		.command("web")
+		.description("Start a web view of the backlog")
+		.option("-p, --port <number>", "Port to listen on", "3000")
+		.action(backlogWeb);
 }

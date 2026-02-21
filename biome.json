@@ -49,6 +49,7 @@
 				"**/shared.ts",
 				"**/types.ts",
 				"**/constants.ts",
+				"**/api.ts",
 				"tsup.config.ts"
 			],
 			"linter": {
