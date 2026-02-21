@@ -1,3 +1,10 @@
+## [0.66.1](https://github.com/staff0rd/assist/compare/v0.66.0...v0.66.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* preserve unknown config keys on save ([39c898c](https://github.com/staff0rd/assist/commit/39c898c397376270f9d73a9de39c3b079cbf2c94))
+
 # [0.66.0](https://github.com/staff0rd/assist/compare/v0.65.0...v0.66.0) (2026-02-19)
 
 
