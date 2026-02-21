@@ -1,3 +1,10 @@
+# [0.67.0](https://github.com/staff0rd/assist/compare/v0.66.1...v0.67.0) (2026-02-21)
+
+
+### Features
+
+* react frontend for backlog web ([8f019a0](https://github.com/staff0rd/assist/commit/8f019a0bb778f6527fe1b4376d951f672e17b3a4))
+
 ## [0.66.1](https://github.com/staff0rd/assist/compare/v0.66.0...v0.66.1) (2026-02-21)
 
 
