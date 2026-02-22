@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import {
 	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
+	list as verifyList,
 	run as verifyRun,
 } from "./verify";
 
@@ -11,6 +12,11 @@ export function registerVerify(program: Command): void {
 		.description("Run all verify:* commands in parallel")
 		.option("--timer", "Show timing information for each task as they complete")
 		.action((options) => verifyRun(options));
+
+	verifyCommand
+		.command("list")
+		.description("List configured verify commands")
+		.action(verifyList);
 
 	verifyCommand
 		.command("init")
