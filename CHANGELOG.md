@@ -1,3 +1,10 @@
+# [0.69.0](https://github.com/staff0rd/assist/compare/v0.68.0...v0.69.0) (2026-02-22)
+
+
+### Features
+
+* add verify list command ([6668376](https://github.com/staff0rd/assist/commit/6668376d27a873a48ec810835acbe49638a4ea5f))
+
 # [0.68.0](https://github.com/staff0rd/assist/compare/v0.67.0...v0.68.0) (2026-02-22)
 
 
