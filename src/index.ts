@@ -67,16 +67,17 @@ configCommand
 const runCommand = program
 	.command("run")
 	.description("Run a configured command from assist.yml")
-	.argument("[name]", "Name of the configured command")
+	.argument("<name>", "Name of the configured command")
 	.argument("[args...]", "Arguments to pass to the command")
 	.allowUnknownOption()
 	.action((name, args) => {
-		if (!name) {
-			listRunConfigs();
-			return;
-		}
 		run(name, args);
 	});
+
+runCommand
+	.command("list")
+	.description("List configured run commands")
+	.action(listRunConfigs);
 
 runCommand
 	.command("add")
