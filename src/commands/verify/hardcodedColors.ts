@@ -1,14 +1,31 @@
 import { execSync } from "node:child_process";
+import { minimatch } from "minimatch";
+import { loadConfig } from "../../shared/loadConfig";
 
 const pattern = "0x[0-9a-fA-F]{6}|#[0-9a-fA-F]{3,6}";
 
 export function hardcodedColors(): void {
+	const ignoreGlobs = loadConfig().hardcodedColors?.ignore ?? [];
+
 	try {
 		const output = execSync(`grep -rEnH '${pattern}' src/`, {
 			encoding: "utf-8",
 		});
 
-		const lines = output.trim().split("\n");
+		const lines = output
+			.trim()
+			.split("\n")
+			.filter((line) => {
+				const match = line.match(/^(.+?):\d+:/);
+				if (!match) return true;
+				const file = match[1];
+				return !ignoreGlobs.some((glob) => minimatch(file, glob));
+			});
+
+		if (lines.length === 0) {
+			console.log("No hardcoded colors found.");
+			process.exit(0);
+		}
 
 		console.log("Hardcoded colors found:\n");
 

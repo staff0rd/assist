@@ -6,7 +6,8 @@ import {
 	saveConfig,
 } from "../../shared/loadConfig";
 import { assistConfigSchema } from "../../shared/types";
-import { getNestedValue, setNestedValue } from "./getNestedValue";
+import { getNestedValue } from "./getNestedValue";
+import { setNestedValue } from "./setNestedValue";
 
 function coerceValue(value: string): string | boolean {
 	if (value === "true") return true;
