@@ -1,3 +1,10 @@
+# [0.68.0](https://github.com/staff0rd/assist/compare/v0.67.0...v0.68.0) (2026-02-22)
+
+
+### Features
+
+* list run configs with no args ([81be6b0](https://github.com/staff0rd/assist/commit/81be6b08fc347bfc2faca2b6b1e5efec2cd630cf))
+
 # [0.67.0](https://github.com/staff0rd/assist/compare/v0.66.1...v0.67.0) (2026-02-21)
 
 
