@@ -1,3 +1,10 @@
+# [0.75.0](https://github.com/staff0rd/assist/compare/v0.74.0...v0.75.0) (2026-02-22)
+
+
+### Features
+
+* default backlog to web UI ([d0a34b3](https://github.com/staff0rd/assist/commit/d0a34b37b0b2e04a7e438fa9aaae29526ca79d82))
+
 # [0.74.0](https://github.com/staff0rd/assist/compare/v0.73.0...v0.74.0) (2026-02-22)
 
 
