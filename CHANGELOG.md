@@ -1,3 +1,10 @@
+# [0.78.0](https://github.com/staff0rd/assist/compare/v0.77.0...v0.78.0) (2026-02-22)
+
+
+### Features
+
+* add type (story/bug) to backlog ([c0d5344](https://github.com/staff0rd/assist/commit/c0d5344e55cc9af0b6dece648a8df8d279aaa251))
+
 # [0.77.0](https://github.com/staff0rd/assist/compare/v0.76.0...v0.77.0) (2026-02-22)
 
 
