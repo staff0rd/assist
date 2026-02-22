@@ -1,3 +1,4 @@
+import { Field } from "@base-ui/react/field";
 import { useRef, useState } from "react";
 import { CriterionRow } from "./CriterionRow";
 
@@ -41,13 +42,12 @@ export function AcceptanceCriteriaField({
 	}
 
 	return (
-		<div className="field">
-			<label htmlFor="ac-0">Acceptance Criteria</label>
+		<Field.Root className="field">
+			<Field.Label>Acceptance Criteria</Field.Label>
 			<div className="ac-inputs">
 				{criteria.map((c, i) => (
 					<CriterionRow
 						key={c.id}
-						id={`ac-${c.id}`}
 						value={c.value}
 						isFirst={i === 0}
 						onChange={(v) => setValue(c.id, v)}
@@ -56,6 +56,6 @@ export function AcceptanceCriteriaField({
 					/>
 				))}
 			</div>
-		</div>
+		</Field.Root>
 	);
 }

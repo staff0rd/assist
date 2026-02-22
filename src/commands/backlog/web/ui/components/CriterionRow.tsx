@@ -1,5 +1,6 @@
+import { Input } from "@base-ui/react/input";
+
 type CriterionRowProps = {
-	id: string;
 	value: string;
 	isFirst: boolean;
 	onChange: (value: string) => void;
@@ -8,7 +9,6 @@ type CriterionRowProps = {
 };
 
 export function CriterionRow({
-	id,
 	value,
 	isFirst,
 	onChange,
@@ -17,8 +17,7 @@ export function CriterionRow({
 }: CriterionRowProps) {
 	return (
 		<div className="ac-row">
-			<input
-				id={id}
+			<Input
 				type="text"
 				placeholder="Criterion"
 				value={value}

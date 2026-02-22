@@ -1,3 +1,4 @@
+import { Field } from "@base-ui/react/field";
 import { marked } from "marked";
 import { useState } from "react";
 
@@ -22,8 +23,8 @@ export function DescriptionField({ value, onChange }: DescriptionFieldProps) {
 	const [showPreview, setShowPreview] = useState(false);
 
 	return (
-		<div className="field">
-			<label htmlFor="f-desc">
+		<Field.Root className="field">
+			<Field.Label>
 				Description{" "}
 				<button
 					type="button"
@@ -33,14 +34,14 @@ export function DescriptionField({ value, onChange }: DescriptionFieldProps) {
 				>
 					(preview)
 				</button>
-			</label>
-			<textarea
-				id="f-desc"
+			</Field.Label>
+			<Field.Control
+				render={<textarea />}
 				placeholder="Markdown supported"
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 			/>
 			{showPreview && <MarkdownPreview text={value} />}
-		</div>
+		</Field.Root>
 	);
 }

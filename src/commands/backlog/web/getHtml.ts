@@ -53,6 +53,8 @@ export function getHtml(): string {
   .form-actions { display: flex; gap: 8px; margin-top: 16px; }
   .preview-toggle { font-size: 0.8rem; color: #2563eb; cursor: pointer; margin-left: 8px; }
   .preview-box { border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; margin-top: 8px; min-height: 60px; background: #fafafa; }
+  .field-error { color: #ef4444; font-size: 0.8rem; margin-top: 4px; }
+  .field [data-invalid] { border-color: #ef4444; }
   .empty { text-align: center; color: #9ca3af; padding: 48px 16px; }
   .status-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 500; }
   .badge-todo { background: #f3f4f6; color: #6b7280; }

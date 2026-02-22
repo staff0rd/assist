@@ -1,3 +1,4 @@
+import { Form } from "@base-ui/react/form";
 import { type FormEvent, useRef, useState } from "react";
 import { submitForm } from "../submitForm";
 import type { BacklogItem } from "../types";
@@ -33,10 +34,7 @@ async function handleSubmit(
 ) {
 	e.preventDefault();
 	const id = await submitForm(name, description, criteria, item);
-	if (id === undefined) {
-		alert("Name is required.");
-		return;
-	}
+	if (id === undefined) return;
 	onSaved(id);
 }
 
@@ -49,7 +47,7 @@ export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
 	return (
 		<>
 			<BackButton onClick={onCancel} />
-			<form
+			<Form
 				className="form"
 				onSubmit={(e) =>
 					handleSubmit(e, name, description, acRef.current, item, onSaved)
@@ -65,7 +63,7 @@ export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
 					}}
 				/>
 				<FormActions submitLabel={defaults.submitLabel} onCancel={onCancel} />
-			</form>
+			</Form>
 		</>
 	);
 }

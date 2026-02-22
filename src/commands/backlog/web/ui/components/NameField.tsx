@@ -1,3 +1,5 @@
+import { Field } from "@base-ui/react/field";
+
 type NameFieldProps = {
 	value: string;
 	onChange: (value: string) => void;
@@ -5,15 +7,17 @@ type NameFieldProps = {
 
 export function NameField({ value, onChange }: NameFieldProps) {
 	return (
-		<div className="field">
-			<label htmlFor="f-name">Name</label>
-			<input
-				id="f-name"
-				type="text"
+		<Field.Root className="field">
+			<Field.Label>Name</Field.Label>
+			<Field.Control
+				required
 				placeholder="Item name"
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 			/>
-		</div>
+			<Field.Error className="field-error" match="valueMissing">
+				Name is required.
+			</Field.Error>
+		</Field.Root>
 	);
 }
