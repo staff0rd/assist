@@ -1,3 +1,10 @@
+# [0.71.0](https://github.com/staff0rd/assist/compare/v0.70.0...v0.71.0) (2026-02-22)
+
+
+### Features
+
+* open browser on backlog web ([f33782e](https://github.com/staff0rd/assist/commit/f33782ef318aef3b0c1bdfa66b81e8e25c87f806))
+
 # [0.70.0](https://github.com/staff0rd/assist/compare/v0.69.0...v0.70.0) (2026-02-22)
 
 
