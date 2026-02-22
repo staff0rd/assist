@@ -1,3 +1,10 @@
+# [0.72.0](https://github.com/staff0rd/assist/compare/v0.71.0...v0.72.0) (2026-02-22)
+
+
+### Features
+
+* migrate backlog forms to base-ui ([40c0f53](https://github.com/staff0rd/assist/commit/40c0f531ac191a66e7f8f94d45aa94904cc17d0f))
+
 # [0.71.0](https://github.com/staff0rd/assist/compare/v0.70.0...v0.71.0) (2026-02-22)
 
 
