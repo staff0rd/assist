@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import {
 	add as backlogAdd,
+	del as backlogDel,
 	done as backlogDone,
 	init as backlogInit,
 	list as backlogList,
@@ -40,6 +41,11 @@ export function registerBacklog(program: Command): void {
 		.command("done <id>")
 		.description("Set a backlog item to done")
 		.action(backlogDone);
+
+	backlogCommand
+		.command("delete <id>")
+		.description("Delete a backlog item")
+		.action(backlogDel);
 
 	backlogCommand
 		.command("web")

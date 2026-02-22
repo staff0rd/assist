@@ -35,12 +35,8 @@ function findItem(items: BacklogFile, id: number) {
 	return items.find((item) => item.id === id);
 }
 
-export function setStatus(
-	id: string,
-	status: BacklogStatus,
-): string | undefined {
-	const backlogPath = getBacklogPath();
-	if (!existsSync(backlogPath)) {
+function loadAndFindItem(id: string) {
+	if (!existsSync(getBacklogPath())) {
 		console.log(
 			chalk.yellow(
 				"No backlog found. Run 'assist backlog init' to create one.",
@@ -54,9 +50,25 @@ export function setStatus(
 		console.log(chalk.red(`Item #${id} not found.`));
 		return undefined;
 	}
-	item.status = status;
-	saveBacklog(items);
-	return item.name;
+	return { items, item };
+}
+
+export function setStatus(
+	id: string,
+	status: BacklogStatus,
+): string | undefined {
+	const result = loadAndFindItem(id);
+	if (!result) return undefined;
+	result.item.status = status;
+	saveBacklog(result.items);
+	return result.item.name;
+}
+
+export function removeItem(id: string): string | undefined {
+	const result = loadAndFindItem(id);
+	if (!result) return undefined;
+	saveBacklog(result.items.filter((i) => i.id !== result.item.id));
+	return result.item.name;
 }
 
 export function getNextId(items: BacklogFile): number {

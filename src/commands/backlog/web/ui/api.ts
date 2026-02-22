@@ -18,6 +18,10 @@ export async function createItem(body: {
 	return res.json();
 }
 
+export async function deleteItem(id: number): Promise<void> {
+	await fetch(`/api/items/${id}`, { method: "DELETE" });
+}
+
 export async function updateItem(
 	id: number,
 	body: {

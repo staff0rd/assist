@@ -3,7 +3,13 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getHtml } from "./getHtml";
-import { createItem, getItemById, listItems, updateItem } from "./shared";
+import {
+	createItem,
+	deleteItem,
+	getItemById,
+	listItems,
+	updateItem,
+} from "./shared";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -30,6 +36,12 @@ function serveHtml(_req: IncomingMessage, res: ServerResponse): void {
 	res.end(getHtml());
 }
 
+type ItemHandler = (
+	req: IncomingMessage,
+	res: ServerResponse,
+	id: number,
+) => void | Promise<void>;
+
 const routes: Record<string, Handler> = {
 	"GET /": serveHtml,
 	"GET /bundle.js": serveBundle,
@@ -37,30 +49,35 @@ const routes: Record<string, Handler> = {
 	"POST /api/items": createItem,
 };
 
+const itemRoutes: Record<string, ItemHandler> = {
+	GET: (_req, res, id) => getItemById(res, id),
+	PUT: (req, res, id) => updateItem(req, res, id),
+	DELETE: (_req, res, id) => deleteItem(res, id),
+};
+
+function parseRoute(req: IncomingMessage, port: number) {
+	const url = new URL(req.url ?? "/", `http://localhost:${port}`);
+	return { method: req.method ?? "GET", pathname: url.pathname };
+}
+
 export async function handleRequest(
 	req: IncomingMessage,
 	res: ServerResponse,
 	port: number,
 ): Promise<void> {
-	const url = new URL(req.url ?? "/", `http://localhost:${port}`);
-	const method = req.method ?? "GET";
-	const key = `${method} ${url.pathname}`;
+	const { method, pathname } = parseRoute(req, port);
 
-	const handler = routes[key];
+	const handler = routes[`${method} ${pathname}`];
 	if (handler) {
 		await handler(req, res);
 		return;
 	}
 
-	const itemMatch = url.pathname.match(/^\/api\/items\/(\d+)$/);
+	const itemMatch = pathname.match(/^\/api\/items\/(\d+)$/);
 	if (itemMatch) {
-		const id = Number.parseInt(itemMatch[1], 10);
-		if (method === "GET") {
-			getItemById(res, id);
-			return;
-		}
-		if (method === "PUT") {
-			await updateItem(req, res, id);
+		const itemHandler = itemRoutes[method];
+		if (itemHandler) {
+			await itemHandler(req, res, Number.parseInt(itemMatch[1], 10));
 			return;
 		}
 	}

@@ -60,6 +60,7 @@ After installation, the `assist` command will be available globally.
 - `assist backlog add` - Add a new backlog item interactively
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
+- `assist backlog delete <id>` - Delete a backlog item
 - `assist backlog web [-p, --port <number>]` - Start a web view of the backlog (default port 3000)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist run <name>` - Run a configured command from assist.yml

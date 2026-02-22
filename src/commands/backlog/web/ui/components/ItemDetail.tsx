@@ -1,75 +1,90 @@
-import { marked } from "marked";
+import { useState } from "react";
+import { deleteItem } from "../api";
 import type { BacklogItem } from "../types";
-import { AcceptanceCriteriaList } from "./AcceptanceCriteriaList";
 import { BackButton } from "./BackButton";
+import { ConfirmDialog } from "./ConfirmDialog";
+import { ItemBody } from "./ItemBody";
 
 type ItemDetailProps = {
 	item: BacklogItem;
 	onBack: () => void;
 	onEdit: () => void;
+	onDeleted: () => void;
 };
 
-const badgeColors: Record<string, string> = {
-	todo: "bg-gray-100 text-gray-500",
-	"in-progress": "bg-amber-100 text-amber-800",
-	done: "bg-green-100 text-green-800",
-};
-
-function MarkdownBlock({ content }: { content: string }) {
+function DeleteAction({
+	itemId,
+	onDeleted,
+}: {
+	itemId: number;
+	onDeleted: () => void;
+}) {
+	const [confirming, setConfirming] = useState(false);
 	return (
-		<div
-			className="markdown leading-relaxed"
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: markdown rendering requires innerHTML
-			dangerouslySetInnerHTML={{ __html: marked.parse(content) as string }}
-		/>
+		<>
+			{confirming && (
+				<ConfirmDialog
+					onConfirm={async () => {
+						await deleteItem(itemId);
+						onDeleted();
+					}}
+					onCancel={() => setConfirming(false)}
+				/>
+			)}
+			<button
+				type="button"
+				className="bg-red-600 hover:bg-red-700 text-white rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
+				onClick={() => setConfirming(true)}
+			>
+				Delete
+			</button>
+		</>
 	);
 }
 
 function DetailHeader({
+	itemId,
 	onBack,
 	onEdit,
+	onDeleted,
 }: {
+	itemId: number;
 	onBack: () => void;
 	onEdit: () => void;
+	onDeleted: () => void;
 }) {
 	return (
 		<div className="flex justify-between items-center mb-4">
 			<BackButton onClick={onBack} />
-			<button
-				type="button"
-				className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
-				onClick={onEdit}
-			>
-				Edit
-			</button>
+			<div className="flex gap-2">
+				<button
+					type="button"
+					className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
+					onClick={onEdit}
+				>
+					Edit
+				</button>
+				<DeleteAction itemId={itemId} onDeleted={onDeleted} />
+			</div>
 		</div>
 	);
 }
 
-export function ItemDetail({ item, onBack, onEdit }: ItemDetailProps) {
+export function ItemDetail({
+	item,
+	onBack,
+	onEdit,
+	onDeleted,
+}: ItemDetailProps) {
 	return (
 		<>
-			<DetailHeader onBack={onBack} onEdit={onEdit} />
-			<div className="bg-white rounded-lg p-6 border border-gray-200">
-				<h2>{item.name}</h2>
-				<div className="text-gray-400 text-sm mb-4">
-					#{item.id}{" "}
-					<span
-						className={`inline-block rounded-full px-2.5 text-xs font-medium ${badgeColors[item.status]}`}
-					>
-						{item.status}
-					</span>
-				</div>
-				{item.description && (
-					<div className="mb-4">
-						<h3 className="text-xs uppercase text-gray-500 mb-2 tracking-wide">
-							Description
-						</h3>
-						<MarkdownBlock content={item.description} />
-					</div>
-				)}
-				<AcceptanceCriteriaList criteria={item.acceptanceCriteria} />
-			</div>
+			<DetailHeader
+				itemId={item.id}
+				onBack={onBack}
+				onEdit={onEdit}
+				onDeleted={onDeleted}
+			/>
+			<ItemBody item={item} />
 		</>
 	);
 }
