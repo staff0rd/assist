@@ -1,3 +1,10 @@
+# [0.74.0](https://github.com/staff0rd/assist/compare/v0.73.0...v0.74.0) (2026-02-22)
+
+
+### Features
+
+* add completed items toggle ([79d034f](https://github.com/staff0rd/assist/commit/79d034f2941e11ceec777cc4fa03820d0179b434))
+
 # [0.73.0](https://github.com/staff0rd/assist/compare/v0.72.0...v0.73.0) (2026-02-22)
 
 
