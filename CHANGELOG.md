@@ -1,3 +1,10 @@
+# [0.77.0](https://github.com/staff0rd/assist/compare/v0.76.0...v0.77.0) (2026-02-22)
+
+
+### Features
+
+* add hardcoded-colors ignore config ([4707135](https://github.com/staff0rd/assist/commit/470713533f111623bd01b036cdd84a23e8032bad))
+
 # [0.76.0](https://github.com/staff0rd/assist/compare/v0.75.0...v0.76.0) (2026-02-22)
 
 
