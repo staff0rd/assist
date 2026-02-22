@@ -1,3 +1,10 @@
+# [0.73.0](https://github.com/staff0rd/assist/compare/v0.72.0...v0.73.0) (2026-02-22)
+
+
+### Features
+
+* migrate backlog web to tailwind ([62dc968](https://github.com/staff0rd/assist/commit/62dc9684a6fbe3eb3e4eb918387a4627ba2fb53a))
+
 # [0.72.0](https://github.com/staff0rd/assist/compare/v0.71.0...v0.72.0) (2026-02-22)
 
 
