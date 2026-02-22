@@ -48,12 +48,12 @@ export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
 		<>
 			<BackButton onClick={onCancel} />
 			<Form
-				className="form"
+				className="bg-white rounded-lg p-6 border border-gray-200"
 				onSubmit={(e) =>
 					handleSubmit(e, name, description, acRef.current, item, onSaved)
 				}
 			>
-				<h2>{defaults.title}</h2>
+				<h2 className="mb-4">{defaults.title}</h2>
 				<NameField value={name} onChange={setName} />
 				<DescriptionField value={description} onChange={setDescription} />
 				<AcceptanceCriteriaField

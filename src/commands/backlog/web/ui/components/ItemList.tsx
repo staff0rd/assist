@@ -6,6 +6,12 @@ const statusIcons: Record<string, string> = {
 	done: "\u25cf",
 };
 
+const statusColors: Record<string, string> = {
+	todo: "text-gray-400",
+	"in-progress": "text-amber-500",
+	done: "text-green-500",
+};
+
 type ItemListProps = {
 	items: BacklogItem[];
 	onSelect: (id: number) => void;
@@ -22,15 +28,14 @@ function ItemCard({
 	return (
 		<button
 			type="button"
-			className="card"
-			style={{ textAlign: "left", width: "100%", font: "inherit" }}
+			className="bg-white rounded-lg p-4 mb-2 cursor-pointer border border-gray-200 hover:shadow-md transition-shadow flex items-center gap-3 text-left w-full font-[inherit]"
 			onClick={onSelect}
 		>
-			<span className={`status-icon status-${item.status}`}>
+			<span className={`text-lg shrink-0 ${statusColors[item.status]}`}>
 				{statusIcons[item.status]}
 			</span>
-			<span className="card-id">#{item.id}</span>
-			<span className="card-name">{item.name}</span>
+			<span className="text-gray-400 text-sm shrink-0">#{item.id}</span>
+			<span className="font-medium">{item.name}</span>
 		</button>
 	);
 }
@@ -38,14 +43,20 @@ function ItemCard({
 export function ItemList({ items, onSelect, onAdd }: ItemListProps) {
 	return (
 		<>
-			<header>
-				<h1>Backlog</h1>
-				<button type="button" className="btn-primary" onClick={onAdd}>
+			<header className="flex justify-between items-center mb-6">
+				<h1 className="text-2xl font-semibold">Backlog</h1>
+				<button
+					type="button"
+					className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
+					onClick={onAdd}
+				>
 					+ Add Item
 				</button>
 			</header>
 			{items.length === 0 ? (
-				<div className="empty">No items in the backlog.</div>
+				<div className="text-center text-gray-400 py-12 px-4">
+					No items in the backlog.
+				</div>
 			) : (
 				items.map((item) => (
 					<ItemCard

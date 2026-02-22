@@ -42,9 +42,11 @@ export function AcceptanceCriteriaField({
 	}
 
 	return (
-		<Field.Root className="field">
-			<Field.Label>Acceptance Criteria</Field.Label>
-			<div className="ac-inputs">
+		<Field.Root className="mb-4">
+			<Field.Label className="block font-medium mb-1 text-sm">
+				Acceptance Criteria
+			</Field.Label>
+			<div className="flex flex-col gap-2">
 				{criteria.map((c, i) => (
 					<CriterionRow
 						key={c.id}

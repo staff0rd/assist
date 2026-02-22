@@ -6,9 +6,8 @@ export function BackButton({ onClick }: BackButtonProps) {
 	return (
 		<button
 			type="button"
-			className="back-link"
+			className="inline-block mb-4 text-blue-600 text-sm cursor-pointer bg-transparent border-none p-0 hover:underline"
 			onClick={onClick}
-			style={{ background: "none", padding: 0 }}
 		>
 			&larr; Back
 		</button>
