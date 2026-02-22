@@ -1,3 +1,10 @@
+# [0.70.0](https://github.com/staff0rd/assist/compare/v0.69.0...v0.70.0) (2026-02-22)
+
+
+### Features
+
+* move run list to subcommand ([c03e301](https://github.com/staff0rd/assist/commit/c03e30192bcdcb65ee1ea008d0f416be8b933729))
+
 # [0.69.0](https://github.com/staff0rd/assist/compare/v0.68.0...v0.69.0) (2026-02-22)
 
 
