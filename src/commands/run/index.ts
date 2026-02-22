@@ -60,6 +60,14 @@ function spawnCommand(fullCommand: string): void {
 	child.on("error", onSpawnError);
 }
 
+export function listRunConfigs(): void {
+	const configs = requireRunConfigs();
+	for (const config of configs) {
+		const args = config.args?.length ? ` ${config.args.join(" ")}` : "";
+		console.log(`${config.name}: ${config.command}${args}`);
+	}
+}
+
 export function run(name: string, args: string[]): void {
 	const runConfig = findRunConfig(name);
 	spawnCommand(buildCommand(runConfig.command, runConfig.args ?? [], args));

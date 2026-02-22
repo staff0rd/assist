@@ -17,7 +17,7 @@ import { registerRefactor } from "./commands/registerRefactor";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
 import { registerRoam } from "./commands/roam/registerRoam";
-import { run, add as runAdd } from "./commands/run";
+import { listRunConfigs, run, add as runAdd } from "./commands/run";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import { update } from "./commands/update";
@@ -67,10 +67,14 @@ configCommand
 const runCommand = program
 	.command("run")
 	.description("Run a configured command from assist.yml")
-	.argument("<name>", "Name of the configured command")
+	.argument("[name]", "Name of the configured command")
 	.argument("[args...]", "Arguments to pass to the command")
 	.allowUnknownOption()
 	.action((name, args) => {
+		if (!name) {
+			listRunConfigs();
+			return;
+		}
 		run(name, args);
 	});
 
