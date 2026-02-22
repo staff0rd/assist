@@ -1,3 +1,10 @@
+# [0.76.0](https://github.com/staff0rd/assist/compare/v0.75.0...v0.76.0) (2026-02-22)
+
+
+### Features
+
+* add backlog delete command ([6028a97](https://github.com/staff0rd/assist/commit/6028a9708fbe8ade2596f059525e177c9b9b03ca))
+
 # [0.75.0](https://github.com/staff0rd/assist/compare/v0.74.0...v0.75.0) (2026-02-22)
 
 
