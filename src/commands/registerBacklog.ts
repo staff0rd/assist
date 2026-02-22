@@ -12,7 +12,7 @@ export function registerBacklog(program: Command): void {
 	const backlogCommand = program
 		.command("backlog")
 		.description("Manage a backlog of work items")
-		.action(backlogList);
+		.action(() => backlogWeb({ port: "3000" }));
 
 	backlogCommand
 		.command("init")

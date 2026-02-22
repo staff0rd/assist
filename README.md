@@ -54,7 +54,7 @@ After installation, the `assist` command will be available globally.
 - `assist prs list-comments` - List all comments on the current branch's pull request
 - `assist prs fixed <comment-id> <sha>` - Reply with commit link and resolve thread
 - `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
-- `assist backlog` - List all backlog items (same as `backlog list`)
+- `assist backlog` - Start the backlog web UI (same as `backlog web`)
 - `assist backlog init` - Create an empty assist.backlog.yml
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively
