@@ -4,6 +4,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import enquirer from "enquirer";
 
+export async function promptType(): Promise<"story" | "bug"> {
+	const { type } = await enquirer.prompt<{ type: "story" | "bug" }>({
+		type: "select",
+		name: "type",
+		message: "Type:",
+		choices: ["story", "bug"],
+		initial: 0,
+	});
+	return type;
+}
+
 export async function promptName(): Promise<string> {
 	const { name } = await enquirer.prompt<{ name: string }>({
 		type: "input",

@@ -1,21 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { getNextId, loadBacklog, saveBacklog } from "../shared";
-
-function respondJson(res: ServerResponse, status: number, data: unknown): void {
-	res.writeHead(status, { "Content-Type": "application/json" });
-	res.end(JSON.stringify(data));
-}
-
-function readBody(req: IncomingMessage): Promise<string> {
-	return new Promise((resolve, reject) => {
-		let body = "";
-		req.on("data", (chunk: Buffer) => {
-			body += chunk.toString();
-		});
-		req.on("end", () => resolve(body));
-		req.on("error", reject);
-	});
-}
+import { parseItemBody, respondJson } from "./respondJson";
 
 export function listItems(_req: IncomingMessage, res: ServerResponse): void {
 	respondJson(res, 200, loadBacklog());
@@ -36,16 +21,6 @@ export function getItemById(res: ServerResponse, id: number): void {
 	if (result) respondJson(res, 200, result.item);
 }
 
-type ItemBody = {
-	name: string;
-	description?: string;
-	acceptanceCriteria?: string[];
-};
-
-async function parseItemBody(req: IncomingMessage): Promise<ItemBody> {
-	return JSON.parse(await readBody(req)) as ItemBody;
-}
-
 export async function createItem(
 	req: IncomingMessage,
 	res: ServerResponse,
@@ -54,6 +29,7 @@ export async function createItem(
 	const items = loadBacklog();
 	const newItem = {
 		id: getNextId(items),
+		type: body.type ?? ("story" as const),
 		name: body.name,
 		description: body.description,
 		acceptanceCriteria: body.acceptanceCriteria ?? [],
@@ -80,6 +56,7 @@ export async function updateItem(
 	const result = findItemOr404(res, id);
 	if (!result) return;
 	Object.assign(result.item, {
+		type: body.type ?? result.item.type,
 		name: body.name,
 		description: body.description,
 		acceptanceCriteria: body.acceptanceCriteria ?? [],

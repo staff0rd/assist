@@ -57,7 +57,7 @@ After installation, the `assist` command will be available globally.
 - `assist backlog` - Start the backlog web UI (same as `backlog web`)
 - `assist backlog init` - Create an empty assist.backlog.yml
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
-- `assist backlog add` - Add a new backlog item interactively
+- `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
 - `assist backlog delete <id>` - Delete a backlog item

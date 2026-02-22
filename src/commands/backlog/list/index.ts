@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import chalk from "chalk";
 import { getBacklogPath, loadBacklog } from "../shared";
-import type { BacklogStatus } from "../types";
+import type { BacklogFile, BacklogStatus, BacklogType } from "../types";
 
 function statusIcon(status: BacklogStatus): string {
 	switch (status) {
@@ -12,6 +12,28 @@ function statusIcon(status: BacklogStatus): string {
 		case "done":
 			return chalk.green("[x]");
 	}
+}
+
+function typeLabel(type: BacklogType): string {
+	switch (type) {
+		case "bug":
+			return chalk.magenta("Bug");
+		case "story":
+			return chalk.cyan("Story");
+	}
+}
+
+function printVerboseDetails(item: BacklogFile[number]): void {
+	if (item.description) {
+		console.log(`  ${chalk.dim("Description:")} ${item.description}`);
+	}
+	if (item.acceptanceCriteria.length > 0) {
+		console.log(`  ${chalk.dim("Acceptance criteria:")}`);
+		for (const criterion of item.acceptanceCriteria) {
+			console.log(`    - ${criterion}`);
+		}
+	}
+	console.log();
 }
 
 export async function list(options: {
@@ -37,19 +59,10 @@ export async function list(options: {
 	}
 	for (const item of items) {
 		console.log(
-			`${statusIcon(item.status)} ${chalk.dim(`#${item.id}`)} ${item.name}`,
+			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}`,
 		);
 		if (options.verbose) {
-			if (item.description) {
-				console.log(`  ${chalk.dim("Description:")} ${item.description}`);
-			}
-			if (item.acceptanceCriteria.length > 0) {
-				console.log(`  ${chalk.dim("Acceptance criteria:")}`);
-				for (const criterion of item.acceptanceCriteria) {
-					console.log(`    - ${criterion}`);
-				}
-			}
-			console.log();
+			printVerboseDetails(item);
 		}
 	}
 }

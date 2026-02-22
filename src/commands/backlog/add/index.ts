@@ -5,6 +5,7 @@ import {
 	promptAcceptanceCriteria,
 	promptDescription,
 	promptName,
+	promptType,
 } from "./shared";
 
 export async function add(): Promise<void> {
@@ -18,13 +19,21 @@ export async function add(): Promise<void> {
 		return;
 	}
 
+	const type = await promptType();
 	const name = await promptName();
 	const description = await promptDescription();
 	const acceptanceCriteria = await promptAcceptanceCriteria();
 
 	const items = loadBacklog();
 	const id = getNextId(items);
-	items.push({ id, name, description, acceptanceCriteria, status: "todo" });
+	items.push({
+		id,
+		type,
+		name,
+		description,
+		acceptanceCriteria,
+		status: "todo",
+	});
 	saveBacklog(items);
 	console.log(chalk.green(`Added item #${id}: ${name}`));
 }

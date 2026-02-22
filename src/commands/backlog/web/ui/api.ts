@@ -6,6 +6,7 @@ export async function fetchItems(): Promise<BacklogItem[]> {
 }
 
 export async function createItem(body: {
+	type: "story" | "bug";
 	name: string;
 	description?: string;
 	acceptanceCriteria: string[];
@@ -25,6 +26,7 @@ export async function deleteItem(id: number): Promise<void> {
 export async function updateItem(
 	id: number,
 	body: {
+		type: "story" | "bug";
 		name: string;
 		description?: string;
 		acceptanceCriteria: string[];

@@ -1,12 +1,13 @@
 import { Form } from "@base-ui/react/form";
-import { type FormEvent, useRef, useState } from "react";
-import { submitForm } from "../submitForm";
+import { useRef, useState } from "react";
 import type { BacklogItem } from "../types";
 import { AcceptanceCriteriaField } from "./AcceptanceCriteriaField";
 import { BackButton } from "./BackButton";
 import { DescriptionField } from "./DescriptionField";
 import { FormActions } from "./FormActions";
+import { getDefaults, handleSubmit } from "./getDefaults";
 import { NameField } from "./NameField";
+import { TypeField } from "./TypeField";
 
 type ItemFormProps = {
 	item?: BacklogItem;
@@ -14,32 +15,11 @@ type ItemFormProps = {
 	onCancel: () => void;
 };
 
-function getDefaults(item?: BacklogItem) {
-	return {
-		name: item?.name ?? "",
-		description: item?.description ?? "",
-		ac: item?.acceptanceCriteria ?? [],
-		title: item ? "Edit Item" : "Add Item",
-		submitLabel: item ? "Save" : "Add",
-	};
-}
-
-async function handleSubmit(
-	e: FormEvent,
-	name: string,
-	description: string,
-	criteria: string[],
-	item: BacklogItem | undefined,
-	onSaved: (id: number) => void,
-) {
-	e.preventDefault();
-	const id = await submitForm(name, description, criteria, item);
-	if (id === undefined) return;
-	onSaved(id);
-}
-
 export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
 	const defaults = getDefaults(item);
+	const [type, setType] = useState<"story" | "bug">(
+		defaults.type as "story" | "bug",
+	);
 	const [name, setName] = useState(defaults.name);
 	const [description, setDescription] = useState(defaults.description);
 	const acRef = useRef<string[]>(defaults.ac);
@@ -50,10 +30,11 @@ export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
 			<Form
 				className="bg-white rounded-lg p-6 border border-gray-200"
 				onSubmit={(e) =>
-					handleSubmit(e, name, description, acRef.current, item, onSaved)
+					handleSubmit(e, type, name, description, acRef.current, item, onSaved)
 				}
 			>
 				<h2 className="mb-4">{defaults.title}</h2>
+				<TypeField value={type} onChange={setType} />
 				<NameField value={name} onChange={setName} />
 				<DescriptionField value={description} onChange={setDescription} />
 				<AcceptanceCriteriaField

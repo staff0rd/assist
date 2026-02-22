@@ -12,6 +12,11 @@ const statusColors: Record<string, string> = {
 	done: "text-green-500",
 };
 
+const typeBadgeColors: Record<string, string> = {
+	story: "bg-blue-100 text-blue-700",
+	bug: "bg-red-100 text-red-700",
+};
+
 export function ItemCard({
 	item,
 	onSelect,
@@ -27,6 +32,11 @@ export function ItemCard({
 		>
 			<span className={`text-lg shrink-0 ${statusColors[item.status]}`}>
 				{statusIcons[item.status]}
+			</span>
+			<span
+				className={`text-xs font-medium rounded-full px-2 shrink-0 ${typeBadgeColors[item.type]}`}
+			>
+				{item.type}
 			</span>
 			<span className="text-gray-400 text-sm shrink-0">#{item.id}</span>
 			<span className="font-medium">{item.name}</span>

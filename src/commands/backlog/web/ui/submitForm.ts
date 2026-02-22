@@ -2,6 +2,7 @@ import { createItem, updateItem } from "./api";
 import type { BacklogItem } from "./types";
 
 export async function submitForm(
+	type: "story" | "bug",
 	name: string,
 	description: string,
 	criteria: string[],
@@ -10,6 +11,7 @@ export async function submitForm(
 	const trimmed = name.trim();
 	if (!trimmed) return undefined;
 	const body = {
+		type,
 		name: trimmed,
 		description: description.trim() || undefined,
 		acceptanceCriteria: criteria.map((c) => c.trim()).filter(Boolean),
