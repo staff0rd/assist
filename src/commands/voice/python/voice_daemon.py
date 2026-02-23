@@ -185,20 +185,62 @@ class VoiceDaemon:
         return process_name in self._submit_windows
 
     def _update_typed_text(self, new_text: str) -> None:
-        """Diff old typed text vs new, backspace + type the difference."""
+        """Diff old typed text vs new at word level, minimising deletions.
+
+        Only deletes back to the first word that changed; appends everything
+        after the common word prefix.  This avoids the jarring full-delete
+        that character-level diffing causes when earlier words shift slightly.
+        """
         old = self._typed_text
-        # Find common prefix
-        common = 0
-        for a, b in zip(old, new_text):
+        if old == new_text:
+            return
+
+        old_words = old.split()
+        new_words = new_text.split()
+
+        # Find the longest common word prefix
+        common_words = 0
+        for a, b in zip(old_words, new_words):
             if a == b:
-                common += 1
+                common_words += 1
             else:
                 break
-        # Backspace what's wrong, type new suffix
-        to_delete = len(old) - common
-        to_type = new_text[common:]
+
+        # Character position where the common word prefix ends (including
+        # the trailing space after the last common word, if any).
+        if common_words == 0:
+            keep_chars = 0
+        else:
+            # Rejoin the common words and add one space (the separator before
+            # the next word that was already typed).
+            keep = " ".join(old_words[:common_words])
+            # Only count the trailing space if there were more old words after
+            # the common prefix (meaning that space is already on screen).
+            if common_words < len(old_words):
+                keep_chars = len(keep) + 1  # +1 for the space
+            else:
+                keep_chars = len(keep)
+
+        to_delete = len(old) - keep_chars
         if to_delete > 0:
             keyboard.backspace(to_delete)
+
+        # Build the new suffix to type from the first divergent word onward
+        if common_words == 0:
+            to_type = new_text
+        else:
+            suffix = " ".join(new_words[common_words:])
+            if suffix:
+                # Need a space separator if we kept text and are appending
+                if keep_chars > 0 and common_words < len(old_words):
+                    to_type = suffix
+                elif keep_chars > 0:
+                    to_type = " " + suffix
+                else:
+                    to_type = suffix
+            else:
+                to_type = ""
+
         if to_type:
             keyboard.type_text(to_type)
         self._typed_text = new_text
