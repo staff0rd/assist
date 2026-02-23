@@ -46,7 +46,8 @@ export function start(options: {
 	checkLockFile();
 	bootstrapVenv();
 
-	const debug = options.debug || options.foreground;
+	const debug =
+		options.debug || options.foreground || process.platform === "win32";
 	const env = buildDaemonEnv({ debug });
 	const script = join(getPythonDir(), "voice_daemon.py");
 	const python = getVenvPython();

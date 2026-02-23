@@ -401,7 +401,26 @@ class VoiceDaemon:
             log("daemon_stop", "Voice daemon stopped")
 
 
+def _setup_console() -> None:
+    """On Windows, reopen stdout/stderr to the process's own console (CONOUT$).
+
+    When launched as a detached background process, Node.js redirects stdio to
+    NUL.  Windows still allocates a console window for the process, but nothing
+    appears in it.  Opening CONOUT$ gives us a handle to that console so all
+    debug output shows up there.
+    """
+    if sys.platform != "win32":
+        return
+    try:
+        con = open("CONOUT$", "w", encoding="utf-8")
+        sys.stdout = con
+        sys.stderr = con
+    except OSError:
+        pass
+
+
 def main() -> None:
+    _setup_console()
     log("daemon_launch", f"PID={os.getpid()}")
     try:
         daemon = VoiceDaemon()
