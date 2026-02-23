@@ -4,6 +4,7 @@ const runConfigSchema = z.strictObject({
 	name: z.string(),
 	command: z.string(),
 	args: z.array(z.string()).optional(),
+	filter: z.string().optional(),
 });
 
 const transcriptConfigSchema = z.strictObject({
@@ -64,7 +65,7 @@ export const assistConfigSchema = z.strictObject({
 	transcript: transcriptConfigSchema.optional(),
 	voice: z
 		.strictObject({
-			wakeWords: z.array(z.string()).default(["claude"]),
+			wakeWords: z.array(z.string()).default(["computer"]),
 			mic: z.string().optional(),
 			cwd: z.string().optional(),
 			modelsDir: z.string().optional(),

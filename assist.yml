@@ -19,6 +19,7 @@ voice:
 run:
   - name: verify:python-lint
     command: uv
+    filter: "src/commands/voice/python/**"
     args:
       - run
       - --project
@@ -30,6 +31,7 @@ run:
       - src/commands/voice/python
   - name: verify:python-format
     command: uv
+    filter: "src/commands/voice/python/**"
     args:
       - run
       - --project
@@ -39,3 +41,64 @@ run:
       - ruff
       - format
       - src/commands/voice/python
+  - name: verify:lint
+    command: npx
+    args:
+      - biome
+      - check
+      - --write
+      - "."
+  - name: verify:build
+    command: npx
+    args:
+      - tsup
+  - name: verify:types
+    command: npx
+    args:
+      - tsc
+      - --noEmit
+  - name: verify:knip
+    command: npx
+    args:
+      - knip
+      - --no-progress
+      - --treat-config-hints-as-errors
+  - name: verify:duplicate-code
+    command: npx
+    args:
+      - jscpd
+      - --format
+      - "typescript,tsx,python"
+      - --exitCode
+      - "1"
+      - --ignore
+      - "**/*.test.*,**/.venv/**"
+      - -r
+      - consoleFull
+      - src
+  - name: verify:maintainability
+    command: assist
+    args:
+      - complexity
+      - maintainability
+      - ./src
+      - --threshold
+      - "70"
+  - name: verify:custom-lint
+    command: assist
+    args:
+      - lint
+  - name: verify:react-build
+    command: npx
+    filter: "src/commands/backlog/web/**"
+    args:
+      - esbuild
+      - src/commands/backlog/web/ui/App.tsx
+      - --bundle
+      - --minify
+      - --format=iife
+      - --target=es2020
+      - --outfile=dist/commands/backlog/web/bundle.js
+      - --jsx=automatic
+      - --jsx-import-source=react
+      - "--define:process.env.NODE_ENV=\"production\""

@@ -1,4 +1,5 @@
 {
-	"ignoreBinaries": ["assist"],
+	"entry": ["src/index.ts", "src/commands/backlog/web/ui/App.tsx"],
+	"ignoreDependencies": ["@biomejs/biome", "jscpd"],
 	"ignore": ["**/.venv/**"]
 }

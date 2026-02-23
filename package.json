@@ -15,15 +15,7 @@
 	},
 	"scripts": {
 		"build": "tsup",
-		"start": "node dist/index.js",
-		"verify:lint": "biome check --write .",
-		"verify:build": "tsup",
-		"verify:types": "tsc --noEmit",
-		"verify:knip": "knip --no-progress --treat-config-hints-as-errors",
-		"verify:duplicate-code": "jscpd --format 'typescript,tsx,python' --exitCode 1 --ignore '**/*.test.*' -r consoleFull src",
-		"verify:maintainability": "assist complexity maintainability ./src --threshold 70",
-		"verify:custom-lint": "assist lint",
-		"verify:react-build": "esbuild src/commands/backlog/web/ui/App.tsx --bundle --minify --format=iife --target=es2020 --outfile=dist/commands/backlog/web/bundle.js --jsx=automatic --jsx-import-source=react \"--define:process.env.NODE_ENV=\\\"production\\\"\""
+		"start": "node dist/index.js"
 	},
 	"keywords": [],
 	"author": "",

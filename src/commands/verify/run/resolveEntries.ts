@@ -14,6 +14,7 @@ export type VerifyEntry = {
 	name: string;
 	fullCommand: string;
 	cwd?: string;
+	filter?: string;
 };
 
 function getRunEntries(): VerifyEntry[] {
@@ -24,6 +25,7 @@ function getRunEntries(): VerifyEntry[] {
 		.map((r) => ({
 			name: r.name,
 			fullCommand: buildFullCommand(r.command, r.args),
+			filter: r.filter,
 		}));
 }
 
