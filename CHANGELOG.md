@@ -1,3 +1,10 @@
+# [0.81.0](https://github.com/staff0rd/assist/compare/v0.80.0...v0.81.0) (2026-02-23)
+
+
+### Features
+
+* set voice wake word ([177a94b](https://github.com/staff0rd/assist/commit/177a94b09d1042666c994a700c82dd9f3fb0d044))
+
 # [0.80.0](https://github.com/staff0rd/assist/compare/v0.79.0...v0.80.0) (2026-02-23)
 
 
