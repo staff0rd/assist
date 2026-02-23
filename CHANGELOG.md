@@ -1,3 +1,10 @@
+# [0.85.0](https://github.com/staff0rd/assist/compare/v0.84.0...v0.85.0) (2026-02-23)
+
+
+### Features
+
+* add verify no-venv check ([add385a](https://github.com/staff0rd/assist/commit/add385af6914dadf7b5bc5326d2b44a6e285e7b3))
+
 # [0.84.0](https://github.com/staff0rd/assist/compare/v0.83.1...v0.84.0) (2026-02-23)
 
 
