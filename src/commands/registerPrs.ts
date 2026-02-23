@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import {
 	prs,
+	comment as prsComment,
 	fixed as prsFixed,
 	listComments as prsListComments,
 	printComments as prsPrintComments,
@@ -34,5 +35,12 @@ export function registerPrs(program: Command): void {
 		.description("Reply with reason and resolve thread")
 		.action((commentId: string, reason: string) => {
 			prsWontfix(Number.parseInt(commentId, 10), reason);
+		});
+
+	prsCommand
+		.command("comment <path> <line> <body>")
+		.description("Add a line comment to the pending review")
+		.action((path: string, line: string, body: string) => {
+			prsComment(path, Number.parseInt(line, 10), body);
 		});
 }

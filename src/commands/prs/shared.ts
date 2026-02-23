@@ -36,3 +36,18 @@ export function getCurrentPrNumber(): number {
 		throw error;
 	}
 }
+
+export function getCurrentPrNodeId(): string {
+	try {
+		const prInfo = JSON.parse(
+			execSync("gh pr view --json id", { encoding: "utf-8" }),
+		);
+		return prInfo.id;
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("no pull requests")) {
+			console.error("Error: No pull request found for the current branch.");
+			process.exit(1);
+		}
+		throw error;
+	}
+}
