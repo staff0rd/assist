@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { expandEnv } from "../../shared/expandEnv";
 import { loadConfig } from "../../shared/loadConfig";
 
 function quoteIfNeeded(arg: string): string {
@@ -54,8 +55,12 @@ function onSpawnError(err: Error): void {
 	process.exit(1);
 }
 
-function spawnCommand(fullCommand: string): void {
-	const child = spawn(fullCommand, [], { stdio: "inherit", shell: true });
+function spawnCommand(fullCommand: string, env?: Record<string, string>): void {
+	const child = spawn(fullCommand, [], {
+		stdio: "inherit",
+		shell: true,
+		env: env ? { ...process.env, ...expandEnv(env) } : undefined,
+	});
 	child.on("close", (code) => process.exit(code ?? 0));
 	child.on("error", onSpawnError);
 }
@@ -70,7 +75,10 @@ export function listRunConfigs(): void {
 
 export function run(name: string, args: string[]): void {
 	const runConfig = findRunConfig(name);
-	spawnCommand(buildCommand(runConfig.command, runConfig.args ?? [], args));
+	spawnCommand(
+		buildCommand(runConfig.command, runConfig.args ?? [], args),
+		runConfig.env,
+	);
 }
 
 export { add } from "./add";

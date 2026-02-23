@@ -1,7 +1,10 @@
 """Voice daemon entry point — main loop and signal handling."""
 
+import ctypes
+import json
 import os
 import signal
+import subprocess
 import sys
 import time
 
@@ -15,6 +18,73 @@ from vad import SileroVAD
 from wake_word import check_wake_word
 
 import keyboard
+
+
+def _load_voice_config() -> dict:
+    """Load voice config by calling ``assist config get voice``.
+
+    Sets environment variables so other Python modules (audio_capture,
+    vad, smart_turn, stt, wake_word) can read them as before.
+    Returns the parsed config dict.
+    """
+    try:
+        result = subprocess.run(
+            ["assist", "config", "get", "voice"],
+            capture_output=True,
+            text=True,
+            check=True,
+            shell=True,
+        )
+        config = json.loads(result.stdout)
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+        log("config_error", str(exc), level="error")
+        return {}
+
+    env_map: dict[str, str | None] = {
+        "VOICE_WAKE_WORDS": ",".join(config.get("wakeWords", [])) or None,
+        "VOICE_MIC": config.get("mic"),
+        "VOICE_MODELS_DIR": os.path.expanduser(v)
+        if (v := config.get("modelsDir"))
+        else None,
+        "VOICE_MODEL_VAD": (config.get("models") or {}).get("vad"),
+        "VOICE_MODEL_SMART_TURN": (config.get("models") or {}).get("smartTurn"),
+    }
+    for key, value in env_map.items():
+        if value:
+            os.environ[key] = value
+
+    log("config_loaded", json.dumps(config))
+    return config
+
+
+def _get_foreground_window_info() -> str:
+    """Return the title and process name of the currently focused window."""
+    user32 = ctypes.windll.user32
+    kernel32 = ctypes.windll.kernel32
+    hwnd = user32.GetForegroundWindow()
+
+    # Window title
+    buf = ctypes.create_unicode_buffer(256)
+    user32.GetWindowTextW(hwnd, buf, 256)
+    title = buf.value
+
+    # Process name from window handle
+    pid = ctypes.c_ulong()
+    user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+    process_name = ""
+    PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+    handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid.value)
+    if handle:
+        exe_buf = ctypes.create_unicode_buffer(260)
+        size = ctypes.c_ulong(260)
+        if kernel32.QueryFullProcessImageNameW(handle, 0, exe_buf, ctypes.byref(size)):
+            process_name = exe_buf.value.rsplit("\\", 1)[-1]
+        kernel32.CloseHandle(handle)
+
+    if process_name:
+        return f"{process_name}: {title}"
+    return title
+
 
 # States
 IDLE = "idle"
@@ -36,23 +106,9 @@ STOP_CHUNKS = (STOP_MS * 16000) // (BLOCK_SIZE * 1000)  # ~31 chunks
 ACTIVATED_TIMEOUT = 10.0
 
 
-def _print_vad_bar(
-    prob: float, threshold: float, state: str, chunk: np.ndarray
-) -> None:
-    """Print a live VAD meter to stderr when debug mode is on."""
-    rms = float(np.sqrt(np.mean(chunk**2)))
-    peak = float(np.max(np.abs(chunk)))
-    width = 40
-    filled = int(prob * width)
-    bar = "█" * filled + "░" * (width - filled)
-    marker = ">" if prob > threshold else " "
-    print(
-        f"\r  {marker} VAD {prob:.2f} [{bar}] "
-        f"rms={rms:.4f} peak={peak:.4f} {state:10s}",
-        end="",
-        file=sys.stderr,
-        flush=True,
-    )
+def _print_state(state: str) -> None:
+    """Print the current daemon state to stderr when debug mode is on."""
+    print(f"\r  {state:10s}", end="", file=sys.stderr, flush=True)
 
 
 class VoiceDaemon:
@@ -60,15 +116,17 @@ class VoiceDaemon:
         self._running = True
         self._state = IDLE
         self._audio_buffer: list[np.ndarray] = []
-        self._submit_word = os.environ.get("VOICE_SUBMIT_WORD", "").strip().lower()
+
+        config = _load_voice_config()
+        self._submit_windows: set[str] = set(config.get("submitWindows") or [])
 
         log("daemon_init", "Initializing models...")
         self._mic = AudioCapture()
         self._vad = SileroVAD()
         self._smart_turn = SmartTurn()
         self._stt = ParakeetSTT()
-        if self._submit_word:
-            log("daemon_init", f"Submit word: '{self._submit_word}'")
+        if self._submit_windows:
+            log("daemon_init", f"Submit windows: {self._submit_windows}")
         log("daemon_ready")
 
         # Incremental typing state
@@ -96,7 +154,7 @@ class VoiceDaemon:
 
         if self._state == ACTIVATED:
             # Already activated — everything is the command, no wake word needed
-            partial = self._hide_submit_word(text.strip())
+            partial = text.strip()
             if partial and partial != self._typed_text:
                 if self._typed_text:
                     self._update_typed_text(partial)
@@ -106,41 +164,25 @@ class VoiceDaemon:
         elif not self._wake_detected:
             found, command = check_wake_word(text)
             if found and command:
-                partial = self._hide_submit_word(command)
-                if partial:
-                    self._wake_detected = True
-                    log("wake_word_detected", partial)
-                    if DEBUG:
-                        print(f"  Wake word! Typing: {partial}", file=sys.stderr)
-                    keyboard.type_text(partial)
-                    self._typed_text = partial
+                self._wake_detected = True
+                log("wake_word_detected", command)
+                if DEBUG:
+                    print(f"  Wake word! Typing: {command}", file=sys.stderr)
+                keyboard.type_text(command)
+                self._typed_text = command
         else:
             found, command = check_wake_word(text)
             if found and command:
-                partial = self._hide_submit_word(command)
-                if partial and partial != self._typed_text:
-                    self._update_typed_text(partial)
+                if command != self._typed_text:
+                    self._update_typed_text(command)
 
-    def _strip_submit_word(self, text: str) -> tuple[bool, str]:
-        """Check if text ends with the submit word.
-
-        Returns (should_submit, stripped_text).
-        If no submit word is configured, always returns (True, text).
-        """
-        if not self._submit_word:
-            return True, text
-        words = text.rsplit(None, 1)
-        if len(words) >= 1 and words[-1].lower().rstrip(".,!?") == self._submit_word:
-            stripped = text[: text.lower().rfind(words[-1].lower())].rstrip()
-            return True, stripped
-        return False, text
-
-    def _hide_submit_word(self, text: str) -> str:
-        """Strip trailing submit word from partial text so it's never typed."""
-        if not self._submit_word:
-            return text
-        _, stripped = self._strip_submit_word(text)
-        return stripped
+    def _should_submit(self) -> bool:
+        """Check if the foreground window matches the submit allowlist."""
+        if not self._submit_windows:
+            return True
+        info = _get_foreground_window_info()
+        process_name = info.split(":")[0].strip() if ":" in info else ""
+        return process_name in self._submit_windows
 
     def _update_typed_text(self, new_text: str) -> None:
         """Diff old typed text vs new, backspace + type the difference."""
@@ -212,26 +254,18 @@ class VoiceDaemon:
                 log("smart_turn_incomplete", "Continuing to listen...")
         return False
 
-    def _dispatch_result(self, should_submit: bool, stripped: str) -> None:
+    def _dispatch_result(self, text: str) -> None:
         """Log and optionally submit a recognized command."""
-        if stripped:
-            if should_submit:
-                log("dispatch_enter", stripped)
-                if DEBUG:
-                    print(f"  Final: {stripped} [Enter]", file=sys.stderr)
-                keyboard.press_enter()
-            else:
-                log("dispatch_typed", stripped)
-                if DEBUG:
-                    print(f"  Final: {stripped} (no submit)", file=sys.stderr)
-        elif should_submit:
-            # Submit word only — erase it and press enter
-            if self._typed_text:
-                keyboard.backspace(len(self._typed_text))
-            log("dispatch_enter", "(submit word only)")
+        should_submit = self._should_submit()
+        if should_submit:
+            log("dispatch_enter", text)
             if DEBUG:
-                print("  Submit word only [Enter]", file=sys.stderr)
+                print(f"  Final: {text} [Enter]", file=sys.stderr)
             keyboard.press_enter()
+        else:
+            log("dispatch_typed", text)
+            if DEBUG:
+                print(f"  Final: {text} (no submit)", file=sys.stderr)
 
     def _finalize_utterance(self) -> None:
         """End of turn: final STT, correct typed text, press Enter."""
@@ -252,14 +286,12 @@ class VoiceDaemon:
             # Activated mode — full text is the command
             command = text.strip()
             if command:
-                should_submit, stripped = self._strip_submit_word(command)
-                if stripped:
-                    if stripped != self._typed_text:
-                        if self._typed_text:
-                            self._update_typed_text(stripped)
-                        else:
-                            keyboard.type_text(stripped)
-                self._dispatch_result(should_submit, stripped)
+                if command != self._typed_text:
+                    if self._typed_text:
+                        self._update_typed_text(command)
+                    else:
+                        keyboard.type_text(command)
+                self._dispatch_result(command)
             else:
                 if self._typed_text:
                     keyboard.backspace(len(self._typed_text))
@@ -271,11 +303,9 @@ class VoiceDaemon:
             # Correct final text and submit
             found, command = check_wake_word(text)
             if found and command:
-                should_submit, stripped = self._strip_submit_word(command)
-                if stripped:
-                    if stripped != self._typed_text:
-                        self._update_typed_text(stripped)
-                self._dispatch_result(should_submit, stripped)
+                if command != self._typed_text:
+                    self._update_typed_text(command)
+                self._dispatch_result(command)
             elif found:
                 # Wake word found but no command text after it
                 if self._typed_text:
@@ -285,29 +315,16 @@ class VoiceDaemon:
                 # Final transcription lost the wake word (e.g. audio clipping
                 # turned "computer" into "uter"); fall back to the command
                 # captured during streaming
-                should_submit, stripped = self._strip_submit_word(self._typed_text)
-                self._dispatch_result(should_submit, stripped or self._typed_text)
+                self._dispatch_result(self._typed_text)
         else:
             # Check final transcription for wake word
             found, command = check_wake_word(text)
             if found and command:
-                should_submit, stripped = self._strip_submit_word(command)
-                if stripped:
-                    log("wake_word_detected", stripped)
-                    if DEBUG:
-                        label = "[Enter]" if should_submit else "(no submit)"
-                        print(
-                            f"  Wake word! Final: {stripped} {label}", file=sys.stderr
-                        )
-                    keyboard.type_text(stripped)
-                    if should_submit:
-                        keyboard.press_enter()
-                else:
-                    # Submit word only — just press enter
-                    log("dispatch_enter", "(submit word only)")
-                    if DEBUG:
-                        print("  Wake word + submit word only [Enter]", file=sys.stderr)
-                    keyboard.press_enter()
+                log("wake_word_detected", command)
+                if DEBUG:
+                    print(f"  Wake word! Final: {command}", file=sys.stderr)
+                keyboard.type_text(command)
+                self._dispatch_result(command)
             if found and not command:
                 # Wake word only — enter ACTIVATED state for next utterance
                 log("wake_word_only", "Listening for command...")
@@ -367,7 +384,7 @@ class VoiceDaemon:
                 prob = self._vad.process(chunk)
 
                 if DEBUG:
-                    _print_vad_bar(prob, self._vad.threshold, self._state, chunk)
+                    _print_state(self._state)
 
                 if self._state == IDLE:
                     if prob > self._vad.threshold:

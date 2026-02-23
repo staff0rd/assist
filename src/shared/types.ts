@@ -4,6 +4,7 @@ const runConfigSchema = z.strictObject({
 	name: z.string(),
 	command: z.string(),
 	args: z.array(z.string()).optional(),
+	env: z.record(z.string(), z.string()).optional(),
 	filter: z.string().optional(),
 });
 
@@ -13,6 +14,8 @@ const transcriptConfigSchema = z.strictObject({
 	summaryDir: z.string(),
 });
 
+const DEFAULT_WAKE_WORDS = ["computer"];
+const DEFAULT_MODELS_DIR = "~/.assist/voice/models";
 export const assistConfigSchema = z.strictObject({
 	commit: z
 		.strictObject({
@@ -65,21 +68,24 @@ export const assistConfigSchema = z.strictObject({
 	transcript: transcriptConfigSchema.optional(),
 	voice: z
 		.strictObject({
-			wakeWords: z.array(z.string()).default(["computer"]),
+			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),
 			mic: z.string().optional(),
 			cwd: z.string().optional(),
-			modelsDir: z.string().optional(),
+			modelsDir: z.string().default(DEFAULT_MODELS_DIR),
 			lockDir: z.string().optional(),
-			submitWord: z.string().optional(),
+			submitWindows: z.array(z.string()).optional(),
 			models: z
 				.strictObject({
 					vad: z.string().optional(),
 					smartTurn: z.string().optional(),
-					stt: z.string().optional(),
 				})
-				.optional(),
+				.default({}),
 		})
-		.optional(),
+		.default({
+			wakeWords: DEFAULT_WAKE_WORDS,
+			modelsDir: DEFAULT_MODELS_DIR,
+			models: {},
+		}),
 });
 
 export type AssistConfig = z.infer<typeof assistConfigSchema>;

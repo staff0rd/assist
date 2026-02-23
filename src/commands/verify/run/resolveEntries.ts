@@ -14,6 +14,7 @@ export type VerifyEntry = {
 	name: string;
 	fullCommand: string;
 	cwd?: string;
+	env?: Record<string, string>;
 	filter?: string;
 };
 
@@ -25,6 +26,7 @@ function getRunEntries(): VerifyEntry[] {
 		.map((r) => ({
 			name: r.name,
 			fullCommand: buildFullCommand(r.command, r.args),
+			env: r.env,
 			filter: r.filter,
 		}));
 }

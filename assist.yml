@@ -11,15 +11,17 @@ devlog:
       - 2026-01-07
 notify:
   enabled: false
-voice:
-  wakeWords:
-    - "computer"
-  submitWord: "go"
-  mic: "Headset Microphone (Jabra Link 380), Windows WASAPI"
+# voice:
+#   wakeWords:
+#     - "computer"
+#   submitWord: "go"
+#   mic: "Headset Microphone (Jabra Link 380), Windows WASAPI"
 run:
   - name: verify:python-lint
     command: uv
     filter: "src/commands/voice/python/**"
+    env:
+      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
     args:
       - run
       - --project
@@ -32,6 +34,8 @@ run:
   - name: verify:python-format
     command: uv
     filter: "src/commands/voice/python/**"
+    env:
+      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
     args:
       - run
       - --project
