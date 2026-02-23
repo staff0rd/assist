@@ -1,22 +1,13 @@
-import { execSync, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { bootstrapVenv } from "./checkLockFile";
 import { getPythonDir, getVenvPython, voicePaths } from "./shared";
 
 export function setup(): void {
 	mkdirSync(voicePaths.dir, { recursive: true });
 
-	if (!existsSync(getVenvPython())) {
-		console.log("Creating Python virtual environment...");
-		execSync(`uv venv "${voicePaths.venv}"`, { stdio: "inherit" });
-
-		console.log("Installing dependencies...");
-		const pythonDir = getPythonDir();
-		execSync(
-			`uv pip install --python "${getVenvPython()}" -e "${pythonDir}[dev]"`,
-			{ stdio: "inherit" },
-		);
-	}
+	bootstrapVenv();
 
 	console.log("\nDownloading models...\n");
 	const script = join(getPythonDir(), "setup_models.py");

@@ -161,6 +161,29 @@ class VoiceDaemon:
             keyboard.type_text(to_type)
         self._typed_text = new_text
 
+    def _process_audio_chunk(
+        self, chunk, prob: float, sample_count: int, trailing_silence: int
+    ) -> tuple[int, int]:
+        """Buffer audio chunk, run partial STT, and check for segment end."""
+        self._audio_buffer.append(chunk)
+        sample_count += len(chunk)
+
+        if prob > self._vad.threshold:
+            trailing_silence = 0
+        else:
+            trailing_silence += 1
+
+        if sample_count - self._last_partial_at >= PARTIAL_STT_INTERVAL:
+            self._last_partial_at = sample_count
+            self._run_partial_stt()
+
+        if self._check_segment_end(sample_count, trailing_silence):
+            self._finalize_utterance()
+            sample_count = 0
+            trailing_silence = 0
+
+        return sample_count, trailing_silence
+
     def _check_segment_end(self, sample_count: int, trailing_silence: int) -> bool:
         """Check if the current segment is done.
 
@@ -189,6 +212,27 @@ class VoiceDaemon:
                 log("smart_turn_incomplete", "Continuing to listen...")
         return False
 
+    def _dispatch_result(self, should_submit: bool, stripped: str) -> None:
+        """Log and optionally submit a recognized command."""
+        if stripped:
+            if should_submit:
+                log("dispatch_enter", stripped)
+                if DEBUG:
+                    print(f"  Final: {stripped} [Enter]", file=sys.stderr)
+                keyboard.press_enter()
+            else:
+                log("dispatch_typed", stripped)
+                if DEBUG:
+                    print(f"  Final: {stripped} (no submit)", file=sys.stderr)
+        elif should_submit:
+            # Submit word only — erase it and press enter
+            if self._typed_text:
+                keyboard.backspace(len(self._typed_text))
+            log("dispatch_enter", "(submit word only)")
+            if DEBUG:
+                print("  Submit word only [Enter]", file=sys.stderr)
+            keyboard.press_enter()
+
     def _finalize_utterance(self) -> None:
         """End of turn: final STT, correct typed text, press Enter."""
         if not self._audio_buffer:
@@ -215,23 +259,7 @@ class VoiceDaemon:
                             self._update_typed_text(stripped)
                         else:
                             keyboard.type_text(stripped)
-                    if should_submit:
-                        log("dispatch_enter", stripped)
-                        if DEBUG:
-                            print(f"  Final: {stripped} [Enter]", file=sys.stderr)
-                        keyboard.press_enter()
-                    else:
-                        log("dispatch_typed", stripped)
-                        if DEBUG:
-                            print(f"  Final: {stripped} (no submit)", file=sys.stderr)
-                elif should_submit:
-                    # Submit word only — erase it and press enter
-                    if self._typed_text:
-                        keyboard.backspace(len(self._typed_text))
-                    log("dispatch_enter", "(submit word only)")
-                    if DEBUG:
-                        print("  Submit word only [Enter]", file=sys.stderr)
-                    keyboard.press_enter()
+                self._dispatch_result(should_submit, stripped)
             else:
                 if self._typed_text:
                     keyboard.backspace(len(self._typed_text))
@@ -247,23 +275,7 @@ class VoiceDaemon:
                 if stripped:
                     if stripped != self._typed_text:
                         self._update_typed_text(stripped)
-                    if should_submit:
-                        log("dispatch_enter", stripped)
-                        if DEBUG:
-                            print(f"  Final: {stripped} [Enter]", file=sys.stderr)
-                        keyboard.press_enter()
-                    else:
-                        log("dispatch_typed", stripped)
-                        if DEBUG:
-                            print(f"  Final: {stripped} (no submit)", file=sys.stderr)
-                elif should_submit:
-                    # Submit word only — erase it and press enter
-                    if self._typed_text:
-                        keyboard.backspace(len(self._typed_text))
-                    log("dispatch_enter", "(submit word only)")
-                    if DEBUG:
-                        print("  Submit word only [Enter]", file=sys.stderr)
-                    keyboard.press_enter()
+                self._dispatch_result(should_submit, stripped)
             elif self._typed_text:
                 # Wake word but no command — clear what we typed
                 keyboard.backspace(len(self._typed_text))
@@ -373,42 +385,14 @@ class VoiceDaemon:
                         log("speech_start", "command after activation")
 
                     if prob > self._vad.threshold or self._audio_buffer:
-                        self._audio_buffer.append(chunk)
-                        sample_count += len(chunk)
-
-                        if prob > self._vad.threshold:
-                            trailing_silence = 0
-                        else:
-                            trailing_silence += 1
-
-                        # Periodic STT for incremental typing
-                        if sample_count - self._last_partial_at >= PARTIAL_STT_INTERVAL:
-                            self._last_partial_at = sample_count
-                            self._run_partial_stt()
-
-                        if self._check_segment_end(sample_count, trailing_silence):
-                            self._finalize_utterance()
-                            sample_count = 0
-                            trailing_silence = 0
+                        sample_count, trailing_silence = self._process_audio_chunk(
+                            chunk, prob, sample_count, trailing_silence
+                        )
 
                 elif self._state == LISTENING:
-                    self._audio_buffer.append(chunk)
-                    sample_count += len(chunk)
-
-                    if prob > self._vad.threshold:
-                        trailing_silence = 0
-                    else:
-                        trailing_silence += 1
-
-                    # Periodic STT for incremental typing
-                    if sample_count - self._last_partial_at >= PARTIAL_STT_INTERVAL:
-                        self._last_partial_at = sample_count
-                        self._run_partial_stt()
-
-                    if self._check_segment_end(sample_count, trailing_silence):
-                        self._finalize_utterance()
-                        sample_count = 0
-                        trailing_silence = 0
+                    sample_count, trailing_silence = self._process_audio_chunk(
+                        chunk, prob, sample_count, trailing_silence
+                    )
 
         finally:
             if DEBUG:
