@@ -93,6 +93,11 @@ run:
       - ./src
       - --threshold
       - "70"
+  - name: verify:no-venv
+    command: assist
+    args:
+      - verify
+      - no-venv
   - name: verify:custom-lint
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"

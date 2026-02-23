@@ -3,6 +3,7 @@ import {
 	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
 	list as verifyList,
+	noVenv as verifyNoVenv,
 	run as verifyRun,
 } from "./verify";
 
@@ -39,4 +40,9 @@ export function registerVerify(program: Command): void {
 		.command("hardcoded-colors")
 		.description("Check for hardcoded hex colors in src/")
 		.action(verifyHardcodedColors);
+
+	verifyCommand
+		.command("no-venv")
+		.description("Check that no venv folders exist in the repo")
+		.action(verifyNoVenv);
 }
