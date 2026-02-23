@@ -1,3 +1,10 @@
+## [0.85.1](https://github.com/staff0rd/assist/compare/v0.85.0...v0.85.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* word-level diff for voice typing ([f31eac8](https://github.com/staff0rd/assist/commit/f31eac86d49a5670aa20316e72187cdfc9270374))
+
 # [0.85.0](https://github.com/staff0rd/assist/compare/v0.84.0...v0.85.0) (2026-02-23)
 
 
