@@ -76,6 +76,7 @@ After installation, the `assist` command will be available globally.
 - `assist config get <key>` - Get a config value
 - `assist config list` - List all config values
 - `assist verify` - Run all verify:* commands in parallel (from run configs in assist.yml and scripts in package.json)
+- `assist verify all` - Run all checks, ignoring diff-based filters
 - `assist verify init` - Add verify scripts to a project
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
 - `assist lint` - Run lint checks for conventions not enforced by biomejs

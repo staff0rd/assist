@@ -1,10 +1,9 @@
-import { minimatch } from "minimatch";
 import {
 	createTimerCallback,
 	initTaskStatuses,
 	logFailedScripts,
 } from "./createTimerCallback";
-import { getChangedFiles } from "./getChangedFiles";
+import { filterByChangedFiles } from "./filterByChangedFiles";
 import { resolveEntries, type VerifyEntry } from "./resolveEntries";
 import { collectOutput, flushIfFailed, spawnCommand } from "./spawnCommand";
 
@@ -58,21 +57,9 @@ function handleResults(
 	console.log(`\nAll ${totalCount} verify command(s) passed`);
 }
 
-function filterByChangedFiles(entries: VerifyEntry[]): VerifyEntry[] {
-	const hasFilters = entries.some((e) => e.filter);
-	if (!hasFilters) return entries;
-
-	const changedFiles = getChangedFiles();
-
-	return entries.filter((entry) => {
-		const { filter } = entry;
-		if (!filter) return true;
-		if (changedFiles.length === 0) return false;
-		return changedFiles.some((file) => minimatch(file, filter));
-	});
-}
-
-export async function run(options: { timer?: boolean } = {}): Promise<void> {
+export async function run(
+	options: { timer?: boolean; all?: boolean } = {},
+): Promise<void> {
 	const allEntries = resolveEntries();
 
 	if (allEntries.length === 0) {
@@ -80,7 +67,7 @@ export async function run(options: { timer?: boolean } = {}): Promise<void> {
 		return;
 	}
 
-	const entries = filterByChangedFiles(allEntries);
+	const entries = options.all ? allEntries : filterByChangedFiles(allEntries);
 
 	if (entries.length === 0) {
 		console.log("No verify commands matched changed files — skipping");

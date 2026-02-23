@@ -43,6 +43,7 @@ run:
       - src/commands/voice/python
   - name: verify:lint
     command: npx
+    filter: "{src/**,*.ts,*.json}"
     args:
       - biome
       - check
@@ -50,21 +51,25 @@ run:
       - "."
   - name: verify:build
     command: npx
+    filter: "{src/**/*.ts,src/**/*.tsx,tsup.config.ts,package.json}"
     args:
       - tsup
   - name: verify:types
     command: npx
+    filter: "{src/**/*.ts,src/**/*.tsx,tsconfig.json}"
     args:
       - tsc
       - --noEmit
   - name: verify:knip
     command: npx
+    filter: "{src/**/*.ts,src/**/*.tsx,package.json,knip.json}"
     args:
       - knip
       - --no-progress
       - --treat-config-hints-as-errors
   - name: verify:duplicate-code
     command: npx
+    filter: "{src/**/*.ts,src/**/*.tsx,src/**/*.py}"
     args:
       - jscpd
       - --format
@@ -78,6 +83,7 @@ run:
       - src
   - name: verify:maintainability
     command: assist
+    filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
       - complexity
       - maintainability
@@ -86,6 +92,7 @@ run:
       - "70"
   - name: verify:custom-lint
     command: assist
+    filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
       - lint
   - name: verify:react-build

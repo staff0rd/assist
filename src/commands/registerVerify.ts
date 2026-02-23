@@ -10,8 +10,20 @@ export function registerVerify(program: Command): void {
 	const verifyCommand = program
 		.command("verify")
 		.description("Run all verify:* commands in parallel")
+		.argument(
+			"[scope]",
+			'Use "all" to run all checks, ignoring diff-based filters',
+		)
 		.option("--timer", "Show timing information for each task as they complete")
-		.action((options) => verifyRun(options));
+		.action((scope, options) => {
+			if (scope && scope !== "all") {
+				console.error(
+					`Unknown scope: "${scope}". Use "all" to run all checks.`,
+				);
+				process.exit(1);
+			}
+			verifyRun({ ...options, all: scope === "all" });
+		});
 
 	verifyCommand
 		.command("list")
