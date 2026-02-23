@@ -7,7 +7,7 @@ export function logs(options: { lines?: string }): void {
 		return;
 	}
 
-	const count = Number.parseInt(options.lines ?? "20", 10);
+	const count = Number.parseInt(options.lines ?? "150", 10);
 	const content = readFileSync(voicePaths.log, "utf-8").trim();
 
 	if (!content) {
