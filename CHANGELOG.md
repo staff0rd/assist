@@ -1,3 +1,10 @@
+## [0.83.1](https://github.com/staff0rd/assist/compare/v0.83.0...v0.83.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* use uv sync instead of pip install ([3e5580f](https://github.com/staff0rd/assist/commit/3e5580f8a0fd7170485b0a8ddc953cb90ada7b40))
+
 # [0.83.0](https://github.com/staff0rd/assist/compare/v0.82.0...v0.83.0) (2026-02-23)
 
 
