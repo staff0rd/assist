@@ -48,7 +48,7 @@ run:
       - biome
       - check
       - --write
-      - "."
+      - src
   - name: verify:build
     command: npx
     filter: "{src/**/*.ts,src/**/*.tsx,tsup.config.ts,package.json}"
@@ -108,4 +108,4 @@ run:
       - --outfile=dist/commands/backlog/web/bundle.js
       - --jsx=automatic
       - --jsx-import-source=react
-      - "--define:process.env.NODE_ENV=\"production\""
+      - "--define:process.env.NODE_ENV='production'"
