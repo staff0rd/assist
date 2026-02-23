@@ -1,3 +1,21 @@
+# [0.83.0](https://github.com/staff0rd/assist/compare/v0.82.0...v0.83.0) (2026-02-23)
+
+
+### Bug Fixes
+
+* add check:types script for CI ([8467852](https://github.com/staff0rd/assist/commit/84678523b435d73134c66d4dd7067e9a29e32b10))
+* deduplicate voice daemon code ([c1f2a96](https://github.com/staff0rd/assist/commit/c1f2a969e05e63a33a9e5b9504f8324723ae8880))
+* exclude dist from verify checks ([e38723f](https://github.com/staff0rd/assist/commit/e38723fe0a3dbe9390eb28748e33fd8213488977))
+* write debug output to voice console window ([a5844a8](https://github.com/staff0rd/assist/commit/a5844a8530d86b99b513236c2f2f80ae12e35fcc))
+
+
+### Features
+
+* add filter to verify run config ([b7688f5](https://github.com/staff0rd/assist/commit/b7688f55e7b984304eca2f083ef855d0570dc2da))
+* add verify all and diff filters ([04a1f07](https://github.com/staff0rd/assist/commit/04a1f074ea44478bf67987f63c700dee2a0b6b91))
+* change default wake word ([0f254f7](https://github.com/staff0rd/assist/commit/0f254f7913b5681d92d089e7036a696fda352188))
+* default submit word to go ([39e98c9](https://github.com/staff0rd/assist/commit/39e98c9206a6ce6965dc4cec2ba679615429ab1c))
+
 # [0.82.0](https://github.com/staff0rd/assist/compare/v0.81.0...v0.82.0) (2026-02-23)
 
 
