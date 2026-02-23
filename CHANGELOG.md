@@ -1,3 +1,10 @@
+# [0.79.0](https://github.com/staff0rd/assist/compare/v0.78.0...v0.79.0) (2026-02-23)
+
+
+### Features
+
+* add prs comment command ([ae200ce](https://github.com/staff0rd/assist/commit/ae200cef01ab88ae4df8cea3a14b0c41d4f9591d))
+
 # [0.78.0](https://github.com/staff0rd/assist/compare/v0.77.0...v0.78.0) (2026-02-22)
 
 
