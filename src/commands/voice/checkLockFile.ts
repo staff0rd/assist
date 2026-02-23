@@ -32,15 +32,12 @@ export function checkLockFile(): void {
 export function bootstrapVenv(): void {
 	if (existsSync(getVenvPython())) return;
 
-	console.log("Creating Python virtual environment...");
-	execSync(`uv venv "${voicePaths.venv}"`, { stdio: "inherit" });
-
-	console.log("Installing dependencies...");
+	console.log("Setting up Python environment...");
 	const pythonDir = getPythonDir();
-	execSync(
-		`uv pip install --python "${getVenvPython()}" -e "${pythonDir}[dev]"`,
-		{ stdio: "inherit" },
-	);
+	execSync(`uv sync --project "${pythonDir}" --no-install-project`, {
+		stdio: "inherit",
+		env: { ...process.env, UV_PROJECT_ENVIRONMENT: voicePaths.venv },
+	});
 }
 
 export function writeLockFile(pid: number): void {

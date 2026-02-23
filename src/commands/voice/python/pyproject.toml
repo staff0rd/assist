@@ -15,20 +15,3 @@ dev = [
     "ruff>=0.8",
 ]
 
-[tool.setuptools]
-py-modules = [
-    "audio_capture",
-    "dispatch",
-    "logger",
-    "smart_turn",
-    "stt",
-    "vad",
-    "voice_daemon",
-    "wake_word",
-    "setup_models",
-    "list_devices",
-]
-
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
