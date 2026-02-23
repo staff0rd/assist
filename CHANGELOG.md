@@ -1,3 +1,10 @@
+# [0.80.0](https://github.com/staff0rd/assist/compare/v0.79.0...v0.80.0) (2026-02-23)
+
+
+### Features
+
+* add voice interaction daemon ([51b1714](https://github.com/staff0rd/assist/commit/51b17147c73aa106968d2652872b43c45dac8e25))
+
 # [0.79.0](https://github.com/staff0rd/assist/compare/v0.78.0...v0.79.0) (2026-02-23)
 
 
