@@ -51,7 +51,6 @@ run:
       - src
   - name: verify:build
     command: npx
-    filter: "{src/**/*.ts,src/**/*.tsx,tsup.config.ts,package.json}"
     args:
       - tsup
   - name: verify:types
