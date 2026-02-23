@@ -1,3 +1,10 @@
+# [0.84.0](https://github.com/staff0rd/assist/compare/v0.83.1...v0.84.0) (2026-02-23)
+
+
+### Features
+
+* run env support & voice refactor ([acb3d92](https://github.com/staff0rd/assist/commit/acb3d9257b42df13d22a8d8ad665863b180e9a94))
+
 ## [0.83.1](https://github.com/staff0rd/assist/compare/v0.83.0...v0.83.1) (2026-02-23)
 
 
