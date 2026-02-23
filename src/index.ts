@@ -16,6 +16,7 @@ import { registerPrs } from "./commands/registerPrs";
 import { registerRefactor } from "./commands/registerRefactor";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
+import { registerVoice } from "./commands/registerVoice";
 import { registerRoam } from "./commands/roam/registerRoam";
 import { listRunConfigs, run, add as runAdd } from "./commands/run";
 import { statusLine } from "./commands/statusLine";
@@ -33,7 +34,8 @@ program
 program
 	.command("sync")
 	.description("Copy command files to ~/.claude/commands")
-	.action(sync);
+	.option("-y, --yes", "Overwrite settings.json without prompting")
+	.action((options) => sync(options));
 
 program
 	.command("init")
@@ -133,5 +135,6 @@ registerDevlog(program);
 registerDeploy(program);
 registerComplexity(program);
 registerTranscript(program);
+registerVoice(program);
 
 program.parse();

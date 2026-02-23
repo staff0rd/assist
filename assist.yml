@@ -11,3 +11,29 @@ devlog:
       - 2026-01-07
 notify:
   enabled: false
+voice:
+  mic: "Headset Microphone (Jabra Link 380), Windows WASAPI"
+run:
+  - name: verify:python-lint
+    command: uv
+    args:
+      - run
+      - --project
+      - src/commands/voice/python
+      - --extra
+      - dev
+      - ruff
+      - check
+      - src/commands/voice/python
+  - name: verify:python-format
+    command: uv
+    args:
+      - run
+      - --project
+      - src/commands/voice/python
+      - --extra
+      - dev
+      - ruff
+      - format
+      - --check
+      - src/commands/voice/python

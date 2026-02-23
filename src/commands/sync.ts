@@ -8,12 +8,12 @@ import { syncSettings } from "./sync/syncSettings";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export async function sync(): Promise<void> {
+export async function sync(options?: { yes?: boolean }): Promise<void> {
 	const claudeDir = path.join(__dirname, "..", "claude");
 	const targetBase = path.join(os.homedir(), ".claude");
 
 	syncCommands(claudeDir, targetBase);
-	await syncSettings(claudeDir, targetBase);
+	await syncSettings(claudeDir, targetBase, { yes: options?.yes });
 	await syncClaudeMd(claudeDir, targetBase);
 }
 

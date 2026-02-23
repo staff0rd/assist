@@ -14,6 +14,9 @@ export default defineConfig({
 	onSuccess: async () => {
 		cpSync("src/commands/lint", "dist/commands/lint", { recursive: true });
 		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });
+		cpSync("src/commands/voice/python", "dist/commands/voice/python", {
+			recursive: true,
+		});
 		await build({
 			entryPoints: ["src/commands/backlog/web/ui/App.tsx"],
 			bundle: true,

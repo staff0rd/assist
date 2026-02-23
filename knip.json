@@ -1,3 +1,4 @@
 {
-	"ignoreBinaries": ["assist"]
+	"ignoreBinaries": ["assist"],
+	"ignore": ["**/.venv/**"]
 }

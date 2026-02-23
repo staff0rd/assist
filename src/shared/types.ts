@@ -62,6 +62,22 @@ export const assistConfigSchema = z.strictObject({
 		.optional(),
 	run: z.array(runConfigSchema).optional(),
 	transcript: transcriptConfigSchema.optional(),
+	voice: z
+		.strictObject({
+			wakeWords: z.array(z.string()).default(["claude"]),
+			mic: z.string().optional(),
+			cwd: z.string().optional(),
+			modelsDir: z.string().optional(),
+			lockDir: z.string().optional(),
+			models: z
+				.strictObject({
+					vad: z.string().optional(),
+					smartTurn: z.string().optional(),
+					stt: z.string().optional(),
+				})
+				.optional(),
+		})
+		.optional(),
 });
 
 export type AssistConfig = z.infer<typeof assistConfigSchema>;

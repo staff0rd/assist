@@ -1,0 +1,34 @@
+[project]
+name = "assist-voice"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "onnxruntime>=1.17",
+    "sounddevice>=0.4",
+    "numpy>=1.24",
+    "nemo_toolkit[asr]>=1.22",
+    "silero-vad>=5.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8",
+]
+
+[tool.setuptools]
+py-modules = [
+    "audio_capture",
+    "dispatch",
+    "logger",
+    "smart_turn",
+    "stt",
+    "vad",
+    "voice_daemon",
+    "wake_word",
+    "setup_models",
+    "list_devices",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

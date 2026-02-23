@@ -43,6 +43,11 @@ After installation, the `assist` command will be available globally.
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
 - `/transcript-summarise` - Summarise transcripts missing summaries
+- `/voice-setup` - Download required voice models (VAD, STT)
+- `/voice-start` - Start the voice interaction daemon
+- `/voice-stop` - Stop the voice interaction daemon
+- `/voice-status` - Check voice daemon status
+- `/voice-logs` - Show recent voice daemon logs
 
 ## CLI Commands
 
@@ -96,4 +101,11 @@ After installation, the `assist` command will be available globally.
 - `assist transcript configure` - Configure transcript directories
 - `assist transcript format` - Convert VTT files to formatted markdown transcripts
 - `assist transcript summarise` - List transcripts that do not have summaries
+- `assist voice setup` - Download required voice models (VAD, STT)
+- `assist voice start` - Start the voice daemon (always-on, listens for wake word)
+- `assist voice start --foreground` - Start in foreground for debugging
+- `assist voice stop` - Stop the voice daemon
+- `assist voice status` - Check voice daemon status and recent events
+- `assist voice devices` - List available audio input devices
+- `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 
