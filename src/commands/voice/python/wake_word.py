@@ -4,7 +4,7 @@ import os
 
 from logger import log
 
-DEFAULT_WAKE_WORDS = ["hi claude"]
+DEFAULT_WAKE_WORDS = ["computer"]
 
 
 def get_wake_words() -> list[str]:
