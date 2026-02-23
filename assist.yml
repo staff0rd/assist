@@ -12,6 +12,8 @@ devlog:
 notify:
   enabled: false
 voice:
+  wakeWords:
+    - "computer"
   mic: "Headset Microphone (Jabra Link 380), Windows WASAPI"
 run:
   - name: verify:python-lint
