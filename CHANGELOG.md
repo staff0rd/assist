@@ -1,3 +1,10 @@
+# [0.82.0](https://github.com/staff0rd/assist/compare/v0.81.0...v0.82.0) (2026-02-23)
+
+
+### Features
+
+* add voice submit word ([599002b](https://github.com/staff0rd/assist/commit/599002b88fb0bf795f22b6925197f933e730281d))
+
 # [0.81.0](https://github.com/staff0rd/assist/compare/v0.80.0...v0.81.0) (2026-02-23)
 
 
