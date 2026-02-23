@@ -276,10 +276,17 @@ class VoiceDaemon:
                     if stripped != self._typed_text:
                         self._update_typed_text(stripped)
                 self._dispatch_result(should_submit, stripped)
-            elif self._typed_text:
-                # Wake word but no command — clear what we typed
-                keyboard.backspace(len(self._typed_text))
+            elif found:
+                # Wake word found but no command text after it
+                if self._typed_text:
+                    keyboard.backspace(len(self._typed_text))
                 log("dispatch_cancelled", "No command after wake word")
+            elif self._typed_text:
+                # Final transcription lost the wake word (e.g. audio clipping
+                # turned "computer" into "uter"); fall back to the command
+                # captured during streaming
+                should_submit, stripped = self._strip_submit_word(self._typed_text)
+                self._dispatch_result(should_submit, stripped or self._typed_text)
         else:
             # Check final transcription for wake word
             found, command = check_wake_word(text)
