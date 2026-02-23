@@ -60,12 +60,15 @@ class VoiceDaemon:
         self._running = True
         self._state = IDLE
         self._audio_buffer: list[np.ndarray] = []
+        self._submit_word = os.environ.get("VOICE_SUBMIT_WORD", "").strip().lower()
 
         log("daemon_init", "Initializing models...")
         self._mic = AudioCapture()
         self._vad = SileroVAD()
         self._smart_turn = SmartTurn()
         self._stt = ParakeetSTT()
+        if self._submit_word:
+            log("daemon_init", f"Submit word: '{self._submit_word}'")
         log("daemon_ready")
 
         # Incremental typing state
@@ -93,25 +96,51 @@ class VoiceDaemon:
 
         if self._state == ACTIVATED:
             # Already activated — everything is the command, no wake word needed
-            if text.strip() != self._typed_text:
+            partial = self._hide_submit_word(text.strip())
+            if partial and partial != self._typed_text:
                 if self._typed_text:
-                    self._update_typed_text(text.strip())
+                    self._update_typed_text(partial)
                 else:
-                    keyboard.type_text(text.strip())
-                    self._typed_text = text.strip()
+                    keyboard.type_text(partial)
+                    self._typed_text = partial
         elif not self._wake_detected:
             found, command = check_wake_word(text)
             if found and command:
-                self._wake_detected = True
-                log("wake_word_detected", command)
-                if DEBUG:
-                    print(f"  Wake word! Typing: {command}", file=sys.stderr)
-                keyboard.type_text(command)
-                self._typed_text = command
+                partial = self._hide_submit_word(command)
+                if partial:
+                    self._wake_detected = True
+                    log("wake_word_detected", partial)
+                    if DEBUG:
+                        print(f"  Wake word! Typing: {partial}", file=sys.stderr)
+                    keyboard.type_text(partial)
+                    self._typed_text = partial
         else:
             found, command = check_wake_word(text)
-            if found and command and command != self._typed_text:
-                self._update_typed_text(command)
+            if found and command:
+                partial = self._hide_submit_word(command)
+                if partial and partial != self._typed_text:
+                    self._update_typed_text(partial)
+
+    def _strip_submit_word(self, text: str) -> tuple[bool, str]:
+        """Check if text ends with the submit word.
+
+        Returns (should_submit, stripped_text).
+        If no submit word is configured, always returns (True, text).
+        """
+        if not self._submit_word:
+            return True, text
+        words = text.rsplit(None, 1)
+        if len(words) >= 1 and words[-1].lower().rstrip(".,!?") == self._submit_word:
+            stripped = text[: text.lower().rfind(words[-1].lower())].rstrip()
+            return True, stripped
+        return False, text
+
+    def _hide_submit_word(self, text: str) -> str:
+        """Strip trailing submit word from partial text so it's never typed."""
+        if not self._submit_word:
+            return text
+        _, stripped = self._strip_submit_word(text)
+        return stripped
 
     def _update_typed_text(self, new_text: str) -> None:
         """Diff old typed text vs new, backspace + type the difference."""
@@ -179,15 +208,30 @@ class VoiceDaemon:
             # Activated mode — full text is the command
             command = text.strip()
             if command:
-                if command != self._typed_text:
-                    if self._typed_text:
-                        self._update_typed_text(command)
+                should_submit, stripped = self._strip_submit_word(command)
+                if stripped:
+                    if stripped != self._typed_text:
+                        if self._typed_text:
+                            self._update_typed_text(stripped)
+                        else:
+                            keyboard.type_text(stripped)
+                    if should_submit:
+                        log("dispatch_enter", stripped)
+                        if DEBUG:
+                            print(f"  Final: {stripped} [Enter]", file=sys.stderr)
+                        keyboard.press_enter()
                     else:
-                        keyboard.type_text(command)
-                log("dispatch_enter", command)
-                if DEBUG:
-                    print(f"  Final: {command} [Enter]", file=sys.stderr)
-                keyboard.press_enter()
+                        log("dispatch_typed", stripped)
+                        if DEBUG:
+                            print(f"  Final: {stripped} (no submit)", file=sys.stderr)
+                elif should_submit:
+                    # Submit word only — erase it and press enter
+                    if self._typed_text:
+                        keyboard.backspace(len(self._typed_text))
+                    log("dispatch_enter", "(submit word only)")
+                    if DEBUG:
+                        print("  Submit word only [Enter]", file=sys.stderr)
+                    keyboard.press_enter()
             else:
                 if self._typed_text:
                     keyboard.backspace(len(self._typed_text))
@@ -199,12 +243,27 @@ class VoiceDaemon:
             # Correct final text and submit
             found, command = check_wake_word(text)
             if found and command:
-                if command != self._typed_text:
-                    self._update_typed_text(command)
-                log("dispatch_enter", command)
-                if DEBUG:
-                    print(f"  Final: {command} [Enter]", file=sys.stderr)
-                keyboard.press_enter()
+                should_submit, stripped = self._strip_submit_word(command)
+                if stripped:
+                    if stripped != self._typed_text:
+                        self._update_typed_text(stripped)
+                    if should_submit:
+                        log("dispatch_enter", stripped)
+                        if DEBUG:
+                            print(f"  Final: {stripped} [Enter]", file=sys.stderr)
+                        keyboard.press_enter()
+                    else:
+                        log("dispatch_typed", stripped)
+                        if DEBUG:
+                            print(f"  Final: {stripped} (no submit)", file=sys.stderr)
+                elif should_submit:
+                    # Submit word only — erase it and press enter
+                    if self._typed_text:
+                        keyboard.backspace(len(self._typed_text))
+                    log("dispatch_enter", "(submit word only)")
+                    if DEBUG:
+                        print("  Submit word only [Enter]", file=sys.stderr)
+                    keyboard.press_enter()
             elif self._typed_text:
                 # Wake word but no command — clear what we typed
                 keyboard.backspace(len(self._typed_text))
@@ -213,16 +272,30 @@ class VoiceDaemon:
             # Check final transcription for wake word
             found, command = check_wake_word(text)
             if found and command:
-                log("wake_word_detected", command)
-                if DEBUG:
-                    print(f"  Wake word! Final: {command} [Enter]", file=sys.stderr)
-                keyboard.type_text(command)
-                keyboard.press_enter()
-            elif found:
+                should_submit, stripped = self._strip_submit_word(command)
+                if stripped:
+                    log("wake_word_detected", stripped)
+                    if DEBUG:
+                        label = "[Enter]" if should_submit else "(no submit)"
+                        print(
+                            f"  Wake word! Final: {stripped} {label}", file=sys.stderr
+                        )
+                    keyboard.type_text(stripped)
+                    if should_submit:
+                        keyboard.press_enter()
+                else:
+                    # Submit word only — just press enter
+                    log("dispatch_enter", "(submit word only)")
+                    if DEBUG:
+                        print("  Wake word + submit word only [Enter]", file=sys.stderr)
+                    keyboard.press_enter()
+            if found and not command:
                 # Wake word only — enter ACTIVATED state for next utterance
                 log("wake_word_only", "Listening for command...")
                 if DEBUG:
-                    print("  Wake word heard — listening for command...", file=sys.stderr)
+                    print(
+                        "  Wake word heard — listening for command...", file=sys.stderr
+                    )
                 self._audio_buffer.clear()
                 self._vad.reset()
                 self._wake_detected = False
@@ -231,7 +304,7 @@ class VoiceDaemon:
                 self._activated_at = time.monotonic()
                 self._state = ACTIVATED
                 return  # don't reset to IDLE
-            else:
+            elif not found:
                 log("no_wake_word", text)
                 if DEBUG:
                     print(f"  No wake word: {text}", file=sys.stderr)

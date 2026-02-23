@@ -24,7 +24,10 @@ class AudioCapture:
         self._queue.put(indata[:, 0].copy())
 
     def start(self) -> None:
-        log("audio_start", f"device={self._device}, rate={SAMPLE_RATE}, block={BLOCK_SIZE}")
+        log(
+            "audio_start",
+            f"device={self._device}, rate={SAMPLE_RATE}, block={BLOCK_SIZE}",
+        )
         self._stream = sd.InputStream(
             samplerate=SAMPLE_RATE,
             channels=1,

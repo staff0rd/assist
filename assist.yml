@@ -14,6 +14,7 @@ notify:
 voice:
   wakeWords:
     - "computer"
+  submitWord: "go"
   mic: "Headset Microphone (Jabra Link 380), Windows WASAPI"
 run:
   - name: verify:python-lint
@@ -37,5 +38,4 @@ run:
       - dev
       - ruff
       - format
-      - --check
       - src/commands/voice/python

@@ -69,6 +69,7 @@ export const assistConfigSchema = z.strictObject({
 			cwd: z.string().optional(),
 			modelsDir: z.string().optional(),
 			lockDir: z.string().optional(),
+			submitWord: z.string().optional(),
 			models: z
 				.strictObject({
 					vad: z.string().optional(),

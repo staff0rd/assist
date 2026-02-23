@@ -12,6 +12,7 @@ const ENV_MAP: Record<
 	VOICE_MODEL_VAD: (v) => v.models?.vad,
 	VOICE_MODEL_SMART_TURN: (v) => v.models?.smartTurn,
 	VOICE_MODEL_STT: (v) => v.models?.stt,
+	VOICE_SUBMIT_WORD: (v) => v.submitWord,
 };
 
 export function buildDaemonEnv(options?: {
