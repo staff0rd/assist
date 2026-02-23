@@ -3,3 +3,11 @@
   name: add radon to block python complexity
   acceptanceCriteria: []
   status: todo
+- id: 2
+  type: story
+  name: add new alias for assist
+  description: install of the assist program should add a new alias `ast` both the `assist` alias and the new alias `ast` should be supported
+  acceptanceCriteria:
+    - i can start the program with ast
+    - i can start the program with assist
+  status: todo
