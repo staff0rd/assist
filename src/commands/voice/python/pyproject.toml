@@ -8,10 +8,20 @@ dependencies = [
     "numpy>=1.24",
     "nemo_toolkit[asr]>=1.22",
     "silero-vad>=5.1",
+    "torch>=2.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     "ruff>=0.8",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu124" }
+torchaudio = { index = "pytorch-cu124" }
 
