@@ -1,3 +1,10 @@
+# [0.91.0](https://github.com/staff0rd/assist/compare/v0.90.0...v0.91.0) (2026-02-24)
+
+
+### Features
+
+* commit takes files and status ([24f04fc](https://github.com/staff0rd/assist/commit/24f04fcba9603a7f6b171f55fbaf25a7e86409ab))
+
 # [0.90.0](https://github.com/staff0rd/assist/compare/v0.89.2...v0.90.0) (2026-02-24)
 
 
