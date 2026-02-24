@@ -45,7 +45,7 @@ run:
       - ruff
       - format
       - src/commands/voice/python
-  - name: verify:python-complexity
+  - name: verify:maintainability-python
     command: uv
     filter: "src/commands/voice/python/**"
     env:
@@ -99,7 +99,7 @@ run:
       - -r
       - consoleFull
       - src
-  - name: verify:maintainability
+  - name: verify:maintainability-typescript
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
