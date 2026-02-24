@@ -1,3 +1,10 @@
+# [0.90.0](https://github.com/staff0rd/assist/compare/v0.89.2...v0.90.0) (2026-02-24)
+
+
+### Features
+
+* color context % in status line ([22dcf4c](https://github.com/staff0rd/assist/commit/22dcf4cd619b9f7c0ebb500e189c7c028a4ad274))
+
 ## [0.89.2](https://github.com/staff0rd/assist/compare/v0.89.1...v0.89.2) (2026-02-24)
 
 
