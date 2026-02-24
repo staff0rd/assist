@@ -1,3 +1,10 @@
+## [0.88.1](https://github.com/staff0rd/assist/compare/v0.88.0...v0.88.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* /verify all ([f4610a4](https://github.com/staff0rd/assist/commit/f4610a49f5f35ac5dc8dd3069c2a510cba6d6eea))
+
 # [0.88.0](https://github.com/staff0rd/assist/compare/v0.87.0...v0.88.0) (2026-02-24)
 
 
