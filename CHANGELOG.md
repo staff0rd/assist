@@ -1,3 +1,10 @@
+# [0.88.0](https://github.com/staff0rd/assist/compare/v0.87.0...v0.88.0) (2026-02-24)
+
+
+### Features
+
+* add radon complexity check ([ebcb715](https://github.com/staff0rd/assist/commit/ebcb715c5dc2e20115c2d47bc74c5111c9e29dbb))
+
 # [0.87.0](https://github.com/staff0rd/assist/compare/v0.86.1...v0.87.0) (2026-02-24)
 
 
