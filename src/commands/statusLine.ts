@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { readStdin } from "../lib/readStdin";
 
 type StatusInput = {
@@ -15,6 +16,13 @@ function formatNumber(num: number): string {
 	return num.toLocaleString("en-US");
 }
 
+function colorizePercent(pct: number): string {
+	const label = `${pct}%`;
+	if (pct > 80) return chalk.red(label);
+	if (pct > 40) return chalk.yellow(label);
+	return label;
+}
+
 export async function statusLine(): Promise<void> {
 	const inputData = await readStdin();
 	const data: StatusInput = JSON.parse(inputData);
@@ -28,6 +36,6 @@ export async function statusLine(): Promise<void> {
 	const formattedOutput = formatNumber(totalOutput);
 
 	console.log(
-		`${model} | Tokens - ${formattedOutput} ↑ : ${formattedInput} ↓ | Context - ${usedPct}%`,
+		`${model} | Tokens - ${formattedOutput} ↑ : ${formattedInput} ↓ | Context - ${colorizePercent(usedPct)}`,
 	);
 }
