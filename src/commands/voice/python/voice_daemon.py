@@ -261,28 +261,37 @@ class VoiceDaemon:
             self._last_partial_at = sample_count
             self._run_partial_stt()
 
-        if self._check_segment_end(sample_count, trailing_silence):
+        is_end, reset_silence = self._check_segment_end(sample_count, trailing_silence)
+        if is_end:
             self._finalize_utterance()
             sample_count = 0
+            trailing_silence = 0
+        elif reset_silence:
             trailing_silence = 0
 
         return sample_count, trailing_silence
 
-    def _check_segment_end(self, sample_count: int, trailing_silence: int) -> bool:
+    def _check_segment_end(
+        self, sample_count: int, trailing_silence: int
+    ) -> tuple[bool, bool]:
         """Check if the current segment is done.
 
         Follows the reference smart-turn implementation:
         1. Accumulate speech + trailing silence.
         2. After STOP_MS of continuous silence, send the full segment to smart turn.
-        3. If smart turn says "Incomplete", keep listening (return False).
-        4. If smart turn says "Complete", finalize (return True).
+        3. If smart turn says "Incomplete", keep listening.
+        4. If smart turn says "Complete", finalize.
         5. Hard cap at MAX_SPEECH_SECONDS always finalizes.
+
+        Returns (is_end, reset_silence).  When reset_silence is True the caller
+        must zero trailing_silence so that another full STOP_MS of silence is
+        required before re-checking smart turn.
         """
         max_samples = MAX_SPEECH_SECONDS * 16000
 
         if sample_count >= max_samples:
             log("max_speech", "Reached max speech duration")
-            return True
+            return True, False
 
         if trailing_silence >= STOP_CHUNKS:
             audio_so_far = np.concatenate(self._audio_buffer)
@@ -291,10 +300,11 @@ class VoiceDaemon:
                 label = "Complete" if is_complete else "Incomplete"
                 print(f"\n  Smart turn: {label}", file=sys.stderr)
             if is_complete:
-                return True
+                return True, False
             else:
                 log("smart_turn_incomplete", "Continuing to listen...")
-        return False
+                return False, True
+        return False, False
 
     def _dispatch_result(self, text: str) -> None:
         """Log and optionally submit a recognized command."""
