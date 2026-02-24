@@ -1,3 +1,10 @@
+# [0.89.0](https://github.com/staff0rd/assist/compare/v0.88.1...v0.89.0) (2026-02-24)
+
+
+### Features
+
+* add radon MI file-level check ([aa6f9b2](https://github.com/staff0rd/assist/commit/aa6f9b2a51298c6ae0d1ce50e422b9c525bf63b7))
+
 ## [0.88.1](https://github.com/staff0rd/assist/compare/v0.88.0...v0.88.1) (2026-02-24)
 
 
