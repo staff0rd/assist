@@ -1,3 +1,10 @@
+## [0.86.1](https://github.com/staff0rd/assist/compare/v0.86.0...v0.86.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* reset silence after smart turn check ([0dc1fea](https://github.com/staff0rd/assist/commit/0dc1fea7b21e63337b03a89fd68e5c444f6ce4f9))
+
 # [0.86.0](https://github.com/staff0rd/assist/compare/v0.85.1...v0.86.0) (2026-02-24)
 
 
