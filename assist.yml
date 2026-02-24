@@ -45,6 +45,21 @@ run:
       - ruff
       - format
       - src/commands/voice/python
+  - name: verify:python-complexity
+    command: uv
+    filter: "src/commands/voice/python/**"
+    env:
+      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
+    args:
+      - run
+      - --project
+      - src/commands/voice/python
+      - --extra
+      - dev
+      - xenon
+      - src/commands/voice/python
+      - --max-absolute
+      - C
   - name: verify:lint
     command: npx
     filter: "{src/**,*.ts,*.json}"

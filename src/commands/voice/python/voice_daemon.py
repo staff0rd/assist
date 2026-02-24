@@ -335,69 +335,79 @@ class VoiceDaemon:
         text = self._stt.transcribe(audio)
 
         if self._state == ACTIVATED:
-            # Activated mode — full text is the command
-            command = text.strip()
-            if command:
-                if command != self._typed_text:
-                    if self._typed_text:
-                        self._update_typed_text(command)
-                    else:
-                        keyboard.type_text(command)
-                self._dispatch_result(command)
-            else:
-                if self._typed_text:
-                    keyboard.backspace(len(self._typed_text))
-                log("dispatch_cancelled", "Empty command in activated mode")
+            self._finalize_activated_command(text)
             self._reset_listening()
             return
 
         if self._wake_detected:
-            # Correct final text and submit
-            found, command = check_wake_word(text)
-            if found and command:
-                if command != self._typed_text:
-                    self._update_typed_text(command)
-                self._dispatch_result(command)
-            elif found:
-                # Wake word found but no command text after it
-                if self._typed_text:
-                    keyboard.backspace(len(self._typed_text))
-                log("dispatch_cancelled", "No command after wake word")
-            elif self._typed_text:
-                # Final transcription lost the wake word (e.g. audio clipping
-                # turned "computer" into "uter"); fall back to the command
-                # captured during streaming
-                self._dispatch_result(self._typed_text)
-        else:
-            # Check final transcription for wake word
-            found, command = check_wake_word(text)
-            if found and command:
-                log("wake_word_detected", command)
-                if DEBUG:
-                    print(f"  Wake word! Final: {command}", file=sys.stderr)
-                keyboard.type_text(command)
-                self._dispatch_result(command)
-            if found and not command:
-                # Wake word only — enter ACTIVATED state for next utterance
-                log("wake_word_only", "Listening for command...")
-                if DEBUG:
-                    print(
-                        "  Wake word heard — listening for command...", file=sys.stderr
-                    )
-                self._audio_buffer.clear()
-                self._vad.reset()
-                self._wake_detected = False
-                self._typed_text = ""
-                self._last_partial_at = 0
-                self._activated_at = time.monotonic()
-                self._state = ACTIVATED
-                return  # don't reset to IDLE
-            elif not found:
-                log("no_wake_word", text)
-                if DEBUG:
-                    print(f"  No wake word: {text}", file=sys.stderr)
+            self._finalize_streamed_wake_word(text)
+        elif not self._finalize_check_final_text(text):
+            return  # entered ACTIVATED state, don't reset to IDLE
 
         self._reset_listening()
+
+    def _finalize_activated_command(self, text: str) -> None:
+        """Finalize utterance in ACTIVATED state (full text is the command)."""
+        command = text.strip()
+        if command:
+            if command != self._typed_text:
+                if self._typed_text:
+                    self._update_typed_text(command)
+                else:
+                    keyboard.type_text(command)
+            self._dispatch_result(command)
+        else:
+            if self._typed_text:
+                keyboard.backspace(len(self._typed_text))
+            log("dispatch_cancelled", "Empty command in activated mode")
+
+    def _finalize_streamed_wake_word(self, text: str) -> None:
+        """Finalize when wake word was detected during streaming."""
+        found, command = check_wake_word(text)
+        if found and command:
+            if command != self._typed_text:
+                self._update_typed_text(command)
+            self._dispatch_result(command)
+        elif found:
+            if self._typed_text:
+                keyboard.backspace(len(self._typed_text))
+            log("dispatch_cancelled", "No command after wake word")
+        elif self._typed_text:
+            # Final transcription lost the wake word (e.g. audio clipping
+            # turned "computer" into "uter"); fall back to the command
+            # captured during streaming
+            self._dispatch_result(self._typed_text)
+
+    def _finalize_check_final_text(self, text: str) -> bool:
+        """Check final transcription for wake word.
+
+        Returns True if caller should reset to IDLE, False if entering ACTIVATED.
+        """
+        found, command = check_wake_word(text)
+        if found and command:
+            log("wake_word_detected", command)
+            if DEBUG:
+                print(f"  Wake word! Final: {command}", file=sys.stderr)
+            keyboard.type_text(command)
+            self._dispatch_result(command)
+        if found and not command:
+            # Wake word only — enter ACTIVATED state for next utterance
+            log("wake_word_only", "Listening for command...")
+            if DEBUG:
+                print("  Wake word heard — listening for command...", file=sys.stderr)
+            self._audio_buffer.clear()
+            self._vad.reset()
+            self._wake_detected = False
+            self._typed_text = ""
+            self._last_partial_at = 0
+            self._activated_at = time.monotonic()
+            self._state = ACTIVATED
+            return False
+        elif not found:
+            log("no_wake_word", text)
+            if DEBUG:
+                print(f"  No wake word: {text}", file=sys.stderr)
+        return True
 
     def _reset_listening(self) -> None:
         self._audio_buffer.clear()
@@ -407,6 +417,21 @@ class VoiceDaemon:
         self._last_partial_at = 0
         self._activated_at = 0.0
         self._state = IDLE
+
+    def _check_activated_timeout(self) -> bool:
+        """If in ACTIVATED state with no audio buffered, check for timeout.
+
+        Returns True if timed out and state was reset.
+        """
+        if self._state != ACTIVATED or self._audio_buffer:
+            return False
+        if time.monotonic() - self._activated_at <= ACTIVATED_TIMEOUT:
+            return False
+        log("activated_timeout", "No command received")
+        if DEBUG:
+            print("\n  Activation timed out", file=sys.stderr)
+        self._reset_listening()
+        return True
 
     def run(self) -> None:
         signal.signal(signal.SIGTERM, self._handle_signal)
@@ -425,12 +450,7 @@ class VoiceDaemon:
             while self._running:
                 chunk = self._mic.read(timeout=0.5)
                 if chunk is None:
-                    if self._state == ACTIVATED and not self._audio_buffer:
-                        if time.monotonic() - self._activated_at > ACTIVATED_TIMEOUT:
-                            log("activated_timeout", "No command received")
-                            if DEBUG:
-                                print("\n  Activation timed out", file=sys.stderr)
-                            self._reset_listening()
+                    self._check_activated_timeout()
                     continue
 
                 prob = self._vad.process(chunk)
@@ -448,14 +468,8 @@ class VoiceDaemon:
                         self._last_partial_at = 0
 
                 elif self._state == ACTIVATED:
-                    # Check timeout (only before speech starts)
-                    if not self._audio_buffer:
-                        if time.monotonic() - self._activated_at > ACTIVATED_TIMEOUT:
-                            log("activated_timeout", "No command received")
-                            if DEBUG:
-                                print("\n  Activation timed out", file=sys.stderr)
-                            self._reset_listening()
-                            continue
+                    if self._check_activated_timeout():
+                        continue
 
                     if prob > self._vad.threshold and not self._audio_buffer:
                         log("speech_start", "command after activation")

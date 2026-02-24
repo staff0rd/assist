@@ -13,7 +13,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "radon>=6.0",
     "ruff>=0.8",
+    "xenon>=0.9",
 ]
 
 [[tool.uv.index]]
