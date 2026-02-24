@@ -1,3 +1,10 @@
+## [0.89.2](https://github.com/staff0rd/assist/compare/v0.89.1...v0.89.2) (2026-02-24)
+
+
+### Bug Fixes
+
+* hide done items in backlog list ([e25dba6](https://github.com/staff0rd/assist/commit/e25dba60b52c445d916ee853cc3669994d08caef))
+
 ## [0.89.1](https://github.com/staff0rd/assist/compare/v0.89.0...v0.89.1) (2026-02-24)
 
 
