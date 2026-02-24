@@ -3,7 +3,9 @@ import type { ThreadInfo } from "../fetchThreadIds";
 import type { PrComment } from "../types";
 
 function fetchJson(endpoint: string): unknown[] {
-	const result = execSync(`gh api ${endpoint}`, { encoding: "utf-8" });
+	const result = execSync(`gh api --paginate ${endpoint}`, {
+		encoding: "utf-8",
+	});
 	if (!result.trim()) return [];
 	return JSON.parse(result);
 }
