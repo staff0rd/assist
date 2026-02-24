@@ -1,3 +1,10 @@
+## [0.89.1](https://github.com/staff0rd/assist/compare/v0.89.0...v0.89.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* paginate gh api in list-comments ([74e68f1](https://github.com/staff0rd/assist/commit/74e68f1a2589fdd17ea9823cd9d29228fbc23ede))
+
 # [0.89.0](https://github.com/staff0rd/assist/compare/v0.88.1...v0.89.0) (2026-02-24)
 
 
