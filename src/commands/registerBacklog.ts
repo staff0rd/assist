@@ -24,6 +24,7 @@ export function registerBacklog(program: Command): void {
 		.command("list")
 		.description("List all backlog items")
 		.option("--status <type>", "Filter by status (todo, in-progress, done)")
+		.option("-a, --all", "Include done items")
 		.option("-v, --verbose", "Show all item details")
 		.action(backlogList);
 

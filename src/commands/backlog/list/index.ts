@@ -36,10 +36,19 @@ function printVerboseDetails(item: BacklogFile[number]): void {
 	console.log();
 }
 
-export async function list(options: {
+type ListOptions = {
 	status?: string;
+	all?: boolean;
 	verbose?: boolean;
-}): Promise<void> {
+};
+
+function filterItems(items: BacklogFile, options: ListOptions): BacklogFile {
+	if (options.status) return items.filter((i) => i.status === options.status);
+	if (!options.all) return items.filter((i) => i.status !== "done");
+	return items;
+}
+
+export async function list(options: ListOptions): Promise<void> {
 	const backlogPath = getBacklogPath();
 	if (!existsSync(backlogPath)) {
 		console.log(
@@ -49,10 +58,7 @@ export async function list(options: {
 		);
 		return;
 	}
-	let items = loadBacklog();
-	if (options.status) {
-		items = items.filter((item) => item.status === options.status);
-	}
+	const items = filterItems(loadBacklog(), options);
 	if (items.length === 0) {
 		console.log(chalk.dim("Backlog is empty."));
 		return;
