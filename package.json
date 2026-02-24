@@ -4,7 +4,8 @@
 	"type": "module",
 	"main": "dist/index.js",
 	"bin": {
-		"assist": "./dist/index.js"
+		"assist": "./dist/index.js",
+		"ast": "./dist/index.js"
 	},
 	"files": [
 		"dist",

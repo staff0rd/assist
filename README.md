@@ -27,7 +27,7 @@ npm run build
 npm install -g .
 ```
 
-After installation, the `assist` command will be available globally.
+After installation, the `assist` command will be available globally. You can also use the shorter `ast` alias.
 
 ## Claude Commands
 

@@ -10,4 +10,4 @@
   acceptanceCriteria:
     - i can start the program with ast
     - i can start the program with assist
-  status: todo
+  status: in-progress
