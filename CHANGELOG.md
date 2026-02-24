@@ -1,3 +1,10 @@
+# [0.86.0](https://github.com/staff0rd/assist/compare/v0.85.1...v0.86.0) (2026-02-24)
+
+
+### Features
+
+* GPU inference for STT ([1ff58ac](https://github.com/staff0rd/assist/commit/1ff58ac2321b5575c60a25ef7582e9800d25bea9))
+
 ## [0.85.1](https://github.com/staff0rd/assist/compare/v0.85.0...v0.85.1) (2026-02-23)
 
 
