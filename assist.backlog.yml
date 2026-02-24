@@ -2,7 +2,7 @@
   type: story
   name: add radon to block python complexity
   acceptanceCriteria: []
-  status: in-progress
+  status: done
 - id: 2
   type: story
   name: add new alias for assist
