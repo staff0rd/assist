@@ -60,6 +60,19 @@ run:
       - src/commands/voice/python
       - --max-absolute
       - C
+  - name: verify:python-maintainability
+    command: uv
+    filter: "src/commands/voice/python/**"
+    env:
+      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
+    args:
+      - run
+      - --project
+      - src/commands/voice/python
+      - --extra
+      - dev
+      - python
+      - src/commands/voice/python/check_mi.py
   - name: verify:lint
     command: npx
     filter: "{src/**,*.ts,*.json}"
