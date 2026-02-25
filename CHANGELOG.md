@@ -1,3 +1,10 @@
+# [0.93.0](https://github.com/staff0rd/assist/compare/v0.92.5...v0.93.0) (2026-02-25)
+
+
+### Features
+
+* allow commit with message only ([30a0a4a](https://github.com/staff0rd/assist/commit/30a0a4a87d24ad29ba7dbdb336f6908a7e6fbb99))
+
 ## [0.92.5](https://github.com/staff0rd/assist/compare/v0.92.4...v0.92.5) (2026-02-25)
 
 
