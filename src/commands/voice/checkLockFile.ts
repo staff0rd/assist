@@ -34,10 +34,13 @@ export function bootstrapVenv(): void {
 
 	console.log("Setting up Python environment...");
 	const pythonDir = getPythonDir();
-	execSync(`uv sync --project "${pythonDir}" --no-install-project`, {
-		stdio: "inherit",
-		env: { ...process.env, UV_PROJECT_ENVIRONMENT: voicePaths.venv },
-	});
+	execSync(
+		`uv sync --project "${pythonDir}" --extra runtime --no-install-project`,
+		{
+			stdio: "inherit",
+			env: { ...process.env, UV_PROJECT_ENVIRONMENT: voicePaths.venv },
+		},
+	);
 }
 
 export function writeLockFile(pid: number): void {

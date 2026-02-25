@@ -2,7 +2,10 @@
 name = "assist-voice"
 version = "0.1.0"
 requires-python = ">=3.10"
-dependencies = [
+dependencies = []
+
+[project.optional-dependencies]
+runtime = [
     "onnxruntime>=1.17",
     "sounddevice>=0.4",
     "numpy>=1.24",
@@ -10,8 +13,6 @@ dependencies = [
     "silero-vad>=5.1",
     "torch>=2.0",
 ]
-
-[project.optional-dependencies]
 dev = [
     "radon>=6.0",
     "ruff>=0.8",
