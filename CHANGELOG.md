@@ -1,3 +1,10 @@
+## [0.93.1](https://github.com/staff0rd/assist/compare/v0.93.0...v0.93.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* check exact git root in isGitRepo ([57f11a0](https://github.com/staff0rd/assist/commit/57f11a02198d4ff9d05f263037bb8e3a758eedf2))
+
 # [0.93.0](https://github.com/staff0rd/assist/compare/v0.92.5...v0.93.0) (2026-02-25)
 
 
