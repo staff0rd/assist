@@ -1,3 +1,10 @@
+## [0.92.5](https://github.com/staff0rd/assist/compare/v0.92.4...v0.92.5) (2026-02-25)
+
+
+### Bug Fixes
+
+* sync package-lock with ast alias ([2418cfc](https://github.com/staff0rd/assist/commit/2418cfc93acb02b9578d859e175bc69d7e887437))
+
 ## [0.92.4](https://github.com/staff0rd/assist/compare/v0.92.3...v0.92.4) (2026-02-25)
 
 
