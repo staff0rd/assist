@@ -16,6 +16,7 @@ export function registerVerify(program: Command): void {
 			'Use "all" to run all checks, ignoring diff-based filters',
 		)
 		.option("--timer", "Show timing information for each task as they complete")
+		.option("--verbose", "Show all output (bypass CLAUDECODE suppression)")
 		.action((scope, options) => {
 			if (scope && scope !== "all") {
 				console.error(

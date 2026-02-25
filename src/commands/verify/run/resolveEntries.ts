@@ -3,7 +3,10 @@ import { loadConfig } from "../../../shared/loadConfig";
 import { findPackageJsonWithVerifyScripts } from "../../../shared/readPackageJson";
 
 function quoteIfNeeded(arg: string): string {
-	return arg.includes(" ") ? `"${arg}"` : arg;
+	if (/[^a-zA-Z0-9_./:=@%^+,-]/.test(arg)) {
+		return `'${arg.replace(/'/g, "'\\''")}'`;
+	}
+	return arg;
 }
 
 function buildFullCommand(command: string, args?: string[]): string {

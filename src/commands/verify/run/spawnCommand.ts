@@ -1,7 +1,11 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import { expandEnv } from "../../../shared/expandEnv";
 
-const isClaudeCode = !!process.env.CLAUDECODE;
+let suppressOutput = !!process.env.CLAUDECODE;
+
+export function setVerbose(verbose: boolean): void {
+	if (verbose) suppressOutput = false;
+}
 
 export function spawnCommand(
 	fullCommand: string,
@@ -9,7 +13,7 @@ export function spawnCommand(
 	env?: Record<string, string>,
 ): ChildProcess {
 	return spawn(fullCommand, [], {
-		stdio: isClaudeCode ? "pipe" : "inherit",
+		stdio: suppressOutput ? "pipe" : "inherit",
 		shell: true,
 		cwd: cwd ?? process.cwd(),
 		env: env ? { ...process.env, ...expandEnv(env) } : undefined,
@@ -17,7 +21,7 @@ export function spawnCommand(
 }
 
 export function collectOutput(child: ChildProcess): Buffer[] {
-	if (!isClaudeCode) return [];
+	if (!suppressOutput) return [];
 	const chunks: Buffer[] = [];
 	child.stdout?.on("data", (data: Buffer) => chunks.push(data));
 	child.stderr?.on("data", (data: Buffer) => chunks.push(data));
