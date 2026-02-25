@@ -1,3 +1,10 @@
+# [0.92.0](https://github.com/staff0rd/assist/compare/v0.91.0...v0.92.0) (2026-02-25)
+
+
+### Features
+
+* new vite adds vscode config auto ([9c7b274](https://github.com/staff0rd/assist/commit/9c7b2748f027f9ad440b3dc6f6575349ab650239))
+
 # [0.91.0](https://github.com/staff0rd/assist/compare/v0.90.0...v0.91.0) (2026-02-24)
 
 
