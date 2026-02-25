@@ -33,7 +33,7 @@ async function promptForOptions(options: ConfigOption[]): Promise<string[]> {
 	return promptMultiselect("Select configurations to add:", options);
 }
 
-export async function init(): Promise<void> {
+export async function init({ all = false } = {}): Promise<void> {
 	const { pkg } = requirePackageJson();
 	const setup = detectVscodeSetup(pkg);
 	const options = getAvailableOptions(setup);
@@ -43,7 +43,9 @@ export async function init(): Promise<void> {
 		return;
 	}
 
-	const selected = await promptForOptions(options);
+	const selected = all
+		? options.map((o) => o.value)
+		: await promptForOptions(options);
 	if (selected.length === 0) {
 		console.log(chalk.yellow("No configurations selected"));
 		return;

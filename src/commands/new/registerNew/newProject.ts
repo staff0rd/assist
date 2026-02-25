@@ -2,7 +2,8 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { removeEslint } from "../../../shared/removeEslint";
 import { init as deployInit } from "../../deploy/init";
-import { init } from "../../init";
+import { init as verifyInit } from "../../verify/init";
+import { init as vscodeInit } from "../../vscode/init";
 import { initGit } from "./initGit";
 
 export async function newProject(): Promise<void> {
@@ -14,7 +15,8 @@ export async function newProject(): Promise<void> {
 	initGit();
 	removeEslint({ removeLintScripts: true });
 	addViteBaseConfig();
-	await init();
+	await vscodeInit({ all: true });
+	await verifyInit();
 	await deployInit();
 }
 
