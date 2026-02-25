@@ -1,3 +1,10 @@
+## [0.92.2](https://github.com/staff0rd/assist/compare/v0.92.1...v0.92.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* make voice runtime deps optional ([017f4f8](https://github.com/staff0rd/assist/commit/017f4f8dd1e4f1b55b017874786fcb750849e804))
+
 ## [0.92.1](https://github.com/staff0rd/assist/compare/v0.92.0...v0.92.1) (2026-02-25)
 
 
