@@ -12,11 +12,13 @@ function getInstallDir(): string {
 
 function isGitRepo(dir: string): boolean {
 	try {
-		execSync("git rev-parse --is-inside-work-tree", {
+		const result = execSync("git rev-parse --show-toplevel", {
 			cwd: dir,
 			stdio: "pipe",
-		});
-		return true;
+		})
+			.toString()
+			.trim();
+		return path.resolve(result) === path.resolve(dir);
 	} catch {
 		return false;
 	}
