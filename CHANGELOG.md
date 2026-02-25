@@ -1,3 +1,10 @@
+## [0.92.4](https://github.com/staff0rd/assist/compare/v0.92.3...v0.92.4) (2026-02-25)
+
+
+### Bug Fixes
+
+* commit lock file on release ([2009fe3](https://github.com/staff0rd/assist/commit/2009fe36d4d10b5bf0c02c60b4c00e3f9a0658d5))
+
 ## [0.92.3](https://github.com/staff0rd/assist/compare/v0.92.2...v0.92.3) (2026-02-25)
 
 
