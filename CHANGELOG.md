@@ -1,3 +1,10 @@
+## [0.92.3](https://github.com/staff0rd/assist/compare/v0.92.2...v0.92.3) (2026-02-25)
+
+
+### Bug Fixes
+
+* shell-escape args, add --verbose ([e5c459b](https://github.com/staff0rd/assist/commit/e5c459b77612076ee3d38c07dec2cc96d2966ca5))
+
 ## [0.92.2](https://github.com/staff0rd/assist/compare/v0.92.1...v0.92.2) (2026-02-25)
 
 
