@@ -1,3 +1,10 @@
+## [0.92.1](https://github.com/staff0rd/assist/compare/v0.92.0...v0.92.1) (2026-02-25)
+
+
+### Bug Fixes
+
+* use short default sound for WSL notify ([551b912](https://github.com/staff0rd/assist/commit/551b912c639e9f3ec4b440e950b77f97aa547b23))
+
 # [0.92.0](https://github.com/staff0rd/assist/compare/v0.91.0...v0.92.0) (2026-02-25)
 
 
