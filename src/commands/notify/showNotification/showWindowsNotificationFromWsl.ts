@@ -31,10 +31,8 @@ export function showWindowsNotificationFromWsl(
 	}
 
 	const args = ["-t", title, "-m", message];
-	if (sound === "Alarm") {
-		args.push("-s", "ms-winsoundevent:Notification.Looping.Alarm");
-	} else if (sound === "Reminder") {
-		args.push("-s", "ms-winsoundevent:Notification.Reminder");
+	if (sound) {
+		args.push("-s", "ms-winsoundevent:Notification.Default");
 	}
 
 	const child = spawn(snoreToastPath, args, {
