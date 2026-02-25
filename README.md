@@ -56,6 +56,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist new cli` - Initialize a new tsup CLI project
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit status` - Show git status and diff
+- `assist commit <message>` - Commit staged changes with validation
 - `assist commit <files...> <message>` - Stage files and create a git commit with validation
 - `assist prs` - List pull requests for the current repository
 - `assist prs list-comments` - List all comments on the current branch's pull request

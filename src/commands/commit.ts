@@ -1,43 +1,23 @@
 import { execSync } from "node:child_process";
 import { loadConfig } from "../shared/loadConfig";
 import type { AssistConfig } from "../shared/types";
-
-const MAX_MESSAGE_LENGTH = 50;
-const CONVENTIONAL_COMMIT_REGEX =
-	/^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(!)?(\(.+\))?!?: .+$/;
-
-function validateMessage(message: string, config: AssistConfig): void {
-	if (message.toLowerCase().includes("claude")) {
-		console.error("Error: Commit message must not reference Claude");
-		process.exit(1);
-	}
-
-	if (config.commit?.conventional && !CONVENTIONAL_COMMIT_REGEX.test(message)) {
-		console.error(
-			"Error: Commit message must follow conventional commit format (e.g., 'feat: add feature', 'fix(scope): fix bug')",
-		);
-		process.exit(1);
-	}
-
-	if (message.length > MAX_MESSAGE_LENGTH) {
-		console.error(
-			`Error: Commit message must be ${MAX_MESSAGE_LENGTH} characters or less (current: ${message.length})`,
-		);
-		process.exit(1);
-	}
-}
+import { validateMessage } from "./commit/validateMessage";
 
 function escapeShell(s: string): string {
 	return `"${s.replace(/"/g, '\\"')}"`;
 }
 
-function stageAndCommit(files: string[], message: string): string {
-	const escaped = files.map(escapeShell).join(" ");
-	execSync(`git add ${escaped}`, { stdio: "inherit" });
+function commitStaged(message: string): string {
 	execSync(`git commit -m ${escapeShell(message)}`, { stdio: "inherit" });
 	return execSync("git rev-parse --short=7 HEAD", {
 		encoding: "utf-8",
 	}).trim();
+}
+
+function stageAndCommit(files: string[], message: string): string {
+	const escaped = files.map(escapeShell).join(" ");
+	execSync(`git add ${escaped}`, { stdio: "inherit" });
+	return commitStaged(message);
 }
 
 function execCommit(
@@ -49,7 +29,8 @@ function execCommit(
 		if (config.commit?.pull) {
 			execSync("git pull", { stdio: "inherit" });
 		}
-		const sha = stageAndCommit(files, message);
+		const sha =
+			files.length > 0 ? stageAndCommit(files, message) : commitStaged(message);
 		console.log(`Committed: ${sha}`);
 		if (config.commit?.push) {
 			execSync("git push", { stdio: "inherit" });
@@ -69,8 +50,8 @@ export function commit(args: string[]): void {
 		return;
 	}
 
-	if (args.length < 2) {
-		console.error("Usage: assist commit <files...> <message>");
+	if (args.length < 1) {
+		console.error("Usage: assist commit [files...] <message>");
 		process.exit(1);
 	}
 
