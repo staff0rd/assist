@@ -1,13 +1,7 @@
 import { spawn } from "node:child_process";
 import { expandEnv } from "../../shared/expandEnv";
 import { loadConfig } from "../../shared/loadConfig";
-
-function quoteIfNeeded(arg: string): string {
-	if (/[^a-zA-Z0-9_./:=@%^+,-]/.test(arg)) {
-		return `'${arg.replace(/'/g, "'\\''")}'`;
-	}
-	return arg;
-}
+import { shellQuote } from "../../shared/shellQuote";
 
 function buildCommand(
 	command: string,
@@ -15,7 +9,7 @@ function buildCommand(
 	extraArgs: string[],
 ): string {
 	const allArgs = [...configArgs, ...extraArgs];
-	return [quoteIfNeeded(command), ...allArgs.map(quoteIfNeeded)].join(" ");
+	return [shellQuote(command), ...allArgs.map(shellQuote)].join(" ");
 }
 
 function printAvailableConfigs(configs: { name: string }[]): void {

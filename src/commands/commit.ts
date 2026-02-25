@@ -1,21 +1,18 @@
 import { execSync } from "node:child_process";
 import { loadConfig } from "../shared/loadConfig";
+import { shellQuote } from "../shared/shellQuote";
 import type { AssistConfig } from "../shared/types";
 import { validateMessage } from "./commit/validateMessage";
 
-function escapeShell(s: string): string {
-	return `"${s.replace(/"/g, '\\"')}"`;
-}
-
 function commitStaged(message: string): string {
-	execSync(`git commit -m ${escapeShell(message)}`, { stdio: "inherit" });
+	execSync(`git commit -m ${shellQuote(message)}`, { stdio: "inherit" });
 	return execSync("git rev-parse --short=7 HEAD", {
 		encoding: "utf-8",
 	}).trim();
 }
 
 function stageAndCommit(files: string[], message: string): string {
-	const escaped = files.map(escapeShell).join(" ");
+	const escaped = files.map(shellQuote).join(" ");
 	execSync(`git add ${escaped}`, { stdio: "inherit" });
 	return commitStaged(message);
 }

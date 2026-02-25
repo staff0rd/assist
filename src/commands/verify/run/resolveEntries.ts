@@ -1,16 +1,10 @@
 import * as path from "node:path";
 import { loadConfig } from "../../../shared/loadConfig";
 import { findPackageJsonWithVerifyScripts } from "../../../shared/readPackageJson";
-
-function quoteIfNeeded(arg: string): string {
-	if (/[^a-zA-Z0-9_./:=@%^+,-]/.test(arg)) {
-		return `'${arg.replace(/'/g, "'\\''")}'`;
-	}
-	return arg;
-}
+import { shellQuote } from "../../../shared/shellQuote";
 
 function buildFullCommand(command: string, args?: string[]): string {
-	return [quoteIfNeeded(command), ...(args ?? []).map(quoteIfNeeded)].join(" ");
+	return [shellQuote(command), ...(args ?? []).map(shellQuote)].join(" ");
 }
 
 export type VerifyEntry = {
