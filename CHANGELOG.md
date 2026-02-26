@@ -1,3 +1,10 @@
+## [0.93.2](https://github.com/staff0rd/assist/compare/v0.93.1...v0.93.2) (2026-02-26)
+
+
+### Bug Fixes
+
+* win32 shell quoting ([09f3bc9](https://github.com/staff0rd/assist/commit/09f3bc9c09d03d75c03534f894616ebfcd59e5ba))
+
 ## [0.93.1](https://github.com/staff0rd/assist/compare/v0.93.0...v0.93.1) (2026-02-25)
 
 
