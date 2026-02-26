@@ -35,6 +35,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/commit` - Commit only relevant files from the session
 - `/devlog` - Generate devlog entry for the next unversioned day
 - `/next-backlog-item` - Pick and implement the next backlog item
+- `/pr` - Raise a PR with a concise description
 - `/refactor` - Run refactoring checks for code quality
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one

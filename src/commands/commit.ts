@@ -39,7 +39,7 @@ function execCommit(
 	}
 }
 
-export function commit(args: string[]): void {
+export function commit(args: string[], options: { message?: string }): void {
 	if (args[0] === "status") {
 		execSync("git status && echo '---DIFF---' && git diff", {
 			stdio: "inherit",
@@ -47,13 +47,21 @@ export function commit(args: string[]): void {
 		return;
 	}
 
-	if (args.length < 1) {
-		console.error("Usage: assist commit [files...] <message>");
-		process.exit(1);
+	let message: string;
+	let files: string[];
+
+	if (options.message) {
+		message = options.message;
+		files = args;
+	} else {
+		if (args.length < 1) {
+			console.error("Usage: assist commit [-m <message>] [files...] <message>");
+			process.exit(1);
+		}
+		message = args[args.length - 1];
+		files = args.slice(0, -1);
 	}
 
-	const message = args[args.length - 1];
-	const files = args.slice(0, -1);
 	const config = loadConfig();
 
 	validateMessage(message, config);
