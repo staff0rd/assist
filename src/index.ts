@@ -45,8 +45,7 @@ program
 program
 	.command("commit")
 	.description("Create a git commit with validation")
-	.argument("[args...]", "status | [files...] [message]")
-	.option("-m, --message <message>", "Commit message")
+	.argument("<args...>", "status | <files...> <message>")
 	.action(commit);
 
 const configCommand = program
