@@ -1,3 +1,10 @@
+## [0.93.3](https://github.com/staff0rd/assist/compare/v0.93.2...v0.93.3) (2026-02-26)
+
+
+### Bug Fixes
+
+* revert commit -m flag ([6cb21d0](https://github.com/staff0rd/assist/commit/6cb21d02f04e011a4f08770f6b4b055636aa8a6b))
+
 ## [0.93.2](https://github.com/staff0rd/assist/compare/v0.93.1...v0.93.2) (2026-02-26)
 
 
