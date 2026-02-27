@@ -48,12 +48,12 @@ export function commit(args: string[]): void {
 	}
 
 	if (args.length < 1) {
-		console.error("Usage: assist commit [files...] <message>");
+		console.error("Usage: assist commit <message> [files...]");
 		process.exit(1);
 	}
 
-	const message = args[args.length - 1];
-	const files = args.slice(0, -1);
+	const message = args[0];
+	const files = args.slice(1);
 	const config = loadConfig();
 
 	validateMessage(message, config);

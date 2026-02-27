@@ -8,10 +8,10 @@ First run `assist commit status` to see the current state of the working tree.
 
 Then either:
 - `assist commit "your message"` to commit already-staged changes, or
-- `assist commit <file1> <file2> ... "your message"` to stage files and commit
+- `assist commit "your message" <file1> <file2> ...` to stage files and commit
 
 Where:
-- Each file argument is a path to git add before committing
-- The last argument is the commit message
+- The first argument is the commit message
+- Any subsequent arguments are paths to git add before committing
 - The commit message is 40 characters or less
 - The commit message does not reference Claude
