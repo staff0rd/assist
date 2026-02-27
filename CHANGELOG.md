@@ -1,3 +1,10 @@
+# [0.96.0](https://github.com/staff0rd/assist/compare/v0.95.0...v0.96.0) (2026-02-27)
+
+
+### Features
+
+* auto-approve read-only gh api calls ([bcc7959](https://github.com/staff0rd/assist/commit/bcc7959e97466f8a96d29306f8211c7f0f74c1d2))
+
 # [0.95.0](https://github.com/staff0rd/assist/compare/v0.94.1...v0.95.0) (2026-02-27)
 
 
