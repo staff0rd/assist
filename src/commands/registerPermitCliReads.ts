@@ -1,16 +1,16 @@
 import type { Command } from "commander";
-import { cliDiscover } from "./cliDiscover";
+import { permitCliReads } from "./permitCliReads";
 
-export function registerCliDiscover(program: Command): void {
+export function registerPermitCliReads(program: Command): void {
 	program
-		.command("cli-discover")
-		.description("Discover a CLI's command tree via recursive --help parsing")
+		.command("permit-cli-reads")
+		.description("Discover a CLI's commands and auto-permit read-only ones")
 		.argument(
 			"<cli...>",
 			"CLI binary and optional subcommand (e.g. gh, az, acli jira)",
 		)
 		.option("--no-cache", "Force fresh discovery, ignoring cached results")
 		.action((cli: string[], options: { cache: boolean }) => {
-			cliDiscover(cli.join(" "), { noCache: !options.cache });
+			permitCliReads(cli.join(" "), { noCache: !options.cache });
 		});
 }

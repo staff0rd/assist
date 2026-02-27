@@ -9,7 +9,8 @@
 	},
 	"files": [
 		"dist",
-		"claude"
+		"claude",
+		"assist.cli-reads"
 	],
 	"publishConfig": {
 		"access": "public"

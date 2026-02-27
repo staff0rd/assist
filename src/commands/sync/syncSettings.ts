@@ -11,13 +11,18 @@ export async function syncSettings(
 ): Promise<void> {
 	const source = path.join(claudeDir, "settings.json");
 	const target = path.join(targetBase, "settings.json");
+
 	const sourceContent = fs.readFileSync(source, "utf-8");
-	const normalizedSource = JSON.stringify(JSON.parse(sourceContent), null, 2);
+	const mergedContent = JSON.stringify(JSON.parse(sourceContent), null, "\t");
 
 	if (fs.existsSync(target)) {
 		const targetContent = fs.readFileSync(target, "utf-8");
-		const normalizedTarget = JSON.stringify(JSON.parse(targetContent), null, 2);
-		if (normalizedSource !== normalizedTarget) {
+		const normalizedTarget = JSON.stringify(
+			JSON.parse(targetContent),
+			null,
+			"\t",
+		);
+		if (mergedContent !== normalizedTarget) {
 			if (!options?.yes) {
 				console.log(
 					chalk.yellow(
@@ -25,7 +30,7 @@ export async function syncSettings(
 					),
 				);
 				console.log();
-				printDiff(targetContent, sourceContent);
+				printDiff(targetContent, mergedContent);
 
 				const confirm = await promptConfirm(
 					chalk.red("Overwrite existing settings.json?"),
@@ -40,6 +45,6 @@ export async function syncSettings(
 		}
 	}
 
-	fs.copyFileSync(source, target);
+	fs.writeFileSync(target, mergedContent);
 	console.log("Copied settings.json to ~/.claude/settings.json");
 }

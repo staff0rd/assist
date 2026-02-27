@@ -2,7 +2,8 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join } from "node:path";
 import chalk from "chalk";
-import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+import { stringify as stringifyYaml } from "yaml";
+import { loadRawYaml } from "./loadRawYaml";
 import {
 	type AssistConfig,
 	assistConfigSchema,
@@ -21,29 +22,19 @@ function getGlobalConfigPath(): string {
 	return join(homedir(), ".assist.yml");
 }
 
-function loadRawConfig(path: string): Record<string, unknown> {
-	if (!existsSync(path)) return {};
-	try {
-		const content = readFileSync(path, "utf-8");
-		return (parseYaml(content) as Record<string, unknown>) || {};
-	} catch {
-		return {};
-	}
-}
-
 export function loadConfig(): AssistConfig {
-	const globalRaw = loadRawConfig(getGlobalConfigPath());
-	const projectRaw = loadRawConfig(getConfigPath());
+	const globalRaw = loadRawYaml(getGlobalConfigPath());
+	const projectRaw = loadRawYaml(getConfigPath());
 	const merged = { ...globalRaw, ...projectRaw };
 	return assistConfigSchema.parse(merged);
 }
 
 export function loadProjectConfig(): Record<string, unknown> {
-	return loadRawConfig(getConfigPath());
+	return loadRawYaml(getConfigPath());
 }
 
 export function loadGlobalConfigRaw(): Record<string, unknown> {
-	return loadRawConfig(getGlobalConfigPath());
+	return loadRawYaml(getGlobalConfigPath());
 }
 
 export function saveGlobalConfig(config: Record<string, unknown>): void {

@@ -1,6 +1,5 @@
 import { readStdin } from "../../lib/readStdin";
-import { loadConfig } from "../../shared/loadConfig";
-import { extractVerb } from "./extractVerb";
+import { findCliRead } from "../../shared/loadCliReads";
 
 type HookInput = {
 	hook_event_name: string;
@@ -25,29 +24,15 @@ export async function cliHook(): Promise<void> {
 	}
 
 	const command = data.tool_input.command.trim();
-	const config = loadConfig();
-	const cliReadVerbs = config.cliReadVerbs;
-	if (!cliReadVerbs) return;
+	const matched = findCliRead(command);
 
-	// Find the matching CLI prefix (longest match first for multi-token keys like "acli jira")
-	const cliKeys = Object.keys(cliReadVerbs).sort((a, b) => b.length - a.length);
-	const cli = cliKeys.find(
-		(key) => command === key || command.startsWith(`${key} `),
-	);
-	if (!cli) return;
-
-	const readVerbs = cliReadVerbs[cli];
-	if (!readVerbs || readVerbs.length === 0) return;
-
-	const verb = extractVerb(command, readVerbs);
-
-	if (verb && readVerbs.includes(verb)) {
+	if (matched) {
 		console.log(
 			JSON.stringify({
 				hookSpecificOutput: {
 					hookEventName: "PreToolUse",
 					permissionDecision: "allow",
-					permissionDecisionReason: `Read-only ${cli} command: ${verb}`,
+					permissionDecisionReason: `Read-only CLI command: ${matched}`,
 				},
 			}),
 		);

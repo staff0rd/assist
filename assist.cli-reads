@@ -1,0 +1,1927 @@
+acli admin auth status
+acli auth status
+acli confluence auth status
+acli confluence space list
+acli confluence space view
+acli jira auth status
+acli jira board get
+acli jira board search
+acli jira dashboard search
+acli jira filter get
+acli jira filter list
+acli jira filter search
+acli jira project list
+acli jira project view
+acli jira sprint view
+acli jira workitem attachment list
+acli jira workitem comment list
+acli jira workitem link list
+acli jira workitem search
+acli jira workitem view
+acli jira workitem watcher list
+az account list
+az account lock list
+az account lock show
+az account management-group entities list
+az account management-group hierarchy-settings list
+az account management-group list
+az account management-group show
+az account management-group subscription show
+az account management-group tenant-backfill get
+az account show
+az acr agentpool list
+az acr agentpool show
+az acr artifact-streaming operation show
+az acr artifact-streaming show
+az acr cache list
+az acr cache show
+az acr config authentication-as-arm show
+az acr config content-trust show
+az acr config retention show
+az acr config soft-delete show
+az acr connected-registry list
+az acr connected-registry permissions show
+az acr connected-registry show
+az acr credential show
+az acr credential-set list
+az acr credential-set show
+az acr encryption show
+az acr helm list
+az acr helm show
+az acr identity show
+az acr list
+az acr manifest list
+az acr manifest show
+az acr network-rule list
+az acr private-endpoint-connection list
+az acr private-endpoint-connection show
+az acr private-link-resource list
+az acr replication list
+az acr replication show
+az acr repository list
+az acr repository show
+az acr scope-map list
+az acr scope-map show
+az acr show
+az acr task credential list
+az acr task identity show
+az acr task list
+az acr task logs
+az acr task show
+az acr task timer list
+az acr taskrun list
+az acr taskrun logs
+az acr taskrun show
+az acr token list
+az acr token show
+az acr webhook list
+az acr webhook show
+az ad app credential list
+az ad app federated-credential list
+az ad app federated-credential show
+az ad app list
+az ad app owner list
+az ad app permission list
+az ad app show
+az ad group list
+az ad group member list
+az ad group owner list
+az ad group show
+az ad signed-in-user show
+az ad sp credential list
+az ad sp list
+az ad sp owner list
+az ad sp show
+az ad user list
+az ad user show
+az advisor configuration list
+az advisor configuration show
+az advisor recommendation list
+az afd custom-domain list
+az afd custom-domain show
+az afd endpoint list
+az afd endpoint show
+az afd log-analytic location list
+az afd log-analytic metric list
+az afd log-analytic ranking list
+az afd log-analytic resource list
+az afd origin list
+az afd origin show
+az afd origin-group list
+az afd origin-group show
+az afd profile identity show
+az afd profile list
+az afd profile log-scrubbing show
+az afd profile show
+az afd route list
+az afd route show
+az afd rule action list
+az afd rule condition list
+az afd rule list
+az afd rule show
+az afd rule-set list
+az afd rule-set show
+az afd secret list
+az afd secret show
+az afd security-policy list
+az afd security-policy show
+az afd waf-log-analytic metric list
+az afd waf-log-analytic ranking list
+az aks approuting zone list
+az aks browse
+az aks connection list
+az aks connection show
+az aks list
+az aks machine list
+az aks machine show
+az aks maintenanceconfiguration list
+az aks maintenanceconfiguration show
+az aks nodepool list
+az aks nodepool show
+az aks nodepool snapshot list
+az aks nodepool snapshot show
+az aks safeguards list
+az aks safeguards show
+az aks show
+az aks trustedaccess role list
+az aks trustedaccess rolebinding list
+az aks trustedaccess rolebinding show
+az ams account encryption show
+az ams account identity show
+az ams account list
+az ams account mru show
+az ams account show
+az ams account-filter list
+az ams account-filter show
+az ams asset list
+az ams asset show
+az ams asset-filter list
+az ams asset-filter show
+az ams asset-track list
+az ams asset-track show
+az ams content-key-policy list
+az ams content-key-policy show
+az ams job list
+az ams job show
+az ams live-event list
+az ams live-event show
+az ams live-output list
+az ams live-output show
+az ams streaming-endpoint list
+az ams streaming-endpoint show
+az ams streaming-locator list
+az ams streaming-locator show
+az ams streaming-policy list
+az ams streaming-policy show
+az ams transform list
+az ams transform show
+az apim api export
+az apim api list
+az apim api operation list
+az apim api operation show
+az apim api release list
+az apim api release show
+az apim api revision list
+az apim api schema list
+az apim api schema show
+az apim api show
+az apim api versionset list
+az apim api versionset show
+az apim deletedservice list
+az apim deletedservice show
+az apim graphql resolver list
+az apim graphql resolver policy list
+az apim graphql resolver policy show
+az apim graphql resolver show
+az apim list
+az apim nv list
+az apim nv show
+az apim product api list
+az apim product list
+az apim product show
+az apim show
+az appconfig credential list
+az appconfig feature filter list
+az appconfig feature filter show
+az appconfig feature list
+az appconfig feature show
+az appconfig identity show
+az appconfig kv export
+az appconfig kv list
+az appconfig kv show
+az appconfig list
+az appconfig replica list
+az appconfig replica show
+az appconfig revision list
+az appconfig show
+az appconfig snapshot list
+az appconfig snapshot show
+az appservice ase list
+az appservice ase show
+az appservice plan list
+az appservice plan show
+az appservice vnet-integration list
+az aro list
+az aro show
+az backup container list
+az backup container show
+az backup item list
+az backup item show
+az backup job list
+az backup job show
+az backup policy list
+az backup policy show
+az backup protectable-item list
+az backup protectable-item show
+az backup recoveryconfig show
+az backup recoverypoint list
+az backup recoverypoint show
+az backup vault backup-properties show
+az backup vault encryption show
+az backup vault identity show
+az backup vault list
+az backup vault resource-guard-mapping show
+az backup vault show
+az batch account identity show
+az batch account keys list
+az batch account list
+az batch account network-profile network-rule list
+az batch account network-profile show
+az batch account show
+az batch application list
+az batch application package list
+az batch application package show
+az batch application show
+az batch application summary list
+az batch application summary show
+az batch job list
+az batch job prep-release-status list
+az batch job show
+az batch job task-counts show
+az batch job-schedule list
+az batch job-schedule show
+az batch location quotas show
+az batch node file list
+az batch node file show
+az batch node list
+az batch node remote-login-settings show
+az batch node show
+az batch pool list
+az batch pool node-counts list
+az batch pool show
+az batch pool supported-images list
+az batch pool usage-metrics list
+az batch private-endpoint-connection list
+az batch private-endpoint-connection show
+az batch private-link-resource list
+az batch private-link-resource show
+az batch task file list
+az batch task file show
+az batch task list
+az batch task show
+az batch task subtask list
+az billing account invoice-section list
+az billing account invoice-section show
+az billing account list
+az billing account reservation list
+az billing account show
+az billing account transaction list
+az billing agreement list
+az billing agreement show
+az billing balance show
+az billing customer list
+az billing customer show
+az billing enrollment-account billing-permission list
+az billing enrollment-account list
+az billing enrollment-account show
+az billing instruction list
+az billing instruction show
+az billing invoice list
+az billing invoice section list
+az billing invoice section show
+az billing invoice show
+az billing period list
+az billing period show
+az billing permission list
+az billing policy show
+az billing product list
+az billing product show
+az billing profile list
+az billing profile reservation list
+az billing profile show
+az billing property show
+az billing role-assignment list
+az billing role-assignment show
+az billing role-definition list
+az billing role-definition show
+az billing subscription list
+az billing subscription show
+az billing transaction list
+az billing transfer list
+az billing transfer show
+az bot authsetting list
+az bot authsetting show
+az bot directline show
+az bot email show
+az bot facebook show
+az bot kik show
+az bot msteams show
+az bot show
+az bot skype show
+az bot slack show
+az bot sms show
+az bot telegram show
+az bot webchat show
+az cache list
+az cache show
+az capacity reservation group list
+az capacity reservation group show
+az capacity reservation list
+az capacity reservation show
+az cdn custom-domain list
+az cdn custom-domain show
+az cdn edge-node list
+az cdn endpoint list
+az cdn endpoint rule action show
+az cdn endpoint rule condition show
+az cdn endpoint rule show
+az cdn endpoint show
+az cdn origin list
+az cdn origin show
+az cdn origin-group list
+az cdn origin-group show
+az cdn profile list
+az cdn profile show
+az cloud list
+az cloud show
+az cognitiveservices account commitment-plan list
+az cognitiveservices account commitment-plan show
+az cognitiveservices account deployment list
+az cognitiveservices account deployment show
+az cognitiveservices account identity show
+az cognitiveservices account keys list
+az cognitiveservices account list
+az cognitiveservices account network-rule list
+az cognitiveservices account show
+az cognitiveservices commitment-tier list
+az cognitiveservices model list
+az cognitiveservices usage list
+az compute-fleet list
+az compute-fleet show
+az config get
+az config param-persist show
+az connection list
+az connection show
+az consumption budget list
+az consumption budget show
+az consumption marketplace list
+az consumption pricesheet show
+az consumption reservation detail list
+az consumption reservation summary list
+az consumption usage list
+az container container-group-profile list
+az container container-group-profile show
+az container export
+az container list
+az container logs
+az container show
+az containerapp auth apple show
+az containerapp auth facebook show
+az containerapp auth github show
+az containerapp auth google show
+az containerapp auth microsoft show
+az containerapp auth openid-connect show
+az containerapp auth show
+az containerapp auth twitter show
+az containerapp browse
+az containerapp connection list
+az containerapp connection show
+az containerapp env certificate list
+az containerapp env dapr-component list
+az containerapp env dapr-component show
+az containerapp env list
+az containerapp env logs show
+az containerapp env show
+az containerapp env storage list
+az containerapp env storage show
+az containerapp env workload-profile list
+az containerapp env workload-profile show
+az containerapp github-action show
+az containerapp hostname list
+az containerapp identity show
+az containerapp ingress access-restriction list
+az containerapp ingress cors show
+az containerapp ingress show
+az containerapp ingress sticky-sessions show
+az containerapp ingress traffic show
+az containerapp job execution list
+az containerapp job execution show
+az containerapp job identity show
+az containerapp job list
+az containerapp job registry list
+az containerapp job registry show
+az containerapp job secret list
+az containerapp job secret show
+az containerapp job show
+az containerapp list
+az containerapp logs show
+az containerapp registry list
+az containerapp registry show
+az containerapp replica list
+az containerapp replica show
+az containerapp revision list
+az containerapp revision show
+az containerapp secret list
+az containerapp secret show
+az containerapp show
+az cosmosdb cassandra keyspace exists
+az cosmosdb cassandra keyspace list
+az cosmosdb cassandra keyspace show
+az cosmosdb cassandra keyspace throughput show
+az cosmosdb cassandra table exists
+az cosmosdb cassandra table list
+az cosmosdb cassandra table show
+az cosmosdb cassandra table throughput show
+az cosmosdb gremlin database exists
+az cosmosdb gremlin database list
+az cosmosdb gremlin database show
+az cosmosdb gremlin database throughput show
+az cosmosdb gremlin graph exists
+az cosmosdb gremlin graph list
+az cosmosdb gremlin graph show
+az cosmosdb gremlin graph throughput show
+az cosmosdb gremlin restorable-database list
+az cosmosdb gremlin restorable-graph list
+az cosmosdb gremlin restorable-resource list
+az cosmosdb identity show
+az cosmosdb keys list
+az cosmosdb list
+az cosmosdb locations list
+az cosmosdb locations show
+az cosmosdb mongodb collection exists
+az cosmosdb mongodb collection list
+az cosmosdb mongodb collection show
+az cosmosdb mongodb collection throughput show
+az cosmosdb mongodb database exists
+az cosmosdb mongodb database list
+az cosmosdb mongodb database show
+az cosmosdb mongodb database throughput show
+az cosmosdb mongodb restorable-collection list
+az cosmosdb mongodb restorable-database list
+az cosmosdb mongodb restorable-resource list
+az cosmosdb mongodb role definition exists
+az cosmosdb mongodb role definition list
+az cosmosdb mongodb role definition show
+az cosmosdb mongodb user definition exists
+az cosmosdb mongodb user definition list
+az cosmosdb mongodb user definition show
+az cosmosdb network-rule list
+az cosmosdb postgres cluster list
+az cosmosdb postgres cluster server list
+az cosmosdb postgres cluster server show
+az cosmosdb postgres cluster show
+az cosmosdb postgres configuration coordinator show
+az cosmosdb postgres configuration list
+az cosmosdb postgres configuration node show
+az cosmosdb postgres configuration server list
+az cosmosdb postgres configuration show
+az cosmosdb postgres firewall-rule list
+az cosmosdb postgres firewall-rule show
+az cosmosdb postgres role list
+az cosmosdb postgres role show
+az cosmosdb private-endpoint-connection show
+az cosmosdb private-link-resource list
+az cosmosdb restorable-database-account list
+az cosmosdb restorable-database-account show
+az cosmosdb service list
+az cosmosdb service show
+az cosmosdb show
+az cosmosdb sql container exists
+az cosmosdb sql container list
+az cosmosdb sql container show
+az cosmosdb sql container throughput show
+az cosmosdb sql database exists
+az cosmosdb sql database list
+az cosmosdb sql database show
+az cosmosdb sql database throughput show
+az cosmosdb sql restorable-container list
+az cosmosdb sql restorable-database list
+az cosmosdb sql restorable-resource list
+az cosmosdb sql role assignment exists
+az cosmosdb sql role assignment list
+az cosmosdb sql role assignment show
+az cosmosdb sql role definition exists
+az cosmosdb sql role definition list
+az cosmosdb sql role definition show
+az cosmosdb sql stored-procedure list
+az cosmosdb sql stored-procedure show
+az cosmosdb sql trigger list
+az cosmosdb sql trigger show
+az cosmosdb sql user-defined-function list
+az cosmosdb sql user-defined-function show
+az cosmosdb table exists
+az cosmosdb table list
+az cosmosdb table restorable-resource list
+az cosmosdb table restorable-table list
+az cosmosdb table show
+az cosmosdb table throughput show
+az data-boundary show
+az databoxedge alert list
+az databoxedge alert show
+az databoxedge bandwidth-schedule list
+az databoxedge bandwidth-schedule show
+az databoxedge device list
+az databoxedge device share list
+az databoxedge device share show
+az databoxedge device show
+az databoxedge device storage-account container list
+az databoxedge device storage-account container show
+az databoxedge device storage-account list
+az databoxedge device storage-account show
+az databoxedge device storage-account-credential list
+az databoxedge device storage-account-credential show
+az databoxedge device user list
+az databoxedge device user show
+az databoxedge order list
+az databoxedge order show
+az deployment group export
+az deployment group list
+az deployment group show
+az deployment mg export
+az deployment mg list
+az deployment mg show
+az deployment operation group list
+az deployment operation group show
+az deployment operation mg list
+az deployment operation mg show
+az deployment operation sub list
+az deployment operation sub show
+az deployment operation tenant list
+az deployment operation tenant show
+az deployment sub export
+az deployment sub list
+az deployment sub show
+az deployment tenant export
+az deployment tenant list
+az deployment tenant show
+az deployment-scripts list
+az deployment-scripts show
+az disk list
+az disk show
+az disk-access list
+az disk-access show
+az disk-encryption-set identity show
+az disk-encryption-set list
+az disk-encryption-set show
+az dls account firewall list
+az dls account firewall show
+az dls account list
+az dls account show
+az dls account trusted-provider list
+az dls account trusted-provider show
+az dls fs access show
+az dls fs list
+az dls fs show
+az dms list
+az dms project list
+az dms project show
+az dms project task list
+az dms project task show
+az dms show
+az eventgrid domain event-subscription list
+az eventgrid domain event-subscription show
+az eventgrid domain key list
+az eventgrid domain list
+az eventgrid domain show
+az eventgrid domain topic event-subscription list
+az eventgrid domain topic event-subscription show
+az eventgrid domain topic list
+az eventgrid domain topic show
+az eventgrid event-subscription list
+az eventgrid event-subscription show
+az eventgrid extension-topic show
+az eventgrid partner configuration list
+az eventgrid partner configuration show
+az eventgrid partner destination list
+az eventgrid partner destination show
+az eventgrid partner namespace channel list
+az eventgrid partner namespace channel show
+az eventgrid partner namespace event-channel list
+az eventgrid partner namespace event-channel show
+az eventgrid partner namespace key list
+az eventgrid partner namespace list
+az eventgrid partner namespace show
+az eventgrid partner registration list
+az eventgrid partner registration show
+az eventgrid partner topic event-subscription list
+az eventgrid partner topic event-subscription show
+az eventgrid partner topic list
+az eventgrid partner topic show
+az eventgrid partner verified-partner list
+az eventgrid partner verified-partner show
+az eventgrid system-topic event-subscription list
+az eventgrid system-topic event-subscription show
+az eventgrid system-topic list
+az eventgrid system-topic show
+az eventgrid topic event-subscription list
+az eventgrid topic event-subscription show
+az eventgrid topic key list
+az eventgrid topic list
+az eventgrid topic show
+az eventgrid topic-type list
+az eventgrid topic-type show
+az eventhubs cluster list
+az eventhubs cluster namespace list
+az eventhubs cluster show
+az eventhubs eventhub authorization-rule keys list
+az eventhubs eventhub authorization-rule list
+az eventhubs eventhub authorization-rule show
+az eventhubs eventhub consumer-group list
+az eventhubs eventhub consumer-group show
+az eventhubs eventhub list
+az eventhubs eventhub show
+az eventhubs georecovery-alias authorization-rule keys list
+az eventhubs georecovery-alias authorization-rule list
+az eventhubs georecovery-alias authorization-rule show
+az eventhubs georecovery-alias exists
+az eventhubs georecovery-alias list
+az eventhubs georecovery-alias show
+az eventhubs namespace application-group list
+az eventhubs namespace application-group show
+az eventhubs namespace authorization-rule keys list
+az eventhubs namespace authorization-rule list
+az eventhubs namespace authorization-rule show
+az eventhubs namespace exists
+az eventhubs namespace list
+az eventhubs namespace network-rule-set list
+az eventhubs namespace network-rule-set show
+az eventhubs namespace nsp-configuration list
+az eventhubs namespace nsp-configuration show
+az eventhubs namespace private-endpoint-connection list
+az eventhubs namespace private-endpoint-connection show
+az eventhubs namespace private-link-resource show
+az eventhubs namespace schema-registry list
+az eventhubs namespace schema-registry show
+az eventhubs namespace show
+az extension list
+az extension show
+az feature list
+az feature registration list
+az feature registration show
+az feature show
+az functionapp config access-restriction show
+az functionapp config appsettings list
+az functionapp config container show
+az functionapp config hostname list
+az functionapp config show
+az functionapp config ssl list
+az functionapp config ssl show
+az functionapp connection list
+az functionapp connection show
+az functionapp cors show
+az functionapp deployment config show
+az functionapp deployment slot list
+az functionapp deployment source show
+az functionapp deployment user show
+az functionapp function keys list
+az functionapp function list
+az functionapp function show
+az functionapp hybrid-connection list
+az functionapp identity show
+az functionapp keys list
+az functionapp list
+az functionapp log deployment list
+az functionapp log deployment show
+az functionapp plan list
+az functionapp plan show
+az functionapp runtime config show
+az functionapp scale config show
+az functionapp show
+az functionapp vnet-integration list
+az group exists
+az group export
+az group list
+az group lock list
+az group lock show
+az group show
+az hdinsight application list
+az hdinsight application show
+az hdinsight autoscale condition list
+az hdinsight autoscale show
+az hdinsight azure-monitor show
+az hdinsight azure-monitor-agent show
+az hdinsight host list
+az hdinsight list
+az hdinsight monitor show
+az hdinsight script-action list
+az hdinsight show
+az identity federated-credential list
+az identity federated-credential show
+az identity list
+az identity show
+az image builder error-handler show
+az image builder identity show
+az image builder list
+az image builder optimizer show
+az image builder output versioning show
+az image builder show
+az image builder trigger list
+az image builder trigger show
+az image builder validator show
+az image list
+az image show
+az iot central app identity show
+az iot central app list
+az iot central app private-endpoint-connection list
+az iot central app private-endpoint-connection show
+az iot central app private-link-resource list
+az iot central app private-link-resource show
+az iot central app show
+az iot dps certificate list
+az iot dps certificate show
+az iot dps linked-hub list
+az iot dps linked-hub show
+az iot dps list
+az iot dps policy list
+az iot dps policy show
+az iot dps show
+az iot hub certificate list
+az iot hub certificate show
+az iot hub consumer-group list
+az iot hub consumer-group show
+az iot hub devicestream show
+az iot hub identity show
+az iot hub list
+az iot hub message-enrichment list
+az iot hub policy list
+az iot hub policy show
+az iot hub show
+az keyvault certificate contact list
+az keyvault certificate issuer admin list
+az keyvault certificate issuer list
+az keyvault certificate issuer show
+az keyvault certificate list
+az keyvault certificate pending show
+az keyvault certificate show
+az keyvault key list
+az keyvault key rotation-policy show
+az keyvault key show
+az keyvault list
+az keyvault network-rule list
+az keyvault private-endpoint-connection list
+az keyvault private-endpoint-connection show
+az keyvault private-link-resource list
+az keyvault region list
+az keyvault role assignment list
+az keyvault role definition list
+az keyvault role definition show
+az keyvault secret list
+az keyvault secret show
+az keyvault setting list
+az keyvault setting show
+az keyvault show
+az lab arm-template list
+az lab arm-template show
+az lab artifact list
+az lab artifact-source list
+az lab artifact-source show
+az lab custom-image list
+az lab custom-image show
+az lab environment list
+az lab environment show
+az lab formula list
+az lab formula show
+az lab gallery-image list
+az lab get
+az lab secret list
+az lab secret show
+az lab vm list
+az lab vm show
+az lab vnet get
+az lab vnet list
+az lock list
+az lock show
+az logicapp config appsettings list
+az logicapp list
+az logicapp show
+az managed-cassandra cluster list
+az managed-cassandra cluster show
+az managed-cassandra cluster status
+az managed-cassandra datacenter list
+az managed-cassandra datacenter show
+az managedapp definition list
+az managedapp definition show
+az managedapp list
+az managedapp show
+az managedservices assignment list
+az managedservices assignment show
+az managedservices definition list
+az managedservices definition show
+az maps account keys list
+az maps account list
+az maps account show
+az maps creator list
+az maps creator show
+az mariadb db list
+az mariadb db show
+az mariadb server configuration list
+az mariadb server configuration show
+az mariadb server firewall-rule list
+az mariadb server firewall-rule show
+az mariadb server list
+az mariadb server private-endpoint-connection show
+az mariadb server private-link-resource list
+az mariadb server replica list
+az mariadb server show
+az mariadb server vnet-rule list
+az mariadb server vnet-rule show
+az mariadb server-logs list
+az monitor account list
+az monitor account show
+az monitor action-group identity show
+az monitor action-group list
+az monitor action-group show
+az monitor activity-log alert list
+az monitor activity-log alert show
+az monitor activity-log list
+az monitor autoscale list
+az monitor autoscale profile list
+az monitor autoscale profile show
+az monitor autoscale rule list
+az monitor autoscale show
+az monitor diagnostic-settings categories list
+az monitor diagnostic-settings categories show
+az monitor diagnostic-settings list
+az monitor diagnostic-settings show
+az monitor diagnostic-settings subscription list
+az monitor diagnostic-settings subscription show
+az monitor log-analytics cluster identity show
+az monitor log-analytics cluster list
+az monitor log-analytics cluster show
+az monitor log-analytics query-pack list
+az monitor log-analytics query-pack query list
+az monitor log-analytics query-pack query search
+az monitor log-analytics query-pack query show
+az monitor log-analytics query-pack show
+az monitor log-analytics workspace data-export list
+az monitor log-analytics workspace data-export show
+az monitor log-analytics workspace identity show
+az monitor log-analytics workspace linked-service list
+az monitor log-analytics workspace linked-service show
+az monitor log-analytics workspace linked-storage list
+az monitor log-analytics workspace linked-storage show
+az monitor log-analytics workspace list
+az monitor log-analytics workspace pack list
+az monitor log-analytics workspace saved-search list
+az monitor log-analytics workspace saved-search show
+az monitor log-analytics workspace show
+az monitor log-analytics workspace table list
+az monitor log-analytics workspace table show
+az monitor log-profiles list
+az monitor log-profiles show
+az monitor metrics alert list
+az monitor metrics alert show
+az monitor metrics list
+az monitor private-link-scope list
+az monitor private-link-scope private-endpoint-connection list
+az monitor private-link-scope private-endpoint-connection show
+az monitor private-link-scope private-link-resource list
+az monitor private-link-scope private-link-resource show
+az monitor private-link-scope scoped-resource list
+az monitor private-link-scope scoped-resource show
+az monitor private-link-scope show
+az mysql db list
+az mysql db show
+az mysql flexible-server ad-admin list
+az mysql flexible-server ad-admin show
+az mysql flexible-server advanced-threat-protection-setting show
+az mysql flexible-server backup list
+az mysql flexible-server backup show
+az mysql flexible-server db list
+az mysql flexible-server db show
+az mysql flexible-server firewall-rule list
+az mysql flexible-server firewall-rule show
+az mysql flexible-server list
+az mysql flexible-server parameter list
+az mysql flexible-server parameter show
+az mysql flexible-server replica list
+az mysql flexible-server server-logs list
+az mysql flexible-server show
+az mysql server ad-admin list
+az mysql server ad-admin show
+az mysql server configuration list
+az mysql server configuration show
+az mysql server firewall-rule list
+az mysql server firewall-rule show
+az mysql server key list
+az mysql server key show
+az mysql server list
+az mysql server private-endpoint-connection show
+az mysql server private-link-resource list
+az mysql server replica list
+az mysql server show
+az mysql server vnet-rule list
+az mysql server vnet-rule show
+az mysql server-logs list
+az netappfiles account ad list
+az netappfiles account ad show
+az netappfiles account backup-policy list
+az netappfiles account backup-policy show
+az netappfiles account backup-vault backup list
+az netappfiles account backup-vault backup show
+az netappfiles account backup-vault list
+az netappfiles account backup-vault show
+az netappfiles account list
+az netappfiles account show
+az netappfiles pool list
+az netappfiles pool show
+az netappfiles quota-limit list
+az netappfiles quota-limit show
+az netappfiles resource region-info default show
+az netappfiles resource region-info list
+az netappfiles snapshot list
+az netappfiles snapshot policy list
+az netappfiles snapshot policy show
+az netappfiles snapshot show
+az netappfiles subvolume list
+az netappfiles subvolume metadata show
+az netappfiles subvolume show
+az netappfiles usage list
+az netappfiles usage show
+az netappfiles volume export-policy list
+az netappfiles volume export-policy show
+az netappfiles volume latest-backup-status current show
+az netappfiles volume latest-restore-status current show
+az netappfiles volume list
+az netappfiles volume quota-rule list
+az netappfiles volume quota-rule show
+az netappfiles volume replication list
+az netappfiles volume replication status
+az netappfiles volume show
+az netappfiles volume-group list
+az netappfiles volume-group show
+az network application-gateway address-pool list
+az network application-gateway address-pool show
+az network application-gateway auth-cert list
+az network application-gateway auth-cert show
+az network application-gateway client-cert list
+az network application-gateway client-cert show
+az network application-gateway frontend-ip list
+az network application-gateway frontend-ip show
+az network application-gateway frontend-port list
+az network application-gateway frontend-port show
+az network application-gateway http-listener list
+az network application-gateway http-listener show
+az network application-gateway http-settings list
+az network application-gateway http-settings show
+az network application-gateway identity show
+az network application-gateway list
+az network application-gateway listener list
+az network application-gateway listener show
+az network application-gateway private-link ip-config list
+az network application-gateway private-link ip-config show
+az network application-gateway private-link list
+az network application-gateway private-link show
+az network application-gateway probe list
+az network application-gateway probe show
+az network application-gateway redirect-config list
+az network application-gateway redirect-config show
+az network application-gateway rewrite-rule condition list
+az network application-gateway rewrite-rule condition show
+az network application-gateway rewrite-rule list
+az network application-gateway rewrite-rule set list
+az network application-gateway rewrite-rule set show
+az network application-gateway rewrite-rule show
+az network application-gateway root-cert list
+az network application-gateway root-cert show
+az network application-gateway routing-rule list
+az network application-gateway routing-rule show
+az network application-gateway rule list
+az network application-gateway rule show
+az network application-gateway settings list
+az network application-gateway settings show
+az network application-gateway show
+az network application-gateway ssl-cert list
+az network application-gateway ssl-cert show
+az network application-gateway ssl-policy predefined list
+az network application-gateway ssl-policy predefined show
+az network application-gateway ssl-policy show
+az network application-gateway ssl-profile list
+az network application-gateway ssl-profile show
+az network application-gateway url-path-map list
+az network application-gateway url-path-map show
+az network application-gateway waf-config show
+az network application-gateway waf-policy custom-rule list
+az network application-gateway waf-policy custom-rule match-condition list
+az network application-gateway waf-policy custom-rule show
+az network application-gateway waf-policy list
+az network application-gateway waf-policy managed-rule exception list
+az network application-gateway waf-policy managed-rule exclusion list
+az network application-gateway waf-policy managed-rule exclusion rule-set list
+az network application-gateway waf-policy managed-rule rule-set list
+az network application-gateway waf-policy policy-setting list
+az network application-gateway waf-policy show
+az network asg list
+az network asg show
+az network cross-region-lb address-pool address list
+az network cross-region-lb address-pool address show
+az network cross-region-lb address-pool list
+az network cross-region-lb address-pool show
+az network cross-region-lb frontend-ip list
+az network cross-region-lb frontend-ip show
+az network cross-region-lb list
+az network cross-region-lb rule list
+az network cross-region-lb rule show
+az network cross-region-lb show
+az network custom-ip prefix list
+az network custom-ip prefix show
+az network ddos-protection list
+az network ddos-protection show
+az network dns dnssec-config show
+az network dns record-set a list
+az network dns record-set a show
+az network dns record-set aaaa list
+az network dns record-set aaaa show
+az network dns record-set caa list
+az network dns record-set caa show
+az network dns record-set cname list
+az network dns record-set cname show
+az network dns record-set ds list
+az network dns record-set ds show
+az network dns record-set list
+az network dns record-set mx list
+az network dns record-set mx show
+az network dns record-set naptr list
+az network dns record-set naptr show
+az network dns record-set ns list
+az network dns record-set ns show
+az network dns record-set ptr list
+az network dns record-set ptr show
+az network dns record-set soa show
+az network dns record-set srv list
+az network dns record-set srv show
+az network dns record-set tlsa list
+az network dns record-set tlsa show
+az network dns record-set txt list
+az network dns record-set txt show
+az network dns zone export
+az network dns zone list
+az network dns zone show
+az network express-route auth list
+az network express-route auth show
+az network express-route gateway connection list
+az network express-route gateway connection show
+az network express-route gateway list
+az network express-route gateway show
+az network express-route list
+az network express-route peering connection list
+az network express-route peering connection show
+az network express-route peering list
+az network express-route peering show
+az network express-route port authorization list
+az network express-route port authorization show
+az network express-route port identity show
+az network express-route port link list
+az network express-route port link show
+az network express-route port list
+az network express-route port show
+az network express-route show
+az network lb address-pool address list
+az network lb address-pool address show
+az network lb address-pool list
+az network lb address-pool show
+az network lb address-pool tunnel-interface list
+az network lb address-pool tunnel-interface show
+az network lb frontend-ip list
+az network lb frontend-ip show
+az network lb inbound-nat-pool list
+az network lb inbound-nat-pool show
+az network lb inbound-nat-rule list
+az network lb inbound-nat-rule show
+az network lb list
+az network lb outbound-rule list
+az network lb outbound-rule show
+az network lb probe list
+az network lb probe show
+az network lb rule list
+az network lb rule show
+az network lb show
+az network local-gateway list
+az network local-gateway show
+az network nat gateway list
+az network nat gateway show
+az network network-watcher connection-monitor list
+az network network-watcher connection-monitor show
+az network network-watcher packet-capture list
+az network network-watcher packet-capture show
+az network nic ip-config list
+az network nic ip-config show
+az network nic list
+az network nic show
+az network nsg list
+az network nsg rule list
+az network nsg rule show
+az network nsg show
+az network private-dns link vnet list
+az network private-dns link vnet show
+az network private-dns record-set a list
+az network private-dns record-set a show
+az network private-dns record-set aaaa list
+az network private-dns record-set aaaa show
+az network private-dns record-set cname list
+az network private-dns record-set cname show
+az network private-dns record-set list
+az network private-dns record-set mx list
+az network private-dns record-set mx show
+az network private-dns record-set ptr list
+az network private-dns record-set ptr show
+az network private-dns record-set soa show
+az network private-dns record-set srv list
+az network private-dns record-set srv show
+az network private-dns record-set txt list
+az network private-dns record-set txt show
+az network private-dns zone export
+az network private-dns zone list
+az network private-dns zone show
+az network private-endpoint asg list
+az network private-endpoint dns-zone-group list
+az network private-endpoint dns-zone-group show
+az network private-endpoint ip-config list
+az network private-endpoint list
+az network private-endpoint show
+az network private-endpoint-connection list
+az network private-endpoint-connection show
+az network private-link-resource list
+az network private-link-service list
+az network private-link-service show
+az network profile list
+az network profile show
+az network public-ip ddos-protection show
+az network public-ip list
+az network public-ip prefix list
+az network public-ip prefix show
+az network public-ip show
+az network route-filter list
+az network route-filter rule list
+az network route-filter rule show
+az network route-filter show
+az network route-table list
+az network route-table route list
+az network route-table route show
+az network route-table show
+az network routeserver list
+az network routeserver peering list
+az network routeserver peering show
+az network routeserver show
+az network security-partner-provider list
+az network security-partner-provider show
+az network service-endpoint list
+az network service-endpoint policy list
+az network service-endpoint policy show
+az network service-endpoint policy-definition list
+az network service-endpoint policy-definition show
+az network traffic-manager endpoint list
+az network traffic-manager endpoint show
+az network traffic-manager profile list
+az network traffic-manager profile show
+az network virtual-appliance connection list
+az network virtual-appliance connection show
+az network virtual-appliance inbound-security-rule show
+az network virtual-appliance list
+az network virtual-appliance show
+az network virtual-appliance site list
+az network virtual-appliance site show
+az network virtual-appliance sku list
+az network virtual-appliance sku show
+az network vnet list
+az network vnet peering list
+az network vnet peering show
+az network vnet show
+az network vnet subnet list
+az network vnet subnet show
+az network vnet-gateway aad show
+az network vnet-gateway ipsec-policy list
+az network vnet-gateway list
+az network vnet-gateway nat-rule list
+az network vnet-gateway show
+az network vnet-gateway vpn-client ipsec-policy show
+az network vpn-connection ipsec-policy list
+az network vpn-connection list
+az network vpn-connection shared-key show
+az network vpn-connection show
+az network watcher connection-monitor endpoint list
+az network watcher connection-monitor endpoint show
+az network watcher connection-monitor list
+az network watcher connection-monitor output list
+az network watcher connection-monitor show
+az network watcher connection-monitor test-configuration list
+az network watcher connection-monitor test-configuration show
+az network watcher connection-monitor test-group list
+az network watcher connection-monitor test-group show
+az network watcher flow-log list
+az network watcher flow-log show
+az network watcher list
+az network watcher packet-capture list
+az network watcher packet-capture show
+az network watcher troubleshooting show
+az policy assignment identity show
+az policy assignment list
+az policy assignment non-compliance-message list
+az policy assignment show
+az policy attestation list
+az policy attestation show
+az policy definition list
+az policy definition show
+az policy event list
+az policy exemption list
+az policy exemption show
+az policy metadata list
+az policy metadata show
+az policy remediation deployment list
+az policy remediation list
+az policy remediation show
+az policy set-definition list
+az policy set-definition show
+az policy state list
+az postgres db list
+az postgres db show
+az postgres flexible-server advanced-threat-protection-setting show
+az postgres flexible-server backup list
+az postgres flexible-server backup show
+az postgres flexible-server db list
+az postgres flexible-server db show
+az postgres flexible-server firewall-rule list
+az postgres flexible-server firewall-rule show
+az postgres flexible-server identity list
+az postgres flexible-server identity show
+az postgres flexible-server index-tuning show
+az postgres flexible-server list
+az postgres flexible-server long-term-retention list
+az postgres flexible-server long-term-retention show
+az postgres flexible-server microsoft-entra-admin list
+az postgres flexible-server microsoft-entra-admin show
+az postgres flexible-server migration list
+az postgres flexible-server migration show
+az postgres flexible-server parameter list
+az postgres flexible-server parameter show
+az postgres flexible-server private-endpoint-connection list
+az postgres flexible-server private-endpoint-connection show
+az postgres flexible-server private-link-resource list
+az postgres flexible-server private-link-resource show
+az postgres flexible-server replica list
+az postgres flexible-server server-logs list
+az postgres flexible-server show
+az postgres flexible-server virtual-endpoint list
+az postgres flexible-server virtual-endpoint show
+az postgres server ad-admin list
+az postgres server ad-admin show
+az postgres server configuration list
+az postgres server configuration show
+az postgres server firewall-rule list
+az postgres server firewall-rule show
+az postgres server key list
+az postgres server key show
+az postgres server list
+az postgres server private-endpoint-connection show
+az postgres server private-link-resource list
+az postgres server replica list
+az postgres server show
+az postgres server vnet-rule list
+az postgres server vnet-rule show
+az postgres server-logs list
+az ppg list
+az ppg show
+az private-link association list
+az private-link association show
+az provider list
+az provider operation list
+az provider operation show
+az provider permission list
+az provider show
+az redis access-policy list
+az redis access-policy show
+az redis access-policy-assignment list
+az redis access-policy-assignment show
+az redis export
+az redis firewall-rules list
+az redis firewall-rules show
+az redis identity show
+az redis list
+az redis patch-schedule show
+az redis server-link list
+az redis server-link show
+az redis show
+az relay hyco authorization-rule keys list
+az relay hyco authorization-rule list
+az relay hyco authorization-rule show
+az relay hyco list
+az relay hyco show
+az relay namespace authorization-rule keys list
+az relay namespace authorization-rule list
+az relay namespace authorization-rule show
+az relay namespace exists
+az relay namespace list
+az relay namespace show
+az relay wcfrelay authorization-rule keys list
+az relay wcfrelay authorization-rule list
+az relay wcfrelay authorization-rule show
+az relay wcfrelay list
+az relay wcfrelay show
+az resource link list
+az resource link show
+az resource list
+az resource lock list
+az resource lock show
+az resource show
+az resourcemanagement private-link list
+az resourcemanagement private-link show
+az restore-point collection list
+az restore-point collection show
+az restore-point show
+az role assignment list
+az role definition list
+az role definition show
+az search admin-key show
+az search private-endpoint-connection list
+az search private-endpoint-connection show
+az search private-link-resource list
+az search query-key list
+az search service list
+az search service show
+az search shared-private-link-resource list
+az search shared-private-link-resource show
+az security adaptive-application-controls list
+az security adaptive-application-controls show
+az security adaptive_network_hardenings list
+az security adaptive_network_hardenings show
+az security alert list
+az security alert show
+az security alerts-suppression-rule list
+az security alerts-suppression-rule show
+az security allowed_connections list
+az security allowed_connections show
+az security api-collection apim list
+az security api-collection apim show
+az security assessment list
+az security assessment show
+az security assessment-metadata list
+az security assessment-metadata show
+az security atp cosmosdb show
+az security atp storage show
+az security auto-provisioning-setting list
+az security auto-provisioning-setting show
+az security automation list
+az security automation show
+az security contact list
+az security contact show
+az security discovered-security-solution list
+az security discovered-security-solution show
+az security external-security-solution list
+az security external-security-solution show
+az security iot-alerts list
+az security iot-alerts show
+az security iot-analytics list
+az security iot-analytics show
+az security iot-recommendations list
+az security iot-recommendations show
+az security iot-solution list
+az security iot-solution show
+az security jit-policy list
+az security jit-policy show
+az security location list
+az security location show
+az security pricing list
+az security pricing show
+az security regulatory-compliance-assessments list
+az security regulatory-compliance-assessments show
+az security regulatory-compliance-controls list
+az security regulatory-compliance-controls show
+az security regulatory-compliance-standards list
+az security regulatory-compliance-standards show
+az security secure-score-control-definitions list
+az security secure-score-controls list
+az security secure-scores list
+az security secure-scores show
+az security security-connector devops azuredevopsorg list
+az security security-connector devops azuredevopsorg project list
+az security security-connector devops azuredevopsorg project repo list
+az security security-connector devops azuredevopsorg project repo show
+az security security-connector devops azuredevopsorg project show
+az security security-connector devops azuredevopsorg show
+az security security-connector devops githubowner list
+az security security-connector devops githubowner repo list
+az security security-connector devops githubowner repo show
+az security security-connector devops githubowner show
+az security security-connector devops gitlabgroup list
+az security security-connector devops gitlabgroup project list
+az security security-connector devops gitlabgroup project show
+az security security-connector devops gitlabgroup show
+az security security-connector devops show
+az security security-connector list
+az security security-connector show
+az security security-solutions list
+az security security-solutions-reference-data list
+az security setting list
+az security setting show
+az security sub-assessment list
+az security sub-assessment show
+az security task list
+az security task show
+az security topology list
+az security topology show
+az security va sql baseline list
+az security va sql baseline show
+az security va sql results list
+az security va sql results show
+az security va sql scans list
+az security va sql scans show
+az security workspace-setting list
+az security workspace-setting show
+az servicebus georecovery-alias authorization-rule keys list
+az servicebus georecovery-alias authorization-rule list
+az servicebus georecovery-alias authorization-rule show
+az servicebus georecovery-alias exists
+az servicebus georecovery-alias list
+az servicebus georecovery-alias show
+az servicebus migration list
+az servicebus migration show
+az servicebus namespace authorization-rule keys list
+az servicebus namespace authorization-rule list
+az servicebus namespace authorization-rule show
+az servicebus namespace exists
+az servicebus namespace list
+az servicebus namespace network-rule-set list
+az servicebus namespace network-rule-set show
+az servicebus namespace private-endpoint-connection list
+az servicebus namespace private-endpoint-connection show
+az servicebus namespace private-link-resource show
+az servicebus namespace show
+az servicebus queue authorization-rule keys list
+az servicebus queue authorization-rule list
+az servicebus queue authorization-rule show
+az servicebus queue list
+az servicebus queue show
+az servicebus topic authorization-rule keys list
+az servicebus topic authorization-rule list
+az servicebus topic authorization-rule show
+az servicebus topic list
+az servicebus topic show
+az servicebus topic subscription list
+az servicebus topic subscription rule list
+az servicebus topic subscription rule show
+az servicebus topic subscription show
+az sf application list
+az sf application show
+az sf application-type list
+az sf application-type show
+az sf application-type version list
+az sf application-type version show
+az sf cluster list
+az sf cluster show
+az sf managed-application list
+az sf managed-application show
+az sf managed-application-type list
+az sf managed-application-type show
+az sf managed-application-type version list
+az sf managed-application-type version show
+az sf managed-cluster list
+az sf managed-cluster network-security-rule get
+az sf managed-cluster network-security-rule list
+az sf managed-cluster show
+az sf managed-node-type list
+az sf managed-node-type show
+az sf managed-service list
+az sf managed-service show
+az sf service list
+az sf service show
+az sig gallery-application list
+az sig gallery-application show
+az sig gallery-application version list
+az sig gallery-application version show
+az sig image-definition list
+az sig image-definition show
+az sig image-version list
+az sig image-version show
+az sig in-vm-access-control-profile list
+az sig in-vm-access-control-profile show
+az sig in-vm-access-control-profile-version list
+az sig in-vm-access-control-profile-version show
+az sig list
+az sig show
+az signalr cors list
+az signalr custom-certificate list
+az signalr custom-certificate show
+az signalr custom-domain list
+az signalr custom-domain show
+az signalr identity show
+az signalr key list
+az signalr list
+az signalr network-rule list
+az signalr replica list
+az signalr replica show
+az signalr show
+az signalr upstream list
+az snapshot list
+az snapshot show
+az sql db advanced-threat-protection-setting show
+az sql db audit-policy show
+az sql db classification list
+az sql db classification recommendation list
+az sql db classification show
+az sql db export
+az sql db geo-backup list
+az sql db geo-backup show
+az sql db ledger-digest-uploads show
+az sql db list
+az sql db ltr-backup list
+az sql db ltr-backup show
+az sql db ltr-policy show
+az sql db op list
+az sql db show
+az sql db str-policy show
+az sql db tde show
+az sql dw list
+az sql dw show
+az sql elastic-pool list
+az sql elastic-pool op list
+az sql elastic-pool show
+az sql failover-group list
+az sql failover-group show
+az sql instance-failover-group show
+az sql instance-pool list
+az sql instance-pool show
+az sql mi ad-admin list
+az sql mi ad-only-auth get
+az sql mi advanced-threat-protection-setting show
+az sql mi dtc show
+az sql mi endpoint-cert list
+az sql mi endpoint-cert show
+az sql mi key list
+az sql mi key show
+az sql mi link list
+az sql mi link show
+az sql mi list
+az sql mi op list
+az sql mi op show
+az sql mi partner-cert list
+az sql mi partner-cert show
+az sql mi server-configuration-option list
+az sql mi server-configuration-option show
+az sql mi show
+az sql mi start-stop-schedule list
+az sql mi start-stop-schedule show
+az sql mi tde-key show
+az sql midb advanced-threat-protection-setting show
+az sql midb copy list
+az sql midb ledger-digest-uploads show
+az sql midb list
+az sql midb log-replay show
+az sql midb ltr-backup list
+az sql midb ltr-backup show
+az sql midb ltr-policy show
+az sql midb move list
+az sql midb short-term-retention-policy show
+az sql midb show
+az sql recoverable-midb list
+az sql recoverable-midb show
+az sql server ad-admin list
+az sql server ad-only-auth get
+az sql server advanced-threat-protection-setting show
+az sql server audit-policy show
+az sql server conn-policy show
+az sql server dns-alias list
+az sql server dns-alias show
+az sql server firewall-rule list
+az sql server firewall-rule show
+az sql server ipv6-firewall-rule list
+az sql server ipv6-firewall-rule show
+az sql server key list
+az sql server key show
+az sql server list
+az sql server ms-support audit-policy show
+az sql server outbound-firewall-rule list
+az sql server outbound-firewall-rule show
+az sql server show
+az sql server tde-key show
+az sql server vnet-rule list
+az sql server vnet-rule show
+az sql stg list
+az sql stg show
+az sql virtual-cluster list
+az sql virtual-cluster show
+az sql vm group ag-listener list
+az sql vm group ag-listener show
+az sql vm group list
+az sql vm group show
+az sql vm list
+az sql vm show
+az sshkey list
+az sshkey show
+az stack group export
+az stack group list
+az stack group show
+az stack mg export
+az stack mg list
+az stack mg show
+az stack sub export
+az stack sub list
+az stack sub show
+az staticwebapp appsettings list
+az staticwebapp backends show
+az staticwebapp enterprise-edge show
+az staticwebapp environment list
+az staticwebapp environment show
+az staticwebapp functions show
+az staticwebapp hostname list
+az staticwebapp hostname show
+az staticwebapp identity show
+az staticwebapp list
+az staticwebapp secrets list
+az staticwebapp show
+az staticwebapp users list
+az storage account blob-inventory-policy show
+az storage account blob-service-properties cors-rule list
+az storage account blob-service-properties show
+az storage account encryption-scope list
+az storage account encryption-scope show
+az storage account file-service-properties show
+az storage account keys list
+az storage account list
+az storage account local-user list
+az storage account local-user show
+az storage account management-policy show
+az storage account migration show
+az storage account network-rule list
+az storage account or-policy list
+az storage account or-policy rule list
+az storage account or-policy rule show
+az storage account or-policy show
+az storage account private-endpoint-connection show
+az storage account private-link-resource list
+az storage account show
+az storage blob exists
+az storage blob list
+az storage blob metadata show
+az storage blob service-properties delete-policy show
+az storage blob service-properties show
+az storage blob show
+az storage container exists
+az storage container immutability-policy show
+az storage container legal-hold show
+az storage container list
+az storage container metadata show
+az storage container policy list
+az storage container policy show
+az storage container show
+az storage container-rm exists
+az storage container-rm list
+az storage container-rm show
+az storage cors list
+az storage directory exists
+az storage directory list
+az storage directory metadata show
+az storage directory show
+az storage entity show
+az storage file exists
+az storage file list
+az storage file metadata show
+az storage file show
+az storage fs access show
+az storage fs directory exists
+az storage fs directory list
+az storage fs directory metadata show
+az storage fs directory show
+az storage fs exists
+az storage fs file exists
+az storage fs file list
+az storage fs file metadata show
+az storage fs file show
+az storage fs list
+az storage fs metadata show
+az storage fs service-properties show
+az storage fs show
+az storage logging show
+az storage message get
+az storage metrics show
+az storage queue exists
+az storage queue list
+az storage queue metadata show
+az storage queue policy list
+az storage queue policy show
+az storage share exists
+az storage share list
+az storage share metadata show
+az storage share policy list
+az storage share policy show
+az storage share show
+az storage share-rm exists
+az storage share-rm list
+az storage share-rm show
+az storage table exists
+az storage table list
+az storage table policy list
+az storage table policy show
+az synapse ad-only-auth get
+az synapse data-flow list
+az synapse data-flow show
+az synapse dataset list
+az synapse dataset show
+az synapse integration-runtime list
+az synapse integration-runtime show
+az synapse integration-runtime-node show
+az synapse kql-script export
+az synapse kql-script list
+az synapse kql-script show
+az synapse kusto attached-database-configuration list
+az synapse kusto attached-database-configuration show
+az synapse kusto data-connection list
+az synapse kusto data-connection show
+az synapse kusto database list
+az synapse kusto database show
+az synapse kusto database-principal-assignment list
+az synapse kusto database-principal-assignment show
+az synapse kusto pool list
+az synapse kusto pool show
+az synapse kusto pool-principal-assignment list
+az synapse kusto pool-principal-assignment show
+az synapse kusto-operation list
+az synapse link-connection list
+az synapse link-connection show
+az synapse linked-service list
+az synapse linked-service show
+az synapse managed-private-endpoints list
+az synapse managed-private-endpoints show
+az synapse notebook export
+az synapse notebook list
+az synapse notebook show
+az synapse pipeline list
+az synapse pipeline show
+az synapse pipeline-run show
+az synapse role assignment list
+az synapse role assignment show
+az synapse role definition list
+az synapse role definition show
+az synapse role scope list
+az synapse spark job list
+az synapse spark job show
+az synapse spark pool list
+az synapse spark pool show
+az synapse spark session list
+az synapse spark session show
+az synapse spark statement list
+az synapse spark statement show
+az synapse spark-job-definition list
+az synapse spark-job-definition show
+az synapse sql ad-admin show
+az synapse sql audit-policy show
+az synapse sql pool audit-policy show
+az synapse sql pool classification list
+az synapse sql pool classification recommendation list
+az synapse sql pool classification show
+az synapse sql pool list
+az synapse sql pool show
+az synapse sql pool tde show
+az synapse sql pool threat-policy show
+az synapse sql-script export
+az synapse sql-script list
+az synapse sql-script show
+az synapse trigger list
+az synapse trigger show
+az synapse workspace firewall-rule list
+az synapse workspace firewall-rule show
+az synapse workspace key list
+az synapse workspace key show
+az synapse workspace list
+az synapse workspace show
+az synapse workspace-package list
+az synapse workspace-package show
+az tag list
+az term show
+az ts export
+az ts list
+az ts show
+az vm application list
+az vm availability-set list
+az vm availability-set show
+az vm encryption show
+az vm extension image list
+az vm extension image show
+az vm extension list
+az vm extension show
+az vm host group list
+az vm host group show
+az vm host list
+az vm host show
+az vm identity show
+az vm image list
+az vm image show
+az vm image terms show
+az vm list
+az vm monitor log show
+az vm nic list
+az vm nic show
+az vm run-command list
+az vm run-command show
+az vm secret list
+az vm show
+az vm unmanaged-disk list
+az vmss application list
+az vmss encryption show
+az vmss extension image list
+az vmss extension image show
+az vmss extension list
+az vmss extension show
+az vmss identity show
+az vmss list
+az vmss nic list
+az vmss nic show
+az vmss run-command list
+az vmss run-command show
+az vmss show
+az webapp auth show
+az webapp browse
+az webapp config access-restriction show
+az webapp config appsettings list
+az webapp config backup list
+az webapp config backup show
+az webapp config connection-string list
+az webapp config container show
+az webapp config hostname list
+az webapp config show
+az webapp config snapshot list
+az webapp config ssl list
+az webapp config ssl show
+az webapp config storage-account list
+az webapp connection list
+az webapp connection show
+az webapp cors show
+az webapp deleted list
+az webapp deployment slot list
+az webapp deployment source show
+az webapp deployment user show
+az webapp hybrid-connection list
+az webapp identity show
+az webapp list
+az webapp log deployment list
+az webapp log deployment show
+az webapp log show
+az webapp show
+az webapp sitecontainers list
+az webapp sitecontainers show
+az webapp sitecontainers status
+az webapp traffic-routing show
+az webapp vnet-integration list
+az webapp webjob continuous list
+az webapp webjob triggered list
+gh agent-task list
+gh agent-task view
+gh alias list
+gh auth status
+gh browse
+gh cache list
+gh codespace list
+gh codespace logs
+gh codespace view
+gh config get
+gh config list
+gh extension browse
+gh extension list
+gh extension search
+gh gist list
+gh gist view
+gh gpg-key list
+gh issue list
+gh issue status
+gh issue view
+gh label list
+gh org list
+gh pr checks
+gh pr diff
+gh pr list
+gh pr status
+gh pr view
+gh project list
+gh project view
+gh release list
+gh release view
+gh repo autolink list
+gh repo autolink view
+gh repo deploy-key list
+gh repo gitignore list
+gh repo gitignore view
+gh repo license list
+gh repo license view
+gh repo list
+gh repo view
+gh ruleset list
+gh ruleset view
+gh run list
+gh run view
+gh run watch
+gh secret list
+gh ssh-key list
+gh status
+gh variable get
+gh variable list
+gh workflow list
+gh workflow view

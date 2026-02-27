@@ -1,28 +1,6 @@
 import { execSync } from "node:child_process";
 import * as path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-function getInstallDir(): string {
-	// Go up from dist/ to the package root (tsup bundles into dist/index.js)
-	return path.resolve(__dirname, "..");
-}
-
-function isGitRepo(dir: string): boolean {
-	try {
-		const result = execSync("git rev-parse --show-toplevel", {
-			cwd: dir,
-			stdio: "pipe",
-		})
-			.toString()
-			.trim();
-		return path.resolve(result) === path.resolve(dir);
-	} catch {
-		return false;
-	}
-}
+import { getInstallDir, isGitRepo } from "../shared/getInstallDir";
 
 function isGlobalNpmInstall(dir: string): boolean {
 	try {

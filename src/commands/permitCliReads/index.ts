@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { getInstallDir, isGitRepo } from "../../shared/getInstallDir";
 import { assertCliExists } from "./assertCliExists";
 import { colorize } from "./colorize";
 import { discoverAll } from "./discoverAll";
@@ -27,12 +28,20 @@ function writeCache(cli: string, output: string): void {
 	writeFileSync(logPath(cli), output);
 }
 
-export async function cliDiscover(
+export async function permitCliReads(
 	cli: string,
 	options: Options = { noCache: false },
 ): Promise<void> {
 	if (!cli) {
-		console.error("Usage: assist cli-discover <cli>");
+		console.error("Usage: assist permit-cli-reads <cli>");
+		process.exit(1);
+	}
+
+	const installDir = getInstallDir();
+	if (!isGitRepo(installDir)) {
+		console.error(
+			"permit-cli-reads must be run from the assist git repo, not a global install.",
+		);
 		process.exit(1);
 	}
 
