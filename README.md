@@ -93,7 +93,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist devlog skip <date>` - Add a date to the skip list
 - `assist devlog version` - Show current repo name and version info
 - `assist permit-cli-reads <cli>` - Discover a CLI's commands and write read-only ones to `assist.cli-reads`
-- `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`)
+- `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`, also auto-approves read-only `gh api` calls)
 - `assist update` - Update assist to the latest version and sync commands
 - `assist vscode init` - Add VS Code configuration files
 - `assist deploy init` - Initialize Netlify project and configure deployment

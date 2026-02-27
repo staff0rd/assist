@@ -1,4 +1,5 @@
 import { readStdin } from "../../lib/readStdin";
+import { isGhApiRead } from "../../shared/isGhApiRead";
 import { findCliRead } from "../../shared/loadCliReads";
 
 type HookInput = {
@@ -33,6 +34,19 @@ export async function cliHook(): Promise<void> {
 					hookEventName: "PreToolUse",
 					permissionDecision: "allow",
 					permissionDecisionReason: `Read-only CLI command: ${matched}`,
+				},
+			}),
+		);
+		return;
+	}
+
+	if (isGhApiRead(command)) {
+		console.log(
+			JSON.stringify({
+				hookSpecificOutput: {
+					hookEventName: "PreToolUse",
+					permissionDecision: "allow",
+					permissionDecisionReason: "Read-only gh api command",
 				},
 			}),
 		);
