@@ -41,6 +41,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/review-comments` - Process PR review comments one by one
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/standup` - Summarise recent journal entries as a standup update
+- `/sync` - Sync commands and settings to ~/.claude
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
 - `/transcript-summarise` - Summarise transcripts missing summaries
