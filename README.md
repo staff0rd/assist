@@ -41,6 +41,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/review-comments` - Process PR review comments one by one
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/standup` - Summarise recent journal entries as a standup update
+- `/generate-cli-read-verbs <cli>` - Discover CLI commands and classify read vs write verbs
 - `/sync` - Sync commands and settings to ~/.claude
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
@@ -92,6 +93,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist devlog next` - Show commits for the day after the last versioned entry
 - `assist devlog skip <date>` - Add a date to the skip list
 - `assist devlog version` - Show current repo name and version info
+- `assist cli-discover <cli>` - Discover a CLI's command tree via recursive `--help` parsing (outputs JSON)
+- `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads JSON from stdin)
 - `assist update` - Update assist to the latest version and sync commands
 - `assist vscode init` - Add VS Code configuration files
 - `assist deploy init` - Initialize Netlify project and configure deployment

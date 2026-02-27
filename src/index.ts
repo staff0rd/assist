@@ -9,6 +9,8 @@ import { lint } from "./commands/lint/lint";
 import { registerNew } from "./commands/new/registerNew";
 import { notify } from "./commands/notify";
 import { registerBacklog } from "./commands/registerBacklog";
+import { registerCliDiscover } from "./commands/registerCliDiscover";
+import { registerCliHook } from "./commands/registerCliHook";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
@@ -127,6 +129,8 @@ program
 	.description("Update assist to the latest version and sync commands")
 	.action(update);
 
+registerCliDiscover(program);
+registerCliHook(program);
 registerPrs(program);
 registerRoam(program);
 registerBacklog(program);

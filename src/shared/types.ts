@@ -66,6 +66,7 @@ export const assistConfigSchema = z.strictObject({
 		.optional(),
 	run: z.array(runConfigSchema).optional(),
 	transcript: transcriptConfigSchema.optional(),
+	cliReadVerbs: z.record(z.string(), z.array(z.string())).optional(),
 	voice: z
 		.strictObject({
 			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),
