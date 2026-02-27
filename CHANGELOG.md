@@ -1,3 +1,10 @@
+## [0.94.1](https://github.com/staff0rd/assist/compare/v0.94.0...v0.94.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* allow assist sync permission ([a79c53c](https://github.com/staff0rd/assist/commit/a79c53c9fe6c236cf4420c022319fb033add539f))
+
 # [0.94.0](https://github.com/staff0rd/assist/compare/v0.93.4...v0.94.0) (2026-02-27)
 
 
