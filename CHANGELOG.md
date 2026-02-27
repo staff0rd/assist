@@ -1,3 +1,10 @@
+# [0.95.0](https://github.com/staff0rd/assist/compare/v0.94.1...v0.95.0) (2026-02-27)
+
+
+### Features
+
+* add cli-discover and cli-hook ([2ae0989](https://github.com/staff0rd/assist/commit/2ae09899242c1532774fc99a6fdacf596d2d48fa))
+
 ## [0.94.1](https://github.com/staff0rd/assist/compare/v0.94.0...v0.94.1) (2026-02-27)
 
 
