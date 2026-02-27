@@ -1,3 +1,10 @@
+# [0.94.0](https://github.com/staff0rd/assist/compare/v0.93.4...v0.94.0) (2026-02-27)
+
+
+### Features
+
+* add /sync slash command ([d75ebaf](https://github.com/staff0rd/assist/commit/d75ebaf2d15c0caaf1dc9156f60df84561eb252a))
+
 ## [0.93.4](https://github.com/staff0rd/assist/compare/v0.93.3...v0.93.4) (2026-02-27)
 
 
