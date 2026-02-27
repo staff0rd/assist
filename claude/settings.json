@@ -20,6 +20,7 @@
 			"Bash(assist complexity:*)",
 			"Bash(assist refactor:*)",
 			"Bash(assist prs list-comments:*)",
+			"Bash(assist sync:*)",
 			"Bash(assist verify:*)",
 			"Bash(assist backlog list:*)",
 			"Bash(assist backlog start:*)",
