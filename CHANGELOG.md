@@ -1,3 +1,10 @@
+## [0.93.4](https://github.com/staff0rd/assist/compare/v0.93.3...v0.93.4) (2026-02-27)
+
+
+### Bug Fixes
+
+* message-first arg order ([7a62367](https://github.com/staff0rd/assist/commit/7a623677e767c7d9a0ba41845850c77e8ddfa39a))
+
 ## [0.93.3](https://github.com/staff0rd/assist/compare/v0.93.2...v0.93.3) (2026-02-26)
 
 
