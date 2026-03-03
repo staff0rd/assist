@@ -1,3 +1,10 @@
+# [0.98.0](https://github.com/staff0rd/assist/compare/v0.97.1...v0.98.0) (2026-03-03)
+
+
+### Features
+
+* run npm i after pull in update ([a019bbc](https://github.com/staff0rd/assist/commit/a019bbc7db2d96dc35c8392b4ddb921b981ba10a))
+
 ## [0.97.1](https://github.com/staff0rd/assist/compare/v0.97.0...v0.97.1) (2026-03-03)
 
 
