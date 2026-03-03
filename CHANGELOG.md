@@ -1,3 +1,10 @@
+# [0.97.0](https://github.com/staff0rd/assist/compare/v0.96.0...v0.97.0) (2026-03-03)
+
+
+### Features
+
+* compound command support in cli-hook ([9354270](https://github.com/staff0rd/assist/commit/93542700823423ba9ebb2482103b623e67954615))
+
 # [0.96.0](https://github.com/staff0rd/assist/compare/v0.95.0...v0.96.0) (2026-02-27)
 
 
