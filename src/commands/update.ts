@@ -24,6 +24,9 @@ export async function update(): Promise<void> {
 		console.log("Detected git repo installation, pulling latest...");
 		execSync("git pull", { cwd: installDir, stdio: "inherit" });
 
+		console.log("Installing dependencies...");
+		execSync("npm i", { cwd: installDir, stdio: "inherit" });
+
 		console.log("Building...");
 		execSync("npm run build", { cwd: installDir, stdio: "inherit" });
 
