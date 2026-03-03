@@ -1,6 +1,6 @@
 import { readStdin } from "../../lib/readStdin";
-import { isGhApiRead } from "../../shared/isGhApiRead";
-import { findCliRead } from "../../shared/loadCliReads";
+import { isApprovedRead } from "../../shared/isApprovedRead";
+import { splitCompound } from "../../shared/splitCompound";
 
 type HookInput = {
 	hook_event_name: string;
@@ -25,30 +25,23 @@ export async function cliHook(): Promise<void> {
 	}
 
 	const command = data.tool_input.command.trim();
-	const matched = findCliRead(command);
+	const parts = splitCompound(command);
+	if (!parts) return;
 
-	if (matched) {
-		console.log(
-			JSON.stringify({
-				hookSpecificOutput: {
-					hookEventName: "PreToolUse",
-					permissionDecision: "allow",
-					permissionDecisionReason: `Read-only CLI command: ${matched}`,
-				},
-			}),
-		);
-		return;
+	const reasons: string[] = [];
+	for (const part of parts) {
+		const reason = isApprovedRead(part);
+		if (!reason) return; // unknown sub-command — fall through
+		reasons.push(reason);
 	}
 
-	if (isGhApiRead(command)) {
-		console.log(
-			JSON.stringify({
-				hookSpecificOutput: {
-					hookEventName: "PreToolUse",
-					permissionDecision: "allow",
-					permissionDecisionReason: "Read-only gh api command",
-				},
-			}),
-		);
-	}
+	console.log(
+		JSON.stringify({
+			hookSpecificOutput: {
+				hookEventName: "PreToolUse",
+				permissionDecision: "allow",
+				permissionDecisionReason: reasons.join("; "),
+			},
+		}),
+	);
 }

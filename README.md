@@ -92,7 +92,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist devlog next` - Show commits for the day after the last versioned entry
 - `assist devlog skip <date>` - Add a date to the skip list
 - `assist devlog version` - Show current repo name and version info
-- `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`, also auto-approves read-only `gh api` calls)
+- `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`, also auto-approves read-only `gh api` calls). Supports compound commands (`|`, `&&`, `||`, `;`) by checking each sub-command independently
 - `assist cli-hook add <cli>` - Discover a CLI's commands and auto-permit read-only ones
 - `assist cli-hook check <command>` - Check whether a command would be auto-approved by `cli-hook`
 - `assist update` - Update assist to the latest version and sync commands

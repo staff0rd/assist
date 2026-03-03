@@ -1,10 +1,11 @@
 {
-	"permissions": {
-		"allow": [
-			"Bash(gh search:*)",
-			"Bash(head:*)",
-			"Bash(gh api:*)",
-			"Bash(assist run:*)"
-		]
-	}
+  "permissions": {
+    "allow": [
+      "Bash(gh search:*)",
+      "Bash(head:*)",
+
+      "Bash(assist run:*)",
+      "Bash(npx vitest:*)"
+    ]
+  }
 }

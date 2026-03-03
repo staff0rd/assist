@@ -38,6 +38,7 @@
 		"minimatch": "^10.1.1",
 		"node-notifier": "^10.0.1",
 		"semver": "^7.7.3",
+		"shell-quote": "^1.8.3",
 		"typescript": "^5.9.3",
 		"yaml": "^2.8.2",
 		"zod": "^4.3.6"
@@ -53,6 +54,7 @@
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"@types/semver": "^7.7.1",
+		"@types/shell-quote": "^1.7.5",
 		"esbuild": "^0.27.3",
 		"jotai": "^2.18.0",
 		"jscpd": "^4.0.5",

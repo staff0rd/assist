@@ -1,20 +1,26 @@
-import { isGhApiRead } from "../../shared/isGhApiRead";
-import { findCliRead } from "../../shared/loadCliReads";
+import { isApprovedRead } from "../../shared/isApprovedRead";
+import { splitCompound } from "../../shared/splitCompound";
 
 export function cliHookCheck(command: string): void {
 	const trimmed = command.trim();
+	const parts = splitCompound(trimmed);
 
-	const matched = findCliRead(trimmed);
-	if (matched) {
-		console.log(`approved - read-only CLI command: ${matched}`);
+	if (!parts) {
+		console.log("not approved (unable to parse)");
+		process.exitCode = 1;
 		return;
 	}
 
-	if (isGhApiRead(trimmed)) {
-		console.log("approved - read-only gh api command");
-		return;
+	const reasons: string[] = [];
+	for (const part of parts) {
+		const reason = isApprovedRead(part);
+		if (!reason) {
+			console.log(`not approved (unrecognised: ${part})`);
+			process.exitCode = 1;
+			return;
+		}
+		reasons.push(`  ${part} -> ${reason}`);
 	}
 
-	console.log("not approved");
-	process.exitCode = 1;
+	console.log(`approved\n${reasons.join("\n")}`);
 }
