@@ -1,3 +1,10 @@
+## [0.97.1](https://github.com/staff0rd/assist/compare/v0.97.0...v0.97.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* use pure JS for cli-reads lookup ([51f32be](https://github.com/staff0rd/assist/commit/51f32be0691960bd7649d73a336f73b3858c2c77))
+
 # [0.97.0](https://github.com/staff0rd/assist/compare/v0.96.0...v0.97.0) (2026-03-03)
 
 
