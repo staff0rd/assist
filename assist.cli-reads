@@ -1918,6 +1918,11 @@ gh ruleset view
 gh run list
 gh run view
 gh run watch
+gh search code
+gh search commits
+gh search issues
+gh search prs
+gh search repos
 gh secret list
 gh ssh-key list
 gh status
@@ -1925,3 +1930,42 @@ gh variable get
 gh variable list
 gh workflow list
 gh workflow view
+git annotate
+git blame
+git cat-file
+git check-attr
+git check-ignore
+git check-mailmap
+git check-ref-format
+git cherry
+git count-objects
+git describe
+git diff
+git diff-files
+git diff-index
+git diff-tree
+git for-each-ref
+git fsck
+git grep
+git help
+git log
+git ls-files
+git ls-remote
+git ls-tree
+git merge-base
+git name-rev
+git range-diff
+git rev-list
+git rev-parse
+git shortlog
+git show
+git show-branch
+git show-index
+git show-ref
+git status
+git var
+git verify-commit
+git verify-pack
+git verify-tag
+git version
+git whatchanged

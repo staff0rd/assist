@@ -7,7 +7,7 @@ export function updateSettings(cli: string, commands: Command[]): void {
 	const existing = loadCliReads();
 
 	const readEntries = commands
-		.filter((cmd) => classifyVerb(cmd.path[cmd.path.length - 1]) === "r")
+		.filter((cmd) => classifyVerb(cmd.path) === "r")
 		.map((cmd) => `${cli} ${cmd.path.join(" ")}`);
 
 	const merged = [...new Set([...existing, ...readEntries])].sort();

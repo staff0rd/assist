@@ -14,10 +14,9 @@ export function formatHuman(cli: string, commands: Command[]): string {
 	);
 	const lines = [`Discovered ${commands.length} commands for "${cli}":\n`];
 	for (const cmd of sorted) {
-		const verb = cmd.path[cmd.path.length - 1];
 		const full = `${cli} ${cmd.path.join(" ")}`;
 		const text = cmd.description ? `${full} — ${cmd.description}` : full;
-		lines.push(`${prefix(classifyVerb(verb))}${text}`);
+		lines.push(`${prefix(classifyVerb(cmd.path))}${text}`);
 	}
 	return lines.join("\n");
 }

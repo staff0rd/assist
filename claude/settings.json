@@ -26,7 +26,6 @@
 			"Bash(assist complexity:*)",
 			"Bash(assist refactor:*)",
 			"Bash(assist prs list-comments:*)",
-			"Bash(assist permit-cli-reads:*)",
 			"Bash(assist cli-hook:*)",
 			"Bash(assist sync:*)",
 			"Bash(assist verify:*)",

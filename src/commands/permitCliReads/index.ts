@@ -33,14 +33,14 @@ export async function permitCliReads(
 	options: Options = { noCache: false },
 ): Promise<void> {
 	if (!cli) {
-		console.error("Usage: assist permit-cli-reads <cli>");
+		console.error("Usage: assist cli-hook add <cli>");
 		process.exit(1);
 	}
 
 	const installDir = getInstallDir();
 	if (!isGitRepo(installDir)) {
 		console.error(
-			"permit-cli-reads must be run from the assist git repo, not a global install.",
+			"cli-hook add must be run from the assist git repo, not a global install.",
 		);
 		process.exit(1);
 	}

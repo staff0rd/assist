@@ -13,7 +13,6 @@ import { registerCliHook } from "./commands/registerCliHook";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
-import { registerPermitCliReads } from "./commands/registerPermitCliReads";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRefactor } from "./commands/registerRefactor";
 import { registerTranscript } from "./commands/registerTranscript";
@@ -129,7 +128,6 @@ program
 	.description("Update assist to the latest version and sync commands")
 	.action(update);
 
-registerPermitCliReads(program);
 registerCliHook(program);
 registerPrs(program);
 registerRoam(program);

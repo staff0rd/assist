@@ -51,8 +51,12 @@ const WRITE_VERBS = new Set([
 	"rotate",
 ]);
 
-export function classifyVerb(verb: string): "r" | "w" | "?" {
-	if (READ_VERBS.has(verb)) return "r";
-	if (WRITE_VERBS.has(verb)) return "w";
-	return "?";
+export function classifyVerb(verbOrPath: string | string[]): "r" | "w" | "?" {
+	const segments = Array.isArray(verbOrPath) ? verbOrPath : [verbOrPath];
+	let hasRead = false;
+	for (const s of segments) {
+		if (WRITE_VERBS.has(s)) return "w";
+		if (READ_VERBS.has(s)) hasRead = true;
+	}
+	return hasRead ? "r" : "?";
 }
