@@ -1,3 +1,10 @@
+## [0.102.1](https://github.com/staff0rd/assist/compare/v0.102.0...v0.102.1) (2026-03-04)
+
+
+### Bug Fixes
+
+* detect npm install via fnm/nvm ([f5b38c0](https://github.com/staff0rd/assist/commit/f5b38c01bd6bb5c119abf04406e2d5e1dc98b929))
+
 # [0.102.0](https://github.com/staff0rd/assist/compare/v0.101.0...v0.102.0) (2026-03-04)
 
 
