@@ -12,8 +12,8 @@ import { registerBacklog } from "./commands/registerBacklog";
 import { registerCliHook } from "./commands/registerCliHook";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerDeploy } from "./commands/registerDeploy";
-import { registerDeps } from "./commands/registerDeps";
 import { registerDevlog } from "./commands/registerDevlog";
+import { registerNetframework } from "./commands/registerNetframework";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRefactor } from "./commands/registerRefactor";
 import { registerTranscript } from "./commands/registerTranscript";
@@ -145,7 +145,7 @@ registerRefactor(program);
 registerDevlog(program);
 registerDeploy(program);
 registerComplexity(program);
-registerDeps(program);
+registerNetframework(program);
 registerTranscript(program);
 registerVoice(program);
 
