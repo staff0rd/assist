@@ -1,3 +1,10 @@
+## [0.100.1](https://github.com/staff0rd/assist/compare/v0.100.0...v0.100.1) (2026-03-04)
+
+
+### Bug Fixes
+
+* document run add params in help ([4fb753d](https://github.com/staff0rd/assist/commit/4fb753d26b27fb993ec53fe470049864416cfedc))
+
 # [0.100.0](https://github.com/staff0rd/assist/compare/v0.99.0...v0.100.0) (2026-03-04)
 
 
