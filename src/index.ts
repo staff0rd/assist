@@ -87,6 +87,13 @@ runCommand
 runCommand
 	.command("add")
 	.description("Add a new run configuration to assist.yml")
+	.argument("<name>", "Name for the run configuration")
+	.argument("<command>", "Command to execute")
+	.argument("[args...]", "Static args to pass to the command")
+	.addHelpText(
+		"after",
+		'\nPositional params can be added to the config manually:\n  params:\n    - name: env        # assist run deploy prod → appends "prod"\n      required: true\n    - name: tag\n      default: latest',
+	)
 	.allowUnknownOption()
 	.allowExcessArguments()
 	.action(() => runAdd());
