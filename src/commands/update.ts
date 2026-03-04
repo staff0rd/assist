@@ -4,11 +4,15 @@ import { getInstallDir, isGitRepo } from "../shared/getInstallDir";
 
 function isGlobalNpmInstall(dir: string): boolean {
 	try {
+		const resolved = path.resolve(dir);
+		// Check if installed inside a node_modules directory (covers fnm, nvm, etc.)
+		if (resolved.split(path.sep).includes("node_modules")) {
+			return true;
+		}
 		const globalPrefix = execSync("npm prefix -g", { stdio: "pipe" })
 			.toString()
 			.trim();
-		return path
-			.resolve(dir)
+		return resolved
 			.toLowerCase()
 			.startsWith(path.resolve(globalPrefix).toLowerCase());
 	} catch {
