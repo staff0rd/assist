@@ -1,3 +1,10 @@
+# [0.100.0](https://github.com/staff0rd/assist/compare/v0.99.0...v0.100.0) (2026-03-04)
+
+
+### Features
+
+* add positional params to run ([a6a0aa8](https://github.com/staff0rd/assist/commit/a6a0aa826823914a95ac85db11647f69f9748e30))
+
 # [0.99.0](https://github.com/staff0rd/assist/compare/v0.98.0...v0.99.0) (2026-03-04)
 
 
