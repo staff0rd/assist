@@ -52,6 +52,7 @@
 			"Bash(echo:*)",
 			"Bash(printf:*)",
 			"Bash(date:*)",
+			"Bash(jq:*)",
 			"SlashCommand(/next-backlog-item)",
 			"SlashCommand(/verify)",
 			"SlashCommand(/commit)",
