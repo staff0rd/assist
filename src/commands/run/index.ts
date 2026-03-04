@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { expandEnv } from "../../shared/expandEnv";
 import { loadConfig } from "../../shared/loadConfig";
 import { shellQuote } from "../../shared/shellQuote";
+import { resolveParams } from "./resolveParams";
 
 function buildCommand(
 	command: string,
@@ -72,8 +73,9 @@ export function listRunConfigs(): void {
 
 export function run(name: string, args: string[]): void {
 	const runConfig = findRunConfig(name);
+	const resolved = resolveParams(runConfig.params, args);
 	spawnCommand(
-		buildCommand(runConfig.command, runConfig.args ?? [], args),
+		buildCommand(runConfig.command, runConfig.args ?? [], resolved),
 		runConfig.env,
 	);
 }

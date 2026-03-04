@@ -1,9 +1,17 @@
 import { z } from "zod";
 
+const runParamSchema = z.strictObject({
+	name: z.string(),
+	required: z.boolean().optional(),
+	default: z.string().optional(),
+	description: z.string().optional(),
+});
+
 const runConfigSchema = z.strictObject({
 	name: z.string(),
 	command: z.string(),
 	args: z.array(z.string()).optional(),
+	params: z.array(runParamSchema).optional(),
 	env: z.record(z.string(), z.string()).optional(),
 	filter: z.string().optional(),
 });
