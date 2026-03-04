@@ -1,3 +1,10 @@
+# [0.99.0](https://github.com/staff0rd/assist/compare/v0.98.0...v0.99.0) (2026-03-04)
+
+
+### Features
+
+* add deps command ([524cc53](https://github.com/staff0rd/assist/commit/524cc5351ac97b202929ffcf57dbe404359591b4))
+
 # [0.98.0](https://github.com/staff0rd/assist/compare/v0.97.1...v0.98.0) (2026-03-03)
 
 
