@@ -1,6 +1,6 @@
 When asked to commit, use conventional commits: `fix:` (patch), `feat:` (minor), `feat!:` (major).
 
-When adding, editing, or removing CLI or Claude commands, update README.md to reflect the change.
+When adding, editing, or removing CLI or Claude commands, update README.md to reflect the change. Also add read-only commands to the allow list in `claude/settings.json`.
 
 ## Config
 

@@ -36,6 +36,7 @@
 			"Bash(assist complexity:*)",
 			"Bash(assist transcript format:*)",
 			"Bash(assist voice:*)",
+			"Bash(assist deps:*)",
 			"Bash(head:*)",
 			"Bash(tail:*)",
 			"Bash(grep:*)",
