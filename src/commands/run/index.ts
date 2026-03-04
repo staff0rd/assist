@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { expandEnv } from "../../shared/expandEnv";
+import { formatElapsed } from "../../shared/formatElapsed";
 import { loadConfig } from "../../shared/loadConfig";
 import { shellQuote } from "../../shared/shellQuote";
 import { resolveParams } from "./resolveParams";
@@ -54,12 +55,17 @@ function onSpawnError(err: Error): void {
 }
 
 function spawnCommand(fullCommand: string, env?: Record<string, string>): void {
+	const start = Date.now();
 	const child = spawn(fullCommand, [], {
 		stdio: "inherit",
 		shell: true,
 		env: env ? { ...process.env, ...expandEnv(env) } : undefined,
 	});
-	child.on("close", (code) => process.exit(code ?? 0));
+	child.on("close", (code) => {
+		const elapsed = formatElapsed(Date.now() - start);
+		console.log(`\nDone in ${elapsed}`);
+		process.exit(code ?? 0);
+	});
 	child.on("error", onSpawnError);
 }
 
