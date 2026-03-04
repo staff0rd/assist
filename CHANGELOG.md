@@ -1,3 +1,10 @@
+# [0.101.0](https://github.com/staff0rd/assist/compare/v0.100.1...v0.101.0) (2026-03-04)
+
+
+### Features
+
+* print elapsed time after run ([5663fa1](https://github.com/staff0rd/assist/commit/5663fa1388f2af4a2e36d0e36280133d9e769d78))
+
 ## [0.100.1](https://github.com/staff0rd/assist/compare/v0.100.0...v0.100.1) (2026-03-04)
 
 
