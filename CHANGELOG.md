@@ -1,3 +1,10 @@
+# [0.102.0](https://github.com/staff0rd/assist/compare/v0.101.0...v0.102.0) (2026-03-04)
+
+
+### Features
+
+* add netframework parent command ([5ec5846](https://github.com/staff0rd/assist/commit/5ec58464e99e91c26b790bf59daa333e7e88f023))
+
 # [0.101.0](https://github.com/staff0rd/assist/compare/v0.100.1...v0.101.0) (2026-03-04)
 
 
