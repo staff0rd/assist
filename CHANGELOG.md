@@ -1,3 +1,10 @@
+# [0.103.0](https://github.com/staff0rd/assist/compare/v0.102.1...v0.103.0) (2026-03-05)
+
+
+### Features
+
+* show summary and save path in list-comments ([27a4049](https://github.com/staff0rd/assist/commit/27a40499e5706df1c0dbcfbc53d664de5bac336a))
+
 ## [0.102.1](https://github.com/staff0rd/assist/compare/v0.102.0...v0.102.1) (2026-03-04)
 
 
