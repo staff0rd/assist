@@ -1,7 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { stringify } from "yaml";
-import { isClaudeCode } from "../../../lib/isClaudeCode";
 import { fetchThreadIds } from "../fetchThreadIds";
 import { deleteCommentsCache } from "../loadCommentsCache";
 import {
@@ -12,24 +11,9 @@ import {
 } from "../shared";
 import type { PrComment } from "../types";
 import { fetchLineComments, fetchReviewComments } from "./fetchReviewComments";
-import { formatForHuman } from "./formatForHuman";
+import type { ListCommentsResult } from "./printComments";
 
-function formatComment(comment: PrComment): string {
-	return isClaudeCode() ? JSON.stringify(comment) : formatForHuman(comment);
-}
-
-export function printComments(comments: PrComment[]): void {
-	if (comments.length === 0) {
-		console.log("No comments found.");
-		return;
-	}
-	for (const comment of comments) {
-		console.log(formatComment(comment));
-	}
-	if (!comments.some((c) => c.type === "line")) {
-		console.log("No line comments to process.");
-	}
-}
+export { printComments } from "./printComments";
 
 function writeCommentsCache(prNumber: number, comments: PrComment[]): void {
 	const assistDir = join(process.cwd(), ".assist");
@@ -68,7 +52,7 @@ function updateCache(prNumber: number, comments: PrComment[]): void {
 	}
 }
 
-export async function listComments(): Promise<PrComment[]> {
+export async function listComments(): Promise<ListCommentsResult> {
 	try {
 		const prNumber = getCurrentPrNumber();
 		const { org, repo } = getRepoInfo();
@@ -78,10 +62,14 @@ export async function listComments(): Promise<PrComment[]> {
 			...fetchLineComments(org, repo, prNumber, threadInfo),
 		];
 		updateCache(prNumber, allComments);
-		return allComments;
+		const hasLineComments = allComments.some((c) => c.type === "line");
+		const cachePath = hasLineComments
+			? join(process.cwd(), ".assist", `pr-${prNumber}-comments.yaml`)
+			: null;
+		return { comments: allComments, cachePath };
 	} catch (error) {
 		const handled = handleKnownErrors(error);
-		if (handled !== null) return handled;
+		if (handled !== null) return { comments: handled, cachePath: null };
 		throw error;
 	}
 }
