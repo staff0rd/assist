@@ -1,3 +1,10 @@
+# [0.104.0](https://github.com/staff0rd/assist/compare/v0.103.0...v0.104.0) (2026-03-06)
+
+
+### Features
+
+* parse >/dev/null; add verify:test ([a4ce5aa](https://github.com/staff0rd/assist/commit/a4ce5aa0be7ae09fe0305fac1837349212a10e4e))
+
 # [0.103.0](https://github.com/staff0rd/assist/compare/v0.102.1...v0.103.0) (2026-03-05)
 
 
