@@ -12,6 +12,9 @@ const UNSAFE_OPS = new Set(["(", ")", ">", ">>", "<", "<&", "|&", ">&"]);
 /** Numeric fd-to-fd redirects like 2>&1 — safe plumbing. */
 const FD_REDIRECT_RE = /\d+>&\d+/g;
 
+/** Fd-to-/dev/null redirects like 2>/dev/null — safe plumbing (just discards output). */
+const FD_DEVNULL_RE = /\d*>\/dev\/null/g;
+
 /**
  * Split a compound Bash command into its constituent simple commands.
  *
@@ -35,7 +38,10 @@ export function splitCompound(command: string): string[] | undefined {
 
 /** Parse command string into shell-quote tokens, or undefined on failure. */
 function tokenizeCommand(command: string): Tokens | undefined {
-	const trimmed = command.trim().replace(FD_REDIRECT_RE, "");
+	const trimmed = command
+		.trim()
+		.replace(FD_DEVNULL_RE, "")
+		.replace(FD_REDIRECT_RE, "");
 	if (!trimmed) return undefined;
 
 	try {

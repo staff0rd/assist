@@ -98,6 +98,23 @@ describe("splitCompound", () => {
 		it("rejects non-numeric >& (file redirect)", () => {
 			expect(splitCompound("echo hello >& file.txt")).toBeUndefined();
 		});
+
+		it("allows 2>/dev/null and strips it from the command", () => {
+			expect(splitCompound("gh pr checks 607 2>/dev/null")).toEqual([
+				"gh pr checks 607",
+			]);
+		});
+
+		it("allows 2>/dev/null in piped command", () => {
+			expect(splitCompound("gh pr checks 607 2>/dev/null | head -20")).toEqual([
+				"gh pr checks 607",
+				"head -20",
+			]);
+		});
+
+		it("allows >/dev/null (stdout)", () => {
+			expect(splitCompound("echo hello >/dev/null")).toEqual(["echo hello"]);
+		});
 	});
 
 	describe("unsafe constructs return undefined", () => {

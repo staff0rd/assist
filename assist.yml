@@ -121,6 +121,16 @@ run:
       - ./src
       - --threshold
       - "70"
+  - name: verify:test
+    command: npx
+    filter: "{src/**/*.ts,src/**/*.tsx}"
+    args:
+      - vitest
+      - run
+      - --changed
+      - --passWithNoTests
+      - --reporter
+      - dot
   - name: verify:no-venv
     command: assist
     args:
