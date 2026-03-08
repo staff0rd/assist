@@ -90,6 +90,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist refactor restructure [pattern]` - Analyze import graph and restructure tightly-coupled files into nested directories
 - `assist devlog list` - Group git commits by date
 - `assist devlog next` - Show commits for the day after the last versioned entry
+- `assist devlog repos` - Show which github.com/staff0rd repos are missing devlog entries
 - `assist devlog skip <date>` - Add a date to the skip list
 - `assist devlog version` - Show current repo name and version info
 - `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`, also auto-approves read-only `gh api` calls). Supports compound commands (`|`, `&&`, `||`, `;`) by checking each sub-command independently
