@@ -1,3 +1,10 @@
+# [0.105.0](https://github.com/staff0rd/assist/compare/v0.104.0...v0.105.0) (2026-03-08)
+
+
+### Features
+
+* add devlog repos command ([f62c97a](https://github.com/staff0rd/assist/commit/f62c97a6d58077eb60ac4f7dcab04d42aa658425))
+
 # [0.104.0](https://github.com/staff0rd/assist/compare/v0.103.0...v0.104.0) (2026-03-06)
 
 
