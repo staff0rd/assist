@@ -1,3 +1,10 @@
+# [0.106.0](https://github.com/staff0rd/assist/compare/v0.105.0...v0.106.0) (2026-03-08)
+
+
+### Features
+
+* move devlog skip days to blog repo ([b7e7d29](https://github.com/staff0rd/assist/commit/b7e7d29b1ade79269cdd85d2ca0fcf788b2ca3c2))
+
 # [0.105.0](https://github.com/staff0rd/assist/compare/v0.104.0...v0.105.0) (2026-03-08)
 
 
