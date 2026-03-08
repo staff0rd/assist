@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import { basename } from "node:path";
+import { loadBlogSkipDays } from "../loadBlogSkipDays";
 import {
 	loadConfig,
 	loadDevlogEntries,
@@ -20,8 +21,8 @@ export function list(options: ListOptions): void {
 	const config = loadConfig();
 	const days = options.days ?? 30;
 	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
-	const skipDays = new Set(config.devlog?.skip?.days ?? []);
 	const repoName = basename(process.cwd());
+	const skipDays = loadBlogSkipDays(repoName);
 	const devlogEntries = loadDevlogEntries(repoName);
 
 	const reverseFlag = options.reverse ? "--reverse " : "";

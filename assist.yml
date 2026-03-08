@@ -4,24 +4,14 @@ commit:
   push: true
 devlog:
   name: assist
-  skip:
-    days:
-      - 2025-12-03
-      - 2025-12-24
-      - 2026-01-07
 notify:
   enabled: false
-# voice:
-#   wakeWords:
-#     - "computer"
-#   submitWord: "go"
-#   mic: "Headset Microphone (Jabra Link 380), Windows WASAPI"
 run:
   - name: verify:python-lint
     command: uv
-    filter: "src/commands/voice/python/**"
+    filter: src/commands/voice/python/**
     env:
-      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
+      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
     args:
       - run
       - --project
@@ -33,9 +23,9 @@ run:
       - src/commands/voice/python
   - name: verify:python-format
     command: uv
-    filter: "src/commands/voice/python/**"
+    filter: src/commands/voice/python/**
     env:
-      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
+      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
     args:
       - run
       - --project
@@ -47,9 +37,9 @@ run:
       - src/commands/voice/python
   - name: verify:maintainability-python
     command: uv
-    filter: "src/commands/voice/python/**"
+    filter: src/commands/voice/python/**
     env:
-      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
+      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
     args:
       - run
       - --project
@@ -62,9 +52,9 @@ run:
       - C
   - name: verify:python-maintainability
     command: uv
-    filter: "src/commands/voice/python/**"
+    filter: src/commands/voice/python/**
     env:
-      UV_PROJECT_ENVIRONMENT: "~/.assist/voice/.venv"
+      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
     args:
       - run
       - --project
@@ -104,7 +94,7 @@ run:
     args:
       - jscpd
       - --format
-      - "typescript,tsx,python"
+      - typescript,tsx,python
       - --exitCode
       - "1"
       - --ignore
@@ -143,7 +133,7 @@ run:
       - lint
   - name: verify:react-build
     command: npx
-    filter: "src/commands/backlog/web/**"
+    filter: src/commands/backlog/web/**
     args:
       - esbuild
       - src/commands/backlog/web/ui/App.tsx
@@ -154,4 +144,4 @@ run:
       - --outfile=dist/commands/backlog/web/bundle.js
       - --jsx=automatic
       - --jsx-import-source=react
-      - "--define:process.env.NODE_ENV='production'"
+      - --define:process.env.NODE_ENV='production'

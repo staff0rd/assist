@@ -2,12 +2,7 @@ import { execSync } from "node:child_process";
 import chalk from "chalk";
 import type { Commit } from "./types";
 
-export {
-	getRepoName,
-	loadConfig,
-	loadProjectConfig,
-	saveConfig,
-} from "../../shared/loadConfig";
+export { getRepoName, loadConfig } from "../../shared/loadConfig";
 export { loadDevlogEntries } from "./loadDevlogEntries";
 
 function getCommitFiles(hash: string): string[] {

@@ -1,9 +1,9 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { join } from "node:path";
+import { BLOG_REPO_ROOT } from "./loadBlogSkipDays";
 import type { DevlogEntry } from "./types";
 
-const DEVLOG_DIR = join(homedir(), "git/blog/src/content/devlog");
+const DEVLOG_DIR = join(BLOG_REPO_ROOT, "src/content/devlog");
 
 type ParsedFrontmatter = {
 	date: string;

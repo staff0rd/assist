@@ -45,7 +45,10 @@ function fetchNextCommits(ctx: NextContext) {
 		ctx.ignore,
 		getLastDate(ctx.lastInfo),
 	);
-	const targetDate = findTargetDate(commitsByDate, resolveSkipDays(ctx.config));
+	const targetDate = findTargetDate(
+		commitsByDate,
+		resolveSkipDays(ctx.repoName),
+	);
 	return targetDate
 		? { targetDate, commits: getCommitsForDate(commitsByDate, targetDate) }
 		: null;

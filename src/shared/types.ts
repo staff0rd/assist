@@ -36,11 +36,7 @@ export const assistConfigSchema = z.strictObject({
 		.strictObject({
 			name: z.string().optional(),
 			ignore: z.array(z.string()).optional(),
-			skip: z
-				.strictObject({
-					days: z.array(z.string()).optional(),
-				})
-				.optional(),
+			skip: z.record(z.string(), z.array(z.string())).optional(),
 		})
 		.optional(),
 	notify: z

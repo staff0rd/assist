@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
 import { bumpVersion } from "../../getLastVersionInfo";
+import { loadBlogSkipDays } from "../../loadBlogSkipDays";
 import { parseGitLogCommits, printCommitsWithFiles } from "../../shared";
 import type { Commit } from "../../types";
 import { displayVersion } from "./displayVersion";
@@ -51,10 +52,8 @@ export function resolveIgnoreList(
 	return options.ignore ?? config.devlog?.ignore ?? [];
 }
 
-export function resolveSkipDays(config: {
-	devlog?: { skip?: { days?: string[] } };
-}): Set<string> {
-	return new Set(config.devlog?.skip?.days ?? []);
+export function resolveSkipDays(repoName: string): Set<string> {
+	return loadBlogSkipDays(repoName);
 }
 
 export function getLastDate(lastInfo: { date?: string } | null): string | null {
