@@ -15,7 +15,7 @@ function replyToComment(
 ): void {
 	execSync(
 		`gh api repos/${org}/${repo}/pulls/${prNumber}/comments -f body="${message.replace(/"/g, '\\"')}" -F in_reply_to=${commentId}`,
-		{ stdio: "inherit" },
+		{ stdio: ["inherit", "pipe", "inherit"] },
 	);
 }
 
@@ -27,7 +27,7 @@ function resolveThread(threadId: string): void {
 	try {
 		execSync(
 			`gh api graphql -F query=@${queryFile} -f threadId="${threadId}"`,
-			{ stdio: "inherit" },
+			{ stdio: ["inherit", "pipe", "inherit"] },
 		);
 	} finally {
 		unlinkSync(queryFile);
