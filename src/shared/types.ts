@@ -59,6 +59,11 @@ export const assistConfigSchema = z.strictObject({
 			ignore: z.array(z.string()).default([]),
 		})
 		.optional(),
+	jira: z
+		.strictObject({
+			acField: z.string().default("customfield_11937"),
+		})
+		.optional(),
 	roam: z
 		.strictObject({
 			clientId: z.string(),

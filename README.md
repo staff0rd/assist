@@ -104,6 +104,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist status-line` - Format Claude Code status line from JSON stdin
 - `assist netframework deps <csproj>` - Show .csproj project dependency tree and solution membership
 - `assist netframework in-sln <csproj>` - Check whether a .csproj is referenced by any .sln file
+- `assist jira auth` - Authenticate with Jira via API token (saves site/email to ~/.assist/jira.json)
+- `assist jira ac <issue-key>` - Print acceptance criteria for a Jira issue
 - `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)
 - `assist complexity cyclomatic [pattern]` - Calculate cyclomatic complexity per function
 - `assist complexity halstead [pattern]` - Calculate Halstead metrics per function

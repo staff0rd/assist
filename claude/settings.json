@@ -36,6 +36,8 @@
 			"Bash(assist complexity:*)",
 			"Bash(assist transcript format:*)",
 			"Bash(assist voice:*)",
+			"Bash(assist jira auth:*)",
+			"Bash(assist jira ac:*)",
 			"Bash(assist netframework:*)",
 			"Bash(head:*)",
 			"Bash(tail:*)",

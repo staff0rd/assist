@@ -13,6 +13,7 @@ import { registerCliHook } from "./commands/registerCliHook";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
+import { registerJira } from "./commands/registerJira";
 import { registerNetframework } from "./commands/registerNetframework";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRefactor } from "./commands/registerRefactor";
@@ -137,6 +138,7 @@ program
 	.action(update);
 
 registerCliHook(program);
+registerJira(program);
 registerPrs(program);
 registerRoam(program);
 registerBacklog(program);
