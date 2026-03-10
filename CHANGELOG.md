@@ -1,3 +1,10 @@
+# [0.107.0](https://github.com/staff0rd/assist/compare/v0.106.1...v0.107.0) (2026-03-10)
+
+
+### Features
+
+* add jira auth and ac commands ([937f718](https://github.com/staff0rd/assist/commit/937f718bc8f01965bb9203b636f76ea7e6d6af62))
+
 ## [0.106.1](https://github.com/staff0rd/assist/compare/v0.106.0...v0.106.1) (2026-03-10)
 
 
