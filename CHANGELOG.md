@@ -1,3 +1,10 @@
+## [0.106.1](https://github.com/staff0rd/assist/compare/v0.106.0...v0.106.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* suppress gh api json output ([5583b6e](https://github.com/staff0rd/assist/commit/5583b6e5a05bd2def032b3edf0220e86fcde5795))
+
 # [0.106.0](https://github.com/staff0rd/assist/compare/v0.105.0...v0.106.0) (2026-03-08)
 
 
