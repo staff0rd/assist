@@ -1,3 +1,10 @@
+# [0.108.0](https://github.com/staff0rd/assist/compare/v0.107.0...v0.108.0) (2026-03-11)
+
+
+### Features
+
+* add news command with RSS feeds ([22a3fd0](https://github.com/staff0rd/assist/commit/22a3fd08d864f0c17097721c36670d2a5b94b8c6))
+
 # [0.107.0](https://github.com/staff0rd/assist/compare/v0.106.1...v0.107.0) (2026-03-10)
 
 
