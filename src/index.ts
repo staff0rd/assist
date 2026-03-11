@@ -15,6 +15,7 @@ import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
 import { registerJira } from "./commands/registerJira";
 import { registerNetframework } from "./commands/registerNetframework";
+import { registerNews } from "./commands/registerNews";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRefactor } from "./commands/registerRefactor";
 import { registerTranscript } from "./commands/registerTranscript";
@@ -48,7 +49,7 @@ program
 program
 	.command("commit")
 	.description("Create a git commit with validation")
-	.argument("<args...>", "status | <files...> <message>")
+	.argument("<args...>", "status | <message> [files...]")
 	.action(commit);
 
 const configCommand = program
@@ -148,6 +149,7 @@ registerDevlog(program);
 registerDeploy(program);
 registerComplexity(program);
 registerNetframework(program);
+registerNews(program);
 registerTranscript(program);
 registerVoice(program);
 

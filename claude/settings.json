@@ -29,6 +29,7 @@
 			"Bash(assist cli-hook:*)",
 			"Bash(assist sync:*)",
 			"Bash(assist verify:*)",
+			"Bash(assist news:*)",
 			"Bash(assist backlog list:*)",
 			"Bash(assist backlog start:*)",
 			"Bash(assist backlog done:*)",

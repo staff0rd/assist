@@ -50,6 +50,7 @@
 				"**/types.ts",
 				"**/constants.ts",
 				"**/api.ts",
+				"**/web.ts",
 				"tsup.config.ts"
 			],
 			"linter": {

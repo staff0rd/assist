@@ -1,13 +1,4 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-
-export function respondJson(
-	res: ServerResponse,
-	status: number,
-	data: unknown,
-): void {
-	res.writeHead(status, { "Content-Type": "application/json" });
-	res.end(JSON.stringify(data));
-}
+import type { IncomingMessage } from "node:http";
 
 function readBody(req: IncomingMessage): Promise<string> {
 	return new Promise((resolve, reject) => {

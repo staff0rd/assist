@@ -18,6 +18,17 @@ export default defineConfig({
 			recursive: true,
 		});
 		await build({
+			entryPoints: ["src/commands/news/web/ui/App.tsx"],
+			bundle: true,
+			minify: true,
+			format: "iife",
+			target: "es2020",
+			outfile: "dist/commands/news/web/bundle.js",
+			jsx: "automatic",
+			jsxImportSource: "react",
+			define: { "process.env.NODE_ENV": '"production"' },
+		});
+		await build({
 			entryPoints: ["src/commands/backlog/web/ui/App.tsx"],
 			bundle: true,
 			minify: true,

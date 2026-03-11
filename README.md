@@ -59,12 +59,15 @@ After installation, the `assist` command will be available globally. You can als
 - `assist sync` - Copy command files to `~/.claude/commands`
 - `assist commit status` - Show git status and diff
 - `assist commit <message>` - Commit staged changes with validation
-- `assist commit <files...> <message>` - Stage files and create a git commit with validation
+- `assist commit <message> [files...]` - Stage files and create a git commit with validation
 - `assist prs` - List pull requests for the current repository
 - `assist prs list-comments` - List all comments on the current branch's pull request
 - `assist prs fixed <comment-id> <sha>` - Reply with commit link and resolve thread
 - `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
 - `assist prs comment <path> <line> <body>` - Add a line comment to the pending review
+- `assist news` - Start the news web UI showing latest RSS feed items (same as `news web`)
+- `assist news add [url]` - Add an RSS feed URL to the config
+- `assist news web [-p, --port <number>]` - Start a web view of the news feeds (default port 3001)
 - `assist backlog` - Start the backlog web UI (same as `backlog web`)
 - `assist backlog init` - Create an empty assist.backlog.yml
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
