@@ -1,3 +1,10 @@
+## [0.108.1](https://github.com/staff0rd/assist/compare/v0.108.0...v0.108.1) (2026-03-11)
+
+
+### Bug Fixes
+
+* push commit before resolving thread ([c151440](https://github.com/staff0rd/assist/commit/c1514406fd57be187c1072b2219fe4a8e476b3b6))
+
 # [0.108.0](https://github.com/staff0rd/assist/compare/v0.107.0...v0.108.0) (2026-03-11)
 
 
