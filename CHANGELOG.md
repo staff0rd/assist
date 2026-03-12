@@ -1,3 +1,10 @@
+## [0.108.2](https://github.com/staff0rd/assist/compare/v0.108.1...v0.108.2) (2026-03-12)
+
+
+### Bug Fixes
+
+* skip MSYS path test on non-Windows ([d447151](https://github.com/staff0rd/assist/commit/d44715194b8bccbb4fb8552bd29f304d8b2a3296))
+
 ## [0.108.1](https://github.com/staff0rd/assist/compare/v0.108.0...v0.108.1) (2026-03-11)
 
 
