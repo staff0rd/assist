@@ -8,4 +8,6 @@ export const expectedScripts: Record<string, string> = {
 	"verify:no-venv": "assist verify no-venv",
 	"verify:maintainability":
 		"assist complexity maintainability ./src --threshold 60",
+	"verify:madge":
+		"madge --circular --ts-config ./tsconfig.json --extensions ts,tsx src/",
 };

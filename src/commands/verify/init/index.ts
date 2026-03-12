@@ -7,6 +7,7 @@ import {
 	setupHardcodedColors,
 	setupKnip,
 	setupLint,
+	setupMadge,
 	setupMaintainability,
 	setupTest,
 	setupTypecheck,
@@ -32,6 +33,7 @@ function getSetupHandlers(
 		build: (p) => setupBuild(p, hasVite, hasTypescript),
 		typecheck: (p) => setupTypecheck(p),
 		"hardcoded-colors": (p) => setupHardcodedColors(p, hasOpenColor),
+		madge: (p) => setupMadge(p),
 		maintainability: (p) => setupMaintainability(p),
 	};
 }
