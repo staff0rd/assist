@@ -48,12 +48,15 @@ describe("isApprovedRead", () => {
 			);
 		});
 
-		it("approves cd to cwd via MSYS path (/c/...)", () => {
-			const cwd = process.cwd();
-			// Convert C:\foo\bar → /c/foo/bar
-			const msys = `/${cwd[0].toLowerCase()}${cwd.slice(2).replace(/\\/g, "/")}`;
-			expect(isApprovedRead(`cd ${msys}`)).toBe("cd to current directory");
-		});
+		it.skipIf(process.platform !== "win32")(
+			"approves cd to cwd via MSYS path (/c/...)",
+			() => {
+				const cwd = process.cwd();
+				// Convert C:\foo\bar → /c/foo/bar
+				const msys = `/${cwd[0].toLowerCase()}${cwd.slice(2).replace(/\\/g, "/")}`;
+				expect(isApprovedRead(`cd ${msys}`)).toBe("cd to current directory");
+			},
+		);
 
 		it("approves cd .", () => {
 			expect(isApprovedRead("cd .")).toBe("cd to current directory");
