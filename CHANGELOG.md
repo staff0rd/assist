@@ -1,3 +1,10 @@
+# [0.109.0](https://github.com/staff0rd/assist/compare/v0.108.2...v0.109.0) (2026-03-12)
+
+
+### Features
+
+* add madge circular dep check to verify init ([2647806](https://github.com/staff0rd/assist/commit/2647806990b92d95247c566eb829803d46d723e7))
+
 ## [0.108.2](https://github.com/staff0rd/assist/compare/v0.108.1...v0.108.2) (2026-03-12)
 
 
