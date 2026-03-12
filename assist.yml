@@ -70,6 +70,7 @@ run:
       - biome
       - check
       - --write
+      - --error-on-warnings
       - src
   - name: verify:build
     command: npx

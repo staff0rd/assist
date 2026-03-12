@@ -2,6 +2,8 @@ import type { Command } from "commander";
 import {
 	check as refactorCheck,
 	ignore as refactorIgnore,
+	rename as refactorRename,
+	renameSymbol as refactorRenameSymbol,
 	restructure as refactorRestructure,
 } from "./refactor";
 
@@ -27,6 +29,24 @@ export function registerRefactor(program: Command): void {
 		.command("ignore <file>")
 		.description("Add a file to the refactor ignore list")
 		.action(refactorIgnore);
+
+	const renameCommand = refactorCommand
+		.command("rename")
+		.description("Rename files or symbols with automatic import updates");
+
+	renameCommand
+		.command("file <source> <destination>")
+		.description("Rename/move a TypeScript file and update all imports")
+		.option("--apply", "Execute the rename (default: dry-run)")
+		.action(refactorRename);
+
+	renameCommand
+		.command("symbol <file> <oldName> <newName>")
+		.description(
+			"Rename a variable, function, class, or type across the project",
+		)
+		.option("--apply", "Execute the rename (default: dry-run)")
+		.action(refactorRenameSymbol);
 
 	refactorCommand
 		.command("restructure [pattern]")

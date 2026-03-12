@@ -3,8 +3,12 @@ import { runFileNameCheck } from "./runFileNameCheck";
 import { runImportExtensionCheck } from "./runImportExtensionCheck";
 import { runStaticImportCheck } from "./runStaticImportCheck";
 
-export function lint(): void {
-	const fileNamePassed = runFileNameCheck();
+type LintOptions = {
+	fix?: boolean;
+};
+
+export function lint(options: LintOptions = {}): void {
+	const fileNamePassed = runFileNameCheck(options.fix);
 	const staticImportPassed = runStaticImportCheck();
 	const importExtensionPassed = runImportExtensionCheck();
 

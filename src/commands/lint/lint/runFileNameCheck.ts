@@ -1,69 +1,45 @@
-import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
-import { findSourceFiles } from "../../../shared/findSourceFiles";
+import { checkFileNames, type FileNameViolation } from "./checkFileNames";
+import { fixFileNameViolations } from "./fixFileNameViolations";
 
-type FileNameViolation = {
-	filePath: string;
-	fileName: string;
-};
-
-function hasClassOrComponent(content: string): boolean {
-	const classPattern = /^(export\s+)?(abstract\s+)?class\s+\w+/m;
-	const functionComponentPattern =
-		/^(export\s+)?(default\s+)?function\s+[A-Z]\w*\s*\(/m;
-	const arrowComponentPattern = /^(export\s+)?(const|let)\s+[A-Z]\w*\s*=.*=>/m;
-
-	return (
-		classPattern.test(content) ||
-		functionComponentPattern.test(content) ||
-		arrowComponentPattern.test(content)
+function reportViolations(violations: FileNameViolation[]): void {
+	console.error(chalk.red("\nFile name check failed:\n"));
+	console.error(
+		chalk.red(
+			"  Files without classes or React components should not start with a capital letter.\n",
+		),
 	);
-}
-
-function checkFileNames(): FileNameViolation[] {
-	const sourceFiles = findSourceFiles("src");
-	const violations: FileNameViolation[] = [];
-
-	for (const filePath of sourceFiles) {
-		const fileName = path.basename(filePath);
-		const nameWithoutExt = fileName.replace(/\.(ts|tsx)$/, "");
-
-		if (/^[A-Z]/.test(nameWithoutExt)) {
-			const content = fs.readFileSync(filePath, "utf-8");
-			if (!hasClassOrComponent(content)) {
-				violations.push({ filePath, fileName });
-			}
-		}
+	for (const violation of violations) {
+		console.error(chalk.red(`  ${violation.filePath}`));
+		console.error(chalk.gray(`    Rename to: ${violation.suggestedName}\n`));
 	}
-
-	return violations;
+	console.error(chalk.dim("  Run with -f to auto-fix.\n"));
 }
 
-export function runFileNameCheck(): boolean {
+export function runFileNameCheck(fix = false): boolean {
 	const violations = checkFileNames();
-	if (violations.length > 0) {
-		console.error(chalk.red("\nFile name check failed:\n"));
-		console.error(
-			chalk.red(
-				"  Files without classes or React components should not start with a capital letter.\n",
-			),
-		);
-		for (const violation of violations) {
-			console.error(chalk.red(`  ${violation.filePath}`));
-			console.error(
-				chalk.gray(
-					`    Rename to: ${violation.fileName.charAt(0).toLowerCase()}${violation.fileName.slice(1)}\n`,
-				),
+
+	if (violations.length === 0) {
+		if (!process.env.CLAUDECODE) {
+			console.log(
+				"File name check passed. All PascalCase files contain classes or components.",
 			);
 		}
+		return true;
+	}
+
+	if (!fix) {
+		reportViolations(violations);
 		return false;
 	}
 
-	if (!process.env.CLAUDECODE) {
-		console.log(
-			"File name check passed. All PascalCase files contain classes or components.",
-		);
-	}
+	fixFileNameViolations(
+		violations.map((v) => ({
+			sourcePath: v.filePath,
+			destPath: path.join(path.dirname(v.filePath), v.suggestedName),
+		})),
+	);
+
 	return true;
 }

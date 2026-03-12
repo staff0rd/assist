@@ -86,10 +86,12 @@ After installation, the `assist` command will be available globally. You can als
 - `assist verify all` - Run all checks, ignoring diff-based filters
 - `assist verify init` - Add verify scripts to a project
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
-- `assist lint` - Run lint checks for conventions not enforced by biomejs
+- `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by biomejs (use `-f` to auto-fix)
 - `assist lint init` - Initialize Biome with standard linter config
 - `assist refactor check [pattern]` - Check for files that exceed the maximum line count
 - `assist refactor ignore <file>` - Add a file to the refactor ignore list
+- `assist refactor rename file <source> <destination>` - Rename/move a TypeScript file and update all imports (dry-run by default, use `--apply` to execute)
+- `assist refactor rename symbol <file> <oldName> <newName>` - Rename a variable, function, class, or type across the project (dry-run by default, use `--apply` to execute)
 - `assist refactor restructure [pattern]` - Analyze import graph and restructure tightly-coupled files into nested directories
 - `assist devlog list` - Group git commits by date
 - `assist devlog next` - Show commits for the day after the last versioned entry

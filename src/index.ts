@@ -105,6 +105,7 @@ registerNew(program);
 const lintCommand = program
 	.command("lint")
 	.description("Run lint checks for conventions not enforced by biomejs")
+	.option("-f, --fix", "Auto-fix violations where possible")
 	.action(lint);
 
 lintCommand
