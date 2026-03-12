@@ -2,6 +2,8 @@
 
 A CLI tool for enforcing determinism in LLM development workflow automation.
 
+See [devlog](https://staffordwilliams.com/devlog/assist/) for latest features.
+
 ## Installation
 You can install `assist` globally using npm:
 
