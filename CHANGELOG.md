@@ -1,3 +1,16 @@
+# [0.112.0](https://github.com/staff0rd/assist/compare/v0.111.0...v0.112.0) (2026-03-13)
+
+
+### Bug Fixes
+
+* resolve circular dependencies ([bf8e10b](https://github.com/staff0rd/assist/commit/bf8e10be5d577ed3af4defd7873171fa87c9aaba))
+* verify init detects assist.yml scripts ([177fff8](https://github.com/staff0rd/assist/commit/177fff869bdd420b1d08d59f96331149ff17225d))
+
+
+### Features
+
+* add madge circular dep check ([f4a7b64](https://github.com/staff0rd/assist/commit/f4a7b64f008e02f339d450570b9b43dc559c95a1))
+
 # [0.111.0](https://github.com/staff0rd/assist/compare/v0.110.0...v0.111.0) (2026-03-13)
 
 
