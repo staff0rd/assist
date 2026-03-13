@@ -146,3 +146,13 @@ run:
       - --jsx=automatic
       - --jsx-import-source=react
       - --define:process.env.NODE_ENV='production'
+  - name: verify:madge
+    command: npx
+    args:
+      - madge
+      - --circular
+      - --ts-config
+      - ./tsconfig.json
+      - --extensions
+      - ts,tsx
+      - src/

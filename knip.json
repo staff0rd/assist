@@ -1,5 +1,5 @@
 {
 	"entry": ["src/index.ts", "src/commands/backlog/web/ui/App.tsx", "src/commands/news/web/ui/App.tsx"],
-	"ignoreDependencies": ["@biomejs/biome", "jscpd"],
+	"ignoreDependencies": ["@biomejs/biome", "jscpd", "madge"],
 	"ignore": ["**/.venv/**"]
 }
