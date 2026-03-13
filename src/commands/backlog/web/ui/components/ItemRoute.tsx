@@ -1,7 +1,7 @@
 import type { BacklogItem } from "../types";
 import { ItemDetail } from "./ItemDetail";
 import { ItemForm } from "./ItemForm";
-import type { View } from "./ViewRouter";
+import type { View } from "./types";
 
 type NavigateFn = (view: View) => void;
 

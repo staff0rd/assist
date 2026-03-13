@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { FileMove } from "../types";
-import { checkDirConflict, emptyResult, type MoveResult } from "./index";
+import { checkDirConflict, emptyResult, type MoveResult } from "./shared";
 
 function collectEntry(results: string[], dir: string, entry: fs.Dirent): void {
 	const full = path.join(dir, entry.name);

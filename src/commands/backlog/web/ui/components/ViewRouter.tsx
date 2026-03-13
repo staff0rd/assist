@@ -2,12 +2,7 @@ import type { BacklogItem } from "../types";
 import { ItemForm } from "./ItemForm";
 import { ItemList } from "./ItemList";
 import { ItemRoute } from "./ItemRoute";
-
-type View =
-	| { kind: "list" }
-	| { kind: "detail"; id: number }
-	| { kind: "add" }
-	| { kind: "edit"; id: number };
+import type { View } from "./types";
 
 type ViewRouterProps = {
 	view: View;
