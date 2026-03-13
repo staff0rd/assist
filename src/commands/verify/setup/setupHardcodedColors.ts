@@ -1,14 +1,13 @@
 import * as path from "node:path";
 import chalk from "chalk";
-import {
-	addToKnipIgnoreBinaries,
-	installPackage,
-	setupVerifyScript,
-} from "../installPackage";
+import { addToKnipIgnoreBinaries } from "../addToKnipIgnoreBinaries";
+import type { ScriptWriter } from "../installPackage";
+import { installPackage } from "../installPackage";
 import { expectedScripts } from "./expectedScripts";
 
 export async function setupHardcodedColors(
 	packageJsonPath: string,
+	writer: ScriptWriter,
 	hasOpenColor: boolean,
 ): Promise<void> {
 	console.log(chalk.blue("\nSetting up hardcoded colors check..."));
@@ -17,9 +16,5 @@ export async function setupHardcodedColors(
 		installPackage("open-color", cwd);
 	}
 	addToKnipIgnoreBinaries(cwd, "assist");
-	setupVerifyScript(
-		packageJsonPath,
-		"verify:hardcoded-colors",
-		expectedScripts["verify:hardcoded-colors"],
-	);
+	writer("verify:hardcoded-colors", expectedScripts["verify:hardcoded-colors"]);
 }

@@ -1,9 +1,9 @@
 import chalk from "chalk";
-import { readPackageJson } from "../../../shared/readPackageJson";
-import { addScript, writePackageJson } from "../installPackage";
+import type { ScriptWriter } from "../installPackage";
 
 export async function setupBuild(
-	packageJsonPath: string,
+	_packageJsonPath: string,
+	writer: ScriptWriter,
 	hasVite: boolean,
 	hasTypescript: boolean,
 ): Promise<void> {
@@ -17,17 +17,15 @@ export async function setupBuild(
 		command = "npm run build";
 	}
 	console.log(chalk.dim(`Using: ${command}`));
-	const pkg = readPackageJson(packageJsonPath);
-	writePackageJson(packageJsonPath, addScript(pkg, "verify:build", command));
+	writer("verify:build", command);
 }
 
-export async function setupTypecheck(packageJsonPath: string): Promise<void> {
+export async function setupTypecheck(
+	_packageJsonPath: string,
+	writer: ScriptWriter,
+): Promise<void> {
 	console.log(chalk.blue("\nSetting up typecheck verification..."));
 	const command = "tsc --noEmit";
 	console.log(chalk.dim(`Using: ${command}`));
-	const pkg = readPackageJson(packageJsonPath);
-	writePackageJson(
-		packageJsonPath,
-		addScript(pkg, "verify:typecheck", command),
-	);
+	writer("verify:typecheck", command);
 }
