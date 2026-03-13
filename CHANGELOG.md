@@ -1,3 +1,10 @@
+# [0.111.0](https://github.com/staff0rd/assist/compare/v0.110.0...v0.111.0) (2026-03-13)
+
+
+### Features
+
+* add /jira command ([d1577fc](https://github.com/staff0rd/assist/commit/d1577fc62166d6b7b03a81528bc002cbec212324))
+
 # [0.110.0](https://github.com/staff0rd/assist/compare/v0.109.0...v0.110.0) (2026-03-12)
 
 
