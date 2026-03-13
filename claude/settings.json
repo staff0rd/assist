@@ -86,6 +86,8 @@
 			"Skill(voice-stop)",
 			"Skill(voice-status)",
 			"Skill(voice-logs)",
+			"Skill(jira)",
+			"SlashCommand(/jira)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]

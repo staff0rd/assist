@@ -41,6 +41,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/refactor` - Run refactoring checks for code quality
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
+- `/jira` - View a Jira work item
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/standup` - Summarise recent journal entries as a standup update
 - `/sync` - Sync commands and settings to ~/.claude
