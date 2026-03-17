@@ -1,3 +1,10 @@
+# [0.113.0](https://github.com/staff0rd/assist/compare/v0.112.0...v0.113.0) (2026-03-17)
+
+
+### Features
+
+* add ravendb query commands ([07bb433](https://github.com/staff0rd/assist/commit/07bb433857d2bf09ddb855140ad18f34ec416d12))
+
 # [0.112.0](https://github.com/staff0rd/assist/compare/v0.111.0...v0.112.0) (2026-03-13)
 
 
