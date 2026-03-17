@@ -17,6 +17,7 @@ import { registerJira } from "./commands/registerJira";
 import { registerNetframework } from "./commands/registerNetframework";
 import { registerNews } from "./commands/registerNews";
 import { registerPrs } from "./commands/registerPrs";
+import { registerRavendb } from "./commands/registerRavendb";
 import { registerRefactor } from "./commands/registerRefactor";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
@@ -151,6 +152,7 @@ registerDeploy(program);
 registerComplexity(program);
 registerNetframework(program);
 registerNews(program);
+registerRavendb(program);
 registerTranscript(program);
 registerVoice(program);
 

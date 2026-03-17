@@ -81,6 +81,21 @@ export const assistConfigSchema = z.strictObject({
 			feeds: z.array(z.string()).default([]),
 		})
 		.default({ feeds: [] }),
+	ravendb: z
+		.strictObject({
+			connections: z
+				.array(
+					z.strictObject({
+						name: z.string(),
+						url: z.string(),
+						database: z.string(),
+						apiKeyRef: z.string(),
+					}),
+				)
+				.default([]),
+			defaultConnection: z.string().optional(),
+		})
+		.optional(),
 	voice: z
 		.strictObject({
 			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),
