@@ -53,15 +53,18 @@ async function discoverAt(
 	return results.flat();
 }
 
-export async function discoverAll(cli: string): Promise<DiscoveredCommand[]> {
-	const topLevel = parseCommands(await runHelp([cli]));
+export async function discoverAll(
+	cli: string,
+	prefixPath: string[] = [],
+): Promise<DiscoveredCommand[]> {
+	const topLevel = parseCommands(await runHelp([cli, ...prefixPath]));
 	const p: Progress = { done: 0, total: topLevel.length };
 
 	const results = await mapAsync(topLevel, CONCURRENCY, async (cmd) => {
 		showProgress(p, cmd.name);
 		const resolved = await resolveCommand(
 			cli,
-			[cmd.name],
+			[...prefixPath, cmd.name],
 			cmd.description,
 			1,
 			p,

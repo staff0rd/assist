@@ -127,6 +127,7 @@ az afd security-policy list
 az afd security-policy show
 az afd waf-log-analytic metric list
 az afd waf-log-analytic ranking list
+az afd waf-policy list
 az aks approuting zone list
 az aks browse
 az aks connection list
@@ -1086,6 +1087,34 @@ az network express-route port link show
 az network express-route port list
 az network express-route port show
 az network express-route show
+az network front-door backend-pool backend list
+az network front-door backend-pool list
+az network front-door backend-pool show
+az network front-door frontend-endpoint list
+az network front-door frontend-endpoint show
+az network front-door list
+az network front-door load-balancing list
+az network front-door load-balancing show
+az network front-door probe list
+az network front-door probe show
+az network front-door routing-rule list
+az network front-door routing-rule show
+az network front-door rules-engine list
+az network front-door rules-engine rule action list
+az network front-door rules-engine rule condition list
+az network front-door rules-engine rule list
+az network front-door rules-engine rule show
+az network front-door rules-engine show
+az network front-door show
+az network front-door waf-policy list
+az network front-door waf-policy managed-rule-definition list
+az network front-door waf-policy managed-rules exclusion list
+az network front-door waf-policy managed-rules list
+az network front-door waf-policy managed-rules override list
+az network front-door waf-policy rule list
+az network front-door waf-policy rule match-condition list
+az network front-door waf-policy rule show
+az network front-door waf-policy show
 az network lb address-pool address list
 az network lb address-pool address show
 az network lb address-pool list

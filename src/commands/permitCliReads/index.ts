@@ -45,19 +45,23 @@ export async function permitCliReads(
 		process.exit(1);
 	}
 
+	const parts = cli.split(/\s+/);
+	const binary = parts[0];
+	const prefixPath = parts.slice(1);
+
 	if (!options.noCache) {
 		const cached = readCache(cli);
 		if (cached) {
 			console.log(colorize(cached));
-			updateSettings(cli, parseCached(cli, cached));
+			updateSettings(binary, parseCached(binary, cached));
 			return;
 		}
 	}
 
 	assertCliExists(cli);
-	const commands = await discoverAll(cli);
-	const output = formatHuman(cli, commands);
+	const commands = await discoverAll(binary, prefixPath);
+	const output = formatHuman(binary, commands);
 	console.log(colorize(output));
 	writeCache(cli, output);
-	updateSettings(cli, commands);
+	updateSettings(binary, commands);
 }
