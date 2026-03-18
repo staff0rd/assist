@@ -1,3 +1,10 @@
+# [0.114.0](https://github.com/staff0rd/assist/compare/v0.113.0...v0.114.0) (2026-03-18)
+
+
+### Features
+
+* narrowed cli-hook add discovery ([182a234](https://github.com/staff0rd/assist/commit/182a23444de7b11587bba4ef710c04651a4e678c))
+
 # [0.113.0](https://github.com/staff0rd/assist/compare/v0.112.0...v0.113.0) (2026-03-17)
 
 
