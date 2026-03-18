@@ -6,3 +6,7 @@ When renaming TypeScript files or symbols, use the refactor commands instead of 
 - `assist refactor rename file <source> <destination>` — rename/move a file and update all imports
 - `assist refactor rename symbol <file> <oldName> <newName>` — rename a variable, function, class, or type across the project
 Both default to dry-run; add `--apply` to execute.
+
+When the user mentions a Jira issue key (e.g. `BAD-671`, `PROJ-123`), use these commands to fetch context:
+- `assist jira view <issue-key>` — print the title and description
+- `assist jira ac <issue-key>` — print acceptance criteria

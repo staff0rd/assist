@@ -1,7 +1,7 @@
-import { execSync } from "node:child_process";
 import chalk from "chalk";
 import { loadConfig } from "../../shared/loadConfig";
 import { adfToText } from "./adfToText";
+import { fetchIssue } from "./fetchIssue";
 
 const DEFAULT_AC_FIELD = "customfield_11937";
 
@@ -9,31 +9,10 @@ export function acceptanceCriteria(issueKey: string): void {
 	const config = loadConfig();
 	const field = config.jira?.acField ?? DEFAULT_AC_FIELD;
 
-	let result: string;
-	try {
-		result = execSync(
-			`acli jira workitem view ${issueKey} -f ${field} --json`,
-			{ encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] },
-		);
-	} catch (error) {
-		if (error instanceof Error && "stderr" in error) {
-			const stderr = (error as { stderr: string }).stderr;
-			if (stderr.includes("unauthorized")) {
-				console.error(
-					chalk.red("Jira authentication expired."),
-					"Run",
-					chalk.cyan("assist jira auth"),
-					"to re-authenticate.",
-				);
-				process.exit(1);
-			}
-		}
-		console.error(chalk.red(`Failed to fetch ${issueKey}.`));
-		process.exit(1);
-	}
-
-	const parsed = JSON.parse(result);
-	const acValue = parsed?.fields?.[field];
+	const parsed = fetchIssue(issueKey, field);
+	const acValue = (parsed?.fields as Record<string, unknown> | undefined)?.[
+		field
+	];
 
 	if (!acValue) {
 		console.log(chalk.yellow(`No acceptance criteria found on ${issueKey}.`));
@@ -45,8 +24,8 @@ export function acceptanceCriteria(issueKey: string): void {
 		return;
 	}
 
-	if (acValue.type === "doc") {
-		console.log(adfToText(acValue));
+	if ((acValue as { type?: string }).type === "doc") {
+		console.log(adfToText(acValue as Parameters<typeof adfToText>[0]));
 		return;
 	}
 

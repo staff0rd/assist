@@ -39,6 +39,7 @@
 			"Bash(assist voice:*)",
 			"Bash(assist jira auth:*)",
 			"Bash(assist jira ac:*)",
+			"Bash(assist jira view:*)",
 			"Bash(assist netframework:*)",
 			"Bash(assist ravendb query:*)",
 			"Bash(assist ravendb collections:*)",

@@ -114,6 +114,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist netframework in-sln <csproj>` - Check whether a .csproj is referenced by any .sln file
 - `assist jira auth` - Authenticate with Jira via API token (saves site/email to ~/.assist/jira.json)
 - `assist jira ac <issue-key>` - Print acceptance criteria for a Jira issue
+- `assist jira view <issue-key>` - Print the title and description of a Jira issue
 - `assist ravendb auth` - Configure a named RavenDB connection (prompts for name, URL, database, op:// secret reference)
 - `assist ravendb auth --list` - List configured RavenDB connections
 - `assist ravendb auth --remove <name>` - Remove a configured connection
