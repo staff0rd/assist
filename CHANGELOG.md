@@ -1,3 +1,10 @@
+# [0.115.0](https://github.com/staff0rd/assist/compare/v0.114.0...v0.115.0) (2026-03-18)
+
+
+### Features
+
+* add jira view command ([8ca6e87](https://github.com/staff0rd/assist/commit/8ca6e87fa794d69163755ae10227f78c567777c7))
+
 # [0.114.0](https://github.com/staff0rd/assist/compare/v0.113.0...v0.114.0) (2026-03-18)
 
 
