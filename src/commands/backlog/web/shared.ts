@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { getNextId, loadBacklog, saveBacklog } from "../shared";
-import { parseItemBody } from "./parseItemBody";
+import { parseItemBody, parseStatusBody } from "./parseItemBody";
 
 export function listItems(_req: IncomingMessage, res: ServerResponse): void {
 	respondJson(res, 200, loadBacklog());
@@ -62,6 +62,19 @@ export async function updateItem(
 		description: body.description,
 		acceptanceCriteria: body.acceptanceCriteria ?? [],
 	});
+	saveBacklog(result.items);
+	respondJson(res, 200, result.item);
+}
+
+export async function patchItemStatus(
+	req: IncomingMessage,
+	res: ServerResponse,
+	id: number,
+): Promise<void> {
+	const { status } = await parseStatusBody(req);
+	const result = findItemOr404(res, id);
+	if (!result) return;
+	result.item.status = status;
 	saveBacklog(result.items);
 	respondJson(res, 200, result.item);
 }

@@ -11,6 +11,7 @@ import {
 	deleteItem,
 	getItemById,
 	listItems,
+	patchItemStatus,
 	updateItem,
 } from "./shared";
 
@@ -33,6 +34,7 @@ const routes: Record<string, Handler> = {
 const itemRoutes: Record<string, ItemHandler> = {
 	GET: (_req, res, id) => getItemById(res, id),
 	PUT: (req, res, id) => updateItem(req, res, id),
+	PATCH: (req, res, id) => patchItemStatus(req, res, id),
 	DELETE: (_req, res, id) => deleteItem(res, id),
 };
 

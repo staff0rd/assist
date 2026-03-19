@@ -1,12 +1,7 @@
 import { marked } from "marked";
 import type { BacklogItem } from "../types";
 import { AcceptanceCriteriaList } from "./AcceptanceCriteriaList";
-
-const badgeColors: Record<string, string> = {
-	todo: "bg-gray-100 text-gray-500",
-	"in-progress": "bg-amber-100 text-amber-800",
-	done: "bg-green-100 text-green-800",
-};
+import { StatusPicker } from "./StatusPicker";
 
 const typeBadgeColors: Record<string, string> = {
 	story: "bg-blue-100 text-blue-700",
@@ -23,7 +18,13 @@ function MarkdownBlock({ content }: { content: string }) {
 	);
 }
 
-export function ItemBody({ item }: { item: BacklogItem }) {
+export function ItemBody({
+	item,
+	onStatusChange,
+}: {
+	item: BacklogItem;
+	onStatusChange?: (status: BacklogItem["status"]) => void;
+}) {
 	return (
 		<div className="bg-white rounded-lg p-6 border border-gray-200">
 			<h2>{item.name}</h2>
@@ -34,11 +35,7 @@ export function ItemBody({ item }: { item: BacklogItem }) {
 				>
 					{item.type}
 				</span>
-				<span
-					className={`inline-block rounded-full px-2.5 text-xs font-medium ${badgeColors[item.status]}`}
-				>
-					{item.status}
-				</span>
+				<StatusPicker current={item.status} onStatusChange={onStatusChange} />
 			</div>
 			{item.description && (
 				<div className="mb-4">

@@ -39,3 +39,15 @@ export async function updateItem(
 	});
 	return res.json();
 }
+
+export async function updateItemStatus(
+	id: number,
+	status: BacklogItem["status"],
+): Promise<BacklogItem> {
+	const res = await fetch(`/api/items/${id}`, {
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ status }),
+	});
+	return res.json();
+}

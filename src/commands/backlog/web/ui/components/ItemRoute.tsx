@@ -31,6 +31,9 @@ export function ItemRoute({
 			onBack={() => onNavigate({ kind: "list" })}
 			onEdit={() => onNavigate({ kind: "edit", id: view.id })}
 			onDeleted={() => onReloadAndNavigate({ kind: "list" })}
+			onStatusChanged={() =>
+				onReloadAndNavigate({ kind: "detail", id: view.id })
+			}
 		/>
 	);
 }

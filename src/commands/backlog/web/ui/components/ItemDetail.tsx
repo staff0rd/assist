@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { deleteItem } from "../api";
+import { deleteItem, updateItemStatus } from "../api";
 import type { BacklogItem } from "../types";
 import { BackButton } from "./BackButton";
 import { ConfirmDialog } from "./ConfirmDialog";
@@ -10,6 +10,7 @@ type ItemDetailProps = {
 	onBack: () => void;
 	onEdit: () => void;
 	onDeleted: () => void;
+	onStatusChanged: () => void;
 };
 
 function DeleteAction({
@@ -75,6 +76,7 @@ export function ItemDetail({
 	onBack,
 	onEdit,
 	onDeleted,
+	onStatusChanged,
 }: ItemDetailProps) {
 	return (
 		<>
@@ -84,7 +86,13 @@ export function ItemDetail({
 				onEdit={onEdit}
 				onDeleted={onDeleted}
 			/>
-			<ItemBody item={item} />
+			<ItemBody
+				item={item}
+				onStatusChange={async (status) => {
+					await updateItemStatus(item.id, status);
+					onStatusChanged();
+				}}
+			/>
 		</>
 	);
 }
