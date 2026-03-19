@@ -1,3 +1,10 @@
+# [0.116.0](https://github.com/staff0rd/assist/compare/v0.115.0...v0.116.0) (2026-03-19)
+
+
+### Features
+
+* add status dropdown to backlog web ([3e5513d](https://github.com/staff0rd/assist/commit/3e5513d5617dc378d805e0072f992cfe8440f66f))
+
 # [0.115.0](https://github.com/staff0rd/assist/compare/v0.114.0...v0.115.0) (2026-03-18)
 
 
