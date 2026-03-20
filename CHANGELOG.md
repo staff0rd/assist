@@ -1,3 +1,10 @@
+# [0.117.0](https://github.com/staff0rd/assist/compare/v0.116.0...v0.117.0) (2026-03-20)
+
+
+### Features
+
+* add rate limits to status line ([f18d904](https://github.com/staff0rd/assist/commit/f18d904de0a1077f539c554bac297fa2e7f422b6))
+
 # [0.116.0](https://github.com/staff0rd/assist/compare/v0.115.0...v0.116.0) (2026-03-19)
 
 
