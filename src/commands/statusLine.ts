@@ -10,6 +10,14 @@ type StatusInput = {
 		total_output_tokens: number;
 		used_percentage?: number;
 	};
+	rate_limits?: {
+		five_hour?: {
+			used_percentage?: number;
+		};
+		seven_day?: {
+			used_percentage?: number;
+		};
+	};
 };
 
 function formatNumber(num: number): string {
@@ -17,7 +25,7 @@ function formatNumber(num: number): string {
 }
 
 function colorizePercent(pct: number): string {
-	const label = `${pct}%`;
+	const label = `${Math.round(pct)}%`;
 	if (pct > 80) return chalk.red(label);
 	if (pct > 40) return chalk.yellow(label);
 	return label;
@@ -35,7 +43,15 @@ export async function statusLine(): Promise<void> {
 	const formattedInput = formatNumber(totalInput);
 	const formattedOutput = formatNumber(totalOutput);
 
+	const fiveHrPct = data.rate_limits?.five_hour?.used_percentage;
+	const sevenDayPct = data.rate_limits?.seven_day?.used_percentage;
+
+	let limitsSegment = "";
+	if (fiveHrPct != null && sevenDayPct != null) {
+		limitsSegment = ` | Limits - ${colorizePercent(fiveHrPct)} (5h), ${colorizePercent(sevenDayPct)} (7d)`;
+	}
+
 	console.log(
-		`${model} | Tokens - ${formattedOutput} ↑ : ${formattedInput} ↓ | Context - ${colorizePercent(usedPct)}`,
+		`${model} | Tokens - ${formattedOutput} ↑ : ${formattedInput} ↓ | Context - ${colorizePercent(usedPct)}${limitsSegment}`,
 	);
 }
