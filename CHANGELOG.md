@@ -1,3 +1,11 @@
+# [0.119.0](https://github.com/staff0rd/assist/compare/v0.118.0...v0.119.0) (2026-03-22)
+
+
+### Features
+
+* add jb inspect backlog item ([0a4c4d1](https://github.com/staff0rd/assist/commit/0a4c4d11adca55559291ad2dadb242f822d00656))
+* group review comments by thread ([2b6bd48](https://github.com/staff0rd/assist/commit/2b6bd481ec17cdca6256b9dcfbaf9a315d74e4a1))
+
 # [0.118.0](https://github.com/staff0rd/assist/compare/v0.117.0...v0.118.0) (2026-03-20)
 
 
