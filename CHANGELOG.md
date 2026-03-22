@@ -1,3 +1,10 @@
+# [0.120.0](https://github.com/staff0rd/assist/compare/v0.119.0...v0.120.0) (2026-03-22)
+
+
+### Features
+
+* group review comments by thread ([0aaf2db](https://github.com/staff0rd/assist/commit/0aaf2dbccf6b871e9504236ce6a9aa9d3f3b8acb))
+
 # [0.119.0](https://github.com/staff0rd/assist/compare/v0.118.0...v0.119.0) (2026-03-22)
 
 
