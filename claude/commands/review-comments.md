@@ -12,7 +12,9 @@ Fetch all review comments using `assist prs list-comments`. This returns both re
 
 ## Processing Comments
 
-Create a task for each comment found. For each comment:
+**Thread grouping:** Comments share a `threadId` field. Group comments by thread and process each thread as a single unit. Present follow-up comments (e.g., a reviewer endorsing a bot suggestion) as context alongside the primary actionable comment. Only call `fixed`/`wontfix` once per thread, using the comment ID of the primary actionable comment.
+
+Create a task for each **thread** (not each comment). For each thread:
 
 1. **Display the comment** to the user:
    - Show the reviewer, file/line (if applicable), and the comment text
