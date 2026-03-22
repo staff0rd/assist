@@ -11,3 +11,17 @@
     - i can start the program with ast
     - i can start the program with assist
   status: done
+- id: 3
+  type: story
+  name: jb inspect
+  description: |-
+    we can use `jb inspect` to find dead c# code in the files we've changed:
+
+    ```
+      dotnet tool install -g JetBrains.ReSharper.GlobalTools
+      jb inspectcode YourSolution.sln -o=report.xml --include="src/Path/To/ChangedFile.cs"
+    ```
+
+    We should add this as a dotnet command to assist.
+  acceptanceCriteria: []
+  status: todo
