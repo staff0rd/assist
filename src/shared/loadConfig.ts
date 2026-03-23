@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { basename, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
 import { loadRawYaml } from "./loadRawYaml";
@@ -10,11 +10,22 @@ import {
 	type TranscriptConfig,
 } from "./types";
 
-function getConfigPath(): string {
-	const claudeConfigPath = join(process.cwd(), ".claude", "assist.yml");
-	if (existsSync(claudeConfigPath)) {
-		return claudeConfigPath;
+function findConfigUp(startDir: string): string | null {
+	let current = startDir;
+	while (current !== dirname(current)) {
+		const claudePath = join(current, ".claude", "assist.yml");
+		if (existsSync(claudePath)) return claudePath;
+		const rootPath = join(current, "assist.yml");
+		if (existsSync(rootPath)) return rootPath;
+		current = dirname(current);
 	}
+	return null;
+}
+
+function getConfigPath(): string {
+	const found = findConfigUp(process.cwd());
+	if (found) return found;
+	// Fallback: default to cwd-based path (for creation)
 	return join(process.cwd(), "assist.yml");
 }
 

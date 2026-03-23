@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
-import { findRepoRoot } from "./findRepoRoot";
+import { findRepoRoot } from "../../shared/findRepoRoot";
 
 export function resolveCsproj(csprojPath: string): {
 	resolved: string;
