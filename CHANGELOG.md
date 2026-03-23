@@ -1,3 +1,10 @@
+## [0.120.1](https://github.com/staff0rd/assist/compare/v0.120.0...v0.120.1) (2026-03-23)
+
+
+### Bug Fixes
+
+* find config from subdirectories ([9974fd9](https://github.com/staff0rd/assist/commit/9974fd94aee4500e0df0e3d9f6c0f721ca32370c))
+
 # [0.120.0](https://github.com/staff0rd/assist/compare/v0.119.0...v0.120.0) (2026-03-22)
 
 
