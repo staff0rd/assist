@@ -1,3 +1,10 @@
+# [0.122.0](https://github.com/staff0rd/assist/compare/v0.121.0...v0.122.0) (2026-03-24)
+
+
+### Features
+
+* suppress unreliable .Global inspect rules ([83a504f](https://github.com/staff0rd/assist/commit/83a504f6d1b30d9fd981c7981f1783ce6123c2b4))
+
 # [0.121.0](https://github.com/staff0rd/assist/compare/v0.120.1...v0.121.0) (2026-03-24)
 
 
