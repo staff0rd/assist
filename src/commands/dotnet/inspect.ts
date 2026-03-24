@@ -35,13 +35,13 @@ function reportResults(
 
 export async function inspect(
 	sln: string | undefined,
-	options: { ref?: string; all?: boolean; swea?: boolean },
+	options: { ref?: string; base?: string; all?: boolean; swea?: boolean },
 ): Promise<void> {
 	const resolved = resolveSolution(sln);
 	checkBuildLocks();
 	assertJbInstalled();
 
-	const changedFiles = getChangedCsFiles(options.ref);
+	const changedFiles = getChangedCsFiles(options.ref, options.base);
 	if (changedFiles.length === 0) {
 		console.log(chalk.green("No changed .cs files found"));
 		return;

@@ -14,6 +14,10 @@ export function registerDotnet(program: Command): void {
 		)
 		.argument("[sln]", "Path to a .sln file (auto-detected if omitted)")
 		.option("--ref <ref>", "Git commit to inspect (default: working copy)")
+		.option(
+			"--base <ref>",
+			"Compare against a base ref using merge-base (e.g. main); inspects all PR changes",
+		)
 		.option("--all", "Show all issues, not just dead code")
 		.option("--swea", "Enable solution-wide error analysis")
 		.action(inspect);
