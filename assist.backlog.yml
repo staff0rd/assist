@@ -24,4 +24,4 @@
 
     We should add this as a dotnet command to assist.
   acceptanceCriteria: []
-  status: todo
+  status: done

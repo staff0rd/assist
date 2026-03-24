@@ -14,6 +14,7 @@ const runConfigSchema = z.strictObject({
 	params: z.array(runParamSchema).optional(),
 	env: z.record(z.string(), z.string()).optional(),
 	filter: z.string().optional(),
+	pre: z.array(z.string()).optional(),
 });
 
 const transcriptConfigSchema = z.strictObject({

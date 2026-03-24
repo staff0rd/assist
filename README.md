@@ -80,7 +80,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog delete <id>` - Delete a backlog item
 - `assist backlog web [-p, --port <number>]` - Start a web view of the backlog (default port 3000)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
-- `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config)
+- `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first)
 - `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
 - `assist config get <key>` - Get a config value
@@ -110,8 +110,11 @@ After installation, the `assist` command will be available globally. You can als
 - `assist deploy redirect` - Add trailing slash redirect script to index.html
 - `assist notify` - Show desktop notification from JSON stdin (supports macOS, Windows, WSL)
 - `assist status-line` - Format Claude Code status line from JSON stdin
-- `assist netframework deps <csproj>` - Show .csproj project dependency tree and solution membership
-- `assist netframework in-sln <csproj>` - Check whether a .csproj is referenced by any .sln file
+- `assist dotnet inspect [sln]` - Run JetBrains inspections on changed .cs files to find dead code
+- `assist dotnet inspect [sln] --ref <ref>` - Inspect .cs files changed in a specific commit (default: HEAD)
+- `assist dotnet check-locks` - Check if build output files are locked by a debugger
+- `assist dotnet deps <csproj>` - Show .csproj project dependency tree and solution membership
+- `assist dotnet in-sln <csproj>` - Check whether a .csproj is referenced by any .sln file
 - `assist jira auth` - Authenticate with Jira via API token (saves site/email to ~/.assist/jira.json)
 - `assist jira ac <issue-key>` - Print acceptance criteria for a Jira issue
 - `assist jira view <issue-key>` - Print the title and description of a Jira issue

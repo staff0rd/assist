@@ -1,9 +1,8 @@
-import { spawn } from "node:child_process";
-import { expandEnv } from "../../shared/expandEnv";
-import { formatElapsed } from "../../shared/formatElapsed";
+import { execSync } from "node:child_process";
 import { loadConfig } from "../../shared/loadConfig";
 import { shellQuote } from "../../shared/shellQuote";
 import { resolveParams } from "./resolveParams";
+import { spawnRunCommand } from "./spawnRunCommand";
 
 function buildCommand(
 	command: string,
@@ -49,26 +48,6 @@ function findRunConfig(name: string) {
 	);
 }
 
-function onSpawnError(err: Error): void {
-	console.error(`Failed to execute command: ${err.message}`);
-	process.exit(1);
-}
-
-function spawnCommand(fullCommand: string, env?: Record<string, string>): void {
-	const start = Date.now();
-	const child = spawn(fullCommand, [], {
-		stdio: "inherit",
-		shell: true,
-		env: env ? { ...process.env, ...expandEnv(env) } : undefined,
-	});
-	child.on("close", (code) => {
-		const elapsed = formatElapsed(Date.now() - start);
-		console.log(`\nDone in ${elapsed}`);
-		process.exit(code ?? 0);
-	});
-	child.on("error", onSpawnError);
-}
-
 export function listRunConfigs(): void {
 	const configs = requireRunConfigs();
 	for (const config of configs) {
@@ -77,10 +56,25 @@ export function listRunConfigs(): void {
 	}
 }
 
+function runPreCommands(pre: string[]): void {
+	for (const cmd of pre) {
+		try {
+			execSync(cmd, { stdio: "inherit" });
+		} catch (err) {
+			const code =
+				err && typeof err === "object" && "status" in err
+					? (err.status as number)
+					: 1;
+			process.exit(code);
+		}
+	}
+}
+
 export function run(name: string, args: string[]): void {
 	const runConfig = findRunConfig(name);
+	if (runConfig.pre) runPreCommands(runConfig.pre);
 	const resolved = resolveParams(runConfig.params, args);
-	spawnCommand(
+	spawnRunCommand(
 		buildCommand(runConfig.command, runConfig.args ?? [], resolved),
 		runConfig.env,
 	);
