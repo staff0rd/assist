@@ -1,3 +1,10 @@
+# [0.124.0](https://github.com/staff0rd/assist/compare/v0.123.0...v0.124.0) (2026-03-24)
+
+
+### Features
+
+* project rate-limit color by pace ([20e4771](https://github.com/staff0rd/assist/commit/20e4771d0664b91431fd44b3d7bef392a7525e11))
+
 # [0.123.0](https://github.com/staff0rd/assist/compare/v0.122.0...v0.123.0) (2026-03-24)
 
 
