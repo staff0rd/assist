@@ -1,3 +1,10 @@
+# [0.123.0](https://github.com/staff0rd/assist/compare/v0.122.0...v0.123.0) (2026-03-24)
+
+
+### Features
+
+* add --base flag to dotnet inspect ([3f819a9](https://github.com/staff0rd/assist/commit/3f819a911c5cd5ba1922d51b28300564e6a1e359))
+
 # [0.122.0](https://github.com/staff0rd/assist/compare/v0.121.0...v0.122.0) (2026-03-24)
 
 
