@@ -112,6 +112,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist status-line` - Format Claude Code status line from JSON stdin
 - `assist dotnet inspect [sln]` - Run JetBrains inspections on changed .cs files to find dead code
 - `assist dotnet inspect [sln] --ref <ref>` - Inspect .cs files changed in a specific commit (default: HEAD)
+- `assist dotnet inspect [sln] --swea` - Enable solution-wide error analysis (slower but more thorough)
 - `assist dotnet check-locks` - Check if build output files are locked by a debugger
 - `assist dotnet deps <csproj>` - Show .csproj project dependency tree and solution membership
 - `assist dotnet in-sln <csproj>` - Check whether a .csproj is referenced by any .sln file

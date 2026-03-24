@@ -16,11 +16,16 @@ export function assertJbInstalled(): void {
 	}
 }
 
-export function runInspectCode(slnPath: string, include: string): string {
+export function runInspectCode(
+	slnPath: string,
+	include: string,
+	swea: boolean,
+): string {
 	const reportPath = path.join(tmpdir(), `inspect-${Date.now()}.xml`);
+	const sweaFlag = swea ? " --swea" : "";
 	try {
 		execSync(
-			`jb inspectcode "${slnPath}" -o="${reportPath}" --include="${include}" --swea --verbosity=OFF`,
+			`jb inspectcode "${slnPath}" -o="${reportPath}" --include="${include}"${sweaFlag} --verbosity=OFF`,
 			{ stdio: "pipe" },
 		);
 	} catch (err) {
