@@ -1,3 +1,10 @@
+# [0.121.0](https://github.com/staff0rd/assist/compare/v0.120.1...v0.121.0) (2026-03-24)
+
+
+### Features
+
+* make --swea opt-in, add timing ([34505ba](https://github.com/staff0rd/assist/commit/34505babc1f7f89d96d77a8f141c1d637f85768f))
+
 ## [0.120.1](https://github.com/staff0rd/assist/compare/v0.120.0...v0.120.1) (2026-03-23)
 
 
