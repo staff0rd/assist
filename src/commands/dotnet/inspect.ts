@@ -3,11 +3,11 @@ import path from "node:path";
 import chalk from "chalk";
 import { formatElapsed } from "../../shared/formatElapsed";
 import { checkBuildLocks } from "./checkBuildLocks";
-import { deadCodeRules } from "./deadCodeRules";
 import { displayIssues } from "./displayIssues";
+import { filterIssues } from "./filterIssues";
 import { findSolution } from "./findSolution";
 import { getChangedCsFiles } from "./getChangedCsFiles";
-import { type Issue, parseInspectReport } from "./parseInspectReport";
+import { parseInspectReport } from "./parseInspectReport";
 import { assertJbInstalled, runInspectCode } from "./runInspectCode";
 
 function resolveSolution(sln: string | undefined): string {
@@ -22,23 +22,10 @@ function resolveSolution(sln: string | undefined): string {
 	return findSolution();
 }
 
-function runAndParse(
-	resolved: string,
-	changedFiles: string[],
-	all: boolean,
-	swea: boolean,
-): { issues: Issue[]; elapsed: number } {
-	const start = Date.now();
-	const report = runInspectCode(resolved, changedFiles.join(";"), swea);
-	const elapsed = Date.now() - start;
-	const allIssues = parseInspectReport(report);
-	const issues = all
-		? allIssues
-		: allIssues.filter((i) => deadCodeRules.has(i.typeId));
-	return { issues, elapsed };
-}
-
-function reportResults(issues: Issue[], elapsed: number): void {
+function reportResults(
+	issues: ReturnType<typeof filterIssues>,
+	elapsed: number,
+): void {
 	if (issues.length > 0) displayIssues(issues);
 	else console.log(chalk.green("No issues found"));
 
@@ -64,11 +51,14 @@ export async function inspect(
 		chalk.dim(`Inspecting ${changedFiles.length} changed file(s)...`),
 	);
 
-	const result = runAndParse(
+	const start = Date.now();
+	const report = runInspectCode(
 		resolved,
-		changedFiles,
-		!!options.all,
+		changedFiles.join(";"),
 		!!options.swea,
 	);
-	reportResults(result.issues, result.elapsed);
+	const elapsed = Date.now() - start;
+	const issues = filterIssues(parseInspectReport(report), !!options.all);
+
+	reportResults(issues, elapsed);
 }

@@ -82,6 +82,15 @@ export const assistConfigSchema = z.strictObject({
 			feeds: z.array(z.string()).default([]),
 		})
 		.default({ feeds: [] }),
+	dotnet: z
+		.strictObject({
+			inspect: z
+				.strictObject({
+					suppress: z.array(z.string()).default([]),
+				})
+				.default({ suppress: [] }),
+		})
+		.optional(),
 	ravendb: z
 		.strictObject({
 			connections: z

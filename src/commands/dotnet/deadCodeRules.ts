@@ -1,7 +1,5 @@
 export const deadCodeRules = new Set([
-	"UnusedMember.Global",
 	"UnusedMember.Local",
-	"UnusedType.Global",
 	"UnusedType.Local",
 	"UnusedParameter.Global",
 	"UnusedParameter.Local",
