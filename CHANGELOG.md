@@ -1,3 +1,10 @@
+# [0.125.0](https://github.com/staff0rd/assist/compare/v0.124.0...v0.125.0) (2026-03-25)
+
+
+### Features
+
+* add --roslyn flag to dotnet inspect ([5c888ce](https://github.com/staff0rd/assist/commit/5c888cefe8ead7cf0119b4b911409cd0f7240b41))
+
 # [0.124.0](https://github.com/staff0rd/assist/compare/v0.123.0...v0.124.0) (2026-03-24)
 
 
