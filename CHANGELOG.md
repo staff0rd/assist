@@ -1,3 +1,10 @@
+# [0.126.0](https://github.com/staff0rd/assist/compare/v0.125.0...v0.126.0) (2026-03-25)
+
+
+### Features
+
+* add seq query commands ([ad61612](https://github.com/staff0rd/assist/commit/ad61612d820b6db04373bdd5f6958fcfe5f6deaa))
+
 # [0.125.0](https://github.com/staff0rd/assist/compare/v0.124.0...v0.125.0) (2026-03-25)
 
 
