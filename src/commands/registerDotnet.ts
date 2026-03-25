@@ -20,6 +20,7 @@ export function registerDotnet(program: Command): void {
 		)
 		.option("--all", "Show all issues, not just dead code")
 		.option("--swea", "Enable solution-wide error analysis")
+		.option("--roslyn", "Use Roslyn analyzers via msbuild instead of JetBrains")
 		.action(inspect);
 
 	cmd

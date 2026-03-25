@@ -1,26 +1,13 @@
-import { existsSync } from "node:fs";
-import path from "node:path";
 import chalk from "chalk";
 import { formatElapsed } from "../../shared/formatElapsed";
 import { checkBuildLocks } from "./checkBuildLocks";
 import { displayIssues } from "./displayIssues";
 import { filterIssues } from "./filterIssues";
-import { findSolution } from "./findSolution";
 import { getChangedCsFiles } from "./getChangedCsFiles";
-import { parseInspectReport } from "./parseInspectReport";
-import { assertJbInstalled, runInspectCode } from "./runInspectCode";
-
-function resolveSolution(sln: string | undefined): string {
-	if (sln) {
-		const resolved = path.resolve(sln);
-		if (!existsSync(resolved)) {
-			console.error(chalk.red(`Solution file not found: ${resolved}`));
-			process.exit(1);
-		}
-		return resolved;
-	}
-	return findSolution();
-}
+import { resolveSolution } from "./resolveSolution";
+import { runEngine } from "./runEngine";
+import { assertJbInstalled } from "./runInspectCode";
+import { assertMsbuildInstalled } from "./runRoslynInspect";
 
 function reportResults(
 	issues: ReturnType<typeof filterIssues>,
@@ -35,11 +22,19 @@ function reportResults(
 
 export async function inspect(
 	sln: string | undefined,
-	options: { ref?: string; base?: string; all?: boolean; swea?: boolean },
+	options: {
+		ref?: string;
+		base?: string;
+		all?: boolean;
+		swea?: boolean;
+		roslyn?: boolean;
+	},
 ): Promise<void> {
 	const resolved = resolveSolution(sln);
 	checkBuildLocks();
-	assertJbInstalled();
+
+	if (options.roslyn) assertMsbuildInstalled();
+	else assertJbInstalled();
 
 	const changedFiles = getChangedCsFiles(options.ref, options.base);
 	if (changedFiles.length === 0) {
@@ -52,13 +47,8 @@ export async function inspect(
 	);
 
 	const start = Date.now();
-	const report = runInspectCode(
-		resolved,
-		changedFiles.join(";"),
-		!!options.swea,
-	);
+	const issues = runEngine(resolved, changedFiles, options);
 	const elapsed = Date.now() - start;
-	const issues = filterIssues(parseInspectReport(report), !!options.all);
 
-	reportResults(issues, elapsed);
+	reportResults(filterIssues(issues, !!options.all), elapsed);
 }

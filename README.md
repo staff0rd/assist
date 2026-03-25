@@ -113,6 +113,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist dotnet inspect [sln]` - Run JetBrains inspections on changed .cs files to find dead code
 - `assist dotnet inspect [sln] --ref <ref>` - Inspect .cs files changed in a specific commit (default: HEAD)
 - `assist dotnet inspect [sln] --base <ref>` - Inspect all .cs files changed since diverging from a base ref (e.g. `--base main` for a full PR)
+- `assist dotnet inspect [sln] --roslyn` - Use Roslyn analyzers via msbuild instead of JetBrains
 - `assist dotnet inspect [sln] --swea` - Enable solution-wide error analysis (slower but more thorough)
 - `assist dotnet check-locks` - Check if build output files are locked by a debugger
 - `assist dotnet deps <csproj>` - Show .csproj project dependency tree and solution membership
