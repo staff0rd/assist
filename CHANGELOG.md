@@ -1,3 +1,10 @@
+# [0.127.0](https://github.com/staff0rd/assist/compare/v0.126.0...v0.127.0) (2026-03-25)
+
+
+### Features
+
+* add /inspect slash command ([54e18f5](https://github.com/staff0rd/assist/commit/54e18f58399ae16c3f70b65619b28a359a864078))
+
 # [0.126.0](https://github.com/staff0rd/assist/compare/v0.125.0...v0.126.0) (2026-03-25)
 
 
