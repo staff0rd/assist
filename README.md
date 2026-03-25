@@ -45,6 +45,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/standup` - Summarise recent journal entries as a standup update
 - `/sync` - Sync commands and settings to ~/.claude
+- `/inspect` - Run .NET code inspections on changed files
 - `/seq` - Query Seq logs from a URL or filter expression
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files

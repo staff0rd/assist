@@ -96,6 +96,8 @@
 			"SlashCommand(/jira)",
 			"Skill(seq)",
 			"SlashCommand(/seq)",
+			"Skill(inspect)",
+			"SlashCommand(/inspect)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]
