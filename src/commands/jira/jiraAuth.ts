@@ -1,6 +1,6 @@
 import { execSync } from "node:child_process";
-import Enquirer from "enquirer";
 import { loadJson, saveJson } from "../../shared/loadJson";
+import { promptInput, promptPassword } from "../../shared/promptInput";
 
 type JiraConfig = {
 	site?: string;
@@ -12,35 +12,18 @@ const CONFIG_FILE = "jira.json";
 async function promptCredentials(
 	config: JiraConfig,
 ): Promise<{ site: string; email: string; token: string }> {
-	const { Input, Password } = Enquirer as unknown as {
-		Input: new (options: {
-			name: string;
-			message: string;
-			initial?: string;
-		}) => { run: () => Promise<string> };
-		Password: new (options: {
-			name: string;
-			message: string;
-		}) => { run: () => Promise<string> };
-	};
+	const site = await promptInput(
+		"site",
+		"Jira site (e.g., mycompany.atlassian.net):",
+		config.site,
+	);
 
-	const site = await new Input({
-		name: "site",
-		message: "Jira site (e.g., mycompany.atlassian.net):",
-		initial: config.site,
-	}).run();
+	const email = await promptInput("email", "Email:", config.email);
 
-	const email = await new Input({
-		name: "email",
-		message: "Email:",
-		initial: config.email,
-	}).run();
-
-	const token = await new Password({
-		name: "token",
-		message:
-			"API token (https://id.atlassian.com/manage-profile/security/api-tokens):",
-	}).run();
+	const token = await promptPassword(
+		"token",
+		"API token (https://id.atlassian.com/manage-profile/security/api-tokens):",
+	);
 
 	return { site, email, token };
 }

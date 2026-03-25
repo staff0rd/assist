@@ -7,12 +7,21 @@ import { ravendbSetConnection } from "./ravendb/ravendbSetConnection";
 export function registerRavendb(program: Command): void {
 	const cmd = program.command("ravendb").description("RavenDB query utilities");
 
-	cmd
+	const auth = cmd
 		.command("auth")
-		.description("Configure a named RavenDB connection")
-		.option("--list", "List configured connections")
-		.option("--remove <name>", "Remove a configured connection")
-		.action((options) => ravendbAuth(options));
+		.description("Configure a named RavenDB connection");
+	auth
+		.command("add")
+		.description("Add a new connection")
+		.action(() => ravendbAuth.add());
+	auth
+		.command("list")
+		.description("List configured connections")
+		.action(() => ravendbAuth.list());
+	auth
+		.command("remove <name>")
+		.description("Remove a configured connection")
+		.action((name: string) => ravendbAuth.remove(name));
 
 	cmd
 		.command("set-connection <name>")

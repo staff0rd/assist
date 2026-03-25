@@ -19,6 +19,7 @@ import { registerNews } from "./commands/registerNews";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRavendb } from "./commands/registerRavendb";
 import { registerRefactor } from "./commands/registerRefactor";
+import { registerSeq } from "./commands/registerSeq";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
 import { registerVoice } from "./commands/registerVoice";
@@ -153,6 +154,7 @@ registerComplexity(program);
 registerDotnet(program);
 registerNews(program);
 registerRavendb(program);
+registerSeq(program);
 registerTranscript(program);
 registerVoice(program);
 

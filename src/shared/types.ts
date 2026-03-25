@@ -106,6 +106,20 @@ export const assistConfigSchema = z.strictObject({
 			defaultConnection: z.string().optional(),
 		})
 		.optional(),
+	seq: z
+		.strictObject({
+			connections: z
+				.array(
+					z.strictObject({
+						name: z.string(),
+						url: z.string(),
+						apiToken: z.string(),
+					}),
+				)
+				.default([]),
+			defaultConnection: z.string().optional(),
+		})
+		.optional(),
 	voice: z
 		.strictObject({
 			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),

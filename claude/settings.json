@@ -43,7 +43,9 @@
 			"Bash(assist dotnet:*)",
 						"Bash(assist ravendb query:*)",
 			"Bash(assist ravendb collections:*)",
-			"Bash(assist ravendb auth --list:*)",
+			"Bash(assist ravendb auth list:*)",
+			"Bash(assist seq query:*)",
+			"Bash(assist seq auth list:*)",
 			"Bash(head:*)",
 			"Bash(tail:*)",
 			"Bash(grep:*)",
@@ -92,6 +94,8 @@
 			"Skill(voice-logs)",
 			"Skill(jira)",
 			"SlashCommand(/jira)",
+			"Skill(seq)",
+			"SlashCommand(/seq)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]
