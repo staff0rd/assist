@@ -9,6 +9,16 @@ import { runEngine } from "./runEngine";
 import { assertJbInstalled } from "./runInspectCode";
 import { assertMsbuildInstalled } from "./runRoslynInspect";
 
+function logScope(changedFiles: string[] | null): void {
+	if (changedFiles === null) {
+		console.log(chalk.dim("Inspecting full solution..."));
+	} else {
+		console.log(
+			chalk.dim(`Inspecting ${changedFiles.length} changed file(s)...`),
+		);
+	}
+}
+
 function reportResults(
 	issues: ReturnType<typeof filterIssues>,
 	elapsed: number,
@@ -25,6 +35,7 @@ export async function inspect(
 	options: {
 		scope?: string;
 		all?: boolean;
+		only?: string[];
 		suppress?: string[];
 		swea?: boolean;
 		roslyn?: boolean;
@@ -44,20 +55,12 @@ export async function inspect(
 		return;
 	}
 
-	if (changedFiles === null) {
-		console.log(chalk.dim("Inspecting full solution..."));
-	} else {
-		console.log(
-			chalk.dim(`Inspecting ${changedFiles.length} changed file(s)...`),
-		);
-	}
+	logScope(changedFiles);
 
 	const start = Date.now();
 	const issues = runEngine(resolved, changedFiles, options);
 	const elapsed = Date.now() - start;
+	const { all = false, only = [], suppress = [] } = options;
 
-	reportResults(
-		filterIssues(issues, !!options.all, options.suppress ?? []),
-		elapsed,
-	);
+	reportResults(filterIssues(issues, all, only, suppress), elapsed);
 }

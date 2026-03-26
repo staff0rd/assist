@@ -19,6 +19,7 @@ export function registerDotnet(program: Command): void {
 			`File scope: ${scopeHelpText} (default: working copy diff)`,
 		)
 		.option("--all", "Show all issues, not just dead code")
+		.option("--only <ids...>", "Show only the specified issue type IDs")
 		.option("--suppress <ids...>", "Suppress specific issue type IDs")
 		.option("--swea", "Enable solution-wide error analysis")
 		.option("--roslyn", "Use Roslyn analyzers via msbuild instead of JetBrains")
