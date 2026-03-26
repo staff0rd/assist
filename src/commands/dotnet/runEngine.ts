@@ -5,13 +5,14 @@ import { runRoslynInspect } from "./runRoslynInspect";
 
 export function runEngine(
 	resolved: string,
-	changedFiles: string[],
+	changedFiles: string[] | null,
 	options: { swea?: boolean; roslyn?: boolean },
 ): Issue[] {
 	if (options.roslyn) {
-		return filterToChangedFiles(runRoslynInspect(resolved), changedFiles);
+		const issues = runRoslynInspect(resolved);
+		return changedFiles ? filterToChangedFiles(issues, changedFiles) : issues;
 	}
 	return parseInspectReport(
-		runInspectCode(resolved, changedFiles.join(";"), !!options.swea),
+		runInspectCode(resolved, changedFiles?.join(";") ?? null, !!options.swea),
 	);
 }

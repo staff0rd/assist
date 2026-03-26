@@ -18,14 +18,15 @@ export function assertJbInstalled(): void {
 
 export function runInspectCode(
 	slnPath: string,
-	include: string,
+	include: string | null,
 	swea: boolean,
 ): string {
 	const reportPath = path.join(tmpdir(), `inspect-${Date.now()}.xml`);
+	const includeFlag = include ? ` --include="${include}"` : "";
 	const sweaFlag = swea ? " --swea" : "";
 	try {
 		execSync(
-			`jb inspectcode "${slnPath}" -o="${reportPath}" --include="${include}"${sweaFlag} --verbosity=OFF`,
+			`jb inspectcode "${slnPath}" -o="${reportPath}"${includeFlag}${sweaFlag} --verbosity=OFF`,
 			{ stdio: "pipe" },
 		);
 	} catch (err) {

@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { checkBuildLocksCommand } from "./dotnet/checkBuildLocks";
 import { deps } from "./dotnet/deps";
+import { scopeHelpText } from "./dotnet/getChangedCsFiles";
 import { inSln } from "./dotnet/inSln";
 import { inspect } from "./dotnet/inspect";
 
@@ -13,12 +14,12 @@ export function registerDotnet(program: Command): void {
 			"Run JetBrains inspections on changed .cs files to find dead code",
 		)
 		.argument("[sln]", "Path to a .sln file (auto-detected if omitted)")
-		.option("--ref <ref>", "Git commit to inspect (default: working copy)")
 		.option(
-			"--base <ref>",
-			"Compare against a base ref using merge-base (e.g. main); inspects all PR changes",
+			"--scope <mode>",
+			`File scope: ${scopeHelpText} (default: working copy diff)`,
 		)
 		.option("--all", "Show all issues, not just dead code")
+		.option("--suppress <ids...>", "Suppress specific issue type IDs")
 		.option("--swea", "Enable solution-wide error analysis")
 		.option("--roslyn", "Use Roslyn analyzers via msbuild instead of JetBrains")
 		.action(inspect);

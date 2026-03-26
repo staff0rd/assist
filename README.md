@@ -114,8 +114,10 @@ After installation, the `assist` command will be available globally. You can als
 - `assist notify` - Show desktop notification from JSON stdin (supports macOS, Windows, WSL)
 - `assist status-line` - Format Claude Code status line from JSON stdin
 - `assist dotnet inspect [sln]` - Run JetBrains inspections on changed .cs files to find dead code
-- `assist dotnet inspect [sln] --ref <ref>` - Inspect .cs files changed in a specific commit (default: HEAD)
-- `assist dotnet inspect [sln] --base <ref>` - Inspect all .cs files changed since diverging from a base ref (e.g. `--base main` for a full PR)
+- `assist dotnet inspect [sln] --scope all` - Inspect the full solution
+- `assist dotnet inspect [sln] --scope base:<ref>` - Inspect all .cs files changed since diverging from a base ref (e.g. `--scope base:main` for a full PR)
+- `assist dotnet inspect [sln] --scope commit:<ref>` - Inspect .cs files changed in a specific commit
+- `assist dotnet inspect [sln] --suppress <ids...>` - Suppress specific issue type IDs on the command line
 - `assist dotnet inspect [sln] --roslyn` - Use Roslyn analyzers via msbuild instead of JetBrains
 - `assist dotnet inspect [sln] --swea` - Enable solution-wide error analysis (slower but more thorough)
 - `assist dotnet check-locks` - Check if build output files are locked by a debugger

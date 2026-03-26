@@ -3,7 +3,7 @@ import { formatElapsed } from "../../shared/formatElapsed";
 import { checkBuildLocks } from "./checkBuildLocks";
 import { displayIssues } from "./displayIssues";
 import { filterIssues } from "./filterIssues";
-import { getChangedCsFiles } from "./getChangedCsFiles";
+import { getChangedCsFiles, parseScope } from "./getChangedCsFiles";
 import { resolveSolution } from "./resolveSolution";
 import { runEngine } from "./runEngine";
 import { assertJbInstalled } from "./runInspectCode";
@@ -23,9 +23,9 @@ function reportResults(
 export async function inspect(
 	sln: string | undefined,
 	options: {
-		ref?: string;
-		base?: string;
+		scope?: string;
 		all?: boolean;
+		suppress?: string[];
 		swea?: boolean;
 		roslyn?: boolean;
 	},
@@ -36,19 +36,28 @@ export async function inspect(
 	if (options.roslyn) assertMsbuildInstalled();
 	else assertJbInstalled();
 
-	const changedFiles = getChangedCsFiles(options.ref, options.base);
-	if (changedFiles.length === 0) {
+	const scope = parseScope(options.scope);
+	const changedFiles = getChangedCsFiles(scope);
+
+	if (changedFiles !== null && changedFiles.length === 0) {
 		console.log(chalk.green("No changed .cs files found"));
 		return;
 	}
 
-	console.log(
-		chalk.dim(`Inspecting ${changedFiles.length} changed file(s)...`),
-	);
+	if (changedFiles === null) {
+		console.log(chalk.dim("Inspecting full solution..."));
+	} else {
+		console.log(
+			chalk.dim(`Inspecting ${changedFiles.length} changed file(s)...`),
+		);
+	}
 
 	const start = Date.now();
 	const issues = runEngine(resolved, changedFiles, options);
 	const elapsed = Date.now() - start;
 
-	reportResults(filterIssues(issues, !!options.all), elapsed);
+	reportResults(
+		filterIssues(issues, !!options.all, options.suppress ?? []),
+		elapsed,
+	);
 }
