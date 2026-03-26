@@ -37,10 +37,17 @@ export function saveCliReads(commands: string[]): void {
 
 export function findCliRead(command: string): string | undefined {
 	const words = command.split(/\s+/);
+	if (words.length === 0) return undefined;
+
+	const lines = getCliReadsLines();
+
+	// Match single-word entries (e.g. "head", "cat", "ls")
+	if (lines.includes(words[0])) return words[0];
+
 	if (words.length < 2) return undefined;
 
 	const prefix = `${words[0]} ${words[1]}`;
-	const candidates = getCliReadsLines().filter(
+	const candidates = lines.filter(
 		(line) => line === prefix || line.startsWith(`${prefix} `),
 	);
 

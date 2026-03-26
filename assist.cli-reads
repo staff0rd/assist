@@ -1902,6 +1902,22 @@ az webapp traffic-routing show
 az webapp vnet-integration list
 az webapp webjob continuous list
 az webapp webjob triggered list
+cat
+cut
+date
+echo
+find
+grep
+head
+jq
+ls
+printf
+sort
+tail
+tee
+tr
+uniq
+wc
 gh agent-task list
 gh agent-task view
 gh alias list
@@ -1974,6 +1990,7 @@ git diff-files
 git diff-index
 git diff-tree
 git for-each-ref
+git fetch
 git fsck
 git grep
 git help
