@@ -1,3 +1,10 @@
+# [0.129.0](https://github.com/staff0rd/assist/compare/v0.128.0...v0.129.0) (2026-03-26)
+
+
+### Features
+
+* add /raven slash command ([8029948](https://github.com/staff0rd/assist/commit/8029948a73a358dae6b79d3a1169b40e73c0d905))
+
 # [0.128.0](https://github.com/staff0rd/assist/compare/v0.127.0...v0.128.0) (2026-03-26)
 
 
