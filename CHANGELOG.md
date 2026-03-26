@@ -1,3 +1,10 @@
+# [0.132.0](https://github.com/staff0rd/assist/compare/v0.131.0...v0.132.0) (2026-03-26)
+
+
+### Features
+
+* unify inspect --scope, add --suppress ([7f4eba6](https://github.com/staff0rd/assist/commit/7f4eba6c62f85283cd05bbe66592cd6f6ca69235))
+
 # [0.131.0](https://github.com/staff0rd/assist/compare/v0.130.0...v0.131.0) (2026-03-26)
 
 
