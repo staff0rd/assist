@@ -1,3 +1,10 @@
+# [0.128.0](https://github.com/staff0rd/assist/compare/v0.127.0...v0.128.0) (2026-03-26)
+
+
+### Features
+
+* move shell read commands to cli-reads ([8b4118b](https://github.com/staff0rd/assist/commit/8b4118bab30ff8fd1b078cedd314d41dc3f143b4))
+
 # [0.127.0](https://github.com/staff0rd/assist/compare/v0.126.0...v0.127.0) (2026-03-25)
 
 
