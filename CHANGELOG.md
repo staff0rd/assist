@@ -1,3 +1,10 @@
+# [0.130.0](https://github.com/staff0rd/assist/compare/v0.129.0...v0.130.0) (2026-03-26)
+
+
+### Features
+
+* seq default 1000, warn on limit ([26f6ea5](https://github.com/staff0rd/assist/commit/26f6ea506513273accf6fa3aa92309dc944eea17))
+
 # [0.129.0](https://github.com/staff0rd/assist/compare/v0.128.0...v0.129.0) (2026-03-26)
 
 
