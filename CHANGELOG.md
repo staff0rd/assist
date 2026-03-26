@@ -1,3 +1,10 @@
+# [0.131.0](https://github.com/staff0rd/assist/compare/v0.130.0...v0.131.0) (2026-03-26)
+
+
+### Features
+
+* add roam show icon command ([f3e5bc9](https://github.com/staff0rd/assist/commit/f3e5bc903df6acedb03e2be557a78dac589279c9))
+
 # [0.130.0](https://github.com/staff0rd/assist/compare/v0.129.0...v0.130.0) (2026-03-26)
 
 
