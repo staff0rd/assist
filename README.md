@@ -82,6 +82,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog delete <id>` - Delete a backlog item
 - `assist backlog web [-p, --port <number>]` - Start a web view of the backlog (default port 3000)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
+- `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API
 - `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first)
 - `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)

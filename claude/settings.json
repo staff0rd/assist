@@ -46,6 +46,7 @@
 			"Bash(assist ravendb auth list:*)",
 			"Bash(assist seq query:*)",
 			"Bash(assist seq auth list:*)",
+			"Bash(assist roam show-claude-code-icon:*)",
 			"SlashCommand(/next-backlog-item)",
 			"SlashCommand(/verify)",
 			"SlashCommand(/commit)",
