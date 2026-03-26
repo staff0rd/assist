@@ -1,3 +1,10 @@
+# [0.133.0](https://github.com/staff0rd/assist/compare/v0.132.0...v0.133.0) (2026-03-26)
+
+
+### Features
+
+* add inspect --only filter ([d773da7](https://github.com/staff0rd/assist/commit/d773da76054402f6f7790a48487e046f2d780e9f))
+
 # [0.132.0](https://github.com/staff0rd/assist/compare/v0.131.0...v0.132.0) (2026-03-26)
 
 
