@@ -12,7 +12,7 @@ export async function seqQuery(
 	},
 ): Promise<void> {
 	const conn = resolveConnection(options.connection);
-	const count = Number.parseInt(options.count ?? "50", 10);
+	const count = Number.parseInt(options.count ?? "1000", 10);
 
 	const params = new URLSearchParams({ filter, count: String(count) });
 	const url = `${conn.url}/api/events?${params}`;
@@ -48,4 +48,11 @@ export async function seqQuery(
 	}
 
 	console.log(chalk.dim(`\n${events.length} events`));
+	if (events.length >= count) {
+		console.log(
+			chalk.yellow(
+				`Results limited to ${count}. Use --count to retrieve more.`,
+			),
+		);
+	}
 }
