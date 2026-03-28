@@ -9,8 +9,11 @@ function buildCommand(
 	configArgs: string[],
 	extraArgs: string[],
 ): string {
-	const allArgs = [...configArgs, ...extraArgs];
-	return [shellQuote(command), ...allArgs.map(shellQuote)].join(" ");
+	const parts =
+		configArgs.length === 0 && command.includes(" ")
+			? command.split(" ")
+			: [command, ...configArgs];
+	return [...parts.map(shellQuote), ...extraArgs.map(shellQuote)].join(" ");
 }
 
 function printAvailableConfigs(configs: { name: string }[]): void {
