@@ -1,3 +1,10 @@
+# [0.134.0](https://github.com/staff0rd/assist/compare/v0.133.0...v0.134.0) (2026-03-28)
+
+
+### Features
+
+* add screenshot command ([deacd78](https://github.com/staff0rd/assist/commit/deacd780af6ccd646a67529761473da383a39b1a))
+
 # [0.133.0](https://github.com/staff0rd/assist/compare/v0.132.0...v0.133.0) (2026-03-26)
 
 
