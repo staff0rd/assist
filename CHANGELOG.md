@@ -1,3 +1,10 @@
+## [0.134.1](https://github.com/staff0rd/assist/compare/v0.134.0...v0.134.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* split inline command args in run ([48428df](https://github.com/staff0rd/assist/commit/48428df2f62a98be64bee263c5b58134b13b0cf5))
+
 # [0.134.0](https://github.com/staff0rd/assist/compare/v0.133.0...v0.134.0) (2026-03-28)
 
 
