@@ -25,6 +25,7 @@ import { registerVerify } from "./commands/registerVerify";
 import { registerVoice } from "./commands/registerVoice";
 import { registerRoam } from "./commands/roam/registerRoam";
 import { listRunConfigs, run, add as runAdd } from "./commands/run";
+import { screenshot } from "./commands/screenshot";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import { update } from "./commands/update";
@@ -140,6 +141,12 @@ program
 	.command("update")
 	.description("Update assist to the latest version and sync commands")
 	.action(update);
+
+program
+	.command("screenshot")
+	.description("Capture a screenshot of a running application window")
+	.argument("<process>", "Name of the running process (e.g. notepad, code)")
+	.action(screenshot);
 
 registerCliHook(program);
 registerJira(program);

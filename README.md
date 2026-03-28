@@ -46,6 +46,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/standup` - Summarise recent journal entries as a standup update
 - `/sync` - Sync commands and settings to ~/.claude
 - `/inspect` - Run .NET code inspections on changed files
+- `/screenshot` - Capture a screenshot of a running application window
 - `/seq` - Query Seq logs from a URL or filter expression
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
@@ -142,6 +143,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist seq query <filter> -c <connection>` - Query using a specific connection
 - `assist seq query <filter> --json` - Output raw JSON
 - `assist seq query <filter> -n <count>` - Fetch a specific number of events (default 50)
+- `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
 - `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)
 - `assist complexity cyclomatic [pattern]` - Calculate cyclomatic complexity per function
 - `assist complexity halstead [pattern]` - Calculate Halstead metrics per function
