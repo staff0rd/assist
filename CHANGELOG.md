@@ -1,3 +1,10 @@
+## [0.145.1](https://github.com/staff0rd/assist/compare/v0.145.0...v0.145.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* sanitise control chars in --json stdin ([8de0379](https://github.com/staff0rd/assist/commit/8de037912518e048f26be4eee5e39dcfe9b557b8))
+
 # [0.145.0](https://github.com/staff0rd/assist/compare/v0.144.1...v0.145.0) (2026-03-29)
 
 
