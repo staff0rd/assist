@@ -26,6 +26,13 @@ export async function next(): Promise<void> {
 		return;
 	}
 
+	if (todo.length === 1) {
+		const only = todo[0];
+		console.log(chalk.bold(`Starting #${only.id}: ${only.name}`));
+		await run(String(only.id));
+		return;
+	}
+
 	const choices = todo.map((i) => ({
 		name: `${typeLabel(i.type)} #${i.id}: ${i.name}`,
 		value: String(i.id),
