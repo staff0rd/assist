@@ -1,3 +1,10 @@
+## [0.149.5](https://github.com/staff0rd/assist/compare/v0.149.4...v0.149.5) (2026-03-29)
+
+
+### Bug Fixes
+
+* skip phase advance for done items ([1242e24](https://github.com/staff0rd/assist/commit/1242e244325032673894edd2369cc1e08876e993))
+
 ## [0.149.4](https://github.com/staff0rd/assist/compare/v0.149.3...v0.149.4) (2026-03-29)
 
 
