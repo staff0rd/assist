@@ -4,6 +4,7 @@ import { SyntaxKind } from "ts-morph";
 function collectReferencedNames(sourceFile: SourceFile): Set<string> {
 	const names = new Set<string>();
 	for (const id of sourceFile.getDescendantsOfKind(SyntaxKind.Identifier)) {
+		if (id.getFirstAncestorByKind(SyntaxKind.ImportDeclaration)) continue;
 		names.add(id.getText());
 	}
 	return names;

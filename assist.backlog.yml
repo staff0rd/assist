@@ -144,7 +144,7 @@
           verify: assist backlog list -v shows numbered AC
         - task: In list/shared.ts, change the console.log bullet to use 1-based index numbering
         - task: In AcceptanceCriteriaList.tsx, replace bullet span with 1-based index number and change ul to ol
-  currentPhase: 1
+  currentPhase: 2
   status: done
 - id: 8
   type: story
@@ -298,7 +298,8 @@
   acceptanceCriteria:
     - After extracting a function, any imports in the source file that are no longer referenced by remaining code are removed
     - Extraction does not remove imports that are still used by other code in the source file
-  status: todo
+  currentPhase: 1
+  status: done
 - id: 15
   type: bug
   name: backlog add --json fails when echo passes JSON with \n literals
