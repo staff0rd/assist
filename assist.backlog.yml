@@ -127,7 +127,8 @@
           verify: No duplicate commit suggestion after review phase
         - task: Update README.md with documentation about the auto-generated review phase
           verify: README mentions the review phase behaviour
-  status: todo
+  currentPhase: 3
+  status: done
 - id: 7
   type: story
   name: Number acceptance criteria for easy reference

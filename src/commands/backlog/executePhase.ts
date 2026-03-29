@@ -18,7 +18,7 @@ export async function executePhase(
 	);
 
 	const { child, done } = spawnClaude(
-		buildPhasePrompt(item, phaseIndex, phase, phases.length),
+		buildPhasePrompt(item, phaseIndex, phase),
 	);
 	watchForMarker(child);
 	await done;

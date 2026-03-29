@@ -38,7 +38,7 @@ Once you have enough context, propose a complete backlog item. Show it to the us
 
 Keep phases small (2-4 tasks each). A typical item should have 2-3 phases.
 
-Most phases should NOT have manual checks — prefer automated verification via the `verify` field on tasks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). The last phase should always have at least one manual check to confirm the feature works end-to-end.
+Most phases should NOT have manual checks — prefer automated verification via the `verify` field on tasks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). Do not add a final phase just for end-to-end verification — a review phase is auto-appended at runtime.
 
 ## Step 4: Iterate
 

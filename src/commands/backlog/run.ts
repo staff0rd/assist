@@ -1,16 +1,19 @@
 import chalk from "chalk";
+import { buildReviewPhase } from "./buildReviewPhase";
 import { executePhase } from "./executePhase";
 import { loadAndFindItem, setStatus } from "./shared";
 import type { BacklogItem, PlanPhase } from "./types";
 
-function validatePlan(item: BacklogItem): PlanPhase[] | undefined {
-	if (!item.plan || item.plan.length === 0) {
-		console.log(
-			chalk.red("Item has no plan. Use /draft to create one with phases."),
-		);
-		return undefined;
+function resolvePlan(item: BacklogItem): PlanPhase[] {
+	if (item.plan && item.plan.length > 0) {
+		return item.plan;
 	}
-	return item.plan;
+	return [
+		{
+			name: "Implement",
+			tasks: item.acceptanceCriteria.map((ac) => ({ task: ac })),
+		},
+	];
 }
 
 export async function run(id: string): Promise<void> {
@@ -18,17 +21,17 @@ export async function run(id: string): Promise<void> {
 	if (!result) return;
 
 	const { item } = result;
-	const plan = validatePlan(item);
-	if (!plan) return;
+	const plan = resolvePlan(item);
 
 	const startPhase = item.currentPhase ?? 0;
 
-	if (startPhase >= plan.length) {
+	// plan.length means authored phases done but review not yet run;
+	// plan.length + 1 means review phase also completed
+	if (startPhase > plan.length) {
 		if (item.status !== "done") setStatus(id, "done");
 		console.log(
 			chalk.green(`All phases already complete for #${id}: ${item.name}`),
 		);
-		console.log(chalk.dim("Review the changes, then use /commit when ready."));
 		return;
 	}
 
@@ -48,7 +51,13 @@ export async function run(id: string): Promise<void> {
 		if (phaseIndex < 0) return;
 	}
 
+	// Run a dynamic review phase to verify acceptance criteria before closing
+	const reviewPhase = buildReviewPhase();
+	const allPhases = [...plan, reviewPhase];
+	const reviewIndex = plan.length;
+	const reviewResult = await executePhase(item, reviewIndex, allPhases);
+	if (reviewResult < 0) return;
+
 	setStatus(id, "done");
 	console.log(chalk.green(`\nAll phases complete for #${id}: ${item.name}`));
-	console.log(chalk.dim("Review the changes, then use /commit when ready."));
 }
