@@ -51,17 +51,17 @@ function registerRunCommands(cmd: Command): void {
 	cmd
 		.command("next")
 		.description("Pick and run the next backlog item, or open /draft if none")
-		.option("--allow-edits", "Run Claude with acceptEdits permission mode")
-		.action((opts: { allowEdits?: boolean }) =>
-			backlogNext({ allowEdits: opts.allowEdits }),
+		.option("-w, --write", "Run Claude with acceptEdits permission mode")
+		.action((opts: { write?: boolean }) =>
+			backlogNext({ allowEdits: opts.write }),
 		);
 
 	cmd
 		.command("run <id>")
 		.description("Run a backlog item's plan phase-by-phase with Claude")
-		.option("--allow-edits", "Run Claude with acceptEdits permission mode")
-		.action((id: string, opts: { allowEdits?: boolean }) =>
-			backlogRun(id, { allowEdits: opts.allowEdits }),
+		.option("-w, --write", "Run Claude with acceptEdits permission mode")
+		.action((id: string, opts: { write?: boolean }) =>
+			backlogRun(id, { allowEdits: opts.write }),
 		);
 }
 
