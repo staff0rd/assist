@@ -1,3 +1,10 @@
+# [0.149.0](https://github.com/staff0rd/assist/compare/v0.148.0...v0.149.0) (2026-03-29)
+
+
+### Features
+
+* --allow-edits for backlog run/next ([b80c91f](https://github.com/staff0rd/assist/commit/b80c91f07b0ccfa03148ef907895583601b1c9e5))
+
 # [0.148.0](https://github.com/staff0rd/assist/compare/v0.147.4...v0.148.0) (2026-03-29)
 
 
