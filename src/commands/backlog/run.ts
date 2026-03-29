@@ -43,9 +43,7 @@ export async function run(id: string): Promise<void> {
 	const reviewPhase = buildReviewPhase();
 	const allPhases = [...plan, reviewPhase];
 	const reviewIndex = plan.length;
-	const reviewResult = await executePhase(item, reviewIndex, allPhases, {
-		skipVerify: true,
-	});
+	const reviewResult = await executePhase(item, reviewIndex, allPhases);
 	if (reviewResult < 0) return;
 
 	if (item.status !== "done") setStatus(id, "done");
