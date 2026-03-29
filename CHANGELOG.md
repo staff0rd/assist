@@ -1,3 +1,10 @@
+# [0.143.0](https://github.com/staff0rd/assist/compare/v0.142.0...v0.143.0) (2026-03-29)
+
+
+### Features
+
+* auto-generate review phase for backlog ([2607e63](https://github.com/staff0rd/assist/commit/2607e6329eedc38ba792cefc8273f0373b8bf800))
+
 # [0.142.0](https://github.com/staff0rd/assist/compare/v0.141.1...v0.142.0) (2026-03-29)
 
 
