@@ -41,6 +41,18 @@ export async function applyExtraction(
 	updateImporters(functionName, sourceFile, plan.importersToUpdate);
 
 	if (plan.barrel) {
+		for (const decl of plan.barrel.getExportDeclarations()) {
+			const named = decl.getNamedExports();
+			const match = named.find((n) => n.getName() === functionName);
+			if (match) {
+				if (named.length === 1) {
+					decl.remove();
+				} else {
+					match.remove();
+				}
+				break;
+			}
+		}
 		plan.barrel.addExportDeclaration({
 			moduleSpecifier: plan.barrelRelPath,
 			namedExports: [functionName],

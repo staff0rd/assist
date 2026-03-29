@@ -316,7 +316,8 @@
     - An agent can add a backlog item with multi-line description fields in a single attempt without hitting a JSON parse error
   currentPhase: 2
   status: done
-- type: bug
+- id: 16
+  type: bug
   name: refactor extract adds unused barrel export to index.ts
   description: |-
     **Repro:**
@@ -330,5 +331,5 @@
   acceptanceCriteria:
     - refactor extract only adds a barrel export when the function was already exported via the barrel before extraction
     - Extracting a non-barrel-exported function does not modify index.ts
-  id: 16
-  status: todo
+  currentPhase: 1
+  status: done
