@@ -1,3 +1,10 @@
+## [0.147.2](https://github.com/staff0rd/assist/compare/v0.147.1...v0.147.2) (2026-03-29)
+
+
+### Bug Fixes
+
+* pass --yes flag through to MD sync ([09b10b3](https://github.com/staff0rd/assist/commit/09b10b3d96ebb26945769304a8fe3784ded2f132))
+
 ## [0.147.1](https://github.com/staff0rd/assist/compare/v0.147.0...v0.147.1) (2026-03-29)
 
 
