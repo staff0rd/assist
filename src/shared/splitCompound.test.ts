@@ -2,156 +2,263 @@ import { describe, expect, it } from "vitest";
 import { splitCompound } from "./splitCompound";
 
 describe("splitCompound", () => {
-	describe("simple commands", () => {
-		it("returns single-element array for simple command", () => {
-			expect(splitCompound("gh repo view owner/repo")).toEqual([
-				"gh repo view owner/repo",
-			]);
+	describe("when given a simple command", () => {
+		it("should return a single-element array", () => {
+			const command = "gh repo view owner/repo";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["gh repo view owner/repo"]);
 		});
 
-		it("returns single-element array for command with flags", () => {
-			expect(splitCompound("git log --oneline -n 5")).toEqual([
-				"git log --oneline -n 5",
-			]);
+		describe("when the command has flags", () => {
+			it("should return a single-element array", () => {
+				const command = "git log --oneline -n 5";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["git log --oneline -n 5"]);
+			});
 		});
 	});
 
-	describe("pipes", () => {
-		it("splits pipe into two commands", () => {
-			expect(splitCompound("gh repo view owner/repo | grep name")).toEqual([
+	describe("when the command contains a single pipe", () => {
+		it("should split into two commands", () => {
+			const command = "gh repo view owner/repo | grep name";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["gh repo view owner/repo", "grep name"]);
+		});
+	});
+
+	describe("when the command contains multiple pipes", () => {
+		it("should split into all segments", () => {
+			const command = "git log --oneline | head -5 | grep fix";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["git log --oneline", "head -5", "grep fix"]);
+		});
+	});
+
+	describe("when the command contains &&", () => {
+		it("should split into separate commands", () => {
+			const command = "git status && git diff";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["git status", "git diff"]);
+		});
+	});
+
+	describe("when the command contains ||", () => {
+		it("should split into separate commands", () => {
+			const command = "echo hello || echo fallback";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["echo hello", "echo fallback"]);
+		});
+	});
+
+	describe("when the command contains semicolons", () => {
+		it("should split into separate commands", () => {
+			const command = "echo hello; echo world";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["echo hello", "echo world"]);
+		});
+	});
+
+	describe("when the command mixes pipes and &&", () => {
+		it("should split all operators", () => {
+			const command = "gh repo view owner/repo | grep name && echo done";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual([
 				"gh repo view owner/repo",
 				"grep name",
-			]);
-		});
-
-		it("splits multi-pipe chain", () => {
-			expect(splitCompound("git log --oneline | head -5 | grep fix")).toEqual([
-				"git log --oneline",
-				"head -5",
-				"grep fix",
+				"echo done",
 			]);
 		});
 	});
 
-	describe("logical operators", () => {
-		it("splits && chain", () => {
-			expect(splitCompound("git status && git diff")).toEqual([
-				"git status",
-				"git diff",
-			]);
+	describe("when the command has env var prefixes", () => {
+		describe("when there is a single prefix", () => {
+			it("should strip the prefix", () => {
+				const command = "NODE_ENV=prod npm test";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["npm test"]);
+			});
 		});
 
-		it("splits || chain", () => {
-			expect(splitCompound("echo hello || echo fallback")).toEqual([
-				"echo hello",
-				"echo fallback",
-			]);
-		});
-	});
+		describe("when there are multiple prefixes", () => {
+			it("should strip all prefixes", () => {
+				const command = "FOO=1 BAR=2 npm test";
 
-	describe("semicolons", () => {
-		it("splits semicolons", () => {
-			expect(splitCompound("echo hello; echo world")).toEqual([
-				"echo hello",
-				"echo world",
-			]);
-		});
-	});
+				const result = splitCompound(command);
 
-	describe("mixed operators", () => {
-		it("splits mixed pipe and &&", () => {
-			expect(
-				splitCompound("gh repo view owner/repo | grep name && echo done"),
-			).toEqual(["gh repo view owner/repo", "grep name", "echo done"]);
-		});
-	});
-
-	describe("env var prefix stripping", () => {
-		it("strips single env var prefix", () => {
-			expect(splitCompound("NODE_ENV=prod npm test")).toEqual(["npm test"]);
+				expect(result).toEqual(["npm test"]);
+			});
 		});
 
-		it("strips multiple env var prefixes", () => {
-			expect(splitCompound("FOO=1 BAR=2 npm test")).toEqual(["npm test"]);
-		});
+		describe("when the prefixed command is piped", () => {
+			it("should strip the prefix and split", () => {
+				const command = "NODE_ENV=prod npm test | grep pass";
 
-		it("strips env var in piped command", () => {
-			expect(splitCompound("NODE_ENV=prod npm test | grep pass")).toEqual([
-				"npm test",
-				"grep pass",
-			]);
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["npm test", "grep pass"]);
+			});
 		});
 	});
 
-	describe("fd redirects (safe plumbing)", () => {
-		it("allows 2>&1 and strips it from the command", () => {
-			expect(splitCompound("npx vitest run 2>&1")).toEqual(["npx vitest run"]);
+	describe("when the command has fd redirects", () => {
+		describe("when using 2>&1", () => {
+			it("should strip the redirect", () => {
+				const command = "npx vitest run 2>&1";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["npx vitest run"]);
+			});
+
+			describe("when in a compound command", () => {
+				it("should strip the redirect and split", () => {
+					const command = "cd /c/git/assist && npx vitest run 2>&1";
+
+					const result = splitCompound(command);
+
+					expect(result).toEqual(["cd /c/git/assist", "npx vitest run"]);
+				});
+			});
 		});
 
-		it("allows 2>&1 in compound command", () => {
-			expect(splitCompound("cd /c/git/assist && npx vitest run 2>&1")).toEqual([
-				"cd /c/git/assist",
-				"npx vitest run",
-			]);
+		describe("when using non-numeric >&", () => {
+			it("should reject", () => {
+				const command = "echo hello >& file.txt";
+
+				const result = splitCompound(command);
+
+				expect(result).toBeUndefined();
+			});
 		});
 
-		it("rejects non-numeric >& (file redirect)", () => {
-			expect(splitCompound("echo hello >& file.txt")).toBeUndefined();
+		describe("when using 2>/dev/null", () => {
+			it("should strip the redirect", () => {
+				const command = "gh pr checks 607 2>/dev/null";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["gh pr checks 607"]);
+			});
+
+			describe("when in a piped command", () => {
+				it("should strip the redirect and split", () => {
+					const command = "gh pr checks 607 2>/dev/null | head -20";
+
+					const result = splitCompound(command);
+
+					expect(result).toEqual(["gh pr checks 607", "head -20"]);
+				});
+			});
 		});
 
-		it("allows 2>/dev/null and strips it from the command", () => {
-			expect(splitCompound("gh pr checks 607 2>/dev/null")).toEqual([
-				"gh pr checks 607",
-			]);
-		});
+		describe("when using >/dev/null", () => {
+			it("should strip the redirect", () => {
+				const command = "echo hello >/dev/null";
 
-		it("allows 2>/dev/null in piped command", () => {
-			expect(splitCompound("gh pr checks 607 2>/dev/null | head -20")).toEqual([
-				"gh pr checks 607",
-				"head -20",
-			]);
-		});
+				const result = splitCompound(command);
 
-		it("allows >/dev/null (stdout)", () => {
-			expect(splitCompound("echo hello >/dev/null")).toEqual(["echo hello"]);
+				expect(result).toEqual(["echo hello"]);
+			});
 		});
 	});
 
-	describe("unsafe constructs return undefined", () => {
-		it("rejects command substitution $()", () => {
-			expect(splitCompound("echo $(date)")).toBeUndefined();
+	describe("when the command contains unsafe constructs", () => {
+		describe("when using $() substitution", () => {
+			it("should reject", () => {
+				const command = "echo $(date)";
+
+				const result = splitCompound(command);
+
+				expect(result).toBeUndefined();
+			});
 		});
 
-		it("rejects backtick substitution", () => {
-			expect(splitCompound("echo `date`")).toBeUndefined();
+		describe("when using backtick substitution", () => {
+			it("should reject", () => {
+				const command = "echo `date`";
+
+				const result = splitCompound(command);
+
+				expect(result).toBeUndefined();
+			});
 		});
 
-		it("rejects output redirection", () => {
-			expect(splitCompound("echo hello > file.txt")).toBeUndefined();
+		describe("when using output redirection", () => {
+			it("should reject", () => {
+				const command = "echo hello > file.txt";
+
+				const result = splitCompound(command);
+
+				expect(result).toBeUndefined();
+			});
 		});
 
-		it("rejects input redirection", () => {
-			expect(splitCompound("cat < file.txt")).toBeUndefined();
+		describe("when using input redirection", () => {
+			it("should reject", () => {
+				const command = "cat < file.txt";
+
+				const result = splitCompound(command);
+
+				expect(result).toBeUndefined();
+			});
 		});
 
-		it("rejects append redirection", () => {
-			expect(splitCompound("echo hello >> file.txt")).toBeUndefined();
+		describe("when using append redirection", () => {
+			it("should reject", () => {
+				const command = "echo hello >> file.txt";
+
+				const result = splitCompound(command);
+
+				expect(result).toBeUndefined();
+			});
 		});
 	});
 
-	describe("edge cases", () => {
-		it("returns undefined for empty string", () => {
-			expect(splitCompound("")).toBeUndefined();
-		});
+	describe("when given an empty string", () => {
+		it("should return undefined", () => {
+			const command = "";
 
-		it("returns undefined for whitespace only", () => {
-			expect(splitCompound("   ")).toBeUndefined();
-		});
+			const result = splitCompound(command);
 
-		it("trims whitespace from commands", () => {
-			expect(splitCompound("  gh repo view owner/repo  ")).toEqual([
-				"gh repo view owner/repo",
-			]);
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe("when given whitespace only", () => {
+		it("should return undefined", () => {
+			const command = "   ";
+
+			const result = splitCompound(command);
+
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe("when the command has leading and trailing whitespace", () => {
+		it("should trim the whitespace", () => {
+			const command = "  gh repo view owner/repo  ";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["gh repo view owner/repo"]);
 		});
 	});
 });
