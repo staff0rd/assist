@@ -17,57 +17,130 @@ vi.mock("./matchesBashAllow", () => ({
 }));
 
 describe("isApprovedRead", () => {
-	it("returns reason for matched CLI read", () => {
-		expect(isApprovedRead("gh repo view owner/repo")).toBe(
-			"Read-only CLI command: gh repo view",
-		);
+	describe("when the command matches a CLI read", () => {
+		it("should return a read-only CLI reason", () => {
+			const command = "gh repo view owner/repo";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("Read-only CLI command: gh repo view");
+		});
 	});
 
-	it("returns reason for gh api read", () => {
-		expect(isApprovedRead("gh api repos/owner/repo")).toBe(
-			"Read-only gh api command",
-		);
+	describe("when the command is a read-only gh api call", () => {
+		it("should return a gh api reason", () => {
+			const command = "gh api repos/owner/repo";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("Read-only gh api command");
+		});
 	});
 
-	it("returns undefined for unrecognised command", () => {
-		expect(isApprovedRead("rm -rf /")).toBeUndefined();
+	describe("when the command is a write gh api call", () => {
+		it("should return undefined", () => {
+			const command = "gh api repos/owner/repo -X POST";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBeUndefined();
+		});
 	});
 
-	it("returns undefined for write gh api", () => {
-		expect(isApprovedRead("gh api repos/owner/repo -X POST")).toBeUndefined();
+	describe("when the command matches a settings allow entry", () => {
+		it("should return an allowed-by-settings reason", () => {
+			const command = "date";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("Allowed by settings: date");
+		});
 	});
 
-	it("returns reason for settings allow match", () => {
-		expect(isApprovedRead("date")).toBe("Allowed by settings: date");
+	describe("when the command is unrecognised", () => {
+		it("should return undefined", () => {
+			const command = "rm -rf /";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBeUndefined();
+		});
 	});
 
-	describe("cd to cwd", () => {
-		it("approves cd to current directory (absolute path)", () => {
-			expect(isApprovedRead(`cd ${process.cwd()}`)).toBe(
-				"cd to current directory",
-			);
+	describe("when the command is cd to the current directory", () => {
+		it("should approve cd with an absolute path", () => {
+			const command = `cd ${process.cwd()}`;
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("cd to current directory");
+		});
+
+		it("should approve cd .", () => {
+			const command = "cd .";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("cd to current directory");
+		});
+
+		it("should approve cd with a trailing slash", () => {
+			const command = `cd ${process.cwd()}/`;
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("cd to current directory");
 		});
 
 		it.skipIf(process.platform !== "win32")(
-			"approves cd to cwd via MSYS path (/c/...)",
+			"should approve cd via MSYS path (/c/...)",
 			() => {
 				const cwd = process.cwd();
-				// Convert C:\foo\bar → /c/foo/bar
 				const msys = `/${cwd[0].toLowerCase()}${cwd.slice(2).replace(/\\/g, "/")}`;
-				expect(isApprovedRead(`cd ${msys}`)).toBe("cd to current directory");
+				const command = `cd ${msys}`;
+
+				const result = isApprovedRead(command);
+
+				expect(result).toBe("cd to current directory");
 			},
 		);
+	});
 
-		it("approves cd .", () => {
-			expect(isApprovedRead("cd .")).toBe("cd to current directory");
+	describe("when the command is cd with unusual whitespace", () => {
+		it("should approve cd with extra spaces before the path", () => {
+			const command = `cd   ${process.cwd()}`;
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("cd to current directory");
 		});
 
-		it("rejects bare cd (goes to $HOME)", () => {
-			expect(isApprovedRead("cd")).toBeUndefined();
-		});
+		it("should approve cd . with extra spaces", () => {
+			const command = "cd   .";
 
-		it("rejects cd to different directory", () => {
-			expect(isApprovedRead("cd /tmp")).toBeUndefined();
+			const result = isApprovedRead(command);
+
+			expect(result).toBe("cd to current directory");
+		});
+	});
+
+	describe("when the command is bare cd", () => {
+		it("should return undefined because bare cd goes to $HOME", () => {
+			const command = "cd";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe("when the command is cd to a different directory", () => {
+		it("should return undefined", () => {
+			const command = "cd /tmp";
+
+			const result = isApprovedRead(command);
+
+			expect(result).toBeUndefined();
 		});
 	});
 });

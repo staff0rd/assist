@@ -170,7 +170,8 @@
           verify: npx vitest run src/shared/isApprovedRead.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  status: todo
+  currentPhase: 1
+  status: done
 - id: 9
   type: story
   name: Refactor isGhApiRead tests to BDD style and add missing coverage
