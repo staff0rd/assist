@@ -15,3 +15,4 @@ Where:
 - Any subsequent arguments are paths to git add before committing
 - The commit message is 40 characters or less
 - The commit message does not reference Claude
+- Match the repo's commit message style (check git log). If the repo uses conventional commits, ensure the prefix accurately reflects the nature of the change (e.g. don't use `feat:` for non-functional changes like backlog updates or config)
