@@ -199,7 +199,7 @@
           verify: npx vitest run src/shared/isGhApiRead.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  currentPhase: 1
+  currentPhase: 2
   status: done
 - id: 10
   type: story
@@ -209,6 +209,7 @@
     - All describe blocks use when phrasing (e.g. describe("when the command contains pipes"))
     - All it blocks use should phrasing
     - Each test follows AAA pattern with whitespace separation
+    - /test-review passes with no BDD structure issues
     - Tests pass and /verify is green
   plan:
     - name: Restructure tests
@@ -221,7 +222,8 @@
           verify: npx vitest run src/shared/splitCompound.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  status: todo
+  currentPhase: 2
+  status: done
 - id: 11
   type: story
   name: Refactor findFunction tests to BDD style
@@ -231,6 +233,7 @@
     - All it blocks use should phrasing
     - Each test follows AAA pattern with whitespace separation
     - Tests with two assertions split into separate it blocks under same describe(when)
+    - /test-review passes with no BDD structure issues
     - Tests pass and /verify is green
   plan:
     - name: Restructure tests
@@ -243,7 +246,8 @@
           verify: npx vitest run src/commands/refactor/extract/findFunction.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  status: todo
+  currentPhase: 1
+  status: done
 - id: 12
   type: story
   name: Refactor collectDependencies tests to BDD style
@@ -253,6 +257,7 @@
     - All it blocks use should phrasing
     - Each test follows AAA pattern with whitespace separation
     - Tests with two assertions (e.g. variables.length + getText) split into separate it blocks
+    - /test-review passes with no BDD structure issues
     - Tests pass and /verify is green
   plan:
     - name: Restructure tests
@@ -265,7 +270,7 @@
           verify: npx vitest run src/commands/refactor/extract/collectDependencies.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  status: todo
+  status: done
 - id: 13
   type: story
   name: Refactor resolveImports tests to BDD style
@@ -274,6 +279,7 @@
     - All describe blocks use when phrasing
     - All it blocks use should phrasing
     - Each test follows AAA pattern with whitespace separation
+    - /test-review passes with no BDD structure issues
     - Tests pass and /verify is green
   plan:
     - name: Restructure tests
