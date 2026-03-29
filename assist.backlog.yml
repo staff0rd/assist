@@ -377,3 +377,66 @@
           verify: assist test splitCompound
   currentPhase: 1
   status: done
+- id: 19
+  type: bug
+  name: Fix run add to split inline command args at save time
+  description: assist run add stores a quoted multi-word command as a single string with no args. assist verify then fails because buildFullCommand in resolveEntries.ts does not split at runtime. Fix by splitting at save time in add.ts, unifying with the split logic already in setupVerifyRunEntry.ts.
+  acceptanceCriteria:
+    - 'assist run add verify:lint "npx biome check --diagnostic-level=error" stores command: npx and args: [biome, check, --diagnostic-level=error]'
+    - setupVerifyRunEntry.ts uses the same shared buildRunEntry
+    - Runtime split workaround removed from buildCommand in index.ts
+    - "Tests cover: no-space command, space-in-command split, and separate args passthrough"
+  plan:
+    - name: Extract and fix buildRunEntry
+      tasks:
+        - task: Extract buildRunEntry to src/commands/run/buildRunEntry.ts with whitespace splitting when args is empty
+          verify: npx vitest run src/commands/run/buildRunEntry.test.ts
+        - task: Update add.ts to import from the new file
+          verify: npx vitest run src/commands/run/buildRunEntry.test.ts
+        - task: Update setupVerifyRunEntry.ts to use the shared function, adding GLOBAL_COMMANDS/npx logic on top
+          verify: npx vitest run src/commands/verify
+        - task: Remove the runtime split workaround from buildCommand in index.ts
+          verify: npx vitest run src/commands/run
+    - name: Tests
+      tasks:
+        - task: Add src/commands/run/buildRunEntry.test.ts covering no-split, split, and separate-args cases
+          verify: npx vitest run src/commands/run/buildRunEntry.test.ts
+  status: todo
+- id: 20
+  type: story
+  name: Add --dir option to backlog commands
+  description: Add a --dir option to the backlog parent command that overrides the directory used for backlog file discovery and marker file resolution. When provided, all backlog operations resolve assist.backlog.yml and .assist-phase-status.json from the given directory instead of process.cwd(). Config discovery is unaffected.
+  acceptanceCriteria:
+    - backlog --dir /some/path list reads the backlog from /some/path/assist.backlog.yml
+    - backlog --dir /some/path add --json writes to /some/path/assist.backlog.yml
+    - backlog --dir /some/path run <id> writes the phase status marker to /some/path/.assist-phase-status.json
+    - When --dir is not provided, behavior is unchanged (uses cwd)
+    - The top-level next alias also respects --dir if passed
+  plan:
+    - name: Plumb --dir through backlog commands
+      tasks:
+        - task: Add --dir option to the backlog parent command in registerBacklog.ts
+          verify: assist backlog --help shows --dir option
+        - task: Refactor getBacklogPath() and getPhaseStatusPath() to accept an optional directory parameter and thread it through all callers (shared helpers, web, phaseDone, etc.)
+          verify: assist backlog --dir /tmp list runs without error
+    - name: Update next alias and docs
+      tasks:
+        - task: Wire --dir through the top-level next alias
+          verify: assist next --help shows --dir option
+        - task: Update README.md with the new --dir option
+          verify: grep --dir README.md
+  status: todo
+- type: story
+  name: Auto-commit backlog after adding an item
+  description: After backlog add saves the YAML file, automatically git add and git commit the backlog file with a descriptive commit message including the item ID and name.
+  acceptanceCriteria:
+    - "After backlog add, the backlog file is committed with message chore: add backlog item #<id> — <name>"
+    - If the repo has no git or the commit fails (e.g. dirty index conflicts), the item is still added — the commit is best-effort with a warning
+    - Interactive and --json add paths both trigger the commit
+  plan:
+    - name: Add auto-commit after backlog add
+      tasks:
+        - task: "After saveBacklog() in add/index.ts, git add the backlog file and commit it with message chore: add backlog item #<id> — <name>. Handle errors gracefully (warn but do not fail). Ensure both the interactive and --json code paths are covered."
+          verify: echo {"name":"test item","type":"story","acceptanceCriteria":["works"],"plan":[]} | assist backlog add --json && git log -1 --oneline | grep backlog
+  id: 21
+  status: todo
