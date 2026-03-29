@@ -1,3 +1,10 @@
+## [0.147.1](https://github.com/staff0rd/assist/compare/v0.147.0...v0.147.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* skip barrel export for non-public fns ([0932328](https://github.com/staff0rd/assist/commit/09323286659bde16e88a44528080f11c3bedd724))
+
 # [0.147.0](https://github.com/staff0rd/assist/compare/v0.146.0...v0.147.0) (2026-03-29)
 
 
