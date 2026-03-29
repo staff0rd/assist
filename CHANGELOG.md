@@ -1,3 +1,10 @@
+# [0.140.0](https://github.com/staff0rd/assist/compare/v0.139.0...v0.140.0) (2026-03-29)
+
+
+### Features
+
+* add test-cover and test-review commands ([b8d76ef](https://github.com/staff0rd/assist/commit/b8d76ef30a75d5693380816e1950a1ae33509ff0))
+
 # [0.139.0](https://github.com/staff0rd/assist/compare/v0.138.0...v0.139.0) (2026-03-29)
 
 
