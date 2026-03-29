@@ -1,3 +1,10 @@
+## [0.141.1](https://github.com/staff0rd/assist/compare/v0.141.0...v0.141.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* mark item done on plan completion ([4cc2d0d](https://github.com/staff0rd/assist/commit/4cc2d0d48889916e54f526171581924c600542e3))
+
 # [0.141.0](https://github.com/staff0rd/assist/compare/v0.140.1...v0.141.0) (2026-03-29)
 
 
