@@ -1,3 +1,10 @@
+## [0.147.3](https://github.com/staff0rd/assist/compare/v0.147.2...v0.147.3) (2026-03-29)
+
+
+### Bug Fixes
+
+* remove inter-phase verify from backlog ([95a5597](https://github.com/staff0rd/assist/commit/95a55974881a5c9454d67d7d897c9a3ff30f526a))
+
 ## [0.147.2](https://github.com/staff0rd/assist/compare/v0.147.1...v0.147.2) (2026-03-29)
 
 
