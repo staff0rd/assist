@@ -35,7 +35,7 @@ function findItem(items: BacklogFile, id: number) {
 	return items.find((item) => item.id === id);
 }
 
-function loadAndFindItem(id: string) {
+export function loadAndFindItem(id: string) {
 	if (!existsSync(getBacklogPath())) {
 		console.log(
 			chalk.yellow(
@@ -74,4 +74,13 @@ export function removeItem(id: string): string | undefined {
 export function getNextId(items: BacklogFile): number {
 	if (items.length === 0) return 1;
 	return Math.max(...items.map((item) => item.id)) + 1;
+}
+
+export function readStdin(): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const chunks: Buffer[] = [];
+		process.stdin.on("data", (chunk) => chunks.push(chunk));
+		process.stdin.on("end", () => resolve(Buffer.concat(chunks).toString()));
+		process.stdin.on("error", reject);
+	});
 }

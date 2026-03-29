@@ -1,3 +1,4 @@
 node_modules
 dist
 books
+.assist-phase-status.json

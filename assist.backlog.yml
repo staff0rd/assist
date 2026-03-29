@@ -25,3 +25,45 @@
     We should add this as a dotnet command to assist.
   acceptanceCriteria: []
   status: done
+- type: story
+  name: Add refactor extract command
+  description: Add assist refactor extract <file> <functionName> <destination> that uses ts-morph to move a function and its private dependencies from one file to a new file, updating all imports. Follows existing refactor patterns (dry-run by default, --apply to execute).
+  acceptanceCriteria:
+    - Extracts the named function and all same-file private (non-exported) functions it transitively depends on
+    - Creates the destination file with the extracted functions and their required imports
+    - Removes the extracted functions from the source file
+    - Adds import { functionName } from "./destination" to the source file
+    - Updates any other files that already import the function (if it was exported)
+    - Adds the export to the nearest barrel index.ts if one exists in the destination directory
+    - Dry-run by default showing what would happen, --apply to execute
+    - assist verify passes after extraction with --apply
+  plan:
+    - name: Core extraction logic
+      tasks:
+        - task: Find the target function declaration in the source file using ts-morph
+          verify: Function is located by name and type
+        - task: Walk the same-file call graph to collect all private (non-exported) functions the target transitively depends on
+          verify: All transitive private deps are identified
+        - task: Resolve the required imports for the destination file (imports used by extracted functions)
+          verify: Import list is complete and correct
+    - name: File manipulation
+      tasks:
+        - task: Create the destination file with extracted functions and their required imports
+          verify: Destination file compiles independently
+        - task: Remove extracted functions from the source file
+          verify: Source file still compiles
+        - task: Add import of the extracted function to the source file
+          verify: Source file references resolve
+        - task: Update any other files that already import the function
+          verify: No broken imports across project
+        - task: Add export to nearest barrel index.ts if one exists in the destination directory
+          verify: Barrel file exports the new function
+    - name: Registration and wiring
+      tasks:
+        - task: Register the extract command under refactor with --apply flag
+          verify: assist refactor extract --help works
+        - task: Update README.md with new command documentation
+        - task: Update CLAUDE.md refactor docs to mention extract command
+        - task: Add read-only command to settings.json allow list
+  id: 4
+  status: todo

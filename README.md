@@ -36,6 +36,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/comment` - Add pending review comments to the current PR
 - `/commit` - Commit only relevant files from the session
 - `/devlog` - Generate devlog entry for the next unversioned day
+- `/draft` - Draft a new backlog item with LLM-assisted questioning
 - `/next-backlog-item` - Pick and implement the next backlog item
 - `/pr` - Raise a PR with a concise description
 - `/refactor` - Run refactoring checks for code quality
@@ -78,9 +79,14 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog init` - Create an empty assist.backlog.yml
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
+- `assist backlog add --json` - Add a backlog item from JSON on stdin (used by `/draft`)
+- `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
 - `assist backlog delete <id>` - Delete a backlog item
+- `assist backlog plan <id>` - Display the phased plan for a backlog item
+- `assist backlog phase-done <id> <phase>` - Signal that a plan phase is complete (used by orchestrator)
+- `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude
 - `assist backlog web [-p, --port <number>]` - Start a web view of the backlog (default port 3000)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API

@@ -33,6 +33,9 @@
 			"Bash(assist backlog list:*)",
 			"Bash(assist backlog start:*)",
 			"Bash(assist backlog done:*)",
+			"Bash(assist backlog plan:*)",
+			"Bash(assist backlog phase-done:*)",
+			"Bash(assist backlog add:*)",
 			"Bash(assist transcript summarise:*)",
 			"Bash(assist complexity:*)",
 			"Bash(assist transcript format:*)",
@@ -86,6 +89,8 @@
 			"SlashCommand(/inspect)",
 			"Skill(screenshot)",
 			"SlashCommand(/screenshot)",
+			"Skill(draft)",
+			"SlashCommand(/draft)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]
