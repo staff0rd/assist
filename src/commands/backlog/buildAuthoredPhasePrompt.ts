@@ -27,7 +27,7 @@ function buildContextLines(
 	phaseIndex: number,
 	phase: PlanPhase,
 ): string[] {
-	const ac = item.acceptanceCriteria.map((c) => `- ${c}`).join("\n");
+	const ac = item.acceptanceCriteria.map((c, i) => `${i + 1}. ${c}`).join("\n");
 	return [
 		`You are implementing phase ${phaseIndex + 1} of backlog item #${item.id}: ${item.name}`,
 		"",

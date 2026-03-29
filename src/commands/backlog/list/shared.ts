@@ -34,8 +34,8 @@ export function printVerboseDetails(item: BacklogFile[number]): void {
 	}
 	if (item.acceptanceCriteria.length > 0) {
 		console.log(`  ${chalk.dim("Acceptance criteria:")}`);
-		for (const criterion of item.acceptanceCriteria) {
-			console.log(`    - ${criterion}`);
+		for (const [i, criterion] of item.acceptanceCriteria.entries()) {
+			console.log(`    ${i + 1}. ${criterion}`);
 		}
 	}
 	console.log();

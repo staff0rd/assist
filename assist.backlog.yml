@@ -144,7 +144,8 @@
           verify: assist backlog list -v shows numbered AC
         - task: In list/shared.ts, change the console.log bullet to use 1-based index numbering
         - task: In AcceptanceCriteriaList.tsx, replace bullet span with 1-based index number and change ul to ol
-  status: todo
+  currentPhase: 1
+  status: done
 - id: 8
   type: story
   name: Refactor isApprovedRead tests to BDD style
@@ -281,4 +282,35 @@
           verify: npx vitest run src/commands/refactor/extract/resolveImports.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
+  status: todo
+- id: 14
+  type: bug
+  name: refactor extract leaves unused imports in source file
+  description: |-
+    **Repro:**
+    1. Have a file (`run.ts`) with a function (`resolvePlan`) that is the sole consumer of certain type imports (`BacklogItem`, `PlanPhase`)
+    2. Run `assist refactor extract src/commands/backlog/run.ts resolvePlan src/commands/backlog/resolvePlan.ts --apply`
+    3. Inspect the source file after extraction
+
+    **Expected:** Imports that are no longer used by any remaining code in the source file are removed during extraction.
+
+    **Actual:** The `import type { BacklogItem, PlanPhase } from "./types"` was left behind in `run.ts` despite `resolvePlan` being the only function that referenced those types. This caused a lint failure (`noUnusedImports`).
+  acceptanceCriteria:
+    - After extracting a function, any imports in the source file that are no longer referenced by remaining code are removed
+    - Extraction does not remove imports that are still used by other code in the source file
+  status: todo
+- id: 15
+  type: bug
+  name: backlog add --json fails when echo passes JSON with \n literals
+  description: |-
+    **Repro:**
+    1. An agent generates JSON with `\n` escape sequences in string values
+    2. Pipes it to `assist backlog add --json` using `echo`
+    3. `JSON.parse` throws `SyntaxError: Bad control character in string literal`
+
+    **Expected:** The agent successfully adds a backlog item on the first attempt.
+
+    **Actual:** The command fails, requiring the agent to retry with a different shell approach (heredoc).
+  acceptanceCriteria:
+    - An agent can add a backlog item with multi-line description fields in a single attempt without hitting a JSON parse error
   status: todo

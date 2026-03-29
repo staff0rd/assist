@@ -1,20 +1,8 @@
 import chalk from "chalk";
 import { buildReviewPhase } from "./buildReviewPhase";
 import { executePhase } from "./executePhase";
+import { resolvePlan } from "./resolvePlan";
 import { loadAndFindItem, setStatus } from "./shared";
-import type { BacklogItem, PlanPhase } from "./types";
-
-function resolvePlan(item: BacklogItem): PlanPhase[] {
-	if (item.plan && item.plan.length > 0) {
-		return item.plan;
-	}
-	return [
-		{
-			name: "Implement",
-			tasks: item.acceptanceCriteria.map((ac) => ({ task: ac })),
-		},
-	];
-}
 
 export async function run(id: string): Promise<void> {
 	const result = loadAndFindItem(id);

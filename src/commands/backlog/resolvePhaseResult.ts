@@ -3,6 +3,7 @@ import { existsSync, unlinkSync } from "node:fs";
 import chalk from "chalk";
 import enquirer from "enquirer";
 import { getPhaseStatusPath } from "./phaseDone";
+import { spawnClaude } from "./spawnClaude";
 
 function cleanupMarker(): void {
 	const statusPath = getPhaseStatusPath();
@@ -30,13 +31,28 @@ async function handleCompletedPhase(phaseIndex: number): Promise<boolean> {
 		return true;
 	}
 
-	const { action } = await enquirer.prompt<{ action: string }>({
-		type: "select",
-		name: "action",
-		message: "Verification failed. What would you like to do?",
-		choices: ["Continue to next phase", "Abort"],
-	});
-	return action === "Continue to next phase";
+	while (true) {
+		const { action } = await enquirer.prompt<{ action: string }>({
+			type: "select",
+			name: "action",
+			message: "Verification failed. What would you like to do?",
+			choices: ["Fix", "Continue to next phase", "Abort"],
+		});
+
+		if (action === "Fix") {
+			const { done } = spawnClaude(
+				"Run /verify and fix all failures. Do not move on until every check passes.",
+			);
+			await done;
+			if (runVerify()) {
+				console.log(chalk.green("Verification passed."));
+				return true;
+			}
+			continue;
+		}
+
+		return action === "Continue to next phase";
+	}
 }
 
 async function handleIncompletePhase(): Promise<"retry" | "skip" | "abort"> {

@@ -1,4 +1,11 @@
-import { type MockInstance, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	beforeEach,
+	describe,
+	expect,
+	it,
+	type MockInstance,
+	vi,
+} from "vitest";
 import type { BacklogItem, PlanPhase } from "./types";
 
 vi.mock("./executePhase", () => ({
@@ -11,8 +18,8 @@ vi.mock("./shared", () => ({
 }));
 
 import { executePhase } from "./executePhase";
-import { loadAndFindItem, setStatus } from "./shared";
 import { run } from "./run";
+import { loadAndFindItem, setStatus } from "./shared";
 
 const mockExecutePhase = executePhase as unknown as MockInstance;
 const mockLoadAndFindItem = loadAndFindItem as unknown as MockInstance;
@@ -196,10 +203,7 @@ describe("run", () => {
 			const firstCall = mockExecutePhase.mock.calls[0];
 			const phases: PlanPhase[] = firstCall[2];
 			expect(phases[0].name).toBe("Implement");
-			expect(phases[0].tasks).toEqual([
-				{ task: "AC1" },
-				{ task: "AC2" },
-			]);
+			expect(phases[0].tasks).toEqual([{ task: "AC1" }, { task: "AC2" }]);
 		});
 	});
 });

@@ -11,14 +11,14 @@ export function AcceptanceCriteriaList({
 			<h3 className="text-xs uppercase text-gray-500 mb-2 tracking-wide">
 				Acceptance Criteria
 			</h3>
-			<ul className="list-none">
-				{criteria.map((ac) => (
+			<ol className="list-none">
+				{criteria.map((ac, i) => (
 					<li key={ac} className="py-1">
-						<span className="text-gray-500 mr-2">&bull;</span>
+						<span className="text-gray-500 mr-2">{i + 1}.</span>
 						{ac}
 					</li>
 				))}
-			</ul>
+			</ol>
 		</div>
 	);
 }
