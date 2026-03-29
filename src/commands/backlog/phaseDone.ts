@@ -1,7 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
-import { setCurrentPhase } from "./shared";
+import { loadAndFindItem, setCurrentPhase } from "./shared";
 
 const PHASE_STATUS_FILE = ".assist-phase-status.json";
 
@@ -20,6 +20,13 @@ export function phaseDone(id: string, phase: string): void {
 			completedAt: new Date().toISOString(),
 		}),
 	);
+
+	const result = loadAndFindItem(id);
+	if (result?.item.status === "done") {
+		console.log(chalk.dim(`Item #${id} already done, skipping phase advance.`));
+		return;
+	}
+
 	setCurrentPhase(id, phaseIndex + 1);
 	console.log(chalk.green(`Phase ${phase} of item #${id} marked as complete.`));
 }
