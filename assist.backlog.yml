@@ -291,7 +291,7 @@
           verify: npx vitest run src/commands/refactor/extract/resolveImports.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  currentPhase: 1
+  currentPhase: 2
   status: done
 - id: 14
   type: bug
@@ -341,5 +341,22 @@
   acceptanceCriteria:
     - refactor extract only adds a barrel export when the function was already exported via the barrel before extraction
     - Extracting a non-barrel-exported function does not modify index.ts
+  currentPhase: 1
+  status: done
+- id: 17
+  type: bug
+  name: refactor extract copies import paths verbatim into destination
+  description: |-
+    **Repro:**
+    1. Have a file `src/commands/registerBacklog.ts` that imports from `"./backlog"` (a barrel)
+    2. Run `assist refactor extract src/commands/registerBacklog.ts registerItemCommands src/commands/backlog/registerItemCommands.ts --apply`
+    3. The extracted file lands inside `backlog/` but still contains `from "./backlog"`
+
+    **Expected:** Import paths in the extracted file are rewritten relative to the destination directory (e.g. direct imports from `./add`, `./init`, `./list`).
+
+    **Actual:** Import paths are copied verbatim from the source file, producing an unresolvable `./backlog` import that fails build and type checks.
+  acceptanceCriteria:
+    - When extracting to a different directory, import paths in the destination file are rewritten relative to the destination
+    - Build and type checks pass on the extracted file without manual fixup
   currentPhase: 1
   status: done

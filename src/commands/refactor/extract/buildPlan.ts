@@ -5,6 +5,7 @@ import { buildDestinationContent } from "./buildDestinationContent";
 import { findImporters, type ImporterUpdate } from "./findImporters";
 import { getRelativeImportPath } from "./getRelativeImportPath";
 import { resolveBarrel } from "./resolveBarrel";
+import { rewriteImportPaths } from "./rewriteImportPaths";
 import { sourceReferencesName } from "./sourceReferencesName";
 
 export type ExtractionPlan = Omit<TargetAnalysis, "functionTexts"> & {
@@ -26,6 +27,11 @@ export function buildPlan(
 ): ExtractionPlan {
 	const analysis = analyseTarget(sourceFile, functionName);
 	const sourceRelPath = getRelativeImportPath(destPath, sourcePath);
+	const rewrittenImports = rewriteImportPaths(
+		analysis.imports,
+		sourcePath,
+		destPath,
+	);
 
 	const { functionTexts: _, ...planFields } = analysis;
 
@@ -33,7 +39,7 @@ export function buildPlan(
 		...planFields,
 		destContent: buildDestinationContent(
 			analysis.functionTexts,
-			analysis.imports,
+			rewrittenImports,
 			sourceRelPath,
 			analysis.exportedDeps,
 		),
