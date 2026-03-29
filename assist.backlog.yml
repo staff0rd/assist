@@ -25,7 +25,8 @@
     We should add this as a dotnet command to assist.
   acceptanceCriteria: []
   status: done
-- type: story
+- id: 4
+  type: story
   name: Add refactor extract command
   description: Add assist refactor extract <file> <functionName> <destination> that uses ts-morph to move a function and its private dependencies from one file to a new file, updating all imports. Follows existing refactor patterns (dry-run by default, --apply to execute).
   acceptanceCriteria:
@@ -65,5 +66,81 @@
         - task: Update README.md with new command documentation
         - task: Update CLAUDE.md refactor docs to mention extract command
         - task: Add read-only command to settings.json allow list
-  id: 4
+  currentPhase: 3
+  status: in-progress
+- id: 5
+  type: story
+  name: Display plan and phase progress in backlog web view
+  description: The backlog web detail view doesn't render the plan, currentPhase, or manualChecks fields that were recently added to the schema. Add a read-only plan section below the acceptance criteria showing phases, tasks, verify steps, and manual checks, with the current phase visually indicated.
+  acceptanceCriteria:
+    - Web UI BacklogItem type includes plan, currentPhase, and manualChecks
+    - ItemBody renders a Plan section below acceptance criteria when plan is present
+    - Each phase shows its name, tasks (with optional verify steps), and manual checks
+    - The current phase (based on currentPhase) is visually highlighted; completed phases are marked as done
+    - Items with no plan show no plan section (no empty state)
+  plan:
+    - name: Update types and plan component
+      tasks:
+        - task: Update the web UI BacklogItem type to match the core schema (add plan, currentPhase, manualChecks)
+          verify: Type compiles and matches core BacklogItem
+        - task: Create a read-only PlanSection component that renders phases, tasks, verify steps, and manual checks with current/completed phase indicators
+          verify: Component renders correctly with sample data
+    - name: Wire into detail view
+      tasks:
+        - task: Render PlanSection in ItemBody below acceptance criteria
+          verify: Plan section appears in the web detail view for items with a plan
+        - task: Verify items with no plan show no plan section
+          verify: Detail view for plan-less items renders without errors or empty sections
+  status: todo
+- id: 6
+  type: story
+  name: Auto-generate review phase for backlog items
+  description: Automatically append a review phase to every backlog item when added. The review phase verifies all acceptance criteria against the implementation, asks the user to perform manual checks, marks the story done, calls /commit, then signals phase-done.
+  acceptanceCriteria:
+    - When a backlog item with a plan is added (via --json or interactive), a review phase is auto-appended
+    - The review phase prompt instructs the agent to verify each acceptance criterion against the current code
+    - The agent reports pass/fail per criterion before proceeding
+    - The agent asks the user to confirm manual checks
+    - After confirmation, the agent runs assist backlog done <id>, then /commit, then assist backlog phase-done
+    - The review phase is always the last phase and is not editable by the author
+    - Existing items without a review phase are unaffected (no migration)
+  plan:
+    - name: Auto-append review phase on add
+      tasks:
+        - task: "Create a helper function that generates the review phase object (name: Review, with a single task describing the review process)"
+          verify: Helper returns a valid PlanPhase
+        - task: Modify addFromJson in add/index.ts to append the review phase to items that have a plan
+          verify: JSON-added items with a plan get the review phase appended
+        - task: Interactive add does not add plans so no change needed there — add a comment clarifying this
+          verify: Interactive add still works unchanged
+    - name: Review phase prompt
+      tasks:
+        - task: Add a detection mechanism in buildPhasePrompt to identify the review phase (e.g. by name convention)
+          verify: Review phase is correctly identified
+        - task: Build a specialised prompt for the review phase that lists each AC and instructs the agent to verify against code
+          verify: Prompt includes all acceptance criteria with verify instructions
+        - task: "Prompt instructs the agent to: confirm manual checks, run assist backlog done, call /commit, then call phase-done"
+          verify: Prompt contains the correct command sequence
+    - name: Wiring and docs
+      tasks:
+        - task: Update run.ts completion message since the review phase now handles commit
+          verify: No duplicate commit suggestion after review phase
+        - task: Update README.md with documentation about the auto-generated review phase
+          verify: README mentions the review phase behaviour
+  status: todo
+- type: story
+  name: Number acceptance criteria for easy reference
+  description: Change acceptance criteria rendering from bullet points to numbered lists so individual criteria can be referenced by number (e.g. AC 1).
+  acceptanceCriteria:
+    - CLI backlog list -v shows numbered AC (e.g. 1. criterion)
+    - Phase prompt sent to Claude uses numbered AC
+    - Web UI renders AC as a numbered list
+  plan:
+    - name: Update rendering
+      tasks:
+        - task: In buildPhasePrompt.ts, change .map((c) => `- ${c}`) to use 1-based index numbering
+          verify: assist backlog list -v shows numbered AC
+        - task: In list/shared.ts, change the console.log bullet to use 1-based index numbering
+        - task: In AcceptanceCriteriaList.tsx, replace bullet span with 1-based index number and change ul to ol
+  id: 7
   status: todo
