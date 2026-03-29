@@ -1,3 +1,10 @@
+## [0.147.4](https://github.com/staff0rd/assist/compare/v0.147.3...v0.147.4) (2026-03-29)
+
+
+### Bug Fixes
+
+* auto-select sole backlog item ([3400bd8](https://github.com/staff0rd/assist/commit/3400bd83e8b64b63f73a91628dfb2d60d61c7ea8))
+
 ## [0.147.3](https://github.com/staff0rd/assist/compare/v0.147.2...v0.147.3) (2026-03-29)
 
 
