@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
+import { typeLabel } from "./list/shared";
 import { run } from "./run";
 import { loadBacklog } from "./shared";
 import { spawnClaude } from "./spawnClaude";
@@ -26,7 +27,7 @@ export async function next(): Promise<void> {
 	}
 
 	const choices = todo.map((i) => ({
-		name: `#${i.id}: ${i.name}`,
+		name: `${typeLabel(i.type)} #${i.id}: ${i.name}`,
 		value: String(i.id),
 	}));
 
@@ -37,6 +38,6 @@ export async function next(): Promise<void> {
 		choices: choices.map((c) => c.name),
 	});
 
-	const id = selected.split(":")[0].slice(1);
+	const id = selected.match(/#(\d+)/)?.[1] ?? "";
 	await run(id);
 }
