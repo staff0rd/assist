@@ -1,40 +1,13 @@
 import { existsSync } from "node:fs";
 import chalk from "chalk";
 import { getBacklogPath, loadBacklog } from "../shared";
-import type { BacklogFile, BacklogStatus, BacklogType } from "../types";
-
-function statusIcon(status: BacklogStatus): string {
-	switch (status) {
-		case "todo":
-			return chalk.dim("[ ]");
-		case "in-progress":
-			return chalk.yellow("[~]");
-		case "done":
-			return chalk.green("[x]");
-	}
-}
-
-function typeLabel(type: BacklogType): string {
-	switch (type) {
-		case "bug":
-			return chalk.magenta("Bug");
-		case "story":
-			return chalk.cyan("Story");
-	}
-}
-
-function printVerboseDetails(item: BacklogFile[number]): void {
-	if (item.description) {
-		console.log(`  ${chalk.dim("Description:")} ${item.description}`);
-	}
-	if (item.acceptanceCriteria.length > 0) {
-		console.log(`  ${chalk.dim("Acceptance criteria:")}`);
-		for (const criterion of item.acceptanceCriteria) {
-			console.log(`    - ${criterion}`);
-		}
-	}
-	console.log();
-}
+import type { BacklogFile } from "../types";
+import {
+	phaseLabel,
+	printVerboseDetails,
+	statusIcon,
+	typeLabel,
+} from "./shared";
 
 type ListOptions = {
 	status?: string;
@@ -49,8 +22,7 @@ function filterItems(items: BacklogFile, options: ListOptions): BacklogFile {
 }
 
 export async function list(options: ListOptions): Promise<void> {
-	const backlogPath = getBacklogPath();
-	if (!existsSync(backlogPath)) {
+	if (!existsSync(getBacklogPath())) {
 		console.log(
 			chalk.yellow(
 				"No backlog found. Run 'assist backlog init' to create one.",
@@ -65,7 +37,7 @@ export async function list(options: ListOptions): Promise<void> {
 	}
 	for (const item of items) {
 		console.log(
-			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}`,
+			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}${phaseLabel(item)}`,
 		);
 		if (options.verbose) {
 			printVerboseDetails(item);

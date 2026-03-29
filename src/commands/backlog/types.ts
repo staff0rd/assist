@@ -20,6 +20,7 @@ const backlogItemSchema = z.strictObject({
 	description: z.string().optional(),
 	acceptanceCriteria: z.array(z.string()),
 	plan: z.array(planPhaseSchema).optional(),
+	currentPhase: z.number().optional(),
 	status: backlogStatusSchema,
 });
 

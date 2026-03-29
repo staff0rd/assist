@@ -22,10 +22,17 @@ export async function run(id: string): Promise<void> {
 	if (!plan) return;
 
 	setStatus(id, "in-progress");
+	const startPhase = item.currentPhase ?? 0;
 	console.log(chalk.bold(`Running plan for #${id}: ${item.name}`));
-	console.log(chalk.dim(`${plan.length} phase(s)\n`));
+	if (startPhase > 0) {
+		console.log(
+			chalk.dim(`Resuming from phase ${startPhase + 1}/${plan.length}\n`),
+		);
+	} else {
+		console.log(chalk.dim(`${plan.length} phase(s)\n`));
+	}
 
-	let phaseIndex = 0;
+	let phaseIndex = startPhase;
 	while (phaseIndex < plan.length) {
 		phaseIndex = await executePhase(item, phaseIndex, plan);
 		if (phaseIndex < 0) return;

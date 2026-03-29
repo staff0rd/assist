@@ -64,6 +64,13 @@ export function setStatus(
 	return result.item.name;
 }
 
+export function setCurrentPhase(id: string, phase: number): void {
+	const result = loadAndFindItem(id);
+	if (!result) return;
+	result.item.currentPhase = phase;
+	saveBacklog(result.items);
+}
+
 export function removeItem(id: string): string | undefined {
 	const result = loadAndFindItem(id);
 	if (!result) return undefined;
