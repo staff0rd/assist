@@ -1,3 +1,10 @@
+# [0.137.0](https://github.com/staff0rd/assist/compare/v0.136.2...v0.137.0) (2026-03-29)
+
+
+### Features
+
+* add manual checks to backlog phases ([d9372f2](https://github.com/staff0rd/assist/commit/d9372f22a5455a8338294dad527460c6e68bbea9))
+
 ## [0.136.2](https://github.com/staff0rd/assist/compare/v0.136.1...v0.136.2) (2026-03-29)
 
 
