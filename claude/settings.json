@@ -89,6 +89,10 @@
 			"SlashCommand(/screenshot)",
 			"Skill(draft)",
 			"SlashCommand(/draft)",
+			"Skill(test-cover)",
+			"SlashCommand(/test-cover)",
+			"Skill(test-review)",
+			"SlashCommand(/test-review)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]
