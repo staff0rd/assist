@@ -1,3 +1,10 @@
+# [0.146.0](https://github.com/staff0rd/assist/compare/v0.145.1...v0.146.0) (2026-03-29)
+
+
+### Features
+
+* add remove alias for backlog delete ([577aa1b](https://github.com/staff0rd/assist/commit/577aa1b0625a2b59452e188855fe2fd8025763fc))
+
 ## [0.145.1](https://github.com/staff0rd/assist/compare/v0.145.0...v0.145.1) (2026-03-29)
 
 
