@@ -1,3 +1,10 @@
+# [0.148.0](https://github.com/staff0rd/assist/compare/v0.147.4...v0.148.0) (2026-03-29)
+
+
+### Features
+
+* add coverage command ([2aaab80](https://github.com/staff0rd/assist/commit/2aaab80683ad879c798f3f7c40663dd5083eba2e))
+
 ## [0.147.4](https://github.com/staff0rd/assist/compare/v0.147.3...v0.147.4) (2026-03-29)
 
 
