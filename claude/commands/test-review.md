@@ -35,7 +35,7 @@ Assess each test file against these criteria:
 ### BDD structure and Arrange-Act-Assert
 - Does the outer `describe` name the function or module under test?
 - Do inner `describe("when ...")` blocks group tests by shared setup/scenario?
-- Do `it` blocks use `should` phrasing (e.g., `it("should return empty array when no matches")`)?
+- Do `it` blocks use `should` phrasing with bare outcomes (e.g., `it("should allow")`, `it("should reject")`)? State specifiers (flags, syntax variants, conditions) belong in `when` blocks, never in `it` descriptions.
 - Does each test follow Arrange, Act, Assert ordering (without comments labelling the sections)?
 - Are assertions minimal per test — ideally one, at most two closely related? If multiple things are asserted about the same action, are they split into separate `it` blocks under the same `describe("when ...")`?
 

@@ -51,7 +51,7 @@ Use a behavioural, BDD-style structure:
 
 - **Outer `describe`** — the function or module under test
 - **Inner `describe("when ...")`** — groups tests that share the same setup/scenario
-- **`it("should ...")`** — asserts a single rule or behaviour
+- **`it("should ...")`** — asserts a single rule or behaviour. State specifiers (flags, syntax variants, conditions) belong in `when` blocks, never in `it` descriptions — keep assertions as bare outcomes (e.g. "should allow", "should reject")
 
 Each test follows an **Arrange, Act, Assert** pattern. Do NOT add `// arrange`, `// act`, `// assert` comments — just structure the code in that order with whitespace separating the three sections.
 

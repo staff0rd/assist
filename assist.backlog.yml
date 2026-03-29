@@ -170,7 +170,7 @@
           verify: npx vitest run src/shared/isApprovedRead.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  currentPhase: 1
+  currentPhase: 2
   status: done
 - id: 9
   type: story
@@ -199,7 +199,8 @@
           verify: npx vitest run src/shared/isGhApiRead.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  status: todo
+  currentPhase: 1
+  status: done
 - id: 10
   type: story
   name: Refactor splitCompound tests to BDD style
