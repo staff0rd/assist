@@ -11,6 +11,7 @@ const planTaskSchema = z.strictObject({
 const planPhaseSchema = z.strictObject({
 	name: z.string(),
 	tasks: z.array(planTaskSchema),
+	manualChecks: z.array(z.string()).optional(),
 });
 
 const backlogItemSchema = z.strictObject({

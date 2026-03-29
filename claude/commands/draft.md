@@ -34,9 +34,11 @@ Once you have enough context, propose a complete backlog item. Show it to the us
 
 **Plan:**
 - Phase 1: (name) — tasks...
-- Phase 2: (name) — tasks...
+- Phase 2: (name) — tasks... [manual checks: ...]
 
 Keep phases small (2-4 tasks each). A typical item should have 2-3 phases.
+
+Most phases should NOT have manual checks — prefer automated verification via the `verify` field on tasks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). The last phase should always have at least one manual check to confirm the feature works end-to-end.
 
 ## Step 4: Iterate
 
@@ -57,7 +59,8 @@ Once confirmed, pipe the JSON to the CLI. The JSON must match this shape:
       "name": "Phase name",
       "tasks": [
         { "task": "Do something", "verify": "optional verification step" }
-      ]
+      ],
+      "manualChecks": ["optional — only for checks that can't be automated"]
     }
   ]
 }

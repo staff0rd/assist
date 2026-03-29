@@ -37,7 +37,6 @@ After installation, the `assist` command will be available globally. You can als
 - `/commit` - Commit only relevant files from the session
 - `/devlog` - Generate devlog entry for the next unversioned day
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
-- `/next-backlog-item` - Pick and implement the next backlog item
 - `/pr` - Raise a PR with a concise description
 - `/refactor` - Run refactoring checks for code quality
 - `/restructure` - Analyze and restructure tightly-coupled files
@@ -105,6 +104,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist refactor ignore <file>` - Add a file to the refactor ignore list
 - `assist refactor rename file <source> <destination>` - Rename/move a TypeScript file and update all imports (dry-run by default, use `--apply` to execute)
 - `assist refactor rename symbol <file> <oldName> <newName>` - Rename a variable, function, class, or type across the project (dry-run by default, use `--apply` to execute)
+- `assist refactor extract <file> <functionName> <destination>` - Extract a function and its private dependencies to a new file (dry-run by default, use `--apply` to execute)
 - `assist refactor restructure [pattern]` - Analyze import graph and restructure tightly-coupled files into nested directories
 - `assist devlog list` - Group git commits by date
 - `assist devlog next` - Show commits for the day after the last versioned entry
