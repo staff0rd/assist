@@ -1,3 +1,10 @@
+# [0.145.0](https://github.com/staff0rd/assist/compare/v0.144.1...v0.145.0) (2026-03-29)
+
+
+### Features
+
+* show type in backlog next list ([32d1a03](https://github.com/staff0rd/assist/commit/32d1a03ae7f1f47d4c275bf702ef686783b2c395))
+
 ## [0.144.1](https://github.com/staff0rd/assist/compare/v0.144.0...v0.144.1) (2026-03-29)
 
 
