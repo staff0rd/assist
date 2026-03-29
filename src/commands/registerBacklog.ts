@@ -47,6 +47,7 @@ function registerStatusCommands(cmd: Command): void {
 
 	cmd
 		.command("delete <id>")
+		.alias("remove")
 		.description("Delete a backlog item")
 		.action(backlogDel);
 
