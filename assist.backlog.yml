@@ -90,7 +90,8 @@
           verify: Plan section appears in the web detail view for items with a plan
         - task: Verify items with no plan show no plan section
           verify: Detail view for plan-less items renders without errors or empty sections
-  status: todo
+  currentPhase: 2
+  status: in-progress
 - id: 6
   type: story
   name: Auto-generate review phase for backlog items

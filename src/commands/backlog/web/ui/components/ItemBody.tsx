@@ -1,6 +1,7 @@
 import { marked } from "marked";
 import type { BacklogItem } from "../types";
 import { AcceptanceCriteriaList } from "./AcceptanceCriteriaList";
+import { PlanSection } from "./PlanSection";
 import { StatusPicker } from "./StatusPicker";
 
 const typeBadgeColors: Record<string, string> = {
@@ -46,6 +47,9 @@ export function ItemBody({
 				</div>
 			)}
 			<AcceptanceCriteriaList criteria={item.acceptanceCriteria} />
+			{item.plan && (
+				<PlanSection phases={item.plan} currentPhase={item.currentPhase} />
+			)}
 		</div>
 	);
 }
