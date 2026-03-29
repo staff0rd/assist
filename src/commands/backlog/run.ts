@@ -58,6 +58,6 @@ export async function run(id: string): Promise<void> {
 	const reviewResult = await executePhase(item, reviewIndex, allPhases);
 	if (reviewResult < 0) return;
 
-	setStatus(id, "done");
+	if (item.status !== "done") setStatus(id, "done");
 	console.log(chalk.green(`\nAll phases complete for #${id}: ${item.name}`));
 }
