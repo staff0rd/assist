@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, unlinkSync } from "node:fs";
 import chalk from "chalk";
 import enquirer from "enquirer";
+import { handleIncompletePhase } from "./handleIncompletePhase";
 import { getPhaseStatusPath } from "./phaseDone";
 import { spawnClaude } from "./spawnClaude";
 
@@ -55,26 +56,22 @@ async function handleCompletedPhase(phaseIndex: number): Promise<boolean> {
 	}
 }
 
-async function handleIncompletePhase(): Promise<"retry" | "skip" | "abort"> {
-	const { action } = await enquirer.prompt<{ action: string }>({
-		type: "select",
-		name: "action",
-		message: "Phase was not marked complete. What would you like to do?",
-		choices: ["Retry this phase", "Skip to next phase", "Abort"],
-	});
-	if (action === "Retry this phase") return "retry";
-	if (action === "Skip to next phase") return "skip";
-	return "abort";
-}
-
 /** Returns step delta: 1 = advance, 0 = retry, -1 = abort */
-export async function resolvePhaseResult(phaseIndex: number): Promise<number> {
-	if (existsSync(getPhaseStatusPath())) {
-		const shouldContinue = await handleCompletedPhase(phaseIndex);
-		return shouldContinue ? 1 : -1;
+export async function resolvePhaseResult(
+	phaseIndex: number,
+	options?: { skipVerify?: boolean },
+): Promise<number> {
+	if (!existsSync(getPhaseStatusPath())) {
+		const action = await handleIncompletePhase();
+		if (action === "abort") return -1;
+		return action === "skip" ? 1 : 0;
 	}
 
-	const action = await handleIncompletePhase();
-	if (action === "abort") return -1;
-	return action === "skip" ? 1 : 0;
+	if (options?.skipVerify) {
+		cleanupMarker();
+		return 1;
+	}
+
+	const shouldContinue = await handleCompletedPhase(phaseIndex);
+	return shouldContinue ? 1 : -1;
 }

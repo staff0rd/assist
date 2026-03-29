@@ -9,6 +9,7 @@ export async function executePhase(
 	item: BacklogItem,
 	phaseIndex: number,
 	phases: PlanPhase[],
+	options?: { skipVerify?: boolean },
 ): Promise<number> {
 	const phase = phases[phaseIndex];
 	console.log(
@@ -24,6 +25,8 @@ export async function executePhase(
 	await done;
 	stopWatching();
 
-	const delta = await resolvePhaseResult(phaseIndex);
+	const delta = await resolvePhaseResult(phaseIndex, {
+		skipVerify: options?.skipVerify,
+	});
 	return delta < 0 ? -1 : phaseIndex + delta;
 }

@@ -314,5 +314,21 @@
     **Actual:** The command fails, requiring the agent to retry with a different shell approach (heredoc).
   acceptanceCriteria:
     - An agent can add a backlog item with multi-line description fields in a single attempt without hitting a JSON parse error
-  currentPhase: 1
+  currentPhase: 2
   status: done
+- type: bug
+  name: refactor extract adds unused barrel export to index.ts
+  description: |-
+    **Repro:**
+    1. Have a file with a private helper function (e.g. `handleIncompletePhase` in `resolvePhaseResult.ts`) that is only used internally within the same directory
+    2. Run `assist refactor extract <source> <functionName> <destination> --apply`
+    3. Check the directory's `index.ts` barrel file
+
+    **Expected:** The extracted function should only be exported from the new file and imported where needed. No barrel export should be added unless the function was already publicly exported.
+
+    **Actual:** The extract command unconditionally adds a barrel export to `index.ts` (e.g. `export { handleIncompletePhase } from "./handleIncompletePhase"`), even when the function is only consumed internally. This causes knip to flag an unused export.
+  acceptanceCriteria:
+    - refactor extract only adds a barrel export when the function was already exported via the barrel before extraction
+    - Extracting a non-barrel-exported function does not modify index.ts
+  id: 16
+  status: todo
