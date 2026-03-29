@@ -66,7 +66,7 @@
         - task: Update README.md with new command documentation
         - task: Update CLAUDE.md refactor docs to mention extract command
         - task: Add read-only command to settings.json allow list
-  currentPhase: 3
+  currentPhase: 4
   status: in-progress
 - id: 5
   type: story
@@ -128,7 +128,8 @@
         - task: Update README.md with documentation about the auto-generated review phase
           verify: README mentions the review phase behaviour
   status: todo
-- type: story
+- id: 7
+  type: story
   name: Number acceptance criteria for easy reference
   description: Change acceptance criteria rendering from bullet points to numbered lists so individual criteria can be referenced by number (e.g. AC 1).
   acceptanceCriteria:
@@ -142,5 +143,141 @@
           verify: assist backlog list -v shows numbered AC
         - task: In list/shared.ts, change the console.log bullet to use 1-based index numbering
         - task: In AcceptanceCriteriaList.tsx, replace bullet span with 1-based index number and change ul to ol
-  id: 7
+  status: todo
+- id: 8
+  type: story
+  name: Refactor isApprovedRead tests to BDD style
+  description: Restructure isApprovedRead.test.ts to follow BDD conventions with AAA pattern, when/should phrasing, and add missing coverage.
+  acceptanceCriteria:
+    - All describe blocks use when phrasing (e.g. describe("when the command is cd"))
+    - All it blocks use should phrasing (e.g. it("should return a reason"))
+    - Each test follows Arrange, Act, Assert with whitespace separation (no comments)
+    - Each test has at most two closely related assertions
+    - "Missing edge cases added: cd with trailing slash, cd with unusual whitespace"
+    - Tests pass and /verify is green
+  plan:
+    - name: Restructure and extend tests
+      tasks:
+        - task: Rewrite describe blocks to use when phrasing grouped by scenario
+          verify: npx vitest run src/shared/isApprovedRead.test.ts
+        - task: Rewrite it blocks to use should phrasing
+          verify: npx vitest run src/shared/isApprovedRead.test.ts
+        - task: Separate each test into Arrange, Act, Assert with whitespace
+          verify: npx vitest run src/shared/isApprovedRead.test.ts
+        - task: Add tests for cd with trailing slash and unusual whitespace
+          verify: npx vitest run src/shared/isApprovedRead.test.ts
+      manualChecks:
+        - Review test file reads naturally as a behaviour specification
+  status: todo
+- id: 9
+  type: story
+  name: Refactor isGhApiRead tests to BDD style and add missing coverage
+  description: Restructure isGhApiRead.test.ts to follow BDD conventions and fill coverage gaps for -X=GET equals syntax, GraphQL with explicit method, and --field flag variant.
+  acceptanceCriteria:
+    - All describe blocks use when phrasing
+    - All it blocks use should phrasing
+    - Each test follows AAA pattern with whitespace separation
+    - Add test for -X=GET equals syntax
+    - Add test for GraphQL with explicit --method GET
+    - Add test for --field flag variant in extractGraphqlQuery path
+    - Tests pass and /verify is green
+  plan:
+    - name: Restructure and extend tests
+      tasks:
+        - task: Rewrite describe/it blocks to BDD when/should phrasing
+          verify: npx vitest run src/shared/isGhApiRead.test.ts
+        - task: Separate each test into Arrange, Act, Assert with whitespace
+          verify: npx vitest run src/shared/isGhApiRead.test.ts
+        - task: Add test for -X=GET equals syntax
+          verify: npx vitest run src/shared/isGhApiRead.test.ts
+        - task: Add test for GraphQL with explicit --method GET
+          verify: npx vitest run src/shared/isGhApiRead.test.ts
+        - task: Add test for --field flag variant in extractGraphqlQuery
+          verify: npx vitest run src/shared/isGhApiRead.test.ts
+      manualChecks:
+        - Review test file reads naturally as a behaviour specification
+  status: todo
+- id: 10
+  type: story
+  name: Refactor splitCompound tests to BDD style
+  description: Restructure splitCompound.test.ts to follow BDD conventions with when/should phrasing and AAA pattern.
+  acceptanceCriteria:
+    - All describe blocks use when phrasing (e.g. describe("when the command contains pipes"))
+    - All it blocks use should phrasing
+    - Each test follows AAA pattern with whitespace separation
+    - Tests pass and /verify is green
+  plan:
+    - name: Restructure tests
+      tasks:
+        - task: Rewrite describe blocks to use when phrasing grouped by scenario
+          verify: npx vitest run src/shared/splitCompound.test.ts
+        - task: Rewrite it blocks to use should phrasing
+          verify: npx vitest run src/shared/splitCompound.test.ts
+        - task: Separate each test into Arrange, Act, Assert with whitespace
+          verify: npx vitest run src/shared/splitCompound.test.ts
+      manualChecks:
+        - Review test file reads naturally as a behaviour specification
+  status: todo
+- id: 11
+  type: story
+  name: Refactor findFunction tests to BDD style
+  description: Restructure findFunction.test.ts to follow BDD conventions. Split tests with multiple assertions into separate it blocks.
+  acceptanceCriteria:
+    - All describe blocks use when phrasing
+    - All it blocks use should phrasing
+    - Each test follows AAA pattern with whitespace separation
+    - Tests with two assertions split into separate it blocks under same describe(when)
+    - Tests pass and /verify is green
+  plan:
+    - name: Restructure tests
+      tasks:
+        - task: Rewrite describe/it blocks to BDD when/should phrasing
+          verify: npx vitest run src/commands/refactor/extract/findFunction.test.ts
+        - task: Split tests with multiple assertions (e.g. toBeDefined + getName) into separate it blocks
+          verify: npx vitest run src/commands/refactor/extract/findFunction.test.ts
+        - task: Separate each test into Arrange, Act, Assert with whitespace
+          verify: npx vitest run src/commands/refactor/extract/findFunction.test.ts
+      manualChecks:
+        - Review test file reads naturally as a behaviour specification
+  status: todo
+- id: 12
+  type: story
+  name: Refactor collectDependencies tests to BDD style
+  description: Restructure collectDependencies.test.ts to follow BDD conventions. Split tests with multiple assertions and group by scenario.
+  acceptanceCriteria:
+    - All describe blocks use when phrasing
+    - All it blocks use should phrasing
+    - Each test follows AAA pattern with whitespace separation
+    - Tests with two assertions (e.g. variables.length + getText) split into separate it blocks
+    - Tests pass and /verify is green
+  plan:
+    - name: Restructure tests
+      tasks:
+        - task: Rewrite describe/it blocks to BDD when/should phrasing, grouping by scenario
+          verify: npx vitest run src/commands/refactor/extract/collectDependencies.test.ts
+        - task: Split tests with multiple assertions into separate it blocks under same describe(when)
+          verify: npx vitest run src/commands/refactor/extract/collectDependencies.test.ts
+        - task: Separate each test into Arrange, Act, Assert with whitespace
+          verify: npx vitest run src/commands/refactor/extract/collectDependencies.test.ts
+      manualChecks:
+        - Review test file reads naturally as a behaviour specification
+  status: todo
+- id: 13
+  type: story
+  name: Refactor resolveImports tests to BDD style
+  description: Restructure resolveImports.test.ts to follow BDD conventions with when/should phrasing and AAA pattern.
+  acceptanceCriteria:
+    - All describe blocks use when phrasing
+    - All it blocks use should phrasing
+    - Each test follows AAA pattern with whitespace separation
+    - Tests pass and /verify is green
+  plan:
+    - name: Restructure tests
+      tasks:
+        - task: Rewrite describe/it blocks to BDD when/should phrasing, grouping by scenario
+          verify: npx vitest run src/commands/refactor/extract/resolveImports.test.ts
+        - task: Separate each test into Arrange, Act, Assert with whitespace
+          verify: npx vitest run src/commands/refactor/extract/resolveImports.test.ts
+      manualChecks:
+        - Review test file reads naturally as a behaviour specification
   status: todo
