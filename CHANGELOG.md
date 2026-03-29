@@ -1,3 +1,10 @@
+## [0.149.2](https://github.com/staff0rd/assist/compare/v0.149.1...v0.149.2) (2026-03-29)
+
+
+### Bug Fixes
+
+* rewrite import paths in extract dest ([c0aebd1](https://github.com/staff0rd/assist/commit/c0aebd1a13e3ba7a47aafd9a557a05f9a47fd37a))
+
 ## [0.149.1](https://github.com/staff0rd/assist/compare/v0.149.0...v0.149.1) (2026-03-29)
 
 
