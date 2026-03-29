@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import packageJson from "../package.json";
+import { next as backlogNext } from "./commands/backlog";
 import { commit } from "./commands/commit";
 import { configGet, configList, configSet } from "./commands/config";
 import { coverage } from "./commands/coverage";
@@ -170,5 +171,10 @@ registerRavendb(program);
 registerSeq(program);
 registerTranscript(program);
 registerVoice(program);
+
+program
+	.command("next")
+	.description("Alias for backlog next -w")
+	.action(() => backlogNext({ allowEdits: true }));
 
 program.parse();
