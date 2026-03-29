@@ -5,7 +5,9 @@ The tool is invoked using the `assist` command and is installed globally. Use it
 When renaming TypeScript files or symbols, use the refactor commands instead of doing it manually:
 - `assist refactor rename file <source> <destination>` — rename/move a file and update all imports
 - `assist refactor rename symbol <file> <oldName> <newName>` — rename a variable, function, class, or type across the project
-Both default to dry-run; add `--apply` to execute.
+- `assist refactor extract <file> <functionName> <destination>` — extract a function and its private dependencies to a new file
+All default to dry-run; add `--apply` to execute.
+When using extract, name the destination file after the exported function (e.g. `updateWorkerCapacity.ts` for `updateWorkerCapacity`) to satisfy `useFilenamingConvention` lint rules.
 
 When the user mentions a Jira issue key (e.g. `BAD-671`, `PROJ-123`), use these commands to fetch context:
 - `assist jira view <issue-key>` — print the title and description

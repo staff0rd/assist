@@ -45,6 +45,8 @@ After installation, the `assist` command will be available globally. You can als
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/standup` - Summarise recent journal entries as a standup update
 - `/sync` - Sync commands and settings to ~/.claude
+- `/test-cover` - Incrementally increase test coverage by identifying and testing uncovered files
+- `/test-review` - Review existing tests for quality, coverage gaps, and adherence to conventions
 - `/inspect` - Run .NET code inspections on changed files
 - `/screenshot` - Capture a screenshot of a running application window
 - `/seq` - Query Seq logs from a URL or filter expression
