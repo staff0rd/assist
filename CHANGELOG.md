@@ -1,3 +1,10 @@
+## [0.149.4](https://github.com/staff0rd/assist/compare/v0.149.3...v0.149.4) (2026-03-29)
+
+
+### Bug Fixes
+
+* handle glob tokens in splitCompound ([27e5313](https://github.com/staff0rd/assist/commit/27e531394b0344ea5ba0922fd3ee1e15ee4129a9))
+
 ## [0.149.3](https://github.com/staff0rd/assist/compare/v0.149.2...v0.149.3) (2026-03-29)
 
 
