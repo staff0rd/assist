@@ -1,3 +1,10 @@
+# [0.138.0](https://github.com/staff0rd/assist/compare/v0.137.0...v0.138.0) (2026-03-29)
+
+
+### Features
+
+* add numbered AC backlog item ([39261d4](https://github.com/staff0rd/assist/commit/39261d4d4e461f866c88c0f970b7c7ac222575cc))
+
 # [0.137.0](https://github.com/staff0rd/assist/compare/v0.136.2...v0.137.0) (2026-03-29)
 
 
