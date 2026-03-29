@@ -1,3 +1,10 @@
+## [0.140.1](https://github.com/staff0rd/assist/compare/v0.140.0...v0.140.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* prevent resume loop on completed item ([42bb091](https://github.com/staff0rd/assist/commit/42bb09125969015a1fb72dbe40993dd730aa6820))
+
 # [0.140.0](https://github.com/staff0rd/assist/compare/v0.139.0...v0.140.0) (2026-03-29)
 
 
