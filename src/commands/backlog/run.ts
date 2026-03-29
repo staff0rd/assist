@@ -21,11 +21,10 @@ export async function run(id: string): Promise<void> {
 	const plan = validatePlan(item);
 	if (!plan) return;
 
-	setStatus(id, "in-progress");
 	const startPhase = item.currentPhase ?? 0;
 
 	if (startPhase >= plan.length) {
-		setStatus(id, "done");
+		if (item.status !== "done") setStatus(id, "done");
 		console.log(
 			chalk.green(`All phases already complete for #${id}: ${item.name}`),
 		);
@@ -33,6 +32,7 @@ export async function run(id: string): Promise<void> {
 		return;
 	}
 
+	setStatus(id, "in-progress");
 	console.log(chalk.bold(`Running plan for #${id}: ${item.name}`));
 	if (startPhase > 0) {
 		console.log(
@@ -48,6 +48,7 @@ export async function run(id: string): Promise<void> {
 		if (phaseIndex < 0) return;
 	}
 
+	setStatus(id, "done");
 	console.log(chalk.green(`\nAll phases complete for #${id}: ${item.name}`));
 	console.log(chalk.dim("Review the changes, then use /commit when ready."));
 }

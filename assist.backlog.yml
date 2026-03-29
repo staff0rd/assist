@@ -91,7 +91,7 @@
         - task: Verify items with no plan show no plan section
           verify: Detail view for plan-less items renders without errors or empty sections
   currentPhase: 2
-  status: in-progress
+  status: done
 - id: 6
   type: story
   name: Auto-generate review phase for backlog items
