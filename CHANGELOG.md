@@ -1,3 +1,10 @@
+# [0.142.0](https://github.com/staff0rd/assist/compare/v0.141.1...v0.142.0) (2026-03-29)
+
+
+### Features
+
+* add /bug command for filing bugs ([a2988e2](https://github.com/staff0rd/assist/commit/a2988e2bdd1f6071182df9f30c71ff302bb8f2b5))
+
 ## [0.141.1](https://github.com/staff0rd/assist/compare/v0.141.0...v0.141.1) (2026-03-29)
 
 
