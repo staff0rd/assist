@@ -270,6 +270,7 @@
           verify: npx vitest run src/commands/refactor/extract/collectDependencies.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
+  currentPhase: 2
   status: done
 - id: 13
   type: story
@@ -290,7 +291,8 @@
           verify: npx vitest run src/commands/refactor/extract/resolveImports.test.ts
       manualChecks:
         - Review test file reads naturally as a behaviour specification
-  status: todo
+  currentPhase: 1
+  status: done
 - id: 14
   type: bug
   name: refactor extract leaves unused imports in source file
