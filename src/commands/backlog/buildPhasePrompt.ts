@@ -28,8 +28,8 @@ export function buildPhasePrompt(
 		tasks,
 		"",
 		"Focus ONLY on this phase. Do not work on other phases.",
-		`When you have completed all tasks for this phase, run: assist backlog phase-done ${item.id} ${phaseIndex}`,
-		"Then run /verify to check your work.",
+		"When you have completed all tasks for this phase, run /verify to check your work.",
+		`Once verify passes, run: assist backlog phase-done ${item.id} ${phaseIndex}`,
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");
