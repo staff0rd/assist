@@ -7,6 +7,7 @@ import { printDiff } from "../../utils/printDiff";
 export async function syncClaudeMd(
 	claudeDir: string,
 	targetBase: string,
+	options?: { yes?: boolean },
 ): Promise<void> {
 	const source = path.join(claudeDir, "CLAUDE.md");
 	const target = path.join(targetBase, "CLAUDE.md");
@@ -21,10 +22,12 @@ export async function syncClaudeMd(
 			console.log();
 			printDiff(targetContent, sourceContent);
 
-			const confirm = await promptConfirm(
-				chalk.red("Overwrite existing CLAUDE.md?"),
-				false,
-			);
+			const confirm =
+				options?.yes ||
+				(await promptConfirm(
+					chalk.red("Overwrite existing CLAUDE.md?"),
+					false,
+				));
 
 			if (!confirm) {
 				console.log("Skipped CLAUDE.md");

@@ -14,7 +14,7 @@ export async function sync(options?: { yes?: boolean }): Promise<void> {
 
 	syncCommands(claudeDir, targetBase);
 	await syncSettings(claudeDir, targetBase, { yes: options?.yes });
-	await syncClaudeMd(claudeDir, targetBase);
+	await syncClaudeMd(claudeDir, targetBase, { yes: options?.yes });
 }
 
 function syncCommands(claudeDir: string, targetBase: string): void {
