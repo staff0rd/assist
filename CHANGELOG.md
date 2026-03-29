@@ -1,3 +1,10 @@
+# [0.139.0](https://github.com/staff0rd/assist/compare/v0.138.0...v0.139.0) (2026-03-29)
+
+
+### Features
+
+* add refactor extract command ([bc18adb](https://github.com/staff0rd/assist/commit/bc18adb22283a3fa77b8a37606033741c83021ca))
+
 # [0.138.0](https://github.com/staff0rd/assist/compare/v0.137.0...v0.138.0) (2026-03-29)
 
 
