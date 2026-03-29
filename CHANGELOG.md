@@ -1,3 +1,10 @@
+# [0.147.0](https://github.com/staff0rd/assist/compare/v0.146.0...v0.147.0) (2026-03-29)
+
+
+### Features
+
+* skip verify on review phase ([eba4381](https://github.com/staff0rd/assist/commit/eba438144aee2728fa1d42e85caf5b88391194e2))
+
 # [0.146.0](https://github.com/staff0rd/assist/compare/v0.145.1...v0.146.0) (2026-03-29)
 
 
