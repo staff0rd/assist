@@ -1,3 +1,10 @@
+# [0.144.0](https://github.com/staff0rd/assist/compare/v0.143.0...v0.144.0) (2026-03-29)
+
+
+### Features
+
+* number acceptance criteria ([0a71ec2](https://github.com/staff0rd/assist/commit/0a71ec2c2c0b14ce841b931c957b5b3cc49c960d))
+
 # [0.143.0](https://github.com/staff0rd/assist/compare/v0.142.0...v0.143.0) (2026-03-29)
 
 
