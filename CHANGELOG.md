@@ -1,3 +1,10 @@
+## [0.136.1](https://github.com/staff0rd/assist/compare/v0.136.0...v0.136.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* shell splitting prompt in spawn ([7c2fdd1](https://github.com/staff0rd/assist/commit/7c2fdd1efb069393710eba7b54725597de2d4774))
+
 # [0.136.0](https://github.com/staff0rd/assist/compare/v0.135.0...v0.136.0) (2026-03-29)
 
 
