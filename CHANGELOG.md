@@ -1,3 +1,10 @@
+# [0.150.0](https://github.com/staff0rd/assist/compare/v0.149.5...v0.150.0) (2026-03-29)
+
+
+### Features
+
+* add next as alias for backlog next -w ([92035af](https://github.com/staff0rd/assist/commit/92035afd473f7e71c5d0966f06ed4ba6fa33f1ba))
+
 ## [0.149.5](https://github.com/staff0rd/assist/compare/v0.149.4...v0.149.5) (2026-03-29)
 
 
