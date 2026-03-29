@@ -1,3 +1,10 @@
+# [0.141.0](https://github.com/staff0rd/assist/compare/v0.140.1...v0.141.0) (2026-03-29)
+
+
+### Features
+
+* display plan progress in backlog web view ([93d13f1](https://github.com/staff0rd/assist/commit/93d13f1c3c166da35cd50f078642639bb676a054))
+
 ## [0.140.1](https://github.com/staff0rd/assist/compare/v0.140.0...v0.140.1) (2026-03-29)
 
 
