@@ -7,7 +7,9 @@ You are increasing test coverage for this project. Your goal is to pick the high
 
 ## Step 1: Measure current coverage
 
-Run coverage against all source files to identify what is untested:
+Run `assist coverage` to get the current global statement coverage percentage.
+
+Then run coverage with JSON output to identify what is untested:
 
 ```
 npx vitest run --coverage --coverage.include='src/**/*.ts' --coverage.all --coverage.reporter=json 2>&1
@@ -116,4 +118,4 @@ File                    | Before | After
 <file path>             | 0%     | 95%
 ```
 
-And the new repo-wide coverage number.
+And the new repo-wide coverage number (run `assist coverage`).

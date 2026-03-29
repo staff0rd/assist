@@ -3,6 +3,7 @@ import { Command } from "commander";
 import packageJson from "../package.json";
 import { commit } from "./commands/commit";
 import { configGet, configList, configSet } from "./commands/config";
+import { coverage } from "./commands/coverage";
 import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
@@ -141,6 +142,11 @@ program
 	.command("update")
 	.description("Update assist to the latest version and sync commands")
 	.action(update);
+
+program
+	.command("coverage")
+	.description("Print global statement coverage percentage")
+	.action(coverage);
 
 program
 	.command("screenshot")

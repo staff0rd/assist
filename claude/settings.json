@@ -49,6 +49,7 @@
 			"Bash(assist ravendb auth list:*)",
 			"Bash(assist seq query:*)",
 			"Bash(assist seq auth list:*)",
+			"Bash(assist coverage:*)",
 			"Bash(assist screenshot:*)",
 			"Bash(assist roam show-claude-code-icon:*)",
 "SlashCommand(/verify)",

@@ -152,6 +152,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist seq query <filter> --json` - Output raw JSON
 - `assist seq query <filter> -n <count>` - Fetch a specific number of events (default 50)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
+- `assist coverage` - Print global statement coverage percentage
 - `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)
 - `assist complexity cyclomatic [pattern]` - Calculate cyclomatic complexity per function
 - `assist complexity halstead [pattern]` - Calculate Halstead metrics per function
