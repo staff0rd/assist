@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { buildPhasePrompt } from "./buildPhasePrompt";
 import { resolvePhaseResult } from "./resolvePhaseResult";
-import { spawnClaude } from "./spawnClaude";
+import { type SpawnClaudeOptions, spawnClaude } from "./spawnClaude";
 import type { BacklogItem, PlanPhase } from "./types";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
@@ -9,6 +9,7 @@ export async function executePhase(
 	item: BacklogItem,
 	phaseIndex: number,
 	phases: PlanPhase[],
+	spawnOptions?: SpawnClaudeOptions,
 ): Promise<number> {
 	const phase = phases[phaseIndex];
 	console.log(
@@ -19,6 +20,7 @@ export async function executePhase(
 
 	const { child, done } = spawnClaude(
 		buildPhasePrompt(item, phaseIndex, phase),
+		spawnOptions,
 	);
 	watchForMarker(child);
 	await done;

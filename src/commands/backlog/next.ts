@@ -3,9 +3,9 @@ import enquirer from "enquirer";
 import { typeLabel } from "./list/shared";
 import { run } from "./run";
 import { loadBacklog } from "./shared";
-import { spawnClaude } from "./spawnClaude";
+import { type SpawnClaudeOptions, spawnClaude } from "./spawnClaude";
 
-export async function next(): Promise<void> {
+export async function next(options?: SpawnClaudeOptions): Promise<void> {
 	const items = loadBacklog();
 
 	const inProgress = items.find((i) => i.status === "in-progress" && i.plan);
@@ -15,21 +15,21 @@ export async function next(): Promise<void> {
 				`Resuming in-progress item #${inProgress.id}: ${inProgress.name}`,
 			),
 		);
-		await run(String(inProgress.id));
+		await run(String(inProgress.id), options);
 		return;
 	}
 
 	const todo = items.filter((i) => i.status === "todo");
 	if (todo.length === 0) {
 		console.log(chalk.dim("No incomplete backlog items. Opening /draft..."));
-		await spawnClaude("/draft");
+		await spawnClaude("/draft", options);
 		return;
 	}
 
 	if (todo.length === 1) {
 		const only = todo[0];
 		console.log(chalk.bold(`Starting #${only.id}: ${only.name}`));
-		await run(String(only.id));
+		await run(String(only.id), options);
 		return;
 	}
 
@@ -46,5 +46,5 @@ export async function next(): Promise<void> {
 	});
 
 	const id = selected.match(/#(\d+)/)?.[1] ?? "";
-	await run(id);
+	await run(id, options);
 }

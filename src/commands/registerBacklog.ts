@@ -1,10 +1,7 @@
 import type { Command } from "commander";
 import {
-	add as backlogAdd,
 	del as backlogDel,
 	done as backlogDone,
-	init as backlogInit,
-	list as backlogList,
 	next as backlogNext,
 	phaseDone as backlogPhaseDone,
 	plan as backlogPlan,
@@ -12,27 +9,7 @@ import {
 	start as backlogStart,
 	web as backlogWeb,
 } from "./backlog";
-
-function registerItemCommands(cmd: Command): void {
-	cmd
-		.command("init")
-		.description("Create an empty assist.backlog.yml")
-		.action(backlogInit);
-
-	cmd
-		.command("list")
-		.description("List all backlog items")
-		.option("--status <type>", "Filter by status (todo, in-progress, done)")
-		.option("-a, --all", "Include done items")
-		.option("-v, --verbose", "Show all item details")
-		.action(backlogList);
-
-	cmd
-		.command("add")
-		.description("Add a new backlog item")
-		.option("--json", "Read item as JSON from stdin")
-		.action(backlogAdd);
-}
+import { registerItemCommands } from "./backlog/registerItemCommands";
 
 function registerStatusCommands(cmd: Command): void {
 	cmd
@@ -58,12 +35,7 @@ function registerStatusCommands(cmd: Command): void {
 		.action(backlogWeb);
 }
 
-function registerOrchestrationCommands(cmd: Command): void {
-	cmd
-		.command("next")
-		.description("Pick and run the next backlog item, or open /draft if none")
-		.action(backlogNext);
-
+function registerPlanCommands(cmd: Command): void {
 	cmd
 		.command("plan <id>")
 		.description("Display the plan for a backlog item")
@@ -73,11 +45,24 @@ function registerOrchestrationCommands(cmd: Command): void {
 		.command("phase-done <id> <phase>")
 		.description("Signal that a plan phase is complete")
 		.action(backlogPhaseDone);
+}
+
+function registerRunCommands(cmd: Command): void {
+	cmd
+		.command("next")
+		.description("Pick and run the next backlog item, or open /draft if none")
+		.option("--allow-edits", "Run Claude with acceptEdits permission mode")
+		.action((opts: { allowEdits?: boolean }) =>
+			backlogNext({ allowEdits: opts.allowEdits }),
+		);
 
 	cmd
 		.command("run <id>")
 		.description("Run a backlog item's plan phase-by-phase with Claude")
-		.action(backlogRun);
+		.option("--allow-edits", "Run Claude with acceptEdits permission mode")
+		.action((id: string, opts: { allowEdits?: boolean }) =>
+			backlogRun(id, { allowEdits: opts.allowEdits }),
+		);
 }
 
 export function registerBacklog(program: Command): void {
@@ -88,5 +73,6 @@ export function registerBacklog(program: Command): void {
 
 	registerItemCommands(cmd);
 	registerStatusCommands(cmd);
-	registerOrchestrationCommands(cmd);
+	registerPlanCommands(cmd);
+	registerRunCommands(cmd);
 }

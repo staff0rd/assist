@@ -3,8 +3,12 @@ import { buildReviewPhase } from "./buildReviewPhase";
 import { executePhase } from "./executePhase";
 import { resolvePlan } from "./resolvePlan";
 import { loadAndFindItem, setStatus } from "./shared";
+import type { SpawnClaudeOptions } from "./spawnClaude";
 
-export async function run(id: string): Promise<void> {
+export async function run(
+	id: string,
+	spawnOptions?: SpawnClaudeOptions,
+): Promise<void> {
 	const result = loadAndFindItem(id);
 	if (!result) return;
 
@@ -35,7 +39,7 @@ export async function run(id: string): Promise<void> {
 
 	let phaseIndex = startPhase;
 	while (phaseIndex < plan.length) {
-		phaseIndex = await executePhase(item, phaseIndex, plan);
+		phaseIndex = await executePhase(item, phaseIndex, plan, spawnOptions);
 		if (phaseIndex < 0) return;
 	}
 
@@ -43,7 +47,12 @@ export async function run(id: string): Promise<void> {
 	const reviewPhase = buildReviewPhase();
 	const allPhases = [...plan, reviewPhase];
 	const reviewIndex = plan.length;
-	const reviewResult = await executePhase(item, reviewIndex, allPhases);
+	const reviewResult = await executePhase(
+		item,
+		reviewIndex,
+		allPhases,
+		spawnOptions,
+	);
 	if (reviewResult < 0) return;
 
 	if (item.status !== "done") setStatus(id, "done");
