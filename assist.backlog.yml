@@ -360,3 +360,20 @@
     - Build and type checks pass on the extracted file without manual fixup
   currentPhase: 1
   status: done
+- id: 18
+  type: bug
+  name: Fix cli-hook check failing to parse glob patterns
+  description: 'splitCompound rejects commands containing glob patterns (e.g. *.ts) because shell-quote parses them as { op: "glob", pattern: "..." } tokens, which are not strings. These should be treated as safe argument values.'
+  acceptanceCriteria:
+    - assist cli-hook check with glob patterns (e.g. *.ts) no longer returns unable to parse
+    - Glob tokens are converted to their pattern string in splitCompound
+    - Existing tests still pass; new test covers glob handling
+  plan:
+    - name: Fix glob handling
+      tasks:
+        - task: Update groupByOperator in splitCompound.ts to treat glob tokens as their pattern string
+          verify: assist test splitCompound
+        - task: Add test cases for glob patterns in splitCompound tests
+          verify: assist test splitCompound
+  currentPhase: 1
+  status: done

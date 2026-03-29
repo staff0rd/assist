@@ -232,6 +232,36 @@ describe("splitCompound", () => {
 		});
 	});
 
+	describe("when the command contains glob patterns", () => {
+		it("should treat glob tokens as their pattern string", () => {
+			const command = "ls *.ts";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(["ls *.ts"]);
+		});
+
+		describe("when the glob is in a compound command", () => {
+			it("should split and preserve the glob pattern", () => {
+				const command = "echo start && ls *.ts | grep foo";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["echo start", "ls *.ts", "grep foo"]);
+			});
+		});
+
+		describe("when the glob uses **", () => {
+			it("should preserve the full pattern", () => {
+				const command = "cat src/**/*.test.ts";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["cat src/**/*.test.ts"]);
+			});
+		});
+	});
+
 	describe("when given an empty string", () => {
 		it("should return undefined", () => {
 			const command = "";

@@ -74,6 +74,8 @@ function groupByOperator(tokens: Tokens): string[][] | undefined {
 		if (op === undefined) {
 			if (typeof token !== "string") return undefined;
 			groups[groups.length - 1].push(token);
+		} else if (op === "glob") {
+			groups[groups.length - 1].push((token as { pattern: string }).pattern);
 		} else if (SEPARATOR_OPS.has(op)) {
 			groups.push([]);
 		} else if (UNSAFE_OPS.has(op)) {
