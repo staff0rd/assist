@@ -23,7 +23,10 @@ async function addFromJson(): Promise<void> {
 		return;
 	}
 	const input = await readStdin();
-	const data = addItemSchema.parse(JSON.parse(input));
+	const sanitised = input.replace(/"(?:[^"\\]|\\.)*"/g, (match) =>
+		match.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t"),
+	);
+	const data = addItemSchema.parse(JSON.parse(sanitised));
 	const items = loadBacklog();
 	const id = getNextId(items);
 	items.push({ ...data, id, status: "todo" });

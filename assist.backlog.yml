@@ -298,7 +298,7 @@
   acceptanceCriteria:
     - After extracting a function, any imports in the source file that are no longer referenced by remaining code are removed
     - Extraction does not remove imports that are still used by other code in the source file
-  currentPhase: 1
+  currentPhase: 2
   status: done
 - id: 15
   type: bug
@@ -314,4 +314,5 @@
     **Actual:** The command fails, requiring the agent to retry with a different shell approach (heredoc).
   acceptanceCriteria:
     - An agent can add a backlog item with multi-line description fields in a single attempt without hitting a JSON parse error
-  status: todo
+  currentPhase: 1
+  status: done
