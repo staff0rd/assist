@@ -13,16 +13,20 @@ vi.mock("./executePhase", () => ({
 }));
 
 vi.mock("./shared", () => ({
-	loadAndFindItem: vi.fn(),
 	setStatus: vi.fn(),
 }));
 
+vi.mock("./prepareRun", () => ({
+	prepareRun: vi.fn(),
+}));
+
 import { executePhase } from "./executePhase";
+import { prepareRun } from "./prepareRun";
 import { run } from "./run";
-import { loadAndFindItem, setStatus } from "./shared";
+import { setStatus } from "./shared";
 
 const mockExecutePhase = executePhase as unknown as MockInstance;
-const mockLoadAndFindItem = loadAndFindItem as unknown as MockInstance;
+const mockPrepareRun = prepareRun as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
@@ -40,14 +44,18 @@ function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	};
 }
 
+function makePlan(item: BacklogItem): PlanPhase[] {
+	return item.plan ?? [];
+}
+
 describe("run", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
-	describe("when item is not found", () => {
+	describe("when prepare returns undefined", () => {
 		it("should return without executing any phases", async () => {
-			mockLoadAndFindItem.mockReturnValue(undefined);
+			mockPrepareRun.mockReturnValue(undefined);
 
 			await run("99");
 
@@ -56,32 +64,14 @@ describe("run", () => {
 		});
 	});
 
-	describe("when all phases including review are already complete", () => {
-		it("should mark done if status is not done", async () => {
-			const item = makeItem({ currentPhase: 3, status: "in-progress" });
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
-
-			await run("1");
-
-			expect(mockSetStatus).toHaveBeenCalledWith("1", "done");
-			expect(mockExecutePhase).not.toHaveBeenCalled();
-		});
-
-		it("should not mark done if status is already done", async () => {
-			const item = makeItem({ currentPhase: 3, status: "done" });
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
-
-			await run("1");
-
-			expect(mockSetStatus).not.toHaveBeenCalled();
-			expect(mockExecutePhase).not.toHaveBeenCalled();
-		});
-	});
-
 	describe("when authored phases complete and review succeeds", () => {
 		it("should execute all authored phases then the review phase", async () => {
 			const item = makeItem();
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
 			mockExecutePhase
 				.mockResolvedValueOnce(1) // phase 0 -> 1
 				.mockResolvedValueOnce(2) // phase 1 -> 2
@@ -94,7 +84,11 @@ describe("run", () => {
 
 		it("should pass the review phase as the last element", async () => {
 			const item = makeItem();
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
 			mockExecutePhase
 				.mockResolvedValueOnce(1)
 				.mockResolvedValueOnce(2)
@@ -109,7 +103,11 @@ describe("run", () => {
 
 		it("should mark done after review completes", async () => {
 			const item = makeItem();
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
 			mockExecutePhase
 				.mockResolvedValueOnce(1)
 				.mockResolvedValueOnce(2)
@@ -124,7 +122,11 @@ describe("run", () => {
 	describe("when an authored phase fails", () => {
 		it("should not run the review phase", async () => {
 			const item = makeItem();
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
 			mockExecutePhase.mockResolvedValueOnce(-1);
 
 			await run("1");
@@ -134,7 +136,11 @@ describe("run", () => {
 
 		it("should not mark done", async () => {
 			const item = makeItem();
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
 			mockExecutePhase.mockResolvedValueOnce(-1);
 
 			await run("1");
@@ -147,7 +153,11 @@ describe("run", () => {
 	describe("when the review phase fails", () => {
 		it("should not mark done", async () => {
 			const item = makeItem();
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
 			mockExecutePhase
 				.mockResolvedValueOnce(1)
 				.mockResolvedValueOnce(2)
@@ -163,7 +173,11 @@ describe("run", () => {
 	describe("when resuming from a mid-plan phase", () => {
 		it("should skip completed phases", async () => {
 			const item = makeItem({ currentPhase: 1 });
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 1,
+			});
 			mockExecutePhase
 				.mockResolvedValueOnce(2) // phase 1 -> 2
 				.mockResolvedValueOnce(3); // review -> 3
@@ -178,7 +192,11 @@ describe("run", () => {
 	describe("when resuming at the review phase", () => {
 		it("should run only the review phase", async () => {
 			const item = makeItem({ currentPhase: 2 });
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 2,
+			});
 			mockExecutePhase.mockResolvedValueOnce(3);
 
 			await run("1");
@@ -193,7 +211,17 @@ describe("run", () => {
 	describe("when item has no plan", () => {
 		it("should synthesize a plan from acceptance criteria", async () => {
 			const item = makeItem({ plan: undefined });
-			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
+			const synthesizedPlan: PlanPhase[] = [
+				{
+					name: "Implement",
+					tasks: [{ task: "AC1" }, { task: "AC2" }],
+				},
+			];
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: synthesizedPlan,
+				startPhase: 0,
+			});
 			mockExecutePhase
 				.mockResolvedValueOnce(1) // synthesized phase
 				.mockResolvedValueOnce(2); // review
