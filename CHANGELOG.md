@@ -1,3 +1,10 @@
+## [0.149.3](https://github.com/staff0rd/assist/compare/v0.149.2...v0.149.3) (2026-03-29)
+
+
+### Bug Fixes
+
+* skip backlog run for done items ([51064d1](https://github.com/staff0rd/assist/commit/51064d17f5f4b153b65ec719c5240fa1767ce11d))
+
 ## [0.149.2](https://github.com/staff0rd/assist/compare/v0.149.1...v0.149.2) (2026-03-29)
 
 
