@@ -66,8 +66,7 @@
         - task: Update README.md with new command documentation
         - task: Update CLAUDE.md refactor docs to mention extract command
         - task: Add read-only command to settings.json allow list
-  currentPhase: 4
-  status: in-progress
+  status: done
 - id: 5
   type: story
   name: Display plan and phase progress in backlog web view

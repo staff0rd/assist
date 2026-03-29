@@ -23,6 +23,16 @@ export async function run(id: string): Promise<void> {
 
 	setStatus(id, "in-progress");
 	const startPhase = item.currentPhase ?? 0;
+
+	if (startPhase >= plan.length) {
+		setStatus(id, "done");
+		console.log(
+			chalk.green(`All phases already complete for #${id}: ${item.name}`),
+		);
+		console.log(chalk.dim("Review the changes, then use /commit when ready."));
+		return;
+	}
+
 	console.log(chalk.bold(`Running plan for #${id}: ${item.name}`));
 	if (startPhase > 0) {
 		console.log(
