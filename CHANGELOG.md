@@ -1,3 +1,10 @@
+## [0.149.1](https://github.com/staff0rd/assist/compare/v0.149.0...v0.149.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* rename --allow-edits to -w/--write ([43bcdb6](https://github.com/staff0rd/assist/commit/43bcdb6499d56854997f54320a32e3b9fc30aae2))
+
 # [0.149.0](https://github.com/staff0rd/assist/compare/v0.148.0...v0.149.0) (2026-03-29)
 
 
