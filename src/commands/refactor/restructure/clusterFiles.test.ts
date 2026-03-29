@@ -1,19 +1,16 @@
 import { describe, expect, it } from "vitest";
-import type { ImportGraph } from "./types";
 import { clusterFiles } from "./clusterFiles";
+import type { ImportGraph } from "./types";
 
-function makeGraph(
-	files: string[],
-	edges: [string, string][],
-): ImportGraph {
+function makeGraph(files: string[], edges: [string, string][]): ImportGraph {
 	const importedBy = new Map<string, Set<string>>();
 	const imports = new Map<string, Set<string>>();
 
 	for (const [source, target] of edges) {
 		if (!importedBy.has(target)) importedBy.set(target, new Set());
-		importedBy.get(target)!.add(source);
+		importedBy.get(target)?.add(source);
 		if (!imports.has(source)) imports.set(source, new Set());
-		imports.get(source)!.add(target);
+		imports.get(source)?.add(target);
 	}
 
 	return {
@@ -129,9 +126,7 @@ describe("clusterFiles", () => {
 			const graph: ImportGraph = {
 				files: new Set(["src/child.ts"]),
 				edges: [],
-				importedBy: new Map([
-					["src/child.ts", new Set(["src/external.ts"])],
-				]),
+				importedBy: new Map([["src/child.ts", new Set(["src/external.ts"])]]),
 				imports: new Map(),
 			};
 

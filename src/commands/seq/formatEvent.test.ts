@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { SeqEvent } from "./types";
 import { formatEvent } from "./formatEvent";
+import type { SeqEvent } from "./types";
 
 function makeEvent(overrides: Partial<SeqEvent> = {}): SeqEvent {
 	return {

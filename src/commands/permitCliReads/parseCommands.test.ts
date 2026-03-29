@@ -72,9 +72,7 @@ Options:
 
 			const result = parseCommands(help);
 
-			expect(result).toEqual([
-				{ name: "serve", description: "Start server" },
-			]);
+			expect(result).toEqual([{ name: "serve", description: "Start server" }]);
 		});
 	});
 
@@ -87,9 +85,7 @@ Options:
 
 			const result = parseCommands(help);
 
-			expect(result).toEqual([
-				{ name: "run", description: "Run something" },
-			]);
+			expect(result).toEqual([{ name: "run", description: "Run something" }]);
 		});
 	});
 
@@ -126,9 +122,7 @@ Notes:
 
 			const result = parseCommands(help);
 
-			expect(result).toEqual([
-				{ name: "build", description: "Build it" },
-			]);
+			expect(result).toEqual([{ name: "build", description: "Build it" }]);
 		});
 	});
 });
