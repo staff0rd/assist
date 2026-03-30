@@ -482,7 +482,17 @@
           verify: assist verify
         - task: Update buildReviewPrompt.ts to inform the agent about comment and comments commands
           verify: assist verify
-  status: todo
+  currentPhase: 4
+  status: done
+  comments:
+    - text: Added comment, comments, and phase-done summary commands. Registered in registerBacklog.ts, updated show to display comments, extracted formatComment helper to avoid duplication, split registerBacklog into smaller functions for maintainability.
+      phase: 1
+      timestamp: 2026-03-30T04:30:08.701Z
+      type: summary
+    - text: Added CommentsSection component to web UI. Updated UI types to include BacklogComment, created CommentsSection.tsx with styled cards for comments and summaries (amber for summaries, gray for comments), and wired it into ItemBody after the plan section.
+      phase: 2
+      timestamp: 2026-03-30T04:31:38.671Z
+      type: summary
 - id: 23
   type: story
   name: Add backlog show command

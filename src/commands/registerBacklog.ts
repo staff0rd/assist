@@ -10,6 +10,7 @@ import {
 	start as backlogStart,
 	web as backlogWeb,
 } from "./backlog";
+import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerItemCommands } from "./backlog/registerItemCommands";
 
 function registerShowCommands(cmd: Command): void {
@@ -36,7 +37,9 @@ function registerStatusCommands(cmd: Command): void {
 		.alias("remove")
 		.description("Delete a backlog item")
 		.action(backlogDel);
+}
 
+function registerWebCommand(cmd: Command): void {
 	cmd
 		.command("web")
 		.description("Start a web view of the backlog")
@@ -51,12 +54,12 @@ function registerPlanCommands(cmd: Command): void {
 		.action(backlogPlan);
 
 	cmd
-		.command("phase-done <id> <phase>")
+		.command("phase-done <id> <phase> <summary>")
 		.description("Signal that a plan phase is complete")
 		.action(backlogPhaseDone);
 }
 
-function registerRunCommands(cmd: Command): void {
+function registerNextCommand(cmd: Command): void {
 	cmd
 		.command("next")
 		.description("Pick and run the next backlog item, or open /draft if none")
@@ -64,7 +67,9 @@ function registerRunCommands(cmd: Command): void {
 		.action((opts: { write?: boolean }) =>
 			backlogNext({ allowEdits: opts.write }),
 		);
+}
 
+function registerRunCommand(cmd: Command): void {
 	cmd
 		.command("run <id>")
 		.description("Run a backlog item's plan phase-by-phase with Claude")
@@ -83,6 +88,9 @@ export function registerBacklog(program: Command): void {
 	registerItemCommands(cmd);
 	registerShowCommands(cmd);
 	registerStatusCommands(cmd);
+	registerWebCommand(cmd);
+	registerCommentCommands(cmd);
 	registerPlanCommands(cmd);
-	registerRunCommands(cmd);
+	registerNextCommand(cmd);
+	registerRunCommand(cmd);
 }

@@ -10,14 +10,22 @@ import {
 
 vi.mock("./shared", () => ({
 	loadAndFindItem: vi.fn(),
+	saveBacklog: vi.fn(),
 	setCurrentPhase: vi.fn(),
 }));
 
+vi.mock("./addComment", () => ({
+	addPhaseSummary: vi.fn(),
+}));
+
+import { addPhaseSummary } from "./addComment";
 import { getPhaseStatusPath, phaseDone } from "./phaseDone";
-import { loadAndFindItem, setCurrentPhase } from "./shared";
+import { loadAndFindItem, saveBacklog, setCurrentPhase } from "./shared";
 
 const mockLoadAndFindItem = loadAndFindItem as unknown as MockInstance;
 const mockSetCurrentPhase = setCurrentPhase as unknown as MockInstance;
+const mockAddPhaseSummary = addPhaseSummary as unknown as MockInstance;
+const mockSaveBacklog = saveBacklog as unknown as MockInstance;
 
 function cleanup(): void {
 	const path = getPhaseStatusPath();
@@ -36,7 +44,7 @@ describe("phaseDone", () => {
 			item: { id: 1, status: "in-progress" },
 		});
 
-		phaseDone("1", "0");
+		phaseDone("1", "0", "Done");
 
 		const marker = JSON.parse(readFileSync(getPhaseStatusPath(), "utf-8"));
 		expect(marker.itemId).toBe(1);
@@ -50,9 +58,39 @@ describe("phaseDone", () => {
 			item: { id: 1, status: "in-progress" },
 		});
 
-		phaseDone("1", "0");
+		phaseDone("1", "0", "Done");
 
 		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 1);
+		cleanup();
+	});
+
+	it("should store a phase summary when summary is provided", () => {
+		const items = [{ id: 1, status: "in-progress" }];
+		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+
+		phaseDone("1", "0", "Implemented the feature");
+
+		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
+			items[0],
+			"Implemented the feature",
+			0,
+		);
+		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
+		cleanup();
+	});
+
+	it("should always store a summary", () => {
+		const items = [{ id: 1, status: "in-progress" }];
+		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+
+		phaseDone("1", "0", "Completed phase");
+
+		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
+			items[0],
+			"Completed phase",
+			0,
+		);
+		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
 		cleanup();
 	});
 
@@ -63,7 +101,7 @@ describe("phaseDone", () => {
 				item: { id: 1, status: "done" },
 			});
 
-			phaseDone("1", "0");
+			phaseDone("1", "0", "Done");
 
 			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 			cleanup();

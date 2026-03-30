@@ -16,7 +16,11 @@ export function buildAuthoredPhasePrompt(
 		"When you have completed all tasks for this phase, run /verify to check your work.",
 		...buildManualCheckLines(manualChecks),
 		"",
-		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${item.id} ${phaseIndex}`,
+		`You can run \`assist backlog comments ${item.id}\` to read prior phase notes and comments.`,
+		`You can run \`assist backlog comment ${item.id} "<text>"\` to post findings or changes worth noting.`,
+		"",
+		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${item.id} ${phaseIndex} "<summary>"`,
+		"Replace <summary> with a concise summary of what was done in this phase.",
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");

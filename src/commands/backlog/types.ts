@@ -14,6 +14,15 @@ const planPhaseSchema = z.strictObject({
 	manualChecks: z.array(z.string()).optional(),
 });
 
+const backlogCommentTypeSchema = z.enum(["comment", "summary"]);
+
+const backlogCommentSchema = z.strictObject({
+	text: z.string(),
+	phase: z.number().optional(),
+	timestamp: z.string(),
+	type: backlogCommentTypeSchema,
+});
+
 const backlogItemSchema = z.strictObject({
 	id: z.number(),
 	type: backlogTypeSchema.default("story"),
@@ -23,6 +32,7 @@ const backlogItemSchema = z.strictObject({
 	plan: z.array(planPhaseSchema).optional(),
 	currentPhase: z.number().optional(),
 	status: backlogStatusSchema,
+	comments: z.array(backlogCommentSchema).optional(),
 });
 
 const backlogFileSchema = z.array(backlogItemSchema);
@@ -32,4 +42,5 @@ export type BacklogItem = z.infer<typeof backlogItemSchema>;
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
+export type BacklogComment = z.infer<typeof backlogCommentSchema>;
 export { backlogFileSchema, backlogItemSchema };

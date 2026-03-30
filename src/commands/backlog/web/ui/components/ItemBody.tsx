@@ -1,6 +1,7 @@
 import { marked } from "marked";
 import type { BacklogItem } from "../types";
 import { AcceptanceCriteriaList } from "./AcceptanceCriteriaList";
+import { CommentsSection } from "./CommentsSection";
 import { PlanSection } from "./PlanSection";
 import { StatusPicker } from "./StatusPicker";
 
@@ -50,6 +51,7 @@ export function ItemBody({
 			{item.plan && (
 				<PlanSection phases={item.plan} currentPhase={item.currentPhase} />
 			)}
+			{item.comments && <CommentsSection comments={item.comments} />}
 		</div>
 	);
 }

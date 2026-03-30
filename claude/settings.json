@@ -37,6 +37,8 @@
 			"Bash(assist backlog view:*)",
 			"Bash(assist backlog plan:*)",
 			"Bash(assist backlog phase-done:*)",
+			"Bash(assist backlog comment:*)",
+			"Bash(assist backlog comments:*)",
 			"Bash(assist backlog add:*)",
 			"Bash(assist transcript summarise:*)",
 			"Bash(assist complexity:*)",

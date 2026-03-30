@@ -20,6 +20,9 @@ export function buildReviewPrompt(
 		"",
 		"If any criterion fails, fix the issue and re-verify before proceeding.",
 		"",
+		`You can run \`assist backlog comments ${item.id}\` to read prior phase notes and comments.`,
+		`You can run \`assist backlog comment ${item.id} "<text>"\` to post findings or changes worth noting.`,
+		"",
 		"After all criteria pass, ask the user to confirm any manual checks",
 		"(e.g. end-to-end behaviour they need to verify themselves).",
 		"Wait for the user to confirm before proceeding.",
@@ -27,7 +30,7 @@ export function buildReviewPrompt(
 		"Once the user confirms:",
 		`1. Run: assist backlog done ${item.id}`,
 		"2. Run: /commit",
-		`3. Run: assist backlog phase-done ${item.id} ${phaseIndex}`,
+		`3. Run: assist backlog phase-done ${item.id} ${phaseIndex} "<summary>"`,
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");

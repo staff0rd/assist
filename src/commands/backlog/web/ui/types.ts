@@ -9,6 +9,13 @@ export type PlanPhase = {
 	manualChecks?: string[];
 };
 
+export type BacklogComment = {
+	text: string;
+	phase?: number;
+	timestamp: string;
+	type: "comment" | "summary";
+};
+
 export type BacklogItem = {
 	id: number;
 	type: "story" | "bug";
@@ -18,4 +25,5 @@ export type BacklogItem = {
 	plan?: PlanPhase[];
 	currentPhase?: number;
 	status: "todo" | "in-progress" | "done";
+	comments?: BacklogComment[];
 };

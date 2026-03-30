@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatComment } from "../formatComment";
 import { loadAndFindItem } from "../shared";
 import type { BacklogItem, PlanPhase } from "../types";
 
@@ -13,13 +14,15 @@ function printPlan(item: BacklogItem): void {
 	console.log();
 }
 
-function printPhase(phase: PlanPhase, index: number, isCurrent: boolean): void {
+function phaseHeader(index: number, name: string, isCurrent: boolean): string {
 	const marker = isCurrent ? chalk.green("▶ ") : "  ";
 	const label = isCurrent
-		? chalk.green.bold(`Phase ${index + 1}: ${phase.name}`)
-		: `${chalk.bold(`Phase ${index + 1}:`)} ${phase.name}`;
-	console.log(`${marker}${label}`);
+		? chalk.green.bold(`Phase ${index + 1}: ${name}`)
+		: `${chalk.bold(`Phase ${index + 1}:`)} ${name}`;
+	return `${marker}${label}`;
+}
 
+function printPhaseTasks(phase: PlanPhase): void {
 	for (const task of phase.tasks) {
 		console.log(`      - ${task.task}`);
 		if (task.verify) {
@@ -35,17 +38,34 @@ function printPhase(phase: PlanPhase, index: number, isCurrent: boolean): void {
 	}
 }
 
-export function show(id: string): void {
-	const result = loadAndFindItem(id);
-	if (!result) process.exit(1);
+function printPhase(phase: PlanPhase, index: number, isCurrent: boolean): void {
+	console.log(phaseHeader(index, phase.name, isCurrent));
+	printPhaseTasks(phase);
+}
 
-	const { item } = result;
-
+function printHeader(item: BacklogItem): void {
 	console.log(chalk.bold(`#${item.id} ${item.name}`));
 	console.log(
 		`${chalk.dim("Type:")} ${item.type}  ${chalk.dim("Status:")} ${item.status}`,
 	);
 	console.log();
+}
+
+function printAcceptanceCriteria(criteria: string[]): void {
+	if (criteria.length === 0) return;
+	console.log(chalk.bold("Acceptance Criteria"));
+	for (const [i, ac] of criteria.entries()) {
+		console.log(`  ${i + 1}. ${ac}`);
+	}
+	console.log();
+}
+
+export function show(id: string): void {
+	const result = loadAndFindItem(id);
+	if (!result) process.exit(1);
+
+	const { item } = result;
+	printHeader(item);
 
 	if (item.description) {
 		console.log(chalk.bold("Description"));
@@ -53,13 +73,18 @@ export function show(id: string): void {
 		console.log();
 	}
 
-	if (item.acceptanceCriteria.length > 0) {
-		console.log(chalk.bold("Acceptance Criteria"));
-		for (const [i, ac] of item.acceptanceCriteria.entries()) {
-			console.log(`  ${i + 1}. ${ac}`);
-		}
-		console.log();
-	}
-
+	printAcceptanceCriteria(item.acceptanceCriteria);
 	printPlan(item);
+	printComments(item);
+}
+
+function printComments(item: BacklogItem): void {
+	const entries = item.comments ?? [];
+	if (entries.length === 0) return;
+
+	console.log(chalk.bold("Comments"));
+	for (const entry of entries) {
+		console.log(`  ${formatComment(entry)}`);
+	}
+	console.log();
 }
