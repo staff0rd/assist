@@ -1,3 +1,10 @@
+# [0.158.0](https://github.com/staff0rd/assist/compare/v0.157.0...v0.158.0) (2026-03-30)
+
+
+### Features
+
+* loop backlog next when items remain ([3749a7e](https://github.com/staff0rd/assist/commit/3749a7e7edf02c0ee91bff1207fa449ab0038617))
+
 # [0.157.0](https://github.com/staff0rd/assist/compare/v0.156.0...v0.157.0) (2026-03-30)
 
 
