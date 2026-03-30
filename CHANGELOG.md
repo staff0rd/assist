@@ -1,3 +1,10 @@
+## [0.158.1](https://github.com/staff0rd/assist/compare/v0.158.0...v0.158.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* graceful exit on Ctrl-C in prompts ([d337912](https://github.com/staff0rd/assist/commit/d337912b308afd7e1b13d72c09fb8afeed6d8051))
+
 # [0.158.0](https://github.com/staff0rd/assist/compare/v0.157.0...v0.158.0) (2026-03-30)
 
 
