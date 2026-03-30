@@ -587,7 +587,7 @@
         - task: On signal detection, terminate Claude and chain into assist next
           verify: after /next signal, Claude is terminated and assist next runs
   currentPhase: 2
-  status: in-progress
+  status: done
   comments:
     - text: "Renamed .assist-phase-status.json to .assist-signal.json with event-type field. Updated phaseDone to write event: phase-done, renamed getPhaseStatusPath to getSignalPath, updated watchForMarker, resolvePhaseResult, .gitignore, README, and tests."
       phase: 0
@@ -597,7 +597,8 @@
       phase: 1
       timestamp: 2026-03-30T11:33:48.671Z
       type: summary
-- type: story
+- id: 27
+  type: story
   name: Global config support for sync auto-confirm
   description: Add a sync.autoConfirm config key (global-only) that controls whether assist sync skips confirmation prompts. Extend assist config set with a --global flag to write to ~/.assist.yml. Wire assist update and assist sync to read this setting.
   acceptanceCriteria:
@@ -623,5 +624,16 @@
           verify: npx vitest run src/commands/update
         - task: Add tests for both paths
           verify: npx vitest run src/commands/sync src/commands/update
-  id: 27
+  status: todo
+- type: story
+  name: Test backlog item
+  description: A dummy item for testing backlog functionality.
+  acceptanceCriteria:
+    - Item can be run and completed
+  plan:
+    - name: Test phase
+      tasks:
+        - task: Echo a test message
+          verify: echo test passed
+  id: 28
   status: todo
