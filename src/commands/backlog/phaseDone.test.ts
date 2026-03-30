@@ -106,5 +106,20 @@ describe("phaseDone", () => {
 			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 			cleanup();
 		});
+
+		it("should still save the summary", () => {
+			const items = [{ id: 1, status: "done" }];
+			mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+
+			phaseDone("1", "2", "Review complete");
+
+			expect(mockAddPhaseSummary).toHaveBeenCalledWith(
+				items[0],
+				"Review complete",
+				2,
+			);
+			expect(mockSaveBacklog).toHaveBeenCalledWith(items);
+			cleanup();
+		});
 	});
 });

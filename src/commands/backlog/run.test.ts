@@ -101,7 +101,7 @@ describe("run", () => {
 			expect(phases[phases.length - 1].name).toBe("Review");
 		});
 
-		it("should mark done after review completes", async () => {
+		it("should ensure item is marked done after review completes", async () => {
 			const item = makeItem();
 			mockPrepareRun.mockReturnValue({
 				item,
@@ -116,6 +116,26 @@ describe("run", () => {
 			await run("1");
 
 			expect(mockSetStatus).toHaveBeenCalledWith("1", "done");
+		});
+
+		it("should not fail if setStatus throws when marking done", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3);
+			mockSetStatus
+				.mockImplementationOnce(() => {}) // in-progress succeeds
+				.mockImplementationOnce(() => {
+					throw new Error("file conflict");
+				}); // done throws
+
+			await expect(run("1")).resolves.toBeUndefined();
 		});
 	});
 

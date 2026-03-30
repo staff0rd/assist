@@ -23,14 +23,15 @@ export function phaseDone(id: string, phase: string, summary: string): void {
 	);
 
 	const result = loadAndFindItem(id);
-	if (result?.item.status === "done") {
-		console.log(chalk.dim(`Item #${id} already done, skipping phase advance.`));
-		return;
-	}
 
 	if (result) {
 		addPhaseSummary(result.item, summary, phaseIndex);
 		saveBacklog(result.items);
+	}
+
+	if (result?.item.status === "done") {
+		console.log(chalk.dim(`Item #${id} already done, skipping phase advance.`));
+		return;
 	}
 
 	setCurrentPhase(id, phaseIndex + 1);

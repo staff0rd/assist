@@ -21,7 +21,7 @@ export async function run(
 	if (!(await runPhases(item, startPhase, plan, spawnOptions))) return;
 	if (!(await runReview(item, plan, spawnOptions))) return;
 
-	setStatus(id, "done");
+	ensureDone(id);
 	console.log(chalk.green(`\nAll phases complete for #${id}: ${item.name}`));
 }
 
@@ -36,6 +36,14 @@ function logProgress(
 		console.log(chalk.dim(`Resuming from phase ${startPhase + 1}/${total}\n`));
 	} else {
 		console.log(chalk.dim(`${total} phase(s)\n`));
+	}
+}
+
+function ensureDone(id: string): void {
+	try {
+		setStatus(id, "done");
+	} catch {
+		// Item may already be marked done by the review agent — ignore
 	}
 }
 
