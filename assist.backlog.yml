@@ -668,8 +668,15 @@
       tasks:
         - task: Wrap the core logic of next() in a loop. After run() completes successfully, re-enter the loop (which re-loads the backlog and applies existing selection logic). If run() returns without completing (abort), break. If no todo items remain, print a completion message and break.
           verify: assist backlog ls shows items; manually test assist next completes one item and loops back
+  currentPhase: 1
   status: in-progress
-- type: story
+  comments:
+    - text: Wrapped next() in a while loop that re-loads backlog after each run() completion. run() now returns boolean to distinguish completion from abort. Loop continues on success, breaks on abort/no-signal, prints completion message when no todo items remain.
+      phase: 0
+      timestamp: 2026-03-30T12:04:32.271Z
+      type: summary
+- id: 30
+  type: story
   name: Test backlog item
   description: A simple test item to verify the backlog workflow works correctly.
   acceptanceCriteria:
@@ -679,5 +686,23 @@
     - name: Verify
       tasks:
         - task: Log a message confirming the test item ran successfully
-  id: 30
+  status: todo
+- type: bug
+  name: Concurrent assist next agents compete for the same in-progress item
+  description: |-
+    **Repro:**
+    1. Have a backlog with at least two todo items
+    2. Run `assist next` — it picks an item and sets it to in-progress
+    3. In another terminal, run `assist next` again
+
+    **Expected:** The second agent skips the item already being worked on and picks the next todo item.
+
+    **Actual:** The second agent sees the in-progress item and tries to resume it, competing with the first agent.
+
+    **Edge case:** If both agents are terminated without completing, a fresh `assist next` should still pick up one of the abandoned in-progress items.
+  acceptanceCriteria:
+    - An in-progress item actively being worked on by another agent is skipped
+    - An in-progress item with no active agent is still resumable
+    - Two concurrent assist next invocations work on different items
+  id: 31
   status: todo
