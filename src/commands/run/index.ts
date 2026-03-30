@@ -9,10 +9,7 @@ function buildCommand(
 	configArgs: string[],
 	extraArgs: string[],
 ): string {
-	const parts =
-		configArgs.length === 0 && command.includes(" ")
-			? command.split(" ")
-			: [command, ...configArgs];
+	const parts = [command, ...configArgs];
 	return [...parts.map(shellQuote), ...extraArgs.map(shellQuote)].join(" ");
 }
 

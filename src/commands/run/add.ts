@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import { buildRunEntry } from "./buildRunEntry";
 
 function findAddIndex(): number {
 	const addIndex = process.argv.indexOf("add");
@@ -19,15 +20,6 @@ function extractAddArgs(addIndex: number) {
 function parseAddArguments() {
 	const addIndex = findAddIndex();
 	return addIndex === -1 ? null : extractAddArgs(addIndex);
-}
-
-function buildRunEntry(name: string, command: string, args: string[]) {
-	const entry: { name: string; command: string; args?: string[] } = {
-		name,
-		command,
-	};
-	if (args.length > 0) entry.args = args;
-	return entry;
 }
 
 function ensureNoDuplicate(configs: { name: string }[], name: string): void {

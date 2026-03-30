@@ -401,7 +401,8 @@
       tasks:
         - task: Add src/commands/run/buildRunEntry.test.ts covering no-split, split, and separate-args cases
           verify: npx vitest run src/commands/run/buildRunEntry.test.ts
-  status: todo
+  currentPhase: 2
+  status: done
 - id: 20
   type: story
   name: Add --dir option to backlog commands
