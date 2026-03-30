@@ -1,3 +1,10 @@
+## [0.154.2](https://github.com/staff0rd/assist/compare/v0.154.1...v0.154.2) (2026-03-30)
+
+
+### Bug Fixes
+
+* update syncs without prompting ([4c56148](https://github.com/staff0rd/assist/commit/4c56148f52c99ec7d158bf66b4dc0c4ab89f1c1a))
+
 ## [0.154.1](https://github.com/staff0rd/assist/compare/v0.154.0...v0.154.1) (2026-03-30)
 
 
