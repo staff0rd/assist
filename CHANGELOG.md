@@ -1,3 +1,10 @@
+# [0.155.0](https://github.com/staff0rd/assist/compare/v0.154.2...v0.155.0) (2026-03-30)
+
+
+### Features
+
+* add 'a' as CLI alias ([231b41d](https://github.com/staff0rd/assist/commit/231b41d642f26765d1a095965e98c168664ea878))
+
 ## [0.154.2](https://github.com/staff0rd/assist/compare/v0.154.1...v0.154.2) (2026-03-30)
 
 
