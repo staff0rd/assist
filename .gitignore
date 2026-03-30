@@ -3,3 +3,4 @@ dist
 books
 .assist-signal.json
 screenshots
+.claude/settings.local.json

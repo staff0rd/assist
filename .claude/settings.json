@@ -1,0 +1,12 @@
+{
+	"permissions": {
+		"allow": [
+			"Bash(gh search:*)",
+			"Bash(head:*)",
+			"Bash(assist run:*)",
+			"Bash(npx vitest:*)",
+			"Bash(assist screenshot:*)",
+			"Bash(git stash:*)"
+		]
+	}
+}
