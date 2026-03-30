@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { validateMessage } from "./validateMessage";
 import type { AssistConfig } from "../../shared/types";
+import { validateMessage } from "./validateMessage";
 
 const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 	throw new Error("process.exit");
@@ -14,7 +14,9 @@ const conventionalConfig = {
 describe("validateMessage", () => {
 	describe("when the message mentions claude", () => {
 		it("should reject", () => {
-			expect(() => validateMessage("fix: use Claude suggestions", baseConfig)).toThrow("process.exit");
+			expect(() =>
+				validateMessage("fix: use Claude suggestions", baseConfig),
+			).toThrow("process.exit");
 			expect(mockExit).toHaveBeenCalledWith(1);
 		});
 	});
@@ -22,30 +24,40 @@ describe("validateMessage", () => {
 	describe("when conventional commits are enabled", () => {
 		describe("when the message follows the format", () => {
 			it("should not reject", () => {
-				expect(() => validateMessage("feat: add feature", conventionalConfig)).not.toThrow();
+				expect(() =>
+					validateMessage("feat: add feature", conventionalConfig),
+				).not.toThrow();
 			});
 
 			it("should accept scoped messages", () => {
-				expect(() => validateMessage("fix(core): fix bug", conventionalConfig)).not.toThrow();
+				expect(() =>
+					validateMessage("fix(core): fix bug", conventionalConfig),
+				).not.toThrow();
 			});
 
 			it("should accept breaking changes", () => {
-				expect(() => validateMessage("feat!: breaking change", conventionalConfig)).not.toThrow();
+				expect(() =>
+					validateMessage("feat!: breaking change", conventionalConfig),
+				).not.toThrow();
 			});
 		});
 
 		describe("when the message does not follow the format", () => {
 			it("should reject", () => {
-				expect(() => validateMessage("random message", conventionalConfig)).toThrow("process.exit");
+				expect(() =>
+					validateMessage("random message", conventionalConfig),
+				).toThrow("process.exit");
 			});
 		});
 	});
 
 	describe("when the message exceeds max length", () => {
 		it("should reject", () => {
-			const longMessage = "feat: " + "a".repeat(50);
+			const longMessage = `feat: ${"a".repeat(50)}`;
 
-			expect(() => validateMessage(longMessage, baseConfig)).toThrow("process.exit");
+			expect(() => validateMessage(longMessage, baseConfig)).toThrow(
+				"process.exit",
+			);
 		});
 	});
 

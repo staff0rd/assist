@@ -38,9 +38,7 @@ describe("formatHuman", () => {
 
 	describe("when commands have no description", () => {
 		it("should omit the dash separator", () => {
-			const result = formatHuman("cli", [
-				{ path: ["run"], description: "" },
-			]);
+			const result = formatHuman("cli", [{ path: ["run"], description: "" }]);
 
 			expect(result).not.toContain("—");
 		});

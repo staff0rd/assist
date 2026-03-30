@@ -14,13 +14,16 @@ function makeGraph(files: string[], edges: ImportEdge[]): ImportGraph {
 describe("clusterDirectories", () => {
 	describe("when a directory is imported by exactly one other directory", () => {
 		it("should cluster it under that parent", () => {
-			const graph = makeGraph(["src/utils/helper.ts"], [
-				{
-					source: "src/commands/foo.ts",
-					target: "src/utils/helper.ts",
-					specifier: "../utils/helper",
-				},
-			]);
+			const graph = makeGraph(
+				["src/utils/helper.ts"],
+				[
+					{
+						source: "src/commands/foo.ts",
+						target: "src/utils/helper.ts",
+						specifier: "../utils/helper",
+					},
+				],
+			);
 
 			const result = clusterDirectories(graph);
 
@@ -30,18 +33,21 @@ describe("clusterDirectories", () => {
 
 	describe("when a directory is imported by multiple directories", () => {
 		it("should not cluster it", () => {
-			const graph = makeGraph(["src/utils/helper.ts"], [
-				{
-					source: "src/commands/foo.ts",
-					target: "src/utils/helper.ts",
-					specifier: "../utils/helper",
-				},
-				{
-					source: "src/lib/bar.ts",
-					target: "src/utils/helper.ts",
-					specifier: "../utils/helper",
-				},
-			]);
+			const graph = makeGraph(
+				["src/utils/helper.ts"],
+				[
+					{
+						source: "src/commands/foo.ts",
+						target: "src/utils/helper.ts",
+						specifier: "../utils/helper",
+					},
+					{
+						source: "src/lib/bar.ts",
+						target: "src/utils/helper.ts",
+						specifier: "../utils/helper",
+					},
+				],
+			);
 
 			const result = clusterDirectories(graph);
 
@@ -51,13 +57,16 @@ describe("clusterDirectories", () => {
 
 	describe("when source and target are in the same directory", () => {
 		it("should not create a cluster", () => {
-			const graph = makeGraph(["src/commands/helper.ts"], [
-				{
-					source: "src/commands/foo.ts",
-					target: "src/commands/helper.ts",
-					specifier: "./helper",
-				},
-			]);
+			const graph = makeGraph(
+				["src/commands/helper.ts"],
+				[
+					{
+						source: "src/commands/foo.ts",
+						target: "src/commands/helper.ts",
+						specifier: "./helper",
+					},
+				],
+			);
 
 			const result = clusterDirectories(graph);
 
@@ -67,13 +76,16 @@ describe("clusterDirectories", () => {
 
 	describe("when the target is an ancestor of the parent", () => {
 		it("should not cluster", () => {
-			const graph = makeGraph(["src/helper.ts"], [
-				{
-					source: "src/commands/sub/foo.ts",
-					target: "src/helper.ts",
-					specifier: "../../helper",
-				},
-			]);
+			const graph = makeGraph(
+				["src/helper.ts"],
+				[
+					{
+						source: "src/commands/sub/foo.ts",
+						target: "src/helper.ts",
+						specifier: "../../helper",
+					},
+				],
+			);
 
 			const result = clusterDirectories(graph);
 
@@ -83,13 +95,16 @@ describe("clusterDirectories", () => {
 
 	describe("when the parent is an ancestor of the child", () => {
 		it("should not cluster", () => {
-			const graph = makeGraph(["src/commands/sub/helper.ts"], [
-				{
-					source: "src/commands/foo.ts",
-					target: "src/commands/sub/helper.ts",
-					specifier: "./sub/helper",
-				},
-			]);
+			const graph = makeGraph(
+				["src/commands/sub/helper.ts"],
+				[
+					{
+						source: "src/commands/foo.ts",
+						target: "src/commands/sub/helper.ts",
+						specifier: "./sub/helper",
+					},
+				],
+			);
 
 			const result = clusterDirectories(graph);
 
@@ -99,13 +114,16 @@ describe("clusterDirectories", () => {
 
 	describe("when the target file is not in the graph files set", () => {
 		it("should ignore the edge", () => {
-			const graph = makeGraph([], [
-				{
-					source: "src/commands/foo.ts",
-					target: "src/utils/helper.ts",
-					specifier: "../utils/helper",
-				},
-			]);
+			const graph = makeGraph(
+				[],
+				[
+					{
+						source: "src/commands/foo.ts",
+						target: "src/utils/helper.ts",
+						specifier: "../utils/helper",
+					},
+				],
+			);
 
 			const result = clusterDirectories(graph);
 

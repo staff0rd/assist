@@ -49,9 +49,7 @@ describe("buildDestinationContent", () => {
 				[],
 			);
 
-			expect(result).toBe(
-				"export function a() {}\n\nexport function b() {}\n",
-			);
+			expect(result).toBe("export function a() {}\n\nexport function b() {}\n");
 		});
 	});
 

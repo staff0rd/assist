@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import ts from "typescript";
+import { describe, expect, it } from "vitest";
 import { calculateHalstead } from "./index";
 
 function parseFunction(code: string): ts.Node {
@@ -13,7 +13,8 @@ function parseFunction(code: string): ts.Node {
 	ts.forEachChild(sourceFile, (node) => {
 		if (ts.isFunctionDeclaration(node)) fn = node;
 	});
-	return fn!;
+	if (!fn) throw new Error("No function declaration found");
+	return fn;
 }
 
 describe("calculateHalstead", () => {
@@ -68,9 +69,7 @@ describe("calculateHalstead", () => {
 
 	describe("metrics relationships", () => {
 		it("should have time proportional to effort", () => {
-			const node = parseFunction(
-				"function f(x: number) { return x * x + 1; }",
-			);
+			const node = parseFunction("function f(x: number) { return x * x + 1; }");
 
 			const result = calculateHalstead(node);
 
@@ -78,9 +77,7 @@ describe("calculateHalstead", () => {
 		});
 
 		it("should have bugs proportional to volume", () => {
-			const node = parseFunction(
-				"function f(x: number) { return x * x + 1; }",
-			);
+			const node = parseFunction("function f(x: number) { return x * x + 1; }");
 
 			const result = calculateHalstead(node);
 

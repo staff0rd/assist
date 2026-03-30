@@ -4,7 +4,13 @@ import { computeRewrites } from "./index";
 describe("computeRewrites", () => {
 	describe("when a target file is moved", () => {
 		it("should rewrite the import specifier", () => {
-			const moves = [{ from: "src/utils/helper.ts", to: "src/lib/helper.ts", reason: "test" }];
+			const moves = [
+				{
+					from: "src/utils/helper.ts",
+					to: "src/lib/helper.ts",
+					reason: "test",
+				},
+			];
 			const edges = [
 				{
 					source: "src/commands/foo.ts",
@@ -28,7 +34,13 @@ describe("computeRewrites", () => {
 
 	describe("when the source file is moved to a different depth", () => {
 		it("should rewrite the specifier relative to the new location", () => {
-			const moves = [{ from: "src/commands/sub/foo.ts", to: "src/lib/foo.ts", reason: "test" }];
+			const moves = [
+				{
+					from: "src/commands/sub/foo.ts",
+					to: "src/lib/foo.ts",
+					reason: "test",
+				},
+			];
 			const edges = [
 				{
 					source: "src/commands/sub/foo.ts",
@@ -36,7 +48,10 @@ describe("computeRewrites", () => {
 					specifier: "../../utils/helper",
 				},
 			];
-			const allFiles = new Set(["src/commands/sub/foo.ts", "src/utils/helper.ts"]);
+			const allFiles = new Set([
+				"src/commands/sub/foo.ts",
+				"src/utils/helper.ts",
+			]);
 
 			const result = computeRewrites(moves, edges, allFiles);
 
@@ -52,7 +67,9 @@ describe("computeRewrites", () => {
 
 	describe("when no files are affected", () => {
 		it("should return no rewrites", () => {
-			const moves = [{ from: "src/other/x.ts", to: "src/other/y.ts", reason: "test" }];
+			const moves = [
+				{ from: "src/other/x.ts", to: "src/other/y.ts", reason: "test" },
+			];
 			const edges = [
 				{
 					source: "src/commands/foo.ts",
@@ -70,7 +87,9 @@ describe("computeRewrites", () => {
 
 	describe("when the specifier resolves to the same value", () => {
 		it("should not create a rewrite", () => {
-			const moves = [{ from: "src/a/foo.ts", to: "src/b/foo.ts", reason: "test" }];
+			const moves = [
+				{ from: "src/a/foo.ts", to: "src/b/foo.ts", reason: "test" },
+			];
 			const edges = [
 				{
 					source: "src/a/foo.ts",

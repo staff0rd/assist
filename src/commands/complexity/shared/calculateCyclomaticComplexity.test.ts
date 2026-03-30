@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import ts from "typescript";
+import { describe, expect, it } from "vitest";
 import { calculateCyclomaticComplexity } from "./calculateCyclomaticComplexity";
 
 function parseFunction(code: string): ts.Node {
@@ -13,7 +13,8 @@ function parseFunction(code: string): ts.Node {
 	ts.forEachChild(sourceFile, (node) => {
 		if (ts.isFunctionDeclaration(node)) fn = node;
 	});
-	return fn!;
+	if (!fn) throw new Error("No function declaration found");
+	return fn;
 }
 
 describe("calculateCyclomaticComplexity", () => {

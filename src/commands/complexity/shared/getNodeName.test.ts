@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import ts from "typescript";
+import { describe, expect, it } from "vitest";
 import { getNodeName, hasFunctionBody } from "./getNodeName";
 
 function parse(code: string): ts.SourceFile {
@@ -16,7 +16,8 @@ function findFirst(sourceFile: ts.SourceFile, kind: ts.SyntaxKind): ts.Node {
 		ts.forEachChild(node, visit);
 	};
 	visit(sourceFile);
-	return found!;
+	if (!found) throw new Error(`No node with kind ${kind} found`);
+	return found;
 }
 
 describe("getNodeName", () => {

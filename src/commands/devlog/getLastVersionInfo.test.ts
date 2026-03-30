@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { stripToMinor, bumpVersion } from "./getLastVersionInfo";
+import { bumpVersion, stripToMinor } from "./getLastVersionInfo";
 
 describe("stripToMinor", () => {
 	describe("when given a full semver version", () => {

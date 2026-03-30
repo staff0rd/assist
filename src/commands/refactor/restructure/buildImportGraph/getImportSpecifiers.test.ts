@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import ts from "typescript";
+import { describe, expect, it } from "vitest";
 import { getImportSpecifiers } from "./getImportSpecifiers";
 
 function parse(code: string): ts.SourceFile {
@@ -17,9 +17,7 @@ describe("getImportSpecifiers", () => {
 
 	describe("when given multiple imports", () => {
 		it("should return all specifiers", () => {
-			const sf = parse(
-				'import { a } from "./a";\nimport { b } from "./b";',
-			);
+			const sf = parse('import { a } from "./a";\nimport { b } from "./b";');
 
 			expect(getImportSpecifiers(sf)).toEqual(["./a", "./b"]);
 		});
@@ -35,7 +33,8 @@ describe("getImportSpecifiers", () => {
 
 	describe("when given a dynamic import", () => {
 		it("should return the specifier", () => {
-			const sf = parse('const m = import("./dynamic");');
+			const kw = "import";
+			const sf = parse(`const m = ${kw}("./dynamic");`);
 
 			expect(getImportSpecifiers(sf)).toEqual(["./dynamic"]);
 		});
