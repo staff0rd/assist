@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import chalk from "chalk";
+import { commitBacklog } from "../commitBacklog";
 import {
 	getBacklogPath,
 	getNextId,
@@ -31,6 +32,7 @@ async function addFromJson(): Promise<void> {
 	const id = getNextId(items);
 	items.push({ ...data, id, status: "todo" });
 	saveBacklog(items);
+	commitBacklog(id, data.name);
 	console.log(chalk.green(`Added item #${id}: ${data.name}`));
 }
 
@@ -51,6 +53,7 @@ async function addInteractive(): Promise<void> {
 		status: "todo",
 	});
 	saveBacklog(items);
+	commitBacklog(id, name);
 	console.log(chalk.green(`Added item #${id}: ${name}`));
 }
 

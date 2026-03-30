@@ -440,7 +440,8 @@
       tasks:
         - task: "After saveBacklog() in add/index.ts, git add the backlog file and commit it with message chore: add backlog item #<id> — <name>. Handle errors gracefully (warn but do not fail). Ensure both the interactive and --json code paths are covered."
           verify: echo {"name":"test item","type":"story","acceptanceCriteria":["works"],"plan":[]} | assist backlog add --json && git log -1 --oneline | grep backlog
-  status: todo
+  currentPhase: 1
+  status: done
 - id: 22
   type: story
   name: Add comments and phase summaries to backlog items
