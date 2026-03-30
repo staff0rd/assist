@@ -1,3 +1,10 @@
+# [0.152.0](https://github.com/staff0rd/assist/compare/v0.151.1...v0.152.0) (2026-03-30)
+
+
+### Features
+
+* auto-commit backlog after add ([32beb82](https://github.com/staff0rd/assist/commit/32beb82582afdab53e4e75beafd44eb6af588f7f))
+
 ## [0.151.1](https://github.com/staff0rd/assist/compare/v0.151.0...v0.151.1) (2026-03-30)
 
 
