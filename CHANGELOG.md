@@ -1,3 +1,10 @@
+# [0.151.0](https://github.com/staff0rd/assist/compare/v0.150.0...v0.151.0) (2026-03-30)
+
+
+### Features
+
+* add backlog show command ([a0fb6f8](https://github.com/staff0rd/assist/commit/a0fb6f8a9e2fbbd3d550280c389138368145cce5))
+
 # [0.150.0](https://github.com/staff0rd/assist/compare/v0.149.5...v0.150.0) (2026-03-29)
 
 
