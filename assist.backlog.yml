@@ -720,3 +720,17 @@
     - An in-progress item with no active agent is still resumable
     - Two concurrent assist next invocations work on different items
   status: todo
+- type: bug
+  name: assist next crashes on Ctrl-C during story prompt
+  description: |-
+    **Repro:**
+    1. Run `assist next`
+    2. When prompted to select/confirm a story, press Ctrl-C
+
+    **Expected:** CLI exits gracefully with no output (exit code 0 or 130).
+
+    **Actual:** Unhandled promise rejection error is printed to stderr and process exits with a non-zero code.
+  acceptanceCriteria:
+    - Pressing Ctrl-C during any interactive prompt in `assist next` exits cleanly without printing an error
+  id: 32
+  status: todo
