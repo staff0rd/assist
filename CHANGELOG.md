@@ -1,3 +1,10 @@
+## [0.154.1](https://github.com/staff0rd/assist/compare/v0.154.0...v0.154.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* save summary and ensure done safely ([c64c9d5](https://github.com/staff0rd/assist/commit/c64c9d5641f1a236b991bead8b34c70a9cc3901f))
+
 # [0.154.0](https://github.com/staff0rd/assist/compare/v0.153.0...v0.154.0) (2026-03-30)
 
 
