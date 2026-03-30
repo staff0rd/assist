@@ -720,7 +720,8 @@
     - An in-progress item with no active agent is still resumable
     - Two concurrent assist next invocations work on different items
   status: todo
-- type: bug
+- id: 32
+  type: bug
   name: assist next crashes on Ctrl-C during story prompt
   description: |-
     **Repro:**
@@ -732,5 +733,14 @@
     **Actual:** Unhandled promise rejection error is printed to stderr and process exits with a non-zero code.
   acceptanceCriteria:
     - Pressing Ctrl-C during any interactive prompt in `assist next` exits cleanly without printing an error
-  id: 32
-  status: todo
+  currentPhase: 1
+  status: done
+  comments:
+    - text: "Added exitOnCancel wrapper that catches enquirer Ctrl-C rejections and calls process.exit(0). Applied to all prompt call sites: next.ts select prompt, handleIncompletePhase.ts, promptConfirm, promptInput, promptPassword, and promptMultiselect. Extracted selectItem helper from next.ts to satisfy maintainability threshold."
+      phase: 0
+      timestamp: 2026-03-30T12:22:29.452Z
+      type: summary
+    - text: Added exitOnCancel wrapper for enquirer prompts so Ctrl-C exits cleanly (exit 0) instead of printing an unhandled rejection.
+      phase: 1
+      timestamp: 2026-03-30T12:23:12.083Z
+      type: summary

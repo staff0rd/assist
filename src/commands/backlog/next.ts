@@ -1,9 +1,26 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
+import { exitOnCancel } from "../../shared/exitOnCancel";
 import { typeLabel } from "./list/shared";
 import { run } from "./run";
 import { loadBacklog } from "./shared";
 import type { SpawnClaudeOptions } from "./spawnClaude";
+import type { BacklogItem } from "./types";
+
+async function selectItem(todo: BacklogItem[]): Promise<string> {
+	const choices = todo.map((i) => `${typeLabel(i.type)} #${i.id}: ${i.name}`);
+
+	const { selected } = await exitOnCancel(
+		enquirer.prompt<{ selected: string }>({
+			type: "select",
+			name: "selected",
+			message: "Choose a backlog item to start:",
+			choices,
+		}),
+	);
+
+	return selected.match(/#(\d+)/)?.[1] ?? "";
+}
 
 export async function next(options?: SpawnClaudeOptions): Promise<void> {
 	while (true) {
@@ -28,25 +45,12 @@ export async function next(options?: SpawnClaudeOptions): Promise<void> {
 		}
 
 		let id: string;
-
 		if (todo.length === 1) {
 			const only = todo[0];
 			console.log(chalk.bold(`Starting #${only.id}: ${only.name}`));
 			id = String(only.id);
 		} else {
-			const choices = todo.map((i) => ({
-				name: `${typeLabel(i.type)} #${i.id}: ${i.name}`,
-				value: String(i.id),
-			}));
-
-			const { selected } = await enquirer.prompt<{ selected: string }>({
-				type: "select",
-				name: "selected",
-				message: "Choose a backlog item to start:",
-				choices: choices.map((c) => c.name),
-			});
-
-			id = selected.match(/#(\d+)/)?.[1] ?? "";
+			id = await selectItem(todo);
 		}
 
 		const completed = await run(id, options);

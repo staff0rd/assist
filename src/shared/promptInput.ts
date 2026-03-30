@@ -1,4 +1,5 @@
 import Enquirer from "enquirer";
+import { exitOnCancel } from "./exitOnCancel";
 
 type PromptOptions = { name: string; message: string; initial?: string };
 type PromptConstructor<T extends PromptOptions> = new (
@@ -15,12 +16,12 @@ export async function promptInput(
 	message: string,
 	initial?: string,
 ): Promise<string> {
-	return new prompts.Input({ name, message, initial }).run();
+	return exitOnCancel(new prompts.Input({ name, message, initial }).run());
 }
 
 export async function promptPassword(
 	name: string,
 	message: string,
 ): Promise<string> {
-	return new prompts.Password({ name, message }).run();
+	return exitOnCancel(new prompts.Password({ name, message }).run());
 }
