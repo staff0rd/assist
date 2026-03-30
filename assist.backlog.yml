@@ -538,7 +538,8 @@
       phase: 0
       timestamp: 2026-03-30T06:54:02.633Z
       type: summary
-- type: story
+- id: 25
+  type: story
   name: Inline backlog comments in phase prompts
   description: Embed existing comments directly into the phase prompt text instead of instructing the agent to read them via CLI. Remove the read-comments instruction but keep the write-comments instruction.
   acceptanceCriteria:
@@ -551,5 +552,38 @@
       tasks:
         - task: Update buildAuthoredPhasePrompt.ts and buildReviewPrompt.ts to embed comments after AC section, remove the read-comments line, and keep the write-comments line. Use formatComment or similar to render each comment inline.
           verify: assist verify
-  id: 25
+  status: todo
+- type: story
+  name: CLI launch modes for draft and bug with /next chaining
+  description: Add assist draft and assist bug CLI commands that spawn Claude Code in the respective slash command mode, watching for a generic signal file. Introduce a /next slash command that writes the signal to terminate the session and chain into assist next. Rename .assist-phase-status.json to a generic signal file used for all assist-Claude communication.
+  acceptanceCriteria:
+    - .assist-phase-status.json is renamed to a generic signal file (e.g. .assist-signal.json) with an event-type field
+    - Existing phase-done flow works as before using the new file format
+    - assist draft spawns claude /draft with default permissions, watching for the signal file
+    - assist bug spawns claude /bug with default permissions, watching for the signal file
+    - /next slash command writes the signal file, causing the watcher to terminate Claude
+    - After termination via /next, assist immediately runs assist next (the full backlog-next flow)
+    - Signal file is cleaned up between sessions
+  plan:
+    - name: Rename signal file
+      tasks:
+        - task: Rename .assist-phase-status.json to a generic signal file name (e.g. .assist-signal.json) with an event-type field in the JSON payload
+          verify: grep for old filename across codebase returns no results
+        - task: Update phaseDone to write the new file format with event type
+          verify: assist backlog phase-done still writes the file correctly
+        - task: Update watchForMarker and resolvePhaseResult to read the new file format
+          verify: existing phase-done detection logic works with new format
+        - task: Update .gitignore and any other references to the old filename
+          verify: grep for assist-phase-status returns no results
+    - name: Add /next command and CLI launch modes
+      tasks:
+        - task: Create /next slash command that writes the generic signal file with a next event type
+          verify: running /next from Claude writes the signal file
+        - task: Add assist draft CLI command that spawns claude /draft with default permissions and watches for the signal file
+          verify: assist draft launches Claude in /draft mode
+        - task: Add assist bug CLI command that spawns claude /bug with default permissions and watches for the signal file
+          verify: assist bug launches Claude in /bug mode
+        - task: On signal detection, terminate Claude and chain into assist next
+          verify: after /next signal, Claude is terminated and assist next runs
+  id: 26
   status: todo
