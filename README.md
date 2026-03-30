@@ -33,6 +33,7 @@ After installation, the `assist` command will be available globally. You can als
 
 ## Claude Commands
 
+- `/bug` - File a bug with reproduction steps, expected and actual behavior
 - `/comment` - Add pending review comments to the current PR
 - `/commit` - Commit only relevant files from the session
 - `/devlog` - Generate devlog entry for the next unversioned day
@@ -49,6 +50,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/test-review` - Review existing tests for quality, coverage gaps, and adherence to conventions
 - `/inspect` - Run .NET code inspections on changed files
 - `/screenshot` - Capture a screenshot of a running application window
+- `/raven` - Query and manage RavenDB connections and collections
 - `/seq` - Query Seq logs from a URL or filter expression
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
@@ -168,4 +170,5 @@ After installation, the `assist` command will be available globally. You can als
 - `assist voice status` - Check voice daemon status and recent events
 - `assist voice devices` - List available audio input devices
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
+- `assist next` - Alias for `backlog next -w`
 
