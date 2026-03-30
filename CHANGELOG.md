@@ -1,3 +1,10 @@
+## [0.151.1](https://github.com/staff0rd/assist/compare/v0.151.0...v0.151.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* split inline command args at save time ([85895ed](https://github.com/staff0rd/assist/commit/85895ed576e0d36bd6de6670618dbce635e4060d))
+
 # [0.151.0](https://github.com/staff0rd/assist/compare/v0.150.0...v0.151.0) (2026-03-30)
 
 
