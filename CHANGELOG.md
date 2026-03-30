@@ -1,3 +1,10 @@
+## [0.155.1](https://github.com/staff0rd/assist/compare/v0.155.0...v0.155.1) (2026-03-30)
+
+
+### Bug Fixes
+
+* save summary on done, not phase-done ([2ea5166](https://github.com/staff0rd/assist/commit/2ea51663d7c924f48356550755a9a590523d62c2))
+
 # [0.155.0](https://github.com/staff0rd/assist/compare/v0.154.2...v0.155.0) (2026-03-30)
 
 
