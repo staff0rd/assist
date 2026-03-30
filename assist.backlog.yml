@@ -553,7 +553,8 @@
         - task: Update buildAuthoredPhasePrompt.ts and buildReviewPrompt.ts to embed comments after AC section, remove the read-comments line, and keep the write-comments line. Use formatComment or similar to render each comment inline.
           verify: assist verify
   status: todo
-- type: story
+- id: 26
+  type: story
   name: CLI launch modes for draft and bug with /next chaining
   description: Add assist draft and assist bug CLI commands that spawn Claude Code in the respective slash command mode, watching for a generic signal file. Introduce a /next slash command that writes the signal to terminate the session and chain into assist next. Rename .assist-phase-status.json to a generic signal file used for all assist-Claude communication.
   acceptanceCriteria:
@@ -585,5 +586,42 @@
           verify: assist bug launches Claude in /bug mode
         - task: On signal detection, terminate Claude and chain into assist next
           verify: after /next signal, Claude is terminated and assist next runs
-  id: 26
+  currentPhase: 2
+  status: in-progress
+  comments:
+    - text: "Renamed .assist-phase-status.json to .assist-signal.json with event-type field. Updated phaseDone to write event: phase-done, renamed getPhaseStatusPath to getSignalPath, updated watchForMarker, resolvePhaseResult, .gitignore, README, and tests."
+      phase: 0
+      timestamp: 2026-03-30T11:26:28.403Z
+      type: summary
+    - text: Added /next slash command, assist draft/bug CLI commands with signal-based chaining. Extracted writeSignal/readSignal helpers, moved getSignalPath to writeSignal.ts to avoid circular deps. On /next signal, Claude is terminated and assist next runs automatically.
+      phase: 1
+      timestamp: 2026-03-30T11:33:48.671Z
+      type: summary
+- type: story
+  name: Global config support for sync auto-confirm
+  description: Add a sync.autoConfirm config key (global-only) that controls whether assist sync skips confirmation prompts. Extend assist config set with a --global flag to write to ~/.assist.yml. Wire assist update and assist sync to read this setting.
+  acceptanceCriteria:
+    - assist config set --global sync.autoConfirm true writes to ~/.assist.yml
+    - assist sync reads sync.autoConfirm from config and skips prompts when true
+    - assist update no longer hardcodes --yes; it calls assist sync and lets the config decide
+    - assist config set sync.autoConfirm true (without --global) errors or warns since it is a global-only key
+    - Default is false (existing behavior preserved)
+  plan:
+    - name: Schema and global config set
+      tasks:
+        - task: Add sync schema to assistConfigSchema with autoConfirm boolean defaulting to false
+          verify: npx vitest run src/shared/types
+        - task: Add --global flag to assist config set that writes via saveGlobalConfig
+          verify: npx vitest run src/commands/config
+        - task: Add tests for global config set
+          verify: npx vitest run src/commands/config
+    - name: Wire sync and update
+      tasks:
+        - task: Update sync to read sync.autoConfirm from config and pass it as the yes option
+          verify: npx vitest run src/commands/sync
+        - task: Update update to call assist sync without --yes, relying on config
+          verify: npx vitest run src/commands/update
+        - task: Add tests for both paths
+          verify: npx vitest run src/commands/sync src/commands/update
+  id: 27
   status: todo
