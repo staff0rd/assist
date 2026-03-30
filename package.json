@@ -5,6 +5,7 @@
 	"main": "dist/index.js",
 	"bin": {
 		"assist": "./dist/index.js",
+		"a": "./dist/index.js",
 		"ast": "./dist/index.js"
 	},
 	"files": [

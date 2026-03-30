@@ -520,7 +520,8 @@
           verify: grep for backlog show in claude/settings.json
   currentPhase: 2
   status: done
-- type: story
+- id: 24
+  type: story
   name: Add "a" as CLI alias
   description: Register "a" as an additional bin alias for the assist CLI, matching the existing "ast" pattern.
   acceptanceCriteria:
@@ -530,5 +531,10 @@
       tasks:
         - task: Add "a" entry to the bin field in package.json
           verify: grep '"a":' package.json
-  id: 24
-  status: todo
+  currentPhase: 1
+  status: done
+  comments:
+    - text: Added "a" as bin alias in package.json pointing to ./dist/index.js
+      phase: 0
+      timestamp: 2026-03-30T06:54:02.633Z
+      type: summary
