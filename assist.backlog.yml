@@ -538,3 +538,18 @@
       phase: 0
       timestamp: 2026-03-30T06:54:02.633Z
       type: summary
+- type: story
+  name: Inline backlog comments in phase prompts
+  description: Embed existing comments directly into the phase prompt text instead of instructing the agent to read them via CLI. Remove the read-comments instruction but keep the write-comments instruction.
+  acceptanceCriteria:
+    - "When a backlog item has comments, they appear in the prompt after the acceptance criteria in a Comments: section"
+    - The read-comments CLI instruction is removed from both authored and review phase prompts
+    - The write-comments CLI instruction is still present in both prompts
+    - "When a backlog item has no comments, no Comments: section appears in the prompt"
+  plan:
+    - name: Inline comments
+      tasks:
+        - task: Update buildAuthoredPhasePrompt.ts and buildReviewPrompt.ts to embed comments after AC section, remove the read-comments line, and keep the write-comments line. Use formatComment or similar to render each comment inline.
+          verify: assist verify
+  id: 25
+  status: todo
