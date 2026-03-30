@@ -87,6 +87,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
 - `assist backlog delete <id>` - Delete a backlog item
+- `assist backlog show <id>` - Display full detail for a backlog item (alias: `view`)
 - `assist backlog plan <id>` - Display the phased plan for a backlog item
 - `assist backlog phase-done <id> <phase>` - Signal that a plan phase is complete (used by orchestrator)
 - `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude

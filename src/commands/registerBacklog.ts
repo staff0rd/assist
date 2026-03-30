@@ -6,10 +6,19 @@ import {
 	phaseDone as backlogPhaseDone,
 	plan as backlogPlan,
 	runPlan as backlogRun,
+	show as backlogShow,
 	start as backlogStart,
 	web as backlogWeb,
 } from "./backlog";
 import { registerItemCommands } from "./backlog/registerItemCommands";
+
+function registerShowCommands(cmd: Command): void {
+	cmd
+		.command("show <id>")
+		.alias("view")
+		.description("Show full detail for a backlog item")
+		.action(backlogShow);
+}
 
 function registerStatusCommands(cmd: Command): void {
 	cmd
@@ -72,6 +81,7 @@ export function registerBacklog(program: Command): void {
 		.action(() => backlogWeb({ port: "3000" }));
 
 	registerItemCommands(cmd);
+	registerShowCommands(cmd);
 	registerStatusCommands(cmd);
 	registerPlanCommands(cmd);
 	registerRunCommands(cmd);

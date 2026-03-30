@@ -33,6 +33,8 @@
 			"Bash(assist backlog list:*)",
 			"Bash(assist backlog start:*)",
 			"Bash(assist backlog done:*)",
+			"Bash(assist backlog show:*)",
+			"Bash(assist backlog view:*)",
 			"Bash(assist backlog plan:*)",
 			"Bash(assist backlog phase-done:*)",
 			"Bash(assist backlog add:*)",

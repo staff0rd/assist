@@ -426,7 +426,8 @@
         - task: Update README.md with the new --dir option
           verify: grep --dir README.md
   status: todo
-- type: story
+- id: 21
+  type: story
   name: Auto-commit backlog after adding an item
   description: After backlog add saves the YAML file, automatically git add and git commit the backlog file with a descriptive commit message including the item ID and name.
   acceptanceCriteria:
@@ -438,5 +439,72 @@
       tasks:
         - task: "After saveBacklog() in add/index.ts, git add the backlog file and commit it with message chore: add backlog item #<id> — <name>. Handle errors gracefully (warn but do not fail). Ensure both the interactive and --json code paths are covered."
           verify: echo {"name":"test item","type":"story","acceptanceCriteria":["works"],"plan":[]} | assist backlog add --json && git log -1 --oneline | grep backlog
-  id: 21
   status: todo
+- id: 22
+  type: story
+  name: Add comments and phase summaries to backlog items
+  description: Allow agents to post comments against backlog items at any time for findings or changes worth noting, and require a concise phase summary when completing a phase. Both are stored as annotations on the item, visible via CLI, and available for other phases to read on demand.
+  acceptanceCriteria:
+    - assist backlog comment <id> <text> adds a comment to the item
+    - assist backlog phase-done <id> <phase> <summary> accepts a required summary argument
+    - "Comments are stored in a comments array on the backlog item with { text, phase?, timestamp, type: summary | comment }"
+    - assist backlog comments <id> lists all comments/summaries for an item
+    - Phase prompts tell the agent it can run assist backlog comments <id> to read prior phase notes, and that it can run assist backlog comment <id> <text> to post findings or changes
+    - Phase prompts instruct the agent to provide a summary when calling phase-done
+    - "`assist backlog web` displays comments/summaries on the item detail screen"
+    - "`assist backlog show <id>` (#23) displays comments if present — update show command to render comments when this lands first"
+  plan:
+    - name: Schema and storage
+      tasks:
+        - task: "Add comments array to backlog item schema in types.ts with { text, phase?, timestamp, type: summary | comment }"
+          verify: assist verify
+        - task: Add helper functions to append a comment/summary entry in shared.ts
+          verify: assist verify
+    - name: Commands
+      tasks:
+        - task: Add backlog comment <id> <text> command that appends a comment entry
+          verify: assist backlog comment 1 "test comment" works
+        - task: Update phase-done to accept and store a required summary argument
+          verify: assist verify
+        - task: Add backlog comments <id> list command that displays all comments/summaries
+          verify: assist backlog comments 1 shows entries
+        - task: Register all new commands in registerBacklog.ts
+          verify: assist verify
+    - name: Web view
+      tasks:
+        - task: Update the backlog web item detail screen to display comments/summaries
+          verify: assist verify
+    - name: Prompt integration
+      tasks:
+        - task: Update buildAuthoredPhasePrompt.ts to inform the agent about comment and comments commands and that it can read prior comments
+          verify: assist verify
+        - task: Update buildReviewPrompt.ts to inform the agent about comment and comments commands
+          verify: assist verify
+  status: todo
+- id: 23
+  type: story
+  name: Add backlog show command
+  description: "Add a `backlog show <id>` command (alias `view`) that displays all detail for a backlog item in formatted terminal output — name, type, status, description, acceptance criteria, plan with phases/tasks/verify hints, and comments (if the comments feature from #22 is available)."
+  acceptanceCriteria:
+    - "`assist backlog show <id>` prints full item detail: id, name, type, status, description, acceptance criteria (numbered), and plan (phases, tasks, verify hints, manual checks)"
+    - "`assist backlog view <id>` works as an alias for `show`"
+    - "If the item has comments (per #22), they are displayed with timestamp, phase, and type"
+    - Exits with a clear error if the item ID does not exist
+    - Current phase is visually indicated in the plan output
+  plan:
+    - name: Implement show command
+      tasks:
+        - task: Create `src/commands/backlog/show/index.ts` with formatted output for all item fields (id, name, type, status, description, numbered acceptance criteria, plan with phases/tasks/verify hints/manual checks, current phase indicator). Handle missing optional fields (description, plan, comments) gracefully.
+          verify: assist backlog show <id> displays full detail for an existing item
+        - task: Register `show` subcommand (alias `view`) in `registerBacklog.ts`
+          verify: assist backlog view <id> works identically to assist backlog show <id>
+        - task: Exit with a clear error message when the item ID does not exist
+          verify: assist backlog show 9999 prints an error and exits non-zero
+    - name: README and settings
+      tasks:
+        - task: Add `backlog show` / `backlog view` to README command documentation
+          verify: grep for backlog show in README.md
+        - task: Add `backlog show` and `backlog view` to the read-only allow list in `claude/settings.json`
+          verify: grep for backlog show in claude/settings.json
+  currentPhase: 2
+  status: done
