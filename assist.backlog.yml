@@ -669,11 +669,15 @@
         - task: Wrap the core logic of next() in a loop. After run() completes successfully, re-enter the loop (which re-loads the backlog and applies existing selection logic). If run() returns without completing (abort), break. If no todo items remain, print a completion message and break.
           verify: assist backlog ls shows items; manually test assist next completes one item and loops back
   currentPhase: 1
-  status: in-progress
+  status: done
   comments:
     - text: Wrapped next() in a while loop that re-loads backlog after each run() completion. run() now returns boolean to distinguish completion from abort. Loop continues on success, breaks on abort/no-signal, prints completion message when no todo items remain.
       phase: 0
       timestamp: 2026-03-30T12:04:32.271Z
+      type: summary
+    - text: Wrapped next() in a while(true) loop that re-loads backlog after each run(). run() returns boolean to distinguish completion from abort. Loop continues on success, breaks on abort/no-signal, prints completion message when no todo items remain.
+      phase: 1
+      timestamp: 2026-03-30T12:07:41.114Z
       type: summary
 - id: 30
   type: story
@@ -687,7 +691,8 @@
       tasks:
         - task: Log a message confirming the test item ran successfully
   status: todo
-- type: bug
+- id: 31
+  type: bug
   name: Concurrent assist next agents compete for the same in-progress item
   description: |-
     **Repro:**
@@ -704,5 +709,4 @@
     - An in-progress item actively being worked on by another agent is skipped
     - An in-progress item with no active agent is still resumable
     - Two concurrent assist next invocations work on different items
-  id: 31
   status: todo

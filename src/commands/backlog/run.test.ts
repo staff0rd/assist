@@ -135,7 +135,7 @@ describe("run", () => {
 					throw new Error("file conflict");
 				}); // done throws
 
-			await expect(run("1")).resolves.toBeUndefined();
+			await expect(run("1")).resolves.toBe(true);
 		});
 	});
 

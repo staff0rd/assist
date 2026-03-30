@@ -9,20 +9,21 @@ import type { BacklogItem, PlanPhase } from "./types";
 export async function run(
 	id: string,
 	spawnOptions?: SpawnClaudeOptions,
-): Promise<void> {
+): Promise<boolean> {
 	const prepared = prepareRun(id);
-	if (!prepared) return;
+	if (!prepared) return false;
 
 	const { item, plan, startPhase } = prepared;
 
 	setStatus(id, "in-progress");
 	logProgress(id, item.name, startPhase, plan.length);
 
-	if (!(await runPhases(item, startPhase, plan, spawnOptions))) return;
-	if (!(await runReview(item, plan, spawnOptions))) return;
+	if (!(await runPhases(item, startPhase, plan, spawnOptions))) return false;
+	if (!(await runReview(item, plan, spawnOptions))) return false;
 
 	ensureDone(id);
 	console.log(chalk.green(`\nAll phases complete for #${id}: ${item.name}`));
+	return true;
 }
 
 function logProgress(
