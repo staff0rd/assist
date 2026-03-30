@@ -632,15 +632,16 @@
         - task: Add tests for both paths
           verify: npx vitest run src/commands/sync src/commands/update
   status: todo
-- id: 28
-  type: story
-  name: Test backlog item
-  description: A dummy item for testing backlog functionality.
+- type: story
+  name: Backlog ls alias
+  description: Add ls as an alias for backlog list to match common CLI conventions.
   acceptanceCriteria:
-    - Item can be run and completed
+    - assist backlog ls works identically to assist backlog list
+    - All options (--status, -a, -v) work with the alias
   plan:
-    - name: Test phase
+    - name: Add alias
       tasks:
-        - task: Echo a test message
-          verify: echo test passed
-  status: in-progress
+        - task: Add .alias("ls") to the list command registration in registerItemCommands.ts
+          verify: Run assist backlog ls and confirm it lists items
+  id: 28
+  status: todo
