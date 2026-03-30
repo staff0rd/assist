@@ -1,3 +1,10 @@
+# [0.154.0](https://github.com/staff0rd/assist/compare/v0.153.0...v0.154.0) (2026-03-30)
+
+
+### Features
+
+* backlog comments and summaries ([15d1f1f](https://github.com/staff0rd/assist/commit/15d1f1f48191d3fe20d0a80137ad7c9e9bcdb6c3))
+
 # [0.153.0](https://github.com/staff0rd/assist/compare/v0.152.0...v0.153.0) (2026-03-30)
 
 
