@@ -1,26 +1,15 @@
-import { writeFileSync } from "node:fs";
-import { join } from "node:path";
 import chalk from "chalk";
 import { addPhaseSummary } from "./addComment";
 import { loadAndFindItem, saveBacklog, setCurrentPhase } from "./shared";
-
-const PHASE_STATUS_FILE = ".assist-phase-status.json";
-
-export function getPhaseStatusPath(): string {
-	return join(process.cwd(), PHASE_STATUS_FILE);
-}
+import { writeSignal } from "./writeSignal";
 
 export function phaseDone(id: string, phase: string, summary: string): void {
 	const phaseIndex = Number.parseInt(phase, 10);
-	const statusPath = getPhaseStatusPath();
-	writeFileSync(
-		statusPath,
-		JSON.stringify({
-			itemId: Number.parseInt(id, 10),
-			phaseIndex,
-			completedAt: new Date().toISOString(),
-		}),
-	);
+	writeSignal("phase-done", {
+		itemId: Number.parseInt(id, 10),
+		phaseIndex,
+		completedAt: new Date().toISOString(),
+	});
 
 	const result = loadAndFindItem(id);
 

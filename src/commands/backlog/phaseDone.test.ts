@@ -19,8 +19,9 @@ vi.mock("./addComment", () => ({
 }));
 
 import { addPhaseSummary } from "./addComment";
-import { getPhaseStatusPath, phaseDone } from "./phaseDone";
+import { phaseDone } from "./phaseDone";
 import { loadAndFindItem, saveBacklog, setCurrentPhase } from "./shared";
+import { getSignalPath } from "./writeSignal";
 
 const mockLoadAndFindItem = loadAndFindItem as unknown as MockInstance;
 const mockSetCurrentPhase = setCurrentPhase as unknown as MockInstance;
@@ -28,7 +29,7 @@ const mockAddPhaseSummary = addPhaseSummary as unknown as MockInstance;
 const mockSaveBacklog = saveBacklog as unknown as MockInstance;
 
 function cleanup(): void {
-	const path = getPhaseStatusPath();
+	const path = getSignalPath();
 	if (existsSync(path)) unlinkSync(path);
 }
 
@@ -46,7 +47,8 @@ describe("phaseDone", () => {
 
 		phaseDone("1", "0", "Done");
 
-		const marker = JSON.parse(readFileSync(getPhaseStatusPath(), "utf-8"));
+		const marker = JSON.parse(readFileSync(getSignalPath(), "utf-8"));
+		expect(marker.event).toBe("phase-done");
 		expect(marker.itemId).toBe(1);
 		expect(marker.phaseIndex).toBe(0);
 		cleanup();

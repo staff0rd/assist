@@ -44,6 +44,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/review-comments` - Process PR review comments one by one
 - `/jira` - View a Jira work item
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
+- `/next` - Signal completion and chain into the next backlog item
 - `/standup` - Summarise recent journal entries as a standup update
 - `/sync` - Sync commands and settings to ~/.claude
 - `/test-cover` - Incrementally increase test coverage by identifying and testing uncovered files
@@ -174,4 +175,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist voice devices` - List available audio input devices
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 - `assist next` - Alias for `backlog next -w`
+- `assist draft` - Launch Claude in `/draft` mode, chain into next on `/next` signal
+- `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
+- `assist signal next` - Write a next signal to chain into `assist next`
 

@@ -597,6 +597,13 @@
       phase: 1
       timestamp: 2026-03-30T11:33:48.671Z
       type: summary
+    - text: "Fixed session isolation bug: concurrent processes shared a single signal file, causing cross-talk. writeSignal now includes sessionId from ASSIST_SESSION_ID env var; watchForMarker only reacts to matching signals."
+      timestamp: 2026-03-30T11:50:25.385Z
+      type: comment
+    - text: Implemented CLI launch modes (assist draft, assist bug) with /next chaining via session-scoped signal file. Fixed concurrent process isolation by embedding sessionId in signals.
+      phase: 2
+      timestamp: 2026-03-30T11:50:26.770Z
+      type: summary
 - id: 27
   type: story
   name: Global config support for sync auto-confirm
@@ -625,7 +632,8 @@
         - task: Add tests for both paths
           verify: npx vitest run src/commands/sync src/commands/update
   status: todo
-- type: story
+- id: 28
+  type: story
   name: Test backlog item
   description: A dummy item for testing backlog functionality.
   acceptanceCriteria:
@@ -635,5 +643,4 @@
       tasks:
         - task: Echo a test message
           verify: echo test passed
-  id: 28
-  status: todo
+  status: in-progress

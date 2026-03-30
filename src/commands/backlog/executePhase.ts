@@ -18,6 +18,7 @@ export async function executePhase(
 		),
 	);
 
+	process.env.ASSIST_SESSION_ID = String(process.pid);
 	const { child, done } = spawnClaude(
 		buildPhasePrompt(item, phaseIndex, phase),
 		spawnOptions,

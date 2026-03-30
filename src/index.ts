@@ -2,6 +2,8 @@
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { next as backlogNext } from "./commands/backlog";
+import { launchMode } from "./commands/backlog/launchMode";
+import { writeSignal } from "./commands/backlog/writeSignal";
 import { commit } from "./commands/commit";
 import { configGet, configList, configSet } from "./commands/config";
 import { coverage } from "./commands/coverage";
@@ -176,5 +178,27 @@ program
 	.command("next")
 	.description("Alias for backlog next -w")
 	.action(() => backlogNext({ allowEdits: true }));
+
+program
+	.command("draft")
+	.description("Launch Claude in /draft mode, chain into next on /next signal")
+	.action(() => launchMode("draft"));
+
+program
+	.command("bug")
+	.description("Launch Claude in /bug mode, chain into next on /next signal")
+	.action(() => launchMode("bug"));
+
+const signalCommand = program
+	.command("signal")
+	.description("Write an assist signal file");
+
+signalCommand
+	.command("next")
+	.description("Write a next signal to chain into assist next")
+	.action(() => {
+		writeSignal("next");
+		console.log("Signal written.");
+	});
 
 program.parse();

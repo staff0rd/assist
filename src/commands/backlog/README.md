@@ -29,7 +29,7 @@ flowchart TD
     end
 
     A1 --> A2 --> A3 --> A4
-    A8 -.->|writes .assist-phase-status.json| O1
+    A8 -.->|writes .assist-signal.json| O1
     O1 --> O2 --> O3 --> O4
     O4 -- yes --> O5
     O4 -- no --> O6
@@ -181,7 +181,7 @@ sequenceDiagram
         claude->>claude: User confirms
     end
     claude->>claude: assist backlog phase-done id phase
-    Note over claude: writes .assist-phase-status.json
+    Note over claude: writes .assist-signal.json
     wm->>claude: SIGTERM (marker detected)
 
     ep->>wm: stopWatching()
@@ -214,12 +214,12 @@ flowchart TD
 sequenceDiagram
     participant claude as Claude subprocess
     participant pd as phaseDone.ts
-    participant fs as .assist-phase-status.json
+    participant fs as .assist-signal.json
     participant wm as watchForMarker
     participant shared as shared.ts (YAML)
 
     claude->>pd: assist backlog phase-done <id> <phase>
-    pd->>fs: write { itemId, phaseIndex, completedAt }
+    pd->>fs: write { event, itemId, phaseIndex, completedAt }
     pd->>shared: setCurrentPhase(id, phase + 1)
     wm->>fs: poll detects file (1s interval)
     wm->>claude: SIGTERM
@@ -272,7 +272,7 @@ Wait for the user to confirm before proceeding.
 | `executePhase.ts` | Orchestrate a single phase |
 | `buildPhasePrompt.ts` | Generate the agent prompt |
 | `spawnClaude.ts` | Spawn `claude` subprocess with stdio |
-| `watchForMarker.ts` | Poll for `.assist-phase-status.json`, kill on detect |
+| `watchForMarker.ts` | Poll for `.assist-signal.json`, kill on detect |
 | `phaseDone.ts` | Write marker + advance `currentPhase` |
 | `resolvePhaseResult.ts` | Post-phase decision (advance / retry / abort) |
 | `shared.ts` | YAML persistence for `assist.backlog.yml` |
