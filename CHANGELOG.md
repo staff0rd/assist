@@ -1,3 +1,10 @@
+# [0.156.0](https://github.com/staff0rd/assist/compare/v0.155.1...v0.156.0) (2026-03-30)
+
+
+### Features
+
+* draft/bug modes with /next chaining ([5a8a3a3](https://github.com/staff0rd/assist/commit/5a8a3a3930d15d2488315846e352994befb0741e))
+
 ## [0.155.1](https://github.com/staff0rd/assist/compare/v0.155.0...v0.155.1) (2026-03-30)
 
 
