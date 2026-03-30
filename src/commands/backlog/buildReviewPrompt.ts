@@ -28,9 +28,9 @@ export function buildReviewPrompt(
 		"Wait for the user to confirm before proceeding.",
 		"",
 		"Once the user confirms:",
-		`1. Run: assist backlog done ${item.id}`,
+		`1. Run: assist backlog done ${item.id} "<summary>"`,
 		"2. Run: /commit",
-		`3. Run: assist backlog phase-done ${item.id} ${phaseIndex} "<summary>"`,
+		`3. Run: assist backlog phase-done ${item.id} ${phaseIndex} "done"`,
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");

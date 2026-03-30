@@ -107,18 +107,14 @@ describe("phaseDone", () => {
 			cleanup();
 		});
 
-		it("should still save the summary", () => {
+		it("should skip the summary (already saved by done command)", () => {
 			const items = [{ id: 1, status: "done" }];
 			mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
 			phaseDone("1", "2", "Review complete");
 
-			expect(mockAddPhaseSummary).toHaveBeenCalledWith(
-				items[0],
-				"Review complete",
-				2,
-			);
-			expect(mockSaveBacklog).toHaveBeenCalledWith(items);
+			expect(mockAddPhaseSummary).not.toHaveBeenCalled();
+			expect(mockSaveBacklog).not.toHaveBeenCalled();
 			cleanup();
 		});
 	});

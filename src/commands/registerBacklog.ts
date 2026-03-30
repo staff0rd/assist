@@ -28,7 +28,7 @@ function registerStatusCommands(cmd: Command): void {
 		.action(backlogStart);
 
 	cmd
-		.command("done <id>")
+		.command("done <id> [summary]")
 		.description("Set a backlog item to done")
 		.action(backlogDone);
 
