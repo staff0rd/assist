@@ -11,6 +11,7 @@ export function registerItemCommands(cmd: Command): void {
 
 	cmd
 		.command("list")
+		.alias("ls")
 		.description("List all backlog items")
 		.option("--status <type>", "Filter by status (todo, in-progress, done)")
 		.option("-a, --all", "Include done items")

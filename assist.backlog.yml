@@ -632,7 +632,8 @@
         - task: Add tests for both paths
           verify: npx vitest run src/commands/sync src/commands/update
   status: todo
-- type: story
+- id: 28
+  type: story
   name: Backlog ls alias
   description: Add ls as an alias for backlog list to match common CLI conventions.
   acceptanceCriteria:
@@ -643,5 +644,14 @@
       tasks:
         - task: Add .alias("ls") to the list command registration in registerItemCommands.ts
           verify: Run assist backlog ls and confirm it lists items
-  id: 28
-  status: todo
+  currentPhase: 1
+  status: done
+  comments:
+    - text: Added .alias('ls') to the list command in registerItemCommands.ts
+      phase: 0
+      timestamp: 2026-03-30T11:53:32.418Z
+      type: summary
+    - text: Added .alias('ls') to backlog list command in registerItemCommands.ts
+      phase: 1
+      timestamp: 2026-03-30T11:54:22.241Z
+      type: summary
