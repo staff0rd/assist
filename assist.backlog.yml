@@ -655,7 +655,8 @@
       phase: 1
       timestamp: 2026-03-30T11:54:22.241Z
       type: summary
-- type: story
+- id: 29
+  type: story
   name: Loop assist next when backlog items remain
   description: After assist next finishes running an item, it should loop back and call next again if there are remaining todo items, preserving the existing selection behaviour (auto-pick if one item, prompt if multiple). If no items remain, print a message and exit. The loop breaks if the user exits without a signal being written.
   acceptanceCriteria:
@@ -667,5 +668,16 @@
       tasks:
         - task: Wrap the core logic of next() in a loop. After run() completes successfully, re-enter the loop (which re-loads the backlog and applies existing selection logic). If run() returns without completing (abort), break. If no todo items remain, print a completion message and break.
           verify: assist backlog ls shows items; manually test assist next completes one item and loops back
-  id: 29
+  status: in-progress
+- type: story
+  name: Test backlog item
+  description: A simple test item to verify the backlog workflow works correctly.
+  acceptanceCriteria:
+    - Item can be added to the backlog
+    - Item appears in assist backlog list
+  plan:
+    - name: Verify
+      tasks:
+        - task: Log a message confirming the test item ran successfully
+  id: 30
   status: todo
