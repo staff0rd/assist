@@ -17,7 +17,7 @@ export function buildAuthoredPhasePrompt(
 		...buildManualCheckLines(manualChecks),
 		"",
 		`You can run \`assist backlog comments ${item.id}\` to read prior phase notes and comments.`,
-		`You can run \`assist backlog comment ${item.id} "<text>"\` to post findings or changes worth noting.`,
+		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
 		"",
 		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${item.id} ${phaseIndex} "<summary>"`,
 		"Replace <summary> with a concise summary of what was done in this phase.",

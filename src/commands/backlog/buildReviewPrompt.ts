@@ -21,7 +21,7 @@ export function buildReviewPrompt(
 		"If any criterion fails, fix the issue and re-verify before proceeding.",
 		"",
 		`You can run \`assist backlog comments ${item.id}\` to read prior phase notes and comments.`,
-		`You can run \`assist backlog comment ${item.id} "<text>"\` to post findings or changes worth noting.`,
+		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
 		"",
 		"After all criteria pass, ask the user to confirm any manual checks",
 		"(e.g. end-to-end behaviour they need to verify themselves).",
