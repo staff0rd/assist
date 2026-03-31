@@ -1,3 +1,10 @@
+# [0.167.0](https://github.com/staff0rd/assist/compare/v0.166.1...v0.167.0) (2026-03-31)
+
+
+### Features
+
+* split cli-reads into reads/writes ([aab7958](https://github.com/staff0rd/assist/commit/aab79587cc55ef4c2ec6a808755121a7fe137f66))
+
 ## [0.166.1](https://github.com/staff0rd/assist/compare/v0.166.0...v0.166.1) (2026-03-31)
 
 
