@@ -1,3 +1,10 @@
+# [0.166.0](https://github.com/staff0rd/assist/compare/v0.165.1...v0.166.0) (2026-03-31)
+
+
+### Features
+
+* use /api/data for historical seq queries ([6b9036f](https://github.com/staff0rd/assist/commit/6b9036fbf522314873589d0162ce4fee318bab72))
+
 ## [0.165.1](https://github.com/staff0rd/assist/compare/v0.165.0...v0.165.1) (2026-03-31)
 
 
