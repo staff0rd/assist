@@ -1,3 +1,10 @@
+## [0.166.1](https://github.com/staff0rd/assist/compare/v0.166.0...v0.166.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* normalize ./ prefix in allow matcher ([e549694](https://github.com/staff0rd/assist/commit/e5496948f65b7fea734d7fd5cf8794f5ae6b315b))
+
 # [0.166.0](https://github.com/staff0rd/assist/compare/v0.165.1...v0.166.0) (2026-03-31)
 
 
