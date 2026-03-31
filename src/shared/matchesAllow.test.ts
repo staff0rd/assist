@@ -1,31 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { _resetCaches, matchesAllow, matchesDeny } from "./matchesAllow";
 
-let settingsJson = "{}";
+let perms: { allow: string[]; deny: string[] } = { allow: [], deny: [] };
 
-vi.mock("node:os", () => ({
-	homedir: () => "/fake-home",
-}));
-
-vi.mock("node:fs", () => ({
-	existsSync: (p: string) => {
-		const norm = p.replace(/\\/g, "/");
-		return (
-			norm.includes(".claude/settings.json") &&
-			!norm.includes("fake-home") &&
-			!norm.includes("local")
-		);
-	},
-	readFileSync: () => settingsJson,
+vi.mock("./readSettingsPerms", () => ({
+	readSettingsPerms: (key: "allow" | "deny") => perms[key],
 }));
 
 function setup(allow: string[] = [], deny: string[] = []) {
-	settingsJson = JSON.stringify({ permissions: { allow, deny } });
+	perms = { allow, deny };
 	_resetCaches();
 }
 
 beforeEach(() => {
-	settingsJson = "{}";
+	perms = { allow: [], deny: [] };
 	_resetCaches();
 });
 
@@ -43,6 +31,16 @@ describe("matchesAllow", () => {
 	it("should match a PowerShell entry when tool is Bash (cross-tool)", () => {
 		setup(["PowerShell(assist verify:*)"]);
 		expect(matchesAllow("Bash", "assist verify")).toBe("assist verify");
+	});
+
+	it("should match entry without colon suffix (exact command)", () => {
+		setup(["Bash(assist run test)"]);
+		expect(matchesAllow("Bash", "assist run test")).toBe("assist run test");
+	});
+
+	it("should not match entry without colon suffix when arguments present", () => {
+		setup(["Bash(assist run test)"]);
+		expect(matchesAllow("Bash", "assist run test --verbose")).toBeUndefined();
 	});
 
 	it("should not match an unrelated command", () => {
