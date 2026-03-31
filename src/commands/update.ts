@@ -35,13 +35,13 @@ export async function update(): Promise<void> {
 		execSync("npm run build", { cwd: installDir, stdio: "inherit" });
 
 		console.log("Syncing commands...");
-		execSync("assist sync --yes", { stdio: "inherit" });
+		execSync("assist sync", { stdio: "inherit" });
 	} else if (isGlobalNpmInstall(installDir)) {
 		console.log("Detected global npm installation, updating...");
 		execSync("npm i -g @staff0rd/assist@latest", { stdio: "inherit" });
 
 		console.log("Syncing commands...");
-		execSync("assist sync --yes", { stdio: "inherit" });
+		execSync("assist sync", { stdio: "inherit" });
 	} else {
 		console.error(
 			"Could not determine installation method. Expected a git repo or global npm install.",

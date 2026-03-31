@@ -2,6 +2,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadConfig } from "../shared/loadConfig";
 import { syncClaudeMd } from "./sync/syncClaudeMd";
 import { syncSettings } from "./sync/syncSettings";
 
@@ -9,12 +10,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function sync(options?: { yes?: boolean }): Promise<void> {
+	const config = loadConfig();
+	const yes = options?.yes ?? config.sync.autoConfirm;
+
 	const claudeDir = path.join(__dirname, "..", "claude");
 	const targetBase = path.join(os.homedir(), ".claude");
 
 	syncCommands(claudeDir, targetBase);
-	await syncSettings(claudeDir, targetBase, { yes: options?.yes });
-	await syncClaudeMd(claudeDir, targetBase, { yes: options?.yes });
+	await syncSettings(claudeDir, targetBase, { yes });
+	await syncClaudeMd(claudeDir, targetBase, { yes });
 }
 
 function syncCommands(claudeDir: string, targetBase: string): void {

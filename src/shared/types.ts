@@ -125,6 +125,11 @@ export const assistConfigSchema = z.strictObject({
 			outputDir: z.string().default("./screenshots"),
 		})
 		.default({ outputDir: "./screenshots" }),
+	sync: z
+		.strictObject({
+			autoConfirm: z.boolean().default(false),
+		})
+		.default({ autoConfirm: false }),
 	voice: z
 		.strictObject({
 			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),

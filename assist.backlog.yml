@@ -631,7 +631,21 @@
           verify: npx vitest run src/commands/update
         - task: Add tests for both paths
           verify: npx vitest run src/commands/sync src/commands/update
-  status: todo
+  currentPhase: 2
+  status: done
+  comments:
+    - text: Added sync.autoConfirm (default false) to assistConfigSchema. Added --global flag to config set that writes via saveGlobalConfig. Extracted configGet to its own file to maintain code quality. Added tests for global and project config set paths.
+      phase: 0
+      timestamp: 2026-03-31T02:34:45.572Z
+      type: summary
+    - text: Wired sync to read sync.autoConfirm from config (falling back to false). Removed hardcoded --yes from update's assist sync calls. Added tests for both sync config-reading and update command invocation.
+      phase: 1
+      timestamp: 2026-03-31T02:36:39.503Z
+      type: summary
+    - text: Added sync.autoConfirm global-only config key with --global flag on config set. Wired sync and update to read the setting. Added global-only key guard preventing project-level writes.
+      phase: 2
+      timestamp: 2026-03-31T02:38:59.188Z
+      type: summary
 - id: 28
   type: story
   name: Backlog ls alias

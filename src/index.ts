@@ -5,7 +5,8 @@ import { next as backlogNext } from "./commands/backlog";
 import { launchMode } from "./commands/backlog/launchMode";
 import { writeSignal } from "./commands/backlog/writeSignal";
 import { commit } from "./commands/commit";
-import { configGet, configList, configSet } from "./commands/config";
+import { configList, configSet } from "./commands/config";
+import { configGet } from "./commands/config/configGet";
 import { coverage } from "./commands/coverage";
 import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
@@ -66,7 +67,8 @@ const configCommand = program
 configCommand
 	.command("set <key> <value>")
 	.description("Set a config value (e.g. commit.push true)")
-	.action(configSet);
+	.option("-g, --global", "Write to global ~/.assist.yml")
+	.action((key, value, options) => configSet(key, value, options));
 
 configCommand
 	.command("get <key>")

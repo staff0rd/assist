@@ -2,11 +2,12 @@ import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
 import {
 	loadConfig,
+	loadGlobalConfigRaw,
 	loadProjectConfig,
 	saveConfig,
+	saveGlobalConfig,
 } from "../../shared/loadConfig";
 import { assistConfigSchema } from "../../shared/types";
-import { getNestedValue } from "./getNestedValue";
 import { setNestedValue } from "./setNestedValue";
 
 function coerceValue(value: string): string | boolean {
@@ -47,42 +48,49 @@ function validateConfig(
 	return updated;
 }
 
-function applyConfigSet(key: string, coerced: string | boolean): void {
-	const updated = setNestedValue(loadProjectConfig(), key, coerced);
-	saveConfig(validateConfig(updated, key));
+const GLOBAL_ONLY_KEYS = ["sync.autoConfirm"];
+
+function assertNotGlobalOnly(key: string, global: boolean): void {
+	if (!global && GLOBAL_ONLY_KEYS.some((k) => key.startsWith(k))) {
+		console.error(
+			chalk.red(
+				`"${key}" is a global-only key. Use --global to set it in ~/.assist.yml`,
+			),
+		);
+		process.exit(1);
+	}
 }
 
-export function configSet(key: string, value: string): void {
-	const coerced = coerceValue(value);
-	applyConfigSet(key, coerced);
-	console.log(chalk.green(`Set ${key} = ${JSON.stringify(coerced)}`));
-}
-
-function formatOutput(value: unknown): string {
-	return typeof value === "object" && value !== null
-		? JSON.stringify(value, null, 2)
-		: String(value);
-}
-
-function exitKeyNotSet(key: string): never {
-	console.error(chalk.red(`Key "${key}" is not set`));
-	process.exit(1);
-}
-
-function requireNestedValue(
-	config: Record<string, unknown>,
+function applyConfigSet(
 	key: string,
-): unknown {
-	const value = getNestedValue(config, key);
-	if (value === undefined) return exitKeyNotSet(key);
-	return value;
+	coerced: string | boolean,
+	global: boolean,
+): void {
+	assertNotGlobalOnly(key, global);
+	const raw = global ? loadGlobalConfigRaw() : loadProjectConfig();
+	const updated = setNestedValue(raw, key, coerced);
+	validateConfig(updated, key);
+	if (global) {
+		saveGlobalConfig(updated);
+	} else {
+		saveConfig(updated);
+	}
 }
 
-export function configGet(key: string): void {
+type ConfigSetOptions = {
+	global?: boolean;
+};
+
+export function configSet(
+	key: string,
+	value: string,
+	options: ConfigSetOptions = {},
+): void {
+	const coerced = coerceValue(value);
+	applyConfigSet(key, coerced, options.global ?? false);
+	const target = options.global ? "global" : "project";
 	console.log(
-		formatOutput(
-			requireNestedValue(loadConfig() as Record<string, unknown>, key),
-		),
+		chalk.green(`Set ${key} = ${JSON.stringify(coerced)} (${target})`),
 	);
 }
 
