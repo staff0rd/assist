@@ -839,3 +839,28 @@
         - task: Add tests for deny matching, precedence over allow, compound command handling, and cli-hook check output
           verify: /verify passes
   status: todo
+- id: 36
+  type: story
+  name: Add --from option to seq query
+  description: The seq query command does not support a time range, so events outside the Seq API's default window are missed. Add a --from option that maps to the fromDateUtc parameter on the Seq /api/events endpoint, allowing queries like `assist seq query "JobId == ..." --from 2026-03-30`.
+  acceptanceCriteria:
+    - seq query accepts a --from option with a date or datetime string
+    - The value is passed as the fromDateUtc parameter to the Seq /api/events endpoint
+    - Omitting --from preserves existing behaviour (no date filter)
+  currentPhase: 1
+  status: done
+  comments:
+    - text: "Phase 1: Added --from option to seq query, mapped to fromDateUtc API param. Extracted fetchSeqEvents to maintain code quality threshold."
+      timestamp: 2026-03-31T03:05:57.782Z
+      type: comment
+    - text: Added --from option to seq query command, passing it as fromDateUtc to the Seq API. Extracted fetchSeqEvents helper to keep maintainability index above threshold.
+      phase: 0
+      timestamp: 2026-03-31T03:05:59.573Z
+      type: summary
+    - text: "Review: all 3 acceptance criteria pass. --from option wired through registerSeq, conditionally sets fromDateUtc param, omitting preserves existing behaviour. fetchSeqEvents extracted cleanly. All verify checks green."
+      timestamp: 2026-03-31T03:06:33.241Z
+      type: comment
+    - text: Added --from option to seq query, mapping to fromDateUtc on the Seq API. Extracted fetchSeqEvents for cleaner separation.
+      phase: 1
+      timestamp: 2026-03-31T03:07:51.746Z
+      type: summary

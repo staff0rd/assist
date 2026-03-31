@@ -1,13 +1,14 @@
 import chalk from "chalk";
+import { fetchSeqEvents } from "./fetchSeqEvents";
 import { formatEvent } from "./formatEvent";
 import { resolveConnection } from "./resolveConnection";
-import type { SeqEvent } from "./types";
 
 export async function seqQuery(
 	filter: string,
 	options: {
 		connection?: string;
 		count?: string;
+		from?: string;
 		json?: boolean;
 	},
 ): Promise<void> {
@@ -15,22 +16,11 @@ export async function seqQuery(
 	const count = Number.parseInt(options.count ?? "1000", 10);
 
 	const params = new URLSearchParams({ filter, count: String(count) });
-	const url = `${conn.url}/api/events?${params}`;
-
-	const response = await fetch(url, {
-		headers: {
-			Accept: "application/json",
-			"X-Seq-ApiKey": conn.apiToken,
-		},
-	});
-
-	if (!response.ok) {
-		const body = await response.text();
-		console.error(chalk.red(`Seq returned ${response.status}: ${body}`));
-		process.exit(1);
+	if (options.from) {
+		params.set("fromDateUtc", options.from);
 	}
 
-	const events: SeqEvent[] = await response.json();
+	const events = await fetchSeqEvents(conn, params);
 
 	if (events.length === 0) {
 		console.log(chalk.yellow("No events found."));

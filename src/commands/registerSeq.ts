@@ -30,6 +30,7 @@ export function registerSeq(program: Command): void {
 		.description("Query Seq events with a filter expression")
 		.option("-c, --connection <name>", "Connection to use")
 		.option("-n, --count <n>", "Number of events to fetch", "50")
+		.option("--from <date>", "Start date (UTC) for the query window")
 		.option("--json", "Output raw JSON")
 		.action((filter: string, options) => seqQuery(filter, options));
 }
