@@ -948,4 +948,22 @@
       tasks:
         - task: Update the /draft skill instructions to use Write tool and --file instead of echo pipe with --json
           verify: grep -q file skills/draft.md
+  status: in-progress
+- type: bug
+  name: PowerShell commands prompt for approval despite Bash allow rules
+  description: |-
+    **Repro:**
+    1. Open a project that has `Bash(assist verify:*)` (and similar) in `.claude/settings.json` allow list but no corresponding `PowerShell(...)` entries
+    2. Run `assist cli-hook check "assist verify"` — reports the command is allowed
+    3. Have Claude Code invoke `PowerShell(assist verify powershell 2>&1)`
+
+    **Expected:** The command auto-approves — #34 made the cli-hook cross-tool so Bash allow rules should cover PowerShell too.
+
+    **Actual:** Claude Code's built-in permission check runs before the cli-hook and finds no matching `PowerShell(...)` entry, so it prompts for approval. The cli-hook's cross-tool merging never gets a chance to run. The `cli-hook check` command gives a false positive because it only tests hook logic, not the settings permission entries that Claude Code evaluates first.
+  acceptanceCriteria:
+    - PowerShell invocations of allowed commands (e.g. assist verify) auto-approve without prompting
+    - The assist sync output includes PowerShell(...) allow entries alongside the existing Bash(...) ones
+    - Deny rules also cover both tools
+    - cli-hook check accepts an optional --tool flag (defaulting to Bash) so both tools can be verified independently
+  id: 39
   status: todo
