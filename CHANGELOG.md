@@ -1,3 +1,10 @@
+## [0.158.2](https://github.com/staff0rd/assist/compare/v0.158.1...v0.158.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* lock backlog items during execution ([bf17935](https://github.com/staff0rd/assist/commit/bf17935d6d51455db73513e27c34915f58b0da89))
+
 ## [0.158.1](https://github.com/staff0rd/assist/compare/v0.158.0...v0.158.1) (2026-03-30)
 
 
