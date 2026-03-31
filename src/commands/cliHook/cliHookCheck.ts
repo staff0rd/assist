@@ -2,7 +2,7 @@ import { isApprovedRead } from "../../shared/isApprovedRead";
 import { matchesConfigDeny } from "../../shared/matchesConfigDeny";
 import { splitCompound } from "../../shared/splitCompound";
 
-export function cliHookCheck(command: string): void {
+export function cliHookCheck(command: string, toolName = "Bash"): void {
 	const trimmed = command.trim();
 	const parts = splitCompound(trimmed);
 
@@ -23,7 +23,7 @@ export function cliHookCheck(command: string): void {
 
 	const reasons: string[] = [];
 	for (const part of parts) {
-		const reason = isApprovedRead(part);
+		const reason = isApprovedRead(part, toolName);
 		if (!reason) {
 			console.log(`not approved (unrecognised: ${part})`);
 			process.exitCode = 1;

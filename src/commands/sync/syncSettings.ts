@@ -3,7 +3,6 @@ import * as path from "node:path";
 import chalk from "chalk";
 import { promptConfirm } from "../../shared/promptConfirm";
 import { printDiff } from "../../utils/printDiff";
-
 export async function syncSettings(
 	claudeDir: string,
 	targetBase: string,

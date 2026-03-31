@@ -925,7 +925,16 @@
     - The filter expression is translated to SQL WHERE clause (single-quoted strings, Seq SQL syntax)
     - Results are formatted the same as /api/events output
     - Without --from, existing /api/events behaviour is preserved
-  status: todo
+  currentPhase: 1
+  status: in-progress
+  comments:
+    - text: "Phase 1: When --from is specified, seq query now uses /api/data with SQL instead of /api/events. Filter expressions are translated (== to =, double-quoted to single-quoted strings). Response rows are mapped back to SeqEvent format so output is identical. Extracted shared fetch logic to fetchSeq.ts to avoid duplication between the two endpoints."
+      timestamp: 2026-03-31T07:48:00.622Z
+      type: comment
+    - text: "Implemented /api/data endpoint for historical seq queries: routes to SQL-based /api/data when --from is specified, translates filter expressions to SQL WHERE clauses, maps columnar response to SeqEvent format for consistent output, preserves existing /api/events behaviour without --from"
+      phase: 0
+      timestamp: 2026-03-31T07:48:07.198Z
+      type: summary
 - id: 38
   type: story
   name: Replace stdin JSON piping with --file flag for backlog add
@@ -983,7 +992,7 @@
     - Deny rules also cover both tools
     - cli-hook check accepts an optional --tool flag (defaulting to Bash) so both tools can be verified independently
   currentPhase: 1
-  status: in-progress
+  status: done
   comments:
     - text: "Phase 1: expandShellPerms in syncSettings auto-generates PowerShell(...) entries from Bash(...) ones during sync. cli-hook check now accepts --tool flag (defaults to Bash). Deny rules also expanded for both tools."
       timestamp: 2026-03-31T07:24:42.814Z
@@ -998,3 +1007,7 @@
     - text: "New requirement: no 'assist' commands should appear in claude/settings.json in the allow section. They should be added to assist.cli-reads. Add a test that asserts there are no assist* entries in settings.json."
       timestamp: 2026-03-31T07:40:42.545Z
       type: comment
+    - text: Moved assist commands from settings.json allow list to assist.cli-reads so the cli-hook handles cross-tool (Bash/PowerShell) approval automatically. Removed expandShellPerms duplication approach. Added test asserting no assist entries in settings.json.
+      phase: 1
+      timestamp: 2026-03-31T07:49:31.267Z
+      type: summary

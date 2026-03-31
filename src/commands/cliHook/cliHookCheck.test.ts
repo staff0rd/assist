@@ -8,7 +8,8 @@ vi.mock("../../shared/matchesConfigDeny", () => ({
 }));
 
 vi.mock("../../shared/isApprovedRead", () => ({
-	isApprovedRead: (cmd: string) => mockIsApprovedRead(cmd),
+	isApprovedRead: (cmd: string, toolName?: string) =>
+		mockIsApprovedRead(cmd, toolName),
 }));
 
 import { cliHookCheck } from "./cliHookCheck";
@@ -61,6 +62,31 @@ describe("cliHookCheck deny", () => {
 			expect.stringContaining("approved"),
 		);
 		expect(process.exitCode).toBeUndefined();
+		consoleSpy.mockRestore();
+	});
+});
+
+describe("cliHookCheck --tool flag", () => {
+	it("defaults toolName to Bash", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockIsApprovedRead.mockReturnValue("Allowed by settings: assist verify");
+
+		cliHookCheck("assist verify");
+
+		expect(mockIsApprovedRead).toHaveBeenCalledWith("assist verify", "Bash");
+		consoleSpy.mockRestore();
+	});
+
+	it("passes toolName through to isApprovedRead", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockIsApprovedRead.mockReturnValue("Allowed by settings: assist verify");
+
+		cliHookCheck("assist verify", "PowerShell");
+
+		expect(mockIsApprovedRead).toHaveBeenCalledWith(
+			"assist verify",
+			"PowerShell",
+		);
 		consoleSpy.mockRestore();
 	});
 });

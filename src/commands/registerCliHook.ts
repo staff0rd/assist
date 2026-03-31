@@ -17,8 +17,9 @@ export function registerCliHook(program: Command): void {
 	cmd
 		.command("check <command>")
 		.description("Check whether a command would be auto-approved")
-		.action((command: string) => {
-			cliHookCheck(command);
+		.option("--tool <tool>", "Tool name to check against", "Bash")
+		.action((command: string, options: { tool: string }) => {
+			cliHookCheck(command, options.tool);
 		});
 
 	cmd
