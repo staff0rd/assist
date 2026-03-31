@@ -1,3 +1,10 @@
+# [0.160.0](https://github.com/staff0rd/assist/compare/v0.159.0...v0.160.0) (2026-03-31)
+
+
+### Features
+
+* global config for sync auto-confirm ([c7a5d98](https://github.com/staff0rd/assist/commit/c7a5d98853836a19a8f121bc3b271cccb65efcd2))
+
 # [0.159.0](https://github.com/staff0rd/assist/compare/v0.158.2...v0.159.0) (2026-03-31)
 
 
