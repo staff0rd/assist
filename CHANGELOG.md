@@ -1,3 +1,10 @@
+# [0.159.0](https://github.com/staff0rd/assist/compare/v0.158.2...v0.159.0) (2026-03-31)
+
+
+### Features
+
+* merge shell allow/deny rules across tools ([e1d8d02](https://github.com/staff0rd/assist/commit/e1d8d020897f2366fba4d11dce64117036ff808e))
+
 ## [0.158.2](https://github.com/staff0rd/assist/compare/v0.158.1...v0.158.2) (2026-03-31)
 
 
