@@ -21,6 +21,6 @@ export function registerItemCommands(cmd: Command): void {
 	cmd
 		.command("add")
 		.description("Add a new backlog item")
-		.option("--json", "Read item as JSON from stdin")
+		.option("--file <path>", "Read item as JSON from a file")
 		.action(backlogAdd);
 }

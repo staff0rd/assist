@@ -83,7 +83,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog init` - Create an empty assist.backlog.yml
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
-- `assist backlog add --json` - Add a backlog item from JSON on stdin (used by `/draft`)
+- `assist backlog add --file <path>` - Add a backlog item from a JSON file (used by `/draft`)
 - `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
@@ -121,7 +121,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist devlog version` - Show current repo name and version info
 - `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`, also auto-approves read-only `gh api` calls). Supports compound commands (`|`, `&&`, `||`, `;`) by checking each sub-command independently
 - `assist cli-hook add <cli>` - Discover a CLI's commands and auto-permit read-only ones
-- `assist cli-hook check <command>` - Check whether a command would be auto-approved by `cli-hook`
+- `assist cli-hook check <command> [--tool <tool>]` - Check whether a command would be auto-approved by `cli-hook` (tool defaults to `Bash`)
 - `assist cli-hook deny` - List all deny rules
 - `assist cli-hook deny add <pattern> <message>` - Add a deny rule for a command pattern
 - `assist cli-hook deny remove <pattern>` - Remove a deny rule by pattern

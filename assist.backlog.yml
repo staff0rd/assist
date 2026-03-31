@@ -948,8 +948,25 @@
       tasks:
         - task: Update the /draft skill instructions to use Write tool and --file instead of echo pipe with --json
           verify: grep -q file skills/draft.md
-  status: in-progress
-- type: bug
+  currentPhase: 2
+  status: done
+  comments:
+    - text: Updated /draft skill to use Write tool + --file flag instead of echo pipe with --json
+      timestamp: 2026-03-31T07:19:59.486Z
+      type: comment
+    - text: Updated /draft skill instructions to write JSON to a temp file via Write tool and use assist backlog add --file instead of echo piping with --json
+      phase: 1
+      timestamp: 2026-03-31T07:20:05.814Z
+      type: summary
+    - text: "Review: replaced --json stdin pipe with --file flag. Extracted parseItemFile.ts for maintainability. All 4 acceptance criteria pass, verify clean."
+      timestamp: 2026-03-31T07:37:42.300Z
+      type: comment
+    - text: Replaced --json stdin pipe with --file flag for backlog add. Extracted parseItemFile.ts for maintainability. Updated README and draft skill.
+      phase: 2
+      timestamp: 2026-03-31T07:41:17.877Z
+      type: summary
+- id: 39
+  type: bug
   name: PowerShell commands prompt for approval despite Bash allow rules
   description: |-
     **Repro:**
@@ -965,5 +982,19 @@
     - The assist sync output includes PowerShell(...) allow entries alongside the existing Bash(...) ones
     - Deny rules also cover both tools
     - cli-hook check accepts an optional --tool flag (defaulting to Bash) so both tools can be verified independently
-  id: 39
-  status: todo
+  currentPhase: 1
+  status: in-progress
+  comments:
+    - text: "Phase 1: expandShellPerms in syncSettings auto-generates PowerShell(...) entries from Bash(...) ones during sync. cli-hook check now accepts --tool flag (defaults to Bash). Deny rules also expanded for both tools."
+      timestamp: 2026-03-31T07:24:42.814Z
+      type: comment
+    - text: Added expandShellPerms to syncSettings that auto-generates PowerShell(...) entries alongside Bash(...) for both allow and deny rules. Added --tool flag to cli-hook check (defaults to Bash). Updated README.
+      phase: 0
+      timestamp: 2026-03-31T07:24:48.471Z
+      type: summary
+    - text: "MAJOR ISSUE: expandShellPerms duplicates every Bash permission as a PowerShell entry in claude/settings.json — this bloats the settings file and is explicitly unwanted. The correct approach: no 'assist' commands should appear in claude/settings.json allow section at all. They should be added to assist.cli-reads instead, where the cli-hook already handles cross-tool approval. Need a test asserting no assist* entries exist in settings.json allow."
+      timestamp: 2026-03-31T07:40:37.544Z
+      type: comment
+    - text: "New requirement: no 'assist' commands should appear in claude/settings.json in the allow section. They should be added to assist.cli-reads. Add a test that asserts there are no assist* entries in settings.json."
+      timestamp: 2026-03-31T07:40:42.545Z
+      type: comment

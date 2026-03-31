@@ -46,7 +46,7 @@ Ask the user if they want to change anything. Iterate until they confirm.
 
 ## Step 5: Save
 
-Once confirmed, pipe the JSON to the CLI. The JSON must match this shape:
+Once confirmed, write the JSON to a temp file and add it via the CLI. The JSON must match this shape:
 
 ```json
 {
@@ -66,9 +66,9 @@ Once confirmed, pipe the JSON to the CLI. The JSON must match this shape:
 }
 ```
 
-Run:
+Use the Write tool to save the JSON to a temp file (e.g. `/tmp/backlog-item.json`), then run:
 ```
-echo '<the confirmed json>' | assist backlog add --json 2>&1
+assist backlog add --file /tmp/backlog-item.json 2>&1
 ```
 
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.
