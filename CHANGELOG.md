@@ -1,3 +1,10 @@
+## [0.164.1](https://github.com/staff0rd/assist/compare/v0.164.0...v0.164.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* support allow entries without :* suffix ([21e2cc8](https://github.com/staff0rd/assist/commit/21e2cc8f2807c44abedcfe42d78cea130ab396fd))
+
 # [0.164.0](https://github.com/staff0rd/assist/compare/v0.163.0...v0.164.0) (2026-03-31)
 
 
