@@ -1,3 +1,10 @@
+# [0.164.0](https://github.com/staff0rd/assist/compare/v0.163.0...v0.164.0) (2026-03-31)
+
+
+### Features
+
+* add --dir option to backlog commands ([9c80a01](https://github.com/staff0rd/assist/commit/9c80a01716bcef31f816e17736aa6b315ca29941))
+
 # [0.163.0](https://github.com/staff0rd/assist/compare/v0.162.0...v0.163.0) (2026-03-31)
 
 
