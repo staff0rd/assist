@@ -1,3 +1,10 @@
+# [0.165.0](https://github.com/staff0rd/assist/compare/v0.164.1...v0.165.0) (2026-03-31)
+
+
+### Features
+
+* replace --json stdin with --file flag ([b968e1a](https://github.com/staff0rd/assist/commit/b968e1a2a926164c2248de5f6efcc5b40509b220))
+
 ## [0.164.1](https://github.com/staff0rd/assist/compare/v0.164.0...v0.164.1) (2026-03-31)
 
 
