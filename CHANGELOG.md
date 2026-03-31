@@ -1,3 +1,10 @@
+# [0.162.0](https://github.com/staff0rd/assist/compare/v0.161.0...v0.162.0) (2026-03-31)
+
+
+### Features
+
+* add --from option to seq query ([aefbd7c](https://github.com/staff0rd/assist/commit/aefbd7cb7b3d034f6d1ed03f63088505e43f27a7))
+
 # [0.161.0](https://github.com/staff0rd/assist/compare/v0.160.0...v0.161.0) (2026-03-31)
 
 
