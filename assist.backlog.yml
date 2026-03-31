@@ -926,7 +926,7 @@
     - Results are formatted the same as /api/events output
     - Without --from, existing /api/events behaviour is preserved
   currentPhase: 1
-  status: in-progress
+  status: done
   comments:
     - text: "Phase 1: When --from is specified, seq query now uses /api/data with SQL instead of /api/events. Filter expressions are translated (== to =, double-quoted to single-quoted strings). Response rows are mapped back to SeqEvent format so output is identical. Extracted shared fetch logic to fetchSeq.ts to avoid duplication between the two endpoints."
       timestamp: 2026-03-31T07:48:00.622Z
@@ -934,6 +934,13 @@
     - text: "Implemented /api/data endpoint for historical seq queries: routes to SQL-based /api/data when --from is specified, translates filter expressions to SQL WHERE clauses, maps columnar response to SeqEvent format for consistent output, preserves existing /api/events behaviour without --from"
       phase: 0
       timestamp: 2026-03-31T07:48:07.198Z
+      type: summary
+    - text: "Fixed during review: Seq /api/data returns Columns as string[] (not {Name}[]) and timestamps as .NET ticks (not ISO). Updated type, added ticksToIso converter, and fixed tests."
+      timestamp: 2026-03-31T08:00:15.372Z
+      type: comment
+    - text: Use /api/data endpoint for historical seq queries. When --from is specified, seq query now uses /api/data with SQL instead of /api/events. Filter expressions are translated to SQL WHERE clauses. Fixed column type and .NET ticks timestamp conversion discovered during e2e testing.
+      phase: 1
+      timestamp: 2026-03-31T08:00:17.375Z
       type: summary
 - id: 38
   type: story

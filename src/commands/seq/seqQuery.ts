@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { fetchSeqData } from "./fetchSeqData";
 import { fetchSeqEvents } from "./fetchSeqEvents";
 import { formatEvent } from "./formatEvent";
 import { resolveConnection } from "./resolveConnection";
@@ -15,12 +16,12 @@ export async function seqQuery(
 	const conn = resolveConnection(options.connection);
 	const count = Number.parseInt(options.count ?? "1000", 10);
 
-	const params = new URLSearchParams({ filter, count: String(count) });
-	if (options.from) {
-		params.set("fromDateUtc", options.from);
-	}
-
-	const events = await fetchSeqEvents(conn, params);
+	const events = options.from
+		? await fetchSeqData(conn, filter, count, options.from)
+		: await fetchSeqEvents(
+				conn,
+				new URLSearchParams({ filter, count: String(count) }),
+			);
 
 	if (events.length === 0) {
 		console.log(chalk.yellow("No events found."));
