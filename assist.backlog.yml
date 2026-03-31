@@ -1018,3 +1018,37 @@
       phase: 1
       timestamp: 2026-03-31T07:49:31.267Z
       type: summary
+- type: story
+  name: Backlog item linking
+  description: Add the ability to link backlog items together with "relates-to" (informational) and "depends-on" (directional dependency) relationship types, with circular dependency detection.
+  acceptanceCriteria:
+    - Items can have a `links` array with entries specifying type (`relates-to` | `depends-on`) and target item ID
+    - "`assist backlog link <from> <to> --type relates-to|depends-on` creates a link"
+    - "`assist backlog unlink <from> <to>` removes a link between two items"
+    - "`assist backlog show <id>` displays the item's links with target name and status"
+    - "`assist backlog list` indicates when items have dependencies"
+    - Adding a `depends-on` link that would create a circular dependency is rejected with an error
+    - Linking to a non-existent item is rejected with an error
+  plan:
+    - name: Schema & storage
+      tasks:
+        - task: "Add `BacklogLink` schema (type: `relates-to` | `depends-on`, targetId: number) and optional `links` array to `BacklogItem` in types.ts"
+          verify: assist build 2>&1
+        - task: Update `backlog add --file` to accept items with links in JSON input
+          verify: assist build 2>&1
+    - name: Link/unlink commands
+      tasks:
+        - task: "Implement `backlog link <from> <to> --type relates-to|depends-on` command with validation: target exists, no self-links, no duplicates, no circular deps for depends-on"
+          verify: assist build 2>&1
+        - task: Implement `backlog unlink <from> <to>` command to remove a link between two items
+          verify: assist build 2>&1
+        - task: Add circular dependency detection that walks the depends-on graph and rejects cycles
+          verify: assist build 2>&1
+    - name: Display
+      tasks:
+        - task: Update `backlog show` to render a links section showing link type, target item name, and target status
+          verify: assist backlog show 1 2>&1
+        - task: Update `backlog list` to indicate when items have depends-on links
+          verify: assist backlog list 2>&1
+  id: 40
+  status: todo
