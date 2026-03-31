@@ -8,6 +8,10 @@
 			{
 				"matcher": "Bash",
 				"hooks": [{ "type": "command", "command": "assist cli-hook" }]
+			},
+			{
+				"matcher": "PowerShell",
+				"hooks": [{ "type": "command", "command": "assist cli-hook" }]
 			}
 		],
 		"Notification": [
@@ -103,6 +107,8 @@
 			"SlashCommand(/test-review)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
-		"deny": ["Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"]
+		"deny": [
+			"Bash(git commit:*)", "Bash(npm run:*)", "Bash(npx assist:*)"
+		]
 	}
 }

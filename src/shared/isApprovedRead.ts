@@ -1,14 +1,17 @@
 import { resolve } from "node:path";
 import { isGhApiRead } from "./isGhApiRead";
 import { findCliRead } from "./loadCliReads";
-import { matchesBashAllow } from "./matchesBashAllow";
+import { matchesAllow } from "./matchesAllow";
 
 /**
  * Check whether a single (non-compound) command is an approved read-only
  * operation. Returns a human-readable reason string when approved, or
  * `undefined` when the command is not recognised.
  */
-export function isApprovedRead(command: string): string | undefined {
+export function isApprovedRead(
+	command: string,
+	toolName = "Bash",
+): string | undefined {
 	if (isCdToCwd(command)) return "cd to current directory";
 
 	const matched = findCliRead(command);
@@ -16,7 +19,7 @@ export function isApprovedRead(command: string): string | undefined {
 
 	if (isGhApiRead(command)) return "Read-only gh api command";
 
-	const allowMatch = matchesBashAllow(command);
+	const allowMatch = matchesAllow(toolName, command);
 	if (allowMatch) return `Allowed by settings: ${allowMatch}`;
 
 	return undefined;

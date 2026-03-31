@@ -11,8 +11,8 @@ vi.mock("./isGhApiRead", () => ({
 		cmd.startsWith("gh api") && !cmd.includes("-X POST"),
 }));
 
-vi.mock("./matchesBashAllow", () => ({
-	matchesBashAllow: (cmd: string) =>
+vi.mock("./matchesAllow", () => ({
+	matchesAllow: (_toolName: string, cmd: string) =>
 		cmd.startsWith("date") ? "date" : undefined,
 }));
 

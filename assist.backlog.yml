@@ -771,8 +771,22 @@
           verify: assist cli-hook check "assist verify" still works
         - task: Add a PowerShell PreToolUse hook matcher in claude/settings.json
           verify: Hook config contains both Bash and PowerShell matchers
-  status: in-progress
-- type: story
+  currentPhase: 1
+  status: done
+  comments:
+    - text: "Phase 1 complete: matchesBashAllow renamed to matchesAllow.ts with matchesAllow(toolName, cmd) and matchesDeny(toolName, cmd) parsing both Bash() and PowerShell() entries. cliHook accepts both tools and checks deny before allow. PowerShell hook matcher and deny rules added to settings.json."
+      timestamp: 2026-03-31T00:50:16.271Z
+      type: comment
+    - text: "Made cli-hook tool-agnostic: renamed matchesBashAllow to matchesAllow.ts with toolName-parameterised matchesAllow/matchesDeny, updated cliHook to accept PowerShell and check deny before allow, added PowerShell hook matcher and deny rules in settings.json"
+      phase: 0
+      timestamp: 2026-03-31T00:50:21.762Z
+      type: summary
+    - text: "Made cli-hook tool-agnostic: shellPrefixes() merges Bash/PowerShell allow and deny rules so a single entry covers both tools. Removed redundant PowerShell config entries from settings.json. Added cross-tool matching tests."
+      phase: 1
+      timestamp: 2026-03-31T02:23:40.729Z
+      type: summary
+- id: 35
+  type: story
   name: Deny rules with correction messages
   description: Add a deny config section to assist.yml that lets users define command patterns with correction messages. When the cli-hook matches a denied command, it returns a deny decision with the message so the agent self-corrects without human intervention.
   acceptanceCriteria:
@@ -800,5 +814,4 @@
       tasks:
         - task: Add tests for deny matching, precedence over allow, compound command handling, and cli-hook check output
           verify: /verify passes
-  id: 35
   status: todo
