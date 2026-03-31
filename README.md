@@ -119,7 +119,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist devlog repos` - Show which github.com/staff0rd repos are missing devlog entries
 - `assist devlog skip <date>` - Add a date to the skip list
 - `assist devlog version` - Show current repo name and version info
-- `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`, also auto-approves read-only `gh api` calls). Supports compound commands (`|`, `&&`, `||`, `;`) by checking each sub-command independently
+- `assist cli-hook` - PreToolUse hook for auto-approving CLI commands (reads from `allowed.cli-reads` and `allowed.cli-writes`, also auto-approves read-only `gh api` calls). Supports compound commands (`|`, `&&`, `||`, `;`) by checking each sub-command independently
 - `assist cli-hook add <cli>` - Discover a CLI's commands and auto-permit read-only ones
 - `assist cli-hook check <command> [--tool <tool>]` - Check whether a command would be auto-approved by `cli-hook` (tool defaults to `Bash`)
 - `assist cli-hook deny` - List all deny rules

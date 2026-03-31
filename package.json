@@ -11,7 +11,8 @@
 	"files": [
 		"dist",
 		"claude",
-		"assist.cli-reads"
+		"allowed.cli-reads",
+		"allowed.cli-writes"
 	],
 	"publishConfig": {
 		"access": "public"

@@ -19,27 +19,18 @@ acli jira workitem link list
 acli jira workitem search
 acli jira workitem view
 acli jira workitem watcher list
-assist backlog add
-assist backlog comment
 assist backlog comments
-assist backlog done
 assist backlog list
-assist backlog phase-done
-assist backlog plan
 assist backlog show
-assist backlog start
 assist backlog view
 assist cli-hook
-assist commit
 assist complexity
 assist coverage
-assist devlog
 assist dotnet
 assist jira ac
 assist jira auth
 assist jira view
 assist news
-assist notify
 assist prs list-comments
 assist ravendb auth list
 assist ravendb collections
@@ -49,11 +40,7 @@ assist roam show-claude-code-icon
 assist screenshot
 assist seq auth list
 assist seq query
-assist signal next
 assist status-line
-assist sync
-assist transcript format
-assist transcript summarise
 assist verify
 assist voice
 az account list

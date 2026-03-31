@@ -5,25 +5,35 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-function getCliReadsPath(): string {
+function packageRoot(): string {
 	// Package root: up from dist/ (tsup bundles into dist/index.js)
-	return resolve(__dirname, "..", "assist.cli-reads");
+	return resolve(__dirname, "..");
 }
 
-/** Cached lines from assist.cli-reads — loaded once per process. */
-let cachedLines: string[] | undefined;
-
-function getCliReadsLines(): string[] {
-	if (cachedLines) return cachedLines;
-	const path = getCliReadsPath();
-	if (!existsSync(path)) {
-		cachedLines = [];
-		return cachedLines;
-	}
-	cachedLines = readFileSync(path, "utf-8")
+function readLines(path: string): string[] {
+	if (!existsSync(path)) return [];
+	return readFileSync(path, "utf-8")
 		.split("\n")
 		.filter((line) => line.trim() !== "");
-	return cachedLines;
+}
+
+/** Cached lines from allowed.cli-reads — loaded once per process. */
+let cachedReads: string[] | undefined;
+/** Cached lines from allowed.cli-writes — loaded once per process. */
+let cachedWrites: string[] | undefined;
+
+function getCliReadsLines(): string[] {
+	if (!cachedReads) {
+		cachedReads = readLines(resolve(packageRoot(), "allowed.cli-reads"));
+	}
+	return cachedReads;
+}
+
+function getCliWritesLines(): string[] {
+	if (!cachedWrites) {
+		cachedWrites = readLines(resolve(packageRoot(), "allowed.cli-writes"));
+	}
+	return cachedWrites;
 }
 
 export function loadCliReads(): string[] {
@@ -31,15 +41,16 @@ export function loadCliReads(): string[] {
 }
 
 export function saveCliReads(commands: string[]): void {
-	writeFileSync(getCliReadsPath(), `${commands.join("\n")}\n`);
-	cachedLines = undefined; // bust cache
+	writeFileSync(
+		resolve(packageRoot(), "allowed.cli-reads"),
+		`${commands.join("\n")}\n`,
+	);
+	cachedReads = undefined; // bust cache
 }
 
-export function findCliRead(command: string): string | undefined {
+function findMatch(command: string, lines: string[]): string | undefined {
 	const words = command.split(/\s+/);
 	if (words.length === 0) return undefined;
-
-	const lines = getCliReadsLines();
 
 	// Match single-word entries (e.g. "head", "cat", "ls")
 	if (lines.includes(words[0])) return words[0];
@@ -54,4 +65,12 @@ export function findCliRead(command: string): string | undefined {
 	return candidates
 		.sort((a, b) => b.length - a.length)
 		.find((rc) => command === rc || command.startsWith(`${rc} `));
+}
+
+export function findCliRead(command: string): string | undefined {
+	return findMatch(command, getCliReadsLines());
+}
+
+export function findCliWrite(command: string): string | undefined {
+	return findMatch(command, getCliWritesLines());
 }

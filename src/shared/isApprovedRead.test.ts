@@ -4,6 +4,8 @@ import { isApprovedRead } from "./isApprovedRead";
 vi.mock("./loadCliReads", () => ({
 	findCliRead: (cmd: string) =>
 		cmd.startsWith("gh repo view") ? "gh repo view" : undefined,
+	findCliWrite: (cmd: string) =>
+		cmd.startsWith("assist commit") ? "assist commit" : undefined,
 }));
 
 vi.mock("./isGhApiRead", () => ({

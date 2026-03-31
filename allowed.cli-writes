@@ -1,0 +1,15 @@
+assist backlog add
+assist backlog comment
+assist backlog done
+assist backlog link
+assist backlog phase-done
+assist backlog plan
+assist backlog unlink
+assist backlog start
+assist commit
+assist devlog
+assist notify
+assist signal next
+assist sync
+assist transcript format
+assist transcript summarise

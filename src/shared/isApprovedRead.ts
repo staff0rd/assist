@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { isGhApiRead } from "./isGhApiRead";
-import { findCliRead } from "./loadCliReads";
+import { findCliRead, findCliWrite } from "./loadCliReads";
 import { matchesAllow } from "./matchesAllow";
 
 /**
@@ -14,8 +14,11 @@ export function isApprovedRead(
 ): string | undefined {
 	if (isCdToCwd(command)) return "cd to current directory";
 
-	const matched = findCliRead(command);
-	if (matched) return `Read-only CLI command: ${matched}`;
+	const matchedRead = findCliRead(command);
+	if (matchedRead) return `Read-only CLI command: ${matchedRead}`;
+
+	const matchedWrite = findCliWrite(command);
+	if (matchedWrite) return `Allowed CLI write: ${matchedWrite}`;
 
 	if (isGhApiRead(command)) return "Read-only gh api command";
 
