@@ -125,6 +125,14 @@ export const assistConfigSchema = z.strictObject({
 			outputDir: z.string().default("./screenshots"),
 		})
 		.default({ outputDir: "./screenshots" }),
+	deny: z
+		.array(
+			z.strictObject({
+				pattern: z.string(),
+				message: z.string(),
+			}),
+		)
+		.optional(),
 	sync: z
 		.strictObject({
 			autoConfirm: z.boolean().default(false),

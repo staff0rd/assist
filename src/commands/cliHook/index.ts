@@ -1,6 +1,7 @@
 import { readStdin } from "../../lib/readStdin";
 import { isApprovedRead } from "../../shared/isApprovedRead";
 import { matchesDeny } from "../../shared/matchesAllow";
+import { matchesConfigDeny } from "../../shared/matchesConfigDeny";
 import { splitCompound } from "../../shared/splitCompound";
 
 type HookInput = {
@@ -18,10 +19,17 @@ type HookDecision = {
 
 const SUPPORTED_TOOLS = new Set(["Bash", "PowerShell"]);
 
-function resolvePermission(
-	toolName: string,
-	parts: string[],
-): HookDecision | undefined {
+function findDeny(toolName: string, parts: string[]): HookDecision | undefined {
+	for (const part of parts) {
+		const configDeny = matchesConfigDeny(part);
+		if (configDeny) {
+			return {
+				permissionDecision: "deny",
+				permissionDecisionReason: configDeny.message,
+			};
+		}
+	}
+
 	for (const part of parts) {
 		const denied = matchesDeny(toolName, part);
 		if (denied) {
@@ -31,6 +39,16 @@ function resolvePermission(
 			};
 		}
 	}
+
+	return undefined;
+}
+
+function resolvePermission(
+	toolName: string,
+	parts: string[],
+): HookDecision | undefined {
+	const denied = findDeny(toolName, parts);
+	if (denied) return denied;
 
 	const reasons: string[] = [];
 	for (const part of parts) {
@@ -45,32 +63,35 @@ function resolvePermission(
 	};
 }
 
-export async function cliHook(): Promise<void> {
-	const inputData = await readStdin();
-
-	let data: HookInput;
+function tryParseJson(raw: string): HookInput | undefined {
 	try {
-		data = JSON.parse(inputData);
+		return JSON.parse(raw);
 	} catch {
-		return;
+		return undefined;
 	}
+}
 
-	if (!SUPPORTED_TOOLS.has(data.tool_name) || !data.tool_input?.command) {
-		return;
-	}
-
+function extractCommand(
+	data: HookInput,
+): { toolName: string; parts: string[] } | undefined {
+	if (!SUPPORTED_TOOLS.has(data.tool_name) || !data.tool_input?.command)
+		return undefined;
 	const parts = splitCompound(data.tool_input.command.trim());
-	if (!parts) return;
+	return parts ? { toolName: data.tool_name, parts } : undefined;
+}
 
-	const decision = resolvePermission(data.tool_name, parts);
+export async function cliHook(): Promise<void> {
+	const data = tryParseJson(await readStdin());
+	if (!data) return;
+	const cmd = extractCommand(data);
+	if (!cmd) return;
+
+	const decision = resolvePermission(cmd.toolName, cmd.parts);
 	if (!decision) return;
 
 	console.log(
 		JSON.stringify({
-			hookSpecificOutput: {
-				hookEventName: "PreToolUse",
-				...decision,
-			},
+			hookSpecificOutput: { hookEventName: "PreToolUse", ...decision },
 		}),
 	);
 }

@@ -838,7 +838,37 @@
       tasks:
         - task: Add tests for deny matching, precedence over allow, compound command handling, and cli-hook check output
           verify: /verify passes
-  status: todo
+  currentPhase: 3
+  status: done
+  comments:
+    - text: "Phase 1: Added deny array schema (pattern + message) to assistConfigSchema as optional field. loadConfig passes rules through via existing Zod parse. 5 unit tests cover valid config, omission, and validation of missing/extra fields."
+      timestamp: 2026-03-31T03:16:11.989Z
+      type: comment
+    - text: Added deny array schema ({pattern, message}) to assistConfigSchema in types.ts with unit tests confirming validation and loadConfig passthrough
+      phase: 0
+      timestamp: 2026-03-31T03:16:17.234Z
+      type: summary
+    - text: "Phase 2: Added matchesConfigDeny for prefix-matching commands against assist.yml deny rules. Integrated into cli-hook (resolvePermission checks config deny before settings deny and allow) and cli-hook check. Compound commands are split and each sub-command checked. Extracted tryParseJson/extractCommand/findDeny helpers to keep maintainability above 70."
+      timestamp: 2026-03-31T03:21:00.492Z
+      type: comment
+    - text: Integrated config deny rules into cli-hook enforcement. Commands are checked against assist.yml deny rules (prefix matching) before settings deny and allow rules. Compound commands (pipes, &&, ||) have each sub-command checked. cli-hook check reports deny matches with the configured message. Added matchesConfigDeny module and tests for all paths.
+      phase: 1
+      timestamp: 2026-03-31T03:21:06.630Z
+      type: summary
+    - text: "Phase 3 tests: 18 tests across 4 files covering schema validation, matchesConfigDeny prefix matching, cliHook deny integration, and cliHookCheck deny output. All verify checks pass."
+      timestamp: 2026-03-31T03:21:43.079Z
+      type: comment
+    - text: "Added 18 tests across 4 files: schema validation (5), matchesConfigDeny prefix matching (5), cliHook deny integration (4), and cliHookCheck deny output (4). Covers deny matching, precedence over allow, compound commands, and check output."
+      phase: 2
+      timestamp: 2026-03-31T03:21:48.586Z
+      type: summary
+    - text: All 5 acceptance criteria verified via code review and passing tests. Config deny rules checked before allow in both cli-hook and cli-hook check paths. Prefix matching works correctly with word boundary protection.
+      timestamp: 2026-03-31T03:23:23.325Z
+      type: comment
+    - text: "Deny rules with correction messages: schema, prefix matching, deny-before-allow precedence in cli-hook, cli-hook check reporting, and CLI commands (cli-hook deny add/remove/list)"
+      phase: 3
+      timestamp: 2026-03-31T03:38:06.097Z
+      type: summary
 - id: 36
   type: story
   name: Add --from option to seq query

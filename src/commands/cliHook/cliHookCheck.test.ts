@@ -1,0 +1,66 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mockMatchesConfigDeny = vi.fn();
+const mockIsApprovedRead = vi.fn();
+
+vi.mock("../../shared/matchesConfigDeny", () => ({
+	matchesConfigDeny: (cmd: string) => mockMatchesConfigDeny(cmd),
+}));
+
+vi.mock("../../shared/isApprovedRead", () => ({
+	isApprovedRead: (cmd: string) => mockIsApprovedRead(cmd),
+}));
+
+import { cliHookCheck } from "./cliHookCheck";
+
+beforeEach(() => {
+	vi.clearAllMocks();
+	process.exitCode = undefined;
+	mockMatchesConfigDeny.mockReturnValue(undefined);
+	mockIsApprovedRead.mockReturnValue(undefined);
+});
+
+describe("cliHookCheck deny", () => {
+	it("reports deny for a command matching a config deny rule", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockMatchesConfigDeny.mockReturnValue({
+			pattern: "rm -rf",
+			message: "Do not use rm -rf",
+		});
+
+		cliHookCheck("rm -rf /");
+
+		expect(consoleSpy).toHaveBeenCalledWith("denied: Do not use rm -rf");
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
+
+	it("reports deny for a compound command with a denied sub-command", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockMatchesConfigDeny.mockImplementation((cmd: string) =>
+			cmd.startsWith("rm -rf")
+				? { pattern: "rm -rf", message: "Do not use rm -rf" }
+				: undefined,
+		);
+
+		cliHookCheck("echo hello && rm -rf /");
+
+		expect(consoleSpy).toHaveBeenCalledWith("denied: Do not use rm -rf");
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
+
+	it("falls through to approved check when no deny matches", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockMatchesConfigDeny.mockReturnValue(undefined);
+		mockIsApprovedRead.mockReturnValue("Read-only CLI command: git status");
+
+		cliHookCheck("git status");
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("approved"),
+		);
+		expect(process.exitCode).toBeUndefined();
+		consoleSpy.mockRestore();
+	});
+});

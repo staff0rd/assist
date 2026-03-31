@@ -1,6 +1,9 @@
 import type { Command } from "commander";
 import { cliHook } from "./cliHook";
 import { cliHookCheck } from "./cliHook/cliHookCheck";
+import { denyAdd } from "./deny/denyAdd";
+import { denyList } from "./deny/denyList";
+import { denyRemove } from "./deny/denyRemove";
 import { permitCliReads } from "./permitCliReads";
 
 export function registerCliHook(program: Command): void {
@@ -29,4 +32,27 @@ export function registerCliHook(program: Command): void {
 		.action((cli: string[], options: { cache: boolean }) => {
 			permitCliReads(cli.join(" "), { noCache: !options.cache });
 		});
+
+	const denyCommand = cmd
+		.command("deny")
+		.description("Manage command deny rules")
+		.action(denyList);
+
+	denyCommand
+		.command("add")
+		.description("Add a deny rule for a command pattern")
+		.argument("<pattern>", "Command prefix to deny")
+		.argument("<message>", "Correction message shown to the agent")
+		.action(denyAdd);
+
+	denyCommand
+		.command("remove")
+		.description("Remove a deny rule by pattern")
+		.argument("<pattern>", "Command prefix to remove")
+		.action(denyRemove);
+
+	denyCommand
+		.command("list")
+		.description("List all deny rules")
+		.action(denyList);
 }

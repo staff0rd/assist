@@ -122,6 +122,9 @@ After installation, the `assist` command will be available globally. You can als
 - `assist cli-hook` - PreToolUse hook for auto-approving read-only CLI commands (reads from `assist.cli-reads`, also auto-approves read-only `gh api` calls). Supports compound commands (`|`, `&&`, `||`, `;`) by checking each sub-command independently
 - `assist cli-hook add <cli>` - Discover a CLI's commands and auto-permit read-only ones
 - `assist cli-hook check <command>` - Check whether a command would be auto-approved by `cli-hook`
+- `assist cli-hook deny` - List all deny rules
+- `assist cli-hook deny add <pattern> <message>` - Add a deny rule for a command pattern
+- `assist cli-hook deny remove <pattern>` - Remove a deny rule by pattern
 - `assist update` - Update assist to the latest version and sync commands
 - `assist vscode init` - Add VS Code configuration files
 - `assist deploy init` - Initialize Netlify project and configure deployment

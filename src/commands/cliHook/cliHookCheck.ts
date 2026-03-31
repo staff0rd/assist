@@ -1,4 +1,5 @@
 import { isApprovedRead } from "../../shared/isApprovedRead";
+import { matchesConfigDeny } from "../../shared/matchesConfigDeny";
 import { splitCompound } from "../../shared/splitCompound";
 
 export function cliHookCheck(command: string): void {
@@ -9,6 +10,15 @@ export function cliHookCheck(command: string): void {
 		console.log("not approved (unable to parse)");
 		process.exitCode = 1;
 		return;
+	}
+
+	for (const part of parts) {
+		const configDeny = matchesConfigDeny(part);
+		if (configDeny) {
+			console.log(`denied: ${configDeny.message}`);
+			process.exitCode = 1;
+			return;
+		}
 	}
 
 	const reasons: string[] = [];
