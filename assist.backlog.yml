@@ -1076,3 +1076,17 @@
       phase: 3
       timestamp: 2026-03-31T09:50:50.311Z
       type: summary
+- type: bug
+  name: refactor extract removes shared helpers from source file
+  description: |-
+    **Repro:**
+    1. Have a file with exported function `A` and private helpers `h1`, `h2`, `h3` used by both `A` and other functions in the file
+    2. Run `assist refactor extract <file> A <destination> --apply`
+
+    **Expected:** Shared helpers are not silently removed from the source file.
+
+    **Actual:** Helpers are moved to the destination file and removed from the source, breaking all remaining functions that depend on them.
+  acceptanceCriteria:
+    - Extracting a function that shares private helpers with remaining code does not break the source file
+  id: 41
+  status: todo
