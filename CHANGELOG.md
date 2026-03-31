@@ -1,3 +1,10 @@
+# [0.163.0](https://github.com/staff0rd/assist/compare/v0.162.0...v0.163.0) (2026-03-31)
+
+
+### Features
+
+* add deny rules with cli-hook deny commands ([29589ea](https://github.com/staff0rd/assist/commit/29589ea53c328e901f3830eed131f03c809cd720))
+
 # [0.162.0](https://github.com/staff0rd/assist/compare/v0.161.0...v0.162.0) (2026-03-31)
 
 
