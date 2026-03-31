@@ -1,13 +1,8 @@
 import { existsSync } from "node:fs";
 import chalk from "chalk";
 import { commitBacklog } from "../commitBacklog";
-import {
-	getBacklogPath,
-	getNextId,
-	loadBacklog,
-	readStdin,
-	saveBacklog,
-} from "../shared";
+import { readStdin } from "../readStdin";
+import { getBacklogPath, getNextId, loadBacklog, saveBacklog } from "../shared";
 import { backlogItemSchema } from "../types";
 import {
 	promptAcceptanceCriteria,

@@ -9,6 +9,7 @@ import {
 } from "vitest";
 
 vi.mock("./shared", () => ({
+	getBacklogDir: () => process.cwd(),
 	loadAndFindItem: vi.fn(),
 	saveBacklog: vi.fn(),
 	setCurrentPhase: vi.fn(),

@@ -8,8 +8,18 @@ import {
 	backlogFileSchema,
 } from "./types";
 
+let _backlogDir: string | undefined;
+
+export function setBacklogDir(dir: string | undefined): void {
+	_backlogDir = dir;
+}
+
+export function getBacklogDir(): string {
+	return _backlogDir ?? process.cwd();
+}
+
 export function getBacklogPath(): string {
-	return join(process.cwd(), "assist.backlog.yml");
+	return join(getBacklogDir(), "assist.backlog.yml");
 }
 
 export function loadBacklog(): BacklogFile {
@@ -81,13 +91,4 @@ export function removeItem(id: string): string | undefined {
 export function getNextId(items: BacklogFile): number {
 	if (items.length === 0) return 1;
 	return Math.max(...items.map((item) => item.id)) + 1;
-}
-
-export function readStdin(): Promise<string> {
-	return new Promise((resolve, reject) => {
-		const chunks: Buffer[] = [];
-		process.stdin.on("data", (chunk) => chunks.push(chunk));
-		process.stdin.on("end", () => resolve(Buffer.concat(chunks).toString()));
-		process.stdin.on("error", reject);
-	});
 }

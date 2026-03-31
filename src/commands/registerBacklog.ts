@@ -1,17 +1,16 @@
 import type { Command } from "commander";
 import {
-	del as backlogDel,
-	done as backlogDone,
 	next as backlogNext,
 	phaseDone as backlogPhaseDone,
 	plan as backlogPlan,
 	runPlan as backlogRun,
 	show as backlogShow,
-	start as backlogStart,
 	web as backlogWeb,
 } from "./backlog";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerItemCommands } from "./backlog/registerItemCommands";
+import { registerStatusCommands } from "./backlog/registerStatusCommands";
+import { setBacklogDir } from "./backlog/shared";
 
 function registerShowCommands(cmd: Command): void {
 	cmd
@@ -19,24 +18,6 @@ function registerShowCommands(cmd: Command): void {
 		.alias("view")
 		.description("Show full detail for a backlog item")
 		.action(backlogShow);
-}
-
-function registerStatusCommands(cmd: Command): void {
-	cmd
-		.command("start <id>")
-		.description("Set a backlog item to in-progress")
-		.action(backlogStart);
-
-	cmd
-		.command("done <id> [summary]")
-		.description("Set a backlog item to done")
-		.action(backlogDone);
-
-	cmd
-		.command("delete <id>")
-		.alias("remove")
-		.description("Delete a backlog item")
-		.action(backlogDel);
 }
 
 function registerWebCommand(cmd: Command): void {
@@ -83,6 +64,10 @@ export function registerBacklog(program: Command): void {
 	const cmd = program
 		.command("backlog")
 		.description("Manage a backlog of work items")
+		.option("--dir <path>", "Override directory for backlog file discovery")
+		.hook("preAction", (thisCommand) => {
+			setBacklogDir(thisCommand.opts().dir);
+		})
 		.action(() => backlogWeb({ port: "3000" }));
 
 	registerItemCommands(cmd);

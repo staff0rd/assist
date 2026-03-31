@@ -1,8 +1,9 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { getBacklogDir } from "./shared";
 
 function getLockPath(itemId: number): string {
-	return join(process.cwd(), `.assist-lock-${itemId}.json`);
+	return join(getBacklogDir(), `.assist-lock-${itemId}.json`);
 }
 
 function isProcessAlive(pid: number): boolean {

@@ -426,7 +426,24 @@
           verify: assist next --help shows --dir option
         - task: Update README.md with the new --dir option
           verify: grep --dir README.md
-  status: todo
+  currentPhase: 2
+  status: done
+  comments:
+    - text: "Phase 1: Added --dir option via preAction hook on backlog parent command. Introduced getBacklogDir/setBacklogDir in shared.ts. Updated getSignalPath and getLockPath to use getBacklogDir. Extracted readStdin and registerStatusCommands to fix maintainability."
+      timestamp: 2026-03-31T03:47:56.006Z
+      type: comment
+    - text: "Plumbed --dir through backlog commands: added setBacklogDir/getBacklogDir to shared.ts, wired preAction hook on backlog parent command, updated getSignalPath and getLockPath to use getBacklogDir instead of process.cwd(). Extracted readStdin and registerStatusCommands to maintain complexity thresholds."
+      phase: 0
+      timestamp: 2026-03-31T03:48:01.998Z
+      type: summary
+    - text: Updated README.md with --dir option on backlog parent command. Top-level next alias left unchanged per user direction.
+      phase: 1
+      timestamp: 2026-03-31T03:50:34.102Z
+      type: summary
+    - text: Added --dir option to backlog parent command via preAction hook and module-level backlogDir override in shared.ts
+      phase: 2
+      timestamp: 2026-03-31T03:58:54.244Z
+      type: summary
 - id: 21
   type: story
   name: Auto-commit backlog after adding an item
@@ -894,3 +911,41 @@
       phase: 1
       timestamp: 2026-03-31T03:07:51.746Z
       type: summary
+- id: 37
+  type: story
+  name: Use /api/data endpoint for historical seq queries
+  description: |-
+    The Seq /api/events endpoint scans backwards from "now" with a limited scan depth. Even with fromDateUtc, it fails to reach events more than a few hours old. This is a known Seq limitation (see https://github.com/datalust/seq-tickets/discussions/2025).
+
+    The /api/data endpoint (SQL query engine) performs a proper indexed search and reliably returns historical events. When --from is specified, seq query should use /api/data instead of /api/events.
+
+    Example: `GET /api/data?q=select * from stream where JobId = 'xxx' limit 50&fromDateUtc=2026-03-30T00:00:00.000Z`
+  acceptanceCriteria:
+    - When --from is specified, seq query uses /api/data with a SQL query instead of /api/events
+    - The filter expression is translated to SQL WHERE clause (single-quoted strings, Seq SQL syntax)
+    - Results are formatted the same as /api/events output
+    - Without --from, existing /api/events behaviour is preserved
+  status: todo
+- id: 38
+  type: story
+  name: Replace stdin JSON piping with --file flag for backlog add
+  description: Replace the --json stdin pipe approach on backlog add with a --file flag that reads JSON from a file. This avoids shell escaping issues that make the command fragile for LLM agents.
+  acceptanceCriteria:
+    - assist backlog add --file path/to/item.json reads and adds the item
+    - --json flag is removed
+    - Error message if file does not exist or contains invalid JSON or schema
+    - The /draft skill is updated to write a temp file and use --file instead of piping
+  plan:
+    - name: Implement --file flag
+      tasks:
+        - task: Remove --json flag, readStdin, and addFromJson piping logic
+          verify: npx tsc --noEmit
+        - task: Add --file option that reads the file, validates JSON structure against the existing Zod schema, and adds the item with clear error messages for missing file, invalid JSON, and schema violations
+          verify: npx tsc --noEmit
+        - task: Add tests for --file flag including missing file, invalid JSON, schema violations, and happy path
+          verify: npm test
+    - name: Update /draft skill
+      tasks:
+        - task: Update the /draft skill instructions to use Write tool and --file instead of echo pipe with --json
+          verify: grep -q file skills/draft.md
+  status: todo
