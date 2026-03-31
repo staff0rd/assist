@@ -1,3 +1,10 @@
+# [0.168.0](https://github.com/staff0rd/assist/compare/v0.167.0...v0.168.0) (2026-03-31)
+
+
+### Features
+
+* backlog item linking ([9267321](https://github.com/staff0rd/assist/commit/92673216ab875a3544c17433a68eae300ce0032f))
+
 # [0.167.0](https://github.com/staff0rd/assist/compare/v0.166.1...v0.167.0) (2026-03-31)
 
 
