@@ -14,6 +14,7 @@ export function _resetCaches(): void {
 
 const TOOL_RE = /^(Bash|PowerShell)\((.+?)(:.*)?\)$/;
 const SHELL_TOOLS = ["Bash", "PowerShell"];
+const DOTSLASH_RE = /^\.[\\/]/;
 
 function loadPerms(key: "allow" | "deny"): PermMap {
 	return parsePerms(readSettingsPerms(key));
@@ -26,11 +27,16 @@ function shellEntries(map: PermMap, toolName: string): PermEntry[] {
 	return map.get(toolName) ?? [];
 }
 
+function normCmd(cmd: string): string {
+	return cmd.replace(DOTSLASH_RE, "");
+}
+
 function findMatch(entries: PermEntry[], command: string): string | undefined {
+	const norm = normCmd(command);
 	return entries.find((e) =>
 		e.wildcard
-			? command === e.command || command.startsWith(`${e.command} `)
-			: command === e.command,
+			? norm === e.command || norm.startsWith(`${e.command} `)
+			: norm === e.command,
 	)?.command;
 }
 
@@ -63,7 +69,7 @@ function parsePerms(entries: string[]): PermMap {
 		const m = entry.match(TOOL_RE);
 		if (m) {
 			const tool = m[1];
-			const command = m[2];
+			const command = normCmd(m[2]);
 			const wildcard = m[3] !== undefined;
 			const list = map.get(tool) ?? [];
 			list.push({ command, wildcard });

@@ -54,6 +54,30 @@ describe("matchesAllow", () => {
 			matchesAllow("PowerShell", 'assist backlog comment 34 "hello"'),
 		).toBe("assist backlog comment");
 	});
+
+	it("should match ./command against command entry", () => {
+		setup(["PowerShell(build.ps1:*)"]);
+		expect(matchesAllow("PowerShell", "./build.ps1 -Target Test")).toBe(
+			"build.ps1",
+		);
+	});
+
+	it("should match command against ./command entry", () => {
+		setup(["PowerShell(./build.ps1:*)"]);
+		expect(matchesAllow("PowerShell", "build.ps1 -Target Test")).toBe(
+			"build.ps1",
+		);
+	});
+
+	it("should match .\\command against command entry (Windows)", () => {
+		setup(["Bash(build.ps1:*)"]);
+		expect(matchesAllow("Bash", ".\\build.ps1 -Target Test")).toBe("build.ps1");
+	});
+
+	it("should match exact ./command against command entry", () => {
+		setup(["PowerShell(build.ps1)"]);
+		expect(matchesAllow("PowerShell", "./build.ps1")).toBe("build.ps1");
+	});
 });
 
 describe("matchesDeny", () => {
