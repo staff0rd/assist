@@ -1,3 +1,10 @@
+## [0.165.1](https://github.com/staff0rd/assist/compare/v0.165.0...v0.165.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* move assist perms to cli-reads ([22931d5](https://github.com/staff0rd/assist/commit/22931d5de40209e58cf94d4c7baf3d2c735b85c4))
+
 # [0.165.0](https://github.com/staff0rd/assist/compare/v0.164.1...v0.165.0) (2026-03-31)
 
 
