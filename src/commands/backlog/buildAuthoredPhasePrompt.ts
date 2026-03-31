@@ -1,3 +1,4 @@
+import { buildCommentLines } from "./buildCommentLines";
 import type { BacklogItem, PlanPhase } from "./types";
 
 export function buildAuthoredPhasePrompt(
@@ -16,7 +17,6 @@ export function buildAuthoredPhasePrompt(
 		"When you have completed all tasks for this phase, run /verify to check your work.",
 		...buildManualCheckLines(manualChecks),
 		"",
-		`You can run \`assist backlog comments ${item.id}\` to read prior phase notes and comments.`,
 		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
 		"",
 		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${item.id} ${phaseIndex} "<summary>"`,
@@ -39,6 +39,7 @@ function buildContextLines(
 		"",
 		"Acceptance criteria:",
 		ac,
+		...buildCommentLines(item.comments),
 		"",
 		`Phase ${phaseIndex + 1}: ${phase.name}`,
 		"Tasks:",

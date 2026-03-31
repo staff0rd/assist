@@ -1,3 +1,4 @@
+import { buildCommentLines } from "./buildCommentLines";
 import type { BacklogItem } from "./types";
 
 export function buildReviewPrompt(
@@ -17,10 +18,10 @@ export function buildReviewPrompt(
 		"For each criterion, inspect the code and report PASS or FAIL with a brief explanation:",
 		"",
 		acLines,
+		...buildCommentLines(item.comments),
 		"",
 		"If any criterion fails, fix the issue and re-verify before proceeding.",
 		"",
-		`You can run \`assist backlog comments ${item.id}\` to read prior phase notes and comments.`,
 		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
 		"",
 		"After all criteria pass, ask the user to confirm any manual checks",

@@ -552,7 +552,17 @@
       tasks:
         - task: Update buildAuthoredPhasePrompt.ts and buildReviewPrompt.ts to embed comments after AC section, remove the read-comments line, and keep the write-comments line. Use formatComment or similar to render each comment inline.
           verify: assist verify
-  status: todo
+  currentPhase: 1
+  status: done
+  comments:
+    - text: Extracted buildCommentLines into shared module, embedded comments inline after AC in both buildAuthoredPhasePrompt and buildReviewPrompt, removed read-comments CLI line while keeping write-comments line
+      phase: 0
+      timestamp: 2026-03-31T02:42:28.893Z
+      type: summary
+    - text: Embedded comments inline in phase prompts after acceptance criteria, removed read-comments CLI instruction, kept write-comments instruction, extracted buildCommentLines as shared module
+      phase: 1
+      timestamp: 2026-03-31T02:43:55.345Z
+      type: summary
 - id: 26
   type: story
   name: CLI launch modes for draft and bug with /next chaining
