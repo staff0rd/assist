@@ -7,7 +7,7 @@ import { stopWatching, watchForMarker } from "./watchForMarker";
 
 export async function launchMode(slashCommand: string): Promise<void> {
 	process.env.ASSIST_SESSION_ID = String(process.pid);
-	const { child, done } = spawnClaude(`/${slashCommand}`);
+	const { child, done } = spawnClaude(`/${slashCommand}`, { allowEdits: true });
 	watchForMarker(child);
 	await done;
 	stopWatching();
