@@ -1018,7 +1018,8 @@
       phase: 1
       timestamp: 2026-03-31T07:49:31.267Z
       type: summary
-- type: story
+- id: 40
+  type: story
   name: Backlog item linking
   description: Add the ability to link backlog items together with "relates-to" (informational) and "depends-on" (directional dependency) relationship types, with circular dependency detection.
   acceptanceCriteria:
@@ -1050,5 +1051,28 @@
           verify: assist backlog show 1 2>&1
         - task: Update `backlog list` to indicate when items have depends-on links
           verify: assist backlog list 2>&1
-  id: 40
-  status: todo
+  currentPhase: 3
+  status: done
+  comments:
+    - text: "Phase 1: Added BacklogLink schema (type: relates-to|depends-on, targetId: number) and optional links array to backlogItemSchema. Types not exported yet to satisfy knip — will export when consumed in phase 2. backlog add --file already supports links via schema derivation."
+      timestamp: 2026-03-31T09:13:15.100Z
+      type: comment
+    - text: Added BacklogLink schema and optional links array to BacklogItem. backlog add --file accepts items with links via schema derivation. Types kept unexported until consumed.
+      phase: 0
+      timestamp: 2026-03-31T09:13:19.082Z
+      type: summary
+    - text: "Phase 2: Implemented link/unlink commands with validation (target exists, no self-links, no duplicates, circular dep detection for depends-on). Extracted hasCycle and validateLinkTarget for maintainability."
+      timestamp: 2026-03-31T09:23:30.323Z
+      type: comment
+    - text: "Implemented backlog link/unlink commands with full validation: target existence, self-link prevention, duplicate detection, and circular dependency detection for depends-on links"
+      phase: 1
+      timestamp: 2026-03-31T09:23:34.669Z
+      type: summary
+    - text: Added links section to backlog show (type, target name, status) and dependency count indicator to backlog list. Extracted printLinks and printPhaseTasks to maintain complexity threshold.
+      phase: 2
+      timestamp: 2026-03-31T09:30:56.831Z
+      type: summary
+    - text: Implemented backlog item linking with relates-to and depends-on types, circular dependency detection, link/unlink commands, and display in show/list views.
+      phase: 3
+      timestamp: 2026-03-31T09:50:50.311Z
+      type: summary

@@ -2,6 +2,8 @@ import chalk from "chalk";
 import { formatComment } from "../formatComment";
 import { loadAndFindItem } from "../shared";
 import type { BacklogItem, PlanPhase } from "../types";
+import { printLinks } from "./printLinks";
+import { printPhaseTasks } from "./printPhaseTasks";
 
 function printPlan(item: BacklogItem): void {
 	if (!item.plan || item.plan.length === 0) return;
@@ -20,22 +22,6 @@ function phaseHeader(index: number, name: string, isCurrent: boolean): string {
 		? chalk.green.bold(`Phase ${index + 1}: ${name}`)
 		: `${chalk.bold(`Phase ${index + 1}:`)} ${name}`;
 	return `${marker}${label}`;
-}
-
-function printPhaseTasks(phase: PlanPhase): void {
-	for (const task of phase.tasks) {
-		console.log(`      - ${task.task}`);
-		if (task.verify) {
-			console.log(`        ${chalk.dim(`verify: ${task.verify}`)}`);
-		}
-	}
-
-	if (phase.manualChecks && phase.manualChecks.length > 0) {
-		console.log(`      ${chalk.dim("Manual checks:")}`);
-		for (const check of phase.manualChecks) {
-			console.log(`        ${chalk.dim(`- ${check}`)}`);
-		}
-	}
 }
 
 function printPhase(phase: PlanPhase, index: number, isCurrent: boolean): void {
@@ -64,7 +50,7 @@ export function show(id: string): void {
 	const result = loadAndFindItem(id);
 	if (!result) process.exit(1);
 
-	const { item } = result;
+	const { item, items } = result;
 	printHeader(item);
 
 	if (item.description) {
@@ -74,6 +60,7 @@ export function show(id: string): void {
 	}
 
 	printAcceptanceCriteria(item.acceptanceCriteria);
+	printLinks(item, items);
 	printPlan(item);
 	printComments(item);
 }

@@ -28,6 +28,12 @@ export function phaseLabel(item: BacklogFile[number]): string {
 	);
 }
 
+export function dependencyLabel(item: BacklogFile[number]): string {
+	const deps = (item.links ?? []).filter((l) => l.type === "depends-on");
+	if (deps.length === 0) return "";
+	return chalk.dim(` [${deps.length} dep${deps.length > 1 ? "s" : ""}]`);
+}
+
 export function printVerboseDetails(item: BacklogFile[number]): void {
 	if (item.description) {
 		console.log(`  ${chalk.dim("Description:")} ${item.description}`);

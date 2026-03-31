@@ -9,6 +9,7 @@ import {
 } from "./backlog";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerItemCommands } from "./backlog/registerItemCommands";
+import { registerLinkCommands } from "./backlog/registerLinkCommands";
 import { registerStatusCommands } from "./backlog/registerStatusCommands";
 import { setBacklogDir } from "./backlog/shared";
 
@@ -75,6 +76,7 @@ export function registerBacklog(program: Command): void {
 	registerStatusCommands(cmd);
 	registerWebCommand(cmd);
 	registerCommentCommands(cmd);
+	registerLinkCommands(cmd);
 	registerPlanCommands(cmd);
 	registerNextCommand(cmd);
 	registerRunCommand(cmd);

@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { getBacklogPath, loadBacklog } from "../shared";
 import type { BacklogFile } from "../types";
 import {
+	dependencyLabel,
 	phaseLabel,
 	printVerboseDetails,
 	statusIcon,
@@ -37,7 +38,7 @@ export async function list(options: ListOptions): Promise<void> {
 	}
 	for (const item of items) {
 		console.log(
-			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}${phaseLabel(item)}`,
+			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}${phaseLabel(item)}${dependencyLabel(item)}`,
 		);
 		if (options.verbose) {
 			printVerboseDetails(item);
