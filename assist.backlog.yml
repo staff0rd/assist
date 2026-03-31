@@ -719,7 +719,17 @@
     - An in-progress item actively being worked on by another agent is skipped
     - An in-progress item with no active agent is still resumable
     - Two concurrent assist next invocations work on different items
-  status: todo
+  currentPhase: 1
+  status: done
+  comments:
+    - text: Added PID-based lock files (.assist-lock-{id}.json) so concurrent assist next agents skip items actively worked on by another process. Stale locks (dead PID) are ignored, keeping abandoned items resumable.
+      phase: 0
+      timestamp: 2026-03-30T23:58:32.134Z
+      type: summary
+    - text: PID-based lock files (.assist-lock-{id}.json) prevent concurrent assist next agents from competing for the same item. Stale locks (dead PID) are ignored so abandoned items remain resumable.
+      phase: 1
+      timestamp: 2026-03-31T00:11:51.584Z
+      type: summary
 - id: 32
   type: bug
   name: assist next crashes on Ctrl-C during story prompt

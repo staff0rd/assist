@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { acquireLock, releaseLock } from "./acquireLock";
 import { buildReviewPhase } from "./buildReviewPhase";
 import { executePhase } from "./executePhase";
 import { prepareRun } from "./prepareRun";
@@ -16,14 +17,17 @@ export async function run(
 	const { item, plan, startPhase } = prepared;
 
 	setStatus(id, "in-progress");
+	acquireLock(item.id);
 	logProgress(id, item.name, startPhase, plan.length);
 
-	if (!(await runPhases(item, startPhase, plan, spawnOptions))) return false;
-	if (!(await runReview(item, plan, spawnOptions))) return false;
-
-	ensureDone(id);
-	console.log(chalk.green(`\nAll phases complete for #${id}: ${item.name}`));
-	return true;
+	try {
+		if (!(await runPhases(item, startPhase, plan, spawnOptions))) return false;
+		if (!(await runReview(item, plan, spawnOptions))) return false;
+		ensureDone(id);
+		return true;
+	} finally {
+		releaseLock(item.id);
+	}
 }
 
 function logProgress(

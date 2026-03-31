@@ -20,6 +20,12 @@ vi.mock("./prepareRun", () => ({
 	prepareRun: vi.fn(),
 }));
 
+vi.mock("./acquireLock", () => ({
+	acquireLock: vi.fn(),
+	releaseLock: vi.fn(),
+}));
+
+import { acquireLock, releaseLock } from "./acquireLock";
 import { executePhase } from "./executePhase";
 import { prepareRun } from "./prepareRun";
 import { run } from "./run";
@@ -28,6 +34,8 @@ import { setStatus } from "./shared";
 const mockExecutePhase = executePhase as unknown as MockInstance;
 const mockPrepareRun = prepareRun as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;
+const mockAcquireLock = acquireLock as unknown as MockInstance;
+const mockReleaseLock = releaseLock as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	return {
@@ -252,6 +260,68 @@ describe("run", () => {
 			const phases: PlanPhase[] = firstCall[2];
 			expect(phases[0].name).toBe("Implement");
 			expect(phases[0].tasks).toEqual([{ task: "AC1" }, { task: "AC2" }]);
+		});
+	});
+
+	describe("lock lifecycle", () => {
+		it("should acquire lock before phases and release after completion", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3);
+
+			await run("1");
+
+			expect(mockAcquireLock).toHaveBeenCalledWith(1);
+			expect(mockReleaseLock).toHaveBeenCalledWith(1);
+		});
+
+		it("should release lock when an authored phase fails", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase.mockResolvedValueOnce(-1);
+
+			await run("1");
+
+			expect(mockAcquireLock).toHaveBeenCalledWith(1);
+			expect(mockReleaseLock).toHaveBeenCalledWith(1);
+		});
+
+		it("should release lock when the review phase fails", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(-1);
+
+			await run("1");
+
+			expect(mockAcquireLock).toHaveBeenCalledWith(1);
+			expect(mockReleaseLock).toHaveBeenCalledWith(1);
+		});
+
+		it("should not acquire lock when prepare returns undefined", async () => {
+			mockPrepareRun.mockReturnValue(undefined);
+
+			await run("99");
+
+			expect(mockAcquireLock).not.toHaveBeenCalled();
+			expect(mockReleaseLock).not.toHaveBeenCalled();
 		});
 	});
 });
