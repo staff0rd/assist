@@ -1,3 +1,10 @@
+# [0.161.0](https://github.com/staff0rd/assist/compare/v0.160.0...v0.161.0) (2026-03-31)
+
+
+### Features
+
+* inline backlog comments in prompts ([3f602c4](https://github.com/staff0rd/assist/commit/3f602c4c34f141a69b67b0caa15b4ab2090b524e))
+
 # [0.160.0](https://github.com/staff0rd/assist/compare/v0.159.0...v0.160.0) (2026-03-31)
 
 
