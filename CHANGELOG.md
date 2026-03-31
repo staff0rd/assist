@@ -1,3 +1,10 @@
+# [0.169.0](https://github.com/staff0rd/assist/compare/v0.168.0...v0.169.0) (2026-03-31)
+
+
+### Features
+
+* enable edit mode for draft/bug ([a54d637](https://github.com/staff0rd/assist/commit/a54d637ffd0397290116d3ed4247de24a4ddb5f4))
+
 # [0.168.0](https://github.com/staff0rd/assist/compare/v0.167.0...v0.168.0) (2026-03-31)
 
 
