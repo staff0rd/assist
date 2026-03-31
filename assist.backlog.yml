@@ -754,31 +754,8 @@
       phase: 1
       timestamp: 2026-03-30T12:23:12.083Z
       type: summary
-- id: 33
+- id: 34
   type: story
-  name: Support PowerShell permissions in cli-hook
-  description: The cli-hook only handles Bash tool calls. Since Claude Code now has a PowerShell tool, the hook needs to process PowerShell commands too, and settings.json needs matching PowerShell permission entries.
-  acceptanceCriteria:
-    - assist verify (and all other allowed commands) auto-approve when run via the PowerShell tool
-    - Denied commands (git commit, npm run, npx assist) are also denied via PowerShell
-    - Existing Bash behaviour is unchanged
-  plan:
-    - name: Make cli-hook tool-agnostic
-      tasks:
-        - task: Rename matchesBashAllow to parse both Bash(...) and PowerShell(...) entries
-          verify: Existing tests pass and new patterns are parsed correctly
-        - task: Update cliHook/index.ts to accept tool_name PowerShell alongside Bash
-          verify: assist cli-hook check "assist verify" still works
-        - task: Add a PowerShell PreToolUse hook matcher in claude/settings.json
-          verify: Hook config contains both Bash and PowerShell matchers
-    - name: Add PowerShell permission entries
-      tasks:
-        - task: Add PowerShell(...) allow entries mirroring every Bash(...) allow entry in settings.json
-          verify: All Bash allow prefixes have a corresponding PowerShell entry
-        - task: Add PowerShell(...) deny entries mirroring every Bash(...) deny entry
-          verify: All Bash deny prefixes have a corresponding PowerShell entry
-  status: todo
-- type: story
   name: Support PowerShell permissions in cli-hook
   description: The cli-hook only handles Bash tool calls. Since Claude Code now has a PowerShell tool, the hook needs to process PowerShell commands too by merging allow/deny rules across both tools.
   acceptanceCriteria:
@@ -794,5 +771,34 @@
           verify: assist cli-hook check "assist verify" still works
         - task: Add a PowerShell PreToolUse hook matcher in claude/settings.json
           verify: Hook config contains both Bash and PowerShell matchers
-  id: 34
+  status: in-progress
+- type: story
+  name: Deny rules with correction messages
+  description: Add a deny config section to assist.yml that lets users define command patterns with correction messages. When the cli-hook matches a denied command, it returns a deny decision with the message so the agent self-corrects without human intervention.
+  acceptanceCriteria:
+    - assistConfigSchema accepts a deny array of { pattern, message } objects
+    - assist cli-hook checks commands against deny rules using prefix matching before allow checks
+    - Denied commands return permissionDecision deny with the message in permissionDecisionReason
+    - Deny rules take precedence over allow rules
+    - assist cli-hook check <command> reports deny matches
+  plan:
+    - name: Schema and config
+      tasks:
+        - task: Add deny array schema (pattern + message) to assistConfigSchema in types.ts
+          verify: Config with deny rules loads without validation errors
+        - task: Ensure loadConfig passes deny rules through correctly
+          verify: Unit test confirms deny rules are accessible from loaded config
+    - name: Hook enforcement
+      tasks:
+        - task: Update cli-hook to check deny rules before allow rules using prefix matching
+          verify: assist cli-hook denies a command matching a deny pattern and returns the message in permissionDecisionReason
+        - task: Ensure compound commands (pipes, &&, ||) are checked against deny rules
+          verify: A compound command containing a denied sub-command is denied with the correct message
+        - task: Update cli-hook check output to report deny matches
+          verify: assist cli-hook check <denied-command> prints the deny reason
+    - name: Tests
+      tasks:
+        - task: Add tests for deny matching, precedence over allow, compound command handling, and cli-hook check output
+          verify: /verify passes
+  id: 35
   status: todo
