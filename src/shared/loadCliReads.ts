@@ -6,8 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function packageRoot(): string {
-	// Package root: up from dist/ (tsup bundles into dist/index.js)
-	return resolve(__dirname, "..");
+	return __dirname;
 }
 
 function readLines(path: string): string[] {
