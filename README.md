@@ -178,7 +178,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist voice devices` - List available audio input devices
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 - `assist next` - Alias for `backlog next -w`
-- `assist draft` - Launch Claude in `/draft` mode, chain into next on `/next` signal
+- `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
 - `assist signal next` - Write a next signal to chain into `assist next`
 

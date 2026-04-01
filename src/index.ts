@@ -183,6 +183,7 @@ program
 
 program
 	.command("draft")
+	.alias("feat")
 	.description("Launch Claude in /draft mode, chain into next on /next signal")
 	.action(() => launchMode("draft"));
 
