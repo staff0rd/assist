@@ -1,3 +1,10 @@
+## [0.170.1](https://github.com/staff0rd/assist/compare/v0.170.0...v0.170.1) (2026-04-01)
+
+
+### Bug Fixes
+
+* bundle cli-reads/writes into dist ([6371463](https://github.com/staff0rd/assist/commit/6371463becf4ba7b638469d29cc80aea60d89fda))
+
 # [0.170.0](https://github.com/staff0rd/assist/compare/v0.169.0...v0.170.0) (2026-04-01)
 
 
