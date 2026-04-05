@@ -1,3 +1,10 @@
+# [0.172.0](https://github.com/staff0rd/assist/compare/v0.171.1...v0.172.0) (2026-04-05)
+
+
+### Features
+
+* add wontdo status to backlog ([9c7956e](https://github.com/staff0rd/assist/commit/9c7956ea25a9d623bd76c6e326dec5bde9e808eb))
+
 ## [0.171.1](https://github.com/staff0rd/assist/compare/v0.171.0...v0.171.1) (2026-04-05)
 
 
