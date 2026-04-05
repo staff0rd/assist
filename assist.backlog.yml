@@ -12,7 +12,8 @@
           verify: assist verify
   id: 3
   status: todo
-- type: story
+- id: 1
+  type: story
   name: Dependency-aware backlog list and next
   description: Make backlog list and backlog next aware of depends-on links so that blocked items are visually tagged and excluded from selection in next.
   acceptanceCriteria:
@@ -35,5 +36,41 @@
           verify: assist verify
         - task: Update single-item auto-start to not auto-start if the only item is blocked
           verify: assist verify
-  id: 1
+  status: todo
+- type: story
+  name: Switch backlog storage to SQLite + JSONL sync
+  description: Replace the YAML flat file storage with SQLite for fast concurrent-safe reads/writes and JSONL for git-tracked sync. Migrate existing assist.backlog.yml data on first access.
+  acceptanceCriteria:
+    - Backlog data is stored in .assist/backlog.db (gitignored)
+    - Changes are automatically exported to .assist/backlog.jsonl (git-tracked) on every write
+    - On read, if JSONL is newer than the DB, it is imported first (handles pulls/merges)
+    - Existing assist.backlog.yml is automatically migrated to the new DB on first access
+    - .assist/backlog.db is added to .gitignore
+    - All existing commands (list, add, delete, start, done, run, next, show, comment, link, etc.) continue to work unchanged
+    - Concurrent writes to different items no longer race (row-level updates)
+    - Web UI continues to work with the new storage layer
+  plan:
+    - name: SQLite storage layer
+      tasks:
+        - task: Add better-sqlite3 dependency and create .assist/backlog.db schema in a new src/commands/backlog/storage.ts (tables for items, comments, links, plan phases/tasks)
+          verify: assist verify
+        - task: Implement loadBacklog() and saveBacklog() equivalents that read/write SQLite, plus setStatus, setCurrentPhase, removeItem as row-level operations
+          verify: assist verify
+        - task: Add .assist/backlog.db to .gitignore
+          verify: assist verify
+    - name: JSONL sync
+      tasks:
+        - task: Implement exportToJsonl() that writes one JSON line per item to .assist/backlog.jsonl, called after every DB mutation
+          verify: assist verify
+        - task: Implement importFromJsonl() that reads JSONL and upserts into DB, called on read when JSONL mtime is newer than last-import timestamp stored in DB metadata
+          verify: assist verify
+    - name: Migration and switchover
+      tasks:
+        - task: Implement migrateFromYaml() that reads assist.backlog.yml, imports into DB, and renames the YAML file to assist.backlog.yml.bak
+          verify: assist verify
+        - task: Update shared.ts exports to use the new SQLite-backed functions so all commands switch over without individual changes
+          verify: assist verify
+        - task: Update commitBacklog.ts to commit .assist/backlog.jsonl instead of assist.backlog.yml
+          verify: assist verify
+  id: 2
   status: todo
