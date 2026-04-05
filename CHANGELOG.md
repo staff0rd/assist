@@ -1,3 +1,10 @@
+## [0.174.1](https://github.com/staff0rd/assist/compare/v0.174.0...v0.174.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* update .gitignore on backlog db creation ([57804ff](https://github.com/staff0rd/assist/commit/57804fff24c73b892f0ccc9d7bd857cae2c9c55d))
+
 # [0.174.0](https://github.com/staff0rd/assist/compare/v0.173.1...v0.174.0) (2026-04-05)
 
 
