@@ -1,3 +1,10 @@
+## [0.173.1](https://github.com/staff0rd/assist/compare/v0.173.0...v0.173.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* strip unknown keys in planTaskSchema ([e7e2d15](https://github.com/staff0rd/assist/commit/e7e2d1587286d0ecd7dc91be724453782b30ebf6))
+
 # [0.173.0](https://github.com/staff0rd/assist/compare/v0.172.4...v0.173.0) (2026-04-05)
 
 
