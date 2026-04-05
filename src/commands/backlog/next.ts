@@ -51,14 +51,7 @@ export async function next(options?: SpawnClaudeOptions): Promise<void> {
 			return;
 		}
 
-		let id: string;
-		if (todo.length === 1) {
-			const only = todo[0];
-			console.log(chalk.bold(`Starting #${only.id}: ${only.name}`));
-			id = String(only.id);
-		} else {
-			id = await selectItem(todo);
-		}
+		const id = await selectItem(todo);
 
 		const completed = await run(id, options);
 		if (!completed) return;
