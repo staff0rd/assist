@@ -1,10 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
-import { getNextId, loadBacklog, saveBacklog } from "../shared";
+import { getNextId, loadBacklog, saveBacklog, searchBacklog } from "../shared";
 import { parseItemBody, parseStatusBody } from "./parseItemBody";
 
-export function listItems(_req: IncomingMessage, res: ServerResponse): void {
-	respondJson(res, 200, loadBacklog());
+export function listItems(req: IncomingMessage, res: ServerResponse): void {
+	const url = new URL(req.url ?? "/", "http://localhost");
+	const q = url.searchParams.get("q");
+	respondJson(res, 200, q ? searchBacklog(q) : loadBacklog());
 }
 
 function findItemOr404(res: ServerResponse, id: number) {

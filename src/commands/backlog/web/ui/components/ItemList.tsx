@@ -2,21 +2,27 @@ import { useAtomValue } from "jotai";
 import { useNavigate } from "react-router";
 import { showCompletedAtom } from "../showCompletedAtom";
 import type { BacklogItem } from "../types";
+import { useSearchItems } from "../useSearchItems";
 import { CompletedToggle } from "./CompletedToggle";
 import { ItemCard } from "./ItemCard";
+import { SearchInput } from "./SearchInput";
 
 type ItemListProps = {
 	items: BacklogItem[];
 };
 
+function filterVisible(items: BacklogItem[], showCompleted: boolean) {
+	if (showCompleted) return items;
+	return items.filter(
+		(item) => item.status !== "done" && item.status !== "wontdo",
+	);
+}
+
 export function ItemList({ items }: ItemListProps) {
 	const navigate = useNavigate();
 	const showCompleted = useAtomValue(showCompletedAtom);
-	const filtered = showCompleted
-		? items
-		: items.filter(
-				(item) => item.status !== "done" && item.status !== "wontdo",
-			);
+	const { query, setQuery, results } = useSearchItems();
+	const filtered = filterVisible(results ?? items, showCompleted);
 
 	return (
 		<>
@@ -33,9 +39,12 @@ export function ItemList({ items }: ItemListProps) {
 					</button>
 				</div>
 			</header>
+			<SearchInput value={query} onChange={setQuery} />
 			{filtered.length === 0 ? (
 				<div className="text-center text-gray-400 py-12 px-4">
-					No items in the backlog.
+					{query.trim()
+						? "No items match your search."
+						: "No items in the backlog."}
 				</div>
 			) : (
 				filtered.map((item) => (

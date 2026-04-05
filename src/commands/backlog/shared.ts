@@ -8,6 +8,7 @@ import { loadAllItems } from "./loadAllItems";
 import { migrateYamlIfNeeded } from "./migrateYamlIfNeeded";
 import { openDb } from "./openDb";
 import { saveAllItems } from "./saveAllItems";
+import { searchItemIds } from "./searchItemIds";
 import type { BacklogFile, BacklogStatus } from "./types";
 import { updateCurrentPhase } from "./updateCurrentPhase";
 import { updateStatus } from "./updateStatus";
@@ -47,6 +48,14 @@ export function loadBacklog(): BacklogFile {
 	const db = getDb();
 	importFromJsonlIfNeeded(db, getBacklogDir());
 	return loadAllItems(db);
+}
+
+export function searchBacklog(query: string): BacklogFile {
+	const db = getDb();
+	importFromJsonlIfNeeded(db, getBacklogDir());
+	const ids = searchItemIds(db, query);
+	const allItems = loadAllItems(db);
+	return allItems.filter((item) => ids.includes(item.id));
 }
 
 export function saveBacklog(items: BacklogFile): void {

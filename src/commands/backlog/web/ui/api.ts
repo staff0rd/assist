@@ -1,7 +1,10 @@
 import type { BacklogItem } from "./types";
 
-export async function fetchItems(): Promise<BacklogItem[]> {
-	const res = await fetch("/api/items");
+export async function fetchItems(query?: string): Promise<BacklogItem[]> {
+	const url = query
+		? `/api/items?q=${encodeURIComponent(query)}`
+		: "/api/items";
+	const res = await fetch(url);
 	return res.json();
 }
 
