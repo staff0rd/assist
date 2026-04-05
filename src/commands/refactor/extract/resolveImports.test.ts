@@ -59,9 +59,9 @@ describe("resolveImports", () => {
 				function main() { return format("ok"); }
 			`);
 			const fn = requireFunction(sf, "main");
-			const { functions: deps } = collectDependencies(fn, sf);
+			const { functions } = collectDependencies(fn, sf);
 
-			const imports = resolveImports(fn, deps, sf);
+			const imports = resolveImports(fn, functions.toCopy, sf);
 
 			expect(imports).toHaveLength(1);
 			expect(imports[0].defaultImport).toBe("chalk");

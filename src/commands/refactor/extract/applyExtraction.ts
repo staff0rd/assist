@@ -21,7 +21,7 @@ export async function applyExtraction(
 ): Promise<void> {
 	project.createSourceFile(destPath, plan.destContent, { overwrite: false });
 
-	for (const fn of [plan.target, ...plan.dependencies]) {
+	for (const fn of [plan.target, ...plan.functionsToRemove]) {
 		fn.remove();
 	}
 

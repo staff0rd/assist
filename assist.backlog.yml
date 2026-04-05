@@ -1089,7 +1089,23 @@
     **Actual:** Helpers are moved to the destination file and removed from the source, breaking all remaining functions that depend on them.
   acceptanceCriteria:
     - Extracting a function that shares private helpers with remaining code does not break the source file
-  status: in-progress
+  currentPhase: 1
+  status: done
+  comments:
+    - text: "Fix: collectDependencies now partitions dep functions into toCopy/toRemove (mirroring the existing statement logic). Shared helpers are copied to the destination but kept in the source. Also fixed statement removal to account for statements used by shared helpers that stay."
+      timestamp: 2026-04-05T08:58:35.298Z
+      type: comment
+    - text: Partition dep functions into toCopy/toRemove so shared helpers are copied to destination but preserved in source. Extracted getFunctionMap and collectPrivateStatements to separate files for maintainability.
+      phase: 0
+      timestamp: 2026-04-05T08:58:42.719Z
+      type: summary
+    - text: "Review PASS: collectDependencies correctly distinguishes toCopy from toRemove for both functions and statements. Shared helpers are copied to destination but retained in source. Tests cover shared function, shared statement, and shared type scenarios. All 23 extract tests pass, full verify passes."
+      timestamp: 2026-04-05T08:59:26.703Z
+      type: comment
+    - text: collectDependencies now distinguishes toCopy from toRemove — shared private helpers/statements are copied to destination but retained in source, preventing breakage of remaining functions
+      phase: 1
+      timestamp: 2026-04-05T09:02:21.048Z
+      type: summary
 - id: 41
   type: story
   name: pull --rebase in commit flow
@@ -1177,8 +1193,9 @@
           verify: assist verify
         - task: Update commitBacklog.ts to commit .assist/backlog.jsonl instead of assist.backlog.yml
           verify: assist verify
-  status: todo
-- type: story
+  status: in-progress
+- id: 46
+  type: story
   name: Inline markdown in backlog web view AC and plan sections
   description: Acceptance criteria, task descriptions, verify hints, and manual checks in the backlog web view render plain text. Apply `marked.parseInline()` so inline markdown (backticks, bold, italic, links) renders consistently with the description section.
   acceptanceCriteria:
@@ -1195,5 +1212,4 @@
           verify: assist backlog web — check plan tasks render backticks as styled code
         - task: Update `ManualChecks.tsx` to use `marked.parseInline()` for check text
           verify: assist backlog web — check manual checks render backticks as styled code
-  id: 46
   status: todo

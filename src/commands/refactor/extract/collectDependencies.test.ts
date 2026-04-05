@@ -25,7 +25,7 @@ describe("collectDependencies", () => {
 
 			const { functions } = collectDependencies(fn, sf);
 
-			expect(functions).toEqual([]);
+			expect(functions.toCopy).toEqual([]);
 		});
 
 		it("should return no statements to copy", () => {
@@ -57,7 +57,7 @@ describe("collectDependencies", () => {
 
 			const { functions } = collectDependencies(fn, sf);
 
-			expect(functions.map((d) => d.getName())).toEqual(["helper"]);
+			expect(functions.toCopy.map((d) => d.getName())).toEqual(["helper"]);
 		});
 	});
 
@@ -72,7 +72,7 @@ describe("collectDependencies", () => {
 
 			const { functions } = collectDependencies(fn, sf);
 
-			const names = functions.map((d) => d.getName()).sort();
+			const names = functions.toCopy.map((d) => d.getName()).sort();
 			expect(names).toEqual(["deep", "mid"]);
 		});
 	});
@@ -87,7 +87,7 @@ describe("collectDependencies", () => {
 
 			const { functions } = collectDependencies(fn, sf);
 
-			expect(functions).toEqual([]);
+			expect(functions.toCopy).toEqual([]);
 		});
 	});
 
@@ -102,7 +102,7 @@ describe("collectDependencies", () => {
 
 			const { functions } = collectDependencies(fn, sf);
 
-			const names = functions.map((d) => d.getName()).sort();
+			const names = functions.toCopy.map((d) => d.getName()).sort();
 			expect(names).toEqual(["a", "b"]);
 		});
 	});
@@ -170,6 +170,49 @@ describe("collectDependencies", () => {
 			const { statements } = collectDependencies(fn, sf);
 
 			expect(statements.toCopy[0].getText()).toContain("MyStore");
+		});
+	});
+
+	describe("when a helper is shared with remaining functions", () => {
+		it("should include the helper in toCopy", () => {
+			const sf = createSourceFile(`
+				function helper() { return 42; }
+				function extract() { return helper(); }
+				function remaining() { return helper(); }
+			`);
+			const fn = requireFunction(sf, "extract");
+
+			const { functions } = collectDependencies(fn, sf);
+
+			expect(functions.toCopy.map((d) => d.getName())).toEqual(["helper"]);
+		});
+
+		it("should not mark the helper for removal", () => {
+			const sf = createSourceFile(`
+				function helper() { return 42; }
+				function extract() { return helper(); }
+				function remaining() { return helper(); }
+			`);
+			const fn = requireFunction(sf, "extract");
+
+			const { functions } = collectDependencies(fn, sf);
+
+			expect(functions.toRemove).toEqual([]);
+		});
+
+		it("should not remove statements used by shared helpers", () => {
+			const sf = createSourceFile(`
+				const BASE = 100;
+				function helper() { return BASE; }
+				function extract() { return helper(); }
+				function remaining() { return helper(); }
+			`);
+			const fn = requireFunction(sf, "extract");
+
+			const { statements } = collectDependencies(fn, sf);
+
+			expect(statements.toCopy.length).toBe(1);
+			expect(statements.toRemove).toEqual([]);
 		});
 	});
 

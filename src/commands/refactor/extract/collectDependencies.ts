@@ -5,42 +5,14 @@ import {
 	SyntaxKind,
 } from "ts-morph";
 import { collectPrivateFunctions } from "./collectPrivateFunctions";
+import { collectPrivateStatements } from "./collectPrivateStatements";
+import { getFunctionMap } from "./getFunctionMap";
 import { getPrivateStatementMap } from "./getPrivateStatementMap";
 
-function getReferencedIdentifiers(fn: FunctionDeclaration): Set<string> {
-	const names = new Set<string>();
-	for (const id of fn.getDescendantsOfKind(SyntaxKind.Identifier)) {
-		names.add(id.getText());
-	}
-	return names;
-}
-
-function getFunctionMap(
-	sourceFile: SourceFile,
-): Map<string, FunctionDeclaration> {
-	const map = new Map<string, FunctionDeclaration>();
-	for (const fn of sourceFile.getDescendantsOfKind(
-		SyntaxKind.FunctionDeclaration,
-	)) {
-		const name = fn.getName();
-		if (name) map.set(name, fn);
-	}
-	return map;
-}
-
-function collectPrivateStatements(
-	functions: FunctionDeclaration[],
-	stmtMap: Map<string, Statement>,
-): Statement[] {
-	const seen = new Set<Statement>();
-	for (const fn of functions) {
-		for (const name of getReferencedIdentifiers(fn)) {
-			const stmt = stmtMap.get(name);
-			if (stmt) seen.add(stmt);
-		}
-	}
-	return [...seen];
-}
+type CopyRemove<T> = {
+	toCopy: T[];
+	toRemove: T[];
+};
 
 function getRemainingFunctions(
 	sourceFile: SourceFile,
@@ -51,28 +23,46 @@ function getRemainingFunctions(
 		.filter((fn) => !extracted.has(fn));
 }
 
-type StatementDeps = {
-	toCopy: Statement[];
-	toRemove: Statement[];
-};
+function collectFnsUsedByRemaining(
+	remaining: FunctionDeclaration[],
+	fnMap: Map<string, FunctionDeclaration>,
+): Set<FunctionDeclaration> {
+	const used = new Set<FunctionDeclaration>();
+	for (const fn of remaining) {
+		for (const dep of collectPrivateFunctions(fn, fnMap)) {
+			used.add(dep);
+		}
+	}
+	return used;
+}
 
 export function collectDependencies(
 	target: FunctionDeclaration,
 	sourceFile: SourceFile,
-): { functions: FunctionDeclaration[]; statements: StatementDeps } {
+): {
+	functions: CopyRemove<FunctionDeclaration>;
+	statements: CopyRemove<Statement>;
+} {
 	const fnMap = getFunctionMap(sourceFile);
 	const depFunctions = collectPrivateFunctions(target, fnMap);
 	const allExtracted = [target, ...depFunctions];
 	const stmtMap = getPrivateStatementMap(sourceFile);
+	const stmtsToCopy = collectPrivateStatements(allExtracted, stmtMap);
 
-	const toCopy = collectPrivateStatements(allExtracted, stmtMap);
-	const extractedSet = new Set(allExtracted);
-	const remaining = getRemainingFunctions(sourceFile, extractedSet);
-	const usedByRemaining = new Set(collectPrivateStatements(remaining, stmtMap));
-	const toRemove = toCopy.filter((s) => !usedByRemaining.has(s));
+	const remaining = getRemainingFunctions(sourceFile, new Set(allExtracted));
+	const fnsUsedByRemaining = collectFnsUsedByRemaining(remaining, fnMap);
+	const fnsToRemove = depFunctions.filter((fn) => !fnsUsedByRemaining.has(fn));
+
+	const staysInSource = [
+		...remaining,
+		...depFunctions.filter((fn) => fnsUsedByRemaining.has(fn)),
+	];
+	const stmtsToRemove = stmtsToCopy.filter(
+		(s) => !new Set(collectPrivateStatements(staysInSource, stmtMap)).has(s),
+	);
 
 	return {
-		functions: depFunctions,
-		statements: { toCopy, toRemove },
+		functions: { toCopy: depFunctions, toRemove: fnsToRemove },
+		statements: { toCopy: stmtsToCopy, toRemove: stmtsToRemove },
 	};
 }

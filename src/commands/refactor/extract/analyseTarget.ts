@@ -9,6 +9,7 @@ import type { RequiredImport } from "./types";
 export type TargetAnalysis = {
 	target: FunctionDeclaration;
 	dependencies: FunctionDeclaration[];
+	functionsToRemove: FunctionDeclaration[];
 	statementsToCopy: Statement[];
 	statementsToRemove: Statement[];
 	imports: RequiredImport[];
@@ -38,27 +39,27 @@ export function analyseTarget(
 	const target = findFunction(sourceFile, functionName);
 	if (!target) throw new Error(`Function "${functionName}" not found`);
 
-	const { functions: dependencies, statements } = collectDependencies(
-		target,
-		sourceFile,
-	);
-	const all = [target, ...dependencies];
+	const { functions, statements } = collectDependencies(target, sourceFile);
+	const all = [target, ...functions.toCopy];
 
 	return {
 		target,
-		dependencies,
+		dependencies: functions.toCopy,
+		functionsToRemove: functions.toRemove,
 		statementsToCopy: statements.toCopy,
 		statementsToRemove: statements.toRemove,
 		imports: resolveImports(
 			target,
-			dependencies,
+			functions.toCopy,
 			sourceFile,
 			statements.toCopy,
 		),
 		exportedDeps: getExportedDependencyNames(target, sourceFile),
 		extractedNames: [
 			...statements.toRemove.flatMap(getStatementNames),
-			...(all.map((fn) => fn.getName()).filter(Boolean) as string[]),
+			...([target, ...functions.toRemove]
+				.map((fn) => fn.getName())
+				.filter(Boolean) as string[]),
 		],
 		functionTexts: extractTexts(target, all, statements.toCopy),
 	};
