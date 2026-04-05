@@ -1,12 +1,15 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
-import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import {
-	type BacklogFile,
-	type BacklogStatus,
-	backlogFileSchema,
-} from "./types";
+import { deleteItem } from "./deleteItem";
+import { exportToJsonl } from "./exportToJsonl";
+import { importFromJsonlIfNeeded } from "./importFromJsonlIfNeeded";
+import { loadAllItems } from "./loadAllItems";
+import { migrateYamlIfNeeded } from "./migrateYamlIfNeeded";
+import { openDb } from "./openDb";
+import { saveAllItems } from "./saveAllItems";
+import type { BacklogFile, BacklogStatus } from "./types";
+import { updateCurrentPhase } from "./updateCurrentPhase";
+import { updateStatus } from "./updateStatus";
 
 let _backlogDir: string | undefined;
 
@@ -22,19 +25,24 @@ export function getBacklogPath(): string {
 	return join(getBacklogDir(), "assist.backlog.yml");
 }
 
+function getDb() {
+	const dir = getBacklogDir();
+	const db = openDb(dir);
+	const migrated = migrateYamlIfNeeded(db, getBacklogPath());
+	if (migrated) exportToJsonl(db, dir);
+	return db;
+}
+
 export function loadBacklog(): BacklogFile {
-	const backlogPath = getBacklogPath();
-	if (!existsSync(backlogPath)) {
-		return [];
-	}
-	const content = readFileSync(backlogPath, "utf-8");
-	const raw = parseYaml(content) || [];
-	return backlogFileSchema.parse(raw);
+	const db = getDb();
+	importFromJsonlIfNeeded(db, getBacklogDir());
+	return loadAllItems(db);
 }
 
 export function saveBacklog(items: BacklogFile): void {
-	const backlogPath = getBacklogPath();
-	writeFileSync(backlogPath, stringifyYaml(items, { lineWidth: 0 }));
+	const db = getDb();
+	saveAllItems(db, items);
+	exportToJsonl(db, getBacklogDir());
 }
 
 function findItem(items: BacklogFile, id: number) {
@@ -42,14 +50,6 @@ function findItem(items: BacklogFile, id: number) {
 }
 
 export function loadAndFindItem(id: string) {
-	if (!existsSync(getBacklogPath())) {
-		console.log(
-			chalk.yellow(
-				"No backlog found. Run 'assist backlog init' to create one.",
-			),
-		);
-		return undefined;
-	}
 	const items = loadBacklog();
 	const item = findItem(items, Number.parseInt(id, 10));
 	if (!item) {
@@ -65,22 +65,26 @@ export function setStatus(
 ): string | undefined {
 	const result = loadAndFindItem(id);
 	if (!result) return undefined;
-	result.item.status = status;
-	saveBacklog(result.items);
+	const db = getDb();
+	updateStatus(db, result.item.id, status);
+	exportToJsonl(db, getBacklogDir());
 	return result.item.name;
 }
 
 export function setCurrentPhase(id: string, phase: number): void {
 	const result = loadAndFindItem(id);
 	if (!result) return;
-	result.item.currentPhase = phase;
-	saveBacklog(result.items);
+	const db = getDb();
+	updateCurrentPhase(db, result.item.id, phase);
+	exportToJsonl(db, getBacklogDir());
 }
 
 export function removeItem(id: string): string | undefined {
 	const result = loadAndFindItem(id);
 	if (!result) return undefined;
-	saveBacklog(result.items.filter((i) => i.id !== result.item.id));
+	const db = getDb();
+	deleteItem(db, result.item.id);
+	exportToJsonl(db, getBacklogDir());
 	return result.item.name;
 }
 

@@ -10,7 +10,7 @@ export default defineConfig({
 	clean: true,
 	shims: true,
 	silent: true,
-	external: ["typescript"],
+	external: ["typescript", "better-sqlite3"],
 	onSuccess: async () => {
 		cpSync("allowed.cli-reads", "dist/allowed.cli-reads");
 		cpSync("allowed.cli-writes", "dist/allowed.cli-writes");

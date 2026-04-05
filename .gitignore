@@ -5,3 +5,6 @@ books
 .assist-lock-*.json
 screenshots
 .claude/settings.local.json
+.assist/backlog.db
+.assist/backlog.db-shm
+.assist/backlog.db-wal
