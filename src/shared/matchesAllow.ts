@@ -15,6 +15,10 @@ export function _resetCaches(): void {
 const TOOL_RE = /^(Bash|PowerShell)\((.+?)(:.*)?\)$/;
 const SHELL_TOOLS = ["Bash", "PowerShell"];
 const DOTSLASH_RE = /^\.[\\/]/;
+/** Numeric fd-to-fd redirects like 2>&1. */
+const FD_REDIRECT_RE = /\d+>&\d+/g;
+/** Fd-to-/dev/null redirects like 2>/dev/null. */
+const FD_DEVNULL_RE = /\d*>\/dev\/null/g;
 
 function loadPerms(key: "allow" | "deny"): PermMap {
 	return parsePerms(readSettingsPerms(key));
@@ -28,7 +32,11 @@ function shellEntries(map: PermMap, toolName: string): PermEntry[] {
 }
 
 function normCmd(cmd: string): string {
-	return cmd.replace(DOTSLASH_RE, "");
+	return cmd
+		.replace(FD_DEVNULL_RE, "")
+		.replace(FD_REDIRECT_RE, "")
+		.trim()
+		.replace(DOTSLASH_RE, "");
 }
 
 function findMatch(entries: PermEntry[], command: string): string | undefined {

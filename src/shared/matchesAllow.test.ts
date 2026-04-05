@@ -78,6 +78,21 @@ describe("matchesAllow", () => {
 		setup(["PowerShell(build.ps1)"]);
 		expect(matchesAllow("PowerShell", "./build.ps1")).toBe("build.ps1");
 	});
+
+	it("should match command against entry with 2>&1 redirect suffix", () => {
+		setup(["Bash(./build.sh 2>&1)"]);
+		expect(matchesAllow("Bash", "./build.sh")).toBe("build.sh");
+	});
+
+	it("should match command without ./ against entry with ./ and 2>&1", () => {
+		setup(["Bash(./build.sh 2>&1)"]);
+		expect(matchesAllow("Bash", "build.sh")).toBe("build.sh");
+	});
+
+	it("should match command against entry with 2>/dev/null suffix", () => {
+		setup(["Bash(./build.sh 2>/dev/null)"]);
+		expect(matchesAllow("Bash", "build.sh")).toBe("build.sh");
+	});
 });
 
 describe("matchesDeny", () => {
