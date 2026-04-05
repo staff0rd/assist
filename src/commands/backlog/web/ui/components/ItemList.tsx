@@ -1,4 +1,5 @@
 import { useAtomValue } from "jotai";
+import { useNavigate } from "react-router";
 import { showCompletedAtom } from "../showCompletedAtom";
 import type { BacklogItem } from "../types";
 import { CompletedToggle } from "./CompletedToggle";
@@ -6,11 +7,10 @@ import { ItemCard } from "./ItemCard";
 
 type ItemListProps = {
 	items: BacklogItem[];
-	onSelect: (id: number) => void;
-	onAdd: () => void;
 };
 
-export function ItemList({ items, onSelect, onAdd }: ItemListProps) {
+export function ItemList({ items }: ItemListProps) {
+	const navigate = useNavigate();
 	const showCompleted = useAtomValue(showCompletedAtom);
 	const filtered = showCompleted
 		? items
@@ -27,7 +27,7 @@ export function ItemList({ items, onSelect, onAdd }: ItemListProps) {
 					<button
 						type="button"
 						className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
-						onClick={onAdd}
+						onClick={() => navigate("/add")}
 					>
 						+ Add Item
 					</button>
@@ -42,7 +42,7 @@ export function ItemList({ items, onSelect, onAdd }: ItemListProps) {
 					<ItemCard
 						key={item.id}
 						item={item}
-						onSelect={() => onSelect(item.id)}
+						onSelect={() => navigate(`/items/${item.id}`)}
 					/>
 				))
 			)}

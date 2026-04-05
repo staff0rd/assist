@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { deleteItem, updateItemStatus } from "../api";
 import type { BacklogItem } from "../types";
 import { BackButton } from "./BackButton";
@@ -7,10 +8,7 @@ import { ItemBody } from "./ItemBody";
 
 type ItemDetailProps = {
 	item: BacklogItem;
-	onBack: () => void;
-	onEdit: () => void;
-	onDeleted: () => void;
-	onStatusChanged: () => void;
+	onReload: () => Promise<void>;
 };
 
 function DeleteAction({
@@ -18,7 +16,7 @@ function DeleteAction({
 	onDeleted,
 }: {
 	itemId: number;
-	onDeleted: () => void;
+	onDeleted: () => Promise<void>;
 }) {
 	const [confirming, setConfirming] = useState(false);
 	return (
@@ -27,7 +25,7 @@ function DeleteAction({
 				<ConfirmDialog
 					onConfirm={async () => {
 						await deleteItem(itemId);
-						onDeleted();
+						await onDeleted();
 					}}
 					onCancel={() => setConfirming(false)}
 				/>
@@ -45,23 +43,20 @@ function DeleteAction({
 
 function DetailHeader({
 	itemId,
-	onBack,
-	onEdit,
 	onDeleted,
 }: {
 	itemId: number;
-	onBack: () => void;
-	onEdit: () => void;
-	onDeleted: () => void;
+	onDeleted: () => Promise<void>;
 }) {
+	const navigate = useNavigate();
 	return (
 		<div className="flex justify-between items-center mb-4">
-			<BackButton onClick={onBack} />
+			<BackButton to="/" />
 			<div className="flex gap-2">
 				<button
 					type="button"
 					className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
-					onClick={onEdit}
+					onClick={() => navigate(`/items/${itemId}/edit`)}
 				>
 					Edit
 				</button>
@@ -71,26 +66,22 @@ function DetailHeader({
 	);
 }
 
-export function ItemDetail({
-	item,
-	onBack,
-	onEdit,
-	onDeleted,
-	onStatusChanged,
-}: ItemDetailProps) {
+export function ItemDetail({ item, onReload }: ItemDetailProps) {
+	const navigate = useNavigate();
 	return (
 		<>
 			<DetailHeader
 				itemId={item.id}
-				onBack={onBack}
-				onEdit={onEdit}
-				onDeleted={onDeleted}
+				onDeleted={async () => {
+					await onReload();
+					navigate("/");
+				}}
 			/>
 			<ItemBody
 				item={item}
 				onStatusChange={async (status) => {
 					await updateItemStatus(item.id, status);
-					onStatusChanged();
+					await onReload();
 				}}
 			/>
 		</>

@@ -1,39 +1,26 @@
+import { useParams } from "react-router";
 import type { BacklogItem } from "../types";
 import { ItemDetail } from "./ItemDetail";
 import { ItemForm } from "./ItemForm";
-import type { View } from "./types";
-
-type NavigateFn = (view: View) => void;
 
 export function ItemRoute({
-	item,
-	view,
-	onNavigate,
-	onReloadAndNavigate,
+	items,
+	mode,
+	onReload,
 }: {
-	item: BacklogItem;
-	view: { kind: "detail" | "edit"; id: number };
-	onNavigate: NavigateFn;
-	onReloadAndNavigate: NavigateFn;
+	items: BacklogItem[];
+	mode: "detail" | "edit";
+	onReload: () => Promise<void>;
 }) {
-	if (view.kind === "edit") {
+	const { id } = useParams<{ id: string }>();
+	const numId = Number(id);
+	const item = items.find((i) => i.id === numId);
+	if (!item) return null;
+
+	if (mode === "edit") {
 		return (
-			<ItemForm
-				item={item}
-				onSaved={(id) => onReloadAndNavigate({ kind: "detail", id })}
-				onCancel={() => onNavigate({ kind: "detail", id: view.id })}
-			/>
+			<ItemForm item={item} onReload={onReload} backTo={`/items/${numId}`} />
 		);
 	}
-	return (
-		<ItemDetail
-			item={item}
-			onBack={() => onNavigate({ kind: "list" })}
-			onEdit={() => onNavigate({ kind: "edit", id: view.id })}
-			onDeleted={() => onReloadAndNavigate({ kind: "list" })}
-			onStatusChanged={() =>
-				onReloadAndNavigate({ kind: "detail", id: view.id })
-			}
-		/>
-	);
+	return <ItemDetail item={item} onReload={onReload} />;
 }

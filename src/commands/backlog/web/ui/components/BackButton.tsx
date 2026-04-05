@@ -1,13 +1,16 @@
+import { useNavigate } from "react-router";
+
 type BackButtonProps = {
-	onClick: () => void;
+	to: string;
 };
 
-export function BackButton({ onClick }: BackButtonProps) {
+export function BackButton({ to }: BackButtonProps) {
+	const navigate = useNavigate();
 	return (
 		<button
 			type="button"
 			className="inline-block mb-4 text-blue-600 text-sm cursor-pointer bg-transparent border-none p-0 hover:underline"
-			onClick={onClick}
+			onClick={() => navigate(to)}
 		>
 			&larr; Back
 		</button>

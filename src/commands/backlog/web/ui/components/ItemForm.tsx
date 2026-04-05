@@ -1,5 +1,6 @@
 import { Form } from "@base-ui/react/form";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router";
 import type { BacklogItem } from "../types";
 import { AcceptanceCriteriaField } from "./AcceptanceCriteriaField";
 import { BackButton } from "./BackButton";
@@ -11,11 +12,12 @@ import { TypeField } from "./TypeField";
 
 type ItemFormProps = {
 	item?: BacklogItem;
-	onSaved: (id: number) => void;
-	onCancel: () => void;
+	onReload: () => Promise<void>;
+	backTo: string;
 };
 
-export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
+export function ItemForm({ item, onReload, backTo }: ItemFormProps) {
+	const navigate = useNavigate();
 	const defaults = getDefaults(item);
 	const [type, setType] = useState<"story" | "bug">(
 		defaults.type as "story" | "bug",
@@ -24,13 +26,26 @@ export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
 	const [description, setDescription] = useState(defaults.description);
 	const acRef = useRef<string[]>(defaults.ac);
 
+	const cancel = () => navigate(backTo);
+
 	return (
 		<>
-			<BackButton onClick={onCancel} />
+			<BackButton to={backTo} />
 			<Form
 				className="bg-white rounded-lg p-6 border border-gray-200"
 				onSubmit={(e) =>
-					handleSubmit(e, type, name, description, acRef.current, item, onSaved)
+					handleSubmit(
+						e,
+						type,
+						name,
+						description,
+						acRef.current,
+						item,
+						async (id) => {
+							await onReload();
+							navigate(`/items/${id}`);
+						},
+					)
 				}
 			>
 				<h2 className="mb-4">{defaults.title}</h2>
@@ -43,7 +58,7 @@ export function ItemForm({ item, onSaved, onCancel }: ItemFormProps) {
 						acRef.current = v;
 					}}
 				/>
-				<FormActions submitLabel={defaults.submitLabel} onCancel={onCancel} />
+				<FormActions submitLabel={defaults.submitLabel} onCancel={cancel} />
 			</Form>
 		</>
 	);

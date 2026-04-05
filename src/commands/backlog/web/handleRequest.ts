@@ -38,7 +38,21 @@ const itemRoutes: Record<string, ItemHandler> = {
 	DELETE: (_req, res, id) => deleteItem(res, id),
 };
 
+const serveHtml = createHtmlHandler(getHtml);
 const baseHandler = createRouteHandler(routes);
+
+async function handleItemRoute(
+	req: IncomingMessage,
+	res: ServerResponse,
+	pathname: string,
+): Promise<boolean> {
+	const match = pathname.match(/^\/api\/items\/(\d+)$/);
+	if (!match) return false;
+	const handler = itemRoutes[req.method ?? "GET"];
+	if (!handler) return false;
+	await handler(req, res, Number.parseInt(match[1], 10));
+	return true;
+}
 
 export async function handleRequest(
 	req: IncomingMessage,
@@ -49,13 +63,17 @@ export async function handleRequest(
 	const method = req.method ?? "GET";
 	const pathname = url.pathname;
 
-	const itemMatch = pathname.match(/^\/api\/items\/(\d+)$/);
-	if (itemMatch) {
-		const itemHandler = itemRoutes[method];
-		if (itemHandler) {
-			await itemHandler(req, res, Number.parseInt(itemMatch[1], 10));
-			return;
-		}
+	if (await handleItemRoute(req, res, pathname)) return;
+
+	if (routes[`${method} ${pathname}`]) {
+		await baseHandler(req, res, port);
+		return;
+	}
+
+	// Client-side routing catch-all: serve HTML for non-API GET requests
+	if (method === "GET" && !pathname.startsWith("/api/")) {
+		await serveHtml(req, res);
+		return;
 	}
 
 	await baseHandler(req, res, port);
