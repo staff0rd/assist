@@ -1,3 +1,10 @@
+## [0.172.3](https://github.com/staff0rd/assist/compare/v0.172.2...v0.172.3) (2026-04-05)
+
+
+### Bug Fixes
+
+* prompt before starting single item ([40f3a3a](https://github.com/staff0rd/assist/commit/40f3a3aee837044ce510f3aa9d4847d05047be09))
+
 ## [0.172.2](https://github.com/staff0rd/assist/compare/v0.172.1...v0.172.2) (2026-04-05)
 
 
