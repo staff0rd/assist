@@ -1,3 +1,15 @@
+# [0.171.0](https://github.com/staff0rd/assist/compare/v0.170.3...v0.171.0) (2026-04-05)
+
+
+### Bug Fixes
+
+* use last version of day in devlog ([ed879ec](https://github.com/staff0rd/assist/commit/ed879ec7fcbff67caa6e288ba7fb72df42212426))
+
+
+### Features
+
+* switch backlog storage to SQLite ([dd6cb68](https://github.com/staff0rd/assist/commit/dd6cb689a22fa0cea0925499635a44db0fa6a28a))
+
 ## [0.170.3](https://github.com/staff0rd/assist/compare/v0.170.2...v0.170.3) (2026-04-05)
 
 
