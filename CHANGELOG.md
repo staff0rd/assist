@@ -1,3 +1,10 @@
+## [0.172.1](https://github.com/staff0rd/assist/compare/v0.172.0...v0.172.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* skip phase prompt for terminal items ([73fdbba](https://github.com/staff0rd/assist/commit/73fdbba5378728cc55eb6751f026f761f1a89818))
+
 # [0.172.0](https://github.com/staff0rd/assist/compare/v0.171.1...v0.172.0) (2026-04-05)
 
 
