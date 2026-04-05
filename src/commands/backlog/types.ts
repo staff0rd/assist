@@ -3,9 +3,11 @@ import { z } from "zod";
 const backlogStatusSchema = z.enum(["todo", "in-progress", "done", "wontdo"]);
 const backlogTypeSchema = z.enum(["story", "bug"]);
 
-const planTaskSchema = z.strictObject({
-	task: z.string(),
-});
+const planTaskSchema = z
+	.object({
+		task: z.string(),
+	})
+	.strip();
 
 const planPhaseSchema = z.strictObject({
 	name: z.string(),
