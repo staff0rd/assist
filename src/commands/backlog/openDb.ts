@@ -50,7 +50,6 @@ function initSchema(db: ReturnType<typeof Database>): void {
 			phase_idx INTEGER NOT NULL,
 			idx INTEGER NOT NULL,
 			task TEXT NOT NULL,
-			verify TEXT,
 			PRIMARY KEY (item_id, phase_idx, idx),
 			FOREIGN KEY (item_id, phase_idx) REFERENCES plan_phases(item_id, idx) ON DELETE CASCADE
 		);

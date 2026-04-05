@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { commitBacklog } from "../commitBacklog";
 import { backlogExists, getNextId, loadBacklog, saveBacklog } from "../shared";
-import { parseItemFile } from "./parseItemFile";
+import type { BacklogType } from "../types";
 import {
 	promptAcceptanceCriteria,
 	promptDescription,
@@ -9,22 +9,18 @@ import {
 	promptType,
 } from "./shared";
 
-function addFromFile(filePath: string): void {
-	const data = parseItemFile(filePath);
-	if (!data) return;
-	const items = loadBacklog();
-	const id = getNextId(items);
-	items.push({ ...data, id, status: "todo" });
-	saveBacklog(items);
-	commitBacklog(id, data.name);
-	console.log(chalk.green(`Added item #${id}: ${data.name}`));
-}
+type AddOptions = {
+	name?: string;
+	type?: string;
+	desc?: string;
+	ac?: string[];
+};
 
-async function addInteractive(): Promise<void> {
-	const type = await promptType();
-	const name = await promptName();
-	const description = await promptDescription();
-	const acceptanceCriteria = await promptAcceptanceCriteria();
+async function addFromOptions(options: AddOptions): Promise<void> {
+	const type = (options.type as BacklogType) ?? (await promptType());
+	const name = options.name ?? (await promptName());
+	const description = options.desc ?? (await promptDescription());
+	const acceptanceCriteria = options.ac ?? (await promptAcceptanceCriteria());
 
 	const items = loadBacklog();
 	const id = getNextId(items);
@@ -32,7 +28,7 @@ async function addInteractive(): Promise<void> {
 		id,
 		type,
 		name,
-		description,
+		description: description || undefined,
 		acceptanceCriteria,
 		status: "todo",
 	});
@@ -41,7 +37,7 @@ async function addInteractive(): Promise<void> {
 	console.log(chalk.green(`Added item #${id}: ${name}`));
 }
 
-export async function add(options: { file?: string }): Promise<void> {
+export async function add(options: AddOptions): Promise<void> {
 	if (!backlogExists()) {
 		console.log(
 			chalk.yellow(
@@ -51,9 +47,5 @@ export async function add(options: { file?: string }): Promise<void> {
 		return;
 	}
 
-	if (options.file) {
-		addFromFile(options.file);
-	} else {
-		await addInteractive();
-	}
+	await addFromOptions(options);
 }

@@ -83,7 +83,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog init` - Create an empty backlog
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
-- `assist backlog add --file <path>` - Add a backlog item from a JSON file (used by `/draft`)
+- `assist backlog add --name <n> --type <t> --desc <d> --ac <criterion...>` - Add a backlog item from CLI options (used by `/draft`)
+- `assist backlog add-phase <id> <name> --task <t...> [--manual-check <c...>]` - Add a phase to an existing backlog item
 - `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done

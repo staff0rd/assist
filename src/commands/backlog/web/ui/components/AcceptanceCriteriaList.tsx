@@ -1,3 +1,5 @@
+import { marked } from "marked";
+
 type AcceptanceCriteriaListProps = {
 	criteria: string[];
 };
@@ -13,9 +15,14 @@ export function AcceptanceCriteriaList({
 			</h3>
 			<ol className="list-none">
 				{criteria.map((ac, i) => (
-					<li key={ac} className="py-1">
+					<li key={ac} className="py-1 markdown">
 						<span className="text-gray-500 mr-2">{i + 1}.</span>
-						{ac}
+						<span
+							// biome-ignore lint/security/noDangerouslySetInnerHtml: inline markdown rendering
+							dangerouslySetInnerHTML={{
+								__html: marked.parseInline(ac) as string,
+							}}
+						/>
 					</li>
 				))}
 			</ol>

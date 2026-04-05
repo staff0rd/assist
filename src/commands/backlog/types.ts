@@ -5,7 +5,6 @@ const backlogTypeSchema = z.enum(["story", "bug"]);
 
 const planTaskSchema = z.strictObject({
 	task: z.string(),
-	verify: z.string().optional(),
 });
 
 const planPhaseSchema = z.strictObject({

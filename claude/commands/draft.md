@@ -38,7 +38,7 @@ Once you have enough context, propose a complete backlog item. Show it to the us
 
 Keep phases small (2-4 tasks each). A typical item should have 2-3 phases.
 
-Most phases should NOT have manual checks — prefer automated verification via the `verify` field on tasks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). Do not add a final phase just for end-to-end verification — a review phase is auto-appended at runtime.
+Most phases should NOT have manual checks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). Do not add a final phase just for end-to-end verification — a review phase is auto-appended at runtime.
 
 ## Step 4: Iterate
 
@@ -46,29 +46,16 @@ Ask the user if they want to change anything. Iterate until they confirm.
 
 ## Step 5: Save
 
-Once confirmed, write the JSON to a temp file and add it via the CLI. The JSON must match this shape:
+Once confirmed, create the item and its phases via CLI commands.
 
-```json
-{
-  "name": "...",
-  "type": "story",
-  "description": "...",
-  "acceptanceCriteria": ["...", "..."],
-  "plan": [
-    {
-      "name": "Phase name",
-      "tasks": [
-        { "task": "Do something", "verify": "optional verification step" }
-      ],
-      "manualChecks": ["optional — only for checks that can't be automated"]
-    }
-  ]
-}
+First, add the item:
+```
+assist backlog add --name "Item name" --type story --desc "Description text" --ac "criterion 1" --ac "criterion 2" 2>&1
 ```
 
-Use the Write tool to save the JSON to a temp file (e.g. `/tmp/backlog-item.json`), then run:
+Then add each phase:
 ```
-assist backlog add --file /tmp/backlog-item.json 2>&1
+assist backlog add-phase <id> "Phase name" --task "Task 1" --task "Task 2" --manual-check "optional check" 2>&1
 ```
 
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.

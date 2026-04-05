@@ -1,3 +1,5 @@
+import { marked } from "marked";
+
 export function ManualChecks({ checks }: { checks: string[] }) {
 	return (
 		<div className="mt-2 pt-2 border-t border-gray-200">
@@ -6,9 +8,14 @@ export function ManualChecks({ checks }: { checks: string[] }) {
 			</span>
 			<ul className="list-none ml-1 mt-1">
 				{checks.map((check) => (
-					<li key={check} className="py-0.5 text-sm text-gray-600">
+					<li key={check} className="py-0.5 text-sm text-gray-600 markdown">
 						<span className="mr-2">{"\u2610"}</span>
-						{check}
+						<span
+							// biome-ignore lint/security/noDangerouslySetInnerHtml: inline markdown rendering
+							dangerouslySetInnerHTML={{
+								__html: marked.parseInline(check) as string,
+							}}
+						/>
 					</li>
 				))}
 			</ul>

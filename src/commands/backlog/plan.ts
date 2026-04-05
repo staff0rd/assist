@@ -19,9 +19,6 @@ export function plan(id: string): void {
 		console.log(`${chalk.bold(`Phase ${i + 1}:`)} ${phase.name}`);
 		for (const task of phase.tasks) {
 			console.log(`  - ${task.task}`);
-			if (task.verify) {
-				console.log(`    ${chalk.dim(`verify: ${task.verify}`)}`);
-			}
 		}
 		console.log();
 	}

@@ -61,11 +61,5 @@ function buildManualCheckLines(manualChecks: string[]): string[] {
 }
 
 function formatTasks(phase: PlanPhase): string {
-	return phase.tasks
-		.map((t) => {
-			let line = `- ${t.task}`;
-			if (t.verify) line += ` (verify: ${t.verify})`;
-			return line;
-		})
-		.join("\n");
+	return phase.tasks.map((t) => `- ${t.task}`).join("\n");
 }

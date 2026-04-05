@@ -1,6 +1,5 @@
 type PlanTask = {
 	task: string;
-	verify?: string;
 };
 
 export type PlanPhase = {

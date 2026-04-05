@@ -41,7 +41,7 @@ flowchart TD
 
 These instructions come from `buildPhasePrompt.ts`:
 
-1. **Implement the phase tasks** — the prompt lists specific tasks, each with an optional `verify` hint
+1. **Implement the phase tasks** — the prompt lists specific tasks
 2. **Run `/verify`** — the prompt tells the agent to verify its own work before signalling completion
 3. **Pause for manual checks** (if any) — the agent lists the manual checks and waits for the user to confirm they pass
 4. **Pause on last phase** (always) — even without explicit manual checks, the last phase always asks the user to verify end-to-end before proceeding
@@ -106,10 +106,9 @@ The `/draft` skill (`claude/commands/draft.md`) is where the workflow is authore
 
 - **Acceptance criteria** — shown to the agent in every phase prompt
 - **Phase names and tasks** — the specific work the agent will do
-- **Verify hints** — optional per-task verification instructions (e.g. "run the test suite", "check the output")
 - **Manual checks** — optional per-phase checks the user must perform (keep these rare)
 
-If you want the agent to write tests, add it as an explicit task in the plan. If you want a specific verification step, add a `verify` field to the task. The agent only reliably does what the plan tells it to do.
+If you want the agent to write tests, add it as an explicit task in the plan. The agent only reliably does what the plan tells it to do.
 
 ## Item Lifecycle
 
@@ -240,7 +239,7 @@ Acceptance criteria:
 
 Phase {N}: {phase name}
 Tasks:
-- {task} (verify: {optional verify step})
+- {task}
 - {task}
 
 Focus ONLY on this phase. Do not work on other phases.

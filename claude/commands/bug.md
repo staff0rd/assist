@@ -41,20 +41,9 @@ Ask the user if they want to change anything. Iterate until they confirm.
 
 ## Step 5: Save
 
-Once confirmed, pipe the JSON to the CLI. The JSON must match this shape:
-
-```json
-{
-  "name": "...",
-  "type": "bug",
-  "description": "**Repro:**\n1. ...\n\n**Expected:** ...\n\n**Actual:** ...",
-  "acceptanceCriteria": ["...", "..."]
-}
+Once confirmed, add the item via CLI:
 ```
-
-Run:
-```
-echo '<the confirmed json>' | assist backlog add --json 2>&1
+assist backlog add --name "Bug title" --type bug --desc "**Repro:**\n1. ...\n\n**Expected:** ...\n\n**Actual:** ..." --ac "criterion 1" --ac "criterion 2" 2>&1
 ```
 
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.

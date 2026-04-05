@@ -28,7 +28,7 @@ function insertPlan(db: BacklogDb, item: BacklogItem): void {
 		"INSERT INTO plan_phases (item_id, idx, name, manual_checks) VALUES (?, ?, ?, ?)",
 	);
 	const taskStmt = db.prepare(
-		"INSERT INTO plan_tasks (item_id, phase_idx, idx, task, verify) VALUES (?, ?, ?, ?, ?)",
+		"INSERT INTO plan_tasks (item_id, phase_idx, idx, task) VALUES (?, ?, ?, ?)",
 	);
 	for (let pi = 0; pi < item.plan.length; pi++) {
 		const phase = item.plan[pi];
@@ -40,7 +40,7 @@ function insertPlan(db: BacklogDb, item: BacklogItem): void {
 		);
 		for (let ti = 0; ti < phase.tasks.length; ti++) {
 			const task = phase.tasks[ti];
-			taskStmt.run(item.id, pi, ti, task.task, task.verify ?? null);
+			taskStmt.run(item.id, pi, ti, task.task);
 		}
 	}
 }
