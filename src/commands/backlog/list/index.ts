@@ -31,14 +31,15 @@ export async function list(options: ListOptions): Promise<void> {
 		);
 		return;
 	}
-	const items = filterItems(loadBacklog(), options);
+	const allItems = loadBacklog();
+	const items = filterItems(allItems, options);
 	if (items.length === 0) {
 		console.log(chalk.dim("Backlog is empty."));
 		return;
 	}
 	for (const item of items) {
 		console.log(
-			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}${phaseLabel(item)}${dependencyLabel(item)}`,
+			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}${phaseLabel(item)}${dependencyLabel(item, allItems)}`,
 		);
 		if (options.verbose) {
 			printVerboseDetails(item);

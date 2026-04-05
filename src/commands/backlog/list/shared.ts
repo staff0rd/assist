@@ -30,9 +30,24 @@ export function phaseLabel(item: BacklogFile[number]): string {
 	);
 }
 
-export function dependencyLabel(item: BacklogFile[number]): string {
+export function isBlocked(
+	item: BacklogFile[number],
+	items: BacklogFile,
+): boolean {
+	const deps = (item.links ?? []).filter((l) => l.type === "depends-on");
+	return deps.some((dep) => {
+		const target = items.find((i) => i.id === dep.targetId);
+		return target !== undefined && target.status !== "done";
+	});
+}
+
+export function dependencyLabel(
+	item: BacklogFile[number],
+	items: BacklogFile,
+): string {
 	const deps = (item.links ?? []).filter((l) => l.type === "depends-on");
 	if (deps.length === 0) return "";
+	if (isBlocked(item, items)) return chalk.red(" [blocked]");
 	return chalk.dim(` [${deps.length} dep${deps.length > 1 ? "s" : ""}]`);
 }
 
