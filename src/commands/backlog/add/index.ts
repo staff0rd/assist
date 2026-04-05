@@ -1,7 +1,6 @@
-import { existsSync } from "node:fs";
 import chalk from "chalk";
 import { commitBacklog } from "../commitBacklog";
-import { getBacklogPath, getNextId, loadBacklog, saveBacklog } from "../shared";
+import { backlogExists, getNextId, loadBacklog, saveBacklog } from "../shared";
 import { parseItemFile } from "./parseItemFile";
 import {
 	promptAcceptanceCriteria,
@@ -43,7 +42,7 @@ async function addInteractive(): Promise<void> {
 }
 
 export async function add(options: { file?: string }): Promise<void> {
-	if (!existsSync(getBacklogPath())) {
+	if (!backlogExists()) {
 		console.log(
 			chalk.yellow(
 				"No backlog found. Run 'assist backlog init' to create one.",

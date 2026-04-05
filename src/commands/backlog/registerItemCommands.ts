@@ -6,7 +6,7 @@ import { list as backlogList } from "./list";
 export function registerItemCommands(cmd: Command): void {
 	cmd
 		.command("init")
-		.description("Create an empty assist.backlog.yml")
+		.description("Create an empty backlog")
 		.action(backlogInit);
 
 	cmd

@@ -1,6 +1,5 @@
-import { existsSync } from "node:fs";
 import chalk from "chalk";
-import { getBacklogPath, loadBacklog } from "../shared";
+import { backlogExists, loadBacklog } from "../shared";
 import type { BacklogFile } from "../types";
 import {
 	dependencyLabel,
@@ -24,7 +23,7 @@ function filterItems(items: BacklogFile, options: ListOptions): BacklogFile {
 }
 
 export async function list(options: ListOptions): Promise<void> {
-	if (!existsSync(getBacklogPath())) {
+	if (!backlogExists()) {
 		console.log(
 			chalk.yellow(
 				"No backlog found. Run 'assist backlog init' to create one.",

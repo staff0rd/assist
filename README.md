@@ -80,7 +80,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist news add [url]` - Add an RSS feed URL to the config
 - `assist news web [-p, --port <number>]` - Start a web view of the news feeds (default port 3001)
 - `assist backlog [--dir <path>]` - Start the backlog web UI (same as `backlog web`). `--dir` overrides the directory for backlog file discovery
-- `assist backlog init` - Create an empty assist.backlog.yml
+- `assist backlog init` - Create an empty backlog
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
 - `assist backlog add --file <path>` - Add a backlog item from a JSON file (used by `/draft`)

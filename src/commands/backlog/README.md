@@ -275,5 +275,5 @@ Wait for the user to confirm before proceeding.
 | `watchForMarker.ts` | Poll for `.assist-signal.json`, kill on detect |
 | `phaseDone.ts` | Write marker + advance `currentPhase` |
 | `resolvePhaseResult.ts` | Post-phase decision (advance / retry / abort) |
-| `shared.ts` | YAML persistence for `assist.backlog.yml` |
+| `shared.ts` | SQLite persistence with JSONL sync |
 | `types.ts` | Zod schemas for `BacklogItem`, `PlanPhase` |

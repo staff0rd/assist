@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
 import { deleteItem } from "./deleteItem";
@@ -21,8 +22,17 @@ export function getBacklogDir(): string {
 	return _backlogDir ?? process.cwd();
 }
 
-export function getBacklogPath(): string {
+function getBacklogPath(): string {
 	return join(getBacklogDir(), "assist.backlog.yml");
+}
+
+export function backlogExists(): boolean {
+	const dir = getBacklogDir();
+	return (
+		existsSync(join(dir, ".assist", "backlog.db")) ||
+		existsSync(join(dir, ".assist", "backlog.jsonl")) ||
+		existsSync(join(dir, "assist.backlog.yml"))
+	);
 }
 
 function getDb() {
