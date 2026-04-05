@@ -1,3 +1,10 @@
+## [0.172.4](https://github.com/staff0rd/assist/compare/v0.172.3...v0.172.4) (2026-04-05)
+
+
+### Bug Fixes
+
+* allow literal backticks in quoted args ([bd881a6](https://github.com/staff0rd/assist/commit/bd881a68835b15f10d20a3ae924b7f7d90cdfd60))
+
 ## [0.172.3](https://github.com/staff0rd/assist/compare/v0.172.2...v0.172.3) (2026-04-05)
 
 
