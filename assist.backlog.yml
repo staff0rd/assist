@@ -1076,7 +1076,8 @@
       phase: 3
       timestamp: 2026-03-31T09:50:50.311Z
       type: summary
-- type: bug
+- id: 45
+  type: bug
   name: refactor extract removes shared helpers from source file
   description: |-
     **Repro:**
@@ -1088,9 +1089,9 @@
     **Actual:** Helpers are moved to the destination file and removed from the source, breaking all remaining functions that depend on them.
   acceptanceCriteria:
     - Extracting a function that shares private helpers with remaining code does not break the source file
-  id: 45
-  status: todo
-- type: story
+  status: in-progress
+- id: 41
+  type: story
   name: pull --rebase in commit flow
   description: Change `git pull` to `git pull --rebase` in the commit command to avoid merge commits when syncing before committing.
   acceptanceCriteria:
@@ -1100,9 +1101,9 @@
       tasks:
         - task: Change `git pull` to `git pull --rebase` in `src/commands/commit.ts`
           verify: assist verify
-  id: 41
   status: todo
-- type: story
+- id: 42
+  type: story
   name: Stop auto-starting last backlog item in next
   description: When `backlog next` finds only one todo item, it currently auto-starts it without prompting. Change it to show the select list (same as the multi-item path) so the user can confirm before it runs.
   acceptanceCriteria:
@@ -1114,9 +1115,9 @@
       tasks:
         - task: Remove the `todo.length === 1` branch in next.ts so it always calls `selectItem`
           verify: assist verify
-  id: 42
   status: todo
-- type: story
+- id: 43
+  type: story
   name: Dependency-aware backlog list and next
   description: Make backlog list and backlog next aware of depends-on links so that blocked items are visually tagged and excluded from selection in next.
   acceptanceCriteria:
@@ -1139,9 +1140,9 @@
           verify: assist verify
         - task: Update single-item auto-start to not auto-start if the only item is blocked
           verify: assist verify
-  id: 43
   status: todo
-- type: story
+- id: 44
+  type: story
   name: Switch backlog storage to SQLite + JSONL sync
   description: Replace the YAML flat file storage with SQLite for fast concurrent-safe reads/writes and JSONL for git-tracked sync. Migrate existing assist.backlog.yml data on first access.
   acceptanceCriteria:
@@ -1176,5 +1177,23 @@
           verify: assist verify
         - task: Update commitBacklog.ts to commit .assist/backlog.jsonl instead of assist.backlog.yml
           verify: assist verify
-  id: 44
+  status: todo
+- type: story
+  name: Inline markdown in backlog web view AC and plan sections
+  description: Acceptance criteria, task descriptions, verify hints, and manual checks in the backlog web view render plain text. Apply `marked.parseInline()` so inline markdown (backticks, bold, italic, links) renders consistently with the description section.
+  acceptanceCriteria:
+    - Backtick-wrapped text in acceptance criteria renders with code styling
+    - Backtick-wrapped text in plan task descriptions and verify hints renders with code styling
+    - Backtick-wrapped text in manual checks renders with code styling
+    - Other inline markdown (bold, italic, links) also renders in all three sections
+  plan:
+    - name: Add inline markdown rendering
+      tasks:
+        - task: Update `AcceptanceCriteriaList.tsx` to use `marked.parseInline()` with `dangerouslySetInnerHTML` for each criterion, wrapped in the `markdown` CSS class
+          verify: assist backlog web — check AC items render backticks as styled code
+        - task: Update `TaskList.tsx` to use `marked.parseInline()` for task text and verify hints
+          verify: assist backlog web — check plan tasks render backticks as styled code
+        - task: Update `ManualChecks.tsx` to use `marked.parseInline()` for check text
+          verify: assist backlog web — check manual checks render backticks as styled code
+  id: 46
   status: todo
