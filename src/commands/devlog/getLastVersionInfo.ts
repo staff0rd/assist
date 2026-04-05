@@ -64,7 +64,8 @@ export function getLastVersionInfo(
 		if (gitInfo) return { date: lastDate, version: gitInfo.version };
 	}
 
-	const lastVersion = entries.get(lastDate)?.[0]?.version;
+	const dayEntries = entries.get(lastDate);
+	const lastVersion = dayEntries?.[dayEntries.length - 1]?.version;
 	return lastVersion ? { date: lastDate, version: lastVersion } : null;
 }
 
