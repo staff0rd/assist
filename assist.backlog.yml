@@ -10,5 +10,30 @@
       tasks:
         - task: Remove the `todo.length === 1` branch in next.ts so it always calls `selectItem`
           verify: assist verify
+  id: 3
+  status: todo
+- type: story
+  name: Dependency-aware backlog list and next
+  description: Make backlog list and backlog next aware of depends-on links so that blocked items are visually tagged and excluded from selection in next.
+  acceptanceCriteria:
+    - list shows a [blocked] indicator on items that have unresolved depends-on links (target not done)
+    - next shows blocked items in the selection prompt but they are not selectable
+    - "next auto-skip logic: if only one todo item exists but it's blocked, don't auto-start it"
+    - Existing behaviour unchanged for items with no links or only relates-to links
+  plan:
+    - name: Add isBlocked helper and update list
+      tasks:
+        - task: Add isBlocked helper in src/commands/backlog/list/shared.ts that takes an item and the full backlog, returns true if any depends-on target has status !== done
+          verify: assist verify
+        - task: Update list/index.ts to pass the full items array and append a blocked indicator to blocked items
+          verify: assist verify
+    - name: Update next to respect blocked items
+      tasks:
+        - task: Update findResumable to skip blocked in-progress items
+          verify: assist verify
+        - task: Update selectItem to show blocked items as disabled choices in the enquirer prompt
+          verify: assist verify
+        - task: Update single-item auto-start to not auto-start if the only item is blocked
+          verify: assist verify
   id: 1
   status: todo
