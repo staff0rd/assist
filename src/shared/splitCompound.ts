@@ -1,4 +1,5 @@
 import { parse } from "shell-quote";
+import { hasUnquotedBackticks } from "./hasUnquotedBackticks";
 
 type Tokens = ReturnType<typeof parse>;
 type Token = Tokens[number];
@@ -44,12 +45,10 @@ function tokenizeCommand(command: string): Tokens | undefined {
 		.replace(FD_REDIRECT_RE, "");
 	if (!trimmed) return undefined;
 
+	if (hasUnquotedBackticks(trimmed)) return undefined;
+
 	try {
-		const tokens = parse(trimmed);
-		const hasBacktick = tokens.some(
-			(t) => typeof t === "string" && /`.+`/.test(t),
-		);
-		return hasBacktick ? undefined : tokens;
+		return parse(trimmed);
 	} catch {
 		return undefined;
 	}

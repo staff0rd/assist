@@ -199,6 +199,39 @@ describe("splitCompound", () => {
 
 				expect(result).toBeUndefined();
 			});
+
+			describe("when backticks are inside double-quoted arguments", () => {
+				it("should allow them as literal characters", () => {
+					const command =
+						'assist backlog add-phase 48 "title" --task "Install `react-router` as a dependency"';
+
+					const result = splitCompound(command);
+
+					expect(result).toEqual([
+						"assist backlog add-phase 48 title --task Install `react-router` as a dependency",
+					]);
+				});
+			});
+
+			describe("when backticks are inside single-quoted arguments", () => {
+				it("should allow them as literal characters", () => {
+					const command = "echo 'hello `world`'";
+
+					const result = splitCompound(command);
+
+					expect(result).toEqual(["echo hello `world`"]);
+				});
+			});
+
+			describe("when backticks are escaped with backslash", () => {
+				it("should allow them as literal characters", () => {
+					const command = "echo \\`not-a-substitution\\`";
+
+					const result = splitCompound(command);
+
+					expect(result).toEqual(["echo `not-a-substitution`"]);
+				});
+			});
 		});
 
 		describe("when using output redirection", () => {
