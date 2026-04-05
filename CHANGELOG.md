@@ -1,3 +1,10 @@
+## [0.171.1](https://github.com/staff0rd/assist/compare/v0.171.0...v0.171.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* handle null comment phase in JSONL ([64faeaf](https://github.com/staff0rd/assist/commit/64faeaff55ac4b7d8d800fb8af36012d3d2fb3c4))
+
 # [0.171.0](https://github.com/staff0rd/assist/compare/v0.170.3...v0.171.0) (2026-04-05)
 
 
