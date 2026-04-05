@@ -1,6 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import Database from "better-sqlite3";
+import { ensureGitignore } from "./ensureGitignore";
 
 let _db: ReturnType<typeof Database> | undefined;
 
@@ -69,6 +70,7 @@ export function openDb(dir: string): ReturnType<typeof Database> {
 	db.pragma("journal_mode = WAL");
 	db.pragma("foreign_keys = ON");
 	initSchema(db);
+	ensureGitignore(dir);
 	_db = db;
 	return db;
 }
