@@ -27,13 +27,9 @@ export function loadBacklog(): BacklogFile {
 	if (!existsSync(backlogPath)) {
 		return [];
 	}
-	try {
-		const content = readFileSync(backlogPath, "utf-8");
-		const raw = parseYaml(content) || [];
-		return backlogFileSchema.parse(raw);
-	} catch {
-		return [];
-	}
+	const content = readFileSync(backlogPath, "utf-8");
+	const raw = parseYaml(content) || [];
+	return backlogFileSchema.parse(raw);
 }
 
 export function saveBacklog(items: BacklogFile): void {
