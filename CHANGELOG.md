@@ -1,3 +1,10 @@
+## [0.170.3](https://github.com/staff0rd/assist/compare/v0.170.2...v0.170.3) (2026-04-05)
+
+
+### Bug Fixes
+
+* preserve shared helpers during extract ([e5d6b6f](https://github.com/staff0rd/assist/commit/e5d6b6fb8d649593b05f1060491d5dcd39c36ae8))
+
 ## [0.170.2](https://github.com/staff0rd/assist/compare/v0.170.1...v0.170.2) (2026-04-05)
 
 
