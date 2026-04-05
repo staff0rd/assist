@@ -1,3 +1,10 @@
+## [0.174.2](https://github.com/staff0rd/assist/compare/v0.174.1...v0.174.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* strip fd redirects in allow-list matching ([d8e0396](https://github.com/staff0rd/assist/commit/d8e0396baf35632ae4b55b5c0b86c8d44f647f90))
+
 ## [0.174.1](https://github.com/staff0rd/assist/compare/v0.174.0...v0.174.1) (2026-04-05)
 
 
