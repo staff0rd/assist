@@ -1,3 +1,10 @@
+# [0.174.0](https://github.com/staff0rd/assist/compare/v0.173.1...v0.174.0) (2026-04-05)
+
+
+### Features
+
+* add backlog search across item fields ([0b0aa0a](https://github.com/staff0rd/assist/commit/0b0aa0aefd2de8b824cd84bb6d5b9922969a0a53))
+
 ## [0.173.1](https://github.com/staff0rd/assist/compare/v0.173.0...v0.173.1) (2026-04-05)
 
 
