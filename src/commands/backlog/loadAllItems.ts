@@ -1,11 +1,7 @@
+import { loadComments } from "./loadComments";
 import { loadPlan } from "./loadPlan";
 import type { BacklogDb } from "./openDb";
-import type {
-	BacklogComment,
-	BacklogFile,
-	BacklogItem,
-	BacklogStatus,
-} from "./types";
+import type { BacklogFile, BacklogItem, BacklogStatus } from "./types";
 
 type ItemRow = {
 	id: number;
@@ -16,14 +12,6 @@ type ItemRow = {
 	status: string;
 	current_phase: number | null;
 };
-
-function loadComments(db: BacklogDb, itemId: number): BacklogComment[] {
-	return db
-		.prepare(
-			"SELECT text, phase, timestamp, type FROM comments WHERE item_id = ? ORDER BY idx",
-		)
-		.all(itemId) as BacklogComment[];
-}
 
 function loadLinks(db: BacklogDb, itemId: number): BacklogItem["links"] {
 	return db
