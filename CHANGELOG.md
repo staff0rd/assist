@@ -1,3 +1,10 @@
+## [0.172.2](https://github.com/staff0rd/assist/compare/v0.172.1...v0.172.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* detect SQLite DB in backlog gates ([7a43a79](https://github.com/staff0rd/assist/commit/7a43a7957ba24540964010dc631d6deba7f0576d))
+
 ## [0.172.1](https://github.com/staff0rd/assist/compare/v0.172.0...v0.172.1) (2026-04-05)
 
 
