@@ -19,7 +19,7 @@ type ItemBody = {
 };
 
 type StatusBody = {
-	status: "todo" | "in-progress" | "done";
+	status: "todo" | "in-progress" | "done" | "wontdo";
 };
 
 export async function parseItemBody(req: IncomingMessage): Promise<ItemBody> {

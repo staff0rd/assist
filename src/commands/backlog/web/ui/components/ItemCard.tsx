@@ -4,12 +4,14 @@ const statusIcons: Record<string, string> = {
 	todo: "\u25cb",
 	"in-progress": "\u25d4",
 	done: "\u25cf",
+	wontdo: "\u2715",
 };
 
 const statusColors: Record<string, string> = {
 	todo: "text-gray-400",
 	"in-progress": "text-amber-500",
 	done: "text-green-500",
+	wontdo: "text-red-500",
 };
 
 const typeBadgeColors: Record<string, string> = {

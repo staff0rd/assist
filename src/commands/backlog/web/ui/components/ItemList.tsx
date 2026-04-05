@@ -14,7 +14,9 @@ export function ItemList({ items, onSelect, onAdd }: ItemListProps) {
 	const showCompleted = useAtomValue(showCompletedAtom);
 	const filtered = showCompleted
 		? items
-		: items.filter((item) => item.status !== "done");
+		: items.filter(
+				(item) => item.status !== "done" && item.status !== "wontdo",
+			);
 
 	return (
 		<>

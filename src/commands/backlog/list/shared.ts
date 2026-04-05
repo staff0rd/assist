@@ -9,6 +9,8 @@ export function statusIcon(status: BacklogStatus): string {
 			return chalk.yellow("[~]");
 		case "done":
 			return chalk.green("[x]");
+		case "wontdo":
+			return chalk.dim("[-]");
 	}
 }
 

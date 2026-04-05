@@ -87,6 +87,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
+- `assist backlog wontdo <id> [reason]` - Set a backlog item to won't do
 - `assist backlog delete <id>` - Delete a backlog item
 - `assist backlog show <id>` - Display full detail for a backlog item (alias: `view`)
 - `assist backlog plan <id>` - Display the phased plan for a backlog item

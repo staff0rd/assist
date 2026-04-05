@@ -24,6 +24,6 @@ export type BacklogItem = {
 	acceptanceCriteria: string[];
 	plan?: PlanPhase[];
 	currentPhase?: number;
-	status: "todo" | "in-progress" | "done";
+	status: "todo" | "in-progress" | "done" | "wontdo";
 	comments?: BacklogComment[];
 };

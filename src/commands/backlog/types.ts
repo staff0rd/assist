@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const backlogStatusSchema = z.enum(["todo", "in-progress", "done"]);
+const backlogStatusSchema = z.enum(["todo", "in-progress", "done", "wontdo"]);
 const backlogTypeSchema = z.enum(["story", "bug"]);
 
 const planTaskSchema = z.strictObject({

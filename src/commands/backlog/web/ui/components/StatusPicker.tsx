@@ -4,9 +4,15 @@ const badgeColors: Record<string, string> = {
 	todo: "bg-gray-100 text-gray-500",
 	"in-progress": "bg-amber-100 text-amber-800",
 	done: "bg-green-100 text-green-800",
+	wontdo: "bg-red-100 text-red-700",
 };
 
-const allStatuses: BacklogItem["status"][] = ["todo", "in-progress", "done"];
+const allStatuses: BacklogItem["status"][] = [
+	"todo",
+	"in-progress",
+	"done",
+	"wontdo",
+];
 
 export function StatusPicker({
 	current,

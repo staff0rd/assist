@@ -18,7 +18,8 @@ type ListOptions = {
 
 function filterItems(items: BacklogFile, options: ListOptions): BacklogFile {
 	if (options.status) return items.filter((i) => i.status === options.status);
-	if (!options.all) return items.filter((i) => i.status !== "done");
+	if (!options.all)
+		return items.filter((i) => i.status !== "done" && i.status !== "wontdo");
 	return items;
 }
 

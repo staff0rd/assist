@@ -13,8 +13,11 @@ export function registerItemCommands(cmd: Command): void {
 		.command("list")
 		.alias("ls")
 		.description("List all backlog items")
-		.option("--status <type>", "Filter by status (todo, in-progress, done)")
-		.option("-a, --all", "Include done items")
+		.option(
+			"--status <type>",
+			"Filter by status (todo, in-progress, done, wontdo)",
+		)
+		.option("-a, --all", "Include done/wontdo items")
 		.option("-v, --verbose", "Show all item details")
 		.action(backlogList);
 
