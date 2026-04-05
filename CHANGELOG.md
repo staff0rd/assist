@@ -1,3 +1,10 @@
+# [0.173.0](https://github.com/staff0rd/assist/compare/v0.172.4...v0.173.0) (2026-04-05)
+
+
+### Features
+
+* add browser routing to backlog UI ([372c90c](https://github.com/staff0rd/assist/commit/372c90c114368eff4ea6969a50c1c21a0c444594))
+
 ## [0.172.4](https://github.com/staff0rd/assist/compare/v0.172.3...v0.172.4) (2026-04-05)
 
 
