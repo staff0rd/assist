@@ -1,3 +1,10 @@
+## [0.170.2](https://github.com/staff0rd/assist/compare/v0.170.1...v0.170.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* restore backlog and surface parse errors ([52fa203](https://github.com/staff0rd/assist/commit/52fa203d049f05660d1384027d6459ee367e1afb))
+
 ## [0.170.1](https://github.com/staff0rd/assist/compare/v0.170.0...v0.170.1) (2026-04-01)
 
 
