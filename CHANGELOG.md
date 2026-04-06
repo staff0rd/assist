@@ -1,3 +1,10 @@
+# [0.175.0](https://github.com/staff0rd/assist/compare/v0.174.2...v0.175.0) (2026-04-06)
+
+
+### Features
+
+* auto-pick single backlog item on first /next ([fc684d8](https://github.com/staff0rd/assist/commit/fc684d84a27fc41648f7c20516f460538f45bab8))
+
 ## [0.174.2](https://github.com/staff0rd/assist/compare/v0.174.1...v0.174.2) (2026-04-05)
 
 
