@@ -1,22 +1,13 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
-import { isLockedByOther } from "./acquireLock";
+import { findResumable } from "./findResumable";
+import { findUnblockedTodos } from "./findUnblockedTodos";
 import { isBlocked, typeLabel } from "./list/shared";
 import { run } from "./run";
 import { loadBacklog } from "./shared";
 import type { SpawnClaudeOptions } from "./spawnClaude";
 import type { BacklogFile, BacklogItem } from "./types";
-
-function findResumable(items: BacklogFile): BacklogItem | undefined {
-	return items.find(
-		(i) =>
-			i.status === "in-progress" &&
-			i.plan &&
-			!isLockedByOther(i.id) &&
-			!isBlocked(i, items),
-	);
-}
 
 function toChoice(item: BacklogItem, items: BacklogFile) {
 	const name = `${typeLabel(item.type)} #${item.id}: ${item.name}`;
@@ -41,7 +32,10 @@ async function selectItem(
 	return selected.match(/#(\d+)/)?.[1] ?? "";
 }
 
-async function pickItem(items: BacklogFile): Promise<string | undefined> {
+async function pickItem(
+	items: BacklogFile,
+	firstPick = false,
+): Promise<string | undefined> {
 	const resumable = findResumable(items);
 	if (resumable) {
 		console.log(
@@ -52,25 +46,24 @@ async function pickItem(items: BacklogFile): Promise<string | undefined> {
 		return String(resumable.id);
 	}
 
+	const unblocked = findUnblockedTodos(items);
+	if (!unblocked) return undefined;
+
+	if (firstPick && unblocked.length === 1) {
+		const item = unblocked[0];
+		console.log(chalk.bold(`Auto-selecting item #${item.id}: ${item.name}`));
+		return String(item.id);
+	}
+
 	const todo = items.filter((i) => i.status === "todo");
-	if (todo.length === 0) {
-		console.log(chalk.green("All backlog items complete."));
-		return undefined;
-	}
-
-	if (todo.every((i) => isBlocked(i, items))) {
-		console.log(
-			chalk.yellow("All remaining todo items are blocked by dependencies."),
-		);
-		return undefined;
-	}
-
 	return selectItem(todo, items);
 }
 
 export async function next(options?: SpawnClaudeOptions): Promise<void> {
+	let firstPick = true;
 	while (true) {
-		const id = await pickItem(loadBacklog());
+		const id = await pickItem(loadBacklog(), firstPick);
+		firstPick = false;
 		if (id === undefined) return;
 
 		const completed = await run(id, options);
