@@ -1,6 +1,11 @@
 ---
 description: Generate devlog entry for the next unversioned day
+allowed_args: "[--all]"
 ---
+
+Parse `$ARGUMENTS`: if `--all` is present, enable **catch-up mode** (described below). Otherwise, process a single day as normal.
+
+## Single-day mode (default)
 
 Run `assist devlog next` to get the next unversioned day's commits and version options.
 
@@ -45,6 +50,20 @@ Fetch existing tags from https://staffordwilliams.com/tags.json for use when sel
 - Do not include tags that are too broad or generic (e.g., `javascript`, `web`, `tooling`)
 
 Read existing devlogs in `~/git/blog/src/content/devlog/` for style inspiration if needed. The tone should be conversational and concise.
+
+## Catch-up mode (`--all`)
+
+When `--all` is passed, loop through all unversioned days up to (excluding) today:
+
+1. Run `assist devlog next` to get the next unversioned day
+2. If the target date is today, **stop** — catch-up is complete
+3. If there are no more unversioned days, **stop**
+4. Analyze the commits for that day:
+   - **Trivial days**: automatically run `assist devlog skip YYYY-MM-DD` without prompting the user
+   - **Non-trivial days**: create the devlog entry as normal (following the single-day instructions above)
+5. Go back to step 1
+
+This continues until all past unversioned days have been processed. Do not process today's date.
 
 ## Important
 
