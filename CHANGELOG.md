@@ -1,3 +1,10 @@
+# [0.183.0](https://github.com/staff0rd/assist/compare/v0.182.0...v0.183.0) (2026-04-07)
+
+
+### Features
+
+* add delete-comment command ([f7c1fd5](https://github.com/staff0rd/assist/commit/f7c1fd5af989d8cbc3b6c0cc37631f39498fba15))
+
 # [0.182.0](https://github.com/staff0rd/assist/compare/v0.181.0...v0.182.0) (2026-04-07)
 
 
