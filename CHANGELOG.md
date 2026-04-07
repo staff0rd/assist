@@ -1,3 +1,15 @@
+# [0.182.0](https://github.com/staff0rd/assist/compare/v0.181.0...v0.182.0) (2026-04-07)
+
+
+### Bug Fixes
+
+* widen signal file gitignore pattern ([f89bb99](https://github.com/staff0rd/assist/commit/f89bb99c4608aeb15a9912a3a048027b5b3dbf6d))
+
+
+### Features
+
+* add --cwd option to run add ([dc766a9](https://github.com/staff0rd/assist/commit/dc766a9f38dcfae58650d9cceafe853d775d690e))
+
 # [0.181.0](https://github.com/staff0rd/assist/compare/v0.180.1...v0.181.0) (2026-04-07)
 
 
