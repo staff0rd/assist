@@ -1,3 +1,10 @@
+## [0.186.1](https://github.com/staff0rd/assist/compare/v0.186.0...v0.186.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* make phase numbering 1-based e2e ([0464061](https://github.com/staff0rd/assist/commit/0464061d558c46b8a62edbe963f2b40f203e387c))
+
 # [0.186.0](https://github.com/staff0rd/assist/compare/v0.185.0...v0.186.0) (2026-04-07)
 
 
