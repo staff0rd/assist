@@ -1,7 +1,7 @@
 node_modules
 dist
 books
-.assist-signal.json
+.assist-signal*.json
 .assist-lock-*.json
 screenshots
 .claude/settings.local.json

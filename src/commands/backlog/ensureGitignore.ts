@@ -5,6 +5,8 @@ const gitignoreEntries = [
 	".assist/backlog.db",
 	".assist/backlog.db-shm",
 	".assist/backlog.db-wal",
+	".assist-signal*.json",
+	".assist-lock-*.json",
 ];
 
 export function ensureGitignore(dir: string): void {
