@@ -33,6 +33,7 @@ After installation, the `assist` command will be available globally. You can als
 
 ## Claude Commands
 
+- `/add-command` - Add a new run command to assist.yml
 - `/bug` - File a bug with reproduction steps, expected and actual behavior
 - `/comment` - Add pending review comments to the current PR
 - `/commit` - Commit only relevant files from the session
