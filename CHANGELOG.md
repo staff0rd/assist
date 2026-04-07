@@ -1,3 +1,10 @@
+# [0.186.0](https://github.com/staff0rd/assist/compare/v0.185.0...v0.186.0) (2026-04-07)
+
+
+### Features
+
+* add /add-command slash command ([5b58938](https://github.com/staff0rd/assist/commit/5b5893887eeb6b5db646124b04c9648ff99b0b98))
+
 # [0.185.0](https://github.com/staff0rd/assist/compare/v0.184.1...v0.185.0) (2026-04-07)
 
 
