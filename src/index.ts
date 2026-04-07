@@ -31,6 +31,7 @@ import { registerVerify } from "./commands/registerVerify";
 import { registerVoice } from "./commands/registerVoice";
 import { registerRoam } from "./commands/roam/registerRoam";
 import { listRunConfigs, run, add as runAdd } from "./commands/run";
+import { formatConfiguredCommands } from "./commands/run/formatConfiguredCommands";
 import { screenshot } from "./commands/screenshot";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
@@ -84,12 +85,11 @@ configCommand
 const runCommand = program
 	.command("run")
 	.description("Run a configured command from assist.yml")
-	.argument("<name>", "Name of the configured command")
+	.argument("[name]", "Name of the configured command")
 	.argument("[args...]", "Arguments to pass to the command")
 	.allowUnknownOption()
-	.action((name, args) => {
-		run(name, args);
-	});
+	.addHelpText("after", () => formatConfiguredCommands())
+	.action((name, args) => run(name, args));
 
 runCommand
 	.command("list")

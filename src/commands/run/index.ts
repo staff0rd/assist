@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import { loadConfig } from "../../shared/loadConfig";
 import { shellQuote } from "../../shared/shellQuote";
+import { formatConfiguredCommands } from "./formatConfiguredCommands";
 import { resolveParams } from "./resolveParams";
 import { spawnRunCommand } from "./spawnRunCommand";
 
@@ -70,7 +71,12 @@ function runPreCommands(pre: string[]): void {
 	}
 }
 
-export function run(name: string, args: string[]): void {
+export function run(name: string | undefined, args: string[]): void {
+	if (!name) {
+		console.error("error: missing required argument 'name'");
+		console.error(formatConfiguredCommands());
+		process.exit(1);
+	}
 	const runConfig = findRunConfig(name);
 	if (runConfig.pre) runPreCommands(runConfig.pre);
 	const resolved = resolveParams(runConfig.params, args);
