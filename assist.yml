@@ -159,3 +159,5 @@ run:
 deny:
   - pattern: assist build
     message: it's /verify, use the skill, don't try to build separately
+backlog:
+  autoCommit: true

@@ -125,6 +125,11 @@ export const assistConfigSchema = z.strictObject({
 			outputDir: z.string().default("./screenshots"),
 		})
 		.default({ outputDir: "./screenshots" }),
+	backlog: z
+		.strictObject({
+			autoCommit: z.boolean().default(false),
+		})
+		.default({ autoCommit: false }),
 	deny: z
 		.array(
 			z.strictObject({
