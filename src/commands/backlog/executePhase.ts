@@ -27,6 +27,5 @@ export async function executePhase(
 	await done;
 	stopWatching();
 
-	const delta = await resolvePhaseResult(phaseIndex, item.id);
-	return delta < 0 ? -1 : phaseIndex + delta;
+	return await resolvePhaseResult(phaseIndex, item.id);
 }

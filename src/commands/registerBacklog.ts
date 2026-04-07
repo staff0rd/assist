@@ -9,6 +9,7 @@ import {
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerItemCommands } from "./backlog/registerItemCommands";
 import { registerLinkCommands } from "./backlog/registerLinkCommands";
+import { registerRewindCommand } from "./backlog/registerRewindCommand";
 import { registerRunCommand } from "./backlog/registerRunCommand";
 import { registerSearchCommand } from "./backlog/registerSearchCommand";
 import { registerStatusCommands } from "./backlog/registerStatusCommands";
@@ -70,6 +71,7 @@ export function registerBacklog(program: Command): void {
 	registerCommentCommands(cmd);
 	registerLinkCommands(cmd);
 	registerPlanCommands(cmd);
+	registerRewindCommand(cmd);
 	registerNextCommand(cmd);
 	registerRunCommand(cmd);
 	registerSearchCommand(cmd);
