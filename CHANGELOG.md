@@ -1,3 +1,10 @@
+# [0.184.0](https://github.com/staff0rd/assist/compare/v0.183.0...v0.184.0) (2026-04-07)
+
+
+### Features
+
+* add backlog rewind-phase command ([c617f92](https://github.com/staff0rd/assist/commit/c617f929ba5424d32cc080e23b49d620bb7dabe7))
+
 # [0.183.0](https://github.com/staff0rd/assist/compare/v0.182.0...v0.183.0) (2026-04-07)
 
 
