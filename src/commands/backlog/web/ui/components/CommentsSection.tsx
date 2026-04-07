@@ -25,6 +25,9 @@ function CommentCard({ comment }: { comment: BacklogComment }) {
 	return (
 		<div className={`border rounded-md p-3 ${typeStyles[comment.type]}`}>
 			<div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+				{comment.id !== undefined && (
+					<span className="text-gray-400">#{comment.id}</span>
+				)}
 				<span className="font-medium">{typeLabels[comment.type]}</span>
 				{comment.phase !== undefined && <span>· Phase {comment.phase}</span>}
 				<span>· {formatTimestamp(comment.timestamp)}</span>

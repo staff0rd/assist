@@ -99,7 +99,9 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog plan <id>` - Display the phased plan for a backlog item
 - `assist backlog comment <id> <text>` - Add a comment to a backlog item
 - `assist backlog comments <id>` - List comments and summaries for a backlog item
+- `assist backlog delete-comment <id> <comment-id>` - Delete a comment from a backlog item (summaries cannot be deleted)
 - `assist backlog phase-done <id> <phase> <summary>` - Signal that a plan phase is complete with a summary (used by orchestrator)
+- `assist backlog rewind <id> <phase> --reason <reason>` - Rewind a backlog item to an earlier phase, setting status to in-progress
 - `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude
 - `assist backlog web [-p, --port <number>]` - Start a web view of the backlog (default port 3000)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)

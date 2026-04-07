@@ -3,12 +3,27 @@ import type { BacklogItem } from "./types";
 
 function insertComments(db: BacklogDb, item: BacklogItem): void {
 	if (!item.comments) return;
-	const stmt = db.prepare(
+	const stmtWithId = db.prepare(
+		"INSERT INTO comments (id, item_id, idx, text, phase, timestamp, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
+	);
+	const stmtNoId = db.prepare(
 		"INSERT INTO comments (item_id, idx, text, phase, timestamp, type) VALUES (?, ?, ?, ?, ?, ?)",
 	);
 	for (let i = 0; i < item.comments.length; i++) {
 		const c = item.comments[i];
-		stmt.run(item.id, i, c.text, c.phase ?? null, c.timestamp, c.type);
+		if (c.id !== undefined) {
+			stmtWithId.run(
+				c.id,
+				item.id,
+				i,
+				c.text,
+				c.phase ?? null,
+				c.timestamp,
+				c.type,
+			);
+		} else {
+			stmtNoId.run(item.id, i, c.text, c.phase ?? null, c.timestamp, c.type);
+		}
 	}
 }
 

@@ -18,6 +18,7 @@ const planPhaseSchema = z.strictObject({
 const backlogCommentTypeSchema = z.enum(["comment", "summary"]);
 
 const backlogCommentSchema = z.strictObject({
+	id: z.number().optional(),
 	text: z.string(),
 	phase: z.number().optional(),
 	timestamp: z.string(),

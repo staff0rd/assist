@@ -9,6 +9,7 @@ export type PlanPhase = {
 };
 
 export type BacklogComment = {
+	id?: number;
 	text: string;
 	phase?: number;
 	timestamp: string;

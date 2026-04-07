@@ -1,6 +1,7 @@
 assist backlog add
 assist backlog add-phase
 assist backlog comment
+assist backlog delete-comment
 assist backlog done
 assist backlog link
 assist backlog phase-done

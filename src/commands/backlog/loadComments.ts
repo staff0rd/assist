@@ -4,9 +4,10 @@ import type { BacklogComment } from "./types";
 export function loadComments(db: BacklogDb, itemId: number): BacklogComment[] {
 	const rows = db
 		.prepare(
-			"SELECT text, phase, timestamp, type FROM comments WHERE item_id = ? ORDER BY idx",
+			"SELECT id, text, phase, timestamp, type FROM comments WHERE item_id = ? ORDER BY idx",
 		)
 		.all(itemId) as Array<{
+		id: number;
 		text: string;
 		phase: number | null;
 		timestamp: string;
@@ -14,6 +15,7 @@ export function loadComments(db: BacklogDb, itemId: number): BacklogComment[] {
 	}>;
 	return rows.map((r) => {
 		const c: BacklogComment = {
+			id: r.id,
 			text: r.text,
 			timestamp: r.timestamp,
 			type: r.type,

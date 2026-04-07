@@ -9,6 +9,26 @@ function getDbPath(dir: string): string {
 	return join(dir, ".assist", "backlog.db");
 }
 
+function migrateCommentsAddId(db: ReturnType<typeof Database>): void {
+	const cols = db.pragma("table_info(comments)") as Array<{ name: string }>;
+	if (cols.length === 0 || cols.some((c) => c.name === "id")) return;
+	db.exec(`
+		CREATE TABLE comments_new (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+			idx INTEGER NOT NULL,
+			text TEXT NOT NULL,
+			phase INTEGER,
+			timestamp TEXT NOT NULL,
+			type TEXT NOT NULL DEFAULT 'comment'
+		);
+		INSERT INTO comments_new (item_id, idx, text, phase, timestamp, type)
+			SELECT item_id, idx, text, phase, timestamp, type FROM comments;
+		DROP TABLE comments;
+		ALTER TABLE comments_new RENAME TO comments;
+	`);
+}
+
 function initSchema(db: ReturnType<typeof Database>): void {
 	db.exec(`
 		CREATE TABLE IF NOT EXISTS items (
@@ -22,13 +42,13 @@ function initSchema(db: ReturnType<typeof Database>): void {
 		);
 
 		CREATE TABLE IF NOT EXISTS comments (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
 			idx INTEGER NOT NULL,
 			text TEXT NOT NULL,
 			phase INTEGER,
 			timestamp TEXT NOT NULL,
-			type TEXT NOT NULL DEFAULT 'comment',
-			PRIMARY KEY (item_id, idx)
+			type TEXT NOT NULL DEFAULT 'comment'
 		);
 
 		CREATE TABLE IF NOT EXISTS links (
@@ -70,6 +90,7 @@ export function openDb(dir: string): ReturnType<typeof Database> {
 	db.pragma("journal_mode = WAL");
 	db.pragma("foreign_keys = ON");
 	initSchema(db);
+	migrateCommentsAddId(db);
 	ensureGitignore(dir);
 	_db = db;
 	return db;
