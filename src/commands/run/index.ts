@@ -76,5 +76,3 @@ export function run(name: string | undefined, args: string[]): void {
 		resolvedCwd,
 	);
 }
-
-export { add } from "./add";
