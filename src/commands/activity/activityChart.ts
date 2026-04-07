@@ -15,7 +15,7 @@ export function activityChart(data: DayCount[]): void {
 	const values = data.map((d) => d.count);
 
 	const line = grid.set(0, 0, 1, 1, contrib.line, {
-		label: " Commits per day (press q to close) ",
+		label: " Commits per week (press q to close) ",
 		showLegend: true,
 		legend: { width: 12 },
 		xLabelPadding: 3,
