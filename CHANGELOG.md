@@ -1,3 +1,10 @@
+## [0.184.1](https://github.com/staff0rd/assist/compare/v0.184.0...v0.184.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* check deny rules on unparseable commands ([f8e5025](https://github.com/staff0rd/assist/commit/f8e5025630d37801f0e5ae519f3cc4204f308aad))
+
 # [0.184.0](https://github.com/staff0rd/assist/compare/v0.183.0...v0.184.0) (2026-04-07)
 
 
