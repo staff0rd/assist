@@ -1,3 +1,10 @@
+# [0.179.0](https://github.com/staff0rd/assist/compare/v0.178.0...v0.179.0) (2026-04-07)
+
+
+### Features
+
+* backtick formatting in PR body ([b3c3fd4](https://github.com/staff0rd/assist/commit/b3c3fd47fe3e440e736c877243cd6372745f751f))
+
 # [0.178.0](https://github.com/staff0rd/assist/compare/v0.177.1...v0.178.0) (2026-04-07)
 
 
