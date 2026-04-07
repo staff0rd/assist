@@ -1,3 +1,10 @@
+# [0.185.0](https://github.com/staff0rd/assist/compare/v0.184.1...v0.185.0) (2026-04-07)
+
+
+### Features
+
+* add run remove subcommand ([d1ca6b6](https://github.com/staff0rd/assist/commit/d1ca6b64b574ba4c80274709dc7be540ac7af3cc))
+
 ## [0.184.1](https://github.com/staff0rd/assist/compare/v0.184.0...v0.184.1) (2026-04-07)
 
 
