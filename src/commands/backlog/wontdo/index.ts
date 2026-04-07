@@ -9,7 +9,7 @@ export async function wontdo(id: string, reason?: string): Promise<void> {
 	result.item.status = "wontdo";
 
 	if (reason) {
-		const phase = result.item.currentPhase ?? 0;
+		const phase = result.item.currentPhase ?? 1;
 		addPhaseSummary(result.item, reason, phase);
 	}
 

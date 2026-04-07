@@ -25,9 +25,7 @@ export function typeLabel(type: BacklogType): string {
 
 export function phaseLabel(item: BacklogFile[number]): string {
 	if (!item.plan) return "";
-	return chalk.dim(
-		` (phase ${(item.currentPhase ?? 0) + 1}/${item.plan.length})`,
-	);
+	return chalk.dim(` (phase ${item.currentPhase ?? 1}/${item.plan.length})`);
 }
 
 export function isBlocked(

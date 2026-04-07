@@ -47,7 +47,7 @@ describe("done", () => {
 				name: "Task",
 				status: "in-progress",
 				plan: [{ name: "Phase 1", tasks: [] }],
-				currentPhase: 1,
+				currentPhase: 2,
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
@@ -68,7 +68,7 @@ describe("done", () => {
 					{ name: "Implement", tasks: [] },
 					{ name: "Review", tasks: [] },
 				],
-				currentPhase: 0,
+				currentPhase: 1,
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
@@ -92,7 +92,7 @@ describe("done", () => {
 					{ name: "Review", tasks: [] },
 					{ name: "Deploy", tasks: [] },
 				],
-				currentPhase: 1,
+				currentPhase: 2,
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
@@ -130,7 +130,7 @@ describe("done", () => {
 				id: 1,
 				name: "Task",
 				status: "in-progress",
-				currentPhase: 2,
+				currentPhase: 3,
 				plan: [
 					{ name: "A", tasks: [] },
 					{ name: "B", tasks: [] },
@@ -141,7 +141,7 @@ describe("done", () => {
 
 		await done("1", "All done");
 
-		expect(mockAddPhaseSummary).toHaveBeenCalledWith(items[0], "All done", 2);
+		expect(mockAddPhaseSummary).toHaveBeenCalledWith(items[0], "All done", 3);
 	});
 
 	it("should allow completion with an empty plan", async () => {

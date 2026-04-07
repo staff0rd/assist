@@ -12,15 +12,16 @@ export async function executePhase(
 	spawnOptions?: SpawnClaudeOptions,
 ): Promise<number> {
 	const phase = phases[phaseIndex];
+	const phaseNumber = phaseIndex + 1;
 	console.log(
 		chalk.bold(
-			`\n--- Phase ${phaseIndex + 1}/${phases.length}: ${phase.name} ---\n`,
+			`\n--- Phase ${phaseNumber}/${phases.length}: ${phase.name} ---\n`,
 		),
 	);
 
 	process.env.ASSIST_SESSION_ID = String(process.pid);
 	const { child, done } = spawnClaude(
-		buildPhasePrompt(item, phaseIndex, phase),
+		buildPhasePrompt(item, phaseNumber, phase),
 		spawnOptions,
 	);
 	watchForMarker(child);

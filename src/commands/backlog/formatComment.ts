@@ -8,7 +8,7 @@ export function formatComment(entry: BacklogComment): string {
 			? chalk.magenta("[summary]")
 			: chalk.cyan("[comment]");
 	const phase =
-		entry.phase !== undefined ? chalk.dim(` (phase ${entry.phase + 1})`) : "";
+		entry.phase !== undefined ? chalk.dim(` (phase ${entry.phase})`) : "";
 	const time = chalk.dim(entry.timestamp);
 	return `${id}${tag}${phase} ${time}\n  ${entry.text}`;
 }

@@ -8,8 +8,8 @@ export async function done(id: string, summary?: string): Promise<void> {
 
 	const { item } = result;
 	if (item.plan && item.plan.length > 0) {
-		const completed = item.currentPhase ?? 0;
-		const pending = item.plan.slice(completed);
+		const completedCount = (item.currentPhase ?? 1) - 1;
+		const pending = item.plan.slice(completedCount);
 		if (pending.length > 0) {
 			console.log(
 				chalk.red(
@@ -27,7 +27,7 @@ export async function done(id: string, summary?: string): Promise<void> {
 	item.status = "done";
 
 	if (summary) {
-		const phase = item.currentPhase ?? 0;
+		const phase = item.currentPhase ?? 1;
 		addPhaseSummary(item, summary, phase);
 	}
 

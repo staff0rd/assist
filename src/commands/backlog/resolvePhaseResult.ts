@@ -35,10 +35,12 @@ export async function resolvePhaseResult(
 
 	if (signal?.event === "rewind") {
 		const targetPhase = signal.targetPhase as number;
-		console.log(chalk.yellow(`\nRewinding to phase ${targetPhase + 1}.`));
+		const targetPhaseNumber = targetPhase + 1;
+		console.log(chalk.yellow(`\nRewinding to phase ${targetPhaseNumber}.`));
 		return targetPhase;
 	}
 
-	console.log(chalk.green(`\nPhase ${phaseIndex + 1} completed.`));
+	const phaseNumber = phaseIndex + 1;
+	console.log(chalk.green(`\nPhase ${phaseNumber} completed.`));
 	return phaseIndex + 1;
 }

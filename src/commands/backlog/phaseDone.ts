@@ -4,7 +4,8 @@ import { loadAndFindItem, saveBacklog, setCurrentPhase } from "./shared";
 import { writeSignal } from "./writeSignal";
 
 export function phaseDone(id: string, phase: string, summary: string): void {
-	const phaseIndex = Number.parseInt(phase, 10);
+	const phaseNumber = Number.parseInt(phase, 10);
+	const phaseIndex = phaseNumber - 1;
 	writeSignal("phase-done", {
 		itemId: Number.parseInt(id, 10),
 		phaseIndex,
@@ -19,10 +20,12 @@ export function phaseDone(id: string, phase: string, summary: string): void {
 	}
 
 	if (result) {
-		addPhaseSummary(result.item, summary, phaseIndex);
+		addPhaseSummary(result.item, summary, phaseNumber);
 		saveBacklog(result.items);
 	}
 
-	setCurrentPhase(id, phaseIndex + 1);
-	console.log(chalk.green(`Phase ${phase} of item #${id} marked as complete.`));
+	setCurrentPhase(id, phaseNumber + 1);
+	console.log(
+		chalk.green(`Phase ${phaseNumber} of item #${id} marked as complete.`),
+	);
 }

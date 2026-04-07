@@ -15,7 +15,7 @@ export function prepareRun(id: string): PreparedRun | undefined {
 
 	const { item } = result;
 	const plan = resolvePlan(item);
-	const startPhase = item.currentPhase ?? 0;
+	const startPhase = (item.currentPhase ?? 1) - 1;
 
 	if (item.status === "done") {
 		console.log(chalk.green(`Already done: #${id}: ${item.name}`));

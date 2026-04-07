@@ -3,7 +3,7 @@ import type { BacklogItem, PlanPhase } from "./types";
 
 export function buildAuthoredPhasePrompt(
 	item: BacklogItem,
-	phaseIndex: number,
+	phaseNumber: number,
 	phase: PlanPhase,
 ): string {
 	const manualChecks = phase.manualChecks ?? [];
@@ -11,7 +11,7 @@ export function buildAuthoredPhasePrompt(
 	const confirmSuffix = needsConfirmation ? " and the user confirms" : "";
 
 	return [
-		...buildContextLines(item, phaseIndex, phase),
+		...buildContextLines(item, phaseNumber, phase),
 		"",
 		"Focus ONLY on this phase. Do not work on other phases.",
 		"When you have completed all tasks for this phase, run /verify to check your work.",
@@ -19,7 +19,7 @@ export function buildAuthoredPhasePrompt(
 		"",
 		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
 		"",
-		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${item.id} ${phaseIndex} "<summary>"`,
+		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${item.id} ${phaseNumber} "<summary>"`,
 		"Replace <summary> with a concise summary of what was done in this phase.",
 	]
 		.filter((line) => line !== undefined)
@@ -28,12 +28,12 @@ export function buildAuthoredPhasePrompt(
 
 function buildContextLines(
 	item: BacklogItem,
-	phaseIndex: number,
+	phaseNumber: number,
 	phase: PlanPhase,
 ): string[] {
 	const ac = item.acceptanceCriteria.map((c, i) => `${i + 1}. ${c}`).join("\n");
 	return [
-		`You are implementing phase ${phaseIndex + 1} of backlog item #${item.id}: ${item.name}`,
+		`You are implementing phase ${phaseNumber} of backlog item #${item.id}: ${item.name}`,
 		"",
 		item.description ? `Description: ${item.description}` : "",
 		"",
@@ -41,7 +41,7 @@ function buildContextLines(
 		ac,
 		...buildCommentLines(item.comments),
 		"",
-		`Phase ${phaseIndex + 1}: ${phase.name}`,
+		`Phase ${phaseNumber}: ${phase.name}`,
 		"Tasks:",
 		formatTasks(phase),
 	];

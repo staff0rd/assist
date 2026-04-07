@@ -3,7 +3,7 @@ import type { BacklogItem } from "./types";
 
 export function buildReviewPrompt(
 	item: BacklogItem,
-	phaseIndex: number,
+	phaseNumber: number,
 ): string {
 	const acLines = item.acceptanceCriteria
 		.map((ac, i) => `${i + 1}. ${ac}`)
@@ -31,7 +31,7 @@ export function buildReviewPrompt(
 		"Once the user confirms:",
 		`1. Run: assist backlog done ${item.id} "<summary>"`,
 		"2. Run: /commit",
-		`3. Run: assist backlog phase-done ${item.id} ${phaseIndex} "done"`,
+		`3. Run: assist backlog phase-done ${item.id} ${phaseNumber} "done"`,
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");

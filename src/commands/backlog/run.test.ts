@@ -200,7 +200,7 @@ describe("run", () => {
 
 	describe("when resuming from a mid-plan phase", () => {
 		it("should skip completed phases", async () => {
-			const item = makeItem({ currentPhase: 1 });
+			const item = makeItem({ currentPhase: 2 });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -219,7 +219,7 @@ describe("run", () => {
 
 	describe("when resuming at the review phase", () => {
 		it("should run only the review phase", async () => {
-			const item = makeItem({ currentPhase: 2 });
+			const item = makeItem({ currentPhase: 3 });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),

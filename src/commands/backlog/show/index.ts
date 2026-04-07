@@ -10,17 +10,18 @@ function printPlan(item: BacklogItem): void {
 
 	console.log(chalk.bold("Plan"));
 	for (const [i, phase] of item.plan.entries()) {
-		const isCurrent = item.currentPhase === i;
+		const isCurrent = item.currentPhase === i + 1;
 		printPhase(phase, i, isCurrent);
 	}
 	console.log();
 }
 
 function phaseHeader(index: number, name: string, isCurrent: boolean): string {
+	const phaseNumber = index + 1;
 	const marker = isCurrent ? chalk.green("▶ ") : "  ";
 	const label = isCurrent
-		? chalk.green.bold(`Phase ${index + 1}: ${name}`)
-		: `${chalk.bold(`Phase ${index + 1}:`)} ${name}`;
+		? chalk.green.bold(`Phase ${phaseNumber}: ${name}`)
+		: `${chalk.bold(`Phase ${phaseNumber}:`)} ${name}`;
 	return `${marker}${label}`;
 }
 
