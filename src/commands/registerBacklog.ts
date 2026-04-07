@@ -3,15 +3,16 @@ import {
 	next as backlogNext,
 	phaseDone as backlogPhaseDone,
 	plan as backlogPlan,
-	runPlan as backlogRun,
 	show as backlogShow,
 	web as backlogWeb,
 } from "./backlog";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerItemCommands } from "./backlog/registerItemCommands";
 import { registerLinkCommands } from "./backlog/registerLinkCommands";
+import { registerRunCommand } from "./backlog/registerRunCommand";
 import { registerSearchCommand } from "./backlog/registerSearchCommand";
 import { registerStatusCommands } from "./backlog/registerStatusCommands";
+import { registerUpdateCommands } from "./backlog/registerUpdateCommands";
 import { setBacklogDir } from "./backlog/shared";
 
 function registerShowCommands(cmd: Command): void {
@@ -52,16 +53,6 @@ function registerNextCommand(cmd: Command): void {
 		);
 }
 
-function registerRunCommand(cmd: Command): void {
-	cmd
-		.command("run <id>")
-		.description("Run a backlog item's plan phase-by-phase with Claude")
-		.option("-w, --write", "Run Claude with acceptEdits permission mode")
-		.action(async (id: string, opts: { write?: boolean }) => {
-			await backlogRun(id, { allowEdits: opts.write });
-		});
-}
-
 export function registerBacklog(program: Command): void {
 	const cmd = program
 		.command("backlog")
@@ -82,4 +73,5 @@ export function registerBacklog(program: Command): void {
 	registerNextCommand(cmd);
 	registerRunCommand(cmd);
 	registerSearchCommand(cmd);
+	registerUpdateCommands(cmd);
 }

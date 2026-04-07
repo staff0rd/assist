@@ -5,7 +5,10 @@ assist backlog done
 assist backlog link
 assist backlog phase-done
 assist backlog plan
+assist backlog remove-phase
 assist backlog unlink
+assist backlog update
+assist backlog update-phase
 assist backlog start
 assist commit
 assist devlog

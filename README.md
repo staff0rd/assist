@@ -40,6 +40,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
 - `/pr` - Raise a PR with a concise description
 - `/refactor` - Run refactoring checks for code quality
+- `/refine` - Refine an existing backlog item through conversation
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
 - `/jira` - View a Jira work item
@@ -85,6 +86,9 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
 - `assist backlog add --name <n> --type <t> --desc <d> --ac <criterion...>` - Add a backlog item from CLI options (used by `/draft`)
 - `assist backlog add-phase <id> <name> --task <t...> [--manual-check <c...>]` - Add a phase to an existing backlog item
+- `assist backlog update <id> [--name <n>] [--desc <d>] [--type <t>] [--ac <criterion...>]` - Update fields on a backlog item
+- `assist backlog update-phase <id> <phase> [--name <n>] [--task <t...>] [--manual-check <c...>]` - Modify a plan phase (name, tasks, or manual checks)
+- `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item
 - `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog done <id>` - Set a backlog item to done
@@ -182,5 +186,6 @@ After installation, the `assist` command will be available globally. You can als
 - `assist next` - Alias for `backlog next -w`
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
+- `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given
 - `assist signal next` - Write a next signal to chain into `assist next`
 

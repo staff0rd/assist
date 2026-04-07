@@ -3,6 +3,7 @@ import { Command } from "commander";
 import packageJson from "../package.json";
 import { next as backlogNext } from "./commands/backlog";
 import { launchMode } from "./commands/backlog/launchMode";
+import { refine } from "./commands/backlog/refine";
 import { writeSignal } from "./commands/backlog/writeSignal";
 import { commit } from "./commands/commit";
 import { configList, configSet } from "./commands/config";
@@ -191,6 +192,12 @@ program
 	.command("bug")
 	.description("Launch Claude in /bug mode, chain into next on /next signal")
 	.action(() => launchMode("bug"));
+
+program
+	.command("refine")
+	.argument("[id]", "Backlog item ID")
+	.description("Launch Claude in /refine mode to refine a backlog item")
+	.action((id) => refine(id));
 
 const signalCommand = program
 	.command("signal")
