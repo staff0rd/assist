@@ -65,6 +65,7 @@ After installation, the `assist` command will be available globally. You can als
 
 ## CLI Commands
 
+- `assist activity [--since <date>]` - Chart GitHub commit activity per day (defaults to last 30 days)
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project

@@ -6,17 +6,17 @@ import { launchMode } from "./commands/backlog/launchMode";
 import { refine } from "./commands/backlog/refine";
 import { writeSignal } from "./commands/backlog/writeSignal";
 import { commit } from "./commands/commit";
-import { configList, configSet } from "./commands/config";
-import { configGet } from "./commands/config/configGet";
 import { coverage } from "./commands/coverage";
 import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
 import { lint } from "./commands/lint/lint";
 import { registerNew } from "./commands/new/registerNew";
 import { notify } from "./commands/notify";
+import { registerActivity } from "./commands/registerActivity";
 import { registerBacklog } from "./commands/registerBacklog";
 import { registerCliHook } from "./commands/registerCliHook";
 import { registerComplexity } from "./commands/registerComplexity";
+import { registerConfig } from "./commands/registerConfig";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
 import { registerDotnet } from "./commands/registerDotnet";
@@ -62,25 +62,7 @@ program
 	.argument("<args...>", "status | <message> [files...]")
 	.action(commit);
 
-const configCommand = program
-	.command("config")
-	.description("View and modify assist.yml configuration");
-
-configCommand
-	.command("set <key> <value>")
-	.description("Set a config value (e.g. commit.push true)")
-	.option("-g, --global", "Write to global ~/.assist.yml")
-	.action((key, value, options) => configSet(key, value, options));
-
-configCommand
-	.command("get <key>")
-	.description("Get a config value")
-	.action(configGet);
-
-configCommand
-	.command("list")
-	.description("List all config values")
-	.action(configList);
+registerConfig(program);
 
 const runCommand = program
 	.command("run")
@@ -160,6 +142,7 @@ program
 	.argument("<process>", "Name of the running process (e.g. notepad, code)")
 	.action(screenshot);
 
+registerActivity(program);
 registerCliHook(program);
 registerJira(program);
 registerPrs(program);
