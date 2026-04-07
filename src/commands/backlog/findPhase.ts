@@ -11,7 +11,8 @@ export function findPhase(id: string, phase: string) {
 	const dir = getBacklogDir();
 	const db = openDb(dir);
 	const itemId = result.item.id;
-	const phaseIdx = Number.parseInt(phase, 10);
+	const phaseNumber = Number.parseInt(phase, 10);
+	const phaseIdx = phaseNumber - 1;
 
 	const existing = db
 		.prepare(
@@ -20,7 +21,9 @@ export function findPhase(id: string, phase: string) {
 		.get(itemId, phaseIdx) as { cnt: number };
 
 	if (existing.cnt === 0) {
-		console.log(chalk.red(`Phase ${phaseIdx} not found on item #${itemId}.`));
+		console.log(
+			chalk.red(`Phase ${phaseNumber} not found on item #${itemId}.`),
+		);
 		process.exitCode = 1;
 		return undefined;
 	}

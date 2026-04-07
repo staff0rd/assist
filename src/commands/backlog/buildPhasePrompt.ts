@@ -6,11 +6,11 @@ export const REVIEW_PHASE_NAME = "Review";
 
 export function buildPhasePrompt(
 	item: BacklogItem,
-	phaseIndex: number,
+	phaseNumber: number,
 	phase: PlanPhase,
 ): string {
 	if (phase.name === REVIEW_PHASE_NAME) {
-		return buildReviewPrompt(item, phaseIndex);
+		return buildReviewPrompt(item, phaseNumber);
 	}
-	return buildAuthoredPhasePrompt(item, phaseIndex, phase);
+	return buildAuthoredPhasePrompt(item, phaseNumber, phase);
 }

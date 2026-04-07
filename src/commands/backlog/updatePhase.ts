@@ -40,6 +40,8 @@ export function updatePhase(
 		.filter(Boolean)
 		.join(", ");
 	console.log(
-		chalk.green(`Updated ${fields} on phase ${phaseIdx} of item #${itemId}.`),
+		chalk.green(
+			`Updated ${fields} on phase ${phaseIdx + 1} of item #${itemId}.`,
+		),
 	);
 }

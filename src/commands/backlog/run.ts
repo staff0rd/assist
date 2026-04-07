@@ -38,7 +38,8 @@ function logProgress(
 ): void {
 	console.log(chalk.bold(`Running plan for #${id}: ${name}`));
 	if (startPhase > 0) {
-		console.log(chalk.dim(`Resuming from phase ${startPhase + 1}/${total}\n`));
+		const phaseNumber = startPhase + 1;
+		console.log(chalk.dim(`Resuming from phase ${phaseNumber}/${total}\n`));
 	} else {
 		console.log(chalk.dim(`${total} phase(s)\n`));
 	}

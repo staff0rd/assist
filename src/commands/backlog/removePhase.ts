@@ -25,5 +25,7 @@ export function removePhase(id: string, phase: string): void {
 
 	exportToJsonl(db, dir);
 	commitBacklog(itemId, result.item.name);
-	console.log(chalk.green(`Removed phase ${phaseIdx} from item #${itemId}.`));
+	console.log(
+		chalk.green(`Removed phase ${phaseIdx + 1} from item #${itemId}.`),
+	);
 }

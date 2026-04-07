@@ -11,17 +11,17 @@ import { writeSignal } from "./writeSignal";
 
 function validateRewind(
 	item: BacklogItem,
-	phaseIndex: number,
+	phaseNumber: number,
 ): string | undefined {
 	if (!item.plan || item.plan.length === 0) {
 		return `Item #${item.id} has no plan phases.`;
 	}
-	if (phaseIndex < 0 || phaseIndex >= item.plan.length) {
-		return `Phase ${phaseIndex} does not exist. Valid range: 0–${item.plan.length - 1}.`;
+	if (phaseNumber < 1 || phaseNumber > item.plan.length) {
+		return `Phase ${phaseNumber} does not exist. Valid range: 1–${item.plan.length}.`;
 	}
-	const currentPhase = item.currentPhase ?? 0;
-	if (phaseIndex >= currentPhase) {
-		return `Phase ${phaseIndex} is not earlier than the current phase (${currentPhase}).`;
+	const currentPhase = (item.currentPhase ?? 0) + 1;
+	if (phaseNumber >= currentPhase) {
+		return `Phase ${phaseNumber} is not earlier than the current phase (${currentPhase}).`;
 	}
 	return undefined;
 }
@@ -31,13 +31,14 @@ export function rewindPhase(
 	phase: string,
 	opts: { reason: string },
 ): void {
-	const phaseIndex = Number.parseInt(phase, 10);
+	const phaseNumber = Number.parseInt(phase, 10);
+	const phaseIndex = phaseNumber - 1;
 
 	const result = loadAndFindItem(id);
 	if (!result) return;
 
 	const { item } = result;
-	const error = validateRewind(item, phaseIndex);
+	const error = validateRewind(item, phaseNumber);
 	if (error) {
 		console.log(chalk.red(error));
 		process.exitCode = 1;
@@ -48,7 +49,7 @@ export function rewindPhase(
 
 	addComment(
 		item,
-		`Rewound to phase ${phaseIndex} (${phaseName}): ${opts.reason}`,
+		`Rewound to phase ${phaseNumber} (${phaseName}): ${opts.reason}`,
 		phaseIndex,
 	);
 	saveBacklog(result.items);
@@ -62,6 +63,6 @@ export function rewindPhase(
 	});
 
 	console.log(
-		chalk.green(`Rewound item #${id} to phase ${phaseIndex} (${phaseName}).`),
+		chalk.green(`Rewound item #${id} to phase ${phaseNumber} (${phaseName}).`),
 	);
 }

@@ -53,15 +53,15 @@ describe("rewindPhase", () => {
 				status: "in-progress",
 				currentPhase: 2,
 				plan: [
-					{ name: "Phase 0", tasks: [] },
-					{ name: "Phase 1", tasks: [] },
-					{ name: "Phase 2", tasks: [] },
+					{ name: "Setup", tasks: [] },
+					{ name: "Implement", tasks: [] },
+					{ name: "Polish", tasks: [] },
 				],
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "1", { reason: "Need to redo" });
+		rewindPhase("1", "2", { reason: "Need to redo" });
 
 		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 1);
 		expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
@@ -74,15 +74,15 @@ describe("rewindPhase", () => {
 				status: "in-progress",
 				currentPhase: 2,
 				plan: [
-					{ name: "Phase 0", tasks: [] },
-					{ name: "Phase 1", tasks: [] },
-					{ name: "Phase 2", tasks: [] },
+					{ name: "Setup", tasks: [] },
+					{ name: "Implement", tasks: [] },
+					{ name: "Polish", tasks: [] },
 				],
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "1", { reason: "Need to redo" });
+		rewindPhase("1", "2", { reason: "Need to redo" });
 
 		expect(mockWriteSignal).toHaveBeenCalledWith("rewind", {
 			itemId: 1,
@@ -97,19 +97,19 @@ describe("rewindPhase", () => {
 				status: "in-progress",
 				currentPhase: 2,
 				plan: [
-					{ name: "Phase 0", tasks: [] },
-					{ name: "Phase 1", tasks: [] },
-					{ name: "Phase 2", tasks: [] },
+					{ name: "Setup", tasks: [] },
+					{ name: "Implement", tasks: [] },
+					{ name: "Polish", tasks: [] },
 				],
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "0", { reason: "Tests failed" });
+		rewindPhase("1", "1", { reason: "Tests failed" });
 
 		expect(mockAddComment).toHaveBeenCalledWith(
 			items[0],
-			"Rewound to phase 0 (Phase 0): Tests failed",
+			"Rewound to phase 1 (Setup): Tests failed",
 			0,
 		);
 		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
@@ -122,15 +122,15 @@ describe("rewindPhase", () => {
 				status: "in-progress",
 				currentPhase: 1,
 				plan: [
-					{ name: "Phase 0", tasks: [] },
-					{ name: "Phase 1", tasks: [] },
-					{ name: "Phase 2", tasks: [] },
+					{ name: "Setup", tasks: [] },
+					{ name: "Implement", tasks: [] },
+					{ name: "Polish", tasks: [] },
 				],
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "1", { reason: "No reason" });
+		rewindPhase("1", "2", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
@@ -144,15 +144,15 @@ describe("rewindPhase", () => {
 				status: "in-progress",
 				currentPhase: 1,
 				plan: [
-					{ name: "Phase 0", tasks: [] },
-					{ name: "Phase 1", tasks: [] },
-					{ name: "Phase 2", tasks: [] },
+					{ name: "Setup", tasks: [] },
+					{ name: "Implement", tasks: [] },
+					{ name: "Polish", tasks: [] },
 				],
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "2", { reason: "No reason" });
+		rewindPhase("1", "3", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
@@ -162,28 +162,28 @@ describe("rewindPhase", () => {
 		const items = [{ id: 1, status: "in-progress", currentPhase: 0 }];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "0", { reason: "No reason" });
+		rewindPhase("1", "1", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 	});
 
-	it("should reject if phase index is out of range", () => {
+	it("should reject if phase number is out of range", () => {
 		const items = [
 			{
 				id: 1,
 				status: "in-progress",
 				currentPhase: 2,
 				plan: [
-					{ name: "Phase 0", tasks: [] },
-					{ name: "Phase 1", tasks: [] },
-					{ name: "Phase 2", tasks: [] },
+					{ name: "Setup", tasks: [] },
+					{ name: "Implement", tasks: [] },
+					{ name: "Polish", tasks: [] },
 				],
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "-1", { reason: "No reason" });
+		rewindPhase("1", "0", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
@@ -196,15 +196,15 @@ describe("rewindPhase", () => {
 				status: "done",
 				currentPhase: 3,
 				plan: [
-					{ name: "Phase 0", tasks: [] },
-					{ name: "Phase 1", tasks: [] },
-					{ name: "Phase 2", tasks: [] },
+					{ name: "Setup", tasks: [] },
+					{ name: "Implement", tasks: [] },
+					{ name: "Polish", tasks: [] },
 				],
 			},
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "1", { reason: "Reopening" });
+		rewindPhase("1", "2", { reason: "Reopening" });
 
 		expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
 		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 1);
@@ -213,7 +213,7 @@ describe("rewindPhase", () => {
 	it("should do nothing if item is not found", () => {
 		mockLoadAndFindItem.mockReturnValue(undefined);
 
-		rewindPhase("99", "0", { reason: "No reason" });
+		rewindPhase("99", "1", { reason: "No reason" });
 
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 		expect(mockSetStatus).not.toHaveBeenCalled();

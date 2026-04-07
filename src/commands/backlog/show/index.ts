@@ -17,10 +17,11 @@ function printPlan(item: BacklogItem): void {
 }
 
 function phaseHeader(index: number, name: string, isCurrent: boolean): string {
+	const phaseNumber = index + 1;
 	const marker = isCurrent ? chalk.green("▶ ") : "  ";
 	const label = isCurrent
-		? chalk.green.bold(`Phase ${index + 1}: ${name}`)
-		: `${chalk.bold(`Phase ${index + 1}:`)} ${name}`;
+		? chalk.green.bold(`Phase ${phaseNumber}: ${name}`)
+		: `${chalk.bold(`Phase ${phaseNumber}:`)} ${name}`;
 	return `${marker}${label}`;
 }
 
