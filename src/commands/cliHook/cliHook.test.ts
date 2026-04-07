@@ -107,6 +107,57 @@ describe("cliHook config deny", () => {
 		consoleSpy.mockRestore();
 	});
 
+	it("denies a heredoc command when the program matches a config deny rule", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeInput("python3 << 'EOF'\nprint('hello')\nEOF"),
+		);
+		mockMatchesConfigDeny.mockImplementation((cmd: string) =>
+			cmd.startsWith("python3")
+				? {
+						pattern: "python3",
+						message: "Do not use python3. Use PowerShell instead.",
+					}
+				: undefined,
+		);
+
+		await cliHook();
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			JSON.stringify({
+				hookSpecificOutput: {
+					hookEventName: "PreToolUse",
+					permissionDecision: "deny",
+					permissionDecisionReason:
+						"Do not use python3. Use PowerShell instead.",
+				},
+			}),
+		);
+		consoleSpy.mockRestore();
+	});
+
+	it("denies a heredoc command via settings deny when no config deny matches", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeInput("python3 << 'EOF'\nprint('hello')\nEOF"),
+		);
+		mockMatchesConfigDeny.mockReturnValue(undefined);
+		mockMatchesDeny.mockReturnValue("python3");
+
+		await cliHook();
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			JSON.stringify({
+				hookSpecificOutput: {
+					hookEventName: "PreToolUse",
+					permissionDecision: "deny",
+					permissionDecisionReason: "Denied by settings: python3",
+				},
+			}),
+		);
+		consoleSpy.mockRestore();
+	});
+
 	it("falls through to settings deny when no config deny matches", async () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 		mockReadStdin.mockResolvedValue(makeInput("git commit --amend"));
