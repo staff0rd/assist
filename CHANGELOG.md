@@ -1,3 +1,10 @@
+# [0.181.0](https://github.com/staff0rd/assist/compare/v0.180.1...v0.181.0) (2026-04-07)
+
+
+### Features
+
+* show date range in activity chart ([7c43bc4](https://github.com/staff0rd/assist/commit/7c43bc4c75d79976515eaa048ca543bff457ff1f))
+
 ## [0.180.1](https://github.com/staff0rd/assist/compare/v0.180.0...v0.180.1) (2026-04-07)
 
 
