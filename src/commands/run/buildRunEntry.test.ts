@@ -28,4 +28,21 @@ describe("buildRunEntry", () => {
 			args: ["vitest", "run"],
 		});
 	});
+
+	it("includes cwd when provided in options", () => {
+		const entry = buildRunEntry("build", "npm", ["run", "build"], {
+			cwd: "../other",
+		});
+		expect(entry).toEqual({
+			name: "build",
+			command: "npm",
+			args: ["run", "build"],
+			cwd: "../other",
+		});
+	});
+
+	it("omits cwd when not provided", () => {
+		const entry = buildRunEntry("lint", "eslint", []);
+		expect(entry).not.toHaveProperty("cwd");
+	});
 });

@@ -5,12 +5,14 @@ import { formatElapsed } from "../../shared/formatElapsed";
 export function spawnRunCommand(
 	fullCommand: string,
 	env?: Record<string, string>,
+	cwd?: string,
 ): void {
 	const start = Date.now();
 	const child = spawn(fullCommand, [], {
 		stdio: "inherit",
 		shell: true,
 		env: env ? { ...process.env, ...expandEnv(env) } : undefined,
+		cwd,
 	});
 	child.on("close", (code) => {
 		const elapsed = formatElapsed(Date.now() - start);

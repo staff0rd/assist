@@ -1,6 +1,6 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { basename, dirname, join } from "node:path";
+import { dirname, join } from "node:path";
 import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
 import { loadRawYaml } from "./loadRawYaml";
@@ -33,6 +33,10 @@ function getGlobalConfigPath(): string {
 	return join(homedir(), ".assist.yml");
 }
 
+export function getConfigDir(): string {
+	return dirname(getConfigPath());
+}
+
 export function loadConfig(): AssistConfig {
 	const globalRaw = loadRawYaml(getGlobalConfigPath());
 	const projectRaw = loadRawYaml(getConfigPath());
@@ -55,27 +59,6 @@ export function saveGlobalConfig(config: Record<string, unknown>): void {
 export function saveConfig(config: Record<string, unknown>): void {
 	const configPath = getConfigPath();
 	writeFileSync(configPath, stringifyYaml(config, { lineWidth: 0 }));
-}
-
-export function getRepoName(): string {
-	const config = loadConfig();
-	if (config.devlog?.name) {
-		return config.devlog.name;
-	}
-
-	const packageJsonPath = join(process.cwd(), "package.json");
-	if (existsSync(packageJsonPath)) {
-		try {
-			const content = readFileSync(packageJsonPath, "utf-8");
-			const pkg = JSON.parse(content);
-			if (pkg.name) {
-				return pkg.name;
-			}
-		} catch {
-			// Fall through to directory name
-		}
-	}
-	return basename(process.cwd());
 }
 
 export function getTranscriptConfig(): TranscriptConfig {

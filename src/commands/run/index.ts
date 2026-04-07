@@ -1,8 +1,9 @@
-import { execSync } from "node:child_process";
-import { loadConfig } from "../../shared/loadConfig";
+import { resolve } from "node:path";
+import { getConfigDir, loadConfig } from "../../shared/loadConfig";
 import { shellQuote } from "../../shared/shellQuote";
 import { formatConfiguredCommands } from "./formatConfiguredCommands";
 import { resolveParams } from "./resolveParams";
+import { runPreCommands } from "./runPreCommands";
 import { spawnRunCommand } from "./spawnRunCommand";
 
 function buildCommand(
@@ -57,20 +58,6 @@ export function listRunConfigs(): void {
 	}
 }
 
-function runPreCommands(pre: string[]): void {
-	for (const cmd of pre) {
-		try {
-			execSync(cmd, { stdio: "inherit" });
-		} catch (err) {
-			const code =
-				err && typeof err === "object" && "status" in err
-					? (err.status as number)
-					: 1;
-			process.exit(code);
-		}
-	}
-}
-
 export function run(name: string | undefined, args: string[]): void {
 	if (!name) {
 		console.error("error: missing required argument 'name'");
@@ -78,11 +65,15 @@ export function run(name: string | undefined, args: string[]): void {
 		process.exit(1);
 	}
 	const runConfig = findRunConfig(name);
-	if (runConfig.pre) runPreCommands(runConfig.pre);
+	const resolvedCwd = runConfig.cwd
+		? resolve(getConfigDir(), runConfig.cwd)
+		: undefined;
+	if (runConfig.pre) runPreCommands(runConfig.pre, resolvedCwd);
 	const resolved = resolveParams(runConfig.params, args);
 	spawnRunCommand(
 		buildCommand(runConfig.command, runConfig.args ?? [], resolved),
 		runConfig.env,
+		resolvedCwd,
 	);
 }
 

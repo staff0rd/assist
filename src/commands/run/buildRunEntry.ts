@@ -1,9 +1,15 @@
-type RunEntry = { name: string; command: string; args?: string[] };
+type RunEntry = {
+	name: string;
+	command: string;
+	args?: string[];
+	cwd?: string;
+};
 
 export function buildRunEntry(
 	name: string,
 	command: string,
 	args: string[],
+	options?: { cwd?: string },
 ): RunEntry {
 	const effectiveArgs =
 		args.length === 0 && command.includes(" ")
@@ -16,5 +22,6 @@ export function buildRunEntry(
 
 	const entry: RunEntry = { name, command: effectiveCommand };
 	if (effectiveArgs.length > 0) entry.args = effectiveArgs;
+	if (options?.cwd) entry.cwd = options.cwd;
 	return entry;
 }

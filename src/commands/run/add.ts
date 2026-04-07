@@ -9,11 +9,26 @@ function findAddIndex(): number {
 	return addIndex;
 }
 
+function extractOption(
+	args: string[],
+	flag: string,
+): { value: string | undefined; remaining: string[] } {
+	const index = args.indexOf(flag);
+	if (index === -1) return { value: undefined, remaining: args };
+	return {
+		value: args[index + 1],
+		remaining: [...args.slice(0, index), ...args.slice(index + 2)],
+	};
+}
+
 function extractAddArgs(addIndex: number) {
+	const rawArgs = process.argv.slice(addIndex + 3);
+	const { value: cwd, remaining: args } = extractOption(rawArgs, "--cwd");
 	return {
 		name: process.argv[addIndex + 1],
 		command: process.argv[addIndex + 2],
-		args: process.argv.slice(addIndex + 3),
+		args,
+		cwd,
 	};
 }
 
@@ -48,10 +63,15 @@ function getOrInitRunList() {
 	return { config, runList: config.run as { name: string }[] };
 }
 
-function saveNewRunConfig(name: string, command: string, args: string[]): void {
+function saveNewRunConfig(
+	name: string,
+	command: string,
+	args: string[],
+	cwd?: string,
+): void {
 	const { config, runList } = getOrInitRunList();
 	ensureNoDuplicate(runList, name);
-	runList.push(buildRunEntry(name, command, args));
+	runList.push(buildRunEntry(name, command, args, { cwd }));
 	saveConfig(config);
 }
 
@@ -65,8 +85,8 @@ function createCommandFile(name: string): void {
 }
 
 export function add(): void {
-	const { name, command, args } = requireParsedArgs();
-	saveNewRunConfig(name, command, args);
+	const { name, command, args, cwd } = requireParsedArgs();
+	saveNewRunConfig(name, command, args, cwd);
 	createCommandFile(name);
 	console.log(
 		`Added run configuration: ${name} -> ${formatDisplay(command, args)}`,
