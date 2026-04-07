@@ -2,10 +2,12 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { getBacklogDir } from "./shared";
 
-const SIGNAL_FILE = ".assist-signal.json";
-
 export function getSignalPath(): string {
-	return join(getBacklogDir(), SIGNAL_FILE);
+	const sessionId = process.env.ASSIST_SESSION_ID;
+	const filename = sessionId
+		? `.assist-signal-${sessionId}.json`
+		: ".assist-signal.json";
+	return join(getBacklogDir(), filename);
 }
 
 type SignalEvent = "phase-done" | "next";

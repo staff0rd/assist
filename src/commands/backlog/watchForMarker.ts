@@ -5,11 +5,10 @@ import { getSignalPath } from "./writeSignal";
 
 export function watchForMarker(child: ChildProcess): void {
 	const statusPath = getSignalPath();
-	const sessionId = process.env.ASSIST_SESSION_ID;
 	watchFile(statusPath, { interval: 1000 }, () => {
 		if (!existsSync(statusPath)) return;
 		const signal = readSignal();
-		if (signal && (!signal.sessionId || signal.sessionId === sessionId)) {
+		if (signal) {
 			unwatchFile(statusPath);
 			child.kill("SIGTERM");
 		}
