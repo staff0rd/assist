@@ -1,3 +1,10 @@
+# [0.176.0](https://github.com/staff0rd/assist/compare/v0.175.0...v0.176.0) (2026-04-07)
+
+
+### Features
+
+* add backlog refine command ([d9c334e](https://github.com/staff0rd/assist/commit/d9c334e7a1977903150db791df31dfe45c13f41b))
+
 # [0.175.0](https://github.com/staff0rd/assist/compare/v0.174.2...v0.175.0) (2026-04-06)
 
 
