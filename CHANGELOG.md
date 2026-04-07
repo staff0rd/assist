@@ -1,3 +1,10 @@
+## [0.177.1](https://github.com/staff0rd/assist/compare/v0.177.0...v0.177.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* scope signal file per session ([f89dc96](https://github.com/staff0rd/assist/commit/f89dc961e07f59e2b16d4eacfa5dcf5d7cb28263))
+
 # [0.177.0](https://github.com/staff0rd/assist/compare/v0.176.0...v0.177.0) (2026-04-07)
 
 
