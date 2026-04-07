@@ -1,3 +1,10 @@
+## [0.180.1](https://github.com/staff0rd/assist/compare/v0.180.0...v0.180.1) (2026-04-07)
+
+
+### Bug Fixes
+
+* chart label says per day not week ([eaec9ca](https://github.com/staff0rd/assist/commit/eaec9ca839080c488496321654d7556bdb5933b3))
+
 # [0.180.0](https://github.com/staff0rd/assist/compare/v0.179.0...v0.180.0) (2026-04-07)
 
 
