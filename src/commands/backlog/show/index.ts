@@ -10,7 +10,7 @@ function printPlan(item: BacklogItem): void {
 
 	console.log(chalk.bold("Plan"));
 	for (const [i, phase] of item.plan.entries()) {
-		const isCurrent = item.currentPhase === i;
+		const isCurrent = item.currentPhase === i + 1;
 		printPhase(phase, i, isCurrent);
 	}
 	console.log();

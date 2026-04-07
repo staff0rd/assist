@@ -11,8 +11,9 @@ function phaseStatus(
 	currentPhase: number | undefined,
 ): PhaseStatus {
 	if (currentPhase === undefined) return "upcoming";
-	if (index < currentPhase) return "done";
-	if (index === currentPhase) return "current";
+	const phaseNumber = index + 1;
+	if (phaseNumber < currentPhase) return "done";
+	if (phaseNumber === currentPhase) return "current";
 	return "upcoming";
 }
 

@@ -49,7 +49,7 @@ describe("prepareRun", () => {
 
 	describe("when item is already done", () => {
 		it("returns undefined without updating status", () => {
-			const item = makeItem({ currentPhase: 1, status: "done" });
+			const item = makeItem({ currentPhase: 2, status: "done" });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
 			expect(prepareRun("1")).toBeUndefined();
@@ -57,7 +57,7 @@ describe("prepareRun", () => {
 		});
 
 		it("returns undefined even when currentPhase exceeds plan length", () => {
-			const item = makeItem({ currentPhase: 3, status: "done" });
+			const item = makeItem({ currentPhase: 4, status: "done" });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
 			expect(prepareRun("1")).toBeUndefined();
@@ -67,7 +67,7 @@ describe("prepareRun", () => {
 
 	describe("when all phases including review are already complete", () => {
 		it("marks done and returns undefined", () => {
-			const item = makeItem({ currentPhase: 3, status: "in-progress" });
+			const item = makeItem({ currentPhase: 4, status: "in-progress" });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
 			expect(prepareRun("1")).toBeUndefined();
@@ -99,7 +99,7 @@ describe("prepareRun", () => {
 		});
 
 		it("uses currentPhase as startPhase when resuming", () => {
-			const item = makeItem({ currentPhase: 1 });
+			const item = makeItem({ currentPhase: 2 });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
 			const result = prepareRun("1");

@@ -55,17 +55,18 @@ export function adjustCurrentPhase(
 	removedIdx: number,
 ): void {
 	if (item.currentPhase === undefined) return;
+	const currentIdx = item.currentPhase - 1;
 
-	if (removedIdx < item.currentPhase) {
+	if (removedIdx < currentIdx) {
 		db.prepare("UPDATE items SET current_phase = ? WHERE id = ?").run(
 			item.currentPhase - 1,
 			item.id,
 		);
-	} else if (removedIdx === item.currentPhase) {
+	} else if (removedIdx === currentIdx) {
 		const { cnt } = db
 			.prepare("SELECT COUNT(*) as cnt FROM plan_phases WHERE item_id = ?")
 			.get(item.id) as { cnt: number };
-		const newPhase = cnt === 0 ? null : Math.min(item.currentPhase, cnt - 1);
+		const newPhase = cnt === 0 ? null : Math.min(item.currentPhase, cnt);
 		db.prepare("UPDATE items SET current_phase = ? WHERE id = ?").run(
 			newPhase,
 			item.id,

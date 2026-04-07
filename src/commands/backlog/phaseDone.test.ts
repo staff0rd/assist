@@ -63,7 +63,7 @@ describe("phaseDone", () => {
 
 		phaseDone("1", "1", "Done");
 
-		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 1);
+		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
 		cleanup();
 	});
 
@@ -76,7 +76,7 @@ describe("phaseDone", () => {
 		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
 			items[0],
 			"Implemented the feature",
-			0,
+			1,
 		);
 		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
 		cleanup();
@@ -91,7 +91,7 @@ describe("phaseDone", () => {
 		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
 			items[0],
 			"Completed phase",
-			0,
+			1,
 		);
 		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
 		cleanup();

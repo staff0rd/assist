@@ -20,11 +20,11 @@ export function phaseDone(id: string, phase: string, summary: string): void {
 	}
 
 	if (result) {
-		addPhaseSummary(result.item, summary, phaseIndex);
+		addPhaseSummary(result.item, summary, phaseNumber);
 		saveBacklog(result.items);
 	}
 
-	setCurrentPhase(id, phaseIndex + 1);
+	setCurrentPhase(id, phaseNumber + 1);
 	console.log(
 		chalk.green(`Phase ${phaseNumber} of item #${id} marked as complete.`),
 	);

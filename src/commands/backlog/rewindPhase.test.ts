@@ -51,7 +51,7 @@ describe("rewindPhase", () => {
 			{
 				id: 1,
 				status: "in-progress",
-				currentPhase: 2,
+				currentPhase: 3,
 				plan: [
 					{ name: "Setup", tasks: [] },
 					{ name: "Implement", tasks: [] },
@@ -63,7 +63,7 @@ describe("rewindPhase", () => {
 
 		rewindPhase("1", "2", { reason: "Need to redo" });
 
-		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 1);
+		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
 		expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
 	});
 
@@ -72,7 +72,7 @@ describe("rewindPhase", () => {
 			{
 				id: 1,
 				status: "in-progress",
-				currentPhase: 2,
+				currentPhase: 3,
 				plan: [
 					{ name: "Setup", tasks: [] },
 					{ name: "Implement", tasks: [] },
@@ -95,7 +95,7 @@ describe("rewindPhase", () => {
 			{
 				id: 1,
 				status: "in-progress",
-				currentPhase: 2,
+				currentPhase: 3,
 				plan: [
 					{ name: "Setup", tasks: [] },
 					{ name: "Implement", tasks: [] },
@@ -110,7 +110,7 @@ describe("rewindPhase", () => {
 		expect(mockAddComment).toHaveBeenCalledWith(
 			items[0],
 			"Rewound to phase 1 (Setup): Tests failed",
-			0,
+			1,
 		);
 		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
 	});
@@ -120,7 +120,7 @@ describe("rewindPhase", () => {
 			{
 				id: 1,
 				status: "in-progress",
-				currentPhase: 1,
+				currentPhase: 2,
 				plan: [
 					{ name: "Setup", tasks: [] },
 					{ name: "Implement", tasks: [] },
@@ -142,7 +142,7 @@ describe("rewindPhase", () => {
 			{
 				id: 1,
 				status: "in-progress",
-				currentPhase: 1,
+				currentPhase: 2,
 				plan: [
 					{ name: "Setup", tasks: [] },
 					{ name: "Implement", tasks: [] },
@@ -159,7 +159,7 @@ describe("rewindPhase", () => {
 	});
 
 	it("should reject if item has no plan", () => {
-		const items = [{ id: 1, status: "in-progress", currentPhase: 0 }];
+		const items = [{ id: 1, status: "in-progress", currentPhase: 1 }];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
 		rewindPhase("1", "1", { reason: "No reason" });
@@ -173,7 +173,7 @@ describe("rewindPhase", () => {
 			{
 				id: 1,
 				status: "in-progress",
-				currentPhase: 2,
+				currentPhase: 3,
 				plan: [
 					{ name: "Setup", tasks: [] },
 					{ name: "Implement", tasks: [] },
@@ -194,7 +194,7 @@ describe("rewindPhase", () => {
 			{
 				id: 1,
 				status: "done",
-				currentPhase: 3,
+				currentPhase: 4,
 				plan: [
 					{ name: "Setup", tasks: [] },
 					{ name: "Implement", tasks: [] },
@@ -207,7 +207,7 @@ describe("rewindPhase", () => {
 		rewindPhase("1", "2", { reason: "Reopening" });
 
 		expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
-		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 1);
+		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
 	});
 
 	it("should do nothing if item is not found", () => {

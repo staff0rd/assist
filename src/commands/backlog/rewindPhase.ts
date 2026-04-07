@@ -19,7 +19,7 @@ function validateRewind(
 	if (phaseNumber < 1 || phaseNumber > item.plan.length) {
 		return `Phase ${phaseNumber} does not exist. Valid range: 1–${item.plan.length}.`;
 	}
-	const currentPhase = (item.currentPhase ?? 0) + 1;
+	const currentPhase = item.currentPhase ?? 1;
 	if (phaseNumber >= currentPhase) {
 		return `Phase ${phaseNumber} is not earlier than the current phase (${currentPhase}).`;
 	}
@@ -50,11 +50,11 @@ export function rewindPhase(
 	addComment(
 		item,
 		`Rewound to phase ${phaseNumber} (${phaseName}): ${opts.reason}`,
-		phaseIndex,
+		phaseNumber,
 	);
 	saveBacklog(result.items);
 
-	setCurrentPhase(id, phaseIndex);
+	setCurrentPhase(id, phaseNumber);
 	setStatus(id, "in-progress");
 
 	writeSignal("rewind", {
