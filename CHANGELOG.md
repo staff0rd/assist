@@ -1,3 +1,10 @@
+# [0.178.0](https://github.com/staff0rd/assist/compare/v0.177.1...v0.178.0) (2026-04-07)
+
+
+### Features
+
+* show configured commands in run help ([797c211](https://github.com/staff0rd/assist/commit/797c2114de79385961510ad25ffdd8022b20e632))
+
 ## [0.177.1](https://github.com/staff0rd/assist/compare/v0.177.0...v0.177.1) (2026-04-07)
 
 
