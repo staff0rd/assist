@@ -17,6 +17,7 @@ import { registerBacklog } from "./commands/registerBacklog";
 import { registerCliHook } from "./commands/registerCliHook";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerConfig } from "./commands/registerConfig";
+import { registerDeny } from "./commands/registerDeny";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
 import { registerDotnet } from "./commands/registerDotnet";
@@ -159,6 +160,8 @@ registerRavendb(program);
 registerSeq(program);
 registerTranscript(program);
 registerVoice(program);
+
+registerDeny(program);
 
 program
 	.command("next")
