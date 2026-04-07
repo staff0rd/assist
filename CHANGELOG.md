@@ -1,3 +1,10 @@
+# [0.180.0](https://github.com/staff0rd/assist/compare/v0.179.0...v0.180.0) (2026-04-07)
+
+
+### Features
+
+* activity command with weekly chart ([84fd270](https://github.com/staff0rd/assist/commit/84fd270437aff577ad8869d48c77faa0f1ad9b51))
+
 # [0.179.0](https://github.com/staff0rd/assist/compare/v0.178.0...v0.179.0) (2026-04-07)
 
 
