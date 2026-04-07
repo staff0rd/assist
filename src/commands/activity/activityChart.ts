@@ -3,7 +3,10 @@ import contrib from "blessed-contrib";
 
 type DayCount = { date: string; count: number };
 
-export function activityChart(data: DayCount[]): void {
+export function activityChart(
+	data: DayCount[],
+	range: { since: string; until: string },
+): void {
 	const screen = blessed.screen({
 		smartCSR: true,
 		title: "Commit Activity",
@@ -15,7 +18,7 @@ export function activityChart(data: DayCount[]): void {
 	const values = data.map((d) => d.count);
 
 	const line = grid.set(0, 0, 1, 1, contrib.line, {
-		label: " Commits per week (press q to close) ",
+		label: ` Commits per week · ${range.since} → ${range.until} (press q to close) `,
 		showLegend: true,
 		legend: { width: 12 },
 		xLabelPadding: 3,

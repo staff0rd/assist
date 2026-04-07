@@ -29,5 +29,6 @@ export async function activity(options: { since?: string }): Promise<void> {
 		.map(([date, count]) => ({ date, count }))
 		.sort((a, b) => a.date.localeCompare(b.date));
 
-	activityChart(weeklyData);
+	const until = data[data.length - 1].date;
+	activityChart(weeklyData, { since, until });
 }
