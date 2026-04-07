@@ -1,3 +1,10 @@
+# [0.177.0](https://github.com/staff0rd/assist/compare/v0.176.0...v0.177.0) (2026-04-07)
+
+
+### Features
+
+* backlog auto-commit config toggle ([cf30629](https://github.com/staff0rd/assist/commit/cf306294668fc8cc73134cc6d084bc28846a74d5))
+
 # [0.176.0](https://github.com/staff0rd/assist/compare/v0.175.0...v0.176.0) (2026-04-07)
 
 
