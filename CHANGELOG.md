@@ -1,3 +1,10 @@
+# [0.187.0](https://github.com/staff0rd/assist/compare/v0.186.1...v0.187.0) (2026-04-08)
+
+
+### Features
+
+* add --position to add-phase command ([35588ad](https://github.com/staff0rd/assist/commit/35588adcfa895df83ca5ca245b55fe304546979c))
+
 ## [0.186.1](https://github.com/staff0rd/assist/compare/v0.186.0...v0.186.1) (2026-04-07)
 
 
