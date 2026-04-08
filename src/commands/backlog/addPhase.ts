@@ -1,13 +1,16 @@
 import chalk from "chalk";
 import { commitBacklog } from "./commitBacklog";
 import { exportToJsonl } from "./exportToJsonl";
+import { insertPhaseAt } from "./insertPhaseAt";
 import { openDb } from "./openDb";
+import { resolveInsertPosition } from "./resolveInsertPosition";
+import { serializeManualChecks } from "./serializeManualChecks";
 import { getBacklogDir, loadAndFindItem } from "./shared";
 
 export function addPhase(
 	id: string,
 	name: string,
-	options: { task?: string[]; manualCheck?: string[] },
+	options: { task?: string[]; manualCheck?: string[]; position?: string },
 ): void {
 	const result = loadAndFindItem(id);
 	if (!result) return;
@@ -23,32 +26,25 @@ export function addPhase(
 	const db = openDb(dir);
 	const itemId = result.item.id;
 
-	const existing = db
-		.prepare("SELECT COUNT(*) as cnt FROM plan_phases WHERE item_id = ?")
-		.get(itemId) as { cnt: number };
-	const phaseIdx = existing.cnt;
+	const phaseIdx = resolveInsertPosition(db, itemId, options.position);
+	if (phaseIdx === undefined) return;
 
-	const manualChecks =
-		options.manualCheck && options.manualCheck.length > 0
-			? JSON.stringify(options.manualCheck)
-			: null;
-
-	db.prepare(
-		"INSERT INTO plan_phases (item_id, idx, name, manual_checks) VALUES (?, ?, ?, ?)",
-	).run(itemId, phaseIdx, name, manualChecks);
-
-	const taskStmt = db.prepare(
-		"INSERT INTO plan_tasks (item_id, phase_idx, idx, task) VALUES (?, ?, ?, ?)",
+	insertPhaseAt(
+		db,
+		itemId,
+		phaseIdx,
+		name,
+		tasks,
+		serializeManualChecks(options.manualCheck),
+		result.item.currentPhase,
 	);
-	for (let i = 0; i < tasks.length; i++) {
-		taskStmt.run(itemId, phaseIdx, i, tasks[i]);
-	}
 
 	exportToJsonl(db, dir);
 	commitBacklog(itemId, result.item.name);
+	const verb = options.position !== undefined ? "Inserted" : "Added";
 	console.log(
 		chalk.green(
-			`Added phase ${phaseIdx + 1} "${name}" to item #${itemId} with ${tasks.length} task(s).`,
+			`${verb} phase ${phaseIdx + 1} "${name}" to item #${itemId} with ${tasks.length} task(s).`,
 		),
 	);
 }

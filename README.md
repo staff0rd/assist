@@ -87,7 +87,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
 - `assist backlog add --name <n> --type <t> --desc <d> --ac <criterion...>` - Add a backlog item from CLI options (used by `/draft`)
-- `assist backlog add-phase <id> <name> --task <t...> [--manual-check <c...>]` - Add a phase to an existing backlog item
+- `assist backlog add-phase <id> <name> --task <t...> [--manual-check <c...>] [--position <pos>]` - Add a phase (appends by default; `--position` inserts at a 1-indexed position)
 - `assist backlog update <id> [--name <n>] [--desc <d>] [--type <t>] [--ac <criterion...>]` - Update fields on a backlog item
 - `assist backlog update-phase <id> <phase> [--name <n>] [--task <t...>] [--manual-check <c...>]` - Modify a plan phase (name, tasks, or manual checks)
 - `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item

@@ -39,5 +39,9 @@ export function registerItemCommands(cmd: Command): void {
 			"--manual-check <check...>",
 			"Manual check description (repeatable)",
 		)
+		.option(
+			"--position <position>",
+			"1-indexed position to insert at (default: append)",
+		)
 		.action(backlogAddPhase);
 }
