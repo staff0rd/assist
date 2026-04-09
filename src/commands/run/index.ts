@@ -1,21 +1,11 @@
 import { resolve } from "node:path";
 import { getConfigDir, loadConfig } from "../../shared/loadConfig";
 import { resolveRunConfigs } from "../../shared/resolveRunConfigs";
-import { shellQuote } from "../../shared/shellQuote";
 import type { RunConfig } from "../../shared/types";
 import { formatConfiguredCommands } from "./formatConfiguredCommands";
 import { resolveParams } from "./resolveParams";
 import { runPreCommands } from "./runPreCommands";
 import { spawnRunCommand } from "./spawnRunCommand";
-
-function buildCommand(
-	command: string,
-	configArgs: string[],
-	extraArgs: string[],
-): string {
-	const parts = [command, ...configArgs];
-	return [...parts.map(shellQuote), ...extraArgs.map(shellQuote)].join(" ");
-}
 
 function printAvailableConfigs(configs: { name: string }[]): void {
 	console.error("Available configurations:");
@@ -47,10 +37,11 @@ function exitWithConfigNotFound(
 
 function findRunConfig(name: string) {
 	const configs = requireRunConfigs();
-	return (
-		configs.find((r) => r.name === name) ??
-		exitWithConfigNotFound(name, configs)
-	);
+	const exact = configs.find((r) => r.name === name);
+	if (exact) return exact;
+	const suffixMatches = configs.filter((r) => r.name.endsWith(`:${name}`));
+	if (suffixMatches.length === 1) return suffixMatches[0];
+	return exitWithConfigNotFound(name, configs);
 }
 
 export function listRunConfigs(verbose: boolean): void {
@@ -70,7 +61,8 @@ function execRunConfig(config: RunConfig, args: string[]): void {
 	if (config.pre) runPreCommands(config.pre, cwd);
 	const resolved = resolveParams(config.params, args);
 	spawnRunCommand(
-		buildCommand(config.command, config.args ?? [], resolved),
+		config.command,
+		[...(config.args ?? []), ...resolved],
 		config.env,
 		cwd,
 	);

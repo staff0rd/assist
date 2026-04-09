@@ -1,16 +1,33 @@
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
+import { existsSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { expandEnv } from "../../shared/expandEnv";
 import { formatElapsed } from "../../shared/formatElapsed";
 
+function resolveCommand(command: string): string {
+	if (process.platform !== "win32" || command !== "bash") return command;
+	try {
+		const gitPath = execFileSync("where", ["git"], { encoding: "utf8" })
+			.trim()
+			.split("\r\n")[0];
+		const gitRoot = resolve(dirname(gitPath), "..");
+		const gitBash = join(gitRoot, "bin", "bash.exe");
+		if (existsSync(gitBash)) return gitBash;
+	} catch {
+		// fall through
+	}
+	return command;
+}
+
 export function spawnRunCommand(
-	fullCommand: string,
+	command: string,
+	args: string[],
 	env?: Record<string, string>,
 	cwd?: string,
 ): void {
 	const start = Date.now();
-	const child = spawn(fullCommand, [], {
+	const child = spawn(resolveCommand(command), args, {
 		stdio: "inherit",
-		shell: true,
 		env: env ? { ...process.env, ...expandEnv(env) } : undefined,
 		cwd,
 	});
