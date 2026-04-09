@@ -1,3 +1,10 @@
+# [0.188.0](https://github.com/staff0rd/assist/compare/v0.187.0...v0.188.0) (2026-04-09)
+
+
+### Features
+
+* simplify .gitignore entries ([cc594ef](https://github.com/staff0rd/assist/commit/cc594efdb52dd4078e8242f9d6eafac2df55db83))
+
 # [0.187.0](https://github.com/staff0rd/assist/compare/v0.186.1...v0.187.0) (2026-04-08)
 
 
