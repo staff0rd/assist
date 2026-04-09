@@ -1,10 +1,7 @@
 node_modules
 dist
 books
-.assist-signal*.json
-.assist-lock-*.json
+.assist-*
+.assist/*.db*
 screenshots
 .claude/settings.local.json
-.assist/backlog.db
-.assist/backlog.db-shm
-.assist/backlog.db-wal

@@ -1,13 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const gitignoreEntries = [
-	".assist/backlog.db",
-	".assist/backlog.db-shm",
-	".assist/backlog.db-wal",
-	".assist-signal*.json",
-	".assist-lock-*.json",
-];
+const gitignoreEntries = [".assist-*", ".assist/*.db*"];
 
 export function ensureGitignore(dir: string): void {
 	const gitignorePath = join(dir, ".gitignore");
