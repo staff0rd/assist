@@ -1,3 +1,10 @@
+## [0.189.1](https://github.com/staff0rd/assist/compare/v0.189.0...v0.189.1) (2026-04-09)
+
+
+### Bug Fixes
+
+* resolve bash and run prefix on Windows ([2567711](https://github.com/staff0rd/assist/commit/256771111d7d7120e6283bae5df5100caa093e4f))
+
 # [0.189.0](https://github.com/staff0rd/assist/compare/v0.188.0...v0.189.0) (2026-04-09)
 
 
