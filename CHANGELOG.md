@@ -1,3 +1,10 @@
+# [0.189.0](https://github.com/staff0rd/assist/compare/v0.188.0...v0.189.0) (2026-04-09)
+
+
+### Features
+
+* linked run configs from external projects ([d605302](https://github.com/staff0rd/assist/commit/d6053024dcdaecc2f0f84af2728d9a3b4372bc09))
+
 # [0.188.0](https://github.com/staff0rd/assist/compare/v0.187.0...v0.188.0) (2026-04-09)
 
 
