@@ -48,8 +48,8 @@ function toolStatus(
 }
 
 function loadConfigScriptNames(): Set<string> {
-	const config = loadConfig();
-	return new Set<string>((config.run ?? []).map((r) => r.name));
+	const entries = loadConfig().run ?? [];
+	return new Set(entries.flatMap((r) => ("name" in r ? [r.name] : [])));
 }
 
 function buildToolStatuses(pkg: PackageJson, configScriptNames: Set<string>) {

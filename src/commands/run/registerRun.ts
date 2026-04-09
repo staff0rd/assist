@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { listRunConfigs, run } from ".";
 import { add } from "./add";
 import { formatConfiguredCommands } from "./formatConfiguredCommands";
+import { link } from "./link";
 import { remove } from "./remove";
 
 export function registerRun(program: Command): void {
@@ -17,7 +18,8 @@ export function registerRun(program: Command): void {
 	runCommand
 		.command("list")
 		.description("List configured run commands")
-		.action(listRunConfigs);
+		.option("-v, --verbose", "Show full command details")
+		.action((opts) => listRunConfigs(!!opts.verbose));
 
 	runCommand
 		.command("add")
@@ -36,6 +38,14 @@ export function registerRun(program: Command): void {
 		.allowUnknownOption()
 		.allowExcessArguments()
 		.action(() => add());
+
+	runCommand
+		.command("link")
+		.description("Link run configurations from another project's assist.yml")
+		.argument("<path>", "Relative path to the linked project")
+		.requiredOption("--prefix <prefix>", "Namespace prefix for linked commands")
+		.allowUnknownOption()
+		.action(() => link());
 
 	runCommand
 		.command("remove")

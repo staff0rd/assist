@@ -109,6 +109,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API
 - `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first)
 - `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
+- `assist run link <path> --prefix <prefix>` - Link run configurations from another project's assist.yml
 - `assist run remove <name>` - Remove a run configuration from assist.yml and delete its Claude command file
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
 - `assist config get <key>` - Get a config value

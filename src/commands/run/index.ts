@@ -1,6 +1,8 @@
 import { resolve } from "node:path";
 import { getConfigDir, loadConfig } from "../../shared/loadConfig";
+import { resolveRunConfigs } from "../../shared/resolveRunConfigs";
 import { shellQuote } from "../../shared/shellQuote";
+import type { RunConfig } from "../../shared/types";
 import { formatConfiguredCommands } from "./formatConfiguredCommands";
 import { resolveParams } from "./resolveParams";
 import { runPreCommands } from "./runPreCommands";
@@ -27,10 +29,11 @@ function exitNoRunConfigs(): never {
 	process.exit(1);
 }
 
-function requireRunConfigs() {
+function requireRunConfigs(): RunConfig[] {
 	const { run } = loadConfig();
-	if (!run || run.length === 0) return exitNoRunConfigs();
-	return run;
+	const configs = resolveRunConfigs(run, getConfigDir());
+	if (configs.length === 0) return exitNoRunConfigs();
+	return configs;
 }
 
 function exitWithConfigNotFound(
@@ -50,12 +53,27 @@ function findRunConfig(name: string) {
 	);
 }
 
-export function listRunConfigs(): void {
+export function listRunConfigs(verbose: boolean): void {
 	const configs = requireRunConfigs();
 	for (const config of configs) {
-		const args = config.args?.length ? ` ${config.args.join(" ")}` : "";
-		console.log(`${config.name}: ${config.command}${args}`);
+		if (verbose) {
+			const args = config.args?.length ? ` ${config.args.join(" ")}` : "";
+			console.log(`${config.name}: ${config.command}${args}`);
+		} else {
+			console.log(config.name);
+		}
 	}
+}
+
+function execRunConfig(config: RunConfig, args: string[]): void {
+	const cwd = config.cwd ? resolve(getConfigDir(), config.cwd) : undefined;
+	if (config.pre) runPreCommands(config.pre, cwd);
+	const resolved = resolveParams(config.params, args);
+	spawnRunCommand(
+		buildCommand(config.command, config.args ?? [], resolved),
+		config.env,
+		cwd,
+	);
 }
 
 export function run(name: string | undefined, args: string[]): void {
@@ -64,15 +82,5 @@ export function run(name: string | undefined, args: string[]): void {
 		console.error(formatConfiguredCommands());
 		process.exit(1);
 	}
-	const runConfig = findRunConfig(name);
-	const resolvedCwd = runConfig.cwd
-		? resolve(getConfigDir(), runConfig.cwd)
-		: undefined;
-	if (runConfig.pre) runPreCommands(runConfig.pre, resolvedCwd);
-	const resolved = resolveParams(runConfig.params, args);
-	spawnRunCommand(
-		buildCommand(runConfig.command, runConfig.args ?? [], resolved),
-		runConfig.env,
-		resolvedCwd,
-	);
+	execRunConfig(findRunConfig(name), args);
 }

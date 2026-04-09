@@ -2,23 +2,12 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
 import { buildRunEntry } from "./buildRunEntry";
+import { extractOption } from "./extractOption";
 
 function findAddIndex(): number {
 	const addIndex = process.argv.indexOf("add");
 	if (addIndex === -1 || addIndex + 2 >= process.argv.length) return -1;
 	return addIndex;
-}
-
-function extractOption(
-	args: string[],
-	flag: string,
-): { value: string | undefined; remaining: string[] } {
-	const index = args.indexOf(flag);
-	if (index === -1) return { value: undefined, remaining: args };
-	return {
-		value: args[index + 1],
-		remaining: [...args.slice(0, index), ...args.slice(index + 2)],
-	};
 }
 
 function extractAddArgs(addIndex: number) {

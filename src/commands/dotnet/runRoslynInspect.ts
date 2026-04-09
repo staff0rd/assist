@@ -1,11 +1,13 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
-import { loadConfig } from "../../shared/loadConfig";
+import { getConfigDir, loadConfig } from "../../shared/loadConfig";
+import { resolveRunConfigs } from "../../shared/resolveRunConfigs";
 import type { Issue } from "./parseInspectReport";
 
 function resolveMsbuildPath(): string {
-	const config = loadConfig();
-	const buildConfig = config.run?.find((r) => r.name === "build");
+	const { run } = loadConfig();
+	const configs = resolveRunConfigs(run, getConfigDir());
+	const buildConfig = configs.find((r) => r.name === "build");
 	return buildConfig?.command ?? "msbuild";
 }
 
