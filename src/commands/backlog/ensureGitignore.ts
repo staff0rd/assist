@@ -8,7 +8,7 @@ export function ensureGitignore(dir: string): void {
 	const existing = existsSync(gitignorePath)
 		? readFileSync(gitignorePath, "utf-8")
 		: "";
-	const lines = existing.split("\n");
+	const lines = existing.split(/\r?\n/);
 	const missing = gitignoreEntries.filter((entry) => !lines.includes(entry));
 	if (missing.length === 0) return;
 	const suffix = existing.length > 0 && !existing.endsWith("\n") ? "\n" : "";
