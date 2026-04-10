@@ -32,6 +32,7 @@ export function findPhase(id: string, phase: string) {
 }
 
 export function reindexPhases(db: BacklogDb, itemId: number): void {
+	db.pragma("defer_foreign_keys = ON");
 	const remaining = db
 		.prepare("SELECT idx FROM plan_phases WHERE item_id = ? ORDER BY idx")
 		.all(itemId) as { idx: number }[];
