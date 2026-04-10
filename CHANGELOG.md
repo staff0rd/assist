@@ -1,3 +1,10 @@
+## [0.191.2](https://github.com/staff0rd/assist/compare/v0.191.1...v0.191.2) (2026-04-10)
+
+
+### Bug Fixes
+
+* approve shell builtins true/false ([8c4a28b](https://github.com/staff0rd/assist/commit/8c4a28bc588c3749598e0f15894f32397f3421af))
+
 ## [0.191.1](https://github.com/staff0rd/assist/compare/v0.191.0...v0.191.1) (2026-04-10)
 
 
