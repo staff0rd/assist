@@ -1,3 +1,10 @@
+# [0.191.0](https://github.com/staff0rd/assist/compare/v0.190.0...v0.191.0) (2026-04-10)
+
+
+### Features
+
+* caveman config to prefix spawn prompts ([e575268](https://github.com/staff0rd/assist/commit/e5752684502bbb2028545d1808e580bdcca63a90))
+
 # [0.190.0](https://github.com/staff0rd/assist/compare/v0.189.3...v0.190.0) (2026-04-10)
 
 
