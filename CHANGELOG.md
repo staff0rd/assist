@@ -1,3 +1,10 @@
+# [0.190.0](https://github.com/staff0rd/assist/compare/v0.189.3...v0.190.0) (2026-04-10)
+
+
+### Features
+
+* approve cd to Read-allowed dirs ([39d59f4](https://github.com/staff0rd/assist/commit/39d59f4655df3f1c8b54e8cff00c08d63b49607e))
+
 ## [0.189.3](https://github.com/staff0rd/assist/compare/v0.189.2...v0.189.3) (2026-04-10)
 
 
