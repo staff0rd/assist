@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { isApprovedRead } from "./isApprovedRead";
 
@@ -16,6 +17,17 @@ vi.mock("./isGhApiRead", () => ({
 vi.mock("./matchesAllow", () => ({
 	matchesAllow: (_toolName: string, cmd: string) =>
 		cmd.startsWith("date") ? "date" : undefined,
+}));
+
+const siblingDir = resolve(process.cwd(), "../sibling");
+
+vi.mock("./readSettingsPerms", () => ({
+	readSettingsPerms: (key: string) => {
+		if (key === "allow") {
+			return ["Read(/tmp/allowed/**)", "Read(../sibling/**)", "Bash(date:*)"];
+		}
+		return [];
+	},
 }));
 
 describe("isApprovedRead", () => {
@@ -141,6 +153,48 @@ describe("isApprovedRead", () => {
 			const command = "cd /tmp";
 
 			const result = isApprovedRead(command);
+
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe("when the command is cd to a Read-allowed directory", () => {
+		it("should approve cd to an absolute path covered by Read entry", () => {
+			const result = isApprovedRead("cd /tmp/allowed");
+
+			expect(result).toBe(
+				"cd to Read-allowed directory: Read(/tmp/allowed/**)",
+			);
+		});
+
+		it("should approve cd to a subdirectory of a Read entry", () => {
+			const result = isApprovedRead("cd /tmp/allowed/sub/dir");
+
+			expect(result).toBe(
+				"cd to Read-allowed directory: Read(/tmp/allowed/**)",
+			);
+		});
+
+		it("should approve cd when Read entry uses a relative path", () => {
+			const result = isApprovedRead(`cd ${siblingDir}`);
+
+			expect(result).toBe("cd to Read-allowed directory: Read(../sibling/**)");
+		});
+
+		it("should reject cd to a directory not covered by any Read entry", () => {
+			const result = isApprovedRead("cd /tmp/forbidden");
+
+			expect(result).toBeUndefined();
+		});
+
+		it("should reject bare cd even with Read entries present", () => {
+			const result = isApprovedRead("cd");
+
+			expect(result).toBeUndefined();
+		});
+
+		it("should not match a directory that shares a prefix but is not a child", () => {
+			const result = isApprovedRead("cd /tmp/allowed-extra");
 
 			expect(result).toBeUndefined();
 		});

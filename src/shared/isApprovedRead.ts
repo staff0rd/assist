@@ -1,7 +1,10 @@
-import { resolve } from "node:path";
+import { resolve, sep } from "node:path";
 import { isGhApiRead } from "./isGhApiRead";
 import { findCliRead, findCliWrite } from "./loadCliReads";
 import { matchesAllow } from "./matchesAllow";
+import { readSettingsPerms } from "./readSettingsPerms";
+
+const READ_RE = /^Read\((.+)\)$/;
 
 /**
  * Check whether a single (non-compound) command is an approved read-only
@@ -13,6 +16,9 @@ export function isApprovedRead(
 	toolName = "Bash",
 ): string | undefined {
 	if (isCdToCwd(command)) return "cd to current directory";
+
+	const cdRead = isCdToReadAllowedDir(command);
+	if (cdRead) return cdRead;
 
 	const matchedRead = findCliRead(command);
 	if (matchedRead) return `Read-only CLI command: ${matchedRead}`;
@@ -41,6 +47,40 @@ function isCdToCwd(command: string): boolean {
 
 	const resolved = resolve(normalizeMsysPath(parts[1]));
 	return resolved === resolve(process.cwd());
+}
+
+/**
+ * Check whether a `cd <path>` command targets a directory covered by a
+ * `Read(...)` entry in the settings allow list. Returns a reason string
+ * when approved, or `undefined` when not matched.
+ */
+function isCdToReadAllowedDir(command: string): string | undefined {
+	const parts = command.split(/\s+/);
+	if (parts[0] !== "cd" || parts.length !== 2) return undefined;
+
+	const target = resolve(normalizeMsysPath(parts[1]));
+
+	for (const entry of readSettingsPerms("allow")) {
+		const m = entry.match(READ_RE);
+		if (!m) continue;
+		const base = globBaseDir(m[1]);
+		if (!base) continue;
+		const resolved = resolve(normalizeMsysPath(base));
+		if (target === resolved || target.startsWith(resolved + sep)) {
+			return `cd to Read-allowed directory: ${entry}`;
+		}
+	}
+
+	return undefined;
+}
+
+/**
+ * Strip trailing glob segments from a path pattern, returning the fixed
+ * directory prefix. Returns an empty string when the whole pattern is a glob.
+ */
+function globBaseDir(pattern: string): string {
+	const base = pattern.replace(/[/\\][^/\\]*[*?[].*$/, "");
+	return /[*?[]/.test(base) ? "" : base;
 }
 
 /**
