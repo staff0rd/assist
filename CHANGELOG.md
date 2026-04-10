@@ -1,3 +1,10 @@
+## [0.191.1](https://github.com/staff0rd/assist/compare/v0.191.0...v0.191.1) (2026-04-10)
+
+
+### Bug Fixes
+
+* convert literal \n to newlines in --desc ([f19e3be](https://github.com/staff0rd/assist/commit/f19e3bebec6c1cfdc910d5807c36dcc56a1897f5))
+
 # [0.191.0](https://github.com/staff0rd/assist/compare/v0.190.0...v0.191.0) (2026-04-10)
 
 
