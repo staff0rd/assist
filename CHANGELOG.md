@@ -1,3 +1,10 @@
+## [0.189.3](https://github.com/staff0rd/assist/compare/v0.189.2...v0.189.3) (2026-04-10)
+
+
+### Bug Fixes
+
+* defer FK checks in reindexPhases ([68dc147](https://github.com/staff0rd/assist/commit/68dc147a8f46ec7cd674fd938aafc94c5ced37bf))
+
 ## [0.189.2](https://github.com/staff0rd/assist/compare/v0.189.1...v0.189.2) (2026-04-10)
 
 
