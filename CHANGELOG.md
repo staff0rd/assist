@@ -1,3 +1,10 @@
+## [0.189.2](https://github.com/staff0rd/assist/compare/v0.189.1...v0.189.2) (2026-04-10)
+
+
+### Bug Fixes
+
+* handle CRLF in ensureGitignore ([3090059](https://github.com/staff0rd/assist/commit/309005951b6c8b6acf5e1548fc7306aa4d29cd0a))
+
 ## [0.189.1](https://github.com/staff0rd/assist/compare/v0.189.0...v0.189.1) (2026-04-09)
 
 
