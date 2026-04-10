@@ -71,6 +71,16 @@ describe("isApprovedRead", () => {
 		});
 	});
 
+	describe("when the command is a safe shell builtin", () => {
+		it("should approve 'true'", () => {
+			expect(isApprovedRead("true")).toBe("safe shell builtin: true");
+		});
+
+		it("should approve 'false'", () => {
+			expect(isApprovedRead("false")).toBe("safe shell builtin: false");
+		});
+	});
+
 	describe("when the command is unrecognised", () => {
 		it("should return undefined", () => {
 			const command = "rm -rf /";

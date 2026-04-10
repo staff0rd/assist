@@ -11,10 +11,14 @@ const READ_RE = /^Read\((.+)\)$/;
  * operation. Returns a human-readable reason string when approved, or
  * `undefined` when the command is not recognised.
  */
+const SAFE_BUILTINS = new Set(["true", "false"]);
+
 export function isApprovedRead(
 	command: string,
 	toolName = "Bash",
 ): string | undefined {
+	if (SAFE_BUILTINS.has(command)) return `safe shell builtin: ${command}`;
+
 	if (isCdToCwd(command)) return "cd to current directory";
 
 	const cdRead = isCdToReadAllowedDir(command);

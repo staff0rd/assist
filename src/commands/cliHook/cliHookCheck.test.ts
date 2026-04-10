@@ -66,6 +66,42 @@ describe("cliHookCheck deny", () => {
 	});
 });
 
+describe("cliHookCheck compound with shell builtins", () => {
+	it("approves 'some-cmd || true' when some-cmd is approved", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockIsApprovedRead.mockImplementation((cmd: string) => {
+			if (cmd === "git status") return "Read-only CLI command: git status";
+			if (cmd === "true") return "safe shell builtin: true";
+			return undefined;
+		});
+
+		cliHookCheck("git status || true");
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("approved"),
+		);
+		expect(process.exitCode).toBeUndefined();
+		consoleSpy.mockRestore();
+	});
+
+	it("approves 'some-cmd || false' when some-cmd is approved", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockIsApprovedRead.mockImplementation((cmd: string) => {
+			if (cmd === "git status") return "Read-only CLI command: git status";
+			if (cmd === "false") return "safe shell builtin: false";
+			return undefined;
+		});
+
+		cliHookCheck("git status || false");
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("approved"),
+		);
+		expect(process.exitCode).toBeUndefined();
+		consoleSpy.mockRestore();
+	});
+});
+
 describe("cliHookCheck --tool flag", () => {
 	it("defaults toolName to Bash", () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
