@@ -45,7 +45,7 @@ export function createHtmlHandler(getHtml: () => string): Handler {
 	};
 }
 
-function parseRoute(req: IncomingMessage, port: number) {
+export function parseRoute(req: IncomingMessage, port: number) {
 	const url = new URL(req.url ?? "/", `http://localhost:${port}`);
 	return { method: req.method ?? "GET", pathname: url.pathname };
 }
@@ -73,7 +73,7 @@ export function startWebServer(
 		res: ServerResponse,
 		port: number,
 	) => Promise<void>,
-): void {
+): ReturnType<typeof createServer> {
 	const url = `http://localhost:${port}`;
 	const server = createServer((req, res) => {
 		handler(req, res, port);
@@ -83,4 +83,5 @@ export function startWebServer(
 		console.log(chalk.dim("Press Ctrl+C to stop"));
 		exec(`open ${url}`);
 	});
+	return server;
 }

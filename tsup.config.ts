@@ -10,7 +10,7 @@ export default defineConfig({
 	clean: true,
 	shims: true,
 	silent: true,
-	external: ["typescript", "better-sqlite3"],
+	external: ["typescript", "better-sqlite3", "node-pty"],
 	onSuccess: async () => {
 		cpSync("allowed.cli-reads", "dist/allowed.cli-reads");
 		cpSync("allowed.cli-writes", "dist/allowed.cli-writes");
@@ -37,6 +37,17 @@ export default defineConfig({
 			format: "iife",
 			target: "es2020",
 			outfile: "dist/commands/backlog/web/bundle.js",
+			jsx: "automatic",
+			jsxImportSource: "react",
+			define: { "process.env.NODE_ENV": '"production"' },
+		});
+		await build({
+			entryPoints: ["src/commands/sessions/web/ui/App.tsx"],
+			bundle: true,
+			minify: true,
+			format: "iife",
+			target: "es2020",
+			outfile: "dist/commands/sessions/web/bundle.js",
 			jsx: "automatic",
 			jsxImportSource: "react",
 			define: { "process.env.NODE_ENV": '"production"' },

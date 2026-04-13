@@ -33,6 +33,7 @@ import { registerVoice } from "./commands/registerVoice";
 import { registerRoam } from "./commands/roam/registerRoam";
 import { registerRun } from "./commands/run/registerRun";
 import { screenshot } from "./commands/screenshot";
+import { registerSessions } from "./commands/sessions/registerSessions";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import { update } from "./commands/update";
@@ -134,6 +135,7 @@ registerSeq(program);
 registerTranscript(program);
 registerVoice(program);
 
+registerSessions(program);
 registerDeny(program);
 
 program

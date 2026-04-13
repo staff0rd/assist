@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { createFallbackHandler } from "../../../shared/createFallbackHandler";
 import {
 	createBundleHandler,
 	createHtmlHandler,
-	createRouteHandler,
 	type Handler,
 } from "../../../shared/web";
 import { getHtml } from "./getHtml";
@@ -21,8 +21,10 @@ type ItemHandler = (
 	id: number,
 ) => void | Promise<void>;
 
+const htmlHandler = createHtmlHandler(getHtml);
+
 const routes: Record<string, Handler> = {
-	"GET /": createHtmlHandler(getHtml),
+	"GET /": htmlHandler,
 	"GET /bundle.js": createBundleHandler(
 		import.meta.url,
 		"commands/backlog/web/bundle.js",
@@ -38,9 +40,6 @@ const itemRoutes: Record<string, ItemHandler> = {
 	DELETE: (_req, res, id) => deleteItem(res, id),
 };
 
-const serveHtml = createHtmlHandler(getHtml);
-const baseHandler = createRouteHandler(routes);
-
 async function handleItemRoute(
 	req: IncomingMessage,
 	res: ServerResponse,
@@ -54,27 +53,8 @@ async function handleItemRoute(
 	return true;
 }
 
-export async function handleRequest(
-	req: IncomingMessage,
-	res: ServerResponse,
-	port: number,
-): Promise<void> {
-	const url = new URL(req.url ?? "/", `http://localhost:${port}`);
-	const method = req.method ?? "GET";
-	const pathname = url.pathname;
-
-	if (await handleItemRoute(req, res, pathname)) return;
-
-	if (routes[`${method} ${pathname}`]) {
-		await baseHandler(req, res, port);
-		return;
-	}
-
-	// Client-side routing catch-all: serve HTML for non-API GET requests
-	if (method === "GET" && !pathname.startsWith("/api/")) {
-		await serveHtml(req, res);
-		return;
-	}
-
-	await baseHandler(req, res, port);
-}
+export const handleRequest = createFallbackHandler(
+	routes,
+	htmlHandler,
+	handleItemRoute,
+);
