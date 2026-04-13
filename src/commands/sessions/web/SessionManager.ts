@@ -1,5 +1,6 @@
 import type { WebSocket } from "ws";
-import { createSession, type Session } from "./createSession";
+import { createSession, resumeSession, type Session } from "./createSession";
+import { discoverSessions } from "./discoverSessions";
 import { clearIdle, scheduleIdle } from "./scheduleIdle";
 import { wirePtyEvents } from "./wirePtyEvents";
 import { wsBroadcast, wsSend } from "./wsBroadcast";
@@ -32,7 +33,19 @@ export class SessionManager {
 	spawn(prompt?: string): string {
 		const id = String(this.nextId++);
 		const session = createSession(id, prompt);
-		this.sessions.set(id, session);
+		this.wire(session);
+		return id;
+	}
+
+	resume(sessionId: string, cwd: string, name?: string): string {
+		const id = String(this.nextId++);
+		const session = resumeSession(id, sessionId, cwd, name);
+		this.wire(session);
+		return id;
+	}
+
+	private wire(session: Session): void {
+		this.sessions.set(session.id, session);
 		wirePtyEvents(session, this.clients, (s, status) => {
 			s.status = status;
 			this.notify();
@@ -42,7 +55,6 @@ export class SessionManager {
 			this.notify();
 		});
 		this.notify();
-		return id;
 	}
 
 	writeToSession(id: string, data: string): void {
@@ -76,6 +88,10 @@ export class SessionManager {
 				startedAt,
 			}),
 		);
+	}
+
+	async getHistory() {
+		return discoverSessions();
 	}
 
 	private notify(): void {

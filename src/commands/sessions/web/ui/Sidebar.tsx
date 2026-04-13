@@ -1,18 +1,28 @@
+import { HistoryList } from "./HistoryList";
 import { NewSessionForm } from "./NewSessionForm";
 import { SessionList } from "./SessionList";
-import type { SessionInfo } from "./useSessionSocket";
+import { SidebarTabs } from "./SidebarTabs";
+import type { HistoricalSession, SessionInfo, SidebarTab } from "./types";
 
 export function Sidebar({
 	sessions,
+	history,
 	activeId,
+	tab,
+	onTabChange,
 	onSelect,
 	onCreate,
+	onResume,
 	onDismiss,
 }: {
 	sessions: SessionInfo[];
+	history: HistoricalSession[];
 	activeId: string | null;
+	tab: SidebarTab;
+	onTabChange: (tab: SidebarTab) => void;
 	onSelect: (id: string) => void;
 	onCreate: (prompt: string) => void;
+	onResume: (session: HistoricalSession) => void;
 	onDismiss: (id: string) => void;
 }) {
 	return (
@@ -26,37 +36,26 @@ export function Sidebar({
 				background: "#252526",
 			}}
 		>
-			<div
-				style={{
-					padding: "12px 16px",
-					borderBottom: "1px solid #333",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-				}}
-			>
-				<span
-					style={{
-						fontSize: 13,
-						fontWeight: 600,
-						color: "#ccc",
-						letterSpacing: 0.5,
-						textTransform: "uppercase",
-					}}
-				>
-					Sessions
-				</span>
-				<span style={{ fontSize: 12, color: "#666" }}>{sessions.length}</span>
-			</div>
-
-			<SessionList
-				sessions={sessions}
-				activeId={activeId}
-				onSelect={onSelect}
-				onDismiss={onDismiss}
+			<SidebarTabs
+				tab={tab}
+				activeCount={sessions.length}
+				historyCount={history.length}
+				onChange={onTabChange}
 			/>
 
-			<NewSessionForm onCreate={onCreate} />
+			{tab === "active" ? (
+				<>
+					<SessionList
+						sessions={sessions}
+						activeId={activeId}
+						onSelect={onSelect}
+						onDismiss={onDismiss}
+					/>
+					<NewSessionForm onCreate={onCreate} />
+				</>
+			) : (
+				<HistoryList sessions={history} onResume={onResume} />
+			)}
 		</div>
 	);
 }

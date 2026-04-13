@@ -6,6 +6,11 @@ export function createSessionAction(send: SendFn) {
 		send({ type: "create", prompt: prompt || undefined });
 }
 
+export function resumeSessionAction(send: SendFn) {
+	return (sessionId: string, cwd: string, name?: string) =>
+		send({ type: "resume", sessionId, cwd, name });
+}
+
 export function dismissSessionAction(
 	send: SendFn,
 	buffers: Map<string, string>,

@@ -21,7 +21,25 @@ export function createSession(id: string, prompt?: string): Session {
 		name: prompt?.slice(0, 40) || `Session ${id}`,
 		status: "running",
 		startedAt: Date.now(),
-		pty: spawnClaude(prompt),
+		pty: spawnClaude({ prompt }),
+		scrollback: "",
+		idleTimer: null,
+		lastResizeAt: 0,
+	};
+}
+
+export function resumeSession(
+	id: string,
+	sessionId: string,
+	cwd: string,
+	name?: string,
+): Session {
+	return {
+		id,
+		name: name ? `${name.slice(0, 36)} (R)` : `Resume ${sessionId.slice(0, 8)}`,
+		status: "running",
+		startedAt: Date.now(),
+		pty: spawnClaude({ resumeSessionId: sessionId, cwd }),
 		scrollback: "",
 		idleTimer: null,
 		lastResizeAt: 0,

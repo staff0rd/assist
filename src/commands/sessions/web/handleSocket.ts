@@ -28,8 +28,22 @@ export function handleSocket(ws: WebSocket, manager: SessionManager): void {
 					data.rows as number,
 				);
 				break;
+			case "resume": {
+				const id = manager.resume(
+					data.sessionId as string,
+					data.cwd as string,
+					data.name as string | undefined,
+				);
+				ws.send(JSON.stringify({ type: "created", sessionId: id }));
+				break;
+			}
 			case "dismiss":
 				manager.dismissSession(data.sessionId as string);
+				break;
+			case "history":
+				manager.getHistory().then((history) => {
+					ws.send(JSON.stringify({ type: "history", sessions: history }));
+				});
 				break;
 		}
 	});
