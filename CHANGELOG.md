@@ -1,3 +1,10 @@
+# [0.192.0](https://github.com/staff0rd/assist/compare/v0.191.3...v0.192.0) (2026-04-13)
+
+
+### Features
+
+* add sessions web dashboard ([de166d6](https://github.com/staff0rd/assist/commit/de166d609de5a5dd34f58ade90718ed630b334fa))
+
 ## [0.191.3](https://github.com/staff0rd/assist/compare/v0.191.2...v0.191.3) (2026-04-13)
 
 
