@@ -1,3 +1,10 @@
+## [0.191.3](https://github.com/staff0rd/assist/compare/v0.191.2...v0.191.3) (2026-04-13)
+
+
+### Bug Fixes
+
+* use fully qualified caveman skill name ([c1893db](https://github.com/staff0rd/assist/commit/c1893dbd4953675bf8ab15d3724013d0d676825f))
+
 ## [0.191.2](https://github.com/staff0rd/assist/compare/v0.191.1...v0.191.2) (2026-04-10)
 
 
