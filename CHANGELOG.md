@@ -1,3 +1,10 @@
+# [0.193.0](https://github.com/staff0rd/assist/compare/v0.192.0...v0.193.0) (2026-04-13)
+
+
+### Features
+
+* add session history and resume ([0d5d8c4](https://github.com/staff0rd/assist/commit/0d5d8c482a71398aaa989fc285a6c632419d65cb))
+
 # [0.192.0](https://github.com/staff0rd/assist/compare/v0.191.3...v0.192.0) (2026-04-13)
 
 
