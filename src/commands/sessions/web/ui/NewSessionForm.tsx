@@ -1,25 +1,31 @@
 import { type FormEvent, useState } from "react";
-import {
-	buildPrompt,
-	MODES,
-	modeButtonStyle,
-	type SessionMode,
-} from "./buildPrompt";
-import { PromptInputRow } from "./PromptInputRow";
+import type { SessionMode } from "./buildPrompt";
+import { RepoPicker } from "./RepoPicker";
+import { SessionFormControls } from "./SessionFormControls";
+import { submitSession } from "./submitSession";
+import type { HistoricalSession } from "./types";
+import { useRepoSelection } from "./useRepoSelection";
 
 export function NewSessionForm({
+	currentCwd,
+	history,
 	onCreate,
 }: {
-	onCreate: (prompt: string) => void;
+	currentCwd: string;
+	history: HistoricalSession[];
+	onCreate: (prompt: string, cwd: string) => void;
 }) {
 	const [mode, setMode] = useState<SessionMode>("free");
 	const [prompt, setPrompt] = useState("");
+	const { repos, selectedCwd, setSelectedCwd } = useRepoSelection(
+		currentCwd,
+		history,
+	);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		const text = prompt.trim();
-		if (mode === "free" && !text) return;
-		onCreate(buildPrompt(mode, text));
+		if (!selectedCwd) return;
+		submitSession(mode, prompt, selectedCwd, onCreate);
 		setPrompt("");
 	};
 
@@ -34,19 +40,18 @@ export function NewSessionForm({
 				gap: 8,
 			}}
 		>
-			<div style={{ display: "flex", gap: 4 }}>
-				{MODES.map((m) => (
-					<button
-						key={m.value}
-						type="button"
-						onClick={() => setMode(m.value)}
-						style={modeButtonStyle(mode === m.value)}
-					>
-						{m.label}
-					</button>
-				))}
-			</div>
-			<PromptInputRow mode={mode} prompt={prompt} setPrompt={setPrompt} />
+			<RepoPicker
+				repos={repos}
+				selected={selectedCwd}
+				onSelect={setSelectedCwd}
+			/>
+			<SessionFormControls
+				hasRepo={selectedCwd !== ""}
+				mode={mode}
+				onSelectMode={setMode}
+				prompt={prompt}
+				setPrompt={setPrompt}
+			/>
 		</form>
 	);
 }

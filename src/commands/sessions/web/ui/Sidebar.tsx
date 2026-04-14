@@ -8,6 +8,7 @@ export function Sidebar({
 	sessions,
 	history,
 	activeId,
+	currentCwd,
 	tab,
 	onTabChange,
 	onSelect,
@@ -18,10 +19,11 @@ export function Sidebar({
 	sessions: SessionInfo[];
 	history: HistoricalSession[];
 	activeId: string | null;
+	currentCwd: string;
 	tab: SidebarTab;
 	onTabChange: (tab: SidebarTab) => void;
 	onSelect: (id: string) => void;
-	onCreate: (prompt: string) => void;
+	onCreate: (prompt: string, cwd: string) => void;
 	onResume: (session: HistoricalSession) => void;
 	onDismiss: (id: string) => void;
 }) {
@@ -51,7 +53,11 @@ export function Sidebar({
 						onSelect={onSelect}
 						onDismiss={onDismiss}
 					/>
-					<NewSessionForm onCreate={onCreate} />
+					<NewSessionForm
+						currentCwd={currentCwd}
+						history={history}
+						onCreate={onCreate}
+					/>
 				</>
 			) : (
 				<HistoryList sessions={history} onResume={onResume} />

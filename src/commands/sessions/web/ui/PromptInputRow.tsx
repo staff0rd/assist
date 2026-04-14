@@ -43,7 +43,7 @@ export function PromptInputRow({
 				type="submit"
 				style={{ ...submitStyle, flex: showInput ? undefined : 1 }}
 			>
-				+ New
+				Start
 			</button>
 		</div>
 	);

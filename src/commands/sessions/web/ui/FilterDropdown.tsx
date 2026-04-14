@@ -1,18 +1,5 @@
 import type { CSSProperties } from "react";
-
-const dropdownStyle: CSSProperties = {
-	position: "absolute",
-	top: "100%",
-	left: 0,
-	right: 0,
-	marginTop: 2,
-	background: "#2d2d2d",
-	border: "1px solid #444",
-	borderRadius: 4,
-	maxHeight: 200,
-	overflowY: "auto",
-	zIndex: 10,
-};
+import { dropdownStyle } from "./DropdownWrapper";
 
 const itemStyle = (checked: boolean): CSSProperties => ({
 	display: "flex",

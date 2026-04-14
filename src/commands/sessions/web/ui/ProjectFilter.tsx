@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { DropdownWrapper } from "./DropdownWrapper";
 import { FilterDropdown } from "./FilterDropdown";
-import { FilterTrigger } from "./FilterTrigger";
 
 function filterLabel(selected: Set<string>): string {
 	if (selected.size === 0) return "All projects";
@@ -17,9 +16,6 @@ export function ProjectFilter({
 	selected: Set<string>;
 	onChange: (next: Set<string>) => void;
 }) {
-	const [open, setOpen] = useState(false);
-	const wrapperRef = useRef<HTMLFieldSetElement>(null);
-
 	const toggle = (project: string) => {
 		const next = new Set(selected);
 		if (next.has(project)) next.delete(project);
@@ -28,26 +24,14 @@ export function ProjectFilter({
 	};
 
 	return (
-		<fieldset
-			ref={wrapperRef}
-			style={{ position: "relative", border: "none", margin: 0, padding: 0 }}
-			onBlur={(e) => {
-				if (!wrapperRef.current?.contains(e.relatedTarget as Node))
-					setOpen(false);
-			}}
-		>
-			<FilterTrigger
-				label={filterLabel(selected)}
-				open={open}
-				onClick={() => setOpen(!open)}
-			/>
-			{open && (
+		<DropdownWrapper label={filterLabel(selected)}>
+			{() => (
 				<FilterDropdown
 					items={projects}
 					selected={selected}
 					onToggle={toggle}
 				/>
 			)}
-		</fieldset>
+		</DropdownWrapper>
 	);
 }

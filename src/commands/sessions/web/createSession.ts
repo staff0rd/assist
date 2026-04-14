@@ -13,15 +13,26 @@ type Session = {
 	lastResizeAt: number;
 };
 
-export type { Session, SessionStatus };
+type SessionInfo = {
+	id: string;
+	name: string;
+	status: string;
+	startedAt: number;
+};
 
-export function createSession(id: string, prompt?: string): Session {
+export type { Session, SessionInfo, SessionStatus };
+
+export function createSession(
+	id: string,
+	prompt?: string,
+	cwd?: string,
+): Session {
 	return {
 		id,
 		name: prompt?.slice(0, 40) || `Session ${id}`,
 		status: "running",
 		startedAt: Date.now(),
-		pty: spawnClaude({ prompt }),
+		pty: spawnClaude({ prompt, cwd }),
 		scrollback: "",
 		idleTimer: null,
 		lastResizeAt: 0,

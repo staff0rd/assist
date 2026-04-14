@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { handleWsMessage, type WsDispatch } from "./handleWsMessage";
 import type { HistoricalSession, SessionInfo } from "./types";
 
 type OutputHandler = (data: string) => void;
@@ -7,6 +8,7 @@ export function useWsConnection() {
 	const [sessions, setSessions] = useState<SessionInfo[]>([]);
 	const [history, setHistory] = useState<HistoricalSession[]>([]);
 	const [activeId, setActiveId] = useState<string | null>(null);
+	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const wsRef = useRef<WebSocket | null>(null);
 	const buffers = useRef(new Map<string, string>());
 	const handlers = useRef(new Map<string, OutputHandler>());
@@ -15,21 +17,21 @@ export function useWsConnection() {
 		const protocol = location.protocol === "https:" ? "wss:" : "ws:";
 		const ws = new WebSocket(`${protocol}//${location.host}/ws`);
 		wsRef.current = ws;
+		const d: WsDispatch = {
+			setSessions,
+			setHistory,
+			setActiveId,
+			setCurrentCwd,
+			buffers,
+			handlers,
+		};
 
 		ws.onopen = () => {
 			ws.send(JSON.stringify({ type: "history" }));
 		};
 
 		ws.onmessage = (e) => {
-			const msg = JSON.parse(e.data);
-			if (msg.type === "sessions") setSessions(msg.sessions);
-			else if (msg.type === "created") setActiveId(msg.sessionId);
-			else if (msg.type === "history") setHistory(msg.sessions);
-			else if (msg.type === "output") {
-				const prev = buffers.current.get(msg.sessionId) ?? "";
-				buffers.current.set(msg.sessionId, prev + msg.data);
-				handlers.current.get(msg.sessionId)?.(msg.data);
-			}
+			handleWsMessage(JSON.parse(e.data), d);
 		};
 
 		return () => ws.close();
@@ -46,6 +48,7 @@ export function useWsConnection() {
 		history,
 		activeId,
 		setActiveId,
+		currentCwd,
 		wsRef,
 		buffers,
 		handlers,

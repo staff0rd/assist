@@ -23,6 +23,7 @@ export function App() {
 				sessions={socket.sessions}
 				history={socket.history}
 				activeId={socket.activeId}
+				currentCwd={socket.currentCwd}
 				tab={tab}
 				onTabChange={setTab}
 				onSelect={socket.setActiveId}

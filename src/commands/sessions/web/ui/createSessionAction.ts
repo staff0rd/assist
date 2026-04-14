@@ -2,8 +2,8 @@ type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;
 
 export function createSessionAction(send: SendFn) {
-	return (prompt: string) =>
-		send({ type: "create", prompt: prompt || undefined });
+	return (prompt: string, cwd?: string) =>
+		send({ type: "create", prompt: prompt || undefined, cwd });
 }
 
 export function resumeSessionAction(send: SendFn) {

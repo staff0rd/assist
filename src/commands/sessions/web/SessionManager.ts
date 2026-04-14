@@ -1,25 +1,43 @@
 import type { WebSocket } from "ws";
-import { createSession, resumeSession, type Session } from "./createSession";
+import { isGitRepo } from "../../../shared/getInstallDir";
+import {
+	createSession,
+	resumeSession,
+	type Session,
+	type SessionInfo,
+} from "./createSession";
 import { discoverSessions } from "./discoverSessions";
-import { clearIdle, scheduleIdle } from "./scheduleIdle";
+import { scheduleIdle } from "./scheduleIdle";
 import { wirePtyEvents } from "./wirePtyEvents";
+import {
+	dismissSession,
+	resizeSession,
+	writeToSession,
+} from "./writeToSession";
 import { wsBroadcast, wsSend } from "./wsBroadcast";
-
-type SessionInfo = {
-	id: string;
-	name: string;
-	status: string;
-	startedAt: number;
-};
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
 	private clients = new Set<WebSocket>();
 	private nextId = 1;
+	private readonly repoCwd: string | undefined;
+
+	constructor() {
+		const cwd = process.cwd();
+		this.repoCwd = isGitRepo(cwd) ? cwd : undefined;
+	}
 
 	addClient(ws: WebSocket): void {
 		this.clients.add(ws);
-		wsSend(ws, { type: "sessions", sessions: this.listSessions() });
+		wsSend(ws, {
+			type: "sessions",
+			cwd: this.repoCwd,
+			sessions: this.listSessions(),
+		});
+		this.replayScrollback(ws);
+	}
+
+	private replayScrollback(ws: WebSocket): void {
 		for (const s of this.sessions.values()) {
 			if (s.scrollback)
 				wsSend(ws, { type: "output", sessionId: s.id, data: s.scrollback });
@@ -30,9 +48,9 @@ export class SessionManager {
 		this.clients.delete(ws);
 	}
 
-	spawn(prompt?: string): string {
+	spawn(prompt?: string, cwd?: string): string {
 		const id = String(this.nextId++);
-		const session = createSession(id, prompt);
+		const session = createSession(id, prompt, cwd);
 		this.wire(session);
 		return id;
 	}
@@ -58,25 +76,15 @@ export class SessionManager {
 	}
 
 	writeToSession(id: string, data: string): void {
-		const s = this.sessions.get(id);
-		if (s && s.status !== "done") s.pty.write(data);
+		writeToSession(this.sessions, id, data);
 	}
 
 	resizeSession(id: string, cols: number, rows: number): void {
-		const s = this.sessions.get(id);
-		if (s && s.status !== "done") {
-			s.lastResizeAt = Date.now();
-			s.pty.resize(cols, rows);
-		}
+		resizeSession(this.sessions, id, cols, rows);
 	}
 
 	dismissSession(id: string): void {
-		const s = this.sessions.get(id);
-		if (!s) return;
-		if (s.status !== "done") s.pty.kill();
-		clearIdle(s);
-		this.sessions.delete(id);
-		this.notify();
+		if (dismissSession(this.sessions, id)) this.notify();
 	}
 
 	listSessions(): SessionInfo[] {
