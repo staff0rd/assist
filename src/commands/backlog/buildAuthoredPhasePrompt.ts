@@ -14,6 +14,7 @@ export function buildAuthoredPhasePrompt(
 		...buildContextLines(item, phaseNumber, phase),
 		"",
 		"Focus ONLY on this phase. Do not work on other phases.",
+		"If you need to modify backlog items, run `assist backlog --help` to discover available commands.",
 		"When you have completed all tasks for this phase, run /verify to check your work.",
 		...buildManualCheckLines(manualChecks),
 		"",
