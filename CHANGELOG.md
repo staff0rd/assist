@@ -1,3 +1,10 @@
+## [0.193.1](https://github.com/staff0rd/assist/compare/v0.193.0...v0.193.1) (2026-04-14)
+
+
+### Bug Fixes
+
+* soften backlog help discovery hint ([6dcfc2e](https://github.com/staff0rd/assist/commit/6dcfc2eba88387dfce24125a1d1cdc7404f593d9))
+
 # [0.193.0](https://github.com/staff0rd/assist/compare/v0.192.0...v0.193.0) (2026-04-13)
 
 
