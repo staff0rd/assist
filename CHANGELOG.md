@@ -1,3 +1,10 @@
+# [0.196.0](https://github.com/staff0rd/assist/compare/v0.195.3...v0.196.0) (2026-04-15)
+
+
+### Features
+
+* prompt frequency analyzer ([809cf99](https://github.com/staff0rd/assist/commit/809cf99b20c45f4075d8e033cb06529791b63f79))
+
 ## [0.195.3](https://github.com/staff0rd/assist/compare/v0.195.2...v0.195.3) (2026-04-15)
 
 
