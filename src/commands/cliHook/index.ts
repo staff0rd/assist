@@ -1,5 +1,7 @@
+import { basename } from "node:path";
 import { readStdin } from "../../lib/readStdin";
 import { splitCompound } from "../../shared/splitCompound";
+import { logDeniedToolCall } from "./logDeniedToolCall";
 import { findDeny, resolvePermission } from "./resolvePermission";
 
 type HookInput = {
@@ -47,4 +49,18 @@ export async function cliHook(): Promise<void> {
 			hookSpecificOutput: { hookEventName: "PreToolUse", ...decision },
 		}),
 	);
+
+	if (decision.permissionDecision === "deny") {
+		try {
+			logDeniedToolCall({
+				tool: input.toolName,
+				command: input.command,
+				repo: basename(process.cwd()),
+				sessionId: process.env.CLAUDE_SESSION_ID,
+				denyReason: decision.permissionDecisionReason,
+			});
+		} catch {
+			// DB write failure must not affect hook output
+		}
+	}
 }

@@ -57,6 +57,8 @@
 			"SlashCommand(/seq)",
 			"Skill(inspect)",
 			"SlashCommand(/inspect)",
+			"Skill(prompts)",
+			"SlashCommand(/prompts)",
 			"Skill(screenshot)",
 			"SlashCommand(/screenshot)",
 			"Skill(draft)",

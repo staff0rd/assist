@@ -4,6 +4,7 @@ const mockReadStdin = vi.fn<() => Promise<string>>();
 const mockMatchesConfigDeny = vi.fn();
 const mockMatchesDeny = vi.fn();
 const mockIsApprovedRead = vi.fn();
+const mockLogDeniedToolCall = vi.fn();
 
 vi.mock("../../lib/readStdin", () => ({
 	readStdin: () => mockReadStdin(),
@@ -19,6 +20,10 @@ vi.mock("../../shared/matchesAllow", () => ({
 
 vi.mock("../../shared/isApprovedRead", () => ({
 	isApprovedRead: (cmd: string, tool: string) => mockIsApprovedRead(cmd, tool),
+}));
+
+vi.mock("./logDeniedToolCall", () => ({
+	logDeniedToolCall: (...args: unknown[]) => mockLogDeniedToolCall(...args),
 }));
 
 import { cliHook } from ".";
@@ -173,6 +178,81 @@ describe("cliHook config deny", () => {
 					permissionDecision: "deny",
 					permissionDecisionReason: "Denied by settings: git commit",
 				},
+			}),
+		);
+		consoleSpy.mockRestore();
+	});
+});
+
+describe("cliHook deny logging", () => {
+	it("logs denied tool calls to the prompts DB", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeInput("rm -rf /"));
+		mockMatchesConfigDeny.mockReturnValue({
+			pattern: "rm -rf",
+			message: "Do not use rm -rf",
+		});
+
+		await cliHook();
+
+		expect(mockLogDeniedToolCall).toHaveBeenCalledWith(
+			expect.objectContaining({
+				tool: "Bash",
+				command: "rm -rf /",
+				denyReason: "Do not use rm -rf",
+			}),
+		);
+		consoleSpy.mockRestore();
+	});
+
+	it("does not log when command is allowed", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeInput("git status"));
+		mockIsApprovedRead.mockReturnValue("Allowed by settings");
+
+		await cliHook();
+
+		expect(mockLogDeniedToolCall).not.toHaveBeenCalled();
+		consoleSpy.mockRestore();
+	});
+
+	it("does not log when input is not parseable", async () => {
+		mockReadStdin.mockResolvedValue("not json");
+
+		await cliHook();
+
+		expect(mockLogDeniedToolCall).not.toHaveBeenCalled();
+	});
+
+	it("does not throw when logging fails", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeInput("rm -rf /"));
+		mockMatchesConfigDeny.mockReturnValue({
+			pattern: "rm -rf",
+			message: "Do not use rm -rf",
+		});
+		mockLogDeniedToolCall.mockImplementation(() => {
+			throw new Error("DB write failed");
+		});
+
+		await expect(cliHook()).resolves.toBeUndefined();
+		consoleSpy.mockRestore();
+	});
+
+	it("logs settings deny with correct reason", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeInput("git commit --amend", "PowerShell"),
+		);
+		mockMatchesDeny.mockReturnValue("git commit");
+
+		await cliHook();
+
+		expect(mockLogDeniedToolCall).toHaveBeenCalledWith(
+			expect.objectContaining({
+				tool: "PowerShell",
+				command: "git commit --amend",
+				denyReason: "Denied by settings: git commit",
 			}),
 		);
 		consoleSpy.mockRestore();

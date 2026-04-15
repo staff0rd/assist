@@ -23,6 +23,7 @@ import { registerDevlog } from "./commands/registerDevlog";
 import { registerDotnet } from "./commands/registerDotnet";
 import { registerJira } from "./commands/registerJira";
 import { registerNews } from "./commands/registerNews";
+import { registerPrompts } from "./commands/registerPrompts";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRavendb } from "./commands/registerRavendb";
 import { registerRefactor } from "./commands/registerRefactor";
@@ -136,6 +137,7 @@ registerTranscript(program);
 registerVoice(program);
 
 registerSessions(program);
+registerPrompts(program);
 registerDeny(program);
 
 program

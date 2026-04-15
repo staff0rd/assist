@@ -41,6 +41,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
 - `/pr` - Raise a PR with a concise description
 - `/refactor` - Run refactoring checks for code quality
+- `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
 - `/refine` - Refine an existing backlog item through conversation
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
@@ -175,6 +176,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist seq query <filter> --from <date>` - Start of query window (UTC date or relative e.g. 5m, 1h, 2d)
 - `assist seq query <filter> --to <date>` - End of query window (UTC date or relative e.g. 5m, 1h, 2d)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
+- `assist prompts` - Show top 10 denied tool calls by frequency with count and repo breakdown
 - `assist coverage` - Print global statement coverage percentage
 - `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)
 - `assist complexity cyclomatic [pattern]` - Calculate cyclomatic complexity per function
