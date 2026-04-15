@@ -156,6 +156,16 @@ run:
       - --extensions
       - ts,tsx
       - src/
+  - name: test:timestamp
+    command: bash
+    args:
+      - -c
+      - echo $(date --iso-8601=seconds) >> assist-test.txt
+  - name: test:tail
+    command: bash
+    args:
+      - -c
+      - tail -f assist-test.txt
 deny:
   - pattern: assist build
     message: it's /verify, use the skill, don't try to build separately

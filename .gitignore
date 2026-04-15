@@ -5,3 +5,4 @@ books
 .assist/*.db*
 screenshots
 .claude/settings.local.json
+assist-test.txt
