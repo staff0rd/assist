@@ -30,6 +30,12 @@ export function handleWsMessage(
 		case "run-configs":
 			d.setRunConfigs(msg.configs as RunConfigInfo[]);
 			break;
+		case "clear": {
+			const clearId = msg.sessionId as string;
+			d.buffers.current?.delete(clearId);
+			d.handlers.current?.get(clearId)?.("\x1bc");
+			break;
+		}
 		case "output": {
 			const id = msg.sessionId as string;
 			const prev = d.buffers.current?.get(id) ?? "";

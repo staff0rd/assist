@@ -16,7 +16,7 @@ type SidebarProps = {
 	onSelect: (id: string) => void;
 	onCreate: (prompt: string, cwd: string) => void;
 	onResume: (session: HistoricalSession) => void;
-	onRetry: (session: SessionInfo) => void;
+	onRetry: (id: string) => void;
 	onDismiss: (id: string) => void;
 };
 

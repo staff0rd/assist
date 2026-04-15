@@ -1,31 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 export type { SessionInfo } from "./types";
 
-import {
-	createRunSessionAction,
-	createSessionAction,
-	dismissSessionAction,
-	inputAction,
-	outputAction,
-	requestRunConfigsAction,
-	resizeAction,
-	resumeSessionAction,
-} from "./createSessionAction";
+import { useSessionActions } from "./useSessionActions";
 import { useWsConnection } from "./useWsConnection";
-
-type SendFn = (msg: object) => void;
-
-function useActions(send: SendFn) {
-	return {
-		createSession: useMemo(() => createSessionAction(send), [send]),
-		createRunSession: useMemo(() => createRunSessionAction(send), [send]),
-		requestRunConfigs: useMemo(() => requestRunConfigsAction(send), [send]),
-		resumeSession: useMemo(() => resumeSessionAction(send), [send]),
-		sendInput: useMemo(() => inputAction(send), [send]),
-		sendResize: useMemo(() => resizeAction(send), [send]),
-	};
-}
 
 export function useSessionSocket() {
 	const {
@@ -49,19 +27,7 @@ export function useSessionSocket() {
 		[wsRef],
 	);
 
-	const actions = useActions(send);
-	const onOutput = useMemo(
-		() => outputAction(buffers.current, handlers.current),
-		[buffers, handlers],
-	);
-
-	const dismissSession = useCallback(
-		(id: string) => {
-			dismissSessionAction(send, buffers.current, handlers.current)(id);
-			setActiveId(null);
-		},
-		[send, buffers, handlers, setActiveId],
-	);
+	const actions = useSessionActions(send, buffers, handlers, setActiveId);
 
 	return {
 		sessions,
@@ -71,8 +37,6 @@ export function useSessionSocket() {
 		setActiveId,
 		currentCwd,
 		...actions,
-		dismissSession,
-		onOutput,
 		requestHistory,
 	};
 }

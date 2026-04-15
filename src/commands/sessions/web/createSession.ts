@@ -1,11 +1,6 @@
-import * as path from "node:path";
+import { repoPrefix } from "./repoPrefix";
 import { spawnClaude } from "./spawnClaude";
 import { spawnRun } from "./spawnRun";
-
-function repoPrefix(cwd?: string): string {
-	if (!cwd) return "";
-	return `${path.basename(cwd)}/`;
-}
 
 type SessionStatus = "running" | "waiting" | "done";
 type CommandType = "claude" | "run";

@@ -26,7 +26,7 @@ export function ActiveTab({
 	run: RunProps;
 	onSelect: (id: string) => void;
 	onCreate: (prompt: string, cwd: string) => void;
-	onRetry: (session: SessionInfo) => void;
+	onRetry: (id: string) => void;
 	onDismiss: (id: string) => void;
 }) {
 	return (

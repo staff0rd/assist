@@ -20,6 +20,18 @@ export function resumeSessionAction(send: SendFn) {
 		send({ type: "resume", sessionId, cwd, name });
 }
 
+export function retrySessionAction(
+	send: SendFn,
+	buffers: Map<string, string>,
+	handlers: Map<string, OutputHandler>,
+) {
+	return (id: string) => {
+		buffers.delete(id);
+		handlers.delete(id);
+		send({ type: "retry", sessionId: id });
+	};
+}
+
 export function dismissSessionAction(
 	send: SendFn,
 	buffers: Map<string, string>,

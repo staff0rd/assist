@@ -1,6 +1,5 @@
 import type { WebSocket } from "ws";
-import { loadConfigFrom } from "../../../shared/loadConfig";
-import { resolveRunConfigs } from "../../../shared/resolveRunConfigs";
+import { handleRunConfigs } from "./handleRunConfigs";
 import type { SessionManager } from "./SessionManager";
 
 type Msg = Record<string, unknown>;
@@ -46,23 +45,8 @@ function handleResume(ws: WebSocket, manager: SessionManager, data: Msg): void {
 	);
 }
 
-function handleRunConfigs(
-	ws: WebSocket,
-	_manager: SessionManager,
-	data: Msg,
-): void {
-	try {
-		const { config, configDir } = loadConfigFrom(data.cwd as string);
-		const configs = resolveRunConfigs(config.run, configDir);
-		ws.send(
-			JSON.stringify({
-				type: "run-configs",
-				configs: configs.map(({ name, params }) => ({ name, params })),
-			}),
-		);
-	} catch {
-		ws.send(JSON.stringify({ type: "run-configs", configs: [] }));
-	}
+function runConfigs(ws: WebSocket, _manager: SessionManager, data: Msg): void {
+	handleRunConfigs(ws, data.cwd as string);
 }
 
 function handleHistory(ws: WebSocket, manager: SessionManager): void {
@@ -75,12 +59,13 @@ const handlers: Record<string, Handler> = {
 	create: handleCreate,
 	"create-run": handleCreateRun,
 	resume: handleResume,
-	"run-configs": handleRunConfigs,
+	"run-configs": runConfigs,
 	history: handleHistory,
 	input: (_ws, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),
 	resize: (_ws, m, d) =>
 		m.resizeSession(d.sessionId as string, d.cols as number, d.rows as number),
+	retry: (_ws, m, d) => m.retrySession(d.sessionId as string),
 	dismiss: (_ws, m, d) => m.dismissSession(d.sessionId as string),
 };
 

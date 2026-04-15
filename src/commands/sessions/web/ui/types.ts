@@ -8,9 +8,6 @@ export type SessionInfo = {
 	commandType: CommandType;
 	status: SessionStatus;
 	startedAt: number;
-	runName?: string;
-	runArgs?: string[];
-	cwd?: string;
 };
 
 export type HistoricalSession = {

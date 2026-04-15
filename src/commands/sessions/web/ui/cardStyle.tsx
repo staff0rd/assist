@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
-import type { SessionStatus } from "./types";
-import { RetryButton } from "./RetryButton";
 import { DismissButton } from "./DismissButton";
+import { RetryButton } from "./RetryButton";
+import type { SessionStatus } from "./types";
 
 const STATUS_COLORS: Record<SessionStatus, string> = {
 	running: "#4ec9b0",

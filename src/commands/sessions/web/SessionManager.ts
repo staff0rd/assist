@@ -8,7 +8,10 @@ import {
 	type SessionInfo,
 } from "./createSession";
 import { discoverSessions } from "./discoverSessions";
+import { replayScrollback } from "./replayScrollback";
+import { retrySession } from "./retrySession";
 import { scheduleIdle } from "./scheduleIdle";
+import { toSessionInfo } from "./toSessionInfo";
 import { wirePtyEvents } from "./wirePtyEvents";
 import {
 	dismissSession,
@@ -35,14 +38,7 @@ export class SessionManager {
 			cwd: this.repoCwd,
 			sessions: this.listSessions(),
 		});
-		this.replayScrollback(ws);
-	}
-
-	private replayScrollback(ws: WebSocket): void {
-		for (const s of this.sessions.values()) {
-			if (s.scrollback)
-				wsSend(ws, { type: "output", sessionId: s.id, data: s.scrollback });
-		}
+		replayScrollback(this.sessions, ws);
 	}
 
 	removeClient(ws: WebSocket): void {
@@ -88,32 +84,17 @@ export class SessionManager {
 		resizeSession(this.sessions, id, cols, rows);
 	}
 
+	retrySession(id: string): void {
+		const s = this.sessions.get(id);
+		if (s && retrySession(s, this.clients, this.onStatusChange)) this.notify();
+	}
+
 	dismissSession(id: string): void {
 		if (dismissSession(this.sessions, id)) this.notify();
 	}
 
 	listSessions(): SessionInfo[] {
-		return [...this.sessions.values()].map(
-			({
-				id,
-				name,
-				commandType,
-				status,
-				startedAt,
-				runName,
-				runArgs,
-				cwd,
-			}) => ({
-				id,
-				name,
-				commandType,
-				status,
-				startedAt,
-				runName,
-				runArgs,
-				cwd,
-			}),
-		);
+		return [...this.sessions.values()].map(toSessionInfo);
 	}
 
 	async getHistory() {
