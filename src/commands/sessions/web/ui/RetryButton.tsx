@@ -1,3 +1,8 @@
+import {
+	cardActionButtonStyle,
+	cardActionHover,
+} from "./cardActionButtonStyle";
+
 export function RetryButton({ onRetry }: { onRetry: () => void }) {
 	return (
 		<button
@@ -6,15 +11,9 @@ export function RetryButton({ onRetry }: { onRetry: () => void }) {
 				e.stopPropagation();
 				onRetry();
 			}}
-			style={{
-				background: "none",
-				border: "none",
-				color: "#888",
-				cursor: "pointer",
-				fontSize: 14,
-				lineHeight: 1,
-				padding: "0 2px",
-			}}
+			onMouseEnter={(e) => cardActionHover(e, true)}
+			onMouseLeave={(e) => cardActionHover(e, false)}
+			style={{ ...cardActionButtonStyle, fontSize: 14 }}
 			title="Retry"
 		>
 			↻
