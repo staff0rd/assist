@@ -1,3 +1,10 @@
+# [0.197.0](https://github.com/staff0rd/assist/compare/v0.196.1...v0.197.0) (2026-04-15)
+
+
+### Features
+
+* session summarise command ([f81f3c9](https://github.com/staff0rd/assist/commit/f81f3c95d304389832ab356a5f5c95eb17fbe646))
+
 ## [0.196.1](https://github.com/staff0rd/assist/compare/v0.196.0...v0.196.1) (2026-04-15)
 
 
