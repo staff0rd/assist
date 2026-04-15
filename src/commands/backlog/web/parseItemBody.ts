@@ -31,3 +31,14 @@ export async function parseStatusBody(
 ): Promise<StatusBody> {
 	return JSON.parse(await readBody(req)) as StatusBody;
 }
+
+type RewindBody = {
+	phase: number;
+	reason: string;
+};
+
+export async function parseRewindBody(
+	req: IncomingMessage,
+): Promise<RewindBody> {
+	return JSON.parse(await readBody(req)) as RewindBody;
+}

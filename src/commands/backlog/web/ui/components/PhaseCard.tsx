@@ -1,5 +1,6 @@
 import type { PlanPhase } from "../types";
 import { ManualChecks } from "./ManualChecks";
+import { RewindAction } from "./RewindAction";
 import { TaskList } from "./TaskList";
 
 export type PhaseStatus = "done" | "current" | "upcoming";
@@ -20,12 +21,21 @@ type PhaseCardProps = {
 	phase: PlanPhase;
 	index: number;
 	status: PhaseStatus;
+	itemId?: number;
+	onRewind?: () => Promise<void>;
 };
 
-export function PhaseCard({ phase, index, status }: PhaseCardProps) {
+export function PhaseCard({
+	phase,
+	index,
+	status,
+	itemId,
+	onRewind,
+}: PhaseCardProps) {
 	const badge = statusBadge[status];
 	const marker = status === "done" ? "\u2713" : "\u2022";
 	const checks = phase.manualChecks ?? [];
+	const canRewind = status === "done" && itemId !== undefined && onRewind;
 	return (
 		<div className={`rounded-lg border p-4 ${statusStyles[status]}`}>
 			<div className="flex items-center gap-2 mb-2">
@@ -37,6 +47,14 @@ export function PhaseCard({ phase, index, status }: PhaseCardProps) {
 				>
 					{badge.label}
 				</span>
+				{canRewind && (
+					<RewindAction
+						itemId={itemId}
+						phaseNumber={index + 1}
+						phaseName={phase.name}
+						onRewound={onRewind}
+					/>
+				)}
 			</div>
 			<TaskList tasks={phase.tasks} marker={marker} />
 			{checks.length > 0 && <ManualChecks checks={checks} />}

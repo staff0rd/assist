@@ -54,3 +54,16 @@ export async function updateItemStatus(
 	});
 	return res.json();
 }
+
+export async function rewindPhase(
+	id: number,
+	phase: number,
+	reason: string,
+): Promise<BacklogItem> {
+	const res = await fetch(`/api/items/${id}/rewind`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ phase, reason }),
+	});
+	return res.json();
+}

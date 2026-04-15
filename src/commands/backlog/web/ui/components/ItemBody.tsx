@@ -23,9 +23,11 @@ function MarkdownBlock({ content }: { content: string }) {
 export function ItemBody({
 	item,
 	onStatusChange,
+	onRewind,
 }: {
 	item: BacklogItem;
 	onStatusChange?: (status: BacklogItem["status"]) => void;
+	onRewind?: () => Promise<void>;
 }) {
 	return (
 		<div className="bg-white rounded-lg p-6 border border-gray-200">
@@ -49,7 +51,12 @@ export function ItemBody({
 			)}
 			<AcceptanceCriteriaList criteria={item.acceptanceCriteria} />
 			{item.plan && (
-				<PlanSection phases={item.plan} currentPhase={item.currentPhase} />
+				<PlanSection
+					phases={item.plan}
+					currentPhase={item.currentPhase}
+					itemId={item.id}
+					onRewind={onRewind}
+				/>
 			)}
 			{item.comments && <CommentsSection comments={item.comments} />}
 		</div>

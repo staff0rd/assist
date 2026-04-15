@@ -83,6 +83,7 @@ export function ItemDetail({ item, onReload }: ItemDetailProps) {
 					await updateItemStatus(item.id, status);
 					await onReload();
 				}}
+				onRewind={onReload}
 			/>
 		</>
 	);

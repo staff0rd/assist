@@ -6,6 +6,7 @@ import {
 	type Handler,
 } from "../../../shared/web";
 import { getHtml } from "./getHtml";
+import { rewindItemPhase } from "./rewindItemPhase";
 import {
 	createItem,
 	deleteItem,
@@ -45,6 +46,12 @@ async function handleItemRoute(
 	res: ServerResponse,
 	pathname: string,
 ): Promise<boolean> {
+	const rewindMatch = pathname.match(/^\/api\/items\/(\d+)\/rewind$/);
+	if (rewindMatch && req.method === "POST") {
+		await rewindItemPhase(req, res, Number.parseInt(rewindMatch[1], 10));
+		return true;
+	}
+
 	const match = pathname.match(/^\/api\/items\/(\d+)$/);
 	if (!match) return false;
 	const handler = itemRoutes[req.method ?? "GET"];

@@ -4,6 +4,8 @@ import { PhaseCard, type PhaseStatus } from "./PhaseCard";
 type PlanSectionProps = {
 	phases: PlanPhase[];
 	currentPhase?: number;
+	itemId?: number;
+	onRewind?: () => Promise<void>;
 };
 
 function phaseStatus(
@@ -17,7 +19,12 @@ function phaseStatus(
 	return "upcoming";
 }
 
-export function PlanSection({ phases, currentPhase }: PlanSectionProps) {
+export function PlanSection({
+	phases,
+	currentPhase,
+	itemId,
+	onRewind,
+}: PlanSectionProps) {
 	if (phases.length === 0) return null;
 	return (
 		<div className="mb-4">
@@ -31,6 +38,8 @@ export function PlanSection({ phases, currentPhase }: PlanSectionProps) {
 						phase={phase}
 						index={i}
 						status={phaseStatus(i, currentPhase)}
+						itemId={itemId}
+						onRewind={onRewind}
 					/>
 				))}
 			</div>
