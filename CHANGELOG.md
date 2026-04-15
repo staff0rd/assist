@@ -1,3 +1,10 @@
+## [0.196.1](https://github.com/staff0rd/assist/compare/v0.196.0...v0.196.1) (2026-04-15)
+
+
+### Bug Fixes
+
+* suffix matching for assist run ([23d3159](https://github.com/staff0rd/assist/commit/23d31599cb5b4e5b3cb0815582cba3777e66c0b6))
+
 # [0.196.0](https://github.com/staff0rd/assist/compare/v0.195.3...v0.196.0) (2026-04-15)
 
 
