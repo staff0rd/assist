@@ -1,4 +1,3 @@
-import { exec } from "node:child_process";
 import { readFileSync } from "node:fs";
 import {
 	createServer,
@@ -8,6 +7,7 @@ import {
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
+import { openBrowser } from "./openBrowser";
 
 export type Handler = (
 	req: IncomingMessage,
@@ -81,7 +81,7 @@ export function startWebServer(
 	server.listen(port, () => {
 		console.log(chalk.green(`${label}: ${url}`));
 		console.log(chalk.dim("Press Ctrl+C to stop"));
-		exec(`open ${url}`);
+		openBrowser(url);
 	});
 	return server;
 }
