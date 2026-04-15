@@ -1,3 +1,10 @@
+# [0.194.0](https://github.com/staff0rd/assist/compare/v0.193.1...v0.194.0) (2026-04-14)
+
+
+### Features
+
+* repo selector on new session form ([c5f3ef7](https://github.com/staff0rd/assist/commit/c5f3ef7dc5c136a1c48e03bb8ceb8d60b05c9c8f))
+
 ## [0.193.1](https://github.com/staff0rd/assist/compare/v0.193.0...v0.193.1) (2026-04-14)
 
 
