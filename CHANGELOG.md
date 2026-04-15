@@ -1,3 +1,10 @@
+## [0.195.1](https://github.com/staff0rd/assist/compare/v0.195.0...v0.195.1) (2026-04-15)
+
+
+### Bug Fixes
+
+* seq timestamp filter guard + relative time ([5bbbc39](https://github.com/staff0rd/assist/commit/5bbbc39b925167e7653552fd8a171a59d8eb489e))
+
 # [0.195.0](https://github.com/staff0rd/assist/compare/v0.194.0...v0.195.0) (2026-04-15)
 
 
