@@ -1,3 +1,10 @@
+# [0.199.0](https://github.com/staff0rd/assist/compare/v0.198.0...v0.199.0) (2026-04-15)
+
+
+### Features
+
+* default to sessions when no command ([1165939](https://github.com/staff0rd/assist/commit/1165939930c3da10c22666df920002c54a76386a))
+
 # [0.198.0](https://github.com/staff0rd/assist/compare/v0.197.0...v0.198.0) (2026-04-15)
 
 
