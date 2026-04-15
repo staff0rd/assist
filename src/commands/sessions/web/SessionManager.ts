@@ -1,6 +1,7 @@
 import type { WebSocket } from "ws";
 import { isGitRepo } from "../../../shared/getInstallDir";
 import {
+	createRunSession,
 	createSession,
 	resumeSession,
 	type Session,
@@ -48,30 +49,34 @@ export class SessionManager {
 		this.clients.delete(ws);
 	}
 
-	spawn(prompt?: string, cwd?: string): string {
-		const id = String(this.nextId++);
-		const session = createSession(id, prompt, cwd);
+	private add(session: Session): string {
 		this.wire(session);
-		return id;
+		return session.id;
+	}
+
+	spawn(prompt?: string, cwd?: string): string {
+		return this.add(createSession(String(this.nextId++), prompt, cwd));
+	}
+
+	spawnRun(runName: string, runArgs: string[], cwd?: string): string {
+		return this.add(
+			createRunSession(String(this.nextId++), runName, runArgs, cwd),
+		);
 	}
 
 	resume(sessionId: string, cwd: string, name?: string): string {
-		const id = String(this.nextId++);
-		const session = resumeSession(id, sessionId, cwd, name);
-		this.wire(session);
-		return id;
+		return this.add(resumeSession(String(this.nextId++), sessionId, cwd, name));
 	}
+
+	private readonly onStatusChange = (s: Session, status: Session["status"]) => {
+		s.status = status;
+		this.notify();
+	};
 
 	private wire(session: Session): void {
 		this.sessions.set(session.id, session);
-		wirePtyEvents(session, this.clients, (s, status) => {
-			s.status = status;
-			this.notify();
-		});
-		scheduleIdle(session, () => {
-			session.status = "waiting";
-			this.notify();
-		});
+		wirePtyEvents(session, this.clients, this.onStatusChange);
+		scheduleIdle(session, () => this.onStatusChange(session, "waiting"));
 		this.notify();
 	}
 
@@ -89,11 +94,24 @@ export class SessionManager {
 
 	listSessions(): SessionInfo[] {
 		return [...this.sessions.values()].map(
-			({ id, name, status, startedAt }) => ({
+			({
 				id,
 				name,
+				commandType,
 				status,
 				startedAt,
+				runName,
+				runArgs,
+				cwd,
+			}) => ({
+				id,
+				name,
+				commandType,
+				status,
+				startedAt,
+				runName,
+				runArgs,
+				cwd,
 			}),
 		);
 	}

@@ -24,13 +24,13 @@ export function buildPrompt(mode: SessionMode, text: string): string {
 
 export function modeButtonStyle(active: boolean): CSSProperties {
 	return {
-		padding: "4px 8px",
-		fontSize: 11,
+		padding: "5px 10px",
+		fontSize: 13,
 		border: "1px solid",
 		borderColor: active ? "#007acc" : "#555",
 		borderRadius: 3,
 		background: active ? "#007acc" : "transparent",
-		color: active ? "#fff" : "#999",
+		color: active ? "#fff" : "#ccc",
 		cursor: "pointer",
 		transition: "all 0.15s",
 	};
@@ -46,3 +46,10 @@ export const inputStyle: CSSProperties = {
 	fontSize: 13,
 	outline: "none",
 };
+
+export function setFocusBorder(
+	e: React.FocusEvent<HTMLInputElement>,
+	color: string,
+) {
+	e.currentTarget.style.borderColor = color;
+}

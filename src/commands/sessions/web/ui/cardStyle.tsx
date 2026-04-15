@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
 import type { SessionStatus } from "./types";
+import { RetryButton } from "./RetryButton";
+import { DismissButton } from "./DismissButton";
 
 const STATUS_COLORS: Record<SessionStatus, string> = {
 	running: "#4ec9b0",
@@ -33,30 +35,6 @@ export function cardStyle(active: boolean): CSSProperties {
 	};
 }
 
-function DismissButton({ onDismiss }: { onDismiss: () => void }) {
-	return (
-		<button
-			type="button"
-			onClick={(e) => {
-				e.stopPropagation();
-				onDismiss();
-			}}
-			style={{
-				background: "none",
-				border: "none",
-				color: "#888",
-				cursor: "pointer",
-				fontSize: 16,
-				lineHeight: 1,
-				padding: "0 2px",
-			}}
-			title="Dismiss"
-		>
-			×
-		</button>
-	);
-}
-
 export function StatusRow({
 	status,
 	elapsed,
@@ -79,15 +57,18 @@ export function StatusRow({
 export function CardHeader({
 	name,
 	isDone,
+	onRetry,
 	onDismiss,
 }: {
 	name: string;
 	isDone: boolean;
+	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
 	return (
 		<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
 			<span style={nameStyle}>{name}</span>
+			{isDone && onRetry && <RetryButton onRetry={onRetry} />}
 			{isDone && <DismissButton onDismiss={onDismiss} />}
 		</div>
 	);

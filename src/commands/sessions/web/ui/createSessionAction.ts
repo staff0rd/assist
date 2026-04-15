@@ -6,6 +6,15 @@ export function createSessionAction(send: SendFn) {
 		send({ type: "create", prompt: prompt || undefined, cwd });
 }
 
+export function createRunSessionAction(send: SendFn) {
+	return (runName: string, runArgs: string[], cwd?: string) =>
+		send({ type: "create-run", runName, runArgs, cwd });
+}
+
+export function requestRunConfigsAction(send: SendFn) {
+	return (cwd: string) => send({ type: "run-configs", cwd });
+}
+
 export function resumeSessionAction(send: SendFn) {
 	return (sessionId: string, cwd: string, name?: string) =>
 		send({ type: "resume", sessionId, cwd, name });

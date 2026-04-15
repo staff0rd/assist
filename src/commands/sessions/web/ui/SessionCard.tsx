@@ -7,11 +7,13 @@ export function SessionCard({
 	session,
 	active,
 	onClick,
+	onRetry,
 	onDismiss,
 }: {
 	session: SessionInfo;
 	active: boolean;
 	onClick: () => void;
+	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
 	const elapsed = useElapsed(session.startedAt);
@@ -30,6 +32,7 @@ export function SessionCard({
 			<CardHeader
 				name={session.name}
 				isDone={session.status === "done"}
+				onRetry={onRetry}
 				onDismiss={onDismiss}
 			/>
 			<StatusRow status={session.status} elapsed={elapsed} />

@@ -1,5 +1,10 @@
 import type { CSSProperties } from "react";
-import { inputStyle, PLACEHOLDERS, type SessionMode } from "./buildPrompt";
+import {
+	inputStyle,
+	PLACEHOLDERS,
+	type SessionMode,
+	setFocusBorder,
+} from "./buildPrompt";
 
 const submitStyle: CSSProperties = {
 	padding: "6px 12px",
@@ -11,10 +16,6 @@ const submitStyle: CSSProperties = {
 	cursor: "pointer",
 	whiteSpace: "nowrap",
 };
-
-function setFocusBorder(e: React.FocusEvent<HTMLInputElement>, color: string) {
-	e.currentTarget.style.borderColor = color;
-}
 
 export function PromptInputRow({
 	mode,

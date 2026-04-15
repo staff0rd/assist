@@ -5,11 +5,13 @@ export function SessionList({
 	sessions,
 	activeId,
 	onSelect,
+	onRetry,
 	onDismiss,
 }: {
 	sessions: SessionInfo[];
 	activeId: string | null;
 	onSelect: (id: string) => void;
+	onRetry: (session: SessionInfo) => void;
 	onDismiss: (id: string) => void;
 }) {
 	return (
@@ -20,6 +22,11 @@ export function SessionList({
 					session={s}
 					active={s.id === activeId}
 					onClick={() => onSelect(s.id)}
+					onRetry={
+						s.commandType === "run" && s.status === "done"
+							? () => onRetry(s)
+							: undefined
+					}
 					onDismiss={() => onDismiss(s.id)}
 				/>
 			))}

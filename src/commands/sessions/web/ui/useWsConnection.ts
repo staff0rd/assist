@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { handleWsMessage, type WsDispatch } from "./handleWsMessage";
-import type { HistoricalSession, SessionInfo } from "./types";
+import type { HistoricalSession, RunConfigInfo, SessionInfo } from "./types";
 
 type OutputHandler = (data: string) => void;
 
 export function useWsConnection() {
 	const [sessions, setSessions] = useState<SessionInfo[]>([]);
 	const [history, setHistory] = useState<HistoricalSession[]>([]);
+	const [runConfigs, setRunConfigs] = useState<RunConfigInfo[]>([]);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const wsRef = useRef<WebSocket | null>(null);
@@ -20,6 +21,7 @@ export function useWsConnection() {
 		const d: WsDispatch = {
 			setSessions,
 			setHistory,
+			setRunConfigs,
 			setActiveId,
 			setCurrentCwd,
 			buffers,
@@ -46,6 +48,7 @@ export function useWsConnection() {
 	return {
 		sessions,
 		history,
+		runConfigs,
 		activeId,
 		setActiveId,
 		currentCwd,

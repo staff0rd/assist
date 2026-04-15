@@ -1,32 +1,42 @@
-import type { SessionMode } from "./buildPrompt";
 import { ModeSelector } from "./ModeSelector";
 import { PromptInputRow } from "./PromptInputRow";
+import { RunParamInputs } from "./RunParamInputs";
+import type { SessionFormState } from "./useNewSessionForm";
 
 export function SessionFormControls({
-	hasRepo,
-	mode,
-	onSelectMode,
-	prompt,
-	setPrompt,
+	form,
+	totalRunCount,
 }: {
-	hasRepo: boolean;
-	mode: SessionMode;
-	onSelectMode: (mode: SessionMode) => void;
-	prompt: string;
-	setPrompt: (v: string) => void;
+	form: SessionFormState;
+	totalRunCount: number;
 }) {
-	if (!hasRepo) {
-		return (
-			<div style={{ color: "#888", fontSize: 12, padding: "6px 0" }}>
-				Select a repo above to create a session
-			</div>
-		);
-	}
+	const activeConfig = form.selectedRun
+		? form.filteredRunConfigs.find((c) => c.name === form.selectedRun)
+		: null;
 
 	return (
 		<>
-			<ModeSelector mode={mode} onSelect={onSelectMode} />
-			<PromptInputRow mode={mode} prompt={prompt} setPrompt={setPrompt} />
+			<ModeSelector
+				mode={form.mode}
+				onSelectMode={form.handleSelectMode}
+				runConfigs={form.filteredRunConfigs}
+				totalRunCount={totalRunCount}
+				selectedRun={form.selectedRun}
+				onSelectRun={form.handleSelectRun}
+			/>
+			{form.selectedRun && activeConfig ? (
+				<RunParamInputs
+					config={activeConfig}
+					values={form.runParams}
+					onChange={form.setRunParams}
+				/>
+			) : (
+				<PromptInputRow
+					mode={form.mode}
+					prompt={form.prompt}
+					setPrompt={form.setPrompt}
+				/>
+			)}
 		</>
 	);
 }

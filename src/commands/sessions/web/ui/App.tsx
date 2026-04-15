@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { SessionArea } from "./SessionArea";
-import { Sidebar } from "./Sidebar";
-import type { HistoricalSession, SidebarTab } from "./types";
+import { type RunProps, Sidebar } from "./Sidebar";
+import type { HistoricalSession, SessionInfo, SidebarTab } from "./types";
 import { useSessionSocket } from "./useSessionSocket";
 
 export function App() {
@@ -17,11 +17,34 @@ export function App() {
 		[socket.resumeSession],
 	);
 
+	const handleRetry = useCallback(
+		(session: SessionInfo) => {
+			if (session.runName) {
+				socket.createRunSession(
+					session.runName,
+					session.runArgs ?? [],
+					session.cwd,
+				);
+			}
+		},
+		[socket.createRunSession],
+	);
+
+	const run: RunProps = useMemo(
+		() => ({
+			configs: socket.runConfigs,
+			create: socket.createRunSession,
+			requestConfigs: socket.requestRunConfigs,
+		}),
+		[socket.runConfigs, socket.createRunSession, socket.requestRunConfigs],
+	);
+
 	return (
 		<div style={{ display: "flex", width: "100%", height: "100%" }}>
 			<Sidebar
 				sessions={socket.sessions}
 				history={socket.history}
+				run={run}
 				activeId={socket.activeId}
 				currentCwd={socket.currentCwd}
 				tab={tab}
@@ -29,6 +52,7 @@ export function App() {
 				onSelect={socket.setActiveId}
 				onCreate={socket.createSession}
 				onResume={handleResume}
+				onRetry={handleRetry}
 				onDismiss={socket.dismissSession}
 			/>
 			<SessionArea

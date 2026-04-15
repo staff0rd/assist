@@ -1,10 +1,11 @@
-import type { HistoricalSession, SessionInfo } from "./types";
+import type { HistoricalSession, RunConfigInfo, SessionInfo } from "./types";
 
 type OutputHandler = (data: string) => void;
 
 export type WsDispatch = {
 	setSessions: (s: SessionInfo[]) => void;
 	setHistory: (h: HistoricalSession[]) => void;
+	setRunConfigs: (c: RunConfigInfo[]) => void;
 	setActiveId: (id: string) => void;
 	setCurrentCwd: (cwd: string) => void;
 	buffers: React.RefObject<Map<string, string>>;
@@ -25,6 +26,9 @@ export function handleWsMessage(
 			break;
 		case "history":
 			d.setHistory(msg.sessions as HistoricalSession[]);
+			break;
+		case "run-configs":
+			d.setRunConfigs(msg.configs as RunConfigInfo[]);
 			break;
 		case "output": {
 			const id = msg.sessionId as string;

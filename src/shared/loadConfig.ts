@@ -44,6 +44,25 @@ export function loadConfig(): AssistConfig {
 	return assistConfigSchema.parse(merged);
 }
 
+/**
+ * Load config starting the search from a given directory instead of process.cwd().
+ * Returns the parsed config and the directory containing the config file.
+ */
+export function loadConfigFrom(startDir: string): {
+	config: AssistConfig;
+	configDir: string;
+} {
+	const found = findConfigUp(startDir);
+	const configPath = found ?? join(startDir, "assist.yml");
+	const globalRaw = loadRawYaml(getGlobalConfigPath());
+	const projectRaw = loadRawYaml(configPath);
+	const merged = { ...globalRaw, ...projectRaw };
+	return {
+		config: assistConfigSchema.parse(merged),
+		configDir: dirname(configPath),
+	};
+}
+
 export function loadProjectConfig(): Record<string, unknown> {
 	return loadRawYaml(getConfigPath());
 }

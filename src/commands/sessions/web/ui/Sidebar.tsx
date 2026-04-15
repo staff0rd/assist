@@ -1,23 +1,14 @@
+import { ActiveTab, type RunProps } from "./ActiveTab";
 import { HistoryList } from "./HistoryList";
-import { NewSessionForm } from "./NewSessionForm";
-import { SessionList } from "./SessionList";
 import { SidebarTabs } from "./SidebarTabs";
 import type { HistoricalSession, SessionInfo, SidebarTab } from "./types";
 
-export function Sidebar({
-	sessions,
-	history,
-	activeId,
-	currentCwd,
-	tab,
-	onTabChange,
-	onSelect,
-	onCreate,
-	onResume,
-	onDismiss,
-}: {
+export type { RunProps } from "./ActiveTab";
+
+type SidebarProps = {
 	sessions: SessionInfo[];
 	history: HistoricalSession[];
+	run: RunProps;
 	activeId: string | null;
 	currentCwd: string;
 	tab: SidebarTab;
@@ -25,8 +16,11 @@ export function Sidebar({
 	onSelect: (id: string) => void;
 	onCreate: (prompt: string, cwd: string) => void;
 	onResume: (session: HistoricalSession) => void;
+	onRetry: (session: SessionInfo) => void;
 	onDismiss: (id: string) => void;
-}) {
+};
+
+export function Sidebar(props: SidebarProps) {
 	return (
 		<div
 			style={{
@@ -39,28 +33,26 @@ export function Sidebar({
 			}}
 		>
 			<SidebarTabs
-				tab={tab}
-				activeCount={sessions.length}
-				historyCount={history.length}
-				onChange={onTabChange}
+				tab={props.tab}
+				activeCount={props.sessions.length}
+				historyCount={props.history.length}
+				onChange={props.onTabChange}
 			/>
 
-			{tab === "active" ? (
-				<>
-					<SessionList
-						sessions={sessions}
-						activeId={activeId}
-						onSelect={onSelect}
-						onDismiss={onDismiss}
-					/>
-					<NewSessionForm
-						currentCwd={currentCwd}
-						history={history}
-						onCreate={onCreate}
-					/>
-				</>
+			{props.tab === "active" ? (
+				<ActiveTab
+					sessions={props.sessions}
+					activeId={props.activeId}
+					currentCwd={props.currentCwd}
+					history={props.history}
+					run={props.run}
+					onSelect={props.onSelect}
+					onCreate={props.onCreate}
+					onRetry={props.onRetry}
+					onDismiss={props.onDismiss}
+				/>
 			) : (
-				<HistoryList sessions={history} onResume={onResume} />
+				<HistoryList sessions={props.history} onResume={props.onResume} />
 			)}
 		</div>
 	);

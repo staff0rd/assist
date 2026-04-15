@@ -1,37 +1,40 @@
-import { type FormEvent, useState } from "react";
-import type { SessionMode } from "./buildPrompt";
-import { RepoPicker } from "./RepoPicker";
+import { RepoFilterRow } from "./RepoFilterRow";
 import { SessionFormControls } from "./SessionFormControls";
-import { submitSession } from "./submitSession";
-import type { HistoricalSession } from "./types";
+import type { HistoricalSession, RunConfigInfo } from "./types";
+import { useNewSessionForm } from "./useNewSessionForm";
 import { useRepoSelection } from "./useRepoSelection";
 
 export function NewSessionForm({
 	currentCwd,
 	history,
+	runConfigs,
 	onCreate,
+	onCreateRun,
+	onRequestRunConfigs,
 }: {
 	currentCwd: string;
 	history: HistoricalSession[];
+	runConfigs: RunConfigInfo[];
 	onCreate: (prompt: string, cwd: string) => void;
+	onCreateRun: (runName: string, runArgs: string[], cwd?: string) => void;
+	onRequestRunConfigs: (cwd: string) => void;
 }) {
-	const [mode, setMode] = useState<SessionMode>("free");
-	const [prompt, setPrompt] = useState("");
 	const { repos, selectedCwd, setSelectedCwd } = useRepoSelection(
 		currentCwd,
 		history,
 	);
-
-	const handleSubmit = (e: FormEvent) => {
-		e.preventDefault();
-		if (!selectedCwd) return;
-		submitSession(mode, prompt, selectedCwd, onCreate);
-		setPrompt("");
-	};
+	const form = useNewSessionForm({
+		runConfigs,
+		selectedCwd,
+		onCreate,
+		onCreateRun,
+		onRequestRunConfigs,
+	});
+	const hasRepo = selectedCwd !== "";
 
 	return (
 		<form
-			onSubmit={handleSubmit}
+			onSubmit={form.handleSubmit}
 			style={{
 				padding: 12,
 				borderTop: "1px solid #333",
@@ -40,18 +43,21 @@ export function NewSessionForm({
 				gap: 8,
 			}}
 		>
-			<RepoPicker
+			<RepoFilterRow
 				repos={repos}
-				selected={selectedCwd}
-				onSelect={setSelectedCwd}
+				selectedCwd={selectedCwd}
+				onSelectCwd={setSelectedCwd}
+				runFilter={form.runFilter}
+				onFilterChange={form.setRunFilter}
+				showFilter={runConfigs.length > 0}
 			/>
-			<SessionFormControls
-				hasRepo={selectedCwd !== ""}
-				mode={mode}
-				onSelectMode={setMode}
-				prompt={prompt}
-				setPrompt={setPrompt}
-			/>
+			{hasRepo ? (
+				<SessionFormControls form={form} totalRunCount={runConfigs.length} />
+			) : (
+				<div style={{ color: "#888", fontSize: 12, padding: "6px 0" }}>
+					Select a repo above to create a session
+				</div>
+			)}
 		</form>
 	);
 }
