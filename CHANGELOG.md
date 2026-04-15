@@ -1,3 +1,10 @@
+## [0.195.2](https://github.com/staff0rd/assist/compare/v0.195.1...v0.195.2) (2026-04-15)
+
+
+### Bug Fixes
+
+* remove caveman skill prefix ([a5b2d91](https://github.com/staff0rd/assist/commit/a5b2d910ba54a6f0f9037fb7c6064a7f0703722a))
+
 ## [0.195.1](https://github.com/staff0rd/assist/compare/v0.195.0...v0.195.1) (2026-04-15)
 
 
