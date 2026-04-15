@@ -35,6 +35,7 @@ import { registerRoam } from "./commands/roam/registerRoam";
 import { registerRun } from "./commands/run/registerRun";
 import { screenshot } from "./commands/screenshot";
 import { registerSessions } from "./commands/sessions/registerSessions";
+import { web as sessionsWeb } from "./commands/sessions/web";
 import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import { update } from "./commands/update";
@@ -45,7 +46,8 @@ const program = new Command();
 program
 	.name("assist")
 	.description("CLI application")
-	.version(packageJson.version);
+	.version(packageJson.version)
+	.action(() => sessionsWeb({ port: "3100" }));
 
 program
 	.command("sync")
