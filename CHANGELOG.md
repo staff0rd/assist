@@ -1,3 +1,10 @@
+## [0.199.1](https://github.com/staff0rd/assist/compare/v0.199.0...v0.199.1) (2026-04-15)
+
+
+### Bug Fixes
+
+* cross-platform browser open ([bf2d693](https://github.com/staff0rd/assist/commit/bf2d6933f11577b5c0afd9ef5ed0b454416d0b16))
+
 # [0.199.0](https://github.com/staff0rd/assist/compare/v0.198.0...v0.199.0) (2026-04-15)
 
 
