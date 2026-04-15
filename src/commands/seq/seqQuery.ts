@@ -2,6 +2,8 @@ import chalk from "chalk";
 import { fetchSeqData } from "./fetchSeqData";
 import { fetchSeqEvents } from "./fetchSeqEvents";
 import { formatEvent } from "./formatEvent";
+import { parseRelativeTime } from "./parseRelativeTime";
+import { rejectTimestampFilter } from "./rejectTimestampFilter";
 import { resolveConnection } from "./resolveConnection";
 
 export async function seqQuery(
@@ -10,18 +12,24 @@ export async function seqQuery(
 		connection?: string;
 		count?: string;
 		from?: string;
+		to?: string;
 		json?: boolean;
 	},
 ): Promise<void> {
+	rejectTimestampFilter(filter);
+
 	const conn = resolveConnection(options.connection);
 	const count = Number.parseInt(options.count ?? "1000", 10);
+	const from = options.from ? parseRelativeTime(options.from) : undefined;
+	const to = options.to ? parseRelativeTime(options.to) : undefined;
 
-	const events = options.from
-		? await fetchSeqData(conn, filter, count, options.from)
-		: await fetchSeqEvents(
-				conn,
-				new URLSearchParams({ filter, count: String(count) }),
-			);
+	const events =
+		from || to
+			? await fetchSeqData(conn, filter, count, from, to)
+			: await fetchSeqEvents(
+					conn,
+					new URLSearchParams({ filter, count: String(count) }),
+				);
 
 	if (events.length === 0) {
 		console.log(chalk.yellow("No events found."));

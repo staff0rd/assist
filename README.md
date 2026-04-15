@@ -172,6 +172,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist seq query <filter> -c <connection>` - Query using a specific connection
 - `assist seq query <filter> --json` - Output raw JSON
 - `assist seq query <filter> -n <count>` - Fetch a specific number of events (default 50)
+- `assist seq query <filter> --from <date>` - Start of query window (UTC date or relative e.g. 5m, 1h, 2d)
+- `assist seq query <filter> --to <date>` - End of query window (UTC date or relative e.g. 5m, 1h, 2d)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
 - `assist coverage` - Print global statement coverage percentage
 - `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)

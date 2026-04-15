@@ -11,12 +11,15 @@ export async function fetchSeqData(
 	conn: SeqConnection,
 	filter: string,
 	count: number,
-	from: string,
+	from?: string,
+	to?: string,
 ): Promise<SeqEvent[]> {
 	const sqlFilter = filterToSql(filter);
 	const sql = `select @Timestamp, @Level, @Exception, @Message from stream where ${sqlFilter} order by @Timestamp desc limit ${count}`;
 
-	const params = new URLSearchParams({ q: sql, fromDateUtc: from });
+	const params = new URLSearchParams({ q: sql });
+	if (from) params.set("fromDateUtc", from);
+	if (to) params.set("toDateUtc", to);
 	const response = await fetchSeq(conn, "/api/data", params);
 
 	const data: SeqDataResponse = await response.json();
