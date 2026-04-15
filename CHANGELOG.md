@@ -1,3 +1,10 @@
+# [0.200.0](https://github.com/staff0rd/assist/compare/v0.199.1...v0.200.0) (2026-04-15)
+
+
+### Features
+
+* card button hover states ([dade055](https://github.com/staff0rd/assist/commit/dade05578db932e9c40e8ac73589eb8d2f0a8244))
+
 ## [0.199.1](https://github.com/staff0rd/assist/compare/v0.199.0...v0.199.1) (2026-04-15)
 
 
