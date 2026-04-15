@@ -1,3 +1,10 @@
+## [0.195.3](https://github.com/staff0rd/assist/compare/v0.195.2...v0.195.3) (2026-04-15)
+
+
+### Bug Fixes
+
+* parse PowerShell $null redirects ([6d033ee](https://github.com/staff0rd/assist/commit/6d033eedd7ec089242f30c6e2b5829461417a729))
+
 ## [0.195.2](https://github.com/staff0rd/assist/compare/v0.195.1...v0.195.2) (2026-04-15)
 
 
