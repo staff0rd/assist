@@ -195,6 +195,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 - `assist sessions` - Start the sessions web dashboard (same as `sessions web`)
 - `assist sessions web [-p, --port <number>]` - Start a web dashboard for Claude Code sessions with xterm.js terminals (default port 3100)
+- `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
 - `assist next` - Alias for `backlog next -w`
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
