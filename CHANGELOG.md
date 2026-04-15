@@ -1,3 +1,11 @@
+# [0.198.0](https://github.com/staff0rd/assist/compare/v0.197.0...v0.198.0) (2026-04-15)
+
+
+### Features
+
+* run session retry button ([e1350e9](https://github.com/staff0rd/assist/commit/e1350e9a84f42b9a2e41241e9578d79f7b4f55b0))
+* web UI run command execution ([f1b7ea9](https://github.com/staff0rd/assist/commit/f1b7ea92424a763265ae6ebbfc7680114a9351b9))
+
 # [0.197.0](https://github.com/staff0rd/assist/compare/v0.196.1...v0.197.0) (2026-04-15)
 
 
