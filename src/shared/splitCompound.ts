@@ -13,8 +13,8 @@ const UNSAFE_OPS = new Set(["(", ")", ">", ">>", "<", "<&", "|&", ">&"]);
 /** Numeric fd-to-fd redirects like 2>&1 — safe plumbing. */
 const FD_REDIRECT_RE = /\d+>&\d+/g;
 
-/** Fd-to-/dev/null redirects like 2>/dev/null — safe plumbing (just discards output). */
-const FD_DEVNULL_RE = /\d*>\/dev\/null/g;
+/** Fd-to-/dev/null or PowerShell $null redirects like 2>/dev/null, 2>$null. */
+const FD_DEVNULL_RE = /\d*>(?:\/dev\/null|\$null)/g;
 
 /**
  * Split a compound Bash command into its constituent simple commands.

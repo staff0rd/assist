@@ -178,6 +178,39 @@ describe("splitCompound", () => {
 				expect(result).toEqual(["echo hello"]);
 			});
 		});
+
+		describe("when using 2>$null (PowerShell)", () => {
+			it("should strip the redirect", () => {
+				const command = "assist run foo 2>$null";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["assist run foo"]);
+			});
+
+			it("should strip the redirect in a compound command", () => {
+				const command =
+					"assist run foo 2>$null; assist run bar && assist run baz";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual([
+					"assist run foo",
+					"assist run bar",
+					"assist run baz",
+				]);
+			});
+		});
+
+		describe("when using >$null (PowerShell)", () => {
+			it("should strip the redirect", () => {
+				const command = "echo hello >$null";
+
+				const result = splitCompound(command);
+
+				expect(result).toEqual(["echo hello"]);
+			});
+		});
 	});
 
 	describe("when the command contains unsafe constructs", () => {

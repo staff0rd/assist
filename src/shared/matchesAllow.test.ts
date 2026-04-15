@@ -93,6 +93,16 @@ describe("matchesAllow", () => {
 		setup(["Bash(./build.sh 2>/dev/null)"]);
 		expect(matchesAllow("Bash", "build.sh")).toBe("build.sh");
 	});
+
+	it("should match command against entry with 2>$null suffix", () => {
+		setup(["Bash(./build.sh 2>$null)"]);
+		expect(matchesAllow("Bash", "build.sh")).toBe("build.sh");
+	});
+
+	it("should match when command uses 2>$null but entry does not", () => {
+		setup(["Bash(build.sh:*)"]);
+		expect(matchesAllow("Bash", "build.sh 2>$null")).toBe("build.sh");
+	});
 });
 
 describe("matchesDeny", () => {
