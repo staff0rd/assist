@@ -149,7 +149,6 @@ export const assistConfigSchema = z.strictObject({
 			autoConfirm: z.boolean().default(false),
 		})
 		.default({ autoConfirm: false }),
-	caveman: z.boolean().default(true),
 	voice: z
 		.strictObject({
 			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),

@@ -1,5 +1,4 @@
 import { type ChildProcess, spawn } from "node:child_process";
-import { loadConfig } from "../../shared/loadConfig";
 
 export type SpawnClaudeOptions = {
 	allowEdits?: boolean;
@@ -12,9 +11,7 @@ export function spawnClaude(
 	child: ChildProcess;
 	done: Promise<number>;
 } {
-	const config = loadConfig();
-	const finalPrompt = config.caveman ? `/caveman:caveman\n\n${prompt}` : prompt;
-	const args = [finalPrompt];
+	const args = [prompt];
 	if (options.allowEdits) {
 		args.push("--permission-mode", "acceptEdits");
 	}
