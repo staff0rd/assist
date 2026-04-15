@@ -1,3 +1,10 @@
+# [0.195.0](https://github.com/staff0rd/assist/compare/v0.194.0...v0.195.0) (2026-04-15)
+
+
+### Features
+
+* backlog web view phase rewind ([b7f7927](https://github.com/staff0rd/assist/commit/b7f7927aa4ec7d4ea13f75f26530e8b2b079631d))
+
 # [0.194.0](https://github.com/staff0rd/assist/compare/v0.193.1...v0.194.0) (2026-04-14)
 
 
