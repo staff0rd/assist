@@ -1,16 +1,39 @@
 import chalk from "chalk";
-import { loadConfig } from "../../shared/loadConfig";
+import {
+	loadGlobalConfigRaw,
+	loadProjectConfig,
+} from "../../shared/loadConfig";
+import { mergeDenyRules } from "../../shared/mergeDenyRules";
+
+type DenyRule = { pattern: string; message: string };
 
 export function denyList(): void {
-	const config = loadConfig();
-	const deny = config.deny;
+	const globalRaw = loadGlobalConfigRaw();
+	const projectRaw = loadProjectConfig();
+	const globalDeny = (globalRaw.deny as DenyRule[] | undefined) ?? [];
+	const projectDeny = (projectRaw.deny as DenyRule[] | undefined) ?? [];
+	const merged = mergeDenyRules(
+		globalDeny.length > 0 ? globalDeny : undefined,
+		projectDeny.length > 0 ? projectDeny : undefined,
+	);
 
-	if (!deny || deny.length === 0) {
+	if (!merged || merged.length === 0) {
 		console.log(chalk.dim("No deny rules configured."));
 		return;
 	}
 
-	for (const rule of deny) {
-		console.log(`${chalk.red(rule.pattern)} → ${rule.message}`);
+	const projectPatterns = new Set(projectDeny.map((r) => r.pattern));
+	const globalPatterns = new Set(globalDeny.map((r) => r.pattern));
+
+	for (const rule of merged) {
+		const inProject = projectPatterns.has(rule.pattern);
+		const inGlobal = globalPatterns.has(rule.pattern);
+		const label =
+			inProject && inGlobal
+				? chalk.dim(" (project, overrides global)")
+				: inGlobal
+					? chalk.dim(" (global)")
+					: "";
+		console.log(`${chalk.red(rule.pattern)} → ${rule.message}${label}`);
 	}
 }

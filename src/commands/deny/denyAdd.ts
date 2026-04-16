@@ -1,11 +1,12 @@
 import chalk from "chalk";
-import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import { loadDenyConfig } from "./loadDenyConfig";
 
-type DenyRule = { pattern: string; message: string };
-
-export function denyAdd(pattern: string, message: string): void {
-	const config = loadProjectConfig();
-	const deny: DenyRule[] = (config.deny as DenyRule[]) ?? [];
+export function denyAdd(
+	pattern: string,
+	message: string,
+	options: { global?: boolean },
+): void {
+	const { deny, saveDeny } = loadDenyConfig(options.global);
 
 	if (deny.some((r) => r.pattern === pattern)) {
 		console.log(chalk.yellow(`Deny rule already exists for: ${pattern}`));
@@ -13,7 +14,6 @@ export function denyAdd(pattern: string, message: string): void {
 	}
 
 	deny.push({ pattern, message });
-	config.deny = deny;
-	saveConfig(config);
+	saveDeny(deny);
 	console.log(chalk.green(`Added deny rule: ${pattern} → ${message}`));
 }

@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
 import { loadRawYaml } from "./loadRawYaml";
+import { mergeRawConfigs } from "./mergeDenyRules";
 import {
 	type AssistConfig,
 	assistConfigSchema,
@@ -40,7 +41,7 @@ export function getConfigDir(): string {
 export function loadConfig(): AssistConfig {
 	const globalRaw = loadRawYaml(getGlobalConfigPath());
 	const projectRaw = loadRawYaml(getConfigPath());
-	const merged = { ...globalRaw, ...projectRaw };
+	const merged = mergeRawConfigs(globalRaw, projectRaw);
 	return assistConfigSchema.parse(merged);
 }
 
@@ -56,7 +57,7 @@ export function loadConfigFrom(startDir: string): {
 	const configPath = found ?? join(startDir, "assist.yml");
 	const globalRaw = loadRawYaml(getGlobalConfigPath());
 	const projectRaw = loadRawYaml(configPath);
-	const merged = { ...globalRaw, ...projectRaw };
+	const merged = mergeRawConfigs(globalRaw, projectRaw);
 	return {
 		config: assistConfigSchema.parse(merged),
 		configDir: dirname(configPath),

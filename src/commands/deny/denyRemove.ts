@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import { loadDenyConfig } from "./loadDenyConfig";
 
-type DenyRule = { pattern: string; message: string };
-
-export function denyRemove(pattern: string): void {
-	const config = loadProjectConfig();
-	const deny: DenyRule[] = (config.deny as DenyRule[]) ?? [];
+export function denyRemove(
+	pattern: string,
+	options: { global?: boolean },
+): void {
+	const { deny, saveDeny } = loadDenyConfig(options.global);
 
 	const index = deny.findIndex((r) => r.pattern === pattern);
 	if (index === -1) {
@@ -14,7 +14,6 @@ export function denyRemove(pattern: string): void {
 	}
 
 	deny.splice(index, 1);
-	config.deny = deny.length > 0 ? deny : undefined;
-	saveConfig(config);
+	saveDeny(deny.length > 0 ? deny : undefined);
 	console.log(chalk.green(`Removed deny rule: ${pattern}`));
 }

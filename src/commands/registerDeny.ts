@@ -14,12 +14,14 @@ export function registerDeny(parent: Command): void {
 		.description("Add a deny rule for a command pattern")
 		.argument("<pattern>", "Command prefix to deny")
 		.argument("<message>", "Correction message shown to the agent")
+		.option("-g, --global", "Write to global ~/.assist.yml")
 		.action(denyAdd);
 
 	denyCommand
 		.command("remove")
 		.description("Remove a deny rule by pattern")
 		.argument("<pattern>", "Command prefix to remove")
+		.option("-g, --global", "Remove from global ~/.assist.yml")
 		.action(denyRemove);
 
 	denyCommand
