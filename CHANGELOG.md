@@ -1,3 +1,10 @@
+# [0.203.0](https://github.com/staff0rd/assist/compare/v0.202.0...v0.203.0) (2026-04-16)
+
+
+### Features
+
+* global deny config support ([ac282e5](https://github.com/staff0rd/assist/commit/ac282e5b63959fe4bda388a757a65d9346cd0a3b))
+
 # [0.202.0](https://github.com/staff0rd/assist/compare/v0.201.0...v0.202.0) (2026-04-16)
 
 
