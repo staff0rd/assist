@@ -1,28 +1,13 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { readStdin } from "../../lib/readStdin";
+import { postRoamActivity } from "./postRoamActivity";
 
-export async function showClaudeCodeIcon(): Promise<void> {
-	const appData = process.env.APPDATA;
-	if (!appData) return;
+// Equivalent hook for ~/.claude/settings.json (PostToolUse):
+//
+// {
+//   "type": "command",
+//   "command": "cat >/dev/null; curl -sf --max-time 0.2 -X POST \"http://127.0.0.1:$(cat 'C:\\Users\\staff_dlpf6ow\\AppData\\Roaming\\Roam\\roam-local-api.port')/api/v1/activity/claude-code/post-tool-use?pid=$PPID\" >/dev/null 2>&1 || true",
+//   "timeout": 3
+// }
 
-	const portFile = join(appData, "Roam", "roam-local-api.port");
-	let port: string;
-	try {
-		port = readFileSync(portFile, "utf-8").trim();
-	} catch {
-		return;
-	}
-
-	const body = process.stdin.isTTY ? "{}" : await readStdin();
-
-	try {
-		await fetch(`http://localhost:${port}/api/v1/activity`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body,
-		});
-	} catch {
-		// Silently fail — Roam may not be running
-	}
+export function showClaudeCodeIcon(): void {
+	postRoamActivity("claude-code", "post-tool-use");
 }
