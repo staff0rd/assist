@@ -1,3 +1,10 @@
+# [0.201.0](https://github.com/staff0rd/assist/compare/v0.200.0...v0.201.0) (2026-04-16)
+
+
+### Features
+
+* roam activity commands for codex ([765ffc5](https://github.com/staff0rd/assist/commit/765ffc5cb698c93f02a14a8c88cf330c2a400eab))
+
 # [0.200.0](https://github.com/staff0rd/assist/compare/v0.199.1...v0.200.0) (2026-04-15)
 
 
