@@ -1,3 +1,10 @@
+# [0.205.0](https://github.com/staff0rd/assist/compare/v0.204.0...v0.205.0) (2026-04-16)
+
+
+### Features
+
+* always show prompt input in sessions ([8bab208](https://github.com/staff0rd/assist/commit/8bab208bb08803714748d13fa0882bdffc13ff0f))
+
 # [0.204.0](https://github.com/staff0rd/assist/compare/v0.203.0...v0.204.0) (2026-04-16)
 
 
