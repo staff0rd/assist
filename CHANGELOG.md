@@ -1,3 +1,10 @@
+# [0.204.0](https://github.com/staff0rd/assist/compare/v0.203.0...v0.204.0) (2026-04-16)
+
+
+### Features
+
+* merge web UIs into single MUI app ([425984b](https://github.com/staff0rd/assist/commit/425984b04800766713c3ffddb6a36678f630360d))
+
 # [0.203.0](https://github.com/staff0rd/assist/compare/v0.202.0...v0.203.0) (2026-04-16)
 
 
