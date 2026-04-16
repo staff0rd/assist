@@ -1,3 +1,10 @@
+# [0.202.0](https://github.com/staff0rd/assist/compare/v0.201.0...v0.202.0) (2026-04-16)
+
+
+### Features
+
+* assist mode buttons in web UI ([cb59e0d](https://github.com/staff0rd/assist/commit/cb59e0d7e794f0911647832ddc79be0bb31c694f))
+
 # [0.201.0](https://github.com/staff0rd/assist/compare/v0.200.0...v0.201.0) (2026-04-16)
 
 
