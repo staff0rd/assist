@@ -1,5 +1,5 @@
 import { type FormEvent, useEffect, useState } from "react";
-import type { SessionMode } from "./buildPrompt";
+import { dispatchMode, type SessionMode } from "./isAssistMode";
 import { selectRun } from "./selectRun";
 import { submitRunOrClaude } from "./submitRunOrClaude";
 import type { RunConfigInfo } from "./types";
@@ -7,11 +7,12 @@ import { useRunFilter } from "./useRunFilter";
 
 export type SessionFormState = ReturnType<typeof useNewSessionForm>;
 
-type FormDeps = {
+export type FormDeps = {
 	runConfigs: RunConfigInfo[];
 	selectedCwd: string;
 	onCreate: (prompt: string, cwd: string) => void;
 	onCreateRun: (name: string, args: string[], cwd?: string) => void;
+	onCreateAssist: (args: string[], cwd?: string) => void;
 	onRequestRunConfigs: (cwd: string) => void;
 };
 
@@ -27,32 +28,6 @@ export function useNewSessionForm(deps: FormDeps) {
 		if (selectedCwd) onRequestRunConfigs(selectedCwd);
 	}, [selectedCwd, onRequestRunConfigs]);
 
-	const handleSelectRun = (name: string | null) => {
-		setSelectedRun(selectRun(name, runConfigs, selectedCwd, onCreateRun));
-		setRunParams({});
-	};
-
-	const handleSelectMode = (m: SessionMode) => {
-		setSelectedRun(null);
-		setMode(m);
-	};
-
-	const handleSubmit = (e: FormEvent) => {
-		e.preventDefault();
-		if (!selectedCwd) return;
-		const kind = submitRunOrClaude({
-			...deps,
-			selectedRun,
-			runParams,
-			mode,
-			prompt,
-			cwd: selectedCwd,
-			configs: runConfigs,
-		});
-		if (kind === "run") setRunParams({});
-		else setPrompt("");
-	};
-
 	return {
 		mode,
 		prompt,
@@ -61,8 +36,28 @@ export function useNewSessionForm(deps: FormDeps) {
 		runParams,
 		setRunParams,
 		...filter,
-		handleSelectRun,
-		handleSelectMode,
-		handleSubmit,
+		handleSelectRun(name: string | null) {
+			setSelectedRun(selectRun(name, runConfigs, selectedCwd, onCreateRun));
+			setRunParams({});
+		},
+		handleSelectMode(m: SessionMode) {
+			setSelectedRun(null);
+			dispatchMode(m, selectedCwd, deps.onCreateAssist, setMode);
+		},
+		handleSubmit(e: FormEvent) {
+			e.preventDefault();
+			if (!selectedCwd) return;
+			const kind = submitRunOrClaude({
+				selectedRun,
+				runParams,
+				prompt,
+				cwd: selectedCwd,
+				configs: runConfigs,
+				onCreate: deps.onCreate,
+				onCreateRun: deps.onCreateRun,
+			});
+			if (kind === "run") setRunParams({});
+			else setPrompt("");
+		},
 	};
 }

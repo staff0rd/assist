@@ -1,35 +1,21 @@
 import { RepoFilterRow } from "./RepoFilterRow";
 import { SessionFormControls } from "./SessionFormControls";
-import type { HistoricalSession, RunConfigInfo } from "./types";
-import { useNewSessionForm } from "./useNewSessionForm";
+import type { HistoricalSession } from "./types";
+import { type FormDeps, useNewSessionForm } from "./useNewSessionForm";
 import { useRepoSelection } from "./useRepoSelection";
 
-export function NewSessionForm({
-	currentCwd,
-	history,
-	runConfigs,
-	onCreate,
-	onCreateRun,
-	onRequestRunConfigs,
-}: {
+type Props = Omit<FormDeps, "selectedCwd"> & {
 	currentCwd: string;
 	history: HistoricalSession[];
-	runConfigs: RunConfigInfo[];
-	onCreate: (prompt: string, cwd: string) => void;
-	onCreateRun: (runName: string, runArgs: string[], cwd?: string) => void;
-	onRequestRunConfigs: (cwd: string) => void;
-}) {
+};
+
+export function NewSessionForm(props: Props) {
+	const { currentCwd, history, runConfigs } = props;
 	const { repos, selectedCwd, setSelectedCwd } = useRepoSelection(
 		currentCwd,
 		history,
 	);
-	const form = useNewSessionForm({
-		runConfigs,
-		selectedCwd,
-		onCreate,
-		onCreateRun,
-		onRequestRunConfigs,
-	});
+	const form = useNewSessionForm({ ...props, selectedCwd });
 	const hasRepo = selectedCwd !== "";
 
 	return (

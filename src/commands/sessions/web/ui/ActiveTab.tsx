@@ -16,6 +16,7 @@ export function ActiveTab({
 	run,
 	onSelect,
 	onCreate,
+	onCreateAssist,
 	onRetry,
 	onDismiss,
 }: {
@@ -26,6 +27,7 @@ export function ActiveTab({
 	run: RunProps;
 	onSelect: (id: string) => void;
 	onCreate: (prompt: string, cwd: string) => void;
+	onCreateAssist: (args: string[], cwd?: string) => void;
 	onRetry: (id: string) => void;
 	onDismiss: (id: string) => void;
 }) {
@@ -44,6 +46,7 @@ export function ActiveTab({
 				runConfigs={run.configs}
 				onCreate={onCreate}
 				onCreateRun={run.create}
+				onCreateAssist={onCreateAssist}
 				onRequestRunConfigs={run.requestConfigs}
 			/>
 		</>

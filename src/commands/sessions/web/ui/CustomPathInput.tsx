@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
-import { inputStyle } from "./buildPrompt";
+import { inputStyle } from "./isAssistMode";
 
 const okStyle: CSSProperties = {
 	padding: "4px 8px",

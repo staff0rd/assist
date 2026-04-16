@@ -1,4 +1,4 @@
-import { modeButtonStyle } from "./buildPrompt";
+import { modeButtonStyle } from "./isAssistMode";
 import type { RunConfigInfo } from "./types";
 
 function hasParams(c: RunConfigInfo): boolean {

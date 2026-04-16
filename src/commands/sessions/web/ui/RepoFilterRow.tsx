@@ -1,4 +1,4 @@
-import { inputStyle, setFocusBorder } from "./buildPrompt";
+import { inputStyle, setFocusBorder } from "./isAssistMode";
 import { RepoPicker } from "./RepoPicker";
 
 export function RepoFilterRow({

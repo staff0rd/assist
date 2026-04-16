@@ -11,6 +11,11 @@ export function createRunSessionAction(send: SendFn) {
 		send({ type: "create-run", runName, runArgs, cwd });
 }
 
+export function createAssistSessionAction(send: SendFn) {
+	return (assistArgs: string[], cwd?: string) =>
+		send({ type: "create-assist", assistArgs, cwd });
+}
+
 export function requestRunConfigsAction(send: SendFn) {
 	return (cwd: string) => send({ type: "run-configs", cwd });
 }

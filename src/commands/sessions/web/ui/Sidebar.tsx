@@ -15,6 +15,7 @@ type SidebarProps = {
 	onTabChange: (tab: SidebarTab) => void;
 	onSelect: (id: string) => void;
 	onCreate: (prompt: string, cwd: string) => void;
+	onCreateAssist: (args: string[], cwd?: string) => void;
 	onResume: (session: HistoricalSession) => void;
 	onRetry: (id: string) => void;
 	onDismiss: (id: string) => void;
@@ -48,6 +49,7 @@ export function Sidebar(props: SidebarProps) {
 					run={props.run}
 					onSelect={props.onSelect}
 					onCreate={props.onCreate}
+					onCreateAssist={props.onCreateAssist}
 					onRetry={props.onRetry}
 					onDismiss={props.onDismiss}
 				/>

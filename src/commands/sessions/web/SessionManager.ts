@@ -1,5 +1,6 @@
 import type { WebSocket } from "ws";
 import { isGitRepo } from "../../../shared/getInstallDir";
+import { createAssistSession } from "./createAssistSession";
 import {
 	createRunSession,
 	createSession,
@@ -57,6 +58,12 @@ export class SessionManager {
 	spawnRun(runName: string, runArgs: string[], cwd?: string): string {
 		return this.add(
 			createRunSession(String(this.nextId++), runName, runArgs, cwd),
+		);
+	}
+
+	spawnAssist(assistArgs: string[], cwd?: string): string {
+		return this.add(
+			createAssistSession(String(this.nextId++), assistArgs, cwd),
 		);
 	}
 

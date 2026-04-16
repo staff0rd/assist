@@ -3,7 +3,7 @@ import { spawnClaude } from "./spawnClaude";
 import { spawnRun } from "./spawnRun";
 
 type SessionStatus = "running" | "waiting" | "done";
-type CommandType = "claude" | "run";
+type CommandType = "claude" | "run" | "assist";
 
 type Session = {
 	id: string;

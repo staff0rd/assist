@@ -1,4 +1,4 @@
-import { MODES, modeButtonStyle, type SessionMode } from "./buildPrompt";
+import { MODES, modeButtonStyle, type SessionMode } from "./isAssistMode";
 import { RunButton } from "./RunButton";
 import type { RunConfigInfo } from "./types";
 

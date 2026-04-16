@@ -51,6 +51,7 @@ export function TerminalPane({
 		if (!visible || !h) return;
 		const id = setTimeout(() => {
 			h.fitAddon.fit();
+			h.term.focus();
 			sendResize(sessionId, h.term.cols, h.term.rows);
 		}, 50);
 		return () => clearTimeout(id);

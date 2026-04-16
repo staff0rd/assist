@@ -34,6 +34,20 @@ function handleCreateRun(
 	);
 }
 
+function handleCreateAssist(
+	ws: WebSocket,
+	manager: SessionManager,
+	data: Msg,
+): void {
+	sendCreated(
+		ws,
+		manager.spawnAssist(
+			(data.assistArgs as string[]) ?? [],
+			data.cwd as string | undefined,
+		),
+	);
+}
+
 function handleResume(ws: WebSocket, manager: SessionManager, data: Msg): void {
 	sendCreated(
 		ws,
@@ -58,6 +72,7 @@ function handleHistory(ws: WebSocket, manager: SessionManager): void {
 const handlers: Record<string, Handler> = {
 	create: handleCreate,
 	"create-run": handleCreateRun,
+	"create-assist": handleCreateAssist,
 	resume: handleResume,
 	"run-configs": runConfigs,
 	history: handleHistory,

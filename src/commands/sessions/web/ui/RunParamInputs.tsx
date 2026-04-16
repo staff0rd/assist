@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { inputStyle, setFocusBorder } from "./buildPrompt";
+import { inputStyle, setFocusBorder } from "./isAssistMode";
 import type { RunConfigInfo } from "./types";
 
 const submitStyle: CSSProperties = {

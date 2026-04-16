@@ -1,10 +1,5 @@
 import type { CSSProperties } from "react";
-import {
-	inputStyle,
-	PLACEHOLDERS,
-	type SessionMode,
-	setFocusBorder,
-} from "./buildPrompt";
+import { inputStyle, PLACEHOLDER, setFocusBorder } from "./isAssistMode";
 
 const submitStyle: CSSProperties = {
 	padding: "6px 12px",
@@ -18,32 +13,23 @@ const submitStyle: CSSProperties = {
 };
 
 export function PromptInputRow({
-	mode,
 	prompt,
 	setPrompt,
 }: {
-	mode: SessionMode;
 	prompt: string;
 	setPrompt: (v: string) => void;
 }) {
-	const showInput = mode !== "/next-backlog-item";
-
 	return (
 		<div style={{ display: "flex", gap: 8 }}>
-			{showInput && (
-				<input
-					value={prompt}
-					onChange={(e) => setPrompt(e.target.value)}
-					placeholder={PLACEHOLDERS[mode]}
-					style={inputStyle}
-					onFocus={(e) => setFocusBorder(e, "#007acc")}
-					onBlur={(e) => setFocusBorder(e, "#555")}
-				/>
-			)}
-			<button
-				type="submit"
-				style={{ ...submitStyle, flex: showInput ? undefined : 1 }}
-			>
+			<input
+				value={prompt}
+				onChange={(e) => setPrompt(e.target.value)}
+				placeholder={PLACEHOLDER}
+				style={inputStyle}
+				onFocus={(e) => setFocusBorder(e, "#007acc")}
+				onBlur={(e) => setFocusBorder(e, "#555")}
+			/>
+			<button type="submit" style={submitStyle}>
 				Start
 			</button>
 		</div>

@@ -1,4 +1,3 @@
-import type { SessionMode } from "./buildPrompt";
 import { buildRunArgs, submitSession } from "./submitSession";
 import type { RunConfigInfo } from "./types";
 
@@ -6,7 +5,6 @@ export function submitRunOrClaude(opts: {
 	selectedRun: string | null;
 	configs: RunConfigInfo[];
 	runParams: Record<string, string>;
-	mode: SessionMode;
 	prompt: string;
 	cwd: string;
 	onCreate: (prompt: string, cwd: string) => void;
@@ -21,6 +19,6 @@ export function submitRunOrClaude(opts: {
 		);
 		return "run";
 	}
-	submitSession(opts.mode, opts.prompt, opts.cwd, opts.onCreate);
+	submitSession(opts.prompt, opts.cwd, opts.onCreate);
 	return "claude";
 }

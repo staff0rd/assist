@@ -38,6 +38,7 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 			onTabChange={onTabChange}
 			onSelect={socket.setActiveId}
 			onCreate={socket.createSession}
+			onCreateAssist={socket.createAssistSession}
 			onResume={handleResume}
 			onRetry={socket.retrySession}
 			onDismiss={socket.dismissSession}

@@ -1,5 +1,6 @@
 import { type RefObject, useCallback, useMemo } from "react";
 import {
+	createAssistSessionAction,
 	createRunSessionAction,
 	createSessionAction,
 	dismissSessionAction,
@@ -23,6 +24,7 @@ export function useSessionActions(
 	const actions = {
 		createSession: useMemo(() => createSessionAction(send), [send]),
 		createRunSession: useMemo(() => createRunSessionAction(send), [send]),
+		createAssistSession: useMemo(() => createAssistSessionAction(send), [send]),
 		requestRunConfigs: useMemo(() => requestRunConfigsAction(send), [send]),
 		resumeSession: useMemo(() => resumeSessionAction(send), [send]),
 		sendInput: useMemo(() => inputAction(send), [send]),
