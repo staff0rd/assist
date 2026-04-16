@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import type { SessionMode } from "./isAssistMode";
+import type { SessionMode } from "./dispatchMode";
 import { ModeButtons } from "./ModeButtons";
 import { RunButtons } from "./RunButtons";
 import type { RunConfigInfo } from "./types";
@@ -7,14 +7,12 @@ import type { RunConfigInfo } from "./types";
 const MAX_VISIBLE_RUNS = 10;
 
 export function ModeSelector({
-	mode,
 	onSelectMode,
 	runConfigs,
 	totalRunCount,
 	selectedRun,
 	onSelectRun,
 }: {
-	mode: SessionMode;
 	onSelectMode: (mode: SessionMode) => void;
 	runConfigs: RunConfigInfo[];
 	totalRunCount: number;
@@ -34,11 +32,7 @@ export function ModeSelector({
 			spacing={0.5}
 			sx={{ flexWrap: "wrap", alignItems: "center" }}
 		>
-			<ModeButtons
-				mode={mode}
-				selectedRun={selectedRun}
-				onSelect={handleModeSelect}
-			/>
+			<ModeButtons onSelect={handleModeSelect} />
 			<RunButtons
 				configs={visible}
 				selectedRun={selectedRun}

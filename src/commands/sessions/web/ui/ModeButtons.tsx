@@ -1,5 +1,5 @@
 import Button from "@mui/material/Button";
-import { MODES, type SessionMode } from "./isAssistMode";
+import { MODES, type SessionMode } from "./dispatchMode";
 
 const btnSx = {
 	textTransform: "none",
@@ -9,12 +9,8 @@ const btnSx = {
 } as const;
 
 export function ModeButtons({
-	mode,
-	selectedRun,
 	onSelect,
 }: {
-	mode: SessionMode;
-	selectedRun: string | null;
 	onSelect: (m: SessionMode) => void;
 }) {
 	return (
@@ -23,7 +19,7 @@ export function ModeButtons({
 				<Button
 					key={m.value}
 					size="small"
-					variant={!selectedRun && mode === m.value ? "contained" : "outlined"}
+					variant="outlined"
 					onClick={() => onSelect(m.value)}
 					sx={btnSx}
 				>

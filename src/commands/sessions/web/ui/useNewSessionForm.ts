@@ -1,5 +1,5 @@
 import { type FormEvent, useEffect, useState } from "react";
-import { dispatchMode, type SessionMode } from "./isAssistMode";
+import { dispatchMode, type SessionMode } from "./dispatchMode";
 import { selectRun } from "./selectRun";
 import { submitRunOrClaude } from "./submitRunOrClaude";
 import type { RunConfigInfo } from "./types";

@@ -1,4 +1,3 @@
-import { isAssistMode } from "./isAssistMode";
 import { ModeSelector } from "./ModeSelector";
 import { PromptInputRow } from "./PromptInputRow";
 import { RunParamInputs } from "./RunParamInputs";
@@ -15,12 +14,9 @@ export function SessionFormControls({
 		? form.filteredRunConfigs.find((c) => c.name === form.selectedRun)
 		: null;
 
-	const showPrompt = !isAssistMode(form.mode) && !form.selectedRun;
-
 	return (
 		<>
 			<ModeSelector
-				mode={form.mode}
 				onSelectMode={form.handleSelectMode}
 				runConfigs={form.filteredRunConfigs}
 				totalRunCount={totalRunCount}
@@ -33,9 +29,9 @@ export function SessionFormControls({
 					values={form.runParams}
 					onChange={form.setRunParams}
 				/>
-			) : showPrompt ? (
+			) : (
 				<PromptInputRow prompt={form.prompt} setPrompt={form.setPrompt} />
-			) : null}
+			)}
 		</>
 	);
 }

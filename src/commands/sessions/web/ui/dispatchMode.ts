@@ -7,7 +7,7 @@ const ASSIST_MODES = {
 type AssistMode = keyof typeof ASSIST_MODES;
 export type SessionMode = "free" | AssistMode;
 
-export function isAssistMode(mode: SessionMode): mode is AssistMode {
+function isAssistMode(mode: SessionMode): mode is AssistMode {
 	return mode in ASSIST_MODES;
 }
 
@@ -28,12 +28,11 @@ export function dispatchMode(
 	setMode(m);
 }
 
-export const MODES: { value: SessionMode; label: string }[] = [
-	{ value: "free", label: "Free" },
-	...Object.entries(ASSIST_MODES).map(([value, { label }]) => ({
-		value: value as AssistMode,
-		label,
-	})),
-];
+export const MODES: { value: AssistMode; label: string }[] = Object.entries(
+	ASSIST_MODES,
+).map(([value, { label }]) => ({
+	value: value as AssistMode,
+	label,
+}));
 
 export const PLACEHOLDER = "Enter prompt...";

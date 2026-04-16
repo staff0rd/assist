@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
-import { PLACEHOLDER } from "./isAssistMode";
+import { PLACEHOLDER } from "./dispatchMode";
 
 export function PromptInputRow({
 	prompt,
