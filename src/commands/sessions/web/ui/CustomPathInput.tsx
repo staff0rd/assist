@@ -1,26 +1,7 @@
-import type { CSSProperties } from "react";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
 import { useEffect, useRef, useState } from "react";
-import { inputStyle } from "./isAssistMode";
-
-const okStyle: CSSProperties = {
-	padding: "4px 8px",
-	fontSize: 11,
-	background: "#007acc",
-	border: "none",
-	borderRadius: 4,
-	color: "#fff",
-	cursor: "pointer",
-};
-
-const cancelStyle: CSSProperties = {
-	padding: "4px 8px",
-	fontSize: 11,
-	background: "none",
-	border: "1px solid #555",
-	borderRadius: 4,
-	color: "#999",
-	cursor: "pointer",
-};
 
 export function CustomPathInput({
 	onConfirm,
@@ -37,31 +18,45 @@ export function CustomPathInput({
 	}, []);
 
 	return (
-		<form
-			onSubmit={(e) => {
+		<Stack
+			component="form"
+			direction="row"
+			spacing={0.5}
+			onSubmit={(e: React.FormEvent) => {
 				e.preventDefault();
 				e.stopPropagation();
 				const p = value.trim();
 				if (p) onConfirm(p);
 			}}
-			style={{ display: "flex", gap: 4 }}
 		>
-			<input
-				ref={ref}
+			<TextField
+				inputRef={ref}
 				value={value}
 				onChange={(e) => setValue(e.target.value)}
 				placeholder="/path/to/repo"
-				style={{ ...inputStyle, fontSize: 12 }}
+				size="small"
+				sx={{ flex: 1 }}
+				slotProps={{ input: { sx: { fontSize: 12 } } }}
 				onKeyDown={(e) => {
 					if (e.key === "Escape") onCancel();
 				}}
 			/>
-			<button type="submit" style={okStyle}>
+			<Button
+				type="submit"
+				variant="contained"
+				size="small"
+				sx={{ minWidth: 0 }}
+			>
 				OK
-			</button>
-			<button type="button" onClick={onCancel} style={cancelStyle}>
+			</Button>
+			<Button
+				variant="outlined"
+				size="small"
+				onClick={onCancel}
+				sx={{ minWidth: 0 }}
+			>
 				Cancel
-			</button>
-		</form>
+			</Button>
+		</Stack>
 	);
 }

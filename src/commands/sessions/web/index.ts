@@ -4,9 +4,17 @@ import { handleRequest } from "./handleRequest";
 import { handleSocket } from "./handleSocket";
 import { SessionManager } from "./SessionManager";
 
-export async function web(options: { port: string }): Promise<void> {
+export async function web(options: {
+	port: string;
+	initialPath?: string;
+}): Promise<void> {
 	const port = Number.parseInt(options.port, 10);
-	const server = startWebServer("Sessions", port, handleRequest);
+	const server = startWebServer(
+		"Assist",
+		port,
+		handleRequest,
+		options.initialPath,
+	);
 	const manager = new SessionManager();
 
 	const wss = new WebSocketServer({ noServer: true });

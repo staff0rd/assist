@@ -1,23 +1,22 @@
-import { useAtom } from "jotai";
-import { showCompletedAtom } from "../showCompletedAtom";
+import { FormControlLabel, Switch } from "@mui/material";
+import { useShowCompleted } from "../useShowCompleted";
 
 export function CompletedToggle() {
-	const [showCompleted, setShowCompleted] = useAtom(showCompletedAtom);
+	const [showCompleted, setShowCompleted] = useShowCompleted();
 
 	return (
-		<label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
-			<button
-				type="button"
-				role="switch"
-				aria-checked={showCompleted}
-				onClick={() => setShowCompleted(!showCompleted)}
-				className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${showCompleted ? "bg-blue-600" : "bg-gray-300"}`}
-			>
-				<span
-					className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform ${showCompleted ? "translate-x-[18px]" : "translate-x-[3px]"}`}
+		<FormControlLabel
+			control={
+				<Switch
+					checked={showCompleted}
+					onChange={() => setShowCompleted(!showCompleted)}
+					size="small"
 				/>
-			</button>
-			Show completed
-		</label>
+			}
+			label="Show completed"
+			slotProps={{
+				typography: { variant: "body2", color: "text.secondary" },
+			}}
+		/>
 	);
 }

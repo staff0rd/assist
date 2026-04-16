@@ -1,29 +1,8 @@
-import type { CSSProperties } from "react";
+import Checkbox from "@mui/material/Checkbox";
+import ListItemText from "@mui/material/ListItemText";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
 import { dropdownStyle } from "./DropdownWrapper";
-
-const itemStyle = (checked: boolean): CSSProperties => ({
-	display: "flex",
-	alignItems: "center",
-	gap: 6,
-	padding: "6px 8px",
-	fontSize: 12,
-	color: checked ? "#d4d4d4" : "#999",
-	cursor: "pointer",
-	background: "none",
-	border: "none",
-	width: "100%",
-	textAlign: "left",
-	font: "inherit",
-});
-
-const checkboxStyle = (checked: boolean): CSSProperties => ({
-	width: 14,
-	height: 14,
-	border: "1px solid #555",
-	borderRadius: 2,
-	background: checked ? "#007acc" : "transparent",
-	flexShrink: 0,
-});
 
 export function FilterDropdown({
 	items,
@@ -35,18 +14,20 @@ export function FilterDropdown({
 	onToggle: (item: string) => void;
 }) {
 	return (
-		<div style={dropdownStyle}>
+		<MenuList dense sx={dropdownStyle}>
 			{items.map((item) => (
-				<button
-					type="button"
-					key={item}
-					style={itemStyle(selected.has(item))}
-					onClick={() => onToggle(item)}
-				>
-					<span style={checkboxStyle(selected.has(item))} />
-					{item}
-				</button>
+				<MenuItem key={item} onClick={() => onToggle(item)} dense>
+					<Checkbox
+						size="small"
+						checked={selected.has(item)}
+						sx={{ p: 0, mr: 1 }}
+					/>
+					<ListItemText
+						primary={item}
+						slotProps={{ primary: { variant: "caption" } }}
+					/>
+				</MenuItem>
 			))}
-		</div>
+		</MenuList>
 	);
 }

@@ -1,4 +1,4 @@
-import { Input } from "@base-ui/react/input";
+import { Button, Stack, TextField } from "@mui/material";
 
 type CriterionRowProps = {
 	value: string;
@@ -16,31 +16,28 @@ export function CriterionRow({
 	onRemove,
 }: CriterionRowProps) {
 	return (
-		<div className="flex gap-2">
-			<Input
-				className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
-				type="text"
+		<Stack direction="row" spacing={1}>
+			<TextField
+				fullWidth
+				size="small"
 				placeholder="Criterion"
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 			/>
 			{isFirst ? (
-				<button
-					type="button"
-					className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
-					onClick={onAdd}
-				>
+				<Button variant="outlined" onClick={onAdd} sx={{ minWidth: 40 }}>
 					+
-				</button>
+				</Button>
 			) : (
-				<button
-					type="button"
-					className="bg-red-500 hover:bg-red-600 text-white rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
+				<Button
+					variant="outlined"
+					color="error"
 					onClick={onRemove}
+					sx={{ minWidth: 40 }}
 				>
 					&minus;
-				</button>
+				</Button>
 			)}
-		</div>
+		</Stack>
 	);
 }

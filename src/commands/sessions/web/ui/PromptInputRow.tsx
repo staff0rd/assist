@@ -1,16 +1,7 @@
-import type { CSSProperties } from "react";
-import { inputStyle, PLACEHOLDER, setFocusBorder } from "./isAssistMode";
-
-const submitStyle: CSSProperties = {
-	padding: "6px 12px",
-	background: "#007acc",
-	border: "none",
-	borderRadius: 4,
-	color: "#fff",
-	fontSize: 13,
-	cursor: "pointer",
-	whiteSpace: "nowrap",
-};
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import { PLACEHOLDER } from "./isAssistMode";
 
 export function PromptInputRow({
 	prompt,
@@ -20,18 +11,23 @@ export function PromptInputRow({
 	setPrompt: (v: string) => void;
 }) {
 	return (
-		<div style={{ display: "flex", gap: 8 }}>
-			<input
+		<Stack direction="row" spacing={1}>
+			<TextField
 				value={prompt}
 				onChange={(e) => setPrompt(e.target.value)}
 				placeholder={PLACEHOLDER}
-				style={inputStyle}
-				onFocus={(e) => setFocusBorder(e, "#007acc")}
-				onBlur={(e) => setFocusBorder(e, "#555")}
+				size="small"
+				fullWidth
+				slotProps={{ input: { sx: { fontSize: 13 } } }}
 			/>
-			<button type="submit" style={submitStyle}>
+			<Button
+				type="submit"
+				variant="contained"
+				size="small"
+				sx={{ whiteSpace: "nowrap" }}
+			>
 				Start
-			</button>
-		</div>
+			</Button>
+		</Stack>
 	);
 }

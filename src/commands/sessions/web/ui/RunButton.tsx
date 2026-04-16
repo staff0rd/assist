@@ -1,4 +1,4 @@
-import { modeButtonStyle } from "./isAssistMode";
+import Button from "@mui/material/Button";
 import type { RunConfigInfo } from "./types";
 
 function hasParams(c: RunConfigInfo): boolean {
@@ -15,9 +15,14 @@ export function RunButton({
 	onClick: () => void;
 }) {
 	return (
-		<button type="button" onClick={onClick} style={modeButtonStyle(active)}>
+		<Button
+			size="small"
+			variant={active ? "contained" : "outlined"}
+			onClick={onClick}
+			sx={{ textTransform: "none", fontSize: 13, py: 0.25, px: 1.25 }}
+		>
 			{!hasParams(config) && "\u25b6 "}
 			{config.name}
-		</button>
+		</Button>
 	);
 }

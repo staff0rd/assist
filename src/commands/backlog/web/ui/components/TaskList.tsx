@@ -1,3 +1,4 @@
+import { Box, List, ListItem, Typography } from "@mui/material";
 import { marked } from "marked";
 import type { PlanPhase } from "../types";
 
@@ -9,18 +10,27 @@ export function TaskList({
 	marker: string;
 }) {
 	return (
-		<ul className="list-none ml-1 space-y-1">
+		<List disablePadding sx={{ ml: 0.5 }}>
 			{tasks.map((t) => (
-				<li key={t.task} className="py-0.5 markdown">
-					<span className="text-gray-500 mr-2">{marker}</span>
-					<span
+				<ListItem
+					key={t.task}
+					disableGutters
+					disablePadding
+					sx={{ py: 0.25, display: "flex", alignItems: "baseline" }}
+				>
+					<Typography component="span" sx={{ color: "text.secondary", mr: 1 }}>
+						{marker}
+					</Typography>
+					<Box
+						component="span"
+						className="markdown"
 						// biome-ignore lint/security/noDangerouslySetInnerHtml: inline markdown rendering
 						dangerouslySetInnerHTML={{
 							__html: marked.parseInline(t.task) as string,
 						}}
 					/>
-				</li>
+				</ListItem>
 			))}
-		</ul>
+		</List>
 	);
 }

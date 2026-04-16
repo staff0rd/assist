@@ -1,23 +1,7 @@
-import type { CSSProperties } from "react";
-import { inputStyle, setFocusBorder } from "./isAssistMode";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
 import type { RunConfigInfo } from "./types";
-
-const submitStyle: CSSProperties = {
-	padding: "6px 12px",
-	background: "#007acc",
-	border: "none",
-	borderRadius: 4,
-	color: "#fff",
-	fontSize: 13,
-	cursor: "pointer",
-	whiteSpace: "nowrap",
-};
-
-const labelStyle: CSSProperties = {
-	fontSize: 11,
-	color: "#999",
-	marginBottom: 2,
-};
 
 type Param = NonNullable<RunConfigInfo["params"]>[number];
 
@@ -41,26 +25,25 @@ export function RunParamInputs({
 		onChange({ ...values, [name]: value });
 
 	return (
-		<div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+		<Stack spacing={0.75}>
 			{params.map((p) => (
-				<label
+				<TextField
 					key={p.name}
-					style={{ display: "flex", flexDirection: "column", ...labelStyle }}
-				>
-					{paramLabel(p)}
-					<input
-						value={values[p.name] ?? p.default ?? ""}
-						onChange={(e) => setParam(p.name, e.target.value)}
-						placeholder={p.default ?? ""}
-						style={inputStyle}
-						onFocus={(e) => setFocusBorder(e, "#007acc")}
-						onBlur={(e) => setFocusBorder(e, "#555")}
-					/>
-				</label>
+					label={paramLabel(p)}
+					value={values[p.name] ?? p.default ?? ""}
+					onChange={(e) => setParam(p.name, e.target.value)}
+					placeholder={p.default ?? ""}
+					size="small"
+					fullWidth
+					slotProps={{
+						input: { sx: { fontSize: 13 } },
+						inputLabel: { sx: { fontSize: 11 }, shrink: true },
+					}}
+				/>
 			))}
-			<button type="submit" style={submitStyle}>
+			<Button type="submit" variant="contained" size="small">
 				Run {config.name}
-			</button>
-		</div>
+			</Button>
+		</Stack>
 	);
 }

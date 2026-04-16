@@ -19,7 +19,11 @@ export function ItemRoute({
 
 	if (mode === "edit") {
 		return (
-			<ItemForm item={item} onReload={onReload} backTo={`/items/${numId}`} />
+			<ItemForm
+				item={item}
+				onReload={onReload}
+				backTo={`/backlog/items/${numId}`}
+			/>
 		);
 	}
 	return <ItemDetail item={item} onReload={onReload} />;

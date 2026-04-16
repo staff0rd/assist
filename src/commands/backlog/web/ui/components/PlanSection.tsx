@@ -1,5 +1,6 @@
-import type { PlanPhase } from "../types";
-import { PhaseCard, type PhaseStatus } from "./PhaseCard";
+import { Box, Stack, Typography } from "@mui/material";
+import type { PhaseStatus, PlanPhase } from "../types";
+import { PhaseCard } from "./PhaseCard";
 
 type PlanSectionProps = {
 	phases: PlanPhase[];
@@ -27,11 +28,19 @@ export function PlanSection({
 }: PlanSectionProps) {
 	if (phases.length === 0) return null;
 	return (
-		<div className="mb-4">
-			<h3 className="text-xs uppercase text-gray-500 mb-2 tracking-wide">
+		<Box sx={{ mb: 2 }}>
+			<Typography
+				variant="overline"
+				sx={{
+					color: "text.secondary",
+					mb: 1,
+					display: "block",
+					letterSpacing: "0.08em",
+				}}
+			>
 				Plan
-			</h3>
-			<div className="space-y-3">
+			</Typography>
+			<Stack spacing={1.5}>
 				{phases.map((phase, i) => (
 					<PhaseCard
 						key={phase.name}
@@ -42,7 +51,7 @@ export function PlanSection({
 						onRewind={onRewind}
 					/>
 				))}
-			</div>
-		</div>
+			</Stack>
+		</Box>
 	);
 }

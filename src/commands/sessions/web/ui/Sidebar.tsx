@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import { ActiveTab, type RunProps } from "./ActiveTab";
 import { HistoryList } from "./HistoryList";
 import { SidebarTabs } from "./SidebarTabs";
@@ -21,18 +22,19 @@ type SidebarProps = {
 	onDismiss: (id: string) => void;
 };
 
+const sidebarSx = {
+	width: 280,
+	minWidth: 280,
+	borderRight: 1,
+	borderColor: "divider",
+	display: "flex",
+	flexDirection: "column",
+	bgcolor: "background.paper",
+} as const;
+
 export function Sidebar(props: SidebarProps) {
 	return (
-		<div
-			style={{
-				width: 280,
-				minWidth: 280,
-				borderRight: "1px solid #333",
-				display: "flex",
-				flexDirection: "column",
-				background: "#252526",
-			}}
-		>
+		<Box sx={sidebarSx}>
 			<SidebarTabs
 				tab={props.tab}
 				activeCount={props.sessions.length}
@@ -56,6 +58,6 @@ export function Sidebar(props: SidebarProps) {
 			) : (
 				<HistoryList sessions={props.history} onResume={props.onResume} />
 			)}
-		</div>
+		</Box>
 	);
 }

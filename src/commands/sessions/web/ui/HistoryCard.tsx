@@ -1,35 +1,9 @@
-import type { CSSProperties, MouseEvent } from "react";
+import Box from "@mui/material/Box";
+import ButtonBase from "@mui/material/ButtonBase";
+import Typography from "@mui/material/Typography";
+import { cardSx } from "./CardHeader";
 import { formatRelativeTime } from "./formatRelativeTime";
 import type { HistoricalSession } from "./types";
-
-const cardBase: CSSProperties = {
-	display: "block",
-	width: "100%",
-	textAlign: "left",
-	padding: "10px 12px",
-	marginBottom: 4,
-	borderRadius: 6,
-	background: "#2d2d2d",
-	border: "1px solid transparent",
-	cursor: "pointer",
-	transition: "background 0.15s",
-	font: "inherit",
-	color: "inherit",
-};
-
-const nameStyle: CSSProperties = {
-	fontSize: 13,
-	color: "#d4d4d4",
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-};
-
-const metaStyle: CSSProperties = {
-	display: "flex",
-	justifyContent: "space-between",
-	marginTop: 4,
-};
 
 export function HistoryCard({
 	session,
@@ -38,27 +12,19 @@ export function HistoryCard({
 	session: HistoricalSession;
 	onResume: (session: HistoricalSession) => void;
 }) {
-	const handleHover = (e: MouseEvent<HTMLButtonElement>, enter: boolean) => {
-		e.currentTarget.style.background = enter ? "#333" : "#2d2d2d";
-	};
-
 	return (
-		<button
-			type="button"
-			style={cardBase}
-			onClick={() => onResume(session)}
-			onMouseEnter={(e) => handleHover(e, true)}
-			onMouseLeave={(e) => handleHover(e, false)}
-		>
-			<div style={nameStyle}>{session.name}</div>
-			<div style={metaStyle}>
-				<span style={{ fontSize: 11, color: "#569cd6" }}>
+		<ButtonBase onClick={() => onResume(session)} sx={cardSx(false)}>
+			<Typography variant="body2" noWrap sx={{ color: "text.primary" }}>
+				{session.name}
+			</Typography>
+			<Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
+				<Typography variant="caption" color="info.main">
 					{session.project}
-				</span>
-				<span style={{ fontSize: 11, color: "#888" }}>
+				</Typography>
+				<Typography variant="caption" color="text.disabled">
 					{formatRelativeTime(session.timestamp)}
-				</span>
-			</div>
-		</button>
+				</Typography>
+			</Box>
+		</ButtonBase>
 	);
 }

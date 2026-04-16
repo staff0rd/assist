@@ -27,8 +27,8 @@ function registerShowCommands(cmd: Command): void {
 function registerWebCommand(cmd: Command): void {
 	cmd
 		.command("web")
-		.description("Start a web view of the backlog")
-		.option("-p, --port <number>", "Port to listen on", "3000")
+		.description("Open the backlog tab in the web dashboard")
+		.option("-p, --port <number>", "Port to listen on", "3100")
 		.action(backlogWeb);
 }
 
@@ -62,7 +62,7 @@ export function registerBacklog(program: Command): void {
 		.hook("preAction", (thisCommand) => {
 			setBacklogDir(thisCommand.opts().dir);
 		})
-		.action(() => backlogWeb({ port: "3000" }));
+		.action(() => backlogWeb({ port: "3100" }));
 
 	registerItemCommands(cmd);
 	registerShowCommands(cmd);

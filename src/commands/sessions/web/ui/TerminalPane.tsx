@@ -1,17 +1,8 @@
-import { type CSSProperties, useEffect, useRef } from "react";
-import type { TerminalHandle } from "./createTerminal";
-import { setupTerminal } from "./setupTerminal";
+import Box from "@mui/material/Box";
+import { useRef } from "react";
+import { useTerminal } from "./useTerminal";
 
 type ResizeFn = (sessionId: string, cols: number, rows: number) => void;
-
-function paneStyle(visible: boolean): CSSProperties {
-	return {
-		position: "absolute",
-		inset: 0,
-		visibility: visible ? "visible" : "hidden",
-		pointerEvents: visible ? "auto" : "none",
-	};
-}
 
 export function TerminalPane({
 	sessionId,
@@ -27,35 +18,24 @@ export function TerminalPane({
 	sendResize: ResizeFn;
 }) {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const handleRef = useRef<TerminalHandle | null>(null);
+	useTerminal(
+		containerRef,
+		sessionId,
+		visible,
+		sendInput,
+		onOutput,
+		sendResize,
+	);
 
-	useEffect(() => {
-		const el = containerRef.current;
-		if (!el) return;
-		const { handle, cleanup } = setupTerminal(
-			el,
-			sessionId,
-			sendInput,
-			onOutput,
-			sendResize,
-		);
-		handleRef.current = handle;
-		return () => {
-			cleanup();
-			handleRef.current = null;
-		};
-	}, [sessionId, onOutput, sendInput, sendResize]);
-
-	useEffect(() => {
-		const h = handleRef.current;
-		if (!visible || !h) return;
-		const id = setTimeout(() => {
-			h.fitAddon.fit();
-			h.term.focus();
-			sendResize(sessionId, h.term.cols, h.term.rows);
-		}, 50);
-		return () => clearTimeout(id);
-	}, [visible, sessionId, sendResize]);
-
-	return <div ref={containerRef} style={paneStyle(visible)} />;
+	return (
+		<Box
+			ref={containerRef}
+			sx={{
+				position: "absolute",
+				inset: 0,
+				visibility: visible ? "visible" : "hidden",
+				pointerEvents: visible ? "auto" : "none",
+			}}
+		/>
+	);
 }

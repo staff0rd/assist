@@ -1,3 +1,5 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { SessionCard } from "./SessionCard";
 import type { SessionInfo } from "./useSessionSocket";
 
@@ -15,7 +17,7 @@ export function SessionList({
 	onDismiss: (id: string) => void;
 }) {
 	return (
-		<div style={{ flex: 1, overflow: "auto", padding: 8 }}>
+		<Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
 			{sessions.map((s) => (
 				<SessionCard
 					key={s.id}
@@ -31,17 +33,14 @@ export function SessionList({
 				/>
 			))}
 			{sessions.length === 0 && (
-				<div
-					style={{
-						padding: 16,
-						textAlign: "center",
-						color: "#666",
-						fontSize: 13,
-					}}
+				<Typography
+					variant="caption"
+					color="text.disabled"
+					sx={{ display: "block", textAlign: "center", p: 2 }}
 				>
 					No sessions yet
-				</div>
+				</Typography>
 			)}
-		</div>
+		</Box>
 	);
 }

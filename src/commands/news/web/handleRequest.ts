@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import chalk from "chalk";
+import { createBundleHandler } from "../../../shared/createBundleHandler";
 import { loadConfig } from "../../../shared/loadConfig";
 import {
-	createBundleHandler,
 	createHtmlHandler,
 	createRouteHandler,
 	type Handler,

@@ -31,17 +31,6 @@ export default defineConfig({
 			define: { "process.env.NODE_ENV": '"production"' },
 		});
 		await build({
-			entryPoints: ["src/commands/backlog/web/ui/App.tsx"],
-			bundle: true,
-			minify: true,
-			format: "iife",
-			target: "es2020",
-			outfile: "dist/commands/backlog/web/bundle.js",
-			jsx: "automatic",
-			jsxImportSource: "react",
-			define: { "process.env.NODE_ENV": '"production"' },
-		});
-		await build({
 			entryPoints: ["src/commands/sessions/web/ui/App.tsx"],
 			bundle: true,
 			minify: true,

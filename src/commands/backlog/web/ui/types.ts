@@ -16,6 +16,8 @@ export type BacklogComment = {
 	type: "comment" | "summary";
 };
 
+export type PhaseStatus = "done" | "current" | "upcoming";
+
 export type BacklogItem = {
 	id: number;
 	type: "story" | "bug";

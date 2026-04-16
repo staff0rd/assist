@@ -1,4 +1,4 @@
-import { inputStyle, setFocusBorder } from "./isAssistMode";
+import TextField from "@mui/material/TextField";
 import { RepoPicker } from "./RepoPicker";
 
 export function RepoFilterRow({
@@ -20,14 +20,13 @@ export function RepoFilterRow({
 		<>
 			<RepoPicker repos={repos} selected={selectedCwd} onSelect={onSelectCwd} />
 			{showFilter && (
-				<input
-					type="text"
+				<TextField
 					value={runFilter}
 					onChange={(e) => onFilterChange(e.target.value)}
 					placeholder="Filter runs..."
-					style={inputStyle}
-					onFocus={(e) => setFocusBorder(e, "#007acc")}
-					onBlur={(e) => setFocusBorder(e, "#555")}
+					size="small"
+					fullWidth
+					slotProps={{ input: { sx: { fontSize: 13 } } }}
 				/>
 			)}
 		</>

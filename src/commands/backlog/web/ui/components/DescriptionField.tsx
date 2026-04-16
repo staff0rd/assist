@@ -1,4 +1,4 @@
-import { Field } from "@base-ui/react/field";
+import { Box, Link, TextField, Typography } from "@mui/material";
 import { marked } from "marked";
 import { useState } from "react";
 
@@ -9,8 +9,16 @@ type DescriptionFieldProps = {
 
 function MarkdownPreview({ text }: { text: string }) {
 	return (
-		<div
-			className="border border-gray-200 rounded-md p-3 mt-2 min-h-[60px] bg-gray-50"
+		<Box
+			sx={(theme) => ({
+				border: 1,
+				borderColor: "divider",
+				borderRadius: 1,
+				p: 1.5,
+				mt: 1,
+				minHeight: 60,
+				bgcolor: theme.palette.mode === "dark" ? "grey.900" : "grey.50",
+			})}
 			// biome-ignore lint/security/noDangerouslySetInnerHtml: markdown preview requires innerHTML
 			dangerouslySetInnerHTML={{
 				__html: marked.parse(text || "") as string,
@@ -23,25 +31,29 @@ export function DescriptionField({ value, onChange }: DescriptionFieldProps) {
 	const [showPreview, setShowPreview] = useState(false);
 
 	return (
-		<Field.Root className="mb-4">
-			<Field.Label className="block font-medium mb-1 text-sm">
+		<Box sx={{ mb: 2 }}>
+			<Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
 				Description{" "}
-				<button
+				<Link
+					component="button"
 					type="button"
-					className="text-xs text-blue-600 cursor-pointer ml-2 bg-transparent border-none p-0"
+					variant="caption"
 					onClick={() => setShowPreview(!showPreview)}
+					sx={{ ml: 1 }}
 				>
 					(preview)
-				</button>
-			</Field.Label>
-			<Field.Control
-				className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm font-[inherit] min-h-[120px] resize-y"
-				render={<textarea />}
+				</Link>
+			</Typography>
+			<TextField
+				fullWidth
+				multiline
+				minRows={4}
+				size="small"
 				placeholder="Markdown supported"
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 			/>
 			{showPreview && <MarkdownPreview text={value} />}
-		</Field.Root>
+		</Box>
 	);
 }

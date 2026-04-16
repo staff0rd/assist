@@ -1,4 +1,4 @@
-import { Field } from "@base-ui/react/field";
+import { Box, Stack, Typography } from "@mui/material";
 import { useRef, useState } from "react";
 import { CriterionRow } from "./CriterionRow";
 
@@ -42,11 +42,11 @@ export function AcceptanceCriteriaField({
 	}
 
 	return (
-		<Field.Root className="mb-4">
-			<Field.Label className="block font-medium mb-1 text-sm">
+		<Box sx={{ mb: 2 }}>
+			<Typography variant="body2" sx={{ fontWeight: "medium", mb: 0.5 }}>
 				Acceptance Criteria
-			</Field.Label>
-			<div className="flex flex-col gap-2">
+			</Typography>
+			<Stack spacing={1}>
 				{criteria.map((c, i) => (
 					<CriterionRow
 						key={c.id}
@@ -57,7 +57,7 @@ export function AcceptanceCriteriaField({
 						onRemove={() => remove(c.id)}
 					/>
 				))}
-			</div>
-		</Field.Root>
+			</Stack>
+		</Box>
 	);
 }

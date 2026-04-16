@@ -1,22 +1,18 @@
-import {
-	cardActionButtonStyle,
-	cardActionHover,
-} from "./cardActionButtonStyle";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
 
 export function DismissButton({ onDismiss }: { onDismiss: () => void }) {
 	return (
-		<button
-			type="button"
+		<IconButton
+			size="small"
 			onClick={(e) => {
 				e.stopPropagation();
 				onDismiss();
 			}}
-			onMouseEnter={(e) => cardActionHover(e, true)}
-			onMouseLeave={(e) => cardActionHover(e, false)}
-			style={{ ...cardActionButtonStyle, fontSize: 16 }}
 			title="Dismiss"
+			sx={{ color: "text.disabled", "&:hover": { color: "text.primary" } }}
 		>
-			×
-		</button>
+			<CloseIcon sx={{ fontSize: 16 }} />
+		</IconButton>
 	);
 }

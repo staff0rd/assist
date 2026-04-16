@@ -83,7 +83,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist news` - Start the news web UI showing latest RSS feed items (same as `news web`)
 - `assist news add [url]` - Add an RSS feed URL to the config
 - `assist news web [-p, --port <number>]` - Start a web view of the news feeds (default port 3001)
-- `assist backlog [--dir <path>]` - Start the backlog web UI (same as `backlog web`). `--dir` overrides the directory for backlog file discovery
+- `assist backlog [--dir <path>]` - Open the backlog tab in the web dashboard (same as `backlog web`). `--dir` overrides the directory for backlog file discovery
 - `assist backlog init` - Create an empty backlog
 - `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
@@ -105,7 +105,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog phase-done <id> <phase> <summary>` - Signal that a plan phase is complete with a summary (used by orchestrator)
 - `assist backlog rewind <id> <phase> --reason <reason>` - Rewind a backlog item to an earlier phase, setting status to in-progress
 - `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude
-- `assist backlog web [-p, --port <number>]` - Start a web view of the backlog (default port 3000)
+- `assist backlog web [-p, --port <number>]` - Open the backlog tab in the web dashboard (default port 3100)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API
 - `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first)
@@ -193,8 +193,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist voice status` - Check voice daemon status and recent events
 - `assist voice devices` - List available audio input devices
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
-- `assist sessions` - Start the sessions web dashboard (same as `sessions web`)
-- `assist sessions web [-p, --port <number>]` - Start a web dashboard for Claude Code sessions with xterm.js terminals (default port 3100)
+- `assist sessions` - Start the web dashboard (same as `sessions web`)
+- `assist sessions web [-p, --port <number>]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals (default port 3100)
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
 - `assist next` - Alias for `backlog next -w`
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal

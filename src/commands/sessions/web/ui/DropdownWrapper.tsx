@@ -1,26 +1,28 @@
-import { type CSSProperties, type ReactNode, useRef, useState } from "react";
+import type { SxProps, Theme } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import { type ReactNode, useRef, useState } from "react";
 import { FilterTrigger } from "./FilterTrigger";
 
-export const dropdownStyle: CSSProperties = {
+export const dropdownStyle: SxProps<Theme> = {
 	position: "absolute",
 	top: "100%",
 	left: 0,
 	right: 0,
-	marginTop: 2,
-	background: "#2d2d2d",
-	border: "1px solid #444",
-	borderRadius: 4,
+	mt: 0.25,
 	maxHeight: 200,
 	overflowY: "auto",
 	zIndex: 10,
 };
 
-export const dropdownStyleUp: CSSProperties = {
-	...dropdownStyle,
-	top: undefined,
-	marginTop: undefined,
+export const dropdownStyleUp: SxProps<Theme> = {
+	position: "absolute",
+	left: 0,
+	right: 0,
 	bottom: "100%",
-	marginBottom: 2,
+	mb: 0.25,
+	maxHeight: 200,
+	overflowY: "auto",
+	zIndex: 10,
 };
 
 export function DropdownWrapper({
@@ -34,16 +36,18 @@ export function DropdownWrapper({
 	const wrapperRef = useRef<HTMLFieldSetElement>(null);
 
 	return (
-		<fieldset
+		<Paper
+			component="fieldset"
 			ref={wrapperRef}
-			style={{ position: "relative", border: "none", margin: 0, padding: 0 }}
-			onBlur={(e) => {
+			variant="outlined"
+			sx={{ position: "relative", border: "none", m: 0, p: 0 }}
+			onBlur={(e: React.FocusEvent) => {
 				if (!wrapperRef.current?.contains(e.relatedTarget as Node))
 					setOpen(false);
 			}}
 		>
 			<FilterTrigger label={label} open={open} onClick={() => setOpen(!open)} />
 			{open && children(() => setOpen(false))}
-		</fieldset>
+		</Paper>
 	);
 }

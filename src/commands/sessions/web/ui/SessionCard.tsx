@@ -1,5 +1,5 @@
-import type { MouseEvent } from "react";
-import { CardHeader, cardStyle, StatusRow } from "./cardStyle";
+import ButtonBase from "@mui/material/ButtonBase";
+import { CardHeader, cardSx, StatusRow } from "./CardHeader";
 import type { SessionInfo } from "./types";
 import { useElapsed } from "./useElapsed";
 
@@ -17,18 +17,9 @@ export function SessionCard({
 	onDismiss: () => void;
 }) {
 	const elapsed = useElapsed(session.startedAt);
-	const handleHover = (e: MouseEvent<HTMLButtonElement>, enter: boolean) => {
-		if (!active) e.currentTarget.style.background = enter ? "#333" : "#2d2d2d";
-	};
 
 	return (
-		<button
-			type="button"
-			onClick={onClick}
-			style={cardStyle(active)}
-			onMouseEnter={(e) => handleHover(e, true)}
-			onMouseLeave={(e) => handleHover(e, false)}
-		>
+		<ButtonBase onClick={onClick} sx={cardSx(active)}>
 			<CardHeader
 				name={session.name}
 				isDone={session.status === "done"}
@@ -36,6 +27,6 @@ export function SessionCard({
 				onDismiss={onDismiss}
 			/>
 			<StatusRow status={session.status} elapsed={elapsed} />
-		</button>
+		</ButtonBase>
 	);
 }

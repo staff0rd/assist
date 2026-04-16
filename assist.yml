@@ -134,15 +134,15 @@ run:
       - lint
   - name: verify:react-build
     command: npx
-    filter: src/commands/backlog/web/**
+    filter: "{src/commands/sessions/web/**,src/commands/backlog/web/ui/**}"
     args:
       - esbuild
-      - src/commands/backlog/web/ui/App.tsx
+      - src/commands/sessions/web/ui/App.tsx
       - --bundle
       - --minify
       - --format=iife
       - --target=es2020
-      - --outfile=dist/commands/backlog/web/bundle.js
+      - --outfile=dist/commands/sessions/web/bundle.js
       - --jsx=automatic
       - --jsx-import-source=react
       - --define:process.env.NODE_ENV='production'
@@ -169,5 +169,7 @@ run:
 deny:
   - pattern: assist build
     message: it's /verify, use the skill, don't try to build separately
+  - pattern: npx tsc
+    message: Use /verify
 backlog:
   autoCommit: true

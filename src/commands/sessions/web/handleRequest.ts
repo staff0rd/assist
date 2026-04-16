@@ -1,11 +1,10 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { createBundleHandler } from "../../../shared/createBundleHandler";
 import { createFallbackHandler } from "../../../shared/createFallbackHandler";
-import {
-	createBundleHandler,
-	createHtmlHandler,
-	type Handler,
-} from "../../../shared/web";
+import { createHtmlHandler, type Handler } from "../../../shared/web";
+import { handleItemRoute } from "../../backlog/web/handleItemRoute";
+import { createItem, listItems } from "../../backlog/web/shared";
 import { getHtml } from "./getHtml";
 
 const require = createRequire(import.meta.url);
@@ -31,6 +30,12 @@ const routes: Record<string, Handler> = {
 		"commands/sessions/web/bundle.js",
 	),
 	"GET /xterm.css": createCssHandler("@xterm/xterm/css/xterm.css"),
+	"GET /api/items": listItems,
+	"POST /api/items": createItem,
 };
 
-export const handleRequest = createFallbackHandler(routes, htmlHandler);
+export const handleRequest = createFallbackHandler(
+	routes,
+	htmlHandler,
+	handleItemRoute,
+);

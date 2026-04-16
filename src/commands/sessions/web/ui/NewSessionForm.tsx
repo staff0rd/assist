@@ -1,3 +1,5 @@
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { RepoFilterRow } from "./RepoFilterRow";
 import { SessionFormControls } from "./SessionFormControls";
 import type { HistoricalSession } from "./types";
@@ -19,14 +21,16 @@ export function NewSessionForm(props: Props) {
 	const hasRepo = selectedCwd !== "";
 
 	return (
-		<form
+		<Box
+			component="form"
 			onSubmit={form.handleSubmit}
-			style={{
-				padding: 12,
-				borderTop: "1px solid #333",
+			sx={{
+				p: 1.5,
+				borderTop: 1,
+				borderColor: "divider",
 				display: "flex",
 				flexDirection: "column",
-				gap: 8,
+				gap: 1,
 			}}
 		>
 			<RepoFilterRow
@@ -40,10 +44,10 @@ export function NewSessionForm(props: Props) {
 			{hasRepo ? (
 				<SessionFormControls form={form} totalRunCount={runConfigs.length} />
 			) : (
-				<div style={{ color: "#888", fontSize: 12, padding: "6px 0" }}>
+				<Typography variant="caption" color="text.disabled" sx={{ py: 0.75 }}>
 					Select a repo above to create a session
-				</div>
+				</Typography>
 			)}
-		</form>
+		</Box>
 	);
 }

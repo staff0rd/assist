@@ -1,5 +1,7 @@
-import { MODES, modeButtonStyle, type SessionMode } from "./isAssistMode";
-import { RunButton } from "./RunButton";
+import Stack from "@mui/material/Stack";
+import type { SessionMode } from "./isAssistMode";
+import { ModeButtons } from "./ModeButtons";
+import { RunButtons } from "./RunButtons";
 import type { RunConfigInfo } from "./types";
 
 const MAX_VISIBLE_RUNS = 10;
@@ -20,41 +22,29 @@ export function ModeSelector({
 	onSelectRun: (name: string | null) => void;
 }) {
 	const visible = runConfigs.slice(0, MAX_VISIBLE_RUNS);
-	const hiddenCount = totalRunCount - visible.length;
+
+	const handleModeSelect = (m: SessionMode) => {
+		onSelectRun(null);
+		onSelectMode(m);
+	};
 
 	return (
-		<div
-			style={{
-				display: "flex",
-				gap: 4,
-				flexWrap: "wrap",
-				alignItems: "center",
-			}}
+		<Stack
+			direction="row"
+			spacing={0.5}
+			sx={{ flexWrap: "wrap", alignItems: "center" }}
 		>
-			{MODES.map((m) => (
-				<button
-					key={m.value}
-					type="button"
-					onClick={() => {
-						onSelectRun(null);
-						onSelectMode(m.value);
-					}}
-					style={modeButtonStyle(!selectedRun && mode === m.value)}
-				>
-					{m.label}
-				</button>
-			))}
-			{visible.map((c) => (
-				<RunButton
-					key={c.name}
-					config={c}
-					active={selectedRun === c.name}
-					onClick={() => onSelectRun(c.name)}
-				/>
-			))}
-			{hiddenCount > 0 && (
-				<span style={{ fontSize: 11, color: "#888" }}>+{hiddenCount} more</span>
-			)}
-		</div>
+			<ModeButtons
+				mode={mode}
+				selectedRun={selectedRun}
+				onSelect={handleModeSelect}
+			/>
+			<RunButtons
+				configs={visible}
+				selectedRun={selectedRun}
+				onSelectRun={onSelectRun}
+				hiddenCount={totalRunCount - visible.length}
+			/>
+		</Stack>
 	);
 }

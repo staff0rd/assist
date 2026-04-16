@@ -1,22 +1,18 @@
-import {
-	cardActionButtonStyle,
-	cardActionHover,
-} from "./cardActionButtonStyle";
+import ReplayIcon from "@mui/icons-material/Replay";
+import IconButton from "@mui/material/IconButton";
 
 export function RetryButton({ onRetry }: { onRetry: () => void }) {
 	return (
-		<button
-			type="button"
+		<IconButton
+			size="small"
 			onClick={(e) => {
 				e.stopPropagation();
 				onRetry();
 			}}
-			onMouseEnter={(e) => cardActionHover(e, true)}
-			onMouseLeave={(e) => cardActionHover(e, false)}
-			style={{ ...cardActionButtonStyle, fontSize: 14 }}
 			title="Retry"
+			sx={{ color: "text.disabled", "&:hover": { color: "text.primary" } }}
 		>
-			↻
-		</button>
+			<ReplayIcon sx={{ fontSize: 14 }} />
+		</IconButton>
 	);
 }

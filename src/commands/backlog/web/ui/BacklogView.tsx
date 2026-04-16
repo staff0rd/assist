@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { Route, Routes } from "react-router";
 import { fetchItems } from "./api";
 import { ViewRouter } from "./components/ViewRouter";
 import type { BacklogItem } from "./types";
 
-export function App() {
+export function BacklogView() {
 	const [items, setItems] = useState<BacklogItem[]>([]);
 
 	const reload = useCallback(async () => {
@@ -17,18 +16,11 @@ export function App() {
 	}, [reload]);
 
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route
-					path="/*"
-					element={<ViewRouter items={items} onReload={reload} />}
-				/>
-			</Routes>
-		</BrowserRouter>
+		<Routes>
+			<Route
+				path="/*"
+				element={<ViewRouter items={items} onReload={reload} />}
+			/>
+		</Routes>
 	);
-}
-
-const root = document.getElementById("app");
-if (root) {
-	createRoot(root).render(<App />);
 }

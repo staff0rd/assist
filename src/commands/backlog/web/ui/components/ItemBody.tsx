@@ -1,19 +1,24 @@
+import { Box, Paper, Typography } from "@mui/material";
 import { marked } from "marked";
 import type { BacklogItem } from "../types";
 import { AcceptanceCriteriaList } from "./AcceptanceCriteriaList";
 import { CommentsSection } from "./CommentsSection";
+import { ItemMeta } from "./ItemMeta";
 import { PlanSection } from "./PlanSection";
-import { StatusPicker } from "./StatusPicker";
 
-const typeBadgeColors: Record<string, string> = {
-	story: "bg-blue-100 text-blue-700",
-	bug: "bg-red-100 text-red-700",
-};
+const markdownSx = { lineHeight: 1.7, "& p": { mt: 0 } } as const;
+const sectionHeadingSx = {
+	color: "text.secondary",
+	mb: 1,
+	display: "block",
+	letterSpacing: "0.08em",
+} as const;
 
 function MarkdownBlock({ content }: { content: string }) {
 	return (
-		<div
-			className="markdown leading-relaxed"
+		<Box
+			className="markdown"
+			sx={markdownSx}
 			// biome-ignore lint/security/noDangerouslySetInnerHtml: markdown rendering requires innerHTML
 			dangerouslySetInnerHTML={{ __html: marked.parse(content) as string }}
 		/>
@@ -30,24 +35,18 @@ export function ItemBody({
 	onRewind?: () => Promise<void>;
 }) {
 	return (
-		<div className="bg-white rounded-lg p-6 border border-gray-200">
-			<h2>{item.name}</h2>
-			<div className="text-gray-400 text-sm mb-4 flex items-center gap-2">
-				#{item.id}
-				<span
-					className={`inline-block rounded-full px-2.5 text-xs font-medium ${typeBadgeColors[item.type]}`}
-				>
-					{item.type}
-				</span>
-				<StatusPicker current={item.status} onStatusChange={onStatusChange} />
-			</div>
+		<Paper variant="outlined" sx={{ p: 3 }}>
+			<Typography variant="h5" component="h2">
+				{item.name}
+			</Typography>
+			<ItemMeta item={item} onStatusChange={onStatusChange} />
 			{item.description && (
-				<div className="mb-4">
-					<h3 className="text-xs uppercase text-gray-500 mb-2 tracking-wide">
+				<Box sx={{ mb: 2 }}>
+					<Typography variant="overline" sx={sectionHeadingSx}>
 						Description
-					</h3>
+					</Typography>
 					<MarkdownBlock content={item.description} />
-				</div>
+				</Box>
 			)}
 			<AcceptanceCriteriaList criteria={item.acceptanceCriteria} />
 			{item.plan && (
@@ -59,6 +58,6 @@ export function ItemBody({
 				/>
 			)}
 			{item.comments && <CommentsSection comments={item.comments} />}
-		</div>
+		</Paper>
 	);
 }

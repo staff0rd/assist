@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router";
-import { deleteItem, updateItemStatus } from "../api";
+import { updateItemStatus } from "../api";
 import type { BacklogItem } from "../types";
 import { BackButton } from "./BackButton";
-import { ConfirmDialog } from "./ConfirmDialog";
+import { DeleteAction } from "./DeleteAction";
 import { ItemBody } from "./ItemBody";
 
 type ItemDetailProps = {
@@ -11,35 +11,11 @@ type ItemDetailProps = {
 	onReload: () => Promise<void>;
 };
 
-function DeleteAction({
-	itemId,
-	onDeleted,
-}: {
-	itemId: number;
-	onDeleted: () => Promise<void>;
-}) {
-	const [confirming, setConfirming] = useState(false);
-	return (
-		<>
-			{confirming && (
-				<ConfirmDialog
-					onConfirm={async () => {
-						await deleteItem(itemId);
-						await onDeleted();
-					}}
-					onCancel={() => setConfirming(false)}
-				/>
-			)}
-			<button
-				type="button"
-				className="bg-red-600 hover:bg-red-700 text-white rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
-				onClick={() => setConfirming(true)}
-			>
-				Delete
-			</button>
-		</>
-	);
-}
+const headerSx = {
+	justifyContent: "space-between",
+	alignItems: "center",
+	mb: 2,
+} as const;
 
 function DetailHeader({
 	itemId,
@@ -50,41 +26,41 @@ function DetailHeader({
 }) {
 	const navigate = useNavigate();
 	return (
-		<div className="flex justify-between items-center mb-4">
-			<BackButton to="/" />
-			<div className="flex gap-2">
-				<button
-					type="button"
-					className="bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md px-4 py-2 text-sm font-medium cursor-pointer"
-					onClick={() => navigate(`/items/${itemId}/edit`)}
+		<Stack direction="row" sx={headerSx}>
+			<BackButton to="/backlog" />
+			<Stack direction="row" spacing={1}>
+				<Button
+					variant="contained"
+					color="inherit"
+					size="small"
+					onClick={() => navigate(`/backlog/items/${itemId}/edit`)}
 				>
 					Edit
-				</button>
+				</Button>
 				<DeleteAction itemId={itemId} onDeleted={onDeleted} />
-			</div>
-		</div>
+			</Stack>
+		</Stack>
 	);
 }
 
 export function ItemDetail({ item, onReload }: ItemDetailProps) {
 	const navigate = useNavigate();
+	const handleDeleted = async () => {
+		await onReload();
+		navigate("/backlog");
+	};
+	const handleStatusChange = async (status: BacklogItem["status"]) => {
+		await updateItemStatus(item.id, status);
+		await onReload();
+	};
 	return (
-		<>
-			<DetailHeader
-				itemId={item.id}
-				onDeleted={async () => {
-					await onReload();
-					navigate("/");
-				}}
-			/>
+		<Box>
+			<DetailHeader itemId={item.id} onDeleted={handleDeleted} />
 			<ItemBody
 				item={item}
-				onStatusChange={async (status) => {
-					await updateItemStatus(item.id, status);
-					await onReload();
-				}}
+				onStatusChange={handleStatusChange}
 				onRewind={onReload}
 			/>
-		</>
+		</Box>
 	);
 }

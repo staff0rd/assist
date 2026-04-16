@@ -1,11 +1,8 @@
-import { readFileSync } from "node:fs";
 import {
 	createServer,
 	type IncomingMessage,
 	type ServerResponse,
 } from "node:http";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import { openBrowser } from "./openBrowser";
 
@@ -21,21 +18,6 @@ export function respondJson(
 ): void {
 	res.writeHead(status, { "Content-Type": "application/json" });
 	res.end(JSON.stringify(data));
-}
-
-export function createBundleHandler(
-	importMetaUrl: string,
-	bundlePath: string,
-): Handler {
-	const dir = dirname(fileURLToPath(importMetaUrl));
-	let cache: string | undefined;
-	return (_req, res) => {
-		if (!cache) {
-			cache = readFileSync(join(dir, bundlePath), "utf-8");
-		}
-		res.writeHead(200, { "Content-Type": "application/javascript" });
-		res.end(cache);
-	};
 }
 
 export function createHtmlHandler(getHtml: () => string): Handler {
@@ -65,6 +47,11 @@ export function createRouteHandler(
 	};
 }
 
+function buildUrl(port: number, initialPath?: string): string {
+	const base = `http://localhost:${port}`;
+	return initialPath ? `${base}${initialPath}` : base;
+}
+
 export function startWebServer(
 	label: string,
 	port: number,
@@ -73,8 +60,9 @@ export function startWebServer(
 		res: ServerResponse,
 		port: number,
 	) => Promise<void>,
+	initialPath?: string,
 ): ReturnType<typeof createServer> {
-	const url = `http://localhost:${port}`;
+	const url = buildUrl(port, initialPath);
 	const server = createServer((req, res) => {
 		handler(req, res, port);
 	});

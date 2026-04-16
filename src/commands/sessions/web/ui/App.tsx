@@ -1,25 +1,34 @@
-import { useState } from "react";
+import { CssBaseline, createTheme, ThemeProvider } from "@mui/material";
+import { useMemo } from "react";
 import { createRoot } from "react-dom/client";
-import { AppSidebar } from "./AppSidebar";
-import { SessionArea } from "./SessionArea";
-import type { SidebarTab } from "./types";
-import { useSessionSocket } from "./useSessionSocket";
+import { BrowserRouter } from "react-router";
+import { AppShell } from "./AppShell";
+import { ThemeToggle } from "./ThemeToggle";
+import { useColorMode } from "./useColorMode";
 
 export function App() {
-	const socket = useSessionSocket();
-	const [tab, setTab] = useState<SidebarTab>("active");
+	const { mode, toggle } = useColorMode();
+	const theme = useMemo(
+		() =>
+			createTheme({
+				palette: {
+					mode,
+					...(mode === "dark" && {
+						background: { default: "#1e1e1e", paper: "#252526" },
+					}),
+				},
+			}),
+		[mode],
+	);
 
 	return (
-		<div style={{ display: "flex", width: "100%", height: "100%" }}>
-			<AppSidebar socket={socket} tab={tab} onTabChange={setTab} />
-			<SessionArea
-				sessions={socket.sessions}
-				activeId={socket.activeId}
-				onOutput={socket.onOutput}
-				sendInput={socket.sendInput}
-				sendResize={socket.sendResize}
-			/>
-		</div>
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
+			<BrowserRouter>
+				<ThemeToggle mode={mode} toggle={toggle} />
+				<AppShell />
+			</BrowserRouter>
+		</ThemeProvider>
 	);
 }
 

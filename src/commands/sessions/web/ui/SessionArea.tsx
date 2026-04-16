@@ -1,4 +1,5 @@
-import type { CSSProperties } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { TerminalPane } from "./TerminalPane";
 import type { SessionInfo } from "./types";
 
@@ -7,21 +8,6 @@ type OutputSubscriber = (
 	sessionId: string,
 	handler: OutputHandler,
 ) => () => void;
-
-const containerStyle: CSSProperties = {
-	flex: 1,
-	position: "relative",
-	background: "#1e1e1e",
-};
-
-const emptyStyle: CSSProperties = {
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-	height: "100%",
-	color: "#666",
-	fontSize: 14,
-};
 
 export function SessionArea({
 	sessions,
@@ -37,7 +23,7 @@ export function SessionArea({
 	sendResize: (sessionId: string, cols: number, rows: number) => void;
 }) {
 	return (
-		<div style={containerStyle}>
+		<Box sx={{ flex: 1, position: "relative", bgcolor: "background.default" }}>
 			{sessions.map((s) => (
 				<TerminalPane
 					key={s.id}
@@ -49,8 +35,19 @@ export function SessionArea({
 				/>
 			))}
 			{sessions.length === 0 && (
-				<div style={emptyStyle}>Create a session to get started</div>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						height: "100%",
+					}}
+				>
+					<Typography variant="body2" color="text.disabled">
+						Create a session to get started
+					</Typography>
+				</Box>
 			)}
-		</div>
+		</Box>
 	);
 }

@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import { useState } from "react";
 import { rewindPhase } from "../api";
 import { RewindDialog } from "./RewindDialog";
@@ -18,13 +19,15 @@ export function RewindAction({
 	const [showDialog, setShowDialog] = useState(false);
 	return (
 		<>
-			<button
-				type="button"
-				className="ml-auto text-xs text-amber-700 bg-amber-100 hover:bg-amber-200 rounded-full px-2 py-0.5 font-medium cursor-pointer"
+			<Button
+				size="small"
+				color="warning"
+				variant="outlined"
 				onClick={() => setShowDialog(true)}
+				sx={{ ml: "auto", textTransform: "none", fontSize: "0.75rem" }}
 			>
 				Rewind
-			</button>
+			</Button>
 			{showDialog && (
 				<RewindDialog
 					phaseName={phaseName}

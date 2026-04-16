@@ -21,7 +21,10 @@ export function ViewRouter({ items, onReload }: ViewRouterProps) {
 				path="items/:id/edit"
 				element={<ItemRoute items={items} mode="edit" onReload={onReload} />}
 			/>
-			<Route path="add" element={<ItemForm onReload={onReload} backTo="/" />} />
+			<Route
+				path="add"
+				element={<ItemForm onReload={onReload} backTo="/backlog" />}
+			/>
 		</Routes>
 	);
 }

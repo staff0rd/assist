@@ -1,22 +1,8 @@
-import type { CSSProperties } from "react";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import type { SidebarTab } from "./types";
 
-const tabStyle = (active: boolean): CSSProperties => ({
-	flex: 1,
-	padding: "8px 0",
-	fontSize: 12,
-	fontWeight: 600,
-	letterSpacing: 0.5,
-	textTransform: "uppercase",
-	color: active ? "#ccc" : "#666",
-	background: "none",
-	border: "none",
-	borderBottom: active ? "2px solid #007acc" : "2px solid transparent",
-	cursor: "pointer",
-	font: "inherit",
-});
-
-const countStyle: CSSProperties = { color: "#666", fontWeight: 400 };
+const tabSx = { minHeight: 36, py: 0, fontSize: 12 } as const;
 
 export function SidebarTabs({
 	tab,
@@ -29,22 +15,16 @@ export function SidebarTabs({
 	historyCount: number;
 	onChange: (tab: SidebarTab) => void;
 }) {
+	const tabIndex = tab === "active" ? 0 : 1;
 	return (
-		<div style={{ display: "flex", borderBottom: "1px solid #333" }}>
-			<button
-				type="button"
-				style={tabStyle(tab === "active")}
-				onClick={() => onChange("active")}
-			>
-				Active <span style={countStyle}>{activeCount}</span>
-			</button>
-			<button
-				type="button"
-				style={tabStyle(tab === "history")}
-				onClick={() => onChange("history")}
-			>
-				History <span style={countStyle}>{historyCount}</span>
-			</button>
-		</div>
+		<Tabs
+			value={tabIndex}
+			onChange={(_e, v: number) => onChange(v === 0 ? "active" : "history")}
+			variant="fullWidth"
+			sx={{ borderBottom: 1, borderColor: "divider", minHeight: 36 }}
+		>
+			<Tab label={`Active ${activeCount}`} sx={tabSx} />
+			<Tab label={`History ${historyCount}`} sx={tabSx} />
+		</Tabs>
 	);
 }
