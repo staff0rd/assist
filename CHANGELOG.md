@@ -1,3 +1,10 @@
+## [0.205.1](https://github.com/staff0rd/assist/compare/v0.205.0...v0.205.1) (2026-04-21)
+
+
+### Bug Fixes
+
+* run git log without shell ([b5a750e](https://github.com/staff0rd/assist/commit/b5a750e6363af2beeb7d4f62d2b2717deb05b551))
+
 # [0.205.0](https://github.com/staff0rd/assist/compare/v0.204.0...v0.205.0) (2026-04-16)
 
 
