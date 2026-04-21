@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { basename } from "node:path";
 import { loadBlogSkipDays } from "../loadBlogSkipDays";
 import {
@@ -25,12 +25,11 @@ export function list(options: ListOptions): void {
 	const skipDays = loadBlogSkipDays(repoName);
 	const devlogEntries = loadDevlogEntries(repoName);
 
-	const reverseFlag = options.reverse ? "--reverse " : "";
-	const limitFlag = options.reverse ? "" : "-n 500 ";
-	const output = execSync(
-		`git log ${reverseFlag}${limitFlag}--pretty=format:'%ad|%h|%s' --date=short`,
-		{ encoding: "utf-8" },
-	);
+	const args = ["log"];
+	if (options.reverse) args.push("--reverse");
+	else args.push("-n", "500");
+	args.push("--pretty=format:%ad|%h|%s", "--date=short");
+	const output = execFileSync("git", args, { encoding: "utf-8" });
 
 	const commitsByDate = parseGitLogCommits(output, ignore);
 

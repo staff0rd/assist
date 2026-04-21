@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import chalk from "chalk";
 import { bumpVersion } from "../../getLastVersionInfo";
 import { loadBlogSkipDays } from "../../loadBlogSkipDays";
@@ -24,8 +24,9 @@ export function findTargetDate(
 }
 
 export function fetchCommitsByDate(ignore: string[], lastDate: string | null) {
-	const output = execSync(
-		"git log --pretty=format:'%ad|%h|%s' --date=short -n 500",
+	const output = execFileSync(
+		"git",
+		["log", "--pretty=format:%ad|%h|%s", "--date=short", "-n", "500"],
 		{ encoding: "utf-8" },
 	);
 	return parseGitLogCommits(output, ignore, lastDate);

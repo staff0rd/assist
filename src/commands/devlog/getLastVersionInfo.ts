@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import semver from "semver";
 import type { AssistConfig } from "../../shared/types";
 import { loadDevlogEntries } from "./loadDevlogEntries";
@@ -28,8 +28,9 @@ export function stripToMinor(version: string): string {
 function getLastVersionInfoFromGit(): LastVersionInfo | null {
 	try {
 		// Get last commit hash and date
-		const output = execSync(
-			"git log -1 --pretty=format:'%ad|%h' --date=short",
+		const output = execFileSync(
+			"git",
+			["log", "-1", "--pretty=format:%ad|%h", "--date=short"],
 			{
 				encoding: "utf-8",
 			},
