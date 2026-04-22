@@ -35,6 +35,10 @@ export function registerVerify(program: Command): void {
 	verifyCommand
 		.command("init")
 		.description("Add verify scripts to a project")
+		.option(
+			"--package-json",
+			"Write scripts to package.json instead of assist.yml",
+		)
 		.action(verifyInit);
 
 	verifyCommand

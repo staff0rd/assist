@@ -21,7 +21,6 @@ export type ExistingSetup = {
 	madge: ToolStatus;
 	maintainability: ToolStatus;
 	hasOpenColor: boolean;
-	hasConfigScripts: boolean;
 };
 
 function hasDep(pkg: PackageJson, name: string): boolean {
@@ -75,9 +74,6 @@ export function detectExistingSetup(pkg: PackageJson): ExistingSetup {
 		hasVite: hasDep(pkg, "vite"),
 		hasTypescript: !!pkg.devDependencies?.typescript,
 		hasOpenColor: hasDep(pkg, "open-color"),
-		hasConfigScripts: [...configScriptNames].some((n) =>
-			n.startsWith("verify:"),
-		),
 	};
 }
 

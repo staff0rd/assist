@@ -47,16 +47,18 @@ async function promptForScripts(
 	return selected;
 }
 
-export async function init(): Promise<void> {
+export async function init(
+	options: { packageJson?: boolean } = {},
+): Promise<void> {
 	const { packageJsonPath, pkg } = requirePackageJson();
 	const setup = detectExistingSetup(pkg);
 	const selected = await promptForScripts(getAvailableOptions(setup));
 
 	if (!selected) return;
 
-	const writer: ScriptWriter = setup.hasConfigScripts
-		? setupVerifyRunEntry
-		: (name, cmd) => setupVerifyScript(packageJsonPath, name, cmd);
+	const writer: ScriptWriter = options.packageJson
+		? (name, cmd) => setupVerifyScript(packageJsonPath, name, cmd)
+		: setupVerifyRunEntry;
 
 	const handlers = getSetupHandlers(
 		setup.hasVite,
