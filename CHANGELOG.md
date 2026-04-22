@@ -1,3 +1,10 @@
+# [0.206.0](https://github.com/staff0rd/assist/compare/v0.205.1...v0.206.0) (2026-04-22)
+
+
+### Features
+
+* verify init writes to assist.yml ([d0c426a](https://github.com/staff0rd/assist/commit/d0c426a55ae56508a88f485a3372c062942aa72e))
+
 ## [0.205.1](https://github.com/staff0rd/assist/compare/v0.205.0...v0.205.1) (2026-04-21)
 
 
