@@ -1,3 +1,10 @@
+## [0.206.1](https://github.com/staff0rd/assist/compare/v0.206.0...v0.206.1) (2026-04-23)
+
+
+### Bug Fixes
+
+* support redirects to tmpdir ([fe691ea](https://github.com/staff0rd/assist/commit/fe691ea1c6788fd7abf3a9fd64a10477b23c7881))
+
 # [0.206.0](https://github.com/staff0rd/assist/compare/v0.205.1...v0.206.0) (2026-04-22)
 
 
