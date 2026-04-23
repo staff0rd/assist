@@ -1,3 +1,4 @@
+import { tmpdir } from "node:os";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockMatchesConfigDeny = vi.fn();
@@ -98,6 +99,53 @@ describe("cliHookCheck compound with shell builtins", () => {
 			expect.stringContaining("approved"),
 		);
 		expect(process.exitCode).toBeUndefined();
+		consoleSpy.mockRestore();
+	});
+});
+
+describe("cliHookCheck with redirects", () => {
+	it("evaluates the underlying command against approval rules when the redirect targets OS temp", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockIsApprovedRead.mockImplementation((cmd: string) =>
+			cmd === "az containerapp logs show -n foo --tail 300"
+				? "Allowed by settings: az containerapp logs show"
+				: undefined,
+		);
+
+		cliHookCheck(
+			`az containerapp logs show -n foo --tail 300 2>&1 > ${tmpdir()}/ca-logs3.json`,
+		);
+
+		expect(mockIsApprovedRead).toHaveBeenCalledWith(
+			"az containerapp logs show -n foo --tail 300",
+			"Bash",
+		);
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("approved"),
+		);
+		expect(process.exitCode).toBeUndefined();
+		consoleSpy.mockRestore();
+	});
+
+	it("rejects redirects whose target is outside OS temp with a clear error", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		cliHookCheck("echo hello > /not-temp/output.log");
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			"not approved (redirect target '/not-temp/output.log' is outside the OS temp directory)",
+		);
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
+
+	it("falls back to the generic unable-to-parse message for other constructs", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		cliHookCheck("echo $(date)");
+
+		expect(consoleSpy).toHaveBeenCalledWith("not approved (unable to parse)");
+		expect(process.exitCode).toBe(1);
 		consoleSpy.mockRestore();
 	});
 });

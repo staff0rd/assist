@@ -1,5 +1,13 @@
+import { tmpdir } from "node:os";
 import { describe, expect, it } from "vitest";
 import { splitCompound } from "./splitCompound";
+
+const ok = (parts: string[]) => ({ ok: true as const, parts });
+const unparseable = { ok: false as const, error: "unable to parse" };
+const redirectError = (target: string) => ({
+	ok: false as const,
+	error: `redirect target '${target}' is outside the OS temp directory`,
+});
 
 describe("splitCompound", () => {
 	describe("when given a simple command", () => {
@@ -8,7 +16,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["gh repo view owner/repo"]);
+			expect(result).toEqual(ok(["gh repo view owner/repo"]));
 		});
 
 		describe("when the command has flags", () => {
@@ -17,7 +25,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["git log --oneline -n 5"]);
+				expect(result).toEqual(ok(["git log --oneline -n 5"]));
 			});
 		});
 	});
@@ -28,7 +36,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["gh repo view owner/repo", "grep name"]);
+			expect(result).toEqual(ok(["gh repo view owner/repo", "grep name"]));
 		});
 	});
 
@@ -38,7 +46,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["git log --oneline", "head -5", "grep fix"]);
+			expect(result).toEqual(ok(["git log --oneline", "head -5", "grep fix"]));
 		});
 	});
 
@@ -48,7 +56,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["git status", "git diff"]);
+			expect(result).toEqual(ok(["git status", "git diff"]));
 		});
 	});
 
@@ -58,7 +66,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["echo hello", "echo fallback"]);
+			expect(result).toEqual(ok(["echo hello", "echo fallback"]));
 		});
 	});
 
@@ -68,7 +76,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["echo hello", "echo world"]);
+			expect(result).toEqual(ok(["echo hello", "echo world"]));
 		});
 	});
 
@@ -78,11 +86,9 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual([
-				"gh repo view owner/repo",
-				"grep name",
-				"echo done",
-			]);
+			expect(result).toEqual(
+				ok(["gh repo view owner/repo", "grep name", "echo done"]),
+			);
 		});
 	});
 
@@ -93,7 +99,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["npm test"]);
+				expect(result).toEqual(ok(["npm test"]));
 			});
 		});
 
@@ -103,7 +109,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["npm test"]);
+				expect(result).toEqual(ok(["npm test"]));
 			});
 		});
 
@@ -113,7 +119,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["npm test", "grep pass"]);
+				expect(result).toEqual(ok(["npm test", "grep pass"]));
 			});
 		});
 	});
@@ -125,7 +131,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["npx vitest run"]);
+				expect(result).toEqual(ok(["npx vitest run"]));
 			});
 
 			describe("when in a compound command", () => {
@@ -134,7 +140,7 @@ describe("splitCompound", () => {
 
 					const result = splitCompound(command);
 
-					expect(result).toEqual(["cd /c/git/assist", "npx vitest run"]);
+					expect(result).toEqual(ok(["cd /c/git/assist", "npx vitest run"]));
 				});
 			});
 		});
@@ -145,7 +151,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toBeUndefined();
+				expect(result).toEqual(unparseable);
 			});
 		});
 
@@ -155,7 +161,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["gh pr checks 607"]);
+				expect(result).toEqual(ok(["gh pr checks 607"]));
 			});
 
 			describe("when in a piped command", () => {
@@ -164,7 +170,7 @@ describe("splitCompound", () => {
 
 					const result = splitCompound(command);
 
-					expect(result).toEqual(["gh pr checks 607", "head -20"]);
+					expect(result).toEqual(ok(["gh pr checks 607", "head -20"]));
 				});
 			});
 		});
@@ -175,7 +181,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["echo hello"]);
+				expect(result).toEqual(ok(["echo hello"]));
 			});
 		});
 
@@ -185,7 +191,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["assist run foo"]);
+				expect(result).toEqual(ok(["assist run foo"]));
 			});
 
 			it("should strip the redirect in a compound command", () => {
@@ -194,11 +200,9 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual([
-					"assist run foo",
-					"assist run bar",
-					"assist run baz",
-				]);
+				expect(result).toEqual(
+					ok(["assist run foo", "assist run bar", "assist run baz"]),
+				);
 			});
 		});
 
@@ -208,8 +212,54 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["echo hello"]);
+				expect(result).toEqual(ok(["echo hello"]));
 			});
+		});
+	});
+
+	describe("when the command redirects to the OS temp directory", () => {
+		const tmp = tmpdir();
+
+		it("should strip > <tmpdir>/file", () => {
+			const command = `az logs show --tail 300 > ${tmp}/ca-logs3.json`;
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(ok(["az logs show --tail 300"]));
+		});
+
+		it("should strip >> <tmpdir>/file (append)", () => {
+			const command = `echo hello >> ${tmp}/out.log`;
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(ok(["echo hello"]));
+		});
+
+		it("should strip 2>&1 combined with > to a temp path", () => {
+			const command = `az containerapp logs show -n foo --tail 300 2>&1 > ${tmp}/ca-logs3.json`;
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(
+				ok(["az containerapp logs show -n foo --tail 300"]),
+			);
+		});
+
+		it("should strip 2> prefix when redirecting to temp", () => {
+			const command = `echo hello 2>${tmp}/errlog`;
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(ok(["echo hello"]));
+		});
+
+		it("should reject a target outside the temp directory with a clear error", () => {
+			const command = "echo hello > /not-temp/file.txt";
+
+			const result = splitCompound(command);
+
+			expect(result).toEqual(redirectError("/not-temp/file.txt"));
 		});
 	});
 
@@ -220,7 +270,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toBeUndefined();
+				expect(result).toEqual(unparseable);
 			});
 		});
 
@@ -230,7 +280,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toBeUndefined();
+				expect(result).toEqual(unparseable);
 			});
 
 			describe("when backticks are inside double-quoted arguments", () => {
@@ -240,9 +290,11 @@ describe("splitCompound", () => {
 
 					const result = splitCompound(command);
 
-					expect(result).toEqual([
-						"assist backlog add-phase 48 title --task Install `react-router` as a dependency",
-					]);
+					expect(result).toEqual(
+						ok([
+							"assist backlog add-phase 48 title --task Install `react-router` as a dependency",
+						]),
+					);
 				});
 			});
 
@@ -252,7 +304,7 @@ describe("splitCompound", () => {
 
 					const result = splitCompound(command);
 
-					expect(result).toEqual(["echo hello `world`"]);
+					expect(result).toEqual(ok(["echo hello `world`"]));
 				});
 			});
 
@@ -262,18 +314,18 @@ describe("splitCompound", () => {
 
 					const result = splitCompound(command);
 
-					expect(result).toEqual(["echo `not-a-substitution`"]);
+					expect(result).toEqual(ok(["echo `not-a-substitution`"]));
 				});
 			});
 		});
 
-		describe("when using output redirection", () => {
-			it("should reject", () => {
+		describe("when using output redirection to a non-temp path", () => {
+			it("should reject with a clear error", () => {
 				const command = "echo hello > file.txt";
 
 				const result = splitCompound(command);
 
-				expect(result).toBeUndefined();
+				expect(result).toEqual(redirectError("file.txt"));
 			});
 		});
 
@@ -283,17 +335,17 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toBeUndefined();
+				expect(result).toEqual(unparseable);
 			});
 		});
 
-		describe("when using append redirection", () => {
-			it("should reject", () => {
+		describe("when using append redirection to a non-temp path", () => {
+			it("should reject with a clear error", () => {
 				const command = "echo hello >> file.txt";
 
 				const result = splitCompound(command);
 
-				expect(result).toBeUndefined();
+				expect(result).toEqual(redirectError("file.txt"));
 			});
 		});
 	});
@@ -304,7 +356,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["ls *.ts"]);
+			expect(result).toEqual(ok(["ls *.ts"]));
 		});
 
 		describe("when the glob is in a compound command", () => {
@@ -313,7 +365,7 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["echo start", "ls *.ts", "grep foo"]);
+				expect(result).toEqual(ok(["echo start", "ls *.ts", "grep foo"]));
 			});
 		});
 
@@ -323,28 +375,28 @@ describe("splitCompound", () => {
 
 				const result = splitCompound(command);
 
-				expect(result).toEqual(["cat src/**/*.test.ts"]);
+				expect(result).toEqual(ok(["cat src/**/*.test.ts"]));
 			});
 		});
 	});
 
 	describe("when given an empty string", () => {
-		it("should return undefined", () => {
+		it("should return an error", () => {
 			const command = "";
 
 			const result = splitCompound(command);
 
-			expect(result).toBeUndefined();
+			expect(result).toEqual(unparseable);
 		});
 	});
 
 	describe("when given whitespace only", () => {
-		it("should return undefined", () => {
+		it("should return an error", () => {
 			const command = "   ";
 
 			const result = splitCompound(command);
 
-			expect(result).toBeUndefined();
+			expect(result).toEqual(unparseable);
 		});
 	});
 
@@ -354,7 +406,7 @@ describe("splitCompound", () => {
 
 			const result = splitCompound(command);
 
-			expect(result).toEqual(["gh repo view owner/repo"]);
+			expect(result).toEqual(ok(["gh repo view owner/repo"]));
 		});
 	});
 });

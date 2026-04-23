@@ -31,8 +31,8 @@ function tryParseInput(
 }
 
 function decide(toolName: string, rawCommand: string) {
-	const parts = splitCompound(rawCommand);
-	if (parts) return resolvePermission(toolName, parts);
+	const result = splitCompound(rawCommand);
+	if (result.ok) return resolvePermission(toolName, result.parts);
 	// Command couldn't be decomposed — still check deny rules against the raw command
 	return findDeny(toolName, [rawCommand]);
 }

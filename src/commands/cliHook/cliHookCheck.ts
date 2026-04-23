@@ -4,14 +4,15 @@ import { splitCompound } from "../../shared/splitCompound";
 
 export function cliHookCheck(command: string, toolName = "Bash"): void {
 	const trimmed = command.trim();
-	const parts = splitCompound(trimmed);
+	const result = splitCompound(trimmed);
 
-	if (!parts) {
-		console.log("not approved (unable to parse)");
+	if (!result.ok) {
+		console.log(`not approved (${result.error})`);
 		process.exitCode = 1;
 		return;
 	}
 
+	const parts = result.parts;
 	for (const part of parts) {
 		const configDeny = matchesConfigDeny(part);
 		if (configDeny) {
