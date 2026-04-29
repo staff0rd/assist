@@ -1,3 +1,10 @@
+## [0.206.2](https://github.com/staff0rd/assist/compare/v0.206.1...v0.206.2) (2026-04-29)
+
+
+### Bug Fixes
+
+* resolve roam port file by channel ([84290b7](https://github.com/staff0rd/assist/commit/84290b734fa5d6f6da53e053fc010581f71cf4f1))
+
 ## [0.206.1](https://github.com/staff0rd/assist/compare/v0.206.0...v0.206.1) (2026-04-23)
 
 
