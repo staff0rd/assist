@@ -1,3 +1,10 @@
+# [0.207.0](https://github.com/staff0rd/assist/compare/v0.206.2...v0.207.0) (2026-05-01)
+
+
+### Features
+
+* add mermaid export command ([dd6e127](https://github.com/staff0rd/assist/commit/dd6e127090a73564b2c17a03478fd331acd01bb8))
+
 ## [0.206.2](https://github.com/staff0rd/assist/compare/v0.206.1...v0.206.2) (2026-04-29)
 
 
