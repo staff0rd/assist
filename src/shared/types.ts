@@ -1,27 +1,5 @@
 import { z } from "zod";
-
-const runParamSchema = z.strictObject({
-	name: z.string(),
-	required: z.boolean().optional(),
-	default: z.string().optional(),
-	description: z.string().optional(),
-});
-
-const runConfigSchema = z.strictObject({
-	name: z.string(),
-	command: z.string(),
-	args: z.array(z.string()).optional(),
-	params: z.array(runParamSchema).optional(),
-	env: z.record(z.string(), z.string()).optional(),
-	filter: z.string().optional(),
-	pre: z.array(z.string()).optional(),
-	cwd: z.string().optional(),
-});
-
-const runLinkSchema = z.strictObject({
-	link: z.string(),
-	prefix: z.string(),
-});
+import { runConfigSchema, runLinkSchema } from "./runConfigSchema";
 
 const transcriptConfigSchema = z.strictObject({
 	vttDir: z.string(),
@@ -136,6 +114,11 @@ export const assistConfigSchema = z.strictObject({
 			autoCommit: z.boolean().default(false),
 		})
 		.default({ autoCommit: false }),
+	mermaid: z
+		.strictObject({
+			krokiUrl: z.string().default("https://kroki.io"),
+		})
+		.default({ krokiUrl: "https://kroki.io" }),
 	deny: z
 		.array(
 			z.strictObject({

@@ -176,6 +176,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist seq query <filter> --from <date>` - Start of query window (UTC date or relative e.g. 5m, 1h, 2d)
 - `assist seq query <filter> --to <date>` - End of query window (UTC date or relative e.g. 5m, 1h, 2d)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
+- `assist mermaid export [file.md]` - Render each fenced mermaid block to `<stem>-<index>.svg` via [Kroki](https://kroki.io). With no file, scans `*.md` in the current directory (non-recursive). Use `--out <dir>` to override the output directory. Use `--index <n>` to render only the nth mermaid block (1-based; requires a file argument). Endpoint is configurable via `mermaid.krokiUrl` (default `https://kroki.io`).
 - `assist prompts` - Show top 10 denied tool calls by frequency with count and repo breakdown
 - `assist coverage` - Print global statement coverage percentage
 - `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)

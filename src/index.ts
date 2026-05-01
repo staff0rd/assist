@@ -22,6 +22,7 @@ import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
 import { registerDotnet } from "./commands/registerDotnet";
 import { registerJira } from "./commands/registerJira";
+import { registerMermaid } from "./commands/registerMermaid";
 import { registerNews } from "./commands/registerNews";
 import { registerPrompts } from "./commands/registerPrompts";
 import { registerPrs } from "./commands/registerPrs";
@@ -123,6 +124,7 @@ program
 registerActivity(program);
 registerCliHook(program);
 registerJira(program);
+registerMermaid(program);
 registerPrs(program);
 registerRoam(program);
 registerBacklog(program);
