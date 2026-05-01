@@ -171,5 +171,9 @@ deny:
     message: it's /verify, use the skill, don't try to build separately
   - pattern: npx tsc
     message: Use /verify
+  - pattern: npx tsup
+    message: use /verify
+  - pattern: npm run build
+    message: use /verify
 backlog:
   autoCommit: true

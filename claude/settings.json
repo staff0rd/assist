@@ -1,5 +1,4 @@
 {
-	"autoUpdatesChannel": "stable",
 	"statusLine": {
 		"type": "command",
 		"command": "assist status-line"
