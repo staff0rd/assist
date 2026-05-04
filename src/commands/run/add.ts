@@ -76,7 +76,9 @@ function createCommandFile(name: string): void {
 export function add(): void {
 	const { name, command, args, cwd } = requireParsedArgs();
 	saveNewRunConfig(name, command, args, cwd);
-	createCommandFile(name);
+	if (!name.startsWith("verify:")) {
+		createCommandFile(name);
+	}
 	console.log(
 		`Added run configuration: ${name} -> ${formatDisplay(command, args)}`,
 	);
