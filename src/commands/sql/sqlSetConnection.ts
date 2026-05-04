@@ -1,11 +1,11 @@
 import { setNamedDefaultConnection } from "../../shared/setNamedDefaultConnection";
 import { loadConnections, setDefaultConnection } from "./loadConnections";
 
-export function seqSetConnection(name: string): void {
+export function sqlSetConnection(name: string): void {
 	setNamedDefaultConnection(
 		loadConnections(),
 		name,
 		setDefaultConnection,
-		"Seq",
+		"SQL",
 	);
 }

@@ -41,6 +41,10 @@ assist roam show-claude-code-icon
 assist screenshot
 assist seq auth list
 assist seq query
+assist sql auth list
+assist sql columns
+assist sql query
+assist sql tables
 assist status-line
 assist verify
 assist voice

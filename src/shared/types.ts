@@ -104,6 +104,23 @@ export const assistConfigSchema = z.strictObject({
 			defaultConnection: z.string().optional(),
 		})
 		.optional(),
+	sql: z
+		.strictObject({
+			connections: z
+				.array(
+					z.strictObject({
+						name: z.string(),
+						server: z.string(),
+						port: z.number(),
+						user: z.string(),
+						password: z.string(),
+						database: z.string(),
+					}),
+				)
+				.default([]),
+			defaultConnection: z.string().optional(),
+		})
+		.optional(),
 	screenshot: z
 		.strictObject({
 			outputDir: z.string().default("./screenshots"),

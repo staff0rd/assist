@@ -55,6 +55,7 @@
 			"SlashCommand(/jira)",
 			"Skill(seq)",
 			"SlashCommand(/seq)",
+			"SlashCommand(/sql)",
 			"Skill(inspect)",
 			"SlashCommand(/inspect)",
 			"Skill(prompts)",

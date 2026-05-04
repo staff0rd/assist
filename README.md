@@ -56,6 +56,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/screenshot` - Capture a screenshot of a running application window
 - `/raven` - Query and manage RavenDB connections and collections
 - `/seq` - Query Seq logs from a URL or filter expression
+- `/sql` - Query a MSSQL database via assist sql
 - `/verify` - Run all verification commands in parallel
 - `/transcript-format` - Format meeting transcripts from VTT files
 - `/transcript-summarise` - Summarise transcripts missing summaries
@@ -175,6 +176,14 @@ After installation, the `assist` command will be available globally. You can als
 - `assist seq query <filter> -n <count>` - Fetch a specific number of events (default 50)
 - `assist seq query <filter> --from <date>` - Start of query window (UTC date or relative e.g. 5m, 1h, 2d)
 - `assist seq query <filter> --to <date>` - End of query window (UTC date or relative e.g. 5m, 1h, 2d)
+- `assist sql auth add` - Add a new MSSQL connection (prompts for name, server, port, user, password, database)
+- `assist sql auth list` - List configured SQL connections
+- `assist sql auth remove <name>` - Remove a configured connection
+- `assist sql set-connection <name>` - Set the default SQL connection
+- `assist sql query "<sql>" [connection]` - Execute a read-only SQL statement and print results in table format (rejects INSERT/UPDATE/DELETE/DROP/CREATE/ALTER/TRUNCATE/MERGE/GRANT/REVOKE/EXEC)
+- `assist sql mutate "<sql>" [connection]` - Execute a mutating SQL statement (not yet implemented)
+- `assist sql tables [connection]` - List tables in the connected database (via INFORMATION_SCHEMA.TABLES)
+- `assist sql columns <table> [connection]` - List columns for a table (use `schema.table` for non-default schema; via INFORMATION_SCHEMA.COLUMNS)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
 - `assist mermaid export [file.md]` - Render each fenced mermaid block to `<stem>-<index>.svg` via [Kroki](https://kroki.io). With no file, scans `*.md` in the current directory (non-recursive). Use `--out <dir>` to override the output directory. Use `--index <n>` to render only the nth mermaid block (1-based; requires a file argument). Endpoint is configurable via `mermaid.krokiUrl` (default `https://kroki.io`).
 - `assist prompts` - Show top 10 denied tool calls by frequency with count and repo breakdown

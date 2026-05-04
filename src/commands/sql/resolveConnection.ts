@@ -1,13 +1,13 @@
 import { resolveNamedConnection } from "../../shared/resolveNamedConnection";
 import { getDefaultConnection, loadConnections } from "./loadConnections";
-import type { SeqConnection } from "./types";
+import type { SqlConnection } from "./types";
 
-export function resolveConnection(name?: string): SeqConnection {
+export function resolveConnection(name?: string): SqlConnection {
 	return resolveNamedConnection(
 		loadConnections(),
 		name,
 		getDefaultConnection(),
-		"Seq",
-		"assist seq auth",
+		"SQL",
+		"assist sql auth add",
 	);
 }
