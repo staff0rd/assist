@@ -19,7 +19,7 @@ The user wants to query a MSSQL database. Use the `assist sql` CLI commands belo
 ## Querying
 
 - `assist sql query "<sql>" [connection]` — execute a read-only SQL statement and print results in table format. Rejects mutating statements (INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, TRUNCATE, MERGE, GRANT, REVOKE, EXEC)
-- `assist sql mutate "<sql>" [connection]` — execute a mutating SQL statement (not yet implemented; will throw)
+- `assist sql mutate "<sql>" [connection]` — execute a mutating SQL statement (INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, TRUNCATE, MERGE, GRANT, REVOKE, EXEC) and print rows affected. Rejects non-mutating statements (pure SELECTs, comment-only inputs)
 
 ## Workflow
 
@@ -27,6 +27,6 @@ The user wants to query a MSSQL database. Use the `assist sql` CLI commands belo
 2. If the user doesn't specify a connection, omit it to use the default.
 3. Prefer `tables` and `columns` for schema discovery before crafting queries.
 4. Quote SQL strings carefully — wrap the statement in double quotes and escape inner double quotes if needed.
-5. Use `query` for SELECTs only. If the user asks for a mutation, tell them `assist sql mutate` is not yet implemented rather than working around the guard.
+5. Use `query` for SELECTs only and `mutate` for mutating statements — each command rejects the other kind, so do not work around the guards.
 6. Display query results to the user. If the output is large, summarise key rows and highlight anything notable.
 7. If the user asks follow-up questions, refine the query and re-run.

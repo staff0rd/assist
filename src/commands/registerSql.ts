@@ -37,7 +37,9 @@ export function registerSql(program: Command): void {
 
 	cmd
 		.command("mutate <sql> [connection]")
-		.description("Execute a mutating SQL statement (not yet implemented)")
+		.description(
+			"Execute a mutating SQL statement (rejects non-mutating statements)",
+		)
 		.action((query: string, connection?: string) =>
 			sqlMutate(query, connection),
 		);

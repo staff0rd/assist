@@ -181,7 +181,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist sql auth remove <name>` - Remove a configured connection
 - `assist sql set-connection <name>` - Set the default SQL connection
 - `assist sql query "<sql>" [connection]` - Execute a read-only SQL statement and print results in table format (rejects INSERT/UPDATE/DELETE/DROP/CREATE/ALTER/TRUNCATE/MERGE/GRANT/REVOKE/EXEC)
-- `assist sql mutate "<sql>" [connection]` - Execute a mutating SQL statement (not yet implemented)
+- `assist sql mutate "<sql>" [connection]` - Execute a mutating SQL statement and print rows affected (rejects non-mutating statements like pure SELECTs)
 - `assist sql tables [connection]` - List tables in the connected database (via INFORMATION_SCHEMA.TABLES)
 - `assist sql columns <table> [connection]` - List columns for a table (use `schema.table` for non-default schema; via INFORMATION_SCHEMA.COLUMNS)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
