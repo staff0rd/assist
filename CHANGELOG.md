@@ -1,3 +1,10 @@
+## [0.207.1](https://github.com/staff0rd/assist/compare/v0.207.0...v0.207.1) (2026-05-04)
+
+
+### Bug Fixes
+
+* skip slash gen for verify: runs ([aa19dd9](https://github.com/staff0rd/assist/commit/aa19dd9fa1b7d1009aef0f23bad1483e5e62543b))
+
 # [0.207.0](https://github.com/staff0rd/assist/compare/v0.206.2...v0.207.0) (2026-05-01)
 
 
