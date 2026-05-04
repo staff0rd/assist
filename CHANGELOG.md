@@ -1,3 +1,10 @@
+# [0.208.0](https://github.com/staff0rd/assist/compare/v0.207.1...v0.208.0) (2026-05-04)
+
+
+### Features
+
+* add sql command for MSSQL queries ([b7c4da2](https://github.com/staff0rd/assist/commit/b7c4da2152901dc6982dc7b21f283e6d34819586))
+
 ## [0.207.1](https://github.com/staff0rd/assist/compare/v0.207.0...v0.207.1) (2026-05-04)
 
 
