@@ -1,3 +1,10 @@
+# [0.209.0](https://github.com/staff0rd/assist/compare/v0.208.0...v0.209.0) (2026-05-04)
+
+
+### Features
+
+* implement assist sql mutate ([8c7f22d](https://github.com/staff0rd/assist/commit/8c7f22db7459ee2f1b6b4b2cddb6ce6e4c689363))
+
 # [0.208.0](https://github.com/staff0rd/assist/compare/v0.207.1...v0.208.0) (2026-05-04)
 
 
