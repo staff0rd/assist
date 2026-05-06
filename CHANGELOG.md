@@ -1,3 +1,10 @@
+# [0.210.0](https://github.com/staff0rd/assist/compare/v0.209.1...v0.210.0) (2026-05-06)
+
+
+### Features
+
+* add /forward-comments command ([08e2792](https://github.com/staff0rd/assist/commit/08e2792b7a83452b63b6b549cecebc8e784a3706))
+
 ## [0.209.1](https://github.com/staff0rd/assist/compare/v0.209.0...v0.209.1) (2026-05-06)
 
 
