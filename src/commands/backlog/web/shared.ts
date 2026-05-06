@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
-import { getNextId, loadBacklog, saveBacklog, searchBacklog } from "../shared";
+import { getNextId } from "../getNextId";
+import { loadBacklog, saveBacklog, searchBacklog } from "../shared";
 import { parseItemBody, parseStatusBody } from "./parseItemBody";
 
 export function listItems(req: IncomingMessage, res: ServerResponse): void {

@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { commitBacklog } from "../commitBacklog";
-import { backlogExists, getNextId, loadBacklog, saveBacklog } from "../shared";
+import { getNextId } from "../getNextId";
+import { backlogExists, loadBacklog, saveBacklog } from "../shared";
 import type { BacklogType } from "../types";
 import {
 	promptAcceptanceCriteria,

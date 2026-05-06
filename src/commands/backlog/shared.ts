@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
+import { getProjectRoot } from "../../shared/loadConfig";
 import { deleteItem } from "./deleteItem";
 import { exportToJsonl } from "./exportToJsonl";
 import { importFromJsonlIfNeeded } from "./importFromJsonlIfNeeded";
@@ -20,7 +21,7 @@ export function setBacklogDir(dir: string | undefined): void {
 }
 
 export function getBacklogDir(): string {
-	return _backlogDir ?? process.cwd();
+	return _backlogDir ?? getProjectRoot();
 }
 
 function getBacklogPath(): string {
@@ -105,9 +106,4 @@ export function removeItem(id: string): string | undefined {
 	deleteItem(db, result.item.id);
 	exportToJsonl(db, getBacklogDir());
 	return result.item.name;
-}
-
-export function getNextId(items: BacklogFile): number {
-	if (items.length === 0) return 1;
-	return Math.max(...items.map((item) => item.id)) + 1;
 }
