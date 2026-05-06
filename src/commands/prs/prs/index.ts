@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { isGhNotInstalled } from "../shared";
+import { getRepoInfo, isGhNotInstalled } from "../shared";
 import type { PrsOptions, PullRequest } from "../types";
 import { displayPaginated } from "./displayPaginated";
 
@@ -7,8 +7,9 @@ export async function prs(options: PrsOptions): Promise<void> {
 	const state = options.open ? "open" : options.closed ? "closed" : "all";
 
 	try {
+		const { org, repo } = getRepoInfo();
 		const result = execSync(
-			`gh pr list --state ${state} --json number,title,url,author,createdAt,mergedAt,closedAt,state,changedFiles --limit 100`,
+			`gh pr list --state ${state} --json number,title,url,author,createdAt,mergedAt,closedAt,state,changedFiles --limit 100 -R ${org}/${repo}`,
 			{ encoding: "utf-8" },
 		);
 
