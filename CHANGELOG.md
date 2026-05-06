@@ -1,3 +1,10 @@
+## [0.210.1](https://github.com/staff0rd/assist/compare/v0.210.0...v0.210.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* prs gh calls prefer origin over upstream ([08eba1c](https://github.com/staff0rd/assist/commit/08eba1c3dbf7e3a3b35e5a41c8c694755a686529))
+
 # [0.210.0](https://github.com/staff0rd/assist/compare/v0.209.1...v0.210.0) (2026-05-06)
 
 
