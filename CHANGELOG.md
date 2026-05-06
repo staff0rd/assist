@@ -1,3 +1,10 @@
+## [0.209.1](https://github.com/staff0rd/assist/compare/v0.209.0...v0.209.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* backlog finds project root from subdirs ([4dd7ab4](https://github.com/staff0rd/assist/commit/4dd7ab46ee8d1efa671d9b41cebd7cfd6ad4c72e))
+
 # [0.209.0](https://github.com/staff0rd/assist/compare/v0.208.0...v0.209.0) (2026-05-04)
 
 
