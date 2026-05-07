@@ -1,3 +1,10 @@
+# [0.211.0](https://github.com/staff0rd/assist/compare/v0.210.1...v0.211.0) (2026-05-07)
+
+
+### Features
+
+* add /verify-new slash command ([86980de](https://github.com/staff0rd/assist/commit/86980de736c70ba3e44e14e071134ddba45e6efc))
+
 ## [0.210.1](https://github.com/staff0rd/assist/compare/v0.210.0...v0.210.1) (2026-05-06)
 
 
