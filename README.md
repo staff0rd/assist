@@ -59,6 +59,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/seq` - Query Seq logs from a URL or filter expression
 - `/sql` - Query a MSSQL database via assist sql
 - `/verify` - Run all verification commands in parallel
+- `/verify-new` - Add a new verify:* run command to assist.yml
 - `/transcript-format` - Format meeting transcripts from VTT files
 - `/transcript-summarise` - Summarise transcripts missing summaries
 - `/voice-setup` - Download required voice models (VAD, STT)
