@@ -12,6 +12,11 @@ npm install -g @staff0rd/assist
 assist sync
 ```
 
+## Updating
+```bash
+assist update
+```
+
 ## Local Development
 
 ```bash
