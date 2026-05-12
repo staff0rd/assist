@@ -23,5 +23,9 @@ export function registerReview(program: Command): void {
 			"--refine",
 			"After synthesis, launch an interactive Claude session to walk through findings instead of posting",
 		)
+		.option(
+			"--verbose",
+			"Disable spinner UI and use per-line log output (per-tool lines, starting/done lines)",
+		)
 		.action((options: Required<ReviewOptions>) => review(options));
 }

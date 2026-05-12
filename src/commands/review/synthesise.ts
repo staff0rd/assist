@@ -3,9 +3,14 @@ import type { ReviewPaths } from "./buildReviewPaths";
 import { buildReviewSummary } from "./buildReviewSummary";
 import { buildSynthesisStdin } from "./buildSynthesisStdin";
 import { cachedReviewerResult } from "./cachedReviewerResult";
+import type { MultiSpinner, SpinnerHandle } from "./MultiSpinner";
+import { printReviewerFailures } from "./printReviewerFailures";
+import { runClaudeReviewer } from "./runClaudeReviewer";
 import type { ReviewerResult } from "./runStreamingChild";
-import { runSynthesis } from "./runSynthesis";
-import { startHeartbeat } from "./startHeartbeat";
+
+type SynthesiseOptions = {
+	multi: MultiSpinner | undefined;
+};
 
 function printSummary(synthesisPath: string): void {
 	const markdown = readFileSync(synthesisPath, "utf-8");
@@ -14,23 +19,31 @@ function printSummary(synthesisPath: string): void {
 	console.log("");
 }
 
-export async function synthesise(paths: ReviewPaths): Promise<ReviewerResult> {
+export async function synthesise(
+	paths: ReviewPaths,
+	options: SynthesiseOptions,
+): Promise<ReviewerResult> {
 	const cached = cachedReviewerResult("synthesis", paths.synthesisPath);
 	if (cached) {
 		printSummary(paths.synthesisPath);
 		return cached;
 	}
-	const stop = startHeartbeat("synthesis");
-	let result: ReviewerResult;
-	try {
-		result = await runSynthesis(
-			paths.reviewDir,
-			paths.synthesisPath,
-			buildSynthesisStdin(paths.requestPath, paths.claudePath, paths.codexPath),
-		);
-	} finally {
-		stop();
-	}
+	const { multi } = options;
+	const spinner: SpinnerHandle | undefined = multi?.create(
+		"synthesis — starting",
+	);
+	const result = await runClaudeReviewer({
+		name: "synthesis",
+		reviewDir: paths.reviewDir,
+		stdin: buildSynthesisStdin(
+			paths.requestPath,
+			paths.claudePath,
+			paths.codexPath,
+		),
+		outputPath: paths.synthesisPath,
+		spinner,
+	});
+	if (multi) printReviewerFailures([result]);
 	if (result.exitCode === 0) printSummary(paths.synthesisPath);
 	return result;
 }

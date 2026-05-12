@@ -1,7 +1,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import { attachLineParser } from "./attachLineParser";
 import { attachStderrCollector } from "./attachStderrCollector";
-import { logChildClose } from "./logChildClose";
+import { handleChildClose } from "./handleChildClose";
 
 type StreamingChildSpec = {
 	name: string;
@@ -9,11 +9,13 @@ type StreamingChildSpec = {
 	args: string[];
 	stdin: string;
 	onLine: (line: string) => void;
+	quiet?: boolean;
 };
 
 type StreamingChildResult = {
 	exitCode: number;
 	stderr: string;
+	elapsedMs: number;
 };
 
 export type ReviewerResult = {
@@ -40,6 +42,7 @@ type ExitContext = {
 	stderr: { value: string };
 	name: string;
 	startedAt: number;
+	quiet: boolean;
 };
 
 function waitForExit(ctx: ExitContext): Promise<StreamingChildResult> {
@@ -47,9 +50,14 @@ function waitForExit(ctx: ExitContext): Promise<StreamingChildResult> {
 		ctx.child.on("error", reject);
 		ctx.child.on("close", (code) => {
 			ctx.flushPending();
-			const elapsed = Math.round((Date.now() - ctx.startedAt) / 1000);
-			logChildClose(ctx.name, code ?? 0, elapsed, ctx.stderr.value);
-			resolve({ exitCode: code ?? 0, stderr: ctx.stderr.value });
+			const closed = handleChildClose({
+				code,
+				startedAt: ctx.startedAt,
+				name: ctx.name,
+				stderr: ctx.stderr.value,
+				quiet: ctx.quiet,
+			});
+			resolve({ ...closed, stderr: ctx.stderr.value });
 		});
 	});
 }
@@ -58,7 +66,7 @@ export function runStreamingChild(
 	spec: StreamingChildSpec,
 ): Promise<StreamingChildResult> {
 	const startedAt = Date.now();
-	console.log(`[${spec.name}] starting`);
+	if (!spec.quiet) console.log(`[${spec.name}] starting`);
 	const { child, flushPending, stderr } = startChild(spec);
 	return waitForExit({
 		child,
@@ -66,5 +74,6 @@ export function runStreamingChild(
 		stderr,
 		name: spec.name,
 		startedAt,
+		quiet: spec.quiet ?? false,
 	});
 }

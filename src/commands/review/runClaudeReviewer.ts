@@ -1,5 +1,8 @@
 import { writeFileSync } from "node:fs";
+import { finaliseReviewerRun } from "./finaliseReviewerRun";
+import type { SpinnerHandle } from "./MultiSpinner";
 import { parseClaudeEvent } from "./parseClaudeEvent";
+import { reportReviewerToolUse } from "./reportReviewerToolUse";
 import { type ReviewerResult, runStreamingChild } from "./runStreamingChild";
 
 type ClaudeReviewerSpec = {
@@ -7,12 +10,14 @@ type ClaudeReviewerSpec = {
 	reviewDir: string;
 	stdin: string;
 	outputPath: string;
+	spinner?: SpinnerHandle;
 };
 
 export async function runClaudeReviewer(
 	spec: ClaudeReviewerSpec,
 ): Promise<ReviewerResult> {
 	let finalText = "";
+	const { spinner } = spec;
 	const result = await runStreamingChild({
 		name: spec.name,
 		command: "claude",
@@ -25,13 +30,12 @@ export async function runClaudeReviewer(
 			"--verbose",
 		],
 		stdin: spec.stdin,
+		quiet: Boolean(spinner),
 		onLine: (line) => {
 			const event = parseClaudeEvent(line);
 			if (event.kind === "tool_uses") {
-				for (const use of event.toolUses) {
-					const suffix = use.summary ? `: ${use.summary}` : "";
-					console.log(`[${spec.name}] ${use.tool}${suffix}`);
-				}
+				for (const use of event.toolUses)
+					reportReviewerToolUse(spec.name, use, spinner);
 				return;
 			}
 			if (event.kind === "final") finalText = event.text;
@@ -39,10 +43,5 @@ export async function runClaudeReviewer(
 	});
 	if (result.exitCode === 0 && finalText)
 		writeFileSync(spec.outputPath, finalText);
-	return {
-		name: spec.name,
-		outputPath: spec.outputPath,
-		exitCode: result.exitCode,
-		stderr: result.stderr,
-	};
+	return finaliseReviewerRun(spec, spinner, result);
 }

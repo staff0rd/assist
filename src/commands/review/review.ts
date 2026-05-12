@@ -2,9 +2,8 @@ import { findRepoRoot } from "../../shared/findRepoRoot";
 import { buildRequest, gatherContext } from "./buildRequest";
 import { buildReviewPaths } from "./buildReviewPaths";
 import { fetchExistingComments } from "./fetchExistingComments";
-import { postReviewToPr } from "./postReviewToPr";
+import { handlePostSynthesis } from "./handlePostSynthesis";
 import { prepareReviewDir } from "./prepareReviewDir";
-import { runRefineSession } from "./runRefineSession";
 import { runReviewPipeline } from "./runReviewPipeline";
 
 export type ReviewOptions = {
@@ -12,6 +11,7 @@ export type ReviewOptions = {
 	submit?: boolean;
 	force?: boolean;
 	refine?: boolean;
+	verbose?: boolean;
 };
 
 function resolveRepoRoot(): string {
@@ -19,6 +19,11 @@ function resolveRepoRoot(): string {
 	if (repoRoot) return repoRoot;
 	console.error("Error: not inside a git repository.");
 	process.exit(1);
+}
+
+function logPriorComments(count: number): void {
+	if (count === 0) return;
+	console.log(`Including ${count} prior review comment(s) in request.md.`);
 }
 
 export async function review(options: ReviewOptions = {}): Promise<void> {
@@ -32,27 +37,22 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	}
 	const paths = buildReviewPaths(repoRoot, context.branch, context.shortSha);
 	const priorComments = fetchExistingComments();
-	if (priorComments && priorComments.length > 0) {
-		console.log(
-			`Including ${priorComments.length} prior review comment(s) in request.md.`,
-		);
-	}
+	logPriorComments(priorComments?.length ?? 0);
 	prepareReviewDir(
 		paths,
 		buildRequest(context, priorComments),
 		options.force ?? false,
 	);
 	console.log(`Review folder: ${paths.reviewDir}`);
-	const synthesisOk = await runReviewPipeline(paths);
+	const synthesisOk = await runReviewPipeline(paths, {
+		verbose: options.verbose ?? false,
+	});
 	if (synthesisOk) {
-		if (options.refine) {
-			await runRefineSession(paths.synthesisPath);
-		} else {
-			await postReviewToPr(paths.synthesisPath, {
-				prompt: options.prompt ?? true,
-				submit: options.submit ?? false,
-			});
-		}
+		await handlePostSynthesis(paths.synthesisPath, {
+			refine: options.refine ?? false,
+			prompt: options.prompt ?? true,
+			submit: options.submit ?? false,
+		});
 	}
 	console.log(`Done. Review folder: ${paths.reviewDir}`);
 }

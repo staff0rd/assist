@@ -41,6 +41,7 @@
 		"enquirer": "^2.4.1",
 		"entities": "^7.0.1",
 		"is-wsl": "^3.1.0",
+		"log-update": "^8.0.0",
 		"minimatch": "^10.1.1",
 		"mssql": "^12.5.0",
 		"node-notifier": "^10.0.1",
