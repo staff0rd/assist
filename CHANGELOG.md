@@ -1,3 +1,16 @@
+# [0.214.0](https://github.com/staff0rd/assist/compare/v0.213.0...v0.214.0) (2026-05-12)
+
+
+### Bug Fixes
+
+* review uses gh PR diff for input ([5146f6b](https://github.com/staff0rd/assist/commit/5146f6bdc271e210134a423eb027dcf5781046c7))
+
+
+### Features
+
+* add --refine flag to review ([24c7ab7](https://github.com/staff0rd/assist/commit/24c7ab7c414f8c17536698508ef30d2c309f1063))
+* stacked spinners for review ([4d79a96](https://github.com/staff0rd/assist/commit/4d79a96a1dfaef1b153e6eb08dbd90f56dc9c0e8))
+
 # [0.213.0](https://github.com/staff0rd/assist/compare/v0.212.0...v0.213.0) (2026-05-12)
 
 
