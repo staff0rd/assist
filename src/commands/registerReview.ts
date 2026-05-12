@@ -1,0 +1,23 @@
+import type { Command } from "commander";
+import { type ReviewOptions, review } from "./review";
+
+export function registerReview(program: Command): void {
+	program
+		.command("review")
+		.description(
+			"Run Claude and Codex in parallel to review the current branch",
+		)
+		.option(
+			"--no-prompt",
+			"Skip confirmation prompts; use flag defaults non-interactively",
+		)
+		.option(
+			"--submit",
+			"Default the submit prompt to yes (or auto-submit with --no-prompt)",
+		)
+		.option(
+			"--force",
+			"Clear cached claude.md / codex.md / synthesis.md and re-run all phases",
+		)
+		.action((options: Required<ReviewOptions>) => review(options));
+}

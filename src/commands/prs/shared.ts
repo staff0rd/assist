@@ -64,3 +64,14 @@ export function getCurrentPrNodeId(): string {
 		throw error;
 	}
 }
+
+export function findCurrentPrNumber(): number | null {
+	try {
+		return viewCurrentPr<{ number: number }>("number").number;
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("no pull requests")) {
+			return null;
+		}
+		throw error;
+	}
+}

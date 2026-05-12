@@ -1,10 +1,9 @@
-import { spawnSync } from "node:child_process";
-import { unlinkSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { runGhGraphql } from "./runGhGraphql";
 import { getCurrentPrNodeId, isGhNotInstalled } from "./shared";
 
-const MUTATION = `mutation($prId: ID!, $body: String!, $path: String!, $line: Int!) { addPullRequestReviewThread(input: { pullRequestId: $prId, body: $body, path: $path, line: $line, side: RIGHT }) { thread { id } } }`;
+const MUTATION_SINGLE = `mutation($prId: ID!, $body: String!, $path: String!, $line: Int!) { addPullRequestReviewThread(input: { pullRequestId: $prId, body: $body, path: $path, line: $line, side: RIGHT }) { thread { id } } }`;
+
+const MUTATION_MULTI = `mutation($prId: ID!, $body: String!, $path: String!, $line: Int!, $startLine: Int!) { addPullRequestReviewThread(input: { pullRequestId: $prId, body: $body, path: $path, line: $line, startLine: $startLine, side: RIGHT, startSide: RIGHT }) { thread { id } } }`;
 
 function validateBody(body: string): void {
 	const lower = body.toLowerCase();
@@ -21,41 +20,37 @@ function validateLine(line: number): void {
 	}
 }
 
-export function comment(path: string, line: number, body: string): void {
+type CommentVars = {
+	prId: string;
+	body: string;
+	path: string;
+	line: number;
+	startLine?: number;
+};
+
+function postComment(vars: CommentVars): void {
+	const { startLine, ...base } = vars;
+	if (startLine === undefined) {
+		runGhGraphql(MUTATION_SINGLE, base);
+		return;
+	}
+	runGhGraphql(MUTATION_MULTI, { ...base, startLine });
+}
+
+export function comment(
+	path: string,
+	line: number,
+	body: string,
+	startLine?: number,
+): void {
 	validateBody(body);
 	validateLine(line);
-
+	if (startLine !== undefined) validateLine(startLine);
 	try {
 		const prId = getCurrentPrNodeId();
-		const queryFile = join(tmpdir(), `gh-query-${Date.now()}.graphql`);
-		writeFileSync(queryFile, MUTATION);
-
-		try {
-			const result = spawnSync(
-				"gh",
-				[
-					"api",
-					"graphql",
-					"-F",
-					`query=@${queryFile}`,
-					"-f",
-					`prId=${prId}`,
-					"-f",
-					`body=${body}`,
-					"-f",
-					`path=${path}`,
-					"-F",
-					`line=${line}`,
-				],
-				{ encoding: "utf-8" },
-			);
-			if (result.status !== 0) {
-				throw new Error(result.stderr || result.stdout);
-			}
-			console.log(`Added review comment on ${path}:${line}`);
-		} finally {
-			unlinkSync(queryFile);
-		}
+		postComment({ prId, body, path, line, startLine });
+		const range = startLine !== undefined ? `${startLine}-${line}` : `${line}`;
+		console.log(`Added review comment on ${path}:${range}`);
 	} catch (error) {
 		if (isGhNotInstalled(error)) {
 			console.error("Error: GitHub CLI (gh) is not installed.");

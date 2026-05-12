@@ -2,6 +2,7 @@ node_modules
 dist
 books
 .assist-*
+.assist/reviews/
 .assist/*.db*
 screenshots
 .claude/settings.local.json
