@@ -1,3 +1,10 @@
+# [0.215.0](https://github.com/staff0rd/assist/compare/v0.214.1...v0.215.0) (2026-05-12)
+
+
+### Features
+
+* assist review --apply flag ([87b0d2a](https://github.com/staff0rd/assist/commit/87b0d2ac01fa2c712865be674617258e8b4bbb74))
+
 ## [0.214.1](https://github.com/staff0rd/assist/compare/v0.214.0...v0.214.1) (2026-05-12)
 
 
