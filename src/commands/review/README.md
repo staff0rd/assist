@@ -45,3 +45,19 @@ flowchart LR
     Next --> Cached{cached synthesis.md}
     Cached --> Post[Post surviving findings]
 ```
+
+## `--apply`
+
+`assist review --apply` also runs the pipeline up through synthesis and then launches an interactive Claude session (`runApplySession.ts`), but with a different goal: walk every non-`already-raised` finding one at a time, ask the user `apply / skip`, and on `apply` edit the referenced code in place (unstaged) while removing that finding's `### Finding:` block from `synthesis.md`. Skipped findings stay in `synthesis.md` untouched. Nothing is posted to the PR during `--apply`.
+
+Because applied blocks are deleted from `synthesis.md` and skipped blocks remain, a subsequent `assist review` (no flag) hits the cached `synthesis.md` via `cachedReviewerResult`, parses the surviving blocks via `parseFindings` / `partitionFindings`, and posts only the skipped (plus any `already-raised`) findings as pending comments. `--force` re-runs the pipeline before the apply session; `--submit` is ignored; combining `--apply` with `--refine` errors out.
+
+```mermaid
+flowchart LR
+    Synthesis[synthesis.md] --> Apply[--apply: interactive Claude apply/skip]
+    Apply --> Edits[Unstaged working-tree edits]
+    Apply --> Trimmed[synthesis.md without applied blocks]
+    Trimmed --> Next[next assist review]
+    Next --> Cached{cached synthesis.md}
+    Cached --> Post[Post skipped findings only]
+```

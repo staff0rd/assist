@@ -178,6 +178,51 @@ Overall summary.
 		});
 	});
 
+	it("handles a post-apply synthesis (applied blocks removed, skipped retained)", () => {
+		const postApply = `# Code review synthesis
+
+## Summary
+
+Overall summary.
+
+## Findings
+
+### Finding: Null pointer dereference
+- Severity: blocker
+- Source: confirmed
+- Location: \`src/foo.ts:42\`
+- Impact: Crash on null input.
+- Recommendation: Add a null guard.
+
+### Finding: Missing log
+- Severity: minor
+- Source: claude-only
+- Location: \`n/a\`
+- Impact: Harder to debug.
+- Recommendation: Add a debug log.
+
+### Finding: Duplicate of prior comment
+- Severity: minor
+- Source: already-raised
+- Location: \`src/qux.ts:5\`
+- Impact: Already flagged in a prior review.
+- Recommendation: No new action.
+`;
+		const { lineBound, unlocated, alreadyRaised } = partitionFindings(
+			parseFindings(postApply),
+		);
+		expect(lineBound).toHaveLength(1);
+		expect(unlocated).toHaveLength(1);
+		expect(alreadyRaised).toHaveLength(1);
+		expect(lineBound[0]).toMatchObject({
+			title: "Null pointer dereference",
+			file: "src/foo.ts",
+			line: 42,
+		});
+		expect(unlocated[0].title).toBe("Missing log");
+		expect(alreadyRaised[0].title).toBe("Duplicate of prior comment");
+	});
+
 	it("separates already-raised findings regardless of location", () => {
 		const md = `### Finding: dup with line
 - Severity: minor

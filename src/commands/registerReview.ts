@@ -24,6 +24,10 @@ export function registerReview(program: Command): void {
 			"After synthesis, launch an interactive Claude session to walk through findings instead of posting",
 		)
 		.option(
+			"--apply",
+			"After synthesis, launch an interactive Claude session to apply fixes for each finding; applied findings are removed from synthesis, skipped ones remain for a later post",
+		)
+		.option(
 			"--verbose",
 			"Disable spinner UI and use per-line log output (per-tool lines, starting/done lines)",
 		)
