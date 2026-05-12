@@ -1,29 +1,24 @@
 import { execSync } from "node:child_process";
 import type { ExistingComment } from "./fetchExistingComments";
+import {
+	fetchPrChangedFiles,
+	fetchPrDiff,
+	fetchPrDiffInfo,
+} from "./fetchPrDiffInfo";
 import { formatPriorComments } from "./formatPriorComments";
 
 type ReviewContext = {
 	branch: string;
 	sha: string;
 	shortSha: string;
-	baseBranch: string;
+	prNumber: number;
+	baseRef: string;
+	baseSha: string;
+	headRef: string;
+	headSha: string;
 	changedFiles: string[];
 	diff: string;
 };
-
-function detectBaseBranch(): string {
-	try {
-		const ref = execSync("git rev-parse --abbrev-ref origin/HEAD", {
-			encoding: "utf-8",
-			stdio: ["ignore", "pipe", "ignore"],
-		}).trim();
-		const name = ref.replace(/^origin\//, "");
-		if (name) return name;
-	} catch {
-		// fall through
-	}
-	return "main";
-}
 
 export function gatherContext(): ReviewContext {
 	const branch = execSync("git rev-parse --abbrev-ref HEAD", {
@@ -33,20 +28,21 @@ export function gatherContext(): ReviewContext {
 	const shortSha = execSync("git rev-parse --short=7 HEAD", {
 		encoding: "utf-8",
 	}).trim();
-	const baseBranch = detectBaseBranch();
-	const range = `${baseBranch}...HEAD`;
-	const changedFiles = execSync(`git diff --name-only ${range}`, {
-		encoding: "utf-8",
-		maxBuffer: 64 * 1024 * 1024,
-	})
-		.trim()
-		.split("\n")
-		.filter(Boolean);
-	const diff = execSync(`git diff ${range}`, {
-		encoding: "utf-8",
-		maxBuffer: 256 * 1024 * 1024,
-	});
-	return { branch, sha, shortSha, baseBranch, changedFiles, diff };
+	const prInfo = fetchPrDiffInfo();
+	const changedFiles = fetchPrChangedFiles(prInfo.prNumber);
+	const diff = fetchPrDiff(prInfo.prNumber);
+	return {
+		branch,
+		sha,
+		shortSha,
+		prNumber: prInfo.prNumber,
+		baseRef: prInfo.baseRef,
+		baseSha: prInfo.baseSha,
+		headRef: prInfo.headRef,
+		headSha: prInfo.headSha,
+		changedFiles,
+		diff,
+	};
 }
 
 function formatFiles(files: string[]): string {
@@ -62,15 +58,17 @@ export function buildRequest(
 	const priorBlock = priorSection ? `\n${priorSection}\n` : "";
 	return `# Code review request
 
-- Branch: \`${context.branch}\`
-- SHA: \`${context.sha}\`
-- Base: \`${context.baseBranch}\`
+- PR: #${context.prNumber}
+- Branch: \`${context.branch}\` (head ref: \`${context.headRef}\`)
+- Base ref: \`${context.baseRef}\`
+- Base SHA: \`${context.baseSha}\`
+- Head SHA: \`${context.headSha}\`
 
 ## Changed files
 
 ${formatFiles(context.changedFiles)}
 ${priorBlock}
-## Diff vs ${context.baseBranch}
+## Diff (PR #${context.prNumber}: ${context.baseSha}..${context.headSha})
 
 \`\`\`diff
 ${context.diff.trimEnd()}

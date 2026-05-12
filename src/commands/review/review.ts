@@ -26,7 +26,7 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	const context = gatherContext();
 	if (context.changedFiles.length === 0) {
 		console.error(
-			`Error: no changes between ${context.baseBranch} and HEAD — nothing to review.`,
+			`Error: PR #${context.prNumber} has no changed files — nothing to review.`,
 		);
 		process.exit(1);
 	}
