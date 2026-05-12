@@ -4,6 +4,7 @@ import chalk from "chalk";
 import { getProjectRoot } from "../../shared/loadConfig";
 import { deleteItem } from "./deleteItem";
 import { exportToJsonl } from "./exportToJsonl";
+import { findBacklogUp } from "./findBacklogUp";
 import { importFromJsonlIfNeeded } from "./importFromJsonlIfNeeded";
 import { loadAllItems } from "./loadAllItems";
 import { migrateYamlIfNeeded } from "./migrateYamlIfNeeded";
@@ -21,7 +22,7 @@ export function setBacklogDir(dir: string | undefined): void {
 }
 
 export function getBacklogDir(): string {
-	return _backlogDir ?? getProjectRoot();
+	return _backlogDir ?? findBacklogUp(process.cwd()) ?? getProjectRoot();
 }
 
 function getBacklogPath(): string {

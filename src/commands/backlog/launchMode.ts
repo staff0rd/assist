@@ -1,8 +1,8 @@
 import chalk from "chalk";
+import { spawnClaude } from "../../shared/spawnClaude";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
 import { cleanupSignal } from "./resolvePhaseResult";
-import { spawnClaude } from "./spawnClaude";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
 export async function launchMode(slashCommand: string): Promise<void> {

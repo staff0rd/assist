@@ -4,12 +4,14 @@ import { buildReviewPaths } from "./buildReviewPaths";
 import { fetchExistingComments } from "./fetchExistingComments";
 import { postReviewToPr } from "./postReviewToPr";
 import { prepareReviewDir } from "./prepareReviewDir";
+import { runRefineSession } from "./runRefineSession";
 import { runReviewPipeline } from "./runReviewPipeline";
 
 export type ReviewOptions = {
 	prompt?: boolean;
 	submit?: boolean;
 	force?: boolean;
+	refine?: boolean;
 };
 
 function resolveRepoRoot(): string {
@@ -43,10 +45,14 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	console.log(`Review folder: ${paths.reviewDir}`);
 	const synthesisOk = await runReviewPipeline(paths);
 	if (synthesisOk) {
-		await postReviewToPr(paths.synthesisPath, {
-			prompt: options.prompt ?? true,
-			submit: options.submit ?? false,
-		});
+		if (options.refine) {
+			await runRefineSession(paths.synthesisPath);
+		} else {
+			await postReviewToPr(paths.synthesisPath, {
+				prompt: options.prompt ?? true,
+				submit: options.submit ?? false,
+			});
+		}
 	}
 	console.log(`Done. Review folder: ${paths.reviewDir}`);
 }

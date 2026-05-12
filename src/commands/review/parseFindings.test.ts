@@ -124,6 +124,60 @@ describe("partitionFindings", () => {
 		expect(unlocated).toHaveLength(1);
 	});
 
+	it("handles a refined synthesis (dropped + edited + appended findings)", () => {
+		const refined = `# Code review synthesis
+
+## Summary
+
+Overall summary.
+
+## Findings
+
+### Finding: Null pointer dereference (clarified)
+- Severity: major
+- Source: confirmed
+- Location: \`src/foo.ts:42\`
+- Impact: Crash on null input from upstream caller.
+- Recommendation: Add a null guard and log when triggered.
+
+### Finding: Style nit
+- Severity: nit
+- Source: codex-only
+- Location: \`src/bar.ts:10\`
+- Impact: Inconsistent with codebase.
+- Recommendation: Rename variable.
+
+### Finding: User-spotted missing test
+- Severity: minor
+- Source: confirmed
+- Location: \`src/baz.ts:7\`
+- Impact: Regression slipped through CI.
+- Recommendation: Add a test covering the empty-input path.
+`;
+		const { lineBound, unlocated, alreadyRaised } = partitionFindings(
+			parseFindings(refined),
+		);
+		expect(unlocated).toHaveLength(0);
+		expect(alreadyRaised).toHaveLength(0);
+		expect(lineBound).toHaveLength(3);
+		expect(lineBound.map((f) => f.title)).toEqual([
+			"Null pointer dereference (clarified)",
+			"Style nit",
+			"User-spotted missing test",
+		]);
+		expect(lineBound[0]).toMatchObject({
+			severity: "major",
+			file: "src/foo.ts",
+			line: 42,
+			impact: "Crash on null input from upstream caller.",
+		});
+		expect(lineBound[2]).toMatchObject({
+			source: "confirmed",
+			file: "src/baz.ts",
+			line: 7,
+		});
+	});
+
 	it("separates already-raised findings regardless of location", () => {
 		const md = `### Finding: dup with line
 - Severity: minor

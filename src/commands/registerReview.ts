@@ -19,5 +19,9 @@ export function registerReview(program: Command): void {
 			"--force",
 			"Clear cached claude.md / codex.md / synthesis.md and re-run all phases",
 		)
+		.option(
+			"--refine",
+			"After synthesis, launch an interactive Claude session to walk through findings instead of posting",
+		)
 		.action((options: Required<ReviewOptions>) => review(options));
 }

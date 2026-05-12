@@ -31,3 +31,17 @@ flowchart LR
 ## Re-running on the same PR
 
 The review directory is keyed by `branch-shortSha`, so re-running with no new commits hits the same folder. Existing `claude.md` / `codex.md` / `synthesis.md` are reused unless `--force` is passed. Findings the synthesis tags as `already-raised` (because they overlap with prior comments fetched in step 4) are filtered out before posting, so a second run on an unchanged PR posts zero new comments.
+
+## `--refine`
+
+`assist review --refine` runs the pipeline up through synthesis and then, instead of posting, launches an interactive Claude session (`runRefineSession.ts`) with `synthesis.md` open. The agent investigates each finding, walks the user through it, and edits `synthesis.md` in place — dropping, editing, or appending blocks using the format `parseFindings.ts` expects.
+
+Because the file is edited in place, a subsequent `assist review` (no flag) hits the cached `synthesis.md` via `cachedReviewerResult` and posts only the surviving / appended findings as pending comments. `--force` re-runs the pipeline before refining; `--submit` is ignored when `--refine` is set because nothing is posted in the refine step itself.
+
+```mermaid
+flowchart LR
+    Synthesis[synthesis.md] --> Refine[--refine: interactive Claude edits file]
+    Refine --> Next[next assist review]
+    Next --> Cached{cached synthesis.md}
+    Cached --> Post[Post surviving findings]
+```

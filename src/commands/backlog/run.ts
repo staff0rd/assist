@@ -1,10 +1,10 @@
 import chalk from "chalk";
+import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { acquireLock, releaseLock } from "./acquireLock";
 import { buildReviewPhase } from "./buildReviewPhase";
 import { executePhase } from "./executePhase";
 import { prepareRun } from "./prepareRun";
 import { setStatus } from "./shared";
-import type { SpawnClaudeOptions } from "./spawnClaude";
 import type { BacklogItem, PlanPhase } from "./types";
 
 export async function run(
