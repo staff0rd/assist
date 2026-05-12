@@ -1,3 +1,10 @@
+# [0.212.0](https://github.com/staff0rd/assist/compare/v0.211.0...v0.212.0) (2026-05-12)
+
+
+### Features
+
+* add assist review command ([dd2ce0a](https://github.com/staff0rd/assist/commit/dd2ce0abb759f95b591fa39d1538bd7e1869711d))
+
 # [0.211.0](https://github.com/staff0rd/assist/compare/v0.210.1...v0.211.0) (2026-05-07)
 
 
