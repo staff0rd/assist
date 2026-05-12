@@ -19,6 +19,14 @@ For each finding, emit one block in this exact format:
 - Impact: one sentence on what could go wrong
 - Recommendation: one or two sentences with a concrete change
 
+Severity rubric (recalibrate each finding against this — reviewers tend to inflate):
+- **blocker** — ships broken behaviour: crash, data loss, security hole, breaks the build or existing tests, or violates a stated requirement.
+- **major** — likely bug, missing error handling on a real failure mode, or a regression in existing behaviour. Not "this could be cleaner" or "this might be slow."
+- **minor** — narrow correctness or clarity issue with limited blast radius; worth fixing but not urgent.
+- **nit** — style, naming, micro-refactors, comment wording; reviewer would not block on it.
+
+Default to the lower tier when uncertain. Code-style preferences, refactor suggestions, and "I would have written it differently" belong in nit — not major. A finding is only major if you can name a concrete failure mode or regression. If a reviewer marked something major but the impact reads as taste or hypothetical, downgrade it.
+
 Rules:
 - \`confirmed\` = both reviewers raised it.
 - \`disputed\` = the reviewers disagreed on the diagnosis or fix.
