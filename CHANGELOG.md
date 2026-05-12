@@ -1,3 +1,10 @@
+## [0.214.1](https://github.com/staff0rd/assist/compare/v0.214.0...v0.214.1) (2026-05-12)
+
+
+### Bug Fixes
+
+* severity rubric in review prompts ([258cfb8](https://github.com/staff0rd/assist/commit/258cfb8600ba49e7629c13eba74d6e2c64cf3bd3))
+
 # [0.214.0](https://github.com/staff0rd/assist/compare/v0.213.0...v0.214.0) (2026-05-12)
 
 
