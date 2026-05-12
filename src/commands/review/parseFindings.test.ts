@@ -52,6 +52,18 @@ describe("parseFindings", () => {
 		expect(findings[0].severity).toBeNull();
 	});
 
+	it("recognises already-raised as a valid source", () => {
+		const md = `### Finding: duplicate\n- Severity: minor\n- Source: already-raised\n- Location: \`src/foo.ts:42\`\n`;
+		const findings = parseFindings(md);
+		expect(findings[0].source).toBe("already-raised");
+	});
+
+	it("drops unknown source values", () => {
+		const md = `### Finding: weird\n- Severity: minor\n- Source: mystery\n- Location: \`n/a\`\n`;
+		const findings = parseFindings(md);
+		expect(findings[0].source).toBeNull();
+	});
+
 	it("returns empty array when no findings present", () => {
 		expect(parseFindings("## Summary\n\nNo findings.\n")).toEqual([]);
 	});
@@ -110,5 +122,30 @@ describe("partitionFindings", () => {
 		const { lineBound, unlocated } = partitionFindings(parseFindings(md));
 		expect(lineBound).toHaveLength(0);
 		expect(unlocated).toHaveLength(1);
+	});
+
+	it("separates already-raised findings regardless of location", () => {
+		const md = `### Finding: dup with line
+- Severity: minor
+- Source: already-raised
+- Location: \`src/foo.ts:42\`
+
+### Finding: dup without line
+- Severity: minor
+- Source: already-raised
+- Location: \`n/a\`
+
+### Finding: fresh
+- Severity: minor
+- Source: claude-only
+- Location: \`src/bar.ts:10\`
+`;
+		const { lineBound, unlocated, alreadyRaised } = partitionFindings(
+			parseFindings(md),
+		);
+		expect(alreadyRaised).toHaveLength(2);
+		expect(lineBound).toHaveLength(1);
+		expect(unlocated).toHaveLength(0);
+		expect(lineBound[0]).toMatchObject({ file: "src/bar.ts", line: 10 });
 	});
 });

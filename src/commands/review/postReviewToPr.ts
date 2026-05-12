@@ -35,8 +35,13 @@ export async function postReviewToPr(
 		console.log("Synthesis contains no findings; nothing to post.");
 		return;
 	}
-	const { lineBound, unlocated } = partitionFindings(findings);
+	const { lineBound, unlocated, alreadyRaised } = partitionFindings(findings);
 	warnUnlocated(unlocated);
+	if (alreadyRaised.length > 0) {
+		console.log(
+			`Skipped ${alreadyRaised.length} finding(s) already raised by prior comments.`,
+		);
+	}
 	if (lineBound.length === 0) {
 		console.log("No line-bound findings to post.");
 		return;

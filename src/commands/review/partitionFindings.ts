@@ -27,13 +27,19 @@ function toLineBound(finding: ParsedFinding): LineBoundFinding | null {
 export function partitionFindings(findings: ParsedFinding[]): {
 	lineBound: LineBoundFinding[];
 	unlocated: ParsedFinding[];
+	alreadyRaised: ParsedFinding[];
 } {
 	const lineBound: LineBoundFinding[] = [];
 	const unlocated: ParsedFinding[] = [];
+	const alreadyRaised: ParsedFinding[] = [];
 	for (const finding of findings) {
+		if (finding.source === "already-raised") {
+			alreadyRaised.push(finding);
+			continue;
+		}
 		const bound = toLineBound(finding);
 		if (bound) lineBound.push(bound);
 		else unlocated.push(finding);
 	}
-	return { lineBound, unlocated };
+	return { lineBound, unlocated, alreadyRaised };
 }

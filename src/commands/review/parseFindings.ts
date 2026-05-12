@@ -1,18 +1,36 @@
 type Severity = "blocker" | "major" | "minor" | "nit";
 
+type Source =
+	| "confirmed"
+	| "disputed"
+	| "claude-only"
+	| "codex-only"
+	| "already-raised";
+
 export type ParsedFinding = {
 	title: string;
 	severity: Severity | null;
-	source: string | null;
+	source: Source | null;
 	location: string;
 	impact: string;
 	recommendation: string;
 };
 
 const SEVERITIES: readonly Severity[] = ["blocker", "major", "minor", "nit"];
+const SOURCES: readonly Source[] = [
+	"confirmed",
+	"disputed",
+	"claude-only",
+	"codex-only",
+	"already-raised",
+];
 
 function isSeverity(value: string): value is Severity {
 	return (SEVERITIES as readonly string[]).includes(value);
+}
+
+function isSource(value: string): value is Source {
+	return (SOURCES as readonly string[]).includes(value);
 }
 
 function extractField(block: string, field: string): string {
@@ -35,7 +53,7 @@ function parseFindingBlock(block: string): ParsedFinding {
 	return {
 		title,
 		severity: isSeverity(severityRaw) ? severityRaw : null,
-		source: sourceRaw === "" ? null : sourceRaw,
+		source: isSource(sourceRaw) ? sourceRaw : null,
 		location: stripBackticks(extractField(body, "Location")),
 		impact: extractField(body, "Impact"),
 		recommendation: extractField(body, "Recommendation"),

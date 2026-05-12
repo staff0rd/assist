@@ -1,6 +1,7 @@
 import { findRepoRoot } from "../../shared/findRepoRoot";
 import { buildRequest, gatherContext } from "./buildRequest";
 import { buildReviewPaths } from "./buildReviewPaths";
+import { fetchExistingComments } from "./fetchExistingComments";
 import { postReviewToPr } from "./postReviewToPr";
 import { prepareReviewDir } from "./prepareReviewDir";
 import { runReviewPipeline } from "./runReviewPipeline";
@@ -28,7 +29,17 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 		process.exit(1);
 	}
 	const paths = buildReviewPaths(repoRoot, context.branch, context.shortSha);
-	prepareReviewDir(paths, buildRequest(context), options.force ?? false);
+	const priorComments = fetchExistingComments();
+	if (priorComments && priorComments.length > 0) {
+		console.log(
+			`Including ${priorComments.length} prior review comment(s) in request.md.`,
+		);
+	}
+	prepareReviewDir(
+		paths,
+		buildRequest(context, priorComments),
+		options.force ?? false,
+	);
 	console.log(`Review folder: ${paths.reviewDir}`);
 	const synthesisOk = await runReviewPipeline(paths);
 	if (synthesisOk) {

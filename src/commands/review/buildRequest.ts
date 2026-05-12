@@ -1,4 +1,6 @@
 import { execSync } from "node:child_process";
+import type { ExistingComment } from "./fetchExistingComments";
+import { formatPriorComments } from "./formatPriorComments";
 
 type ReviewContext = {
 	branch: string;
@@ -52,7 +54,12 @@ function formatFiles(files: string[]): string {
 	return files.map((file) => `- ${file}`).join("\n");
 }
 
-export function buildRequest(context: ReviewContext): string {
+export function buildRequest(
+	context: ReviewContext,
+	priorComments: ExistingComment[] | null = null,
+): string {
+	const priorSection = priorComments ? formatPriorComments(priorComments) : "";
+	const priorBlock = priorSection ? `\n${priorSection}\n` : "";
 	return `# Code review request
 
 - Branch: \`${context.branch}\`
@@ -62,7 +69,7 @@ export function buildRequest(context: ReviewContext): string {
 ## Changed files
 
 ${formatFiles(context.changedFiles)}
-
+${priorBlock}
 ## Diff vs ${context.baseBranch}
 
 \`\`\`diff
