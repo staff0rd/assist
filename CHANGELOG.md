@@ -1,3 +1,10 @@
+# [0.217.0](https://github.com/staff0rd/assist/compare/v0.216.1...v0.217.0) (2026-05-13)
+
+
+### Features
+
+* /next [id] shortcut ([d45b12a](https://github.com/staff0rd/assist/commit/d45b12a3e15a45e2e5f66c69c03c138bc89d828e))
+
 ## [0.216.1](https://github.com/staff0rd/assist/compare/v0.216.0...v0.216.1) (2026-05-13)
 
 
