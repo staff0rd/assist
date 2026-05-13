@@ -1,3 +1,10 @@
+## [0.216.1](https://github.com/staff0rd/assist/compare/v0.216.0...v0.216.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* /draft defers codebase reads ([07c0141](https://github.com/staff0rd/assist/commit/07c0141517a58c66a02a1fcf25d025cd394739e0))
+
 # [0.216.0](https://github.com/staff0rd/assist/compare/v0.215.1...v0.216.0) (2026-05-13)
 
 
