@@ -1,6 +1,5 @@
-import path from "node:path";
 import chalk from "chalk";
-import { Project } from "ts-morph";
+import { loadProjectFile } from "../extract/loadProjectFile";
 import { findSymbol } from "./findSymbol";
 import { groupReferences } from "./groupReferences";
 
@@ -14,17 +13,9 @@ export async function renameSymbol(
 	newName: string,
 	options: RenameSymbolOptions = {},
 ): Promise<void> {
-	const filePath = path.resolve(file);
-	const tsConfigPath = path.resolve("tsconfig.json");
 	const cwd = process.cwd();
 
-	const project = new Project({ tsConfigFilePath: tsConfigPath });
-	const sourceFile = project.getSourceFile(filePath);
-
-	if (!sourceFile) {
-		console.log(chalk.red(`File not found in project: ${file}`));
-		process.exit(1);
-	}
+	const { project, sourceFile } = loadProjectFile(file);
 
 	const symbol = findSymbol(sourceFile, oldName);
 	if (!symbol) {
