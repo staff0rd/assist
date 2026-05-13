@@ -1,3 +1,10 @@
+## [0.215.1](https://github.com/staff0rd/assist/compare/v0.215.0...v0.215.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* rename symbol in monorepos ([e00ceca](https://github.com/staff0rd/assist/commit/e00ceca1d0828c3857f68de23d001d69e2614c9f))
+
 # [0.215.0](https://github.com/staff0rd/assist/compare/v0.214.1...v0.215.0) (2026-05-12)
 
 
