@@ -146,16 +146,16 @@ run:
       - --jsx=automatic
       - --jsx-import-source=react
       - --define:process.env.NODE_ENV='production'
-  - name: verify:madge
+  - name: verify:circular-deps
     command: npx
+    quiet: true
     args:
-      - madge
-      - --circular
-      - --ts-config
-      - ./tsconfig.json
-      - --extensions
-      - ts,tsx
-      - src/
+      - -y
+      - skott
+      - --displayMode=raw
+      - --showCircularDependencies
+      - --exitCodeOnCircularDependencies=1
+      - src/index.ts
   - name: test:timestamp
     command: bash
     args:

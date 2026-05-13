@@ -39,6 +39,7 @@ assist ravendb collections
 assist ravendb query
 assist refactor
 assist roam show-claude-code-icon
+assist run
 assist screenshot
 assist seq auth list
 assist seq query

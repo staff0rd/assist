@@ -14,6 +14,7 @@ export type VerifyEntry = {
 	cwd?: string;
 	env?: Record<string, string>;
 	filter?: string;
+	quiet?: boolean;
 };
 
 function getRunEntries(): VerifyEntry[] {
@@ -27,6 +28,7 @@ function getRunEntries(): VerifyEntry[] {
 			cwd: r.cwd ? path.resolve(getConfigDir(), r.cwd) : undefined,
 			env: r.env,
 			filter: r.filter,
+			quiet: r.quiet,
 		}));
 }
 

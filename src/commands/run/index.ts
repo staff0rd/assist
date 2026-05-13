@@ -28,6 +28,7 @@ function execRunConfig(config: RunConfig, args: string[]): void {
 		[...(config.args ?? []), ...resolved],
 		config.env,
 		cwd,
+		config.quiet,
 	);
 }
 

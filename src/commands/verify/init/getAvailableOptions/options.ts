@@ -66,10 +66,10 @@ export const options: OptionDef[] = [
 		extraCondition: (s) => s.hasTypescript && !s.hasVite,
 	},
 	{
-		toolKey: "madge",
-		value: "madge",
-		label: "madge",
-		description: "Circular dependency detection with madge",
+		toolKey: "skott",
+		value: "circular-deps",
+		label: "circular-deps",
+		description: "Circular dependency detection with skott",
 	},
 	{
 		toolKey: "maintainability",

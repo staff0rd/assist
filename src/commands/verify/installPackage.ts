@@ -6,7 +6,12 @@ import {
 	readPackageJson,
 } from "../../shared/readPackageJson";
 
-export type ScriptWriter = (scriptName: string, command: string) => void;
+export type ScriptWriterOptions = { quiet?: boolean };
+export type ScriptWriter = (
+	scriptName: string,
+	command: string,
+	options?: ScriptWriterOptions,
+) => void;
 
 function writePackageJson(filePath: string, pkg: PackageJson): void {
 	writeFileSync(filePath, `${JSON.stringify(pkg, null, 2)}\n`);
@@ -41,6 +46,7 @@ export function setupVerifyScript(
 	packageJsonPath: string,
 	scriptName: string,
 	command: string,
+	_options?: ScriptWriterOptions,
 ): void {
 	writePackageJson(
 		packageJsonPath,
