@@ -1,3 +1,10 @@
+# [0.218.0](https://github.com/staff0rd/assist/compare/v0.217.0...v0.218.0) (2026-05-13)
+
+
+### Features
+
+* add backlog stop command ([e853e05](https://github.com/staff0rd/assist/commit/e853e0552fbf8aec66e5e0a53067702678e82037))
+
 # [0.217.0](https://github.com/staff0rd/assist/compare/v0.216.1...v0.217.0) (2026-05-13)
 
 
