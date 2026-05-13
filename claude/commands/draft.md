@@ -7,9 +7,9 @@ You are helping the user create a well-structured backlog item with a phased imp
 
 ## Step 1: Understand the idea
 
-If the user provided a description via $ARGUMENTS, use that as a starting point. Otherwise, ask what they want to build.
+If the user provided a description via $ARGUMENTS, use that as a starting point. Otherwise, ask the user what they want to build — do NOT read any codebase files yet. Wait for their response before doing anything else.
 
-Read relevant parts of the codebase to understand the current architecture and patterns.
+Once you have a description (either from $ARGUMENTS or the user's reply), read relevant parts of the codebase to understand the current architecture and patterns as they relate to what's being drafted.
 
 ## Step 2: Ask clarifying questions
 
