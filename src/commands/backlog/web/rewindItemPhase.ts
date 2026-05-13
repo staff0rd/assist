@@ -1,7 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { addComment } from "../addComment";
-import { loadBacklog, saveBacklog } from "../shared";
+import { saveBacklog } from "../shared";
+import { applyCwdFromReq } from "./applyCwdFromReq";
+import { findItemOr404 } from "./findItemOr404";
 import { parseRewindBody } from "./parseItemBody";
 
 export async function rewindItemPhase(
@@ -10,12 +12,10 @@ export async function rewindItemPhase(
 	id: number,
 ): Promise<void> {
 	const { phase, reason } = await parseRewindBody(req);
-	const items = loadBacklog();
-	const item = items.find((i) => i.id === id);
-	if (!item) {
-		respondJson(res, 404, { error: "Not found" });
-		return;
-	}
+	applyCwdFromReq(req);
+	const result = findItemOr404(res, id);
+	if (!result) return;
+	const { items, item } = result;
 
 	const error = validateRewind(item, phase);
 	if (error) {

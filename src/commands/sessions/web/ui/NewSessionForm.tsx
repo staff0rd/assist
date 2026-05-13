@@ -1,22 +1,15 @@
 import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { RepoFilterRow } from "./RepoFilterRow";
+import { useRepoSelectionContext } from "./RepoSelectionProvider";
 import { SessionFormControls } from "./SessionFormControls";
-import type { HistoricalSession } from "./types";
 import { type FormDeps, useNewSessionForm } from "./useNewSessionForm";
-import { useRepoSelection } from "./useRepoSelection";
 
-type Props = Omit<FormDeps, "selectedCwd"> & {
-	currentCwd: string;
-	history: HistoricalSession[];
-};
+type Props = Omit<FormDeps, "selectedCwd">;
 
 export function NewSessionForm(props: Props) {
-	const { currentCwd, history, runConfigs } = props;
-	const { repos, selectedCwd, setSelectedCwd } = useRepoSelection(
-		currentCwd,
-		history,
-	);
+	const { runConfigs } = props;
+	const { selectedCwd } = useRepoSelectionContext();
 	const form = useNewSessionForm({ ...props, selectedCwd });
 	const hasRepo = selectedCwd !== "";
 
@@ -33,14 +26,16 @@ export function NewSessionForm(props: Props) {
 				gap: 1,
 			}}
 		>
-			<RepoFilterRow
-				repos={repos}
-				selectedCwd={selectedCwd}
-				onSelectCwd={setSelectedCwd}
-				runFilter={form.runFilter}
-				onFilterChange={form.setRunFilter}
-				showFilter={runConfigs.length > 0}
-			/>
+			{runConfigs.length > 0 && (
+				<TextField
+					value={form.runFilter}
+					onChange={(e) => form.setRunFilter(e.target.value)}
+					placeholder="Filter runs..."
+					size="small"
+					fullWidth
+					slotProps={{ input: { sx: { fontSize: 13 } } }}
+				/>
+			)}
 			{hasRepo ? (
 				<SessionFormControls form={form} totalRunCount={runConfigs.length} />
 			) : (

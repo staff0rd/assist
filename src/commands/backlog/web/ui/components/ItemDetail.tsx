@@ -1,5 +1,6 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router";
+import { useRepoSelectionContext } from "../../../../sessions/web/ui/RepoSelectionProvider";
 import { updateItemStatus } from "../api";
 import type { BacklogItem } from "../types";
 import { BackButton } from "./BackButton";
@@ -45,12 +46,13 @@ function DetailHeader({
 
 export function ItemDetail({ item, onReload }: ItemDetailProps) {
 	const navigate = useNavigate();
+	const { selectedCwd } = useRepoSelectionContext();
 	const handleDeleted = async () => {
 		await onReload();
 		navigate("/backlog");
 	};
 	const handleStatusChange = async (status: BacklogItem["status"]) => {
-		await updateItemStatus(item.id, status);
+		await updateItemStatus(item.id, status, selectedCwd || undefined);
 		await onReload();
 	};
 	return (

@@ -6,7 +6,8 @@ export async function submitForm(
 	name: string,
 	description: string,
 	criteria: string[],
-	item?: BacklogItem,
+	item: BacklogItem | undefined,
+	cwd: string | undefined,
 ): Promise<number | undefined> {
 	const trimmed = name.trim();
 	if (!trimmed) return undefined;
@@ -17,9 +18,9 @@ export async function submitForm(
 		acceptanceCriteria: criteria.map((c) => c.trim()).filter(Boolean),
 	};
 	if (item) {
-		await updateItem(item.id, body);
+		await updateItem(item.id, body, cwd);
 		return item.id;
 	}
-	const created = await createItem(body);
+	const created = await createItem(body, cwd);
 	return created.id;
 }

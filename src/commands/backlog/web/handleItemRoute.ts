@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { rewindItemPhase } from "./rewindItemPhase";
-import { deleteItem, getItemById, patchItemStatus, updateItem } from "./shared";
+import { deleteItem, getItemById, patchItemStatus } from "./shared";
+import { updateItem } from "./updateItem";
 
 type ItemHandler = (
 	req: IncomingMessage,
@@ -9,10 +10,10 @@ type ItemHandler = (
 ) => void | Promise<void>;
 
 const itemRoutes: Record<string, ItemHandler> = {
-	GET: (_req, res, id) => getItemById(res, id),
+	GET: (req, res, id) => getItemById(req, res, id),
 	PUT: (req, res, id) => updateItem(req, res, id),
 	PATCH: (req, res, id) => patchItemStatus(req, res, id),
-	DELETE: (_req, res, id) => deleteItem(res, id),
+	DELETE: (req, res, id) => deleteItem(req, res, id),
 };
 
 export async function handleItemRoute(

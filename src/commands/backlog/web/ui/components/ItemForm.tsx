@@ -1,10 +1,11 @@
 import { Paper } from "@mui/material";
-import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { useRepoSelectionContext } from "../../../../sessions/web/ui/RepoSelectionProvider";
 import type { BacklogItem } from "../types";
 import { BackButton } from "./BackButton";
-import { getDefaults, handleSubmit } from "./getDefaults";
+import { buildItemFormSubmit } from "./buildItemFormSubmit";
 import { ItemFormFields } from "./ItemFormFields";
+import { useItemFormState } from "./useItemFormState";
 
 type ItemFormProps = {
 	item?: BacklogItem;
@@ -14,13 +15,21 @@ type ItemFormProps = {
 
 export function ItemForm({ item, onReload, backTo }: ItemFormProps) {
 	const navigate = useNavigate();
-	const defaults = getDefaults(item);
-	const [type, setType] = useState<"story" | "bug">(
-		defaults.type as "story" | "bug",
-	);
-	const [name, setName] = useState(defaults.name);
-	const [description, setDescription] = useState(defaults.description);
-	const acRef = useRef<string[]>(defaults.ac);
+	const { selectedCwd } = useRepoSelectionContext();
+	const state = useItemFormState(item);
+
+	const onSubmit = buildItemFormSubmit({
+		type: state.type,
+		name: state.name,
+		description: state.description,
+		criteria: state.acRef.current,
+		item,
+		cwd: selectedCwd || undefined,
+		onSaved: async (id) => {
+			await onReload();
+			navigate(`/backlog/items/${id}`);
+		},
+	});
 
 	return (
 		<>
@@ -29,33 +38,20 @@ export function ItemForm({ item, onReload, backTo }: ItemFormProps) {
 				component="form"
 				variant="outlined"
 				sx={{ p: 3 }}
-				onSubmit={(e: React.FormEvent<HTMLFormElement>) =>
-					handleSubmit(
-						e,
-						type,
-						name,
-						description,
-						acRef.current,
-						item,
-						async (id) => {
-							await onReload();
-							navigate(`/backlog/items/${id}`);
-						},
-					)
-				}
+				onSubmit={onSubmit}
 			>
 				<ItemFormFields
-					title={defaults.title}
-					submitLabel={defaults.submitLabel}
-					type={type}
-					onTypeChange={setType}
-					name={name}
-					onNameChange={setName}
-					description={description}
-					onDescriptionChange={setDescription}
-					initialAc={defaults.ac}
+					title={state.defaults.title}
+					submitLabel={state.defaults.submitLabel}
+					type={state.type}
+					onTypeChange={state.setType}
+					name={state.name}
+					onNameChange={state.setName}
+					description={state.description}
+					onDescriptionChange={state.setDescription}
+					initialAc={state.defaults.ac}
 					onAcChange={(v) => {
-						acRef.current = v;
+						state.acRef.current = v;
 					}}
 					onCancel={() => navigate(backTo)}
 				/>

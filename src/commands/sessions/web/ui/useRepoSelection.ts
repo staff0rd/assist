@@ -6,10 +6,18 @@ export function useRepoSelection(
 	currentCwd: string,
 	history: HistoricalSession[],
 ) {
-	const [selectedCwd, setSelectedCwd] = useState(currentCwd);
+	const [selectedCwd, setSelectedCwdState] = useState(currentCwd);
+
+	const setSelectedCwd = (cwd: string) => {
+		console.log("[repo] setSelectedCwd:", cwd);
+		setSelectedCwdState(cwd);
+	};
 
 	useEffect(() => {
-		if (currentCwd && !selectedCwd) setSelectedCwd(currentCwd);
+		if (currentCwd && !selectedCwd) {
+			console.log("[repo] init selectedCwd from currentCwd:", currentCwd);
+			setSelectedCwdState(currentCwd);
+		}
 	}, [currentCwd, selectedCwd]);
 
 	const repos = useMemo(

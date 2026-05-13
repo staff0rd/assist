@@ -20,10 +20,11 @@ export async function handleSubmit(
 	description: string,
 	criteria: string[],
 	item: BacklogItem | undefined,
+	cwd: string | undefined,
 	onSaved: (id: number) => void | Promise<void>,
 ) {
 	e.preventDefault();
-	const id = await submitForm(type, name, description, criteria, item);
+	const id = await submitForm(type, name, description, criteria, item, cwd);
 	if (id === undefined) return;
 	await onSaved(id);
 }

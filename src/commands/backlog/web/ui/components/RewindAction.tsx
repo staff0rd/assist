@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
+import { useRepoSelectionContext } from "../../../../sessions/web/ui/RepoSelectionProvider";
 import { rewindPhase } from "../api";
 import { RewindDialog } from "./RewindDialog";
 
@@ -17,6 +18,7 @@ export function RewindAction({
 	onRewound,
 }: RewindActionProps) {
 	const [showDialog, setShowDialog] = useState(false);
+	const { selectedCwd } = useRepoSelectionContext();
 	return (
 		<>
 			<Button
@@ -32,7 +34,12 @@ export function RewindAction({
 				<RewindDialog
 					phaseName={phaseName}
 					onConfirm={async (reason) => {
-						await rewindPhase(itemId, phaseNumber, reason);
+						await rewindPhase(
+							itemId,
+							phaseNumber,
+							reason,
+							selectedCwd || undefined,
+						);
 						await onRewound();
 					}}
 					onCancel={() => setShowDialog(false)}

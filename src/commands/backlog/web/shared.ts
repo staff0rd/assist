@@ -1,26 +1,36 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { getNextId } from "../getNextId";
-import { loadBacklog, saveBacklog, searchBacklog } from "../shared";
+import {
+	getBacklogDir,
+	loadBacklog,
+	saveBacklog,
+	searchBacklog,
+} from "../shared";
+import { applyCwdFromReq } from "./applyCwdFromReq";
+import { findItemOr404 } from "./findItemOr404";
 import { parseItemBody, parseStatusBody } from "./parseItemBody";
 
 export function listItems(req: IncomingMessage, res: ServerResponse): void {
+	applyCwdFromReq(req);
 	const url = new URL(req.url ?? "/", "http://localhost");
 	const q = url.searchParams.get("q");
-	respondJson(res, 200, q ? searchBacklog(q) : loadBacklog());
+	const items = q ? searchBacklog(q) : loadBacklog();
+	console.log(
+		"[backlog server] listItems → dir:",
+		getBacklogDir(),
+		"count:",
+		items.length,
+	);
+	respondJson(res, 200, items);
 }
 
-function findItemOr404(res: ServerResponse, id: number) {
-	const items = loadBacklog();
-	const item = items.find((i) => i.id === id);
-	if (!item) {
-		respondJson(res, 404, { error: "Not found" });
-		return undefined;
-	}
-	return { items, item };
-}
-
-export function getItemById(res: ServerResponse, id: number): void {
+export function getItemById(
+	req: IncomingMessage,
+	res: ServerResponse,
+	id: number,
+): void {
+	applyCwdFromReq(req);
 	const result = findItemOr404(res, id);
 	if (result) respondJson(res, 200, result.item);
 }
@@ -30,6 +40,7 @@ export async function createItem(
 	res: ServerResponse,
 ): Promise<void> {
 	const body = await parseItemBody(req);
+	applyCwdFromReq(req);
 	const items = loadBacklog();
 	const newItem = {
 		id: getNextId(items),
@@ -44,28 +55,15 @@ export async function createItem(
 	respondJson(res, 201, newItem);
 }
 
-export function deleteItem(res: ServerResponse, id: number): void {
-	const result = findItemOr404(res, id);
-	if (!result) return;
-	saveBacklog(result.items.filter((i) => i.id !== id));
-	respondJson(res, 200, result.item);
-}
-
-export async function updateItem(
+export function deleteItem(
 	req: IncomingMessage,
 	res: ServerResponse,
 	id: number,
-): Promise<void> {
-	const body = await parseItemBody(req);
+): void {
+	applyCwdFromReq(req);
 	const result = findItemOr404(res, id);
 	if (!result) return;
-	Object.assign(result.item, {
-		type: body.type ?? result.item.type,
-		name: body.name,
-		description: body.description,
-		acceptanceCriteria: body.acceptanceCriteria ?? [],
-	});
-	saveBacklog(result.items);
+	saveBacklog(result.items.filter((i) => i.id !== id));
 	respondJson(res, 200, result.item);
 }
 
@@ -75,6 +73,7 @@ export async function patchItemStatus(
 	id: number,
 ): Promise<void> {
 	const { status } = await parseStatusBody(req);
+	applyCwdFromReq(req);
 	const result = findItemOr404(res, id);
 	if (!result) return;
 	result.item.status = status;

@@ -33,7 +33,6 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 			history={socket.history}
 			run={run}
 			activeId={socket.activeId}
-			currentCwd={socket.currentCwd}
 			tab={tab}
 			onTabChange={onTabChange}
 			onSelect={socket.setActiveId}

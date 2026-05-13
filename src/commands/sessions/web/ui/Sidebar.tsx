@@ -11,7 +11,6 @@ type SidebarProps = {
 	history: HistoricalSession[];
 	run: RunProps;
 	activeId: string | null;
-	currentCwd: string;
 	tab: SidebarTab;
 	onTabChange: (tab: SidebarTab) => void;
 	onSelect: (id: string) => void;
@@ -46,8 +45,6 @@ export function Sidebar(props: SidebarProps) {
 				<ActiveTab
 					sessions={props.sessions}
 					activeId={props.activeId}
-					currentCwd={props.currentCwd}
-					history={props.history}
 					run={props.run}
 					onSelect={props.onSelect}
 					onCreate={props.onCreate}

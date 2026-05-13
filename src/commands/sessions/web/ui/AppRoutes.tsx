@@ -3,6 +3,7 @@ import Container from "@mui/material/Container";
 import { Navigate, Route, Routes } from "react-router";
 import { BacklogView } from "../../../../commands/backlog/web/ui/BacklogView";
 import { SessionsView } from "./SessionsView";
+import type { useSessionSocket } from "./useSessionSocket";
 
 function BacklogContent() {
 	return (
@@ -12,7 +13,11 @@ function BacklogContent() {
 	);
 }
 
-export function AppRoutes() {
+type Props = {
+	socket: ReturnType<typeof useSessionSocket>;
+};
+
+export function AppRoutes({ socket }: Props) {
 	return (
 		<Routes>
 			<Route
@@ -25,7 +30,7 @@ export function AppRoutes() {
 							height: "calc(100vh - 48px)",
 						}}
 					>
-						<SessionsView />
+						<SessionsView socket={socket} />
 					</Box>
 				}
 			/>
