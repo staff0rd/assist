@@ -53,7 +53,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/review-comments` - Process PR review comments one by one
 - `/jira` - View a Jira work item
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
-- `/next` - Signal completion and chain into the next backlog item
+- `/next [id]` - Signal completion and chain into the next backlog item; pass an `id` to run a specific item directly (falls back to the picker if the id is missing, done, won't-do, or blocked)
 - `/standup` - Summarise recent journal entries as a standup update
 - `/sync` - Sync commands and settings to ~/.claude
 - `/test-cover` - Incrementally increase test coverage by identifying and testing uncovered files
@@ -103,6 +103,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item
 - `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog start <id>` - Set a backlog item to in-progress
+- `assist backlog stop` - Revert all in-progress backlog items to todo and reset their phase to 1
 - `assist backlog done <id>` - Set a backlog item to done
 - `assist backlog wontdo <id> [reason]` - Set a backlog item to won't do
 - `assist backlog delete <id>` - Delete a backlog item
@@ -218,5 +219,5 @@ After installation, the `assist` command will be available globally. You can als
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
 - `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given
-- `assist signal next` - Write a next signal to chain into `assist next`
+- `assist signal next [id]` - Write a next signal to chain into `assist next`; when `id` is supplied, the parent launcher runs that backlog item directly
 

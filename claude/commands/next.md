@@ -6,7 +6,7 @@ You are done with the current session. Write the signal file to terminate this s
 
 Run:
 ```
-assist signal next
+assist signal next $ARGUMENTS
 ```
 
 Then tell the user the session is ending and `assist next` will start automatically.

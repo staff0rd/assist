@@ -3,6 +3,7 @@ import { spawnClaude } from "../../shared/spawnClaude";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
 import { cleanupSignal } from "./resolvePhaseResult";
+import { tryRunById } from "./tryRunById";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
 export async function launchMode(slashCommand: string): Promise<void> {
@@ -16,6 +17,9 @@ export async function launchMode(slashCommand: string): Promise<void> {
 	cleanupSignal();
 
 	if (signal?.event === "next") {
+		if (typeof signal.id === "string" && signal.id) {
+			if (await tryRunById(signal.id, { allowEdits: true })) return;
+		}
 		console.log(chalk.bold("\nChaining into assist next...\n"));
 		await next({ allowEdits: true });
 	}
