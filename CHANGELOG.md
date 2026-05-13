@@ -1,3 +1,10 @@
+# [0.216.0](https://github.com/staff0rd/assist/compare/v0.215.1...v0.216.0) (2026-05-13)
+
+
+### Features
+
+* replace madge with skott ([23bc487](https://github.com/staff0rd/assist/commit/23bc48758b6d4f4b7336cc3ef6ee3ea76667be90))
+
 ## [0.215.1](https://github.com/staff0rd/assist/compare/v0.215.0...v0.215.1) (2026-05-13)
 
 
