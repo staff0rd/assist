@@ -1,3 +1,10 @@
+# [0.220.0](https://github.com/staff0rd/assist/compare/v0.219.0...v0.220.0) (2026-05-15)
+
+
+### Features
+
+* add sha mode to assist review ([9ec6d45](https://github.com/staff0rd/assist/commit/9ec6d456eec6aa69ccb847ff2a035b2e54290168))
+
 # [0.219.0](https://github.com/staff0rd/assist/compare/v0.218.0...v0.219.0) (2026-05-15)
 
 
