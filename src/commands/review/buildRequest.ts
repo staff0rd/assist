@@ -1,49 +1,7 @@
-import { execSync } from "node:child_process";
 import type { ExistingComment } from "./fetchExistingComments";
-import {
-	fetchPrChangedFiles,
-	fetchPrDiff,
-	fetchPrDiffInfo,
-} from "./fetchPrDiffInfo";
 import { formatPriorComments } from "./formatPriorComments";
-
-type ReviewContext = {
-	branch: string;
-	sha: string;
-	shortSha: string;
-	prNumber: number;
-	baseRef: string;
-	baseSha: string;
-	headRef: string;
-	headSha: string;
-	changedFiles: string[];
-	diff: string;
-};
-
-export function gatherContext(): ReviewContext {
-	const branch = execSync("git rev-parse --abbrev-ref HEAD", {
-		encoding: "utf-8",
-	}).trim();
-	const sha = execSync("git rev-parse HEAD", { encoding: "utf-8" }).trim();
-	const shortSha = execSync("git rev-parse --short=7 HEAD", {
-		encoding: "utf-8",
-	}).trim();
-	const prInfo = fetchPrDiffInfo();
-	const changedFiles = fetchPrChangedFiles(prInfo.prNumber);
-	const diff = fetchPrDiff(prInfo.prNumber);
-	return {
-		branch,
-		sha,
-		shortSha,
-		prNumber: prInfo.prNumber,
-		baseRef: prInfo.baseRef,
-		baseSha: prInfo.baseSha,
-		headRef: prInfo.headRef,
-		headSha: prInfo.headSha,
-		changedFiles,
-		diff,
-	};
-}
+import type { ReviewContext } from "./gatherContext";
+import type { ShaContext } from "./gatherShaContext";
 
 function formatFiles(files: string[]): string {
 	if (files.length === 0) return "(none)";
@@ -69,6 +27,24 @@ export function buildRequest(
 ${formatFiles(context.changedFiles)}
 ${priorBlock}
 ## Diff (PR #${context.prNumber}: ${context.baseSha}..${context.headSha})
+
+\`\`\`diff
+${context.diff.trimEnd()}
+\`\`\`
+`;
+}
+
+export function buildShaRequest(context: ShaContext): string {
+	return `# Code review request
+
+- Commit: \`${context.sha}\`
+- Parent: \`${context.parentSha}\`
+
+## Changed files
+
+${formatFiles(context.changedFiles)}
+
+## Diff (commit ${context.sha}: ${context.parentSha}..${context.sha})
 
 \`\`\`diff
 ${context.diff.trimEnd()}

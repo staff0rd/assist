@@ -8,17 +8,8 @@ export type ReviewPaths = {
 	synthesisPath: string;
 };
 
-export function buildReviewPaths(
-	repoRoot: string,
-	branch: string,
-	shortSha: string,
-): ReviewPaths {
-	const reviewDir = join(
-		repoRoot,
-		".assist",
-		"reviews",
-		`${branch}-${shortSha}`,
-	);
+export function buildReviewPaths(repoRoot: string, key: string): ReviewPaths {
+	const reviewDir = join(repoRoot, ".assist", "reviews", key);
 	return {
 		reviewDir,
 		requestPath: join(reviewDir, "request.md"),
