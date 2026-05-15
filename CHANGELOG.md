@@ -1,3 +1,10 @@
+# [0.219.0](https://github.com/staff0rd/assist/compare/v0.218.0...v0.219.0) (2026-05-15)
+
+
+### Features
+
+* merge codex guidelines into review prompt ([7cb3c34](https://github.com/staff0rd/assist/commit/7cb3c34ae0b14dd0eb8997b34aa0a4d3e63d3bc2))
+
 # [0.218.0](https://github.com/staff0rd/assist/compare/v0.217.0...v0.218.0) (2026-05-13)
 
 
