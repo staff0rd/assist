@@ -4,7 +4,6 @@ import packageJson from "../package.json";
 import { next as backlogNext } from "./commands/backlog";
 import { launchMode } from "./commands/backlog/launchMode";
 import { refine } from "./commands/backlog/refine";
-import { writeSignal } from "./commands/backlog/writeSignal";
 import { commit } from "./commands/commit";
 import { coverage } from "./commands/coverage";
 import { init } from "./commands/init";
@@ -28,7 +27,9 @@ import { registerPrompts } from "./commands/registerPrompts";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRavendb } from "./commands/registerRavendb";
 import { registerRefactor } from "./commands/registerRefactor";
+import { registerReview } from "./commands/registerReview";
 import { registerSeq } from "./commands/registerSeq";
+import { registerSignal } from "./commands/registerSignal";
 import { registerSql } from "./commands/registerSql";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
@@ -131,6 +132,7 @@ registerRoam(program);
 registerBacklog(program);
 registerVerify(program);
 registerRefactor(program);
+registerReview(program);
 registerDevlog(program);
 registerDeploy(program);
 registerComplexity(program);
@@ -168,16 +170,6 @@ program
 	.description("Launch Claude in /refine mode to refine a backlog item")
 	.action((id) => refine(id));
 
-const signalCommand = program
-	.command("signal")
-	.description("Write an assist signal file");
-
-signalCommand
-	.command("next")
-	.description("Write a next signal to chain into assist next")
-	.action(() => {
-		writeSignal("next");
-		console.log("Signal written.");
-	});
+registerSignal(program);
 
 program.parse();

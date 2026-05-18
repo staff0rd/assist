@@ -57,7 +57,7 @@ export async function init(
 	if (!selected) return;
 
 	const writer: ScriptWriter = options.packageJson
-		? (name, cmd) => setupVerifyScript(packageJsonPath, name, cmd)
+		? (name, cmd, opts) => setupVerifyScript(packageJsonPath, name, cmd, opts)
 		: setupVerifyRunEntry;
 
 	const handlers = getSetupHandlers(

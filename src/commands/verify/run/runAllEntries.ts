@@ -11,8 +11,13 @@ function runEntry(
 	onComplete?: (code: number) => void,
 ): Promise<{ script: string; code: number }> {
 	return new Promise((resolve) => {
-		const child = spawnCommand(entry.fullCommand, entry.cwd, entry.env);
-		const chunks = collectOutput(child);
+		const child = spawnCommand(
+			entry.fullCommand,
+			entry.cwd,
+			entry.env,
+			entry.quiet,
+		);
+		const chunks = collectOutput(child, entry.quiet);
 
 		child.on("close", (code) => {
 			const exitCode = code ?? 1;

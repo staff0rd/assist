@@ -1,6 +1,6 @@
 {
 	"name": "@staff0rd/assist",
-	"version": "0.209.0",
+	"version": "0.220.0",
 	"type": "module",
 	"main": "dist/index.js",
 	"bin": {
@@ -41,6 +41,7 @@
 		"enquirer": "^2.4.1",
 		"entities": "^7.0.1",
 		"is-wsl": "^3.1.0",
+		"log-update": "^8.0.0",
 		"minimatch": "^10.1.1",
 		"mssql": "^12.5.0",
 		"node-notifier": "^10.0.1",
@@ -78,7 +79,6 @@
 		"esbuild": "^0.27.3",
 		"jscpd": "^4.0.5",
 		"knip": "^5.71.0",
-		"madge": "^8.0.0",
 		"marked": "^15.0.12",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",

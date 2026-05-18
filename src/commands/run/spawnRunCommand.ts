@@ -24,17 +24,27 @@ export function spawnRunCommand(
 	args: string[],
 	env?: Record<string, string>,
 	cwd?: string,
+	quiet?: boolean,
 ): void {
 	const start = Date.now();
 	const child = spawn(resolveCommand(command), args, {
-		stdio: "inherit",
+		stdio: quiet ? "pipe" : "inherit",
 		env: env ? { ...process.env, ...expandEnv(env) } : undefined,
 		cwd,
 	});
+	const chunks: Buffer[] = [];
+	if (quiet) {
+		child.stdout?.on("data", (data: Buffer) => chunks.push(data));
+		child.stderr?.on("data", (data: Buffer) => chunks.push(data));
+	}
 	child.on("close", (code) => {
+		const exitCode = code ?? 0;
+		if (quiet && exitCode !== 0 && chunks.length > 0) {
+			process.stdout.write(Buffer.concat(chunks));
+		}
 		const elapsed = formatElapsed(Date.now() - start);
-		console.log(`\nDone in ${elapsed}`);
-		process.exit(code ?? 0);
+		if (!quiet || exitCode !== 0) console.log(`\nDone in ${elapsed}`);
+		process.exit(exitCode);
 	});
 	child.on("error", (err) => {
 		console.error(`Failed to execute command: ${err.message}`);

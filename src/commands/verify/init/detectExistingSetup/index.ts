@@ -18,7 +18,7 @@ export type ExistingSetup = {
 	build: ToolStatus;
 	typecheck: ToolStatus;
 	hardcodedColors: ToolStatus;
-	madge: ToolStatus;
+	skott: ToolStatus;
 	maintainability: ToolStatus;
 	hasOpenColor: boolean;
 };
@@ -62,7 +62,7 @@ function buildToolStatuses(pkg: PackageJson, configScriptNames: Set<string>) {
 		build: status("verify:build", true),
 		typecheck: status("verify:typecheck", true),
 		hardcodedColors: status("verify:hardcoded-colors", true),
-		madge: status("verify:madge", hasDep(pkg, "madge")),
+		skott: status("verify:circular-deps", true),
 		maintainability: status("verify:maintainability", true),
 	};
 }

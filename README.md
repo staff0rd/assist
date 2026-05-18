@@ -12,6 +12,11 @@ npm install -g @staff0rd/assist
 assist sync
 ```
 
+## Updating
+```bash
+assist update
+```
+
 ## Local Development
 
 ```bash
@@ -39,6 +44,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/commit` - Commit only relevant files from the session
 - `/devlog` - Generate devlog entry for the next unversioned day
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
+- `/forward-comments` - Split a coarse PR comment (e.g. from Slack) into per-line review comments on the current branch's PR, attributed to the original reviewer
 - `/pr` - Raise a PR with a concise description
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
@@ -47,7 +53,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/review-comments` - Process PR review comments one by one
 - `/jira` - View a Jira work item
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
-- `/next` - Signal completion and chain into the next backlog item
+- `/next [id]` - Signal completion and chain into the next backlog item; pass an `id` to run a specific item directly (falls back to the picker if the id is missing, done, won't-do, or blocked)
 - `/standup` - Summarise recent journal entries as a standup update
 - `/sync` - Sync commands and settings to ~/.claude
 - `/test-cover` - Incrementally increase test coverage by identifying and testing uncovered files
@@ -58,6 +64,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/seq` - Query Seq logs from a URL or filter expression
 - `/sql` - Query a MSSQL database via assist sql
 - `/verify` - Run all verification commands in parallel
+- `/verify-new` - Add a new verify:* run command to assist.yml
 - `/transcript-format` - Format meeting transcripts from VTT files
 - `/transcript-summarise` - Summarise transcripts missing summaries
 - `/voice-setup` - Download required voice models (VAD, STT)
@@ -81,6 +88,14 @@ After installation, the `assist` command will be available globally. You can als
 - `assist prs fixed <comment-id> <sha>` - Reply with commit link and resolve thread
 - `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
 - `assist prs comment <path> <line> <body>` - Add a line comment to the pending review
+- `assist review [sha] [options]` - Run Claude and Codex in parallel to review the open PR for the current branch. The diff is fetched from GitHub (base SHA → head SHA via `gh pr diff`), so stale local base branches don't pollute the review; fails fast if no PR is open. By default, prompts before posting line-bound comments and then prompts again to submit the pending review (defaulting to no). Cached `claude.md` / `codex.md` / `synthesis.md` are reused when present; if any reviewer is re-run, the synthesis is invalidated.
+  - `[sha]` - Review that commit's diff (`sha^..sha`) instead of the open PR. Files land under `.assist/reviews/<shortSha>/`, no GitHub lookup or posting happens, and `--refine` / `--apply` / `--submit` are rejected
+  - `--no-prompt` - Skip all confirmations
+  - `--submit` - Default the submit prompt to yes (or auto-submit when combined with `--no-prompt`)
+  - `--force` - Clear all cached files and re-run every phase
+  - `--refine` - Skip posting; launch an interactive Claude session that walks through `synthesis.md` and edits it in place. A subsequent `assist review` reuses the refined file and posts only the surviving findings
+  - `--apply` - Skip posting; launch an interactive Claude session that walks through each finding asking apply/skip. Applied findings are fixed in the working tree (unstaged) and removed from `synthesis.md`; skipped findings stay so a subsequent `assist review` posts them. Cannot be combined with `--refine`
+  - `--verbose` - Disable the stacked-spinner UI and fall back to per-line log output. Non-TTY environments (CI) automatically use this mode
 - `assist news` - Start the news web UI showing latest RSS feed items (same as `news web`)
 - `assist news add [url]` - Add an RSS feed URL to the config
 - `assist news web [-p, --port <number>]` - Start a web view of the news feeds (default port 3001)
@@ -95,6 +110,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item
 - `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog start <id>` - Set a backlog item to in-progress
+- `assist backlog stop` - Revert all in-progress backlog items to todo and reset their phase to 1
 - `assist backlog done <id>` - Set a backlog item to done
 - `assist backlog wontdo <id> [reason]` - Set a backlog item to won't do
 - `assist backlog delete <id>` - Delete a backlog item
@@ -210,5 +226,5 @@ After installation, the `assist` command will be available globally. You can als
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
 - `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given
-- `assist signal next` - Write a next signal to chain into `assist next`
+- `assist signal next [id]` - Write a next signal to chain into `assist next`; when `id` is supplied, the parent launcher runs that backlog item directly
 

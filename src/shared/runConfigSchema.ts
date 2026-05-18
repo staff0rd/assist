@@ -16,6 +16,7 @@ export const runConfigSchema = z.strictObject({
 	filter: z.string().optional(),
 	pre: z.array(z.string()).optional(),
 	cwd: z.string().optional(),
+	quiet: z.boolean().optional(),
 });
 
 export const runLinkSchema = z.strictObject({

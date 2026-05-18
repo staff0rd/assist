@@ -83,6 +83,7 @@ describe("verify init", () => {
 			"/tmp/package.json",
 			"verify:knip",
 			"knip",
+			undefined,
 		);
 		expect(mockSetupVerifyRunEntry).not.toHaveBeenCalled();
 	});

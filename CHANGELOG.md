@@ -1,3 +1,121 @@
+# [0.220.0](https://github.com/staff0rd/assist/compare/v0.219.0...v0.220.0) (2026-05-15)
+
+
+### Features
+
+* add sha mode to assist review ([9ec6d45](https://github.com/staff0rd/assist/commit/9ec6d456eec6aa69ccb847ff2a035b2e54290168))
+
+# [0.219.0](https://github.com/staff0rd/assist/compare/v0.218.0...v0.219.0) (2026-05-15)
+
+
+### Features
+
+* merge codex guidelines into review prompt ([7cb3c34](https://github.com/staff0rd/assist/commit/7cb3c34ae0b14dd0eb8997b34aa0a4d3e63d3bc2))
+
+# [0.218.0](https://github.com/staff0rd/assist/compare/v0.217.0...v0.218.0) (2026-05-13)
+
+
+### Features
+
+* add backlog stop command ([e853e05](https://github.com/staff0rd/assist/commit/e853e0552fbf8aec66e5e0a53067702678e82037))
+
+# [0.217.0](https://github.com/staff0rd/assist/compare/v0.216.1...v0.217.0) (2026-05-13)
+
+
+### Features
+
+* /next [id] shortcut ([d45b12a](https://github.com/staff0rd/assist/commit/d45b12a3e15a45e2e5f66c69c03c138bc89d828e))
+
+## [0.216.1](https://github.com/staff0rd/assist/compare/v0.216.0...v0.216.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* /draft defers codebase reads ([07c0141](https://github.com/staff0rd/assist/commit/07c0141517a58c66a02a1fcf25d025cd394739e0))
+
+# [0.216.0](https://github.com/staff0rd/assist/compare/v0.215.1...v0.216.0) (2026-05-13)
+
+
+### Features
+
+* replace madge with skott ([23bc487](https://github.com/staff0rd/assist/commit/23bc48758b6d4f4b7336cc3ef6ee3ea76667be90))
+
+## [0.215.1](https://github.com/staff0rd/assist/compare/v0.215.0...v0.215.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* rename symbol in monorepos ([e00ceca](https://github.com/staff0rd/assist/commit/e00ceca1d0828c3857f68de23d001d69e2614c9f))
+
+# [0.215.0](https://github.com/staff0rd/assist/compare/v0.214.1...v0.215.0) (2026-05-12)
+
+
+### Features
+
+* assist review --apply flag ([87b0d2a](https://github.com/staff0rd/assist/commit/87b0d2ac01fa2c712865be674617258e8b4bbb74))
+
+## [0.214.1](https://github.com/staff0rd/assist/compare/v0.214.0...v0.214.1) (2026-05-12)
+
+
+### Bug Fixes
+
+* severity rubric in review prompts ([258cfb8](https://github.com/staff0rd/assist/commit/258cfb8600ba49e7629c13eba74d6e2c64cf3bd3))
+
+# [0.214.0](https://github.com/staff0rd/assist/compare/v0.213.0...v0.214.0) (2026-05-12)
+
+
+### Bug Fixes
+
+* review uses gh PR diff for input ([5146f6b](https://github.com/staff0rd/assist/commit/5146f6bdc271e210134a423eb027dcf5781046c7))
+
+
+### Features
+
+* add --refine flag to review ([24c7ab7](https://github.com/staff0rd/assist/commit/24c7ab7c414f8c17536698508ef30d2c309f1063))
+* stacked spinners for review ([4d79a96](https://github.com/staff0rd/assist/commit/4d79a96a1dfaef1b153e6eb08dbd90f56dc9c0e8))
+
+# [0.213.0](https://github.com/staff0rd/assist/compare/v0.212.0...v0.213.0) (2026-05-12)
+
+
+### Features
+
+* review reads prior PR comments ([abd483e](https://github.com/staff0rd/assist/commit/abd483e5ed7c0bbd51e48b9a251fca8926dedaf8))
+
+# [0.212.0](https://github.com/staff0rd/assist/compare/v0.211.0...v0.212.0) (2026-05-12)
+
+
+### Features
+
+* add assist review command ([dd2ce0a](https://github.com/staff0rd/assist/commit/dd2ce0abb759f95b591fa39d1538bd7e1869711d))
+
+# [0.211.0](https://github.com/staff0rd/assist/compare/v0.210.1...v0.211.0) (2026-05-07)
+
+
+### Features
+
+* add /verify-new slash command ([86980de](https://github.com/staff0rd/assist/commit/86980de736c70ba3e44e14e071134ddba45e6efc))
+
+## [0.210.1](https://github.com/staff0rd/assist/compare/v0.210.0...v0.210.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* prs gh calls prefer origin over upstream ([08eba1c](https://github.com/staff0rd/assist/commit/08eba1c3dbf7e3a3b35e5a41c8c694755a686529))
+
+# [0.210.0](https://github.com/staff0rd/assist/compare/v0.209.1...v0.210.0) (2026-05-06)
+
+
+### Features
+
+* add /forward-comments command ([08e2792](https://github.com/staff0rd/assist/commit/08e2792b7a83452b63b6b549cecebc8e784a3706))
+
+## [0.209.1](https://github.com/staff0rd/assist/compare/v0.209.0...v0.209.1) (2026-05-06)
+
+
+### Bug Fixes
+
+* backlog finds project root from subdirs ([4dd7ab4](https://github.com/staff0rd/assist/commit/4dd7ab46ee8d1efa671d9b41cebd7cfd6ad4c72e))
+
 # [0.209.0](https://github.com/staff0rd/assist/compare/v0.208.0...v0.209.0) (2026-05-04)
 
 

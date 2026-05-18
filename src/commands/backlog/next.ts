@@ -1,12 +1,12 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
+import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { findResumable } from "./findResumable";
 import { findUnblockedTodos } from "./findUnblockedTodos";
 import { isBlocked, typeLabel } from "./list/shared";
 import { run } from "./run";
 import { loadBacklog } from "./shared";
-import type { SpawnClaudeOptions } from "./spawnClaude";
 import type { BacklogFile, BacklogItem } from "./types";
 
 function toChoice(item: BacklogItem, items: BacklogFile) {

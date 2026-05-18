@@ -1,7 +1,7 @@
 import chalk from "chalk";
+import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
 import { buildPhasePrompt } from "./buildPhasePrompt";
 import { resolvePhaseResult } from "./resolvePhaseResult";
-import { type SpawnClaudeOptions, spawnClaude } from "./spawnClaude";
 import type { BacklogItem, PlanPhase } from "./types";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 

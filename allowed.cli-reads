@@ -20,6 +20,7 @@ acli jira workitem search
 acli jira workitem view
 acli jira workitem watcher list
 assist activity
+assist backlog --help
 assist backlog comments
 assist backlog list
 assist backlog show
@@ -38,6 +39,7 @@ assist ravendb collections
 assist ravendb query
 assist refactor
 assist roam show-claude-code-icon
+assist run
 assist screenshot
 assist seq auth list
 assist seq query

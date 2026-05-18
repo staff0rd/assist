@@ -11,13 +11,16 @@ import {
 	type TranscriptConfig,
 } from "./types";
 
-function findConfigUp(startDir: string): string | null {
+function findConfigUp(
+	startDir: string,
+): { configPath: string; rootDir: string } | null {
 	let current = startDir;
 	while (current !== dirname(current)) {
 		const claudePath = join(current, ".claude", "assist.yml");
-		if (existsSync(claudePath)) return claudePath;
+		if (existsSync(claudePath))
+			return { configPath: claudePath, rootDir: current };
 		const rootPath = join(current, "assist.yml");
-		if (existsSync(rootPath)) return rootPath;
+		if (existsSync(rootPath)) return { configPath: rootPath, rootDir: current };
 		current = dirname(current);
 	}
 	return null;
@@ -25,7 +28,7 @@ function findConfigUp(startDir: string): string | null {
 
 function getConfigPath(): string {
 	const found = findConfigUp(process.cwd());
-	if (found) return found;
+	if (found) return found.configPath;
 	// Fallback: default to cwd-based path (for creation)
 	return join(process.cwd(), "assist.yml");
 }
@@ -36,6 +39,11 @@ function getGlobalConfigPath(): string {
 
 export function getConfigDir(): string {
 	return dirname(getConfigPath());
+}
+
+export function getProjectRoot(): string {
+	const found = findConfigUp(process.cwd());
+	return found?.rootDir ?? process.cwd();
 }
 
 export function loadConfig(): AssistConfig {
@@ -54,7 +62,7 @@ export function loadConfigFrom(startDir: string): {
 	configDir: string;
 } {
 	const found = findConfigUp(startDir);
-	const configPath = found ?? join(startDir, "assist.yml");
+	const configPath = found?.configPath ?? join(startDir, "assist.yml");
 	const globalRaw = loadRawYaml(getGlobalConfigPath());
 	const projectRaw = loadRawYaml(configPath);
 	const merged = mergeRawConfigs(globalRaw, projectRaw);

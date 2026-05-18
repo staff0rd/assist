@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { del as backlogDel } from "./delete";
 import { done as backlogDone } from "./done";
 import { start as backlogStart } from "./start";
+import { stop as backlogStop } from "./stop";
 import { wontdo as backlogWontdo } from "./wontdo";
 
 export function registerStatusCommands(cmd: Command): void {
@@ -9,6 +10,11 @@ export function registerStatusCommands(cmd: Command): void {
 		.command("start <id>")
 		.description("Set a backlog item to in-progress")
 		.action(backlogStart);
+
+	cmd
+		.command("stop")
+		.description("Revert all in-progress backlog items to todo")
+		.action(backlogStop);
 
 	cmd
 		.command("done <id> [summary]")

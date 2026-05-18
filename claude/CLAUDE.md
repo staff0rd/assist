@@ -11,6 +11,4 @@ When using extract, name the destination file after the exported function (e.g. 
 
 Do not modify `claude/settings.json` without asking the user first. Only read-only commands should be added to the allow list — write operations (add, remove, set, delete) must require confirmation.
 
-When the user mentions a Jira issue key (e.g. `BAD-671`, `PROJ-123`), use these commands to fetch context:
-- `assist jira view <issue-key>` — print the title and description
-- `assist jira ac <issue-key>` — print acceptance criteria
+When the user mentions a Jira issue key (e.g. `BAD-671`, `PROJ-123`), use the Atlassian MCP to fetch context.
