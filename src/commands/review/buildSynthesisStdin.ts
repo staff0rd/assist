@@ -1,6 +1,8 @@
 const SYNTHESIS_PROMPT = `You are consolidating two independent code reviews of the same change. The original review request is in request.md. The two reviews are in claude.md and codex.md in the current working directory.
 
-Read all three files, deduplicate findings, and produce a single consolidated review in Markdown with this exact structure:
+If codex.md does not exist on disk, the codex reviewer was skipped (CLI unavailable). In that case, work from claude.md alone; treat every finding as 'claude-only', do not mark anything 'confirmed' or 'codex-only', and add a note in the Summary that the codex reviewer was skipped.
+
+Read all available review files, deduplicate findings, and produce a single consolidated review in Markdown with this exact structure:
 
 # Code review synthesis
 

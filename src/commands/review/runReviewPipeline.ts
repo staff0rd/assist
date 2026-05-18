@@ -1,9 +1,8 @@
-import { existsSync, unlinkSync } from "node:fs";
-import { buildReviewerStdin } from "./buildReviewerStdin";
 import type { ReviewPaths } from "./buildReviewPaths";
+import { cachedReviewerResult } from "./cachedReviewerResult";
 import { MultiSpinner, type SpinnerHandle } from "./MultiSpinner";
-import { runReviewers } from "./runReviewers";
-import { synthesise } from "./synthesise";
+import { planCodexReviewer } from "./planCodexReviewer";
+import { runAndSynthesise } from "./runAndSynthesise";
 import { useSpinnerUi } from "./useSpinnerUi";
 
 type PipelineOptions = {
@@ -35,27 +34,16 @@ export async function runReviewPipeline(
 	paths: ReviewPaths,
 	options: PipelineOptions,
 ): Promise<boolean> {
+	const cachedClaude = cachedReviewerResult("claude", paths.claudePath);
+	const codexPlan = await planCodexReviewer(paths.codexPath);
 	const ui = createUi(useSpinnerUi(options.verbose));
 	try {
-		const { results, anyFresh } = await runReviewers(
-			paths.reviewDir,
-			paths.claudePath,
-			paths.codexPath,
-			buildReviewerStdin(paths.requestPath),
-			{ multi: ui.multi },
-		);
-		if (results.every((r) => r.exitCode !== 0)) {
-			console.error(
-				"Both reviewers failed; skipping synthesis. See review folder for stderr details.",
-			);
-			finishUi(ui, false);
-			return false;
-		}
-		if (anyFresh && existsSync(paths.synthesisPath)) {
-			unlinkSync(paths.synthesisPath);
-		}
-		const synthesisResult = await synthesise(paths, { multi: ui.multi });
-		const ok = synthesisResult.exitCode === 0;
+		const ok = await runAndSynthesise({
+			paths,
+			cachedClaude,
+			codexPlan,
+			multi: ui.multi,
+		});
 		finishUi(ui, ok);
 		return ok;
 	} catch (err) {

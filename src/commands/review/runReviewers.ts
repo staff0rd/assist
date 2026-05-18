@@ -1,8 +1,8 @@
-import { cachedReviewerResult } from "./cachedReviewerResult";
-import type { MultiSpinner, SpinnerHandle } from "./MultiSpinner";
+import type { MultiSpinner } from "./MultiSpinner";
+import type { CodexPlan } from "./planCodexReviewer";
 import { printReviewerFailures } from "./printReviewerFailures";
-import { runClaudeReviewer } from "./runClaudeReviewer";
-import { runCodexReviewer } from "./runCodexReviewer";
+import { resolveClaude } from "./resolveClaude";
+import { resolveCodex } from "./resolveCodex";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type ReviewersOutcome = {
@@ -12,16 +12,9 @@ type ReviewersOutcome = {
 
 type ReviewersOptions = {
 	multi: MultiSpinner | undefined;
+	codexPlan: CodexPlan;
+	cachedClaude: ReviewerResult | null;
 };
-
-function spinnerFor(
-	multi: MultiSpinner | undefined,
-	name: string,
-	cached: ReviewerResult | null,
-): SpinnerHandle | undefined {
-	if (cached || !multi) return undefined;
-	return multi.create(`${name} — starting`);
-}
 
 export async function runReviewers(
 	reviewDir: string,
@@ -30,34 +23,23 @@ export async function runReviewers(
 	stdinPrompt: string,
 	options: ReviewersOptions,
 ): Promise<ReviewersOutcome> {
-	const cachedClaude = cachedReviewerResult("claude", claudePath);
-	const cachedCodex = cachedReviewerResult("codex", codexPath);
-	if (cachedClaude && cachedCodex) {
-		return { results: [cachedClaude, cachedCodex], anyFresh: false };
-	}
-	const { multi } = options;
-	const claudeSpinner = spinnerFor(multi, "claude", cachedClaude);
-	const codexSpinner = spinnerFor(multi, "codex", cachedCodex);
-	const results = await Promise.all([
-		cachedClaude
-			? Promise.resolve(cachedClaude)
-			: runClaudeReviewer({
-					name: "claude",
-					reviewDir,
-					stdin: stdinPrompt,
-					outputPath: claudePath,
-					spinner: claudeSpinner,
-				}),
-		cachedCodex
-			? Promise.resolve(cachedCodex)
-			: runCodexReviewer({
-					name: "codex",
-					reviewDir,
-					stdin: stdinPrompt,
-					outputPath: codexPath,
-					spinner: codexSpinner,
-				}),
-	]);
-	if (multi) printReviewerFailures(results);
-	return { results, anyFresh: true };
+	const claudePromise = resolveClaude({
+		reviewDir,
+		claudePath,
+		stdin: stdinPrompt,
+		cached: options.cachedClaude,
+		multi: options.multi,
+	});
+	const codexPromise = resolveCodex({
+		reviewDir,
+		codexPath,
+		stdin: stdinPrompt,
+		plan: options.codexPlan,
+		multi: options.multi,
+	});
+	const results = await Promise.all([claudePromise, codexPromise]);
+	if (options.multi) printReviewerFailures(results);
+	const anyFresh =
+		options.cachedClaude === null || options.codexPlan.kind !== "cached";
+	return { results, anyFresh };
 }
