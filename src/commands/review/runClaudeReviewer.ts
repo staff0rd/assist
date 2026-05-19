@@ -18,9 +18,10 @@ export async function runClaudeReviewer(
 ): Promise<ReviewerResult> {
 	let finalText = "";
 	const { spinner } = spec;
+	const command = "claude";
 	const result = await runStreamingChild({
 		name: spec.name,
-		command: "claude",
+		command,
 		args: [
 			"-p",
 			"--add-dir",
@@ -43,5 +44,5 @@ export async function runClaudeReviewer(
 	});
 	if (result.exitCode === 0 && finalText)
 		writeFileSync(spec.outputPath, finalText);
-	return finaliseReviewerRun(spec, spinner, result);
+	return finaliseReviewerRun({ ...spec, command }, spinner, result);
 }

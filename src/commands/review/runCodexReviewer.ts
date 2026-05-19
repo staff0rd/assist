@@ -30,9 +30,10 @@ export async function runCodexReviewer(
 	spec: CodexReviewerSpec,
 ): Promise<ReviewerResult> {
 	const { spinner } = spec;
+	const command = "codex";
 	const result = await runStreamingChild({
 		name: spec.name,
-		command: "codex",
+		command,
 		args: codexArgs(spec.reviewDir, spec.outputPath),
 		stdin: spec.stdin,
 		quiet: Boolean(spinner),
@@ -45,5 +46,5 @@ export async function runCodexReviewer(
 	if (result.exitCode !== 0 && existsSync(spec.outputPath)) {
 		unlinkSync(spec.outputPath);
 	}
-	return finaliseReviewerRun(spec, spinner, result);
+	return finaliseReviewerRun({ ...spec, command }, spinner, result);
 }

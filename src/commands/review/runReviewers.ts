@@ -1,6 +1,5 @@
 import type { MultiSpinner } from "./MultiSpinner";
 import type { CodexPlan } from "./planCodexReviewer";
-import { printReviewerFailures } from "./printReviewerFailures";
 import { resolveClaude } from "./resolveClaude";
 import { resolveCodex } from "./resolveCodex";
 import type { ReviewerResult } from "./runStreamingChild";
@@ -38,7 +37,6 @@ export async function runReviewers(
 		multi: options.multi,
 	});
 	const results = await Promise.all([claudePromise, codexPromise]);
-	if (options.multi) printReviewerFailures(results);
 	const anyFresh =
 		options.cachedClaude === null || options.codexPlan.kind !== "cached";
 	return { results, anyFresh };

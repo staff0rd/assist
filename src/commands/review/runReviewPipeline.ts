@@ -2,7 +2,9 @@ import type { ReviewPaths } from "./buildReviewPaths";
 import { cachedReviewerResult } from "./cachedReviewerResult";
 import { MultiSpinner, type SpinnerHandle } from "./MultiSpinner";
 import { planCodexReviewer } from "./planCodexReviewer";
+import { printReviewerFailures } from "./printReviewerFailures";
 import { runAndSynthesise } from "./runAndSynthesise";
+import type { ReviewerResult } from "./runStreamingChild";
 import { useSpinnerUi } from "./useSpinnerUi";
 
 type PipelineOptions = {
@@ -30,6 +32,18 @@ function finishUi(ui: PipelineUi, ok: boolean): void {
 	else ui.elapsed.fail(label);
 }
 
+function reportFailures(
+	failures: ReviewerResult[],
+	usingSpinner: boolean,
+): void {
+	if (failures.length === 0) return;
+	// In spinner mode failure detail is deferred so it survives the
+	// in-place rendering; in non-spinner mode logChildClose has already
+	// printed it inline as each reviewer exits.
+	if (!usingSpinner) return;
+	printReviewerFailures(failures);
+}
+
 export async function runReviewPipeline(
 	paths: ReviewPaths,
 	options: PipelineOptions,
@@ -38,14 +52,15 @@ export async function runReviewPipeline(
 	const codexPlan = await planCodexReviewer(paths.codexPath);
 	const ui = createUi(useSpinnerUi(options.verbose));
 	try {
-		const ok = await runAndSynthesise({
+		const outcome = await runAndSynthesise({
 			paths,
 			cachedClaude,
 			codexPlan,
 			multi: ui.multi,
 		});
-		finishUi(ui, ok);
-		return ok;
+		finishUi(ui, outcome.ok);
+		reportFailures(outcome.failures, ui.multi !== undefined);
+		return outcome.ok;
 	} catch (err) {
 		ui.multi?.failRemaining();
 		throw err;

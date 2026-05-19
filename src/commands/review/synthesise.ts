@@ -4,7 +4,6 @@ import { buildReviewSummary } from "./buildReviewSummary";
 import { buildSynthesisStdin } from "./buildSynthesisStdin";
 import { cachedReviewerResult } from "./cachedReviewerResult";
 import type { MultiSpinner, SpinnerHandle } from "./MultiSpinner";
-import { printReviewerFailures } from "./printReviewerFailures";
 import { runClaudeReviewer } from "./runClaudeReviewer";
 import type { ReviewerResult } from "./runStreamingChild";
 
@@ -43,7 +42,6 @@ export async function synthesise(
 		outputPath: paths.synthesisPath,
 		spinner,
 	});
-	if (multi) printReviewerFailures([result]);
 	if (result.exitCode === 0) printSummary(paths.synthesisPath);
 	return result;
 }

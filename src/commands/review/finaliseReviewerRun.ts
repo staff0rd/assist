@@ -5,11 +5,13 @@ import type { ReviewerResult } from "./runStreamingChild";
 type RunOutcome = {
 	exitCode: number;
 	stderr: string;
+	stdout: string;
 	elapsedMs: number;
 };
 
 type RunSpec = {
 	name: string;
+	command?: string;
 	outputPath: string;
 };
 
@@ -24,11 +26,15 @@ export function finaliseReviewerRun(
 			spec.name,
 			result.exitCode,
 			result.elapsedMs,
+			result.stderr,
 		);
 	return {
 		name: spec.name,
+		command: spec.command,
 		outputPath: spec.outputPath,
 		exitCode: result.exitCode,
 		stderr: result.stderr,
+		stdout: result.stdout,
+		elapsedMs: result.elapsedMs,
 	};
 }

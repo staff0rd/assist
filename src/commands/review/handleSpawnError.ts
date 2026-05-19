@@ -2,6 +2,7 @@ type SpawnErrorContext = {
 	command: string;
 	name: string;
 	stderr: string;
+	stdout: string;
 	startedAt: number;
 	quiet: boolean;
 };
@@ -9,6 +10,7 @@ type SpawnErrorContext = {
 type SpawnErrorResult = {
 	exitCode: number;
 	stderr: string;
+	stdout: string;
 	elapsedMs: number;
 };
 
@@ -27,6 +29,7 @@ export function handleSpawnError(
 	return {
 		exitCode: 127,
 		stderr,
+		stdout: ctx.stdout,
 		elapsedMs: Date.now() - ctx.startedAt,
 	};
 }

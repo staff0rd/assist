@@ -14,7 +14,18 @@ type Args = {
 	multi: MultiSpinner | undefined;
 };
 
-export async function runAndSynthesise(args: Args): Promise<boolean> {
+type AndSynthesiseOutcome = {
+	ok: boolean;
+	failures: ReviewerResult[];
+};
+
+function failed(results: ReviewerResult[]): ReviewerResult[] {
+	return results.filter((r) => r.exitCode !== 0);
+}
+
+export async function runAndSynthesise(
+	args: Args,
+): Promise<AndSynthesiseOutcome> {
 	const { paths, multi } = args;
 	const { results, anyFresh } = await runReviewers(
 		paths.reviewDir,
@@ -23,15 +34,15 @@ export async function runAndSynthesise(args: Args): Promise<boolean> {
 		buildReviewerStdin(paths.requestPath),
 		{ multi, codexPlan: args.codexPlan, cachedClaude: args.cachedClaude },
 	);
+	const failures = failed(results);
 	if (results.every((r) => r.exitCode !== 0)) {
-		console.error(
-			"Both reviewers failed; skipping synthesis. See review folder for stderr details.",
-		);
-		return false;
+		console.error("Both reviewers failed; skipping synthesis.");
+		return { ok: false, failures };
 	}
 	if (anyFresh && existsSync(paths.synthesisPath)) {
 		unlinkSync(paths.synthesisPath);
 	}
 	const synthesisResult = await synthesise(paths, { multi });
-	return synthesisResult.exitCode === 0;
+	if (synthesisResult.exitCode !== 0) failures.push(synthesisResult);
+	return { ok: synthesisResult.exitCode === 0, failures };
 }

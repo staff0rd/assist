@@ -4,7 +4,9 @@ type CloseHandlerArgs = {
 	code: number | null;
 	startedAt: number;
 	name: string;
+	command: string;
 	stderr: string;
+	stdout: string;
 	quiet: boolean;
 };
 
@@ -17,8 +19,14 @@ export function handleChildClose(args: CloseHandlerArgs): CloseHandlerResult {
 	const elapsedMs = Date.now() - args.startedAt;
 	const exitCode = args.code ?? 0;
 	if (!args.quiet) {
-		const elapsed = Math.round(elapsedMs / 1000);
-		logChildClose(args.name, exitCode, elapsed, args.stderr);
+		logChildClose({
+			name: args.name,
+			command: args.command,
+			exitCode,
+			elapsedMs,
+			stderr: args.stderr,
+			stdout: args.stdout,
+		});
 	}
 	return { exitCode, elapsedMs };
 }

@@ -1,6 +1,7 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import { attachLineParser } from "./attachLineParser";
 import { attachStderrCollector } from "./attachStderrCollector";
+import { attachStdoutTail } from "./attachStdoutTail";
 import { type ExitResult, waitForChildExit } from "./waitForChildExit";
 
 type StreamingChildSpec = {
@@ -14,9 +15,12 @@ type StreamingChildSpec = {
 
 export type ReviewerResult = {
 	name: string;
+	command?: string;
 	outputPath: string;
 	exitCode: number;
 	stderr: string;
+	stdout?: string;
+	elapsedMs?: number;
 };
 
 function writeStdinSafely(child: ChildProcess, payload: string): void {
@@ -32,11 +36,13 @@ function writeStdinSafely(child: ChildProcess, payload: string): void {
 function startChild(spec: StreamingChildSpec) {
 	const child = spawn(spec.command, spec.args, {
 		stdio: ["pipe", "pipe", "pipe"],
+		shell: process.platform === "win32",
 	});
 	const flushPending = attachLineParser(child, spec.onLine);
 	const stderr = attachStderrCollector(child);
+	const stdout = attachStdoutTail(child);
 	writeStdinSafely(child, spec.stdin);
-	return { child, flushPending, stderr };
+	return { child, flushPending, stderr, stdout };
 }
 
 export function runStreamingChild(
@@ -44,11 +50,12 @@ export function runStreamingChild(
 ): Promise<ExitResult> {
 	const startedAt = Date.now();
 	if (!spec.quiet) console.log(`[${spec.name}] starting`);
-	const { child, flushPending, stderr } = startChild(spec);
+	const { child, flushPending, stderr, stdout } = startChild(spec);
 	return waitForChildExit({
 		child,
 		flushPending,
 		stderr,
+		stdout,
 		name: spec.name,
 		command: spec.command,
 		startedAt,
