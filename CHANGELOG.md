@@ -1,3 +1,10 @@
+## [0.220.2](https://github.com/staff0rd/assist/compare/v0.220.1...v0.220.2) (2026-05-19)
+
+
+### Bug Fixes
+
+* surface reviewer failure details ([e18c61e](https://github.com/staff0rd/assist/commit/e18c61e2bff0bf47711159f588e811ceaa387cea))
+
 ## [0.220.1](https://github.com/staff0rd/assist/compare/v0.220.0...v0.220.1) (2026-05-18)
 
 
