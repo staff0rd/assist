@@ -1,3 +1,10 @@
+## [0.220.1](https://github.com/staff0rd/assist/compare/v0.220.0...v0.220.1) (2026-05-18)
+
+
+### Bug Fixes
+
+* handle missing codex CLI in review ([1f4c14d](https://github.com/staff0rd/assist/commit/1f4c14d9dbb6724b654287da432e53aa6be28a54))
+
 # [0.220.0](https://github.com/staff0rd/assist/compare/v0.219.0...v0.220.0) (2026-05-15)
 
 
