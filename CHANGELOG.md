@@ -1,3 +1,10 @@
+# [0.221.0](https://github.com/staff0rd/assist/compare/v0.220.2...v0.221.0) (2026-05-25)
+
+
+### Features
+
+* handover and recall commands ([51731fd](https://github.com/staff0rd/assist/commit/51731fdd63ad4b579deedc83f90790fd75b7effb))
+
 ## [0.220.2](https://github.com/staff0rd/assist/compare/v0.220.1...v0.220.2) (2026-05-19)
 
 
