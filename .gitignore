@@ -4,6 +4,8 @@ books
 .assist-*
 .assist/reviews/
 .assist/*.db*
+.assist/HANDOVER.md
+.assist/handovers/
 screenshots
 .claude/settings.local.json
 assist-test.txt

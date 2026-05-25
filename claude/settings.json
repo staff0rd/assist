@@ -19,6 +19,12 @@
 				"matcher": "",
 				"hooks": [{ "type": "command", "command": "assist notify" }]
 			}
+		],
+		"SessionStart": [
+			{
+				"matcher": "",
+				"hooks": [{ "type": "command", "command": "assist handover load" }]
+			}
 		]
 	},
 	"permissions": {
@@ -70,6 +76,10 @@
 			"SlashCommand(/test-cover)",
 			"Skill(test-review)",
 			"SlashCommand(/test-review)",
+			"Skill(handover)",
+			"SlashCommand(/handover)",
+			"Skill(recall)",
+			"SlashCommand(/recall)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": [

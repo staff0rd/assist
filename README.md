@@ -45,9 +45,11 @@ After installation, the `assist` command will be available globally. You can als
 - `/devlog` - Generate devlog entry for the next unversioned day
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
 - `/forward-comments` - Split a coarse PR comment (e.g. from Slack) into per-line review comments on the current branch's PR, attributed to the original reviewer
+- `/handover` - Write a session handover note (`.assist/HANDOVER.md`) for the next conversation; archives any prior handover first. The SessionStart hook surfaces the handover at the start of the next session
 - `/pr` - Raise a PR with a concise description
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
+- `/recall` - Recall context from the most recent prior session in this repo by summarising its transcript (skips sdk-cli-only sessions); read-only, emits a `# Recall` block in chat
 - `/refine` - Refine an existing backlog item through conversation
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
@@ -201,6 +203,9 @@ After installation, the `assist` command will be available globally. You can als
 - `assist sql tables [connection]` - List tables in the connected database (via INFORMATION_SCHEMA.TABLES)
 - `assist sql columns <table> [connection]` - List columns for a table (use `schema.table` for non-default schema; via INFORMATION_SCHEMA.COLUMNS)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
+- `assist handover archive [--suffix <s>]` - Archive the current `.assist/HANDOVER.md` to `.assist/handovers/archive/<ISO-ts>[-<suffix>].md`. Prints the archive path; no-op when no handover exists
+- `assist handover summarise <jsonl>` - Print a one-line summary of a session JSONL via `claude -p --model haiku`. Filters sdk-cli-only transcripts and sets a recursion-guard env var so the inner SessionStart hook short-circuits
+- `assist handover load` - SessionStart hook entry point: reads `{cwd, session_id}` from stdin, archives any existing `.assist/HANDOVER.md`, and emits `{ hookSpecificOutput: { hookEventName: "SessionStart", additionalContext }, systemMessage }`. When no handover exists, falls back to summarising the most-recent non-current, non-sdk-cli prior JSONL under `~/.claude/projects/<encoded-cwd>/`. Honors `_CLAUDE_HOOK_SUMMARISE_RUNNING` so nested invocations short-circuit silently
 - `assist mermaid export [file.md]` - Render each fenced mermaid block to `<stem>-<index>.svg` via [Kroki](https://kroki.io). With no file, scans `*.md` in the current directory (non-recursive). Use `--out <dir>` to override the output directory. Use `--index <n>` to render only the nth mermaid block (1-based; requires a file argument). Endpoint is configurable via `mermaid.krokiUrl` (default `https://kroki.io`).
 - `assist prompts` - Show top 10 denied tool calls by frequency with count and repo breakdown
 - `assist coverage` - Print global statement coverage percentage

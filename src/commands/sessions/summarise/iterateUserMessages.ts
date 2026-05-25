@@ -1,4 +1,5 @@
 import * as fs from "node:fs";
+import { parseUserLine } from "./parseUserLine";
 
 /**
  * Read a session JSONL file and yield the text of each user message.
@@ -24,24 +25,7 @@ export function* iterateUserMessages(
 
 	for (const line of content.split("\n")) {
 		if (!line) continue;
-		let entry: Record<string, unknown>;
-		try {
-			entry = JSON.parse(line);
-		} catch {
-			continue;
-		}
-		if (entry.type !== "user") continue;
-
-		const msg = entry.message as { content?: unknown } | undefined;
-		const c = msg?.content;
-		if (typeof c === "string") {
-			yield c;
-		} else if (Array.isArray(c)) {
-			const text = c
-				.filter((b: { type?: string }) => b.type === "text")
-				.map((b: { text?: string }) => b.text ?? "")
-				.join("\n");
-			if (text) yield text;
-		}
+		const entry = parseUserLine(line);
+		if (entry) yield entry.text;
 	}
 }

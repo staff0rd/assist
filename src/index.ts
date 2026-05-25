@@ -20,6 +20,7 @@ import { registerDeny } from "./commands/registerDeny";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
 import { registerDotnet } from "./commands/registerDotnet";
+import { registerHandover } from "./commands/registerHandover";
 import { registerJira } from "./commands/registerJira";
 import { registerMermaid } from "./commands/registerMermaid";
 import { registerNews } from "./commands/registerNews";
@@ -125,6 +126,7 @@ program
 
 registerActivity(program);
 registerCliHook(program);
+registerHandover(program);
 registerJira(program);
 registerMermaid(program);
 registerPrs(program);
