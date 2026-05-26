@@ -1,3 +1,10 @@
+# [0.222.0](https://github.com/staff0rd/assist/compare/v0.221.0...v0.222.0) (2026-05-26)
+
+
+### Features
+
+* allow assist handover writes ([ab574a5](https://github.com/staff0rd/assist/commit/ab574a55588e513febd83910b4525c0af052fce5))
+
 # [0.221.0](https://github.com/staff0rd/assist/compare/v0.220.2...v0.221.0) (2026-05-25)
 
 
