@@ -13,6 +13,7 @@ assist backlog update-phase
 assist backlog start
 assist commit
 assist devlog
+assist handover
 assist notify
 assist signal next
 assist sync
