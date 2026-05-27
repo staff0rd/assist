@@ -2,6 +2,7 @@ import chalk from "chalk";
 import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
+import { blockedByHandover } from "./blockedByHandover";
 import { findResumable } from "./findResumable";
 import { findUnblockedTodos } from "./findUnblockedTodos";
 import { isBlocked, typeLabel } from "./list/shared";
@@ -60,6 +61,8 @@ async function pickItem(
 }
 
 export async function next(options?: SpawnClaudeOptions): Promise<void> {
+	if (blockedByHandover()) return;
+
 	let firstPick = true;
 	while (true) {
 		const id = await pickItem(loadBacklog(), firstPick);

@@ -75,56 +75,12 @@ describe("load", () => {
 		expect(archived).toHaveLength(1);
 	});
 
-	it("falls back to summarise when no handover exists but a prior transcript does", async () => {
+	it("emits nothing when no handover exists", async () => {
 		const dir = makeTempDir();
-		const summariseFn = vi
-			.fn()
-			.mockReturnValue("Refactoring summarise pipeline");
-		const findRecentFn = vi.fn().mockReturnValue("/tmp/session-abc.jsonl");
 
 		const result = await load({
 			stdin: stdinReturning({ cwd: dir, session_id: "current-session-id" }),
 			env: {},
-			summariseFn,
-			findRecentFn,
-		});
-
-		expect(findRecentFn).toHaveBeenCalledWith(dir, "current-session-id");
-		expect(summariseFn).toHaveBeenCalledWith("/tmp/session-abc.jsonl");
-
-		const parsed = JSON.parse(result as string);
-		expect(parsed.hookSpecificOutput.additionalContext).toBe(
-			"Previous session: Refactoring summarise pipeline",
-		);
-		expect(parsed.systemMessage).toBe(
-			"Previous session: Refactoring summarise pipeline",
-		);
-	});
-
-	it("emits nothing when there is no handover and no eligible prior transcript", async () => {
-		const dir = makeTempDir();
-		const summariseFn = vi.fn();
-		const findRecentFn = vi.fn().mockReturnValue(undefined);
-
-		const result = await load({
-			stdin: stdinReturning({ cwd: dir }),
-			env: {},
-			summariseFn,
-			findRecentFn,
-		});
-
-		expect(result).toBeNull();
-		expect(summariseFn).not.toHaveBeenCalled();
-		expect(logSpy).not.toHaveBeenCalled();
-	});
-
-	it("emits nothing when the prior transcript yields an empty summary", async () => {
-		const dir = makeTempDir();
-		const result = await load({
-			stdin: stdinReturning({ cwd: dir }),
-			env: {},
-			summariseFn: () => "",
-			findRecentFn: () => "/tmp/session-abc.jsonl",
 		});
 
 		expect(result).toBeNull();

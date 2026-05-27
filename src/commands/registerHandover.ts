@@ -38,7 +38,7 @@ export function registerHandover(program: Command): void {
 	cmd
 		.command("load")
 		.description(
-			"SessionStart hook: archive prior handover and emit additionalContext (or fall back to prior-session summary)",
+			"SessionStart hook: if .assist/HANDOVER.md exists, archive it and emit its content as additionalContext",
 		)
 		.action(async () => {
 			await load();

@@ -3,7 +3,7 @@ import { resolvePlan } from "./resolvePlan";
 import { loadAndFindItem, setStatus } from "./shared";
 import type { BacklogItem, PlanPhase } from "./types";
 
-type PreparedRun = {
+export type PreparedRun = {
 	item: BacklogItem;
 	plan: PlanPhase[];
 	startPhase: number;

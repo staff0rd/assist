@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { acquireLock, releaseLock } from "./acquireLock";
+import { blockedByHandover } from "./blockedByHandover";
 import { buildReviewPhase } from "./buildReviewPhase";
 import { executePhase } from "./executePhase";
-import { prepareRun } from "./prepareRun";
+import { type PreparedRun, prepareRun } from "./prepareRun";
 import { setStatus } from "./shared";
 import type { BacklogItem, PlanPhase } from "./types";
 
@@ -11,15 +12,23 @@ export async function run(
 	id: string,
 	spawnOptions?: SpawnClaudeOptions,
 ): Promise<boolean> {
+	if (blockedByHandover()) return false;
+
 	const prepared = prepareRun(id);
 	if (!prepared) return false;
 
-	const { item, plan, startPhase } = prepared;
-
 	setStatus(id, "in-progress");
-	acquireLock(item.id);
-	logProgress(id, item.name, startPhase, plan.length);
+	logProgress(id, prepared);
+	return runPrepared(id, prepared, spawnOptions);
+}
 
+async function runPrepared(
+	id: string,
+	prepared: PreparedRun,
+	spawnOptions?: SpawnClaudeOptions,
+): Promise<boolean> {
+	const { item, plan, startPhase } = prepared;
+	acquireLock(item.id);
 	try {
 		if (!(await runPhases(item, startPhase, plan, spawnOptions))) return false;
 		if (!(await runReview(item, plan, spawnOptions))) return false;
@@ -32,16 +41,16 @@ export async function run(
 
 function logProgress(
 	id: string,
-	name: string,
-	startPhase: number,
-	total: number,
+	{ plan, startPhase, item }: PreparedRun,
 ): void {
-	console.log(chalk.bold(`Running plan for #${id}: ${name}`));
+	console.log(chalk.bold(`Running plan for #${id}: ${item.name}`));
 	if (startPhase > 0) {
 		const phaseNumber = startPhase + 1;
-		console.log(chalk.dim(`Resuming from phase ${phaseNumber}/${total}\n`));
+		console.log(
+			chalk.dim(`Resuming from phase ${phaseNumber}/${plan.length}\n`),
+		);
 	} else {
-		console.log(chalk.dim(`${total} phase(s)\n`));
+		console.log(chalk.dim(`${plan.length} phase(s)\n`));
 	}
 }
 

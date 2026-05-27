@@ -29,11 +29,16 @@ vi.mock("./shared", () => ({
 	loadBacklog: vi.fn(),
 }));
 
+vi.mock("./blockedByHandover", () => ({
+	blockedByHandover: vi.fn(() => false),
+}));
+
 vi.mock("../../shared/exitOnCancel", () => ({
 	exitOnCancel: vi.fn((p: Promise<unknown>) => p),
 }));
 
 import enquirer from "enquirer";
+import { blockedByHandover } from "./blockedByHandover";
 import { isBlocked } from "./list/shared";
 import { next } from "./next";
 import { run } from "./run";
@@ -43,6 +48,7 @@ const mockIsBlocked = isBlocked as unknown as MockInstance;
 const mockLoadBacklog = loadBacklog as unknown as MockInstance;
 const mockRun = run as unknown as MockInstance;
 const mockPrompt = enquirer.prompt as unknown as MockInstance;
+const mockBlockedByHandover = blockedByHandover as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	return {
@@ -58,6 +64,18 @@ function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 describe("next", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+	});
+
+	describe("when a handover is pending", () => {
+		it("exits immediately without loading the backlog or prompting", async () => {
+			mockBlockedByHandover.mockReturnValueOnce(true);
+
+			await next();
+
+			expect(mockLoadBacklog).not.toHaveBeenCalled();
+			expect(mockPrompt).not.toHaveBeenCalled();
+			expect(mockRun).not.toHaveBeenCalled();
+		});
 	});
 
 	describe("when first pick has exactly one unblocked todo", () => {
