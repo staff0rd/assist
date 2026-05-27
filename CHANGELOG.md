@@ -1,3 +1,10 @@
+# [0.223.0](https://github.com/staff0rd/assist/compare/v0.222.0...v0.223.0) (2026-05-27)
+
+
+### Features
+
+* gate handover + backlog on HANDOVER.md ([619684c](https://github.com/staff0rd/assist/commit/619684c499565dbaaa4b06603d95f313883a77f9))
+
 # [0.222.0](https://github.com/staff0rd/assist/compare/v0.221.0...v0.222.0) (2026-05-26)
 
 
