@@ -33,6 +33,7 @@ function getDatabaseUrl(): string {
 
 let _db: BacklogDb | undefined;
 let _connecting: Promise<BacklogDb> | undefined;
+let _pool: Pool | undefined;
 
 /**
  * Connect to the configured Postgres database on demand, creating the schema on
@@ -43,6 +44,7 @@ export function getBacklogDb(): Promise<BacklogDb> {
 	if (_connecting) return _connecting;
 	_connecting = (async () => {
 		const pool = new Pool({ connectionString: getDatabaseUrl() });
+		_pool = pool;
 		const db = makeBacklogDb(
 			{ query: (sql, params) => pool.query(sql, params as unknown[]) },
 			pool,
@@ -52,4 +54,18 @@ export function getBacklogDb(): Promise<BacklogDb> {
 		return db;
 	})();
 	return _connecting;
+}
+
+/**
+ * Close the cached Postgres pool, if one was opened. The pool's idle connections
+ * and timers keep the Node event loop alive, so commands hang after printing
+ * unless the pool is drained. Safe to call when no pool was ever created.
+ */
+export async function closeBacklogDb(): Promise<void> {
+	const pool = _pool;
+	if (!pool) return;
+	_pool = undefined;
+	_db = undefined;
+	_connecting = undefined;
+	await pool.end();
 }

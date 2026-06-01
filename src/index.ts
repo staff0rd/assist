@@ -2,6 +2,7 @@
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { next as backlogNext } from "./commands/backlog";
+import { closeBacklogDb } from "./commands/backlog/getBacklogDb";
 import { launchMode } from "./commands/backlog/launchMode";
 import { refine } from "./commands/backlog/refine";
 import { commit } from "./commands/commit";
@@ -174,4 +175,10 @@ program
 
 registerSignal(program);
 
-program.parse();
+program
+	.parseAsync()
+	.catch((error) => {
+		console.error(error);
+		process.exitCode = 1;
+	})
+	.finally(() => closeBacklogDb());
