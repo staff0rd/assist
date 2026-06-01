@@ -1,3 +1,10 @@
+## [0.223.1](https://github.com/staff0rd/assist/compare/v0.223.0...v0.223.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* behaviour-focused /pr descriptions ([2957495](https://github.com/staff0rd/assist/commit/295749524f801efe6d43b59b512ed507bf195650))
+
 # [0.223.0](https://github.com/staff0rd/assist/compare/v0.222.0...v0.223.0) (2026-05-27)
 
 
