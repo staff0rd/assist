@@ -128,9 +128,9 @@ export const assistConfigSchema = z.strictObject({
 		.default({ outputDir: "./screenshots" }),
 	backlog: z
 		.strictObject({
-			autoCommit: z.boolean().default(false),
+			databaseUrl: z.string().optional(),
 		})
-		.default({ autoCommit: false }),
+		.default({}),
 	mermaid: z
 		.strictObject({
 			krokiUrl: z.string().default("https://kroki.io"),

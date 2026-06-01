@@ -6,7 +6,7 @@ import { typeLabel } from "./list/shared";
 import { loadBacklog } from "./shared";
 
 async function pickItemForRefine(): Promise<string | undefined> {
-	const items = loadBacklog();
+	const items = await loadBacklog();
 	const active = items.filter(
 		(i) => i.status === "todo" || i.status === "in-progress",
 	);

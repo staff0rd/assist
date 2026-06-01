@@ -4,11 +4,11 @@ import { loadAndFindItem, saveBacklog } from "./shared";
 import type { BacklogLinkType } from "./types";
 import { validateLinkTarget } from "./validateLinkTarget";
 
-export function link(
+export async function link(
 	fromId: string,
 	toId: string,
 	opts: { type?: string },
-): void {
+): Promise<void> {
 	const linkType = (opts.type ?? "relates-to") as BacklogLinkType;
 	if (linkType !== "relates-to" && linkType !== "depends-on") {
 		console.log(chalk.red(`Invalid link type: ${linkType}`));
@@ -23,7 +23,7 @@ export function link(
 		return;
 	}
 
-	const result = loadAndFindItem(fromId);
+	const result = await loadAndFindItem(fromId);
 	if (!result) return;
 	const { items, item: fromItem } = result;
 
@@ -48,7 +48,7 @@ export function link(
 
 	if (!fromItem.links) fromItem.links = [];
 	fromItem.links.push({ type: linkType, targetId: toNum });
-	saveBacklog(items);
+	await saveBacklog(items);
 	console.log(
 		chalk.green(`Linked #${fromId} ${linkType} #${toId} (${toItem.name})`),
 	);

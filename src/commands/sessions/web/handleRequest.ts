@@ -3,8 +3,9 @@ import { createRequire } from "node:module";
 import { createBundleHandler } from "../../../shared/createBundleHandler";
 import { createFallbackHandler } from "../../../shared/createFallbackHandler";
 import { createHtmlHandler, type Handler } from "../../../shared/web";
+import { createItem } from "../../backlog/web/createItem";
 import { handleItemRoute } from "../../backlog/web/handleItemRoute";
-import { createItem, listItems } from "../../backlog/web/shared";
+import { listItems } from "../../backlog/web/shared";
 import { getHtml } from "./getHtml";
 
 const require = createRequire(import.meta.url);

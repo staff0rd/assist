@@ -1,18 +1,9 @@
 import chalk from "chalk";
 import { statusIcon, typeLabel } from "../list/shared";
-import { backlogExists, searchBacklog } from "../shared";
+import { searchBacklog } from "../shared";
 
 export async function search(query: string): Promise<void> {
-	if (!backlogExists()) {
-		console.log(
-			chalk.yellow(
-				"No backlog found. Run 'assist backlog init' to create one.",
-			),
-		);
-		return;
-	}
-
-	const items = searchBacklog(query);
+	const items = await searchBacklog(query);
 	if (items.length === 0) {
 		console.log(chalk.dim(`No items matching "${query}".`));
 		return;

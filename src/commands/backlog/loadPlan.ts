@@ -1,15 +1,18 @@
-import type { BacklogDb } from "./openDb";
+import type { BacklogDb } from "./BacklogDb";
 import type { PlanPhase } from "./types";
 
 type PhaseRow = { idx: number; name: string; manual_checks: string | null };
 type TaskRow = { task: string };
 
-function toPhase(db: BacklogDb, itemId: number, p: PhaseRow): PlanPhase {
-	const tasks = db
-		.prepare(
-			"SELECT task FROM plan_tasks WHERE item_id = ? AND phase_idx = ? ORDER BY idx",
-		)
-		.all(itemId, p.idx) as TaskRow[];
+async function toPhase(
+	db: BacklogDb,
+	itemId: number,
+	p: PhaseRow,
+): Promise<PlanPhase> {
+	const tasks = await db.all<TaskRow>(
+		"SELECT task FROM plan_tasks WHERE item_id = ? AND phase_idx = ? ORDER BY idx",
+		[itemId, p.idx],
+	);
 
 	const phase: PlanPhase = {
 		name: p.name,
@@ -21,16 +24,15 @@ function toPhase(db: BacklogDb, itemId: number, p: PhaseRow): PlanPhase {
 	return phase;
 }
 
-export function loadPlan(
+export async function loadPlan(
 	db: BacklogDb,
 	itemId: number,
-): PlanPhase[] | undefined {
-	const phases = db
-		.prepare(
-			"SELECT idx, name, manual_checks FROM plan_phases WHERE item_id = ? ORDER BY idx",
-		)
-		.all(itemId) as PhaseRow[];
+): Promise<PlanPhase[] | undefined> {
+	const phases = await db.all<PhaseRow>(
+		"SELECT idx, name, manual_checks FROM plan_phases WHERE item_id = ? ORDER BY idx",
+		[itemId],
+	);
 
 	if (phases.length === 0) return undefined;
-	return phases.map((p) => toPhase(db, itemId, p));
+	return Promise.all(phases.map((p) => toPhase(db, itemId, p)));
 }

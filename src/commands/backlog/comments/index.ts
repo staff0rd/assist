@@ -2,8 +2,8 @@ import chalk from "chalk";
 import { formatComment } from "../formatComment";
 import { loadAndFindItem } from "../shared";
 
-export function comments(id: string): void {
-	const result = loadAndFindItem(id);
+export async function comments(id: string): Promise<void> {
+	const result = await loadAndFindItem(id);
 	if (!result) process.exit(1);
 
 	const { item } = result;

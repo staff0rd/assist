@@ -9,8 +9,8 @@ export type PreparedRun = {
 	startPhase: number;
 };
 
-export function prepareRun(id: string): PreparedRun | undefined {
-	const result = loadAndFindItem(id);
+export async function prepareRun(id: string): Promise<PreparedRun | undefined> {
+	const result = await loadAndFindItem(id);
 	if (!result) return undefined;
 
 	const { item } = result;
@@ -25,7 +25,7 @@ export function prepareRun(id: string): PreparedRun | undefined {
 	// plan.length means authored phases done but review not yet run;
 	// plan.length + 1 means review phase also completed
 	if (startPhase > plan.length) {
-		setStatus(id, "done");
+		await setStatus(id, "done");
 		console.log(
 			chalk.green(`All phases already complete for #${id}: ${item.name}`),
 		);

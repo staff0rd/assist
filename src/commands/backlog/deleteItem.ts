@@ -1,11 +1,10 @@
+import type { BacklogDb } from "./BacklogDb";
 import { deleteItemRelations } from "./deleteItemRelations";
-import type { BacklogDb } from "./openDb";
 
-export function deleteItem(db: BacklogDb, id: number): boolean {
-	const del = db.transaction(() => {
-		deleteItemRelations(db, id);
-		const result = db.prepare("DELETE FROM items WHERE id = ?").run(id);
+export async function deleteItem(db: BacklogDb, id: number): Promise<boolean> {
+	return db.transaction(async (tx) => {
+		await deleteItemRelations(tx, id);
+		const result = await tx.run("DELETE FROM items WHERE id = ?", [id]);
 		return result.changes > 0;
 	});
-	return del();
 }

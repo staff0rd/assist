@@ -1,8 +1,8 @@
 import chalk from "chalk";
 import { loadAndFindItem } from "./shared";
 
-export function plan(id: string): void {
-	const result = loadAndFindItem(id);
+export async function plan(id: string): Promise<void> {
+	const result = await loadAndFindItem(id);
 	if (!result) return;
 
 	const { item } = result;

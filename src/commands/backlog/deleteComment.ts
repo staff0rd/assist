@@ -1,22 +1,23 @@
-import type { BacklogDb } from "./openDb";
+import type { BacklogDb } from "./BacklogDb";
 
 type DeleteCommentResult = "deleted" | "not-found" | "is-summary";
 
-export function deleteComment(
+export async function deleteComment(
 	db: BacklogDb,
 	itemId: number,
 	commentId: number,
-): DeleteCommentResult {
-	const row = db
-		.prepare("SELECT type FROM comments WHERE id = ? AND item_id = ?")
-		.get(commentId, itemId) as { type: string } | undefined;
+): Promise<DeleteCommentResult> {
+	const row = await db.get<{ type: string }>(
+		"SELECT type FROM comments WHERE id = ? AND item_id = ?",
+		[commentId, itemId],
+	);
 
 	if (!row) return "not-found";
 	if (row.type === "summary") return "is-summary";
 
-	db.prepare("DELETE FROM comments WHERE id = ? AND item_id = ?").run(
+	await db.run("DELETE FROM comments WHERE id = ? AND item_id = ?", [
 		commentId,
 		itemId,
-	);
+	]);
 	return "deleted";
 }

@@ -32,7 +32,7 @@ const backlogLinkSchema = z.strictObject({
 	targetId: z.number(),
 });
 
-const backlogItemSchema = z.strictObject({
+export const backlogItemSchema = z.strictObject({
 	id: z.number(),
 	type: backlogTypeSchema.default("story"),
 	name: z.string(),
@@ -54,4 +54,3 @@ export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
 export type BacklogComment = z.infer<typeof backlogCommentSchema>;
 export type BacklogLinkType = z.infer<typeof backlogLinkTypeSchema>;
-export { backlogFileSchema, backlogItemSchema };

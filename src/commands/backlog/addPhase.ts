@@ -1,18 +1,16 @@
 import chalk from "chalk";
-import { commitBacklog } from "./commitBacklog";
-import { exportToJsonl } from "./exportToJsonl";
+import { getBacklogDb } from "./getBacklogDb";
 import { insertPhaseAt } from "./insertPhaseAt";
-import { openDb } from "./openDb";
 import { resolveInsertPosition } from "./resolveInsertPosition";
 import { serializeManualChecks } from "./serializeManualChecks";
-import { getBacklogDir, loadAndFindItem } from "./shared";
+import { loadAndFindItem } from "./shared";
 
-export function addPhase(
+export async function addPhase(
 	id: string,
 	name: string,
 	options: { task?: string[]; manualCheck?: string[]; position?: string },
-): void {
-	const result = loadAndFindItem(id);
+): Promise<void> {
+	const result = await loadAndFindItem(id);
 	if (!result) return;
 
 	const tasks = options.task ?? [];
@@ -22,14 +20,13 @@ export function addPhase(
 		return;
 	}
 
-	const dir = getBacklogDir();
-	const db = openDb(dir);
+	const db = await getBacklogDb();
 	const itemId = result.item.id;
 
-	const phaseIdx = resolveInsertPosition(db, itemId, options.position);
+	const phaseIdx = await resolveInsertPosition(db, itemId, options.position);
 	if (phaseIdx === undefined) return;
 
-	insertPhaseAt(
+	await insertPhaseAt(
 		db,
 		itemId,
 		phaseIdx,
@@ -39,8 +36,6 @@ export function addPhase(
 		result.item.currentPhase,
 	);
 
-	exportToJsonl(db, dir);
-	commitBacklog(itemId, result.item.name);
 	const verb = options.position !== undefined ? "Inserted" : "Added";
 	console.log(
 		chalk.green(

@@ -3,7 +3,7 @@ import { addPhaseSummary } from "../addComment";
 import { loadAndFindItem, saveBacklog } from "../shared";
 
 export async function done(id: string, summary?: string): Promise<void> {
-	const result = loadAndFindItem(id);
+	const result = await loadAndFindItem(id);
 	if (!result) return;
 
 	const { item } = result;
@@ -31,6 +31,6 @@ export async function done(id: string, summary?: string): Promise<void> {
 		addPhaseSummary(item, summary, phase);
 	}
 
-	saveBacklog(result.items);
+	await saveBacklog(result.items);
 	console.log(chalk.green(`Completed item #${id}: ${item.name}`));
 }

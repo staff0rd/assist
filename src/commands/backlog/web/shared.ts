@@ -1,17 +1,19 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
-import { getNextId } from "../getNextId";
 import { loadBacklog, saveBacklog, searchBacklog } from "../shared";
-import { parseItemBody, parseStatusBody } from "./parseItemBody";
+import { parseStatusBody } from "./parseItemBody";
 
-export function listItems(req: IncomingMessage, res: ServerResponse): void {
+export async function listItems(
+	req: IncomingMessage,
+	res: ServerResponse,
+): Promise<void> {
 	const url = new URL(req.url ?? "/", "http://localhost");
 	const q = url.searchParams.get("q");
-	respondJson(res, 200, q ? searchBacklog(q) : loadBacklog());
+	respondJson(res, 200, q ? await searchBacklog(q) : await loadBacklog());
 }
 
-function findItemOr404(res: ServerResponse, id: number) {
-	const items = loadBacklog();
+export async function findItemOr404(res: ServerResponse, id: number) {
+	const items = await loadBacklog();
 	const item = items.find((i) => i.id === id);
 	if (!item) {
 		respondJson(res, 404, { error: "Not found" });
@@ -20,52 +22,21 @@ function findItemOr404(res: ServerResponse, id: number) {
 	return { items, item };
 }
 
-export function getItemById(res: ServerResponse, id: number): void {
-	const result = findItemOr404(res, id);
-	if (result) respondJson(res, 200, result.item);
-}
-
-export async function createItem(
-	req: IncomingMessage,
-	res: ServerResponse,
-): Promise<void> {
-	const body = await parseItemBody(req);
-	const items = loadBacklog();
-	const newItem = {
-		id: getNextId(items),
-		type: body.type ?? ("story" as const),
-		name: body.name,
-		description: body.description,
-		acceptanceCriteria: body.acceptanceCriteria ?? [],
-		status: "todo" as const,
-	};
-	items.push(newItem);
-	saveBacklog(items);
-	respondJson(res, 201, newItem);
-}
-
-export function deleteItem(res: ServerResponse, id: number): void {
-	const result = findItemOr404(res, id);
-	if (!result) return;
-	saveBacklog(result.items.filter((i) => i.id !== id));
-	respondJson(res, 200, result.item);
-}
-
-export async function updateItem(
-	req: IncomingMessage,
+export async function getItemById(
 	res: ServerResponse,
 	id: number,
 ): Promise<void> {
-	const body = await parseItemBody(req);
-	const result = findItemOr404(res, id);
+	const result = await findItemOr404(res, id);
+	if (result) respondJson(res, 200, result.item);
+}
+
+export async function deleteItem(
+	res: ServerResponse,
+	id: number,
+): Promise<void> {
+	const result = await findItemOr404(res, id);
 	if (!result) return;
-	Object.assign(result.item, {
-		type: body.type ?? result.item.type,
-		name: body.name,
-		description: body.description,
-		acceptanceCriteria: body.acceptanceCriteria ?? [],
-	});
-	saveBacklog(result.items);
+	await saveBacklog(result.items.filter((i) => i.id !== id));
 	respondJson(res, 200, result.item);
 }
 
@@ -75,9 +46,9 @@ export async function patchItemStatus(
 	id: number,
 ): Promise<void> {
 	const { status } = await parseStatusBody(req);
-	const result = findItemOr404(res, id);
+	const result = await findItemOr404(res, id);
 	if (!result) return;
 	result.item.status = status;
-	saveBacklog(result.items);
+	await saveBacklog(result.items);
 	respondJson(res, 200, result.item);
 }

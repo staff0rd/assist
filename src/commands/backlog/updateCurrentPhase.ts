@@ -1,12 +1,13 @@
-import type { BacklogDb } from "./openDb";
+import type { BacklogDb } from "./BacklogDb";
 
-export function updateCurrentPhase(
+export async function updateCurrentPhase(
 	db: BacklogDb,
 	id: number,
 	phase: number,
-): boolean {
-	const result = db
-		.prepare("UPDATE items SET current_phase = ? WHERE id = ?")
-		.run(phase, id);
+): Promise<boolean> {
+	const result = await db.run(
+		"UPDATE items SET current_phase = ? WHERE id = ?",
+		[phase, id],
+	);
 	return result.changes > 0;
 }

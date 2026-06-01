@@ -3,7 +3,7 @@ import { addPhaseSummary } from "../addComment";
 import { loadAndFindItem, saveBacklog } from "../shared";
 
 export async function wontdo(id: string, reason?: string): Promise<void> {
-	const result = loadAndFindItem(id);
+	const result = await loadAndFindItem(id);
 	if (!result) return;
 
 	result.item.status = "wontdo";
@@ -13,6 +13,6 @@ export async function wontdo(id: string, reason?: string): Promise<void> {
 		addPhaseSummary(result.item, reason, phase);
 	}
 
-	saveBacklog(result.items);
+	await saveBacklog(result.items);
 	console.log(chalk.red(`Won't do item #${id}: ${result.item.name}`));
 }

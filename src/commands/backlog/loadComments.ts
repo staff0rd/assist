@@ -1,18 +1,20 @@
-import type { BacklogDb } from "./openDb";
+import type { BacklogDb } from "./BacklogDb";
 import type { BacklogComment } from "./types";
 
-export function loadComments(db: BacklogDb, itemId: number): BacklogComment[] {
-	const rows = db
-		.prepare(
-			"SELECT id, text, phase, timestamp, type FROM comments WHERE item_id = ? ORDER BY idx",
-		)
-		.all(itemId) as Array<{
+export async function loadComments(
+	db: BacklogDb,
+	itemId: number,
+): Promise<BacklogComment[]> {
+	const rows = await db.all<{
 		id: number;
 		text: string;
 		phase: number | null;
 		timestamp: string;
 		type: BacklogComment["type"];
-	}>;
+	}>(
+		"SELECT id, text, phase, timestamp, type FROM comments WHERE item_id = ? ORDER BY idx",
+		[itemId],
+	);
 	return rows.map((r) => {
 		const c: BacklogComment = {
 			id: r.id,

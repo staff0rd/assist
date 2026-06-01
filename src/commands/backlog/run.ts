@@ -14,10 +14,10 @@ export async function run(
 ): Promise<boolean> {
 	if (blockedByHandover()) return false;
 
-	const prepared = prepareRun(id);
+	const prepared = await prepareRun(id);
 	if (!prepared) return false;
 
-	setStatus(id, "in-progress");
+	await setStatus(id, "in-progress");
 	logProgress(id, prepared);
 	return runPrepared(id, prepared, spawnOptions);
 }
@@ -32,7 +32,7 @@ async function runPrepared(
 	try {
 		if (!(await runPhases(item, startPhase, plan, spawnOptions))) return false;
 		if (!(await runReview(item, plan, spawnOptions))) return false;
-		ensureDone(id);
+		await ensureDone(id);
 		return true;
 	} finally {
 		releaseLock(item.id);
@@ -54,9 +54,9 @@ function logProgress(
 	}
 }
 
-function ensureDone(id: string): void {
+async function ensureDone(id: string): Promise<void> {
 	try {
-		setStatus(id, "done");
+		await setStatus(id, "done");
 	} catch {
 		// Item may already be marked done by the review agent — ignore
 	}

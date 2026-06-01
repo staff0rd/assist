@@ -8,7 +8,7 @@ export async function tryRunById(
 	id: string,
 	options?: SpawnClaudeOptions,
 ): Promise<boolean> {
-	const items = loadBacklog();
+	const items = await loadBacklog();
 	const numericId = Number.parseInt(id, 10);
 	const item = Number.isNaN(numericId)
 		? undefined

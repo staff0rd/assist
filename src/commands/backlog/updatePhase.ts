@@ -1,7 +1,5 @@
 import chalk from "chalk";
 import { applyPhaseUpdate } from "./applyPhaseUpdate";
-import { commitBacklog } from "./commitBacklog";
-import { exportToJsonl } from "./exportToJsonl";
 import { findPhase } from "./findPhase";
 
 type UpdatePhaseOptions = {
@@ -10,11 +8,11 @@ type UpdatePhaseOptions = {
 	manualCheck?: string[];
 };
 
-export function updatePhase(
+export async function updatePhase(
 	id: string,
 	phase: string,
 	options: UpdatePhaseOptions,
-): void {
+): Promise<void> {
 	const { name, task, manualCheck } = options;
 
 	if (!name && !task && !manualCheck) {
@@ -23,14 +21,11 @@ export function updatePhase(
 		return;
 	}
 
-	const found = findPhase(id, phase);
+	const found = await findPhase(id, phase);
 	if (!found) return;
-	const { result, dir, db, itemId, phaseIdx } = found;
+	const { db, itemId, phaseIdx } = found;
 
-	applyPhaseUpdate(db, itemId, phaseIdx, { name, task, manualCheck });
-
-	exportToJsonl(db, dir);
-	commitBacklog(itemId, result.item.name);
+	await applyPhaseUpdate(db, itemId, phaseIdx, { name, task, manualCheck });
 
 	const fields = [
 		name && "name",

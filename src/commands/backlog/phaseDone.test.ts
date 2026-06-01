@@ -40,13 +40,13 @@ describe("phaseDone", () => {
 		cleanup();
 	});
 
-	it("should write the status marker file", () => {
+	it("should write the status marker file", async () => {
 		mockLoadAndFindItem.mockReturnValue({
 			items: [],
 			item: { id: 1, status: "in-progress" },
 		});
 
-		phaseDone("1", "1", "Done");
+		await phaseDone("1", "1", "Done");
 
 		const marker = JSON.parse(readFileSync(getSignalPath(), "utf-8"));
 		expect(marker.event).toBe("phase-done");
@@ -55,23 +55,23 @@ describe("phaseDone", () => {
 		cleanup();
 	});
 
-	it("should advance currentPhase when item is not done", () => {
+	it("should advance currentPhase when item is not done", async () => {
 		mockLoadAndFindItem.mockReturnValue({
 			items: [],
 			item: { id: 1, status: "in-progress" },
 		});
 
-		phaseDone("1", "1", "Done");
+		await phaseDone("1", "1", "Done");
 
 		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
 		cleanup();
 	});
 
-	it("should store a phase summary when summary is provided", () => {
+	it("should store a phase summary when summary is provided", async () => {
 		const items = [{ id: 1, status: "in-progress" }];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		phaseDone("1", "1", "Implemented the feature");
+		await phaseDone("1", "1", "Implemented the feature");
 
 		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
 			items[0],
@@ -82,11 +82,11 @@ describe("phaseDone", () => {
 		cleanup();
 	});
 
-	it("should always store a summary", () => {
+	it("should always store a summary", async () => {
 		const items = [{ id: 1, status: "in-progress" }];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		phaseDone("1", "1", "Completed phase");
+		await phaseDone("1", "1", "Completed phase");
 
 		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
 			items[0],
@@ -98,23 +98,23 @@ describe("phaseDone", () => {
 	});
 
 	describe("when item is already done", () => {
-		it("should not advance currentPhase", () => {
+		it("should not advance currentPhase", async () => {
 			mockLoadAndFindItem.mockReturnValue({
 				items: [],
 				item: { id: 1, status: "done" },
 			});
 
-			phaseDone("1", "1", "Done");
+			await phaseDone("1", "1", "Done");
 
 			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 			cleanup();
 		});
 
-		it("should skip the summary (already saved by done command)", () => {
+		it("should skip the summary (already saved by done command)", async () => {
 			const items = [{ id: 1, status: "done" }];
 			mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-			phaseDone("1", "3", "Review complete");
+			await phaseDone("1", "3", "Review complete");
 
 			expect(mockAddPhaseSummary).not.toHaveBeenCalled();
 			expect(mockSaveBacklog).not.toHaveBeenCalled();

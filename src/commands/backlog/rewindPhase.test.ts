@@ -46,7 +46,7 @@ describe("rewindPhase", () => {
 		process.exitCode = undefined;
 	});
 
-	it("should rewind currentPhase and set status to in-progress", () => {
+	it("should rewind currentPhase and set status to in-progress", async () => {
 		const items = [
 			{
 				id: 1,
@@ -61,13 +61,13 @@ describe("rewindPhase", () => {
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "2", { reason: "Need to redo" });
+		await rewindPhase("1", "2", { reason: "Need to redo" });
 
 		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
 		expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
 	});
 
-	it("should write a rewind signal to terminate the session", () => {
+	it("should write a rewind signal to terminate the session", async () => {
 		const items = [
 			{
 				id: 1,
@@ -82,7 +82,7 @@ describe("rewindPhase", () => {
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "2", { reason: "Need to redo" });
+		await rewindPhase("1", "2", { reason: "Need to redo" });
 
 		expect(mockWriteSignal).toHaveBeenCalledWith("rewind", {
 			itemId: 1,
@@ -90,7 +90,7 @@ describe("rewindPhase", () => {
 		});
 	});
 
-	it("should add a comment recording the rewind", () => {
+	it("should add a comment recording the rewind", async () => {
 		const items = [
 			{
 				id: 1,
@@ -105,7 +105,7 @@ describe("rewindPhase", () => {
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "1", { reason: "Tests failed" });
+		await rewindPhase("1", "1", { reason: "Tests failed" });
 
 		expect(mockAddComment).toHaveBeenCalledWith(
 			items[0],
@@ -115,7 +115,7 @@ describe("rewindPhase", () => {
 		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
 	});
 
-	it("should reject if target phase is not earlier than current", () => {
+	it("should reject if target phase is not earlier than current", async () => {
 		const items = [
 			{
 				id: 1,
@@ -130,14 +130,14 @@ describe("rewindPhase", () => {
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "2", { reason: "No reason" });
+		await rewindPhase("1", "2", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 		expect(mockSetStatus).not.toHaveBeenCalled();
 	});
 
-	it("should reject if target phase is beyond current", () => {
+	it("should reject if target phase is beyond current", async () => {
 		const items = [
 			{
 				id: 1,
@@ -152,23 +152,23 @@ describe("rewindPhase", () => {
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "3", { reason: "No reason" });
+		await rewindPhase("1", "3", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 	});
 
-	it("should reject if item has no plan", () => {
+	it("should reject if item has no plan", async () => {
 		const items = [{ id: 1, status: "in-progress", currentPhase: 1 }];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "1", { reason: "No reason" });
+		await rewindPhase("1", "1", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 	});
 
-	it("should reject if phase number is out of range", () => {
+	it("should reject if phase number is out of range", async () => {
 		const items = [
 			{
 				id: 1,
@@ -183,13 +183,13 @@ describe("rewindPhase", () => {
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "0", { reason: "No reason" });
+		await rewindPhase("1", "0", { reason: "No reason" });
 
 		expect(process.exitCode).toBe(1);
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 	});
 
-	it("should set done items to in-progress", () => {
+	it("should set done items to in-progress", async () => {
 		const items = [
 			{
 				id: 1,
@@ -204,16 +204,16 @@ describe("rewindPhase", () => {
 		];
 		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
 
-		rewindPhase("1", "2", { reason: "Reopening" });
+		await rewindPhase("1", "2", { reason: "Reopening" });
 
 		expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
 		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
 	});
 
-	it("should do nothing if item is not found", () => {
+	it("should do nothing if item is not found", async () => {
 		mockLoadAndFindItem.mockReturnValue(undefined);
 
-		rewindPhase("99", "1", { reason: "No reason" });
+		await rewindPhase("99", "1", { reason: "No reason" });
 
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 		expect(mockSetStatus).not.toHaveBeenCalled();

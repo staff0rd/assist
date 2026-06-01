@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { rewindItemPhase } from "./rewindItemPhase";
-import { deleteItem, getItemById, patchItemStatus, updateItem } from "./shared";
+import { deleteItem, getItemById, patchItemStatus } from "./shared";
+import { updateItem } from "./updateItem";
 
 type ItemHandler = (
 	req: IncomingMessage,

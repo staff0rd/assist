@@ -40,47 +40,47 @@ describe("prepareRun", () => {
 	});
 
 	describe("when item is not found", () => {
-		it("returns undefined", () => {
+		it("returns undefined", async () => {
 			mockLoadAndFindItem.mockReturnValue(undefined);
 
-			expect(prepareRun("99")).toBeUndefined();
+			expect(await prepareRun("99")).toBeUndefined();
 		});
 	});
 
 	describe("when item is already done", () => {
-		it("returns undefined without updating status", () => {
+		it("returns undefined without updating status", async () => {
 			const item = makeItem({ currentPhase: 2, status: "done" });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
-			expect(prepareRun("1")).toBeUndefined();
+			expect(await prepareRun("1")).toBeUndefined();
 			expect(mockSetStatus).not.toHaveBeenCalled();
 		});
 
-		it("returns undefined even when currentPhase exceeds plan length", () => {
+		it("returns undefined even when currentPhase exceeds plan length", async () => {
 			const item = makeItem({ currentPhase: 4, status: "done" });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
-			expect(prepareRun("1")).toBeUndefined();
+			expect(await prepareRun("1")).toBeUndefined();
 			expect(mockSetStatus).not.toHaveBeenCalled();
 		});
 	});
 
 	describe("when all phases including review are already complete", () => {
-		it("marks done and returns undefined", () => {
+		it("marks done and returns undefined", async () => {
 			const item = makeItem({ currentPhase: 4, status: "in-progress" });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
-			expect(prepareRun("1")).toBeUndefined();
+			expect(await prepareRun("1")).toBeUndefined();
 			expect(mockSetStatus).toHaveBeenCalledWith("1", "done");
 		});
 	});
 
 	describe("when item is ready to run", () => {
-		it("returns item, plan, and startPhase", () => {
+		it("returns item, plan, and startPhase", async () => {
 			const item = makeItem();
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
-			const result = prepareRun("1");
+			const result = await prepareRun("1");
 
 			expect(result).toEqual({
 				item,
@@ -89,20 +89,20 @@ describe("prepareRun", () => {
 			});
 		});
 
-		it("defaults startPhase to 0 when currentPhase is undefined", () => {
+		it("defaults startPhase to 0 when currentPhase is undefined", async () => {
 			const item = makeItem({ currentPhase: undefined });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
-			const result = prepareRun("1");
+			const result = await prepareRun("1");
 
 			expect(result?.startPhase).toBe(0);
 		});
 
-		it("uses currentPhase as startPhase when resuming", () => {
+		it("uses currentPhase as startPhase when resuming", async () => {
 			const item = makeItem({ currentPhase: 2 });
 			mockLoadAndFindItem.mockReturnValue({ items: [item], item });
 
-			const result = prepareRun("1");
+			const result = await prepareRun("1");
 
 			expect(result?.startPhase).toBe(1);
 		});
