@@ -12,8 +12,8 @@ export function cleanupSignal(): void {
 	}
 }
 
-function isTerminalStatus(itemId: number): boolean {
-	const items = loadBacklog();
+async function isTerminalStatus(itemId: number): Promise<boolean> {
+	const items = await loadBacklog();
 	const item = items.find((i) => i.id === itemId);
 	return item?.status === "done" || item?.status === "wontdo";
 }
@@ -24,7 +24,7 @@ export async function resolvePhaseResult(
 	itemId: number,
 ): Promise<number> {
 	if (!existsSync(getSignalPath())) {
-		if (isTerminalStatus(itemId)) return -1;
+		if (await isTerminalStatus(itemId)) return -1;
 		const action = await handleIncompletePhase();
 		if (action === "abort") return -1;
 		return action === "skip" ? phaseIndex + 1 : phaseIndex;

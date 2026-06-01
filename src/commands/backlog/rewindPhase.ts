@@ -26,15 +26,15 @@ function validateRewind(
 	return undefined;
 }
 
-export function rewindPhase(
+export async function rewindPhase(
 	id: string,
 	phase: string,
 	opts: { reason: string },
-): void {
+): Promise<void> {
 	const phaseNumber = Number.parseInt(phase, 10);
 	const phaseIndex = phaseNumber - 1;
 
-	const result = loadAndFindItem(id);
+	const result = await loadAndFindItem(id);
 	if (!result) return;
 
 	const { item } = result;
@@ -52,10 +52,10 @@ export function rewindPhase(
 		`Rewound to phase ${phaseNumber} (${phaseName}): ${opts.reason}`,
 		phaseNumber,
 	);
-	saveBacklog(result.items);
+	await saveBacklog(result.items);
 
-	setCurrentPhase(id, phaseNumber);
-	setStatus(id, "in-progress");
+	await setCurrentPhase(id, phaseNumber);
+	await setStatus(id, "in-progress");
 
 	writeSignal("rewind", {
 		itemId: Number.parseInt(id, 10),

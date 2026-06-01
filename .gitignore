@@ -3,7 +3,6 @@ dist
 books
 .assist-*
 .assist/reviews/
-.assist/*.db*
 .assist/HANDOVER.md
 .assist/handovers/
 screenshots

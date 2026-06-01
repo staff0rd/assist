@@ -1,11 +1,13 @@
 import chalk from "chalk";
-import { backlogExists, saveBacklog } from "../shared";
+import { getBacklogDb } from "../getBacklogDb";
+import { getOrigin } from "../shared";
 
 export async function init(): Promise<void> {
-	if (backlogExists()) {
-		console.log(chalk.yellow("Backlog already exists."));
-		return;
-	}
-	saveBacklog([]);
-	console.log(chalk.green("Created backlog."));
+	// Connecting creates the schema if it does not yet exist.
+	await getBacklogDb();
+	console.log(
+		chalk.green(
+			`Backlog database ready. This repository maps to origin: ${getOrigin()}`,
+		),
+	);
 }

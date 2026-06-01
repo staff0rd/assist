@@ -19,6 +19,7 @@ export function registerItemCommands(cmd: Command): void {
 			"Filter by status (todo, in-progress, done, wontdo)",
 		)
 		.option("-a, --all", "Include done/wontdo items")
+		.option("--all-repos", "List items across all repositories")
 		.option("-v, --verbose", "Show all item details")
 		.action(backlogList);
 

@@ -1,7 +1,7 @@
 import chalk from "chalk";
-import { commitBacklog } from "../commitBacklog";
-import { getNextId } from "../getNextId";
-import { backlogExists, loadBacklog, saveBacklog } from "../shared";
+import { getBacklogDb } from "../getBacklogDb";
+import { insertItem } from "../insertItem";
+import { getOrigin } from "../shared";
 import type { BacklogType } from "../types";
 import {
 	promptAcceptanceCriteria,
@@ -17,37 +17,24 @@ type AddOptions = {
 	ac?: string[];
 };
 
-async function addFromOptions(options: AddOptions): Promise<void> {
+export async function add(options: AddOptions): Promise<void> {
 	const type = (options.type as BacklogType) ?? (await promptType());
 	const name = options.name ?? (await promptName());
 	const description =
 		options.desc?.replaceAll("\\n", "\n") ?? (await promptDescription());
 	const acceptanceCriteria = options.ac ?? (await promptAcceptanceCriteria());
 
-	const items = loadBacklog();
-	const id = getNextId(items);
-	items.push({
-		id,
-		type,
-		name,
-		description: description || undefined,
-		acceptanceCriteria,
-		status: "todo",
-	});
-	saveBacklog(items);
-	commitBacklog(id, name);
+	const db = await getBacklogDb();
+	const id = await insertItem(
+		db,
+		{
+			type,
+			name,
+			description: description || undefined,
+			acceptanceCriteria,
+			status: "todo",
+		},
+		getOrigin(),
+	);
 	console.log(chalk.green(`Added item #${id}: ${name}`));
-}
-
-export async function add(options: AddOptions): Promise<void> {
-	if (!backlogExists()) {
-		console.log(
-			chalk.yellow(
-				"No backlog found. Run 'assist backlog init' to create one.",
-			),
-		);
-		return;
-	}
-
-	await addFromOptions(options);
 }

@@ -1,10 +1,10 @@
 import chalk from "chalk";
 import { loadAndFindItem, saveBacklog } from "./shared";
 
-export function unlink(fromId: string, toId: string): void {
+export async function unlink(fromId: string, toId: string): Promise<void> {
 	const toNum = Number.parseInt(toId, 10);
 
-	const result = loadAndFindItem(fromId);
+	const result = await loadAndFindItem(fromId);
 	if (!result) return;
 	const { items, item: fromItem } = result;
 
@@ -25,6 +25,6 @@ export function unlink(fromId: string, toId: string): void {
 		fromItem.links = undefined;
 	}
 
-	saveBacklog(items);
+	await saveBacklog(items);
 	console.log(chalk.green(`Removed link from #${fromId} to #${toId}.`));
 }

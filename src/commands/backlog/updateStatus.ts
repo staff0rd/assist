@@ -1,13 +1,14 @@
-import type { BacklogDb } from "./openDb";
+import type { BacklogDb } from "./BacklogDb";
 import type { BacklogStatus } from "./types";
 
-export function updateStatus(
+export async function updateStatus(
 	db: BacklogDb,
 	id: number,
 	status: BacklogStatus,
-): boolean {
-	const result = db
-		.prepare("UPDATE items SET status = ? WHERE id = ?")
-		.run(status, id);
+): Promise<boolean> {
+	const result = await db.run("UPDATE items SET status = ? WHERE id = ?", [
+		status,
+		id,
+	]);
 	return result.changes > 0;
 }

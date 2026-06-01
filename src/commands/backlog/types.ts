@@ -54,4 +54,3 @@ export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
 export type BacklogComment = z.infer<typeof backlogCommentSchema>;
 export type BacklogLinkType = z.infer<typeof backlogLinkTypeSchema>;
-export { backlogFileSchema, backlogItemSchema };

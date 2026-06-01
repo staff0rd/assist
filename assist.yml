@@ -175,5 +175,3 @@ deny:
     message: use /verify
   - pattern: npm run build
     message: use /verify
-backlog:
-  autoCommit: true

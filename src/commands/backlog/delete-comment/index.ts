@@ -1,16 +1,17 @@
 import chalk from "chalk";
 import { deleteComment } from "../deleteComment";
-import { exportToJsonl } from "../exportToJsonl";
-import { openDb } from "../openDb";
-import { getBacklogDir, loadAndFindItem } from "../shared";
+import { getBacklogDb } from "../getBacklogDb";
+import { loadAndFindItem } from "../shared";
 
-export function deleteCommentCmd(id: string, commentId: string): void {
-	const result = loadAndFindItem(id);
+export async function deleteCommentCmd(
+	id: string,
+	commentId: string,
+): Promise<void> {
+	const result = await loadAndFindItem(id);
 	if (!result) process.exit(1);
 
-	const dir = getBacklogDir();
-	const db = openDb(dir);
-	const outcome = deleteComment(
+	const db = await getBacklogDb();
+	const outcome = await deleteComment(
 		db,
 		result.item.id,
 		Number.parseInt(commentId, 10),
@@ -18,7 +19,6 @@ export function deleteCommentCmd(id: string, commentId: string): void {
 
 	switch (outcome) {
 		case "deleted":
-			exportToJsonl(db, dir);
 			console.log(
 				chalk.green(`Comment #${commentId} deleted from item #${id}.`),
 			);

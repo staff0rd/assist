@@ -65,7 +65,7 @@ export async function next(options?: SpawnClaudeOptions): Promise<void> {
 
 	let firstPick = true;
 	while (true) {
-		const id = await pickItem(loadBacklog(), firstPick);
+		const id = await pickItem(await loadBacklog(), firstPick);
 		firstPick = false;
 		if (id === undefined) return;
 

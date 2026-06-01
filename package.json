@@ -46,6 +46,7 @@
 		"mssql": "^12.5.0",
 		"node-notifier": "^10.0.1",
 		"node-pty": "^1.1.0",
+		"pg": "^8.21.0",
 		"semver": "^7.7.3",
 		"shell-quote": "^1.8.3",
 		"ts-morph": "^27.0.2",
@@ -56,6 +57,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.8",
+		"@electric-sql/pglite": "^0.4.6",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
 		"@mui/icons-material": "^9.0.0",
@@ -68,6 +70,7 @@
 		"@types/mssql": "^12.3.0",
 		"@types/node": "^24.10.1",
 		"@types/node-notifier": "^8.0.5",
+		"@types/pg": "^8.20.0",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"@types/semver": "^7.7.1",

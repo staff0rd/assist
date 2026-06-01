@@ -10,7 +10,7 @@ export async function rewindItemPhase(
 	id: number,
 ): Promise<void> {
 	const { phase, reason } = await parseRewindBody(req);
-	const items = loadBacklog();
+	const items = await loadBacklog();
 	const item = items.find((i) => i.id === id);
 	if (!item) {
 		respondJson(res, 404, { error: "Not found" });
@@ -31,7 +31,7 @@ export async function rewindItemPhase(
 	);
 	item.currentPhase = phase;
 	item.status = "in-progress";
-	saveBacklog(items);
+	await saveBacklog(items);
 	respondJson(res, 200, item);
 }
 

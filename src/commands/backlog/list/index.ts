@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { backlogExists, loadBacklog } from "../shared";
+import { loadBacklog } from "../shared";
 import type { BacklogFile } from "../types";
 import {
 	dependencyLabel,
@@ -12,6 +12,7 @@ import {
 type ListOptions = {
 	status?: string;
 	all?: boolean;
+	allRepos?: boolean;
 	verbose?: boolean;
 };
 
@@ -23,15 +24,7 @@ function filterItems(items: BacklogFile, options: ListOptions): BacklogFile {
 }
 
 export async function list(options: ListOptions): Promise<void> {
-	if (!backlogExists()) {
-		console.log(
-			chalk.yellow(
-				"No backlog found. Run 'assist backlog init' to create one.",
-			),
-		);
-		return;
-	}
-	const allItems = loadBacklog();
+	const allItems = await loadBacklog(options.allRepos);
 	const items = filterItems(allItems, options);
 	if (items.length === 0) {
 		console.log(chalk.dim("Backlog is empty."));

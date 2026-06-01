@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { loadBacklog, saveBacklog } from "../shared";
 
 export async function stop(): Promise<void> {
-	const items = loadBacklog();
+	const items = await loadBacklog();
 	const inProgress = items.filter((item) => item.status === "in-progress");
 
 	if (inProgress.length === 0) {
@@ -15,7 +15,7 @@ export async function stop(): Promise<void> {
 		item.currentPhase = 1;
 	}
 
-	saveBacklog(items);
+	await saveBacklog(items);
 
 	for (const item of inProgress) {
 		console.log(chalk.yellow(`Stopped item #${item.id}: ${item.name}`));

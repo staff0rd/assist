@@ -3,7 +3,11 @@ import { addPhaseSummary } from "./addComment";
 import { loadAndFindItem, saveBacklog, setCurrentPhase } from "./shared";
 import { writeSignal } from "./writeSignal";
 
-export function phaseDone(id: string, phase: string, summary: string): void {
+export async function phaseDone(
+	id: string,
+	phase: string,
+	summary: string,
+): Promise<void> {
 	const phaseNumber = Number.parseInt(phase, 10);
 	const phaseIndex = phaseNumber - 1;
 	writeSignal("phase-done", {
@@ -12,7 +16,7 @@ export function phaseDone(id: string, phase: string, summary: string): void {
 		completedAt: new Date().toISOString(),
 	});
 
-	const result = loadAndFindItem(id);
+	const result = await loadAndFindItem(id);
 
 	if (result?.item.status === "done") {
 		console.log(chalk.dim(`Item #${id} already done, skipping phase advance.`));
@@ -21,10 +25,10 @@ export function phaseDone(id: string, phase: string, summary: string): void {
 
 	if (result) {
 		addPhaseSummary(result.item, summary, phaseNumber);
-		saveBacklog(result.items);
+		await saveBacklog(result.items);
 	}
 
-	setCurrentPhase(id, phaseNumber + 1);
+	await setCurrentPhase(id, phaseNumber + 1);
 	console.log(
 		chalk.green(`Phase ${phaseNumber} of item #${id} marked as complete.`),
 	);

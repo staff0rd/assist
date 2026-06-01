@@ -47,8 +47,8 @@ function printAcceptanceCriteria(criteria: string[]): void {
 	console.log();
 }
 
-export function show(id: string): void {
-	const result = loadAndFindItem(id);
+export async function show(id: string): Promise<void> {
+	const result = await loadAndFindItem(id);
 	if (!result) process.exit(1);
 
 	const { item, items } = result;

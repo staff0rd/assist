@@ -1,14 +1,16 @@
 import chalk from "chalk";
-import type { BacklogDb } from "./openDb";
+import type { BacklogDb } from "./BacklogDb";
 
-export function resolveInsertPosition(
+export async function resolveInsertPosition(
 	db: BacklogDb,
 	itemId: number,
 	position: string | undefined,
-): number | undefined {
-	const { cnt: phaseCount } = db
-		.prepare("SELECT COUNT(*) as cnt FROM plan_phases WHERE item_id = ?")
-		.get(itemId) as { cnt: number };
+): Promise<number | undefined> {
+	const row = await db.get<{ cnt: number }>(
+		"SELECT COUNT(*)::int as cnt FROM plan_phases WHERE item_id = ?",
+		[itemId],
+	);
+	const phaseCount = row?.cnt ?? 0;
 
 	if (position === undefined) return phaseCount;
 

@@ -1,6 +1,6 @@
+import type { BacklogDb } from "./BacklogDb";
 import { loadComments } from "./loadComments";
 import { loadPlan } from "./loadPlan";
-import type { BacklogDb } from "./openDb";
 import type { BacklogFile, BacklogItem, BacklogStatus } from "./types";
 
 type ItemRow = {
@@ -13,16 +13,20 @@ type ItemRow = {
 	current_phase: number | null;
 };
 
-function loadLinks(db: BacklogDb, itemId: number): BacklogItem["links"] {
-	return db
-		.prepare("SELECT type, target_id as targetId FROM links WHERE item_id = ?")
-		.all(itemId) as BacklogItem["links"];
+async function loadLinks(
+	db: BacklogDb,
+	itemId: number,
+): Promise<BacklogItem["links"]> {
+	return db.all<NonNullable<BacklogItem["links"]>[number]>(
+		'SELECT type, target_id as "targetId" FROM links WHERE item_id = ?',
+		[itemId],
+	);
 }
 
-function rowToItem(db: BacklogDb, row: ItemRow): BacklogItem {
-	const comments = loadComments(db, row.id);
-	const links = loadLinks(db, row.id);
-	const plan = loadPlan(db, row.id);
+async function rowToItem(db: BacklogDb, row: ItemRow): Promise<BacklogItem> {
+	const comments = await loadComments(db, row.id);
+	const links = await loadLinks(db, row.id);
+	const plan = await loadPlan(db, row.id);
 
 	const item: BacklogItem = {
 		id: row.id,
@@ -40,7 +44,20 @@ function rowToItem(db: BacklogDb, row: ItemRow): BacklogItem {
 	return item;
 }
 
-export function loadAllItems(db: BacklogDb): BacklogFile {
-	const rows = db.prepare("SELECT * FROM items ORDER BY id").all() as ItemRow[];
-	return rows.map((row) => rowToItem(db, row));
+/**
+ * Load all backlog items. When `origin` is provided, only items tagged with that
+ * origin are returned; when omitted, items across every repository are returned.
+ */
+export async function loadAllItems(
+	db: BacklogDb,
+	origin?: string,
+): Promise<BacklogFile> {
+	const rows = await db.all<ItemRow>(
+		`SELECT id, type, name, description, acceptance_criteria, status, current_phase
+		 FROM items
+		 WHERE (?::text IS NULL OR origin = ?)
+		 ORDER BY id`,
+		[origin ?? null, origin ?? null],
+	);
+	return Promise.all(rows.map((row) => rowToItem(db, row)));
 }

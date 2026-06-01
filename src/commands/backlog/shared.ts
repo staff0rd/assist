@@ -1,14 +1,10 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import chalk from "chalk";
 import { getProjectRoot } from "../../shared/loadConfig";
 import { deleteItem } from "./deleteItem";
-import { exportToJsonl } from "./exportToJsonl";
 import { findBacklogUp } from "./findBacklogUp";
-import { importFromJsonlIfNeeded } from "./importFromJsonlIfNeeded";
+import { getBacklogDb } from "./getBacklogDb";
+import { getCurrentOrigin } from "./getCurrentOrigin";
 import { loadAllItems } from "./loadAllItems";
-import { migrateYamlIfNeeded } from "./migrateYamlIfNeeded";
-import { openDb } from "./openDb";
 import { saveAllItems } from "./saveAllItems";
 import { searchItemIds } from "./searchItemIds";
 import type { BacklogFile, BacklogStatus } from "./types";
@@ -25,53 +21,35 @@ export function getBacklogDir(): string {
 	return _backlogDir ?? findBacklogUp(process.cwd()) ?? getProjectRoot();
 }
 
-function getBacklogPath(): string {
-	return join(getBacklogDir(), "assist.backlog.yml");
+/** The normalized git origin key for the repository the command is running in. */
+export function getOrigin(): string {
+	return getCurrentOrigin(getBacklogDir());
 }
 
-export function backlogExists(): boolean {
-	const dir = getBacklogDir();
-	return (
-		existsSync(join(dir, ".assist", "backlog.db")) ||
-		existsSync(join(dir, ".assist", "backlog.jsonl")) ||
-		existsSync(join(dir, "assist.backlog.yml"))
-	);
+export async function loadBacklog(allRepos = false): Promise<BacklogFile> {
+	const db = await getBacklogDb();
+	return loadAllItems(db, allRepos ? undefined : getOrigin());
 }
 
-function getDb() {
-	const dir = getBacklogDir();
-	const db = openDb(dir);
-	const migrated = migrateYamlIfNeeded(db, getBacklogPath());
-	if (migrated) exportToJsonl(db, dir);
-	return db;
-}
-
-export function loadBacklog(): BacklogFile {
-	const db = getDb();
-	importFromJsonlIfNeeded(db, getBacklogDir());
-	return loadAllItems(db);
-}
-
-export function searchBacklog(query: string): BacklogFile {
-	const db = getDb();
-	importFromJsonlIfNeeded(db, getBacklogDir());
-	const ids = searchItemIds(db, query);
-	const allItems = loadAllItems(db);
+export async function searchBacklog(query: string): Promise<BacklogFile> {
+	const db = await getBacklogDb();
+	const origin = getOrigin();
+	const ids = await searchItemIds(db, query, origin);
+	const allItems = await loadAllItems(db, origin);
 	return allItems.filter((item) => ids.includes(item.id));
 }
 
-export function saveBacklog(items: BacklogFile): void {
-	const db = getDb();
-	saveAllItems(db, items);
-	exportToJsonl(db, getBacklogDir());
+export async function saveBacklog(items: BacklogFile): Promise<void> {
+	const db = await getBacklogDb();
+	await saveAllItems(db, items, getOrigin());
 }
 
 function findItem(items: BacklogFile, id: number) {
 	return items.find((item) => item.id === id);
 }
 
-export function loadAndFindItem(id: string) {
-	const items = loadBacklog();
+export async function loadAndFindItem(id: string) {
+	const items = await loadBacklog();
 	const item = findItem(items, Number.parseInt(id, 10));
 	if (!item) {
 		console.log(chalk.red(`Item #${id} not found.`));
@@ -80,31 +58,31 @@ export function loadAndFindItem(id: string) {
 	return { items, item };
 }
 
-export function setStatus(
+export async function setStatus(
 	id: string,
 	status: BacklogStatus,
-): string | undefined {
-	const result = loadAndFindItem(id);
+): Promise<string | undefined> {
+	const result = await loadAndFindItem(id);
 	if (!result) return undefined;
-	const db = getDb();
-	updateStatus(db, result.item.id, status);
-	exportToJsonl(db, getBacklogDir());
+	const db = await getBacklogDb();
+	await updateStatus(db, result.item.id, status);
 	return result.item.name;
 }
 
-export function setCurrentPhase(id: string, phase: number): void {
-	const result = loadAndFindItem(id);
+export async function setCurrentPhase(
+	id: string,
+	phase: number,
+): Promise<void> {
+	const result = await loadAndFindItem(id);
 	if (!result) return;
-	const db = getDb();
-	updateCurrentPhase(db, result.item.id, phase);
-	exportToJsonl(db, getBacklogDir());
+	const db = await getBacklogDb();
+	await updateCurrentPhase(db, result.item.id, phase);
 }
 
-export function removeItem(id: string): string | undefined {
-	const result = loadAndFindItem(id);
+export async function removeItem(id: string): Promise<string | undefined> {
+	const result = await loadAndFindItem(id);
 	if (!result) return undefined;
-	const db = getDb();
-	deleteItem(db, result.item.id);
-	exportToJsonl(db, getBacklogDir());
+	const db = await getBacklogDb();
+	await deleteItem(db, result.item.id);
 	return result.item.name;
 }
