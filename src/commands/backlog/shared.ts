@@ -1,6 +1,8 @@
 import chalk from "chalk";
 import { getProjectRoot } from "../../shared/loadConfig";
+import type { BacklogDb } from "./BacklogDb";
 import { deleteItem } from "./deleteItem";
+import { ensureMigrated } from "./ensureMigrated";
 import { findBacklogUp } from "./findBacklogUp";
 import { getBacklogDb } from "./getBacklogDb";
 import { getCurrentOrigin } from "./getCurrentOrigin";
@@ -26,13 +28,24 @@ export function getOrigin(): string {
 	return getCurrentOrigin(getBacklogDir());
 }
 
-export async function loadBacklog(allRepos = false): Promise<BacklogFile> {
+/**
+ * Resolve the backlog database, running the one-time local→Postgres migration for
+ * the current repository on first use.
+ */
+async function getDb(): Promise<BacklogDb> {
 	const db = await getBacklogDb();
+	const dir = getBacklogDir();
+	await ensureMigrated(db, dir, getCurrentOrigin(dir));
+	return db;
+}
+
+export async function loadBacklog(allRepos = false): Promise<BacklogFile> {
+	const db = await getDb();
 	return loadAllItems(db, allRepos ? undefined : getOrigin());
 }
 
 export async function searchBacklog(query: string): Promise<BacklogFile> {
-	const db = await getBacklogDb();
+	const db = await getDb();
 	const origin = getOrigin();
 	const ids = await searchItemIds(db, query, origin);
 	const allItems = await loadAllItems(db, origin);
@@ -40,7 +53,7 @@ export async function searchBacklog(query: string): Promise<BacklogFile> {
 }
 
 export async function saveBacklog(items: BacklogFile): Promise<void> {
-	const db = await getBacklogDb();
+	const db = await getDb();
 	await saveAllItems(db, items, getOrigin());
 }
 

@@ -101,9 +101,13 @@ After installation, the `assist` command will be available globally. You can als
 - `assist news` - Start the news web UI showing latest RSS feed items (same as `news web`)
 - `assist news add [url]` - Add an RSS feed URL to the config
 - `assist news web [-p, --port <number>]` - Start a web view of the news feeds (default port 3001)
-- `assist backlog [--dir <path>]` - Open the backlog tab in the web dashboard (same as `backlog web`). `--dir` overrides the directory for backlog file discovery
+Backlog data is stored in a global Postgres database (shared across all repos, scoped per repository by git origin), so a connection string is required. Set it via the `ASSIST_BACKLOG_DATABASE_URL` environment variable or the `backlog.databaseUrl` key in `assist.yml`; the environment variable takes precedence. Without one, every `assist backlog` command exits with a setup message. (There is no SQLite/JSONL fallback.) Commands default to the current repository's items; pass `--all-repos` to span every repository.
+
+The first backlog command in a repository that still has a local `.assist/backlog.jsonl` automatically migrates it into Postgres — but only as a one-time bootstrap into an empty origin. If Postgres has **no** items for the repo's origin yet, it runs `git pull` (best-effort) to fetch the latest committed copy, imports every item under the origin with fresh global IDs (rewriting links to other items), and verifies the result. If Postgres **already** has items for that origin (a prior run, another clone, or a pre-seeded database), the import is skipped to avoid creating duplicates. Either way the local `.assist/backlog.jsonl` and `.assist/backlog.db` are renamed to `*.bak`, so the migration never re-runs and a local copy is retained.
+
+- `assist backlog [--dir <path>]` - Open the backlog tab in the web dashboard (same as `backlog web`). `--dir` overrides the directory used to resolve the current repository's git origin
 - `assist backlog init` - Create an empty backlog
-- `assist backlog list [--status <type>] [-v]` - List all backlog items with status icons
+- `assist backlog list [--status <type>] [-a, --all] [--all-repos] [-v]` - List backlog items with status icons (alias: `ls`). Defaults to the current repository's todo/in-progress items; `--all` includes done/wontdo, `--all-repos` lists items across all repositories
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
 - `assist backlog add --name <n> --type <t> --desc <d> --ac <criterion...>` - Add a backlog item from CLI options (used by `/draft`)
 - `assist backlog add-phase <id> <name> --task <t...> [--manual-check <c...>] [--position <pos>]` - Add a phase (appends by default; `--position` inserts at a 1-indexed position)
