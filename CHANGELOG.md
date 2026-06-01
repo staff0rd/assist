@@ -1,3 +1,10 @@
+# [0.224.0](https://github.com/staff0rd/assist/compare/v0.223.1...v0.224.0) (2026-06-01)
+
+
+### Features
+
+* auto-migrate local backlog into Postgres ([774abfe](https://github.com/staff0rd/assist/commit/774abfe87e2ecfeaca4468f7c14e8acaa6aefd7c))
+
 ## [0.223.1](https://github.com/staff0rd/assist/compare/v0.223.0...v0.223.1) (2026-06-01)
 
 
