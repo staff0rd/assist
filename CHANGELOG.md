@@ -1,3 +1,10 @@
+## [0.224.1](https://github.com/staff0rd/assist/compare/v0.224.0...v0.224.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* drain pg pool so backlog cmds exit ([22db58f](https://github.com/staff0rd/assist/commit/22db58f56356e5c8ad02cb6d105a2f10075e883f))
+
 # [0.224.0](https://github.com/staff0rd/assist/compare/v0.223.1...v0.224.0) (2026-06-01)
 
 
