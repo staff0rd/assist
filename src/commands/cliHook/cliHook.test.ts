@@ -184,6 +184,50 @@ describe("cliHook config deny", () => {
 	});
 });
 
+describe("cliHook subcommand advice", () => {
+	it("denies a compound command piping 'assist complexity' with sub-command advice", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeInput("assist complexity src/foo.ts | grep Maintainability"),
+		);
+
+		await cliHook();
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			JSON.stringify({
+				hookSpecificOutput: {
+					hookEventName: "PreToolUse",
+					permissionDecision: "deny",
+					permissionDecisionReason:
+						"Do not pipe or chain 'assist complexity'. Run a focused sub-command directly for targeted output: assist complexity maintainability <file>, assist complexity cyclomatic <file>, assist complexity halstead <file>.",
+				},
+			}),
+		);
+		consoleSpy.mockRestore();
+	});
+
+	it("allows a bare 'assist complexity' command (single part, no pipe)", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeInput("assist complexity src/foo.ts"));
+		mockIsApprovedRead.mockReturnValue(
+			"Read-only CLI command: assist complexity",
+		);
+
+		await cliHook();
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			JSON.stringify({
+				hookSpecificOutput: {
+					hookEventName: "PreToolUse",
+					permissionDecision: "allow",
+					permissionDecisionReason: "Read-only CLI command: assist complexity",
+				},
+			}),
+		);
+		consoleSpy.mockRestore();
+	});
+});
+
 describe("cliHook deny logging", () => {
 	it("logs denied tool calls to the prompts DB", async () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
