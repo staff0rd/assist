@@ -1,3 +1,10 @@
+## [0.226.1](https://github.com/staff0rd/assist/compare/v0.226.0...v0.226.1) (2026-06-02)
+
+
+### Bug Fixes
+
+* run phases added mid-run ([8bb4d6c](https://github.com/staff0rd/assist/commit/8bb4d6c96280fab7ba054b2518935295a6ba9b60))
+
 # [0.226.0](https://github.com/staff0rd/assist/compare/v0.225.0...v0.226.0) (2026-06-02)
 
 
