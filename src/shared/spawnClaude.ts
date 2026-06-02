@@ -13,7 +13,7 @@ export function spawnClaude(
 } {
 	const args = [prompt];
 	if (options.allowEdits) {
-		args.push("--permission-mode", "acceptEdits");
+		args.push("--permission-mode", "auto");
 	}
 	const child = spawn("claude", args, {
 		stdio: "inherit",
