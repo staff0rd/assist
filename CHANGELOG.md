@@ -1,3 +1,10 @@
+# [0.226.0](https://github.com/staff0rd/assist/compare/v0.225.0...v0.226.0) (2026-06-02)
+
+
+### Features
+
+* deny piped assist complexity reads ([cd9c5a9](https://github.com/staff0rd/assist/commit/cd9c5a957cd6d2db4b4cf7ed64cfd49522b01a1d))
+
 # [0.225.0](https://github.com/staff0rd/assist/compare/v0.224.1...v0.225.0) (2026-06-02)
 
 
