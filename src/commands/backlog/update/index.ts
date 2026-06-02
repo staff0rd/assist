@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { getBacklogDb } from "../getBacklogDb";
 import { loadAndFindItem } from "../shared";
+import { applyAcMutations, hasAcMutations } from "./applyAcMutations";
 import { buildUpdateSql } from "./buildUpdateSql";
 
 type UpdateOptions = {
@@ -8,6 +9,9 @@ type UpdateOptions = {
 	desc?: string;
 	type?: string;
 	ac?: string[];
+	addAc?: string[];
+	editAc?: string[];
+	removeAc?: string;
 };
 
 export async function update(
@@ -17,7 +21,25 @@ export async function update(
 	const result = await loadAndFindItem(id);
 	if (!result) return;
 
-	const built = buildUpdateSql(options);
+	let ac = options.ac;
+	if (hasAcMutations(options)) {
+		if (options.ac) {
+			console.log(
+				chalk.red("Cannot combine --ac with --add-ac/--edit-ac/--remove-ac."),
+			);
+			process.exitCode = 1;
+			return;
+		}
+		const mutation = applyAcMutations(result.item.acceptanceCriteria, options);
+		if (!mutation.ok) {
+			console.log(chalk.red(mutation.error));
+			process.exitCode = 1;
+			return;
+		}
+		ac = mutation.criteria;
+	}
+
+	const built = buildUpdateSql({ ...options, ac });
 	if (!built) return;
 
 	const db = await getBacklogDb();

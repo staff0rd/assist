@@ -1,30 +1,28 @@
 import chalk from "chalk";
 import { applyPhaseUpdate } from "./applyPhaseUpdate";
 import { findPhase } from "./findPhase";
-
-type UpdatePhaseOptions = {
-	name?: string;
-	task?: string[];
-	manualCheck?: string[];
-};
+import {
+	resolvePhaseFields,
+	type UpdatePhaseOptions,
+} from "./resolvePhaseFields";
 
 export async function updatePhase(
 	id: string,
 	phase: string,
 	options: UpdatePhaseOptions,
 ): Promise<void> {
-	const { name, task, manualCheck } = options;
+	const found = await findPhase(id, phase);
+	if (!found) return;
+	const { result, db, itemId, phaseIdx } = found;
 
-	if (!name && !task && !manualCheck) {
-		console.log(chalk.red("Nothing to update. Provide at least one flag."));
+	const resolved = resolvePhaseFields(options, result.item.plan?.[phaseIdx]);
+	if (!resolved.ok) {
+		console.log(chalk.red(resolved.error));
 		process.exitCode = 1;
 		return;
 	}
 
-	const found = await findPhase(id, phase);
-	if (!found) return;
-	const { db, itemId, phaseIdx } = found;
-
+	const { name, task, manualCheck } = resolved.fields;
 	await applyPhaseUpdate(db, itemId, phaseIdx, { name, task, manualCheck });
 
 	const fields = [

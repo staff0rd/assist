@@ -35,10 +35,10 @@ Based on the user's input, apply changes using the appropriate commands. Always 
 
 **To update item fields:**
 ```
-assist backlog update <id> --name "New name"
-assist backlog update <id> --desc "New description"
-assist backlog update <id> --type story
-assist backlog update <id> --ac "criterion 1" --ac "criterion 2"
+assist backlog update-field <id> --name "New name"
+assist backlog update-field <id> --desc "New description"
+assist backlog update-field <id> --type story
+assist backlog update-field <id> --ac "criterion 1" --ac "criterion 2"
 ```
 
 Note: `--ac` replaces all acceptance criteria, so include the full list (both existing and new).
