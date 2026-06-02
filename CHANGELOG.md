@@ -1,3 +1,10 @@
+# [0.225.0](https://github.com/staff0rd/assist/compare/v0.224.1...v0.225.0) (2026-06-02)
+
+
+### Features
+
+* granular backlog list edits ([3d24e06](https://github.com/staff0rd/assist/commit/3d24e060891b45e7d995bcc69ae050a41017672e))
+
 ## [0.224.1](https://github.com/staff0rd/assist/compare/v0.224.0...v0.224.1) (2026-06-01)
 
 
