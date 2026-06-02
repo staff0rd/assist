@@ -20,6 +20,10 @@ vi.mock("./prepareRun", () => ({
 	prepareRun: vi.fn(),
 }));
 
+vi.mock("./reloadPlan", () => ({
+	reloadPlan: vi.fn(),
+}));
+
 vi.mock("./acquireLock", () => ({
 	acquireLock: vi.fn(),
 	releaseLock: vi.fn(),
@@ -33,11 +37,13 @@ import { acquireLock, releaseLock } from "./acquireLock";
 import { blockedByHandover } from "./blockedByHandover";
 import { executePhase } from "./executePhase";
 import { prepareRun } from "./prepareRun";
+import { reloadPlan } from "./reloadPlan";
 import { run } from "./run";
 import { setStatus } from "./shared";
 
 const mockExecutePhase = executePhase as unknown as MockInstance;
 const mockPrepareRun = prepareRun as unknown as MockInstance;
+const mockReloadPlan = reloadPlan as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;
 const mockAcquireLock = acquireLock as unknown as MockInstance;
 const mockReleaseLock = releaseLock as unknown as MockInstance;
@@ -277,6 +283,105 @@ describe("run", () => {
 			const phases: PlanPhase[] = firstCall[2];
 			expect(phases[0].name).toBe("Implement");
 			expect(phases[0].tasks).toEqual([{ task: "AC1" }, { task: "AC2" }]);
+		});
+	});
+
+	describe("when phases are added mid-run", () => {
+		it("runs a phase appended while the last authored phase executes", async () => {
+			const item = makeItem(); // [Phase 1, Phase 2]
+			const extended: PlanPhase[] = [
+				...makePlan(item),
+				{ name: "Phase 3", tasks: [{ task: "Added mid-run" }] },
+			];
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase
+				.mockResolvedValueOnce(1) // phase 0 -> 1
+				.mockResolvedValueOnce(2) // phase 1 -> 2 (Phase 3 appended here)
+				.mockResolvedValueOnce(3) // phase 2 (new) -> 3
+				.mockResolvedValueOnce(4); // review -> 4
+			mockReloadPlan
+				.mockResolvedValueOnce(makePlan(item)) // after phase 0: unchanged
+				.mockResolvedValueOnce(extended) // after phase 1: Phase 3 appended
+				.mockResolvedValueOnce(extended) // after phase 2
+				.mockResolvedValueOnce(extended); // runReview
+
+			await run("1");
+
+			expect(mockExecutePhase).toHaveBeenCalledTimes(4);
+			// The newly added phase (index 2) runs before review.
+			expect(mockExecutePhase.mock.calls[2][1]).toBe(2);
+		});
+
+		it("runs the review phase only after all phases including added ones", async () => {
+			const item = makeItem();
+			const extended: PlanPhase[] = [
+				...makePlan(item),
+				{ name: "Phase 3", tasks: [{ task: "Added mid-run" }] },
+			];
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3)
+				.mockResolvedValueOnce(4);
+			mockReloadPlan
+				.mockResolvedValueOnce(makePlan(item))
+				.mockResolvedValueOnce(extended)
+				.mockResolvedValueOnce(extended)
+				.mockResolvedValueOnce(extended);
+
+			await run("1");
+
+			const reviewCall = mockExecutePhase.mock.calls[3];
+			expect(reviewCall[1]).toBe(3); // review sits after all 3 authored phases
+			const phases: PlanPhase[] = reviewCall[2];
+			expect(phases).toHaveLength(4);
+			expect(phases[phases.length - 1].name).toBe("Review");
+		});
+
+		it("runs a phase inserted ahead of the current phase without skipping it", async () => {
+			const item = makeItem({
+				plan: [
+					{ name: "Phase 1", tasks: [{ task: "t1" }] },
+					{ name: "Phase 2", tasks: [{ task: "t2" }] },
+				],
+			});
+			// While Phase 1 executes, a phase is inserted ahead at index 1.
+			const withInserted: PlanPhase[] = [
+				{ name: "Phase 1", tasks: [{ task: "t1" }] },
+				{ name: "Inserted", tasks: [{ task: "tX" }] },
+				{ name: "Phase 2", tasks: [{ task: "t2" }] },
+			];
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase
+				.mockResolvedValueOnce(1) // phase 0 (Phase 1) -> 1
+				.mockResolvedValueOnce(2) // phase 1 (Inserted) -> 2
+				.mockResolvedValueOnce(3) // phase 2 (Phase 2) -> 3
+				.mockResolvedValueOnce(4); // review -> 4
+			mockReloadPlan
+				.mockResolvedValueOnce(withInserted) // after phase 0: Inserted appears
+				.mockResolvedValueOnce(withInserted)
+				.mockResolvedValueOnce(withInserted)
+				.mockResolvedValueOnce(withInserted);
+
+			await run("1");
+
+			expect(mockExecutePhase).toHaveBeenCalledTimes(4);
+			// Inserted phase (index 1) runs; original Phase 2 shifts to index 2.
+			expect(mockExecutePhase.mock.calls[1][2][1].name).toBe("Inserted");
+			expect(mockExecutePhase.mock.calls[2][2][2].name).toBe("Phase 2");
 		});
 	});
 

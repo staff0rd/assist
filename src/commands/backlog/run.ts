@@ -2,11 +2,10 @@ import chalk from "chalk";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { acquireLock, releaseLock } from "./acquireLock";
 import { blockedByHandover } from "./blockedByHandover";
-import { buildReviewPhase } from "./buildReviewPhase";
-import { executePhase } from "./executePhase";
 import { type PreparedRun, prepareRun } from "./prepareRun";
+import { runPhases } from "./runPhases";
+import { runReview } from "./runReview";
 import { setStatus } from "./shared";
-import type { BacklogItem, PlanPhase } from "./types";
 
 export async function run(
 	id: string,
@@ -60,34 +59,4 @@ async function ensureDone(id: string): Promise<void> {
 	} catch {
 		// Item may already be marked done by the review agent — ignore
 	}
-}
-
-async function runPhases(
-	item: BacklogItem,
-	startPhase: number,
-	plan: PlanPhase[],
-	spawnOptions?: SpawnClaudeOptions,
-): Promise<boolean> {
-	let phaseIndex = startPhase;
-	while (phaseIndex < plan.length) {
-		phaseIndex = await executePhase(item, phaseIndex, plan, spawnOptions);
-		if (phaseIndex < 0) return false;
-	}
-	return true;
-}
-
-async function runReview(
-	item: BacklogItem,
-	plan: PlanPhase[],
-	spawnOptions?: SpawnClaudeOptions,
-): Promise<boolean> {
-	const reviewPhase = buildReviewPhase();
-	const allPhases = [...plan, reviewPhase];
-	const reviewResult = await executePhase(
-		item,
-		plan.length,
-		allPhases,
-		spawnOptions,
-	);
-	return reviewResult >= 0;
 }
