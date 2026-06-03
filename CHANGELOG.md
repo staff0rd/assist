@@ -1,3 +1,10 @@
+# [0.228.0](https://github.com/staff0rd/assist/compare/v0.227.0...v0.228.0) (2026-06-03)
+
+
+### Features
+
+* batch backlog queries via Drizzle ([7c5a00e](https://github.com/staff0rd/assist/commit/7c5a00e69c05a3867c6608c34c60c5cedc93a0a7))
+
 # [0.227.0](https://github.com/staff0rd/assist/compare/v0.226.1...v0.227.0) (2026-06-03)
 
 
