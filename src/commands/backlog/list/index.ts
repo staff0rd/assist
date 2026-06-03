@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { originDisplayName } from "../originDisplayName";
+import { originDisplayLabels } from "../originDisplayLabels";
 import { loadBacklog } from "../shared";
 import type { BacklogFile } from "../types";
 import {
@@ -31,10 +31,14 @@ export async function list(options: ListOptions): Promise<void> {
 		console.log(chalk.dim("Backlog is empty."));
 		return;
 	}
-	// Pad every repo prefix to the widest display name so the status icons stay
-	// in a readable column regardless of differing org/repo lengths.
+	// Resolve a collision-aware label per origin (bare repo name when unique,
+	// org/repo when it collides), then pad every prefix to the widest resolved
+	// label so the status icons stay in a readable column.
+	const labels = originDisplayLabels(
+		items.flatMap((i) => (i.origin ? [i.origin] : [])),
+	);
 	const repoNameOf = (item: BacklogFile[number]): string =>
-		item.origin ? originDisplayName(item.origin) : "";
+		item.origin ? (labels.get(item.origin) ?? "") : "";
 	const prefixWidth = options.allRepos
 		? Math.max(0, ...items.map((i) => repoNameOf(i).length))
 		: 0;
