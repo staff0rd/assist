@@ -1,3 +1,11 @@
+# [0.227.0](https://github.com/staff0rd/assist/compare/v0.226.1...v0.227.0) (2026-06-03)
+
+
+### Features
+
+* backlog export/import via COPY ([ccb6165](https://github.com/staff0rd/assist/commit/ccb6165f70ed4d85f46c101cc3fe8c296f98a3dd))
+* run phases in auto mode ([c393f1a](https://github.com/staff0rd/assist/commit/c393f1a04f5ab694e466876983fd93cccfd4b6e1))
+
 ## [0.226.1](https://github.com/staff0rd/assist/compare/v0.226.0...v0.226.1) (2026-06-02)
 
 
