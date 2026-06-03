@@ -1,3 +1,10 @@
+# [0.229.0](https://github.com/staff0rd/assist/compare/v0.228.0...v0.229.0) (2026-06-03)
+
+
+### Features
+
+* smaller list labels ([3a603eb](https://github.com/staff0rd/assist/commit/3a603ebfdc04bd83cb80fccde6f1aaa02e6496f1))
+
 # [0.228.0](https://github.com/staff0rd/assist/compare/v0.227.0...v0.228.0) (2026-06-03)
 
 
