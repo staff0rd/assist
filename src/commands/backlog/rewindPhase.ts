@@ -1,11 +1,7 @@
 import chalk from "chalk";
-import { addComment } from "./addComment";
-import {
-	loadAndFindItem,
-	saveBacklog,
-	setCurrentPhase,
-	setStatus,
-} from "./shared";
+import { appendComment } from "./appendComment";
+import { loadItem } from "./loadItem";
+import { getReady, setCurrentPhase, setStatus } from "./shared";
 import type { BacklogItem } from "./types";
 import { writeSignal } from "./writeSignal";
 
@@ -34,10 +30,13 @@ export async function rewindPhase(
 	const phaseNumber = Number.parseInt(phase, 10);
 	const phaseIndex = phaseNumber - 1;
 
-	const result = await loadAndFindItem(id);
-	if (!result) return;
+	const { orm } = await getReady();
+	const item = await loadItem(orm, Number.parseInt(id, 10));
+	if (!item) {
+		console.log(chalk.red(`Item #${id} not found.`));
+		return;
+	}
 
-	const { item } = result;
 	const error = validateRewind(item, phaseNumber);
 	if (error) {
 		console.log(chalk.red(error));
@@ -47,12 +46,12 @@ export async function rewindPhase(
 
 	const phaseName = item.plan?.[phaseIndex].name;
 
-	addComment(
-		item,
+	await appendComment(
+		orm,
+		item.id,
 		`Rewound to phase ${phaseNumber} (${phaseName}): ${opts.reason}`,
-		phaseNumber,
+		{ phase: phaseNumber },
 	);
-	await saveBacklog(result.items);
 
 	await setCurrentPhase(id, phaseNumber);
 	await setStatus(id, "in-progress");

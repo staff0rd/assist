@@ -1,13 +1,12 @@
-import type { BacklogDb } from "./BacklogDb";
+import { eq } from "drizzle-orm";
+import type { BacklogOrm } from "./BacklogOrm";
+import { items } from "./backlogSchema";
 
+/** Set an item's current phase with a single targeted write. */
 export async function updateCurrentPhase(
-	db: BacklogDb,
+	orm: BacklogOrm,
 	id: number,
 	phase: number,
-): Promise<boolean> {
-	const result = await db.run(
-		"UPDATE items SET current_phase = ? WHERE id = ?",
-		[phase, id],
-	);
-	return result.changes > 0;
+): Promise<void> {
+	await orm.update(items).set({ currentPhase: phase }).where(eq(items.id, id));
 }

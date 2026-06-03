@@ -2,7 +2,7 @@ import { writeFile } from "node:fs/promises";
 import chalk from "chalk";
 import { buildDump } from "../dump/buildDump";
 import { copyTableOut } from "../dump/copyTableOut";
-import { withBacklogClient } from "../getBacklogDb";
+import { withBacklogClient } from "../getBacklogOrm";
 
 /**
  * Export the entire backlog database as a self-contained, versioned dump of

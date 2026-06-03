@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
-import type { BacklogDb } from "./BacklogDb";
+import type { BacklogOrm } from "./BacklogOrm";
 import { backupLocalBacklogFiles } from "./backupLocalBacklogFiles";
 import { gitPullBacklog } from "./gitPullBacklog";
 import { importItemsRemapped } from "./importItemsRemapped";
@@ -15,12 +15,12 @@ function jsonlPath(dir: string): string {
 
 /** Verify the import landed in the (previously empty) origin before touching files. */
 async function verifyImport(
-	db: BacklogDb,
+	orm: BacklogOrm,
 	origin: string,
 	items: BacklogItem[],
 	imported: number,
 ): Promise<void> {
-	const reloaded = await loadAllItems(db, origin);
+	const reloaded = await loadAllItems(orm, origin);
 	if (reloaded.length !== imported) {
 		throw new Error(
 			`backlog migrate: expected ${imported} item(s) for ${origin} after import but found ${reloaded.length}.`,
@@ -45,13 +45,13 @@ async function verifyImport(
  * the migration never re-runs. No-op when no local jsonl is present.
  */
 export async function migrateLocalBacklog(
-	db: BacklogDb,
+	orm: BacklogOrm,
 	dir: string,
 	origin: string,
 ): Promise<void> {
 	if (!existsSync(jsonlPath(dir))) return;
 
-	const existing = (await loadAllItems(db, origin)).length;
+	const existing = (await loadAllItems(orm, origin)).length;
 	if (existing > 0) {
 		const moved = backupLocalBacklogFiles(dir);
 		console.error(
@@ -65,8 +65,8 @@ export async function migrateLocalBacklog(
 	gitPullBacklog(dir);
 
 	const items = parseBacklogJsonl(jsonlPath(dir));
-	const imported = await importItemsRemapped(db, items, origin);
-	await verifyImport(db, origin, items, imported);
+	const imported = await importItemsRemapped(orm, items, origin);
+	await verifyImport(orm, origin, items, imported);
 
 	const moved = backupLocalBacklogFiles(dir);
 	console.error(

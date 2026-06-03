@@ -9,57 +9,58 @@ import {
 
 vi.mock("./shared", () => ({
 	getBacklogDir: () => process.cwd(),
-	loadAndFindItem: vi.fn(),
-	saveBacklog: vi.fn(),
+	getReady: vi.fn(),
 	setCurrentPhase: vi.fn(),
 	setStatus: vi.fn(),
 }));
 
-vi.mock("./addComment", () => ({
-	addComment: vi.fn(),
+vi.mock("./loadItem", () => ({
+	loadItem: vi.fn(),
+}));
+
+vi.mock("./appendComment", () => ({
+	appendComment: vi.fn(),
 }));
 
 vi.mock("./writeSignal", () => ({
 	writeSignal: vi.fn(),
 }));
 
-import { addComment } from "./addComment";
+import { appendComment } from "./appendComment";
+import { loadItem } from "./loadItem";
 import { rewindPhase } from "./rewindPhase";
-import {
-	loadAndFindItem,
-	saveBacklog,
-	setCurrentPhase,
-	setStatus,
-} from "./shared";
+import { getReady, setCurrentPhase, setStatus } from "./shared";
 import { writeSignal } from "./writeSignal";
 
-const mockLoadAndFindItem = loadAndFindItem as unknown as MockInstance;
+const mockGetReady = getReady as unknown as MockInstance;
+const mockLoadItem = loadItem as unknown as MockInstance;
 const mockSetCurrentPhase = setCurrentPhase as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;
-const mockAddComment = addComment as unknown as MockInstance;
-const mockSaveBacklog = saveBacklog as unknown as MockInstance;
+const mockAppendComment = appendComment as unknown as MockInstance;
 const mockWriteSignal = writeSignal as unknown as MockInstance;
+
+const orm = {} as never;
+
+const threePhasePlan = [
+	{ name: "Setup", tasks: [] },
+	{ name: "Implement", tasks: [] },
+	{ name: "Polish", tasks: [] },
+];
 
 describe("rewindPhase", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockGetReady.mockResolvedValue({ orm });
 		process.exitCode = undefined;
 	});
 
 	it("should rewind currentPhase and set status to in-progress", async () => {
-		const items = [
-			{
-				id: 1,
-				status: "in-progress",
-				currentPhase: 3,
-				plan: [
-					{ name: "Setup", tasks: [] },
-					{ name: "Implement", tasks: [] },
-					{ name: "Polish", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "in-progress",
+			currentPhase: 3,
+			plan: threePhasePlan,
+		});
 
 		await rewindPhase("1", "2", { reason: "Need to redo" });
 
@@ -68,19 +69,12 @@ describe("rewindPhase", () => {
 	});
 
 	it("should write a rewind signal to terminate the session", async () => {
-		const items = [
-			{
-				id: 1,
-				status: "in-progress",
-				currentPhase: 3,
-				plan: [
-					{ name: "Setup", tasks: [] },
-					{ name: "Implement", tasks: [] },
-					{ name: "Polish", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "in-progress",
+			currentPhase: 3,
+			plan: threePhasePlan,
+		});
 
 		await rewindPhase("1", "2", { reason: "Need to redo" });
 
@@ -90,45 +84,31 @@ describe("rewindPhase", () => {
 		});
 	});
 
-	it("should add a comment recording the rewind", async () => {
-		const items = [
-			{
-				id: 1,
-				status: "in-progress",
-				currentPhase: 3,
-				plan: [
-					{ name: "Setup", tasks: [] },
-					{ name: "Implement", tasks: [] },
-					{ name: "Polish", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+	it("should append a comment recording the rewind", async () => {
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "in-progress",
+			currentPhase: 3,
+			plan: threePhasePlan,
+		});
 
 		await rewindPhase("1", "1", { reason: "Tests failed" });
 
-		expect(mockAddComment).toHaveBeenCalledWith(
-			items[0],
-			"Rewound to phase 1 (Setup): Tests failed",
+		expect(mockAppendComment).toHaveBeenCalledWith(
+			orm,
 			1,
+			"Rewound to phase 1 (Setup): Tests failed",
+			{ phase: 1 },
 		);
-		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
 	});
 
 	it("should reject if target phase is not earlier than current", async () => {
-		const items = [
-			{
-				id: 1,
-				status: "in-progress",
-				currentPhase: 2,
-				plan: [
-					{ name: "Setup", tasks: [] },
-					{ name: "Implement", tasks: [] },
-					{ name: "Polish", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "in-progress",
+			currentPhase: 2,
+			plan: threePhasePlan,
+		});
 
 		await rewindPhase("1", "2", { reason: "No reason" });
 
@@ -138,19 +118,12 @@ describe("rewindPhase", () => {
 	});
 
 	it("should reject if target phase is beyond current", async () => {
-		const items = [
-			{
-				id: 1,
-				status: "in-progress",
-				currentPhase: 2,
-				plan: [
-					{ name: "Setup", tasks: [] },
-					{ name: "Implement", tasks: [] },
-					{ name: "Polish", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "in-progress",
+			currentPhase: 2,
+			plan: threePhasePlan,
+		});
 
 		await rewindPhase("1", "3", { reason: "No reason" });
 
@@ -159,8 +132,11 @@ describe("rewindPhase", () => {
 	});
 
 	it("should reject if item has no plan", async () => {
-		const items = [{ id: 1, status: "in-progress", currentPhase: 1 }];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "in-progress",
+			currentPhase: 1,
+		});
 
 		await rewindPhase("1", "1", { reason: "No reason" });
 
@@ -169,19 +145,12 @@ describe("rewindPhase", () => {
 	});
 
 	it("should reject if phase number is out of range", async () => {
-		const items = [
-			{
-				id: 1,
-				status: "in-progress",
-				currentPhase: 3,
-				plan: [
-					{ name: "Setup", tasks: [] },
-					{ name: "Implement", tasks: [] },
-					{ name: "Polish", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "in-progress",
+			currentPhase: 3,
+			plan: threePhasePlan,
+		});
 
 		await rewindPhase("1", "0", { reason: "No reason" });
 
@@ -190,19 +159,12 @@ describe("rewindPhase", () => {
 	});
 
 	it("should set done items to in-progress", async () => {
-		const items = [
-			{
-				id: 1,
-				status: "done",
-				currentPhase: 4,
-				plan: [
-					{ name: "Setup", tasks: [] },
-					{ name: "Implement", tasks: [] },
-					{ name: "Polish", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			status: "done",
+			currentPhase: 4,
+			plan: threePhasePlan,
+		});
 
 		await rewindPhase("1", "2", { reason: "Reopening" });
 
@@ -211,7 +173,7 @@ describe("rewindPhase", () => {
 	});
 
 	it("should do nothing if item is not found", async () => {
-		mockLoadAndFindItem.mockReturnValue(undefined);
+		mockLoadItem.mockResolvedValue(undefined);
 
 		await rewindPhase("99", "1", { reason: "No reason" });
 

@@ -1,7 +1,11 @@
-import type { BacklogFile } from "./types";
-
+/**
+ * Whether adding a `depends-on` edge from `fromId` to `toId` would create a
+ * cycle, i.e. `toId` can already reach `fromId` by following existing
+ * dependencies. `adjacency` maps an item id to the ids it depends on (see
+ * {@link ./loadDependencyGraph}).
+ */
 export function hasCycle(
-	items: BacklogFile,
+	adjacency: Map<number, number[]>,
 	fromId: number,
 	toId: number,
 ): boolean {
@@ -12,12 +16,8 @@ export function hasCycle(
 		if (current === fromId) return true;
 		if (visited.has(current)) continue;
 		visited.add(current);
-		const item = items.find((i) => i.id === current);
-		if (!item?.links) continue;
-		for (const link of item.links) {
-			if (link.type === "depends-on") {
-				stack.push(link.targetId);
-			}
+		for (const target of adjacency.get(current) ?? []) {
+			stack.push(target);
 		}
 	}
 	return false;

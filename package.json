@@ -38,6 +38,7 @@
 		"chalk": "^5.6.2",
 		"commander": "^14.0.2",
 		"diff": "^8.0.2",
+		"drizzle-orm": "^0.45.2",
 		"enquirer": "^2.4.1",
 		"entities": "^7.0.1",
 		"is-wsl": "^3.1.0",

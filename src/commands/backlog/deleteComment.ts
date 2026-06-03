@@ -1,23 +1,24 @@
-import type { BacklogDb } from "./BacklogDb";
+import { and, eq } from "drizzle-orm";
+import type { BacklogOrm } from "./BacklogOrm";
+import { comments } from "./backlogSchema";
 
 type DeleteCommentResult = "deleted" | "not-found" | "is-summary";
 
 export async function deleteComment(
-	db: BacklogDb,
+	orm: BacklogOrm,
 	itemId: number,
 	commentId: number,
 ): Promise<DeleteCommentResult> {
-	const row = await db.get<{ type: string }>(
-		"SELECT type FROM comments WHERE id = ? AND item_id = ?",
-		[commentId, itemId],
-	);
+	const [row] = await orm
+		.select({ type: comments.type })
+		.from(comments)
+		.where(and(eq(comments.id, commentId), eq(comments.itemId, itemId)));
 
 	if (!row) return "not-found";
 	if (row.type === "summary") return "is-summary";
 
-	await db.run("DELETE FROM comments WHERE id = ? AND item_id = ?", [
-		commentId,
-		itemId,
-	]);
+	await orm
+		.delete(comments)
+		.where(and(eq(comments.id, commentId), eq(comments.itemId, itemId)));
 	return "deleted";
 }

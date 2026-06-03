@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getBacklogDb } from "./getBacklogDb";
+import { getBacklogOrm } from "./getBacklogOrm";
 import { insertPhaseAt } from "./insertPhaseAt";
 import { resolveInsertPosition } from "./resolveInsertPosition";
 import { serializeManualChecks } from "./serializeManualChecks";
@@ -20,14 +20,14 @@ export async function addPhase(
 		return;
 	}
 
-	const db = await getBacklogDb();
+	const orm = await getBacklogOrm();
 	const itemId = result.item.id;
 
-	const phaseIdx = await resolveInsertPosition(db, itemId, options.position);
+	const phaseIdx = await resolveInsertPosition(orm, itemId, options.position);
 	if (phaseIdx === undefined) return;
 
 	await insertPhaseAt(
-		db,
+		orm,
 		itemId,
 		phaseIdx,
 		name,

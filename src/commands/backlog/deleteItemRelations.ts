@@ -1,11 +1,13 @@
-import type { BacklogDb } from "./BacklogDb";
+import { eq } from "drizzle-orm";
+import type { BacklogDatabase } from "./BacklogOrm";
+import { comments, links, planPhases, planTasks } from "./backlogSchema";
 
 export async function deleteItemRelations(
-	db: BacklogDb,
+	db: BacklogDatabase,
 	itemId: number,
 ): Promise<void> {
-	await db.run("DELETE FROM plan_tasks WHERE item_id = ?", [itemId]);
-	await db.run("DELETE FROM plan_phases WHERE item_id = ?", [itemId]);
-	await db.run("DELETE FROM comments WHERE item_id = ?", [itemId]);
-	await db.run("DELETE FROM links WHERE item_id = ?", [itemId]);
+	await db.delete(planTasks).where(eq(planTasks.itemId, itemId));
+	await db.delete(planPhases).where(eq(planPhases.itemId, itemId));
+	await db.delete(comments).where(eq(comments.itemId, itemId));
+	await db.delete(links).where(eq(links.itemId, itemId));
 }

@@ -2,7 +2,7 @@
 import { Command } from "commander";
 import packageJson from "../package.json";
 import { next as backlogNext } from "./commands/backlog";
-import { closeBacklogDb } from "./commands/backlog/getBacklogDb";
+import { closeBacklogDb } from "./commands/backlog/getBacklogOrm";
 import { launchMode } from "./commands/backlog/launchMode";
 import { refine } from "./commands/backlog/refine";
 import { commit } from "./commands/commit";

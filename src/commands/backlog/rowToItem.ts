@@ -1,0 +1,98 @@
+import type {
+	CommentRow,
+	ItemRow,
+	LinkRow,
+	PhaseRow,
+	TaskRow,
+} from "./backlogSchema";
+import type { Relations } from "./loadRelations";
+import type {
+	BacklogComment,
+	BacklogItem,
+	BacklogStatus,
+	PlanPhase,
+} from "./types";
+
+type Link = NonNullable<BacklogItem["links"]>[number];
+
+function rowToComment(c: CommentRow): BacklogComment {
+	const comment: BacklogComment = {
+		id: c.id,
+		text: c.text,
+		timestamp: c.timestamp,
+		type: c.type as BacklogComment["type"],
+	};
+	if (c.phase != null) comment.phase = c.phase;
+	return comment;
+}
+
+function rowToLink(l: LinkRow): Link {
+	return { type: l.type as Link["type"], targetId: l.targetId };
+}
+
+function groupTasksByPhase(taskRows: TaskRow[]): Map<number, TaskRow[]> {
+	const byPhase = new Map<number, TaskRow[]>();
+	for (const t of taskRows) {
+		const bucket = byPhase.get(t.phaseIdx);
+		if (bucket) bucket.push(t);
+		else byPhase.set(t.phaseIdx, [t]);
+	}
+	return byPhase;
+}
+
+function rowToPhase(p: PhaseRow, byPhase: Map<number, TaskRow[]>): PlanPhase {
+	const phase: PlanPhase = {
+		name: p.name,
+		tasks: (byPhase.get(p.idx) ?? []).map((t) => ({ task: t.task })),
+	};
+	if (p.manualChecks) phase.manualChecks = JSON.parse(p.manualChecks);
+	return phase;
+}
+
+function buildPlan(phaseRows: PhaseRow[], taskRows: TaskRow[]): PlanPhase[] {
+	const byPhase = groupTasksByPhase(taskRows);
+	return phaseRows.map((p) => rowToPhase(p, byPhase));
+}
+
+function assignOptionalColumns(item: BacklogItem, row: ItemRow): void {
+	if (row.description != null) item.description = row.description;
+	if (row.currentPhase != null) item.currentPhase = row.currentPhase;
+}
+
+/** The item's own columns, before relations are attached. */
+function baseItem(row: ItemRow): BacklogItem {
+	const item: BacklogItem = {
+		id: row.id,
+		type: row.type as BacklogItem["type"],
+		name: row.name,
+		acceptanceCriteria: JSON.parse(row.acceptanceCriteria),
+		status: row.status as BacklogStatus,
+		origin: row.origin,
+	};
+	assignOptionalColumns(item, row);
+	return item;
+}
+
+function attachComments(item: BacklogItem, rel: Relations, id: number): void {
+	const comments = (rel.comments.get(id) ?? []).map(rowToComment);
+	if (comments.length > 0) item.comments = comments;
+}
+
+function attachLinks(item: BacklogItem, rel: Relations, id: number): void {
+	const links = (rel.links.get(id) ?? []).map(rowToLink);
+	if (links.length > 0) item.links = links;
+}
+
+function attachPlan(item: BacklogItem, rel: Relations, id: number): void {
+	const phases = rel.phases.get(id) ?? [];
+	if (phases.length > 0) item.plan = buildPlan(phases, rel.tasks.get(id) ?? []);
+}
+
+/** Assemble a domain item from its row and the pre-grouped relation rows. */
+export function rowToItem(row: ItemRow, rel: Relations): BacklogItem {
+	const item = baseItem(row);
+	attachComments(item, rel, row.id);
+	attachLinks(item, rel, row.id);
+	attachPlan(item, rel, row.id);
+	return item;
+}

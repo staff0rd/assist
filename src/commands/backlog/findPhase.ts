@@ -1,19 +1,21 @@
 import chalk from "chalk";
-import { getBacklogDb } from "./getBacklogDb";
+import { and, count, eq } from "drizzle-orm";
+import { planPhases } from "./backlogSchema";
+import { getBacklogOrm } from "./getBacklogOrm";
 import { loadAndFindItem } from "./shared";
 
 export async function findPhase(id: string, phase: string) {
 	const result = await loadAndFindItem(id);
 	if (!result) return undefined;
 
-	const db = await getBacklogDb();
+	const orm = await getBacklogOrm();
 	const itemId = result.item.id;
 	const phaseIdx = Number.parseInt(phase, 10) - 1;
 
-	const row = await db.get<{ cnt: number }>(
-		"SELECT COUNT(*)::int as cnt FROM plan_phases WHERE item_id = ? AND idx = ?",
-		[itemId, phaseIdx],
-	);
+	const [row] = await orm
+		.select({ cnt: count() })
+		.from(planPhases)
+		.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)));
 
 	if (!row || row.cnt === 0) {
 		console.log(
@@ -23,5 +25,5 @@ export async function findPhase(id: string, phase: string) {
 		return undefined;
 	}
 
-	return { result, db, itemId, phaseIdx };
+	return { result, orm, itemId, phaseIdx };
 }

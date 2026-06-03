@@ -1,4 +1,6 @@
-import type { BacklogDb } from "./BacklogDb";
+import { and, eq } from "drizzle-orm";
+import type { BacklogOrm } from "./BacklogOrm";
+import { planPhases, planTasks } from "./backlogSchema";
 
 type PhaseUpdateFields = {
 	name?: string;
@@ -7,36 +9,45 @@ type PhaseUpdateFields = {
 };
 
 export async function applyPhaseUpdate(
-	db: BacklogDb,
+	orm: BacklogOrm,
 	itemId: number,
 	phaseIdx: number,
 	fields: PhaseUpdateFields,
 ): Promise<void> {
-	await db.transaction(async (tx) => {
+	await orm.transaction(async (tx) => {
 		if (fields.name) {
-			await tx.run(
-				"UPDATE plan_phases SET name = ? WHERE item_id = ? AND idx = ?",
-				[fields.name, itemId, phaseIdx],
-			);
+			await tx
+				.update(planPhases)
+				.set({ name: fields.name })
+				.where(
+					and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)),
+				);
 		}
 
 		if (fields.manualCheck) {
-			await tx.run(
-				"UPDATE plan_phases SET manual_checks = ? WHERE item_id = ? AND idx = ?",
-				[JSON.stringify(fields.manualCheck), itemId, phaseIdx],
-			);
+			await tx
+				.update(planPhases)
+				.set({ manualChecks: JSON.stringify(fields.manualCheck) })
+				.where(
+					and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)),
+				);
 		}
 
 		if (fields.task) {
-			await tx.run(
-				"DELETE FROM plan_tasks WHERE item_id = ? AND phase_idx = ?",
-				[itemId, phaseIdx],
-			);
+			await tx
+				.delete(planTasks)
+				.where(
+					and(eq(planTasks.itemId, itemId), eq(planTasks.phaseIdx, phaseIdx)),
+				);
 
-			for (let i = 0; i < fields.task.length; i++) {
-				await tx.run(
-					"INSERT INTO plan_tasks (item_id, phase_idx, idx, task) VALUES (?, ?, ?, ?)",
-					[itemId, phaseIdx, i, fields.task[i]],
+			if (fields.task.length) {
+				await tx.insert(planTasks).values(
+					fields.task.map((task, i) => ({
+						itemId,
+						phaseIdx,
+						idx: i,
+						task,
+					})),
 				);
 			}
 		}

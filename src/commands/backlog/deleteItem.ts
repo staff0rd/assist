@@ -1,10 +1,19 @@
-import type { BacklogDb } from "./BacklogDb";
-import { deleteItemRelations } from "./deleteItemRelations";
+import { eq } from "drizzle-orm";
+import type { BacklogOrm } from "./BacklogOrm";
+import { items } from "./backlogSchema";
 
-export async function deleteItem(db: BacklogDb, id: number): Promise<boolean> {
-	return db.transaction(async (tx) => {
-		await deleteItemRelations(tx, id);
-		const result = await tx.run("DELETE FROM items WHERE id = ?", [id]);
-		return result.changes > 0;
-	});
+/**
+ * Delete an item with a single targeted write; its relations are removed by the
+ * `ON DELETE CASCADE` foreign keys (see {@link ./ensureSchema}). Returns the
+ * deleted item's name, or `undefined` if no item with that id existed.
+ */
+export async function deleteItem(
+	orm: BacklogOrm,
+	id: number,
+): Promise<string | undefined> {
+	const [row] = await orm
+		.delete(items)
+		.where(eq(items.id, id))
+		.returning({ name: items.name });
+	return row?.name;
 }

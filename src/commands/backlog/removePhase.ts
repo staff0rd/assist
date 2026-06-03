@@ -1,21 +1,23 @@
 import chalk from "chalk";
+import { and, eq } from "drizzle-orm";
+import { planPhases, planTasks } from "./backlogSchema";
 import { findPhase } from "./findPhase";
 import { adjustCurrentPhase, reindexPhases } from "./reindexPhases";
 
 export async function removePhase(id: string, phase: string): Promise<void> {
 	const found = await findPhase(id, phase);
 	if (!found) return;
-	const { result, db, itemId, phaseIdx } = found;
+	const { result, orm, itemId, phaseIdx } = found;
 
-	await db.transaction(async (tx) => {
-		await tx.run("DELETE FROM plan_tasks WHERE item_id = ? AND phase_idx = ?", [
-			itemId,
-			phaseIdx,
-		]);
-		await tx.run("DELETE FROM plan_phases WHERE item_id = ? AND idx = ?", [
-			itemId,
-			phaseIdx,
-		]);
+	await orm.transaction(async (tx) => {
+		await tx
+			.delete(planTasks)
+			.where(
+				and(eq(planTasks.itemId, itemId), eq(planTasks.phaseIdx, phaseIdx)),
+			);
+		await tx
+			.delete(planPhases)
+			.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)));
 		await reindexPhases(tx, itemId);
 		await adjustCurrentPhase(tx, result.item, phaseIdx);
 	});

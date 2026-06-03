@@ -1,31 +1,26 @@
 import chalk from "chalk";
-import type { BacklogFile, BacklogItem } from "./types";
+import type { BacklogItem } from "./types";
 
+/**
+ * Validate that a proposed link is not already present on `fromItem`. Returns
+ * `true` when the link is valid to add, logging the reason and returning `false`
+ * otherwise. The target's existence is checked by the caller.
+ */
 export function validateLinkTarget(
-	items: BacklogFile,
 	fromItem: BacklogItem,
-	fromId: string,
-	toId: string,
+	fromNum: number,
 	toNum: number,
 	linkType: string,
-): BacklogItem | undefined {
-	const toItem = items.find((i) => i.id === toNum);
-	if (!toItem) {
-		console.log(chalk.red(`Item #${toId} not found.`));
-		return undefined;
-	}
-
-	if (!fromItem.links) fromItem.links = [];
-
-	const duplicate = fromItem.links.some(
+): boolean {
+	const duplicate = (fromItem.links ?? []).some(
 		(l) => l.targetId === toNum && l.type === linkType,
 	);
 	if (duplicate) {
 		console.log(
-			chalk.yellow(`Link already exists: #${fromId} ${linkType} #${toId}`),
+			chalk.yellow(`Link already exists: #${fromNum} ${linkType} #${toNum}`),
 		);
-		return undefined;
+		return false;
 	}
 
-	return toItem;
+	return true;
 }

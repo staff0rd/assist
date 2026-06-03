@@ -8,7 +8,8 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { BacklogDb } from "./BacklogDb";
+import type { BacklogOrm } from "./BacklogOrm";
+import { items as itemsTable } from "./backlogSchema";
 import { createTestDb } from "./createTestDb";
 import { loadAllItems } from "./loadAllItems";
 import { migrateLocalBacklog } from "./migrateLocalBacklog";
@@ -54,12 +55,12 @@ function writeJsonl(dir: string, items: BacklogItem[]): void {
 }
 
 describe("migrateLocalBacklog", () => {
-	let db: BacklogDb;
+	let orm: BacklogOrm;
 	let close: () => Promise<void>;
 	let dir: string;
 
 	beforeEach(async () => {
-		({ db, close } = await createTestDb());
+		({ orm, close } = await createTestDb());
 		dir = mkdtempSync(join(tmpdir(), "assist-migrate-"));
 	});
 
@@ -70,9 +71,9 @@ describe("migrateLocalBacklog", () => {
 
 	it("imports items with fresh global ids and remaps link targets", async () => {
 		writeJsonl(dir, ITEMS);
-		await migrateLocalBacklog(db, dir, ORIGIN);
+		await migrateLocalBacklog(orm, dir, ORIGIN);
 
-		const items = await loadAllItems(db, ORIGIN);
+		const items = await loadAllItems(orm, ORIGIN);
 		expect(items).toHaveLength(2);
 		expect(items.map((i) => i.id)).not.toContain(10);
 		expect(items.map((i) => i.id)).not.toContain(20);
@@ -84,8 +85,8 @@ describe("migrateLocalBacklog", () => {
 
 	it("reassigns comment ids rather than preserving per-repo ones", async () => {
 		writeJsonl(dir, ITEMS);
-		await migrateLocalBacklog(db, dir, ORIGIN);
-		const first = (await loadAllItems(db, ORIGIN)).find(
+		await migrateLocalBacklog(orm, dir, ORIGIN);
+		const first = (await loadAllItems(orm, ORIGIN)).find(
 			(i) => i.name === "First",
 		);
 		expect(first?.comments).toHaveLength(1);
@@ -94,8 +95,8 @@ describe("migrateLocalBacklog", () => {
 
 	it("preserves plans, status, and acceptance criteria", async () => {
 		writeJsonl(dir, ITEMS);
-		await migrateLocalBacklog(db, dir, ORIGIN);
-		const items = await loadAllItems(db, ORIGIN);
+		await migrateLocalBacklog(orm, dir, ORIGIN);
+		const items = await loadAllItems(orm, ORIGIN);
 		const first = items.find((i) => i.name === "First");
 		const second = items.find((i) => i.name === "Second");
 		expect(first?.acceptanceCriteria).toEqual(["a"]);
@@ -104,29 +105,31 @@ describe("migrateLocalBacklog", () => {
 
 	it("renames the local jsonl to .bak so it does not re-run", async () => {
 		writeJsonl(dir, ITEMS);
-		await migrateLocalBacklog(db, dir, ORIGIN);
+		await migrateLocalBacklog(orm, dir, ORIGIN);
 		expect(existsSync(join(dir, ".assist", "backlog.jsonl"))).toBe(false);
 		expect(existsSync(join(dir, ".assist", "backlog.jsonl.bak"))).toBe(true);
 
 		// A second run finds no jsonl and is a no-op (no duplicate import).
-		await migrateLocalBacklog(db, dir, ORIGIN);
-		expect(await loadAllItems(db, ORIGIN)).toHaveLength(2);
+		await migrateLocalBacklog(orm, dir, ORIGIN);
+		expect(await loadAllItems(orm, ORIGIN)).toHaveLength(2);
 	});
 
 	it("is a no-op when there is no local jsonl", async () => {
-		await migrateLocalBacklog(db, dir, ORIGIN);
-		expect(await loadAllItems(db, ORIGIN)).toHaveLength(0);
+		await migrateLocalBacklog(orm, dir, ORIGIN);
+		expect(await loadAllItems(orm, ORIGIN)).toHaveLength(0);
 	});
 
 	it("skips importing (no duplicates) when the origin already has items", async () => {
-		await db.run(
-			"INSERT INTO items (origin, type, name, status) VALUES (?, 'story', 'Pre-existing', 'todo')",
-			[ORIGIN],
-		);
+		await orm.insert(itemsTable).values({
+			origin: ORIGIN,
+			type: "story",
+			name: "Pre-existing",
+			status: "todo",
+		});
 		writeJsonl(dir, ITEMS);
-		await migrateLocalBacklog(db, dir, ORIGIN);
+		await migrateLocalBacklog(orm, dir, ORIGIN);
 
-		const items = await loadAllItems(db, ORIGIN);
+		const items = await loadAllItems(orm, ORIGIN);
 		expect(items).toHaveLength(1);
 		expect(items[0].name).toBe("Pre-existing");
 		// the local file is still archived so it does not keep re-triggering

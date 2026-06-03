@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { deleteComment } from "../deleteComment";
-import { getBacklogDb } from "../getBacklogDb";
+import { getBacklogOrm } from "../getBacklogOrm";
 import { loadAndFindItem } from "../shared";
 
 export async function deleteCommentCmd(
@@ -10,9 +10,9 @@ export async function deleteCommentCmd(
 	const result = await loadAndFindItem(id);
 	if (!result) process.exit(1);
 
-	const db = await getBacklogDb();
+	const orm = await getBacklogOrm();
 	const outcome = await deleteComment(
-		db,
+		orm,
 		result.item.id,
 		Number.parseInt(commentId, 10),
 	);

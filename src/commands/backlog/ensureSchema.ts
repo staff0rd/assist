@@ -1,5 +1,3 @@
-import type { BacklogDb } from "./BacklogDb";
-
 /** The backlog schema DDL. Idempotent (`IF NOT EXISTS`), so safe to run repeatedly. */
 export const SCHEMA = `
 	CREATE TABLE IF NOT EXISTS items (
@@ -56,7 +54,14 @@ export const SCHEMA = `
 	);
 `;
 
-/** Create the backlog schema if it does not already exist. Safe to call repeatedly. */
-export async function ensureSchema(db: BacklogDb): Promise<void> {
-	await db.exec(SCHEMA);
+/**
+ * Create the backlog schema if it does not already exist. Safe to call
+ * repeatedly. The multi-statement DDL is run via `exec` — a pg pool's `query`
+ * in production, PGlite's `exec` in tests — since neither Drizzle's query
+ * builder nor a single parameterised query can run multiple statements at once.
+ */
+export async function ensureSchema(
+	exec: (sql: string) => Promise<unknown>,
+): Promise<void> {
+	await exec(SCHEMA);
 }

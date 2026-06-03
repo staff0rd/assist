@@ -10,24 +10,30 @@ import {
 
 vi.mock("./shared", () => ({
 	getBacklogDir: () => process.cwd(),
-	loadAndFindItem: vi.fn(),
-	saveBacklog: vi.fn(),
+	getReady: vi.fn(),
 	setCurrentPhase: vi.fn(),
 }));
 
-vi.mock("./addComment", () => ({
-	addPhaseSummary: vi.fn(),
+vi.mock("./getItemStatus", () => ({
+	getItemStatus: vi.fn(),
 }));
 
-import { addPhaseSummary } from "./addComment";
+vi.mock("./appendComment", () => ({
+	appendComment: vi.fn(),
+}));
+
+import { appendComment } from "./appendComment";
+import { getItemStatus } from "./getItemStatus";
 import { phaseDone } from "./phaseDone";
-import { loadAndFindItem, saveBacklog, setCurrentPhase } from "./shared";
+import { getReady, setCurrentPhase } from "./shared";
 import { getSignalPath } from "./writeSignal";
 
-const mockLoadAndFindItem = loadAndFindItem as unknown as MockInstance;
+const mockGetReady = getReady as unknown as MockInstance;
+const mockGetItemStatus = getItemStatus as unknown as MockInstance;
 const mockSetCurrentPhase = setCurrentPhase as unknown as MockInstance;
-const mockAddPhaseSummary = addPhaseSummary as unknown as MockInstance;
-const mockSaveBacklog = saveBacklog as unknown as MockInstance;
+const mockAppendComment = appendComment as unknown as MockInstance;
+
+const orm = {} as never;
 
 function cleanup(): void {
 	const path = getSignalPath();
@@ -37,14 +43,12 @@ function cleanup(): void {
 describe("phaseDone", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockGetReady.mockResolvedValue({ orm });
 		cleanup();
 	});
 
 	it("should write the status marker file", async () => {
-		mockLoadAndFindItem.mockReturnValue({
-			items: [],
-			item: { id: 1, status: "in-progress" },
-		});
+		mockGetItemStatus.mockResolvedValue("in-progress");
 
 		await phaseDone("1", "1", "Done");
 
@@ -56,10 +60,7 @@ describe("phaseDone", () => {
 	});
 
 	it("should advance currentPhase when item is not done", async () => {
-		mockLoadAndFindItem.mockReturnValue({
-			items: [],
-			item: { id: 1, status: "in-progress" },
-		});
+		mockGetItemStatus.mockResolvedValue("in-progress");
 
 		await phaseDone("1", "1", "Done");
 
@@ -67,42 +68,23 @@ describe("phaseDone", () => {
 		cleanup();
 	});
 
-	it("should store a phase summary when summary is provided", async () => {
-		const items = [{ id: 1, status: "in-progress" }];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+	it("should store a phase summary as a targeted comment write", async () => {
+		mockGetItemStatus.mockResolvedValue("in-progress");
 
 		await phaseDone("1", "1", "Implemented the feature");
 
-		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
-			items[0],
+		expect(mockAppendComment).toHaveBeenCalledWith(
+			orm,
+			1,
 			"Implemented the feature",
-			1,
+			{ phase: 1, type: "summary" },
 		);
-		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
-		cleanup();
-	});
-
-	it("should always store a summary", async () => {
-		const items = [{ id: 1, status: "in-progress" }];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
-
-		await phaseDone("1", "1", "Completed phase");
-
-		expect(mockAddPhaseSummary).toHaveBeenCalledWith(
-			items[0],
-			"Completed phase",
-			1,
-		);
-		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
 		cleanup();
 	});
 
 	describe("when item is already done", () => {
 		it("should not advance currentPhase", async () => {
-			mockLoadAndFindItem.mockReturnValue({
-				items: [],
-				item: { id: 1, status: "done" },
-			});
+			mockGetItemStatus.mockResolvedValue("done");
 
 			await phaseDone("1", "1", "Done");
 
@@ -111,13 +93,23 @@ describe("phaseDone", () => {
 		});
 
 		it("should skip the summary (already saved by done command)", async () => {
-			const items = [{ id: 1, status: "done" }];
-			mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+			mockGetItemStatus.mockResolvedValue("done");
 
 			await phaseDone("1", "3", "Review complete");
 
-			expect(mockAddPhaseSummary).not.toHaveBeenCalled();
-			expect(mockSaveBacklog).not.toHaveBeenCalled();
+			expect(mockAppendComment).not.toHaveBeenCalled();
+			cleanup();
+		});
+	});
+
+	describe("when item does not exist", () => {
+		it("should not advance currentPhase or write a summary", async () => {
+			mockGetItemStatus.mockResolvedValue(undefined);
+
+			await phaseDone("99", "1", "Done");
+
+			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
+			expect(mockAppendComment).not.toHaveBeenCalled();
 			cleanup();
 		});
 	});

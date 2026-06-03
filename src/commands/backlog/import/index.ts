@@ -4,7 +4,7 @@ import { countCopyRows } from "../dump/countCopyRows";
 import { DUMP_TABLES } from "../dump/DumpTable";
 import { parseDump } from "../dump/parseDump";
 import { validateDump } from "../dump/validateDump";
-import { withBacklogClient } from "../getBacklogDb";
+import { withBacklogClient } from "../getBacklogOrm";
 import { confirmReplace } from "./confirmReplace";
 import { readStdinBuffer } from "./readStdinBuffer";
 import { restore } from "./restore";

@@ -1,15 +1,17 @@
 import chalk from "chalk";
-import type { BacklogDb } from "./BacklogDb";
+import { count, eq } from "drizzle-orm";
+import type { BacklogOrm } from "./BacklogOrm";
+import { planPhases } from "./backlogSchema";
 
 export async function resolveInsertPosition(
-	db: BacklogDb,
+	orm: BacklogOrm,
 	itemId: number,
 	position: string | undefined,
 ): Promise<number | undefined> {
-	const row = await db.get<{ cnt: number }>(
-		"SELECT COUNT(*)::int as cnt FROM plan_phases WHERE item_id = ?",
-		[itemId],
-	);
+	const [row] = await orm
+		.select({ cnt: count() })
+		.from(planPhases)
+		.where(eq(planPhases.itemId, itemId));
 	const phaseCount = row?.cnt ?? 0;
 
 	if (position === undefined) return phaseCount;

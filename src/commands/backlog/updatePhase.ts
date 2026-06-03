@@ -13,7 +13,7 @@ export async function updatePhase(
 ): Promise<void> {
 	const found = await findPhase(id, phase);
 	if (!found) return;
-	const { result, db, itemId, phaseIdx } = found;
+	const { result, orm, itemId, phaseIdx } = found;
 
 	const resolved = resolvePhaseFields(options, result.item.plan?.[phaseIdx]);
 	if (!resolved.ok) {
@@ -23,7 +23,7 @@ export async function updatePhase(
 	}
 
 	const { name, task, manualCheck } = resolved.fields;
-	await applyPhaseUpdate(db, itemId, phaseIdx, { name, task, manualCheck });
+	await applyPhaseUpdate(orm, itemId, phaseIdx, { name, task, manualCheck });
 
 	const fields = [
 		name && "name",

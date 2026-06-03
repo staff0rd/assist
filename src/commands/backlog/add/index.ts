@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getBacklogDb } from "../getBacklogDb";
+import { getBacklogOrm } from "../getBacklogOrm";
 import { insertItem } from "../insertItem";
 import { getOrigin } from "../shared";
 import type { BacklogType } from "../types";
@@ -24,9 +24,9 @@ export async function add(options: AddOptions): Promise<void> {
 		options.desc?.replaceAll("\\n", "\n") ?? (await promptDescription());
 	const acceptanceCriteria = options.ac ?? (await promptAcceptanceCriteria());
 
-	const db = await getBacklogDb();
+	const orm = await getBacklogOrm();
 	const id = await insertItem(
-		db,
+		orm,
 		{
 			type,
 			name,

@@ -1,57 +1,69 @@
+import { and, asc, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { BacklogDb } from "./BacklogDb";
+import type { BacklogOrm } from "./BacklogOrm";
+import { items, planPhases, planTasks } from "./backlogSchema";
 import { createTestDb } from "./createTestDb";
 import { insertPhaseAt } from "./insertPhaseAt";
 
-async function seedItem(db: BacklogDb, currentPhase?: number): Promise<void> {
-	await db.run(
-		"INSERT INTO items (id, origin, name, status, current_phase) VALUES (1, 'test', 'Test', 'in-progress', ?)",
-		[currentPhase ?? null],
-	);
+async function seedItem(orm: BacklogOrm, currentPhase?: number): Promise<void> {
+	await orm.insert(items).values({
+		id: 1,
+		origin: "test",
+		name: "Test",
+		status: "in-progress",
+		currentPhase: currentPhase ?? null,
+	});
 }
 
 async function seedPhase(
-	db: BacklogDb,
+	orm: BacklogOrm,
 	idx: number,
 	name: string,
 	tasks: string[],
 ): Promise<void> {
-	await db.run(
-		"INSERT INTO plan_phases (item_id, idx, name) VALUES (1, ?, ?)",
-		[idx, name],
-	);
-	for (let i = 0; i < tasks.length; i++) {
-		await db.run(
-			"INSERT INTO plan_tasks (item_id, phase_idx, idx, task) VALUES (1, ?, ?, ?)",
-			[idx, i, tasks[i]],
-		);
+	await orm.insert(planPhases).values({ itemId: 1, idx, name });
+	if (tasks.length) {
+		await orm
+			.insert(planTasks)
+			.values(
+				tasks.map((task, i) => ({ itemId: 1, phaseIdx: idx, idx: i, task })),
+			);
 	}
 }
 
-function getPhases(db: BacklogDb) {
-	return db.all<{ idx: number; name: string }>(
-		"SELECT idx, name FROM plan_phases WHERE item_id = 1 ORDER BY idx",
-	);
+function getPhases(orm: BacklogOrm) {
+	return orm
+		.select({ idx: planPhases.idx, name: planPhases.name })
+		.from(planPhases)
+		.where(eq(planPhases.itemId, 1))
+		.orderBy(asc(planPhases.idx));
 }
 
-function getTasks(db: BacklogDb) {
-	return db.all<{ phase_idx: number; idx: number; task: string }>(
-		"SELECT phase_idx, idx, task FROM plan_tasks WHERE item_id = 1 ORDER BY phase_idx, idx",
-	);
+function getTasks(orm: BacklogOrm) {
+	return orm
+		.select({
+			phase_idx: planTasks.phaseIdx,
+			idx: planTasks.idx,
+			task: planTasks.task,
+		})
+		.from(planTasks)
+		.where(eq(planTasks.itemId, 1))
+		.orderBy(asc(planTasks.phaseIdx), asc(planTasks.idx));
 }
 
-async function getCurrentPhase(db: BacklogDb): Promise<number | null> {
-	const row = await db.get<{ current_phase: number | null }>(
-		"SELECT current_phase FROM items WHERE id = 1",
-	);
-	return row?.current_phase ?? null;
+async function getCurrentPhase(orm: BacklogOrm): Promise<number | null> {
+	const [row] = await orm
+		.select({ currentPhase: items.currentPhase })
+		.from(items)
+		.where(eq(items.id, 1));
+	return row?.currentPhase ?? null;
 }
 
-let db: BacklogDb;
+let orm: BacklogOrm;
 let close: () => Promise<void>;
 
 beforeEach(async () => {
-	({ db, close } = await createTestDb());
+	({ orm, close } = await createTestDb());
 });
 
 afterEach(async () => {
@@ -60,19 +72,19 @@ afterEach(async () => {
 
 describe("insertPhaseAt", () => {
 	it("inserts at the beginning and shifts existing phases", async () => {
-		await seedItem(db);
-		await seedPhase(db, 0, "Phase A", ["taskA1"]);
-		await seedPhase(db, 1, "Phase B", ["taskB1", "taskB2"]);
+		await seedItem(orm);
+		await seedPhase(orm, 0, "Phase A", ["taskA1"]);
+		await seedPhase(orm, 1, "Phase B", ["taskB1", "taskB2"]);
 
-		await insertPhaseAt(db, 1, 0, "New First", ["newTask"], null, undefined);
+		await insertPhaseAt(orm, 1, 0, "New First", ["newTask"], null, undefined);
 
-		expect(await getPhases(db)).toEqual([
+		expect(await getPhases(orm)).toEqual([
 			{ idx: 0, name: "New First" },
 			{ idx: 1, name: "Phase A" },
 			{ idx: 2, name: "Phase B" },
 		]);
 
-		expect(await getTasks(db)).toEqual([
+		expect(await getTasks(orm)).toEqual([
 			{ phase_idx: 0, idx: 0, task: "newTask" },
 			{ phase_idx: 1, idx: 0, task: "taskA1" },
 			{ phase_idx: 2, idx: 0, task: "taskB1" },
@@ -81,14 +93,14 @@ describe("insertPhaseAt", () => {
 	});
 
 	it("inserts in the middle", async () => {
-		await seedItem(db);
-		await seedPhase(db, 0, "Phase A", ["taskA1"]);
-		await seedPhase(db, 1, "Phase B", ["taskB1"]);
-		await seedPhase(db, 2, "Phase C", ["taskC1"]);
+		await seedItem(orm);
+		await seedPhase(orm, 0, "Phase A", ["taskA1"]);
+		await seedPhase(orm, 1, "Phase B", ["taskB1"]);
+		await seedPhase(orm, 2, "Phase C", ["taskC1"]);
 
-		await insertPhaseAt(db, 1, 1, "Middle", ["midTask"], null, undefined);
+		await insertPhaseAt(orm, 1, 1, "Middle", ["midTask"], null, undefined);
 
-		expect(await getPhases(db)).toEqual([
+		expect(await getPhases(orm)).toEqual([
 			{ idx: 0, name: "Phase A" },
 			{ idx: 1, name: "Middle" },
 			{ idx: 2, name: "Phase B" },
@@ -97,13 +109,13 @@ describe("insertPhaseAt", () => {
 	});
 
 	it("inserts at the end (append)", async () => {
-		await seedItem(db);
-		await seedPhase(db, 0, "Phase A", ["taskA1"]);
-		await seedPhase(db, 1, "Phase B", ["taskB1"]);
+		await seedItem(orm);
+		await seedPhase(orm, 0, "Phase A", ["taskA1"]);
+		await seedPhase(orm, 1, "Phase B", ["taskB1"]);
 
-		await insertPhaseAt(db, 1, 2, "Appended", ["endTask"], null, undefined);
+		await insertPhaseAt(orm, 1, 2, "Appended", ["endTask"], null, undefined);
 
-		expect(await getPhases(db)).toEqual([
+		expect(await getPhases(orm)).toEqual([
 			{ idx: 0, name: "Phase A" },
 			{ idx: 1, name: "Phase B" },
 			{ idx: 2, name: "Appended" },
@@ -111,16 +123,17 @@ describe("insertPhaseAt", () => {
 	});
 
 	it("stores manual checks on the new phase", async () => {
-		await seedItem(db);
-		await seedPhase(db, 0, "Phase A", ["taskA1"]);
+		await seedItem(orm);
+		await seedPhase(orm, 0, "Phase A", ["taskA1"]);
 
 		const checks = JSON.stringify(["check1", "check2"]);
-		await insertPhaseAt(db, 1, 0, "Checked", ["t1"], checks, undefined);
+		await insertPhaseAt(orm, 1, 0, "Checked", ["t1"], checks, undefined);
 
-		const row = await db.get<{ manual_checks: string | null }>(
-			"SELECT manual_checks FROM plan_phases WHERE item_id = 1 AND idx = 0",
-		);
-		expect(JSON.parse(row?.manual_checks ?? "null")).toEqual([
+		const [row] = await orm
+			.select({ manualChecks: planPhases.manualChecks })
+			.from(planPhases)
+			.where(and(eq(planPhases.itemId, 1), eq(planPhases.idx, 0)));
+		expect(JSON.parse(row?.manualChecks ?? "null")).toEqual([
 			"check1",
 			"check2",
 		]);
@@ -128,46 +141,46 @@ describe("insertPhaseAt", () => {
 
 	describe("currentPhase adjustment", () => {
 		it("increments currentPhase when inserting at its position", async () => {
-			await seedItem(db, 2);
-			await seedPhase(db, 0, "A", ["t"]);
-			await seedPhase(db, 1, "B", ["t"]);
-			await seedPhase(db, 2, "C", ["t"]);
+			await seedItem(orm, 2);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
+			await seedPhase(orm, 2, "C", ["t"]);
 
 			// currentPhase 2 (1-based) = index 1; inserting at index 1 pushes it down
-			await insertPhaseAt(db, 1, 1, "New", ["t"], null, 2);
+			await insertPhaseAt(orm, 1, 1, "New", ["t"], null, 2);
 
-			expect(await getCurrentPhase(db)).toBe(3);
+			expect(await getCurrentPhase(orm)).toBe(3);
 		});
 
 		it("does not adjust currentPhase when inserting just past it", async () => {
-			await seedItem(db, 2);
-			await seedPhase(db, 0, "A", ["t"]);
-			await seedPhase(db, 1, "B", ["t"]);
-			await seedPhase(db, 2, "C", ["t"]);
+			await seedItem(orm, 2);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
+			await seedPhase(orm, 2, "C", ["t"]);
 
 			// currentPhase 2 (1-based) = index 1; inserting at index 2 is after it
-			await insertPhaseAt(db, 1, 2, "New", ["t"], null, 2);
+			await insertPhaseAt(orm, 1, 2, "New", ["t"], null, 2);
 
-			expect(await getCurrentPhase(db)).toBe(2);
+			expect(await getCurrentPhase(orm)).toBe(2);
 		});
 
 		it("does not adjust currentPhase when inserting well after it", async () => {
-			await seedItem(db, 1);
-			await seedPhase(db, 0, "A", ["t"]);
-			await seedPhase(db, 1, "B", ["t"]);
+			await seedItem(orm, 1);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
 
-			await insertPhaseAt(db, 1, 2, "New", ["t"], null, 1);
+			await insertPhaseAt(orm, 1, 2, "New", ["t"], null, 1);
 
-			expect(await getCurrentPhase(db)).toBe(1);
+			expect(await getCurrentPhase(orm)).toBe(1);
 		});
 
 		it("does not adjust when currentPhase is undefined", async () => {
-			await seedItem(db);
-			await seedPhase(db, 0, "A", ["t"]);
+			await seedItem(orm);
+			await seedPhase(orm, 0, "A", ["t"]);
 
-			await insertPhaseAt(db, 1, 0, "New", ["t"], null, undefined);
+			await insertPhaseAt(orm, 1, 0, "New", ["t"], null, undefined);
 
-			expect(await getCurrentPhase(db)).toBeNull();
+			expect(await getCurrentPhase(orm)).toBeNull();
 		});
 	});
 });

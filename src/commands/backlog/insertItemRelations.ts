@@ -1,59 +1,69 @@
-import type { BacklogDb } from "./BacklogDb";
+import type { BacklogDatabase } from "./BacklogOrm";
+import { comments, links, planPhases, planTasks } from "./backlogSchema";
 import type { BacklogItem } from "./types";
 
-async function insertComments(db: BacklogDb, item: BacklogItem): Promise<void> {
-	if (!item.comments) return;
-	for (let i = 0; i < item.comments.length; i++) {
-		const c = item.comments[i];
-		if (c.id !== undefined) {
-			await db.run(
-				"INSERT INTO comments (id, item_id, idx, text, phase, timestamp, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
-				[c.id, item.id, i, c.text, c.phase ?? null, c.timestamp, c.type],
-			);
-		} else {
-			await db.run(
-				"INSERT INTO comments (item_id, idx, text, phase, timestamp, type) VALUES (?, ?, ?, ?, ?, ?)",
-				[item.id, i, c.text, c.phase ?? null, c.timestamp, c.type],
-			);
-		}
-	}
+async function insertComments(
+	db: BacklogDatabase,
+	item: BacklogItem,
+): Promise<void> {
+	if (!item.comments?.length) return;
+	// `id` is left undefined for comments without one, so Drizzle inserts DEFAULT
+	// and the global identity sequence assigns a fresh id.
+	await db.insert(comments).values(
+		item.comments.map((c, i) => ({
+			id: c.id,
+			itemId: item.id,
+			idx: i,
+			text: c.text,
+			phase: c.phase ?? null,
+			timestamp: c.timestamp,
+			type: c.type,
+		})),
+	);
 }
 
-async function insertLinks(db: BacklogDb, item: BacklogItem): Promise<void> {
-	if (!item.links) return;
-	for (const l of item.links) {
-		await db.run(
-			"INSERT INTO links (item_id, type, target_id) VALUES (?, ?, ?)",
-			[item.id, l.type, l.targetId],
-		);
-	}
+async function insertLinks(
+	db: BacklogDatabase,
+	item: BacklogItem,
+): Promise<void> {
+	if (!item.links?.length) return;
+	await db.insert(links).values(
+		item.links.map((l) => ({
+			itemId: item.id,
+			type: l.type,
+			targetId: l.targetId,
+		})),
+	);
 }
 
-async function insertPlan(db: BacklogDb, item: BacklogItem): Promise<void> {
-	if (!item.plan) return;
-	for (let pi = 0; pi < item.plan.length; pi++) {
-		const phase = item.plan[pi];
-		await db.run(
-			"INSERT INTO plan_phases (item_id, idx, name, manual_checks) VALUES (?, ?, ?, ?)",
-			[
-				item.id,
-				pi,
-				phase.name,
-				phase.manualChecks ? JSON.stringify(phase.manualChecks) : null,
-			],
-		);
-		for (let ti = 0; ti < phase.tasks.length; ti++) {
-			const task = phase.tasks[ti];
-			await db.run(
-				"INSERT INTO plan_tasks (item_id, phase_idx, idx, task) VALUES (?, ?, ?, ?)",
-				[item.id, pi, ti, task.task],
-			);
-		}
-	}
+async function insertPlan(
+	db: BacklogDatabase,
+	item: BacklogItem,
+): Promise<void> {
+	if (!item.plan?.length) return;
+	await db.insert(planPhases).values(
+		item.plan.map((phase, pi) => ({
+			itemId: item.id,
+			idx: pi,
+			name: phase.name,
+			manualChecks: phase.manualChecks
+				? JSON.stringify(phase.manualChecks)
+				: null,
+		})),
+	);
+	const tasks = item.plan.flatMap((phase, pi) =>
+		phase.tasks.map((task, ti) => ({
+			itemId: item.id,
+			phaseIdx: pi,
+			idx: ti,
+			task: task.task,
+		})),
+	);
+	if (tasks.length) await db.insert(planTasks).values(tasks);
 }
 
 export async function insertItemRelations(
-	db: BacklogDb,
+	db: BacklogDatabase,
 	item: BacklogItem,
 ): Promise<void> {
 	await insertComments(db, item);

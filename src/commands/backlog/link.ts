@@ -1,55 +1,64 @@
 import chalk from "chalk";
+import type { BacklogOrm } from "./BacklogOrm";
+import { links } from "./backlogSchema";
 import { hasCycle } from "./hasCycle";
-import { loadAndFindItem, saveBacklog } from "./shared";
+import { loadDependencyGraph } from "./loadDependencyGraph";
+import { loadItem } from "./loadItem";
+import { getReady } from "./shared";
 import type { BacklogLinkType } from "./types";
 import { validateLinkTarget } from "./validateLinkTarget";
+
+/** Log a red error and return `undefined`, the "invalid" sentinel for the helpers below. */
+function fail(message: string): undefined {
+	console.log(chalk.red(message));
+	return undefined;
+}
+
+function parseLinkType(type: string | undefined): BacklogLinkType | undefined {
+	const linkType = (type ?? "relates-to") as BacklogLinkType;
+	if (linkType === "relates-to" || linkType === "depends-on") return linkType;
+	return fail(`Invalid link type: ${linkType}`);
+}
+
+/** Whether adding the (depends-on) edge would close a dependency cycle, logging if so. */
+async function createsCycle(
+	orm: BacklogOrm,
+	linkType: BacklogLinkType,
+	fromNum: number,
+	toNum: number,
+): Promise<boolean> {
+	if (linkType !== "depends-on") return false;
+	const graph = await loadDependencyGraph(orm);
+	if (!hasCycle(graph, fromNum, toNum)) return false;
+	fail(`Cannot add dependency: #${fromNum} → #${toNum} would create a cycle.`);
+	return true;
+}
 
 export async function link(
 	fromId: string,
 	toId: string,
 	opts: { type?: string },
 ): Promise<void> {
-	const linkType = (opts.type ?? "relates-to") as BacklogLinkType;
-	if (linkType !== "relates-to" && linkType !== "depends-on") {
-		console.log(chalk.red(`Invalid link type: ${linkType}`));
-		return;
-	}
+	const linkType = parseLinkType(opts.type);
+	if (!linkType) return;
 
 	const fromNum = Number.parseInt(fromId, 10);
 	const toNum = Number.parseInt(toId, 10);
+	if (fromNum === toNum) return void fail("Cannot link an item to itself.");
 
-	if (fromNum === toNum) {
-		console.log(chalk.red("Cannot link an item to itself."));
-		return;
-	}
+	const { orm } = await getReady();
+	const fromItem = await loadItem(orm, fromNum);
+	if (!fromItem) return void fail(`Item #${fromNum} not found.`);
+	const toItem = await loadItem(orm, toNum);
+	if (!toItem) return void fail(`Item #${toNum} not found.`);
 
-	const result = await loadAndFindItem(fromId);
-	if (!result) return;
-	const { items, item: fromItem } = result;
+	if (!validateLinkTarget(fromItem, fromNum, toNum, linkType)) return;
+	if (await createsCycle(orm, linkType, fromNum, toNum)) return;
 
-	const toItem = validateLinkTarget(
-		items,
-		fromItem,
-		fromId,
-		toId,
-		toNum,
-		linkType,
-	);
-	if (!toItem) return;
-
-	if (linkType === "depends-on" && hasCycle(items, fromNum, toNum)) {
-		console.log(
-			chalk.red(
-				`Cannot add dependency: #${fromId} → #${toId} would create a circular dependency.`,
-			),
-		);
-		return;
-	}
-
-	if (!fromItem.links) fromItem.links = [];
-	fromItem.links.push({ type: linkType, targetId: toNum });
-	await saveBacklog(items);
+	await orm
+		.insert(links)
+		.values({ itemId: fromNum, type: linkType, targetId: toNum });
 	console.log(
-		chalk.green(`Linked #${fromId} ${linkType} #${toId} (${toItem.name})`),
+		chalk.green(`Linked #${fromNum} ${linkType} #${toNum} (${toItem.name})`),
 	);
 }

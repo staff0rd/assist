@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import type { items } from "../backlogSchema";
 
 type UpdateOptions = {
 	name?: string;
@@ -7,7 +8,15 @@ type UpdateOptions = {
 	ac?: string[];
 };
 
-export function buildUpdateSql(options: UpdateOptions) {
+/** The subset of item columns an update touches, as a Drizzle `.set()` payload. */
+type ItemUpdate = Partial<typeof items.$inferInsert>;
+
+/**
+ * Validate the requested item edits and build a Drizzle `.set()` payload plus a
+ * human-readable list of the fields changed. Returns `undefined` (after logging)
+ * when there is nothing to update or the type is invalid.
+ */
+export function buildUpdateValues(options: UpdateOptions) {
 	const { name, desc, type, ac } = options;
 
 	if (!name && !desc && !type && !ac) {
@@ -22,30 +31,25 @@ export function buildUpdateSql(options: UpdateOptions) {
 		return undefined;
 	}
 
-	const sets: string[] = [];
-	const params: unknown[] = [];
+	const set: ItemUpdate = {};
 	const fieldNames: string[] = [];
 
 	if (name) {
-		sets.push("name = ?");
-		params.push(name);
+		set.name = name;
 		fieldNames.push("name");
 	}
 	if (desc) {
-		sets.push("description = ?");
-		params.push(desc);
+		set.description = desc;
 		fieldNames.push("description");
 	}
 	if (type) {
-		sets.push("type = ?");
-		params.push(type);
+		set.type = type;
 		fieldNames.push("type");
 	}
 	if (ac) {
-		sets.push("acceptance_criteria = ?");
-		params.push(JSON.stringify(ac));
+		set.acceptanceCriteria = JSON.stringify(ac);
 		fieldNames.push("acceptance criteria");
 	}
 
-	return { sets, params, fields: fieldNames.join(", ") };
+	return { set, fields: fieldNames.join(", ") };
 }
