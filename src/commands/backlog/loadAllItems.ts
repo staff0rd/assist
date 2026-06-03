@@ -11,6 +11,7 @@ type ItemRow = {
 	acceptance_criteria: string;
 	status: string;
 	current_phase: number | null;
+	origin: string;
 };
 
 async function loadLinks(
@@ -34,6 +35,7 @@ async function rowToItem(db: BacklogDb, row: ItemRow): Promise<BacklogItem> {
 		name: row.name,
 		acceptanceCriteria: JSON.parse(row.acceptance_criteria),
 		status: row.status as BacklogStatus,
+		origin: row.origin,
 	};
 	if (row.description != null) item.description = row.description;
 	if (row.current_phase != null) item.currentPhase = row.current_phase;
@@ -53,7 +55,7 @@ export async function loadAllItems(
 	origin?: string,
 ): Promise<BacklogFile> {
 	const rows = await db.all<ItemRow>(
-		`SELECT id, type, name, description, acceptance_criteria, status, current_phase
+		`SELECT id, type, name, description, acceptance_criteria, status, current_phase, origin
 		 FROM items
 		 WHERE (?::text IS NULL OR origin = ?)
 		 ORDER BY id`,

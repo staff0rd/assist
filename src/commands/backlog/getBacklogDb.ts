@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { Pool } from "pg";
+import { Pool, type PoolClient } from "pg";
 import { loadConfig } from "../../shared/loadConfig";
 import { type BacklogDb, makeBacklogDb } from "./BacklogDb";
 import { ensureSchema } from "./ensureSchema";
@@ -54,6 +54,28 @@ export function getBacklogDb(): Promise<BacklogDb> {
 		return db;
 	})();
 	return _connecting;
+}
+
+/**
+ * Check out a dedicated pooled client and run {@link fn} against it, releasing
+ * the client afterwards. Connecting first ensures the schema exists. Used for
+ * COPY streaming, which needs a raw pg client rather than the {@link BacklogDb}
+ * query surface. Throws when the backend is not a pg pool (e.g. PGlite in tests).
+ */
+export async function withBacklogClient<T>(
+	fn: (client: PoolClient) => Promise<T>,
+): Promise<T> {
+	await getBacklogDb();
+	const pool = _pool;
+	if (!pool) {
+		throw new Error("COPY streaming requires a pooled Postgres connection.");
+	}
+	const client = await pool.connect();
+	try {
+		return await fn(client);
+	} finally {
+		client.release();
+	}
 }
 
 /**

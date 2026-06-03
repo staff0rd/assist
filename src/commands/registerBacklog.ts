@@ -1,14 +1,15 @@
 import type { Command } from "commander";
 import {
 	next as backlogNext,
-	phaseDone as backlogPhaseDone,
-	plan as backlogPlan,
 	show as backlogShow,
 	web as backlogWeb,
 } from "./backlog";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
+import { registerExportCommand } from "./backlog/registerExportCommand";
+import { registerImportCommand } from "./backlog/registerImportCommand";
 import { registerItemCommands } from "./backlog/registerItemCommands";
 import { registerLinkCommands } from "./backlog/registerLinkCommands";
+import { registerPlanCommands } from "./backlog/registerPlanCommands";
 import { registerRewindCommand } from "./backlog/registerRewindCommand";
 import { registerRunCommand } from "./backlog/registerRunCommand";
 import { registerSearchCommand } from "./backlog/registerSearchCommand";
@@ -30,18 +31,6 @@ function registerWebCommand(cmd: Command): void {
 		.description("Open the backlog tab in the web dashboard")
 		.option("-p, --port <number>", "Port to listen on", "3100")
 		.action(backlogWeb);
-}
-
-function registerPlanCommands(cmd: Command): void {
-	cmd
-		.command("plan <id>")
-		.description("Display the plan for a backlog item")
-		.action(backlogPlan);
-
-	cmd
-		.command("phase-done <id> <phase> <summary>")
-		.description("Signal that a plan phase is complete")
-		.action(backlogPhaseDone);
 }
 
 function registerNextCommand(cmd: Command): void {
@@ -76,4 +65,6 @@ export function registerBacklog(program: Command): void {
 	registerRunCommand(cmd);
 	registerSearchCommand(cmd);
 	registerUpdateCommands(cmd);
+	registerExportCommand(cmd);
+	registerImportCommand(cmd);
 }

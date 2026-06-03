@@ -22,6 +22,7 @@ acli jira workitem watcher list
 assist activity
 assist backlog --help
 assist backlog comments
+assist backlog export
 assist backlog list
 assist backlog show
 assist backlog view

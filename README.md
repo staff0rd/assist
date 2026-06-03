@@ -130,6 +130,8 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog phase-done <id> <phase> <summary>` - Signal that a plan phase is complete with a summary (used by orchestrator)
 - `assist backlog rewind <id> <phase> --reason <reason>` - Rewind a backlog item to an earlier phase, setting status to in-progress
 - `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude
+- `assist backlog export [file]` - Export the entire backlog database (all tables, all repos) to a file, or stdout if omitted
+- `assist backlog import [file]` - Restore the entire backlog database from a dump (file or stdin), faithfully replacing all data; prompts for confirmation (use `-y, --yes` to skip; required when reading from stdin)
 - `assist backlog web [-p, --port <number>]` - Open the backlog tab in the web dashboard (default port 3100)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API
