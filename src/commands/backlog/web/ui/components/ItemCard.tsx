@@ -1,6 +1,7 @@
 import type { SxProps, Theme } from "@mui/material";
 import { ButtonBase, Chip, Typography } from "@mui/material";
 import type { BacklogItem } from "../types";
+import { typeChipColors } from "./typeChipColors";
 
 const statusIcons: Record<string, string> = {
 	todo: "\u25cb",
@@ -14,11 +15,6 @@ const statusColors: Record<string, string> = {
 	"in-progress": "warning.main",
 	done: "success.main",
 	wontdo: "error.main",
-};
-
-const typeBadgeColors: Record<string, { bg: string; text: string }> = {
-	story: { bg: "info.light", text: "info.dark" },
-	bug: { bg: "error.light", text: "error.dark" },
 };
 
 const cardSx: SxProps<Theme> = {
@@ -40,16 +36,12 @@ const cardSx: SxProps<Theme> = {
 const idSx: SxProps<Theme> = { color: "text.disabled", flexShrink: 0 };
 const nameSx: SxProps<Theme> = { fontWeight: 500, flex: 1, textAlign: "left" };
 
-function chipSx(badge: { bg: string; text: string }): SxProps<Theme> {
-	return {
-		flexShrink: 0,
-		bgcolor: badge.bg,
-		color: badge.text,
-		fontWeight: 500,
-		fontSize: "0.75rem",
-		height: 22,
-	};
-}
+const chipSx: SxProps<Theme> = {
+	flexShrink: 0,
+	fontWeight: 500,
+	fontSize: "0.75rem",
+	height: 22,
+};
 
 function iconSx(status: string): SxProps<Theme> {
 	return { fontSize: "1.125rem", flexShrink: 0, color: statusColors[status] };
@@ -70,7 +62,8 @@ export function ItemCard({
 			<Chip
 				label={item.type}
 				size="small"
-				sx={chipSx(typeBadgeColors[item.type])}
+				color={typeChipColors[item.type]}
+				sx={chipSx}
 			/>
 			<Typography variant="body2" sx={idSx}>
 				#{item.id}

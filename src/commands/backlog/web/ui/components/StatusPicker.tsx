@@ -1,11 +1,12 @@
 import { Chip, MenuItem, Select } from "@mui/material";
 import type { BacklogItem } from "../types";
+import { statusChipColors } from "./typeChipColors";
 
-const badgeColors: Record<string, { bg: string; text: string }> = {
-	todo: { bg: "action.selected", text: "text.secondary" },
-	"in-progress": { bg: "warning.light", text: "warning.dark" },
-	done: { bg: "success.light", text: "success.dark" },
-	wontdo: { bg: "error.light", text: "error.dark" },
+const selectColors: Record<string, { bg: string; text: string }> = {
+	todo: { bg: "action.selected", text: "text.primary" },
+	"in-progress": { bg: "warning.main", text: "warning.contrastText" },
+	done: { bg: "success.main", text: "success.contrastText" },
+	wontdo: { bg: "error.main", text: "error.contrastText" },
 };
 
 const allStatuses: BacklogItem["status"][] = [
@@ -27,9 +28,8 @@ export function StatusPicker({
 			<Chip
 				label={current}
 				size="small"
+				color={statusChipColors[current]}
 				sx={{
-					bgcolor: badgeColors[current].bg,
-					color: badgeColors[current].text,
 					fontWeight: 500,
 					fontSize: "0.75rem",
 				}}
@@ -45,11 +45,14 @@ export function StatusPicker({
 				fontSize: "0.75rem",
 				fontWeight: 500,
 				borderRadius: 4,
-				bgcolor: badgeColors[current].bg,
-				color: badgeColors[current].text,
+				bgcolor: selectColors[current].bg,
+				color: selectColors[current].text,
 				"& .MuiSelect-select": {
 					py: 0.5,
 					px: 1.5,
+				},
+				"& .MuiSelect-icon": {
+					color: "inherit",
 				},
 			}}
 		>

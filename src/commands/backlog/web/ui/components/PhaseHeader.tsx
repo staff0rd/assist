@@ -1,23 +1,25 @@
+import type { ChipProps } from "@mui/material";
 import { Chip, Stack, Typography } from "@mui/material";
 import type { PhaseStatus, PlanPhase } from "../types";
 import { RewindAction } from "./RewindAction";
 
 const statusBadge: Record<
 	PhaseStatus,
-	{ label: string; bg: string; text: string }
+	{ label: string; color: ChipProps["color"] }
 > = {
-	done: { label: "Done", bg: "success.light", text: "success.dark" },
-	current: { label: "In Progress", bg: "info.light", text: "info.dark" },
-	upcoming: {
-		label: "Upcoming",
-		bg: "action.selected",
-		text: "text.secondary",
-	},
+	done: { label: "Done", color: "success" },
+	current: { label: "In Progress", color: "info" },
+	upcoming: { label: "Upcoming", color: "default" },
 };
 
 const headerSx = { alignItems: "center", mb: 1 } as const;
 
 const nameSx = { fontWeight: 500 } as const;
+
+const chipSx = {
+	fontWeight: 500,
+	fontSize: "0.75rem",
+} as const;
 
 export function PhaseHeader({
 	phase,
@@ -39,7 +41,7 @@ export function PhaseHeader({
 			<Typography sx={nameSx}>
 				Phase {index + 1}: {phase.name}
 			</Typography>
-			<Chip label={badge.label} size="small" sx={chipSx(badge)} />
+			<Chip label={badge.label} size="small" color={badge.color} sx={chipSx} />
 			{canRewind && (
 				<RewindAction
 					itemId={itemId}
@@ -50,13 +52,4 @@ export function PhaseHeader({
 			)}
 		</Stack>
 	);
-}
-
-function chipSx(badge: { bg: string; text: string }) {
-	return {
-		bgcolor: badge.bg,
-		color: badge.text,
-		fontWeight: 500,
-		fontSize: "0.75rem",
-	} as const;
 }
