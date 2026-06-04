@@ -17,19 +17,25 @@ export function AppShell() {
 	const navigate = useNavigate();
 	const tabIndex = TAB_PATHS.findIndex((p) => location.pathname.startsWith(p));
 
+	// Tabs onChange doesn't fire when re-clicking the selected tab, so use
+	// per-tab onClick to support navigating back to a section root (e.g. from
+	// /backlog/items/:id to /backlog)
+	const goTo = (path: string) => {
+		if (location.pathname !== path) navigate(path);
+	};
+
 	return (
 		<>
 			<AppBar position="fixed" elevation={1} sx={appBarSx}>
 				<Toolbar variant="dense" sx={toolbarSx}>
 					<Tabs
 						value={tabIndex === -1 ? 0 : tabIndex}
-						onChange={(_e, v) => navigate(TAB_PATHS[v])}
 						textColor="inherit"
 						indicatorColor="secondary"
 						sx={{ flexGrow: 1 }}
 					>
-						<Tab label="Sessions" />
-						<Tab label="Backlog" />
+						<Tab label="Sessions" onClick={() => goTo("/sessions")} />
+						<Tab label="Backlog" onClick={() => goTo("/backlog")} />
 					</Tabs>
 				</Toolbar>
 			</AppBar>
