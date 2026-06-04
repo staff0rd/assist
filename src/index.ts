@@ -153,7 +153,7 @@ registerDeny(program);
 
 program
 	.command("next")
-	.description("Alias for backlog next -w")
+	.description("Alias for backlog next")
 	.action(() => backlogNext({ allowEdits: true }));
 
 program

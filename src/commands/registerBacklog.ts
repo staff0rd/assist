@@ -37,9 +37,10 @@ function registerNextCommand(cmd: Command): void {
 	cmd
 		.command("next")
 		.description("Pick and run the next backlog item, or open /draft if none")
-		.option("-w, --write", "Run Claude with auto permission mode")
+		.option("-w, --write", "Run Claude with auto permission mode (default)")
+		.option("--no-write", "Run Claude without auto permission mode")
 		.action((opts: { write?: boolean }) =>
-			backlogNext({ allowEdits: opts.write }),
+			backlogNext({ allowEdits: opts.write !== false }),
 		);
 }
 

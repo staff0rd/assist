@@ -235,7 +235,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist sessions` - Start the web dashboard (same as `sessions web`)
 - `assist sessions web [-p, --port <number>]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals (default port 3100)
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
-- `assist next` - Alias for `backlog next -w`
+- `assist next` - Alias for `backlog next`
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
 - `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given
