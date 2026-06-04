@@ -1,3 +1,10 @@
+# [0.230.0](https://github.com/staff0rd/assist/compare/v0.229.0...v0.230.0) (2026-06-04)
+
+
+### Features
+
+* more claude.md ([8b2ce6b](https://github.com/staff0rd/assist/commit/8b2ce6b5036e388867f3a389ad900dbab62fa86b))
+
 # [0.229.0](https://github.com/staff0rd/assist/compare/v0.228.0...v0.229.0) (2026-06-03)
 
 
