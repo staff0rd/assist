@@ -1,3 +1,10 @@
+# [0.234.0](https://github.com/staff0rd/assist/compare/v0.233.2...v0.234.0) (2026-06-04)
+
+
+### Features
+
+* backlog refine alias ([c275c64](https://github.com/staff0rd/assist/commit/c275c64b04d50cfe596721cd075eb5e19a23b334))
+
 ## [0.233.2](https://github.com/staff0rd/assist/compare/v0.233.1...v0.233.2) (2026-06-04)
 
 
