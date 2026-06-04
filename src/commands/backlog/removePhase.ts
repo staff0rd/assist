@@ -7,7 +7,7 @@ import { adjustCurrentPhase, reindexPhases } from "./reindexPhases";
 export async function removePhase(id: string, phase: string): Promise<void> {
 	const found = await findPhase(id, phase);
 	if (!found) return;
-	const { result, orm, itemId, phaseIdx } = found;
+	const { item, orm, itemId, phaseIdx } = found;
 
 	await orm.transaction(async (tx) => {
 		await tx
@@ -19,7 +19,7 @@ export async function removePhase(id: string, phase: string): Promise<void> {
 			.delete(planPhases)
 			.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)));
 		await reindexPhases(tx, itemId);
-		await adjustCurrentPhase(tx, result.item, phaseIdx);
+		await adjustCurrentPhase(tx, item, phaseIdx);
 	});
 
 	console.log(

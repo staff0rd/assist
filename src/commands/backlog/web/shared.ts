@@ -1,6 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
-import { loadBacklog, saveBacklog, searchBacklog } from "../shared";
+import { deleteItem as deleteItemById } from "../deleteItem";
+import { loadItem } from "../loadItem";
+import { getReady, loadBacklog, searchBacklog } from "../shared";
+import type { BacklogItem } from "../types";
+import { updateStatus } from "../updateStatus";
 import { parseStatusBody } from "./parseItemBody";
 
 export async function listItems(
@@ -13,13 +17,13 @@ export async function listItems(
 }
 
 export async function findItemOr404(res: ServerResponse, id: number) {
-	const items = await loadBacklog();
-	const item = items.find((i) => i.id === id);
+	const { orm } = await getReady();
+	const item = await loadItem(orm, id);
 	if (!item) {
 		respondJson(res, 404, { error: "Not found" });
 		return undefined;
 	}
-	return { items, item };
+	return { orm, item };
 }
 
 export async function getItemById(
@@ -36,7 +40,7 @@ export async function deleteItem(
 ): Promise<void> {
 	const result = await findItemOr404(res, id);
 	if (!result) return;
-	await saveBacklog(result.items.filter((i) => i.id !== id));
+	await deleteItemById(result.orm, id);
 	respondJson(res, 200, result.item);
 }
 
@@ -48,7 +52,7 @@ export async function patchItemStatus(
 	const { status } = await parseStatusBody(req);
 	const result = await findItemOr404(res, id);
 	if (!result) return;
-	result.item.status = status;
-	await saveBacklog(result.items);
-	respondJson(res, 200, result.item);
+	await updateStatus(result.orm, id, status);
+	const updated: BacklogItem = { ...result.item, status };
+	respondJson(res, 200, updated);
 }

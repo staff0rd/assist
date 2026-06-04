@@ -13,9 +13,9 @@ export async function updatePhase(
 ): Promise<void> {
 	const found = await findPhase(id, phase);
 	if (!found) return;
-	const { result, orm, itemId, phaseIdx } = found;
+	const { item, orm, itemId, phaseIdx } = found;
 
-	const resolved = resolvePhaseFields(options, result.item.plan?.[phaseIdx]);
+	const resolved = resolvePhaseFields(options, item.plan?.[phaseIdx]);
 	if (!resolved.ok) {
 		console.log(chalk.red(resolved.error));
 		process.exitCode = 1;

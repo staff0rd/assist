@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { resolvePlan } from "./resolvePlan";
-import { loadAndFindItem, setStatus } from "./shared";
+import { findOneItem, setStatus } from "./shared";
 import type { BacklogItem, PlanPhase } from "./types";
 
 export type PreparedRun = {
@@ -10,10 +10,10 @@ export type PreparedRun = {
 };
 
 export async function prepareRun(id: string): Promise<PreparedRun | undefined> {
-	const result = await loadAndFindItem(id);
-	if (!result) return undefined;
+	const found = await findOneItem(id);
+	if (!found) return undefined;
 
-	const { item } = result;
+	const { item } = found;
 	const plan = resolvePlan(item);
 	const startPhase = (item.currentPhase ?? 1) - 1;
 

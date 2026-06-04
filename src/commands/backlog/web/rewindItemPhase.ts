@@ -1,8 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { eq } from "drizzle-orm";
 import { respondJson } from "../../../shared/web";
-import { addComment } from "../addComment";
-import { loadBacklog, saveBacklog } from "../shared";
+import { appendComment } from "../appendComment";
+import { items } from "../backlogSchema";
+import { loadItem } from "../loadItem";
 import { parseRewindBody } from "./parseItemBody";
+import { findItemOr404 } from "./shared";
 
 export async function rewindItemPhase(
 	req: IncomingMessage,
@@ -10,12 +13,9 @@ export async function rewindItemPhase(
 	id: number,
 ): Promise<void> {
 	const { phase, reason } = await parseRewindBody(req);
-	const items = await loadBacklog();
-	const item = items.find((i) => i.id === id);
-	if (!item) {
-		respondJson(res, 404, { error: "Not found" });
-		return;
-	}
+	const result = await findItemOr404(res, id);
+	if (!result) return;
+	const { orm, item } = result;
 
 	const error = validateRewind(item, phase);
 	if (error) {
@@ -24,15 +24,17 @@ export async function rewindItemPhase(
 	}
 
 	const phaseName = item.plan?.[phase - 1].name;
-	addComment(
-		item,
+	await appendComment(
+		orm,
+		id,
 		`Rewound to phase ${phase} (${phaseName}): ${reason}`,
-		phase,
+		{ phase },
 	);
-	item.currentPhase = phase;
-	item.status = "in-progress";
-	await saveBacklog(items);
-	respondJson(res, 200, item);
+	await orm
+		.update(items)
+		.set({ currentPhase: phase, status: "in-progress" })
+		.where(eq(items.id, id));
+	respondJson(res, 200, await loadItem(orm, id));
 }
 
 function validateRewind(
@@ -43,7 +45,7 @@ function validateRewind(
 		return "Item has no plan phases.";
 	}
 	if (phase < 1 || phase > item.plan.length) {
-		return `Phase ${phase} does not exist. Valid range: 1\u2013${item.plan.length}.`;
+		return `Phase ${phase} does not exist. Valid range: 1–${item.plan.length}.`;
 	}
 	const currentPhase = item.currentPhase ?? 1;
 	if (phase >= currentPhase) {

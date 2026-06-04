@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { loadAndFindItem } from "./shared";
+import { findOneItem } from "./shared";
 
 export async function plan(id: string): Promise<void> {
-	const result = await loadAndFindItem(id);
-	if (!result) return;
+	const found = await findOneItem(id);
+	if (!found) return;
 
-	const { item } = result;
+	const { item } = found;
 
 	if (!item.plan || item.plan.length === 0) {
 		console.log(chalk.dim("No plan defined for this item."));

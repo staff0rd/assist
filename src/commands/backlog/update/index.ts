@@ -1,8 +1,7 @@
 import chalk from "chalk";
 import { eq } from "drizzle-orm";
 import { items } from "../backlogSchema";
-import { getBacklogOrm } from "../getBacklogOrm";
-import { loadAndFindItem } from "../shared";
+import { findOneItem } from "../shared";
 import { applyAcMutations, hasAcMutations } from "./applyAcMutations";
 import { buildUpdateValues } from "./buildUpdateValues";
 
@@ -20,8 +19,8 @@ export async function update(
 	id: string,
 	options: UpdateOptions,
 ): Promise<void> {
-	const result = await loadAndFindItem(id);
-	if (!result) return;
+	const found = await findOneItem(id);
+	if (!found) return;
 
 	let ac = options.ac;
 	if (hasAcMutations(options)) {
@@ -32,7 +31,7 @@ export async function update(
 			process.exitCode = 1;
 			return;
 		}
-		const mutation = applyAcMutations(result.item.acceptanceCriteria, options);
+		const mutation = applyAcMutations(found.item.acceptanceCriteria, options);
 		if (!mutation.ok) {
 			console.log(chalk.red(mutation.error));
 			process.exitCode = 1;
@@ -44,8 +43,8 @@ export async function update(
 	const built = buildUpdateValues({ ...options, ac });
 	if (!built) return;
 
-	const orm = await getBacklogOrm();
-	const itemId = result.item.id;
+	const { orm } = found;
+	const itemId = found.item.id;
 
 	await orm.update(items).set(built.set).where(eq(items.id, itemId));
 

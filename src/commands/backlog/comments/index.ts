@@ -1,12 +1,12 @@
 import chalk from "chalk";
 import { formatComment } from "../formatComment";
-import { loadAndFindItem } from "../shared";
+import { findOneItem } from "../shared";
 
 export async function comments(id: string): Promise<void> {
-	const result = await loadAndFindItem(id);
-	if (!result) process.exit(1);
+	const found = await findOneItem(id);
+	if (!found) process.exit(1);
 
-	const { item } = result;
+	const { item } = found;
 	const entries = item.comments ?? [];
 
 	if (entries.length === 0) {

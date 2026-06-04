@@ -6,8 +6,7 @@ import type { BacklogComment } from "./types";
 /**
  * Append a single comment to an item with one targeted insert. The next `idx` is
  * computed in-statement via a subquery, so this is a single round-trip and never
- * loads or rewrites the rest of the backlog — the targeted-write counterpart to
- * the in-memory {@link ./addComment} used by the load-all/save-all paths.
+ * loads or rewrites the rest of the backlog.
  */
 export async function appendComment(
 	orm: BacklogOrm,

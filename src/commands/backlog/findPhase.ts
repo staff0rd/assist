@@ -1,15 +1,14 @@
 import chalk from "chalk";
 import { and, count, eq } from "drizzle-orm";
 import { planPhases } from "./backlogSchema";
-import { getBacklogOrm } from "./getBacklogOrm";
-import { loadAndFindItem } from "./shared";
+import { findOneItem } from "./shared";
 
 export async function findPhase(id: string, phase: string) {
-	const result = await loadAndFindItem(id);
-	if (!result) return undefined;
+	const found = await findOneItem(id);
+	if (!found) return undefined;
 
-	const orm = await getBacklogOrm();
-	const itemId = result.item.id;
+	const { orm, item } = found;
+	const itemId = item.id;
 	const phaseIdx = Number.parseInt(phase, 10) - 1;
 
 	const [row] = await orm
@@ -25,5 +24,5 @@ export async function findPhase(id: string, phase: string) {
 		return undefined;
 	}
 
-	return { result, orm, itemId, phaseIdx };
+	return { item, orm, itemId, phaseIdx };
 }

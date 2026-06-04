@@ -1,13 +1,23 @@
 import chalk from "chalk";
-import type { BacklogFile, BacklogItem } from "../types";
+import type { BacklogOrm } from "../BacklogOrm";
+import type { BacklogItem } from "../types";
+import { loadLinkTargets } from "./loadLinkTargets";
 
-export function printLinks(item: BacklogItem, items: BacklogFile): void {
+export async function printLinks(
+	orm: BacklogOrm,
+	item: BacklogItem,
+): Promise<void> {
 	const links = item.links ?? [];
 	if (links.length === 0) return;
 
+	const targets = await loadLinkTargets(
+		orm,
+		links.map((l) => l.targetId),
+	);
+
 	console.log(chalk.bold("Links"));
 	for (const link of links) {
-		const target = items.find((i) => i.id === link.targetId);
+		const target = targets.find((i) => i.id === link.targetId);
 		const typeLabel =
 			link.type === "depends-on"
 				? chalk.red("depends-on")

@@ -1,12 +1,11 @@
 import chalk from "chalk";
-import { addComment } from "../addComment";
-import { loadAndFindItem, saveBacklog } from "../shared";
+import { appendComment } from "../appendComment";
+import { findOneItem } from "../shared";
 
 export async function comment(id: string, text: string): Promise<void> {
-	const result = await loadAndFindItem(id);
-	if (!result) process.exit(1);
+	const found = await findOneItem(id);
+	if (!found) process.exit(1);
 
-	addComment(result.item, text);
-	await saveBacklog(result.items);
+	await appendComment(found.orm, found.item.id, text);
 	console.log(chalk.green(`Comment added to item #${id}.`));
 }

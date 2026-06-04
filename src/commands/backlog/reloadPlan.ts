@@ -1,5 +1,5 @@
 import { resolvePlan } from "./resolvePlan";
-import { loadAndFindItem } from "./shared";
+import { findOneItem } from "./shared";
 import type { PlanPhase } from "./types";
 
 /**
@@ -11,7 +11,7 @@ import type { PlanPhase } from "./types";
  * back to the plan they already hold.
  */
 export async function reloadPlan(id: number): Promise<PlanPhase[] | undefined> {
-	const result = await loadAndFindItem(String(id));
-	if (!result) return undefined;
-	return resolvePlan(result.item);
+	const found = await findOneItem(String(id));
+	if (!found) return undefined;
+	return resolvePlan(found.item);
 }

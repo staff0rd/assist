@@ -8,21 +8,32 @@ import {
 } from "vitest";
 
 vi.mock("../shared", () => ({
-	loadAndFindItem: vi.fn(),
-	saveBacklog: vi.fn(),
+	findOneItem: vi.fn(),
 }));
 
-vi.mock("../addComment", () => ({
-	addPhaseSummary: vi.fn(),
+vi.mock("../updateStatus", () => ({
+	updateStatus: vi.fn(),
 }));
 
-import { addPhaseSummary } from "../addComment";
-import { loadAndFindItem, saveBacklog } from "../shared";
+vi.mock("../appendComment", () => ({
+	appendComment: vi.fn(),
+}));
+
+import { appendComment } from "../appendComment";
+import { findOneItem } from "../shared";
+import { updateStatus } from "../updateStatus";
 import { done } from "./index";
 
-const mockLoadAndFindItem = loadAndFindItem as unknown as MockInstance;
-const mockSaveBacklog = saveBacklog as unknown as MockInstance;
-const mockAddPhaseSummary = addPhaseSummary as unknown as MockInstance;
+const mockFindOneItem = findOneItem as unknown as MockInstance;
+const mockUpdateStatus = updateStatus as unknown as MockInstance;
+const mockAppendComment = appendComment as unknown as MockInstance;
+
+const orm = {} as never;
+
+// biome-ignore lint/suspicious/noExplicitAny: test fixtures use partial items
+function found(item: any) {
+	return { orm, item };
+}
 
 describe("done", () => {
 	beforeEach(() => {
@@ -31,71 +42,62 @@ describe("done", () => {
 	});
 
 	it("should mark an item without a plan as done", async () => {
-		const items = [{ id: 1, name: "Task", status: "in-progress" }];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		const item = { id: 1, name: "Task", status: "in-progress" };
+		mockFindOneItem.mockResolvedValue(found(item));
 
 		await done("1");
 
-		expect(items[0].status).toBe("done");
-		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
+		expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
 	});
 
 	it("should mark an item with all phases completed as done", async () => {
-		const items = [
-			{
-				id: 1,
-				name: "Task",
-				status: "in-progress",
-				plan: [{ name: "Phase 1", tasks: [] }],
-				currentPhase: 2,
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			plan: [{ name: "Phase 1", tasks: [] }],
+			currentPhase: 2,
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
 
 		await done("1");
 
-		expect(items[0].status).toBe("done");
-		expect(mockSaveBacklog).toHaveBeenCalledWith(items);
+		expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
 	});
 
 	it("should reject completion when phases are pending", async () => {
-		const items = [
-			{
-				id: 1,
-				name: "Task",
-				status: "in-progress",
-				plan: [
-					{ name: "Implement", tasks: [] },
-					{ name: "Review", tasks: [] },
-				],
-				currentPhase: 1,
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			plan: [
+				{ name: "Implement", tasks: [] },
+				{ name: "Review", tasks: [] },
+			],
+			currentPhase: 1,
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
 
 		await done("1");
 
-		expect(items[0].status).toBe("in-progress");
-		expect(mockSaveBacklog).not.toHaveBeenCalled();
+		expect(mockUpdateStatus).not.toHaveBeenCalled();
 		expect(process.exitCode).toBe(1);
 	});
 
 	it("should list pending phase names", async () => {
 		const consoleSpy = vi.spyOn(console, "log");
-		const items = [
-			{
-				id: 1,
-				name: "Task",
-				status: "in-progress",
-				plan: [
-					{ name: "Implement", tasks: [] },
-					{ name: "Review", tasks: [] },
-					{ name: "Deploy", tasks: [] },
-				],
-				currentPhase: 2,
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			plan: [
+				{ name: "Implement", tasks: [] },
+				{ name: "Review", tasks: [] },
+				{ name: "Deploy", tasks: [] },
+			],
+			currentPhase: 2,
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
 
 		await done("1");
 
@@ -107,50 +109,47 @@ describe("done", () => {
 	});
 
 	it("should treat missing currentPhase as 0 phases completed", async () => {
-		const items = [
-			{
-				id: 1,
-				name: "Task",
-				status: "in-progress",
-				plan: [{ name: "Phase 1", tasks: [] }],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			plan: [{ name: "Phase 1", tasks: [] }],
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
 
 		await done("1");
 
-		expect(items[0].status).toBe("in-progress");
-		expect(mockSaveBacklog).not.toHaveBeenCalled();
+		expect(mockUpdateStatus).not.toHaveBeenCalled();
 		expect(process.exitCode).toBe(1);
 	});
 
 	it("should store a phase summary when provided", async () => {
-		const items = [
-			{
-				id: 1,
-				name: "Task",
-				status: "in-progress",
-				currentPhase: 3,
-				plan: [
-					{ name: "A", tasks: [] },
-					{ name: "B", tasks: [] },
-				],
-			},
-		];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			currentPhase: 3,
+			plan: [
+				{ name: "A", tasks: [] },
+				{ name: "B", tasks: [] },
+			],
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
 
 		await done("1", "All done");
 
-		expect(mockAddPhaseSummary).toHaveBeenCalledWith(items[0], "All done", 3);
+		expect(mockAppendComment).toHaveBeenCalledWith(orm, 1, "All done", {
+			phase: 3,
+			type: "summary",
+		});
 	});
 
 	it("should allow completion with an empty plan", async () => {
-		const items = [{ id: 1, name: "Task", status: "in-progress", plan: [] }];
-		mockLoadAndFindItem.mockReturnValue({ items, item: items[0] });
+		const item = { id: 1, name: "Task", status: "in-progress", plan: [] };
+		mockFindOneItem.mockResolvedValue(found(item));
 
 		await done("1");
 
-		expect(items[0].status).toBe("done");
-		expect(mockSaveBacklog).toHaveBeenCalled();
+		expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
 	});
 });

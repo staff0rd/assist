@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { formatComment } from "../formatComment";
-import { loadAndFindItem } from "../shared";
+import { findOneItem } from "../shared";
 import type { BacklogItem, PlanPhase } from "../types";
 import { printLinks } from "./printLinks";
 import { printPhaseTasks } from "./printPhaseTasks";
@@ -48,10 +48,10 @@ function printAcceptanceCriteria(criteria: string[]): void {
 }
 
 export async function show(id: string): Promise<void> {
-	const result = await loadAndFindItem(id);
-	if (!result) process.exit(1);
+	const found = await findOneItem(id);
+	if (!found) process.exit(1);
 
-	const { item, items } = result;
+	const { orm, item } = found;
 	printHeader(item);
 
 	if (item.description) {
@@ -61,7 +61,7 @@ export async function show(id: string): Promise<void> {
 	}
 
 	printAcceptanceCriteria(item.acceptanceCriteria);
-	printLinks(item, items);
+	await printLinks(orm, item);
 	printPlan(item);
 	printComments(item);
 }

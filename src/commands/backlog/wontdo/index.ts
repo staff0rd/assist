@@ -1,18 +1,19 @@
 import chalk from "chalk";
-import { addPhaseSummary } from "../addComment";
-import { loadAndFindItem, saveBacklog } from "../shared";
+import { appendComment } from "../appendComment";
+import { findOneItem } from "../shared";
+import { updateStatus } from "../updateStatus";
 
 export async function wontdo(id: string, reason?: string): Promise<void> {
-	const result = await loadAndFindItem(id);
-	if (!result) return;
+	const found = await findOneItem(id);
+	if (!found) return;
 
-	result.item.status = "wontdo";
+	const { orm, item } = found;
+	await updateStatus(orm, item.id, "wontdo");
 
 	if (reason) {
-		const phase = result.item.currentPhase ?? 1;
-		addPhaseSummary(result.item, reason, phase);
+		const phase = item.currentPhase ?? 1;
+		await appendComment(orm, item.id, reason, { phase, type: "summary" });
 	}
 
-	await saveBacklog(result.items);
-	console.log(chalk.red(`Won't do item #${id}: ${result.item.name}`));
+	console.log(chalk.red(`Won't do item #${id}: ${item.name}`));
 }

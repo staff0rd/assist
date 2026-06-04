@@ -7,9 +7,10 @@ import { findBacklogUp } from "./findBacklogUp";
 import { getBacklogOrm } from "./getBacklogOrm";
 import { getCurrentOrigin } from "./getCurrentOrigin";
 import { loadAllItems } from "./loadAllItems";
+import { loadItem } from "./loadItem";
 import { saveAllItems } from "./saveAllItems";
 import { searchItemIds } from "./searchItemIds";
-import type { BacklogFile, BacklogStatus } from "./types";
+import type { BacklogFile, BacklogItem, BacklogStatus } from "./types";
 import { updateCurrentPhase } from "./updateCurrentPhase";
 import { updateStatus } from "./updateStatus";
 
@@ -53,23 +54,33 @@ export async function searchBacklog(query: string): Promise<BacklogFile> {
 	return allItems.filter((item) => ids.includes(item.id));
 }
 
+/**
+ * Bulk-reconcile the set of items belonging to `origin`. Retained for
+ * whole-backlog tooling (import/restore); per-item commands use targeted writes.
+ *
+ * @public
+ */
 export async function saveBacklog(items: BacklogFile): Promise<void> {
 	const { orm } = await getReady();
 	await saveAllItems(orm, items, getOrigin());
 }
 
-function findItem(items: BacklogFile, id: number) {
-	return items.find((item) => item.id === id);
-}
-
-export async function loadAndFindItem(id: string) {
-	const items = await loadBacklog();
-	const item = findItem(items, Number.parseInt(id, 10));
+/**
+ * Load a single item by id with one targeted read, returning it alongside the
+ * resolved orm so callers can follow up with targeted writes. Prints a not-found
+ * message and returns `undefined` when no item with that id exists.
+ */
+export async function findOneItem(
+	id: string,
+): Promise<{ orm: BacklogOrm; item: BacklogItem } | undefined> {
+	const numId = Number.parseInt(id, 10);
+	const { orm } = await getReady();
+	const item = Number.isNaN(numId) ? undefined : await loadItem(orm, numId);
 	if (!item) {
 		console.log(chalk.red(`Item #${id} not found.`));
 		return undefined;
 	}
-	return { items, item };
+	return { orm, item };
 }
 
 export async function setStatus(

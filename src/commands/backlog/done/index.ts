@@ -1,12 +1,13 @@
 import chalk from "chalk";
-import { addPhaseSummary } from "../addComment";
-import { loadAndFindItem, saveBacklog } from "../shared";
+import { appendComment } from "../appendComment";
+import { findOneItem } from "../shared";
+import { updateStatus } from "../updateStatus";
 
 export async function done(id: string, summary?: string): Promise<void> {
-	const result = await loadAndFindItem(id);
-	if (!result) return;
+	const found = await findOneItem(id);
+	if (!found) return;
 
-	const { item } = result;
+	const { orm, item } = found;
 	if (item.plan && item.plan.length > 0) {
 		const completedCount = (item.currentPhase ?? 1) - 1;
 		const pending = item.plan.slice(completedCount);
@@ -24,13 +25,12 @@ export async function done(id: string, summary?: string): Promise<void> {
 		}
 	}
 
-	item.status = "done";
+	await updateStatus(orm, item.id, "done");
 
 	if (summary) {
 		const phase = item.currentPhase ?? 1;
-		addPhaseSummary(item, summary, phase);
+		await appendComment(orm, item.id, summary, { phase, type: "summary" });
 	}
 
-	await saveBacklog(result.items);
 	console.log(chalk.green(`Completed item #${id}: ${item.name}`));
 }
