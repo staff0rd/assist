@@ -1,3 +1,10 @@
+## [0.230.1](https://github.com/staff0rd/assist/compare/v0.230.0...v0.230.1) (2026-06-04)
+
+
+### Performance Improvements
+
+* targeted per-item backlog writes ([e576d02](https://github.com/staff0rd/assist/commit/e576d0274d844b030a4ca07a873de6e2ad974cea))
+
 # [0.230.0](https://github.com/staff0rd/assist/compare/v0.229.0...v0.230.0) (2026-06-04)
 
 
