@@ -37,7 +37,12 @@ vi.mock("../../shared/exitOnCancel", () => ({
 	exitOnCancel: vi.fn((p: Promise<unknown>) => p),
 }));
 
+vi.mock("../../shared/pullIfConfigured", () => ({
+	pullIfConfigured: vi.fn(),
+}));
+
 import enquirer from "enquirer";
+import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { blockedByHandover } from "./blockedByHandover";
 import { isBlocked } from "./list/shared";
 import { next } from "./next";
@@ -49,6 +54,7 @@ const mockLoadBacklog = loadBacklog as unknown as MockInstance;
 const mockRun = run as unknown as MockInstance;
 const mockPrompt = enquirer.prompt as unknown as MockInstance;
 const mockBlockedByHandover = blockedByHandover as unknown as MockInstance;
+const mockPullIfConfigured = pullIfConfigured as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	return {
@@ -140,6 +146,7 @@ describe("next", () => {
 			expect(mockRun).toHaveBeenCalledTimes(2);
 			expect(mockRun).toHaveBeenNthCalledWith(1, "1", undefined);
 			expect(mockRun).toHaveBeenNthCalledWith(2, "2", undefined);
+			expect(mockPullIfConfigured).toHaveBeenCalledTimes(1);
 		});
 	});
 });

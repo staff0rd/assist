@@ -241,3 +241,5 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given
 - `assist signal next [id]` - Write a next signal to chain into `assist next`; when `id` is supplied, the parent launcher runs that backlog item directly
 
+When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist refine`, `assist next`, and `assist backlog run` run `git pull --ff-only` before doing anything else; if the pull fails the command aborts. `assist next` pulls once per invocation, not per item in its loop.
+

@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
+import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { blockedByHandover } from "./blockedByHandover";
 import { findResumable } from "./findResumable";
@@ -33,28 +34,32 @@ async function selectItem(
 	return selected.match(/#(\d+)/)?.[1] ?? "";
 }
 
+function pickResumable(items: BacklogFile): string | undefined {
+	const resumable = findResumable(items);
+	if (!resumable) return undefined;
+	console.log(
+		chalk.bold(`Resuming in-progress item #${resumable.id}: ${resumable.name}`),
+	);
+	return String(resumable.id);
+}
+
+function autoSelect(unblocked: BacklogItem[]): string {
+	const item = unblocked[0];
+	console.log(chalk.bold(`Auto-selecting item #${item.id}: ${item.name}`));
+	return String(item.id);
+}
+
 async function pickItem(
 	items: BacklogFile,
 	firstPick = false,
 ): Promise<string | undefined> {
-	const resumable = findResumable(items);
-	if (resumable) {
-		console.log(
-			chalk.bold(
-				`Resuming in-progress item #${resumable.id}: ${resumable.name}`,
-			),
-		);
-		return String(resumable.id);
-	}
+	const resumable = pickResumable(items);
+	if (resumable) return resumable;
 
 	const unblocked = findUnblockedTodos(items);
 	if (!unblocked) return undefined;
 
-	if (firstPick && unblocked.length === 1) {
-		const item = unblocked[0];
-		console.log(chalk.bold(`Auto-selecting item #${item.id}: ${item.name}`));
-		return String(item.id);
-	}
+	if (firstPick && unblocked.length === 1) return autoSelect(unblocked);
 
 	const todo = items.filter((i) => i.status === "todo");
 	return selectItem(todo, items);
@@ -62,6 +67,8 @@ async function pickItem(
 
 export async function next(options?: SpawnClaudeOptions): Promise<void> {
 	if (blockedByHandover()) return;
+
+	pullIfConfigured();
 
 	let firstPick = true;
 	while (true) {

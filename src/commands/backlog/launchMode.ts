@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { spawnClaude } from "../../shared/spawnClaude";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
@@ -7,6 +8,7 @@ import { tryRunById } from "./tryRunById";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
 export async function launchMode(slashCommand: string): Promise<void> {
+	pullIfConfigured();
 	process.env.ASSIST_SESSION_ID = String(process.pid);
 	const { child, done } = spawnClaude(`/${slashCommand}`, { allowEdits: true });
 	watchForMarker(child);

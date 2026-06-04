@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { run as backlogRun } from "./run";
 
 export function registerRunCommand(cmd: Command): void {
@@ -8,6 +9,7 @@ export function registerRunCommand(cmd: Command): void {
 		.option("-w, --write", "Run Claude with auto permission mode (default)")
 		.option("--no-write", "Run Claude without auto permission mode")
 		.action(async (id: string, opts: { write?: boolean }) => {
+			pullIfConfigured();
 			await backlogRun(id, { allowEdits: opts.write !== false });
 		});
 }
