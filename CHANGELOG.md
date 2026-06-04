@@ -1,3 +1,10 @@
+## [0.233.2](https://github.com/staff0rd/assist/compare/v0.233.1...v0.233.2) (2026-06-04)
+
+
+### Bug Fixes
+
+* rewind to phase added during review ([6d4d0cd](https://github.com/staff0rd/assist/commit/6d4d0cdd4c734d1d0dc37db7d332c20b0659fcc6))
+
 ## [0.233.1](https://github.com/staff0rd/assist/compare/v0.233.0...v0.233.1) (2026-06-04)
 
 
