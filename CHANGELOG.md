@@ -1,3 +1,10 @@
+# [0.233.0](https://github.com/staff0rd/assist/compare/v0.232.0...v0.233.0) (2026-06-04)
+
+
+### Features
+
+* git pull before backlog commands ([1611b2e](https://github.com/staff0rd/assist/commit/1611b2e598ddc5d64fd28c297d807048e1a8f684))
+
 # [0.232.0](https://github.com/staff0rd/assist/compare/v0.231.1...v0.232.0) (2026-06-04)
 
 
