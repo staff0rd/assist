@@ -1,3 +1,10 @@
+## [0.231.1](https://github.com/staff0rd/assist/compare/v0.231.0...v0.231.1) (2026-06-04)
+
+
+### Bug Fixes
+
+* use theme contrast for backlog chips ([8489663](https://github.com/staff0rd/assist/commit/84896633a64e0127c0642e93197cec87035958ab))
+
 # [0.231.0](https://github.com/staff0rd/assist/compare/v0.230.1...v0.231.0) (2026-06-04)
 
 
