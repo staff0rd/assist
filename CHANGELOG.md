@@ -1,3 +1,10 @@
+## [0.233.1](https://github.com/staff0rd/assist/compare/v0.233.0...v0.233.1) (2026-06-04)
+
+
+### Bug Fixes
+
+* backlog tab navigates back to list ([13cc65e](https://github.com/staff0rd/assist/commit/13cc65e7cb3f8abc3b01f880682d304fe06601b0))
+
 # [0.233.0](https://github.com/staff0rd/assist/compare/v0.232.0...v0.233.0) (2026-06-04)
 
 
