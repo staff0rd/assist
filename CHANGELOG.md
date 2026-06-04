@@ -1,3 +1,10 @@
+# [0.231.0](https://github.com/staff0rd/assist/compare/v0.230.1...v0.231.0) (2026-06-04)
+
+
+### Features
+
+* backlog run/next default to auto mode ([dc56bff](https://github.com/staff0rd/assist/commit/dc56bffbd2ff6071600adf107b9e17062277740b))
+
 ## [0.230.1](https://github.com/staff0rd/assist/compare/v0.230.0...v0.230.1) (2026-06-04)
 
 
