@@ -4,6 +4,7 @@ import {
 	show as backlogShow,
 	web as backlogWeb,
 } from "./backlog";
+import { refine as backlogRefine } from "./backlog/refine";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerExportCommand } from "./backlog/registerExportCommand";
 import { registerImportCommand } from "./backlog/registerImportCommand";
@@ -33,6 +34,14 @@ function registerWebCommand(cmd: Command): void {
 		.action(backlogWeb);
 }
 
+function registerRefineCommand(cmd: Command): void {
+	cmd
+		.command("refine")
+		.argument("[id]", "Backlog item ID")
+		.description("Alias for refine")
+		.action((id: string | undefined) => backlogRefine(id));
+}
+
 function registerNextCommand(cmd: Command): void {
 	cmd
 		.command("next")
@@ -44,6 +53,24 @@ function registerNextCommand(cmd: Command): void {
 		);
 }
 
+const registrars = [
+	registerItemCommands,
+	registerShowCommands,
+	registerStatusCommands,
+	registerWebCommand,
+	registerCommentCommands,
+	registerLinkCommands,
+	registerPlanCommands,
+	registerRewindCommand,
+	registerNextCommand,
+	registerRefineCommand,
+	registerRunCommand,
+	registerSearchCommand,
+	registerUpdateCommands,
+	registerExportCommand,
+	registerImportCommand,
+];
+
 export function registerBacklog(program: Command): void {
 	const cmd = program
 		.command("backlog")
@@ -54,18 +81,7 @@ export function registerBacklog(program: Command): void {
 		})
 		.action(() => backlogWeb({ port: "3100" }));
 
-	registerItemCommands(cmd);
-	registerShowCommands(cmd);
-	registerStatusCommands(cmd);
-	registerWebCommand(cmd);
-	registerCommentCommands(cmd);
-	registerLinkCommands(cmd);
-	registerPlanCommands(cmd);
-	registerRewindCommand(cmd);
-	registerNextCommand(cmd);
-	registerRunCommand(cmd);
-	registerSearchCommand(cmd);
-	registerUpdateCommands(cmd);
-	registerExportCommand(cmd);
-	registerImportCommand(cmd);
+	for (const register of registrars) {
+		register(cmd);
+	}
 }
