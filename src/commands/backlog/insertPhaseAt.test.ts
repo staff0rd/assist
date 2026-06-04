@@ -174,6 +174,54 @@ describe("insertPhaseAt", () => {
 			expect(await getCurrentPhase(orm)).toBe(1);
 		});
 
+		it("rewinds to a phase appended while at the review slot", async () => {
+			await seedItem(orm, 3);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
+
+			// currentPhase 3 = review slot (both authored phases complete);
+			// appending must not push currentPhase past the new phase.
+			await insertPhaseAt(orm, 1, 2, "New", ["t"], null, 3);
+
+			expect(await getCurrentPhase(orm)).toBe(3);
+		});
+
+		it("rewinds to a phase inserted mid-plan while at the review slot", async () => {
+			await seedItem(orm, 4);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
+			await seedPhase(orm, 2, "C", ["t"]);
+
+			// currentPhase 4 = review slot; inserting at index 1 rewinds to it.
+			await insertPhaseAt(orm, 1, 1, "New", ["t"], null, 4);
+
+			expect(await getCurrentPhase(orm)).toBe(2);
+		});
+
+		it("rewinds when the review phase has already completed", async () => {
+			await seedItem(orm, 4);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
+
+			// currentPhase 4 = review complete; appending rewinds to the new phase.
+			await insertPhaseAt(orm, 1, 2, "New", ["t"], null, 4);
+
+			expect(await getCurrentPhase(orm)).toBe(3);
+		});
+
+		it("keeps pointing at the first added phase when appending a second", async () => {
+			await seedItem(orm, 3);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
+			await seedPhase(orm, 2, "First added", ["t"]);
+
+			// currentPhase 3 already rewound to "First added"; appending another
+			// phase after it must not move the pointer.
+			await insertPhaseAt(orm, 1, 3, "Second added", ["t"], null, 3);
+
+			expect(await getCurrentPhase(orm)).toBe(3);
+		});
+
 		it("does not adjust when currentPhase is undefined", async () => {
 			await seedItem(orm);
 			await seedPhase(orm, 0, "A", ["t"]);
