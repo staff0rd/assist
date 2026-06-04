@@ -1,3 +1,10 @@
+# [0.232.0](https://github.com/staff0rd/assist/compare/v0.231.1...v0.232.0) (2026-06-04)
+
+
+### Features
+
+* loading spinner on backlog list ([753aa62](https://github.com/staff0rd/assist/commit/753aa62e9700bd094dffadbe646493497ce1aac3))
+
 ## [0.231.1](https://github.com/staff0rd/assist/compare/v0.231.0...v0.231.1) (2026-06-04)
 
 
