@@ -1,3 +1,10 @@
+## [0.238.1](https://github.com/staff0rd/assist/compare/v0.238.0...v0.238.1) (2026-06-05)
+
+
+### Bug Fixes
+
+* keep suppression above new imports ([c96d54a](https://github.com/staff0rd/assist/commit/c96d54a5ba358716a9c0dae614285230d314783a))
+
 # [0.238.0](https://github.com/staff0rd/assist/compare/v0.237.0...v0.238.0) (2026-06-05)
 
 
