@@ -1,3 +1,10 @@
+# [0.237.0](https://github.com/staff0rd/assist/compare/v0.236.0...v0.237.0) (2026-06-05)
+
+
+### Features
+
+* top-level list/ls backlog shortcut ([633e37b](https://github.com/staff0rd/assist/commit/633e37bf373fda3642e7453a14d66995b5b91d2d))
+
 # [0.236.0](https://github.com/staff0rd/assist/compare/v0.235.0...v0.236.0) (2026-06-05)
 
 
