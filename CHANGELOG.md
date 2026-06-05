@@ -1,3 +1,10 @@
+# [0.236.0](https://github.com/staff0rd/assist/compare/v0.235.0...v0.236.0) (2026-06-05)
+
+
+### Features
+
+* assist review-comments command ([4711b7b](https://github.com/staff0rd/assist/commit/4711b7b368298285f541a53da6467a0b689a92fa))
+
 # [0.235.0](https://github.com/staff0rd/assist/compare/v0.234.0...v0.235.0) (2026-06-05)
 
 
