@@ -107,7 +107,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 
 - `assist backlog [--dir <path>]` - Open the backlog tab in the web dashboard (same as `backlog web`). `--dir` overrides the directory used to resolve the current repository's git origin
 - `assist backlog init` - Create an empty backlog
-- `assist backlog list [--status <type>] [-a, --all] [--all-repos] [-v]` - List backlog items with status icons (alias: `ls`). Defaults to the current repository's todo/in-progress items; `--all` includes done/wontdo, `--all-repos` lists items across all repositories
+- `assist backlog list [--status <type>] [-a, --all] [--all-repos] [-v]` - List backlog items with status icons (alias: `ls`). Defaults to the current repository's todo/in-progress items; `--all` includes done/wontdo, `--all-repos` lists items across all repositories. Also available as the top-level shortcut `assist list` / `assist ls` with the same flags
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
 - `assist backlog add --name <n> --type <t> --desc <d> --ac <criterion...>` - Add a backlog item from CLI options (used by `/draft`)
 - `assist backlog add-phase <id> <name> --task <t...> [--manual-check <c...>] [--position <pos>]` - Add a phase (appends by default; `--position` inserts at a 1-indexed position)
