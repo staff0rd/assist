@@ -1,4 +1,5 @@
 import { type Project, type SourceFile, SyntaxKind } from "ts-morph";
+import { addImportPreservingSuppressions } from "./addImportPreservingSuppressions";
 import type { ExtractionPlan } from "./buildPlan";
 import { removeStaleImports } from "./removeStaleImports";
 import { updateImporters } from "./updateImporters";
@@ -32,7 +33,7 @@ export async function applyExtraction(
 	removeStaleImports(sourceFile);
 
 	if (isNameReferencedInSource(sourceFile, functionName)) {
-		sourceFile.addImportDeclaration({
+		addImportPreservingSuppressions(sourceFile, {
 			moduleSpecifier: plan.destRelPath,
 			namedImports: [functionName],
 		});

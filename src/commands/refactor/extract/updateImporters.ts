@@ -1,4 +1,5 @@
 import type { SourceFile } from "ts-morph";
+import { addImportPreservingSuppressions } from "./addImportPreservingSuppressions";
 
 export function updateImporters(
 	functionName: string,
@@ -26,7 +27,7 @@ export function updateImporters(
 			}
 		}
 
-		importerFile.addImportDeclaration({
+		addImportPreservingSuppressions(importerFile, {
 			moduleSpecifier: relPath,
 			namedImports: [alias ? { name: functionName, alias } : functionName],
 		});
