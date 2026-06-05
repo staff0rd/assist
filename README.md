@@ -241,6 +241,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
 - `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given
+- `assist review-comments [number]` - Launch Claude in `/review-comments` mode to process PR review comments (single session, no chaining); when a PR number is supplied, checks out that PR via `gh pr checkout` first
 - `assist signal next [id]` - Write a next signal to chain into `assist next`; when `id` is supplied, the parent launcher runs that backlog item directly
 
 When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist refine`, `assist next`, and `assist backlog run` run `git pull --ff-only` before doing anything else; if the pull fails the command aborts. `assist next` pulls once per invocation, not per item in its loop.

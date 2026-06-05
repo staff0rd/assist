@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import packageJson from "../package.json";
-import { next as backlogNext } from "./commands/backlog";
 import { closeBacklogDb } from "./commands/backlog/getBacklogOrm";
-import { launchMode } from "./commands/backlog/launchMode";
-import { refine } from "./commands/backlog/refine";
 import { commit } from "./commands/commit";
 import { coverage } from "./commands/coverage";
 import { init } from "./commands/init";
@@ -23,6 +20,7 @@ import { registerDevlog } from "./commands/registerDevlog";
 import { registerDotnet } from "./commands/registerDotnet";
 import { registerHandover } from "./commands/registerHandover";
 import { registerJira } from "./commands/registerJira";
+import { registerLaunch } from "./commands/registerLaunch";
 import { registerMermaid } from "./commands/registerMermaid";
 import { registerNews } from "./commands/registerNews";
 import { registerPrompts } from "./commands/registerPrompts";
@@ -151,28 +149,7 @@ registerSessions(program);
 registerPrompts(program);
 registerDeny(program);
 
-program
-	.command("next")
-	.description("Alias for backlog next")
-	.action(() => backlogNext({ allowEdits: true }));
-
-program
-	.command("draft")
-	.alias("feat")
-	.description("Launch Claude in /draft mode, chain into next on /next signal")
-	.action(() => launchMode("draft"));
-
-program
-	.command("bug")
-	.description("Launch Claude in /bug mode, chain into next on /next signal")
-	.action(() => launchMode("bug"));
-
-program
-	.command("refine")
-	.argument("[id]", "Backlog item ID")
-	.description("Launch Claude in /refine mode to refine a backlog item")
-	.action((id) => refine(id));
-
+registerLaunch(program);
 registerSignal(program);
 
 program
