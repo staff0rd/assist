@@ -7,8 +7,9 @@ import { reviewComments } from "./reviewComments";
 export function registerLaunch(program: Command): void {
 	program
 		.command("next")
+		.argument("[id]", "Backlog item ID to run first")
 		.description("Alias for backlog next")
-		.action(() => backlogNext({ allowEdits: true }));
+		.action((id: string | undefined) => backlogNext({ allowEdits: true }, id));
 
 	program
 		.command("draft")

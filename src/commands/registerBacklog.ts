@@ -46,11 +46,12 @@ function registerRefineCommand(cmd: Command): void {
 function registerNextCommand(cmd: Command): void {
 	cmd
 		.command("next")
+		.argument("[id]", "Backlog item ID to run first")
 		.description("Pick and run the next backlog item, or open /draft if none")
 		.option("-w, --write", "Run Claude with auto permission mode (default)")
 		.option("--no-write", "Run Claude without auto permission mode")
-		.action((opts: { write?: boolean }) =>
-			backlogNext({ allowEdits: opts.write !== false }),
+		.action((id: string | undefined, opts: { write?: boolean }) =>
+			backlogNext({ allowEdits: opts.write !== false }, id),
 		);
 }
 

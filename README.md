@@ -116,7 +116,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog update-phase <id> <phase> [--name <n>] [--task <t...>] [--manual-check <c...>]` - Modify a plan phase (name, tasks, or manual checks)
 - `assist backlog update-phase <id> <phase> [--add-task <text>] [--edit-task <n> <text>] [--remove-task <n>] [--add-check <text>] [--edit-check <n> <text>] [--remove-check <n>]` - Granular task and manual-check edits using 1-based indices matching `backlog show`: `--add-*` appends (repeatable), `--edit-*` replaces entry n in place, `--remove-*` deletes entry n and renumbers the rest (task ops cannot be combined with `--task`; check ops cannot be combined with `--manual-check`)
 - `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item
-- `assist backlog next` - Pick and run the next backlog item, or open `/draft` if none remain
+- `assist backlog next [id]` - Pick and run the next backlog item, or open `/draft` if none remain; pass an `id` to run that item first, then continue chaining
 - `assist backlog refine [id]` - Alias for `refine`
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog stop` - Revert all in-progress backlog items to todo and reset their phase to 1
@@ -237,7 +237,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist sessions` - Start the web dashboard (same as `sessions web`)
 - `assist sessions web [-p, --port <number>]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals (default port 3100)
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
-- `assist next` - Alias for `backlog next`
+- `assist next [id]` - Alias for `backlog next [id]`
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
 - `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given

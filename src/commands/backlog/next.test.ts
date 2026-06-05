@@ -126,6 +126,46 @@ describe("next", () => {
 		});
 	});
 
+	describe("when an id is provided", () => {
+		it("runs the given id first without picking", async () => {
+			mockRun.mockResolvedValueOnce(false);
+
+			await next(undefined, "220");
+
+			expect(mockLoadBacklog).not.toHaveBeenCalled();
+			expect(mockPrompt).not.toHaveBeenCalled();
+			expect(mockRun).toHaveBeenCalledTimes(1);
+			expect(mockRun).toHaveBeenCalledWith("220", undefined);
+		});
+
+		it("continues picking after the given id completes", async () => {
+			mockIsBlocked.mockReturnValue(false);
+			const items: BacklogFile = [makeItem({ id: 2, name: "Item B" })];
+			mockLoadBacklog.mockReturnValue(items);
+			mockRun.mockResolvedValueOnce(true); // given id completes
+			mockPrompt.mockResolvedValueOnce({ selected: "story #2: Item B" });
+			mockRun.mockResolvedValueOnce(false); // picked item does not complete
+
+			await next(undefined, "220");
+
+			expect(mockRun).toHaveBeenCalledTimes(2);
+			expect(mockRun).toHaveBeenNthCalledWith(1, "220", undefined);
+			expect(mockRun).toHaveBeenNthCalledWith(2, "2", undefined);
+			// Prompts even with a single todo: the id-run counts as the first pick
+			expect(mockPrompt).toHaveBeenCalledTimes(1);
+		});
+
+		it("does not chain when the given id fails to run", async () => {
+			mockRun.mockResolvedValueOnce(false);
+
+			await next(undefined, "999");
+
+			expect(mockRun).toHaveBeenCalledTimes(1);
+			expect(mockLoadBacklog).not.toHaveBeenCalled();
+			expect(mockPrompt).not.toHaveBeenCalled();
+		});
+	});
+
 	describe("on subsequent iterations", () => {
 		it("shows the selection prompt even with one unblocked todo", async () => {
 			mockIsBlocked.mockReturnValue(false);

@@ -65,14 +65,19 @@ async function pickItem(
 	return selectItem(todo, items);
 }
 
-export async function next(options?: SpawnClaudeOptions): Promise<void> {
+export async function next(
+	options?: SpawnClaudeOptions,
+	startId?: string,
+): Promise<void> {
 	if (blockedByHandover()) return;
 
 	pullIfConfigured();
 
+	let pendingId = startId;
 	let firstPick = true;
 	while (true) {
-		const id = await pickItem(await loadBacklog(), firstPick);
+		const id = pendingId ?? (await pickItem(await loadBacklog(), firstPick));
+		pendingId = undefined;
 		firstPick = false;
 		if (id === undefined) return;
 
