@@ -7,6 +7,7 @@ import {
 	printComments as prsPrintComments,
 	wontfix as prsWontfix,
 } from "./prs/index";
+import { registerPrsCreate } from "./registerPrsCreate";
 
 export function registerPrs(program: Command): void {
 	const prsCommand = program
@@ -15,6 +16,8 @@ export function registerPrs(program: Command): void {
 		.option("--open", "List only open pull requests")
 		.option("--closed", "List only closed pull requests")
 		.action(prs);
+
+	registerPrsCreate(prsCommand);
 
 	prsCommand
 		.command("list-comments")

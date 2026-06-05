@@ -1,6 +1,7 @@
 import { isApprovedRead } from "../../shared/isApprovedRead";
 import { matchesDeny } from "../../shared/matchesAllow";
 import { matchesConfigDeny } from "../../shared/matchesConfigDeny";
+import { findBuiltinDeny } from "./findBuiltinDeny";
 
 type HookDecision = {
 	permissionDecision: "allow" | "deny";
@@ -52,6 +53,9 @@ export function findDeny(
 	toolName: string,
 	parts: string[],
 ): HookDecision | undefined {
+	const builtinDeny = findBuiltinDeny(parts);
+	if (builtinDeny) return builtinDeny;
+
 	for (const part of parts) {
 		const configDeny = matchesConfigDeny(part);
 		if (configDeny) {

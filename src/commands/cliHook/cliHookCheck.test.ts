@@ -13,6 +13,10 @@ vi.mock("../../shared/isApprovedRead", () => ({
 		mockIsApprovedRead(cmd, toolName),
 }));
 
+vi.mock("../../shared/matchesAllow", () => ({
+	matchesDeny: () => undefined,
+}));
+
 import { cliHookCheck } from "./cliHookCheck";
 
 beforeEach(() => {
@@ -48,6 +52,18 @@ describe("cliHookCheck deny", () => {
 		cliHookCheck("echo hello && rm -rf /");
 
 		expect(consoleSpy).toHaveBeenCalledWith("denied: Do not use rm -rf");
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
+
+	it("reports deny for 'gh pr create' via the built-in deny", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		cliHookCheck("gh pr create --title x --body y");
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("assist prs create"),
+		);
 		expect(process.exitCode).toBe(1);
 		consoleSpy.mockRestore();
 	});
