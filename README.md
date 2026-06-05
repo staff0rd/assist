@@ -133,6 +133,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude
 - `assist backlog export [file]` - Export the entire backlog database (all tables, all repos) to a file, or stdout if omitted
 - `assist backlog import [file]` - Restore the entire backlog database from a dump (file or stdin), faithfully replacing all data; prompts for confirmation (use `-y, --yes` to skip; required when reading from stdin)
+- `assist backlog move-repo <old-origin> [new-origin]` - Retag all items from one origin to another after a repo rename; the new origin defaults to the current repo's remote, both accept URL or `git@` forms, and a bare repo name works for the old origin when unambiguous. Prompts for confirmation (use `-y, --yes` to skip)
 - `assist backlog web [-p, --port <number>]` - Open the backlog tab in the web dashboard (default port 3100)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API

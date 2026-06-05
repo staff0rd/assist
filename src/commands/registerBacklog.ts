@@ -10,6 +10,7 @@ import { registerExportCommand } from "./backlog/registerExportCommand";
 import { registerImportCommand } from "./backlog/registerImportCommand";
 import { registerItemCommands } from "./backlog/registerItemCommands";
 import { registerLinkCommands } from "./backlog/registerLinkCommands";
+import { registerMoveRepoCommand } from "./backlog/registerMoveRepoCommand";
 import { registerPlanCommands } from "./backlog/registerPlanCommands";
 import { registerRewindCommand } from "./backlog/registerRewindCommand";
 import { registerRunCommand } from "./backlog/registerRunCommand";
@@ -69,6 +70,7 @@ const registrars = [
 	registerUpdateCommands,
 	registerExportCommand,
 	registerImportCommand,
+	registerMoveRepoCommand,
 ];
 
 export function registerBacklog(program: Command): void {
