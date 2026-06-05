@@ -1,3 +1,10 @@
+# [0.238.0](https://github.com/staff0rd/assist/compare/v0.237.0...v0.238.0) (2026-06-05)
+
+
+### Features
+
+* next accepts optional start id ([dfb98e5](https://github.com/staff0rd/assist/commit/dfb98e5c86527c4cfc2fe67ea7a8f10462e1ddd5))
+
 # [0.237.0](https://github.com/staff0rd/assist/compare/v0.236.0...v0.237.0) (2026-06-05)
 
 
