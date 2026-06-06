@@ -1,3 +1,10 @@
+# [0.241.0](https://github.com/staff0rd/assist/compare/v0.240.0...v0.241.0) (2026-06-06)
+
+
+### Features
+
+* github commits org leaderboard ([86c22e1](https://github.com/staff0rd/assist/commit/86c22e15a3e36c8e38b093995c4838acca4c01a1))
+
 # [0.240.0](https://github.com/staff0rd/assist/compare/v0.239.1...v0.240.0) (2026-06-06)
 
 
