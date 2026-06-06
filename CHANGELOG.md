@@ -1,3 +1,10 @@
+## [0.242.1](https://github.com/staff0rd/assist/compare/v0.242.0...v0.242.1) (2026-06-06)
+
+
+### Bug Fixes
+
+* pty spawn failure crashing server ([90cc567](https://github.com/staff0rd/assist/commit/90cc567842bfa816fc1029b9a510b9680d0e4351))
+
 # [0.242.0](https://github.com/staff0rd/assist/compare/v0.241.0...v0.242.0) (2026-06-06)
 
 
