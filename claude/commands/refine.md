@@ -62,6 +62,14 @@ assist backlog remove-phase <id> <phase>
 assist backlog add-phase <id> "Phase name" --task "Task 1" --task "Task 2"
 ```
 
+### Phase design rules
+
+When adding or restructuring plan phases, follow the same rules as /draft:
+
+- **Vertical slices, not horizontal layers.** Each phase delivers a thin, working increment verifiable end-to-end — never "backend in phase 1, UI in phase 2".
+- **Every phase must pass `assist verify` on its own.** Verification includes knip, which fails on unused exports — so every export a phase adds must have a caller wired up in that same phase. No "phase 2 will use it" scaffolding.
+- If the user proposes a horizontal split, point out that the earlier phase won't verify (knip will flag the unused exports) and suggest a vertical restructure instead.
+
 **To add a comment** (for context, decisions, or notes that don't fit in fields):
 ```
 assist backlog comment <id> "Comment text"

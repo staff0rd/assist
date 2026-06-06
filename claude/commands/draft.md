@@ -51,7 +51,15 @@ Good (vertical):
 - Phase 2: Add real data handling and validation
 - Phase 3: Polish edge cases and error states
 
-The test: at the end of each phase, you should be able to answer "does this work?" by running or inspecting the result. If a phase only produces internal plumbing with no observable effect, it's horizontal — restructure it.
+**Every phase must pass `assist verify` on its own.** Verification includes knip, which fails on unused exports. This makes horizontal slicing mechanically impossible to verify: an API helper, type, or stub added in phase 1 "for phase 2 to use" has no caller yet, so knip flags it and phase 1 cannot complete. Therefore:
+
+- Every export a phase adds must have a caller wired up **in that same phase**.
+- Never plan a task like "add X helper/endpoint/type" unless the same phase also includes the task that consumes it.
+- If a feature spans backend + UI, each phase carries its slice through both — e.g. "Phase 1: endpoint + UI button that calls it", not "Phase 1: endpoint, Phase 2: button".
+
+Two tests for each phase before proposing the plan:
+1. **Observable**: can you answer "does this work?" by running or inspecting the result? If a phase only produces internal plumbing with no observable effect, it's horizontal — restructure it.
+2. **Self-contained**: would `assist verify` pass with only this phase's code committed — no unused exports, no dead stubs awaiting a later phase? If not, merge the producer and its consumer into the same phase.
 
 Keep phases small (2-4 tasks each). A typical item should have 2-3 phases.
 
