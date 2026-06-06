@@ -1,3 +1,10 @@
+## [0.239.1](https://github.com/staff0rd/assist/compare/v0.239.0...v0.239.1) (2026-06-06)
+
+
+### Bug Fixes
+
+* review on PRs over 300 files ([821a8f8](https://github.com/staff0rd/assist/commit/821a8f8d7424402b409ea584c5c430f8c3ba7fc8))
+
 # [0.239.0](https://github.com/staff0rd/assist/compare/v0.238.1...v0.239.0) (2026-06-05)
 
 
