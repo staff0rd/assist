@@ -1,3 +1,10 @@
+# [0.243.0](https://github.com/staff0rd/assist/compare/v0.242.1...v0.243.0) (2026-06-06)
+
+
+### Features
+
+* highlight in-progress backlog items ([1359f73](https://github.com/staff0rd/assist/commit/1359f731fc77dfebe1898249b9c9884aa697a2c8))
+
 ## [0.242.1](https://github.com/staff0rd/assist/compare/v0.242.0...v0.242.1) (2026-06-06)
 
 
