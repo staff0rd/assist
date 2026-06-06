@@ -1,3 +1,10 @@
+# [0.242.0](https://github.com/staff0rd/assist/compare/v0.241.0...v0.242.0) (2026-06-06)
+
+
+### Features
+
+* shared repo selector in toolbar ([11be6dc](https://github.com/staff0rd/assist/commit/11be6dce8aaea5205c4af4f8528b9c238408f20f))
+
 # [0.241.0](https://github.com/staff0rd/assist/compare/v0.240.0...v0.241.0) (2026-06-06)
 
 
