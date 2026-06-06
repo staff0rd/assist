@@ -1,23 +1,11 @@
 import type { SxProps, Theme } from "@mui/material";
-import { ButtonBase, Chip, Typography } from "@mui/material";
+import { alpha, ButtonBase, Chip, Typography } from "@mui/material";
 import type { BacklogItem } from "../types";
+import { InProgressChip } from "./InProgressChip";
+import { StatusIcon } from "./StatusIcon";
 import { typeChipColors } from "./typeChipColors";
 
-const statusIcons: Record<string, string> = {
-	todo: "\u25cb",
-	"in-progress": "\u25d4",
-	done: "\u25cf",
-	wontdo: "\u2715",
-};
-
-const statusColors: Record<string, string> = {
-	todo: "text.disabled",
-	"in-progress": "warning.main",
-	done: "success.main",
-	wontdo: "error.main",
-};
-
-const cardSx: SxProps<Theme> = {
+const baseCardSx = {
 	display: "flex",
 	alignItems: "center",
 	gap: 1.5,
@@ -31,6 +19,16 @@ const cardSx: SxProps<Theme> = {
 	bgcolor: "background.paper",
 	transition: "box-shadow 0.2s",
 	"&:hover": { boxShadow: 3 },
+} as const;
+
+const cardSx: SxProps<Theme> = baseCardSx;
+
+const inProgressCardSx: SxProps<Theme> = {
+	...baseCardSx,
+	borderColor: "warning.main",
+	borderLeft: 4,
+	borderLeftColor: "warning.main",
+	bgcolor: (theme: Theme) => alpha(theme.palette.warning.main, 0.08),
 };
 
 const idSx: SxProps<Theme> = { color: "text.disabled", flexShrink: 0 };
@@ -43,10 +41,6 @@ const chipSx: SxProps<Theme> = {
 	height: 22,
 };
 
-function iconSx(status: string): SxProps<Theme> {
-	return { fontSize: "1.125rem", flexShrink: 0, color: statusColors[status] };
-}
-
 export function ItemCard({
 	item,
 	onSelect,
@@ -54,11 +48,10 @@ export function ItemCard({
 	item: BacklogItem;
 	onSelect: () => void;
 }) {
+	const inProgress = item.status === "in-progress";
 	return (
-		<ButtonBase onClick={onSelect} sx={cardSx}>
-			<Typography sx={iconSx(item.status)}>
-				{statusIcons[item.status]}
-			</Typography>
+		<ButtonBase onClick={onSelect} sx={inProgress ? inProgressCardSx : cardSx}>
+			<StatusIcon status={item.status} />
 			<Chip
 				label={item.type}
 				size="small"
@@ -69,6 +62,7 @@ export function ItemCard({
 				#{item.id}
 			</Typography>
 			<Typography sx={nameSx}>{item.name}</Typography>
+			{inProgress && <InProgressChip />}
 		</ButtonBase>
 	);
 }
