@@ -1,4 +1,4 @@
-import { runGhGraphql } from "./runGhGraphql";
+import { runGhGraphql } from "../../shared/runGhGraphql";
 import { getCurrentPrNodeId, isGhNotInstalled } from "./shared";
 
 const MUTATION_SINGLE = `mutation($prId: ID!, $body: String!, $path: String!, $line: Int!) { addPullRequestReviewThread(input: { pullRequestId: $prId, body: $body, path: $path, line: $line, side: RIGHT }) { thread { id } } }`;

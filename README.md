@@ -100,6 +100,10 @@ After installation, the `assist` command will be available globally. You can als
   - `--apply` - Skip posting; launch an interactive Claude session that walks through each finding asking apply/skip. Applied findings are fixed in the working tree (unstaged) and removed from `synthesis.md`; skipped findings stay so a subsequent `assist review` posts them. Cannot be combined with `--refine`
   - `--backlog` - Skip posting; launch an interactive Claude session running `/bug` that files all findings (including `already-raised`) as a single bug backlog item with one phase per finding. `synthesis.md` is left untouched; `--submit` is ignored. Cannot be combined with `--refine` or `--apply`
   - `--verbose` - Disable the stacked-spinner UI and fall back to per-line log output. Non-TTY environments (CI) automatically use this mode
+- `assist github commits <org>` - Report commit activity across a GitHub organisation over the last 30 days: repos ranked by commits to their default branch, top committers, and a per-repo author breakdown (empty repos are skipped; commits with no linked GitHub account fall back to the raw author name)
+  - `--since <date>` - Start of the window as `YYYY-MM-DD` instead of the default 30 days ago
+  - `--top <n>` - Only report the top `n` repos by commit count; committers and the author breakdown then cover those repos only (also caps the per-repo author queries, which speeds up large orgs)
+  - `--json` - Output all three views as structured JSON instead of tables
 - `assist news` - Start the news web UI showing latest RSS feed items (same as `news web`)
 - `assist news add [url]` - Add an RSS feed URL to the config
 - `assist news web [-p, --port <number>]` - Start a web view of the news feeds (default port 3001)
