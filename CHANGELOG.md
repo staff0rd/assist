@@ -1,3 +1,10 @@
+## [0.243.1](https://github.com/staff0rd/assist/compare/v0.243.0...v0.243.1) (2026-06-06)
+
+
+### Bug Fixes
+
+* enforce vertical slicing in plans ([ceadc18](https://github.com/staff0rd/assist/commit/ceadc182c2035329dc261bfebb30fa885bd85df4))
+
 # [0.243.0](https://github.com/staff0rd/assist/compare/v0.242.1...v0.243.0) (2026-06-06)
 
 
