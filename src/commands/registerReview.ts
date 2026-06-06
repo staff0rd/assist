@@ -32,6 +32,10 @@ export function registerReview(program: Command): void {
 			"After synthesis, launch an interactive Claude session to apply fixes for each finding; applied findings are removed from synthesis, skipped ones remain for a later post",
 		)
 		.option(
+			"--backlog",
+			"After synthesis, launch an interactive Claude session running /bug to file all findings as a single backlog item with one phase per finding, instead of posting to the PR",
+		)
+		.option(
 			"--verbose",
 			"Disable spinner UI and use per-line log output (per-tool lines, starting/done lines)",
 		)

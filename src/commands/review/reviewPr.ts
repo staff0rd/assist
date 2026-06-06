@@ -5,6 +5,7 @@ import { gatherContext } from "./gatherContext";
 import { handlePostSynthesis } from "./handlePostSynthesis";
 import { prepareReviewDir } from "./prepareReviewDir";
 import { runApplySession } from "./runApplySession";
+import { runBacklogSession } from "./runBacklogSession";
 import { runReviewPipeline } from "./runReviewPipeline";
 
 type ReviewPrOptions = {
@@ -13,6 +14,7 @@ type ReviewPrOptions = {
 	force?: boolean;
 	refine?: boolean;
 	apply?: boolean;
+	backlog?: boolean;
 	verbose?: boolean;
 };
 
@@ -50,6 +52,10 @@ async function runPostSynthesis(
 	synthesisPath: string,
 	options: ReviewPrOptions,
 ): Promise<void> {
+	if (options.backlog) {
+		await runBacklogSession(synthesisPath);
+		return;
+	}
 	if (options.apply) {
 		await runApplySession(synthesisPath);
 		return;

@@ -98,6 +98,7 @@ After installation, the `assist` command will be available globally. You can als
   - `--force` - Clear all cached files and re-run every phase
   - `--refine` - Skip posting; launch an interactive Claude session that walks through `synthesis.md` and edits it in place. A subsequent `assist review` reuses the refined file and posts only the surviving findings
   - `--apply` - Skip posting; launch an interactive Claude session that walks through each finding asking apply/skip. Applied findings are fixed in the working tree (unstaged) and removed from `synthesis.md`; skipped findings stay so a subsequent `assist review` posts them. Cannot be combined with `--refine`
+  - `--backlog` - Skip posting; launch an interactive Claude session running `/bug` that files all findings (including `already-raised`) as a single bug backlog item with one phase per finding. `synthesis.md` is left untouched; `--submit` is ignored. Cannot be combined with `--refine` or `--apply`
   - `--verbose` - Disable the stacked-spinner UI and fall back to per-line log output. Non-TTY environments (CI) automatically use this mode
 - `assist news` - Start the news web UI showing latest RSS feed items (same as `news web`)
 - `assist news add [url]` - Add an RSS feed URL to the config

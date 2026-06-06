@@ -64,3 +64,16 @@ flowchart LR
     Next --> Cached{cached synthesis.md}
     Cached --> Post[Post skipped findings only]
 ```
+
+## `--backlog`
+
+`assist review --backlog` runs the pipeline up through synthesis and then, instead of posting, launches an interactive Claude session (`runBacklogSession.ts`) running the `/bug` flow. The session files all findings — including `already-raised` ones — as a single bug backlog item with one phase per finding, each phase capturing the finding's Location, Impact, and Recommendation.
+
+`synthesis.md` is left untouched, so a subsequent `assist review` (no flag) still hits the cached file and can post as usual. `--submit` is ignored when `--backlog` is set because nothing is posted; combining `--backlog` with `--refine` or `--apply` errors out.
+
+```mermaid
+flowchart LR
+    Synthesis[synthesis.md] --> Backlog[--backlog: interactive Claude /bug session]
+    Backlog --> Item[One bug backlog item, one phase per finding]
+    Synthesis --> Untouched[synthesis.md unchanged]
+```

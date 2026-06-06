@@ -69,4 +69,32 @@ describe("review", () => {
 			expect(mockReviewPr).not.toHaveBeenCalled();
 		});
 	});
+
+	describe("when --backlog is combined with --refine", () => {
+		it("should reject", async () => {
+			await expect(review({ backlog: true, refine: true })).rejects.toThrow(
+				"process.exit",
+			);
+			expect(mockExit).toHaveBeenCalledWith(1);
+			expect(mockReviewPr).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("when --backlog is combined with --apply", () => {
+		it("should reject", async () => {
+			await expect(review({ backlog: true, apply: true })).rejects.toThrow(
+				"process.exit",
+			);
+			expect(mockExit).toHaveBeenCalledWith(1);
+			expect(mockReviewPr).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("when --backlog is given alone", () => {
+		it("should review", async () => {
+			await review({ backlog: true });
+
+			expect(mockReviewPr).toHaveBeenCalledWith("/repo", { backlog: true });
+		});
+	});
 });

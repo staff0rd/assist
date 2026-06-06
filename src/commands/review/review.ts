@@ -8,6 +8,7 @@ export type ReviewOptions = {
 	force?: boolean;
 	refine?: boolean;
 	apply?: boolean;
+	backlog?: boolean;
 	verbose?: boolean;
 	number?: string;
 };
@@ -22,6 +23,12 @@ function resolveRepoRoot(): string {
 function validateOptions(options: ReviewOptions): void {
 	if (options.apply && options.refine) {
 		console.error("Error: --apply cannot be combined with --refine.");
+		process.exit(1);
+	}
+	if (options.backlog && (options.refine || options.apply)) {
+		console.error(
+			"Error: --backlog cannot be combined with --refine or --apply.",
+		);
 		process.exit(1);
 	}
 }
