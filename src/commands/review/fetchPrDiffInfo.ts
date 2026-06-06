@@ -52,17 +52,12 @@ export function fetchPrDiffInfo(): PrDiffInfo {
 
 export function fetchPrChangedFiles(prNumber: number): string[] {
 	const { org, repo } = getRepoInfo();
-	const out = execSync(`gh pr diff ${prNumber} --name-only -R ${org}/${repo}`, {
-		encoding: "utf-8",
-		maxBuffer: 64 * 1024 * 1024,
-	});
+	const out = execSync(
+		`gh api repos/${org}/${repo}/pulls/${prNumber}/files --paginate --jq ".[].filename"`,
+		{
+			encoding: "utf-8",
+			maxBuffer: 64 * 1024 * 1024,
+		},
+	);
 	return out.trim().split("\n").filter(Boolean);
-}
-
-export function fetchPrDiff(prNumber: number): string {
-	const { org, repo } = getRepoInfo();
-	return execSync(`gh pr diff ${prNumber} -R ${org}/${repo}`, {
-		encoding: "utf-8",
-		maxBuffer: 256 * 1024 * 1024,
-	});
 }

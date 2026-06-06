@@ -1,9 +1,6 @@
 import { execSync } from "node:child_process";
-import {
-	fetchPrChangedFiles,
-	fetchPrDiff,
-	fetchPrDiffInfo,
-} from "./fetchPrDiffInfo";
+import { fetchPrDiff } from "./fetchPrDiff";
+import { fetchPrChangedFiles, fetchPrDiffInfo } from "./fetchPrDiffInfo";
 
 export type ReviewContext = {
 	branch: string;
@@ -28,7 +25,7 @@ export function gatherContext(): ReviewContext {
 	}).trim();
 	const prInfo = fetchPrDiffInfo();
 	const changedFiles = fetchPrChangedFiles(prInfo.prNumber);
-	const diff = fetchPrDiff(prInfo.prNumber);
+	const diff = fetchPrDiff(prInfo.prNumber, prInfo.baseSha, prInfo.headSha);
 	return {
 		branch,
 		sha,
