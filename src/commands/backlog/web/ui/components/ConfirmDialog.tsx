@@ -10,17 +10,19 @@ import {
 export function ConfirmDialog({
 	onConfirm,
 	onCancel,
+	title = "Confirm deletion",
+	message = "Are you sure you want to delete this item?",
 }: {
 	onConfirm: () => void;
 	onCancel: () => void;
+	title?: string;
+	message?: string;
 }) {
 	return (
 		<Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
-			<DialogTitle>Confirm deletion</DialogTitle>
+			<DialogTitle>{title}</DialogTitle>
 			<DialogContent>
-				<DialogContentText>
-					Are you sure you want to delete this item?
-				</DialogContentText>
+				<DialogContentText>{message}</DialogContentText>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={onCancel}>Cancel</Button>

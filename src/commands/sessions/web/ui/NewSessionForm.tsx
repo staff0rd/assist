@@ -1,24 +1,13 @@
 import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { RepoFilterRow } from "./RepoFilterRow";
 import { SessionFormControls } from "./SessionFormControls";
-import type { HistoricalSession } from "./types";
 import { type FormDeps, useNewSessionForm } from "./useNewSessionForm";
-import { useRepoSelection } from "./useRepoSelection";
 
-type Props = Omit<FormDeps, "selectedCwd"> & {
-	currentCwd: string;
-	history: HistoricalSession[];
-};
-
-export function NewSessionForm(props: Props) {
-	const { currentCwd, history, runConfigs } = props;
-	const { repos, selectedCwd, setSelectedCwd } = useRepoSelection(
-		currentCwd,
-		history,
-	);
-	const form = useNewSessionForm({ ...props, selectedCwd });
-	const hasRepo = selectedCwd !== "";
+export function NewSessionForm(props: FormDeps) {
+	const { runConfigs } = props;
+	const form = useNewSessionForm(props);
+	const hasRepo = form.selectedCwd !== "";
 
 	return (
 		<Box
@@ -33,19 +22,21 @@ export function NewSessionForm(props: Props) {
 				gap: 1,
 			}}
 		>
-			<RepoFilterRow
-				repos={repos}
-				selectedCwd={selectedCwd}
-				onSelectCwd={setSelectedCwd}
-				runFilter={form.runFilter}
-				onFilterChange={form.setRunFilter}
-				showFilter={runConfigs.length > 0}
-			/>
+			{runConfigs.length > 0 && (
+				<TextField
+					value={form.runFilter}
+					onChange={(e) => form.setRunFilter(e.target.value)}
+					placeholder="Filter runs..."
+					size="small"
+					fullWidth
+					slotProps={{ input: { sx: { fontSize: 13 } } }}
+				/>
+			)}
 			{hasRepo ? (
 				<SessionFormControls form={form} totalRunCount={runConfigs.length} />
 			) : (
 				<Typography variant="caption" color="text.disabled" sx={{ py: 0.75 }}>
-					Select a repo above to create a session
+					Select a repo in the toolbar to create a session
 				</Typography>
 			)}
 		</Box>

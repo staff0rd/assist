@@ -1,21 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
 import { Route, Routes } from "react-router";
-import { fetchItems } from "./api";
+import { EmptyBacklog } from "./components/EmptyBacklog";
 import { ViewRouter } from "./components/ViewRouter";
-import type { BacklogItem } from "./types";
+import { useBacklogItems } from "./useBacklogItems";
 
 export function BacklogView() {
-	const [items, setItems] = useState<BacklogItem[]>([]);
-	const [loading, setLoading] = useState(true);
+	const { items, loading, exists, reload, initialize } = useBacklogItems();
 
-	const reload = useCallback(async () => {
-		setItems(await fetchItems());
-		setLoading(false);
-	}, []);
-
-	useEffect(() => {
-		reload();
-	}, [reload]);
+	if (!exists) return <EmptyBacklog onInit={initialize} />;
 
 	return (
 		<Routes>

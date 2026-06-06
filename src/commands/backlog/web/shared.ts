@@ -1,16 +1,19 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
+import { deleteComment } from "../deleteComment";
 import { deleteItem as deleteItemById } from "../deleteItem";
 import { loadItem } from "../loadItem";
 import { getReady, loadBacklog, searchBacklog } from "../shared";
 import type { BacklogItem } from "../types";
 import { updateStatus } from "../updateStatus";
+import { applyCwdFromReq } from "./applyCwdFromReq";
 import { parseStatusBody } from "./parseItemBody";
 
 export async function listItems(
 	req: IncomingMessage,
 	res: ServerResponse,
 ): Promise<void> {
+	applyCwdFromReq(req);
 	const url = new URL(req.url ?? "/", "http://localhost");
 	const q = url.searchParams.get("q");
 	respondJson(res, 200, q ? await searchBacklog(q) : await loadBacklog());
@@ -42,6 +45,29 @@ export async function deleteItem(
 	if (!result) return;
 	await deleteItemById(result.orm, id);
 	respondJson(res, 200, result.item);
+}
+
+export async function deleteItemComment(
+	res: ServerResponse,
+	itemId: number,
+	commentId: number,
+): Promise<void> {
+	const result = await findItemOr404(res, itemId);
+	if (!result) return;
+	const outcome = await deleteComment(result.orm, itemId, commentId);
+	if (outcome === "not-found") {
+		respondJson(res, 404, {
+			error: `Comment #${commentId} not found on item #${itemId}.`,
+		});
+		return;
+	}
+	if (outcome === "is-summary") {
+		respondJson(res, 400, {
+			error: `Comment #${commentId} is a phase summary and cannot be deleted.`,
+		});
+		return;
+	}
+	respondJson(res, 200, await loadItem(result.orm, itemId));
 }
 
 export async function patchItemStatus(

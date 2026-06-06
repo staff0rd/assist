@@ -3,10 +3,9 @@ import { useState } from "react";
 import { AppSidebar } from "./AppSidebar";
 import { SessionArea } from "./SessionArea";
 import type { SidebarTab } from "./types";
-import { useSessionSocket } from "./useSessionSocket";
+import type { SessionSocket } from "./useSessionSocket";
 
-export function SessionsView() {
-	const socket = useSessionSocket();
+export function SessionsView({ socket }: { socket: SessionSocket }) {
 	const [tab, setTab] = useState<SidebarTab>("active");
 
 	return (

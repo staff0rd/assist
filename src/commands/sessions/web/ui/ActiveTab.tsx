@@ -1,6 +1,6 @@
 import { NewSessionForm } from "./NewSessionForm";
 import { SessionList } from "./SessionList";
-import type { HistoricalSession, RunConfigInfo, SessionInfo } from "./types";
+import type { RunConfigInfo, SessionInfo } from "./types";
 
 export type RunProps = {
 	configs: RunConfigInfo[];
@@ -11,8 +11,6 @@ export type RunProps = {
 export function ActiveTab({
 	sessions,
 	activeId,
-	currentCwd,
-	history,
 	run,
 	onSelect,
 	onCreate,
@@ -22,8 +20,6 @@ export function ActiveTab({
 }: {
 	sessions: SessionInfo[];
 	activeId: string | null;
-	currentCwd: string;
-	history: HistoricalSession[];
 	run: RunProps;
 	onSelect: (id: string) => void;
 	onCreate: (prompt: string, cwd: string) => void;
@@ -41,8 +37,6 @@ export function ActiveTab({
 				onDismiss={onDismiss}
 			/>
 			<NewSessionForm
-				currentCwd={currentCwd}
-				history={history}
 				runConfigs={run.configs}
 				onCreate={onCreate}
 				onCreateRun={run.create}

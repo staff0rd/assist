@@ -3,7 +3,7 @@ import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
-import { dropdownStyleUp } from "./DropdownWrapper";
+import { dropdownStyle } from "./DropdownWrapper";
 
 export function repoName(cwd: string): string {
 	const sep = cwd.includes("\\") ? "\\" : "/";
@@ -11,7 +11,7 @@ export function repoName(cwd: string): string {
 }
 
 const menuSx: SxProps<Theme> = {
-	...dropdownStyleUp,
+	...dropdownStyle,
 } as SxProps<Theme>;
 
 export function RepoList({

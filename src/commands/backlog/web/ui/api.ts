@@ -1,69 +1,101 @@
 import type { BacklogItem } from "./types";
 
-export async function fetchItems(query?: string): Promise<BacklogItem[]> {
-	const url = query
-		? `/api/items?q=${encodeURIComponent(query)}`
-		: "/api/items";
-	const res = await fetch(url);
-	return res.json();
-}
-
-export async function createItem(body: {
+type ItemBody = {
 	type: "story" | "bug";
 	name: string;
 	description?: string;
 	acceptanceCriteria: string[];
-}): Promise<BacklogItem> {
-	const res = await fetch("/api/items", {
-		method: "POST",
+};
+
+function withCwd(url: string, cwd?: string): string {
+	if (!cwd) return url;
+	const separator = url.includes("?") ? "&" : "?";
+	return `${url}${separator}cwd=${encodeURIComponent(cwd)}`;
+}
+
+async function sendJson<T>(
+	url: string,
+	method: string,
+	body: unknown,
+): Promise<T> {
+	const res = await fetch(url, {
+		method,
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body),
 	});
 	return res.json();
 }
 
-export async function deleteItem(id: number): Promise<void> {
-	await fetch(`/api/items/${id}`, { method: "DELETE" });
+export async function fetchItems(
+	query?: string,
+	cwd?: string,
+): Promise<BacklogItem[]> {
+	const base = query
+		? `/api/items?q=${encodeURIComponent(query)}`
+		: "/api/items";
+	const res = await fetch(withCwd(base, cwd));
+	return res.json();
 }
 
-export async function updateItem(
+export async function backlogExists(cwd?: string): Promise<boolean> {
+	const res = await fetch(withCwd("/api/backlog/exists", cwd));
+	const body = (await res.json()) as { exists: boolean };
+	return body.exists;
+}
+
+export async function initBacklog(cwd?: string): Promise<void> {
+	await fetch(withCwd("/api/backlog/init", cwd), { method: "POST" });
+}
+
+export function createItem(body: ItemBody, cwd?: string): Promise<BacklogItem> {
+	return sendJson(withCwd("/api/items", cwd), "POST", body);
+}
+
+export async function deleteItem(id: number, cwd?: string): Promise<void> {
+	await fetch(withCwd(`/api/items/${id}`, cwd), { method: "DELETE" });
+}
+
+export async function deleteComment(
+	itemId: number,
+	commentId: number,
+	cwd?: string,
+): Promise<void> {
+	const res = await fetch(
+		withCwd(`/api/items/${itemId}/comments/${commentId}`, cwd),
+		{ method: "DELETE" },
+	);
+	if (!res.ok) {
+		const body = (await res.json().catch(() => undefined)) as
+			| { error?: string }
+			| undefined;
+		throw new Error(body?.error ?? `Failed to delete comment (${res.status})`);
+	}
+}
+
+export function updateItem(
 	id: number,
-	body: {
-		type: "story" | "bug";
-		name: string;
-		description?: string;
-		acceptanceCriteria: string[];
-	},
+	body: ItemBody,
+	cwd?: string,
 ): Promise<BacklogItem> {
-	const res = await fetch(`/api/items/${id}`, {
-		method: "PUT",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(body),
-	});
-	return res.json();
+	return sendJson(withCwd(`/api/items/${id}`, cwd), "PUT", body);
 }
 
-export async function updateItemStatus(
+export function updateItemStatus(
 	id: number,
 	status: BacklogItem["status"],
+	cwd?: string,
 ): Promise<BacklogItem> {
-	const res = await fetch(`/api/items/${id}`, {
-		method: "PATCH",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ status }),
-	});
-	return res.json();
+	return sendJson(withCwd(`/api/items/${id}`, cwd), "PATCH", { status });
 }
 
-export async function rewindPhase(
+export function rewindPhase(
 	id: number,
 	phase: number,
 	reason: string,
+	cwd?: string,
 ): Promise<BacklogItem> {
-	const res = await fetch(`/api/items/${id}/rewind`, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ phase, reason }),
+	return sendJson(withCwd(`/api/items/${id}/rewind`, cwd), "POST", {
+		phase,
+		reason,
 	});
-	return res.json();
 }

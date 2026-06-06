@@ -1,6 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { applyCwdFromReq } from "./applyCwdFromReq";
 import { rewindItemPhase } from "./rewindItemPhase";
-import { deleteItem, getItemById, patchItemStatus } from "./shared";
+import {
+	deleteItem,
+	deleteItemComment,
+	getItemById,
+	patchItemStatus,
+} from "./shared";
 import { updateItem } from "./updateItem";
 
 type ItemHandler = (
@@ -23,7 +29,19 @@ export async function handleItemRoute(
 ): Promise<boolean> {
 	const rewindMatch = pathname.match(/^\/api\/items\/(\d+)\/rewind$/);
 	if (rewindMatch && req.method === "POST") {
+		applyCwdFromReq(req);
 		await rewindItemPhase(req, res, Number.parseInt(rewindMatch[1], 10));
+		return true;
+	}
+
+	const commentMatch = pathname.match(/^\/api\/items\/(\d+)\/comments\/(\d+)$/);
+	if (commentMatch && req.method === "DELETE") {
+		applyCwdFromReq(req);
+		await deleteItemComment(
+			res,
+			Number.parseInt(commentMatch[1], 10),
+			Number.parseInt(commentMatch[2], 10),
+		);
 		return true;
 	}
 
@@ -31,6 +49,7 @@ export async function handleItemRoute(
 	if (!match) return false;
 	const handler = itemRoutes[req.method ?? "GET"];
 	if (!handler) return false;
+	applyCwdFromReq(req);
 	await handler(req, res, Number.parseInt(match[1], 10));
 	return true;
 }

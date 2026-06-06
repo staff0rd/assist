@@ -9,7 +9,15 @@ const headingSx = {
 	letterSpacing: "0.08em",
 } as const;
 
-export function CommentsSection({ comments }: { comments: BacklogComment[] }) {
+export function CommentsSection({
+	comments,
+	itemId,
+	onCommentDeleted,
+}: {
+	comments: BacklogComment[];
+	itemId?: number;
+	onCommentDeleted?: () => Promise<void>;
+}) {
 	if (comments.length === 0) return null;
 	return (
 		<Box sx={{ mb: 2 }}>
@@ -18,7 +26,12 @@ export function CommentsSection({ comments }: { comments: BacklogComment[] }) {
 			</Typography>
 			<Stack spacing={1}>
 				{comments.map((c, i) => (
-					<CommentCard key={`${c.timestamp}-${i}`} comment={c} />
+					<CommentCard
+						key={`${c.timestamp}-${i}`}
+						comment={c}
+						itemId={itemId}
+						onDeleted={onCommentDeleted}
+					/>
 				))}
 			</Stack>
 		</Box>

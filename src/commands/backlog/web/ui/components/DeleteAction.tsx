@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { deleteItem } from "../api";
+import { useRepoCwd } from "../useRepoCwd";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 export function DeleteAction({
@@ -10,13 +11,14 @@ export function DeleteAction({
 	itemId: number;
 	onDeleted: () => Promise<void>;
 }) {
+	const cwd = useRepoCwd();
 	const [confirming, setConfirming] = useState(false);
 	return (
 		<>
 			{confirming && (
 				<ConfirmDialog
 					onConfirm={async () => {
-						await deleteItem(itemId);
+						await deleteItem(itemId, cwd);
 						await onDeleted();
 					}}
 					onCancel={() => setConfirming(false)}

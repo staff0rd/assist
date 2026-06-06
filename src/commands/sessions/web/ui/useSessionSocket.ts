@@ -5,6 +5,8 @@ export type { SessionInfo } from "./types";
 import { useSessionActions } from "./useSessionActions";
 import { useWsConnection } from "./useWsConnection";
 
+export type SessionSocket = ReturnType<typeof useSessionSocket>;
+
 export function useSessionSocket() {
 	const {
 		sessions,

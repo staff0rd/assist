@@ -3,13 +3,13 @@ import { dispatchMode, type SessionMode } from "./dispatchMode";
 import { selectRun } from "./selectRun";
 import { submitRunOrClaude } from "./submitRunOrClaude";
 import type { RunConfigInfo } from "./types";
+import { useRepoSelectionContext } from "./useRepoSelectionContext";
 import { useRunFilter } from "./useRunFilter";
 
 export type SessionFormState = ReturnType<typeof useNewSessionForm>;
 
 export type FormDeps = {
 	runConfigs: RunConfigInfo[];
-	selectedCwd: string;
 	onCreate: (prompt: string, cwd: string) => void;
 	onCreateRun: (name: string, args: string[], cwd?: string) => void;
 	onCreateAssist: (args: string[], cwd?: string) => void;
@@ -17,7 +17,8 @@ export type FormDeps = {
 };
 
 export function useNewSessionForm(deps: FormDeps) {
-	const { runConfigs, selectedCwd, onCreateRun, onRequestRunConfigs } = deps;
+	const { runConfigs, onCreateRun, onRequestRunConfigs } = deps;
+	const { selectedCwd } = useRepoSelectionContext();
 	const [mode, setMode] = useState<SessionMode>("free");
 	const [prompt, setPrompt] = useState("");
 	const [selectedRun, setSelectedRun] = useState<string | null>(null);
@@ -29,6 +30,7 @@ export function useNewSessionForm(deps: FormDeps) {
 	}, [selectedCwd, onRequestRunConfigs]);
 
 	return {
+		selectedCwd,
 		mode,
 		prompt,
 		setPrompt,

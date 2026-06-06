@@ -14,17 +14,6 @@ export const dropdownStyle: SxProps<Theme> = {
 	zIndex: 10,
 };
 
-export const dropdownStyleUp: SxProps<Theme> = {
-	position: "absolute",
-	left: 0,
-	right: 0,
-	bottom: "100%",
-	mb: 0.25,
-	maxHeight: 200,
-	overflowY: "auto",
-	zIndex: 10,
-};
-
 export function DropdownWrapper({
 	label,
 	children,

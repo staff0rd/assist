@@ -1,12 +1,11 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { marked } from "marked";
 import type { BacklogItem } from "../types";
 import { AcceptanceCriteriaList } from "./AcceptanceCriteriaList";
 import { CommentsSection } from "./CommentsSection";
 import { ItemMeta } from "./ItemMeta";
+import { MarkdownBlock } from "./MarkdownBlock";
 import { PlanSection } from "./PlanSection";
 
-const markdownSx = { lineHeight: 1.7, "& p": { mt: 0 } } as const;
 const sectionHeadingSx = {
 	color: "text.secondary",
 	mb: 1,
@@ -14,25 +13,16 @@ const sectionHeadingSx = {
 	letterSpacing: "0.08em",
 } as const;
 
-function MarkdownBlock({ content }: { content: string }) {
-	return (
-		<Box
-			className="markdown"
-			sx={markdownSx}
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: markdown rendering requires innerHTML
-			dangerouslySetInnerHTML={{ __html: marked.parse(content) as string }}
-		/>
-	);
-}
-
 export function ItemBody({
 	item,
 	onStatusChange,
 	onRewind,
+	onCommentDeleted,
 }: {
 	item: BacklogItem;
 	onStatusChange?: (status: BacklogItem["status"]) => void;
 	onRewind?: () => Promise<void>;
+	onCommentDeleted?: () => Promise<void>;
 }) {
 	return (
 		<Paper variant="outlined" sx={{ p: 3 }}>
@@ -57,7 +47,13 @@ export function ItemBody({
 					onRewind={onRewind}
 				/>
 			)}
-			{item.comments && <CommentsSection comments={item.comments} />}
+			{item.comments && (
+				<CommentsSection
+					comments={item.comments}
+					itemId={item.id}
+					onCommentDeleted={onCommentDeleted}
+				/>
+			)}
 		</Paper>
 	);
 }

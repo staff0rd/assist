@@ -2,6 +2,7 @@ import { Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router";
 import { updateItemStatus } from "../api";
 import type { BacklogItem } from "../types";
+import { useRepoCwd } from "../useRepoCwd";
 import { BackButton } from "./BackButton";
 import { DeleteAction } from "./DeleteAction";
 import { ItemBody } from "./ItemBody";
@@ -45,12 +46,13 @@ function DetailHeader({
 
 export function ItemDetail({ item, onReload }: ItemDetailProps) {
 	const navigate = useNavigate();
+	const cwd = useRepoCwd();
 	const handleDeleted = async () => {
 		await onReload();
 		navigate("/backlog");
 	};
 	const handleStatusChange = async (status: BacklogItem["status"]) => {
-		await updateItemStatus(item.id, status);
+		await updateItemStatus(item.id, status, cwd);
 		await onReload();
 	};
 	return (
@@ -60,6 +62,7 @@ export function ItemDetail({ item, onReload }: ItemDetailProps) {
 				item={item}
 				onStatusChange={handleStatusChange}
 				onRewind={onReload}
+				onCommentDeleted={onReload}
 			/>
 		</Box>
 	);

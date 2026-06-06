@@ -1,10 +1,11 @@
 import { Paper } from "@mui/material";
-import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import type { BacklogItem } from "../types";
+import { useRepoCwd } from "../useRepoCwd";
 import { BackButton } from "./BackButton";
-import { getDefaults, handleSubmit } from "./getDefaults";
+import { handleSubmit } from "./getDefaults";
 import { ItemFormFields } from "./ItemFormFields";
+import { useItemFormState } from "./useItemFormState";
 
 type ItemFormProps = {
 	item?: BacklogItem;
@@ -14,13 +15,8 @@ type ItemFormProps = {
 
 export function ItemForm({ item, onReload, backTo }: ItemFormProps) {
 	const navigate = useNavigate();
-	const defaults = getDefaults(item);
-	const [type, setType] = useState<"story" | "bug">(
-		defaults.type as "story" | "bug",
-	);
-	const [name, setName] = useState(defaults.name);
-	const [description, setDescription] = useState(defaults.description);
-	const acRef = useRef<string[]>(defaults.ac);
+	const cwd = useRepoCwd();
+	const form = useItemFormState(item);
 
 	return (
 		<>
@@ -30,33 +26,23 @@ export function ItemForm({ item, onReload, backTo }: ItemFormProps) {
 				variant="outlined"
 				sx={{ p: 3 }}
 				onSubmit={(e: React.FormEvent<HTMLFormElement>) =>
-					handleSubmit(
-						e,
-						type,
-						name,
-						description,
-						acRef.current,
-						item,
-						async (id) => {
-							await onReload();
-							navigate(`/backlog/items/${id}`);
-						},
-					)
+					handleSubmit(e, form.fields(), item, cwd, async (id) => {
+						await onReload();
+						navigate(`/backlog/items/${id}`);
+					})
 				}
 			>
 				<ItemFormFields
-					title={defaults.title}
-					submitLabel={defaults.submitLabel}
-					type={type}
-					onTypeChange={setType}
-					name={name}
-					onNameChange={setName}
-					description={description}
-					onDescriptionChange={setDescription}
-					initialAc={defaults.ac}
-					onAcChange={(v) => {
-						acRef.current = v;
-					}}
+					title={form.defaults.title}
+					submitLabel={form.defaults.submitLabel}
+					type={form.type}
+					onTypeChange={form.setType}
+					name={form.name}
+					onNameChange={form.setName}
+					description={form.description}
+					onDescriptionChange={form.setDescription}
+					initialAc={form.defaults.ac}
+					onAcChange={form.setAc}
 					onCancel={() => navigate(backTo)}
 				/>
 			</Paper>
