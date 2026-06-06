@@ -1,3 +1,10 @@
+# [0.240.0](https://github.com/staff0rd/assist/compare/v0.239.1...v0.240.0) (2026-06-06)
+
+
+### Features
+
+* review --backlog files findings ([31261fd](https://github.com/staff0rd/assist/commit/31261fd38afe485f01cfc693a744381bd1414946))
+
 ## [0.239.1](https://github.com/staff0rd/assist/compare/v0.239.0...v0.239.1) (2026-06-06)
 
 
