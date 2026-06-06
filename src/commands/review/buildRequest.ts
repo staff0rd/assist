@@ -1,7 +1,6 @@
 import type { ExistingComment } from "./fetchExistingComments";
 import { formatPriorComments } from "./formatPriorComments";
 import type { ReviewContext } from "./gatherContext";
-import type { ShaContext } from "./gatherShaContext";
 
 function formatFiles(files: string[]): string {
 	if (files.length === 0) return "(none)";
@@ -27,24 +26,6 @@ export function buildRequest(
 ${formatFiles(context.changedFiles)}
 ${priorBlock}
 ## Diff (PR #${context.prNumber}: ${context.baseSha}..${context.headSha})
-
-\`\`\`diff
-${context.diff.trimEnd()}
-\`\`\`
-`;
-}
-
-export function buildShaRequest(context: ShaContext): string {
-	return `# Code review request
-
-- Commit: \`${context.sha}\`
-- Parent: \`${context.parentSha}\`
-
-## Changed files
-
-${formatFiles(context.changedFiles)}
-
-## Diff (commit ${context.sha}: ${context.parentSha}..${context.sha})
 
 \`\`\`diff
 ${context.diff.trimEnd()}

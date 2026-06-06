@@ -91,8 +91,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist prs fixed <comment-id> <sha>` - Reply with commit link and resolve thread
 - `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
 - `assist prs comment <path> <line> <body>` - Add a line comment to the pending review
-- `assist review [sha] [options]` - Run Claude and Codex in parallel to review the open PR for the current branch. The diff is fetched from GitHub (base SHA → head SHA via `gh pr diff`), so stale local base branches don't pollute the review; fails fast if no PR is open. By default, prompts before posting line-bound comments and then prompts again to submit the pending review (defaulting to no). Cached `claude.md` / `codex.md` / `synthesis.md` are reused when present; if any reviewer is re-run, the synthesis is invalidated.
-  - `[sha]` - Review that commit's diff (`sha^..sha`) instead of the open PR. Files land under `.assist/reviews/<shortSha>/`, no GitHub lookup or posting happens, and `--refine` / `--apply` / `--submit` are rejected
+- `assist review [number] [options]` - Run Claude and Codex in parallel to review the open PR for the current branch. The diff is fetched from GitHub (base SHA → head SHA via `gh pr diff`), so stale local base branches don't pollute the review; fails fast if no PR is open. By default, prompts before posting line-bound comments and then prompts again to submit the pending review (defaulting to no). Cached `claude.md` / `codex.md` / `synthesis.md` are reused when present; if any reviewer is re-run, the synthesis is invalidated.
+  - `[number]` - Run `gh pr checkout <number>` first, then review that PR's branch. If the checkout fails (dirty working tree, unknown PR number), the review aborts
   - `--no-prompt` - Skip all confirmations
   - `--submit` - Default the submit prompt to yes (or auto-submit when combined with `--no-prompt`)
   - `--force` - Clear all cached files and re-run every phase

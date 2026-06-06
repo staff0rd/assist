@@ -2,10 +2,7 @@
 
 Orchestrates two independent LLM code reviewers (Claude and Codex), consolidates their findings into a single synthesis, and posts the result as pending line comments on the current PR.
 
-Two modes:
-
-- **PR mode** (`assist review`) — diffs the open PR for the current branch, fetches prior PR comments, and posts the synthesis as pending line comments on the PR.
-- **SHA mode** (`assist review <sha>`) — diffs a single commit (`sha^..sha`) and writes the four review files to `.assist/reviews/<shortSha>/`. The SHA is validated via `git rev-parse --verify <sha>^{commit}`; no `gh` lookups, no prior-comments fetch, no GitHub posting. `--refine`, `--apply`, and `--submit` are rejected; `--force` and `--verbose` work as in PR mode.
+`assist review` diffs the open PR for the current branch, fetches prior PR comments, and posts the synthesis as pending line comments on the PR. `assist review <number>` first runs `gh pr checkout <number>` and then performs the same review on that branch; if the checkout fails (dirty working tree, unknown PR number), gh/git's error is surfaced and the review aborts.
 
 ## End-to-end flow
 
@@ -23,10 +20,8 @@ flowchart LR
 
 ## Key files
 
-- `review.ts` — entry point; validates flags, resolves the repo root, and dispatches to `reviewPr` or `reviewSha` based on whether a SHA was supplied.
-- `reviewPr.ts` / `reviewSha.ts` — mode-specific pipelines. `reviewSha.ts` skips prior-comments fetch and post-synthesis (`handlePostSynthesis` / `runApplySession`), so the pipeline stops once `synthesis.md` is written.
-- `gatherShaContext.ts` — SHA-mode counterpart to `gatherContext`: resolves the SHA with `git rev-parse --verify` and produces the `sha^..sha` diff with no `gh` calls.
-- `buildRequest.ts` — exports both `buildRequest` (PR mode) and `buildShaRequest` (SHA mode: commit-only header, no PR/baseRef section, no prior comments).
+- `review.ts` — entry point; validates flags, resolves the repo root, checks out the PR (`gh pr checkout <number>`) when a number is supplied, and runs `reviewPr`.
+- `reviewPr.ts` — the review pipeline.
 - `gatherContext`, `buildReviewPaths` (in `buildRequest.ts`, `buildReviewPaths.ts`) — derive the working set. The diff comes from the open PR (base SHA → head SHA via `gh pr diff`), not a local `base...HEAD` range, so stale local base branches don't pollute the review. Fails fast with a clear message if no PR exists for the current branch.
 - `fetchExistingComments.ts` — pulls PR review comments via REST (`--paginate`) and enriches them with thread IDs / resolved state via GraphQL. Returns `null` when no PR exists.
 - `formatPriorComments.ts` — groups comments into threads (by `threadId`, falling back to `inReplyToId`) and renders the `## Prior review comments` section.

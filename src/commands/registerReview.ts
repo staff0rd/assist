@@ -5,11 +5,11 @@ export function registerReview(program: Command): void {
 	program
 		.command("review")
 		.description(
-			"Run Claude and Codex in parallel to review the current branch, or a single commit when a SHA is given",
+			"Run Claude and Codex in parallel to review the current branch's PR, or check out a PR by number first when given",
 		)
 		.argument(
-			"[sha]",
-			"Optional commit SHA to review (sha^..sha); when provided, no PR lookup or GitHub posting happens",
+			"[number]",
+			"Optional PR number; when provided, runs `gh pr checkout <number>` before reviewing",
 		)
 		.option(
 			"--no-prompt",
@@ -35,7 +35,7 @@ export function registerReview(program: Command): void {
 			"--verbose",
 			"Disable spinner UI and use per-line log output (per-tool lines, starting/done lines)",
 		)
-		.action((sha: string | undefined, options: Required<ReviewOptions>) =>
-			review({ ...options, sha }),
+		.action((number: string | undefined, options: Required<ReviewOptions>) =>
+			review({ ...options, number }),
 		);
 }
