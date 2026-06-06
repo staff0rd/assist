@@ -8,6 +8,7 @@ export type WsDispatch = {
 	setRunConfigs: (c: RunConfigInfo[]) => void;
 	setActiveId: (id: string) => void;
 	setCurrentCwd: (cwd: string) => void;
+	setError: (message: string) => void;
 	buffers: React.RefObject<Map<string, string>>;
 	handlers: React.RefObject<Map<string, OutputHandler>>;
 };
@@ -29,6 +30,9 @@ export function handleWsMessage(
 			break;
 		case "run-configs":
 			d.setRunConfigs(msg.configs as RunConfigInfo[]);
+			break;
+		case "error":
+			d.setError(msg.message as string);
 			break;
 		case "clear": {
 			const clearId = msg.sessionId as string;

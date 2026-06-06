@@ -5,6 +5,7 @@ import Tabs from "@mui/material/Tabs";
 import Toolbar from "@mui/material/Toolbar";
 import { useLocation, useNavigate } from "react-router";
 import { AppRoutes } from "./AppRoutes";
+import { ErrorSnackbar } from "./ErrorSnackbar";
 import { RepoPicker } from "./RepoPicker";
 import { useRepoSelection } from "./useRepoSelection";
 import { RepoSelectionContext } from "./useRepoSelectionContext";
@@ -57,6 +58,7 @@ export function AppShell() {
 			</AppBar>
 			<Toolbar variant="dense" sx={toolbarSx} />
 			<AppRoutes socket={socket} />
+			<ErrorSnackbar error={socket.error} onClose={socket.clearError} />
 		</RepoSelectionContext.Provider>
 	);
 }

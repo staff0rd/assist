@@ -15,6 +15,8 @@ export function useSessionSocket() {
 		activeId,
 		setActiveId,
 		currentCwd,
+		error,
+		clearError,
 		wsRef,
 		buffers,
 		handlers,
@@ -38,6 +40,8 @@ export function useSessionSocket() {
 		activeId,
 		setActiveId,
 		currentCwd,
+		error,
+		clearError,
 		...actions,
 		requestHistory,
 	};

@@ -1,6 +1,8 @@
 import * as pty from "node-pty";
+import { ensureSpawnHelperExecutable } from "./ensureSpawnHelperExecutable";
 
 export function spawnPty(args: string[], cwd?: string): pty.IPty {
+	ensureSpawnHelperExecutable();
 	const shell =
 		process.platform === "win32" ? "cmd.exe" : (process.env.SHELL ?? "bash");
 	const shellArgs =
