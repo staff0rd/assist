@@ -1,3 +1,10 @@
+## [0.244.2](https://github.com/staff0rd/assist/compare/v0.244.1...v0.244.2) (2026-06-07)
+
+
+### Bug Fixes
+
+* review ensures .assist/reviews ignored ([073f8b4](https://github.com/staff0rd/assist/commit/073f8b4a5ded8ee191a92bd516a16ab1b9371690))
+
 ## [0.244.1](https://github.com/staff0rd/assist/compare/v0.244.0...v0.244.1) (2026-06-07)
 
 
