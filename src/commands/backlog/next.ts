@@ -65,8 +65,12 @@ async function pickItem(
 	return selectItem(todo, items);
 }
 
+type NextOptions = SpawnClaudeOptions & {
+	once?: boolean;
+};
+
 export async function next(
-	options?: SpawnClaudeOptions,
+	options?: NextOptions,
 	startId?: string,
 ): Promise<void> {
 	if (blockedByHandover()) return;
@@ -82,6 +86,6 @@ export async function next(
 		if (id === undefined) return;
 
 		const completed = await run(id, options);
-		if (!completed) return;
+		if (!completed || options?.once) return;
 	}
 }

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
-import { launchMode } from "./launchMode";
+import { type LaunchModeOptions, launchMode } from "./launchMode";
 import { typeLabel } from "./list/shared";
 import { loadBacklog } from "./shared";
 
@@ -36,9 +36,12 @@ async function pickItemForRefine(): Promise<string | undefined> {
 	return selected.match(/#(\d+)/)?.[1] ?? "";
 }
 
-export async function refine(id?: string): Promise<void> {
+export async function refine(
+	id?: string,
+	options?: LaunchModeOptions,
+): Promise<void> {
 	const itemId = id ?? (await pickItemForRefine());
 	if (!itemId) return;
 
-	await launchMode(`refine ${itemId}`);
+	await launchMode(`refine ${itemId}`, options);
 }

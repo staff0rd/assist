@@ -10,7 +10,7 @@ export function getSignalPath(): string {
 	return join(getBacklogDir(), filename);
 }
 
-type SignalEvent = "phase-done" | "next" | "rewind";
+type SignalEvent = "phase-done" | "next" | "rewind" | "done";
 
 export type Signal = {
 	event: SignalEvent;

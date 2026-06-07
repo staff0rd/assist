@@ -166,6 +166,31 @@ describe("next", () => {
 		});
 	});
 
+	describe("when once mode is enabled", () => {
+		it("returns after the first completed run without picking again", async () => {
+			const items: BacklogFile = [makeItem({ id: 1, name: "Item A" })];
+			mockLoadBacklog.mockReturnValue(items);
+			mockRun.mockResolvedValueOnce(true);
+
+			await next({ once: true });
+
+			expect(mockRun).toHaveBeenCalledTimes(1);
+			expect(mockLoadBacklog).toHaveBeenCalledTimes(1);
+			expect(mockPrompt).not.toHaveBeenCalled();
+		});
+
+		it("returns after a provided id completes without chaining", async () => {
+			mockRun.mockResolvedValueOnce(true);
+
+			await next({ once: true }, "220");
+
+			expect(mockRun).toHaveBeenCalledTimes(1);
+			expect(mockRun).toHaveBeenCalledWith("220", { once: true });
+			expect(mockLoadBacklog).not.toHaveBeenCalled();
+			expect(mockPrompt).not.toHaveBeenCalled();
+		});
+	});
+
 	describe("on subsequent iterations", () => {
 		it("shows the selection prompt even with one unblocked todo", async () => {
 			mockIsBlocked.mockReturnValue(false);

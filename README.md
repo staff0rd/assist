@@ -122,8 +122,8 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog update-phase <id> <phase> [--name <n>] [--task <t...>] [--manual-check <c...>]` - Modify a plan phase (name, tasks, or manual checks)
 - `assist backlog update-phase <id> <phase> [--add-task <text>] [--edit-task <n> <text>] [--remove-task <n>] [--add-check <text>] [--edit-check <n> <text>] [--remove-check <n>]` - Granular task and manual-check edits using 1-based indices matching `backlog show`: `--add-*` appends (repeatable), `--edit-*` replaces entry n in place, `--remove-*` deletes entry n and renumbers the rest (task ops cannot be combined with `--task`; check ops cannot be combined with `--manual-check`)
 - `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item
-- `assist backlog next [id]` - Pick and run the next backlog item, or open `/draft` if none remain; pass an `id` to run that item first, then continue chaining
-- `assist backlog refine [id]` - Alias for `refine`
+- `assist backlog next [id] [--once]` - Pick and run the next backlog item, or open `/draft` if none remain; pass an `id` to run that item first, then continue chaining; `--once` exits after the first completed item run instead of prompting for another
+- `assist backlog refine [id] [--once]` - Alias for `refine`
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog stop` - Revert all in-progress backlog items to todo and reset their phase to 1
 - `assist backlog done <id>` - Set a backlog item to done
@@ -251,12 +251,13 @@ The first backlog command in a repository that still has a local `.assist/backlo
 Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client that relays WebSocket traffic to the daemon over a local IPC socket (unix domain socket at `~/.assist/daemon/daemon.sock`; named pipe `\\.\pipe\assist-sessions-daemon` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` and auto-exits once no sessions remain and no client has been connected for 60 seconds (it is respawned on demand by the web server).
 
 When iterating on assist itself: web server changes only need the `assist sessions` process restarted — sessions survive. Daemon/session-core changes need `assist daemon restart` to load the new code; this kills the PTYs, then claude sessions — including assist sessions that wrap claude, like `assist draft` — are auto-respawned via `claude --resume` with scrollback starting fresh, while run sessions (and assist sessions whose claude sessionId was never discovered) reappear as not-restored tiles that can be retried.
-- `assist next [id]` - Alias for `backlog next [id]`
-- `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
-- `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal
-- `assist refine [id]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given
+- `assist next [id] [--once]` - Alias for `backlog next [id]`; `--once` exits after the first completed item run instead of prompting for another
+- `assist draft [--once]` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal; `--once` exits when the done signal arrives after the initial draft completes
+- `assist bug [--once]` - Launch Claude in `/bug` mode, chain into next on `/next` signal; `--once` exits when the done signal arrives after the initial bug report completes
+- `assist refine [id] [--once]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given; `--once` exits when the done signal arrives after refinement completes
 - `assist review-comments [number]` - Launch Claude in `/review-comments` mode to process PR review comments (single session, no chaining); when a PR number is supplied, checks out that PR via `gh pr checkout` first
 - `assist signal next [id]` - Write a next signal to chain into `assist next`; when `id` is supplied, the parent launcher runs that backlog item directly
+- `assist signal done` - Write a done signal marking the session's initial task complete; `--once` launch sessions exit when it arrives, plain sessions ignore it
 
 When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist refine`, `assist next`, and `assist backlog run` run `git pull --ff-only` before doing anything else; if the pull fails the command aborts. `assist next` pulls once per invocation, not per item in its loop.
 

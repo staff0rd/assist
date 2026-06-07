@@ -47,3 +47,9 @@ assist backlog add --name "Bug title" --type bug --desc "**Repro:**\n1. ...\n\n*
 ```
 
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.
+
+Finally, signal that the bug-filing task is complete:
+```
+assist signal done 2>&1
+```
+This lets a wrapping `assist bug --once` session end; in a plain interactive session it has no effect.

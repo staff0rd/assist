@@ -84,3 +84,9 @@ assist backlog add-phase <id> "Phase name" --task "Task 1" --task "Task 2" --man
 ```
 
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.
+
+Finally, signal that the drafting task is complete:
+```
+assist signal done 2>&1
+```
+This lets a wrapping `assist draft --once` session end; in a plain interactive session it has no effect.

@@ -9,7 +9,10 @@ export function registerLaunch(program: Command): void {
 		.command("next")
 		.argument("[id]", "Backlog item ID to run first")
 		.description("Alias for backlog next")
-		.action((id: string | undefined) => backlogNext({ allowEdits: true }, id));
+		.option("--once", "Exit after the first completed item run")
+		.action((id: string | undefined, opts: { once?: boolean }) =>
+			backlogNext({ allowEdits: true, once: opts.once }, id),
+		);
 
 	program
 		.command("draft")
@@ -17,12 +20,18 @@ export function registerLaunch(program: Command): void {
 		.description(
 			"Launch Claude in /draft mode, chain into next on /next signal",
 		)
-		.action(() => launchMode("draft"));
+		.option("--once", "Exit when the initial task completes")
+		.action((opts: { once?: boolean }) =>
+			launchMode("draft", { once: opts.once }),
+		);
 
 	program
 		.command("bug")
 		.description("Launch Claude in /bug mode, chain into next on /next signal")
-		.action(() => launchMode("bug"));
+		.option("--once", "Exit when the initial task completes")
+		.action((opts: { once?: boolean }) =>
+			launchMode("bug", { once: opts.once }),
+		);
 
 	program
 		.command("review-comments")
@@ -34,5 +43,8 @@ export function registerLaunch(program: Command): void {
 		.command("refine")
 		.argument("[id]", "Backlog item ID")
 		.description("Launch Claude in /refine mode to refine a backlog item")
-		.action((id) => refine(id));
+		.option("--once", "Exit when the initial task completes")
+		.action((id: string | undefined, opts: { once?: boolean }) =>
+			refine(id, { once: opts.once }),
+		);
 }

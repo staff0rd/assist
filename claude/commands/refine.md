@@ -80,3 +80,11 @@ After applying changes, show the updated item with `assist backlog view <id> 2>&
 ## Step 4: Iterate
 
 Ask if there is anything else to refine. Continue the conversation until the user is satisfied.
+
+## Step 5: Signal completion
+
+Once the user confirms they are done refining, signal that the task is complete:
+```
+assist signal done 2>&1
+```
+This lets a wrapping `assist refine --once` session end; in a plain interactive session it has no effect.

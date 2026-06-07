@@ -7,11 +7,18 @@ import { cleanupSignal } from "./resolvePhaseResult";
 import { tryRunById } from "./tryRunById";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
-export async function launchMode(slashCommand: string): Promise<void> {
+export type LaunchModeOptions = {
+	once?: boolean;
+};
+
+export async function launchMode(
+	slashCommand: string,
+	options?: LaunchModeOptions,
+): Promise<void> {
 	pullIfConfigured();
 	process.env.ASSIST_SESSION_ID = String(process.pid);
 	const { child, done } = spawnClaude(`/${slashCommand}`, { allowEdits: true });
-	watchForMarker(child);
+	watchForMarker(child, { actOnDone: options?.once });
 	await done;
 	stopWatching();
 
@@ -23,6 +30,6 @@ export async function launchMode(slashCommand: string): Promise<void> {
 			if (await tryRunById(signal.id, { allowEdits: true })) return;
 		}
 		console.log(chalk.bold("\nChaining into assist next...\n"));
-		await next({ allowEdits: true });
+		await next({ allowEdits: true, once: options?.once });
 	}
 }

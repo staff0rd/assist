@@ -3,15 +3,18 @@ import { existsSync, unwatchFile, watchFile } from "node:fs";
 import { readSignal } from "./readSignal";
 import { getSignalPath } from "./writeSignal";
 
-export function watchForMarker(child: ChildProcess): void {
+export function watchForMarker(
+	child: ChildProcess,
+	options?: { actOnDone?: boolean },
+): void {
 	const statusPath = getSignalPath();
 	watchFile(statusPath, { interval: 1000 }, () => {
 		if (!existsSync(statusPath)) return;
 		const signal = readSignal();
-		if (signal) {
-			unwatchFile(statusPath);
-			child.kill("SIGTERM");
-		}
+		if (!signal) return;
+		if (signal.event === "done" && !options?.actOnDone) return;
+		unwatchFile(statusPath);
+		child.kill("SIGTERM");
 	});
 }
 

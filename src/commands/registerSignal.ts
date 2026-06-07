@@ -14,4 +14,12 @@ export function registerSignal(program: Command): void {
 			writeSignal("next", id ? { id } : undefined);
 			console.log("Signal written.");
 		});
+
+	signalCommand
+		.command("done")
+		.description("Write a done signal to end a --once launch session")
+		.action(() => {
+			writeSignal("done");
+			console.log("Signal written.");
+		});
 }
