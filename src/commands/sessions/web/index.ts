@@ -9,7 +9,7 @@ export async function web(options: {
 	port: string;
 	initialPath?: string;
 }): Promise<void> {
-	await ensureDaemonRunning();
+	await ensureDaemonRunning("web server start");
 	const port = Number.parseInt(options.port, 10);
 	const server = startWebServer(
 		"Assist",

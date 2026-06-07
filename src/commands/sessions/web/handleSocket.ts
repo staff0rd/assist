@@ -35,7 +35,7 @@ async function openDaemonConnection(
 	ctx: RelayContext,
 ): Promise<Socket> {
 	try {
-		await ensureDaemonRunning();
+		await ensureDaemonRunning("web socket connection");
 		const conn = await connectToDaemon();
 		relayDaemonLines(conn, ws, ctx.repoCwd);
 		return conn;

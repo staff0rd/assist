@@ -1,11 +1,8 @@
-import { existsSync, readFileSync } from "node:fs";
 import type * as net from "node:net";
-import { createInterface } from "node:readline";
 import { connectToDaemon } from "./connectToDaemon";
-import type { SessionInfo } from "./createSession";
-import { daemonPaths } from "./daemonPaths";
-
-const STATUS_TIMEOUT_MS = 5_000;
+import { listDaemonPids } from "./listDaemonPids";
+import { queryDaemon } from "./queryDaemon";
+import { reportStolenSocket } from "./reportStolenSocket";
 
 export async function daemonStatus(): Promise<void> {
 	let socket: net.Socket;
@@ -13,13 +10,17 @@ export async function daemonStatus(): Promise<void> {
 		socket = await connectToDaemon();
 	} catch {
 		console.log("Sessions daemon is not running");
+		// Anything still alive cannot be reached via the socket — all strays
+		reportStrays(listDaemonPids());
 		return;
 	}
 
-	const sessions = await readSessionList(socket);
+	const { pid, sessions } = await queryDaemon(socket);
 	socket.destroy();
 
-	console.log(`Sessions daemon is running${describePid()}`);
+	console.log(`Sessions daemon is running${pid ? ` (PID ${pid})` : ""}`);
+	reportStolenSocket(pid);
+	reportStrays(listDaemonPids().filter((p) => p !== pid));
 	if (sessions.length === 0) {
 		console.log("No sessions");
 		return;
@@ -30,24 +31,9 @@ export async function daemonStatus(): Promise<void> {
 	}
 }
 
-function describePid(): string {
-	if (!existsSync(daemonPaths.pid)) return "";
-	return ` (PID ${readFileSync(daemonPaths.pid, "utf-8").trim()})`;
-}
-
-// The daemon greets every new connection with a sessions message
-function readSessionList(socket: net.Socket): Promise<SessionInfo[]> {
-	return new Promise((resolve) => {
-		const timer = setTimeout(() => resolve([]), STATUS_TIMEOUT_MS);
-		const lines = createInterface({ input: socket });
-		lines.on("error", () => {});
-		lines.on("line", (line) => {
-			try {
-				const data = JSON.parse(line);
-				if (data.type !== "sessions") return;
-				clearTimeout(timer);
-				resolve(data.sessions ?? []);
-			} catch {}
-		});
-	});
+function reportStrays(pids: number[]): void {
+	if (pids.length === 0) return;
+	console.error(
+		`Warning: stray daemon process(es) detected: ${pids.join(", ")}`,
+	);
 }

@@ -18,7 +18,9 @@ export function registerDaemon(program: Command): void {
 
 	cmd
 		.command("status")
-		.description("Show sessions daemon status and live sessions")
+		.description(
+			"Show sessions daemon status, live sessions, and any stray daemon processes",
+		)
 		.action(daemonStatus);
 
 	cmd

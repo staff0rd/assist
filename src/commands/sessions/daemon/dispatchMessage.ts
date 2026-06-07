@@ -93,6 +93,7 @@ function handleShutdown(client: SessionClient, manager: SessionManager): void {
 }
 
 const handlers: Record<string, Handler> = {
+	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
 	create: handleCreate,
 	"create-run": handleCreateRun,
 	"create-assist": handleCreateAssist,

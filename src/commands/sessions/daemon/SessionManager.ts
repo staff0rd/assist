@@ -53,10 +53,11 @@ export class SessionManager {
 		shutdownSessions(this.sessions);
 	}
 
-	restore(): void {
-		for (const persisted of loadPersistedSessions()) {
+	restore(): string[] {
+		return loadPersistedSessions().map((persisted) => {
 			this.add(restoreSession(String(this.nextId++), persisted));
-		}
+			return persisted.name;
+		});
 	}
 
 	private add(session: Session): string {
