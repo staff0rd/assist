@@ -1,3 +1,10 @@
+## [0.245.1](https://github.com/staff0rd/assist/compare/v0.245.0...v0.245.1) (2026-06-07)
+
+
+### Bug Fixes
+
+* prevent daemon spawn race orphans ([5db8142](https://github.com/staff0rd/assist/commit/5db8142e6d061a0d1b28c8ffbe8f4791ec3023e6))
+
 # [0.245.0](https://github.com/staff0rd/assist/compare/v0.244.2...v0.245.0) (2026-06-07)
 
 
