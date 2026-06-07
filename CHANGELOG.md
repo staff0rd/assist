@@ -1,3 +1,10 @@
+## [0.245.3](https://github.com/staff0rd/assist/compare/v0.245.2...v0.245.3) (2026-06-07)
+
+
+### Bug Fixes
+
+* freeze session card timer when done ([c96191d](https://github.com/staff0rd/assist/commit/c96191d92e73d28d74e4aab500b30aac3df82c0c))
+
 ## [0.245.2](https://github.com/staff0rd/assist/compare/v0.245.1...v0.245.2) (2026-06-07)
 
 
