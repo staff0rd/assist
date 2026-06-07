@@ -1,3 +1,10 @@
+## [0.244.1](https://github.com/staff0rd/assist/compare/v0.244.0...v0.244.1) (2026-06-07)
+
+
+### Bug Fixes
+
+* pointer cursor on web buttons/links ([cd3c0a0](https://github.com/staff0rd/assist/commit/cd3c0a02eee6ddd0a60b5857a843828125ac3115))
+
 # [0.244.0](https://github.com/staff0rd/assist/compare/v0.243.1...v0.244.0) (2026-06-07)
 
 
