@@ -7,7 +7,7 @@ export function writeToSession(
 	data: string,
 ): void {
 	const s = sessions.get(id);
-	if (s && s.status !== "done") s.pty.write(data);
+	if (s && s.status !== "done") s.pty?.write(data);
 }
 
 export function resizeSession(
@@ -19,7 +19,7 @@ export function resizeSession(
 	const s = sessions.get(id);
 	if (s && s.status !== "done") {
 		s.lastResizeAt = Date.now();
-		s.pty.resize(cols, rows);
+		s.pty?.resize(cols, rows);
 	}
 }
 
@@ -29,7 +29,7 @@ export function dismissSession(
 ): boolean {
 	const s = sessions.get(id);
 	if (!s) return false;
-	if (s.status !== "done") s.pty.kill();
+	if (s.status !== "done") s.pty?.kill();
 	clearIdle(s);
 	sessions.delete(id);
 	return true;

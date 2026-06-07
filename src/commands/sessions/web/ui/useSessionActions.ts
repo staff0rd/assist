@@ -38,9 +38,9 @@ export function useSessionActions(
 
 	const retrySession = useCallback(
 		(id: string) => {
-			retrySessionAction(send, buffers.current, handlers.current)(id);
+			retrySessionAction(send, buffers.current)(id);
 		},
-		[send, buffers, handlers],
+		[send, buffers],
 	);
 
 	const dismissSession = useCallback(

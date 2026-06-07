@@ -1,5 +1,6 @@
 import ButtonBase from "@mui/material/ButtonBase";
-import { CardHeader, cardSx, StatusRow } from "./CardHeader";
+import { CardHeader, cardSx } from "./CardHeader";
+import { StatusRow } from "./StatusRow";
 import type { SessionInfo } from "./types";
 import { useElapsed } from "./useElapsed";
 
@@ -26,7 +27,11 @@ export function SessionCard({
 				onRetry={onRetry}
 				onDismiss={onDismiss}
 			/>
-			<StatusRow status={session.status} elapsed={elapsed} />
+			<StatusRow
+				status={session.status}
+				elapsed={elapsed}
+				restored={session.restored}
+			/>
 		</ButtonBase>
 	);
 }

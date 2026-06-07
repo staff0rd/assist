@@ -243,6 +243,14 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist sessions` - Start the web dashboard (same as `sessions web`)
 - `assist sessions web [-p, --port <number>]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals (default port 3100)
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
+- `assist daemon run` - Run the sessions daemon in the foreground (normally auto-spawned detached by `assist sessions`)
+- `assist daemon status` - Show sessions daemon status and live sessions
+- `assist daemon stop` - Stop the sessions daemon; running claude sessions resume on next start
+- `assist daemon restart` - Restart the sessions daemon, resuming previously running claude sessions
+
+Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client that relays WebSocket traffic to the daemon over a local IPC socket (unix domain socket at `~/.assist/daemon/daemon.sock`; named pipe `\\.\pipe\assist-sessions-daemon` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` and auto-exits once no sessions remain and no client has been connected for 60 seconds (it is respawned on demand by the web server).
+
+When iterating on assist itself: web server changes only need the `assist sessions` process restarted — sessions survive. Daemon/session-core changes need `assist daemon restart` to load the new code; this kills the PTYs, then claude sessions — including assist sessions that wrap claude, like `assist draft` — are auto-respawned via `claude --resume` with scrollback starting fresh, while run sessions (and assist sessions whose claude sessionId was never discovered) reappear as not-restored tiles that can be retried.
 - `assist next [id]` - Alias for `backlog next [id]`
 - `assist draft` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal
 - `assist bug` - Launch Claude in `/bug` mode, chain into next on `/next` signal

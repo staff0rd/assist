@@ -39,6 +39,7 @@ import { registerVoice } from "./commands/registerVoice";
 import { registerRoam } from "./commands/roam/registerRoam";
 import { registerRun } from "./commands/run/registerRun";
 import { screenshot } from "./commands/screenshot";
+import { registerDaemon } from "./commands/sessions/daemon/registerDaemon";
 import { registerSessions } from "./commands/sessions/registerSessions";
 import { web as sessionsWeb } from "./commands/sessions/web";
 import { statusLine } from "./commands/statusLine";
@@ -150,6 +151,7 @@ registerTranscript(program);
 registerVoice(program);
 
 registerSessions(program);
+registerDaemon(program);
 registerPrompts(program);
 registerDeny(program);
 

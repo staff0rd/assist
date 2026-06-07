@@ -1,6 +1,6 @@
 export type SessionStatus = "running" | "waiting" | "done";
 
-type CommandType = "claude" | "run";
+type CommandType = "claude" | "run" | "assist";
 
 export type SessionInfo = {
 	id: string;
@@ -8,6 +8,7 @@ export type SessionInfo = {
 	commandType: CommandType;
 	status: SessionStatus;
 	startedAt: number;
+	restored?: boolean;
 };
 
 export type HistoricalSession = {

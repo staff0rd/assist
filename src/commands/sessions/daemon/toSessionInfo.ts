@@ -9,6 +9,17 @@ export function toSessionInfo({
 	runName,
 	runArgs,
 	cwd,
+	restored,
 }: Session): SessionInfo {
-	return { id, name, commandType, status, startedAt, runName, runArgs, cwd };
+	return {
+		id,
+		name,
+		commandType,
+		status,
+		startedAt,
+		runName,
+		runArgs,
+		cwd,
+		restored,
+	};
 }

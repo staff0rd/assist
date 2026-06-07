@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import chalk from "chalk";
-import { discoverSessionJsonlPaths } from "../web/discoverSessions";
+import { discoverSessionJsonlPaths } from "../shared/discoverSessions";
 import { hasSummary, writeSummary } from "./shared";
 import { summariseSession } from "./summariseSession";
 

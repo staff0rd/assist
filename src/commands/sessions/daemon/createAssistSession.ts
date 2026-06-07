@@ -17,6 +17,7 @@ export function createAssistSession(
 		scrollback: "",
 		idleTimer: null,
 		lastResizeAt: 0,
+		assistArgs,
 		cwd,
 	};
 }

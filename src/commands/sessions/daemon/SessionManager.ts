@@ -1,53 +1,67 @@
-import type { WebSocket } from "ws";
-import { isGitRepo } from "../../../shared/getInstallDir";
+import { discoverSessions } from "../shared/discoverSessions";
+import { broadcast, type SessionClient } from "./broadcast";
 import { createAssistSession } from "./createAssistSession";
 import {
 	createRunSession,
 	createSession,
-	resumeSession,
 	type Session,
 	type SessionInfo,
 } from "./createSession";
-import { discoverSessions } from "./discoverSessions";
-import { replayScrollback } from "./replayScrollback";
+import { greetClient } from "./greetClient";
+import {
+	loadPersistedSessions,
+	persistLiveSessions,
+} from "./loadPersistedSessions";
+import { restoreSession } from "./restoreSession";
+import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
-import { scheduleIdle } from "./scheduleIdle";
+import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
+import { watchForClaudeSessionId } from "./watchForClaudeSessionId";
 import { wirePtyEvents } from "./wirePtyEvents";
 import {
 	dismissSession,
 	resizeSession,
 	writeToSession,
 } from "./writeToSession";
-import { wsBroadcast, wsSend } from "./wsBroadcast";
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
-	private clients = new Set<WebSocket>();
+	private clients = new Set<SessionClient>();
 	private nextId = 1;
-	private readonly repoCwd: string | undefined;
+	private shuttingDown = false;
 
-	constructor() {
-		const cwd = process.cwd();
-		this.repoCwd = isGitRepo(cwd) ? cwd : undefined;
+	constructor(private readonly onIdleChange?: (idle: boolean) => void) {}
+
+	addClient(client: SessionClient): void {
+		this.clients.add(client);
+		this.onIdleChange?.(this.isIdle());
+		greetClient(client, this.sessions, () => this.listSessions());
 	}
 
-	addClient(ws: WebSocket): void {
-		this.clients.add(ws);
-		wsSend(ws, {
-			type: "sessions",
-			cwd: this.repoCwd,
-			sessions: this.listSessions(),
-		});
-		replayScrollback(this.sessions, ws);
+	removeClient(client: SessionClient): void {
+		this.clients.delete(client);
+		this.onIdleChange?.(this.isIdle());
 	}
 
-	removeClient(ws: WebSocket): void {
-		this.clients.delete(ws);
+	isIdle(): boolean {
+		return this.sessions.size === 0 && this.clients.size === 0;
+	}
+
+	shutdown(): void {
+		this.shuttingDown = true;
+		shutdownSessions(this.sessions);
+	}
+
+	restore(): void {
+		for (const persisted of loadPersistedSessions()) {
+			this.add(restoreSession(String(this.nextId++), persisted));
+		}
 	}
 
 	private add(session: Session): string {
 		this.wire(session);
+		watchForClaudeSessionId(session, this.sessions, this.notify);
 		return session.id;
 	}
 
@@ -79,7 +93,6 @@ export class SessionManager {
 	private wire(session: Session): void {
 		this.sessions.set(session.id, session);
 		wirePtyEvents(session, this.clients, this.onStatusChange);
-		scheduleIdle(session, () => this.onStatusChange(session, "waiting"));
 		this.notify();
 	}
 
@@ -108,10 +121,15 @@ export class SessionManager {
 		return discoverSessions();
 	}
 
-	private notify(): void {
-		wsBroadcast(this.clients, {
+	private readonly notify = (): void => {
+		// During shutdown pty exits must not rewrite sessions.json, or the
+		// done statuses would erase the metadata that resume needs on restart
+		if (this.shuttingDown) return;
+		persistLiveSessions(this.sessions);
+		broadcast(this.clients, {
 			type: "sessions",
 			sessions: this.listSessions(),
 		});
-	}
+		this.onIdleChange?.(this.isIdle());
+	};
 }

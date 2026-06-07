@@ -1,7 +1,6 @@
-import type { WebSocket } from "ws";
+import { broadcast, type SessionClient } from "./broadcast";
 import type { Session, SessionStatus } from "./createSession";
 import { clearIdle, scheduleIdle } from "./scheduleIdle";
-import { wsBroadcast } from "./wsBroadcast";
 
 const MAX_SCROLLBACK = 256 * 1024;
 const RESIZE_GRACE_MS = 500;
@@ -15,9 +14,10 @@ function appendScrollback(session: Session, data: string): void {
 
 export function wirePtyEvents(
 	session: Session,
-	clients: Set<WebSocket>,
+	clients: Set<SessionClient>,
 	onStatusChange: (session: Session, status: SessionStatus) => void,
 ): void {
+	if (!session.pty) return;
 	session.pty.onData((data) => {
 		appendScrollback(session, data);
 		const isRedraw = Date.now() - session.lastResizeAt < RESIZE_GRACE_MS;
@@ -25,10 +25,11 @@ export function wirePtyEvents(
 			onStatusChange(session, "running");
 		if (!isRedraw)
 			scheduleIdle(session, () => onStatusChange(session, "waiting"));
-		wsBroadcast(clients, { type: "output", sessionId: session.id, data });
+		broadcast(clients, { type: "output", sessionId: session.id, data });
 	});
 	session.pty.onExit(() => {
 		clearIdle(session);
 		onStatusChange(session, "done");
 	});
+	scheduleIdle(session, () => onStatusChange(session, "waiting"));
 }

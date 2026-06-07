@@ -1,13 +1,12 @@
-import type { WebSocket } from "ws";
+import { type SessionClient, sendTo } from "./broadcast";
 import type { Session } from "./createSession";
-import { wsSend } from "./wsBroadcast";
 
 export function replayScrollback(
 	sessions: Map<string, Session>,
-	ws: WebSocket,
+	client: SessionClient,
 ): void {
 	for (const s of sessions.values()) {
 		if (s.scrollback)
-			wsSend(ws, { type: "output", sessionId: s.id, data: s.scrollback });
+			sendTo(client, { type: "output", sessionId: s.id, data: s.scrollback });
 	}
 }

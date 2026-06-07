@@ -25,7 +25,8 @@ export function SessionList({
 					active={s.id === activeId}
 					onClick={() => onSelect(s.id)}
 					onRetry={
-						s.commandType === "run" && s.status === "done"
+						(s.commandType === "run" || s.commandType === "assist") &&
+						s.status === "done"
 							? () => onRetry(s.id)
 							: undefined
 					}

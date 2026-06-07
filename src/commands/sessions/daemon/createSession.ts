@@ -11,13 +11,16 @@ type Session = {
 	commandType: CommandType;
 	status: SessionStatus;
 	startedAt: number;
-	pty: ReturnType<typeof spawnClaude>;
+	pty: ReturnType<typeof spawnClaude> | null;
 	scrollback: string;
 	idleTimer: ReturnType<typeof setTimeout> | null;
 	lastResizeAt: number;
 	runName?: string;
 	runArgs?: string[];
+	assistArgs?: string[];
 	cwd?: string;
+	claudeSessionId?: string;
+	restored?: boolean;
 };
 
 type SessionInfo = {
@@ -29,6 +32,7 @@ type SessionInfo = {
 	runName?: string;
 	runArgs?: string[];
 	cwd?: string;
+	restored?: boolean;
 };
 
 export type { Session, SessionInfo, SessionStatus };
@@ -48,6 +52,7 @@ export function createSession(
 		scrollback: "",
 		idleTimer: null,
 		lastResizeAt: 0,
+		cwd,
 	};
 }
 
@@ -70,24 +75,5 @@ export function createRunSession(
 		runName,
 		runArgs,
 		cwd,
-	};
-}
-
-export function resumeSession(
-	id: string,
-	sessionId: string,
-	cwd: string,
-	name?: string,
-): Session {
-	return {
-		id,
-		name: `${repoPrefix(cwd)}${name ? `${name.slice(0, 36)} (R)` : `Resume ${sessionId.slice(0, 8)}`}`,
-		commandType: "claude",
-		status: "running",
-		startedAt: Date.now(),
-		pty: spawnClaude({ resumeSessionId: sessionId, cwd }),
-		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 	};
 }

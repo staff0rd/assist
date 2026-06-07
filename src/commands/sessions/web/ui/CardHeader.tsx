@@ -3,13 +3,6 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { DismissButton } from "./DismissButton";
 import { RetryButton } from "./RetryButton";
-import type { SessionStatus } from "./types";
-
-const STATUS_COLORS: Record<SessionStatus, string> = {
-	running: "success.main",
-	waiting: "warning.main",
-	done: "info.main",
-};
 
 export function cardSx(active: boolean): SxProps<Theme> {
 	return {
@@ -26,25 +19,6 @@ export function cardSx(active: boolean): SxProps<Theme> {
 		transition: "background 0.15s",
 		"&:hover": !active ? { bgcolor: "action.hover" } : undefined,
 	};
-}
-
-export function StatusRow({
-	status,
-	elapsed,
-}: {
-	status: SessionStatus;
-	elapsed: string;
-}) {
-	return (
-		<Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
-			<Typography variant="caption" sx={{ color: STATUS_COLORS[status] }}>
-				● {status}
-			</Typography>
-			<Typography variant="caption" color="text.disabled">
-				{elapsed}
-			</Typography>
-		</Box>
-	);
 }
 
 export function CardHeader({

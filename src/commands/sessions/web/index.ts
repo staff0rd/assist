@@ -1,13 +1,15 @@
 import { WebSocketServer } from "ws";
+import { isGitRepo } from "../../../shared/getInstallDir";
 import { startWebServer } from "../../../shared/web";
+import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
 import { handleRequest } from "./handleRequest";
-import { handleSocket } from "./handleSocket";
-import { SessionManager } from "./SessionManager";
+import { handleSocket, type RelayContext } from "./handleSocket";
 
 export async function web(options: {
 	port: string;
 	initialPath?: string;
 }): Promise<void> {
+	await ensureDaemonRunning();
 	const port = Number.parseInt(options.port, 10);
 	const server = startWebServer(
 		"Assist",
@@ -15,14 +17,18 @@ export async function web(options: {
 		handleRequest,
 		options.initialPath,
 	);
-	const manager = new SessionManager();
+	const serverCwd = process.cwd();
+	const ctx: RelayContext = {
+		serverCwd,
+		repoCwd: isGitRepo(serverCwd) ? serverCwd : undefined,
+	};
 
 	const wss = new WebSocketServer({ noServer: true });
 
 	server.on("upgrade", (req, socket, head) => {
 		if (req.url === "/ws") {
 			wss.handleUpgrade(req, socket, head, (ws) => {
-				handleSocket(ws, manager);
+				handleSocket(ws, ctx);
 			});
 		} else {
 			socket.destroy();

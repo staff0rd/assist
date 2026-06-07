@@ -25,14 +25,11 @@ export function resumeSessionAction(send: SendFn) {
 		send({ type: "resume", sessionId, cwd, name });
 }
 
-export function retrySessionAction(
-	send: SendFn,
-	buffers: Map<string, string>,
-	handlers: Map<string, OutputHandler>,
-) {
+export function retrySessionAction(send: SendFn, buffers: Map<string, string>) {
 	return (id: string) => {
+		// Keep the output handler registered: the terminal pane stays mounted
+		// across a retry, and the daemon's clear broadcast resets it
 		buffers.delete(id);
-		handlers.delete(id);
 		send({ type: "retry", sessionId: id });
 	};
 }
