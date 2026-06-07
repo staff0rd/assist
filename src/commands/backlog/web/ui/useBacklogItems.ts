@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { backlogExists, fetchItems, initBacklog } from "./api";
+import { initBacklog } from "./api";
+import { backlogExists } from "./backlogExists";
+import { fetchItems } from "./fetchItems";
 import type { BacklogItem } from "./types";
 import { useRepoCwd } from "./useRepoCwd";
 
@@ -8,6 +10,16 @@ export function useBacklogItems() {
 	const [items, setItems] = useState<BacklogItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [exists, setExists] = useState(true);
+	const [loadedCwd, setLoadedCwd] = useState(cwd);
+
+	// Reset during render so the previous project's list never commits while the
+	// new project loads (the load-triggering effect runs only after commit).
+	if (cwd !== loadedCwd) {
+		setLoadedCwd(cwd);
+		setItems([]);
+		setLoading(true);
+		setExists(true);
+	}
 
 	const reload = useCallback(async () => {
 		setItems(await fetchItems(undefined, cwd));
@@ -15,18 +27,29 @@ export function useBacklogItems() {
 	}, [cwd]);
 
 	useEffect(() => {
+		const controller = new AbortController();
+		const { signal } = controller;
 		setLoading(true);
 		setExists(true);
 		(async () => {
-			if (await backlogExists(cwd)) {
-				await reload();
-				return;
+			try {
+				if (await backlogExists(cwd, signal)) {
+					const next = await fetchItems(undefined, cwd, signal);
+					if (signal.aborted) return;
+					setItems(next);
+					setLoading(false);
+					return;
+				}
+				if (signal.aborted) return;
+				setExists(false);
+				setItems([]);
+				setLoading(false);
+			} catch (err) {
+				if (!signal.aborted) throw err;
 			}
-			setExists(false);
-			setItems([]);
-			setLoading(false);
 		})();
-	}, [cwd, reload]);
+		return () => controller.abort();
+	}, [cwd]);
 
 	const initialize = useCallback(async () => {
 		await initBacklog(cwd);

@@ -1,4 +1,5 @@
 import type { BacklogItem } from "./types";
+import { withCwd } from "./withCwd";
 
 type ItemBody = {
 	type: "story" | "bug";
@@ -6,12 +7,6 @@ type ItemBody = {
 	description?: string;
 	acceptanceCriteria: string[];
 };
-
-function withCwd(url: string, cwd?: string): string {
-	if (!cwd) return url;
-	const separator = url.includes("?") ? "&" : "?";
-	return `${url}${separator}cwd=${encodeURIComponent(cwd)}`;
-}
 
 async function sendJson<T>(
 	url: string,
@@ -24,23 +19,6 @@ async function sendJson<T>(
 		body: JSON.stringify(body),
 	});
 	return res.json();
-}
-
-export async function fetchItems(
-	query?: string,
-	cwd?: string,
-): Promise<BacklogItem[]> {
-	const base = query
-		? `/api/items?q=${encodeURIComponent(query)}`
-		: "/api/items";
-	const res = await fetch(withCwd(base, cwd));
-	return res.json();
-}
-
-export async function backlogExists(cwd?: string): Promise<boolean> {
-	const res = await fetch(withCwd("/api/backlog/exists", cwd));
-	const body = (await res.json()) as { exists: boolean };
-	return body.exists;
 }
 
 export async function initBacklog(cwd?: string): Promise<void> {
