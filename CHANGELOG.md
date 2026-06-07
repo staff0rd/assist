@@ -1,3 +1,10 @@
+# [0.244.0](https://github.com/staff0rd/assist/compare/v0.243.1...v0.244.0) (2026-06-07)
+
+
+### Features
+
+* sessions survive server restarts ([16b0eb6](https://github.com/staff0rd/assist/commit/16b0eb65bc055781857dc1e8ff26cc9f1b739123))
+
 ## [0.243.1](https://github.com/staff0rd/assist/compare/v0.243.0...v0.243.1) (2026-06-06)
 
 
