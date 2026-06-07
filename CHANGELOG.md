@@ -1,3 +1,10 @@
+# [0.245.0](https://github.com/staff0rd/assist/compare/v0.244.2...v0.245.0) (2026-06-07)
+
+
+### Features
+
+* add --once to end spawned sessions ([52e3afd](https://github.com/staff0rd/assist/commit/52e3afd159575084684009fa26707b20829b42a3))
+
 ## [0.244.2](https://github.com/staff0rd/assist/compare/v0.244.1...v0.244.2) (2026-06-07)
 
 
