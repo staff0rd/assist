@@ -6,6 +6,22 @@ import { AppShell } from "./AppShell";
 import { ThemeToggle } from "./ThemeToggle";
 import { useColorMode } from "./useColorMode";
 
+const components = {
+	MuiButtonBase: {
+		styleOverrides: {
+			root: {
+				cursor: "pointer",
+				"&.Mui-disabled": { cursor: "default" },
+			},
+		},
+	},
+	MuiLink: {
+		styleOverrides: {
+			root: { cursor: "pointer" },
+		},
+	},
+} as const;
+
 export function App() {
 	const { mode, toggle } = useColorMode();
 	const theme = useMemo(
@@ -17,6 +33,7 @@ export function App() {
 						background: { default: "#1e1e1e", paper: "#252526" },
 					}),
 				},
+				components,
 			}),
 		[mode],
 	);
