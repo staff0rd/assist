@@ -17,7 +17,7 @@ export function SessionCard({
 	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
-	const elapsed = useElapsed(session.startedAt);
+	const elapsed = useElapsed(session.startedAt, session.status);
 
 	return (
 		<ButtonBase onClick={onClick} sx={cardSx(active)}>
