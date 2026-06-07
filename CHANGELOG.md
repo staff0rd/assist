@@ -1,3 +1,10 @@
+## [0.245.2](https://github.com/staff0rd/assist/compare/v0.245.1...v0.245.2) (2026-06-07)
+
+
+### Bug Fixes
+
+* cancel stale backlog list on project switch ([fc15aee](https://github.com/staff0rd/assist/commit/fc15aeeb741d6369309e436965f58b4dc5587a72))
+
 ## [0.245.1](https://github.com/staff0rd/assist/compare/v0.245.0...v0.245.1) (2026-06-07)
 
 
