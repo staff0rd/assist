@@ -11,7 +11,6 @@ export function useSessionSocket() {
 	const {
 		sessions,
 		history,
-		runConfigs,
 		activeId,
 		setActiveId,
 		currentCwd,
@@ -36,7 +35,6 @@ export function useSessionSocket() {
 	return {
 		sessions,
 		history,
-		runConfigs,
 		activeId,
 		setActiveId,
 		currentCwd,

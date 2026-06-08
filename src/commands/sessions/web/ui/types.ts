@@ -19,16 +19,4 @@ export type HistoricalSession = {
 	timestamp: string;
 };
 
-type RunParam = {
-	name: string;
-	required?: boolean;
-	default?: string;
-	description?: string;
-};
-
-export type RunConfigInfo = {
-	name: string;
-	params?: RunParam[];
-};
-
 export type SidebarTab = "active" | "history";

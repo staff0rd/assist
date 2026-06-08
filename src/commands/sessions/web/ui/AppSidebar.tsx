@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from "react";
-import { type RunProps, Sidebar } from "./Sidebar";
+import { useCallback } from "react";
+import { Sidebar } from "./Sidebar";
 import type { HistoricalSession, SidebarTab } from "./types";
 import type { useSessionSocket } from "./useSessionSocket";
 
@@ -18,26 +18,14 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 		[socket.resumeSession, onTabChange],
 	);
 
-	const run: RunProps = useMemo(
-		() => ({
-			configs: socket.runConfigs,
-			create: socket.createRunSession,
-			requestConfigs: socket.requestRunConfigs,
-		}),
-		[socket.runConfigs, socket.createRunSession, socket.requestRunConfigs],
-	);
-
 	return (
 		<Sidebar
 			sessions={socket.sessions}
 			history={socket.history}
-			run={run}
 			activeId={socket.activeId}
 			tab={tab}
 			onTabChange={onTabChange}
 			onSelect={socket.setActiveId}
-			onCreate={socket.createSession}
-			onCreateAssist={socket.createAssistSession}
 			onResume={handleResume}
 			onRetry={socket.retrySession}
 			onDismiss={socket.dismissSession}

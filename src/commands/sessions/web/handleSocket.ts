@@ -9,12 +9,7 @@ export type RelayContext = {
 	repoCwd?: string;
 };
 
-const CWD_DEFAULTED_TYPES = new Set([
-	"create",
-	"create-run",
-	"create-assist",
-	"run-configs",
-]);
+const CWD_DEFAULTED_TYPES = new Set(["create", "create-run", "create-assist"]);
 
 export function handleSocket(ws: WebSocket, ctx: RelayContext): void {
 	const connection = openDaemonConnection(ws, ctx);

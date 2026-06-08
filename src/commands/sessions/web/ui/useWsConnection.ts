@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createWsConnection } from "./createWsConnection";
-import type { HistoricalSession, RunConfigInfo, SessionInfo } from "./types";
+import type { HistoricalSession, SessionInfo } from "./types";
 
 type OutputHandler = (data: string) => void;
 
 export function useWsConnection() {
 	const [sessions, setSessions] = useState<SessionInfo[]>([]);
 	const [history, setHistory] = useState<HistoricalSession[]>([]);
-	const [runConfigs, setRunConfigs] = useState<RunConfigInfo[]>([]);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
@@ -19,7 +18,6 @@ export function useWsConnection() {
 		const ws = createWsConnection({
 			setSessions,
 			setHistory,
-			setRunConfigs,
 			setActiveId,
 			setCurrentCwd,
 			setError,
@@ -41,7 +39,6 @@ export function useWsConnection() {
 	return {
 		sessions,
 		history,
-		runConfigs,
 		activeId,
 		setActiveId,
 		currentCwd,

@@ -1,5 +1,4 @@
 import { type SessionClient, sendTo } from "./broadcast";
-import { handleRunConfigs } from "./handleRunConfigs";
 import type { SessionManager } from "./SessionManager";
 
 type Msg = Record<string, unknown>;
@@ -71,14 +70,6 @@ function handleResume(
 	);
 }
 
-function runConfigs(
-	client: SessionClient,
-	_manager: SessionManager,
-	data: Msg,
-): void {
-	handleRunConfigs(client, data.cwd as string);
-}
-
 function handleHistory(client: SessionClient, manager: SessionManager): void {
 	manager.getHistory().then((history) => {
 		sendTo(client, { type: "history", sessions: history });
@@ -98,7 +89,6 @@ const handlers: Record<string, Handler> = {
 	"create-run": handleCreateRun,
 	"create-assist": handleCreateAssist,
 	resume: handleResume,
-	"run-configs": runConfigs,
 	history: handleHistory,
 	shutdown: handleShutdown,
 	input: (_client, m, d) =>

@@ -1,11 +1,10 @@
-import type { HistoricalSession, RunConfigInfo, SessionInfo } from "./types";
+import type { HistoricalSession, SessionInfo } from "./types";
 
 type OutputHandler = (data: string) => void;
 
 export type WsDispatch = {
 	setSessions: (s: SessionInfo[]) => void;
 	setHistory: (h: HistoricalSession[]) => void;
-	setRunConfigs: (c: RunConfigInfo[]) => void;
 	setActiveId: (id: string) => void;
 	setCurrentCwd: (cwd: string) => void;
 	setError: (message: string) => void;
@@ -27,9 +26,6 @@ export function handleWsMessage(
 			break;
 		case "history":
 			d.setHistory(msg.sessions as HistoricalSession[]);
-			break;
-		case "run-configs":
-			d.setRunConfigs(msg.configs as RunConfigInfo[]);
 			break;
 		case "error":
 			d.setError(msg.message as string);
