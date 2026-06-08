@@ -1,4 +1,5 @@
 import { discoverSessions } from "../shared/discoverSessions";
+import { applyStatusChange } from "./applyStatusChange";
 import { broadcast, type SessionClient } from "./broadcast";
 import { createAssistSession } from "./createAssistSession";
 import {
@@ -86,10 +87,11 @@ export class SessionManager {
 		return this.add(resumeSession(String(this.nextId++), sessionId, cwd, name));
 	}
 
-	private readonly onStatusChange = (s: Session, status: Session["status"]) => {
-		s.status = status;
-		this.notify();
-	};
+	private readonly onStatusChange = (
+		s: Session,
+		status: Session["status"],
+		exitCode?: number,
+	) => applyStatusChange(s, status, exitCode, this.dismissSession, this.notify);
 
 	private wire(session: Session): void {
 		this.sessions.set(session.id, session);
@@ -110,9 +112,9 @@ export class SessionManager {
 		if (s && retrySession(s, this.clients, this.onStatusChange)) this.notify();
 	}
 
-	dismissSession(id: string): void {
+	dismissSession = (id: string): void => {
 		if (dismissSession(this.sessions, id)) this.notify();
-	}
+	};
 
 	listSessions(): SessionInfo[] {
 		return [...this.sessions.values()].map(toSessionInfo);

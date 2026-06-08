@@ -8,7 +8,11 @@ import { wirePtyEvents } from "./wirePtyEvents";
 export function retrySession(
 	session: Session,
 	clients: Set<SessionClient>,
-	onStatusChange: (s: Session, status: Session["status"]) => void,
+	onStatusChange: (
+		s: Session,
+		status: Session["status"],
+		exitCode?: number,
+	) => void,
 ): boolean {
 	const respawn = respawnThunk(session);
 	if (!respawn) return false;

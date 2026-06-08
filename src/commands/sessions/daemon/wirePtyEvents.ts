@@ -15,7 +15,11 @@ function appendScrollback(session: Session, data: string): void {
 export function wirePtyEvents(
 	session: Session,
 	clients: Set<SessionClient>,
-	onStatusChange: (session: Session, status: SessionStatus) => void,
+	onStatusChange: (
+		session: Session,
+		status: SessionStatus,
+		exitCode?: number,
+	) => void,
 ): void {
 	if (!session.pty) return;
 	session.pty.onData((data) => {
@@ -27,9 +31,9 @@ export function wirePtyEvents(
 			scheduleIdle(session, () => onStatusChange(session, "waiting"));
 		broadcast(clients, { type: "output", sessionId: session.id, data });
 	});
-	session.pty.onExit(() => {
+	session.pty.onExit(({ exitCode }) => {
 		clearIdle(session);
-		onStatusChange(session, "done");
+		onStatusChange(session, "done", exitCode);
 	});
 	scheduleIdle(session, () => onStatusChange(session, "waiting"));
 }
