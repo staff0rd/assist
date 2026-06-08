@@ -17,3 +17,6 @@ When the user mentions a Jira issue key (e.g. `BAD-671`, `PROJ-123`), use the At
 
 ## Commenting code
 Do not include comments for standard logic or syntax. Only comment if the specific line involves unintuitive complexity or a hack.
+
+## Backlog items, PRs, and commits
+Do not mention assist backlog items in PR descriptions or PR comments. The reference goes the other way: mention the relevant commits or PRs in the assist backlog item.
