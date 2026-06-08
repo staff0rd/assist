@@ -1,3 +1,10 @@
+# [0.250.0](https://github.com/staff0rd/assist/compare/v0.249.0...v0.250.0) (2026-06-08)
+
+
+### Features
+
+* alias numeric run to backlog run ([5a71d36](https://github.com/staff0rd/assist/commit/5a71d361453907652e793b4c118b2787d6a81e6b))
+
 # [0.249.0](https://github.com/staff0rd/assist/compare/v0.248.0...v0.249.0) (2026-06-08)
 
 
