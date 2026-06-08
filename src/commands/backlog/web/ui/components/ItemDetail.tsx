@@ -4,8 +4,10 @@ import { updateItemStatus } from "../api";
 import type { BacklogItem } from "../types";
 import { useRepoCwd } from "../useRepoCwd";
 import { BackButton } from "./BackButton";
+import { canPlay } from "./canPlay";
 import { DeleteAction } from "./DeleteAction";
 import { ItemBody } from "./ItemBody";
+import { PlayAction } from "./PlayAction";
 
 type ItemDetailProps = {
 	item: BacklogItem;
@@ -19,10 +21,10 @@ const headerSx = {
 } as const;
 
 function DetailHeader({
-	itemId,
+	item,
 	onDeleted,
 }: {
-	itemId: number;
+	item: BacklogItem;
 	onDeleted: () => Promise<void>;
 }) {
 	const navigate = useNavigate();
@@ -30,15 +32,16 @@ function DetailHeader({
 		<Stack direction="row" sx={headerSx}>
 			<BackButton to="/backlog" />
 			<Stack direction="row" spacing={1}>
+				{canPlay(item) && <PlayAction itemId={item.id} />}
 				<Button
 					variant="contained"
 					color="inherit"
 					size="small"
-					onClick={() => navigate(`/backlog/items/${itemId}/edit`)}
+					onClick={() => navigate(`/backlog/items/${item.id}/edit`)}
 				>
 					Edit
 				</Button>
-				<DeleteAction itemId={itemId} onDeleted={onDeleted} />
+				<DeleteAction itemId={item.id} onDeleted={onDeleted} />
 			</Stack>
 		</Stack>
 	);
@@ -57,7 +60,7 @@ export function ItemDetail({ item, onReload }: ItemDetailProps) {
 	};
 	return (
 		<Box>
-			<DetailHeader itemId={item.id} onDeleted={handleDeleted} />
+			<DetailHeader item={item} onDeleted={handleDeleted} />
 			<ItemBody
 				item={item}
 				onStatusChange={handleStatusChange}

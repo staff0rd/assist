@@ -1,7 +1,9 @@
 import type { SxProps, Theme } from "@mui/material";
 import { alpha, ButtonBase, Chip, Typography } from "@mui/material";
 import type { BacklogItem } from "../types";
+import { canPlay } from "./canPlay";
 import { InProgressChip } from "./InProgressChip";
+import { PlayAction } from "./PlayAction";
 import { StatusIcon } from "./StatusIcon";
 import { typeChipColors } from "./typeChipColors";
 
@@ -63,6 +65,7 @@ export function ItemCard({
 			</Typography>
 			<Typography sx={nameSx}>{item.name}</Typography>
 			{inProgress && <InProgressChip />}
+			{canPlay(item) && <PlayAction itemId={item.id} compact />}
 		</ButtonBase>
 	);
 }
