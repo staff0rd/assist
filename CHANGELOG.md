@@ -1,3 +1,10 @@
+# [0.246.0](https://github.com/staff0rd/assist/compare/v0.245.4...v0.246.0) (2026-06-08)
+
+
+### Features
+
+* list web backlog items newest-first ([6042b7b](https://github.com/staff0rd/assist/commit/6042b7b1b86bd6861eec25993baabe22b36e548c))
+
 ## [0.245.4](https://github.com/staff0rd/assist/compare/v0.245.3...v0.245.4) (2026-06-08)
 
 
