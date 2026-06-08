@@ -38,13 +38,27 @@ export function requireRunConfigs(): RunConfig[] {
 	return configs;
 }
 
-export function findRunConfig(name: string) {
+type RunConfigLookup =
+	| { kind: "match"; config: RunConfig }
+	| { kind: "ambiguous"; matches: RunConfig[] }
+	| { kind: "not-found" };
+
+export function lookupRunConfig(name: string): RunConfigLookup {
 	const configs = requireRunConfigs();
 	const exact = configs.find((r) => r.name === name);
-	if (exact) return exact;
+	if (exact) return { kind: "match", config: exact };
 	const suffixMatches = configs.filter((r) => r.name.endsWith(`:${name}`));
-	if (suffixMatches.length === 1) return suffixMatches[0];
+	if (suffixMatches.length === 1)
+		return { kind: "match", config: suffixMatches[0] };
 	if (suffixMatches.length > 1)
-		return exitWithAmbiguousConfig(name, suffixMatches);
-	return exitWithConfigNotFound(name, configs);
+		return { kind: "ambiguous", matches: suffixMatches };
+	return { kind: "not-found" };
+}
+
+export function findRunConfig(name: string): RunConfig {
+	const result = lookupRunConfig(name);
+	if (result.kind === "match") return result.config;
+	if (result.kind === "ambiguous")
+		return exitWithAmbiguousConfig(name, result.matches);
+	return exitWithConfigNotFound(name, requireRunConfigs());
 }

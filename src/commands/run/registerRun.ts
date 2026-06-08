@@ -12,6 +12,10 @@ export function registerRun(program: Command): void {
 		.argument("[name]", "Name of the configured command")
 		.argument("[args...]", "Arguments to pass to the command")
 		.allowUnknownOption()
+		.addHelpText(
+			"after",
+			"\nA purely numeric name with no matching command is an alias for\n'assist backlog run <id>' (forwards --write/--no-write/-w).",
+		)
 		.addHelpText("after", () => formatConfiguredCommands())
 		.action((name, args) => run(name, args));
 

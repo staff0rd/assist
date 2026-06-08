@@ -143,7 +143,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog web [-p, --port <number>]` - Open the backlog tab in the web dashboard (default port 3100)
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API
-- `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first)
+- `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first). If `<name>` is purely numeric and matches no configured command, it is treated as an alias for `assist backlog run <name>` and forwards `--write`/`--no-write`/`-w`.
 - `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
 - `assist run link <path> --prefix <prefix>` - Link run configurations from another project's assist.yml
 - `assist run remove <name>` - Remove a run configuration from assist.yml and delete its Claude command file
