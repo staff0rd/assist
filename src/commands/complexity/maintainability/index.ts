@@ -11,6 +11,7 @@ import {
 	displayMaintainabilityResults,
 	type ResultEntry,
 } from "./displayMaintainabilityResults";
+import { printMaintainabilityFormula } from "./printMaintainabilityFormula";
 
 function calculateMaintainabilityIndex(
 	halsteadVolume: number,
@@ -74,6 +75,7 @@ export async function maintainability(
 	pattern = "**/*.ts",
 	options: ThresholdOptions = {},
 ): Promise<void> {
+	printMaintainabilityFormula();
 	withSourceFiles(pattern, (files) => {
 		const fileMetrics = collectFileMetrics(files);
 		const results = aggregateResults(fileMetrics);
