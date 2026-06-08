@@ -29,6 +29,7 @@ assist backlog view
 assist cli-hook
 assist complexity
 assist coverage
+assist daemon status
 assist dotnet
 assist jira ac
 assist jira auth
