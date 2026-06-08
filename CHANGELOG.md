@@ -1,3 +1,10 @@
+# [0.257.0](https://github.com/staff0rd/assist/compare/v0.256.0...v0.257.0) (2026-06-08)
+
+
+### Features
+
+* highlight review phase chip ([408dae5](https://github.com/staff0rd/assist/commit/408dae59a4210e62e1d39ffd333b4b26cb8d83c2))
+
 # [0.256.0](https://github.com/staff0rd/assist/compare/v0.255.0...v0.256.0) (2026-06-08)
 
 
