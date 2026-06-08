@@ -2,14 +2,14 @@ import { useCallback, useEffect, useState } from "react";
 import { initBacklog } from "./api";
 import { backlogExists } from "./backlogExists";
 import { fetchItems } from "./fetchItems";
-import type { BacklogItem } from "./types";
+import type { BacklogItemSummary } from "./types";
 import { useRepoCwd } from "./useRepoCwd";
 import { useShowCompleted } from "./useShowCompleted";
 
 export function useBacklogItems() {
 	const cwd = useRepoCwd();
 	const [showCompleted] = useShowCompleted();
-	const [items, setItems] = useState<BacklogItem[]>([]);
+	const [items, setItems] = useState<BacklogItemSummary[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [exists, setExists] = useState(true);
 	const [loadedCwd, setLoadedCwd] = useState(cwd);

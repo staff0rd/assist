@@ -1,7 +1,10 @@
-import type { BacklogItem } from "../types";
+import type { BacklogStatus } from "../types";
 
-export function canPlay(item: BacklogItem): boolean {
-	if (item.status !== "todo") return false;
-	if (item.type === "bug") return true;
-	return !!item.plan && item.plan.length > 0;
+/**
+ * An item can be built whenever it is open work — todo or in-progress. A plan is
+ * not a prerequisite (a run can start without one), so this depends only on
+ * status, which keeps it usable for both the list summary and the full item.
+ */
+export function canPlay(item: { status: BacklogStatus }): boolean {
+	return item.status === "todo" || item.status === "in-progress";
 }

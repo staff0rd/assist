@@ -7,30 +7,38 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
-import type { BacklogFile, BacklogItem, BacklogStatus } from "../types";
+import type { BacklogItemSummary, BacklogStatus } from "../types";
 
 vi.mock("../shared", () => ({
 	getReady: vi.fn(),
-	loadBacklog: vi.fn(),
-	searchBacklog: vi.fn(),
+}));
+
+vi.mock("../loadBacklogSummaries", () => ({
+	loadBacklogSummaries: vi.fn(),
+	searchBacklogSummaries: vi.fn(),
 }));
 
 vi.mock("./applyCwdFromReq", () => ({
 	applyCwdFromReq: vi.fn(),
 }));
 
-import { loadBacklog, searchBacklog } from "../shared";
+import {
+	loadBacklogSummaries,
+	searchBacklogSummaries,
+} from "../loadBacklogSummaries";
 import { listItems } from "./shared";
 
-const mockLoadBacklog = loadBacklog as unknown as MockInstance;
-const mockSearchBacklog = searchBacklog as unknown as MockInstance;
+const mockLoadBacklog = loadBacklogSummaries as unknown as MockInstance;
+const mockSearchBacklog = searchBacklogSummaries as unknown as MockInstance;
 
-function makeItem(id: number, status: BacklogStatus = "todo"): BacklogItem {
+function makeItem(
+	id: number,
+	status: BacklogStatus = "todo",
+): BacklogItemSummary {
 	return {
 		id,
 		type: "story",
 		name: `Item ${id}`,
-		acceptanceCriteria: ["AC1"],
 		status,
 	};
 }
@@ -38,7 +46,7 @@ function makeItem(id: number, status: BacklogStatus = "todo"): BacklogItem {
 function makeReqRes(url: string): {
 	req: IncomingMessage;
 	res: ServerResponse;
-	getJson: () => BacklogFile;
+	getJson: () => BacklogItemSummary[];
 } {
 	const req = { url } as IncomingMessage;
 	let body = "";
@@ -48,7 +56,7 @@ function makeReqRes(url: string): {
 			if (chunk) body = chunk;
 		}),
 	} as unknown as ServerResponse;
-	return { req, res, getJson: () => JSON.parse(body) as BacklogFile };
+	return { req, res, getJson: () => JSON.parse(body) as BacklogItemSummary[] };
 }
 
 describe("listItems", () => {

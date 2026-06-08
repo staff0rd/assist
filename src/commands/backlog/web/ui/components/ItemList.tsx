@@ -1,13 +1,13 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
-import type { BacklogItem } from "../types";
+import type { BacklogItemSummary } from "../types";
 import { useSearchItems } from "../useSearchItems";
 import { CompletedToggle } from "./CompletedToggle";
 import { ListBody } from "./ListBody";
 import { SearchInput } from "./SearchInput";
 
 type ItemListProps = {
-	items: BacklogItem[];
+	items: BacklogItemSummary[];
 	loading: boolean;
 };
 

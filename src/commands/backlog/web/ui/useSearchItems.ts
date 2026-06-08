@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchItems } from "./fetchItems";
-import type { BacklogItem } from "./types";
+import type { BacklogItemSummary } from "./types";
 import { useRepoCwd } from "./useRepoCwd";
 import { useShowCompleted } from "./useShowCompleted";
 
@@ -8,7 +8,7 @@ export function useSearchItems() {
 	const cwd = useRepoCwd();
 	const [showCompleted] = useShowCompleted();
 	const [query, setQuery] = useState("");
-	const [results, setResults] = useState<BacklogItem[] | null>(null);
+	const [results, setResults] = useState<BacklogItemSummary[] | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [loadedCwd, setLoadedCwd] = useState(cwd);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(

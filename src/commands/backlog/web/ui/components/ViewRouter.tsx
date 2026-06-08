@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router";
-import type { BacklogItem } from "../types";
+import type { BacklogItemSummary } from "../types";
 import { ItemForm } from "./ItemForm";
 import { ItemList } from "./ItemList";
 import { ItemRoute } from "./ItemRoute";
 
 type ViewRouterProps = {
-	items: BacklogItem[];
+	items: BacklogItemSummary[];
 	loading: boolean;
 	onReload: () => Promise<void>;
 };
@@ -16,11 +16,11 @@ export function ViewRouter({ items, loading, onReload }: ViewRouterProps) {
 			<Route index element={<ItemList items={items} loading={loading} />} />
 			<Route
 				path="items/:id"
-				element={<ItemRoute items={items} mode="detail" onReload={onReload} />}
+				element={<ItemRoute mode="detail" onReload={onReload} />}
 			/>
 			<Route
 				path="items/:id/edit"
-				element={<ItemRoute items={items} mode="edit" onReload={onReload} />}
+				element={<ItemRoute mode="edit" onReload={onReload} />}
 			/>
 			<Route
 				path="add"

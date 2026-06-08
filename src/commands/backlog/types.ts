@@ -50,6 +50,15 @@ const backlogFileSchema = z.array(backlogItemSchema);
 
 export type BacklogFile = z.infer<typeof backlogFileSchema>;
 export type BacklogItem = z.infer<typeof backlogItemSchema>;
+/**
+ * The trimmed-down shape the web list renders. Only the item's own summary
+ * columns — relations (comments, links, plan) are loaded on demand when a single
+ * item is opened, never for the list. See {@link ../backlog/loadItemSummaries}.
+ */
+export type BacklogItemSummary = Pick<
+	BacklogItem,
+	"id" | "type" | "name" | "status" | "origin"
+>;
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;

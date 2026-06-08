@@ -1,4 +1,4 @@
-import type { BacklogItem } from "./types";
+import type { BacklogItemSummary } from "./types";
 import { withCwd } from "./withCwd";
 
 function itemsUrl(query?: string, showCompleted?: boolean): string {
@@ -21,7 +21,7 @@ export async function fetchItems({
 	cwd,
 	signal,
 	showCompleted,
-}: FetchItemsOptions = {}): Promise<BacklogItem[]> {
+}: FetchItemsOptions = {}): Promise<BacklogItemSummary[]> {
 	const res = await fetch(withCwd(itemsUrl(query, showCompleted), cwd), {
 		signal,
 	});

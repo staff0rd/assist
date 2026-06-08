@@ -1,12 +1,12 @@
 import { Box, CircularProgress } from "@mui/material";
-import type { BacklogItem } from "../types";
+import type { BacklogItemSummary } from "../types";
 import { ItemCard } from "./ItemCard";
 
 type ListBodyProps = {
 	loading: boolean;
 	query: string;
-	items: BacklogItem[];
-	onSelect: (item: BacklogItem) => void;
+	items: BacklogItemSummary[];
+	onSelect: (item: BacklogItemSummary) => void;
 };
 
 const loadingSx = {

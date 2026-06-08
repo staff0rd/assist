@@ -18,6 +18,8 @@ export type BacklogComment = {
 
 export type PhaseStatus = "done" | "current" | "upcoming";
 
+export type BacklogStatus = "todo" | "in-progress" | "done" | "wontdo";
+
 export type BacklogItem = {
 	id: number;
 	type: "story" | "bug";
@@ -26,6 +28,14 @@ export type BacklogItem = {
 	acceptanceCriteria: string[];
 	plan?: PlanPhase[];
 	currentPhase?: number;
-	status: "todo" | "in-progress" | "done" | "wontdo";
+	status: BacklogStatus;
 	comments?: BacklogComment[];
+};
+
+/** The trimmed-down shape the list renders; full data loads when an item opens. */
+export type BacklogItemSummary = {
+	id: number;
+	type: "story" | "bug";
+	name: string;
+	status: BacklogStatus;
 };

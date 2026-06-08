@@ -1,6 +1,6 @@
 import type { SxProps, Theme } from "@mui/material";
 import { alpha, ButtonBase, Chip, Typography } from "@mui/material";
-import type { BacklogItem } from "../types";
+import type { BacklogItemSummary } from "../types";
 import { canPlay } from "./canPlay";
 import { InProgressChip } from "./InProgressChip";
 import { PlayAction } from "./PlayAction";
@@ -47,7 +47,7 @@ export function ItemCard({
 	item,
 	onSelect,
 }: {
-	item: BacklogItem;
+	item: BacklogItemSummary;
 	onSelect: () => void;
 }) {
 	const inProgress = item.status === "in-progress";
