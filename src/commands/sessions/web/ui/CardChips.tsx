@@ -10,6 +10,9 @@ export function CardChips({ session }: { session: SessionInfo }) {
 	const repo = repoLabel(session.cwd);
 	const { activity } = session;
 	const isBacklog = activity?.kind === "backlog";
+	// The review phase is the auto-appended final phase, so it's the only one
+	// where the current phase equals the (review-inclusive) total.
+	const isReview = isBacklog && activity.phase === activity.totalPhases;
 	return (
 		<>
 			{repo && <Chip label={repo} size="small" sx={chipSx} />}
@@ -28,6 +31,7 @@ export function CardChips({ session }: { session: SessionInfo }) {
 					<Chip
 						label={`${activity.phase}/${activity.totalPhases}`}
 						size="small"
+						color={isReview ? "primary" : "default"}
 						sx={chipSx}
 					/>
 				</>
