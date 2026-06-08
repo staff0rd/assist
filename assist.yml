@@ -156,10 +156,6 @@ run:
       - --showCircularDependencies
       - --exitCodeOnCircularDependencies=1
       - src/index.ts
-  - name: worktree:create
-    command: npm
-    args:
-      - install
   - name: test:timestamp
     command: bash
     args:
