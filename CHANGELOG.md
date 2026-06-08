@@ -1,3 +1,10 @@
+# [0.258.0](https://github.com/staff0rd/assist/compare/v0.257.0...v0.258.0) (2026-06-08)
+
+
+### Features
+
+* open selected repo in GitHub from web view ([f53587f](https://github.com/staff0rd/assist/commit/f53587f77a14d6211ea3441cd082b7520ba4bb5e))
+
 # [0.257.0](https://github.com/staff0rd/assist/compare/v0.256.0...v0.257.0) (2026-06-08)
 
 
