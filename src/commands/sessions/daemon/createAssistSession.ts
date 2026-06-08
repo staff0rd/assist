@@ -1,5 +1,4 @@
 import type { Session } from "./createSession";
-import { repoPrefix } from "./repoPrefix";
 import { spawnPty } from "./spawnPty";
 
 export function createAssistSession(
@@ -9,11 +8,11 @@ export function createAssistSession(
 ): Session {
 	return {
 		id,
-		name: `${repoPrefix(cwd)}assist ${assistArgs.join(" ")}`,
+		name: `assist ${assistArgs.join(" ")}`,
 		commandType: "assist",
 		status: "running",
 		startedAt: Date.now(),
-		pty: spawnPty(["assist", ...assistArgs], cwd),
+		pty: spawnPty(["assist", ...assistArgs], cwd, id),
 		scrollback: "",
 		idleTimer: null,
 		lastResizeAt: 0,

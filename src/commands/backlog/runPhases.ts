@@ -17,6 +17,8 @@ export async function runPhases(
 			phaseIndex,
 			currentPlan,
 			spawnOptions,
+			// +1 for the review phase appended after the authored phases complete
+			currentPlan.length + 1,
 		);
 		if (phaseIndex < 0) return false;
 		// Re-resolve from the DB so phases added mid-run (e.g. appended to the end

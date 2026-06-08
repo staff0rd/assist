@@ -1,5 +1,4 @@
 import type { Session } from "./createSession";
-import { repoPrefix } from "./repoPrefix";
 import { spawnClaude } from "./spawnClaude";
 
 export function resumeSession(
@@ -10,7 +9,7 @@ export function resumeSession(
 ): Session {
 	return {
 		id,
-		name: `${repoPrefix(cwd)}${name ? `${name.slice(0, 36)} (R)` : `Resume ${sessionId.slice(0, 8)}`}`,
+		name: name ? `${name.slice(0, 36)} (R)` : `Resume ${sessionId.slice(0, 8)}`,
 		commandType: "claude",
 		status: "running",
 		startedAt: Date.now(),

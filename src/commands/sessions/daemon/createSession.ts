@@ -1,4 +1,5 @@
-import { repoPrefix } from "./repoPrefix";
+import type { FSWatcher } from "node:fs";
+import type { Activity } from "../../../shared/emitActivity";
 import { spawnClaude } from "./spawnClaude";
 import { spawnRun } from "./spawnRun";
 
@@ -21,6 +22,8 @@ type Session = {
 	cwd?: string;
 	claudeSessionId?: string;
 	restored?: boolean;
+	activity?: Activity;
+	activityWatcher?: FSWatcher;
 };
 
 type SessionInfo = {
@@ -31,8 +34,10 @@ type SessionInfo = {
 	startedAt: number;
 	runName?: string;
 	runArgs?: string[];
+	assistArgs?: string[];
 	cwd?: string;
 	restored?: boolean;
+	activity?: Activity;
 };
 
 export type { Session, SessionInfo, SessionStatus };
@@ -44,7 +49,7 @@ export function createSession(
 ): Session {
 	return {
 		id,
-		name: `${repoPrefix(cwd)}${prompt?.slice(0, 40) || `Session ${id}`}`,
+		name: prompt?.slice(0, 40) || `Session ${id}`,
 		commandType: "claude",
 		status: "running",
 		startedAt: Date.now(),
@@ -64,7 +69,7 @@ export function createRunSession(
 ): Session {
 	return {
 		id,
-		name: `${repoPrefix(cwd)}run: ${runName}`,
+		name: `run: ${runName}`,
 		commandType: "run",
 		status: "running",
 		startedAt: Date.now(),

@@ -1,9 +1,11 @@
 import type { SxProps, Theme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { CardChips } from "./CardChips";
 import { DismissButton } from "./DismissButton";
 import { RetryButton } from "./RetryButton";
-import type { SessionStatus } from "./types";
+import { sessionTitle } from "./sessionTitle";
+import type { SessionInfo } from "./types";
 
 export function cardSx(active: boolean): SxProps<Theme> {
 	return {
@@ -23,28 +25,30 @@ export function cardSx(active: boolean): SxProps<Theme> {
 }
 
 export function CardHeader({
-	name,
-	status,
+	session,
 	onRetry,
 	onDismiss,
 }: {
-	name: string;
-	status: SessionStatus;
+	session: SessionInfo;
 	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
+	const { status } = session;
 	const isDone = status === "done";
 	return (
-		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+		<Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+			<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+				<CardChips session={session} />
+				<Box sx={{ flex: 1 }} />
+				{isDone && onRetry && <RetryButton onRetry={onRetry} />}
+				<DismissButton status={status} onDismiss={onDismiss} />
+			</Box>
 			<Typography
 				variant="body2"
-				noWrap
-				sx={{ flex: 1, color: "text.primary" }}
+				sx={{ color: "text.primary", overflowWrap: "anywhere" }}
 			>
-				{name}
+				{sessionTitle(session)}
 			</Typography>
-			{isDone && onRetry && <RetryButton onRetry={onRetry} />}
-			<DismissButton status={status} onDismiss={onDismiss} />
 		</Box>
 	);
 }

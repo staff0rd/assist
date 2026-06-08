@@ -1,3 +1,5 @@
+import type { Activity } from "../../../../shared/emitActivity";
+
 export type SessionStatus = "running" | "waiting" | "done";
 
 type CommandType = "claude" | "run" | "assist";
@@ -8,7 +10,11 @@ export type SessionInfo = {
 	commandType: CommandType;
 	status: SessionStatus;
 	startedAt: number;
+	runName?: string;
+	assistArgs?: string[];
+	cwd?: string;
 	restored?: boolean;
+	activity?: Activity;
 };
 
 export type HistoricalSession = {

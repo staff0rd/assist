@@ -8,8 +8,10 @@ export function toSessionInfo({
 	startedAt,
 	runName,
 	runArgs,
+	assistArgs,
 	cwd,
 	restored,
+	activity,
 }: Session): SessionInfo {
 	return {
 		id,
@@ -19,7 +21,9 @@ export function toSessionInfo({
 		startedAt,
 		runName,
 		runArgs,
+		assistArgs,
 		cwd,
 		restored,
+		activity,
 	};
 }

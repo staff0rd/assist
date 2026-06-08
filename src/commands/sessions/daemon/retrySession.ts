@@ -33,6 +33,6 @@ function respawnThunk(session: Session): (() => Session["pty"]) | null {
 	if (session.commandType === "run" && runName)
 		return () => spawnRun({ name: runName, args: runArgs, cwd });
 	if (session.commandType === "assist" && assistArgs)
-		return () => spawnPty(["assist", ...assistArgs], cwd);
+		return () => spawnPty(["assist", ...assistArgs], cwd, session.id);
 	return null;
 }

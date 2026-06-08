@@ -5,6 +5,7 @@ books
 .assist/reviews/
 .assist/HANDOVER.md
 .assist/handovers/
+.assist/activity-*.json
 screenshots
 .claude/settings.local.json
 assist-test.txt

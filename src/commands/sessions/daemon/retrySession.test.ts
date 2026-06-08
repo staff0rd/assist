@@ -64,6 +64,7 @@ describe("retrySession", () => {
 		expect(spawnPtyMock).toHaveBeenCalledWith(
 			["assist", "draft"],
 			"/home/user/repo",
+			"1",
 		);
 		expect(session.status).toBe("running");
 		expect(session.restored).toBeUndefined();

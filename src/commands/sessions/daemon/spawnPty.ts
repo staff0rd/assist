@@ -1,7 +1,11 @@
 import * as pty from "node-pty";
 import { ensureSpawnHelperExecutable } from "./ensureSpawnHelperExecutable";
 
-export function spawnPty(args: string[], cwd?: string): pty.IPty {
+export function spawnPty(
+	args: string[],
+	cwd?: string,
+	sessionId?: string,
+): pty.IPty {
 	ensureSpawnHelperExecutable();
 	const shell =
 		process.platform === "win32" ? "cmd.exe" : (process.env.SHELL ?? "bash");
@@ -15,7 +19,13 @@ export function spawnPty(args: string[], cwd?: string): pty.IPty {
 		cols: 120,
 		rows: 30,
 		cwd: cwd ?? process.cwd(),
-		env: { ...process.env } as Record<string, string>,
+		env: {
+			...process.env,
+			...(sessionId && {
+				ASSIST_SESSION_ID: sessionId,
+				ASSIST_ACTIVITY_ID: sessionId,
+			}),
+		} as Record<string, string>,
 	});
 }
 

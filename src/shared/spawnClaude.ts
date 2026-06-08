@@ -15,8 +15,12 @@ export function spawnClaude(
 	if (options.allowEdits) {
 		args.push("--permission-mode", "auto");
 	}
+	// Claude (and any assist commands it runs) must not own the session's
+	// activity file; only the daemon's direct assist child emits activity.
+	const { ASSIST_ACTIVITY_ID: _activityId, ...env } = process.env;
 	const child = spawn("claude", args, {
 		stdio: "inherit",
+		env,
 	});
 	const done = new Promise<number>((resolve, reject) => {
 		child.on("close", (code) => resolve(code ?? 0));

@@ -1,3 +1,4 @@
+import { removeActivity } from "../../../shared/emitActivity";
 import type { Session } from "./createSession";
 import { clearIdle } from "./scheduleIdle";
 
@@ -31,6 +32,8 @@ export function dismissSession(
 	if (!s) return false;
 	if (s.status !== "done") s.pty?.kill();
 	clearIdle(s);
+	s.activityWatcher?.close();
+	if (s.cwd) removeActivity(s.cwd, s.id);
 	sessions.delete(id);
 	return true;
 }

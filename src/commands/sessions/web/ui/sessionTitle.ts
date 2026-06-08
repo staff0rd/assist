@@ -1,0 +1,27 @@
+import type { SessionInfo } from "./types";
+
+export function sessionTitle(session: SessionInfo): string {
+	const { activity } = session;
+	if (activity?.kind === "backlog") {
+		return activity.itemName ?? session.name;
+	}
+	switch (session.commandType) {
+		case "assist":
+			return (
+				assistPrompt(session.assistArgs) ??
+				session.assistArgs?.[0] ??
+				session.name
+			);
+		case "run":
+			return session.runName ? `run: ${session.runName}` : session.name;
+		default:
+			return session.name;
+	}
+}
+
+// The prompt text (when the user entered one) is the trailing non-flag arg,
+// e.g. ["draft", "--once", "add dark mode"] -> "add dark mode"
+function assistPrompt(args?: string[]): string | undefined {
+	const rest = args?.slice(1).filter((a) => !a.startsWith("--"));
+	return rest?.[rest.length - 1];
+}

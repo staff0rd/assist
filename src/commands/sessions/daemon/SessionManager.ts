@@ -18,6 +18,7 @@ import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
+import { watchActivity } from "./watchActivity";
 import { watchForClaudeSessionId } from "./watchForClaudeSessionId";
 import { wirePtyEvents } from "./wirePtyEvents";
 import {
@@ -64,6 +65,7 @@ export class SessionManager {
 	private add(session: Session): string {
 		this.wire(session);
 		watchForClaudeSessionId(session, this.sessions, this.notify);
+		watchActivity(session, this.notify);
 		return session.id;
 	}
 

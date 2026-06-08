@@ -21,12 +21,7 @@ export function SessionCard({
 
 	return (
 		<ButtonBase onClick={onClick} sx={cardSx(active)}>
-			<CardHeader
-				name={session.name}
-				status={session.status}
-				onRetry={onRetry}
-				onDismiss={onDismiss}
-			/>
+			<CardHeader session={session} onRetry={onRetry} onDismiss={onDismiss} />
 			<StatusRow
 				status={session.status}
 				elapsed={elapsed}

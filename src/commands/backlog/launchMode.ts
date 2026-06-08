@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { emitActivity } from "../../shared/emitActivity";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { spawnClaude } from "../../shared/spawnClaude";
 import { next } from "./next";
@@ -25,7 +26,8 @@ export async function launchMode(
 	options?: LaunchModeOptions,
 ): Promise<void> {
 	pullIfConfigured();
-	process.env.ASSIST_SESSION_ID = String(process.pid);
+	process.env.ASSIST_SESSION_ID ??= String(process.pid);
+	emitActivity({ kind: "command", name: slashCommand });
 	const { child, done } = spawnClaude(
 		buildSlashCommand(slashCommand, options?.description),
 		{ allowEdits: true },
