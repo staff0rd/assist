@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { DismissButton } from "./DismissButton";
 import { RetryButton } from "./RetryButton";
+import type { SessionStatus } from "./types";
 
 export function cardSx(active: boolean): SxProps<Theme> {
 	return {
@@ -23,15 +24,16 @@ export function cardSx(active: boolean): SxProps<Theme> {
 
 export function CardHeader({
 	name,
-	isDone,
+	status,
 	onRetry,
 	onDismiss,
 }: {
 	name: string;
-	isDone: boolean;
+	status: SessionStatus;
 	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
+	const isDone = status === "done";
 	return (
 		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 			<Typography
@@ -42,7 +44,7 @@ export function CardHeader({
 				{name}
 			</Typography>
 			{isDone && onRetry && <RetryButton onRetry={onRetry} />}
-			{isDone && <DismissButton onDismiss={onDismiss} />}
+			<DismissButton status={status} onDismiss={onDismiss} />
 		</Box>
 	);
 }

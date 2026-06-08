@@ -23,7 +23,7 @@ export function SessionCard({
 		<ButtonBase onClick={onClick} sx={cardSx(active)}>
 			<CardHeader
 				name={session.name}
-				isDone={session.status === "done"}
+				status={session.status}
 				onRetry={onRetry}
 				onDismiss={onDismiss}
 			/>
