@@ -14,9 +14,10 @@ export async function listItems(
 	res: ServerResponse,
 ): Promise<void> {
 	applyCwdFromReq(req);
-	const url = new URL(req.url ?? "/", "http://localhost");
-	const q = url.searchParams.get("q");
-	respondJson(res, 200, q ? await searchBacklog(q) : await loadBacklog());
+	const q = new URL(req.url ?? "/", "http://localhost").searchParams.get("q");
+	const items = q ? await searchBacklog(q) : await loadBacklog();
+	// The web view lists newest-first, reversing the ascending-id CLI ordering.
+	respondJson(res, 200, items.slice().reverse());
 }
 
 export async function findItemOr404(res: ServerResponse, id: number) {
