@@ -1,3 +1,10 @@
+## [0.245.4](https://github.com/staff0rd/assist/compare/v0.245.3...v0.245.4) (2026-06-08)
+
+
+### Bug Fixes
+
+* resume run from rewound review phase ([7316dcd](https://github.com/staff0rd/assist/commit/7316dcd9f741ac2311cc95572fde2a87e91e02e0))
+
 ## [0.245.3](https://github.com/staff0rd/assist/compare/v0.245.2...v0.245.3) (2026-06-07)
 
 
