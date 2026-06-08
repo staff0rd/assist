@@ -40,4 +40,14 @@ describe("canPlay", () => {
 	it("is not playable when the plan is empty", () => {
 		expect(canPlay(item({ plan: [] }))).toBe(false);
 	});
+
+	it("is playable for a bug with no plan when status is todo", () => {
+		expect(canPlay(item({ type: "bug", plan: undefined }))).toBe(true);
+	});
+
+	it("is not playable for a bug that is not todo", () => {
+		expect(
+			canPlay(item({ type: "bug", plan: undefined, status: "in-progress" })),
+		).toBe(false);
+	});
 });

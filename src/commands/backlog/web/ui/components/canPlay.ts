@@ -1,5 +1,7 @@
 import type { BacklogItem } from "../types";
 
 export function canPlay(item: BacklogItem): boolean {
-	return item.status === "todo" && !!item.plan && item.plan.length > 0;
+	if (item.status !== "todo") return false;
+	if (item.type === "bug") return true;
+	return !!item.plan && item.plan.length > 0;
 }
