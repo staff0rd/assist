@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { fetchItems } from "./fetchItems";
 import type { BacklogItem } from "./types";
 import { useRepoCwd } from "./useRepoCwd";
+import { useShowCompleted } from "./useShowCompleted";
 
 export function useSearchItems() {
 	const cwd = useRepoCwd();
+	const [showCompleted] = useShowCompleted();
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState<BacklogItem[] | null>(null);
 	const [loading, setLoading] = useState(false);
@@ -35,7 +37,7 @@ export function useSearchItems() {
 		setLoading(true);
 		debounceRef.current = setTimeout(async () => {
 			try {
-				const next = await fetchItems(query, cwd, signal);
+				const next = await fetchItems({ query, cwd, signal, showCompleted });
 				if (signal.aborted) return;
 				setResults(next);
 				setLoading(false);
@@ -48,7 +50,7 @@ export function useSearchItems() {
 			if (debounceRef.current !== undefined) clearTimeout(debounceRef.current);
 			controller.abort();
 		};
-	}, [query, cwd]);
+	}, [query, cwd, showCompleted]);
 
 	return { query, setQuery, results, loading };
 }

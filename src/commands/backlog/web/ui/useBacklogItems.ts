@@ -4,9 +4,11 @@ import { backlogExists } from "./backlogExists";
 import { fetchItems } from "./fetchItems";
 import type { BacklogItem } from "./types";
 import { useRepoCwd } from "./useRepoCwd";
+import { useShowCompleted } from "./useShowCompleted";
 
 export function useBacklogItems() {
 	const cwd = useRepoCwd();
+	const [showCompleted] = useShowCompleted();
 	const [items, setItems] = useState<BacklogItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [exists, setExists] = useState(true);
@@ -22,10 +24,12 @@ export function useBacklogItems() {
 	}
 
 	const reload = useCallback(async () => {
-		setItems(await fetchItems(undefined, cwd));
+		setItems(await fetchItems({ cwd, showCompleted }));
 		setLoading(false);
-	}, [cwd]);
+	}, [cwd, showCompleted]);
 
+	// Refetches when showCompleted flips so completed items are only ever
+	// fetched (and sent over the wire) while the toggle is on.
 	useEffect(() => {
 		const controller = new AbortController();
 		const { signal } = controller;
@@ -33,23 +37,20 @@ export function useBacklogItems() {
 		setExists(true);
 		(async () => {
 			try {
-				if (await backlogExists(cwd, signal)) {
-					const next = await fetchItems(undefined, cwd, signal);
-					if (signal.aborted) return;
-					setItems(next);
-					setLoading(false);
-					return;
-				}
+				const found = await backlogExists(cwd, signal);
+				const next = found
+					? await fetchItems({ cwd, signal, showCompleted })
+					: [];
 				if (signal.aborted) return;
-				setExists(false);
-				setItems([]);
+				setExists(found);
+				setItems(next);
 				setLoading(false);
 			} catch (err) {
 				if (!signal.aborted) throw err;
 			}
 		})();
 		return () => controller.abort();
-	}, [cwd]);
+	}, [cwd, showCompleted]);
 
 	const initialize = useCallback(async () => {
 		await initBacklog(cwd);

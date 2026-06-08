@@ -2,7 +2,6 @@ import { Button, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import type { BacklogItem } from "../types";
 import { useSearchItems } from "../useSearchItems";
-import { useShowCompleted } from "../useShowCompleted";
 import { CompletedToggle } from "./CompletedToggle";
 import { ListBody } from "./ListBody";
 import { SearchInput } from "./SearchInput";
@@ -17,12 +16,6 @@ const headerSx = {
 	alignItems: "center",
 	mb: 3,
 } as const;
-function filterVisible(items: BacklogItem[], showCompleted: boolean) {
-	if (showCompleted) return items;
-	return items.filter(
-		(item) => item.status !== "done" && item.status !== "wontdo",
-	);
-}
 
 const titleSx = { fontWeight: 600 } as const;
 const actionsSx = { alignItems: "center" } as const;
@@ -45,9 +38,8 @@ function Header({ onAdd }: { onAdd: () => void }) {
 
 export function ItemList({ items, loading }: ItemListProps) {
 	const navigate = useNavigate();
-	const [showCompleted] = useShowCompleted();
 	const { query, setQuery, results, loading: searching } = useSearchItems();
-	const filtered = filterVisible(results ?? items, showCompleted);
+	const visible = results ?? items;
 
 	return (
 		<>
@@ -56,7 +48,7 @@ export function ItemList({ items, loading }: ItemListProps) {
 			<ListBody
 				loading={loading || searching}
 				query={query}
-				items={filtered}
+				items={visible}
 				onSelect={(item) => navigate(`/backlog/items/${item.id}`)}
 			/>
 		</>

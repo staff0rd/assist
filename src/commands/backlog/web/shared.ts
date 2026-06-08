@@ -3,10 +3,11 @@ import { respondJson } from "../../../shared/web";
 import { deleteComment } from "../deleteComment";
 import { deleteItem as deleteItemById } from "../deleteItem";
 import { loadItem } from "../loadItem";
-import { getReady, loadBacklog, searchBacklog } from "../shared";
+import { getReady } from "../shared";
 import type { BacklogItem } from "../types";
 import { updateStatus } from "../updateStatus";
 import { applyCwdFromReq } from "./applyCwdFromReq";
+import { loadVisibleItems } from "./loadVisibleItems";
 import { parseStatusBody } from "./parseItemBody";
 
 export async function listItems(
@@ -14,8 +15,7 @@ export async function listItems(
 	res: ServerResponse,
 ): Promise<void> {
 	applyCwdFromReq(req);
-	const q = new URL(req.url ?? "/", "http://localhost").searchParams.get("q");
-	const items = q ? await searchBacklog(q) : await loadBacklog();
+	const items = await loadVisibleItems(req);
 	// The web view lists newest-first, reversing the ascending-id CLI ordering.
 	respondJson(res, 200, items.slice().reverse());
 }
