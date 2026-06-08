@@ -1,3 +1,10 @@
+# [0.248.0](https://github.com/staff0rd/assist/compare/v0.247.0...v0.248.0) (2026-06-08)
+
+
+### Features
+
+* open repo in VS Code from web UI ([4208a44](https://github.com/staff0rd/assist/commit/4208a4454ebe676cf589e28afc00f0f6c21aa039))
+
 # [0.247.0](https://github.com/staff0rd/assist/compare/v0.246.0...v0.247.0) (2026-06-08)
 
 
