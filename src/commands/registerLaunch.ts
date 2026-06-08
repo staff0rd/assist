@@ -17,20 +17,22 @@ export function registerLaunch(program: Command): void {
 	program
 		.command("draft")
 		.alias("feat")
+		.argument("[description]", "Text to forward to the /draft slash command")
 		.description(
 			"Launch Claude in /draft mode, chain into next on /next signal",
 		)
 		.option("--once", "Exit when the initial task completes")
-		.action((opts: { once?: boolean }) =>
-			launchMode("draft", { once: opts.once }),
+		.action((description: string | undefined, opts: { once?: boolean }) =>
+			launchMode("draft", { once: opts.once, description }),
 		);
 
 	program
 		.command("bug")
+		.argument("[description]", "Text to forward to the /bug slash command")
 		.description("Launch Claude in /bug mode, chain into next on /next signal")
 		.option("--once", "Exit when the initial task completes")
-		.action((opts: { once?: boolean }) =>
-			launchMode("bug", { once: opts.once }),
+		.action((description: string | undefined, opts: { once?: boolean }) =>
+			launchMode("bug", { once: opts.once, description }),
 		);
 
 	program

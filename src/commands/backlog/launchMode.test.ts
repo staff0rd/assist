@@ -37,7 +37,7 @@ vi.mock("./watchForMarker", () => ({
 }));
 
 import { spawnClaude } from "../../shared/spawnClaude";
-import { launchMode } from "./launchMode";
+import { buildSlashCommand, launchMode } from "./launchMode";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
 import { tryRunById } from "./tryRunById";
@@ -51,10 +51,41 @@ const mockWatchForMarker = watchForMarker as unknown as MockInstance;
 
 const child = { kill: vi.fn() };
 
+describe("buildSlashCommand", () => {
+	it("appends a trimmed description to the slash command", () => {
+		expect(buildSlashCommand("draft", "this is broken")).toBe(
+			"/draft this is broken",
+		);
+		expect(buildSlashCommand("bug", "  spaced out  ")).toBe("/bug spaced out");
+	});
+
+	it("returns the plain slash command when no description is given", () => {
+		expect(buildSlashCommand("draft")).toBe("/draft");
+		expect(buildSlashCommand("bug", "")).toBe("/bug");
+		expect(buildSlashCommand("draft", "   ")).toBe("/draft");
+	});
+});
+
 describe("launchMode", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockSpawnClaude.mockReturnValue({ child, done: Promise.resolve(0) });
+	});
+
+	it("forwards the description to the spawned slash command", async () => {
+		await launchMode("bug", { description: "this is broken" });
+
+		expect(mockSpawnClaude).toHaveBeenCalledWith("/bug this is broken", {
+			allowEdits: true,
+		});
+	});
+
+	it("spawns a plain slash command when no description is given", async () => {
+		await launchMode("draft");
+
+		expect(mockSpawnClaude).toHaveBeenCalledWith("/draft", {
+			allowEdits: true,
+		});
 	});
 
 	describe("when launched in once mode", () => {

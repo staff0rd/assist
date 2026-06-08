@@ -18,7 +18,9 @@ export function TopNavActions({
 		<Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
 			<ModeButtons
 				disabled={disabled}
-				onSelect={(m) => dispatchMode(m, selectedCwd, onCreateAssist, () => {})}
+				onSelect={(m, text) =>
+					dispatchMode(m, selectedCwd, onCreateAssist, () => {}, text)
+				}
 			/>
 			<FreePromptDropdown
 				disabled={disabled}

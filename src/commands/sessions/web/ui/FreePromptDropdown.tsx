@@ -9,14 +9,18 @@ import { PLACEHOLDER } from "./dispatchMode";
 export function FreePromptDropdown({
 	disabled,
 	onSubmit,
+	label = "Prompt...",
+	allowEmpty = false,
 }: {
 	disabled: boolean;
 	onSubmit: (prompt: string) => void;
+	label?: string;
+	allowEmpty?: boolean;
 }) {
 	const [prompt, setPrompt] = useState("");
 
 	return (
-		<DropdownWrapper label="Prompt..." disabled={disabled}>
+		<DropdownWrapper label={label} disabled={disabled}>
 			{(close) => (
 				<Paper
 					elevation={4}
@@ -29,7 +33,7 @@ export function FreePromptDropdown({
 						sx={{ p: 1 }}
 						onSubmit={(e: FormEvent) => {
 							e.preventDefault();
-							if (!prompt.trim()) return;
+							if (!allowEmpty && !prompt.trim()) return;
 							onSubmit(prompt);
 							setPrompt("");
 							close();
