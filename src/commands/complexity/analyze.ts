@@ -28,6 +28,11 @@ export async function analyze(pattern: string): Promise<void> {
 		await halstead(file);
 		console.log();
 		console.log(chalk.bold.underline("Maintainability Index"));
+		console.log(
+			chalk.dim(
+				"171 - 5.2*ln(HalsteadVolume) - 0.23*CyclomaticComplexity - 16.2*ln(SLOC), clamped 0-100",
+			),
+		);
 		await maintainability(file);
 		return;
 	}
