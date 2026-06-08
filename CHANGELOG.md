@@ -1,3 +1,10 @@
+# [0.256.0](https://github.com/staff0rd/assist/compare/v0.255.0...v0.256.0) (2026-06-08)
+
+
+### Features
+
+* show MI formula on all maintainability runs ([406357f](https://github.com/staff0rd/assist/commit/406357f3f19f760407a356680d51a87d596c3c6b))
+
 # [0.255.0](https://github.com/staff0rd/assist/compare/v0.254.0...v0.255.0) (2026-06-08)
 
 
