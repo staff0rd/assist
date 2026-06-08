@@ -1,3 +1,10 @@
+# [0.253.0](https://github.com/staff0rd/assist/compare/v0.252.0...v0.253.0) (2026-06-08)
+
+
+### Features
+
+* forward prompt text to draft/bug ([b65859c](https://github.com/staff0rd/assist/commit/b65859c11de0912a24cedfffcf53f0eb1c5401a7))
+
 # [0.252.0](https://github.com/staff0rd/assist/compare/v0.251.0...v0.252.0) (2026-06-08)
 
 
