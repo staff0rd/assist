@@ -221,6 +221,70 @@ describe("run", () => {
 		});
 	});
 
+	describe("when the review phase rewinds", () => {
+		it("should resume execution from the rewound phase instead of finishing", async () => {
+			const item = makeItem(); // [Phase 1, Phase 2]
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(1) // phase 0 -> 1
+				.mockResolvedValueOnce(2) // phase 1 -> 2
+				.mockResolvedValueOnce(0) // review rewinds to phase 0
+				.mockResolvedValueOnce(1) // phase 0 re-runs -> 1
+				.mockResolvedValueOnce(2) // phase 1 re-runs -> 2
+				.mockResolvedValueOnce(3); // review -> 3 (done)
+
+			await run("1");
+
+			expect(mockExecutePhase).toHaveBeenCalledTimes(6);
+			expect(mockExecutePhase.mock.calls[3][1]).toBe(0);
+		});
+
+		it("should mark done once a resumed run completes review cleanly", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(0) // review rewinds
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3); // review passes
+
+			await run("1");
+
+			expect(mockSetStatus).toHaveBeenCalledWith("1", "done");
+		});
+
+		it("should not mark done if a resumed phase fails", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(0) // review rewinds
+				.mockResolvedValueOnce(-1); // resumed phase fails
+
+			await expect(run("1")).resolves.toBe(false);
+
+			expect(mockSetStatus).not.toHaveBeenCalledWith("1", "done");
+		});
+	});
+
 	describe("when resuming from a mid-plan phase", () => {
 		it("should skip completed phases", async () => {
 			const item = makeItem({ currentPhase: 2 });

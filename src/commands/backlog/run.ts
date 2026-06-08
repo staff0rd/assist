@@ -3,6 +3,7 @@ import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { acquireLock, releaseLock } from "./acquireLock";
 import { blockedByHandover } from "./blockedByHandover";
 import { type PreparedRun, prepareRun } from "./prepareRun";
+import { reloadPlan } from "./reloadPlan";
 import { runPhases } from "./runPhases";
 import { runReview } from "./runReview";
 import { setStatus } from "./shared";
@@ -26,13 +27,25 @@ async function runPrepared(
 	prepared: PreparedRun,
 	spawnOptions?: SpawnClaudeOptions,
 ): Promise<boolean> {
-	const { item, plan, startPhase } = prepared;
+	const { item } = prepared;
+	let { plan, startPhase } = prepared;
 	acquireLock(item.id);
 	try {
-		if (!(await runPhases(item, startPhase, plan, spawnOptions))) return false;
-		if (!(await runReview(item, plan, spawnOptions))) return false;
-		await ensureDone(id);
-		return true;
+		while (true) {
+			if (!(await runPhases(item, startPhase, plan, spawnOptions)))
+				return false;
+			const review = await runReview(item, plan, spawnOptions);
+			if (review.kind === "abort") return false;
+			if (review.kind === "rewind") {
+				// rewindPhase already set the status to in-progress and rewound the
+				// current phase; resume from the rewound phase rather than finishing.
+				startPhase = review.targetPhase;
+				plan = (await reloadPlan(item.id)) ?? plan;
+				continue;
+			}
+			await ensureDone(id);
+			return true;
+		}
 	} finally {
 		releaseLock(item.id);
 	}
