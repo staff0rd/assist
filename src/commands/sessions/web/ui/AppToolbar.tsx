@@ -4,6 +4,7 @@ import Tabs from "@mui/material/Tabs";
 import Toolbar from "@mui/material/Toolbar";
 import { useLocation, useNavigate } from "react-router";
 import { OpenInCodeButton } from "./OpenInCodeButton";
+import { OpenInGitHubButton } from "./OpenInGitHubButton";
 import { RepoPicker } from "./RepoPicker";
 import { TopNavActions } from "./TopNavActions";
 import type { RepoSelection } from "./useRepoSelectionContext";
@@ -54,7 +55,11 @@ export function AppToolbar({
 					onSelect={selection.setSelectedCwd}
 				/>
 			</Box>
-			<OpenInCodeButton cwd={selection.selectedCwd} />
+			{/* mr clears the fixed-position ThemeToggle at the toolbar's right edge */}
+			<Box sx={{ display: "flex", mr: 5 }}>
+				<OpenInCodeButton cwd={selection.selectedCwd} />
+				<OpenInGitHubButton cwd={selection.selectedCwd} />
+			</Box>
 		</Toolbar>
 	);
 }

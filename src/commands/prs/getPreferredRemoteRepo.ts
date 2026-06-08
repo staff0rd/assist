@@ -11,22 +11,23 @@ export function parseGitHubUrl(
 	return { org: match[1], repo: match[2] };
 }
 
-function tryGetRemoteUrl(remote: string): string | null {
+function tryGetRemoteUrl(remote: string, cwd?: string): string | null {
 	try {
 		return execSync(`git remote get-url ${remote}`, {
 			encoding: "utf-8",
 			stdio: ["pipe", "pipe", "pipe"],
+			cwd,
 		}).trim();
 	} catch {
 		return null;
 	}
 }
 
-function getCurrentBranchRemote(): string | null {
+function getCurrentBranchRemote(cwd?: string): string | null {
 	try {
 		const ref = execSync(
 			"git rev-parse --abbrev-ref --symbolic-full-name @{u}",
-			{ encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] },
+			{ encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"], cwd },
 		).trim();
 		const [remote] = ref.split("/", 1);
 		return remote || null;
@@ -35,11 +36,12 @@ function getCurrentBranchRemote(): string | null {
 	}
 }
 
-function listRemotes(): string[] {
+function listRemotes(cwd?: string): string[] {
 	try {
 		return execSync("git remote", {
 			encoding: "utf-8",
 			stdio: ["pipe", "pipe", "pipe"],
+			cwd,
 		})
 			.trim()
 			.split("\n")
@@ -49,22 +51,22 @@ function listRemotes(): string[] {
 	}
 }
 
-export function getPreferredRemoteRepo(): {
+export function getPreferredRemoteRepo(cwd?: string): {
 	org: string;
 	repo: string;
 } | null {
 	const candidates: string[] = [];
-	const tracked = getCurrentBranchRemote();
+	const tracked = getCurrentBranchRemote(cwd);
 	if (tracked) candidates.push(tracked);
 	if (!candidates.includes("origin")) candidates.push("origin");
-	for (const remote of listRemotes()) {
+	for (const remote of listRemotes(cwd)) {
 		if (remote !== "upstream" && !candidates.includes(remote)) {
 			candidates.push(remote);
 		}
 	}
 
 	for (const remote of candidates) {
-		const url = tryGetRemoteUrl(remote);
+		const url = tryGetRemoteUrl(remote, cwd);
 		if (!url) continue;
 		const parsed = parseGitHubUrl(url);
 		if (parsed) return parsed;

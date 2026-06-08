@@ -4,8 +4,7 @@ import { useState } from "react";
 import { ErrorSnackbar } from "./ErrorSnackbar";
 import { VsCodeIcon } from "./VsCodeIcon";
 
-// mr clears the fixed-position ThemeToggle at the toolbar's right edge
-const sx = { color: "inherit", mr: 5 } as const;
+const sx = { color: "inherit" } as const;
 
 export function OpenInCodeButton({ cwd }: { cwd: string }) {
 	const [error, setError] = useState<string | null>(null);
