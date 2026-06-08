@@ -1,3 +1,10 @@
+# [0.247.0](https://github.com/staff0rd/assist/compare/v0.246.0...v0.247.0) (2026-06-08)
+
+
+### Features
+
+* auto-dismiss done --once sessions ([a42f384](https://github.com/staff0rd/assist/commit/a42f384376f5c28c753e8c5f8e6d48931a01157a))
+
 # [0.246.0](https://github.com/staff0rd/assist/compare/v0.245.4...v0.246.0) (2026-06-08)
 
 
