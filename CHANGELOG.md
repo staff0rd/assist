@@ -1,3 +1,11 @@
+# [0.255.0](https://github.com/staff0rd/assist/compare/v0.254.0...v0.255.0) (2026-06-08)
+
+
+### Features
+
+* link backlog chip to item page ([470f9dc](https://github.com/staff0rd/assist/commit/470f9dccc3e881787b5485b6b8437933515f0be9))
+* link backlog chip to item page ([b1e89ae](https://github.com/staff0rd/assist/commit/b1e89ae1ee9ef4107efccebe1a76c7421dd01292))
+
 # [0.254.0](https://github.com/staff0rd/assist/compare/v0.253.0...v0.254.0) (2026-06-08)
 
 
