@@ -8,6 +8,7 @@ import { canPlay } from "./canPlay";
 import { DeleteAction } from "./DeleteAction";
 import { ItemBody } from "./ItemBody";
 import { PlayAction } from "./PlayAction";
+import { RefineAction } from "./RefineAction";
 
 type ItemDetailProps = {
 	item: BacklogItem;
@@ -33,6 +34,7 @@ function DetailHeader({
 			<BackButton to="/backlog" />
 			<Stack direction="row" spacing={1}>
 				{canPlay(item) && <PlayAction itemId={item.id} />}
+				<RefineAction itemId={item.id} />
 				<Button
 					variant="contained"
 					color="inherit"
