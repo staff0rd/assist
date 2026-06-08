@@ -17,9 +17,11 @@ export const dropdownStyle: SxProps<Theme> = {
 export function DropdownWrapper({
 	label,
 	children,
+	disabled = false,
 }: {
 	label: string;
 	children: (close: () => void) => ReactNode;
+	disabled?: boolean;
 }) {
 	const [open, setOpen] = useState(false);
 	const wrapperRef = useRef<HTMLFieldSetElement>(null);
@@ -35,7 +37,12 @@ export function DropdownWrapper({
 					setOpen(false);
 			}}
 		>
-			<FilterTrigger label={label} open={open} onClick={() => setOpen(!open)} />
+			<FilterTrigger
+				label={label}
+				open={open}
+				disabled={disabled}
+				onClick={() => setOpen(!open)}
+			/>
 			{open && children(() => setOpen(false))}
 		</Paper>
 	);

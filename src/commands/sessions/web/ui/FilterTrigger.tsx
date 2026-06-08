@@ -6,15 +6,18 @@ export function FilterTrigger({
 	label,
 	open,
 	onClick,
+	disabled = false,
 }: {
 	label: string;
 	open: boolean;
 	onClick: () => void;
+	disabled?: boolean;
 }) {
 	return (
 		<Button
 			size="small"
 			variant="outlined"
+			disabled={disabled}
 			onClick={onClick}
 			endIcon={open ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
 			sx={{

@@ -9,6 +9,7 @@ import { handleItemRoute } from "../../backlog/web/handleItemRoute";
 import { initBacklog } from "../../backlog/web/initBacklog";
 import { listItems } from "../../backlog/web/shared";
 import { getHtml } from "./getHtml";
+import { openInCode } from "./openInCode";
 
 const require = createRequire(import.meta.url);
 
@@ -37,6 +38,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/items": createItem,
 	"GET /api/backlog/exists": getBacklogExists,
 	"POST /api/backlog/init": initBacklog,
+	"POST /api/open-in-code": openInCode,
 };
 
 export const handleRequest = createFallbackHandler(

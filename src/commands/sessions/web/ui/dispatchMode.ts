@@ -1,7 +1,7 @@
 const ASSIST_MODES = {
-	"assist-draft": { label: "\u25b6 /draft", args: ["draft", "--once"] },
-	"assist-bug": { label: "\u25b6 /bug", args: ["bug", "--once"] },
-	"assist-next": { label: "\u25b6 /next", args: ["next", "--once"] },
+	"assist-draft": { label: "draft", args: ["draft", "--once"] },
+	"assist-bug": { label: "bug", args: ["bug", "--once"] },
+	"assist-next": { label: "next", args: ["next", "--once"] },
 } as const;
 
 type AssistMode = keyof typeof ASSIST_MODES;
