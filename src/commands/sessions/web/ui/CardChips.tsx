@@ -1,5 +1,5 @@
 import Chip from "@mui/material/Chip";
-import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import { repoLabel } from "./repoLabel";
 import { sessionType } from "./sessionType";
 import type { SessionInfo } from "./types";
@@ -7,7 +7,6 @@ import type { SessionInfo } from "./types";
 const chipSx = { height: 18, fontSize: "0.65rem" };
 
 export function CardChips({ session }: { session: SessionInfo }) {
-	const navigate = useNavigate();
 	const repo = repoLabel(session.cwd);
 	const { activity } = session;
 	const isBacklog = activity?.kind === "backlog";
@@ -21,11 +20,10 @@ export function CardChips({ session }: { session: SessionInfo }) {
 						size="small"
 						sx={chipSx}
 						clickable
-						onClick={(e) => {
-							// The card itself is a ButtonBase; don't let it also select
-							e.stopPropagation();
-							navigate(`/backlog/items/${activity.itemId}`);
-						}}
+						component={Link}
+						to={`/backlog/items/${activity.itemId}`}
+						// The card itself is a ButtonBase; don't let it also select
+						onClick={(e) => e.stopPropagation()}
 					/>
 					<Chip
 						label={`${activity.phase}/${activity.totalPhases}`}
