@@ -1,6 +1,9 @@
 import chalk from "chalk";
 import type { BacklogFile, BacklogStatus, BacklogType } from "../types";
 
+/** The minimal shape isBlocked needs from each dependency target. */
+type StatusLookup = ReadonlyArray<{ id: number; status: BacklogStatus }>;
+
 export function statusIcon(status: BacklogStatus): string {
 	switch (status) {
 		case "todo":
@@ -30,7 +33,7 @@ export function phaseLabel(item: BacklogFile[number]): string {
 
 export function isBlocked(
 	item: BacklogFile[number],
-	items: BacklogFile,
+	items: StatusLookup,
 ): boolean {
 	const deps = (item.links ?? []).filter((l) => l.type === "depends-on");
 	return deps.some((dep) => {

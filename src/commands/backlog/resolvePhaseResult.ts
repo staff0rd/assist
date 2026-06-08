@@ -1,8 +1,9 @@
 import { existsSync, unlinkSync } from "node:fs";
 import chalk from "chalk";
 import { handleIncompletePhase } from "./handleIncompletePhase";
+import { loadItem } from "./loadItem";
 import { readSignal } from "./readSignal";
-import { loadBacklog } from "./shared";
+import { getReady } from "./shared";
 import { getSignalPath } from "./writeSignal";
 
 export function cleanupSignal(): void {
@@ -13,8 +14,8 @@ export function cleanupSignal(): void {
 }
 
 async function isTerminalStatus(itemId: number): Promise<boolean> {
-	const items = await loadBacklog();
-	const item = items.find((i) => i.id === itemId);
+	const { orm } = await getReady();
+	const item = await loadItem(orm, itemId);
 	return item?.status === "done" || item?.status === "wontdo";
 }
 

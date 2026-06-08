@@ -1,18 +1,20 @@
 import chalk from "chalk";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { isBlocked } from "./list/shared";
+import { loadItem } from "./loadItem";
+import { loadItemSummaries } from "./loadItemSummaries";
 import { run } from "./run";
-import { loadBacklog } from "./shared";
+import { getOrigin, getReady } from "./shared";
 
 export async function tryRunById(
 	id: string,
 	options?: SpawnClaudeOptions,
 ): Promise<boolean> {
-	const items = await loadBacklog();
 	const numericId = Number.parseInt(id, 10);
+	const { orm } = await getReady();
 	const item = Number.isNaN(numericId)
 		? undefined
-		: items.find((i) => i.id === numericId);
+		: await loadItem(orm, numericId);
 
 	if (!item) {
 		console.log(chalk.red(`Item #${id} not found.`));
@@ -26,7 +28,10 @@ export async function tryRunById(
 		console.log(chalk.red(`Item #${id} is marked won't do.`));
 		return false;
 	}
-	if (isBlocked(item, items)) {
+	// Only the dependency targets' statuses are needed to test blocking, so load
+	// lightweight summaries (no relations) rather than the whole backlog graph.
+	const hasDeps = (item.links ?? []).some((l) => l.type === "depends-on");
+	if (hasDeps && isBlocked(item, await loadItemSummaries(orm, getOrigin()))) {
 		console.log(
 			chalk.red(`Item #${id} is blocked by unresolved dependencies.`),
 		);

@@ -11,7 +11,9 @@ import type { BacklogFile } from "./types";
  *
  * Relations are loaded in batched queries (see {@link loadRelations}) rather than
  * per-item, avoiding the N+1 round-trips that made this slow against remote
- * Postgres.
+ * Postgres. Comments and tasks are skipped: the whole-backlog callers (list,
+ * next, search, migrate) only read item columns, links and phase names — full
+ * relations load on demand via {@link ./loadItem} when a single item is opened.
  */
 export async function loadAllItems(
 	orm: BacklogOrm,
@@ -27,6 +29,7 @@ export async function loadAllItems(
 	const rel = await loadRelations(
 		orm,
 		rows.map((r) => r.id),
+		{ includeComments: false, includeTasks: false },
 	);
 	return rows.map((row) => rowToItem(row, rel));
 }

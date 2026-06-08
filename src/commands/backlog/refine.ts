@@ -3,10 +3,10 @@ import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
 import { type LaunchModeOptions, launchMode } from "./launchMode";
 import { typeLabel } from "./list/shared";
-import { loadBacklog } from "./shared";
+import { loadBacklogSummaries } from "./loadBacklogSummaries";
 
 async function pickItemForRefine(): Promise<string | undefined> {
-	const items = await loadBacklog();
+	const items = await loadBacklogSummaries();
 	const active = items.filter(
 		(i) => i.status === "todo" || i.status === "in-progress",
 	);

@@ -12,6 +12,7 @@ import type { BacklogOrm } from "./BacklogOrm";
 import { items as itemsTable } from "./backlogSchema";
 import { createTestDb } from "./createTestDb";
 import { loadAllItems } from "./loadAllItems";
+import { loadItem } from "./loadItem";
 import { migrateLocalBacklog } from "./migrateLocalBacklog";
 import type { BacklogItem } from "./types";
 
@@ -86,9 +87,11 @@ describe("migrateLocalBacklog", () => {
 	it("reassigns comment ids rather than preserving per-repo ones", async () => {
 		writeJsonl(dir, ITEMS);
 		await migrateLocalBacklog(orm, dir, ORIGIN);
-		const first = (await loadAllItems(orm, ORIGIN)).find(
+		const summary = (await loadAllItems(orm, ORIGIN)).find(
 			(i) => i.name === "First",
 		);
+		// Comments are a relation, so load the full item to inspect them.
+		const first = summary && (await loadItem(orm, summary.id));
 		expect(first?.comments).toHaveLength(1);
 		expect(first?.comments?.[0].id).not.toBe(99);
 	});
@@ -98,7 +101,9 @@ describe("migrateLocalBacklog", () => {
 		await migrateLocalBacklog(orm, dir, ORIGIN);
 		const items = await loadAllItems(orm, ORIGIN);
 		const first = items.find((i) => i.name === "First");
-		const second = items.find((i) => i.name === "Second");
+		const secondSummary = items.find((i) => i.name === "Second");
+		// Plan tasks are a relation, so load the full item to inspect them.
+		const second = secondSummary && (await loadItem(orm, secondSummary.id));
 		expect(first?.acceptanceCriteria).toEqual(["a"]);
 		expect(second?.plan?.[0].tasks[0].task).toBe("do it");
 	});

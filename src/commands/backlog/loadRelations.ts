@@ -65,7 +65,17 @@ const selectTasks = (orm: BacklogOrm, ids: number[]) =>
 		);
 
 /**
- * Fetch every relation row for the given item ids in one batched query each
+ * Which relation tables to query. Links and phases are always loaded; comments
+ * and tasks are opt-in because the whole-backlog callers (list, next, migrate)
+ * never read them — only {@link ./loadItem}, opening a single item, needs them.
+ */
+type LoadRelationsOptions = {
+	includeComments?: boolean;
+	includeTasks?: boolean;
+};
+
+/**
+ * Fetch relation rows for the given item ids in one batched query each
  * (run in parallel), grouped by item id. A fixed handful of round-trips
  * regardless of item count — this is what keeps the load fast against
  * high-latency (remote) Postgres.
@@ -73,12 +83,13 @@ const selectTasks = (orm: BacklogOrm, ids: number[]) =>
 export async function loadRelations(
 	orm: BacklogOrm,
 	ids: number[],
+	{ includeComments = true, includeTasks = true }: LoadRelationsOptions = {},
 ): Promise<Relations> {
 	const [commentRows, linkRows, phaseRows, taskRows] = await Promise.all([
-		selectComments(orm, ids),
+		includeComments ? selectComments(orm, ids) : ([] as CommentRow[]),
 		selectLinks(orm, ids),
 		selectPhases(orm, ids),
-		selectTasks(orm, ids),
+		includeTasks ? selectTasks(orm, ids) : ([] as TaskRow[]),
 	]);
 	return {
 		comments: groupByItem(commentRows),
