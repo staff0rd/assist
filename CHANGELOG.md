@@ -1,3 +1,10 @@
+# [0.249.0](https://github.com/staff0rd/assist/compare/v0.248.0...v0.249.0) (2026-06-08)
+
+
+### Features
+
+* drop sidebar run-command list ([c9fe175](https://github.com/staff0rd/assist/commit/c9fe17573fc1343122b4f7b346ce43da1ae73913))
+
 # [0.248.0](https://github.com/staff0rd/assist/compare/v0.247.0...v0.248.0) (2026-06-08)
 
 
