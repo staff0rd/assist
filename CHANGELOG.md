@@ -1,3 +1,10 @@
+# [0.251.0](https://github.com/staff0rd/assist/compare/v0.250.0...v0.251.0) (2026-06-08)
+
+
+### Features
+
+* always show session close button ([d46f548](https://github.com/staff0rd/assist/commit/d46f548b9c393e7afaed0fb91c4df4981392fc28))
+
 # [0.250.0](https://github.com/staff0rd/assist/compare/v0.249.0...v0.250.0) (2026-06-08)
 
 
