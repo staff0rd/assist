@@ -1,3 +1,21 @@
+# [0.254.0](https://github.com/staff0rd/assist/compare/v0.253.0...v0.254.0) (2026-06-08)
+
+
+### Bug Fixes
+
+* lighten backlog web index loading ([674b8c3](https://github.com/staff0rd/assist/commit/674b8c3d35e6cfd3d5debd05e13b43e1fd011ecb))
+* lighten backlog whole-list loaders ([df6b1de](https://github.com/staff0rd/assist/commit/df6b1de86c0e3a7063924d6739091dca8da6ac83))
+* refresh history on tab switch ([8c256a1](https://github.com/staff0rd/assist/commit/8c256a1f60b3b29dd0d3b196f9afdafd28df7e8a))
+
+
+### Features
+
+* filter completed items server-side ([059f978](https://github.com/staff0rd/assist/commit/059f978b15ec7d11f973a418d3ed8076728aec7e))
+* refine button on item detail ([d913e06](https://github.com/staff0rd/assist/commit/d913e0637bb21529b7cc9ff764b6b4c17d974320))
+* session card chips + live activity ([c081f06](https://github.com/staff0rd/assist/commit/c081f0667bc0ffb4acaab12a131bc5468a4e6ffa))
+* show MI formula in complexity ([00faeba](https://github.com/staff0rd/assist/commit/00faeba6849c0bd68f12a8554ad998a27037c66d))
+* show Play button on todo bugs ([17c50a6](https://github.com/staff0rd/assist/commit/17c50a64c1faad97927493f36051dfd6e2f9e10c))
+
 # [0.253.0](https://github.com/staff0rd/assist/compare/v0.252.0...v0.253.0) (2026-06-08)
 
 
