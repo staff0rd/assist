@@ -1,3 +1,10 @@
+# [0.252.0](https://github.com/staff0rd/assist/compare/v0.251.0...v0.252.0) (2026-06-08)
+
+
+### Features
+
+* play button for backlog sessions ([7fa3d12](https://github.com/staff0rd/assist/commit/7fa3d1203b94869808eb1a783306cc1279299121))
+
 # [0.251.0](https://github.com/staff0rd/assist/compare/v0.250.0...v0.251.0) (2026-06-08)
 
 
