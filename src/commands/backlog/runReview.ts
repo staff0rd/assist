@@ -7,7 +7,7 @@ import type { BacklogItem, PlanPhase } from "./types";
 type ReviewResult =
 	| { kind: "done" }
 	| { kind: "abort" }
-	| { kind: "rewind"; targetPhase: number };
+	| { kind: "rewind"; targetPhase: number; plan: PlanPhase[] };
 
 export async function runReview(
 	item: BacklogItem,
@@ -29,7 +29,7 @@ export async function runReview(
 	// The review agent can rewind to an earlier authored phase, which resolves to
 	// a target index below the review phase. Anything else means review passed.
 	if (reviewResult < plan.length) {
-		return { kind: "rewind", targetPhase: reviewResult };
+		return { kind: "rewind", targetPhase: reviewResult, plan };
 	}
 	return { kind: "done" };
 }

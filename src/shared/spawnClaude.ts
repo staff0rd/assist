@@ -3,7 +3,16 @@ import { type ChildProcess, spawn } from "node:child_process";
 export type SpawnClaudeOptions = {
 	allowEdits?: boolean;
 	permissionMode?: "auto" | "acceptEdits";
+	resumeSessionId?: string;
 };
+
+export function withoutResumeSession(
+	options?: SpawnClaudeOptions,
+): SpawnClaudeOptions | undefined {
+	if (!options?.resumeSessionId) return options;
+	const { resumeSessionId: _resumeSessionId, ...rest } = options;
+	return rest;
+}
 
 export function spawnClaude(
 	prompt: string,
@@ -12,7 +21,11 @@ export function spawnClaude(
 	child: ChildProcess;
 	done: Promise<number>;
 } {
-	const args = [prompt];
+	/* why: on resume the prompt is already in the transcript, so reopen the
+	 * conversation rather than re-injecting it as a fresh turn. */
+	const args = options.resumeSessionId
+		? ["--resume", options.resumeSessionId]
+		: [prompt];
 	const permissionMode =
 		options.permissionMode ?? (options.allowEdits ? "auto" : undefined);
 	if (permissionMode) {

@@ -8,8 +8,17 @@ export function registerRunCommand(cmd: Command): void {
 		.description("Run a backlog item's plan phase-by-phase with Claude")
 		.option("-w, --write", "Run Claude with auto permission mode (default)")
 		.option("--no-write", "Run Claude without auto permission mode")
-		.action(async (id: string, opts: { write?: boolean }) => {
-			pullIfConfigured();
-			await backlogRun(id, { allowEdits: opts.write !== false });
-		});
+		.option(
+			"--resume-session <id>",
+			"Resume an interrupted Claude session for the current phase (used by the sessions daemon on restart)",
+		)
+		.action(
+			async (id: string, opts: { write?: boolean; resumeSession?: string }) => {
+				pullIfConfigured();
+				await backlogRun(id, {
+					allowEdits: opts.write !== false,
+					resumeSessionId: opts.resumeSession,
+				});
+			},
+		);
 }

@@ -41,7 +41,7 @@ describe("restoreSession", () => {
 		expect(session.name).toBe("repo/Fix the bug");
 	});
 
-	it("relaunches a backlog run via the assist wrapper, not bare claude", () => {
+	it("relaunches a backlog run via the assist wrapper, resuming the latest phase's session", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Run backlog 295",
 			commandType: "assist",
@@ -63,13 +63,14 @@ describe("restoreSession", () => {
 
 		expect(spawnClaudeMock).not.toHaveBeenCalled();
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["assist", "backlog", "run", "295"],
+			["assist", "backlog", "run", "295", "--resume-session", "abc-123"],
 			"/home/user/repo",
 			"1",
 		);
 		expect(session.status).toBe("running");
 		expect(session.restored).toBe(true);
 		expect(session.commandType).toBe("assist");
+		expect(session.claudeSessionId).toBe("abc-123");
 		expect(session.assistArgs).toEqual(["backlog", "run", "295"]);
 		expect(session.activity).toEqual({
 			kind: "backlog",
@@ -79,6 +80,26 @@ describe("restoreSession", () => {
 			totalPhases: 3,
 			startedAt: 5,
 		});
+	});
+
+	it("relaunches a backlog run without a resume flag when no sessionId was discovered", () => {
+		const persisted: PersistedSession = {
+			name: "repo/Run backlog 295",
+			commandType: "assist",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			assistArgs: ["backlog", "run", "295"],
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "backlog", "run", "295"],
+			"/home/user/repo",
+			"1",
+		);
+		expect(session.status).toBe("running");
+		expect(session.claudeSessionId).toBeUndefined();
 	});
 
 	it("returns a not-restored stub for a claude session without a sessionId", () => {

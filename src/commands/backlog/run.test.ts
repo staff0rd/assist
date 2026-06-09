@@ -449,6 +449,66 @@ describe("run", () => {
 		});
 	});
 
+	describe("when resuming an interrupted Claude session after a restart", () => {
+		it("resumes only the interrupted authored phase, not the review phase", async () => {
+			const item = makeItem({ currentPhase: 2 });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 1,
+			});
+			mockExecutePhase.mockResolvedValueOnce(2).mockResolvedValueOnce(3);
+
+			await run("1", { resumeSessionId: "sess-1" });
+
+			expect(mockExecutePhase.mock.calls[0][3]).toEqual({
+				resumeSessionId: "sess-1",
+			});
+			expect(mockExecutePhase.mock.calls[1][3]).toEqual({});
+		});
+
+		it("does not resume the review phase", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3);
+
+			await run("1", { resumeSessionId: "sess-1" });
+
+			expect(mockExecutePhase.mock.calls[2][3]).toEqual({});
+		});
+
+		it("does not resume a rewound phase", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(0)
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3);
+
+			await run("1", { resumeSessionId: "sess-1" });
+
+			expect(mockExecutePhase.mock.calls[0][3]).toEqual({
+				resumeSessionId: "sess-1",
+			});
+			expect(mockExecutePhase.mock.calls[3][3]).toEqual({});
+		});
+	});
+
 	describe("lock lifecycle", () => {
 		it("should acquire lock before phases and release after completion", async () => {
 			const item = makeItem();

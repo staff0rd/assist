@@ -1,9 +1,11 @@
 import chalk from "chalk";
-import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
+import {
+	type SpawnClaudeOptions,
+	withoutResumeSession,
+} from "../../shared/spawnClaude";
 import { acquireLock, releaseLock } from "./acquireLock";
 import { blockedByHandover } from "./blockedByHandover";
 import { type PreparedRun, prepareRun } from "./prepareRun";
-import { reloadPlan } from "./reloadPlan";
 import { runPhases } from "./runPhases";
 import { runReview } from "./runReview";
 import { setStatus } from "./shared";
@@ -34,13 +36,14 @@ async function runPrepared(
 		while (true) {
 			if (!(await runPhases(item, startPhase, plan, spawnOptions)))
 				return false;
+			spawnOptions = withoutResumeSession(spawnOptions);
 			const review = await runReview(item, plan, spawnOptions);
 			if (review.kind === "abort") return false;
 			if (review.kind === "rewind") {
 				// rewindPhase already set the status to in-progress and rewound the
 				// current phase; resume from the rewound phase rather than finishing.
 				startPhase = review.targetPhase;
-				plan = (await reloadPlan(item.id)) ?? plan;
+				plan = review.plan;
 				continue;
 			}
 			await ensureDone(id);

@@ -136,7 +136,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog delete-comment <id> <comment-id>` - Delete a comment from a backlog item (summaries cannot be deleted)
 - `assist backlog phase-done <id> <phase> <summary>` - Signal that a plan phase is complete with a summary (used by orchestrator)
 - `assist backlog rewind <id> <phase> --reason <reason>` - Rewind a backlog item to an earlier phase, setting status to in-progress
-- `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude
+- `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude; `--resume-session <id>` resumes an interrupted Claude session for the current phase (used by the sessions daemon when it restarts a running item)
 - `assist backlog export [file]` - Export the entire backlog database (all tables, all repos) to a file, or stdout if omitted
 - `assist backlog import [file]` - Restore the entire backlog database from a dump (file or stdin), faithfully replacing all data; prompts for confirmation (use `-y, --yes` to skip; required when reading from stdin)
 - `assist backlog move-repo <old-origin> [new-origin]` - Retag all items from one origin to another after a repo rename; the new origin defaults to the current repo's remote, both accept URL or `git@` forms, and a bare repo name works for the old origin when unambiguous. Prompts for confirmation (use `-y, --yes` to skip)
