@@ -1,3 +1,10 @@
+# [0.259.0](https://github.com/staff0rd/assist/compare/v0.258.0...v0.259.0) (2026-06-09)
+
+
+### Features
+
+* sync repo selector to active card ([1d9cade](https://github.com/staff0rd/assist/commit/1d9cadea9f750d2bca2b29e9ca3edf33829c241f))
+
 # [0.258.0](https://github.com/staff0rd/assist/compare/v0.257.0...v0.258.0) (2026-06-08)
 
 
