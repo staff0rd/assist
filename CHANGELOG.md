@@ -1,3 +1,10 @@
+## [0.264.1](https://github.com/staff0rd/assist/compare/v0.264.0...v0.264.1) (2026-06-09)
+
+
+### Bug Fixes
+
+* restore backlog session via wrapper ([19e0065](https://github.com/staff0rd/assist/commit/19e0065a5e41f2551af0255f22e66a73136b643e))
+
 # [0.264.0](https://github.com/staff0rd/assist/compare/v0.263.3...v0.264.0) (2026-06-09)
 
 
