@@ -8,6 +8,7 @@ import { useRepoSelection } from "./useRepoSelection";
 import { RepoSelectionContext } from "./useRepoSelectionContext";
 import { SessionLaunchContext } from "./useSessionLaunchContext";
 import { useSessionSocket } from "./useSessionSocket";
+import { useSyncRepoToActiveCard } from "./useSyncRepoToActiveCard";
 
 const appBarSx = {
 	zIndex: (t: { zIndex: { drawer: number } }) => t.zIndex.drawer + 1,
@@ -17,6 +18,12 @@ const toolbarSx = { minHeight: 48 } as const;
 export function AppShell() {
 	const socket = useSessionSocket();
 	const selection = useRepoSelection(socket.currentCwd, socket.history);
+	useSyncRepoToActiveCard(
+		socket.activeId,
+		socket.sessions,
+		socket.history,
+		selection.setSelectedCwd,
+	);
 	const launch = useMemo(
 		() => ({ launchAssist: socket.createAssistSession }),
 		[socket.createAssistSession],
