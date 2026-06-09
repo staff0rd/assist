@@ -1,3 +1,10 @@
+## [0.263.3](https://github.com/staff0rd/assist/compare/v0.263.2...v0.263.3) (2026-06-09)
+
+
+### Bug Fixes
+
+* persist session activity on restore ([61044cb](https://github.com/staff0rd/assist/commit/61044cb4ca940396953544ba450df904d696976b))
+
 ## [0.263.2](https://github.com/staff0rd/assist/compare/v0.263.1...v0.263.2) (2026-06-09)
 
 
