@@ -127,6 +127,12 @@ run:
     args:
       - verify
       - no-venv
+  - name: verify:comment-policy
+    command: assist
+    filter: "{src/**/*.ts,src/**/*.tsx}"
+    args:
+      - verify
+      - comment-policy
   - name: verify:custom-lint
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"

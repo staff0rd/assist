@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import {
+	commentPolicy as verifyCommentPolicy,
 	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
 	list as verifyList,
@@ -45,6 +46,11 @@ export function registerVerify(program: Command): void {
 		.command("hardcoded-colors")
 		.description("Check for hardcoded hex colors in src/")
 		.action(verifyHardcodedColors);
+
+	verifyCommand
+		.command("comment-policy")
+		.description("Check for undocumented comments added on changed lines")
+		.action(verifyCommentPolicy);
 
 	verifyCommand
 		.command("no-venv")
