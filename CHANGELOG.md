@@ -1,3 +1,10 @@
+# [0.264.0](https://github.com/staff0rd/assist/compare/v0.263.3...v0.264.0) (2026-06-09)
+
+
+### Features
+
+* rename free-prompt button to 'prompt' ([ad49716](https://github.com/staff0rd/assist/commit/ad49716620d62ddc441223d2de32d615970e21f6))
+
 ## [0.263.3](https://github.com/staff0rd/assist/compare/v0.263.2...v0.263.3) (2026-06-09)
 
 
