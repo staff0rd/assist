@@ -1,3 +1,10 @@
+# [0.261.0](https://github.com/staff0rd/assist/compare/v0.260.0...v0.261.0) (2026-06-09)
+
+
+### Features
+
+* per-card auto-run toggle ([2135f7f](https://github.com/staff0rd/assist/commit/2135f7f631ecbc7e0f402afb1a17e5976213b5a2))
+
 # [0.260.0](https://github.com/staff0rd/assist/compare/v0.259.0...v0.260.0) (2026-06-09)
 
 
