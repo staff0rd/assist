@@ -1,3 +1,10 @@
+## [0.264.2](https://github.com/staff0rd/assist/compare/v0.264.1...v0.264.2) (2026-06-09)
+
+
+### Bug Fixes
+
+* restore resumes interrupted session ([69c4464](https://github.com/staff0rd/assist/commit/69c446464aaeac9bfb011eacdd95a88c8679e59b))
+
 ## [0.264.1](https://github.com/staff0rd/assist/compare/v0.264.0...v0.264.1) (2026-06-09)
 
 
