@@ -25,6 +25,7 @@ export function commentPolicy(): void {
 	console.log(
 		"\nDon't comment standard logic or syntax — only unintuitive complexity or a hack.",
 	);
+	console.log("Prefer self-documenting code.");
 	console.log(
 		`Remove each comment, or justify it inline with a ${markers
 			.map((m) => `'${m}'`)
