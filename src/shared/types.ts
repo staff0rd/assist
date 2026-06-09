@@ -179,10 +179,6 @@ export const assistConfigSchema = z.strictObject({
 
 export type AssistConfig = z.infer<typeof assistConfigSchema>;
 export type RunConfig = z.infer<typeof runConfigSchema>;
-type RunLink = z.infer<typeof runLinkSchema>;
+export type RunLink = z.infer<typeof runLinkSchema>;
 export type RunEntry = RunConfig | RunLink;
 export type TranscriptConfig = z.infer<typeof transcriptConfigSchema>;
-
-export function isRunLink(entry: RunEntry): entry is RunLink {
-	return "link" in entry;
-}

@@ -1,8 +1,9 @@
 import { dirname, relative, resolve } from "node:path";
 import { assertNoDuplicateRunNames } from "./assertNoDuplicateRunNames";
 import { findLinkedConfigPath } from "./findLinkedConfigPath";
+import { isRunLink } from "./isRunLink";
 import { loadLinkedEntries } from "./loadLinkedEntries";
-import { isRunLink, type RunConfig, type RunEntry } from "./types";
+import type { RunConfig, RunEntry } from "./types";
 
 type ResolveContext = {
 	rootConfigDir: string;
