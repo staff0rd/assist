@@ -1,3 +1,10 @@
+## [0.263.2](https://github.com/staff0rd/assist/compare/v0.263.1...v0.263.2) (2026-06-09)
+
+
+### Bug Fixes
+
+* launch review-comments in acceptEdits ([1f8aa93](https://github.com/staff0rd/assist/commit/1f8aa938a32f7f2884ecf5c904149bc2cb4a9d28))
+
 ## [0.263.1](https://github.com/staff0rd/assist/compare/v0.263.0...v0.263.1) (2026-06-09)
 
 
