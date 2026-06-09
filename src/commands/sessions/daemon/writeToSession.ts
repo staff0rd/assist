@@ -44,7 +44,7 @@ export function dismissSession(
 	if (s.status !== "done") s.pty?.kill();
 	clearIdle(s);
 	s.activityWatcher?.close();
-	if (s.cwd) removeActivity(s.cwd, s.id);
+	removeActivity(s.id);
 	sessions.delete(id);
 	return true;
 }

@@ -7,7 +7,7 @@ const DEBOUNCE_MS = 50;
 
 export function watchActivity(session: Session, notify: () => void): void {
 	if (session.commandType !== "assist" || !session.cwd) return;
-	const path = activityPath(session.cwd, session.id);
+	const path = activityPath(session.id);
 	const dir = dirname(path);
 	try {
 		// The activity file may not exist yet, so watch the containing .assist
@@ -44,6 +44,6 @@ export function watchActivity(session: Session, notify: () => void): void {
  */
 export function refreshActivity(session: Session): void {
 	if (session.commandType !== "assist" || !session.cwd) return;
-	const activity = readActivity(activityPath(session.cwd, session.id));
+	const activity = readActivity(activityPath(session.id));
 	if (activity) session.activity = activity;
 }

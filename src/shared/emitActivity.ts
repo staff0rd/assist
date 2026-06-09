@@ -1,4 +1,5 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 
 export type Activity = {
@@ -11,8 +12,8 @@ export type Activity = {
 	startedAt: number;
 };
 
-export function activityPath(cwd: string, sessionId: string): string {
-	return join(cwd, ".assist", `activity-${sessionId}.json`);
+export function activityPath(sessionId: string): string {
+	return join(homedir(), ".assist", "activity", `activity-${sessionId}.json`);
 }
 
 export function emitActivity(activity: Omit<Activity, "startedAt">): void {
@@ -21,7 +22,7 @@ export function emitActivity(activity: Omit<Activity, "startedAt">): void {
 	// session can't clobber the owning session's activity file.
 	const sessionId = process.env.ASSIST_ACTIVITY_ID;
 	if (!sessionId) return;
-	const path = activityPath(process.cwd(), sessionId);
+	const path = activityPath(sessionId);
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, JSON.stringify({ ...activity, startedAt: Date.now() }));
 }
@@ -34,9 +35,9 @@ export function readActivity(path: string): Activity | undefined {
 	}
 }
 
-export function removeActivity(cwd: string, sessionId: string): void {
+export function removeActivity(sessionId: string): void {
 	try {
-		rmSync(activityPath(cwd, sessionId));
+		rmSync(activityPath(sessionId));
 	} catch {
 		// Activity file may never have been written; nothing to remove
 	}

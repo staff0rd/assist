@@ -1,9 +1,19 @@
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	unlinkSync,
+	writeFileSync,
+} from "node:fs";
+import { homedir } from "node:os";
 import { join } from "node:path";
-import { getBacklogDir } from "./shared";
+
+function getLocksDir(): string {
+	return join(homedir(), ".assist", "locks");
+}
 
 function getLockPath(itemId: number): string {
-	return join(getBacklogDir(), `.assist-lock-${itemId}.json`);
+	return join(getLocksDir(), `lock-${itemId}.json`);
 }
 
 function isProcessAlive(pid: number): boolean {
@@ -29,6 +39,7 @@ export function isLockedByOther(itemId: number): boolean {
 }
 
 export function acquireLock(itemId: number): void {
+	mkdirSync(getLocksDir(), { recursive: true });
 	writeFileSync(
 		getLockPath(itemId),
 		JSON.stringify({ pid: process.pid, timestamp: new Date().toISOString() }),
