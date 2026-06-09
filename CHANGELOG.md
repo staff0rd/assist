@@ -1,3 +1,10 @@
+# [0.260.0](https://github.com/staff0rd/assist/compare/v0.259.0...v0.260.0) (2026-06-09)
+
+
+### Features
+
+* keyboard-searchable repo selector ([b8a578a](https://github.com/staff0rd/assist/commit/b8a578afa574cad429b0acb36d046448ac2ed07a))
+
 # [0.259.0](https://github.com/staff0rd/assist/compare/v0.258.0...v0.259.0) (2026-06-09)
 
 
