@@ -9,7 +9,7 @@ import { PLACEHOLDER } from "./dispatchMode";
 export function FreePromptDropdown({
 	disabled,
 	onSubmit,
-	label = "Prompt...",
+	label = "prompt",
 	allowEmpty = false,
 }: {
 	disabled: boolean;

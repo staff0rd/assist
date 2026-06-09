@@ -21,11 +21,12 @@ export function TopNavActions({
 				onSelect={(m, text) =>
 					dispatchMode(m, selectedCwd, onCreateAssist, () => {}, text)
 				}
-			/>
-			<FreePromptDropdown
-				disabled={disabled}
-				onSubmit={(prompt) => onCreate(prompt, selectedCwd)}
-			/>
+			>
+				<FreePromptDropdown
+					disabled={disabled}
+					onSubmit={(prompt) => onCreate(prompt, selectedCwd)}
+				/>
+			</ModeButtons>
 		</Stack>
 	);
 }
