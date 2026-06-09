@@ -1,4 +1,5 @@
 import { removeActivity } from "../../../shared/emitActivity";
+import { releaseLock } from "../../backlog/acquireLock";
 import type { Session } from "./createSession";
 import { clearIdle } from "./scheduleIdle";
 
@@ -45,6 +46,7 @@ export function dismissSession(
 	clearIdle(s);
 	s.activityWatcher?.close();
 	removeActivity(s.id);
+	if (s.activity?.itemId != null) releaseLock(s.activity.itemId);
 	sessions.delete(id);
 	return true;
 }

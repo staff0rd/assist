@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { releaseLock } from "../../backlog/acquireLock";
 import { createAssistSession } from "./createAssistSession";
 import { createSession, type Session } from "./createSession";
 import {
@@ -25,6 +26,9 @@ vi.mock("./watchForClaudeSessionId", () => ({
 	watchForClaudeSessionId: vi.fn(),
 }));
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
+vi.mock("../../backlog/acquireLock", () => ({ releaseLock: vi.fn() }));
+
+const releaseLockMock = releaseLock as unknown as ReturnType<typeof vi.fn>;
 
 const loadPersistedMock = loadPersistedSessions as unknown as ReturnType<
 	typeof vi.fn
@@ -210,6 +214,31 @@ describe("SessionManager", () => {
 			];
 			expect(sessions.size).toBe(0);
 			expect(manager.listSessions()).toEqual([]);
+		});
+
+		it("releases the lock for a backlog session being dismissed", () => {
+			createSessionMock.mockReturnValue(
+				fakeSession({
+					id: "1",
+					activity: { kind: "backlog", itemId: 301, startedAt: 1 },
+				}),
+			);
+			const manager = new SessionManager();
+			manager.spawn();
+
+			manager.dismissSession("1");
+
+			expect(releaseLockMock).toHaveBeenCalledWith(301);
+		});
+
+		it("does not release a lock for a session without a backlog item", () => {
+			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			const manager = new SessionManager();
+			manager.spawn();
+
+			manager.dismissSession("1");
+
+			expect(releaseLockMock).not.toHaveBeenCalled();
 		});
 	});
 
