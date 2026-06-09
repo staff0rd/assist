@@ -39,15 +39,10 @@ export function AppToolbar({
 				value={tabIndex === -1 ? 0 : tabIndex}
 				textColor="inherit"
 				indicatorColor="secondary"
-				sx={{ flexGrow: 1 }}
 			>
 				<Tab label="Sessions" onClick={() => goTo("/sessions")} />
 				<Tab label="Backlog" onClick={() => goTo("/backlog")} />
 			</Tabs>
-			<TopNavActions
-				onCreate={socket.createSession}
-				onCreateAssist={socket.createAssistSession}
-			/>
 			<Box sx={pickerSx}>
 				<RepoPicker
 					repos={selection.repos}
@@ -55,11 +50,14 @@ export function AppToolbar({
 					onSelect={selection.setSelectedCwd}
 				/>
 			</Box>
-			{/* mr clears the fixed-position ThemeToggle at the toolbar's right edge */}
-			<Box sx={{ display: "flex", mr: 5 }}>
+			<Box sx={{ display: "flex", mr: 2 }}>
 				<OpenInCodeButton cwd={selection.selectedCwd} />
 				<OpenInGitHubButton cwd={selection.selectedCwd} />
 			</Box>
+			<TopNavActions
+				onCreate={socket.createSession}
+				onCreateAssist={socket.createAssistSession}
+			/>
 		</Toolbar>
 	);
 }
