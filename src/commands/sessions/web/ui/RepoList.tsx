@@ -1,9 +1,10 @@
 import type { SxProps, Theme } from "@mui/material";
-import Divider from "@mui/material/Divider";
-import MenuItem from "@mui/material/MenuItem";
-import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
+import { useEffect, useRef, useState } from "react";
 import { dropdownStyle } from "./DropdownWrapper";
+import { RepoFilterInput } from "./RepoFilterInput";
+import { RepoMenuList } from "./RepoMenuList";
+import { useRepoKeyboardNav } from "./useRepoKeyboardNav";
 
 export function repoName(cwd: string): string {
 	const sep = cwd.includes("\\") ? "\\" : "/";
@@ -18,43 +19,52 @@ export function RepoList({
 	repos,
 	selected,
 	onSelect,
-	onCustom,
 	close,
 }: {
 	repos: string[];
 	selected: string;
 	onSelect: (cwd: string) => void;
-	onCustom: () => void;
 	close: () => void;
 }) {
+	const [filter, setFilter] = useState("");
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		inputRef.current?.focus();
+	}, []);
+
+	const query = filter.trim().toLowerCase();
+	const filtered = query
+		? repos.filter((cwd) => cwd.toLowerCase().includes(query))
+		: repos;
+
+	const { highlight, setHighlight, onKeyDown } = useRepoKeyboardNav(
+		filtered,
+		query,
+		onSelect,
+		close,
+	);
+
+	const select = (cwd: string) => {
+		onSelect(cwd);
+		close();
+	};
+
 	return (
 		<Paper elevation={4} sx={menuSx}>
-			<MenuList dense>
-				{repos.map((cwd) => (
-					<MenuItem
-						key={cwd}
-						selected={cwd === selected}
-						title={cwd}
-						onClick={() => {
-							onSelect(cwd);
-							close();
-						}}
-						sx={{ fontSize: 12 }}
-					>
-						{repoName(cwd)}
-					</MenuItem>
-				))}
-				<Divider />
-				<MenuItem
-					onClick={() => {
-						close();
-						onCustom();
-					}}
-					sx={{ fontSize: 12, color: "text.secondary", fontStyle: "italic" }}
-				>
-					Custom path...
-				</MenuItem>
-			</MenuList>
+			<RepoFilterInput
+				inputRef={inputRef}
+				value={filter}
+				onChange={setFilter}
+				onKeyDown={onKeyDown}
+			/>
+			<RepoMenuList
+				repos={filtered}
+				selected={selected}
+				highlight={highlight}
+				onHighlight={setHighlight}
+				onSelect={select}
+			/>
 		</Paper>
 	);
 }

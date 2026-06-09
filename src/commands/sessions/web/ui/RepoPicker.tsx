@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { CustomPathInput } from "./CustomPathInput";
 import { DropdownWrapper } from "./DropdownWrapper";
 import { RepoList, repoName } from "./RepoList";
 
@@ -12,20 +10,6 @@ export function RepoPicker({
 	selected: string;
 	onSelect: (cwd: string) => void;
 }) {
-	const [customMode, setCustomMode] = useState(false);
-
-	if (customMode) {
-		return (
-			<CustomPathInput
-				onConfirm={(p) => {
-					onSelect(p);
-					setCustomMode(false);
-				}}
-				onCancel={() => setCustomMode(false)}
-			/>
-		);
-	}
-
 	return (
 		<DropdownWrapper label={selected ? repoName(selected) : "Select repo..."}>
 			{(close) => (
@@ -33,7 +17,6 @@ export function RepoPicker({
 					repos={repos}
 					selected={selected}
 					onSelect={onSelect}
-					onCustom={() => setCustomMode(true)}
 					close={close}
 				/>
 			)}
