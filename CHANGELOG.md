@@ -1,3 +1,10 @@
+# [0.263.0](https://github.com/staff0rd/assist/compare/v0.262.0...v0.263.0) (2026-06-09)
+
+
+### Features
+
+* add verify comment-policy check ([07b1dda](https://github.com/staff0rd/assist/commit/07b1dda79ebff0c0874cf2405c58f39f988bfcb9))
+
 # [0.262.0](https://github.com/staff0rd/assist/compare/v0.261.0...v0.262.0) (2026-06-09)
 
 
