@@ -35,6 +35,36 @@ describe("restoreSession", () => {
 		expect(session.name).toBe("repo/Fix the bug");
 	});
 
+	it("rehydrates persisted activity onto a resumed backlog session", () => {
+		const persisted: PersistedSession = {
+			name: "repo/Run backlog 295",
+			commandType: "assist",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "abc-123",
+			assistArgs: ["backlog", "run", "295"],
+			activity: {
+				kind: "backlog",
+				itemId: 295,
+				itemName: "Fix the thing",
+				phase: 2,
+				totalPhases: 3,
+				startedAt: 5,
+			},
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(session.activity).toEqual({
+			kind: "backlog",
+			itemId: 295,
+			itemName: "Fix the thing",
+			phase: 2,
+			totalPhases: 3,
+			startedAt: 5,
+		});
+	});
+
 	it("returns a not-restored stub for a claude session without a sessionId", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Session 1",

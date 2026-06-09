@@ -1,16 +1,19 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
+import { z } from "zod";
 
-export type Activity = {
-	kind: "command" | "backlog";
-	name?: string;
-	itemId?: number;
-	itemName?: string;
-	phase?: number;
-	totalPhases?: number;
-	startedAt: number;
-};
+export const activitySchema = z.object({
+	kind: z.enum(["command", "backlog"]),
+	name: z.string().optional(),
+	itemId: z.number().optional(),
+	itemName: z.string().optional(),
+	phase: z.number().optional(),
+	totalPhases: z.number().optional(),
+	startedAt: z.number(),
+});
+
+export type Activity = z.infer<typeof activitySchema>;
 
 export function activityPath(sessionId: string): string {
 	return join(homedir(), ".assist", "activity", `activity-${sessionId}.json`);

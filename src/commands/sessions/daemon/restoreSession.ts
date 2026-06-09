@@ -26,6 +26,7 @@ export function restoreSession(
 			cwd: persisted.cwd,
 			claudeSessionId: persisted.claudeSessionId,
 			restored: true,
+			activity: persisted.activity,
 		};
 	}
 	return {

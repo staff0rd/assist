@@ -95,8 +95,45 @@ describe("persistLiveSessions", () => {
 				claudeSessionId: "abc",
 				runName: undefined,
 				runArgs: undefined,
+				activity: undefined,
 			},
 		]);
+	});
+
+	it("persists the session's activity so restore can rehydrate it", () => {
+		const sessions = new Map<string, Session>([
+			[
+				"1",
+				fakeSession({
+					id: "1",
+					name: "backlog",
+					claudeSessionId: "abc",
+					activity: {
+						kind: "backlog",
+						itemId: 295,
+						itemName: "Fix the thing",
+						phase: 2,
+						totalPhases: 3,
+						startedAt: 5,
+					},
+				}),
+			],
+		]);
+
+		persistLiveSessions(sessions);
+
+		const [, persisted] = saveJsonMock.mock.lastCall as [
+			string,
+			PersistedSession[],
+		];
+		expect(persisted[0].activity).toEqual({
+			kind: "backlog",
+			itemId: 295,
+			itemName: "Fix the thing",
+			phase: 2,
+			totalPhases: 3,
+			startedAt: 5,
+		});
 	});
 
 	it("defaults cwd to the process cwd", () => {

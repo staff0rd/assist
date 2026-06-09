@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { activitySchema } from "../../../shared/emitActivity";
 import { loadJson, saveJson } from "../../../shared/loadJson";
 import type { Session } from "./createSession";
 
@@ -13,6 +14,7 @@ const persistedSessionSchema = z.object({
 	runName: z.string().optional(),
 	runArgs: z.array(z.string()).optional(),
 	assistArgs: z.array(z.string()).optional(),
+	activity: activitySchema.optional(),
 });
 
 export type PersistedSession = z.infer<typeof persistedSessionSchema>;
@@ -48,5 +50,6 @@ function toPersistedSession(session: Session): PersistedSession {
 		runName: session.runName,
 		runArgs: session.runArgs,
 		assistArgs: session.assistArgs,
+		activity: session.activity,
 	};
 }
