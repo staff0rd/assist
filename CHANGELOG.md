@@ -1,3 +1,10 @@
+# [0.262.0](https://github.com/staff0rd/assist/compare/v0.261.0...v0.262.0) (2026-06-09)
+
+
+### Features
+
+* move lock & activity to ~/.assist ([085c986](https://github.com/staff0rd/assist/commit/085c9866ff255d00ec2ba3da26a3d1ba811021a3))
+
 # [0.261.0](https://github.com/staff0rd/assist/compare/v0.260.0...v0.261.0) (2026-06-09)
 
 
