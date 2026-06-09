@@ -1,3 +1,10 @@
+## [0.263.1](https://github.com/staff0rd/assist/compare/v0.263.0...v0.263.1) (2026-06-09)
+
+
+### Bug Fixes
+
+* release session lock on dismiss ([116ac57](https://github.com/staff0rd/assist/commit/116ac5716ba243adcc1ca4da00d3e5a31110914f))
+
 # [0.263.0](https://github.com/staff0rd/assist/compare/v0.262.0...v0.263.0) (2026-06-09)
 
 
