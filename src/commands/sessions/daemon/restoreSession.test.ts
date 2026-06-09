@@ -2,12 +2,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreSession } from "./restoreSession";
 import { spawnClaude } from "./spawnClaude";
+import { spawnPty } from "./spawnPty";
 
 vi.mock("./spawnClaude", () => ({
 	spawnClaude: vi.fn(() => ({ fake: "pty" })),
 }));
 
+vi.mock("./spawnPty", () => ({
+	spawnPty: vi.fn(() => ({ fake: "pty" })),
+}));
+
 const spawnClaudeMock = spawnClaude as unknown as ReturnType<typeof vi.fn>;
+const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 
 describe("restoreSession", () => {
 	beforeEach(() => {
@@ -35,7 +41,7 @@ describe("restoreSession", () => {
 		expect(session.name).toBe("repo/Fix the bug");
 	});
 
-	it("rehydrates persisted activity onto a resumed backlog session", () => {
+	it("relaunches a backlog run via the assist wrapper, not bare claude", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Run backlog 295",
 			commandType: "assist",
@@ -55,6 +61,16 @@ describe("restoreSession", () => {
 
 		const session = restoreSession("1", persisted);
 
+		expect(spawnClaudeMock).not.toHaveBeenCalled();
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "backlog", "run", "295"],
+			"/home/user/repo",
+			"1",
+		);
+		expect(session.status).toBe("running");
+		expect(session.restored).toBe(true);
+		expect(session.commandType).toBe("assist");
+		expect(session.assistArgs).toEqual(["backlog", "run", "295"]);
 		expect(session.activity).toEqual({
 			kind: "backlog",
 			itemId: 295,
