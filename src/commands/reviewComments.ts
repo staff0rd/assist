@@ -11,6 +11,8 @@ export async function reviewComments(number?: string): Promise<void> {
 			process.exit(1);
 		}
 	}
-	const { done } = spawnClaude("/review-comments", { allowEdits: true });
+	const { done } = spawnClaude("/review-comments", {
+		permissionMode: "acceptEdits",
+	});
 	await done;
 }

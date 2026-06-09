@@ -2,6 +2,7 @@ import { type ChildProcess, spawn } from "node:child_process";
 
 export type SpawnClaudeOptions = {
 	allowEdits?: boolean;
+	permissionMode?: "auto" | "acceptEdits";
 };
 
 export function spawnClaude(
@@ -12,8 +13,10 @@ export function spawnClaude(
 	done: Promise<number>;
 } {
 	const args = [prompt];
-	if (options.allowEdits) {
-		args.push("--permission-mode", "auto");
+	const permissionMode =
+		options.permissionMode ?? (options.allowEdits ? "auto" : undefined);
+	if (permissionMode) {
+		args.push("--permission-mode", permissionMode);
 	}
 	// Claude (and any assist commands it runs) must not own the session's
 	// activity file; only the daemon's direct assist child emits activity.
