@@ -8,6 +8,7 @@ import {
 	resizeAction,
 	resumeSessionAction,
 	retrySessionAction,
+	setAutoRunAction,
 } from "./createSessionAction";
 
 type SendFn = (msg: object) => void;
@@ -25,6 +26,7 @@ export function useSessionActions(
 		resumeSession: useMemo(() => resumeSessionAction(send), [send]),
 		sendInput: useMemo(() => inputAction(send), [send]),
 		sendResize: useMemo(() => resizeAction(send), [send]),
+		setAutoRun: useMemo(() => setAutoRunAction(send), [send]),
 	};
 
 	const onOutput = useMemo(

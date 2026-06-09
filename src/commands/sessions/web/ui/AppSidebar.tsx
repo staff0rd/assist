@@ -29,6 +29,7 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 			onResume={handleResume}
 			onRetry={socket.retrySession}
 			onDismiss={socket.dismissSession}
+			onSetAutoRun={socket.setAutoRun}
 		/>
 	);
 }

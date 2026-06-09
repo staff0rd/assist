@@ -36,13 +36,26 @@ export function CardChips({ session }: { session: SessionInfo }) {
 					/>
 				</>
 			) : (
-				<Chip
-					label={sessionType(session)}
-					size="small"
-					color="primary"
-					variant="outlined"
-					sx={chipSx}
-				/>
+				<>
+					<Chip
+						label={sessionType(session)}
+						size="small"
+						color="primary"
+						variant="outlined"
+						sx={chipSx}
+					/>
+					{activity?.itemId != null && (
+						<Chip
+							label={`#${activity.itemId}`}
+							size="small"
+							sx={chipSx}
+							clickable
+							component={Link}
+							to={`/backlog/items/${activity.itemId}`}
+							onClick={(e) => e.stopPropagation()}
+						/>
+					)}
+				</>
 			)}
 		</>
 	);

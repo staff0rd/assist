@@ -73,10 +73,11 @@ Ask the user if they want to change anything. Iterate until they confirm.
 
 Once confirmed, create the item and its phases via CLI commands.
 
-First, add the item:
+First, add the item and capture the id it prints:
 ```
 assist backlog add --name "Item name" --type story --desc "Description text" --ac "criterion 1" --ac "criterion 2" 2>&1
 ```
+Note the created item id from the output — you'll pass it to the done signal below.
 
 Then add each phase:
 ```
@@ -85,8 +86,8 @@ assist backlog add-phase <id> "Phase name" --task "Task 1" --task "Task 2" --man
 
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.
 
-Finally, signal that the drafting task is complete:
+Finally, signal that the drafting task is complete, passing the created item id:
 ```
-assist signal done 2>&1
+assist signal done <id> 2>&1
 ```
-This lets a wrapping `assist draft --once` session end; in a plain interactive session it has no effect.
+This lets a wrapping `assist draft --once` session end and surfaces the created item id to the session card; in a plain interactive session it has no effect.

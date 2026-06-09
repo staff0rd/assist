@@ -17,9 +17,10 @@ export function registerSignal(program: Command): void {
 
 	signalCommand
 		.command("done")
+		.argument("[id]", "Backlog item ID created by the session")
 		.description("Write a done signal to end a --once launch session")
-		.action(() => {
-			writeSignal("done");
+		.action((id?: string) => {
+			writeSignal("done", id ? { id } : undefined);
 			console.log("Signal written.");
 		});
 }

@@ -24,6 +24,17 @@ export function resizeSession(
 	}
 }
 
+export function setAutoRun(
+	sessions: Map<string, Session>,
+	id: string,
+	enabled: boolean,
+): boolean {
+	const s = sessions.get(id);
+	if (!s) return false;
+	s.autoRun = enabled;
+	return true;
+}
+
 export function dismissSession(
 	sessions: Map<string, Session>,
 	id: string,

@@ -97,6 +97,8 @@ const handlers: Record<string, Handler> = {
 		m.resizeSession(d.sessionId as string, d.cols as number, d.rows as number),
 	retry: (_client, m, d) => m.retrySession(d.sessionId as string),
 	dismiss: (_client, m, d) => m.dismissSession(d.sessionId as string),
+	"set-autorun": (_client, m, d) =>
+		m.setAutoRun(d.sessionId as string, d.enabled as boolean),
 };
 
 export function dispatchMessage(

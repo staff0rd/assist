@@ -5,6 +5,7 @@ import { spawnClaude } from "../../shared/spawnClaude";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
 import { cleanupSignal } from "./resolvePhaseResult";
+import { surfaceCreatedItem } from "./surfaceCreatedItem";
 import { tryRunById } from "./tryRunById";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
@@ -38,6 +39,10 @@ export async function launchMode(
 
 	const signal = readSignal();
 	cleanupSignal();
+
+	if (signal?.event === "done" && typeof signal.id === "string" && signal.id) {
+		await surfaceCreatedItem(slashCommand, signal.id);
+	}
 
 	if (signal?.event === "next") {
 		if (typeof signal.id === "string" && signal.id) {

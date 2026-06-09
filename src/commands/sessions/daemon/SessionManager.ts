@@ -1,6 +1,6 @@
 import { discoverSessions } from "../shared/discoverSessions";
-import { applyStatusChange } from "./applyStatusChange";
-import { broadcast, type SessionClient } from "./broadcast";
+import type { SessionClient } from "./broadcast";
+import { broadcastSessions } from "./broadcastSessions";
 import { createAssistSession } from "./createAssistSession";
 import {
 	createRunSession,
@@ -9,10 +9,8 @@ import {
 	type SessionInfo,
 } from "./createSession";
 import { greetClient } from "./greetClient";
-import {
-	loadPersistedSessions,
-	persistLiveSessions,
-} from "./loadPersistedSessions";
+import { loadPersistedSessions } from "./loadPersistedSessions";
+import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import { restoreSession } from "./restoreSession";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
@@ -24,6 +22,7 @@ import { wirePtyEvents } from "./wirePtyEvents";
 import {
 	dismissSession,
 	resizeSession,
+	setAutoRun,
 	writeToSession,
 } from "./writeToSession";
 
@@ -89,11 +88,11 @@ export class SessionManager {
 		return this.add(resumeSession(String(this.nextId++), sessionId, cwd, name));
 	}
 
-	private readonly onStatusChange = (
-		s: Session,
-		status: Session["status"],
-		exitCode?: number,
-	) => applyStatusChange(s, status, exitCode, this.dismissSession, this.notify);
+	private readonly onStatusChange = makeStatusChangeHandler(
+		(id) => this.dismissSession(id),
+		() => this.notify(),
+		(itemId, cwd) => this.spawnAssist(["backlog", "run", String(itemId)], cwd),
+	);
 
 	private wire(session: Session): void {
 		this.sessions.set(session.id, session);
@@ -118,6 +117,10 @@ export class SessionManager {
 		if (dismissSession(this.sessions, id)) this.notify();
 	};
 
+	setAutoRun(id: string, enabled: boolean): void {
+		if (setAutoRun(this.sessions, id, enabled)) this.notify();
+	}
+
 	listSessions(): SessionInfo[] {
 		return [...this.sessions.values()].map(toSessionInfo);
 	}
@@ -130,11 +133,7 @@ export class SessionManager {
 		// During shutdown pty exits must not rewrite sessions.json, or the
 		// done statuses would erase the metadata that resume needs on restart
 		if (this.shuttingDown) return;
-		persistLiveSessions(this.sessions);
-		broadcast(this.clients, {
-			type: "sessions",
-			sessions: this.listSessions(),
-		});
+		broadcastSessions(this.sessions, this.clients);
 		this.onIdleChange?.(this.isIdle());
 	};
 }

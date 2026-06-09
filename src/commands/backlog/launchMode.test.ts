@@ -31,13 +31,27 @@ vi.mock("./tryRunById", () => ({
 	tryRunById: vi.fn(),
 }));
 
+vi.mock("./loadItem", () => ({
+	loadItem: vi.fn(),
+}));
+
+vi.mock("./shared", () => ({
+	getReady: vi.fn().mockResolvedValue({ orm: {} }),
+}));
+
+vi.mock("../../shared/emitActivity", () => ({
+	emitActivity: vi.fn(),
+}));
+
 vi.mock("./watchForMarker", () => ({
 	watchForMarker: vi.fn(),
 	stopWatching: vi.fn(),
 }));
 
+import { emitActivity } from "../../shared/emitActivity";
 import { spawnClaude } from "../../shared/spawnClaude";
 import { buildSlashCommand, launchMode } from "./launchMode";
+import { loadItem } from "./loadItem";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
 import { tryRunById } from "./tryRunById";
@@ -48,6 +62,8 @@ const mockNext = next as unknown as MockInstance;
 const mockReadSignal = readSignal as unknown as MockInstance;
 const mockTryRunById = tryRunById as unknown as MockInstance;
 const mockWatchForMarker = watchForMarker as unknown as MockInstance;
+const mockLoadItem = loadItem as unknown as MockInstance;
+const mockEmitActivity = emitActivity as unknown as MockInstance;
 
 const child = { kill: vi.fn() };
 
@@ -141,6 +157,36 @@ describe("launchMode", () => {
 				allowEdits: true,
 				once: undefined,
 			});
+		});
+	});
+
+	describe("when a done signal carries a created item id", () => {
+		it("surfaces the item as activity and does not chain", async () => {
+			mockReadSignal.mockReturnValue({ event: "done", id: "42" });
+			mockLoadItem.mockResolvedValue({ id: 42, name: "Shiny feature" });
+
+			await launchMode("draft", { once: true });
+
+			expect(mockLoadItem).toHaveBeenCalledWith({}, 42);
+			expect(mockEmitActivity).toHaveBeenCalledWith({
+				kind: "command",
+				name: "draft",
+				itemId: 42,
+				itemName: "Shiny feature",
+			});
+			expect(mockNext).not.toHaveBeenCalled();
+			expect(mockTryRunById).not.toHaveBeenCalled();
+		});
+
+		it("does not surface an item id when the item cannot be loaded", async () => {
+			mockReadSignal.mockReturnValue({ event: "done", id: "99" });
+			mockLoadItem.mockResolvedValue(undefined);
+
+			await launchMode("bug", { once: true });
+
+			expect(mockEmitActivity).not.toHaveBeenCalledWith(
+				expect.objectContaining({ itemId: expect.anything() }),
+			);
 		});
 	});
 

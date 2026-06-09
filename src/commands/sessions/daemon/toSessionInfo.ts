@@ -12,6 +12,7 @@ export function toSessionInfo({
 	cwd,
 	restored,
 	activity,
+	autoRun,
 }: Session): SessionInfo {
 	return {
 		id,
@@ -25,5 +26,6 @@ export function toSessionInfo({
 		cwd,
 		restored,
 		activity,
+		autoRun,
 	};
 }

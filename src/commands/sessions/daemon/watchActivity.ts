@@ -34,3 +34,16 @@ export function watchActivity(session: Session, notify: () => void): void {
 
 	if (existsSync(path)) read();
 }
+
+/**
+ * Synchronously load the latest activity into the session, bypassing the
+ * watcher's debounce. A launch session writes its final activity (the created
+ * item id) microseconds before exiting, so the pty `onExit` handler must read
+ * it directly — the debounced watcher would otherwise lose the race and the
+ * auto-run decision would see stale activity with no itemId.
+ */
+export function refreshActivity(session: Session): void {
+	if (session.commandType !== "assist" || !session.cwd) return;
+	const activity = readActivity(activityPath(session.cwd, session.id));
+	if (activity) session.activity = activity;
+}

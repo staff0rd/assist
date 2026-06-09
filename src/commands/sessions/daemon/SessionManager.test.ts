@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createAssistSession } from "./createAssistSession";
 import { createSession, type Session } from "./createSession";
 import {
 	loadPersistedSessions,
@@ -35,6 +36,20 @@ const restoreSessionMock = restoreSession as unknown as ReturnType<
 	typeof vi.fn
 >;
 const createSessionMock = createSession as unknown as ReturnType<typeof vi.fn>;
+const createAssistMock = createAssistSession as unknown as ReturnType<
+	typeof vi.fn
+>;
+const wirePtyMock = wirePtyEvents as unknown as ReturnType<typeof vi.fn>;
+
+type StatusChange = (
+	s: Session,
+	status: Session["status"],
+	exitCode?: number,
+) => void;
+
+function lastStatusChange(): StatusChange {
+	return wirePtyMock.mock.lastCall?.[2] as StatusChange;
+}
 
 function fakeSession(overrides: Partial<Session> = {}): Session {
 	return {
@@ -195,6 +210,57 @@ describe("SessionManager", () => {
 			];
 			expect(sessions.size).toBe(0);
 			expect(manager.listSessions()).toEqual([]);
+		});
+	});
+
+	describe("setAutoRun", () => {
+		it("stores the flag and surfaces it in broadcast session state", () => {
+			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			const manager = new SessionManager();
+			manager.spawn();
+
+			manager.setAutoRun("1", true);
+
+			expect(manager.listSessions()[0]?.autoRun).toBe(true);
+		});
+	});
+
+	describe("auto-run on done", () => {
+		function drive(overrides: Partial<Session>): typeof createAssistMock {
+			const draft = fakeSession({
+				id: "1",
+				commandType: "assist",
+				assistArgs: ["draft", "--once"],
+				pty: null,
+				autoRun: true,
+				activity: { kind: "command", itemId: 42, startedAt: 1 },
+				...overrides,
+			});
+			createAssistMock
+				.mockReturnValueOnce(draft)
+				.mockReturnValue(fakeSession({ id: "2", commandType: "assist" }));
+			const manager = new SessionManager();
+			manager.spawnAssist(["draft", "--once"]);
+			lastStatusChange()(draft, "done", 0);
+			return createAssistMock;
+		}
+
+		it("spawns 'backlog run <id>' when an autoRun draft exits cleanly", () => {
+			expect(drive({})).toHaveBeenCalledWith(
+				expect.any(String),
+				["backlog", "run", "42"],
+				undefined,
+			);
+		});
+
+		it("does not spawn a run when autoRun is off", () => {
+			drive({ autoRun: false });
+			expect(createAssistMock).toHaveBeenCalledTimes(1);
+		});
+
+		it("does not spawn a run when no item was created", () => {
+			drive({ activity: undefined });
+			expect(createAssistMock).toHaveBeenCalledTimes(1);
 		});
 	});
 });

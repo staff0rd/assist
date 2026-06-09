@@ -9,12 +9,14 @@ export function SessionList({
 	onSelect,
 	onRetry,
 	onDismiss,
+	onSetAutoRun,
 }: {
 	sessions: SessionInfo[];
 	activeId: string | null;
 	onSelect: (id: string) => void;
 	onRetry: (id: string) => void;
 	onDismiss: (id: string) => void;
+	onSetAutoRun: (id: string, enabled: boolean) => void;
 }) {
 	return (
 		<Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
@@ -31,6 +33,7 @@ export function SessionList({
 							: undefined
 					}
 					onDismiss={() => onDismiss(s.id)}
+					onSetAutoRun={(enabled) => onSetAutoRun(s.id, enabled)}
 				/>
 			))}
 			{sessions.length === 0 && (

@@ -15,6 +15,7 @@ export type SessionInfo = {
 	cwd?: string;
 	restored?: boolean;
 	activity?: Activity;
+	autoRun?: boolean;
 };
 
 export type HistoricalSession = {

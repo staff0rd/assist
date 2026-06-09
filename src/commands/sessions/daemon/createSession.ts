@@ -24,6 +24,7 @@ type Session = {
 	restored?: boolean;
 	activity?: Activity;
 	activityWatcher?: FSWatcher;
+	autoRun?: boolean;
 };
 
 type SessionInfo = {
@@ -38,6 +39,7 @@ type SessionInfo = {
 	cwd?: string;
 	restored?: boolean;
 	activity?: Activity;
+	autoRun?: boolean;
 };
 
 export type { Session, SessionInfo, SessionStatus };

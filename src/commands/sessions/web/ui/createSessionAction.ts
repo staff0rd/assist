@@ -37,6 +37,11 @@ export function dismissSessionAction(
 	};
 }
 
+export function setAutoRunAction(send: SendFn) {
+	return (id: string, enabled: boolean) =>
+		send({ type: "set-autorun", sessionId: id, enabled });
+}
+
 export function inputAction(send: SendFn) {
 	return (sessionId: string, data: string) =>
 		send({ type: "input", sessionId, data });

@@ -1,6 +1,7 @@
 import { broadcast, type SessionClient } from "./broadcast";
 import type { Session, SessionStatus } from "./createSession";
 import { clearIdle, scheduleIdle } from "./scheduleIdle";
+import { refreshActivity } from "./watchActivity";
 
 const MAX_SCROLLBACK = 256 * 1024;
 const RESIZE_GRACE_MS = 500;
@@ -33,6 +34,7 @@ export function wirePtyEvents(
 	});
 	session.pty.onExit(({ exitCode }) => {
 		clearIdle(session);
+		refreshActivity(session);
 		onStatusChange(session, "done", exitCode);
 	});
 	scheduleIdle(session, () => onStatusChange(session, "waiting"));

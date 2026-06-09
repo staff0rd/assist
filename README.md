@@ -257,7 +257,7 @@ When iterating on assist itself: web server changes only need the `assist sessio
 - `assist refine [id] [--once]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given; `--once` exits when the done signal arrives after refinement completes
 - `assist review-comments [number]` - Launch Claude in `/review-comments` mode to process PR review comments (single session, no chaining); when a PR number is supplied, checks out that PR via `gh pr checkout` first
 - `assist signal next [id]` - Write a next signal to chain into `assist next`; when `id` is supplied, the parent launcher runs that backlog item directly
-- `assist signal done` - Write a done signal marking the session's initial task complete; `--once` launch sessions exit when it arrives, plain sessions ignore it
+- `assist signal done [id]` - Write a done signal marking the session's initial task complete; an optional `id` surfaces the backlog item the session created onto its session card; `--once` launch sessions exit when it arrives, plain sessions ignore it
 
 When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist refine`, `assist next`, and `assist backlog run` run `git pull --ff-only` before doing anything else; if the pull fails the command aborts. `assist next` pulls once per invocation, not per item in its loop.
 
