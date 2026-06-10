@@ -35,6 +35,14 @@ describe("shouldAutoRun", () => {
 		});
 	});
 
+	describe("when a refine session with autoRun and a created item exits cleanly", () => {
+		it("runs", () => {
+			expect(
+				shouldAutoRun(session({ assistArgs: ["refine", "--once"] }), 0),
+			).toBe(true);
+		});
+	});
+
 	describe("when autoRun is off", () => {
 		it("does not run", () => {
 			expect(shouldAutoRun(session({ autoRun: false }), 0)).toBe(false);

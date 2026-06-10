@@ -287,6 +287,14 @@ describe("SessionManager", () => {
 			expect(createAssistMock).toHaveBeenCalledTimes(1);
 		});
 
+		it("reuses a refine card to run 'backlog run <id>' when it exits cleanly", () => {
+			const refine = drive({ assistArgs: ["refine", "--once"] });
+			expect(refine.assistArgs).toEqual(["backlog", "run", "42"]);
+			expect(refine.name).toBe("assist backlog run 42");
+			expect(refine.status).toBe("running");
+			expect(createAssistMock).toHaveBeenCalledTimes(1);
+		});
+
 		it("does not reuse the card when autoRun is off", () => {
 			const draft = drive({ autoRun: false });
 			expect(draft.assistArgs).toEqual(["draft", "--once"]);
