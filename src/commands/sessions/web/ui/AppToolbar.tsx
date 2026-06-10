@@ -3,6 +3,7 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import Toolbar from "@mui/material/Toolbar";
 import { useLocation, useNavigate } from "react-router";
+import { GitStatusCounts } from "./GitStatusCounts";
 import { OpenInCodeButton } from "./OpenInCodeButton";
 import { OpenInGitHubButton } from "./OpenInGitHubButton";
 import { RepoPicker } from "./RepoPicker";
@@ -50,7 +51,8 @@ export function AppToolbar({
 					onSelect={selection.setSelectedCwd}
 				/>
 			</Box>
-			<Box sx={{ display: "flex", mx: 2 }}>
+			<GitStatusCounts cwd={selection.selectedCwd} />
+			<Box sx={{ display: "flex", ml: 1, mr: 2 }}>
 				<OpenInCodeButton cwd={selection.selectedCwd} />
 				<OpenInGitHubButton cwd={selection.selectedCwd} />
 			</Box>
