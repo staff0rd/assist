@@ -1,3 +1,10 @@
+## [0.272.2](https://github.com/staff0rd/assist/compare/v0.272.1...v0.272.2) (2026-06-10)
+
+
+### Bug Fixes
+
+* default to top session card on load ([51a7a97](https://github.com/staff0rd/assist/commit/51a7a97eb504fa0483d1dc202f20c5744a189dc3))
+
 ## [0.272.1](https://github.com/staff0rd/assist/compare/v0.272.0...v0.272.1) (2026-06-10)
 
 
