@@ -1,3 +1,10 @@
+# [0.265.0](https://github.com/staff0rd/assist/compare/v0.264.3...v0.265.0) (2026-06-10)
+
+
+### Features
+
+* multiline web prompt dropdowns ([73ca8f2](https://github.com/staff0rd/assist/commit/73ca8f271eb8a265479170e81d7131dbbc01e116))
+
 ## [0.264.3](https://github.com/staff0rd/assist/compare/v0.264.2...v0.264.3) (2026-06-10)
 
 
