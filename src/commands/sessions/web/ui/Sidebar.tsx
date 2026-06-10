@@ -15,6 +15,7 @@ type SidebarProps = {
 	onRetry: (id: string) => void;
 	onDismiss: (id: string) => void;
 	onSetAutoRun: (id: string, enabled: boolean) => void;
+	initialized: Set<string>;
 };
 
 const sidebarSx = {
@@ -41,6 +42,7 @@ export function Sidebar(props: SidebarProps) {
 				<SessionList
 					sessions={props.sessions}
 					activeId={props.activeId}
+					initialized={props.initialized}
 					onSelect={props.onSelect}
 					onRetry={props.onRetry}
 					onDismiss={props.onDismiss}

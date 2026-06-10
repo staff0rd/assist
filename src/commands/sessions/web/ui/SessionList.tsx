@@ -6,6 +6,7 @@ import type { SessionInfo } from "./useSessionSocket";
 export function SessionList({
 	sessions,
 	activeId,
+	initialized,
 	onSelect,
 	onRetry,
 	onDismiss,
@@ -13,6 +14,7 @@ export function SessionList({
 }: {
 	sessions: SessionInfo[];
 	activeId: string | null;
+	initialized: Set<string>;
 	onSelect: (id: string) => void;
 	onRetry: (id: string) => void;
 	onDismiss: (id: string) => void;
@@ -25,6 +27,7 @@ export function SessionList({
 					key={s.id}
 					session={s}
 					active={s.id === activeId}
+					loading={!initialized.has(s.id)}
 					onClick={() => onSelect(s.id)}
 					onRetry={
 						(s.commandType === "run" || s.commandType === "assist") &&

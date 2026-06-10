@@ -1,4 +1,7 @@
+import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
 import { AutoRunToggle } from "./AutoRunToggle";
 import { CardHeader, cardSx } from "./CardHeader";
 import { StatusRow } from "./StatusRow";
@@ -9,6 +12,7 @@ import { useElapsed } from "./useElapsed";
 export function SessionCard({
 	session,
 	active,
+	loading,
 	onClick,
 	onRetry,
 	onDismiss,
@@ -16,6 +20,7 @@ export function SessionCard({
 }: {
 	session: SessionInfo;
 	active: boolean;
+	loading: boolean;
 	onClick: () => void;
 	onRetry?: () => void;
 	onDismiss: () => void;
@@ -28,16 +33,27 @@ export function SessionCard({
 	return (
 		<ButtonBase onClick={onClick} sx={cardSx(active)}>
 			<CardHeader session={session} onRetry={onRetry} onDismiss={onDismiss} />
-			<StatusRow
-				status={session.status}
-				elapsed={elapsed}
-				restored={session.restored}
-			/>
-			{showAutoRun && (
-				<AutoRunToggle
-					checked={session.autoRun ?? false}
-					onChange={onSetAutoRun}
-				/>
+			{loading ? (
+				<Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
+					<CircularProgress size={12} />
+					<Typography variant="caption" color="text.disabled">
+						Starting…
+					</Typography>
+				</Box>
+			) : (
+				<>
+					<StatusRow
+						status={session.status}
+						elapsed={elapsed}
+						restored={session.restored}
+					/>
+					{showAutoRun && (
+						<AutoRunToggle
+							checked={session.autoRun ?? false}
+							onChange={onSetAutoRun}
+						/>
+					)}
+				</>
 			)}
 		</ButtonBase>
 	);

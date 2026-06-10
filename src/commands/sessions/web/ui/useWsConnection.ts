@@ -10,9 +10,14 @@ export function useWsConnection() {
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
+	const [initialized, setInitialized] = useState<Set<string>>(new Set());
 	const wsRef = useRef<WebSocket | null>(null);
 	const buffers = useRef(new Map<string, string>());
 	const handlers = useRef(new Map<string, OutputHandler>());
+
+	const markInitialized = useCallback((id: string) => {
+		setInitialized((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
+	}, []);
 
 	useEffect(() => {
 		const ws = createWsConnection({
@@ -21,12 +26,13 @@ export function useWsConnection() {
 			setActiveId,
 			setCurrentCwd,
 			setError,
+			markInitialized,
 			buffers,
 			handlers,
 		});
 		wsRef.current = ws;
 		return () => ws.close();
-	}, []);
+	}, [markInitialized]);
 
 	const requestHistory = useCallback(() => {
 		const ws = wsRef.current;
@@ -44,6 +50,7 @@ export function useWsConnection() {
 		currentCwd,
 		error,
 		clearError,
+		initialized,
 		wsRef,
 		buffers,
 		handlers,

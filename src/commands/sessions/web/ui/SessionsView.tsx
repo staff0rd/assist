@@ -25,6 +25,7 @@ export function SessionsView({ socket }: { socket: SessionSocket }) {
 			<SessionArea
 				sessions={socket.sessions}
 				activeId={socket.activeId}
+				initialized={socket.initialized}
 				onOutput={socket.onOutput}
 				sendInput={socket.sendInput}
 				sendResize={socket.sendResize}

@@ -8,6 +8,7 @@ export type WsDispatch = {
 	setActiveId: (id: string) => void;
 	setCurrentCwd: (cwd: string) => void;
 	setError: (message: string) => void;
+	markInitialized: (id: string) => void;
 	buffers: React.RefObject<Map<string, string>>;
 	handlers: React.RefObject<Map<string, OutputHandler>>;
 };
@@ -41,6 +42,7 @@ export function handleWsMessage(
 			const prev = d.buffers.current?.get(id) ?? "";
 			d.buffers.current?.set(id, prev + (msg.data as string));
 			d.handlers.current?.get(id)?.(msg.data as string);
+			d.markInitialized(id);
 			break;
 		}
 	}
