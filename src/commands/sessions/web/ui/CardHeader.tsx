@@ -18,7 +18,7 @@ export function cardSx(active: boolean): SxProps<Theme> {
 		bgcolor: active ? "action.selected" : "background.default",
 		border: 1,
 		borderColor: active ? "primary.main" : "transparent",
-		cursor: "pointer",
+		cursor: active ? "default" : "pointer",
 		transition: "background 0.15s",
 		"&:hover": !active ? { bgcolor: "action.hover" } : undefined,
 	};
