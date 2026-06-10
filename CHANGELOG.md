@@ -1,3 +1,10 @@
+# [0.270.0](https://github.com/staff0rd/assist/compare/v0.269.1...v0.270.0) (2026-06-10)
+
+
+### Features
+
+* session sidebar at 25% width ([9f83150](https://github.com/staff0rd/assist/commit/9f83150f05a58255710247498c722438dd78c112))
+
 ## [0.269.1](https://github.com/staff0rd/assist/compare/v0.269.0...v0.269.1) (2026-06-10)
 
 
