@@ -1,3 +1,10 @@
+## [0.269.1](https://github.com/staff0rd/assist/compare/v0.269.0...v0.269.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* loading state for new session cards ([2b66fc8](https://github.com/staff0rd/assist/commit/2b66fc8d72fdc9dcd40efa5e732ab58da8d6b57e))
+
 # [0.269.0](https://github.com/staff0rd/assist/compare/v0.268.0...v0.269.0) (2026-06-10)
 
 
