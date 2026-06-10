@@ -1,3 +1,10 @@
+## [0.273.2](https://github.com/staff0rd/assist/compare/v0.273.1...v0.273.2) (2026-06-10)
+
+
+### Bug Fixes
+
+* auto-run refine cards on done ([290132a](https://github.com/staff0rd/assist/commit/290132a8400af2ae8fdc31261d7af4d08c92815b))
+
 ## [0.273.1](https://github.com/staff0rd/assist/compare/v0.273.0...v0.273.1) (2026-06-10)
 
 
