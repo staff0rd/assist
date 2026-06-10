@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+import { itemsEqual } from "./itemsEqual";
+import type { BacklogItemSummary } from "./types";
+
+function item(
+	id: number,
+	overrides: Partial<BacklogItemSummary> = {},
+): BacklogItemSummary {
+	return {
+		id,
+		type: "story",
+		name: `item ${id}`,
+		status: "todo",
+		...overrides,
+	};
+}
+
+describe("itemsEqual", () => {
+	it("treats the same reference as equal", () => {
+		const items = [item(1)];
+		expect(itemsEqual(items, items)).toBe(true);
+	});
+
+	it("treats structurally identical lists as equal", () => {
+		expect(itemsEqual([item(1), item(2)], [item(1), item(2)])).toBe(true);
+	});
+
+	it("returns false when lengths differ", () => {
+		expect(itemsEqual([item(1)], [item(1), item(2)])).toBe(false);
+	});
+
+	it("returns false when a status differs", () => {
+		expect(itemsEqual([item(1)], [item(1, { status: "done" })])).toBe(false);
+	});
+
+	it("returns false when a name differs", () => {
+		expect(itemsEqual([item(1)], [item(1, { name: "renamed" })])).toBe(false);
+	});
+
+	it("returns false when order differs", () => {
+		expect(itemsEqual([item(1), item(2)], [item(2), item(1)])).toBe(false);
+	});
+});

@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { initBacklog } from "./api";
-import { backlogExists } from "./backlogExists";
+import { backlogItemsCache } from "./backlogItemsCache";
 import { fetchItems } from "./fetchItems";
+import { itemsEqual } from "./itemsEqual";
+import { revalidateBacklog } from "./revalidateBacklog";
 import type { BacklogItemSummary } from "./types";
 import { useRepoCwd } from "./useRepoCwd";
 import { useShowCompleted } from "./useShowCompleted";
@@ -9,46 +11,39 @@ import { useShowCompleted } from "./useShowCompleted";
 export function useBacklogItems() {
 	const cwd = useRepoCwd();
 	const [showCompleted] = useShowCompleted();
-	const [items, setItems] = useState<BacklogItemSummary[]>([]);
-	const [loading, setLoading] = useState(true);
+	const cached = backlogItemsCache.get(cwd, showCompleted);
+	const seed = cached ?? [];
+	const isMiss = cached === undefined;
+	const [items, setItems] = useState<BacklogItemSummary[]>(seed);
+	const [loading, setLoading] = useState(isMiss);
 	const [exists, setExists] = useState(true);
 	const [loadedCwd, setLoadedCwd] = useState(cwd);
+	const [loadedShowCompleted, setLoadedShowCompleted] = useState(showCompleted);
 
-	// Reset during render so the previous project's list never commits while the
-	// new project loads (the load-triggering effect runs only after commit).
-	if (cwd !== loadedCwd) {
+	// why: reset during render so the previous key's stale list never commits and loading reflects the new key's cache hit/miss before the effect runs.
+	if (cwd !== loadedCwd || showCompleted !== loadedShowCompleted) {
 		setLoadedCwd(cwd);
-		setItems([]);
-		setLoading(true);
+		setLoadedShowCompleted(showCompleted);
+		setItems(seed);
+		setLoading(isMiss);
 		setExists(true);
 	}
 
 	const reload = useCallback(async () => {
-		setItems(await fetchItems({ cwd, showCompleted }));
+		const next = await fetchItems({ cwd, showCompleted });
+		setItems(next);
+		backlogItemsCache.set(cwd, showCompleted, next);
 		setLoading(false);
 	}, [cwd, showCompleted]);
 
-	// Refetches when showCompleted flips so completed items are only ever
-	// fetched (and sent over the wire) while the toggle is on.
 	useEffect(() => {
 		const controller = new AbortController();
-		const { signal } = controller;
-		setLoading(true);
 		setExists(true);
-		(async () => {
-			try {
-				const found = await backlogExists(cwd, signal);
-				const next = found
-					? await fetchItems({ cwd, signal, showCompleted })
-					: [];
-				if (signal.aborted) return;
-				setExists(found);
-				setItems(next);
-				setLoading(false);
-			} catch (err) {
-				if (!signal.aborted) throw err;
-			}
-		})();
+		revalidateBacklog(cwd, showCompleted, controller.signal, (found, next) => {
+			setExists(found);
+			setItems((prev) => (itemsEqual(prev, next) ? prev : next));
+			setLoading(false);
+		});
 		return () => controller.abort();
 	}, [cwd, showCompleted]);
 
