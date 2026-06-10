@@ -4,30 +4,15 @@ import {
 	calculateHalstead,
 	countSloc,
 	forEachFunction,
-	type ThresholdOptions,
+	type MaintainabilityOptions,
 	withSourceFiles,
 } from "../shared";
+import { calculateMaintainabilityIndex } from "./calculateMaintainabilityIndex";
 import {
 	displayMaintainabilityResults,
 	type ResultEntry,
 } from "./displayMaintainabilityResults";
 import { printMaintainabilityFormula } from "./printMaintainabilityFormula";
-
-function calculateMaintainabilityIndex(
-	halsteadVolume: number,
-	cyclomaticComplexity: number,
-	sloc: number,
-): number {
-	if (halsteadVolume === 0 || sloc === 0) {
-		return 100;
-	}
-	const mi =
-		171 -
-		5.2 * Math.log(halsteadVolume) -
-		0.23 * cyclomaticComplexity -
-		16.2 * Math.log(sloc);
-	return Math.max(0, Math.min(100, mi));
-}
 
 type FileMetrics = Map<string, { sloc: number; functions: number[] }>;
 
@@ -73,12 +58,16 @@ function aggregateResults(fileMetrics: FileMetrics): ResultEntry[] {
 
 export async function maintainability(
 	pattern = "**/*.ts",
-	options: ThresholdOptions = {},
+	options: MaintainabilityOptions = {},
 ): Promise<void> {
 	printMaintainabilityFormula();
-	withSourceFiles(pattern, (files) => {
-		const fileMetrics = collectFileMetrics(files);
-		const results = aggregateResults(fileMetrics);
-		displayMaintainabilityResults(results, options.threshold);
-	});
+	withSourceFiles(
+		pattern,
+		(files) => {
+			const fileMetrics = collectFileMetrics(files);
+			const results = aggregateResults(fileMetrics);
+			displayMaintainabilityResults(results, options.threshold);
+		},
+		options.ignore ?? [],
+	);
 }

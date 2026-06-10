@@ -9,6 +9,10 @@ export type ThresholdOptions = {
 	threshold?: number;
 };
 
+export type MaintainabilityOptions = ThresholdOptions & {
+	ignore?: string[];
+};
+
 function createSourceFromFile(filePath: string): ts.SourceFile {
 	const content = fs.readFileSync(filePath, "utf-8");
 	return ts.createSourceFile(
@@ -23,8 +27,9 @@ function createSourceFromFile(filePath: string): ts.SourceFile {
 export function withSourceFiles<T>(
 	pattern: string,
 	callback: (files: string[]) => T,
+	extraIgnore: string[] = [],
 ): T | undefined {
-	const files = findSourceFiles(pattern);
+	const files = findSourceFiles(pattern, ".", extraIgnore);
 	if (files.length === 0) {
 		console.log(chalk.yellow("No files found matching pattern"));
 		return undefined;

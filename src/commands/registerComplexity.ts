@@ -40,6 +40,12 @@ export function registerComplexity(program: Command): void {
 			"Min maintainability threshold",
 			Number.parseInt,
 		)
+		.option(
+			"--ignore <glob>",
+			"Glob of files to exclude (repeatable, additive to config)",
+			(value: string, previous: string[]) => previous.concat([value]),
+			[],
+		)
 		.action(complexityMaintainability);
 
 	complexityCommand

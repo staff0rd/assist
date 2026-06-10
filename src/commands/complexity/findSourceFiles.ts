@@ -3,11 +3,13 @@ import path from "node:path";
 import { minimatch } from "minimatch";
 import { loadConfig } from "../../shared/loadConfig";
 
-function applyIgnoreGlobs(files: string[]): string[] {
+function applyIgnoreGlobs(
+	files: string[],
+	extraIgnore: string[] = [],
+): string[] {
 	const { complexity } = loadConfig();
-	return files.filter(
-		(f) => !complexity.ignore.some((glob) => minimatch(f, glob)),
-	);
+	const ignore = [...complexity.ignore, ...extraIgnore];
+	return files.filter((f) => !ignore.some((glob) => minimatch(f, glob)));
 }
 
 function walk(dir: string, results: string[]): void {
@@ -31,12 +33,19 @@ function walk(dir: string, results: string[]): void {
 	}
 }
 
-export function findSourceFiles(pattern: string, baseDir = "."): string[] {
+export function findSourceFiles(
+	pattern: string,
+	baseDir = ".",
+	extraIgnore: string[] = [],
+): string[] {
 	const results: string[] = [];
 
 	if (pattern.includes("*")) {
 		walk(baseDir, results);
-		return applyIgnoreGlobs(results.filter((f) => minimatch(f, pattern)));
+		return applyIgnoreGlobs(
+			results.filter((f) => minimatch(f, pattern)),
+			extraIgnore,
+		);
 	}
 
 	if (fs.existsSync(pattern) && fs.statSync(pattern).isFile()) {
@@ -45,9 +54,12 @@ export function findSourceFiles(pattern: string, baseDir = "."): string[] {
 
 	if (fs.existsSync(pattern) && fs.statSync(pattern).isDirectory()) {
 		walk(pattern, results);
-		return applyIgnoreGlobs(results);
+		return applyIgnoreGlobs(results, extraIgnore);
 	}
 
 	walk(baseDir, results);
-	return applyIgnoreGlobs(results.filter((f) => minimatch(f, pattern)));
+	return applyIgnoreGlobs(
+		results.filter((f) => minimatch(f, pattern)),
+		extraIgnore,
+	);
 }
