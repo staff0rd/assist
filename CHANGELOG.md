@@ -1,3 +1,10 @@
+# [0.273.0](https://github.com/staff0rd/assist/compare/v0.272.3...v0.273.0) (2026-06-10)
+
+
+### Features
+
+* show git status counts in toolbar ([e3bef1e](https://github.com/staff0rd/assist/commit/e3bef1e27ee23f20a74c7118982fdc2b43c1d4a5))
+
 ## [0.272.3](https://github.com/staff0rd/assist/compare/v0.272.2...v0.272.3) (2026-06-10)
 
 
