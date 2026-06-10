@@ -1,3 +1,11 @@
+# [0.267.0](https://github.com/staff0rd/assist/compare/v0.266.0...v0.267.0) (2026-06-10)
+
+
+### Features
+
+* clickable links in web terminal ([4d01c7f](https://github.com/staff0rd/assist/commit/4d01c7f1bf9cb128ff8948c746d6bfb571f1936b))
+* submit web prompt on Enter ([d612003](https://github.com/staff0rd/assist/commit/d612003ae8d1d645e73da233b1e9be19e1241735))
+
 # [0.266.0](https://github.com/staff0rd/assist/compare/v0.265.0...v0.266.0) (2026-06-10)
 
 
