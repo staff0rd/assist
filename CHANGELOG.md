@@ -1,3 +1,10 @@
+## [0.273.1](https://github.com/staff0rd/assist/compare/v0.273.0...v0.273.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* cache backlog items across view switches ([31ebfb2](https://github.com/staff0rd/assist/commit/31ebfb21991b8fe6dcd37c2ade1e5a5ad02592a9))
+
 # [0.273.0](https://github.com/staff0rd/assist/compare/v0.272.3...v0.273.0) (2026-06-10)
 
 
