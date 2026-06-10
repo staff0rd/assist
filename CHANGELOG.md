@@ -1,3 +1,15 @@
+# [0.271.0](https://github.com/staff0rd/assist/compare/v0.270.0...v0.271.0) (2026-06-10)
+
+
+### Bug Fixes
+
+* even spacing in sessions top nav ([4f5cec1](https://github.com/staff0rd/assist/commit/4f5cec13ecbae170ec6333a2c350773b6420ee48))
+
+
+### Features
+
+* reuse draft/bug card on auto-run ([ee1b24c](https://github.com/staff0rd/assist/commit/ee1b24caa337c9bda360a747c0481913995ec3fe))
+
 # [0.270.0](https://github.com/staff0rd/assist/compare/v0.269.1...v0.270.0) (2026-06-10)
 
 
