@@ -31,7 +31,7 @@ export function useSessionSocket() {
 		[wsRef],
 	);
 
-	const actions = useSessionActions(send, buffers, handlers, setActiveId);
+	const actions = useSessionActions(send, buffers, handlers);
 
 	return {
 		sessions,

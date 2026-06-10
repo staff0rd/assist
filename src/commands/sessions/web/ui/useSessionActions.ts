@@ -18,7 +18,6 @@ export function useSessionActions(
 	send: SendFn,
 	buffers: RefObject<Map<string, string>>,
 	handlers: RefObject<Map<string, OutputHandler>>,
-	setActiveId: (id: string | null) => void,
 ) {
 	const actions = {
 		createSession: useMemo(() => createSessionAction(send), [send]),
@@ -44,9 +43,8 @@ export function useSessionActions(
 	const dismissSession = useCallback(
 		(id: string) => {
 			dismissSessionAction(send, buffers.current, handlers.current)(id);
-			setActiveId(null);
 		},
-		[send, buffers, handlers, setActiveId],
+		[send, buffers, handlers],
 	);
 
 	return { ...actions, onOutput, retrySession, dismissSession };

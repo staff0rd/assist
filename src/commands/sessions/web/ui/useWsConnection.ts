@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createWsConnection } from "./createWsConnection";
 import type { HistoricalSession, SessionInfo } from "./types";
+import { useActiveIdReconciler } from "./useActiveIdReconciler";
 import { useInitialized } from "./useInitialized";
 
 type OutputHandler = (data: string) => void;
@@ -38,6 +39,8 @@ export function useWsConnection() {
 		wsRef.current = ws;
 		return () => ws.close();
 	}, [markInitialized, handleSessions]);
+
+	useActiveIdReconciler(sessions, setActiveId);
 
 	const requestHistory = useCallback(() => {
 		const ws = wsRef.current;
