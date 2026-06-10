@@ -43,7 +43,7 @@ export async function executePhase(
 	});
 	const { child, done } = spawnClaude(
 		resumeSessionId
-			? buildResumePrompt(phaseNumber, totalPhases)
+			? buildResumePrompt()
 			: buildPhasePrompt(item, phaseNumber, phase),
 		resumeSessionId
 			? spawnOptions
