@@ -1,3 +1,4 @@
+import { annotateDiffWithLineNumbers } from "./annotateDiffWithLineNumbers";
 import type { ExistingComment } from "./fetchExistingComments";
 import { formatPriorComments } from "./formatPriorComments";
 import type { ReviewContext } from "./gatherContext";
@@ -27,8 +28,10 @@ ${formatFiles(context.changedFiles)}
 ${priorBlock}
 ## Diff (PR #${context.prNumber}: ${context.baseSha}..${context.headSha})
 
+Each added or context line is prefixed with a left gutter showing its line number in the new file. When citing a finding as \`file:line\`, use that gutter number — do **not** count lines in this document. Removed lines (\`-\`) and headers have a blank gutter and cannot be commented on.
+
 \`\`\`diff
-${context.diff.trimEnd()}
+${annotateDiffWithLineNumbers(context.diff.trimEnd())}
 \`\`\`
 `;
 }

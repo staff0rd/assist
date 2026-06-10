@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs";
 import { promptConfirm } from "../../shared/promptConfirm";
-import { findCurrentPrNumber } from "../prs/shared";
+import { fetchPrDiffInfo } from "./fetchPrDiffInfo";
 import { parseFindings } from "./parseFindings";
 import { partitionFindings } from "./partitionFindings";
 import { postAndMaybeSubmit } from "./postAndMaybeSubmit";
+import { selectInDiffFindings } from "./selectInDiffFindings";
 import { warnUnlocated } from "./warnUnlocated";
 
 type PostReviewOptions = {
@@ -24,11 +25,8 @@ export async function postReviewToPr(
 	synthesisPath: string,
 	options: PostReviewOptions,
 ): Promise<void> {
-	const prNumber = findCurrentPrNumber();
-	if (prNumber === null) {
-		console.log("No PR found for current branch; nothing posted.");
-		return;
-	}
+	const prInfo = fetchPrDiffInfo();
+	const prNumber = prInfo.prNumber;
 	const markdown = readFileSync(synthesisPath, "utf-8");
 	const findings = parseFindings(markdown);
 	if (findings.length === 0) {
@@ -46,13 +44,18 @@ export async function postReviewToPr(
 		console.log("No line-bound findings to post.");
 		return;
 	}
+	const inDiff = selectInDiffFindings(lineBound, prInfo);
+	if (inDiff.length === 0) {
+		console.log("No findings fall within the PR diff; nothing to post.");
+		return;
+	}
 	console.log(
-		`Found PR #${prNumber} with ${lineBound.length} line-bound finding(s).`,
+		`Found PR #${prNumber} with ${inDiff.length} line-bound finding(s) in the diff.`,
 	);
-	const confirmed = await confirmPost(prNumber, lineBound.length, options);
+	const confirmed = await confirmPost(prNumber, inDiff.length, options);
 	if (!confirmed) {
 		console.log("Skipped posting.");
 		return;
 	}
-	await postAndMaybeSubmit(lineBound, markdown, options);
+	await postAndMaybeSubmit(inDiff, markdown, options);
 }

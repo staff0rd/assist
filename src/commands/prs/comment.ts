@@ -28,13 +28,30 @@ type CommentVars = {
 	startLine?: number;
 };
 
+function assertThreadCreated(stdout: string): void {
+	let parsed: {
+		data?: { addPullRequestReviewThread?: { thread?: { id?: unknown } } };
+	};
+	try {
+		parsed = JSON.parse(stdout);
+	} catch {
+		throw new Error(`GitHub returned an unparseable response: ${stdout}`);
+	}
+	const id = parsed.data?.addPullRequestReviewThread?.thread?.id;
+	if (typeof id !== "string" || id.length === 0) {
+		throw new Error(
+			"GitHub did not create a review thread (no thread id returned); the line is likely outside the PR diff.",
+		);
+	}
+}
+
 function postComment(vars: CommentVars): void {
 	const { startLine, ...base } = vars;
-	if (startLine === undefined) {
-		runGhGraphql(MUTATION_SINGLE, base);
-		return;
-	}
-	runGhGraphql(MUTATION_MULTI, { ...base, startLine });
+	const stdout =
+		startLine === undefined
+			? runGhGraphql(MUTATION_SINGLE, base)
+			: runGhGraphql(MUTATION_MULTI, { ...base, startLine });
+	assertThreadCreated(stdout);
 }
 
 export function comment(

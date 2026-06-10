@@ -14,6 +14,26 @@ function buildArgs(queryFile: string, vars: GhGraphqlVars): string[] {
 	return args;
 }
 
+function throwOnGraphqlErrors(stdout: string): void {
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(stdout);
+	} catch {
+		return;
+	}
+	if (!parsed || typeof parsed !== "object") return;
+	const errors = (parsed as { errors?: unknown }).errors;
+	if (!Array.isArray(errors) || errors.length === 0) return;
+	const messages = errors
+		.map((entry) =>
+			entry && typeof entry === "object" && "message" in entry
+				? String((entry as { message: unknown }).message)
+				: String(entry),
+		)
+		.join("; ");
+	throw new Error(messages || "GraphQL request returned errors");
+}
+
 export function runGhGraphql(mutation: string, vars: GhGraphqlVars): string {
 	const queryFile = join(tmpdir(), `gh-query-${Date.now()}.graphql`);
 	writeFileSync(queryFile, mutation);
@@ -22,6 +42,7 @@ export function runGhGraphql(mutation: string, vars: GhGraphqlVars): string {
 			encoding: "utf-8",
 		});
 		if (result.status !== 0) throw new Error(result.stderr || result.stdout);
+		throwOnGraphqlErrors(result.stdout);
 		return result.stdout;
 	} finally {
 		unlinkSync(queryFile);

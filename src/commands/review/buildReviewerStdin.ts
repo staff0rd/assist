@@ -36,7 +36,7 @@ List every finding that the original author would want to know about and fix. Do
 
 For each finding include:
 - Severity (blocker, major, minor, nit) — see rubric below
-- File and line (e.g. \`src/foo.ts:42\`) when the finding is tied to a specific location
+- File and line (e.g. \`src/foo.ts:42\`) when the finding is tied to a specific location. Take the line number from the diff's left gutter (its line in the new file); never count lines in request.md.
 - Impact: what could go wrong, including the conditions under which it manifests
 - Recommendation: a concrete change
 
