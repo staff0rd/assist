@@ -1,3 +1,10 @@
+## [0.272.1](https://github.com/staff0rd/assist/compare/v0.272.0...v0.272.1) (2026-06-10)
+
+
+### Bug Fixes
+
+* reselect top card on card close ([35d8ef6](https://github.com/staff0rd/assist/commit/35d8ef63a3a6713262541b98d374c741cbc86cd9))
+
 # [0.272.0](https://github.com/staff0rd/assist/compare/v0.271.0...v0.272.0) (2026-06-10)
 
 
