@@ -86,6 +86,17 @@ describe("watchForClaudeSessionId", () => {
 		expect(onDiscovered).toHaveBeenCalled();
 	});
 
+	it("ignores backlog runs, which report their own per-phase session id", () => {
+		const session = fakeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "295"],
+		});
+
+		watchForClaudeSessionId(session, new Map(), vi.fn());
+
+		expect(watchMock).not.toHaveBeenCalled();
+	});
+
 	it("ignores sessions without a pty", () => {
 		const session = fakeSession({ pty: null });
 

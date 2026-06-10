@@ -23,6 +23,10 @@ export function watchActivity(session: Session, notify: () => void): void {
 		const activity = readActivity(path);
 		if (!activity) return;
 		session.activity = activity;
+		/* why: a backlog run reports its current phase's Claude session id here, so
+		 * the daemon persists the latest phase's id and can resume it on restart. */
+		if (activity.claudeSessionId)
+			session.claudeSessionId = activity.claudeSessionId;
 		notify();
 	};
 
@@ -45,5 +49,8 @@ export function watchActivity(session: Session, notify: () => void): void {
 export function refreshActivity(session: Session): void {
 	if (session.commandType !== "assist" || !session.cwd) return;
 	const activity = readActivity(activityPath(session.id));
-	if (activity) session.activity = activity;
+	if (!activity) return;
+	session.activity = activity;
+	if (activity.claudeSessionId)
+		session.claudeSessionId = activity.claudeSessionId;
 }

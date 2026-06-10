@@ -4,7 +4,7 @@ import { executePhase } from "./executePhase";
 import { reloadPlan } from "./reloadPlan";
 import type { BacklogItem, PlanPhase } from "./types";
 
-type ReviewResult =
+export type ReviewResult =
 	| { kind: "done" }
 	| { kind: "abort" }
 	| { kind: "rewind"; targetPhase: number; plan: PlanPhase[] };

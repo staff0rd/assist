@@ -6,8 +6,7 @@ import {
 import { acquireLock, releaseLock } from "./acquireLock";
 import { blockedByHandover } from "./blockedByHandover";
 import { type PreparedRun, prepareRun } from "./prepareRun";
-import { runPhases } from "./runPhases";
-import { runReview } from "./runReview";
+import { runOnce } from "./runOnce";
 import { setStatus } from "./shared";
 
 export async function run(
@@ -34,10 +33,9 @@ async function runPrepared(
 	acquireLock(item.id);
 	try {
 		while (true) {
-			if (!(await runPhases(item, startPhase, plan, spawnOptions)))
-				return false;
+			const review = await runOnce(item, startPhase, plan, spawnOptions);
 			spawnOptions = withoutResumeSession(spawnOptions);
-			const review = await runReview(item, plan, spawnOptions);
+			if (review.kind === "fail") return false;
 			if (review.kind === "abort") return false;
 			if (review.kind === "rewind") {
 				// rewindPhase already set the status to in-progress and rewound the
@@ -59,13 +57,15 @@ function logProgress(
 	{ plan, startPhase, item }: PreparedRun,
 ): void {
 	console.log(chalk.bold(`Running plan for #${id}: ${item.name}`));
+	// why: +1 for the review phase appended after the authored phases, so resuming at the review reads e.g. 2/2 rather than 2/1.
+	const totalPhases = plan.length + 1;
 	if (startPhase > 0) {
 		const phaseNumber = startPhase + 1;
 		console.log(
-			chalk.dim(`Resuming from phase ${phaseNumber}/${plan.length}\n`),
+			chalk.dim(`Resuming from phase ${phaseNumber}/${totalPhases}\n`),
 		);
 	} else {
-		console.log(chalk.dim(`${plan.length} phase(s)\n`));
+		console.log(chalk.dim(`${totalPhases} phase(s)\n`));
 	}
 }
 

@@ -14,7 +14,11 @@ export function registerRunCommand(cmd: Command): void {
 		)
 		.action(
 			async (id: string, opts: { write?: boolean; resumeSession?: string }) => {
-				pullIfConfigured();
+				/* why: a daemon restore relaunches with --resume-session to resume an
+				 * interrupted phase; pulling would move the working tree out from
+				 * under that in-flight conversation, and a pull failure would abort
+				 * the restore entirely. Only pull on a fresh run. */
+				if (!opts.resumeSession) pullIfConfigured();
 				await backlogRun(id, {
 					allowEdits: opts.write !== false,
 					resumeSessionId: opts.resumeSession,

@@ -27,14 +27,30 @@ describe("spawnClaude", () => {
 		expect(spawnedArgs()).toEqual(["do the thing"]);
 	});
 
-	it("resumes by sessionId instead of re-injecting the prompt", () => {
-		spawnClaude("do the thing", { resumeSessionId: "abc-123" });
+	it("assigns a specific session id to a fresh session", () => {
+		spawnClaude("do the thing", { sessionId: "new-1" });
 
-		expect(spawnedArgs()).toEqual(["--resume", "abc-123"]);
+		expect(spawnedArgs()).toEqual(["--session-id", "new-1", "do the thing"]);
+	});
+
+	it("resumes by sessionId and passes the prompt as a continuation nudge", () => {
+		spawnClaude("continue where you left off", { resumeSessionId: "abc-123" });
+
+		expect(spawnedArgs()).toEqual([
+			"--resume",
+			"abc-123",
+			"continue where you left off",
+		]);
+	});
+
+	it("prefers resuming over assigning a fresh session id", () => {
+		spawnClaude("continue", { sessionId: "new-1", resumeSessionId: "abc-123" });
+
+		expect(spawnedArgs()).toEqual(["--resume", "abc-123", "continue"]);
 	});
 
 	it("keeps the permission mode flag when resuming", () => {
-		spawnClaude("do the thing", {
+		spawnClaude("continue", {
 			resumeSessionId: "abc-123",
 			allowEdits: true,
 		});
@@ -42,6 +58,7 @@ describe("spawnClaude", () => {
 		expect(spawnedArgs()).toEqual([
 			"--resume",
 			"abc-123",
+			"continue",
 			"--permission-mode",
 			"auto",
 		]);

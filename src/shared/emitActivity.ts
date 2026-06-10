@@ -10,6 +10,7 @@ export const activitySchema = z.object({
 	itemName: z.string().optional(),
 	phase: z.number().optional(),
 	totalPhases: z.number().optional(),
+	claudeSessionId: z.string().optional(),
 	startedAt: z.number(),
 });
 

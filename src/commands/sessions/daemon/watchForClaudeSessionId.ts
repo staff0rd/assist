@@ -15,6 +15,10 @@ export function watchForClaudeSessionId(
 	onDiscovered: () => void,
 ): void {
 	if (session.commandType === "run" || !session.pty) return;
+	/* why: backlog runs assign and report their own exact per-phase session id via
+	 * the activity channel (executePhase). The cwd-based poller below would race
+	 * with concurrent runs in the same repo and clobber that id. */
+	if (isBacklogRun(session)) return;
 	void watchClaudeSessionId({
 		cwd: session.cwd ?? process.cwd(),
 		sinceMs: session.startedAt,
@@ -30,4 +34,12 @@ export function watchForClaudeSessionId(
 			onDiscovered();
 		},
 	});
+}
+
+function isBacklogRun(session: Session): boolean {
+	return (
+		session.commandType === "assist" &&
+		session.assistArgs?.[0] === "backlog" &&
+		session.assistArgs?.[1] === "run"
+	);
 }

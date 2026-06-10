@@ -321,6 +321,26 @@ describe("run", () => {
 			const phases: PlanPhase[] = reviewCall[2];
 			expect(phases[phases.length - 1].name).toBe("Review");
 		});
+
+		it("counts the review phase in the resume progress line", async () => {
+			const item = makeItem({
+				plan: [{ name: "Phase 1", tasks: [{ task: "t1" }] }],
+				currentPhase: 2,
+			});
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 1,
+			});
+			mockExecutePhase.mockResolvedValueOnce(2);
+			const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+			await run("1");
+
+			const logged = logSpy.mock.calls.map((c) => String(c[0])).join("\n");
+			expect(logged).toContain("Resuming from phase 2/2");
+			logSpy.mockRestore();
+		});
 	});
 
 	describe("when item has no plan", () => {
@@ -467,7 +487,7 @@ describe("run", () => {
 			expect(mockExecutePhase.mock.calls[1][3]).toEqual({});
 		});
 
-		it("does not resume the review phase", async () => {
+		it("does not resume the review phase when an authored phase was interrupted", async () => {
 			const item = makeItem();
 			mockPrepareRun.mockReturnValue({
 				item,
@@ -482,6 +502,23 @@ describe("run", () => {
 			await run("1", { resumeSessionId: "sess-1" });
 
 			expect(mockExecutePhase.mock.calls[2][3]).toEqual({});
+		});
+
+		it("resumes the review phase when the restart interrupted it", async () => {
+			const item = makeItem({ currentPhase: 3 });
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 2,
+			});
+			mockExecutePhase.mockResolvedValueOnce(3);
+
+			await run("1", { resumeSessionId: "sess-1" });
+
+			expect(mockExecutePhase).toHaveBeenCalledTimes(1);
+			expect(mockExecutePhase.mock.calls[0][3]).toEqual({
+				resumeSessionId: "sess-1",
+			});
 		});
 
 		it("does not resume a rewound phase", async () => {

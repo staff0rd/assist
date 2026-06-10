@@ -1,7 +1,9 @@
+import { randomUUID } from "node:crypto";
 import chalk from "chalk";
 import { emitActivity } from "../../shared/emitActivity";
 import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
 import { buildPhasePrompt } from "./buildPhasePrompt";
+import { buildResumePrompt } from "./buildResumePrompt";
 import { resolvePhaseResult } from "./resolvePhaseResult";
 import type { BacklogItem, PlanPhase } from "./types";
 import { stopWatching, watchForMarker } from "./watchForMarker";
@@ -24,6 +26,12 @@ export async function executePhase(
 		),
 	);
 
+	/* why: a fresh phase gets a new id we assign so the daemon knows exactly
+	 * which transcript to resume on restart; a resumed phase keeps the
+	 * interrupted conversation's id. Either way it is reported via activity. */
+	const resumeSessionId = spawnOptions?.resumeSessionId;
+	const claudeSessionId = resumeSessionId ?? randomUUID();
+
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	emitActivity({
 		kind: "backlog",
@@ -31,10 +39,15 @@ export async function executePhase(
 		itemName: item.name,
 		phase: phaseNumber,
 		totalPhases,
+		claudeSessionId,
 	});
 	const { child, done } = spawnClaude(
-		buildPhasePrompt(item, phaseNumber, phase),
-		spawnOptions,
+		resumeSessionId
+			? buildResumePrompt(phaseNumber, totalPhases)
+			: buildPhasePrompt(item, phaseNumber, phase),
+		resumeSessionId
+			? spawnOptions
+			: { ...spawnOptions, sessionId: claudeSessionId },
 	);
 	watchForMarker(child);
 	await done;
