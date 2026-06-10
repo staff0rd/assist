@@ -14,6 +14,7 @@ import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import { restoreSession } from "./restoreSession";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
+import { reuseSessionForRun } from "./reuseSessionForRun";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
 import { watchActivity } from "./watchActivity";
@@ -91,7 +92,8 @@ export class SessionManager {
 	private readonly onStatusChange = makeStatusChangeHandler(
 		(id) => this.dismissSession(id),
 		() => this.notify(),
-		(itemId, cwd) => this.spawnAssist(["backlog", "run", String(itemId)], cwd),
+		(session, itemId) =>
+			reuseSessionForRun(session, itemId, this.clients, this.onStatusChange),
 	);
 
 	private wire(session: Session): void {

@@ -26,6 +26,13 @@ vi.mock("./watchForClaudeSessionId", () => ({
 	watchForClaudeSessionId: vi.fn(),
 }));
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
+vi.mock("./spawnPty", () => ({
+	spawnPty: vi.fn(() => ({
+		onData: vi.fn(),
+		onExit: vi.fn(),
+		kill: vi.fn(),
+	})),
+}));
 vi.mock("../../backlog/acquireLock", () => ({ releaseLock: vi.fn() }));
 
 const releaseLockMock = releaseLock as unknown as ReturnType<typeof vi.fn>;
@@ -255,7 +262,7 @@ describe("SessionManager", () => {
 	});
 
 	describe("auto-run on done", () => {
-		function drive(overrides: Partial<Session>): typeof createAssistMock {
+		function drive(overrides: Partial<Session>): Session {
 			const draft = fakeSession({
 				id: "1",
 				commandType: "assist",
@@ -265,30 +272,30 @@ describe("SessionManager", () => {
 				activity: { kind: "command", itemId: 42, startedAt: 1 },
 				...overrides,
 			});
-			createAssistMock
-				.mockReturnValueOnce(draft)
-				.mockReturnValue(fakeSession({ id: "2", commandType: "assist" }));
+			createAssistMock.mockReturnValueOnce(draft);
 			const manager = new SessionManager();
 			manager.spawnAssist(["draft", "--once"]);
 			lastStatusChange()(draft, "done", 0);
-			return createAssistMock;
+			return draft;
 		}
 
-		it("spawns 'backlog run <id>' when an autoRun draft exits cleanly", () => {
-			expect(drive({})).toHaveBeenCalledWith(
-				expect.any(String),
-				["backlog", "run", "42"],
-				undefined,
-			);
-		});
-
-		it("does not spawn a run when autoRun is off", () => {
-			drive({ autoRun: false });
+		it("reuses the draft card to run 'backlog run <id>' when it exits cleanly", () => {
+			const draft = drive({});
+			expect(draft.assistArgs).toEqual(["backlog", "run", "42"]);
+			expect(draft.name).toBe("assist backlog run 42");
+			expect(draft.status).toBe("running");
 			expect(createAssistMock).toHaveBeenCalledTimes(1);
 		});
 
-		it("does not spawn a run when no item was created", () => {
-			drive({ activity: undefined });
+		it("does not reuse the card when autoRun is off", () => {
+			const draft = drive({ autoRun: false });
+			expect(draft.assistArgs).toEqual(["draft", "--once"]);
+			expect(createAssistMock).toHaveBeenCalledTimes(1);
+		});
+
+		it("does not reuse the card when no item was created", () => {
+			const draft = drive({ activity: undefined });
+			expect(draft.assistArgs).toEqual(["draft", "--once"]);
 			expect(createAssistMock).toHaveBeenCalledTimes(1);
 		});
 	});

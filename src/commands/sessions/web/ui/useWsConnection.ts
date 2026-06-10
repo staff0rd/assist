@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createWsConnection } from "./createWsConnection";
 import type { HistoricalSession, SessionInfo } from "./types";
+import { useInitialized } from "./useInitialized";
 
 type OutputHandler = (data: string) => void;
 
@@ -10,18 +11,22 @@ export function useWsConnection() {
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
-	const [initialized, setInitialized] = useState<Set<string>>(new Set());
+	const { initialized, markInitialized, syncSessions } = useInitialized();
 	const wsRef = useRef<WebSocket | null>(null);
 	const buffers = useRef(new Map<string, string>());
 	const handlers = useRef(new Map<string, OutputHandler>());
 
-	const markInitialized = useCallback((id: string) => {
-		setInitialized((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
-	}, []);
+	const handleSessions = useCallback(
+		(next: SessionInfo[]) => {
+			syncSessions(next);
+			setSessions(next);
+		},
+		[syncSessions],
+	);
 
 	useEffect(() => {
 		const ws = createWsConnection({
-			setSessions,
+			setSessions: handleSessions,
 			setHistory,
 			setActiveId,
 			setCurrentCwd,
@@ -32,7 +37,7 @@ export function useWsConnection() {
 		});
 		wsRef.current = ws;
 		return () => ws.close();
-	}, [markInitialized]);
+	}, [markInitialized, handleSessions]);
 
 	const requestHistory = useCallback(() => {
 		const ws = wsRef.current;
