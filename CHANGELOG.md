@@ -1,3 +1,10 @@
+# [0.266.0](https://github.com/staff0rd/assist/compare/v0.265.0...v0.266.0) (2026-06-10)
+
+
+### Features
+
+* validate review findings vs diff ([d79fbc7](https://github.com/staff0rd/assist/commit/d79fbc7bd8a94604d9cba88f06fb0d32604420e7))
+
 # [0.265.0](https://github.com/staff0rd/assist/compare/v0.264.3...v0.265.0) (2026-06-10)
 
 
