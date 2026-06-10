@@ -1,6 +1,5 @@
 import { buildRequest } from "./buildRequest";
 import { buildReviewPaths, type ReviewPaths } from "./buildReviewPaths";
-import { ensureReviewsIgnored } from "./ensureReviewsIgnored";
 import { fetchExistingComments } from "./fetchExistingComments";
 import { gatherContext } from "./gatherContext";
 import { handlePostSynthesis } from "./handlePostSynthesis";
@@ -73,7 +72,6 @@ export async function reviewPr(
 	options: ReviewPrOptions,
 ): Promise<void> {
 	const context = gatherChangedContext();
-	ensureReviewsIgnored(repoRoot);
 	const paths = setupReviewDir(repoRoot, context, options.force ?? false);
 	const synthesisOk = await runReviewPipeline(paths, {
 		verbose: options.verbose ?? false,

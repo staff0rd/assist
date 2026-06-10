@@ -1,4 +1,5 @@
-import { join } from "node:path";
+import { homedir } from "node:os";
+import { basename, join } from "node:path";
 
 export type ReviewPaths = {
 	reviewDir: string;
@@ -9,7 +10,13 @@ export type ReviewPaths = {
 };
 
 export function buildReviewPaths(repoRoot: string, key: string): ReviewPaths {
-	const reviewDir = join(repoRoot, ".assist", "reviews", key);
+	const reviewDir = join(
+		homedir(),
+		".assist",
+		"reviews",
+		basename(repoRoot),
+		key,
+	);
 	return {
 		reviewDir,
 		requestPath: join(reviewDir, "request.md"),
