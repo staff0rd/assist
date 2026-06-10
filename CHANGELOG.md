@@ -1,3 +1,10 @@
+## [0.264.3](https://github.com/staff0rd/assist/compare/v0.264.2...v0.264.3) (2026-06-10)
+
+
+### Bug Fixes
+
+* resume correct session on daemon restart ([26cc4a4](https://github.com/staff0rd/assist/commit/26cc4a4a7e7da060fcfab3d78f0cadf9dfd990fa))
+
 ## [0.264.2](https://github.com/staff0rd/assist/compare/v0.264.1...v0.264.2) (2026-06-09)
 
 
