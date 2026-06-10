@@ -1,3 +1,10 @@
+# [0.268.0](https://github.com/staff0rd/assist/compare/v0.267.0...v0.268.0) (2026-06-10)
+
+
+### Features
+
+* persist reviews under home dir ([bd59fc3](https://github.com/staff0rd/assist/commit/bd59fc308532e7a2e3aa74d30c1394495dec52e6))
+
 # [0.267.0](https://github.com/staff0rd/assist/compare/v0.266.0...v0.267.0) (2026-06-10)
 
 
