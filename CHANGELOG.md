@@ -1,3 +1,10 @@
+# [0.269.0](https://github.com/staff0rd/assist/compare/v0.268.0...v0.269.0) (2026-06-10)
+
+
+### Features
+
+* maintainability --ignore glob ([4889d1c](https://github.com/staff0rd/assist/commit/4889d1c1fd704579d01f444e081c6c1ab5115f7f))
+
 # [0.268.0](https://github.com/staff0rd/assist/compare/v0.267.0...v0.268.0) (2026-06-10)
 
 
