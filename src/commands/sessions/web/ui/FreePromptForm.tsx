@@ -6,6 +6,18 @@ import type { FormEvent, KeyboardEvent } from "react";
 import { dropdownStyle } from "./DropdownWrapper";
 import { PLACEHOLDER } from "./dispatchMode";
 
+function handleEnterSubmit(e: KeyboardEvent<HTMLDivElement>, value: string) {
+	const isPlainEnter =
+		e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing;
+	if (!isPlainEnter) {
+		return;
+	}
+	e.preventDefault();
+	if (value.trim() !== "") {
+		e.currentTarget.closest("form")?.requestSubmit();
+	}
+}
+
 export function FreePromptForm({
 	value,
 	onChange,
@@ -30,12 +42,9 @@ export function FreePromptForm({
 				<TextField
 					value={value}
 					onChange={(e) => onChange(e.target.value)}
-					onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
-						if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-							e.preventDefault();
-							e.currentTarget.closest("form")?.requestSubmit();
-						}
-					}}
+					onKeyDown={(e: KeyboardEvent<HTMLDivElement>) =>
+						handleEnterSubmit(e, value)
+					}
 					placeholder={PLACEHOLDER}
 					size="small"
 					autoFocus
