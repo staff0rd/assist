@@ -50,7 +50,7 @@ export function AppToolbar({
 					onSelect={selection.setSelectedCwd}
 				/>
 			</Box>
-			<Box sx={{ display: "flex", mr: 2 }}>
+			<Box sx={{ display: "flex", mx: 2 }}>
 				<OpenInCodeButton cwd={selection.selectedCwd} />
 				<OpenInGitHubButton cwd={selection.selectedCwd} />
 			</Box>
