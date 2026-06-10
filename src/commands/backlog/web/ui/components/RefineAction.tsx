@@ -15,7 +15,7 @@ export function RefineAction({ itemId }: { itemId: number }) {
 		event.stopPropagation();
 		if (launched) return;
 		setLaunched(true);
-		launchAssist(["backlog", "refine", String(itemId)], cwd);
+		launchAssist(["refine", "--once", String(itemId)], cwd);
 		navigate("/sessions");
 	};
 	return (

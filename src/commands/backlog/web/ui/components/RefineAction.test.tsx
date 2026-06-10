@@ -24,14 +24,14 @@ function renderRefine(launchAssist: () => void) {
 afterEach(cleanup);
 
 describe("RefineAction", () => {
-	it("launches a backlog refine session and navigates to /sessions", () => {
+	it("launches a refine session and navigates to /sessions", () => {
 		const launchAssist = vi.fn();
 		renderRefine(launchAssist);
 
 		fireEvent.click(screen.getByRole("button", { name: "Refine" }));
 
 		expect(launchAssist).toHaveBeenCalledWith(
-			["backlog", "refine", "279"],
+			["refine", "--once", "279"],
 			undefined,
 		);
 		expect(screen.getByTestId("location").textContent).toBe("/sessions");

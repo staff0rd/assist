@@ -28,7 +28,7 @@ export function SessionCard({
 }) {
 	const elapsed = useElapsed(session.startedAt, session.status);
 	const type = sessionType(session);
-	const showAutoRun = type === "draft" || type === "bug";
+	const showAutoRun = type === "draft" || type === "bug" || type === "refine";
 
 	return (
 		<ButtonBase onClick={onClick} sx={cardSx(active)}>

@@ -104,6 +104,20 @@ describe("launchMode", () => {
 		});
 	});
 
+	it("emits the item id and name on the command activity when given", async () => {
+		await launchMode("refine 254", {
+			itemId: 254,
+			itemName: "Add refine mode button",
+		});
+
+		expect(mockEmitActivity).toHaveBeenCalledWith({
+			kind: "command",
+			name: "refine 254",
+			itemId: 254,
+			itemName: "Add refine mode button",
+		});
+	});
+
 	describe("when launched in once mode", () => {
 		it("tells the watcher to act on done signals", async () => {
 			await launchMode("draft", { once: true });

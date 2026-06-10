@@ -19,6 +19,17 @@ describe("dispatchMode", () => {
 		);
 	});
 
+	it("dispatches a refine session with the item id", () => {
+		const onCreateAssist = vi.fn();
+
+		dispatchMode("assist-refine", "/repo", onCreateAssist, () => {}, "254");
+
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			["refine", "--once", "254"],
+			"/repo",
+		);
+	});
+
 	it("launches the plain assist session when no text is given", () => {
 		const onCreateAssist = vi.fn();
 
@@ -47,7 +58,7 @@ describe("dispatchMode", () => {
 });
 
 describe("MODES", () => {
-	it("flags draft and bug as prompt modes but not next", () => {
+	it("flags draft, bug, and refine as prompt modes but not next", () => {
 		const promptModes = Object.fromEntries(
 			MODES.map((m) => [m.value, m.prompt]),
 		);
@@ -56,6 +67,18 @@ describe("MODES", () => {
 			"assist-draft": true,
 			"assist-bug": true,
 			"assist-next": false,
+			"assist-refine": true,
+		});
+	});
+
+	it("keeps refine off the top nav while the other modes stay on it", () => {
+		const navModes = Object.fromEntries(MODES.map((m) => [m.value, m.nav]));
+
+		expect(navModes).toEqual({
+			"assist-draft": true,
+			"assist-bug": true,
+			"assist-next": true,
+			"assist-refine": false,
 		});
 	});
 });

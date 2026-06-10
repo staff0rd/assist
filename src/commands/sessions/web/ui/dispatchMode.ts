@@ -1,7 +1,28 @@
 const ASSIST_MODES = {
-	"assist-draft": { label: "draft", args: ["draft", "--once"], prompt: true },
-	"assist-bug": { label: "bug", args: ["bug", "--once"], prompt: true },
-	"assist-next": { label: "next", args: ["next", "--once"], prompt: false },
+	"assist-draft": {
+		label: "draft",
+		args: ["draft", "--once"],
+		prompt: true,
+		nav: true,
+	},
+	"assist-bug": {
+		label: "bug",
+		args: ["bug", "--once"],
+		prompt: true,
+		nav: true,
+	},
+	"assist-next": {
+		label: "next",
+		args: ["next", "--once"],
+		prompt: false,
+		nav: true,
+	},
+	"assist-refine": {
+		label: "refine",
+		args: ["refine", "--once"],
+		prompt: true,
+		nav: false,
+	},
 } as const;
 
 type AssistMode = keyof typeof ASSIST_MODES;
@@ -32,11 +53,16 @@ export function dispatchMode(
 	setMode(m);
 }
 
-export const MODES: { value: AssistMode; label: string; prompt: boolean }[] =
-	Object.entries(ASSIST_MODES).map(([value, { label, prompt }]) => ({
-		value: value as AssistMode,
-		label,
-		prompt,
-	}));
+export const MODES: {
+	value: AssistMode;
+	label: string;
+	prompt: boolean;
+	nav: boolean;
+}[] = Object.entries(ASSIST_MODES).map(([value, { label, prompt, nav }]) => ({
+	value: value as AssistMode,
+	label,
+	prompt,
+	nav,
+}));
 
 export const PLACEHOLDER = "Enter prompt...";

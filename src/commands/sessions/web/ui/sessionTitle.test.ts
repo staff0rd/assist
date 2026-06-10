@@ -71,4 +71,20 @@ describe("sessionTitle", () => {
 
 		expect(sessionTitle(session)).toBe("Session card type");
 	});
+
+	it("shows the item name for a refine session (id is shown as a chip)", () => {
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["refine", "--once", "254"],
+			activity: {
+				kind: "command",
+				name: "refine 254",
+				itemId: 254,
+				itemName: "Add refine mode button",
+				startedAt: 0,
+			},
+		});
+
+		expect(sessionTitle(session)).toBe("Add refine mode button");
+	});
 });

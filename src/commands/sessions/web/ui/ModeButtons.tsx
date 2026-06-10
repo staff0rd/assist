@@ -21,7 +21,7 @@ export function ModeButtons({
 }) {
 	return (
 		<>
-			{MODES.filter((m) => m.prompt).map((m) => (
+			{MODES.filter((m) => m.nav && m.prompt).map((m) => (
 				<FreePromptDropdown
 					key={m.value}
 					label={m.label}
@@ -31,7 +31,7 @@ export function ModeButtons({
 				/>
 			))}
 			{children}
-			{MODES.filter((m) => !m.prompt).map((m) => (
+			{MODES.filter((m) => m.nav && !m.prompt).map((m) => (
 				<Button
 					key={m.value}
 					size="small"

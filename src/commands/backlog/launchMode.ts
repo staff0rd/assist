@@ -12,6 +12,8 @@ import { stopWatching, watchForMarker } from "./watchForMarker";
 export type LaunchModeOptions = {
 	once?: boolean;
 	description?: string;
+	itemId?: number;
+	itemName?: string;
 };
 
 export function buildSlashCommand(
@@ -28,7 +30,12 @@ export async function launchMode(
 ): Promise<void> {
 	pullIfConfigured();
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
-	emitActivity({ kind: "command", name: slashCommand });
+	emitActivity({
+		kind: "command",
+		name: slashCommand,
+		itemId: options?.itemId,
+		itemName: options?.itemName,
+	});
 	const { child, done } = spawnClaude(
 		buildSlashCommand(slashCommand, options?.description),
 		{ allowEdits: true },

@@ -4,6 +4,8 @@ import { exitOnCancel } from "../../shared/exitOnCancel";
 import { type LaunchModeOptions, launchMode } from "./launchMode";
 import { typeLabel } from "./list/shared";
 import { loadBacklogSummaries } from "./loadBacklogSummaries";
+import { loadItem } from "./loadItem";
+import { getReady } from "./shared";
 
 async function pickItemForRefine(): Promise<string | undefined> {
 	const items = await loadBacklogSummaries();
@@ -43,5 +45,14 @@ export async function refine(
 	const itemId = id ?? (await pickItemForRefine());
 	if (!itemId) return;
 
-	await launchMode(`refine ${itemId}`, options);
+	const numericId = Number.parseInt(itemId, 10);
+	const item = Number.isNaN(numericId)
+		? undefined
+		: await loadItem((await getReady()).orm, numericId);
+
+	await launchMode(`refine ${itemId}`, {
+		...options,
+		itemId: item ? numericId : undefined,
+		itemName: item?.name,
+	});
 }

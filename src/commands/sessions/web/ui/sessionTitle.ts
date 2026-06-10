@@ -5,6 +5,9 @@ export function sessionTitle(session: SessionInfo): string {
 	if (activity?.kind === "backlog") {
 		return activity.itemName ?? session.name;
 	}
+	if (session.assistArgs?.[0] === "refine" && activity?.itemName) {
+		return activity.itemName;
+	}
 	switch (session.commandType) {
 		case "assist":
 			return (

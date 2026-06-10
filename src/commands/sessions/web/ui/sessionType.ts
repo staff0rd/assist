@@ -1,13 +1,19 @@
 import type { SessionInfo } from "./types";
 
-type SessionType = "draft" | "next" | "bug" | "prompt" | "run";
+type SessionType = "draft" | "next" | "bug" | "refine" | "prompt" | "run";
 
 export function sessionType(session: SessionInfo): SessionType {
 	if (session.activity?.kind === "backlog") return "next";
 	switch (session.commandType) {
 		case "assist": {
 			const cmd = session.assistArgs?.[0];
-			if (cmd === "draft" || cmd === "bug" || cmd === "next") return cmd;
+			if (
+				cmd === "draft" ||
+				cmd === "bug" ||
+				cmd === "next" ||
+				cmd === "refine"
+			)
+				return cmd;
 			return "prompt";
 		}
 		case "run":
