@@ -1,3 +1,10 @@
+## [0.272.3](https://github.com/staff0rd/assist/compare/v0.272.2...v0.272.3) (2026-06-10)
+
+
+### Bug Fixes
+
+* default cursor on active session card ([a27a191](https://github.com/staff0rd/assist/commit/a27a1917871ed6dade0614e4aa530338a43167aa))
+
 ## [0.272.2](https://github.com/staff0rd/assist/compare/v0.272.1...v0.272.2) (2026-06-10)
 
 
