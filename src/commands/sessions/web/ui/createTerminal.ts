@@ -1,4 +1,5 @@
 import { FitAddon } from "@xterm/addon-fit";
+import { WebLinksAddon } from "@xterm/addon-web-links";
 import { Terminal } from "@xterm/xterm";
 
 export type TerminalHandle = {
@@ -17,6 +18,11 @@ export function createTerminal(el: HTMLElement): TerminalHandle {
 
 	const fitAddon = new FitAddon();
 	term.loadAddon(fitAddon);
+	term.loadAddon(
+		new WebLinksAddon((_event, uri) => {
+			window.open(uri, "_blank", "noopener");
+		}),
+	);
 	term.open(el);
 	fitAddon.fit();
 
