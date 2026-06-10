@@ -32,8 +32,12 @@ describe("reconcileActiveId", () => {
 		expect(reconcileActiveId([], "a")).toBeNull();
 	});
 
-	it("leaves an absent selection untouched", () => {
+	it("selects the top card when nothing is selected and cards exist", () => {
 		const sessions = [session("a"), session("b")];
-		expect(reconcileActiveId(sessions, null)).toBeNull();
+		expect(reconcileActiveId(sessions, null)).toBe("a");
+	});
+
+	it("leaves selection null when nothing is selected and no cards exist", () => {
+		expect(reconcileActiveId([], null)).toBeNull();
 	});
 });
