@@ -1,3 +1,10 @@
+# [0.272.0](https://github.com/staff0rd/assist/compare/v0.271.0...v0.272.0) (2026-06-10)
+
+
+### Features
+
+* refine job on session cards ([d8519da](https://github.com/staff0rd/assist/commit/d8519dacc4af046f99250a08a404923d1b56344b))
+
 # [0.271.0](https://github.com/staff0rd/assist/compare/v0.270.0...v0.271.0) (2026-06-10)
 
 
