@@ -19,8 +19,7 @@ type SidebarProps = {
 };
 
 const sidebarSx = {
-	width: 280,
-	minWidth: 280,
+	width: "25%",
 	borderRight: 1,
 	borderColor: "divider",
 	display: "flex",
