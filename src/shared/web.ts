@@ -4,7 +4,7 @@ import {
 	type ServerResponse,
 } from "node:http";
 import chalk from "chalk";
-import { openBrowser } from "./openBrowser";
+import { openBrowser } from "../lib/openBrowser";
 
 export type Handler = (
 	req: IncomingMessage,
@@ -61,6 +61,7 @@ export function startWebServer(
 		port: number,
 	) => Promise<void>,
 	initialPath?: string,
+	open = true,
 ): ReturnType<typeof createServer> {
 	const url = buildUrl(port, initialPath);
 	const server = createServer((req, res) => {
@@ -69,7 +70,9 @@ export function startWebServer(
 	server.listen(port, () => {
 		console.log(chalk.green(`${label}: ${url}`));
 		console.log(chalk.dim("Press Ctrl+C to stop"));
-		openBrowser(url);
+		if (open) {
+			openBrowser(url);
+		}
 	});
 	return server;
 }

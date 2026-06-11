@@ -6,12 +6,14 @@ export function registerSessions(program: Command): void {
 	const cmd = program
 		.command("sessions")
 		.description("Web dashboard for Claude Code sessions")
-		.action(() => sessionsWeb({ port: "3100" }));
+		.option("--no-open", "Do not open a browser on startup")
+		.action((options) => sessionsWeb({ port: "3100", open: options.open }));
 
 	cmd
 		.command("web")
 		.description("Start the sessions web dashboard")
 		.option("-p, --port <number>", "Port to listen on", "3100")
+		.option("--no-open", "Do not open a browser on startup")
 		.action(sessionsWeb);
 
 	cmd

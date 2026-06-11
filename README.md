@@ -140,7 +140,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog export [file]` - Export the entire backlog database (all tables, all repos) to a file, or stdout if omitted
 - `assist backlog import [file]` - Restore the entire backlog database from a dump (file or stdin), faithfully replacing all data; prompts for confirmation (use `-y, --yes` to skip; required when reading from stdin)
 - `assist backlog move-repo <old-origin> [new-origin]` - Retag all items from one origin to another after a repo rename; the new origin defaults to the current repo's remote, both accept URL or `git@` forms, and a bare repo name works for the old origin when unambiguous. Prompts for confirmation (use `-y, --yes` to skip)
-- `assist backlog web [-p, --port <number>]` - Open the backlog tab in the web dashboard (default port 3100)
+- `assist backlog web [-p, --port <number>] [--no-open]` - Open the backlog tab in the web dashboard (default port 3100); `--no-open` skips opening a browser on startup
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API
 - `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first). If `<name>` is purely numeric and matches no configured command, it is treated as an alias for `assist backlog run <name>` and forwards `--write`/`--no-write`/`-w`.
@@ -194,6 +194,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist jira auth` - Authenticate with Jira via API token (saves site/email to ~/.assist/jira.json)
 - `assist jira ac <issue-key>` - Print acceptance criteria for a Jira issue
 - `assist jira view <issue-key>` - Print the title and description of a Jira issue
+  - Note: Claude is wired to the MCP Atlassian server (`mcp__claude_ai_Atlassian__getJiraIssue`) for fetching Jira context, so the `/jira` slash command and Jira-key mentions go through MCP. These `assist jira` CLI commands remain for direct human use.
 - `assist ravendb auth add` - Add a new RavenDB connection (prompts for name, URL, database, op:// secret reference)
 - `assist ravendb auth list` - List configured RavenDB connections
 - `assist ravendb auth remove <name>` - Remove a configured connection
@@ -242,7 +243,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist voice devices` - List available audio input devices
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 - `assist sessions` - Start the web dashboard (same as `sessions web`)
-- `assist sessions web [-p, --port <number>]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals with clickable http(s) links (default port 3100); press Ctrl+R in the foreground terminal for an in-terminal restart menu (Restart daemon, Restart webserver, Restart both); Restart webserver re-execs the foreground process so the connected browser auto-reconnects
+- `assist sessions web [-p, --port <number>] [--no-open]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals with clickable http(s) links (default port 3100); `--no-open` skips opening a browser on startup; press Ctrl+R in the foreground terminal for an in-terminal restart menu (Restart daemon, Restart webserver, Restart both); Restart webserver re-execs the foreground process (passing `--no-open` so no browser pops on restart) so the connected browser auto-reconnects
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
 - `assist daemon run` - Run the sessions daemon in the foreground (normally auto-spawned detached by `assist sessions`)
 - `assist daemon status` - Show sessions daemon status, live sessions, and any stray daemon processes or stolen socket

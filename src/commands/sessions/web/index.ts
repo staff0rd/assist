@@ -9,6 +9,7 @@ import { installRestartMenu } from "./restartMenu/installRestartMenu";
 export async function web(options: {
 	port: string;
 	initialPath?: string;
+	open?: boolean;
 }): Promise<void> {
 	await ensureDaemonRunning("web server start");
 	const port = Number.parseInt(options.port, 10);
@@ -17,6 +18,7 @@ export async function web(options: {
 		port,
 		handleRequest,
 		options.initialPath,
+		options.open !== false,
 	);
 	const serverCwd = process.cwd();
 	const ctx: RelayContext = {

@@ -4,7 +4,7 @@ import { detectPlatform } from "./detectPlatform";
 function tryExec(commands: string[]): boolean {
 	for (const cmd of commands) {
 		try {
-			execSync(cmd);
+			execSync(cmd, { stdio: "ignore" });
 			return true;
 		} catch {
 			// try next
@@ -37,7 +37,7 @@ export function openBrowser(url: string): void {
 			commands.push(`start chrome ${quoted}`, `start msedge ${quoted}`);
 			break;
 		case "wsl":
-			commands.push(`wslview ${quoted}`);
+			commands.push(`xdg-open ${quoted}`);
 			break;
 	}
 

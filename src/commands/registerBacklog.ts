@@ -29,6 +29,7 @@ function registerWebCommand(cmd: Command): void {
 		.command("web")
 		.description("Open the backlog tab in the web dashboard")
 		.option("-p, --port <number>", "Port to listen on", "3100")
+		.option("--no-open", "Do not open a browser on startup")
 		.action(backlogWeb);
 }
 
@@ -56,10 +57,11 @@ export function registerBacklog(program: Command): void {
 		.command("backlog")
 		.description("Manage a backlog of work items")
 		.option("--dir <path>", "Override directory for backlog file discovery")
+		.option("--no-open", "Do not open a browser on startup")
 		.hook("preAction", (thisCommand) => {
 			setBacklogDir(thisCommand.opts().dir);
 		})
-		.action(() => backlogWeb({ port: "3100" }));
+		.action((options) => backlogWeb({ port: "3100", open: options.open }));
 
 	for (const register of registrars) {
 		register(cmd);

@@ -21,6 +21,11 @@ function resolveExecve(): ExecveFn | null {
 		: null;
 }
 
+// why: the restart path must not re-open a browser; pass --no-open through, but only once across repeated restarts
+function withNoOpen(args: string[]): string[] {
+	return args.includes("--no-open") ? args : [...args, "--no-open"];
+}
+
 export function reExecWebServer(deps: ReExecDeps = {}): void {
 	const {
 		beforeExec,
@@ -31,11 +36,13 @@ export function reExecWebServer(deps: ReExecDeps = {}): void {
 	beforeExec?.();
 	if (execveFn) {
 		// why: in-place image replacement keeps the new server in the terminal's foreground process group, so it stays interactive (a detached spawn would not)
-		execveFn(process.execPath, process.argv, process.env);
+		execveFn(process.execPath, withNoOpen(process.argv), process.env);
 		return;
 	}
 	// why: no execve (e.g. Windows) — a blocking, attached child keeps the terminal in the foreground process group; detaching would leave the terminal dead
 	const [, ...args] = process.argv;
-	const result = spawnSyncFn(process.execPath, args, { stdio: "inherit" });
+	const result = spawnSyncFn(process.execPath, withNoOpen(args), {
+		stdio: "inherit",
+	});
 	exit(result.status ?? 0);
 }

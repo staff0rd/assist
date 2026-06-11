@@ -53,7 +53,8 @@ program
 	.name("assist")
 	.description("CLI application")
 	.version(packageJson.version)
-	.action(() => sessionsWeb({ port: "3100" }));
+	.option("--no-open", "Do not open a browser on startup")
+	.action((options) => sessionsWeb({ port: "3100", open: options.open }));
 
 program
 	.command("sync")
