@@ -1,3 +1,10 @@
+## [0.281.2](https://github.com/staff0rd/assist/compare/v0.281.1...v0.281.2) (2026-06-11)
+
+
+### Bug Fixes
+
+* prevent double paste in web terminal ([4f9e663](https://github.com/staff0rd/assist/commit/4f9e663df1a77954bbbe17b7f7d9ebd4922e9cf7))
+
 ## [0.281.1](https://github.com/staff0rd/assist/compare/v0.281.0...v0.281.1) (2026-06-11)
 
 
