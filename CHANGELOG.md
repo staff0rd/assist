@@ -1,3 +1,10 @@
+# [0.277.0](https://github.com/staff0rd/assist/compare/v0.276.0...v0.277.0) (2026-06-11)
+
+
+### Features
+
+* order repo selector by recency ([0c06a4d](https://github.com/staff0rd/assist/commit/0c06a4d0bde95028df803d440c53e0b7f741676b))
+
 # [0.276.0](https://github.com/staff0rd/assist/compare/v0.275.1...v0.276.0) (2026-06-11)
 
 
