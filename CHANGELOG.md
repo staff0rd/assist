@@ -1,3 +1,10 @@
+# [0.281.0](https://github.com/staff0rd/assist/compare/v0.280.1...v0.281.0) (2026-06-11)
+
+
+### Features
+
+* copy/paste in sessions terminal ([dbd8ee0](https://github.com/staff0rd/assist/commit/dbd8ee0c0919743c2b20ff2837421e33b731ba8d))
+
 ## [0.280.1](https://github.com/staff0rd/assist/compare/v0.280.0...v0.280.1) (2026-06-11)
 
 
