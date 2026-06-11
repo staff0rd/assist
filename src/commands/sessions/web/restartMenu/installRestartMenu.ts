@@ -32,7 +32,7 @@ export function installRestartMenu(
 		},
 	});
 	const restoreRaw = enableRawMode(stdin, handler);
-	console.log(chalk.dim("Press Ctrl+G for the restart menu"));
+	console.log(chalk.dim("Press Ctrl+R for the restart menu"));
 
 	let cleaned = false;
 	function cleanup(): void {

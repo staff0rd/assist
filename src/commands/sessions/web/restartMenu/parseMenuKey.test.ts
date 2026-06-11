@@ -1,40 +1,40 @@
 import { describe, expect, it } from "vitest";
 import { parseMenuKey } from "./parseMenuKey";
 
-const CTRL_G = String.fromCharCode(7);
+const CTRL_R = String.fromCharCode(18);
 const CTRL_C = String.fromCharCode(3);
 const ESC = String.fromCharCode(27);
 
 describe("parseMenuKey", () => {
 	it("recognises the configured toggle key", () => {
-		expect(parseMenuKey(CTRL_G, CTRL_G)).toEqual({ key: "toggle" });
+		expect(parseMenuKey(CTRL_R, CTRL_R)).toEqual({ key: "toggle" });
 	});
 
 	it("recognises Ctrl+C as quit", () => {
-		expect(parseMenuKey(CTRL_C, CTRL_G)).toEqual({ key: "quit" });
+		expect(parseMenuKey(CTRL_C, CTRL_R)).toEqual({ key: "quit" });
 	});
 
 	it("recognises Esc as dismiss", () => {
-		expect(parseMenuKey(ESC, CTRL_G)).toEqual({ key: "dismiss" });
+		expect(parseMenuKey(ESC, CTRL_R)).toEqual({ key: "dismiss" });
 	});
 
 	it("recognises Enter as select", () => {
-		expect(parseMenuKey("\r", CTRL_G)).toEqual({ key: "select" });
-		expect(parseMenuKey("\n", CTRL_G)).toEqual({ key: "select" });
+		expect(parseMenuKey("\r", CTRL_R)).toEqual({ key: "select" });
+		expect(parseMenuKey("\n", CTRL_R)).toEqual({ key: "select" });
 	});
 
 	it("recognises arrow keys", () => {
-		expect(parseMenuKey(`${ESC}[A`, CTRL_G)).toEqual({ key: "up" });
-		expect(parseMenuKey(`${ESC}[B`, CTRL_G)).toEqual({ key: "down" });
+		expect(parseMenuKey(`${ESC}[A`, CTRL_R)).toEqual({ key: "up" });
+		expect(parseMenuKey(`${ESC}[B`, CTRL_R)).toEqual({ key: "down" });
 	});
 
 	it("recognises number keys as digits", () => {
-		expect(parseMenuKey("1", CTRL_G)).toEqual({ key: "digit", digit: 1 });
-		expect(parseMenuKey("3", CTRL_G)).toEqual({ key: "digit", digit: 3 });
+		expect(parseMenuKey("1", CTRL_R)).toEqual({ key: "digit", digit: 1 });
+		expect(parseMenuKey("3", CTRL_R)).toEqual({ key: "digit", digit: 3 });
 	});
 
 	it("returns none for unknown input", () => {
-		expect(parseMenuKey("x", CTRL_G)).toEqual({ key: "none" });
+		expect(parseMenuKey("x", CTRL_R)).toEqual({ key: "none" });
 	});
 
 	it("prefers the toggle key when it collides with another binding", () => {

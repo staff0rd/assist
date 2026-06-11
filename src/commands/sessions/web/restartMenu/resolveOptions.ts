@@ -2,7 +2,7 @@ import { restartDaemon } from "../../daemon/restartDaemon";
 import { type MenuItem, menuItems } from "./menuItems";
 import { type ReExecDeps, reExecWebServer } from "./reExecWebServer";
 
-const CTRL_G = String.fromCharCode(7);
+const CTRL_R = String.fromCharCode(18);
 
 export type RestartMenuOptions = {
 	toggleKey?: string;
@@ -18,7 +18,7 @@ export function resolveOptions(options: RestartMenuOptions) {
 	return {
 		stdin: options.stdin ?? process.stdin,
 		out: options.out ?? process.stdout,
-		toggleKey: options.toggleKey ?? CTRL_G,
+		toggleKey: options.toggleKey ?? CTRL_R,
 		exit: options.exit ?? ((code: number) => process.exit(code)),
 		restartDaemonFn: options.restartDaemonFn ?? restartDaemon,
 		reExecFn: options.reExecFn ?? reExecWebServer,

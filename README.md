@@ -242,7 +242,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist voice devices` - List available audio input devices
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 - `assist sessions` - Start the web dashboard (same as `sessions web`)
-- `assist sessions web [-p, --port <number>]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals with clickable http(s) links (default port 3100); press Ctrl+G in the foreground terminal for an in-terminal restart menu (Restart daemon, Restart webserver, Restart both); Restart webserver re-execs the foreground process so the connected browser auto-reconnects
+- `assist sessions web [-p, --port <number>]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals with clickable http(s) links (default port 3100); press Ctrl+R in the foreground terminal for an in-terminal restart menu (Restart daemon, Restart webserver, Restart both); Restart webserver re-execs the foreground process so the connected browser auto-reconnects
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
 - `assist daemon run` - Run the sessions daemon in the foreground (normally auto-spawned detached by `assist sessions`)
 - `assist daemon status` - Show sessions daemon status, live sessions, and any stray daemon processes or stolen socket

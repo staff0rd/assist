@@ -3,7 +3,7 @@ import { PassThrough } from "node:stream";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { installRestartMenu } from "./installRestartMenu";
 
-const CTRL_G = String.fromCharCode(7);
+const CTRL_R = String.fromCharCode(18);
 const CTRL_C = String.fromCharCode(3);
 const ESC = String.fromCharCode(27);
 const ARROW_UP = `${ESC}[A`;
@@ -75,7 +75,7 @@ describe("installRestartMenu", () => {
 
 	it("restarts the daemon when the daemon item is selected with Enter", async () => {
 		const { stdin, restartDaemonFn } = setup();
-		stdin.emit("data", CTRL_G);
+		stdin.emit("data", CTRL_R);
 		stdin.emit("data", "\r");
 		await flush();
 		expect(restartDaemonFn).toHaveBeenCalledOnce();
@@ -83,7 +83,7 @@ describe("installRestartMenu", () => {
 
 	it("restarts the daemon via the number key", async () => {
 		const { stdin, restartDaemonFn } = setup();
-		stdin.emit("data", CTRL_G);
+		stdin.emit("data", CTRL_R);
 		stdin.emit("data", "1");
 		await flush();
 		expect(restartDaemonFn).toHaveBeenCalledOnce();
@@ -98,7 +98,7 @@ describe("installRestartMenu", () => {
 
 	it("re-execs the web server when the webserver item is selected", async () => {
 		const { stdin, restartDaemonFn, reExecFn } = setup();
-		stdin.emit("data", CTRL_G);
+		stdin.emit("data", CTRL_R);
 		stdin.emit("data", "2");
 		await flush();
 		expect(reExecFn).toHaveBeenCalledOnce();
@@ -107,7 +107,7 @@ describe("installRestartMenu", () => {
 
 	it("restarts the daemon then re-execs for Restart both", async () => {
 		const { stdin, restartDaemonFn, reExecFn } = setup();
-		stdin.emit("data", CTRL_G);
+		stdin.emit("data", CTRL_R);
 		stdin.emit("data", "3");
 		await flush();
 		expect(restartDaemonFn).toHaveBeenCalledOnce();
@@ -119,7 +119,7 @@ describe("installRestartMenu", () => {
 
 	it("navigates with arrow keys back to an enabled item before running", async () => {
 		const { stdin, restartDaemonFn } = setup();
-		stdin.emit("data", CTRL_G);
+		stdin.emit("data", CTRL_R);
 		stdin.emit("data", ARROW_DOWN);
 		stdin.emit("data", ARROW_UP);
 		stdin.emit("data", "\r");
@@ -129,7 +129,7 @@ describe("installRestartMenu", () => {
 
 	it("closes the menu on Esc without acting", async () => {
 		const { stdin, restartDaemonFn } = setup();
-		stdin.emit("data", CTRL_G);
+		stdin.emit("data", CTRL_R);
 		stdin.emit("data", ESC);
 		stdin.emit("data", "\r");
 		await flush();
