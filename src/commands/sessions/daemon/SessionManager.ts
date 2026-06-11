@@ -23,6 +23,7 @@ import { wirePtyEvents } from "./wirePtyEvents";
 import {
 	dismissSession,
 	resizeSession,
+	setAutoAdvance,
 	setAutoRun,
 	writeToSession,
 } from "./writeToSession";
@@ -57,7 +58,7 @@ export class SessionManager {
 
 	restore(): string[] {
 		return loadPersistedSessions().map((persisted) => {
-			this.add(restoreSession(String(this.nextId++), persisted));
+			this.spawnWith((id) => restoreSession(id, persisted));
 			return persisted.name;
 		});
 	}
@@ -69,24 +70,24 @@ export class SessionManager {
 		return session.id;
 	}
 
+	private spawnWith(create: (id: string) => Session): string {
+		return this.add(create(String(this.nextId++)));
+	}
+
 	spawn(prompt?: string, cwd?: string): string {
-		return this.add(createSession(String(this.nextId++), prompt, cwd));
+		return this.spawnWith((id) => createSession(id, prompt, cwd));
 	}
 
 	spawnRun(runName: string, runArgs: string[], cwd?: string): string {
-		return this.add(
-			createRunSession(String(this.nextId++), runName, runArgs, cwd),
-		);
+		return this.spawnWith((id) => createRunSession(id, runName, runArgs, cwd));
 	}
 
 	spawnAssist(assistArgs: string[], cwd?: string): string {
-		return this.add(
-			createAssistSession(String(this.nextId++), assistArgs, cwd),
-		);
+		return this.spawnWith((id) => createAssistSession(id, assistArgs, cwd));
 	}
 
 	resume(sessionId: string, cwd: string, name?: string): string {
-		return this.add(resumeSession(String(this.nextId++), sessionId, cwd, name));
+		return this.spawnWith((id) => resumeSession(id, sessionId, cwd, name));
 	}
 
 	private readonly onStatusChange = makeStatusChangeHandler(
@@ -121,6 +122,10 @@ export class SessionManager {
 
 	setAutoRun(id: string, enabled: boolean): void {
 		if (setAutoRun(this.sessions, id, enabled)) this.notify();
+	}
+
+	setAutoAdvance(id: string, enabled: boolean): void {
+		if (setAutoAdvance(this.sessions, id, enabled)) this.notify();
 	}
 
 	listSessions(): SessionInfo[] {

@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { SessionCard } from "./SessionCard";
+import type { SessionListHandlers } from "./types";
 import type { SessionInfo } from "./useSessionSocket";
 
 export function SessionList({
@@ -11,15 +12,13 @@ export function SessionList({
 	onRetry,
 	onDismiss,
 	onSetAutoRun,
+	onSetAutoAdvance,
 }: {
 	sessions: SessionInfo[];
 	activeId: string | null;
 	initialized: Set<string>;
 	onSelect: (id: string) => void;
-	onRetry: (id: string) => void;
-	onDismiss: (id: string) => void;
-	onSetAutoRun: (id: string, enabled: boolean) => void;
-}) {
+} & SessionListHandlers) {
 	return (
 		<Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
 			{sessions.map((s) => (
@@ -37,6 +36,7 @@ export function SessionList({
 					}
 					onDismiss={() => onDismiss(s.id)}
 					onSetAutoRun={(enabled) => onSetAutoRun(s.id, enabled)}
+					onSetAutoAdvance={(enabled) => onSetAutoAdvance(s.id, enabled)}
 				/>
 			))}
 			{sessions.length === 0 && (

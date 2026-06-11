@@ -11,13 +11,14 @@ export async function runOnce(
 	startPhase: number,
 	plan: PlanPhase[],
 	spawnOptions?: SpawnClaudeOptions,
-): Promise<ReviewResult | { kind: "fail" }> {
+): Promise<ReviewResult | { kind: "fail" } | { kind: "paused" }> {
 	// why: resume only reaches the review when the restart interrupted the review.
 	const reviewOptions =
 		startPhase >= plan.length
 			? spawnOptions
 			: withoutResumeSession(spawnOptions);
-	if (!(await runPhases(item, startPhase, plan, spawnOptions)))
-		return { kind: "fail" };
+	const phases = await runPhases(item, startPhase, plan, spawnOptions);
+	if (phases.kind === "fail") return { kind: "fail" };
+	if (phases.kind === "paused") return { kind: "paused" };
 	return runReview(item, plan, reviewOptions);
 }

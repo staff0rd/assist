@@ -5,6 +5,7 @@ import {
 } from "../../shared/spawnClaude";
 import { acquireLock, releaseLock } from "./acquireLock";
 import { blockedByHandover } from "./blockedByHandover";
+import { handleReviewResult } from "./handleReviewResult";
 import { type PreparedRun, prepareRun } from "./prepareRun";
 import { runOnce } from "./runOnce";
 import { setStatus } from "./shared";
@@ -35,17 +36,10 @@ async function runPrepared(
 		while (true) {
 			const review = await runOnce(item, startPhase, plan, spawnOptions);
 			spawnOptions = withoutResumeSession(spawnOptions);
-			if (review.kind === "fail") return false;
-			if (review.kind === "abort") return false;
-			if (review.kind === "rewind") {
-				// rewindPhase already set the status to in-progress and rewound the
-				// current phase; resume from the rewound phase rather than finishing.
-				startPhase = review.targetPhase;
-				plan = review.plan;
-				continue;
-			}
-			await ensureDone(id);
-			return true;
+			const outcome = await handleReviewResult(id, review);
+			if (outcome.kind === "stop") return outcome.success;
+			startPhase = outcome.startPhase;
+			plan = outcome.plan;
 		}
 	} finally {
 		releaseLock(item.id);
@@ -66,13 +60,5 @@ function logProgress(
 		);
 	} else {
 		console.log(chalk.dim(`${totalPhases} phase(s)\n`));
-	}
-}
-
-async function ensureDone(id: string): Promise<void> {
-	try {
-		await setStatus(id, "done");
-	} catch {
-		// Item may already be marked done by the review agent — ignore
 	}
 }

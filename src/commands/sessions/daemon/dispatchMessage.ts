@@ -99,6 +99,8 @@ const handlers: Record<string, Handler> = {
 	dismiss: (_client, m, d) => m.dismissSession(d.sessionId as string),
 	"set-autorun": (_client, m, d) =>
 		m.setAutoRun(d.sessionId as string, d.enabled as boolean),
+	"set-autoadvance": (_client, m, d) =>
+		m.setAutoAdvance(d.sessionId as string, d.enabled as boolean),
 };
 
 export function dispatchMessage(

@@ -1,5 +1,6 @@
 import { removeActivity } from "../../../shared/emitActivity";
 import { releaseLock } from "../../backlog/acquireLock";
+import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session } from "./createSession";
 import { clearIdle } from "./scheduleIdle";
 
@@ -33,6 +34,22 @@ export function setAutoRun(
 	const s = sessions.get(id);
 	if (!s) return false;
 	s.autoRun = enabled;
+	return true;
+}
+
+export function setAutoAdvance(
+	sessions: Map<string, Session>,
+	id: string,
+	enabled: boolean,
+): boolean {
+	const s = sessions.get(id);
+	if (!s) return false;
+	s.autoAdvance = enabled;
+	const itemId = s.activity?.itemId;
+	if (itemId != null) {
+		if (enabled) clearPause(itemId);
+		else requestPause(itemId);
+	}
 	return true;
 }
 

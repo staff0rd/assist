@@ -25,6 +25,7 @@ type Session = {
 	activity?: Activity;
 	activityWatcher?: FSWatcher;
 	autoRun?: boolean;
+	autoAdvance?: boolean;
 };
 
 type SessionInfo = {
@@ -40,6 +41,7 @@ type SessionInfo = {
 	restored?: boolean;
 	activity?: Activity;
 	autoRun?: boolean;
+	autoAdvance?: boolean;
 };
 
 export type { Session, SessionInfo, SessionStatus };

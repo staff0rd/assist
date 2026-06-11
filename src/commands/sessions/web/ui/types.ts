@@ -16,6 +16,14 @@ export type SessionInfo = {
 	restored?: boolean;
 	activity?: Activity;
 	autoRun?: boolean;
+	autoAdvance?: boolean;
+};
+
+export type SessionListHandlers = {
+	onRetry: (id: string) => void;
+	onDismiss: (id: string) => void;
+	onSetAutoRun: (id: string, enabled: boolean) => void;
+	onSetAutoAdvance: (id: string, enabled: boolean) => void;
 };
 
 export type HistoricalSession = {

@@ -2,7 +2,12 @@ import Box from "@mui/material/Box";
 import { HistoryList } from "./HistoryList";
 import { SessionList } from "./SessionList";
 import { SidebarTabs } from "./SidebarTabs";
-import type { HistoricalSession, SessionInfo, SidebarTab } from "./types";
+import type {
+	HistoricalSession,
+	SessionInfo,
+	SessionListHandlers,
+	SidebarTab,
+} from "./types";
 
 type SidebarProps = {
 	sessions: SessionInfo[];
@@ -12,11 +17,8 @@ type SidebarProps = {
 	onTabChange: (tab: SidebarTab) => void;
 	onSelect: (id: string) => void;
 	onResume: (session: HistoricalSession) => void;
-	onRetry: (id: string) => void;
-	onDismiss: (id: string) => void;
-	onSetAutoRun: (id: string, enabled: boolean) => void;
 	initialized: Set<string>;
-};
+} & SessionListHandlers;
 
 const sidebarSx = {
 	width: "25%",
@@ -46,6 +48,7 @@ export function Sidebar(props: SidebarProps) {
 					onRetry={props.onRetry}
 					onDismiss={props.onDismiss}
 					onSetAutoRun={props.onSetAutoRun}
+					onSetAutoAdvance={props.onSetAutoAdvance}
 				/>
 			) : (
 				<HistoryList sessions={props.history} onResume={props.onResume} />

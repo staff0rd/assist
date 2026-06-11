@@ -25,6 +25,7 @@ function renderCard(loading: boolean) {
 			onClick={() => {}}
 			onDismiss={() => {}}
 			onSetAutoRun={() => {}}
+			onSetAutoAdvance={() => {}}
 		/>,
 	);
 }

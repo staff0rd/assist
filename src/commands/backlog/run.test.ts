@@ -24,6 +24,10 @@ vi.mock("./reloadPlan", () => ({
 	reloadPlan: vi.fn(),
 }));
 
+vi.mock("./consumePause", () => ({
+	consumePause: vi.fn(() => false),
+}));
+
 vi.mock("./acquireLock", () => ({
 	acquireLock: vi.fn(),
 	releaseLock: vi.fn(),
@@ -35,6 +39,7 @@ vi.mock("./blockedByHandover", () => ({
 
 import { acquireLock, releaseLock } from "./acquireLock";
 import { blockedByHandover } from "./blockedByHandover";
+import { consumePause } from "./consumePause";
 import { executePhase } from "./executePhase";
 import { prepareRun } from "./prepareRun";
 import { reloadPlan } from "./reloadPlan";
@@ -48,6 +53,7 @@ const mockSetStatus = setStatus as unknown as MockInstance;
 const mockAcquireLock = acquireLock as unknown as MockInstance;
 const mockReleaseLock = releaseLock as unknown as MockInstance;
 const mockBlockedByHandover = blockedByHandover as unknown as MockInstance;
+const mockConsumePause = consumePause as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	return {
@@ -543,6 +549,85 @@ describe("run", () => {
 				resumeSessionId: "sess-1",
 			});
 			expect(mockExecutePhase.mock.calls[3][3]).toEqual({});
+		});
+	});
+
+	describe("when auto-advance is turned off mid-phase", () => {
+		it("stops after the current phase without starting the next", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase.mockResolvedValueOnce(1);
+			mockConsumePause.mockReturnValueOnce(true);
+
+			await run("1");
+
+			expect(mockExecutePhase).toHaveBeenCalledTimes(1);
+		});
+
+		it("does not run the review phase", async () => {
+			const item = makeItem({
+				plan: [{ name: "Phase 1", tasks: [{ task: "t1" }] }],
+			});
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase.mockResolvedValueOnce(1);
+			mockConsumePause.mockReturnValueOnce(true);
+
+			await run("1");
+
+			expect(mockExecutePhase).toHaveBeenCalledTimes(1);
+		});
+
+		it("leaves the item in-progress without marking it done", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase.mockResolvedValueOnce(1);
+			mockConsumePause.mockReturnValueOnce(true);
+
+			await run("1");
+
+			expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
+			expect(mockSetStatus).not.toHaveBeenCalledWith("1", "done");
+		});
+
+		it("exits cleanly (resolves true) so the process returns 0", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase.mockResolvedValueOnce(1);
+			mockConsumePause.mockReturnValueOnce(true);
+
+			await expect(run("1")).resolves.toBe(true);
+		});
+
+		it("consumes the pause request once (one-shot)", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase.mockResolvedValueOnce(1);
+			mockConsumePause.mockReturnValueOnce(true);
+
+			await run("1");
+
+			expect(mockConsumePause).toHaveBeenCalledTimes(1);
+			expect(mockConsumePause).toHaveBeenCalledWith(1);
 		});
 	});
 

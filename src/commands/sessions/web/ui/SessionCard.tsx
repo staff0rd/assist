@@ -2,10 +2,9 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
-import { AutoRunToggle } from "./AutoRunToggle";
 import { CardHeader, cardSx } from "./CardHeader";
+import { CardToggles } from "./CardToggles";
 import { StatusRow } from "./StatusRow";
-import { sessionType } from "./sessionType";
 import type { SessionInfo } from "./types";
 import { useElapsed } from "./useElapsed";
 
@@ -17,6 +16,7 @@ export function SessionCard({
 	onRetry,
 	onDismiss,
 	onSetAutoRun,
+	onSetAutoAdvance,
 }: {
 	session: SessionInfo;
 	active: boolean;
@@ -25,10 +25,9 @@ export function SessionCard({
 	onRetry?: () => void;
 	onDismiss: () => void;
 	onSetAutoRun: (enabled: boolean) => void;
+	onSetAutoAdvance: (enabled: boolean) => void;
 }) {
 	const elapsed = useElapsed(session.startedAt, session.status);
-	const type = sessionType(session);
-	const showAutoRun = type === "draft" || type === "bug" || type === "refine";
 
 	return (
 		<ButtonBase onClick={onClick} sx={cardSx(active)}>
@@ -47,12 +46,11 @@ export function SessionCard({
 						elapsed={elapsed}
 						restored={session.restored}
 					/>
-					{showAutoRun && (
-						<AutoRunToggle
-							checked={session.autoRun ?? false}
-							onChange={onSetAutoRun}
-						/>
-					)}
+					<CardToggles
+						session={session}
+						onSetAutoRun={onSetAutoRun}
+						onSetAutoAdvance={onSetAutoAdvance}
+					/>
 				</>
 			)}
 		</ButtonBase>
