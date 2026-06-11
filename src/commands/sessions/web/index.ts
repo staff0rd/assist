@@ -4,6 +4,7 @@ import { startWebServer } from "../../../shared/web";
 import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
 import { handleRequest } from "./handleRequest";
 import { handleSocket, type RelayContext } from "./handleSocket";
+import { installRestartMenu } from "./restartMenu/installRestartMenu";
 
 export async function web(options: {
 	port: string;
@@ -34,4 +35,6 @@ export async function web(options: {
 			socket.destroy();
 		}
 	});
+
+	installRestartMenu();
 }
