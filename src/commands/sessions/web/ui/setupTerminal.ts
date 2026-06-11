@@ -1,4 +1,5 @@
 import { createTerminal, type TerminalHandle } from "./createTerminal";
+import { handleClipboardKey } from "./handleClipboardKey";
 
 type ResizeFn = (sessionId: string, cols: number, rows: number) => void;
 
@@ -12,6 +13,11 @@ export function setupTerminal(
 	const handle = createTerminal(el);
 
 	handle.term.onData((data) => sendInput(sessionId, data));
+	handle.term.attachCustomKeyEventHandler((event) =>
+		handleClipboardKey(event, handle.term, navigator.clipboard, (text) =>
+			handle.term.paste(text),
+		),
+	);
 	const unsubOutput = onOutput(sessionId, (data) => handle.term.write(data));
 
 	const observer = new ResizeObserver(() => {
