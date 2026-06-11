@@ -1,5 +1,5 @@
 import { type RefObject, useCallback, useEffect, useRef } from "react";
-import { createWsConnection } from "./createWsConnection";
+import { connectWithReconnect } from "./connectWithReconnect";
 import type { WsDispatch } from "./WsDispatch";
 
 type OutputHandler = (data: string) => void;
@@ -20,14 +20,28 @@ type WsDeps = {
 /** Own the WebSocket lifecycle: connect on mount, expose a history request. */
 export function useWebSocket(deps: WsDeps) {
 	const wsRef = useRef<WebSocket | null>(null);
-	const { handleSessions, markInitialized } = deps;
+	const { handleSessions, markInitialized, buffers, handlers } = deps;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state setters and refs keep a stable identity for the connection's lifetime
 	useEffect(() => {
-		const ws = createWsConnection({ ...deps, setSessions: handleSessions });
-		wsRef.current = ws;
-		return () => ws.close();
-	}, [handleSessions, markInitialized]);
+		// why: the daemon replays full scrollback on every (re)connect, so a reconnect must reset terminals first or the replay appends a duplicate
+		const resetTerminals = () => {
+			buffers.current?.clear();
+			const h = handlers.current;
+			if (h) for (const write of h.values()) write("\x1bc");
+		};
+		const stop = connectWithReconnect(
+			{ ...deps, setSessions: handleSessions },
+			(ws) => {
+				wsRef.current = ws;
+			},
+			resetTerminals,
+		);
+		return () => {
+			stop();
+			wsRef.current?.close();
+		};
+	}, [handleSessions, markInitialized, buffers, handlers]);
 
 	const requestHistory = useCallback(() => {
 		const ws = wsRef.current;
