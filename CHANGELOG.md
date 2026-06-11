@@ -1,3 +1,10 @@
+# [0.274.0](https://github.com/staff0rd/assist/compare/v0.273.2...v0.274.0) (2026-06-11)
+
+
+### Features
+
+* auto-advance toggle for run cards ([5c9b3a2](https://github.com/staff0rd/assist/commit/5c9b3a2e726d8206acdad83240d8e483fc43f70b))
+
 ## [0.273.2](https://github.com/staff0rd/assist/compare/v0.273.1...v0.273.2) (2026-06-10)
 
 
