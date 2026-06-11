@@ -1,0 +1,16 @@
+import type { HistoricalSession, SessionInfo, Transcript } from "./types";
+
+type OutputHandler = (data: string) => void;
+
+export type WsDispatch = {
+	setSessions: (s: SessionInfo[]) => void;
+	setHistory: (h: HistoricalSession[]) => void;
+	setActiveId: (id: string) => void;
+	setTranscript: (t: Transcript | null) => void;
+	setViewingTranscriptSessionId: (id: string | null) => void;
+	setCurrentCwd: (cwd: string) => void;
+	setError: (message: string) => void;
+	markInitialized: (id: string) => void;
+	buffers: React.RefObject<Map<string, string>>;
+	handlers: React.RefObject<Map<string, OutputHandler>>;
+};

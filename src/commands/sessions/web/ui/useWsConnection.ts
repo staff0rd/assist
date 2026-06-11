@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { createWsConnection } from "./createWsConnection";
-import type { HistoricalSession, SessionInfo } from "./types";
+import { useCallback, useRef, useState } from "react";
+import type { HistoricalSession, SessionInfo, Transcript } from "./types";
 import { useActiveIdReconciler } from "./useActiveIdReconciler";
 import { useInitialized } from "./useInitialized";
+import { useWebSocket } from "./useWebSocket";
 
 type OutputHandler = (data: string) => void;
 
@@ -10,10 +10,13 @@ export function useWsConnection() {
 	const [sessions, setSessions] = useState<SessionInfo[]>([]);
 	const [history, setHistory] = useState<HistoricalSession[]>([]);
 	const [activeId, setActiveId] = useState<string | null>(null);
+	const [transcript, setTranscript] = useState<Transcript | null>(null);
+	const [viewingTranscriptSessionId, setViewingTranscriptSessionId] = useState<
+		string | null
+	>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
 	const { initialized, markInitialized, syncSessions } = useInitialized();
-	const wsRef = useRef<WebSocket | null>(null);
 	const buffers = useRef(new Map<string, string>());
 	const handlers = useRef(new Map<string, OutputHandler>());
 
@@ -25,28 +28,20 @@ export function useWsConnection() {
 		[syncSessions],
 	);
 
-	useEffect(() => {
-		const ws = createWsConnection({
-			setSessions: handleSessions,
-			setHistory,
-			setActiveId,
-			setCurrentCwd,
-			setError,
-			markInitialized,
-			buffers,
-			handlers,
-		});
-		wsRef.current = ws;
-		return () => ws.close();
-	}, [markInitialized, handleSessions]);
+	const { wsRef, requestHistory } = useWebSocket({
+		handleSessions,
+		setHistory,
+		setActiveId,
+		setTranscript,
+		setViewingTranscriptSessionId,
+		setCurrentCwd,
+		setError,
+		markInitialized,
+		buffers,
+		handlers,
+	});
 
 	useActiveIdReconciler(sessions, setActiveId);
-
-	const requestHistory = useCallback(() => {
-		const ws = wsRef.current;
-		if (ws?.readyState === WebSocket.OPEN)
-			ws.send(JSON.stringify({ type: "history" }));
-	}, []);
 
 	const clearError = useCallback(() => setError(null), []);
 
@@ -55,6 +50,9 @@ export function useWsConnection() {
 		history,
 		activeId,
 		setActiveId,
+		transcript,
+		viewingTranscriptSessionId,
+		setViewingTranscriptSessionId,
 		currentCwd,
 		error,
 		clearError,

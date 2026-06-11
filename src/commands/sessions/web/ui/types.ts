@@ -1,4 +1,5 @@
 import type { Activity } from "../../../../shared/emitActivity";
+import type { SessionType } from "../../shared/deriveHistoryFields";
 
 export type SessionStatus = "running" | "waiting" | "done";
 
@@ -32,6 +33,24 @@ export type HistoricalSession = {
 	project: string;
 	cwd: string;
 	timestamp: string;
+	sessionType?: SessionType;
+	itemId?: number;
+	prompt?: string;
+};
+
+export type HistoryCardHandlers = {
+	onView: (session: HistoricalSession) => void;
+	onResume: (session: HistoricalSession) => void;
 };
 
 export type SidebarTab = "active" | "history";
+
+export type TranscriptMessage =
+	| { role: "user"; text: string }
+	| { role: "assistant"; text: string }
+	| { role: "tool"; tool: string; target: string };
+
+export type Transcript = {
+	sessionId: string;
+	messages: TranscriptMessage[];
+};

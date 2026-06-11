@@ -1,6 +1,5 @@
+import type { SessionType } from "../../shared/deriveHistoryFields";
 import type { SessionInfo } from "./types";
-
-type SessionType = "draft" | "next" | "bug" | "refine" | "prompt" | "run";
 
 export function sessionType(session: SessionInfo): SessionType {
 	if (session.activity?.kind === "backlog") return "next";

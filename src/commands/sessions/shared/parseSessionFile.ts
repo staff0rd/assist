@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { deriveHistoryFields, type SessionType } from "./deriveHistoryFields";
 import { extractSessionMeta } from "./extractSessionMeta";
 
 export type HistoricalSession = {
@@ -8,6 +9,9 @@ export type HistoricalSession = {
 	project: string;
 	cwd: string;
 	timestamp: string;
+	sessionType?: SessionType;
+	itemId?: number;
+	prompt?: string;
 };
 
 export async function parseSessionFile(
@@ -38,6 +42,7 @@ export async function parseSessionFile(
 			project,
 			cwd: meta.cwd,
 			timestamp,
+			...deriveHistoryFields(meta.commandName, meta.commandArgs, meta.name),
 		};
 	} catch {
 		return null;

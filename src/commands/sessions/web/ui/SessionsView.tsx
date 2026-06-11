@@ -7,16 +7,17 @@ import type { SessionSocket } from "./useSessionSocket";
 
 export function SessionsView({ socket }: { socket: SessionSocket }) {
 	const [tab, setTab] = useState<SidebarTab>("active");
-	const { requestHistory } = socket;
+	const { requestHistory, clearTranscript } = socket;
 
 	// History is only pushed on request, so refresh it on each switch to the
 	// history view to pick up sessions completed after the initial page load.
 	const handleTabChange = useCallback(
 		(next: SidebarTab) => {
 			if (next === "history") requestHistory();
+			else clearTranscript();
 			setTab(next);
 		},
-		[requestHistory],
+		[requestHistory, clearTranscript],
 	);
 
 	return (
@@ -29,6 +30,8 @@ export function SessionsView({ socket }: { socket: SessionSocket }) {
 				onOutput={socket.onOutput}
 				sendInput={socket.sendInput}
 				sendResize={socket.sendResize}
+				viewingTranscriptSessionId={socket.viewingTranscriptSessionId}
+				transcript={socket.transcript}
 			/>
 		</Box>
 	);

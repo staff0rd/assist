@@ -1,4 +1,3 @@
-import { discoverSessions } from "../shared/discoverSessions";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
 import { createAssistSession } from "./createAssistSession";
@@ -130,10 +129,6 @@ export class SessionManager {
 
 	listSessions(): SessionInfo[] {
 		return [...this.sessions.values()].map(toSessionInfo);
-	}
-
-	async getHistory() {
-		return discoverSessions();
 	}
 
 	private readonly notify = (): void => {

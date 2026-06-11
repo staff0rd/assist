@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import { useMemo, useState } from "react";
 import { HistoryCard } from "./HistoryCard";
 import { ProjectFilter } from "./ProjectFilter";
-import type { HistoricalSession } from "./types";
+import type { HistoricalSession, HistoryCardHandlers } from "./types";
 import { filterByProject, uniqueProjects } from "./uniqueProjects";
 
 function EmptyState({ hasAny }: { hasAny: boolean }) {
@@ -20,15 +20,18 @@ function EmptyState({ hasAny }: { hasAny: boolean }) {
 
 function HistoryCards({
 	sessions,
+	onView,
 	onResume,
-}: {
-	sessions: HistoricalSession[];
-	onResume: (session: HistoricalSession) => void;
-}) {
+}: { sessions: HistoricalSession[] } & HistoryCardHandlers) {
 	return (
 		<Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
 			{sessions.map((s) => (
-				<HistoryCard key={s.sessionId} session={s} onResume={onResume} />
+				<HistoryCard
+					key={s.sessionId}
+					session={s}
+					onView={onView}
+					onResume={onResume}
+				/>
 			))}
 			{sessions.length === 0 && <EmptyState hasAny={false} />}
 		</Box>
@@ -37,11 +40,9 @@ function HistoryCards({
 
 export function HistoryList({
 	sessions,
+	onView,
 	onResume,
-}: {
-	sessions: HistoricalSession[];
-	onResume: (session: HistoricalSession) => void;
-}) {
+}: { sessions: HistoricalSession[] } & HistoryCardHandlers) {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const projects = useMemo(() => uniqueProjects(sessions), [sessions]);
 	const filtered = filterByProject(sessions, selected);
@@ -64,7 +65,7 @@ export function HistoryList({
 					/>
 				</Box>
 			)}
-			<HistoryCards sessions={filtered} onResume={onResume} />
+			<HistoryCards sessions={filtered} onView={onView} onResume={onResume} />
 		</Box>
 	);
 }

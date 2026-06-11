@@ -18,6 +18,13 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 		[socket.resumeSession, onTabChange],
 	);
 
+	const handleView = useCallback(
+		(session: HistoricalSession) => {
+			socket.viewTranscript(session.sessionId);
+		},
+		[socket.viewTranscript],
+	);
+
 	return (
 		<Sidebar
 			sessions={socket.sessions}
@@ -25,7 +32,8 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 			activeId={socket.activeId}
 			tab={tab}
 			onTabChange={onTabChange}
-			onSelect={socket.setActiveId}
+			onSelect={socket.selectSession}
+			onView={handleView}
 			onResume={handleResume}
 			onRetry={socket.retrySession}
 			onDismiss={socket.dismissSession}

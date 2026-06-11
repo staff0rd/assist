@@ -16,6 +16,7 @@ type SidebarProps = {
 	tab: SidebarTab;
 	onTabChange: (tab: SidebarTab) => void;
 	onSelect: (id: string) => void;
+	onView: (session: HistoricalSession) => void;
 	onResume: (session: HistoricalSession) => void;
 	initialized: Set<string>;
 } & SessionListHandlers;
@@ -51,7 +52,11 @@ export function Sidebar(props: SidebarProps) {
 					onSetAutoAdvance={props.onSetAutoAdvance}
 				/>
 			) : (
-				<HistoryList sessions={props.history} onResume={props.onResume} />
+				<HistoryList
+					sessions={props.history}
+					onView={props.onView}
+					onResume={props.onResume}
+				/>
 			)}
 		</Box>
 	);

@@ -42,6 +42,8 @@ function renderArea(activeId: string | null, initialized: Set<string>) {
 			onOutput={() => () => {}}
 			sendInput={() => {}}
 			sendResize={() => {}}
+			viewingTranscriptSessionId={null}
+			transcript={null}
 		/>,
 	);
 }
@@ -60,5 +62,50 @@ describe("SessionArea loading state", () => {
 	it("does not show a loading indicator when there is no active session", () => {
 		renderArea(null, new Set());
 		expect(screen.queryByText("Starting session…")).toBeNull();
+	});
+});
+
+describe("SessionArea transcript view", () => {
+	it("renders the transcript instead of terminals when one is being viewed", () => {
+		render(
+			<SessionArea
+				sessions={sessions}
+				activeId="1"
+				initialized={new Set(["1"])}
+				onOutput={() => () => {}}
+				sendInput={() => {}}
+				sendResize={() => {}}
+				viewingTranscriptSessionId="abc"
+				transcript={{
+					sessionId: "abc",
+					messages: [
+						{ role: "user", text: "hello there" },
+						{ role: "tool", tool: "Read", target: "/tmp/x.ts" },
+						{ role: "assistant", text: "done" },
+					],
+				}}
+			/>,
+		);
+		expect(screen.getByText("hello there")).toBeTruthy();
+		expect(screen.getByText("Read")).toBeTruthy();
+		expect(screen.getByText("done")).toBeTruthy();
+		expect(screen.queryByTestId("pane-1")).toBeNull();
+	});
+
+	it("shows a spinner until the transcript for the viewed session arrives", () => {
+		render(
+			<SessionArea
+				sessions={sessions}
+				activeId="1"
+				initialized={new Set(["1"])}
+				onOutput={() => () => {}}
+				sendInput={() => {}}
+				sendResize={() => {}}
+				viewingTranscriptSessionId="abc"
+				transcript={null}
+			/>,
+		);
+		expect(screen.queryByText("No transcript available")).toBeNull();
+		expect(screen.queryByTestId("pane-1")).toBeNull();
 	});
 });

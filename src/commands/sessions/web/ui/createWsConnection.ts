@@ -1,4 +1,5 @@
-import { handleWsMessage, type WsDispatch } from "./handleWsMessage";
+import { handleWsMessage } from "./handleWsMessage";
+import type { WsDispatch } from "./WsDispatch";
 
 export function createWsConnection(d: WsDispatch): WebSocket {
 	const protocol = location.protocol === "https:" ? "wss:" : "ws:";

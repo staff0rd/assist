@@ -1,3 +1,5 @@
+import { discoverSessions } from "../shared/discoverSessions";
+import { parseTranscript } from "../shared/parseTranscript";
 import { type SessionClient, sendTo } from "./broadcast";
 import type { SessionManager } from "./SessionManager";
 
@@ -70,10 +72,21 @@ function handleResume(
 	);
 }
 
-function handleHistory(client: SessionClient, manager: SessionManager): void {
-	manager.getHistory().then((history) => {
-		sendTo(client, { type: "history", sessions: history });
-	});
+function handleHistory(client: SessionClient): void {
+	discoverSessions().then((sessions) =>
+		sendTo(client, { type: "history", sessions }),
+	);
+}
+
+function handleFetchTranscript(
+	client: SessionClient,
+	_manager: SessionManager,
+	data: Msg,
+): void {
+	const sessionId = data.sessionId as string;
+	parseTranscript(sessionId).then((messages) =>
+		sendTo(client, { type: "transcript", sessionId, messages }),
+	);
 }
 
 function handleShutdown(client: SessionClient, manager: SessionManager): void {
@@ -90,6 +103,7 @@ const handlers: Record<string, Handler> = {
 	"create-assist": handleCreateAssist,
 	resume: handleResume,
 	history: handleHistory,
+	"fetch-transcript": handleFetchTranscript,
 	shutdown: handleShutdown,
 	input: (_client, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),
