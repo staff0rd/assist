@@ -1,3 +1,10 @@
+## [0.275.1](https://github.com/staff0rd/assist/compare/v0.275.0...v0.275.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* override vulnerable transitive deps ([1f47ede](https://github.com/staff0rd/assist/commit/1f47ede00bb5b170b080521cdb9028d6ed1050fa))
+
 # [0.275.0](https://github.com/staff0rd/assist/compare/v0.274.0...v0.275.0) (2026-06-11)
 
 
