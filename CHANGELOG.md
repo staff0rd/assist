@@ -1,3 +1,10 @@
+# [0.276.0](https://github.com/staff0rd/assist/compare/v0.275.1...v0.276.0) (2026-06-11)
+
+
+### Features
+
+* deny git commit via cli-hook ([dde878b](https://github.com/staff0rd/assist/commit/dde878b57ebfd6a7a53250d9c546b622cf5d165b))
+
 ## [0.275.1](https://github.com/staff0rd/assist/compare/v0.275.0...v0.275.1) (2026-06-11)
 
 
