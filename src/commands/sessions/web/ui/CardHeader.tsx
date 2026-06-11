@@ -1,7 +1,9 @@
 import type { SxProps, Theme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { backlogTarget } from "./backlogTarget";
 import { CardChips } from "./CardChips";
+import { CompleteButton } from "./CompleteButton";
 import { DismissButton } from "./DismissButton";
 import { RetryButton } from "./RetryButton";
 import { sessionTitle } from "./sessionTitle";
@@ -35,12 +37,20 @@ export function CardHeader({
 }) {
 	const { status } = session;
 	const isDone = status === "done";
+	const target = backlogTarget(session);
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
 			<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 				<CardChips session={session} />
 				<Box sx={{ flex: 1 }} />
 				{isDone && onRetry && <RetryButton onRetry={onRetry} />}
+				{target && (
+					<CompleteButton
+						target={target}
+						cwd={session.cwd}
+						onDismiss={onDismiss}
+					/>
+				)}
 				<DismissButton status={status} onDismiss={onDismiss} />
 			</Box>
 			<Typography
