@@ -1,3 +1,10 @@
+# [0.275.0](https://github.com/staff0rd/assist/compare/v0.274.0...v0.275.0) (2026-06-11)
+
+
+### Features
+
+* read-only history transcript view ([a9e5504](https://github.com/staff0rd/assist/commit/a9e55043f7a29c0df419d737f5a8e87711d4fd15))
+
 # [0.274.0](https://github.com/staff0rd/assist/compare/v0.273.2...v0.274.0) (2026-06-11)
 
 
