@@ -1,3 +1,10 @@
+# [0.280.0](https://github.com/staff0rd/assist/compare/v0.279.0...v0.280.0) (2026-06-11)
+
+
+### Features
+
+* mark-done button on backlog cards ([8c0e5ee](https://github.com/staff0rd/assist/commit/8c0e5ee5d6c46653fc6804062f090eaeb0b3173f))
+
 # [0.279.0](https://github.com/staff0rd/assist/compare/v0.278.0...v0.279.0) (2026-06-11)
 
 
