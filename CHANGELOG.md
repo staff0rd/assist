@@ -1,3 +1,10 @@
+# [0.279.0](https://github.com/staff0rd/assist/compare/v0.278.0...v0.279.0) (2026-06-11)
+
+
+### Features
+
+* use Ctrl+R for web restart menu ([628dfc0](https://github.com/staff0rd/assist/commit/628dfc01df99d97ca84c2258b66c62dc69fc6f70))
+
 # [0.278.0](https://github.com/staff0rd/assist/compare/v0.277.0...v0.278.0) (2026-06-11)
 
 
