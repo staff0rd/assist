@@ -4,8 +4,14 @@ export function uniqueRepos(
 	currentCwd: string,
 	history: HistoricalSession[],
 ): string[] {
-	const set = new Set<string>();
-	if (currentCwd) set.add(currentCwd);
-	for (const s of history) if (s.cwd) set.add(s.cwd);
-	return [...set].sort((a, b) => a.localeCompare(b));
+	const seen = new Set<string>();
+	const ordered: string[] = [];
+	for (const s of history) {
+		if (s.cwd && !seen.has(s.cwd)) {
+			seen.add(s.cwd);
+			ordered.push(s.cwd);
+		}
+	}
+	if (currentCwd && !seen.has(currentCwd)) ordered.unshift(currentCwd);
+	return ordered;
 }
