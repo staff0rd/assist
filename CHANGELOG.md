@@ -1,3 +1,10 @@
+# [0.278.0](https://github.com/staff0rd/assist/compare/v0.277.0...v0.278.0) (2026-06-11)
+
+
+### Features
+
+* terminal restart menu for web server ([ef20ddc](https://github.com/staff0rd/assist/commit/ef20ddcabbc02897f30ee48face626bbfa13daf5))
+
 # [0.277.0](https://github.com/staff0rd/assist/compare/v0.276.0...v0.277.0) (2026-06-11)
 
 
