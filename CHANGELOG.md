@@ -1,3 +1,10 @@
+## [0.281.3](https://github.com/staff0rd/assist/compare/v0.281.2...v0.281.3) (2026-06-11)
+
+
+### Bug Fixes
+
+* WSL browser open + --no-open flag ([e59c46b](https://github.com/staff0rd/assist/commit/e59c46b7db6a067d849018a6886438608ea99c0e))
+
 ## [0.281.2](https://github.com/staff0rd/assist/compare/v0.281.1...v0.281.2) (2026-06-11)
 
 
