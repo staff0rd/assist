@@ -1,3 +1,10 @@
+## [0.280.1](https://github.com/staff0rd/assist/compare/v0.280.0...v0.280.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* web terminal reconnect on restart ([baecdbc](https://github.com/staff0rd/assist/commit/baecdbcb04f30444125caca0aa0092d63b66e0cd))
+
 # [0.280.0](https://github.com/staff0rd/assist/compare/v0.279.0...v0.280.0) (2026-06-11)
 
 
