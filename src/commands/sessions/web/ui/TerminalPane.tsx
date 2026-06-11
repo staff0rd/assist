@@ -32,7 +32,7 @@ export function TerminalPane({
 			ref={containerRef}
 			sx={{
 				position: "absolute",
-				inset: 0,
+				inset: "0 0 0 8px",
 				visibility: visible ? "visible" : "hidden",
 				pointerEvents: visible ? "auto" : "none",
 			}}
