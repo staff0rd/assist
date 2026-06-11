@@ -26,11 +26,13 @@ export function handleClipboardKey(
 	const key = event.key.toLowerCase();
 
 	if (key === "c" && term.hasSelection()) {
+		event.preventDefault();
 		void clipboard.writeText(term.getSelection());
 		return false;
 	}
 
 	if (key === "v") {
+		event.preventDefault();
 		void clipboard.readText().then(paste);
 		return false;
 	}

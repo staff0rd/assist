@@ -23,15 +23,18 @@ function makeClipboard(readValue = ""): ClipboardApi & {
 	};
 }
 
-function keyEvent(overrides: Partial<KeyboardEvent>): KeyboardEvent {
+function keyEvent(
+	overrides: Partial<KeyboardEvent>,
+): KeyboardEvent & { preventDefault: ReturnType<typeof vi.fn> } {
 	return {
 		type: "keydown",
 		ctrlKey: false,
 		shiftKey: false,
 		altKey: false,
 		key: "",
+		preventDefault: vi.fn(),
 		...overrides,
-	} as KeyboardEvent;
+	} as unknown as KeyboardEvent & { preventDefault: ReturnType<typeof vi.fn> };
 }
 
 describe("handleClipboardKey", () => {
@@ -43,14 +46,11 @@ describe("handleClipboardKey", () => {
 		const clipboard = makeClipboard();
 		const paste = vi.fn();
 
-		const result = handleClipboardKey(
-			keyEvent({ ctrlKey: true, key: "c" }),
-			term,
-			clipboard,
-			paste,
-		);
+		const event = keyEvent({ ctrlKey: true, key: "c" });
+		const result = handleClipboardKey(event, term, clipboard, paste);
 
 		expect(result).toBe(false);
+		expect(event.preventDefault).toHaveBeenCalled();
 		expect(clipboard.writeText).toHaveBeenCalledWith("selected text");
 		expect(paste).not.toHaveBeenCalled();
 	});
@@ -58,14 +58,16 @@ describe("handleClipboardKey", () => {
 	it("preserves interrupt behaviour on Ctrl+C when there is no selection", () => {
 		const clipboard = makeClipboard();
 
+		const event = keyEvent({ ctrlKey: true, key: "c" });
 		const result = handleClipboardKey(
-			keyEvent({ ctrlKey: true, key: "c" }),
+			event,
 			makeTerm({ hasSelection: () => false }),
 			clipboard,
 			vi.fn(),
 		);
 
 		expect(result).toBe(true);
+		expect(event.preventDefault).not.toHaveBeenCalled();
 		expect(clipboard.writeText).not.toHaveBeenCalled();
 	});
 
@@ -73,14 +75,11 @@ describe("handleClipboardKey", () => {
 		const clipboard = makeClipboard("pasted text");
 		const paste = vi.fn();
 
-		const result = handleClipboardKey(
-			keyEvent({ ctrlKey: true, key: "v" }),
-			makeTerm(),
-			clipboard,
-			paste,
-		);
+		const event = keyEvent({ ctrlKey: true, key: "v" });
+		const result = handleClipboardKey(event, makeTerm(), clipboard, paste);
 
 		expect(result).toBe(false);
+		expect(event.preventDefault).toHaveBeenCalled();
 		expect(clipboard.readText).toHaveBeenCalled();
 		await Promise.resolve();
 		expect(paste).toHaveBeenCalledWith("pasted text");
