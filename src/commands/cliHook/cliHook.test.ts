@@ -165,9 +165,9 @@ describe("cliHook config deny", () => {
 
 	it("falls through to settings deny when no config deny matches", async () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-		mockReadStdin.mockResolvedValue(makeInput("git commit --amend"));
+		mockReadStdin.mockResolvedValue(makeInput("npm run build"));
 		mockMatchesConfigDeny.mockReturnValue(undefined);
-		mockMatchesDeny.mockReturnValue("git commit");
+		mockMatchesDeny.mockReturnValue("npm run");
 
 		await cliHook();
 
@@ -176,7 +176,7 @@ describe("cliHook config deny", () => {
 				hookSpecificOutput: {
 					hookEventName: "PreToolUse",
 					permissionDecision: "deny",
-					permissionDecisionReason: "Denied by settings: git commit",
+					permissionDecisionReason: "Denied by settings: npm run",
 				},
 			}),
 		);
@@ -285,18 +285,16 @@ describe("cliHook deny logging", () => {
 
 	it("logs settings deny with correct reason", async () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-		mockReadStdin.mockResolvedValue(
-			makeInput("git commit --amend", "PowerShell"),
-		);
-		mockMatchesDeny.mockReturnValue("git commit");
+		mockReadStdin.mockResolvedValue(makeInput("npm run build", "PowerShell"));
+		mockMatchesDeny.mockReturnValue("npm run");
 
 		await cliHook();
 
 		expect(mockLogDeniedToolCall).toHaveBeenCalledWith(
 			expect.objectContaining({
 				tool: "PowerShell",
-				command: "git commit --amend",
-				denyReason: "Denied by settings: git commit",
+				command: "npm run build",
+				denyReason: "Denied by settings: npm run",
 			}),
 		);
 		consoleSpy.mockRestore();

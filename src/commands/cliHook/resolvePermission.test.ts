@@ -74,3 +74,42 @@ describe("built-in gh pr create deny", () => {
 		expect(findDeny("Bash", ["echo gh pr created"])).toBeUndefined();
 	});
 });
+
+describe("built-in git commit deny", () => {
+	it("denies a bare 'git commit'", () => {
+		const decision = findDeny("Bash", ["git commit"]);
+
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("assist commit");
+	});
+
+	it("denies 'git commit' with flags", () => {
+		const decision = findDeny("Bash", ['git commit -m "fix: x"']);
+
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("denies a compound command containing 'git commit'", () => {
+		const decision = findDeny("Bash", ["git add -A", 'git commit -m "fix: x"']);
+
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("assist commit");
+	});
+
+	it("applies even when settings would allow the command", () => {
+		mockIsApprovedRead.mockReturnValue("Allowed by settings");
+
+		const decision = resolvePermission("Bash", ['git commit -m "fix: x"']);
+
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("does not deny other git sub-commands", () => {
+		expect(findDeny("Bash", ["git commit-tree"])).toBeUndefined();
+		expect(findDeny("Bash", ["git status"])).toBeUndefined();
+	});
+
+	it("does not deny 'assist commit'", () => {
+		expect(findDeny("Bash", ['assist commit "fix: x"'])).toBeUndefined();
+	});
+});
