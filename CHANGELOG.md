@@ -1,3 +1,10 @@
+## [0.281.1](https://github.com/staff0rd/assist/compare/v0.281.0...v0.281.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* left gap between terminal and pane ([3e6c7b5](https://github.com/staff0rd/assist/commit/3e6c7b5fc71df63d555ae41fb28f6380258ea2ee))
+
 # [0.281.0](https://github.com/staff0rd/assist/compare/v0.280.1...v0.281.0) (2026-06-11)
 
 
