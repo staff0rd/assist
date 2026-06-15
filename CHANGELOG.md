@@ -1,3 +1,10 @@
+# [0.282.0](https://github.com/staff0rd/assist/compare/v0.281.3...v0.282.0) (2026-06-15)
+
+
+### Features
+
+* prs raise + edit replace create ([8c69680](https://github.com/staff0rd/assist/commit/8c69680bdbfd396cfdf921ee2fdaf09150987303))
+
 ## [0.281.3](https://github.com/staff0rd/assist/compare/v0.281.2...v0.281.3) (2026-06-11)
 
 
