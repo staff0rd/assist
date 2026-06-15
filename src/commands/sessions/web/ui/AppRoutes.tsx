@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { Navigate, Route, Routes } from "react-router";
 import { BacklogView } from "../../../../commands/backlog/web/ui/BacklogView";
+import { NewsView } from "./NewsView";
 import { SessionsView } from "./SessionsView";
 import type { SessionSocket } from "./useSessionSocket";
 
@@ -31,6 +32,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 				}
 			/>
 			<Route path="backlog/*" element={<BacklogContent />} />
+			<Route path="news" element={<NewsView />} />
 			<Route path="*" element={<Navigate to="/sessions" replace />} />
 		</Routes>
 	);

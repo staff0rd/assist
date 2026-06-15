@@ -104,9 +104,7 @@ After installation, the `assist` command will be available globally. You can als
   - `--since <date>` - Start of the window as `YYYY-MM-DD` instead of the default 30 days ago
   - `--top <n>` - Only report the top `n` repos by commit count; committers and the author breakdown then cover those repos only (also caps the per-repo author queries, which speeds up large orgs)
   - `--json` - Output all three views as structured JSON instead of tables
-- `assist news` - Start the news web UI showing latest RSS feed items (same as `news web`)
-- `assist news add [url]` - Add an RSS feed URL to the config
-- `assist news web [-p, --port <number>]` - Start a web view of the news feeds (default port 3001)
+- `assist news add [url]` - Add an RSS feed URL (rendered in the sessions web News tab)
 Backlog data is stored in a global Postgres database (shared across all repos, scoped per repository by git origin), so a connection string is required. Set it via the `ASSIST_BACKLOG_DATABASE_URL` environment variable or the `backlog.databaseUrl` key in `assist.yml`; the environment variable takes precedence. Without one, every `assist backlog` command exits with a setup message. (There is no SQLite/JSONL fallback.) Commands default to the current repository's items; pass `--all-repos` to span every repository.
 
 The first backlog command in a repository that still has a local `.assist/backlog.jsonl` automatically migrates it into Postgres — but only as a one-time bootstrap into an empty origin. If Postgres has **no** items for the repo's origin yet, it runs `git pull` (best-effort) to fetch the latest committed copy, imports every item under the origin with fresh global IDs (rewriting links to other items), and verifies the result. If Postgres **already** has items for that origin (a prior run, another clone, or a pre-seeded database), the import is skipped to avoid creating duplicates. Either way the local `.assist/backlog.jsonl` and `.assist/backlog.db` are renamed to `*.bak`, so the migration never re-runs and a local copy is retained.
@@ -243,7 +241,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist voice devices` - List available audio input devices
 - `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 - `assist sessions` - Start the web dashboard (same as `sessions web`)
-- `assist sessions web [-p, --port <number>] [--no-open]` - Start the web dashboard with Sessions and Backlog tabs, xterm.js terminals with clickable http(s) links (default port 3100); `--no-open` skips opening a browser on startup; press Ctrl+R in the foreground terminal for an in-terminal restart menu (Restart daemon, Restart webserver, Restart both); Restart webserver re-execs the foreground process (passing `--no-open` so no browser pops on restart) so the connected browser auto-reconnects
+- `assist sessions web [-p, --port <number>] [--no-open]` - Start the web dashboard with Sessions, Backlog and News tabs, xterm.js terminals with clickable http(s) links (default port 3100); `--no-open` skips opening a browser on startup; press Ctrl+R in the foreground terminal for an in-terminal restart menu (Restart daemon, Restart webserver, Restart both); Restart webserver re-execs the foreground process (passing `--no-open` so no browser pops on restart) so the connected browser auto-reconnects
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions (force re-generates all; limit caps how many to process)
 - `assist daemon run` - Run the sessions daemon in the foreground (normally auto-spawned detached by `assist sessions`)
 - `assist daemon status` - Show sessions daemon status, live sessions, and any stray daemon processes or stolen socket

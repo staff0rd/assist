@@ -50,6 +50,8 @@ export function loadConfig(): AssistConfig {
 	const globalRaw = loadRawYaml(getGlobalConfigPath());
 	const projectRaw = loadRawYaml(getConfigPath());
 	const merged = mergeRawConfigs(globalRaw, projectRaw);
+	// why: `news.feeds` moved to the backlog DB; drop the legacy key so it doesn't trip the strict schema (seedNewsFeeds migrates it from raw YAML)
+	delete merged.news;
 	return assistConfigSchema.parse(merged);
 }
 

@@ -11,6 +11,7 @@ import { listItems } from "../../backlog/web/shared";
 import { getHtml } from "./getHtml";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
+import { listNewsItems } from "./listNewsItems";
 import { openInCode } from "./openInCode";
 
 const require = createRequire(import.meta.url);
@@ -43,6 +44,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/open-in-code": openInCode,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,
+	"GET /api/news/items": listNewsItems,
 };
 
 export const handleRequest = createFallbackHandler(

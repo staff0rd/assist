@@ -67,11 +67,6 @@ export const assistConfigSchema = z.strictObject({
 	run: z.array(z.union([runConfigSchema, runLinkSchema])).optional(),
 	transcript: transcriptConfigSchema.optional(),
 	cliReadVerbs: z.record(z.string(), z.array(z.string())).optional(),
-	news: z
-		.strictObject({
-			feeds: z.array(z.string()).default([]),
-		})
-		.default({ feeds: [] }),
 	dotnet: z
 		.strictObject({
 			inspect: z

@@ -1,5 +1,5 @@
 {
-	"entry": ["src/index.ts", "src/commands/news/web/ui/App.tsx", "src/commands/sessions/web/ui/App.tsx"],
+	"entry": ["src/index.ts", "src/commands/sessions/web/ui/App.tsx"],
 	"ignoreDependencies": ["@biomejs/biome", "jscpd", "@vitest/coverage-v8"],
 	"ignore": ["**/.venv/**"]
 }

@@ -88,6 +88,11 @@ const metadata = pgTable("metadata", {
 	value: text().notNull(),
 });
 
+export const feeds = pgTable("feeds", {
+	id: integer().generatedByDefaultAsIdentity().primaryKey(),
+	url: text().notNull().unique(),
+});
+
 /** All backlog tables, passed to the Drizzle client as its schema. */
 export const backlogSchema = {
 	items,
@@ -96,6 +101,7 @@ export const backlogSchema = {
 	planPhases,
 	planTasks,
 	metadata,
+	feeds,
 };
 
 export type ItemRow = typeof items.$inferSelect;

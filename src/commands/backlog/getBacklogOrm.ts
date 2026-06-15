@@ -3,6 +3,7 @@ import { Pool, type PoolClient } from "pg";
 import { loadConfig } from "../../shared/loadConfig";
 import { type BacklogOrm, makeOrmFromPool } from "./BacklogOrm";
 import { ensureSchema } from "./ensureSchema";
+import { seedNewsFeeds } from "./seedNewsFeeds";
 
 const DATABASE_URL_ENV = "ASSIST_BACKLOG_DATABASE_URL";
 
@@ -48,6 +49,7 @@ export function getBacklogOrm(): Promise<BacklogOrm> {
 		_pool = pool;
 		await ensureSchema((sql) => pool.query(sql));
 		_orm = makeOrmFromPool(pool);
+		await seedNewsFeeds(_orm);
 		return _orm;
 	})();
 	return _connecting;
