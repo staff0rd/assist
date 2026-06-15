@@ -1,3 +1,10 @@
+# [0.286.0](https://github.com/staff0rd/assist/compare/v0.285.0...v0.286.0) (2026-06-15)
+
+
+### Features
+
+* discover windows-origin sessions ([bd14558](https://github.com/staff0rd/assist/commit/bd145588a121a367e2841bbe3bc69fed387920bc))
+
 # [0.285.0](https://github.com/staff0rd/assist/compare/v0.284.1...v0.285.0) (2026-06-15)
 
 
