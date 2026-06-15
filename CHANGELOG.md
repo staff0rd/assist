@@ -1,3 +1,10 @@
+# [0.285.0](https://github.com/staff0rd/assist/compare/v0.284.1...v0.285.0) (2026-06-15)
+
+
+### Features
+
+* proxy windows sessions over TCP ([82f7d98](https://github.com/staff0rd/assist/commit/82f7d98cb8230c73f30ca4540a216e7ccfcb9999))
+
 ## [0.284.1](https://github.com/staff0rd/assist/compare/v0.284.0...v0.284.1) (2026-06-15)
 
 
