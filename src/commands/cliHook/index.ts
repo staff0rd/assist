@@ -1,6 +1,7 @@
 import { basename } from "node:path";
 import { readStdin } from "../../lib/readStdin";
 import { splitCompound } from "../../shared/splitCompound";
+import { findBuiltinDenyRaw } from "./findBuiltinDeny";
 import { logDeniedToolCall } from "./logDeniedToolCall";
 import { findDeny, resolvePermission } from "./resolvePermission";
 
@@ -33,8 +34,8 @@ function tryParseInput(
 function decide(toolName: string, rawCommand: string) {
 	const result = splitCompound(rawCommand);
 	if (result.ok) return resolvePermission(toolName, result.parts);
-	// Command couldn't be decomposed — still check deny rules against the raw command
-	return findDeny(toolName, [rawCommand]);
+	// why: undecomposable command — fail closed on built-in denies the raw-string prefix check would miss
+	return findBuiltinDenyRaw(rawCommand) ?? findDeny(toolName, [rawCommand]);
 }
 
 export async function cliHook(): Promise<void> {

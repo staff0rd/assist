@@ -35,3 +35,35 @@ export function findBuiltinDeny(parts: string[]): HookDecision | undefined {
 		permissionDecisionReason: rule.message,
 	};
 }
+
+function rawDenyRegex(pattern: string): RegExp {
+	const tokens = pattern
+		.trim()
+		.split(/\s+/)
+		.map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+		.join("\\s+");
+	// why: match the pattern as a whole token sequence anywhere, not only as a leading prefix
+	return new RegExp(`(?<=^|\\s)${tokens}(?=\\s|$)`);
+}
+
+const RAW_BUILTIN_DENIES = BUILTIN_DENIES.map((rule) => ({
+	...rule,
+	regex: rawDenyRegex(rule.pattern),
+}));
+
+/**
+ * why: fail-closed fallback for commands splitCompound can't decompose
+ * (backticks/heredoc/subshell), where a buried `git commit` would otherwise
+ * slip past the leading-prefix check in findBuiltinDeny.
+ */
+export function findBuiltinDenyRaw(
+	rawCommand: string,
+): HookDecision | undefined {
+	const rule = RAW_BUILTIN_DENIES.find((r) => r.regex.test(rawCommand));
+	if (!rule) return undefined;
+
+	return {
+		permissionDecision: "deny",
+		permissionDecisionReason: rule.message,
+	};
+}

@@ -184,6 +184,73 @@ describe("cliHook config deny", () => {
 	});
 });
 
+describe("cliHook built-in deny hardening", () => {
+	function expectGitCommitDeny(consoleSpy: ReturnType<typeof vi.spyOn>) {
+		expect(consoleSpy).toHaveBeenCalledWith(
+			JSON.stringify({
+				hookSpecificOutput: {
+					hookEventName: "PreToolUse",
+					permissionDecision: "deny",
+					permissionDecisionReason:
+						"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead.",
+				},
+			}),
+		);
+	}
+
+	it("denies a compound '&&' git commit not at the leading token", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeInput("git add A B && git commit -q -m wip"),
+		);
+
+		await cliHook();
+
+		expectGitCommitDeny(consoleSpy);
+		consoleSpy.mockRestore();
+	});
+
+	it("denies a ';'-separated leading-cd git commit", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeInput("cd /repo; git commit -m wip"));
+
+		await cliHook();
+
+		expectGitCommitDeny(consoleSpy);
+		consoleSpy.mockRestore();
+	});
+
+	it("denies a heredoc git commit whose body contains backticks", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeInput(
+				"cd /repo && git add A B && git commit -q -F - <<'EOF'\nSubject mentioning `some.code`\nbody with `verify:complexity`\nEOF",
+			),
+		);
+
+		await cliHook();
+
+		expectGitCommitDeny(consoleSpy);
+		consoleSpy.mockRestore();
+	});
+
+	it("denies a heredoc 'gh pr create' whose body contains backticks", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeInput(
+				"gh pr create --title x --body - <<'EOF'\nbody with `code`\nEOF",
+			),
+		);
+
+		await cliHook();
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("assist prs raise"),
+		);
+		consoleSpy.mockRestore();
+	});
+});
+
 describe("cliHook subcommand advice", () => {
 	it("denies a compound command piping 'assist complexity' with sub-command advice", async () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});

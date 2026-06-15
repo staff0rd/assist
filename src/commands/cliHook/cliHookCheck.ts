@@ -1,14 +1,18 @@
 import { isApprovedRead } from "../../shared/isApprovedRead";
 import { splitCompound } from "../../shared/splitCompound";
+import { findBuiltinDenyRaw } from "./findBuiltinDeny";
 import { findDeny } from "./resolvePermission";
 
-function reportDeny(toolName: string, parts: string[]): boolean {
-	const denied = findDeny(toolName, parts);
-	if (!denied) return false;
+function reportDecision(decision: ReturnType<typeof findDeny>): boolean {
+	if (!decision) return false;
 
-	console.log(`denied: ${denied.permissionDecisionReason}`);
+	console.log(`denied: ${decision.permissionDecisionReason}`);
 	process.exitCode = 1;
 	return true;
+}
+
+function reportDeny(toolName: string, parts: string[]): boolean {
+	return reportDecision(findDeny(toolName, parts));
 }
 
 export function cliHookCheck(command: string, toolName = "Bash"): void {
@@ -16,6 +20,7 @@ export function cliHookCheck(command: string, toolName = "Bash"): void {
 	const result = splitCompound(trimmed);
 
 	if (!result.ok) {
+		if (reportDecision(findBuiltinDenyRaw(trimmed))) return;
 		if (reportDeny(toolName, [trimmed])) return;
 		console.log(`not approved (${result.error})`);
 		process.exitCode = 1;

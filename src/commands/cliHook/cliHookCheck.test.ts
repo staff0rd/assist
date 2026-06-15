@@ -83,6 +83,46 @@ describe("cliHookCheck deny", () => {
 	});
 });
 
+describe("cliHookCheck built-in deny hardening", () => {
+	it("denies a compound '&&' git commit not at the leading token", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		cliHookCheck("git add A B && git commit -q -m wip");
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("assist commit"),
+		);
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
+
+	it("denies a leading-cd git commit", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		cliHookCheck("cd /repo; git commit -m wip");
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("assist commit"),
+		);
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
+
+	it("denies a heredoc git commit whose body contains backticks (fails closed)", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		cliHookCheck(
+			"cd /repo && git add A B && git commit -q -F - <<'EOF'\nSubject `some.code`\nbody `verify:complexity`\nEOF",
+		);
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("assist commit"),
+		);
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
+});
+
 describe("cliHookCheck compound with shell builtins", () => {
 	it("approves 'some-cmd || true' when some-cmd is approved", () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
