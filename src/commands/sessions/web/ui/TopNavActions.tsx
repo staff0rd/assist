@@ -23,6 +23,7 @@ export function TopNavActions({
 				}
 			>
 				<FreePromptDropdown
+					allowEmpty
 					disabled={disabled}
 					onSubmit={(prompt) => onCreate(prompt, selectedCwd)}
 				/>
