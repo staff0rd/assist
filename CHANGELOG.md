@@ -1,3 +1,10 @@
+## [0.282.1](https://github.com/staff0rd/assist/compare/v0.282.0...v0.282.1) (2026-06-15)
+
+
+### Bug Fixes
+
+* fail closed on buried cli-hook denies ([fb6e27e](https://github.com/staff0rd/assist/commit/fb6e27ec3cff690f11f2c3eaef72a70486801da6))
+
 # [0.282.0](https://github.com/staff0rd/assist/compare/v0.281.3...v0.282.0) (2026-06-15)
 
 
