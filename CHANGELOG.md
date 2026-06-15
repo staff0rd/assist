@@ -1,3 +1,10 @@
+## [0.284.1](https://github.com/staff0rd/assist/compare/v0.284.0...v0.284.1) (2026-06-15)
+
+
+### Bug Fixes
+
+* allow starting session with empty prompt ([2755a5e](https://github.com/staff0rd/assist/commit/2755a5ee56c59992804e2021a555ce39105621a0))
+
 # [0.284.0](https://github.com/staff0rd/assist/compare/v0.283.0...v0.284.0) (2026-06-15)
 
 
