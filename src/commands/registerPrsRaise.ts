@@ -1,18 +1,30 @@
 import type { Command } from "commander";
-import { create as prsCreate } from "./prs/index";
+import { raise as prsRaise } from "./prs/index";
 
 function collect(value: string, previous: string[]): string[] {
 	return previous.concat([value]);
 }
 
-export function registerPrsCreate(prsCommand: Command): void {
+export function registerPrsRaise(prsCommand: Command): void {
 	prsCommand
-		.command("create")
+		.command("raise")
 		.description(
-			"Create a pull request via gh pr create, validating the title and body first",
+			"Raise a pull request, assembling the body from discrete sections",
 		)
 		.option("-t, --title <title>", "Title for the pull request")
-		.option("-b, --body <body>", "Body for the pull request")
+		.option("--what <what>", "What the change does (## What section)")
+		.option("--why <why>", "Why the change is needed (## Why section)")
+		.option("--how <how>", "How the change works (optional ## How section)")
+		.option(
+			"--resolves <key>",
+			"Jira issue key resolved by this PR, appended to ## Why (repeatable)",
+			collect,
+			[],
+		)
+		.option(
+			"--force",
+			"Overwrite the title and body of an existing pull request",
+		)
 		.option("-B, --base <branch>", "Branch into which the pull request merges")
 		.option("-H, --head <branch>", "Branch that contains the commits")
 		.option("-d, --draft", "Mark the pull request as a draft")
@@ -31,5 +43,5 @@ export function registerPrsCreate(prsCommand: Command): void {
 			[],
 		)
 		.option("-m, --milestone <name>", "Add the pull request to a milestone")
-		.action(prsCreate);
+		.action(prsRaise);
 }

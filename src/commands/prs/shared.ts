@@ -53,6 +53,18 @@ export function getCurrentPrNumber(): number {
 	}
 }
 
+export function getCurrentPr(): { number: number; body: string } {
+	try {
+		return viewCurrentPr<{ number: number; body: string }>("number,body");
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("no pull requests")) {
+			console.error("Error: No pull request found for the current branch.");
+			process.exit(1);
+		}
+		throw error;
+	}
+}
+
 export function getCurrentPrNodeId(): string {
 	try {
 		return viewCurrentPr<{ id: string }>("id").id;

@@ -30,7 +30,7 @@ describe("built-in gh pr create deny", () => {
 		const decision = findDeny("Bash", ["gh pr create"]);
 
 		expect(decision?.permissionDecision).toBe("deny");
-		expect(decision?.permissionDecisionReason).toContain("assist prs create");
+		expect(decision?.permissionDecisionReason).toContain("assist prs raise");
 	});
 
 	it("denies 'gh pr create' with flags", () => {
@@ -48,7 +48,7 @@ describe("built-in gh pr create deny", () => {
 		]);
 
 		expect(decision?.permissionDecision).toBe("deny");
-		expect(decision?.permissionDecisionReason).toContain("assist prs create");
+		expect(decision?.permissionDecisionReason).toContain("assist prs raise");
 	});
 
 	it("applies even when settings would allow the command", () => {
@@ -64,9 +64,9 @@ describe("built-in gh pr create deny", () => {
 		expect(findDeny("Bash", ["gh pr list"])).toBeUndefined();
 	});
 
-	it("does not deny 'assist prs create'", () => {
+	it("does not deny 'assist prs raise'", () => {
 		expect(
-			findDeny("Bash", ["assist prs create --title t --body b"]),
+			findDeny("Bash", ["assist prs raise --title t --what w --why y"]),
 		).toBeUndefined();
 	});
 

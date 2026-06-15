@@ -62,7 +62,7 @@ describe("cliHookCheck deny", () => {
 		cliHookCheck("gh pr create --title x --body y");
 
 		expect(consoleSpy).toHaveBeenCalledWith(
-			expect.stringContaining("assist prs create"),
+			expect.stringContaining("assist prs raise"),
 		);
 		expect(process.exitCode).toBe(1);
 		consoleSpy.mockRestore();

@@ -86,7 +86,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist commit <message>` - Commit staged changes with validation
 - `assist commit <message> [files...]` - Stage files and create a git commit with validation
 - `assist prs` - List pull requests for the current repository
-- `assist prs create --title <title> --body <body>` - Create a pull request via `gh pr create`
+- `assist prs raise --title <title> --what <what> --why <why> [--how <how>] [--resolves <key>] [--force]` - Raise a pull request, assembling the body from `## What`, `## Why` (with `--resolves` Jira URLs appended inline), and an optional `## How`; errors if a PR already exists unless `--force` overwrites its title and body
+- `assist prs edit [--title <title>] [--what <what>] [--why <why>] [--how <how>] [--resolves <key>]` - Update only the supplied sections of the current branch's pull request, preserving every other section of its body
 - `assist prs list-comments` - List all comments on the current branch's pull request
 - `assist prs fixed <comment-id> <sha>` - Reply with commit link and resolve thread
 - `assist prs wontfix <comment-id> <reason>` - Reply with reason and resolve thread
