@@ -1,3 +1,10 @@
+# [0.284.0](https://github.com/staff0rd/assist/compare/v0.283.0...v0.284.0) (2026-06-15)
+
+
+### Features
+
+* /prs-slack posts PR to Slack ([c583118](https://github.com/staff0rd/assist/commit/c58311842d2635f647a95b45ed0de2c03ca81191))
+
 # [0.283.0](https://github.com/staff0rd/assist/compare/v0.282.1...v0.283.0) (2026-06-15)
 
 
