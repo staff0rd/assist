@@ -40,10 +40,10 @@ async function findLatestSessionId(
 ): Promise<{ sessionId: string; createdMs: number } | null> {
 	const paths = await discoverSessionJsonlPaths();
 	let latest: { sessionId: string; createdMs: number } | null = null;
-	for (const filePath of paths) {
+	for (const { path: filePath, origin } of paths) {
 		const createdMs = await createdSince(filePath, options.sinceMs);
 		if (createdMs === null) continue;
-		const meta = await parseSessionFile(filePath);
+		const meta = await parseSessionFile(filePath, origin);
 		if (!meta?.cwd || options.isClaimed(meta.sessionId)) continue;
 		if (path.resolve(meta.cwd) !== path.resolve(options.cwd)) continue;
 		if (!latest || createdMs > latest.createdMs)

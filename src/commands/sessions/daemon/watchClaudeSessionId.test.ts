@@ -27,7 +27,9 @@ describe("watchClaudeSessionId", () => {
 	});
 
 	it("reports the sessionId of a new file matching the cwd", async () => {
-		pathsMock.mockResolvedValue(["/projects/a/new.jsonl"]);
+		pathsMock.mockResolvedValue([
+			{ path: "/projects/a/new.jsonl", origin: "wsl" },
+		]);
 		statMock.mockResolvedValue({ birthtimeMs: 2_000, mtimeMs: 2_000 });
 		parseMock.mockResolvedValue({ sessionId: "abc-123", cwd: "/repo" });
 		const onSessionId = vi.fn();
@@ -45,7 +47,9 @@ describe("watchClaudeSessionId", () => {
 	});
 
 	it("ignores files created before the session started", async () => {
-		pathsMock.mockResolvedValue(["/projects/a/old.jsonl"]);
+		pathsMock.mockResolvedValue([
+			{ path: "/projects/a/old.jsonl", origin: "wsl" },
+		]);
 		statMock.mockResolvedValue({ birthtimeMs: 500, mtimeMs: 500 });
 		const onSessionId = vi.fn();
 
@@ -63,7 +67,9 @@ describe("watchClaudeSessionId", () => {
 	});
 
 	it("skips sessionIds already claimed by other sessions", async () => {
-		pathsMock.mockResolvedValue(["/projects/a/new.jsonl"]);
+		pathsMock.mockResolvedValue([
+			{ path: "/projects/a/new.jsonl", origin: "wsl" },
+		]);
 		statMock.mockResolvedValue({ birthtimeMs: 2_000, mtimeMs: 2_000 });
 		parseMock.mockResolvedValue({ sessionId: "claimed", cwd: "/repo" });
 		const onSessionId = vi.fn();
@@ -81,7 +87,9 @@ describe("watchClaudeSessionId", () => {
 	});
 
 	it("ignores sessions from other working directories", async () => {
-		pathsMock.mockResolvedValue(["/projects/a/new.jsonl"]);
+		pathsMock.mockResolvedValue([
+			{ path: "/projects/a/new.jsonl", origin: "wsl" },
+		]);
 		statMock.mockResolvedValue({ birthtimeMs: 2_000, mtimeMs: 2_000 });
 		parseMock.mockResolvedValue({ sessionId: "abc-123", cwd: "/other" });
 		const onSessionId = vi.fn();
@@ -116,8 +124,8 @@ describe("watchClaudeSessionId", () => {
 
 	it("adopts the newest matching transcript, not the first discovered", async () => {
 		pathsMock.mockResolvedValue([
-			"/projects/a/phase1.jsonl",
-			"/projects/a/phase2.jsonl",
+			{ path: "/projects/a/phase1.jsonl", origin: "wsl" },
+			{ path: "/projects/a/phase2.jsonl", origin: "wsl" },
 		]);
 		statMock.mockImplementation((p: string) =>
 			Promise.resolve(
@@ -164,10 +172,12 @@ describe("watchClaudeSessionId", () => {
 			),
 		);
 		pathsMock
-			.mockResolvedValueOnce(["/projects/a/phase1.jsonl"])
+			.mockResolvedValueOnce([
+				{ path: "/projects/a/phase1.jsonl", origin: "wsl" },
+			])
 			.mockResolvedValue([
-				"/projects/a/phase1.jsonl",
-				"/projects/a/phase2.jsonl",
+				{ path: "/projects/a/phase1.jsonl", origin: "wsl" },
+				{ path: "/projects/a/phase2.jsonl", origin: "wsl" },
 			]);
 		const onSessionId = vi.fn((id: string) => claimed.add(id));
 
@@ -185,7 +195,9 @@ describe("watchClaudeSessionId", () => {
 	});
 
 	it("does not re-report the same session on subsequent polls", async () => {
-		pathsMock.mockResolvedValue(["/projects/a/new.jsonl"]);
+		pathsMock.mockResolvedValue([
+			{ path: "/projects/a/new.jsonl", origin: "wsl" },
+		]);
 		statMock.mockResolvedValue({ birthtimeMs: 2_000, mtimeMs: 2_000 });
 		const claimed = new Set<string>();
 		parseMock.mockImplementation(() =>

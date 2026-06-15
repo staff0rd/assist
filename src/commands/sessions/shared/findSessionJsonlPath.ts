@@ -11,11 +11,13 @@ export async function findSessionJsonlPath(
 	sessionId: string,
 ): Promise<string | null> {
 	const paths = await discoverSessionJsonlPaths();
-	const direct = paths.find((p) => path.basename(p, ".jsonl") === sessionId);
-	if (direct) return direct;
+	const direct = paths.find(
+		(p) => path.basename(p.path, ".jsonl") === sessionId,
+	);
+	if (direct) return direct.path;
 	for (const p of paths) {
-		const meta = await parseSessionFile(p);
-		if (meta?.sessionId === sessionId) return p;
+		const meta = await parseSessionFile(p.path, p.origin);
+		if (meta?.sessionId === sessionId) return p.path;
 	}
 	return null;
 }

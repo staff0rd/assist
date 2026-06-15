@@ -10,6 +10,15 @@ export function HistoryCardChips({ session }: { session: HistoricalSession }) {
 	return (
 		<>
 			{repo && <Chip label={repo} size="small" sx={chipSx} />}
+			{session.origin === "windows" && (
+				<Chip
+					label="Windows"
+					size="small"
+					color="info"
+					variant="outlined"
+					sx={chipSx}
+				/>
+			)}
 			{session.sessionType && session.sessionType !== "next" && (
 				<Chip
 					label={session.sessionType}

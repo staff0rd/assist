@@ -1,5 +1,6 @@
 import type { Activity } from "../../../../shared/emitActivity";
 import type { SessionType } from "../../shared/deriveHistoryFields";
+import type { SessionOrigin } from "../../shared/parseSessionFile";
 
 export type SessionStatus = "running" | "waiting" | "done";
 
@@ -33,6 +34,7 @@ export type HistoricalSession = {
 	project: string;
 	cwd: string;
 	timestamp: string;
+	origin?: SessionOrigin;
 	sessionType?: SessionType;
 	itemId?: number;
 	prompt?: string;

@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import chalk from "chalk";
-import { discoverSessionJsonlPaths } from "../shared/discoverSessions";
+import { discoverSessionFiles } from "../shared/discoverSessions";
 import { hasSummary, writeSummary } from "./shared";
 import { summariseSession } from "./summariseSession";
 
@@ -10,7 +10,7 @@ type SummariseOptions = {
 };
 
 export async function summarise(options: SummariseOptions): Promise<void> {
-	const files = await discoverSessionJsonlPaths();
+	const files = await discoverSessionFiles();
 	if (files.length === 0) {
 		console.log(chalk.yellow("No sessions found."));
 		return;
