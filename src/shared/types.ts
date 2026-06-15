@@ -64,6 +64,11 @@ export const assistConfigSchema = z.strictObject({
 			tokenExpiresAt: z.number().optional(),
 		})
 		.optional(),
+	prs: z
+		.strictObject({
+			slack: z.string(),
+		})
+		.optional(),
 	run: z.array(z.union([runConfigSchema, runLinkSchema])).optional(),
 	transcript: transcriptConfigSchema.optional(),
 	cliReadVerbs: z.record(z.string(), z.array(z.string())).optional(),

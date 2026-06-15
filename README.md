@@ -47,6 +47,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/forward-comments` - Split a coarse PR comment (e.g. from Slack) into per-line review comments on the current branch's PR, attributed to the original reviewer
 - `/handover` - Write a session handover note (`.assist/HANDOVER.md`) for the next conversation; archives any prior handover first. The SessionStart hook surfaces the handover at the start of the next session
 - `/pr` - Raise a PR with a concise description
+- `/prs-slack <number>` - Post a PR's title and URL to the Slack channel configured in `prs.slack`
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
 - `/recall` - Recall context from the most recent prior session in this repo by summarising its transcript (skips sdk-cli-only sessions); read-only, emits a `# Recall` block in chat
@@ -149,6 +150,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
 - `assist config get <key>` - Get a config value
 - `assist config list` - List all config values
+  - `prs.slack` - The Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector
 - `assist verify` - Run all verify:* commands in parallel (from run configs in assist.yml and scripts in package.json)
 - `assist verify all` - Run all checks, ignoring diff-based filters
 - `assist verify init` - Add verify scripts to a project (writes to `assist.yml` by default; pass `--package-json` to write to `package.json` scripts instead)

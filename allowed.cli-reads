@@ -28,6 +28,7 @@ assist backlog show
 assist backlog view
 assist cli-hook
 assist complexity
+assist config get
 assist coverage
 assist daemon status
 assist dotnet
