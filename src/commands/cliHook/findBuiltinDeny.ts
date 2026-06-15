@@ -14,6 +14,11 @@ const BUILTIN_DENIES: { pattern: string; message: string }[] = [
 			"Do not run 'gh pr create' directly. Use 'assist prs raise --title <title> --what <what> --why <why>' instead — it assembles and validates the body before delegating to gh. Before running it, get explicit approval via the AskUserQuestion tool, regardless of permission mode, with the full proposed title and body in the approve option's preview field so the user actually sees them.",
 	},
 	{
+		pattern: "gh pr edit",
+		message:
+			"Do not run 'gh pr edit' directly. Use 'assist prs edit [--title <title>] [--what <what>] [--why <why>] [--how <how>]' instead — it assembles and validates the body before delegating to gh. Before running it, get explicit approval via the AskUserQuestion tool, regardless of permission mode, with the full proposed title and body in the approve option's preview field so the user actually sees them.",
+	},
+	{
 		pattern: "git commit",
 		message:
 			"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead.",
