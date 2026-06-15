@@ -1,3 +1,10 @@
+# [0.283.0](https://github.com/staff0rd/assist/compare/v0.282.1...v0.283.0) (2026-06-15)
+
+
+### Features
+
+* deny gh pr edit, force assist wrapper ([244e791](https://github.com/staff0rd/assist/commit/244e7913e892512448e42d1e7bc58e8df97152f9))
+
 ## [0.282.1](https://github.com/staff0rd/assist/compare/v0.282.0...v0.282.1) (2026-06-15)
 
 
