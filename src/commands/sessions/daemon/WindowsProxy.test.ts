@@ -1,0 +1,199 @@
+import type { AddressInfo } from "node:net";
+import * as net from "node:net";
+import { createInterface } from "node:readline";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { SessionClient } from "./broadcast";
+import { WindowsProxy } from "./WindowsProxy";
+
+// route() only proxies under WSL; tests run on plain Linux/macOS CI
+vi.mock("../../../lib/detectPlatform", () => ({ detectPlatform: () => "wsl" }));
+
+// A fake native Windows daemon: one TCP connection whose received lines and
+// send() helper let the test drive the proxy from the far end.
+type FakeDaemon = {
+	port: number;
+	received: string[];
+	send: (msg: object) => void;
+	close: () => Promise<void>;
+};
+
+async function startFakeDaemon(): Promise<FakeDaemon> {
+	const received: string[] = [];
+	let peer: net.Socket | null = null;
+	const server = net.createServer((socket) => {
+		peer = socket;
+		const lines = createInterface({ input: socket });
+		lines.on("line", (line) => received.push(line));
+	});
+	await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+	const { port } = server.address() as AddressInfo;
+
+	return {
+		port,
+		received,
+		send: (msg) => peer?.write(`${JSON.stringify(msg)}\n`),
+		close: () =>
+			new Promise((resolve) => {
+				peer?.destroy();
+				server.close(() => resolve());
+			}),
+	};
+}
+
+function waitFor(predicate: () => boolean, timeoutMs = 1000): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const deadline = Date.now() + timeoutMs;
+		const tick = () => {
+			if (predicate()) return resolve();
+			if (Date.now() > deadline) return reject(new Error("waitFor timed out"));
+			setTimeout(tick, 5);
+		};
+		tick();
+	});
+}
+
+function settle(): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, 10));
+}
+
+describe("WindowsProxy", () => {
+	let daemon: FakeDaemon;
+	let proxy: WindowsProxy;
+	let broadcasts: object[];
+
+	beforeEach(async () => {
+		daemon = await startFakeDaemon();
+		broadcasts = [];
+		const clients = new Set<SessionClient>([
+			{ send: (data) => broadcasts.push(JSON.parse(data)) },
+		]);
+		proxy = new WindowsProxy(
+			clients,
+			() => {},
+			() =>
+				new Promise((resolve, reject) => {
+					const s = net.connect(daemon.port, "127.0.0.1");
+					s.once("connect", () => resolve(s));
+					s.once("error", reject);
+				}),
+		);
+	});
+
+	afterEach(async () => {
+		proxy.dispose();
+		await daemon.close();
+		// let the disposed socket's async 'close' drain before the next test
+		await settle();
+	});
+
+	function client(): SessionClient & { sent: object[] } {
+		const sent: object[] = [];
+		return { sent, send: (data) => sent.push(JSON.parse(data)) };
+	}
+
+	async function createWindowsSession(): Promise<void> {
+		proxy.route(client(), { type: "create", cwd: "C:\\repo" });
+		await waitFor(() => daemon.received.length >= 1);
+	}
+
+	it("forwards create and relays a namespaced created ack to the requester", async () => {
+		const c = client();
+		expect(proxy.route(c, { type: "create", cwd: "C:\\repo" })).toBe(true);
+
+		await waitFor(() => daemon.received.length >= 2);
+		// the hello handshake is sent before the create
+		expect(JSON.parse(daemon.received[0]).type).toBe("hello");
+		expect(JSON.parse(daemon.received[1])).toMatchObject({
+			type: "create",
+			cwd: "C:\\repo",
+		});
+
+		daemon.send({ type: "created", sessionId: "3" });
+		await waitFor(() => c.sent.length >= 1);
+		expect(c.sent[0]).toEqual({ type: "created", sessionId: "w-3" });
+	});
+
+	it("namespaces session ids in the merged list", async () => {
+		await createWindowsSession();
+		daemon.send({
+			type: "sessions",
+			sessions: [{ id: "3", name: "app", cwd: "C:\\repo" }],
+		});
+		await waitFor(() => proxy.sessions().length === 1);
+		expect(proxy.sessions()).toEqual([
+			{ id: "w-3", name: "app", cwd: "C:\\repo" },
+		]);
+	});
+
+	it("relays output with a namespaced id and replays scrollback to new clients", async () => {
+		await createWindowsSession();
+		daemon.send({ type: "output", sessionId: "3", data: "hello" });
+		await waitFor(() => broadcasts.length > 0);
+		expect(broadcasts[0]).toEqual({
+			type: "output",
+			sessionId: "w-3",
+			data: "hello",
+		});
+
+		const late = client();
+		proxy.replayScrollback(late);
+		expect(late.sent).toEqual([
+			{ type: "output", sessionId: "w-3", data: "hello" },
+		]);
+	});
+
+	it("strips the namespace when forwarding I/O back to the daemon", async () => {
+		await createWindowsSession();
+		expect(
+			proxy.route(client(), { type: "input", sessionId: "w-3", data: "ls\n" }),
+		).toBe(true);
+		await waitFor(() => daemon.received.some((l) => l.includes('"input"')));
+		const input = daemon.received
+			.map((l) => JSON.parse(l))
+			.find((m) => m.type === "input");
+		expect(input).toEqual({ type: "input", sessionId: "3", data: "ls\n" });
+	});
+
+	it("drops sessions when the connection closes", async () => {
+		await createWindowsSession();
+		daemon.send({
+			type: "sessions",
+			sessions: [{ id: "3", name: "app", cwd: "C:\\repo" }],
+		});
+		await waitFor(() => proxy.sessions().length === 1);
+
+		await daemon.close();
+		await waitFor(() => proxy.sessions().length === 0);
+	});
+
+	it("surfaces an error to the client when connect fails", async () => {
+		const failing = new WindowsProxy(
+			new Set(),
+			() => {},
+			() => Promise.reject(new Error("no windows daemon")),
+		);
+		const c = client();
+		failing.route(c, { type: "create", cwd: "C:\\repo" });
+		await waitFor(() => c.sent.length >= 1);
+		expect(c.sent[0]).toMatchObject({ type: "error" });
+	});
+
+	it("does not claim local sessions", () => {
+		expect(
+			proxy.route(client(), { type: "create", cwd: "/home/me/repo" }),
+		).toBe(false);
+		expect(
+			proxy.route(client(), { type: "input", sessionId: "3", data: "x" }),
+		).toBe(false);
+	});
+
+	it("logs a warning on version mismatch", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		await createWindowsSession();
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await waitFor(() =>
+			log.mock.calls.some((c) => String(c[0]).includes("version mismatch")),
+		);
+		log.mockRestore();
+	});
+});

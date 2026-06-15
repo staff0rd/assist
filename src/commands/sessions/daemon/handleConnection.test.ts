@@ -15,6 +15,7 @@ function createManager(overrides: Partial<SessionManager>): SessionManager {
 	return {
 		addClient: vi.fn(),
 		removeClient: vi.fn(),
+		windowsProxy: { route: vi.fn(() => false) },
 		...overrides,
 	} as unknown as SessionManager;
 }

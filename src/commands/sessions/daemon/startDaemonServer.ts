@@ -6,6 +6,7 @@ import { daemonPaths } from "./daemonPaths";
 import { handleConnection } from "./handleConnection";
 import { onListening } from "./onListening";
 import type { SessionManager } from "./SessionManager";
+import { windowsDaemonPort } from "./windowsDaemonPort";
 
 export function startDaemonServer(
 	manager: SessionManager,
@@ -14,6 +15,8 @@ export function startDaemonServer(
 	const server = net.createServer((socket) =>
 		handleConnection(socket, manager),
 	);
+	// why: the WSL daemon cannot reach the Windows named pipe, so add a TCP bridge
+	if (process.platform === "win32") startWindowsBridge(manager);
 	let retried = false;
 	server.on("error", (e: NodeJS.ErrnoException) => {
 		if (e.code !== "EADDRINUSE" || retried) {
@@ -26,6 +29,17 @@ export function startDaemonServer(
 	// Sessions are restored only after the socket is bound, so a daemon that
 	// loses the startup race never resumes a duplicate copy of them
 	server.listen(daemonPaths.socket, () => onListening(manager, checkAutoExit));
+}
+
+function startWindowsBridge(manager: SessionManager): void {
+	const port = windowsDaemonPort();
+	const bridge = net.createServer((socket) =>
+		handleConnection(socket, manager),
+	);
+	bridge.on("error", (e: NodeJS.ErrnoException) =>
+		daemonLog(`windows bridge error: ${e.message}`),
+	);
+	bridge.listen(port, () => daemonLog(`windows bridge listening on :${port}`));
 }
 
 // The socket path is taken: either a live daemon owns it (this process lost

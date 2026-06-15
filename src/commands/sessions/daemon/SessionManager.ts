@@ -16,16 +16,11 @@ import { retrySession } from "./retrySession";
 import { reuseSessionForRun } from "./reuseSessionForRun";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
+import { WindowsProxy } from "./WindowsProxy";
 import { watchActivity } from "./watchActivity";
 import { watchForClaudeSessionId } from "./watchForClaudeSessionId";
 import { wirePtyEvents } from "./wirePtyEvents";
-import {
-	dismissSession,
-	resizeSession,
-	setAutoAdvance,
-	setAutoRun,
-	writeToSession,
-} from "./writeToSession";
+import * as sessionIo from "./writeToSession";
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
@@ -33,12 +28,15 @@ export class SessionManager {
 	private nextId = 1;
 	private shuttingDown = false;
 
+	// why: dispatch calls windowsProxy.route() to forward windows-origin sessions
+	readonly windowsProxy = new WindowsProxy(this.clients, () => this.notify());
+
 	constructor(private readonly onIdleChange?: (idle: boolean) => void) {}
 
 	addClient(client: SessionClient): void {
 		this.clients.add(client);
 		this.onIdleChange?.(this.isIdle());
-		greetClient(client, this.sessions, () => this.listSessions());
+		greetClient(client, this.sessions, this.listSessions, this.windowsProxy);
 	}
 
 	removeClient(client: SessionClient): void {
@@ -103,11 +101,11 @@ export class SessionManager {
 	}
 
 	writeToSession(id: string, data: string): void {
-		writeToSession(this.sessions, id, data);
+		sessionIo.writeToSession(this.sessions, id, data);
 	}
 
 	resizeSession(id: string, cols: number, rows: number): void {
-		resizeSession(this.sessions, id, cols, rows);
+		sessionIo.resizeSession(this.sessions, id, cols, rows);
 	}
 
 	retrySession(id: string): void {
@@ -116,26 +114,28 @@ export class SessionManager {
 	}
 
 	dismissSession = (id: string): void => {
-		if (dismissSession(this.sessions, id)) this.notify();
+		if (sessionIo.dismissSession(this.sessions, id)) this.notify();
 	};
 
 	setAutoRun(id: string, enabled: boolean): void {
-		if (setAutoRun(this.sessions, id, enabled)) this.notify();
+		if (sessionIo.setAutoRun(this.sessions, id, enabled)) this.notify();
 	}
 
 	setAutoAdvance(id: string, enabled: boolean): void {
-		if (setAutoAdvance(this.sessions, id, enabled)) this.notify();
+		if (sessionIo.setAutoAdvance(this.sessions, id, enabled)) this.notify();
 	}
 
-	listSessions(): SessionInfo[] {
-		return [...this.sessions.values()].map(toSessionInfo);
-	}
+	listSessions = (): SessionInfo[] => {
+		const local = [...this.sessions.values()].map(toSessionInfo);
+		return local.concat(this.windowsProxy.sessions());
+	};
 
 	private readonly notify = (): void => {
 		// During shutdown pty exits must not rewrite sessions.json, or the
 		// done statuses would erase the metadata that resume needs on restart
 		if (this.shuttingDown) return;
-		broadcastSessions(this.sessions, this.clients);
+		const windows = this.windowsProxy.sessions();
+		broadcastSessions(this.sessions, this.clients, windows);
 		this.onIdleChange?.(this.isIdle());
 	};
 }

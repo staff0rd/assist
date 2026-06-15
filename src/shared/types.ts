@@ -132,6 +132,16 @@ export const assistConfigSchema = z.strictObject({
 			outputDir: z.string().default("./screenshots"),
 		})
 		.default({ outputDir: "./screenshots" }),
+	sessions: z
+		.strictObject({
+			// why: Windows .claude/projects root as seen from WSL (e.g. /mnt/c/Users/<user>/.claude/projects); when set its transcripts are discovered and tagged windows-origin
+			windowsProjectsRoot: z.string().optional(),
+			// why: host the WSL daemon dials to reach the native Windows daemon over TCP (WSL can't use the Windows named pipe); defaults to 127.0.0.1 (WSL2 mirrored networking). NAT-mode users set the Windows host IP.
+			windowsDaemonHost: z.string().optional(),
+			// why: TCP port the native Windows daemon listens on for the WSL bridge; defaults to 51764
+			windowsDaemonPort: z.number().optional(),
+		})
+		.optional(),
 	backlog: z
 		.strictObject({
 			databaseUrl: z.string().optional(),

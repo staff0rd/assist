@@ -1,6 +1,7 @@
 import { discoverSessions } from "../shared/discoverSessions";
 import { parseTranscript } from "../shared/parseTranscript";
 import { type SessionClient, sendTo } from "./broadcast";
+import { buildHello } from "./buildHello";
 import type { SessionManager } from "./SessionManager";
 
 type Msg = Record<string, unknown>;
@@ -10,66 +11,12 @@ type Handler = (
 	data: Msg,
 ) => void;
 
-function sendCreated(client: SessionClient, id: string): void {
-	sendTo(client, { type: "created", sessionId: id });
-}
-
-function handleCreate(
-	client: SessionClient,
-	manager: SessionManager,
-	data: Msg,
-): void {
-	sendCreated(
-		client,
-		manager.spawn(
-			data.prompt as string | undefined,
-			data.cwd as string | undefined,
-		),
-	);
-}
-
-function handleCreateRun(
-	client: SessionClient,
-	manager: SessionManager,
-	data: Msg,
-): void {
-	sendCreated(
-		client,
-		manager.spawnRun(
-			data.runName as string,
-			(data.runArgs as string[]) ?? [],
-			data.cwd as string | undefined,
-		),
-	);
-}
-
-function handleCreateAssist(
-	client: SessionClient,
-	manager: SessionManager,
-	data: Msg,
-): void {
-	sendCreated(
-		client,
-		manager.spawnAssist(
-			(data.assistArgs as string[]) ?? [],
-			data.cwd as string | undefined,
-		),
-	);
-}
-
-function handleResume(
-	client: SessionClient,
-	manager: SessionManager,
-	data: Msg,
-): void {
-	sendCreated(
-		client,
-		manager.resume(
-			data.sessionId as string,
-			data.cwd as string,
-			data.name as string | undefined,
-		),
-	);
+// why: a windows-origin create/resume forwards to the Windows daemon, not a local spawn
+function creator(spawn: (m: SessionManager, d: Msg) => string): Handler {
+	return (client, m, d) => {
+		if (m.windowsProxy.route(client, d)) return;
+		sendTo(client, { type: "created", sessionId: spawn(m, d) });
+	};
 }
 
 function handleHistory(client: SessionClient): void {
@@ -96,25 +43,56 @@ function handleShutdown(client: SessionClient, manager: SessionManager): void {
 	setImmediate(() => process.exit(0));
 }
 
+// why: proxied (windows) sessions route to the Windows daemon, else run locally
+function routed(local: Handler): Handler {
+	return (client, m, d) => {
+		if (!m.windowsProxy.route(client, d)) local(client, m, d);
+	};
+}
+
 const handlers: Record<string, Handler> = {
 	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
-	create: handleCreate,
-	"create-run": handleCreateRun,
-	"create-assist": handleCreateAssist,
-	resume: handleResume,
+	hello: (client) => sendTo(client, buildHello()),
+	create: creator((m, d) =>
+		m.spawn(d.prompt as string | undefined, d.cwd as string | undefined),
+	),
+	"create-run": creator((m, d) =>
+		m.spawnRun(
+			d.runName as string,
+			(d.runArgs as string[]) ?? [],
+			d.cwd as string | undefined,
+		),
+	),
+	"create-assist": creator((m, d) =>
+		m.spawnAssist(
+			(d.assistArgs as string[]) ?? [],
+			d.cwd as string | undefined,
+		),
+	),
+	resume: creator((m, d) =>
+		m.resume(
+			d.sessionId as string,
+			d.cwd as string,
+			d.name as string | undefined,
+		),
+	),
 	history: handleHistory,
 	"fetch-transcript": handleFetchTranscript,
 	shutdown: handleShutdown,
-	input: (_client, m, d) =>
+	input: routed((_client, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),
-	resize: (_client, m, d) =>
+	),
+	resize: routed((_client, m, d) =>
 		m.resizeSession(d.sessionId as string, d.cols as number, d.rows as number),
-	retry: (_client, m, d) => m.retrySession(d.sessionId as string),
-	dismiss: (_client, m, d) => m.dismissSession(d.sessionId as string),
-	"set-autorun": (_client, m, d) =>
+	),
+	retry: routed((_client, m, d) => m.retrySession(d.sessionId as string)),
+	dismiss: routed((_client, m, d) => m.dismissSession(d.sessionId as string)),
+	"set-autorun": routed((_client, m, d) =>
 		m.setAutoRun(d.sessionId as string, d.enabled as boolean),
-	"set-autoadvance": (_client, m, d) =>
+	),
+	"set-autoadvance": routed((_client, m, d) =>
 		m.setAutoAdvance(d.sessionId as string, d.enabled as boolean),
+	),
 };
 
 export function dispatchMessage(
