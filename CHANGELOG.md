@@ -1,3 +1,10 @@
+# [0.287.0](https://github.com/staff0rd/assist/compare/v0.286.0...v0.287.0) (2026-06-16)
+
+
+### Features
+
+* drive windows sessions from wsl ui ([67552b7](https://github.com/staff0rd/assist/commit/67552b7e0670eb84094ff3cfc69e3f96a488da9d))
+
 # [0.286.0](https://github.com/staff0rd/assist/compare/v0.285.0...v0.286.0) (2026-06-15)
 
 
