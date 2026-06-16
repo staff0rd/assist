@@ -1,3 +1,10 @@
+# [0.288.0](https://github.com/staff0rd/assist/compare/v0.287.0...v0.288.0) (2026-06-16)
+
+
+### Features
+
+* auto-heal windows daemon on version drift ([b462d4c](https://github.com/staff0rd/assist/commit/b462d4ca9f7de3d8c880b7067703ab9590ac04a1))
+
 # [0.287.0](https://github.com/staff0rd/assist/compare/v0.286.0...v0.287.0) (2026-06-16)
 
 
