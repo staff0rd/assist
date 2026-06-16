@@ -23,7 +23,10 @@ const inbound: Record<string, (state: WindowsProxyState, msg: Msg) => void> = {
 	sessions: handleSessions,
 	output: handleOutput,
 	clear: relayWithSessionId,
-	error: (state, msg) => state.broadcast(msg),
+	error: (state, msg) => {
+		daemonLog(`windows daemon: inbound error: ${msg.message}`);
+		state.broadcast(msg);
+	},
 };
 
 function handleHello(msg: Msg): void {
@@ -34,8 +37,10 @@ function handleHello(msg: Msg): void {
 }
 
 function handleCreated(state: WindowsProxyState, msg: Msg): void {
+	daemonLog(`windows daemon: created session ${nsId(msg)}`);
 	const client = state.pendingCreators.shift();
 	if (client) sendTo(client, { type: "created", sessionId: nsId(msg) });
+	else daemonLog("windows daemon: created with no pending creator (dropped)");
 }
 
 function handleSessions(state: WindowsProxyState, msg: Msg): void {

@@ -7,19 +7,21 @@ const SPAWN_TIMEOUT_MS = 30_000;
 const RETRY_DELAY_MS = 300;
 
 export async function ensureWindowsDaemonRunning(): Promise<void> {
-	if (await isWindowsDaemonRunning()) return;
+	if (await isWindowsDaemonRunning()) {
+		daemonLog("windows daemon: already running");
+		return;
+	}
+	daemonLog("windows daemon: not running, launching via pwsh.exe");
 	launchWindowsDaemon();
 	await waitForWindowsDaemon();
 }
 
+// why: pwsh 7 (not powershell.exe 5.1) loads the profile that runs `fnm env`, putting the fnm-managed node and global `assist` shim on PATH; without the profile neither resolves
 function launchWindowsDaemon(): void {
-	// `start "" assist daemon run` detaches a native Windows assist daemon via
-	// WSL interop; the empty title arg is required by cmd's start syntax
-	const child = spawn(
-		"cmd.exe",
-		["/c", "start", "", "assist", "daemon", "run"],
-		{ detached: true, stdio: "ignore" },
-	);
+	const child = spawn("pwsh.exe", ["-Command", "assist daemon run"], {
+		detached: true,
+		stdio: "ignore",
+	});
 	child.on("error", (e) =>
 		daemonLog(`failed to launch windows daemon: ${e.message}`),
 	);
@@ -27,11 +29,22 @@ function launchWindowsDaemon(): void {
 }
 
 async function waitForWindowsDaemon(): Promise<void> {
-	const deadline = Date.now() + SPAWN_TIMEOUT_MS;
+	const start = Date.now();
+	const deadline = start + SPAWN_TIMEOUT_MS;
+	let attempts = 0;
 	while (Date.now() < deadline) {
 		await delay(RETRY_DELAY_MS);
-		if (await isWindowsDaemonRunning()) return;
+		attempts++;
+		if (await isWindowsDaemonRunning()) {
+			daemonLog(
+				`windows daemon: up after ${Date.now() - start}ms (${attempts} attempts)`,
+			);
+			return;
+		}
 	}
+	daemonLog(
+		`windows daemon: did NOT start within ${SPAWN_TIMEOUT_MS}ms (${attempts} attempts)`,
+	);
 	throw new Error(
 		"Windows daemon did not start; is assist installed on the Windows host?",
 	);

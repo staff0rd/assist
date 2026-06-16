@@ -1,6 +1,7 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import Button from "@mui/material/Button";
+import type { ReactNode } from "react";
 
 export function FilterTrigger({
 	label,
@@ -8,7 +9,7 @@ export function FilterTrigger({
 	onClick,
 	disabled = false,
 }: {
-	label: string;
+	label: ReactNode;
 	open: boolean;
 	onClick: () => void;
 	disabled?: boolean;

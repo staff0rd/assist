@@ -1,6 +1,7 @@
 import type { Socket } from "node:net";
 import { createInterface } from "node:readline";
 import { buildHello } from "./buildHello";
+import { daemonLog } from "./daemonLog";
 
 type ConnectionDeps = {
 	connect: () => Promise<Socket>;
@@ -15,6 +16,10 @@ export class WindowsConnection {
 	private socket: Socket | null = null;
 
 	constructor(private readonly deps: ConnectionDeps) {}
+
+	get connected(): boolean {
+		return this.connection !== null;
+	}
 
 	ensure(): Promise<Socket> {
 		if (this.connection) return this.connection;
@@ -42,7 +47,9 @@ export class WindowsConnection {
 	}
 
 	private async open(): Promise<Socket> {
+		daemonLog("windows connection: opening (launch + tcp connect)");
 		const socket = await this.deps.connect();
+		daemonLog("windows connection: tcp connected, sending hello");
 		this.socket = socket;
 		const lines = createInterface({ input: socket });
 		lines.on("error", () => {});

@@ -19,7 +19,7 @@ export function DropdownWrapper({
 	children,
 	disabled = false,
 }: {
-	label: string;
+	label: ReactNode;
 	children: (close: () => void) => ReactNode;
 	disabled?: boolean;
 }) {

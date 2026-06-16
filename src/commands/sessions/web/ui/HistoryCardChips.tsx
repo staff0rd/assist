@@ -2,6 +2,7 @@ import Chip from "@mui/material/Chip";
 import { Link } from "react-router";
 import { repoLabel } from "./repoLabel";
 import type { HistoricalSession } from "./types";
+import { WindowsBadge } from "./WindowsBadge";
 
 const chipSx = { height: 18, fontSize: "0.65rem" };
 
@@ -10,15 +11,7 @@ export function HistoryCardChips({ session }: { session: HistoricalSession }) {
 	return (
 		<>
 			{repo && <Chip label={repo} size="small" sx={chipSx} />}
-			{session.origin === "windows" && (
-				<Chip
-					label="Windows"
-					size="small"
-					color="info"
-					variant="outlined"
-					sx={chipSx}
-				/>
-			)}
+			{session.origin === "windows" && <WindowsBadge />}
 			{session.sessionType && session.sessionType !== "next" && (
 				<Chip
 					label={session.sessionType}

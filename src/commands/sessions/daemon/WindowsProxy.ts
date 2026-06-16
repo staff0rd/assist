@@ -2,7 +2,10 @@ import type { Socket } from "node:net";
 import { broadcast, type SessionClient, sendTo } from "./broadcast";
 import { connectToWindowsDaemon } from "./connectToWindowsDaemon";
 import type { SessionInfo } from "./createSession";
+import { daemonLog } from "./daemonLog";
+import { discoverWindowsSessions } from "./discoverWindowsSessions";
 import { ensureWindowsDaemonRunning } from "./ensureWindowsDaemonRunning";
+import { forwardWindowsCreate } from "./forwardWindowsCreate";
 import { handleInbound } from "./handleInbound";
 import { shouldProxyToWindows } from "./isWindowsCwd";
 import {
@@ -51,6 +54,10 @@ export class WindowsProxy {
 		return this.state.windowsSessions;
 	}
 
+	discover(): Promise<void> {
+		return discoverWindowsSessions(this.conn);
+	}
+
 	replayScrollback(client: SessionClient): void {
 		replayScrollback(this.state, client);
 	}
@@ -75,19 +82,11 @@ export class WindowsProxy {
 	}
 
 	private async forwardCreate(client: SessionClient, data: Msg): Promise<void> {
-		try {
-			await this.conn.ensure();
-			this.state.pendingCreators.push(client);
-			this.conn.write(data);
-		} catch (e) {
-			sendTo(client, {
-				type: "error",
-				message: `Windows session unavailable: ${errorText(e)}`,
-			});
-		}
+		await forwardWindowsCreate(this.conn, this.state, client, data);
 	}
 
 	private handleClose(): void {
+		daemonLog("windows proxy: connection to windows daemon closed");
 		for (const client of this.state.pendingCreators)
 			sendTo(client, {
 				type: "error",
@@ -112,8 +111,4 @@ function isWindowsIo(data: Msg): boolean {
 async function defaultConnect(): Promise<Socket> {
 	await ensureWindowsDaemonRunning();
 	return connectToWindowsDaemon();
-}
-
-function errorText(e: unknown): string {
-	return e instanceof Error ? e.message : String(e);
 }

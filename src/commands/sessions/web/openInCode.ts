@@ -13,7 +13,11 @@ export async function openInCode(
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
 	try {
-		await execAsync(`code "${cwd}"`);
+		// why: a windows-origin repo (C:\…) must open in Windows-native VS Code via interop; the WSL `code` shim can't open a C:\ path
+		const command = /^[A-Za-z]:[\\/]/.test(cwd)
+			? `cmd.exe /c code "${cwd}"`
+			: `code "${cwd}"`;
+		await execAsync(command);
 		respondJson(res, 200, { ok: true });
 	} catch {
 		respondJson(res, 500, {

@@ -1,6 +1,8 @@
 import MenuItem from "@mui/material/MenuItem";
 import { useEffect, useRef } from "react";
+import { isWindowsCwd } from "./isWindowsCwd";
 import { repoName } from "./RepoList";
+import { WindowsBadge } from "./WindowsBadge";
 
 export function RepoMenuItem({
 	cwd,
@@ -30,10 +32,14 @@ export function RepoMenuItem({
 			onMouseEnter={onHover}
 			sx={{
 				fontSize: 12,
+				display: "flex",
+				justifyContent: "space-between",
+				gap: 1,
 				...(highlighted && { bgcolor: "action.hover" }),
 			}}
 		>
 			{repoName(cwd)}
+			{isWindowsCwd(cwd) && <WindowsBadge />}
 		</MenuItem>
 	);
 }

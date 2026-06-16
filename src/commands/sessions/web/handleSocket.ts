@@ -3,6 +3,7 @@ import { createInterface } from "node:readline";
 import type { WebSocket } from "ws";
 import { connectToDaemon } from "../daemon/connectToDaemon";
 import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
+import { createSessionLifecycleLogger } from "./createSessionLifecycleLogger";
 
 export type RelayContext = {
 	serverCwd: string;
@@ -46,6 +47,7 @@ function relayDaemonLines(conn: Socket, ws: WebSocket, repoCwd?: string): void {
 	// disconnect) and crashes the process if unhandled
 	lines.on("error", () => {});
 	lines.on("line", (line) => {
+		logSessionLifecycle(line);
 		if (ws.readyState === ws.OPEN) ws.send(withRepoCwd(line, repoCwd));
 	});
 	conn.on("error", () => {});
@@ -75,6 +77,9 @@ function withDefaultCwd(raw: string, serverCwd: string): string {
 		return raw;
 	}
 }
+
+// why: surface session start/end on the web server's stdout (daemon's own lifecycle logs are hidden in daemon.log)
+const logSessionLifecycle = createSessionLifecycleLogger();
 
 // The repo the web server was started in is per-client context the daemon
 // doesn't know about.
