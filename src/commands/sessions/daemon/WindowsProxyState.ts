@@ -10,11 +10,13 @@ export type WindowsProxyState = {
 	pendingCreators: SessionClient[];
 	broadcast: (msg: object) => void;
 	onSessionsChanged: () => void;
+	onVersionMismatch: (version: string) => void;
 };
 
 export function createState(
 	broadcast: (msg: object) => void,
 	onSessionsChanged: () => void,
+	onVersionMismatch: (version: string) => void,
 ): WindowsProxyState {
 	return {
 		windowsSessions: [],
@@ -22,6 +24,7 @@ export function createState(
 		pendingCreators: [],
 		broadcast,
 		onSessionsChanged,
+		onVersionMismatch,
 	};
 }
 

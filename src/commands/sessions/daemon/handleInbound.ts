@@ -18,7 +18,7 @@ export function handleInbound(state: WindowsProxyState, line: string): void {
 }
 
 const inbound: Record<string, (state: WindowsProxyState, msg: Msg) => void> = {
-	hello: (_state, msg) => handleHello(msg),
+	hello: handleHello,
 	created: handleCreated,
 	sessions: handleSessions,
 	output: handleOutput,
@@ -29,11 +29,13 @@ const inbound: Record<string, (state: WindowsProxyState, msg: Msg) => void> = {
 	},
 };
 
-function handleHello(msg: Msg): void {
-	if (isHello(msg) && !versionsMatch(msg.version, ASSIST_VERSION))
+function handleHello(state: WindowsProxyState, msg: Msg): void {
+	if (isHello(msg) && !versionsMatch(msg.version, ASSIST_VERSION)) {
 		daemonLog(
 			`windows daemon version mismatch: ${msg.version} (wsl ${ASSIST_VERSION})`,
 		);
+		state.onVersionMismatch(msg.version);
+	}
 }
 
 function handleCreated(state: WindowsProxyState, msg: Msg): void {

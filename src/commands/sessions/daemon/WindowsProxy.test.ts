@@ -1,7 +1,15 @@
 import type { AddressInfo } from "node:net";
 import * as net from "node:net";
 import { createInterface } from "node:readline";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	type Mock,
+	vi,
+} from "vitest";
 import type { SessionClient } from "./broadcast";
 import { WindowsProxy } from "./WindowsProxy";
 
@@ -60,23 +68,25 @@ describe("WindowsProxy", () => {
 	let daemon: FakeDaemon;
 	let proxy: WindowsProxy;
 	let broadcasts: object[];
+	let heal: Mock<() => Promise<void>>;
+
+	function connectToDaemon(): Promise<net.Socket> {
+		return new Promise((resolve, reject) => {
+			const s = net.connect(daemon.port, "127.0.0.1");
+			s.once("connect", () => resolve(s));
+			s.once("error", reject);
+		});
+	}
 
 	beforeEach(async () => {
 		daemon = await startFakeDaemon();
 		broadcasts = [];
+		// why: a mismatch triggers heal, which would otherwise spawn pwsh.exe
+		heal = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
 		const clients = new Set<SessionClient>([
 			{ send: (data) => broadcasts.push(JSON.parse(data)) },
 		]);
-		proxy = new WindowsProxy(
-			clients,
-			() => {},
-			() =>
-				new Promise((resolve, reject) => {
-					const s = net.connect(daemon.port, "127.0.0.1");
-					s.once("connect", () => resolve(s));
-					s.once("error", reject);
-				}),
-		);
+		proxy = new WindowsProxy(clients, () => {}, connectToDaemon, heal);
 	});
 
 	afterEach(async () => {
@@ -195,5 +205,46 @@ describe("WindowsProxy", () => {
 			log.mock.calls.some((c) => String(c[0]).includes("version mismatch")),
 		);
 		log.mockRestore();
+	});
+
+	it("auto-heals and reconnects on version mismatch", async () => {
+		await createWindowsSession();
+		await waitFor(() => daemon.received.some((l) => l.includes('"hello"')));
+		const before = daemon.received.length;
+
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+
+		await waitFor(() => heal.mock.calls.length === 1);
+		await waitFor(() =>
+			daemon.received.slice(before).some((l) => l.includes('"hello"')),
+		);
+	});
+
+	it("heals only once even if the mismatch repeats", async () => {
+		await createWindowsSession();
+		const before = daemon.received.length;
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await waitFor(() => heal.mock.calls.length === 1);
+		// why: wait for reconnect so the repeat mismatch reaches the live peer
+		await waitFor(() =>
+			daemon.received.slice(before).some((l) => l.includes('"hello"')),
+		);
+
+		// why: simulate WSL being the older side — heal can't fix that, so a repeat mismatch must not trigger another heal
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await settle();
+		expect(heal.mock.calls.length).toBe(1);
+	});
+
+	it("tells a pending creator to reselect while it heals", async () => {
+		const c = client();
+		proxy.route(c, { type: "create", cwd: "C:\\repo" });
+		await waitFor(() => daemon.received.length >= 1);
+
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await waitFor(() =>
+			c.sent.some((m) => (m as { type: string }).type === "error"),
+		);
+		expect(c.sent[0]).toMatchObject({ type: "error" });
 	});
 });
