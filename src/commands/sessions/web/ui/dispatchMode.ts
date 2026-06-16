@@ -11,12 +11,6 @@ const ASSIST_MODES = {
 		prompt: true,
 		nav: true,
 	},
-	"assist-next": {
-		label: "next",
-		args: ["next", "--once"],
-		prompt: false,
-		nav: true,
-	},
 	"assist-refine": {
 		label: "refine",
 		args: ["refine", "--once"],

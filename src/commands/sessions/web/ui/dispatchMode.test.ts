@@ -58,7 +58,7 @@ describe("dispatchMode", () => {
 });
 
 describe("MODES", () => {
-	it("flags draft, bug, and refine as prompt modes but not next", () => {
+	it("flags draft, bug, and refine as prompt modes", () => {
 		const promptModes = Object.fromEntries(
 			MODES.map((m) => [m.value, m.prompt]),
 		);
@@ -66,7 +66,6 @@ describe("MODES", () => {
 		expect(promptModes).toEqual({
 			"assist-draft": true,
 			"assist-bug": true,
-			"assist-next": false,
 			"assist-refine": true,
 		});
 	});
@@ -77,7 +76,6 @@ describe("MODES", () => {
 		expect(navModes).toEqual({
 			"assist-draft": true,
 			"assist-bug": true,
-			"assist-next": true,
 			"assist-refine": false,
 		});
 	});
