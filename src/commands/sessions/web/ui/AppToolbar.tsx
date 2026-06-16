@@ -4,6 +4,7 @@ import { GitStatusCounts } from "./GitStatusCounts";
 import { NavTabs } from "./NavTabs";
 import { OpenInCodeButton } from "./OpenInCodeButton";
 import { OpenInGitHubButton } from "./OpenInGitHubButton";
+import { RateLimitsIndicator } from "./RateLimitsIndicator";
 import { RepoPicker } from "./RepoPicker";
 import { TopNavActions } from "./TopNavActions";
 import type { RepoSelection } from "./useRepoSelectionContext";
@@ -38,6 +39,7 @@ export function AppToolbar({
 				onCreate={socket.createSession}
 				onCreateAssist={socket.createAssistSession}
 			/>
+			<RateLimitsIndicator rateLimits={socket.rateLimits} />
 		</Toolbar>
 	);
 }

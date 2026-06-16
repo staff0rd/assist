@@ -1,3 +1,4 @@
+import type { RateLimits } from "../../../../shared/RateLimits";
 import type {
 	HistoricalSession,
 	SessionInfo,
@@ -30,6 +31,9 @@ export function handleWsMessage(
 			break;
 		case "error":
 			d.setError(msg.message as string);
+			break;
+		case "limits":
+			d.setRateLimits(msg.rateLimits as RateLimits);
 			break;
 		case "clear":
 			handleClear(msg, d);

@@ -1,3 +1,4 @@
+import type { RateLimits } from "../../../../shared/RateLimits";
 import type { HistoricalSession, SessionInfo, Transcript } from "./types";
 
 type OutputHandler = (data: string) => void;
@@ -10,6 +11,7 @@ export type WsDispatch = {
 	setViewingTranscriptSessionId: (id: string | null) => void;
 	setCurrentCwd: (cwd: string) => void;
 	setError: (message: string) => void;
+	setRateLimits: (limits: RateLimits) => void;
 	markInitialized: (id: string) => void;
 	buffers: React.RefObject<Map<string, string>>;
 	handlers: React.RefObject<Map<string, OutputHandler>>;

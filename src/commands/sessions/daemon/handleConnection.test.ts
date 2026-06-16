@@ -15,6 +15,7 @@ function createManager(overrides: Partial<SessionManager>): SessionManager {
 	return {
 		addClient: vi.fn(),
 		removeClient: vi.fn(),
+		clients: { greet: vi.fn() },
 		windowsProxy: { route: vi.fn(() => false) },
 		...overrides,
 	} as unknown as SessionManager;
@@ -32,6 +33,15 @@ describe("handleConnection", () => {
 		handleConnection(socket, manager);
 
 		expect(manager.addClient).toHaveBeenCalledOnce();
+	});
+
+	it("greets the new client with the last-known rate limits", () => {
+		const { socket } = createSocket();
+		const manager = createManager({});
+
+		handleConnection(socket, manager);
+
+		expect(manager.clients.greet).toHaveBeenCalledOnce();
 	});
 
 	describe("when a message handler throws", () => {

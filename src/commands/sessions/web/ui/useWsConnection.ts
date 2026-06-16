@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import type { RateLimits } from "../../../../shared/RateLimits";
 import type { HistoricalSession, SessionInfo, Transcript } from "./types";
 import { useActiveIdReconciler } from "./useActiveIdReconciler";
 import { useInitialized } from "./useInitialized";
@@ -16,6 +17,7 @@ export function useWsConnection() {
 	>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
+	const [rateLimits, setRateLimits] = useState<RateLimits | null>(null);
 	const { initialized, markInitialized, syncSessions } = useInitialized();
 	const buffers = useRef(new Map<string, string>());
 	const handlers = useRef(new Map<string, OutputHandler>());
@@ -36,6 +38,7 @@ export function useWsConnection() {
 		setViewingTranscriptSessionId,
 		setCurrentCwd,
 		setError,
+		setRateLimits,
 		markInitialized,
 		buffers,
 		handlers,
@@ -56,6 +59,7 @@ export function useWsConnection() {
 		currentCwd,
 		error,
 		clearError,
+		rateLimits,
 		initialized,
 		wsRef,
 		buffers,

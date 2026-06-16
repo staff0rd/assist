@@ -14,6 +14,7 @@ export function handleConnection(
 		},
 	};
 	manager.addClient(client);
+	manager.clients.greet(client);
 
 	const lines = createInterface({ input: socket });
 	// readline re-emits the socket's 'error' (e.g. ECONNRESET on abrupt

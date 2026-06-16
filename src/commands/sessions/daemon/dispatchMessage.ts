@@ -1,3 +1,4 @@
+import type { RateLimits } from "../../../shared/RateLimits";
 import { discoverSessions } from "../shared/discoverSessions";
 import { parseTranscript } from "../shared/parseTranscript";
 import { type SessionClient, sendTo } from "./broadcast";
@@ -79,6 +80,7 @@ const handlers: Record<string, Handler> = {
 	history: handleHistory,
 	"fetch-transcript": handleFetchTranscript,
 	shutdown: handleShutdown,
+	limits: (_client, m, d) => m.clients.updateLimits(d.rateLimits as RateLimits),
 	input: routed((_client, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),
 	),

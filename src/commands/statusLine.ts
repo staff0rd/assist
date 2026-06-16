@@ -1,6 +1,8 @@
 import chalk from "chalk";
 import { readStdin } from "../lib/readStdin";
+import type { RateLimits } from "../shared/RateLimits";
 import { buildLimitsSegment } from "./buildLimitsSegment";
+import { relayRateLimits } from "./relayRateLimits";
 
 // stdout is piped so chalk disables colour; force it on
 chalk.level = 3;
@@ -14,16 +16,7 @@ type StatusInput = {
 		total_output_tokens: number;
 		used_percentage?: number;
 	};
-	rate_limits?: {
-		five_hour?: {
-			used_percentage?: number;
-			resets_at?: number;
-		};
-		seven_day?: {
-			used_percentage?: number;
-			resets_at?: number;
-		};
-	};
+	rate_limits?: RateLimits;
 };
 
 function formatNumber(num: number): string {
@@ -49,4 +42,6 @@ export async function statusLine(): Promise<void> {
 	console.log(
 		`${model} | Tokens - ${formatNumber(totalOut)} ↑ : ${formatNumber(totalIn)} ↓ | Context - ${colorizePercent(usedPct)}${buildLimitsSegment(data.rate_limits)}`,
 	);
+
+	await relayRateLimits(data.rate_limits);
 }

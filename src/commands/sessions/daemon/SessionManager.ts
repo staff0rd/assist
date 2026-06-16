@@ -1,5 +1,6 @@
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
+import { ClientHub } from "./ClientHub";
 import { createAssistSession } from "./createAssistSession";
 import {
 	createRunSession,
@@ -24,7 +25,7 @@ import * as sessionIo from "./writeToSession";
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
-	private clients = new Set<SessionClient>();
+	readonly clients = new ClientHub();
 	private nextId = 1;
 	private shuttingDown = false;
 
