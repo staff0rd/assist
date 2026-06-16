@@ -1,3 +1,10 @@
+# [0.290.0](https://github.com/staff0rd/assist/compare/v0.289.0...v0.290.0) (2026-06-16)
+
+
+### Features
+
+* remove next button from web view ([9af488a](https://github.com/staff0rd/assist/commit/9af488a974373b47880258fbdaa13f95ddf45366))
+
 # [0.289.0](https://github.com/staff0rd/assist/compare/v0.288.2...v0.289.0) (2026-06-16)
 
 
