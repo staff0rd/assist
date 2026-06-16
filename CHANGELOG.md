@@ -1,3 +1,10 @@
+## [0.288.1](https://github.com/staff0rd/assist/compare/v0.288.0...v0.288.1) (2026-06-16)
+
+
+### Bug Fixes
+
+* resolve windows backlog origin ([16d429b](https://github.com/staff0rd/assist/commit/16d429bff3027a12a9e37cba5dc49155c77bba51))
+
 # [0.288.0](https://github.com/staff0rd/assist/compare/v0.287.0...v0.288.0) (2026-06-16)
 
 
