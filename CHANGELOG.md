@@ -1,3 +1,10 @@
+# [0.291.0](https://github.com/staff0rd/assist/compare/v0.290.0...v0.291.0) (2026-06-16)
+
+
+### Features
+
+* surface account rate limits in web nav ([85b977c](https://github.com/staff0rd/assist/commit/85b977c676779c4a53f63aa88c737f5f81070da3))
+
 # [0.290.0](https://github.com/staff0rd/assist/compare/v0.289.0...v0.290.0) (2026-06-16)
 
 
