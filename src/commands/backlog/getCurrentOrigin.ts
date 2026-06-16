@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 function stripLeadingSlashes(path: string): string {
 	return path.replace(/^\/+/, "");
@@ -40,12 +40,16 @@ export function normalizeOrigin(raw: string): string {
 	return trimmed.toLowerCase();
 }
 
-function tryGit(cwd: string, args: string): string | null {
+// why: a windows-origin repo (C:\…) must run git natively over interop — the WSL process can't chdir into a Windows path, so it would otherwise derive a different origin than the Windows host and its backlog queries would find no items
+function tryGit(cwd: string, args: string[]): string | null {
+	const windows = /^[A-Za-z]:[\\/]/.test(cwd);
+	const file = windows ? "git.exe" : "git";
+	const argv = windows ? ["-C", cwd, ...args] : args;
 	try {
-		const out = execSync(`git ${args}`, {
-			cwd,
+		const out = execFileSync(file, argv, {
 			encoding: "utf-8",
 			stdio: ["pipe", "pipe", "pipe"],
+			...(windows ? {} : { cwd }),
 		}).trim();
 		return out || null;
 	} catch {
@@ -54,13 +58,13 @@ function tryGit(cwd: string, args: string): string | null {
 }
 
 function firstRemoteUrl(cwd: string): string | null {
-	const remotes = tryGit(cwd, "remote");
+	const remotes = tryGit(cwd, ["remote"]);
 	if (!remotes) return null;
 	for (const remote of remotes
 		.split("\n")
 		.map((r) => r.trim())
 		.filter(Boolean)) {
-		const url = tryGit(cwd, `remote get-url ${remote}`);
+		const url = tryGit(cwd, ["remote", "get-url", remote]);
 		if (url) return url;
 	}
 	return null;
@@ -73,8 +77,9 @@ function firstRemoteUrl(cwd: string): string | null {
  * (note: separate clones without a shared remote do NOT share a backlog).
  */
 export function getCurrentOrigin(cwd: string): string {
-	const url = tryGit(cwd, "remote get-url origin") ?? firstRemoteUrl(cwd);
+	const url =
+		tryGit(cwd, ["remote", "get-url", "origin"]) ?? firstRemoteUrl(cwd);
 	if (url) return normalizeOrigin(url);
-	const root = tryGit(cwd, "rev-parse --show-toplevel");
+	const root = tryGit(cwd, ["rev-parse", "--show-toplevel"]);
 	return `local:${root ?? cwd}`;
 }
