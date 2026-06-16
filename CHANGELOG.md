@@ -1,3 +1,10 @@
+## [0.288.2](https://github.com/staff0rd/assist/compare/v0.288.1...v0.288.2) (2026-06-16)
+
+
+### Bug Fixes
+
+* speed up refactor rename file ([83f37d6](https://github.com/staff0rd/assist/commit/83f37d69cecf7228b061b811f9a96508cc3c4c71))
+
 ## [0.288.1](https://github.com/staff0rd/assist/compare/v0.288.0...v0.288.1) (2026-06-16)
 
 
