@@ -1,3 +1,10 @@
+# [0.289.0](https://github.com/staff0rd/assist/compare/v0.288.2...v0.289.0) (2026-06-16)
+
+
+### Features
+
+* web hamburger menu with restarts ([040e37d](https://github.com/staff0rd/assist/commit/040e37d888f71594874e12981633f859f2452918))
+
 ## [0.288.2](https://github.com/staff0rd/assist/compare/v0.288.1...v0.288.2) (2026-06-16)
 
 
