@@ -3,6 +3,7 @@ import { useCallback } from "react";
 export type { SessionInfo } from "./types";
 
 import { useSessionActions } from "./useSessionActions";
+import { useTranscriptNavigation } from "./useTranscriptNavigation";
 import { useWsConnection } from "./useWsConnection";
 
 export type SessionSocket = ReturnType<typeof useSessionSocket>;
@@ -24,6 +25,7 @@ export function useSessionSocket() {
 		buffers,
 		handlers,
 		requestHistory,
+		reconnecting,
 	} = useWsConnection();
 
 	const send = useCallback(
@@ -36,26 +38,8 @@ export function useSessionSocket() {
 
 	const actions = useSessionActions(send, buffers, handlers);
 
-	const viewTranscript = useCallback(
-		(sessionId: string) => {
-			setViewingTranscriptSessionId(sessionId);
-			send({ type: "fetch-transcript", sessionId });
-		},
-		[send, setViewingTranscriptSessionId],
-	);
-
-	const clearTranscript = useCallback(() => {
-		setViewingTranscriptSessionId(null);
-	}, [setViewingTranscriptSessionId]);
-
-	// why: drop the transcript view even when the active id is unchanged
-	const selectSession = useCallback(
-		(id: string) => {
-			setViewingTranscriptSessionId(null);
-			setActiveId(id);
-		},
-		[setActiveId, setViewingTranscriptSessionId],
-	);
+	const { viewTranscript, clearTranscript, selectSession } =
+		useTranscriptNavigation(send, setActiveId, setViewingTranscriptSessionId);
 
 	return {
 		sessions,
@@ -73,5 +57,6 @@ export function useSessionSocket() {
 		initialized,
 		...actions,
 		requestHistory,
+		reconnecting,
 	};
 }

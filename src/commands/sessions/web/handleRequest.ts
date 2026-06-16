@@ -13,6 +13,7 @@ import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
 import { listNewsItems } from "./listNewsItems";
 import { openInCode } from "./openInCode";
+import { restartWeb } from "./restartWeb";
 
 const require = createRequire(import.meta.url);
 
@@ -42,6 +43,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/backlog/exists": getBacklogExists,
 	"POST /api/backlog/init": initBacklog,
 	"POST /api/open-in-code": openInCode,
+	"POST /api/restart": restartWeb,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,
 	"GET /api/news/items": listNewsItems,

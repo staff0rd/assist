@@ -1,4 +1,10 @@
-import { type RefObject, useCallback, useEffect, useRef } from "react";
+import {
+	type RefObject,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { connectWithReconnect } from "./connectWithReconnect";
 import type { WsDispatch } from "./WsDispatch";
 
@@ -20,6 +26,7 @@ type WsDeps = {
 /** Own the WebSocket lifecycle: connect on mount, expose a history request. */
 export function useWebSocket(deps: WsDeps) {
 	const wsRef = useRef<WebSocket | null>(null);
+	const [reconnecting, setReconnecting] = useState(false);
 	const { handleSessions, markInitialized, buffers, handlers } = deps;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state setters and refs keep a stable identity for the connection's lifetime
@@ -36,6 +43,7 @@ export function useWebSocket(deps: WsDeps) {
 				wsRef.current = ws;
 			},
 			resetTerminals,
+			setReconnecting,
 		);
 		return () => {
 			stop();
@@ -49,5 +57,5 @@ export function useWebSocket(deps: WsDeps) {
 			ws.send(JSON.stringify({ type: "history" }));
 	}, []);
 
-	return { wsRef, requestHistory };
+	return { wsRef, requestHistory, reconnecting };
 }

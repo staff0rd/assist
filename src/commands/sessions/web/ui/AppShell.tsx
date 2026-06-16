@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { AppRoutes } from "./AppRoutes";
 import { AppToolbar } from "./AppToolbar";
 import { ErrorSnackbar } from "./ErrorSnackbar";
+import { ReconnectingIndicator } from "./ReconnectingIndicator";
 import { useRepoSelection } from "./useRepoSelection";
 import { RepoSelectionContext } from "./useRepoSelectionContext";
 import { SessionLaunchContext } from "./useSessionLaunchContext";
@@ -37,6 +38,7 @@ export function AppShell() {
 				</AppBar>
 				<Toolbar variant="dense" sx={toolbarSx} />
 				<AppRoutes socket={socket} />
+				<ReconnectingIndicator reconnecting={socket.reconnecting} />
 				<ErrorSnackbar error={socket.error} onClose={socket.clearError} />
 			</SessionLaunchContext.Provider>
 		</RepoSelectionContext.Provider>

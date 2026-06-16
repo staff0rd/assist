@@ -28,7 +28,7 @@ export function useWsConnection() {
 		[syncSessions],
 	);
 
-	const { wsRef, requestHistory } = useWebSocket({
+	const { wsRef, requestHistory, reconnecting } = useWebSocket({
 		handleSessions,
 		setHistory,
 		setActiveId,
@@ -61,5 +61,6 @@ export function useWsConnection() {
 		buffers,
 		handlers,
 		requestHistory,
+		reconnecting,
 	};
 }
