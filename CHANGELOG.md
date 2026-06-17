@@ -1,3 +1,10 @@
+# [0.297.0](https://github.com/staff0rd/assist/compare/v0.296.1...v0.297.0) (2026-06-17)
+
+
+### Features
+
+* store handovers in backlog DB ([8983277](https://github.com/staff0rd/assist/commit/89832771880d39115e11db932d0ac3411d8714af))
+
 ## [0.296.1](https://github.com/staff0rd/assist/compare/v0.296.0...v0.296.1) (2026-06-17)
 
 
