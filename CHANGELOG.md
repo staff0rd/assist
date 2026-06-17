@@ -1,3 +1,10 @@
+## [0.294.1](https://github.com/staff0rd/assist/compare/v0.294.0...v0.294.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* run codex review from repo cwd ([af0482d](https://github.com/staff0rd/assist/commit/af0482d1811841ed73195818aacacb177fa018de))
+
 # [0.294.0](https://github.com/staff0rd/assist/compare/v0.293.0...v0.294.0) (2026-06-17)
 
 
