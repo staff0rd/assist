@@ -12,9 +12,57 @@ Use `assist prs raise` to create the PR — do not use `gh pr create` directly. 
 - `--how <how>` — optional; how the change works (rendered as `## How`). Omit it unless the approach genuinely needs explaining.
 - `--resolves <key>` — Jira issue key resolved by this PR; repeatable. Each key's browse URL is appended inline to the `## Why` section. Unless a Jira key is already known from the session (e.g. mentioned by the user or present on the branch), ask the user whether this PR resolves a Jira issue and for the key before raising; omit `--resolves` only if they say there isn't one.
 
-Keep each section to a brief plain-text summary. Wrap symbols, file paths, function names, class names, variable names, config keys, CLI commands, and flag names in backticks.
+Wrap symbols, file paths, function names, class names, variable names, config keys, CLI commands, and flag names in backticks.
 
-Write the description in terms of behaviour and user-facing impact: what the change does, what's different for someone using it, and why. Keep technical detail to a minimum — do not walk through the implementation approach step by step, and do not restate what is already obvious from the diff or changelog (which files changed, which functions were added). The reviewer can read the code; the description should tell them what to expect from the change, not narrate how it was built.
+One section, one question. Each section answers exactly one thing, and implementation detail lives only in `## How`:
+
+- `## What` — what is observably different for someone using or calling this, and nothing else. Not how it's built, not which functions/files changed.
+- `## Why` — the problem or motivation that made the change worth doing. Not how the solution works.
+- `## How` — only the non-obvious decisions the diff alone won't explain: a deliberate trade-off, a workaround, a reason the obvious approach was rejected. Omit it entirely by default. Never restate `## What` as mechanism, and never walk through the diff.
+
+The most common failure is altitude bleed: the author has an implementation detail they want to include, so they spray it into whichever section they're writing — `## What` narrates the diff, `## How` restates `## What`, `## Why` smuggles in mechanism. Don't. If a sentence describes a mechanism, it belongs in `## How` — and probably shouldn't exist at all unless it's a genuine non-obvious decision.
+
+Litmus — a sentence is almost certainly mechanism (so `## How`, or cut it) if it contains "by …ing", "so that it can", "because the X filters/needs/uses", or names an internal component, property, function, or file.
+
+Brevity budget — keep each section within these limits:
+
+- `## What` — a few sentences (2–3).
+- `## Why` — 1–2 sentences.
+- `## How` — omit by default; a sentence or two, only for non-obvious decisions, not a diff walkthrough.
+
+Write prose. A short paragraph of a few sentences is the natural form for `## What` and `## Why` — bullets in `## What` are a smell, usually a sign the change is being narrated point-by-point like a diff. Use bullets only when there are genuinely several independent, parallel items (3+) that don't read as a paragraph; a single bullet is never right — make it a sentence. Don't pack multiple points into one long running paragraph either: a single non-list paragraph over ~600 characters or ~4 sentences is a wall of text and `assist prs raise`/`assist prs edit` will reject it.
+
+Worked example — altitude bleed across every section.
+
+Bad — mechanism leaks everywhere:
+
+> ## What
+>
+> Adds a `RetryPolicy` wrapper that catches transient errors and re-invokes the handler with exponential backoff so callers don't see intermittent failures.
+>
+> ## Why
+>
+> Intermittent failures were surfacing to users. The handler also needs to distinguish transient from permanent errors, which the new `isTransient` check does by inspecting the status code.
+>
+> ## How
+>
+> The wrapper retries with exponential backoff on transient errors.
+
+`## What` describes the implementation (a wrapper, backoff) rather than the observable change. `## Why`'s second sentence is mechanism dressed as motivation. `## How` just restates `## What` at a lower altitude. Good — each section stays at its own altitude:
+
+> ## What
+>
+> Intermittent failures are now retried automatically instead of surfacing to the user.
+>
+> ## Why
+>
+> Transient errors were failing requests that would have succeeded on a second attempt.
+>
+> ## How
+>
+> Only errors flagged transient are retried; permanent failures still fail fast, to avoid masking real bugs behind retries.
+
+Only the genuinely non-obvious decision survives in `## How`; everything that merely paraphrased `## What` is gone.
 
 `assist prs raise` errors if a pull request already exists for the branch. Pass `--force` to fully overwrite the existing PR's title and body.
 

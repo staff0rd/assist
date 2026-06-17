@@ -39,4 +39,34 @@ describe("validatePrContent", () => {
 			).not.toThrow();
 		});
 	});
+
+	describe("paragraph length", () => {
+		it("should pass short prose", () => {
+			expect(() =>
+				validatePrContent(
+					"Add feature",
+					"## What\n\nAdds a new endpoint for fetching user preferences.",
+				),
+			).not.toThrow();
+		});
+
+		it("should pass a long bulleted list", () => {
+			const bullets = Array.from(
+				{ length: 30 },
+				(_, i) =>
+					`- Item ${i} describing a change made to the system in some detail to pad length`,
+			).join("\n");
+			expect(() =>
+				validatePrContent("Add feature", `## What\n\n${bullets}`),
+			).not.toThrow();
+		});
+
+		it("should reject a long paragraph", () => {
+			const longParagraph = "This sentence describes some change. ".repeat(20);
+			expect(() =>
+				validatePrContent("Add feature", `## What\n\n${longParagraph}`),
+			).toThrow("process.exit");
+			expect(mockExit).toHaveBeenCalledWith(1);
+		});
+	});
 });
