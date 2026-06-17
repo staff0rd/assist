@@ -4,6 +4,7 @@ import type { BacklogItemSummary } from "../types";
 import { canPlay } from "./canPlay";
 import { InProgressChip } from "./InProgressChip";
 import { PlayAction } from "./PlayAction";
+import { StarAction } from "./StarAction";
 import { StatusIcon } from "./StatusIcon";
 import { typeChipColors } from "./typeChipColors";
 
@@ -43,16 +44,9 @@ const chipSx: SxProps<Theme> = {
 	height: 22,
 };
 
-export function ItemCard({
-	item,
-	onSelect,
-}: {
-	item: BacklogItemSummary;
-	onSelect: () => void;
-}) {
-	const inProgress = item.status === "in-progress";
+function CardSummary({ item }: { item: BacklogItemSummary }) {
 	return (
-		<ButtonBase onClick={onSelect} sx={inProgress ? inProgressCardSx : cardSx}>
+		<>
 			<StatusIcon status={item.status} />
 			<Chip
 				label={item.type}
@@ -64,8 +58,44 @@ export function ItemCard({
 				#{item.id}
 			</Typography>
 			<Typography sx={nameSx}>{item.name}</Typography>
-			{inProgress && <InProgressChip />}
+		</>
+	);
+}
+
+function CardActions({
+	item,
+	onReload,
+}: {
+	item: BacklogItemSummary;
+	onReload: () => Promise<void>;
+}) {
+	return (
+		<>
+			{item.status === "in-progress" && <InProgressChip />}
+			<StarAction
+				itemId={item.id}
+				starred={item.starred}
+				onToggled={onReload}
+			/>
 			{canPlay(item) && <PlayAction itemId={item.id} compact />}
+		</>
+	);
+}
+
+export function ItemCard({
+	item,
+	onSelect,
+	onReload,
+}: {
+	item: BacklogItemSummary;
+	onSelect: () => void;
+	onReload: () => Promise<void>;
+}) {
+	const inProgress = item.status === "in-progress";
+	return (
+		<ButtonBase onClick={onSelect} sx={inProgress ? inProgressCardSx : cardSx}>
+			<CardSummary item={item} />
+			<CardActions item={item} onReload={onReload} />
 		</ButtonBase>
 	);
 }

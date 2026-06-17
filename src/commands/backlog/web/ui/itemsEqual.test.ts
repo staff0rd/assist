@@ -11,6 +11,7 @@ function item(
 		type: "story",
 		name: `item ${id}`,
 		status: "todo",
+		starred: false,
 		...overrides,
 	};
 }
@@ -35,6 +36,10 @@ describe("itemsEqual", () => {
 
 	it("returns false when a name differs", () => {
 		expect(itemsEqual([item(1)], [item(1, { name: "renamed" })])).toBe(false);
+	});
+
+	it("returns false when a starred flag differs", () => {
+		expect(itemsEqual([item(1)], [item(1, { starred: true })])).toBe(false);
 	});
 
 	it("returns false when order differs", () => {

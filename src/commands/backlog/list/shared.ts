@@ -17,6 +17,10 @@ export function statusIcon(status: BacklogStatus): string {
 	}
 }
 
+export function starMarker(item: BacklogFile[number]): string {
+	return item.starred ? `${chalk.yellow("★")} ` : "";
+}
+
 export function typeLabel(type: BacklogType): string {
 	switch (type) {
 		case "bug":

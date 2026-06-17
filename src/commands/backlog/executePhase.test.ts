@@ -51,6 +51,7 @@ function makeItem(): BacklogItem {
 		name: "Test item",
 		acceptanceCriteria: ["AC1"],
 		status: "in-progress",
+		starred: false,
 	};
 }
 

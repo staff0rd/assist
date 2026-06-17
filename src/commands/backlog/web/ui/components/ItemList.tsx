@@ -9,6 +9,7 @@ import { SearchInput } from "./SearchInput";
 type ItemListProps = {
 	items: BacklogItemSummary[];
 	loading: boolean;
+	onReload: () => Promise<void>;
 };
 
 const headerSx = {
@@ -33,7 +34,7 @@ function Header() {
 	);
 }
 
-export function ItemList({ items, loading }: ItemListProps) {
+export function ItemList({ items, loading, onReload }: ItemListProps) {
 	const navigate = useNavigate();
 	const { query, setQuery, results, loading: searching } = useSearchItems();
 	const visible = results ?? items;
@@ -47,6 +48,7 @@ export function ItemList({ items, loading }: ItemListProps) {
 				query={query}
 				items={visible}
 				onSelect={(item) => navigate(`/backlog/items/${item.id}`)}
+				onReload={onReload}
 			/>
 		</>
 	);

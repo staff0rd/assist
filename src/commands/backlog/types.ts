@@ -40,6 +40,7 @@ export const backlogItemSchema = z.strictObject({
 	acceptanceCriteria: z.array(z.string()),
 	plan: z.array(planPhaseSchema).optional(),
 	currentPhase: z.number().optional(),
+	starred: z.boolean().default(false),
 	status: backlogStatusSchema,
 	comments: z.array(backlogCommentSchema).optional(),
 	links: z.array(backlogLinkSchema).optional(),
@@ -57,7 +58,7 @@ export type BacklogItem = z.infer<typeof backlogItemSchema>;
  */
 export type BacklogItemSummary = Pick<
 	BacklogItem,
-	"id" | "type" | "name" | "status" | "origin"
+	"id" | "type" | "name" | "status" | "origin" | "starred"
 >;
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;

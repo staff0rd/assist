@@ -6,6 +6,7 @@ import {
 	dependencyLabel,
 	phaseLabel,
 	printVerboseDetails,
+	starMarker,
 	statusIcon,
 	typeLabel,
 } from "./shared";
@@ -47,7 +48,7 @@ export async function list(options: ListOptions): Promise<void> {
 			? `${chalk.dim(repoNameOf(item).padEnd(prefixWidth))} `
 			: "";
 		console.log(
-			`${repoPrefix}${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}${phaseLabel(item)}${dependencyLabel(item, allItems)}`,
+			`${repoPrefix}${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${starMarker(item)}${item.name}${phaseLabel(item)}${dependencyLabel(item, allItems)}`,
 		);
 		if (options.verbose) {
 			printVerboseDetails(item);

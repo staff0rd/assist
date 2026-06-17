@@ -33,6 +33,7 @@ export async function add(options: AddOptions): Promise<void> {
 			description: description || undefined,
 			acceptanceCriteria,
 			status: "todo",
+			starred: false,
 		},
 		getOrigin(),
 	);

@@ -1,11 +1,7 @@
 import type { SxProps, Theme } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { backlogTarget } from "./backlogTarget";
-import { CardChips } from "./CardChips";
-import { CompleteButton } from "./CompleteButton";
-import { DismissButton } from "./DismissButton";
-import { RetryButton } from "./RetryButton";
+import { CardHeaderActions } from "./CardHeaderActions";
 import { sessionTitle } from "./sessionTitle";
 import type { SessionInfo } from "./types";
 
@@ -35,24 +31,13 @@ export function CardHeader({
 	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
-	const { status } = session;
-	const isDone = status === "done";
-	const target = backlogTarget(session);
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-			<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-				<CardChips session={session} />
-				<Box sx={{ flex: 1 }} />
-				{isDone && onRetry && <RetryButton onRetry={onRetry} />}
-				{target && (
-					<CompleteButton
-						target={target}
-						cwd={session.cwd}
-						onDismiss={onDismiss}
-					/>
-				)}
-				<DismissButton status={status} onDismiss={onDismiss} />
-			</Box>
+			<CardHeaderActions
+				session={session}
+				onRetry={onRetry}
+				onDismiss={onDismiss}
+			/>
 			<Typography
 				variant="body2"
 				sx={{ color: "text.primary", overflowWrap: "anywhere" }}

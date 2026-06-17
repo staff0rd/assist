@@ -34,12 +34,14 @@ const mockSearchBacklog = searchBacklogSummaries as unknown as MockInstance;
 function makeItem(
 	id: number,
 	status: BacklogStatus = "todo",
+	starred = false,
 ): BacklogItemSummary {
 	return {
 		id,
 		type: "story",
 		name: `Item ${id}`,
 		status,
+		starred,
 	};
 }
 

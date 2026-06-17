@@ -3,7 +3,13 @@ import { backlogItemsCache } from "./backlogItemsCache";
 import type { BacklogItemSummary } from "./types";
 
 function item(id: number): BacklogItemSummary {
-	return { id, type: "story", name: `item ${id}`, status: "todo" };
+	return {
+		id,
+		type: "story",
+		name: `item ${id}`,
+		status: "todo",
+		starred: false,
+	};
 }
 
 describe("backlogItemsCache", () => {

@@ -27,6 +27,7 @@ function item(
 		type: "story",
 		name: `item ${id}`,
 		status: "todo",
+		starred: false,
 		...overrides,
 	};
 }

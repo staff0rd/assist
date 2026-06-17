@@ -12,7 +12,12 @@ type ViewRouterProps = {
 export function ViewRouter({ items, loading, onReload }: ViewRouterProps) {
 	return (
 		<Routes>
-			<Route index element={<ItemList items={items} loading={loading} />} />
+			<Route
+				index
+				element={
+					<ItemList items={items} loading={loading} onReload={onReload} />
+				}
+			/>
 			<Route
 				path="items/:id"
 				element={<ItemRoute mode="detail" onReload={onReload} />}

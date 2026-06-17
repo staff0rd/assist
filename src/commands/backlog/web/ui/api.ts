@@ -62,6 +62,14 @@ export function updateItemStatus(
 	return sendJson(withCwd(`/api/items/${id}`, cwd), "PATCH", { status });
 }
 
+export function toggleStar(
+	id: number,
+	starred: boolean,
+	cwd?: string,
+): Promise<BacklogItem> {
+	return sendJson(withCwd(`/api/items/${id}/star`, cwd), "POST", { starred });
+}
+
 export function rewindPhase(
 	id: number,
 	phase: number,

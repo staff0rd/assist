@@ -67,6 +67,7 @@ function baseItem(row: ItemRow): BacklogItem {
 		name: row.name,
 		acceptanceCriteria: JSON.parse(row.acceptanceCriteria),
 		status: row.status as BacklogStatus,
+		starred: row.starred,
 		origin: row.origin,
 	};
 	assignOptionalColumns(item, row);

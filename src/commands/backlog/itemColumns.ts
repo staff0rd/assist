@@ -18,5 +18,6 @@ export function itemColumns(
 		acceptanceCriteria: JSON.stringify(item.acceptanceCriteria),
 		status: item.status,
 		currentPhase: item.currentPhase ?? null,
+		starred: item.starred,
 	};
 }

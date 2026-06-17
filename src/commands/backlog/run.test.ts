@@ -62,6 +62,7 @@ function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 		name: "Test item",
 		acceptanceCriteria: ["AC1", "AC2"],
 		status: "todo",
+		starred: false,
 		plan: [
 			{ name: "Phase 1", tasks: [{ task: "Do something" }] },
 			{ name: "Phase 2", tasks: [{ task: "Do more" }] },

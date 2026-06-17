@@ -1,55 +1,76 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { applyCwdFromReq } from "./applyCwdFromReq";
+import { deleteItemComment } from "./deleteItemComment";
 import { rewindItemPhase } from "./rewindItemPhase";
 import {
 	deleteItem,
-	deleteItemComment,
 	getItemById,
+	patchItemStar,
 	patchItemStatus,
 } from "./shared";
 import { updateItem } from "./updateItem";
 
-type ItemHandler = (
+type RouteHandler = (
 	req: IncomingMessage,
 	res: ServerResponse,
-	id: number,
+	match: RegExpMatchArray,
 ) => void | Promise<void>;
 
-const itemRoutes: Record<string, ItemHandler> = {
-	GET: (_req, res, id) => getItemById(res, id),
-	PUT: (req, res, id) => updateItem(req, res, id),
-	PATCH: (req, res, id) => patchItemStatus(req, res, id),
-	DELETE: (_req, res, id) => deleteItem(res, id),
-};
+type ItemRoute = { pattern: RegExp; method: string; run: RouteHandler };
+
+const id = (match: RegExpMatchArray, group = 1): number =>
+	Number.parseInt(match[group], 10);
+
+const routes: ItemRoute[] = [
+	{
+		pattern: /^\/api\/items\/(\d+)\/rewind$/,
+		method: "POST",
+		run: (req, res, m) => rewindItemPhase(req, res, id(m)),
+	},
+	{
+		pattern: /^\/api\/items\/(\d+)\/star$/,
+		method: "POST",
+		run: (req, res, m) => patchItemStar(req, res, id(m)),
+	},
+	{
+		pattern: /^\/api\/items\/(\d+)\/comments\/(\d+)$/,
+		method: "DELETE",
+		run: (_req, res, m) => deleteItemComment(res, id(m), id(m, 2)),
+	},
+	{
+		pattern: /^\/api\/items\/(\d+)$/,
+		method: "GET",
+		run: (_req, res, m) => getItemById(res, id(m)),
+	},
+	{
+		pattern: /^\/api\/items\/(\d+)$/,
+		method: "PUT",
+		run: (req, res, m) => updateItem(req, res, id(m)),
+	},
+	{
+		pattern: /^\/api\/items\/(\d+)$/,
+		method: "PATCH",
+		run: (req, res, m) => patchItemStatus(req, res, id(m)),
+	},
+	{
+		pattern: /^\/api\/items\/(\d+)$/,
+		method: "DELETE",
+		run: (_req, res, m) => deleteItem(res, id(m)),
+	},
+];
 
 export async function handleItemRoute(
 	req: IncomingMessage,
 	res: ServerResponse,
 	pathname: string,
 ): Promise<boolean> {
-	const rewindMatch = pathname.match(/^\/api\/items\/(\d+)\/rewind$/);
-	if (rewindMatch && req.method === "POST") {
-		applyCwdFromReq(req);
-		await rewindItemPhase(req, res, Number.parseInt(rewindMatch[1], 10));
-		return true;
+	for (const route of routes) {
+		const match = pathname.match(route.pattern);
+		if (match && req.method === route.method) {
+			applyCwdFromReq(req);
+			await route.run(req, res, match);
+			return true;
+		}
 	}
-
-	const commentMatch = pathname.match(/^\/api\/items\/(\d+)\/comments\/(\d+)$/);
-	if (commentMatch && req.method === "DELETE") {
-		applyCwdFromReq(req);
-		await deleteItemComment(
-			res,
-			Number.parseInt(commentMatch[1], 10),
-			Number.parseInt(commentMatch[2], 10),
-		);
-		return true;
-	}
-
-	const match = pathname.match(/^\/api\/items\/(\d+)$/);
-	if (!match) return false;
-	const handler = itemRoutes[req.method ?? "GET"];
-	if (!handler) return false;
-	applyCwdFromReq(req);
-	await handler(req, res, Number.parseInt(match[1], 10));
-	return true;
+	return false;
 }

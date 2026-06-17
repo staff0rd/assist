@@ -1,7 +1,9 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Sidebar } from "./Sidebar";
+import { sortSessionsByStar } from "./sortSessionsByStar";
 import type { HistoricalSession, SidebarTab } from "./types";
 import type { useSessionSocket } from "./useSessionSocket";
+import { useStarredSessions } from "./useStarredSessions";
 
 type Props = {
 	socket: ReturnType<typeof useSessionSocket>;
@@ -10,6 +12,12 @@ type Props = {
 };
 
 export function AppSidebar({ socket, tab, onTabChange }: Props) {
+	const { isStarred } = useStarredSessions();
+	const sessions = useMemo(
+		() => sortSessionsByStar(socket.sessions, isStarred),
+		[socket.sessions, isStarred],
+	);
+
 	const handleResume = useCallback(
 		(session: HistoricalSession) => {
 			socket.resumeSession(session.sessionId, session.cwd, session.name);
@@ -27,7 +35,7 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 
 	return (
 		<Sidebar
-			sessions={socket.sessions}
+			sessions={sessions}
 			history={socket.history}
 			activeId={socket.activeId}
 			tab={tab}

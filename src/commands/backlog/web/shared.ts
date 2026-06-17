@@ -1,14 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
-import { deleteComment } from "../deleteComment";
 import { deleteItem as deleteItemById } from "../deleteItem";
 import { loadItem } from "../loadItem";
 import { getReady } from "../shared";
 import type { BacklogItem } from "../types";
+import { updateStarred } from "../updateStarred";
 import { updateStatus } from "../updateStatus";
 import { applyCwdFromReq } from "./applyCwdFromReq";
 import { loadVisibleItems } from "./loadVisibleItems";
-import { parseStatusBody } from "./parseItemBody";
+import { parseStarBody, parseStatusBody } from "./parseItemBody";
 
 export async function listItems(
 	req: IncomingMessage,
@@ -48,29 +48,6 @@ export async function deleteItem(
 	respondJson(res, 200, result.item);
 }
 
-export async function deleteItemComment(
-	res: ServerResponse,
-	itemId: number,
-	commentId: number,
-): Promise<void> {
-	const result = await findItemOr404(res, itemId);
-	if (!result) return;
-	const outcome = await deleteComment(result.orm, itemId, commentId);
-	if (outcome === "not-found") {
-		respondJson(res, 404, {
-			error: `Comment #${commentId} not found on item #${itemId}.`,
-		});
-		return;
-	}
-	if (outcome === "is-summary") {
-		respondJson(res, 400, {
-			error: `Comment #${commentId} is a phase summary and cannot be deleted.`,
-		});
-		return;
-	}
-	respondJson(res, 200, await loadItem(result.orm, itemId));
-}
-
 export async function patchItemStatus(
 	req: IncomingMessage,
 	res: ServerResponse,
@@ -81,5 +58,18 @@ export async function patchItemStatus(
 	if (!result) return;
 	await updateStatus(result.orm, id, status);
 	const updated: BacklogItem = { ...result.item, status };
+	respondJson(res, 200, updated);
+}
+
+export async function patchItemStar(
+	req: IncomingMessage,
+	res: ServerResponse,
+	id: number,
+): Promise<void> {
+	const { starred } = await parseStarBody(req);
+	const result = await findItemOr404(res, id);
+	if (!result) return;
+	await updateStarred(result.orm, id, starred);
+	const updated: BacklogItem = { ...result.item, starred };
 	respondJson(res, 200, updated);
 }

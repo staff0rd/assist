@@ -27,6 +27,7 @@ const ITEMS: BacklogItem[] = [
 		name: "First",
 		acceptanceCriteria: ["a"],
 		status: "todo",
+		starred: false,
 		comments: [
 			{
 				id: 99,
@@ -43,6 +44,7 @@ const ITEMS: BacklogItem[] = [
 		name: "Second",
 		acceptanceCriteria: [],
 		status: "todo",
+		starred: false,
 		plan: [{ name: "Phase 1", tasks: [{ task: "do it" }] }],
 	},
 ];

@@ -54,6 +54,7 @@ describe("loadItemSummaries", () => {
 			type: "bug",
 			name: "Test",
 			status: "in-progress",
+			starred: false,
 		});
 	});
 

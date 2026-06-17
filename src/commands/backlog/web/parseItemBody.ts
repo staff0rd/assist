@@ -42,3 +42,11 @@ export async function parseRewindBody(
 ): Promise<RewindBody> {
 	return JSON.parse(await readBody(req)) as RewindBody;
 }
+
+type StarBody = {
+	starred: boolean;
+};
+
+export async function parseStarBody(req: IncomingMessage): Promise<StarBody> {
+	return JSON.parse(await readBody(req)) as StarBody;
+}

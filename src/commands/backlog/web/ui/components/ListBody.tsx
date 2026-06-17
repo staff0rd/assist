@@ -7,6 +7,7 @@ type ListBodyProps = {
 	query: string;
 	items: BacklogItemSummary[];
 	onSelect: (item: BacklogItemSummary) => void;
+	onReload: () => Promise<void>;
 };
 
 const loadingSx = {
@@ -28,7 +29,13 @@ function EmptyState({ query }: { query: string }) {
 	return <Box sx={emptySx}>{message}</Box>;
 }
 
-export function ListBody({ loading, query, items, onSelect }: ListBodyProps) {
+export function ListBody({
+	loading,
+	query,
+	items,
+	onSelect,
+	onReload,
+}: ListBodyProps) {
 	if (loading) {
 		return (
 			<Box sx={loadingSx}>
@@ -40,7 +47,12 @@ export function ListBody({ loading, query, items, onSelect }: ListBodyProps) {
 	return (
 		<>
 			{items.map((item) => (
-				<ItemCard key={item.id} item={item} onSelect={() => onSelect(item)} />
+				<ItemCard
+					key={item.id}
+					item={item}
+					onSelect={() => onSelect(item)}
+					onReload={onReload}
+				/>
 			))}
 		</>
 	);

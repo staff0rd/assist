@@ -38,4 +38,5 @@ export type BacklogItemSummary = {
 	type: "story" | "bug";
 	name: string;
 	status: BacklogStatus;
+	starred: boolean;
 };

@@ -1,4 +1,5 @@
 import {
+	boolean,
 	foreignKey,
 	index,
 	integer,
@@ -25,6 +26,7 @@ export const items = pgTable(
 		acceptanceCriteria: text("acceptance_criteria").notNull().default("[]"),
 		status: text().notNull().default("todo"),
 		currentPhase: integer("current_phase"),
+		starred: boolean().notNull().default(false),
 	},
 	(t) => [index("items_origin_idx").on(t.origin)],
 );
