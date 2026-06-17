@@ -30,7 +30,6 @@ export async function runReviewers(
 		multi: options.multi,
 	});
 	const codexPromise = resolveCodex({
-		reviewDir,
 		codexPath,
 		stdin: stdinPrompt,
 		plan: options.codexPlan,

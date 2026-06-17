@@ -4,7 +4,6 @@ import { runCodexReviewer } from "./runCodexReviewer";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type Args = {
-	reviewDir: string;
 	codexPath: string;
 	stdin: string;
 	plan: CodexPlan;
@@ -19,7 +18,6 @@ export function resolveCodex(args: Args): Promise<ReviewerResult> {
 	const spinner = args.multi?.create("codex — starting");
 	return runCodexReviewer({
 		name: "codex",
-		reviewDir: args.reviewDir,
 		stdin: args.stdin,
 		outputPath: args.codexPath,
 		spinner,

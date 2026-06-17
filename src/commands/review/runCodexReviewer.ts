@@ -7,17 +7,14 @@ import { type ReviewerResult, runStreamingChild } from "./runStreamingChild";
 
 type CodexReviewerSpec = {
 	name: string;
-	reviewDir: string;
 	stdin: string;
 	outputPath: string;
 	spinner?: SpinnerHandle;
 };
 
-function codexArgs(reviewDir: string, outputPath: string): string[] {
+function codexArgs(outputPath: string): string[] {
 	return [
 		"exec",
-		"--cd",
-		reviewDir,
 		"--sandbox",
 		"read-only",
 		"--json",
@@ -34,7 +31,7 @@ export async function runCodexReviewer(
 	const result = await runStreamingChild({
 		name: spec.name,
 		command,
-		args: codexArgs(spec.reviewDir, spec.outputPath),
+		args: codexArgs(spec.outputPath),
 		stdin: spec.stdin,
 		quiet: Boolean(spinner),
 		onLine: (line) => {
