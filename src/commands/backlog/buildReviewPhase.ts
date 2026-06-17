@@ -6,7 +6,7 @@ export function buildReviewPhase(): PlanPhase {
 		name: REVIEW_PHASE_NAME,
 		tasks: [
 			{
-				task: "Verify acceptance criteria, confirm manual checks, mark done, commit, and signal phase-done.",
+				task: "Verify acceptance criteria, confirm manual checks, commit, mark done, and signal phase-done.",
 			},
 		],
 	};
