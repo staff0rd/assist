@@ -45,7 +45,20 @@ export function getBacklogOrm(): Promise<BacklogOrm> {
 	if (_orm) return Promise.resolve(_orm);
 	if (_connecting) return _connecting;
 	_connecting = (async () => {
-		const pool = new Pool({ connectionString: getDatabaseUrl() });
+		const pool = new Pool({
+			connectionString: getDatabaseUrl(),
+			max: 10,
+			// why: retire idle clients before managed Postgres (Supabase/Neon) drops them server-side, so we never check out a dead socket and stall on a timeout.
+			idleTimeoutMillis: 30_000,
+			// why: bound the wait for a free client so a degraded pool fails fast (500 + log line) rather than hanging for seconds.
+			connectionTimeoutMillis: 10_000,
+		});
+		// why: an unhandled 'error' from an idle client crashes the process; absorb it so the pool just reconnects.
+		pool.on("error", (err) => {
+			console.error(
+				`${new Date().toISOString()} backlog pool error: ${err.message}`,
+			);
+		});
 		_pool = pool;
 		await ensureSchema((sql) => pool.query(sql));
 		_orm = makeOrmFromPool(pool);

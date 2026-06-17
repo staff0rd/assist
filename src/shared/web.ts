@@ -5,6 +5,7 @@ import {
 } from "node:http";
 import chalk from "chalk";
 import { openBrowser } from "../lib/openBrowser";
+import { runHandler } from "./runHandler";
 
 export type Handler = (
 	req: IncomingMessage,
@@ -65,7 +66,7 @@ export function startWebServer(
 ): ReturnType<typeof createServer> {
 	const url = buildUrl(port, initialPath);
 	const server = createServer((req, res) => {
-		handler(req, res, port);
+		runHandler(handler, req, res, port);
 	});
 	server.listen(port, () => {
 		console.log(chalk.green(`${label}: ${url}`));
