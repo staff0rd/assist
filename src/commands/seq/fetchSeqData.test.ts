@@ -1,5 +1,45 @@
 import { describe, expect, it } from "vitest";
-import { mapDataToEvents } from "./fetchSeqData";
+import { buildDataParams, mapDataToEvents } from "./fetchSeqData";
+
+describe("buildDataParams", () => {
+	it("should pass --from/--to as Seq rangeStartUtc/rangeEndUtc params", () => {
+		const params = buildDataParams(
+			"@Level = 'Error'",
+			50,
+			"2026-06-16T08:40:00Z",
+			"2026-06-16T09:10:00Z",
+		);
+
+		expect(params.get("rangeStartUtc")).toBe("2026-06-16T08:40:00Z");
+		expect(params.get("rangeEndUtc")).toBe("2026-06-16T09:10:00Z");
+	});
+
+	it("should omit range params when not provided", () => {
+		const params = buildDataParams("@Level = 'Error'", 50);
+
+		expect(params.has("rangeStartUtc")).toBe(false);
+		expect(params.has("rangeEndUtc")).toBe(false);
+	});
+
+	it("should set only rangeStartUtc when only from is provided", () => {
+		const params = buildDataParams(
+			"@Level = 'Error'",
+			50,
+			"2026-06-16T08:40:00Z",
+		);
+
+		expect(params.get("rangeStartUtc")).toBe("2026-06-16T08:40:00Z");
+		expect(params.has("rangeEndUtc")).toBe(false);
+	});
+
+	it("should embed the filter and count in the SQL query", () => {
+		const params = buildDataParams("@Level = 'Error'", 25);
+
+		expect(params.get("q")).toBe(
+			"select @Timestamp, @Level, @Exception, @Message from stream where @Level = 'Error' order by @Timestamp desc limit 25",
+		);
+	});
+});
 
 describe("mapDataToEvents", () => {
 	it("should map rows to SeqEvent objects", () => {

@@ -7,6 +7,21 @@ type SeqDataResponse = {
 	Rows: unknown[][];
 };
 
+export function buildDataParams(
+	filter: string,
+	count: number,
+	from?: string,
+	to?: string,
+): URLSearchParams {
+	const sqlFilter = filterToSql(filter);
+	const sql = `select @Timestamp, @Level, @Exception, @Message from stream where ${sqlFilter} order by @Timestamp desc limit ${count}`;
+
+	const params = new URLSearchParams({ q: sql });
+	if (from) params.set("rangeStartUtc", from);
+	if (to) params.set("rangeEndUtc", to);
+	return params;
+}
+
 export async function fetchSeqData(
 	conn: SeqConnection,
 	filter: string,
@@ -14,12 +29,7 @@ export async function fetchSeqData(
 	from?: string,
 	to?: string,
 ): Promise<SeqEvent[]> {
-	const sqlFilter = filterToSql(filter);
-	const sql = `select @Timestamp, @Level, @Exception, @Message from stream where ${sqlFilter} order by @Timestamp desc limit ${count}`;
-
-	const params = new URLSearchParams({ q: sql });
-	if (from) params.set("fromDateUtc", from);
-	if (to) params.set("toDateUtc", to);
+	const params = buildDataParams(filter, count, from, to);
 	const response = await fetchSeq(conn, "/api/data", params);
 
 	const data: SeqDataResponse = await response.json();
