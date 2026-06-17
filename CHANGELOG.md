@@ -1,3 +1,10 @@
+# [0.296.0](https://github.com/staff0rd/assist/compare/v0.295.0...v0.296.0) (2026-06-17)
+
+
+### Features
+
+* guide extraction in complexity output ([38457fb](https://github.com/staff0rd/assist/commit/38457fbafb7641477d18ca31fef225790fa0a24c))
+
 # [0.295.0](https://github.com/staff0rd/assist/compare/v0.294.1...v0.295.0) (2026-06-17)
 
 
