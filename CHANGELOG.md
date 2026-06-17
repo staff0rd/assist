@@ -1,3 +1,10 @@
+## [0.291.1](https://github.com/staff0rd/assist/compare/v0.291.0...v0.291.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* apply seq query time window ([5c7c523](https://github.com/staff0rd/assist/commit/5c7c5237f279e951d85885963233cad07081ddf2))
+
 # [0.291.0](https://github.com/staff0rd/assist/compare/v0.290.0...v0.291.0) (2026-06-16)
 
 
