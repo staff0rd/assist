@@ -2,51 +2,54 @@
 description: Recall context from the most recent prior session in this repo
 ---
 
-Summarise the most recent **prior** Claude Code session for this working directory, so the current session can pick up where it left off. Always operate on the current working directory; do not ask which repo to recall.
+Load the most recent handover note for this repo so the current session can pick up where the last one left off. Always operate on the current working directory; do not ask which repo to recall.
 
-## Step 1: Locate the prior session JSONL
+Handover notes are stored in the backlog database (scoped by git origin), authored by `/handover`. `/recall` reads only those notes — it does not read session transcripts or any disk files.
 
-Sessions are stored under `~/.claude/projects/<encoded-cwd>/`, where `<encoded-cwd>` is the absolute current working directory with every `/` replaced by `-` (e.g. `/home/me/git/foo` → `-home-me-git-foo`).
+## Step 1: List unrecalled notes
 
-1. Compute `<encoded-cwd>` from the absolute path of the current working directory. Do not hard-code a path — derive it.
-2. List `*.jsonl` files in that directory, newest-first by mtime.
-3. Walk the list and pick the **first** file that satisfies all of:
-   - It is **not** the current session's JSONL (the current session id is in `$CLAUDE_SESSION_ID` if set, or matches the JSONL whose tail you would actively be appending to right now — when in doubt, skip the newest if it could be this session).
-   - It is **not** an sdk-cli-only transcript. A transcript is sdk-cli-only when every `type:"user"` entry with text content has `"entrypoint":"sdk-cli"`. If at least one `type:"user"` entry has `"entrypoint":"cli"` (or any value other than `sdk-cli`), the transcript counts as a real interactive session and is eligible.
+Run:
 
-If no eligible prior session exists, emit:
-
-```markdown
-# Recall
-
-No prior session found for this directory.
+```bash
+assist handover list
 ```
 
-…and stop.
+This prints one unrecalled handover per line, most recent first, as tab-separated `id`, ISO-8601 created timestamp, and one-line summary.
 
-## Step 2: Emit the # Recall block
+- **No output** — there are no unrecalled handovers. Skip to Step 3 and emit the "no handover" block.
+- **Exactly one line** — recall it directly in Step 2 with no id.
+- **More than one line** — present the summaries (with their created timestamps) to the user and ask which to recall, then pass the chosen `id` in Step 2.
 
-Read enough of the chosen JSONL to understand what the previous session was working on (recent human user turns are the highest signal — skip tool results and assistant messages). Then emit a single `# Recall` block directly in chat. **Do not write any file.**
+## Step 2: Recall the chosen note
 
-Use this structure:
+Run:
+
+```bash
+assist handover recall [id]
+```
+
+With no argument this recalls the most recent unrecalled handover; with an `id` it recalls that specific note. Either way it prints the note's content to stdout and marks it recalled (so it drops out of the SessionStart advisory and future recalls).
+
+## Step 3: Surface it
+
+If the command printed content, present it to the user as a `# Recall` block so they can resume:
 
 ```markdown
 # Recall
 
-**Previous session:** <one-line summary of what the prior session was doing>
+<the recalled handover content>
+```
 
-**Key points:**
-- <bullet> — what was happening, decisions made, or where it stopped
-- <bullet>
-- <bullet>
+If the command printed nothing, there are no unrecalled handovers — emit:
 
-**Suggested next step:** <one concrete thing to do now, or "—" if unclear>
+```markdown
+# Recall
+
+No handover found for this repo.
 ```
 
 ## Guidelines
 
 - Always operate on the current working directory — never guess or substitute another repo.
-- Keep the summary terse. The user is reading it cold at the start of a new session.
-- Prefer concrete file paths, command names, and backlog IDs over vague descriptions.
-- If `.assist/HANDOVER.md` exists, the SessionStart hook will already have surfaced it — `/recall` complements that by pulling context from the prior transcript, not the handover file.
-- Do not modify any files. `/recall` is read-only.
+- `/recall` is the counterpart to `/handover`: it reads notes the previous session authored, nothing else.
+- Do not write or modify any files.

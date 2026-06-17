@@ -1,4 +1,4 @@
-export type UserLineEntry = {
+type UserLineEntry = {
 	text: string;
 	entrypoint?: string;
 };

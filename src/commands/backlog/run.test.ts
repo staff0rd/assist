@@ -33,12 +33,7 @@ vi.mock("./acquireLock", () => ({
 	releaseLock: vi.fn(),
 }));
 
-vi.mock("./blockedByHandover", () => ({
-	blockedByHandover: vi.fn(() => false),
-}));
-
 import { acquireLock, releaseLock } from "./acquireLock";
-import { blockedByHandover } from "./blockedByHandover";
 import { consumePause } from "./consumePause";
 import { executePhase } from "./executePhase";
 import { prepareRun } from "./prepareRun";
@@ -52,7 +47,6 @@ const mockReloadPlan = reloadPlan as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;
 const mockAcquireLock = acquireLock as unknown as MockInstance;
 const mockReleaseLock = releaseLock as unknown as MockInstance;
-const mockBlockedByHandover = blockedByHandover as unknown as MockInstance;
 const mockConsumePause = consumePause as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
@@ -78,17 +72,6 @@ function makePlan(item: BacklogItem): PlanPhase[] {
 describe("run", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-	});
-
-	describe("when a handover is pending", () => {
-		it("should exit immediately without preparing the run", async () => {
-			mockBlockedByHandover.mockReturnValueOnce(true);
-
-			await expect(run("1")).resolves.toBe(false);
-
-			expect(mockPrepareRun).not.toHaveBeenCalled();
-			expect(mockExecutePhase).not.toHaveBeenCalled();
-		});
 	});
 
 	describe("when prepare returns undefined", () => {

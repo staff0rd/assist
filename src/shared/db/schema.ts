@@ -7,6 +7,9 @@ import {
 	primaryKey,
 	text,
 } from "drizzle-orm/pg-core";
+import { handovers } from "./handovers";
+
+export { handovers } from "./handovers";
 
 /**
  * Drizzle schema for the backlog store. This mirrors the DDL in
@@ -104,6 +107,7 @@ export const schema = {
 	planTasks,
 	metadata,
 	feeds,
+	handovers,
 };
 
 export type ItemRow = typeof items.$inferSelect;

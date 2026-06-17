@@ -1,119 +1,77 @@
-import {
-	existsSync,
-	mkdirSync,
-	mkdtempSync,
-	readdirSync,
-	writeFileSync,
-} from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import { getCurrentOrigin } from "../backlog/getCurrentOrigin";
 import { load } from "./load";
-import { SUMMARISE_RECURSION_GUARD } from "./summarise";
+import { saveHandover } from "./saveHandover";
 
 function makeTempDir(): string {
 	return mkdtempSync(join(tmpdir(), "handover-load-"));
 }
 
-function writeHandover(dir: string, content: string): string {
+function writeHandover(dir: string, content: string): void {
 	const assistDir = join(dir, ".assist");
 	mkdirSync(assistDir, { recursive: true });
-	const path = join(assistDir, "HANDOVER.md");
-	writeFileSync(path, content);
-	return path;
+	writeFileSync(join(assistDir, "HANDOVER.md"), content);
 }
 
-function stdinReturning(value: object | string): () => Promise<string> {
-	const raw = typeof value === "string" ? value : JSON.stringify(value);
-	return () => Promise.resolve(raw);
+function stdinReturning(value: object): () => Promise<string> {
+	return () => Promise.resolve(JSON.stringify(value));
 }
 
 describe("load", () => {
+	let orm: Db;
+	let close: () => Promise<void>;
 	let logSpy: ReturnType<typeof vi.spyOn>;
 
-	beforeEach(() => {
+	beforeEach(async () => {
+		({ orm, close } = await createTestDb());
 		logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 	});
 
-	afterEach(() => {
+	afterEach(async () => {
 		logSpy.mockRestore();
+		await close();
 	});
 
-	it("short-circuits silently when the recursion guard env var is set", async () => {
+	it("emits nothing when no handovers exist on disk or in the DB", async () => {
 		const dir = makeTempDir();
-		writeHandover(dir, "stale");
 
-		const result = await load({
-			stdin: stdinReturning({ cwd: dir }),
-			env: { [SUMMARISE_RECURSION_GUARD]: "1" },
-		});
+		const result = await load({ stdin: stdinReturning({ cwd: dir }), orm });
 
 		expect(result).toBeNull();
 		expect(logSpy).not.toHaveBeenCalled();
-		expect(existsSync(join(dir, ".assist", "HANDOVER.md"))).toBe(true);
 	});
 
-	it("archives the handover and emits its content as additionalContext", async () => {
+	it("migrates a disk handover and advises the unrecalled count", async () => {
 		const dir = makeTempDir();
-		writeHandover(dir, "# Handover\n\nbody");
+		writeHandover(dir, "# Handover\n\nshipping the thing");
 
-		const result = await load({
-			stdin: stdinReturning({ cwd: dir, session_id: "s1" }),
-			env: {},
-		});
+		const result = await load({ stdin: stdinReturning({ cwd: dir }), orm });
 
 		expect(result).not.toBeNull();
 		const parsed = JSON.parse(result as string);
 		expect(parsed.hookSpecificOutput.hookEventName).toBe("SessionStart");
-		expect(parsed.hookSpecificOutput.additionalContext).toBe(
-			"# Handover\n\nbody",
+		expect(parsed.hookSpecificOutput.additionalContext).toBeUndefined();
+		expect(parsed.systemMessage).toBe(
+			"1 unrecalled handover for this repo. Run /recall to load.",
 		);
-		expect(parsed.systemMessage).toBe("Loaded handover from previous session");
-
-		expect(existsSync(join(dir, ".assist", "HANDOVER.md"))).toBe(false);
-		const archived = readdirSync(join(dir, ".assist", "handovers", "archive"));
-		expect(archived).toHaveLength(1);
 	});
 
-	it("emits nothing when no handover exists", async () => {
+	it("pluralises the advisory for multiple unrecalled handovers", async () => {
 		const dir = makeTempDir();
+		const origin = getCurrentOrigin(dir);
+		await saveHandover(orm, { origin, summary: "one", content: "a" });
+		await saveHandover(orm, { origin, summary: "two", content: "b" });
 
-		const result = await load({
-			stdin: stdinReturning({ cwd: dir, session_id: "current-session-id" }),
-			env: {},
-		});
-
-		expect(result).toBeNull();
-		expect(logSpy).not.toHaveBeenCalled();
-	});
-
-	it("tolerates malformed stdin JSON and falls back to cwdFallback", async () => {
-		const dir = makeTempDir();
-		writeHandover(dir, "fallback body");
-
-		const result = await load({
-			stdin: stdinReturning("not-json"),
-			env: {},
-			cwdFallback: dir,
-		});
+		const result = await load({ stdin: stdinReturning({ cwd: dir }), orm });
 
 		const parsed = JSON.parse(result as string);
-		expect(parsed.hookSpecificOutput.additionalContext).toBe("fallback body");
-	});
-
-	it("tolerates empty stdin and falls back to cwdFallback", async () => {
-		const dir = makeTempDir();
-		writeHandover(dir, "empty stdin body");
-
-		const result = await load({
-			stdin: stdinReturning(""),
-			env: {},
-			cwdFallback: dir,
-		});
-
-		const parsed = JSON.parse(result as string);
-		expect(parsed.hookSpecificOutput.additionalContext).toBe(
-			"empty stdin body",
+		expect(parsed.systemMessage).toBe(
+			"2 unrecalled handovers for this repo. Run /recall to load.",
 		);
 	});
 });

@@ -1,29 +1,20 @@
-import { existsSync, readFileSync } from "node:fs";
-import { archive } from "./archive";
-import { getHandoverPath } from "./getHandoverPath";
+import { getDb } from "../../shared/db/getDb";
+import { getCurrentOrigin } from "../backlog/getCurrentOrigin";
+import { countPendingHandovers } from "./countPendingHandovers";
+import { migrateDiskHandovers } from "./migrateDiskHandovers";
 import { parseLoadInput } from "./parseLoadInput";
 import { resolveLoadOptions } from "./resolveLoadOptions";
-import { SUMMARISE_RECURSION_GUARD } from "./summarise";
-import type { LoadContext, LoadOptions } from "./types";
+import type { LoadOptions } from "./types";
 
-function loadFromHandover(cwd: string): LoadContext | undefined {
-	const handoverPath = getHandoverPath(cwd);
-	if (!existsSync(handoverPath)) return undefined;
-	const content = readFileSync(handoverPath, "utf-8");
-	archive({ cwd });
-	return {
-		additionalContext: content,
-		systemMessage: "Loaded handover from previous session",
-	};
+function advisory(count: number): string {
+	const noun = count === 1 ? "handover" : "handovers";
+	return `${count} unrecalled ${noun} for this repo. Run /recall to load.`;
 }
 
-function emit(context: LoadContext): string {
+function emit(message: string): string {
 	const json = JSON.stringify({
-		hookSpecificOutput: {
-			hookEventName: "SessionStart",
-			additionalContext: context.additionalContext,
-		},
-		systemMessage: context.systemMessage,
+		hookSpecificOutput: { hookEventName: "SessionStart" },
+		systemMessage: message,
 	});
 	console.log(json);
 	return json;
@@ -31,11 +22,14 @@ function emit(context: LoadContext): string {
 
 export async function load(options: LoadOptions = {}): Promise<string | null> {
 	const opts = resolveLoadOptions(options);
-	if (opts.env[SUMMARISE_RECURSION_GUARD]) return null;
-
 	const input = await parseLoadInput(opts.stdin);
 	const cwd = input.cwd ?? opts.cwdFallback;
+	const origin = getCurrentOrigin(cwd);
 
-	const context = loadFromHandover(cwd);
-	return context ? emit(context) : null;
+	const orm = options.orm ?? (await getDb());
+	await migrateDiskHandovers(orm, origin, cwd);
+
+	const count = await countPendingHandovers(orm, origin);
+	if (count === 0) return null;
+	return emit(advisory(count));
 }

@@ -1,8 +1,13 @@
 import type { Command } from "commander";
-import { archive, load, summarise } from "./handover";
+import {
+	load,
+	printPendingHandovers,
+	recallAndPrint,
+	saveHandoverFromStdin,
+} from "./handover";
 
-type ArchiveCliOptions = {
-	suffix?: string;
+type SaveCliOptions = {
+	summary: string;
 };
 
 export function registerHandover(program: Command): void {
@@ -11,34 +16,36 @@ export function registerHandover(program: Command): void {
 		.description("Session handover utilities");
 
 	cmd
-		.command("archive")
+		.command("save")
 		.description(
-			"Archive the current .assist/HANDOVER.md to .assist/handovers/archive/",
+			"Save a session handover note (content read from stdin) to the backlog DB",
 		)
-		.option(
-			"--suffix <suffix>",
-			"Optional suffix appended to the archive filename",
-		)
-		.action((options: ArchiveCliOptions) => {
-			const dest = archive({ suffix: options.suffix });
-			if (dest) console.log(dest);
-		});
+		.requiredOption("--summary <summary>", "One-line summary of the handover")
+		.action((options: SaveCliOptions) =>
+			saveHandoverFromStdin(options.summary),
+		);
 
 	cmd
-		.command("summarise")
+		.command("list")
 		.description(
-			"Print a one-line summary of a session JSONL via claude -p --model haiku",
+			"List unrecalled handovers for this repo (tab-separated: id, created, summary), most recent first",
 		)
-		.argument("<jsonl>", "Path to a session JSONL file")
-		.action((jsonl: string) => {
-			const line = summarise(jsonl);
-			if (line) console.log(line);
-		});
+		.action(() => printPendingHandovers());
+
+	cmd
+		.command("recall")
+		.argument("[id]", "Id of a specific handover to recall")
+		.description(
+			"Print an unrecalled handover for this repo and mark it recalled (most recent by default, or the given id)",
+		)
+		.action((id: string | undefined) =>
+			recallAndPrint(id === undefined ? undefined : Number(id)),
+		);
 
 	cmd
 		.command("load")
 		.description(
-			"SessionStart hook: if .assist/HANDOVER.md exists, archive it and emit its content as additionalContext",
+			"SessionStart hook: migrate any disk handovers, then advise how many unrecalled handovers exist for this repo",
 		)
 		.action(async () => {
 			await load();

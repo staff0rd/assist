@@ -2,17 +2,13 @@
 description: Write a session handover note for the next conversation
 ---
 
-Write a concise handover note for the next session working on this repo. The note captures everything the next session needs to pick up where this one left off.
+Write a concise handover note for the next session working on this repo, then save it to the backlog database. The note captures everything the next session needs to pick up where this one left off.
 
-## Step 1: Archive the previous handover
+Handover notes are stored in the backlog DB (scoped by git origin), never on disk. `/handover` can be run any number of times — each run appends a new note.
 
-Run `assist handover archive` first. If a `.assist/HANDOVER.md` already exists, it is moved to `.assist/handovers/archive/<ISO-ts>.md` (path printed to stdout). If no handover exists, the command is a no-op.
+## Step 1: Compose the note
 
-Do NOT skip this step — re-running `/handover` must never overwrite a prior unsaved note.
-
-## Step 2: Write `.assist/HANDOVER.md`
-
-Always operate on the current working directory. Write the file at `.assist/HANDOVER.md` (create the `.assist/` directory if needed). Use the following sections, in this order, and omit none even if empty (use a single "—" placeholder line):
+Always operate on the current working directory. Compose the note body using the following sections, in this order, and omit none even if empty (use a single "—" placeholder line):
 
 ```markdown
 # Handover
@@ -46,9 +42,24 @@ Non-obvious gotchas, in-flight refactors, broken tests, half-applied changes, or
 Things that have been ruled out, attempted unsuccessfully, or that the user has explicitly asked not to do. Saves the next session from repeating dead ends.
 ```
 
+## Step 2: Save the note
+
+Author a one-line summary (under 100 chars) describing the note — this is what `/recall` shows when listing notes. Then save it by piping the composed note into `assist handover save` via stdin:
+
+```bash
+assist handover save --summary "<one-line summary>" <<'HANDOVER_EOF'
+# Handover
+
+## Current Task
+...
+HANDOVER_EOF
+```
+
+Use a quoted heredoc delimiter (`<<'HANDOVER_EOF'`) so nothing in the note body is expanded by the shell. The command resolves the repo's git origin and inserts a new row in the backlog DB.
+
 ## Guidelines
 
 - Keep each section terse — bullets, not paragraphs. The next session will read this cold.
 - Reference concrete file paths and line numbers wherever it helps orientation.
 - Do not summarise context that is already obvious from the code or git history.
-- Do not commit `.assist/HANDOVER.md` — it is gitignored.
+- Do not write `.assist/HANDOVER.md` or any other file — handovers live only in the backlog DB.

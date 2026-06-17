@@ -45,12 +45,12 @@ After installation, the `assist` command will be available globally. You can als
 - `/devlog` - Generate devlog entry for the next unversioned day
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
 - `/forward-comments` - Split a coarse PR comment (e.g. from Slack) into per-line review comments on the current branch's PR, attributed to the original reviewer
-- `/handover` - Write a session handover note (`.assist/HANDOVER.md`) for the next conversation; archives any prior handover first. The SessionStart hook surfaces the handover at the start of the next session
+- `/handover` - Write a session handover note for the next conversation and save it to the backlog DB (scoped by git origin, never on disk). Can be run any number of times; each call appends a note with a one-line summary. The SessionStart hook advises how many unrecalled handovers exist
 - `/pr` - Raise a PR with a concise description
 - `/prs-slack <number>` - Post a PR's title and URL to the Slack channel configured in `prs.slack`
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
-- `/recall` - Recall context from the most recent prior session in this repo by summarising its transcript (skips sdk-cli-only sessions); read-only, emits a `# Recall` block in chat
+- `/recall` - Recall the most recent handover note for this repo from the backlog DB, emit it as a `# Recall` block, and mark it recalled. Reads DB handovers only (no transcripts or disk files)
 - `/refine` - Refine an existing backlog item through conversation
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
@@ -224,9 +224,10 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist sql tables [connection]` - List tables in the connected database (via INFORMATION_SCHEMA.TABLES)
 - `assist sql columns <table> [connection]` - List columns for a table (use `schema.table` for non-default schema; via INFORMATION_SCHEMA.COLUMNS)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
-- `assist handover archive [--suffix <s>]` - Archive the current `.assist/HANDOVER.md` to `.assist/handovers/archive/<ISO-ts>[-<suffix>].md`. Prints the archive path; no-op when no handover exists
-- `assist handover summarise <jsonl>` - Print a one-line summary of a session JSONL via `claude -p --model haiku`. Filters sdk-cli-only transcripts and sets a recursion-guard env var so the inner SessionStart hook short-circuits
-- `assist handover load` - SessionStart hook entry point: reads `{cwd, session_id}` from stdin, and only when `.assist/HANDOVER.md` exists archives it and emits `{ hookSpecificOutput: { hookEventName: "SessionStart", additionalContext }, systemMessage }`. Emits nothing when no handover exists (use `/recall` to pull prior-session context on demand). Honors `_CLAUDE_HOOK_SUMMARISE_RUNNING` so nested invocations short-circuit silently
+- `assist handover save --summary <s>` - Save a session handover note to the backlog DB (content read from stdin), scoped by the repo's git origin. Appends a new row each call; `--summary` is the one-line description shown when recalling
+- `assist handover list` - List unrecalled handovers for this repo, most recent first, one per line as tab-separated `id`, ISO-8601 created timestamp, and one-line summary. Prints nothing when none are pending
+- `assist handover recall [id]` - Print an unrecalled handover for this repo and mark it recalled (so it drops out of the SessionStart advisory and future recalls). Recalls the most recent by default, or the given `id`. Prints nothing when none match
+- `assist handover load` - SessionStart hook entry point: reads `{cwd, session_id}` from stdin, migrates any legacy disk handovers (`.assist/HANDOVER.md` and notes under `.assist/handovers/`) into the backlog DB then deletes them, and emits `{ hookSpecificOutput: { hookEventName: "SessionStart" }, systemMessage }` advising how many unrecalled handovers exist. Emits nothing when there are none (use `/recall` to load one)
 - `assist mermaid export [file.md]` - Render each fenced mermaid block to `<stem>-<index>.svg` via [Kroki](https://kroki.io). With no file, scans `*.md` in the current directory (non-recursive). Use `--out <dir>` to override the output directory. Use `--index <n>` to render only the nth mermaid block (1-based; requires a file argument). Endpoint is configurable via `mermaid.krokiUrl` (default `https://kroki.io`).
 - `assist prompts` - Show top 10 denied tool calls by frequency with count and repo breakdown
 - `assist coverage` - Print global statement coverage percentage

@@ -4,7 +4,6 @@ import {
 	withoutResumeSession,
 } from "../../shared/spawnClaude";
 import { acquireLock, releaseLock } from "./acquireLock";
-import { blockedByHandover } from "./blockedByHandover";
 import { handleReviewResult } from "./handleReviewResult";
 import { type PreparedRun, prepareRun } from "./prepareRun";
 import { runOnce } from "./runOnce";
@@ -14,8 +13,6 @@ export async function run(
 	id: string,
 	spawnOptions?: SpawnClaudeOptions,
 ): Promise<boolean> {
-	if (blockedByHandover()) return false;
-
 	const prepared = await prepareRun(id);
 	if (!prepared) return false;
 

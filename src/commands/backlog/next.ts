@@ -3,7 +3,6 @@ import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
-import { blockedByHandover } from "./blockedByHandover";
 import { findResumable } from "./findResumable";
 import { findUnblockedTodos } from "./findUnblockedTodos";
 import { isBlocked, typeLabel } from "./list/shared";
@@ -73,8 +72,6 @@ export async function next(
 	options?: NextOptions,
 	startId?: string,
 ): Promise<void> {
-	if (blockedByHandover()) return;
-
 	pullIfConfigured();
 
 	let pendingId = startId;
