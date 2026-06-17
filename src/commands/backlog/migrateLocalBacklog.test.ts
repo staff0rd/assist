@@ -8,9 +8,9 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items as itemsTable } from "./backlogSchema";
-import { createTestDb } from "./createTestDb";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import { items as itemsTable } from "../../shared/db/schema";
 import { loadAllItems } from "./loadAllItems";
 import { loadItem } from "./loadItem";
 import { migrateLocalBacklog } from "./migrateLocalBacklog";
@@ -58,7 +58,7 @@ function writeJsonl(dir: string, items: BacklogItem[]): void {
 }
 
 describe("migrateLocalBacklog", () => {
-	let orm: BacklogOrm;
+	let orm: Db;
 	let close: () => Promise<void>;
 	let dir: string;
 

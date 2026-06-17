@@ -142,9 +142,9 @@ export const assistConfigSchema = z.strictObject({
 			windowsDaemonPort: z.number().optional(),
 		})
 		.optional(),
-	backlog: z
+	database: z
 		.strictObject({
-			databaseUrl: z.string().optional(),
+			url: z.string().optional(),
 		})
 		.default({}),
 	mermaid: z

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { eq } from "drizzle-orm";
-import { items } from "../backlogSchema";
+import { items } from "../../../shared/db/schema";
 import { findOneItem } from "../shared";
 import { applyAcMutations, hasAcMutations } from "./applyAcMutations";
 import { buildUpdateValues } from "./buildUpdateValues";

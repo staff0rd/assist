@@ -1,11 +1,11 @@
 import { asc, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import { comments, items } from "../../shared/db/schema";
 import { appendComment } from "./appendComment";
-import type { BacklogOrm } from "./BacklogOrm";
-import { comments, items } from "./backlogSchema";
-import { createTestDb } from "./createTestDb";
 
-let orm: BacklogOrm;
+let orm: Db;
 let close: () => Promise<void>;
 
 async function seedItem(): Promise<void> {

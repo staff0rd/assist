@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { and, eq } from "drizzle-orm";
-import { planPhases, planTasks } from "./backlogSchema";
+import { planPhases, planTasks } from "../../shared/db/schema";
 import { findPhase } from "./findPhase";
 import { adjustCurrentPhase, reindexPhases } from "./reindexPhases";
 

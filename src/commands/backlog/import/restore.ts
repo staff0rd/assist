@@ -1,8 +1,8 @@
 import type { PoolClient } from "pg";
+import { SCHEMA } from "../../../shared/db/ensureSchema";
 import { copyTableIn } from "../dump/copyTableIn";
 import { DUMP_TABLES } from "../dump/DumpTable";
 import type { ParsedDump } from "../dump/parseDump";
-import { SCHEMA } from "../ensureSchema";
 
 /** Tables with a generated identity whose sequence must be resynced after restore. */
 const IDENTITY_TABLES = ["items", "comments"] as const;

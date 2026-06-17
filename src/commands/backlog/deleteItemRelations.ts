@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import type { BacklogDatabase } from "./BacklogOrm";
-import { comments, links, planPhases, planTasks } from "./backlogSchema";
+import type { BacklogDatabase } from "../../shared/db/Db";
+import { comments, links, planPhases, planTasks } from "../../shared/db/schema";
 
 export async function deleteItemRelations(
 	db: BacklogDatabase,

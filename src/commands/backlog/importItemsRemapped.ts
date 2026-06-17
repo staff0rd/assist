@@ -1,4 +1,4 @@
-import type { BacklogOrm } from "./BacklogOrm";
+import type { Db } from "../../shared/db/Db";
 import { insertItem } from "./insertItem";
 import { insertItemRelations } from "./insertItemRelations";
 import type { BacklogItem } from "./types";
@@ -30,7 +30,7 @@ function remap(
  * that appear later in the input. Returns the number of items imported.
  */
 export async function importItemsRemapped(
-	orm: BacklogOrm,
+	orm: Db,
 	items: BacklogItem[],
 	origin: string,
 ): Promise<number> {

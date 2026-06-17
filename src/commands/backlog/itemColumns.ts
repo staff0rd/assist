@@ -1,4 +1,4 @@
-import type { items } from "./backlogSchema";
+import type { items } from "../../shared/db/schema";
 import type { BacklogItem } from "./types";
 
 /**

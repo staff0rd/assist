@@ -4,7 +4,7 @@ import type {
 	LinkRow,
 	PhaseRow,
 	TaskRow,
-} from "./backlogSchema";
+} from "../../shared/db/schema";
 import type { Relations } from "./loadRelations";
 import type {
 	BacklogComment,

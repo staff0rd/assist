@@ -1,6 +1,6 @@
 import { and, desc, eq, gte } from "drizzle-orm";
-import type { BacklogDatabase } from "./BacklogOrm";
-import { planPhases, planTasks } from "./backlogSchema";
+import type { BacklogDatabase } from "../../shared/db/Db";
+import { planPhases, planTasks } from "../../shared/db/schema";
 
 /**
  * Shift every phase (and its tasks) at or after `fromIdx` up by one index, in

@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { items } from "./backlogSchema";
+import { items } from "../../shared/db/schema";
 import { loadItemSummaries } from "./loadItemSummaries";
 import { searchItemIds } from "./searchItemIds";
 import { getOrigin, getReady } from "./shared";

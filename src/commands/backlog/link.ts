@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import type { BacklogOrm } from "./BacklogOrm";
-import { links } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { links } from "../../shared/db/schema";
 import { hasCycle } from "./hasCycle";
 import { loadDependencyGraph } from "./loadDependencyGraph";
 import { loadItem } from "./loadItem";
@@ -22,7 +22,7 @@ function parseLinkType(type: string | undefined): BacklogLinkType | undefined {
 
 /** Whether adding the (depends-on) edge would close a dependency cycle, logging if so. */
 async function createsCycle(
-	orm: BacklogOrm,
+	orm: Db,
 	linkType: BacklogLinkType,
 	fromNum: number,
 	toNum: number,

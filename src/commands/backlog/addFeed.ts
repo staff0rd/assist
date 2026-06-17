@@ -1,5 +1,5 @@
-import type { BacklogDatabase } from "./BacklogOrm";
-import { feeds } from "./backlogSchema";
+import type { BacklogDatabase } from "../../shared/db/Db";
+import { feeds } from "../../shared/db/schema";
 
 /**
  * Add a news feed URL. Returns `true` if it was inserted, `false` if an entry

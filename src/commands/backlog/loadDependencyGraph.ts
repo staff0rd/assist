@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { links } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { links } from "../../shared/db/schema";
 
 /**
  * Load the `depends-on` dependency graph as an adjacency map (item id → the ids
@@ -8,7 +8,7 @@ import { links } from "./backlogSchema";
  * without loading every item and all of its relations.
  */
 export async function loadDependencyGraph(
-	orm: BacklogOrm,
+	orm: Db,
 ): Promise<Map<number, number[]>> {
 	const rows = await orm
 		.select({ itemId: links.itemId, targetId: links.targetId })

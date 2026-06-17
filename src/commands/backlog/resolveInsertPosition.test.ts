@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items, planPhases } from "./backlogSchema";
-import { createTestDb } from "./createTestDb";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import { items, planPhases } from "../../shared/db/schema";
 import { resolveInsertPosition } from "./resolveInsertPosition";
 
-let orm: BacklogOrm;
+let orm: Db;
 let close: () => Promise<void>;
 
 beforeEach(async () => {

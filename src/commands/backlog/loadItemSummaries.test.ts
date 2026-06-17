@@ -1,10 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { BacklogOrm } from "./BacklogOrm";
-import { comments, items, links, planPhases, planTasks } from "./backlogSchema";
-import { createTestDb } from "./createTestDb";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import {
+	comments,
+	items,
+	links,
+	planPhases,
+	planTasks,
+} from "../../shared/db/schema";
 import { loadItemSummaries } from "./loadItemSummaries";
 
-let orm: BacklogOrm;
+let orm: Db;
 let close: () => Promise<void>;
 
 describe("loadItemSummaries", () => {

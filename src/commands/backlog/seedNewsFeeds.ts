@@ -1,9 +1,9 @@
+import type { BacklogDatabase } from "../../shared/db/Db";
 import {
 	loadGlobalConfigRaw,
 	loadProjectConfig,
 } from "../../shared/loadConfig";
 import { addFeed } from "./addFeed";
-import type { BacklogDatabase } from "./BacklogOrm";
 import { listFeeds } from "./listFeeds";
 
 function legacyFeeds(raw: Record<string, unknown>): string[] {

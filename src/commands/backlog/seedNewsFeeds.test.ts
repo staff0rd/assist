@@ -8,13 +8,13 @@ vi.mock("../../shared/loadConfig", () => ({
 	loadGlobalConfigRaw: () => mockLoadGlobalConfigRaw(),
 }));
 
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
 import { addFeed } from "./addFeed";
-import type { BacklogOrm } from "./BacklogOrm";
-import { createTestDb } from "./createTestDb";
 import { listFeeds } from "./listFeeds";
 import { seedNewsFeeds } from "./seedNewsFeeds";
 
-let orm: BacklogOrm;
+let orm: Db;
 let close: () => Promise<void>;
 
 describe("seedNewsFeeds", () => {

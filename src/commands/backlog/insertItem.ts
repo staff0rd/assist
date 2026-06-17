@@ -1,5 +1,5 @@
-import type { BacklogDatabase } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { BacklogDatabase } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 import { itemColumns } from "./itemColumns";
 import type { BacklogItem } from "./types";
 

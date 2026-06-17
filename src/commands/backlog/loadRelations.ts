@@ -1,5 +1,5 @@
 import { asc, inArray } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
+import type { Db } from "../../shared/db/Db";
 import {
 	type CommentRow,
 	comments,
@@ -9,7 +9,7 @@ import {
 	planPhases,
 	planTasks,
 	type TaskRow,
-} from "./backlogSchema";
+} from "../../shared/db/schema";
 
 /** Relation rows for a set of items, grouped by item id. */
 export type Relations = {
@@ -32,28 +32,28 @@ function groupByItem<T extends { itemId: number }>(
 	return map;
 }
 
-const selectComments = (orm: BacklogOrm, ids: number[]) =>
+const selectComments = (orm: Db, ids: number[]) =>
 	orm
 		.select()
 		.from(comments)
 		.where(inArray(comments.itemId, ids))
 		.orderBy(asc(comments.itemId), asc(comments.idx));
 
-const selectLinks = (orm: BacklogOrm, ids: number[]) =>
+const selectLinks = (orm: Db, ids: number[]) =>
 	orm
 		.select()
 		.from(links)
 		.where(inArray(links.itemId, ids))
 		.orderBy(asc(links.itemId));
 
-const selectPhases = (orm: BacklogOrm, ids: number[]) =>
+const selectPhases = (orm: Db, ids: number[]) =>
 	orm
 		.select()
 		.from(planPhases)
 		.where(inArray(planPhases.itemId, ids))
 		.orderBy(asc(planPhases.itemId), asc(planPhases.idx));
 
-const selectTasks = (orm: BacklogOrm, ids: number[]) =>
+const selectTasks = (orm: Db, ids: number[]) =>
 	orm
 		.select()
 		.from(planTasks)
@@ -81,7 +81,7 @@ type LoadRelationsOptions = {
  * high-latency (remote) Postgres.
  */
 export async function loadRelations(
-	orm: BacklogOrm,
+	orm: Db,
 	ids: number[],
 	{ includeComments = true, includeTasks = true }: LoadRelationsOptions = {},
 ): Promise<Relations> {

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { and, count, eq } from "drizzle-orm";
-import { planPhases } from "./backlogSchema";
+import { planPhases } from "../../shared/db/schema";
 import { findOneItem } from "./shared";
 
 export async function findPhase(id: string, phase: string) {

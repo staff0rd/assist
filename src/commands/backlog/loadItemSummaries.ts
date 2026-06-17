@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 import type { BacklogItemSummary, BacklogStatus, BacklogType } from "./types";
 
 /**
@@ -11,7 +11,7 @@ import type { BacklogItemSummary, BacklogStatus, BacklogType } from "./types";
  * when a single item is opened, keeping the index fast for large backlogs.
  */
 export async function loadItemSummaries(
-	orm: BacklogOrm,
+	orm: Db,
 	origin?: string,
 ): Promise<BacklogItemSummary[]> {
 	const rows = await orm

@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { eq } from "drizzle-orm";
+import { items } from "../../../shared/db/schema";
 import { respondJson } from "../../../shared/web";
 import { appendComment } from "../appendComment";
-import { items } from "../backlogSchema";
 import { loadItem } from "../loadItem";
 import { parseRewindBody } from "./parseItemBody";
 import { findItemOr404 } from "./shared";

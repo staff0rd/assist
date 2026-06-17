@@ -1,5 +1,5 @@
-import type { BacklogOrm } from "../BacklogOrm";
-import { items } from "../backlogSchema";
+import type { Db } from "../../../shared/db/Db";
+import { items } from "../../../shared/db/schema";
 
 type Resolution = { origin: string } | { error: string };
 
@@ -9,7 +9,7 @@ type Resolution = { origin: string } | { error: string };
  * `/<input>` (case-insensitive, since stored paths preserve case).
  */
 export async function resolveOldOrigin(
-	orm: BacklogOrm,
+	orm: Db,
 	input: string,
 ): Promise<Resolution> {
 	const rows = await orm.selectDistinct({ origin: items.origin }).from(items);

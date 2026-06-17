@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 import { loadRelations } from "./loadRelations";
 import { rowToItem } from "./rowToItem";
 import type { BacklogItem } from "./types";
@@ -11,7 +11,7 @@ import type { BacklogItem } from "./types";
  * scoped to this one id — a fixed handful of round-trips, never the whole backlog.
  */
 export async function loadItem(
-	orm: BacklogOrm,
+	orm: Db,
 	id: number,
 ): Promise<BacklogItem | undefined> {
 	const [row] = await orm.select().from(items).where(eq(items.id, id));

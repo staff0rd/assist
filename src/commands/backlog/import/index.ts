@@ -1,10 +1,10 @@
 import { readFile } from "node:fs/promises";
 import chalk from "chalk";
+import { withDbClient } from "../../../shared/db/getDb";
 import { countCopyRows } from "../dump/countCopyRows";
 import { DUMP_TABLES } from "../dump/DumpTable";
 import { parseDump } from "../dump/parseDump";
 import { validateDump } from "../dump/validateDump";
-import { withBacklogClient } from "../getBacklogOrm";
 import { confirmReplace } from "./confirmReplace";
 import { readStdinBuffer } from "./readStdinBuffer";
 import { restore } from "./restore";
@@ -27,7 +27,7 @@ export async function importBacklog(
 		countCopyRows(parsed.sections.get(t.name) ?? Buffer.alloc(0)),
 	);
 
-	await withBacklogClient(async (client) => {
+	await withDbClient(async (client) => {
 		if (!options.yes && !(await confirmReplace(client, incoming, !file))) {
 			console.error(chalk.yellow("Import cancelled; no changes made."));
 			return;

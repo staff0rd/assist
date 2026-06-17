@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
-import type { BacklogOrm } from "./BacklogOrm";
+import type { Db } from "../../shared/db/Db";
 import { backupLocalBacklogFiles } from "./backupLocalBacklogFiles";
 import { gitPullBacklog } from "./gitPullBacklog";
 import { importItemsRemapped } from "./importItemsRemapped";
@@ -15,7 +15,7 @@ function jsonlPath(dir: string): string {
 
 /** Verify the import landed in the (previously empty) origin before touching files. */
 async function verifyImport(
-	orm: BacklogOrm,
+	orm: Db,
 	origin: string,
 	items: BacklogItem[],
 	imported: number,
@@ -45,7 +45,7 @@ async function verifyImport(
  * the migration never re-runs. No-op when no local jsonl is present.
  */
 export async function migrateLocalBacklog(
-	orm: BacklogOrm,
+	orm: Db,
 	dir: string,
 	origin: string,
 ): Promise<void> {

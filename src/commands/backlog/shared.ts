@@ -1,10 +1,10 @@
 import chalk from "chalk";
+import type { Db } from "../../shared/db/Db";
+import { ensureMigrated } from "../../shared/db/ensureMigrated";
+import { getDb } from "../../shared/db/getDb";
 import { getProjectRoot } from "../../shared/loadConfig";
-import type { BacklogOrm } from "./BacklogOrm";
 import { deleteItem } from "./deleteItem";
-import { ensureMigrated } from "./ensureMigrated";
 import { findBacklogUp } from "./findBacklogUp";
-import { getBacklogOrm } from "./getBacklogOrm";
 import { getCurrentOrigin } from "./getCurrentOrigin";
 import { loadAllItems } from "./loadAllItems";
 import { loadItem } from "./loadItem";
@@ -34,8 +34,8 @@ export function getOrigin(): string {
  * the current repository on first use. Mutation commands call this directly to
  * obtain the Drizzle client for targeted writes without loading the whole backlog.
  */
-export async function getReady(): Promise<{ orm: BacklogOrm }> {
-	const orm = await getBacklogOrm();
+export async function getReady(): Promise<{ orm: Db }> {
+	const orm = await getDb();
 	const dir = getBacklogDir();
 	await ensureMigrated(orm, dir, getCurrentOrigin(dir));
 	return { orm };
@@ -72,7 +72,7 @@ export async function saveBacklog(items: BacklogFile): Promise<void> {
  */
 export async function findOneItem(
 	id: string,
-): Promise<{ orm: BacklogOrm; item: BacklogItem } | undefined> {
+): Promise<{ orm: Db; item: BacklogItem } | undefined> {
 	const numId = Number.parseInt(id, 10);
 	const { orm } = await getReady();
 	const item = Number.isNaN(numId) ? undefined : await loadItem(orm, numId);

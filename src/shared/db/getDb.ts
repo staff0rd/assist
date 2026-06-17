@@ -1,21 +1,21 @@
 import chalk from "chalk";
 import { Pool, type PoolClient } from "pg";
-import { loadConfig } from "../../shared/loadConfig";
-import { type BacklogOrm, makeOrmFromPool } from "./BacklogOrm";
+import { seedNewsFeeds } from "../../commands/backlog/seedNewsFeeds";
+import { loadConfig } from "../loadConfig";
+import { type Db, makeOrmFromPool } from "./Db";
 import { ensureSchema } from "./ensureSchema";
-import { seedNewsFeeds } from "./seedNewsFeeds";
 
-const DATABASE_URL_ENV = "ASSIST_BACKLOG_DATABASE_URL";
+const DATABASE_URL_ENV = "ASSIST_DATABASE_URL";
 
-const MISSING_URL_MESSAGE = `No backlog database configured.
+const MISSING_URL_MESSAGE = `No assist database configured.
 
-Backlog storage requires a Postgres-compatible connection string. Set one via either:
+Assist storage requires a Postgres-compatible connection string. Set one via either:
   • the ${DATABASE_URL_ENV} environment variable, or
-  • backlog.databaseUrl in ~/.assist.yml
+  • database.url in ~/.assist.yml
 
 Example:
-  backlog:
-    databaseUrl: postgresql://user:password@host:5432/database
+  database:
+    url: postgresql://user:password@host:5432/database
 
 Managed Postgres providers such as Supabase or Neon work out of the box.`;
 
@@ -24,7 +24,7 @@ Managed Postgres providers such as Supabase or Neon work out of the box.`;
  * over config. Prints a helpful message and exits if neither is set.
  */
 function getDatabaseUrl(): string {
-	const url = process.env[DATABASE_URL_ENV] ?? loadConfig().backlog.databaseUrl;
+	const url = process.env[DATABASE_URL_ENV] ?? loadConfig().database.url;
 	if (!url) {
 		console.error(chalk.red(MISSING_URL_MESSAGE));
 		process.exit(1);
@@ -32,16 +32,16 @@ function getDatabaseUrl(): string {
 	return url;
 }
 
-let _connecting: Promise<BacklogOrm> | undefined;
+let _connecting: Promise<Db> | undefined;
 let _pool: Pool | undefined;
-let _orm: BacklogOrm | undefined;
+let _orm: Db | undefined;
 
 /**
  * Connect to the configured Postgres database on demand, creating the schema on
  * first connect and returning the Drizzle client used throughout the backlog
  * data layer. The connection is cached for the lifetime of the process.
  */
-export function getBacklogOrm(): Promise<BacklogOrm> {
+export function getDb(): Promise<Db> {
 	if (_orm) return Promise.resolve(_orm);
 	if (_connecting) return _connecting;
 	_connecting = (async () => {
@@ -74,10 +74,10 @@ export function getBacklogOrm(): Promise<BacklogOrm> {
  * COPY streaming, which needs a raw pg client rather than the Drizzle query
  * surface. Throws when the backend is not a pg pool (e.g. PGlite in tests).
  */
-export async function withBacklogClient<T>(
+export async function withDbClient<T>(
 	fn: (client: PoolClient) => Promise<T>,
 ): Promise<T> {
-	await getBacklogOrm();
+	await getDb();
 	const pool = _pool;
 	if (!pool) {
 		throw new Error("COPY streaming requires a pooled Postgres connection.");
@@ -95,7 +95,7 @@ export async function withBacklogClient<T>(
  * and timers keep the Node event loop alive, so commands hang after printing
  * unless the pool is drained. Safe to call when no pool was ever created.
  */
-export async function closeBacklogDb(): Promise<void> {
+export async function closeDb(): Promise<void> {
 	const pool = _pool;
 	if (!pool) return;
 	_pool = undefined;

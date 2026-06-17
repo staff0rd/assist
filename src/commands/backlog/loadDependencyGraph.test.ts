@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items, links } from "./backlogSchema";
-import { createTestDb } from "./createTestDb";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import { items, links } from "../../shared/db/schema";
 import { hasCycle } from "./hasCycle";
 import { loadDependencyGraph } from "./loadDependencyGraph";
 
-let orm: BacklogOrm;
+let orm: Db;
 let close: () => Promise<void>;
 
 async function seedItem(id: number): Promise<void> {

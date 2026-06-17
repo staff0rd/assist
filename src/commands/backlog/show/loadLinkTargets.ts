@@ -1,6 +1,6 @@
 import { inArray } from "drizzle-orm";
-import type { BacklogOrm } from "../BacklogOrm";
-import { items } from "../backlogSchema";
+import type { Db } from "../../../shared/db/Db";
+import { items } from "../../../shared/db/schema";
 import type { BacklogItem, BacklogStatus } from "../types";
 
 /** The fields {@link ./printLinks} needs to render a linked item. */
@@ -11,7 +11,7 @@ type ItemRef = Pick<BacklogItem, "id" | "name" | "status">;
  * query, so `show` can render link labels without loading the whole backlog.
  */
 export async function loadLinkTargets(
-	orm: BacklogOrm,
+	orm: Db,
 	ids: number[],
 ): Promise<ItemRef[]> {
 	if (ids.length === 0) return [];

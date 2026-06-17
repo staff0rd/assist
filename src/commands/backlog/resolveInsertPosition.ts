@@ -1,10 +1,10 @@
 import chalk from "chalk";
 import { count, eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { planPhases } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { planPhases } from "../../shared/db/schema";
 
 export async function resolveInsertPosition(
-	orm: BacklogOrm,
+	orm: Db,
 	itemId: number,
 	position: string | undefined,
 ): Promise<number | undefined> {

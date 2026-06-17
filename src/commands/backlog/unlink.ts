@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { and, eq } from "drizzle-orm";
-import { links } from "./backlogSchema";
+import { links } from "../../shared/db/schema";
 import { loadItem } from "./loadItem";
 import { getReady } from "./shared";
 

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 
 /**
  * Delete an item with a single targeted write; its relations are removed by the
@@ -8,7 +8,7 @@ import { items } from "./backlogSchema";
  * deleted item's name, or `undefined` if no item with that id existed.
  */
 export async function deleteItem(
-	orm: BacklogOrm,
+	orm: Db,
 	id: number,
 ): Promise<string | undefined> {
 	const [row] = await orm

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import packageJson from "../package.json";
-import { closeBacklogDb } from "./commands/backlog/getBacklogOrm";
 import { commit } from "./commands/commit";
 import { coverage } from "./commands/coverage";
 import { init } from "./commands/init";
@@ -46,6 +45,7 @@ import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import { update } from "./commands/update";
 import { init as vscodeInit } from "./commands/vscode";
+import { closeDb } from "./shared/db/getDb";
 
 const program = new Command();
 
@@ -165,4 +165,4 @@ program
 		console.error(error);
 		process.exitCode = 1;
 	})
-	.finally(() => closeBacklogDb());
+	.finally(() => closeDb());

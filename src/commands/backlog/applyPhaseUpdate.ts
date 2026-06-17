@@ -1,6 +1,6 @@
 import { and, eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { planPhases, planTasks } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { planPhases, planTasks } from "../../shared/db/schema";
 
 type PhaseUpdateFields = {
 	name?: string;
@@ -9,7 +9,7 @@ type PhaseUpdateFields = {
 };
 
 export async function applyPhaseUpdate(
-	orm: BacklogOrm,
+	orm: Db,
 	itemId: number,
 	phaseIdx: number,
 	fields: PhaseUpdateFields,

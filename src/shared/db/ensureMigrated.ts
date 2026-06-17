@@ -1,5 +1,5 @@
-import type { BacklogOrm } from "./BacklogOrm";
-import { migrateLocalBacklog } from "./migrateLocalBacklog";
+import { migrateLocalBacklog } from "../../commands/backlog/migrateLocalBacklog";
+import type { Db } from "./Db";
 
 const attempted = new Set<string>();
 
@@ -9,7 +9,7 @@ const attempted = new Set<string>();
  * the same process; a later process retries while the local file remains.
  */
 export async function ensureMigrated(
-	orm: BacklogOrm,
+	orm: Db,
 	dir: string,
 	origin: string,
 ): Promise<void> {

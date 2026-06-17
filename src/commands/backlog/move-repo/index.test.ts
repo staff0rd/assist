@@ -19,9 +19,9 @@ vi.mock("./confirmMove", async () => ({
 	confirmMove: vi.fn(),
 }));
 
-import type { BacklogOrm } from "../BacklogOrm";
-import { items } from "../backlogSchema";
-import { createTestDb } from "../createTestDb";
+import { createTestDb } from "../../../shared/db/createTestDb";
+import type { Db } from "../../../shared/db/Db";
+import { items } from "../../../shared/db/schema";
 import { getOrigin, getReady } from "../shared";
 import { confirmMove } from "./confirmMove";
 import { moveRepo } from "./index";
@@ -30,7 +30,7 @@ const mockGetReady = getReady as unknown as MockInstance;
 const mockGetOrigin = getOrigin as unknown as MockInstance;
 const mockConfirmMove = confirmMove as unknown as MockInstance;
 
-let orm: BacklogOrm;
+let orm: Db;
 let close: () => Promise<void>;
 
 const OLD = "github.com/acme/space-glob-factory";

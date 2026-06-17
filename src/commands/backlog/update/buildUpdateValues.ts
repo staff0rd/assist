@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import type { items } from "../backlogSchema";
+import type { items } from "../../../shared/db/schema";
 
 type UpdateOptions = {
 	name?: string;

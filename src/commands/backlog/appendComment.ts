@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { comments } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { comments } from "../../shared/db/schema";
 import type { BacklogComment } from "./types";
 
 /**
@@ -9,7 +9,7 @@ import type { BacklogComment } from "./types";
  * loads or rewrites the rest of the backlog.
  */
 export async function appendComment(
-	orm: BacklogOrm,
+	orm: Db,
 	itemId: number,
 	text: string,
 	opts: { phase?: number; type?: BacklogComment["type"] } = {},

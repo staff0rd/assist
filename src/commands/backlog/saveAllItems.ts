@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
-import type { BacklogDatabase, BacklogOrm } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { BacklogDatabase, Db } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 import { deleteItemRelations } from "./deleteItemRelations";
 import { insertItemRelations } from "./insertItemRelations";
 import { itemColumns } from "./itemColumns";
@@ -39,7 +39,7 @@ async function resyncSequences(db: BacklogDatabase): Promise<void> {
  * untouched, so saving from one repository never affects another's backlog.
  */
 export async function saveAllItems(
-	orm: BacklogOrm,
+	orm: Db,
 	file: BacklogFile,
 	origin: string,
 ): Promise<void> {

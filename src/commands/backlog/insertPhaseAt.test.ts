@@ -1,11 +1,11 @@
 import { and, asc, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items, planPhases, planTasks } from "./backlogSchema";
-import { createTestDb } from "./createTestDb";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import { items, planPhases, planTasks } from "../../shared/db/schema";
 import { insertPhaseAt } from "./insertPhaseAt";
 
-async function seedItem(orm: BacklogOrm, currentPhase?: number): Promise<void> {
+async function seedItem(orm: Db, currentPhase?: number): Promise<void> {
 	await orm.insert(items).values({
 		id: 1,
 		origin: "test",
@@ -16,7 +16,7 @@ async function seedItem(orm: BacklogOrm, currentPhase?: number): Promise<void> {
 }
 
 async function seedPhase(
-	orm: BacklogOrm,
+	orm: Db,
 	idx: number,
 	name: string,
 	tasks: string[],
@@ -31,7 +31,7 @@ async function seedPhase(
 	}
 }
 
-function getPhases(orm: BacklogOrm) {
+function getPhases(orm: Db) {
 	return orm
 		.select({ idx: planPhases.idx, name: planPhases.name })
 		.from(planPhases)
@@ -39,7 +39,7 @@ function getPhases(orm: BacklogOrm) {
 		.orderBy(asc(planPhases.idx));
 }
 
-function getTasks(orm: BacklogOrm) {
+function getTasks(orm: Db) {
 	return orm
 		.select({
 			phase_idx: planTasks.phaseIdx,
@@ -51,7 +51,7 @@ function getTasks(orm: BacklogOrm) {
 		.orderBy(asc(planTasks.phaseIdx), asc(planTasks.idx));
 }
 
-async function getCurrentPhase(orm: BacklogOrm): Promise<number | null> {
+async function getCurrentPhase(orm: Db): Promise<number | null> {
 	const [row] = await orm
 		.select({ currentPhase: items.currentPhase })
 		.from(items)
@@ -59,7 +59,7 @@ async function getCurrentPhase(orm: BacklogOrm): Promise<number | null> {
 	return row?.currentPhase ?? null;
 }
 
-let orm: BacklogOrm;
+let orm: Db;
 let close: () => Promise<void>;
 
 beforeEach(async () => {

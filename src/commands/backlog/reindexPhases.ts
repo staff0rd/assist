@@ -1,6 +1,6 @@
 import { and, asc, count, eq } from "drizzle-orm";
-import type { BacklogDatabase } from "./BacklogOrm";
-import { items, planPhases, planTasks } from "./backlogSchema";
+import type { BacklogDatabase } from "../../shared/db/Db";
+import { items, planPhases, planTasks } from "../../shared/db/schema";
 import type { BacklogItem } from "./types";
 
 /** Renumber an item's phases to be contiguous from 0 after a deletion. */

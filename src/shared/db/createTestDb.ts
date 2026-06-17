@@ -1,24 +1,24 @@
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
-import type { BacklogOrm } from "./BacklogOrm";
-import { backlogSchema } from "./backlogSchema";
+import type { Db } from "./Db";
 import { ensureSchema } from "./ensureSchema";
+import { schema } from "./schema";
 
 /**
- * Create an in-process Postgres-backed {@link BacklogOrm} for tests, using PGlite
+ * Create an in-process Postgres-backed {@link Db} for tests, using PGlite
  * (real Postgres compiled to WASM) so SQL is validated against the production
  * dialect without requiring an external database. The Drizzle client is
  * structurally identical to the production node-postgres client for query
  * building, so it is cast to that type.
  */
 export async function createTestDb(): Promise<{
-	orm: BacklogOrm;
+	orm: Db;
 	close: () => Promise<void>;
 }> {
 	const lite = new PGlite();
 	const orm = drizzlePglite(lite, {
-		schema: backlogSchema,
-	}) as unknown as BacklogOrm;
+		schema: schema,
+	}) as unknown as Db;
 	await ensureSchema((sql) => lite.exec(sql));
 	return { orm, close: () => lite.close() };
 }

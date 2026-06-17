@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 import { loadRelations } from "./loadRelations";
 import { rowToItem } from "./rowToItem";
 import type { BacklogFile } from "./types";
@@ -16,7 +16,7 @@ import type { BacklogFile } from "./types";
  * relations load on demand via {@link ./loadItem} when a single item is opened.
  */
 export async function loadAllItems(
-	orm: BacklogOrm,
+	orm: Db,
 	origin?: string,
 ): Promise<BacklogFile> {
 	const rows = await orm

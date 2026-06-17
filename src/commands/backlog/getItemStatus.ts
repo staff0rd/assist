@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 import type { BacklogStatus } from "./types";
 
 /**
@@ -8,7 +8,7 @@ import type { BacklogStatus } from "./types";
  * with that id exists. Avoids loading the whole backlog just to branch on status.
  */
 export async function getItemStatus(
-	orm: BacklogOrm,
+	orm: Db,
 	id: number,
 ): Promise<BacklogStatus | undefined> {
 	const [row] = await orm

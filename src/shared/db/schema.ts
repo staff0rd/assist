@@ -96,7 +96,7 @@ export const feeds = pgTable("feeds", {
 });
 
 /** All backlog tables, passed to the Drizzle client as its schema. */
-export const backlogSchema = {
+export const schema = {
 	items,
 	comments,
 	links,

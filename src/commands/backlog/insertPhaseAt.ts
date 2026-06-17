@@ -1,10 +1,10 @@
 import { count, eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items, planPhases, planTasks } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { items, planPhases, planTasks } from "../../shared/db/schema";
 import { shiftPhasesUp } from "./shiftPhasesUp";
 
 export async function insertPhaseAt(
-	orm: BacklogOrm,
+	orm: Db,
 	itemId: number,
 	phaseIdx: number,
 	name: string,

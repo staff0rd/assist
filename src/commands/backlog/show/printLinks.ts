@@ -1,12 +1,9 @@
 import chalk from "chalk";
-import type { BacklogOrm } from "../BacklogOrm";
+import type { Db } from "../../../shared/db/Db";
 import type { BacklogItem } from "../types";
 import { loadLinkTargets } from "./loadLinkTargets";
 
-export async function printLinks(
-	orm: BacklogOrm,
-	item: BacklogItem,
-): Promise<void> {
+export async function printLinks(orm: Db, item: BacklogItem): Promise<void> {
 	const links = item.links ?? [];
 	if (links.length === 0) return;
 

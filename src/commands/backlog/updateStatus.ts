@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { items } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { items } from "../../shared/db/schema";
 import type { BacklogStatus } from "./types";
 
 /**
@@ -8,7 +8,7 @@ import type { BacklogStatus } from "./types";
  * `undefined` if no item with that id exists.
  */
 export async function updateStatus(
-	orm: BacklogOrm,
+	orm: Db,
 	id: number,
 	status: BacklogStatus,
 ): Promise<string | undefined> {

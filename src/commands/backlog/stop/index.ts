@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { and, eq } from "drizzle-orm";
-import { items } from "../backlogSchema";
+import { items } from "../../../shared/db/schema";
 import { getOrigin, getReady } from "../shared";
 
 export async function stop(): Promise<void> {

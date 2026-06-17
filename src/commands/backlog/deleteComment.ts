@@ -1,11 +1,11 @@
 import { and, eq } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { comments } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { comments } from "../../shared/db/schema";
 
 type DeleteCommentResult = "deleted" | "not-found" | "is-summary";
 
 export async function deleteComment(
-	orm: BacklogOrm,
+	orm: Db,
 	itemId: number,
 	commentId: number,
 ): Promise<DeleteCommentResult> {

@@ -1,13 +1,13 @@
 import { and, asc, eq, ilike, or } from "drizzle-orm";
-import type { BacklogOrm } from "./BacklogOrm";
-import { comments, items, planPhases } from "./backlogSchema";
+import type { Db } from "../../shared/db/Db";
+import { comments, items, planPhases } from "../../shared/db/schema";
 
 /**
  * Returns distinct item IDs matching the query across items, comments, and
  * plan_phases, scoped to `origin` when provided. Uses case-insensitive matching.
  */
 export async function searchItemIds(
-	orm: BacklogOrm,
+	orm: Db,
 	query: string,
 	origin?: string,
 ): Promise<number[]> {
