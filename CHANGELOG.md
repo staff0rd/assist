@@ -1,3 +1,10 @@
+# [0.293.0](https://github.com/staff0rd/assist/compare/v0.292.0...v0.293.0) (2026-06-17)
+
+
+### Features
+
+* remove web add-item flow ([aae905c](https://github.com/staff0rd/assist/commit/aae905c19c40c5e3e225d2218ea968d3460b93c0))
+
 # [0.292.0](https://github.com/staff0rd/assist/compare/v0.291.1...v0.292.0) (2026-06-17)
 
 
