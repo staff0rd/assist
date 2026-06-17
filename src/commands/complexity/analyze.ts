@@ -29,6 +29,12 @@ export async function analyze(pattern: string): Promise<void> {
 		console.log();
 		console.log(chalk.bold.underline("Maintainability Index"));
 		await maintainability(file);
+		console.log();
+		console.log(
+			chalk.dim(
+				"To improve the maintainability index, extract functions and logic out of this file into separate, smaller modules. Collapsing whitespace or removing comments is not the goal.",
+			),
+		);
 		return;
 	}
 
