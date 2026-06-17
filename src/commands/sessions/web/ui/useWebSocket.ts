@@ -18,6 +18,7 @@ type WsDeps = {
 	setViewingTranscriptSessionId: WsDispatch["setViewingTranscriptSessionId"];
 	setCurrentCwd: WsDispatch["setCurrentCwd"];
 	setError: WsDispatch["setError"];
+	setSuccess: WsDispatch["setSuccess"];
 	setRateLimits: WsDispatch["setRateLimits"];
 	markInitialized: WsDispatch["markInitialized"];
 	buffers: RefObject<Map<string, string>>;

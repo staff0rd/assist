@@ -1,9 +1,11 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
+import { useNavigate } from "react-router";
 import { AppRoutes } from "./AppRoutes";
 import { AppToolbar } from "./AppToolbar";
 import { ErrorSnackbar } from "./ErrorSnackbar";
+import { LaunchSnackbar } from "./LaunchSnackbar";
 import { ReconnectingIndicator } from "./ReconnectingIndicator";
 import { useRepoSelection } from "./useRepoSelection";
 import { RepoSelectionContext } from "./useRepoSelectionContext";
@@ -29,6 +31,15 @@ export function AppShell() {
 		() => ({ launchAssist: socket.createAssistSession }),
 		[socket.createAssistSession],
 	);
+	const navigate = useNavigate();
+	const viewLaunchedSession = useCallback(
+		(sessionId: string) => {
+			socket.selectSession(sessionId);
+			navigate("/sessions");
+			socket.clearSuccess();
+		},
+		[navigate, socket.selectSession, socket.clearSuccess],
+	);
 
 	return (
 		<RepoSelectionContext.Provider value={selection}>
@@ -40,6 +51,11 @@ export function AppShell() {
 				<AppRoutes socket={socket} />
 				<ReconnectingIndicator reconnecting={socket.reconnecting} />
 				<ErrorSnackbar error={socket.error} onClose={socket.clearError} />
+				<LaunchSnackbar
+					notice={socket.success}
+					onClose={socket.clearSuccess}
+					onView={viewLaunchedSession}
+				/>
 			</SessionLaunchContext.Provider>
 		</RepoSelectionContext.Provider>
 	);

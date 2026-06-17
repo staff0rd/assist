@@ -13,10 +13,14 @@ type Handler = (
 ) => void;
 
 // why: a windows-origin create/resume forwards to the Windows daemon, not a local spawn
-function creator(spawn: (m: SessionManager, d: Msg) => string): Handler {
+// why: isNew flags fresh spawns vs resume so the web UI toasts only on new sessions
+function creator(
+	isNew: boolean,
+	spawn: (m: SessionManager, d: Msg) => string,
+): Handler {
 	return (client, m, d) => {
 		if (m.windowsProxy.route(client, d)) return;
-		sendTo(client, { type: "created", sessionId: spawn(m, d) });
+		sendTo(client, { type: "created", sessionId: spawn(m, d), isNew });
 	};
 }
 
@@ -54,23 +58,23 @@ function routed(local: Handler): Handler {
 const handlers: Record<string, Handler> = {
 	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
 	hello: (client) => sendTo(client, buildHello()),
-	create: creator((m, d) =>
+	create: creator(true, (m, d) =>
 		m.spawn(d.prompt as string | undefined, d.cwd as string | undefined),
 	),
-	"create-run": creator((m, d) =>
+	"create-run": creator(true, (m, d) =>
 		m.spawnRun(
 			d.runName as string,
 			(d.runArgs as string[]) ?? [],
 			d.cwd as string | undefined,
 		),
 	),
-	"create-assist": creator((m, d) =>
+	"create-assist": creator(true, (m, d) =>
 		m.spawnAssist(
 			(d.assistArgs as string[]) ?? [],
 			d.cwd as string | undefined,
 		),
 	),
-	resume: creator((m, d) =>
+	resume: creator(false, (m, d) =>
 		m.resume(
 			d.sessionId as string,
 			d.cwd as string,

@@ -3,6 +3,7 @@ import type { RateLimits } from "../../../../shared/RateLimits";
 import type { HistoricalSession, SessionInfo, Transcript } from "./types";
 import { useActiveIdReconciler } from "./useActiveIdReconciler";
 import { useInitialized } from "./useInitialized";
+import { useNotices } from "./useNotices";
 import { useWebSocket } from "./useWebSocket";
 
 type OutputHandler = (data: string) => void;
@@ -16,7 +17,7 @@ export function useWsConnection() {
 		string | null
 	>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
-	const [error, setError] = useState<string | null>(null);
+	const notices = useNotices();
 	const [rateLimits, setRateLimits] = useState<RateLimits | null>(null);
 	const { initialized, markInitialized, syncSessions } = useInitialized();
 	const buffers = useRef(new Map<string, string>());
@@ -37,7 +38,8 @@ export function useWsConnection() {
 		setTranscript,
 		setViewingTranscriptSessionId,
 		setCurrentCwd,
-		setError,
+		setError: notices.setError,
+		setSuccess: notices.setSuccess,
 		setRateLimits,
 		markInitialized,
 		buffers,
@@ -45,8 +47,6 @@ export function useWsConnection() {
 	});
 
 	useActiveIdReconciler(sessions, setActiveId);
-
-	const clearError = useCallback(() => setError(null), []);
 
 	return {
 		sessions,
@@ -57,8 +57,7 @@ export function useWsConnection() {
 		viewingTranscriptSessionId,
 		setViewingTranscriptSessionId,
 		currentCwd,
-		error,
-		clearError,
+		...notices,
 		rateLimits,
 		initialized,
 		wsRef,

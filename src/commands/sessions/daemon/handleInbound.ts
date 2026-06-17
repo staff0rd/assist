@@ -41,7 +41,12 @@ function handleHello(state: WindowsProxyState, msg: Msg): void {
 function handleCreated(state: WindowsProxyState, msg: Msg): void {
 	daemonLog(`windows daemon: created session ${nsId(msg)}`);
 	const client = state.pendingCreators.shift();
-	if (client) sendTo(client, { type: "created", sessionId: nsId(msg) });
+	if (client)
+		sendTo(client, {
+			type: "created",
+			sessionId: nsId(msg),
+			isNew: msg.isNew as boolean | undefined,
+		});
 	else daemonLog("windows daemon: created with no pending creator (dropped)");
 }
 
