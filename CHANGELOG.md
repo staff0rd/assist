@@ -1,3 +1,10 @@
+# [0.294.0](https://github.com/staff0rd/assist/compare/v0.293.0...v0.294.0) (2026-06-17)
+
+
+### Features
+
+* guard against wall-of-text PR bodies ([620c7ed](https://github.com/staff0rd/assist/commit/620c7edf6f822fabdd13b9acadd2c5e2f66b7c2a))
+
 # [0.293.0](https://github.com/staff0rd/assist/compare/v0.292.0...v0.293.0) (2026-06-17)
 
 
