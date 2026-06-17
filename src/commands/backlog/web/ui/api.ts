@@ -25,10 +25,6 @@ export async function initBacklog(cwd?: string): Promise<void> {
 	await fetch(withCwd("/api/backlog/init", cwd), { method: "POST" });
 }
 
-export function createItem(body: ItemBody, cwd?: string): Promise<BacklogItem> {
-	return sendJson(withCwd("/api/items", cwd), "POST", body);
-}
-
 export async function deleteItem(id: number, cwd?: string): Promise<void> {
 	await fetch(withCwd(`/api/items/${id}`, cwd), { method: "DELETE" });
 }

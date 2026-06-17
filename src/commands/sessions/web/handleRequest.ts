@@ -3,7 +3,6 @@ import { createRequire } from "node:module";
 import { createBundleHandler } from "../../../shared/createBundleHandler";
 import { createFallbackHandler } from "../../../shared/createFallbackHandler";
 import { createHtmlHandler, type Handler } from "../../../shared/web";
-import { createItem } from "../../backlog/web/createItem";
 import { getBacklogExists } from "../../backlog/web/getBacklogExists";
 import { handleItemRoute } from "../../backlog/web/handleItemRoute";
 import { initBacklog } from "../../backlog/web/initBacklog";
@@ -39,7 +38,6 @@ const routes: Record<string, Handler> = {
 	),
 	"GET /xterm.css": createCssHandler("@xterm/xterm/css/xterm.css"),
 	"GET /api/items": listItems,
-	"POST /api/items": createItem,
 	"GET /api/backlog/exists": getBacklogExists,
 	"POST /api/backlog/init": initBacklog,
 	"POST /api/open-in-code": openInCode,

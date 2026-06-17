@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router";
 import type { BacklogItemSummary } from "../types";
-import { ItemForm } from "./ItemForm";
 import { ItemList } from "./ItemList";
 import { ItemRoute } from "./ItemRoute";
 
@@ -21,10 +20,6 @@ export function ViewRouter({ items, loading, onReload }: ViewRouterProps) {
 			<Route
 				path="items/:id/edit"
 				element={<ItemRoute mode="edit" onReload={onReload} />}
-			/>
-			<Route
-				path="add"
-				element={<ItemForm onReload={onReload} backTo="/backlog" />}
 			/>
 		</Routes>
 	);

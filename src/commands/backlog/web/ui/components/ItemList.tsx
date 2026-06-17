@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import type { BacklogItemSummary } from "../types";
 import { useSearchItems } from "../useSearchItems";
@@ -20,7 +20,7 @@ const headerSx = {
 const titleSx = { fontWeight: 600 } as const;
 const actionsSx = { alignItems: "center" } as const;
 
-function Header({ onAdd }: { onAdd: () => void }) {
+function Header() {
 	return (
 		<Stack direction="row" sx={headerSx}>
 			<Typography variant="h5" sx={titleSx}>
@@ -28,9 +28,6 @@ function Header({ onAdd }: { onAdd: () => void }) {
 			</Typography>
 			<Stack direction="row" spacing={2} sx={actionsSx}>
 				<CompletedToggle />
-				<Button variant="contained" size="small" onClick={onAdd}>
-					+ Add Item
-				</Button>
 			</Stack>
 		</Stack>
 	);
@@ -43,7 +40,7 @@ export function ItemList({ items, loading }: ItemListProps) {
 
 	return (
 		<>
-			<Header onAdd={() => navigate("/backlog/add")} />
+			<Header />
 			<SearchInput value={query} onChange={setQuery} />
 			<ListBody
 				loading={loading || searching}

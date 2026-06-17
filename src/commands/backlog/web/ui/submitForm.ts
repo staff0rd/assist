@@ -1,4 +1,4 @@
-import { createItem, updateItem } from "./api";
+import { updateItem } from "./api";
 import type { BacklogItem } from "./types";
 
 export type ItemFields = {
@@ -13,6 +13,7 @@ export async function submitForm(
 	item?: BacklogItem,
 	cwd?: string,
 ): Promise<number | undefined> {
+	if (!item) return undefined;
 	const trimmed = fields.name.trim();
 	if (!trimmed) return undefined;
 	const body = {
@@ -21,10 +22,6 @@ export async function submitForm(
 		description: fields.description.trim() || undefined,
 		acceptanceCriteria: fields.criteria.map((c) => c.trim()).filter(Boolean),
 	};
-	if (item) {
-		await updateItem(item.id, body, cwd);
-		return item.id;
-	}
-	const created = await createItem(body, cwd);
-	return created.id;
+	await updateItem(item.id, body, cwd);
+	return item.id;
 }
