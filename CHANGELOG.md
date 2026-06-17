@@ -1,3 +1,10 @@
+## [0.296.1](https://github.com/staff0rd/assist/compare/v0.296.0...v0.296.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* stop web view tab-switch slowdown ([a73b20b](https://github.com/staff0rd/assist/commit/a73b20b39b226c36046e13b94038b9e2a51ad1c1))
+
 # [0.296.0](https://github.com/staff0rd/assist/compare/v0.295.0...v0.296.0) (2026-06-17)
 
 
