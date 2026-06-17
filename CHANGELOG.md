@@ -1,3 +1,10 @@
+# [0.292.0](https://github.com/staff0rd/assist/compare/v0.291.1...v0.292.0) (2026-06-17)
+
+
+### Features
+
+* toast on new web session launch ([3cf5acf](https://github.com/staff0rd/assist/commit/3cf5acf138395ccc999927bcdb2bfcd430629e41))
+
 ## [0.291.1](https://github.com/staff0rd/assist/compare/v0.291.0...v0.291.1) (2026-06-17)
 
 
