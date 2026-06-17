@@ -1,3 +1,10 @@
+# [0.295.0](https://github.com/staff0rd/assist/compare/v0.294.1...v0.295.0) (2026-06-17)
+
+
+### Features
+
+* star backlog items in web view ([d807086](https://github.com/staff0rd/assist/commit/d807086371f118e17e95205e2b86dbd7c78d12e1))
+
 ## [0.294.1](https://github.com/staff0rd/assist/compare/v0.294.0...v0.294.1) (2026-06-17)
 
 
