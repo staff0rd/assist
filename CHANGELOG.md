@@ -1,3 +1,10 @@
+## [0.297.1](https://github.com/staff0rd/assist/compare/v0.297.0...v0.297.1) (2026-06-17)
+
+
+### Bug Fixes
+
+* commit before backlog done on final phase ([04cc014](https://github.com/staff0rd/assist/commit/04cc01445ff8e2f57ad1fea87143fb56b2721fba))
+
 # [0.297.0](https://github.com/staff0rd/assist/compare/v0.296.1...v0.297.0) (2026-06-17)
 
 
