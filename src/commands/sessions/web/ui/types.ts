@@ -2,7 +2,7 @@ import type { Activity } from "../../../../shared/emitActivity";
 import type { SessionType } from "../../shared/deriveHistoryFields";
 import type { SessionOrigin } from "../../shared/parseSessionFile";
 
-export type SessionStatus = "running" | "waiting" | "done";
+export type SessionStatus = "running" | "waiting" | "done" | "error";
 
 type CommandType = "claude" | "run" | "assist";
 
@@ -16,6 +16,7 @@ export type SessionInfo = {
 	assistArgs?: string[];
 	cwd?: string;
 	restored?: boolean;
+	error?: string;
 	activity?: Activity;
 	autoRun?: boolean;
 	autoAdvance?: boolean;

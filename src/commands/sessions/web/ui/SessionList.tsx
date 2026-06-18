@@ -4,6 +4,12 @@ import { SessionCard } from "./SessionCard";
 import type { SessionListHandlers } from "./types";
 import type { SessionInfo } from "./useSessionSocket";
 
+/* why: a terminal/error session never emits the first output that clears the
+ * "Starting…" indicator, so only treat in-flight sessions as loading (#396). */
+function isStarting(s: SessionInfo, initialized: Set<string>): boolean {
+	return !initialized.has(s.id) && s.status !== "done" && s.status !== "error";
+}
+
 export function SessionList({
 	sessions,
 	activeId,
@@ -26,7 +32,7 @@ export function SessionList({
 					key={s.id}
 					session={s}
 					active={s.id === activeId}
-					loading={!initialized.has(s.id)}
+					loading={isStarting(s, initialized)}
 					onClick={() => onSelect(s.id)}
 					onRetry={
 						(s.commandType === "run" || s.commandType === "assist") &&

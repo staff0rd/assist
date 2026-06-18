@@ -3,7 +3,7 @@ import type { Activity } from "../../../shared/emitActivity";
 import { spawnClaude } from "./spawnClaude";
 import { spawnRun } from "./spawnRun";
 
-type SessionStatus = "running" | "waiting" | "done";
+type SessionStatus = "running" | "waiting" | "done" | "error";
 type CommandType = "claude" | "run" | "assist";
 
 type Session = {
@@ -22,6 +22,7 @@ type Session = {
 	cwd?: string;
 	claudeSessionId?: string;
 	restored?: boolean;
+	error?: string;
 	activity?: Activity;
 	activityWatcher?: FSWatcher;
 	autoRun?: boolean;
@@ -39,6 +40,7 @@ type SessionInfo = {
 	assistArgs?: string[];
 	cwd?: string;
 	restored?: boolean;
+	error?: string;
 	activity?: Activity;
 	autoRun?: boolean;
 	autoAdvance?: boolean;

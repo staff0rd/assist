@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { releaseLock } from "../../backlog/acquireLock";
 import { createAssistSession } from "./createAssistSession";
 import { createSession, type Session } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import {
 	loadPersistedSessions,
 	persistLiveSessions,
@@ -30,6 +31,7 @@ vi.mock("./watchForClaudeSessionId", () => ({
 	watchForClaudeSessionId: vi.fn(),
 }));
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
+vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({
 		onData: vi.fn(),
@@ -55,6 +57,7 @@ const createAssistMock = createAssistSession as unknown as ReturnType<
 	typeof vi.fn
 >;
 const wirePtyMock = wirePtyEvents as unknown as ReturnType<typeof vi.fn>;
+const daemonLogMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
 
 type StatusChange = (
 	s: Session,
@@ -120,6 +123,60 @@ describe("SessionManager", () => {
 				["live", true],
 				["stub", false],
 			]);
+		});
+
+		it("logs a clear error for a restored session that failed to resume", () => {
+			loadPersistedMock.mockReturnValue([
+				{
+					name: "repo/Session 1",
+					commandType: "claude",
+					cwd: "/repo",
+					startedAt: 1,
+				},
+			]);
+			restoreSessionMock.mockReturnValue(
+				fakeSession({
+					id: "1",
+					name: "repo/Session 1",
+					status: "error",
+					pty: null,
+					restored: false,
+					error: "no claude session id was recorded",
+				}),
+			);
+
+			new SessionManager().restore();
+
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("could not resume restored session"),
+			);
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("no claude session id was recorded"),
+			);
+		});
+
+		it("logs and surfaces an error session when restore throws", () => {
+			loadPersistedMock.mockReturnValue([
+				{
+					name: "repo/Boom",
+					commandType: "claude",
+					cwd: "/repo",
+					startedAt: 1,
+				},
+			]);
+			restoreSessionMock.mockImplementationOnce(() => {
+				throw new Error("pty spawn failed");
+			});
+
+			const manager = new SessionManager();
+			manager.restore();
+
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("pty spawn failed"),
+			);
+			const listed = manager.listSessions();
+			expect(listed).toHaveLength(1);
+			expect(listed[0].status).toBe("error");
 		});
 
 		it("watches restored sessions for a new claude sessionId", () => {

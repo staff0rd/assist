@@ -12,7 +12,7 @@ import {
 import { greetClient } from "./greetClient";
 import { loadPersistedSessions } from "./loadPersistedSessions";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
-import { restoreSession } from "./restoreSession";
+import { restoreOne } from "./restoreOne";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
 import { reuseSessionForRun } from "./reuseSessionForRun";
@@ -58,7 +58,7 @@ export class SessionManager {
 
 	restore(): string[] {
 		return loadPersistedSessions().map((persisted) => {
-			this.spawnWith((id) => restoreSession(id, persisted));
+			restoreOne(persisted, this.spawnWith, this.sessions);
 			return persisted.name;
 		});
 	}
@@ -70,9 +70,8 @@ export class SessionManager {
 		return session.id;
 	}
 
-	private spawnWith(create: (id: string) => Session): string {
-		return this.add(create(String(this.nextId++)));
-	}
+	private readonly spawnWith = (create: (id: string) => Session): string =>
+		this.add(create(String(this.nextId++)));
 
 	spawn(prompt?: string, cwd?: string): string {
 		return this.spawnWith((id) => createSession(id, prompt, cwd));

@@ -6,6 +6,7 @@ const STATUS_COLORS: Record<SessionStatus, string> = {
 	running: "success.main",
 	waiting: "warning.main",
 	done: "info.main",
+	error: "error.main",
 };
 
 export function StatusRow({

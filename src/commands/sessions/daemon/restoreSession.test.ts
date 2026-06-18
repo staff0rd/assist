@@ -102,7 +102,7 @@ describe("restoreSession", () => {
 		expect(session.claudeSessionId).toBeUndefined();
 	});
 
-	it("returns a not-restored stub for a claude session without a sessionId", () => {
+	it("returns an error session for a claude session without a sessionId", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Session 1",
 			commandType: "claude",
@@ -113,9 +113,10 @@ describe("restoreSession", () => {
 		const session = restoreSession("1", persisted);
 
 		expect(spawnClaudeMock).not.toHaveBeenCalled();
-		expect(session.status).toBe("done");
+		expect(session.status).toBe("error");
 		expect(session.restored).toBe(false);
 		expect(session.pty).toBeNull();
+		expect(session.error).toBeTruthy();
 	});
 
 	it("resumes an assist session with a discovered claude sessionId", () => {

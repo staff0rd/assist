@@ -1,5 +1,6 @@
 import { backlogRunArgs } from "./backlogRunArgs";
 import type { Session } from "./createSession";
+import { errorSession } from "./errorSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreBase } from "./restoreBase";
 import { runningSession } from "./runningSession";
@@ -32,6 +33,21 @@ export function restoreSession(
 		return runningSession(base, persisted, pty);
 	}
 
+	/* why: a plain claude session that reaches here has no claudeSessionId to
+	 * `--resume` and no run/assist args to retry, so the conversation is
+	 * unrecoverable. Surface an error (logged by SessionManager.restore) instead
+	 * of a silent "done" stub the client renders as "Starting…" forever (#396). */
+	if (persisted.commandType === "claude") {
+		return errorSession(
+			id,
+			persisted,
+			"no claude session id was recorded before the daemon stopped, so the conversation cannot be resumed",
+		);
+	}
+
+	/* why: run/assist sessions can be re-launched from their stored args, so a
+	 * retryable "done" card is recoverable — only the unrecoverable claude case
+	 * above is an error. */
 	return {
 		...base,
 		status: "done",

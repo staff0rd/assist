@@ -43,4 +43,26 @@ describe("SessionCard loading state", () => {
 		expect(screen.getByText(/● running/)).toBeTruthy();
 		expect(screen.getByText("my session")).toBeTruthy();
 	});
+
+	it("shows an error state with its reason instead of staying at Starting…", () => {
+		render(
+			<SessionCard
+				session={{
+					...session,
+					status: "error",
+					restored: false,
+					error: "the conversation cannot be resumed",
+				}}
+				active={false}
+				loading={false}
+				onClick={() => {}}
+				onDismiss={() => {}}
+				onSetAutoRun={() => {}}
+				onSetAutoAdvance={() => {}}
+			/>,
+		);
+		expect(screen.queryByText("Starting…")).toBeNull();
+		expect(screen.getByText(/● error/)).toBeTruthy();
+		expect(screen.getByText("the conversation cannot be resumed")).toBeTruthy();
+	});
 });

@@ -4,6 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { CardHeader, cardSx } from "./CardHeader";
 import { CardToggles } from "./CardToggles";
+import { SessionErrorText } from "./SessionErrorText";
 import { StatusRow } from "./StatusRow";
 import type { SessionInfo } from "./types";
 import { useElapsed } from "./useElapsed";
@@ -46,6 +47,9 @@ export function SessionCard({
 						elapsed={elapsed}
 						restored={session.restored}
 					/>
+					{session.status === "error" && (
+						<SessionErrorText error={session.error} />
+					)}
 					<CardToggles
 						session={session}
 						onSetAutoRun={onSetAutoRun}

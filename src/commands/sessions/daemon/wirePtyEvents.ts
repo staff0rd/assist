@@ -1,5 +1,6 @@
 import { broadcast, type SessionClient } from "./broadcast";
 import type { Session, SessionStatus } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import { clearIdle, scheduleIdle } from "./scheduleIdle";
 import { refreshActivity } from "./watchActivity";
 
@@ -35,7 +36,21 @@ export function wirePtyEvents(
 	session.pty.onExit(({ exitCode }) => {
 		clearIdle(session);
 		refreshActivity(session);
-		onStatusChange(session, "done", exitCode);
+		/* why: a restored session whose pty dies non-zero before emitting any
+		 * output failed to resume (e.g. `claude --resume` rejected a stale id).
+		 * Mark it as an error and log why, so the card surfaces the failure
+		 * instead of hanging at "Starting…" with nothing in the log (#396). */
+		const failedResume =
+			session.restored === true &&
+			exitCode !== 0 &&
+			session.scrollback.length === 0;
+		if (failedResume) {
+			session.error = `resume process exited with code ${exitCode} before producing any output`;
+			daemonLog(
+				`could not resume restored session "${session.name}" (id ${session.id}): ${session.error}`,
+			);
+		}
+		onStatusChange(session, failedResume ? "error" : "done", exitCode);
 	});
 	scheduleIdle(session, () => onStatusChange(session, "waiting"));
 }
