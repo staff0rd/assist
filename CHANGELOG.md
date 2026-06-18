@@ -1,3 +1,10 @@
+## [0.298.1](https://github.com/staff0rd/assist/compare/v0.298.0...v0.298.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* bound windows reconnect on mismatch ([d173618](https://github.com/staff0rd/assist/commit/d173618e6be9a01526efba669e4f954ad3bdd89f))
+
 # [0.298.0](https://github.com/staff0rd/assist/compare/v0.297.4...v0.298.0) (2026-06-18)
 
 
