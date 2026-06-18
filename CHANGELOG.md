@@ -1,3 +1,10 @@
+# [0.300.0](https://github.com/staff0rd/assist/compare/v0.299.1...v0.300.0) (2026-06-18)
+
+
+### Features
+
+* persist peak usage history ([5b61f7c](https://github.com/staff0rd/assist/commit/5b61f7cd5fc55c9b1e2ca603bb14bc92a95412c2))
+
 ## [0.299.1](https://github.com/staff0rd/assist/compare/v0.299.0...v0.299.1) (2026-06-18)
 
 
