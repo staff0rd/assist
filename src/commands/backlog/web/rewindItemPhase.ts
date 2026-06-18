@@ -4,6 +4,8 @@ import { items } from "../../../shared/db/schema";
 import { respondJson } from "../../../shared/web";
 import { appendComment } from "../appendComment";
 import { loadItem } from "../loadItem";
+import { resolveRewindPlan } from "../resolveRewindPlan";
+import type { BacklogItem, PlanPhase } from "../types";
 import { parseRewindBody } from "./parseItemBody";
 import { findItemOr404 } from "./shared";
 
@@ -17,13 +19,14 @@ export async function rewindItemPhase(
 	if (!result) return;
 	const { orm, item } = result;
 
-	const error = validateRewind(item, phase);
+	const plan = resolveRewindPlan(item);
+	const error = validateRewind(item, plan, phase);
 	if (error) {
 		respondJson(res, 400, { error });
 		return;
 	}
 
-	const phaseName = item.plan?.[phase - 1].name;
+	const phaseName = plan[phase - 1].name;
 	await appendComment(
 		orm,
 		id,
@@ -38,14 +41,12 @@ export async function rewindItemPhase(
 }
 
 function validateRewind(
-	item: { plan?: unknown[]; currentPhase?: number; id: number },
+	item: BacklogItem,
+	plan: PlanPhase[],
 	phase: number,
 ): string | undefined {
-	if (!item.plan || item.plan.length === 0) {
-		return "Item has no plan phases.";
-	}
-	if (phase < 1 || phase > item.plan.length) {
-		return `Phase ${phase} does not exist. Valid range: 1–${item.plan.length}.`;
+	if (phase < 1 || phase > plan.length) {
+		return `Phase ${phase} does not exist. Valid range: 1–${plan.length}.`;
 	}
 	const currentPhase = item.currentPhase ?? 1;
 	if (phase >= currentPhase) {

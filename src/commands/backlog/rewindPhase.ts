@@ -1,19 +1,18 @@
 import chalk from "chalk";
 import { appendComment } from "./appendComment";
 import { loadItem } from "./loadItem";
+import { resolveRewindPlan } from "./resolveRewindPlan";
 import { getReady, setCurrentPhase, setStatus } from "./shared";
-import type { BacklogItem } from "./types";
+import type { BacklogItem, PlanPhase } from "./types";
 import { writeSignal } from "./writeSignal";
 
 function validateRewind(
 	item: BacklogItem,
+	plan: PlanPhase[],
 	phaseNumber: number,
 ): string | undefined {
-	if (!item.plan || item.plan.length === 0) {
-		return `Item #${item.id} has no plan phases.`;
-	}
-	if (phaseNumber < 1 || phaseNumber > item.plan.length) {
-		return `Phase ${phaseNumber} does not exist. Valid range: 1–${item.plan.length}.`;
+	if (phaseNumber < 1 || phaseNumber > plan.length) {
+		return `Phase ${phaseNumber} does not exist. Valid range: 1–${plan.length}.`;
 	}
 	const currentPhase = item.currentPhase ?? 1;
 	if (phaseNumber >= currentPhase) {
@@ -37,14 +36,15 @@ export async function rewindPhase(
 		return;
 	}
 
-	const error = validateRewind(item, phaseNumber);
+	const plan = resolveRewindPlan(item);
+	const error = validateRewind(item, plan, phaseNumber);
 	if (error) {
 		console.log(chalk.red(error));
 		process.exitCode = 1;
 		return;
 	}
 
-	const phaseName = item.plan?.[phaseIndex].name;
+	const phaseName = plan[phaseIndex].name;
 
 	await appendComment(
 		orm,

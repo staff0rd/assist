@@ -131,11 +131,34 @@ describe("rewindPhase", () => {
 		expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 	});
 
-	it("should reject if item has no plan", async () => {
+	it("should rewind a plan-less item that has advanced past phase 1", async () => {
 		mockLoadItem.mockResolvedValue({
 			id: 1,
+			type: "bug",
+			status: "in-progress",
+			currentPhase: 2,
+			acceptanceCriteria: ["Fix the thing"],
+		});
+
+		await rewindPhase("1", "1", { reason: "initial fix was nonsense" });
+
+		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 1);
+		expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
+		expect(mockAppendComment).toHaveBeenCalledWith(
+			orm,
+			1,
+			"Rewound to phase 1 (Implement): initial fix was nonsense",
+			{ phase: 1 },
+		);
+	});
+
+	it("should reject a plan-less item when target is not earlier than current", async () => {
+		mockLoadItem.mockResolvedValue({
+			id: 1,
+			type: "bug",
 			status: "in-progress",
 			currentPhase: 1,
+			acceptanceCriteria: ["Fix the thing"],
 		});
 
 		await rewindPhase("1", "1", { reason: "No reason" });
