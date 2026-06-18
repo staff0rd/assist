@@ -8,7 +8,7 @@ function fetchContributions(from: string, to: string): DayCount[] {
 		".data.viewer.contributionsCollection.contributionCalendar.weeks[].contributionDays[]";
 
 	const raw = execSync(`gh api graphql -f query='${query}' --jq '${jq}'`, {
-		encoding: "utf-8",
+		encoding: "utf8",
 	}).trim();
 
 	if (!raw) return [];

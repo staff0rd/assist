@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const settingsPath = resolve(__dirname, "../../../claude/settings.json");
-const settings = JSON.parse(readFileSync(settingsPath, "utf-8"));
+const settings = JSON.parse(readFileSync(settingsPath, "utf8"));
 
 describe("claude/settings.json invariants", () => {
 	it("does not contain assist commands in the allow list", () => {

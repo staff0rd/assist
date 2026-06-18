@@ -61,8 +61,8 @@ export async function runReviewPipeline(
 		finishUi(ui, outcome.ok);
 		reportFailures(outcome.failures, ui.multi !== undefined);
 		return outcome.ok;
-	} catch (err) {
+	} catch (error) {
 		ui.multi?.failRemaining();
-		throw err;
+		throw error;
 	}
 }

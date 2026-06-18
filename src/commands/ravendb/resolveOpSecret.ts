@@ -9,7 +9,7 @@ export function resolveOpSecret(reference: string): string {
 
 	try {
 		return execSync(`op read "${reference}"`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 			stdio: ["pipe", "pipe", "pipe"],
 		}).trim();
 	} catch {

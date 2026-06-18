@@ -5,7 +5,8 @@ import {
 	SyntaxKind,
 } from "ts-morph";
 
-const suppressionPattern = /^\s*(\/\/|\/\*)\s*biome-ignore(-all)?\b/;
+const suppressionPattern =
+	/^\s*(\/\/|\/\*)\s*(biome-ignore(-all)?|oxlint-disable)\b/;
 
 function countLeadingSuppressions(sourceFile: SourceFile): number {
 	let count = 0;

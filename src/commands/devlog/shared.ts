@@ -9,7 +9,7 @@ export { loadDevlogEntries } from "./loadDevlogEntries";
 function getCommitFiles(hash: string): string[] {
 	try {
 		const output = execSync(`git show --name-only --format="" ${hash}`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 		});
 		return output.trim().split("\n").filter(Boolean);
 	} catch {

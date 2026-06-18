@@ -33,7 +33,7 @@ export function emitActivity(activity: Omit<Activity, "startedAt">): void {
 
 export function readActivity(path: string): Activity | undefined {
 	try {
-		return JSON.parse(readFileSync(path, "utf-8")) as Activity;
+		return JSON.parse(readFileSync(path, "utf8")) as Activity;
 	} catch {
 		return undefined;
 	}

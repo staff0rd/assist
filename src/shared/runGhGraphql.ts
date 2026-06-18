@@ -39,7 +39,7 @@ export function runGhGraphql(mutation: string, vars: GhGraphqlVars): string {
 	writeFileSync(queryFile, mutation);
 	try {
 		const result = spawnSync("gh", buildArgs(queryFile, vars), {
-			encoding: "utf-8",
+			encoding: "utf8",
 		});
 		if (result.status !== 0) throw new Error(result.stderr || result.stdout);
 		throwOnGraphqlErrors(result.stdout);

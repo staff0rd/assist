@@ -4,7 +4,7 @@ import path from "node:path";
 const PROJECT_REF_RE = /<ProjectReference\s+Include="([^"]+)"/g;
 
 function getProjectRefs(csprojPath: string): string[] {
-	const content = readFileSync(csprojPath, "utf-8");
+	const content = readFileSync(csprojPath, "utf8");
 	const refs: string[] = [];
 	for (const match of content.matchAll(PROJECT_REF_RE)) {
 		refs.push(match[1].replace(/\\/g, "/"));
@@ -21,7 +21,7 @@ export type ProjectNode = {
 export function buildTree(
 	csprojPath: string,
 	repoRoot: string,
-	visited: Set<string> = new Set(),
+	visited = new Set<string>(),
 ): ProjectNode {
 	const abs = path.resolve(csprojPath);
 	const rel = path.relative(repoRoot, abs);

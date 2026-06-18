@@ -12,5 +12,5 @@ export function nextIndex(
 
 export function firstEnabledIndex(items: MenuItem[]): number {
 	const idx = items.findIndex((item) => !item.disabled);
-	return idx < 0 ? 0 : idx;
+	return idx === -1 ? 0 : idx;
 }

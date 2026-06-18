@@ -44,7 +44,7 @@ function applySnapshot(
 		if (previous === undefined) logEvent("started", session);
 		else if (isDone(session) && !isDone(previous)) logEvent("ended", session);
 	}
-	for (const [id, session] of [...known]) {
+	for (const [id, session] of known) {
 		if (present.has(id)) continue;
 		known.delete(id);
 		// A "done" session already logged its end; removal is just cleanup.

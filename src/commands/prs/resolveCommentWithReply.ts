@@ -14,7 +14,7 @@ function replyToComment(
 	message: string,
 ): void {
 	execSync(
-		`gh api repos/${org}/${repo}/pulls/${prNumber}/comments -f body="${message.replace(/"/g, '\\"')}" -F in_reply_to=${commentId}`,
+		`gh api repos/${org}/${repo}/pulls/${prNumber}/comments -f body="${message.replace(/"/g, String.raw`\"`)}" -F in_reply_to=${commentId}`,
 		{ stdio: ["inherit", "pipe", "inherit"] },
 	);
 }

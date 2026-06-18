@@ -24,7 +24,7 @@ export function processStagedFile(): boolean {
 
 	const { transcriptsDir, summaryDir } = getTranscriptConfig();
 	const stagedFile = stagedFiles[0];
-	const content = readFileSync(stagedFile.absolutePath, "utf-8");
+	const content = readFileSync(stagedFile.absolutePath, "utf8");
 
 	validateStagedContent(stagedFile.filename, content);
 

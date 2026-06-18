@@ -29,9 +29,9 @@ export function runInspectCode(
 			`jb inspectcode "${slnPath}" -o="${reportPath}"${includeFlag}${sweaFlag} --verbosity=OFF`,
 			{ stdio: "pipe" },
 		);
-	} catch (err) {
-		if (err && typeof err === "object" && "stderr" in err) {
-			process.stderr.write(err.stderr as Buffer);
+	} catch (error) {
+		if (error && typeof error === "object" && "stderr" in error) {
+			process.stderr.write(error.stderr as Buffer);
 		}
 		console.error(chalk.red("jb inspectcode failed"));
 		process.exit(1);
@@ -42,7 +42,7 @@ export function runInspectCode(
 		process.exit(1);
 	}
 
-	const xml = readFileSync(reportPath, "utf-8");
+	const xml = readFileSync(reportPath, "utf8");
 	unlinkSync(reportPath);
 	return xml;
 }

@@ -45,8 +45,8 @@ function rawDenyRegex(pattern: string): RegExp {
 	const tokens = pattern
 		.trim()
 		.split(/\s+/)
-		.map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-		.join("\\s+");
+		.map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`))
+		.join(String.raw`\s+`);
 	// why: match the pattern as a whole token sequence anywhere, not only as a leading prefix
 	return new RegExp(`(?<=^|\\s)${tokens}(?=\\s|$)`);
 }

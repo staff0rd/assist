@@ -17,7 +17,7 @@ export function attachLineParser(
 ): () => void {
 	let buffer = "";
 	child.stdout?.on("data", (chunk: Buffer) => {
-		buffer += chunk.toString("utf-8");
+		buffer += chunk.toString("utf8");
 		buffer = flushBuffer(buffer, onLine);
 	});
 	return () => {

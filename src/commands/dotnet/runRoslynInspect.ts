@@ -46,10 +46,10 @@ export function runRoslynInspect(slnPath: string): Issue[] {
 	try {
 		output = execSync(
 			`"${msbuild}" "${slnPath}" -t:Build -v:minimal -maxcpucount -p:EnforceCodeStyleInBuild=true -p:RunAnalyzersDuringBuild=true 2>&1`,
-			{ encoding: "utf-8", stdio: "pipe", maxBuffer: 50 * 1024 * 1024 },
+			{ encoding: "utf8", stdio: "pipe", maxBuffer: 50 * 1024 * 1024 },
 		);
-	} catch (err) {
-		const e = err as { stdout?: string };
+	} catch (error) {
+		const e = error as { stdout?: string };
 		output = e.stdout ?? "";
 	}
 	return parseMsbuildOutput(output);

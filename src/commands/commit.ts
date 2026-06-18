@@ -7,7 +7,7 @@ import { validateMessage } from "./commit/validateMessage";
 function commitStaged(message: string): string {
 	execSync(`git commit -m ${shellQuote(message)}`, { stdio: "inherit" });
 	return execSync("git rev-parse --short=7 HEAD", {
-		encoding: "utf-8",
+		encoding: "utf8",
 	}).trim();
 }
 
@@ -34,7 +34,7 @@ function execCommit(
 			console.log("Pushed to remote");
 		}
 		process.exit(0);
-	} catch (_error) {
+	} catch {
 		process.exit(1);
 	}
 }

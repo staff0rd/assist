@@ -3,10 +3,7 @@ import Enquirer from "enquirer";
 import { getItemFields, searchItems } from "./searchItems";
 
 const { Input, Select } = Enquirer as unknown as {
-	Input: new (opts: {
-		name: string;
-		message: string;
-	}) => {
+	Input: new (opts: { name: string; message: string }) => {
 		run: () => Promise<string>;
 	};
 	Select: new (opts: {

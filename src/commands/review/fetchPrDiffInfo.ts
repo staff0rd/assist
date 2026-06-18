@@ -11,7 +11,7 @@ type PrDiffInfo = {
 
 function getCurrentBranch(): string {
 	return execSync("git rev-parse --abbrev-ref HEAD", {
-		encoding: "utf-8",
+		encoding: "utf8",
 	}).trim();
 }
 
@@ -22,7 +22,7 @@ export function fetchPrDiffInfo(): PrDiffInfo {
 	let raw: string;
 	try {
 		raw = execSync(`gh pr view ${branch} --json ${fields} -R ${org}/${repo}`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 			stdio: ["ignore", "pipe", "pipe"],
 		});
 	} catch (error) {
@@ -55,7 +55,7 @@ export function fetchPrChangedFiles(prNumber: number): string[] {
 	const out = execSync(
 		`gh api repos/${org}/${repo}/pulls/${prNumber}/files --paginate --jq ".[].filename"`,
 		{
-			encoding: "utf-8",
+			encoding: "utf8",
 			maxBuffer: 64 * 1024 * 1024,
 		},
 	);

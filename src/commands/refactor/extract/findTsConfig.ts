@@ -31,7 +31,7 @@ export function findTsConfig(sourcePath: string): string {
 
 function readReferences(configPath: string): string[] {
 	if (!fs.existsSync(configPath)) return [];
-	const raw = fs.readFileSync(configPath, "utf-8");
+	const raw = fs.readFileSync(configPath, "utf8");
 	const stripped = raw
 		.replace(/\/\/.*$/gm, "")
 		.replace(/\/\*[\s\S]*?\*\//g, "");

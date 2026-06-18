@@ -20,14 +20,14 @@ export function getRepoInfo(): { org: string; repo: string } {
 	const preferred = getPreferredRemoteRepo();
 	if (preferred) return preferred;
 	const repoInfo = JSON.parse(
-		execSync("gh repo view --json owner,name", { encoding: "utf-8" }),
+		execSync("gh repo view --json owner,name", { encoding: "utf8" }),
 	);
 	return { org: repoInfo.owner.login, repo: repoInfo.name };
 }
 
 function getCurrentBranch(): string {
 	return execSync("git rev-parse --abbrev-ref HEAD", {
-		encoding: "utf-8",
+		encoding: "utf8",
 	}).trim();
 }
 
@@ -36,7 +36,7 @@ function viewCurrentPr<T>(fields: string): T {
 	const branch = getCurrentBranch();
 	return JSON.parse(
 		execSync(`gh pr view ${branch} --json ${fields} -R ${org}/${repo}`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 		}),
 	);
 }

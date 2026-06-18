@@ -35,7 +35,7 @@ export function postRoamActivity(app: string, event: string): void {
 
 	let port: string;
 	try {
-		port = readFileSync(portFile, "utf-8").trim();
+		port = readFileSync(portFile, "utf8").trim();
 	} catch {
 		return;
 	}

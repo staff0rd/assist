@@ -18,8 +18,8 @@ export async function autoHealWindowsDaemon(
 		await heal();
 		daemonLog("windows proxy: heal complete, reconnecting to windows daemon");
 		await conn.ensure();
-	} catch (e) {
-		const message = e instanceof Error ? e.message : String(e);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
 		daemonLog(`windows proxy: auto-heal failed: ${message}`);
 		state.broadcast({
 			type: "error",

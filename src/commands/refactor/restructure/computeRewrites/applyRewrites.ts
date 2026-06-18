@@ -23,7 +23,7 @@ function rewriteSpecifier(
 	oldSpecifier: string,
 	newSpecifier: string,
 ): string {
-	const escaped = oldSpecifier.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const escaped = oldSpecifier.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 	const pattern = new RegExp(`(from\\s+["'])${escaped}(["'])`, "g");
 	return content.replace(pattern, `$1${newSpecifier}$2`);
 }
@@ -32,7 +32,7 @@ function applyFileRewrites(
 	file: string,
 	fileRewrites: ImportRewrite[],
 ): string {
-	let content = fs.readFileSync(file, "utf-8");
+	let content = fs.readFileSync(file, "utf8");
 	for (const { oldSpecifier, newSpecifier } of fileRewrites) {
 		content = rewriteSpecifier(content, oldSpecifier, newSpecifier);
 	}

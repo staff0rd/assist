@@ -10,7 +10,7 @@ export async function prs(options: PrsOptions): Promise<void> {
 		const { org, repo } = getRepoInfo();
 		const result = execSync(
 			`gh pr list --state ${state} --json number,title,url,author,createdAt,mergedAt,closedAt,state,changedFiles --limit 100 -R ${org}/${repo}`,
-			{ encoding: "utf-8" },
+			{ encoding: "utf8" },
 		);
 
 		const pullRequests: PullRequest[] = JSON.parse(result);

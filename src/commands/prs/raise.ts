@@ -50,7 +50,7 @@ export function raise(options: RaiseOptions): void {
 
 	try {
 		execSync(args.join(" "), { stdio: "inherit" });
-	} catch (_error) {
+	} catch {
 		process.exit(1);
 	}
 }

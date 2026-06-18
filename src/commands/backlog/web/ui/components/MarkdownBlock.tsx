@@ -8,7 +8,6 @@ export function MarkdownBlock({ content }: { content: string }) {
 		<Box
 			className="markdown"
 			sx={markdownSx}
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: markdown rendering requires innerHTML
 			dangerouslySetInnerHTML={{ __html: marked.parse(content) as string }}
 		/>
 	);

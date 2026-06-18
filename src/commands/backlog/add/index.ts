@@ -21,7 +21,8 @@ export async function add(options: AddOptions): Promise<void> {
 	const type = (options.type as BacklogType) ?? (await promptType());
 	const name = options.name ?? (await promptName());
 	const description =
-		options.desc?.replaceAll("\\n", "\n") ?? (await promptDescription());
+		options.desc?.replaceAll(String.raw`\n`, "\n") ??
+		(await promptDescription());
 	const acceptanceCriteria = options.ac ?? (await promptAcceptanceCriteria());
 
 	const orm = await getDb();

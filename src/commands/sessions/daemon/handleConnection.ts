@@ -29,10 +29,10 @@ export function handleConnection(
 		}
 		try {
 			dispatchMessage(client, manager, data);
-		} catch (e) {
+		} catch (error) {
 			sendTo(client, {
 				type: "error",
-				message: `${data.type} failed: ${e instanceof Error ? e.message : String(e)}`,
+				message: `${data.type} failed: ${error instanceof Error ? error.message : String(error)}`,
 			});
 		}
 	});

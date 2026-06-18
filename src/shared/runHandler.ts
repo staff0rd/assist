@@ -42,10 +42,10 @@ export function runHandler(
 	res.on("finish", () => {
 		logRequest(method, url, res.statusCode, Date.now() - startedAt);
 	});
-	Promise.resolve(handler(req, res, port)).catch((err) => {
+	Promise.resolve(handler(req, res, port)).catch((error) => {
 		console.error(
 			`${new Date().toISOString()} ${method} ${url} failed: ${
-				err instanceof Error ? err.message : String(err)
+				error instanceof Error ? error.message : String(error)
 			}`,
 		);
 		if (!res.headersSent)

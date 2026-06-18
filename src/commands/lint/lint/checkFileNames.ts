@@ -63,7 +63,7 @@ export function checkFileNames(): FileNameViolation[] {
 		if (/\.(stories|test)\.(ts|tsx)$/.test(fileName)) continue;
 
 		if (/^[A-Z]/.test(nameWithoutExt)) {
-			const content = fs.readFileSync(filePath, "utf-8");
+			const content = fs.readFileSync(filePath, "utf8");
 			if (
 				!hasClassOrComponent(content) &&
 				!hasMatchingTypeExport(content, nameWithoutExt)

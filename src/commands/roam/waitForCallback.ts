@@ -48,10 +48,10 @@ export function waitForCallback(
 				respondHtml(res, 200, "Authorization successful!");
 				server.close();
 				resolve(code);
-			} catch (err) {
-				respondHtml(res, 400, (err as Error).message);
+			} catch (error) {
+				respondHtml(res, 400, (error as Error).message);
 				server.close();
-				reject(err);
+				reject(error);
 			}
 		});
 

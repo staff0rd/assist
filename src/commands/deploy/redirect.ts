@@ -15,7 +15,7 @@ export function redirect(): void {
 		return;
 	}
 
-	const content = readFileSync(indexPath, "utf-8");
+	const content = readFileSync(indexPath, "utf8");
 
 	if (content.includes("window.location.pathname.endsWith('/')")) {
 		console.log(chalk.dim("Trailing slash script already present"));
@@ -28,11 +28,9 @@ export function redirect(): void {
 		return;
 	}
 
-	const newContent =
-		content.slice(0, headCloseIndex) +
-		TRAILING_SLASH_SCRIPT +
-		"\n  " +
-		content.slice(headCloseIndex);
+	const newContent = `${
+		content.slice(0, headCloseIndex) + TRAILING_SLASH_SCRIPT
+	}\n  ${content.slice(headCloseIndex)}`;
 
 	writeFileSync(indexPath, newContent);
 	console.log(chalk.green("Added trailing slash redirect to index.html"));

@@ -47,7 +47,7 @@ function tryGit(cwd: string, args: string[]): string | null {
 	const argv = windows ? ["-C", cwd, ...args] : args;
 	try {
 		const out = execFileSync(file, argv, {
-			encoding: "utf-8",
+			encoding: "utf8",
 			stdio: ["pipe", "pipe", "pipe"],
 			...(windows ? {} : { cwd }),
 		}).trim();

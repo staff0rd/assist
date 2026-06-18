@@ -57,7 +57,7 @@ function openEditor(): string | undefined {
 		return undefined;
 	}
 
-	const content = readFileSync(filePath, "utf-8").trim();
+	const content = readFileSync(filePath, "utf8").trim();
 	unlinkSync(filePath);
 	return content || undefined;
 }

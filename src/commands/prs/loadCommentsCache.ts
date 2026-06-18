@@ -18,7 +18,7 @@ export function loadCommentsCache(prNumber: number): CacheData | null {
 	if (!existsSync(cachePath)) {
 		return null;
 	}
-	const content = readFileSync(cachePath, "utf-8");
+	const content = readFileSync(cachePath, "utf8");
 	return parse(content) as CacheData;
 }
 

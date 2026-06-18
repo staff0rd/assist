@@ -20,7 +20,7 @@ function collectFileMetrics(files: string[]): FileMetrics {
 	const fileMetrics: FileMetrics = new Map();
 
 	for (const file of files) {
-		const content = fs.readFileSync(file, "utf-8");
+		const content = fs.readFileSync(file, "utf8");
 		fileMetrics.set(file, { sloc: countSloc(content), functions: [] });
 	}
 

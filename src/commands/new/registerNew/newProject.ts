@@ -27,7 +27,7 @@ function addViteBaseConfig(): void {
 		return;
 	}
 
-	const content = readFileSync(viteConfigPath, "utf-8");
+	const content = readFileSync(viteConfigPath, "utf8");
 	if (content.includes("base:")) {
 		console.log("vite.config.ts already has base config");
 		return;

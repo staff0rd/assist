@@ -17,7 +17,7 @@ export async function createTestDb(): Promise<{
 }> {
 	const lite = new PGlite();
 	const orm = drizzlePglite(lite, {
-		schema: schema,
+		schema,
 	}) as unknown as Db;
 	await ensureSchema((sql) => lite.exec(sql));
 	return { orm, close: () => lite.close() };

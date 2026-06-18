@@ -55,7 +55,7 @@ export function findContainingSolutions(
 
 	for (const sln of slnFiles) {
 		try {
-			const content = readFileSync(sln, "utf-8");
+			const content = readFileSync(sln, "utf8");
 			if (pattern.test(content)) {
 				matches.push(path.relative(repoRoot, sln));
 			}
@@ -68,5 +68,5 @@ export function findContainingSolutions(
 }
 
 function escapeRegex(s: string): string {
-	return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return s.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }

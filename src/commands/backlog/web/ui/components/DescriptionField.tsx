@@ -19,7 +19,6 @@ function MarkdownPreview({ text }: { text: string }) {
 				minHeight: 60,
 				bgcolor: theme.palette.mode === "dark" ? "grey.900" : "grey.50",
 			})}
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: markdown preview requires innerHTML
 			dangerouslySetInnerHTML={{
 				__html: marked.parse(text || "") as string,
 			}}

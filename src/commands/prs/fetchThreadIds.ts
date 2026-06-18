@@ -7,7 +7,7 @@ type ThreadNode = {
 	id: string;
 	isResolved: boolean;
 	comments: {
-		nodes: Array<{ databaseId: number }>;
+		nodes: { databaseId: number }[];
 	};
 };
 
@@ -41,7 +41,7 @@ export function fetchThreadIds(
 	try {
 		const result = execSync(
 			`gh api graphql -F query=@${queryFile} -F owner="${org}" -F repo="${repo}" -F prNumber=${prNumber}`,
-			{ encoding: "utf-8" },
+			{ encoding: "utf8" },
 		);
 
 		const response: GraphQLResponse = JSON.parse(result);

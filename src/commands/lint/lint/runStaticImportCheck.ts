@@ -3,7 +3,7 @@ import { findSourceFiles } from "../../../shared/findSourceFiles";
 import { type LintViolation, reportViolations } from "../shared";
 
 function checkForDynamicImports(filePath: string): LintViolation[] {
-	const content = fs.readFileSync(filePath, "utf-8");
+	const content = fs.readFileSync(filePath, "utf8");
 	const lines = content.split("\n");
 	const violations: LintViolation[] = [];
 

@@ -33,7 +33,7 @@ export function getChangedCsFiles(scope: Scope): string[] | null {
 	} else {
 		cmd = "git diff --name-only HEAD";
 	}
-	const output = execSync(cmd, { encoding: "utf-8" }).trim();
+	const output = execSync(cmd, { encoding: "utf8" }).trim();
 	if (output === "") return [];
 	return output.split("\n").filter((f) => f.toLowerCase().endsWith(".cs"));
 }

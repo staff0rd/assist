@@ -64,7 +64,7 @@ plan:
     manualChecks:
       - Verify search results appear within 200ms
       - Check that empty state shows placeholder text
-  - name: Polish and edge cases    # last phase — always pauses for user
+  - name: Polish and edge cases # last phase — always pauses for user
     tasks:
       - task: Handle network errors gracefully
 ```
@@ -92,13 +92,13 @@ flowchart LR
     V1 --> V2 --> V3 --> V4
 ```
 
-| Gate | Who runs it | When | What happens on failure |
-|---|---|---|---|
-| Agent `/verify` | Claude subprocess | Before calling phase-done | Agent should fix and retry (prompt says "once verify passes") |
-| Manual checks | User, prompted by agent | After /verify passes, before phase-done | Agent waits for user confirmation |
-| Last-phase confirmation | User, prompted by agent | Always on the final phase | Agent waits — this is the "is the story done?" gate |
-| Orchestrator `assist verify` | `resolvePhaseResult.ts` | After phase-done marker detected | User prompted: continue or abort |
-| Final `/verify` | User | Before committing | User decides |
+| Gate                         | Who runs it             | When                                    | What happens on failure                                       |
+| ---------------------------- | ----------------------- | --------------------------------------- | ------------------------------------------------------------- |
+| Agent `/verify`              | Claude subprocess       | Before calling phase-done               | Agent should fix and retry (prompt says "once verify passes") |
+| Manual checks                | User, prompted by agent | After /verify passes, before phase-done | Agent waits for user confirmation                             |
+| Last-phase confirmation      | User, prompted by agent | Always on the final phase               | Agent waits — this is the "is the story done?" gate           |
+| Orchestrator `assist verify` | `resolvePhaseResult.ts` | After phase-done marker detected        | User prompted: continue or abort                              |
+| Final `/verify`              | User                    | Before committing                       | User decides                                                  |
 
 ### What `/draft` controls
 
@@ -264,15 +264,15 @@ Wait for the user to confirm before proceeding.
 
 ## File Map
 
-| File | Role |
-|---|---|
-| `run.ts` | Entry point — phase loop |
-| `next.ts` | Pick or resume an item |
-| `executePhase.ts` | Orchestrate a single phase |
-| `buildPhasePrompt.ts` | Generate the agent prompt |
-| `spawnClaude.ts` | Spawn `claude` subprocess with stdio |
-| `watchForMarker.ts` | Poll for `.assist-signal.json`, kill on detect |
-| `phaseDone.ts` | Write marker + advance `currentPhase` |
-| `resolvePhaseResult.ts` | Post-phase decision (advance / retry / abort) |
-| `shared.ts` | SQLite persistence with JSONL sync |
-| `types.ts` | Zod schemas for `BacklogItem`, `PlanPhase` |
+| File                    | Role                                           |
+| ----------------------- | ---------------------------------------------- |
+| `run.ts`                | Entry point — phase loop                       |
+| `next.ts`               | Pick or resume an item                         |
+| `executePhase.ts`       | Orchestrate a single phase                     |
+| `buildPhasePrompt.ts`   | Generate the agent prompt                      |
+| `spawnClaude.ts`        | Spawn `claude` subprocess with stdio           |
+| `watchForMarker.ts`     | Poll for `.assist-signal.json`, kill on detect |
+| `phaseDone.ts`          | Write marker + advance `currentPhase`          |
+| `resolvePhaseResult.ts` | Post-phase decision (advance / retry / abort)  |
+| `shared.ts`             | SQLite persistence with JSONL sync             |
+| `types.ts`              | Zod schemas for `BacklogItem`, `PlanPhase`     |

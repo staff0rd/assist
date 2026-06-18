@@ -19,8 +19,8 @@ export async function forwardWindowsCreate(
 		daemonLog("windows proxy: connection ready, forwarding create");
 		state.pendingCreators.push(client);
 		conn.write(data);
-	} catch (e) {
-		const message = e instanceof Error ? e.message : String(e);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
 		daemonLog(`windows proxy: forwardCreate failed: ${message}`);
 		sendTo(client, {
 			type: "error",

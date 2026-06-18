@@ -5,7 +5,7 @@ import { getRepoInfo, isGhNotInstalled } from "./shared";
 function verifySha(sha: string): string {
 	try {
 		return execSync(`git rev-parse --verify ${sha}`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 		}).trim();
 	} catch {
 		console.error(`Error: '${sha}' is not a valid commit in this repository.`);

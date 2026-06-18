@@ -11,11 +11,11 @@ export async function syncSettings(
 	const source = path.join(claudeDir, "settings.json");
 	const target = path.join(targetBase, "settings.json");
 
-	const sourceContent = fs.readFileSync(source, "utf-8");
+	const sourceContent = fs.readFileSync(source, "utf8");
 	const mergedContent = JSON.stringify(JSON.parse(sourceContent), null, "\t");
 
 	if (fs.existsSync(target)) {
-		const targetContent = fs.readFileSync(target, "utf-8");
+		const targetContent = fs.readFileSync(target, "utf8");
 		const normalizedTarget = JSON.stringify(
 			JSON.parse(targetContent),
 			null,

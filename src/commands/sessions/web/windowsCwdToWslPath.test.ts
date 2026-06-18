@@ -3,7 +3,9 @@ import { windowsCwdToWslPath } from "./windowsCwdToWslPath";
 
 describe("windowsCwdToWslPath", () => {
 	it("maps a drive-letter path to the /mnt mount", () => {
-		expect(windowsCwdToWslPath("C:\\git\\nextgen")).toBe("/mnt/c/git/nextgen");
+		expect(windowsCwdToWslPath(String.raw`C:\git\nextgen`)).toBe(
+			"/mnt/c/git/nextgen",
+		);
 		expect(windowsCwdToWslPath("D:/projects/app")).toBe("/mnt/d/projects/app");
 	});
 

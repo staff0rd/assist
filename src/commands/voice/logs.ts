@@ -8,7 +8,7 @@ export function logs(options: { lines?: string }): void {
 	}
 
 	const count = Number.parseInt(options.lines ?? "150", 10);
-	const content = readFileSync(voicePaths.log, "utf-8").trim();
+	const content = readFileSync(voicePaths.log, "utf8").trim();
 
 	if (!content) {
 		console.log("Voice log is empty");

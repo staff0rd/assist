@@ -14,7 +14,7 @@ export type MaintainabilityOptions = ThresholdOptions & {
 };
 
 function createSourceFromFile(filePath: string): ts.SourceFile {
-	const content = fs.readFileSync(filePath, "utf-8");
+	const content = fs.readFileSync(filePath, "utf8");
 	return ts.createSourceFile(
 		path.basename(filePath),
 		content,
@@ -54,8 +54,5 @@ export function forEachFunction(
 }
 
 export { calculateCyclomaticComplexity } from "./calculateCyclomaticComplexity";
-export {
-	calculateHalstead,
-	type HalsteadMetrics,
-} from "./calculateHalstead";
+export { calculateHalstead, type HalsteadMetrics } from "./calculateHalstead";
 export { countSloc } from "./countSloc";

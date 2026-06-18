@@ -1,6 +1,6 @@
 import ts from "typescript";
 
-export const operatorChecks: Array<(n: ts.Node) => string | undefined> = [
+export const operatorChecks: ((n: ts.Node) => string | undefined)[] = [
 	(n) => (ts.isBinaryExpression(n) ? n.operatorToken.getText() : undefined),
 	(n) =>
 		ts.isPrefixUnaryExpression(n) || ts.isPostfixUnaryExpression(n)

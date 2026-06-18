@@ -27,7 +27,7 @@ function getStatus(
 function fetchRepos(days: number, all: boolean): GitHubRepo[] {
 	const json = execSync(
 		"gh repo list staff0rd --json name,pushedAt,isArchived --limit 200",
-		{ encoding: "utf-8" },
+		{ encoding: "utf8" },
 	);
 	const allRepos: GitHubRepo[] = JSON.parse(json);
 

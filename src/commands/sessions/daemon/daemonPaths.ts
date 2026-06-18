@@ -7,7 +7,7 @@ export const daemonPaths = {
 	dir: DAEMON_DIR,
 	socket:
 		process.platform === "win32"
-			? "\\\\.\\pipe\\assist-sessions-daemon"
+			? String.raw`\\.\pipe\assist-sessions-daemon`
 			: join(DAEMON_DIR, "daemon.sock"),
 	log: join(DAEMON_DIR, "daemon.log"),
 	pid: join(DAEMON_DIR, "daemon.pid"),

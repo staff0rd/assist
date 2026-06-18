@@ -34,5 +34,5 @@ export type BacklogDatabase = Db | BacklogTx;
 
 /** Build a Drizzle client over a pg {@link Pool} (production). */
 export function makeOrmFromPool(pool: Pool): Db {
-	return drizzleNodePg(pool, { schema: schema });
+	return drizzleNodePg(pool, { schema });
 }

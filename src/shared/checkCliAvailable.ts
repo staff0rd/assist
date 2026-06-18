@@ -3,7 +3,7 @@ import { execSync } from "node:child_process";
 export function checkCliAvailable(cli: string): boolean {
 	const binary = cli.split(/\s+/)[0];
 	const opts = {
-		encoding: "utf-8" as const,
+		encoding: "utf8" as const,
 		stdio: ["ignore", "pipe", "pipe"] as ["ignore", "pipe", "pipe"],
 	};
 	try {

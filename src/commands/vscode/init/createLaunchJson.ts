@@ -16,7 +16,7 @@ export function removeVscodeFromGitignore(): void {
 		return;
 	}
 
-	const content = fs.readFileSync(gitignorePath, "utf-8");
+	const content = fs.readFileSync(gitignorePath, "utf8");
 	const lines = content.split("\n");
 	const filteredLines = lines.filter(
 		(line) => !line.trim().toLowerCase().includes(".vscode"),

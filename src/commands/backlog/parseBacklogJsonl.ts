@@ -6,7 +6,7 @@ import { type BacklogItem, backlogItemSchema } from "./types";
  * validated items. Each non-empty line is one item; malformed lines throw.
  */
 export function parseBacklogJsonl(path: string): BacklogItem[] {
-	const content = readFileSync(path, "utf-8").trim();
+	const content = readFileSync(path, "utf8").trim();
 	if (content.length === 0) return [];
 	return content
 		.split("\n")

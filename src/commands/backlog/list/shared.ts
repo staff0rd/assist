@@ -2,7 +2,7 @@ import chalk from "chalk";
 import type { BacklogFile, BacklogStatus, BacklogType } from "../types";
 
 /** The minimal shape isBlocked needs from each dependency target. */
-type StatusLookup = ReadonlyArray<{ id: number; status: BacklogStatus }>;
+type StatusLookup = readonly { id: number; status: BacklogStatus }[];
 
 export function statusIcon(status: BacklogStatus): string {
 	switch (status) {

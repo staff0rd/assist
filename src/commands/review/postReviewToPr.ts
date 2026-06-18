@@ -27,7 +27,7 @@ export async function postReviewToPr(
 ): Promise<void> {
 	const prInfo = fetchPrDiffInfo();
 	const prNumber = prInfo.prNumber;
-	const markdown = readFileSync(synthesisPath, "utf-8");
+	const markdown = readFileSync(synthesisPath, "utf8");
 	const findings = parseFindings(markdown);
 	if (findings.length === 0) {
 		console.log("Synthesis contains no findings; nothing to post.");

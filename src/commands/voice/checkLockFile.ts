@@ -17,7 +17,7 @@ export function checkLockFile(): void {
 	if (!existsSync(lockFile)) return;
 
 	try {
-		const lock = JSON.parse(readFileSync(lockFile, "utf-8"));
+		const lock = JSON.parse(readFileSync(lockFile, "utf8"));
 		if (lock.pid && isProcessAlive(lock.pid)) {
 			console.error(
 				`Voice daemon already running (PID ${lock.pid}, env: ${lock.env}). Stop it first with: assist voice stop`,

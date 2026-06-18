@@ -14,7 +14,7 @@ export function parseGitHubUrl(
 function tryGetRemoteUrl(remote: string, cwd?: string): string | null {
 	try {
 		return execSync(`git remote get-url ${remote}`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 			stdio: ["pipe", "pipe", "pipe"],
 			cwd,
 		}).trim();
@@ -27,7 +27,7 @@ function getCurrentBranchRemote(cwd?: string): string | null {
 	try {
 		const ref = execSync(
 			"git rev-parse --abbrev-ref --symbolic-full-name @{u}",
-			{ encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"], cwd },
+			{ encoding: "utf8", stdio: ["pipe", "pipe", "pipe"], cwd },
 		).trim();
 		const [remote] = ref.split("/", 1);
 		return remote || null;
@@ -39,7 +39,7 @@ function getCurrentBranchRemote(cwd?: string): string | null {
 function listRemotes(cwd?: string): string[] {
 	try {
 		return execSync("git remote", {
-			encoding: "utf-8",
+			encoding: "utf8",
 			stdio: ["pipe", "pipe", "pipe"],
 			cwd,
 		})

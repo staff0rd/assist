@@ -29,7 +29,7 @@ export function list(options: ListOptions): void {
 	if (options.reverse) args.push("--reverse");
 	else args.push("-n", "500");
 	args.push("--pretty=format:%ad|%h|%s", "--date=short");
-	const output = execFileSync("git", args, { encoding: "utf-8" });
+	const output = execFileSync("git", args, { encoding: "utf8" });
 
 	const commitsByDate = parseGitLogCommits(output, ignore);
 

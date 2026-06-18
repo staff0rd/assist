@@ -11,7 +11,7 @@ export function getRepoName(): string {
 	const packageJsonPath = join(process.cwd(), "package.json");
 	if (existsSync(packageJsonPath)) {
 		try {
-			const content = readFileSync(packageJsonPath, "utf-8");
+			const content = readFileSync(packageJsonPath, "utf8");
 			const pkg = JSON.parse(content);
 			if (pkg.name) {
 				return pkg.name;

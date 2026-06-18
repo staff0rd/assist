@@ -12,7 +12,7 @@ function parseRefactorYml(): IgnoreEntry[] {
 		return [];
 	}
 
-	const content = fs.readFileSync(REFACTOR_YML_PATH, "utf-8");
+	const content = fs.readFileSync(REFACTOR_YML_PATH, "utf8");
 	const entries: IgnoreEntry[] = [];
 
 	const lines = content.split("\n");

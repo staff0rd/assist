@@ -12,7 +12,7 @@ function isProcessAlive(pid: number): boolean {
 
 function readRecentLogs(count: number): string[] {
 	if (!existsSync(voicePaths.log)) return [];
-	const lines = readFileSync(voicePaths.log, "utf-8").trim().split("\n");
+	const lines = readFileSync(voicePaths.log, "utf8").trim().split("\n");
 	return lines.slice(-count);
 }
 
@@ -22,7 +22,7 @@ export function status(): void {
 		return;
 	}
 
-	const pid = Number.parseInt(readFileSync(voicePaths.pid, "utf-8").trim(), 10);
+	const pid = Number.parseInt(readFileSync(voicePaths.pid, "utf8").trim(), 10);
 	const alive = isProcessAlive(pid);
 
 	console.log(`Voice daemon: ${alive ? "running" : "dead"} (PID ${pid})`);

@@ -50,7 +50,7 @@ function readDevlogFiles(callback: (parsed: ParsedFrontmatter) => void): void {
 		const files = readdirSync(DEVLOG_DIR).filter((f) => f.endsWith(".md"));
 
 		for (const file of files) {
-			const content = readFileSync(join(DEVLOG_DIR, file), "utf-8");
+			const content = readFileSync(join(DEVLOG_DIR, file), "utf8");
 			const parsed = parseFrontmatter(content, file);
 			if (parsed) callback(parsed);
 		}

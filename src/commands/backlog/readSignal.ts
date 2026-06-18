@@ -6,7 +6,7 @@ export function readSignal(): Signal | undefined {
 	const path = getSignalPath();
 	if (!existsSync(path)) return undefined;
 	try {
-		return JSON.parse(readFileSync(path, "utf-8")) as Signal;
+		return JSON.parse(readFileSync(path, "utf8")) as Signal;
 	} catch {
 		return undefined;
 	}

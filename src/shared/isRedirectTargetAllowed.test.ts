@@ -45,12 +45,12 @@ describe("isRedirectTargetAllowed", () => {
 	});
 
 	describe("with a Windows-style temp directory", () => {
-		const winTmp = "C:\\Users\\User\\AppData\\Local\\Temp";
+		const winTmp = String.raw`C:\Users\User\AppData\Local\Temp`;
 
 		it("allows a file directly in %TEMP%", () => {
 			expect(
 				isRedirectTargetAllowed(
-					"C:\\Users\\User\\AppData\\Local\\Temp\\out.txt",
+					String.raw`C:\Users\User\AppData\Local\Temp\out.txt`,
 					winTmp,
 				),
 			).toBe(true);
@@ -59,7 +59,7 @@ describe("isRedirectTargetAllowed", () => {
 		it("is case-insensitive", () => {
 			expect(
 				isRedirectTargetAllowed(
-					"c:\\users\\user\\appdata\\local\\temp\\out.txt",
+					String.raw`c:\users\user\appdata\local\temp\out.txt`,
 					winTmp,
 				),
 			).toBe(true);
@@ -76,14 +76,17 @@ describe("isRedirectTargetAllowed", () => {
 
 		it("rejects a Windows path outside %TEMP%", () => {
 			expect(
-				isRedirectTargetAllowed("C:\\Users\\User\\Documents\\out.txt", winTmp),
+				isRedirectTargetAllowed(
+					String.raw`C:\Users\User\Documents\out.txt`,
+					winTmp,
+				),
 			).toBe(false);
 		});
 
 		it("rejects a path without a drive letter", () => {
 			expect(
 				isRedirectTargetAllowed(
-					"\\Users\\User\\AppData\\Local\\Temp\\f",
+					String.raw`\Users\User\AppData\Local\Temp\f`,
 					winTmp,
 				),
 			).toBe(false);
@@ -92,7 +95,7 @@ describe("isRedirectTargetAllowed", () => {
 		it("rejects a path on a different drive", () => {
 			expect(
 				isRedirectTargetAllowed(
-					"D:\\Users\\User\\AppData\\Local\\Temp\\out.txt",
+					String.raw`D:\Users\User\AppData\Local\Temp\out.txt`,
 					winTmp,
 				),
 			).toBe(false);

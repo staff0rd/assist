@@ -10,8 +10,8 @@ import {
 
 type DiscoveredSessionPath = { path: string; origin: SessionOrigin };
 
-function sessionRoots(): Array<{ dir: string; origin: SessionOrigin }> {
-	const roots: Array<{ dir: string; origin: SessionOrigin }> = [
+function sessionRoots(): { dir: string; origin: SessionOrigin }[] {
+	const roots: { dir: string; origin: SessionOrigin }[] = [
 		{ dir: path.join(os.homedir(), ".claude", "projects"), origin: "wsl" },
 	];
 	const windowsRoot = loadConfig().sessions?.windowsProjectsRoot;

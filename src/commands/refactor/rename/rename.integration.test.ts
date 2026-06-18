@@ -53,10 +53,10 @@ describe("rename file", () => {
 		expect(existsSync(join(dir, "src", "utils", "helper.ts"))).toBe(false);
 		expect(existsSync(join(dir, "src", "lib", "helper.ts"))).toBe(true);
 
-		const consumer = readFileSync(join(dir, "src", "consumer.ts"), "utf-8");
+		const consumer = readFileSync(join(dir, "src", "consumer.ts"), "utf8");
 		expect(consumer).toContain("from './lib/helper'");
 
-		const moved = readFileSync(join(dir, "src", "lib", "helper.ts"), "utf-8");
+		const moved = readFileSync(join(dir, "src", "lib", "helper.ts"), "utf8");
 		expect(moved).toContain("from '../utils/sibling'");
 	});
 
@@ -65,7 +65,7 @@ describe("rename file", () => {
 
 		expect(existsSync(join(dir, "src", "utils", "helper.ts"))).toBe(true);
 		expect(existsSync(join(dir, "src", "lib", "helper.ts"))).toBe(false);
-		const consumer = readFileSync(join(dir, "src", "consumer.ts"), "utf-8");
+		const consumer = readFileSync(join(dir, "src", "consumer.ts"), "utf8");
 		expect(consumer).toContain("from './utils/helper'");
 	});
 });

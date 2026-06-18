@@ -6,7 +6,7 @@ type OpField = { id: string; label: string; reference: string; value?: string };
 
 function opExec(args: string): string {
 	return execSync(`op ${args}`, {
-		encoding: "utf-8",
+		encoding: "utf8",
 		stdio: ["pipe", "pipe", "pipe"],
 	}).trim();
 }

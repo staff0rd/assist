@@ -33,7 +33,7 @@ export function findAddedComments(
 	options: FindAddedCommentsOptions,
 ): CommentFinding[] {
 	const diff = execSync("git diff HEAD", {
-		encoding: "utf-8",
+		encoding: "utf8",
 		maxBuffer: 64 * 1024 * 1024,
 	});
 	const addedLines = parseDiffAddedLines(diff);

@@ -9,7 +9,7 @@ describe("cli-hook check from outside repo", () => {
 		const dir = mkdtempSync(join(tmpdir(), "assist-test-"));
 		const result = execSync('assist cli-hook check "assist verify"', {
 			cwd: dir,
-			encoding: "utf-8",
+			encoding: "utf8",
 		});
 
 		expect(result).toContain("approved");

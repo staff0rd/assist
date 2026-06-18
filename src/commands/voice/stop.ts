@@ -7,7 +7,7 @@ export function stop(): void {
 		return;
 	}
 
-	const pid = Number.parseInt(readFileSync(voicePaths.pid, "utf-8").trim(), 10);
+	const pid = Number.parseInt(readFileSync(voicePaths.pid, "utf8").trim(), 10);
 
 	try {
 		process.kill(pid, "SIGTERM");

@@ -11,7 +11,7 @@ function packageRoot(): string {
 
 function readLines(path: string): string[] {
 	if (!existsSync(path)) return [];
-	return readFileSync(path, "utf-8")
+	return readFileSync(path, "utf8")
 		.split("\n")
 		.filter((line) => line.trim() !== "");
 }

@@ -9,7 +9,7 @@ export function fetchIssue(
 	try {
 		result = execSync(
 			`acli jira workitem view ${issueKey} -f ${fields} --json`,
-			{ encoding: "utf-8", stdio: ["pipe", "pipe", "pipe"] },
+			{ encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
 		);
 	} catch (error) {
 		if (error instanceof Error && "stderr" in error) {

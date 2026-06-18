@@ -12,7 +12,7 @@ export function applyRename(
 ): void {
 	const updatedContents = applyRewrites(rewrites);
 	for (const [file, content] of updatedContents) {
-		fs.writeFileSync(file, content, "utf-8");
+		fs.writeFileSync(file, content, "utf8");
 		console.log(chalk.cyan(`  Updated imports in ${path.relative(cwd, file)}`));
 	}
 

@@ -17,8 +17,8 @@ export function revalidateBacklog(
 				signal,
 			);
 			if (!signal.aborted) onLoaded(found, items);
-		} catch (err) {
-			if (!signal.aborted) throw err;
+		} catch (error) {
+			if (!signal.aborted) throw error;
 		}
 	})();
 }

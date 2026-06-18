@@ -30,7 +30,7 @@ async function migrateFile(
 	file: string,
 	createdAt: Date,
 ): Promise<void> {
-	const content = readFileSync(file, "utf-8");
+	const content = readFileSync(file, "utf8");
 	await saveHandover(orm, {
 		origin,
 		summary: summariseHandoverContent(content),

@@ -4,7 +4,7 @@ import type { PrComment } from "../types";
 
 function fetchJson(endpoint: string): unknown[] {
 	const result = execSync(`gh api --paginate ${endpoint}`, {
-		encoding: "utf-8",
+		encoding: "utf8",
 	});
 	if (!result.trim()) return [];
 	return JSON.parse(result);

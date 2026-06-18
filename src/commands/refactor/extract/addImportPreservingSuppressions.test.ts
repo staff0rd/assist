@@ -25,6 +25,23 @@ export function thrust() { return lerp(OFF, 1, 0.5); }
 		expect(lines[1]).toBe('import { lerp } from "./lerp";');
 	});
 
+	it("inserts the import below a leading oxlint-disable comment", () => {
+		const sf =
+			createSourceFile(`// oxlint-disable react-hooks/exhaustive-deps -- stable identity
+const OFF = 0;
+export function thrust() { return lerp(OFF, 1, 0.5); }
+`);
+		addImportPreservingSuppressions(sf, {
+			moduleSpecifier: "./lerp",
+			namedImports: ["lerp"],
+		});
+		const lines = sf.getFullText().split("\n");
+		expect(lines[0]).toBe(
+			"// oxlint-disable react-hooks/exhaustive-deps -- stable identity",
+		);
+		expect(lines[1]).toBe('import { lerp } from "./lerp";');
+	});
+
 	it("inserts below multiple leading suppression comments", () => {
 		const sf =
 			createSourceFile(`// biome-ignore-all lint/style/useFilenamingConvention: data file

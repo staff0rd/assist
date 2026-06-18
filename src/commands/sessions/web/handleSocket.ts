@@ -35,9 +35,9 @@ async function openDaemonConnection(
 		const conn = await connectToDaemon();
 		relayDaemonLines(conn, ws, ctx.repoCwd);
 		return conn;
-	} catch (e) {
-		closeWithError(ws, e);
-		throw e;
+	} catch (error) {
+		closeWithError(ws, error);
+		throw error;
 	}
 }
 

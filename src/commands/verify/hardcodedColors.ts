@@ -9,7 +9,7 @@ export function hardcodedColors(): void {
 
 	try {
 		const output = execSync(`grep -rEnH '${pattern}' src/`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 		});
 
 		const lines = output

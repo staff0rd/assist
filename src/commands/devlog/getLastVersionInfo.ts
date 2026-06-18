@@ -11,7 +11,7 @@ type LastVersionInfo = {
 export function getVersionAtCommit(hash: string): string | null {
 	try {
 		const content = execSync(`git show ${hash}:package.json`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 		});
 		const pkg = JSON.parse(content);
 		return pkg.version ?? null;
@@ -32,7 +32,7 @@ function getLastVersionInfoFromGit(): LastVersionInfo | null {
 			"git",
 			["log", "-1", "--pretty=format:%ad|%h", "--date=short"],
 			{
-				encoding: "utf-8",
+				encoding: "utf8",
 			},
 		).trim();
 		const [date, hash] = output.split("|");

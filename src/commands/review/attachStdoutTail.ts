@@ -6,7 +6,7 @@ export function attachStdoutTail(
 ): { value: string } {
 	const state = { value: "" };
 	child.stdout?.on("data", (chunk: Buffer) => {
-		state.value += chunk.toString("utf-8");
+		state.value += chunk.toString("utf8");
 		if (state.value.length > maxBytes) {
 			state.value = state.value.slice(state.value.length - maxBytes);
 		}

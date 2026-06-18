@@ -19,7 +19,7 @@ function logPath(cli: string): string {
 function readCache(cli: string): string | undefined {
 	const path = logPath(cli);
 	if (!existsSync(path)) return undefined;
-	return readFileSync(path, "utf-8");
+	return readFileSync(path, "utf8");
 }
 
 function writeCache(cli: string, output: string): void {

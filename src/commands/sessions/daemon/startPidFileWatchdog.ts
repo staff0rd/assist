@@ -18,9 +18,7 @@ export function startPidFileWatchdog(
 
 export function ownsPidFile(): boolean {
 	try {
-		return (
-			readFileSync(daemonPaths.pid, "utf-8").trim() === String(process.pid)
-		);
+		return readFileSync(daemonPaths.pid, "utf8").trim() === String(process.pid);
 	} catch {
 		return false;
 	}

@@ -29,7 +29,6 @@ export function ManualChecks({ checks }: { checks: string[] }) {
 							component="span"
 							className="markdown"
 							sx={{ fontSize: "0.875rem", color: "text.secondary" }}
-							// biome-ignore lint/security/noDangerouslySetInnerHtml: inline markdown rendering
 							dangerouslySetInnerHTML={{
 								__html: marked.parseInline(check) as string,
 							}}

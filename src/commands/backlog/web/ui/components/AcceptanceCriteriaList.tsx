@@ -39,7 +39,6 @@ export function AcceptanceCriteriaList({
 						<Box
 							component="span"
 							className="markdown"
-							// biome-ignore lint/security/noDangerouslySetInnerHtml: inline markdown rendering
 							dangerouslySetInnerHTML={{
 								__html: marked.parseInline(ac) as string,
 							}}

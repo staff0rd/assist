@@ -11,10 +11,10 @@ export async function syncClaudeMd(
 ): Promise<void> {
 	const source = path.join(claudeDir, "CLAUDE.md");
 	const target = path.join(targetBase, "CLAUDE.md");
-	const sourceContent = fs.readFileSync(source, "utf-8");
+	const sourceContent = fs.readFileSync(source, "utf8");
 
 	if (fs.existsSync(target)) {
-		const targetContent = fs.readFileSync(target, "utf-8");
+		const targetContent = fs.readFileSync(target, "utf8");
 		if (sourceContent !== targetContent) {
 			console.log(
 				chalk.yellow("\n⚠️  Warning: CLAUDE.md differs from existing file"),

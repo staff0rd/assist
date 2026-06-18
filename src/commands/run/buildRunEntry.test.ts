@@ -10,13 +10,13 @@ describe("buildRunEntry", () => {
 	it("splits a multi-word command string when args is empty", () => {
 		const entry = buildRunEntry(
 			"verify:lint",
-			"npx biome check --diagnostic-level=error",
+			"npx oxlint --config .oxlintrc.json",
 			[],
 		);
 		expect(entry).toEqual({
 			name: "verify:lint",
 			command: "npx",
-			args: ["biome", "check", "--diagnostic-level=error"],
+			args: ["oxlint", "--config", ".oxlintrc.json"],
 		});
 	});
 

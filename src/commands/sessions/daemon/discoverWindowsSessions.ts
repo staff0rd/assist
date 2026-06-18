@@ -11,8 +11,8 @@ export async function discoverWindowsSessions(
 	daemonLog("windows proxy: discovering sessions on running windows daemon");
 	try {
 		await conn.ensure();
-	} catch (e) {
-		const message = e instanceof Error ? e.message : String(e);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
 		daemonLog(`windows proxy: discovery failed: ${message}`);
 	}
 }

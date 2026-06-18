@@ -30,7 +30,6 @@ const mockAppendComment = appendComment as unknown as MockInstance;
 
 const orm = {} as never;
 
-// biome-ignore lint/suspicious/noExplicitAny: test fixtures use partial items
 function found(item: any) {
 	return { orm, item };
 }

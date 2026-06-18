@@ -9,7 +9,7 @@ export function fetchPrDiff(
 	const { org, repo } = getRepoInfo();
 	try {
 		return execSync(`gh pr diff ${prNumber} -R ${org}/${repo}`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 			maxBuffer: 256 * 1024 * 1024,
 			stdio: ["ignore", "pipe", "pipe"],
 		});
@@ -35,7 +35,7 @@ function fetchDiffViaGit(baseSha: string, headSha: string): string {
 		// shas may already be available locally; git diff below fails clearly if not
 	}
 	return execSync(`git diff ${baseSha}...${headSha}`, {
-		encoding: "utf-8",
+		encoding: "utf8",
 		maxBuffer: 256 * 1024 * 1024,
 	});
 }

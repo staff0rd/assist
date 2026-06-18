@@ -1,5 +1,9 @@
 {
-	"entry": ["src/index.ts", "src/commands/sessions/web/ui/App.tsx"],
-	"ignoreDependencies": ["@biomejs/biome", "jscpd", "@vitest/coverage-v8"],
+	"entry": [
+		"src/index.ts",
+		"src/commands/sessions/web/ui/App.tsx",
+		"oxlint-rules/filenameConvention.ts"
+	],
+	"ignoreDependencies": ["oxlint", "oxfmt", "jscpd", "@vitest/coverage-v8"],
 	"ignore": ["**/.venv/**"]
 }

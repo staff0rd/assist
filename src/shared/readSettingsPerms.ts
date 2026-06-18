@@ -22,7 +22,7 @@ function readPermissionArray(
 ): string[] {
 	if (!existsSync(filePath)) return [];
 	try {
-		const data = JSON.parse(readFileSync(filePath, "utf-8"));
+		const data = JSON.parse(readFileSync(filePath, "utf8"));
 		const arr = data?.permissions?.[key];
 		return Array.isArray(arr)
 			? arr.filter((e: unknown) => typeof e === "string")

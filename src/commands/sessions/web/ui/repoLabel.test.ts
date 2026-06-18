@@ -7,7 +7,7 @@ describe("repoLabel", () => {
 	});
 
 	it("returns the basename of a windows path", () => {
-		expect(repoLabel("C:\\Users\\stafford\\git\\assist")).toBe("assist");
+		expect(repoLabel(String.raw`C:\Users\stafford\git\assist`)).toBe("assist");
 	});
 
 	it("ignores a trailing slash", () => {

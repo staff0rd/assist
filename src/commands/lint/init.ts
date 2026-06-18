@@ -25,8 +25,8 @@ export async function init(): Promise<void> {
 	}
 
 	const linterConfigPath = join(__dirname, "commands/lint/biome.linter.json");
-	const linterConfig = JSON.parse(readFileSync(linterConfigPath, "utf-8"));
-	const biomeConfig = JSON.parse(readFileSync(biomeConfigPath, "utf-8"));
+	const linterConfig = JSON.parse(readFileSync(linterConfigPath, "utf8"));
+	const biomeConfig = JSON.parse(readFileSync(biomeConfigPath, "utf8"));
 
 	const oldContent = `${JSON.stringify(biomeConfig, null, 2)}\n`;
 	biomeConfig.linter = linterConfig.linter;

@@ -8,10 +8,10 @@
 export async function exitOnCancel<T>(promise: Promise<T>): Promise<T> {
 	try {
 		return await promise;
-	} catch (err) {
-		if (err === "" || err === undefined) {
+	} catch (error) {
+		if (error === "" || error === undefined) {
 			process.exit(0);
 		}
-		throw err;
+		throw error;
 	}
 }

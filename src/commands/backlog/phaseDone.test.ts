@@ -52,7 +52,7 @@ describe("phaseDone", () => {
 
 		await phaseDone("1", "1", "Done");
 
-		const marker = JSON.parse(readFileSync(getSignalPath(), "utf-8"));
+		const marker = JSON.parse(readFileSync(getSignalPath(), "utf8"));
 		expect(marker.event).toBe("phase-done");
 		expect(marker.itemId).toBe(1);
 		expect(marker.phaseIndex).toBe(0);

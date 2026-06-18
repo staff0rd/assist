@@ -94,18 +94,17 @@ describe("SessionManager", () => {
 				},
 				{ name: "stub", commandType: "run", cwd: "/repo", startedAt: 1 },
 			]);
-			restoreSessionMock.mockImplementation(
-				(id: string, p: { name: string }) =>
-					p.name === "live"
-						? fakeSession({ id, name: "live", restored: true })
-						: fakeSession({
-								id,
-								name: "stub",
-								commandType: "run",
-								status: "done",
-								pty: null,
-								restored: false,
-							}),
+			restoreSessionMock.mockImplementation((id: string, p: { name: string }) =>
+				p.name === "live"
+					? fakeSession({ id, name: "live", restored: true })
+					: fakeSession({
+							id,
+							name: "stub",
+							commandType: "run",
+							status: "done",
+							pty: null,
+							restored: false,
+						}),
 			);
 
 			const manager = new SessionManager();

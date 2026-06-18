@@ -16,11 +16,11 @@ function buildOutputPath(outputDir: string, processName: string): string {
 
 function runPowerShellScript(processName: string, outputPath: string): void {
 	const scriptPath = join(tmpdir(), `assist-screenshot-${Date.now()}.ps1`);
-	writeFileSync(scriptPath, captureWindowPs1, "utf-8");
+	writeFileSync(scriptPath, captureWindowPs1, "utf8");
 	try {
 		execSync(
 			`powershell -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}" -ProcessName "${processName}" -OutputPath "${outputPath}"`,
-			{ stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
+			{ stdio: ["ignore", "pipe", "pipe"], encoding: "utf8" },
 		);
 	} finally {
 		unlinkSync(scriptPath);

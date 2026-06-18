@@ -30,7 +30,7 @@ export function isLockedByOther(itemId: number): boolean {
 	if (!existsSync(lockPath)) return false;
 
 	try {
-		const lock = JSON.parse(readFileSync(lockPath, "utf-8"));
+		const lock = JSON.parse(readFileSync(lockPath, "utf8"));
 		if (lock.pid === process.pid) return false;
 		return isProcessAlive(lock.pid);
 	} catch {

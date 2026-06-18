@@ -11,7 +11,7 @@ export async function sloc(
 		let hasViolation = false;
 
 		for (const file of files) {
-			const content = fs.readFileSync(file, "utf-8");
+			const content = fs.readFileSync(file, "utf8");
 			const lines = countSloc(content);
 			results.push({ file, lines });
 			if (options.threshold !== undefined && lines > options.threshold) {

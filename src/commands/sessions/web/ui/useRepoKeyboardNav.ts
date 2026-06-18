@@ -8,7 +8,6 @@ export function useRepoKeyboardNav(
 ) {
 	const [highlight, setHighlight] = useState(0);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: reset highlight whenever the result set changes
 	useEffect(() => {
 		setHighlight(0);
 	}, [resetKey]);

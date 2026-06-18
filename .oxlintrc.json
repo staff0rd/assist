@@ -1,0 +1,72 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc", "react"],
+	"jsPlugins": ["./oxlint-rules/filenameConvention.ts"],
+	"categories": {
+		"correctness": "error",
+		"style": "error"
+	},
+	"rules": {
+		"local/filename-convention": "error",
+		"no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_"
+			}
+		],
+		"typescript/consistent-type-definitions": ["error", "type"],
+		"typescript/explicit-member-accessibility": [
+			"error",
+			{ "accessibility": "no-public" }
+		],
+		"unicorn/filename-case": "off",
+		"no-magic-numbers": "off",
+		"func-style": "off",
+		"sort-imports": "off",
+		"sort-keys": "off",
+		"id-length": "off",
+		"no-ternary": "off",
+		"no-nested-ternary": "off",
+		"unicorn/no-nested-ternary": "off",
+		"unicorn/no-null": "off",
+		"max-statements": "off",
+		"max-params": "off",
+		"max-depth": "off",
+		"init-declarations": "off",
+		"no-continue": "off",
+		"prefer-named-capture-group": "off",
+		"prefer-destructuring": "off",
+		"no-implicit-coercion": "off",
+		"no-duplicate-imports": "off",
+		"unicorn/no-await-expression-member": "off",
+		"typescript/method-signature-style": "off",
+		"react/jsx-max-depth": "off",
+		"react/jsx-handler-names": "off",
+		"react/jsx-props-no-spreading": "off",
+		"typescript/parameter-properties": "off",
+		"capitalized-comments": "off",
+		"unicorn/prefer-ternary": "off",
+		"unicorn/prefer-spread": "off",
+		"unicorn/prefer-default-parameters": "off",
+		"unicorn/numeric-separators-style": "off",
+		"unicorn/no-unreadable-array-destructuring": "off",
+		"unicorn/number-literal-case": "off",
+		"curly": "off",
+		"unicorn/switch-case-braces": "off",
+		"new-cap": "off"
+	},
+	"env": {
+		"builtin": true
+	},
+	"overrides": [
+		{
+			"files": ["**/*.test.ts", "**/*.test.tsx"],
+			"rules": {
+				"local/filename-convention": "off"
+			}
+		}
+	],
+	"ignorePatterns": ["dist/**", "**/.venv/**"]
+}

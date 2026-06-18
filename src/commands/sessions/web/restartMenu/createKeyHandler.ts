@@ -18,7 +18,8 @@ export function createKeyHandler(
 		const { key, digit } = parseMenuKey(chunk, toggleKey);
 		if (key === "quit") return quit();
 		if (key === "toggle") {
-			menu.isOpen() ? menu.close() : menu.open();
+			if (menu.isOpen()) menu.close();
+			else menu.open();
 			return;
 		}
 		if (!menu.isOpen()) return;

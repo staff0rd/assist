@@ -14,7 +14,7 @@ export function loadJson<T extends object>(filename: string): T {
 	const path = getStorePath(filename);
 	if (existsSync(path)) {
 		try {
-			return JSON.parse(readFileSync(path, "utf-8"));
+			return JSON.parse(readFileSync(path, "utf8"));
 		} catch {
 			return {} as T;
 		}

@@ -6,7 +6,7 @@
 - **Python daemon**: Full pipeline — AudioCapture → Silero VAD → Smart Turn → Parakeet STT → wake word → dispatch
 - **Model setup**: `assist voice setup` downloads Silero VAD (ONNX from GitHub), Smart Turn v3.2 (ONNX from HuggingFace pipecat-ai/smart-turn-v3), Parakeet STT (NeMo from_pretrained)
 - **Config schema**: `voice` key in assistConfigSchema with wakeWords, mic, cwd, modelsDir, lockDir, models
-- **Build/verify**: tsup copies python dir, ruff lint+format via `uv run --project`, biome/knip exclude .venv
+- **Build/verify**: tsup copies python dir, ruff lint+format via `uv run --project`, oxlint/oxfmt/knip exclude .venv
 - **Claude commands**: /voice-setup, /voice-start, /voice-stop, /voice-status, /voice-logs
 - **Debug mode**: `--foreground` flag shows live VAD meter with rms/peak audio levels
 - **Misc**: `assist sync --yes` flag added

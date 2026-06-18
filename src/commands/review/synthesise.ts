@@ -12,7 +12,7 @@ type SynthesiseOptions = {
 };
 
 function printSummary(synthesisPath: string): void {
-	const markdown = readFileSync(synthesisPath, "utf-8");
+	const markdown = readFileSync(synthesisPath, "utf8");
 	console.log("");
 	console.log(buildReviewSummary(markdown));
 	console.log("");

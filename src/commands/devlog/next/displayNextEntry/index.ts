@@ -27,7 +27,7 @@ export function fetchCommitsByDate(ignore: string[], lastDate: string | null) {
 	const output = execFileSync(
 		"git",
 		["log", "--pretty=format:%ad|%h|%s", "--date=short", "-n", "500"],
-		{ encoding: "utf-8" },
+		{ encoding: "utf8" },
 	);
 	return parseGitLogCommits(output, ignore, lastDate);
 }

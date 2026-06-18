@@ -17,11 +17,11 @@ export type ReviewContext = {
 
 export function gatherContext(): ReviewContext {
 	const branch = execSync("git rev-parse --abbrev-ref HEAD", {
-		encoding: "utf-8",
+		encoding: "utf8",
 	}).trim();
-	const sha = execSync("git rev-parse HEAD", { encoding: "utf-8" }).trim();
+	const sha = execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
 	const shortSha = execSync("git rev-parse --short=7 HEAD", {
-		encoding: "utf-8",
+		encoding: "utf8",
 	}).trim();
 	const prInfo = fetchPrDiffInfo();
 	const changedFiles = fetchPrChangedFiles(prInfo.prNumber);

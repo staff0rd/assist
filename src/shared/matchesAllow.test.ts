@@ -69,9 +69,11 @@ describe("matchesAllow", () => {
 		);
 	});
 
-	it("should match .\\command against command entry (Windows)", () => {
+	it(String.raw`should match .\command against command entry (Windows)`, () => {
 		setup(["Bash(build.ps1:*)"]);
-		expect(matchesAllow("Bash", ".\\build.ps1 -Target Test")).toBe("build.ps1");
+		expect(matchesAllow("Bash", String.raw`.\build.ps1 -Target Test`)).toBe(
+			"build.ps1",
+		);
 	});
 
 	it("should match exact ./command against command entry", () => {

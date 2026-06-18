@@ -27,8 +27,8 @@ export function useItem(id: number) {
 				if (signal.aborted) return;
 				setItem(next);
 				setLoading(false);
-			} catch (err) {
-				if (!signal.aborted) throw err;
+			} catch (error) {
+				if (!signal.aborted) throw error;
 			}
 		})();
 		return () => controller.abort();

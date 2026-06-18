@@ -27,7 +27,7 @@ function runGitStatus(cwd: string): Promise<string> {
 		? { file: "git.exe", argv: ["-C", cwd, ...args] }
 		: { file: "git", argv: args };
 	return execFileAsync(file, argv, {
-		encoding: "utf-8",
+		encoding: "utf8",
 		...(file === "git" ? { cwd } : {}),
 	}).then((r) => r.stdout);
 }

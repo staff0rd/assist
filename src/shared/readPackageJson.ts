@@ -17,7 +17,7 @@ function findPackageJson(): string | null {
 }
 
 export function readPackageJson(filePath: string): PackageJson {
-	return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+	return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 export function requirePackageJson(): {
@@ -45,7 +45,7 @@ export function findPackageJsonWithVerifyScripts(startDir: string): {
 		const packageJsonPath = path.join(currentDir, "package.json");
 
 		if (fs.existsSync(packageJsonPath)) {
-			const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
+			const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 			const scripts = packageJson.scripts || {};
 			const verifyScripts = Object.keys(scripts).filter((name) =>
 				name.startsWith("verify:"),

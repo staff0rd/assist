@@ -158,7 +158,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist verify init` - Add verify scripts to a project (writes to `assist.yml` by default; pass `--package-json` to write to `package.json` scripts instead)
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
 - `assist verify comment-policy` - Flag comments added on changed lines (staged + unstaged) unless they carry a justification marker; supports `commentPolicy.markers` and `commentPolicy.ignore` globs in config
-- `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by biomejs (use `-f` to auto-fix)
+- `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by oxlint (use `-f` to auto-fix)
 - `assist lint init` - Initialize Biome with standard linter config
 - `assist refactor check [pattern]` - Check for files that exceed the maximum line count
 - `assist refactor ignore <file>` - Add a file to the refactor ignore list

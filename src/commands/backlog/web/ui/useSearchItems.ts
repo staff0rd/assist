@@ -41,8 +41,8 @@ export function useSearchItems() {
 				if (signal.aborted) return;
 				setResults(next);
 				setLoading(false);
-			} catch (err) {
-				if (!signal.aborted) throw err;
+			} catch (error) {
+				if (!signal.aborted) throw error;
 			}
 		}, 250);
 

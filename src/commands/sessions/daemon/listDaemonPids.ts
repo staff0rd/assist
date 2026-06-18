@@ -6,7 +6,7 @@ export function listDaemonPids(): number[] {
 	if (process.platform === "win32") return [];
 	try {
 		const out = execFileSync("ps", ["-eo", "pid=,args="], {
-			encoding: "utf-8",
+			encoding: "utf8",
 		});
 		return out
 			.split("\n")

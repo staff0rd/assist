@@ -30,9 +30,11 @@ export function DeleteCommentAction({
 						try {
 							await deleteComment(itemId, commentId, cwd);
 							await onDeleted();
-						} catch (e) {
+						} catch (error) {
 							setError(
-								e instanceof Error ? e.message : "Failed to delete comment",
+								error instanceof Error
+									? error.message
+									: "Failed to delete comment",
 							);
 						}
 					}}

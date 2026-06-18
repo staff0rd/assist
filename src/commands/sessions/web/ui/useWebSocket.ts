@@ -31,7 +31,7 @@ export function useWebSocket(deps: WsDeps) {
 	const [reconnecting, setReconnecting] = useState(false);
 	const { handleSessions, markInitialized, buffers, handlers } = deps;
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: state setters and refs keep a stable identity for the connection's lifetime
+	/* oxlint-disable react-hooks/exhaustive-deps -- state setters and refs keep a stable identity for the connection's lifetime */
 	useEffect(() => {
 		// why: the daemon replays full scrollback on every (re)connect, so a reconnect must reset terminals first or the replay appends a duplicate
 		const resetTerminals = () => {
@@ -52,6 +52,7 @@ export function useWebSocket(deps: WsDeps) {
 			wsRef.current?.close();
 		};
 	}, [handleSessions, markInitialized, buffers, handlers]);
+	/* oxlint-enable react-hooks/exhaustive-deps */
 
 	const requestHistory = useCallback(() => {
 		const ws = wsRef.current;

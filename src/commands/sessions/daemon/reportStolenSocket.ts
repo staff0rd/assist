@@ -13,7 +13,7 @@ export function reportStolenSocket(socketPid?: number): void {
 function readPidFile(): number | undefined {
 	try {
 		const pid = Number.parseInt(
-			readFileSync(daemonPaths.pid, "utf-8").trim(),
+			readFileSync(daemonPaths.pid, "utf8").trim(),
 			10,
 		);
 		return Number.isInteger(pid) ? pid : undefined;

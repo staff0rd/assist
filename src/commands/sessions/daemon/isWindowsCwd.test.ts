@@ -3,7 +3,7 @@ import { isWindowsCwd } from "./isWindowsCwd";
 
 describe("isWindowsCwd", () => {
 	it("matches drive-letter paths with either slash", () => {
-		expect(isWindowsCwd("C:\\Users\\me\\repo")).toBe(true);
+		expect(isWindowsCwd(String.raw`C:\Users\me\repo`)).toBe(true);
 		expect(isWindowsCwd("D:/projects/app")).toBe(true);
 	});
 

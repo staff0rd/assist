@@ -8,7 +8,7 @@ export function executePlan(plan: RestructurePlan): void {
 	const updatedContents = applyRewrites(plan.rewrites);
 
 	for (const [file, content] of updatedContents) {
-		fs.writeFileSync(file, content, "utf-8");
+		fs.writeFileSync(file, content, "utf8");
 		console.log(
 			chalk.cyan(`  Rewrote imports in ${path.relative(process.cwd(), file)}`),
 		);

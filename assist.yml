@@ -65,12 +65,18 @@ run:
       - src/commands/voice/python/check_mi.py
   - name: verify:lint
     command: npx
-    filter: "{src/**,*.ts,*.json}"
+    filter: "{src/**,*.ts}"
     args:
-      - biome
-      - check
-      - --write
-      - --error-on-warnings
+      - oxlint
+      - --config
+      - .oxlintrc.json
+      - src
+  - name: verify:format
+    command: npx
+    filter: "{src/**,*.ts,*.tsx}"
+    args:
+      - oxfmt
+      - --check
       - src
   - name: verify:build
     command: npx

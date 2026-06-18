@@ -58,11 +58,11 @@ function logReduction(cueCount: number, messageCount: number): void {
 
 function readAndParseCues(inputPath: string) {
 	console.log(`Reading: ${inputPath}`);
-	return processCues(readFileSync(inputPath, "utf-8"));
+	return processCues(readFileSync(inputPath, "utf8"));
 }
 
 function writeFormatted(outputPath: string, content: string): void {
-	writeFileSync(outputPath, content, "utf-8");
+	writeFileSync(outputPath, content, "utf8");
 	console.log(`Written: ${outputPath}`);
 }
 

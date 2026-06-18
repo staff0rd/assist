@@ -12,14 +12,14 @@ export function getExistingSiteId(): string | null {
 	if (!existsSync(WORKFLOW_PATH)) {
 		return null;
 	}
-	const content = readFileSync(WORKFLOW_PATH, "utf-8");
+	const content = readFileSync(WORKFLOW_PATH, "utf8");
 	const match = content.match(/-s\s+([a-f0-9-]{36})/);
 	return match ? match[1] : null;
 }
 
 function getTemplateContent(siteId: string): string {
 	const templatePath = join(__dirname, "commands/deploy/build.yml");
-	const template = readFileSync(templatePath, "utf-8");
+	const template = readFileSync(templatePath, "utf8");
 	return template.replace("{{NETLIFY_SITE_ID}}", siteId);
 }
 
@@ -32,7 +32,7 @@ export async function updateWorkflow(siteId: string): Promise<void> {
 	}
 
 	if (existsSync(WORKFLOW_PATH)) {
-		const oldContent = readFileSync(WORKFLOW_PATH, "utf-8");
+		const oldContent = readFileSync(WORKFLOW_PATH, "utf8");
 
 		if (oldContent === newContent) {
 			console.log(chalk.green("build.yml is already up to date"));

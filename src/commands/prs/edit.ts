@@ -37,7 +37,7 @@ export function edit(options: EditOptions): void {
 
 	try {
 		execSync(args.join(" "), { stdio: "inherit" });
-	} catch (_error) {
+	} catch {
 		process.exit(1);
 	}
 }

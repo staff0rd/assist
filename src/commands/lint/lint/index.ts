@@ -1,4 +1,3 @@
-// Implements conventions not enforced by biomejs
 import { runFileNameCheck } from "./runFileNameCheck";
 import { runImportExtensionCheck } from "./runImportExtensionCheck";
 import { runStaticImportCheck } from "./runStaticImportCheck";

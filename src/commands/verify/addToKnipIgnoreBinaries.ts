@@ -4,7 +4,7 @@ import chalk from "chalk";
 
 function loadKnipConfig(knipJsonPath: string): Record<string, unknown> {
 	if (existsSync(knipJsonPath)) {
-		return JSON.parse(readFileSync(knipJsonPath, "utf-8"));
+		return JSON.parse(readFileSync(knipJsonPath, "utf8"));
 	}
 	return { $schema: "https://unpkg.com/knip@5/schema.json" };
 }

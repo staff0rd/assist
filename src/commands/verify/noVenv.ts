@@ -5,7 +5,7 @@ export function noVenv(): void {
 		const output = execSync(
 			"find . -type d -name venv -not -path '*/node_modules/*'",
 			{
-				encoding: "utf-8",
+				encoding: "utf8",
 			},
 		).trim();
 

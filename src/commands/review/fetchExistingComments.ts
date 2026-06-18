@@ -32,7 +32,7 @@ function fetchRawComments(
 ): RawComment[] {
 	const out = execSync(
 		`gh api --paginate repos/${org}/${repo}/pulls/${prNumber}/comments`,
-		{ encoding: "utf-8", maxBuffer: 64 * 1024 * 1024 },
+		{ encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
 	);
 	if (!out.trim()) return [];
 	return JSON.parse(out);

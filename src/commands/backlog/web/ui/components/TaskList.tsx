@@ -24,7 +24,6 @@ export function TaskList({
 					<Box
 						component="span"
 						className="markdown"
-						// biome-ignore lint/security/noDangerouslySetInnerHtml: inline markdown rendering
 						dangerouslySetInnerHTML={{
 							__html: marked.parseInline(t.task) as string,
 						}}

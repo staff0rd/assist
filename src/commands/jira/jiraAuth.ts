@@ -40,7 +40,7 @@ export async function jiraAuth(): Promise<void> {
 		}
 
 		execSync(`acli jira auth login --site ${site} --email "${email}" --token`, {
-			encoding: "utf-8",
+			encoding: "utf8",
 			input: token,
 			stdio: ["pipe", "inherit", "inherit"],
 		});

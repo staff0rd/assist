@@ -32,6 +32,7 @@ export function AppShell() {
 		[socket.createAssistSession],
 	);
 	const navigate = useNavigate();
+	/* oxlint-disable react-hooks/exhaustive-deps -- socket methods keep a stable identity; depending on the whole socket object (recreated each render) would needlessly recreate the callback */
 	const viewLaunchedSession = useCallback(
 		(sessionId: string) => {
 			socket.selectSession(sessionId);
@@ -40,6 +41,7 @@ export function AppShell() {
 		},
 		[navigate, socket.selectSession, socket.clearSuccess],
 	);
+	/* oxlint-enable react-hooks/exhaustive-deps */
 
 	return (
 		<RepoSelectionContext.Provider value={selection}>

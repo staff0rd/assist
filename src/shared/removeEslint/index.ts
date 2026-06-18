@@ -26,7 +26,7 @@ function removeEslintFromPackageJson(options: RemoveEslintOptions): boolean {
 		return false;
 	}
 
-	const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8"));
+	const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
 	let modified = false;
 
 	modified = removeEslintDeps(packageJson.dependencies) || modified;

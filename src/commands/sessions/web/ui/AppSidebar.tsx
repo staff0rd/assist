@@ -18,6 +18,7 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 		[socket.sessions, isStarred],
 	);
 
+	/* oxlint-disable react-hooks/exhaustive-deps -- socket methods keep a stable identity; depending on the whole socket object (recreated each render) would needlessly recreate the callback */
 	const handleResume = useCallback(
 		(session: HistoricalSession) => {
 			socket.resumeSession(session.sessionId, session.cwd, session.name);
@@ -32,6 +33,7 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 		},
 		[socket.viewTranscript],
 	);
+	/* oxlint-enable react-hooks/exhaustive-deps */
 
 	return (
 		<Sidebar

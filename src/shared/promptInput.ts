@@ -2,9 +2,9 @@ import Enquirer from "enquirer";
 import { exitOnCancel } from "./exitOnCancel";
 
 type PromptOptions = { name: string; message: string; initial?: string };
-type PromptConstructor<T extends PromptOptions> = new (
-	options: T,
-) => { run: () => Promise<string> };
+type PromptConstructor<T extends PromptOptions> = new (options: T) => {
+	run: () => Promise<string>;
+};
 
 const prompts = Enquirer as unknown as {
 	Input: PromptConstructor<PromptOptions>;

@@ -12,7 +12,7 @@ export type GitFilterOptions = {
 };
 
 function countLines(filePath: string): number {
-	const content = fs.readFileSync(filePath, "utf-8");
+	const content = fs.readFileSync(filePath, "utf8");
 	return content.split("\n").length;
 }
 
@@ -25,7 +25,7 @@ function getGitFiles(options: GitFilterOptions): Set<string> | null {
 
 	if (options.staged || options.modified) {
 		const staged = execSync("git diff --cached --name-only", {
-			encoding: "utf-8",
+			encoding: "utf8",
 		});
 		for (const file of staged.trim().split("\n").filter(Boolean)) {
 			files.add(file);
@@ -33,7 +33,7 @@ function getGitFiles(options: GitFilterOptions): Set<string> | null {
 	}
 
 	if (options.unstaged || options.modified) {
-		const unstaged = execSync("git diff --name-only", { encoding: "utf-8" });
+		const unstaged = execSync("git diff --name-only", { encoding: "utf8" });
 		for (const file of unstaged.trim().split("\n").filter(Boolean)) {
 			files.add(file);
 		}

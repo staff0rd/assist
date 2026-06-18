@@ -81,7 +81,7 @@ registerNew(program);
 
 const lintCommand = program
 	.command("lint")
-	.description("Run lint checks for conventions not enforced by biomejs")
+	.description("Run lint checks for conventions not enforced by oxlint")
 	.option("-f, --fix", "Auto-fix violations where possible")
 	.action(lint);
 
