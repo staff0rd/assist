@@ -1,4 +1,5 @@
 import { Box, CircularProgress } from "@mui/material";
+import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 import { ItemCard } from "./ItemCard";
 
@@ -6,6 +7,7 @@ type ListBodyProps = {
 	loading: boolean;
 	query: string;
 	items: BacklogItemSummary[];
+	socket: SessionSocket;
 	onSelect: (item: BacklogItemSummary) => void;
 	onReload: () => Promise<void>;
 };
@@ -33,6 +35,7 @@ export function ListBody({
 	loading,
 	query,
 	items,
+	socket,
 	onSelect,
 	onReload,
 }: ListBodyProps) {
@@ -50,6 +53,7 @@ export function ListBody({
 				<ItemCard
 					key={item.id}
 					item={item}
+					socket={socket}
 					onSelect={() => onSelect(item)}
 					onReload={onReload}
 				/>

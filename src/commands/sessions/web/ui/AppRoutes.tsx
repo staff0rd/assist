@@ -6,10 +6,10 @@ import { NewsView } from "./NewsView";
 import { SessionsView } from "./SessionsView";
 import type { SessionSocket } from "./useSessionSocket";
 
-function BacklogContent() {
+function BacklogContent({ socket }: { socket: SessionSocket }) {
 	return (
 		<Container maxWidth="md" sx={{ py: 3, px: 2 }}>
-			<BacklogView />
+			<BacklogView socket={socket} />
 		</Container>
 	);
 }
@@ -31,7 +31,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					</Box>
 				}
 			/>
-			<Route path="backlog/*" element={<BacklogContent />} />
+			<Route path="backlog/*" element={<BacklogContent socket={socket} />} />
 			<Route path="news" element={<NewsView />} />
 			<Route path="*" element={<Navigate to="/sessions" replace />} />
 		</Routes>

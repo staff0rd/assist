@@ -1,48 +1,14 @@
-import type { SxProps, Theme } from "@mui/material";
-import { alpha, ButtonBase, Chip, Typography } from "@mui/material";
+import { ButtonBase, Chip, Typography } from "@mui/material";
+import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 import { canPlay } from "./canPlay";
 import { InProgressChip } from "./InProgressChip";
+import { itemCardStyles } from "./itemCardStyles";
+import { mostRecentOpenSession } from "./mostRecentOpenSession";
 import { PlayAction } from "./PlayAction";
 import { StarAction } from "./StarAction";
 import { StatusIcon } from "./StatusIcon";
 import { typeChipColors } from "./typeChipColors";
-
-const baseCardSx = {
-	display: "flex",
-	alignItems: "center",
-	gap: 1.5,
-	width: "100%",
-	textAlign: "left",
-	p: 2,
-	mb: 1,
-	borderRadius: 2,
-	border: 1,
-	borderColor: "divider",
-	bgcolor: "background.paper",
-	transition: "box-shadow 0.2s",
-	"&:hover": { boxShadow: 3 },
-} as const;
-
-const cardSx: SxProps<Theme> = baseCardSx;
-
-const inProgressCardSx: SxProps<Theme> = {
-	...baseCardSx,
-	borderColor: "warning.main",
-	borderLeft: 4,
-	borderLeftColor: "warning.main",
-	bgcolor: (theme: Theme) => alpha(theme.palette.warning.main, 0.08),
-};
-
-const idSx: SxProps<Theme> = { color: "text.disabled", flexShrink: 0 };
-const nameSx: SxProps<Theme> = { fontWeight: 500, flex: 1, textAlign: "left" };
-
-const chipSx: SxProps<Theme> = {
-	flexShrink: 0,
-	fontWeight: 500,
-	fontSize: "0.75rem",
-	height: 22,
-};
 
 function CardSummary({ item }: { item: BacklogItemSummary }) {
 	return (
@@ -52,26 +18,34 @@ function CardSummary({ item }: { item: BacklogItemSummary }) {
 				label={item.type}
 				size="small"
 				color={typeChipColors[item.type]}
-				sx={chipSx}
+				sx={itemCardStyles.chip}
 			/>
-			<Typography variant="body2" sx={idSx}>
+			<Typography variant="body2" sx={itemCardStyles.id}>
 				#{item.id}
 			</Typography>
-			<Typography sx={nameSx}>{item.name}</Typography>
+			<Typography sx={itemCardStyles.name}>{item.name}</Typography>
 		</>
 	);
 }
 
 function CardActions({
 	item,
+	socket,
 	onReload,
 }: {
 	item: BacklogItemSummary;
+	socket: SessionSocket;
 	onReload: () => Promise<void>;
 }) {
+	const openSession = mostRecentOpenSession(socket.sessions, item.id);
 	return (
 		<>
-			{item.status === "in-progress" && <InProgressChip />}
+			{item.status === "in-progress" && (
+				<InProgressChip
+					openSession={openSession}
+					onSelectSession={socket.selectSession}
+				/>
+			)}
 			<StarAction
 				itemId={item.id}
 				starred={item.starred}
@@ -84,18 +58,23 @@ function CardActions({
 
 export function ItemCard({
 	item,
+	socket,
 	onSelect,
 	onReload,
 }: {
 	item: BacklogItemSummary;
+	socket: SessionSocket;
 	onSelect: () => void;
 	onReload: () => Promise<void>;
 }) {
 	const inProgress = item.status === "in-progress";
 	return (
-		<ButtonBase onClick={onSelect} sx={inProgress ? inProgressCardSx : cardSx}>
+		<ButtonBase
+			onClick={onSelect}
+			sx={inProgress ? itemCardStyles.inProgressCard : itemCardStyles.card}
+		>
 			<CardSummary item={item} />
-			<CardActions item={item} onReload={onReload} />
+			<CardActions item={item} socket={socket} onReload={onReload} />
 		</ButtonBase>
 	);
 }
