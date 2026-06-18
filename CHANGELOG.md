@@ -1,3 +1,10 @@
+## [0.297.4](https://github.com/staff0rd/assist/compare/v0.297.3...v0.297.4) (2026-06-18)
+
+
+### Bug Fixes
+
+* rewind plan-less items in review ([086209f](https://github.com/staff0rd/assist/commit/086209f6f31ad3efa06ceb3b272bb058f74e2807))
+
 ## [0.297.3](https://github.com/staff0rd/assist/compare/v0.297.2...v0.297.3) (2026-06-18)
 
 
