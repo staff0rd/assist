@@ -1,12 +1,8 @@
-import chalk from "chalk";
+import { awaitClaude } from "../../shared/awaitClaude";
 import { emitActivity } from "../../shared/emitActivity";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { spawnClaude } from "../../shared/spawnClaude";
-import { next } from "./next";
-import { readSignal } from "./readSignal";
-import { cleanupSignal } from "./resolvePhaseResult";
-import { surfaceCreatedItem } from "./surfaceCreatedItem";
-import { tryRunById } from "./tryRunById";
+import { handleLaunchSignal } from "./handleLaunchSignal";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
 export type LaunchModeOptions = {
@@ -41,21 +37,9 @@ export async function launchMode(
 		{ allowEdits: true },
 	);
 	watchForMarker(child, { actOnDone: options?.once });
-	await done;
+	const launched = await awaitClaude(done, `/${slashCommand}`);
 	stopWatching();
+	if (!launched) return;
 
-	const signal = readSignal();
-	cleanupSignal();
-
-	if (signal?.event === "done" && typeof signal.id === "string" && signal.id) {
-		await surfaceCreatedItem(slashCommand, signal.id);
-	}
-
-	if (signal?.event === "next") {
-		if (typeof signal.id === "string" && signal.id) {
-			if (await tryRunById(signal.id, { allowEdits: true })) return;
-		}
-		console.log(chalk.bold("\nChaining into assist next...\n"));
-		await next({ allowEdits: true, once: options?.once });
-	}
+	await handleLaunchSignal(slashCommand, options?.once);
 }

@@ -2,6 +2,7 @@ import type { Socket } from "node:net";
 import { createInterface } from "node:readline";
 import { buildHello } from "./buildHello";
 import { daemonLog } from "./daemonLog";
+import { LaunchCircuitBreaker } from "./LaunchCircuitBreaker";
 
 type ConnectionDeps = {
 	connect: () => Promise<Socket>;
@@ -14,6 +15,8 @@ type ConnectionDeps = {
 export class WindowsConnection {
 	private connection: Promise<Socket> | null = null;
 	private socket: Socket | null = null;
+	// why: survives reset()/dispose() so a reconnect can't re-arm it into a loop; only a successful open clears it
+	private readonly breaker = new LaunchCircuitBreaker();
 
 	constructor(private readonly deps: ConnectionDeps) {}
 
@@ -23,12 +26,20 @@ export class WindowsConnection {
 
 	ensure(): Promise<Socket> {
 		if (this.connection) return this.connection;
+		if (this.breaker.tripped())
+			return Promise.reject(new Error(this.breaker.reason()));
 		const connection = this.open();
 		this.connection = connection;
-		connection.catch(() => {
-			if (this.connection === connection) this.connection = null;
-		});
+		connection.then(
+			() => this.breaker.clear(),
+			() => this.onOpenFailure(connection),
+		);
 		return connection;
+	}
+
+	private onOpenFailure(connection: Promise<Socket>): void {
+		if (this.connection === connection) this.connection = null;
+		this.breaker.fail();
 	}
 
 	write(msg: object): void {
@@ -51,6 +62,12 @@ export class WindowsConnection {
 		const socket = await this.deps.connect();
 		daemonLog("windows connection: tcp connected, sending hello");
 		this.socket = socket;
+		this.wire(socket);
+		this.write(buildHello());
+		return socket;
+	}
+
+	private wire(socket: Socket): void {
 		const lines = createInterface({ input: socket });
 		lines.on("error", () => {});
 		lines.on("line", (line) => this.deps.onLine(line));
@@ -59,8 +76,6 @@ export class WindowsConnection {
 			this.reset();
 			this.deps.onClose();
 		});
-		this.write(buildHello());
-		return socket;
 	}
 
 	private reset(): void {

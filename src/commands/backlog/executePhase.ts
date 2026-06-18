@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import chalk from "chalk";
+import { awaitClaude } from "../../shared/awaitClaude";
 import { emitActivity } from "../../shared/emitActivity";
 import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
 import { buildPhasePrompt } from "./buildPhasePrompt";
@@ -50,8 +51,14 @@ export async function executePhase(
 			: { ...spawnOptions, sessionId: claudeSessionId },
 	);
 	watchForMarker(child);
-	await done;
+	const launched = await awaitClaude(
+		done,
+		`phase ${phaseNumber}/${totalPhases}`,
+	);
 	stopWatching();
+	/* why: abort the phase loop on a spawn failure rather than surfacing an
+	 * uncaught rejection or retrying a launch that can't succeed */
+	if (!launched) return -1;
 
 	return await resolvePhaseResult(phaseIndex, item.id);
 }

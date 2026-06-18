@@ -22,6 +22,7 @@ type FakeDaemon = {
 	port: number;
 	received: string[];
 	send: (msg: object) => void;
+	dropPeer: () => void;
 	close: () => Promise<void>;
 };
 
@@ -40,6 +41,9 @@ async function startFakeDaemon(): Promise<FakeDaemon> {
 		port,
 		received,
 		send: (msg) => peer?.write(`${JSON.stringify(msg)}\n`),
+		/* why: drop just the client connection while the server keeps listening,
+		 * so the proxy reconnects to the same daemon on its next create */
+		dropPeer: () => peer?.destroy(),
 		close: () =>
 			new Promise((resolve) => {
 				peer?.destroy();
@@ -231,6 +235,31 @@ describe("WindowsProxy", () => {
 		);
 
 		// why: simulate WSL being the older side — heal can't fix that, so a repeat mismatch must not trigger another heal
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await settle();
+		expect(heal.mock.calls.length).toBe(1);
+	});
+
+	it("does not re-heal after a connection close re-establishes the link", async () => {
+		await createWindowsSession();
+		const before = daemon.received.length;
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await waitFor(() => heal.mock.calls.length === 1);
+		await waitFor(() =>
+			daemon.received.slice(before).some((l) => l.includes('"hello"')),
+		);
+
+		/* why: a dropped connection resets the proxy's session state; the
+		 * healAttempted guard must NOT be re-armed by that reset, or a host stuck
+		 * on an unfixable mismatch would loop heal → reconnect → heal forever */
+		daemon.dropPeer();
+		await waitFor(() => proxy.sessions().length === 0);
+
+		const reconnected = daemon.received.length;
+		proxy.route(client(), { type: "create", cwd: "C:\\repo" });
+		await waitFor(() =>
+			daemon.received.slice(reconnected).some((l) => l.includes('"hello"')),
+		);
 		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
 		await settle();
 		expect(heal.mock.calls.length).toBe(1);

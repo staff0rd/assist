@@ -1,7 +1,6 @@
 import { spawn } from "node:child_process";
-import { createInterface } from "node:readline";
-import type { Readable } from "node:stream";
 import { daemonLog } from "./daemonLog";
+import { logChildStream } from "./logChildStream";
 
 // assist update on the Windows host can be slow: npm install + build under
 // node-for-windows is far heavier than a WSL rebuild.
@@ -13,7 +12,16 @@ const STOP_TIMEOUT_MS = 30_000;
 // (relaunch is handled by ensureWindowsDaemonRunning on the next connect).
 export async function healWindowsDaemon(): Promise<void> {
 	daemonLog("windows daemon: auto-heal: running `assist update` on host");
-	await runOnWindowsHost("assist update", UPDATE_TIMEOUT_MS);
+	try {
+		await runOnWindowsHost("assist update", UPDATE_TIMEOUT_MS);
+	} catch (error) {
+		// why: log the update failure as the heal's root cause before rethrowing
+		const message = error instanceof Error ? error.message : String(error);
+		daemonLog(
+			`windows daemon: auto-heal: \`assist update\` failed: ${message}`,
+		);
+		throw error;
+	}
 	daemonLog("windows daemon: auto-heal: update done, stopping stale daemon");
 	await runOnWindowsHost("assist daemon stop", STOP_TIMEOUT_MS);
 	daemonLog("windows daemon: auto-heal: stale daemon stopped");
@@ -27,8 +35,8 @@ function runOnWindowsHost(command: string, timeoutMs: number): Promise<void> {
 		const child = spawn("pwsh.exe", ["-Command", command], {
 			stdio: ["ignore", "pipe", "pipe"],
 		});
-		logStream(child.stdout, command);
-		logStream(child.stderr, command);
+		logChildStream(child.stdout, `windows ${command}`);
+		logChildStream(child.stderr, `windows ${command}`);
 		const timer = setTimeout(() => {
 			child.kill();
 			reject(
@@ -52,11 +60,4 @@ function runOnWindowsHost(command: string, timeoutMs: number): Promise<void> {
 				);
 		});
 	});
-}
-
-function logStream(stream: Readable | null, command: string): void {
-	if (!stream) return;
-	const lines = createInterface({ input: stream });
-	lines.on("line", (line) => daemonLog(`[windows ${command}] ${line}`));
-	lines.on("error", () => {});
 }
