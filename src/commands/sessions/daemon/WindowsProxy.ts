@@ -1,5 +1,4 @@
 import type { Socket } from "node:net";
-import { autoHealWindowsDaemon } from "./autoHealWindowsDaemon";
 import { broadcast, type SessionClient, sendTo } from "./broadcast";
 import type { SessionInfo } from "./createSession";
 import { daemonLog } from "./daemonLog";
@@ -17,6 +16,7 @@ import {
 	resetState,
 	type WindowsProxyState,
 } from "./WindowsProxyState";
+import { WindowsVersionHealer } from "./WindowsVersionHealer";
 
 type Msg = Record<string, unknown>;
 
@@ -30,9 +30,7 @@ type Msg = Record<string, unknown>;
 export class WindowsProxy {
 	private readonly state: WindowsProxyState;
 	private readonly conn: WindowsConnection;
-	// why: heal runs once per proxy lifetime; if WSL is the older side, updating Windows can't close the gap, so a repeat mismatch must not loop
-	private healAttempted = false;
-	private healing = false;
+	private readonly healer: WindowsVersionHealer;
 
 	constructor(
 		clients: Set<SessionClient>,
@@ -40,18 +38,19 @@ export class WindowsProxy {
 		// Injectable for tests; defaults to launch-then-connect over TCP.
 		connect: () => Promise<Socket> = defaultConnect,
 		// why: injectable so tests don't spawn pwsh; defaults to update + restart
-		private readonly heal: () => Promise<void> = healWindowsDaemon,
+		heal: () => Promise<void> = healWindowsDaemon,
 	) {
 		this.state = createState(
 			(msg) => broadcast(clients, msg),
 			onSessionsChanged,
-			(version) => void this.handleVersionMismatch(version),
+			(version) => void this.healer.onMismatch(version),
 		);
 		this.conn = new WindowsConnection({
 			connect,
 			onLine: (line) => handleInbound(this.state, line),
 			onClose: () => this.handleClose(),
 		});
+		this.healer = new WindowsVersionHealer(this.conn, this.state, heal);
 	}
 
 	sessions(): SessionInfo[] {
@@ -59,6 +58,7 @@ export class WindowsProxy {
 	}
 
 	discover(): Promise<void> {
+		if (this.healer.blocked) return Promise.resolve();
 		return discoverWindowsSessions(this.conn);
 	}
 
@@ -70,7 +70,8 @@ export class WindowsProxy {
 	// windows-origin cwd is forwarded, as is I/O for a namespaced session id.
 	route(client: SessionClient, data: Msg): boolean {
 		if (isWindowsCreate(data)) {
-			void forwardWindowsCreate(this.conn, this.state, client, data);
+			if (this.healer.blocked) sendTo(client, this.healer.refusal());
+			else void forwardWindowsCreate(this.conn, this.state, client, data);
 			return true;
 		}
 		if (isWindowsIo(data)) {
@@ -83,17 +84,6 @@ export class WindowsProxy {
 
 	dispose(): void {
 		this.conn.dispose();
-	}
-
-	private async handleVersionMismatch(version: string): Promise<void> {
-		if (this.healing || this.healAttempted) return;
-		this.healing = true;
-		this.healAttempted = true;
-		try {
-			await autoHealWindowsDaemon(this.conn, this.state, this.heal, version);
-		} finally {
-			this.healing = false;
-		}
 	}
 
 	private handleClose(): void {

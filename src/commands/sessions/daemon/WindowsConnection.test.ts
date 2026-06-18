@@ -30,7 +30,10 @@ describe("WindowsConnection circuit breaker", () => {
 	});
 
 	it("resets the breaker once a connection succeeds", async () => {
-		const server = net.createServer();
+		/* why: track server-side peers so teardown can destroy them — without a
+		 * connection handler the accepted socket lingers and server.close() hangs */
+		const peers: net.Socket[] = [];
+		const server = net.createServer((s) => peers.push(s));
 		await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
 		const { port } = server.address() as AddressInfo;
 
@@ -66,6 +69,7 @@ describe("WindowsConnection circuit breaker", () => {
 		await expect(conn.ensure()).rejects.toThrow(/not retrying/);
 		expect(connect).toHaveBeenCalledTimes(6);
 
+		for (const peer of peers) peer.destroy();
 		await new Promise<void>((r) => server.close(() => r()));
 	});
 });

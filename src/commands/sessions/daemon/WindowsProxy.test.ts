@@ -283,6 +283,43 @@ describe("WindowsProxy", () => {
 		expect(heal.mock.calls.length).toBe(1);
 	});
 
+	it("stops reconnecting and refuses creates once a mismatch persists after heal", async () => {
+		await createWindowsSession();
+		const before = daemon.received.length;
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await waitFor(() => heal.mock.calls.length === 1);
+		await waitFor(() =>
+			daemon.received.slice(before).some((l) => l.includes('"hello"')),
+		);
+
+		/* why: the mismatch is still here after the one heal — the real runaway is
+		 * this reconnect→mismatch→remote-close cycle, not launch failures. The proxy
+		 * must give up: surface one error and stop reopening the connection. */
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await waitFor(() =>
+			broadcasts.some(
+				(m) =>
+					(m as { type?: string }).type === "error" &&
+					String((m as { message?: string }).message).includes(
+						"incompatible version",
+					),
+			),
+		);
+
+		/* why: a further create is refused with an error and never reaches the
+		 * daemon, and discovery no longer reopens the connection */
+		const settled = daemon.received.length;
+		const c = client();
+		expect(proxy.route(c, { type: "create", cwd: "C:\\repo" })).toBe(true);
+		await waitFor(() =>
+			c.sent.some((m) => (m as { type?: string }).type === "error"),
+		);
+		await proxy.discover();
+		await settle();
+		expect(daemon.received.length).toBe(settled);
+		expect(heal.mock.calls.length).toBe(1);
+	});
+
 	it("tells a pending creator to reselect while it heals", async () => {
 		const c = client();
 		proxy.route(c, { type: "create", cwd: "C:\\repo" });
