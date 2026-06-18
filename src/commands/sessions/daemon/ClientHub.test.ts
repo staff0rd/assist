@@ -21,6 +21,20 @@ describe("ClientHub", () => {
 		expect(b.send).toHaveBeenCalledWith(expected);
 	});
 
+	it("hands the limits to the injected persister after broadcasting", () => {
+		const persist = vi.fn();
+		const hub = new ClientHub(persist);
+		const client = { send: vi.fn() };
+		hub.add(client);
+
+		hub.updateLimits(rateLimits);
+
+		expect(client.send).toHaveBeenCalledWith(
+			JSON.stringify({ type: "limits", rateLimits }),
+		);
+		expect(persist).toHaveBeenCalledWith(rateLimits);
+	});
+
 	it("greets a client with the last-known limits", () => {
 		const hub = new ClientHub();
 		hub.updateLimits(rateLimits);

@@ -1,17 +1,11 @@
 import Box from "@mui/material/Box";
 import {
 	formatRateLimitTimeLeft,
-	type RateLimitLevel,
 	rateLimitLevel,
 } from "../../../../shared/rateLimitLevel";
+import { limitLevelColor } from "./limitLevelColor";
 
 type Window = { used_percentage?: number; resets_at?: number };
-
-const LEVEL_COLOR: Record<RateLimitLevel, string> = {
-	ok: "success.main",
-	warn: "warning.main",
-	over: "error.main",
-};
 
 export function LimitChip({
 	window,
@@ -33,7 +27,7 @@ export function LimitChip({
 			: fallbackLabel;
 	return (
 		<Box component="span">
-			<Box component="span" sx={{ color: LEVEL_COLOR[level] }}>
+			<Box component="span" sx={{ color: limitLevelColor(level) }}>
 				{Math.round(pct)}%
 			</Box>{" "}
 			<Box component="span" sx={{ color: "text.secondary" }}>

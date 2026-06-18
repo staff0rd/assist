@@ -12,6 +12,7 @@ import { getHtml } from "./getHtml";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
 import { listNewsItems } from "./listNewsItems";
+import { listUsageHistory } from "./listUsageHistory";
 import { openInCode } from "./openInCode";
 import { restartWeb } from "./restartWeb";
 
@@ -54,6 +55,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,
 	"GET /api/news/items": listNewsItems,
+	"GET /api/usage/history": listUsageHistory,
 };
 
 export const handleRequest = createFallbackHandler(

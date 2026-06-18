@@ -8,8 +8,10 @@ import {
 	text,
 } from "drizzle-orm/pg-core";
 import { handovers } from "./handovers";
+import { usagePeaks } from "./usagePeaks";
 
 export { handovers } from "./handovers";
+export { usagePeaks } from "./usagePeaks";
 
 /**
  * Drizzle schema for the backlog store. This mirrors the DDL in
@@ -108,6 +110,7 @@ export const schema = {
 	metadata,
 	feeds,
 	handovers,
+	usagePeaks,
 };
 
 export type ItemRow = typeof items.$inferSelect;

@@ -1,7 +1,7 @@
 import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
-import { ClientHub } from "./ClientHub";
+import { ClientHub, persistUsagePeak } from "./ClientHub";
 import { createAssistSession } from "./createAssistSession";
 import {
 	createRunSession,
@@ -28,7 +28,7 @@ export class SessionManager {
 	private sessions = new Map<string, Session>();
 	// why: dispatch calls active.set() on card click; broadcasts include active.toJSON()
 	readonly active = new ActiveSelection(() => this.notify());
-	readonly clients = new ClientHub();
+	readonly clients = new ClientHub(persistUsagePeak);
 	private nextId = 1;
 	private shuttingDown = false;
 

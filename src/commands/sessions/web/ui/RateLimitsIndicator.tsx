@@ -1,13 +1,8 @@
-import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
 import Tooltip from "@mui/material/Tooltip";
-import { Fragment } from "react";
+import { Link as RouterLink } from "react-router";
 import type { RateLimits } from "../../../../shared/RateLimits";
-import {
-	FIVE_HOUR_SECONDS,
-	SEVEN_DAY_SECONDS,
-} from "../../../../shared/rateLimitLevel";
-import { LimitChip } from "./LimitChip";
-import { useNowSeconds } from "./useNowSeconds";
+import { RateLimitChips } from "./RateLimitChips";
 
 const containerSx = {
 	display: "flex",
@@ -15,50 +10,33 @@ const containerSx = {
 	ml: 2,
 	fontFamily: "monospace",
 	fontSize: 13,
-	cursor: "default",
 } as const;
+
+function hasUsage(rateLimits: RateLimits | null): rateLimits is RateLimits {
+	return (
+		rateLimits?.five_hour?.used_percentage != null ||
+		rateLimits?.seven_day?.used_percentage != null
+	);
+}
 
 export function RateLimitsIndicator({
 	rateLimits,
 }: {
 	rateLimits: RateLimits | null;
 }) {
-	const now = useNowSeconds(30_000);
-
-	if (!rateLimits) return null;
-	const windows = [
-		{
-			window: rateLimits.five_hour,
-			windowSeconds: FIVE_HOUR_SECONDS,
-			fallbackLabel: "5h",
-		},
-		{
-			window: rateLimits.seven_day,
-			windowSeconds: SEVEN_DAY_SECONDS,
-			fallbackLabel: "7d",
-		},
-	].filter((w) => w.window?.used_percentage != null);
-	if (windows.length === 0) return null;
+	if (!hasUsage(rateLimits)) return null;
 
 	return (
-		<Tooltip title="Claude account usage (5h / 7d windows)">
-			<Box sx={containerSx}>
-				{windows.map((w, i) => (
-					<Fragment key={w.fallbackLabel}>
-						{i > 0 ? (
-							<Box component="span" sx={{ color: "text.secondary", mr: 0.5 }}>
-								,
-							</Box>
-						) : null}
-						<LimitChip
-							window={w.window}
-							windowSeconds={w.windowSeconds}
-							fallbackLabel={w.fallbackLabel}
-							now={now}
-						/>
-					</Fragment>
-				))}
-			</Box>
+		<Tooltip title="Claude account usage (5h / 7d windows) — view history">
+			<Link
+				component={RouterLink}
+				to="/usage"
+				underline="hover"
+				color="inherit"
+				sx={containerSx}
+			>
+				<RateLimitChips rateLimits={rateLimits} />
+			</Link>
 		</Tooltip>
 	);
 }

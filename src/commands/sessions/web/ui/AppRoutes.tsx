@@ -4,6 +4,7 @@ import { Navigate, Route, Routes } from "react-router";
 import { BacklogView } from "../../../../commands/backlog/web/ui/BacklogView";
 import { NewsView } from "./NewsView";
 import { SessionsView } from "./SessionsView";
+import { UsageHistoryView } from "./UsageHistoryView";
 import type { SessionSocket } from "./useSessionSocket";
 
 function BacklogContent({ socket }: { socket: SessionSocket }) {
@@ -33,6 +34,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 			/>
 			<Route path="backlog/*" element={<BacklogContent socket={socket} />} />
 			<Route path="news" element={<NewsView />} />
+			<Route path="usage" element={<UsageHistoryView />} />
 			<Route path="*" element={<Navigate to="/sessions" replace />} />
 		</Routes>
 	);

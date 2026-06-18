@@ -72,6 +72,13 @@ export const SCHEMA = `
 	);
 
 	CREATE INDEX IF NOT EXISTS handovers_origin_idx ON handovers (origin);
+
+	CREATE TABLE IF NOT EXISTS usage_peaks (
+		"window" TEXT NOT NULL,
+		resets_at BIGINT NOT NULL,
+		used_percentage DOUBLE PRECISION NOT NULL,
+		PRIMARY KEY ("window", resets_at)
+	);
 `;
 
 /**
