@@ -168,6 +168,24 @@ describe("WindowsProxy", () => {
 		expect(input).toEqual({ type: "input", sessionId: "3", data: "ls\n" });
 	});
 
+	it("strips the namespace when forwarding a resume to the daemon", async () => {
+		await createWindowsSession();
+		/* why: the UI resumes a windows session by its namespaced id (w-3); if the
+		 * prefix isn't stripped the daemon resumes a non-existent transcript and
+		 * re-reports an id we namespace again into w-w-3, w-w-w-3, ... */
+		proxy.route(client(), {
+			type: "resume",
+			sessionId: "w-3",
+			cwd: "C:\\repo",
+			name: "app",
+		});
+		await waitFor(() => daemon.received.some((l) => l.includes('"resume"')));
+		const resume = daemon.received
+			.map((l) => JSON.parse(l))
+			.find((m) => m.type === "resume");
+		expect(resume).toMatchObject({ type: "resume", sessionId: "3" });
+	});
+
 	it("drops sessions when the connection closes", async () => {
 		await createWindowsSession();
 		daemon.send({
