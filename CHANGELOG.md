@@ -1,3 +1,10 @@
+## [0.297.2](https://github.com/staff0rd/assist/compare/v0.297.1...v0.297.2) (2026-06-18)
+
+
+### Bug Fixes
+
+* bound windows daemon spawn retries ([b6ef972](https://github.com/staff0rd/assist/commit/b6ef972fe1f7965a6cb79f90858d985ac9afa48b))
+
 ## [0.297.1](https://github.com/staff0rd/assist/compare/v0.297.0...v0.297.1) (2026-06-17)
 
 
