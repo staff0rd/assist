@@ -1,3 +1,10 @@
+# [0.299.0](https://github.com/staff0rd/assist/compare/v0.298.1...v0.299.0) (2026-06-18)
+
+
+### Features
+
+* animate badge for open session ([76da0c0](https://github.com/staff0rd/assist/commit/76da0c03fd705339bb095e46739507dd7abf8e7d))
+
 ## [0.298.1](https://github.com/staff0rd/assist/compare/v0.298.0...v0.298.1) (2026-06-18)
 
 
