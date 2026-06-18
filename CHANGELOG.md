@@ -1,3 +1,10 @@
+# [0.298.0](https://github.com/staff0rd/assist/compare/v0.297.4...v0.298.0) (2026-06-18)
+
+
+### Features
+
+* persist & share session selection ([f237aa1](https://github.com/staff0rd/assist/commit/f237aa124e410a6a58f68892bdfbf1bfb0e96f44))
+
 ## [0.297.4](https://github.com/staff0rd/assist/compare/v0.297.3...v0.297.4) (2026-06-18)
 
 
