@@ -1,3 +1,10 @@
+## [0.299.1](https://github.com/staff0rd/assist/compare/v0.299.0...v0.299.1) (2026-06-18)
+
+
+### Bug Fixes
+
+* surface failed session restores ([8a515a8](https://github.com/staff0rd/assist/commit/8a515a8b8999a1a43af4bd4e642fd8d66e983849))
+
 # [0.299.0](https://github.com/staff0rd/assist/compare/v0.298.1...v0.299.0) (2026-06-18)
 
 
