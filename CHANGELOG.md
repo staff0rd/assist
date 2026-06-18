@@ -1,3 +1,10 @@
+## [0.297.3](https://github.com/staff0rd/assist/compare/v0.297.2...v0.297.3) (2026-06-18)
+
+
+### Bug Fixes
+
+* strip windows namespace on forward ([e761aee](https://github.com/staff0rd/assist/commit/e761aeecb63da16c80086b3b70265b15c16503fc))
+
 ## [0.297.2](https://github.com/staff0rd/assist/compare/v0.297.1...v0.297.2) (2026-06-18)
 
 
