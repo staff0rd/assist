@@ -66,6 +66,22 @@ describe("dispatchMessage", () => {
 		});
 	});
 
+	describe("set-active", () => {
+		it("records the per-repo active selection on the manager", () => {
+			const client = { send: vi.fn() };
+			const set = vi.fn();
+			const manager = { active: { set } } as unknown as SessionManager;
+
+			dispatchMessage(client, manager, {
+				type: "set-active",
+				cwd: "/repo",
+				sessionId: "s1",
+			});
+
+			expect(set).toHaveBeenCalledWith("/repo", "s1");
+		});
+	});
+
 	describe("limits", () => {
 		it("forwards reported rate limits to the client hub", () => {
 			const client = { send: vi.fn() };

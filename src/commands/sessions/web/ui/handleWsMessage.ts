@@ -2,6 +2,7 @@ import type { RateLimits } from "../../../../shared/RateLimits";
 import { handleClear } from "./handleClear";
 import { handleCreated } from "./handleCreated";
 import { handleOutput } from "./handleOutput";
+import { resolveActiveId } from "./resolveActiveId";
 import type {
 	HistoricalSession,
 	SessionInfo,
@@ -14,10 +15,15 @@ export function handleWsMessage(
 	d: WsDispatch,
 ): void {
 	switch (msg.type) {
-		case "sessions":
-			d.setSessions(msg.sessions as SessionInfo[]);
+		case "sessions": {
+			const sessions = msg.sessions as SessionInfo[];
+			d.setSessions(sessions);
 			if (msg.cwd) d.setCurrentCwd(msg.cwd as string);
+			// why: resolve the daemon's per-repo selection map to this UI's single active card
+			const active = (msg.active ?? {}) as Record<string, string>;
+			d.setDaemonActiveId(resolveActiveId(active, sessions));
 			break;
+		}
 		case "created":
 			handleCreated(msg, d);
 			break;

@@ -12,6 +12,7 @@ export function useWsConnection() {
 	const [sessions, setSessions] = useState<SessionInfo[]>([]);
 	const [history, setHistory] = useState<HistoricalSession[]>([]);
 	const [activeId, setActiveId] = useState<string | null>(null);
+	const [daemonActiveId, setDaemonActiveId] = useState<string | null>(null);
 	const [transcript, setTranscript] = useState<Transcript | null>(null);
 	const [viewingTranscriptSessionId, setViewingTranscriptSessionId] = useState<
 		string | null
@@ -35,18 +36,18 @@ export function useWsConnection() {
 		handleSessions,
 		setHistory,
 		setActiveId,
+		setDaemonActiveId,
 		setTranscript,
 		setViewingTranscriptSessionId,
 		setCurrentCwd,
-		setError: notices.setError,
-		setSuccess: notices.setSuccess,
+		...notices,
 		setRateLimits,
 		markInitialized,
 		buffers,
 		handlers,
 	});
 
-	useActiveIdReconciler(sessions, setActiveId);
+	useActiveIdReconciler(sessions, setActiveId, daemonActiveId);
 
 	return {
 		sessions,

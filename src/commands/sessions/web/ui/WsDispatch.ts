@@ -8,6 +8,7 @@ export type WsDispatch = {
 	setSessions: (s: SessionInfo[]) => void;
 	setHistory: (h: HistoricalSession[]) => void;
 	setActiveId: (id: string) => void;
+	setDaemonActiveId: (id: string | null) => void;
 	setTranscript: (t: Transcript | null) => void;
 	setViewingTranscriptSessionId: (id: string | null) => void;
 	setCurrentCwd: (cwd: string) => void;

@@ -99,6 +99,8 @@ const handlers: Record<string, Handler> = {
 	"set-autoadvance": routed((_client, m, d) =>
 		m.setAutoAdvance(d.sessionId as string, d.enabled as boolean),
 	),
+	"set-active": (_client, m, d) =>
+		m.active.set(d.cwd as string, d.sessionId as string),
 };
 
 export function dispatchMessage(

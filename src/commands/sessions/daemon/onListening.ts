@@ -16,6 +16,8 @@ export function onListening(
 	});
 	process.on("exit", cleanupOwnedFiles);
 	const restored = manager.restore();
+	const liveIds = new Set(manager.listSessions().map((s) => s.id));
+	manager.active.restore((id) => liveIds.has(id));
 	daemonLog(
 		restored.length > 0
 			? `restored ${restored.length} session(s): ${restored.join(", ")}`

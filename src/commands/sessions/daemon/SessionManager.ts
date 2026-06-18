@@ -1,3 +1,4 @@
+import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
 import { ClientHub } from "./ClientHub";
@@ -25,6 +26,8 @@ import * as sessionIo from "./writeToSession";
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
+	// why: dispatch calls active.set() on card click; broadcasts include active.toJSON()
+	readonly active = new ActiveSelection(() => this.notify());
 	readonly clients = new ClientHub();
 	private nextId = 1;
 	private shuttingDown = false;
@@ -36,8 +39,9 @@ export class SessionManager {
 
 	addClient(client: SessionClient): void {
 		this.clients.add(client);
-		this.onIdleChange?.(this.isIdle());
-		greetClient(client, this.sessions, this.listSessions, this.windowsProxy);
+		// why: notify sends the sessions list with the active selection in one message, avoiding a first-card race before greetClient
+		this.notify();
+		greetClient(client, this.sessions, this.windowsProxy);
 	}
 
 	removeClient(client: SessionClient): void {
@@ -45,9 +49,7 @@ export class SessionManager {
 		this.onIdleChange?.(this.isIdle());
 	}
 
-	isIdle(): boolean {
-		return this.sessions.size === 0 && this.clients.size === 0;
-	}
+	isIdle = (): boolean => this.sessions.size === 0 && this.clients.size === 0;
 
 	shutdown(): void {
 		this.shuttingDown = true;
@@ -136,7 +138,7 @@ export class SessionManager {
 		// done statuses would erase the metadata that resume needs on restart
 		if (this.shuttingDown) return;
 		const windows = this.windowsProxy.sessions();
-		broadcastSessions(this.sessions, this.clients, windows);
+		broadcastSessions(this.sessions, this.clients, windows, this.active);
 		this.onIdleChange?.(this.isIdle());
 	};
 }

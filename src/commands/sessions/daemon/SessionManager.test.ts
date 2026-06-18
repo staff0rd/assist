@@ -22,6 +22,10 @@ vi.mock("./loadPersistedSessions", () => ({
 	loadPersistedSessions: vi.fn(() => []),
 	persistLiveSessions: vi.fn(),
 }));
+vi.mock("./loadActiveSelection", () => ({
+	loadActiveSelection: vi.fn(() => ({})),
+	saveActiveSelection: vi.fn(),
+}));
 vi.mock("./watchForClaudeSessionId", () => ({
 	watchForClaudeSessionId: vi.fn(),
 }));
@@ -245,6 +249,33 @@ describe("SessionManager", () => {
 			manager.dismissSession("1");
 
 			expect(releaseLockMock).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("active selection", () => {
+		it("broadcasts the per-repo selection to connected clients", () => {
+			const manager = new SessionManager();
+			const client = { send: vi.fn() };
+			manager.addClient(client);
+			client.send.mockClear();
+
+			manager.active.set("/repo", "1");
+
+			const broadcast = client.send.mock.calls
+				.map(([raw]) => JSON.parse(raw as string))
+				.find((msg) => msg.type === "sessions");
+			expect(broadcast.active).toEqual({ "/repo": "1" });
+		});
+
+		it("does not broadcast when the cwd is empty", () => {
+			const manager = new SessionManager();
+			const client = { send: vi.fn() };
+			manager.addClient(client);
+			client.send.mockClear();
+
+			manager.active.set("", "1");
+
+			expect(client.send).not.toHaveBeenCalled();
 		});
 	});
 

@@ -40,4 +40,21 @@ describe("reconcileActiveId", () => {
 	it("leaves selection null when nothing is selected and no cards exist", () => {
 		expect(reconcileActiveId([], null)).toBeNull();
 	});
+
+	describe("when a daemon selection is provided", () => {
+		it("adopts the daemon selection over the first card when nothing is selected", () => {
+			const sessions = [session("a"), session("b"), session("c")];
+			expect(reconcileActiveId(sessions, null, "b")).toBe("b");
+		});
+
+		it("falls back to the first card when the daemon selection is gone", () => {
+			const sessions = [session("a"), session("b")];
+			expect(reconcileActiveId(sessions, null, "x")).toBe("a");
+		});
+
+		it("keeps the local selection even when a daemon selection differs", () => {
+			const sessions = [session("a"), session("b"), session("c")];
+			expect(reconcileActiveId(sessions, "c", "b")).toBe("c");
+		});
+	});
 });
