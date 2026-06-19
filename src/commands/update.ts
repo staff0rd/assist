@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import * as path from "node:path";
 import { getInstallDir, isGitRepo } from "../shared/getInstallDir";
+import { restartDaemonAfterUpdate } from "./restartDaemonAfterUpdate";
 
 function isGlobalNpmInstall(dir: string): boolean {
 	try {
@@ -48,4 +49,6 @@ export async function update(): Promise<void> {
 		);
 		process.exit(1);
 	}
+
+	await restartDaemonAfterUpdate();
 }
