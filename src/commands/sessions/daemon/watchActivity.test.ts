@@ -18,14 +18,16 @@ vi.mock("node:fs", () => ({
 vi.mock("../../../shared/emitActivity", () => ({
 	activityPath: (id: string) => `/activity/activity-${id}.json`,
 	readActivity: vi.fn(),
+	reconcileActivity: vi.fn(),
 }));
 
 import { watch } from "node:fs";
-import { readActivity } from "../../../shared/emitActivity";
+import { readActivity, reconcileActivity } from "../../../shared/emitActivity";
 import { refreshActivity, watchActivity } from "./watchActivity";
 
 const mockWatch = watch as unknown as MockInstance;
 const mockReadActivity = readActivity as unknown as MockInstance;
+const mockReconcileActivity = reconcileActivity as unknown as MockInstance;
 
 function fakeSession(overrides: Partial<Session> = {}): Session {
 	return {
@@ -36,8 +38,6 @@ function fakeSession(overrides: Partial<Session> = {}): Session {
 		startedAt: 1,
 		pty: {} as Session["pty"],
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		cwd: "/repo",
 		...overrides,
 	};
@@ -77,6 +77,27 @@ describe("watchActivity", () => {
 		expect(session.claudeSessionId).toBe("phase-2-id");
 		expect(session.activity).toEqual(backlogActivity);
 		expect(notify).toHaveBeenCalled();
+	});
+
+	describe("when the session was restored", () => {
+		it("reconciles the reused id's activity file with the session's own activity", () => {
+			const session = fakeSession({
+				restored: true,
+				activity: backlogActivity,
+			});
+
+			watchActivity(session, vi.fn());
+
+			expect(mockReconcileActivity).toHaveBeenCalledWith("1", backlogActivity);
+		});
+	});
+
+	describe("when the session was not restored", () => {
+		it("leaves the activity file untouched", () => {
+			watchActivity(fakeSession(), vi.fn());
+
+			expect(mockReconcileActivity).not.toHaveBeenCalled();
+		});
 	});
 });
 

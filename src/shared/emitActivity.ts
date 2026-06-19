@@ -39,6 +39,23 @@ export function readActivity(path: string): Activity | undefined {
 	}
 }
 
+/* why: on daemon restart session ids are reused (nextId resets to 1), so a stale
+ * activity file from a prior generation can sit at a restored session's id and
+ * misreport it as a different backlog item (#408). Align the file with the
+ * session's own activity, or remove it when the session has none. */
+export function reconcileActivity(
+	sessionId: string,
+	activity: Activity | undefined,
+): void {
+	if (!activity) {
+		removeActivity(sessionId);
+		return;
+	}
+	const path = activityPath(sessionId);
+	mkdirSync(dirname(path), { recursive: true });
+	writeFileSync(path, JSON.stringify(activity));
+}
+
 export function removeActivity(sessionId: string): void {
 	try {
 		rmSync(activityPath(sessionId));

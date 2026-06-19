@@ -1,6 +1,10 @@
 import { existsSync, mkdirSync, watch } from "node:fs";
 import { dirname } from "node:path";
-import { activityPath, readActivity } from "../../../shared/emitActivity";
+import {
+	activityPath,
+	readActivity,
+	reconcileActivity,
+} from "../../../shared/emitActivity";
 import type { Session } from "./createSession";
 
 const DEBOUNCE_MS = 50;
@@ -16,6 +20,12 @@ export function watchActivity(session: Session, notify: () => void): void {
 	} catch {
 		return;
 	}
+
+	/* why: a restored session inherits a reused id whose activity file may belong
+	 * to a different session from the previous daemon generation. Seed the file
+	 * from this session's own restored activity so the read below shows its own
+	 * details, not another backlog item's (#408). */
+	if (session.restored) reconcileActivity(session.id, session.activity);
 
 	let timer: ReturnType<typeof setTimeout> | null = null;
 	const read = () => {
