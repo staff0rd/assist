@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { isSessionStarting } from "./isSessionStarting";
 import { SessionLoadingOverlay } from "./SessionLoadingOverlay";
 import { TerminalPane } from "./TerminalPane";
 import type { SessionInfo } from "./types";
@@ -27,10 +28,10 @@ export function TerminalArea({
 	sendResize,
 }: TerminalAreaProps) {
 	// why: a new session's terminal is empty until its process emits output, so the previously active pane would otherwise show through
+	const activeSession = sessions.find((s) => s.id === activeId);
 	const activeLoading =
-		activeId !== null &&
-		sessions.some((s) => s.id === activeId) &&
-		!initialized.has(activeId);
+		activeSession !== undefined &&
+		isSessionStarting(activeSession, initialized);
 
 	return (
 		<Box sx={{ flex: 1, position: "relative", bgcolor: "background.default" }}>
