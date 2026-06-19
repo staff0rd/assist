@@ -6,6 +6,7 @@ import {
 	reconcileActivity,
 } from "../../../shared/emitActivity";
 import type { Session } from "./createSession";
+import { applyReviewPause } from "./applyReviewPause";
 
 const DEBOUNCE_MS = 50;
 
@@ -37,6 +38,7 @@ export function watchActivity(session: Session, notify: () => void): void {
 		 * the daemon persists the latest phase's id and can resume it on restart. */
 		if (activity.claudeSessionId)
 			session.claudeSessionId = activity.claudeSessionId;
+		applyReviewPause(session, activity);
 		notify();
 	};
 

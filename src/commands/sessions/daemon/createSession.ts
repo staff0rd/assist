@@ -28,6 +28,7 @@ type Session = {
 	autoRun?: boolean;
 	autoAdvance?: boolean;
 	escInterruptTimer?: ReturnType<typeof setTimeout>;
+	reviewStarted?: boolean;
 };
 
 type SessionInfo = {

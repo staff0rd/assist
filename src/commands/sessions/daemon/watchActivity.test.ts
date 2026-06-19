@@ -81,6 +81,111 @@ describe("watchActivity", () => {
 		expect(notify).toHaveBeenCalled();
 	});
 
+	function triggerRead(session: Session, notify = vi.fn()) {
+		watchActivity(session, notify);
+		const onChange = mockWatch.mock.lastCall?.[1] as (
+			event: string,
+			filename: string,
+		) => void;
+		onChange("change", "activity-1.json");
+		vi.runAllTimers();
+	}
+
+	describe("when a backlog run enters its review (last) phase", () => {
+		it("flips Continue off and marks reviewStarted", () => {
+			mockReadActivity.mockReturnValue({
+				kind: "backlog",
+				itemId: 7,
+				phase: 3,
+				totalPhases: 3,
+				startedAt: 5,
+			});
+			const session = fakeSession({ autoAdvance: true });
+
+			triggerRead(session);
+
+			expect(session.autoAdvance).toBe(false);
+			expect(session.reviewStarted).toBe(true);
+		});
+
+		describe("when the user re-enables Continue during review", () => {
+			it("does not override it on a later activity write", () => {
+				const reviewActivity = {
+					kind: "backlog" as const,
+					itemId: 7,
+					phase: 3,
+					totalPhases: 3,
+					startedAt: 5,
+				};
+				mockReadActivity.mockReturnValue(reviewActivity);
+				const session = fakeSession({ autoAdvance: true });
+				triggerRead(session);
+				expect(session.autoAdvance).toBe(false);
+
+				session.autoAdvance = true;
+				triggerRead(session);
+
+				expect(session.autoAdvance).toBe(true);
+			});
+		});
+
+		describe("when the review phase re-enters after a rewind", () => {
+			it("re-flips Continue off", () => {
+				const session = fakeSession({ autoAdvance: true });
+
+				mockReadActivity.mockReturnValue({
+					kind: "backlog",
+					itemId: 7,
+					phase: 3,
+					totalPhases: 3,
+					startedAt: 5,
+				});
+				triggerRead(session);
+
+				mockReadActivity.mockReturnValue({
+					kind: "backlog",
+					itemId: 7,
+					phase: 2,
+					totalPhases: 3,
+					startedAt: 5,
+				});
+				session.autoAdvance = true;
+				triggerRead(session);
+				expect(session.reviewStarted).toBe(false);
+
+				mockReadActivity.mockReturnValue({
+					kind: "backlog",
+					itemId: 7,
+					phase: 3,
+					totalPhases: 3,
+					startedAt: 5,
+				});
+				triggerRead(session);
+
+				expect(session.autoAdvance).toBe(false);
+				expect(session.reviewStarted).toBe(true);
+			});
+		});
+	});
+
+	describe("when a backlog run is in a non-review phase", () => {
+		it("leaves Continue alone", () => {
+			mockReadActivity.mockReturnValue({
+				kind: "backlog",
+				itemId: 7,
+				phase: 1,
+				totalPhases: 3,
+				startedAt: 5,
+			});
+			const session = fakeSession({ autoAdvance: true });
+
+			triggerRead(session);
+
+			expect(session.autoAdvance).toBe(true);
+			expect(session.reviewStarted).toBeUndefined();
+		});
+	});
+
 	describe("when the session was restored", () => {
 		it("reconciles the reused id's activity file with the session's own activity", () => {
 			const session = fakeSession({
