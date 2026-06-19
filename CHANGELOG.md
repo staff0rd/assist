@@ -1,3 +1,10 @@
+# [0.301.0](https://github.com/staff0rd/assist/compare/v0.300.0...v0.301.0) (2026-06-19)
+
+
+### Features
+
+* add /strip-comments command ([452c93b](https://github.com/staff0rd/assist/commit/452c93ba266e74782d435ad93b269f1759404e82))
+
 # [0.300.0](https://github.com/staff0rd/assist/compare/v0.299.1...v0.300.0) (2026-06-18)
 
 
