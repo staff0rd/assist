@@ -10,11 +10,11 @@ export async function setupLint(
 	packageJsonPath: string,
 	writer: ScriptWriter,
 ): Promise<void> {
-	console.log(chalk.blue("\nSetting up biome..."));
+	console.log(chalk.blue("\nSetting up oxlint..."));
 	const cwd = path.dirname(packageJsonPath);
 	const pkg = readPackageJson(packageJsonPath);
-	if (!pkg.devDependencies?.["@biomejs/biome"]) {
-		if (!installPackage("@biomejs/biome", cwd)) {
+	if (!pkg.devDependencies?.oxlint) {
+		if (!installPackage("oxlint", cwd)) {
 			return;
 		}
 	}

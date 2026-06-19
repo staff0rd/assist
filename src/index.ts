@@ -87,7 +87,7 @@ const lintCommand = program
 
 lintCommand
 	.command("init")
-	.description("Initialize Biome with standard linter config")
+	.description("Initialize oxlint with baseline linter config")
 	.action(lintInit);
 
 const vscodeCommand = program

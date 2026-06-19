@@ -27,10 +27,10 @@ export const options: OptionDef[] = [
 		description: "Dead code and unused dependency detection",
 	},
 	{
-		toolKey: "biome",
+		toolKey: "oxlint",
 		value: "lint",
 		label: "lint",
-		description: "Code linting and formatting with Biome",
+		description: "Code linting with oxc",
 	},
 	{
 		toolKey: "jscpd",

@@ -10,7 +10,7 @@ type ToolStatus = {
 
 export type ExistingSetup = {
 	knip: ToolStatus;
-	biome: ToolStatus;
+	oxlint: ToolStatus;
 	jscpd: ToolStatus;
 	test: ToolStatus;
 	hasVite: boolean;
@@ -56,7 +56,7 @@ function buildToolStatuses(pkg: PackageJson, configScriptNames: Set<string>) {
 		toolStatus(pkg, script, has, configScriptNames);
 	return {
 		knip: status("verify:knip", hasDep(pkg, "knip")),
-		biome: status("verify:lint", hasDep(pkg, "@biomejs/biome")),
+		oxlint: status("verify:lint", hasDep(pkg, "oxlint")),
 		jscpd: status("verify:duplicate-code", hasDep(pkg, "jscpd")),
 		test: status("verify:test", hasDep(pkg, "vitest")),
 		build: status("verify:build", true),

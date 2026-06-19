@@ -14,7 +14,6 @@ export default defineConfig({
 	onSuccess: async () => {
 		cpSync("allowed.cli-reads", "dist/allowed.cli-reads");
 		cpSync("allowed.cli-writes", "dist/allowed.cli-writes");
-		cpSync("src/commands/lint", "dist/commands/lint", { recursive: true });
 		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });
 		cpSync("src/commands/voice/python", "dist/commands/voice/python", {
 			recursive: true,

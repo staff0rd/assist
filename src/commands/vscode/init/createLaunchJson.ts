@@ -45,28 +45,3 @@ export function createLaunchJson(type: "vite" | "tsup"): void {
 	fs.writeFileSync(launchPath, `${JSON.stringify(launchConfig, null, "\t")}\n`);
 	console.log(chalk.green("Created .vscode/launch.json"));
 }
-
-export function createSettingsJson(): void {
-	const settings = {
-		"editor.defaultFormatter": "biomejs.biome",
-		"editor.formatOnSave": true,
-		"editor.codeActionsOnSave": {
-			"source.organizeImports.biome": "explicit",
-		},
-	};
-	const settingsPath = path.join(process.cwd(), ".vscode", "settings.json");
-	fs.writeFileSync(settingsPath, `${JSON.stringify(settings, null, "\t")}\n`);
-	console.log(chalk.green("Created .vscode/settings.json"));
-}
-
-export function createExtensionsJson(): void {
-	const extensions = {
-		recommendations: ["biomejs.biome"],
-	};
-	const extensionsPath = path.join(process.cwd(), ".vscode", "extensions.json");
-	fs.writeFileSync(
-		extensionsPath,
-		`${JSON.stringify(extensions, null, "\t")}\n`,
-	);
-	console.log(chalk.green("Created .vscode/extensions.json"));
-}

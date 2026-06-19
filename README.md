@@ -160,7 +160,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
 - `assist verify comment-policy` - Flag comments added on changed lines (staged + unstaged) unless they carry a justification marker; supports `commentPolicy.markers` and `commentPolicy.ignore` globs in config
 - `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by oxlint (use `-f` to auto-fix)
-- `assist lint init` - Initialize Biome with standard linter config
+- `assist lint init` - Initialize oxlint with baseline linter config
 - `assist refactor check [pattern]` - Check for files that exceed the maximum line count
 - `assist refactor ignore <file>` - Add a file to the refactor ignore list
 - `assist refactor rename file <source> <destination>` - Rename/move a TypeScript file and update all imports (dry-run by default, use `--apply` to execute)

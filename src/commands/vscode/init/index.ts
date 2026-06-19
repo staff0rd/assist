@@ -2,14 +2,14 @@ import chalk from "chalk";
 import { promptMultiselect } from "../../../shared/promptMultiselect";
 import { requirePackageJson } from "../../../shared/readPackageJson";
 import {
-	createExtensionsJson,
 	createLaunchJson,
-	createSettingsJson,
 	ensureVscodeFolder,
 	removeVscodeFromGitignore,
 } from "./createLaunchJson";
 import { detectVscodeSetup } from "./detectVscodeSetup";
 import { type ConfigOption, getAvailableOptions } from "./getAvailableOptions";
+import { createSettingsJson } from "./createSettingsJson";
+import { createExtensionsJson } from "./createExtensionsJson";
 
 function applySelections(
 	selected: string[],

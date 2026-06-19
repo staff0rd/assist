@@ -18,7 +18,7 @@ Run `assist run add --help` to see the current CLI usage and options. Use the ou
 `assist verify` runs every `verify:*` entry in parallel and only surfaces output for the ones that fail. A noisy success drowns the signal, so before registering the command, find the flag(s) that make the wrapped tool silent on success:
 
 - Check the tool's `--help` for options like `--silent`, `--quiet`, `-q`, `--reporter=dot`, `--reporter=line`, `--no-progress`, `--log-level=error`, `--no-color`, etc.
-- Prefer reporters that print only failures (e.g. `vitest --reporter=dot`, `eslint --quiet`, `tsc --pretty false`, `biome check --reporter=summary`).
+- Prefer reporters that print only failures (e.g. `vitest --reporter=dot`, `oxlint --quiet`, `tsc --pretty false`).
 - If the tool always prints a banner or summary on success, look for a way to suppress it (redirect, `--no-summary`, etc.). Mention any unavoidable noise to the user.
 
 Apply those flags as part of the args you pass to `assist run add`.
@@ -29,7 +29,7 @@ Run `assist run add verify:<name> <command> [args...]` with the quiet flags appl
 
 ```
 assist run add verify:test vitest run --reporter=dot
-assist run add verify:lint eslint . --quiet
+assist run add verify:lint oxlint . --quiet
 assist run add verify:types tsc --noEmit --pretty false
 ```
 

@@ -18,7 +18,7 @@ Run `assist run add --help` to see the current CLI usage and options. Use the ou
 Run `assist run add <name> <command> [args...]` with the appropriate arguments. For example:
 
 ```
-assist run add lint biome check --write
+assist run add lint oxlint --fix
 ```
 
 If the command needs a working directory, use `--cwd <dir>`.

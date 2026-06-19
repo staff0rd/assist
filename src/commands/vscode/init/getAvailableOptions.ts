@@ -26,11 +26,11 @@ export function getAvailableOptions(
 			value: "launch",
 			description: launchDescription,
 		});
-	if (!setup.hasSettingsJson)
+	if (!setup.hasSettingsJson || setup.hasBiomeConfig)
 		options.push({
 			name: "settings",
 			value: "settings",
-			description: "Biome formatter configuration",
+			description: "oxc formatter configuration",
 		});
 	return options;
 }
