@@ -1,3 +1,10 @@
+# [0.305.0](https://github.com/staff0rd/assist/compare/v0.304.0...v0.305.0) (2026-06-19)
+
+
+### Features
+
+* restart daemon after update ([5718c40](https://github.com/staff0rd/assist/commit/5718c40e9d522da98438f0eb9a1b8de8048d751c))
+
 # [0.304.0](https://github.com/staff0rd/assist/compare/v0.303.0...v0.304.0) (2026-06-19)
 
 
