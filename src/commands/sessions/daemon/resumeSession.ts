@@ -13,10 +13,8 @@ export function resumeSession(
 		commandType: "claude",
 		status: "running",
 		startedAt: Date.now(),
-		pty: spawnClaude({ resumeSessionId: sessionId, cwd }),
+		pty: spawnClaude({ resumeSessionId: sessionId, cwd, sessionId: id }),
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		cwd,
 	};
 }

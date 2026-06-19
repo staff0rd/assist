@@ -1,4 +1,5 @@
 import { type ChildProcess, spawn } from "node:child_process";
+import { ensureHooksSettings } from "../commands/sessions/daemon/ensureHooksSettings";
 
 export type SpawnClaudeOptions = {
 	allowEdits?: boolean;
@@ -22,7 +23,15 @@ export function spawnClaude(
 	child: ChildProcess;
 	done: Promise<number>;
 } {
-	const args = buildArgs(prompt, options);
+	/* why: wire the session-status hooks into CLI-launched Claude too (assist
+	 * backlog run, draft, etc.), so their daemon cards reflect running/waiting via
+	 * $ASSIST_SESSION_ID — not just sessions the daemon spawns claude for directly.
+	 * Merged with the user's own settings, so their hooks still run. */
+	const args = [
+		"--settings",
+		ensureHooksSettings(),
+		...buildArgs(prompt, options),
+	];
 	const permissionMode =
 		options.permissionMode ?? (options.allowEdits ? "auto" : undefined);
 	if (permissionMode) {

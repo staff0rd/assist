@@ -21,8 +21,6 @@ function makeSession(overrides: Partial<Session>): Session {
 		startedAt: 123,
 		pty: null,
 		scrollback: "old output",
-		idleTimer: null,
-		lastResizeAt: 0,
 		restored: false,
 		...overrides,
 	};

@@ -11,8 +11,6 @@ function session(overrides: Partial<Session> = {}): Session {
 		startedAt: 1,
 		pty: null,
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		...overrides,
 	};
 }

@@ -4,7 +4,7 @@ import { errorSession } from "./errorSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreSession } from "./restoreSession";
 
-type Spawn = (create: (id: string) => Session) => string;
+export type Spawn = (create: (id: string) => Session) => string;
 
 /** Restore one persisted session, logging (and surfacing as an error card) any
  * session that resumes into an error state or whose spawn throws (#396). */

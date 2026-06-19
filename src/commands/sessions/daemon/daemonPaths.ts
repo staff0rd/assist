@@ -12,4 +12,5 @@ export const daemonPaths = {
 	log: join(DAEMON_DIR, "daemon.log"),
 	pid: join(DAEMON_DIR, "daemon.pid"),
 	spawnLock: join(DAEMON_DIR, "spawn.lock"),
+	hooksSettings: join(DAEMON_DIR, "hooks-settings.json"),
 };

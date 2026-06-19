@@ -10,6 +10,12 @@ vi.mock("node:child_process", () => ({
 	spawn: vi.fn(() => ({ on: vi.fn() })),
 }));
 
+vi.mock("../commands/sessions/daemon/ensureHooksSettings", () => ({
+	ensureHooksSettings: vi.fn(() => "/hooks.json"),
+}));
+
+const SETTINGS = ["--settings", "/hooks.json"];
+
 const spawnMock = spawn as unknown as ReturnType<typeof vi.fn>;
 
 function spawnedArgs(): string[] {
@@ -31,19 +37,25 @@ describe("spawnClaude", () => {
 	it("passes the prompt as the first argument for a fresh session", () => {
 		spawnClaude("do the thing");
 
-		expect(spawnedArgs()).toEqual(["do the thing"]);
+		expect(spawnedArgs()).toEqual([...SETTINGS, "do the thing"]);
 	});
 
 	it("assigns a specific session id to a fresh session", () => {
 		spawnClaude("do the thing", { sessionId: "new-1" });
 
-		expect(spawnedArgs()).toEqual(["--session-id", "new-1", "do the thing"]);
+		expect(spawnedArgs()).toEqual([
+			...SETTINGS,
+			"--session-id",
+			"new-1",
+			"do the thing",
+		]);
 	});
 
 	it("resumes by sessionId and passes the prompt as a continuation nudge", () => {
 		spawnClaude("continue where you left off", { resumeSessionId: "abc-123" });
 
 		expect(spawnedArgs()).toEqual([
+			...SETTINGS,
 			"--resume",
 			"abc-123",
 			"continue where you left off",
@@ -53,7 +65,12 @@ describe("spawnClaude", () => {
 	it("prefers resuming over assigning a fresh session id", () => {
 		spawnClaude("continue", { sessionId: "new-1", resumeSessionId: "abc-123" });
 
-		expect(spawnedArgs()).toEqual(["--resume", "abc-123", "continue"]);
+		expect(spawnedArgs()).toEqual([
+			...SETTINGS,
+			"--resume",
+			"abc-123",
+			"continue",
+		]);
 	});
 
 	it("strips CLAUDE_CODE_CHILD_SESSION so the phase runs as a resumable top-level session", () => {
@@ -72,6 +89,7 @@ describe("spawnClaude", () => {
 		});
 
 		expect(spawnedArgs()).toEqual([
+			...SETTINGS,
 			"--resume",
 			"abc-123",
 			"continue",

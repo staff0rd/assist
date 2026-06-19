@@ -1,3 +1,4 @@
+import { buildResumePrompt } from "../../backlog/buildResumePrompt";
 import { backlogRunArgs } from "./backlogRunArgs";
 import type { Session } from "./createSession";
 import { errorSession } from "./errorSession";
@@ -23,12 +24,16 @@ export function restoreSession(
 		return runningSession(base, persisted, pty);
 	}
 
-	// Assist sessions that wrap claude (e.g. `assist draft`) resume the same
-	// way as plain claude sessions, via their discovered sessionId
+	/* why: assist sessions that wrap claude (e.g. `assist draft`) and plain claude
+	 * sessions resume via their discovered sessionId. Pass the same restart nudge
+	 * backlog runs use so the reattached conversation continues the interrupted
+	 * work instead of sitting idle waiting for input (#404). */
 	if (persisted.commandType !== "run" && persisted.claudeSessionId) {
 		const pty = spawnClaude({
 			resumeSessionId: persisted.claudeSessionId,
+			prompt: buildResumePrompt(),
 			cwd: persisted.cwd,
+			sessionId: id,
 		});
 		return runningSession(base, persisted, pty);
 	}

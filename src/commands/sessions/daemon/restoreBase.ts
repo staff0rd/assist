@@ -6,8 +6,6 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		name: persisted.name,
 		commandType: persisted.commandType,
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		cwd: persisted.cwd,
 		assistArgs: persisted.assistArgs,
 	};

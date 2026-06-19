@@ -26,8 +26,6 @@ function makeSession(overrides: Partial<Session> = {}): Session {
 		startedAt: 100,
 		pty: null,
 		scrollback: "draft transcript",
-		idleTimer: null,
-		lastResizeAt: 0,
 		assistArgs: ["draft", "--once"],
 		cwd: "/home/user/repo",
 		...overrides,

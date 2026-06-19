@@ -1,6 +1,5 @@
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
-import { clearIdle } from "./scheduleIdle";
 import { spawnPty } from "./spawnPty";
 import { wirePtyEvents } from "./wirePtyEvents";
 
@@ -16,7 +15,6 @@ export function reuseSessionForRun(
 ): void {
 	const assistArgs = ["backlog", "run", String(itemId)];
 	if (session.status !== "done") session.pty?.kill();
-	clearIdle(session);
 	session.assistArgs = assistArgs;
 	session.name = `assist ${assistArgs.join(" ")}`;
 	session.commandType = "assist";

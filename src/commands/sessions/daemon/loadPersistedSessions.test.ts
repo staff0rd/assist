@@ -33,8 +33,6 @@ function fakeSession(overrides: Partial<Session> = {}): Session {
 		startedAt: 1,
 		pty: {} as Session["pty"],
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		cwd: "/repo",
 		...overrides,
 	};

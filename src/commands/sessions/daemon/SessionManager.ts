@@ -8,11 +8,11 @@ import {
 	createSession,
 	type Session,
 	type SessionInfo,
+	type SessionStatus,
 } from "./createSession";
 import { greetClient } from "./greetClient";
-import { loadPersistedSessions } from "./loadPersistedSessions";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
-import { restoreOne } from "./restoreOne";
+import { restoreAll } from "./restoreAll";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
 import { reuseSessionForRun } from "./reuseSessionForRun";
@@ -57,10 +57,7 @@ export class SessionManager {
 	}
 
 	restore(): string[] {
-		return loadPersistedSessions().map((persisted) => {
-			restoreOne(persisted, this.spawnWith, this.sessions);
-			return persisted.name;
-		});
+		return restoreAll(this.spawnWith, this.sessions);
 	}
 
 	private add(session: Session): string {
@@ -125,6 +122,11 @@ export class SessionManager {
 
 	setAutoAdvance(id: string, enabled: boolean): void {
 		if (sessionIo.setAutoAdvance(this.sessions, id, enabled)) this.notify();
+	}
+
+	setStatus(id: string, status: SessionStatus): void {
+		const session = this.sessions.get(id);
+		if (session) this.onStatusChange(session, status);
 	}
 
 	listSessions = (): SessionInfo[] => {

@@ -1,4 +1,5 @@
 import type { Session } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import { shouldAutoDismiss } from "./shouldAutoDismiss";
 import { shouldAutoRun } from "./shouldAutoRun";
 
@@ -10,6 +11,11 @@ export function applyStatusChange(
 	notify: () => void,
 	reuseForRun: (session: Session, itemId: number) => void,
 ): void {
+	/* why: Claude Code hooks re-assert "running" on every tool call; if the status
+	 * is unchanged there is nothing to broadcast or auto-dismiss, so skip the work
+	 * to avoid a broadcast storm during a long tool-heavy turn. */
+	if (session.status === status) return;
+	daemonLog(`session ${session.id} status: ${session.status} -> ${status}`);
 	session.status = status;
 	if (shouldAutoRun(session, exitCode) && session.activity?.itemId != null) {
 		reuseForRun(session, session.activity.itemId);

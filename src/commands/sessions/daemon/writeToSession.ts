@@ -2,7 +2,6 @@ import { removeActivity } from "../../../shared/emitActivity";
 import { releaseLock } from "../../backlog/acquireLock";
 import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session } from "./createSession";
-import { clearIdle } from "./scheduleIdle";
 
 export function writeToSession(
 	sessions: Map<string, Session>,
@@ -20,10 +19,7 @@ export function resizeSession(
 	rows: number,
 ): void {
 	const s = sessions.get(id);
-	if (s && s.status !== "done") {
-		s.lastResizeAt = Date.now();
-		s.pty?.resize(cols, rows);
-	}
+	if (s && s.status !== "done") s.pty?.resize(cols, rows);
 }
 
 export function setAutoRun(
@@ -60,7 +56,6 @@ export function dismissSession(
 	const s = sessions.get(id);
 	if (!s) return false;
 	if (s.status !== "done") s.pty?.kill();
-	clearIdle(s);
 	s.activityWatcher?.close();
 	removeActivity(s.id);
 	if (s.activity?.itemId != null) releaseLock(s.activity.itemId);

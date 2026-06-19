@@ -14,8 +14,6 @@ type Session = {
 	startedAt: number;
 	pty: ReturnType<typeof spawnClaude> | null;
 	scrollback: string;
-	idleTimer: ReturnType<typeof setTimeout> | null;
-	lastResizeAt: number;
 	runName?: string;
 	runArgs?: string[];
 	assistArgs?: string[];
@@ -59,10 +57,8 @@ export function createSession(
 		commandType: "claude",
 		status: "running",
 		startedAt: Date.now(),
-		pty: spawnClaude({ prompt, cwd }),
+		pty: spawnClaude({ prompt, cwd, sessionId: id }),
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		cwd,
 	};
 }
@@ -81,8 +77,6 @@ export function createRunSession(
 		startedAt: Date.now(),
 		pty: spawnRun({ name: runName, args: runArgs, cwd }),
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		runName,
 		runArgs,
 		cwd,

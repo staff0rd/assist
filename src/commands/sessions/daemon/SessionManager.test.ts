@@ -78,8 +78,6 @@ function fakeSession(overrides: Partial<Session> = {}): Session {
 		startedAt: 1,
 		pty: { kill: vi.fn() } as unknown as Session["pty"],
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		...overrides,
 	};
 }
@@ -345,6 +343,39 @@ describe("SessionManager", () => {
 			manager.setAutoRun("1", true);
 
 			expect(manager.listSessions()[0]?.autoRun).toBe(true);
+		});
+	});
+
+	describe("setStatus", () => {
+		it("applies the new status and surfaces it in broadcast session state", () => {
+			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			const manager = new SessionManager();
+			manager.spawn();
+
+			manager.setStatus("1", "waiting");
+
+			expect(manager.listSessions()[0]?.status).toBe("waiting");
+		});
+
+		describe("when the session is unknown", () => {
+			it("does nothing", () => {
+				const manager = new SessionManager();
+
+				expect(() => manager.setStatus("missing", "running")).not.toThrow();
+			});
+		});
+
+		describe("when the status is unchanged", () => {
+			it("does not re-broadcast", () => {
+				createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+				const manager = new SessionManager();
+				manager.spawn();
+				persistLiveMock.mockClear();
+
+				manager.setStatus("1", "running");
+
+				expect(persistLiveMock).not.toHaveBeenCalled();
+			});
 		});
 	});
 

@@ -82,6 +82,44 @@ describe("dispatchMessage", () => {
 		});
 	});
 
+	describe("set-status", () => {
+		it("sets the routed session's status on the manager", () => {
+			const client = { send: vi.fn() };
+			const setStatus = vi.fn();
+			const manager = {
+				windowsProxy: { route: () => false },
+				setStatus,
+			} as unknown as SessionManager;
+
+			dispatchMessage(client, manager, {
+				type: "set-status",
+				sessionId: "s1",
+				status: "waiting",
+			});
+
+			expect(setStatus).toHaveBeenCalledWith("s1", "waiting");
+		});
+
+		describe("when the session is windows-routed", () => {
+			it("forwards to the windows daemon without touching the manager", () => {
+				const client = { send: vi.fn() };
+				const setStatus = vi.fn();
+				const manager = {
+					windowsProxy: { route: () => true },
+					setStatus,
+				} as unknown as SessionManager;
+
+				dispatchMessage(client, manager, {
+					type: "set-status",
+					sessionId: "s1",
+					status: "running",
+				});
+
+				expect(setStatus).not.toHaveBeenCalled();
+			});
+		});
+	});
+
 	describe("limits", () => {
 		it("forwards reported rate limits to the client hub", () => {
 			const client = { send: vi.fn() };

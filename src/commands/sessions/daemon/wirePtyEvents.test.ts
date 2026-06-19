@@ -12,14 +12,18 @@ type ExitHandler = (e: { exitCode: number }) => void;
 
 function fakePty() {
 	let onExit: ExitHandler = () => {};
+	let onData: (data: string) => void = () => {};
 	return {
 		pty: {
-			onData: vi.fn(),
+			onData: vi.fn((cb: (data: string) => void) => {
+				onData = cb;
+			}),
 			onExit: vi.fn((cb: ExitHandler) => {
 				onExit = cb;
 			}),
 		} as unknown as Session["pty"],
 		exit: (exitCode: number) => onExit({ exitCode }),
+		emit: (data: string) => onData(data),
 	};
 }
 
@@ -32,11 +36,33 @@ function fakeSession(overrides: Partial<Session> = {}): Session {
 		startedAt: 1,
 		pty: null,
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		...overrides,
 	};
 }
+
+describe("wirePtyEvents output handling", () => {
+	beforeEach(() => vi.clearAllMocks());
+
+	it("appends output to scrollback and broadcasts it without changing status", () => {
+		const { pty, emit } = fakePty();
+		const session = fakeSession({ pty });
+		const onStatusChange = vi.fn();
+		const client = { send: vi.fn() };
+
+		wirePtyEvents(
+			session,
+			new Set<SessionClient>([client as unknown as SessionClient]),
+			onStatusChange,
+		);
+		emit("hello");
+
+		expect(session.scrollback).toBe("hello");
+		expect(onStatusChange).not.toHaveBeenCalled();
+		expect(client.send).toHaveBeenCalledWith(
+			JSON.stringify({ type: "output", sessionId: "1", data: "hello" }),
+		);
+	});
+});
 
 describe("wirePtyEvents exit handling", () => {
 	beforeEach(() => vi.clearAllMocks());

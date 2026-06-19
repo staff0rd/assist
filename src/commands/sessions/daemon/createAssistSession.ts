@@ -14,8 +14,6 @@ export function createAssistSession(
 		startedAt: Date.now(),
 		pty: spawnPty(["assist", ...assistArgs], cwd, id),
 		scrollback: "",
-		idleTimer: null,
-		lastResizeAt: 0,
 		assistArgs,
 		cwd,
 	};

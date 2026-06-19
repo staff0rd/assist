@@ -1,6 +1,5 @@
 import { broadcast, type SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
-import { clearIdle } from "./scheduleIdle";
 import { spawnPty } from "./spawnPty";
 import { spawnRun } from "./spawnRun";
 import { wirePtyEvents } from "./wirePtyEvents";
@@ -17,7 +16,6 @@ export function retrySession(
 	const respawn = respawnThunk(session);
 	if (!respawn) return false;
 	if (session.status !== "done") session.pty?.kill();
-	clearIdle(session);
 	session.scrollback = "";
 	session.status = "running";
 	session.startedAt = Date.now();

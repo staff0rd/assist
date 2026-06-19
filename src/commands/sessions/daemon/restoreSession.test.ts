@@ -33,7 +33,10 @@ describe("restoreSession", () => {
 
 		expect(spawnClaudeMock).toHaveBeenCalledWith({
 			resumeSessionId: "abc-123",
+			prompt:
+				"A restart interrupted this conversation. Continue from where you left off.",
 			cwd: "/home/user/repo",
+			sessionId: "1",
 		});
 		expect(session.status).toBe("running");
 		expect(session.restored).toBe(true);
@@ -133,7 +136,10 @@ describe("restoreSession", () => {
 
 		expect(spawnClaudeMock).toHaveBeenCalledWith({
 			resumeSessionId: "draft-456",
+			prompt:
+				"A restart interrupted this conversation. Continue from where you left off.",
 			cwd: "/home/user/repo",
+			sessionId: "1",
 		});
 		expect(session.status).toBe("running");
 		expect(session.restored).toBe(true);
