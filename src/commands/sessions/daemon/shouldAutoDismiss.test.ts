@@ -90,4 +90,56 @@ describe("shouldAutoDismiss", () => {
 			).toBe(false);
 		});
 	});
+
+	describe("when a backlog run reached review and Continue is on", () => {
+		it("dismisses", () => {
+			expect(
+				shouldAutoDismiss(
+					session({
+						assistArgs: ["backlog"],
+						reviewStarted: true,
+						autoAdvance: true,
+					}),
+					0,
+				),
+			).toBe(true);
+		});
+	});
+
+	describe("when a backlog run reached review and Continue is off", () => {
+		it("keeps", () => {
+			expect(
+				shouldAutoDismiss(
+					session({
+						assistArgs: ["backlog"],
+						reviewStarted: true,
+						autoAdvance: false,
+					}),
+					0,
+				),
+			).toBe(false);
+		});
+	});
+
+	describe("when a backlog run has not reached review", () => {
+		it("keeps", () => {
+			expect(
+				shouldAutoDismiss(
+					session({ assistArgs: ["backlog"], autoAdvance: true }),
+					0,
+				),
+			).toBe(false);
+		});
+	});
+
+	describe("when a non-backlog session has autoAdvance on but never reached review", () => {
+		it("keeps", () => {
+			expect(
+				shouldAutoDismiss(
+					session({ assistArgs: ["bug"], autoAdvance: true }),
+					0,
+				),
+			).toBe(false);
+		});
+	});
 });

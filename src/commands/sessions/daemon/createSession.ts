@@ -25,6 +25,7 @@ type Session = {
 	activityWatcher?: FSWatcher;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
+	reviewStarted?: boolean;
 };
 
 type SessionInfo = {
