@@ -1,9 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { detectPlatform } from "../../../lib/detectPlatform";
 import { createSessionLifecycleLogger } from "./createSessionLifecycleLogger";
+
+vi.mock("../../../lib/detectPlatform");
 
 let logSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
+	vi.mocked(detectPlatform).mockReturnValue("macos");
 	logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
@@ -27,6 +31,22 @@ describe("createSessionLifecycleLogger", () => {
 		);
 
 		expect(lines()).toHaveLength(1);
+		expect(lines()[0]).toContain("session started: 1 nextgen [macos daemon]");
+	});
+
+	it("labels local sessions with the local platform", () => {
+		vi.mocked(detectPlatform).mockReturnValue("linux");
+		const log = createSessionLifecycleLogger();
+		log(sessionsLine([{ id: "1", cwd: "/home/me/nextgen" }]));
+
+		expect(lines()[0]).toContain("session started: 1 nextgen [linux daemon]");
+	});
+
+	it("still labels local sessions wsl when running under wsl", () => {
+		vi.mocked(detectPlatform).mockReturnValue("wsl");
+		const log = createSessionLifecycleLogger();
+		log(sessionsLine([{ id: "1", cwd: "/home/me/nextgen" }]));
+
 		expect(lines()[0]).toContain("session started: 1 nextgen [wsl daemon]");
 	});
 

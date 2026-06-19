@@ -1,3 +1,4 @@
+import { detectPlatform } from "../../../lib/detectPlatform";
 import { isWindowsSessionId } from "../daemon/toWindowsSessionId";
 import { repoLabel } from "./ui/repoLabel";
 
@@ -9,11 +10,7 @@ type SessionSnapshot = {
 	activity?: { itemId?: number; phase?: number; totalPhases?: number };
 };
 
-// Derives session start/end events from the daemon's `sessions` broadcast lines
-// and prints them to the web server's stdout — the process the user actually
-// runs. Covers both WSL-local and Windows sessions (the daemon merges both into
-// one list). The returned tracer closes over its own live-session map; the web
-// server holds a single instance so each session is logged once across all tabs.
+// why: a single shared instance logs each session once, not once per browser tab
 export function createSessionLifecycleLogger(): (line: string) => void {
 	const known = new Map<string, SessionSnapshot>();
 	return (line) => {
@@ -57,7 +54,7 @@ function isDone(session: SessionSnapshot): boolean {
 }
 
 function logEvent(event: "started" | "ended", session: SessionSnapshot): void {
-	const origin = isWindowsSessionId(session.id) ? "windows" : "wsl";
+	const origin = isWindowsSessionId(session.id) ? "windows" : detectPlatform();
 	console.log(
 		`${new Date().toISOString()} session ${event}: ${session.id}${describe(session)} [${origin} daemon]`,
 	);
