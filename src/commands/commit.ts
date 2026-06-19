@@ -24,7 +24,7 @@ function execCommit(
 ): void {
 	try {
 		if (config.commit?.pull) {
-			execSync("git pull", { stdio: "inherit" });
+			execSync("git pull --autostash", { stdio: "inherit" });
 		}
 		const sha =
 			files.length > 0 ? stageAndCommit(files, message) : commitStaged(message);
