@@ -80,6 +80,9 @@
 			"SlashCommand(/handover)",
 			"Skill(recall)",
 			"SlashCommand(/recall)",
+			"Skill(strip-comments)",
+			"SlashCommand(/strip-comments)",
+			"Bash(git ls-files:*)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": [

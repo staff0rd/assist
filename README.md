@@ -58,6 +58,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/next [id]` - Signal completion and chain into the next backlog item; pass an `id` to run a specific item directly (falls back to the picker if the id is missing, done, won't-do, or blocked)
 - `/standup` - Summarise recent journal entries as a standup update
+- `/strip-comments` - Enforce self-documenting code: declare the comment policy in CLAUDE.md if absent, then strip redundant comments, commented-out code, and section banners from tracked source files (functional directives and genuine workaround comments are preserved); edits are left unstaged
 - `/sync` - Sync commands and settings to ~/.claude
 - `/test-cover` - Incrementally increase test coverage by identifying and testing uncovered files
 - `/test-review` - Review existing tests for quality, coverage gaps, and adherence to conventions
