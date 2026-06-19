@@ -1,3 +1,10 @@
+## [0.305.2](https://github.com/staff0rd/assist/compare/v0.305.1...v0.305.2) (2026-06-19)
+
+
+### Bug Fixes
+
+* flip session to waiting on ESC ([7c567d7](https://github.com/staff0rd/assist/commit/7c567d736ae0d397324ff7f9a9e307056afae9f6))
+
 ## [0.305.1](https://github.com/staff0rd/assist/compare/v0.305.0...v0.305.1) (2026-06-19)
 
 
