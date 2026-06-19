@@ -28,9 +28,17 @@ export function spawnClaude(
 	if (permissionMode) {
 		args.push("--permission-mode", permissionMode);
 	}
-	// Claude (and any assist commands it runs) must not own the session's
-	// activity file; only the daemon's direct assist child emits activity.
-	const { ASSIST_ACTIVITY_ID: _activityId, ...env } = process.env;
+	/* why: strip ASSIST_ACTIVITY_ID so Claude (and any assist commands it runs)
+	 * can't clobber the session's activity file — only the daemon's direct assist
+	 * child emits activity. Strip CLAUDE_CODE_CHILD_SESSION so a phase launched
+	 * from within a Claude Code session (which sets it, and the daemon inherits)
+	 * runs as a top-level session: a nested child session never writes a
+	 * resumable ~/.claude transcript, so --resume would later fail (#402). */
+	const {
+		ASSIST_ACTIVITY_ID: _activityId,
+		CLAUDE_CODE_CHILD_SESSION: _childSession,
+		...env
+	} = process.env;
 	const child = spawn("claude", args, {
 		stdio: "inherit",
 		env,

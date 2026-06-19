@@ -16,6 +16,13 @@ function spawnedArgs(): string[] {
 	return spawnMock.mock.lastCall?.[1] as string[];
 }
 
+function spawnedEnv(): Record<string, string | undefined> {
+	const opts = spawnMock.mock.lastCall?.[2] as
+		| { env: Record<string, string | undefined> }
+		| undefined;
+	return opts?.env ?? {};
+}
+
 describe("spawnClaude", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -47,6 +54,15 @@ describe("spawnClaude", () => {
 		spawnClaude("continue", { sessionId: "new-1", resumeSessionId: "abc-123" });
 
 		expect(spawnedArgs()).toEqual(["--resume", "abc-123", "continue"]);
+	});
+
+	it("strips CLAUDE_CODE_CHILD_SESSION so the phase runs as a resumable top-level session", () => {
+		vi.stubEnv("CLAUDE_CODE_CHILD_SESSION", "1");
+
+		spawnClaude("do the thing", { sessionId: "new-1" });
+
+		expect(spawnedEnv()).not.toHaveProperty("CLAUDE_CODE_CHILD_SESSION");
+		vi.unstubAllEnvs();
 	});
 
 	it("keeps the permission mode flag when resuming", () => {
