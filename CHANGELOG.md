@@ -1,3 +1,10 @@
+## [0.302.1](https://github.com/staff0rd/assist/compare/v0.302.0...v0.302.1) (2026-06-19)
+
+
+### Bug Fixes
+
+* skip startup pull on dirty worktree ([0bac68d](https://github.com/staff0rd/assist/commit/0bac68d178f3e0edfbacff25ac3940028bdd5570))
+
 # [0.302.0](https://github.com/staff0rd/assist/compare/v0.301.0...v0.302.0) (2026-06-19)
 
 
