@@ -1,3 +1,15 @@
+# [0.304.0](https://github.com/staff0rd/assist/compare/v0.303.0...v0.304.0) (2026-06-19)
+
+
+### Bug Fixes
+
+* restored session card metadata ([adc0c51](https://github.com/staff0rd/assist/commit/adc0c5185a0578ed3aef7077e2f152363d676fb0))
+
+
+### Features
+
+* hook-driven session status ([96f8599](https://github.com/staff0rd/assist/commit/96f8599ebbc7d2b766e69a54863f6eee1b01f19a))
+
 # [0.303.0](https://github.com/staff0rd/assist/compare/v0.302.2...v0.303.0) (2026-06-19)
 
 
