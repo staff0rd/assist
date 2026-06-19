@@ -54,7 +54,7 @@ export function InProgressChip({
 			label="in progress"
 			size="small"
 			color={statusChipColors["in-progress"]}
-			sx={openSession ? animatedChipSx : chipSx}
+			sx={openSession?.status === "running" ? animatedChipSx : chipSx}
 			clickable={!!openSession}
 			onClick={openSession ? handleClick : undefined}
 		/>
