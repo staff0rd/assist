@@ -16,7 +16,7 @@ export function handleClipboardKey(
 ): boolean {
 	if (
 		event.type !== "keydown" ||
-		!event.ctrlKey ||
+		!(event.ctrlKey || event.metaKey) ||
 		event.shiftKey ||
 		event.altKey
 	) {

@@ -29,6 +29,7 @@ function keyEvent(
 	return {
 		type: "keydown",
 		ctrlKey: false,
+		metaKey: false,
 		shiftKey: false,
 		altKey: false,
 		key: "",
@@ -83,6 +84,51 @@ describe("handleClipboardKey", () => {
 		expect(clipboard.readText).toHaveBeenCalled();
 		await Promise.resolve();
 		expect(paste).toHaveBeenCalledWith("pasted text");
+	});
+
+	it("copies the selection to the clipboard on Cmd+C and suppresses default", () => {
+		const term = makeTerm({
+			hasSelection: () => true,
+			getSelection: () => "selected text",
+		});
+		const clipboard = makeClipboard();
+		const paste = vi.fn();
+
+		const event = keyEvent({ metaKey: true, key: "c" });
+		const result = handleClipboardKey(event, term, clipboard, paste);
+
+		expect(result).toBe(false);
+		expect(event.preventDefault).toHaveBeenCalled();
+		expect(clipboard.writeText).toHaveBeenCalledWith("selected text");
+		expect(paste).not.toHaveBeenCalled();
+	});
+
+	it("pastes clipboard contents on Cmd+V and suppresses default", async () => {
+		const clipboard = makeClipboard("pasted text");
+		const paste = vi.fn();
+
+		const event = keyEvent({ metaKey: true, key: "v" });
+		const result = handleClipboardKey(event, makeTerm(), clipboard, paste);
+
+		expect(result).toBe(false);
+		expect(event.preventDefault).toHaveBeenCalled();
+		expect(clipboard.readText).toHaveBeenCalled();
+		await Promise.resolve();
+		expect(paste).toHaveBeenCalledWith("pasted text");
+	});
+
+	it("ignores keydown with Shift held (e.g. Cmd+Shift+V)", () => {
+		const clipboard = makeClipboard("text");
+
+		const result = handleClipboardKey(
+			keyEvent({ metaKey: true, shiftKey: true, key: "v" }),
+			makeTerm(),
+			clipboard,
+			vi.fn(),
+		);
+
+		expect(result).toBe(true);
+		expect(clipboard.readText).not.toHaveBeenCalled();
 	});
 
 	it("handles uppercase keys (e.g. caps lock)", () => {
