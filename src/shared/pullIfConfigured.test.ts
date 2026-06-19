@@ -39,6 +39,7 @@ describe("pullIfConfigured", () => {
 
 	it("runs git pull --ff-only and proceeds on success", () => {
 		mockLoadConfig.mockReturnValue({ commit: { pull: true } });
+		mockExecSync.mockReturnValue("");
 
 		pullIfConfigured();
 
@@ -50,11 +51,28 @@ describe("pullIfConfigured", () => {
 
 	it("exits with code 1 when the pull fails", () => {
 		mockLoadConfig.mockReturnValue({ commit: { pull: true } });
-		mockExecSync.mockImplementation(() => {
+		mockExecSync.mockImplementation((command: string) => {
+			if (command === "git status --porcelain") return "";
 			throw new Error("pull failed");
 		});
 
 		expect(() => pullIfConfigured()).toThrow("process.exit");
 		expect(exitSpy).toHaveBeenCalledWith(1);
+	});
+
+	it("skips the pull when the working copy has local changes", () => {
+		mockLoadConfig.mockReturnValue({ commit: { pull: true } });
+		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+		mockExecSync.mockImplementation((command: string) =>
+			command === "git status --porcelain" ? " M src/foo.ts\n" : "",
+		);
+
+		pullIfConfigured();
+
+		expect(mockExecSync).not.toHaveBeenCalledWith("git pull --ff-only", {
+			stdio: "inherit",
+		});
+		expect(warnSpy).toHaveBeenCalled();
+		expect(exitSpy).not.toHaveBeenCalled();
 	});
 });
