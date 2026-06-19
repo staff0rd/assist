@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import { AppShell } from "./AppShell";
-import { HamburgerMenu } from "./HamburgerMenu";
 import { useColorMode } from "./useColorMode";
 
 const components = {
@@ -42,8 +41,7 @@ export function App() {
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			<BrowserRouter>
-				<HamburgerMenu mode={mode} toggle={toggle} />
-				<AppShell />
+				<AppShell mode={mode} toggle={toggle} />
 			</BrowserRouter>
 		</ThemeProvider>
 	);

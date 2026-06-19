@@ -11,6 +11,7 @@ const MACHINE_DIRECTIVES = [
 	"istanbul ignore",
 	"v8 ignore",
 	"c8 ignore",
+	"@vitest-environment",
 ];
 
 export function isCommentExempt(text: string, markers: string[]): boolean {

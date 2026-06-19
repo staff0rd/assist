@@ -50,6 +50,22 @@ describe("shouldAutoDismiss", () => {
 		});
 	});
 
+	describe("when an update session exits cleanly", () => {
+		it("dismisses", () => {
+			expect(shouldAutoDismiss(session({ assistArgs: ["update"] }), 0)).toBe(
+				true,
+			);
+		});
+	});
+
+	describe("when an update session exits with a non-zero code", () => {
+		it("keeps", () => {
+			expect(shouldAutoDismiss(session({ assistArgs: ["update"] }), 1)).toBe(
+				false,
+			);
+		});
+	});
+
 	describe("when a non --once session exits cleanly", () => {
 		it("keeps", () => {
 			expect(shouldAutoDismiss(session({ assistArgs: ["bug"] }), 0)).toBe(

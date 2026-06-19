@@ -1,14 +1,14 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { useCallback, useMemo } from "react";
-import { useNavigate } from "react-router";
 import { AppRoutes } from "./AppRoutes";
 import { AppToolbar } from "./AppToolbar";
 import { ErrorSnackbar } from "./ErrorSnackbar";
+import { HamburgerMenu } from "./HamburgerMenu";
 import { LaunchSnackbar } from "./LaunchSnackbar";
 import { ReconnectingIndicator } from "./ReconnectingIndicator";
 import { useRepoSelection } from "./useRepoSelection";
 import { RepoSelectionContext } from "./useRepoSelectionContext";
+import { useSessionLaunch } from "./useSessionLaunch";
 import { SessionLaunchContext } from "./useSessionLaunchContext";
 import { useSessionSocket } from "./useSessionSocket";
 import { useSyncRepoToActiveCard } from "./useSyncRepoToActiveCard";
@@ -18,7 +18,13 @@ const appBarSx = {
 } as const;
 const toolbarSx = { minHeight: 48 } as const;
 
-export function AppShell() {
+export function AppShell({
+	mode,
+	toggle,
+}: {
+	mode: "light" | "dark";
+	toggle: () => void;
+}) {
 	const socket = useSessionSocket();
 	const selection = useRepoSelection(socket.currentCwd, socket.history);
 	useSyncRepoToActiveCard(
@@ -27,25 +33,12 @@ export function AppShell() {
 		socket.history,
 		selection.setSelectedCwd,
 	);
-	const launch = useMemo(
-		() => ({ launchAssist: socket.createAssistSession }),
-		[socket.createAssistSession],
-	);
-	const navigate = useNavigate();
-	/* oxlint-disable react-hooks/exhaustive-deps -- socket methods keep a stable identity; depending on the whole socket object (recreated each render) would needlessly recreate the callback */
-	const viewLaunchedSession = useCallback(
-		(sessionId: string) => {
-			socket.selectSession(sessionId);
-			navigate("/sessions");
-			socket.clearSuccess();
-		},
-		[navigate, socket.selectSession, socket.clearSuccess],
-	);
-	/* oxlint-enable react-hooks/exhaustive-deps */
+	const { launch, viewLaunchedSession } = useSessionLaunch(socket);
 
 	return (
 		<RepoSelectionContext.Provider value={selection}>
 			<SessionLaunchContext.Provider value={launch}>
+				<HamburgerMenu mode={mode} toggle={toggle} />
 				<AppBar position="fixed" elevation={1} sx={appBarSx}>
 					<AppToolbar socket={socket} selection={selection} />
 				</AppBar>
