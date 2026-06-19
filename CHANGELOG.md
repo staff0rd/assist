@@ -1,3 +1,15 @@
+# [0.303.0](https://github.com/staff0rd/assist/compare/v0.302.2...v0.303.0) (2026-06-19)
+
+
+### Bug Fixes
+
+* autostash assist commit pull ([daf72df](https://github.com/staff0rd/assist/commit/daf72df5b59156aa5a8ea3985f4a2edf3c8bde93))
+
+
+### Features
+
+* add Update assist to web menu ([8f6f42d](https://github.com/staff0rd/assist/commit/8f6f42d81363854d6f082f3127cbc141d396f20f))
+
 ## [0.302.2](https://github.com/staff0rd/assist/compare/v0.302.1...v0.302.2) (2026-06-19)
 
 
