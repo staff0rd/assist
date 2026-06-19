@@ -7,12 +7,15 @@ import { restoreBase } from "./restoreBase";
 import { runningSession } from "./runningSession";
 import { spawnClaude } from "./spawnClaude";
 import { spawnPty } from "./spawnPty";
+import { isUpdate, updatedSession } from "./updatedSession";
 
 export function restoreSession(
 	id: string,
 	persisted: PersistedSession,
 ): Session {
 	const base = restoreBase(id, persisted);
+
+	if (isUpdate(persisted)) return updatedSession(id, persisted);
 
 	/* why: `assist backlog run` is a phase-orchestrating wrapper; a bare
 	 * `claude --resume` pty never exits on completion, so re-launch the wrapper

@@ -164,6 +164,25 @@ describe("restoreSession", () => {
 		expect(session.assistArgs).toEqual(["draft"]);
 	});
 
+	it("returns a cleanly completed card for a restored update session", () => {
+		const persisted: PersistedSession = {
+			name: "assist update",
+			commandType: "assist",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			assistArgs: ["update"],
+		};
+
+		const session = restoreSession("4", persisted);
+
+		expect(spawnClaudeMock).not.toHaveBeenCalled();
+		expect(spawnPtyMock).not.toHaveBeenCalled();
+		expect(session.status).toBe("done");
+		expect(session.restored).toBeUndefined();
+		expect(session.pty).toBeNull();
+		expect(session.startedAt).toBe(123);
+	});
+
 	it("returns a not-restored stub for a run session, keeping retry args", () => {
 		const persisted: PersistedSession = {
 			name: "repo/run: build",
