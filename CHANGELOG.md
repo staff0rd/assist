@@ -1,3 +1,10 @@
+## [0.305.1](https://github.com/staff0rd/assist/compare/v0.305.0...v0.305.1) (2026-06-19)
+
+
+### Bug Fixes
+
+* label local daemon by platform ([25cce4e](https://github.com/staff0rd/assist/commit/25cce4e39ecec44cd207e31b9ef57b550944794f))
+
 # [0.305.0](https://github.com/staff0rd/assist/compare/v0.304.0...v0.305.0) (2026-06-19)
 
 
