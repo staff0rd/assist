@@ -1,3 +1,10 @@
+# [0.302.0](https://github.com/staff0rd/assist/compare/v0.301.0...v0.302.0) (2026-06-19)
+
+
+### Features
+
+* migrate scaffolding from Biome to oxc ([d8894ff](https://github.com/staff0rd/assist/commit/d8894ff34ab5e0091cd116021d3592bdadf33e87))
+
 # [0.301.0](https://github.com/staff0rd/assist/compare/v0.300.0...v0.301.0) (2026-06-19)
 
 
