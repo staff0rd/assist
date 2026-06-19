@@ -100,7 +100,7 @@ export class SessionManager {
 	}
 
 	writeToSession(id: string, data: string): void {
-		sessionIo.writeToSession(this.sessions, id, data);
+		sessionIo.writeToSession(this.sessions, id, data, this.onStatusChange);
 	}
 
 	resizeSession(id: string, cols: number, rows: number): void {

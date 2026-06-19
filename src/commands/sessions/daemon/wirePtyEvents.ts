@@ -1,6 +1,7 @@
 import { broadcast, type SessionClient } from "./broadcast";
 import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { noteOutputForEscInterrupt } from "./watchEscInterrupt";
 import { refreshActivity } from "./watchActivity";
 
 const MAX_SCROLLBACK = 256 * 1024;
@@ -26,6 +27,7 @@ export function wirePtyEvents(
 	 * stream only feeds scrollback and live output. done/error still come from exit. */
 	session.pty.onData((data) => {
 		appendScrollback(session, data);
+		noteOutputForEscInterrupt(session, onStatusChange);
 		broadcast(clients, { type: "output", sessionId: session.id, data });
 	});
 	session.pty.onExit(({ exitCode }) => {

@@ -1,15 +1,19 @@
 import { removeActivity } from "../../../shared/emitActivity";
 import { releaseLock } from "../../backlog/acquireLock";
 import { clearPause, requestPause } from "../../backlog/consumePause";
-import type { Session } from "./createSession";
+import type { Session, SessionStatus } from "./createSession";
+import { watchEscInterrupt } from "./watchEscInterrupt";
 
 export function writeToSession(
 	sessions: Map<string, Session>,
 	id: string,
 	data: string,
+	onStatusChange: (session: Session, status: SessionStatus) => void,
 ): void {
 	const s = sessions.get(id);
-	if (s && s.status !== "done") s.pty?.write(data);
+	if (!s || s.status === "done") return;
+	s.pty?.write(data);
+	watchEscInterrupt(s, data, onStatusChange);
 }
 
 export function resizeSession(

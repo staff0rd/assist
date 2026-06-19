@@ -25,6 +25,7 @@ type Session = {
 	activityWatcher?: FSWatcher;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
+	escInterruptTimer?: ReturnType<typeof setTimeout>;
 };
 
 type SessionInfo = {
