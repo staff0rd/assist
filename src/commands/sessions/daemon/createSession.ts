@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { FSWatcher } from "node:fs";
 import type { Activity } from "../../../shared/emitActivity";
 import { spawnClaude } from "./spawnClaude";
@@ -52,15 +53,20 @@ export function createSession(
 	prompt?: string,
 	cwd?: string,
 ): Session {
+	/* why: assign the claude conversation id up front so the card is bound to the
+	 * transcript this process writes, rather than the cwd poller guessing the
+	 * newest unclaimed .jsonl and racing concurrent sessions in the repo (#413). */
+	const claudeSessionId = randomUUID();
 	return {
 		id,
 		name: prompt?.slice(0, 40) || `Session ${id}`,
 		commandType: "claude",
 		status: "running",
 		startedAt: Date.now(),
-		pty: spawnClaude({ prompt, cwd, sessionId: id }),
+		pty: spawnClaude({ prompt, cwd, sessionId: id, claudeSessionId }),
 		scrollback: "",
 		cwd,
+		claudeSessionId,
 	};
 }
 

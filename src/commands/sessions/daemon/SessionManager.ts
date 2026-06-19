@@ -20,7 +20,6 @@ import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
 import { WindowsProxy } from "./WindowsProxy";
 import { watchActivity } from "./watchActivity";
-import { watchForClaudeSessionId } from "./watchForClaudeSessionId";
 import { wirePtyEvents } from "./wirePtyEvents";
 import * as sessionIo from "./writeToSession";
 
@@ -62,7 +61,6 @@ export class SessionManager {
 
 	private add(session: Session): string {
 		this.wire(session);
-		watchForClaudeSessionId(session, this.sessions, this.notify);
 		watchActivity(session, this.notify);
 		return session.id;
 	}
