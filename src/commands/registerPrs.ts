@@ -5,6 +5,7 @@ import {
 	fixed as prsFixed,
 	listComments as prsListComments,
 	printComments as prsPrintComments,
+	reply as prsReply,
 	wontfix as prsWontfix,
 } from "./prs/index";
 import { registerPrsEdit } from "./registerPrsEdit";
@@ -40,6 +41,13 @@ export function registerPrs(program: Command): void {
 		.description("Reply with reason and resolve thread")
 		.action((commentId: string, reason: string) => {
 			prsWontfix(Number.parseInt(commentId, 10), reason);
+		});
+
+	prsCommand
+		.command("reply <comment-id> <body>")
+		.description("Reply to a comment thread without resolving it")
+		.action((commentId: string, body: string) => {
+			prsReply(Number.parseInt(commentId, 10), body);
 		});
 
 	prsCommand
