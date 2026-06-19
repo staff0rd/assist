@@ -1,3 +1,10 @@
+## [0.302.2](https://github.com/staff0rd/assist/compare/v0.302.1...v0.302.2) (2026-06-19)
+
+
+### Bug Fixes
+
+* keep daemon phases resumable ([5214f79](https://github.com/staff0rd/assist/commit/5214f791ee2a22c7cd10f40201d3c596de6a4b17))
+
 ## [0.302.1](https://github.com/staff0rd/assist/compare/v0.302.0...v0.302.1) (2026-06-19)
 
 
