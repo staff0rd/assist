@@ -13,6 +13,11 @@ export function CardToggles({
 	onSetAutoAdvance: (enabled: boolean) => void;
 }) {
 	const type = sessionType(session);
+	const activity = session.activity;
+	const inReviewPhase =
+		activity?.kind === "backlog" &&
+		activity.phase !== undefined &&
+		activity.phase === activity.totalPhases;
 	return (
 		<>
 			{(type === "draft" || type === "bug" || type === "refine") && (
@@ -21,8 +26,9 @@ export function CardToggles({
 					onChange={onSetAutoRun}
 				/>
 			)}
-			{session.activity?.kind === "backlog" && (
+			{activity?.kind === "backlog" && (
 				<AutoAdvanceToggle
+					label={inReviewPhase ? "Dismiss" : "Continue"}
 					checked={session.autoAdvance ?? true}
 					onChange={onSetAutoAdvance}
 				/>

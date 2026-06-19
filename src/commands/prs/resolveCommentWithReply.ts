@@ -5,19 +5,7 @@ import { join } from "node:path";
 import { deleteCommentsCache, loadCommentsCache } from "./loadCommentsCache";
 import { getCurrentPrNumber, getRepoInfo } from "./shared";
 import type { PrComment } from "./types";
-
-function replyToComment(
-	org: string,
-	repo: string,
-	prNumber: number,
-	commentId: number,
-	message: string,
-): void {
-	execSync(
-		`gh api repos/${org}/${repo}/pulls/${prNumber}/comments -f body="${message.replace(/"/g, String.raw`\"`)}" -F in_reply_to=${commentId}`,
-		{ stdio: ["inherit", "pipe", "inherit"] },
-	);
-}
+import { replyToComment } from "./replyToComment";
 
 function resolveThread(threadId: string): void {
 	const mutation = `mutation($threadId: ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { isResolved } } }`;

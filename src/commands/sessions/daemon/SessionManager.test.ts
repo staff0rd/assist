@@ -9,7 +9,6 @@ import {
 } from "./loadPersistedSessions";
 import { restoreSession } from "./restoreSession";
 import { SessionManager } from "./SessionManager";
-import { watchForClaudeSessionId } from "./watchForClaudeSessionId";
 import { wirePtyEvents } from "./wirePtyEvents";
 
 vi.mock("./createSession", () => ({
@@ -26,9 +25,6 @@ vi.mock("./loadPersistedSessions", () => ({
 vi.mock("./loadActiveSelection", () => ({
 	loadActiveSelection: vi.fn(() => ({})),
 	saveActiveSelection: vi.fn(),
-}));
-vi.mock("./watchForClaudeSessionId", () => ({
-	watchForClaudeSessionId: vi.fn(),
 }));
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
@@ -175,28 +171,6 @@ describe("SessionManager", () => {
 			const listed = manager.listSessions();
 			expect(listed).toHaveLength(1);
 			expect(listed[0].status).toBe("error");
-		});
-
-		it("watches restored sessions for a new claude sessionId", () => {
-			const session = fakeSession({ restored: true, cwd: "/repo" });
-			loadPersistedMock.mockReturnValue([
-				{
-					name: "live",
-					commandType: "claude",
-					cwd: "/repo",
-					startedAt: 1,
-					claudeSessionId: "abc",
-				},
-			]);
-			restoreSessionMock.mockReturnValue(session);
-
-			new SessionManager().restore();
-
-			expect(watchForClaudeSessionId).toHaveBeenCalledWith(
-				session,
-				expect.any(Map),
-				expect.any(Function),
-			);
 		});
 	});
 

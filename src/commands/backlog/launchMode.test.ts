@@ -7,6 +7,10 @@ import {
 	vi,
 } from "vitest";
 
+vi.mock("node:crypto", () => ({
+	randomUUID: vi.fn(() => "generated-uuid"),
+}));
+
 vi.mock("../../shared/pullIfConfigured", () => ({
 	pullIfConfigured: vi.fn(),
 }));
@@ -93,6 +97,7 @@ describe("launchMode", () => {
 
 		expect(mockSpawnClaude).toHaveBeenCalledWith("/bug this is broken", {
 			allowEdits: true,
+			sessionId: "generated-uuid",
 		});
 	});
 
@@ -101,7 +106,16 @@ describe("launchMode", () => {
 
 		expect(mockSpawnClaude).toHaveBeenCalledWith("/draft", {
 			allowEdits: true,
+			sessionId: "generated-uuid",
 		});
+	});
+
+	it("reports the assigned claude session id on the command activity", async () => {
+		await launchMode("draft");
+
+		expect(mockEmitActivity).toHaveBeenCalledWith(
+			expect.objectContaining({ claudeSessionId: "generated-uuid" }),
+		);
 	});
 
 	it("emits the item id and name on the command activity when given", async () => {
@@ -115,6 +129,7 @@ describe("launchMode", () => {
 			name: "refine 254",
 			itemId: 254,
 			itemName: "Add refine mode button",
+			claudeSessionId: "generated-uuid",
 		});
 	});
 
