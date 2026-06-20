@@ -107,6 +107,31 @@ describe("useBacklogItems", () => {
 		expect(result.current.loading).toBe(false);
 	});
 
+	it("picks up a cross-machine status change via background polling without remount", async () => {
+		vi.useFakeTimers();
+		try {
+			backlogItemsCache.set("/repo", false, [item(1)]);
+			resolveLoad([item(1)]);
+
+			const { result } = renderHook(() => useBacklogItems());
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(0);
+			});
+			expect(result.current.items).toEqual([item(1)]);
+
+			resolveLoad([item(1, { status: "in-progress" })]);
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(5000);
+			});
+
+			expect(result.current.items).toEqual([
+				item(1, { status: "in-progress" }),
+			]);
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+
 	it("re-seeds from the matching cache entry when showCompleted toggles", async () => {
 		backlogItemsCache.set("/repo", false, [item(1)]);
 		backlogItemsCache.set("/repo", true, [

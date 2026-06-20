@@ -3,7 +3,7 @@ import { initBacklog } from "./api";
 import { backlogItemsCache } from "./backlogItemsCache";
 import { fetchItems } from "./fetchItems";
 import { itemsEqual } from "./itemsEqual";
-import { revalidateBacklog } from "./revalidateBacklog";
+import { startBacklogPolling } from "./startBacklogPolling";
 import type { BacklogItemSummary } from "./types";
 import { useRepoCwd } from "./useRepoCwd";
 import { useShowCompleted } from "./useShowCompleted";
@@ -37,14 +37,12 @@ export function useBacklogItems() {
 	}, [cwd, showCompleted]);
 
 	useEffect(() => {
-		const controller = new AbortController();
 		setExists(true);
-		revalidateBacklog(cwd, showCompleted, controller.signal, (found, next) => {
+		return startBacklogPolling(cwd, showCompleted, (found, next) => {
 			setExists(found);
 			setItems((prev) => (itemsEqual(prev, next) ? prev : next));
 			setLoading(false);
 		});
-		return () => controller.abort();
 	}, [cwd, showCompleted]);
 
 	const initialize = useCallback(async () => {

@@ -17,8 +17,9 @@ export function revalidateBacklog(
 				signal,
 			);
 			if (!signal.aborted) onLoaded(found, items);
-		} catch (error) {
-			if (!signal.aborted) throw error;
+		} catch {
+			// why: a transient failure (network blip, server mid-restart) must not throw
+			// out of the polling loop — the next interval simply retries.
 		}
 	})();
 }
