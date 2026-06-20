@@ -1,3 +1,12 @@
+# [0.306.0](https://github.com/staff0rd/assist/compare/v0.305.4...v0.306.0) (2026-06-20)
+
+
+### Features
+
+* add netcap capture command ([8561fe3](https://github.com/staff0rd/assist/commit/8561fe315614cd25b2f73aa1643e9c8f01c0ea7e))
+* remove edit from backlog web view ([49c2147](https://github.com/staff0rd/assist/commit/49c2147d01a45764ec51cf3ffe24645af4942709))
+* session timer counts only running time ([088e8ac](https://github.com/staff0rd/assist/commit/088e8acec1661ef01f39adf5c8e710867a5f0a09))
+
 ## [0.305.4](https://github.com/staff0rd/assist/compare/v0.305.3...v0.305.4) (2026-06-20)
 
 
