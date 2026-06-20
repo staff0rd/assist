@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { useNavigate } from "react-router";
 import { updateItemStatus } from "../api";
 import type { BacklogItem } from "../types";
@@ -28,21 +28,12 @@ function DetailHeader({
 	item: BacklogItem;
 	onDeleted: () => Promise<void>;
 }) {
-	const navigate = useNavigate();
 	return (
 		<Stack direction="row" sx={headerSx}>
 			<BackButton to="/backlog" />
 			<Stack direction="row" spacing={1}>
 				{canPlay(item) && <PlayAction itemId={item.id} />}
 				<RefineAction itemId={item.id} />
-				<Button
-					variant="contained"
-					color="inherit"
-					size="small"
-					onClick={() => navigate(`/backlog/items/${item.id}/edit`)}
-				>
-					Edit
-				</Button>
 				<DeleteAction itemId={item.id} onDeleted={onDeleted} />
 			</Stack>
 		</Stack>

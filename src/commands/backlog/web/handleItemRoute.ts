@@ -8,7 +8,6 @@ import {
 	patchItemStar,
 	patchItemStatus,
 } from "./shared";
-import { updateItem } from "./updateItem";
 
 type RouteHandler = (
 	req: IncomingMessage,
@@ -41,11 +40,6 @@ const routes: ItemRoute[] = [
 		pattern: /^\/api\/items\/(\d+)$/,
 		method: "GET",
 		run: (_req, res, m) => getItemById(res, id(m)),
-	},
-	{
-		pattern: /^\/api\/items\/(\d+)$/,
-		method: "PUT",
-		run: (req, res, m) => updateItem(req, res, id(m)),
 	},
 	{
 		pattern: /^\/api\/items\/(\d+)$/,

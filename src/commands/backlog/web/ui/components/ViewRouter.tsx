@@ -30,14 +30,7 @@ export function ViewRouter({
 					/>
 				}
 			/>
-			<Route
-				path="items/:id"
-				element={<ItemRoute mode="detail" onReload={onReload} />}
-			/>
-			<Route
-				path="items/:id/edit"
-				element={<ItemRoute mode="edit" onReload={onReload} />}
-			/>
+			<Route path="items/:id" element={<ItemRoute onReload={onReload} />} />
 		</Routes>
 	);
 }

@@ -1,13 +1,6 @@
 import type { BacklogItem } from "./types";
 import { withCwd } from "./withCwd";
 
-type ItemBody = {
-	type: "story" | "bug";
-	name: string;
-	description?: string;
-	acceptanceCriteria: string[];
-};
-
 async function sendJson<T>(
 	url: string,
 	method: string,
@@ -44,14 +37,6 @@ export async function deleteComment(
 			| undefined;
 		throw new Error(body?.error ?? `Failed to delete comment (${res.status})`);
 	}
-}
-
-export function updateItem(
-	id: number,
-	body: ItemBody,
-	cwd?: string,
-): Promise<BacklogItem> {
-	return sendJson(withCwd(`/api/items/${id}`, cwd), "PUT", body);
 }
 
 export function updateItemStatus(

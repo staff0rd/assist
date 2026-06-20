@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import { useParams } from "react-router";
 import { useItem } from "../useItem";
 import { ItemDetail } from "./ItemDetail";
-import { ItemForm } from "./ItemForm";
 
 const loadingSx = {
 	display: "flex",
@@ -11,13 +10,7 @@ const loadingSx = {
 	py: 6,
 } as const;
 
-export function ItemRoute({
-	mode,
-	onReload,
-}: {
-	mode: "detail" | "edit";
-	onReload: () => Promise<void>;
-}) {
+export function ItemRoute({ onReload }: { onReload: () => Promise<void> }) {
 	const { id } = useParams<{ id: string }>();
 	const numId = Number(id);
 	const { item, loading, reload } = useItem(numId);
@@ -37,14 +30,5 @@ export function ItemRoute({
 	}
 	if (!item) return null;
 
-	if (mode === "edit") {
-		return (
-			<ItemForm
-				item={item}
-				onReload={handleReload}
-				backTo={`/backlog/items/${numId}`}
-			/>
-		);
-	}
 	return <ItemDetail item={item} onReload={handleReload} />;
 }
