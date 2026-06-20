@@ -9,6 +9,8 @@ function session(overrides: Partial<Session> = {}): Session {
 		commandType: "assist",
 		status: "done",
 		startedAt: 1,
+		runningMs: 0,
+		runningSince: null,
 		pty: null,
 		scrollback: "",
 		...overrides,

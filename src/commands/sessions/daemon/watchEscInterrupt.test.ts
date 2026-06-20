@@ -15,6 +15,8 @@ function makeSession(status: Session["status"] = "running"): Session {
 		commandType: "claude",
 		status,
 		startedAt: 0,
+		runningMs: 0,
+		runningSince: null,
 		pty: null,
 		scrollback: "",
 	};

@@ -10,6 +10,7 @@ const persistedSessionSchema = z.object({
 	commandType: z.enum(["claude", "run", "assist"]),
 	cwd: z.string(),
 	startedAt: z.number(),
+	runningMs: z.number().optional(),
 	claudeSessionId: z.string().optional(),
 	runName: z.string().optional(),
 	runArgs: z.array(z.string()).optional(),
@@ -46,10 +47,21 @@ function toPersistedSession(session: Session): PersistedSession {
 		commandType: session.commandType,
 		cwd: session.cwd ?? process.cwd(),
 		startedAt: session.startedAt,
+		runningMs: accumulatedRunningMs(session),
 		claudeSessionId: session.claudeSessionId,
 		runName: session.runName,
 		runArgs: session.runArgs,
 		assistArgs: session.assistArgs,
 		activity: session.activity,
 	};
+}
+
+/* why: persistence runs on every broadcast, while a session is still running and
+ * its current stretch is not yet folded into runningMs. Fold the in-flight stretch
+ * in here so the saved total is accurate at any moment; restore stamps a fresh
+ * runningSince, so daemon-down time is never counted. */
+function accumulatedRunningMs(session: Session): number {
+	return session.runningSince != null
+		? session.runningMs + Date.now() - session.runningSince
+		: session.runningMs;
 }

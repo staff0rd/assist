@@ -1,5 +1,6 @@
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { setStatus } from "./setStatus";
 import { disarmEscInterrupt } from "./watchEscInterrupt";
 import { shouldAutoDismiss } from "./shouldAutoDismiss";
 import { shouldAutoRun } from "./shouldAutoRun";
@@ -21,7 +22,7 @@ export function applyStatusChange(
 	 * to avoid a broadcast storm during a long tool-heavy turn. */
 	if (session.status === status) return;
 	daemonLog(`session ${session.id} status: ${session.status} -> ${status}`);
-	session.status = status;
+	setStatus(session, status);
 	if (shouldAutoRun(session, exitCode) && session.activity?.itemId != null) {
 		reuseForRun(session, session.activity.itemId);
 		notify();

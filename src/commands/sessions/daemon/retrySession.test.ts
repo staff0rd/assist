@@ -19,6 +19,8 @@ function makeSession(overrides: Partial<Session>): Session {
 		commandType: "claude",
 		status: "done",
 		startedAt: 123,
+		runningMs: 0,
+		runningSince: null,
 		pty: null,
 		scrollback: "old output",
 		restored: false,

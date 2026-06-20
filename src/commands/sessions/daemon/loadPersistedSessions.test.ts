@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadJson, saveJson } from "../../../shared/loadJson";
 import type { Session } from "./createSession";
 import {
@@ -24,6 +24,8 @@ const validEntry: PersistedSession = {
 	claudeSessionId: "abc-123",
 };
 
+const NOW = 5000;
+
 function fakeSession(overrides: Partial<Session> = {}): Session {
 	return {
 		id: "1",
@@ -31,6 +33,8 @@ function fakeSession(overrides: Partial<Session> = {}): Session {
 		commandType: "claude",
 		status: "running",
 		startedAt: 1,
+		runningMs: 0,
+		runningSince: NOW,
 		pty: {} as Session["pty"],
 		scrollback: "",
 		cwd: "/repo",
@@ -73,6 +77,12 @@ describe("savePersistedSessions", () => {
 describe("persistLiveSessions", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.useFakeTimers();
+		vi.setSystemTime(NOW);
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
 	});
 
 	it("persists only live sessions with a pty", () => {
@@ -90,12 +100,44 @@ describe("persistLiveSessions", () => {
 				commandType: "claude",
 				cwd: "/repo",
 				startedAt: 1,
+				runningMs: 0,
 				claudeSessionId: "abc",
 				runName: undefined,
 				runArgs: undefined,
 				activity: undefined,
 			},
 		]);
+	});
+
+	it("folds the in-flight running stretch into the persisted runningMs", () => {
+		const sessions = new Map<string, Session>([
+			["1", fakeSession({ runningMs: 1000, runningSince: NOW - 2000 })],
+		]);
+
+		persistLiveSessions(sessions);
+
+		const [, persisted] = saveJsonMock.mock.lastCall as [
+			string,
+			PersistedSession[],
+		];
+		expect(persisted[0].runningMs).toBe(3000);
+	});
+
+	it("persists the frozen runningMs of a session that is not running", () => {
+		const sessions = new Map<string, Session>([
+			[
+				"1",
+				fakeSession({ status: "waiting", runningMs: 7000, runningSince: null }),
+			],
+		]);
+
+		persistLiveSessions(sessions);
+
+		const [, persisted] = saveJsonMock.mock.lastCall as [
+			string,
+			PersistedSession[],
+		];
+		expect(persisted[0].runningMs).toBe(7000);
 	});
 
 	it("persists the session's activity so restore can rehydrate it", () => {

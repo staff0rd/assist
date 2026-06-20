@@ -6,12 +6,15 @@ export function createAssistSession(
 	assistArgs: string[],
 	cwd?: string,
 ): Session {
+	const startedAt = Date.now();
 	return {
 		id,
 		name: `assist ${assistArgs.join(" ")}`,
 		commandType: "assist",
 		status: "running",
-		startedAt: Date.now(),
+		startedAt,
+		runningMs: 0,
+		runningSince: startedAt,
 		pty: spawnPty(["assist", ...assistArgs], cwd, id),
 		scrollback: "",
 		assistArgs,

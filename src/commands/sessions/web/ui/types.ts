@@ -12,6 +12,8 @@ export type SessionInfo = {
 	commandType: CommandType;
 	status: SessionStatus;
 	startedAt: number;
+	runningMs?: number;
+	runningSince?: number | null;
 	runName?: string;
 	assistArgs?: string[];
 	cwd?: string;

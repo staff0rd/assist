@@ -13,6 +13,8 @@ export function errorSession(
 		...restoreBase(id, persisted),
 		status: "error",
 		startedAt: persisted.startedAt,
+		runningMs: persisted.runningMs ?? 0,
+		runningSince: null,
 		pty: null,
 		runName: persisted.runName,
 		runArgs: persisted.runArgs,

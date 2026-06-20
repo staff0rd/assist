@@ -9,10 +9,13 @@ export function runningSession(
 	persisted: PersistedSession,
 	pty: Session["pty"],
 ): Session {
+	const startedAt = Date.now();
 	return {
 		...base,
 		status: "running",
-		startedAt: Date.now(),
+		startedAt,
+		runningMs: persisted.runningMs ?? 0,
+		runningSince: startedAt,
 		pty,
 		claudeSessionId: persisted.claudeSessionId,
 		restored: true,

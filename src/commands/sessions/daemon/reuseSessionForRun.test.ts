@@ -24,6 +24,8 @@ function makeSession(overrides: Partial<Session> = {}): Session {
 		commandType: "assist",
 		status: "done",
 		startedAt: 100,
+		runningMs: 0,
+		runningSince: null,
 		pty: null,
 		scrollback: "draft transcript",
 		assistArgs: ["draft", "--once"],

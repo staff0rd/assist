@@ -12,6 +12,8 @@ type Session = {
 	commandType: CommandType;
 	status: SessionStatus;
 	startedAt: number;
+	runningMs: number;
+	runningSince: number | null;
 	pty: ReturnType<typeof spawnClaude> | null;
 	scrollback: string;
 	runName?: string;
@@ -34,6 +36,8 @@ type SessionInfo = {
 	commandType: CommandType;
 	status: string;
 	startedAt: number;
+	runningMs: number;
+	runningSince: number | null;
 	runName?: string;
 	runArgs?: string[];
 	assistArgs?: string[];
@@ -52,12 +56,15 @@ export function createSession(
 	prompt?: string,
 	cwd?: string,
 ): Session {
+	const startedAt = Date.now();
 	return {
 		id,
 		name: prompt?.slice(0, 40) || `Session ${id}`,
 		commandType: "claude",
 		status: "running",
-		startedAt: Date.now(),
+		startedAt,
+		runningMs: 0,
+		runningSince: startedAt,
 		pty: spawnClaude({ prompt, cwd, sessionId: id }),
 		scrollback: "",
 		cwd,
@@ -70,12 +77,15 @@ export function createRunSession(
 	runArgs: string[],
 	cwd?: string,
 ): Session {
+	const startedAt = Date.now();
 	return {
 		id,
 		name: `run: ${runName}`,
 		commandType: "run",
 		status: "running",
-		startedAt: Date.now(),
+		startedAt,
+		runningMs: 0,
+		runningSince: startedAt,
 		pty: spawnRun({ name: runName, args: runArgs, cwd }),
 		scrollback: "",
 		runName,

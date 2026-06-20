@@ -28,7 +28,7 @@ export function SessionCard({
 	onSetAutoRun: (enabled: boolean) => void;
 	onSetAutoAdvance: (enabled: boolean) => void;
 }) {
-	const elapsed = useElapsed(session.startedAt, session.status);
+	const elapsed = useElapsed(session.runningMs, session.runningSince);
 
 	return (
 		<ButtonBase onClick={onClick} sx={cardSx(active)}>

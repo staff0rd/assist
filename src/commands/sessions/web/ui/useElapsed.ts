@@ -1,24 +1,20 @@
-import { useEffect, useRef, useState } from "react";
-import type { SessionStatus } from "./types";
+import { useEffect, useState } from "react";
 
-export function useElapsed(startedAt: number, status: SessionStatus): string {
+export function useElapsed(
+	runningMs = 0,
+	runningSince: number | null = null,
+): string {
 	const [, tick] = useState(0);
-	const isDone = status === "done";
 
 	useEffect(() => {
-		if (isDone) return;
+		if (runningSince == null) return;
 		const id = setInterval(() => tick((n) => n + 1), 1000);
 		return () => clearInterval(id);
-	}, [isDone]);
+	}, [runningSince]);
 
-	const frozenMs = useRef<number | null>(null);
-	if (isDone) {
-		frozenMs.current ??= Date.now() - startedAt;
-	} else {
-		frozenMs.current = null;
-	}
-
-	const secs = Math.floor((frozenMs.current ?? Date.now() - startedAt) / 1000);
+	const totalMs =
+		runningSince == null ? runningMs : runningMs + (Date.now() - runningSince);
+	const secs = Math.floor(totalMs / 1000);
 	const m = Math.floor(secs / 60);
 	const s = secs % 60;
 	if (m >= 60) {

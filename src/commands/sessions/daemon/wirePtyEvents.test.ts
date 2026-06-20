@@ -34,6 +34,8 @@ function fakeSession(overrides: Partial<Session> = {}): Session {
 		commandType: "claude",
 		status: "running",
 		startedAt: 1,
+		runningMs: 0,
+		runningSince: 1,
 		pty: null,
 		scrollback: "",
 		...overrides,

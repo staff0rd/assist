@@ -57,6 +57,8 @@ export function restoreSession(
 		...base,
 		status: "done",
 		startedAt: persisted.startedAt,
+		runningMs: persisted.runningMs ?? 0,
+		runningSince: null,
 		pty: null,
 		runName: persisted.runName,
 		runArgs: persisted.runArgs,

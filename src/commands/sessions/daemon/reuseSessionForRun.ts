@@ -1,5 +1,6 @@
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
+import { setStatus } from "./setStatus";
 import { spawnPty } from "./spawnPty";
 import { wirePtyEvents } from "./wirePtyEvents";
 
@@ -18,8 +19,12 @@ export function reuseSessionForRun(
 	session.assistArgs = assistArgs;
 	session.name = `assist ${assistArgs.join(" ")}`;
 	session.commandType = "assist";
-	session.status = "running";
+	/* why: a reused card is a fresh run, so reset the accumulator alongside
+	 * startedAt; setStatus then stamps a new runningSince. */
 	session.startedAt = Date.now();
+	session.runningMs = 0;
+	session.runningSince = null;
+	setStatus(session, "running");
 	session.restored = undefined;
 	session.pty = spawnPty(["assist", ...assistArgs], session.cwd, session.id);
 	wirePtyEvents(session, clients, onStatusChange);
