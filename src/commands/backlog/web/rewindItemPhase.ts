@@ -6,7 +6,7 @@ import { appendComment } from "../appendComment";
 import { loadItem } from "../loadItem";
 import { resolveRewindPlan } from "../resolveRewindPlan";
 import type { BacklogItem, PlanPhase } from "../types";
-import { parseRewindBody } from "./parseItemBody";
+import { parseRewindBody } from "./parseStatusBody";
 import { findItemOr404 } from "./shared";
 
 export async function rewindItemPhase(

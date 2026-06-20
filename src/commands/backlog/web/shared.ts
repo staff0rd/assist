@@ -8,7 +8,7 @@ import { updateStarred } from "../updateStarred";
 import { updateStatus } from "../updateStatus";
 import { applyCwdFromReq } from "./applyCwdFromReq";
 import { loadVisibleItems } from "./loadVisibleItems";
-import { parseStarBody, parseStatusBody } from "./parseItemBody";
+import { parseStarBody, parseStatusBody } from "./parseStatusBody";
 
 export async function listItems(
 	req: IncomingMessage,
