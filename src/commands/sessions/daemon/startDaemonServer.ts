@@ -33,9 +33,11 @@ export function startDaemonServer(
 
 function startWindowsBridge(manager: SessionManager): void {
 	const port = windowsDaemonPort();
-	const bridge = net.createServer((socket) =>
-		handleConnection(socket, manager),
-	);
+	const bridge = net.createServer((socket) => {
+		// why: keep the WSL<->Windows mapping alive from this end too, so an idle connection survives WSL2's NAT idle drop
+		socket.setKeepAlive(true, 10_000);
+		handleConnection(socket, manager);
+	});
 	bridge.on("error", (e: NodeJS.ErrnoException) =>
 		daemonLog(`windows bridge error: ${e.message}`),
 	);
