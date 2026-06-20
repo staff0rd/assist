@@ -1,3 +1,10 @@
+## [0.305.4](https://github.com/staff0rd/assist/compare/v0.305.3...v0.305.4) (2026-06-20)
+
+
+### Bug Fixes
+
+* poll backlog web view for status ([6a33f50](https://github.com/staff0rd/assist/commit/6a33f50c0dfbdcd4c41bf8ed3a1f9178848de421))
+
 ## [0.305.3](https://github.com/staff0rd/assist/compare/v0.305.2...v0.305.3) (2026-06-20)
 
 
