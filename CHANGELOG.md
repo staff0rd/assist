@@ -1,3 +1,10 @@
+## [0.305.3](https://github.com/staff0rd/assist/compare/v0.305.2...v0.305.3) (2026-06-20)
+
+
+### Bug Fixes
+
+* keepalive on WSL<->Windows proxy ([e35c977](https://github.com/staff0rd/assist/commit/e35c977da77b46a58a969e83c8ae0c4c470b7ace))
+
 ## [0.305.2](https://github.com/staff0rd/assist/compare/v0.305.1...v0.305.2) (2026-06-19)
 
 
