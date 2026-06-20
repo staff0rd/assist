@@ -224,6 +224,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist sql mutate "<sql>" [connection]` - Execute a mutating SQL statement and print rows affected (rejects non-mutating statements like pure SELECTs)
 - `assist sql tables [connection]` - List tables in the connected database (via INFORMATION_SCHEMA.TABLES)
 - `assist sql columns <table> [connection]` - List columns for a table (use `schema.table` for non-default schema; via INFORMATION_SCHEMA.COLUMNS)
+- `assist netcap [-p, --port <port>]` - Start a local receiver that captures browser network traffic to a JSONL file (default `~/.assist/netcap/capture.jsonl`), paired with the netcap browser extension. Sends permissive CORS, logs each ping/capture live, and runs until Ctrl-C (default port `8723`). See [netcap browser extension](#netcap-browser-extension)
 - `assist screenshot <process>` - Capture a screenshot of a running application window (e.g. `assist screenshot notepad`). Output directory is configurable via `screenshot.outputDir` (default `./screenshots`)
 - `assist handover save --summary <s>` - Save a session handover note to the backlog DB (content read from stdin), scoped by the repo's git origin. Appends a new row each call; `--summary` is the one-line description shown when recalling
 - `assist handover list` - List unrecalled handovers for this repo, most recent first, one per line as tab-separated `id`, ISO-8601 created timestamp, and one-line summary. Prints nothing when none are pending
@@ -273,3 +274,14 @@ When iterating on assist itself: web server changes only need the `assist sessio
 
 When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist refine`, `assist next`, and `assist backlog run` run `git pull --ff-only` before doing anything else; if the pull fails the command aborts. `assist next` pulls once per invocation, not per item in its loop.
 
+
+## netcap browser extension
+
+`assist netcap` only runs the receiver; the browser side is a raw Manifest V3 extension (no build step) under `netcap-extension/`. A MAIN-world content script patches `fetch`/`XMLHttpRequest` to capture `{url, method, status, requestBody, responseBody, timestamp}`, relays each entry to the background service worker (`window.postMessage` → `chrome.runtime.sendMessage`), and the background worker POSTs it to the receiver. Forwarding happens in the background context, so the page's CSP (`connect-src`) never blocks it — the limitation that killed the earlier console-paste approach.
+
+1. Run `assist netcap` — it prints the receiver URL, the capture file path, and the absolute path to the extension directory to load. The receiver host/port is baked into the extension's `background.js` at this point. Under WSL (where the browser runs on the Windows host, cannot load from a WSL path, and cannot reach the receiver on `localhost` because WSL2 localhost forwarding is unreliable) it copies the extension to `C:\tools\netcap-extension`, targets the WSL VM's IP, and prints that Windows path instead. Re-run `assist netcap` after a reboot (the WSL IP can change) and reload the extension.
+2. Load the unpacked extension:
+   - **Firefox**: open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → pick `manifest.json` inside the printed extension directory. (Requires Firefox 128+ for MAIN-world content scripts.)
+   - **Chrome**: open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select the extension directory.
+3. On load the background worker pings the receiver; `ping from extension` appears in the `assist netcap` log, confirming browser→server connectivity.
+4. Browse a site (e.g. LinkedIn activity); matching requests append to the capture file live and survive page refreshes. The extension targets `http://127.0.0.1:8723`; if you change `--port`, edit `RECEIVER` in `netcap-extension/background.js`.

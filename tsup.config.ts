@@ -18,6 +18,9 @@ export default defineConfig({
 		cpSync("src/commands/voice/python", "dist/commands/voice/python", {
 			recursive: true,
 		});
+		cpSync("netcap-extension", "dist/commands/netcap/netcap-extension", {
+			recursive: true,
+		});
 		await build({
 			entryPoints: ["src/commands/sessions/web/ui/App.tsx"],
 			bundle: true,

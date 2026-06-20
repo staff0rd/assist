@@ -5,5 +5,5 @@
 		"oxlint-rules/filenameConvention.ts"
 	],
 	"ignoreDependencies": ["oxlint", "oxfmt", "jscpd", "@vitest/coverage-v8"],
-	"ignore": ["**/.venv/**"]
+	"ignore": ["**/.venv/**", "netcap-extension/**"]
 }

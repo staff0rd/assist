@@ -1,0 +1,25 @@
+{
+	"manifest_version": 3,
+	"name": "assist netcap",
+	"version": "1.0.0",
+	"description": "Captures fetch/XHR traffic and forwards it to the local assist netcap receiver.",
+	"host_permissions": ["http://*/*"],
+	"background": {
+		"service_worker": "background.js",
+		"scripts": ["background.js"]
+	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["interceptor.js"],
+			"run_at": "document_start",
+			"world": "MAIN"
+		},
+		{
+			"matches": ["<all_urls>"],
+			"js": ["relay.js"],
+			"run_at": "document_start",
+			"world": "ISOLATED"
+		}
+	]
+}
