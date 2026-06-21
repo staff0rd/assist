@@ -1,3 +1,10 @@
+# [0.312.0](https://github.com/staff0rd/assist/compare/v0.311.0...v0.312.0) (2026-06-21)
+
+
+### Features
+
+* replace verify --timer with --measure ([3804ade](https://github.com/staff0rd/assist/commit/3804adee70fd8c8396bbc671b4d1ad71b6c82b75))
+
 # [0.311.0](https://github.com/staff0rd/assist/compare/v0.310.5...v0.311.0) (2026-06-21)
 
 
