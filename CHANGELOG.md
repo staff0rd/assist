@@ -1,3 +1,20 @@
+# [0.308.0](https://github.com/staff0rd/assist/compare/v0.307.0...v0.308.0) (2026-06-21)
+
+
+### Bug Fixes
+
+* animate chip only while running ([9ece72e](https://github.com/staff0rd/assist/commit/9ece72eb004abb6036d888ae5e0d6e8728b376d3))
+* bind session to its own transcript ([cf58884](https://github.com/staff0rd/assist/commit/cf588843d27df645b6b72e88e7f0136ac43ec246))
+* clean done state for restored update ([a349227](https://github.com/staff0rd/assist/commit/a349227d46cfd33100b302875eb91c44a71dbc2c))
+* honor Cmd+C/Cmd+V in terminal ([2070f98](https://github.com/staff0rd/assist/commit/2070f98fac087b38cfa5b9f48bc37f793352a9cf))
+
+
+### Features
+
+* add prs reply command ([e6e1549](https://github.com/staff0rd/assist/commit/e6e154992ca2dd62cb80a3cb3895a773b8796a27))
+* label toggle Dismiss in review ([8cb87b8](https://github.com/staff0rd/assist/commit/8cb87b8ae5880cf94d32e2240e909f9ffb236f45))
+* pause backlog run at review phase ([c9640db](https://github.com/staff0rd/assist/commit/c9640dbfba890685cb73e6dd06ef4c04fd59d35b))
+
 # [0.307.0](https://github.com/staff0rd/assist/compare/v0.306.0...v0.307.0) (2026-06-21)
 
 
