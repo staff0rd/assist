@@ -1,3 +1,10 @@
+# [0.307.0](https://github.com/staff0rd/assist/compare/v0.306.0...v0.307.0) (2026-06-21)
+
+
+### Features
+
+* extract LinkedIn posts from netcap ([f9de668](https://github.com/staff0rd/assist/commit/f9de6682082f683c64bb583773786d6a42fd6616))
+
 # [0.306.0](https://github.com/staff0rd/assist/compare/v0.305.4...v0.306.0) (2026-06-20)
 
 
