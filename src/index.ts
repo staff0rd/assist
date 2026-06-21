@@ -9,6 +9,7 @@ import { lint } from "./commands/lint/lint";
 import { registerNew } from "./commands/new/registerNew";
 import { notify } from "./commands/notify";
 import { registerActivity } from "./commands/registerActivity";
+import { registerBackup } from "./commands/registerBackup";
 import { registerBacklog } from "./commands/registerBacklog";
 import { registerCliHook } from "./commands/registerCliHook";
 import { registerComplexity } from "./commands/registerComplexity";
@@ -129,6 +130,7 @@ program
 	.action(screenshot);
 
 registerActivity(program);
+registerBackup(program);
 registerCliHook(program);
 registerGithub(program);
 registerHandover(program);

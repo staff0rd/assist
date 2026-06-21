@@ -9,7 +9,13 @@ const transcriptConfigSchema = z.strictObject({
 
 const DEFAULT_WAKE_WORDS = ["computer"];
 const DEFAULT_MODELS_DIR = "~/.assist/voice/models";
+const DEFAULT_BACKUP_DIR = "~/.assist/backups";
 export const assistConfigSchema = z.strictObject({
+	backup: z
+		.strictObject({
+			dir: z.string().default(DEFAULT_BACKUP_DIR),
+		})
+		.default({ dir: DEFAULT_BACKUP_DIR }),
 	commit: z
 		.strictObject({
 			conventional: z.boolean().default(false),

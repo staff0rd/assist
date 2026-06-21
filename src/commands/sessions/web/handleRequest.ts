@@ -8,6 +8,7 @@ import { getBacklogExists } from "../../backlog/web/getBacklogExists";
 import { handleItemRoute } from "../../backlog/web/handleItemRoute";
 import { initBacklog } from "../../backlog/web/initBacklog";
 import { listItems } from "../../backlog/web/shared";
+import { getBackups } from "./getBackups";
 import { getHtml } from "./getHtml";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
@@ -56,6 +57,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/git-status": gitStatus,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/usage/history": listUsageHistory,
+	"GET /api/backups/list": getBackups,
 };
 
 export const handleRequest = createFallbackHandler(

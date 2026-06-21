@@ -7,9 +7,11 @@ import {
 	primaryKey,
 	text,
 } from "drizzle-orm/pg-core";
+import { backups } from "./backups";
 import { handovers } from "./handovers";
 import { usagePeaks } from "./usagePeaks";
 
+export { backups } from "./backups";
 export { handovers } from "./handovers";
 export { usagePeaks } from "./usagePeaks";
 
@@ -111,6 +113,7 @@ export const schema = {
 	feeds,
 	handovers,
 	usagePeaks,
+	backups,
 };
 
 export type ItemRow = typeof items.$inferSelect;

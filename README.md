@@ -80,6 +80,7 @@ After installation, the `assist` command will be available globally. You can als
 ## CLI Commands
 
 - `assist activity [--since <date>]` - Chart GitHub commit activity per day (defaults to last 30 days)
+- `assist backup [--out <dir>]` - Write a dump of the entire backlog database to `<dir>/backup-<timestamp>.dump` (default dir `~/.assist/backups`, overridable via the `backup.dir` config key or `--out`) and record the dump's path and byte size in the backups table; on failure no row is recorded and the command exits with an error
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project

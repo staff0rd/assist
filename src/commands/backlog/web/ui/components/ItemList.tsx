@@ -1,5 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
+import { LastBackedUp } from "../../../../sessions/web/ui/LastBackedUp";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 import { useSearchItems } from "../useSearchItems";
@@ -30,6 +31,7 @@ function Header() {
 				Backlog
 			</Typography>
 			<Stack direction="row" spacing={2} sx={actionsSx}>
+				<LastBackedUp />
 				<CompletedToggle />
 			</Stack>
 		</Stack>
