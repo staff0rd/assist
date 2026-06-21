@@ -1,3 +1,10 @@
+# [0.311.0](https://github.com/staff0rd/assist/compare/v0.310.5...v0.311.0) (2026-06-21)
+
+
+### Features
+
+* add backup command and backups view ([c641669](https://github.com/staff0rd/assist/commit/c641669e50739d513cbefc3d360a409d099c1821))
+
 ## [0.310.5](https://github.com/staff0rd/assist/compare/v0.310.4...v0.310.5) (2026-06-21)
 
 
