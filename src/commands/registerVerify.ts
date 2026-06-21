@@ -16,7 +16,10 @@ export function registerVerify(program: Command): void {
 			"[scope]",
 			'Use "all" to run all checks, ignoring diff-based filters',
 		)
-		.option("--timer", "Show timing information for each task as they complete")
+		.option(
+			"--measure",
+			"Print a summary table of each command's status and duration after the run",
+		)
 		.option("--verbose", "Show all output (bypass CLAUDECODE suppression)")
 		.action((scope, options) => {
 			if (scope && scope !== "all") {

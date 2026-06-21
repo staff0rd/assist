@@ -1,4 +1,5 @@
 import { filterByChangedFiles } from "./filterByChangedFiles";
+import { printMeasureTable } from "./printMeasureTable";
 import { resolveEntries } from "./resolveEntries";
 import { handleResults, runAllEntries } from "./runAllEntries";
 import { setVerbose } from "./spawnCommand";
@@ -11,7 +12,7 @@ function printEntryList(entries: { name: string }[]): void {
 }
 
 export async function run(
-	options: { timer?: boolean; all?: boolean; verbose?: boolean } = {},
+	options: { measure?: boolean; all?: boolean; verbose?: boolean } = {},
 ): Promise<void> {
 	setVerbose(!!options.verbose);
 	const allEntries = resolveEntries();
@@ -28,6 +29,9 @@ export async function run(
 	}
 
 	printEntryList(entries);
-	const results = await runAllEntries(entries, options.timer ?? false);
+	const { results, totalMs } = await runAllEntries(entries);
+	if (options.measure) {
+		printMeasureTable(results, totalMs);
+	}
 	handleResults(results, entries.length);
 }

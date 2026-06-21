@@ -158,6 +158,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
   - `prs.slack` - The Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector
 - `assist verify` - Run all verify:* commands in parallel (from run configs in assist.yml and scripts in package.json)
 - `assist verify all` - Run all checks, ignoring diff-based filters
+- `assist verify --measure` - After the run, print a summary table of each command's status and duration (slowest first) plus a wall-clock total
 - `assist verify init` - Add verify scripts to a project (writes to `assist.yml` by default; pass `--package-json` to write to `package.json` scripts instead)
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
 - `assist verify comment-policy` - Flag comments added on changed lines (staged + unstaged) unless they carry a justification marker; supports `commentPolicy.markers` and `commentPolicy.ignore` globs in config

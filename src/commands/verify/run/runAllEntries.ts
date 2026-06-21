@@ -1,16 +1,17 @@
-import {
-	createTimerCallback,
-	initTaskStatuses,
-	logFailedScripts,
-} from "./createTimerCallback";
+import type { MeasureRecord } from "./printMeasureTable";
 import type { VerifyEntry } from "./resolveEntries";
 import { collectOutput, flushIfFailed, spawnCommand } from "./spawnCommand";
 
-function runEntry(
-	entry: VerifyEntry,
-	onComplete?: (code: number) => void,
-): Promise<{ script: string; code: number }> {
+function logFailedScripts(failed: MeasureRecord[]): void {
+	console.error(`\n${failed.length} script(s) failed:`);
+	for (const f of failed) {
+		console.error(`  - ${f.script} (exit code ${f.code})`);
+	}
+}
+
+function runEntry(entry: VerifyEntry): Promise<MeasureRecord> {
 	return new Promise((resolve) => {
+		const startTime = Date.now();
 		const child = spawnCommand(
 			entry.fullCommand,
 			entry.cwd,
@@ -22,32 +23,31 @@ function runEntry(
 		child.on("close", (code) => {
 			const exitCode = code ?? 1;
 			flushIfFailed(exitCode, chunks);
-			onComplete?.(exitCode);
-			resolve({ script: entry.name, code: exitCode });
+			resolve({
+				script: entry.name,
+				code: exitCode,
+				durationMs: Date.now() - startTime,
+			});
 		});
 	});
 }
 
-function exitIfFailed(failed: { script: string; code: number }[]): void {
+function exitIfFailed(failed: MeasureRecord[]): void {
 	if (failed.length === 0) return;
 	logFailedScripts(failed);
 	process.exit(1);
 }
 
-export function runAllEntries(entries: VerifyEntry[], timer: boolean) {
-	const taskStatuses = initTaskStatuses(entries.map((e) => e.name));
-	return Promise.all(
-		entries.map((entry, index) =>
-			runEntry(
-				entry,
-				timer ? createTimerCallback(taskStatuses, index) : undefined,
-			),
-		),
-	);
+export async function runAllEntries(
+	entries: VerifyEntry[],
+): Promise<{ results: MeasureRecord[]; totalMs: number }> {
+	const startTime = Date.now();
+	const results = await Promise.all(entries.map((entry) => runEntry(entry)));
+	return { results, totalMs: Date.now() - startTime };
 }
 
 export function handleResults(
-	results: { script: string; code: number }[],
+	results: MeasureRecord[],
 	totalCount: number,
 ): void {
 	exitIfFailed(results.filter((r) => r.code !== 0));
