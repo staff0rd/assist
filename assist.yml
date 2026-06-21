@@ -179,10 +179,10 @@ run:
       - tail -f assist-test.txt
 deny:
   - pattern: assist build
-    message: it's /verify, use the skill, don't try to build separately
+    message: STOP. Do not attempt any workaround. This is a verify command and must be run via /verify (the skill). Do not build, typecheck, or lint separately — invoke /verify now.
   - pattern: npx tsc
-    message: Use /verify
+    message: STOP. Do not attempt any workaround. Typechecking is a verify command and must be run via /verify (the skill). Do not try tsc, build, or any alternative — invoke /verify now.
   - pattern: npx tsup
-    message: use /verify
+    message: STOP. Do not attempt any workaround. Building is a verify command and must be run via /verify (the skill). Do not try tsup, tsc, or any alternative — invoke /verify now.
   - pattern: npm run build
-    message: use /verify
+    message: STOP. Do not attempt any workaround. Building is a verify command and must be run via /verify (the skill). Do not try npm run, tsc, tsup, or any alternative — invoke /verify now.
