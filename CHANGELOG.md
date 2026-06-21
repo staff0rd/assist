@@ -1,3 +1,10 @@
+## [0.310.3](https://github.com/staff0rd/assist/compare/v0.310.2...v0.310.3) (2026-06-21)
+
+
+### Bug Fixes
+
+* show newest usage segment on top ([72fb668](https://github.com/staff0rd/assist/commit/72fb6681012802bb3d5456d14fa17402d6f941c1))
+
 ## [0.310.2](https://github.com/staff0rd/assist/compare/v0.310.1...v0.310.2) (2026-06-21)
 
 
