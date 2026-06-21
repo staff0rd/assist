@@ -1,3 +1,10 @@
+## [0.310.5](https://github.com/staff0rd/assist/compare/v0.310.4...v0.310.5) (2026-06-21)
+
+
+### Bug Fixes
+
+* extract article-card links in netcap ([3884a20](https://github.com/staff0rd/assist/commit/3884a205ad663e18e0d59a4a05243968c7034cc0))
+
 ## [0.310.4](https://github.com/staff0rd/assist/compare/v0.310.3...v0.310.4) (2026-06-21)
 
 
