@@ -5,9 +5,11 @@ import { usagePeaks } from "./schema";
 export type UsagePeakRow = typeof usagePeaks.$inferSelect;
 
 /**
- * All recorded per-cycle usage peaks, newest first throughout: descending
- * `resetsAt`, then `window`, then `segment` descending so a reset cycle shows
- * its current post-reset value on top with the badged pre-reset peak beneath.
+ * All recorded usage peaks, newest cycle first (descending `resetsAt`) with
+ * `window` as a stable cross-window tiebreak, then `createdAt` descending so a
+ * cycle's segments stack newest-first by when each reading landed — the current
+ * post-reset value on top, earlier (badged) pre-reset peaks beneath. `segment`
+ * is a final tiebreak should two readings share a timestamp.
  */
 export async function listUsagePeaks(db: Db): Promise<UsagePeakRow[]> {
 	return db
@@ -16,6 +18,7 @@ export async function listUsagePeaks(db: Db): Promise<UsagePeakRow[]> {
 		.orderBy(
 			desc(usagePeaks.resetsAt),
 			usagePeaks.window,
+			desc(usagePeaks.createdAt),
 			desc(usagePeaks.segment),
 		);
 }
