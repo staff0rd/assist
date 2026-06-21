@@ -76,9 +76,34 @@ export const SCHEMA = `
 	CREATE TABLE IF NOT EXISTS usage_peaks (
 		"window" TEXT NOT NULL,
 		resets_at BIGINT NOT NULL,
+		segment INTEGER NOT NULL DEFAULT 0,
 		used_percentage DOUBLE PRECISION NOT NULL,
-		PRIMARY KEY ("window", resets_at)
+		reset_detected BOOLEAN NOT NULL DEFAULT false,
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		PRIMARY KEY ("window", resets_at, segment)
 	);
+
+	-- Backfill columns on databases created before reset/segment tracking existed.
+	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS reset_detected BOOLEAN NOT NULL DEFAULT false;
+	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS segment INTEGER NOT NULL DEFAULT 0;
+	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
+
+	-- Widen the primary key to include segment so a cycle can hold both its
+	-- pre-reset peak and its post-reset continuation. Idempotent: only fires
+	-- while the legacy two-column key is still in place.
+	DO $$
+	BEGIN
+		IF EXISTS (
+			SELECT 1 FROM pg_constraint
+			WHERE conname = 'usage_peaks_pkey'
+			  AND conrelid = 'usage_peaks'::regclass
+			  AND array_length(conkey, 1) = 2
+		) THEN
+			ALTER TABLE usage_peaks DROP CONSTRAINT usage_peaks_pkey;
+			ALTER TABLE usage_peaks ADD CONSTRAINT usage_peaks_pkey
+				PRIMARY KEY ("window", resets_at, segment);
+		END IF;
+	END $$;
 `;
 
 /**

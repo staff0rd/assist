@@ -1,40 +1,27 @@
-import { sql } from "drizzle-orm";
 import type { RateLimits } from "../RateLimits";
 import type { Db } from "./Db";
-import { usagePeaks } from "./schema";
+import { recordWindowPeak } from "./recordWindowPeak";
 
 const WINDOWS = ["five_hour", "seven_day"] as const;
 
 /**
- * Upsert the peak usage for each present rate-limit window, keyed by the window's
- * reset time, keeping the maximum percentage ever seen for that cycle
- * (`GREATEST`). Windows missing a `resets_at` or `used_percentage` are skipped;
- * with nothing to record the call is a no-op.
+ * Record the latest reading for each present rate-limit window against its
+ * cycle (keyed by `resets_at`), delegating the per-window peak/reset bookkeeping
+ * to {@link recordWindowPeak}. Windows missing a `resets_at` or
+ * `used_percentage` are skipped.
  */
 export async function recordUsagePeak(
 	db: Db,
 	rateLimits: RateLimits,
 ): Promise<void> {
-	const rows = WINDOWS.flatMap((window) => {
+	for (const window of WINDOWS) {
 		const w = rateLimits[window];
-		if (!w) return [];
 		if (
+			!w ||
 			typeof w.resets_at !== "number" ||
 			typeof w.used_percentage !== "number"
 		)
-			return [];
-		return [
-			{ window, resetsAt: w.resets_at, usedPercentage: w.used_percentage },
-		];
-	});
-	if (rows.length === 0) return;
-	await db
-		.insert(usagePeaks)
-		.values(rows)
-		.onConflictDoUpdate({
-			target: [usagePeaks.window, usagePeaks.resetsAt],
-			set: {
-				usedPercentage: sql`GREATEST(${usagePeaks.usedPercentage}, excluded.used_percentage)`,
-			},
-		});
+			continue;
+		await recordWindowPeak(db, window, w.resets_at, w.used_percentage);
+	}
 }

@@ -35,9 +35,60 @@ describe("listUsagePeaks", () => {
 			});
 
 			expect(await listUsagePeaks(orm)).toEqual([
-				{ window: "five_hour", resetsAt: 3000, usedPercentage: 20 },
-				{ window: "seven_day", resetsAt: 2000, usedPercentage: 30 },
-				{ window: "five_hour", resetsAt: 1000, usedPercentage: 10 },
+				{
+					window: "five_hour",
+					resetsAt: 3000,
+					segment: 0,
+					usedPercentage: 20,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+				{
+					window: "seven_day",
+					resetsAt: 2000,
+					segment: 0,
+					usedPercentage: 30,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+				{
+					window: "five_hour",
+					resetsAt: 1000,
+					segment: 0,
+					usedPercentage: 10,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+			]);
+		});
+	});
+
+	describe("when a cycle was reset mid-window", () => {
+		it("returns the pre-reset peak before its post-reset continuation", async () => {
+			await recordUsagePeak(orm, {
+				seven_day: { used_percentage: 35, resets_at: 2000 },
+			});
+			await recordUsagePeak(orm, {
+				seven_day: { used_percentage: 8, resets_at: 2000 },
+			});
+
+			expect(await listUsagePeaks(orm)).toEqual([
+				{
+					window: "seven_day",
+					resetsAt: 2000,
+					segment: 0,
+					usedPercentage: 35,
+					resetDetected: true,
+					createdAt: expect.any(Date),
+				},
+				{
+					window: "seven_day",
+					resetsAt: 2000,
+					segment: 1,
+					usedPercentage: 8,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
 			]);
 		});
 	});
@@ -50,8 +101,22 @@ describe("listUsagePeaks", () => {
 			});
 
 			expect(await listUsagePeaks(orm)).toEqual([
-				{ window: "five_hour", resetsAt: 5000, usedPercentage: 40 },
-				{ window: "seven_day", resetsAt: 5000, usedPercentage: 60 },
+				{
+					window: "five_hour",
+					resetsAt: 5000,
+					segment: 0,
+					usedPercentage: 40,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+				{
+					window: "seven_day",
+					resetsAt: 5000,
+					segment: 0,
+					usedPercentage: 60,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
 			]);
 		});
 	});
