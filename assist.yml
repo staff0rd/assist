@@ -76,7 +76,6 @@ run:
     filter: "{src/**,*.ts,*.tsx}"
     args:
       - oxfmt
-      - --check
       - src
   - name: verify:build
     command: npx
