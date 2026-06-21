@@ -2,6 +2,7 @@ commit:
   conventional: true
   pull: true
   push: true
+  expectedBranch: main
 devlog:
   name: assist
 notify:

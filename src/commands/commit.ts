@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import { loadConfig } from "../shared/loadConfig";
 import { shellQuote } from "../shared/shellQuote";
 import type { AssistConfig } from "../shared/types";
+import { warnIfUnexpectedBranch } from "../shared/warnIfUnexpectedBranch";
 import { validateMessage } from "./commit/validateMessage";
 
 function commitStaged(message: string): string {
@@ -23,6 +24,7 @@ function execCommit(
 	config: AssistConfig,
 ): void {
 	try {
+		warnIfUnexpectedBranch(config);
 		if (config.commit?.pull) {
 			execSync("git pull --autostash", { stdio: "inherit" });
 		}

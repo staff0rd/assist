@@ -15,6 +15,7 @@ export const assistConfigSchema = z.strictObject({
 			conventional: z.boolean().default(false),
 			pull: z.boolean().default(false),
 			push: z.boolean().default(false),
+			expectedBranch: z.string().optional(),
 		})
 		.default({ conventional: false, pull: false, push: false }),
 	devlog: z
