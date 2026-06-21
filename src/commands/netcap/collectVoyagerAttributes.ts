@@ -38,18 +38,33 @@ function hashtagsFrom(details: Json[]): string[] {
 	return [...new Set(tags)];
 }
 
-function linksFrom(details: Json[]): string[] {
-	const links = details
+function textLinksFrom(details: Json[]): string[] {
+	return details
 		.map((detail) => asObject(detail.textLink)?.url)
 		.filter((url): url is string => typeof url === "string");
-	return dedupeLinks(links);
+}
+
+// why: an attached article preview card carries its outbound url on the article component's navigation context, not in the commentary text attributes
+function articleCardLinksFrom(update: Json): string[] {
+	const article = asObject(asObject(update.content)?.articleComponent);
+	const url = asObject(article?.navigationContext)?.actionTarget;
+	return typeof url === "string" ? [url] : [];
+}
+
+function linksFrom(update: Json, details: Json[]): string[] {
+	return dedupeLinks([
+		...textLinksFrom(details),
+		...articleCardLinksFrom(update),
+	]);
 }
 
 /**
  * Pull the mentions, hashtags, and links out of a voyager update's commentary
  * text attributes. A profile-mention attribute carries an opaque profile urn,
  * resolved to a vanity slug and name via `profiles`; a hashtag attribute names
- * its tag inside its urn; a text-link attribute carries the outbound url.
+ * its tag inside its urn; a text-link attribute carries the outbound url. An
+ * attached article preview card contributes its url too, taken from the update's
+ * article component rather than the commentary text attributes.
  */
 export function collectVoyagerAttributes(
 	update: Json,
@@ -60,6 +75,6 @@ export function collectVoyagerAttributes(
 	return {
 		mentions: mentionsFrom(details, profiles, authorSlug),
 		hashtags: hashtagsFrom(details),
-		links: linksFrom(details),
+		links: linksFrom(update, details),
 	};
 }

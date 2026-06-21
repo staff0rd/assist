@@ -104,6 +104,51 @@ describe("extractVoyagerPosts", () => {
 		expect(post.links).toEqual(["https://lnkd.in/abc"]);
 	});
 
+	describe("when the outbound link is an attached article card", () => {
+		const cardCommentary = {
+			text: { text: "I blogged about static web apps" },
+		};
+		const withCard = {
+			...update(cardCommentary),
+			content: {
+				articleComponent: {
+					navigationContext: {
+						actionTarget:
+							"https://staffordwilliams.com/blog/2024/10/14/netlify-azure-static-webapps/",
+					},
+				},
+			},
+		};
+
+		it("should include the card url in links", () => {
+			const [p] = extractVoyagerPosts(body([withCard], []));
+			expect(p.links).toEqual([
+				"https://staffordwilliams.com/blog/2024/10/14/netlify-azure-static-webapps/",
+			]);
+		});
+	});
+
+	describe("when a post has both an inline link and an article card", () => {
+		const withBoth = {
+			...update(commentary),
+			content: {
+				articleComponent: {
+					navigationContext: {
+						actionTarget: "https://staffordwilliams.com/blog/post/",
+					},
+				},
+			},
+		};
+
+		it("should include both urls in links", () => {
+			const [p] = extractVoyagerPosts(body([withBoth], [profile]));
+			expect(p.links).toEqual([
+				"https://lnkd.in/abc",
+				"https://staffordwilliams.com/blog/post/",
+			]);
+		});
+	});
+
 	describe("when the update carries no commentary", () => {
 		it("should skip it", () => {
 			expect(extractVoyagerPosts(body([update(null)], []))).toHaveLength(0);
