@@ -3,9 +3,16 @@
 // startup it pings the receiver (the connectivity spike) and thereafter
 // forwards every captured entry relayed from the content scripts.
 const RECEIVER = "http://127.0.0.1:8723/";
+const FILTER = "";
 
 function ping() {
 	fetch(`${RECEIVER}ping`, { method: "GET" }).catch(() => {});
+}
+
+// why: duplicates matchesNetcapFilter (src/commands/netcap) — plain JS, no TS import
+function matchesFilter(url) {
+	if (!FILTER) return true;
+	return typeof url === "string" && url.includes(FILTER);
 }
 
 ping();
@@ -14,6 +21,7 @@ chrome.runtime.onStartup?.addListener(ping);
 
 chrome.runtime.onMessage.addListener((message) => {
 	if (!message || message.type !== "netcap-entry") return;
+	if (!matchesFilter(message.entry && message.entry.url)) return;
 	fetch(RECEIVER, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },

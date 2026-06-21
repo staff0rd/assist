@@ -17,19 +17,25 @@ function lanIPv4(): string | undefined {
 	return undefined;
 }
 
-async function setReceiverHost(
+async function configureBackground(
 	dir: string,
 	host: string,
 	port: number,
+	filter: string,
 ): Promise<void> {
 	const file = join(dir, "background.js");
 	const source = await readFile(file, "utf8");
 	await writeFile(
 		file,
-		source.replace(
-			/const RECEIVER = "[^"]*";/,
-			`const RECEIVER = "http://${host}:${port}/";`,
-		),
+		source
+			.replace(
+				/const RECEIVER = "[^"]*";/,
+				`const RECEIVER = "http://${host}:${port}/";`,
+			)
+			.replace(
+				/const FILTER = "[^"]*";/,
+				`const FILTER = ${JSON.stringify(filter)};`,
+			),
 	);
 }
 
@@ -40,10 +46,13 @@ async function setReceiverHost(
  * forwarding is unreliable), so copy the extension to a Windows-accessible
  * directory and target the WSL VM's IP instead.
  */
-export async function prepareExtensionForLoad(port: number): Promise<string> {
+export async function prepareExtensionForLoad(
+	port: number,
+	filter = "",
+): Promise<string> {
 	const source = netcapExtensionDir();
 	if (detectPlatform() !== "wsl") {
-		await setReceiverHost(source, "127.0.0.1", port);
+		await configureBackground(source, "127.0.0.1", port, filter);
 		return source;
 	}
 	const host = lanIPv4();
@@ -51,12 +60,12 @@ export async function prepareExtensionForLoad(port: number): Promise<string> {
 		console.log(
 			chalk.yellow("could not determine the WSL IP for the extension"),
 		);
-		await setReceiverHost(source, "127.0.0.1", port);
+		await configureBackground(source, "127.0.0.1", port, filter);
 		return source;
 	}
 	try {
 		await cp(source, WSL_WINDOWS_DIR, { recursive: true });
-		await setReceiverHost(WSL_WINDOWS_DIR, host, port);
+		await configureBackground(WSL_WINDOWS_DIR, host, port, filter);
 		return WSL_WINDOWS_PATH;
 	} catch {
 		console.log(

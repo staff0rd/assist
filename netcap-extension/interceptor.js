@@ -57,6 +57,24 @@
 		};
 	}
 
+	// why: voyager GraphQL uses responseType "json"/"blob" (no responseText), so reading responseText alone captured them empty
+	function xhrResponseBody(xhr) {
+		try {
+			const type = xhr.responseType;
+			if (type === "" || type === "text") return xhr.responseText ?? "";
+			if (type === "json")
+				return xhr.response == null ? "" : JSON.stringify(xhr.response);
+			if (type === "arraybuffer")
+				return new TextDecoder().decode(xhr.response);
+			if (type === "document")
+				return xhr.response?.documentElement?.outerHTML ?? "";
+			if (type === "blob") return xhr.response;
+		} catch {
+			// ignore: response unavailable for this responseType
+		}
+		return "";
+	}
+
 	const OriginalXHR = window.XMLHttpRequest;
 	if (OriginalXHR) {
 		const open = OriginalXHR.prototype.open;
@@ -70,22 +88,24 @@
 			if (meta) {
 				meta.requestBody = bodyToString(body);
 				this.addEventListener("loadend", () => {
-					let responseBody = "";
-					try {
-						if (this.responseType === "" || this.responseType === "text") {
-							responseBody = this.responseText;
-						}
-					} catch {
-						// ignore: responseText unavailable for this responseType
+					const emit = (responseBody) =>
+						post({
+							url: meta.url,
+							method: meta.method,
+							status: this.status,
+							requestBody: meta.requestBody ?? null,
+							responseBody,
+							timestamp: Date.now(),
+						});
+					const value = xhrResponseBody(this);
+					if (value instanceof Blob) {
+						value
+							.text()
+							.then(emit)
+							.catch(() => emit(""));
+					} else {
+						emit(value);
 					}
-					post({
-						url: meta.url,
-						method: meta.method,
-						status: this.status,
-						requestBody: meta.requestBody ?? null,
-						responseBody,
-						timestamp: Date.now(),
-					});
 				});
 			}
 			return send.call(this, body);
