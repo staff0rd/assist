@@ -1,3 +1,10 @@
+## [0.310.4](https://github.com/staff0rd/assist/compare/v0.310.3...v0.310.4) (2026-06-21)
+
+
+### Bug Fixes
+
+* order usage segments by created_at ([b62ec30](https://github.com/staff0rd/assist/commit/b62ec30dcf1063451b68475d977f3452bc5d6f93))
+
 ## [0.310.3](https://github.com/staff0rd/assist/compare/v0.310.2...v0.310.3) (2026-06-21)
 
 
