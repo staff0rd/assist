@@ -1,3 +1,10 @@
+# [0.310.0](https://github.com/staff0rd/assist/compare/v0.309.0...v0.310.0) (2026-06-21)
+
+
+### Features
+
+* add permalink to extracted posts ([a30a422](https://github.com/staff0rd/assist/commit/a30a422de409cfbc6976eaa1a37f462aac399e5f))
+
 # [0.309.0](https://github.com/staff0rd/assist/compare/v0.308.0...v0.309.0) (2026-06-21)
 
 
