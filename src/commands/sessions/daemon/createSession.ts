@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { FSWatcher } from "node:fs";
 import type { Activity } from "../../../shared/emitActivity";
 import { spawnClaude } from "./spawnClaude";
@@ -52,23 +53,34 @@ type SessionInfo = {
 
 export type { Session, SessionInfo, SessionStatus };
 
+function runningBase(id: string) {
+	const startedAt = Date.now();
+	return {
+		id,
+		status: "running" as const,
+		startedAt,
+		runningMs: 0,
+		runningSince: startedAt,
+		scrollback: "",
+	};
+}
+
 export function createSession(
 	id: string,
 	prompt?: string,
 	cwd?: string,
 ): Session {
-	const startedAt = Date.now();
+	/* why: assign the claude conversation id up front so the card binds to the
+	 * transcript this process writes, not the newest unclaimed .jsonl in the cwd
+	 * (which races concurrent sessions in the same repo) (#413). */
+	const claudeSessionId = randomUUID();
 	return {
-		id,
+		...runningBase(id),
 		name: prompt?.slice(0, 40) || `Session ${id}`,
 		commandType: "claude",
-		status: "running",
-		startedAt,
-		runningMs: 0,
-		runningSince: startedAt,
-		pty: spawnClaude({ prompt, cwd, sessionId: id }),
-		scrollback: "",
+		pty: spawnClaude({ prompt, cwd, sessionId: id, claudeSessionId }),
 		cwd,
+		claudeSessionId,
 	};
 }
 
@@ -78,17 +90,11 @@ export function createRunSession(
 	runArgs: string[],
 	cwd?: string,
 ): Session {
-	const startedAt = Date.now();
 	return {
-		id,
+		...runningBase(id),
 		name: `run: ${runName}`,
 		commandType: "run",
-		status: "running",
-		startedAt,
-		runningMs: 0,
-		runningSince: startedAt,
 		pty: spawnRun({ name: runName, args: runArgs, cwd }),
-		scrollback: "",
 		runName,
 		runArgs,
 		cwd,

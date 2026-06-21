@@ -64,6 +64,33 @@ describe("spawnClaude", () => {
 		);
 	});
 
+	it("assigns the claude conversation id up front for a fresh session", () => {
+		spawnClaude({ prompt: "Do the thing", claudeSessionId: "conv-1" });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"claude",
+				"--settings",
+				"/hooks.json",
+				"--session-id",
+				"conv-1",
+				"Do the thing",
+			],
+			undefined,
+			undefined,
+		);
+	});
+
+	it("ignores claudeSessionId when resuming, which already pins the transcript", () => {
+		spawnClaude({ resumeSessionId: "abc-123", claudeSessionId: "conv-1" });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["claude", "--settings", "/hooks.json", "--resume", "abc-123"],
+			undefined,
+			undefined,
+		);
+	});
+
 	it("passes the daemon session id so the status hooks can target it", () => {
 		spawnClaude({ prompt: "Do the thing", sessionId: "7" });
 

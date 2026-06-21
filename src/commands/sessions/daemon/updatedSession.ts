@@ -15,6 +15,8 @@ export function updatedSession(
 		...restoreBase(id, persisted),
 		status: "done",
 		startedAt: persisted.startedAt,
+		runningMs: persisted.runningMs ?? 0,
+		runningSince: null,
 		pty: null,
 	};
 }

@@ -19,5 +19,9 @@ export function resumeSession(
 		pty: spawnClaude({ resumeSessionId: sessionId, cwd, sessionId: id }),
 		scrollback: "",
 		cwd,
+		/* why: bind the card to the conversation it is resuming so a daemon restart
+		 * re-resumes this same transcript, not whichever .jsonl a cwd poller would
+		 * have re-discovered (#413). */
+		claudeSessionId: sessionId,
 	};
 }

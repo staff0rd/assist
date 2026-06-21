@@ -6,6 +6,7 @@ type SpawnOpts = {
 	resumeSessionId?: string;
 	cwd?: string;
 	sessionId?: string;
+	claudeSessionId?: string;
 };
 
 export function spawnClaude(opts: SpawnOpts = {}) {
@@ -22,6 +23,11 @@ function buildArgs(opts: SpawnOpts): string[] {
 			? [...base, "--resume", opts.resumeSessionId, opts.prompt]
 			: [...base, "--resume", opts.resumeSessionId];
 	}
+	/* why: assign the conversation id up front so the daemon binds the card to the
+	 * exact transcript this claude writes, instead of guessing the newest unclaimed
+	 * .jsonl in the cwd — which races with concurrent sessions in the same repo and
+	 * could adopt another session's conversation (#413). */
+	if (opts.claudeSessionId) base.push("--session-id", opts.claudeSessionId);
 	if (opts.prompt) return [...base, opts.prompt];
 	return base;
 }
