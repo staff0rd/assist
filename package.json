@@ -37,6 +37,7 @@
 		"url": "https://github.com/staff0rd/assist"
 	},
 	"dependencies": {
+		"@xterm/addon-webgl": "^0.19.0",
 		"better-sqlite3": "^12.8.0",
 		"blessed": "^0.1.81",
 		"blessed-contrib": "^4.11.0",

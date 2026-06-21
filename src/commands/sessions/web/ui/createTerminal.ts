@@ -1,4 +1,5 @@
 import { FitAddon } from "@xterm/addon-fit";
+import { WebglAddon } from "@xterm/addon-webgl";
 import { WebLinksAddon } from "@xterm/addon-web-links";
 import { Terminal } from "@xterm/xterm";
 
@@ -24,7 +25,32 @@ export function createTerminal(el: HTMLElement): TerminalHandle {
 		}),
 	);
 	term.open(el);
+
+	/* why: the DOM fallback renderer paints each selected run as one span carrying
+	   the selection background plus a per-span letter-spacing; the trailing spacing
+	   inflates the background box past the final glyph, so the last selected cell
+	   reads blank (xterm #4881). The WebGL renderer draws selection as a separate
+	   cell-aligned layer and avoids it. Fall back to DOM if WebGL is unavailable. */
+	let webgl: WebglAddon | undefined;
+	try {
+		webgl = new WebglAddon();
+		webgl.onContextLoss(() => {
+			webgl?.dispose();
+			webgl = undefined;
+		});
+		term.loadAddon(webgl);
+	} catch {
+		webgl = undefined;
+	}
+
 	fitAddon.fit();
 
-	return { term, fitAddon, dispose: () => term.dispose() };
+	return {
+		term,
+		fitAddon,
+		dispose: () => {
+			webgl?.dispose();
+			term.dispose();
+		},
+	};
 }
