@@ -1,3 +1,10 @@
+## [0.310.1](https://github.com/staff0rd/assist/compare/v0.310.0...v0.310.1) (2026-06-21)
+
+
+### Bug Fixes
+
+* render session terminal with WebGL ([c877a65](https://github.com/staff0rd/assist/commit/c877a65b69686bbc6d6f2babfb4147a6394b3035))
+
 # [0.310.0](https://github.com/staff0rd/assist/compare/v0.309.0...v0.310.0) (2026-06-21)
 
 
