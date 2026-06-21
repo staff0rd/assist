@@ -1,3 +1,4 @@
+import { activityPermalink } from "./activityPermalink";
 import { activityUrnDate } from "./activityUrnDate";
 import { type Mention, slugFromProfileUrl } from "./buildMentionMap";
 import { dedupeLinks } from "./dedupeLinks";
@@ -6,6 +7,7 @@ import type { PostRaw } from "./walkPostRow";
 
 export type LinkedInPost = {
 	activityUrn?: string;
+	permalink?: string;
 	postedAt?: string;
 	author?: Mention;
 	text: string;
@@ -67,6 +69,7 @@ export function buildPost(
 		links: dedupeLinks(raw.links),
 		relatedPosts,
 		activityUrn: relatedPosts[0],
+		permalink: activityPermalink(relatedPosts[0]),
 		postedAt: activityUrnDate(relatedPosts[0]),
 		author: resolveAuthor(mentionMap, author),
 	};

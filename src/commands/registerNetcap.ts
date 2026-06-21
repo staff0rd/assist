@@ -20,9 +20,9 @@ export function registerNetcap(program: Command): void {
 		.action((options) => netcap(options));
 
 	command
-		.command("extract [file]")
+		.command("extract-linkedin-posts [file]")
 		.description(
-			"Extract LinkedIn posts (text, author, mentions, links) from a netcap capture file to posts.json",
+			"Extract LinkedIn posts (text, author, mentions, links, permalink) from a netcap capture file to posts.json",
 		)
 		.action((file) => netcapExtract(file));
 }

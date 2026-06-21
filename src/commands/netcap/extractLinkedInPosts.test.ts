@@ -103,6 +103,12 @@ describe("extractLinkedInPosts", () => {
 		expect(post.activityUrn).toBe("urn:li:activity:123");
 	});
 
+	it("should expose a permalink to the post", () => {
+		expect(post.permalink).toBe(
+			"https://www.linkedin.com/feed/update/urn:li:activity:123/",
+		);
+	});
+
 	it("should derive the posted date from the activity urn", () => {
 		expect(post.postedAt).toBe(new Date(0).toISOString());
 	});

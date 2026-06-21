@@ -1,3 +1,4 @@
+import { activityPermalink } from "./activityPermalink";
 import { activityUrnDate } from "./activityUrnDate";
 import { asObject, type Mention } from "./buildMentionMap";
 import type { LinkedInPost } from "./buildPost";
@@ -43,6 +44,7 @@ export function buildVoyagerPost(
 		links,
 		relatedPosts: activityUrn ? [activityUrn] : [],
 		activityUrn,
+		permalink: activityPermalink(activityUrn),
 		postedAt: activityUrnDate(activityUrn),
 		author,
 	};
