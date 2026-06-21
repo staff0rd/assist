@@ -64,7 +64,7 @@ describe("listUsagePeaks", () => {
 	});
 
 	describe("when a cycle was reset mid-window", () => {
-		it("returns the pre-reset peak before its post-reset continuation", async () => {
+		it("returns the post-reset continuation before its pre-reset peak", async () => {
 			await recordUsagePeak(orm, {
 				seven_day: { used_percentage: 35, resets_at: 2000 },
 			});
@@ -76,17 +76,17 @@ describe("listUsagePeaks", () => {
 				{
 					window: "seven_day",
 					resetsAt: 2000,
-					segment: 0,
-					usedPercentage: 35,
-					resetDetected: true,
+					segment: 1,
+					usedPercentage: 8,
+					resetDetected: false,
 					createdAt: expect.any(Date),
 				},
 				{
 					window: "seven_day",
 					resetsAt: 2000,
-					segment: 1,
-					usedPercentage: 8,
-					resetDetected: false,
+					segment: 0,
+					usedPercentage: 35,
+					resetDetected: true,
 					createdAt: expect.any(Date),
 				},
 			]);
