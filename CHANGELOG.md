@@ -1,3 +1,10 @@
+# [0.309.0](https://github.com/staff0rd/assist/compare/v0.308.0...v0.309.0) (2026-06-21)
+
+
+### Features
+
+* warn on commit off expected branch ([1bc5db2](https://github.com/staff0rd/assist/commit/1bc5db2a4f29711e76b73f545093bd1498c60387))
+
 # [0.308.0](https://github.com/staff0rd/assist/compare/v0.307.0...v0.308.0) (2026-06-21)
 
 
