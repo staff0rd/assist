@@ -1,3 +1,10 @@
+## [0.310.2](https://github.com/staff0rd/assist/compare/v0.310.1...v0.310.2) (2026-06-21)
+
+
+### Bug Fixes
+
+* keep pre-reset peak on usage reset ([6ec10ac](https://github.com/staff0rd/assist/commit/6ec10acdb3cd0eb0939280f7c9e887d8689ca58a))
+
 ## [0.310.1](https://github.com/staff0rd/assist/compare/v0.310.0...v0.310.1) (2026-06-21)
 
 
