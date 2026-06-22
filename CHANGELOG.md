@@ -1,3 +1,15 @@
+# [0.314.0](https://github.com/staff0rd/assist/compare/v0.313.0...v0.314.0) (2026-06-22)
+
+
+### Bug Fixes
+
+* detect wrapped urls in web terminal ([4ab0460](https://github.com/staff0rd/assist/commit/4ab0460564b40e67cf169fd964866f28cf468616))
+
+
+### Features
+
+* show backup filename with path tooltip ([f2a901f](https://github.com/staff0rd/assist/commit/f2a901fce546d545716b702f954d4d1108c01fee))
+
 # [0.313.0](https://github.com/staff0rd/assist/compare/v0.312.0...v0.313.0) (2026-06-22)
 
 
