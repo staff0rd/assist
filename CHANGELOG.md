@@ -1,3 +1,10 @@
+# [0.315.0](https://github.com/staff0rd/assist/compare/v0.314.0...v0.315.0) (2026-06-22)
+
+
+### Features
+
+* add backup schedule remove command ([0fb5ed6](https://github.com/staff0rd/assist/commit/0fb5ed681ab64c8024afae7445f22129f5d8ff6a))
+
 # [0.314.0](https://github.com/staff0rd/assist/compare/v0.313.0...v0.314.0) (2026-06-22)
 
 
