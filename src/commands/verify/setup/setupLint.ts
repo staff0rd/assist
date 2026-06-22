@@ -20,4 +20,11 @@ export async function setupLint(
 	}
 	await lintInit();
 	writer("verify:lint", expectedScripts["verify:lint"]);
+
+	if (!pkg.devDependencies?.oxfmt) {
+		if (!installPackage("oxfmt", cwd)) {
+			return;
+		}
+	}
+	writer("verify:format", expectedScripts["verify:format"]);
 }
