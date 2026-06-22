@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { Pool, type PoolClient } from "pg";
 import { seedNewsFeeds } from "../../commands/backlog/seedNewsFeeds";
 import { loadConfig } from "../loadConfig";
+import { cleanupFalseResetSegments } from "./cleanupFalseResetSegments";
 import { type Db, makeOrmFromPool } from "./Db";
 import { ensureSchema } from "./ensureSchema";
 
@@ -32,6 +33,45 @@ function getDatabaseUrl(): string {
 	return url;
 }
 
+async function runUsagePeakCleanup(orm: Db): Promise<void> {
+	try {
+		await cleanupFalseResetSegments(orm);
+	} catch (error) {
+		// why: a one-off data fix must never block connecting, so swallow and log.
+		console.error(
+			`${new Date().toISOString()} usage-peaks cleanup failed: ${String(error)}`,
+		);
+	}
+}
+
+// why: an unhandled 'error' from an idle client crashes the process; absorb it so the pool just reconnects.
+function logPoolError(error: Error): void {
+	console.error(
+		`${new Date().toISOString()} backlog pool error: ${error.message}`,
+	);
+}
+
+function createPool(): Pool {
+	const pool = new Pool({
+		connectionString: getDatabaseUrl(),
+		max: 10,
+		// why: retire idle clients before managed Postgres (Supabase/Neon) drops them server-side, so we never check out a dead socket and stall on a timeout.
+		idleTimeoutMillis: 30_000,
+		// why: bound the wait for a free client so a degraded pool fails fast (500 + log line) rather than hanging for seconds.
+		connectionTimeoutMillis: 10_000,
+	});
+	pool.on("error", logPoolError);
+	return pool;
+}
+
+async function initSchema(pool: Pool): Promise<Db> {
+	await ensureSchema((sql) => pool.query(sql));
+	const orm = makeOrmFromPool(pool);
+	await seedNewsFeeds(orm);
+	await runUsagePeakCleanup(orm);
+	return orm;
+}
+
 let _connecting: Promise<Db> | undefined;
 let _pool: Pool | undefined;
 let _orm: Db | undefined;
@@ -45,24 +85,8 @@ export function getDb(): Promise<Db> {
 	if (_orm) return Promise.resolve(_orm);
 	if (_connecting) return _connecting;
 	_connecting = (async () => {
-		const pool = new Pool({
-			connectionString: getDatabaseUrl(),
-			max: 10,
-			// why: retire idle clients before managed Postgres (Supabase/Neon) drops them server-side, so we never check out a dead socket and stall on a timeout.
-			idleTimeoutMillis: 30_000,
-			// why: bound the wait for a free client so a degraded pool fails fast (500 + log line) rather than hanging for seconds.
-			connectionTimeoutMillis: 10_000,
-		});
-		// why: an unhandled 'error' from an idle client crashes the process; absorb it so the pool just reconnects.
-		pool.on("error", (err) => {
-			console.error(
-				`${new Date().toISOString()} backlog pool error: ${err.message}`,
-			);
-		});
-		_pool = pool;
-		await ensureSchema((sql) => pool.query(sql));
-		_orm = makeOrmFromPool(pool);
-		await seedNewsFeeds(_orm);
+		_pool = createPool();
+		_orm = await initSchema(_pool);
 		return _orm;
 	})();
 	return _connecting;

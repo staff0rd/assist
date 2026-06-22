@@ -92,7 +92,7 @@ export const planTasks = pgTable(
 	],
 );
 
-const metadata = pgTable("metadata", {
+export const metadata = pgTable("metadata", {
 	key: text().primaryKey(),
 	value: text().notNull(),
 });

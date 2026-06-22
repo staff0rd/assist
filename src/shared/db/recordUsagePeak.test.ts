@@ -213,6 +213,105 @@ describe("recordUsagePeak", () => {
 		});
 	});
 
+	describe("when a stale below-peak reading lands during a climb", () => {
+		it("does not leave a reset segment once usage climbs back", async () => {
+			await recordUsagePeak(orm, {
+				five_hour: { used_percentage: 50, resets_at: 1000 },
+			});
+			await recordUsagePeak(orm, {
+				five_hour: { used_percentage: 80, resets_at: 1000 },
+			});
+			await recordUsagePeak(orm, {
+				five_hour: { used_percentage: 60, resets_at: 1000 },
+			});
+			await recordUsagePeak(orm, {
+				five_hour: { used_percentage: 85, resets_at: 1000 },
+			});
+
+			expect(await peaks()).toEqual([
+				{
+					window: "five_hour",
+					resetsAt: 1000,
+					segment: 0,
+					usedPercentage: 85,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+			]);
+		});
+	});
+
+	describe("when several stale readings interleave a climbing cycle", () => {
+		it("records the single true peak with no resets", async () => {
+			for (const used of [50, 80, 60, 90, 70, 95]) {
+				await recordUsagePeak(orm, {
+					five_hour: { used_percentage: used, resets_at: 1000 },
+				});
+			}
+
+			expect(await peaks()).toEqual([
+				{
+					window: "five_hour",
+					resetsAt: 1000,
+					segment: 0,
+					usedPercentage: 95,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+			]);
+		});
+	});
+
+	describe("when a genuine reset is followed by a stale pre-reset reading", () => {
+		it("keeps the reset and collapses the stale noise once usage climbs back", async () => {
+			for (const used of [80, 5, 20, 12, 25]) {
+				await recordUsagePeak(orm, {
+					seven_day: { used_percentage: used, resets_at: 1000 },
+				});
+			}
+
+			expect(await peaks()).toEqual([
+				{
+					window: "seven_day",
+					resetsAt: 1000,
+					segment: 0,
+					usedPercentage: 80,
+					resetDetected: true,
+					createdAt: expect.any(Date),
+				},
+				{
+					window: "seven_day",
+					resetsAt: 1000,
+					segment: 1,
+					usedPercentage: 25,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+			]);
+		});
+	});
+
+	describe("when readings from several agents arrive out of order within one cycle", () => {
+		it("resolves to the single true peak with no spurious resets", async () => {
+			for (const used of [40, 70, 55, 65, 88, 90]) {
+				await recordUsagePeak(orm, {
+					five_hour: { used_percentage: used, resets_at: 1000 },
+				});
+			}
+
+			expect(await peaks()).toEqual([
+				{
+					window: "five_hour",
+					resetsAt: 1000,
+					segment: 0,
+					usedPercentage: 90,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+			]);
+		});
+	});
+
 	describe("when the same window resets to a new cycle", () => {
 		it("tracks each cycle separately", async () => {
 			await recordUsagePeak(orm, {

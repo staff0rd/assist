@@ -19,9 +19,12 @@ import {
  * happens the existing row is frozen with `resetDetected` set (preserving the
  * pre-reset peak) and a fresh row is opened at the next `segment`. So a reset
  * leaves two rows for one cycle — the badged pre-reset peak and the post-reset
- * continuation — instead of overwriting the peak. `createdAt` records when each
- * row's first reading landed, so a reset cycle reads as a timeline. Mirrors the
- * DDL in {@link ./ensureSchema}.
+ * continuation — instead of overwriting the peak. Segment peaks therefore stay
+ * strictly decreasing within a cycle; a reading that climbs back to a peak the
+ * cycle already recorded exposes the segments below it as stale/out-of-order
+ * noise rather than resets, and {@link ./recordWindowPeak} collapses them.
+ * `createdAt` records when each row's first reading landed, so a reset cycle
+ * reads as a timeline. Mirrors the DDL in {@link ./ensureSchema}.
  */
 export const usagePeaks = pgTable(
 	"usage_peaks",
