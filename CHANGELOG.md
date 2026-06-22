@@ -1,3 +1,10 @@
+## [0.317.1](https://github.com/staff0rd/assist/compare/v0.317.0...v0.317.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* harden usage-peak reset detection ([d63067e](https://github.com/staff0rd/assist/commit/d63067eedfa9e978c2031d685eab67d645d8c056))
+
 # [0.317.0](https://github.com/staff0rd/assist/compare/v0.316.0...v0.317.0) (2026-06-22)
 
 
