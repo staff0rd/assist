@@ -80,7 +80,9 @@ After installation, the `assist` command will be available globally. You can als
 ## CLI Commands
 
 - `assist activity [--since <date>]` - Chart GitHub commit activity per day (defaults to last 30 days)
-- `assist backup [--out <dir>]` - Write a dump of the entire backlog database to `<dir>/backup-<timestamp>.dump` (default dir `~/.assist/backups`, overridable via the `backup.dir` config key or `--out`) and record the dump's path and byte size in the backups table; on failure no row is recorded and the command exits with an error
+- `assist backup [-o, --out <dir>]` - Write a dump of the entire backlog database to `<dir>/backup-<timestamp>.dump` (default dir `~/.assist/backups`, overridable via the `backup.dir` config key or `--out`) and record the dump's path and byte size in the backups table; on failure no row is recorded and the command exits with an error
+- `assist backup schedule --every <duration>` - Install or update a marked crontab block that runs `assist backup` on a recurring cadence (e.g. `5m` → `*/5 * * * *`, `6h` → `0 */6 * * *`), appending output to `<backup.dir>/cron.log`; re-running with a new duration replaces the block without duplicating it. Durations cron cannot represent evenly (sub-minute, or non-divisor intervals like `90m`) are rejected
+- `assist backup schedule status` - Print the active backup cadence and cron expression, or report that none is set
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project

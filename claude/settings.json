@@ -83,6 +83,7 @@
 			"Skill(strip-comments)",
 			"SlashCommand(/strip-comments)",
 			"Bash(git ls-files:*)",
+			"Bash(assist backup schedule status:*)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": [
