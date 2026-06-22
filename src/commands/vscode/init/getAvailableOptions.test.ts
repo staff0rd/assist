@@ -44,34 +44,4 @@ describe("vscode init settings option", () => {
 			expect(settingsOption()).toBeUndefined();
 		});
 	});
-
-	describe("when an existing settings.json still references biome", () => {
-		beforeEach(() => {
-			writeFileSync(
-				join(dir, ".vscode", "settings.json"),
-				`${JSON.stringify({ "editor.defaultFormatter": "biomejs.biome" })}\n`,
-			);
-		});
-
-		it("offers the settings configuration so biome can be migrated", () => {
-			expect(settingsOption()?.description).toBe("oxc formatter configuration");
-		});
-	});
-
-	describe("when an existing extensions.json still recommends biome", () => {
-		beforeEach(() => {
-			writeFileSync(
-				join(dir, ".vscode", "settings.json"),
-				`${JSON.stringify({ "editor.defaultFormatter": "oxc.oxc-vscode" })}\n`,
-			);
-			writeFileSync(
-				join(dir, ".vscode", "extensions.json"),
-				`${JSON.stringify({ recommendations: ["biomejs.biome"] })}\n`,
-			);
-		});
-
-		it("offers the settings configuration so biome can be migrated", () => {
-			expect(settingsOption()?.description).toBe("oxc formatter configuration");
-		});
-	});
 });

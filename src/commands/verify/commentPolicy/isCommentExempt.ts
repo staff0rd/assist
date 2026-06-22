@@ -1,5 +1,4 @@
 const MACHINE_DIRECTIVES = [
-	"biome-ignore",
 	"oxlint-disable",
 	"oxlint-enable",
 	"@ts-expect-error",

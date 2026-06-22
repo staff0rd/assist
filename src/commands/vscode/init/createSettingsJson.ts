@@ -11,7 +11,7 @@ export function createSettingsJson(): void {
 		"editor.defaultFormatter": "oxc.oxc-vscode",
 		"editor.formatOnSave": true,
 		"editor.codeActionsOnSave": {
-			...withoutBiomeCodeActions(existing["editor.codeActionsOnSave"]),
+			...existingCodeActions(existing["editor.codeActionsOnSave"]),
 			"source.fixAll.oxc": "explicit",
 			"source.organizeImports.oxc": "explicit",
 		},
@@ -20,11 +20,7 @@ export function createSettingsJson(): void {
 	console.log(chalk.green("Created .vscode/settings.json"));
 }
 
-function withoutBiomeCodeActions(actions: unknown): Record<string, unknown> {
+function existingCodeActions(actions: unknown): Record<string, unknown> {
 	if (!actions || typeof actions !== "object") return {};
-	return Object.fromEntries(
-		Object.entries(actions as Record<string, unknown>).filter(
-			([key]) => !key.includes("biome"),
-		),
-	);
+	return actions as Record<string, unknown>;
 }

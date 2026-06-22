@@ -7,9 +7,7 @@ export function createExtensionsJson(): void {
 	const extensionsPath = path.join(process.cwd(), ".vscode", "extensions.json");
 	const existing = readVscodeJson(extensionsPath);
 	const previous = Array.isArray(existing.recommendations)
-		? (existing.recommendations as unknown[]).filter(
-				(r) => r !== "biomejs.biome",
-			)
+		? (existing.recommendations as unknown[])
 		: [];
 	const recommendations = previous.includes("oxc.oxc-vscode")
 		? previous

@@ -8,23 +8,6 @@ function createSourceFile(code: string) {
 }
 
 describe("addImportPreservingSuppressions", () => {
-	it("inserts the import below a leading file-level suppression comment", () => {
-		const sf =
-			createSourceFile(`// biome-ignore lint/style/useFilenamingConvention: data definition file
-const OFF = 0;
-export function thrust() { return lerp(OFF, 1, 0.5); }
-`);
-		addImportPreservingSuppressions(sf, {
-			moduleSpecifier: "./lerp",
-			namedImports: ["lerp"],
-		});
-		const lines = sf.getFullText().split("\n");
-		expect(lines[0]).toBe(
-			"// biome-ignore lint/style/useFilenamingConvention: data definition file",
-		);
-		expect(lines[1]).toBe('import { lerp } from "./lerp";');
-	});
-
 	it("inserts the import below a leading oxlint-disable comment", () => {
 		const sf =
 			createSourceFile(`// oxlint-disable react-hooks/exhaustive-deps -- stable identity
@@ -44,8 +27,8 @@ export function thrust() { return lerp(OFF, 1, 0.5); }
 
 	it("inserts below multiple leading suppression comments", () => {
 		const sf =
-			createSourceFile(`// biome-ignore-all lint/style/useFilenamingConvention: data file
-// biome-ignore-all lint/suspicious/noExplicitAny: generated
+			createSourceFile(`// oxlint-disable lint/style/useFilenamingConvention -- data file
+// oxlint-disable lint/suspicious/noExplicitAny -- generated
 const OFF = 0;
 `);
 		addImportPreservingSuppressions(sf, {
@@ -83,7 +66,7 @@ const OFF = 0;
 
 	it("appends after existing imports below a suppression comment", () => {
 		const sf =
-			createSourceFile(`// biome-ignore lint/style/useFilenamingConvention: data definition file
+			createSourceFile(`// oxlint-disable lint/style/useFilenamingConvention -- data definition file
 import { other } from "./other";
 const OFF = other;
 `);
@@ -93,7 +76,7 @@ const OFF = other;
 		});
 		const lines = sf.getFullText().split("\n");
 		expect(lines[0]).toBe(
-			"// biome-ignore lint/style/useFilenamingConvention: data definition file",
+			"// oxlint-disable lint/style/useFilenamingConvention -- data definition file",
 		);
 		expect(lines[1]).toBe('import { other } from "./other";');
 		expect(lines[2]).toBe('import { lerp } from "./lerp";');

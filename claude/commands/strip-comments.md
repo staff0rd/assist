@@ -33,7 +33,7 @@ Read each file and remove only comments that violate the policy:
 
 **Never remove** the following, even if they look like noise:
 
-- **Functional directives** that the toolchain acts on: `eslint-disable*`, `@ts-expect-error`, `@ts-ignore`, `biome-ignore`, `prettier-ignore`, `// @ts-nocheck`, coverage pragmas (`c8 ignore`, `istanbul ignore`), `noqa`, `type: ignore`, `#pragma`, `//go:`-style directives, and similar.
+- **Functional directives** that the toolchain acts on: `eslint-disable*`, `@ts-expect-error`, `@ts-ignore`, `oxlint-disable`, `prettier-ignore`, `// @ts-nocheck`, coverage pragmas (`c8 ignore`, `istanbul ignore`), `noqa`, `type: ignore`, `#pragma`, `//go:`-style directives, and similar.
 - **Comments marking a genuine hack or workaround** — anything explaining *why* non-obvious code exists, including `HACK`/`WORKAROUND`/`FIXME`/`TODO` notes, links to issues, or rationale the code cannot convey on its own.
 - **Doc comments** that form part of an API contract (JSDoc/TSDoc, XML doc comments, docstrings) unless they only restate the signature.
 

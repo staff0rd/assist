@@ -26,7 +26,7 @@ export function getAvailableOptions(
 			value: "launch",
 			description: launchDescription,
 		});
-	if (!setup.hasSettingsJson || setup.hasBiomeConfig)
+	if (!setup.hasSettingsJson)
 		options.push({
 			name: "settings",
 			value: "settings",

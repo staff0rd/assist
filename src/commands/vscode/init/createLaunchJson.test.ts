@@ -56,33 +56,21 @@ describe("createSettingsJson", () => {
 		});
 	});
 
-	describe("when an existing settings.json references biome", () => {
+	describe("when an existing settings.json sets another formatter", () => {
 		beforeEach(() => {
 			writeFileSync(
 				join(dir, ".vscode", "settings.json"),
 				`${JSON.stringify({
-					"editor.defaultFormatter": "biomejs.biome",
-					"editor.codeActionsOnSave": {
-						"source.organizeImports.biome": "explicit",
-					},
+					"editor.defaultFormatter": "esbenp.prettier-vscode",
 					"files.eol": "\n",
 				})}\n`,
 			);
 		});
 
-		it("replaces the biome formatter with oxc", () => {
+		it("replaces the formatter with oxc", () => {
 			createSettingsJson();
 
 			expect(readSettings()["editor.defaultFormatter"]).toBe("oxc.oxc-vscode");
-		});
-
-		it("strips biome code actions", () => {
-			createSettingsJson();
-
-			expect(readSettings()["editor.codeActionsOnSave"]).toEqual({
-				"source.fixAll.oxc": "explicit",
-				"source.organizeImports.oxc": "explicit",
-			});
 		});
 
 		it("preserves unrelated existing settings", () => {
@@ -123,20 +111,14 @@ describe("createExtensionsJson", () => {
 		expect(readExtensions().recommendations).toEqual(["oxc.oxc-vscode"]);
 	});
 
-	describe("when an existing extensions.json recommends biome", () => {
+	describe("when an existing extensions.json has recommendations", () => {
 		beforeEach(() => {
 			writeFileSync(
 				join(dir, ".vscode", "extensions.json"),
 				`${JSON.stringify({
-					recommendations: ["biomejs.biome", "ms-azuretools.vscode-docker"],
+					recommendations: ["ms-azuretools.vscode-docker"],
 				})}\n`,
 			);
-		});
-
-		it("removes the biome recommendation", () => {
-			createExtensionsJson();
-
-			expect(readExtensions().recommendations).not.toContain("biomejs.biome");
 		});
 
 		it("adds the oxc recommendation", () => {
