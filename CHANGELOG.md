@@ -1,3 +1,10 @@
+## [0.315.1](https://github.com/staff0rd/assist/compare/v0.315.0...v0.315.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* generate auto-fix verify scripts ([4f4db39](https://github.com/staff0rd/assist/commit/4f4db395c5c19939a549a6a33c3ecb9af33ba7cc))
+
 # [0.315.0](https://github.com/staff0rd/assist/compare/v0.314.0...v0.315.0) (2026-06-22)
 
 
