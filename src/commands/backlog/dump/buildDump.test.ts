@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { buildDump } from "./buildDump";
-import {
-	DUMP_FORMAT,
-	DUMP_TABLES,
-	DUMP_VERSION,
-	type DumpTable,
-} from "./DumpTable";
+import { DUMP_FORMAT, DUMP_VERSION, type DumpTable } from "./DumpTable";
+
+const TABLES: DumpTable[] = [
+	{ name: "items", columns: ["id", "origin", "name"] },
+	{ name: "comments", columns: ["id", "item_id", "text"] },
+	{ name: "usage_peaks", columns: ['"window"', "resets_at"] },
+	{ name: "metadata", columns: ["key", "value"] },
+];
 
 /** Split a dump buffer into its JSON header and a list of table sections. */
 function parseDump(dump: Buffer): {
@@ -31,41 +33,40 @@ function parseDump(dump: Buffer): {
 }
 
 describe("buildDump", () => {
-	it("writes a versioned header describing every table in FK order", async () => {
-		const dump = await buildDump(async () => Buffer.alloc(0));
+	it("writes a versioned header describing exactly the introspected tables", async () => {
+		const dump = await buildDump(TABLES, async () => Buffer.alloc(0));
 		const { header } = parseDump(dump);
 
 		expect(header.format).toBe(DUMP_FORMAT);
 		expect(header.version).toBe(DUMP_VERSION);
-		expect(header.tables).toEqual(
-			DUMP_TABLES.map(({ name, columns }) => ({ name, columns })),
-		);
+		expect(header.tables).toEqual(TABLES);
 	});
 
 	it("frames each table's COPY data verbatim by byte length", async () => {
 		const payloads: Record<string, Buffer> = {
-			items: Buffer.from("1\ttest\tstory\tName\t\\N\t[]\ttodo\t\\N\n", "utf8"),
+			items: Buffer.from("1\ttest\tName\n", "utf8"),
 			comments: Buffer.from("", "utf8"),
 			metadata: Buffer.from("schema\t{embedded\ttab}\n", "utf8"),
 		};
 		const dump = await buildDump(
+			TABLES,
 			async (table) => payloads[table.name] ?? Buffer.alloc(0),
 		);
 		const { sections } = parseDump(dump);
 
-		expect(sections.map((s) => s.name)).toEqual(DUMP_TABLES.map((t) => t.name));
+		expect(sections.map((s) => s.name)).toEqual(TABLES.map((t) => t.name));
 		for (const { name, data } of sections) {
 			const expected = payloads[name] ?? Buffer.alloc(0);
 			expect(data.equals(expected)).toBe(true);
 		}
 	});
 
-	it("requests COPY data for each table exactly once", async () => {
+	it("requests COPY data for each table once, in the given order", async () => {
 		const seen: string[] = [];
-		await buildDump(async (table) => {
+		await buildDump(TABLES, async (table) => {
 			seen.push(table.name);
 			return Buffer.alloc(0);
 		});
-		expect(seen).toEqual(DUMP_TABLES.map((t) => t.name));
+		expect(seen).toEqual(TABLES.map((t) => t.name));
 	});
 });

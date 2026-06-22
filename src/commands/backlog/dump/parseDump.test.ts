@@ -1,22 +1,26 @@
 import { describe, expect, it } from "vitest";
 import { buildDump } from "./buildDump";
 import { countCopyRows } from "./countCopyRows";
-import { DUMP_FORMAT, DUMP_TABLES, DUMP_VERSION } from "./DumpTable";
+import { DUMP_FORMAT, DUMP_VERSION, type DumpTable } from "./DumpTable";
 import { parseDump } from "./parseDump";
 import { validateDump } from "./validateDump";
 
+const TABLES: DumpTable[] = [
+	{ name: "items", columns: ["id", "origin", "name"] },
+	{ name: "comments", columns: ["id", "item_id", "text"] },
+	{ name: "usage_peaks", columns: ['"window"', "resets_at"] },
+	{ name: "metadata", columns: ["key", "value"] },
+];
+
 /** A realistic per-table payload set for round-trip assertions. */
 const payloads: Record<string, Buffer> = {
-	items: Buffer.from(
-		"1\ttest\tstory\tName\t\\N\t[]\ttodo\t\\N\n2\ttest\tstory\tOther\t\\N\t[]\ttodo\t\\N\n",
-		"utf8",
-	),
+	items: Buffer.from("1\ttest\tName\n2\ttest\tOther\n", "utf8"),
 	comments: Buffer.from("", "utf8"),
 	metadata: Buffer.from("schema\t{embedded\ttab}\n", "utf8"),
 };
 
 const buildFixture = () =>
-	buildDump(async (table) => payloads[table.name] ?? Buffer.alloc(0));
+	buildDump(TABLES, async (table) => payloads[table.name] ?? Buffer.alloc(0));
 
 describe("parseDump", () => {
 	it("recovers the header and every table payload verbatim", async () => {
@@ -24,8 +28,8 @@ describe("parseDump", () => {
 
 		expect(header.format).toBe(DUMP_FORMAT);
 		expect(header.version).toBe(DUMP_VERSION);
-		expect([...sections.keys()]).toEqual(DUMP_TABLES.map((t) => t.name));
-		for (const { name } of DUMP_TABLES) {
+		expect([...sections.keys()]).toEqual(TABLES.map((t) => t.name));
+		for (const { name } of TABLES) {
 			const expected = payloads[name] ?? Buffer.alloc(0);
 			expect(sections.get(name)?.equals(expected)).toBe(true);
 		}
@@ -50,7 +54,7 @@ describe("parseDump", () => {
 });
 
 describe("validateDump", () => {
-	it("accepts a dump matching this build's format, version and tables", async () => {
+	it("accepts a dump matching this build's format and version", async () => {
 		const parsed = parseDump(await buildFixture());
 		expect(() => validateDump(parsed)).not.toThrow();
 	});
@@ -58,7 +62,7 @@ describe("validateDump", () => {
 	it("rejects an unknown format", () => {
 		expect(() =>
 			validateDump({
-				header: { format: "other", version: DUMP_VERSION, tables: DUMP_TABLES },
+				header: { format: "other", version: DUMP_VERSION, tables: TABLES },
 				sections: new Map(),
 			}),
 		).toThrow(/Unrecognised dump format/);
@@ -67,30 +71,26 @@ describe("validateDump", () => {
 	it("rejects an unsupported version", () => {
 		expect(() =>
 			validateDump({
-				header: { format: DUMP_FORMAT, version: 99, tables: DUMP_TABLES },
+				header: { format: DUMP_FORMAT, version: 99, tables: TABLES },
 				sections: new Map(),
 			}),
 		).toThrow(/Unsupported dump version/);
 	});
 
-	it("rejects a mismatched table set", () => {
+	it("rejects a header listing no tables", () => {
 		expect(() =>
 			validateDump({
-				header: {
-					format: DUMP_FORMAT,
-					version: DUMP_VERSION,
-					tables: [{ name: "items", columns: ["id"] }],
-				},
-				sections: new Map([["items", Buffer.alloc(0)]]),
+				header: { format: DUMP_FORMAT, version: DUMP_VERSION, tables: [] },
+				sections: new Map(),
 			}),
-		).toThrow(/table set does not match/);
+		).toThrow(/lists no tables/);
 	});
 
 	it("rejects a dump missing a data section", async () => {
 		const parsed = parseDump(await buildFixture());
-		parsed.sections.delete("links");
+		parsed.sections.delete("usage_peaks");
 		expect(() => validateDump(parsed)).toThrow(
-			/missing data section for "links"/,
+			/missing data section for "usage_peaks"/,
 		);
 	});
 });

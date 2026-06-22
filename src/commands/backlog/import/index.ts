@@ -2,7 +2,6 @@ import { readFile } from "node:fs/promises";
 import chalk from "chalk";
 import { withDbClient } from "../../../shared/db/getDb";
 import { countCopyRows } from "../dump/countCopyRows";
-import { DUMP_TABLES } from "../dump/DumpTable";
 import { parseDump } from "../dump/parseDump";
 import { validateDump } from "../dump/validateDump";
 import { confirmReplace } from "./confirmReplace";
@@ -23,12 +22,16 @@ export async function importBacklog(
 	const raw = file ? await readFile(file) : await readStdinBuffer();
 	const parsed = parseDump(raw);
 	validateDump(parsed);
-	const incoming = DUMP_TABLES.map((t) =>
+	const { tables } = parsed.header;
+	const incoming = tables.map((t) =>
 		countCopyRows(parsed.sections.get(t.name) ?? Buffer.alloc(0)),
 	);
 
 	await withDbClient(async (client) => {
-		if (!options.yes && !(await confirmReplace(client, incoming, !file))) {
+		if (
+			!options.yes &&
+			!(await confirmReplace(client, tables, incoming, !file))
+		) {
 			console.error(chalk.yellow("Import cancelled; no changes made."));
 			return;
 		}
@@ -36,7 +39,7 @@ export async function importBacklog(
 		const total = incoming.reduce((sum, n) => sum + n, 0);
 		console.error(
 			chalk.green(
-				`Imported backlog: ${total} rows restored across ${DUMP_TABLES.length} tables.`,
+				`Imported backlog: ${total} rows restored across ${tables.length} tables.`,
 			),
 		);
 	});
