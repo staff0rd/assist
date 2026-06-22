@@ -1,3 +1,10 @@
+# [0.317.0](https://github.com/staff0rd/assist/compare/v0.316.0...v0.317.0) (2026-06-22)
+
+
+### Features
+
+* config-driven forbidden-strings verify ([808177e](https://github.com/staff0rd/assist/commit/808177e0098b8e4133b5543a9c02deaa6a4d8584))
+
 # [0.316.0](https://github.com/staff0rd/assist/compare/v0.315.1...v0.316.0) (2026-06-22)
 
 
