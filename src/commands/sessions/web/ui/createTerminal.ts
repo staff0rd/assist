@@ -1,7 +1,7 @@
 import { FitAddon } from "@xterm/addon-fit";
 import { WebglAddon } from "@xterm/addon-webgl";
-import { WebLinksAddon } from "@xterm/addon-web-links";
 import { Terminal } from "@xterm/xterm";
+import { createWrappedLinkProvider } from "./createWrappedLinkProvider";
 
 export type TerminalHandle = {
 	term: Terminal;
@@ -19,8 +19,8 @@ export function createTerminal(el: HTMLElement): TerminalHandle {
 
 	const fitAddon = new FitAddon();
 	term.loadAddon(fitAddon);
-	term.loadAddon(
-		new WebLinksAddon((_event, uri) => {
+	const linkProvider = term.registerLinkProvider(
+		createWrappedLinkProvider(term, (_event, uri) => {
 			window.open(uri, "_blank", "noopener");
 		}),
 	);
@@ -49,6 +49,7 @@ export function createTerminal(el: HTMLElement): TerminalHandle {
 		term,
 		fitAddon,
 		dispose: () => {
+			linkProvider.dispose();
 			webgl?.dispose();
 			term.dispose();
 		},
