@@ -1,3 +1,10 @@
+# [0.316.0](https://github.com/staff0rd/assist/compare/v0.315.1...v0.316.0) (2026-06-22)
+
+
+### Features
+
+* self-discovering db backup/restore ([6a7f18c](https://github.com/staff0rd/assist/commit/6a7f18c8bfcbebe9584148573f674c311e477504))
+
 ## [0.315.1](https://github.com/staff0rd/assist/compare/v0.315.0...v0.315.1) (2026-06-22)
 
 
