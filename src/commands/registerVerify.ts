@@ -6,7 +6,16 @@ import {
 	list as verifyList,
 	noVenv as verifyNoVenv,
 	run as verifyRun,
+	settingsGuard as verifySettingsGuard,
 } from "./verify";
+
+function runScope(scope: string | undefined, options: object): void {
+	if (scope && scope !== "all") {
+		console.error(`Unknown scope: "${scope}". Use "all" to run all checks.`);
+		process.exit(1);
+	}
+	verifyRun({ ...options, all: scope === "all" });
+}
 
 export function registerVerify(program: Command): void {
 	const verifyCommand = program
@@ -21,15 +30,7 @@ export function registerVerify(program: Command): void {
 			"Print a summary table of each command's status and duration after the run",
 		)
 		.option("--verbose", "Show all output (bypass CLAUDECODE suppression)")
-		.action((scope, options) => {
-			if (scope && scope !== "all") {
-				console.error(
-					`Unknown scope: "${scope}". Use "all" to run all checks.`,
-				);
-				process.exit(1);
-			}
-			verifyRun({ ...options, all: scope === "all" });
-		});
+		.action(runScope);
 
 	verifyCommand
 		.command("list")
@@ -59,4 +60,11 @@ export function registerVerify(program: Command): void {
 		.command("no-venv")
 		.description("Check that no venv folders exist in the repo")
 		.action(verifyNoVenv);
+
+	verifyCommand
+		.command("settings-guard")
+		.description(
+			"Check that claude/settings.json permission lists contain no assist references",
+		)
+		.action(verifySettingsGuard);
 }

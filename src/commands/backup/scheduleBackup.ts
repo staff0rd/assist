@@ -1,39 +1,16 @@
-import { execSync } from "node:child_process";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import chalk from "chalk";
 import { expandTilde } from "../../shared/expandTilde";
 import { loadConfig } from "../../shared/loadConfig";
+import { readCrontab, writeCrontab } from "./readCrontab";
 import { durationToCron } from "./durationToCron";
 import { resolveAssistCommand } from "./resolveAssistCommand";
-import { readScheduleBlock, upsertScheduleBlock } from "./upsertScheduleBlock";
-
-function readCrontab(): string {
-	try {
-		return execSync("crontab -l", {
-			encoding: "utf8",
-			stdio: ["ignore", "pipe", "ignore"],
-		});
-	} catch {
-		return "";
-	}
-}
-
-function writeCrontab(content: string): void {
-	try {
-		execSync("crontab -", {
-			input: content,
-			stdio: ["pipe", "ignore", "pipe"],
-		});
-	} catch (error) {
-		if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-			throw new Error(
-				"crontab is not available on this system. Backup scheduling requires Linux cron.",
-			);
-		}
-		throw error;
-	}
-}
+import {
+	readScheduleBlock,
+	removeScheduleBlock,
+	upsertScheduleBlock,
+} from "./upsertScheduleBlock";
 
 function fail(message: string): never {
 	console.error(chalk.red(message));
@@ -79,4 +56,20 @@ export function scheduleStatus(): void {
 		return;
 	}
 	console.error(`assist backup runs every ${block.every} (${block.cron}).`);
+}
+
+export function scheduleRemove(): void {
+	const current = readCrontab();
+	if (!readScheduleBlock(current)) {
+		console.error("No assist backup schedule is set; nothing to remove.");
+		return;
+	}
+
+	try {
+		writeCrontab(removeScheduleBlock(current));
+	} catch (error) {
+		fail((error as Error).message);
+	}
+
+	console.error(chalk.green("Removed the assist backup schedule."));
 }

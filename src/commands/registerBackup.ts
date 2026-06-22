@@ -6,7 +6,11 @@ import { getDb } from "../shared/db/getDb";
 import { recordBackup } from "../shared/db/recordBackup";
 import { expandTilde } from "../shared/expandTilde";
 import { loadConfig } from "../shared/loadConfig";
-import { scheduleBackup, scheduleStatus } from "./backup/scheduleBackup";
+import {
+	scheduleBackup,
+	scheduleRemove,
+	scheduleStatus,
+} from "./backup/scheduleBackup";
 import { exportBacklog } from "./backlog/export";
 
 type BackupOptions = { out?: string };
@@ -59,4 +63,11 @@ export function registerBackup(program: Command): void {
 		.command("status")
 		.description("Show the active backup schedule, or report that none is set")
 		.action(scheduleStatus);
+
+	scheduleCommand
+		.command("remove")
+		.description(
+			"Remove the marked backup schedule block, leaving other crontab lines intact",
+		)
+		.action(scheduleRemove);
 }

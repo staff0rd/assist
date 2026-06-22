@@ -83,6 +83,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backup [-o, --out <dir>]` - Write a dump of the entire backlog database to `<dir>/backup-<timestamp>.dump` (default dir `~/.assist/backups`, overridable via the `backup.dir` config key or `--out`) and record the dump's path and byte size in the backups table; on failure no row is recorded and the command exits with an error
 - `assist backup schedule --every <duration>` - Install or update a marked crontab block that runs `assist backup` on a recurring cadence (e.g. `5m` → `*/5 * * * *`, `6h` → `0 */6 * * *`), appending output to `<backup.dir>/cron.log`; re-running with a new duration replaces the block without duplicating it. Durations cron cannot represent evenly (sub-minute, or non-divisor intervals like `90m`) are rejected
 - `assist backup schedule status` - Print the active backup cadence and cron expression, or report that none is set
+- `assist backup schedule remove` - Remove the marked backup schedule block from the crontab, leaving all other crontab lines intact (reports if none is set)
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project
@@ -164,6 +165,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist verify init` - Add verify scripts to a project (writes to `assist.yml` by default; pass `--package-json` to write to `package.json` scripts instead)
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
 - `assist verify comment-policy` - Flag comments added on changed lines (staged + unstaged) unless they carry a justification marker; supports `commentPolicy.markers` and `commentPolicy.ignore` globs in config
+- `assist verify settings-guard` - Fail if any `permissions.allow` or `permissions.deny` entry in `claude/settings.json` references the `assist` binary (the hooks block is exempt)
 - `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by oxlint (use `-f` to auto-fix)
 - `assist lint init` - Initialize oxlint with baseline linter config
 - `assist refactor check [pattern]` - Check for files that exceed the maximum line count

@@ -133,6 +133,11 @@ run:
     args:
       - verify
       - no-venv
+  - name: verify:settings-guard
+    command: assist
+    args:
+      - verify
+      - settings-guard
   - name: verify:comment-policy
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
