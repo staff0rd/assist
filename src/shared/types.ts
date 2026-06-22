@@ -167,6 +167,15 @@ export const assistConfigSchema = z.strictObject({
 			}),
 		)
 		.optional(),
+	forbiddenStrings: z
+		.array(
+			z.strictObject({
+				file: z.string(),
+				paths: z.array(z.string()),
+				disallowed: z.string(),
+			}),
+		)
+		.optional(),
 	sync: z
 		.strictObject({
 			autoConfirm: z.boolean().default(false),
@@ -195,6 +204,9 @@ export const assistConfigSchema = z.strictObject({
 });
 
 export type AssistConfig = z.infer<typeof assistConfigSchema>;
+export type ForbiddenStringsRule = NonNullable<
+	AssistConfig["forbiddenStrings"]
+>[number];
 export type RunConfig = z.infer<typeof runConfigSchema>;
 export type RunLink = z.infer<typeof runLinkSchema>;
 export type RunEntry = RunConfig | RunLink;

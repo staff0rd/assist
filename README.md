@@ -165,7 +165,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist verify init` - Add verify scripts to a project (writes to `assist.yml` by default; pass `--package-json` to write to `package.json` scripts instead)
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
 - `assist verify comment-policy` - Flag comments added on changed lines (staged + unstaged) unless they carry a justification marker; supports `commentPolicy.markers` and `commentPolicy.ignore` globs in config
-- `assist verify settings-guard` - Fail if any `permissions.allow` or `permissions.deny` entry in `claude/settings.json` references the `assist` binary (the hooks block is exempt)
+- `assist verify forbidden-strings` - Check configured JSON files for disallowed values. Each `forbiddenStrings` rule names a `file`, a list of dot-`paths` to inspect (string or string[] values are scanned; other types skipped), and a `disallowed` wildcard matched via minimatch; any matching value fails the check. Zero rules is a no-op that passes
 - `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by oxlint (use `-f` to auto-fix)
 - `assist lint init` - Initialize oxlint with baseline linter config
 - `assist refactor check [pattern]` - Check for files that exceed the maximum line count

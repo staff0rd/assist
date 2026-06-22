@@ -1,12 +1,12 @@
 import type { Command } from "commander";
 import {
 	commentPolicy as verifyCommentPolicy,
+	forbiddenStrings as verifyForbiddenStrings,
 	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
 	list as verifyList,
 	noVenv as verifyNoVenv,
 	run as verifyRun,
-	settingsGuard as verifySettingsGuard,
 } from "./verify";
 
 function runScope(scope: string | undefined, options: object): void {
@@ -62,9 +62,9 @@ export function registerVerify(program: Command): void {
 		.action(verifyNoVenv);
 
 	verifyCommand
-		.command("settings-guard")
+		.command("forbidden-strings")
 		.description(
-			"Check that claude/settings.json permission lists contain no assist references",
+			"Check configured JSON files for values matching forbiddenStrings rules",
 		)
-		.action(verifySettingsGuard);
+		.action(verifyForbiddenStrings);
 }

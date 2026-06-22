@@ -133,11 +133,11 @@ run:
     args:
       - verify
       - no-venv
-  - name: verify:settings-guard
+  - name: verify:forbidden-strings
     command: assist
     args:
       - verify
-      - settings-guard
+      - forbidden-strings
   - name: verify:comment-policy
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
@@ -183,6 +183,12 @@ run:
     args:
       - -c
       - tail -f assist-test.txt
+forbiddenStrings:
+  - file: claude/settings.json
+    paths:
+      - permissions.allow
+      - permissions.deny
+    disallowed: "*assist*"
 deny:
   - pattern: assist build
     message: STOP. Do not attempt any workaround. This is a verify command and must be run via /verify (the skill). Do not build, typecheck, or lint separately — invoke /verify now.
