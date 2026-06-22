@@ -47,12 +47,40 @@ describe("createSettingsJson", () => {
 		expect(readSettings()["editor.formatOnSave"]).toBe(true);
 	});
 
-	it("writes oxc fix-all and import-organization code actions", () => {
+	it("writes the oxc fix-all code action", () => {
 		createSettingsJson();
 
 		expect(readSettings()["editor.codeActionsOnSave"]).toEqual({
 			"source.fixAll.oxc": "explicit",
-			"source.organizeImports.oxc": "explicit",
+		});
+	});
+
+	it("does not enable the conflicting organize-imports code action", () => {
+		createSettingsJson();
+
+		expect(readSettings()["editor.codeActionsOnSave"]).not.toHaveProperty(
+			"source.organizeImports.oxc",
+		);
+	});
+
+	describe("when settings already contain the stale organize-imports action", () => {
+		beforeEach(() => {
+			writeFileSync(
+				join(dir, ".vscode", "settings.json"),
+				`${JSON.stringify({
+					"editor.codeActionsOnSave": {
+						"source.organizeImports.oxc": "explicit",
+					},
+				})}\n`,
+			);
+		});
+
+		it("strips it", () => {
+			createSettingsJson();
+
+			expect(readSettings()["editor.codeActionsOnSave"]).not.toHaveProperty(
+				"source.organizeImports.oxc",
+			);
 		});
 	});
 

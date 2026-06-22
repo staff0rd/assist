@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import chalk from "chalk";
 import { readPackageJson } from "../../../shared/readPackageJson";
+import { init as formatInit } from "../../format/init";
 import { init as lintInit } from "../../lint/init";
 import type { ScriptWriter } from "../installPackage";
 import { installPackage } from "../installPackage";
@@ -26,5 +27,6 @@ export async function setupLint(
 			return;
 		}
 	}
+	await formatInit();
 	writer("verify:format", expectedScripts["verify:format"]);
 }

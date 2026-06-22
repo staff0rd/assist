@@ -13,7 +13,6 @@ export function createSettingsJson(): void {
 		"editor.codeActionsOnSave": {
 			...existingCodeActions(existing["editor.codeActionsOnSave"]),
 			"source.fixAll.oxc": "explicit",
-			"source.organizeImports.oxc": "explicit",
 		},
 	};
 	fs.writeFileSync(settingsPath, `${JSON.stringify(settings, null, "\t")}\n`);
@@ -22,5 +21,9 @@ export function createSettingsJson(): void {
 
 function existingCodeActions(actions: unknown): Record<string, unknown> {
 	if (!actions || typeof actions !== "object") return {};
-	return actions as Record<string, unknown>;
+	const { "source.organizeImports.oxc": _removed, ...rest } = actions as Record<
+		string,
+		unknown
+	>;
+	return rest;
 }

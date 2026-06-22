@@ -11,6 +11,7 @@
 			"error",
 			{ "accessibility": "no-public" }
 		],
-		"prefer-template": "error"
+		"prefer-template": "error",
+		"sort-imports": "off"
 	}
 }
