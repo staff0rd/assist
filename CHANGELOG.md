@@ -1,3 +1,10 @@
+## [0.318.1](https://github.com/staff0rd/assist/compare/v0.318.0...v0.318.1) (2026-06-23)
+
+
+### Bug Fixes
+
+* flip card to running while thinking ([96fbbce](https://github.com/staff0rd/assist/commit/96fbbce1810baff852bc2bf98df8554dce8f9785))
+
 # [0.318.0](https://github.com/staff0rd/assist/compare/v0.317.2...v0.318.0) (2026-06-23)
 
 
