@@ -9,6 +9,7 @@ export const activitySchema = z.object({
 	itemId: z.number().optional(),
 	itemName: z.string().optional(),
 	phase: z.number().optional(),
+	phaseName: z.string().optional(),
 	totalPhases: z.number().optional(),
 	claudeSessionId: z.string().optional(),
 	startedAt: z.number(),

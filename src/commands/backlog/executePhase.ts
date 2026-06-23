@@ -3,7 +3,7 @@ import chalk from "chalk";
 import { awaitClaude } from "../../shared/awaitClaude";
 import { emitActivity } from "../../shared/emitActivity";
 import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
-import { buildPhasePrompt } from "./buildPhasePrompt";
+import { buildPhasePrompt, REVIEW_PHASE_NAME } from "./buildPhasePrompt";
 import { buildResumePrompt } from "./buildResumePrompt";
 import { resolvePhaseResult } from "./resolvePhaseResult";
 import type { BacklogItem, PlanPhase } from "./types";
@@ -34,11 +34,14 @@ export async function executePhase(
 	const claudeSessionId = resumeSessionId ?? randomUUID();
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
+	// why: review sits one slot beyond the authored plan (totalPhases counts it), so label it explicitly rather than trusting the appended phase's name.
+	const isReviewPhase = phaseNumber >= totalPhases;
 	emitActivity({
 		kind: "backlog",
 		itemId: item.id,
 		itemName: item.name,
 		phase: phaseNumber,
+		phaseName: isReviewPhase ? REVIEW_PHASE_NAME : phase.name,
 		totalPhases,
 		claudeSessionId,
 	});

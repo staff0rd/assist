@@ -22,6 +22,7 @@ vi.mock("../../shared/spawnClaude", () => ({
 
 vi.mock("./buildPhasePrompt", () => ({
 	buildPhasePrompt: vi.fn(() => "PHASE_PROMPT"),
+	REVIEW_PHASE_NAME: "Review",
 }));
 
 vi.mock("./buildResumePrompt", () => ({
@@ -81,6 +82,27 @@ describe("executePhase", () => {
 		});
 		expect(mockEmitActivity).toHaveBeenCalledWith(
 			expect.objectContaining({ claudeSessionId: "sess-9" }),
+		);
+	});
+
+	it("reports the authored phase name as the activity phaseName", async () => {
+		await executePhase(makeItem(), 0, phases, undefined, 2);
+
+		expect(mockEmitActivity).toHaveBeenCalledWith(
+			expect.objectContaining({ phaseName: "Phase 1" }),
+		);
+	});
+
+	it("reports 'Review' for the phase beyond the authored plan", async () => {
+		const reviewPhases: PlanPhase[] = [
+			...phases,
+			{ name: "Review", tasks: [{ task: "review it" }] },
+		];
+
+		await executePhase(makeItem(), 1, reviewPhases, undefined, 2);
+
+		expect(mockEmitActivity).toHaveBeenCalledWith(
+			expect.objectContaining({ phase: 2, phaseName: "Review" }),
 		);
 	});
 });

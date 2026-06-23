@@ -31,6 +31,11 @@ export function CardHeader({
 	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
+	const { activity, status } = session;
+	const phaseName =
+		activity?.kind === "backlog" && status !== "done"
+			? activity.phaseName
+			: undefined;
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
 			<CardHeaderActions
@@ -44,6 +49,14 @@ export function CardHeader({
 			>
 				{sessionTitle(session)}
 			</Typography>
+			{phaseName && (
+				<Typography
+					variant="caption"
+					sx={{ color: "text.secondary", overflowWrap: "anywhere" }}
+				>
+					{phaseName}
+				</Typography>
+			)}
 		</Box>
 	);
 }
