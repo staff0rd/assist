@@ -29,6 +29,8 @@ type Session = {
 	autoRun?: boolean;
 	autoAdvance?: boolean;
 	escInterruptTimer?: ReturnType<typeof setTimeout>;
+	thinkingStreakStart?: number;
+	thinkingLastOutput?: number;
 	reviewStarted?: boolean;
 };
 
