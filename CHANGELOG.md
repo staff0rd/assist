@@ -1,3 +1,10 @@
+# [0.318.0](https://github.com/staff0rd/assist/compare/v0.317.2...v0.318.0) (2026-06-23)
+
+
+### Features
+
+* show phase name on session cards ([1b973b6](https://github.com/staff0rd/assist/commit/1b973b60b553af0a7328e312b2e91553a52b5075))
+
 ## [0.317.2](https://github.com/staff0rd/assist/compare/v0.317.1...v0.317.2) (2026-06-22)
 
 
