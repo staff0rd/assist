@@ -1,3 +1,10 @@
+## [0.318.3](https://github.com/staff0rd/assist/compare/v0.318.2...v0.318.3) (2026-06-24)
+
+
+### Bug Fixes
+
+* format remaining docs to oxfmt canonical form ([606c5ee](https://github.com/staff0rd/assist/commit/606c5ee12f1c6334bb7e087141ca726a4d101c8e))
+
 ## [0.318.2](https://github.com/staff0rd/assist/compare/v0.318.1...v0.318.2) (2026-06-24)
 
 
