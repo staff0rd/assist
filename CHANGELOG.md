@@ -1,3 +1,10 @@
+## [0.318.2](https://github.com/staff0rd/assist/compare/v0.318.1...v0.318.2) (2026-06-24)
+
+
+### Bug Fixes
+
+* format README to oxfmt canonical form ([33e52e1](https://github.com/staff0rd/assist/commit/33e52e15923690c65be85c9729a5b11259da49d5))
+
 ## [0.318.1](https://github.com/staff0rd/assist/compare/v0.318.0...v0.318.1) (2026-06-23)
 
 
