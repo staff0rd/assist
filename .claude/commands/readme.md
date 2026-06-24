@@ -11,6 +11,7 @@ Analyze the following files to find commands that are missing from README.md:
 3. Read `README.md` - the current documentation
 
 Compare and report:
+
 - Any Claude commands in `claude/commands/` not documented in README.md
 - Any CLI commands in `src/index.ts` not documented in README.md
 - Any documented commands that no longer exist

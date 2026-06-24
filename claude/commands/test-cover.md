@@ -26,6 +26,7 @@ From the uncovered files, prioritise by:
 3. **Complexity** — files with branching logic, edge cases, or error handling
 
 Skip files that are primarily:
+
 - Thin CLI wrappers (just parse args and call another function)
 - UI components (React/TSX)
 - Files that only re-export or wire things together
@@ -63,29 +64,30 @@ Example:
 
 ```typescript
 describe("parseToken", () => {
-  describe("when given a valid token", () => {
-    it("should return the decoded payload", () => {
-      const token = createToken({ sub: "user-1" });
+	describe("when given a valid token", () => {
+		it("should return the decoded payload", () => {
+			const token = createToken({ sub: "user-1" });
 
-      const result = parseToken(token);
+			const result = parseToken(token);
 
-      expect(result.sub).toBe("user-1");
-    });
-  });
+			expect(result.sub).toBe("user-1");
+		});
+	});
 
-  describe("when given an expired token", () => {
-    it("should throw an expiration error", () => {
-      const token = createToken({ exp: pastDate() });
+	describe("when given an expired token", () => {
+		it("should throw an expiration error", () => {
+			const token = createToken({ exp: pastDate() });
 
-      expect(() => parseToken(token)).toThrow("expired");
-    });
-  });
+			expect(() => parseToken(token)).toThrow("expired");
+		});
+	});
 });
 ```
 
 ### Coverage targets
 
 Cover:
+
 - Happy path for each exported function
 - Edge cases (empty input, undefined, boundary values)
 - Error cases and invalid input

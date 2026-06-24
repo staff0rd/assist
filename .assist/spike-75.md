@@ -21,6 +21,7 @@
 **Architecture:** Python SDK, zero core dependencies, pluggable LLM/embedding/storage providers.
 
 **Pipeline:** 3-stage extraction:
+
 1. **Plan** — LLM estimates skill count/names from conversation window
 2. **Expand** — LLM generates full skill spec per planned skill (name, description, prompt, triggers, tags, examples, confidence)
 3. **Compile** — Normalize, dedupe via hybrid embedding+BM25 search, version (add/merge/discard)
@@ -29,6 +30,7 @@
 **Output:** `SKILL.md` files with YAML frontmatter (id, name, description, version, tags, triggers) + prompt body.
 
 **Extraction philosophy (from prompt analysis):**
+
 - Only extract when user provides **concrete, reusable execution requirements**
 - Single explicit constraint can be sufficient signal
 - Must be traceable to USER evidence only — assistant replies are never direct skill evidence
@@ -40,15 +42,18 @@
 ## Integration Approach Evaluation
 
 ### A) Standalone AutoSkill — RULED OUT
+
 - Requires Python runtime + external LLM API key
 - Adds heavy dependency for extraction that could be done natively
 - Output format (SKILL.md) doesn't match assist skill format anyway
 
 ### B) AutoSkill as subprocess/wrapper — RULED OUT
+
 - Same API key requirement
 - IPC complexity for no real benefit over (A)
 
 ### C) Hybrid: AutoSkill storage + Claude Code extraction — RULED OUT
+
 - AutoSkill's storage is just filesystem .md files — no value over writing our own
 - Embedding-based dedupe is overkill for <100 skill files
 
@@ -57,6 +62,7 @@
 Use Claude Code itself as the extraction LLM. No external API key needed.
 
 **Implementation:**
+
 1. `assist skill extract` CLI command that:
    - Reads session JSONL files for the current project
    - Strips metadata/tool-calls, keeps user+assistant text
@@ -69,6 +75,7 @@ Use Claude Code itself as the extraction LLM. No external API key needed.
    - Writes approved skills as `.md` files to `claude/commands/`
 
 **Why this wins:**
+
 - Zero external dependencies (no Python, no API key)
 - Claude Code IS the LLM — already running, already has project context
 - Session data is small enough to process in batches within context
@@ -76,12 +83,14 @@ Use Claude Code itself as the extraction LLM. No external API key needed.
 - AutoSkill's prompt engineering concepts (user-evidence-only, reuse test, conservative extraction) are portable as prompt instructions
 
 **What to port from AutoSkill:**
+
 - Extraction criteria: reusable policy detection, confidence scoring, user-evidence-only rule
 - Anti-patterns: skip generic tasks, one-off content, assistant-invented structures
 - Output structure: name, description, triggers/tags for discoverability
 - Dedupe concept: compare against existing skills in `claude/commands/` before proposing
 
 **What NOT to port:**
+
 - Embedding-based retrieval (overkill at this scale)
 - Version/provenance tracking (git handles this)
 - Concurrent extraction workers (single-session processing is fast enough)
@@ -106,6 +115,7 @@ Note: this cost is already incurred within the Claude Code session — no additi
 **Approach D: Port extraction prompts, implement natively in assist CLI + Claude Code skill.**
 
 Phase 2 should:
+
 1. Add `assist skill extract [--sessions N] [--project PATH]` command that reads and summarizes session transcripts
 2. Create a `/skill-extract` Claude Code skill with adapted AutoSkill extraction prompt
 3. Implement approval flow and `.md` file generation

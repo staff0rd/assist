@@ -30,9 +30,11 @@ Once you have enough context, propose a complete backlog item. Show it to the us
 **Type:** story or bug
 **Description:** 1-3 sentences
 **Acceptance Criteria:**
+
 - (specific, testable criteria)
 
 **Plan:**
+
 - Phase 1: (name) — tasks...
 - Phase 2: (name) — tasks... [manual checks: ...]
 
@@ -41,12 +43,14 @@ Once you have enough context, propose a complete backlog item. Show it to the us
 **Phases must be vertical slices, not horizontal layers.** Each phase should deliver a thin, working increment of the feature that can be verified end-to-end. Do NOT decompose by architectural layer (e.g. "Phase 1: schema changes", "Phase 2: backend API", "Phase 3: UI"). Instead, each phase should cut through all necessary layers to produce something observable.
 
 Bad (horizontal):
+
 - Phase 1: Add database schema and types
 - Phase 2: Build API endpoints
 - Phase 3: Create UI components
 - Phase 4: Wire everything together
 
 Good (vertical):
+
 - Phase 1: Minimal working feature (hardcoded/simplified) visible end-to-end
 - Phase 2: Add real data handling and validation
 - Phase 3: Polish edge cases and error states
@@ -58,6 +62,7 @@ Good (vertical):
 - If a feature spans backend + UI, each phase carries its slice through both — e.g. "Phase 1: endpoint + UI button that calls it", not "Phase 1: endpoint, Phase 2: button".
 
 Two tests for each phase before proposing the plan:
+
 1. **Observable**: can you answer "does this work?" by running or inspecting the result? If a phase only produces internal plumbing with no observable effect, it's horizontal — restructure it.
 2. **Self-contained**: would `assist verify` pass with only this phase's code committed — no unused exports, no dead stubs awaiting a later phase? If not, merge the producer and its consumer into the same phase.
 
@@ -74,12 +79,15 @@ Ask the user if they want to change anything. Iterate until they confirm.
 Once confirmed, create the item and its phases via CLI commands.
 
 First, add the item and capture the id it prints:
+
 ```
 assist backlog add --name "Item name" --type story --desc "Description text" --ac "criterion 1" --ac "criterion 2" 2>&1
 ```
+
 Note the created item id from the output — you'll pass it to the done signal below.
 
 Then add each phase:
+
 ```
 assist backlog add-phase <id> "Phase name" --task "Task 1" --task "Task 2" --manual-check "optional check" 2>&1
 ```
@@ -87,7 +95,9 @@ assist backlog add-phase <id> "Phase name" --task "Task 1" --task "Task 2" --man
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.
 
 Finally, signal that the drafting task is complete, passing the created item id:
+
 ```
 assist signal done <id> 2>&1
 ```
+
 This lets a wrapping `assist draft --once` session end and surfaces the created item id to the session card; in a plain interactive session it has no effect.

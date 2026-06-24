@@ -78,17 +78,19 @@ The pipeline uses 3 ML models: **Silero VAD** (voice activity detection, ONNX/CP
 
 ```typescript
 voice: z.strictObject({
-  wakeWords: z.array(z.string()).default(["claude"]),
-  mic: z.string().optional(),           // audio device name
-  cwd: z.string().optional(),           // working directory for dispatch
-  modelsDir: z.string().optional(),     // shared model storage path (cross-env)
-  lockDir: z.string().optional(),       // shared lock file directory (cross-env)
-  models: z.strictObject({
-    vad: z.string().optional(),         // custom Silero ONNX path
-    smartTurn: z.string().optional(),   // custom Smart Turn ONNX path
-    stt: z.string().optional(),         // custom Parakeet model path
-  }).optional(),
-}).optional()
+	wakeWords: z.array(z.string()).default(["claude"]),
+	mic: z.string().optional(), // audio device name
+	cwd: z.string().optional(), // working directory for dispatch
+	modelsDir: z.string().optional(), // shared model storage path (cross-env)
+	lockDir: z.string().optional(), // shared lock file directory (cross-env)
+	models: z
+		.strictObject({
+			vad: z.string().optional(), // custom Silero ONNX path
+			smartTurn: z.string().optional(), // custom Smart Turn ONNX path
+			stt: z.string().optional(), // custom Parakeet model path
+		})
+		.optional(),
+}).optional();
 ```
 
 ## Python Daemon Flow
@@ -113,10 +115,12 @@ IDLE → (VAD detects speech) → LISTENING → (Smart Turn: end of turn) → PR
 `assist` is installed in both WSL and PowerShell on the same Windows 11 machine. Key considerations:
 
 **Naturally separate (no conflict):**
+
 - PID files, logs — `~` resolves to `/home/stafford` (WSL) vs `C:\Users\stafford` (PowerShell)
 - Python venvs — must be separate (Linux vs Windows binaries)
 
 **Shared model storage:**
+
 - Config `voice.modelsDir` points both environments at the same physical directory
 - Default: `~/.assist/voice/models/` (per-environment)
 - To share: set `modelsDir` in WSL config to `/mnt/c/Users/stafford/.assist/voice/models/` and in Windows config to `C:\Users\stafford\.assist\voice\models\` — same physical location
@@ -124,6 +128,7 @@ IDLE → (VAD detects speech) → LISTENING → (Smart Turn: end of turn) → PR
 - NeMo/Parakeet model weights are also platform-independent
 
 **Cross-environment lock file:**
+
 - Prevents both WSL and PowerShell daemons from running simultaneously (mic + GPU contention)
 - Config `voice.lockDir` specifies a shared directory both environments can write to
 - Default: same as `modelsDir` (or `~/.assist/voice/` if not shared)

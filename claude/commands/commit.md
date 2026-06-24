@@ -7,10 +7,12 @@ Review the git status and create a commit with only the files that are relevant 
 First run `assist commit status` to see the current state of the working tree.
 
 Then either:
+
 - `assist commit "your message"` to commit already-staged changes, or
 - `assist commit "your message" <file1> <file2> ...` to stage files and commit
 
 Where:
+
 - The first argument is the commit message
 - Any subsequent arguments are paths to git add before committing
 - The commit message is 40 characters or less

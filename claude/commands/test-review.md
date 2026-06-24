@@ -18,21 +18,25 @@ For each test file, read both the test and the source file it covers. You need b
 Assess each test file against these criteria:
 
 ### Correctness
+
 - Do assertions actually verify the behaviour, or are they tautological (e.g., testing that a mock returns what you told it to)?
 - Are expected values correct and meaningful, not just copied from implementation output?
 - Do tests assert the right thing — return values, side effects, thrown errors — for each scenario?
 
 ### Coverage of behaviour
+
 - Are all exported functions tested?
 - Are conditional branches exercised (if/else, switch, early returns, error paths)?
 - Are edge cases covered (empty input, null/undefined, boundary values, large input)?
 - Are error cases tested (invalid arguments, missing data, thrown exceptions)?
 
 ### Test independence
+
 - Can each test run in isolation, or do tests depend on shared mutable state or execution order?
 - Are mocks reset properly between tests?
 
 ### BDD structure and Arrange-Act-Assert
+
 - Does the outer `describe` name the function or module under test?
 - Do inner `describe("when ...")` blocks group tests by shared setup/scenario?
 - Do `it` blocks use `should` phrasing with bare outcomes (e.g., `it("should allow")`, `it("should reject")`)? State specifiers (flags, syntax variants, conditions) belong in `when` blocks, never in `it` descriptions.
@@ -40,11 +44,13 @@ Assess each test file against these criteria:
 - Are assertions minimal per test — ideally one, at most two closely related? If multiple things are asserted about the same action, are they split into separate `it` blocks under the same `describe("when ...")`?
 
 ### Mocking discipline
+
 - Are mocks used only when necessary (external I/O, complex dependencies)?
 - Do mocks faithfully represent the real dependency's contract, or do they mask bugs?
 - Is there a risk that mocked tests pass but real integration would fail?
 
 ### Missing tests
+
 - Are there exported functions or significant code paths with no corresponding test?
 - Are there recently added functions (check git log) that lack tests?
 
@@ -57,12 +63,15 @@ For each test file, report:
 **Verdict:** Good / Needs improvement / Weak
 
 **Strengths:**
+
 - (what the tests do well)
 
 **Issues:**
+
 - (specific problems, each with a concrete recommendation)
 
 **Missing coverage:**
+
 - (untested functions or paths, with suggested test cases)
 
 ## Step 5: Summary

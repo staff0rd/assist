@@ -12,6 +12,7 @@ Parse `$ARGUMENTS` as a comma-separated list of item numbers (e.g. `1,2` or `1,2
 ## Finding the Referenced List
 
 Look back through the conversation for the most recent numbered list of issues, suggestions, or comments. Each item should have enough context to determine:
+
 - **path**: the file path
 - **line**: the line number
 - **body**: a concise comment describing the issue
@@ -29,6 +30,7 @@ assist prs comment <path> <line> '<body>' 2>&1
 **Important:** Always use single quotes around `<body>`, never double quotes. Double quotes cause shell escaping issues with backticks and special characters.
 
 The body must:
+
 - Be a clear, concise description of the issue (1-2 sentences)
 - Not contain "claude" or "opus" (case-insensitive) — the command will reject it
 - Not contain single quotes (reword to avoid them)

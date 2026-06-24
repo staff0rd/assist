@@ -34,6 +34,7 @@ Ask one focused question at a time. Wait for the user's response before continui
 Based on the user's input, apply changes using the appropriate commands. Always append `2>&1` to each command.
 
 **To update item fields:**
+
 ```
 assist backlog update-field <id> --name "New name"
 assist backlog update-field <id> --desc "New description"
@@ -44,6 +45,7 @@ assist backlog update-field <id> --ac "criterion 1" --ac "criterion 2"
 Note: `--ac` replaces all acceptance criteria, so include the full list (both existing and new).
 
 **To modify a plan phase** (phase is 0-indexed):
+
 ```
 assist backlog update-phase <id> <phase> --name "New phase name"
 assist backlog update-phase <id> <phase> --task "Task 1" --task "Task 2"
@@ -53,11 +55,13 @@ assist backlog update-phase <id> <phase> --manual-check "Check 1"
 Note: `--task` and `--manual-check` replace the full list for that phase, so include all items.
 
 **To remove a plan phase:**
+
 ```
 assist backlog remove-phase <id> <phase>
 ```
 
 **To add a new plan phase:**
+
 ```
 assist backlog add-phase <id> "Phase name" --task "Task 1" --task "Task 2"
 ```
@@ -71,6 +75,7 @@ When adding or restructuring plan phases, follow the same rules as /draft:
 - If the user proposes a horizontal split, point out that the earlier phase won't verify (knip will flag the unused exports) and suggest a vertical restructure instead.
 
 **To add a comment** (for context, decisions, or notes that don't fit in fields):
+
 ```
 assist backlog comment <id> "Comment text"
 ```
@@ -84,7 +89,9 @@ Ask if there is anything else to refine. Continue the conversation until the use
 ## Step 5: Signal completion
 
 Once the user confirms they are done refining, signal that the task is complete:
+
 ```
 assist signal done 2>&1
 ```
+
 This lets a wrapping `assist refine --once` session end; in a plain interactive session it has no effect.

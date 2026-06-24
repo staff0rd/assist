@@ -15,6 +15,7 @@ Otherwise, analyze each entry and suggest specific changes to auto-allow the rec
 Present your suggestions as a numbered list with the specific change for each. Group related suggestions together.
 
 **Important:**
+
 - Only suggest allowing read-only, non-destructive commands
 - Never suggest allowing write operations (git push, rm, npm publish, etc.) without flagging them as risky
 - Reference the deny reason from the output to explain why each command was blocked

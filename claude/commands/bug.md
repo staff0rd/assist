@@ -33,6 +33,7 @@ Show the user the bug report:
 **Actual:** ...
 
 **Acceptance Criteria:**
+
 - (conditions that confirm the bug is fixed)
 
 Do NOT generate a plan — the implementer will determine how to fix it.
@@ -44,15 +45,19 @@ Ask the user if they want to change anything. Iterate until they confirm.
 ## Step 5: Save
 
 Once confirmed, add the item via CLI and capture the id it prints:
+
 ```
 assist backlog add --name "Bug title" --type bug --desc "**Repro:**\n1. ...\n\n**Expected:** ...\n\n**Actual:** ..." --ac "criterion 1" --ac "criterion 2" 2>&1
 ```
+
 Note the created item id from the output — you'll pass it to the done signal below.
 
 Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.
 
 Finally, signal that the bug-filing task is complete, passing the created item id:
+
 ```
 assist signal done <id> 2>&1
 ```
+
 This lets a wrapping `assist bug --once` session end and surfaces the created item id to the session card; in a plain interactive session it has no effect.

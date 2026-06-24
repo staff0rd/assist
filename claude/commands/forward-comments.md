@@ -32,7 +32,7 @@ If either is missing or ambiguous, ask before proceeding. The PR is always the c
 
    Rules for the quote:
    - **Quote verbatim.** Preserve the reviewer's exact wording, including typos, repeated words, odd spacing, and punctuation. Do not paraphrase, "fix," or tidy. The reviewer's voice matters.
-   - **Drop framing prose.** Only the actionable suggestion that maps to *this specific line* should appear. If the reviewer's sentence opens with broad framing ("the only thing that's slightly naff is...") and then states the suggestion, quote only the suggestion part.
+   - **Drop framing prose.** Only the actionable suggestion that maps to _this specific line_ should appear. If the reviewer's sentence opens with broad framing ("the only thing that's slightly naff is...") and then states the suggestion, quote only the suggestion part.
    - **Add backticks around symbols.** Identifier names, type names, file names, and function names should be wrapped in backticks (e.g. `` `displayValue` ``, `` `SurveyQuestionModel` ``, `` `resolvers.ts` ``) even if the reviewer didn't use them. This is the only formatting change permitted.
    - **No editorialising.** Do not add your own commentary, explanation, or restatement. The whole body is the attribution line plus the quote.
 

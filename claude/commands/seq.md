@@ -7,10 +7,12 @@ The user wants to query Seq log events. The argument is either a Seq UI URL or a
 ## If the argument is a URL
 
 Parse it to extract:
+
 1. **Base URL** — the origin (e.g., `http://localhost:5341`)
 2. **Filter** — URL-decode the `filter` query parameter from the fragment (after `#`). For example, from `http://localhost:5341/#/events?filter=JobId%20%3D%3D%20%22abc%22`, extract filter `JobId == "abc"`.
 
 Then determine the correct connection:
+
 - Run `assist seq auth list` to see configured connections.
 - Match the base URL from the parsed URL against a connection's URL.
 - If a match is found, use that connection name with `-c <name>`.
