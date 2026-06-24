@@ -1,3 +1,10 @@
+## [0.318.4](https://github.com/staff0rd/assist/compare/v0.318.3...v0.318.4) (2026-06-24)
+
+
+### Bug Fixes
+
+* verify formats whole repo via oxfmt ([1903b4e](https://github.com/staff0rd/assist/commit/1903b4ebc31a3b25176e9694eb29a8f499ffe0af))
+
 ## [0.318.3](https://github.com/staff0rd/assist/compare/v0.318.2...v0.318.3) (2026-06-24)
 
 
