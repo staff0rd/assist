@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Session } from "./createSession";
-import { noteOutputForThinking } from "./watchThinking";
+import { noteOutputForThinking } from "./noteOutputForThinking";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 

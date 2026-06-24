@@ -29,7 +29,7 @@
 	},
 	"permissions": {
 		"allow": [
-"SlashCommand(/verify)",
+			"SlashCommand(/verify)",
 			"SlashCommand(/commit)",
 			"SlashCommand(/devlog)",
 			"SlashCommand(/refactor)",
@@ -43,7 +43,7 @@
 			"SlashCommand(/voice-logs)",
 			"SlashCommand(/journal)",
 			"SlashCommand(/standup)",
-"Skill(verify)",
+			"Skill(verify)",
 			"Skill(commit)",
 			"Skill(devlog)",
 			"Skill(refactor)",
@@ -85,8 +85,6 @@
 			"Bash(git ls-files:*)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
-		"deny": [
-			"Bash(npm run:*)"
-		]
+		"deny": ["Bash(npm run:*)"]
 	}
 }

@@ -3,7 +3,7 @@ import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { noteOutputForEscInterrupt } from "./watchEscInterrupt";
 import { refreshActivity } from "./watchActivity";
-import { noteOutputForThinking } from "./watchThinking";
+import { noteOutputForThinking } from "./noteOutputForThinking";
 
 const MAX_SCROLLBACK = 256 * 1024;
 

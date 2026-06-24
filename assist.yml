@@ -74,10 +74,9 @@ run:
       - src
   - name: verify:format
     command: npx
-    filter: "{src/**,*.ts,*.tsx}"
     args:
       - oxfmt
-      - src
+      - .
   - name: verify:build
     command: npx
     args:

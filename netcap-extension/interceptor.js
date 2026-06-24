@@ -64,8 +64,7 @@
 			if (type === "" || type === "text") return xhr.responseText ?? "";
 			if (type === "json")
 				return xhr.response == null ? "" : JSON.stringify(xhr.response);
-			if (type === "arraybuffer")
-				return new TextDecoder().decode(xhr.response);
+			if (type === "arraybuffer") return new TextDecoder().decode(xhr.response);
 			if (type === "document")
 				return xhr.response?.documentElement?.outerHTML ?? "";
 			if (type === "blob") return xhr.response;
@@ -80,7 +79,10 @@
 		const open = OriginalXHR.prototype.open;
 		const send = OriginalXHR.prototype.send;
 		OriginalXHR.prototype.open = function (method, url, ...rest) {
-			this.__netcap = { method: String(method).toUpperCase(), url: String(url) };
+			this.__netcap = {
+				method: String(method).toUpperCase(),
+				url: String(url),
+			};
 			return open.call(this, method, url, ...rest);
 		};
 		OriginalXHR.prototype.send = function (body) {
