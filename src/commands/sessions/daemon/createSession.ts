@@ -29,8 +29,6 @@ type Session = {
 	autoRun?: boolean;
 	autoAdvance?: boolean;
 	escInterruptTimer?: ReturnType<typeof setTimeout>;
-	thinkingStreakStart?: number;
-	thinkingLastOutput?: number;
 	reviewStarted?: boolean;
 };
 
@@ -55,14 +53,16 @@ type SessionInfo = {
 
 export type { Session, SessionInfo, SessionStatus };
 
-function runningBase(id: string) {
+function sessionBase(id: string, status: SessionStatus) {
 	const startedAt = Date.now();
 	return {
 		id,
-		status: "running" as const,
+		status,
 		startedAt,
 		runningMs: 0,
-		runningSince: startedAt,
+		/* why: runningMs counts only running stretches, so a session that starts
+		 * waiting (idle, awaiting first input) has no open stretch to stamp. */
+		runningSince: status === "running" ? startedAt : null,
 		scrollback: "",
 	};
 }
@@ -76,8 +76,12 @@ export function createSession(
 	 * transcript this process writes, not the newest unclaimed .jsonl in the cwd
 	 * (which races concurrent sessions in the same repo) (#413). */
 	const claudeSessionId = randomUUID();
+	/* why: a session with no initial prompt opens idle, awaiting the user's first
+	 * input — no Claude Code hook fires until they submit, so it must start
+	 * waiting rather than the default running, which would otherwise stick until
+	 * the first turn's Stop (#449). A prompted session is working immediately. */
 	return {
-		...runningBase(id),
+		...sessionBase(id, prompt ? "running" : "waiting"),
 		name: prompt?.slice(0, 40) || `Session ${id}`,
 		commandType: "claude",
 		pty: spawnClaude({ prompt, cwd, sessionId: id, claudeSessionId }),
@@ -93,7 +97,7 @@ export function createRunSession(
 	cwd?: string,
 ): Session {
 	return {
-		...runningBase(id),
+		...sessionBase(id, "running"),
 		name: `run: ${runName}`,
 		commandType: "run",
 		pty: spawnRun({ name: runName, args: runArgs, cwd }),

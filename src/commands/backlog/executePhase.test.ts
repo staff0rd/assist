@@ -38,12 +38,18 @@ vi.mock("./watchForMarker", () => ({
 	stopWatching: vi.fn(),
 }));
 
+vi.mock("../sessions/setSessionStatus", () => ({
+	setSessionStatus: vi.fn(),
+}));
+
 import { emitActivity } from "../../shared/emitActivity";
 import { spawnClaude } from "../../shared/spawnClaude";
+import { setSessionStatus } from "../sessions/setSessionStatus";
 import { executePhase } from "./executePhase";
 
 const mockEmitActivity = emitActivity as unknown as MockInstance;
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;
+const mockSetSessionStatus = setSessionStatus as unknown as MockInstance;
 
 function makeItem(): BacklogItem {
 	return {
@@ -104,5 +110,27 @@ describe("executePhase", () => {
 		expect(mockEmitActivity).toHaveBeenCalledWith(
 			expect.objectContaining({ phase: 2, phaseName: "Review" }),
 		);
+	});
+
+	describe("when the phase Claude has exited", () => {
+		it("pushes running so the card reflects the driver's between-phase work", async () => {
+			await executePhase(makeItem(), 0, phases);
+
+			expect(mockSetSessionStatus).toHaveBeenCalledWith("running");
+		});
+	});
+
+	describe("when the phase Claude fails to launch", () => {
+		it("does not push running for work that never starts", async () => {
+			mockSpawnClaude.mockReturnValueOnce({
+				child: {},
+				done: Promise.reject(new Error("spawn failed")),
+			});
+
+			const result = await executePhase(makeItem(), 0, phases);
+
+			expect(result).toBe(-1);
+			expect(mockSetSessionStatus).not.toHaveBeenCalled();
+		});
 	});
 });

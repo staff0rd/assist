@@ -18,6 +18,11 @@ const hooksSettings = {
 		PreToolUse: on(RUNNING),
 		Stop: on(WAITING),
 		Notification: on(WAITING),
+		/* why: a tool/plan approval prompt appears mid-turn, after PreToolUse has
+		 * already set running; PermissionRequest fires when the agent blocks on
+		 * that decision, so the card shows waiting rather than staying running while
+		 * it is genuinely awaiting the user (#449). */
+		PermissionRequest: on(WAITING),
 	},
 };
 

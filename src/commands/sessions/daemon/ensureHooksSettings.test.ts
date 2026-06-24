@@ -40,4 +40,13 @@ describe("ensureHooksSettings", () => {
 		expect(command("Stop")).toBe("assist sessions set-status waiting");
 		expect(command("Notification")).toBe("assist sessions set-status waiting");
 	});
+
+	it("maps a mid-turn permission prompt to waiting", () => {
+		ensureHooksSettings();
+
+		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		expect(written.hooks.PermissionRequest[0].hooks[0].command).toBe(
+			"assist sessions set-status waiting",
+		);
+	});
 });

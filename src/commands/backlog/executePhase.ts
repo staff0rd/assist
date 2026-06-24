@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
 import chalk from "chalk";
 import { awaitClaude } from "../../shared/awaitClaude";
-import { emitActivity } from "../../shared/emitActivity";
 import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
-import { buildPhasePrompt, REVIEW_PHASE_NAME } from "./buildPhasePrompt";
+import { setSessionStatus } from "../sessions/setSessionStatus";
+import { buildPhasePrompt } from "./buildPhasePrompt";
 import { buildResumePrompt } from "./buildResumePrompt";
+import { reportPhaseActivity } from "./reportPhaseActivity";
 import { resolvePhaseResult } from "./resolvePhaseResult";
 import type { BacklogItem, PlanPhase } from "./types";
 import { stopWatching, watchForMarker } from "./watchForMarker";
@@ -34,17 +35,7 @@ export async function executePhase(
 	const claudeSessionId = resumeSessionId ?? randomUUID();
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
-	// why: review sits one slot beyond the authored plan (totalPhases counts it), so label it explicitly rather than trusting the appended phase's name.
-	const isReviewPhase = phaseNumber >= totalPhases;
-	emitActivity({
-		kind: "backlog",
-		itemId: item.id,
-		itemName: item.name,
-		phase: phaseNumber,
-		phaseName: isReviewPhase ? REVIEW_PHASE_NAME : phase.name,
-		totalPhases,
-		claudeSessionId,
-	});
+	reportPhaseActivity(item, phaseNumber, totalPhases, phase, claudeSessionId);
 	const { child, done } = spawnClaude(
 		resumeSessionId
 			? buildResumePrompt()
@@ -62,6 +53,16 @@ export async function executePhase(
 	/* why: abort the phase loop on a spawn failure rather than surfacing an
 	 * uncaught rejection or retrying a launch that can't succeed */
 	if (!launched) return -1;
+
+	/* why: the phase Claude has exited, so its hooks no longer drive the daemon
+	 * card; the driver now works (resolve result, reload plan, spawn the next
+	 * phase) with no claude alive, leaving the card stuck on the last Stop's
+	 * `waiting`. Push `running` explicitly so the card reflects the active driver
+	 * work instead of the daemon guessing from PTY output (#447/#449). This only
+	 * runs once a phase Claude has exited — the review phase keeps its Claude
+	 * alive awaiting input, so awaitClaude blocks above and this never fires,
+	 * leaving its `waiting` intact. */
+	void setSessionStatus("running");
 
 	return await resolvePhaseResult(phaseIndex, item.id);
 }

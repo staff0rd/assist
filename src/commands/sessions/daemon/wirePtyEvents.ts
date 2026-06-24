@@ -3,7 +3,6 @@ import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { noteOutputForEscInterrupt } from "./watchEscInterrupt";
 import { refreshActivity } from "./watchActivity";
-import { noteOutputForThinking } from "./noteOutputForThinking";
 
 const MAX_SCROLLBACK = 256 * 1024;
 
@@ -24,14 +23,16 @@ export function wirePtyEvents(
 	) => void,
 ): void {
 	if (!session.pty) return;
-	/* why: running/waiting is primarily pushed by Claude Code hooks (set-status),
-	 * but an extended-thinking phase emits output yet fires no hook, so sustained
-	 * output while waiting is treated as activity and flips back to running
-	 * (watchThinking, #447). done/error still come from exit. */
+	/* why: running/waiting is pushed by Claude Code hooks (set-status) — including
+	 * the explicit `running` the backlog-run driver emits while it works between
+	 * hook-bearing phases (#447) — so the PTY stream only feeds scrollback, never
+	 * status. We deliberately do NOT infer status from output: a redrawing idle
+	 * prompt (spinner/status line) is indistinguishable from active work by output
+	 * alone, and inferring flipped an awaiting-input card to running (#449).
+	 * done/error still come from exit. */
 	session.pty.onData((data) => {
 		appendScrollback(session, data);
 		noteOutputForEscInterrupt(session, onStatusChange);
-		noteOutputForThinking(session, onStatusChange);
 		broadcast(clients, { type: "output", sessionId: session.id, data });
 	});
 	session.pty.onExit(({ exitCode }) => {
