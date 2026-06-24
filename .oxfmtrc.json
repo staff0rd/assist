@@ -10,5 +10,5 @@
 	"arrowParens": "always",
 	"bracketSameLine": false,
 	"bracketSpacing": true,
-	"ignorePatterns": ["dist/**", "**/.venv/**"]
+	"ignorePatterns": ["dist/**", "**/.venv/**", "CHANGELOG.md", "package.json"]
 }

@@ -5,6 +5,7 @@ A CLI tool for enforcing determinism in LLM development workflow automation.
 See [devlog](https://staffordwilliams.com/devlog/assist/) for latest features.
 
 ## Installation
+
 You can install `assist` globally using npm:
 
 ```bash
@@ -13,6 +14,7 @@ assist sync
 ```
 
 ## Updating
+
 ```bash
 assist update
 ```
@@ -68,7 +70,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/seq` - Query Seq logs from a URL or filter expression
 - `/sql` - Query a MSSQL database via assist sql
 - `/verify` - Run all verification commands in parallel
-- `/verify-new` - Add a new verify:* run command to assist.yml
+- `/verify-new` - Add a new verify:\* run command to assist.yml
 - `/transcript-format` - Format meeting transcripts from VTT files
 - `/transcript-summarise` - Summarise transcripts missing summaries
 - `/voice-setup` - Download required voice models (VAD, STT)
@@ -113,7 +115,7 @@ After installation, the `assist` command will be available globally. You can als
   - `--top <n>` - Only report the top `n` repos by commit count; committers and the author breakdown then cover those repos only (also caps the per-repo author queries, which speeds up large orgs)
   - `--json` - Output all three views as structured JSON instead of tables
 - `assist news add [url]` - Add an RSS feed URL (rendered in the sessions web News tab)
-Backlog data is stored in a global Postgres database (shared across all repos, scoped per repository by git origin), so a connection string is required. Set it via the `ASSIST_DATABASE_URL` environment variable or the `database.url` key in `assist.yml`; the environment variable takes precedence. Without one, every `assist backlog` command exits with a setup message. (There is no SQLite/JSONL fallback.) Commands default to the current repository's items; pass `--all-repos` to span every repository.
+  Backlog data is stored in a global Postgres database (shared across all repos, scoped per repository by git origin), so a connection string is required. Set it via the `ASSIST_DATABASE_URL` environment variable or the `database.url` key in `assist.yml`; the environment variable takes precedence. Without one, every `assist backlog` command exits with a setup message. (There is no SQLite/JSONL fallback.) Commands default to the current repository's items; pass `--all-repos` to span every repository.
 
 The first backlog command in a repository that still has a local `.assist/backlog.jsonl` automatically migrates it into Postgres — but only as a one-time bootstrap into an empty origin. If Postgres has **no** items for the repo's origin yet, it runs `git pull` (best-effort) to fetch the latest committed copy, imports every item under the origin with fresh global IDs (rewriting links to other items), and verifies the result. If Postgres **already** has items for that origin (a prior run, another clone, or a pre-seeded database), the import is skipped to avoid creating duplicates. Either way the local `.assist/backlog.jsonl` and `.assist/backlog.db` are renamed to `*.bak`, so the migration never re-runs and a local copy is retained.
 
@@ -159,7 +161,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist config get <key>` - Get a config value
 - `assist config list` - List all config values
   - `prs.slack` - The Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector
-- `assist verify` - Run all verify:* commands in parallel (from run configs in assist.yml and scripts in package.json)
+- `assist verify` - Run all verify:\* commands in parallel (from run configs in assist.yml and scripts in package.json)
 - `assist verify all` - Run all checks, ignoring diff-based filters
 - `assist verify --measure` - After the run, print a summary table of each command's status and duration (slowest first) plus a wall-clock total
 - `assist verify init` - Add verify scripts to a project (writes to `assist.yml` by default; pass `--package-json` to write to `package.json` scripts instead)
@@ -268,10 +270,12 @@ The first backlog command in a repository that still has a local `.assist/backlo
 Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client that relays WebSocket traffic to the daemon over a local IPC socket (unix domain socket at `~/.assist/daemon/daemon.sock`; named pipe `\\.\pipe\assist-sessions-daemon` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` (timestamped lines tagged with the daemon's pid, including why it spawned and which sessions it restored) and auto-exits once no sessions remain and no client has been connected for 60 seconds (it is respawned on demand by the web server). Daemon spawning is arbitrated by an `O_EXCL` lockfile so racing clients start at most one daemon; sessions are only restored after the daemon owns the IPC socket, and a daemon that loses ownership of `daemon.pid` shuts down its sessions and exits rather than running orphaned.
 
 From WSL, the selector can also surface and drive Windows-host repos (requires `assist` installed on the Windows host). Config keys:
+
 - `sessions.windowsProjectsRoot` — the Windows `.claude/projects` directory as seen from WSL (e.g. `/mnt/c/Users/<user>/.claude/projects`); enables discovery of Windows-host repos, tagged with a `Windows` badge. Selecting one launches a native assist daemon on Windows and runs an interactive session there.
 - `sessions.windowsDaemonHost` / `sessions.windowsDaemonPort` — where the WSL daemon reaches the native Windows daemon (defaults `127.0.0.1` / `51764`; set the host to the Windows IP on WSL2 NAT-mode networking).
 
 When iterating on assist itself: web server changes only need the `assist sessions` process restarted — sessions survive. Daemon/session-core changes need `assist daemon restart` to load the new code; this kills the PTYs, then claude sessions — including assist sessions that wrap claude, like `assist draft` — are auto-respawned via `claude --resume` with scrollback starting fresh, while run sessions (and assist sessions whose claude sessionId was never discovered) reappear as not-restored tiles that can be retried.
+
 - `assist next [id] [--once]` - Alias for `backlog next [id]`; `--once` exits after the first completed item run instead of prompting for another
 - `assist draft [description] [--once]` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal; an optional `description` is forwarded as `/draft <description>`; `--once` exits when the done signal arrives after the initial draft completes
 - `assist bug [description] [--once]` - Launch Claude in `/bug` mode, chain into next on `/next` signal; an optional `description` is forwarded as `/bug <description>`; `--once` exits when the done signal arrives after the initial bug report completes
@@ -283,7 +287,6 @@ When iterating on assist itself: web server changes only need the `assist sessio
 When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist refine`, `assist next`, and `assist backlog run` run `git pull --ff-only` before doing anything else; if the pull fails the command aborts. `assist next` pulls once per invocation, not per item in its loop.
 
 When `commit.expectedBranch` is set (e.g. `main`), `assist commit` prints a prominent warning if HEAD is on any other branch before committing — so work committed (and pushed) on a stray branch in a repo that lands directly on the expected branch isn't silently orphaned. The warning is non-blocking: the commit still proceeds. With the key unset, behaviour is unchanged and no branch check runs.
-
 
 ## netcap browser extension
 
