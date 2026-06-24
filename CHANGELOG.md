@@ -1,3 +1,10 @@
+## [0.318.5](https://github.com/staff0rd/assist/compare/v0.318.4...v0.318.5) (2026-06-24)
+
+
+### Bug Fixes
+
+* awaiting sessions show waiting ([5be6a25](https://github.com/staff0rd/assist/commit/5be6a258b8357bb4f10bdaa28967e012765952d9))
+
 ## [0.318.4](https://github.com/staff0rd/assist/compare/v0.318.3...v0.318.4) (2026-06-24)
 
 
