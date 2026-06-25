@@ -2,20 +2,9 @@ import Chip from "@mui/material/Chip";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import type { UsagePeakRow as UsagePeakRowData } from "../../../../shared/db/listUsagePeaks";
-import {
-	FIVE_HOUR_SECONDS,
-	rateLimitLevel,
-	SEVEN_DAY_SECONDS,
-} from "../../../../shared/rateLimitLevel";
+import { rateLimitLevel } from "../../../../shared/rateLimitLevel";
 import { UsageBar } from "./UsageBar";
-
-const WINDOW: Record<
-	UsagePeakRowData["window"],
-	{ label: string; seconds: number }
-> = {
-	five_hour: { label: "5h", seconds: FIVE_HOUR_SECONDS },
-	seven_day: { label: "7d", seconds: SEVEN_DAY_SECONDS },
-};
+import { usagePeakWindow } from "./usagePeakWindow";
 
 export function UsagePeakRow({
 	peak,
@@ -24,7 +13,7 @@ export function UsagePeakRow({
 	peak: UsagePeakRowData;
 	now: number;
 }) {
-	const { label, seconds } = WINDOW[peak.window];
+	const { label, seconds, tint } = usagePeakWindow[peak.window];
 	const level = rateLimitLevel(
 		peak.usedPercentage,
 		peak.resetsAt,
@@ -32,7 +21,15 @@ export function UsagePeakRow({
 		now,
 	);
 	return (
-		<TableRow>
+		<TableRow
+			sx={(theme) => ({
+				backgroundColor: tint
+					? theme.palette.mode === "dark"
+						? tint.dark
+						: tint.light
+					: undefined,
+			})}
+		>
 			<TableCell>
 				{label}
 				{peak.resetDetected && (
