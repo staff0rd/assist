@@ -1,3 +1,10 @@
+## [0.318.7](https://github.com/staff0rd/assist/compare/v0.318.6...v0.318.7) (2026-06-25)
+
+
+### Bug Fixes
+
+* stop windows session-id w- growth ([7f256c0](https://github.com/staff0rd/assist/commit/7f256c0f0d87357298bbeb57c386a6ca8f6c3628))
+
 ## [0.318.6](https://github.com/staff0rd/assist/compare/v0.318.5...v0.318.6) (2026-06-25)
 
 
