@@ -1,3 +1,10 @@
+# [0.322.0](https://github.com/staff0rd/assist/compare/v0.321.0...v0.322.0) (2026-06-25)
+
+
+### Features
+
+* unify daemon logs into assist.log ([61cc1c0](https://github.com/staff0rd/assist/commit/61cc1c0373d8bed5dd36e89947434523cd8a1fb8))
+
 # [0.321.0](https://github.com/staff0rd/assist/compare/v0.320.0...v0.321.0) (2026-06-25)
 
 
