@@ -1,3 +1,10 @@
+## [0.322.2](https://github.com/staff0rd/assist/compare/v0.322.1...v0.322.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* log windows-proxy create refusal ([e8684ca](https://github.com/staff0rd/assist/commit/e8684caa1b4a607903ee2401b5f18e35eefc0455))
+
 ## [0.322.1](https://github.com/staff0rd/assist/compare/v0.322.0...v0.322.1) (2026-06-25)
 
 
