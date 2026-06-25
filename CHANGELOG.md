@@ -1,3 +1,10 @@
+## [0.326.1](https://github.com/staff0rd/assist/compare/v0.326.0...v0.326.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* stop replaying daemon log buffer to web ([b771c2a](https://github.com/staff0rd/assist/commit/b771c2af05a2970474fd668e4ef8bbe402ebebeb))
+
 # [0.326.0](https://github.com/staff0rd/assist/compare/v0.325.1...v0.326.0) (2026-06-25)
 
 
