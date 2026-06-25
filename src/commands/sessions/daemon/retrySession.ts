@@ -1,5 +1,6 @@
 import { broadcast, type SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import { setStatus } from "./setStatus";
 import { spawnPty } from "./spawnPty";
 import { spawnRun } from "./spawnRun";
@@ -28,6 +29,7 @@ export function retrySession(
 	session.pty = respawn();
 	broadcast(clients, { type: "clear", sessionId: session.id });
 	wirePtyEvents(session, clients, onStatusChange);
+	daemonLog(`session ${session.id} retried: ${session.name}`);
 	return true;
 }
 

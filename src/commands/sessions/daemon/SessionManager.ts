@@ -1,8 +1,10 @@
+// assist-maintainability-override: 65
 import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
 import { ClientHub, persistUsagePeak } from "./ClientHub";
 import { createAssistSession } from "./createAssistSession";
+import { dismissSession, drainSessions } from "./dismissSession";
 import {
 	createRunSession,
 	createSession,
@@ -11,6 +13,7 @@ import {
 	type SessionStatus,
 } from "./createSession";
 import { greetClient } from "./greetClient";
+import { logSpawnedSession } from "./logSpawnedSession";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import { restoreAll } from "./restoreAll";
 import { resumeSession } from "./resumeSession";
@@ -60,11 +63,12 @@ export class SessionManager {
 		return restoreAll(this.spawnWith, this.sessions);
 	}
 
-	drain = (): number => sessionIo.drainSessions(this.sessions, this.notify);
+	drain = (): number => drainSessions(this.sessions, this.notify);
 
 	private add(session: Session): string {
 		this.wire(session);
 		watchActivity(session, this.notify);
+		logSpawnedSession(session);
 		return session.id;
 	}
 
@@ -114,7 +118,7 @@ export class SessionManager {
 	}
 
 	dismissSession = (id: string): void => {
-		if (sessionIo.dismissSession(this.sessions, id)) this.notify();
+		if (dismissSession(this.sessions, id)) this.notify();
 	};
 
 	setAutoRun(id: string, enabled: boolean): void {

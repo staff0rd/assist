@@ -1,7 +1,6 @@
-import { removeActivity } from "../../../shared/emitActivity";
-import { releaseLock } from "../../backlog/acquireLock";
 import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session, SessionStatus } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import { watchEscInterrupt } from "./watchEscInterrupt";
 
 export function writeToSession(
@@ -34,6 +33,7 @@ export function setAutoRun(
 	const s = sessions.get(id);
 	if (!s) return false;
 	s.autoRun = enabled;
+	daemonLog(`session ${id} autorun ${enabled ? "on" : "off"}`);
 	return true;
 }
 
@@ -50,29 +50,6 @@ export function setAutoAdvance(
 		if (enabled) clearPause(itemId);
 		else requestPause(itemId);
 	}
+	daemonLog(`session ${id} autoadvance ${enabled ? "on" : "off"}`);
 	return true;
-}
-
-export function dismissSession(
-	sessions: Map<string, Session>,
-	id: string,
-): boolean {
-	const s = sessions.get(id);
-	if (!s) return false;
-	if (s.status !== "done") s.pty?.kill();
-	s.activityWatcher?.close();
-	removeActivity(s.id);
-	if (s.activity?.itemId != null) releaseLock(s.activity.itemId);
-	sessions.delete(id);
-	return true;
-}
-
-export function drainSessions(
-	sessions: Map<string, Session>,
-	onDrained: () => void,
-): number {
-	const ids = [...sessions.keys()];
-	for (const id of ids) dismissSession(sessions, id);
-	onDrained();
-	return ids.length;
 }
