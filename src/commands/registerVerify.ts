@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import {
-	commentPolicy as verifyCommentPolicy,
+	blockComments as verifyBlockComments,
 	forbiddenStrings as verifyForbiddenStrings,
 	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
@@ -52,9 +52,11 @@ export function registerVerify(program: Command): void {
 		.action(verifyHardcodedColors);
 
 	verifyCommand
-		.command("comment-policy")
-		.description("Check for undocumented comments added on changed lines")
-		.action(verifyCommentPolicy);
+		.command("block-comments")
+		.description(
+			"Fail on any comment on a changed line, whether added or edited",
+		)
+		.action(verifyBlockComments);
 
 	verifyCommand
 		.command("no-venv")

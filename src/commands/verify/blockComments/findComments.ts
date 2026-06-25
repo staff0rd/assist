@@ -12,8 +12,7 @@ type CommentFinding = {
 	text: string;
 };
 
-type FindAddedCommentsOptions = {
-	markers: string[];
+type FindCommentsOptions = {
 	ignoreGlobs: string[];
 };
 
@@ -29,9 +28,7 @@ function shouldScan(file: string, ignoreGlobs: string[]): boolean {
 	return fs.existsSync(file);
 }
 
-export function findAddedComments(
-	options: FindAddedCommentsOptions,
-): CommentFinding[] {
+export function findComments(options: FindCommentsOptions): CommentFinding[] {
 	const diff = execSync("git diff HEAD", {
 		encoding: "utf8",
 		maxBuffer: 64 * 1024 * 1024,
@@ -53,7 +50,7 @@ export function findAddedComments(
 		for (const { pos, text } of collectComments(sourceFile)) {
 			const { line } = sourceFile.getLineAndColumnAtPos(pos);
 			if (!lines.has(line)) continue;
-			if (isCommentExempt(text, options.markers)) continue;
+			if (isCommentExempt(text)) continue;
 			findings.push({ file, line, text: toSingleLine(text) });
 		}
 	}

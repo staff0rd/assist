@@ -46,10 +46,9 @@ export const assistConfigSchema = z.strictObject({
 			ignore: z.array(z.string()).default([]),
 		})
 		.optional(),
-	commentPolicy: z
+	blockComments: z
 		.strictObject({
 			ignore: z.array(z.string()).default([]),
-			markers: z.array(z.string()).default(["HACK:", "why:"]),
 		})
 		.optional(),
 	restructure: z

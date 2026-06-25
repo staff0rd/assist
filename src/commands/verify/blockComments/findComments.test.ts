@@ -9,16 +9,18 @@ vi.mock("node:child_process", () => ({
 	execSync: (...args: unknown[]) => mockExecSync(...args),
 }));
 
-import { findAddedComments } from "./findAddedComments";
+import { findComments } from "./findComments";
 
 const SOURCE = [
 	"const a = 1;",
-	"// added comment here",
+	"// a narration comment",
 	"const b = 2;",
-	"// HACK: justified reason",
+	"// HACK: formerly justified, now still blocked",
 	"const c = 3;",
-	"// pre-existing untouched comment",
+	"// oxlint-disable-next-line no-explicit-any",
 	"const d = 4;",
+	"// pre-existing untouched comment",
+	"const e = 5;",
 	"",
 ].join("\n");
 
@@ -35,7 +37,7 @@ function diffAddingLine(startLine: number): string {
 
 beforeEach(() => {
 	vi.clearAllMocks();
-	tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "comment-policy-"));
+	tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "block-comments-"));
 	filePath = path.join(tmpDir, "sample.ts");
 	fs.writeFileSync(filePath, SOURCE);
 });
@@ -44,29 +46,43 @@ afterEach(() => {
 	fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 
-describe("findAddedComments", () => {
-	it("flags an unjustified comment added on a changed line", () => {
+describe("findComments", () => {
+	it("flags a comment added on a changed line", () => {
 		mockExecSync.mockReturnValue(diffAddingLine(2));
 
-		const findings = findAddedComments({ markers: ["HACK:"], ignoreGlobs: [] });
+		const findings = findComments({ ignoreGlobs: [] });
 
 		expect(findings).toEqual([
-			{ file: filePath, line: 2, text: "// added comment here" },
+			{ file: filePath, line: 2, text: "// a narration comment" },
 		]);
 	});
 
-	it("does not flag a comment carrying a justification marker", () => {
+	it("flags a comment even when it carries a former justification marker", () => {
 		mockExecSync.mockReturnValue(diffAddingLine(4));
 
-		const findings = findAddedComments({ markers: ["HACK:"], ignoreGlobs: [] });
+		const findings = findComments({ ignoreGlobs: [] });
+
+		expect(findings).toEqual([
+			{
+				file: filePath,
+				line: 4,
+				text: "// HACK: formerly justified, now still blocked",
+			},
+		]);
+	});
+
+	it("exempts functional machine directives on a changed line", () => {
+		mockExecSync.mockReturnValue(diffAddingLine(6));
+
+		const findings = findComments({ ignoreGlobs: [] });
 
 		expect(findings).toEqual([]);
 	});
 
 	it("does not flag comments on lines that were not changed", () => {
-		mockExecSync.mockReturnValue(diffAddingLine(1));
+		mockExecSync.mockReturnValue(diffAddingLine(9));
 
-		const findings = findAddedComments({ markers: ["HACK:"], ignoreGlobs: [] });
+		const findings = findComments({ ignoreGlobs: [] });
 
 		expect(findings).toEqual([]);
 	});
@@ -74,10 +90,7 @@ describe("findAddedComments", () => {
 	it("skips files matching an ignore glob", () => {
 		mockExecSync.mockReturnValue(diffAddingLine(2));
 
-		const findings = findAddedComments({
-			markers: ["HACK:"],
-			ignoreGlobs: ["**/sample.ts"],
-		});
+		const findings = findComments({ ignoreGlobs: ["**/sample.ts"] });
 
 		expect(findings).toEqual([]);
 	});

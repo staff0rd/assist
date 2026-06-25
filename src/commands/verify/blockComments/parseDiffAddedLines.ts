@@ -32,9 +32,7 @@ export function parseDiffAddedLines(diff: string): AddedLines {
 			}
 			set.add(newLine);
 			newLine++;
-		} else if (line.startsWith("-")) {
-			// why: removed lines do not advance the new-file line counter
-		} else {
+		} else if (!line.startsWith("-")) {
 			newLine++;
 		}
 	}

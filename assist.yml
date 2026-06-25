@@ -137,12 +137,12 @@ run:
     args:
       - verify
       - forbidden-strings
-  - name: verify:comment-policy
+  - name: verify:block-comments
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
       - verify
-      - comment-policy
+      - block-comments
   - name: verify:custom-lint
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"

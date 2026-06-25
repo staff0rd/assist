@@ -1,4 +1,4 @@
-export { commentPolicy } from "./commentPolicy";
+export { blockComments } from "./blockComments";
 export { forbiddenStrings } from "./forbiddenStrings";
 export { hardcodedColors } from "./hardcodedColors";
 export { init } from "./init";

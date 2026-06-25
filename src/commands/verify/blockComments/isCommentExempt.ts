@@ -16,8 +16,7 @@ const MACHINE_DIRECTIVES = [
 	MAINTAINABILITY_OVERRIDE_MARKER,
 ];
 
-export function isCommentExempt(text: string, markers: string[]): boolean {
+export function isCommentExempt(text: string): boolean {
 	const lower = text.toLowerCase();
-	if (MACHINE_DIRECTIVES.some((d) => lower.includes(d))) return true;
-	return markers.some((m) => lower.includes(m.toLowerCase()));
+	return MACHINE_DIRECTIVES.some((d) => lower.includes(d));
 }
