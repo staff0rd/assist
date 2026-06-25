@@ -151,6 +151,27 @@ describe("SessionManager", () => {
 			);
 		});
 
+		it("caps the batch and logs the skipped remainder", () => {
+			const persisted = Array.from({ length: 13 }, (_, i) => ({
+				name: `s${i}`,
+				commandType: "claude" as const,
+				cwd: "/repo",
+				startedAt: 1,
+			}));
+			loadPersistedMock.mockReturnValue(persisted);
+			restoreSessionMock.mockImplementation((id: string) =>
+				fakeSession({ id, name: `s${id}`, restored: true }),
+			);
+
+			const restored = new SessionManager().restore();
+
+			expect(restored).toHaveLength(10);
+			expect(restoreSessionMock).toHaveBeenCalledTimes(10);
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("skipping 3 persisted session(s)"),
+			);
+		});
+
 		it("logs and surfaces an error session when restore throws", () => {
 			loadPersistedMock.mockReturnValue([
 				{
@@ -186,6 +207,21 @@ describe("SessionManager", () => {
 				Map<string, Session>,
 			];
 			expect([...sessions.values()].map((s) => s.name)).toEqual(["new"]);
+		});
+
+		it("refuses to spawn past the absolute live-session ceiling", () => {
+			createSessionMock.mockImplementation((id: string) =>
+				fakeSession({ id, name: id }),
+			);
+			const manager = new SessionManager();
+
+			for (let i = 0; i < 12; i++) manager.spawn();
+
+			expect(() => manager.spawn()).toThrow(/ceiling/);
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("at ceiling of 12 live sessions"),
+			);
+			expect(manager.listSessions()).toHaveLength(12);
 		});
 	});
 

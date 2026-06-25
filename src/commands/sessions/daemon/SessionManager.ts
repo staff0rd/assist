@@ -16,6 +16,7 @@ import { restoreAll } from "./restoreAll";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
 import { reuseSessionForRun } from "./reuseSessionForRun";
+import { sessionLimits } from "./sessionLimits";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
 import { WindowsProxy } from "./WindowsProxy";
@@ -28,7 +29,7 @@ export class SessionManager {
 	// why: dispatch calls active.set() on card click; broadcasts include active.toJSON()
 	readonly active = new ActiveSelection(() => this.notify());
 	readonly clients = new ClientHub(persistUsagePeak);
-	private nextId = 1;
+	private readonly idCounter = { next: 1 };
 	private shuttingDown = false;
 
 	// why: dispatch calls windowsProxy.route() to forward windows-origin sessions
@@ -66,7 +67,7 @@ export class SessionManager {
 	}
 
 	private readonly spawnWith = (create: (id: string) => Session): string =>
-		this.add(create(String(this.nextId++)));
+		this.add(create(sessionLimits.nextId(this.sessions.size, this.idCounter)));
 
 	spawn(prompt?: string, cwd?: string): string {
 		return this.spawnWith((id) => createSession(id, prompt, cwd));

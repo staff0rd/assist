@@ -18,7 +18,10 @@ export function restoreOne(
 		logUnresumable(persisted.name, id, sessions.get(id));
 	} catch (error) {
 		const reason = logRestoreError(persisted.name, error);
-		spawn((id) => errorSession(id, persisted, reason));
+		// why: the error card also spawns, which refuses past the ceiling; swallow so one capped entry can't abort the batch
+		try {
+			spawn((id) => errorSession(id, persisted, reason));
+		} catch {}
 	}
 }
 
