@@ -1,3 +1,11 @@
+## [0.324.1](https://github.com/staff0rd/assist/compare/v0.324.0...v0.324.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* cap windows connect probe at 2s ([73b95f7](https://github.com/staff0rd/assist/commit/73b95f7b8b30e7376383aabc8db6efd3ceeed0ea))
+* tighten windows create timeout to 5s ([6c7f8c3](https://github.com/staff0rd/assist/commit/6c7f8c3f3808e48873cd7f2fb0057c64646074ab))
+
 # [0.324.0](https://github.com/staff0rd/assist/compare/v0.323.1...v0.324.0) (2026-06-25)
 
 
