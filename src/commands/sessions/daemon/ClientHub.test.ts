@@ -55,4 +55,34 @@ describe("ClientHub", () => {
 
 		expect(client.send).not.toHaveBeenCalled();
 	});
+
+	describe("log subscription", () => {
+		it("delivers live log lines only to subscribers", () => {
+			const hub = new ClientHub();
+			const subscriber = { send: vi.fn() };
+			const plain = { send: vi.fn() };
+			hub.add(subscriber);
+			hub.add(plain);
+			hub.subscribeLogs(subscriber);
+
+			hub.emitLog("daemon line");
+
+			expect(subscriber.send).toHaveBeenCalledWith(
+				JSON.stringify({ type: "log", line: "daemon line" }),
+			);
+			expect(plain.send).not.toHaveBeenCalled();
+		});
+
+		it("stops delivering once unsubscribed", () => {
+			const hub = new ClientHub();
+			const client = { send: vi.fn() };
+			hub.subscribeLogs(client);
+			client.send.mockClear();
+
+			hub.unsubscribeLogs(client);
+			hub.emitLog("after");
+
+			expect(client.send).not.toHaveBeenCalled();
+		});
+	});
 });

@@ -49,6 +49,7 @@ export class SessionManager {
 
 	removeClient(client: SessionClient): void {
 		this.clients.delete(client);
+		this.clients.unsubscribeLogs(client);
 		this.onIdleChange?.(this.isIdle());
 	}
 

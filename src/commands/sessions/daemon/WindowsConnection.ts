@@ -64,6 +64,8 @@ export class WindowsConnection {
 		this.socket = socket;
 		this.wire(socket);
 		this.write(buildHello());
+		// why: subscribe to the Windows daemon's log stream so its ring replay (covers an already-running daemon's startup) and live daemonLog lines flow back here, where handleInbound relays them tagged [windows].
+		this.write({ type: "subscribe-logs" });
 		return socket;
 	}
 

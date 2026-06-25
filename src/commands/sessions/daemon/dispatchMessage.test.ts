@@ -120,6 +120,20 @@ describe("dispatchMessage", () => {
 		});
 	});
 
+	describe("subscribe-logs", () => {
+		it("subscribes the client to the hub's log stream", () => {
+			const client = { send: vi.fn() };
+			const subscribeLogs = vi.fn();
+			const manager = {
+				clients: { subscribeLogs },
+			} as unknown as SessionManager;
+
+			dispatchMessage(client, manager, { type: "subscribe-logs" });
+
+			expect(subscribeLogs).toHaveBeenCalledWith(client);
+		});
+	});
+
 	describe("limits", () => {
 		it("forwards reported rate limits to the client hub", () => {
 			const client = { send: vi.fn() };

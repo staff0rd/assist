@@ -114,10 +114,11 @@ describe("WindowsProxy", () => {
 		const c = client();
 		expect(proxy.route(c, { type: "create", cwd: "C:\\repo" })).toBe(true);
 
-		await waitFor(() => daemon.received.length >= 2);
-		// the hello handshake is sent before the create
+		await waitFor(() => daemon.received.length >= 3);
+		// why: hello then a log subscription precede the create over the bridge
 		expect(JSON.parse(daemon.received[0]).type).toBe("hello");
-		expect(JSON.parse(daemon.received[1])).toMatchObject({
+		expect(JSON.parse(daemon.received[1]).type).toBe("subscribe-logs");
+		expect(JSON.parse(daemon.received[2])).toMatchObject({
 			type: "create",
 			cwd: "C:\\repo",
 		});

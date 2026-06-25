@@ -72,4 +72,41 @@ describe("WindowsConnection circuit breaker", () => {
 		for (const peer of peers) peer.destroy();
 		await new Promise<void>((r) => server.close(() => r()));
 	});
+
+	it("subscribes to the windows daemon log stream after sending hello", async () => {
+		const received: string[] = [];
+		const peers: net.Socket[] = [];
+		const server = net.createServer((s) => {
+			peers.push(s);
+			s.on("data", (buf) => received.push(buf.toString()));
+		});
+		await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+		const { port } = server.address() as AddressInfo;
+
+		const connect = () =>
+			new Promise<net.Socket>((resolve, reject) => {
+				const s = net.connect(port, "127.0.0.1");
+				s.once("connect", () => resolve(s));
+				s.once("error", reject);
+			});
+		const conn = new WindowsConnection({ ...sink, connect });
+
+		const socket = await conn.ensure();
+		await new Promise<void>((r) => setTimeout(r, 50));
+
+		const messages = received
+			.join("")
+			.split("\n")
+			.filter(Boolean)
+			.map((l) => JSON.parse(l));
+		const hello = messages.findIndex((m) => m.type === "hello");
+		const subscribe = messages.findIndex((m) => m.type === "subscribe-logs");
+		expect(hello).toBeGreaterThanOrEqual(0);
+		expect(subscribe).toBeGreaterThan(hello);
+
+		socket.destroy();
+		conn.dispose();
+		for (const peer of peers) peer.destroy();
+		await new Promise<void>((r) => server.close(() => r()));
+	});
 });

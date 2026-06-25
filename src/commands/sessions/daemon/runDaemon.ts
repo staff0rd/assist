@@ -1,7 +1,7 @@
 import { mkdirSync } from "node:fs";
 import { isDaemonRunning } from "./connectToDaemon";
 import { createAutoExit } from "./createAutoExit";
-import { daemonLog } from "./daemonLog";
+import { daemonLog, setDaemonLogSink } from "./daemonLog";
 import { daemonPaths } from "./daemonPaths";
 import { SessionManager } from "./SessionManager";
 import { startDaemonServer } from "./startDaemonServer";
@@ -21,5 +21,8 @@ export async function runDaemon(): Promise<void> {
 		daemonLog("no sessions and no connected server; exiting");
 		process.exit(0);
 	});
-	startDaemonServer(new SessionManager(checkAutoExit), checkAutoExit);
+	const manager = new SessionManager(checkAutoExit);
+	// why: forward every daemonLog line to log subscribers (e.g. the web server) so they reach assist.log alongside web-server lifecycle output.
+	setDaemonLogSink(manager.clients.emitLog);
+	startDaemonServer(manager, checkAutoExit);
 }

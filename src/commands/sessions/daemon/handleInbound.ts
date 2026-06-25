@@ -1,7 +1,7 @@
 import { sendTo } from "./broadcast";
 import { ASSIST_VERSION, isHello, versionsMatch } from "./buildHello";
 import type { SessionInfo } from "./createSession";
-import { daemonLog } from "./daemonLog";
+import { daemonLog, relayDaemonLog } from "./daemonLog";
 import { toWindowsSessionId } from "./toWindowsSessionId";
 import { appendScrollback, type WindowsProxyState } from "./WindowsProxyState";
 
@@ -22,6 +22,10 @@ const inbound: Record<string, (state: WindowsProxyState, msg: Msg) => void> = {
 	created: handleCreated,
 	sessions: handleSessions,
 	output: handleOutput,
+	// why: relay the Windows daemon's own log lines into this daemon's stream (ring + subscribers) so assist.log shows both daemons; not state.broadcast — browsers must not receive log spam.
+	log: (_state, msg) => {
+		if (typeof msg.line === "string") relayDaemonLog(msg.line);
+	},
 	clear: relayWithSessionId,
 	error: (state, msg) => {
 		daemonLog(`windows daemon: inbound error: ${msg.message}`);

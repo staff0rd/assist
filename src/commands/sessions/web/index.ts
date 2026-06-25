@@ -6,6 +6,7 @@ import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
 import { handleRequest } from "./handleRequest";
 import { handleSocket, type RelayContext } from "./handleSocket";
 import { installRestartMenu } from "./restartMenu/installRestartMenu";
+import { streamDaemonLogs } from "./streamDaemonLogs";
 
 export async function web(options: {
 	port: string;
@@ -39,6 +40,9 @@ export async function web(options: {
 	});
 
 	installRestartMenu();
+
+	// why: keep a dedicated daemon log subscription open so daemonLog output reaches the web server's stdout (assist.log) regardless of whether a browser tab is connected.
+	streamDaemonLogs();
 
 	// why: never await the daemon before binding — on WSL login the spawn can stall behind an interactive shell-init step (ssh-key passphrase prompt) and a throw here would exit before binding, needing a manual restart. Warming it in the background lets each WS connection ensure it lazily (handleSocket) while the browser auto-reconnects once it is up.
 	void ensureDaemonRunning("web server start").catch((error) => {
