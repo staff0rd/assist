@@ -9,8 +9,11 @@ function extractPath(rest: string): string {
 	return arrow === -1 ? rest : rest.slice(arrow + 4);
 }
 
+const UNMERGED_STATES = new Set(["DD", "AU", "UD", "UA", "DU", "AA", "UU"]);
+
 function categorize(xy: string): keyof GitStatusCounts | null {
 	if (xy === "??") return "new";
+	if (UNMERGED_STATES.has(xy)) return "modified";
 	const codes = xy.replace(/ /g, "");
 	if (codes.includes("A")) return "new";
 	if (codes.includes("D")) return "deleted";

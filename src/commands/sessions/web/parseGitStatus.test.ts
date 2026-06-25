@@ -42,6 +42,39 @@ describe("parseGitStatus", () => {
 		});
 	});
 
+	it("groups an unmerged (UU) conflict file as modified", () => {
+		expect(parseGitStatus("UU conflicted.ts")).toEqual({
+			new: [],
+			modified: ["conflicted.ts"],
+			deleted: [],
+		});
+	});
+
+	it("groups all unmerged conflict states as modified", () => {
+		const output = [
+			"DD both-deleted.ts",
+			"AU added-by-us.ts",
+			"UD deleted-by-them.ts",
+			"UA added-by-them.ts",
+			"DU deleted-by-us.ts",
+			"AA both-added.ts",
+			"UU both-modified.ts",
+		].join("\n");
+		expect(parseGitStatus(output)).toEqual({
+			new: [],
+			modified: [
+				"both-deleted.ts",
+				"added-by-us.ts",
+				"deleted-by-them.ts",
+				"added-by-them.ts",
+				"deleted-by-us.ts",
+				"both-added.ts",
+				"both-modified.ts",
+			],
+			deleted: [],
+		});
+	});
+
 	it("ignores blank lines and parses multiple entries", () => {
 		const output = ["?? a.ts", " M b.ts", " D c.ts", ""].join("\n");
 		expect(parseGitStatus(output)).toEqual({
