@@ -1,3 +1,10 @@
+# [0.325.0](https://github.com/staff0rd/assist/compare/v0.324.1...v0.325.0) (2026-06-25)
+
+
+### Features
+
+* comment edit gate w/ escape hatch ([519bc68](https://github.com/staff0rd/assist/commit/519bc683755d1859ddd55d351ead460071e48d5f))
+
 ## [0.324.1](https://github.com/staff0rd/assist/compare/v0.324.0...v0.324.1) (2026-06-25)
 
 
