@@ -1,3 +1,10 @@
+## [0.318.8](https://github.com/staff0rd/assist/compare/v0.318.7...v0.318.8) (2026-06-25)
+
+
+### Bug Fixes
+
+* clamp session-card prompt to 5 lines ([cea3f6d](https://github.com/staff0rd/assist/commit/cea3f6dae3eb18ec5f7feae7d3722158cabee5ee))
+
 ## [0.318.7](https://github.com/staff0rd/assist/compare/v0.318.6...v0.318.7) (2026-06-25)
 
 
