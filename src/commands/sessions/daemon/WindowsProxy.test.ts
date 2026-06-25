@@ -310,11 +310,19 @@ describe("WindowsProxy", () => {
 		/* why: a further create is refused with an error and never reaches the
 		 * daemon, and discovery no longer reopens the connection */
 		const settled = daemon.received.length;
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
 		const c = client();
 		expect(proxy.route(c, { type: "create", cwd: "C:\\repo" })).toBe(true);
 		await waitFor(() =>
 			c.sent.some((m) => (m as { type?: string }).type === "error"),
 		);
+		// why: the refusal must be logged, not just toasted, so daemon.log records why nothing started
+		expect(
+			log.mock.calls.some((call) =>
+				String(call[0]).includes("refusing create"),
+			),
+		).toBe(true);
+		log.mockRestore();
 		await proxy.discover();
 		await settle();
 		expect(daemon.received.length).toBe(settled);

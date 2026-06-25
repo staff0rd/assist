@@ -6,6 +6,7 @@ import { defaultConnect } from "./defaultConnect";
 import { discoverWindowsSessions } from "./discoverWindowsSessions";
 import { forwardWindowsCreate } from "./forwardWindowsCreate";
 import { handleInbound } from "./handleInbound";
+import { handleWindowsClose } from "./handleWindowsClose";
 import { healWindowsDaemon } from "./healWindowsDaemon";
 import { isWindowsCreate, isWindowsIo } from "./isWindowsCreate";
 import { stripWindowsSessionId } from "./toWindowsSessionId";
@@ -13,7 +14,6 @@ import { WindowsConnection } from "./WindowsConnection";
 import {
 	createState,
 	replayScrollback,
-	resetState,
 	type WindowsProxyState,
 } from "./WindowsProxyState";
 import { WindowsVersionHealer } from "./WindowsVersionHealer";
@@ -50,7 +50,7 @@ export class WindowsProxy {
 		this.conn = new WindowsConnection({
 			connect,
 			onLine: (line) => handleInbound(this.state, line),
-			onClose: () => this.handleClose(),
+			onClose: () => handleWindowsClose(this.state),
 		});
 		this.healer = new WindowsVersionHealer(this.conn, this.state, heal);
 	}
@@ -72,32 +72,28 @@ export class WindowsProxy {
 	// windows-origin cwd is forwarded, as is I/O for a namespaced session id.
 	route(client: SessionClient, data: Msg): boolean {
 		if (!this.enabled) return false;
-		if (isWindowsCreate(data)) {
-			if (this.healer.blocked) sendTo(client, this.healer.refusal());
-			else void forwardWindowsCreate(this.conn, this.state, client, data);
-			return true;
-		}
-		if (isWindowsIo(data)) {
-			const sessionId = stripWindowsSessionId(data.sessionId as string);
-			this.conn.trySend({ ...data, sessionId });
-			return true;
-		}
+		if (isWindowsCreate(data)) return this.routeCreate(client, data);
+		if (isWindowsIo(data)) return this.routeIo(data);
 		return false;
+	}
+
+	private routeCreate(client: SessionClient, data: Msg): boolean {
+		if (this.healer.blocked) {
+			daemonLog(
+				`windows proxy: refusing ${data.type} (cwd=${data.cwd}); windows host version incompatible`,
+			);
+			sendTo(client, this.healer.refusal());
+		} else void forwardWindowsCreate(this.conn, this.state, client, data);
+		return true;
+	}
+
+	private routeIo(data: Msg): boolean {
+		const sessionId = stripWindowsSessionId(data.sessionId as string);
+		this.conn.trySend({ ...data, sessionId });
+		return true;
 	}
 
 	dispose(): void {
 		this.conn.dispose();
-	}
-
-	private handleClose(): void {
-		daemonLog("windows proxy: connection to windows daemon closed");
-		for (const client of this.state.pendingCreators)
-			sendTo(client, {
-				type: "error",
-				message: "Windows daemon connection closed",
-			});
-		resetState(this.state);
-		// Drop the Windows cards from every UI by rebroadcasting the merged list.
-		this.state.onSessionsChanged();
 	}
 }
