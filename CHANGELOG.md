@@ -1,3 +1,10 @@
+# [0.324.0](https://github.com/staff0rd/assist/compare/v0.323.1...v0.324.0) (2026-06-25)
+
+
+### Features
+
+* harden block-comments verify gate ([ee0a5c7](https://github.com/staff0rd/assist/commit/ee0a5c796a843f9504759f0531e8e903bf6ee618))
+
 ## [0.323.1](https://github.com/staff0rd/assist/compare/v0.323.0...v0.323.1) (2026-06-25)
 
 
