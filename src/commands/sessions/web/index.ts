@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { WebSocketServer } from "ws";
 import { isGitRepo } from "../../../shared/getInstallDir";
 import { startWebServer } from "../../../shared/web";
@@ -11,7 +12,6 @@ export async function web(options: {
 	initialPath?: string;
 	open?: boolean;
 }): Promise<void> {
-	await ensureDaemonRunning("web server start");
 	const port = Number.parseInt(options.port, 10);
 	const server = startWebServer(
 		"Assist",
@@ -39,4 +39,15 @@ export async function web(options: {
 	});
 
 	installRestartMenu();
+
+	// why: never await the daemon before binding — on WSL login the spawn can stall behind an interactive shell-init step (ssh-key passphrase prompt) and a throw here would exit before binding, needing a manual restart. Warming it in the background lets each WS connection ensure it lazily (handleSocket) while the browser auto-reconnects once it is up.
+	void ensureDaemonRunning("web server start").catch((error) => {
+		console.error(
+			chalk.yellow(
+				`sessions daemon not ready yet, will retry on connection: ${
+					error instanceof Error ? error.message : String(error)
+				}`,
+			),
+		);
+	});
 }
