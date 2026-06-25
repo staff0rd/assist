@@ -1,3 +1,11 @@
+# [0.321.0](https://github.com/staff0rd/assist/compare/v0.320.0...v0.321.0) (2026-06-25)
+
+
+### Features
+
+* log daemon session operations ([a22a057](https://github.com/staff0rd/assist/commit/a22a0576e65744d997222467693860359d83de0b))
+* maintainability override output ([73548fb](https://github.com/staff0rd/assist/commit/73548fb71667763e6ca25306b43c5682638ed770))
+
 # [0.320.0](https://github.com/staff0rd/assist/compare/v0.319.0...v0.320.0) (2026-06-25)
 
 
