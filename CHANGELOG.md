@@ -1,3 +1,10 @@
+# [0.326.0](https://github.com/staff0rd/assist/compare/v0.325.1...v0.326.0) (2026-06-25)
+
+
+### Features
+
+* deliver comment-gate pin out-of-band ([29a5e73](https://github.com/staff0rd/assist/commit/29a5e73b612a6444b2bca18ded03dca6dbacf78a))
+
 ## [0.325.1](https://github.com/staff0rd/assist/compare/v0.325.0...v0.325.1) (2026-06-25)
 
 
