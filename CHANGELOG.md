@@ -1,3 +1,10 @@
+# [0.320.0](https://github.com/staff0rd/assist/compare/v0.319.0...v0.320.0) (2026-06-25)
+
+
+### Features
+
+* maintainability override marker ([9e17eb0](https://github.com/staff0rd/assist/commit/9e17eb0e1fca36e7209b2c33257dfb5132096031))
+
 # [0.319.0](https://github.com/staff0rd/assist/compare/v0.318.9...v0.319.0) (2026-06-25)
 
 
