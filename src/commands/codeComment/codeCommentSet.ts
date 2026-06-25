@@ -1,13 +1,6 @@
-import { mkdirSync, writeFileSync } from "node:fs";
-import { randomBytes } from "node:crypto";
 import chalk from "chalk";
-import { getPinStatePath, getRestrictedDir } from "./getRestrictedDir";
-import { sweepRestrictedDir } from "./sweepRestrictedDir";
 import { validateCommentText } from "./validateCommentText";
-
-function generatePin(): string {
-	return randomBytes(4).toString("hex");
-}
+import { issuePin } from "./issuePin";
 
 export function codeCommentSet(file: string, line: string, text: string): void {
 	const lineNumber = Number.parseInt(line, 10);
@@ -27,23 +20,30 @@ export function codeCommentSet(file: string, line: string, text: string): void {
 
 	console.error(
 		chalk.yellow.bold(
-			"Think hard. Comments are a last resort, not a habit.\n" +
-				"Almost every comment you reach for is a sign the code should be clearer instead.\n" +
-				"Before you confirm this pin, ask whether a better name, a smaller function, or a\n" +
-				"test would make the comment redundant. If you are still sure this one line earns\n" +
-				"its keep, run the confirm step below.",
+			"THIS IS YOUR LAST CHANCE TO RECONSIDER BEFORE INVOLVING A HUMAN.\n" +
+				"Requesting this pin pages a real person to approve a comment. DO NOT WASTE THEIR TIME.\n" +
+				"You had BETTER BE RIGHT that this comment is genuinely necessary.\n\n" +
+				"Comments are a last resort, not a habit. Almost every comment you reach for is a sign\n" +
+				"the code should be clearer instead. Before a human is pulled in, ask whether a better\n" +
+				"name, a smaller function, or a test would make the comment redundant. ONLY if you are\n" +
+				"certain this one line earns its keep should you proceed to the confirm step below.",
 		),
 	);
 
-	const pin = generatePin();
-	mkdirSync(getRestrictedDir(), { recursive: true });
-	sweepRestrictedDir();
-	writeFileSync(
-		getPinStatePath(pin),
-		JSON.stringify({ pin, file, line: lineNumber, text: validation.text }),
-	);
+	const delivered = issuePin(file, lineNumber, validation.text);
+
+	if (!delivered) {
+		console.error(
+			chalk.red(
+				"Could not deliver the confirmation pin via notification.\n" +
+					"The comment cannot be confirmed until the notification channel works.",
+			),
+		);
+		process.exitCode = 1;
+		return;
+	}
 
 	console.log(
-		`${chalk.green(`Pin issued: ${pin}`)}\nTo insert "// ${validation.text}" at ${file}:${lineNumber}, run:\n${chalk.cyan(`  assist code-comment confirm ${pin}`)}`,
+		`A confirmation pin was sent to your desktop notifications.\nTo insert "// ${validation.text}" at ${file}:${lineNumber}, run:\n${chalk.cyan("  assist code-comment confirm <PIN>")}\nusing the pin from that notification.`,
 	);
 }
