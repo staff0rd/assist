@@ -3,7 +3,7 @@ import type { SessionInfo } from "./createSession";
 
 const MAX_SCROLLBACK = 256 * 1024;
 
-const DEFAULT_CREATE_TIMEOUT_MS = 15_000;
+const DEFAULT_CREATE_TIMEOUT_MS = 5_000;
 
 type PendingCreator = {
 	client: SessionClient;
