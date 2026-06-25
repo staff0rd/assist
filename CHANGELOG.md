@@ -1,3 +1,10 @@
+## [0.318.6](https://github.com/staff0rd/assist/compare/v0.318.5...v0.318.6) (2026-06-25)
+
+
+### Bug Fixes
+
+* web server binds before daemon ready ([c550452](https://github.com/staff0rd/assist/commit/c550452c12cf97f93effe1b6919bde1eb41b5133))
+
 ## [0.318.5](https://github.com/staff0rd/assist/compare/v0.318.4...v0.318.5) (2026-06-24)
 
 
