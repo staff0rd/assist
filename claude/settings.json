@@ -89,6 +89,6 @@
 			"Bash(git ls-files:*)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
-		"deny": ["Bash(npm run:*)"]
+		"deny": ["Bash(npm run:*)", "Read(~/.assist/restricted/**)"]
 	}
 }

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { readStdin } from "../../lib/readStdin";
+import { decideCommentGuard } from "./decideCommentGuard";
 import { decideOverrideGuard, type EditHookInput } from "./decideOverrideGuard";
 
 function tryParseInput(raw: string): EditHookInput | undefined {
@@ -31,7 +32,8 @@ export async function editHook(): Promise<void> {
 			? readExisting(input.tool_input.file_path)
 			: undefined;
 
-	const reason = decideOverrideGuard(input, existing);
+	const reason =
+		decideOverrideGuard(input, existing) ?? decideCommentGuard(input, existing);
 	if (!reason) return;
 
 	console.log(

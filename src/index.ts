@@ -12,6 +12,7 @@ import { registerActivity } from "./commands/registerActivity";
 import { registerBackup } from "./commands/registerBackup";
 import { registerBacklog } from "./commands/registerBacklog";
 import { registerCliHook } from "./commands/registerCliHook";
+import { registerCodeComment } from "./commands/registerCodeComment";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerConfig } from "./commands/registerConfig";
 import { registerDeny } from "./commands/registerDeny";
@@ -133,6 +134,7 @@ program
 registerActivity(program);
 registerBackup(program);
 registerCliHook(program);
+registerCodeComment(program);
 registerEditHook(program);
 registerGithub(program);
 registerHandover(program);
