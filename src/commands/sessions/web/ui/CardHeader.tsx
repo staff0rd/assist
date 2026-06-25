@@ -45,7 +45,14 @@ export function CardHeader({
 			/>
 			<Typography
 				variant="body2"
-				sx={{ color: "text.primary", overflowWrap: "anywhere" }}
+				sx={{
+					color: "text.primary",
+					overflowWrap: "anywhere",
+					display: "-webkit-box",
+					WebkitBoxOrient: "vertical",
+					WebkitLineClamp: 5,
+					overflow: "hidden",
+				}}
 			>
 				{sessionTitle(session)}
 			</Typography>
