@@ -20,4 +20,4 @@ Exception: genuinely per-keystroke, high-frequency operations (`input`) may be s
 ## Where the logs go
 
 - `daemonLog()` output → `~/.assist/daemon/daemon.log` (WSL) or `C:\Users\<you>\.assist\daemon\daemon.log` (Windows host). See `daemonPaths.ts`.
-- Web-server session lifecycle (`session started` / `session ended`) uses raw `console.log`, NOT `daemonLog`, so it does NOT reach `daemon.log` — it lands in the web-server stdout (project-switch `assist.log`). See the project root `CLAUDE.md`.
+- `daemonLog()` output is _also_ forwarded to log subscribers (the web server's dedicated `subscribe-logs` connection in `web/streamDaemonLogs.ts`), so every daemon line reaches the web-server stdout (project-switch `assist.log`) too. A bounded ring buffer (`daemonLog.ts`) is replayed on subscribe so startup lines aren't lost. Windows daemon lines arrive over the proxy bridge and are relayed tagged `[windows]`. This is the single unified stream — there is no separate web-server lifecycle logger.
