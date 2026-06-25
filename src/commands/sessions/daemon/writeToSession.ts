@@ -66,3 +66,13 @@ export function dismissSession(
 	sessions.delete(id);
 	return true;
 }
+
+export function drainSessions(
+	sessions: Map<string, Session>,
+	onDrained: () => void,
+): number {
+	const ids = [...sessions.keys()];
+	for (const id of ids) dismissSession(sessions, id);
+	onDrained();
+	return ids.length;
+}

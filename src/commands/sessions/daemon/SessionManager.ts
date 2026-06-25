@@ -60,6 +60,8 @@ export class SessionManager {
 		return restoreAll(this.spawnWith, this.sessions);
 	}
 
+	drain = (): number => sessionIo.drainSessions(this.sessions, this.notify);
+
 	private add(session: Session): string {
 		this.wire(session);
 		watchActivity(session, this.notify);

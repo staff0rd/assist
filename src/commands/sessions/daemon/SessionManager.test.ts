@@ -319,6 +319,37 @@ describe("SessionManager", () => {
 		});
 	});
 
+	describe("drain", () => {
+		it("removes every session, killing ptys and persisting the empty set", () => {
+			const killed = vi.fn();
+			restoreSessionMock.mockImplementation((id: string) =>
+				fakeSession({
+					id,
+					pty: { kill: killed } as unknown as Session["pty"],
+				}),
+			);
+			loadPersistedMock.mockReturnValue([
+				{ name: "a", commandType: "assist", cwd: "/r", startedAt: 1 },
+				{ name: "b", commandType: "assist", cwd: "/r", startedAt: 1 },
+			]);
+			const manager = new SessionManager();
+			manager.restore();
+
+			expect(manager.drain()).toBe(2);
+
+			expect(killed).toHaveBeenCalledTimes(2);
+			expect(manager.listSessions()).toEqual([]);
+			const [sessions] = persistLiveMock.mock.lastCall as [
+				Map<string, Session>,
+			];
+			expect(sessions.size).toBe(0);
+		});
+
+		it("returns zero when there are no sessions to drain", () => {
+			expect(new SessionManager().drain()).toBe(0);
+		});
+	});
+
 	describe("active selection", () => {
 		it("broadcasts the per-repo selection to connected clients", () => {
 			const manager = new SessionManager();

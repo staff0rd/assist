@@ -266,6 +266,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist daemon status` - Show sessions daemon status, live sessions, and any stray daemon processes or stolen socket
 - `assist daemon stop` - Stop the sessions daemon; running claude sessions resume on next start
 - `assist daemon restart` - Restart the sessions daemon, resuming previously running claude sessions
+- `assist daemon drain` - Remove all sessions from the local daemon for a clean slate (does not affect the Windows daemon)
 
 Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client that relays WebSocket traffic to the daemon over a local IPC socket (unix domain socket at `~/.assist/daemon/daemon.sock`; named pipe `\\.\pipe\assist-sessions-daemon` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` (timestamped lines tagged with the daemon's pid, including why it spawned and which sessions it restored) and auto-exits once no sessions remain and no client has been connected for 60 seconds (it is respawned on demand by the web server). Daemon spawning is arbitrated by an `O_EXCL` lockfile so racing clients start at most one daemon; sessions are only restored after the daemon owns the IPC socket, and a daemon that loses ownership of `daemon.pid` shuts down its sessions and exits rather than running orphaned.
 

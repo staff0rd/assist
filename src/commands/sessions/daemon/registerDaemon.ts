@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { daemonStatus } from "./daemonStatus";
+import { drainDaemon } from "./drainDaemon";
 import { restartDaemon } from "./restartDaemon";
 import { runDaemon } from "./runDaemon";
 import { stopDaemon } from "./stopDaemon";
@@ -36,4 +37,11 @@ export function registerDaemon(program: Command): void {
 			"Restart the sessions daemon, resuming previously running claude sessions",
 		)
 		.action(restartDaemon);
+
+	cmd
+		.command("drain")
+		.description(
+			"Remove all sessions from the local daemon for a clean slate (does not affect the Windows daemon)",
+		)
+		.action(drainDaemon);
 }

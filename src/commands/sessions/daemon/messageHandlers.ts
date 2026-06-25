@@ -85,6 +85,7 @@ export const messageHandlers: Record<string, Handler> = {
 	history: handleHistory,
 	"fetch-transcript": handleFetchTranscript,
 	shutdown: handleShutdown,
+	drain: (client, m) => sendTo(client, { type: "drained", count: m.drain() }),
 	limits: (_client, m, d) => m.clients.updateLimits(d.rateLimits as RateLimits),
 	input: routed((_client, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),
