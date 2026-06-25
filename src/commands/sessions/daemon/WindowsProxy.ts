@@ -41,11 +41,14 @@ export class WindowsProxy {
 		connect: () => Promise<Socket> = defaultConnect,
 		// why: injectable so tests don't spawn pwsh; defaults to update + restart
 		heal: () => Promise<void> = healWindowsDaemon,
+		// why: injectable so tests don't wait the full window for a create to time out
+		createTimeoutMs?: number,
 	) {
 		this.state = createState(
 			(msg) => broadcast(clients, msg),
 			onSessionsChanged,
 			(version) => void this.healer.onMismatch(version),
+			createTimeoutMs,
 		);
 		this.conn = new WindowsConnection({
 			connect,

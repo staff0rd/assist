@@ -211,6 +211,50 @@ describe("WindowsProxy", () => {
 		expect(c.sent[0]).toMatchObject({ type: "error" });
 	});
 
+	it("surfaces an error to the client when the windows daemon never acks a create", async () => {
+		/* why: the daemon connects but never sends `created`; a tiny timeout fires
+		 * the error so the web UI shows something instead of hanging silently */
+		const slow = new WindowsProxy(
+			new Set(),
+			() => {},
+			connectToDaemon,
+			heal,
+			30,
+		);
+		const c = client();
+		slow.route(c, { type: "create", cwd: "C:\\repo" });
+		await waitFor(() =>
+			c.sent.some((m) => (m as { type?: string }).type === "error"),
+		);
+		expect(c.sent.at(-1)).toMatchObject({ type: "error" });
+		slow.dispose();
+	});
+
+	it("clears the timeout once the create is acked", async () => {
+		/* why: a created ack must cancel the timeout so no late error reaches a
+		 * client that already got its card */
+		const slow = new WindowsProxy(
+			new Set(),
+			() => {},
+			connectToDaemon,
+			heal,
+			30,
+		);
+		const c = client();
+		slow.route(c, { type: "create", cwd: "C:\\repo" });
+		await waitFor(() => daemon.received.some((l) => l.includes('"create"')));
+		daemon.send({ type: "created", sessionId: "3" });
+		await waitFor(() =>
+			c.sent.some((m) => (m as { type?: string }).type === "created"),
+		);
+		// why: wait past the 30ms timeout to prove the ack cancelled it
+		await new Promise((resolve) => setTimeout(resolve, 60));
+		expect(
+			c.sent.filter((m) => (m as { type?: string }).type === "error"),
+		).toEqual([]);
+		slow.dispose();
+	});
+
 	it("does not claim local sessions", () => {
 		expect(
 			proxy.route(client(), { type: "create", cwd: "/home/me/repo" }),

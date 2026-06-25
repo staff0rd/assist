@@ -18,7 +18,22 @@ export async function forwardWindowsCreate(
 	try {
 		await conn.ensure();
 		daemonLog("windows proxy: connection ready, forwarding create");
-		state.pendingCreators.push(client);
+		/* why: `created` is the only ack the web client gets; if it never arrives
+		 * (daemon errored to its own stdout, or the reply raced a teardown) this
+		 * timer surfaces an error instead of leaving the UI hanging. */
+		const timer = setTimeout(() => {
+			const index = state.pendingCreators.findIndex((p) => p.timer === timer);
+			if (index === -1) return;
+			state.pendingCreators.splice(index, 1);
+			daemonLog(`windows proxy: create timed out (cwd=${data.cwd})`);
+			sendTo(client, {
+				type: "error",
+				message:
+					"Windows session did not start: the Windows daemon did not respond.",
+			});
+		}, state.createTimeoutMs);
+		timer.unref?.();
+		state.pendingCreators.push({ client, timer });
 		conn.write(stripOutboundSessionId(data));
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);

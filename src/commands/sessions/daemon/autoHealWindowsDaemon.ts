@@ -1,7 +1,9 @@
-import { sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
 import type { WindowsConnection } from "./WindowsConnection";
-import type { WindowsProxyState } from "./WindowsProxyState";
+import {
+	failPendingCreators,
+	type WindowsProxyState,
+} from "./WindowsProxyState";
 
 // why: on a version drift, updating + relaunching the host daemon makes the
 // reconnect handshake match the freshly-installed version
@@ -31,11 +33,8 @@ export async function autoHealWindowsDaemon(
 // why: the in-flight create can't complete against the stale daemon being torn
 // down, so tell the requester to reselect once the update finishes
 function notifyHealing(state: WindowsProxyState): void {
-	for (const client of state.pendingCreators)
-		sendTo(client, {
-			type: "error",
-			message:
-				"Windows host is out of date; updating it now — reselect the repo once the update finishes.",
-		});
-	state.pendingCreators = [];
+	failPendingCreators(
+		state,
+		"Windows host is out of date; updating it now — reselect the repo once the update finishes.",
+	);
 }

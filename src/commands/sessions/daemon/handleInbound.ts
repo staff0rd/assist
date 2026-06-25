@@ -3,7 +3,11 @@ import { ASSIST_VERSION, isHello, versionsMatch } from "./buildHello";
 import type { SessionInfo } from "./createSession";
 import { daemonLog, relayDaemonLog } from "./daemonLog";
 import { toWindowsSessionId } from "./toWindowsSessionId";
-import { appendScrollback, type WindowsProxyState } from "./WindowsProxyState";
+import {
+	appendScrollback,
+	takePendingCreator,
+	type WindowsProxyState,
+} from "./WindowsProxyState";
 
 type Msg = Record<string, unknown>;
 
@@ -44,7 +48,7 @@ function handleHello(state: WindowsProxyState, msg: Msg): void {
 
 function handleCreated(state: WindowsProxyState, msg: Msg): void {
 	daemonLog(`windows daemon: created session ${nsId(msg)}`);
-	const client = state.pendingCreators.shift();
+	const client = takePendingCreator(state);
 	if (client)
 		sendTo(client, {
 			type: "created",
