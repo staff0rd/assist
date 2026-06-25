@@ -1,3 +1,10 @@
+## [0.318.9](https://github.com/staff0rd/assist/compare/v0.318.8...v0.318.9) (2026-06-25)
+
+
+### Bug Fixes
+
+* hard-cap session fan-out ([d15354e](https://github.com/staff0rd/assist/commit/d15354e5c94f3902bd305a31a0bd13ca98ad2f4f))
+
 ## [0.318.8](https://github.com/staff0rd/assist/compare/v0.318.7...v0.318.8) (2026-06-25)
 
 
