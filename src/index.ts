@@ -18,6 +18,7 @@ import { registerDeny } from "./commands/registerDeny";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
 import { registerDotnet } from "./commands/registerDotnet";
+import { registerEditHook } from "./commands/registerEditHook";
 import { registerGithub } from "./commands/registerGithub";
 import { registerHandover } from "./commands/registerHandover";
 import { registerJira } from "./commands/registerJira";
@@ -132,6 +133,7 @@ program
 registerActivity(program);
 registerBackup(program);
 registerCliHook(program);
+registerEditHook(program);
 registerGithub(program);
 registerHandover(program);
 registerJira(program);

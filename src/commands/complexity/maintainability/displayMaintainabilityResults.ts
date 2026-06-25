@@ -1,39 +1,36 @@
 import chalk from "chalk";
-
-export type ResultEntry = {
-	file: string;
-	avgMaintainability: number;
-	minMaintainability: number;
-};
+import { formatResultLine } from "./formatResultLine";
+import { printMaintainabilityFailure } from "./printMaintainabilityFailure";
+import type { ResultEntry } from "./ResultEntry";
 
 export function displayMaintainabilityResults(
 	results: ResultEntry[],
 	threshold: number | undefined,
 ): void {
-	const filtered =
-		threshold !== undefined
-			? results.filter((r) => r.minMaintainability < threshold)
-			: results;
+	const gating =
+		threshold !== undefined || results.some((r) => r.override !== undefined);
 
-	if (threshold !== undefined && filtered.length === 0) {
+	if (!gating) {
+		for (const entry of results) console.log(formatResultLine(entry, false));
+		console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
+		return;
+	}
+
+	const failing = results.filter((r) => {
+		const limit = r.override ?? threshold;
+		return limit !== undefined && r.minMaintainability < limit;
+	});
+
+	if (failing.length === 0) {
 		console.log(chalk.green("All files pass maintainability threshold"));
 	} else {
-		for (const { file, avgMaintainability, minMaintainability } of filtered) {
-			const color = threshold !== undefined ? chalk.red : chalk.white;
-			console.log(
-				`${color(file)} → avg: ${chalk.cyan(avgMaintainability.toFixed(1))}, min: ${chalk.yellow(minMaintainability.toFixed(1))}`,
-			);
-		}
+		for (const entry of failing) console.log(formatResultLine(entry, true));
 	}
 
 	console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
 
-	if (filtered.length > 0 && threshold !== undefined) {
-		console.error(
-			chalk.red(
-				`\nFail: ${filtered.length} file(s) below threshold ${threshold}. Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code.\n\n⚠️  ${chalk.bold("Diagnose and fix one file at a time")} — do not investigate or fix multiple files in parallel. Run 'assist complexity <file>' to see all metrics. For larger files, start by extracting responsibilities into smaller files.`,
-			),
-		);
+	if (failing.length > 0) {
+		printMaintainabilityFailure(failing.length, threshold);
 		process.exit(1);
 	}
 }
