@@ -35,4 +35,13 @@ describe("connectToWindowsDaemon", () => {
 		socket.destroy();
 		spy.mockRestore();
 	});
+
+	it("arms a connect timeout and clears it once connected", async () => {
+		const spy = vi.spyOn(net.Socket.prototype, "setTimeout");
+		const socket = await connectToWindowsDaemon();
+		expect(spy.mock.calls[0]?.[0]).toBeGreaterThan(0);
+		expect(spy).toHaveBeenCalledWith(0);
+		socket.destroy();
+		spy.mockRestore();
+	});
 });

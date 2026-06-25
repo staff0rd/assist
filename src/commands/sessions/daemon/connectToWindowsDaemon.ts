@@ -1,12 +1,22 @@
 import * as net from "node:net";
 import { windowsDaemonHost, windowsDaemonPort } from "./windowsDaemonPort";
 
+const CONNECT_TIMEOUT_MS = 2_000;
+const KEEPALIVE_PROBE_MS = 10_000;
+
 export function connectToWindowsDaemon(): Promise<net.Socket> {
 	return new Promise((resolve, reject) => {
 		const socket = net.connect(windowsDaemonPort(), windowsDaemonHost());
-		// why: WSL2's NAT drops an idle WSL->Windows socket after ~15-30s; probing at 10s keeps the mapping alive
-		socket.setKeepAlive(true, 10_000);
-		socket.once("connect", () => resolve(socket));
+		socket.setTimeout(CONNECT_TIMEOUT_MS);
+		socket.once("timeout", () => {
+			socket.destroy();
+			reject(new Error("windows daemon connect timed out"));
+		});
+		socket.once("connect", () => {
+			socket.setTimeout(0);
+			socket.setKeepAlive(true, KEEPALIVE_PROBE_MS);
+			resolve(socket);
+		});
 		socket.once("error", reject);
 	});
 }
