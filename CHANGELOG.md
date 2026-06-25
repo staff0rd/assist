@@ -1,3 +1,10 @@
+## [0.322.1](https://github.com/staff0rd/assist/compare/v0.322.0...v0.322.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* gate windows proxy off on win host ([65aa053](https://github.com/staff0rd/assist/commit/65aa053061a15d99340f1c567667bbd9e9c76fbc))
+
 # [0.322.0](https://github.com/staff0rd/assist/compare/v0.321.0...v0.322.0) (2026-06-25)
 
 
