@@ -321,6 +321,26 @@ describe("WindowsProxy", () => {
 		expect(heal.mock.calls.length).toBe(1);
 	});
 
+	it("is inert on the Windows host: never dials, never claims a create", async () => {
+		const original = process.platform;
+		Object.defineProperty(process, "platform", { value: "win32" });
+		try {
+			const connect = vi.fn(connectToDaemon);
+			const onWindows = new WindowsProxy(new Set(), () => {}, connect, heal);
+			const c = client();
+			expect(onWindows.route(c, { type: "create", cwd: "C:\\repo" })).toBe(
+				false,
+			);
+			await onWindows.discover();
+			await settle();
+			expect(connect).not.toHaveBeenCalled();
+			expect(c.sent).toEqual([]);
+			onWindows.dispose();
+		} finally {
+			Object.defineProperty(process, "platform", { value: original });
+		}
+	});
+
 	it("tells a pending creator to reselect while it heals", async () => {
 		const c = client();
 		proxy.route(c, { type: "create", cwd: "C:\\repo" });

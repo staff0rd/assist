@@ -31,6 +31,8 @@ export class WindowsProxy {
 	private readonly state: WindowsProxyState;
 	private readonly conn: WindowsConnection;
 	private readonly healer: WindowsVersionHealer;
+	// why: on the Windows host the proxy would dial its own bridge, self-feeding a log loop and connect churn.
+	private readonly enabled = process.platform !== "win32";
 
 	constructor(
 		clients: Set<SessionClient>,
@@ -58,7 +60,7 @@ export class WindowsProxy {
 	}
 
 	discover(): Promise<void> {
-		if (this.healer.blocked) return Promise.resolve();
+		if (!this.enabled || this.healer.blocked) return Promise.resolve();
 		return discoverWindowsSessions(this.conn);
 	}
 
@@ -69,6 +71,7 @@ export class WindowsProxy {
 	// Returns true when the message targets Windows: a create/resume in a
 	// windows-origin cwd is forwarded, as is I/O for a namespaced session id.
 	route(client: SessionClient, data: Msg): boolean {
+		if (!this.enabled) return false;
 		if (isWindowsCreate(data)) {
 			if (this.healer.blocked) sendTo(client, this.healer.refusal());
 			else void forwardWindowsCreate(this.conn, this.state, client, data);
