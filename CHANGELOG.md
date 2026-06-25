@@ -1,3 +1,10 @@
+# [0.319.0](https://github.com/staff0rd/assist/compare/v0.318.9...v0.319.0) (2026-06-25)
+
+
+### Features
+
+* add daemon drain command ([c6e335b](https://github.com/staff0rd/assist/commit/c6e335b45493e7bf6d6d926f23bf7b576a8262e2))
+
 ## [0.318.9](https://github.com/staff0rd/assist/compare/v0.318.8...v0.318.9) (2026-06-25)
 
 
