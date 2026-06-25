@@ -247,7 +247,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist complexity <pattern>` - Analyze a file (all metrics if single match, maintainability if multiple)
 - `assist complexity cyclomatic [pattern]` - Calculate cyclomatic complexity per function
 - `assist complexity halstead [pattern]` - Calculate Halstead metrics per function
-- `assist complexity maintainability [pattern]` - Calculate maintainability index per file (`--ignore <glob>`, repeatable, excludes extra files on top of `complexity.ignore`)
+- `assist complexity maintainability [pattern]` - Calculate maintainability index per file (`--ignore <glob>`, repeatable, excludes extra files on top of `complexity.ignore`). A file can declare its own threshold with a `// assist-maintainability-override: N` comment in its first ~10 lines (integer 0-100); that value replaces the global `--threshold` for that file only and the output annotates it with `(override: N)`
 - `assist complexity sloc [pattern]` - Count source lines of code per file
 - `assist transcript configure` - Configure transcript directories
 - `assist transcript format` - Convert VTT files to formatted markdown transcripts

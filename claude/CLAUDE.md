@@ -8,7 +8,7 @@ When renaming TypeScript files or symbols, use the refactor commands instead of 
 - `assist refactor rename symbol <file> <oldName> <newName>` — rename a variable, function, class, or type across the project
 - `assist refactor extract <file> <functionName> <destination>` — extract a function and its private dependencies to a new file
   All default to dry-run; add `--apply` to execute.
-  When using extract, name the destination file after the exported function (e.g. `updateWorkerCapacity.ts` for `updateWorkerCapacity`) to satisfy `useFilenamingConvention` lint rules.
+  When using extract, name the destination file after the exported function (e.g. `updateWorkerCapacity.ts` for `updateWorkerCapacity`) to satisfy the `oxlint-rules/filenameConvention.ts` lint rule.
 
 Do not modify `claude/settings.json` without asking the user first. Only read-only commands should be added to the allow list — write operations (add, remove, set, delete) must require confirmation.
 

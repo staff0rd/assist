@@ -27,6 +27,12 @@ export function displayMaintainabilityResults(
 		for (const entry of failing) console.log(formatResultLine(entry, true));
 	}
 
+	const passingOverrides = results.filter(
+		(r) => r.override !== undefined && !failing.includes(r),
+	);
+	for (const entry of passingOverrides)
+		console.log(formatResultLine(entry, false));
+
 	console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
 
 	if (failing.length > 0) {

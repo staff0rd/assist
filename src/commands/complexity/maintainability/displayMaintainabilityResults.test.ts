@@ -52,6 +52,15 @@ describe("displayMaintainabilityResults", () => {
 			expect(exitSpy).not.toHaveBeenCalled();
 			expect(output()).toContain("All files pass");
 		});
+
+		it("should surface the passing file with its override annotation", () => {
+			displayMaintainabilityResults([entry("gnarly.ts", 52.1, 45)], 60);
+
+			const out = output();
+			expect(out).toContain("gnarly.ts");
+			expect(out).toContain("min: 52.1");
+			expect(out).toContain("override: 45");
+		});
 	});
 
 	describe("when an overridden file fails its own higher threshold", () => {
@@ -60,7 +69,7 @@ describe("displayMaintainabilityResults", () => {
 
 			expect(exitSpy).toHaveBeenCalledWith(1);
 			expect(output()).toContain("strict.ts");
-			expect(output()).toContain("override threshold 80");
+			expect(output()).toContain("override: 80");
 		});
 	});
 
@@ -81,7 +90,7 @@ describe("displayMaintainabilityResults", () => {
 			expect(out).toContain("fail-global.ts");
 			expect(out).toContain("fail-override.ts");
 			expect(out).not.toContain("pass-global.ts");
-			expect(out).not.toContain("pass-override.ts");
+			expect(out).toContain("pass-override.ts");
 			expect(out).toContain("2 file(s) below threshold");
 		});
 	});
@@ -110,7 +119,7 @@ describe("displayMaintainabilityResults", () => {
 			expect(exitSpy).toHaveBeenCalledWith(1);
 			const out = output();
 			expect(out).toContain("a.ts");
-			expect(out).toContain("override threshold 50");
+			expect(out).toContain("override: 50");
 		});
 	});
 });
