@@ -130,7 +130,22 @@ describe("dispatchMessage", () => {
 
 			dispatchMessage(client, manager, { type: "subscribe-logs" });
 
-			expect(subscribeLogs).toHaveBeenCalledWith(client);
+			expect(subscribeLogs).toHaveBeenCalledWith(client, true);
+		});
+
+		it("forwards replay: false so the web stream skips buffered history", () => {
+			const client = { send: vi.fn() };
+			const subscribeLogs = vi.fn();
+			const manager = {
+				clients: { subscribeLogs },
+			} as unknown as SessionManager;
+
+			dispatchMessage(client, manager, {
+				type: "subscribe-logs",
+				replay: false,
+			});
+
+			expect(subscribeLogs).toHaveBeenCalledWith(client, false);
 		});
 	});
 

@@ -58,7 +58,8 @@ function routed(local: Handler): Handler {
 
 export const messageHandlers: Record<string, Handler> = {
 	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
-	"subscribe-logs": (client, m) => m.clients.subscribeLogs(client),
+	"subscribe-logs": (client, m, d) =>
+		m.clients.subscribeLogs(client, d.replay !== false),
 	hello: (client) => sendTo(client, buildHello()),
 	create: creator(true, (m, d) =>
 		m.spawn(d.prompt as string | undefined, d.cwd as string | undefined),

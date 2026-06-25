@@ -18,7 +18,9 @@ async function connect(): Promise<void> {
 		await ensureDaemonRunning("web log stream");
 		const socket = await connectToDaemon();
 		wire(socket);
-		socket.write(`${JSON.stringify({ type: "subscribe-logs" })}\n`);
+		socket.write(
+			`${JSON.stringify({ type: "subscribe-logs", replay: false })}\n`,
+		);
 	} catch {
 		scheduleReconnect();
 	}

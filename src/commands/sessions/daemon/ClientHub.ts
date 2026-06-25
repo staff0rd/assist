@@ -30,10 +30,12 @@ export class ClientHub extends Set<SessionClient> {
 		}
 	}
 
-	subscribeLogs(client: SessionClient): void {
+	subscribeLogs(client: SessionClient, replay = true): void {
 		// why: replay buffered history before registering, so a line emitted mid-replay isn't sent twice.
-		for (const line of recentDaemonLogLines()) {
-			sendTo(client, { type: "log", line });
+		if (replay) {
+			for (const line of recentDaemonLogLines()) {
+				sendTo(client, { type: "log", line });
+			}
 		}
 		this.logSubscribers.add(client);
 	}

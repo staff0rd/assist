@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { ClientHub } from "./ClientHub";
+import { daemonLog } from "./daemonLog";
 
 const rateLimits = {
 	five_hour: { used_percentage: 12, resets_at: 100 },
@@ -71,6 +72,35 @@ describe("ClientHub", () => {
 				JSON.stringify({ type: "log", line: "daemon line" }),
 			);
 			expect(plain.send).not.toHaveBeenCalled();
+		});
+
+		it("replays buffered history on subscribe by default", () => {
+			daemonLog("buffered line");
+			const hub = new ClientHub();
+			const client = { send: vi.fn() };
+
+			hub.subscribeLogs(client);
+
+			expect(client.send).toHaveBeenCalledWith(
+				expect.stringContaining("buffered line"),
+			);
+		});
+
+		it("skips history replay when replay is false but still streams live", () => {
+			daemonLog("earlier line");
+			const hub = new ClientHub();
+			const client = { send: vi.fn() };
+
+			hub.subscribeLogs(client, false);
+
+			expect(client.send).not.toHaveBeenCalled();
+
+			hub.emitLog("live line");
+
+			expect(client.send).toHaveBeenCalledWith(
+				JSON.stringify({ type: "log", line: "live line" }),
+			);
+			expect(client.send).toHaveBeenCalledTimes(1);
 		});
 
 		it("stops delivering once unsubscribed", () => {
