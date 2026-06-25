@@ -1,3 +1,10 @@
+## [0.323.1](https://github.com/staff0rd/assist/compare/v0.323.0...v0.323.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* surface failed windows create to UI ([7192c09](https://github.com/staff0rd/assist/commit/7192c0959dbdb5db59192acf92ff9c7c2918ce8c))
+
 # [0.323.0](https://github.com/staff0rd/assist/compare/v0.322.2...v0.323.0) (2026-06-25)
 
 
