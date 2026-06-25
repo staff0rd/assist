@@ -1,3 +1,10 @@
+## [0.325.1](https://github.com/staff0rd/assist/compare/v0.325.0...v0.325.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* show unmerged files in web UI ([4d76db7](https://github.com/staff0rd/assist/commit/4d76db78474bcb03b08a46e2b4a162ea728330fa))
+
 # [0.325.0](https://github.com/staff0rd/assist/compare/v0.324.1...v0.325.0) (2026-06-25)
 
 
