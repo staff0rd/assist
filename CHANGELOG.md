@@ -1,3 +1,10 @@
+# [0.327.0](https://github.com/staff0rd/assist/compare/v0.326.1...v0.327.0) (2026-06-26)
+
+
+### Features
+
+* protocol-version daemon handshake ([bb86473](https://github.com/staff0rd/assist/commit/bb864732ad7b101aca1586d0185eb18b45253b26))
+
 ## [0.326.1](https://github.com/staff0rd/assist/compare/v0.326.0...v0.326.1) (2026-06-25)
 
 
