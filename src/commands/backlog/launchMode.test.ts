@@ -133,6 +133,31 @@ describe("launchMode", () => {
 		});
 	});
 
+	describe("when resuming an interrupted session", () => {
+		it("resumes the conversation with a nudge prompt and re-establishes the watcher", async () => {
+			await launchMode("draft", {
+				once: true,
+				description: "ignored on resume",
+				resumeSessionId: "draft-456",
+			});
+
+			expect(mockSpawnClaude).toHaveBeenCalledWith(
+				"A restart interrupted this conversation. Continue from where you left off.",
+				{
+					allowEdits: true,
+					sessionId: "draft-456",
+					resumeSessionId: "draft-456",
+				},
+			);
+			expect(mockWatchForMarker).toHaveBeenCalledWith(child, {
+				actOnDone: true,
+			});
+			expect(mockEmitActivity).toHaveBeenCalledWith(
+				expect.objectContaining({ claudeSessionId: "draft-456" }),
+			);
+		});
+	});
+
 	describe("when launched in once mode", () => {
 		it("tells the watcher to act on done signals", async () => {
 			await launchMode("draft", { once: true });

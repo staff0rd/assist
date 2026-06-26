@@ -105,6 +105,73 @@ describe("restoreSession", () => {
 		expect(session.claudeSessionId).toBeUndefined();
 	});
 
+	it("relaunches a --once draft session via the wrapper so the done signal is rewatched", () => {
+		const persisted: PersistedSession = {
+			name: "repo/assist draft",
+			commandType: "assist",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "draft-456",
+			assistArgs: ["draft", "--once", "fix the thing"],
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnClaudeMock).not.toHaveBeenCalled();
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"assist",
+				"draft",
+				"--once",
+				"fix the thing",
+				"--resume-session",
+				"draft-456",
+			],
+			"/home/user/repo",
+			"1",
+		);
+		expect(session.status).toBe("running");
+		expect(session.restored).toBe(true);
+		expect(session.commandType).toBe("assist");
+	});
+
+	it("relaunches a --once refine session via the wrapper", () => {
+		const persisted: PersistedSession = {
+			name: "repo/assist refine 254",
+			commandType: "assist",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "refine-789",
+			assistArgs: ["refine", "254", "--once"],
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "refine", "254", "--once", "--resume-session", "refine-789"],
+			"/home/user/repo",
+			"1",
+		);
+		expect(session.status).toBe("running");
+	});
+
+	it("resumes a --once session via bare claude when no sessionId was discovered", () => {
+		const persisted: PersistedSession = {
+			name: "repo/assist draft",
+			commandType: "assist",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			assistArgs: ["draft", "--once"],
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnPtyMock).not.toHaveBeenCalled();
+		expect(spawnClaudeMock).not.toHaveBeenCalled();
+		expect(session.status).toBe("done");
+		expect(session.restored).toBe(false);
+	});
+
 	it("returns an error session for a claude session without a sessionId", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Session 1",

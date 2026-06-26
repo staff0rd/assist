@@ -1,6 +1,6 @@
 import type { PersistedSession } from "./loadPersistedSessions";
 
-export function backlogRunArgs(
+export function assistResumeArgs(
 	persisted: PersistedSession & { assistArgs: string[] },
 ): string[] {
 	const args = ["assist", ...persisted.assistArgs];
