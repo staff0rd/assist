@@ -11,6 +11,7 @@ import {
 	vi,
 } from "vitest";
 import type { SessionClient } from "./broadcast";
+import { PROTOCOL_VERSION } from "./buildHello";
 import { WindowsProxy } from "./WindowsProxy";
 
 // route() only proxies under WSL; tests run on plain Linux/macOS CI
@@ -264,14 +265,31 @@ describe("WindowsProxy", () => {
 		).toBe(false);
 	});
 
-	it("logs a warning on version mismatch", async () => {
+	it("logs a warning on protocol mismatch", async () => {
 		const log = vi.spyOn(console, "log").mockImplementation(() => {});
 		await createWindowsSession();
 		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
 		await waitFor(() =>
-			log.mock.calls.some((c) => String(c[0]).includes("version mismatch")),
+			log.mock.calls.some((c) => String(c[0]).includes("protocol mismatch")),
 		);
 		log.mockRestore();
+	});
+
+	it("does not heal when the protocol matches despite a differing app version", async () => {
+		await createWindowsSession();
+		await waitFor(() => daemon.received.some((l) => l.includes('"hello"')));
+
+		daemon.send({
+			type: "hello",
+			version: "0.0.0-different",
+			protocol: PROTOCOL_VERSION,
+		});
+		await settle();
+
+		expect(heal).not.toHaveBeenCalled();
+		expect(
+			broadcasts.some((m) => (m as { type?: string }).type === "error"),
+		).toBe(false);
 	});
 
 	it("auto-heals and reconnects on version mismatch", async () => {

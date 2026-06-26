@@ -277,6 +277,7 @@ From WSL, the selector can also surface and drive Windows-host repos (requires `
 
 - `sessions.windowsProjectsRoot` — the Windows `.claude/projects` directory as seen from WSL (e.g. `/mnt/c/Users/<user>/.claude/projects`); enables discovery of Windows-host repos, tagged with a `Windows` badge. Selecting one launches a native assist daemon on Windows and runs an interactive session there.
 - `sessions.windowsDaemonHost` / `sessions.windowsDaemonPort` — where the WSL daemon reaches the native Windows daemon (defaults `127.0.0.1` / `51764`; set the host to the Windows IP on WSL2 NAT-mode networking).
+- `sessions.windowsVersionCheck` — how the WSL↔Windows daemon handshake reacts to a protocol-version mismatch: `block` (default) refuses creates and auto-heals the host, `warn` logs and proceeds anyway, `off` skips the check. Use `warn`/`off` to keep working across an unfixable version gap.
 
 When iterating on assist itself: web server changes only need the `assist sessions` process restarted — sessions survive. Daemon/session-core changes need `assist daemon restart` to load the new code; this kills the PTYs, then claude sessions — including assist sessions that wrap claude, like `assist draft` — are auto-respawned via `claude --resume` with scrollback starting fresh, while run sessions (and assist sessions whose claude sessionId was never discovered) reappear as not-restored tiles that can be retried.
 

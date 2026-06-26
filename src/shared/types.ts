@@ -146,6 +146,7 @@ export const assistConfigSchema = z.strictObject({
 			windowsDaemonHost: z.string().optional(),
 			// why: TCP port the native Windows daemon listens on for the WSL bridge; defaults to 51764
 			windowsDaemonPort: z.number().optional(),
+			windowsVersionCheck: z.enum(["block", "warn", "off"]).default("block"),
 		})
 		.optional(),
 	database: z

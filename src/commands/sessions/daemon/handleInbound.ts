@@ -1,6 +1,4 @@
 import { sendTo } from "./broadcast";
-import { ASSIST_VERSION, isHello, versionsMatch } from "./buildHello";
-import type { SessionInfo } from "./createSession";
 import { daemonLog, relayDaemonLog } from "./daemonLog";
 import { toWindowsSessionId } from "./toWindowsSessionId";
 import {
@@ -8,6 +6,8 @@ import {
 	takePendingCreator,
 	type WindowsProxyState,
 } from "./WindowsProxyState";
+import { handleSessions } from "./handleSessions";
+import { handleHello } from "./handleHello";
 
 type Msg = Record<string, unknown>;
 
@@ -37,15 +37,6 @@ const inbound: Record<string, (state: WindowsProxyState, msg: Msg) => void> = {
 	},
 };
 
-function handleHello(state: WindowsProxyState, msg: Msg): void {
-	if (isHello(msg) && !versionsMatch(msg.version, ASSIST_VERSION)) {
-		daemonLog(
-			`windows daemon version mismatch: ${msg.version} (wsl ${ASSIST_VERSION})`,
-		);
-		state.onVersionMismatch(msg.version);
-	}
-}
-
 function handleCreated(state: WindowsProxyState, msg: Msg): void {
 	daemonLog(`windows daemon: created session ${nsId(msg)}`);
 	const client = takePendingCreator(state);
@@ -56,17 +47,6 @@ function handleCreated(state: WindowsProxyState, msg: Msg): void {
 			isNew: msg.isNew as boolean | undefined,
 		});
 	else daemonLog("windows daemon: created with no pending creator (dropped)");
-}
-
-function handleSessions(state: WindowsProxyState, msg: Msg): void {
-	state.windowsSessions = (msg.sessions as SessionInfo[]).map((s) => ({
-		...s,
-		id: toWindowsSessionId(s.id),
-	}));
-	const live = new Set(state.windowsSessions.map((s) => s.id));
-	for (const id of state.scrollback.keys())
-		if (!live.has(id)) state.scrollback.delete(id);
-	state.onSessionsChanged();
 }
 
 function handleOutput(state: WindowsProxyState, msg: Msg): void {
