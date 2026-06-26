@@ -1,3 +1,10 @@
+# [0.328.0](https://github.com/staff0rd/assist/compare/v0.327.1...v0.328.0) (2026-06-26)
+
+
+### Features
+
+* backlog associate-jira command ([ce22e4e](https://github.com/staff0rd/assist/commit/ce22e4ece99f0f19d27db7077e77bb2dc3e4fc62))
+
 ## [0.327.1](https://github.com/staff0rd/assist/compare/v0.327.0...v0.327.1) (2026-06-26)
 
 
