@@ -35,6 +35,9 @@ function printHeader(item: BacklogItem): void {
 	console.log(
 		`${chalk.dim("Type:")} ${item.type}  ${chalk.dim("Status:")} ${item.status}`,
 	);
+	if (item.jiraKey) {
+		console.log(`${chalk.dim("Jira:")} ${item.jiraKey}`);
+	}
 	console.log();
 }
 

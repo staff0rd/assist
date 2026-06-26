@@ -41,6 +41,7 @@ After installation, the `assist` command will be available globally. You can als
 ## Claude Commands
 
 - `/add-command` - Add a new run command to assist.yml
+- `/associate-jira <KEY> [id]` - Associate a Jira ticket with the backlog item this session is working on (or an explicit id) by calling `assist backlog associate-jira`
 - `/bug` - File a bug with reproduction steps, expected and actual behavior
 - `/comment` - Add pending review comments to the current PR
 - `/commit` - Commit only relevant files from the session
@@ -149,6 +150,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog run <id>` - Run a backlog item's plan phase-by-phase with Claude; `--resume-session <id>` resumes an interrupted Claude session for the current phase (used by the sessions daemon when it restarts a running item)
 - `assist backlog export [file]` - Export every table in the backlog database (discovered by live schema introspection, so new tables are covered automatically) to a file, or stdout if omitted
 - `assist backlog import [file]` - Restore every table present in a dump (file or stdin) back into the backlog database in foreign-key-safe order, faithfully replacing all data and resyncing identity sequences; prompts for confirmation (use `-y, --yes` to skip; required when reading from stdin)
+- `assist backlog associate-jira <id> [key]` - Associate a Jira ticket with a backlog item; validates the key shape, fetches the issue to confirm it exists, and stores the key (re-running with a different key replaces it). Use `--clear` to remove the association
 - `assist backlog move-repo <old-origin> [new-origin]` - Retag all items from one origin to another after a repo rename; the new origin defaults to the current repo's remote, both accept URL or `git@` forms, and a bare repo name works for the old origin when unambiguous. Prompts for confirmation (use `-y, --yes` to skip)
 - `assist backlog web [-p, --port <number>] [--no-open]` - Open the backlog tab in the web dashboard (default port 3100); `--no-open` skips opening a browser on startup
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)

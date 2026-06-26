@@ -9,11 +9,13 @@ export const SCHEMA = `
 		acceptance_criteria TEXT NOT NULL DEFAULT '[]',
 		status TEXT NOT NULL DEFAULT 'todo',
 		current_phase INTEGER,
-		starred BOOLEAN NOT NULL DEFAULT false
+		starred BOOLEAN NOT NULL DEFAULT false,
+		jira_key TEXT
 	);
 
 	-- Backfill the column on databases created before it was introduced.
 	ALTER TABLE items ADD COLUMN IF NOT EXISTS starred BOOLEAN NOT NULL DEFAULT false;
+	ALTER TABLE items ADD COLUMN IF NOT EXISTS jira_key TEXT;
 
 	CREATE INDEX IF NOT EXISTS items_origin_idx ON items (origin);
 

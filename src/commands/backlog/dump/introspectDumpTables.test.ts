@@ -50,6 +50,7 @@ describe("introspectDumpTables", () => {
 			"status",
 			"current_phase",
 			"starred",
+			"jira_key",
 		]);
 	});
 

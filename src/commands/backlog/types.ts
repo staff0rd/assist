@@ -45,6 +45,7 @@ export const backlogItemSchema = z.strictObject({
 	comments: z.array(backlogCommentSchema).optional(),
 	links: z.array(backlogLinkSchema).optional(),
 	origin: z.string().optional(),
+	jiraKey: z.string().optional(),
 });
 
 const backlogFileSchema = z.array(backlogItemSchema);

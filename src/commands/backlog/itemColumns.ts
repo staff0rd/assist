@@ -19,5 +19,6 @@ export function itemColumns(
 		status: item.status,
 		currentPhase: item.currentPhase ?? null,
 		starred: item.starred,
+		jiraKey: item.jiraKey ?? null,
 	};
 }

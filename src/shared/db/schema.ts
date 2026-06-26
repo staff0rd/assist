@@ -34,6 +34,7 @@ export const items = pgTable(
 		status: text().notNull().default("todo"),
 		currentPhase: integer("current_phase"),
 		starred: boolean().notNull().default(false),
+		jiraKey: text("jira_key"),
 	},
 	(t) => [index("items_origin_idx").on(t.origin)],
 );
