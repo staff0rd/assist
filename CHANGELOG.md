@@ -1,3 +1,10 @@
+## [0.327.1](https://github.com/staff0rd/assist/compare/v0.327.0...v0.327.1) (2026-06-26)
+
+
+### Bug Fixes
+
+* rewatch done signal on --once restore ([11c3fe2](https://github.com/staff0rd/assist/commit/11c3fe294035eae5d229e7236f61ca17f200e4b5))
+
 # [0.327.0](https://github.com/staff0rd/assist/compare/v0.326.1...v0.327.0) (2026-06-26)
 
 
