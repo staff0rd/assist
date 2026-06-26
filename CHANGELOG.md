@@ -1,3 +1,10 @@
+# [0.329.0](https://github.com/staff0rd/assist/compare/v0.328.0...v0.329.0) (2026-06-26)
+
+
+### Features
+
+* allow trimming comments in gate ([98add87](https://github.com/staff0rd/assist/commit/98add8763b0641cad8391bdfb2785e7064357058))
+
 # [0.328.0](https://github.com/staff0rd/assist/compare/v0.327.1...v0.328.0) (2026-06-26)
 
 
