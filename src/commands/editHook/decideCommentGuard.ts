@@ -1,5 +1,6 @@
 import { type EditHookInput } from "./decideOverrideGuard";
 import { extractComments, isSourceFile } from "./extractComments";
+import { introducedComments } from "./introducedComments";
 
 const DENY_REASON =
 	"This edit introduces a code comment, which is blocked by the comment gate. " +
@@ -40,22 +41,6 @@ function partitionStrings(
 		default:
 			return { added: [], removed: [] };
 	}
-}
-
-/** Comments present in `added` that are not accounted for by `removed`. */
-function introducedComments(added: string[], removed: string[]): string[] {
-	const counts = new Map<string, number>();
-	for (const comment of removed) {
-		counts.set(comment, (counts.get(comment) ?? 0) + 1);
-	}
-
-	const introduced: string[] = [];
-	for (const comment of added) {
-		const remaining = counts.get(comment) ?? 0;
-		if (remaining > 0) counts.set(comment, remaining - 1);
-		else introduced.push(comment);
-	}
-	return introduced;
 }
 
 export function decideCommentGuard(

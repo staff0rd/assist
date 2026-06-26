@@ -83,6 +83,78 @@ describe("decideCommentGuard", () => {
 			expect(decision).toBeUndefined();
 		});
 
+		it("allows trimming a sentence from a comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "const a = 1; // keep this. remove this stale bit.",
+					new_string: "const a = 1; // keep this.",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("allows trimming a comment to a word subset", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "const a = 1; // the quick brown fox jumps",
+					new_string: "const a = 1; // quick fox",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("blocks an edit that adds a word not in the removed comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "const a = 1; // keep this. remove this stale bit.",
+					new_string: "const a = 1; // keep this fresh idea.",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("allows trimming a block comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "/* keep this. remove this stale bit. */ const a = 1;",
+					new_string: "/* keep this. */ const a = 1;",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("blocks a block comment that adds a new word", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "/* keep this. */ const a = 1;",
+					new_string: "/* keep this brand new thing. */ const a = 1;",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("allows fully deleting a comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "const a = 1; // stale note",
+					new_string: "const a = 1;",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
 		it("allows adding a machine directive", () => {
 			const decision = decideCommentGuard(
 				input("Edit", {
