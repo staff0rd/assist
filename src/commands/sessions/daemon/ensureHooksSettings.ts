@@ -16,6 +16,8 @@ const hooksSettings = {
 	hooks: {
 		UserPromptSubmit: on(RUNNING),
 		PreToolUse: on(RUNNING),
+		// tool finished, agent resumes; restores running
+		PostToolUse: on(RUNNING),
 		Stop: on(WAITING),
 		Notification: on(WAITING),
 		/* why: a tool/plan approval prompt appears mid-turn, after PreToolUse has
