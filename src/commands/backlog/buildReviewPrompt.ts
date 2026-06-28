@@ -22,7 +22,6 @@ export function buildReviewPrompt(
 		...buildCommentLines(item.comments),
 		"",
 		"If any criterion fails, fix the issue and re-verify.",
-		`If a criterion still fails after fixing, use \`assist backlog rewind ${item.id} <phase> --reason "<reason>"\` to return to the appropriate phase instead of using phase-done.`,
 		"",
 		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
 		"",
@@ -34,6 +33,11 @@ export function buildReviewPrompt(
 		"1. Run: /commit",
 		`2. Run: assist backlog done ${item.id} "<summary>"`,
 		`3. Run: assist backlog phase-done ${item.id} ${phaseNumber} "done"`,
+		"",
+		"Precedence rules — read carefully:",
+		"- User approval plus a successful commit means the work is complete. Always finish with done + phase-done; never rewind already-approved, committed work as an automatic response.",
+		"- If the implementation has diverged from the recorded acceptance criteria but the user has approved it, the default is still to complete the item. You may optionally offer to update the acceptance criteria, but stale criteria are not a reason to rewind.",
+		`- Rewinding is a confirm-first exception, not the normal path. If you believe a criterion genuinely no longer fits and the work should return to an earlier phase, you must ask the user and get explicit confirmation first. Only after they confirm may you run \`assist backlog rewind ${item.id} <phase> --reason "<reason>"\`. Never rewind silently.`,
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");
