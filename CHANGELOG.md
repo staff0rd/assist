@@ -1,3 +1,10 @@
+## [0.329.1](https://github.com/staff0rd/assist/compare/v0.329.0...v0.329.1) (2026-06-28)
+
+
+### Bug Fixes
+
+* confirm before review-phase rewind ([fa00826](https://github.com/staff0rd/assist/commit/fa008266008f9268beea54e33b365336bdf6395a))
+
 # [0.329.0](https://github.com/staff0rd/assist/compare/v0.328.0...v0.329.0) (2026-06-26)
 
 
