@@ -1,3 +1,10 @@
+## [0.329.2](https://github.com/staff0rd/assist/compare/v0.329.1...v0.329.2) (2026-06-28)
+
+
+### Bug Fixes
+
+* restore running status after tool completes ([1997243](https://github.com/staff0rd/assist/commit/199724391c7cb3fec9bd68990f62af4ec9730568))
+
 ## [0.329.1](https://github.com/staff0rd/assist/compare/v0.329.0...v0.329.1) (2026-06-28)
 
 
