@@ -1,3 +1,10 @@
+## [0.329.3](https://github.com/staff0rd/assist/compare/v0.329.2...v0.329.3) (2026-06-29)
+
+
+### Bug Fixes
+
+* keep session cwd via ASSIST_SESSION ([c4cc570](https://github.com/staff0rd/assist/commit/c4cc5704286e523ea1ba1a5cdfb38a2f0d9d7102))
+
 ## [0.329.2](https://github.com/staff0rd/assist/compare/v0.329.1...v0.329.2) (2026-06-28)
 
 
