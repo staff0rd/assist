@@ -34,6 +34,12 @@ describe("spawnPty", () => {
 		vi.unstubAllEnvs();
 	});
 
+	it("marks every spawn with ASSIST_SESSION even without a session id", () => {
+		spawnPty(["assist", "run", "build"], "/repo");
+
+		expect(spawnedEnv().ASSIST_SESSION).toBe("1");
+	});
+
 	it("sets the activity env vars when a session id is given", () => {
 		spawnPty(["assist", "backlog", "run", "402"], "/repo", "7");
 

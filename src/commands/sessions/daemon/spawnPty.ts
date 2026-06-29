@@ -12,7 +12,7 @@ export function spawnPty(
 	const shellArgs =
 		process.platform === "win32"
 			? ["/c", ...args]
-			: ["-c", `exec ${args.map(shellEscape).join(" ")}`];
+			: ["-l", "-c", `exec ${args.map(shellEscape).join(" ")}`];
 
 	/* why: a daemon spawned from within a Claude Code session inherits
 	 * CLAUDE_CODE_CHILD_SESSION; left in the env it propagates to every claude the
@@ -29,6 +29,7 @@ export function spawnPty(
 		cwd: cwd ?? process.cwd(),
 		env: {
 			...parentEnv,
+			ASSIST_SESSION: "1",
 			...(sessionId && {
 				ASSIST_SESSION_ID: sessionId,
 				ASSIST_ACTIVITY_ID: sessionId,
