@@ -1,3 +1,10 @@
+# [0.334.0](https://github.com/staff0rd/assist/compare/v0.333.0...v0.334.0) (2026-06-29)
+
+
+### Features
+
+* scope history list to selected repo ([862ba52](https://github.com/staff0rd/assist/commit/862ba52f2551ef599c1e35af0afc11e67aa3fb5a))
+
 # [0.333.0](https://github.com/staff0rd/assist/compare/v0.332.0...v0.333.0) (2026-06-29)
 
 
