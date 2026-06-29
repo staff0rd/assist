@@ -1,3 +1,10 @@
+## [0.330.2](https://github.com/staff0rd/assist/compare/v0.330.1...v0.330.2) (2026-06-29)
+
+
+### Bug Fixes
+
+* deny buried raw commits in cli-hook ([0448934](https://github.com/staff0rd/assist/commit/044893469831381053b35120af29fcbb5bb9a800))
+
 ## [0.330.1](https://github.com/staff0rd/assist/compare/v0.330.0...v0.330.1) (2026-06-29)
 
 
