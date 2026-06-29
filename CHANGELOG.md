@@ -1,3 +1,10 @@
+## [0.330.3](https://github.com/staff0rd/assist/compare/v0.330.2...v0.330.3) (2026-06-29)
+
+
+### Bug Fixes
+
+* keep signal files out of foreign repos ([c1789bd](https://github.com/staff0rd/assist/commit/c1789bdad835abe27926d09a908c24d2f351ddc2))
+
 ## [0.330.2](https://github.com/staff0rd/assist/compare/v0.330.1...v0.330.2) (2026-06-29)
 
 
