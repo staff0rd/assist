@@ -1,3 +1,10 @@
+# [0.332.0](https://github.com/staff0rd/assist/compare/v0.331.2...v0.332.0) (2026-06-29)
+
+
+### Features
+
+* add open PR button to session cards ([5ccb186](https://github.com/staff0rd/assist/commit/5ccb1861aa859e31067103f302a3bfec13b32985))
+
 ## [0.331.2](https://github.com/staff0rd/assist/compare/v0.331.1...v0.331.2) (2026-06-29)
 
 
