@@ -1,3 +1,10 @@
+# [0.330.0](https://github.com/staff0rd/assist/compare/v0.329.3...v0.330.0) (2026-06-29)
+
+
+### Features
+
+* review PRs from sessions web view ([c38a912](https://github.com/staff0rd/assist/commit/c38a91285b90164e17a69d526e2bf430dcd3a44c))
+
 ## [0.329.3](https://github.com/staff0rd/assist/compare/v0.329.2...v0.329.3) (2026-06-29)
 
 
