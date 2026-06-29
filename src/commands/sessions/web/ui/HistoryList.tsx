@@ -1,19 +1,18 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useMemo, useState } from "react";
 import { HistoryCard } from "./HistoryCard";
-import { ProjectFilter } from "./ProjectFilter";
+import { repoName } from "./RepoList";
 import type { HistoricalSession, HistoryCardHandlers } from "./types";
-import { filterByProject, uniqueProjects } from "./uniqueProjects";
+import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
-function EmptyState({ hasAny }: { hasAny: boolean }) {
+function EmptyState() {
 	return (
 		<Typography
 			variant="caption"
 			color="text.disabled"
 			sx={{ display: "block", textAlign: "center", p: 2 }}
 		>
-			{hasAny ? "No sessions match filter" : "No session history"}
+			No history for this repo
 		</Typography>
 	);
 }
@@ -33,7 +32,7 @@ function HistoryCards({
 					onResume={onResume}
 				/>
 			))}
-			{sessions.length === 0 && <EmptyState hasAny={false} />}
+			{sessions.length === 0 && <EmptyState />}
 		</Box>
 	);
 }
@@ -43,9 +42,10 @@ export function HistoryList({
 	onView,
 	onResume,
 }: { sessions: HistoricalSession[] } & HistoryCardHandlers) {
-	const [selected, setSelected] = useState<Set<string>>(new Set());
-	const projects = useMemo(() => uniqueProjects(sessions), [sessions]);
-	const filtered = filterByProject(sessions, selected);
+	const { selectedCwd } = useRepoSelectionContext();
+	const filtered = selectedCwd
+		? sessions.filter((s) => s.project === repoName(selectedCwd))
+		: [];
 
 	return (
 		<Box
@@ -56,15 +56,6 @@ export function HistoryList({
 				overflow: "hidden",
 			}}
 		>
-			{projects.length > 1 && (
-				<Box sx={{ px: 1, pt: 1 }}>
-					<ProjectFilter
-						projects={projects}
-						selected={selected}
-						onChange={setSelected}
-					/>
-				</Box>
-			)}
 			<HistoryCards sessions={filtered} onView={onView} onResume={onResume} />
 		</Box>
 	);
