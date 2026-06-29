@@ -199,11 +199,11 @@ describe("watchActivity", () => {
 		});
 	});
 
-	describe("when the session was not restored", () => {
-		it("leaves the activity file untouched", () => {
-			watchActivity(fakeSession(), vi.fn());
+	describe("when a fresh (non-restored) session reuses an id", () => {
+		it("clears the stale activity file so a prior backlog item's chip does not leak", () => {
+			watchActivity(fakeSession({ activity: undefined }), vi.fn());
 
-			expect(mockReconcileActivity).not.toHaveBeenCalled();
+			expect(mockReconcileActivity).toHaveBeenCalledWith("1", undefined);
 		});
 	});
 });

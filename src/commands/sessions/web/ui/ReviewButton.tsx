@@ -3,6 +3,8 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
+import type { PrSummary } from "../prList";
+import { formatRelativeTime } from "./formatRelativeTime";
 import { useSessionLaunchContext } from "./useSessionLaunchContext";
 
 const MODES: { label: string; args: string[] }[] = [
@@ -12,8 +14,14 @@ const MODES: { label: string; args: string[] }[] = [
 	{ label: "Review & apply", args: ["review", "--apply"] },
 ];
 
-export function ReviewButton({ cwd }: { cwd: string }) {
+export function ReviewButton({ cwd, pr }: { cwd: string; pr: PrSummary }) {
 	const { launchAssist } = useSessionLaunchContext();
+	const meta = {
+		title: pr.title,
+		subtitle: `#${pr.number} · ${pr.author} · ${formatRelativeTime(
+			pr.createdAt,
+		)}`,
+	};
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
 
@@ -42,7 +50,7 @@ export function ReviewButton({ cwd }: { cwd: string }) {
 						onClick={(e) => {
 							e.stopPropagation();
 							setAnchorEl(null);
-							launchAssist(mode.args, cwd);
+							launchAssist(mode.args, cwd, meta);
 						}}
 					>
 						{mode.label}

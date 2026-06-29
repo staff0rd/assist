@@ -2,12 +2,26 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { createCachedGhJson } from "./createCachedGhJson";
 import { getCwdParam } from "./getCwdParam";
+import type { PrSummary } from "./prList";
 
-const getPrNumber = createCachedGhJson<number | null>(
-	["pr", "view", "--json", "number"],
+type GhPr = {
+	number?: number;
+	title?: string;
+	author?: { login?: string; name?: string };
+	createdAt?: string;
+};
+
+const getPr = createCachedGhJson<PrSummary | null>(
+	["pr", "view", "--json", "number,title,author,createdAt"],
 	(stdout) => {
-		const parsed = JSON.parse(stdout) as { number?: number };
-		return typeof parsed.number === "number" ? parsed.number : null;
+		const parsed = JSON.parse(stdout) as GhPr;
+		if (typeof parsed.number !== "number") return null;
+		return {
+			number: parsed.number,
+			title: parsed.title ?? "",
+			author: parsed.author?.name || parsed.author?.login || "unknown",
+			createdAt: parsed.createdAt ?? "",
+		};
 	},
 	null,
 );
@@ -18,5 +32,5 @@ export async function prStatus(
 ): Promise<void> {
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
-	respondJson(res, 200, { number: await getPrNumber(cwd) });
+	respondJson(res, 200, { pr: await getPr(cwd) });
 }

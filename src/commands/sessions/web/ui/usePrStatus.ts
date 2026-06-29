@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import type { PrSummary } from "../prList";
 
-export function usePrStatus(cwd: string | undefined): number | null {
-	const [number, setNumber] = useState<number | null>(null);
+export function usePrStatus(cwd: string | undefined): PrSummary | null {
+	const [pr, setPr] = useState<PrSummary | null>(null);
 
 	useEffect(() => {
 		if (!cwd) {
-			setNumber(null);
+			setPr(null);
 			return;
 		}
 		let cancelled = false;
@@ -13,15 +14,15 @@ export function usePrStatus(cwd: string | undefined): number | null {
 			.then((res) => res.json())
 			.then((body) => {
 				if (!cancelled)
-					setNumber(typeof body?.number === "number" ? body.number : null);
+					setPr(typeof body?.pr?.number === "number" ? body.pr : null);
 			})
 			.catch(() => {
-				if (!cancelled) setNumber(null);
+				if (!cancelled) setPr(null);
 			});
 		return () => {
 			cancelled = true;
 		};
 	}, [cwd]);
 
-	return number;
+	return pr;
 }

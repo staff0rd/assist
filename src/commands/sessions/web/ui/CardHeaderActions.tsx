@@ -22,12 +22,12 @@ export function CardHeaderActions({
 	const { status } = session;
 	const target = backlogTarget(session);
 	const canStar = sessionStarTarget(session) !== undefined;
-	const prNumber = usePrStatus(session.cwd);
+	const pr = usePrStatus(session.cwd);
 	return (
 		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 			<CardChips session={session} />
 			<Box sx={{ flex: 1 }} />
-			{prNumber !== null && session.cwd && <ReviewButton cwd={session.cwd} />}
+			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}
 			{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
 			{canStar && <SessionStarButton session={session} />}
 			{target && (

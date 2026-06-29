@@ -26,7 +26,7 @@ export function watchActivity(session: Session, notify: () => void): void {
 	 * to a different session from the previous daemon generation. Seed the file
 	 * from this session's own restored activity so the read below shows its own
 	 * details, not another backlog item's (#408). */
-	if (session.restored) reconcileActivity(session.id, session.activity);
+	reconcileActivity(session.id, session.activity);
 
 	let timer: ReturnType<typeof setTimeout> | null = null;
 	const read = () => {
