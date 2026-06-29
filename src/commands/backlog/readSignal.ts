@@ -4,7 +4,7 @@ import { getSignalPath } from "./writeSignal";
 
 export function readSignal(): Signal | undefined {
 	const path = getSignalPath();
-	if (!existsSync(path)) return undefined;
+	if (!path || !existsSync(path)) return undefined;
 	try {
 		return JSON.parse(readFileSync(path, "utf8")) as Signal;
 	} catch {

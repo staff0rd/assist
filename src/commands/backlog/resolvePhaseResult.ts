@@ -8,7 +8,7 @@ import { getSignalPath } from "./writeSignal";
 
 export function cleanupSignal(): void {
 	const statusPath = getSignalPath();
-	if (existsSync(statusPath)) {
+	if (statusPath && existsSync(statusPath)) {
 		unlinkSync(statusPath);
 	}
 }
@@ -24,7 +24,8 @@ export async function resolvePhaseResult(
 	phaseIndex: number,
 	itemId: number,
 ): Promise<number> {
-	if (!existsSync(getSignalPath())) {
+	const signalPath = getSignalPath();
+	if (!signalPath || !existsSync(signalPath)) {
 		if (await isTerminalStatus(itemId)) return -1;
 		const action = await handleIncompletePhase();
 		if (action === "abort") return -1;

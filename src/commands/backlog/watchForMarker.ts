@@ -8,6 +8,7 @@ export function watchForMarker(
 	options?: { actOnDone?: boolean },
 ): void {
 	const statusPath = getSignalPath();
+	if (!statusPath) return;
 	watchFile(statusPath, { interval: 1000 }, () => {
 		if (!existsSync(statusPath)) return;
 		const signal = readSignal();
@@ -19,5 +20,6 @@ export function watchForMarker(
 }
 
 export function stopWatching(): void {
-	unwatchFile(getSignalPath());
+	const statusPath = getSignalPath();
+	if (statusPath) unwatchFile(statusPath);
 }

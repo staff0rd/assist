@@ -1,13 +1,11 @@
-import { writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { getBacklogDir } from "./shared";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { dirname, join } from "node:path";
 
-export function getSignalPath(): string {
+export function getSignalPath(): string | undefined {
 	const sessionId = process.env.ASSIST_SESSION_ID;
-	const filename = sessionId
-		? `.assist-signal-${sessionId}.json`
-		: ".assist-signal.json";
-	return join(getBacklogDir(), filename);
+	if (!sessionId) return undefined;
+	return join(homedir(), ".assist", "signals", `signal-${sessionId}.json`);
 }
 
 type SignalEvent = "phase-done" | "next" | "rewind" | "done";
@@ -21,7 +19,10 @@ export function writeSignal(
 	event: SignalEvent,
 	data?: Record<string, unknown>,
 ): void {
+	const path = getSignalPath();
+	if (!path) return;
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	const signal: Signal = { event, ...(sessionId && { sessionId }), ...data };
-	writeFileSync(getSignalPath(), JSON.stringify(signal));
+	mkdirSync(dirname(path), { recursive: true });
+	writeFileSync(path, JSON.stringify(signal));
 }

@@ -20,7 +20,7 @@ export function setBacklogDir(dir: string | undefined): void {
 	_backlogDir = dir;
 }
 
-export function getBacklogDir(): string {
+function getBacklogDir(): string {
 	return _backlogDir ?? findBacklogUp(process.cwd()) ?? getProjectRoot();
 }
 

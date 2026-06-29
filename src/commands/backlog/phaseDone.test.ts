@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, unlinkSync } from "node:fs";
 import {
+	afterEach,
 	beforeEach,
 	describe,
 	expect,
@@ -37,14 +38,26 @@ const orm = {} as never;
 
 function cleanup(): void {
 	const path = getSignalPath();
-	if (existsSync(path)) unlinkSync(path);
+	if (path && existsSync(path)) unlinkSync(path);
+}
+
+function signalPath(): string {
+	const path = getSignalPath();
+	if (!path) throw new Error("expected a signal path");
+	return path;
 }
 
 describe("phaseDone", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		process.env.ASSIST_SESSION_ID = "test-session";
 		mockGetReady.mockResolvedValue({ orm });
 		cleanup();
+	});
+
+	afterEach(() => {
+		cleanup();
+		delete process.env.ASSIST_SESSION_ID;
 	});
 
 	it("should write the status marker file", async () => {
@@ -52,7 +65,7 @@ describe("phaseDone", () => {
 
 		await phaseDone("1", "1", "Done");
 
-		const marker = JSON.parse(readFileSync(getSignalPath(), "utf8"));
+		const marker = JSON.parse(readFileSync(signalPath(), "utf8"));
 		expect(marker.event).toBe("phase-done");
 		expect(marker.itemId).toBe(1);
 		expect(marker.phaseIndex).toBe(0);
