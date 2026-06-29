@@ -1,57 +1,9 @@
 import { randomUUID } from "node:crypto";
-import type { FSWatcher } from "node:fs";
-import type { Activity } from "../../../shared/emitActivity";
 import { spawnClaude } from "./spawnClaude";
 import { spawnRun } from "./spawnRun";
+import type { Session, SessionStatus } from "./types";
 
-type SessionStatus = "running" | "waiting" | "done" | "error";
-type CommandType = "claude" | "run" | "assist";
-
-type Session = {
-	id: string;
-	name: string;
-	commandType: CommandType;
-	status: SessionStatus;
-	startedAt: number;
-	runningMs: number;
-	runningSince: number | null;
-	pty: ReturnType<typeof spawnClaude> | null;
-	scrollback: string;
-	runName?: string;
-	runArgs?: string[];
-	assistArgs?: string[];
-	cwd?: string;
-	claudeSessionId?: string;
-	restored?: boolean;
-	error?: string;
-	activity?: Activity;
-	activityWatcher?: FSWatcher;
-	autoRun?: boolean;
-	autoAdvance?: boolean;
-	escInterruptTimer?: ReturnType<typeof setTimeout>;
-	reviewStarted?: boolean;
-};
-
-type SessionInfo = {
-	id: string;
-	name: string;
-	commandType: CommandType;
-	status: string;
-	startedAt: number;
-	runningMs: number;
-	runningSince: number | null;
-	runName?: string;
-	runArgs?: string[];
-	assistArgs?: string[];
-	cwd?: string;
-	restored?: boolean;
-	error?: string;
-	activity?: Activity;
-	autoRun?: boolean;
-	autoAdvance?: boolean;
-};
-
-export type { Session, SessionInfo, SessionStatus };
+export type { Session, SessionInfo, SessionStatus } from "./types";
 
 function sessionBase(id: string, status: SessionStatus) {
 	const startedAt = Date.now();

@@ -3,6 +3,8 @@ import type { Session, SessionInfo } from "./createSession";
 export function toSessionInfo({
 	id,
 	name,
+	title,
+	subtitle,
 	commandType,
 	status,
 	startedAt,
@@ -21,6 +23,8 @@ export function toSessionInfo({
 	return {
 		id,
 		name,
+		title,
+		subtitle,
 		commandType,
 		status,
 		startedAt,

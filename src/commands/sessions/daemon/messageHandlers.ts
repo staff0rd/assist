@@ -1,9 +1,8 @@
 import type { RateLimits } from "../../../shared/RateLimits";
-import { discoverSessions } from "../shared/discoverSessions";
-import { parseTranscript } from "../shared/parseTranscript";
 import { type SessionClient, sendTo } from "./broadcast";
 import { buildHello } from "./buildHello";
 import type { SessionStatus } from "./createSession";
+import { lifecycleHandlers } from "./lifecycleHandlers";
 import type { SessionManager } from "./SessionManager";
 
 export type Msg = Record<string, unknown>;
@@ -23,30 +22,6 @@ function creator(
 		if (m.windowsProxy.route(client, d)) return;
 		sendTo(client, { type: "created", sessionId: spawn(m, d), isNew });
 	};
-}
-
-function handleHistory(client: SessionClient): void {
-	discoverSessions().then((sessions) =>
-		sendTo(client, { type: "history", sessions }),
-	);
-}
-
-function handleFetchTranscript(
-	client: SessionClient,
-	_manager: SessionManager,
-	data: Msg,
-): void {
-	const sessionId = data.sessionId as string;
-	parseTranscript(sessionId).then((messages) =>
-		sendTo(client, { type: "transcript", sessionId, messages }),
-	);
-}
-
-function handleShutdown(client: SessionClient, manager: SessionManager): void {
-	manager.shutdown();
-	sendTo(client, { type: "shutting-down" });
-	// Exit on the next tick so the ack is flushed to the socket first
-	setImmediate(() => process.exit(0));
 }
 
 // why: proxied (windows) sessions route to the Windows daemon, else run locally
@@ -75,6 +50,10 @@ export const messageHandlers: Record<string, Handler> = {
 		m.spawnAssist(
 			(d.assistArgs as string[]) ?? [],
 			d.cwd as string | undefined,
+			{
+				title: d.title as string | undefined,
+				subtitle: d.subtitle as string | undefined,
+			},
 		),
 	),
 	resume: creator(false, (m, d) =>
@@ -84,9 +63,7 @@ export const messageHandlers: Record<string, Handler> = {
 			d.name as string | undefined,
 		),
 	),
-	history: handleHistory,
-	"fetch-transcript": handleFetchTranscript,
-	shutdown: handleShutdown,
+	...lifecycleHandlers,
 	drain: (client, m) => sendTo(client, { type: "drained", count: m.drain() }),
 	limits: (_client, m, d) => m.clients.updateLimits(d.rateLimits as RateLimits),
 	input: routed((_client, m, d) =>

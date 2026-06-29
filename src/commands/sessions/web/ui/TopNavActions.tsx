@@ -1,7 +1,10 @@
 import Stack from "@mui/material/Stack";
+import type { AssistLaunchMeta } from "./createSessionAction";
 import { dispatchMode } from "./dispatchMode";
+import { formatRelativeTime } from "./formatRelativeTime";
 import { FreePromptDropdown } from "./FreePromptDropdown";
 import { ModeButtons } from "./ModeButtons";
+import { ReviewDropdown } from "./ReviewDropdown";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 export function TopNavActions({
@@ -9,7 +12,11 @@ export function TopNavActions({
 	onCreateAssist,
 }: {
 	onCreate: (prompt: string, cwd: string) => void;
-	onCreateAssist: (args: string[], cwd?: string) => void;
+	onCreateAssist: (
+		args: string[],
+		cwd?: string,
+		meta?: AssistLaunchMeta,
+	) => void;
 }) {
 	const { selectedCwd } = useRepoSelectionContext();
 	const disabled = !selectedCwd;
@@ -26,6 +33,18 @@ export function TopNavActions({
 					allowEmpty
 					disabled={disabled}
 					onSubmit={(prompt) => onCreate(prompt, selectedCwd)}
+				/>
+				<ReviewDropdown
+					cwd={selectedCwd}
+					disabled={disabled}
+					onSelect={(pr) =>
+						onCreateAssist(["review", String(pr.number)], selectedCwd, {
+							title: pr.title,
+							subtitle: `#${pr.number} · ${pr.author} · ${formatRelativeTime(
+								pr.createdAt,
+							)}`,
+						})
+					}
 				/>
 			</ModeButtons>
 		</Stack>

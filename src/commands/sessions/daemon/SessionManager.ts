@@ -3,7 +3,10 @@ import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
 import { ClientHub, persistUsagePeak } from "./ClientHub";
-import { createAssistSession } from "./createAssistSession";
+import {
+	type AssistSessionMeta,
+	createAssistSession,
+} from "./createAssistSession";
 import { dismissSession, drainSessions } from "./dismissSession";
 import {
 	createRunSession,
@@ -84,8 +87,14 @@ export class SessionManager {
 		return this.spawnWith((id) => createRunSession(id, runName, runArgs, cwd));
 	}
 
-	spawnAssist(assistArgs: string[], cwd?: string): string {
-		return this.spawnWith((id) => createAssistSession(id, assistArgs, cwd));
+	spawnAssist(
+		assistArgs: string[],
+		cwd?: string,
+		meta?: AssistSessionMeta,
+	): string {
+		return this.spawnWith((id) =>
+			createAssistSession(id, assistArgs, cwd, meta),
+		);
 	}
 
 	resume(sessionId: string, cwd: string, name?: string): string {

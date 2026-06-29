@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { cardSx } from "./CardHeader";
+import { cardSx } from "./cardSx";
 import { formatRelativeTime } from "./formatRelativeTime";
 import { HistoryCardChips } from "./HistoryCardChips";
 import { historyTitle } from "./historyTitle";

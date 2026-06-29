@@ -9,6 +9,8 @@ type CommandType = "claude" | "run" | "assist";
 export type SessionInfo = {
 	id: string;
 	name: string;
+	title?: string;
+	subtitle?: string;
 	commandType: CommandType;
 	status: SessionStatus;
 	startedAt: number;

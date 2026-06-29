@@ -3,6 +3,7 @@ export type SessionType =
 	| "next"
 	| "bug"
 	| "refine"
+	| "review"
 	| "prompt"
 	| "run";
 
@@ -12,7 +13,14 @@ type HistoryFields = {
 	prompt?: string;
 };
 
-const KNOWN: SessionType[] = ["draft", "next", "bug", "refine", "run"];
+const KNOWN: SessionType[] = [
+	"draft",
+	"next",
+	"bug",
+	"refine",
+	"review",
+	"run",
+];
 
 /**
  * Reconstruct an active card's session-type/item-id/title hints from the

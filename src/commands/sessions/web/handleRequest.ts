@@ -15,6 +15,8 @@ import { gitStatus } from "./gitStatus";
 import { listNewsItems } from "./listNewsItems";
 import { listUsageHistory } from "./listUsageHistory";
 import { openInCode } from "./openInCode";
+import { prList } from "./prList";
+import { prStatus } from "./prStatus";
 import { restartWeb } from "./restartWeb";
 
 const require = createRequire(import.meta.url);
@@ -55,6 +57,8 @@ const routes: Record<string, Handler> = {
 	"POST /api/restart": restartWeb,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,
+	"GET /api/pr-status": prStatus,
+	"GET /api/pr-list": prList,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/usage/history": listUsageHistory,
 	"GET /api/backups/list": getBackups,

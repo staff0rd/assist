@@ -7,6 +7,7 @@ describe("deriveHistoryFields", () => {
 		expect(deriveHistoryFields("refine", "", "").sessionType).toBe("refine");
 		expect(deriveHistoryFields("bug", "", "").sessionType).toBe("bug");
 		expect(deriveHistoryFields("next", "", "").sessionType).toBe("next");
+		expect(deriveHistoryFields("review", "", "").sessionType).toBe("review");
 	});
 
 	it("treats an unknown command or a bare prompt as 'prompt'", () => {
