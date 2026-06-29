@@ -11,6 +11,8 @@ vi.mock("node:fs", () => ({
 const writeMock = writeFileSync as unknown as ReturnType<typeof vi.fn>;
 const mkdirMock = mkdirSync as unknown as ReturnType<typeof vi.fn>;
 
+type HookEntry = { matcher?: string; hooks: { command: string }[] };
+
 describe("ensureHooksSettings", () => {
 	afterEach(() => {
 		vi.clearAllMocks();
@@ -32,13 +34,18 @@ describe("ensureHooksSettings", () => {
 		ensureHooksSettings();
 
 		const written = JSON.parse(writeMock.mock.calls[0][1]);
-		const command = (event: string) => written.hooks[event][0].hooks[0].command;
-		expect(command("UserPromptSubmit")).toBe(
+		expect(written.hooks.UserPromptSubmit[0].hooks[0].command).toBe(
 			"assist sessions set-status running",
 		);
-		expect(command("PreToolUse")).toBe("assist sessions set-status running");
-		expect(command("Stop")).toBe("assist sessions set-status waiting");
-		expect(command("Notification")).toBe("assist sessions set-status waiting");
+		expect(written.hooks.PostToolUse[0].hooks[0].command).toBe(
+			"assist sessions set-status running",
+		);
+		expect(written.hooks.Stop[0].hooks[0].command).toBe(
+			"assist sessions set-status waiting",
+		);
+		expect(written.hooks.Notification[0].hooks[0].command).toBe(
+			"assist sessions set-status waiting",
+		);
 	});
 
 	it("maps a mid-turn permission prompt to waiting", () => {
@@ -48,5 +55,33 @@ describe("ensureHooksSettings", () => {
 		expect(written.hooks.PermissionRequest[0].hooks[0].command).toBe(
 			"assist sessions set-status waiting",
 		);
+	});
+
+	it("sets waiting for AskUserQuestion while it blocks on the user's answer", () => {
+		ensureHooksSettings();
+
+		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		const askEntry = written.hooks.PreToolUse.find(
+			(e: HookEntry) => e.matcher === "AskUserQuestion",
+		) as HookEntry;
+		expect(askEntry.hooks[0].command).toBe(
+			"assist sessions set-status waiting",
+		);
+	});
+
+	it("keeps running for normal tools and excludes AskUserQuestion from it", () => {
+		ensureHooksSettings();
+
+		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		const runningEntry = written.hooks.PreToolUse.find(
+			(e: HookEntry) =>
+				e.hooks[0].command === "assist sessions set-status running",
+		) as HookEntry;
+		const matcher = runningEntry.matcher ?? "";
+		expect(matcher).toBe("^(?!AskUserQuestion$).*");
+		const matches = new RegExp(matcher);
+		expect(matches.test("Bash")).toBe(true);
+		expect(matches.test("Edit")).toBe(true);
+		expect(matches.test("AskUserQuestion")).toBe(false);
 	});
 });

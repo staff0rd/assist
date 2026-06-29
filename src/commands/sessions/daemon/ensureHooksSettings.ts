@@ -5,9 +5,13 @@ import { daemonPaths } from "./daemonPaths";
 const RUNNING = "assist sessions set-status running";
 const WAITING = "assist sessions set-status waiting";
 
-function on(command: string) {
-	return [{ hooks: [{ type: "command", command }] }];
+function on(command: string, matcher?: string) {
+	const hooks = [{ type: "command", command }];
+	return [matcher == null ? { hooks } : { matcher, hooks }];
 }
+
+const ASK_USER_QUESTION = "AskUserQuestion";
+const NOT_ASK_USER_QUESTION = `^(?!${ASK_USER_QUESTION}$).*`;
 
 // why: merged into each daemon-spawned claude via --settings so Claude Code
 // pushes real running/waiting state to the daemon instead of the daemon
@@ -15,7 +19,10 @@ function on(command: string) {
 const hooksSettings = {
 	hooks: {
 		UserPromptSubmit: on(RUNNING),
-		PreToolUse: on(RUNNING),
+		PreToolUse: [
+			...on(WAITING, ASK_USER_QUESTION),
+			...on(RUNNING, NOT_ASK_USER_QUESTION),
+		],
 		// tool finished, agent resumes; restores running
 		PostToolUse: on(RUNNING),
 		Stop: on(WAITING),
