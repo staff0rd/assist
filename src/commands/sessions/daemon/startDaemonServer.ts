@@ -28,6 +28,15 @@ export function startDaemonServer(
 	});
 	// Sessions are restored only after the socket is bound, so a daemon that
 	// loses the startup race never resumes a duplicate copy of them
+	listenWithSingleOnListening(server, manager, checkAutoExit);
+}
+
+function listenWithSingleOnListening(
+	server: net.Server,
+	manager: SessionManager,
+	checkAutoExit: (idle: boolean) => void,
+): void {
+	server.removeAllListeners("listening");
 	server.listen(daemonPaths.socket, () => onListening(manager, checkAutoExit));
 }
 
@@ -62,5 +71,5 @@ async function recoverFromAddrInUse(
 			unlinkSync(daemonPaths.socket);
 		} catch {}
 	}
-	server.listen(daemonPaths.socket, () => onListening(manager, checkAutoExit));
+	listenWithSingleOnListening(server, manager, checkAutoExit);
 }
