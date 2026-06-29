@@ -1,3 +1,10 @@
+## [0.330.1](https://github.com/staff0rd/assist/compare/v0.330.0...v0.330.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* review session card chip & PR meta ([758765a](https://github.com/staff0rd/assist/commit/758765ae26f598c369cb70b6374431dd1d2bbf1c))
+
 # [0.330.0](https://github.com/staff0rd/assist/compare/v0.329.3...v0.330.0) (2026-06-29)
 
 
