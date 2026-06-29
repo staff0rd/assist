@@ -15,6 +15,7 @@ export function createWsConnection(
 
 	ws.onopen = () => {
 		lifecycle.onOpen?.();
+		ws.send(JSON.stringify({ type: "hello" }));
 		ws.send(JSON.stringify({ type: "history" }));
 	};
 

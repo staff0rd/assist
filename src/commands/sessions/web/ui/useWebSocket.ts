@@ -15,6 +15,7 @@ type WsDeps = {
 	setHistory: WsDispatch["setHistory"];
 	setActiveId: WsDispatch["setActiveId"];
 	setDaemonActiveId: WsDispatch["setDaemonActiveId"];
+	setDaemonVersion: WsDispatch["setDaemonVersion"];
 	setTranscript: WsDispatch["setTranscript"];
 	setViewingTranscriptSessionId: WsDispatch["setViewingTranscriptSessionId"];
 	setCurrentCwd: WsDispatch["setCurrentCwd"];

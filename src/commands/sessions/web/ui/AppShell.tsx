@@ -6,6 +6,7 @@ import { ErrorSnackbar } from "./ErrorSnackbar";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { LaunchSnackbar } from "./LaunchSnackbar";
 import { ReconnectingIndicator } from "./ReconnectingIndicator";
+import { DaemonVersionContext } from "./useDaemonVersionContext";
 import { useRepoSelection } from "./useRepoSelection";
 import { RepoSelectionContext } from "./useRepoSelectionContext";
 import { useSessionLaunch } from "./useSessionLaunch";
@@ -38,7 +39,9 @@ export function AppShell({
 	return (
 		<RepoSelectionContext.Provider value={selection}>
 			<SessionLaunchContext.Provider value={launch}>
-				<HamburgerMenu mode={mode} toggle={toggle} />
+				<DaemonVersionContext.Provider value={socket.daemonVersion}>
+					<HamburgerMenu mode={mode} toggle={toggle} />
+				</DaemonVersionContext.Provider>
 				<AppBar position="fixed" elevation={1} sx={appBarSx}>
 					<AppToolbar socket={socket} selection={selection} />
 				</AppBar>

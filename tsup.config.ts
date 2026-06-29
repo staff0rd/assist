@@ -1,6 +1,7 @@
 import { cpSync } from "node:fs";
 import { build } from "esbuild";
 import { defineConfig } from "tsup";
+import pkg from "./package.json";
 
 export default defineConfig({
 	entry: ["src/index.ts"],
@@ -30,7 +31,10 @@ export default defineConfig({
 			outfile: "dist/commands/sessions/web/bundle.js",
 			jsx: "automatic",
 			jsxImportSource: "react",
-			define: { "process.env.NODE_ENV": '"production"' },
+			define: {
+				"process.env.NODE_ENV": '"production"',
+				__ASSIST_VERSION__: JSON.stringify(pkg.version),
+			},
 		});
 	},
 });

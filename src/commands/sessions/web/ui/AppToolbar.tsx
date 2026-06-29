@@ -10,7 +10,7 @@ import { TopNavActions } from "./TopNavActions";
 import type { RepoSelection } from "./useRepoSelectionContext";
 import type { SessionSocket } from "./useSessionSocket";
 
-const toolbarSx = { minHeight: 48 } as const;
+const toolbarSx = { minHeight: 48, pr: 14 } as const;
 const pickerSx = { width: 240, ml: 2 } as const;
 
 export function AppToolbar({

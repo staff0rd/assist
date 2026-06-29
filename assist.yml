@@ -152,7 +152,7 @@ run:
       - --minify
       - --format=iife
       - --target=es2020
-      - --outfile=dist/commands/sessions/web/bundle.js
+      - --outfile=dist/commands/sessions/web/bundle.verify.js
       - --jsx=automatic
       - --jsx-import-source=react
       - --define:process.env.NODE_ENV='production'
