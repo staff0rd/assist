@@ -1,3 +1,10 @@
+## [0.330.4](https://github.com/staff0rd/assist/compare/v0.330.3...v0.330.4) (2026-06-29)
+
+
+### Bug Fixes
+
+* AskUserQuestion shows waiting ([bad6e5e](https://github.com/staff0rd/assist/commit/bad6e5e247b70dd58c43069d39f919d41462d564))
+
 ## [0.330.3](https://github.com/staff0rd/assist/compare/v0.330.2...v0.330.3) (2026-06-29)
 
 
