@@ -1,3 +1,10 @@
+## [0.331.1](https://github.com/staff0rd/assist/compare/v0.331.0...v0.331.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* restore sessions once on stale socket ([5976bf5](https://github.com/staff0rd/assist/commit/5976bf546e2d6bc17eb885d2c6aeb3b3802c7fa7))
+
 # [0.331.0](https://github.com/staff0rd/assist/compare/v0.330.4...v0.331.0) (2026-06-29)
 
 
