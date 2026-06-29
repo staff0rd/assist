@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { SessionCard } from "./SessionCard";
 import type { SessionInfo } from "./types";
 
@@ -64,5 +64,29 @@ describe("SessionCard loading state", () => {
 		expect(screen.queryByText("Starting…")).toBeNull();
 		expect(screen.getByText(/● error/)).toBeTruthy();
 		expect(screen.getByText("the conversation cannot be resumed")).toBeTruthy();
+	});
+});
+
+describe("SessionCard dismiss confirmation", () => {
+	it("does not select the card when confirming a running session's dismissal", () => {
+		const onClick = vi.fn();
+		const onDismiss = vi.fn();
+		render(
+			<SessionCard
+				session={session}
+				active={false}
+				loading={false}
+				onClick={onClick}
+				onDismiss={onDismiss}
+				onSetAutoRun={() => {}}
+				onSetAutoAdvance={() => {}}
+			/>,
+		);
+
+		fireEvent.click(screen.getByTitle("Dismiss"));
+		fireEvent.click(screen.getByRole("button", { name: "End session" }));
+
+		expect(onDismiss).toHaveBeenCalledTimes(1);
+		expect(onClick).not.toHaveBeenCalled();
 	});
 });

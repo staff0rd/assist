@@ -5,6 +5,7 @@ import { updateItemStatus } from "../../../backlog/web/ui/api";
 import { ConfirmDialog } from "../../../backlog/web/ui/components/ConfirmDialog";
 import type { BacklogTarget } from "./backlogTarget";
 import { ErrorSnackbar } from "./ErrorSnackbar";
+import { StopClickPropagation } from "./StopClickPropagation";
 
 export function CompleteButton({
 	target,
@@ -43,15 +44,19 @@ export function CompleteButton({
 				<CheckIcon sx={{ fontSize: 16 }} />
 			</IconButton>
 			{confirming && (
-				<ConfirmDialog
-					title={`Mark #${itemId} done`}
-					message={`${phase ?? 0} of ${totalPhases ?? 0} phases completed. Mark this backlog item as done and end its session?`}
-					confirmLabel="Mark done"
-					onConfirm={handleConfirm}
-					onCancel={() => setConfirming(false)}
-				/>
+				<StopClickPropagation>
+					<ConfirmDialog
+						title={`Mark #${itemId} done`}
+						message={`${phase ?? 0} of ${totalPhases ?? 0} phases completed. Mark this backlog item as done and end its session?`}
+						confirmLabel="Mark done"
+						onConfirm={handleConfirm}
+						onCancel={() => setConfirming(false)}
+					/>
+				</StopClickPropagation>
 			)}
-			<ErrorSnackbar error={error} onClose={() => setError(null)} />
+			<StopClickPropagation>
+				<ErrorSnackbar error={error} onClose={() => setError(null)} />
+			</StopClickPropagation>
 		</>
 	);
 }
