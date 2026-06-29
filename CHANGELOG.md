@@ -1,3 +1,10 @@
+# [0.331.0](https://github.com/staff0rd/assist/compare/v0.330.4...v0.331.0) (2026-06-29)
+
+
+### Features
+
+* show web version with daemon mismatch ([69b827c](https://github.com/staff0rd/assist/commit/69b827c301474b3096c15764d6753309bac8a753))
+
 ## [0.330.4](https://github.com/staff0rd/assist/compare/v0.330.3...v0.330.4) (2026-06-29)
 
 
