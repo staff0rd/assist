@@ -1,3 +1,10 @@
+## [0.331.2](https://github.com/staff0rd/assist/compare/v0.331.1...v0.331.2) (2026-06-29)
+
+
+### Bug Fixes
+
+* hide review dropdown with no open PRs ([eb5366b](https://github.com/staff0rd/assist/commit/eb5366bf43b16b949186a71627b905e8e987a29c))
+
 ## [0.331.1](https://github.com/staff0rd/assist/compare/v0.331.0...v0.331.1) (2026-06-29)
 
 
