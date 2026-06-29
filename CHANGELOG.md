@@ -1,3 +1,10 @@
+# [0.333.0](https://github.com/staff0rd/assist/compare/v0.332.0...v0.333.0) (2026-06-29)
+
+
+### Features
+
+* persistent sessions sidebar ([85b2cf6](https://github.com/staff0rd/assist/commit/85b2cf6ac6276243c389928ee6ee898db88425b4))
+
 # [0.332.0](https://github.com/staff0rd/assist/compare/v0.331.2...v0.332.0) (2026-06-29)
 
 
