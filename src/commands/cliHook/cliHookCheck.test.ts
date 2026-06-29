@@ -121,6 +121,20 @@ describe("cliHookCheck built-in deny hardening", () => {
 		expect(process.exitCode).toBe(1);
 		consoleSpy.mockRestore();
 	});
+
+	it("denies a command-substitution heredoc git commit that splitCompound merges into a non-leading part", () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		cliHookCheck(
+			"cd /repo\n      git commit -q -m \"$(cat <<'EOF'\nfix: thing\n\nCo-Authored-By: Claude\nEOF\n)\"",
+		);
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining("assist commit"),
+		);
+		expect(process.exitCode).toBe(1);
+		consoleSpy.mockRestore();
+	});
 });
 
 describe("cliHookCheck compound with shell builtins", () => {

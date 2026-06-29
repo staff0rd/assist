@@ -25,22 +25,6 @@ const BUILTIN_DENIES: { pattern: string; message: string }[] = [
 	},
 ];
 
-function matchesBuiltinDeny(part: string) {
-	return BUILTIN_DENIES.find(
-		(rule) => part === rule.pattern || part.startsWith(`${rule.pattern} `),
-	);
-}
-
-export function findBuiltinDeny(parts: string[]): HookDecision | undefined {
-	const rule = parts.map(matchesBuiltinDeny).find(Boolean);
-	if (!rule) return undefined;
-
-	return {
-		permissionDecision: "deny",
-		permissionDecisionReason: rule.message,
-	};
-}
-
 function rawDenyRegex(pattern: string): RegExp {
 	const tokens = pattern
 		.trim()
@@ -56,19 +40,31 @@ const RAW_BUILTIN_DENIES = BUILTIN_DENIES.map((rule) => ({
 	regex: rawDenyRegex(rule.pattern),
 }));
 
-/**
- * why: fail-closed fallback for commands splitCompound can't decompose
- * (backticks/heredoc/subshell), where a buried `git commit` would otherwise
- * slip past the leading-prefix check in findBuiltinDeny.
- */
-export function findBuiltinDenyRaw(
-	rawCommand: string,
+function matchBuiltinDeny(text: string) {
+	return RAW_BUILTIN_DENIES.find((rule) => rule.regex.test(text));
+}
+
+function toDecision(
+	rule: { message: string } | undefined,
 ): HookDecision | undefined {
-	const rule = RAW_BUILTIN_DENIES.find((r) => r.regex.test(rawCommand));
 	if (!rule) return undefined;
 
 	return {
 		permissionDecision: "deny",
 		permissionDecisionReason: rule.message,
 	};
+}
+
+export function findBuiltinDeny(parts: string[]): HookDecision | undefined {
+	for (const part of parts) {
+		const decision = toDecision(matchBuiltinDeny(part));
+		if (decision) return decision;
+	}
+	return undefined;
+}
+
+export function findBuiltinDenyRaw(
+	rawCommand: string,
+): HookDecision | undefined {
+	return toDecision(matchBuiltinDeny(rawCommand));
 }

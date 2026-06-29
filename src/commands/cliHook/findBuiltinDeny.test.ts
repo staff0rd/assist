@@ -27,6 +27,38 @@ describe("findBuiltinDeny gh pr edit", () => {
 	});
 });
 
+describe("findBuiltinDeny git commit", () => {
+	it("denies a leading 'git commit'", () => {
+		const decision = findBuiltinDeny(['git commit -m "fix: x"']);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("assist commit");
+	});
+
+	it("denies a bare 'git commit'", () => {
+		expect(findBuiltinDeny(["git commit"])?.permissionDecision).toBe("deny");
+	});
+
+	it("denies 'git commit' buried in a merged, non-leading part", () => {
+		const decision = findBuiltinDeny([
+			"cd /repo git commit -q -m $(cat <<'EOF'\nfix: thing\nCo-Authored-By: Claude\nEOF\n)",
+		]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("assist commit");
+	});
+
+	it("does not deny 'git commit-tree'", () => {
+		expect(findBuiltinDeny(["git commit-tree abc"])).toBeUndefined();
+	});
+
+	it("does not deny 'assist commit'", () => {
+		expect(findBuiltinDeny(['assist commit "fix: x"'])).toBeUndefined();
+	});
+
+	it("does not deny an unrelated git command mentioning commit", () => {
+		expect(findBuiltinDeny(["git log --grep commit"])).toBeUndefined();
+	});
+});
+
 describe("findBuiltinDenyRaw gh pr edit", () => {
 	it("denies 'gh pr edit' buried in a raw command the prefix path can't decompose", () => {
 		const decision = findBuiltinDenyRaw(
