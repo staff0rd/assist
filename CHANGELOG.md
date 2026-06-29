@@ -1,3 +1,10 @@
+## [0.334.1](https://github.com/staff0rd/assist/compare/v0.334.0...v0.334.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* stop dialog clicks selecting card ([73fff44](https://github.com/staff0rd/assist/commit/73fff4468a70380d6c262606c503382cf78e2f75))
+
 # [0.334.0](https://github.com/staff0rd/assist/compare/v0.333.0...v0.334.0) (2026-06-29)
 
 
