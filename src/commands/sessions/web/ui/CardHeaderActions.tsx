@@ -3,6 +3,7 @@ import { backlogTarget } from "./backlogTarget";
 import { CardChips } from "./CardChips";
 import { CompleteButton } from "./CompleteButton";
 import { DismissButton } from "./DismissButton";
+import { OpenPrButton } from "./OpenPrButton";
 import { ReviewButton } from "./ReviewButton";
 import { RetryButton } from "./RetryButton";
 import { SessionStarButton } from "./SessionStarButton";
@@ -27,6 +28,7 @@ export function CardHeaderActions({
 		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 			<CardChips session={session} />
 			<Box sx={{ flex: 1 }} />
+			{pr && session.cwd && <OpenPrButton pr={pr} />}
 			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}
 			{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
 			{canStar && <SessionStarButton session={session} />}

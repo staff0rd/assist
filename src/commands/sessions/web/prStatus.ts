@@ -9,10 +9,11 @@ type GhPr = {
 	title?: string;
 	author?: { login?: string; name?: string };
 	createdAt?: string;
+	url?: string;
 };
 
 const getPr = createCachedGhJson<PrSummary | null>(
-	["pr", "view", "--json", "number,title,author,createdAt"],
+	["pr", "view", "--json", "number,title,author,createdAt,url"],
 	(stdout) => {
 		const parsed = JSON.parse(stdout) as GhPr;
 		if (typeof parsed.number !== "number") return null;
@@ -21,6 +22,7 @@ const getPr = createCachedGhJson<PrSummary | null>(
 			title: parsed.title ?? "",
 			author: parsed.author?.name || parsed.author?.login || "unknown",
 			createdAt: parsed.createdAt ?? "",
+			url: parsed.url ?? "",
 		};
 	},
 	null,
