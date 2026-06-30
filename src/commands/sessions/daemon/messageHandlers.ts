@@ -88,4 +88,6 @@ export const messageHandlers: Record<string, Handler> = {
 		if (!m.windowsProxy.route(client, d))
 			m.setStatus(d.sessionId as string, d.status as SessionStatus);
 	},
+	"ui-status": (_client, _m, d) =>
+		daemonLog(`ui rendered: id=${d.sessionId} status=${d.status}`),
 };

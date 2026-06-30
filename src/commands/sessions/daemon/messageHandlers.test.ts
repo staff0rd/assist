@@ -48,3 +48,18 @@ describe("set-status handler", () => {
 		expect(m.setStatus).not.toHaveBeenCalled();
 	});
 });
+
+describe("ui-status handler", () => {
+	beforeEach(() => daemonLogMock.mockClear());
+
+	it("logs what the web UI rendered so daemon.log alone traces the UI stage", () => {
+		messageHandlers["ui-status"]({} as never, fakeManager(), {
+			sessionId: "42",
+			status: "running",
+		});
+
+		expect(daemonLogMock).toHaveBeenCalledWith(
+			"ui rendered: id=42 status=running",
+		);
+	});
+});
