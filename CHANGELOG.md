@@ -1,3 +1,10 @@
+## [0.337.1](https://github.com/staff0rd/assist/compare/v0.337.0...v0.337.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* deselect session card on /usage ([9381602](https://github.com/staff0rd/assist/commit/93816026c7124d665baee6733e416ec728614675))
+
 # [0.337.0](https://github.com/staff0rd/assist/compare/v0.336.1...v0.337.0) (2026-06-30)
 
 
