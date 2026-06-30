@@ -1,3 +1,10 @@
+## [0.337.2](https://github.com/staff0rd/assist/compare/v0.337.1...v0.337.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* spinner for starting session cards ([802e532](https://github.com/staff0rd/assist/commit/802e532b67e1710317eb32ed8bd9c42dee3e95b0))
+
 ## [0.337.1](https://github.com/staff0rd/assist/compare/v0.337.0...v0.337.1) (2026-06-30)
 
 
