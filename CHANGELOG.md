@@ -1,3 +1,10 @@
+## [0.334.2](https://github.com/staff0rd/assist/compare/v0.334.1...v0.334.2) (2026-06-30)
+
+
+### Bug Fixes
+
+* open terminal links without prompt ([a4f8a2b](https://github.com/staff0rd/assist/commit/a4f8a2b88c564f3988ce57f9133a0f0fc960f8e3))
+
 ## [0.334.1](https://github.com/staff0rd/assist/compare/v0.334.0...v0.334.1) (2026-06-29)
 
 
