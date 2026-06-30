@@ -406,6 +406,17 @@ describe("SessionManager", () => {
 
 				expect(() => manager.setStatus("missing", "running")).not.toThrow();
 			});
+
+			it("warns instead of silently no-opping", () => {
+				const manager = new SessionManager();
+				daemonLogMock.mockClear();
+
+				manager.setStatus("missing", "waiting");
+
+				expect(daemonLogMock).toHaveBeenCalledWith(
+					expect.stringContaining("unknown session id=missing status=waiting"),
+				);
+			});
 		});
 
 		describe("when the status is unchanged", () => {

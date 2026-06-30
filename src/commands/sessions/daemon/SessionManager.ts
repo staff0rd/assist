@@ -15,6 +15,7 @@ import {
 	type SessionInfo,
 	type SessionStatus,
 } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
@@ -141,7 +142,13 @@ export class SessionManager {
 
 	setStatus(id: string, status: SessionStatus): void {
 		const session = this.sessions.get(id);
-		if (session) this.onStatusChange(session, status);
+		if (!session) {
+			daemonLog(
+				`set-status for unknown session id=${id} status=${status} (no live session; ignoring)`,
+			);
+			return;
+		}
+		this.onStatusChange(session, status);
 	}
 
 	listSessions = (): SessionInfo[] => {

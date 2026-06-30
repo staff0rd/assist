@@ -39,7 +39,7 @@ export function CardHeaderActions({
 					onDismiss={onDismiss}
 				/>
 			)}
-			<DismissButton status={status} onDismiss={onDismiss} />
+			<DismissButton id={session.id} status={status} onDismiss={onDismiss} />
 		</Box>
 	);
 }

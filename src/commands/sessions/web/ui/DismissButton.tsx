@@ -6,9 +6,11 @@ import { StopClickPropagation } from "./StopClickPropagation";
 import type { SessionStatus } from "./types";
 
 export function DismissButton({
+	id,
 	status,
 	onDismiss,
 }: {
+	id: string;
 	status: SessionStatus;
 	onDismiss: () => void;
 }) {
@@ -27,7 +29,7 @@ export function DismissButton({
 						setConfirming(true);
 					}
 				}}
-				title="Dismiss"
+				title={`Dismiss session ${id}`}
 				sx={{ color: "text.disabled", "&:hover": { color: "text.primary" } }}
 			>
 				<CloseIcon sx={{ fontSize: 16 }} />

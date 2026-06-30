@@ -83,7 +83,7 @@ describe("SessionCard dismiss confirmation", () => {
 			/>,
 		);
 
-		fireEvent.click(screen.getByTitle("Dismiss"));
+		fireEvent.click(screen.getByTitle("Dismiss session 1"));
 		fireEvent.click(screen.getByRole("button", { name: "End session" }));
 
 		expect(onDismiss).toHaveBeenCalledTimes(1);

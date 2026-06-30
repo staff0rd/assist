@@ -2,6 +2,7 @@ import type { RateLimits } from "../../../shared/RateLimits";
 import { type SessionClient, sendTo } from "./broadcast";
 import { buildHello } from "./buildHello";
 import type { SessionStatus } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import type { SessionManager } from "./SessionManager";
 
@@ -82,7 +83,9 @@ export const messageHandlers: Record<string, Handler> = {
 	),
 	"set-active": (_client, m, d) =>
 		m.active.set(d.cwd as string, d.sessionId as string),
-	"set-status": routed((_client, m, d) =>
-		m.setStatus(d.sessionId as string, d.status as SessionStatus),
-	),
+	"set-status": (client, m, d) => {
+		daemonLog(`set-status received: id=${d.sessionId} status=${d.status}`);
+		if (!m.windowsProxy.route(client, d))
+			m.setStatus(d.sessionId as string, d.status as SessionStatus);
+	},
 };
