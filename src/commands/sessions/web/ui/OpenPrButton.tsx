@@ -1,4 +1,4 @@
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import IconButton from "@mui/material/IconButton";
 import type { PrSummary } from "../prList";
 
@@ -15,7 +15,7 @@ export function OpenPrButton({ pr }: { pr: PrSummary }) {
 			title="Open PR"
 			sx={{ color: "text.disabled", "&:hover": { color: "text.primary" } }}
 		>
-			<OpenInNewIcon sx={{ fontSize: 14 }} />
+			<GitHubIcon sx={{ fontSize: 14 }} />
 		</IconButton>
 	);
 }
