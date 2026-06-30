@@ -1,4 +1,6 @@
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import { areChipsLoading } from "./areChipsLoading";
 import { backlogTarget } from "./backlogTarget";
 import { CardChips } from "./CardChips";
 import { CompleteButton } from "./CompleteButton";
@@ -13,10 +15,12 @@ import { usePrStatus } from "./usePrStatus";
 
 export function CardHeaderActions({
 	session,
+	loading,
 	onRetry,
 	onDismiss,
 }: {
 	session: SessionInfo;
+	loading: boolean;
 	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
@@ -26,7 +30,11 @@ export function CardHeaderActions({
 	const pr = usePrStatus(session.cwd);
 	return (
 		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-			<CardChips session={session} />
+			{areChipsLoading(session, loading) ? (
+				<CircularProgress size={12} />
+			) : (
+				<CardChips session={session} />
+			)}
 			<Box sx={{ flex: 1 }} />
 			{pr && session.cwd && <OpenPrButton pr={pr} />}
 			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}

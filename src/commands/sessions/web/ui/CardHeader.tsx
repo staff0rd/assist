@@ -6,10 +6,12 @@ import type { SessionInfo } from "./types";
 
 export function CardHeader({
 	session,
+	loading,
 	onRetry,
 	onDismiss,
 }: {
 	session: SessionInfo;
+	loading: boolean;
 	onRetry?: () => void;
 	onDismiss: () => void;
 }) {
@@ -23,6 +25,7 @@ export function CardHeader({
 		<Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
 			<CardHeaderActions
 				session={session}
+				loading={loading}
 				onRetry={onRetry}
 				onDismiss={onDismiss}
 			/>
