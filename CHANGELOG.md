@@ -1,3 +1,10 @@
+## [0.336.1](https://github.com/staff0rd/assist/compare/v0.336.0...v0.336.1) (2026-06-30)
+
+
+### Bug Fixes
+
+* open resumed sessions as waiting ([8dd3a91](https://github.com/staff0rd/assist/commit/8dd3a915e490db4e76c0b09103d1e185d7613d70))
+
 # [0.336.0](https://github.com/staff0rd/assist/compare/v0.335.0...v0.336.0) (2026-06-30)
 
 
