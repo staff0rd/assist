@@ -1,3 +1,10 @@
+# [0.338.0](https://github.com/staff0rd/assist/compare/v0.337.2...v0.338.0) (2026-06-30)
+
+
+### Features
+
+* paginate usage history view ([425b484](https://github.com/staff0rd/assist/commit/425b484da6f540c3db19b663abf07d663a60a44a))
+
 ## [0.337.2](https://github.com/staff0rd/assist/compare/v0.337.1...v0.337.2) (2026-06-30)
 
 
