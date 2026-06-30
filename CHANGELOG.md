@@ -1,3 +1,10 @@
+# [0.336.0](https://github.com/staff0rd/assist/compare/v0.335.0...v0.336.0) (2026-06-30)
+
+
+### Features
+
+* use GitHub icon for open-PR button ([f575c40](https://github.com/staff0rd/assist/commit/f575c40709b4f606a5299f0f9f32418ea9f6ac60))
+
 # [0.335.0](https://github.com/staff0rd/assist/compare/v0.334.2...v0.335.0) (2026-06-30)
 
 
