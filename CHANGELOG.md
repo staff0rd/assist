@@ -1,3 +1,10 @@
+# [0.335.0](https://github.com/staff0rd/assist/compare/v0.334.2...v0.335.0) (2026-06-30)
+
+
+### Features
+
+* add address-comments review mode ([43ff47d](https://github.com/staff0rd/assist/commit/43ff47dbe62b0490d9a1ff7ae47f84e72363fb0c))
+
 ## [0.334.2](https://github.com/staff0rd/assist/compare/v0.334.1...v0.334.2) (2026-06-30)
 
 
