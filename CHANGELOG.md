@@ -1,3 +1,10 @@
+# [0.337.0](https://github.com/staff0rd/assist/compare/v0.336.1...v0.337.0) (2026-06-30)
+
+
+### Features
+
+* log UI-rendered status to daemon.log ([00b9261](https://github.com/staff0rd/assist/commit/00b9261d0ba8da38068cb8bc99ead8629c61a05b))
+
 ## [0.336.1](https://github.com/staff0rd/assist/compare/v0.336.0...v0.336.1) (2026-06-30)
 
 
