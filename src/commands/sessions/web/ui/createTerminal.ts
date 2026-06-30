@@ -15,13 +15,18 @@ export function createTerminal(el: HTMLElement): TerminalHandle {
 		fontSize: 14,
 		fontFamily: "'Cascadia Code', 'Fira Code', Consolas, monospace",
 		theme: { background: "#1e1e1e", foreground: "#d4d4d4" },
+		linkHandler: {
+			activate: (_event, uri) => {
+				window.open(uri, "_blank");
+			},
+		},
 	});
 
 	const fitAddon = new FitAddon();
 	term.loadAddon(fitAddon);
 	const linkProvider = term.registerLinkProvider(
 		createWrappedLinkProvider(term, (_event, uri) => {
-			window.open(uri, "_blank", "noopener");
+			window.open(uri, "_blank");
 		}),
 	);
 	term.open(el);
