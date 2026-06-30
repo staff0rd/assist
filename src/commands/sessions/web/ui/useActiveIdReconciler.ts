@@ -8,14 +8,16 @@ export function useActiveIdReconciler(
 	setActiveId: Dispatch<SetStateAction<string | null>>,
 	daemonActiveId: string | null,
 ) {
-	const onBacklog = useLocation().pathname.startsWith("/backlog");
+	const pathname = useLocation().pathname;
+	const deselects =
+		pathname.startsWith("/backlog") || pathname.startsWith("/usage");
 	useEffect(() => {
-		if (onBacklog) {
+		if (deselects) {
 			setActiveId(null);
 			return;
 		}
 		setActiveId((current) =>
 			reconcileActiveId(sessions, current, daemonActiveId),
 		);
-	}, [sessions, setActiveId, daemonActiveId, onBacklog]);
+	}, [sessions, setActiveId, daemonActiveId, deselects]);
 }

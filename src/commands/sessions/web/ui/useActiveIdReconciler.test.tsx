@@ -50,6 +50,14 @@ describe("useActiveIdReconciler", () => {
 		expect(result.current).toBeNull();
 	});
 
+	it("keeps activeId null on /usage", () => {
+		const { result } = renderReconciler("/usage", {
+			sessions: [session("a"), session("b"), session("c")],
+			daemonActiveId: "b",
+		});
+		expect(result.current).toBeNull();
+	});
+
 	it("auto-selects the top card after a dismiss on the sessions route", () => {
 		const { result, rerender } = renderReconciler("/sessions", {
 			sessions: [session("a"), session("b"), session("c")],
