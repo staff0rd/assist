@@ -37,8 +37,8 @@ export function TopNavActions({
 				<ReviewDropdown
 					cwd={selectedCwd}
 					disabled={disabled}
-					onSelect={(pr) =>
-						onCreateAssist(["review", String(pr.number)], selectedCwd, {
+					onSelect={(pr, mode) =>
+						onCreateAssist([mode, String(pr.number)], selectedCwd, {
 							title: pr.title,
 							subtitle: `#${pr.number} · ${pr.author} · ${formatRelativeTime(
 								pr.createdAt,

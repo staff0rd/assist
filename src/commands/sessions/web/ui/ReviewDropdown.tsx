@@ -1,7 +1,9 @@
 import type { PrSummary } from "../prList";
 import { DropdownWrapper } from "./DropdownWrapper";
-import { ReviewPrList } from "./ReviewPrList";
 import { useOpenPrs } from "./useOpenPrs";
+import { ReviewDropdownContent } from "./ReviewDropdownContent";
+
+export type ReviewMode = "review" | "review-comments";
 
 export function ReviewDropdown({
 	cwd,
@@ -10,7 +12,7 @@ export function ReviewDropdown({
 }: {
 	cwd: string;
 	disabled: boolean;
-	onSelect: (pr: PrSummary) => void;
+	onSelect: (pr: PrSummary, mode: ReviewMode) => void;
 }) {
 	const { prs, loading } = useOpenPrs(cwd);
 
@@ -21,13 +23,7 @@ export function ReviewDropdown({
 	return (
 		<DropdownWrapper label="review" disabled={disabled}>
 			{(close) => (
-				<ReviewPrList
-					cwd={cwd}
-					onPick={(pr) => {
-						onSelect(pr);
-						close();
-					}}
-				/>
+				<ReviewDropdownContent cwd={cwd} onSelect={onSelect} close={close} />
 			)}
 		</DropdownWrapper>
 	);

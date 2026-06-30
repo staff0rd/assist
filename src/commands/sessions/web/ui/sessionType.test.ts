@@ -24,6 +24,14 @@ describe("sessionType", () => {
 		}
 	});
 
+	it("maps review-comments to the review type", () => {
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["review-comments", "123"],
+		});
+		expect(sessionType(session)).toBe("review");
+	});
+
 	it("treats a free claude session as a prompt", () => {
 		expect(sessionType(makeSession({ commandType: "claude" }))).toBe("prompt");
 	});
