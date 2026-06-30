@@ -1,4 +1,4 @@
-import { desc } from "drizzle-orm";
+import { count, desc } from "drizzle-orm";
 import type { Db } from "./Db";
 import { usagePeaks } from "./schema";
 
@@ -11,8 +11,11 @@ export type UsagePeakRow = typeof usagePeaks.$inferSelect;
  * post-reset value on top, earlier (badged) pre-reset peaks beneath. `segment`
  * is a final tiebreak should two readings share a timestamp.
  */
-export async function listUsagePeaks(db: Db): Promise<UsagePeakRow[]> {
-	return db
+export async function listUsagePeaks(
+	db: Db,
+	paging?: { limit: number; offset: number },
+): Promise<UsagePeakRow[]> {
+	const query = db
 		.select()
 		.from(usagePeaks)
 		.orderBy(
@@ -21,4 +24,13 @@ export async function listUsagePeaks(db: Db): Promise<UsagePeakRow[]> {
 			desc(usagePeaks.createdAt),
 			desc(usagePeaks.segment),
 		);
+	if (paging) {
+		return query.limit(paging.limit).offset(paging.offset);
+	}
+	return query;
+}
+
+export async function countUsagePeaks(db: Db): Promise<number> {
+	const [row] = await db.select({ value: count() }).from(usagePeaks);
+	return row?.value ?? 0;
 }

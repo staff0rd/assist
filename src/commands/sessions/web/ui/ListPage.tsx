@@ -1,8 +1,5 @@
-import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 import { type ReactNode, useEffect, useState } from "react";
+import { PageShell } from "./PageShell";
 
 /**
  * A titled page that fetches a list of rows, showing a spinner while loading,
@@ -27,26 +24,14 @@ export const ListPage = <T,>(props: ListPageProps<T>) => {
 			.finally(() => setLoading(false));
 	}, [fetchRows]);
 
-	if (loading) {
-		return (
-			<Box sx={{ display: "flex", justifyContent: "center", py: 6 }}>
-				<CircularProgress />
-			</Box>
-		);
-	}
-
 	return (
-		<Container maxWidth="md" sx={{ py: 3, px: 2 }}>
-			<Typography variant="h6" sx={{ mb: 2 }}>
-				{title}
-			</Typography>
-			{rows.length === 0 ? (
-				<Typography color="text.secondary" align="center" sx={{ py: 6 }}>
-					{emptyMessage}
-				</Typography>
-			) : (
-				children(rows)
-			)}
-		</Container>
+		<PageShell
+			loading={loading}
+			title={title}
+			isEmpty={rows.length === 0}
+			emptyMessage={emptyMessage}
+		>
+			{children(rows)}
+		</PageShell>
 	);
 };

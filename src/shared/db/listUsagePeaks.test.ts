@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
-import { listUsagePeaks } from "./listUsagePeaks";
+import { countUsagePeaks, listUsagePeaks } from "./listUsagePeaks";
 import { recordUsagePeak } from "./recordUsagePeak";
 
 describe("listUsagePeaks", () => {
@@ -118,6 +118,36 @@ describe("listUsagePeaks", () => {
 					createdAt: expect.any(Date),
 				},
 			]);
+		});
+	});
+
+	describe("when paging", () => {
+		beforeEach(async () => {
+			for (const resets_at of [1000, 2000, 3000, 4000, 5000]) {
+				await recordUsagePeak(orm, {
+					five_hour: { used_percentage: resets_at / 100, resets_at },
+				});
+			}
+		});
+
+		it("returns the requested slice in the deterministic order", async () => {
+			const page0 = await listUsagePeaks(orm, { limit: 2, offset: 0 });
+			const page1 = await listUsagePeaks(orm, { limit: 2, offset: 2 });
+			const page2 = await listUsagePeaks(orm, { limit: 2, offset: 4 });
+
+			expect(page0.map((r) => r.resetsAt)).toEqual([5000, 4000]);
+			expect(page1.map((r) => r.resetsAt)).toEqual([3000, 2000]);
+			expect(page2.map((r) => r.resetsAt)).toEqual([1000]);
+		});
+
+		it("counts every recorded peak", async () => {
+			expect(await countUsagePeaks(orm)).toBe(5);
+		});
+	});
+
+	describe("when no peaks have been recorded", () => {
+		it("counts zero", async () => {
+			expect(await countUsagePeaks(orm)).toBe(0);
 		});
 	});
 });
