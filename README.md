@@ -72,8 +72,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/sql` - Query a MSSQL database via assist sql
 - `/verify` - Run all verification commands in parallel
 - `/verify-new` - Add a new verify:\* run command to assist.yml
-- `/transcript-format` - Format meeting transcripts from VTT files
-- `/transcript-summarise` - Summarise transcripts missing summaries
+- `/transcripts` - Format and summarise meeting transcripts end to end
 - `/voice-setup` - Download required voice models (VAD, STT)
 - `/voice-start` - Start the voice interaction daemon
 - `/voice-stop` - Stop the voice interaction daemon
@@ -254,8 +253,8 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist complexity maintainability [pattern]` - Calculate maintainability index per file (`--ignore <glob>`, repeatable, excludes extra files on top of `complexity.ignore`). A file can declare its own threshold with a `// assist-maintainability-override: N` comment in its first ~10 lines (integer 0-100); that value replaces the global `--threshold` for that file only and the output annotates it with `(override: N)`
 - `assist complexity sloc [pattern]` - Count source lines of code per file
 - `assist transcript configure` - Configure transcript directories
-- `assist transcript format` - Convert VTT files to formatted markdown transcripts
-- `assist transcript summarise` - List transcripts that do not have summaries
+- `assist transcript list` - List raw .vtt filenames waiting in the pick-up directory
+- `assist transcript move <file>` - Convert a raw .vtt to a dated markdown transcript and archive the original
 - `assist voice setup` - Download required voice models (VAD, STT)
 - `assist voice start` - Start the voice daemon (always-on, listens for wake word)
 - `assist voice start --foreground` - Start in foreground for debugging

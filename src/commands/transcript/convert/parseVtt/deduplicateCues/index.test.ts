@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { VttCue } from "../../../../types";
+import type { VttCue } from "../../../types";
 import { deduplicateCues } from "./index";
 
 function cue(

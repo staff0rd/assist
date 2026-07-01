@@ -1,4 +1,4 @@
-import type { ChatMessage, VttCue } from "../../types";
+import type { ChatMessage, VttCue } from "../types";
 import { cleanText } from "./parseVtt";
 
 export function cuesToChatMessages(cues: VttCue[]): ChatMessage[] {

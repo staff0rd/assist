@@ -54,6 +54,7 @@ assist sql columns
 assist sql query
 assist sql tables
 assist status-line
+assist transcript list
 assist verify
 assist voice
 az account list

@@ -1,8 +1,8 @@
 import type { Command } from "commander";
 import {
 	configure as transcriptConfigure,
-	format as transcriptFormat,
-	summarise as transcriptSummarise,
+	list as transcriptList,
+	move as transcriptMove,
 } from "./transcript";
 
 export function registerTranscript(program: Command): void {
@@ -16,12 +16,16 @@ export function registerTranscript(program: Command): void {
 		.action(transcriptConfigure);
 
 	transcriptCommand
-		.command("format")
-		.description("Convert VTT files to formatted markdown transcripts")
-		.action(transcriptFormat);
+		.command("list")
+		.description("List raw .vtt filenames waiting in the pick-up directory")
+		.action(transcriptList);
 
 	transcriptCommand
-		.command("summarise")
-		.description("List transcripts that do not have summaries")
-		.action(transcriptSummarise);
+		.command("move <file>")
+		.description(
+			"Convert a raw .vtt to a dated markdown transcript and archive the original",
+		)
+		.requiredOption("--date <YYYY-MM-DD>", "meeting date")
+		.requiredOption("--client <name>", "client name")
+		.action(transcriptMove);
 }
