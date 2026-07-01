@@ -8,6 +8,8 @@ const SESSIONS_FILE = "sessions.json";
 
 const persistedSessionSchema = z.object({
 	name: z.string(),
+	title: z.string().optional(),
+	subtitle: z.string().optional(),
 	commandType: z.enum(["claude", "run", "assist"]),
 	cwd: z.string(),
 	startedAt: z.number(),
@@ -59,6 +61,8 @@ function logPersist(live: Session[]): void {
 function toPersistedSession(session: Session): PersistedSession {
 	return {
 		name: session.name,
+		title: session.title,
+		subtitle: session.subtitle,
 		commandType: session.commandType,
 		cwd: session.cwd ?? process.cwd(),
 		startedAt: session.startedAt,

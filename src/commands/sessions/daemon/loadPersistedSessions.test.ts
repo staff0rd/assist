@@ -140,6 +140,30 @@ describe("persistLiveSessions", () => {
 		expect(persisted[0].runningMs).toBe(7000);
 	});
 
+	it("persists a review session's title and subtitle so restore keeps the PR title", () => {
+		const sessions = new Map<string, Session>([
+			[
+				"1",
+				fakeSession({
+					id: "1",
+					name: "assist review 1234",
+					title: "fix: something",
+					subtitle: "#1234 · alice · 2h ago",
+					claudeSessionId: "abc",
+				}),
+			],
+		]);
+
+		persistLiveSessions(sessions);
+
+		const [, persisted] = saveJsonMock.mock.lastCall as [
+			string,
+			PersistedSession[],
+		];
+		expect(persisted[0].title).toBe("fix: something");
+		expect(persisted[0].subtitle).toBe("#1234 · alice · 2h ago");
+	});
+
 	it("persists the session's activity so restore can rehydrate it", () => {
 		const sessions = new Map<string, Session>([
 			[
