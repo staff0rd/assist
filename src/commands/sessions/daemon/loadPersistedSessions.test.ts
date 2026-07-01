@@ -98,6 +98,7 @@ describe("persistLiveSessions", () => {
 			{
 				name: "live",
 				commandType: "claude",
+				status: "running",
 				cwd: "/repo",
 				startedAt: 1,
 				runningMs: 0,

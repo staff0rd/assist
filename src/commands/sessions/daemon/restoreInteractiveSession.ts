@@ -3,7 +3,7 @@ import type { Session } from "./createSession";
 import { errorSession } from "./errorSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
-import { runningSession } from "./runningSession";
+import { runningSession, waitingSession } from "./runningSession";
 import { spawnClaude } from "./spawnClaude";
 
 type RestoreBase = ReturnType<typeof restoreBase>;
@@ -40,13 +40,16 @@ function resumeViaClaude(
 	persisted: PersistedSession,
 	base: RestoreBase,
 ): Session {
+	const idle = persisted.status === "waiting";
 	const pty = spawnClaude({
 		resumeSessionId: persisted.claudeSessionId,
-		prompt: buildResumePrompt(),
+		prompt: idle ? undefined : buildResumePrompt(),
 		cwd: persisted.cwd,
 		sessionId: id,
 	});
-	return runningSession(base, persisted, pty);
+	return idle
+		? waitingSession(base, persisted, pty)
+		: runningSession(base, persisted, pty);
 }
 
 function unrecoverableClaude(id: string, persisted: PersistedSession): Session {

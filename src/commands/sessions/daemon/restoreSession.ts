@@ -3,7 +3,7 @@ import type { Session } from "./createSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreBase } from "./restoreBase";
 import { restoreInteractiveSession } from "./restoreInteractiveSession";
-import { runningSession } from "./runningSession";
+import { runningSession, waitingSession } from "./runningSession";
 import { spawnPty } from "./spawnPty";
 import { isUpdate, updatedSession } from "./updatedSession";
 
@@ -21,8 +21,16 @@ export function restoreSession(
 	 * latest discovered sessionId so the wrapper resumes the interrupted phase's
 	 * conversation instead of restarting it from scratch (#300). */
 	if (needsWrapperRelaunch(persisted)) {
-		const pty = spawnPty(assistResumeArgs(persisted), persisted.cwd, id);
-		return runningSession(base, persisted, pty);
+		const idle = persisted.status === "waiting";
+		const pty = spawnPty(
+			assistResumeArgs(persisted),
+			persisted.cwd,
+			id,
+			idle ? { ASSIST_RESUME_IDLE: "1" } : undefined,
+		);
+		return idle
+			? waitingSession(base, persisted, pty)
+			: runningSession(base, persisted, pty);
 	}
 
 	return restoreInteractiveSession(id, persisted, base);

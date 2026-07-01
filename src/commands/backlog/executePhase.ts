@@ -4,9 +4,9 @@ import { awaitClaude } from "../../shared/awaitClaude";
 import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { buildPhasePrompt } from "./buildPhasePrompt";
-import { buildResumePrompt } from "./buildResumePrompt";
 import { reportPhaseActivity } from "./reportPhaseActivity";
 import { resolvePhaseResult } from "./resolvePhaseResult";
+import { resumeNudge } from "./resumeNudge";
 import type { BacklogItem, PlanPhase } from "./types";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
@@ -38,7 +38,7 @@ export async function executePhase(
 	reportPhaseActivity(item, phaseNumber, totalPhases, phase, claudeSessionId);
 	const { child, done } = spawnClaude(
 		resumeSessionId
-			? buildResumePrompt()
+			? resumeNudge()
 			: buildPhasePrompt(item, phaseNumber, phase),
 		resumeSessionId
 			? spawnOptions

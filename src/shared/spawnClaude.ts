@@ -65,7 +65,9 @@ function buildArgs(prompt: string, options: SpawnClaudeOptions): string[] {
 	 * interrupted turn to completion. No --fork-session, so the resumed
 	 * conversation keeps the same session id. */
 	if (options.resumeSessionId) {
-		return ["--resume", options.resumeSessionId, prompt];
+		return prompt
+			? ["--resume", options.resumeSessionId, prompt]
+			: ["--resume", options.resumeSessionId];
 	}
 	/* why: assign the session id up front so whoever spawned Claude knows exactly
 	 * which transcript this run owns (and can resume it on restart) rather than

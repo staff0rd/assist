@@ -5,6 +5,7 @@ export function spawnPty(
 	args: string[],
 	cwd?: string,
 	sessionId?: string,
+	extraEnv?: Record<string, string>,
 ): pty.IPty {
 	ensureSpawnHelperExecutable();
 	const shell =
@@ -34,6 +35,7 @@ export function spawnPty(
 				ASSIST_SESSION_ID: sessionId,
 				ASSIST_ACTIVITY_ID: sessionId,
 			}),
+			...extraEnv,
 		} as Record<string, string>,
 	});
 }

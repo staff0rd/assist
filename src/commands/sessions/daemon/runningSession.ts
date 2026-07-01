@@ -1,4 +1,4 @@
-import type { Session } from "./createSession";
+import type { Session, SessionStatus } from "./createSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
 
@@ -9,13 +9,30 @@ export function runningSession(
 	persisted: PersistedSession,
 	pty: Session["pty"],
 ): Session {
+	return restoredSession(base, persisted, pty, "running");
+}
+
+export function waitingSession(
+	base: RestoreBase,
+	persisted: PersistedSession,
+	pty: Session["pty"],
+): Session {
+	return restoredSession(base, persisted, pty, "waiting");
+}
+
+function restoredSession(
+	base: RestoreBase,
+	persisted: PersistedSession,
+	pty: Session["pty"],
+	status: SessionStatus,
+): Session {
 	const startedAt = Date.now();
 	return {
 		...base,
-		status: "running",
+		status,
 		startedAt,
 		runningMs: persisted.runningMs ?? 0,
-		runningSince: startedAt,
+		runningSince: status === "running" ? startedAt : null,
 		pty,
 		claudeSessionId: persisted.claudeSessionId,
 		restored: true,

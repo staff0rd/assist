@@ -3,8 +3,8 @@ import { awaitClaude } from "../../shared/awaitClaude";
 import { emitActivity } from "../../shared/emitActivity";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { spawnClaude } from "../../shared/spawnClaude";
-import { buildResumePrompt } from "./buildResumePrompt";
 import { handleLaunchSignal } from "./handleLaunchSignal";
+import { resumeNudge } from "./resumeNudge";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
 export type LaunchModeOptions = {
@@ -44,7 +44,7 @@ export async function launchMode(
 	});
 	const { child, done } = spawnClaude(
 		resumeSessionId
-			? buildResumePrompt()
+			? resumeNudge()
 			: buildSlashCommand(slashCommand, options?.description),
 		{ allowEdits: true, sessionId: claudeSessionId, resumeSessionId },
 	);

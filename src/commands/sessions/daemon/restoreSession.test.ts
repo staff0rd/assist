@@ -69,6 +69,7 @@ describe("restoreSession", () => {
 			["assist", "backlog", "run", "295", "--resume-session", "abc-123"],
 			"/home/user/repo",
 			"1",
+			undefined,
 		);
 		expect(session.status).toBe("running");
 		expect(session.restored).toBe(true);
@@ -100,6 +101,7 @@ describe("restoreSession", () => {
 			["assist", "backlog", "run", "295"],
 			"/home/user/repo",
 			"1",
+			undefined,
 		);
 		expect(session.status).toBe("running");
 		expect(session.claudeSessionId).toBeUndefined();
@@ -129,6 +131,7 @@ describe("restoreSession", () => {
 			],
 			"/home/user/repo",
 			"1",
+			undefined,
 		);
 		expect(session.status).toBe("running");
 		expect(session.restored).toBe(true);
@@ -151,8 +154,55 @@ describe("restoreSession", () => {
 			["assist", "refine", "254", "--once", "--resume-session", "refine-789"],
 			"/home/user/repo",
 			"1",
+			undefined,
 		);
 		expect(session.status).toBe("running");
+	});
+
+	it("reopens an idle backlog run as waiting, signalling the wrapper to skip the nudge", () => {
+		const persisted: PersistedSession = {
+			name: "repo/Run backlog 295",
+			commandType: "assist",
+			status: "waiting",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "abc-123",
+			assistArgs: ["backlog", "run", "295"],
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "backlog", "run", "295", "--resume-session", "abc-123"],
+			"/home/user/repo",
+			"1",
+			{ ASSIST_RESUME_IDLE: "1" },
+		);
+		expect(session.status).toBe("waiting");
+		expect(session.runningSince).toBeNull();
+		expect(session.restored).toBe(true);
+	});
+
+	it("reopens an idle interactive claude session as waiting with no resume nudge", () => {
+		const persisted: PersistedSession = {
+			name: "repo/Fix the bug",
+			commandType: "claude",
+			status: "waiting",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "abc-123",
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnClaudeMock).toHaveBeenCalledWith({
+			resumeSessionId: "abc-123",
+			prompt: undefined,
+			cwd: "/home/user/repo",
+			sessionId: "1",
+		});
+		expect(session.status).toBe("waiting");
+		expect(session.runningSince).toBeNull();
 	});
 
 	it("resumes a --once session via bare claude when no sessionId was discovered", () => {
