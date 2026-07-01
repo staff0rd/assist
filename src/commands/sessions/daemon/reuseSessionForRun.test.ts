@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { removeActivity } from "../../../shared/emitActivity";
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { reuseSessionForRun } from "./reuseSessionForRun";
@@ -13,9 +14,14 @@ vi.mock("./spawnPty", () => ({
 	})),
 }));
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
+vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("../../../shared/emitActivity", () => ({ removeActivity: vi.fn() }));
 
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 const wirePtyMock = wirePtyEvents as unknown as ReturnType<typeof vi.fn>;
+const removeActivityMock = removeActivity as unknown as ReturnType<
+	typeof vi.fn
+>;
 
 function makeSession(overrides: Partial<Session> = {}): Session {
 	return {
@@ -62,21 +68,38 @@ describe("reuseSessionForRun", () => {
 		expect(session.startedAt).toBeGreaterThan(100);
 	});
 
-	it("preserves scrollback so the draft transcript is not cleared", () => {
+	it("clears scrollback so the draft tail is not shown under the run", () => {
 		const session = makeSession({ scrollback: "draft transcript" });
 
 		reuseSessionForRun(session, 42, new Set(), vi.fn());
 
-		expect(session.scrollback).toBe("draft transcript");
+		expect(session.scrollback).toBe("");
 	});
 
-	it("does not broadcast a clear to clients", () => {
+	it("broadcasts a clear so terminals drop the draft output", () => {
 		const client: SessionClient = { send: vi.fn() };
 		const session = makeSession();
 
 		reuseSessionForRun(session, 42, new Set([client]), vi.fn());
 
-		expect(client.send).not.toHaveBeenCalled();
+		expect(client.send).toHaveBeenCalledWith(
+			JSON.stringify({ type: "clear", sessionId: "7" }),
+		);
+	});
+
+	it("resets stale draft activity on the reused session", () => {
+		const session = makeSession({
+			activity: {
+				kind: "command",
+				name: "draft",
+				startedAt: 100,
+			},
+		});
+
+		reuseSessionForRun(session, 42, new Set(), vi.fn());
+
+		expect(session.activity).toBeUndefined();
+		expect(removeActivityMock).toHaveBeenCalledWith("7");
 	});
 
 	it("re-wires pty events on the reused session", () => {
@@ -93,6 +116,18 @@ describe("reuseSessionForRun", () => {
 		const kill = vi.fn();
 		const session = makeSession({
 			status: "running",
+			pty: { kill } as unknown as Session["pty"],
+		});
+
+		reuseSessionForRun(session, 42, new Set(), vi.fn());
+
+		expect(kill).toHaveBeenCalledOnce();
+	});
+
+	it("kills the old pty even when the draft is already done", () => {
+		const kill = vi.fn();
+		const session = makeSession({
+			status: "done",
 			pty: { kill } as unknown as Session["pty"],
 		});
 
