@@ -1,3 +1,10 @@
+# [0.342.0](https://github.com/staff0rd/assist/compare/v0.341.2...v0.342.0) (2026-07-01)
+
+
+### Features
+
+* view review synthesis in web UI ([963ee93](https://github.com/staff0rd/assist/commit/963ee93180aae164393d93c6597f905fe066c997))
+
 ## [0.341.2](https://github.com/staff0rd/assist/compare/v0.341.1...v0.341.2) (2026-07-01)
 
 
