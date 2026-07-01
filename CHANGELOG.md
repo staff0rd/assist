@@ -1,3 +1,10 @@
+# [0.341.0](https://github.com/staff0rd/assist/compare/v0.340.1...v0.341.0) (2026-07-01)
+
+
+### Features
+
+* auto-add Fix phase to new bugs ([477306a](https://github.com/staff0rd/assist/commit/477306ad9f33c84fc421864e8302d06f440564bb))
+
 ## [0.340.1](https://github.com/staff0rd/assist/compare/v0.340.0...v0.340.1) (2026-07-01)
 
 
