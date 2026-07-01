@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { getDb } from "../../../shared/db/getDb";
 import { insertItem } from "../insertItem";
+import { insertPhaseAt } from "../insertPhaseAt";
 import { getOrigin } from "../shared";
 import type { BacklogType } from "../types";
 import {
@@ -38,5 +39,10 @@ export async function add(options: AddOptions): Promise<void> {
 		},
 		getOrigin(),
 	);
+
+	if (type === "bug") {
+		await insertPhaseAt(orm, id, 0, "Fix", ["Fix the bug"], null, undefined);
+	}
+
 	console.log(chalk.green(`Added item #${id}: ${name}`));
 }
