@@ -1,3 +1,10 @@
+## [0.342.2](https://github.com/staff0rd/assist/compare/v0.342.1...v0.342.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* indent markdown lists in web UI ([039991d](https://github.com/staff0rd/assist/commit/039991d1e5e3bc071e080ca1644fe51a0cee9717))
+
 ## [0.342.1](https://github.com/staff0rd/assist/compare/v0.342.0...v0.342.1) (2026-07-01)
 
 
