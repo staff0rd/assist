@@ -1,3 +1,10 @@
+## [0.341.2](https://github.com/staff0rd/assist/compare/v0.341.1...v0.341.2) (2026-07-01)
+
+
+### Bug Fixes
+
+* persist session title across restore ([ebf73db](https://github.com/staff0rd/assist/commit/ebf73dbc159e95183525e8b11df54e8400180958))
+
 ## [0.341.1](https://github.com/staff0rd/assist/compare/v0.341.0...v0.341.1) (2026-07-01)
 
 
