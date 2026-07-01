@@ -1,3 +1,10 @@
+## [0.342.1](https://github.com/staff0rd/assist/compare/v0.342.0...v0.342.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* restore idle sessions as waiting ([a95cd8f](https://github.com/staff0rd/assist/commit/a95cd8ffe57111355296bd7d2ace9963ff4fcb93))
+
 # [0.342.0](https://github.com/staff0rd/assist/compare/v0.341.2...v0.342.0) (2026-07-01)
 
 
