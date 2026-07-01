@@ -1,3 +1,10 @@
+# [0.340.0](https://github.com/staff0rd/assist/compare/v0.339.0...v0.340.0) (2026-07-01)
+
+
+### Features
+
+* label transcript move output paths ([8ad53d3](https://github.com/staff0rd/assist/commit/8ad53d34e946a563aed828d2561a9e0255edb824))
+
 # [0.339.0](https://github.com/staff0rd/assist/compare/v0.338.0...v0.339.0) (2026-07-01)
 
 
