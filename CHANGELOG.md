@@ -1,3 +1,10 @@
+# [0.339.0](https://github.com/staff0rd/assist/compare/v0.338.0...v0.339.0) (2026-07-01)
+
+
+### Features
+
+* consolidate transcript workflow ([cda577d](https://github.com/staff0rd/assist/commit/cda577d78658a5c10c7b3aa17eb6430110157bf4))
+
 # [0.338.0](https://github.com/staff0rd/assist/compare/v0.337.2...v0.338.0) (2026-06-30)
 
 
