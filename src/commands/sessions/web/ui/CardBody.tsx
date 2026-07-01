@@ -3,9 +3,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { CardToggles } from "./CardToggles";
 import { SessionErrorText } from "./SessionErrorText";
+import { sessionType } from "./sessionType";
 import { StatusRow } from "./StatusRow";
 import type { SessionInfo } from "./types";
 import { useElapsed } from "./useElapsed";
+import { ViewReviewButton } from "./ViewReviewButton";
 
 export function CardBody({
 	session,
@@ -43,6 +45,9 @@ export function CardBody({
 				onSetAutoRun={onSetAutoRun}
 				onSetAutoAdvance={onSetAutoAdvance}
 			/>
+			{sessionType(session) === "review" && (
+				<ViewReviewButton cwd={session.cwd} />
+			)}
 		</>
 	);
 }

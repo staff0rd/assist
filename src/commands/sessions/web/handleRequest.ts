@@ -10,6 +10,7 @@ import { initBacklog } from "../../backlog/web/initBacklog";
 import { listItems } from "../../backlog/web/shared";
 import { getBackups } from "./getBackups";
 import { getHtml } from "./getHtml";
+import { getReviewSynthesis } from "./getReviewSynthesis";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
 import { listNewsItems } from "./listNewsItems";
@@ -62,6 +63,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/news/items": listNewsItems,
 	"GET /api/usage/history": listUsageHistory,
 	"GET /api/backups/list": getBackups,
+	"GET /api/review/synthesis": getReviewSynthesis,
 };
 
 export const handleRequest = createFallbackHandler(
