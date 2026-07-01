@@ -33,14 +33,14 @@ Convert the raw `.vtt` to a dated markdown transcript and archive the original:
 assist transcript move "<filename>" --date <YYYY-MM-DD> --client "<client>"
 ```
 
-`move` prints two paths:
+`move` prints two labelled paths:
 
-- **line 1** — the formatted transcript it just wrote
-- **line 2** — the summary target path to create in the next step
+- **`Formatted transcript:`** — the formatted transcript it just wrote
+- **`Summary target:`** — the summary target path to create in the next step
 
 ## Step 4: Write the summary
 
-Read the formatted transcript (line 1) and write a concise summary to the summary target path (line 2). The summary must start with a link back to the transcript:
+Read the formatted transcript (the `Formatted transcript:` path) and write a concise summary to the summary target path (the `Summary target:` path). The summary must start with a link back to the transcript:
 
 ```
 [Full Transcript](<relative path from the summary file's directory to the formatted transcript>)

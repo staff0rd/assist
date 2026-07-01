@@ -59,6 +59,6 @@ export function move(file: string, options: MoveOptions): void {
 	archiveRawVtt(vttDir, sourcePath, filename);
 
 	const summaryPath = join(summaryDir, client, outputName);
-	console.log(formattedPath);
-	console.log(summaryPath);
+	console.log(`Formatted transcript: ${formattedPath}`);
+	console.log(`Summary target:       ${summaryPath}`);
 }
