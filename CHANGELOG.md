@@ -1,3 +1,10 @@
+## [0.340.1](https://github.com/staff0rd/assist/compare/v0.340.0...v0.340.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* reset stale state on draft→run reuse ([80fad69](https://github.com/staff0rd/assist/commit/80fad69e1303ad4496b484775ca6364c5bc16b27))
+
 # [0.340.0](https://github.com/staff0rd/assist/compare/v0.339.0...v0.340.0) (2026-07-01)
 
 
