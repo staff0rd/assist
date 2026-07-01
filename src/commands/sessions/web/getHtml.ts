@@ -14,6 +14,8 @@ export function getHtml(): string {
   ::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: #777; }
   .markdown p { margin-bottom: 0.5em; }
+  .markdown ul, .markdown ol { margin: 0 0 0.5em; padding-left: 1.5em; }
+  .markdown li { margin-bottom: 0.25em; }
   .markdown pre { background: rgba(0,0,0,0.1); padding: 12px; border-radius: 6px; overflow-x: auto; }
   .markdown code { background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 3px; font-size: 0.9em; }
   .markdown pre code { background: none; padding: 0; }
