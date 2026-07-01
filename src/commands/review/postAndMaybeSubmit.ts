@@ -1,4 +1,5 @@
 import { promptConfirm } from "../../shared/promptConfirm";
+import { setSessionStatus } from "../sessions/setSessionStatus";
 import { buildReviewSummary } from "./buildReviewSummary";
 import type { LineBoundFinding } from "./partitionFindings";
 import { postFindings } from "./postFindings";
@@ -18,7 +19,12 @@ async function decideSubmit(
 	options: PostAndMaybeSubmitOptions,
 ): Promise<boolean> {
 	if (!options.prompt) return options.submit;
-	return promptConfirm("Submit the pending review?", options.submit);
+	await setSessionStatus("waiting");
+	try {
+		return await promptConfirm("Submit the pending review?", options.submit);
+	} finally {
+		await setSessionStatus("running");
+	}
 }
 
 export async function postAndMaybeSubmit(

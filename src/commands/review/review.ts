@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { emitActivity } from "../../shared/emitActivity";
 import { findRepoRoot } from "../../shared/findRepoRoot";
 import { reviewPr } from "./reviewPr";
 
@@ -45,6 +46,7 @@ function checkoutPr(number: string): void {
 export async function review(options: ReviewOptions = {}): Promise<void> {
 	validateOptions(options);
 	const repoRoot = resolveRepoRoot();
+	emitActivity({ kind: "command", name: "review" });
 	if (options.number) checkoutPr(options.number);
 	await reviewPr(repoRoot, options);
 }
