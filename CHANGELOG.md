@@ -1,3 +1,10 @@
+## [0.341.1](https://github.com/staff0rd/assist/compare/v0.341.0...v0.341.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* resolve review session chips and status ([041acea](https://github.com/staff0rd/assist/commit/041acead80e79e8702deb350831aeaffa35cdfa5))
+
 # [0.341.0](https://github.com/staff0rd/assist/compare/v0.340.1...v0.341.0) (2026-07-01)
 
 
