@@ -136,6 +136,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog stop` - Revert all in-progress backlog items to todo and reset their phase to 1
 - `assist backlog done <id>` - Set a backlog item to done
 - `assist backlog wontdo <id> [reason]` - Set a backlog item to won't do
+- `assist backlog set-status <id> <status>` - Set a backlog item to a specific status (`todo`, `in-progress`, `done`, `wontdo`)
 - `assist backlog star <id>` - Star a backlog item to pin it ahead of unstarred items in the web view
 - `assist backlog unstar <id>` - Remove the star from a backlog item
 - `assist backlog delete <id>` - Delete a backlog item

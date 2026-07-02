@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { del as backlogDel } from "./delete";
 import { done as backlogDone } from "./done";
+import { setStatusCommand as backlogSetStatus } from "./set-status";
 import { star as backlogStar } from "./star";
 import { start as backlogStart } from "./start";
 import { stop as backlogStop } from "./stop";
@@ -27,6 +28,13 @@ export function registerStatusCommands(cmd: Command): void {
 		.command("wontdo <id> [reason]")
 		.description("Set a backlog item to won't do")
 		.action(backlogWontdo);
+
+	cmd
+		.command("set-status <id> <status>")
+		.description(
+			"Set a backlog item to a specific status (todo, in-progress, done, wontdo)",
+		)
+		.action(backlogSetStatus);
 
 	cmd
 		.command("star <id>")
