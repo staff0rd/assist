@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
+import { getPhaseActiveMs } from "./getPhaseActiveMs";
 import { recordPhaseActiveMs } from "./recordPhaseActiveMs";
 import { recordPhaseTokens } from "./recordPhaseTokens";
 import { items, phaseUsage } from "./schema";
@@ -96,6 +97,21 @@ describe("phase usage accumulation", () => {
 			expect(await rows()).toMatchObject([
 				{ activeMs: 1000, tokensDown: 200, tokensUp: 50 },
 			]);
+		});
+	});
+
+	describe("getPhaseActiveMs", () => {
+		it("returns 0 when the phase has no recorded usage", async () => {
+			expect(await getPhaseActiveMs(orm, 1, 0)).toBe(0);
+		});
+
+		it("returns only the requested phase's active_ms", async () => {
+			await recordPhaseActiveMs(orm, 1, 0, 1000);
+			await recordPhaseActiveMs(orm, 1, 1, 2500);
+			await recordPhaseActiveMs(orm, 1, 0, 500);
+
+			expect(await getPhaseActiveMs(orm, 1, 0)).toBe(1500);
+			expect(await getPhaseActiveMs(orm, 1, 1)).toBe(2500);
 		});
 	});
 });

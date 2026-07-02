@@ -29,6 +29,7 @@ export function reuseSessionForRun(
 	session.startedAt = Date.now();
 	session.runningMs = 0;
 	session.runningSince = null;
+	session.usageSeeded = false;
 	setStatus(session, "running");
 	session.restored = undefined;
 	session.pty = spawnPty(["assist", ...assistArgs], session.cwd, session.id);

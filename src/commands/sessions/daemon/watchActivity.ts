@@ -7,6 +7,7 @@ import {
 } from "../../../shared/emitActivity";
 import type { Session } from "./createSession";
 import { applyReviewPause } from "./applyReviewPause";
+import { seedRunningMsFromUsage } from "./seedRunningMsFromUsage";
 
 const DEBOUNCE_MS = 50;
 
@@ -39,6 +40,7 @@ export function watchActivity(session: Session, notify: () => void): void {
 		if (activity.claudeSessionId)
 			session.claudeSessionId = activity.claudeSessionId;
 		applyReviewPause(session, activity);
+		void seedRunningMsFromUsage(session, notify);
 		notify();
 	};
 

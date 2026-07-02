@@ -30,6 +30,7 @@ export type Session = {
 	autoAdvance?: boolean;
 	escInterruptTimer?: ReturnType<typeof setTimeout>;
 	reviewStarted?: boolean;
+	usageSeeded?: boolean;
 };
 
 export type SessionInfo = {
