@@ -1,3 +1,11 @@
+# [0.343.0](https://github.com/staff0rd/assist/compare/v0.342.2...v0.343.0) (2026-07-02)
+
+
+### Features
+
+* add backlog set-status command ([3f87d40](https://github.com/staff0rd/assist/commit/3f87d40f358858015b9962dfcd967b26c83cf150))
+* track per-phase token & active-time cost ([f96b25b](https://github.com/staff0rd/assist/commit/f96b25b851e584d8020e322a1684ab945a237a24))
+
 ## [0.342.2](https://github.com/staff0rd/assist/compare/v0.342.1...v0.342.2) (2026-07-01)
 
 
