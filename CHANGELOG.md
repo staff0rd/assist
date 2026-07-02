@@ -1,3 +1,10 @@
+# [0.344.0](https://github.com/staff0rd/assist/compare/v0.343.0...v0.344.0) (2026-07-02)
+
+
+### Features
+
+* seed session timer from phase active time ([4e2ad09](https://github.com/staff0rd/assist/commit/4e2ad09a6eebbf5d27356dee82355a200c25daa3))
+
 # [0.343.0](https://github.com/staff0rd/assist/compare/v0.342.2...v0.343.0) (2026-07-02)
 
 
