@@ -1,7 +1,8 @@
 import { Paper } from "@mui/material";
-import type { PhaseStatus, PlanPhase } from "../types";
+import type { PhaseStatus, PhaseUsage, PlanPhase } from "../types";
 import { ManualChecks } from "./ManualChecks";
 import { PhaseHeader } from "./PhaseHeader";
+import { PhaseUsageLine } from "./PhaseUsageLine";
 import { TaskList } from "./TaskList";
 
 const statusStyles: Record<
@@ -42,6 +43,7 @@ type PhaseCardProps = {
 	index: number;
 	status: PhaseStatus;
 	itemId?: number;
+	usage?: PhaseUsage;
 	onRewind?: () => Promise<void>;
 };
 
@@ -50,6 +52,7 @@ export function PhaseCard({
 	index,
 	status,
 	itemId,
+	usage,
 	onRewind,
 }: PhaseCardProps) {
 	const checks = phase.manualChecks ?? [];
@@ -62,6 +65,7 @@ export function PhaseCard({
 				itemId={itemId}
 				onRewind={onRewind}
 			/>
+			{usage && <PhaseUsageLine usage={usage} />}
 			<TaskList tasks={phase.tasks} marker={markers[status]} />
 			{checks.length > 0 && <ManualChecks checks={checks} />}
 		</Paper>

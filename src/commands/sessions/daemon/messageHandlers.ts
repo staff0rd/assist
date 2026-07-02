@@ -67,6 +67,12 @@ export const messageHandlers: Record<string, Handler> = {
 	...lifecycleHandlers,
 	drain: (client, m) => sendTo(client, { type: "drained", count: m.drain() }),
 	limits: (_client, m, d) => m.clients.updateLimits(d.rateLimits as RateLimits),
+	usage: (_client, m, d) =>
+		m.recordUsage(
+			d.claudeSessionId as string,
+			d.totalIn as number,
+			d.totalOut as number,
+		),
 	input: routed((_client, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),
 	),

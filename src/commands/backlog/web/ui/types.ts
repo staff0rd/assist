@@ -8,6 +8,13 @@ export type PlanPhase = {
 	manualChecks?: string[];
 };
 
+export type PhaseUsage = {
+	phaseIdx: number;
+	tokensUp: number;
+	tokensDown: number;
+	activeMs: number;
+};
+
 export type BacklogComment = {
 	id?: number;
 	text: string;
@@ -30,6 +37,7 @@ export type BacklogItem = {
 	currentPhase?: number;
 	status: BacklogStatus;
 	comments?: BacklogComment[];
+	phaseUsage?: PhaseUsage[];
 };
 
 /** The trimmed-down shape the list renders; full data loads when an item opens. */

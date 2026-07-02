@@ -3,11 +3,13 @@ import { readStdin } from "../lib/readStdin";
 import type { RateLimits } from "../shared/RateLimits";
 import { buildLimitsSegment } from "./buildLimitsSegment";
 import { relayRateLimits } from "./relayRateLimits";
+import { relayUsage } from "./relayUsage";
 
 // stdout is piped so chalk disables colour; force it on
 chalk.level = 3;
 
 type StatusInput = {
+	session_id?: string;
 	model: {
 		display_name: string;
 	};
@@ -44,4 +46,5 @@ export async function statusLine(): Promise<void> {
 	);
 
 	await relayRateLimits(data.rate_limits);
+	await relayUsage(data.session_id, totalIn, totalOut);
 }

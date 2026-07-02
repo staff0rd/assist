@@ -1,7 +1,5 @@
 import {
-	boolean,
 	foreignKey,
-	index,
 	integer,
 	pgTable,
 	primaryKey,
@@ -9,10 +7,14 @@ import {
 } from "drizzle-orm/pg-core";
 import { backups } from "./backups";
 import { handovers } from "./handovers";
+import { items } from "./items";
+import { phaseUsage } from "./phaseUsage";
 import { usagePeaks } from "./usagePeaks";
 
 export { backups } from "./backups";
 export { handovers } from "./handovers";
+export { items } from "./items";
+export { phaseUsage } from "./phaseUsage";
 export { usagePeaks } from "./usagePeaks";
 
 /**
@@ -22,23 +24,6 @@ export { usagePeaks } from "./usagePeaks";
  * for migrations, so the column/key definitions here exist to describe the
  * existing tables rather than to generate them.
  */
-export const items = pgTable(
-	"items",
-	{
-		id: integer().generatedByDefaultAsIdentity().primaryKey(),
-		origin: text().notNull(),
-		type: text().notNull().default("story"),
-		name: text().notNull(),
-		description: text(),
-		acceptanceCriteria: text("acceptance_criteria").notNull().default("[]"),
-		status: text().notNull().default("todo"),
-		currentPhase: integer("current_phase"),
-		starred: boolean().notNull().default(false),
-		jiraKey: text("jira_key"),
-	},
-	(t) => [index("items_origin_idx").on(t.origin)],
-);
-
 export const comments = pgTable("comments", {
 	id: integer().generatedByDefaultAsIdentity().primaryKey(),
 	itemId: integer("item_id")
@@ -115,6 +100,7 @@ export const schema = {
 	handovers,
 	usagePeaks,
 	backups,
+	phaseUsage,
 };
 
 export type ItemRow = typeof items.$inferSelect;
@@ -122,3 +108,4 @@ export type CommentRow = typeof comments.$inferSelect;
 export type LinkRow = typeof links.$inferSelect;
 export type PhaseRow = typeof planPhases.$inferSelect;
 export type TaskRow = typeof planTasks.$inferSelect;
+export type PhaseUsageRow = typeof phaseUsage.$inferSelect;

@@ -117,6 +117,17 @@ export const SCHEMA = `
 
 	-- Backfill for databases created before backup duration was tracked.
 	ALTER TABLE backups ADD COLUMN IF NOT EXISTS duration_ms INTEGER;
+
+	CREATE TABLE IF NOT EXISTS phase_usage (
+		item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+		phase_idx INTEGER NOT NULL,
+		tokens_up BIGINT NOT NULL DEFAULT 0,
+		tokens_down BIGINT NOT NULL DEFAULT 0,
+		active_ms BIGINT NOT NULL DEFAULT 0,
+		last_total_in BIGINT,
+		last_total_out BIGINT,
+		PRIMARY KEY (item_id, phase_idx)
+	);
 `;
 
 /**

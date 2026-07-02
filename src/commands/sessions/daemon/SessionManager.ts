@@ -19,6 +19,7 @@ import { daemonLog } from "./daemonLog";
 import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
+import { recordSessionUsage } from "./recordSessionUsage";
 import { restoreAll } from "./restoreAll";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
@@ -149,6 +150,21 @@ export class SessionManager {
 			return;
 		}
 		this.onStatusChange(session, status);
+	}
+
+	/* why: the status line relays token totals keyed by Claude's session id; join
+	 * it to the running backlog phase so the spend accumulates against that row. */
+	recordUsage(
+		claudeSessionId: string,
+		totalIn: number,
+		totalOut: number,
+	): void {
+		recordSessionUsage(
+			this.sessions.values(),
+			claudeSessionId,
+			totalIn,
+			totalOut,
+		);
 	}
 
 	listSessions = (): SessionInfo[] => {

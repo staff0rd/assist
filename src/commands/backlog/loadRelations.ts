@@ -1,15 +1,12 @@
-import { asc, inArray } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
-import {
-	type CommentRow,
-	comments,
-	type LinkRow,
-	links,
-	type PhaseRow,
-	planPhases,
-	planTasks,
-	type TaskRow,
+import type {
+	CommentRow,
+	LinkRow,
+	PhaseRow,
+	PhaseUsageRow,
+	TaskRow,
 } from "../../shared/db/schema";
+import { relationQueries } from "./relationQueries";
 
 /** Relation rows for a set of items, grouped by item id. */
 export type Relations = {
@@ -17,6 +14,7 @@ export type Relations = {
 	links: Map<number, LinkRow[]>;
 	phases: Map<number, PhaseRow[]>;
 	tasks: Map<number, TaskRow[]>;
+	usage: Map<number, PhaseUsageRow[]>;
 };
 
 /** Group rows by their `itemId`, preserving the order rows arrive in. */
@@ -32,46 +30,16 @@ function groupByItem<T extends { itemId: number }>(
 	return map;
 }
 
-const selectComments = (orm: Db, ids: number[]) =>
-	orm
-		.select()
-		.from(comments)
-		.where(inArray(comments.itemId, ids))
-		.orderBy(asc(comments.itemId), asc(comments.idx));
-
-const selectLinks = (orm: Db, ids: number[]) =>
-	orm
-		.select()
-		.from(links)
-		.where(inArray(links.itemId, ids))
-		.orderBy(asc(links.itemId));
-
-const selectPhases = (orm: Db, ids: number[]) =>
-	orm
-		.select()
-		.from(planPhases)
-		.where(inArray(planPhases.itemId, ids))
-		.orderBy(asc(planPhases.itemId), asc(planPhases.idx));
-
-const selectTasks = (orm: Db, ids: number[]) =>
-	orm
-		.select()
-		.from(planTasks)
-		.where(inArray(planTasks.itemId, ids))
-		.orderBy(
-			asc(planTasks.itemId),
-			asc(planTasks.phaseIdx),
-			asc(planTasks.idx),
-		);
-
 /**
- * Which relation tables to query. Links and phases are always loaded; comments
- * and tasks are opt-in because the whole-backlog callers (list, next, migrate)
- * never read them — only {@link ./loadItem}, opening a single item, needs them.
+ * Which relation tables to query. Links and phases are always loaded; comments,
+ * tasks and per-phase usage are opt-in because the whole-backlog callers (list,
+ * next, migrate) never read them — only {@link ./loadItem}, opening a single
+ * item, needs them.
  */
 type LoadRelationsOptions = {
 	includeComments?: boolean;
 	includeTasks?: boolean;
+	includeUsage?: boolean;
 };
 
 /**
@@ -83,18 +51,27 @@ type LoadRelationsOptions = {
 export async function loadRelations(
 	orm: Db,
 	ids: number[],
-	{ includeComments = true, includeTasks = true }: LoadRelationsOptions = {},
+	{
+		includeComments = true,
+		includeTasks = true,
+		includeUsage = false,
+	}: LoadRelationsOptions = {},
 ): Promise<Relations> {
-	const [commentRows, linkRows, phaseRows, taskRows] = await Promise.all([
-		includeComments ? selectComments(orm, ids) : ([] as CommentRow[]),
-		selectLinks(orm, ids),
-		selectPhases(orm, ids),
-		includeTasks ? selectTasks(orm, ids) : ([] as TaskRow[]),
-	]);
+	const [commentRows, linkRows, phaseRows, taskRows, usageRows] =
+		await Promise.all([
+			includeComments
+				? relationQueries.comments(orm, ids)
+				: ([] as CommentRow[]),
+			relationQueries.links(orm, ids),
+			relationQueries.phases(orm, ids),
+			includeTasks ? relationQueries.tasks(orm, ids) : ([] as TaskRow[]),
+			includeUsage ? relationQueries.usage(orm, ids) : ([] as PhaseUsageRow[]),
+		]);
 	return {
 		comments: groupByItem(commentRows),
 		links: groupByItem(linkRows),
 		phases: groupByItem(phaseRows),
 		tasks: groupByItem(taskRows),
+		usage: groupByItem(usageRows),
 	};
 }

@@ -15,6 +15,16 @@ const planPhaseSchema = z.strictObject({
 	manualChecks: z.array(z.string()).optional(),
 });
 
+/* why: read-only on the item detail path (joined from the phase_usage table),
+ * keyed to a plan phase by its 0-based phaseIdx; never authored or persisted
+ * back through the item, so it is optional on the item schema below. */
+const phaseUsageSchema = z.strictObject({
+	phaseIdx: z.number(),
+	tokensUp: z.number(),
+	tokensDown: z.number(),
+	activeMs: z.number(),
+});
+
 const backlogCommentTypeSchema = z.enum(["comment", "summary"]);
 
 const backlogCommentSchema = z.strictObject({
@@ -44,6 +54,7 @@ export const backlogItemSchema = z.strictObject({
 	status: backlogStatusSchema,
 	comments: z.array(backlogCommentSchema).optional(),
 	links: z.array(backlogLinkSchema).optional(),
+	phaseUsage: z.array(phaseUsageSchema).optional(),
 	origin: z.string().optional(),
 	jiraKey: z.string().optional(),
 });
@@ -64,5 +75,6 @@ export type BacklogItemSummary = Pick<
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
+export type PhaseUsage = z.infer<typeof phaseUsageSchema>;
 export type BacklogComment = z.infer<typeof backlogCommentSchema>;
 export type BacklogLinkType = z.infer<typeof backlogLinkTypeSchema>;

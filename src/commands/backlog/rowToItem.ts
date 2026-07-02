@@ -2,15 +2,15 @@ import type {
 	CommentRow,
 	ItemRow,
 	LinkRow,
-	PhaseRow,
-	TaskRow,
+	PhaseUsageRow,
 } from "../../shared/db/schema";
+import { buildPlan } from "./buildPlan";
 import type { Relations } from "./loadRelations";
 import type {
 	BacklogComment,
 	BacklogItem,
 	BacklogStatus,
-	PlanPhase,
+	PhaseUsage,
 } from "./types";
 
 type Link = NonNullable<BacklogItem["links"]>[number];
@@ -28,30 +28,6 @@ function rowToComment(c: CommentRow): BacklogComment {
 
 function rowToLink(l: LinkRow): Link {
 	return { type: l.type as Link["type"], targetId: l.targetId };
-}
-
-function groupTasksByPhase(taskRows: TaskRow[]): Map<number, TaskRow[]> {
-	const byPhase = new Map<number, TaskRow[]>();
-	for (const t of taskRows) {
-		const bucket = byPhase.get(t.phaseIdx);
-		if (bucket) bucket.push(t);
-		else byPhase.set(t.phaseIdx, [t]);
-	}
-	return byPhase;
-}
-
-function rowToPhase(p: PhaseRow, byPhase: Map<number, TaskRow[]>): PlanPhase {
-	const phase: PlanPhase = {
-		name: p.name,
-		tasks: (byPhase.get(p.idx) ?? []).map((t) => ({ task: t.task })),
-	};
-	if (p.manualChecks) phase.manualChecks = JSON.parse(p.manualChecks);
-	return phase;
-}
-
-function buildPlan(phaseRows: PhaseRow[], taskRows: TaskRow[]): PlanPhase[] {
-	const byPhase = groupTasksByPhase(taskRows);
-	return phaseRows.map((p) => rowToPhase(p, byPhase));
 }
 
 function assignOptionalColumns(item: BacklogItem, row: ItemRow): void {
@@ -90,11 +66,26 @@ function attachPlan(item: BacklogItem, rel: Relations, id: number): void {
 	if (phases.length > 0) item.plan = buildPlan(phases, rel.tasks.get(id) ?? []);
 }
 
+function rowToUsage(u: PhaseUsageRow): PhaseUsage {
+	return {
+		phaseIdx: u.phaseIdx,
+		tokensUp: u.tokensUp,
+		tokensDown: u.tokensDown,
+		activeMs: u.activeMs,
+	};
+}
+
+function attachUsage(item: BacklogItem, rel: Relations, id: number): void {
+	const usage = (rel.usage.get(id) ?? []).map(rowToUsage);
+	if (usage.length > 0) item.phaseUsage = usage;
+}
+
 /** Assemble a domain item from its row and the pre-grouped relation rows. */
 export function rowToItem(row: ItemRow, rel: Relations): BacklogItem {
 	const item = baseItem(row);
 	attachComments(item, rel, row.id);
 	attachLinks(item, rel, row.id);
 	attachPlan(item, rel, row.id);
+	attachUsage(item, rel, row.id);
 	return item;
 }

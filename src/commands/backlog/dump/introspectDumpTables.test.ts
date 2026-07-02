@@ -34,6 +34,7 @@ describe("introspectDumpTables", () => {
 				"handovers",
 				"usage_peaks",
 				"backups",
+				"phase_usage",
 			]),
 		);
 	});

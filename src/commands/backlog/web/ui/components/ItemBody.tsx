@@ -44,6 +44,7 @@ export function ItemBody({
 					phases={item.plan}
 					currentPhase={item.currentPhase}
 					itemId={item.id}
+					usage={item.phaseUsage}
 					onRewind={onRewind}
 				/>
 			)}
