@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import type { PrSummary } from "../prList";
 
-export function usePrStatus(cwd: string | undefined): PrSummary | null {
+export function usePrStatus(
+	cwd: string | undefined,
+	prNumber?: number,
+): PrSummary | null {
 	const [pr, setPr] = useState<PrSummary | null>(null);
 
 	useEffect(() => {
@@ -10,7 +13,8 @@ export function usePrStatus(cwd: string | undefined): PrSummary | null {
 			return;
 		}
 		let cancelled = false;
-		fetch(`/api/pr-status?cwd=${encodeURIComponent(cwd)}`)
+		const numberParam = prNumber !== undefined ? `&number=${prNumber}` : "";
+		fetch(`/api/pr-status?cwd=${encodeURIComponent(cwd)}${numberParam}`)
 			.then((res) => res.json())
 			.then((body) => {
 				if (!cancelled)
@@ -22,7 +26,7 @@ export function usePrStatus(cwd: string | undefined): PrSummary | null {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd]);
+	}, [cwd, prNumber]);
 
 	return pr;
 }

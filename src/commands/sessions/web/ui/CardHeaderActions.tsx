@@ -8,6 +8,7 @@ import { DismissButton } from "./DismissButton";
 import { OpenPrButton } from "./OpenPrButton";
 import { ReviewButton } from "./ReviewButton";
 import { RetryButton } from "./RetryButton";
+import { reviewTargetPr } from "./reviewTargetPr";
 import { SessionStarButton } from "./SessionStarButton";
 import { sessionStarTarget } from "./sessionStarTarget";
 import type { SessionInfo } from "./types";
@@ -27,7 +28,7 @@ export function CardHeaderActions({
 	const { status } = session;
 	const target = backlogTarget(session);
 	const canStar = sessionStarTarget(session) !== undefined;
-	const pr = usePrStatus(session.cwd);
+	const pr = usePrStatus(session.cwd, reviewTargetPr(session));
 	return (
 		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 			{areChipsLoading(session, loading) ? (

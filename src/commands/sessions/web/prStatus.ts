@@ -28,11 +28,22 @@ const getPr = createCachedGhJson<PrSummary | null>(
 	null,
 );
 
+function getNumberParam(req: IncomingMessage): number | undefined {
+	const raw = new URL(req.url ?? "/", "http://localhost").searchParams.get(
+		"number",
+	);
+	if (!raw) return undefined;
+	const parsed = Number(raw);
+	return Number.isInteger(parsed) && parsed > 0 ? parsed : undefined;
+}
+
 export async function prStatus(
 	req: IncomingMessage,
 	res: ServerResponse,
 ): Promise<void> {
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
-	respondJson(res, 200, { pr: await getPr(cwd) });
+	const number = getNumberParam(req);
+	const extraArgs = number !== undefined ? [String(number)] : undefined;
+	respondJson(res, 200, { pr: await getPr(cwd, extraArgs) });
 }

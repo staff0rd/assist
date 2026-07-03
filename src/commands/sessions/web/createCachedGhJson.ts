@@ -10,16 +10,17 @@ export function createCachedGhJson<T>(
 	args: string[],
 	parse: (stdout: string) => T,
 	fallback: T,
-): (cwd: string) => Promise<T> {
+): (cwd: string, extraArgs?: string[]) => Promise<T> {
 	const cache = new Map<string, { value: T; expires: number }>();
 
-	return async (cwd: string): Promise<T> => {
+	return async (cwd: string, extraArgs: string[] = []): Promise<T> => {
+		const key = extraArgs.length ? `${cwd}\0${extraArgs.join("\0")}` : cwd;
 		const now = Date.now();
-		const cached = cache.get(cwd);
+		const cached = cache.get(key);
 		if (cached && cached.expires > now) return cached.value;
 		let value = fallback;
 		try {
-			const { stdout } = await execFileAsync("gh", args, {
+			const { stdout } = await execFileAsync("gh", [...args, ...extraArgs], {
 				encoding: "utf8",
 				cwd: windowsCwdToWslPath(cwd),
 			});
@@ -27,7 +28,7 @@ export function createCachedGhJson<T>(
 		} catch {
 			value = fallback;
 		}
-		cache.set(cwd, { value, expires: now + CACHE_TTL_MS });
+		cache.set(key, { value, expires: now + CACHE_TTL_MS });
 		return value;
 	};
 }
