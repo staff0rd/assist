@@ -1,3 +1,10 @@
+## [0.344.1](https://github.com/staff0rd/assist/compare/v0.344.0...v0.344.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* review button opens correct PR ([d7b2cc5](https://github.com/staff0rd/assist/commit/d7b2cc5b9a214ed7eba9c5a465afb1f588acc819))
+
 # [0.344.0](https://github.com/staff0rd/assist/compare/v0.343.0...v0.344.0) (2026-07-02)
 
 
