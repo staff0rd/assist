@@ -1,3 +1,5 @@
+\***\* IMPORTANT \*\*** if you _EVER_ see conversation continuation after "No response after 60s — continued without an answer" then the session must be stopped. It is NEVER acceptable to continue past a human intervention point without a response from a human.
+
 After any code change, run `/verify` to ensure all checks pass.
 
 `assist` is installed globally. Use it directly (e.g., `assist commit "message"`).
