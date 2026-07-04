@@ -1,3 +1,10 @@
+## [0.344.2](https://github.com/staff0rd/assist/compare/v0.344.1...v0.344.2) (2026-07-04)
+
+
+### Bug Fixes
+
+* resume flips card to running on submit ([a476b7b](https://github.com/staff0rd/assist/commit/a476b7bb7a3baa600d6ad56b335b4b20855f65e0))
+
 ## [0.344.1](https://github.com/staff0rd/assist/compare/v0.344.0...v0.344.1) (2026-07-03)
 
 
