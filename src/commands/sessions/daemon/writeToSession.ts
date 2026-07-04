@@ -2,6 +2,7 @@ import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { watchEscInterrupt } from "./watchEscInterrupt";
+import { watchPromptSubmit } from "./watchPromptSubmit";
 
 export function writeToSession(
 	sessions: Map<string, Session>,
@@ -13,6 +14,7 @@ export function writeToSession(
 	if (!s || s.status === "done") return;
 	s.pty?.write(data);
 	watchEscInterrupt(s, data, onStatusChange);
+	watchPromptSubmit(s, data, onStatusChange);
 }
 
 export function resizeSession(
