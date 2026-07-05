@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { isYamlFile } from "../../shared/isYamlFile";
 import { validateCommentText } from "./validateCommentText";
 import { issuePin } from "./issuePin";
 
@@ -10,7 +11,8 @@ export function codeCommentSet(file: string, line: string, text: string): void {
 		return;
 	}
 
-	const validation = validateCommentText(text);
+	const marker = isYamlFile(file) ? "#" : "//";
+	const validation = validateCommentText(text, isYamlFile(file));
 	if (!validation.ok) {
 		console.error(chalk.red(`Refused: ${validation.reason}`));
 		console.error(chalk.red("No pin issued."));
@@ -44,6 +46,6 @@ export function codeCommentSet(file: string, line: string, text: string): void {
 	}
 
 	console.log(
-		`A confirmation pin was sent to your desktop notifications.\nTo insert "// ${validation.text}" at ${file}:${lineNumber}, run:\n${chalk.cyan("  assist code-comment confirm <PIN>")}\nusing the pin from that notification.`,
+		`A confirmation pin was sent to your desktop notifications.\nTo insert "${marker} ${validation.text}" at ${file}:${lineNumber}, run:\n${chalk.cyan("  assist code-comment confirm <PIN>")}\nusing the pin from that notification.`,
 	);
 }

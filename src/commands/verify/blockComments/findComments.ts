@@ -2,28 +2,29 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import { minimatch } from "minimatch";
 import { Project } from "ts-morph";
-import { collectComments } from "./collectComments";
-import { isCommentExempt } from "./isCommentExempt";
+import {
+	type CommentFinding,
+	collectFileComments,
+} from "./collectFileComments";
 import { parseDiffAddedLines } from "./parseDiffAddedLines";
-
-type CommentFinding = {
-	file: string;
-	line: number;
-	text: string;
-};
 
 type FindCommentsOptions = {
 	ignoreGlobs: string[];
 };
 
-const SOURCE_EXTENSIONS = [".ts", ".tsx", ".cts", ".mts", ".js", ".jsx"];
-
-function toSingleLine(text: string): string {
-	return text.replace(/\s+/g, " ").trim();
-}
+const SCANNED_EXTENSIONS = [
+	".ts",
+	".tsx",
+	".cts",
+	".mts",
+	".js",
+	".jsx",
+	".yml",
+	".yaml",
+];
 
 function shouldScan(file: string, ignoreGlobs: string[]): boolean {
-	if (!SOURCE_EXTENSIONS.some((ext) => file.endsWith(ext))) return false;
+	if (!SCANNED_EXTENSIONS.some((ext) => file.endsWith(ext))) return false;
 	if (ignoreGlobs.some((glob) => minimatch(file, glob))) return false;
 	return fs.existsSync(file);
 }
@@ -44,15 +45,7 @@ export function findComments(options: FindCommentsOptions): CommentFinding[] {
 
 	for (const [file, lines] of addedLines) {
 		if (!shouldScan(file, options.ignoreGlobs)) continue;
-
-		const sourceFile = project.addSourceFileAtPath(file);
-
-		for (const { pos, text } of collectComments(sourceFile)) {
-			const { line } = sourceFile.getLineAndColumnAtPos(pos);
-			if (!lines.has(line)) continue;
-			if (isCommentExempt(text)) continue;
-			findings.push({ file, line, text: toSingleLine(text) });
-		}
+		findings.push(...collectFileComments(file, lines, project));
 	}
 
 	findings.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);

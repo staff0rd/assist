@@ -1,21 +1,9 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
+import { isYamlFile } from "../../shared/isYamlFile";
 import { getPinStatePath } from "./getRestrictedDir";
 import { sweepRestrictedDir } from "./sweepRestrictedDir";
-
-type PinState = { pin: string; file: string; line: number; text: string };
-
-function readPinState(pin: string): PinState | undefined {
-	const path = getPinStatePath(pin);
-	if (!existsSync(path)) return undefined;
-	try {
-		const state: PinState = JSON.parse(readFileSync(path, "utf8"));
-		if (state.pin !== pin) return undefined;
-		return state;
-	} catch {
-		return undefined;
-	}
-}
+import { readPinState } from "./readPinState";
 
 export function codeCommentConfirm(pin: string): void {
 	sweepRestrictedDir();
@@ -45,14 +33,17 @@ export function codeCommentConfirm(pin: string): void {
 		return;
 	}
 
+	const marker = isYamlFile(state.file) ? "#" : "//";
 	const indentSource = lines[index] ?? "";
 	const indent = indentSource.match(/^\s*/)?.[0] ?? "";
-	lines.splice(index, 0, `${indent}// ${state.text}`);
+	lines.splice(index, 0, `${indent}${marker} ${state.text}`);
 	writeFileSync(state.file, lines.join("\n"));
 
 	unlinkSync(getPinStatePath(pin));
 
 	console.log(
-		chalk.green(`Inserted "// ${state.text}" at ${state.file}:${state.line}`),
+		chalk.green(
+			`Inserted "${marker} ${state.text}" at ${state.file}:${state.line}`,
+		),
 	);
 }

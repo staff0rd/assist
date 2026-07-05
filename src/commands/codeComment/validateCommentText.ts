@@ -8,8 +8,11 @@ type CommentValidation =
  * Validates an escape-hatch comment body. Accepts only a single line of plain
  * comment text; rejects block-comment syntax and bodies over the length cap.
  */
-export function validateCommentText(raw: string): CommentValidation {
-	const text = raw.replace(/^\/\/\s?/, "");
+export function validateCommentText(
+	raw: string,
+	isYaml = false,
+): CommentValidation {
+	const text = isYaml ? raw.replace(/^#\s?/, "") : raw.replace(/^\/\/\s?/, "");
 
 	if (/[\r\n]/.test(text)) {
 		return {
@@ -19,7 +22,7 @@ export function validateCommentText(raw: string): CommentValidation {
 		};
 	}
 
-	if (text.includes("/*") || text.includes("*/")) {
+	if (!isYaml && (text.includes("/*") || text.includes("*/"))) {
 		return {
 			ok: false,
 			reason:

@@ -168,7 +168,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist verify --measure` - After the run, print a summary table of each command's status and duration (slowest first) plus a wall-clock total
 - `assist verify init` - Add verify scripts to a project (writes to `assist.yml` by default; pass `--package-json` to write to `package.json` scripts instead)
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (supports `hardcodedColors.ignore` globs in config)
-- `assist verify block-comments` - Fail on any comment on a changed line (staged + unstaged), whether newly added or edited, reporting each offending file:line; functional machine directives are exempt and `blockComments.ignore` globs in config scope which files are scanned
+- `assist verify block-comments` - Fail on any comment on a changed line (staged + unstaged), whether newly added or edited, reporting each offending file:line; functional machine directives are exempt and `blockComments.ignore` globs in config scope which files are scanned. Yaml `.yml`/`.yaml` files are scanned for `#` comments with no directive exemptions
 - `assist verify forbidden-strings` - Check configured JSON files for disallowed values. Each `forbiddenStrings` rule names a `file`, a list of dot-`paths` to inspect (string or string[] values are scanned; other types skipped), and a `disallowed` wildcard matched via minimatch; any matching value fails the check. Zero rules is a no-op that passes
 - `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by oxlint (use `-f` to auto-fix)
 - `assist lint init` - Initialize oxlint with baseline linter config
@@ -190,7 +190,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist cli-hook deny add <pattern> <message>` - Add a deny rule for a command pattern
 - `assist cli-hook deny remove <pattern>` - Remove a deny rule by pattern
 - `assist edit-hook` - PreToolUse hook that blocks `Edit`/`Write`/`MultiEdit` calls from adding, changing, or removing a `// assist-maintainability-override` marker, or from introducing a code comment (use `code-comment set`/`confirm` for the rare comment that belongs)
-- `assist code-comment set <file> <line> <text>` - Validate a single-line comment (max 50 chars, no block comments) and issue a pin authorising its insertion
+- `assist code-comment set <file> <line> <text>` - Validate a single-line comment (max 50 chars; no block comments for `.ts`/`.js`) and issue a pin authorising its insertion; inserts `#` for `.yml`/`.yaml` files and `//` otherwise
 - `assist code-comment confirm <pin>` - Insert the pinned comment at its file/line and clear the pin state
 - `assist update` - Update assist to the latest version and sync commands
 - `assist vscode init` - Add VS Code configuration files

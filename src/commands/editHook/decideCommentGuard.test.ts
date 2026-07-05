@@ -23,6 +23,18 @@ describe("decideCommentGuard", () => {
 			expect(decision).toBeDefined();
 		});
 
+		it("uses the // marker in the deny message", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "const a = 1;",
+					new_string: "const a = 1; // bump",
+				}),
+			);
+
+			expect(decision).toContain("(//)");
+		});
+
 		it("blocks introducing a block comment", () => {
 			const decision = decideCommentGuard(
 				input("Edit", {
@@ -224,6 +236,116 @@ describe("decideCommentGuard", () => {
 				input("Write", {
 					file_path: "src/a.ts",
 					content: "const a = 1;",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+	});
+
+	describe("yaml", () => {
+		it("blocks introducing a full-line # comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "port: 8080",
+					new_string: "# the http port\nport: 8080",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("blocks introducing a trailing # comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yaml",
+					old_string: "port: 8080",
+					new_string: "port: 8080 # the http port",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("blocks a # yaml-language-server directive (no exemptions)", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "port: 8080",
+					new_string: "# yaml-language-server: $schema=./s.json\nport: 8080",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("allows a # inside a quoted string", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "colour: red",
+					new_string: 'colour: "#ff0000"',
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("allows a # inside a url value", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "url: x",
+					new_string: "url: https://example.com/page#anchor",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("allows a mid-scalar # (no preceding whitespace)", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "ref: x",
+					new_string: "ref: v1#stable",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("allows editing a line that already had the # comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "port: 8080 # the http port",
+					new_string: "port: 9090 # the http port",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("uses the # marker in the deny message", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "port: 8080",
+					new_string: "port: 8080 # note",
+				}),
+			);
+
+			expect(decision).toContain("(#)");
+		});
+
+		it("does not treat // as a comment in yaml", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "config.yml",
+					old_string: "path: x",
+					new_string: "path: a//b",
 				}),
 			);
 

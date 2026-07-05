@@ -39,4 +39,19 @@ describe("validateCommentText", () => {
 		const result = validateCommentText("x".repeat(50));
 		expect(result.ok).toBe(true);
 	});
+
+	it("accepts a yaml comment body", () => {
+		const result = validateCommentText("pins the runtime version", true);
+		expect(result).toEqual({ ok: true, text: "pins the runtime version" });
+	});
+
+	it("strips a leading hash marker for yaml", () => {
+		const result = validateCommentText("# already prefixed", true);
+		expect(result).toEqual({ ok: true, text: "already prefixed" });
+	});
+
+	it("does not reject block-comment markers in yaml text", () => {
+		const result = validateCommentText("range is /* to */ here", true);
+		expect(result.ok).toBe(true);
+	});
 });

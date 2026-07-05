@@ -1,15 +1,21 @@
+import { isYamlFile } from "../../shared/isYamlFile";
 import { type EditHookInput } from "./decideOverrideGuard";
 import { extractComments, isSourceFile } from "./extractComments";
+import { extractYamlComments } from "./extractYamlComments";
 import { introducedComments } from "./introducedComments";
 
-const DENY_REASON =
-	"This edit introduces a code comment, which is blocked by the comment gate. " +
-	"Comments are a last resort — prefer a clearer name, a smaller function, or a " +
-	"test that makes the comment unnecessary. The comment must not appear in your " +
-	"edit itself. If this one line genuinely earns its keep, use the escape hatch: " +
-	'run `assist code-comment set <file> <line> "<text>"` (single line, max 50 ' +
-	"chars, no block comments) to get a pin, then `assist code-comment confirm " +
-	"<pin>` to insert it.";
+function denyReason(marker: string): string {
+	const blockClause = marker === "//" ? ", no block comments" : "";
+	return (
+		`This edit introduces a code comment (${marker}), which is blocked by the ` +
+		"comment gate. Comments are a last resort — prefer a clearer name, a smaller " +
+		"function, or a test that makes the comment unnecessary. The comment must " +
+		"not appear in your edit itself. If this one line genuinely earns its keep, " +
+		'use the escape hatch: run `assist code-comment set <file> <line> "<text>"` ' +
+		`(single line, max 50 chars${blockClause}) to get a pin, then ` +
+		"`assist code-comment confirm <pin>` to insert it."
+	);
+}
 
 function defined(values: (string | undefined)[]): string[] {
 	return values.filter((value): value is string => value != null);
@@ -47,12 +53,15 @@ export function decideCommentGuard(
 	input: EditHookInput,
 	existingContent?: string,
 ): string | undefined {
-	if (!isSourceFile(input.tool_input.file_path)) return undefined;
+	const filePath = input.tool_input.file_path;
+	const yaml = isYamlFile(filePath);
+	if (!isSourceFile(filePath) && !yaml) return undefined;
 
+	const extract = yaml ? extractYamlComments : extractComments;
 	const { added, removed } = partitionStrings(input, existingContent);
 	const introduced = introducedComments(
-		added.flatMap(extractComments),
-		removed.flatMap(extractComments),
+		added.flatMap(extract),
+		removed.flatMap(extract),
 	);
-	return introduced.length > 0 ? DENY_REASON : undefined;
+	return introduced.length > 0 ? denyReason(yaml ? "#" : "//") : undefined;
 }
