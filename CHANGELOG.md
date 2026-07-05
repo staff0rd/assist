@@ -1,3 +1,10 @@
+# [0.346.0](https://github.com/staff0rd/assist/compare/v0.345.0...v0.346.0) (2026-07-05)
+
+
+### Features
+
+* extend comment policy to yaml ([8cf7be3](https://github.com/staff0rd/assist/commit/8cf7be386c53f67e9efae19c094ea66174e47ce4))
+
 # [0.345.0](https://github.com/staff0rd/assist/compare/v0.344.2...v0.345.0) (2026-07-05)
 
 
