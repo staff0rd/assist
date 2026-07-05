@@ -6,6 +6,7 @@ import type { BacklogItemSummary } from "../types";
 import { useSearchItems } from "../useSearchItems";
 import { CompletedToggle } from "./CompletedToggle";
 import { ListBody } from "./ListBody";
+import { RepoSummaryChips } from "./RepoSummaryChips";
 import { SearchInput } from "./SearchInput";
 
 type ItemListProps = {
@@ -46,6 +47,7 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 	return (
 		<>
 			<Header />
+			<RepoSummaryChips />
 			<SearchInput value={query} onChange={setQuery} />
 			<ListBody
 				loading={loading || searching}
