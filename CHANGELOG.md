@@ -1,3 +1,10 @@
+# [0.345.0](https://github.com/staff0rd/assist/compare/v0.344.2...v0.345.0) (2026-07-05)
+
+
+### Features
+
+* add repo summary chips to backlog ([d60fd47](https://github.com/staff0rd/assist/commit/d60fd47242e71c793a87e32264f2701251d7bb9f))
+
 ## [0.344.2](https://github.com/staff0rd/assist/compare/v0.344.1...v0.344.2) (2026-07-04)
 
 
