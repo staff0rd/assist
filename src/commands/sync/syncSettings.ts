@@ -12,15 +12,20 @@ export async function syncSettings(
 	const target = path.join(targetBase, "settings.json");
 
 	const sourceContent = fs.readFileSync(source, "utf8");
-	const mergedContent = JSON.stringify(JSON.parse(sourceContent), null, "\t");
+	const sourceSettings = JSON.parse(sourceContent);
 
-	if (fs.existsSync(target)) {
-		const targetContent = fs.readFileSync(target, "utf8");
-		const normalizedTarget = JSON.stringify(
-			JSON.parse(targetContent),
-			null,
-			"\t",
-		);
+	const targetExists = fs.existsSync(target);
+	const targetContent = targetExists ? fs.readFileSync(target, "utf8") : "";
+	const preservedUserSettings = targetExists ? JSON.parse(targetContent) : {};
+
+	const mergedContent = JSON.stringify(
+		{ ...preservedUserSettings, ...sourceSettings },
+		null,
+		"\t",
+	);
+
+	if (targetExists) {
+		const normalizedTarget = JSON.stringify(preservedUserSettings, null, "\t");
 		if (mergedContent !== normalizedTarget) {
 			if (!options?.yes) {
 				console.log(
