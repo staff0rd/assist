@@ -1,3 +1,10 @@
+# [0.347.0](https://github.com/staff0rd/assist/compare/v0.346.0...v0.347.0) (2026-07-06)
+
+
+### Features
+
+* add branch command off fresh remote default ([f2aec0b](https://github.com/staff0rd/assist/commit/f2aec0b11605b8974358e314a3c45b16fcb98f10))
+
 # [0.346.0](https://github.com/staff0rd/assist/compare/v0.345.0...v0.346.0) (2026-07-05)
 
 
