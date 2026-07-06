@@ -1,3 +1,11 @@
+# [0.349.0](https://github.com/staff0rd/assist/compare/v0.348.0...v0.349.0) (2026-07-06)
+
+
+### Features
+
+* /update-jira command ([be049d5](https://github.com/staff0rd/assist/commit/be049d596f3452a7bf75a3496dac9780d6816f10))
+* group same-repo session cards ([1e418e6](https://github.com/staff0rd/assist/commit/1e418e63f902ac85cb330beb33547a78d316fdaa))
+
 # [0.348.0](https://github.com/staff0rd/assist/compare/v0.347.0...v0.348.0) (2026-07-06)
 
 
