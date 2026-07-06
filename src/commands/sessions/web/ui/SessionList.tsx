@@ -1,9 +1,10 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { isSessionStarting } from "./isSessionStarting";
-import { SessionCard } from "./SessionCard";
+import { groupSessionsByRepo } from "./groupSessionsByRepo";
+import { SessionGroups } from "./SessionGroups";
 import type { SessionListHandlers } from "./types";
 import type { SessionInfo } from "./useSessionSocket";
+import { useStarredSessions } from "./useStarredSessions";
 
 export function SessionList({
 	sessions,
@@ -20,26 +21,21 @@ export function SessionList({
 	initialized: Set<string>;
 	onSelect: (id: string) => void;
 } & SessionListHandlers) {
+	const { isStarred } = useStarredSessions();
+	const groups = groupSessionsByRepo(sessions, isStarred);
+
 	return (
 		<Box sx={{ flex: 1, overflow: "auto", p: 1 }}>
-			{sessions.map((s) => (
-				<SessionCard
-					key={s.id}
-					session={s}
-					active={s.id === activeId}
-					loading={isSessionStarting(s, initialized)}
-					onClick={() => onSelect(s.id)}
-					onRetry={
-						(s.commandType === "run" || s.commandType === "assist") &&
-						s.status === "done"
-							? () => onRetry(s.id)
-							: undefined
-					}
-					onDismiss={() => onDismiss(s.id)}
-					onSetAutoRun={(enabled) => onSetAutoRun(s.id, enabled)}
-					onSetAutoAdvance={(enabled) => onSetAutoAdvance(s.id, enabled)}
-				/>
-			))}
+			<SessionGroups
+				groups={groups}
+				activeId={activeId}
+				initialized={initialized}
+				onSelect={onSelect}
+				onRetry={onRetry}
+				onDismiss={onDismiss}
+				onSetAutoRun={onSetAutoRun}
+				onSetAutoAdvance={onSetAutoAdvance}
+			/>
 			{sessions.length === 0 && (
 				<Typography
 					variant="caption"
