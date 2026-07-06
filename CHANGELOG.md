@@ -1,3 +1,10 @@
+# [0.348.0](https://github.com/staff0rd/assist/compare/v0.347.0...v0.348.0) (2026-07-06)
+
+
+### Features
+
+* /branch command and branch deny ([bb0e11f](https://github.com/staff0rd/assist/commit/bb0e11f06e8247331f6ff88d65d99f1953f56f0b))
+
 # [0.347.0](https://github.com/staff0rd/assist/compare/v0.346.0...v0.347.0) (2026-07-06)
 
 
