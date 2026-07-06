@@ -59,6 +59,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
 - `/jira` - View a Jira work item
+- `/update-jira [JIRA-KEY]` - Post a concise summary of this session's findings to a Jira ticket via MCP; attaches a passed key to the session's backlog item (else reads the key from it), retargets sub-task comments to the parent, and previews the comment before posting on confirmation
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/next [id]` - Signal completion and chain into the next backlog item; pass an `id` to run a specific item directly (falls back to the picker if the id is missing, done, won't-do, or blocked)
 - `/standup` - Summarise recent journal entries as a standup update
