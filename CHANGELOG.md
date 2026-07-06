@@ -1,3 +1,10 @@
+# [0.350.0](https://github.com/staff0rd/assist/compare/v0.349.1...v0.350.0) (2026-07-06)
+
+
+### Features
+
+* show branch config in --help ([e4796cc](https://github.com/staff0rd/assist/commit/e4796cc863ba4465772b64802d3b8684b9a133ba))
+
 ## [0.349.1](https://github.com/staff0rd/assist/compare/v0.349.0...v0.349.1) (2026-07-06)
 
 
