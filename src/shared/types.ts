@@ -24,6 +24,11 @@ export const assistConfigSchema = z.strictObject({
 			expectedBranch: z.string().optional(),
 		})
 		.default({ conventional: false, pull: false, push: false }),
+	branch: z
+		.strictObject({
+			prefix: z.string().optional(),
+		})
+		.optional(),
 	devlog: z
 		.strictObject({
 			name: z.string().optional(),

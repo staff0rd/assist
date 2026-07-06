@@ -93,6 +93,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist commit status` - Show git status and diff
 - `assist commit <message>` - Commit staged changes with validation
 - `assist commit <message> [files...]` - Stage files and create a git commit with validation
+- `assist branch <slug> [--jira <key>]` - Create and switch to a new branch off the fresh remote default branch. Assembles the name as `[<prefix>/][<JIRA>-]<slug>` (prefix from the optional `branch.prefix` config, Jira key used verbatim), fetches and branches from `origin/<default>` (resolved dynamically, not hardcoded to main), and rejects slugs whose numeric tokens look like backlog IDs
 - `assist prs` - List pull requests for the current repository
 - `assist prs raise --title <title> --what <what> --why <why> [--how <how>] [--resolves <key>] [--force]` - Raise a pull request, assembling the body from `## What`, `## Why` (with `--resolves` Jira URLs appended inline), and an optional `## How`; errors if a PR already exists unless `--force` overwrites its title and body
 - `assist prs edit [--title <title>] [--what <what>] [--why <why>] [--how <how>] [--resolves <key>]` - Update only the supplied sections of the current branch's pull request, preserving every other section of its body
@@ -294,6 +295,8 @@ When iterating on assist itself: web server changes only need the `assist sessio
 When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist refine`, `assist next`, and `assist backlog run` run `git pull --ff-only` before doing anything else; if the pull fails the command aborts. `assist next` pulls once per invocation, not per item in its loop.
 
 When `commit.expectedBranch` is set (e.g. `main`), `assist commit` prints a prominent warning if HEAD is on any other branch before committing — so work committed (and pushed) on a stray branch in a repo that lands directly on the expected branch isn't silently orphaned. The warning is non-blocking: the commit still proceeds. With the key unset, behaviour is unchanged and no branch check runs.
+
+When `branch.prefix` is set (e.g. `sw`), `assist branch <slug>` prepends `<prefix>/` to the branch name. With the key unset, no prefix segment is added.
 
 ## netcap browser extension
 
