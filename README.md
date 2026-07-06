@@ -42,6 +42,7 @@ After installation, the `assist` command will be available globally. You can als
 
 - `/add-command` - Add a new run command to assist.yml
 - `/associate-jira <KEY> [id]` - Associate a Jira ticket with the backlog item this session is working on (or an explicit id) by calling `assist backlog associate-jira`
+- `/branch <description> [--jira KEY]` - Create a branch off the fresh remote default via `assist branch`, deriving a kebab-case slug from the description and auto-filling the Jira key from the session's backlog item when one is associated
 - `/bug` - File a bug with reproduction steps, expected and actual behavior
 - `/comment` - Add pending review comments to the current PR
 - `/commit` - Commit only relevant files from the session
@@ -93,7 +94,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist commit status` - Show git status and diff
 - `assist commit <message>` - Commit staged changes with validation
 - `assist commit <message> [files...]` - Stage files and create a git commit with validation
-- `assist branch <slug> [--jira <key>]` - Create and switch to a new branch off the fresh remote default branch. Assembles the name as `[<prefix>/][<JIRA>-]<slug>` (prefix from the optional `branch.prefix` config, Jira key used verbatim), fetches and branches from `origin/<default>` (resolved dynamically, not hardcoded to main), and rejects slugs whose numeric tokens look like backlog IDs
+- `assist branch <slug> [--jira <key>]` - Create and switch to a new branch off the fresh remote default branch. Assembles the name as `[<prefix>/][<JIRA>-]<slug>` (prefix from the optional `branch.prefix` config, Jira key used verbatim), fetches and branches from `origin/<default>` (resolved live from the remote, falling back to `main`, overridable via `branch.defaultBranch`), and rejects slugs whose numeric tokens look like backlog IDs
 - `assist prs` - List pull requests for the current repository
 - `assist prs raise --title <title> --what <what> --why <why> [--how <how>] [--resolves <key>] [--force]` - Raise a pull request, assembling the body from `## What`, `## Why` (with `--resolves` Jira URLs appended inline), and an optional `## How`; errors if a PR already exists unless `--force` overwrites its title and body
 - `assist prs edit [--title <title>] [--what <what>] [--why <why>] [--how <how>] [--resolves <key>]` - Update only the supplied sections of the current branch's pull request, preserving every other section of its body
@@ -297,6 +298,8 @@ When `commit.pull` is enabled in config, `assist draft`, `assist bug`, `assist r
 When `commit.expectedBranch` is set (e.g. `main`), `assist commit` prints a prominent warning if HEAD is on any other branch before committing — so work committed (and pushed) on a stray branch in a repo that lands directly on the expected branch isn't silently orphaned. The warning is non-blocking: the commit still proceeds. With the key unset, behaviour is unchanged and no branch check runs.
 
 When `branch.prefix` is set (e.g. `sw`), `assist branch <slug>` prepends `<prefix>/` to the branch name. With the key unset, no prefix segment is added.
+
+`assist branch` resolves the base branch live from the remote (`git ls-remote --symref origin HEAD`), so it never depends on a stale or unset local `origin/HEAD`. If the remote advertises no default it falls back to `main`. Set `branch.defaultBranch` (e.g. `develop`) to override the base branch outright.
 
 ## netcap browser extension
 

@@ -25,6 +25,15 @@ const BUILTIN_DENIES: { pattern: string; message: string }[] = [
 	},
 ];
 
+const BRANCH_CREATION_MESSAGE =
+	"Do not create branches with raw git. Use the /branch command, or 'assist branch <slug> [--jira <KEY>]' — it branches off the fresh remote default and enforces the team naming convention.";
+
+const BRANCH_CREATION_REGEXES: RegExp[] = [
+	/(?<=^|\s)git\s+(?:checkout|co)\s+-[bB](?=\s|$)/,
+	/(?<=^|\s)git\s+switch\s+(?:-[cC]|--create)(?=\s|$)/,
+	/(?<=^|\s)git\s+branch\s+(?!-)\S/,
+];
+
 function rawDenyRegex(pattern: string): RegExp {
 	const tokens = pattern
 		.trim()
@@ -35,10 +44,16 @@ function rawDenyRegex(pattern: string): RegExp {
 	return new RegExp(`(?<=^|\\s)${tokens}(?=\\s|$)`);
 }
 
-const RAW_BUILTIN_DENIES = BUILTIN_DENIES.map((rule) => ({
-	...rule,
-	regex: rawDenyRegex(rule.pattern),
-}));
+const RAW_BUILTIN_DENIES = [
+	...BUILTIN_DENIES.map((rule) => ({
+		message: rule.message,
+		regex: rawDenyRegex(rule.pattern),
+	})),
+	...BRANCH_CREATION_REGEXES.map((regex) => ({
+		message: BRANCH_CREATION_MESSAGE,
+		regex,
+	})),
+];
 
 function matchBuiltinDeny(text: string) {
 	return RAW_BUILTIN_DENIES.find((rule) => rule.regex.test(text));

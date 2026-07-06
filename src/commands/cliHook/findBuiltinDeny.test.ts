@@ -59,6 +59,63 @@ describe("findBuiltinDeny git commit", () => {
 	});
 });
 
+describe("findBuiltinDeny branch creation", () => {
+	it("denies 'git checkout -b <name>' with a redirect to /branch", () => {
+		const decision = findBuiltinDeny(["git checkout -b feature-x"]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("/branch");
+	});
+
+	it("denies the 'git co -b' alias", () => {
+		expect(findBuiltinDeny(["git co -b feature-x"])?.permissionDecision).toBe(
+			"deny",
+		);
+	});
+
+	it("denies 'git checkout -B <name>'", () => {
+		expect(
+			findBuiltinDeny(["git checkout -B feature-x"])?.permissionDecision,
+		).toBe("deny");
+	});
+
+	it("denies 'git switch -c <name>' and 'git switch --create <name>'", () => {
+		expect(
+			findBuiltinDeny(["git switch -c feature-x"])?.permissionDecision,
+		).toBe("deny");
+		expect(
+			findBuiltinDeny(["git switch --create feature-x"])?.permissionDecision,
+		).toBe("deny");
+	});
+
+	it("denies 'git branch <name>' (bare creation)", () => {
+		expect(findBuiltinDeny(["git branch feature-x"])?.permissionDecision).toBe(
+			"deny",
+		);
+	});
+
+	it("denies branch creation buried in a compound part", () => {
+		const decision = findBuiltinDeny(["cd /repo", "git checkout -b feature-x"]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("/branch");
+	});
+
+	it("does not deny bare 'git branch' (listing)", () => {
+		expect(findBuiltinDeny(["git branch"])).toBeUndefined();
+		expect(findBuiltinDeny(["git branch -a"])).toBeUndefined();
+		expect(findBuiltinDeny(["git branch --list"])).toBeUndefined();
+	});
+
+	it("does not deny branch management flags (delete, rename)", () => {
+		expect(findBuiltinDeny(["git branch -d old"])).toBeUndefined();
+		expect(findBuiltinDeny(["git branch -m old new"])).toBeUndefined();
+	});
+
+	it("does not deny switching to an existing branch", () => {
+		expect(findBuiltinDeny(["git checkout main"])).toBeUndefined();
+		expect(findBuiltinDeny(["git switch main"])).toBeUndefined();
+	});
+});
+
 describe("findBuiltinDenyRaw gh pr edit", () => {
 	it("denies 'gh pr edit' buried in a raw command the prefix path can't decompose", () => {
 		const decision = findBuiltinDenyRaw(

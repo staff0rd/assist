@@ -27,6 +27,7 @@ export const assistConfigSchema = z.strictObject({
 	branch: z
 		.strictObject({
 			prefix: z.string().optional(),
+			defaultBranch: z.string().optional(),
 		})
 		.optional(),
 	devlog: z

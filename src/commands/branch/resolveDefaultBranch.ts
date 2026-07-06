@@ -1,15 +1,19 @@
 import { execSync } from "node:child_process";
 
-export function resolveDefaultBranch(cwd?: string): string {
-	const ref = execSync("git symbolic-ref --short refs/remotes/origin/HEAD", {
-		encoding: "utf8",
-		stdio: ["pipe", "pipe", "pipe"],
-		cwd,
-	}).trim();
-	const [, ...rest] = ref.split("/");
-	const branch = rest.join("/");
-	if (!branch) {
-		throw new Error(`Could not resolve default branch from "${ref}"`);
-	}
-	return branch;
+const REMOTE_HEAD_REGEX = /^ref:\s+refs\/heads\/(\S+)\s+HEAD$/m;
+
+export function resolveDefaultBranch(override?: string, cwd?: string): string {
+	if (override) return override;
+
+	try {
+		const output = execSync("git ls-remote --symref origin HEAD", {
+			encoding: "utf8",
+			stdio: ["pipe", "pipe", "pipe"],
+			cwd,
+		});
+		const match = output.match(REMOTE_HEAD_REGEX);
+		if (match) return match[1];
+	} catch {}
+
+	return "main";
 }

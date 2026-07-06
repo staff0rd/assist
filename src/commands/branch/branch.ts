@@ -20,7 +20,7 @@ export function branch(slug: string, options: { jira?: string }): void {
 	});
 
 	try {
-		const defaultBranch = resolveDefaultBranch();
+		const defaultBranch = resolveDefaultBranch(config.branch?.defaultBranch);
 		execSync("git fetch", { stdio: "inherit" });
 		execSync(
 			`git switch -c ${shellQuote(branchName)} ${shellQuote(`origin/${defaultBranch}`)}`,
@@ -30,7 +30,10 @@ export function branch(slug: string, options: { jira?: string }): void {
 			`Created and switched to ${branchName} (from origin/${defaultBranch})`,
 		);
 		process.exit(0);
-	} catch {
+	} catch (error) {
+		console.error(
+			`Error: ${error instanceof Error ? error.message : String(error)}`,
+		);
 		process.exit(1);
 	}
 }
