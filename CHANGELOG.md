@@ -1,3 +1,10 @@
+## [0.349.1](https://github.com/staff0rd/assist/compare/v0.349.0...v0.349.1) (2026-07-06)
+
+
+### Bug Fixes
+
+* preserve user-only keys on settings sync ([f353b57](https://github.com/staff0rd/assist/commit/f353b573f8b7226e99fdb3e0d8012d4ef3711931))
+
 # [0.349.0](https://github.com/staff0rd/assist/compare/v0.348.0...v0.349.0) (2026-07-06)
 
 
