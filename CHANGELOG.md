@@ -1,3 +1,10 @@
+## [0.353.1](https://github.com/staff0rd/assist/compare/v0.353.0...v0.353.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* don't dismiss sessions whose launch failed ([c06c460](https://github.com/staff0rd/assist/commit/c06c4600ea076db59cb4496f4f1c0b8bd0e66a04))
+
 # [0.353.0](https://github.com/staff0rd/assist/compare/v0.352.1...v0.353.0) (2026-07-07)
 
 
