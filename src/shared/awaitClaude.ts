@@ -1,20 +1,18 @@
 import chalk from "chalk";
 
-// Awaits a spawned Claude run, turning a spawn failure (e.g. a missing `claude`
-// binary) into a logged error and a false result rather than an uncaught
-// rejection. Returns true when the run exited on its own.
+export const CLAUDE_SPAWN_FAILED = null;
+
 export async function awaitClaude(
 	done: Promise<number>,
 	context: string,
-): Promise<boolean> {
+): Promise<number | typeof CLAUDE_SPAWN_FAILED> {
 	try {
-		await done;
-		return true;
+		return await done;
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		console.error(
 			chalk.red(`\nFailed to launch Claude for ${context}: ${message}`),
 		);
-		return false;
+		return CLAUDE_SPAWN_FAILED;
 	}
 }

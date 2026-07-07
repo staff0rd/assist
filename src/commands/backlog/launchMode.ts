@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { awaitClaude } from "../../shared/awaitClaude";
+import { awaitClaude, CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
 import { emitActivity } from "../../shared/emitActivity";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { spawnClaude } from "../../shared/spawnClaude";
@@ -49,9 +49,11 @@ export async function launchMode(
 		{ allowEdits: true, sessionId: claudeSessionId, resumeSessionId },
 	);
 	watchForMarker(child, { actOnDone: options?.once });
-	const launched = await awaitClaude(done, `/${slashCommand}`);
+	const exitCode = await awaitClaude(done, `/${slashCommand}`);
 	stopWatching();
-	if (!launched) return;
+	if (exitCode === CLAUDE_SPAWN_FAILED) return;
 
 	await handleLaunchSignal(slashCommand, options?.once);
+
+	if (exitCode !== 0) process.exitCode = exitCode;
 }

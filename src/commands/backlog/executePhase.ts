@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import chalk from "chalk";
-import { awaitClaude } from "../../shared/awaitClaude";
+import { awaitClaude, CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
 import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { buildPhasePrompt } from "./buildPhasePrompt";
@@ -45,14 +45,14 @@ export async function executePhase(
 			: { ...spawnOptions, sessionId: claudeSessionId },
 	);
 	watchForMarker(child);
-	const launched = await awaitClaude(
+	const exitCode = await awaitClaude(
 		done,
 		`phase ${phaseNumber}/${totalPhases}`,
 	);
 	stopWatching();
 	/* why: abort the phase loop on a spawn failure rather than surfacing an
 	 * uncaught rejection or retrying a launch that can't succeed */
-	if (!launched) return -1;
+	if (exitCode === CLAUDE_SPAWN_FAILED) return -1;
 
 	/* why: the phase Claude has exited, so its hooks no longer drive the daemon
 	 * card; the driver now works (resolve result, reload plan, spawn the next

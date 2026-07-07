@@ -244,6 +244,42 @@ describe("launchMode", () => {
 		});
 	});
 
+	describe("when the launched Claude exits non-zero", () => {
+		it("propagates the exit code so the daemon keeps the card visible", async () => {
+			mockSpawnClaude.mockReturnValue({ child, done: Promise.resolve(1) });
+			const original = process.exitCode;
+			try {
+				await launchMode("bug", { once: true });
+				expect(process.exitCode).toBe(1);
+			} finally {
+				process.exitCode = original;
+			}
+		});
+	});
+
+	describe("when a clean exit reports code zero", () => {
+		it("leaves the process exit code untouched", async () => {
+			mockSpawnClaude.mockReturnValue({ child, done: Promise.resolve(0) });
+			const original = process.exitCode;
+			await launchMode("bug", { once: true });
+			expect(process.exitCode).toBe(original);
+		});
+	});
+
+	describe("when the launched Claude fails to spawn", () => {
+		it("does not chain into next", async () => {
+			mockSpawnClaude.mockReturnValue({
+				child,
+				done: Promise.reject(new Error("no claude binary")),
+			});
+			mockReadSignal.mockReturnValue({ event: "next" });
+
+			await launchMode("bug", { once: true });
+
+			expect(mockNext).not.toHaveBeenCalled();
+		});
+	});
+
 	describe("when a next signal carries an id", () => {
 		it("runs that item directly and skips next when it succeeds", async () => {
 			mockReadSignal.mockReturnValue({ event: "next", id: "7" });
