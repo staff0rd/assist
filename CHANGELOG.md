@@ -1,3 +1,10 @@
+# [0.353.0](https://github.com/staff0rd/assist/compare/v0.352.1...v0.353.0) (2026-07-07)
+
+
+### Features
+
+* add Review & post to review menus ([e262aa1](https://github.com/staff0rd/assist/commit/e262aa1c9031dd7da520b9a9af6bb62f246661c6))
+
 ## [0.352.1](https://github.com/staff0rd/assist/compare/v0.352.0...v0.352.1) (2026-07-07)
 
 
