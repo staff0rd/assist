@@ -1,3 +1,10 @@
+## [0.352.1](https://github.com/staff0rd/assist/compare/v0.352.0...v0.352.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* require git remote for backlog add ([f48283a](https://github.com/staff0rd/assist/commit/f48283abc3534c1053a4662ffe8976cbb7f19a1e))
+
 # [0.352.0](https://github.com/staff0rd/assist/compare/v0.351.0...v0.352.0) (2026-07-07)
 
 
