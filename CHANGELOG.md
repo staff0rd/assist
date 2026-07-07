@@ -1,3 +1,10 @@
+## [0.350.2](https://github.com/staff0rd/assist/compare/v0.350.1...v0.350.2) (2026-07-07)
+
+
+### Bug Fixes
+
+* disambiguate review completion gate ([1dafdcd](https://github.com/staff0rd/assist/commit/1dafdcd867952e1a9caadd2b32ecff88db52ee8a))
+
 ## [0.350.1](https://github.com/staff0rd/assist/compare/v0.350.0...v0.350.1) (2026-07-07)
 
 
