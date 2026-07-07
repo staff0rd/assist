@@ -1,5 +1,6 @@
 import { type SessionClient, sendTo } from "./broadcast";
 import type { SessionInfo } from "./createSession";
+import { stripReplayQueries } from "./stripReplayQueries";
 
 const MAX_SCROLLBACK = 256 * 1024;
 
@@ -71,7 +72,12 @@ export function replayScrollback(
 	client: SessionClient,
 ): void {
 	for (const [sessionId, data] of state.scrollback)
-		if (data) sendTo(client, { type: "output", sessionId, data });
+		if (data)
+			sendTo(client, {
+				type: "output",
+				sessionId,
+				data: stripReplayQueries(data),
+			});
 }
 
 export function appendScrollback(
