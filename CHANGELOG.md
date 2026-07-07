@@ -1,3 +1,10 @@
+## [0.353.2](https://github.com/staff0rd/assist/compare/v0.353.1...v0.353.2) (2026-07-07)
+
+
+### Bug Fixes
+
+* stop macOS notifications hanging caller ([bbea88e](https://github.com/staff0rd/assist/commit/bbea88ef24706c00a5c38c46447fb111cba840cf))
+
 ## [0.353.1](https://github.com/staff0rd/assist/compare/v0.353.0...v0.353.1) (2026-07-07)
 
 
