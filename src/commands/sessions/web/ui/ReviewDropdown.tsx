@@ -3,7 +3,7 @@ import { DropdownWrapper } from "./DropdownWrapper";
 import { useOpenPrs } from "./useOpenPrs";
 import { ReviewDropdownContent } from "./ReviewDropdownContent";
 
-export type ReviewMode = "review" | "review-comments";
+export type ReviewMode = "review" | "review-comments" | "review-post";
 
 export function ReviewDropdown({
 	cwd,

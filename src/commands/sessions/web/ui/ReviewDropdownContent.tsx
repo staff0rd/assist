@@ -41,6 +41,13 @@ export function ReviewDropdownContent({
 						onMouseDown={(e) => e.preventDefault()}
 						slotProps={{ typography: { sx: { fontSize: 13 } } }}
 					/>
+					<FormControlLabel
+						value="review-post"
+						control={<Radio size="small" />}
+						label="Review & post"
+						onMouseDown={(e) => e.preventDefault()}
+						slotProps={{ typography: { sx: { fontSize: 13 } } }}
+					/>
 				</RadioGroup>
 			}
 			onPick={(pr) => {

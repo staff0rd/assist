@@ -5,6 +5,7 @@ import { formatRelativeTime } from "./formatRelativeTime";
 import { FreePromptDropdown } from "./FreePromptDropdown";
 import { ModeButtons } from "./ModeButtons";
 import { ReviewDropdown } from "./ReviewDropdown";
+import { reviewModeArgs } from "./reviewModeArgs";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 export function TopNavActions({
@@ -38,12 +39,16 @@ export function TopNavActions({
 					cwd={selectedCwd}
 					disabled={disabled}
 					onSelect={(pr, mode) =>
-						onCreateAssist([mode, String(pr.number)], selectedCwd, {
-							title: pr.title,
-							subtitle: `#${pr.number} · ${pr.author} · ${formatRelativeTime(
-								pr.createdAt,
-							)}`,
-						})
+						onCreateAssist(
+							[...reviewModeArgs(mode), String(pr.number)],
+							selectedCwd,
+							{
+								title: pr.title,
+								subtitle: `#${pr.number} · ${pr.author} · ${formatRelativeTime(
+									pr.createdAt,
+								)}`,
+							},
+						)
 					}
 				/>
 			</ModeButtons>

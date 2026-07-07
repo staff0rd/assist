@@ -12,6 +12,7 @@ const MODES: { label: string; args: string[] }[] = [
 	{ label: "Review (force re-run)", args: ["review", "--force"] },
 	{ label: "Review & refine", args: ["review", "--refine"] },
 	{ label: "Review & apply", args: ["review", "--apply"] },
+	{ label: "Review & post", args: ["review", "--no-prompt", "--submit"] },
 ];
 
 export function ReviewButton({ cwd, pr }: { cwd: string; pr: PrSummary }) {
