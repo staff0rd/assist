@@ -1,3 +1,10 @@
+# [0.351.0](https://github.com/staff0rd/assist/compare/v0.350.2...v0.351.0) (2026-07-07)
+
+
+### Features
+
+* sub-tasks on backlog items ([d4f2be9](https://github.com/staff0rd/assist/commit/d4f2be9c33e87237f7296a1a4ae67b31fc0b2b93))
+
 ## [0.350.2](https://github.com/staff0rd/assist/compare/v0.350.1...v0.350.2) (2026-07-07)
 
 
