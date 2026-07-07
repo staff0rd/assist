@@ -1,3 +1,10 @@
+# [0.352.0](https://github.com/staff0rd/assist/compare/v0.351.0...v0.352.0) (2026-07-07)
+
+
+### Features
+
+* backlog move-phase command ([de44b13](https://github.com/staff0rd/assist/commit/de44b1366f686b51e3fe90ff52d8188b925e1bc8))
+
 # [0.351.0](https://github.com/staff0rd/assist/compare/v0.350.2...v0.351.0) (2026-07-07)
 
 
