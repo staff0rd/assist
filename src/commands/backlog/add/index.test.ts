@@ -20,8 +20,14 @@ vi.mock("../../../shared/db/getDb", () => ({
 	getDb: () => Promise.resolve(orm),
 }));
 
+let remoteOrigin = true;
+
 vi.mock("../shared", () => ({
 	getOrigin: () => "test",
+}));
+
+vi.mock("../ensureRemoteOrigin", () => ({
+	ensureRemoteOrigin: () => remoteOrigin,
 }));
 
 vi.mock("../../../shared/loadConfig", () => ({
@@ -69,6 +75,7 @@ async function onlyItemId(): Promise<number> {
 beforeEach(async () => {
 	({ orm, close } = await createTestDb());
 	mockConfig = {} as AssistConfig;
+	remoteOrigin = true;
 });
 
 afterEach(async () => {
@@ -143,5 +150,13 @@ describe("add", () => {
 
 		const id = await onlyItemId();
 		expect(await getSubtasks(id)).toEqual([]);
+	});
+
+	it("refuses to add an item when there is no git remote", async () => {
+		remoteOrigin = false;
+
+		await add({ type: "story", name: "Feature", desc: "", ac: [] });
+
+		expect(await orm.select({ id: items.id }).from(items)).toEqual([]);
 	});
 });

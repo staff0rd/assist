@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { insertPhaseAt } from "./insertPhaseAt";
 import { resolveInsertPosition } from "./resolveInsertPosition";
 import { serializeManualChecks } from "./serializeManualChecks";
+import { ensureRemoteOrigin } from "./ensureRemoteOrigin";
 import { findOneItem } from "./shared";
 
 export async function addPhase(
@@ -9,6 +10,8 @@ export async function addPhase(
 	name: string,
 	options: { task?: string[]; manualCheck?: string[]; position?: string },
 ): Promise<void> {
+	if (!ensureRemoteOrigin()) return;
+
 	const found = await findOneItem(id);
 	if (!found) return;
 

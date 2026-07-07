@@ -70,6 +70,10 @@ function firstRemoteUrl(cwd: string): string | null {
 	return null;
 }
 
+export function getRemoteOriginUrl(cwd: string): string | null {
+	return tryGit(cwd, ["remote", "get-url", "origin"]) ?? firstRemoteUrl(cwd);
+}
+
 /**
  * Resolve the normalized origin key for the repository at `cwd`. Prefers the
  * `origin` remote, falling back to any other remote. Repositories with no remote
@@ -77,8 +81,7 @@ function firstRemoteUrl(cwd: string): string | null {
  * (note: separate clones without a shared remote do NOT share a backlog).
  */
 export function getCurrentOrigin(cwd: string): string {
-	const url =
-		tryGit(cwd, ["remote", "get-url", "origin"]) ?? firstRemoteUrl(cwd);
+	const url = getRemoteOriginUrl(cwd);
 	if (url) return normalizeOrigin(url);
 	const root = tryGit(cwd, ["rev-parse", "--show-toplevel"]);
 	return `local:${root ?? cwd}`;
