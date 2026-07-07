@@ -136,6 +136,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog update-phase <id> <phase> [--name <n>] [--task <t...>] [--manual-check <c...>]` - Modify a plan phase (name, tasks, or manual checks)
 - `assist backlog update-phase <id> <phase> [--add-task <text>] [--edit-task <n> <text>] [--remove-task <n>] [--add-check <text>] [--edit-check <n> <text>] [--remove-check <n>]` - Granular task and manual-check edits using 1-based indices matching `backlog show`: `--add-*` appends (repeatable), `--edit-*` replaces entry n in place, `--remove-*` deletes entry n and renumbers the rest (task ops cannot be combined with `--task`; check ops cannot be combined with `--manual-check`)
 - `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item
+- `assist backlog move-phase <id> <from> <to>` - Reorder a plan phase from one 1-based position to another, carrying its tasks and manual checks with it
 - `assist backlog next [id] [--once]` - Pick and run the next backlog item, or open `/draft` if none remain; pass an `id` to run that item first, then continue chaining; `--once` exits after the first completed item run instead of prompting for another
 - `assist backlog refine [id] [--once]` - Alias for `refine`
 - `assist backlog start <id>` - Set a backlog item to in-progress
