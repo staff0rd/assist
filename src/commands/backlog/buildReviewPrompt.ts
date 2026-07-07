@@ -23,6 +23,8 @@ export function buildReviewPrompt(
 		"",
 		"If any criterion fails, fix the issue and re-verify.",
 		"",
+		`Any sub-tasks on this item must all be done before it can be completed: \`assist backlog done\` and completing this Review phase both fail while any sub-task is not done. Check them with \`assist backlog show ${item.id}\` and mark each finished one done via \`assist backlog subtask-status ${item.id} <idx> done\`.`,
+		"",
 		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
 		"",
 		"After all criteria pass, ask the user to confirm any manual checks",

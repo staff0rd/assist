@@ -29,7 +29,7 @@ export async function loadAllItems(
 	const rel = await loadRelations(
 		orm,
 		rows.map((r) => r.id),
-		{ includeComments: false, includeTasks: false },
+		{ includeComments: false, includeTasks: false, includeSubtasks: false },
 	);
 	return rows.map((row) => rowToItem(row, rel));
 }

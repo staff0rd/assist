@@ -14,6 +14,7 @@ import { registerRewindCommand } from "./backlog/registerRewindCommand";
 import { registerRunCommand } from "./backlog/registerRunCommand";
 import { registerSearchCommand } from "./backlog/registerSearchCommand";
 import { registerStatusCommands } from "./backlog/registerStatusCommands";
+import { registerSubtaskCommands } from "./backlog/registerSubtaskCommands";
 import { registerUpdateCommands } from "./backlog/registerUpdateCommands";
 import { setBacklogDir } from "./backlog/shared";
 
@@ -38,6 +39,7 @@ const registrars = [
 	registerItemCommands,
 	registerShowCommands,
 	registerStatusCommands,
+	registerSubtaskCommands,
 	registerWebCommand,
 	registerCommentCommands,
 	registerLinkCommands,

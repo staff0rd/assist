@@ -8,12 +8,14 @@ import {
 import { backups } from "./backups";
 import { handovers } from "./handovers";
 import { items } from "./items";
+import { itemSubtasks } from "./itemSubtasks";
 import { phaseUsage } from "./phaseUsage";
 import { usagePeaks } from "./usagePeaks";
 
 export { backups } from "./backups";
 export { handovers } from "./handovers";
 export { items } from "./items";
+export { itemSubtasks } from "./itemSubtasks";
 export { phaseUsage } from "./phaseUsage";
 export { usagePeaks } from "./usagePeaks";
 
@@ -95,6 +97,7 @@ export const schema = {
 	links,
 	planPhases,
 	planTasks,
+	itemSubtasks,
 	metadata,
 	feeds,
 	handovers,
@@ -108,4 +111,5 @@ export type CommentRow = typeof comments.$inferSelect;
 export type LinkRow = typeof links.$inferSelect;
 export type PhaseRow = typeof planPhases.$inferSelect;
 export type TaskRow = typeof planTasks.$inferSelect;
+export type SubtaskRow = typeof itemSubtasks.$inferSelect;
 export type PhaseUsageRow = typeof phaseUsage.$inferSelect;

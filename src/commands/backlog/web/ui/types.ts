@@ -27,6 +27,14 @@ export type PhaseStatus = "done" | "current" | "upcoming";
 
 export type BacklogStatus = "todo" | "in-progress" | "done" | "wontdo";
 
+export type SubtaskStatus = "todo" | "in-progress" | "done";
+
+export type Subtask = {
+	title: string;
+	description?: string;
+	status: SubtaskStatus;
+};
+
 export type BacklogItem = {
 	id: number;
 	type: "story" | "bug";
@@ -37,6 +45,7 @@ export type BacklogItem = {
 	currentPhase?: number;
 	status: BacklogStatus;
 	comments?: BacklogComment[];
+	subtasks?: Subtask[];
 	phaseUsage?: PhaseUsage[];
 };
 

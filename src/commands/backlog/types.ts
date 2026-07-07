@@ -25,6 +25,14 @@ const phaseUsageSchema = z.strictObject({
 	activeMs: z.number(),
 });
 
+const subtaskStatusSchema = z.enum(["todo", "in-progress", "done"]);
+
+const subtaskSchema = z.strictObject({
+	title: z.string(),
+	description: z.string().optional(),
+	status: subtaskStatusSchema.default("todo"),
+});
+
 const backlogCommentTypeSchema = z.enum(["comment", "summary"]);
 
 const backlogCommentSchema = z.strictObject({
@@ -53,6 +61,7 @@ export const backlogItemSchema = z.strictObject({
 	starred: z.boolean().default(false),
 	status: backlogStatusSchema,
 	comments: z.array(backlogCommentSchema).optional(),
+	subtasks: z.array(subtaskSchema).optional(),
 	links: z.array(backlogLinkSchema).optional(),
 	phaseUsage: z.array(phaseUsageSchema).optional(),
 	origin: z.string().optional(),
@@ -77,4 +86,6 @@ export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
 export type PhaseUsage = z.infer<typeof phaseUsageSchema>;
 export type BacklogComment = z.infer<typeof backlogCommentSchema>;
+export type Subtask = z.infer<typeof subtaskSchema>;
+export type SubtaskStatus = z.infer<typeof subtaskStatusSchema>;
 export type BacklogLinkType = z.infer<typeof backlogLinkTypeSchema>;

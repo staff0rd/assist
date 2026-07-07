@@ -54,6 +54,15 @@ export const SCHEMA = `
 			ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
 	);
 
+	CREATE TABLE IF NOT EXISTS item_subtasks (
+		item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+		idx INTEGER NOT NULL,
+		title TEXT NOT NULL,
+		description TEXT,
+		status TEXT NOT NULL DEFAULT 'todo',
+		PRIMARY KEY (item_id, idx)
+	);
+
 	CREATE TABLE IF NOT EXISTS metadata (
 		key TEXT PRIMARY KEY,
 		value TEXT NOT NULL

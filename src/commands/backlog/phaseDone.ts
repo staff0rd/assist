@@ -1,6 +1,8 @@
 import chalk from "chalk";
 import { appendComment } from "./appendComment";
-import { getItemStatus } from "./getItemStatus";
+import { checkSubtasksComplete } from "./checkSubtasksComplete";
+import { loadItem } from "./loadItem";
+import { resolvePlan } from "./resolvePlan";
 import { getReady, setCurrentPhase } from "./shared";
 import { writeSignal } from "./writeSignal";
 
@@ -12,25 +14,36 @@ export async function phaseDone(
 	const phaseNumber = Number.parseInt(phase, 10);
 	const phaseIndex = phaseNumber - 1;
 	const itemId = Number.parseInt(id, 10);
-	writeSignal("phase-done", {
-		itemId,
-		phaseIndex,
-		completedAt: new Date().toISOString(),
-	});
 
 	const { orm } = await getReady();
-	const status = await getItemStatus(orm, itemId);
+	const item = await loadItem(orm, itemId);
 
-	if (status === undefined) {
+	if (item === undefined) {
 		console.log(chalk.red(`Item #${id} not found.`));
 		return;
 	}
 
-	if (status === "done") {
+	function signal(): void {
+		writeSignal("phase-done", {
+			itemId,
+			phaseIndex,
+			completedAt: new Date().toISOString(),
+		});
+	}
+
+	if (item.status === "done") {
+		signal();
 		console.log(chalk.dim(`Item #${id} already done, skipping phase advance.`));
 		return;
 	}
 
+	const reviewPhaseNumber = resolvePlan(item).length + 1;
+	if (phaseNumber === reviewPhaseNumber && !checkSubtasksComplete(id, item)) {
+		process.exitCode = 1;
+		return;
+	}
+
+	signal();
 	await appendComment(orm, itemId, summary, {
 		phase: phaseNumber,
 		type: "summary",

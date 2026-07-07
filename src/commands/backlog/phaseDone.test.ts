@@ -8,6 +8,7 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import type { BacklogItem } from "./types";
 
 vi.mock("./shared", () => ({
 	getBacklogDir: () => process.cwd(),
@@ -15,8 +16,8 @@ vi.mock("./shared", () => ({
 	setCurrentPhase: vi.fn(),
 }));
 
-vi.mock("./getItemStatus", () => ({
-	getItemStatus: vi.fn(),
+vi.mock("./loadItem", () => ({
+	loadItem: vi.fn(),
 }));
 
 vi.mock("./appendComment", () => ({
@@ -24,17 +25,29 @@ vi.mock("./appendComment", () => ({
 }));
 
 import { appendComment } from "./appendComment";
-import { getItemStatus } from "./getItemStatus";
+import { loadItem } from "./loadItem";
 import { phaseDone } from "./phaseDone";
 import { getReady, setCurrentPhase } from "./shared";
 import { getSignalPath } from "./writeSignal";
 
 const mockGetReady = getReady as unknown as MockInstance;
-const mockGetItemStatus = getItemStatus as unknown as MockInstance;
+const mockLoadItem = loadItem as unknown as MockInstance;
 const mockSetCurrentPhase = setCurrentPhase as unknown as MockInstance;
 const mockAppendComment = appendComment as unknown as MockInstance;
 
 const orm = {} as never;
+
+function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
+	return {
+		id: 1,
+		type: "story",
+		name: "Item",
+		acceptanceCriteria: [],
+		status: "in-progress",
+		starred: false,
+		...overrides,
+	};
+}
 
 function cleanup(): void {
 	const path = getSignalPath();
@@ -51,18 +64,19 @@ describe("phaseDone", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		process.env.ASSIST_SESSION_ID = "test-session";
+		process.exitCode = undefined;
 		mockGetReady.mockResolvedValue({ orm });
+		mockLoadItem.mockResolvedValue(makeItem());
 		cleanup();
 	});
 
 	afterEach(() => {
 		cleanup();
 		delete process.env.ASSIST_SESSION_ID;
+		process.exitCode = undefined;
 	});
 
 	it("should write the status marker file", async () => {
-		mockGetItemStatus.mockResolvedValue("in-progress");
-
 		await phaseDone("1", "1", "Done");
 
 		const marker = JSON.parse(readFileSync(signalPath(), "utf8"));
@@ -73,8 +87,6 @@ describe("phaseDone", () => {
 	});
 
 	it("should advance currentPhase when item is not done", async () => {
-		mockGetItemStatus.mockResolvedValue("in-progress");
-
 		await phaseDone("1", "1", "Done");
 
 		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
@@ -82,8 +94,6 @@ describe("phaseDone", () => {
 	});
 
 	it("should store a phase summary as a targeted comment write", async () => {
-		mockGetItemStatus.mockResolvedValue("in-progress");
-
 		await phaseDone("1", "1", "Implemented the feature");
 
 		expect(mockAppendComment).toHaveBeenCalledWith(
@@ -97,7 +107,7 @@ describe("phaseDone", () => {
 
 	describe("when item is already done", () => {
 		it("should not advance currentPhase", async () => {
-			mockGetItemStatus.mockResolvedValue("done");
+			mockLoadItem.mockResolvedValue(makeItem({ status: "done" }));
 
 			await phaseDone("1", "1", "Done");
 
@@ -106,7 +116,7 @@ describe("phaseDone", () => {
 		});
 
 		it("should skip the summary (already saved by done command)", async () => {
-			mockGetItemStatus.mockResolvedValue("done");
+			mockLoadItem.mockResolvedValue(makeItem({ status: "done" }));
 
 			await phaseDone("1", "3", "Review complete");
 
@@ -117,12 +127,53 @@ describe("phaseDone", () => {
 
 	describe("when item does not exist", () => {
 		it("should not advance currentPhase or write a summary", async () => {
-			mockGetItemStatus.mockResolvedValue(undefined);
+			mockLoadItem.mockResolvedValue(undefined);
 
 			await phaseDone("99", "1", "Done");
 
 			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 			expect(mockAppendComment).not.toHaveBeenCalled();
+			cleanup();
+		});
+	});
+
+	describe("when the review phase has incomplete sub-tasks", () => {
+		const withPlanAndSubtask = makeItem({
+			plan: [{ name: "Implement", tasks: [] }],
+			subtasks: [{ title: "Wire it up", status: "todo" }],
+		});
+
+		it("should block the review phase and not advance", async () => {
+			mockLoadItem.mockResolvedValue(withPlanAndSubtask);
+
+			await phaseDone("1", "2", "Review complete");
+
+			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
+			expect(mockAppendComment).not.toHaveBeenCalled();
+			expect(process.exitCode).toBe(1);
+			cleanup();
+		});
+
+		it("should still allow an intermediate authored phase to complete", async () => {
+			mockLoadItem.mockResolvedValue(withPlanAndSubtask);
+
+			await phaseDone("1", "1", "Phase 1 done");
+
+			expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
+			cleanup();
+		});
+
+		it("should allow the review phase once all sub-tasks are done", async () => {
+			mockLoadItem.mockResolvedValue(
+				makeItem({
+					plan: [{ name: "Implement", tasks: [] }],
+					subtasks: [{ title: "Wire it up", status: "done" }],
+				}),
+			);
+
+			await phaseDone("1", "2", "Review complete");
+
+			expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 3);
 			cleanup();
 		});
 	});

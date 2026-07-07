@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { applyCwdFromReq } from "./applyCwdFromReq";
 import { deleteItemComment } from "./deleteItemComment";
+import { patchSubtaskStatus } from "./patchSubtaskStatus";
 import { rewindItemPhase } from "./rewindItemPhase";
 import {
 	deleteItem,
@@ -35,6 +36,11 @@ const routes: ItemRoute[] = [
 		pattern: /^\/api\/items\/(\d+)\/comments\/(\d+)$/,
 		method: "DELETE",
 		run: (_req, res, m) => deleteItemComment(res, id(m), id(m, 2)),
+	},
+	{
+		pattern: /^\/api\/items\/(\d+)\/subtasks\/(\d+)$/,
+		method: "PATCH",
+		run: (req, res, m) => patchSubtaskStatus(req, res, id(m), id(m, 2)),
 	},
 	{
 		pattern: /^\/api\/items\/(\d+)$/,

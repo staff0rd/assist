@@ -29,6 +29,7 @@ describe("introspectDumpTables", () => {
 				"links",
 				"plan_phases",
 				"plan_tasks",
+				"item_subtasks",
 				"metadata",
 				"feeds",
 				"handovers",
@@ -72,6 +73,7 @@ describe("introspectDumpTables", () => {
 		expect(order(tables, "items")).toBeLessThan(order(tables, "comments"));
 		expect(order(tables, "items")).toBeLessThan(order(tables, "links"));
 		expect(order(tables, "items")).toBeLessThan(order(tables, "plan_phases"));
+		expect(order(tables, "items")).toBeLessThan(order(tables, "item_subtasks"));
 		expect(order(tables, "plan_phases")).toBeLessThan(
 			order(tables, "plan_tasks"),
 		);

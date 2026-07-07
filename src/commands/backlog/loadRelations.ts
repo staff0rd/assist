@@ -4,9 +4,11 @@ import type {
 	LinkRow,
 	PhaseRow,
 	PhaseUsageRow,
+	SubtaskRow,
 	TaskRow,
 } from "../../shared/db/schema";
 import { relationQueries } from "./relationQueries";
+import { groupByItem } from "./groupByItem";
 
 /** Relation rows for a set of items, grouped by item id. */
 export type Relations = {
@@ -14,31 +16,19 @@ export type Relations = {
 	links: Map<number, LinkRow[]>;
 	phases: Map<number, PhaseRow[]>;
 	tasks: Map<number, TaskRow[]>;
+	subtasks: Map<number, SubtaskRow[]>;
 	usage: Map<number, PhaseUsageRow[]>;
 };
-
-/** Group rows by their `itemId`, preserving the order rows arrive in. */
-function groupByItem<T extends { itemId: number }>(
-	rows: T[],
-): Map<number, T[]> {
-	const map = new Map<number, T[]>();
-	for (const row of rows) {
-		const bucket = map.get(row.itemId);
-		if (bucket) bucket.push(row);
-		else map.set(row.itemId, [row]);
-	}
-	return map;
-}
-
 /**
  * Which relation tables to query. Links and phases are always loaded; comments,
- * tasks and per-phase usage are opt-in because the whole-backlog callers (list,
- * next, migrate) never read them — only {@link ./loadItem}, opening a single
+ * tasks, subtasks and per-phase usage are opt-in because the whole-backlog callers
+ * (list, next, migrate) never read them — only {@link ./loadItem}, opening a single
  * item, needs them.
  */
 type LoadRelationsOptions = {
 	includeComments?: boolean;
 	includeTasks?: boolean;
+	includeSubtasks?: boolean;
 	includeUsage?: boolean;
 };
 
@@ -54,10 +44,11 @@ export async function loadRelations(
 	{
 		includeComments = true,
 		includeTasks = true,
+		includeSubtasks = true,
 		includeUsage = false,
 	}: LoadRelationsOptions = {},
 ): Promise<Relations> {
-	const [commentRows, linkRows, phaseRows, taskRows, usageRows] =
+	const [commentRows, linkRows, phaseRows, taskRows, subtaskRows, usageRows] =
 		await Promise.all([
 			includeComments
 				? relationQueries.comments(orm, ids)
@@ -65,6 +56,9 @@ export async function loadRelations(
 			relationQueries.links(orm, ids),
 			relationQueries.phases(orm, ids),
 			includeTasks ? relationQueries.tasks(orm, ids) : ([] as TaskRow[]),
+			includeSubtasks
+				? relationQueries.subtasks(orm, ids)
+				: ([] as SubtaskRow[]),
 			includeUsage ? relationQueries.usage(orm, ids) : ([] as PhaseUsageRow[]),
 		]);
 	return {
@@ -72,6 +66,7 @@ export async function loadRelations(
 		links: groupByItem(linkRows),
 		phases: groupByItem(phaseRows),
 		tasks: groupByItem(taskRows),
+		subtasks: groupByItem(subtaskRows),
 		usage: groupByItem(usageRows),
 	};
 }

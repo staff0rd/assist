@@ -34,5 +34,10 @@ export function mergeRawConfigs(
 	if (deny !== undefined) {
 		merged.deny = deny;
 	}
+	const globalSubtasks = globalRaw.subtasks as unknown[] | undefined;
+	const projectSubtasks = projectRaw.subtasks as unknown[] | undefined;
+	if (globalSubtasks || projectSubtasks) {
+		merged.subtasks = [...(globalSubtasks ?? []), ...(projectSubtasks ?? [])];
+	}
 	return merged;
 }

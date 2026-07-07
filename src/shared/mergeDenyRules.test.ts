@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mergeDenyRules } from "./mergeDenyRules";
+import { mergeDenyRules, mergeRawConfigs } from "./mergeDenyRules";
 
 describe("mergeDenyRules", () => {
 	it("returns undefined when both are undefined", () => {
@@ -47,5 +47,32 @@ describe("mergeDenyRules", () => {
 			{ pattern: "rm", message: "project rm" },
 			{ pattern: "drop", message: "project drop" },
 		]);
+	});
+});
+
+describe("mergeRawConfigs subtasks", () => {
+	it("leaves subtasks unset when neither side has them", () => {
+		expect(mergeRawConfigs({}, {})).not.toHaveProperty("subtasks");
+	});
+
+	it("combines global and project subtasks with global first", () => {
+		const merged = mergeRawConfigs(
+			{ subtasks: [{ title: "global" }] },
+			{ subtasks: [{ title: "project" }] },
+		);
+		expect(merged.subtasks).toEqual([
+			{ title: "global" },
+			{ title: "project" },
+		]);
+	});
+
+	it("keeps global-only subtasks", () => {
+		const merged = mergeRawConfigs({ subtasks: [{ title: "global" }] }, {});
+		expect(merged.subtasks).toEqual([{ title: "global" }]);
+	});
+
+	it("keeps project-only subtasks", () => {
+		const merged = mergeRawConfigs({}, { subtasks: [{ title: "project" }] });
+		expect(merged.subtasks).toEqual([{ title: "project" }]);
 	});
 });

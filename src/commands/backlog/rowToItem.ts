@@ -1,17 +1,9 @@
-import type {
-	CommentRow,
-	ItemRow,
-	LinkRow,
-	PhaseUsageRow,
-} from "../../shared/db/schema";
+import type { CommentRow, ItemRow, LinkRow } from "../../shared/db/schema";
+import { attachSubtasks } from "./attachSubtasks";
+import { attachUsage } from "./attachUsage";
 import { buildPlan } from "./buildPlan";
 import type { Relations } from "./loadRelations";
-import type {
-	BacklogComment,
-	BacklogItem,
-	BacklogStatus,
-	PhaseUsage,
-} from "./types";
+import type { BacklogComment, BacklogItem, BacklogStatus } from "./types";
 
 type Link = NonNullable<BacklogItem["links"]>[number];
 
@@ -66,24 +58,11 @@ function attachPlan(item: BacklogItem, rel: Relations, id: number): void {
 	if (phases.length > 0) item.plan = buildPlan(phases, rel.tasks.get(id) ?? []);
 }
 
-function rowToUsage(u: PhaseUsageRow): PhaseUsage {
-	return {
-		phaseIdx: u.phaseIdx,
-		tokensUp: u.tokensUp,
-		tokensDown: u.tokensDown,
-		activeMs: u.activeMs,
-	};
-}
-
-function attachUsage(item: BacklogItem, rel: Relations, id: number): void {
-	const usage = (rel.usage.get(id) ?? []).map(rowToUsage);
-	if (usage.length > 0) item.phaseUsage = usage;
-}
-
 /** Assemble a domain item from its row and the pre-grouped relation rows. */
 export function rowToItem(row: ItemRow, rel: Relations): BacklogItem {
 	const item = baseItem(row);
 	attachComments(item, rel, row.id);
+	attachSubtasks(item, rel, row.id);
 	attachLinks(item, rel, row.id);
 	attachPlan(item, rel, row.id);
 	attachUsage(item, rel, row.id);

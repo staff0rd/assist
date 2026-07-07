@@ -87,6 +87,8 @@
 			"SlashCommand(/recall)",
 			"Skill(strip-comments)",
 			"SlashCommand(/strip-comments)",
+			"Skill(subtask)",
+			"SlashCommand(/subtask)",
 			"Bash(git ls-files:*)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],

@@ -151,4 +151,41 @@ describe("done", () => {
 
 		expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
 	});
+
+	it("should reject completion while a sub-task is not done", async () => {
+		const consoleSpy = vi.spyOn(console, "log");
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			subtasks: [
+				{ title: "Wire it up", status: "in-progress" },
+				{ title: "Ship it", status: "done" },
+			],
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
+
+		await done("1");
+
+		expect(mockUpdateStatus).not.toHaveBeenCalled();
+		expect(process.exitCode).toBe(1);
+		const output = consoleSpy.mock.calls.map((c) => c[0]).join("\n");
+		expect(output).toContain("Wire it up");
+		expect(output).toContain("1 incomplete sub-task(s)");
+		consoleSpy.mockRestore();
+	});
+
+	it("should complete once all sub-tasks are done", async () => {
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			subtasks: [{ title: "Wire it up", status: "done" }],
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
+
+		await done("1");
+
+		expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
+	});
 });

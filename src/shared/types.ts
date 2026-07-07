@@ -82,6 +82,14 @@ export const assistConfigSchema = z.strictObject({
 		})
 		.optional(),
 	run: z.array(z.union([runConfigSchema, runLinkSchema])).optional(),
+	subtasks: z
+		.array(
+			z.strictObject({
+				title: z.string(),
+				description: z.string().optional(),
+			}),
+		)
+		.optional(),
 	transcript: transcriptConfigSchema.optional(),
 	cliReadVerbs: z.record(z.string(), z.array(z.string())).optional(),
 	dotnet: z

@@ -1,7 +1,7 @@
 import { Box, Stack } from "@mui/material";
 import { useNavigate } from "react-router";
-import { updateItemStatus } from "../api";
-import type { BacklogItem } from "../types";
+import { updateItemStatus, updateSubtaskStatus } from "../api";
+import type { BacklogItem, SubtaskStatus } from "../types";
 import { useRepoCwd } from "../useRepoCwd";
 import { BackButton } from "./BackButton";
 import { canPlay } from "./canPlay";
@@ -51,6 +51,13 @@ export function ItemDetail({ item, onReload }: ItemDetailProps) {
 		await updateItemStatus(item.id, status, cwd);
 		await onReload();
 	};
+	const handleSubtaskStatusChange = async (
+		idx: number,
+		status: SubtaskStatus,
+	) => {
+		await updateSubtaskStatus(item.id, idx, status, cwd);
+		await onReload();
+	};
 	return (
 		<Box>
 			<DetailHeader item={item} onDeleted={handleDeleted} />
@@ -59,6 +66,7 @@ export function ItemDetail({ item, onReload }: ItemDetailProps) {
 				onStatusChange={handleStatusChange}
 				onRewind={onReload}
 				onCommentDeleted={onReload}
+				onSubtaskStatusChange={handleSubtaskStatusChange}
 			/>
 		</Box>
 	);

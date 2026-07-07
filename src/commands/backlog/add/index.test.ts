@@ -2,12 +2,19 @@ import { asc, eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../../../shared/db/createTestDb";
 import type { Db } from "../../../shared/db/Db";
-import { items, planPhases, planTasks } from "../../../shared/db/schema";
+import {
+	items,
+	itemSubtasks,
+	planPhases,
+	planTasks,
+} from "../../../shared/db/schema";
+import type { AssistConfig } from "../../../shared/types";
 import { insertPhaseAt } from "../insertPhaseAt";
 import { add } from "./index";
 
 let orm: Db;
 let close: () => Promise<void>;
+let mockConfig: AssistConfig;
 
 vi.mock("../../../shared/db/getDb", () => ({
 	getDb: () => Promise.resolve(orm),
@@ -15,6 +22,10 @@ vi.mock("../../../shared/db/getDb", () => ({
 
 vi.mock("../shared", () => ({
 	getOrigin: () => "test",
+}));
+
+vi.mock("../../../shared/loadConfig", () => ({
+	loadConfig: () => mockConfig,
 }));
 
 function getPhases(itemId: number) {
@@ -37,6 +48,19 @@ function getTasks(itemId: number) {
 		.orderBy(asc(planTasks.phaseIdx), asc(planTasks.idx));
 }
 
+function getSubtasks(itemId: number) {
+	return orm
+		.select({
+			idx: itemSubtasks.idx,
+			title: itemSubtasks.title,
+			description: itemSubtasks.description,
+			status: itemSubtasks.status,
+		})
+		.from(itemSubtasks)
+		.where(eq(itemSubtasks.itemId, itemId))
+		.orderBy(asc(itemSubtasks.idx));
+}
+
 async function onlyItemId(): Promise<number> {
 	const [row] = await orm.select({ id: items.id }).from(items);
 	return row.id;
@@ -44,6 +68,7 @@ async function onlyItemId(): Promise<number> {
 
 beforeEach(async () => {
 	({ orm, close } = await createTestDb());
+	mockConfig = {} as AssistConfig;
 });
 
 afterEach(async () => {
@@ -78,5 +103,45 @@ describe("add", () => {
 			{ idx: 0, name: "Fix" },
 			{ idx: 1, name: "Review" },
 		]);
+	});
+
+	it("applies configured sub-tasks to a new story", async () => {
+		mockConfig = {
+			subtasks: [
+				{ title: "Write tests" },
+				{ title: "Update docs", description: "README + CLAUDE.md" },
+			],
+		} as AssistConfig;
+
+		await add({ type: "story", name: "Feature", desc: "", ac: [] });
+
+		const id = await onlyItemId();
+		expect(await getSubtasks(id)).toEqual([
+			{ idx: 0, title: "Write tests", description: null, status: "todo" },
+			{
+				idx: 1,
+				title: "Update docs",
+				description: "README + CLAUDE.md",
+				status: "todo",
+			},
+		]);
+	});
+
+	it("applies configured sub-tasks to a new bug", async () => {
+		mockConfig = { subtasks: [{ title: "Write tests" }] } as AssistConfig;
+
+		await add({ type: "bug", name: "Broken", desc: "", ac: [] });
+
+		const id = await onlyItemId();
+		expect(await getSubtasks(id)).toEqual([
+			{ idx: 0, title: "Write tests", description: null, status: "todo" },
+		]);
+	});
+
+	it("adds no sub-tasks when none are configured", async () => {
+		await add({ type: "story", name: "Feature", desc: "", ac: [] });
+
+		const id = await onlyItemId();
+		expect(await getSubtasks(id)).toEqual([]);
 	});
 });

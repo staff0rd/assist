@@ -1,4 +1,4 @@
-import type { BacklogItem } from "./types";
+import type { BacklogItem, SubtaskStatus } from "./types";
 import { withCwd } from "./withCwd";
 
 async function sendJson<T>(
@@ -45,6 +45,19 @@ export function updateItemStatus(
 	cwd?: string,
 ): Promise<BacklogItem> {
 	return sendJson(withCwd(`/api/items/${id}`, cwd), "PATCH", { status });
+}
+
+export function updateSubtaskStatus(
+	itemId: number,
+	idx: number,
+	status: SubtaskStatus,
+	cwd?: string,
+): Promise<BacklogItem> {
+	return sendJson(
+		withCwd(`/api/items/${itemId}/subtasks/${idx}`, cwd),
+		"PATCH",
+		{ status },
+	);
 }
 
 export function toggleStar(

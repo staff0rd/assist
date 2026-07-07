@@ -63,6 +63,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/next [id]` - Signal completion and chain into the next backlog item; pass an `id` to run a specific item directly (falls back to the picker if the id is missing, done, won't-do, or blocked)
 - `/standup` - Summarise recent journal entries as a standup update
+- `/subtask <text>` - Add a sub-task to the backlog item this session is working on (errors if there is no current item) by calling `assist backlog add-subtask`
 - `/strip-comments` - Enforce self-documenting code: declare the comment policy in CLAUDE.md if absent, then strip redundant comments, commented-out code, and section banners from tracked source files (functional directives and genuine workaround comments are preserved); edits are left unstaged
 - `/sync` - Sync commands and settings to ~/.claude
 - `/test-cover` - Incrementally increase test coverage by identifying and testing uncovered files
@@ -128,6 +129,8 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog add` - Add a new backlog item interactively (prompts for type: story/bug)
 - `assist backlog add --name <n> --type <t> --desc <d> --ac <criterion...>` - Add a backlog item from CLI options (used by `/draft`)
 - `assist backlog add-phase <id> <name> --task <t...> [--manual-check <c...>] [--position <pos>]` - Add a phase (appends by default; `--position` inserts at a 1-indexed position)
+- `assist backlog add-subtask <id> --title <t> [--desc <d>]` - Add a sub-task (status `todo`) to a backlog item. Sub-tasks listed under the `subtasks` key (each `title` and optional `description`) in `assist.yml` and `~/.assist.yml` are auto-applied to every newly created item (stories and bugs); the global and project lists are combined
+- `assist backlog subtask-status <id> <idx> <status>` - Set a sub-task's status (`todo`, `in-progress`, `done`) by its 1-based index from `backlog show`
 - `assist backlog update-field <id> [--name <n>] [--desc <d>] [--type <t>] [--ac <criterion...>]` - Update fields on a backlog item
 - `assist backlog update-field <id> [--add-ac <text>] [--edit-ac <n> <text>] [--remove-ac <n>]` - Granular acceptance-criteria edits using 1-based indices matching `backlog show`: `--add-ac` appends (repeatable), `--edit-ac` replaces criterion n in place, `--remove-ac` deletes criterion n and renumbers the rest (cannot be combined with the whole-list `--ac`)
 - `assist backlog update-phase <id> <phase> [--name <n>] [--task <t...>] [--manual-check <c...>]` - Modify a plan phase (name, tasks, or manual checks)
@@ -137,7 +140,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog refine [id] [--once]` - Alias for `refine`
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog stop` - Revert all in-progress backlog items to todo and reset their phase to 1
-- `assist backlog done <id>` - Set a backlog item to done
+- `assist backlog done <id>` - Set a backlog item to done (blocked while any sub-task is not done)
 - `assist backlog wontdo <id> [reason]` - Set a backlog item to won't do
 - `assist backlog set-status <id> <status>` - Set a backlog item to a specific status (`todo`, `in-progress`, `done`, `wontdo`)
 - `assist backlog star <id>` - Star a backlog item to pin it ahead of unstarred items in the web view

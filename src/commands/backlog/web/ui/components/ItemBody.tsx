@@ -1,28 +1,22 @@
-import { Box, Paper, Typography } from "@mui/material";
-import type { BacklogItem } from "../types";
+import { Paper, Typography } from "@mui/material";
+import type { BacklogItem, SubtaskStatus } from "../types";
 import { AcceptanceCriteriaList } from "./AcceptanceCriteriaList";
-import { CommentsSection } from "./CommentsSection";
+import { ItemDescription } from "./ItemDescription";
 import { ItemMeta } from "./ItemMeta";
-import { MarkdownBlock } from "./MarkdownBlock";
-import { PlanSection } from "./PlanSection";
-
-const sectionHeadingSx = {
-	color: "text.secondary",
-	mb: 1,
-	display: "block",
-	letterSpacing: "0.08em",
-} as const;
+import { ItemRelations } from "./ItemRelations";
 
 export function ItemBody({
 	item,
 	onStatusChange,
 	onRewind,
 	onCommentDeleted,
+	onSubtaskStatusChange,
 }: {
 	item: BacklogItem;
 	onStatusChange?: (status: BacklogItem["status"]) => void;
 	onRewind?: () => Promise<void>;
 	onCommentDeleted?: () => Promise<void>;
+	onSubtaskStatusChange?: (idx: number, status: SubtaskStatus) => void;
 }) {
 	return (
 		<Paper variant="outlined" sx={{ p: 3 }}>
@@ -30,31 +24,14 @@ export function ItemBody({
 				{item.name}
 			</Typography>
 			<ItemMeta item={item} onStatusChange={onStatusChange} />
-			{item.description && (
-				<Box sx={{ mb: 2 }}>
-					<Typography variant="overline" sx={sectionHeadingSx}>
-						Description
-					</Typography>
-					<MarkdownBlock content={item.description} />
-				</Box>
-			)}
+			<ItemDescription description={item.description} />
 			<AcceptanceCriteriaList criteria={item.acceptanceCriteria} />
-			{item.plan && (
-				<PlanSection
-					phases={item.plan}
-					currentPhase={item.currentPhase}
-					itemId={item.id}
-					usage={item.phaseUsage}
-					onRewind={onRewind}
-				/>
-			)}
-			{item.comments && (
-				<CommentsSection
-					comments={item.comments}
-					itemId={item.id}
-					onCommentDeleted={onCommentDeleted}
-				/>
-			)}
+			<ItemRelations
+				item={item}
+				onRewind={onRewind}
+				onCommentDeleted={onCommentDeleted}
+				onSubtaskStatusChange={onSubtaskStatusChange}
+			/>
 		</Paper>
 	);
 }
