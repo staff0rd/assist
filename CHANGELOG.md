@@ -1,3 +1,10 @@
+## [0.350.1](https://github.com/staff0rd/assist/compare/v0.350.0...v0.350.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* strip replay query escape sequences ([a1860ea](https://github.com/staff0rd/assist/commit/a1860eade728aa91e3d5dcd66ffc0b8124eb9380))
+
 # [0.350.0](https://github.com/staff0rd/assist/compare/v0.349.1...v0.350.0) (2026-07-06)
 
 
