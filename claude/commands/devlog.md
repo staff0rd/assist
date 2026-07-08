@@ -38,6 +38,15 @@ ai-generated: <model name, e.g., "claude-opus-4-5">
 <First-person summary of the day's work. Group related commits into cohesive paragraphs. Focus on what was accomplished and why, not implementation details. Wrap code symbols (function names, variable names, file names, commands, etc.) in backticks.>
 ```
 
+## One post per version
+
+Navigation is keyed by `version`, so **every version may appear in at most one devlog file**. Because `assist devlog next` reports the day's `major.minor` version, consecutive days that only shipped patch releases report the *same* version — these must not become separate posts.
+
+Before creating a file, check `~/git/blog/src/content/devlog/` for an existing entry whose `version` matches the one being written:
+
+- **If a post with that version already exists**, merge the new day's work into it as additional paragraph(s) instead of creating a new file. Keep the existing post's `date` (the date the version was first cut) and its `title`/`slug`; widen the title only if the merged scope no longer fits it.
+- **If several unversioned days share one version** (catch-up mode), write a single post anchored on the earliest of those days and fold the later days' work into it.
+
 ## Tag Selection
 
 Fetch existing tags from https://staffordwilliams.com/tags.json for use when selecting tags.
@@ -60,7 +69,7 @@ When `--all` is passed, loop through all unversioned days up to (excluding) toda
 3. If there are no more unversioned days, **stop**
 4. Analyze the commits for that day:
    - **Trivial days**: automatically run `assist devlog skip YYYY-MM-DD` without prompting the user
-   - **Non-trivial days**: create the devlog entry as normal (following the single-day instructions above)
+   - **Non-trivial days**: create the devlog entry as normal (following the single-day instructions above), honouring the **One post per version** rule — if the reported version already has a post, merge into it rather than creating a new file
 5. Go back to step 1
 
 This continues until all past unversioned days have been processed. Do not process today's date.
