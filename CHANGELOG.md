@@ -1,3 +1,10 @@
+# [0.359.0](https://github.com/staff0rd/assist/compare/v0.358.0...v0.359.0) (2026-07-08)
+
+
+### Features
+
+* show Jira key badge on session cards ([25c834f](https://github.com/staff0rd/assist/commit/25c834f62de9f12f49201e614b2ee0747fea5a97))
+
 # [0.358.0](https://github.com/staff0rd/assist/compare/v0.357.0...v0.358.0) (2026-07-08)
 
 
