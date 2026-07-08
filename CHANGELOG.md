@@ -1,3 +1,10 @@
+## [0.356.1](https://github.com/staff0rd/assist/compare/v0.356.0...v0.356.1) (2026-07-08)
+
+
+### Bug Fixes
+
+* resolve open PR by branch, not stale ([308ff4c](https://github.com/staff0rd/assist/commit/308ff4c9e967733209bc487351694590c0290ae3))
+
 # [0.356.0](https://github.com/staff0rd/assist/compare/v0.355.0...v0.356.0) (2026-07-08)
 
 
