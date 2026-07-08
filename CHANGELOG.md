@@ -1,3 +1,10 @@
+# [0.358.0](https://github.com/staff0rd/assist/compare/v0.357.0...v0.358.0) (2026-07-08)
+
+
+### Features
+
+* show commit timestamp in web ([0199f48](https://github.com/staff0rd/assist/commit/0199f48de1cad861867f1c52852a9a00c1e8801b))
+
 # [0.357.0](https://github.com/staff0rd/assist/compare/v0.356.1...v0.357.0) (2026-07-08)
 
 
