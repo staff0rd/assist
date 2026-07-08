@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { formatComment } from "../formatComment";
 import { findOneItem } from "../shared";
 import type { BacklogItem } from "../types";
+import { printActivity } from "./printActivity";
 import { printLinks } from "./printLinks";
 import { printPlan } from "./printPlan";
 import { printSubtasks } from "./printSubtasks";
@@ -54,5 +55,6 @@ export async function show(id: string): Promise<void> {
 	printSubtasks(item);
 	await printLinks(orm, item);
 	printPlan(item);
+	printActivity(item);
 	printComments(item);
 }

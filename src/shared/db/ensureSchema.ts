@@ -137,6 +137,20 @@ export const SCHEMA = `
 		last_total_out BIGINT,
 		PRIMARY KEY (item_id, phase_idx)
 	);
+
+	-- Git activity (branch/commit/PR) snapshotted for an item during a run. The
+	-- (item_id, kind, ref) primary key makes re-snapshotting the same ref a no-op
+	-- upsert rather than a duplicate row.
+	CREATE TABLE IF NOT EXISTS item_git_refs (
+		item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+		kind TEXT NOT NULL,
+		ref TEXT NOT NULL,
+		title TEXT,
+		url TEXT,
+		state TEXT,
+		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+		PRIMARY KEY (item_id, kind, ref)
+	);
 `;
 
 /**

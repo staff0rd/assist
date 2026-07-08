@@ -16,6 +16,9 @@ export async function loadItem(
 ): Promise<BacklogItem | undefined> {
 	const [row] = await orm.select().from(items).where(eq(items.id, id));
 	if (!row) return undefined;
-	const rel = await loadRelations(orm, [id], { includeUsage: true });
+	const rel = await loadRelations(orm, [id], {
+		includeUsage: true,
+		includeGitRefs: true,
+	});
 	return rowToItem(row, rel);
 }

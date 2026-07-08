@@ -1,8 +1,11 @@
 import { execSync } from "node:child_process";
+import { recordSessionRefs } from "../shared/db/recordSessionRefs";
 import { loadConfig } from "../shared/loadConfig";
+import { resolveSessionItemId } from "../shared/resolveSessionItemId";
 import { shellQuote } from "../shared/shellQuote";
 import type { AssistConfig } from "../shared/types";
 import { warnIfUnexpectedBranch } from "../shared/warnIfUnexpectedBranch";
+import { collectCommitRefs } from "./commit/collectCommitRefs";
 import { validateMessage } from "./commit/validateMessage";
 
 function commitStaged(message: string): string {
@@ -18,11 +21,11 @@ function stageAndCommit(files: string[], message: string): string {
 	return commitStaged(message);
 }
 
-function execCommit(
+async function execCommit(
 	files: string[],
 	message: string,
 	config: AssistConfig,
-): void {
+): Promise<void> {
 	try {
 		warnIfUnexpectedBranch(config);
 		if (config.commit?.pull) {
@@ -35,13 +38,19 @@ function execCommit(
 			execSync("git push", { stdio: "inherit" });
 			console.log("Pushed to remote");
 		}
+		await recordCommitActivity(message);
 		process.exit(0);
 	} catch {
 		process.exit(1);
 	}
 }
 
-export function commit(args: string[]): void {
+async function recordCommitActivity(message: string): Promise<void> {
+	if (resolveSessionItemId() === null) return;
+	await recordSessionRefs(collectCommitRefs(message));
+}
+
+export async function commit(args: string[]): Promise<void> {
 	if (args[0] === "status") {
 		execSync("git status && echo '---DIFF---' && git diff", {
 			stdio: "inherit",
@@ -59,5 +68,5 @@ export function commit(args: string[]): void {
 	const config = loadConfig();
 
 	validateMessage(message, config);
-	execCommit(files, message, config);
+	await execCommit(files, message, config);
 }

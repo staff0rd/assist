@@ -27,27 +27,33 @@ beforeEach(() => {
 
 describe("raise", () => {
 	describe("when required sections are missing", () => {
-		it("rejects without title", () => {
-			expect(() => raise({ what: "w", why: "y" })).toThrow("process.exit");
+		it("rejects without title", async () => {
+			await expect(raise({ what: "w", why: "y" })).rejects.toThrow(
+				"process.exit",
+			);
 			expect(mockExecSync).not.toHaveBeenCalled();
 		});
 
-		it("rejects without what", () => {
-			expect(() => raise({ title: "t", why: "y" })).toThrow("process.exit");
+		it("rejects without what", async () => {
+			await expect(raise({ title: "t", why: "y" })).rejects.toThrow(
+				"process.exit",
+			);
 			expect(mockExecSync).not.toHaveBeenCalled();
 		});
 
-		it("rejects without why", () => {
-			expect(() => raise({ title: "t", what: "w" })).toThrow("process.exit");
+		it("rejects without why", async () => {
+			await expect(raise({ title: "t", what: "w" })).rejects.toThrow(
+				"process.exit",
+			);
 			expect(mockExecSync).not.toHaveBeenCalled();
 		});
 	});
 
 	describe("when the title references Claude", () => {
-		it("rejects without calling gh", () => {
-			expect(() =>
+		it("rejects without calling gh", async () => {
+			await expect(
 				raise({ title: "Built by Claude", what: "w", why: "y" }),
-			).toThrow("process.exit");
+			).rejects.toThrow("process.exit");
 			expect(mockExit).toHaveBeenCalledWith(1);
 			expect(mockExecSync).not.toHaveBeenCalled();
 		});
@@ -85,8 +91,8 @@ describe("raise", () => {
 			mockFindCurrentPrNumber.mockReturnValue(42);
 		});
 
-		it("errors without --force", () => {
-			expect(() => raise({ title: "t", what: "w", why: "y" })).toThrow(
+		it("errors without --force", async () => {
+			await expect(raise({ title: "t", what: "w", why: "y" })).rejects.toThrow(
 				"process.exit",
 			);
 			expect(mockExit).toHaveBeenCalledWith(1);
@@ -104,12 +110,12 @@ describe("raise", () => {
 	});
 
 	describe("when gh fails", () => {
-		it("exits with code 1", () => {
+		it("exits with code 1", async () => {
 			mockExecSync.mockImplementation(() => {
 				throw new Error("gh failed");
 			});
 
-			expect(() => raise({ title: "t", what: "w", why: "y" })).toThrow(
+			await expect(raise({ title: "t", what: "w", why: "y" })).rejects.toThrow(
 				"process.exit",
 			);
 			expect(mockExit).toHaveBeenCalledWith(1);

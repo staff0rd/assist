@@ -1,7 +1,10 @@
 import { execSync } from "node:child_process";
+import { recordSessionRefs } from "../../shared/db/recordSessionRefs";
+import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
 import { shellQuote } from "../../shared/shellQuote";
 import { buildCreateArgs, type CreateOptions } from "./buildCreateArgs";
 import { buildPrBody } from "./buildPrBody";
+import { readSessionPrRef } from "./readSessionPrRef";
 import { findCurrentPrNumber } from "./shared";
 import { validatePrContent } from "./validatePrContent";
 
@@ -13,7 +16,7 @@ type RaiseOptions = Omit<CreateOptions, "body"> & {
 	force?: boolean;
 };
 
-export function raise(options: RaiseOptions): void {
+export async function raise(options: RaiseOptions): Promise<void> {
 	if (!options.title || !options.what || !options.why) {
 		console.error(
 			"Usage: assist prs raise --title <title> --what <what> --why <why> [--how <how>] [--resolves <key>] [--force]",
@@ -53,4 +56,12 @@ export function raise(options: RaiseOptions): void {
 	} catch {
 		process.exit(1);
 	}
+
+	await recordPrActivity();
+}
+
+async function recordPrActivity(): Promise<void> {
+	if (resolveSessionItemId() === null) return;
+	const pr = readSessionPrRef();
+	if (pr) await recordSessionRefs([pr]);
 }

@@ -2,6 +2,7 @@ import { asc, inArray } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import {
 	comments,
+	itemGitRefs,
 	itemSubtasks,
 	links,
 	phaseUsage,
@@ -59,4 +60,11 @@ export const relationQueries = {
 			.from(phaseUsage)
 			.where(inArray(phaseUsage.itemId, ids))
 			.orderBy(asc(phaseUsage.itemId), asc(phaseUsage.phaseIdx)),
+
+	gitRefs: (orm: Db, ids: number[]) =>
+		orm
+			.select()
+			.from(itemGitRefs)
+			.where(inArray(itemGitRefs.itemId, ids))
+			.orderBy(asc(itemGitRefs.itemId), asc(itemGitRefs.createdAt)),
 };

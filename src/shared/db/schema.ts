@@ -7,6 +7,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { backups } from "./backups";
 import { handovers } from "./handovers";
+import { itemGitRefs } from "./itemGitRefs";
 import { items } from "./items";
 import { itemSubtasks } from "./itemSubtasks";
 import { phaseUsage } from "./phaseUsage";
@@ -14,6 +15,7 @@ import { usagePeaks } from "./usagePeaks";
 
 export { backups } from "./backups";
 export { handovers } from "./handovers";
+export { itemGitRefs } from "./itemGitRefs";
 export { items } from "./items";
 export { itemSubtasks } from "./itemSubtasks";
 export { phaseUsage } from "./phaseUsage";
@@ -98,6 +100,7 @@ export const schema = {
 	planPhases,
 	planTasks,
 	itemSubtasks,
+	itemGitRefs,
 	metadata,
 	feeds,
 	handovers,
@@ -113,3 +116,4 @@ export type PhaseRow = typeof planPhases.$inferSelect;
 export type TaskRow = typeof planTasks.$inferSelect;
 export type SubtaskRow = typeof itemSubtasks.$inferSelect;
 export type PhaseUsageRow = typeof phaseUsage.$inferSelect;
+export type GitRefRow = typeof itemGitRefs.$inferSelect;

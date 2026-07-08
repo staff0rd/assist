@@ -7,8 +7,8 @@ const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 const mockError = vi.spyOn(console, "error").mockImplementation(() => {});
 
 describe("branch", () => {
-	it("exits with a clear message when the slug looks like a backlog ID", () => {
-		expect(() => branch("fix-404-page", {})).toThrow("process.exit");
+	it("exits with a clear message when the slug looks like a backlog ID", async () => {
+		await expect(branch("fix-404-page", {})).rejects.toThrow("process.exit");
 		expect(mockExit).toHaveBeenCalledWith(1);
 		expect(mockError).toHaveBeenCalledWith(expect.stringContaining("backlog"));
 	});

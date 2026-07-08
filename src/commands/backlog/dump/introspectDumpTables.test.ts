@@ -30,6 +30,7 @@ describe("introspectDumpTables", () => {
 				"plan_phases",
 				"plan_tasks",
 				"item_subtasks",
+				"item_git_refs",
 				"metadata",
 				"feeds",
 				"handovers",

@@ -43,6 +43,16 @@ const backlogCommentSchema = z.strictObject({
 	type: backlogCommentTypeSchema,
 });
 
+const gitRefKindSchema = z.enum(["branch", "commit", "pr"]);
+
+const gitRefSchema = z.strictObject({
+	kind: gitRefKindSchema,
+	ref: z.string(),
+	title: z.string().optional(),
+	url: z.string().optional(),
+	state: z.string().optional(),
+});
+
 const backlogLinkTypeSchema = z.enum(["relates-to", "depends-on"]);
 
 const backlogLinkSchema = z.strictObject({
@@ -64,6 +74,7 @@ export const backlogItemSchema = z.strictObject({
 	subtasks: z.array(subtaskSchema).optional(),
 	links: z.array(backlogLinkSchema).optional(),
 	phaseUsage: z.array(phaseUsageSchema).optional(),
+	gitRefs: z.array(gitRefSchema).optional(),
 	origin: z.string().optional(),
 	jiraKey: z.string().optional(),
 });
@@ -89,3 +100,4 @@ export type BacklogComment = z.infer<typeof backlogCommentSchema>;
 export type Subtask = z.infer<typeof subtaskSchema>;
 export type SubtaskStatus = z.infer<typeof subtaskStatusSchema>;
 export type BacklogLinkType = z.infer<typeof backlogLinkTypeSchema>;
+export type GitRef = z.infer<typeof gitRefSchema>;

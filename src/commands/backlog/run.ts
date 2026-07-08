@@ -46,7 +46,9 @@ async function runPrepared(
 			const review = await runOnce(item, startPhase, plan, spawnOptions);
 			spawnOptions = withoutResumeSession(spawnOptions);
 			const outcome = await handleReviewResult(id, review);
-			if (outcome.kind === "stop") return outcome.success;
+			if (outcome.kind === "stop") {
+				return outcome.success;
+			}
 			startPhase = outcome.startPhase;
 			plan = outcome.plan;
 		}

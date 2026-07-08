@@ -35,6 +35,7 @@ export async function executePhase(
 	const claudeSessionId = resumeSessionId ?? randomUUID();
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
+	process.env.ASSIST_BACKLOG_ITEM_ID = String(item.id);
 	reportPhaseActivity(item, phaseNumber, totalPhases, phase, claudeSessionId);
 	const { child, done } = spawnClaude(
 		resumeSessionId
