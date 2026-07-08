@@ -1,28 +1,45 @@
+import Chip from "@mui/material/Chip";
 import { Link, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useJiraSite } from "./useJiraSite";
 
 const sx = { fontSize: "0.875rem" } as const;
+const chipSx = { height: 18, fontSize: "0.65rem" } as const;
 
-export function JiraKeyLink({ jiraKey }: { jiraKey?: string }) {
-	const [site, setSite] = useState<string | null>(null);
+type JiraKeyLinkProps = {
+	jiraKey?: string;
+	variant?: "link" | "chip";
+};
 
-	useEffect(() => {
-		let cancelled = false;
-		(async () => {
-			try {
-				const res = await fetch("/api/jira-site");
-				const body = await res.json();
-				if (!cancelled) setSite(body?.site ?? null);
-			} catch {
-				if (!cancelled) setSite(null);
-			}
-		})();
-		return () => {
-			cancelled = true;
-		};
-	}, []);
+export function JiraKeyLink({ jiraKey, variant = "link" }: JiraKeyLinkProps) {
+	const site = useJiraSite();
 
 	if (!jiraKey) return null;
+
+	if (variant === "chip") {
+		if (!site)
+			return (
+				<Chip
+					label={jiraKey}
+					size="small"
+					sx={chipSx}
+					clickable={false}
+					onClick={(e) => e.stopPropagation()}
+				/>
+			);
+		return (
+			<Chip
+				label={jiraKey}
+				size="small"
+				sx={chipSx}
+				clickable
+				component="a"
+				href={`https://${site}/browse/${jiraKey}`}
+				target="_blank"
+				rel="noopener"
+				onClick={(e) => e.stopPropagation()}
+			/>
+		);
+	}
 
 	if (!site) {
 		return (
