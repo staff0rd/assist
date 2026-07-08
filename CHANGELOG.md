@@ -1,3 +1,10 @@
+## [0.353.3](https://github.com/staff0rd/assist/compare/v0.353.2...v0.353.3) (2026-07-08)
+
+
+### Bug Fixes
+
+* theme-aware markdown link color ([9022490](https://github.com/staff0rd/assist/commit/902249008528c02d84bb022d18234eacc0c6d9ba))
+
 ## [0.353.2](https://github.com/staff0rd/assist/compare/v0.353.1...v0.353.2) (2026-07-07)
 
 
