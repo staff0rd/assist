@@ -26,6 +26,12 @@ vi.mock("./reloadPlan", () => ({
 
 vi.mock("./consumePause", () => ({
 	consumePause: vi.fn(() => false),
+	isPausePending: vi.fn(() => false),
+	clearPause: vi.fn(),
+}));
+
+vi.mock("../sessions/daemon/appendDaemonLog", () => ({
+	appendDaemonLog: vi.fn(),
 }));
 
 vi.mock("./acquireLock", () => ({
@@ -33,8 +39,9 @@ vi.mock("./acquireLock", () => ({
 	releaseLock: vi.fn(),
 }));
 
+import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { acquireLock, releaseLock } from "./acquireLock";
-import { consumePause } from "./consumePause";
+import { clearPause, consumePause, isPausePending } from "./consumePause";
 import { executePhase } from "./executePhase";
 import { prepareRun } from "./prepareRun";
 import { reloadPlan } from "./reloadPlan";
@@ -48,6 +55,9 @@ const mockSetStatus = setStatus as unknown as MockInstance;
 const mockAcquireLock = acquireLock as unknown as MockInstance;
 const mockReleaseLock = releaseLock as unknown as MockInstance;
 const mockConsumePause = consumePause as unknown as MockInstance;
+const mockIsPausePending = isPausePending as unknown as MockInstance;
+const mockClearPause = clearPause as unknown as MockInstance;
+const mockAppendDaemonLog = appendDaemonLog as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	return {
@@ -612,6 +622,87 @@ describe("run", () => {
 
 			expect(mockConsumePause).toHaveBeenCalledTimes(1);
 			expect(mockConsumePause).toHaveBeenCalledWith(1);
+		});
+	});
+
+	describe("stale pause file from an earlier run", () => {
+		it("discards a pre-existing pause file at run start so the run auto-advances", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockIsPausePending.mockReturnValueOnce(true);
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3);
+
+			await run("1");
+
+			expect(mockClearPause).toHaveBeenCalledWith(1);
+			expect(mockExecutePhase).toHaveBeenCalledTimes(3);
+		});
+
+		it("does not clear or log when no pause file is present", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockIsPausePending.mockReturnValue(false);
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3);
+
+			await run("1");
+
+			expect(mockClearPause).not.toHaveBeenCalled();
+			expect(mockAppendDaemonLog).not.toHaveBeenCalled();
+		});
+
+		it("records the discard in the daemon log", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockIsPausePending.mockReturnValueOnce(true);
+			mockExecutePhase
+				.mockResolvedValueOnce(1)
+				.mockResolvedValueOnce(2)
+				.mockResolvedValueOnce(3);
+
+			await run("1");
+
+			expect(mockAppendDaemonLog).toHaveBeenCalledTimes(1);
+			expect(String(mockAppendDaemonLog.mock.calls[0][0])).toContain(
+				"discarded stale pause file",
+			);
+		});
+	});
+
+	describe("pausing on a mid-run Continue-off toggle", () => {
+		it("records the pause in the daemon log", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockExecutePhase.mockResolvedValueOnce(1);
+			mockConsumePause.mockReturnValueOnce(true);
+
+			await run("1");
+
+			expect(mockAppendDaemonLog).toHaveBeenCalledTimes(1);
+			expect(String(mockAppendDaemonLog.mock.calls[0][0])).toContain(
+				"paused before phase",
+			);
 		});
 	});
 

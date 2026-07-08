@@ -3,7 +3,9 @@ import {
 	type SpawnClaudeOptions,
 	withoutResumeSession,
 } from "../../shared/spawnClaude";
+import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { acquireLock, releaseLock } from "./acquireLock";
+import { clearPause, isPausePending } from "./consumePause";
 import { handleReviewResult } from "./handleReviewResult";
 import { type PreparedRun, prepareRun } from "./prepareRun";
 import { runOnce } from "./runOnce";
@@ -17,8 +19,18 @@ export async function run(
 	if (!prepared) return false;
 
 	await setStatus(id, "in-progress");
+	discardStalePause(prepared.item.id);
 	logProgress(id, prepared);
 	return runPrepared(id, prepared, spawnOptions);
+}
+
+function discardStalePause(itemId: number): void {
+	if (!isPausePending(itemId)) return;
+	clearPause(itemId);
+	appendDaemonLog(
+		`backlog run ${itemId}: discarded stale pause file at run start; ` +
+			`this run starts auto-advancing (Continue on) regardless of a prior run's pause`,
+	);
 }
 
 async function runPrepared(

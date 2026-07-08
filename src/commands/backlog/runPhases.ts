@@ -2,6 +2,7 @@ import {
 	type SpawnClaudeOptions,
 	withoutResumeSession,
 } from "../../shared/spawnClaude";
+import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { consumePause } from "./consumePause";
 import { executePhase } from "./executePhase";
 import { reloadPlan } from "./reloadPlan";
@@ -35,7 +36,12 @@ export async function runPhases(
 		phaseOptions = withoutResumeSession(phaseOptions);
 		if (phaseIndex < 0) return { kind: "fail" };
 		// why: auto-advance off stops here; consumePause clears the one-shot request.
-		if (consumePause(item.id)) return { kind: "paused" };
+		if (consumePause(item.id)) {
+			appendDaemonLog(
+				`backlog run ${item.id}: paused before phase ${phaseIndex + 1} — consumed pending pause request (Continue turned off)`,
+			);
+			return { kind: "paused" };
+		}
 		// Re-resolve from the DB so phases added mid-run (e.g. appended to the end
 		// while the last phase is executing) extend the loop instead of being
 		// skipped in favour of the review phase.
