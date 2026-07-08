@@ -5,12 +5,13 @@ import { NavTabs } from "./NavTabs";
 import { OpenInCodeButton } from "./OpenInCodeButton";
 import { OpenInGitHubButton } from "./OpenInGitHubButton";
 import { RateLimitsIndicator } from "./RateLimitsIndicator";
+import { RefreshWebserverButton } from "./RefreshWebserverButton";
 import { RepoPicker } from "./RepoPicker";
 import { TopNavActions } from "./TopNavActions";
 import type { RepoSelection } from "./useRepoSelectionContext";
 import type { SessionSocket } from "./useSessionSocket";
 
-const toolbarSx = { minHeight: 48, pr: 14 } as const;
+const toolbarSx = { minHeight: 48, pl: 1, pr: 14 } as const;
 const pickerSx = { width: 240, ml: 2 } as const;
 
 export function AppToolbar({
@@ -21,7 +22,8 @@ export function AppToolbar({
 	selection: RepoSelection;
 }) {
 	return (
-		<Toolbar variant="dense" sx={toolbarSx}>
+		<Toolbar variant="dense" disableGutters sx={toolbarSx}>
+			<RefreshWebserverButton reconnecting={socket.reconnecting} />
 			<NavTabs />
 			<Box sx={pickerSx}>
 				<RepoPicker
