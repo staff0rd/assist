@@ -1,28 +1,17 @@
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import type { PrSummary } from "../prList";
-import { formatRelativeTime } from "./formatRelativeTime";
+import { prLaunchMeta } from "./prLaunchMeta";
+import { reviewButtonModes } from "./reviewButtonModes";
 import { useSessionLaunchContext } from "./useSessionLaunchContext";
-
-const MODES: { label: string; args: string[] }[] = [
-	{ label: "Review", args: ["review"] },
-	{ label: "Review (force re-run)", args: ["review", "--force"] },
-	{ label: "Review & refine", args: ["review", "--refine"] },
-	{ label: "Review & apply", args: ["review", "--apply"] },
-	{ label: "Review & post", args: ["review", "--no-prompt", "--submit"] },
-];
 
 export function ReviewButton({ cwd, pr }: { cwd: string; pr: PrSummary }) {
 	const { launchAssist } = useSessionLaunchContext();
-	const meta = {
-		title: pr.title,
-		subtitle: `#${pr.number} · ${pr.author} · ${formatRelativeTime(
-			pr.createdAt,
-		)}`,
-	};
+	const meta = prLaunchMeta(pr);
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
 
@@ -45,7 +34,7 @@ export function ReviewButton({ cwd, pr }: { cwd: string; pr: PrSummary }) {
 				onClose={() => setAnchorEl(null)}
 				onClick={(e) => e.stopPropagation()}
 			>
-				{MODES.map((mode) => (
+				{reviewButtonModes.map((mode) => (
 					<MenuItem
 						key={mode.label}
 						onClick={(e) => {
@@ -57,6 +46,16 @@ export function ReviewButton({ cwd, pr }: { cwd: string; pr: PrSummary }) {
 						{mode.label}
 					</MenuItem>
 				))}
+				<Divider />
+				<MenuItem
+					onClick={(e) => {
+						e.stopPropagation();
+						setAnchorEl(null);
+						launchAssist(["review-comments", String(pr.number)], cwd, meta);
+					}}
+				>
+					Address Comments
+				</MenuItem>
 			</Menu>
 		</>
 	);

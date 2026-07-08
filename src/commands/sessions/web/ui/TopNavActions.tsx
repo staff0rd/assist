@@ -1,9 +1,9 @@
 import Stack from "@mui/material/Stack";
 import type { AssistLaunchMeta } from "./createSessionAction";
 import { dispatchMode } from "./dispatchMode";
-import { formatRelativeTime } from "./formatRelativeTime";
 import { FreePromptDropdown } from "./FreePromptDropdown";
 import { ModeButtons } from "./ModeButtons";
+import { prLaunchMeta } from "./prLaunchMeta";
 import { ReviewDropdown } from "./ReviewDropdown";
 import { reviewModeArgs } from "./reviewModeArgs";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
@@ -42,12 +42,7 @@ export function TopNavActions({
 						onCreateAssist(
 							[...reviewModeArgs(mode), String(pr.number)],
 							selectedCwd,
-							{
-								title: pr.title,
-								subtitle: `#${pr.number} · ${pr.author} · ${formatRelativeTime(
-									pr.createdAt,
-								)}`,
-							},
+							prLaunchMeta(pr),
 						)
 					}
 				/>
