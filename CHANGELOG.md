@@ -1,3 +1,10 @@
+## [0.354.1](https://github.com/staff0rd/assist/compare/v0.354.0...v0.354.1) (2026-07-08)
+
+
+### Bug Fixes
+
+* log reason on pty exit to done ([296be44](https://github.com/staff0rd/assist/commit/296be44b7ef8cab8c388cef722ae1b695e7b8240))
+
 # [0.354.0](https://github.com/staff0rd/assist/compare/v0.353.3...v0.354.0) (2026-07-08)
 
 
