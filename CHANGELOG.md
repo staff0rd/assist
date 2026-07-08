@@ -1,3 +1,10 @@
+# [0.354.0](https://github.com/staff0rd/assist/compare/v0.353.3...v0.354.0) (2026-07-08)
+
+
+### Features
+
+* add Address Comments to card review menu ([541eb89](https://github.com/staff0rd/assist/commit/541eb899ea2eb342fc34ed468402f6c329df0402))
+
 ## [0.353.3](https://github.com/staff0rd/assist/compare/v0.353.2...v0.353.3) (2026-07-08)
 
 
