@@ -1,3 +1,10 @@
+# [0.357.0](https://github.com/staff0rd/assist/compare/v0.356.1...v0.357.0) (2026-07-08)
+
+
+### Features
+
+* attach git refs to backlog items ([ff04d86](https://github.com/staff0rd/assist/commit/ff04d86445a19bd57f90515f5a50711ef6a2de80))
+
 ## [0.356.1](https://github.com/staff0rd/assist/compare/v0.356.0...v0.356.1) (2026-07-08)
 
 
