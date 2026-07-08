@@ -1,3 +1,10 @@
+# [0.355.0](https://github.com/staff0rd/assist/compare/v0.354.3...v0.355.0) (2026-07-08)
+
+
+### Features
+
+* show Jira key on backlog items ([6718510](https://github.com/staff0rd/assist/commit/67185101545093526c82bb0fc76a0d7202696e43))
+
 ## [0.354.3](https://github.com/staff0rd/assist/compare/v0.354.2...v0.354.3) (2026-07-08)
 
 
