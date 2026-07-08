@@ -40,7 +40,7 @@ ai-generated: <model name, e.g., "claude-opus-4-5">
 
 ## One post per version
 
-Navigation is keyed by `version`, so **every version may appear in at most one devlog file**. Because `assist devlog next` reports the day's `major.minor` version, consecutive days that only shipped patch releases report the *same* version — these must not become separate posts.
+Navigation is keyed by `version`, so **every version may appear in at most one devlog file**. Because `assist devlog next` reports the day's `major.minor` version, consecutive days that only shipped patch releases report the _same_ version — these must not become separate posts.
 
 Before creating a file, check `~/git/blog/src/content/devlog/` for an existing entry whose `version` matches the one being written:
 
