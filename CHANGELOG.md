@@ -1,3 +1,10 @@
+## [0.354.2](https://github.com/staff0rd/assist/compare/v0.354.1...v0.354.2) (2026-07-08)
+
+
+### Bug Fixes
+
+* auto-run after non-zero draft exit ([05a2ba5](https://github.com/staff0rd/assist/commit/05a2ba5ea87cfbd43329d7d7097332ac7f262be3))
+
 ## [0.354.1](https://github.com/staff0rd/assist/compare/v0.354.0...v0.354.1) (2026-07-08)
 
 
