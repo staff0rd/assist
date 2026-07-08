@@ -1,7 +1,11 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { resolveSessionItemId } from "./resolveSessionItemId";
 
 const ENV = "ASSIST_BACKLOG_ITEM_ID";
+
+beforeEach(() => {
+	delete process.env[ENV];
+});
 
 afterEach(() => {
 	delete process.env[ENV];

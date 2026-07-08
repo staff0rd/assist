@@ -19,6 +19,7 @@ const mockCloseDb = closeDb as unknown as ReturnType<typeof vi.fn>;
 const ENV = "ASSIST_BACKLOG_ITEM_ID";
 
 beforeEach(() => {
+	delete process.env[ENV];
 	vi.clearAllMocks();
 	mockGetDb.mockResolvedValue({});
 });
