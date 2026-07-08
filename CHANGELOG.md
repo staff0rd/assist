@@ -1,3 +1,10 @@
+## [0.354.3](https://github.com/staff0rd/assist/compare/v0.354.2...v0.354.3) (2026-07-08)
+
+
+### Bug Fixes
+
+* discard stale pause file at run start ([2872cda](https://github.com/staff0rd/assist/commit/2872cda0e6d05c0289484c3e0e5ed42cb404404c))
+
 ## [0.354.2](https://github.com/staff0rd/assist/compare/v0.354.1...v0.354.2) (2026-07-08)
 
 
