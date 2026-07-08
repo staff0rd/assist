@@ -1,3 +1,10 @@
+# [0.356.0](https://github.com/staff0rd/assist/compare/v0.355.0...v0.356.0) (2026-07-08)
+
+
+### Features
+
+* top-nav web server refresh button ([ccc036d](https://github.com/staff0rd/assist/commit/ccc036d59116212e168bc95fa196d781039c368a))
+
 # [0.355.0](https://github.com/staff0rd/assist/compare/v0.354.3...v0.355.0) (2026-07-08)
 
 
