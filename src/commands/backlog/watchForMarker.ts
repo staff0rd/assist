@@ -6,17 +6,20 @@ import { getSignalPath } from "./writeSignal";
 export function watchForMarker(
 	child: ChildProcess,
 	options?: { actOnDone?: boolean },
-): void {
+): { killedOnMarker: () => boolean } {
+	let killed = false;
 	const statusPath = getSignalPath();
-	if (!statusPath) return;
+	if (!statusPath) return { killedOnMarker: () => killed };
 	watchFile(statusPath, { interval: 1000 }, () => {
 		if (!existsSync(statusPath)) return;
 		const signal = readSignal();
 		if (!signal) return;
 		if (signal.event === "done" && !options?.actOnDone) return;
 		unwatchFile(statusPath);
+		killed = true;
 		child.kill("SIGTERM");
 	});
+	return { killedOnMarker: () => killed };
 }
 
 export function stopWatching(): void {

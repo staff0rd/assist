@@ -82,6 +82,17 @@ describe("watchForMarker", () => {
 			expect(child.kill).toHaveBeenCalledWith("SIGTERM");
 			expect(mockUnwatchFile).toHaveBeenCalled();
 		});
+
+		it("reports that it triggered the kill", () => {
+			const child = makeChild();
+			mockReadSignal.mockReturnValue({ event: "done" });
+
+			const marker = watchForMarker(child, { actOnDone: true });
+			expect(marker.killedOnMarker()).toBe(false);
+			fireWatcher();
+
+			expect(marker.killedOnMarker()).toBe(true);
+		});
 	});
 
 	describe("when a next signal arrives in default mode", () => {

@@ -90,6 +90,7 @@ describe("launchMode", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockSpawnClaude.mockReturnValue({ child, done: Promise.resolve(0) });
+		mockWatchForMarker.mockReturnValue({ killedOnMarker: () => false });
 	});
 
 	it("forwards the description to the spawned slash command", async () => {
@@ -251,6 +252,20 @@ describe("launchMode", () => {
 			try {
 				await launchMode("bug", { once: true });
 				expect(process.exitCode).toBe(1);
+			} finally {
+				process.exitCode = original;
+			}
+		});
+	});
+
+	describe("when the watcher killed Claude after a done marker", () => {
+		it("treats the forced non-zero exit as success and does not propagate it", async () => {
+			mockSpawnClaude.mockReturnValue({ child, done: Promise.resolve(143) });
+			mockWatchForMarker.mockReturnValue({ killedOnMarker: () => true });
+			const original = process.exitCode;
+			try {
+				await launchMode("draft", { once: true });
+				expect(process.exitCode).toBe(original);
 			} finally {
 				process.exitCode = original;
 			}

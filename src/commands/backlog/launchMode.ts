@@ -48,12 +48,12 @@ export async function launchMode(
 			: buildSlashCommand(slashCommand, options?.description),
 		{ allowEdits: true, sessionId: claudeSessionId, resumeSessionId },
 	);
-	watchForMarker(child, { actOnDone: options?.once });
+	const marker = watchForMarker(child, { actOnDone: options?.once });
 	const exitCode = await awaitClaude(done, `/${slashCommand}`);
 	stopWatching();
 	if (exitCode === CLAUDE_SPAWN_FAILED) return;
 
 	await handleLaunchSignal(slashCommand, options?.once);
 
-	if (exitCode !== 0) process.exitCode = exitCode;
+	if (exitCode !== 0 && !marker.killedOnMarker()) process.exitCode = exitCode;
 }

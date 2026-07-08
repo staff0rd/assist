@@ -40,10 +40,16 @@ export function applyStatusChange(
 	daemonLog(`session ${session.id} status: ${session.status} -> ${status}`);
 	accumulateActiveTime(session);
 	setStatus(session, status);
-	if (shouldAutoRun(session, exitCode) && session.activity?.itemId != null) {
-		reuseForRun(session, session.activity.itemId);
+	const autoRun = shouldAutoRun(session);
+	if (autoRun.run) {
+		reuseForRun(session, autoRun.itemId);
 		notify();
 		return;
+	}
+	if (status === "done" && autoRun.reason != null) {
+		daemonLog(
+			`session ${session.id} auto-run enabled but skipped (exit ${exitCode ?? "none"}): ${autoRun.reason}`,
+		);
 	}
 	if (shouldAutoDismiss(session, exitCode)) dismiss(session.id);
 	else notify();
