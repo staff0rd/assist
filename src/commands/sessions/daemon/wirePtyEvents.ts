@@ -50,7 +50,15 @@ export function wirePtyEvents(
 			daemonLog(
 				`could not resume restored session "${session.name}" (id ${session.id}): ${session.error}`,
 			);
+			onStatusChange(session, "error", exitCode);
+			return;
 		}
-		onStatusChange(session, failedResume ? "error" : "done", exitCode);
+		const priorStatus = session.status;
+		const unexpected = priorStatus === "waiting" || exitCode !== 0;
+		daemonLog(
+			`session ${session.id} ("${session.name}") pty exited with code ${exitCode} from status "${priorStatus}" ` +
+				`(${session.scrollback.length} bytes of output) — ${unexpected ? "unexpected exit, process died mid-session" : "expected completion"}; marking done`,
+		);
+		onStatusChange(session, "done", exitCode);
 	});
 }

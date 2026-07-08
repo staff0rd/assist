@@ -85,23 +85,48 @@ describe("wirePtyEvents exit handling", () => {
 		);
 	});
 
-	it("treats a clean exit as done without logging", () => {
+	it("logs a clean exit from running as an expected completion", () => {
 		const { pty, exit } = fakePty();
-		const session = fakeSession({ pty, restored: true });
+		const session = fakeSession({ pty, restored: true, status: "running" });
 		const onStatusChange = vi.fn();
 
 		wirePtyEvents(session, new Set<SessionClient>(), onStatusChange);
 		exit(0);
 
 		expect(onStatusChange).toHaveBeenCalledWith(session, "done", 0);
-		expect(daemonLogMock).not.toHaveBeenCalled();
+		expect(daemonLogMock).toHaveBeenCalledWith(
+			expect.stringContaining("exited with code 0"),
+		);
+		expect(daemonLogMock).toHaveBeenCalledWith(
+			expect.stringContaining("expected completion"),
+		);
 	});
 
-	it("treats a non-zero exit with prior output as done, not an error", () => {
+	it("logs an exit from waiting as an unexpected mid-session death with its exit code", () => {
+		const { pty, exit } = fakePty();
+		const session = fakeSession({
+			pty,
+			status: "waiting",
+			scrollback: "prior conversation",
+		});
+		const onStatusChange = vi.fn();
+
+		wirePtyEvents(session, new Set<SessionClient>(), onStatusChange);
+		exit(0);
+
+		expect(onStatusChange).toHaveBeenCalledWith(session, "done", 0);
+		const line = daemonLogMock.mock.calls.at(-1)?.[0] as string;
+		expect(line).toContain("exited with code 0");
+		expect(line).toContain('from status "waiting"');
+		expect(line).toContain("unexpected exit");
+	});
+
+	it("logs a non-zero exit with prior output as an unexpected done, not an error", () => {
 		const { pty, exit } = fakePty();
 		const session = fakeSession({
 			pty,
 			restored: true,
+			status: "running",
 			scrollback: "some output",
 		});
 		const onStatusChange = vi.fn();
@@ -110,6 +135,8 @@ describe("wirePtyEvents exit handling", () => {
 		exit(1);
 
 		expect(onStatusChange).toHaveBeenCalledWith(session, "done", 1);
-		expect(daemonLogMock).not.toHaveBeenCalled();
+		const line = daemonLogMock.mock.calls.at(-1)?.[0] as string;
+		expect(line).toContain("exited with code 1");
+		expect(line).toContain("unexpected exit");
 	});
 });
