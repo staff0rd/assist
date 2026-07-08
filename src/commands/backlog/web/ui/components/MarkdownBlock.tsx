@@ -1,7 +1,12 @@
 import { Box } from "@mui/material";
 import { marked } from "marked";
 
-const markdownSx = { lineHeight: 1.7, "& p": { mt: 0 } } as const;
+const markdownSx = {
+	lineHeight: 1.7,
+	"& p": { mt: 0 },
+	"& a": { color: "primary.main", textDecoration: "underline" },
+	"& a:hover": { color: "primary.light" },
+} as const;
 
 export function MarkdownBlock({ content }: { content: string }) {
 	return (
