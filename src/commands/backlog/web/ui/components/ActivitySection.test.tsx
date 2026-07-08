@@ -54,6 +54,25 @@ describe("ActivitySection", () => {
 		expect(screen.getByText("#9")).toBeTruthy();
 	});
 
+	it("shows a timestamp on commits but not on branches or PRs", () => {
+		const createdAt = "2026-07-08T09:34:00.000Z";
+		const refs: GitRef[] = [
+			{ kind: "branch", ref: "feature", createdAt },
+			{ kind: "commit", ref: "abcdef1234", createdAt },
+		];
+
+		render(<ActivitySection gitRefs={refs} />);
+
+		const expected = new Date(createdAt).toLocaleDateString(undefined, {
+			year: "numeric",
+			month: "short",
+			day: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+		expect(screen.getAllByText(expected)).toHaveLength(1);
+	});
+
 	it("orders refs newest-first and caps commits with an overflow indicator", () => {
 		const commits: GitRef[] = Array.from({ length: 13 }, (_, i) => ({
 			kind: "commit",

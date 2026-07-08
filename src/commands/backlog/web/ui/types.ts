@@ -43,6 +43,7 @@ export type GitRef = {
 	title?: string;
 	url?: string;
 	state?: string;
+	createdAt?: string;
 };
 
 export type BacklogItem = {

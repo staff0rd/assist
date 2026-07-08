@@ -10,6 +10,7 @@ function rowToGitRef(r: GitRefRow): GitRef {
 	if (r.title != null) ref.title = r.title;
 	if (r.url != null) ref.url = r.url;
 	if (r.state != null) ref.state = r.state;
+	if (r.createdAt != null) ref.createdAt = new Date(r.createdAt).toISOString();
 	return ref;
 }
 

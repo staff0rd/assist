@@ -51,6 +51,7 @@ const gitRefSchema = z.strictObject({
 	title: z.string().optional(),
 	url: z.string().optional(),
 	state: z.string().optional(),
+	createdAt: z.string().optional(),
 });
 
 const backlogLinkTypeSchema = z.enum(["relates-to", "depends-on"]);

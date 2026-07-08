@@ -1,6 +1,8 @@
 import { Box, Link, Stack, Typography } from "@mui/material";
 import { groupActivityRefs } from "../../../groupActivityRefs";
 import type { GitRef } from "../types";
+import { refLabel } from "./refLabel";
+import { CommitTimestamp } from "./CommitTimestamp";
 
 const headingSx = {
 	color: "text.secondary",
@@ -15,38 +17,29 @@ const kindSx = {
 	fontFamily: "monospace",
 } as const;
 
-function refLabel(ref: GitRef): string {
-	if (ref.kind === "commit") {
-		const subject = ref.title ? ` ${ref.title}` : "";
-		return `${ref.ref.slice(0, 8)}${subject}`;
-	}
-	if (ref.kind === "pr") {
-		const title = ref.title ? ` ${ref.title}` : "";
-		const state = ref.state ? ` (${ref.state.toLowerCase()})` : "";
-		return `#${ref.ref}${title}${state}`;
-	}
-	return ref.ref;
+function RefText({ gitRef }: { gitRef: GitRef }) {
+	const label = refLabel(gitRef);
+	if (!gitRef.url) return <>{label}</>;
+	return (
+		<Link
+			href={gitRef.url}
+			target="_blank"
+			rel="noopener"
+			onClick={(e) => e.stopPropagation()}
+		>
+			{label}
+		</Link>
+	);
 }
 
 function RefRow({ gitRef }: { gitRef: GitRef }) {
-	const label = refLabel(gitRef);
 	return (
 		<Typography variant="body2">
 			<Box component="span" sx={kindSx}>
 				{gitRef.kind}
 			</Box>
-			{gitRef.url ? (
-				<Link
-					href={gitRef.url}
-					target="_blank"
-					rel="noopener"
-					onClick={(e) => e.stopPropagation()}
-				>
-					{label}
-				</Link>
-			) : (
-				label
-			)}
+			<RefText gitRef={gitRef} />
+			<CommitTimestamp gitRef={gitRef} />
 		</Typography>
 	);
 }
