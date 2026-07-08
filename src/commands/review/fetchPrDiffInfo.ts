@@ -19,34 +19,33 @@ export function fetchPrDiffInfo(): PrDiffInfo {
 	const { org, repo } = getRepoInfo();
 	const branch = getCurrentBranch();
 	const fields = "number,baseRefName,baseRefOid,headRefName,headRefOid";
-	let raw: string;
-	try {
-		raw = execSync(`gh pr view ${branch} --json ${fields} -R ${org}/${repo}`, {
+	const raw = execSync(
+		`gh pr list --state open --head ${branch} --json ${fields} -R ${org}/${repo}`,
+		{
 			encoding: "utf8",
 			stdio: ["ignore", "pipe", "pipe"],
-		});
-	} catch (error) {
-		if (error instanceof Error && error.message.includes("no pull requests")) {
-			console.error(
-				`Error: No open pull request found for branch \`${branch}\`. Open a PR for this branch before running \`assist review\`.`,
-			);
-			process.exit(1);
-		}
-		throw error;
-	}
+		},
+	);
 	const parsed = JSON.parse(raw) as {
 		number: number;
 		baseRefName: string;
 		baseRefOid: string;
 		headRefName: string;
 		headRefOid: string;
-	};
+	}[];
+	const pr = parsed[0];
+	if (!pr) {
+		console.error(
+			`Error: No open pull request found for branch \`${branch}\`. Open a PR for this branch before running \`assist review\`.`,
+		);
+		process.exit(1);
+	}
 	return {
-		prNumber: parsed.number,
-		baseRef: parsed.baseRefName,
-		baseSha: parsed.baseRefOid,
-		headRef: parsed.headRefName,
-		headSha: parsed.headRefOid,
+		prNumber: pr.number,
+		baseRef: pr.baseRefName,
+		baseSha: pr.baseRefOid,
+		headRef: pr.headRefName,
+		headSha: pr.headRefOid,
 	};
 }
 

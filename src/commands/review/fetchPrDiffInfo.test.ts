@@ -6,7 +6,7 @@ vi.mock("node:child_process", () => ({
 	execSync: (...args: unknown[]) => mockExecSync(...args),
 }));
 
-import { fetchPrChangedFiles } from "./fetchPrDiffInfo";
+import { fetchPrChangedFiles, fetchPrDiffInfo } from "./fetchPrDiffInfo";
 
 type ExecCall = (cmd: string) => string;
 
@@ -27,6 +27,58 @@ function setupExec(handler: ExecCall): void {
 
 beforeEach(() => {
 	vi.clearAllMocks();
+});
+
+describe("fetchPrDiffInfo", () => {
+	it("resolves the open PR for the branch via gh pr list", () => {
+		setupExec((cmd) => {
+			if (cmd.includes("git rev-parse --abbrev-ref HEAD")) return "my-branch";
+			if (cmd.includes("gh pr list")) {
+				return JSON.stringify([
+					{
+						number: 131,
+						baseRefName: "main",
+						baseRefOid: "base-sha",
+						headRefName: "my-branch",
+						headRefOid: "head-sha",
+					},
+				]);
+			}
+			return undefined as unknown as string;
+		});
+
+		expect(fetchPrDiffInfo()).toEqual({
+			prNumber: 131,
+			baseRef: "main",
+			baseSha: "base-sha",
+			headRef: "my-branch",
+			headSha: "head-sha",
+		});
+
+		const listCall = mockExecSync.mock.calls
+			.map((call) => call[0] as string)
+			.find((cmd) => cmd.includes("gh pr list"));
+		expect(listCall).toContain("--state open");
+		expect(listCall).toContain("--head my-branch");
+	});
+
+	it("exits when the branch has no open PR", () => {
+		setupExec((cmd) => {
+			if (cmd.includes("git rev-parse --abbrev-ref HEAD")) return "my-branch";
+			if (cmd.includes("gh pr list")) return "[]";
+			return undefined as unknown as string;
+		});
+		const exit = vi.spyOn(process, "exit").mockImplementation((() => {
+			throw new Error("exit");
+		}) as never);
+		const err = vi.spyOn(console, "error").mockImplementation(() => {});
+
+		expect(() => fetchPrDiffInfo()).toThrow("exit");
+		expect(exit).toHaveBeenCalledWith(1);
+
+		exit.mockRestore();
+		err.mockRestore();
+	});
 });
 
 describe("fetchPrChangedFiles", () => {
