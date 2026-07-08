@@ -79,7 +79,7 @@ export type BacklogItem = z.infer<typeof backlogItemSchema>;
  */
 export type BacklogItemSummary = Pick<
 	BacklogItem,
-	"id" | "type" | "name" | "status" | "origin" | "starred"
+	"id" | "type" | "name" | "status" | "origin" | "starred" | "jiraKey"
 >;
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;

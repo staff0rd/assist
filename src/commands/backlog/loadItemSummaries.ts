@@ -22,6 +22,7 @@ export async function loadItemSummaries(
 			name: items.name,
 			status: items.status,
 			starred: items.starred,
+			jiraKey: items.jiraKey,
 		})
 		.from(items)
 		.where(origin === undefined ? undefined : eq(items.origin, origin))
@@ -33,5 +34,6 @@ export async function loadItemSummaries(
 		name: row.name,
 		status: row.status as BacklogStatus,
 		starred: row.starred,
+		jiraKey: row.jiraKey ?? undefined,
 	}));
 }

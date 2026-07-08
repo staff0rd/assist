@@ -11,6 +11,7 @@ import { getHtml } from "./getHtml";
 import { getReviewSynthesis } from "./getReviewSynthesis";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
+import { jiraSite } from "./jiraSite";
 import { listNewsItems } from "./listNewsItems";
 import { listUsageHistory } from "./listUsageHistory";
 import { openInCode } from "./openInCode";
@@ -36,6 +37,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/restart": restartWeb,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,
+	"GET /api/jira-site": jiraSite,
 	"GET /api/pr-status": prStatus,
 	"GET /api/pr-list": prList,
 	"GET /api/news/items": listNewsItems,

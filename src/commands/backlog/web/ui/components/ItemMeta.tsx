@@ -1,5 +1,6 @@
 import { Chip, Stack, Typography } from "@mui/material";
 import type { BacklogItem } from "../types";
+import { JiraKeyLink } from "./JiraKeyLink";
 import { StatusPicker } from "./StatusPicker";
 import { typeChipColors } from "./typeChipColors";
 
@@ -32,6 +33,7 @@ export function ItemMeta({
 				<Chip label={item.type} size="small" color={color} sx={chipSx} />
 			)}
 			<StatusPicker current={item.status} onStatusChange={onStatusChange} />
+			<JiraKeyLink jiraKey={item.jiraKey} />
 		</Stack>
 	);
 }

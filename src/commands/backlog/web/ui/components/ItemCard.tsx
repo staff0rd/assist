@@ -4,6 +4,7 @@ import type { BacklogItemSummary } from "../types";
 import { canPlay } from "./canPlay";
 import { InProgressChip } from "./InProgressChip";
 import { itemCardStyles } from "./itemCardStyles";
+import { JiraKeyLink } from "./JiraKeyLink";
 import { mostRecentOpenSession } from "./mostRecentOpenSession";
 import { PlayAction } from "./PlayAction";
 import { StarAction } from "./StarAction";
@@ -24,6 +25,7 @@ function CardSummary({ item }: { item: BacklogItemSummary }) {
 				#{item.id}
 			</Typography>
 			<Typography sx={itemCardStyles.name}>{item.name}</Typography>
+			{item.jiraKey && <JiraKeyLink jiraKey={item.jiraKey} />}
 		</>
 	);
 }

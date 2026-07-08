@@ -44,6 +44,7 @@ export type BacklogItem = {
 	plan?: PlanPhase[];
 	currentPhase?: number;
 	status: BacklogStatus;
+	jiraKey?: string;
 	comments?: BacklogComment[];
 	subtasks?: Subtask[];
 	phaseUsage?: PhaseUsage[];
@@ -56,4 +57,5 @@ export type BacklogItemSummary = {
 	name: string;
 	status: BacklogStatus;
 	starred: boolean;
+	jiraKey?: string;
 };
