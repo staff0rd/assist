@@ -7,7 +7,10 @@ export function registerSubtaskCommands(cmd: Command): void {
 		.command("add-subtask <id>")
 		.description("Add a sub-task to an existing backlog item")
 		.requiredOption("--title <title>", "Sub-task title")
-		.option("--desc <description>", "Sub-task description")
+		.option(
+			"--desc <description>",
+			String.raw`Sub-task description (Markdown supported; use \n for line breaks)`,
+		)
 		.action(backlogAddSubtask);
 
 	cmd

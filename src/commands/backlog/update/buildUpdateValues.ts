@@ -39,7 +39,7 @@ export function buildUpdateValues(options: UpdateOptions) {
 		fieldNames.push("name");
 	}
 	if (desc) {
-		set.description = desc;
+		set.description = desc.replaceAll(String.raw`\n`, "\n");
 		fieldNames.push("description");
 	}
 	if (type) {

@@ -28,7 +28,10 @@ export function registerItemCommands(cmd: Command): void {
 		.description("Add a new backlog item")
 		.option("--name <name>", "Item name")
 		.option("--type <type>", "Item type (story or bug)")
-		.option("--desc <description>", "Item description")
+		.option(
+			"--desc <description>",
+			String.raw`Item description (Markdown supported; use \n for line breaks)`,
+		)
 		.option("--ac <criterion...>", "Acceptance criteria (repeatable)")
 		.action(backlogAdd);
 

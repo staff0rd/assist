@@ -20,6 +20,7 @@ export async function addSubtask(
 	}
 
 	const { orm, item } = found;
-	await insertSubtask(orm, item.id, title, options.desc);
+	const description = options.desc?.replaceAll(String.raw`\n`, "\n");
+	await insertSubtask(orm, item.id, title, description);
 	console.log(chalk.green(`Added sub-task to item #${id}: ${title}`));
 }

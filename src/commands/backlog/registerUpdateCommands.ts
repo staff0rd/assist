@@ -13,7 +13,10 @@ export function registerUpdateCommands(cmd: Command): void {
 		.command("update-field <id>")
 		.description("Update fields on a backlog item")
 		.option("--name <name>", "New item name")
-		.option("--desc <description>", "New description")
+		.option(
+			"--desc <description>",
+			String.raw`New description (Markdown supported; use \n for line breaks)`,
+		)
 		.option("--type <type>", "New type (story or bug)")
 		.option("--ac <criterion...>", "Replace acceptance criteria (repeatable)")
 		.option(
