@@ -13,6 +13,16 @@ export async function addSubtask(
 		return;
 	}
 
+	if (title.length > 50) {
+		console.log(
+			chalk.red(
+				"A sub-task title must be 50 characters or fewer. Use --desc for longer detail.",
+			),
+		);
+		process.exitCode = 1;
+		return;
+	}
+
 	const found = await findOneItem(id);
 	if (!found) {
 		process.exitCode = 1;
