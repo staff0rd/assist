@@ -47,8 +47,8 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 	return (
 		<>
 			<Header />
-			<RepoSummaryChips />
 			<SearchInput value={query} onChange={setQuery} />
+			<RepoSummaryChips />
 			<ListBody
 				loading={loading || searching}
 				query={query}
