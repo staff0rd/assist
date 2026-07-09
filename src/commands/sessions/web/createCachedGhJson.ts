@@ -10,7 +10,9 @@ export function createCachedGhJson<T>(
 	args: string[],
 	parse: (stdout: string) => T,
 	fallback: T,
+	options: { cacheFallback?: boolean } = {},
 ): (cwd: string, extraArgs?: string[]) => Promise<T> {
+	const { cacheFallback = true } = options;
 	const cache = new Map<string, { value: T; expires: number }>();
 
 	return async (cwd: string, extraArgs: string[] = []): Promise<T> => {
@@ -28,7 +30,8 @@ export function createCachedGhJson<T>(
 		} catch {
 			value = fallback;
 		}
-		cache.set(key, { value, expires: now + CACHE_TTL_MS });
+		if (cacheFallback || value !== fallback)
+			cache.set(key, { value, expires: now + CACHE_TTL_MS });
 		return value;
 	};
 }

@@ -25,7 +25,7 @@ export function CardHeaderActions({
 	const { status } = session;
 	const target = backlogTarget(session);
 	const canStar = sessionStarTarget(session) !== undefined;
-	const pr = usePrStatus(session.cwd, reviewTargetPr(session));
+	const pr = usePrStatus(session.cwd, reviewTargetPr(session), status);
 	return (
 		<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 			{areChipsLoading(session, loading) ? (

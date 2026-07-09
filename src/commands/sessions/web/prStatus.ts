@@ -34,6 +34,7 @@ const getPrByNumber = createCachedGhJson<PrSummary | null>(
 	["pr", "view", "--json", prFields],
 	(stdout) => toPrSummary(JSON.parse(stdout) as GhPr),
 	null,
+	{ cacheFallback: false },
 );
 
 const getOpenPrForBranch = createCachedGhJson<PrSummary | null>(
@@ -44,6 +45,7 @@ const getOpenPrForBranch = createCachedGhJson<PrSummary | null>(
 		return toPrSummary(parsed[0]);
 	},
 	null,
+	{ cacheFallback: false },
 );
 
 async function getCurrentBranch(cwd: string): Promise<string | undefined> {

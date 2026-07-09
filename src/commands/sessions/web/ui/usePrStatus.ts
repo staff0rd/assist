@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import type { PrSummary } from "../prList";
+import type { SessionStatus } from "./types";
 
 export function usePrStatus(
 	cwd: string | undefined,
-	prNumber?: number,
+	prNumber: number | undefined,
+	status: SessionStatus,
 ): PrSummary | null {
 	const [pr, setPr] = useState<PrSummary | null>(null);
 
@@ -26,7 +28,7 @@ export function usePrStatus(
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, prNumber]);
+	}, [cwd, prNumber, status]);
 
 	return pr;
 }
