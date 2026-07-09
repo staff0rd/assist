@@ -1,3 +1,10 @@
+## [0.362.1](https://github.com/staff0rd/assist/compare/v0.362.0...v0.362.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* show PR buttons on card after prs raise ([b2ac59d](https://github.com/staff0rd/assist/commit/b2ac59df7c366d3c152f94034c96cd31a0ceffa1))
+
 # [0.362.0](https://github.com/staff0rd/assist/compare/v0.361.0...v0.362.0) (2026-07-09)
 
 
