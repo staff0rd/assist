@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { show as backlogShow, web as backlogWeb } from "./backlog";
+import { registerActivityCommands } from "./backlog/registerActivityCommands";
 import { registerAssociateJiraCommand } from "./backlog/registerAssociateJiraCommand";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerExportCommand } from "./backlog/registerExportCommand";
@@ -54,6 +55,7 @@ const registrars = [
 	registerImportCommand,
 	registerMoveRepoCommand,
 	registerAssociateJiraCommand,
+	registerActivityCommands,
 ];
 
 export function registerBacklog(program: Command): void {
