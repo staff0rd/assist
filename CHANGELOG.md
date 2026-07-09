@@ -1,3 +1,12 @@
+# [0.364.0](https://github.com/staff0rd/assist/compare/v0.363.0...v0.364.0) (2026-07-09)
+
+
+### Features
+
+* auto-branch PR-required stories ([a7bc5c5](https://github.com/staff0rd/assist/commit/a7bc5c57ddd82273edae0bd71fd87f8a829e8bd0))
+* markdown newlines in backlog --desc ([494f8cf](https://github.com/staff0rd/assist/commit/494f8cf99130b6f5343f32fa4779a0abb918fd86))
+* show current branch in status line ([55b5eb1](https://github.com/staff0rd/assist/commit/55b5eb1fca619810806836cf0f449972c7c5b768))
+
 # [0.363.0](https://github.com/staff0rd/assist/compare/v0.362.1...v0.363.0) (2026-07-09)
 
 
