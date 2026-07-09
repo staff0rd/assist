@@ -46,7 +46,7 @@ Note: `--ac` replaces all acceptance criteria, so include the full list (both ex
 
 Descriptions render as markdown in both the terminal (`assist backlog show`) and the web UI, so author them as structured markdown — short paragraphs, `##` headings for longer descriptions, and bullet lists rather than one run-on prose paragraph. Pass the value as real markdown with line breaks preserved (use `printf` or a quoted heredoc so `\n` becomes actual newlines, not literal `\n` characters).
 
-**To modify a plan phase** (phase is 0-indexed):
+**To modify a plan phase** (phase is 1-based — the first phase is `1`, matching `assist backlog show`):
 
 ```
 assist backlog update-phase <id> <phase> --name "New phase name"
