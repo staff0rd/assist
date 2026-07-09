@@ -41,7 +41,6 @@ After installation, the `assist` command will be available globally. You can als
 ## Claude Commands
 
 - `/add-command` - Add a new run command to assist.yml
-- `/associate-jira <KEY> [id]` - Associate a Jira ticket with the backlog item this session is working on (or an explicit id) by calling `assist backlog associate-jira`
 - `/branch <description> [--jira KEY]` - Create a branch off the fresh remote default via `assist branch`, deriving a kebab-case slug from the description and auto-filling the Jira key from the session's backlog item when one is associated
 - `/bug` - File a bug with reproduction steps, expected and actual behavior
 - `/comment` - Add pending review comments to the current PR
@@ -58,8 +57,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/refine` - Refine an existing backlog item through conversation
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-comments` - Process PR review comments one by one
-- `/jira` - View a Jira work item
-- `/update-jira [JIRA-KEY]` - Post a concise summary of this session's findings to a Jira ticket via MCP; attaches a passed key to the session's backlog item (else reads the key from it), retargets sub-task comments to the parent, and previews the comment before posting on confirmation
+- `/jira [action] [KEY] [args]` - Dispatch Jira actions. `view` (default for a bare key) fetches and displays the issue; `associate <KEY> [id]` associates a ticket with a backlog item via `assist backlog associate-jira`; `update [KEY]` posts a concise session-summary comment via MCP (attaches a passed key to the session item first, else reads the key from it; retargets sub-task comments to the parent; previews before posting); `started [KEY]` assigns it to the current Atlassian user and transitions it to In Progress; `done [KEY]` transitions it to Done with no assignment change; `help` (or bare `/jira`) lists the actions. A `[KEY]` is optional for every action — when omitted it resolves from the session's current backlog item; started/done act on the exact issue with no parent retargeting
 - `/journal` - Append a journal entry summarising recent work, decisions, and notable observations
 - `/next [id]` - Signal completion and chain into the next backlog item; pass an `id` to run a specific item directly (falls back to the picker if the id is missing, done, won't-do, or blocked)
 - `/standup` - Summarise recent journal entries as a standup update
