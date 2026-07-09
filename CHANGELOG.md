@@ -1,3 +1,10 @@
+## [0.370.1](https://github.com/staff0rd/assist/compare/v0.370.0...v0.370.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* correct phase index note in refine doc ([d7fdb86](https://github.com/staff0rd/assist/commit/d7fdb86f52723fdadb764119ac0d8f56d9da4c09))
+
 # [0.370.0](https://github.com/staff0rd/assist/compare/v0.369.0...v0.370.0) (2026-07-09)
 
 
