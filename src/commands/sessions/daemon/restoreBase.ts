@@ -10,5 +10,6 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		scrollback: "",
 		cwd: persisted.cwd,
 		assistArgs: persisted.assistArgs,
+		initialPrompt: persisted.initialPrompt,
 	};
 }

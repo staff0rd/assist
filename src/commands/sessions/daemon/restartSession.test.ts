@@ -89,11 +89,33 @@ describe("restartSession", () => {
 		killSpy.mockRestore();
 	});
 
-	it("does not restart a claude session without a conversation id", () => {
-		const session = makeSession({ claudeSessionId: undefined });
+	it("does not restart a claude session without a conversation id or prompt", () => {
+		const session = makeSession({
+			claudeSessionId: undefined,
+			initialPrompt: undefined,
+		});
 
 		expect(restartSession(session, new Set(), vi.fn())).toBe(false);
 		expect(spawnClaudeMock).not.toHaveBeenCalled();
+	});
+
+	it("restarts a claude session fresh from its prompt when no conversation id is known", () => {
+		const session = makeSession({
+			claudeSessionId: undefined,
+			initialPrompt: "do the thing",
+			cwd: "/home/user/repo",
+		});
+
+		expect(restartSession(session, new Set(), vi.fn())).toBe(true);
+
+		expect(spawnClaudeMock).toHaveBeenCalledWith({
+			prompt: "do the thing",
+			cwd: "/home/user/repo",
+			sessionId: "1",
+			claudeSessionId: expect.any(String),
+		});
+		expect(session.claudeSessionId).toEqual(expect.any(String));
+		expect(session.status).toBe("running");
 	});
 
 	it("resumes a running assist session via the wrapper with --resume-session", () => {

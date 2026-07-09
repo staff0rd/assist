@@ -28,6 +28,7 @@ export type Session = {
 	assistArgs?: string[];
 	cwd?: string;
 	claudeSessionId?: string;
+	initialPrompt?: string;
 	restored?: boolean;
 	error?: string;
 	activity?: Activity;

@@ -39,6 +39,7 @@ export function createSession(
 		pty: spawnClaude({ prompt, cwd, sessionId: id, claudeSessionId }),
 		cwd,
 		claudeSessionId,
+		initialPrompt: prompt,
 	};
 }
 
