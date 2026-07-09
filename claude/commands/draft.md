@@ -28,10 +28,21 @@ Once you have enough context, propose a complete backlog item. Show it to the us
 
 **Name:** (concise title)
 **Type:** story or bug
-**Description:** 1-3 sentences
+**Description:** (structured markdown — see below)
 **Acceptance Criteria:**
 
 - (specific, testable criteria)
+
+### Writing the description
+
+Descriptions render as markdown in both the terminal (`assist backlog show`) and the web UI, so author them as structured markdown — never a single run-on prose paragraph:
+
+- Use short paragraphs (1-3 sentences each), separated by blank lines.
+- Use `##` headings to break longer descriptions into sections (e.g. Background, Goal, Notes).
+- Use bullet lists for enumerations and `-`/`1.` lists where they read more clearly than prose.
+- Use **bold**, `inline code`, and other inline markdown for emphasis and identifiers.
+
+Keep it scannable. A short item can be a couple of tight paragraphs; a larger one should use headings and lists.
 
 **Plan:**
 
@@ -81,8 +92,10 @@ Once confirmed, create the item and its phases via CLI commands.
 First, add the item and capture the id it prints:
 
 ```
-assist backlog add --name "Item name" --type story --desc "Description text" --ac "criterion 1" --ac "criterion 2" 2>&1
+assist backlog add --name "Item name" --type story --desc "$(printf '## Background\n\nShort paragraph.\n\n## Goal\n\n- Bullet one\n- Bullet two')" --ac "criterion 1" --ac "criterion 2" 2>&1
 ```
+
+Pass the description as real markdown with line breaks preserved (use `printf` or a quoted heredoc so `\n` becomes actual newlines, not the literal `\n` characters).
 
 Note the created item id from the output — you'll pass it to the done signal below.
 

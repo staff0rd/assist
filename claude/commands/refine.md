@@ -37,12 +37,14 @@ Based on the user's input, apply changes using the appropriate commands. Always 
 
 ```
 assist backlog update-field <id> --name "New name"
-assist backlog update-field <id> --desc "New description"
+assist backlog update-field <id> --desc "$(printf '## Section\n\nShort paragraph.\n\n- Bullet one\n- Bullet two')"
 assist backlog update-field <id> --type story
 assist backlog update-field <id> --ac "criterion 1" --ac "criterion 2"
 ```
 
 Note: `--ac` replaces all acceptance criteria, so include the full list (both existing and new).
+
+Descriptions render as markdown in both the terminal (`assist backlog show`) and the web UI, so author them as structured markdown — short paragraphs, `##` headings for longer descriptions, and bullet lists rather than one run-on prose paragraph. Pass the value as real markdown with line breaks preserved (use `printf` or a quoted heredoc so `\n` becomes actual newlines, not literal `\n` characters).
 
 **To modify a plan phase** (phase is 0-indexed):
 

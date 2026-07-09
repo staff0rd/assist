@@ -62,7 +62,7 @@
 	},
 	"overrides": [
 		{
-			"files": ["**/*.test.ts", "**/*.test.tsx"],
+			"files": ["**/*.test.ts", "**/*.test.tsx", "**/*.d.ts"],
 			"rules": {
 				"local/filename-convention": "off"
 			}

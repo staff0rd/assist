@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { formatComment } from "../formatComment";
+import { renderMarkdownTerminal } from "../../../shared/renderMarkdownTerminal";
 import { findOneItem } from "../shared";
 import type { BacklogItem } from "../types";
 import { printActivity } from "./printActivity";
@@ -47,7 +48,7 @@ export async function show(id: string): Promise<void> {
 
 	if (item.description) {
 		console.log(chalk.bold("Description"));
-		console.log(item.description);
+		console.log(renderMarkdownTerminal(item.description));
 		console.log();
 	}
 

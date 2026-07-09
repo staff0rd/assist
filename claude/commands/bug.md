@@ -38,6 +38,21 @@ Show the user the bug report:
 
 Do NOT generate a plan — the implementer will determine how to fix it.
 
+### Writing the description
+
+The description renders as markdown in both the terminal (`assist backlog show`) and the web UI, so author it as structured markdown — never a single run-on prose paragraph. Use bold section labels or `##` headings, a numbered list for the repro steps, and short paragraphs for Expected/Actual:
+
+```markdown
+**Repro:**
+
+1. Step one
+2. Step two
+
+**Expected:** what should happen.
+
+**Actual:** what happens instead.
+```
+
 ## Step 4: Iterate
 
 Ask the user if they want to change anything. Iterate until they confirm.
@@ -47,8 +62,10 @@ Ask the user if they want to change anything. Iterate until they confirm.
 Once confirmed, add the item via CLI and capture the id it prints:
 
 ```
-assist backlog add --name "Bug title" --type bug --desc "**Repro:**\n1. ...\n\n**Expected:** ...\n\n**Actual:** ..." --ac "criterion 1" --ac "criterion 2" 2>&1
+assist backlog add --name "Bug title" --type bug --desc "$(printf '**Repro:**\n\n1. ...\n2. ...\n\n**Expected:** ...\n\n**Actual:** ...')" --ac "criterion 1" --ac "criterion 2" 2>&1
 ```
+
+Pass the description as real markdown with line breaks preserved (use `printf` or a quoted heredoc so the `\n` sequences become actual newlines, not literal `\n` characters).
 
 Note the created item id from the output — you'll pass it to the done signal below.
 

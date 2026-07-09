@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import type { Subtask, SubtaskStatus } from "../types";
+import { MarkdownBlock } from "./MarkdownBlock";
 import { SubtaskStatusPicker } from "./SubtaskStatusPicker";
 
 export function SubtaskRow({
@@ -27,9 +28,15 @@ export function SubtaskRow({
 					{subtask.title}
 				</Typography>
 				{subtask.description && (
-					<Typography variant="caption" color="text.secondary">
-						{subtask.description}
-					</Typography>
+					<Box
+						sx={{
+							mt: 0.5,
+							fontSize: "0.8125rem",
+							color: done ? "text.disabled" : "text.secondary",
+						}}
+					>
+						<MarkdownBlock content={subtask.description} />
+					</Box>
 				)}
 			</Box>
 			<SubtaskStatusPicker
