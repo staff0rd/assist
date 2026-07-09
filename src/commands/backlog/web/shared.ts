@@ -9,6 +9,7 @@ import { updateStatus } from "../updateStatus";
 import { applyCwdFromReq } from "./applyCwdFromReq";
 import { loadVisibleItems } from "./loadVisibleItems";
 import { parseStarBody, parseStatusBody } from "./parseStatusBody";
+import { withReviewPhase } from "./withReviewPhase";
 
 export async function listItems(
 	req: IncomingMessage,
@@ -35,7 +36,7 @@ export async function getItemById(
 	id: number,
 ): Promise<void> {
 	const result = await findItemOr404(res, id);
-	if (result) respondJson(res, 200, result.item);
+	if (result) respondJson(res, 200, withReviewPhase(result.item));
 }
 
 export async function deleteItem(
