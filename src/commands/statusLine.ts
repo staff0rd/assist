@@ -49,7 +49,8 @@ export async function statusLine(): Promise<void> {
 
 	const dir = data.workspace?.current_dir ?? data.cwd;
 	const branch = dir ? readGitBranch(windowsCwdToWslPath(dir)) : null;
-	const branchSegment = branch ? `🌿 ${chalk.cyan(branch)} | ` : "";
+	// 🌿️ needs trailing U+FE0F for stable width
+	const branchSegment = branch ? `🌿️ ${chalk.cyan(branch)} | ` : "";
 
 	console.log(
 		`${branchSegment}${model} | Tokens - ${formatNumber(totalOut)} ↑ : ${formatNumber(totalIn)} ↓ | Context - ${colorizePercent(usedPct)}${buildLimitsSegment(data.rate_limits)}`,
