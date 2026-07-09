@@ -1,3 +1,15 @@
+# [0.366.0](https://github.com/staff0rd/assist/compare/v0.365.0...v0.366.0) (2026-07-09)
+
+
+### Bug Fixes
+
+* herb emoji in status line branch ([dda9432](https://github.com/staff0rd/assist/commit/dda9432ccd478b16c33adacedccc3c505e65e26b))
+
+
+### Features
+
+* edit and remove backlog sub-tasks ([4b5aa3f](https://github.com/staff0rd/assist/commit/4b5aa3ffbb405cccc21fa312c6ad649900ad2e19))
+
 # [0.365.0](https://github.com/staff0rd/assist/compare/v0.364.0...v0.365.0) (2026-07-09)
 
 
