@@ -1,3 +1,10 @@
+## [0.367.2](https://github.com/staff0rd/assist/compare/v0.367.1...v0.367.2) (2026-07-09)
+
+
+### Bug Fixes
+
+* search input above repo chips ([acedf87](https://github.com/staff0rd/assist/commit/acedf87bbb49f9ab41317d4ba5792944a1811e51))
+
 ## [0.367.1](https://github.com/staff0rd/assist/compare/v0.367.0...v0.367.1) (2026-07-09)
 
 
