@@ -26,8 +26,17 @@ export type SessionInfo = {
 	autoAdvance?: boolean;
 };
 
+export type CardHeaderProps = {
+	session: SessionInfo;
+	loading: boolean;
+	onRetry?: () => void;
+	onRestart?: () => void;
+	onDismiss: () => void;
+};
+
 export type SessionListHandlers = {
 	onRetry: (id: string) => void;
+	onRestart: (id: string) => void;
 	onDismiss: (id: string) => void;
 	onSetAutoRun: (id: string, enabled: boolean) => void;
 	onSetAutoAdvance: (id: string, enabled: boolean) => void;

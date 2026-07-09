@@ -6,25 +6,22 @@ import { CardChips } from "./CardChips";
 import { CompleteButton } from "./CompleteButton";
 import { DismissButton } from "./DismissButton";
 import { OpenPrButton } from "./OpenPrButton";
+import { RestartButton } from "./RestartButton";
 import { ReviewButton } from "./ReviewButton";
 import { RetryButton } from "./RetryButton";
 import { reviewTargetPr } from "./reviewTargetPr";
 import { SessionStarButton } from "./SessionStarButton";
 import { sessionStarTarget } from "./sessionStarTarget";
-import type { SessionInfo } from "./types";
+import type { CardHeaderProps } from "./types";
 import { usePrStatus } from "./usePrStatus";
 
 export function CardHeaderActions({
 	session,
 	loading,
 	onRetry,
+	onRestart,
 	onDismiss,
-}: {
-	session: SessionInfo;
-	loading: boolean;
-	onRetry?: () => void;
-	onDismiss: () => void;
-}) {
+}: CardHeaderProps) {
 	const { status } = session;
 	const target = backlogTarget(session);
 	const canStar = sessionStarTarget(session) !== undefined;
@@ -39,6 +36,7 @@ export function CardHeaderActions({
 			<Box sx={{ flex: 1 }} />
 			{pr && session.cwd && <OpenPrButton pr={pr} />}
 			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}
+			{onRestart && <RestartButton onRestart={onRestart} />}
 			{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
 			{canStar && <SessionStarButton session={session} />}
 			{target && (

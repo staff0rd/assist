@@ -10,6 +10,7 @@ export function SessionGroups({
 	initialized,
 	onSelect,
 	onRetry,
+	onRestart,
 	onDismiss,
 	onSetAutoRun,
 	onSetAutoAdvance,
@@ -27,6 +28,7 @@ export function SessionGroups({
 			initialized={initialized}
 			onSelect={onSelect}
 			onRetry={onRetry}
+			onRestart={onRestart}
 			onDismiss={onDismiss}
 			onSetAutoRun={onSetAutoRun}
 			onSetAutoAdvance={onSetAutoAdvance}

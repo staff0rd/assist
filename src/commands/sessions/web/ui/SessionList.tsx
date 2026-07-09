@@ -12,6 +12,7 @@ export function SessionList({
 	initialized,
 	onSelect,
 	onRetry,
+	onRestart,
 	onDismiss,
 	onSetAutoRun,
 	onSetAutoAdvance,
@@ -32,6 +33,7 @@ export function SessionList({
 				initialized={initialized}
 				onSelect={onSelect}
 				onRetry={onRetry}
+				onRestart={onRestart}
 				onDismiss={onDismiss}
 				onSetAutoRun={onSetAutoRun}
 				onSetAutoAdvance={onSetAutoAdvance}

@@ -33,6 +33,16 @@ export function retrySessionAction(send: SendFn, buffers: Map<string, string>) {
 	};
 }
 
+export function restartSessionAction(
+	send: SendFn,
+	buffers: Map<string, string>,
+) {
+	return (id: string) => {
+		buffers.delete(id);
+		send({ type: "restart", sessionId: id });
+	};
+}
+
 export function dismissSessionAction(
 	send: SendFn,
 	buffers: Map<string, string>,

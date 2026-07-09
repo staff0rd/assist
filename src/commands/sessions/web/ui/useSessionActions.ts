@@ -6,6 +6,7 @@ import {
 	inputAction,
 	outputAction,
 	resizeAction,
+	restartSessionAction,
 	resumeSessionAction,
 	retrySessionAction,
 	setAutoAdvanceAction,
@@ -42,6 +43,13 @@ export function useSessionActions(
 		[send, buffers],
 	);
 
+	const restartSession = useCallback(
+		(id: string) => {
+			restartSessionAction(send, buffers.current)(id);
+		},
+		[send, buffers],
+	);
+
 	const dismissSession = useCallback(
 		(id: string) => {
 			dismissSessionAction(send, buffers.current, handlers.current)(id);
@@ -49,5 +57,5 @@ export function useSessionActions(
 		[send, buffers, handlers],
 	);
 
-	return { ...actions, onOutput, retrySession, dismissSession };
+	return { ...actions, onOutput, retrySession, restartSession, dismissSession };
 }

@@ -58,6 +58,7 @@ export function AppSidebar({ socket, tab, onTabChange }: Props) {
 			onView={handleView}
 			onResume={handleResume}
 			onRetry={socket.retrySession}
+			onRestart={socket.restartSession}
 			onDismiss={socket.dismissSession}
 			onSetAutoRun={socket.setAutoRun}
 			onSetAutoAdvance={socket.setAutoAdvance}

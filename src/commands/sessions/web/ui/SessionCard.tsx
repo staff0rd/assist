@@ -10,6 +10,7 @@ export function SessionCard({
 	loading,
 	onClick,
 	onRetry,
+	onRestart,
 	onDismiss,
 	onSetAutoRun,
 	onSetAutoAdvance,
@@ -19,6 +20,7 @@ export function SessionCard({
 	loading: boolean;
 	onClick: () => void;
 	onRetry?: () => void;
+	onRestart?: () => void;
 	onDismiss: () => void;
 	onSetAutoRun: (enabled: boolean) => void;
 	onSetAutoAdvance: (enabled: boolean) => void;
@@ -29,6 +31,7 @@ export function SessionCard({
 				session={session}
 				loading={loading}
 				onRetry={onRetry}
+				onRestart={onRestart}
 				onDismiss={onDismiss}
 			/>
 			<CardBody

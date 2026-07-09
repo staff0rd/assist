@@ -20,6 +20,7 @@ import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import { recordSessionUsage } from "./recordSessionUsage";
+import { restartSession } from "./restartSession";
 import { restoreAll } from "./restoreAll";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
@@ -127,6 +128,12 @@ export class SessionManager {
 	retrySession(id: string): void {
 		const s = this.sessions.get(id);
 		if (s && retrySession(s, this.clients, this.onStatusChange)) this.notify();
+	}
+
+	restart(id: string): void {
+		const s = this.sessions.get(id);
+		if (s && restartSession(s, this.clients, this.onStatusChange))
+			this.notify();
 	}
 
 	dismissSession = (id: string): void => {

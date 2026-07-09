@@ -2,19 +2,15 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { CardHeaderActions } from "./CardHeaderActions";
 import { sessionTitle } from "./sessionTitle";
-import type { SessionInfo } from "./types";
+import type { CardHeaderProps } from "./types";
 
 export function CardHeader({
 	session,
 	loading,
 	onRetry,
+	onRestart,
 	onDismiss,
-}: {
-	session: SessionInfo;
-	loading: boolean;
-	onRetry?: () => void;
-	onDismiss: () => void;
-}) {
+}: CardHeaderProps) {
 	const { activity, status } = session;
 	const phaseName =
 		activity?.kind === "backlog" && status !== "done"
@@ -27,6 +23,7 @@ export function CardHeader({
 				session={session}
 				loading={loading}
 				onRetry={onRetry}
+				onRestart={onRestart}
 				onDismiss={onDismiss}
 			/>
 			<Typography

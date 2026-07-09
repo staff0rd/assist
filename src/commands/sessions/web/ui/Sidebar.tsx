@@ -47,6 +47,7 @@ export function Sidebar(props: SidebarProps) {
 					initialized={props.initialized}
 					onSelect={props.onSelect}
 					onRetry={props.onRetry}
+					onRestart={props.onRestart}
 					onDismiss={props.onDismiss}
 					onSetAutoRun={props.onSetAutoRun}
 					onSetAutoAdvance={props.onSetAutoAdvance}

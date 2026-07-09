@@ -9,6 +9,7 @@ export function SessionListCard({
 	initialized,
 	onSelect,
 	onRetry,
+	onRestart,
 	onDismiss,
 	onSetAutoRun,
 	onSetAutoAdvance,
@@ -18,9 +19,8 @@ export function SessionListCard({
 	initialized: Set<string>;
 	onSelect: (id: string) => void;
 } & SessionListHandlers) {
-	const retryable =
-		(session.commandType === "run" || session.commandType === "assist") &&
-		session.status === "done";
+	const retryable = session.commandType === "run" && session.status === "done";
+	const restartable = session.commandType !== "run";
 
 	return (
 		<SessionCard
@@ -29,6 +29,7 @@ export function SessionListCard({
 			loading={isSessionStarting(session, initialized)}
 			onClick={() => onSelect(session.id)}
 			onRetry={retryable ? () => onRetry(session.id) : undefined}
+			onRestart={restartable ? () => onRestart(session.id) : undefined}
 			onDismiss={() => onDismiss(session.id)}
 			onSetAutoRun={(enabled) => onSetAutoRun(session.id, enabled)}
 			onSetAutoAdvance={(enabled) => onSetAutoAdvance(session.id, enabled)}

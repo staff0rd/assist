@@ -1,10 +1,9 @@
-import type { PersistedSession } from "./loadPersistedSessions";
-
-export function assistResumeArgs(
-	persisted: PersistedSession & { assistArgs: string[] },
-): string[] {
-	const args = ["assist", ...persisted.assistArgs];
-	return persisted.claudeSessionId
-		? [...args, "--resume-session", persisted.claudeSessionId]
+export function assistResumeArgs(session: {
+	assistArgs: string[];
+	claudeSessionId?: string;
+}): string[] {
+	const args = ["assist", ...session.assistArgs];
+	return session.claudeSessionId
+		? [...args, "--resume-session", session.claudeSessionId]
 		: args;
 }
