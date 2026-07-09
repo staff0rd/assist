@@ -1,3 +1,10 @@
+# [0.361.0](https://github.com/staff0rd/assist/compare/v0.360.1...v0.361.0) (2026-07-09)
+
+
+### Features
+
+* restart from persisted prompt ([fb674f8](https://github.com/staff0rd/assist/commit/fb674f8d3a5012db01643408527e59dd327a2135))
+
 ## [0.360.1](https://github.com/staff0rd/assist/compare/v0.360.0...v0.360.1) (2026-07-09)
 
 
