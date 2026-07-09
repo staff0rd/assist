@@ -1,3 +1,10 @@
+# [0.369.0](https://github.com/staff0rd/assist/compare/v0.368.0...v0.369.0) (2026-07-09)
+
+
+### Features
+
+* rewind to Review phase from web ([13d36ac](https://github.com/staff0rd/assist/commit/13d36ac009b2b511bfcd812fae77ae79ed94661b))
+
 # [0.368.0](https://github.com/staff0rd/assist/compare/v0.367.2...v0.368.0) (2026-07-09)
 
 
