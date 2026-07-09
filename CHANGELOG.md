@@ -1,3 +1,10 @@
+# [0.371.0](https://github.com/staff0rd/assist/compare/v0.370.1...v0.371.0) (2026-07-09)
+
+
+### Features
+
+* gate comments in #-comment files ([03ddbf6](https://github.com/staff0rd/assist/commit/03ddbf69f1054c851e97e0a8d8818bd24aed0794)), closes [#-comment](https://github.com/staff0rd/assist/issues/-comment)
+
 ## [0.370.1](https://github.com/staff0rd/assist/compare/v0.370.0...v0.370.1) (2026-07-09)
 
 
