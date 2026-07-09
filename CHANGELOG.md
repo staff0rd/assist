@@ -1,3 +1,10 @@
+# [0.363.0](https://github.com/staff0rd/assist/compare/v0.362.1...v0.363.0) (2026-07-09)
+
+
+### Features
+
+* search backlog items by Jira key ([72200ca](https://github.com/staff0rd/assist/commit/72200ca11cc35c54582b329edfe25950c52fe6d8))
+
 ## [0.362.1](https://github.com/staff0rd/assist/compare/v0.362.0...v0.362.1) (2026-07-09)
 
 
