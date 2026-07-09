@@ -1,3 +1,10 @@
+## [0.367.1](https://github.com/staff0rd/assist/compare/v0.367.0...v0.367.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* stable width for status line branch emoji ([a503b9b](https://github.com/staff0rd/assist/commit/a503b9b451a9efb0f6e82edac65892e7b354ed71))
+
 # [0.367.0](https://github.com/staff0rd/assist/compare/v0.366.0...v0.367.0) (2026-07-09)
 
 
