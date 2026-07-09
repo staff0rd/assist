@@ -72,4 +72,22 @@ describe("codeCommentConfirm", () => {
 
 		expect(writtenContent()).toContain("  // guards the edge case");
 	});
+
+	it("inserts a # comment for a Dockerfile pin", () => {
+		primePin("Dockerfile", 2, "pins the base image digest");
+
+		codeCommentConfirm("123");
+
+		expect(writtenContent()).toContain("# pins the base image digest");
+	});
+
+	it("inserts a # comment for a below-header .sh pin", () => {
+		primePin("deploy.sh", 2, "retry accounts for eventual consistency");
+
+		codeCommentConfirm("123");
+
+		expect(writtenContent()).toContain(
+			"# retry accounts for eventual consistency",
+		);
+	});
 });

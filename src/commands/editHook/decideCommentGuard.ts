@@ -1,6 +1,7 @@
-import { isYamlFile } from "../../shared/isYamlFile";
+import { isHashCommentFile, isShellFile } from "../../shared/isHashCommentFile";
 import { type EditHookInput } from "./decideOverrideGuard";
 import { extractComments, isSourceFile } from "./extractComments";
+import { extractShellComments } from "./extractShellComments";
 import { extractYamlComments } from "./extractYamlComments";
 import { introducedComments } from "./introducedComments";
 
@@ -54,14 +55,18 @@ export function decideCommentGuard(
 	existingContent?: string,
 ): string | undefined {
 	const filePath = input.tool_input.file_path;
-	const yaml = isYamlFile(filePath);
-	if (!isSourceFile(filePath) && !yaml) return undefined;
+	const hash = isHashCommentFile(filePath);
+	if (!isSourceFile(filePath) && !hash) return undefined;
 
-	const extract = yaml ? extractYamlComments : extractComments;
+	const extract = hash
+		? isShellFile(filePath)
+			? extractShellComments
+			: extractYamlComments
+		: extractComments;
 	const { added, removed } = partitionStrings(input, existingContent);
 	const introduced = introducedComments(
 		added.flatMap(extract),
 		removed.flatMap(extract),
 	);
-	return introduced.length > 0 ? denyReason(yaml ? "#" : "//") : undefined;
+	return introduced.length > 0 ? denyReason(hash ? "#" : "//") : undefined;
 }

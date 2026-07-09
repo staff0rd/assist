@@ -1,18 +1,32 @@
 import fs from "node:fs";
 import type { Project } from "ts-morph";
+import {
+	isDockerfile,
+	isEnvFile,
+	isShellFile,
+} from "../../../shared/isHashCommentFile";
 import { isYamlFile } from "../../../shared/isYamlFile";
-import { collectComments } from "./collectComments";
+import type { CommentFinding } from "./types";
+import { collectHashComments } from "./collectHashComments";
+import { collectSourceFindings } from "./collectSourceFindings";
 import { collectYamlComments } from "./collectYamlComments";
 import { isCommentExempt } from "./isCommentExempt";
 
-export type CommentFinding = {
-	file: string;
-	line: number;
-	text: string;
-};
+export type { CommentFinding } from "./types";
 
-function toSingleLine(text: string): string {
-	return text.replace(/\s+/g, " ").trim();
+function toFindings(
+	file: string,
+	lines: Set<number>,
+	raw: { line: number; text: string }[],
+	exempt: boolean,
+): CommentFinding[] {
+	const findings: CommentFinding[] = [];
+	for (const { line, text } of raw) {
+		if (!lines.has(line)) continue;
+		if (exempt && isCommentExempt(text)) continue;
+		findings.push({ file, line, text: text.replace(/\s+/g, " ").trim() });
+	}
+	return findings;
 }
 
 export function collectFileComments(
@@ -20,24 +34,18 @@ export function collectFileComments(
 	lines: Set<number>,
 	project: Project,
 ): CommentFinding[] {
-	const findings: CommentFinding[] = [];
+	const read = () => fs.readFileSync(file, "utf8");
 
-	if (isYamlFile(file)) {
-		for (const { line, text } of collectYamlComments(
-			fs.readFileSync(file, "utf8"),
-		)) {
-			if (lines.has(line))
-				findings.push({ file, line, text: toSingleLine(text) });
-		}
-		return findings;
-	}
+	if (isYamlFile(file))
+		return toFindings(file, lines, collectYamlComments(read()), false);
 
-	const sourceFile = project.addSourceFileAtPath(file);
-	for (const { pos, text } of collectComments(sourceFile)) {
-		const { line } = sourceFile.getLineAndColumnAtPos(pos);
-		if (!lines.has(line)) continue;
-		if (isCommentExempt(text)) continue;
-		findings.push({ file, line, text: toSingleLine(text) });
-	}
-	return findings;
+	if (isDockerfile(file) || isEnvFile(file) || isShellFile(file))
+		return toFindings(
+			file,
+			lines,
+			collectHashComments(read(), { skipHeader: isShellFile(file) }),
+			true,
+		);
+
+	return collectSourceFindings(file, lines, project);
 }

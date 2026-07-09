@@ -199,7 +199,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist cli-hook deny add <pattern> <message>` - Add a deny rule for a command pattern
 - `assist cli-hook deny remove <pattern>` - Remove a deny rule by pattern
 - `assist edit-hook` - PreToolUse hook that blocks `Edit`/`Write`/`MultiEdit` calls from adding, changing, or removing a `// assist-maintainability-override` marker, or from introducing a code comment (use `code-comment set`/`confirm` for the rare comment that belongs)
-- `assist code-comment set <file> <line> <text>` - Validate a single-line comment (max 50 chars; no block comments for `.ts`/`.js`) and issue a pin authorising its insertion; inserts `#` for `.yml`/`.yaml` files and `//` otherwise
+- `assist code-comment set <file> <line> <text>` - Validate a single-line comment (max 50 chars; no block comments for `.ts`/`.js`) and issue a pin authorising its insertion; inserts `#` for `#`-comment files (`.yml`/`.yaml`, Dockerfile, `*.env`, `*.sh`) and `//` otherwise
 - `assist code-comment confirm <pin>` - Insert the pinned comment at its file/line and clear the pin state
 - `assist update` - Update assist to the latest version and sync commands
 - `assist vscode init` - Add VS Code configuration files

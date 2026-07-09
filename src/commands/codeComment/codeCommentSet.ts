@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { isYamlFile } from "../../shared/isYamlFile";
+import { isHashCommentFile } from "../../shared/isHashCommentFile";
 import { validateCommentText } from "./validateCommentText";
 import { issuePin } from "./issuePin";
 
@@ -11,8 +11,9 @@ export function codeCommentSet(file: string, line: string, text: string): void {
 		return;
 	}
 
-	const marker = isYamlFile(file) ? "#" : "//";
-	const validation = validateCommentText(text, isYamlFile(file));
+	const hash = isHashCommentFile(file);
+	const marker = hash ? "#" : "//";
+	const validation = validateCommentText(text, hash);
 	if (!validation.ok) {
 		console.error(chalk.red(`Refused: ${validation.reason}`));
 		console.error(chalk.red("No pin issued."));

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
-import { isYamlFile } from "../../shared/isYamlFile";
+import { isHashCommentFile } from "../../shared/isHashCommentFile";
 import { getPinStatePath } from "./getRestrictedDir";
 import { sweepRestrictedDir } from "./sweepRestrictedDir";
 import { readPinState } from "./readPinState";
@@ -33,7 +33,7 @@ export function codeCommentConfirm(pin: string): void {
 		return;
 	}
 
-	const marker = isYamlFile(state.file) ? "#" : "//";
+	const marker = isHashCommentFile(state.file) ? "#" : "//";
 	const indentSource = lines[index] ?? "";
 	const indent = indentSource.match(/^\s*/)?.[0] ?? "";
 	lines.splice(index, 0, `${indent}${marker} ${state.text}`);

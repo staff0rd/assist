@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import fs from "node:fs";
 import { minimatch } from "minimatch";
 import { Project } from "ts-morph";
+import { isHashCommentFile } from "../../../shared/isHashCommentFile";
 import {
 	type CommentFinding,
 	collectFileComments,
@@ -24,7 +25,11 @@ const SCANNED_EXTENSIONS = [
 ];
 
 function shouldScan(file: string, ignoreGlobs: string[]): boolean {
-	if (!SCANNED_EXTENSIONS.some((ext) => file.endsWith(ext))) return false;
+	if (
+		!SCANNED_EXTENSIONS.some((ext) => file.endsWith(ext)) &&
+		!isHashCommentFile(file)
+	)
+		return false;
 	if (ignoreGlobs.some((glob) => minimatch(file, glob))) return false;
 	return fs.existsSync(file);
 }

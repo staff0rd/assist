@@ -21,7 +21,9 @@ Write self-documenting code. Do not add comments that restate what the code alre
 
 ## Step 2: Enumerate tracked source files
 
-List git-tracked source files with `git ls-files`. Restrict to source files (e.g. `.ts`, `.tsx`, `.js`, `.jsx`, `.cs`, `.py`, `.go`, `.rs`, `.java`, `.kt`, `.rb`, `.c`, `.h`, `.cpp`, `.css`, `.scss`, `.sh`). Skip generated output, lockfiles, vendored dependencies, and markdown/docs.
+List git-tracked source files with `git ls-files`. Restrict to source files (e.g. `.ts`, `.tsx`, `.js`, `.jsx`, `.cs`, `.py`, `.go`, `.rs`, `.java`, `.kt`, `.rb`, `.c`, `.h`, `.cpp`, `.css`, `.scss`), plus `#`-comment config and script files: `Dockerfile` (and variants `Dockerfile.*` / `*.dockerfile`), `*.env`, and `*.sh`. Skip generated output, lockfiles, vendored dependencies, and markdown/docs.
+
+For `*.sh` files, leave the leading header block untouched — the contiguous run of shebang, blank, and `#` lines from the top of the file, ending at the first line of code. Only strip violating `#` comments that appear **after** that header block. Dockerfile and `*.env` files have no such allowance; treat every `#` comment as in-scope.
 
 ## Step 3: Remove violating comments
 

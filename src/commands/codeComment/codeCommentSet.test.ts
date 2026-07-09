@@ -80,6 +80,18 @@ describe("codeCommentSet", () => {
 		expect(errors).toContain("Could not deliver");
 	});
 
+	it("describes a # marker insertion for a Dockerfile", () => {
+		codeCommentSet("Dockerfile", "3", "pins the base image digest");
+
+		expect(stdout()).toContain('insert "# pins the base image digest"');
+	});
+
+	it("describes a # marker insertion for a .sh file", () => {
+		codeCommentSet("deploy.sh", "8", "retry for eventual consistency");
+
+		expect(stdout()).toContain('insert "# retry for eventual consistency"');
+	});
+
 	it("does not issue a pin or notify when the comment text is invalid", () => {
 		codeCommentSet("src/foo.ts", "10", "/* not allowed */");
 

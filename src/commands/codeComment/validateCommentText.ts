@@ -10,9 +10,9 @@ type CommentValidation =
  */
 export function validateCommentText(
 	raw: string,
-	isYaml = false,
+	isHash = false,
 ): CommentValidation {
-	const text = isYaml ? raw.replace(/^#\s?/, "") : raw.replace(/^\/\/\s?/, "");
+	const text = isHash ? raw.replace(/^#\s?/, "") : raw.replace(/^\/\/\s?/, "");
 
 	if (/[\r\n]/.test(text)) {
 		return {
@@ -22,7 +22,7 @@ export function validateCommentText(
 		};
 	}
 
-	if (!isYaml && (text.includes("/*") || text.includes("*/"))) {
+	if (!isHash && (text.includes("/*") || text.includes("*/"))) {
 		return {
 			ok: false,
 			reason:

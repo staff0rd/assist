@@ -353,6 +353,82 @@ describe("decideCommentGuard", () => {
 		});
 	});
 
+	describe("hash-comment files", () => {
+		it("blocks introducing a # comment in a Dockerfile", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "Dockerfile",
+					old_string: "RUN npm ci",
+					new_string: "RUN npm ci # install deps",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+			expect(decision).toContain("(#)");
+		});
+
+		it("blocks introducing a # comment in a Dockerfile variant", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "web.dockerfile",
+					old_string: "FROM node:20",
+					new_string: "# base image\nFROM node:20",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("blocks introducing a # comment in a .env file", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".env.local",
+					old_string: "PORT=8080",
+					new_string: "PORT=8080 # the http port",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+			expect(decision).toContain("(#)");
+		});
+
+		it("allows a comment inside the .sh leading header block", () => {
+			const decision = decideCommentGuard(
+				input("Write", {
+					file_path: "deploy.sh",
+					content: "#!/bin/bash\n# deploys the app\nset -e\necho go",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("blocks a # comment below the .sh header block", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "deploy.sh",
+					old_string: "echo go",
+					new_string: "echo go\n# stray note",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+			expect(decision).toContain("(#)");
+		});
+
+		it("allows editing a below-header .sh line without a comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "deploy.sh",
+					old_string: "echo go",
+					new_string: "echo done",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+	});
+
 	describe("other tools", () => {
 		it("ignores unrelated tools", () => {
 			const decision = decideCommentGuard(
