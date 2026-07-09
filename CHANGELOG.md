@@ -1,3 +1,10 @@
+# [0.365.0](https://github.com/staff0rd/assist/compare/v0.364.0...v0.365.0) (2026-07-09)
+
+
+### Features
+
+* markdown backlog descriptions ([311f28f](https://github.com/staff0rd/assist/commit/311f28f1353b4260dbfb49cf54a15a190a6b58f3))
+
 # [0.364.0](https://github.com/staff0rd/assist/compare/v0.363.0...v0.364.0) (2026-07-09)
 
 
