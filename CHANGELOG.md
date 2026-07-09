@@ -1,3 +1,10 @@
+## [0.360.1](https://github.com/staff0rd/assist/compare/v0.360.0...v0.360.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* kill process tree on session restart ([073928c](https://github.com/staff0rd/assist/commit/073928cf692066ee5ce0735f4b7e049ef2b751c8))
+
 # [0.360.0](https://github.com/staff0rd/assist/compare/v0.359.0...v0.360.0) (2026-07-09)
 
 
