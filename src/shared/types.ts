@@ -78,7 +78,8 @@ export const assistConfigSchema = z.strictObject({
 		.optional(),
 	prs: z
 		.strictObject({
-			slack: z.string(),
+			slack: z.string().optional(),
+			required: z.boolean().default(false),
 		})
 		.optional(),
 	run: z.array(z.union([runConfigSchema, runLinkSchema])).optional(),

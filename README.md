@@ -167,7 +167,8 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
 - `assist config get <key>` - Get a config value
 - `assist config list` - List all config values
-  - `prs.slack` - The Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector
+  - `prs.slack` - The Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector (optional; can be omitted when only `prs.required` is set)
+  - `prs.required` - When `true` (default `false`), `assist backlog run` auto-branches a story that has no recorded branch at run start, so a new story never inherits the previous story's branch
 - `assist verify` - Run all verify:\* commands in parallel (from run configs in assist.yml and scripts in package.json)
 - `assist verify all` - Run all checks, ignoring diff-based filters
 - `assist verify --measure` - After the run, print a summary table of each command's status and duration (slowest first) plus a wall-clock total
@@ -303,6 +304,8 @@ When `commit.expectedBranch` is set (e.g. `main`), `assist commit` prints a prom
 When `branch.prefix` is set (e.g. `sw`), `assist branch <slug>` prepends `<prefix>/` to the branch name. With the key unset, no prefix segment is added.
 
 `assist branch` resolves the base branch live from the remote (`git ls-remote --symref origin HEAD`), so it never depends on a stale or unset local `origin/HEAD`. If the remote advertises no default it falls back to `main`. Set `branch.defaultBranch` (e.g. `develop`) to override the base branch outright.
+
+When `prs.required` is `true`, `assist backlog run` checks at run start whether a branch has been recorded against the story; if none has, it uses the same branch-creation code as `assist branch` to cut a fresh branch off `origin/<default>` (name derived from the story's title, plus its Jira key when associated) and records it against the story. A story that already has a recorded branch is left untouched, so resumes and later phases never re-branch. With the key unset or `false`, run behaviour is unchanged.
 
 ## netcap browser extension
 

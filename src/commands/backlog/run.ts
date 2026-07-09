@@ -6,6 +6,7 @@ import {
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { acquireLock, releaseLock } from "./acquireLock";
 import { clearPause, isPausePending } from "./consumePause";
+import { ensureStoryBranch } from "./ensureStoryBranch";
 import { handleReviewResult } from "./handleReviewResult";
 import { type PreparedRun, prepareRun } from "./prepareRun";
 import { runOnce } from "./runOnce";
@@ -18,6 +19,7 @@ export async function run(
 	const prepared = await prepareRun(id);
 	if (!prepared) return false;
 
+	await ensureStoryBranch(prepared.item);
 	await setStatus(id, "in-progress");
 	discardStalePause(prepared.item.id);
 	logProgress(id, prepared);

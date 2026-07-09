@@ -20,6 +20,10 @@ vi.mock("./prepareRun", () => ({
 	prepareRun: vi.fn(),
 }));
 
+vi.mock("./ensureStoryBranch", () => ({
+	ensureStoryBranch: vi.fn(),
+}));
+
 vi.mock("./reloadPlan", () => ({
 	reloadPlan: vi.fn(),
 }));
