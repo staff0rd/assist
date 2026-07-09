@@ -1,3 +1,15 @@
+# [0.367.0](https://github.com/staff0rd/assist/compare/v0.366.0...v0.367.0) (2026-07-09)
+
+
+### Bug Fixes
+
+* cap sub-task title at 50 chars ([272ab92](https://github.com/staff0rd/assist/commit/272ab92aed258b184021085f1d333fb2f1763e80))
+
+
+### Features
+
+* search backlog items by number ([079e7f1](https://github.com/staff0rd/assist/commit/079e7f15db638097d999ef9709822b82b4e790ec))
+
 # [0.366.0](https://github.com/staff0rd/assist/compare/v0.365.0...v0.366.0) (2026-07-09)
 
 
