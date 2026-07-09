@@ -1,3 +1,11 @@
+# [0.368.0](https://github.com/staff0rd/assist/compare/v0.367.2...v0.368.0) (2026-07-09)
+
+
+### Features
+
+* /jira started on phase-1 run ([f335f44](https://github.com/staff0rd/assist/commit/f335f44107c3ab4d015652ba8a65310c2cd51ce2))
+* incomplete sub-task count on cards ([ecff84e](https://github.com/staff0rd/assist/commit/ecff84efb88e0e13b802aba9314b8f7b397945bf))
+
 ## [0.367.2](https://github.com/staff0rd/assist/compare/v0.367.1...v0.367.2) (2026-07-09)
 
 
