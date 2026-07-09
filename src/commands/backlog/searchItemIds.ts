@@ -1,4 +1,4 @@
-import { and, asc, eq, ilike, or } from "drizzle-orm";
+import { and, asc, eq, ilike, or, sql } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { comments, items, planPhases } from "../../shared/db/schema";
 
@@ -12,6 +12,7 @@ export async function searchItemIds(
 	origin?: string,
 ): Promise<number[]> {
 	const pattern = `%${query}%`;
+	const numberPattern = `%${query.replace(/^#/, "")}%`;
 	const rows = await orm
 		.selectDistinct({ id: items.id })
 		.from(items)
@@ -27,6 +28,7 @@ export async function searchItemIds(
 					ilike(items.jiraKey, pattern),
 					ilike(comments.text, pattern),
 					ilike(planPhases.name, pattern),
+					ilike(sql`${items.id}::text`, numberPattern),
 				),
 			),
 		)
