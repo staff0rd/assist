@@ -1,3 +1,10 @@
+# [0.362.0](https://github.com/staff0rd/assist/compare/v0.361.0...v0.362.0) (2026-07-09)
+
+
+### Features
+
+* consolidate Jira actions into /jira ([128a4d2](https://github.com/staff0rd/assist/commit/128a4d2760f84c6e9b926ffe42535e3407e890be))
+
 # [0.361.0](https://github.com/staff0rd/assist/compare/v0.360.1...v0.361.0) (2026-07-09)
 
 
