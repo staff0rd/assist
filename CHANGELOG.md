@@ -1,3 +1,10 @@
+# [0.360.0](https://github.com/staff0rd/assist/compare/v0.359.0...v0.360.0) (2026-07-09)
+
+
+### Features
+
+* restart control on session cards ([17ef756](https://github.com/staff0rd/assist/commit/17ef7566c18291cc638cd53b7b49c364aa3d7dee))
+
 # [0.359.0](https://github.com/staff0rd/assist/compare/v0.358.0...v0.359.0) (2026-07-08)
 
 
