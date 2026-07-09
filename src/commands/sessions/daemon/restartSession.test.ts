@@ -60,17 +60,33 @@ describe("restartSession", () => {
 		expect(session.restored).toBeUndefined();
 	});
 
-	it("kills a running pty before resuming", () => {
-		const kill = vi.fn();
+	it("kills the running process group and defers resume until it exits", () => {
+		const killSpy = vi.spyOn(process, "kill").mockImplementation(() => true);
 		const session = makeSession({
+			commandType: "assist",
 			status: "running",
+			assistArgs: ["backlog", "run", "601"],
 			claudeSessionId: "abc-123",
 			cwd: "/home/user/repo",
-			pty: { kill } as unknown as Session["pty"],
+			pty: { kill: vi.fn(), pid: 4321 } as unknown as Session["pty"],
 		});
 
 		expect(restartSession(session, new Set(), vi.fn())).toBe(true);
-		expect(kill).toHaveBeenCalledTimes(1);
+
+		expect(killSpy).toHaveBeenCalledWith(-4321, "SIGHUP");
+		expect(spawnPtyMock).not.toHaveBeenCalled();
+		expect(session.pendingRestart).toBeTypeOf("function");
+
+		session.pendingRestart?.();
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "backlog", "run", "601", "--resume-session", "abc-123"],
+			"/home/user/repo",
+			"1",
+			undefined,
+		);
+		expect(session.status).toBe("running");
+		killSpy.mockRestore();
 	});
 
 	it("does not restart a claude session without a conversation id", () => {

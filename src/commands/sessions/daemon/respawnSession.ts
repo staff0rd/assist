@@ -1,13 +1,8 @@
 import { broadcast, type SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { setStatus } from "./setStatus";
+import type { OnStatusChange } from "./types";
 import { wirePtyEvents } from "./wirePtyEvents";
-
-export type OnStatusChange = (
-	s: Session,
-	status: Session["status"],
-	exitCode?: number,
-) => void;
 
 export function respawnSession(
 	session: Session,

@@ -5,6 +5,12 @@ import type { spawnClaude } from "./spawnClaude";
 export type SessionStatus = "running" | "waiting" | "done" | "error";
 type CommandType = "claude" | "run" | "assist";
 
+export type OnStatusChange = (
+	session: Session,
+	status: SessionStatus,
+	exitCode?: number,
+) => void;
+
 export type Session = {
 	id: string;
 	name: string;
@@ -31,6 +37,7 @@ export type Session = {
 	escInterruptTimer?: ReturnType<typeof setTimeout>;
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;
+	pendingRestart?: () => void;
 };
 
 export type SessionInfo = {

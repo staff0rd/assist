@@ -1,9 +1,10 @@
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
-import { type OnStatusChange, respawnSession } from "./respawnSession";
+import { respawnSession } from "./respawnSession";
 import { spawnPty } from "./spawnPty";
 import { spawnRun } from "./spawnRun";
+import type { OnStatusChange } from "./types";
 
 export function retrySession(
 	session: Session,

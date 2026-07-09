@@ -1,12 +1,9 @@
-import { assistResumeArgs } from "./assistResumeArgs";
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
-import { type OnStatusChange, respawnSession } from "./respawnSession";
-import { spawnClaude } from "./spawnClaude";
-import { spawnPty } from "./spawnPty";
-
-type RespawnPlan = { spawn: () => Session["pty"]; status: Session["status"] };
+import { respawnSession } from "./respawnSession";
+import { respawnPlan } from "./respawnPlan";
+import type { OnStatusChange } from "./types";
 
 export function restartSession(
 	session: Session,
@@ -15,41 +12,37 @@ export function restartSession(
 ): boolean {
 	const plan = respawnPlan(session);
 	if (!plan) return false;
-	session.pty?.kill();
-	respawnSession(session, plan.spawn, plan.status, clients, onStatusChange);
 	const via = session.claudeSessionId
 		? `resume ${session.claudeSessionId}`
 		: "fresh";
-	daemonLog(`session ${session.id} restarted (${via}): ${session.name}`);
+	const respawn = () => {
+		respawnSession(session, plan.spawn, plan.status, clients, onStatusChange);
+		daemonLog(`session ${session.id} restarted (${via}): ${session.name}`);
+	};
+
+	const pty = session.pty;
+	if (pty && session.status !== "done") {
+		daemonLog(
+			`session ${session.id} restart requested: killing running process, will resume on exit`,
+		);
+		session.pendingRestart = respawn;
+		killPtyTree(pty);
+	} else {
+		respawn();
+	}
 	return true;
 }
 
-function respawnPlan(session: Session): RespawnPlan | null {
-	const { commandType, claudeSessionId, cwd, assistArgs } = session;
-	if (commandType === "claude")
-		return claudeSessionId
-			? {
-					spawn: () =>
-						spawnClaude({
-							resumeSessionId: claudeSessionId,
-							cwd,
-							sessionId: session.id,
-						}),
-					status: "waiting",
-				}
-			: null;
-	if (commandType === "assist" && assistArgs) {
-		const idle = session.status === "waiting";
-		return {
-			spawn: () =>
-				spawnPty(
-					assistResumeArgs({ assistArgs, claudeSessionId }),
-					cwd,
-					session.id,
-					idle ? { ASSIST_RESUME_IDLE: "1" } : undefined,
-				),
-			status: idle ? "waiting" : "running",
-		};
+function killPtyTree(pty: NonNullable<Session["pty"]>): void {
+	if (process.platform === "win32") {
+		pty.kill();
+		return;
 	}
-	return null;
+	try {
+		process.kill(-pty.pid, "SIGHUP");
+	} catch {
+		try {
+			pty.kill();
+		} catch {}
+	}
 }
