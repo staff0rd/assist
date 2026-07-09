@@ -1,7 +1,9 @@
 import chalk from "chalk";
 import { readStdin } from "../lib/readStdin";
 import type { RateLimits } from "../shared/RateLimits";
+import { windowsCwdToWslPath } from "./sessions/web/windowsCwdToWslPath";
 import { buildLimitsSegment } from "./buildLimitsSegment";
+import { readGitBranch } from "./readGitBranch";
 import { relayRateLimits } from "./relayRateLimits";
 import { relayUsage } from "./relayUsage";
 
@@ -19,6 +21,10 @@ type StatusInput = {
 		used_percentage?: number;
 	};
 	rate_limits?: RateLimits;
+	workspace?: {
+		current_dir?: string;
+	};
+	cwd?: string;
 };
 
 function formatNumber(num: number): string {
@@ -41,8 +47,12 @@ export async function statusLine(): Promise<void> {
 		data.context_window;
 	const usedPct = data.context_window.used_percentage ?? 0;
 
+	const dir = data.workspace?.current_dir ?? data.cwd;
+	const branch = dir ? readGitBranch(windowsCwdToWslPath(dir)) : null;
+	const branchSegment = branch ? `🍃️ ${chalk.cyan(branch)} | ` : "";
+
 	console.log(
-		`${model} | Tokens - ${formatNumber(totalOut)} ↑ : ${formatNumber(totalIn)} ↓ | Context - ${colorizePercent(usedPct)}${buildLimitsSegment(data.rate_limits)}`,
+		`${branchSegment}${model} | Tokens - ${formatNumber(totalOut)} ↑ : ${formatNumber(totalIn)} ↓ | Context - ${colorizePercent(usedPct)}${buildLimitsSegment(data.rate_limits)}`,
 	);
 
 	await relayRateLimits(data.rate_limits);
