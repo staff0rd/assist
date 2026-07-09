@@ -1,3 +1,10 @@
+# [0.370.0](https://github.com/staff0rd/assist/compare/v0.369.0...v0.370.0) (2026-07-09)
+
+
+### Features
+
+* backlog add-activity command ([208e12e](https://github.com/staff0rd/assist/commit/208e12ecca7e5dd3ebfcb463c01c35631ffc86ad))
+
 # [0.369.0](https://github.com/staff0rd/assist/compare/v0.368.0...v0.369.0) (2026-07-09)
 
 
