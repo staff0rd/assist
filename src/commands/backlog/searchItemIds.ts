@@ -24,6 +24,7 @@ export async function searchItemIds(
 					ilike(items.name, pattern),
 					ilike(items.description, pattern),
 					ilike(items.acceptanceCriteria, pattern),
+					ilike(items.jiraKey, pattern),
 					ilike(comments.text, pattern),
 					ilike(planPhases.name, pattern),
 				),
