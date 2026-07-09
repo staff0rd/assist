@@ -13,7 +13,8 @@ export function itemsEqual(
 			item.type === other.type &&
 			item.name === other.name &&
 			item.status === other.status &&
-			item.starred === other.starred
+			item.starred === other.starred &&
+			item.incompleteSubtasks === other.incompleteSubtasks
 		);
 	});
 }

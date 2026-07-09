@@ -70,4 +70,5 @@ export type BacklogItemSummary = {
 	status: BacklogStatus;
 	starred: boolean;
 	jiraKey?: string;
+	incompleteSubtasks: number;
 };

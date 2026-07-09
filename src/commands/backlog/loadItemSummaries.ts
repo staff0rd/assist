@@ -1,6 +1,6 @@
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, ne, sql } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
-import { items } from "../../shared/db/schema";
+import { items, itemSubtasks } from "../../shared/db/schema";
 import type { BacklogItemSummary, BacklogStatus, BacklogType } from "./types";
 
 /**
@@ -14,6 +14,15 @@ export async function loadItemSummaries(
 	orm: Db,
 	origin?: string,
 ): Promise<BacklogItemSummary[]> {
+	const incompleteCounts = orm
+		.select({
+			itemId: itemSubtasks.itemId,
+			count: sql<number>`count(*)::int`.as("incomplete_subtasks"),
+		})
+		.from(itemSubtasks)
+		.where(ne(itemSubtasks.status, "done"))
+		.groupBy(itemSubtasks.itemId)
+		.as("incomplete_counts");
 	const rows = await orm
 		.select({
 			id: items.id,
@@ -23,8 +32,10 @@ export async function loadItemSummaries(
 			status: items.status,
 			starred: items.starred,
 			jiraKey: items.jiraKey,
+			incompleteSubtasks: incompleteCounts.count,
 		})
 		.from(items)
+		.leftJoin(incompleteCounts, eq(incompleteCounts.itemId, items.id))
 		.where(origin === undefined ? undefined : eq(items.origin, origin))
 		.orderBy(asc(items.id));
 	return rows.map((row) => ({
@@ -35,5 +46,6 @@ export async function loadItemSummaries(
 		status: row.status as BacklogStatus,
 		starred: row.starred,
 		jiraKey: row.jiraKey ?? undefined,
+		incompleteSubtasks: row.incompleteSubtasks ?? 0,
 	}));
 }

@@ -9,6 +9,7 @@ function item(id: number): BacklogItemSummary {
 		name: `item ${id}`,
 		status: "todo",
 		starred: false,
+		incompleteSubtasks: 0,
 	};
 }
 

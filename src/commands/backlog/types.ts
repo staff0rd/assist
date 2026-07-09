@@ -92,7 +92,7 @@ export type BacklogItem = z.infer<typeof backlogItemSchema>;
 export type BacklogItemSummary = Pick<
 	BacklogItem,
 	"id" | "type" | "name" | "status" | "origin" | "starred" | "jiraKey"
->;
+> & { incompleteSubtasks: number };
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;

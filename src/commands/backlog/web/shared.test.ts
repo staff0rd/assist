@@ -42,6 +42,7 @@ function makeItem(
 		name: `Item ${id}`,
 		status,
 		starred,
+		incompleteSubtasks: 0,
 	};
 }
 

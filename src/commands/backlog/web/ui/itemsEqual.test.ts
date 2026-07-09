@@ -12,6 +12,7 @@ function item(
 		name: `item ${id}`,
 		status: "todo",
 		starred: false,
+		incompleteSubtasks: 0,
 		...overrides,
 	};
 }
@@ -40,6 +41,12 @@ describe("itemsEqual", () => {
 
 	it("returns false when a starred flag differs", () => {
 		expect(itemsEqual([item(1)], [item(1, { starred: true })])).toBe(false);
+	});
+
+	it("returns false when the incomplete sub-task count differs", () => {
+		expect(itemsEqual([item(1)], [item(1, { incompleteSubtasks: 2 })])).toBe(
+			false,
+		);
 	});
 
 	it("returns false when order differs", () => {

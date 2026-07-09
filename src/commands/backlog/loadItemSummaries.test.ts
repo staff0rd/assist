@@ -4,6 +4,7 @@ import type { Db } from "../../shared/db/Db";
 import {
 	comments,
 	items,
+	itemSubtasks,
 	links,
 	planPhases,
 	planTasks,
@@ -61,7 +62,28 @@ describe("loadItemSummaries", () => {
 			name: "Test",
 			status: "in-progress",
 			starred: false,
+			incompleteSubtasks: 0,
 		});
+	});
+
+	it("counts only sub-tasks whose status is not done", async () => {
+		await orm
+			.insert(items)
+			.values({ id: 1, origin: "test", name: "One", status: "todo" });
+		await orm
+			.insert(items)
+			.values({ id: 2, origin: "test", name: "Two", status: "todo" });
+		await orm.insert(itemSubtasks).values([
+			{ itemId: 1, idx: 0, title: "a", status: "todo" },
+			{ itemId: 1, idx: 1, title: "b", status: "in-progress" },
+			{ itemId: 1, idx: 2, title: "c", status: "done" },
+			{ itemId: 2, idx: 0, title: "d", status: "done" },
+		]);
+
+		const summaries = await loadItemSummaries(orm);
+
+		expect(summaries.find((s) => s.id === 1)?.incompleteSubtasks).toBe(2);
+		expect(summaries.find((s) => s.id === 2)?.incompleteSubtasks).toBe(0);
 	});
 
 	it("scopes to the given origin", async () => {

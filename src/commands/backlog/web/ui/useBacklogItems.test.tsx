@@ -28,6 +28,7 @@ function item(
 		name: `item ${id}`,
 		status: "todo",
 		starred: false,
+		incompleteSubtasks: 0,
 		...overrides,
 	};
 }

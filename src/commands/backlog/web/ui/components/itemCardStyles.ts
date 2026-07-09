@@ -34,4 +34,17 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 		fontSize: "0.75rem",
 		height: 22,
 	},
+	incompleteSubtasks: {
+		flexShrink: 0,
+		fontWeight: 500,
+		fontSize: "0.75rem",
+		height: 22,
+		color: "text.secondary",
+		borderColor: "divider",
+		"& .MuiChip-icon": {
+			fontSize: "1rem",
+			ml: 0.75,
+			color: "text.secondary",
+		},
+	},
 };

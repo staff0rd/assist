@@ -1,15 +1,11 @@
 import { ButtonBase, Chip, Typography } from "@mui/material";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
-import { canPlay } from "./canPlay";
-import { InProgressChip } from "./InProgressChip";
 import { itemCardStyles } from "./itemCardStyles";
 import { JiraKeyLink } from "./JiraKeyLink";
-import { mostRecentOpenSession } from "./mostRecentOpenSession";
-import { PlayAction } from "./PlayAction";
-import { StarAction } from "./StarAction";
 import { StatusIcon } from "./StatusIcon";
 import { typeChipColors } from "./typeChipColors";
+import { CardActions } from "./CardActions";
 
 function CardSummary({ item }: { item: BacklogItemSummary }) {
 	return (
@@ -26,34 +22,6 @@ function CardSummary({ item }: { item: BacklogItemSummary }) {
 			</Typography>
 			<Typography sx={itemCardStyles.name}>{item.name}</Typography>
 			{item.jiraKey && <JiraKeyLink jiraKey={item.jiraKey} />}
-		</>
-	);
-}
-
-function CardActions({
-	item,
-	socket,
-	onReload,
-}: {
-	item: BacklogItemSummary;
-	socket: SessionSocket;
-	onReload: () => Promise<void>;
-}) {
-	const openSession = mostRecentOpenSession(socket.sessions, item.id);
-	return (
-		<>
-			{item.status === "in-progress" && (
-				<InProgressChip
-					openSession={openSession}
-					onSelectSession={socket.selectSession}
-				/>
-			)}
-			<StarAction
-				itemId={item.id}
-				starred={item.starred}
-				onToggled={onReload}
-			/>
-			{canPlay(item) && <PlayAction itemId={item.id} compact />}
 		</>
 	);
 }
