@@ -41,6 +41,7 @@ import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
 import { registerVoice } from "./commands/registerVoice";
 import { registerRoam } from "./commands/roam/registerRoam";
+import { rootConfigHelp } from "./commands/rootConfigHelp";
 import { registerRun } from "./commands/run/registerRun";
 import { screenshot } from "./commands/screenshot";
 import { registerDaemon } from "./commands/sessions/daemon/registerDaemon";
@@ -51,6 +52,7 @@ import { sync } from "./commands/sync";
 import { update } from "./commands/update";
 import { init as vscodeInit } from "./commands/vscode";
 import { reportCliError } from "./reportCliError";
+import { configHelp } from "./shared/configHelp";
 import { closeDb } from "./shared/db/getDb";
 
 const program = new Command();
@@ -62,22 +64,26 @@ program
 	.option("--no-open", "Do not open a browser on startup")
 	.action((options) => sessionsWeb({ port: "3100", open: options.open }));
 
-program
+const syncCommand = program
 	.command("sync")
 	.description("Copy command files to ~/.claude/commands")
 	.option("-y, --yes", "Overwrite settings.json without prompting")
 	.action((options) => sync(options));
+
+configHelp(syncCommand, rootConfigHelp.sync);
 
 program
 	.command("init")
 	.description("Initialize VS Code and verify configurations")
 	.action(init);
 
-program
+const commitCommand = program
 	.command("commit")
 	.description("Create a git commit with validation")
 	.argument("<args...>", "status | <message> [files...]")
 	.action(commit);
+
+configHelp(commitCommand, rootConfigHelp.commit);
 
 registerConfig(program);
 
@@ -110,12 +116,14 @@ program
 	.description("Format Claude Code status line from JSON stdin")
 	.action(statusLine);
 
-program
+const notifyCommand = program
 	.command("notify")
 	.description(
 		"Show notification from Claude Code hook (reads JSON from stdin)",
 	)
 	.action(notify);
+
+configHelp(notifyCommand, rootConfigHelp.notify);
 
 program
 	.command("update")
@@ -127,11 +135,13 @@ program
 	.description("Print global statement coverage percentage")
 	.action(coverage);
 
-program
+const screenshotCommand = program
 	.command("screenshot")
 	.description("Capture a screenshot of a running application window")
 	.argument("<process>", "Name of the running process (e.g. notepad, code)")
 	.action(screenshot);
+
+configHelp(screenshotCommand, rootConfigHelp.screenshot);
 
 registerActivity(program);
 registerBackup(program);

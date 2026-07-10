@@ -4,6 +4,7 @@ import chalk from "chalk";
 import type { Command } from "commander";
 import { getDb } from "../shared/db/getDb";
 import { recordBackup } from "../shared/db/recordBackup";
+import { configHelp } from "../shared/configHelp";
 import { expandTilde } from "../shared/expandTilde";
 import { loadConfig } from "../shared/loadConfig";
 import {
@@ -70,4 +71,12 @@ export function registerBackup(program: Command): void {
 			"Remove the marked backup schedule block, leaving other crontab lines intact",
 		)
 		.action(scheduleRemove);
+
+	configHelp(backupCommand, [
+		{
+			key: "backup.dir",
+			setter: "assist config set backup.dir ~/.assist/backups",
+			note: "directory dumps are written to (default: ~/.assist/backups)",
+		},
+	]);
 }

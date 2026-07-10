@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import { checkBuildLocksCommand } from "./dotnet/checkBuildLocks";
 import { deps } from "./dotnet/deps";
 import { scopeHelpText } from "./dotnet/getChangedCsFiles";
@@ -42,4 +43,13 @@ export function registerDotnet(program: Command): void {
 		.description("Check whether a .csproj is referenced by any .sln file")
 		.argument("<csproj>", "Path to a .csproj file")
 		.action(inSln);
+
+	configHelp(cmd, [
+		{
+			key: "dotnet.inspect.suppress",
+			setter:
+				"assist config set dotnet.inspect.suppress CSharpWarnings::CS0168",
+			note: "inspection issue-type IDs suppressed by default",
+		},
+	]);
 }

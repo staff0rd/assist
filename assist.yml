@@ -65,49 +65,45 @@ run:
       - python
       - src/commands/voice/python/check_mi.py
   - name: verify:lint
-    command: npx
+    command: npm
     filter: "{src/**,*.ts}"
     args:
-      - oxlint
-      - --config
-      - .oxlintrc.json
-      - src
+      - run
+      - --silent
+      - verify:lint
   - name: verify:format
-    command: npx
+    command: npm
     args:
-      - oxfmt
-      - .
+      - run
+      - --silent
+      - verify:format
   - name: verify:build
-    command: npx
+    command: npm
     args:
-      - tsup
+      - run
+      - --silent
+      - build
   - name: verify:types
-    command: npx
+    command: npm
     filter: "{src/**/*.ts,src/**/*.tsx,tsconfig.json}"
     args:
-      - tsc
-      - --noEmit
+      - run
+      - --silent
+      - check:types
   - name: verify:knip
-    command: npx
+    command: npm
     filter: "{src/**/*.ts,src/**/*.tsx,package.json,knip.json}"
     args:
-      - knip
-      - --no-progress
-      - --treat-config-hints-as-errors
+      - run
+      - --silent
+      - verify:knip
   - name: verify:duplicate-code
-    command: npx
+    command: npm
     filter: "{src/**/*.ts,src/**/*.tsx,src/**/*.py}"
     args:
-      - jscpd
-      - --format
-      - typescript,tsx,python
-      - --exitCode
-      - "1"
-      - --ignore
-      - "**/*.test.*,**/.venv/**"
-      - -r
-      - consoleFull
-      - src
+      - run
+      - --silent
+      - verify:duplicate-code
   - name: verify:maintainability-typescript
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
@@ -118,15 +114,12 @@ run:
       - --threshold
       - "70"
   - name: verify:test
-    command: npx
+    command: npm
     filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
-      - vitest
       - run
-      - --changed
-      - --passWithNoTests
-      - --reporter
-      - dot
+      - --silent
+      - verify:test
   - name: verify:no-venv
     command: assist
     args:
@@ -137,35 +130,31 @@ run:
     args:
       - verify
       - forbidden-strings
+  - name: verify:config-keys
+    command: npm
+    args:
+      - run
+      - --silent
+      - verify:config-keys
   - name: verify:custom-lint
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
       - lint
   - name: verify:react-build
-    command: npx
+    command: npm
     filter: "{src/commands/sessions/web/**,src/commands/backlog/web/ui/**}"
     args:
-      - esbuild
-      - src/commands/sessions/web/ui/App.tsx
-      - --bundle
-      - --minify
-      - --format=iife
-      - --target=es2020
-      - --outfile=dist/commands/sessions/web/bundle.verify.js
-      - --jsx=automatic
-      - --jsx-import-source=react
-      - --define:process.env.NODE_ENV='production'
+      - run
+      - --silent
+      - verify:react-build
   - name: verify:circular-deps
-    command: npx
+    command: npm
     quiet: true
     args:
-      - -y
-      - skott
-      - --displayMode=raw
-      - --showCircularDependencies
-      - --exitCodeOnCircularDependencies=1
-      - src/index.ts
+      - run
+      - --silent
+      - verify:circular-deps
   - name: test:timestamp
     command: bash
     args:

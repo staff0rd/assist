@@ -1,5 +1,7 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import { seqAuth } from "./seq/seqAuth";
+import { seqConfigHelp } from "./seq/seqConfigHelp";
 import { seqQuery } from "./seq/seqQuery";
 import { seqSetConnection } from "./seq/seqSetConnection";
 
@@ -40,4 +42,6 @@ export function registerSeq(program: Command): void {
 		)
 		.option("--json", "Output raw JSON")
 		.action((filter: string, options) => seqQuery(filter, options));
+
+	configHelp(cmd, seqConfigHelp);
 }

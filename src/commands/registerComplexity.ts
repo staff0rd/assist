@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import {
 	analyze as complexityAnalyze,
 	cyclomatic as complexityCyclomatic,
@@ -6,6 +7,7 @@ import {
 	maintainability as complexityMaintainability,
 	sloc as complexitySloc,
 } from "./complexity";
+import { complexityConfigHelp } from "./complexity/complexityConfigHelp";
 
 export function registerComplexity(program: Command): void {
 	const complexityCommand = program
@@ -53,4 +55,6 @@ export function registerComplexity(program: Command): void {
 		.description("Count source lines of code per file")
 		.option("--threshold <number>", "Max lines threshold", Number.parseInt)
 		.action(complexitySloc);
+
+	configHelp(complexityCommand, complexityConfigHelp);
 }

@@ -1,5 +1,7 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import { devices, logs, setup, start, status, stop } from "./voice";
+import { voiceConfigHelp } from "./voice/voiceConfigHelp";
 
 export function registerVoice(program: Command): void {
 	const voiceCommand = program
@@ -38,4 +40,6 @@ export function registerVoice(program: Command): void {
 		.description("Tail voice daemon logs")
 		.option("-n, --lines <count>", "Number of lines to show", "20")
 		.action((options) => logs(options));
+
+	configHelp(voiceCommand, voiceConfigHelp);
 }

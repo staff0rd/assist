@@ -1,4 +1,5 @@
 export { blockComments } from "./blockComments";
+export { configKeys } from "./configKeys";
 export { forbiddenStrings } from "./forbiddenStrings";
 export { hardcodedColors } from "./hardcodedColors";
 export { init } from "./init";

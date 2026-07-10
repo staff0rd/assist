@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import {
 	prs,
 	comment as prsComment,
@@ -8,6 +9,7 @@ import {
 	reply as prsReply,
 	wontfix as prsWontfix,
 } from "./prs/index";
+import { prsConfigHelp } from "./prs/prsConfigHelp";
 import { registerPrsEdit } from "./registerPrsEdit";
 import { registerPrsRaise } from "./registerPrsRaise";
 
@@ -56,4 +58,6 @@ export function registerPrs(program: Command): void {
 		.action((path: string, line: string, body: string) => {
 			prsComment(path, Number.parseInt(line, 10), body);
 		});
+
+	configHelp(prsCommand, prsConfigHelp);
 }

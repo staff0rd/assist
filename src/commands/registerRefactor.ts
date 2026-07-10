@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import {
 	check as refactorCheck,
 	extract as refactorExtract,
@@ -7,6 +8,7 @@ import {
 	renameSymbol as refactorRenameSymbol,
 	restructure as refactorRestructure,
 } from "./refactor";
+import { refactorConfigHelp } from "./refactor/refactorConfigHelp";
 
 function registerCheck(parent: Command): void {
 	parent
@@ -44,7 +46,7 @@ function registerRename(parent: Command): void {
 }
 
 function registerRestructure(parent: Command): void {
-	parent
+	const restructureCommand = parent
 		.command("restructure [pattern]")
 		.description(
 			"Analyze import graph and restructure tightly-coupled files into nested directories",
@@ -56,6 +58,8 @@ function registerRestructure(parent: Command): void {
 			Number.parseInt,
 		)
 		.action(refactorRestructure);
+
+	configHelp(restructureCommand, refactorConfigHelp);
 }
 
 export function registerRefactor(program: Command): void {

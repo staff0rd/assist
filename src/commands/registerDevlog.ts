@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import {
 	list as devlogList,
 	next as devlogNext,
@@ -6,6 +7,7 @@ import {
 	skip as devlogSkip,
 	version as devlogVersion,
 } from "./devlog";
+import { devlogConfigHelp } from "./devlog/devlogConfigHelp";
 
 export function registerDevlog(program: Command): void {
 	const devlogCommand = program
@@ -51,4 +53,6 @@ export function registerDevlog(program: Command): void {
 		)
 		.option("--all", "Show all non-archived repos regardless of push date")
 		.action(devlogRepos);
+
+	configHelp(devlogCommand, devlogConfigHelp);
 }

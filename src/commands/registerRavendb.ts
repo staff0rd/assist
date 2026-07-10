@@ -1,6 +1,8 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import { ravendbAuth } from "./ravendb/ravendbAuth";
 import { ravendbCollections } from "./ravendb/ravendbCollections";
+import { ravendbConfigHelp } from "./ravendb/ravendbConfigHelp";
 import { ravendbQuery } from "./ravendb/ravendbQuery";
 import { ravendbSetConnection } from "./ravendb/ravendbSetConnection";
 
@@ -51,4 +53,6 @@ export function registerRavendb(program: Command): void {
 		.command("collections [connection]")
 		.description("List collections in a RavenDB database")
 		.action((connection?: string) => ravendbCollections(connection));
+
+	configHelp(cmd, ravendbConfigHelp);
 }

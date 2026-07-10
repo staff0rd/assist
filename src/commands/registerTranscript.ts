@@ -1,14 +1,18 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import {
 	configure as transcriptConfigure,
 	list as transcriptList,
 	move as transcriptMove,
 } from "./transcript";
+import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
 
 export function registerTranscript(program: Command): void {
 	const transcriptCommand = program
 		.command("transcript")
 		.description("Meeting transcript utilities");
+
+	configHelp(transcriptCommand, transcriptConfigHelp);
 
 	transcriptCommand
 		.command("configure")

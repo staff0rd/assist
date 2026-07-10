@@ -1,6 +1,8 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import { sqlAuth } from "./sql/sqlAuth";
 import { sqlColumns } from "./sql/sqlColumns";
+import { sqlConfigHelp } from "./sql/sqlConfigHelp";
 import { sqlMutate } from "./sql/sqlMutate";
 import { sqlQuery } from "./sql/sqlQuery";
 import { sqlSetConnection } from "./sql/sqlSetConnection";
@@ -57,4 +59,6 @@ export function registerSql(program: Command): void {
 		.action((table: string, connection?: string) =>
 			sqlColumns(table, connection),
 		);
+
+	configHelp(cmd, sqlConfigHelp);
 }

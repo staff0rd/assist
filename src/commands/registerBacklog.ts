@@ -1,5 +1,7 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
 import { show as backlogShow, web as backlogWeb } from "./backlog";
+import { backlogConfigHelp } from "./backlog/backlogConfigHelp";
 import { registerActivityCommands } from "./backlog/registerActivityCommands";
 import { registerAssociateJiraCommand } from "./backlog/registerAssociateJiraCommand";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
@@ -72,4 +74,6 @@ export function registerBacklog(program: Command): void {
 	for (const register of registrars) {
 		register(cmd);
 	}
+
+	configHelp(cmd, backlogConfigHelp);
 }

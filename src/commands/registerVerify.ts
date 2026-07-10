@@ -1,13 +1,12 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
+import { registerVerifyChecks } from "./registerVerifyChecks";
 import {
-	blockComments as verifyBlockComments,
-	forbiddenStrings as verifyForbiddenStrings,
-	hardcodedColors as verifyHardcodedColors,
 	init as verifyInit,
 	list as verifyList,
-	noVenv as verifyNoVenv,
 	run as verifyRun,
 } from "./verify";
+import { verifyConfigHelp } from "./verify/verifyConfigHelp";
 
 function runScope(scope: string | undefined, options: object): void {
 	if (scope && scope !== "all") {
@@ -46,27 +45,7 @@ export function registerVerify(program: Command): void {
 		)
 		.action(verifyInit);
 
-	verifyCommand
-		.command("hardcoded-colors")
-		.description("Check for hardcoded hex colors in src/")
-		.action(verifyHardcodedColors);
+	registerVerifyChecks(verifyCommand);
 
-	verifyCommand
-		.command("block-comments")
-		.description(
-			"Fail on any comment on a changed line, whether added or edited",
-		)
-		.action(verifyBlockComments);
-
-	verifyCommand
-		.command("no-venv")
-		.description("Check that no venv folders exist in the repo")
-		.action(verifyNoVenv);
-
-	verifyCommand
-		.command("forbidden-strings")
-		.description(
-			"Check configured JSON files for values matching forbiddenStrings rules",
-		)
-		.action(verifyForbiddenStrings);
+	configHelp(verifyCommand, verifyConfigHelp);
 }
