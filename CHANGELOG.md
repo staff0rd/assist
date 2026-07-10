@@ -1,3 +1,10 @@
+# [0.381.0](https://github.com/staff0rd/assist/compare/v0.380.0...v0.381.0) (2026-07-10)
+
+
+### Features
+
+* show context usage on session cards ([f7de83f](https://github.com/staff0rd/assist/commit/f7de83ff5531905ad9aa289420ef30bbbd92626c))
+
 # [0.380.0](https://github.com/staff0rd/assist/compare/v0.379.0...v0.380.0) (2026-07-10)
 
 
