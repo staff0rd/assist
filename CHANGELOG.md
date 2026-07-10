@@ -1,3 +1,10 @@
+## [0.374.1](https://github.com/staff0rd/assist/compare/v0.374.0...v0.374.1) (2026-07-10)
+
+
+### Bug Fixes
+
+* count untracked files individually ([55e64ea](https://github.com/staff0rd/assist/commit/55e64eabcfb4dfd67c536076bb11cbceb3052d88))
+
 # [0.374.0](https://github.com/staff0rd/assist/compare/v0.373.0...v0.374.0) (2026-07-10)
 
 
