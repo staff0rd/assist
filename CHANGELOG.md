@@ -1,3 +1,10 @@
+# [0.376.0](https://github.com/staff0rd/assist/compare/v0.375.0...v0.376.0) (2026-07-10)
+
+
+### Features
+
+* concise branch names w/ spinner ([b2a8ae2](https://github.com/staff0rd/assist/commit/b2a8ae259dcbf79c094e768efe7f4ae866c9a4c2))
+
 # [0.375.0](https://github.com/staff0rd/assist/compare/v0.374.2...v0.375.0) (2026-07-10)
 
 
