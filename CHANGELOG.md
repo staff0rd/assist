@@ -1,3 +1,10 @@
+# [0.380.0](https://github.com/staff0rd/assist/compare/v0.379.0...v0.380.0) (2026-07-10)
+
+
+### Features
+
+* persist session star flag ([0c03fd6](https://github.com/staff0rd/assist/commit/0c03fd681f8fba53c77b07cb51d1c956211fd083))
+
 # [0.379.0](https://github.com/staff0rd/assist/compare/v0.378.0...v0.379.0) (2026-07-10)
 
 
