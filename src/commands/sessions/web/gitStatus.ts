@@ -22,7 +22,7 @@ export async function gitStatus(
 
 // why: a windows-origin repo (C:\…) must run git natively on Windows via interop — git over the /mnt mount walks the whole tree and takes >60s, wedging the server
 function runGitStatus(cwd: string): Promise<string> {
-	const args = ["status", "--porcelain"];
+	const args = ["status", "--porcelain", "--untracked-files=all"];
 	const { file, argv } = /^[A-Za-z]:[\\/]/.test(cwd)
 		? { file: "git.exe", argv: ["-C", cwd, ...args] }
 		: { file: "git", argv: args };

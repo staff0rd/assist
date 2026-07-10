@@ -75,6 +75,19 @@ describe("parseGitStatus", () => {
 		});
 	});
 
+	it("counts each untracked file in a directory individually", () => {
+		const output = [
+			"?? newdir/a.ts",
+			"?? newdir/b.ts",
+			"?? newdir/nested/c.ts",
+		].join("\n");
+		expect(parseGitStatus(output)).toEqual({
+			new: ["newdir/a.ts", "newdir/b.ts", "newdir/nested/c.ts"],
+			modified: [],
+			deleted: [],
+		});
+	});
+
 	it("ignores blank lines and parses multiple entries", () => {
 		const output = ["?? a.ts", " M b.ts", " D c.ts", ""].join("\n");
 		expect(parseGitStatus(output)).toEqual({
