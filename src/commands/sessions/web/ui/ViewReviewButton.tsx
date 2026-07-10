@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
 import { ReviewSynthesisDialog } from "./ReviewSynthesisDialog";
-import { StopClickPropagation } from "./StopClickPropagation";
+import { StopCardActivation } from "./StopCardActivation";
 import { useReviewSynthesis } from "./useReviewSynthesis";
 
 export function ViewReviewButton({ cwd }: { cwd: string | undefined }) {
@@ -15,7 +15,7 @@ export function ViewReviewButton({ cwd }: { cwd: string | undefined }) {
 	const loading = state.status === "loading";
 
 	return (
-		<StopClickPropagation>
+		<StopCardActivation>
 			<Button
 				size="small"
 				disabled={loading}
@@ -39,6 +39,6 @@ export function ViewReviewButton({ cwd }: { cwd: string | undefined }) {
 			{open && (
 				<ReviewSynthesisDialog state={state} onClose={() => setOpen(false)} />
 			)}
-		</StopClickPropagation>
+		</StopCardActivation>
 	);
 }

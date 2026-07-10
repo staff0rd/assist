@@ -4,6 +4,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { useEffect, useRef, useState } from "react";
 import { formatRelativeTime } from "./formatRelativeTime";
+import { StopCardActivation } from "./StopCardActivation";
 import type { HistoricalSession } from "./types";
 
 function SessionIdCaption({ claudeSessionId }: { claudeSessionId: string }) {
@@ -22,20 +23,22 @@ function SessionIdCaption({ claudeSessionId }: { claudeSessionId: string }) {
 	};
 
 	return (
-		<Tooltip
-			title={copied ? "Copied!" : "Copy Claude session id"}
-			open={copied || undefined}
-		>
-			<ButtonBase onClick={copy} sx={{ borderRadius: 0.5, px: 0.25 }}>
-				<Typography
-					variant="caption"
-					color="text.disabled"
-					sx={{ fontFamily: "monospace" }}
-				>
-					{claudeSessionId.slice(0, 8)}
-				</Typography>
-			</ButtonBase>
-		</Tooltip>
+		<StopCardActivation>
+			<Tooltip
+				title={copied ? "Copied!" : "Copy Claude session id"}
+				open={copied || undefined}
+			>
+				<ButtonBase onClick={copy} sx={{ borderRadius: 0.5, px: 0.25 }}>
+					<Typography
+						variant="caption"
+						color="text.disabled"
+						sx={{ fontFamily: "monospace" }}
+					>
+						{claudeSessionId.slice(0, 8)}
+					</Typography>
+				</ButtonBase>
+			</Tooltip>
+		</StopCardActivation>
 	);
 }
 

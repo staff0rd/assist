@@ -7,6 +7,7 @@ import { cardSx } from "./cardSx";
 import { HistoryCardChips } from "./HistoryCardChips";
 import { HistoryCardFooter } from "./HistoryCardFooter";
 import { historyTitle } from "./historyTitle";
+import { StopCardActivation } from "./StopCardActivation";
 import type { HistoricalSession, HistoryCardHandlers } from "./types";
 
 function ResumeButton({ onResume }: { onResume: () => void }) {
@@ -36,7 +37,9 @@ export function HistoryCard({
 				<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 					<HistoryCardChips session={session} />
 					<Box sx={{ flex: 1 }} />
-					<ResumeButton onResume={() => onResume(session)} />
+					<StopCardActivation>
+						<ResumeButton onResume={() => onResume(session)} />
+					</StopCardActivation>
 				</Box>
 				<Typography
 					variant="body2"

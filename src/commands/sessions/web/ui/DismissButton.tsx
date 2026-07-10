@@ -2,7 +2,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import { ConfirmDialog } from "../../../backlog/web/ui/components/ConfirmDialog";
-import { StopClickPropagation } from "./StopClickPropagation";
+import { StopCardActivation } from "./StopCardActivation";
 import type { SessionStatus } from "./types";
 
 export function DismissButton({
@@ -35,7 +35,7 @@ export function DismissButton({
 				<CloseIcon sx={{ fontSize: 16 }} />
 			</IconButton>
 			{confirming && (
-				<StopClickPropagation>
+				<StopCardActivation>
 					<ConfirmDialog
 						title="End session"
 						message="This will stop the running session and kill its process. Are you sure?"
@@ -46,7 +46,7 @@ export function DismissButton({
 						}}
 						onCancel={() => setConfirming(false)}
 					/>
-				</StopClickPropagation>
+				</StopCardActivation>
 			)}
 		</>
 	);

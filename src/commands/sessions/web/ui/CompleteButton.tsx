@@ -6,7 +6,7 @@ import { updateItemStatus } from "../../../backlog/web/ui/api";
 import { ConfirmDialog } from "../../../backlog/web/ui/components/ConfirmDialog";
 import type { BacklogTarget } from "./backlogTarget";
 import { ErrorSnackbar } from "./ErrorSnackbar";
-import { StopClickPropagation } from "./StopClickPropagation";
+import { StopCardActivation } from "./StopCardActivation";
 
 export function CompleteButton({
 	target,
@@ -45,7 +45,7 @@ export function CompleteButton({
 				<CheckIcon sx={{ fontSize: 16 }} />
 			</IconButton>
 			{confirming && (
-				<StopClickPropagation>
+				<StopCardActivation>
 					<ConfirmDialog
 						title={`Mark ${formatItemId(itemId)} done`}
 						message={`${phase ?? 0} of ${totalPhases ?? 0} phases completed. Mark this backlog item as done and end its session?`}
@@ -53,11 +53,11 @@ export function CompleteButton({
 						onConfirm={handleConfirm}
 						onCancel={() => setConfirming(false)}
 					/>
-				</StopClickPropagation>
+				</StopCardActivation>
 			)}
-			<StopClickPropagation>
+			<StopCardActivation>
 				<ErrorSnackbar error={error} onClose={() => setError(null)} />
-			</StopClickPropagation>
+			</StopCardActivation>
 		</>
 	);
 }

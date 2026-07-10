@@ -12,6 +12,7 @@ import { RetryButton } from "./RetryButton";
 import { reviewTargetPr } from "./reviewTargetPr";
 import { SessionStarButton } from "./SessionStarButton";
 import { sessionStarTarget } from "./sessionStarTarget";
+import { StopCardActivation } from "./StopCardActivation";
 import type { CardHeaderProps } from "./types";
 import { usePrStatus } from "./usePrStatus";
 
@@ -34,19 +35,21 @@ export function CardHeaderActions({
 				<CardChips session={session} />
 			)}
 			<Box sx={{ flex: 1 }} />
-			{pr && session.cwd && <OpenPrButton pr={pr} />}
-			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}
-			{onRestart && <RestartButton onRestart={onRestart} />}
-			{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
-			{canStar && <SessionStarButton session={session} />}
-			{target && (
-				<CompleteButton
-					target={target}
-					cwd={session.cwd}
-					onDismiss={onDismiss}
-				/>
-			)}
-			<DismissButton id={session.id} status={status} onDismiss={onDismiss} />
+			<StopCardActivation>
+				{pr && session.cwd && <OpenPrButton pr={pr} />}
+				{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}
+				{onRestart && <RestartButton onRestart={onRestart} />}
+				{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
+				{canStar && <SessionStarButton session={session} />}
+				{target && (
+					<CompleteButton
+						target={target}
+						cwd={session.cwd}
+						onDismiss={onDismiss}
+					/>
+				)}
+				<DismissButton id={session.id} status={status} onDismiss={onDismiss} />
+			</StopCardActivation>
 		</Box>
 	);
 }

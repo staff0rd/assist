@@ -67,6 +67,41 @@ describe("SessionCard loading state", () => {
 	});
 });
 
+describe("SessionCard ripple", () => {
+	function renderDefaultCard() {
+		return render(
+			<SessionCard
+				session={session}
+				active={false}
+				loading={false}
+				onClick={() => {}}
+				onDismiss={() => {}}
+				onSetAutoRun={() => {}}
+				onSetAutoAdvance={() => {}}
+			/>,
+		);
+	}
+
+	async function cardRipple(container: HTMLElement) {
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		const card = container.firstChild as HTMLElement;
+		const root = card.querySelector(":scope > .MuiTouchRipple-root");
+		return root?.querySelector(".MuiTouchRipple-ripple") ?? null;
+	}
+
+	it("ripples the card when its body is pressed", async () => {
+		const { container } = renderDefaultCard();
+		fireEvent.mouseDown(screen.getByText("my session"));
+		expect(await cardRipple(container)).not.toBeNull();
+	});
+
+	it("does not ripple the card when an action button is pressed", async () => {
+		const { container } = renderDefaultCard();
+		fireEvent.mouseDown(screen.getByTitle("Dismiss session 1"));
+		expect(await cardRipple(container)).toBeNull();
+	});
+});
+
 describe("SessionCard dismiss confirmation", () => {
 	it("does not select the card when confirming a running session's dismissal", () => {
 		const onClick = vi.fn();
