@@ -1,7 +1,6 @@
 import Chip from "@mui/material/Chip";
-import { Link } from "react-router";
-import { formatItemId } from "../../../backlog/formatItemId";
 import { JiraKeyLink } from "../../../backlog/web/ui/components/JiraKeyLink";
+import { BacklogItemChip } from "./BacklogItemChip";
 import { repoLabel } from "./repoLabel";
 import type { HistoricalSession } from "./types";
 import { useJiraKeys } from "./useJiraKeys";
@@ -26,16 +25,7 @@ export function HistoryCardChips({ session }: { session: HistoricalSession }) {
 				/>
 			)}
 			{session.itemId != null && (
-				<Chip
-					label={formatItemId(session.itemId)}
-					size="small"
-					sx={chipSx}
-					clickable
-					component={Link}
-					to={`/backlog/items/${formatItemId(session.itemId)}`}
-					// The card itself is a ButtonBase; don't let it also select
-					onClick={(e) => e.stopPropagation()}
-				/>
+				<BacklogItemChip itemId={session.itemId} cwd={session.cwd} />
 			)}
 			<JiraKeyLink variant="chip" jiraKey={jiraKeyFor(session.itemId)} />
 		</>

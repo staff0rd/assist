@@ -2,8 +2,9 @@ import { Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import { LastBackedUp } from "../../../../sessions/web/ui/LastBackedUp";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
-import { formatItemId } from "../../../formatItemId";
+import { itemDetailPath } from "../itemDetailPath";
 import type { BacklogItemSummary } from "../types";
+import { useRepoCwd } from "../useRepoCwd";
 import { useSearchItems } from "../useSearchItems";
 import { CompletedToggle } from "./CompletedToggle";
 import { ListBody } from "./ListBody";
@@ -42,6 +43,7 @@ function Header() {
 
 export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 	const navigate = useNavigate();
+	const cwd = useRepoCwd();
 	const { query, setQuery, results, loading: searching } = useSearchItems();
 	const visible = results ?? items;
 
@@ -55,7 +57,7 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 				query={query}
 				items={visible}
 				socket={socket}
-				onSelect={(item) => navigate(`/backlog/items/${formatItemId(item.id)}`)}
+				onSelect={(item) => navigate(itemDetailPath(item.id, cwd))}
 				onReload={onReload}
 			/>
 		</>

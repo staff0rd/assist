@@ -1,6 +1,10 @@
 import { Box, CircularProgress } from "@mui/material";
 import { useCallback } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
+import {
+	RepoSelectionContext,
+	useRepoSelectionContext,
+} from "../../../../sessions/web/ui/useRepoSelectionContext";
 import { parseItemId } from "../../../formatItemId";
 import { useItem } from "../useItem";
 import { ItemDetail } from "./ItemDetail";
@@ -12,6 +16,19 @@ const loadingSx = {
 } as const;
 
 export function ItemRoute({ onReload }: { onReload: () => Promise<void> }) {
+	const [searchParams] = useSearchParams();
+	const cwdParam = searchParams.get("cwd") || undefined;
+	const selection = useRepoSelectionContext();
+	const value = cwdParam ? { ...selection, selectedCwd: cwdParam } : selection;
+
+	return (
+		<RepoSelectionContext.Provider value={value}>
+			<ItemRouteContent onReload={onReload} />
+		</RepoSelectionContext.Provider>
+	);
+}
+
+function ItemRouteContent({ onReload }: { onReload: () => Promise<void> }) {
 	const { id } = useParams<{ id: string }>();
 	let numId = Number.NaN;
 	try {
