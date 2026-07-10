@@ -1,3 +1,10 @@
+# [0.375.0](https://github.com/staff0rd/assist/compare/v0.374.2...v0.375.0) (2026-07-10)
+
+
+### Features
+
+* copy session id from history card ([6140630](https://github.com/staff0rd/assist/commit/61406305da8191314f119c1923991a5f2f18a0f6))
+
 ## [0.374.2](https://github.com/staff0rd/assist/compare/v0.374.1...v0.374.2) (2026-07-10)
 
 
