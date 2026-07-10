@@ -39,6 +39,8 @@ export type Session = {
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;
 	pendingRestart?: () => void;
+	totalIn?: number;
+	totalOut?: number;
 };
 
 export type SessionInfo = {
@@ -60,4 +62,6 @@ export type SessionInfo = {
 	activity?: Activity;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
+	totalIn?: number;
+	totalOut?: number;
 };

@@ -24,6 +24,8 @@ export type SessionInfo = {
 	activity?: Activity;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
+	totalIn?: number;
+	totalOut?: number;
 };
 
 export type CardHeaderProps = {

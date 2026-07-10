@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { TokenUsage } from "./TokenUsage";
 import type { SessionStatus } from "./types";
 
 const STATUS_COLORS: Record<SessionStatus, string> = {
@@ -13,10 +14,14 @@ export function StatusRow({
 	status,
 	elapsed,
 	restored,
+	totalIn,
+	totalOut,
 }: {
 	status: SessionStatus;
 	elapsed: string;
 	restored?: boolean;
+	totalIn?: number;
+	totalOut?: number;
 }) {
 	return (
 		<Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
@@ -32,6 +37,7 @@ export function StatusRow({
 						{restored ? "restored" : "not restored"}
 					</Typography>
 				)}
+				<TokenUsage totalIn={totalIn} totalOut={totalOut} />
 			</Box>
 			<Typography variant="caption" color="text.disabled">
 				{elapsed}

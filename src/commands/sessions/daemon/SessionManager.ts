@@ -166,12 +166,15 @@ export class SessionManager {
 		totalIn: number,
 		totalOut: number,
 	): void {
-		recordSessionUsage(
-			this.sessions.values(),
-			claudeSessionId,
-			totalIn,
-			totalOut,
-		);
+		if (
+			recordSessionUsage(
+				this.sessions.values(),
+				claudeSessionId,
+				totalIn,
+				totalOut,
+			)
+		)
+			this.notify();
 	}
 
 	listSessions = (): SessionInfo[] => {

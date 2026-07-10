@@ -19,6 +19,8 @@ export function toSessionInfo({
 	activity,
 	autoRun,
 	autoAdvance,
+	totalIn,
+	totalOut,
 }: Session): SessionInfo {
 	return {
 		id,
@@ -39,5 +41,7 @@ export function toSessionInfo({
 		activity,
 		autoRun,
 		autoAdvance,
+		totalIn,
+		totalOut,
 	};
 }

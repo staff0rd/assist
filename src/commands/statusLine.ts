@@ -53,7 +53,7 @@ export async function statusLine(): Promise<void> {
 	const branchSegment = branch ? `🌿️ ${chalk.cyan(branch)} | ` : "";
 
 	console.log(
-		`${branchSegment}${model} | Tokens - ${formatNumber(totalOut)} ↑ : ${formatNumber(totalIn)} ↓ | Context - ${colorizePercent(usedPct)}${buildLimitsSegment(data.rate_limits)}`,
+		`${branchSegment}${model} | Tokens - ${formatNumber(totalIn)} ↑ : ${formatNumber(totalOut)} ↓ | Context - ${colorizePercent(usedPct)}${buildLimitsSegment(data.rate_limits)}`,
 	);
 
 	await relayRateLimits(data.rate_limits);

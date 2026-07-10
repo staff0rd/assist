@@ -38,6 +38,8 @@ export function CardBody({
 				status={session.status}
 				elapsed={elapsed}
 				restored={session.restored}
+				totalIn={session.totalIn}
+				totalOut={session.totalOut}
 			/>
 			{session.status === "error" && <SessionErrorText error={session.error} />}
 			<CardToggles

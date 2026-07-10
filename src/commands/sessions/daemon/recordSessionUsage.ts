@@ -12,12 +12,15 @@ export function recordSessionUsage(
 	claudeSessionId: string,
 	totalIn: number,
 	totalOut: number,
-): void {
+): boolean {
 	for (const session of sessions) {
 		if (session.claudeSessionId !== claudeSessionId) continue;
+		session.totalIn = totalIn;
+		session.totalOut = totalOut;
 		const phase = sessionBacklogPhase(session);
 		if (phase)
 			void persistPhaseTokens(phase.itemId, phase.phaseIdx, totalIn, totalOut);
-		return;
+		return true;
 	}
+	return false;
 }
