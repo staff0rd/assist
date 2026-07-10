@@ -17,7 +17,7 @@ Ask short, targeted questions one at a time to fill in any gaps. You need three 
 2. **Expected behavior** — what should happen?
 3. **Actual behavior** — what happens instead?
 
-Before asking the user about existing functionality — how a feature currently works, what a command does, where something lives — investigate the codebase first and answer it yourself. Only ask the user about things the code can't tell you (their intent, what they observed, how to reproduce it).
+Before asking the user about existing functionality — how a feature currently works, what a command does, where something lives — investigate the codebase first and answer it yourself. Do this investigation yourself — do not delegate it to a sub-agent; you need the context in your own working memory to write an accurate bug report. Only ask the user about things the code can't tell you (their intent, what they observed, how to reproduce it).
 
 Skip questions the user has already answered. Stop asking as soon as you have enough to write a clear bug report — don't over-interrogate.
 
