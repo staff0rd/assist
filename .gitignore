@@ -9,3 +9,4 @@ books
 screenshots
 .claude/settings.local.json
 assist-test.txt
+.assist/backlog.db
