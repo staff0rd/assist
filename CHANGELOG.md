@@ -1,3 +1,10 @@
+## [0.376.1](https://github.com/staff0rd/assist/compare/v0.376.0...v0.376.1) (2026-07-10)
+
+
+### Bug Fixes
+
+* stop card ripple on action buttons ([1113aee](https://github.com/staff0rd/assist/commit/1113aeea7ebd940c2aee478b0a7a2cc628a9524a))
+
 # [0.376.0](https://github.com/staff0rd/assist/compare/v0.375.0...v0.376.0) (2026-07-10)
 
 
