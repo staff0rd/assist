@@ -1,3 +1,10 @@
+# [0.378.0](https://github.com/staff0rd/assist/compare/v0.377.0...v0.378.0) (2026-07-10)
+
+
+### Features
+
+* token usage on session cards ([7f3a3ab](https://github.com/staff0rd/assist/commit/7f3a3abb4dcf70e95ebd96414f9d164bf080e697))
+
 # [0.377.0](https://github.com/staff0rd/assist/compare/v0.376.1...v0.377.0) (2026-07-10)
 
 
