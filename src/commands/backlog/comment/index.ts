@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { appendComment } from "../appendComment";
+import { formatItemId } from "../formatItemId";
 import { findOneItem } from "../shared";
 
 export async function comment(id: string, text: string): Promise<void> {
@@ -7,5 +8,7 @@ export async function comment(id: string, text: string): Promise<void> {
 	if (!found) process.exit(1);
 
 	await appendComment(found.orm, found.item.id, text);
-	console.log(chalk.green(`Comment added to item #${id}.`));
+	console.log(
+		chalk.green(`Comment added to item ${formatItemId(found.item.id)}.`),
+	);
 }

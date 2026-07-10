@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { eq } from "drizzle-orm";
 import { items } from "../../../shared/db/schema";
+import { formatItemId } from "../formatItemId";
 import { findOneItem } from "../shared";
 import { applyAcMutations, hasAcMutations } from "./applyAcMutations";
 import { buildUpdateValues } from "./buildUpdateValues";
@@ -48,5 +49,7 @@ export async function update(
 
 	await orm.update(items).set(built.set).where(eq(items.id, itemId));
 
-	console.log(chalk.green(`Updated ${built.fields} on item #${itemId}.`));
+	console.log(
+		chalk.green(`Updated ${built.fields} on item ${formatItemId(itemId)}.`),
+	);
 }

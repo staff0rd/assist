@@ -2,6 +2,7 @@ import { Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import { LastBackedUp } from "../../../../sessions/web/ui/LastBackedUp";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
+import { formatItemId } from "../../../formatItemId";
 import type { BacklogItemSummary } from "../types";
 import { useSearchItems } from "../useSearchItems";
 import { CompletedToggle } from "./CompletedToggle";
@@ -54,7 +55,7 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 				query={query}
 				items={visible}
 				socket={socket}
-				onSelect={(item) => navigate(`/backlog/items/${item.id}`)}
+				onSelect={(item) => navigate(`/backlog/items/${formatItemId(item.id)}`)}
 				onReload={onReload}
 			/>
 		</>

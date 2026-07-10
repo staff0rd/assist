@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
+import { formatItemId } from "../formatItemId";
 import { loadItem } from "../loadItem";
 import type { SubtaskStatus } from "../types";
 import { updateSubtaskStatus } from "../updateSubtaskStatus";
@@ -26,7 +27,9 @@ export async function patchSubtaskStatus(
 	const { orm, item } = result;
 	const subtasks = item.subtasks ?? [];
 	if (idx < 0 || idx >= subtasks.length) {
-		respondJson(res, 400, { error: `Item #${id} has no sub-task ${idx}.` });
+		respondJson(res, 400, {
+			error: `Item ${formatItemId(id)} has no sub-task ${idx}.`,
+		});
 		return;
 	}
 	await updateSubtaskStatus(orm, id, idx, status as SubtaskStatus);

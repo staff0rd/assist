@@ -77,7 +77,7 @@ describe("phaseDone", () => {
 	});
 
 	it("should write the status marker file", async () => {
-		await phaseDone("1", "1", "Done");
+		await phaseDone("a1", "1", "Done");
 
 		const marker = JSON.parse(readFileSync(signalPath(), "utf8"));
 		expect(marker.event).toBe("phase-done");
@@ -87,14 +87,14 @@ describe("phaseDone", () => {
 	});
 
 	it("should advance currentPhase when item is not done", async () => {
-		await phaseDone("1", "1", "Done");
+		await phaseDone("a1", "1", "Done");
 
-		expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
+		expect(mockSetCurrentPhase).toHaveBeenCalledWith("a1", 2);
 		cleanup();
 	});
 
 	it("should store a phase summary as a targeted comment write", async () => {
-		await phaseDone("1", "1", "Implemented the feature");
+		await phaseDone("a1", "1", "Implemented the feature");
 
 		expect(mockAppendComment).toHaveBeenCalledWith(
 			orm,
@@ -109,7 +109,7 @@ describe("phaseDone", () => {
 		it("should not advance currentPhase", async () => {
 			mockLoadItem.mockResolvedValue(makeItem({ status: "done" }));
 
-			await phaseDone("1", "1", "Done");
+			await phaseDone("a1", "1", "Done");
 
 			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 			cleanup();
@@ -118,7 +118,7 @@ describe("phaseDone", () => {
 		it("should skip the summary (already saved by done command)", async () => {
 			mockLoadItem.mockResolvedValue(makeItem({ status: "done" }));
 
-			await phaseDone("1", "3", "Review complete");
+			await phaseDone("a1", "3", "Review complete");
 
 			expect(mockAppendComment).not.toHaveBeenCalled();
 			cleanup();
@@ -129,7 +129,7 @@ describe("phaseDone", () => {
 		it("should not advance currentPhase or write a summary", async () => {
 			mockLoadItem.mockResolvedValue(undefined);
 
-			await phaseDone("99", "1", "Done");
+			await phaseDone("a99", "1", "Done");
 
 			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 			expect(mockAppendComment).not.toHaveBeenCalled();
@@ -146,7 +146,7 @@ describe("phaseDone", () => {
 		it("should block the review phase and not advance", async () => {
 			mockLoadItem.mockResolvedValue(withPlanAndSubtask);
 
-			await phaseDone("1", "2", "Review complete");
+			await phaseDone("a1", "2", "Review complete");
 
 			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
 			expect(mockAppendComment).not.toHaveBeenCalled();
@@ -157,9 +157,9 @@ describe("phaseDone", () => {
 		it("should still allow an intermediate authored phase to complete", async () => {
 			mockLoadItem.mockResolvedValue(withPlanAndSubtask);
 
-			await phaseDone("1", "1", "Phase 1 done");
+			await phaseDone("a1", "1", "Phase 1 done");
 
-			expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 2);
+			expect(mockSetCurrentPhase).toHaveBeenCalledWith("a1", 2);
 			cleanup();
 		});
 
@@ -171,9 +171,9 @@ describe("phaseDone", () => {
 				}),
 			);
 
-			await phaseDone("1", "2", "Review complete");
+			await phaseDone("a1", "2", "Review complete");
 
-			expect(mockSetCurrentPhase).toHaveBeenCalledWith("1", 3);
+			expect(mockSetCurrentPhase).toHaveBeenCalledWith("a1", 3);
 			cleanup();
 		});
 	});

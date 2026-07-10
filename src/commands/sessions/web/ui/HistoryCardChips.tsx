@@ -1,5 +1,6 @@
 import Chip from "@mui/material/Chip";
 import { Link } from "react-router";
+import { formatItemId } from "../../../backlog/formatItemId";
 import { JiraKeyLink } from "../../../backlog/web/ui/components/JiraKeyLink";
 import { repoLabel } from "./repoLabel";
 import type { HistoricalSession } from "./types";
@@ -26,12 +27,12 @@ export function HistoryCardChips({ session }: { session: HistoricalSession }) {
 			)}
 			{session.itemId != null && (
 				<Chip
-					label={`#${session.itemId}`}
+					label={formatItemId(session.itemId)}
 					size="small"
 					sx={chipSx}
 					clickable
 					component={Link}
-					to={`/backlog/items/${session.itemId}`}
+					to={`/backlog/items/${formatItemId(session.itemId)}`}
 					// The card itself is a ButtonBase; don't let it also select
 					onClick={(e) => e.stopPropagation()}
 				/>

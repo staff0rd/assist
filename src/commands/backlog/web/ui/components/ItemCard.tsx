@@ -1,5 +1,6 @@
 import { ButtonBase, Chip, Typography } from "@mui/material";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
+import { formatItemId } from "../../../formatItemId";
 import type { BacklogItemSummary } from "../types";
 import { itemCardStyles } from "./itemCardStyles";
 import { JiraKeyLink } from "./JiraKeyLink";
@@ -18,7 +19,7 @@ function CardSummary({ item }: { item: BacklogItemSummary }) {
 				sx={itemCardStyles.chip}
 			/>
 			<Typography variant="body2" sx={itemCardStyles.id}>
-				#{item.id}
+				{formatItemId(item.id)}
 			</Typography>
 			<Typography sx={itemCardStyles.name}>{item.name}</Typography>
 			{item.jiraKey && <JiraKeyLink jiraKey={item.jiraKey} />}

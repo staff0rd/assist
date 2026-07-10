@@ -31,7 +31,7 @@ describe("RefineAction", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Refine" }));
 
 		expect(launchAssist).toHaveBeenCalledWith(
-			["refine", "--once", "279"],
+			["refine", "--once", "a279"],
 			undefined,
 		);
 		expect(screen.getByTestId("location").textContent).toBe("/sessions");

@@ -59,7 +59,7 @@ describe("summariseSession", () => {
 		summariseSession("/s.jsonl");
 
 		const prompt = mockExecFileSync.mock.calls[0][1].at(-1) as string;
-		expect(prompt).toContain("#10, #20");
+		expect(prompt).toContain("a10, a20");
 	});
 
 	it("works with only backlog refs and no first message", () => {

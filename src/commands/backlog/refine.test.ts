@@ -38,10 +38,10 @@ describe("refine", () => {
 	it("emits the item id and name on the launched activity", async () => {
 		mockLoadItem.mockResolvedValue({ id: 254, name: "Add refine mode button" });
 
-		await refine("254", { once: true });
+		await refine("a254", { once: true });
 
 		expect(mockLoadItem).toHaveBeenCalledWith({}, 254);
-		expect(mockLaunchMode).toHaveBeenCalledWith("refine 254", {
+		expect(mockLaunchMode).toHaveBeenCalledWith("refine a254", {
 			once: true,
 			itemId: 254,
 			itemName: "Add refine mode button",
@@ -51,9 +51,9 @@ describe("refine", () => {
 	it("launches without an item id when the item cannot be loaded", async () => {
 		mockLoadItem.mockResolvedValue(undefined);
 
-		await refine("999");
+		await refine("a999");
 
-		expect(mockLaunchMode).toHaveBeenCalledWith("refine 999", {
+		expect(mockLaunchMode).toHaveBeenCalledWith("refine a999", {
 			itemId: undefined,
 			itemName: undefined,
 		});

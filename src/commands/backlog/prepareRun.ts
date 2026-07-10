@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import { resolvePlan } from "./resolvePlan";
 import { findOneItem, setStatus } from "./shared";
 import type { BacklogItem, PlanPhase } from "./types";
@@ -18,7 +19,9 @@ export async function prepareRun(id: string): Promise<PreparedRun | undefined> {
 	const startPhase = (item.currentPhase ?? 1) - 1;
 
 	if (item.status === "done") {
-		console.log(chalk.green(`Already done: #${id}: ${item.name}`));
+		console.log(
+			chalk.green(`Already done: ${formatItemId(item.id)}: ${item.name}`),
+		);
 		return undefined;
 	}
 
@@ -27,7 +30,9 @@ export async function prepareRun(id: string): Promise<PreparedRun | undefined> {
 	if (startPhase > plan.length) {
 		await setStatus(id, "done");
 		console.log(
-			chalk.green(`All phases already complete for #${id}: ${item.name}`),
+			chalk.green(
+				`All phases already complete for ${formatItemId(item.id)}: ${item.name}`,
+			),
 		);
 		return undefined;
 	}

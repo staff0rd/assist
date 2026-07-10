@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
+import { formatItemId, parseItemId } from "./formatItemId";
 import { type LaunchModeOptions, launchMode } from "./launchMode";
 import { typeLabel } from "./list/shared";
 import { loadBacklogSummaries } from "./loadBacklogSummaries";
@@ -20,8 +21,10 @@ async function pickItemForRefine(): Promise<string | undefined> {
 
 	if (active.length === 1) {
 		const item = active[0];
-		console.log(chalk.bold(`Auto-selecting item #${item.id}: ${item.name}`));
-		return String(item.id);
+		console.log(
+			chalk.bold(`Auto-selecting item ${formatItemId(item.id)}: ${item.name}`),
+		);
+		return formatItemId(item.id);
 	}
 
 	const { selected } = await exitOnCancel(
@@ -30,12 +33,12 @@ async function pickItemForRefine(): Promise<string | undefined> {
 			name: "selected",
 			message: "Choose a backlog item to refine:",
 			choices: active.map((item) => ({
-				name: `${typeLabel(item.type)} #${item.id}: ${item.name}`,
+				name: `${typeLabel(item.type)} ${formatItemId(item.id)}: ${item.name}`,
 			})),
 		}),
 	);
 
-	return selected.match(/#(\d+)/)?.[1] ?? "";
+	return selected.match(/(a\d+):/)?.[1] ?? "";
 }
 
 export async function refine(
@@ -45,10 +48,8 @@ export async function refine(
 	const itemId = id ?? (await pickItemForRefine());
 	if (!itemId) return;
 
-	const numericId = Number.parseInt(itemId, 10);
-	const item = Number.isNaN(numericId)
-		? undefined
-		: await loadItem((await getReady()).orm, numericId);
+	const numericId = parseItemId(itemId);
+	const item = await loadItem((await getReady()).orm, numericId);
 
 	await launchMode(`refine ${itemId}`, {
 		...options,

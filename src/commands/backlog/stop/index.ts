@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { and, eq } from "drizzle-orm";
 import { items } from "../../../shared/db/schema";
+import { formatItemId } from "../formatItemId";
 import { getOrigin, getReady } from "../shared";
 
 export async function stop(): Promise<void> {
@@ -17,6 +18,8 @@ export async function stop(): Promise<void> {
 	}
 
 	for (const item of stopped) {
-		console.log(chalk.yellow(`Stopped item #${item.id}: ${item.name}`));
+		console.log(
+			chalk.yellow(`Stopped item ${formatItemId(item.id)}: ${item.name}`),
+		);
 	}
 }

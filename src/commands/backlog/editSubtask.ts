@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import { findSubtask } from "./findSubtask";
 import type { SubtaskStatus } from "./types";
 import { type SubtaskUpdate, updateSubtask } from "./updateSubtask";
@@ -56,6 +57,8 @@ export async function editSubtask(
 	const { orm, item, idx } = found;
 	const title = await updateSubtask(orm, item.id, idx, fields);
 	console.log(
-		chalk.green(`Updated sub-task ${idx + 1} of item #${id}: ${title}`),
+		chalk.green(
+			`Updated sub-task ${idx + 1} of item ${formatItemId(item.id)}: ${title}`,
+		),
 	);
 }

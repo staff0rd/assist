@@ -60,20 +60,21 @@ describe("tryRunById", () => {
 		it("returns false and does not call run", async () => {
 			mockLoadItem.mockResolvedValue(undefined);
 
-			const result = await tryRunById("99");
+			const result = await tryRunById("a99");
 
 			expect(result).toBe(false);
 			expect(mockRun).not.toHaveBeenCalled();
 		});
 	});
 
-	describe("when the id is not numeric", () => {
-		it("returns false and does not call run", async () => {
-			const result = await tryRunById("abc");
+	describe("when the id is a bare number", () => {
+		it("tolerates it, resolves the item, and calls run", async () => {
+			mockLoadItem.mockResolvedValue(makeItem({ id: 42 }));
 
-			expect(result).toBe(false);
-			expect(mockLoadItem).not.toHaveBeenCalled();
-			expect(mockRun).not.toHaveBeenCalled();
+			const result = await tryRunById("42", { allowEdits: true });
+
+			expect(result).toBe(true);
+			expect(mockRun).toHaveBeenCalledWith("42", { allowEdits: true });
 		});
 	});
 
@@ -81,7 +82,7 @@ describe("tryRunById", () => {
 		it("returns false and does not call run", async () => {
 			mockLoadItem.mockResolvedValue(makeItem({ id: 1, status: "done" }));
 
-			const result = await tryRunById("1");
+			const result = await tryRunById("a1");
 
 			expect(result).toBe(false);
 			expect(mockRun).not.toHaveBeenCalled();
@@ -92,7 +93,7 @@ describe("tryRunById", () => {
 		it("returns false and does not call run", async () => {
 			mockLoadItem.mockResolvedValue(makeItem({ id: 1, status: "wontdo" }));
 
-			const result = await tryRunById("1");
+			const result = await tryRunById("a1");
 
 			expect(result).toBe(false);
 			expect(mockRun).not.toHaveBeenCalled();
@@ -106,7 +107,7 @@ describe("tryRunById", () => {
 			);
 			mockIsBlocked.mockReturnValue(true);
 
-			const result = await tryRunById("1");
+			const result = await tryRunById("a1");
 
 			expect(result).toBe(false);
 			expect(mockRun).not.toHaveBeenCalled();
@@ -117,10 +118,10 @@ describe("tryRunById", () => {
 		it("calls run with the id and returns true", async () => {
 			mockLoadItem.mockResolvedValue(makeItem({ id: 1 }));
 
-			const result = await tryRunById("1", { allowEdits: true });
+			const result = await tryRunById("a1", { allowEdits: true });
 
 			expect(result).toBe(true);
-			expect(mockRun).toHaveBeenCalledWith("1", { allowEdits: true });
+			expect(mockRun).toHaveBeenCalledWith("a1", { allowEdits: true });
 		});
 
 		it("treats in-progress items as runnable", async () => {
@@ -128,10 +129,10 @@ describe("tryRunById", () => {
 				makeItem({ id: 1, status: "in-progress" }),
 			);
 
-			const result = await tryRunById("1");
+			const result = await tryRunById("a1");
 
 			expect(result).toBe(true);
-			expect(mockRun).toHaveBeenCalledWith("1", undefined);
+			expect(mockRun).toHaveBeenCalledWith("a1", undefined);
 		});
 	});
 });

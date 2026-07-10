@@ -1,3 +1,4 @@
+import { formatItemId } from "../../formatItemId";
 import type { BacklogItem, SubtaskStatus } from "./types";
 import { withCwd } from "./withCwd";
 
@@ -19,7 +20,9 @@ export async function initBacklog(cwd?: string): Promise<void> {
 }
 
 export async function deleteItem(id: number, cwd?: string): Promise<void> {
-	await fetch(withCwd(`/api/items/${id}`, cwd), { method: "DELETE" });
+	await fetch(withCwd(`/api/items/${formatItemId(id)}`, cwd), {
+		method: "DELETE",
+	});
 }
 
 export async function deleteComment(
@@ -28,7 +31,7 @@ export async function deleteComment(
 	cwd?: string,
 ): Promise<void> {
 	const res = await fetch(
-		withCwd(`/api/items/${itemId}/comments/${commentId}`, cwd),
+		withCwd(`/api/items/${formatItemId(itemId)}/comments/${commentId}`, cwd),
 		{ method: "DELETE" },
 	);
 	if (!res.ok) {
@@ -44,7 +47,9 @@ export function updateItemStatus(
 	status: BacklogItem["status"],
 	cwd?: string,
 ): Promise<BacklogItem> {
-	return sendJson(withCwd(`/api/items/${id}`, cwd), "PATCH", { status });
+	return sendJson(withCwd(`/api/items/${formatItemId(id)}`, cwd), "PATCH", {
+		status,
+	});
 }
 
 export function updateSubtaskStatus(
@@ -54,7 +59,7 @@ export function updateSubtaskStatus(
 	cwd?: string,
 ): Promise<BacklogItem> {
 	return sendJson(
-		withCwd(`/api/items/${itemId}/subtasks/${idx}`, cwd),
+		withCwd(`/api/items/${formatItemId(itemId)}/subtasks/${idx}`, cwd),
 		"PATCH",
 		{ status },
 	);
@@ -65,7 +70,9 @@ export function toggleStar(
 	starred: boolean,
 	cwd?: string,
 ): Promise<BacklogItem> {
-	return sendJson(withCwd(`/api/items/${id}/star`, cwd), "POST", { starred });
+	return sendJson(withCwd(`/api/items/${formatItemId(id)}/star`, cwd), "POST", {
+		starred,
+	});
 }
 
 export function rewindPhase(
@@ -74,8 +81,12 @@ export function rewindPhase(
 	reason: string,
 	cwd?: string,
 ): Promise<BacklogItem> {
-	return sendJson(withCwd(`/api/items/${id}/rewind`, cwd), "POST", {
-		phase,
-		reason,
-	});
+	return sendJson(
+		withCwd(`/api/items/${formatItemId(id)}/rewind`, cwd),
+		"POST",
+		{
+			phase,
+			reason,
+		},
+	);
 }

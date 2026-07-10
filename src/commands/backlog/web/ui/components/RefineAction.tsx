@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import { type MouseEvent, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
+import { formatItemId } from "../../../formatItemId";
 import { useRepoCwd } from "../useRepoCwd";
 
 export function RefineAction({ itemId }: { itemId: number }) {
@@ -15,7 +16,7 @@ export function RefineAction({ itemId }: { itemId: number }) {
 		event.stopPropagation();
 		if (launched) return;
 		setLaunched(true);
-		launchAssist(["refine", "--once", String(itemId)], cwd);
+		launchAssist(["refine", "--once", formatItemId(itemId)], cwd);
 		navigate("/sessions");
 	};
 	return (

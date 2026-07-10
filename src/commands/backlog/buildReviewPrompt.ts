@@ -1,4 +1,5 @@
 import { buildCommentLines } from "./buildCommentLines";
+import { formatItemId } from "./formatItemId";
 import type { BacklogItem } from "./types";
 
 export function buildReviewPrompt(
@@ -8,9 +9,10 @@ export function buildReviewPrompt(
 	const acLines = item.acceptanceCriteria
 		.map((ac, i) => `${i + 1}. ${ac}`)
 		.join("\n");
+	const itemId = formatItemId(item.id);
 
 	return [
-		`You are reviewing backlog item #${item.id}: ${item.name}`,
+		`You are reviewing backlog item ${itemId}: ${item.name}`,
 		"",
 		item.description ? `Description: ${item.description}` : "",
 		"",
@@ -23,9 +25,9 @@ export function buildReviewPrompt(
 		"",
 		"If any criterion fails, fix the issue and re-verify.",
 		"",
-		`Any sub-tasks on this item must all be done before it can be completed: \`assist backlog done\` and completing this Review phase both fail while any sub-task is not done. Check them with \`assist backlog show ${item.id}\` and mark each finished one done via \`assist backlog subtask-status ${item.id} <idx> done\`.`,
+		`Any sub-tasks on this item must all be done before it can be completed: \`assist backlog done\` and completing this Review phase both fail while any sub-task is not done. Check them with \`assist backlog show ${itemId}\` and mark each finished one done via \`assist backlog subtask-status ${itemId} <idx> done\`.`,
 		"",
-		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
+		`Post concise comments for any notable findings or changes using \`assist backlog comment ${itemId} "<text>"\`.`,
 		"",
 		"After all criteria pass, ask the user to confirm any manual checks",
 		"(e.g. end-to-end behaviour they need to verify themselves).",
@@ -38,13 +40,13 @@ export function buildReviewPrompt(
 		"",
 		"Once the user gives that explicit completion instruction:",
 		"1. Run: /commit",
-		`2. Run: assist backlog done ${item.id} "<summary>"`,
-		`3. Run: assist backlog phase-done ${item.id} ${phaseNumber} "done"`,
+		`2. Run: assist backlog done ${itemId} "<summary>"`,
+		`3. Run: assist backlog phase-done ${itemId} ${phaseNumber} "done"`,
 		"",
 		"Precedence rules — read carefully:",
 		"- An explicit completion instruction plus a successful commit means the work is complete. Always finish with done + phase-done; never rewind already-approved, committed work as an automatic response.",
 		"- If the implementation has diverged from the recorded acceptance criteria but the user has approved it, the default is still to complete the item. You may optionally offer to update the acceptance criteria, but stale criteria are not a reason to rewind.",
-		`- Rewinding is a confirm-first exception, not the normal path. If you believe a criterion genuinely no longer fits and the work should return to an earlier phase, you must ask the user and get explicit confirmation first. Only after they confirm may you run \`assist backlog rewind ${item.id} <phase> --reason "<reason>"\`. Never rewind silently.`,
+		`- Rewinding is a confirm-first exception, not the normal path. If you believe a criterion genuinely no longer fits and the work should return to an earlier phase, you must ask the user and get explicit confirmation first. Only after they confirm may you run \`assist backlog rewind ${itemId} <phase> --reason "<reason>"\`. Never rewind silently.`,
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");

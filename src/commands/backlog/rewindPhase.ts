@@ -1,7 +1,7 @@
 import chalk from "chalk";
-import { loadItem } from "./loadItem";
+import { formatItemId } from "./formatItemId";
 import { rewindItemToPhase } from "./rewindItemToPhase";
-import { getReady } from "./shared";
+import { findOneItem } from "./shared";
 
 export async function rewindPhase(
 	id: string,
@@ -10,12 +10,9 @@ export async function rewindPhase(
 ): Promise<void> {
 	const phaseNumber = Number.parseInt(phase, 10);
 
-	const { orm } = await getReady();
-	const item = await loadItem(orm, Number.parseInt(id, 10));
-	if (!item) {
-		console.log(chalk.red(`Item #${id} not found.`));
-		return;
-	}
+	const found = await findOneItem(id);
+	if (!found) return;
+	const { orm, item } = found;
 
 	const result = await rewindItemToPhase(orm, item, phaseNumber, opts.reason);
 	if (!result.ok) {
@@ -26,7 +23,7 @@ export async function rewindPhase(
 
 	console.log(
 		chalk.green(
-			`Rewound item #${id} to phase ${phaseNumber} (${result.phaseName}).`,
+			`Rewound item ${formatItemId(item.id)} to phase ${phaseNumber} (${result.phaseName}).`,
 		),
 	);
 }

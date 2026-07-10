@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { and, count, eq } from "drizzle-orm";
 import { planPhases } from "../../shared/db/schema";
+import { formatItemId } from "./formatItemId";
 import { findOneItem } from "./shared";
 
 export async function findPhase(id: string, phase: string) {
@@ -18,7 +19,9 @@ export async function findPhase(id: string, phase: string) {
 
 	if (!row || row.cnt === 0) {
 		console.log(
-			chalk.red(`Phase ${phaseIdx + 1} not found on item #${itemId}.`),
+			chalk.red(
+				`Phase ${phaseIdx + 1} not found on item ${formatItemId(itemId)}.`,
+			),
 		);
 		process.exitCode = 1;
 		return undefined;

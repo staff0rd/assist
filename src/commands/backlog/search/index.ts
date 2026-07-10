@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "../formatItemId";
 import { statusIcon, typeLabel } from "../list/shared";
 import { searchBacklog } from "../shared";
 
@@ -16,7 +17,7 @@ export async function search(query: string): Promise<void> {
 	);
 	for (const item of items) {
 		console.log(
-			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(`#${item.id}`)} ${item.name}`,
+			`${statusIcon(item.status)} ${typeLabel(item.type)} ${chalk.dim(formatItemId(item.id))} ${item.name}`,
 		);
 	}
 }

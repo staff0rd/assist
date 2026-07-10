@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { recordGitRef } from "../../shared/db/recordGitRef";
 import { gitRefUrl } from "../../shared/gitRefUrl";
+import { formatItemId } from "./formatItemId";
 import { findOneItem } from "./shared";
 import { gitRefKindSchema } from "./types";
 
@@ -41,6 +42,8 @@ export async function addActivity(
 	});
 
 	console.log(
-		chalk.green(`Attached ${parsedKind.data} "${ref}" to item #${id}.`),
+		chalk.green(
+			`Attached ${parsedKind.data} "${ref}" to item ${formatItemId(item.id)}.`,
+		),
 	);
 }

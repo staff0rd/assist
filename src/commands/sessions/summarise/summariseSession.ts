@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { formatItemId } from "../../backlog/formatItemId";
 import { extractFirstUserMessage } from "./extractFirstUserMessage";
 import { scanSessionBacklogRefs } from "./scanSessionBacklogRefs";
 
@@ -46,7 +47,7 @@ function buildPrompt(
 	];
 
 	if (backlogIds.length > 0) {
-		const refs = backlogIds.map((id) => `#${id}`).join(", ");
+		const refs = backlogIds.map((id) => formatItemId(id)).join(", ");
 		parts.push(
 			`The session references backlog item(s) ${refs}. Start the summary with "Backlog ${refs} —" if relevant.`,
 		);

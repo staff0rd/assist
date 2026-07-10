@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { and, eq } from "drizzle-orm";
 import { planPhases, planTasks } from "../../shared/db/schema";
+import { formatItemId } from "./formatItemId";
 import { findPhase } from "./findPhase";
 import { adjustCurrentPhase, reindexPhases } from "./reindexPhases";
 
@@ -23,6 +24,8 @@ export async function removePhase(id: string, phase: string): Promise<void> {
 	});
 
 	console.log(
-		chalk.green(`Removed phase ${phaseIdx + 1} from item #${itemId}.`),
+		chalk.green(
+			`Removed phase ${phaseIdx + 1} from item ${formatItemId(itemId)}.`,
+		),
 	);
 }

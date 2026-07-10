@@ -5,7 +5,7 @@ export function backlogRunMarkers(text: string): {
 	commandName: string;
 	commandArgs: string;
 } {
-	const match = text.match(/backlog item #(\d+):[ \t]*([^\n]*)/);
+	const match = text.match(/backlog item a(\d+):[ \t]*([^\n]*)/);
 	if (!match) return { commandName: "", commandArgs: "" };
 	const title = match[2].trim();
 	return {

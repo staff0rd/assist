@@ -1,6 +1,7 @@
 import CheckIcon from "@mui/icons-material/Check";
 import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
+import { formatItemId } from "../../../backlog/formatItemId";
 import { updateItemStatus } from "../../../backlog/web/ui/api";
 import { ConfirmDialog } from "../../../backlog/web/ui/components/ConfirmDialog";
 import type { BacklogTarget } from "./backlogTarget";
@@ -26,7 +27,7 @@ export function CompleteButton({
 			setConfirming(false);
 			onDismiss();
 		} catch {
-			setError(`Failed to mark item #${itemId} as done`);
+			setError(`Failed to mark item ${formatItemId(itemId)} as done`);
 		}
 	};
 
@@ -46,7 +47,7 @@ export function CompleteButton({
 			{confirming && (
 				<StopClickPropagation>
 					<ConfirmDialog
-						title={`Mark #${itemId} done`}
+						title={`Mark ${formatItemId(itemId)} done`}
 						message={`${phase ?? 0} of ${totalPhases ?? 0} phases completed. Mark this backlog item as done and end its session?`}
 						confirmLabel="Mark done"
 						onConfirm={handleConfirm}

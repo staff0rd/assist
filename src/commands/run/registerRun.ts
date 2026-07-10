@@ -14,7 +14,7 @@ export function registerRun(program: Command): void {
 		.allowUnknownOption()
 		.addHelpText(
 			"after",
-			"\nA purely numeric name with no matching command is an alias for\n'assist backlog run <id>' (forwards --write/--no-write/-w).",
+			"\nAn a-prefixed item id (e.g. a555) with no matching command is an alias for\n'assist backlog run <id>' (forwards --write/--no-write/-w).",
 		)
 		.addHelpText("after", () => formatConfiguredCommands())
 		.action((name, args) => run(name, args));

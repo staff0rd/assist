@@ -5,6 +5,7 @@ import { getDb } from "../../shared/db/getDb";
 import { getProjectRoot } from "../../shared/loadConfig";
 import { deleteItem } from "./deleteItem";
 import { findBacklogUp } from "./findBacklogUp";
+import { formatItemId, parseItemId } from "./formatItemId";
 import { getCurrentOrigin } from "./getCurrentOrigin";
 import { loadAllItems } from "./loadAllItems";
 import { loadItem } from "./loadItem";
@@ -73,11 +74,11 @@ export async function saveBacklog(items: BacklogFile): Promise<void> {
 export async function findOneItem(
 	id: string,
 ): Promise<{ orm: Db; item: BacklogItem } | undefined> {
-	const numId = Number.parseInt(id, 10);
+	const numId = parseItemId(id);
 	const { orm } = await getReady();
-	const item = Number.isNaN(numId) ? undefined : await loadItem(orm, numId);
+	const item = await loadItem(orm, numId);
 	if (!item) {
-		console.log(chalk.red(`Item #${id} not found.`));
+		console.log(chalk.red(`Item ${formatItemId(numId)} not found.`));
 		return undefined;
 	}
 	return { orm, item };
@@ -88,8 +89,10 @@ export async function setStatus(
 	status: BacklogStatus,
 ): Promise<string | undefined> {
 	const { orm } = await getReady();
-	const name = await updateStatus(orm, Number.parseInt(id, 10), status);
-	if (name === undefined) console.log(chalk.red(`Item #${id} not found.`));
+	const numId = parseItemId(id);
+	const name = await updateStatus(orm, numId, status);
+	if (name === undefined)
+		console.log(chalk.red(`Item ${formatItemId(numId)} not found.`));
 	return name;
 }
 
@@ -98,12 +101,14 @@ export async function setCurrentPhase(
 	phase: number,
 ): Promise<void> {
 	const { orm } = await getReady();
-	await updateCurrentPhase(orm, Number.parseInt(id, 10), phase);
+	await updateCurrentPhase(orm, parseItemId(id), phase);
 }
 
 export async function removeItem(id: string): Promise<string | undefined> {
 	const { orm } = await getReady();
-	const name = await deleteItem(orm, Number.parseInt(id, 10));
-	if (name === undefined) console.log(chalk.red(`Item #${id} not found.`));
+	const numId = parseItemId(id);
+	const name = await deleteItem(orm, numId);
+	if (name === undefined)
+		console.log(chalk.red(`Item ${formatItemId(numId)} not found.`));
 	return name;
 }

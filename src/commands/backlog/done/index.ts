@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { appendComment } from "../appendComment";
 import { checkSubtasksComplete } from "../checkSubtasksComplete";
+import { formatItemId } from "../formatItemId";
 import { findOneItem } from "../shared";
 import { updateStatus } from "../updateStatus";
 
@@ -9,7 +10,7 @@ export async function done(id: string, summary?: string): Promise<void> {
 	if (!found) return;
 
 	const { orm, item } = found;
-	if (!checkSubtasksComplete(id, item)) {
+	if (!checkSubtasksComplete(item)) {
 		process.exitCode = 1;
 		return;
 	}
@@ -20,7 +21,7 @@ export async function done(id: string, summary?: string): Promise<void> {
 		if (pending.length > 0) {
 			console.log(
 				chalk.red(
-					`Cannot complete item #${id}: ${pending.length} pending phase(s):`,
+					`Cannot complete item ${formatItemId(item.id)}: ${pending.length} pending phase(s):`,
 				),
 			);
 			for (const phase of pending) {
@@ -38,5 +39,7 @@ export async function done(id: string, summary?: string): Promise<void> {
 		await appendComment(orm, item.id, summary, { phase, type: "summary" });
 	}
 
-	console.log(chalk.green(`Completed item #${id}: ${item.name}`));
+	console.log(
+		chalk.green(`Completed item ${formatItemId(item.id)}: ${item.name}`),
+	);
 }

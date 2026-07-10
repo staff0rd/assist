@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import { applyPhaseUpdate } from "./applyPhaseUpdate";
 import { findPhase } from "./findPhase";
 import {
@@ -34,7 +35,7 @@ export async function updatePhase(
 		.join(", ");
 	console.log(
 		chalk.green(
-			`Updated ${fields} on phase ${phaseIdx + 1} of item #${itemId}.`,
+			`Updated ${fields} on phase ${phaseIdx + 1} of item ${formatItemId(itemId)}.`,
 		),
 	);
 }

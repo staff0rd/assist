@@ -76,7 +76,7 @@ describe("next", () => {
 			await next();
 
 			expect(mockPrompt).not.toHaveBeenCalled();
-			expect(mockRun).toHaveBeenCalledWith("5", undefined);
+			expect(mockRun).toHaveBeenCalledWith("a5", undefined);
 		});
 	});
 
@@ -87,7 +87,7 @@ describe("next", () => {
 				makeItem({ id: 2, name: "Item B" }),
 			];
 			mockLoadBacklog.mockReturnValue(items);
-			mockPrompt.mockResolvedValueOnce({ selected: "story #1: Item A" });
+			mockPrompt.mockResolvedValueOnce({ selected: "story a1: Item A" });
 			mockRun.mockResolvedValueOnce(false);
 
 			await next();
@@ -113,12 +113,12 @@ describe("next", () => {
 		it("runs the given id first without picking", async () => {
 			mockRun.mockResolvedValueOnce(false);
 
-			await next(undefined, "220");
+			await next(undefined, "a220");
 
 			expect(mockLoadBacklog).not.toHaveBeenCalled();
 			expect(mockPrompt).not.toHaveBeenCalled();
 			expect(mockRun).toHaveBeenCalledTimes(1);
-			expect(mockRun).toHaveBeenCalledWith("220", undefined);
+			expect(mockRun).toHaveBeenCalledWith("a220", undefined);
 		});
 
 		it("continues picking after the given id completes", async () => {
@@ -126,14 +126,14 @@ describe("next", () => {
 			const items: BacklogFile = [makeItem({ id: 2, name: "Item B" })];
 			mockLoadBacklog.mockReturnValue(items);
 			mockRun.mockResolvedValueOnce(true); // given id completes
-			mockPrompt.mockResolvedValueOnce({ selected: "story #2: Item B" });
+			mockPrompt.mockResolvedValueOnce({ selected: "story a2: Item B" });
 			mockRun.mockResolvedValueOnce(false); // picked item does not complete
 
-			await next(undefined, "220");
+			await next(undefined, "a220");
 
 			expect(mockRun).toHaveBeenCalledTimes(2);
-			expect(mockRun).toHaveBeenNthCalledWith(1, "220", undefined);
-			expect(mockRun).toHaveBeenNthCalledWith(2, "2", undefined);
+			expect(mockRun).toHaveBeenNthCalledWith(1, "a220", undefined);
+			expect(mockRun).toHaveBeenNthCalledWith(2, "a2", undefined);
 			// Prompts even with a single todo: the id-run counts as the first pick
 			expect(mockPrompt).toHaveBeenCalledTimes(1);
 		});
@@ -141,7 +141,7 @@ describe("next", () => {
 		it("does not chain when the given id fails to run", async () => {
 			mockRun.mockResolvedValueOnce(false);
 
-			await next(undefined, "999");
+			await next(undefined, "a999");
 
 			expect(mockRun).toHaveBeenCalledTimes(1);
 			expect(mockLoadBacklog).not.toHaveBeenCalled();
@@ -165,10 +165,10 @@ describe("next", () => {
 		it("returns after a provided id completes without chaining", async () => {
 			mockRun.mockResolvedValueOnce(true);
 
-			await next({ once: true }, "220");
+			await next({ once: true }, "a220");
 
 			expect(mockRun).toHaveBeenCalledTimes(1);
-			expect(mockRun).toHaveBeenCalledWith("220", { once: true });
+			expect(mockRun).toHaveBeenCalledWith("a220", { once: true });
 			expect(mockLoadBacklog).not.toHaveBeenCalled();
 			expect(mockPrompt).not.toHaveBeenCalled();
 		});
@@ -183,7 +183,7 @@ describe("next", () => {
 				.mockReturnValueOnce(firstItems)
 				.mockReturnValueOnce(secondItems);
 			mockRun.mockResolvedValueOnce(true); // first item completes
-			mockPrompt.mockResolvedValueOnce({ selected: "story #2: Item B" });
+			mockPrompt.mockResolvedValueOnce({ selected: "story a2: Item B" });
 			mockRun.mockResolvedValueOnce(false); // second item does not complete
 
 			await next();
@@ -192,8 +192,8 @@ describe("next", () => {
 			// Second call: should prompt even though only one item
 			expect(mockPrompt).toHaveBeenCalledTimes(1);
 			expect(mockRun).toHaveBeenCalledTimes(2);
-			expect(mockRun).toHaveBeenNthCalledWith(1, "1", undefined);
-			expect(mockRun).toHaveBeenNthCalledWith(2, "2", undefined);
+			expect(mockRun).toHaveBeenNthCalledWith(1, "a1", undefined);
+			expect(mockRun).toHaveBeenNthCalledWith(2, "a2", undefined);
 			expect(mockPullIfConfigured).toHaveBeenCalledTimes(1);
 		});
 	});

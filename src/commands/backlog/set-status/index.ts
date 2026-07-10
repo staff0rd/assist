@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId, parseItemId } from "../formatItemId";
 import { setStatus } from "../shared";
 import type { BacklogStatus } from "../types";
 
@@ -25,6 +26,10 @@ export async function setStatusCommand(
 
 	const name = await setStatus(id, status as BacklogStatus);
 	if (name) {
-		console.log(chalk.green(`Set item #${id} to ${status}: ${name}`));
+		console.log(
+			chalk.green(
+				`Set item ${formatItemId(parseItemId(id))} to ${status}: ${name}`,
+			),
+		);
 	}
 }

@@ -12,7 +12,7 @@ export async function findSubtask(
 		process.exitCode = 1;
 		return undefined;
 	}
-	const idx = resolveSubtaskIndex(id, index, found.item);
+	const idx = resolveSubtaskIndex(index, found.item);
 	if (idx === undefined) return undefined;
 	return { orm: found.orm, item: found.item, idx };
 }

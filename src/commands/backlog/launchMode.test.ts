@@ -218,7 +218,7 @@ describe("launchMode", () => {
 
 	describe("when a done signal carries a created item id", () => {
 		it("surfaces the item as activity and does not chain", async () => {
-			mockReadSignal.mockReturnValue({ event: "done", id: "42" });
+			mockReadSignal.mockReturnValue({ event: "done", id: "a42" });
 			mockLoadItem.mockResolvedValue({ id: 42, name: "Shiny feature" });
 
 			await launchMode("draft", { once: true });
@@ -235,7 +235,7 @@ describe("launchMode", () => {
 		});
 
 		it("does not surface an item id when the item cannot be loaded", async () => {
-			mockReadSignal.mockReturnValue({ event: "done", id: "99" });
+			mockReadSignal.mockReturnValue({ event: "done", id: "a99" });
 			mockLoadItem.mockResolvedValue(undefined);
 
 			await launchMode("bug", { once: true });
@@ -298,17 +298,17 @@ describe("launchMode", () => {
 
 	describe("when a next signal carries an id", () => {
 		it("runs that item directly and skips next when it succeeds", async () => {
-			mockReadSignal.mockReturnValue({ event: "next", id: "7" });
+			mockReadSignal.mockReturnValue({ event: "next", id: "a7" });
 			mockTryRunById.mockResolvedValue(true);
 
 			await launchMode("draft", { once: true });
 
-			expect(mockTryRunById).toHaveBeenCalledWith("7", { allowEdits: true });
+			expect(mockTryRunById).toHaveBeenCalledWith("a7", { allowEdits: true });
 			expect(mockNext).not.toHaveBeenCalled();
 		});
 
 		it("falls back to next when the item cannot run", async () => {
-			mockReadSignal.mockReturnValue({ event: "next", id: "7" });
+			mockReadSignal.mockReturnValue({ event: "next", id: "a7" });
 			mockTryRunById.mockResolvedValue(false);
 
 			await launchMode("draft", { once: true });

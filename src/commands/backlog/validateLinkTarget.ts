@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import type { BacklogItem } from "./types";
 
 /**
@@ -17,7 +18,9 @@ export function validateLinkTarget(
 	);
 	if (duplicate) {
 		console.log(
-			chalk.yellow(`Link already exists: #${fromNum} ${linkType} #${toNum}`),
+			chalk.yellow(
+				`Link already exists: ${formatItemId(fromNum)} ${linkType} ${formatItemId(toNum)}`,
+			),
 		);
 		return false;
 	}

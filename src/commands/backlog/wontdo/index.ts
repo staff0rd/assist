@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { appendComment } from "../appendComment";
+import { formatItemId } from "../formatItemId";
 import { findOneItem } from "../shared";
 import { updateStatus } from "../updateStatus";
 
@@ -15,5 +16,7 @@ export async function wontdo(id: string, reason?: string): Promise<void> {
 		await appendComment(orm, item.id, reason, { phase, type: "summary" });
 	}
 
-	console.log(chalk.red(`Won't do item #${id}: ${item.name}`));
+	console.log(
+		chalk.red(`Won't do item ${formatItemId(item.id)}: ${item.name}`),
+	);
 }

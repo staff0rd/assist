@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { getDb } from "../../../shared/db/getDb";
 import { loadConfig } from "../../../shared/loadConfig";
+import { formatItemId } from "../formatItemId";
 import { insertItem } from "../insertItem";
 import { insertPhaseAt } from "../insertPhaseAt";
 import { insertSubtask } from "../insertSubtask";
@@ -53,5 +54,5 @@ export async function add(options: AddOptions): Promise<void> {
 		await insertSubtask(orm, id, subtask.title, subtask.description);
 	}
 
-	console.log(chalk.green(`Added item #${id}: ${name}`));
+	console.log(chalk.green(`Added item ${formatItemId(id)}: ${name}`));
 }

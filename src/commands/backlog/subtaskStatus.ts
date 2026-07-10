@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import { findSubtask } from "./findSubtask";
 import type { SubtaskStatus } from "./types";
 import { updateSubtaskStatus } from "./updateSubtaskStatus";
@@ -31,7 +32,7 @@ export async function subtaskStatus(
 	);
 	console.log(
 		chalk.green(
-			`Set sub-task ${idx + 1} of item #${id} to ${status}: ${title}`,
+			`Set sub-task ${idx + 1} of item ${formatItemId(item.id)} to ${status}: ${title}`,
 		),
 	);
 }

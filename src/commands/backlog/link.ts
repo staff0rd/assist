@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import type { Db } from "../../shared/db/Db";
 import { links } from "../../shared/db/schema";
+import { formatItemId, parseItemId } from "./formatItemId";
 import { hasCycle } from "./hasCycle";
 import { loadDependencyGraph } from "./loadDependencyGraph";
 import { loadItem } from "./loadItem";
@@ -30,7 +31,9 @@ async function createsCycle(
 	if (linkType !== "depends-on") return false;
 	const graph = await loadDependencyGraph(orm);
 	if (!hasCycle(graph, fromNum, toNum)) return false;
-	fail(`Cannot add dependency: #${fromNum} → #${toNum} would create a cycle.`);
+	fail(
+		`Cannot add dependency: ${formatItemId(fromNum)} → ${formatItemId(toNum)} would create a cycle.`,
+	);
 	return true;
 }
 
@@ -42,15 +45,17 @@ export async function link(
 	const linkType = parseLinkType(opts.type);
 	if (!linkType) return;
 
-	const fromNum = Number.parseInt(fromId, 10);
-	const toNum = Number.parseInt(toId, 10);
+	const fromNum = parseItemId(fromId);
+	const toNum = parseItemId(toId);
 	if (fromNum === toNum) return void fail("Cannot link an item to itself.");
+	const from = formatItemId(fromNum);
+	const to = formatItemId(toNum);
 
 	const { orm } = await getReady();
 	const fromItem = await loadItem(orm, fromNum);
-	if (!fromItem) return void fail(`Item #${fromNum} not found.`);
+	if (!fromItem) return void fail(`Item ${from} not found.`);
 	const toItem = await loadItem(orm, toNum);
-	if (!toItem) return void fail(`Item #${toNum} not found.`);
+	if (!toItem) return void fail(`Item ${to} not found.`);
 
 	if (!validateLinkTarget(fromItem, fromNum, toNum, linkType)) return;
 	if (await createsCycle(orm, linkType, fromNum, toNum)) return;
@@ -58,7 +63,5 @@ export async function link(
 	await orm
 		.insert(links)
 		.values({ itemId: fromNum, type: linkType, targetId: toNum });
-	console.log(
-		chalk.green(`Linked #${fromNum} ${linkType} #${toNum} (${toItem.name})`),
-	);
+	console.log(chalk.green(`Linked ${from} ${linkType} ${to} (${toItem.name})`));
 }

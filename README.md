@@ -121,6 +121,8 @@ After installation, the `assist` command will be available globally. You can als
 
 The first backlog command in a repository that still has a local `.assist/backlog.jsonl` automatically migrates it into Postgres — but only as a one-time bootstrap into an empty origin. If Postgres has **no** items for the repo's origin yet, it runs `git pull` (best-effort) to fetch the latest committed copy, imports every item under the origin with fresh global IDs (rewriting links to other items), and verifies the result. If Postgres **already** has items for that origin (a prior run, another clone, or a pre-seeded database), the import is skipped to avoid creating duplicates. Either way the local `.assist/backlog.jsonl` and `.assist/backlog.db` are renamed to `*.bak`, so the migration never re-runs and a local copy is retained.
 
+Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 555 is `a555`) to disambiguate them from GitHub PR/issue numbers (`#42`) and Jira keys. Commands and web API routes that take an `<id>` accept either the prefixed form (`a555`) or a bare number (`555`).
+
 - `assist backlog [--dir <path>]` - Open the backlog tab in the web dashboard (same as `backlog web`). `--dir` overrides the directory used to resolve the current repository's git origin
 - `assist backlog init` - Create an empty backlog
 - `assist backlog list [--status <type>] [-a, --all] [--all-repos] [-v]` - List backlog items with status icons (alias: `ls`). Defaults to the current repository's todo/in-progress items; `--all` includes done/wontdo, `--all-repos` lists items across all repositories. Also available as the top-level shortcut `assist list` / `assist ls` with the same flags
@@ -163,7 +165,7 @@ The first backlog command in a repository that still has a local `.assist/backlo
 - `assist backlog web [-p, --port <number>] [--no-open]` - Open the backlog tab in the web dashboard (default port 3100); `--no-open` skips opening a browser on startup
 - `assist roam auth` - Authenticate with Roam via OAuth (opens browser, saves tokens to ~/.assist.yml)
 - `assist roam show-claude-code-icon` - Forward Claude Code hook activity to Roam local API
-- `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first). If `<name>` is purely numeric and matches no configured command, it is treated as an alias for `assist backlog run <name>` and forwards `--write`/`--no-write`/`-w`.
+- `assist run <name> [params...]` - Run a configured command from assist.yml (positional params are matched to `params` config; supports `pre` array of commands to run first). If `<name>` is a backlog item id (`a555` or a bare `555`) and matches no configured command, it is treated as an alias for `assist backlog run <name>` and forwards `--write`/`--no-write`/`-w`.
 - `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
 - `assist run link <path> --prefix <prefix>` - Link run configurations from another project's assist.yml
 - `assist run remove <name>` - Remove a run configuration from assist.yml and delete its Claude command file

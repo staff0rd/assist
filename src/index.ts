@@ -50,6 +50,7 @@ import { statusLine } from "./commands/statusLine";
 import { sync } from "./commands/sync";
 import { update } from "./commands/update";
 import { init as vscodeInit } from "./commands/vscode";
+import { reportCliError } from "./reportCliError";
 import { closeDb } from "./shared/db/getDb";
 
 const program = new Command();
@@ -171,8 +172,5 @@ registerSignal(program);
 
 program
 	.parseAsync()
-	.catch((error) => {
-		console.error(error);
-		process.exitCode = 1;
-	})
+	.catch(reportCliError)
 	.finally(() => closeDb());

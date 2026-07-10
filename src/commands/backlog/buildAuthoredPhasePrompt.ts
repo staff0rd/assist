@@ -1,4 +1,5 @@
 import { buildCommentLines } from "./buildCommentLines";
+import { formatItemId } from "./formatItemId";
 import type { BacklogItem, PlanPhase } from "./types";
 
 export function buildAuthoredPhasePrompt(
@@ -19,9 +20,9 @@ export function buildAuthoredPhasePrompt(
 		"When you have completed all tasks for this phase, run /verify to check your work.",
 		...buildManualCheckLines(manualChecks),
 		"",
-		`Post concise comments for any notable findings or changes using \`assist backlog comment ${item.id} "<text>"\`.`,
+		`Post concise comments for any notable findings or changes using \`assist backlog comment ${formatItemId(item.id)} "<text>"\`.`,
 		"",
-		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${item.id} ${phaseNumber} "<summary>"`,
+		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${formatItemId(item.id)} ${phaseNumber} "<summary>"`,
 		"Replace <summary> with a concise summary of what was done in this phase.",
 	]
 		.filter((line) => line !== undefined)
@@ -35,7 +36,7 @@ function buildContextLines(
 ): string[] {
 	const ac = item.acceptanceCriteria.map((c, i) => `${i + 1}. ${c}`).join("\n");
 	return [
-		`You are implementing phase ${phaseNumber} of backlog item #${item.id}: ${item.name}`,
+		`You are implementing phase ${phaseNumber} of backlog item ${formatItemId(item.id)}: ${item.name}`,
 		"",
 		item.description ? `Description: ${item.description}` : "",
 		"",

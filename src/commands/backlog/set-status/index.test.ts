@@ -25,9 +25,9 @@ describe("setStatusCommand", () => {
 	it("should set the item to a valid status", async () => {
 		mockSetStatus.mockResolvedValue("Task");
 
-		await setStatusCommand("1", "todo");
+		await setStatusCommand("a1", "todo");
 
-		expect(mockSetStatus).toHaveBeenCalledWith("1", "todo");
+		expect(mockSetStatus).toHaveBeenCalledWith("a1", "todo");
 		expect(process.exitCode).toBeUndefined();
 	});
 

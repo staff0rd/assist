@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import { insertSubtask } from "./insertSubtask";
 import { findOneItem } from "./shared";
 
@@ -32,5 +33,7 @@ export async function addSubtask(
 	const { orm, item } = found;
 	const description = options.desc?.replaceAll(String.raw`\n`, "\n");
 	await insertSubtask(orm, item.id, title, description);
-	console.log(chalk.green(`Added sub-task to item #${id}: ${title}`));
+	console.log(
+		chalk.green(`Added sub-task to item ${formatItemId(item.id)}: ${title}`),
+	);
 }

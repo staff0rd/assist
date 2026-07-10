@@ -58,7 +58,7 @@ describe("extractSessionMeta", () => {
 				message: {
 					role: "user",
 					content:
-						"You are implementing phase 3 of backlog item #324: History card opens read-only transcript\n\nDescription: ...",
+						"You are implementing phase 3 of backlog item a324: History card opens read-only transcript\n\nDescription: ...",
 				},
 			}),
 		]);

@@ -3,6 +3,7 @@ import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
+import { formatItemId } from "./formatItemId";
 import { findResumable } from "./findResumable";
 import { findUnblockedTodos } from "./findUnblockedTodos";
 import { isBlocked, typeLabel } from "./list/shared";
@@ -11,7 +12,7 @@ import { loadBacklog } from "./shared";
 import type { BacklogFile, BacklogItem } from "./types";
 
 function toChoice(item: BacklogItem, items: BacklogFile) {
-	const name = `${typeLabel(item.type)} #${item.id}: ${item.name}`;
+	const name = `${typeLabel(item.type)} ${formatItemId(item.id)}: ${item.name}`;
 	return isBlocked(item, items)
 		? { name, disabled: chalk.red("[blocked]") }
 		: { name };
@@ -30,22 +31,26 @@ async function selectItem(
 		}),
 	);
 
-	return selected.match(/#(\d+)/)?.[1] ?? "";
+	return selected.match(/(a\d+):/)?.[1] ?? "";
 }
 
 function pickResumable(items: BacklogFile): string | undefined {
 	const resumable = findResumable(items);
 	if (!resumable) return undefined;
 	console.log(
-		chalk.bold(`Resuming in-progress item #${resumable.id}: ${resumable.name}`),
+		chalk.bold(
+			`Resuming in-progress item ${formatItemId(resumable.id)}: ${resumable.name}`,
+		),
 	);
-	return String(resumable.id);
+	return formatItemId(resumable.id);
 }
 
 function autoSelect(unblocked: BacklogItem[]): string {
 	const item = unblocked[0];
-	console.log(chalk.bold(`Auto-selecting item #${item.id}: ${item.name}`));
-	return String(item.id);
+	console.log(
+		chalk.bold(`Auto-selecting item ${formatItemId(item.id)}: ${item.name}`),
+	);
+	return formatItemId(item.id);
 }
 
 async function pickItem(

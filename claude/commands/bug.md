@@ -69,12 +69,12 @@ Pass the description as real markdown with line breaks preserved (use `printf` o
 
 Note the created item id from the output — you'll pass it to the done signal below.
 
-Then show the user the item was created and suggest they can run `assist backlog run <id>` to start implementation.
+Then show the user the item was created and suggest they can run `assist backlog run a<id>` to start implementation.
 
-Finally, signal that the bug-filing task is complete, passing the created item id:
+Finally, signal that the bug-filing task is complete, passing the created item id (a-prefixed, e.g. `a555`):
 
 ```
-assist signal done <id> 2>&1
+assist signal done a<id> 2>&1
 ```
 
 This lets a wrapping `assist bug --once` session end and surfaces the created item id to the session card; in a plain interactive session it has no effect.

@@ -7,6 +7,7 @@ import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { acquireLock, releaseLock } from "./acquireLock";
 import { clearPause, isPausePending } from "./consumePause";
 import { ensureStoryBranch } from "./ensureStoryBranch";
+import { formatItemId } from "./formatItemId";
 import { handleReviewResult } from "./handleReviewResult";
 import { type PreparedRun, prepareRun } from "./prepareRun";
 import { runOnce } from "./runOnce";
@@ -22,7 +23,7 @@ export async function run(
 	await ensureStoryBranch(prepared.item);
 	await setStatus(id, "in-progress");
 	discardStalePause(prepared.item.id);
-	logProgress(id, prepared);
+	logProgress(prepared);
 	return runPrepared(id, prepared, spawnOptions);
 }
 
@@ -59,11 +60,10 @@ async function runPrepared(
 	}
 }
 
-function logProgress(
-	id: string,
-	{ plan, startPhase, item }: PreparedRun,
-): void {
-	console.log(chalk.bold(`Running plan for #${id}: ${item.name}`));
+function logProgress({ plan, startPhase, item }: PreparedRun): void {
+	console.log(
+		chalk.bold(`Running plan for ${formatItemId(item.id)}: ${item.name}`),
+	);
 	// why: +1 for the review phase appended after the authored phases, so resuming at the review reads e.g. 2/2 rather than 2/1.
 	const totalPhases = plan.length + 1;
 	if (startPhase > 0) {

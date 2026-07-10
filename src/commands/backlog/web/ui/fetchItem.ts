@@ -1,3 +1,4 @@
+import { formatItemId } from "../../formatItemId";
 import type { BacklogItem } from "./types";
 import { withCwd } from "./withCwd";
 
@@ -12,7 +13,9 @@ export async function fetchItem(
 	cwd?: string,
 	signal?: AbortSignal,
 ): Promise<BacklogItem | null> {
-	const res = await fetch(withCwd(`/api/items/${id}`, cwd), { signal });
+	const res = await fetch(withCwd(`/api/items/${formatItemId(id)}`, cwd), {
+		signal,
+	});
 	if (!res.ok) return null;
 	return res.json();
 }

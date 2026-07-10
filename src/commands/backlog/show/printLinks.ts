@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import type { Db } from "../../../shared/db/Db";
+import { formatItemId } from "../formatItemId";
 import type { BacklogItem } from "../types";
 import { loadLinkTargets } from "./loadLinkTargets";
 
@@ -21,11 +22,11 @@ export async function printLinks(orm: Db, item: BacklogItem): Promise<void> {
 				: chalk.blue("relates-to");
 		if (target) {
 			console.log(
-				`  ${typeLabel} #${target.id} ${target.name} ${chalk.dim(`(${target.status})`)}`,
+				`  ${typeLabel} ${formatItemId(target.id)} ${target.name} ${chalk.dim(`(${target.status})`)}`,
 			);
 		} else {
 			console.log(
-				`  ${typeLabel} #${link.targetId} ${chalk.dim("(not found)")}`,
+				`  ${typeLabel} ${formatItemId(link.targetId)} ${chalk.dim("(not found)")}`,
 			);
 		}
 	}

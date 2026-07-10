@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { parseItemId } from "../formatItemId";
 import { applyCwdFromReq } from "./applyCwdFromReq";
 import { deleteItemComment } from "./deleteItemComment";
 import { patchSubtaskStatus } from "./patchSubtaskStatus";
@@ -18,44 +19,46 @@ type RouteHandler = (
 
 type ItemRoute = { pattern: RegExp; method: string; run: RouteHandler };
 
-const id = (match: RegExpMatchArray, group = 1): number =>
+const itemId = (match: RegExpMatchArray, group = 1): number =>
+	parseItemId(match[group]);
+const subId = (match: RegExpMatchArray, group: number): number =>
 	Number.parseInt(match[group], 10);
 
 const routes: ItemRoute[] = [
 	{
-		pattern: /^\/api\/items\/(\d+)\/rewind$/,
+		pattern: /^\/api\/items\/(a?\d+)\/rewind$/,
 		method: "POST",
-		run: (req, res, m) => rewindItemPhase(req, res, id(m)),
+		run: (req, res, m) => rewindItemPhase(req, res, itemId(m)),
 	},
 	{
-		pattern: /^\/api\/items\/(\d+)\/star$/,
+		pattern: /^\/api\/items\/(a?\d+)\/star$/,
 		method: "POST",
-		run: (req, res, m) => patchItemStar(req, res, id(m)),
+		run: (req, res, m) => patchItemStar(req, res, itemId(m)),
 	},
 	{
-		pattern: /^\/api\/items\/(\d+)\/comments\/(\d+)$/,
+		pattern: /^\/api\/items\/(a?\d+)\/comments\/(\d+)$/,
 		method: "DELETE",
-		run: (_req, res, m) => deleteItemComment(res, id(m), id(m, 2)),
+		run: (_req, res, m) => deleteItemComment(res, itemId(m), subId(m, 2)),
 	},
 	{
-		pattern: /^\/api\/items\/(\d+)\/subtasks\/(\d+)$/,
+		pattern: /^\/api\/items\/(a?\d+)\/subtasks\/(\d+)$/,
 		method: "PATCH",
-		run: (req, res, m) => patchSubtaskStatus(req, res, id(m), id(m, 2)),
+		run: (req, res, m) => patchSubtaskStatus(req, res, itemId(m), subId(m, 2)),
 	},
 	{
-		pattern: /^\/api\/items\/(\d+)$/,
+		pattern: /^\/api\/items\/(a?\d+)$/,
 		method: "GET",
-		run: (_req, res, m) => getItemById(res, id(m)),
+		run: (_req, res, m) => getItemById(res, itemId(m)),
 	},
 	{
-		pattern: /^\/api\/items\/(\d+)$/,
+		pattern: /^\/api\/items\/(a?\d+)$/,
 		method: "PATCH",
-		run: (req, res, m) => patchItemStatus(req, res, id(m)),
+		run: (req, res, m) => patchItemStatus(req, res, itemId(m)),
 	},
 	{
-		pattern: /^\/api\/items\/(\d+)$/,
+		pattern: /^\/api\/items\/(a?\d+)$/,
 		method: "DELETE",
-		run: (_req, res, m) => deleteItem(res, id(m)),
+		run: (_req, res, m) => deleteItem(res, itemId(m)),
 	},
 ];
 

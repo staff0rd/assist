@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import { insertPhaseAt } from "./insertPhaseAt";
 import { resolveInsertPosition } from "./resolveInsertPosition";
 import { serializeManualChecks } from "./serializeManualChecks";
@@ -41,7 +42,7 @@ export async function addPhase(
 	const verb = options.position !== undefined ? "Inserted" : "Added";
 	console.log(
 		chalk.green(
-			`${verb} phase ${phaseIdx + 1} "${name}" to item #${itemId} with ${tasks.length} task(s).`,
+			`${verb} phase ${phaseIdx + 1} "${name}" to item ${formatItemId(itemId)} with ${tasks.length} task(s).`,
 		),
 	);
 }

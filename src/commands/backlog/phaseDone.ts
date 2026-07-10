@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { appendComment } from "./appendComment";
 import { checkSubtasksComplete } from "./checkSubtasksComplete";
+import { formatItemId, parseItemId } from "./formatItemId";
 import { loadItem } from "./loadItem";
 import { resolvePlan } from "./resolvePlan";
 import { getReady, setCurrentPhase } from "./shared";
@@ -13,13 +14,14 @@ export async function phaseDone(
 ): Promise<void> {
 	const phaseNumber = Number.parseInt(phase, 10);
 	const phaseIndex = phaseNumber - 1;
-	const itemId = Number.parseInt(id, 10);
+	const itemId = parseItemId(id);
+	const label = formatItemId(itemId);
 
 	const { orm } = await getReady();
 	const item = await loadItem(orm, itemId);
 
 	if (item === undefined) {
-		console.log(chalk.red(`Item #${id} not found.`));
+		console.log(chalk.red(`Item ${label} not found.`));
 		return;
 	}
 
@@ -33,12 +35,14 @@ export async function phaseDone(
 
 	if (item.status === "done") {
 		signal();
-		console.log(chalk.dim(`Item #${id} already done, skipping phase advance.`));
+		console.log(
+			chalk.dim(`Item ${label} already done, skipping phase advance.`),
+		);
 		return;
 	}
 
 	const reviewPhaseNumber = resolvePlan(item).length + 1;
-	if (phaseNumber === reviewPhaseNumber && !checkSubtasksComplete(id, item)) {
+	if (phaseNumber === reviewPhaseNumber && !checkSubtasksComplete(item)) {
 		process.exitCode = 1;
 		return;
 	}
@@ -50,6 +54,6 @@ export async function phaseDone(
 	});
 	await setCurrentPhase(id, phaseNumber + 1);
 	console.log(
-		chalk.green(`Phase ${phaseNumber} of item #${id} marked as complete.`),
+		chalk.green(`Phase ${phaseNumber} of item ${label} marked as complete.`),
 	);
 }

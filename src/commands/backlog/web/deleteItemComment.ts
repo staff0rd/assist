@@ -1,6 +1,7 @@
 import type { ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { deleteComment } from "../deleteComment";
+import { formatItemId } from "../formatItemId";
 import { loadItem } from "../loadItem";
 import { findItemOr404 } from "./shared";
 
@@ -14,7 +15,7 @@ export async function deleteItemComment(
 	const outcome = await deleteComment(result.orm, itemId, commentId);
 	if (outcome === "not-found") {
 		respondJson(res, 404, {
-			error: `Comment #${commentId} not found on item #${itemId}.`,
+			error: `Comment #${commentId} not found on item ${formatItemId(itemId)}.`,
 		});
 		return;
 	}

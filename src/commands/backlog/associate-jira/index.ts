@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { eq } from "drizzle-orm";
 import { items } from "../../../shared/db/schema";
 import { fetchIssue } from "../../jira/fetchIssue";
+import { formatItemId } from "../formatItemId";
 import { findOneItem } from "../shared";
 
 const JIRA_KEY_PATTERN = /^[A-Z]+-\d+$/;
@@ -26,7 +27,9 @@ export async function associateJira(
 
 	if (options.clear) {
 		await orm.update(items).set({ jiraKey: null }).where(eq(items.id, itemId));
-		console.log(chalk.green(`Cleared Jira association on item #${itemId}.`));
+		console.log(
+			chalk.green(`Cleared Jira association on item ${formatItemId(itemId)}.`),
+		);
 		return;
 	}
 
@@ -51,7 +54,7 @@ export async function associateJira(
 	await orm.update(items).set({ jiraKey: key }).where(eq(items.id, itemId));
 
 	console.log(
-		chalk.green(`Associated ${key} with item #${itemId}.`),
+		chalk.green(`Associated ${key} with item ${formatItemId(itemId)}.`),
 		summary ? chalk.dim(`(${summary})`) : "",
 	);
 }

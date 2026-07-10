@@ -1,6 +1,7 @@
 import { Box, CircularProgress } from "@mui/material";
 import { useCallback } from "react";
 import { useParams } from "react-router";
+import { parseItemId } from "../../../formatItemId";
 import { useItem } from "../useItem";
 import { ItemDetail } from "./ItemDetail";
 
@@ -12,7 +13,12 @@ const loadingSx = {
 
 export function ItemRoute({ onReload }: { onReload: () => Promise<void> }) {
 	const { id } = useParams<{ id: string }>();
-	const numId = Number(id);
+	let numId = Number.NaN;
+	try {
+		numId = parseItemId(id ?? "");
+	} catch {
+		numId = Number.NaN;
+	}
 	const { item, loading, reload } = useItem(numId);
 
 	// Refresh both the open item and the list summary so status/edits made here

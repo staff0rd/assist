@@ -1,4 +1,5 @@
 import { Chip, Stack, Typography } from "@mui/material";
+import { formatItemId } from "../../../formatItemId";
 import type { BacklogItem } from "../types";
 import { JiraKeyLink } from "./JiraKeyLink";
 import { StatusPicker } from "./StatusPicker";
@@ -26,7 +27,7 @@ export function ItemMeta({
 	return (
 		<Stack direction="row" spacing={1} sx={metaRowSx}>
 			<Typography variant="body2" color="text.disabled">
-				#{item.id}
+				{formatItemId(item.id)}
 			</Typography>
 			{color && (
 				<Chip label={item.type} size="small" color={color} sx={chipSx} />

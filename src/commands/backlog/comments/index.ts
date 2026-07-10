@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { formatComment } from "../formatComment";
+import { formatItemId } from "../formatItemId";
 import { findOneItem } from "../shared";
 
 export async function comments(id: string): Promise<void> {
@@ -10,11 +11,13 @@ export async function comments(id: string): Promise<void> {
 	const entries = item.comments ?? [];
 
 	if (entries.length === 0) {
-		console.log(chalk.dim(`No comments on item #${id}.`));
+		console.log(chalk.dim(`No comments on item ${formatItemId(item.id)}.`));
 		return;
 	}
 
-	console.log(chalk.bold(`Comments for #${id}: ${item.name}\n`));
+	console.log(
+		chalk.bold(`Comments for ${formatItemId(item.id)}: ${item.name}\n`),
+	);
 	for (const entry of entries) {
 		console.log(`${formatComment(entry)}\n`);
 	}

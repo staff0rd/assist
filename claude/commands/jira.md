@@ -22,7 +22,7 @@ These actions operate on a single Jira issue. Resolve it once:
 - Otherwise read it from the backlog item this session is working on — the one you are implementing, reviewing, or otherwise focused on (e.g. via `/next-backlog-item`, a `backlog run`, or earlier in this conversation). Get its id, then run:
 
   ```
-  assist backlog show <id> 2>&1
+  assist backlog show a<id> 2>&1
   ```
 
   Use the `Jira: <KEY>` line from the output.

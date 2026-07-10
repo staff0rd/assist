@@ -1,5 +1,6 @@
 import Chip from "@mui/material/Chip";
 import { Link } from "react-router";
+import { formatItemId } from "../../../backlog/formatItemId";
 import { sessionType } from "./sessionType";
 import type { SessionInfo } from "./types";
 
@@ -14,16 +15,18 @@ export function ActivityChips({ session }: { session: SessionInfo }) {
 	if (isBacklog)
 		return (
 			<>
-				<Chip
-					label={`#${activity.itemId}`}
-					size="small"
-					sx={chipSx}
-					clickable
-					component={Link}
-					to={`/backlog/items/${activity.itemId}`}
-					// The card itself is a ButtonBase; don't let it also select
-					onClick={(e) => e.stopPropagation()}
-				/>
+				{activity.itemId != null && (
+					<Chip
+						label={formatItemId(activity.itemId)}
+						size="small"
+						sx={chipSx}
+						clickable
+						component={Link}
+						to={`/backlog/items/${formatItemId(activity.itemId)}`}
+						// The card itself is a ButtonBase; don't let it also select
+						onClick={(e) => e.stopPropagation()}
+					/>
+				)}
 				<Chip
 					label={`${activity.phase}/${activity.totalPhases}`}
 					size="small"
@@ -43,12 +46,12 @@ export function ActivityChips({ session }: { session: SessionInfo }) {
 			/>
 			{activity?.itemId != null && (
 				<Chip
-					label={`#${activity.itemId}`}
+					label={formatItemId(activity.itemId)}
 					size="small"
 					sx={chipSx}
 					clickable
 					component={Link}
-					to={`/backlog/items/${activity.itemId}`}
+					to={`/backlog/items/${formatItemId(activity.itemId)}`}
 					onClick={(e) => e.stopPropagation()}
 				/>
 			)}

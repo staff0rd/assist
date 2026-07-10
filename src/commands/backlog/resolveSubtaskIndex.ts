@@ -1,8 +1,8 @@
 import chalk from "chalk";
+import { formatItemId } from "./formatItemId";
 import type { BacklogItem } from "./types";
 
 export function resolveSubtaskIndex(
-	id: string,
 	index: string,
 	item: BacklogItem,
 ): number | undefined {
@@ -11,7 +11,7 @@ export function resolveSubtaskIndex(
 	if (Number.isNaN(position) || position < 1 || position > subtasks.length) {
 		console.log(
 			chalk.red(
-				`Item #${id} has no sub-task ${index}${subtasks.length > 0 ? ` (1-${subtasks.length})` : ""}.`,
+				`Item ${formatItemId(item.id)} has no sub-task ${index}${subtasks.length > 0 ? ` (1-${subtasks.length})` : ""}.`,
 			),
 		);
 		process.exitCode = 1;

@@ -90,7 +90,7 @@ describe("removeSubtask", () => {
 		expect(await getSubtasks(orm)).toEqual([]);
 		expect(process.exitCode).toBeUndefined();
 		expect(logSpy).toHaveBeenCalledWith(
-			expect.stringContaining("Removed sub-task 1 of item #1: Only"),
+			expect.stringContaining("Removed sub-task 1 of item a1: Only"),
 		);
 	});
 

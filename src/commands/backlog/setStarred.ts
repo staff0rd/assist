@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { formatItemId, parseItemId } from "./formatItemId";
 import { getReady } from "./shared";
 import { updateStarred } from "./updateStarred";
 
@@ -11,7 +12,9 @@ export async function setStarred(
 	starred: boolean,
 ): Promise<string | undefined> {
 	const { orm } = await getReady();
-	const name = await updateStarred(orm, Number.parseInt(id, 10), starred);
-	if (name === undefined) console.log(chalk.red(`Item #${id} not found.`));
+	const numId = parseItemId(id);
+	const name = await updateStarred(orm, numId, starred);
+	if (name === undefined)
+		console.log(chalk.red(`Item ${formatItemId(numId)} not found.`));
 	return name;
 }

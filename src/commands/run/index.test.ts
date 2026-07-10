@@ -52,7 +52,18 @@ beforeEach(() => {
 });
 
 describe("run", () => {
-	it("delegates a purely numeric arg with no matching config to backlog run", async () => {
+	it("delegates an a-prefixed id with no matching config to backlog run", async () => {
+		mockLookupRunConfig.mockReturnValue({ kind: "not-found" });
+
+		await run("a12", []);
+
+		expect(mockPullIfConfigured).toHaveBeenCalledTimes(1);
+		expect(mockBacklogRun).toHaveBeenCalledWith("a12", { allowEdits: true });
+		expect(mockFindRunConfig).not.toHaveBeenCalled();
+		expect(mockSpawnRunCommand).not.toHaveBeenCalled();
+	});
+
+	it("delegates a bare-number id with no matching config to backlog run", async () => {
 		mockLookupRunConfig.mockReturnValue({ kind: "not-found" });
 
 		await run("12", []);
@@ -66,25 +77,25 @@ describe("run", () => {
 	it("forwards --no-write to backlog run as allowEdits: false", async () => {
 		mockLookupRunConfig.mockReturnValue({ kind: "not-found" });
 
-		await run("12", ["--no-write"]);
+		await run("a12", ["--no-write"]);
 
-		expect(mockBacklogRun).toHaveBeenCalledWith("12", { allowEdits: false });
+		expect(mockBacklogRun).toHaveBeenCalledWith("a12", { allowEdits: false });
 	});
 
 	it("forwards --write to backlog run as allowEdits: true", async () => {
 		mockLookupRunConfig.mockReturnValue({ kind: "not-found" });
 
-		await run("12", ["--write"]);
+		await run("a12", ["--write"]);
 
-		expect(mockBacklogRun).toHaveBeenCalledWith("12", { allowEdits: true });
+		expect(mockBacklogRun).toHaveBeenCalledWith("a12", { allowEdits: true });
 	});
 
 	it("forwards -w to backlog run as allowEdits: true", async () => {
 		mockLookupRunConfig.mockReturnValue({ kind: "not-found" });
 
-		await run("12", ["-w"]);
+		await run("a12", ["-w"]);
 
-		expect(mockBacklogRun).toHaveBeenCalledWith("12", { allowEdits: true });
+		expect(mockBacklogRun).toHaveBeenCalledWith("a12", { allowEdits: true });
 	});
 
 	it("errors on extra non-flag args when delegating to backlog run", async () => {
@@ -94,7 +105,7 @@ describe("run", () => {
 		}) as never);
 		vi.spyOn(console, "error").mockImplementation(() => {});
 
-		await expect(run("12", ["extra"])).rejects.toThrow("process.exit(1)");
+		await expect(run("a12", ["extra"])).rejects.toThrow("process.exit(1)");
 		expect(mockBacklogRun).not.toHaveBeenCalled();
 
 		exitSpy.mockRestore();

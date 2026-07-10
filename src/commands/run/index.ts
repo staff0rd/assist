@@ -55,6 +55,17 @@ function parseBacklogRunOptions(
 	return { allowEdits };
 }
 
+async function tryBacklogRunAlias(
+	name: string,
+	args: string[],
+): Promise<boolean> {
+	if (!/^a?\d+$/.test(name)) return false;
+	if (lookupRunConfig(name).kind !== "not-found") return false;
+	pullIfConfigured();
+	await backlogRun(name, parseBacklogRunOptions(name, args));
+	return true;
+}
+
 export async function run(
 	name: string | undefined,
 	args: string[],
@@ -64,11 +75,6 @@ export async function run(
 		console.error(formatConfiguredCommands());
 		process.exit(1);
 	}
-	if (/^\d+$/.test(name) && lookupRunConfig(name).kind === "not-found") {
-		const options = parseBacklogRunOptions(name, args);
-		pullIfConfigured();
-		await backlogRun(name, options);
-		return;
-	}
+	if (await tryBacklogRunAlias(name, args)) return;
 	execRunConfig(findRunConfig(name), args);
 }

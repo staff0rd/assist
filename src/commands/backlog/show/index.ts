@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { formatComment } from "../formatComment";
+import { formatItemId } from "../formatItemId";
 import { renderMarkdownTerminal } from "../../../shared/renderMarkdownTerminal";
 import { findOneItem } from "../shared";
 import type { BacklogItem } from "../types";
@@ -9,7 +10,7 @@ import { printPlan } from "./printPlan";
 import { printSubtasks } from "./printSubtasks";
 
 function printHeader(item: BacklogItem): void {
-	console.log(chalk.bold(`#${item.id} ${item.name}`));
+	console.log(chalk.bold(`${formatItemId(item.id)} ${item.name}`));
 	console.log(
 		`${chalk.dim("Type:")} ${item.type}  ${chalk.dim("Status:")} ${item.status}`,
 	);
