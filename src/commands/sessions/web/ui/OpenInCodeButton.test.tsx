@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SessionCard } from "./SessionCard";
 import type { SessionInfo } from "./types";
+import { StarredSessionsProvider } from "./useStarredSessions";
 
 afterEach(() => {
 	cleanup();
@@ -25,6 +27,14 @@ const session: SessionInfo = {
 	cwd: "/home/me/repo",
 };
 
+function Stars({ children }: { children: ReactNode }) {
+	return (
+		<StarredSessionsProvider sessions={[]} setSessionStarred={() => {}}>
+			{children}
+		</StarredSessionsProvider>
+	);
+}
+
 function renderCard(onClick: () => void) {
 	render(
 		<SessionCard
@@ -36,6 +46,7 @@ function renderCard(onClick: () => void) {
 			onSetAutoRun={() => {}}
 			onSetAutoAdvance={() => {}}
 		/>,
+		{ wrapper: Stars },
 	);
 }
 

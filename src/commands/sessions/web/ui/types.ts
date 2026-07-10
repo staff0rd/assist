@@ -1,35 +1,13 @@
-import type { Activity } from "../../../../shared/emitActivity";
 import type { SessionType } from "../../shared/deriveHistoryFields";
 import type { SessionOrigin } from "../../shared/parseSessionFile";
+import type { SessionInfoBase } from "../../shared/SessionInfoBase";
 
 export type SessionStatus = "running" | "waiting" | "done" | "error";
 
-type CommandType = "claude" | "run" | "assist";
-
-export type SessionInfo = {
-	id: string;
-	name: string;
-	title?: string;
-	subtitle?: string;
-	commandType: CommandType;
+export type SessionInfo = SessionInfoBase & {
 	status: SessionStatus;
-	startedAt: number;
 	runningMs?: number;
 	runningSince?: number | null;
-	runName?: string;
-	assistArgs?: string[];
-	cwd?: string;
-	restored?: boolean;
-	error?: string;
-	activity?: Activity;
-	autoRun?: boolean;
-	autoAdvance?: boolean;
-<<<<<<< Updated upstream
-	totalIn?: number;
-	totalOut?: number;
-=======
-	starred?: boolean;
->>>>>>> Stashed changes
 };
 
 export type CardHeaderProps = {

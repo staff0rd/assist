@@ -1,4 +1,4 @@
-// assist-maintainability-override: 65
+// assist-maintainability-override: 60
 import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
@@ -7,7 +7,6 @@ import {
 	type AssistSessionMeta,
 	createAssistSession,
 } from "./createAssistSession";
-import { dismissSession, drainSessions } from "./dismissSession";
 import {
 	createRunSession,
 	createSession,
@@ -16,6 +15,7 @@ import {
 	type SessionStatus,
 } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { dismissSession, drainSessions } from "./dismissSession";
 import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
@@ -28,8 +28,8 @@ import { reuseSessionForRun } from "./reuseSessionForRun";
 import { sessionLimits } from "./sessionLimits";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
-import { WindowsProxy } from "./WindowsProxy";
 import { watchActivity } from "./watchActivity";
+import { WindowsProxy } from "./WindowsProxy";
 import { wirePtyEvents } from "./wirePtyEvents";
 import * as sessionIo from "./writeToSession";
 

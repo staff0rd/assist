@@ -8,7 +8,6 @@ import { ReviewButton } from "./ReviewButton";
 import { RetryButton } from "./RetryButton";
 import { reviewTargetPr } from "./reviewTargetPr";
 import { SessionStarButton } from "./SessionStarButton";
-import { sessionStarTarget } from "./sessionStarTarget";
 import { StopCardActivation } from "./StopCardActivation";
 import type { CardHeaderProps } from "./types";
 import { usePrStatus } from "./usePrStatus";
@@ -21,7 +20,6 @@ export function CardActionButtons({
 }: CardHeaderProps) {
 	const { status } = session;
 	const target = backlogTarget(session);
-	const canStar = sessionStarTarget(session) !== undefined;
 	const pr = usePrStatus(session.cwd, reviewTargetPr(session), status);
 	return (
 		<StopCardActivation>
@@ -30,7 +28,7 @@ export function CardActionButtons({
 			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}
 			{onRestart && <RestartButton onRestart={onRestart} />}
 			{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
-			{canStar && <SessionStarButton session={session} />}
+			<SessionStarButton session={session} />
 			{target && (
 				<CompleteButton
 					target={target}

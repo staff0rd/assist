@@ -19,12 +19,9 @@ export function toSessionInfo({
 	activity,
 	autoRun,
 	autoAdvance,
-<<<<<<< Updated upstream
+	starred,
 	totalIn,
 	totalOut,
-=======
-	starred,
->>>>>>> Stashed changes
 }: Session): SessionInfo {
 	return {
 		id,
@@ -45,11 +42,8 @@ export function toSessionInfo({
 		activity,
 		autoRun,
 		autoAdvance,
-<<<<<<< Updated upstream
+		starred,
 		totalIn,
 		totalOut,
-=======
-		starred,
->>>>>>> Stashed changes
 	};
 }
