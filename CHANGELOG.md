@@ -1,3 +1,10 @@
+## [0.374.2](https://github.com/staff0rd/assist/compare/v0.374.1...v0.374.2) (2026-07-10)
+
+
+### Bug Fixes
+
+* build backlog item in its own repo ([e74c83b](https://github.com/staff0rd/assist/commit/e74c83b5ee2867363169a487f4a88859b43e09ef))
+
 ## [0.374.1](https://github.com/staff0rd/assist/compare/v0.374.0...v0.374.1) (2026-07-10)
 
 
