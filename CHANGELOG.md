@@ -1,3 +1,10 @@
+# [0.374.0](https://github.com/staff0rd/assist/compare/v0.373.0...v0.374.0) (2026-07-10)
+
+
+### Features
+
+* surface config keys in --help ([d9ee4e6](https://github.com/staff0rd/assist/commit/d9ee4e602c76d5183e3457e5c3e595acabe0fe9a))
+
 # [0.373.0](https://github.com/staff0rd/assist/compare/v0.372.0...v0.373.0) (2026-07-10)
 
 
