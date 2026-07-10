@@ -1,3 +1,10 @@
+# [0.377.0](https://github.com/staff0rd/assist/compare/v0.376.1...v0.377.0) (2026-07-10)
+
+
+### Features
+
+* VS Code button on session cards ([887216e](https://github.com/staff0rd/assist/commit/887216e233b42ef21eaa33693fd0626d94d33b27))
+
 ## [0.376.1](https://github.com/staff0rd/assist/compare/v0.376.0...v0.376.1) (2026-07-10)
 
 
