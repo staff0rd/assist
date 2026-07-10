@@ -169,6 +169,7 @@ export class SessionManager {
 		claudeSessionId: string,
 		totalIn: number,
 		totalOut: number,
+		usedPct: number | undefined,
 	): void {
 		if (
 			recordSessionUsage(
@@ -176,6 +177,7 @@ export class SessionManager {
 				claudeSessionId,
 				totalIn,
 				totalOut,
+				usedPct,
 			)
 		)
 			this.notify();

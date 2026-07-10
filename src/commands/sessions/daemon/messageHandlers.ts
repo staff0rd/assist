@@ -72,6 +72,7 @@ export const messageHandlers: Record<string, Handler> = {
 			d.claudeSessionId as string,
 			d.totalIn as number,
 			d.totalOut as number,
+			d.usedPct as number | undefined,
 		),
 	input: routed((_client, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),

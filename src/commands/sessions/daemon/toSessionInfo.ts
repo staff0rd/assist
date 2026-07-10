@@ -20,8 +20,7 @@ export function toSessionInfo({
 	autoRun,
 	autoAdvance,
 	starred,
-	totalIn,
-	totalOut,
+	usedPct,
 }: Session): SessionInfo {
 	return {
 		id,
@@ -43,7 +42,6 @@ export function toSessionInfo({
 		autoRun,
 		autoAdvance,
 		starred,
-		totalIn,
-		totalOut,
+		usedPct,
 	};
 }

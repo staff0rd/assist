@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { TokenUsage } from "./TokenUsage";
 import type { SessionStatus } from "./types";
 
 const STATUS_COLORS: Record<SessionStatus, string> = {
@@ -10,22 +9,26 @@ const STATUS_COLORS: Record<SessionStatus, string> = {
 	error: "error.main",
 };
 
+function contextColor(pct: number): string {
+	if (pct >= 30) return "error.main";
+	if (pct >= 20) return "warning.main";
+	return "text.disabled";
+}
+
 export function StatusRow({
 	status,
 	elapsed,
 	restored,
-	totalIn,
-	totalOut,
+	usedPct,
 }: {
 	status: SessionStatus;
 	elapsed: string;
 	restored?: boolean;
-	totalIn?: number;
-	totalOut?: number;
+	usedPct?: number;
 }) {
 	return (
 		<Box sx={{ display: "flex", justifyContent: "space-between", mt: 0.5 }}>
-			<Box sx={{ display: "flex", gap: 1 }}>
+			<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 				<Typography variant="caption" sx={{ color: STATUS_COLORS[status] }}>
 					● {status}
 				</Typography>
@@ -37,7 +40,18 @@ export function StatusRow({
 						{restored ? "restored" : "not restored"}
 					</Typography>
 				)}
-				<TokenUsage totalIn={totalIn} totalOut={totalOut} />
+				{usedPct !== undefined && (
+					<Typography
+						variant="caption"
+						sx={{
+							color: contextColor(usedPct),
+							opacity: 0.6,
+							fontSize: "0.8rem",
+						}}
+					>
+						{Math.round(usedPct)}%
+					</Typography>
+				)}
 			</Box>
 			<Typography variant="caption" color="text.disabled">
 				{elapsed}

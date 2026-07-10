@@ -40,8 +40,7 @@ export type Session = {
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;
 	pendingRestart?: () => void;
-	totalIn?: number;
-	totalOut?: number;
+	usedPct?: number;
 };
 
 export type SessionInfo = SessionInfoBase & {

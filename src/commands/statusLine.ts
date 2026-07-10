@@ -57,5 +57,10 @@ export async function statusLine(): Promise<void> {
 	);
 
 	await relayRateLimits(data.rate_limits);
-	await relayUsage(data.session_id, totalIn, totalOut);
+	await relayUsage(
+		data.session_id,
+		totalIn,
+		totalOut,
+		data.context_window.used_percentage,
+	);
 }

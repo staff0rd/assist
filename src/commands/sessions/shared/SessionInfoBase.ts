@@ -18,6 +18,5 @@ export type SessionInfoBase = {
 	autoRun?: boolean;
 	autoAdvance?: boolean;
 	starred?: boolean;
-	totalIn?: number;
-	totalOut?: number;
+	usedPct?: number;
 };

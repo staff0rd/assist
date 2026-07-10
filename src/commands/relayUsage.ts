@@ -8,10 +8,17 @@ export async function relayUsage(
 	claudeSessionId: string | undefined,
 	totalIn: number,
 	totalOut: number,
+	usedPct: number | undefined,
 ): Promise<void> {
 	if (!claudeSessionId) return;
 	try {
-		await sendToDaemon({ type: "usage", claudeSessionId, totalIn, totalOut });
+		await sendToDaemon({
+			type: "usage",
+			claudeSessionId,
+			totalIn,
+			totalOut,
+			usedPct,
+		});
 	} catch {
 		// daemon not running — relay is best-effort
 	}
