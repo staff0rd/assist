@@ -8,7 +8,6 @@ const metaRowSx = {
 	alignItems: "center",
 	color: "text.disabled",
 	fontSize: "0.875rem",
-	mb: 2,
 } as const;
 
 const chipSx = {
