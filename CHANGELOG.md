@@ -1,3 +1,15 @@
+# [0.379.0](https://github.com/staff0rd/assist/compare/v0.378.0...v0.379.0) (2026-07-10)
+
+
+### Bug Fixes
+
+* repair star/token-usage merge ([85ba778](https://github.com/staff0rd/assist/commit/85ba7780232f95641bd5f06784f64f24ba2a2ec2))
+
+
+### Features
+
+* star any session, not just backlog ([b8e29fa](https://github.com/staff0rd/assist/commit/b8e29fa728742d4e8ae9e6d2a80a8bf7913f0a36))
+
 # [0.378.0](https://github.com/staff0rd/assist/compare/v0.377.0...v0.378.0) (2026-07-10)
 
 
