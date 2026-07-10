@@ -24,8 +24,12 @@ export type SessionInfo = {
 	activity?: Activity;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
+<<<<<<< Updated upstream
 	totalIn?: number;
 	totalOut?: number;
+=======
+	starred?: boolean;
+>>>>>>> Stashed changes
 };
 
 export type CardHeaderProps = {

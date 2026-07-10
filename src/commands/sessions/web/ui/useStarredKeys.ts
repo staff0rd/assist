@@ -18,12 +18,22 @@ export function checkStarred(
 	session: SessionInfo,
 ): boolean {
 	const target = sessionStarTarget(session);
-	return target ? starred.has(starTargetKey(target.cwd, target.itemId)) : false;
+	if (!target) return session.starred ?? false;
+	return starred.has(starTargetKey(target.cwd, target.itemId));
 }
 
-export function applyToggle(setStarred: SetKeys, session: SessionInfo): void {
+type SetSessionStarred = (id: string, starred: boolean) => void;
+
+export function applyToggle(
+	setStarred: SetKeys,
+	setSessionStarred: SetSessionStarred,
+	session: SessionInfo,
+): void {
 	const target = sessionStarTarget(session);
-	if (!target) return;
+	if (!target) {
+		setSessionStarred(session.id, !(session.starred ?? false));
+		return;
+	}
 	const key = starTargetKey(target.cwd, target.itemId);
 	setStarred((prev) => {
 		const on = !prev.has(key);

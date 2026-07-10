@@ -11,6 +11,7 @@ import {
 	retrySessionAction,
 	setAutoAdvanceAction,
 	setAutoRunAction,
+	setStarredAction,
 } from "./createSessionAction";
 
 type SendFn = (msg: object) => void;
@@ -29,6 +30,7 @@ export function useSessionActions(
 		sendResize: useMemo(() => resizeAction(send), [send]),
 		setAutoRun: useMemo(() => setAutoRunAction(send), [send]),
 		setAutoAdvance: useMemo(() => setAutoAdvanceAction(send), [send]),
+		setStarred: useMemo(() => setStarredAction(send), [send]),
 	};
 
 	const onOutput = useMemo(

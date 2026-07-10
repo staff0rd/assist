@@ -148,6 +148,10 @@ export class SessionManager {
 		if (sessionIo.setAutoAdvance(this.sessions, id, enabled)) this.notify();
 	}
 
+	setStarred(id: string, starred: boolean): void {
+		if (sessionIo.setStarred(this.sessions, id, starred)) this.notify();
+	}
+
 	setStatus(id: string, status: SessionStatus): void {
 		const session = this.sessions.get(id);
 		if (!session) {

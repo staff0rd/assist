@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { CardHeader } from "./CardHeader";
 import type { SessionInfo } from "./types";
+import { StarredSessionsProvider } from "./useStarredSessions";
 
 afterEach(cleanup);
 
@@ -14,10 +16,19 @@ const session: SessionInfo = {
 	startedAt: 0,
 };
 
+function Stars({ children }: { children: ReactNode }) {
+	return (
+		<StarredSessionsProvider sessions={[]} setSessionStarred={() => {}}>
+			{children}
+		</StarredSessionsProvider>
+	);
+}
+
 describe("CardHeader prompt", () => {
 	it("clamps the prompt to 5 lines with hidden overflow", () => {
 		render(
 			<CardHeader session={session} loading={false} onDismiss={() => {}} />,
+			{ wrapper: Stars },
 		);
 
 		const style = getComputedStyle(screen.getByText("my session"));
@@ -29,7 +40,9 @@ describe("CardHeader prompt", () => {
 describe("CardHeader loading", () => {
 	it("shows a spinner instead of chips while starting", () => {
 		const starting: SessionInfo = { ...session, cwd: "/home/me/repo" };
-		render(<CardHeader session={starting} loading onDismiss={() => {}} />);
+		render(<CardHeader session={starting} loading onDismiss={() => {}} />, {
+			wrapper: Stars,
+		});
 
 		expect(screen.getByRole("progressbar")).toBeTruthy();
 		expect(screen.queryByText("repo")).toBeNull();
@@ -39,6 +52,7 @@ describe("CardHeader loading", () => {
 		const loaded: SessionInfo = { ...session, cwd: "/home/me/repo" };
 		render(
 			<CardHeader session={loaded} loading={false} onDismiss={() => {}} />,
+			{ wrapper: Stars },
 		);
 
 		expect(screen.queryByRole("progressbar")).toBeNull();
@@ -54,6 +68,7 @@ describe("CardHeader loading", () => {
 		};
 		render(
 			<CardHeader session={pending} loading={false} onDismiss={() => {}} />,
+			{ wrapper: Stars },
 		);
 
 		expect(screen.getByRole("progressbar")).toBeTruthy();
@@ -70,6 +85,7 @@ describe("CardHeader loading", () => {
 		};
 		render(
 			<CardHeader session={resolved} loading={false} onDismiss={() => {}} />,
+			{ wrapper: Stars },
 		);
 
 		expect(screen.queryByRole("progressbar")).toBeNull();
@@ -84,7 +100,9 @@ describe("CardHeader loading", () => {
 			cwd: "/home/me/repo",
 			status: "done",
 		};
-		render(<CardHeader session={done} loading={false} onDismiss={() => {}} />);
+		render(<CardHeader session={done} loading={false} onDismiss={() => {}} />, {
+			wrapper: Stars,
+		});
 
 		expect(screen.queryByRole("progressbar")).toBeNull();
 		expect(screen.getByText("repo")).toBeTruthy();

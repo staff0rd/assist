@@ -65,6 +65,11 @@ export function setAutoAdvanceAction(send: SendFn) {
 		send({ type: "set-autoadvance", sessionId: id, enabled });
 }
 
+export function setStarredAction(send: SendFn) {
+	return (id: string, starred: boolean) =>
+		send({ type: "set-starred", sessionId: id, starred });
+}
+
 export function inputAction(send: SendFn) {
 	return (sessionId: string, data: string) =>
 		send({ type: "input", sessionId, data });

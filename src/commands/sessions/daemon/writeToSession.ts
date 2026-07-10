@@ -39,6 +39,18 @@ export function setAutoRun(
 	return true;
 }
 
+export function setStarred(
+	sessions: Map<string, Session>,
+	id: string,
+	starred: boolean,
+): boolean {
+	const s = sessions.get(id);
+	if (!s) return false;
+	s.starred = starred;
+	daemonLog(`session ${id} starred ${starred ? "on" : "off"}`);
+	return true;
+}
+
 export function setAutoAdvance(
 	sessions: Map<string, Session>,
 	id: string,

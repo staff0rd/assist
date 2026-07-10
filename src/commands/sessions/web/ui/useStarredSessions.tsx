@@ -18,9 +18,11 @@ const StarredSessionsContext = createContext<StarredSessions | null>(null);
 
 export function StarredSessionsProvider({
 	sessions,
+	setSessionStarred,
 	children,
 }: {
 	sessions: SessionInfo[];
+	setSessionStarred: (id: string, starred: boolean) => void;
 	children: ReactNode;
 }) {
 	const cwdsKey = backlogCwds(sessions).join("|");
@@ -31,8 +33,9 @@ export function StarredSessionsProvider({
 		[starred],
 	);
 	const toggleStar = useCallback(
-		(session: SessionInfo) => applyToggle(setStarred, session),
-		[setStarred],
+		(session: SessionInfo) =>
+			applyToggle(setStarred, setSessionStarred, session),
+		[setStarred, setSessionStarred],
 	);
 
 	const value = useMemo(

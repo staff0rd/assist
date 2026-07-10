@@ -35,6 +35,7 @@ export type Session = {
 	activityWatcher?: FSWatcher;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
+	starred?: boolean;
 	escInterruptTimer?: ReturnType<typeof setTimeout>;
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;
@@ -62,6 +63,10 @@ export type SessionInfo = {
 	activity?: Activity;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
+<<<<<<< Updated upstream
 	totalIn?: number;
 	totalOut?: number;
+=======
+	starred?: boolean;
+>>>>>>> Stashed changes
 };

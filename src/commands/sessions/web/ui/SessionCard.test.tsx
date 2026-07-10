@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SessionCard } from "./SessionCard";
 import type { SessionInfo } from "./types";
+import { StarredSessionsProvider } from "./useStarredSessions";
 
 afterEach(() => {
 	cleanup();
@@ -16,6 +18,14 @@ const session: SessionInfo = {
 	startedAt: 0,
 };
 
+function Stars({ children }: { children: ReactNode }) {
+	return (
+		<StarredSessionsProvider sessions={[]} setSessionStarred={() => {}}>
+			{children}
+		</StarredSessionsProvider>
+	);
+}
+
 function renderCard(loading: boolean) {
 	render(
 		<SessionCard
@@ -27,6 +37,7 @@ function renderCard(loading: boolean) {
 			onSetAutoRun={() => {}}
 			onSetAutoAdvance={() => {}}
 		/>,
+		{ wrapper: Stars },
 	);
 }
 
@@ -60,6 +71,7 @@ describe("SessionCard loading state", () => {
 				onSetAutoRun={() => {}}
 				onSetAutoAdvance={() => {}}
 			/>,
+			{ wrapper: Stars },
 		);
 		expect(screen.queryByText("Starting…")).toBeNull();
 		expect(screen.getByText(/● error/)).toBeTruthy();
@@ -79,6 +91,7 @@ describe("SessionCard ripple", () => {
 				onSetAutoRun={() => {}}
 				onSetAutoAdvance={() => {}}
 			/>,
+			{ wrapper: Stars },
 		);
 	}
 
@@ -116,6 +129,7 @@ describe("SessionCard dismiss confirmation", () => {
 				onSetAutoRun={() => {}}
 				onSetAutoAdvance={() => {}}
 			/>,
+			{ wrapper: Stars },
 		);
 
 		fireEvent.click(screen.getByTitle("Dismiss session 1"));

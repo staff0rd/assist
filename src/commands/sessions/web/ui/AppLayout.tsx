@@ -20,7 +20,10 @@ export function AppLayout({ socket }: { socket: SessionSocket }) {
 	);
 
 	return (
-		<StarredSessionsProvider sessions={socket.sessions}>
+		<StarredSessionsProvider
+			sessions={socket.sessions}
+			setSessionStarred={socket.setStarred}
+		>
 			<Box
 				sx={{ display: "flex", width: "100%", height: "calc(100vh - 48px)" }}
 			>
