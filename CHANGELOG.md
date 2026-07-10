@@ -1,3 +1,10 @@
+# [0.372.0](https://github.com/staff0rd/assist/compare/v0.371.0...v0.372.0) (2026-07-10)
+
+
+### Features
+
+* pin backlog item header on scroll ([b6bfe1e](https://github.com/staff0rd/assist/commit/b6bfe1e11fea279ee7c61074e497a5b29abb245c))
+
 # [0.371.0](https://github.com/staff0rd/assist/compare/v0.370.1...v0.371.0) (2026-07-09)
 
 
