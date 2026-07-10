@@ -1,11 +1,20 @@
 import { createBranch } from "./createBranch";
+import { isConciseSlug } from "./deriveBranchSlug";
+import { generateBranchSlug } from "./generateBranchSlug";
 import { validateSlug } from "./validateSlug";
 
 export async function branch(
 	slug: string,
 	options: { jira?: string },
 ): Promise<void> {
-	const slugError = validateSlug(slug);
+	const conciseSlug = isConciseSlug(slug)
+		? slug
+		: await generateBranchSlug(slug);
+	if (conciseSlug !== slug) {
+		console.log(`Shortened "${slug}" to "${conciseSlug}"`);
+	}
+
+	const slugError = validateSlug(conciseSlug);
 	if (slugError) {
 		console.error(`Error: ${slugError}`);
 		process.exit(1);
@@ -13,7 +22,7 @@ export async function branch(
 
 	try {
 		const { branchName, defaultBranch } = await createBranch({
-			slug,
+			slug: conciseSlug,
 			jira: options.jira,
 		});
 		console.log(

@@ -16,16 +16,23 @@ vi.mock("../branch/createBranch", () => ({
 	createBranch: vi.fn(),
 }));
 
+vi.mock("../branch/generateBranchSlug", () => ({
+	generateBranchSlug: vi.fn(),
+}));
+
 vi.mock("../sessions/daemon/appendDaemonLog", () => ({
 	appendDaemonLog: vi.fn(),
 }));
 
 import { loadConfig } from "../../shared/loadConfig";
 import { createBranch } from "../branch/createBranch";
+import { deriveBranchSlug } from "../branch/deriveBranchSlug";
+import { generateBranchSlug } from "../branch/generateBranchSlug";
 import { ensureStoryBranch } from "./ensureStoryBranch";
 
 const mockLoadConfig = loadConfig as unknown as MockInstance;
 const mockCreateBranch = createBranch as unknown as MockInstance;
+const mockGenerate = generateBranchSlug as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	return {
@@ -46,6 +53,7 @@ describe("ensureStoryBranch", () => {
 			branchName: "add-login-form",
 			defaultBranch: "main",
 		});
+		mockGenerate.mockImplementation((name: string) => deriveBranchSlug(name));
 		delete process.env.ASSIST_BACKLOG_ITEM_ID;
 	});
 
