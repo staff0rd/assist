@@ -4,8 +4,8 @@ import ButtonBase from "@mui/material/ButtonBase";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { cardSx } from "./cardSx";
-import { formatRelativeTime } from "./formatRelativeTime";
 import { HistoryCardChips } from "./HistoryCardChips";
+import { HistoryCardFooter } from "./HistoryCardFooter";
 import { historyTitle } from "./historyTitle";
 import type { HistoricalSession, HistoryCardHandlers } from "./types";
 
@@ -44,13 +44,7 @@ export function HistoryCard({
 				>
 					{historyTitle(session)}
 				</Typography>
-				<Typography
-					variant="caption"
-					color="text.disabled"
-					sx={{ alignSelf: "flex-end" }}
-				>
-					{formatRelativeTime(session.timestamp)}
-				</Typography>
+				<HistoryCardFooter session={session} />
 			</Box>
 		</ButtonBase>
 	);
