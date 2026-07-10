@@ -21,6 +21,7 @@ const persistedSessionSchema = z.object({
 	runArgs: z.array(z.string()).optional(),
 	assistArgs: z.array(z.string()).optional(),
 	activity: activitySchema.optional(),
+	starred: z.boolean().optional(),
 });
 
 export type PersistedSession = z.infer<typeof persistedSessionSchema>;
@@ -76,6 +77,7 @@ function toPersistedSession(session: Session): PersistedSession {
 		runArgs: session.runArgs,
 		assistArgs: session.assistArgs,
 		activity: session.activity,
+		starred: session.starred,
 	};
 }
 

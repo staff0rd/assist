@@ -11,5 +11,6 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		cwd: persisted.cwd,
 		assistArgs: persisted.assistArgs,
 		initialPrompt: persisted.initialPrompt,
+		starred: persisted.starred,
 	};
 }

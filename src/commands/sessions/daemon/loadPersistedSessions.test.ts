@@ -7,6 +7,7 @@ import {
 	persistLiveSessions,
 	savePersistedSessions,
 } from "./loadPersistedSessions";
+import { restoreBase } from "./restoreBase";
 
 vi.mock("../../../shared/loadJson", () => ({
 	loadJson: vi.fn(),
@@ -199,6 +200,34 @@ describe("persistLiveSessions", () => {
 			totalPhases: 3,
 			startedAt: 5,
 		});
+	});
+
+	it("round-trips a starred session through persist, schema parse, and restore", () => {
+		const sessions = new Map<string, Session>([
+			[
+				"1",
+				fakeSession({
+					id: "1",
+					name: "assist review 1234",
+					claudeSessionId: "abc",
+					starred: true,
+				}),
+			],
+		]);
+
+		persistLiveSessions(sessions);
+
+		const [, persisted] = saveJsonMock.mock.lastCall as [
+			string,
+			PersistedSession[],
+		];
+		expect(persisted[0].starred).toBe(true);
+
+		loadJsonMock.mockReturnValue(persisted);
+		const [parsed] = loadPersistedSessions();
+		expect(parsed.starred).toBe(true);
+
+		expect(restoreBase("1", parsed).starred).toBe(true);
 	});
 
 	it("defaults cwd to the process cwd", () => {
