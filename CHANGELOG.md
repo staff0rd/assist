@@ -1,3 +1,10 @@
+## [0.384.1](https://github.com/staff0rd/assist/compare/v0.384.0...v0.384.1) (2026-07-11)
+
+
+### Bug Fixes
+
+* honor --no-open on sessions web ([9d1d69d](https://github.com/staff0rd/assist/commit/9d1d69db708e55f8079d6631a3ef3c6b5a140cf4))
+
 # [0.384.0](https://github.com/staff0rd/assist/compare/v0.383.0...v0.384.0) (2026-07-11)
 
 
