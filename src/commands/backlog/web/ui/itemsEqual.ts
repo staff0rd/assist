@@ -6,7 +6,8 @@ function usageTotalEqual(a?: PhaseUsageTotal, b?: PhaseUsageTotal): boolean {
 	return (
 		a.tokensUp === b.tokensUp &&
 		a.tokensDown === b.tokensDown &&
-		a.activeMs === b.activeMs
+		a.activeMs === b.activeMs &&
+		a.peakContextPct === b.peakContextPct
 	);
 }
 

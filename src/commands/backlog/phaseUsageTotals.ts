@@ -15,6 +15,9 @@ export function phaseUsageTotals(orm: Db) {
 			activeMs: sql<number>`sum(${phaseUsage.activeMs})::bigint`.as(
 				"total_active_ms",
 			),
+			peakContextPct: sql<number>`max(${phaseUsage.peakContextPct})`.as(
+				"max_peak_context_pct",
+			),
 		})
 		.from(phaseUsage)
 		.groupBy(phaseUsage.itemId)

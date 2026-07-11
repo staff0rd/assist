@@ -20,6 +20,7 @@ export function recordSessionUsage(
 				phase.itemId,
 				phase.phaseIdx,
 				transcriptPath,
+				usedPct,
 				windows,
 			);
 		void flushPhaseActiveMs(session);

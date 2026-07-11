@@ -32,6 +32,7 @@ export async function loadItemSummaries(
 			tokensUp: usageTotals.tokensUp,
 			tokensDown: usageTotals.tokensDown,
 			activeMs: usageTotals.activeMs,
+			peakContextPct: usageTotals.peakContextPct,
 		})
 		.from(items)
 		.leftJoin(incompleteCounts, eq(incompleteCounts.itemId, items.id))

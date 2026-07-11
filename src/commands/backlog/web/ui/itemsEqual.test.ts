@@ -55,23 +55,63 @@ describe("itemsEqual", () => {
 
 	it("returns false when the usage total differs", () => {
 		const before = item(1, {
-			usageTotal: { tokensUp: 100, tokensDown: 200, activeMs: 5000 },
+			usageTotal: {
+				tokensUp: 100,
+				tokensDown: 200,
+				activeMs: 5000,
+				peakContextPct: 40,
+			},
 		});
 		const after = item(1, {
-			usageTotal: { tokensUp: 150, tokensDown: 200, activeMs: 5000 },
+			usageTotal: {
+				tokensUp: 150,
+				tokensDown: 200,
+				activeMs: 5000,
+				peakContextPct: 40,
+			},
+		});
+		expect(itemsEqual([before], [after])).toBe(false);
+	});
+
+	it("returns false when only the peak context differs", () => {
+		const before = item(1, {
+			usageTotal: {
+				tokensUp: 100,
+				tokensDown: 200,
+				activeMs: 5000,
+				peakContextPct: 40,
+			},
+		});
+		const after = item(1, {
+			usageTotal: {
+				tokensUp: 100,
+				tokensDown: 200,
+				activeMs: 5000,
+				peakContextPct: 65,
+			},
 		});
 		expect(itemsEqual([before], [after])).toBe(false);
 	});
 
 	it("returns false when a usage total appears", () => {
 		const after = item(1, {
-			usageTotal: { tokensUp: 100, tokensDown: 200, activeMs: 5000 },
+			usageTotal: {
+				tokensUp: 100,
+				tokensDown: 200,
+				activeMs: 5000,
+				peakContextPct: 40,
+			},
 		});
 		expect(itemsEqual([item(1)], [after])).toBe(false);
 	});
 
 	it("treats matching usage totals as equal", () => {
-		const total = { tokensUp: 100, tokensDown: 200, activeMs: 5000 };
+		const total = {
+			tokensUp: 100,
+			tokensDown: 200,
+			activeMs: 5000,
+			peakContextPct: 40,
+		};
 		expect(
 			itemsEqual(
 				[item(1, { usageTotal: total })],

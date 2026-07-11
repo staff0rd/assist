@@ -9,6 +9,7 @@ function rowToUsage(u: PhaseUsageRow): PhaseUsage {
 		tokensUp: u.tokensUp,
 		tokensDown: u.tokensDown,
 		activeMs: u.activeMs,
+		peakContextPct: u.peakContextPct,
 	};
 }
 

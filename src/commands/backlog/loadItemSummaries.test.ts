@@ -101,8 +101,16 @@ describe("loadItemSummaries", () => {
 				tokensUp: 100,
 				tokensDown: 200,
 				activeMs: 5000,
+				peakContextPct: 45,
 			},
-			{ itemId: 1, phaseIdx: 1, tokensUp: 50, tokensDown: 25, activeMs: 1000 },
+			{
+				itemId: 1,
+				phaseIdx: 1,
+				tokensUp: 50,
+				tokensDown: 25,
+				activeMs: 1000,
+				peakContextPct: 72,
+			},
 		]);
 
 		const summaries = await loadItemSummaries(orm);
@@ -111,6 +119,7 @@ describe("loadItemSummaries", () => {
 			tokensUp: 150,
 			tokensDown: 225,
 			activeMs: 6000,
+			peakContextPct: 72,
 		});
 		expect(summaries.find((s) => s.id === 2)?.usageTotal).toBeUndefined();
 	});

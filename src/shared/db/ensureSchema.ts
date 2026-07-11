@@ -137,6 +137,7 @@ export const SCHEMA = `
 		tokens_up BIGINT NOT NULL DEFAULT 0,
 		tokens_down BIGINT NOT NULL DEFAULT 0,
 		active_ms BIGINT NOT NULL DEFAULT 0,
+		peak_context_pct DOUBLE PRECISION NOT NULL DEFAULT 0,
 		last_total_in BIGINT,
 		last_total_out BIGINT,
 		PRIMARY KEY (item_id, phase_idx)
@@ -144,6 +145,7 @@ export const SCHEMA = `
 
 	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS last_total_in BIGINT;
 	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS last_total_out BIGINT;
+	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS peak_context_pct DOUBLE PRECISION NOT NULL DEFAULT 0;
 
 	CREATE TABLE IF NOT EXISTS phase_usage_messages (
 		item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,

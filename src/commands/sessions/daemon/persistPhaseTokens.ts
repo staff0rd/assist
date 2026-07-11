@@ -1,5 +1,6 @@
 import type { ActiveWindow } from "../../../shared/activeWindows";
 import { getDb } from "../../../shared/db/getDb";
+import { recordPhasePeakContext } from "../../../shared/db/recordPhasePeakContext";
 import { recordPhaseTranscriptUsage } from "../../../shared/db/recordPhaseTranscriptUsage";
 import { recordWindowTokens } from "../../../shared/db/recordWindowTokens";
 import { loadConfig } from "../../../shared/loadConfig";
@@ -15,13 +16,16 @@ export async function persistPhaseTokens(
 	itemId: number,
 	phaseIdx: number,
 	transcriptPath: string,
+	usedPct: number | undefined,
 	windows: ActiveWindow[],
 ): Promise<void> {
 	try {
 		if (!process.env.ASSIST_DATABASE_URL && !loadConfig().database.url) return;
+		const db = await getDb();
+		if (usedPct !== undefined)
+			await recordPhasePeakContext(db, itemId, phaseIdx, usedPct);
 		const responses = await readTranscriptUsage(transcriptPath);
 		if (responses.length === 0) return;
-		const db = await getDb();
 		const { tokensUp, tokensDown } = await recordPhaseTranscriptUsage(
 			db,
 			itemId,

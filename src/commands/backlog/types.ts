@@ -23,12 +23,14 @@ const phaseUsageSchema = z.strictObject({
 	tokensUp: z.number(),
 	tokensDown: z.number(),
 	activeMs: z.number(),
+	peakContextPct: z.number(),
 });
 
 const phaseUsageTotalSchema = z.strictObject({
 	tokensUp: z.number(),
 	tokensDown: z.number(),
 	activeMs: z.number(),
+	peakContextPct: z.number(),
 });
 
 const subtaskStatusSchema = z.enum(["todo", "in-progress", "done"]);

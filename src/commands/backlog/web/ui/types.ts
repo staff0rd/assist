@@ -13,12 +13,14 @@ export type PhaseUsage = {
 	tokensUp: number;
 	tokensDown: number;
 	activeMs: number;
+	peakContextPct: number;
 };
 
 export type PhaseUsageTotal = {
 	tokensUp: number;
 	tokensDown: number;
 	activeMs: number;
+	peakContextPct: number;
 };
 
 export type BacklogComment = {

@@ -12,6 +12,7 @@ type ItemSummaryRow = {
 	tokensUp: number | null;
 	tokensDown: number | null;
 	activeMs: number | null;
+	peakContextPct: number | null;
 };
 
 export function rowToItemSummary(row: ItemSummaryRow): BacklogItemSummary {
@@ -31,6 +32,7 @@ export function rowToItemSummary(row: ItemSummaryRow): BacklogItemSummary {
 						tokensUp: Number(row.tokensUp),
 						tokensDown: Number(row.tokensDown),
 						activeMs: Number(row.activeMs),
+						peakContextPct: Number(row.peakContextPct ?? 0),
 					},
 	};
 }

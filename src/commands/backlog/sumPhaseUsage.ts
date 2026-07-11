@@ -6,7 +6,8 @@ export function sumPhaseUsage(usage: PhaseUsage[]): PhaseUsageTotal {
 			tokensUp: total.tokensUp + u.tokensUp,
 			tokensDown: total.tokensDown + u.tokensDown,
 			activeMs: total.activeMs + u.activeMs,
+			peakContextPct: Math.max(total.peakContextPct, u.peakContextPct),
 		}),
-		{ tokensUp: 0, tokensDown: 0, activeMs: 0 },
+		{ tokensUp: 0, tokensDown: 0, activeMs: 0, peakContextPct: 0 },
 	);
 }

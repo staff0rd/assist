@@ -11,11 +11,13 @@ export function UsageSummary({
 	total: PhaseUsageTotal;
 	sx?: SxProps<Theme>;
 }) {
+	const peak =
+		total.peakContextPct > 0 ? ` · ▓ ${Math.round(total.peakContextPct)}%` : "";
 	return (
 		<Typography sx={sx}>
 			{`↑ ${formatTokens(total.tokensUp)} ↓ ${formatTokens(
 				total.tokensDown,
-			)} · ⏱ ${formatActiveTime(total.activeMs)}`}
+			)} · ⏱ ${formatActiveTime(total.activeMs)}${peak}`}
 		</Typography>
 	);
 }
