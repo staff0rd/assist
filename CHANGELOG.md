@@ -1,3 +1,10 @@
+# [0.382.0](https://github.com/staff0rd/assist/compare/v0.381.0...v0.382.0) (2026-07-11)
+
+
+### Features
+
+* transcript-sourced phase tokens ([4dcc836](https://github.com/staff0rd/assist/commit/4dcc836960c11ea4837334517ad32082e745c122))
+
 # [0.381.0](https://github.com/staff0rd/assist/compare/v0.380.0...v0.381.0) (2026-07-10)
 
 
