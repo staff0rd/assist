@@ -1,14 +1,15 @@
 import { randomUUID } from "node:crypto";
 import chalk from "chalk";
-import { awaitClaude, CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
-import { type SpawnClaudeOptions, spawnClaude } from "../../shared/spawnClaude";
+import { CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
+import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { buildPhasePrompt } from "./buildPhasePrompt";
+import { launchPhaseClaude } from "./launchPhaseClaude";
 import { reportPhaseActivity } from "./reportPhaseActivity";
-import { resolvePhaseResult } from "./resolvePhaseResult";
+import { cleanupSignal, resolvePhaseResult } from "./resolvePhaseResult";
 import { resumeNudge } from "./resumeNudge";
 import type { BacklogItem, PlanPhase } from "./types";
-import { stopWatching, watchForMarker } from "./watchForMarker";
+import { verifyResumeConversation } from "./verifyResumeConversation";
 
 export async function executePhase(
 	item: BacklogItem,
@@ -36,21 +37,27 @@ export async function executePhase(
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	process.env.ASSIST_BACKLOG_ITEM_ID = String(item.id);
+
+	if (resumeSessionId) {
+		const canResume = await verifyResumeConversation(
+			item.id,
+			resumeSessionId,
+			`phase ${phaseNumber}/${totalPhases}`,
+		);
+		if (!canResume) return -1;
+		cleanupSignal();
+	}
+
 	reportPhaseActivity(item, phaseNumber, totalPhases, phase, claudeSessionId);
-	const { child, done } = spawnClaude(
+	const exitCode = await launchPhaseClaude(
 		resumeSessionId
 			? resumeNudge()
 			: buildPhasePrompt(item, phaseNumber, phase),
 		resumeSessionId
-			? spawnOptions
+			? (spawnOptions ?? {})
 			: { ...spawnOptions, sessionId: claudeSessionId },
-	);
-	watchForMarker(child);
-	const exitCode = await awaitClaude(
-		done,
 		`phase ${phaseNumber}/${totalPhases}`,
 	);
-	stopWatching();
 	/* why: abort the phase loop on a spawn failure rather than surfacing an
 	 * uncaught rejection or retrying a launch that can't succeed */
 	if (exitCode === CLAUDE_SPAWN_FAILED) return -1;

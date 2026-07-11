@@ -31,6 +31,11 @@ vi.mock("./buildResumePrompt", () => ({
 
 vi.mock("./resolvePhaseResult", () => ({
 	resolvePhaseResult: vi.fn(() => 1),
+	cleanupSignal: vi.fn(),
+}));
+
+vi.mock("./verifyResumeConversation", () => ({
+	verifyResumeConversation: vi.fn(() => Promise.resolve(true)),
 }));
 
 vi.mock("./watchForMarker", () => ({
@@ -46,10 +51,15 @@ import { emitActivity } from "../../shared/emitActivity";
 import { spawnClaude } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { executePhase } from "./executePhase";
+import { resolvePhaseResult } from "./resolvePhaseResult";
+import { verifyResumeConversation } from "./verifyResumeConversation";
 
 const mockEmitActivity = emitActivity as unknown as MockInstance;
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;
 const mockSetSessionStatus = setSessionStatus as unknown as MockInstance;
+const mockResolvePhaseResult = resolvePhaseResult as unknown as MockInstance;
+const mockVerifyResumeConversation =
+	verifyResumeConversation as unknown as MockInstance;
 
 function makeItem(): BacklogItem {
 	return {
@@ -131,6 +141,21 @@ describe("executePhase", () => {
 			const result = await executePhase(makeItem(), 0, phases);
 
 			expect(result).toBe(-1);
+			expect(mockSetSessionStatus).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("when a restart-resume targets a missing conversation", () => {
+		it("fails the phase without spawning Claude or resolving a result", async () => {
+			mockVerifyResumeConversation.mockResolvedValueOnce(false);
+
+			const result = await executePhase(makeItem(), 0, phases, {
+				resumeSessionId: "gone-9",
+			});
+
+			expect(result).toBe(-1);
+			expect(mockSpawnClaude).not.toHaveBeenCalled();
+			expect(mockResolvePhaseResult).not.toHaveBeenCalled();
 			expect(mockSetSessionStatus).not.toHaveBeenCalled();
 		});
 	});
