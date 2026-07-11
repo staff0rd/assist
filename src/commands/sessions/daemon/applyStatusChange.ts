@@ -1,25 +1,10 @@
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
-import { persistPhaseActiveMs } from "./persistPhaseActiveMs";
-import { sessionBacklogPhase } from "./sessionBacklogPhase";
+import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { setStatus } from "./setStatus";
 import { shouldAutoDismiss } from "./shouldAutoDismiss";
 import { shouldAutoRun } from "./shouldAutoRun";
 import { disarmEscInterrupt } from "./watchEscInterrupt";
-
-/* why: the running stretch that just ended belongs to the backlog phase the
- * session was on, so attribute its duration to that phase's usage row — the same
- * interval setStatus folds into runningMs, read here before setStatus resets it. */
-function accumulateActiveTime(session: Session): void {
-	if (session.status !== "running" || session.runningSince == null) return;
-	const phase = sessionBacklogPhase(session);
-	if (!phase) return;
-	void persistPhaseActiveMs(
-		phase.itemId,
-		phase.phaseIdx,
-		Date.now() - session.runningSince,
-	);
-}
 
 export function applyStatusChange(
 	session: Session,
@@ -38,7 +23,7 @@ export function applyStatusChange(
 	 * to avoid a broadcast storm during a long tool-heavy turn. */
 	if (session.status === status) return;
 	daemonLog(`session ${session.id} status: ${session.status} -> ${status}`);
-	accumulateActiveTime(session);
+	void flushPhaseActiveMs(session);
 	setStatus(session, status);
 	const autoRun = shouldAutoRun(session);
 	if (autoRun.run) {

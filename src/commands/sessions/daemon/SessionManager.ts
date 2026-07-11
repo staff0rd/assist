@@ -16,6 +16,7 @@ import {
 } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { dismissSession, drainSessions } from "./dismissSession";
+import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
@@ -64,6 +65,12 @@ export class SessionManager {
 	shutdown(): void {
 		this.shuttingDown = true;
 		shutdownSessions(this.sessions);
+	}
+
+	async flushActiveMs(): Promise<void> {
+		await Promise.all(
+			[...this.sessions.values()].map((s) => flushPhaseActiveMs(s)),
+		);
 	}
 
 	restore(): string[] {

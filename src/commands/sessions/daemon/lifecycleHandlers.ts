@@ -22,7 +22,11 @@ function handleFetchTranscript(
 	);
 }
 
-function handleShutdown(client: SessionClient, manager: SessionManager): void {
+async function handleShutdown(
+	client: SessionClient,
+	manager: SessionManager,
+): Promise<void> {
+	await manager.flushActiveMs();
 	manager.shutdown();
 	sendTo(client, { type: "shutting-down" });
 	setImmediate(() => process.exit(0));

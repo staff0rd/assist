@@ -12,11 +12,14 @@ export async function persistPhaseActiveMs(
 	itemId: number,
 	phaseIdx: number,
 	activeMs: number,
-): Promise<void> {
+): Promise<boolean> {
 	try {
-		if (!process.env.ASSIST_DATABASE_URL && !loadConfig().database.url) return;
+		if (!process.env.ASSIST_DATABASE_URL && !loadConfig().database.url)
+			return true;
 		await recordPhaseActiveMs(await getDb(), itemId, phaseIdx, activeMs);
+		return true;
 	} catch (error) {
 		daemonLog(`phase-active-ms persist failed: ${String(error)}`);
+		return false;
 	}
 }

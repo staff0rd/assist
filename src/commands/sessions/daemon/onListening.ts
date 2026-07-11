@@ -11,8 +11,10 @@ export function onListening(
 	writeFileSync(daemonPaths.pid, String(process.pid));
 	startPidFileWatchdog(() => {
 		daemonLog("lost daemon.pid ownership; shutting down sessions and exiting");
-		manager.shutdown();
-		process.exit(0);
+		void manager.flushActiveMs().finally(() => {
+			manager.shutdown();
+			process.exit(0);
+		});
 	});
 	process.on("exit", cleanupOwnedFiles);
 	const restored = manager.restore();

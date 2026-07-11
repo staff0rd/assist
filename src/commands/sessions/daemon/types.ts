@@ -41,6 +41,8 @@ export type Session = {
 	usageSeeded?: boolean;
 	pendingRestart?: () => void;
 	usedPct?: number;
+	activeMsFlushedForStretch?: { since: number; ms: number };
+	activeMsFlushChain?: Promise<void>;
 };
 
 export type SessionInfo = SessionInfoBase & {

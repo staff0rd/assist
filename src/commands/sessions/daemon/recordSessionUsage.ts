@@ -1,5 +1,6 @@
 import type { ActiveWindow } from "../../../shared/activeWindows";
 import type { Session } from "./createSession";
+import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { persistPhaseTokens } from "./persistPhaseTokens";
 import { sessionBacklogPhase } from "./sessionBacklogPhase";
 
@@ -21,6 +22,7 @@ export function recordSessionUsage(
 				transcriptPath,
 				windows,
 			);
+		void flushPhaseActiveMs(session);
 		return true;
 	}
 	return false;

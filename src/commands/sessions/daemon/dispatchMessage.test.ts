@@ -168,21 +168,28 @@ describe("dispatchMessage", () => {
 	});
 
 	describe("shutdown", () => {
-		it("kills sessions, acks, then exits", async () => {
+		it("flushes active time, kills sessions, acks, then exits", async () => {
 			const exit = vi
 				.spyOn(process, "exit")
 				.mockImplementation((() => {}) as never);
 			const client = { send: vi.fn() };
-			const manager = { shutdown: vi.fn() } as unknown as SessionManager;
+			const flushActiveMs = vi.fn(() => Promise.resolve());
+			const manager = {
+				flushActiveMs,
+				shutdown: vi.fn(),
+			} as unknown as SessionManager;
 
 			dispatchMessage(client, manager, { type: "shutdown" });
 
+			expect(exit).not.toHaveBeenCalled();
+			await flush();
+			await flush();
+
+			expect(flushActiveMs).toHaveBeenCalledOnce();
 			expect(manager.shutdown).toHaveBeenCalledOnce();
 			expect(client.send).toHaveBeenCalledWith(
 				JSON.stringify({ type: "shutting-down" }),
 			);
-			expect(exit).not.toHaveBeenCalled();
-			await flush();
 			expect(exit).toHaveBeenCalledWith(0);
 		});
 	});
