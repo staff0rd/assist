@@ -1,5 +1,16 @@
 {
-	"entry": ["src/index.ts", "oxlint-rules/filenameConvention.ts"],
-	"ignoreDependencies": ["@vitest/coverage-v8"],
+	"entry": [
+		"src/index.ts",
+		"oxlint-rules/filenameConvention.ts",
+		"src/commands/sessions/web/ui/App.tsx"
+	],
+	"ignoreDependencies": [
+		"@vitest/coverage-v8",
+		"jscpd",
+		"oxfmt",
+		"oxlint",
+		"skott",
+		"tsx"
+	],
 	"ignore": ["**/.venv/**", "netcap-extension/**"]
 }

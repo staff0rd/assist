@@ -21,15 +21,7 @@
 		"build": "tsup",
 		"start": "node dist/index.js",
 		"check:types": "tsc --noEmit",
-		"test": "vitest run",
-		"verify:lint": "oxlint --config .oxlintrc.json src",
-		"verify:format": "oxfmt .",
-		"verify:knip": "knip --no-progress --treat-config-hints-as-errors",
-		"verify:duplicate-code": "jscpd --format typescript,tsx,python --exitCode 1 --ignore \"**/*.test.*,**/.venv/**\" -r consoleFull src",
-		"verify:test": "vitest run --changed --passWithNoTests --reporter dot",
-		"verify:config-keys": "tsx src/index.ts verify config-keys",
-		"verify:react-build": "esbuild src/commands/sessions/web/ui/App.tsx --bundle --minify --format=iife --target=es2020 --outfile=dist/commands/sessions/web/bundle.verify.js --jsx=automatic --jsx-import-source=react --define:process.env.NODE_ENV='production'",
-		"verify:circular-deps": "skott --displayMode=raw --showCircularDependencies --exitCodeOnCircularDependencies=1 src/index.ts"
+		"test": "vitest run"
 	},
 	"overrides": {
 		"lodash": "^4.18.0",
