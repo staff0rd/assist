@@ -1,3 +1,10 @@
+## [0.384.2](https://github.com/staff0rd/assist/compare/v0.384.1...v0.384.2) (2026-07-11)
+
+
+### Bug Fixes
+
+* fail run on missing resume conversation ([96b71e9](https://github.com/staff0rd/assist/commit/96b71e96b1f2bdd935495749d9ce91f6afccb508))
+
 ## [0.384.1](https://github.com/staff0rd/assist/compare/v0.384.0...v0.384.1) (2026-07-11)
 
 
