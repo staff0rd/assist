@@ -1,3 +1,10 @@
+# [0.383.0](https://github.com/staff0rd/assist/compare/v0.382.1...v0.383.0) (2026-07-11)
+
+
+### Features
+
+* near-live restart-safe per-phase active-time ([3c00a77](https://github.com/staff0rd/assist/commit/3c00a77136572918c2ff55bd7b6a8db0be7f4424))
+
 ## [0.382.1](https://github.com/staff0rd/assist/compare/v0.382.0...v0.382.1) (2026-07-11)
 
 
