@@ -1,3 +1,10 @@
+## [0.382.1](https://github.com/staff0rd/assist/compare/v0.382.0...v0.382.1) (2026-07-11)
+
+
+### Bug Fixes
+
+* dedupe verify:* commands ([5d0f2a2](https://github.com/staff0rd/assist/commit/5d0f2a2497b45350356b2cc8c89eaaa3f15f9bab))
+
 # [0.382.0](https://github.com/staff0rd/assist/compare/v0.381.0...v0.382.0) (2026-07-11)
 
 
