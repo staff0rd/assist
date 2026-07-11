@@ -1,3 +1,10 @@
+# [0.384.0](https://github.com/staff0rd/assist/compare/v0.383.0...v0.384.0) (2026-07-11)
+
+
+### Features
+
+* per-phase peak context-window % ([a8ec1b4](https://github.com/staff0rd/assist/commit/a8ec1b46e863c7c889dafe7e946ec51520fddeb0))
+
 # [0.383.0](https://github.com/staff0rd/assist/compare/v0.382.1...v0.383.0) (2026-07-11)
 
 
