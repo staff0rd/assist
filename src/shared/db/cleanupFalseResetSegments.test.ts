@@ -65,7 +65,14 @@ describe("cleanupFalseResetSegments", () => {
 
 	const peaks = () =>
 		orm
-			.select()
+			.select({
+				window: usagePeaks.window,
+				resetsAt: usagePeaks.resetsAt,
+				segment: usagePeaks.segment,
+				usedPercentage: usagePeaks.usedPercentage,
+				resetDetected: usagePeaks.resetDetected,
+				createdAt: usagePeaks.createdAt,
+			})
 			.from(usagePeaks)
 			.orderBy(usagePeaks.window, usagePeaks.resetsAt, usagePeaks.segment);
 

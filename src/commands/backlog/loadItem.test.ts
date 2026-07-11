@@ -5,6 +5,7 @@ import {
 	comments,
 	items,
 	links,
+	phaseUsage,
 	planPhases,
 	planTasks,
 } from "../../shared/db/schema";
@@ -59,6 +60,30 @@ describe("loadItem", () => {
 			comments: [{ text: "Hi", type: "comment" }],
 			links: [{ type: "relates-to", targetId: 5 }],
 			plan: [{ name: "Setup", tasks: [{ task: "Do it" }] }],
+		});
+	});
+
+	it("sums phase usage into an item-level total", async () => {
+		await orm
+			.insert(items)
+			.values({ id: 1, origin: "test", name: "Test", status: "in-progress" });
+		await orm.insert(phaseUsage).values([
+			{
+				itemId: 1,
+				phaseIdx: 0,
+				tokensUp: 100,
+				tokensDown: 200,
+				activeMs: 5000,
+			},
+			{ itemId: 1, phaseIdx: 1, tokensUp: 50, tokensDown: 25, activeMs: 1000 },
+		]);
+
+		const item = await loadItem(orm, 1);
+
+		expect(item?.usageTotal).toEqual({
+			tokensUp: 150,
+			tokensDown: 225,
+			activeMs: 6000,
 		});
 	});
 });

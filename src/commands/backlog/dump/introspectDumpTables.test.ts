@@ -37,6 +37,7 @@ describe("introspectDumpTables", () => {
 				"usage_peaks",
 				"backups",
 				"phase_usage",
+				"phase_usage_messages",
 			]),
 		);
 	});
@@ -65,6 +66,8 @@ describe("introspectDumpTables", () => {
 			"segment",
 			"used_percentage",
 			"reset_detected",
+			"tokens_up",
+			"tokens_down",
 			"created_at",
 		]);
 	});

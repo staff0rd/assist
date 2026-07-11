@@ -1,5 +1,6 @@
 import type { PhaseUsageRow } from "../../shared/db/schema";
 import type { Relations } from "./loadRelations";
+import { sumPhaseUsage } from "./sumPhaseUsage";
 import type { BacklogItem, PhaseUsage } from "./types";
 
 function rowToUsage(u: PhaseUsageRow): PhaseUsage {
@@ -17,5 +18,8 @@ export function attachUsage(
 	id: number,
 ): void {
 	const usage = (rel.usage.get(id) ?? []).map(rowToUsage);
-	if (usage.length > 0) item.phaseUsage = usage;
+	if (usage.length > 0) {
+		item.phaseUsage = usage;
+		item.usageTotal = sumPhaseUsage(usage);
+	}
 }

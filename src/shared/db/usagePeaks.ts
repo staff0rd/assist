@@ -24,7 +24,10 @@ import {
  * cycle already recorded exposes the segments below it as stale/out-of-order
  * noise rather than resets, and {@link ./recordWindowPeak} collapses them.
  * `createdAt` records when each row's first reading landed, so a reset cycle
- * reads as a timeline. Mirrors the DDL in {@link ./ensureSchema}.
+ * reads as a timeline. `tokensUp`/`tokensDown` accumulate the token spend
+ * attributed to the cycle while it was the active window, held on its base
+ * segment (0), which no reset or collapse ever removes, so the cycle total
+ * survives. Mirrors the DDL in {@link ./ensureSchema}.
  */
 export const usagePeaks = pgTable(
 	"usage_peaks",
@@ -34,6 +37,8 @@ export const usagePeaks = pgTable(
 		segment: integer().notNull().default(0),
 		usedPercentage: doublePrecision("used_percentage").notNull(),
 		resetDetected: boolean("reset_detected").notNull().default(false),
+		tokensUp: bigint("tokens_up", { mode: "number" }).notNull().default(0),
+		tokensDown: bigint("tokens_down", { mode: "number" }).notNull().default(0),
 		createdAt: timestamp("created_at", { withTimezone: true })
 			.notNull()
 			.defaultNow(),

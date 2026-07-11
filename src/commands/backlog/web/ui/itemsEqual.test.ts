@@ -52,4 +52,31 @@ describe("itemsEqual", () => {
 	it("returns false when order differs", () => {
 		expect(itemsEqual([item(1), item(2)], [item(2), item(1)])).toBe(false);
 	});
+
+	it("returns false when the usage total differs", () => {
+		const before = item(1, {
+			usageTotal: { tokensUp: 100, tokensDown: 200, activeMs: 5000 },
+		});
+		const after = item(1, {
+			usageTotal: { tokensUp: 150, tokensDown: 200, activeMs: 5000 },
+		});
+		expect(itemsEqual([before], [after])).toBe(false);
+	});
+
+	it("returns false when a usage total appears", () => {
+		const after = item(1, {
+			usageTotal: { tokensUp: 100, tokensDown: 200, activeMs: 5000 },
+		});
+		expect(itemsEqual([item(1)], [after])).toBe(false);
+	});
+
+	it("treats matching usage totals as equal", () => {
+		const total = { tokensUp: 100, tokensDown: 200, activeMs: 5000 };
+		expect(
+			itemsEqual(
+				[item(1, { usageTotal: total })],
+				[item(1, { usageTotal: total })],
+			),
+		).toBe(true);
+	});
 });

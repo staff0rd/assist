@@ -1,4 +1,14 @@
-import type { BacklogItemSummary } from "./types";
+import type { BacklogItemSummary, PhaseUsageTotal } from "./types";
+
+function usageTotalEqual(a?: PhaseUsageTotal, b?: PhaseUsageTotal): boolean {
+	if (a === b) return true;
+	if (!a || !b) return false;
+	return (
+		a.tokensUp === b.tokensUp &&
+		a.tokensDown === b.tokensDown &&
+		a.activeMs === b.activeMs
+	);
+}
 
 export function itemsEqual(
 	a: BacklogItemSummary[],
@@ -14,7 +24,8 @@ export function itemsEqual(
 			item.name === other.name &&
 			item.status === other.status &&
 			item.starred === other.starred &&
-			item.incompleteSubtasks === other.incompleteSubtasks
+			item.incompleteSubtasks === other.incompleteSubtasks &&
+			usageTotalEqual(item.usageTotal, other.usageTotal)
 		);
 	});
 }

@@ -6,6 +6,7 @@ import {
 	items,
 	itemSubtasks,
 	links,
+	phaseUsage,
 	planPhases,
 	planTasks,
 } from "../../shared/db/schema";
@@ -84,6 +85,34 @@ describe("loadItemSummaries", () => {
 
 		expect(summaries.find((s) => s.id === 1)?.incompleteSubtasks).toBe(2);
 		expect(summaries.find((s) => s.id === 2)?.incompleteSubtasks).toBe(0);
+	});
+
+	it("sums phase usage into an item-level total, or omits it when absent", async () => {
+		await orm
+			.insert(items)
+			.values({ id: 1, origin: "test", name: "With usage", status: "todo" });
+		await orm
+			.insert(items)
+			.values({ id: 2, origin: "test", name: "No usage", status: "todo" });
+		await orm.insert(phaseUsage).values([
+			{
+				itemId: 1,
+				phaseIdx: 0,
+				tokensUp: 100,
+				tokensDown: 200,
+				activeMs: 5000,
+			},
+			{ itemId: 1, phaseIdx: 1, tokensUp: 50, tokensDown: 25, activeMs: 1000 },
+		]);
+
+		const summaries = await loadItemSummaries(orm);
+
+		expect(summaries.find((s) => s.id === 1)?.usageTotal).toEqual({
+			tokensUp: 150,
+			tokensDown: 225,
+			activeMs: 6000,
+		});
+		expect(summaries.find((s) => s.id === 2)?.usageTotal).toBeUndefined();
 	});
 
 	it("scopes to the given origin", async () => {

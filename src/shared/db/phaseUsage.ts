@@ -1,15 +1,5 @@
 import { bigint, integer, pgTable, primaryKey } from "drizzle-orm/pg-core";
 
-/**
- * Per-phase cost for a backlog item run. One row per (itemId, phaseIdx), where
- * `phaseIdx` is 0-based to line up with {@link ./schema plan_phases.idx}.
- * `tokensUp`/`tokensDown` accumulate the status line's output/input token totals
- * as positive deltas; `activeMs` sums the running (non-waiting) intervals. The
- * `lastTotalIn`/`lastTotalOut` baselines are the last observed context-window
- * totals, so the next update can add only the positive growth. The `item_id`
- * foreign key (ON DELETE CASCADE) lives in the DDL in {@link ./ensureSchema},
- * which is the source of truth; Drizzle here is for typed queries only.
- */
 export const phaseUsage = pgTable(
 	"phase_usage",
 	{

@@ -1,7 +1,10 @@
-import { asc, eq, ne, sql } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
-import { items, itemSubtasks } from "../../shared/db/schema";
-import type { BacklogItemSummary, BacklogStatus, BacklogType } from "./types";
+import { items } from "../../shared/db/schema";
+import { incompleteSubtaskCounts } from "./incompleteSubtaskCounts";
+import { phaseUsageTotals } from "./phaseUsageTotals";
+import { rowToItemSummary } from "./rowToItemSummary";
+import type { BacklogItemSummary } from "./types";
 
 /**
  * Load lightweight summaries for the backlog list: only the columns the list
@@ -14,15 +17,8 @@ export async function loadItemSummaries(
 	orm: Db,
 	origin?: string,
 ): Promise<BacklogItemSummary[]> {
-	const incompleteCounts = orm
-		.select({
-			itemId: itemSubtasks.itemId,
-			count: sql<number>`count(*)::int`.as("incomplete_subtasks"),
-		})
-		.from(itemSubtasks)
-		.where(ne(itemSubtasks.status, "done"))
-		.groupBy(itemSubtasks.itemId)
-		.as("incomplete_counts");
+	const incompleteCounts = incompleteSubtaskCounts(orm);
+	const usageTotals = phaseUsageTotals(orm);
 	const rows = await orm
 		.select({
 			id: items.id,
@@ -33,19 +29,14 @@ export async function loadItemSummaries(
 			starred: items.starred,
 			jiraKey: items.jiraKey,
 			incompleteSubtasks: incompleteCounts.count,
+			tokensUp: usageTotals.tokensUp,
+			tokensDown: usageTotals.tokensDown,
+			activeMs: usageTotals.activeMs,
 		})
 		.from(items)
 		.leftJoin(incompleteCounts, eq(incompleteCounts.itemId, items.id))
+		.leftJoin(usageTotals, eq(usageTotals.itemId, items.id))
 		.where(origin === undefined ? undefined : eq(items.origin, origin))
 		.orderBy(asc(items.id));
-	return rows.map((row) => ({
-		id: row.id,
-		origin: row.origin,
-		type: row.type as BacklogType,
-		name: row.name,
-		status: row.status as BacklogStatus,
-		starred: row.starred,
-		jiraKey: row.jiraKey ?? undefined,
-		incompleteSubtasks: row.incompleteSubtasks ?? 0,
-	}));
+	return rows.map(rowToItemSummary);
 }

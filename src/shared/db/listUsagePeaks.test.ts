@@ -41,6 +41,8 @@ describe("listUsagePeaks", () => {
 					segment: 0,
 					usedPercentage: 20,
 					resetDetected: false,
+					tokensUp: 0,
+					tokensDown: 0,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -49,6 +51,8 @@ describe("listUsagePeaks", () => {
 					segment: 0,
 					usedPercentage: 30,
 					resetDetected: false,
+					tokensUp: 0,
+					tokensDown: 0,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -57,6 +61,8 @@ describe("listUsagePeaks", () => {
 					segment: 0,
 					usedPercentage: 10,
 					resetDetected: false,
+					tokensUp: 0,
+					tokensDown: 0,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -79,6 +85,8 @@ describe("listUsagePeaks", () => {
 					segment: 1,
 					usedPercentage: 8,
 					resetDetected: false,
+					tokensUp: 0,
+					tokensDown: 0,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -87,6 +95,8 @@ describe("listUsagePeaks", () => {
 					segment: 0,
 					usedPercentage: 35,
 					resetDetected: true,
+					tokensUp: 0,
+					tokensDown: 0,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -107,6 +117,8 @@ describe("listUsagePeaks", () => {
 					segment: 0,
 					usedPercentage: 40,
 					resetDetected: false,
+					tokensUp: 0,
+					tokensDown: 0,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -115,6 +127,8 @@ describe("listUsagePeaks", () => {
 					segment: 0,
 					usedPercentage: 60,
 					resetDetected: false,
+					tokensUp: 0,
+					tokensDown: 0,
 					createdAt: expect.any(Date),
 				},
 			]);

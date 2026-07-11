@@ -25,6 +25,12 @@ const phaseUsageSchema = z.strictObject({
 	activeMs: z.number(),
 });
 
+const phaseUsageTotalSchema = z.strictObject({
+	tokensUp: z.number(),
+	tokensDown: z.number(),
+	activeMs: z.number(),
+});
+
 const subtaskStatusSchema = z.enum(["todo", "in-progress", "done"]);
 
 const subtaskSchema = z.strictObject({
@@ -75,6 +81,7 @@ export const backlogItemSchema = z.strictObject({
 	subtasks: z.array(subtaskSchema).optional(),
 	links: z.array(backlogLinkSchema).optional(),
 	phaseUsage: z.array(phaseUsageSchema).optional(),
+	usageTotal: phaseUsageTotalSchema.optional(),
 	gitRefs: z.array(gitRefSchema).optional(),
 	origin: z.string().optional(),
 	jiraKey: z.string().optional(),
@@ -91,12 +98,20 @@ export type BacklogItem = z.infer<typeof backlogItemSchema>;
  */
 export type BacklogItemSummary = Pick<
 	BacklogItem,
-	"id" | "type" | "name" | "status" | "origin" | "starred" | "jiraKey"
+	| "id"
+	| "type"
+	| "name"
+	| "status"
+	| "origin"
+	| "starred"
+	| "jiraKey"
+	| "usageTotal"
 > & { incompleteSubtasks: number };
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
 export type PhaseUsage = z.infer<typeof phaseUsageSchema>;
+export type PhaseUsageTotal = z.infer<typeof phaseUsageTotalSchema>;
 export type BacklogComment = z.infer<typeof backlogCommentSchema>;
 export type Subtask = z.infer<typeof subtaskSchema>;
 export type SubtaskStatus = z.infer<typeof subtaskStatusSchema>;

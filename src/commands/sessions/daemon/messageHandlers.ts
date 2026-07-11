@@ -70,8 +70,7 @@ export const messageHandlers: Record<string, Handler> = {
 	usage: (_client, m, d) =>
 		m.recordUsage(
 			d.claudeSessionId as string,
-			d.totalIn as number,
-			d.totalOut as number,
+			d.transcriptPath as string | undefined,
 			d.usedPct as number | undefined,
 		),
 	input: routed((_client, m, d) =>

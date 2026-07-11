@@ -18,6 +18,7 @@ export function UsagePeaksTable({ peaks }: { peaks: UsagePeakRowData[] }) {
 					<TableRow>
 						<TableCell>Window</TableCell>
 						<TableCell>Peak usage</TableCell>
+						<TableCell align="right">Tokens spent</TableCell>
 						<TableCell align="right">Started</TableCell>
 						<TableCell align="right">Cycle reset</TableCell>
 					</TableRow>

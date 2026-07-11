@@ -90,6 +90,8 @@ export const SCHEMA = `
 		segment INTEGER NOT NULL DEFAULT 0,
 		used_percentage DOUBLE PRECISION NOT NULL,
 		reset_detected BOOLEAN NOT NULL DEFAULT false,
+		tokens_up BIGINT NOT NULL DEFAULT 0,
+		tokens_down BIGINT NOT NULL DEFAULT 0,
 		created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 		PRIMARY KEY ("window", resets_at, segment)
 	);
@@ -98,6 +100,8 @@ export const SCHEMA = `
 	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS reset_detected BOOLEAN NOT NULL DEFAULT false;
 	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS segment INTEGER NOT NULL DEFAULT 0;
 	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
+	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS tokens_up BIGINT NOT NULL DEFAULT 0;
+	ALTER TABLE usage_peaks ADD COLUMN IF NOT EXISTS tokens_down BIGINT NOT NULL DEFAULT 0;
 
 	-- Widen the primary key to include segment so a cycle can hold both its
 	-- pre-reset peak and its post-reset continuation. Idempotent: only fires
@@ -136,6 +140,16 @@ export const SCHEMA = `
 		last_total_in BIGINT,
 		last_total_out BIGINT,
 		PRIMARY KEY (item_id, phase_idx)
+	);
+
+	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS last_total_in BIGINT;
+	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS last_total_out BIGINT;
+
+	CREATE TABLE IF NOT EXISTS phase_usage_messages (
+		item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,
+		phase_idx INTEGER NOT NULL,
+		message_id TEXT NOT NULL,
+		PRIMARY KEY (item_id, phase_idx, message_id)
 	);
 
 	-- Git activity (branch/commit/PR) snapshotted for an item during a run. The

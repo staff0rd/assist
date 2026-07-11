@@ -6,6 +6,14 @@ import { InProgressChip } from "./InProgressChip";
 import { mostRecentOpenSession } from "./mostRecentOpenSession";
 import { PlayAction } from "./PlayAction";
 import { StarAction } from "./StarAction";
+import { UsageSummary } from "./UsageSummary";
+
+const usageSx = {
+	color: "text.secondary",
+	fontSize: "0.75rem",
+	flexShrink: 0,
+	whiteSpace: "nowrap",
+} as const;
 
 export function CardActions({
 	item,
@@ -19,6 +27,7 @@ export function CardActions({
 	const openSession = mostRecentOpenSession(socket.sessions, item.id);
 	return (
 		<>
+			{item.usageTotal && <UsageSummary total={item.usageTotal} sx={usageSx} />}
 			{item.incompleteSubtasks > 0 && (
 				<IncompleteSubtasksChip count={item.incompleteSubtasks} />
 			)}

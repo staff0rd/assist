@@ -12,6 +12,7 @@ chalk.level = 3;
 
 type StatusInput = {
 	session_id?: string;
+	transcript_path?: string;
 	model: {
 		display_name: string;
 	};
@@ -59,8 +60,7 @@ export async function statusLine(): Promise<void> {
 	await relayRateLimits(data.rate_limits);
 	await relayUsage(
 		data.session_id,
-		totalIn,
-		totalOut,
+		data.transcript_path,
 		data.context_window.used_percentage,
 	);
 }

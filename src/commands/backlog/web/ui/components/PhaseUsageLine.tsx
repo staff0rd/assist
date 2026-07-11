@@ -1,7 +1,5 @@
-import { Typography } from "@mui/material";
 import type { PhaseUsage } from "../types";
-import { formatActiveTime } from "./formatActiveTime";
-import { formatTokens } from "./formatTokens";
+import { UsageSummary } from "./UsageSummary";
 
 const usageSx = {
 	color: "text.secondary",
@@ -12,11 +10,5 @@ const usageSx = {
 
 /** Compact per-phase cost line: tokens up/down and active (non-waiting) time. */
 export function PhaseUsageLine({ usage }: { usage: PhaseUsage }) {
-	return (
-		<Typography sx={usageSx}>
-			{`↑ ${formatTokens(usage.tokensUp)} ↓ ${formatTokens(
-				usage.tokensDown,
-			)} · ⏱ ${formatActiveTime(usage.activeMs)}`}
-		</Typography>
-	);
+	return <UsageSummary total={usage} sx={usageSx} />;
 }

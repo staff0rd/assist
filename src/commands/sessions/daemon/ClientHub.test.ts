@@ -57,6 +57,18 @@ describe("ClientHub", () => {
 		expect(client.send).not.toHaveBeenCalled();
 	});
 
+	it("exposes the active windows from the latest limits", () => {
+		const hub = new ClientHub();
+		expect(hub.currentWindows()).toEqual([]);
+
+		hub.updateLimits(rateLimits);
+
+		expect(hub.currentWindows()).toEqual([
+			{ window: "five_hour", resetsAt: 100 },
+			{ window: "seven_day", resetsAt: 200 },
+		]);
+	});
+
 	describe("log subscription", () => {
 		it("delivers live log lines only to subscribers", () => {
 			const hub = new ClientHub();

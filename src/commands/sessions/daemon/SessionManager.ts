@@ -167,17 +167,16 @@ export class SessionManager {
 	 * it to the running backlog phase so the spend accumulates against that row. */
 	recordUsage(
 		claudeSessionId: string,
-		totalIn: number,
-		totalOut: number,
+		transcriptPath: string | undefined,
 		usedPct: number | undefined,
 	): void {
 		if (
 			recordSessionUsage(
 				this.sessions.values(),
 				claudeSessionId,
-				totalIn,
-				totalOut,
+				transcriptPath,
 				usedPct,
+				this.clients.currentWindows(),
 			)
 		)
 			this.notify();

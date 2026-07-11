@@ -1,3 +1,7 @@
+import {
+	type ActiveWindow,
+	activeWindows,
+} from "../../../shared/activeWindows";
 import type { RateLimits } from "../../../shared/RateLimits";
 import { broadcast, type SessionClient, sendTo } from "./broadcast";
 import { recentDaemonLogLines } from "./daemonLog";
@@ -22,6 +26,10 @@ export class ClientHub extends Set<SessionClient> {
 		this.latestLimits = rateLimits;
 		broadcast(this, { type: "limits", rateLimits });
 		this.persistPeak?.(rateLimits);
+	}
+
+	currentWindows(): ActiveWindow[] {
+		return activeWindows(this.latestLimits);
 	}
 
 	greet(client: SessionClient): void {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatActiveTime } from "./formatActiveTime";
-import { formatTokens } from "./formatTokens";
+import { formatTokens } from "../../../../../shared/formatTokens";
 
 describe("formatTokens", () => {
 	it("shows raw counts below 1000", () => {

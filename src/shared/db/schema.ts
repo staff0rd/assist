@@ -11,6 +11,7 @@ import { itemGitRefs } from "./itemGitRefs";
 import { items } from "./items";
 import { itemSubtasks } from "./itemSubtasks";
 import { phaseUsage } from "./phaseUsage";
+import { phaseUsageMessages } from "./phaseUsageMessages";
 import { usagePeaks } from "./usagePeaks";
 
 export { backups } from "./backups";
@@ -19,6 +20,7 @@ export { itemGitRefs } from "./itemGitRefs";
 export { items } from "./items";
 export { itemSubtasks } from "./itemSubtasks";
 export { phaseUsage } from "./phaseUsage";
+export { phaseUsageMessages } from "./phaseUsageMessages";
 export { usagePeaks } from "./usagePeaks";
 
 /**
@@ -107,6 +109,7 @@ export const schema = {
 	usagePeaks,
 	backups,
 	phaseUsage,
+	phaseUsageMessages,
 };
 
 export type ItemRow = typeof items.$inferSelect;

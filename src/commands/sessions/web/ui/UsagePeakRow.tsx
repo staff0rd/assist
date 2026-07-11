@@ -4,6 +4,7 @@ import TableRow from "@mui/material/TableRow";
 import type { UsagePeakRow as UsagePeakRowData } from "../../../../shared/db/listUsagePeaks";
 import { rateLimitLevel } from "../../../../shared/rateLimitLevel";
 import { UsageBar } from "./UsageBar";
+import { usagePeakTokens } from "./usagePeakTokens";
 import { usagePeakWindow } from "./usagePeakWindow";
 
 export function UsagePeakRow({
@@ -46,6 +47,7 @@ export function UsagePeakRow({
 			<TableCell sx={{ minWidth: 160 }}>
 				<UsageBar percentage={peak.usedPercentage} level={level} />
 			</TableCell>
+			<TableCell align="right">{usagePeakTokens(peak)}</TableCell>
 			<TableCell align="right">
 				{new Date(peak.createdAt).toLocaleString()}
 			</TableCell>

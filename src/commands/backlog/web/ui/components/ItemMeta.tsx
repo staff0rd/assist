@@ -4,6 +4,7 @@ import type { BacklogItem } from "../types";
 import { JiraKeyLink } from "./JiraKeyLink";
 import { StatusPicker } from "./StatusPicker";
 import { typeChipColors } from "./typeChipColors";
+import { UsageSummary } from "./UsageSummary";
 
 const metaRowSx = {
 	alignItems: "center",
@@ -15,6 +16,8 @@ const chipSx = {
 	fontWeight: 500,
 	fontSize: "0.75rem",
 } as const;
+
+const usageSx = { color: "text.secondary", fontSize: "0.75rem" } as const;
 
 export function ItemMeta({
 	item,
@@ -34,6 +37,7 @@ export function ItemMeta({
 			)}
 			<StatusPicker current={item.status} onStatusChange={onStatusChange} />
 			<JiraKeyLink jiraKey={item.jiraKey} />
+			{item.usageTotal && <UsageSummary total={item.usageTotal} sx={usageSx} />}
 		</Stack>
 	);
 }

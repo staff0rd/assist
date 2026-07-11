@@ -15,6 +15,12 @@ export type PhaseUsage = {
 	activeMs: number;
 };
 
+export type PhaseUsageTotal = {
+	tokensUp: number;
+	tokensDown: number;
+	activeMs: number;
+};
+
 export type BacklogComment = {
 	id?: number;
 	text: string;
@@ -59,6 +65,7 @@ export type BacklogItem = {
 	comments?: BacklogComment[];
 	subtasks?: Subtask[];
 	phaseUsage?: PhaseUsage[];
+	usageTotal?: PhaseUsageTotal;
 	gitRefs?: GitRef[];
 };
 
@@ -71,4 +78,5 @@ export type BacklogItemSummary = {
 	starred: boolean;
 	jiraKey?: string;
 	incompleteSubtasks: number;
+	usageTotal?: PhaseUsageTotal;
 };

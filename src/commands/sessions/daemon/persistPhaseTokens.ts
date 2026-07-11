@@ -1,6 +1,9 @@
+import type { ActiveWindow } from "../../../shared/activeWindows";
 import { getDb } from "../../../shared/db/getDb";
-import { recordPhaseTokens } from "../../../shared/db/recordPhaseTokens";
+import { recordPhaseTranscriptUsage } from "../../../shared/db/recordPhaseTranscriptUsage";
+import { recordWindowTokens } from "../../../shared/db/recordWindowTokens";
 import { loadConfig } from "../../../shared/loadConfig";
+import { readTranscriptUsage } from "../shared/transcriptUsage";
 import { daemonLog } from "./daemonLog";
 
 /**
@@ -11,12 +14,23 @@ import { daemonLog } from "./daemonLog";
 export async function persistPhaseTokens(
 	itemId: number,
 	phaseIdx: number,
-	totalIn: number,
-	totalOut: number,
+	transcriptPath: string,
+	windows: ActiveWindow[],
 ): Promise<void> {
 	try {
 		if (!process.env.ASSIST_DATABASE_URL && !loadConfig().database.url) return;
-		await recordPhaseTokens(await getDb(), itemId, phaseIdx, totalIn, totalOut);
+		const responses = await readTranscriptUsage(transcriptPath);
+		if (responses.length === 0) return;
+		const db = await getDb();
+		const { tokensUp, tokensDown } = await recordPhaseTranscriptUsage(
+			db,
+			itemId,
+			phaseIdx,
+			responses,
+		);
+		for (const { window, resetsAt } of windows) {
+			await recordWindowTokens(db, window, resetsAt, tokensUp, tokensDown);
+		}
 	} catch (error) {
 		daemonLog(`phase-tokens persist failed: ${String(error)}`);
 	}
