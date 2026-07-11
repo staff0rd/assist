@@ -20,6 +20,10 @@ When the user mentions a Jira issue key (e.g. `BAD-671`, `PROJ-123`), use the At
 
 When editing a Jira issue whose description (or comment) contains Smart Links — rendered issue-key/URL chips, stored as ADF `inlineCard` nodes — edit via `editJiraIssue` with `contentFormat: "adf"` and emit real `inlineCard` nodes. Never round-trip such content through `contentFormat: "markdown"`: markdown has no representation for `inlineCard`, so every existing Smart Link is flattened to a plain browse URL and lost. Jira does not auto-promote plain browse URLs back into Smart Links, so the damage is not self-healing. Inspect the current stored ADF first and preserve existing `inlineCard` nodes when making a small edit. For anything beyond a trivial edit, build the ADF programmatically (a small script) rather than hand-authoring it inline — full-description ADF is verbose and easy to get wrong.
 
+## Drafting messages to send on the user's behalf
+
+When drafting a message to send on the user's behalf (Slack, PR, email, comment): state only the confirmed conclusion and the facts behind it. No hedging, no speculative next-steps, no fixes not agreed to, no pleasantries. Match the scope of what was asked — nothing added.
+
 ## Commenting code
 
 Do not include comments for standard logic or syntax. Only comment if the specific line involves unintuitive complexity or a hack.
