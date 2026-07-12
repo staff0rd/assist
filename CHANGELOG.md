@@ -1,3 +1,10 @@
+## [0.384.3](https://github.com/staff0rd/assist/compare/v0.384.2...v0.384.3) (2026-07-12)
+
+
+### Bug Fixes
+
+* sync backlog phase to resumed session ([8446cc0](https://github.com/staff0rd/assist/commit/8446cc05125944581e212b31ec4144be9e6f285d))
+
 ## [0.384.2](https://github.com/staff0rd/assist/compare/v0.384.1...v0.384.2) (2026-07-11)
 
 
