@@ -146,6 +146,7 @@ export const SCHEMA = `
 	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS last_total_in BIGINT;
 	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS last_total_out BIGINT;
 	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS peak_context_pct DOUBLE PRECISION NOT NULL DEFAULT 0;
+	ALTER TABLE phase_usage ADD COLUMN IF NOT EXISTS claude_session_id TEXT;
 
 	CREATE TABLE IF NOT EXISTS phase_usage_messages (
 		item_id INTEGER NOT NULL REFERENCES items(id) ON DELETE CASCADE,

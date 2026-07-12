@@ -47,10 +47,19 @@ vi.mock("../sessions/setSessionStatus", () => ({
 	setSessionStatus: vi.fn(),
 }));
 
+vi.mock("./persistPhaseSessionId", () => ({
+	persistPhaseSessionId: vi.fn(),
+}));
+
+vi.mock("./recordSignalOwner", () => ({
+	recordSignalOwner: vi.fn(),
+}));
+
 import { emitActivity } from "../../shared/emitActivity";
 import { spawnClaude } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { executePhase } from "./executePhase";
+import { persistPhaseSessionId } from "./persistPhaseSessionId";
 import { resolvePhaseResult } from "./resolvePhaseResult";
 import { verifyResumeConversation } from "./verifyResumeConversation";
 
@@ -58,6 +67,8 @@ const mockEmitActivity = emitActivity as unknown as MockInstance;
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;
 const mockSetSessionStatus = setSessionStatus as unknown as MockInstance;
 const mockResolvePhaseResult = resolvePhaseResult as unknown as MockInstance;
+const mockPersistPhaseSessionId =
+	persistPhaseSessionId as unknown as MockInstance;
 const mockVerifyResumeConversation =
 	verifyResumeConversation as unknown as MockInstance;
 
@@ -100,6 +111,22 @@ describe("executePhase", () => {
 		expect(mockEmitActivity).toHaveBeenCalledWith(
 			expect.objectContaining({ claudeSessionId: "sess-9" }),
 		);
+	});
+
+	it("records the phase->session mapping on a fresh launch", async () => {
+		await executePhase(makeItem(), 0, phases);
+
+		expect(mockPersistPhaseSessionId).toHaveBeenCalledWith(
+			7,
+			0,
+			"generated-uuid",
+		);
+	});
+
+	it("does not overwrite the phase->session mapping on resume", async () => {
+		await executePhase(makeItem(), 0, phases, { resumeSessionId: "sess-9" });
+
+		expect(mockPersistPhaseSessionId).not.toHaveBeenCalled();
 	});
 
 	it("reports the authored phase name as the activity phaseName", async () => {

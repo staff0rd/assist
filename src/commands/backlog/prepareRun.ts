@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { formatItemId } from "./formatItemId";
+import { reconcileResumePhase } from "./reconcileResumePhase";
 import { resolvePlan } from "./resolvePlan";
 import { findOneItem, setStatus } from "./shared";
 import type { BacklogItem, PlanPhase } from "./types";
@@ -10,13 +11,15 @@ export type PreparedRun = {
 	startPhase: number;
 };
 
-export async function prepareRun(id: string): Promise<PreparedRun | undefined> {
+export async function prepareRun(
+	id: string,
+	resumeSessionId?: string,
+): Promise<PreparedRun | undefined> {
 	const found = await findOneItem(id);
 	if (!found) return undefined;
 
-	const { item } = found;
+	const { orm, item } = found;
 	const plan = resolvePlan(item);
-	const startPhase = (item.currentPhase ?? 1) - 1;
 
 	if (item.status === "done") {
 		console.log(
@@ -24,6 +27,13 @@ export async function prepareRun(id: string): Promise<PreparedRun | undefined> {
 		);
 		return undefined;
 	}
+
+	const startPhase = await reconcileResumePhase(
+		orm,
+		item,
+		(item.currentPhase ?? 1) - 1,
+		resumeSessionId,
+	);
 
 	// plan.length means authored phases done but review not yet run;
 	// plan.length + 1 means review phase also completed

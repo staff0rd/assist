@@ -3,13 +3,13 @@ import chalk from "chalk";
 import { CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
-import { buildPhasePrompt } from "./buildPhasePrompt";
-import { launchPhaseClaude } from "./launchPhaseClaude";
+import { launchPhaseSession } from "./launchPhaseSession";
+import { persistPhaseSessionId } from "./persistPhaseSessionId";
+import { recordSignalOwner } from "./recordSignalOwner";
 import { reportPhaseActivity } from "./reportPhaseActivity";
-import { cleanupSignal, resolvePhaseResult } from "./resolvePhaseResult";
-import { resumeNudge } from "./resumeNudge";
+import { resolvePhaseResult } from "./resolvePhaseResult";
 import type { BacklogItem, PlanPhase } from "./types";
-import { verifyResumeConversation } from "./verifyResumeConversation";
+import { verifyPhaseResume } from "./verifyPhaseResume";
 
 export async function executePhase(
 	item: BacklogItem,
@@ -37,26 +37,25 @@ export async function executePhase(
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	process.env.ASSIST_BACKLOG_ITEM_ID = String(item.id);
+	recordSignalOwner(item.id);
 
+	const phaseLabel = `phase ${phaseNumber}/${totalPhases}`;
 	if (resumeSessionId) {
-		const canResume = await verifyResumeConversation(
-			item.id,
-			resumeSessionId,
-			`phase ${phaseNumber}/${totalPhases}`,
-		);
-		if (!canResume) return -1;
-		cleanupSignal();
+		if (!(await verifyPhaseResume(item.id, resumeSessionId, phaseLabel)))
+			return -1;
 	}
 
 	reportPhaseActivity(item, phaseNumber, totalPhases, phase, claudeSessionId);
-	const exitCode = await launchPhaseClaude(
-		resumeSessionId
-			? resumeNudge()
-			: buildPhasePrompt(item, phaseNumber, phase),
-		resumeSessionId
-			? (spawnOptions ?? {})
-			: { ...spawnOptions, sessionId: claudeSessionId },
-		`phase ${phaseNumber}/${totalPhases}`,
+	if (!resumeSessionId) {
+		await persistPhaseSessionId(item.id, phaseIndex, claudeSessionId);
+	}
+	const exitCode = await launchPhaseSession(
+		item,
+		phaseNumber,
+		phase,
+		phaseLabel,
+		claudeSessionId,
+		spawnOptions,
 	);
 	/* why: abort the phase loop on a spawn failure rather than surfacing an
 	 * uncaught rejection or retrying a launch that can't succeed */

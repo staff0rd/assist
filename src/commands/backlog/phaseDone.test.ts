@@ -28,6 +28,7 @@ import { appendComment } from "./appendComment";
 import { loadItem } from "./loadItem";
 import { phaseDone } from "./phaseDone";
 import { getReady, setCurrentPhase } from "./shared";
+import { clearSignalOwner, recordSignalOwner } from "./recordSignalOwner";
 import { getSignalPath } from "./writeSignal";
 
 const mockGetReady = getReady as unknown as MockInstance;
@@ -67,11 +68,13 @@ describe("phaseDone", () => {
 		process.exitCode = undefined;
 		mockGetReady.mockResolvedValue({ orm });
 		mockLoadItem.mockResolvedValue(makeItem());
+		recordSignalOwner(1);
 		cleanup();
 	});
 
 	afterEach(() => {
 		cleanup();
+		clearSignalOwner(1);
 		delete process.env.ASSIST_SESSION_ID;
 		process.exitCode = undefined;
 	});

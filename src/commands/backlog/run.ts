@@ -12,12 +12,13 @@ import { handleReviewResult } from "./handleReviewResult";
 import { type PreparedRun, prepareRun } from "./prepareRun";
 import { runOnce } from "./runOnce";
 import { setStatus } from "./shared";
+import { clearSignalOwner } from "./recordSignalOwner";
 
 export async function run(
 	id: string,
 	spawnOptions?: SpawnClaudeOptions,
 ): Promise<boolean> {
-	const prepared = await prepareRun(id);
+	const prepared = await prepareRun(id, spawnOptions?.resumeSessionId);
 	if (!prepared) return false;
 
 	await ensureStoryBranch(prepared.item);
@@ -57,6 +58,7 @@ async function runPrepared(
 		}
 	} finally {
 		releaseLock(item.id);
+		clearSignalOwner(item.id);
 	}
 }
 

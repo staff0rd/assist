@@ -13,11 +13,17 @@ vi.mock("./shared", () => ({
 	setStatus: vi.fn(),
 }));
 
+vi.mock("./reconcileResumePhase", () => ({
+	reconcileResumePhase: vi.fn(),
+}));
+
 import { prepareRun } from "./prepareRun";
+import { reconcileResumePhase } from "./reconcileResumePhase";
 import { findOneItem, setStatus } from "./shared";
 
 const mockFindOneItem = findOneItem as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;
+const mockReconcile = reconcileResumePhase as unknown as MockInstance;
 
 function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 	return {
@@ -38,6 +44,9 @@ function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
 describe("prepareRun", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockReconcile.mockImplementation(
+			async (_orm, _item, startPhase: number) => startPhase,
+		);
 	});
 
 	describe("when item is not found", () => {
@@ -106,6 +115,17 @@ describe("prepareRun", () => {
 			const result = await prepareRun("1");
 
 			expect(result?.startPhase).toBe(1);
+		});
+
+		it("uses the reconciled phase when a resumed conversation diverges", async () => {
+			const item = makeItem({ currentPhase: 2 });
+			mockFindOneItem.mockReturnValue({ orm: {}, item });
+			mockReconcile.mockResolvedValue(2);
+
+			const result = await prepareRun("1", "f4f18318");
+
+			expect(mockReconcile).toHaveBeenCalledWith({}, item, 1, "f4f18318");
+			expect(result?.startPhase).toBe(2);
 		});
 	});
 });

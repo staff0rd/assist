@@ -4,6 +4,7 @@ import {
 	integer,
 	pgTable,
 	primaryKey,
+	text,
 } from "drizzle-orm/pg-core";
 
 export const phaseUsage = pgTable(
@@ -17,6 +18,7 @@ export const phaseUsage = pgTable(
 		peakContextPct: doublePrecision("peak_context_pct").notNull().default(0),
 		lastTotalIn: bigint("last_total_in", { mode: "number" }),
 		lastTotalOut: bigint("last_total_out", { mode: "number" }),
+		claudeSessionId: text("claude_session_id"),
 	},
 	(t) => [primaryKey({ columns: [t.itemId, t.phaseIdx] })],
 );
