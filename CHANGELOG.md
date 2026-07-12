@@ -1,3 +1,10 @@
+# [0.386.0](https://github.com/staff0rd/assist/compare/v0.385.1...v0.386.0) (2026-07-12)
+
+
+### Features
+
+* versioned db migrations ([d760b2a](https://github.com/staff0rd/assist/commit/d760b2a50755fb8eaf36b5b922573951d211cbb8))
+
 ## [0.385.1](https://github.com/staff0rd/assist/compare/v0.385.0...v0.385.1) (2026-07-12)
 
 
