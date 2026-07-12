@@ -1,3 +1,10 @@
+# [0.385.0](https://github.com/staff0rd/assist/compare/v0.384.3...v0.385.0) (2026-07-12)
+
+
+### Features
+
+* add /design command and topnav ([615168d](https://github.com/staff0rd/assist/commit/615168d61beff2d89bd7ea29c9b6d35e4f3a724f))
+
 ## [0.384.3](https://github.com/staff0rd/assist/compare/v0.384.2...v0.384.3) (2026-07-12)
 
 
