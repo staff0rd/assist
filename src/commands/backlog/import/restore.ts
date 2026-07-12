@@ -1,5 +1,6 @@
 import type { PoolClient } from "pg";
-import { SCHEMA } from "../../../shared/db/ensureSchema";
+import { applyMigrations } from "../../../shared/db/migrations/applyMigrations";
+import { pgExecutor } from "../../../shared/db/migrations/MigrationExecutor";
 import { copyTableIn } from "../dump/copyTableIn";
 import {
 	introspectIdentityColumns,
@@ -14,7 +15,7 @@ async function replaceData(
 ): Promise<void> {
 	const { tables } = parsed.header;
 	const tableList = tables.map((t) => t.name).join(", ");
-	await client.query(SCHEMA);
+	await applyMigrations(pgExecutor(client));
 	await client.query(`TRUNCATE ${tableList} RESTART IDENTITY CASCADE`);
 	for (const table of tables) {
 		const data = parsed.sections.get(table.name) ?? Buffer.alloc(0);

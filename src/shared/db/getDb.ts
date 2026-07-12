@@ -4,7 +4,8 @@ import { seedNewsFeeds } from "../../commands/backlog/seedNewsFeeds";
 import { loadConfig } from "../loadConfig";
 import { cleanupFalseResetSegments } from "./cleanupFalseResetSegments";
 import { type Db, makeOrmFromPool } from "./Db";
-import { ensureSchema } from "./ensureSchema";
+import { assertMigrationsInSync } from "./migrations/assertMigrationsInSync";
+import { pgExecutor } from "./migrations/MigrationExecutor";
 
 const DATABASE_URL_ENV = "ASSIST_DATABASE_URL";
 
@@ -51,7 +52,7 @@ function logPoolError(error: Error): void {
 	);
 }
 
-function createPool(): Pool {
+export function createPool(): Pool {
 	const pool = new Pool({
 		connectionString: getDatabaseUrl(),
 		max: 10,
@@ -64,8 +65,8 @@ function createPool(): Pool {
 	return pool;
 }
 
-async function initSchema(pool: Pool): Promise<Db> {
-	await ensureSchema((sql) => pool.query(sql));
+async function initDb(pool: Pool): Promise<Db> {
+	await assertMigrationsInSync(pgExecutor(pool));
 	const orm = makeOrmFromPool(pool);
 	await seedNewsFeeds(orm);
 	await runUsagePeakCleanup(orm);
@@ -77,16 +78,16 @@ let _pool: Pool | undefined;
 let _orm: Db | undefined;
 
 /**
- * Connect to the configured Postgres database on demand, creating the schema on
- * first connect and returning the Drizzle client used throughout the backlog
- * data layer. The connection is cached for the lifetime of the process.
+ * Connect to the configured Postgres database on demand, returning the Drizzle
+ * client used throughout the backlog data layer. The connection is cached for
+ * the lifetime of the process.
  */
 export function getDb(): Promise<Db> {
 	if (_orm) return Promise.resolve(_orm);
 	if (_connecting) return _connecting;
 	_connecting = (async () => {
 		_pool = createPool();
-		_orm = await initSchema(_pool);
+		_orm = await initDb(_pool);
 		return _orm;
 	})();
 	return _connecting;

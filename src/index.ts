@@ -16,6 +16,7 @@ import { registerCliHook } from "./commands/registerCliHook";
 import { registerCodeComment } from "./commands/registerCodeComment";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerConfig } from "./commands/registerConfig";
+import { registerDb } from "./commands/registerDb";
 import { registerDeny } from "./commands/registerDeny";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
@@ -145,6 +146,7 @@ configHelp(screenshotCommand, rootConfigHelp.screenshot);
 
 registerActivity(program);
 registerBackup(program);
+registerDb(program);
 registerCliHook(program);
 registerCodeComment(program);
 registerEditHook(program);

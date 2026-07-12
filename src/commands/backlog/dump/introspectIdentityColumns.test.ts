@@ -1,6 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { ensureSchema } from "../../../shared/db/ensureSchema";
+import { applyMigrations } from "../../../shared/db/migrations/applyMigrations";
+import { pgliteExecutor } from "../../../shared/db/migrations/MigrationExecutor";
 import { introspectIdentityColumns } from "./introspectIdentityColumns";
 
 describe("introspectIdentityColumns", () => {
@@ -8,7 +9,7 @@ describe("introspectIdentityColumns", () => {
 
 	beforeEach(async () => {
 		db = new PGlite();
-		await ensureSchema((sql) => db.exec(sql));
+		await applyMigrations(pgliteExecutor(db));
 	});
 
 	afterEach(async () => {

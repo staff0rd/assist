@@ -4,5 +4,6 @@ export { forbiddenStrings } from "./forbiddenStrings";
 export { hardcodedColors } from "./hardcodedColors";
 export { init } from "./init";
 export { list } from "./list";
+export { migrations } from "./migrations";
 export { noVenv } from "./noVenv";
 export { run } from "./run";

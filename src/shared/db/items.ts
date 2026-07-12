@@ -1,8 +1,7 @@
 import { boolean, index, integer, pgTable, text } from "drizzle-orm/pg-core";
 
 /**
- * Backlog items. Mirrors the DDL in {@link ./ensureSchema}, which remains the
- * source of truth for creating the table; Drizzle here is for typed queries.
+ * Backlog items. Mirrors the DDL; Drizzle here is for typed queries.
  */
 export const items = pgTable(
 	"items",

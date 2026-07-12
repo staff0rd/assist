@@ -88,6 +88,8 @@ After installation, the `assist` command will be available globally. You can als
 - `assist backup schedule --every <duration>` - Install or update a marked crontab block that runs `assist backup` on a recurring cadence (e.g. `5m` → `*/5 * * * *`, `6h` → `0 */6 * * *`), appending output to `<backup.dir>/cron.log`; re-running with a new duration replaces the block without duplicating it. Durations cron cannot represent evenly (sub-minute, or non-divisor intervals like `90m`) are rejected
 - `assist backup schedule status` - Print the active backup cadence and cron expression, or report that none is set
 - `assist backup schedule remove` - Remove the marked backup schedule block from the crontab, leaving all other crontab lines intact (reports if none is set)
+- `assist db migrate` - Apply pending backlog database migrations in order, recording each in the `applied_migrations` table; a no-op when the database is already up to date. Run this after installing a build that ships new migrations
+- `assist db status` - Report whether the database is in sync with the build's bundled migrations, behind (run `assist db migrate`), or ahead (update assist)
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project
@@ -183,6 +185,7 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist verify block-comments` - Fail on any comment on a changed line (staged + unstaged), whether newly added or edited, reporting each offending file:line; functional machine directives are exempt and `blockComments.ignore` globs in config scope which files are scanned. Yaml `.yml`/`.yaml` files are scanned for `#` comments with no directive exemptions
 - `assist verify forbidden-strings` - Check configured JSON files for disallowed values. Each `forbiddenStrings` rule names a `file`, a list of dot-`paths` to inspect (string or string[] values are scanned; other types skipped), and a `disallowed` wildcard matched via minimatch; any matching value fails the check. Zero rules is a no-op that passes
 - `assist verify config-keys` - Check that every leaf key in `assistConfigSchema` is surfaced in some command's `--help` via the `configHelp` helper. Fails when a schema key is documented by no command (add it with `configHelp`) or when a declared key is not in the schema. Keys not yet migrated are tracked in a `pendingConfigDocumentation` list that must be drained as commands adopt `configHelp`
+- `assist verify migrations` - Check the bundled DB migrations under `src/shared/db/migrations/` are safe to ship: sequentially numbered `1..N` in `index.ts` order with a matching file per id, append-only (fails if a migration already present on the default branch is edited or removed — add a new numbered migration instead), and free of unacknowledged destructive DDL (`DROP TABLE`, `DROP COLUMN`, `RENAME COLUMN` must carry a `-- destructive-ok` marker in the migration's SQL)
 - `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by oxlint (use `-f` to auto-fix)
 - `assist lint init` - Initialize oxlint with baseline linter config
 - `assist refactor check [pattern]` - Check for files that exceed the maximum line count

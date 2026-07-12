@@ -4,6 +4,7 @@ import {
 	configKeys,
 	forbiddenStrings,
 	hardcodedColors,
+	migrations,
 	noVenv,
 } from "./verify";
 
@@ -35,6 +36,12 @@ const checks = [
 		description:
 			"Check every assistConfigSchema key is surfaced in some command's --help via configHelp",
 		action: configKeys,
+	},
+	{
+		name: "migrations",
+		description:
+			"Check DB migrations are sequentially numbered, append-only, and gate destructive DDL behind an acknowledgement marker",
+		action: migrations,
 	},
 ];
 

@@ -1,7 +1,8 @@
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
 import type { Db } from "./Db";
-import { ensureSchema } from "./ensureSchema";
+import { applyMigrations } from "./migrations/applyMigrations";
+import { pgliteExecutor } from "./migrations/MigrationExecutor";
 import { schema } from "./schema";
 
 /**
@@ -19,6 +20,6 @@ export async function createTestDb(): Promise<{
 	const orm = drizzlePglite(lite, {
 		schema,
 	}) as unknown as Db;
-	await ensureSchema((sql) => lite.exec(sql));
+	await applyMigrations(pgliteExecutor(lite));
 	return { orm, close: () => lite.close() };
 }

@@ -27,7 +27,7 @@ import {
  * reads as a timeline. `tokensUp`/`tokensDown` accumulate the token spend
  * attributed to the cycle while it was the active window, held on its base
  * segment (0), which no reset or collapse ever removes, so the cycle total
- * survives. Mirrors the DDL in {@link ./ensureSchema}.
+ * survives. Mirrors the DDL.
  */
 export const usagePeaks = pgTable(
 	"usage_peaks",

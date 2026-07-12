@@ -22,12 +22,6 @@ Every command that reads config keys must document them in its `--help` via the 
 
 The `verify:config-keys` check enforces this: it fails when a leaf key in `assistConfigSchema` is surfaced by no command, or when a declared key is not in the schema. When adding a new config key, surface it with `configHelp` (and remove it from `pendingConfigDocumentation` in `src/commands/verify/pendingConfigDocumentation.ts` if listed there) so the check passes.
 
-## Database schema changes (shared DB — additive only)
-
-`ensureSchema` (`src/shared/db/ensureSchema.ts`) runs its idempotent DDL on the first DB connection of any process — including a from-source `tsx` run — against a single shared Postgres. So DDL lands the moment you run from source, while the installed `assist` (`dist`) and any other daemon stay on old code.
-
-Keep schema changes **additive only**: never `DROP`/`RENAME` a column or table that older code still references. A dropped column breaks old builds' reads too — Drizzle `select()` selects an explicit column list, so old code hard-errors on the missing column. Drop only in a later change, once every consumer no longer references it.
-
 ## Sessions daemon log
 
 The sessions daemon writes its stdout/stderr (every `daemonLog` call) to `~/.assist/daemon/daemon.log`. On WSL the Windows-host daemon logs to `C:\Users\<you>\.assist\daemon\daemon.log` on the Windows side. When debugging daemon, Windows-proxy, or session behaviour, read this log first. Paths come from `daemonPaths` in `src/commands/sessions/daemon/daemonPaths.ts`.

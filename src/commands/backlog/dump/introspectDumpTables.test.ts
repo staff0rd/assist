@@ -1,6 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { ensureSchema } from "../../../shared/db/ensureSchema";
+import { applyMigrations } from "../../../shared/db/migrations/applyMigrations";
+import { pgliteExecutor } from "../../../shared/db/migrations/MigrationExecutor";
 import type { DumpTable } from "./DumpTable";
 import { introspectDumpTables } from "./introspectDumpTables";
 
@@ -13,7 +14,7 @@ describe("introspectDumpTables", () => {
 
 	beforeEach(async () => {
 		db = new PGlite();
-		await ensureSchema((sql) => db.exec(sql));
+		await applyMigrations(pgliteExecutor(db));
 	});
 
 	afterEach(async () => {
@@ -24,6 +25,7 @@ describe("introspectDumpTables", () => {
 		const tables = await introspectDumpTables(db);
 		expect(new Set(tables.map((t) => t.name))).toEqual(
 			new Set([
+				"applied_migrations",
 				"items",
 				"comments",
 				"links",

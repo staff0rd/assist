@@ -24,11 +24,9 @@ export { phaseUsageMessages } from "./phaseUsageMessages";
 export { usagePeaks } from "./usagePeaks";
 
 /**
- * Drizzle schema for the backlog store. This mirrors the DDL in
- * {@link ./ensureSchema}, which remains the source of truth for actually
- * creating the tables — Drizzle is used for type-safe query building, not (yet)
- * for migrations, so the column/key definitions here exist to describe the
- * existing tables rather than to generate them.
+ * Drizzle schema for the backlog store. This mirrors the DDL, used for type-safe
+ * query building; the column/key definitions here describe the existing tables
+ * rather than generate them.
  */
 export const comments = pgTable("comments", {
 	id: integer().generatedByDefaultAsIdentity().primaryKey(),

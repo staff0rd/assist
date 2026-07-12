@@ -147,6 +147,14 @@ run:
       - src/index.ts
       - verify
       - config-keys
+  - name: verify:migrations
+    command: npx
+    filter: src/shared/db/migrations/**
+    args:
+      - tsx
+      - src/index.ts
+      - verify
+      - migrations
   - name: verify:custom-lint
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
@@ -185,6 +193,11 @@ run:
     args:
       - -c
       - tail -f assist-test.txt
+  - name: db-migrate
+    command: assist
+    args:
+      - db
+      - migrate
 forbiddenStrings:
   - file: claude/settings.json
     paths:
