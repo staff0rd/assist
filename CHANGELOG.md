@@ -1,3 +1,10 @@
+## [0.385.1](https://github.com/staff0rd/assist/compare/v0.385.0...v0.385.1) (2026-07-12)
+
+
+### Bug Fixes
+
+* abort commit on autostash conflict ([8fcd4f2](https://github.com/staff0rd/assist/commit/8fcd4f2d701510f0f335db8a129d089b4a7bb7b3))
+
 # [0.385.0](https://github.com/staff0rd/assist/compare/v0.384.3...v0.385.0) (2026-07-12)
 
 
