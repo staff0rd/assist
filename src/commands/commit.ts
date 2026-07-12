@@ -2,24 +2,12 @@ import { execSync } from "node:child_process";
 import { recordSessionRefs } from "../shared/db/recordSessionRefs";
 import { loadConfig } from "../shared/loadConfig";
 import { resolveSessionItemId } from "../shared/resolveSessionItemId";
-import { shellQuote } from "../shared/shellQuote";
 import type { AssistConfig } from "../shared/types";
 import { warnIfUnexpectedBranch } from "../shared/warnIfUnexpectedBranch";
+import { abortOnConflicts } from "./commit/abortOnConflicts";
 import { collectCommitRefs } from "./commit/collectCommitRefs";
+import { commitStaged, stageAndCommit } from "./commit/stageAndCommit";
 import { validateMessage } from "./commit/validateMessage";
-
-function commitStaged(message: string): string {
-	execSync(`git commit -m ${shellQuote(message)}`, { stdio: "inherit" });
-	return execSync("git rev-parse --short=7 HEAD", {
-		encoding: "utf8",
-	}).trim();
-}
-
-function stageAndCommit(files: string[], message: string): string {
-	const escaped = files.map(shellQuote).join(" ");
-	execSync(`git add ${escaped}`, { stdio: "inherit" });
-	return commitStaged(message);
-}
 
 async function execCommit(
 	files: string[],
@@ -28,9 +16,11 @@ async function execCommit(
 ): Promise<void> {
 	try {
 		warnIfUnexpectedBranch(config);
-		if (config.commit?.pull) {
+		const pulled = Boolean(config.commit?.pull);
+		if (pulled) {
 			execSync("git pull --autostash", { stdio: "inherit" });
 		}
+		abortOnConflicts(files, pulled);
 		const sha =
 			files.length > 0 ? stageAndCommit(files, message) : commitStaged(message);
 		console.log(`Committed: ${sha}`);
