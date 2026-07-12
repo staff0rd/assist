@@ -11,10 +11,16 @@ function fakeManager(routeReturns = false) {
 	return {
 		windowsProxy: { route: vi.fn(() => routeReturns) },
 		setStatus: vi.fn(),
+		spawn: vi.fn(() => "5"),
 	} as unknown as SessionManager & {
 		windowsProxy: { route: ReturnType<typeof vi.fn> };
 		setStatus: ReturnType<typeof vi.fn>;
+		spawn: ReturnType<typeof vi.fn>;
 	};
+}
+
+function fakeClient() {
+	return { send: vi.fn() };
 }
 
 describe("set-status handler", () => {
@@ -46,6 +52,42 @@ describe("set-status handler", () => {
 			"set-status received: id=win-3 status=running",
 		);
 		expect(m.setStatus).not.toHaveBeenCalled();
+	});
+});
+
+describe("create handler", () => {
+	beforeEach(() => daemonLogMock.mockClear());
+
+	it("spawns a design session and logs it when design is set", () => {
+		const m = fakeManager();
+		const client = fakeClient();
+
+		messageHandlers.create(client as never, m, {
+			prompt: "make it pop",
+			cwd: "/repo",
+			design: true,
+		});
+
+		expect(m.spawn).toHaveBeenCalledWith("make it pop", "/repo", true);
+		expect(daemonLogMock).toHaveBeenCalledWith(
+			"create: design session (cwd=/repo)",
+		);
+		expect(client.send).toHaveBeenCalledWith(
+			JSON.stringify({ type: "created", sessionId: "5", isNew: true }),
+		);
+	});
+
+	it("spawns a plain session without the design flag or a log line", () => {
+		const m = fakeManager();
+		const client = fakeClient();
+
+		messageHandlers.create(client as never, m, {
+			prompt: "hello",
+			cwd: "/repo",
+		});
+
+		expect(m.spawn).toHaveBeenCalledWith("hello", "/repo", false);
+		expect(daemonLogMock).not.toHaveBeenCalled();
 	});
 });
 

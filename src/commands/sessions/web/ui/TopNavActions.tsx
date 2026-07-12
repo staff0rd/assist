@@ -10,9 +10,11 @@ import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 export function TopNavActions({
 	onCreate,
+	onCreateDesign,
 	onCreateAssist,
 }: {
 	onCreate: (prompt: string, cwd: string) => void;
+	onCreateDesign: (prompt: string, cwd: string) => void;
 	onCreateAssist: (
 		args: string[],
 		cwd?: string,
@@ -34,6 +36,12 @@ export function TopNavActions({
 					allowEmpty
 					disabled={disabled}
 					onSubmit={(prompt) => onCreate(prompt, selectedCwd)}
+				/>
+				<FreePromptDropdown
+					label="design"
+					allowEmpty
+					disabled={disabled}
+					onSubmit={(prompt) => onCreateDesign(prompt, selectedCwd)}
 				/>
 				<ReviewDropdown
 					cwd={selectedCwd}

@@ -1,3 +1,4 @@
+import { readDesignSystemPrompt } from "./readDesignSystemPrompt";
 import { ensureHooksSettings } from "./ensureHooksSettings";
 import { spawnPty } from "./spawnPty";
 
@@ -7,6 +8,7 @@ type SpawnOpts = {
 	cwd?: string;
 	sessionId?: string;
 	claudeSessionId?: string;
+	design?: boolean;
 };
 
 export function spawnClaude(opts: SpawnOpts = {}) {
@@ -15,6 +17,10 @@ export function spawnClaude(opts: SpawnOpts = {}) {
 
 function buildArgs(opts: SpawnOpts): string[] {
 	const base = ["claude", "--settings", ensureHooksSettings()];
+	if (opts.design) {
+		base.push("--append-system-prompt", readDesignSystemPrompt());
+		base.push("--permission-mode", "auto");
+	}
 	/* why: resuming replays the existing transcript, so the original prompt is
 	 * already in context; an optional `prompt` here is a short nudge that drives
 	 * the interrupted turn to completion (consistent with backlog runs, #404). */

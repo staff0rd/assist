@@ -5,6 +5,7 @@ import type { SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import type { SessionManager } from "./SessionManager";
+import { spawnCreate } from "./spawnCreate";
 
 export type Msg = Record<string, unknown>;
 type Handler = (
@@ -37,9 +38,7 @@ export const messageHandlers: Record<string, Handler> = {
 	"subscribe-logs": (client, m, d) =>
 		m.clients.subscribeLogs(client, d.replay !== false),
 	hello: (client) => sendTo(client, buildHello()),
-	create: creator(true, (m, d) =>
-		m.spawn(d.prompt as string | undefined, d.cwd as string | undefined),
-	),
+	create: creator(true, spawnCreate),
 	"create-run": creator(true, (m, d) =>
 		m.spawnRun(
 			d.runName as string,

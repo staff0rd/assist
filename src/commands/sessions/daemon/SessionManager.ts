@@ -89,8 +89,8 @@ export class SessionManager {
 	private readonly spawnWith = (create: (id: string) => Session): string =>
 		this.add(create(sessionLimits.nextId(this.sessions.size, this.idCounter)));
 
-	spawn(prompt?: string, cwd?: string): string {
-		return this.spawnWith((id) => createSession(id, prompt, cwd));
+	spawn(prompt?: string, cwd?: string, design?: boolean): string {
+		return this.spawnWith((id) => createSession(id, prompt, cwd, design));
 	}
 
 	spawnRun(runName: string, runArgs: string[], cwd?: string): string {

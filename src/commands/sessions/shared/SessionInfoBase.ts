@@ -19,4 +19,5 @@ export type SessionInfoBase = {
 	autoAdvance?: boolean;
 	starred?: boolean;
 	usedPct?: number;
+	design?: boolean;
 };

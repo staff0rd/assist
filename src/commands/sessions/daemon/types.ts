@@ -36,6 +36,7 @@ export type Session = {
 	autoRun?: boolean;
 	autoAdvance?: boolean;
 	starred?: boolean;
+	design?: boolean;
 	escInterruptTimer?: ReturnType<typeof setTimeout>;
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;

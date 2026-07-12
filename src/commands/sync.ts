@@ -4,6 +4,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "../shared/loadConfig";
 import { syncClaudeMd } from "./sync/syncClaudeMd";
+import { syncDesign } from "./sync/syncDesign";
 import { syncSettings } from "./sync/syncSettings";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,6 +18,7 @@ export async function sync(options?: { yes?: boolean }): Promise<void> {
 	const targetBase = path.join(os.homedir(), ".claude");
 
 	syncCommands(claudeDir, targetBase);
+	syncDesign(claudeDir, targetBase);
 	await syncSettings(claudeDir, targetBase, { yes });
 	await syncClaudeMd(claudeDir, targetBase, { yes });
 }

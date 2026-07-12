@@ -21,6 +21,7 @@ export function toSessionInfo({
 	autoAdvance,
 	starred,
 	usedPct,
+	design,
 }: Session): SessionInfo {
 	return {
 		id,
@@ -43,5 +44,6 @@ export function toSessionInfo({
 		autoAdvance,
 		starred,
 		usedPct,
+		design,
 	};
 }

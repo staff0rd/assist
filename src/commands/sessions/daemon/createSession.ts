@@ -23,6 +23,7 @@ export function createSession(
 	id: string,
 	prompt?: string,
 	cwd?: string,
+	design?: boolean,
 ): Session {
 	/* why: assign the claude conversation id up front so the card binds to the
 	 * transcript this process writes, not the newest unclaimed .jsonl in the cwd
@@ -36,10 +37,11 @@ export function createSession(
 		...sessionBase(id, prompt ? "running" : "waiting"),
 		name: prompt?.slice(0, 40) || `Session ${id}`,
 		commandType: "claude",
-		pty: spawnClaude({ prompt, cwd, sessionId: id, claudeSessionId }),
+		pty: spawnClaude({ prompt, cwd, sessionId: id, claudeSessionId, design }),
 		cwd,
 		claudeSessionId,
 		initialPrompt: prompt,
+		design,
 	};
 }
 

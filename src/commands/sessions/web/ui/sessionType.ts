@@ -3,6 +3,7 @@ import type { SessionInfo } from "./types";
 
 export function sessionType(session: SessionInfo): SessionType {
 	if (session.activity?.kind === "backlog") return "next";
+	if (session.design) return "design";
 	switch (session.commandType) {
 		case "assist": {
 			const cmd = session.assistArgs?.[0];

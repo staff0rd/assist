@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockSyncSettings = vi.fn();
 const mockSyncClaudeMd = vi.fn();
+const mockSyncDesign = vi.fn();
 const mockLoadConfig = vi.fn();
 
 vi.mock("../shared/loadConfig", () => ({
@@ -14,6 +15,10 @@ vi.mock("./sync/syncSettings", () => ({
 
 vi.mock("./sync/syncClaudeMd", () => ({
 	syncClaudeMd: (...args: unknown[]) => mockSyncClaudeMd(...args),
+}));
+
+vi.mock("./sync/syncDesign", () => ({
+	syncDesign: (...args: unknown[]) => mockSyncDesign(...args),
 }));
 
 vi.mock("node:fs", () => ({

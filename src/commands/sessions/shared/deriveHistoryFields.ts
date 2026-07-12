@@ -4,6 +4,7 @@ export type SessionType =
 	| "bug"
 	| "refine"
 	| "review"
+	| "design"
 	| "prompt"
 	| "run";
 

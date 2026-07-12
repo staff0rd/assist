@@ -64,6 +64,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/subtask <text>` - Add a sub-task to the backlog item this session is working on (errors if there is no current item) by calling `assist backlog add-subtask`
 - `/strip-comments` - Enforce self-documenting code: declare the comment policy in CLAUDE.md if absent, then strip redundant comments, commented-out code, and section banners from tracked source files (functional directives and genuine workaround comments are preserved); edits are left unstaged
 - `/sync` - Sync commands and settings to ~/.claude
+- `/design <prompt>` - Adopt the vendored design system prompt (`~/.claude/system-prompt.md`) and its design skills (`~/.claude/skills/`, both installed by `assist sync`) as context, then apply that design guidance to `<prompt>`
 - `/test-cover` - Incrementally increase test coverage by identifying and testing uncovered files
 - `/test-review` - Review existing tests for quality, coverage gaps, and adherence to conventions
 - `/inspect` - Run .NET code inspections on changed files
@@ -90,7 +91,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project
-- `assist sync` - Copy command files to `~/.claude/commands`
+- `assist sync` - Copy command files to `~/.claude/commands`, sync `settings.json` and `CLAUDE.md`, and install the design assets — `claude/system-prompt.md` to `~/.claude/system-prompt.md` and `claude/skills/*` into `~/.claude/skills` (existing files in that directory are preserved)
 - `assist commit status` - Show git status and diff
 - `assist commit <message>` - Commit staged changes with validation
 - `assist commit <message> [files...]` - Stage files and create a git commit with validation
@@ -284,6 +285,8 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist daemon stop` - Stop the sessions daemon; running claude sessions resume on next start
 - `assist daemon restart` - Restart the sessions daemon, resuming previously running claude sessions
 - `assist daemon drain` - Remove all sessions from the local daemon for a clean slate (does not affect the Windows daemon)
+
+The sessions topnav has a **Design** dropdown: submitting a prompt launches an interactive `claude` session with the vendored design system prompt appended via `--append-system-prompt` (so the 647-line prompt stays out of the visible conversation) and the prompt sent as the first message; submitting an empty prompt opens a design-configured session with no initial message.
 
 Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client that relays WebSocket traffic to the daemon over a local IPC socket (unix domain socket at `~/.assist/daemon/daemon.sock`; named pipe `\\.\pipe\assist-sessions-daemon` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` (timestamped lines tagged with the daemon's pid, including why it spawned and which sessions it restored) and auto-exits once no sessions remain and no client has been connected for 60 seconds (it is respawned on demand by the web server). Daemon spawning is arbitrated by an `O_EXCL` lockfile so racing clients start at most one daemon; sessions are only restored after the daemon owns the IPC socket, and a daemon that loses ownership of `daemon.pid` shuts down its sessions and exits rather than running orphaned.
 

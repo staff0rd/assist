@@ -10,6 +10,10 @@ vi.mock("./ensureHooksSettings", () => ({
 	ensureHooksSettings: vi.fn(() => "/hooks.json"),
 }));
 
+vi.mock("./readDesignSystemPrompt", () => ({
+	readDesignSystemPrompt: vi.fn(() => "DESIGN PROMPT"),
+}));
+
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 
 describe("spawnClaude", () => {
@@ -86,6 +90,43 @@ describe("spawnClaude", () => {
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
 			["claude", "--settings", "/hooks.json", "--resume", "abc-123"],
+			undefined,
+			undefined,
+		);
+	});
+
+	it("appends the design system prompt and starts in auto mode when design is set", () => {
+		spawnClaude({ prompt: "make it pop", design: true });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"claude",
+				"--settings",
+				"/hooks.json",
+				"--append-system-prompt",
+				"DESIGN PROMPT",
+				"--permission-mode",
+				"auto",
+				"make it pop",
+			],
+			undefined,
+			undefined,
+		);
+	});
+
+	it("appends the design system prompt for a design session with no prompt", () => {
+		spawnClaude({ design: true });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"claude",
+				"--settings",
+				"/hooks.json",
+				"--append-system-prompt",
+				"DESIGN PROMPT",
+				"--permission-mode",
+				"auto",
+			],
 			undefined,
 			undefined,
 		);
