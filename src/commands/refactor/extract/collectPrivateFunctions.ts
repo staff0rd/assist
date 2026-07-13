@@ -1,10 +1,10 @@
-import { type FunctionDeclaration, SyntaxKind } from "ts-morph";
+import { type FunctionDeclaration, type Node, SyntaxKind } from "ts-morph";
 
 function isPrivate(fn: FunctionDeclaration): boolean {
 	return !fn.isExported() && !fn.isDefaultExport();
 }
 
-function getCalledFunctionNames(fn: FunctionDeclaration): Set<string> {
+function getCalledFunctionNames(fn: Node): Set<string> {
 	const names = new Set<string>();
 	for (const call of fn.getDescendantsOfKind(SyntaxKind.CallExpression)) {
 		const expr = call.getExpression();
@@ -16,11 +16,11 @@ function getCalledFunctionNames(fn: FunctionDeclaration): Set<string> {
 }
 
 export function collectPrivateFunctions(
-	target: FunctionDeclaration,
+	target: Node,
 	fnMap: Map<string, FunctionDeclaration>,
 ): FunctionDeclaration[] {
 	const collected = new Set<string>();
-	const queue: FunctionDeclaration[] = [target];
+	const queue: Node[] = [target];
 
 	let current = queue.pop();
 	while (current) {

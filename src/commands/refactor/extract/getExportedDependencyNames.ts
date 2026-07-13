@@ -1,8 +1,8 @@
-import type { FunctionDeclaration, SourceFile } from "ts-morph";
+import type { Node, SourceFile } from "ts-morph";
 import { SyntaxKind } from "ts-morph";
 
 export function getExportedDependencyNames(
-	target: FunctionDeclaration,
+	target: Node,
 	sourceFile: SourceFile,
 ): string[] {
 	const calledNames = new Set<string>();

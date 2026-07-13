@@ -1,13 +1,18 @@
-import type { FunctionDeclaration, SourceFile, Statement } from "ts-morph";
+import type {
+	FunctionDeclaration,
+	Node,
+	SourceFile,
+	Statement,
+} from "ts-morph";
 import { collectDependencies } from "./collectDependencies";
-import { findFunction } from "./findFunction";
+import { findTarget } from "./findTarget";
 import { getExportedDependencyNames } from "./getExportedDependencyNames";
 import { getStatementNames } from "./getStatementNames";
 import { resolveImports } from "./resolveImports";
-import type { RequiredImport } from "./types";
+import type { ExtractTarget, RequiredImport } from "./types";
 
 export type TargetAnalysis = {
-	target: FunctionDeclaration;
+	target: ExtractTarget;
 	dependencies: FunctionDeclaration[];
 	functionsToRemove: FunctionDeclaration[];
 	statementsToCopy: Statement[];
@@ -19,8 +24,8 @@ export type TargetAnalysis = {
 };
 
 function extractTexts(
-	target: FunctionDeclaration,
-	allFunctions: FunctionDeclaration[],
+	target: Node,
+	allFunctions: Node[],
 	statements: Statement[],
 ): string[] {
 	const stmtTexts = statements.map((v) => v.getFullText().trim());
@@ -36,7 +41,7 @@ export function analyseTarget(
 	sourceFile: SourceFile,
 	functionName: string,
 ): TargetAnalysis {
-	const target = findFunction(sourceFile, functionName);
+	const target = findTarget(sourceFile, functionName);
 	if (!target) throw new Error(`Function "${functionName}" not found`);
 
 	const { functions, statements } = collectDependencies(target, sourceFile);
@@ -57,7 +62,8 @@ export function analyseTarget(
 		exportedDeps: getExportedDependencyNames(target, sourceFile),
 		extractedNames: [
 			...statements.toRemove.flatMap(getStatementNames),
-			...([target, ...functions.toRemove]
+			functionName,
+			...(functions.toRemove
 				.map((fn) => fn.getName())
 				.filter(Boolean) as string[]),
 		],

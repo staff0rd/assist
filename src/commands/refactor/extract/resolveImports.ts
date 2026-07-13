@@ -1,11 +1,11 @@
 import {
 	type FunctionDeclaration,
-	type Node,
+	Node,
 	type SourceFile,
 	SyntaxKind,
 } from "ts-morph";
 import { matchImport } from "./matchImport";
-import type { RequiredImport } from "./types";
+import type { ExtractTarget, RequiredImport } from "./types";
 
 function getReferencedNames(nodes: Node[]): Set<string> {
 	const names = new Set<string>();
@@ -17,17 +17,17 @@ function getReferencedNames(nodes: Node[]): Set<string> {
 	return names;
 }
 
-function getLocallyDeclaredNames(
-	functions: FunctionDeclaration[],
-): Set<string> {
+function getLocallyDeclaredNames(nodes: Node[]): Set<string> {
 	const names = new Set<string>();
-	for (const fn of functions) {
-		const name = fn.getName();
-		if (name) names.add(name);
-		for (const param of fn.getParameters()) {
+	for (const node of nodes) {
+		if (Node.isFunctionDeclaration(node)) {
+			const name = node.getName();
+			if (name) names.add(name);
+		}
+		for (const param of node.getDescendantsOfKind(SyntaxKind.Parameter)) {
 			names.add(param.getName());
 		}
-		for (const varDecl of fn.getDescendantsOfKind(
+		for (const varDecl of node.getDescendantsOfKind(
 			SyntaxKind.VariableDeclaration,
 		)) {
 			names.add(varDecl.getName());
@@ -37,12 +37,12 @@ function getLocallyDeclaredNames(
 }
 
 export function resolveImports(
-	target: FunctionDeclaration,
+	target: ExtractTarget,
 	dependencies: FunctionDeclaration[],
 	sourceFile: SourceFile,
 	statements: Node[] = [],
 ): RequiredImport[] {
-	const allFunctions = [target, ...dependencies];
+	const allFunctions: Node[] = [target, ...dependencies];
 	const allNodes: Node[] = [...allFunctions, ...statements];
 	const referencedNames = getReferencedNames(allNodes);
 	const localNames = getLocallyDeclaredNames(allFunctions);

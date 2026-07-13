@@ -1,6 +1,6 @@
-import { type FunctionDeclaration, type Statement, SyntaxKind } from "ts-morph";
+import { type Node, type Statement, SyntaxKind } from "ts-morph";
 
-function getReferencedIdentifiers(fn: FunctionDeclaration): Set<string> {
+function getReferencedIdentifiers(fn: Node): Set<string> {
 	const names = new Set<string>();
 	for (const id of fn.getDescendantsOfKind(SyntaxKind.Identifier)) {
 		names.add(id.getText());
@@ -9,7 +9,7 @@ function getReferencedIdentifiers(fn: FunctionDeclaration): Set<string> {
 }
 
 export function collectPrivateStatements(
-	functions: FunctionDeclaration[],
+	functions: Node[],
 	stmtMap: Map<string, Statement>,
 ): Statement[] {
 	const seen = new Set<Statement>();

@@ -1,5 +1,6 @@
 import {
 	type FunctionDeclaration,
+	type Node,
 	type SourceFile,
 	type Statement,
 	SyntaxKind,
@@ -8,6 +9,7 @@ import { collectPrivateFunctions } from "./collectPrivateFunctions";
 import { collectPrivateStatements } from "./collectPrivateStatements";
 import { getFunctionMap } from "./getFunctionMap";
 import { getPrivateStatementMap } from "./getPrivateStatementMap";
+import type { ExtractTarget } from "./types";
 
 type CopyRemove<T> = {
 	toCopy: T[];
@@ -16,7 +18,7 @@ type CopyRemove<T> = {
 
 function getRemainingFunctions(
 	sourceFile: SourceFile,
-	extracted: Set<FunctionDeclaration>,
+	extracted: Set<Node>,
 ): FunctionDeclaration[] {
 	return sourceFile
 		.getDescendantsOfKind(SyntaxKind.FunctionDeclaration)
@@ -37,7 +39,7 @@ function collectFnsUsedByRemaining(
 }
 
 export function collectDependencies(
-	target: FunctionDeclaration,
+	target: ExtractTarget,
 	sourceFile: SourceFile,
 ): {
 	functions: CopyRemove<FunctionDeclaration>;
@@ -45,7 +47,7 @@ export function collectDependencies(
 } {
 	const fnMap = getFunctionMap(sourceFile);
 	const depFunctions = collectPrivateFunctions(target, fnMap);
-	const allExtracted = [target, ...depFunctions];
+	const allExtracted: Node[] = [target, ...depFunctions];
 	const stmtMap = getPrivateStatementMap(sourceFile);
 	const stmtsToCopy = collectPrivateStatements(allExtracted, stmtMap);
 
