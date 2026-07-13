@@ -1,3 +1,10 @@
+## [0.388.2](https://github.com/staff0rd/assist/compare/v0.388.1...v0.388.2) (2026-07-13)
+
+
+### Bug Fixes
+
+* reliable session status delivery ([a9e7c74](https://github.com/staff0rd/assist/commit/a9e7c74e475ff334b0838fa13cc8b810362609ae))
+
 ## [0.388.1](https://github.com/staff0rd/assist/compare/v0.388.0...v0.388.1) (2026-07-13)
 
 
