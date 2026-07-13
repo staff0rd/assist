@@ -1,3 +1,10 @@
+# [0.388.0](https://github.com/staff0rd/assist/compare/v0.387.3...v0.388.0) (2026-07-13)
+
+
+### Features
+
+* gate comments in bicep files ([da5fe79](https://github.com/staff0rd/assist/commit/da5fe79f94f9723a8ba691f34f44af75cf6eda37))
+
 ## [0.387.3](https://github.com/staff0rd/assist/compare/v0.387.2...v0.387.3) (2026-07-13)
 
 
