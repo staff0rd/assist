@@ -236,3 +236,45 @@ describe("findComments (hash-comment files)", () => {
 		expect(findComments({ ignoreGlobs: [] })).toEqual([]);
 	});
 });
+
+describe("findComments (bicep)", () => {
+	function diffAddingLineFor(file: string, startLine: number): string {
+		return [`+++ b/${file}`, `@@ -1,0 +${startLine},1 @@`, "+placeholder"].join(
+			"\n",
+		);
+	}
+
+	it("flags a // comment added to a .bicep file", () => {
+		const bicepPath = path.join(tmpDir, "main.bicep");
+		fs.writeFileSync(
+			bicepPath,
+			["param name string", "// describe the param"].join("\n"),
+		);
+		mockExecSync.mockReturnValue(diffAddingLineFor(bicepPath, 2));
+
+		expect(findComments({ ignoreGlobs: [] })).toEqual([
+			{ file: bicepPath, line: 2, text: "// describe the param" },
+		]);
+	});
+
+	it("flags a // comment added to a .bicepparam file", () => {
+		const paramPath = path.join(tmpDir, "main.bicepparam");
+		fs.writeFileSync(
+			paramPath,
+			["using 'main.bicep'", "// explain the value"].join("\n"),
+		);
+		mockExecSync.mockReturnValue(diffAddingLineFor(paramPath, 2));
+
+		expect(findComments({ ignoreGlobs: [] })).toEqual([
+			{ file: paramPath, line: 2, text: "// explain the value" },
+		]);
+	});
+
+	it("does not flag comment markers inside a bicep string literal", () => {
+		const bicepPath = path.join(tmpDir, "main.bicep");
+		fs.writeFileSync(bicepPath, "var url = 'https://example.com'");
+		mockExecSync.mockReturnValue(diffAddingLineFor(bicepPath, 1));
+
+		expect(findComments({ ignoreGlobs: [] })).toEqual([]);
+	});
+});

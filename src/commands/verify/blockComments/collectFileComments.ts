@@ -5,8 +5,10 @@ import {
 	isEnvFile,
 	isShellFile,
 } from "../../../shared/isHashCommentFile";
+import { isBicepFile } from "../../../shared/isBicepFile";
 import { isYamlFile } from "../../../shared/isYamlFile";
 import type { CommentFinding } from "./types";
+import { collectBicepComments } from "./collectBicepComments";
 import { collectHashComments } from "./collectHashComments";
 import { collectSourceFindings } from "./collectSourceFindings";
 import { collectYamlComments } from "./collectYamlComments";
@@ -46,6 +48,9 @@ export function collectFileComments(
 			collectHashComments(read(), { skipHeader: isShellFile(file) }),
 			true,
 		);
+
+	if (isBicepFile(file))
+		return toFindings(file, lines, collectBicepComments(read()), true);
 
 	return collectSourceFindings(file, lines, project);
 }

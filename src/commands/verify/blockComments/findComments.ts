@@ -22,6 +22,8 @@ const SCANNED_EXTENSIONS = [
 	".jsx",
 	".yml",
 	".yaml",
+	".bicep",
+	".bicepparam",
 ];
 
 function shouldScan(file: string, ignoreGlobs: string[]): boolean {

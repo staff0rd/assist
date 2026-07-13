@@ -81,6 +81,14 @@ describe("codeCommentConfirm", () => {
 		expect(writtenContent()).toContain("# pins the base image digest");
 	});
 
+	it("inserts a // comment for a .bicep pin", () => {
+		primePin("infra/main.bicep", 2, "documents the sku choice");
+
+		codeCommentConfirm("123");
+
+		expect(writtenContent()).toContain("  // documents the sku choice");
+	});
+
 	it("inserts a # comment for a below-header .sh pin", () => {
 		primePin("deploy.sh", 2, "retry accounts for eventual consistency");
 

@@ -58,6 +58,11 @@ describe("isSourceFile", () => {
 		expect(isSourceFile("src/a.mjs")).toBe(true);
 	});
 
+	it("accepts bicep extensions", () => {
+		expect(isSourceFile("main.bicep")).toBe(true);
+		expect(isSourceFile("main.bicepparam")).toBe(true);
+	});
+
 	it("rejects non-source files", () => {
 		expect(isSourceFile("README.md")).toBe(false);
 		expect(isSourceFile("config.yml")).toBe(false);

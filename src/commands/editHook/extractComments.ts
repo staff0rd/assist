@@ -9,6 +9,8 @@ const SOURCE_EXTENSIONS = [
 	".jsx",
 	".cjs",
 	".mjs",
+	".bicep",
+	".bicepparam",
 ];
 
 /** Code-comment syntax only matters in source files, not markdown/yaml/json. */

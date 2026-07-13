@@ -429,6 +429,45 @@ describe("decideCommentGuard", () => {
 		});
 	});
 
+	describe("bicep", () => {
+		it("blocks introducing a // comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "main.bicep",
+					old_string: "param location string",
+					new_string: "param location string // deploy region",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+			expect(decision).toContain("(//)");
+		});
+
+		it("blocks introducing a /* */ comment in a .bicepparam file", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "main.bicepparam",
+					old_string: "param location = 'westus'",
+					new_string: "/* pinned region */ param location = 'westus'",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("allows a // inside a bicep string literal", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "main.bicep",
+					old_string: "var endpoint = 'x'",
+					new_string: "var endpoint = 'https://example.com'",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+	});
+
 	describe("other tools", () => {
 		it("ignores unrelated tools", () => {
 			const decision = decideCommentGuard(
