@@ -1,3 +1,10 @@
+## [0.387.3](https://github.com/staff0rd/assist/compare/v0.387.2...v0.387.3) (2026-07-13)
+
+
+### Bug Fixes
+
+* fold usage started into reset tooltip ([6c6a6e4](https://github.com/staff0rd/assist/commit/6c6a6e4de026cb2e031d50f8eecb067878276651))
+
 ## [0.387.2](https://github.com/staff0rd/assist/compare/v0.387.1...v0.387.2) (2026-07-13)
 
 
