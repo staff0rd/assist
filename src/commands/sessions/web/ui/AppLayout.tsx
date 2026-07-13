@@ -1,13 +1,15 @@
 import Box from "@mui/material/Box";
 import { useCallback, useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import { AppSidebar } from "./AppSidebar";
+import { ErrorBoundary } from "./ErrorBoundary";
 import type { SidebarTab } from "./types";
 import type { SessionSocket } from "./useSessionSocket";
 import { StarredSessionsProvider } from "./useStarredSessions";
 
 export function AppLayout({ socket }: { socket: SessionSocket }) {
 	const [tab, setTab] = useState<SidebarTab>("active");
+	const { pathname } = useLocation();
 	const { requestHistory, clearTranscript } = socket;
 
 	const handleTabChange = useCallback(
@@ -38,7 +40,9 @@ export function AppLayout({ socket }: { socket: SessionSocket }) {
 						overflow: "auto",
 					}}
 				>
-					<Outlet />
+					<ErrorBoundary key={pathname}>
+						<Outlet />
+					</ErrorBoundary>
 				</Box>
 			</Box>
 		</StarredSessionsProvider>

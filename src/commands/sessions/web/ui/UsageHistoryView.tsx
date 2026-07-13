@@ -7,7 +7,7 @@ import { UsagePeaksTable } from "./UsagePeaksTable";
 import { useUsageHistoryPage } from "./useUsageHistoryPage";
 
 export function UsageHistoryView() {
-	const { page, setPage, rows, total, loaded, fetching, pageSize } =
+	const { page, setPage, rows, total, loaded, fetching, error, pageSize } =
 		useUsageHistoryPage();
 	const tableRef = useRef<HTMLDivElement>(null);
 	const [fullPageHeight, setFullPageHeight] = useState<number>();
@@ -17,6 +17,8 @@ export function UsageHistoryView() {
 			setFullPageHeight(tableRef.current.offsetHeight);
 		}
 	}, [rows, pageSize]);
+
+	if (error) throw error;
 
 	return (
 		<PageShell
