@@ -21,7 +21,7 @@ export function restoreSession(
 	 * latest discovered sessionId so the wrapper resumes the interrupted phase's
 	 * conversation instead of restarting it from scratch (#300). */
 	if (needsWrapperRelaunch(persisted)) {
-		const idle = persisted.status === "waiting";
+		const idle = persisted.status !== "running";
 		const pty = spawnPty(
 			assistResumeArgs(persisted),
 			persisted.cwd,

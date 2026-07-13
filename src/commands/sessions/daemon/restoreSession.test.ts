@@ -24,6 +24,7 @@ describe("restoreSession", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Fix the bug",
 			commandType: "claude",
+			status: "running",
 			cwd: "/home/user/repo",
 			startedAt: 123,
 			claudeSessionId: "abc-123",
@@ -48,6 +49,7 @@ describe("restoreSession", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Run backlog 295",
 			commandType: "assist",
+			status: "running",
 			cwd: "/home/user/repo",
 			startedAt: 123,
 			claudeSessionId: "abc-123",
@@ -90,6 +92,7 @@ describe("restoreSession", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Run backlog 295",
 			commandType: "assist",
+			status: "running",
 			cwd: "/home/user/repo",
 			startedAt: 123,
 			assistArgs: ["backlog", "run", "295"],
@@ -111,6 +114,7 @@ describe("restoreSession", () => {
 		const persisted: PersistedSession = {
 			name: "repo/assist draft",
 			commandType: "assist",
+			status: "running",
 			cwd: "/home/user/repo",
 			startedAt: 123,
 			claudeSessionId: "draft-456",
@@ -142,6 +146,7 @@ describe("restoreSession", () => {
 		const persisted: PersistedSession = {
 			name: "repo/assist refine 254",
 			commandType: "assist",
+			status: "running",
 			cwd: "/home/user/repo",
 			startedAt: 123,
 			claudeSessionId: "refine-789",
@@ -205,6 +210,56 @@ describe("restoreSession", () => {
 		expect(session.runningSince).toBeNull();
 	});
 
+	it("restores a --once wrapper session with no recorded status as waiting, not nudged", () => {
+		const persisted: PersistedSession = {
+			name: "repo/assist draft",
+			commandType: "assist",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "draft-456",
+			assistArgs: ["draft", "--once", "fix the thing"],
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"assist",
+				"draft",
+				"--once",
+				"fix the thing",
+				"--resume-session",
+				"draft-456",
+			],
+			"/home/user/repo",
+			"1",
+			{ ASSIST_RESUME_IDLE: "1" },
+		);
+		expect(session.status).toBe("waiting");
+		expect(session.runningSince).toBeNull();
+	});
+
+	it("restores an interactive claude session with no recorded status as waiting, not nudged", () => {
+		const persisted: PersistedSession = {
+			name: "repo/Fix the bug",
+			commandType: "claude",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "abc-123",
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnClaudeMock).toHaveBeenCalledWith({
+			resumeSessionId: "abc-123",
+			prompt: undefined,
+			cwd: "/home/user/repo",
+			sessionId: "1",
+		});
+		expect(session.status).toBe("waiting");
+		expect(session.runningSince).toBeNull();
+	});
+
 	it("resumes a --once session via bare claude when no sessionId was discovered", () => {
 		const persisted: PersistedSession = {
 			name: "repo/assist draft",
@@ -243,6 +298,7 @@ describe("restoreSession", () => {
 		const persisted: PersistedSession = {
 			name: "repo/assist draft",
 			commandType: "assist",
+			status: "running",
 			cwd: "/home/user/repo",
 			startedAt: 123,
 			claudeSessionId: "draft-456",

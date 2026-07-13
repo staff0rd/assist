@@ -1,50 +1,82 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { connectToDaemon } from "./daemon/connectToDaemon";
+import { appendDaemonLog } from "./daemon/appendDaemonLog";
+import { sendToDaemon } from "./daemon/sendToDaemon";
 import { setSessionStatus } from "./setSessionStatus";
 
-vi.mock("./daemon/connectToDaemon", () => ({
-	connectToDaemon: vi.fn(),
+vi.mock("./daemon/sendToDaemon", () => ({
+	sendToDaemon: vi.fn(),
 }));
 
-const connectMock = connectToDaemon as unknown as ReturnType<typeof vi.fn>;
+vi.mock("./daemon/appendDaemonLog", () => ({
+	appendDaemonLog: vi.fn(),
+}));
+
+const sendMock = sendToDaemon as unknown as ReturnType<typeof vi.fn>;
+const logMock = appendDaemonLog as unknown as ReturnType<typeof vi.fn>;
 
 describe("setSessionStatus", () => {
 	beforeEach(() => {
+		vi.useFakeTimers();
 		process.env.ASSIST_SESSION_ID = "s1";
 	});
 
 	afterEach(() => {
+		vi.useRealTimers();
 		vi.clearAllMocks();
 		delete process.env.ASSIST_SESSION_ID;
 	});
 
-	it("writes a newline-delimited set-status message to the daemon", async () => {
-		const write = vi.fn((_data: string, cb: () => void) => cb());
-		const socket = { write, on: vi.fn(), end: vi.fn(), destroy: vi.fn() };
-		connectMock.mockResolvedValue(socket);
+	it("sends a set-status message to the daemon", async () => {
+		sendMock.mockResolvedValue(undefined);
 
 		await setSessionStatus("running");
 
-		expect(write).toHaveBeenCalledWith(
-			`${JSON.stringify({ type: "set-status", sessionId: "s1", status: "running" })}\n`,
-			expect.any(Function),
+		expect(sendMock).toHaveBeenCalledOnce();
+		expect(sendMock).toHaveBeenCalledWith({
+			type: "set-status",
+			sessionId: "s1",
+			status: "running",
+		});
+		expect(logMock).not.toHaveBeenCalledWith(
+			expect.stringContaining("delivery failed"),
 		);
-		expect(socket.end).toHaveBeenCalledOnce();
-	});
-
-	it("swallows errors when the daemon is not running", async () => {
-		connectMock.mockRejectedValue(new Error("ECONNREFUSED"));
-
-		await expect(setSessionStatus("waiting")).resolves.toBeUndefined();
 	});
 
 	describe("when ASSIST_SESSION_ID is absent", () => {
-		it("exits without connecting to the daemon", async () => {
+		it("does not send to the daemon", async () => {
 			delete process.env.ASSIST_SESSION_ID;
 
 			await setSessionStatus("running");
 
-			expect(connectMock).not.toHaveBeenCalled();
+			expect(sendMock).not.toHaveBeenCalled();
 		});
+	});
+
+	it("retries then logs a failure when delivery never succeeds", async () => {
+		sendMock.mockRejectedValue(new Error("ECONNREFUSED"));
+
+		const done = setSessionStatus("waiting");
+		await vi.runAllTimersAsync();
+		await done;
+
+		expect(sendMock).toHaveBeenCalledTimes(3);
+		expect(logMock).toHaveBeenCalledWith(
+			expect.stringContaining("set-status delivery failed after 3 attempts"),
+		);
+	});
+
+	it("recovers on a retry without logging a failure", async () => {
+		sendMock
+			.mockRejectedValueOnce(new Error("ECONNREFUSED"))
+			.mockResolvedValueOnce(undefined);
+
+		const done = setSessionStatus("waiting");
+		await vi.runAllTimersAsync();
+		await done;
+
+		expect(sendMock).toHaveBeenCalledTimes(2);
+		expect(logMock).not.toHaveBeenCalledWith(
+			expect.stringContaining("delivery failed"),
+		);
 	});
 });

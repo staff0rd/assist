@@ -1,16 +1,23 @@
 import { connectToDaemon } from "./connectToDaemon";
 
-// why: every fire-and-forget client message shares the same bounded-write dance —
-// connect, guard with a short destroy timeout, swallow socket errors, then end
-// once the line is flushed. Callers wrap this in try/catch to stay best-effort.
-export async function sendToDaemon(
-	message: Record<string, unknown>,
-): Promise<void> {
-	const socket = await connectToDaemon();
-	const timer = setTimeout(() => socket.destroy(), 500);
-	socket.on("error", () => {});
-	socket.write(`${JSON.stringify(message)}\n`, () => {
-		clearTimeout(timer);
-		socket.end();
+const WRITE_TIMEOUT_MS = 500;
+
+export function sendToDaemon(message: Record<string, unknown>): Promise<void> {
+	return new Promise((resolve, reject) => {
+		connectToDaemon().then((socket) => {
+			const timer = setTimeout(() => {
+				socket.destroy();
+				reject(new Error("timed out writing to daemon socket"));
+			}, WRITE_TIMEOUT_MS);
+			socket.on("error", (error) => {
+				clearTimeout(timer);
+				reject(error);
+			});
+			socket.write(`${JSON.stringify(message)}\n`, () => {
+				clearTimeout(timer);
+				socket.end();
+				resolve();
+			});
+		}, reject);
 	});
 }

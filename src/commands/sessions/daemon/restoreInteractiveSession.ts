@@ -40,7 +40,7 @@ function resumeViaClaude(
 	persisted: PersistedSession,
 	base: RestoreBase,
 ): Session {
-	const idle = persisted.status === "waiting";
+	const idle = persisted.status !== "running";
 	const pty = spawnClaude({
 		resumeSessionId: persisted.claudeSessionId,
 		prompt: idle ? undefined : buildResumePrompt(),
