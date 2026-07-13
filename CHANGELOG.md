@@ -1,3 +1,10 @@
+## [0.388.1](https://github.com/staff0rd/assist/compare/v0.388.0...v0.388.1) (2026-07-13)
+
+
+### Bug Fixes
+
+* extract const arrow functions ([b8a23bf](https://github.com/staff0rd/assist/commit/b8a23bf34ce8509ec351e5c029003cdcf01d3a4a))
+
 # [0.388.0](https://github.com/staff0rd/assist/compare/v0.387.3...v0.388.0) (2026-07-13)
 
 
