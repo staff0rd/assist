@@ -1,3 +1,10 @@
+# [0.387.0](https://github.com/staff0rd/assist/compare/v0.386.0...v0.387.0) (2026-07-13)
+
+
+### Features
+
+* avg context per rate-limit cycle ([d48d1f2](https://github.com/staff0rd/assist/commit/d48d1f20ee9689eb9c4b2fe5161fd8d13a3cd762))
+
 # [0.386.0](https://github.com/staff0rd/assist/compare/v0.385.1...v0.386.0) (2026-07-12)
 
 
