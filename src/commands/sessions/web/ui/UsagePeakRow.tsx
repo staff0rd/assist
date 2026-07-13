@@ -6,6 +6,7 @@ import { UsageBar } from "./UsageBar";
 import { usagePeakAvgContext } from "./usagePeakAvgContext";
 import { UsagePeakResetChip } from "./UsagePeakResetChip";
 import { usagePeakTokens } from "./usagePeakTokens";
+import { formatPeakTimestamp } from "./formatPeakTimestamp";
 import { usagePeakWindow } from "./usagePeakWindow";
 
 export function UsagePeakRow({
@@ -39,13 +40,17 @@ export function UsagePeakRow({
 			<TableCell sx={{ minWidth: 160 }}>
 				<UsageBar percentage={peak.usedPercentage} level={level} />
 			</TableCell>
-			<TableCell align="right">{usagePeakAvgContext(peak)}</TableCell>
-			<TableCell align="right">{usagePeakTokens(peak)}</TableCell>
-			<TableCell align="right">
-				{new Date(peak.createdAt).toLocaleString()}
+			<TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+				{usagePeakAvgContext(peak)}
 			</TableCell>
-			<TableCell align="right">
-				{new Date(peak.resetsAt * 1000).toLocaleString()}
+			<TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+				{usagePeakTokens(peak)}
+			</TableCell>
+			<TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+				{formatPeakTimestamp(new Date(peak.createdAt))}
+			</TableCell>
+			<TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+				{formatPeakTimestamp(new Date(peak.resetsAt * 1000))}
 			</TableCell>
 		</TableRow>
 	);

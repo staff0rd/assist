@@ -15,7 +15,7 @@ export function UsagePeaksTable({ peaks }: { peaks: UsagePeakRowData[] }) {
 	return (
 		<TableContainer component={Paper}>
 			<Table size="small">
-				<TableHead>
+				<TableHead sx={{ "& th": { whiteSpace: "nowrap" } }}>
 					<TableRow>
 						<TableCell>Window</TableCell>
 						<TableCell>Peak usage</TableCell>
