@@ -1,7 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { describe, expect, it } from "vitest";
 import { applyMigrations } from "./applyMigrations";
-import { latestMigrationId, migrations } from "./index";
+import { migrations } from "./index";
 import { pgliteExecutor } from "./MigrationExecutor";
 
 const bundledIds = migrations.map((m) => m.id);
@@ -46,7 +46,7 @@ describe("applyMigrations", () => {
 
 			const readopted = await applyMigrations(pgliteExecutor(db));
 
-			expect(readopted.map((m) => m.id)).toEqual([latestMigrationId]);
+			expect(readopted.map((m) => m.id)).toEqual(bundledIds);
 			const { rows } = await db.query("SELECT name FROM items");
 			expect(rows).toEqual([{ name: "kept row" }]);
 		} finally {

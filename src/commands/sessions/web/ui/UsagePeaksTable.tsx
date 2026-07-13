@@ -5,6 +5,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Tooltip from "@mui/material/Tooltip";
 import type { UsagePeakRow as UsagePeakRowData } from "../../../../shared/db/listUsagePeaks";
 import { UsagePeakRow } from "./UsagePeakRow";
 import { useNowSeconds } from "./useNowSeconds";
@@ -18,6 +19,11 @@ export function UsagePeaksTable({ peaks }: { peaks: UsagePeakRowData[] }) {
 					<TableRow>
 						<TableCell>Window</TableCell>
 						<TableCell>Peak usage</TableCell>
+						<TableCell align="right">
+							<Tooltip title="Mean context-window usage across all readings in this rate-limit cycle — distinct from the Peak usage quota above.">
+								<span>Avg context</span>
+							</Tooltip>
+						</TableCell>
 						<TableCell align="right">Tokens spent</TableCell>
 						<TableCell align="right">Started</TableCell>
 						<TableCell align="right">Cycle reset</TableCell>

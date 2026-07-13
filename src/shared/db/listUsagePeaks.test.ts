@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
 import { countUsagePeaks, listUsagePeaks } from "./listUsagePeaks";
+import { recordPhaseCycleContext } from "./recordPhaseCycleContext";
 import { recordUsagePeak } from "./recordUsagePeak";
+import { items } from "./schema";
 
 describe("listUsagePeaks", () => {
 	let orm: Db;
@@ -43,6 +45,7 @@ describe("listUsagePeaks", () => {
 					resetDetected: false,
 					tokensUp: 0,
 					tokensDown: 0,
+					avgContextPct: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -53,6 +56,7 @@ describe("listUsagePeaks", () => {
 					resetDetected: false,
 					tokensUp: 0,
 					tokensDown: 0,
+					avgContextPct: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -63,6 +67,7 @@ describe("listUsagePeaks", () => {
 					resetDetected: false,
 					tokensUp: 0,
 					tokensDown: 0,
+					avgContextPct: null,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -87,6 +92,7 @@ describe("listUsagePeaks", () => {
 					resetDetected: false,
 					tokensUp: 0,
 					tokensDown: 0,
+					avgContextPct: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -97,6 +103,7 @@ describe("listUsagePeaks", () => {
 					resetDetected: true,
 					tokensUp: 0,
 					tokensDown: 0,
+					avgContextPct: null,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -119,6 +126,7 @@ describe("listUsagePeaks", () => {
 					resetDetected: false,
 					tokensUp: 0,
 					tokensDown: 0,
+					avgContextPct: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -129,6 +137,7 @@ describe("listUsagePeaks", () => {
 					resetDetected: false,
 					tokensUp: 0,
 					tokensDown: 0,
+					avgContextPct: null,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -162,6 +171,32 @@ describe("listUsagePeaks", () => {
 	describe("when no peaks have been recorded", () => {
 		it("counts zero", async () => {
 			expect(await countUsagePeaks(orm)).toBe(0);
+		});
+	});
+
+	describe("avg context per cycle", () => {
+		beforeEach(async () => {
+			await orm.insert(items).values({ id: 1, origin: "test", name: "Item" });
+		});
+
+		it("reports the mean of the cycle's per-phase peaks", async () => {
+			await recordUsagePeak(orm, {
+				five_hour: { used_percentage: 40, resets_at: 1000 },
+			});
+			await recordPhaseCycleContext(orm, 1, 0, "five_hour", 1000, 30);
+			await recordPhaseCycleContext(orm, 1, 1, "five_hour", 1000, 50);
+
+			const [row] = await listUsagePeaks(orm);
+			expect(row?.avgContextPct).toBe(40);
+		});
+
+		it("leaves avgContextPct null for a cycle with no readings", async () => {
+			await recordUsagePeak(orm, {
+				five_hour: { used_percentage: 40, resets_at: 1000 },
+			});
+
+			const [row] = await listUsagePeaks(orm);
+			expect(row?.avgContextPct).toBeNull();
 		});
 	});
 });

@@ -40,6 +40,7 @@ describe("introspectDumpTables", () => {
 				"backups",
 				"phase_usage",
 				"phase_usage_messages",
+				"phase_cycle_context",
 			]),
 		);
 	});
