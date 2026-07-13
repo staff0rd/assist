@@ -1,3 +1,10 @@
+## [0.388.3](https://github.com/staff0rd/assist/compare/v0.388.2...v0.388.3) (2026-07-13)
+
+
+### Bug Fixes
+
+* survive transient DB outage on launch ([b93ec8c](https://github.com/staff0rd/assist/commit/b93ec8cdb2622c0d438e866d5c734ec1de80e642))
+
 ## [0.388.2](https://github.com/staff0rd/assist/compare/v0.388.1...v0.388.2) (2026-07-13)
 
 
