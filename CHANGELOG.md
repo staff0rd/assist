@@ -1,3 +1,10 @@
+## [0.387.1](https://github.com/staff0rd/assist/compare/v0.387.0...v0.387.1) (2026-07-13)
+
+
+### Bug Fixes
+
+* UI error boundary for page crashes ([d297a8a](https://github.com/staff0rd/assist/commit/d297a8a299bfc84725316c2e6ccd5078c6101884))
+
 # [0.387.0](https://github.com/staff0rd/assist/compare/v0.386.0...v0.387.0) (2026-07-13)
 
 
