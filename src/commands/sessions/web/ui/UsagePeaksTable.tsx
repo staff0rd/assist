@@ -25,7 +25,6 @@ export function UsagePeaksTable({ peaks }: { peaks: UsagePeakRowData[] }) {
 							</Tooltip>
 						</TableCell>
 						<TableCell align="right">Tokens spent</TableCell>
-						<TableCell align="right">Started</TableCell>
 						<TableCell align="right">Cycle reset</TableCell>
 					</TableRow>
 				</TableHead>

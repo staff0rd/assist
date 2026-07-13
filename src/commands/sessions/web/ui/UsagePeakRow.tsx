@@ -1,5 +1,6 @@
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
+import Tooltip from "@mui/material/Tooltip";
 import type { UsagePeakRow as UsagePeakRowData } from "../../../../shared/db/listUsagePeaks";
 import { rateLimitLevel } from "../../../../shared/rateLimitLevel";
 import { UsageBar } from "./UsageBar";
@@ -47,10 +48,11 @@ export function UsagePeakRow({
 				{usagePeakTokens(peak)}
 			</TableCell>
 			<TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
-				{formatPeakTimestamp(new Date(peak.createdAt))}
-			</TableCell>
-			<TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
-				{formatPeakTimestamp(new Date(peak.resetsAt * 1000))}
+				<Tooltip
+					title={`Cycle started ${formatPeakTimestamp(new Date(peak.createdAt))}`}
+				>
+					<span>{formatPeakTimestamp(new Date(peak.resetsAt * 1000))}</span>
+				</Tooltip>
 			</TableCell>
 		</TableRow>
 	);
