@@ -82,14 +82,18 @@ let _orm: Db | undefined;
  * client used throughout the backlog data layer. The connection is cached for
  * the lifetime of the process.
  */
+function discardPool(): void {
+	void _pool?.end().catch(() => {});
+	_connecting = undefined;
+	_pool = undefined;
+}
+
 export function getDb(): Promise<Db> {
 	if (_orm) return Promise.resolve(_orm);
 	if (_connecting) return _connecting;
-	_connecting = (async () => {
-		_pool = createPool();
-		_orm = await initDb(_pool);
-		return _orm;
-	})();
+	_pool = createPool();
+	_connecting = initDb(_pool);
+	void _connecting.then((orm) => (_orm = orm)).catch(discardPool);
 	return _connecting;
 }
 

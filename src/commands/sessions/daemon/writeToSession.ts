@@ -24,7 +24,14 @@ export function resizeSession(
 	rows: number,
 ): void {
 	const s = sessions.get(id);
-	if (s && s.status !== "done") s.pty?.resize(cols, rows);
+	if (!s || s.status === "done" || !s.pty) return;
+	try {
+		s.pty.resize(cols, rows);
+	} catch (error) {
+		daemonLog(
+			`session ${id} resize skipped (dead pty): ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
 }
 
 export function setAutoRun(

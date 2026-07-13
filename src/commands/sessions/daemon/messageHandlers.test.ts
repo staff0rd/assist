@@ -91,6 +91,42 @@ describe("create handler", () => {
 	});
 });
 
+describe("restart handler", () => {
+	function restartManager(result: { ok: boolean; reason?: string }) {
+		return {
+			windowsProxy: { route: vi.fn(() => false) },
+			restart: vi.fn(() => result),
+		} as unknown as SessionManager & { restart: ReturnType<typeof vi.fn> };
+	}
+
+	it("sends an error toast when restart cannot proceed", () => {
+		const m = restartManager({
+			ok: false,
+			reason: "Session s can't be restarted.",
+		});
+		const client = fakeClient();
+
+		messageHandlers.restart(client as never, m, { sessionId: "1" });
+
+		expect(m.restart).toHaveBeenCalledWith("1");
+		expect(client.send).toHaveBeenCalledWith(
+			JSON.stringify({
+				type: "error",
+				message: "Session s can't be restarted.",
+			}),
+		);
+	});
+
+	it("stays silent when restart succeeds", () => {
+		const m = restartManager({ ok: true });
+		const client = fakeClient();
+
+		messageHandlers.restart(client as never, m, { sessionId: "1" });
+
+		expect(client.send).not.toHaveBeenCalled();
+	});
+});
+
 describe("ui-status handler", () => {
 	beforeEach(() => daemonLogMock.mockClear());
 

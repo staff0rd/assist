@@ -7,6 +7,7 @@ import {
 	loadPersistedSessions,
 	persistLiveSessions,
 } from "./loadPersistedSessions";
+import { restartSession } from "./restartSession";
 import { restoreSession } from "./restoreSession";
 import { SessionManager } from "./SessionManager";
 import { wirePtyEvents } from "./wirePtyEvents";
@@ -27,6 +28,7 @@ vi.mock("./loadActiveSelection", () => ({
 	saveActiveSelection: vi.fn(),
 }));
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
+vi.mock("./restartSession", () => ({ restartSession: vi.fn(() => true) }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({
@@ -54,6 +56,9 @@ const createAssistMock = createAssistSession as unknown as ReturnType<
 >;
 const wirePtyMock = wirePtyEvents as unknown as ReturnType<typeof vi.fn>;
 const daemonLogMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
+const restartSessionMock = restartSession as unknown as ReturnType<
+	typeof vi.fn
+>;
 
 type StatusChange = (
 	s: Session,
@@ -430,6 +435,53 @@ describe("SessionManager", () => {
 
 				expect(persistLiveMock).not.toHaveBeenCalled();
 			});
+		});
+	});
+
+	describe("restart", () => {
+		it("logs and returns a reason for an unknown session", () => {
+			const manager = new SessionManager();
+			daemonLogMock.mockClear();
+
+			const result = manager.restart("nope");
+
+			expect(result.ok).toBe(false);
+			expect(result.reason).toContain("no longer tracked");
+			expect(restartSessionMock).not.toHaveBeenCalled();
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("unknown session id=nope"),
+			);
+		});
+
+		it("logs on entry and reports success when the session restarts", () => {
+			createSessionMock.mockReturnValue(fakeSession({ id: "1", name: "s" }));
+			restartSessionMock.mockReturnValue(true);
+			const manager = new SessionManager();
+			manager.spawn();
+			daemonLogMock.mockClear();
+
+			const result = manager.restart("1");
+
+			expect(result.ok).toBe(true);
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("restart requested: id=1"),
+			);
+		});
+
+		it("reports a reason and logs when there is no respawn plan", () => {
+			createSessionMock.mockReturnValue(fakeSession({ id: "1", name: "s" }));
+			restartSessionMock.mockReturnValue(false);
+			const manager = new SessionManager();
+			manager.spawn();
+			daemonLogMock.mockClear();
+
+			const result = manager.restart("1");
+
+			expect(result.ok).toBe(false);
+			expect(result.reason).toContain("can't be restarted");
+			expect(daemonLogMock).toHaveBeenCalledWith(
+				expect.stringContaining("did nothing: no respawn plan"),
+			);
 		});
 	});
 

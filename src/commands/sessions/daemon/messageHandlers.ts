@@ -79,7 +79,11 @@ export const messageHandlers: Record<string, Handler> = {
 		m.resizeSession(d.sessionId as string, d.cols as number, d.rows as number),
 	),
 	retry: routed((_client, m, d) => m.retrySession(d.sessionId as string)),
-	restart: routed((_client, m, d) => m.restart(d.sessionId as string)),
+	restart: routed((client, m, d) => {
+		const result = m.restart(d.sessionId as string);
+		if (!result.ok && result.reason)
+			sendTo(client, { type: "error", message: result.reason });
+	}),
 	dismiss: routed((_client, m, d) => m.dismissSession(d.sessionId as string)),
 	"set-autorun": routed((_client, m, d) =>
 		m.setAutoRun(d.sessionId as string, d.enabled as boolean),

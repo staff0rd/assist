@@ -21,7 +21,10 @@ import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import { recordSessionUsage } from "./recordSessionUsage";
-import { restartSession } from "./restartSession";
+import {
+	restartManagedSession,
+	type RestartResult,
+} from "./restartManagedSession";
 import { restoreAll } from "./restoreAll";
 import { resumeSession } from "./resumeSession";
 import { retrySession } from "./retrySession";
@@ -137,10 +140,15 @@ export class SessionManager {
 		if (s && retrySession(s, this.clients, this.onStatusChange)) this.notify();
 	}
 
-	restart(id: string): void {
-		const s = this.sessions.get(id);
-		if (s && restartSession(s, this.clients, this.onStatusChange))
-			this.notify();
+	restart(id: string): RestartResult {
+		const result = restartManagedSession(
+			this.sessions,
+			id,
+			this.clients,
+			this.onStatusChange,
+		);
+		if (result.ok) this.notify();
+		return result;
 	}
 
 	dismissSession = (id: string): void => {
