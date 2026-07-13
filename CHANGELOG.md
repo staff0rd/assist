@@ -1,3 +1,10 @@
+## [0.387.2](https://github.com/staff0rd/assist/compare/v0.387.1...v0.387.2) (2026-07-13)
+
+
+### Bug Fixes
+
+* stop usage table dates wrapping ([c59090d](https://github.com/staff0rd/assist/commit/c59090d139e53da4feae935da660b3967b603e35))
+
 ## [0.387.1](https://github.com/staff0rd/assist/compare/v0.387.0...v0.387.1) (2026-07-13)
 
 
