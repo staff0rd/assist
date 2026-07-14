@@ -1,3 +1,10 @@
+## [0.388.5](https://github.com/staff0rd/assist/compare/v0.388.4...v0.388.5) (2026-07-14)
+
+
+### Bug Fixes
+
+* cap vitest workers to stop test flakes ([37e16cd](https://github.com/staff0rd/assist/commit/37e16cdafea326bd26126ac4dceb8e9232405835))
+
 ## [0.388.4](https://github.com/staff0rd/assist/compare/v0.388.3...v0.388.4) (2026-07-14)
 
 
