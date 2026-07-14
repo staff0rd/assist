@@ -140,16 +140,33 @@ describe("insertPhaseAt", () => {
 	});
 
 	describe("currentPhase adjustment", () => {
-		it("increments currentPhase when inserting at its position", async () => {
+		it("points at the inserted phase when inserting at the in-progress position", async () => {
 			await seedItem(orm, 2);
 			await seedPhase(orm, 0, "A", ["t"]);
 			await seedPhase(orm, 1, "B", ["t"]);
 			await seedPhase(orm, 2, "C", ["t"]);
 
-			// currentPhase 2 (1-based) = index 1; inserting at index 1 pushes it down
 			await insertPhaseAt(orm, 1, 1, "New", ["t"], null, 2);
 
-			expect(await getCurrentPhase(orm)).toBe(3);
+			expect(await getPhases(orm)).toEqual([
+				{ idx: 0, name: "A" },
+				{ idx: 1, name: "New" },
+				{ idx: 2, name: "B" },
+				{ idx: 3, name: "C" },
+			]);
+			expect(await getCurrentPhase(orm)).toBe(2);
+		});
+
+		it("rewinds to a phase inserted before an earlier in-progress phase", async () => {
+			await seedItem(orm, 4);
+			await seedPhase(orm, 0, "A", ["t"]);
+			await seedPhase(orm, 1, "B", ["t"]);
+			await seedPhase(orm, 2, "C", ["t"]);
+			await seedPhase(orm, 3, "D", ["t"]);
+
+			await insertPhaseAt(orm, 1, 1, "New", ["t"], null, 4);
+
+			expect(await getCurrentPhase(orm)).toBe(2);
 		});
 
 		it("does not adjust currentPhase when inserting just past it", async () => {
