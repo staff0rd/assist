@@ -1,3 +1,10 @@
+## [0.388.4](https://github.com/staff0rd/assist/compare/v0.388.3...v0.388.4) (2026-07-14)
+
+
+### Bug Fixes
+
+* run inserted phase instead of skipping it ([99a08ff](https://github.com/staff0rd/assist/commit/99a08ffc590b6f51f9fac18491c166f10e6ae3a7))
+
 ## [0.388.3](https://github.com/staff0rd/assist/compare/v0.388.2...v0.388.3) (2026-07-13)
 
 
