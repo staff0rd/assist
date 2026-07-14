@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { awaitClaude, CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
 import { emitActivity } from "../../shared/emitActivity";
+import type { HarnessKind } from "../../shared/harnesses";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
-import { spawnClaude } from "../../shared/spawnClaude";
+import { spawnHarness } from "../../shared/spawnHarness";
 import { handleLaunchSignal } from "./handleLaunchSignal";
 import { resumeNudge } from "./resumeNudge";
 import { stopWatching, watchForMarker } from "./watchForMarker";
@@ -13,6 +14,7 @@ export type LaunchModeOptions = {
 	itemId?: number;
 	itemName?: string;
 	resumeSessionId?: string;
+	harness?: HarnessKind;
 };
 
 export function buildSlashCommand(
@@ -42,12 +44,14 @@ export async function launchMode(
 		itemName: options?.itemName,
 		claudeSessionId,
 	});
-	const { child, done } = spawnClaude(
-		resumeSessionId
-			? resumeNudge()
-			: buildSlashCommand(slashCommand, options?.description),
-		{ allowEdits: true, sessionId: claudeSessionId, resumeSessionId },
-	);
+	const prompt = resumeSessionId
+		? resumeNudge()
+		: buildSlashCommand(slashCommand, options?.description);
+	const { child, done } = spawnHarness(options?.harness ?? "claude", prompt, {
+		sessionId: claudeSessionId,
+		resumeSessionId,
+		cwd: process.cwd(),
+	});
 	const marker = watchForMarker(child, { actOnDone: options?.once });
 	const exitCode = await awaitClaude(done, `/${slashCommand}`);
 	stopWatching();

@@ -93,7 +93,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project
-- `assist sync` - Copy command files to `~/.claude/commands`, sync `settings.json` and `CLAUDE.md`, and install the design assets — `claude/system-prompt.md` to `~/.claude/system-prompt.md` and `claude/skills/*` into `~/.claude/skills` (existing files in that directory are preserved)
+- `assist sync` - Copy command files to `~/.claude/commands`, sync `settings.json` and `CLAUDE.md`, and install the design assets — `claude/system-prompt.md` to `~/.claude/system-prompt.md` and `claude/skills/*` into `~/.claude/skills` (existing files in that directory are preserved). When the `codex` CLI is detected on PATH, additionally installs each command as a Codex skill at `~/.codex/skills/<name>/SKILL.md` and `CLAUDE.md` as `~/.codex/AGENTS.md`, leaving the `~/.claude` copy untouched
 - `assist commit status` - Show git status and diff
 - `assist commit <message>` - Commit staged changes with validation
 - `assist commit <message> [files...]` - Stage files and create a git commit with validation
@@ -143,7 +143,7 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist backlog remove-phase <id> <phase>` - Remove a plan phase from a backlog item
 - `assist backlog move-phase <id> <from> <to>` - Reorder a plan phase from one 1-based position to another, carrying its tasks and manual checks with it
 - `assist backlog next [id] [--once]` - Pick and run the next backlog item, or open `/draft` if none remain; pass an `id` to run that item first, then continue chaining; `--once` exits after the first completed item run instead of prompting for another
-- `assist backlog refine [id] [--once]` - Alias for `refine`
+- `assist backlog refine [id] [--once] [--harness <claude|codex>]` - Alias for `refine`
 - `assist backlog start <id>` - Set a backlog item to in-progress
 - `assist backlog stop` - Revert all in-progress backlog items to todo and reset their phase to 1
 - `assist backlog done <id>` - Set a backlog item to done (blocked while any sub-task is not done)
@@ -304,7 +304,7 @@ When iterating on assist itself: web server changes only need the `assist sessio
 - `assist next [id] [--once]` - Alias for `backlog next [id]`; `--once` exits after the first completed item run instead of prompting for another
 - `assist draft [description] [--once]` (alias: `feat`) - Launch Claude in `/draft` mode, chain into next on `/next` signal; an optional `description` is forwarded as `/draft <description>`; `--once` exits when the done signal arrives after the initial draft completes; `--resume-session <id>` resumes an interrupted Claude session (used by the sessions daemon when it restarts a running item)
 - `assist bug [description] [--once]` - Launch Claude in `/bug` mode, chain into next on `/next` signal; an optional `description` is forwarded as `/bug <description>`; `--once` exits when the done signal arrives after the initial bug report completes; `--resume-session <id>` resumes an interrupted Claude session (used by the sessions daemon when it restarts a running item)
-- `assist refine [id] [--once]` - Launch Claude in `/refine` mode to refine a backlog item; prompts for selection when no id given; `--once` exits when the done signal arrives after refinement completes; `--resume-session <id>` resumes an interrupted Claude session (used by the sessions daemon when it restarts a running item)
+- `assist refine [id] [--once] [--harness <claude|codex>]` - Launch a coding harness in `/refine` mode to refine a backlog item; prompts for selection when no id given; `--once` exits when the done signal arrives after refinement completes; `--harness` picks the engine (`codex` runs `codex -C <cwd> <prompt>`), defaulting to the configured `harness.engine` (Claude); `--resume-session <id>` resumes an interrupted Claude session (used by the sessions daemon when it restarts a running item)
 - `assist review-comments [number]` - Launch Claude in `/review-comments` mode to process PR review comments (single session, no chaining); when a PR number is supplied, checks out that PR via `gh pr checkout` first
 - `assist signal next [id]` - Write a next signal to chain into `assist next`; when `id` is supplied, the parent launcher runs that backlog item directly
 - `assist signal done [id]` - Write a done signal marking the session's initial task complete; an optional `id` surfaces the backlog item the session created onto its session card; `--once` launch sessions exit when it arrives, plain sessions ignore it

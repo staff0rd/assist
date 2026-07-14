@@ -4,6 +4,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "../shared/loadConfig";
 import { syncClaudeMd } from "./sync/syncClaudeMd";
+import { syncCodex } from "./sync/syncCodex";
 import { syncDesign } from "./sync/syncDesign";
 import { syncSettings } from "./sync/syncSettings";
 
@@ -21,6 +22,7 @@ export async function sync(options?: { yes?: boolean }): Promise<void> {
 	syncDesign(claudeDir, targetBase);
 	await syncSettings(claudeDir, targetBase, { yes });
 	await syncClaudeMd(claudeDir, targetBase, { yes });
+	syncCodex(claudeDir);
 }
 
 function syncCommands(claudeDir: string, targetBase: string): void {

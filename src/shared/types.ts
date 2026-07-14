@@ -196,6 +196,12 @@ export const assistConfigSchema = z.strictObject({
 			autoConfirm: z.boolean().default(false),
 		})
 		.default({ autoConfirm: false }),
+	harness: z
+		.strictObject({
+			engine: z.enum(["claude", "codex"]).default("claude"),
+			exposeCodexActions: z.boolean().optional(),
+		})
+		.default({ engine: "claude" }),
 	voice: z
 		.strictObject({
 			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),

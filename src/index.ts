@@ -67,7 +67,9 @@ program
 
 const syncCommand = program
 	.command("sync")
-	.description("Copy command files to ~/.claude/commands")
+	.description(
+		"Copy command files to ~/.claude/commands; when codex is detected, also install commands as ~/.codex/skills/<name>/SKILL.md and CLAUDE.md as ~/.codex/AGENTS.md",
+	)
 	.option("-y, --yes", "Overwrite settings.json without prompting")
 	.action((options) => sync(options));
 

@@ -1,5 +1,5 @@
-import { type ChildProcess, spawn } from "node:child_process";
 import { ensureHooksSettings } from "../commands/sessions/daemon/ensureHooksSettings";
+import { type SpawnResult, spawnInherit } from "./spawnInherit";
 
 export type SpawnClaudeOptions = {
 	allowEdits?: boolean;
@@ -19,10 +19,7 @@ export function withoutResumeSession(
 export function spawnClaude(
 	prompt: string,
 	options: SpawnClaudeOptions = {},
-): {
-	child: ChildProcess;
-	done: Promise<number>;
-} {
+): SpawnResult {
 	/* why: wire the session-status hooks into CLI-launched Claude too (assist
 	 * backlog run, draft, etc.), so their daemon cards reflect running/waiting via
 	 * $ASSIST_SESSION_ID — not just sessions the daemon spawns claude for directly.
@@ -37,26 +34,7 @@ export function spawnClaude(
 	if (permissionMode) {
 		args.push("--permission-mode", permissionMode);
 	}
-	/* why: strip ASSIST_ACTIVITY_ID so Claude (and any assist commands it runs)
-	 * can't clobber the session's activity file — only the daemon's direct assist
-	 * child emits activity. Strip CLAUDE_CODE_CHILD_SESSION so a phase launched
-	 * from within a Claude Code session (which sets it, and the daemon inherits)
-	 * runs as a top-level session: a nested child session never writes a
-	 * resumable ~/.claude transcript, so --resume would later fail (#402). */
-	const {
-		ASSIST_ACTIVITY_ID: _activityId,
-		CLAUDE_CODE_CHILD_SESSION: _childSession,
-		...env
-	} = process.env;
-	const child = spawn("claude", args, {
-		stdio: "inherit",
-		env,
-	});
-	const done = new Promise<number>((resolve, reject) => {
-		child.on("close", (code) => resolve(code ?? 0));
-		child.on("error", reject);
-	});
-	return { child, done };
+	return spawnInherit("claude", args);
 }
 
 function buildArgs(prompt: string, options: SpawnClaudeOptions): string[] {

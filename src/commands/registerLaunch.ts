@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import { next as backlogNext } from "./backlog";
 import { launchMode } from "./backlog/launchMode";
-import { refine } from "./backlog/refine";
+import { registerRefineLaunch } from "./backlog/registerRefineLaunch";
 import { reviewComments } from "./reviewComments";
 
 type LaunchOpts = { once?: boolean; resumeSession?: string };
@@ -54,18 +54,6 @@ function registerReviewComments(program: Command): void {
 		.action((number) => reviewComments(number));
 }
 
-function registerRefine(program: Command): void {
-	program
-		.command("refine")
-		.argument("[id]", "Backlog item ID")
-		.description("Launch Claude in /refine mode to refine a backlog item")
-		.option("--once", "Exit when the initial task completes")
-		.option("--resume-session <id>", RESUME_SESSION_FLAG)
-		.action((id: string | undefined, opts: LaunchOpts) =>
-			refine(id, { once: opts.once, resumeSessionId: opts.resumeSession }),
-		);
-}
-
 export function registerLaunch(program: Command): void {
 	registerNext(program);
 	registerDescriptionLaunch(
@@ -82,5 +70,5 @@ export function registerLaunch(program: Command): void {
 		"Launch Claude in /bug mode, chain into next on /next signal",
 	);
 	registerReviewComments(program);
-	registerRefine(program);
+	registerRefineLaunch(program, RESUME_SESSION_FLAG);
 }
