@@ -37,7 +37,9 @@
 		"url": "https://github.com/staff0rd/assist"
 	},
 	"dependencies": {
+		"@xterm/addon-fit": "^0.11.0",
 		"@xterm/addon-webgl": "^0.19.0",
+		"@xterm/xterm": "^6.0.0",
 		"better-sqlite3": "^12.8.0",
 		"blessed": "^0.1.81",
 		"blessed-contrib": "^4.11.0",
@@ -89,8 +91,6 @@
 		"@types/shell-quote": "^1.7.5",
 		"@types/ws": "^8.18.1",
 		"@vitest/coverage-v8": "^4.1.2",
-		"@xterm/addon-fit": "^0.11.0",
-		"@xterm/xterm": "^6.0.0",
 		"esbuild": "^0.27.3",
 		"jscpd": "^4.0.5",
 		"jsdom": "^29.1.1",
