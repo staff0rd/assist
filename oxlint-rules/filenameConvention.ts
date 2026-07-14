@@ -37,6 +37,7 @@ const defaultOptions: FilenameConventionOptions = {
 		"api.ts",
 		"web.ts",
 		"tsup.config.ts",
+		"vitest.config.ts",
 	],
 	requireAscii: true,
 };
