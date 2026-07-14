@@ -1,3 +1,10 @@
+## [0.391.1](https://github.com/staff0rd/assist/compare/v0.391.0...v0.391.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* signal phase-done after DB writes ([0f76ca1](https://github.com/staff0rd/assist/commit/0f76ca1cbf53a8f3bbce57fdc3d4a6960c573e0c))
+
 # [0.391.0](https://github.com/staff0rd/assist/compare/v0.390.1...v0.391.0) (2026-07-14)
 
 
