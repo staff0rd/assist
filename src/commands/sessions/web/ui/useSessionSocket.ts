@@ -1,9 +1,8 @@
-import { useCallback } from "react";
-
 export type { SessionInfo } from "./types";
 
 import { useActiveSelectionSync } from "./useActiveSelectionSync";
 import { useReportRenderedStatus } from "./useReportRenderedStatus";
+import { useSend } from "./useSend";
 import { useSessionActions } from "./useSessionActions";
 import { useTranscriptNavigation } from "./useTranscriptNavigation";
 import { useWsConnection } from "./useWsConnection";
@@ -25,6 +24,9 @@ export function useSessionSocket() {
 		clearError,
 		success,
 		clearSuccess,
+		pendingLaunches,
+		addPendingLaunch,
+		dismissPendingLaunch,
 		rateLimits,
 		initialized,
 		wsRef,
@@ -34,13 +36,7 @@ export function useSessionSocket() {
 		reconnecting,
 	} = useWsConnection();
 
-	const send = useCallback(
-		(msg: object) => {
-			const ws = wsRef.current;
-			if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify(msg));
-		},
-		[wsRef],
-	);
+	const send = useSend(wsRef, addPendingLaunch);
 
 	const actions = useSessionActions(send, buffers, handlers);
 	useActiveSelectionSync(activeId, sessions, history, send);
@@ -65,6 +61,8 @@ export function useSessionSocket() {
 		clearError,
 		success,
 		clearSuccess,
+		pendingLaunches,
+		dismissPendingLaunch,
 		rateLimits,
 		initialized,
 		...actions,

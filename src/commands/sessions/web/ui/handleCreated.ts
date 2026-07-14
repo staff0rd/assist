@@ -5,6 +5,7 @@ export function handleCreated(
 	d: WsDispatch,
 ): void {
 	const sessionId = msg.sessionId as string;
+	d.resolvePendingLaunch();
 	// why: creating/resuming switches the pane back to the live terminal
 	d.setViewingTranscriptSessionId(null);
 	d.setActiveId(sessionId);

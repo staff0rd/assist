@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { HistoryList } from "./HistoryList";
+import type { PendingLaunch } from "./PendingLaunch";
 import { SessionList } from "./SessionList";
 import { SidebarTabs } from "./SidebarTabs";
 import type {
@@ -11,11 +12,13 @@ import type {
 
 type SidebarProps = {
 	sessions: SessionInfo[];
+	pendingLaunches: PendingLaunch[];
 	history: HistoricalSession[];
 	activeId: string | null;
 	tab: SidebarTab;
 	onTabChange: (tab: SidebarTab) => void;
 	onSelect: (id: string) => void;
+	onDismissPending: (id: string) => void;
 	onView: (session: HistoricalSession) => void;
 	onResume: (session: HistoricalSession) => void;
 	initialized: Set<string>;
@@ -43,9 +46,11 @@ export function Sidebar(props: SidebarProps) {
 			{props.tab === "active" ? (
 				<SessionList
 					sessions={props.sessions}
+					pendingLaunches={props.pendingLaunches}
 					activeId={props.activeId}
 					initialized={props.initialized}
 					onSelect={props.onSelect}
+					onDismissPending={props.onDismissPending}
 					onRetry={props.onRetry}
 					onRestart={props.onRestart}
 					onDismiss={props.onDismiss}

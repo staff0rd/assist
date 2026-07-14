@@ -21,6 +21,8 @@ type WsDeps = {
 	setCurrentCwd: WsDispatch["setCurrentCwd"];
 	setError: WsDispatch["setError"];
 	setSuccess: WsDispatch["setSuccess"];
+	resolvePendingLaunch: WsDispatch["resolvePendingLaunch"];
+	failPendingLaunch: WsDispatch["failPendingLaunch"];
 	setRateLimits: WsDispatch["setRateLimits"];
 	markInitialized: WsDispatch["markInitialized"];
 	buffers: RefObject<Map<string, string>>;

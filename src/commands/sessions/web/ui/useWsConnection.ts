@@ -5,10 +5,9 @@ import { useActiveIdReconciler } from "./useActiveIdReconciler";
 import { useDaemonState } from "./useDaemonState";
 import { useInitialized } from "./useInitialized";
 import { useNotices } from "./useNotices";
+import { usePendingLaunches } from "./usePendingLaunches";
 import { useSessionsSync } from "./useSessionsSync";
 import { useWebSocket } from "./useWebSocket";
-
-type OutputHandler = (data: string) => void;
 
 export function useWsConnection() {
 	const [sessions, setSessions] = useState<SessionInfo[]>([]);
@@ -21,10 +20,11 @@ export function useWsConnection() {
 	>(null);
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const notices = useNotices();
+	const pending = usePendingLaunches();
 	const [rateLimits, setRateLimits] = useState<RateLimits | null>(null);
 	const { initialized, markInitialized, syncSessions } = useInitialized();
 	const buffers = useRef(new Map<string, string>());
-	const handlers = useRef(new Map<string, OutputHandler>());
+	const handlers = useRef(new Map<string, (data: string) => void>());
 	const handleSessions = useSessionsSync(syncSessions, setSessions);
 
 	const { wsRef, requestHistory, reconnecting } = useWebSocket({
@@ -36,6 +36,7 @@ export function useWsConnection() {
 		setViewingTranscriptSessionId,
 		setCurrentCwd,
 		...notices,
+		...pending,
 		setRateLimits,
 		markInitialized,
 		buffers,
@@ -49,12 +50,13 @@ export function useWsConnection() {
 		history,
 		activeId,
 		setActiveId,
-		daemonVersion: daemon.daemonVersion,
+		...daemon,
 		transcript,
 		viewingTranscriptSessionId,
 		setViewingTranscriptSessionId,
 		currentCwd,
 		...notices,
+		...pending,
 		rateLimits,
 		initialized,
 		wsRef,

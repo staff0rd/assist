@@ -15,6 +15,8 @@ export type WsDispatch = {
 	setCurrentCwd: (cwd: string) => void;
 	setError: (message: string) => void;
 	setSuccess: (notice: SuccessNotice) => void;
+	resolvePendingLaunch: () => void;
+	failPendingLaunch: (message: string) => void;
 	setRateLimits: (limits: RateLimits) => void;
 	markInitialized: (id: string) => void;
 	buffers: React.RefObject<Map<string, string>>;

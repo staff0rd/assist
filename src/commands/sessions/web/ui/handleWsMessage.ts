@@ -29,9 +29,12 @@ export function handleWsMessage(
 		case "hello":
 			d.setDaemonVersion(msg.version as string);
 			break;
-		case "error":
-			d.setError(msg.message as string);
+		case "error": {
+			const message = msg.message as string;
+			d.setError(message);
+			d.failPendingLaunch(message);
 			break;
+		}
 		case "limits":
 			d.setRateLimits(msg.rateLimits as RateLimits);
 			break;
