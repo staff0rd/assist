@@ -1,3 +1,10 @@
+## [0.388.6](https://github.com/staff0rd/assist/compare/v0.388.5...v0.388.6) (2026-07-14)
+
+
+### Bug Fixes
+
+* preserve multi-line PR body on Windows ([20d3a8b](https://github.com/staff0rd/assist/commit/20d3a8b037bf2299a45d4ef7ba110d066efa6cb1))
+
 ## [0.388.5](https://github.com/staff0rd/assist/compare/v0.388.4...v0.388.5) (2026-07-14)
 
 
