@@ -170,6 +170,18 @@ describe("WindowsProxy", () => {
 		expect(input).toEqual({ type: "input", sessionId: "3", data: "ls\n" });
 	});
 
+	it("strips the namespace when forwarding a restart to the daemon", async () => {
+		await createWindowsSession();
+		expect(proxy.route(client(), { type: "restart", sessionId: "w-3" })).toBe(
+			true,
+		);
+		await waitFor(() => daemon.received.some((l) => l.includes('"restart"')));
+		const restart = daemon.received
+			.map((l) => JSON.parse(l))
+			.find((m) => m.type === "restart");
+		expect(restart).toEqual({ type: "restart", sessionId: "3" });
+	});
+
 	it("strips the namespace when forwarding a resume to the daemon", async () => {
 		await createWindowsSession();
 		/* why: the UI resumes a windows session by its namespaced id (w-3); if the

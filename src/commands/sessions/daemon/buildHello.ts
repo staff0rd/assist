@@ -2,7 +2,7 @@ import pkg from "../../../../package.json";
 
 export const ASSIST_VERSION: string = pkg.version;
 
-export const PROTOCOL_VERSION = 1;
+export const PROTOCOL_VERSION = 2;
 
 type Hello = { type: "hello"; version: string; protocol?: number };
 
