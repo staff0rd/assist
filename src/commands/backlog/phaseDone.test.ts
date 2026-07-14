@@ -96,6 +96,19 @@ describe("phaseDone", () => {
 		cleanup();
 	});
 
+	it("should write the phase-done signal only after setCurrentPhase resolves", async () => {
+		let signalExistedWhenPhaseAdvanced: boolean | undefined;
+		mockSetCurrentPhase.mockImplementation(async () => {
+			signalExistedWhenPhaseAdvanced = existsSync(signalPath());
+		});
+
+		await phaseDone("a1", "1", "Done");
+
+		expect(signalExistedWhenPhaseAdvanced).toBe(false);
+		expect(existsSync(signalPath())).toBe(true);
+		cleanup();
+	});
+
 	it("should store a phase summary as a targeted comment write", async () => {
 		await phaseDone("a1", "1", "Implemented the feature");
 

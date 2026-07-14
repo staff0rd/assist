@@ -47,12 +47,12 @@ export async function phaseDone(
 		return;
 	}
 
-	signal();
 	await appendComment(orm, itemId, summary, {
 		phase: phaseNumber,
 		type: "summary",
 	});
 	await setCurrentPhase(id, phaseNumber + 1);
+	signal();
 	console.log(
 		chalk.green(`Phase ${phaseNumber} of item ${label} marked as complete.`),
 	);
