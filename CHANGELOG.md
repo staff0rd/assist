@@ -1,3 +1,10 @@
+## [0.390.1](https://github.com/staff0rd/assist/compare/v0.390.0...v0.390.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* promote xterm deps to dependencies ([9f77265](https://github.com/staff0rd/assist/commit/9f77265388cd1c5199d587baf925a8e4c4d14592))
+
 # [0.390.0](https://github.com/staff0rd/assist/compare/v0.389.2...v0.390.0) (2026-07-14)
 
 
