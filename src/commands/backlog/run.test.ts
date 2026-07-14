@@ -83,9 +83,18 @@ function makePlan(item: BacklogItem): PlanPhase[] {
 	return item.plan ?? [];
 }
 
+const advance = { kind: "advance" as const };
+const abort = { kind: "abort" as const };
+const skip = { kind: "skip" as const };
+const retry = { kind: "retry" as const };
+function rewind(targetPhase: number) {
+	return { kind: "rewind" as const, targetPhase };
+}
+
 describe("run", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockReloadPlan.mockReset();
 	});
 
 	describe("when prepare returns undefined", () => {
@@ -108,9 +117,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1) // phase 0 -> 1
-				.mockResolvedValueOnce(2) // phase 1 -> 2
-				.mockResolvedValueOnce(3); // review -> 3
+				.mockResolvedValueOnce(advance) // phase 0 -> 1
+				.mockResolvedValueOnce(advance) // phase 1 -> 2
+				.mockResolvedValueOnce(advance); // review -> 3
 
 			await run("1");
 
@@ -125,9 +134,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1");
 
@@ -144,9 +153,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1");
 
@@ -161,9 +170,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 			mockSetStatus
 				.mockImplementationOnce(() => {}) // in-progress succeeds
 				.mockImplementationOnce(() => {
@@ -182,7 +191,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(-1);
+			mockExecutePhase.mockResolvedValueOnce(abort);
 
 			await run("1");
 
@@ -196,7 +205,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(-1);
+			mockExecutePhase.mockResolvedValueOnce(abort);
 
 			await run("1");
 
@@ -214,9 +223,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(-1); // review fails
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(abort); // review fails
 
 			await run("1");
 
@@ -235,12 +244,12 @@ describe("run", () => {
 			});
 			mockReloadPlan.mockResolvedValue(makePlan(item));
 			mockExecutePhase
-				.mockResolvedValueOnce(1) // phase 0 -> 1
-				.mockResolvedValueOnce(2) // phase 1 -> 2
-				.mockResolvedValueOnce(0) // review rewinds to phase 0
-				.mockResolvedValueOnce(1) // phase 0 re-runs -> 1
-				.mockResolvedValueOnce(2) // phase 1 re-runs -> 2
-				.mockResolvedValueOnce(3); // review -> 3 (done)
+				.mockResolvedValueOnce(advance) // phase 0 -> 1
+				.mockResolvedValueOnce(advance) // phase 1 -> 2
+				.mockResolvedValueOnce(rewind(0)) // review rewinds to phase 0
+				.mockResolvedValueOnce(advance) // phase 0 re-runs -> 1
+				.mockResolvedValueOnce(advance) // phase 1 re-runs -> 2
+				.mockResolvedValueOnce(advance); // review -> 3 (done)
 
 			await run("1");
 
@@ -257,12 +266,12 @@ describe("run", () => {
 			});
 			mockReloadPlan.mockResolvedValue(makePlan(item));
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(0) // review rewinds
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3); // review passes
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(rewind(0)) // review rewinds
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance); // review passes
 
 			await run("1");
 
@@ -278,14 +287,94 @@ describe("run", () => {
 			});
 			mockReloadPlan.mockResolvedValue(makePlan(item));
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(0) // review rewinds
-				.mockResolvedValueOnce(-1); // resumed phase fails
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(rewind(0)) // review rewinds
+				.mockResolvedValueOnce(abort); // resumed phase fails
 
 			await expect(run("1")).resolves.toBe(false);
 
 			expect(mockSetStatus).not.toHaveBeenCalledWith("1", "done");
+		});
+	});
+
+	describe("when the review phase exits without a completion signal", () => {
+		it("leaves the item in-progress and does not mark it done", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(skip);
+
+			await run("1");
+
+			expect(mockSetStatus).toHaveBeenCalledWith("1", "in-progress");
+			expect(mockSetStatus).not.toHaveBeenCalledWith("1", "done");
+		});
+
+		it("resolves false so an auto-chain does not advance to the next item", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(skip);
+
+			await expect(run("1")).resolves.toBe(false);
+		});
+	});
+
+	describe("when Retry is chosen at the incomplete review prompt", () => {
+		it("re-runs the review phase without completing the item", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(retry)
+				.mockResolvedValueOnce(skip);
+
+			await run("1");
+
+			expect(mockExecutePhase).toHaveBeenCalledTimes(4);
+			expect(mockExecutePhase.mock.calls[2][1]).toBe(2);
+			expect(mockExecutePhase.mock.calls[3][1]).toBe(2);
+			expect(mockSetStatus).not.toHaveBeenCalledWith("1", "done");
+		});
+
+		it("completes the item only once the re-run review passes", async () => {
+			const item = makeItem();
+			mockPrepareRun.mockReturnValue({
+				item,
+				plan: makePlan(item),
+				startPhase: 0,
+			});
+			mockReloadPlan.mockResolvedValue(makePlan(item));
+			mockExecutePhase
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(retry)
+				.mockResolvedValueOnce(advance);
+
+			await run("1");
+
+			expect(mockSetStatus).toHaveBeenCalledWith("1", "done");
 		});
 	});
 
@@ -298,8 +387,8 @@ describe("run", () => {
 				startPhase: 1,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(2) // phase 1 -> 2
-				.mockResolvedValueOnce(3); // review -> 3
+				.mockResolvedValueOnce(advance) // phase 1 -> 2
+				.mockResolvedValueOnce(advance); // review -> 3
 
 			await run("1");
 
@@ -316,7 +405,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 2,
 			});
-			mockExecutePhase.mockResolvedValueOnce(3);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 
 			await run("1");
 
@@ -336,7 +425,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 1,
 			});
-			mockExecutePhase.mockResolvedValueOnce(2);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 			const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 			await run("1");
@@ -361,9 +450,10 @@ describe("run", () => {
 				plan: synthesizedPlan,
 				startPhase: 0,
 			});
+			mockReloadPlan.mockResolvedValue(synthesizedPlan);
 			mockExecutePhase
-				.mockResolvedValueOnce(1) // synthesized phase
-				.mockResolvedValueOnce(2); // review
+				.mockResolvedValueOnce(advance) // synthesized phase
+				.mockResolvedValueOnce(advance); // review
 
 			await run("1");
 
@@ -387,10 +477,10 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1) // phase 0 -> 1
-				.mockResolvedValueOnce(2) // phase 1 -> 2 (Phase 3 appended here)
-				.mockResolvedValueOnce(3) // phase 2 (new) -> 3
-				.mockResolvedValueOnce(4); // review -> 4
+				.mockResolvedValueOnce(advance) // phase 0 -> 1
+				.mockResolvedValueOnce(advance) // phase 1 -> 2 (Phase 3 appended here)
+				.mockResolvedValueOnce(advance) // phase 2 (new) -> 3
+				.mockResolvedValueOnce(advance); // review -> 4
 			mockReloadPlan
 				.mockResolvedValueOnce(makePlan(item)) // after phase 0: unchanged
 				.mockResolvedValueOnce(extended) // after phase 1: Phase 3 appended
@@ -416,10 +506,10 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3)
-				.mockResolvedValueOnce(4);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 			mockReloadPlan
 				.mockResolvedValueOnce(makePlan(item))
 				.mockResolvedValueOnce(extended)
@@ -454,10 +544,10 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1) // phase 0 (Phase 1) -> 1
-				.mockResolvedValueOnce(2) // phase 1 (Inserted) -> 2
-				.mockResolvedValueOnce(3) // phase 2 (Phase 2) -> 3
-				.mockResolvedValueOnce(4); // review -> 4
+				.mockResolvedValueOnce(advance) // phase 0 (Phase 1) -> 1
+				.mockResolvedValueOnce(advance) // phase 1 (Inserted) -> 2
+				.mockResolvedValueOnce(advance) // phase 2 (Phase 2) -> 3
+				.mockResolvedValueOnce(advance); // review -> 4
 			mockReloadPlan
 				.mockResolvedValueOnce(withInserted) // after phase 0: Inserted appears
 				.mockResolvedValueOnce(withInserted)
@@ -481,7 +571,9 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 1,
 			});
-			mockExecutePhase.mockResolvedValueOnce(2).mockResolvedValueOnce(3);
+			mockExecutePhase
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1", { resumeSessionId: "sess-1" });
 
@@ -499,9 +591,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1", { resumeSessionId: "sess-1" });
 
@@ -515,7 +607,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 2,
 			});
-			mockExecutePhase.mockResolvedValueOnce(3);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 
 			await run("1", { resumeSessionId: "sess-1" });
 
@@ -534,12 +626,12 @@ describe("run", () => {
 			});
 			mockReloadPlan.mockResolvedValue(makePlan(item));
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(0)
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(rewind(0))
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1", { resumeSessionId: "sess-1" });
 
@@ -558,7 +650,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(1);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 			mockConsumePause.mockReturnValueOnce(true);
 
 			await run("1");
@@ -575,7 +667,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(1);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 			mockConsumePause.mockReturnValueOnce(true);
 
 			await run("1");
@@ -590,7 +682,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(1);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 			mockConsumePause.mockReturnValueOnce(true);
 
 			await run("1");
@@ -606,7 +698,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(1);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 			mockConsumePause.mockReturnValueOnce(true);
 
 			await expect(run("1")).resolves.toBe(true);
@@ -619,7 +711,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(1);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 			mockConsumePause.mockReturnValueOnce(true);
 
 			await run("1");
@@ -639,9 +731,9 @@ describe("run", () => {
 			});
 			mockIsPausePending.mockReturnValueOnce(true);
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1");
 
@@ -658,9 +750,9 @@ describe("run", () => {
 			});
 			mockIsPausePending.mockReturnValue(false);
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1");
 
@@ -677,9 +769,9 @@ describe("run", () => {
 			});
 			mockIsPausePending.mockReturnValueOnce(true);
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1");
 
@@ -698,7 +790,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(1);
+			mockExecutePhase.mockResolvedValueOnce(advance);
 			mockConsumePause.mockReturnValueOnce(true);
 
 			await run("1");
@@ -719,9 +811,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(3);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance);
 
 			await run("1");
 
@@ -736,7 +828,7 @@ describe("run", () => {
 				plan: makePlan(item),
 				startPhase: 0,
 			});
-			mockExecutePhase.mockResolvedValueOnce(-1);
+			mockExecutePhase.mockResolvedValueOnce(abort);
 
 			await run("1");
 
@@ -752,9 +844,9 @@ describe("run", () => {
 				startPhase: 0,
 			});
 			mockExecutePhase
-				.mockResolvedValueOnce(1)
-				.mockResolvedValueOnce(2)
-				.mockResolvedValueOnce(-1);
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(advance)
+				.mockResolvedValueOnce(abort);
 
 			await run("1");
 

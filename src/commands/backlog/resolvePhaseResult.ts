@@ -6,6 +6,13 @@ import { readSignal } from "./readSignal";
 import { getReady } from "./shared";
 import { getSignalPath } from "./writeSignal";
 
+export type PhaseOutcome =
+	| { kind: "advance" }
+	| { kind: "rewind"; targetPhase: number }
+	| { kind: "retry" }
+	| { kind: "skip" }
+	| { kind: "abort" };
+
 export function cleanupSignal(): void {
 	const statusPath = getSignalPath();
 	if (statusPath && existsSync(statusPath)) {
@@ -19,17 +26,16 @@ async function isTerminalStatus(itemId: number): Promise<boolean> {
 	return item?.status === "done" || item?.status === "wontdo";
 }
 
-/** Returns absolute target phase index, or -1 to abort */
 export async function resolvePhaseResult(
 	phaseIndex: number,
 	itemId: number,
-): Promise<number> {
+): Promise<PhaseOutcome> {
 	const signalPath = getSignalPath();
 	if (!signalPath || !existsSync(signalPath)) {
-		if (await isTerminalStatus(itemId)) return -1;
+		if (await isTerminalStatus(itemId)) return { kind: "abort" };
 		const action = await handleIncompletePhase();
-		if (action === "abort") return -1;
-		return action === "skip" ? phaseIndex + 1 : phaseIndex;
+		if (action === "abort") return { kind: "abort" };
+		return action === "skip" ? { kind: "skip" } : { kind: "retry" };
 	}
 
 	const signal = readSignal();
@@ -39,10 +45,10 @@ export async function resolvePhaseResult(
 		const targetPhase = signal.targetPhase as number;
 		const targetPhaseNumber = targetPhase + 1;
 		console.log(chalk.yellow(`\nRewinding to phase ${targetPhaseNumber}.`));
-		return targetPhase;
+		return { kind: "rewind", targetPhase };
 	}
 
 	const phaseNumber = phaseIndex + 1;
 	console.log(chalk.green(`\nPhase ${phaseNumber} completed.`));
-	return phaseIndex + 1;
+	return { kind: "advance" };
 }

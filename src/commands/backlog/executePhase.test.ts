@@ -30,7 +30,7 @@ vi.mock("./buildResumePrompt", () => ({
 }));
 
 vi.mock("./resolvePhaseResult", () => ({
-	resolvePhaseResult: vi.fn(() => 1),
+	resolvePhaseResult: vi.fn(() => ({ kind: "advance" })),
 	cleanupSignal: vi.fn(),
 }));
 
@@ -167,7 +167,7 @@ describe("executePhase", () => {
 
 			const result = await executePhase(makeItem(), 0, phases);
 
-			expect(result).toBe(-1);
+			expect(result).toEqual({ kind: "abort" });
 			expect(mockSetSessionStatus).not.toHaveBeenCalled();
 		});
 	});
@@ -180,7 +180,7 @@ describe("executePhase", () => {
 				resumeSessionId: "gone-9",
 			});
 
-			expect(result).toBe(-1);
+			expect(result).toEqual({ kind: "abort" });
 			expect(mockSpawnClaude).not.toHaveBeenCalled();
 			expect(mockResolvePhaseResult).not.toHaveBeenCalled();
 			expect(mockSetSessionStatus).not.toHaveBeenCalled();

@@ -14,6 +14,7 @@ export async function handleReviewResult(
 ): Promise<ReviewOutcome> {
 	if (review.kind === "fail" || review.kind === "abort")
 		return { kind: "stop", success: false };
+	if (review.kind === "incomplete") return { kind: "stop", success: false };
 	// why: auto-advance off ends the run with the item left in-progress, not done.
 	if (review.kind === "paused") return { kind: "stop", success: true };
 	// why: rewindPhase already reset the status and rewound the current phase, so

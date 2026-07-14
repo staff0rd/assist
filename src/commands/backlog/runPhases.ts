@@ -25,7 +25,7 @@ export async function runPhases(
 	 * session; every phase after it starts a fresh conversation. */
 	let phaseOptions = spawnOptions;
 	while (phaseIndex < currentPlan.length) {
-		phaseIndex = await executePhase(
+		const outcome = await executePhase(
 			item,
 			phaseIndex,
 			currentPlan,
@@ -34,7 +34,10 @@ export async function runPhases(
 			currentPlan.length + 1,
 		);
 		phaseOptions = withoutResumeSession(phaseOptions);
-		if (phaseIndex < 0) return { kind: "fail" };
+		if (outcome.kind === "abort") return { kind: "fail" };
+		if (outcome.kind === "rewind") phaseIndex = outcome.targetPhase;
+		else if (outcome.kind === "advance" || outcome.kind === "skip")
+			phaseIndex += 1;
 		// why: auto-advance off stops here; consumePause clears the one-shot request.
 		if (consumePause(item.id)) {
 			appendDaemonLog(

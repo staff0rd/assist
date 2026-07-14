@@ -7,7 +7,7 @@ import { launchPhaseSession } from "./launchPhaseSession";
 import { persistPhaseSessionId } from "./persistPhaseSessionId";
 import { recordSignalOwner } from "./recordSignalOwner";
 import { reportPhaseActivity } from "./reportPhaseActivity";
-import { resolvePhaseResult } from "./resolvePhaseResult";
+import { type PhaseOutcome, resolvePhaseResult } from "./resolvePhaseResult";
 import type { BacklogItem, PlanPhase } from "./types";
 import { verifyPhaseResume } from "./verifyPhaseResume";
 
@@ -20,7 +20,7 @@ export async function executePhase(
 	// the authored run, so callers pass the review-inclusive total to keep the
 	// count stable (e.g. 1/3, 2/3, then 3/3 for review) rather than jumping.
 	totalPhases: number = phases.length,
-): Promise<number> {
+): Promise<PhaseOutcome> {
 	const phase = phases[phaseIndex];
 	const phaseNumber = phaseIndex + 1;
 	console.log(
@@ -42,7 +42,7 @@ export async function executePhase(
 	const phaseLabel = `phase ${phaseNumber}/${totalPhases}`;
 	if (resumeSessionId) {
 		if (!(await verifyPhaseResume(item.id, resumeSessionId, phaseLabel)))
-			return -1;
+			return { kind: "abort" };
 	}
 
 	reportPhaseActivity(item, phaseNumber, totalPhases, phase, claudeSessionId);
@@ -59,7 +59,7 @@ export async function executePhase(
 	);
 	/* why: abort the phase loop on a spawn failure rather than surfacing an
 	 * uncaught rejection or retrying a launch that can't succeed */
-	if (exitCode === CLAUDE_SPAWN_FAILED) return -1;
+	if (exitCode === CLAUDE_SPAWN_FAILED) return { kind: "abort" };
 
 	/* why: the phase Claude has exited, so its hooks no longer drive the daemon
 	 * card; the driver now works (resolve result, reload plan, spawn the next
