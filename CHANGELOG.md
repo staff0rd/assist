@@ -1,3 +1,10 @@
+# [0.390.0](https://github.com/staff0rd/assist/compare/v0.389.2...v0.390.0) (2026-07-14)
+
+
+### Features
+
+* optimistic pending launch card in web UI ([41a65c8](https://github.com/staff0rd/assist/commit/41a65c829b3124bbcf08799cfcbb806a140dc9ee))
+
 ## [0.389.2](https://github.com/staff0rd/assist/compare/v0.389.1...v0.389.2) (2026-07-14)
 
 
