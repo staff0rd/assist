@@ -1,3 +1,10 @@
+# [0.391.0](https://github.com/staff0rd/assist/compare/v0.390.1...v0.391.0) (2026-07-14)
+
+
+### Features
+
+* add Codex harness support ([3793605](https://github.com/staff0rd/assist/commit/3793605922eae81bd9f8a3812859fa2c66c4b890))
+
 ## [0.390.1](https://github.com/staff0rd/assist/compare/v0.390.0...v0.390.1) (2026-07-14)
 
 
