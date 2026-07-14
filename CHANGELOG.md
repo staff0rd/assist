@@ -1,3 +1,10 @@
+# [0.389.0](https://github.com/staff0rd/assist/compare/v0.388.6...v0.389.0) (2026-07-14)
+
+
+### Features
+
+* add type filter to backlog list ([3a5875d](https://github.com/staff0rd/assist/commit/3a5875d43f18225a3290d58d6ab38f5e1514a639))
+
 ## [0.388.6](https://github.com/staff0rd/assist/compare/v0.388.5...v0.388.6) (2026-07-14)
 
 
