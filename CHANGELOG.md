@@ -1,3 +1,10 @@
+## [0.389.2](https://github.com/staff0rd/assist/compare/v0.389.1...v0.389.2) (2026-07-14)
+
+
+### Bug Fixes
+
+* bump protocol to heal stale daemon ([9135c67](https://github.com/staff0rd/assist/commit/9135c678f416119d878680caec9f2c8c3fc0361a))
+
 ## [0.389.1](https://github.com/staff0rd/assist/compare/v0.389.0...v0.389.1) (2026-07-14)
 
 
