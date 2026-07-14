@@ -1,3 +1,10 @@
+## [0.391.2](https://github.com/staff0rd/assist/compare/v0.391.1...v0.391.2) (2026-07-14)
+
+
+### Bug Fixes
+
+* guard branch-create at cmd boundary ([b7a1e30](https://github.com/staff0rd/assist/commit/b7a1e30f37e37442c21e79c1384a544b09b404de))
+
 ## [0.391.1](https://github.com/staff0rd/assist/compare/v0.391.0...v0.391.1) (2026-07-14)
 
 
