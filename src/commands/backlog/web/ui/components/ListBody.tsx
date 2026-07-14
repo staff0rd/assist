@@ -2,10 +2,12 @@ import { Box, CircularProgress } from "@mui/material";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 import { ItemCard } from "./ItemCard";
+import type { TypeFilterValue } from "./TypeFilter";
 
 type ListBodyProps = {
 	loading: boolean;
 	query: string;
+	typeFilter: TypeFilterValue;
 	items: BacklogItemSummary[];
 	socket: SessionSocket;
 	onSelect: (item: BacklogItemSummary) => void;
@@ -24,16 +26,30 @@ const emptySx = {
 	px: 2,
 } as const;
 
-function EmptyState({ query }: { query: string }) {
+const typeNoun: Record<TypeFilterValue, string> = {
+	all: "items",
+	story: "stories",
+	bug: "bugs",
+};
+
+function EmptyState({
+	query,
+	typeFilter,
+}: {
+	query: string;
+	typeFilter: TypeFilterValue;
+}) {
+	const noun = typeNoun[typeFilter];
 	const message = query.trim()
-		? "No items match your search."
-		: "No items in the backlog.";
+		? `No ${noun} match your search.`
+		: `No ${noun} in the backlog.`;
 	return <Box sx={emptySx}>{message}</Box>;
 }
 
 export function ListBody({
 	loading,
 	query,
+	typeFilter,
 	items,
 	socket,
 	onSelect,
@@ -46,7 +62,8 @@ export function ListBody({
 			</Box>
 		);
 	}
-	if (items.length === 0) return <EmptyState query={query} />;
+	if (items.length === 0)
+		return <EmptyState query={query} typeFilter={typeFilter} />;
 	return (
 		<>
 			{items.map((item) => (

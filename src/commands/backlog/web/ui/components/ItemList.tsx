@@ -1,15 +1,15 @@
-import { Stack, Typography } from "@mui/material";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import { LastBackedUp } from "../../../../sessions/web/ui/LastBackedUp";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import { itemDetailPath } from "../itemDetailPath";
 import type { BacklogItemSummary } from "../types";
 import { useRepoCwd } from "../useRepoCwd";
 import { useSearchItems } from "../useSearchItems";
-import { CompletedToggle } from "./CompletedToggle";
 import { ListBody } from "./ListBody";
 import { RepoSummaryChips } from "./RepoSummaryChips";
 import { SearchInput } from "./SearchInput";
+import { type TypeFilterValue } from "./TypeFilter";
+import { Header } from "./Header";
 
 type ItemListProps = {
 	items: BacklogItemSummary[];
@@ -18,44 +18,27 @@ type ItemListProps = {
 	onReload: () => Promise<void>;
 };
 
-const headerSx = {
-	justifyContent: "space-between",
-	alignItems: "center",
-	mb: 3,
-} as const;
-
-const titleSx = { fontWeight: 600 } as const;
-const actionsSx = { alignItems: "center" } as const;
-
-function Header() {
-	return (
-		<Stack direction="row" sx={headerSx}>
-			<Typography variant="h5" sx={titleSx}>
-				Backlog
-			</Typography>
-			<Stack direction="row" spacing={2} sx={actionsSx}>
-				<LastBackedUp />
-				<CompletedToggle />
-			</Stack>
-		</Stack>
-	);
-}
-
 export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 	const navigate = useNavigate();
 	const cwd = useRepoCwd();
 	const { query, setQuery, results, loading: searching } = useSearchItems();
+	const [typeFilter, setTypeFilter] = useState<TypeFilterValue>("all");
 	const visible = results ?? items;
+	const filtered =
+		typeFilter === "all"
+			? visible
+			: visible.filter((item) => item.type === typeFilter);
 
 	return (
 		<>
-			<Header />
+			<Header typeFilter={typeFilter} onTypeFilterChange={setTypeFilter} />
 			<SearchInput value={query} onChange={setQuery} />
 			<RepoSummaryChips />
 			<ListBody
 				loading={loading || searching}
 				query={query}
-				items={visible}
+				typeFilter={typeFilter}
+				items={filtered}
 				socket={socket}
 				onSelect={(item) => navigate(itemDetailPath(item.id, cwd))}
 				onReload={onReload}
