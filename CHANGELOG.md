@@ -1,3 +1,10 @@
+## [0.391.3](https://github.com/staff0rd/assist/compare/v0.391.2...v0.391.3) (2026-07-14)
+
+
+### Bug Fixes
+
+* gate cwd->/mnt rewrite on WSL ([b5904ea](https://github.com/staff0rd/assist/commit/b5904eab60a84fd45d3a0a6f58e7c6c7a11fbbe1))
+
 ## [0.391.2](https://github.com/staff0rd/assist/compare/v0.391.1...v0.391.2) (2026-07-14)
 
 
