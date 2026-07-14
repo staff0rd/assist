@@ -1,3 +1,10 @@
+## [0.389.1](https://github.com/staff0rd/assist/compare/v0.389.0...v0.389.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* don't mark item done on abnormal review exit ([58f2385](https://github.com/staff0rd/assist/commit/58f238557fb319548d310201fd79b5891d422685))
+
 # [0.389.0](https://github.com/staff0rd/assist/compare/v0.388.6...v0.389.0) (2026-07-14)
 
 
