@@ -114,6 +114,33 @@ describe("findBuiltinDeny branch creation", () => {
 		expect(findBuiltinDeny(["git checkout main"])).toBeUndefined();
 		expect(findBuiltinDeny(["git switch main"])).toBeUndefined();
 	});
+
+	it("does not deny a branch-creation phrase inside a quoted argument", () => {
+		expect(
+			findBuiltinDeny([
+				'assist backlog draft --name "git checkout -b for a new feature"',
+			]),
+		).toBeUndefined();
+		expect(
+			findBuiltinDeny(['echo "explain git switch -c usage"']),
+		).toBeUndefined();
+		expect(
+			findBuiltinDeny(['echo "run git branch feature-x to create it"']),
+		).toBeUndefined();
+	});
+
+	it("still denies genuine branch creation after a command boundary", () => {
+		expect(
+			findBuiltinDeny(["cd /repo && git checkout -b feature-x"])
+				?.permissionDecision,
+		).toBe("deny");
+		expect(
+			findBuiltinDeny(["true; git switch -c feature-x"])?.permissionDecision,
+		).toBe("deny");
+		expect(
+			findBuiltinDeny(["ls | git branch feature-x"])?.permissionDecision,
+		).toBe("deny");
+	});
 });
 
 describe("findBuiltinDenyRaw gh pr edit", () => {

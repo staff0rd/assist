@@ -28,10 +28,16 @@ const BUILTIN_DENIES: { pattern: string; message: string }[] = [
 const BRANCH_CREATION_MESSAGE =
 	"Do not create branches with raw git. Use the /branch command, or 'assist branch <slug> [--jira <KEY>]' — it branches off the fresh remote default and enforces the team naming convention.";
 
+const COMMAND_BOUNDARY = String.raw`(?<=(?:^|[;&|(\n])\s*)`;
+
 const BRANCH_CREATION_REGEXES: RegExp[] = [
-	/(?<=^|\s)git\s+(?:checkout|co)\s+-[bB](?=\s|$)/,
-	/(?<=^|\s)git\s+switch\s+(?:-[cC]|--create)(?=\s|$)/,
-	/(?<=^|\s)git\s+branch\s+(?!-)\S/,
+	new RegExp(
+		COMMAND_BOUNDARY + String.raw`git\s+(?:checkout|co)\s+-[bB](?=\s|$)`,
+	),
+	new RegExp(
+		COMMAND_BOUNDARY + String.raw`git\s+switch\s+(?:-[cC]|--create)(?=\s|$)`,
+	),
+	new RegExp(COMMAND_BOUNDARY + String.raw`git\s+branch\s+(?!-)\S`),
 ];
 
 function rawDenyRegex(pattern: string): RegExp {
