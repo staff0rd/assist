@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockExecSync = vi.fn();
+const mockExecFileSync = vi.fn();
 vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
+	execFileSync: (...args: unknown[]) => mockExecFileSync(...args),
 }));
 
 const mockFindCurrentPrNumber = vi.fn();
@@ -31,21 +31,21 @@ describe("raise", () => {
 			await expect(raise({ what: "w", why: "y" })).rejects.toThrow(
 				"process.exit",
 			);
-			expect(mockExecSync).not.toHaveBeenCalled();
+			expect(mockExecFileSync).not.toHaveBeenCalled();
 		});
 
 		it("rejects without what", async () => {
 			await expect(raise({ title: "t", why: "y" })).rejects.toThrow(
 				"process.exit",
 			);
-			expect(mockExecSync).not.toHaveBeenCalled();
+			expect(mockExecFileSync).not.toHaveBeenCalled();
 		});
 
 		it("rejects without why", async () => {
 			await expect(raise({ title: "t", what: "w" })).rejects.toThrow(
 				"process.exit",
 			);
-			expect(mockExecSync).not.toHaveBeenCalled();
+			expect(mockExecFileSync).not.toHaveBeenCalled();
 		});
 	});
 
@@ -55,7 +55,7 @@ describe("raise", () => {
 				raise({ title: "Built by Claude", what: "w", why: "y" }),
 			).rejects.toThrow("process.exit");
 			expect(mockExit).toHaveBeenCalledWith(1);
-			expect(mockExecSync).not.toHaveBeenCalled();
+			expect(mockExecFileSync).not.toHaveBeenCalled();
 		});
 	});
 
@@ -63,8 +63,16 @@ describe("raise", () => {
 		it("creates the PR with an assembled body", () => {
 			raise({ title: "feat: x", what: "Adds x", why: "Needed x" });
 
-			expect(mockExecSync).toHaveBeenCalledWith(
-				"gh pr create --title 'feat: x' --body '## What\n\nAdds x\n\n## Why\n\nNeeded x'",
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"create",
+					"--title",
+					"feat: x",
+					"--body",
+					"## What\n\nAdds x\n\n## Why\n\nNeeded x",
+				],
 				{ stdio: "inherit" },
 			);
 		});
@@ -77,10 +85,13 @@ describe("raise", () => {
 				resolves: ["BAD-671"],
 			});
 
-			expect(mockExecSync).toHaveBeenCalledWith(
-				expect.stringContaining(
-					"Resolves https://example.atlassian.net/browse/BAD-671",
-				),
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				expect.arrayContaining([
+					expect.stringContaining(
+						"Resolves https://example.atlassian.net/browse/BAD-671",
+					),
+				]),
 				{ stdio: "inherit" },
 			);
 		});
@@ -96,14 +107,23 @@ describe("raise", () => {
 				"process.exit",
 			);
 			expect(mockExit).toHaveBeenCalledWith(1);
-			expect(mockExecSync).not.toHaveBeenCalled();
+			expect(mockExecFileSync).not.toHaveBeenCalled();
 		});
 
 		it("overwrites title and body with --force", () => {
 			raise({ title: "t", what: "w", why: "y", force: true });
 
-			expect(mockExecSync).toHaveBeenCalledWith(
-				"gh pr edit 42 --title t --body '## What\n\nw\n\n## Why\n\ny'",
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"edit",
+					"42",
+					"--title",
+					"t",
+					"--body",
+					"## What\n\nw\n\n## Why\n\ny",
+				],
 				{ stdio: "inherit" },
 			);
 		});
@@ -111,7 +131,7 @@ describe("raise", () => {
 
 	describe("when gh fails", () => {
 		it("exits with code 1", async () => {
-			mockExecSync.mockImplementation(() => {
+			mockExecFileSync.mockImplementation(() => {
 				throw new Error("gh failed");
 			});
 

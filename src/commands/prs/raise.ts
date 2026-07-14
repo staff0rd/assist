@@ -1,8 +1,11 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { recordSessionRefs } from "../../shared/db/recordSessionRefs";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
-import { shellQuote } from "../../shared/shellQuote";
-import { buildCreateArgs, type CreateOptions } from "./buildCreateArgs";
+import {
+	buildCreateArgs,
+	buildEditArgs,
+	type CreateOptions,
+} from "./buildCreateArgs";
 import { buildPrBody } from "./buildPrBody";
 import { readSessionPrRef } from "./readSessionPrRef";
 import { findCurrentPrNumber } from "./shared";
@@ -44,15 +47,11 @@ export async function raise(options: RaiseOptions): Promise<void> {
 
 	const args =
 		existing !== null
-			? [
-					`gh pr edit ${existing}`,
-					`--title ${shellQuote(options.title)}`,
-					`--body ${shellQuote(body)}`,
-				]
+			? buildEditArgs(existing, options.title, body)
 			: buildCreateArgs(options.title, body, options);
 
 	try {
-		execSync(args.join(" "), { stdio: "inherit" });
+		execFileSync("gh", args, { stdio: "inherit" });
 	} catch {
 		process.exit(1);
 	}

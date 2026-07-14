@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockExecSync = vi.fn();
+const mockExecFileSync = vi.fn();
 vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
+	execFileSync: (...args: unknown[]) => mockExecFileSync(...args),
 }));
 
 const mockGetCurrentPr = vi.fn();
@@ -32,14 +32,21 @@ describe("edit", () => {
 	it("errors when no sections are supplied", () => {
 		expect(() => edit({})).toThrow("process.exit");
 		expect(mockExit).toHaveBeenCalledWith(1);
-		expect(mockExecSync).not.toHaveBeenCalled();
+		expect(mockExecFileSync).not.toHaveBeenCalled();
 	});
 
 	it("replaces only the supplied section, preserving the rest", () => {
 		edit({ what: "new what" });
 
-		expect(mockExecSync).toHaveBeenCalledWith(
-			"gh pr edit 42 --body '## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how'",
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"pr",
+				"edit",
+				"42",
+				"--body",
+				"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how",
+			],
 			{ stdio: "inherit" },
 		);
 	});
@@ -47,8 +54,17 @@ describe("edit", () => {
 	it("updates the title without touching the body sections", () => {
 		edit({ title: "feat: new title" });
 
-		expect(mockExecSync).toHaveBeenCalledWith(
-			"gh pr edit 42 --title 'feat: new title' --body '## What\n\nold what\n\n## Why\n\nold why\n\n## How\n\nold how'",
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"pr",
+				"edit",
+				"42",
+				"--title",
+				"feat: new title",
+				"--body",
+				"## What\n\nold what\n\n## Why\n\nold why\n\n## How\n\nold how",
+			],
 			{ stdio: "inherit" },
 		);
 	});
@@ -56,10 +72,13 @@ describe("edit", () => {
 	it("rebuilds Why with resolved Jira URLs appended", () => {
 		edit({ why: "new why", resolves: ["BAD-671"] });
 
-		expect(mockExecSync).toHaveBeenCalledWith(
-			expect.stringContaining(
-				"## Why\n\nnew why\n\nResolves https://example.atlassian.net/browse/BAD-671",
-			),
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			expect.arrayContaining([
+				expect.stringContaining(
+					"## Why\n\nnew why\n\nResolves https://example.atlassian.net/browse/BAD-671",
+				),
+			]),
 			{ stdio: "inherit" },
 		);
 	});
@@ -67,10 +86,13 @@ describe("edit", () => {
 	it("appends resolves to the existing Why when only --resolves is given", () => {
 		edit({ resolves: ["BAD-671"] });
 
-		expect(mockExecSync).toHaveBeenCalledWith(
-			expect.stringContaining(
-				"## Why\n\nold why\n\nResolves https://example.atlassian.net/browse/BAD-671",
-			),
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			expect.arrayContaining([
+				expect.stringContaining(
+					"## Why\n\nold why\n\nResolves https://example.atlassian.net/browse/BAD-671",
+				),
+			]),
 			{ stdio: "inherit" },
 		);
 	});
@@ -83,7 +105,9 @@ describe("edit", () => {
 
 		edit({ why: "new why" });
 
-		const body = mockExecSync.mock.calls[0][0] as string;
+		const body = (mockExecFileSync.mock.calls[0][1] as string[]).at(
+			-1,
+		) as string;
 		expect(body).toContain(
 			"## Why\n\nnew why\n\nResolves https://example.atlassian.net/browse/BAD-1",
 		);
@@ -97,7 +121,9 @@ describe("edit", () => {
 
 		edit({ resolves: ["BAD-2"] });
 
-		const body = mockExecSync.mock.calls[0][0] as string;
+		const body = (mockExecFileSync.mock.calls[0][1] as string[]).at(
+			-1,
+		) as string;
 		expect(body).toContain(
 			"Resolves https://example.atlassian.net/browse/BAD-2",
 		);
@@ -112,8 +138,9 @@ describe("edit", () => {
 
 		edit({ how: "new how" });
 
-		expect(mockExecSync).toHaveBeenCalledWith(
-			expect.stringContaining("## How\n\nnew how"),
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			expect.arrayContaining([expect.stringContaining("## How\n\nnew how")]),
 			{ stdio: "inherit" },
 		);
 	});
@@ -121,11 +148,11 @@ describe("edit", () => {
 	it("rejects content that references Claude", () => {
 		expect(() => edit({ what: "built by Claude" })).toThrow("process.exit");
 		expect(mockExit).toHaveBeenCalledWith(1);
-		expect(mockExecSync).not.toHaveBeenCalled();
+		expect(mockExecFileSync).not.toHaveBeenCalled();
 	});
 
 	it("exits with code 1 when gh fails", () => {
-		mockExecSync.mockImplementation(() => {
+		mockExecFileSync.mockImplementation(() => {
 			throw new Error("gh failed");
 		});
 

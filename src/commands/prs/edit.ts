@@ -1,5 +1,4 @@
-import { execSync } from "node:child_process";
-import { shellQuote } from "../../shared/shellQuote";
+import { execFileSync } from "node:child_process";
 import { editPrBody } from "./editPrBody";
 import { getCurrentPr } from "./shared";
 import { validatePrContent } from "./validatePrContent";
@@ -31,12 +30,12 @@ export function edit(options: EditOptions): void {
 	const newBody = editPrBody(body, options);
 	validatePrContent(options.title ?? "", newBody);
 
-	const args = [`gh pr edit ${number}`];
-	if (options.title) args.push(`--title ${shellQuote(options.title)}`);
-	args.push(`--body ${shellQuote(newBody)}`);
+	const args = ["pr", "edit", String(number)];
+	if (options.title) args.push("--title", options.title);
+	args.push("--body", newBody);
 
 	try {
-		execSync(args.join(" "), { stdio: "inherit" });
+		execFileSync("gh", args, { stdio: "inherit" });
 	} catch {
 		process.exit(1);
 	}

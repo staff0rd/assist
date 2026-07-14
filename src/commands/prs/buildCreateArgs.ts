@@ -1,5 +1,3 @@
-import { shellQuote } from "../../shared/shellQuote";
-
 export type CreateOptions = {
 	title?: string;
 	body?: string;
@@ -13,16 +11,16 @@ export type CreateOptions = {
 	milestone?: string;
 };
 
+export function buildEditArgs(number: number, title: string, body: string) {
+	return ["pr", "edit", String(number), "--title", title, "--body", body];
+}
+
 export function buildCreateArgs(
 	title: string,
 	body: string,
 	options: CreateOptions,
 ) {
-	const args = [
-		"gh pr create",
-		`--title ${shellQuote(title)}`,
-		`--body ${shellQuote(body)}`,
-	];
+	const args = ["pr", "create", "--title", title, "--body", body];
 
 	const valueFlags = [
 		["--base", options.base],
@@ -30,7 +28,7 @@ export function buildCreateArgs(
 		["--milestone", options.milestone],
 	] as const;
 	for (const [flag, value] of valueFlags) {
-		if (value) args.push(`${flag} ${shellQuote(value)}`);
+		if (value) args.push(flag, value);
 	}
 
 	if (options.draft) args.push("--draft");
@@ -43,7 +41,7 @@ export function buildCreateArgs(
 	] as const;
 	for (const [flag, values] of repeatableFlags) {
 		for (const value of values ?? []) {
-			args.push(`${flag} ${shellQuote(value)}`);
+			args.push(flag, value);
 		}
 	}
 
