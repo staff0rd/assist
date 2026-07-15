@@ -2,18 +2,19 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { backlogItemsCache } from "./backlogItemsCache";
+import type { BacklogFilter } from "../parseBacklogFilter";
 import type { BacklogItemSummary } from "./types";
 
 const loadBacklogItems = vi.fn();
 let cwd: string | undefined;
-let showCompleted: boolean;
+let filter: BacklogFilter;
 
 vi.mock("./loadBacklogItems", () => ({
 	loadBacklogItems: (...args: unknown[]) => loadBacklogItems(...args),
 }));
 vi.mock("./useRepoCwd", () => ({ useRepoCwd: () => cwd }));
-vi.mock("./useShowCompleted", () => ({
-	useShowCompleted: () => [showCompleted, vi.fn()] as const,
+vi.mock("./useBacklogFilter", () => ({
+	useBacklogFilter: () => [filter, vi.fn()] as const,
 }));
 
 import { useBacklogItems } from "./useBacklogItems";
@@ -39,7 +40,7 @@ function resolveLoad(items: BacklogItemSummary[], found = true) {
 
 beforeEach(() => {
 	cwd = "/repo";
-	showCompleted = false;
+	filter = "todo";
 	loadBacklogItems.mockReset();
 });
 
@@ -61,7 +62,7 @@ describe("useBacklogItems", () => {
 	});
 
 	it("renders cached items immediately with no spinner, then revalidates silently", async () => {
-		backlogItemsCache.set("/repo", false, [item(1)]);
+		backlogItemsCache.set("/repo", "todo", [item(1)]);
 		resolveLoad([item(1), item(2)]);
 
 		const { result } = renderHook(() => useBacklogItems());
@@ -78,7 +79,7 @@ describe("useBacklogItems", () => {
 	});
 
 	it("keeps the same items reference when revalidation finds no change", async () => {
-		backlogItemsCache.set("/repo", false, [item(1)]);
+		backlogItemsCache.set("/repo", "todo", [item(1)]);
 		resolveLoad([item(1)]);
 
 		const { result } = renderHook(() => useBacklogItems());
@@ -92,7 +93,7 @@ describe("useBacklogItems", () => {
 	});
 
 	it("shows the spinner when switching to an uncached cwd", async () => {
-		backlogItemsCache.set("/repo", false, [item(1)]);
+		backlogItemsCache.set("/repo", "todo", [item(1)]);
 		resolveLoad([item(1)]);
 
 		const { result, rerender } = renderHook(() => useBacklogItems());
@@ -111,7 +112,7 @@ describe("useBacklogItems", () => {
 	it("picks up a cross-machine status change via background polling without remount", async () => {
 		vi.useFakeTimers();
 		try {
-			backlogItemsCache.set("/repo", false, [item(1)]);
+			backlogItemsCache.set("/repo", "todo", [item(1)]);
 			resolveLoad([item(1)]);
 
 			const { result } = renderHook(() => useBacklogItems());
@@ -133,26 +134,19 @@ describe("useBacklogItems", () => {
 		}
 	});
 
-	it("re-seeds from the matching cache entry when showCompleted toggles", async () => {
-		backlogItemsCache.set("/repo", false, [item(1)]);
-		backlogItemsCache.set("/repo", true, [
-			item(1),
-			item(2, { status: "done" }),
-		]);
+	it("re-seeds from the matching cache entry when the filter changes", async () => {
+		backlogItemsCache.set("/repo", "todo", [item(1)]);
+		backlogItemsCache.set("/repo", "done", [item(2, { status: "done" })]);
 		resolveLoad([item(1)]);
 
 		const { result, rerender } = renderHook(() => useBacklogItems());
 		expect(result.current.items).toEqual([item(1)]);
 
-		// Toggle on: must show the completed-key cache, not the stale active set.
-		showCompleted = true;
-		resolveLoad([item(1), item(2, { status: "done" })]);
+		filter = "done";
+		resolveLoad([item(2, { status: "done" })]);
 		rerender();
 
 		expect(result.current.loading).toBe(false);
-		expect(result.current.items).toEqual([
-			item(1),
-			item(2, { status: "done" }),
-		]);
+		expect(result.current.items).toEqual([item(2, { status: "done" })]);
 	});
 });

@@ -1,3 +1,4 @@
+import type { BacklogFilter } from "../parseBacklogFilter";
 import { revalidateBacklog } from "./revalidateBacklog";
 import type { BacklogItemSummary } from "./types";
 
@@ -12,12 +13,11 @@ type Apply = (found: boolean, items: BacklogItemSummary[]) => void;
  */
 export function startBacklogPolling(
 	cwd: string | undefined,
-	showCompleted: boolean,
+	filter: BacklogFilter,
 	apply: Apply,
 ): () => void {
 	const controller = new AbortController();
-	const poll = () =>
-		revalidateBacklog(cwd, showCompleted, controller.signal, apply);
+	const poll = () => revalidateBacklog(cwd, filter, controller.signal, apply);
 	poll();
 	const interval = setInterval(poll, POLL_INTERVAL_MS);
 	return () => {

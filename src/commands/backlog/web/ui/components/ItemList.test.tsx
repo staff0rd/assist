@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
@@ -46,7 +52,8 @@ function renderList(items: BacklogItemSummary[]) {
 }
 
 function clickFilter(label: string) {
-	fireEvent.click(screen.getByRole("button", { name: label }));
+	const group = screen.getByRole("group", { name: "Type filter" });
+	fireEvent.click(within(group).getByRole("button", { name: label }));
 }
 
 afterEach(cleanup);

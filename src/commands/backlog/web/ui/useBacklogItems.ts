@@ -5,45 +5,45 @@ import { fetchItems } from "./fetchItems";
 import { itemsEqual } from "./itemsEqual";
 import { startBacklogPolling } from "./startBacklogPolling";
 import type { BacklogItemSummary } from "./types";
+import { useBacklogFilter } from "./useBacklogFilter";
 import { useRepoCwd } from "./useRepoCwd";
-import { useShowCompleted } from "./useShowCompleted";
 
 export function useBacklogItems() {
 	const cwd = useRepoCwd();
-	const [showCompleted] = useShowCompleted();
-	const cached = backlogItemsCache.get(cwd, showCompleted);
+	const [filter] = useBacklogFilter();
+	const cached = backlogItemsCache.get(cwd, filter);
 	const seed = cached ?? [];
 	const isMiss = cached === undefined;
 	const [items, setItems] = useState<BacklogItemSummary[]>(seed);
 	const [loading, setLoading] = useState(isMiss);
 	const [exists, setExists] = useState(true);
 	const [loadedCwd, setLoadedCwd] = useState(cwd);
-	const [loadedShowCompleted, setLoadedShowCompleted] = useState(showCompleted);
+	const [loadedFilter, setLoadedFilter] = useState(filter);
 
 	// why: reset during render so the previous key's stale list never commits and loading reflects the new key's cache hit/miss before the effect runs.
-	if (cwd !== loadedCwd || showCompleted !== loadedShowCompleted) {
+	if (cwd !== loadedCwd || filter !== loadedFilter) {
 		setLoadedCwd(cwd);
-		setLoadedShowCompleted(showCompleted);
+		setLoadedFilter(filter);
 		setItems(seed);
 		setLoading(isMiss);
 		setExists(true);
 	}
 
 	const reload = useCallback(async () => {
-		const next = await fetchItems({ cwd, showCompleted });
+		const next = await fetchItems({ cwd, filter });
 		setItems(next);
-		backlogItemsCache.set(cwd, showCompleted, next);
+		backlogItemsCache.set(cwd, filter, next);
 		setLoading(false);
-	}, [cwd, showCompleted]);
+	}, [cwd, filter]);
 
 	useEffect(() => {
 		setExists(true);
-		return startBacklogPolling(cwd, showCompleted, (found, next) => {
+		return startBacklogPolling(cwd, filter, (found, next) => {
 			setExists(found);
 			setItems((prev) => (itemsEqual(prev, next) ? prev : next));
 			setLoading(false);
 		});
-	}, [cwd, showCompleted]);
+	}, [cwd, filter]);
 
 	const initialize = useCallback(async () => {
 		await initBacklog(cwd);

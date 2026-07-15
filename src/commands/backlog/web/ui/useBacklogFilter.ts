@@ -1,15 +1,16 @@
 import { useSyncExternalStore } from "react";
+import { type BacklogFilter, parseBacklogFilter } from "../parseBacklogFilter";
 
-const STORAGE_KEY = "backlog-show-completed";
+const STORAGE_KEY = "backlog-filter";
 
 const listeners = new Set<() => void>();
 let current = readFromStorage();
 
-function readFromStorage(): boolean {
+function readFromStorage(): BacklogFilter {
 	try {
-		return localStorage.getItem(STORAGE_KEY) === "true";
+		return parseBacklogFilter(localStorage.getItem(STORAGE_KEY));
 	} catch {
-		return false;
+		return "todo";
 	}
 }
 
@@ -22,15 +23,15 @@ function getSnapshot() {
 	return current;
 }
 
-function setShowCompleted(next: boolean) {
+function setBacklogFilter(next: BacklogFilter) {
 	current = next;
 	try {
-		localStorage.setItem(STORAGE_KEY, String(next));
+		localStorage.setItem(STORAGE_KEY, next);
 	} catch {}
 	for (const cb of listeners) cb();
 }
 
-export function useShowCompleted() {
+export function useBacklogFilter() {
 	const value = useSyncExternalStore(subscribe, getSnapshot);
-	return [value, setShowCompleted] as const;
+	return [value, setBacklogFilter] as const;
 }

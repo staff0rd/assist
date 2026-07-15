@@ -14,7 +14,7 @@ export function backlogCwds(sessions: SessionInfo[]): string[] {
 
 async function starredKeysForCwd(cwd: string): Promise<string[]> {
 	try {
-		const items = await fetchItems({ cwd, showCompleted: true });
+		const items = await fetchItems({ cwd, filter: "all" });
 		return items
 			.filter((item) => item.starred)
 			.map((item) => starTargetKey(cwd, item.id));

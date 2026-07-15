@@ -83,8 +83,8 @@ describe("listItems", () => {
 		});
 	});
 
-	describe("when Show completed is off (default)", () => {
-		it("excludes done and wontdo items from the list", async () => {
+	describe("when the filter is todo (default)", () => {
+		it("lists only todo and in-progress items", async () => {
 			mockLoadBacklog.mockResolvedValue([
 				makeItem(1, "todo"),
 				makeItem(2, "done"),
@@ -109,17 +109,57 @@ describe("listItems", () => {
 
 			expect(getJson().map((item) => item.id)).toEqual([5]);
 		});
+
+		it("falls back to todo when the filter param is unrecognised", async () => {
+			mockLoadBacklog.mockResolvedValue([
+				makeItem(1, "todo"),
+				makeItem(2, "done"),
+			]);
+			const { req, res, getJson } = makeReqRes("/api/items?filter=bogus");
+
+			await listItems(req, res);
+
+			expect(getJson().map((item) => item.id)).toEqual([1]);
+		});
 	});
 
-	describe("when Show completed is on", () => {
-		it("includes done and wontdo items in the list", async () => {
+	describe("when the filter is done", () => {
+		it("lists only done and wontdo items", async () => {
 			mockLoadBacklog.mockResolvedValue([
 				makeItem(1, "todo"),
 				makeItem(2, "done"),
 				makeItem(3, "in-progress"),
 				makeItem(4, "wontdo"),
 			]);
-			const { req, res, getJson } = makeReqRes("/api/items?showCompleted=true");
+			const { req, res, getJson } = makeReqRes("/api/items?filter=done");
+
+			await listItems(req, res);
+
+			expect(getJson().map((item) => item.id)).toEqual([4, 2]);
+		});
+
+		it("keeps only completed items in search results", async () => {
+			mockSearchBacklog.mockResolvedValue([
+				makeItem(5, "todo"),
+				makeItem(6, "done"),
+			]);
+			const { req, res, getJson } = makeReqRes("/api/items?q=foo&filter=done");
+
+			await listItems(req, res);
+
+			expect(getJson().map((item) => item.id)).toEqual([6]);
+		});
+	});
+
+	describe("when the filter is all", () => {
+		it("lists every item regardless of status", async () => {
+			mockLoadBacklog.mockResolvedValue([
+				makeItem(1, "todo"),
+				makeItem(2, "done"),
+				makeItem(3, "in-progress"),
+				makeItem(4, "wontdo"),
+			]);
+			const { req, res, getJson } = makeReqRes("/api/items?filter=all");
 
 			await listItems(req, res);
 
@@ -131,9 +171,7 @@ describe("listItems", () => {
 				makeItem(5, "todo"),
 				makeItem(6, "done"),
 			]);
-			const { req, res, getJson } = makeReqRes(
-				"/api/items?q=foo&showCompleted=true",
-			);
+			const { req, res, getJson } = makeReqRes("/api/items?q=foo&filter=all");
 
 			await listItems(req, res);
 

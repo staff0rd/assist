@@ -13,6 +13,7 @@ export function TypeFilter({ value, onChange }: TypeFilterProps) {
 			value={value}
 			exclusive
 			size="small"
+			aria-label="Type filter"
 			onChange={(_event, next: TypeFilterValue | null) => {
 				if (next !== null) onChange(next);
 			}}

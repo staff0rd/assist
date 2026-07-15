@@ -1,22 +1,23 @@
-import { FormControlLabel, Switch } from "@mui/material";
-import { useShowCompleted } from "../useShowCompleted";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import type { BacklogFilter } from "../../parseBacklogFilter";
+import { useBacklogFilter } from "../useBacklogFilter";
 
 export function CompletedToggle() {
-	const [showCompleted, setShowCompleted] = useShowCompleted();
+	const [filter, setFilter] = useBacklogFilter();
 
 	return (
-		<FormControlLabel
-			control={
-				<Switch
-					checked={showCompleted}
-					onChange={() => setShowCompleted(!showCompleted)}
-					size="small"
-				/>
-			}
-			label="Show completed"
-			slotProps={{
-				typography: { variant: "body2", color: "text.secondary" },
+		<ToggleButtonGroup
+			value={filter}
+			exclusive
+			size="small"
+			aria-label="Status filter"
+			onChange={(_event, next: BacklogFilter | null) => {
+				if (next !== null) setFilter(next);
 			}}
-		/>
+		>
+			<ToggleButton value="todo">Todo</ToggleButton>
+			<ToggleButton value="done">Done</ToggleButton>
+			<ToggleButton value="all">All</ToggleButton>
+		</ToggleButtonGroup>
 	);
 }
