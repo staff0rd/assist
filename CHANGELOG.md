@@ -1,3 +1,10 @@
+# [0.392.0](https://github.com/staff0rd/assist/compare/v0.391.4...v0.392.0) (2026-07-15)
+
+
+### Features
+
+* add Codex command auto-approval hook ([09c6eb4](https://github.com/staff0rd/assist/commit/09c6eb4f2c3b36ed7878e5e89052cf0e5deb92e4))
+
 ## [0.391.4](https://github.com/staff0rd/assist/compare/v0.391.3...v0.391.4) (2026-07-15)
 
 
