@@ -46,6 +46,7 @@ describe("listUsagePeaks", () => {
 					tokensUp: 0,
 					tokensDown: 0,
 					avgContextPct: null,
+					phaseCount: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -57,6 +58,7 @@ describe("listUsagePeaks", () => {
 					tokensUp: 0,
 					tokensDown: 0,
 					avgContextPct: null,
+					phaseCount: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -68,6 +70,7 @@ describe("listUsagePeaks", () => {
 					tokensUp: 0,
 					tokensDown: 0,
 					avgContextPct: null,
+					phaseCount: null,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -93,6 +96,7 @@ describe("listUsagePeaks", () => {
 					tokensUp: 0,
 					tokensDown: 0,
 					avgContextPct: null,
+					phaseCount: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -104,6 +108,7 @@ describe("listUsagePeaks", () => {
 					tokensUp: 0,
 					tokensDown: 0,
 					avgContextPct: null,
+					phaseCount: null,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -127,6 +132,7 @@ describe("listUsagePeaks", () => {
 					tokensUp: 0,
 					tokensDown: 0,
 					avgContextPct: null,
+					phaseCount: null,
 					createdAt: expect.any(Date),
 				},
 				{
@@ -138,6 +144,7 @@ describe("listUsagePeaks", () => {
 					tokensUp: 0,
 					tokensDown: 0,
 					avgContextPct: null,
+					phaseCount: null,
 					createdAt: expect.any(Date),
 				},
 			]);
@@ -188,15 +195,17 @@ describe("listUsagePeaks", () => {
 
 			const [row] = await listUsagePeaks(orm);
 			expect(row?.avgContextPct).toBe(40);
+			expect(row?.phaseCount).toBe(2);
 		});
 
-		it("leaves avgContextPct null for a cycle with no readings", async () => {
+		it("leaves avgContextPct and phaseCount null for a cycle with no readings", async () => {
 			await recordUsagePeak(orm, {
 				five_hour: { used_percentage: 40, resets_at: 1000 },
 			});
 
 			const [row] = await listUsagePeaks(orm);
 			expect(row?.avgContextPct).toBeNull();
+			expect(row?.phaseCount).toBeNull();
 		});
 	});
 });

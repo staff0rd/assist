@@ -4,6 +4,7 @@ import { phaseCycleContext, usagePeaks } from "./schema";
 
 export type UsagePeakRow = typeof usagePeaks.$inferSelect & {
 	avgContextPct: number | null;
+	phaseCount: number | null;
 };
 
 /**
@@ -26,6 +27,7 @@ export async function listUsagePeaks(
 			>`cast(avg(${phaseCycleContext.peakContextPct}) as double precision)`.as(
 				"avg_context_pct",
 			),
+			phaseCount: count().as("phase_count"),
 		})
 		.from(phaseCycleContext)
 		.groupBy(phaseCycleContext.window, phaseCycleContext.resetsAt)
@@ -35,6 +37,7 @@ export async function listUsagePeaks(
 		.select({
 			...getTableColumns(usagePeaks),
 			avgContextPct: avgContext.avgContextPct,
+			phaseCount: avgContext.phaseCount,
 		})
 		.from(usagePeaks)
 		.leftJoin(

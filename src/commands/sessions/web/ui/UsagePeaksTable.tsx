@@ -24,6 +24,11 @@ export function UsagePeaksTable({ peaks }: { peaks: UsagePeakRowData[] }) {
 								<span>Avg context</span>
 							</Tooltip>
 						</TableCell>
+						<TableCell align="right">
+							<Tooltip title="Number of phase readings behind the average.">
+								<span>Phases</span>
+							</Tooltip>
+						</TableCell>
 						<TableCell align="right">Tokens spent</TableCell>
 						<TableCell align="right">Cycle reset</TableCell>
 					</TableRow>
