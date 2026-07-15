@@ -8,8 +8,7 @@ export const RESTART_ITEMS: {
 	{
 		target: "daemon",
 		label: "Restart daemon",
-		message:
-			"This restarts the sessions daemon. Running claude sessions will resume.",
+		message: "This restarts the sessions daemon. Running sessions will resume.",
 	},
 	{
 		target: "webserver",

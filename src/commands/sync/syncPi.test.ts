@@ -79,7 +79,11 @@ describe("syncPi", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockIsHarnessAvailable.mockReturnValue(true);
-		mockReaddirSync.mockReturnValue(["refine.md", "notes.txt"]);
+		mockReaddirSync.mockImplementation((dir: string) =>
+			dir.endsWith("commands")
+				? ["refine.md", "notes.txt"]
+				: ["permission-gate.ts", "status-driver.ts"],
+		);
 		mockReadFileSync.mockReturnValue("---\ndescription: Refine it\n---\nbody");
 	});
 
@@ -125,7 +129,7 @@ describe("syncPi", () => {
 		);
 	});
 
-	it("installs the permission-gate extension from the pi source dir", () => {
+	it("installs the permission-gate and status-driver extensions from the pi source dir", () => {
 		syncPi("/claude");
 
 		expect(mockCopyFileSync).toHaveBeenCalledWith(
@@ -135,6 +139,10 @@ describe("syncPi", () => {
 				"extensions",
 				"assist-permission-gate.ts",
 			),
+		);
+		expect(mockCopyFileSync).toHaveBeenCalledWith(
+			path.join("/claude", "..", "pi", "status-driver.ts"),
+			path.join(harnesses.pi.homeDir, "extensions", "assist-status-driver.ts"),
 		);
 	});
 });

@@ -3,42 +3,54 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockMkdirSync = vi.fn();
 const mockCopyFileSync = vi.fn();
+const mockReaddirSync = vi.fn();
 
 vi.mock("node:fs", () => ({
 	mkdirSync: (...args: unknown[]) => mockMkdirSync(...args),
 	copyFileSync: (...args: unknown[]) => mockCopyFileSync(...args),
+	readdirSync: (...args: unknown[]) => mockReaddirSync(...args),
 }));
 
 import { harnesses } from "../../shared/harnesses";
-import {
-	PI_PERMISSION_GATE_FILE,
-	piPermissionGateTarget,
-	syncPiHooks,
-} from "./syncPiHooks";
+import { piExtensionsDir, syncPiHooks } from "./syncPiHooks";
 
 describe("syncPiHooks", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockReaddirSync.mockReturnValue([
+			"permission-gate.ts",
+			"status-driver.ts",
+			"README.md",
+		]);
 	});
 
-	it("copies the extension source into ~/.pi/agent/extensions", () => {
-		const source = "/repo/pi/permission-gate.ts";
+	it("copies every .ts extension into ~/.pi/agent/extensions, namespaced with assist-", () => {
+		const source = "/repo/pi";
 		syncPiHooks(source);
 
-		const target = path.join(
-			harnesses.pi.homeDir,
-			"extensions",
-			PI_PERMISSION_GATE_FILE,
+		const dir = piExtensionsDir();
+		expect(mockMkdirSync).toHaveBeenCalledWith(dir, { recursive: true });
+		expect(mockCopyFileSync).toHaveBeenCalledWith(
+			path.join(source, "permission-gate.ts"),
+			path.join(dir, "assist-permission-gate.ts"),
 		);
-		expect(mockMkdirSync).toHaveBeenCalledWith(path.dirname(target), {
-			recursive: true,
-		});
-		expect(mockCopyFileSync).toHaveBeenCalledWith(source, target);
+		expect(mockCopyFileSync).toHaveBeenCalledWith(
+			path.join(source, "status-driver.ts"),
+			path.join(dir, "assist-status-driver.ts"),
+		);
 	});
 
-	it("targets the pi harness home dir", () => {
-		expect(piPermissionGateTarget()).toBe(
-			path.join(harnesses.pi.homeDir, "extensions", PI_PERMISSION_GATE_FILE),
+	it("ignores non-.ts files", () => {
+		syncPiHooks("/repo/pi");
+		expect(mockCopyFileSync).not.toHaveBeenCalledWith(
+			expect.anything(),
+			path.join(piExtensionsDir(), "assist-README.md"),
+		);
+	});
+
+	it("targets the pi harness extensions dir", () => {
+		expect(piExtensionsDir()).toBe(
+			path.join(harnesses.pi.homeDir, "extensions"),
 		);
 	});
 });

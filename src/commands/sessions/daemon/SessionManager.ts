@@ -1,4 +1,5 @@
 // assist-maintainability-override: 60
+import type { HarnessKind } from "../../../shared/harnesses";
 import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
@@ -92,8 +93,15 @@ export class SessionManager {
 	private readonly spawnWith = (create: (id: string) => Session): string =>
 		this.add(create(sessionLimits.nextId(this.sessions.size, this.idCounter)));
 
-	spawn(prompt?: string, cwd?: string, design?: boolean): string {
-		return this.spawnWith((id) => createSession(id, prompt, cwd, design));
+	spawn(
+		prompt?: string,
+		cwd?: string,
+		design?: boolean,
+		harness?: HarnessKind,
+	): string {
+		return this.spawnWith((id) =>
+			createSession(id, prompt, cwd, design, harness),
+		);
 	}
 
 	spawnRun(runName: string, runArgs: string[], cwd?: string): string {

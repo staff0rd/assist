@@ -26,7 +26,9 @@ export function CardActionButtons({
 			{session.cwd && <OpenInCodeButton cwd={session.cwd} variant="card" />}
 			{pr && session.cwd && <OpenPrButton pr={pr} />}
 			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}
-			{onRestart && <RestartButton onRestart={onRestart} />}
+			{onRestart && (
+				<RestartButton onRestart={onRestart} harness={session.harness} />
+			)}
 			{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
 			<SessionStarButton session={session} />
 			{target && (

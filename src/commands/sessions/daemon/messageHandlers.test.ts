@@ -68,7 +68,12 @@ describe("create handler", () => {
 			design: true,
 		});
 
-		expect(m.spawn).toHaveBeenCalledWith("make it pop", "/repo", true);
+		expect(m.spawn).toHaveBeenCalledWith(
+			"make it pop",
+			"/repo",
+			true,
+			undefined,
+		);
 		expect(daemonLogMock).toHaveBeenCalledWith(
 			"create: design session (cwd=/repo)",
 		);
@@ -86,8 +91,24 @@ describe("create handler", () => {
 			cwd: "/repo",
 		});
 
-		expect(m.spawn).toHaveBeenCalledWith("hello", "/repo", false);
+		expect(m.spawn).toHaveBeenCalledWith("hello", "/repo", false, undefined);
 		expect(daemonLogMock).not.toHaveBeenCalled();
+	});
+
+	it("forwards the harness and logs it for a pi session", () => {
+		const m = fakeManager();
+		const client = fakeClient();
+
+		messageHandlers.create(client as never, m, {
+			prompt: "hello",
+			cwd: "/repo",
+			harness: "pi",
+		});
+
+		expect(m.spawn).toHaveBeenCalledWith("hello", "/repo", false, "pi");
+		expect(daemonLogMock).toHaveBeenCalledWith(
+			"create: pi session (cwd=/repo)",
+		);
 	});
 });
 

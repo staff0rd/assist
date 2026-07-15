@@ -1,3 +1,4 @@
+import type { HarnessKind } from "../../../../shared/harnesses";
 import type { SessionType } from "../../shared/deriveHistoryFields";
 import type { SessionOrigin } from "../../shared/parseSessionFile";
 import type { SessionInfoBase } from "../../shared/SessionInfoBase";
@@ -36,6 +37,7 @@ export type HistoricalSession = {
 	sessionType?: SessionType;
 	itemId?: number;
 	prompt?: string;
+	harness?: HarnessKind;
 };
 
 export type HistoryCardHandlers = {

@@ -1,5 +1,7 @@
 import { randomUUID } from "node:crypto";
+import type { HarnessKind } from "../../../shared/harnesses";
 import { spawnClaude } from "./spawnClaude";
+import { spawnPi } from "./spawnPi";
 import { spawnRun } from "./spawnRun";
 import type { Session, SessionStatus } from "./types";
 
@@ -24,7 +26,9 @@ export function createSession(
 	prompt?: string,
 	cwd?: string,
 	design?: boolean,
+	harness?: HarnessKind,
 ): Session {
+	if (harness === "pi") return createPiSession(id, prompt, cwd);
 	/* why: assign the claude conversation id up front so the card binds to the
 	 * transcript this process writes, not the newest unclaimed .jsonl in the cwd
 	 * (which races concurrent sessions in the same repo) (#413). */
@@ -42,6 +46,18 @@ export function createSession(
 		claudeSessionId,
 		initialPrompt: prompt,
 		design,
+	};
+}
+
+function createPiSession(id: string, prompt?: string, cwd?: string): Session {
+	return {
+		...sessionBase(id, prompt ? "running" : "waiting"),
+		name: prompt?.slice(0, 40) || `Session ${id}`,
+		commandType: "claude",
+		harness: "pi",
+		pty: spawnPi({ prompt, cwd, sessionId: id }),
+		cwd,
+		initialPrompt: prompt,
 	};
 }
 

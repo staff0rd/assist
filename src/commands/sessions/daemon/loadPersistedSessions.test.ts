@@ -230,6 +230,40 @@ describe("persistLiveSessions", () => {
 		expect(restoreBase("1", parsed).starred).toBe(true);
 	});
 
+	it("round-trips the harness through persist, schema parse, and restore", () => {
+		const sessions = new Map<string, Session>([
+			["1", fakeSession({ id: "1", claudeSessionId: "abc", harness: "pi" })],
+		]);
+
+		persistLiveSessions(sessions);
+
+		const [, persisted] = saveJsonMock.mock.lastCall as [
+			string,
+			PersistedSession[],
+		];
+		expect(persisted[0].harness).toBe("pi");
+
+		loadJsonMock.mockReturnValue(persisted);
+		const [parsed] = loadPersistedSessions();
+		expect(parsed.harness).toBe("pi");
+
+		expect(restoreBase("1", parsed).harness).toBe("pi");
+	});
+
+	it("defaults an absent harness to undefined so consumers fall back to claude", () => {
+		const sessions = new Map<string, Session>([
+			["1", fakeSession({ id: "1", claudeSessionId: "abc" })],
+		]);
+
+		persistLiveSessions(sessions);
+
+		const [, persisted] = saveJsonMock.mock.lastCall as [
+			string,
+			PersistedSession[],
+		];
+		expect(persisted[0].harness).toBeUndefined();
+	});
+
 	it("defaults cwd to the process cwd", () => {
 		const sessions = new Map<string, Session>([
 			["1", fakeSession({ cwd: undefined })],

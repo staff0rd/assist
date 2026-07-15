@@ -11,6 +11,11 @@ export function createDesignSessionAction(send: SendFn) {
 		send({ type: "create", prompt: prompt || undefined, cwd, design: true });
 }
 
+export function createPiSessionAction(send: SendFn) {
+	return (prompt: string, cwd?: string) =>
+		send({ type: "create", prompt: prompt || undefined, cwd, harness: "pi" });
+}
+
 export type AssistLaunchMeta = { title?: string; subtitle?: string };
 
 export function createAssistSessionAction(send: SendFn) {

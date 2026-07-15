@@ -1,9 +1,9 @@
 import Stack from "@mui/material/Stack";
 import type { AssistLaunchMeta } from "./createSessionAction";
 import { dispatchMode } from "./dispatchMode";
-import { FreePromptDropdown } from "./FreePromptDropdown";
 import { ModeButtons } from "./ModeButtons";
 import { prLaunchMeta } from "./prLaunchMeta";
+import { PromptComposerDropdowns } from "./PromptComposerDropdowns";
 import { ReviewDropdown } from "./ReviewDropdown";
 import { reviewModeArgs } from "./reviewModeArgs";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
@@ -11,10 +11,12 @@ import { useRepoSelectionContext } from "./useRepoSelectionContext";
 export function TopNavActions({
 	onCreate,
 	onCreateDesign,
+	onCreatePi,
 	onCreateAssist,
 }: {
 	onCreate: (prompt: string, cwd: string) => void;
 	onCreateDesign: (prompt: string, cwd: string) => void;
+	onCreatePi: (prompt: string, cwd: string) => void;
 	onCreateAssist: (
 		args: string[],
 		cwd?: string,
@@ -32,16 +34,12 @@ export function TopNavActions({
 					dispatchMode(m, selectedCwd, onCreateAssist, () => {}, text)
 				}
 			>
-				<FreePromptDropdown
-					allowEmpty
+				<PromptComposerDropdowns
+					cwd={selectedCwd}
 					disabled={disabled}
-					onSubmit={(prompt) => onCreate(prompt, selectedCwd)}
-				/>
-				<FreePromptDropdown
-					label="design"
-					allowEmpty
-					disabled={disabled}
-					onSubmit={(prompt) => onCreateDesign(prompt, selectedCwd)}
+					onCreate={onCreate}
+					onCreateDesign={onCreateDesign}
+					onCreatePi={onCreatePi}
 				/>
 				<ReviewDropdown
 					cwd={selectedCwd}

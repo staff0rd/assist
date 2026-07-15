@@ -1,19 +1,16 @@
 import { type RefObject, useCallback, useMemo } from "react";
 import {
-	createAssistSessionAction,
-	createDesignSessionAction,
-	createSessionAction,
 	dismissSessionAction,
 	inputAction,
 	outputAction,
 	resizeAction,
 	restartSessionAction,
-	resumeSessionAction,
 	retrySessionAction,
 	setAutoAdvanceAction,
 	setAutoRunAction,
 	setStarredAction,
 } from "./createSessionAction";
+import { useLaunchActions } from "./useLaunchActions";
 
 type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;
@@ -24,10 +21,7 @@ export function useSessionActions(
 	handlers: RefObject<Map<string, OutputHandler>>,
 ) {
 	const actions = {
-		createSession: useMemo(() => createSessionAction(send), [send]),
-		createDesignSession: useMemo(() => createDesignSessionAction(send), [send]),
-		createAssistSession: useMemo(() => createAssistSessionAction(send), [send]),
-		resumeSession: useMemo(() => resumeSessionAction(send), [send]),
+		...useLaunchActions(send),
 		sendInput: useMemo(() => inputAction(send), [send]),
 		sendResize: useMemo(() => resizeAction(send), [send]),
 		setAutoRun: useMemo(() => setAutoRunAction(send), [send]),

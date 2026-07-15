@@ -37,7 +37,7 @@ export function syncPi(claudeDir: string): void {
 		commandToPrompt,
 	);
 
-	syncPiHooks(path.join(claudeDir, "..", "pi", "permission-gate.ts"));
+	syncPiHooks(path.join(claudeDir, "..", "pi"));
 
 	console.log(
 		`Synced ${synced} prompt(s) to ~/.pi/agent/prompts and CLAUDE.md to ~/.pi/agent/AGENTS.md`,

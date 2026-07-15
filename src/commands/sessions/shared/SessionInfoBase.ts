@@ -1,4 +1,5 @@
 import type { Activity } from "../../../shared/emitActivity";
+import type { HarnessKind } from "../../../shared/harnesses";
 
 export type CommandType = "claude" | "run" | "assist";
 
@@ -8,6 +9,7 @@ export type SessionInfoBase = {
 	title?: string;
 	subtitle?: string;
 	commandType: CommandType;
+	harness?: HarnessKind;
 	startedAt: number;
 	runName?: string;
 	assistArgs?: string[];

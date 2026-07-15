@@ -1,5 +1,6 @@
 import type { FSWatcher } from "node:fs";
 import type { Activity } from "../../../shared/emitActivity";
+import type { HarnessKind } from "../../../shared/harnesses";
 import type { CommandType, SessionInfoBase } from "../shared/SessionInfoBase";
 import type { spawnClaude } from "./spawnClaude";
 
@@ -17,6 +18,7 @@ export type Session = {
 	title?: string;
 	subtitle?: string;
 	commandType: CommandType;
+	harness?: HarnessKind;
 	status: SessionStatus;
 	startedAt: number;
 	runningMs: number;

@@ -40,6 +40,7 @@ export function AppToolbar({
 			<TopNavActions
 				onCreate={socket.createSession}
 				onCreateDesign={socket.createDesignSession}
+				onCreatePi={socket.createPiSession}
 				onCreateAssist={socket.createAssistSession}
 			/>
 			<RateLimitsIndicator rateLimits={socket.rateLimits} />

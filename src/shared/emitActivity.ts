@@ -5,6 +5,7 @@ import { z } from "zod";
 
 export const activitySchema = z.object({
 	kind: z.enum(["command", "backlog"]),
+	harness: z.enum(["claude", "codex", "pi"]).optional(),
 	name: z.string().optional(),
 	itemId: z.number().optional(),
 	itemName: z.string().optional(),

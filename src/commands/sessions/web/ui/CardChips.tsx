@@ -1,6 +1,7 @@
 import Chip from "@mui/material/Chip";
 import { JiraKeyLink } from "../../../backlog/web/ui/components/JiraKeyLink";
 import { ActivityChips } from "./ActivityChips";
+import { HarnessBadge } from "./HarnessBadge";
 import { isWindowsCwd } from "./isWindowsCwd";
 import { repoLabel } from "./repoLabel";
 import type { SessionInfo } from "./types";
@@ -15,6 +16,7 @@ export function CardChips({ session }: { session: SessionInfo }) {
 	return (
 		<>
 			{repo && <Chip label={repo} size="small" sx={chipSx} />}
+			<HarnessBadge harness={session.harness} />
 			{isWindowsCwd(session.cwd) && <WindowsBadge />}
 			<ActivityChips session={session} />
 			<JiraKeyLink
