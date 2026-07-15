@@ -1,3 +1,10 @@
+# [0.393.0](https://github.com/staff0rd/assist/compare/v0.392.0...v0.393.0) (2026-07-15)
+
+
+### Features
+
+* three-way backlog status filter ([5ce8630](https://github.com/staff0rd/assist/commit/5ce863036a8d4c1e3c37b3d1f14816d5eeb2479b))
+
 # [0.392.0](https://github.com/staff0rd/assist/compare/v0.391.4...v0.392.0) (2026-07-15)
 
 
