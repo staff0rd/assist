@@ -3,7 +3,7 @@ import { matchesDeny } from "../../shared/matchesAllow";
 import { matchesConfigDeny } from "../../shared/matchesConfigDeny";
 import { findBuiltinDeny } from "./findBuiltinDeny";
 
-type HookDecision = {
+export type HookDecision = {
 	permissionDecision: "allow" | "deny";
 	permissionDecisionReason: string;
 };

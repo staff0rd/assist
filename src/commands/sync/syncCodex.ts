@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { harnesses, isHarnessAvailable } from "../../shared/harnesses";
+import { syncCodexHooks } from "./syncCodexHooks";
 
 function quoteYaml(value: string): string {
 	return `"${value.replace(/\\/g, String.raw`\\`).replace(/"/g, String.raw`\"`)}"`;
@@ -37,6 +38,8 @@ export function syncCodex(claudeDir: string): void {
 	const agentsTarget = path.join(codex.homeDir, codex.sync.agentsFile);
 	fs.mkdirSync(path.dirname(agentsTarget), { recursive: true });
 	fs.copyFileSync(path.join(claudeDir, "CLAUDE.md"), agentsTarget);
+
+	syncCodexHooks(path.join(claudeDir, "..", "codex", "config.toml"));
 
 	console.log(
 		`Synced ${files.length} skill(s) to ~/.codex/skills and CLAUDE.md to ~/.codex/AGENTS.md`,

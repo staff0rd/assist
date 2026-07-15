@@ -14,6 +14,7 @@ import { registerBacklog } from "./commands/registerBacklog";
 import { registerBranch } from "./commands/registerBranch";
 import { registerCliHook } from "./commands/registerCliHook";
 import { registerCodeComment } from "./commands/registerCodeComment";
+import { registerCodexHook } from "./commands/registerCodexHook";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerConfig } from "./commands/registerConfig";
 import { registerDb } from "./commands/registerDb";
@@ -68,7 +69,7 @@ program
 const syncCommand = program
 	.command("sync")
 	.description(
-		"Copy command files to ~/.claude/commands; when codex is detected, also install commands as ~/.codex/skills/<name>/SKILL.md and CLAUDE.md as ~/.codex/AGENTS.md",
+		"Copy command files to ~/.claude/commands; when codex is detected, also install commands as ~/.codex/skills/<name>/SKILL.md, CLAUDE.md as ~/.codex/AGENTS.md, and register the assist codex-hook auto-approval hook in ~/.codex/config.toml",
 	)
 	.option("-y, --yes", "Overwrite settings.json without prompting")
 	.action((options) => sync(options));
@@ -151,6 +152,7 @@ registerBackup(program);
 registerDb(program);
 registerCliHook(program);
 registerCodeComment(program);
+registerCodexHook(program);
 registerEditHook(program);
 registerGithub(program);
 registerHandover(program);

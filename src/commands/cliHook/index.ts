@@ -1,9 +1,7 @@
 import { basename } from "node:path";
 import { readStdin } from "../../lib/readStdin";
-import { splitCompound } from "../../shared/splitCompound";
-import { findBuiltinDenyRaw } from "./findBuiltinDeny";
+import { decideCommand } from "./decideCommand";
 import { logDeniedToolCall } from "./logDeniedToolCall";
-import { findDeny, resolvePermission } from "./resolvePermission";
 
 type HookInput = {
 	hook_event_name: string;
@@ -31,18 +29,11 @@ function tryParseInput(
 	}
 }
 
-function decide(toolName: string, rawCommand: string) {
-	const result = splitCompound(rawCommand);
-	if (result.ok) return resolvePermission(toolName, result.parts);
-	// why: undecomposable command — fail closed on built-in denies the raw-string prefix check would miss
-	return findBuiltinDenyRaw(rawCommand) ?? findDeny(toolName, [rawCommand]);
-}
-
 export async function cliHook(): Promise<void> {
 	const input = tryParseInput(await readStdin());
 	if (!input) return;
 
-	const decision = decide(input.toolName, input.command);
+	const decision = decideCommand(input.toolName, input.command);
 	if (!decision) return;
 
 	console.log(

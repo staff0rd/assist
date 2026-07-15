@@ -93,7 +93,7 @@ After installation, the `assist` command will be available globally. You can als
 - `assist init` - Initialize project with VS Code and verify configurations
 - `assist new vite` - Initialize a new Vite React TypeScript project
 - `assist new cli` - Initialize a new tsup CLI project
-- `assist sync` - Copy command files to `~/.claude/commands`, sync `settings.json` and `CLAUDE.md`, and install the design assets — `claude/system-prompt.md` to `~/.claude/system-prompt.md` and `claude/skills/*` into `~/.claude/skills` (existing files in that directory are preserved). When the `codex` CLI is detected on PATH, additionally installs each command as a Codex skill at `~/.codex/skills/<name>/SKILL.md` and `CLAUDE.md` as `~/.codex/AGENTS.md`, leaving the `~/.claude` copy untouched
+- `assist sync` - Copy command files to `~/.claude/commands`, sync `settings.json` and `CLAUDE.md`, and install the design assets — `claude/system-prompt.md` to `~/.claude/system-prompt.md` and `claude/skills/*` into `~/.claude/skills` (existing files in that directory are preserved). When the `codex` CLI is detected on PATH, additionally installs each command as a Codex skill at `~/.codex/skills/<name>/SKILL.md`, `CLAUDE.md` as `~/.codex/AGENTS.md`, and registers the `assist codex-hook` auto-approval hook (`PreToolUse` for `Bash`, plus `PermissionRequest`) in a managed block in `~/.codex/config.toml`, leaving the `~/.claude` copy untouched
 - `assist commit status` - Show git status and diff
 - `assist commit <message>` - Commit staged changes with validation
 - `assist commit <message> [files...]` - Stage files and create a git commit with validation
@@ -205,6 +205,7 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist cli-hook deny` - List all deny rules
 - `assist cli-hook deny add <pattern> <message>` - Add a deny rule for a command pattern
 - `assist cli-hook deny remove <pattern>` - Remove a deny rule by pattern
+- `assist codex-hook` - Codex `PreToolUse`/`PermissionRequest` hook that auto-approves read-only CLI commands, reading Codex's hook JSON from stdin and emitting Codex's decision shape. Reuses the same allowlist and deny logic as `cli-hook`; installed by `assist sync` when `codex` is on PATH
 - `assist edit-hook` - PreToolUse hook that blocks `Edit`/`Write`/`MultiEdit` calls from adding, changing, or removing a `// assist-maintainability-override` marker, or from introducing a code comment (use `code-comment set`/`confirm` for the rare comment that belongs)
 - `assist code-comment set <file> <line> <text>` - Validate a single-line comment (max 50 chars; no block comments for `.ts`/`.js`) and issue a pin authorising its insertion; inserts `#` for `#`-comment files (`.yml`/`.yaml`, Dockerfile, `*.env`, `*.sh`) and `//` otherwise
 - `assist code-comment confirm <pin>` - Insert the pinned comment at its file/line and clear the pin state

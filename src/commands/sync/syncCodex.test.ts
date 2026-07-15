@@ -8,6 +8,7 @@ const mockReadFileSync = vi.fn();
 const mockWriteFileSync = vi.fn();
 const mockMkdirSync = vi.fn();
 const mockCopyFileSync = vi.fn();
+const mockExistsSync = vi.fn();
 
 vi.mock("../../shared/harnesses", async (importOriginal) => {
 	const actual = await importOriginal<typeof HarnessModule>();
@@ -23,6 +24,7 @@ vi.mock("node:fs", () => ({
 	writeFileSync: (...args: unknown[]) => mockWriteFileSync(...args),
 	mkdirSync: (...args: unknown[]) => mockMkdirSync(...args),
 	copyFileSync: (...args: unknown[]) => mockCopyFileSync(...args),
+	existsSync: (...args: unknown[]) => mockExistsSync(...args),
 }));
 
 import { harnesses } from "../../shared/harnesses";
@@ -75,7 +77,12 @@ describe("syncCodex", () => {
 		vi.clearAllMocks();
 		mockIsHarnessAvailable.mockReturnValue(true);
 		mockReaddirSync.mockReturnValue(["refine.md", "notes.txt"]);
-		mockReadFileSync.mockReturnValue("---\ndescription: Refine it\n---\nbody");
+		mockReadFileSync.mockImplementation((target: string) =>
+			target.endsWith(path.join("codex", "config.toml"))
+				? '[[hooks.PreToolUse]]\nmatcher = "Bash"\n[[hooks.PreToolUse.hooks]]\ntype = "command"\ncommand = "assist codex-hook"\n\n[[hooks.PermissionRequest]]\n[[hooks.PermissionRequest.hooks]]\ntype = "command"\ncommand = "assist codex-hook"'
+				: "---\ndescription: Refine it\n---\nbody",
+		);
+		mockExistsSync.mockReturnValue(false);
 	});
 
 	afterEach(() => {
@@ -99,7 +106,6 @@ describe("syncCodex", () => {
 			"refine",
 			"SKILL.md",
 		);
-		expect(mockWriteFileSync).toHaveBeenCalledTimes(1);
 		expect(mockWriteFileSync).toHaveBeenCalledWith(
 			skillTarget,
 			expect.stringContaining("name: refine"),
@@ -107,6 +113,21 @@ describe("syncCodex", () => {
 		expect(mockMkdirSync).toHaveBeenCalledWith(path.dirname(skillTarget), {
 			recursive: true,
 		});
+	});
+
+	it("registers the codex-hook adapter in ~/.codex/config.toml", () => {
+		syncCodex("/claude");
+
+		const configTarget = path.join(harnesses.codex.homeDir, "config.toml");
+		const write = mockWriteFileSync.mock.calls.find(
+			([target]) => target === configTarget,
+		);
+		expect(write).toBeDefined();
+		const contents = write?.[1] as string;
+		expect(contents).toContain("[[hooks.PreToolUse]]");
+		expect(contents).toContain('matcher = "Bash"');
+		expect(contents).toContain("[[hooks.PermissionRequest]]");
+		expect(contents).toContain('command = "assist codex-hook"');
 	});
 
 	it("copies CLAUDE.md to ~/.codex/AGENTS.md verbatim", () => {

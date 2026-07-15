@@ -11,6 +11,7 @@
 	"files": [
 		"dist",
 		"claude",
+		"codex",
 		"allowed.cli-reads",
 		"allowed.cli-writes"
 	],
