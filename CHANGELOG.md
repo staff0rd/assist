@@ -1,3 +1,11 @@
+# [0.395.0](https://github.com/staff0rd/assist/compare/v0.394.0...v0.395.0) (2026-07-15)
+
+
+### Features
+
+* create pi sessions from web UI ([cf0839a](https://github.com/staff0rd/assist/commit/cf0839a3d98078ca3834ddd44c9bdeea26fdaa2f))
+* pi sessions with live status ([dc82f2f](https://github.com/staff0rd/assist/commit/dc82f2f6dea772d2d81bd686d6a76cbd6f8b2a09))
+
 # [0.394.0](https://github.com/staff0rd/assist/compare/v0.393.0...v0.394.0) (2026-07-15)
 
 
