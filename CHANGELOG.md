@@ -1,3 +1,10 @@
+## [0.391.4](https://github.com/staff0rd/assist/compare/v0.391.3...v0.391.4) (2026-07-15)
+
+
+### Bug Fixes
+
+* restore windows sessions when daemon down ([602062d](https://github.com/staff0rd/assist/commit/602062d80a0f8873fc458c4ae031ec9036db3874))
+
 ## [0.391.3](https://github.com/staff0rd/assist/compare/v0.391.2...v0.391.3) (2026-07-14)
 
 
