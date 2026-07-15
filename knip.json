@@ -12,5 +12,5 @@
 		"skott",
 		"tsx"
 	],
-	"ignore": ["**/.venv/**", "netcap-extension/**"]
+	"ignore": ["**/.venv/**", "netcap-extension/**", "pi/**"]
 }

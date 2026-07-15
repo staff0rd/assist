@@ -9,13 +9,16 @@ import {
 
 vi.mock("./spawnClaude", () => ({ spawnClaude: vi.fn() }));
 vi.mock("./spawnCodex", () => ({ spawnCodex: vi.fn() }));
+vi.mock("./spawnPi", () => ({ spawnPi: vi.fn() }));
 
 import { spawnClaude } from "./spawnClaude";
 import { spawnCodex } from "./spawnCodex";
 import { spawnHarness } from "./spawnHarness";
+import { spawnPi } from "./spawnPi";
 
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;
 const mockSpawnCodex = spawnCodex as unknown as MockInstance;
+const mockSpawnPi = spawnPi as unknown as MockInstance;
 
 describe("spawnHarness", () => {
 	beforeEach(() => {
@@ -44,5 +47,16 @@ describe("spawnHarness", () => {
 			cwd: "/repo",
 		});
 		expect(mockSpawnClaude).not.toHaveBeenCalled();
+		expect(mockSpawnPi).not.toHaveBeenCalled();
+	});
+
+	it("launches pi in the given cwd", () => {
+		spawnHarness("pi", "/refine a279", { cwd: "/repo", sessionId: "s-1" });
+
+		expect(mockSpawnPi).toHaveBeenCalledWith("/refine a279", {
+			cwd: "/repo",
+		});
+		expect(mockSpawnClaude).not.toHaveBeenCalled();
+		expect(mockSpawnCodex).not.toHaveBeenCalled();
 	});
 });

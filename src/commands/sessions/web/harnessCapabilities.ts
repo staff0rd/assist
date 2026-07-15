@@ -7,7 +7,10 @@ export function harnessCapabilities(
 	_req: IncomingMessage,
 	res: ServerResponse,
 ): void {
-	const forcedOff = loadConfig().harness.exposeCodexActions === false;
-	const exposeCodexActions = !forcedOff && isHarnessAvailable("codex");
-	respondJson(res, 200, { exposeCodexActions });
+	const config = loadConfig().harness;
+	const codexForcedOff = config.exposeCodexActions === false;
+	const exposeCodexActions = !codexForcedOff && isHarnessAvailable("codex");
+	const piForcedOff = config.exposePiActions === false;
+	const exposePiActions = !piForcedOff && isHarnessAvailable("pi");
+	respondJson(res, 200, { exposeCodexActions, exposePiActions });
 }

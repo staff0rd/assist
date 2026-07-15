@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 
-export function useHarnessCapabilities(): { exposeCodexActions: boolean } {
+export function useHarnessCapabilities(): {
+	exposeCodexActions: boolean;
+	exposePiActions: boolean;
+} {
 	const [exposeCodexActions, setExposeCodexActions] = useState(false);
+	const [exposePiActions, setExposePiActions] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -11,9 +15,11 @@ export function useHarnessCapabilities(): { exposeCodexActions: boolean } {
 				const body = await res.json();
 				if (!cancelled) {
 					setExposeCodexActions(Boolean(body?.exposeCodexActions));
+					setExposePiActions(Boolean(body?.exposePiActions));
 				}
 			} catch {
 				setExposeCodexActions(false);
+				setExposePiActions(false);
 			}
 		})();
 		return () => {
@@ -21,5 +27,5 @@ export function useHarnessCapabilities(): { exposeCodexActions: boolean } {
 		};
 	}, []);
 
-	return { exposeCodexActions };
+	return { exposeCodexActions, exposePiActions };
 }

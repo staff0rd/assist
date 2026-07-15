@@ -2,7 +2,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { checkCliAvailable } from "./checkCliAvailable";
 
-export type HarnessKind = "claude" | "codex";
+export type HarnessKind = "claude" | "codex" | "pi";
 
 export type Harness = {
 	kind: HarnessKind;
@@ -31,6 +31,15 @@ export const harnesses: Record<HarnessKind, Harness> = {
 		sync: {
 			agentsFile: "AGENTS.md",
 			commandDest: (name) => path.join("skills", name, "SKILL.md"),
+		},
+	},
+	pi: {
+		kind: "pi",
+		command: "pi",
+		homeDir: path.join(os.homedir(), ".pi", "agent"),
+		sync: {
+			agentsFile: "AGENTS.md",
+			commandDest: (name) => path.join("prompts", `${name}.md`),
 		},
 	},
 };

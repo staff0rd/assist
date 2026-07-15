@@ -31,6 +31,7 @@ import { registerList } from "./commands/registerList";
 import { registerMermaid } from "./commands/registerMermaid";
 import { registerNetcap } from "./commands/registerNetcap";
 import { registerNews } from "./commands/registerNews";
+import { registerPiHook } from "./commands/registerPiHook";
 import { registerPrompts } from "./commands/registerPrompts";
 import { registerPrs } from "./commands/registerPrs";
 import { registerRavendb } from "./commands/registerRavendb";
@@ -69,7 +70,7 @@ program
 const syncCommand = program
 	.command("sync")
 	.description(
-		"Copy command files to ~/.claude/commands; when codex is detected, also install commands as ~/.codex/skills/<name>/SKILL.md, CLAUDE.md as ~/.codex/AGENTS.md, and register the assist codex-hook auto-approval hook in ~/.codex/config.toml",
+		"Copy command files to ~/.claude/commands; when codex is detected, also install commands as ~/.codex/skills/<name>/SKILL.md, CLAUDE.md as ~/.codex/AGENTS.md, and register the assist codex-hook auto-approval hook in ~/.codex/config.toml; when pi is detected, also install commands as ~/.pi/agent/prompts/<name>.md, CLAUDE.md as ~/.pi/agent/AGENTS.md, and register the assist pi-hook permission-gate extension in ~/.pi/agent/extensions",
 	)
 	.option("-y, --yes", "Overwrite settings.json without prompting")
 	.action((options) => sync(options));
@@ -153,6 +154,7 @@ registerDb(program);
 registerCliHook(program);
 registerCodeComment(program);
 registerCodexHook(program);
+registerPiHook(program);
 registerEditHook(program);
 registerGithub(program);
 registerHandover(program);

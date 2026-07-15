@@ -10,18 +10,23 @@ type RefineLaunchOpts = {
 };
 
 const HARNESS_FLAG =
-	"Coding harness to launch (claude|codex); defaults to the configured harness.engine";
+	"Coding harness to launch (claude|codex|pi); defaults to the configured harness.engine";
 
 const HARNESS_CONFIG_HELP: ConfigHelpEntry[] = [
 	{
 		key: "harness.engine",
-		setter: "assist config set harness.engine <claude|codex>",
+		setter: "assist config set harness.engine <claude|codex|pi>",
 		note: "default coding harness launched by refine and other flows",
 	},
 	{
 		key: "harness.exposeCodexActions",
 		setter: "assist config set harness.exposeCodexActions <true|false>",
 		note: "force the web UI 'with Codex' actions off even when codex is on PATH",
+	},
+	{
+		key: "harness.exposePiActions",
+		setter: "assist config set harness.exposePiActions <true|false>",
+		note: "force the web UI 'with pi' actions off even when pi is on PATH",
 	},
 ];
 

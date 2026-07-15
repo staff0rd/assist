@@ -6,6 +6,7 @@ import { loadConfig } from "../shared/loadConfig";
 import { syncClaudeMd } from "./sync/syncClaudeMd";
 import { syncCodex } from "./sync/syncCodex";
 import { syncDesign } from "./sync/syncDesign";
+import { syncPi } from "./sync/syncPi";
 import { syncSettings } from "./sync/syncSettings";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +24,7 @@ export async function sync(options?: { yes?: boolean }): Promise<void> {
 	await syncSettings(claudeDir, targetBase, { yes });
 	await syncClaudeMd(claudeDir, targetBase, { yes });
 	syncCodex(claudeDir);
+	syncPi(claudeDir);
 }
 
 function syncCommands(claudeDir: string, targetBase: string): void {

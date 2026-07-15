@@ -17,7 +17,13 @@ describe("resolveHarness", () => {
 	it("returns an explicit valid harness value", () => {
 		expect(resolveHarness("codex")).toBe("codex");
 		expect(resolveHarness("claude")).toBe("claude");
+		expect(resolveHarness("pi")).toBe("pi");
 		expect(mockLoadConfig).not.toHaveBeenCalled();
+	});
+
+	it("falls back to the configured engine when pi is the default", () => {
+		mockLoadConfig.mockReturnValue({ harness: { engine: "pi" } });
+		expect(resolveHarness(undefined)).toBe("pi");
 	});
 
 	it("falls back to the configured engine when no value is given", () => {

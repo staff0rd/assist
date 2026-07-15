@@ -21,11 +21,14 @@ function renderRefine(launchAssist: () => void) {
 	);
 }
 
-function mockHarness(exposeCodexActions: boolean) {
+function mockHarness(capabilities: {
+	exposeCodexActions?: boolean;
+	exposePiActions?: boolean;
+}) {
 	vi.stubGlobal(
 		"fetch",
 		vi.fn().mockResolvedValue({
-			json: () => Promise.resolve({ exposeCodexActions }),
+			json: () => Promise.resolve(capabilities),
 		}),
 	);
 }
@@ -37,7 +40,7 @@ afterEach(() => {
 
 describe("RefineAction", () => {
 	beforeEach(() => {
-		mockHarness(false);
+		mockHarness({ exposeCodexActions: false, exposePiActions: false });
 	});
 
 	it("launches a refine session and navigates to /sessions", () => {
@@ -64,7 +67,7 @@ describe("RefineAction", () => {
 		expect(launchAssist).toHaveBeenCalledTimes(1);
 	});
 
-	it("hides the codex dropdown when codex actions are not exposed", () => {
+	it("hides the harness dropdown when no alternate harness is exposed", () => {
 		renderRefine(vi.fn());
 
 		expect(
@@ -77,7 +80,7 @@ describe("RefineAction", () => {
 
 describe("RefineAction with codex exposed", () => {
 	beforeEach(() => {
-		mockHarness(true);
+		mockHarness({ exposeCodexActions: true, exposePiActions: false });
 	});
 
 	it("launches refine under codex from the dropdown", async () => {
@@ -95,5 +98,50 @@ describe("RefineAction with codex exposed", () => {
 			undefined,
 		);
 		expect(screen.getByTestId("location").textContent).toBe("/sessions");
+	});
+
+	it("does not offer the pi menu item", async () => {
+		renderRefine(vi.fn());
+
+		const toggle = await screen.findByRole("button", {
+			name: "Refine with a different harness",
+		});
+		fireEvent.click(toggle);
+
+		expect(screen.queryByRole("menuitem", { name: "with pi" })).toBeNull();
+	});
+});
+
+describe("RefineAction with pi exposed", () => {
+	beforeEach(() => {
+		mockHarness({ exposeCodexActions: false, exposePiActions: true });
+	});
+
+	it("launches refine under pi from the dropdown", async () => {
+		const launchAssist = vi.fn();
+		renderRefine(launchAssist);
+
+		const toggle = await screen.findByRole("button", {
+			name: "Refine with a different harness",
+		});
+		fireEvent.click(toggle);
+		fireEvent.click(screen.getByRole("menuitem", { name: "with pi" }));
+
+		expect(launchAssist).toHaveBeenCalledWith(
+			["refine", "--once", "--harness", "pi", "a279"],
+			undefined,
+		);
+		expect(screen.getByTestId("location").textContent).toBe("/sessions");
+	});
+
+	it("does not offer the codex menu item", async () => {
+		renderRefine(vi.fn());
+
+		const toggle = await screen.findByRole("button", {
+			name: "Refine with a different harness",
+		});
+		fireEvent.click(toggle);
+
+		expect(screen.queryByRole("menuitem", { name: "with Codex" })).toBeNull();
 	});
 });

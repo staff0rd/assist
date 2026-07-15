@@ -198,8 +198,9 @@ export const assistConfigSchema = z.strictObject({
 		.default({ autoConfirm: false }),
 	harness: z
 		.strictObject({
-			engine: z.enum(["claude", "codex"]).default("claude"),
+			engine: z.enum(["claude", "codex", "pi"]).default("claude"),
 			exposeCodexActions: z.boolean().optional(),
+			exposePiActions: z.boolean().optional(),
 		})
 		.default({ engine: "claude" }),
 	voice: z

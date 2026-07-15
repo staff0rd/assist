@@ -12,6 +12,7 @@
 		"dist",
 		"claude",
 		"codex",
+		"pi",
 		"allowed.cli-reads",
 		"allowed.cli-writes"
 	],

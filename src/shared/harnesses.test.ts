@@ -39,6 +39,16 @@ describe("harnesses registry", () => {
 			path.join("skills", "refine", "SKILL.md"),
 		);
 	});
+
+	it("maps pi to ~/.pi/agent with prompts/<name>.md and AGENTS.md", () => {
+		const pi = harnesses.pi;
+		expect(pi.command).toBe("pi");
+		expect(pi.homeDir).toBe(path.join(os.homedir(), ".pi", "agent"));
+		expect(pi.sync.agentsFile).toBe("AGENTS.md");
+		expect(pi.sync.commandDest("refine")).toBe(
+			path.join("prompts", "refine.md"),
+		);
+	});
 });
 
 describe("isHarnessAvailable", () => {

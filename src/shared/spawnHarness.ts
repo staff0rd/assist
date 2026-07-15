@@ -2,6 +2,7 @@ import type { HarnessKind } from "./harnesses";
 import { spawnClaude } from "./spawnClaude";
 import { spawnCodex } from "./spawnCodex";
 import type { SpawnResult } from "./spawnInherit";
+import { spawnPi } from "./spawnPi";
 
 type SpawnHarnessOptions = {
 	sessionId?: string;
@@ -16,6 +17,9 @@ export function spawnHarness(
 ): SpawnResult {
 	if (harness === "codex") {
 		return spawnCodex(prompt, { cwd: options.cwd });
+	}
+	if (harness === "pi") {
+		return spawnPi(prompt, { cwd: options.cwd });
 	}
 	return spawnClaude(prompt, {
 		allowEdits: true,
