@@ -1,14 +1,21 @@
 import { isWindowsDaemonRunning } from "./connectToWindowsDaemon";
 import { daemonLog } from "./daemonLog";
+import { hasPersistedWindowsSessions } from "./hasPersistedWindowsSessions";
 import type { WindowsConnection } from "./WindowsConnection";
 
-// Connects to an already-running Windows daemon so its live sessions appear
-// immediately on web server open — without launching one that isn't running.
 export async function discoverWindowsSessions(
 	conn: WindowsConnection,
 ): Promise<void> {
-	if (conn.connected || !(await isWindowsDaemonRunning())) return;
-	daemonLog("windows proxy: discovering sessions on running windows daemon");
+	if (conn.connected) return;
+	if (await isWindowsDaemonRunning()) {
+		daemonLog("windows proxy: discovering sessions on running windows daemon");
+	} else if (hasPersistedWindowsSessions()) {
+		daemonLog(
+			"windows proxy: launching windows daemon to restore persisted sessions",
+		);
+	} else {
+		return;
+	}
 	try {
 		await conn.ensure();
 	} catch (error) {
