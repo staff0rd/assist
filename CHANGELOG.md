@@ -1,3 +1,10 @@
+# [0.394.0](https://github.com/staff0rd/assist/compare/v0.393.0...v0.394.0) (2026-07-15)
+
+
+### Features
+
+* add pi coding harness support ([48e6be3](https://github.com/staff0rd/assist/commit/48e6be3cfc127685ce6f0b6770fd6c5a0632c7a2))
+
 # [0.393.0](https://github.com/staff0rd/assist/compare/v0.392.0...v0.393.0) (2026-07-15)
 
 
