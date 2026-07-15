@@ -1,3 +1,10 @@
+# [0.396.0](https://github.com/staff0rd/assist/compare/v0.395.0...v0.396.0) (2026-07-15)
+
+
+### Features
+
+* phase count in usage history ([dff5663](https://github.com/staff0rd/assist/commit/dff5663c45211376094a617b05e72c09a2627421))
+
 # [0.395.0](https://github.com/staff0rd/assist/compare/v0.394.0...v0.395.0) (2026-07-15)
 
 
