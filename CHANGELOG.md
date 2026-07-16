@@ -1,3 +1,10 @@
+# [0.400.0](https://github.com/staff0rd/assist/compare/v0.399.0...v0.400.0) (2026-07-16)
+
+
+### Features
+
+* review-type modal after PR pick ([1403f74](https://github.com/staff0rd/assist/commit/1403f74cc5e68038986b0021754b2575fc5dca07))
+
 # [0.399.0](https://github.com/staff0rd/assist/compare/v0.398.0...v0.399.0) (2026-07-16)
 
 
