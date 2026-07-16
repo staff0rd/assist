@@ -200,6 +200,53 @@ describe("WindowsProxy", () => {
 		expect(resume).toMatchObject({ type: "resume", sessionId: "3" });
 	});
 
+	it("logs a dropped forward when the windows connection is not writable", async () => {
+		await createWindowsSession();
+		daemon.send({
+			type: "sessions",
+			sessions: [{ id: "3", name: "app", cwd: "C:\\repo" }],
+		});
+		await waitFor(() => proxy.sessions().length === 1);
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		daemon.dropPeer();
+		await waitFor(() => proxy.sessions().length === 0);
+
+		expect(
+			proxy.route(client(), {
+				type: "set-status",
+				sessionId: "w-3",
+				status: "waiting",
+			}),
+		).toBe(true);
+		expect(
+			log.mock.calls.some(
+				(call) =>
+					String(call[0]).includes("DROPPED set-status") &&
+					String(call[0]).includes("w-3"),
+			),
+		).toBe(true);
+		log.mockRestore();
+	});
+
+	it("logs a forwarded set-status (non-input) that reaches the daemon", async () => {
+		await createWindowsSession();
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		proxy.route(client(), {
+			type: "set-status",
+			sessionId: "w-3",
+			status: "waiting",
+		});
+		await waitFor(() =>
+			daemon.received.some((l) => l.includes('"set-status"')),
+		);
+		expect(
+			log.mock.calls.some((call) =>
+				String(call[0]).includes("forwarded set-status"),
+			),
+		).toBe(true);
+		log.mockRestore();
+	});
+
 	it("drops sessions when the connection closes", async () => {
 		await createWindowsSession();
 		daemon.send({

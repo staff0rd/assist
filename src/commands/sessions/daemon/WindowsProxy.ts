@@ -9,6 +9,7 @@ import { handleInbound } from "./handleInbound";
 import { handleWindowsClose } from "./handleWindowsClose";
 import { healWindowsDaemon } from "./healWindowsDaemon";
 import { isWindowsCreate, isWindowsIo } from "./isWindowsCreate";
+import { logWindowsForward } from "./logWindowsForward";
 import { stripWindowsSessionId } from "./toWindowsSessionId";
 import { WindowsConnection } from "./WindowsConnection";
 import {
@@ -92,7 +93,8 @@ export class WindowsProxy {
 
 	private routeIo(data: Msg): boolean {
 		const sessionId = stripWindowsSessionId(data.sessionId as string);
-		this.conn.trySend({ ...data, sessionId });
+		const delivered = this.conn.trySend({ ...data, sessionId });
+		logWindowsForward(delivered, data.type, data.sessionId);
 		return true;
 	}
 
