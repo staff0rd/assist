@@ -1,3 +1,10 @@
+# [0.398.0](https://github.com/staff0rd/assist/compare/v0.397.0...v0.398.0) (2026-07-16)
+
+
+### Features
+
+* add edit-phase alias for update-phase ([b15596e](https://github.com/staff0rd/assist/commit/b15596e318ae33e549737162c6f4069442935acf))
+
 # [0.397.0](https://github.com/staff0rd/assist/compare/v0.396.0...v0.397.0) (2026-07-16)
 
 
