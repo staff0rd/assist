@@ -1,3 +1,10 @@
+# [0.397.0](https://github.com/staff0rd/assist/compare/v0.396.0...v0.397.0) (2026-07-16)
+
+
+### Features
+
+* auto-reload web UI after assist update ([58d167b](https://github.com/staff0rd/assist/commit/58d167b5699659e376c3bcc34944b160902f89a3))
+
 # [0.396.0](https://github.com/staff0rd/assist/compare/v0.395.0...v0.396.0) (2026-07-15)
 
 
