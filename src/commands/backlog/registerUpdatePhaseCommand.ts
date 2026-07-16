@@ -8,6 +8,7 @@ function collect(value: string, previous: string[]): string[] {
 export function registerUpdatePhaseCommand(cmd: Command): void {
 	cmd
 		.command("update-phase <id> <phase>")
+		.alias("edit-phase")
 		.description("Modify a plan phase on a backlog item")
 		.option("--name <name>", "New phase name")
 		.option("--task <task...>", "Replace tasks (repeatable)")
