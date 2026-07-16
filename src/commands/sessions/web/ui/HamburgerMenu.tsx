@@ -17,7 +17,7 @@ export function HamburgerMenu({
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const [pending, setPending] = useState<RestartTarget | null>(null);
 	const [updatePending, setUpdatePending] = useState(false);
-	const { launchAssist } = useSessionLaunchContext();
+	const { launchAssist, armUpdateReload } = useSessionLaunchContext();
 	const open = Boolean(anchorEl);
 
 	return (
@@ -54,7 +54,10 @@ export function HamburgerMenu({
 			)}
 			{updatePending && (
 				<UpdateAssistConfirmDialog
-					onConfirm={() => launchAssist(["update"])}
+					onConfirm={() => {
+						armUpdateReload();
+						launchAssist(["update"]);
+					}}
 					onClose={() => setUpdatePending(false)}
 				/>
 			)}

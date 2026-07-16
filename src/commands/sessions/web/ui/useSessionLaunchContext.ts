@@ -7,10 +7,12 @@ type SessionLaunch = {
 		cwd?: string,
 		meta?: AssistLaunchMeta,
 	) => void;
+	armUpdateReload: () => void;
 };
 
 export const SessionLaunchContext = createContext<SessionLaunch>({
 	launchAssist: () => {},
+	armUpdateReload: () => {},
 });
 
 export function useSessionLaunchContext(): SessionLaunch {
