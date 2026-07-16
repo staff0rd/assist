@@ -1,3 +1,10 @@
+# [0.399.0](https://github.com/staff0rd/assist/compare/v0.398.0...v0.399.0) (2026-07-16)
+
+
+### Features
+
+* log dropped windows-proxy forwards ([9d2d6cc](https://github.com/staff0rd/assist/commit/9d2d6cc1d65c64936883ec7ef37f20303d4ea6de))
+
 # [0.398.0](https://github.com/staff0rd/assist/compare/v0.397.0...v0.398.0) (2026-07-16)
 
 
