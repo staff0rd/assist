@@ -5,7 +5,6 @@ import { ModeButtons } from "./ModeButtons";
 import { prLaunchMeta } from "./prLaunchMeta";
 import { PromptComposerDropdowns } from "./PromptComposerDropdowns";
 import { ReviewDropdown } from "./ReviewDropdown";
-import { reviewModeArgs } from "./reviewModeArgs";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 export function TopNavActions({
@@ -44,9 +43,9 @@ export function TopNavActions({
 				<ReviewDropdown
 					cwd={selectedCwd}
 					disabled={disabled}
-					onSelect={(pr, mode) =>
+					onSelect={(pr, args) =>
 						onCreateAssist(
-							[...reviewModeArgs(mode), String(pr.number)],
+							[...args, String(pr.number)],
 							selectedCwd,
 							prLaunchMeta(pr),
 						)

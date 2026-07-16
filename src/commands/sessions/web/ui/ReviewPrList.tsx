@@ -4,7 +4,6 @@ import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import type { ReactNode } from "react";
 import type { PrSummary } from "../prList";
 import { dropdownStyle } from "./DropdownWrapper";
 import { formatRelativeTime } from "./formatRelativeTime";
@@ -13,17 +12,14 @@ import { useOpenPrs } from "./useOpenPrs";
 export function ReviewPrList({
 	cwd,
 	onPick,
-	header,
 }: {
 	cwd: string;
 	onPick: (pr: PrSummary) => void;
-	header?: ReactNode;
 }) {
 	const { prs, loading } = useOpenPrs(cwd);
 
 	return (
 		<Paper elevation={4} sx={{ ...dropdownStyle, left: "auto", width: 320 }}>
-			{header}
 			{loading ? (
 				<Message text="Loading open PRs…" />
 			) : prs.length === 0 ? (
