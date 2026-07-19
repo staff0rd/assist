@@ -1,3 +1,10 @@
+# [0.402.0](https://github.com/staff0rd/assist/compare/v0.401.0...v0.402.0) (2026-07-19)
+
+
+### Features
+
+* share context % color thresholds ([b9da063](https://github.com/staff0rd/assist/commit/b9da063f3b154bac45d8d5ffd356d9853efdae70))
+
 # [0.401.0](https://github.com/staff0rd/assist/compare/v0.400.0...v0.401.0) (2026-07-19)
 
 
