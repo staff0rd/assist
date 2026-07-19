@@ -1,3 +1,10 @@
+# [0.404.0](https://github.com/staff0rd/assist/compare/v0.403.0...v0.404.0) (2026-07-19)
+
+
+### Features
+
+* disambiguate code-comment gate names ([46ea88c](https://github.com/staff0rd/assist/commit/46ea88c72c4f6b78e1dcda52284481ad2fa749d0))
+
 # [0.403.0](https://github.com/staff0rd/assist/compare/v0.402.0...v0.403.0) (2026-07-19)
 
 
