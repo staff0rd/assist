@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { contextLevel } from "../../../../shared/contextLevel";
 import type { SessionStatus } from "./types";
 
 const STATUS_COLORS: Record<SessionStatus, string> = {
@@ -10,9 +11,14 @@ const STATUS_COLORS: Record<SessionStatus, string> = {
 };
 
 function contextColor(pct: number): string {
-	if (pct >= 30) return "error.main";
-	if (pct >= 20) return "warning.main";
-	return "text.disabled";
+	switch (contextLevel(pct)) {
+		case "red":
+			return "error.main";
+		case "yellow":
+			return "warning.main";
+		default:
+			return "text.disabled";
+	}
 }
 
 export function StatusRow({

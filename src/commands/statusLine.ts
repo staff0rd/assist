@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { readStdin } from "../lib/readStdin";
+import { contextLevel } from "../shared/contextLevel";
 import type { RateLimits } from "../shared/RateLimits";
 import { toGitCwd } from "./sessions/web/toGitCwd";
 import { buildLimitsSegment } from "./buildLimitsSegment";
@@ -34,9 +35,14 @@ function formatNumber(num: number): string {
 
 function colorizePercent(pct: number): string {
 	const label = `${Math.round(pct)}%`;
-	if (pct > 80) return chalk.red(label);
-	if (pct > 40) return chalk.yellow(label);
-	return label;
+	switch (contextLevel(pct)) {
+		case "red":
+			return chalk.red(label);
+		case "yellow":
+			return chalk.yellow(label);
+		default:
+			return label;
+	}
 }
 
 export async function statusLine(): Promise<void> {
