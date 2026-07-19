@@ -41,6 +41,7 @@ describe("introspectDumpTables", () => {
 				"phase_usage",
 				"phase_usage_messages",
 				"phase_cycle_context",
+				"phase_sessions",
 			]),
 		);
 	});

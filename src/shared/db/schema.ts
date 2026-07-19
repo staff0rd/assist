@@ -7,6 +7,7 @@ import { items } from "./items";
 import { itemSubtasks } from "./itemSubtasks";
 import { links } from "./links";
 import { phaseCycleContext } from "./phaseCycleContext";
+import { phaseSessions } from "./phaseSessions";
 import { phaseUsage } from "./phaseUsage";
 import { phaseUsageMessages } from "./phaseUsageMessages";
 import { planPhases } from "./planPhases";
@@ -21,6 +22,7 @@ export { items } from "./items";
 export { itemSubtasks } from "./itemSubtasks";
 export { links } from "./links";
 export { phaseCycleContext } from "./phaseCycleContext";
+export { phaseSessions } from "./phaseSessions";
 export { phaseUsage } from "./phaseUsage";
 export { phaseUsageMessages } from "./phaseUsageMessages";
 export { planPhases } from "./planPhases";
@@ -54,6 +56,7 @@ export const schema = {
 	phaseUsage,
 	phaseUsageMessages,
 	phaseCycleContext,
+	phaseSessions,
 };
 
 export type ItemRow = typeof items.$inferSelect;
@@ -63,4 +66,5 @@ export type PhaseRow = typeof planPhases.$inferSelect;
 export type TaskRow = typeof planTasks.$inferSelect;
 export type SubtaskRow = typeof itemSubtasks.$inferSelect;
 export type PhaseUsageRow = typeof phaseUsage.$inferSelect;
+export type PhaseSessionRow = typeof phaseSessions.$inferSelect;
 export type GitRefRow = typeof itemGitRefs.$inferSelect;

@@ -5,6 +5,7 @@ import {
 	itemGitRefs,
 	itemSubtasks,
 	links,
+	phaseSessions,
 	phaseUsage,
 	planPhases,
 	planTasks,
@@ -60,6 +61,17 @@ export const relationQueries = {
 			.from(phaseUsage)
 			.where(inArray(phaseUsage.itemId, ids))
 			.orderBy(asc(phaseUsage.itemId), asc(phaseUsage.phaseIdx)),
+
+	sessions: (orm: Db, ids: number[]) =>
+		orm
+			.select()
+			.from(phaseSessions)
+			.where(inArray(phaseSessions.itemId, ids))
+			.orderBy(
+				asc(phaseSessions.itemId),
+				asc(phaseSessions.phaseIdx),
+				asc(phaseSessions.createdAt),
+			),
 
 	gitRefs: (orm: Db, ids: number[]) =>
 		orm

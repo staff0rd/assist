@@ -1,5 +1,6 @@
 import type { CommentRow, ItemRow, LinkRow } from "../../shared/db/schema";
 import { attachGitRefs } from "./attachGitRefs";
+import { attachSessions } from "./attachSessions";
 import { attachSubtasks } from "./attachSubtasks";
 import { attachUsage } from "./attachUsage";
 import { buildPlan } from "./buildPlan";
@@ -67,6 +68,7 @@ export function rowToItem(row: ItemRow, rel: Relations): BacklogItem {
 	attachLinks(item, rel, row.id);
 	attachPlan(item, rel, row.id);
 	attachUsage(item, rel, row.id);
+	attachSessions(item, rel, row.id);
 	attachGitRefs(item, rel, row.id);
 	return item;
 }

@@ -2,6 +2,7 @@ import type { Db } from "../../shared/db/Db";
 import type {
 	CommentRow,
 	GitRefRow,
+	PhaseSessionRow,
 	PhaseUsageRow,
 	SubtaskRow,
 	TaskRow,
@@ -30,6 +31,7 @@ export async function loadRelations(
 		taskRows,
 		subtaskRows,
 		usageRows,
+		sessionRows,
 		gitRefRows,
 	] = await Promise.all([
 		includeComments ? relationQueries.comments(orm, ids) : ([] as CommentRow[]),
@@ -38,6 +40,9 @@ export async function loadRelations(
 		includeTasks ? relationQueries.tasks(orm, ids) : ([] as TaskRow[]),
 		includeSubtasks ? relationQueries.subtasks(orm, ids) : ([] as SubtaskRow[]),
 		includeUsage ? relationQueries.usage(orm, ids) : ([] as PhaseUsageRow[]),
+		includeUsage
+			? relationQueries.sessions(orm, ids)
+			: ([] as PhaseSessionRow[]),
 		includeGitRefs ? relationQueries.gitRefs(orm, ids) : ([] as GitRefRow[]),
 	]);
 	return {
@@ -47,6 +52,7 @@ export async function loadRelations(
 		tasks: groupByItem(taskRows),
 		subtasks: groupByItem(subtaskRows),
 		usage: groupByItem(usageRows),
+		sessions: groupByItem(sessionRows),
 		gitRefs: groupByItem(gitRefRows),
 	};
 }

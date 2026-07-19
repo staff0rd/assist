@@ -23,6 +23,13 @@ export type PhaseUsageTotal = {
 	peakContextPct: number;
 };
 
+export type PhaseSession = {
+	phaseIdx: number;
+	claudeSessionId: string;
+	hostname: string;
+	osUser: string;
+};
+
 export type BacklogComment = {
 	id?: number;
 	text: string;
@@ -67,6 +74,7 @@ export type BacklogItem = {
 	comments?: BacklogComment[];
 	subtasks?: Subtask[];
 	phaseUsage?: PhaseUsage[];
+	phaseSessions?: PhaseSession[];
 	usageTotal?: PhaseUsageTotal;
 	gitRefs?: GitRef[];
 };

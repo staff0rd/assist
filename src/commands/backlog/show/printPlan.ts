@@ -1,5 +1,6 @@
 import chalk from "chalk";
-import type { BacklogItem, PlanPhase } from "../types";
+import { REVIEW_PHASE_NAME } from "../buildPhasePrompt";
+import type { BacklogItem, PhaseSession, PlanPhase } from "../types";
 import { printPhaseTasks } from "./printPhaseTasks";
 
 function phaseHeader(index: number, name: string, isCurrent: boolean): string {
@@ -11,9 +12,35 @@ function phaseHeader(index: number, name: string, isCurrent: boolean): string {
 	return `${marker}${label}`;
 }
 
-function printPhase(phase: PlanPhase, index: number, isCurrent: boolean): void {
+function printPhaseSessions(sessions: PhaseSession[]): void {
+	if (sessions.length === 0) return;
+	console.log(`      ${chalk.dim("Sessions:")}`);
+	for (const s of sessions) {
+		console.log(
+			`        ${chalk.dim(`- ${s.hostname} / ${s.osUser} / ${s.claudeSessionId}`)}`,
+		);
+	}
+}
+
+function printPhase(
+	phase: PlanPhase,
+	index: number,
+	isCurrent: boolean,
+	sessions: PhaseSession[],
+): void {
 	console.log(phaseHeader(index, phase.name, isCurrent));
 	printPhaseTasks(phase);
+	printPhaseSessions(sessions);
+}
+
+function printReviewSessions(item: BacklogItem, planLength: number): void {
+	const sessions = (item.phaseSessions ?? []).filter(
+		(s) => s.phaseIdx >= planLength,
+	);
+	if (sessions.length === 0) return;
+	const isCurrent = item.currentPhase === planLength + 1;
+	console.log(phaseHeader(planLength, REVIEW_PHASE_NAME, isCurrent));
+	printPhaseSessions(sessions);
 }
 
 export function printPlan(item: BacklogItem): void {
@@ -22,7 +49,9 @@ export function printPlan(item: BacklogItem): void {
 	console.log(chalk.bold("Plan"));
 	for (const [i, phase] of item.plan.entries()) {
 		const isCurrent = item.currentPhase === i + 1;
-		printPhase(phase, i, isCurrent);
+		const sessions = (item.phaseSessions ?? []).filter((s) => s.phaseIdx === i);
+		printPhase(phase, i, isCurrent, sessions);
 	}
+	printReviewSessions(item, item.plan.length);
 	console.log();
 }

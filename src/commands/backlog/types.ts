@@ -26,6 +26,13 @@ const phaseUsageSchema = z.strictObject({
 	peakContextPct: z.number(),
 });
 
+const phaseSessionSchema = z.strictObject({
+	phaseIdx: z.number(),
+	claudeSessionId: z.string(),
+	hostname: z.string(),
+	osUser: z.string(),
+});
+
 const phaseUsageTotalSchema = z.strictObject({
 	tokensUp: z.number(),
 	tokensDown: z.number(),
@@ -83,6 +90,7 @@ export const backlogItemSchema = z.strictObject({
 	subtasks: z.array(subtaskSchema).optional(),
 	links: z.array(backlogLinkSchema).optional(),
 	phaseUsage: z.array(phaseUsageSchema).optional(),
+	phaseSessions: z.array(phaseSessionSchema).optional(),
 	usageTotal: phaseUsageTotalSchema.optional(),
 	gitRefs: z.array(gitRefSchema).optional(),
 	origin: z.string().optional(),
@@ -113,6 +121,7 @@ export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;
 export type PhaseUsage = z.infer<typeof phaseUsageSchema>;
+export type PhaseSession = z.infer<typeof phaseSessionSchema>;
 export type PhaseUsageTotal = z.infer<typeof phaseUsageTotalSchema>;
 export type BacklogComment = z.infer<typeof backlogCommentSchema>;
 export type Subtask = z.infer<typeof subtaskSchema>;

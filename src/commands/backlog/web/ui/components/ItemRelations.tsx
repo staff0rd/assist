@@ -31,6 +31,7 @@ export function ItemRelations({
 					currentPhase={item.currentPhase}
 					itemId={item.id}
 					usage={item.phaseUsage}
+					sessions={item.phaseSessions}
 					onRewind={onRewind}
 				/>
 			)}

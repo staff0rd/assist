@@ -3,12 +3,16 @@ import { migration0001Baseline } from "./migration0001Baseline";
 import { migration0002UsagePeaksContext } from "./migration0002UsagePeaksContext";
 import { migration0003PhaseCycleContext } from "./migration0003PhaseCycleContext";
 import { migration0004DropUsagePeaksContext } from "./migration0004DropUsagePeaksContext";
+import { migration0005PhaseSessions } from "./migration0005PhaseSessions";
+import { migration0006BackfillPhaseSessions } from "./migration0006BackfillPhaseSessions";
 
 export const migrations: readonly Migration[] = [
 	migration0001Baseline,
 	migration0002UsagePeaksContext,
 	migration0003PhaseCycleContext,
 	migration0004DropUsagePeaksContext,
+	migration0005PhaseSessions,
+	migration0006BackfillPhaseSessions,
 ];
 
 export const latestMigrationId: number = migrations.reduce(

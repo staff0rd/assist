@@ -51,6 +51,10 @@ vi.mock("./persistPhaseSessionId", () => ({
 	persistPhaseSessionId: vi.fn(),
 }));
 
+vi.mock("./persistPhaseSession", () => ({
+	persistPhaseSession: vi.fn(),
+}));
+
 vi.mock("./recordSignalOwner", () => ({
 	recordSignalOwner: vi.fn(),
 }));
@@ -59,6 +63,7 @@ import { emitActivity } from "../../shared/emitActivity";
 import { spawnClaude } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { executePhase } from "./executePhase";
+import { persistPhaseSession } from "./persistPhaseSession";
 import { persistPhaseSessionId } from "./persistPhaseSessionId";
 import { resolvePhaseResult } from "./resolvePhaseResult";
 import { verifyResumeConversation } from "./verifyResumeConversation";
@@ -69,6 +74,7 @@ const mockSetSessionStatus = setSessionStatus as unknown as MockInstance;
 const mockResolvePhaseResult = resolvePhaseResult as unknown as MockInstance;
 const mockPersistPhaseSessionId =
 	persistPhaseSessionId as unknown as MockInstance;
+const mockPersistPhaseSession = persistPhaseSession as unknown as MockInstance;
 const mockVerifyResumeConversation =
 	verifyResumeConversation as unknown as MockInstance;
 
@@ -127,6 +133,22 @@ describe("executePhase", () => {
 		await executePhase(makeItem(), 0, phases, { resumeSessionId: "sess-9" });
 
 		expect(mockPersistPhaseSessionId).not.toHaveBeenCalled();
+	});
+
+	it("appends a session-history row on a fresh launch", async () => {
+		await executePhase(makeItem(), 0, phases);
+
+		expect(mockPersistPhaseSession).toHaveBeenCalledWith(
+			7,
+			0,
+			"generated-uuid",
+		);
+	});
+
+	it("appends a session-history row on resume too", async () => {
+		await executePhase(makeItem(), 0, phases, { resumeSessionId: "sess-9" });
+
+		expect(mockPersistPhaseSession).toHaveBeenCalledWith(7, 0, "sess-9");
 	});
 
 	it("reports the authored phase name as the activity phaseName", async () => {

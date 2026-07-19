@@ -4,6 +4,7 @@ import { CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { launchPhaseSession } from "./launchPhaseSession";
+import { persistPhaseSession } from "./persistPhaseSession";
 import { persistPhaseSessionId } from "./persistPhaseSessionId";
 import { recordSignalOwner } from "./recordSignalOwner";
 import { reportPhaseActivity } from "./reportPhaseActivity";
@@ -49,6 +50,7 @@ export async function executePhase(
 	if (!resumeSessionId) {
 		await persistPhaseSessionId(item.id, phaseIndex, claudeSessionId);
 	}
+	await persistPhaseSession(item.id, phaseIndex, claudeSessionId);
 	const exitCode = await launchPhaseSession(
 		item,
 		phaseNumber,

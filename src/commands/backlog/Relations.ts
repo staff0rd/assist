@@ -3,6 +3,7 @@ import type {
 	GitRefRow,
 	LinkRow,
 	PhaseRow,
+	PhaseSessionRow,
 	PhaseUsageRow,
 	SubtaskRow,
 	TaskRow,
@@ -15,6 +16,7 @@ export type Relations = {
 	tasks: Map<number, TaskRow[]>;
 	subtasks: Map<number, SubtaskRow[]>;
 	usage: Map<number, PhaseUsageRow[]>;
+	sessions: Map<number, PhaseSessionRow[]>;
 	gitRefs: Map<number, GitRefRow[]>;
 };
 
