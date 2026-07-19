@@ -1,3 +1,10 @@
+# [0.403.0](https://github.com/staff0rd/assist/compare/v0.402.0...v0.403.0) (2026-07-19)
+
+
+### Features
+
+* block backlog refs in PRs/commits ([34d23d7](https://github.com/staff0rd/assist/commit/34d23d7e7850541a8db2ab67f025abbeb49eeae4))
+
 # [0.402.0](https://github.com/staff0rd/assist/compare/v0.401.0...v0.402.0) (2026-07-19)
 
 
