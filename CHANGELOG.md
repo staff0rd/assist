@@ -1,3 +1,10 @@
+# [0.401.0](https://github.com/staff0rd/assist/compare/v0.400.0...v0.401.0) (2026-07-19)
+
+
+### Features
+
+* per-phase session capture + show ([404d9ab](https://github.com/staff0rd/assist/commit/404d9ab8ba0dccfb4532ccc16c0871296e2463c4))
+
 # [0.400.0](https://github.com/staff0rd/assist/compare/v0.399.0...v0.400.0) (2026-07-16)
 
 
