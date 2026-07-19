@@ -40,6 +40,55 @@ describe("validatePrContent", () => {
 		});
 	});
 
+	describe("when the title references a backlog item", () => {
+		it("should reject a bare id", () => {
+			expect(() =>
+				validatePrContent("Fix bug from a706", "A clean body"),
+			).toThrow("process.exit");
+			expect(mockExit).toHaveBeenCalledWith(1);
+		});
+	});
+
+	describe("when the body references a backlog item", () => {
+		it("should reject a bare id", () => {
+			expect(() => validatePrContent("Fix bug", "Implements a706.")).toThrow(
+				"process.exit",
+			);
+		});
+
+		it("should reject a contextual phrase", () => {
+			expect(() =>
+				validatePrContent("Fix bug", "See backlog item a706 for context."),
+			).toThrow("process.exit");
+		});
+	});
+
+	describe("when content only resembles a backlog ref", () => {
+		it("should pass data706", () => {
+			expect(() =>
+				validatePrContent("Add feature", "Processes data706 records."),
+			).not.toThrow();
+		});
+
+		it("should pass a Jira key", () => {
+			expect(() =>
+				validatePrContent("Add feature", "Resolves BAD-671."),
+			).not.toThrow();
+		});
+
+		it("should pass a bare hash number", () => {
+			expect(() =>
+				validatePrContent("Add feature", "Closes #42."),
+			).not.toThrow();
+		});
+
+		it("should pass clean prose", () => {
+			expect(() =>
+				validatePrContent("Add feature", "Adds the feature."),
+			).not.toThrow();
+		});
+	});
+
 	describe("paragraph length", () => {
 		it("should pass short prose", () => {
 			expect(() =>

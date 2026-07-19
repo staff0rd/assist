@@ -21,6 +21,27 @@ describe("validateMessage", () => {
 		});
 	});
 
+	describe("when the message references a backlog item", () => {
+		it("should reject a bare id", () => {
+			expect(() => validateMessage("fix: bug from a706", baseConfig)).toThrow(
+				"process.exit",
+			);
+			expect(mockExit).toHaveBeenCalledWith(1);
+		});
+
+		it("should reject a contextual phrase", () => {
+			expect(() =>
+				validateMessage("chore: backlog item a706", baseConfig),
+			).toThrow("process.exit");
+		});
+
+		it("should not reject lookalikes", () => {
+			expect(() =>
+				validateMessage("fix: parse data706 rows", baseConfig),
+			).not.toThrow();
+		});
+	});
+
 	describe("when conventional commits are enabled", () => {
 		describe("when the message follows the format", () => {
 			it("should not reject", () => {

@@ -1,3 +1,4 @@
+import { backlogRefError, findBacklogRefs } from "../../shared/findBacklogRefs";
 import type { AssistConfig } from "../../shared/types";
 
 const MAX_MESSAGE_LENGTH = 50;
@@ -7,6 +8,14 @@ const CONVENTIONAL_COMMIT_REGEX =
 export function validateMessage(message: string, config: AssistConfig): void {
 	if (message.toLowerCase().includes("claude")) {
 		console.error("Error: Commit message must not reference Claude");
+		process.exit(1);
+	}
+
+	const backlogIds = findBacklogRefs(message);
+	if (backlogIds.length > 0) {
+		console.error(
+			backlogRefError("Commit message", "commit messages", backlogIds),
+		);
 		process.exit(1);
 	}
 

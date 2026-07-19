@@ -22,7 +22,7 @@ export function scanSessionBacklogRefs(filePath: string): number[] {
 	return [...ids].sort((a, b) => a - b);
 }
 
-function extractBacklogIds(text: string): number[] {
+export function extractBacklogIds(text: string): number[] {
 	const ids: number[] = [];
 
 	for (const m of text.matchAll(/backlog\s+run\s+a(\d+)/gi)) {
