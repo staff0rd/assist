@@ -51,7 +51,7 @@ export function ReviewButton({ cwd, pr }: { cwd: string; pr: PrSummary }) {
 					onClick={(e) => {
 						e.stopPropagation();
 						setAnchorEl(null);
-						launchAssist(["review-comments", String(pr.number)], cwd, meta);
+						launchAssist(["review-pr-comments", String(pr.number)], cwd, meta);
 					}}
 				>
 					Address Comments

@@ -52,7 +52,7 @@ export const assistConfigSchema = z.strictObject({
 			ignore: z.array(z.string()).default([]),
 		})
 		.optional(),
-	blockComments: z
+	blockCodeComments: z
 		.strictObject({
 			ignore: z.array(z.string()).default([]),
 		})

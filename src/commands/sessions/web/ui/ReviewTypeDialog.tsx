@@ -33,7 +33,7 @@ export function ReviewTypeDialog({
 						</MenuItem>
 					))}
 					<Divider />
-					<MenuItem onClick={() => onSelect(["review-comments"])}>
+					<MenuItem onClick={() => onSelect(["review-pr-comments"])}>
 						Address Comments
 					</MenuItem>
 				</MenuList>

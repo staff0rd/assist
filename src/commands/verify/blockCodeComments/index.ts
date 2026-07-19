@@ -1,8 +1,8 @@
 import { loadConfig } from "../../../shared/loadConfig";
 import { findComments } from "./findComments";
 
-export function blockComments(): void {
-	const ignoreGlobs = loadConfig().blockComments?.ignore ?? [];
+export function blockCodeComments(): void {
+	const ignoreGlobs = loadConfig().blockCodeComments?.ignore ?? [];
 
 	const findings = findComments({ ignoreGlobs });
 

@@ -2,9 +2,9 @@ import type { ConfigHelpEntry } from "../../shared/configHelp";
 
 export const verifyConfigHelp: ConfigHelpEntry[] = [
 	{
-		key: "blockComments.ignore",
-		setter: 'assist config set blockComments.ignore "**/*.test.ts"',
-		note: "globs exempt from the block-comments check",
+		key: "blockCodeComments.ignore",
+		setter: 'assist config set blockCodeComments.ignore "**/*.test.ts"',
+		note: "globs exempt from the block-code-comments check",
 	},
 	{
 		key: "hardcodedColors.ignore",

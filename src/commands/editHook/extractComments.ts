@@ -1,4 +1,4 @@
-import { isCommentExempt } from "../verify/blockComments/isCommentExempt";
+import { isCommentExempt } from "../verify/blockCodeComments/isCommentExempt";
 
 const SOURCE_EXTENSIONS = [
 	".ts",

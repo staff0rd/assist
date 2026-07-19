@@ -24,10 +24,10 @@ describe("sessionType", () => {
 		}
 	});
 
-	it("maps review-comments to the review type", () => {
+	it("maps review-pr-comments to the review type", () => {
 		const session = makeSession({
 			commandType: "assist",
-			assistArgs: ["review-comments", "123"],
+			assistArgs: ["review-pr-comments", "123"],
 		});
 		expect(sessionType(session)).toBe("review");
 	});

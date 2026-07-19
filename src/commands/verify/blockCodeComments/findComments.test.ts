@@ -37,7 +37,7 @@ function diffAddingLine(startLine: number): string {
 
 beforeEach(() => {
 	vi.clearAllMocks();
-	tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "block-comments-"));
+	tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "block-code-comments-"));
 	filePath = path.join(tmpDir, "sample.ts");
 	fs.writeFileSync(filePath, SOURCE);
 });

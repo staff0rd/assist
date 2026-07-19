@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { next as backlogNext } from "./backlog";
 import { launchMode } from "./backlog/launchMode";
 import { registerRefineLaunch } from "./backlog/registerRefineLaunch";
-import { reviewComments } from "./reviewComments";
+import { reviewPrComments } from "./reviewPrComments";
 
 type LaunchOpts = { once?: boolean; resumeSession?: string };
 
@@ -46,12 +46,12 @@ function registerDescriptionLaunch(
 	if (alias) command.alias(alias);
 }
 
-function registerReviewComments(program: Command): void {
+function registerReviewPrComments(program: Command): void {
 	program
-		.command("review-comments")
+		.command("review-pr-comments")
 		.argument("[number]", "PR number to check out first")
-		.description("Launch Claude in /review-comments mode (single session)")
-		.action((number) => reviewComments(number));
+		.description("Launch Claude in /review-pr-comments mode (single session)")
+		.action((number) => reviewPrComments(number));
 }
 
 export function registerLaunch(program: Command): void {
@@ -69,6 +69,6 @@ export function registerLaunch(program: Command): void {
 		"bug",
 		"Launch Claude in /bug mode, chain into next on /next signal",
 	);
-	registerReviewComments(program);
+	registerReviewPrComments(program);
 	registerRefineLaunch(program, RESUME_SESSION_FLAG);
 }

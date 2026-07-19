@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import {
-	blockComments,
+	blockCodeComments,
 	configKeys,
 	forbiddenStrings,
 	hardcodedColors,
@@ -15,10 +15,10 @@ const checks = [
 		action: hardcodedColors,
 	},
 	{
-		name: "block-comments",
+		name: "block-code-comments",
 		description:
 			"Fail on any comment on a changed line, whether added or edited",
-		action: blockComments,
+		action: blockCodeComments,
 	},
 	{
 		name: "no-venv",

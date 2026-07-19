@@ -38,9 +38,9 @@ describe("reviewTargetPr", () => {
 		expect(reviewTargetPr(session)).toBe(119);
 	});
 
-	it("handles review-comments sessions", () => {
+	it("handles review-pr-comments sessions", () => {
 		const session = makeSession({
-			assistArgs: ["review-comments", "122"],
+			assistArgs: ["review-pr-comments", "122"],
 		});
 		expect(reviewTargetPr(session)).toBe(122);
 	});
