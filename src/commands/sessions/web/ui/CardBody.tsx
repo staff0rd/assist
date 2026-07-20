@@ -40,7 +40,12 @@ export function CardBody({
 				restored={session.restored}
 				usedPct={session.usedPct}
 			/>
-			{session.status === "error" && <SessionErrorText error={session.error} />}
+			{session.status === "error" && (
+				<SessionErrorText
+					error={session.error}
+					errorOutput={session.errorOutput}
+				/>
+			)}
 			<CardToggles
 				session={session}
 				onSetAutoRun={onSetAutoRun}

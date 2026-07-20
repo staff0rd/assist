@@ -121,22 +121,24 @@ describe("wirePtyEvents exit handling", () => {
 		expect(line).toContain("unexpected exit");
 	});
 
-	it("logs a non-zero exit with prior output as an unexpected done, not an error", () => {
+	it("marks a non-zero exit as an error, captures the output tail, and logs it", () => {
 		const { pty, exit } = fakePty();
 		const session = fakeSession({
 			pty,
-			restored: true,
 			status: "running",
-			scrollback: "some output",
+			scrollback: "startup failed: EMAXCONNSESSION",
 		});
 		const onStatusChange = vi.fn();
 
 		wirePtyEvents(session, new Set<SessionClient>(), onStatusChange);
 		exit(1);
 
-		expect(onStatusChange).toHaveBeenCalledWith(session, "done", 1);
+		expect(onStatusChange).toHaveBeenCalledWith(session, "error", 1);
+		expect(session.error).toBe("process exited with code 1");
+		expect(session.errorOutput).toBe("startup failed: EMAXCONNSESSION");
 		const line = daemonLogMock.mock.calls.at(-1)?.[0] as string;
 		expect(line).toContain("exited with code 1");
-		expect(line).toContain("unexpected exit");
+		expect(line).toContain("marking error");
+		expect(line).toContain("EMAXCONNSESSION");
 	});
 });

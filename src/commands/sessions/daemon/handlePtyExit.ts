@@ -1,5 +1,6 @@
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { errorTail } from "./errorTail";
 import type { OnStatusChange } from "./types";
 import { refreshActivity } from "./watchActivity";
 
@@ -31,7 +32,17 @@ export function handlePtyExit(
 		return;
 	}
 	const priorStatus = session.status;
-	const unexpected = priorStatus === "waiting" || exitCode !== 0;
+	if (exitCode !== 0) {
+		const tail = errorTail(session.scrollback);
+		session.error = `process exited with code ${exitCode}`;
+		session.errorOutput = tail || undefined;
+		daemonLog(
+			`session ${session.id} ("${session.name}") pty exited with code ${exitCode} from status "${priorStatus}" — unexpected exit, marking error; error output:\n${tail || "(no output captured)"}`,
+		);
+		onStatusChange(session, "error", exitCode);
+		return;
+	}
+	const unexpected = priorStatus === "waiting";
 	daemonLog(
 		`session ${session.id} ("${session.name}") pty exited with code ${exitCode} from status "${priorStatus}" ` +
 			`(${session.scrollback.length} bytes of output) — ${unexpected ? "unexpected exit, process died mid-session" : "expected completion"}; marking done`,
