@@ -1,3 +1,10 @@
+# [0.409.0](https://github.com/staff0rd/assist/compare/v0.408.2...v0.409.0) (2026-07-20)
+
+
+### Features
+
+* clone repos from backlog chips ([5bcde90](https://github.com/staff0rd/assist/commit/5bcde90ac11deb776aa854b83efe0e71c010ee53))
+
 ## [0.408.2](https://github.com/staff0rd/assist/compare/v0.408.1...v0.408.2) (2026-07-20)
 
 
