@@ -1,3 +1,10 @@
+## [0.408.1](https://github.com/staff0rd/assist/compare/v0.408.0...v0.408.1) (2026-07-20)
+
+
+### Bug Fixes
+
+* drop usage readings past cycle reset ([1b35423](https://github.com/staff0rd/assist/commit/1b354234583675acb5e0dd77772a60d03069c37b))
+
 # [0.408.0](https://github.com/staff0rd/assist/compare/v0.407.0...v0.408.0) (2026-07-20)
 
 
