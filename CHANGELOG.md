@@ -1,3 +1,10 @@
+## [0.408.2](https://github.com/staff0rd/assist/compare/v0.408.1...v0.408.2) (2026-07-20)
+
+
+### Bug Fixes
+
+* resolve nested tsconfig in refactor ([c73c664](https://github.com/staff0rd/assist/commit/c73c664999e54c7f1940c42377213bdc8871787f))
+
 ## [0.408.1](https://github.com/staff0rd/assist/compare/v0.408.0...v0.408.1) (2026-07-20)
 
 
