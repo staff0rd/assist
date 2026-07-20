@@ -1,3 +1,10 @@
+# [0.405.0](https://github.com/staff0rd/assist/compare/v0.404.2...v0.405.0) (2026-07-20)
+
+
+### Features
+
+* associate github issue with item ([8f7dcc9](https://github.com/staff0rd/assist/commit/8f7dcc9a3a00d396992de230143213d0043026e3))
+
 ## [0.404.2](https://github.com/staff0rd/assist/compare/v0.404.1...v0.404.2) (2026-07-20)
 
 
