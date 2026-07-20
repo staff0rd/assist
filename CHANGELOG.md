@@ -1,3 +1,10 @@
+# [0.407.0](https://github.com/staff0rd/assist/compare/v0.406.0...v0.407.0) (2026-07-20)
+
+
+### Features
+
+* gate new db migrations behind pin ([666f7d8](https://github.com/staff0rd/assist/commit/666f7d811e243899774edb6c4c3274a7838057ed))
+
 # [0.406.0](https://github.com/staff0rd/assist/compare/v0.405.0...v0.406.0) (2026-07-20)
 
 
