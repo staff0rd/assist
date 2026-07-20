@@ -1,3 +1,10 @@
+## [0.404.1](https://github.com/staff0rd/assist/compare/v0.404.0...v0.404.1) (2026-07-20)
+
+
+### Bug Fixes
+
+* drop vestigial backlog init/exists ([7020ca8](https://github.com/staff0rd/assist/commit/7020ca8894fff6d19368fdf40a7baa6481a0a372))
+
 # [0.404.0](https://github.com/staff0rd/assist/compare/v0.403.0...v0.404.0) (2026-07-19)
 
 
