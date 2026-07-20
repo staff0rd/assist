@@ -1,6 +1,7 @@
 import path from "node:path";
 import chalk from "chalk";
 import { findSourceFiles } from "../../complexity/findSourceFiles";
+import { findTsConfig } from "../extract/findTsConfig";
 import { buildImportGraph } from "./buildImportGraph";
 import { clusterDirectories } from "./clusterDirectories";
 import { clusterFiles } from "./clusterFiles";
@@ -52,7 +53,7 @@ export async function restructure(
 		return;
 	}
 
-	const tsConfigPath = path.resolve("tsconfig.json");
+	const tsConfigPath = findTsConfig(path.resolve(files[0]));
 	const plan = buildPlan(files, tsConfigPath);
 
 	if (plan.moves.length === 0) {

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { Project } from "ts-morph";
+import { findEnclosingTsConfig } from "./findEnclosingTsConfig";
+import { projectIncludesFile } from "./projectIncludesFile";
 
 export function findTsConfig(sourcePath: string): string {
 	const rootConfig = path.resolve("tsconfig.json");
@@ -12,7 +13,7 @@ export function findTsConfig(sourcePath: string): string {
 	for (const candidate of candidates) {
 		if (tried.has(candidate)) continue;
 		tried.add(candidate);
-		if (projectIncludes(candidate, sourcePath)) return candidate;
+		if (projectIncludesFile(candidate, sourcePath)) return candidate;
 	}
 
 	const siblings = fs
@@ -23,8 +24,15 @@ export function findTsConfig(sourcePath: string): string {
 	for (const sibling of siblings) {
 		if (tried.has(sibling)) continue;
 		tried.add(sibling);
-		if (projectIncludes(sibling, sourcePath)) return sibling;
+		if (projectIncludesFile(sibling, sourcePath)) return sibling;
 	}
+
+	const nested = findEnclosingTsConfig(
+		sourcePath,
+		path.dirname(rootConfig),
+		tried,
+	);
+	if (nested) return nested;
 
 	return rootConfig;
 }
@@ -51,13 +59,4 @@ function readReferences(configPath: string): string[] {
 				: refPath;
 		})
 		.filter((p) => fs.existsSync(p));
-}
-
-function projectIncludes(configPath: string, sourcePath: string): boolean {
-	try {
-		const project = new Project({ tsConfigFilePath: configPath });
-		return !!project.getSourceFile(sourcePath);
-	} catch {
-		return false;
-	}
 }
