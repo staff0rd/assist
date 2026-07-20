@@ -211,6 +211,8 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist edit-hook` - PreToolUse hook that blocks `Edit`/`Write`/`MultiEdit` calls from adding, changing, or removing a `// assist-maintainability-override` marker, or from introducing a code comment (use `code-comment set`/`confirm` for the rare comment that belongs)
 - `assist code-comment set <file> <line> <text>` - Validate a single-line comment (max 50 chars; no block comments for `.ts`/`.js`) and issue a pin authorising its insertion; inserts `#` for `#`-comment files (`.yml`/`.yaml`, Dockerfile, `*.env`, `*.sh`) and `//` otherwise
 - `assist code-comment confirm <pin>` - Insert the pinned comment at its file/line and clear the pin state
+- `assist db-migration unlock` - Page a human to approve creating the next new database migration module: issues a pin via desktop notification and records the pending migration id
+- `assist db-migration confirm <pin>` - Confirm a pin from `db-migration unlock` to record a one-shot approval for that migration id, allowing the edit hook to let its `migrationNNNN*.ts` write through once
 - `assist update` - Update assist to the latest version and sync commands
 - `assist vscode init` - Add VS Code configuration files
 - `assist deploy init` - Initialize Netlify project and configure deployment
