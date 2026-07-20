@@ -5,6 +5,7 @@ import { migration0003PhaseCycleContext } from "./migration0003PhaseCycleContext
 import { migration0004DropUsagePeaksContext } from "./migration0004DropUsagePeaksContext";
 import { migration0005PhaseSessions } from "./migration0005PhaseSessions";
 import { migration0006BackfillPhaseSessions } from "./migration0006BackfillPhaseSessions";
+import { migration0007GithubIssue } from "./migration0007GithubIssue";
 
 export const migrations: readonly Migration[] = [
 	migration0001Baseline,
@@ -13,6 +14,7 @@ export const migrations: readonly Migration[] = [
 	migration0004DropUsagePeaksContext,
 	migration0005PhaseSessions,
 	migration0006BackfillPhaseSessions,
+	migration0007GithubIssue,
 ];
 
 export const latestMigrationId: number = migrations.reduce(

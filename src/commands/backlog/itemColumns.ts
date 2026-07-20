@@ -20,5 +20,6 @@ export function itemColumns(
 		currentPhase: item.currentPhase ?? null,
 		starred: item.starred,
 		jiraKey: item.jiraKey ?? null,
+		githubIssue: item.githubIssue ?? null,
 	};
 }

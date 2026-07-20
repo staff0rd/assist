@@ -28,6 +28,7 @@ export async function loadItemSummaries(
 			status: items.status,
 			starred: items.starred,
 			jiraKey: items.jiraKey,
+			githubIssue: items.githubIssue,
 			incompleteSubtasks: incompleteCounts.count,
 			tokensUp: usageTotals.tokensUp,
 			tokensDown: usageTotals.tokensDown,

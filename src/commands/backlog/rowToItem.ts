@@ -28,6 +28,7 @@ function assignOptionalColumns(item: BacklogItem, row: ItemRow): void {
 	if (row.description != null) item.description = row.description;
 	if (row.currentPhase != null) item.currentPhase = row.currentPhase;
 	if (row.jiraKey != null) item.jiraKey = row.jiraKey;
+	if (row.githubIssue != null) item.githubIssue = row.githubIssue;
 }
 
 /** The item's own columns, before relations are attached. */

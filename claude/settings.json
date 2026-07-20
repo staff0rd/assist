@@ -65,6 +65,8 @@
 			"Skill(voice-logs)",
 			"Skill(jira)",
 			"SlashCommand(/jira)",
+			"Skill(github)",
+			"SlashCommand(/github)",
 			"Skill(seq)",
 			"SlashCommand(/seq)",
 			"SlashCommand(/sql)",

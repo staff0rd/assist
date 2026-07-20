@@ -95,6 +95,7 @@ export const backlogItemSchema = z.strictObject({
 	gitRefs: z.array(gitRefSchema).optional(),
 	origin: z.string().optional(),
 	jiraKey: z.string().optional(),
+	githubIssue: z.string().optional(),
 });
 
 const backlogFileSchema = z.array(backlogItemSchema);
@@ -115,6 +116,7 @@ export type BacklogItemSummary = Pick<
 	| "origin"
 	| "starred"
 	| "jiraKey"
+	| "githubIssue"
 	| "usageTotal"
 > & { incompleteSubtasks: number };
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;

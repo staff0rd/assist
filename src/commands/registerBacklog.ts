@@ -3,6 +3,7 @@ import { configHelp } from "../shared/configHelp";
 import { show as backlogShow, web as backlogWeb } from "./backlog";
 import { backlogConfigHelp } from "./backlog/backlogConfigHelp";
 import { registerActivityCommands } from "./backlog/registerActivityCommands";
+import { registerAssociateGithubCommand } from "./backlog/registerAssociateGithubCommand";
 import { registerAssociateJiraCommand } from "./backlog/registerAssociateJiraCommand";
 import { registerCommentCommands } from "./backlog/registerCommentCommands";
 import { registerExportCommand } from "./backlog/registerExportCommand";
@@ -57,6 +58,7 @@ const registrars = [
 	registerImportCommand,
 	registerMoveRepoCommand,
 	registerAssociateJiraCommand,
+	registerAssociateGithubCommand,
 	registerActivityCommands,
 ];
 

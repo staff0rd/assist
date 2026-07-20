@@ -3,6 +3,7 @@ import { formatComment } from "../formatComment";
 import { formatItemId } from "../formatItemId";
 import { renderMarkdownTerminal } from "../../../shared/renderMarkdownTerminal";
 import { findOneItem } from "../shared";
+import { shortenGithubIssue } from "../shortenGithubIssue";
 import type { BacklogItem } from "../types";
 import { printActivity } from "./printActivity";
 import { printLinks } from "./printLinks";
@@ -16,6 +17,11 @@ function printHeader(item: BacklogItem): void {
 	);
 	if (item.jiraKey) {
 		console.log(`${chalk.dim("Jira:")} ${item.jiraKey}`);
+	}
+	if (item.githubIssue) {
+		console.log(
+			`${chalk.dim("GitHub:")} ${shortenGithubIssue(item.githubIssue, item.origin)}`,
+		);
 	}
 	console.log();
 }

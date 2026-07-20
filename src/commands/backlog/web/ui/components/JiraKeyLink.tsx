@@ -1,9 +1,5 @@
-import Chip from "@mui/material/Chip";
-import { Link, Typography } from "@mui/material";
 import { useJiraSite } from "./useJiraSite";
-
-const sx = { fontSize: "0.875rem" } as const;
-const chipSx = { height: 18, fontSize: "0.65rem" } as const;
+import { TrackerLink } from "./TrackerLink";
 
 type JiraKeyLinkProps = {
 	jiraKey?: string;
@@ -15,49 +11,7 @@ export function JiraKeyLink({ jiraKey, variant = "link" }: JiraKeyLinkProps) {
 
 	if (!jiraKey) return null;
 
-	if (variant === "chip") {
-		if (!site)
-			return (
-				<Chip
-					label={jiraKey}
-					size="small"
-					sx={chipSx}
-					clickable={false}
-					onClick={(e) => e.stopPropagation()}
-				/>
-			);
-		return (
-			<Chip
-				label={jiraKey}
-				size="small"
-				sx={chipSx}
-				clickable
-				component="a"
-				href={`https://${site}/browse/${jiraKey}`}
-				target="_blank"
-				rel="noopener"
-				onClick={(e) => e.stopPropagation()}
-			/>
-		);
-	}
+	const url = site ? `https://${site}/browse/${jiraKey}` : undefined;
 
-	if (!site) {
-		return (
-			<Typography variant="body2" color="text.disabled" sx={sx}>
-				{jiraKey}
-			</Typography>
-		);
-	}
-
-	return (
-		<Link
-			href={`https://${site}/browse/${jiraKey}`}
-			target="_blank"
-			rel="noopener"
-			onClick={(e) => e.stopPropagation()}
-			sx={sx}
-		>
-			{jiraKey}
-		</Link>
-	);
+	return <TrackerLink label={jiraKey} url={url} variant={variant} />;
 }

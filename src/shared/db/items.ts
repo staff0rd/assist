@@ -16,6 +16,7 @@ export const items = pgTable(
 		currentPhase: integer("current_phase"),
 		starred: boolean().notNull().default(false),
 		jiraKey: text("jira_key"),
+		githubIssue: text("github_issue"),
 	},
 	(t) => [index("items_origin_idx").on(t.origin)],
 );

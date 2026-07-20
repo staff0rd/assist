@@ -1,6 +1,7 @@
 import { Chip, Stack, Typography } from "@mui/material";
 import { formatItemId } from "../../../formatItemId";
 import type { BacklogItem } from "../types";
+import { GithubIssueLink } from "./GithubIssueLink";
 import { JiraKeyLink } from "./JiraKeyLink";
 import { StatusPicker } from "./StatusPicker";
 import { typeChipColors } from "./typeChipColors";
@@ -37,6 +38,7 @@ export function ItemMeta({
 			)}
 			<StatusPicker current={item.status} onStatusChange={onStatusChange} />
 			<JiraKeyLink jiraKey={item.jiraKey} />
+			<GithubIssueLink githubIssue={item.githubIssue} origin={item.origin} />
 			{item.usageTotal && <UsageSummary total={item.usageTotal} sx={usageSx} />}
 		</Stack>
 	);

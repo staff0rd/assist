@@ -2,8 +2,8 @@ import chalk from "chalk";
 import { eq } from "drizzle-orm";
 import { items } from "../../../shared/db/schema";
 import { fetchIssue } from "../../jira/fetchIssue";
+import { beginAssociation } from "../beginAssociation";
 import { formatItemId } from "../formatItemId";
-import { findOneItem } from "../shared";
 
 const JIRA_KEY_PATTERN = /^[A-Z]+-\d+$/;
 
@@ -16,22 +16,10 @@ export async function associateJira(
 	key: string | undefined,
 	options: AssociateJiraOptions,
 ): Promise<void> {
-	const found = await findOneItem(id);
-	if (!found) {
-		process.exitCode = 1;
-		return;
-	}
+	const target = await beginAssociation(id, options, { jiraKey: null }, "Jira");
+	if (!target) return;
 
-	const { orm } = found;
-	const itemId = found.item.id;
-
-	if (options.clear) {
-		await orm.update(items).set({ jiraKey: null }).where(eq(items.id, itemId));
-		console.log(
-			chalk.green(`Cleared Jira association on item ${formatItemId(itemId)}.`),
-		);
-		return;
-	}
+	const { orm, itemId } = target;
 
 	if (!key) {
 		console.log(chalk.red("Provide a Jira key, or use --clear to remove one."));
@@ -51,7 +39,10 @@ export async function associateJira(
 	const fields = parsed?.fields as Record<string, unknown> | undefined;
 	const summary = fields?.summary as string | undefined;
 
-	await orm.update(items).set({ jiraKey: key }).where(eq(items.id, itemId));
+	await orm
+		.update(items)
+		.set({ jiraKey: key, githubIssue: null })
+		.where(eq(items.id, itemId));
 
 	console.log(
 		chalk.green(`Associated ${key} with item ${formatItemId(itemId)}.`),
