@@ -14,6 +14,7 @@ export function aggregateResults(fileMetrics: FileMetrics): ResultEntry[] {
 			avgMaintainability,
 			minMaintainability,
 			override: metrics.override,
+			largestFunction: metrics.largestFunction,
 		});
 	}
 

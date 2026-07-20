@@ -3,4 +3,5 @@ export type ResultEntry = {
 	avgMaintainability: number;
 	minMaintainability: number;
 	override: number | undefined;
+	largestFunction: string;
 };

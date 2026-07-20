@@ -1,16 +1,23 @@
 import chalk from "chalk";
 import { formatResultLine } from "./formatResultLine";
+import {
+	getMaintainabilityGitState,
+	type MaintainabilityGitState,
+} from "./getMaintainabilityGitState";
 import { printMaintainabilityFailure } from "./printMaintainabilityFailure";
+import { printMaintainabilityFormula } from "./printMaintainabilityFormula";
 import type { ResultEntry } from "./ResultEntry";
 
 export function displayMaintainabilityResults(
 	results: ResultEntry[],
 	threshold: number | undefined,
+	gitState: MaintainabilityGitState = getMaintainabilityGitState(),
 ): void {
 	const gating =
 		threshold !== undefined || results.some((r) => r.override !== undefined);
 
 	if (!gating) {
+		printMaintainabilityFormula();
 		for (const entry of results) console.log(formatResultLine(entry, false));
 		console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
 		return;
@@ -23,8 +30,6 @@ export function displayMaintainabilityResults(
 
 	if (failing.length === 0) {
 		console.log(chalk.green("All files pass maintainability threshold"));
-	} else {
-		for (const entry of failing) console.log(formatResultLine(entry, true));
 	}
 
 	const passingOverrides = results.filter(
@@ -36,7 +41,7 @@ export function displayMaintainabilityResults(
 	console.log(chalk.dim(`\nAnalyzed ${results.length} files`));
 
 	if (failing.length > 0) {
-		printMaintainabilityFailure(failing.length, threshold);
+		printMaintainabilityFailure(failing, gitState);
 		process.exit(1);
 	}
 }

@@ -1,13 +1,40 @@
+import path from "node:path";
 import chalk from "chalk";
+import type { MaintainabilityGitState } from "./getMaintainabilityGitState";
+import type { ResultEntry } from "./ResultEntry";
+
+function suggestDestination(file: string, functionName: string): string {
+	return path.join(path.dirname(file), `${functionName}.ts`);
+}
+
+function remediationLine(entry: ResultEntry): string {
+	const { file, largestFunction } = entry;
+	if (largestFunction === "" || largestFunction.startsWith("<"))
+		return `  Move the largest responsibility out of ${chalk.bold(file)} into a new file with 'assist refactor extract'.`;
+	const dest = suggestDestination(file, largestFunction);
+	const command = `assist refactor extract ${file} ${largestFunction} ${dest} --apply`;
+	return `  ${chalk.bold(file)} → extract '${largestFunction}' to a new file:\n    ${chalk.cyan(command)}`;
+}
+
+function cheatLine(
+	entry: ResultEntry,
+	gitState: MaintainabilityGitState,
+): string {
+	const shrank = gitState.shrunkFiles.has(path.resolve(entry.file));
+	if (!shrank || gitState.newFileCreated) return "";
+	return `\n    ${chalk.red("✗ You shrank existing lines in this file without creating a new file. That cannot clear the gate — extract a responsibility to a new file.")}`;
+}
 
 export function printMaintainabilityFailure(
-	failingCount: number,
-	threshold: number | undefined,
+	failing: ResultEntry[],
+	gitState: MaintainabilityGitState,
 ): void {
-	const thresholdLabel = threshold !== undefined ? ` ${threshold}` : "";
+	const blocks = failing
+		.map((entry) => `${remediationLine(entry)}${cheatLine(entry, gitState)}`)
+		.join("\n");
 	console.error(
 		chalk.red(
-			`\nFail: ${failingCount} file(s) below threshold${thresholdLabel} (files marked "(override: N)" were judged against their own marker). Maintainability index (0–100) is derived from Halstead volume, cyclomatic complexity, and lines of code.\n\n⚠️  ${chalk.bold("Diagnose and fix one file at a time")} — do not investigate or fix multiple files in parallel.\n\nThe score is a property of the whole file, not your diff: any existing logic counts, so the fix is to shrink the file — not to revert or micro-optimize the lines you just changed. Identify the largest cohesive responsibility (often the biggest function, or a related group of functions) and move it to a new file with 'assist refactor extract'. Run 'assist complexity <file>' for per-function metrics only to locate that responsibility, not to tweak individual lines.`,
+			`\nFail: ${failing.length} file(s) below threshold → extract a responsibility to a new file.\n\n${blocks}\n\n${chalk.bold("Diagnose and fix one file at a time.")} Only a new file (Write) or 'assist refactor extract' clears this gate — editing the existing lines does not.`,
 		),
 	);
 }

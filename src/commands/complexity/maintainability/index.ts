@@ -1,14 +1,12 @@
 import { type MaintainabilityOptions, withSourceFiles } from "../shared";
-import { displayMaintainabilityResults } from "./displayMaintainabilityResults";
-import { printMaintainabilityFormula } from "./printMaintainabilityFormula";
-import { collectFileMetrics } from "./collectFileMetrics";
 import { aggregateResults } from "./aggregateResults";
+import { collectFileMetrics } from "./collectFileMetrics";
+import { displayMaintainabilityResults } from "./displayMaintainabilityResults";
 
 export async function maintainability(
 	pattern = "**/*.ts",
 	options: MaintainabilityOptions = {},
 ): Promise<void> {
-	printMaintainabilityFormula();
 	withSourceFiles(
 		pattern,
 		(files) => {
