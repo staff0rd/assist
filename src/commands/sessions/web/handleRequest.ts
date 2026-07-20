@@ -1,10 +1,8 @@
 import { createBundleHandler } from "../../../shared/createBundleHandler";
 import { createFallbackHandler } from "../../../shared/createFallbackHandler";
 import { createHtmlHandler, type Handler } from "../../../shared/web";
-import { getBacklogExists } from "../../backlog/web/getBacklogExists";
 import { getBacklogSummary } from "../../backlog/web/getBacklogSummary";
 import { handleItemRoute } from "../../backlog/web/handleItemRoute";
-import { initBacklog } from "../../backlog/web/initBacklog";
 import { listItems } from "../../backlog/web/shared";
 import { getBackups } from "./getBackups";
 import { getHtml } from "./getHtml";
@@ -31,9 +29,7 @@ const routes: Record<string, Handler> = {
 	),
 	"GET /xterm.css": createCssHandler("@xterm/xterm/css/xterm.css"),
 	"GET /api/items": listItems,
-	"GET /api/backlog/exists": getBacklogExists,
 	"GET /api/backlog/summary": getBacklogSummary,
-	"POST /api/backlog/init": initBacklog,
 	"POST /api/open-in-code": openInCode,
 	"POST /api/restart": restartWeb,
 	"GET /api/github-url": githubUrl,

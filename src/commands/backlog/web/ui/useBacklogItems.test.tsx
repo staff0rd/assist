@@ -34,8 +34,8 @@ function item(
 	};
 }
 
-function resolveLoad(items: BacklogItemSummary[], found = true) {
-	loadBacklogItems.mockResolvedValue({ found, items });
+function resolveLoad(items: BacklogItemSummary[]) {
+	loadBacklogItems.mockResolvedValue(items);
 }
 
 beforeEach(() => {

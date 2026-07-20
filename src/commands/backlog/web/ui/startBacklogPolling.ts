@@ -5,7 +5,7 @@ import type { BacklogItemSummary } from "./types";
 // why: other machines change status in the shared DB; poll so their flips show without a reload (#418).
 const POLL_INTERVAL_MS = 5000;
 
-type Apply = (found: boolean, items: BacklogItemSummary[]) => void;
+type Apply = (items: BacklogItemSummary[]) => void;
 
 /**
  * Revalidate the backlog list immediately and then on an interval, returning a

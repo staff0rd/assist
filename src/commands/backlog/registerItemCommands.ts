@@ -1,15 +1,9 @@
 import type { Command } from "commander";
 import { add as backlogAdd } from "./add";
 import { addPhase as backlogAddPhase } from "./addPhase";
-import { init as backlogInit } from "./init";
 import { list as backlogList } from "./list";
 
 export function registerItemCommands(cmd: Command): void {
-	cmd
-		.command("init")
-		.description("Create an empty backlog")
-		.action(backlogInit);
-
 	cmd
 		.command("list")
 		.alias("ls")

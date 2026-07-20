@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { initBacklog } from "./api";
 import { backlogItemsCache } from "./backlogItemsCache";
 import { fetchItems } from "./fetchItems";
 import { itemsEqual } from "./itemsEqual";
@@ -16,7 +15,6 @@ export function useBacklogItems() {
 	const isMiss = cached === undefined;
 	const [items, setItems] = useState<BacklogItemSummary[]>(seed);
 	const [loading, setLoading] = useState(isMiss);
-	const [exists, setExists] = useState(true);
 	const [loadedCwd, setLoadedCwd] = useState(cwd);
 	const [loadedFilter, setLoadedFilter] = useState(filter);
 
@@ -26,7 +24,6 @@ export function useBacklogItems() {
 		setLoadedFilter(filter);
 		setItems(seed);
 		setLoading(isMiss);
-		setExists(true);
 	}
 
 	const reload = useCallback(async () => {
@@ -36,21 +33,14 @@ export function useBacklogItems() {
 		setLoading(false);
 	}, [cwd, filter]);
 
-	useEffect(() => {
-		setExists(true);
-		return startBacklogPolling(cwd, filter, (found, next) => {
-			setExists(found);
-			setItems((prev) => (itemsEqual(prev, next) ? prev : next));
-			setLoading(false);
-		});
-	}, [cwd, filter]);
+	useEffect(
+		() =>
+			startBacklogPolling(cwd, filter, (next) => {
+				setItems((prev) => (itemsEqual(prev, next) ? prev : next));
+				setLoading(false);
+			}),
+		[cwd, filter],
+	);
 
-	const initialize = useCallback(async () => {
-		await initBacklog(cwd);
-		setExists(true);
-		setLoading(true);
-		await reload();
-	}, [cwd, reload]);
-
-	return { items, loading, exists, reload, initialize };
+	return { items, loading, reload };
 }
