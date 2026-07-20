@@ -1,3 +1,10 @@
+# [0.406.0](https://github.com/staff0rd/assist/compare/v0.405.0...v0.406.0) (2026-07-20)
+
+
+### Features
+
+* associate tracker on item creation ([0687aa7](https://github.com/staff0rd/assist/commit/0687aa7c5d3166f0e85826cd2e8b1a17b70ad73c))
+
 # [0.405.0](https://github.com/staff0rd/assist/compare/v0.404.2...v0.405.0) (2026-07-20)
 
 
