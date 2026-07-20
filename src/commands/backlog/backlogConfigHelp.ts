@@ -11,4 +11,9 @@ export const backlogConfigHelp: ConfigHelpEntry[] = [
 		setter: 'assist config set subtasks.0.title "Review"',
 		note: "default sub-tasks seeded onto every new backlog item",
 	},
+	{
+		key: "clone.baseDir",
+		setter: "assist config set clone.baseDir ~/git",
+		note: "base directory 'backlog clone' clones repos into (default: ~/git)",
+	},
 ];

@@ -6,6 +6,7 @@ export type RepoSummary = {
 	openCount: number;
 	isCurrent: boolean;
 	cwd?: string;
+	cloneTarget?: string;
 };
 
 function summaryUrl(knownCwds: string[]): string {

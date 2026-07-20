@@ -33,7 +33,7 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 		<>
 			<Header typeFilter={typeFilter} onTypeFilterChange={setTypeFilter} />
 			<SearchInput value={query} onChange={setQuery} />
-			<RepoSummaryChips />
+			<RepoSummaryChips sessions={socket.sessions} />
 			<ListBody
 				loading={loading || searching}
 				query={query}

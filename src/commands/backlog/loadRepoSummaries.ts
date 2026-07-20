@@ -1,6 +1,9 @@
+import { expandTilde } from "../../shared/expandTilde";
+import { loadConfig } from "../../shared/loadConfig";
 import { getCurrentOrigin } from "./getCurrentOrigin";
 import { loadItemSummaries } from "./loadItemSummaries";
 import { originDisplayLabels } from "./originDisplayLabels";
+import { resolveRepoLocation } from "./resolveRepoLocation";
 import { getReady } from "./shared";
 
 const completedStatuses = new Set(["done", "wontdo"]);
@@ -11,6 +14,7 @@ type RepoSummary = {
 	openCount: number;
 	isCurrent: boolean;
 	cwd?: string;
+	cloneTarget?: string;
 };
 
 export async function loadRepoSummaries(
@@ -33,14 +37,23 @@ export async function loadRepoSummaries(
 	}
 
 	const labels = originDisplayLabels([...openCounts.keys()]);
+	const baseDir = expandTilde(loadConfig().clone.baseDir);
 
 	return [...openCounts.entries()]
-		.map(([origin, openCount]) => ({
-			origin,
-			displayName: labels.get(origin) ?? origin,
-			openCount,
-			isCurrent: origin === currentOrigin,
-			cwd: cwdByOrigin.get(origin),
-		}))
+		.map(([origin, openCount]) => {
+			const { cwd, cloneTarget } = resolveRepoLocation(
+				origin,
+				cwdByOrigin.get(origin),
+				baseDir,
+			);
+			return {
+				origin,
+				displayName: labels.get(origin) ?? origin,
+				openCount,
+				isCurrent: origin === currentOrigin,
+				cwd,
+				cloneTarget,
+			};
+		})
 		.sort((a, b) => a.displayName.localeCompare(b.displayName));
 }

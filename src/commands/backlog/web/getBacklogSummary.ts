@@ -12,5 +12,6 @@ export async function getBacklogSummary(
 	const cwd = url.searchParams.get("cwd") ?? undefined;
 	const knownCwds = url.searchParams.getAll("knownCwd");
 	const currentOrigin = cwd ? getCurrentOrigin(cwd) : getOrigin();
-	respondJson(res, 200, await loadRepoSummaries(currentOrigin, knownCwds));
+	const allCwds = cwd ? [cwd, ...knownCwds] : knownCwds;
+	respondJson(res, 200, await loadRepoSummaries(currentOrigin, allCwds));
 }

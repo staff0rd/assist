@@ -1,5 +1,6 @@
 assist backlog add
 assist backlog add-phase
+assist backlog clone
 assist backlog comment
 assist backlog delete-comment
 assist backlog done
