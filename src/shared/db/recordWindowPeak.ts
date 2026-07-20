@@ -16,13 +16,21 @@ const lock = ({ tx, window, resetsAt }: Cycle) =>
  * segments below it as stale noise (which {@link reconcile} collapses) rather
  * than resets. The read-compare-write runs under a cycle-scoped advisory
  * {@link lock} so concurrent callers serialise instead of racing.
+ *
+ * A reading landing at or after `resetsAt` belongs to the next cycle (which
+ * reports a fresh `resets_at`), so it is dropped: recording it would stamp a
+ * segment past the window's reset and open a spurious reset against the
+ * already-expired cycle. `now` is injectable for tests; production passes the
+ * wall clock in seconds.
  */
 export async function recordWindowPeak(
 	db: Db,
 	window: "five_hour" | "seven_day",
 	resetsAt: number,
 	usedPercentage: number,
+	now: number = Math.floor(Date.now() / 1000),
 ): Promise<void> {
+	if (now >= resetsAt) return;
 	await db.transaction(async (tx) => {
 		const c: Cycle = { tx, window, resetsAt };
 		await lock(c);

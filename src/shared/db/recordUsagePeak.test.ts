@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { RateLimits } from "../RateLimits";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
 import { recordUsagePeak } from "./recordUsagePeak";
@@ -29,9 +30,13 @@ describe("recordUsagePeak", () => {
 			.from(usagePeaks)
 			.orderBy(usagePeaks.window, usagePeaks.resetsAt, usagePeaks.segment);
 
+	const NOW = 100;
+	const record = (rateLimits: RateLimits) =>
+		recordUsagePeak(orm, rateLimits, NOW);
+
 	describe("when a window is recorded for the first time", () => {
 		it("inserts the peak keyed by window and reset time", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 42, resets_at: 1000 },
 			});
 
@@ -50,7 +55,7 @@ describe("recordUsagePeak", () => {
 
 	describe("when both windows are present", () => {
 		it("records a row per window", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 10, resets_at: 1000 },
 				seven_day: { used_percentage: 20, resets_at: 5000 },
 			});
@@ -78,10 +83,10 @@ describe("recordUsagePeak", () => {
 
 	describe("when a higher percentage arrives for the same cycle", () => {
 		it("keeps the higher percentage", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 30, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 75, resets_at: 1000 },
 			});
 
@@ -100,10 +105,10 @@ describe("recordUsagePeak", () => {
 
 	describe("when a marginally lower percentage arrives for the same cycle", () => {
 		it("keeps the previous maximum and flags no reset", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 80, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 79.5, resets_at: 1000 },
 			});
 
@@ -122,10 +127,10 @@ describe("recordUsagePeak", () => {
 
 	describe("when usage drops sharply mid-cycle (a quota reset)", () => {
 		it("preserves the pre-reset peak and opens a new segment for the post-reset value", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 35, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 8, resets_at: 1000 },
 			});
 
@@ -150,13 +155,13 @@ describe("recordUsagePeak", () => {
 		});
 
 		it("climbs the post-reset segment while the pre-reset peak stays put", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 35, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 8, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 12, resets_at: 1000 },
 			});
 
@@ -181,13 +186,13 @@ describe("recordUsagePeak", () => {
 		});
 
 		it("opens a further segment when a second reset hits the same cycle", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 35, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 8, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 2, resets_at: 1000 },
 			});
 
@@ -222,16 +227,16 @@ describe("recordUsagePeak", () => {
 
 	describe("when a stale below-peak reading lands during a climb", () => {
 		it("does not leave a reset segment once usage climbs back", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 50, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 80, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 60, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 85, resets_at: 1000 },
 			});
 
@@ -251,7 +256,7 @@ describe("recordUsagePeak", () => {
 	describe("when several stale readings interleave a climbing cycle", () => {
 		it("records the single true peak with no resets", async () => {
 			for (const used of [50, 80, 60, 90, 70, 95]) {
-				await recordUsagePeak(orm, {
+				await record({
 					five_hour: { used_percentage: used, resets_at: 1000 },
 				});
 			}
@@ -272,7 +277,7 @@ describe("recordUsagePeak", () => {
 	describe("when a genuine reset is followed by a stale pre-reset reading", () => {
 		it("keeps the reset and collapses the stale noise once usage climbs back", async () => {
 			for (const used of [80, 5, 20, 12, 25]) {
-				await recordUsagePeak(orm, {
+				await record({
 					seven_day: { used_percentage: used, resets_at: 1000 },
 				});
 			}
@@ -301,7 +306,7 @@ describe("recordUsagePeak", () => {
 	describe("when readings from several agents arrive out of order within one cycle", () => {
 		it("resolves to the single true peak with no spurious resets", async () => {
 			for (const used of [40, 70, 55, 65, 88, 90]) {
-				await recordUsagePeak(orm, {
+				await record({
 					five_hour: { used_percentage: used, resets_at: 1000 },
 				});
 			}
@@ -321,10 +326,10 @@ describe("recordUsagePeak", () => {
 
 	describe("when the same window resets to a new cycle", () => {
 		it("tracks each cycle separately", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 90, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 15, resets_at: 2000 },
 			});
 
@@ -351,7 +356,7 @@ describe("recordUsagePeak", () => {
 
 	describe("when a window is missing its reset time", () => {
 		it("skips that window", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 50 },
 				seven_day: { used_percentage: 20, resets_at: 5000 },
 			});
@@ -371,7 +376,7 @@ describe("recordUsagePeak", () => {
 
 	describe("when a window is missing its used percentage", () => {
 		it("skips that window", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { resets_at: 1000 },
 			});
 
@@ -381,9 +386,55 @@ describe("recordUsagePeak", () => {
 
 	describe("when no windows carry usable data", () => {
 		it("records nothing", async () => {
-			await recordUsagePeak(orm, {});
+			await record({});
 
 			expect(await peaks()).toEqual([]);
+		});
+	});
+
+	describe("when a reading arrives after its cycle has already reset", () => {
+		it("drops a reading that lands at or after resetsAt", async () => {
+			await recordUsagePeak(
+				orm,
+				{ five_hour: { used_percentage: 42, resets_at: 1000 } },
+				1000,
+			);
+
+			expect(await peaks()).toEqual([]);
+		});
+
+		it("does not open a reset segment against the expired cycle", async () => {
+			await record({
+				five_hour: { used_percentage: 80, resets_at: 1000 },
+			});
+			await recordUsagePeak(
+				orm,
+				{ five_hour: { used_percentage: 5, resets_at: 1000 } },
+				2000,
+			);
+
+			expect(await peaks()).toEqual([
+				{
+					window: "five_hour",
+					resetsAt: 1000,
+					segment: 0,
+					usedPercentage: 80,
+					resetDetected: false,
+					createdAt: expect.any(Date),
+				},
+			]);
+		});
+
+		it("stamps segments no later than their cycle reset time", async () => {
+			const nowSeconds = Math.floor(Date.now() / 1000);
+			const resetsAt = nowSeconds + 3600;
+			await recordUsagePeak(orm, {
+				five_hour: { used_percentage: 50, resets_at: resetsAt },
+			});
+
+			const rows = await peaks();
+			expect(rows).toHaveLength(1);
+			expect(rows[0].createdAt.getTime()).toBeLessThanOrEqual(resetsAt * 1000);
 		});
 	});
 });

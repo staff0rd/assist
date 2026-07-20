@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { RateLimits } from "../RateLimits";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
 import { recordUsagePeak } from "./recordUsagePeak";
@@ -17,6 +18,10 @@ describe("recordWindowTokens", () => {
 		await close();
 	});
 
+	const NOW = 100;
+	const record = (rateLimits: RateLimits) =>
+		recordUsagePeak(orm, rateLimits, NOW);
+
 	const tokens = () =>
 		orm
 			.select({
@@ -30,7 +35,7 @@ describe("recordWindowTokens", () => {
 			.orderBy(usagePeaks.segment);
 
 	it("accumulates the delta onto the cycle's base segment", async () => {
-		await recordUsagePeak(orm, {
+		await record({
 			five_hour: { used_percentage: 40, resets_at: 1000 },
 		});
 
@@ -49,11 +54,11 @@ describe("recordWindowTokens", () => {
 	});
 
 	it("keeps accumulating on the base segment after a reset opens a new one", async () => {
-		await recordUsagePeak(orm, {
+		await record({
 			seven_day: { used_percentage: 80, resets_at: 1000 },
 		});
 		await recordWindowTokens(orm, "seven_day", 1000, 100, 200);
-		await recordUsagePeak(orm, {
+		await record({
 			seven_day: { used_percentage: 5, resets_at: 1000 },
 		});
 
@@ -78,15 +83,15 @@ describe("recordWindowTokens", () => {
 	});
 
 	it("preserves the base segment's tokens through a collapse", async () => {
-		await recordUsagePeak(orm, {
+		await record({
 			seven_day: { used_percentage: 80, resets_at: 1000 },
 		});
 		await recordWindowTokens(orm, "seven_day", 1000, 100, 200);
-		await recordUsagePeak(orm, {
+		await record({
 			seven_day: { used_percentage: 5, resets_at: 1000 },
 		});
 
-		await recordUsagePeak(orm, {
+		await record({
 			seven_day: { used_percentage: 90, resets_at: 1000 },
 		});
 
@@ -107,7 +112,7 @@ describe("recordWindowTokens", () => {
 	});
 
 	it("ignores a non-positive delta", async () => {
-		await recordUsagePeak(orm, {
+		await record({
 			five_hour: { used_percentage: 40, resets_at: 1000 },
 		});
 

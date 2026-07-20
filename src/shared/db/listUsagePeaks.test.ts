@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { RateLimits } from "../RateLimits";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
 import { countUsagePeaks, listUsagePeaks } from "./listUsagePeaks";
@@ -18,6 +19,10 @@ describe("listUsagePeaks", () => {
 		await close();
 	});
 
+	const NOW = 100;
+	const record = (rateLimits: RateLimits) =>
+		recordUsagePeak(orm, rateLimits, NOW);
+
 	describe("when no peaks have been recorded", () => {
 		it("returns an empty list", async () => {
 			expect(await listUsagePeaks(orm)).toEqual([]);
@@ -26,13 +31,13 @@ describe("listUsagePeaks", () => {
 
 	describe("when peaks span several cycles", () => {
 		it("returns them newest cycle first", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 10, resets_at: 1000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 20, resets_at: 3000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 30, resets_at: 2000 },
 			});
 
@@ -79,10 +84,10 @@ describe("listUsagePeaks", () => {
 
 	describe("when a cycle was reset mid-window", () => {
 		it("returns the post-reset continuation before its pre-reset peak", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 35, resets_at: 2000 },
 			});
-			await recordUsagePeak(orm, {
+			await record({
 				seven_day: { used_percentage: 8, resets_at: 2000 },
 			});
 
@@ -117,7 +122,7 @@ describe("listUsagePeaks", () => {
 
 	describe("when both windows share a reset time", () => {
 		it("orders them by window for a deterministic result", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 40, resets_at: 5000 },
 				seven_day: { used_percentage: 60, resets_at: 5000 },
 			});
@@ -154,7 +159,7 @@ describe("listUsagePeaks", () => {
 	describe("when paging", () => {
 		beforeEach(async () => {
 			for (const resets_at of [1000, 2000, 3000, 4000, 5000]) {
-				await recordUsagePeak(orm, {
+				await record({
 					five_hour: { used_percentage: resets_at / 100, resets_at },
 				});
 			}
@@ -187,7 +192,7 @@ describe("listUsagePeaks", () => {
 		});
 
 		it("reports the mean of the cycle's per-phase peaks", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 40, resets_at: 1000 },
 			});
 			await recordPhaseCycleContext(orm, 1, 0, "five_hour", 1000, 30);
@@ -199,7 +204,7 @@ describe("listUsagePeaks", () => {
 		});
 
 		it("leaves avgContextPct and phaseCount null for a cycle with no readings", async () => {
-			await recordUsagePeak(orm, {
+			await record({
 				five_hour: { used_percentage: 40, resets_at: 1000 },
 			});
 
