@@ -1,3 +1,10 @@
+## [0.404.2](https://github.com/staff0rd/assist/compare/v0.404.1...v0.404.2) (2026-07-20)
+
+
+### Bug Fixes
+
+* surface failed session errors in UI ([f88180c](https://github.com/staff0rd/assist/commit/f88180c44618fb1eb12065db3192e734a59395a3))
+
 ## [0.404.1](https://github.com/staff0rd/assist/compare/v0.404.0...v0.404.1) (2026-07-20)
 
 
