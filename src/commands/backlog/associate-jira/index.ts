@@ -4,8 +4,7 @@ import { items } from "../../../shared/db/schema";
 import { fetchIssue } from "../../jira/fetchIssue";
 import { beginAssociation } from "../beginAssociation";
 import { formatItemId } from "../formatItemId";
-
-const JIRA_KEY_PATTERN = /^[A-Z]+-\d+$/;
+import { normalizeJiraKey } from "./normalizeJiraKey";
 
 type AssociateJiraOptions = {
 	clear?: boolean;
@@ -27,25 +26,28 @@ export async function associateJira(
 		return;
 	}
 
-	if (!JIRA_KEY_PATTERN.test(key)) {
+	const normalized = normalizeJiraKey(key);
+	if (!normalized) {
 		console.log(
-			chalk.red(`Malformed Jira key "${key}". Expected a key like PROJ-123.`),
+			chalk.red(
+				`Malformed Jira key "${key}". Expected a key like PROJ-123 or a browse URL.`,
+			),
 		);
 		process.exitCode = 1;
 		return;
 	}
 
-	const parsed = fetchIssue(key, "summary");
+	const parsed = fetchIssue(normalized, "summary");
 	const fields = parsed?.fields as Record<string, unknown> | undefined;
 	const summary = fields?.summary as string | undefined;
 
 	await orm
 		.update(items)
-		.set({ jiraKey: key, githubIssue: null })
+		.set({ jiraKey: normalized, githubIssue: null })
 		.where(eq(items.id, itemId));
 
 	console.log(
-		chalk.green(`Associated ${key} with item ${formatItemId(itemId)}.`),
+		chalk.green(`Associated ${normalized} with item ${formatItemId(itemId)}.`),
 		summary ? chalk.dim(`(${summary})`) : "",
 	);
 }

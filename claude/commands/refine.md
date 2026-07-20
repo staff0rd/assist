@@ -25,6 +25,7 @@ Ask the user what they want to change or improve about this item. Listen for cha
 - **Type** (story / bug)
 - **Acceptance criteria**
 - **Plan phases** (add, modify, or remove phases and their tasks)
+- **External tracker** (a Jira key/URL or a GitHub issue reference to associate)
 - **General feedback** that should be captured as a comment
 
 Ask one focused question at a time. Wait for the user's response before continuing.
@@ -75,6 +76,15 @@ When adding or restructuring plan phases, follow the same rules as /draft:
 - **Vertical slices, not horizontal layers.** Each phase delivers a thin, working increment verifiable end-to-end — never "backend in phase 1, UI in phase 2".
 - **Every phase must pass `assist verify` on its own.** Verification includes knip, which fails on unused exports — so every export a phase adds must have a caller wired up in that same phase. No "phase 2 will use it" scaffolding.
 - If the user proposes a horizontal split, point out that the earlier phase won't verify (knip will flag the unused exports) and suggest a vertical restructure instead.
+
+**To associate an external tracker** (Jira or GitHub — mutually exclusive, one per item; associating one clears the other):
+
+```
+assist backlog associate-jira <id> "<key-or-browse-url>" 2>&1
+assist backlog associate-github <id> "<owner/repo#number-or-issue-url>" 2>&1
+```
+
+`associate-jira` accepts a bare key (`PROJ-123`) or an Atlassian browse URL; `associate-github` accepts `owner/repo#number` or a `github.com` issue URL. To remove any association, add `--clear` with no reference. If the command reports an error (malformed reference, issue not found), relay it to the user — nothing is stored on failure.
 
 **To add a comment** (for context, decisions, or notes that don't fit in fields):
 

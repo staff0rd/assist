@@ -105,6 +105,24 @@ Then add each phase:
 assist backlog add-phase a<id> "Phase name" --task "Task 1" --task "Task 2" --manual-check "optional check" 2>&1
 ```
 
+### Associate an external tracker
+
+If the user's original input (`$ARGUMENTS`) referenced an external tracker, associate it with the created item so downstream sessions have the context. Detect at most **one** tracker:
+
+- A **Jira** issue — a bare key (`PROJ-123`) or an Atlassian browse URL (`https://<site>.atlassian.net/browse/PROJ-123`):
+
+  ```
+  assist backlog associate-jira a<id> "<key-or-url>" 2>&1
+  ```
+
+- A **GitHub** issue — `owner/repo#number` shorthand or a `https://github.com/owner/repo/issues/N` URL:
+
+  ```
+  assist backlog associate-github a<id> "<issue-or-url>" 2>&1
+  ```
+
+Only one external tracker can be set per item (associating one clears the other), so run at most one of these. If the input referenced no tracker, skip this step. If the association command reports an error (malformed reference, issue not found), relay it to the user but do not treat it as fatal — the item was still created successfully.
+
 Then show the user the item was created and suggest they can run `assist backlog run a<id>` to start implementation.
 
 Finally, signal that the drafting task is complete, passing the created item id (a-prefixed, e.g. `a555`):
