@@ -1,3 +1,10 @@
+# [0.408.0](https://github.com/staff0rd/assist/compare/v0.407.0...v0.408.0) (2026-07-20)
+
+
+### Features
+
+* bind maintainability gate remediation ([749e11a](https://github.com/staff0rd/assist/commit/749e11a34f6c6f7b94f87c11205e5b6a04d146fd))
+
 # [0.407.0](https://github.com/staff0rd/assist/compare/v0.406.0...v0.407.0) (2026-07-20)
 
 
