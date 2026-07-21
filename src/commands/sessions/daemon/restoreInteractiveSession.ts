@@ -12,13 +12,14 @@ export function restoreInteractiveSession(
 	id: string,
 	persisted: PersistedSession,
 	base: RestoreBase,
+	idle: boolean,
 ): Session {
 	/* why: assist sessions that wrap claude (e.g. `assist draft`) and plain claude
 	 * sessions resume via their discovered sessionId. Pass the same restart nudge
 	 * backlog runs use so the reattached conversation continues the interrupted
 	 * work instead of sitting idle waiting for input (#404). */
 	if (persisted.commandType !== "run" && persisted.claudeSessionId) {
-		return resumeViaClaude(id, persisted, base);
+		return resumeViaClaude(id, persisted, base, idle);
 	}
 
 	/* why: a plain claude session that reaches here has no claudeSessionId to
@@ -39,8 +40,8 @@ function resumeViaClaude(
 	id: string,
 	persisted: PersistedSession,
 	base: RestoreBase,
+	idle: boolean,
 ): Session {
-	const idle = persisted.status !== "running";
 	const pty = spawnClaude({
 		resumeSessionId: persisted.claudeSessionId,
 		prompt: idle ? undefined : buildResumePrompt(),

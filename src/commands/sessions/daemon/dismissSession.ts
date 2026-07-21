@@ -11,6 +11,7 @@ export function dismissSession(
 	if (!s) return false;
 	if (s.status !== "done") s.pty?.kill();
 	s.activityWatcher?.close();
+	s.transcriptWatcher?.close();
 	removeActivity(s.id);
 	if (s.activity?.itemId != null) releaseLock(s.activity.itemId);
 	sessions.delete(id);

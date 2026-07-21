@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
-import { setSessionStatus } from "./setSessionStatus";
+import { registerSetStatusCommand } from "./registerSetStatusCommand";
 import { summarise } from "./summarise";
 import { web as sessionsWeb } from "./web";
 
@@ -29,12 +29,7 @@ export function registerSessions(program: Command): void {
 		.option("-n, --limit <count>", "Maximum number of sessions to summarise")
 		.action(summarise);
 
-	cmd
-		.command("set-status <status>")
-		.description(
-			"Report the current session's status to the sessions daemon (used by Claude Code hooks)",
-		)
-		.action(setSessionStatus);
+	registerSetStatusCommand(cmd);
 
 	configHelp(cmd, [
 		{

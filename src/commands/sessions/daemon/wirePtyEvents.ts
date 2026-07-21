@@ -2,7 +2,6 @@ import { broadcast, type SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { handlePtyExit } from "./handlePtyExit";
 import type { OnStatusChange } from "./types";
-import { noteOutputForEscInterrupt } from "./watchEscInterrupt";
 
 const MAX_SCROLLBACK = 256 * 1024;
 
@@ -28,7 +27,6 @@ export function wirePtyEvents(
 	 * done/error still come from exit. */
 	session.pty.onData((data) => {
 		appendScrollback(session, data);
-		noteOutputForEscInterrupt(session, onStatusChange);
 		broadcast(clients, { type: "output", sessionId: session.id, data });
 	});
 	session.pty.onExit(({ exitCode }) =>

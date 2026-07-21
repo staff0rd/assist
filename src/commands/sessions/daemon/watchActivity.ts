@@ -11,7 +11,11 @@ import { seedRunningMsFromUsage } from "./seedRunningMsFromUsage";
 
 const DEBOUNCE_MS = 50;
 
-export function watchActivity(session: Session, notify: () => void): void {
+export function watchActivity(
+	session: Session,
+	notify: () => void,
+	onClaudeSessionId?: (session: Session) => void,
+): void {
 	if (session.commandType !== "assist" || !session.cwd) return;
 	const path = activityPath(session.id);
 	const dir = dirname(path);
@@ -37,8 +41,10 @@ export function watchActivity(session: Session, notify: () => void): void {
 		session.activity = activity;
 		/* why: a backlog run reports its current phase's Claude session id here, so
 		 * the daemon persists the latest phase's id and can resume it on restart. */
-		if (activity.claudeSessionId)
+		if (activity.claudeSessionId) {
 			session.claudeSessionId = activity.claudeSessionId;
+			onClaudeSessionId?.(session);
+		}
 		applyReviewPause(session, activity);
 		void seedRunningMsFromUsage(session, notify);
 		notify();

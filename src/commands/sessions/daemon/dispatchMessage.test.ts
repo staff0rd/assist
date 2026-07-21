@@ -97,7 +97,7 @@ describe("dispatchMessage", () => {
 				status: "waiting",
 			});
 
-			expect(setStatus).toHaveBeenCalledWith("s1", "waiting");
+			expect(setStatus).toHaveBeenCalledWith("s1", "waiting", undefined);
 		});
 
 		describe("when the session is windows-routed", () => {

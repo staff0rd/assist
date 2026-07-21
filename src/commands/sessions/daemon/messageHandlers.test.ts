@@ -37,7 +37,7 @@ describe("set-status handler", () => {
 		expect(daemonLogMock).toHaveBeenCalledWith(
 			"set-status received: id=42 status=waiting",
 		);
-		expect(m.setStatus).toHaveBeenCalledWith("42", "waiting");
+		expect(m.setStatus).toHaveBeenCalledWith("42", "waiting", undefined);
 	});
 
 	it("still logs receipt when the request is routed to the windows daemon", () => {
@@ -52,6 +52,47 @@ describe("set-status handler", () => {
 			"set-status received: id=win-3 status=running",
 		);
 		expect(m.setStatus).not.toHaveBeenCalled();
+	});
+
+	it("passes the hook source through to the manager", () => {
+		const m = fakeManager();
+
+		messageHandlers["set-status"](fakeClient() as never, m, {
+			sessionId: "42",
+			status: "waiting",
+			source: "permission",
+		});
+
+		expect(m.setStatus).toHaveBeenCalledWith("42", "waiting", "permission");
+	});
+
+	it("acknowledges an ack'd delivery back to the client", () => {
+		const m = fakeManager();
+		const client = fakeClient();
+
+		messageHandlers["set-status"](client as never, m, {
+			sessionId: "42",
+			status: "waiting",
+			source: "stop",
+			ack: true,
+		});
+
+		expect(client.send).toHaveBeenCalledWith(
+			JSON.stringify({ type: "ack", sessionId: "42" }),
+		);
+	});
+
+	it("does not acknowledge a best-effort delivery", () => {
+		const m = fakeManager();
+		const client = fakeClient();
+
+		messageHandlers["set-status"](client as never, m, {
+			sessionId: "42",
+			status: "running",
+			source: "pretool",
+		});
+
+		expect(client.send).not.toHaveBeenCalled();
 	});
 });
 

@@ -1,10 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { appendDaemonLog } from "./daemon/appendDaemonLog";
 import { sendToDaemon } from "./daemon/sendToDaemon";
+import { sendToDaemonAwaitAck } from "./daemon/sendToDaemonAwaitAck";
 import { setSessionStatus } from "./setSessionStatus";
 
 vi.mock("./daemon/sendToDaemon", () => ({
 	sendToDaemon: vi.fn(),
+}));
+
+vi.mock("./daemon/sendToDaemonAwaitAck", () => ({
+	sendToDaemonAwaitAck: vi.fn(),
 }));
 
 vi.mock("./daemon/appendDaemonLog", () => ({
@@ -12,6 +17,7 @@ vi.mock("./daemon/appendDaemonLog", () => ({
 }));
 
 const sendMock = sendToDaemon as unknown as ReturnType<typeof vi.fn>;
+const ackMock = sendToDaemonAwaitAck as unknown as ReturnType<typeof vi.fn>;
 const logMock = appendDaemonLog as unknown as ReturnType<typeof vi.fn>;
 
 describe("setSessionStatus", () => {
@@ -26,7 +32,7 @@ describe("setSessionStatus", () => {
 		delete process.env.ASSIST_SESSION_ID;
 	});
 
-	it("sends a set-status message to the daemon", async () => {
+	it("sends a bare best-effort set-status message to the daemon", async () => {
 		sendMock.mockResolvedValue(undefined);
 
 		await setSessionStatus("running");
@@ -37,9 +43,20 @@ describe("setSessionStatus", () => {
 			sessionId: "s1",
 			status: "running",
 		});
-		expect(logMock).not.toHaveBeenCalledWith(
-			expect.stringContaining("delivery failed"),
-		);
+		expect(ackMock).not.toHaveBeenCalled();
+	});
+
+	it("includes the source but no ack flag for a best-effort hint", async () => {
+		sendMock.mockResolvedValue(undefined);
+
+		await setSessionStatus("running", { source: "pretool" });
+
+		expect(sendMock).toHaveBeenCalledWith({
+			type: "set-status",
+			sessionId: "s1",
+			status: "running",
+			source: "pretool",
+		});
 	});
 
 	describe("when ASSIST_SESSION_ID is absent", () => {
@@ -49,32 +66,63 @@ describe("setSessionStatus", () => {
 			await setSessionStatus("running");
 
 			expect(sendMock).not.toHaveBeenCalled();
+			expect(ackMock).not.toHaveBeenCalled();
 		});
 	});
 
-	it("retries then logs a failure when delivery never succeeds", async () => {
+	it("does not retry a best-effort hint that fails to send", async () => {
 		sendMock.mockRejectedValue(new Error("ECONNREFUSED"));
 
-		const done = setSessionStatus("waiting");
+		await setSessionStatus("running", { source: "posttool" });
+
+		expect(sendMock).toHaveBeenCalledOnce();
+		expect(logMock).toHaveBeenCalledWith(
+			expect.stringContaining("best-effort send failed"),
+		);
+	});
+
+	it("uses ack'd delivery for the blocking set and marks the payload", async () => {
+		ackMock.mockResolvedValue(undefined);
+
+		await setSessionStatus("waiting", { source: "permission", ack: true });
+
+		expect(sendMock).not.toHaveBeenCalled();
+		expect(ackMock).toHaveBeenCalledOnce();
+		expect(ackMock).toHaveBeenCalledWith({
+			type: "set-status",
+			sessionId: "s1",
+			status: "waiting",
+			source: "permission",
+			ack: true,
+		});
+	});
+
+	it("retries then logs a failure when ack'd delivery never succeeds", async () => {
+		ackMock.mockRejectedValue(new Error("no ack"));
+
+		const done = setSessionStatus("waiting", { source: "stop", ack: true });
 		await vi.runAllTimersAsync();
 		await done;
 
-		expect(sendMock).toHaveBeenCalledTimes(3);
+		expect(ackMock).toHaveBeenCalledTimes(3);
 		expect(logMock).toHaveBeenCalledWith(
-			expect.stringContaining("set-status delivery failed after 3 attempts"),
+			expect.stringContaining("ack'd delivery failed after 3 attempts"),
 		);
 	});
 
 	it("recovers on a retry without logging a failure", async () => {
-		sendMock
-			.mockRejectedValueOnce(new Error("ECONNREFUSED"))
+		ackMock
+			.mockRejectedValueOnce(new Error("no ack"))
 			.mockResolvedValueOnce(undefined);
 
-		const done = setSessionStatus("waiting");
+		const done = setSessionStatus("waiting", {
+			source: "notification",
+			ack: true,
+		});
 		await vi.runAllTimersAsync();
 		await done;
 
-		expect(sendMock).toHaveBeenCalledTimes(2);
+		expect(ackMock).toHaveBeenCalledTimes(2);
 		expect(logMock).not.toHaveBeenCalledWith(
 			expect.stringContaining("delivery failed"),
 		);

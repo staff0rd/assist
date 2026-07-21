@@ -1,5 +1,6 @@
 import { assistResumeArgs } from "./assistResumeArgs";
 import type { Session } from "./createSession";
+import { deriveRestoreStatus } from "./deriveRestoreStatus";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreBase } from "./restoreBase";
 import { restoreInteractiveSession } from "./restoreInteractiveSession";
@@ -15,13 +16,14 @@ export function restoreSession(
 
 	if (isUpdate(persisted)) return updatedSession(id, persisted);
 
+	const idle = deriveRestoreStatus(persisted) !== "running";
+
 	/* why: `assist backlog run` is a phase-orchestrating wrapper; a bare
 	 * `claude --resume` pty never exits on completion, so re-launch the wrapper
 	 * so the card reaches "done" and the phase chain continues (#304). Pass the
 	 * latest discovered sessionId so the wrapper resumes the interrupted phase's
 	 * conversation instead of restarting it from scratch (#300). */
 	if (needsWrapperRelaunch(persisted)) {
-		const idle = persisted.status !== "running";
 		const pty = spawnPty(
 			assistResumeArgs(persisted),
 			persisted.cwd,
@@ -33,7 +35,7 @@ export function restoreSession(
 			: runningSession(base, persisted, pty);
 	}
 
-	return restoreInteractiveSession(id, persisted, base);
+	return restoreInteractiveSession(id, persisted, base, idle);
 }
 
 function needsWrapperRelaunch(

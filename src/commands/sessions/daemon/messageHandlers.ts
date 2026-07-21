@@ -1,8 +1,9 @@
 import type { RateLimits } from "../../../shared/RateLimits";
 import { type SessionClient, sendTo } from "./broadcast";
 import { buildHello } from "./buildHello";
-import type { SessionStatus } from "./createSession";
+import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
+import { handleSetStatus } from "./handleSetStatus";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import type { SessionManager } from "./SessionManager";
 import { spawnCreate } from "./spawnCreate";
@@ -13,18 +14,6 @@ type Handler = (
 	manager: SessionManager,
 	data: Msg,
 ) => void;
-
-// why: a windows-origin create/resume forwards to the Windows daemon, not a local spawn
-// why: isNew flags fresh spawns vs resume so the web UI toasts only on new sessions
-function creator(
-	isNew: boolean,
-	spawn: (m: SessionManager, d: Msg) => string,
-): Handler {
-	return (client, m, d) => {
-		if (m.windowsProxy.route(client, d)) return;
-		sendTo(client, { type: "created", sessionId: spawn(m, d), isNew });
-	};
-}
 
 // why: proxied (windows) sessions route to the Windows daemon, else run locally
 function routed(local: Handler): Handler {
@@ -96,11 +85,7 @@ export const messageHandlers: Record<string, Handler> = {
 	),
 	"set-active": (_client, m, d) =>
 		m.active.set(d.cwd as string, d.sessionId as string),
-	"set-status": (client, m, d) => {
-		daemonLog(`set-status received: id=${d.sessionId} status=${d.status}`);
-		if (!m.windowsProxy.route(client, d))
-			m.setStatus(d.sessionId as string, d.status as SessionStatus);
-	},
+	"set-status": handleSetStatus,
 	"ui-status": (_client, _m, d) =>
 		daemonLog(`ui rendered: id=${d.sessionId} status=${d.status}`),
 };

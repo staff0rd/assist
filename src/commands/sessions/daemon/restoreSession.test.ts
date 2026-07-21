@@ -12,6 +12,11 @@ vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({ fake: "pty" })),
 }));
 
+vi.mock("./deriveRestoreStatus", () => ({
+	deriveRestoreStatus: (p: PersistedSession) =>
+		p.status === "running" ? "running" : "waiting",
+}));
+
 const spawnClaudeMock = spawnClaude as unknown as ReturnType<typeof vi.fn>;
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 

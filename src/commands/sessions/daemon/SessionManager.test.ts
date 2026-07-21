@@ -405,6 +405,32 @@ describe("SessionManager", () => {
 			expect(manager.listSessions()[0]?.status).toBe("waiting");
 		});
 
+		it("marks the session permission-active on a permission-sourced waiting", () => {
+			const session = fakeSession({ id: "1", status: "running" });
+			createSessionMock.mockReturnValue(session);
+			const manager = new SessionManager();
+			manager.spawn();
+
+			manager.setStatus("1", "waiting", "permission");
+
+			expect(session.permissionActive).toBe(true);
+		});
+
+		it("clears permission-active whenever the session goes running", () => {
+			const session = fakeSession({
+				id: "1",
+				status: "waiting",
+				permissionActive: true,
+			});
+			createSessionMock.mockReturnValue(session);
+			const manager = new SessionManager();
+			manager.spawn();
+
+			manager.setStatus("1", "running", "pretool");
+
+			expect(session.permissionActive).toBe(false);
+		});
+
 		describe("when the session is unknown", () => {
 			it("does nothing", () => {
 				const manager = new SessionManager();

@@ -36,11 +36,14 @@ export type Session = {
 	errorOutput?: string;
 	activity?: Activity;
 	activityWatcher?: FSWatcher;
+	transcriptWatcher?: FSWatcher;
+	watchedTranscriptId?: string;
+	transcriptPath?: string;
+	permissionActive?: boolean;
 	autoRun?: boolean;
 	autoAdvance?: boolean;
 	starred?: boolean;
 	design?: boolean;
-	escInterruptTimer?: ReturnType<typeof setTimeout>;
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;
 	pendingRestart?: () => void;

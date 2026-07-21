@@ -15,13 +15,13 @@ import {
 	type SessionInfo,
 	type SessionStatus,
 } from "./createSession";
-import { daemonLog } from "./daemonLog";
 import { dismissSession, drainSessions } from "./dismissSession";
 import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
+import { applySetStatus } from "./applySetStatus";
+import { applyUsageRecord } from "./applyUsageRecord";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
-import { recordSessionUsage } from "./recordSessionUsage";
 import {
 	restartManagedSession,
 	type RestartResult,
@@ -33,7 +33,7 @@ import { reuseSessionForRun } from "./reuseSessionForRun";
 import { sessionLimits } from "./sessionLimits";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
-import { watchActivity } from "./watchActivity";
+import { wireSessionWatchers } from "./wireSessionWatchers";
 import { WindowsProxy } from "./WindowsProxy";
 import { wirePtyEvents } from "./wirePtyEvents";
 import * as sessionIo from "./writeToSession";
@@ -85,7 +85,7 @@ export class SessionManager {
 
 	private add(session: Session): string {
 		this.wire(session);
-		watchActivity(session, this.notify);
+		wireSessionWatchers(session, this.notify, this.onStatusChange);
 		logSpawnedSession(session);
 		return session.id;
 	}
@@ -175,15 +175,8 @@ export class SessionManager {
 		if (sessionIo.setStarred(this.sessions, id, starred)) this.notify();
 	}
 
-	setStatus(id: string, status: SessionStatus): void {
-		const session = this.sessions.get(id);
-		if (!session) {
-			daemonLog(
-				`set-status for unknown session id=${id} status=${status} (no live session; ignoring)`,
-			);
-			return;
-		}
-		this.onStatusChange(session, status);
+	setStatus(id: string, status: SessionStatus, source?: string): void {
+		applySetStatus(this.sessions, id, status, source, this.onStatusChange);
 	}
 
 	/* why: the status line relays token totals keyed by Claude's session id; join
@@ -193,16 +186,14 @@ export class SessionManager {
 		transcriptPath: string | undefined,
 		usedPct: number | undefined,
 	): void {
-		if (
-			recordSessionUsage(
-				this.sessions.values(),
-				claudeSessionId,
-				transcriptPath,
-				usedPct,
-				this.clients.currentWindows(),
-			)
-		)
-			this.notify();
+		applyUsageRecord(
+			this.sessions.values(),
+			this.clients.currentWindows(),
+			this.notify,
+			claudeSessionId,
+			transcriptPath,
+			usedPct,
+		);
 	}
 
 	listSessions = (): SessionInfo[] => {
