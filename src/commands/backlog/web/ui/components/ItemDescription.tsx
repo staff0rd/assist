@@ -15,7 +15,7 @@ export function ItemDescription({ description }: { description?: string }) {
 			<Typography variant="overline" sx={sectionHeadingSx}>
 				Description
 			</Typography>
-			<MarkdownBlock content={description} />
+			<MarkdownBlock content={description} renderMermaid />
 		</Box>
 	);
 }
