@@ -118,7 +118,8 @@ export type BacklogItemSummary = Pick<
 	| "jiraKey"
 	| "githubIssue"
 	| "usageTotal"
-> & { incompleteSubtasks: number };
+	| "currentPhase"
+> & { incompleteSubtasks: number; totalPhases?: number };
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;

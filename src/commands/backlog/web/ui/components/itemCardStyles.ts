@@ -47,4 +47,12 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 			color: "text.secondary",
 		},
 	},
+	phaseProgress: {
+		flexShrink: 0,
+		fontWeight: 500,
+		fontSize: "0.75rem",
+		height: 22,
+		color: "text.secondary",
+		borderColor: "divider",
+	},
 };

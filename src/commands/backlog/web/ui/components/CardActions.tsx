@@ -4,6 +4,7 @@ import { canPlay } from "./canPlay";
 import { IncompleteSubtasksChip } from "./IncompleteSubtasksChip";
 import { InProgressChip } from "./InProgressChip";
 import { mostRecentOpenSession } from "./mostRecentOpenSession";
+import { PhaseProgressChip } from "./PhaseProgressChip";
 import { PlayAction } from "./PlayAction";
 import { StarAction } from "./StarAction";
 import { UsageSummary } from "./UsageSummary";
@@ -30,6 +31,12 @@ export function CardActions({
 			{item.usageTotal && <UsageSummary total={item.usageTotal} sx={usageSx} />}
 			{item.incompleteSubtasks > 0 && (
 				<IncompleteSubtasksChip count={item.incompleteSubtasks} />
+			)}
+			{item.status === "in-progress" && item.currentPhase != null && (
+				<PhaseProgressChip
+					current={item.currentPhase}
+					total={item.totalPhases ?? item.currentPhase + 1}
+				/>
 			)}
 			{item.status === "in-progress" && (
 				<InProgressChip

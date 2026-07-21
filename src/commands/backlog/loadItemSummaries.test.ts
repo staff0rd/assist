@@ -63,6 +63,8 @@ describe("loadItemSummaries", () => {
 			name: "Test",
 			status: "in-progress",
 			starred: false,
+			currentPhase: 2,
+			totalPhases: 2,
 			incompleteSubtasks: 0,
 		});
 	});
@@ -122,6 +124,37 @@ describe("loadItemSummaries", () => {
 			peakContextPct: 72,
 		});
 		expect(summaries.find((s) => s.id === 2)?.usageTotal).toBeUndefined();
+	});
+
+	it("counts total phases as authored plan length + 1, defaulting plan-less items to 2", async () => {
+		await orm.insert(items).values({
+			id: 1,
+			origin: "test",
+			name: "Planned",
+			status: "in-progress",
+			currentPhase: 2,
+		});
+		await orm.insert(items).values({
+			id: 2,
+			origin: "test",
+			name: "Plan-less",
+			status: "in-progress",
+			currentPhase: 1,
+		});
+		await orm.insert(planPhases).values([
+			{ itemId: 1, idx: 0, name: "One" },
+			{ itemId: 1, idx: 1, name: "Two" },
+			{ itemId: 1, idx: 2, name: "Three" },
+		]);
+
+		const summaries = await loadItemSummaries(orm);
+
+		const planned = summaries.find((s) => s.id === 1);
+		expect(planned?.currentPhase).toBe(2);
+		expect(planned?.totalPhases).toBe(4);
+		const planless = summaries.find((s) => s.id === 2);
+		expect(planless?.currentPhase).toBe(1);
+		expect(planless?.totalPhases).toBe(2);
 	});
 
 	it("scopes to the given origin", async () => {

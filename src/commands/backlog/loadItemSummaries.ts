@@ -2,6 +2,7 @@ import { asc, eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { items } from "../../shared/db/schema";
 import { incompleteSubtaskCounts } from "./incompleteSubtaskCounts";
+import { planPhaseCounts } from "./planPhaseCounts";
 import { phaseUsageTotals } from "./phaseUsageTotals";
 import { rowToItemSummary } from "./rowToItemSummary";
 import type { BacklogItemSummary } from "./types";
@@ -19,6 +20,7 @@ export async function loadItemSummaries(
 ): Promise<BacklogItemSummary[]> {
 	const incompleteCounts = incompleteSubtaskCounts(orm);
 	const usageTotals = phaseUsageTotals(orm);
+	const phaseCounts = planPhaseCounts(orm);
 	const rows = await orm
 		.select({
 			id: items.id,
@@ -29,6 +31,8 @@ export async function loadItemSummaries(
 			starred: items.starred,
 			jiraKey: items.jiraKey,
 			githubIssue: items.githubIssue,
+			currentPhase: items.currentPhase,
+			planPhaseCount: phaseCounts.count,
 			incompleteSubtasks: incompleteCounts.count,
 			tokensUp: usageTotals.tokensUp,
 			tokensDown: usageTotals.tokensDown,
@@ -38,6 +42,7 @@ export async function loadItemSummaries(
 		.from(items)
 		.leftJoin(incompleteCounts, eq(incompleteCounts.itemId, items.id))
 		.leftJoin(usageTotals, eq(usageTotals.itemId, items.id))
+		.leftJoin(phaseCounts, eq(phaseCounts.itemId, items.id))
 		.where(origin === undefined ? undefined : eq(items.origin, origin))
 		.orderBy(asc(items.id));
 	return rows.map(rowToItemSummary);

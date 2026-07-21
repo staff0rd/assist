@@ -93,4 +93,6 @@ export type BacklogItemSummary = {
 	githubIssue?: string;
 	incompleteSubtasks: number;
 	usageTotal?: PhaseUsageTotal;
+	currentPhase?: number;
+	totalPhases?: number;
 };

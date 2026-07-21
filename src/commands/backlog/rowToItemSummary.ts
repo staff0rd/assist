@@ -9,6 +9,8 @@ type ItemSummaryRow = {
 	starred: boolean;
 	jiraKey: string | null;
 	githubIssue: string | null;
+	currentPhase: number | null;
+	planPhaseCount: number | null;
 	incompleteSubtasks: number | null;
 	tokensUp: number | null;
 	tokensDown: number | null;
@@ -26,6 +28,8 @@ export function rowToItemSummary(row: ItemSummaryRow): BacklogItemSummary {
 		starred: row.starred,
 		jiraKey: row.jiraKey ?? undefined,
 		githubIssue: row.githubIssue ?? undefined,
+		currentPhase: row.currentPhase ?? undefined,
+		totalPhases: (row.planPhaseCount || 1) + 1,
 		incompleteSubtasks: row.incompleteSubtasks ?? 0,
 		usageTotal:
 			row.tokensUp == null
