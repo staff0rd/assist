@@ -1,3 +1,10 @@
+# [0.411.0](https://github.com/staff0rd/assist/compare/v0.410.0...v0.411.0) (2026-07-21)
+
+
+### Features
+
+* render mermaid diagrams in item view ([1982e52](https://github.com/staff0rd/assist/commit/1982e5275cf91ce67eaf8bee27d946bfca43ec04))
+
 # [0.410.0](https://github.com/staff0rd/assist/compare/v0.409.0...v0.410.0) (2026-07-21)
 
 
