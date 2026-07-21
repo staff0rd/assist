@@ -1,3 +1,10 @@
+# [0.410.0](https://github.com/staff0rd/assist/compare/v0.409.0...v0.410.0) (2026-07-21)
+
+
+### Features
+
+* show phase progress chip on backlog rows ([a693f76](https://github.com/staff0rd/assist/commit/a693f76180d17cb51c615ff7b42642cf2cef726d))
+
 # [0.409.0](https://github.com/staff0rd/assist/compare/v0.408.2...v0.409.0) (2026-07-20)
 
 
