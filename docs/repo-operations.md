@@ -43,6 +43,13 @@ card adopts), worked around by minting the conversation id up front — but the
 same shared-checkout model means the git working tree, index, and current
 branch are shared too, with no such workaround.
 
+(The comment's "in the cwd" is shorthand: the transcript is not written to the
+working directory itself but to a per-cwd project dir under
+`~/.claude/projects/<encoded-cwd>/` — see `projectDirForCwd` in
+`src/commands/sessions/shared/findTranscriptPathSync.ts`. It is keyed by `cwd`,
+so concurrent sessions sharing a `cwd` still share that transcript dir, and the
+poller race the comment guards against is real; only its location differs.)
+
 The sequence below shows the unguarded case: two sessions the daemon spawned
 into the _same_ `cwd` interleave git operations against one working tree, index,
 and `HEAD`.
