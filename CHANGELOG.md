@@ -1,3 +1,10 @@
+# [0.412.0](https://github.com/staff0rd/assist/compare/v0.411.0...v0.412.0) (2026-07-21)
+
+
+### Features
+
+* level-triggered session status ([be7177f](https://github.com/staff0rd/assist/commit/be7177f67190c480ef98605ae6724f9ca80a54c1))
+
 # [0.411.0](https://github.com/staff0rd/assist/compare/v0.410.0...v0.411.0) (2026-07-21)
 
 
