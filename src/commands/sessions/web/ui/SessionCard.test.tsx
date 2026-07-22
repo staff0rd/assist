@@ -55,7 +55,7 @@ describe("SessionCard loading state", () => {
 		expect(screen.getByText("my session")).toBeTruthy();
 	});
 
-	it("shows an error state with its reason instead of staying at Starting…", () => {
+	it("shows only the error status instead of staying at Starting…", () => {
 		render(
 			<SessionCard
 				session={{
@@ -75,7 +75,7 @@ describe("SessionCard loading state", () => {
 		);
 		expect(screen.queryByText("Starting…")).toBeNull();
 		expect(screen.getByText(/● error/)).toBeTruthy();
-		expect(screen.getByText("the conversation cannot be resumed")).toBeTruthy();
+		expect(screen.queryByText("the conversation cannot be resumed")).toBeNull();
 	});
 });
 

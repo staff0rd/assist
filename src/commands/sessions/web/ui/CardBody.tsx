@@ -2,7 +2,6 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { CardToggles } from "./CardToggles";
-import { SessionErrorText } from "./SessionErrorText";
 import { sessionType } from "./sessionType";
 import { StatusRow } from "./StatusRow";
 import type { SessionInfo } from "./types";
@@ -40,12 +39,6 @@ export function CardBody({
 				restored={session.restored}
 				usedPct={session.usedPct}
 			/>
-			{session.status === "error" && (
-				<SessionErrorText
-					error={session.error}
-					errorOutput={session.errorOutput}
-				/>
-			)}
 			<CardToggles
 				session={session}
 				onSetAutoRun={onSetAutoRun}

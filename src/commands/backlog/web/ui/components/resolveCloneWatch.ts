@@ -62,7 +62,7 @@ export function resolveCloneWatch(
 	if (session.status === "error")
 		return {
 			type: "error",
-			message: session.error || session.errorOutput || "Clone failed.",
+			message: session.error || "Clone failed.",
 		};
 	return null;
 }

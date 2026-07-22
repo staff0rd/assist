@@ -19,7 +19,6 @@ export type SessionInfoBase = {
 	cwd?: string;
 	restored?: boolean;
 	error?: string;
-	errorOutput?: string;
 	activity?: Activity;
 	autoRun?: boolean;
 	autoAdvance?: boolean;

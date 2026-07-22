@@ -37,7 +37,6 @@ export type Session = {
 	initialPrompt?: string;
 	restored?: boolean;
 	error?: string;
-	errorOutput?: string;
 	activity?: Activity;
 	activityWatcher?: FSWatcher;
 	transcriptWatcher?: FSWatcher;
