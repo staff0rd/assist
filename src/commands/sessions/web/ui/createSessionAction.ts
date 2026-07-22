@@ -89,15 +89,6 @@ export function setStarredAction(send: SendFn) {
 		send({ type: "set-starred", sessionId: id, starred });
 }
 
-export function prDecisionAction(send: SendFn) {
-	return (
-		sessionId: string,
-		requestId: string,
-		decision: "approve" | "reject",
-		reason?: string,
-	) => send({ type: "pr-decision", sessionId, requestId, decision, reason });
-}
-
 export function inputAction(send: SendFn) {
 	return (sessionId: string, data: string) =>
 		send({ type: "input", sessionId, data });

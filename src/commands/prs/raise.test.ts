@@ -206,6 +206,29 @@ describe("raise", () => {
 			expect(mockExecFileSync).not.toHaveBeenCalled();
 		});
 
+		it("prints quoted-span + note pairs to stderr on reject-with-comments", async () => {
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			mockRequestPrDecision.mockResolvedValue({
+				decision: "reject",
+				comments: [
+					{ quote: "Adds x", note: "say what x is" },
+					{ quote: "Needed x", note: "link the issue" },
+				],
+			});
+
+			await expect(
+				raise({ title: "feat: x", what: "Adds x", why: "Needed x" }),
+			).rejects.toThrow("process.exit");
+
+			const output = errorSpy.mock.calls.map((c) => c.join(" ")).join("\n");
+			expect(output).toContain("> Adds x");
+			expect(output).toContain("say what x is");
+			expect(output).toContain("> Needed x");
+			expect(output).toContain("link the issue");
+			expect(mockExecFileSync).not.toHaveBeenCalled();
+			errorSpy.mockRestore();
+		});
+
 		it("updates an existing PR after approval without needing --force", async () => {
 			mockFindCurrentPrNumber.mockReturnValue(42);
 			mockRequestPrDecision.mockResolvedValue({ decision: "approve" });

@@ -1,45 +1,51 @@
-import { Box, Chip, Divider, Typography } from "@mui/material";
-import type { PrPreview } from "../../shared/SessionInfoBase";
-import { MarkdownView } from "./MarkdownView";
-import { PrPreviewActions } from "./PrPreviewActions";
+import { Box, Divider } from "@mui/material";
+import type { PrPreview, PrPreviewComment } from "../../shared/SessionInfoBase";
+import { PrPreviewFooter } from "./PrPreviewFooter";
+import { PrPreviewHeader } from "./PrPreviewHeader";
+import { PreviewBody } from "./PreviewBody";
+import { usePrPane } from "./usePrPane";
+
+const paneSx = {
+	flex: 1,
+	minWidth: 0,
+	height: "100%",
+	display: "flex",
+	flexDirection: "column",
+	borderLeft: 1,
+	borderColor: "divider",
+	bgcolor: "background.paper",
+} as const;
 
 export function PrPreviewPane({
 	preview,
-	onApprove,
-	onReject,
+	onDecision,
 }: {
 	preview: PrPreview;
-	onApprove: () => void;
-	onReject: () => void;
+	onDecision: (
+		decision: "approve" | "reject",
+		comments: PrPreviewComment[],
+	) => void;
 }) {
-	const isNew = preview.prNumber === null;
+	const pane = usePrPane(preview.requestId, onDecision);
+
 	return (
-		<Box
-			sx={{
-				flex: 1,
-				minWidth: 0,
-				height: "100%",
-				display: "flex",
-				flexDirection: "column",
-				borderLeft: 1,
-				borderColor: "divider",
-				bgcolor: "background.paper",
-			}}
-		>
-			<Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
-				<Typography variant="subtitle1" sx={{ flex: 1, fontWeight: 600 }}>
-					{preview.title}
-				</Typography>
-				<Chip
-					size="small"
-					label={isNew ? "New PR" : `Update #${preview.prNumber}`}
-					color={isNew ? "success" : "info"}
-				/>
-			</Box>
+		<Box sx={paneSx}>
+			<PrPreviewHeader title={preview.title} prNumber={preview.prNumber} />
 			<Divider />
-			<MarkdownView content={preview.body} />
-			<Divider />
-			<PrPreviewActions onApprove={onApprove} onReject={onReject} />
+			<PreviewBody
+				content={preview.body}
+				ranges={pane.ranges}
+				rootRef={pane.contentRef}
+				onMouseUp={pane.capture}
+			/>
+			<PrPreviewFooter
+				comments={pane.comments}
+				pending={pane.pending}
+				onRemove={pane.remove}
+				onDecision={pane.onDecide}
+				onAdd={pane.onAdd}
+				onCancel={pane.onCancel}
+			/>
 		</Box>
 	);
 }

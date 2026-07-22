@@ -4,7 +4,6 @@ import {
 	dismissSessionAction,
 	inputAction,
 	outputAction,
-	prDecisionAction,
 	resizeAction,
 	restartSessionAction,
 	retrySessionAction,
@@ -14,6 +13,7 @@ import {
 	stopSessionAction,
 } from "./createSessionAction";
 import { useLaunchActions } from "./useLaunchActions";
+import { prDecisionAction } from "./prDecisionAction";
 
 type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;

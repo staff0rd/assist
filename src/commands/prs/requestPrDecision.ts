@@ -1,7 +1,6 @@
 import { connectToDaemon } from "../sessions/daemon/connectToDaemon";
 import { readSocketLines } from "../sessions/daemon/readSocketLines";
-
-type PrDecision = { decision: "approve" | "reject"; reason?: string };
+import { type PrDecision, parseIncoming } from "./parseIncoming";
 
 type PrPreviewRequest = {
 	sessionId: string;
@@ -10,32 +9,6 @@ type PrPreviewRequest = {
 	body: string;
 	prNumber: number | null;
 };
-
-type Incoming =
-	| { kind: "decision"; decision: PrDecision }
-	| { kind: "error"; message: string };
-
-function parseIncoming(line: string, requestId: string): Incoming | null {
-	try {
-		const msg = JSON.parse(line) as {
-			type?: string;
-			requestId?: string;
-			decision?: PrDecision["decision"];
-			reason?: string;
-			message?: string;
-		};
-		if (msg.type === "error" && (msg.message ?? "").includes("pr-preview"))
-			return { kind: "error", message: msg.message ?? "pr-preview failed" };
-		if (msg.type !== "pr-decision" || msg.requestId !== requestId) return null;
-		if (msg.decision !== "approve" && msg.decision !== "reject") return null;
-		return {
-			kind: "decision",
-			decision: { decision: msg.decision, reason: msg.reason },
-		};
-	} catch {
-		return null;
-	}
-}
 
 export function requestPrDecision(
 	request: PrPreviewRequest,

@@ -3,6 +3,11 @@ import type { HarnessKind } from "../../../shared/harnesses";
 
 export type CommandType = "claude" | "run" | "assist";
 
+export type PrPreviewComment = {
+	quote: string;
+	note: string;
+};
+
 export type PrPreview = {
 	requestId: string;
 	title: string;
