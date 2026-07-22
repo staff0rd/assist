@@ -1,3 +1,10 @@
+# [0.418.0](https://github.com/staff0rd/assist/compare/v0.417.0...v0.418.0) (2026-07-22)
+
+
+### Features
+
+* inline comments on PR preview ([8f9bd17](https://github.com/staff0rd/assist/commit/8f9bd173bce4a7e349f01738251e4d8cee21a020))
+
 # [0.417.0](https://github.com/staff0rd/assist/compare/v0.416.0...v0.417.0) (2026-07-22)
 
 
