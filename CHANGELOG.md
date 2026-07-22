@@ -1,3 +1,10 @@
+## [0.415.1](https://github.com/staff0rd/assist/compare/v0.415.0...v0.415.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* merge global and project run configs ([b25e35a](https://github.com/staff0rd/assist/commit/b25e35ac69710fbe7d6dc6bb02e79b5dd2660104))
+
 # [0.415.0](https://github.com/staff0rd/assist/compare/v0.414.0...v0.415.0) (2026-07-22)
 
 
