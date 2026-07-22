@@ -1,3 +1,10 @@
+# [0.417.0](https://github.com/staff0rd/assist/compare/v0.416.0...v0.417.0) (2026-07-22)
+
+
+### Features
+
+* web UI PR preview approve/reject ([b84d31c](https://github.com/staff0rd/assist/commit/b84d31ccc0db0761983c969d4e585f697bf8cdd8))
+
 # [0.416.0](https://github.com/staff0rd/assist/compare/v0.415.1...v0.416.0) (2026-07-22)
 
 
