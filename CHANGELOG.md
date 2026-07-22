@@ -1,3 +1,10 @@
+# [0.413.0](https://github.com/staff0rd/assist/compare/v0.412.0...v0.413.0) (2026-07-22)
+
+
+### Features
+
+* per-repo config overrides ([a51281b](https://github.com/staff0rd/assist/commit/a51281b704fd55e7947b965905790e6e9cbddb53))
+
 # [0.412.0](https://github.com/staff0rd/assist/compare/v0.411.0...v0.412.0) (2026-07-21)
 
 
