@@ -1,3 +1,10 @@
+# [0.419.0](https://github.com/staff0rd/assist/compare/v0.418.0...v0.419.0) (2026-07-22)
+
+
+### Features
+
+* colour & word-select PR comments ([6bc455a](https://github.com/staff0rd/assist/commit/6bc455ad4293bf5aeb60944a0edbd1c44fa33d06))
+
 # [0.418.0](https://github.com/staff0rd/assist/compare/v0.417.0...v0.418.0) (2026-07-22)
 
 
