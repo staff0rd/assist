@@ -1,8 +1,6 @@
 import type { groupSessionsByRepo } from "./groupSessionsByRepo";
-import { SessionGroupSection } from "./SessionGroupSection";
-import { SessionListCard } from "./SessionListCard";
+import { SessionGroupItem } from "./SessionGroupItem";
 import type { SessionListHandlers } from "./types";
-import type { SessionInfo } from "./useSessionSocket";
 
 export function SessionGroups({
 	groups,
@@ -20,32 +18,29 @@ export function SessionGroups({
 	initialized: Set<string>;
 	onSelect: (id: string) => void;
 } & SessionListHandlers) {
-	const renderCard = (session: SessionInfo) => (
-		<SessionListCard
-			key={session.id}
-			session={session}
-			activeId={activeId}
-			initialized={initialized}
-			onSelect={onSelect}
-			onRetry={onRetry}
-			onRestart={onRestart}
-			onDismiss={onDismiss}
-			onSetAutoRun={onSetAutoRun}
-			onSetAutoAdvance={onSetAutoAdvance}
-		/>
+	const cardProps = {
+		activeId,
+		initialized,
+		onSelect,
+		onRetry,
+		onRestart,
+		onDismiss,
+		onSetAutoRun,
+		onSetAutoAdvance,
+	};
+	const allSessions = groups.flatMap((group) =>
+		group.kind === "single" ? [group.session] : group.sessions,
 	);
-
 	return (
 		<>
-			{groups.map((group) =>
-				group.kind === "single" ? (
-					renderCard(group.session)
-				) : (
-					<SessionGroupSection key={group.key} label={group.label}>
-						{group.sessions.map(renderCard)}
-					</SessionGroupSection>
-				),
-			)}
+			{groups.map((group) => (
+				<SessionGroupItem
+					key={group.kind === "single" ? group.session.id : group.key}
+					group={group}
+					allSessions={allSessions}
+					cardProps={cardProps}
+				/>
+			))}
 		</>
 	);
 }

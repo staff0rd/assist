@@ -1,4 +1,5 @@
 import type { Session, SessionInfo } from "./createSession";
+import { originForCwd } from "./originForCwd";
 
 export function toSessionInfo({
 	id,
@@ -15,6 +16,7 @@ export function toSessionInfo({
 	runArgs,
 	server,
 	serverPort,
+	serverOrigin,
 	assistArgs,
 	cwd,
 	restored,
@@ -42,6 +44,7 @@ export function toSessionInfo({
 		runArgs,
 		server,
 		port: serverPort,
+		remoteOrigin: serverOrigin ?? originForCwd(cwd),
 		assistArgs,
 		cwd,
 		restored,

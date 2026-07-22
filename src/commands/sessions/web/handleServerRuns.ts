@@ -6,11 +6,13 @@ import {
 import { resolveRunConfigs } from "../../../shared/resolveRunConfigs";
 import { respondJson } from "../../../shared/web";
 import { getCwdParam } from "./getCwdParam";
+import { toGitCwd } from "./toGitCwd";
 
 export type ServerRunInfo = { name: string; port?: number };
 
-function getServerRuns(cwd: string): ServerRunInfo[] {
+function getServerRuns(rawCwd: string): ServerRunInfo[] {
 	try {
+		const cwd = toGitCwd(rawCwd);
 		const { run } = loadConfigFrom(cwd);
 		return resolveRunConfigs(run, getConfigDirFrom(cwd))
 			.filter((r) => r.server)

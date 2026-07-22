@@ -14,6 +14,7 @@ export type SessionInfoBase = {
 	runName?: string;
 	server?: boolean;
 	port?: number;
+	remoteOrigin?: string;
 	assistArgs?: string[];
 	cwd?: string;
 	restored?: boolean;
