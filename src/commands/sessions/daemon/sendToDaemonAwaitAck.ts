@@ -1,4 +1,5 @@
 import { connectToDaemon } from "./connectToDaemon";
+import { readSocketLines } from "./readSocketLines";
 
 const ACK_TIMEOUT_MS = 1_000;
 
@@ -20,16 +21,8 @@ export function sendToDaemonAwaitAck(
 				() => finish(new Error("timed out awaiting daemon ack")),
 				ACK_TIMEOUT_MS,
 			);
-			let buffer = "";
-			socket.on("data", (chunk) => {
-				buffer += chunk.toString("utf8");
-				let newline = buffer.indexOf("\n");
-				while (newline !== -1) {
-					const line = buffer.slice(0, newline);
-					buffer = buffer.slice(newline + 1);
-					if (isAck(line)) return finish();
-					newline = buffer.indexOf("\n");
-				}
+			readSocketLines(socket, (line) => {
+				if (isAck(line)) finish();
 			});
 			socket.on("error", (error) => finish(error));
 			socket.on("close", () =>

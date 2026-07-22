@@ -27,6 +27,7 @@ export function toSessionInfo({
 	starred,
 	usedPct,
 	design,
+	pendingPrPreview,
 }: Session): SessionInfo {
 	return {
 		id,
@@ -54,5 +55,6 @@ export function toSessionInfo({
 		starred,
 		usedPct,
 		design,
+		pendingPrPreview,
 	};
 }

@@ -44,6 +44,7 @@ function renderArea(activeId: string | null, initialized: Set<string>) {
 			sendResize={() => {}}
 			viewingTranscriptSessionId={null}
 			transcript={null}
+			sendPrDecision={() => {}}
 		/>,
 	);
 }
@@ -76,6 +77,7 @@ describe("SessionArea transcript view", () => {
 				sendInput={() => {}}
 				sendResize={() => {}}
 				viewingTranscriptSessionId="abc"
+				sendPrDecision={() => {}}
 				transcript={{
 					sessionId: "abc",
 					messages: [
@@ -102,6 +104,7 @@ describe("SessionArea transcript view", () => {
 				sendInput={() => {}}
 				sendResize={() => {}}
 				viewingTranscriptSessionId="abc"
+				sendPrDecision={() => {}}
 				transcript={null}
 			/>,
 		);

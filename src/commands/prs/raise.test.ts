@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockExecFileSync = vi.fn();
 vi.mock("node:child_process", () => ({
@@ -14,6 +14,13 @@ vi.mock("../../shared/loadJson", () => ({
 	loadJson: () => ({ site: "example.atlassian.net" }),
 }));
 
+vi.mock("./recordPrActivity", () => ({ recordPrActivity: vi.fn() }));
+
+const mockRequestPrDecision = vi.fn();
+vi.mock("./requestPrDecision", () => ({
+	requestPrDecision: (...args: unknown[]) => mockRequestPrDecision(...args),
+}));
+
 const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 	throw new Error("process.exit");
 });
@@ -22,7 +29,10 @@ import { raise } from "./raise";
 
 beforeEach(() => {
 	vi.clearAllMocks();
+	mockExecFileSync.mockReset();
 	mockFindCurrentPrNumber.mockReturnValue(null);
+	delete process.env.ASSIST_SESSION;
+	delete process.env.ASSIST_SESSION_ID;
 });
 
 describe("raise", () => {
@@ -77,6 +87,16 @@ describe("raise", () => {
 			);
 		});
 
+		it("pushes the branch before creating", () => {
+			raise({ title: "feat: x", what: "Adds x", why: "Needed x" });
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				expect.arrayContaining(["push"]),
+				expect.anything(),
+			);
+		});
+
 		it("appends resolved Jira URLs to Why", () => {
 			raise({
 				title: "feat: x",
@@ -110,7 +130,7 @@ describe("raise", () => {
 			expect(mockExecFileSync).not.toHaveBeenCalled();
 		});
 
-		it("overwrites title and body with --force", () => {
+		it("overwrites title and body with --force, without pushing", () => {
 			raise({ title: "t", what: "w", why: "y", force: true });
 
 			expect(mockExecFileSync).toHaveBeenCalledWith(
@@ -126,6 +146,11 @@ describe("raise", () => {
 				],
 				{ stdio: "inherit" },
 			);
+			expect(mockExecFileSync).not.toHaveBeenCalledWith(
+				"git",
+				expect.anything(),
+				expect.anything(),
+			);
 		});
 	});
 
@@ -139,6 +164,59 @@ describe("raise", () => {
 				"process.exit",
 			);
 			expect(mockExit).toHaveBeenCalledWith(1);
+		});
+	});
+
+	describe("when running inside a web session", () => {
+		beforeEach(() => {
+			process.env.ASSIST_SESSION = "1";
+			process.env.ASSIST_SESSION_ID = "7";
+		});
+
+		afterEach(() => {
+			delete process.env.ASSIST_SESSION;
+			delete process.env.ASSIST_SESSION_ID;
+		});
+
+		it("places the PR after the UI approves", async () => {
+			mockRequestPrDecision.mockResolvedValue({ decision: "approve" });
+
+			await raise({ title: "feat: x", what: "Adds x", why: "Needed x" });
+
+			expect(mockRequestPrDecision).toHaveBeenCalledWith(
+				expect.objectContaining({ sessionId: "7", prNumber: null }),
+			);
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				expect.arrayContaining(["pr", "create"]),
+				{ stdio: "inherit" },
+			);
+		});
+
+		it("exits non-zero and does not place when the UI rejects", async () => {
+			mockRequestPrDecision.mockResolvedValue({
+				decision: "reject",
+				reason: "needs work",
+			});
+
+			await expect(
+				raise({ title: "feat: x", what: "Adds x", why: "Needed x" }),
+			).rejects.toThrow("process.exit");
+			expect(mockExit).toHaveBeenCalledWith(1);
+			expect(mockExecFileSync).not.toHaveBeenCalled();
+		});
+
+		it("updates an existing PR after approval without needing --force", async () => {
+			mockFindCurrentPrNumber.mockReturnValue(42);
+			mockRequestPrDecision.mockResolvedValue({ decision: "approve" });
+
+			await raise({ title: "t", what: "w", why: "y" });
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				expect.arrayContaining(["pr", "edit", "42"]),
+				{ stdio: "inherit" },
+			);
 		});
 	});
 });

@@ -27,6 +27,7 @@ function SessionContent({ socket }: { socket: SessionSocket }) {
 			sendResize={socket.sendResize}
 			viewingTranscriptSessionId={socket.viewingTranscriptSessionId}
 			transcript={socket.transcript}
+			sendPrDecision={socket.sendPrDecision}
 		/>
 	);
 }

@@ -90,6 +90,8 @@ export const messageHandlers: Record<string, Handler> = {
 	"set-active": (_client, m, d) =>
 		m.active.set(d.cwd as string, d.sessionId as string),
 	"set-status": handleSetStatus,
+	"pr-preview": (client, m, d) => m.prPreview.set(client, d),
+	"pr-decision": (_client, m, d) => m.prPreview.decide(d),
 	"ui-status": (_client, _m, d) =>
 		daemonLog(`ui rendered: id=${d.sessionId} status=${d.status}`),
 };

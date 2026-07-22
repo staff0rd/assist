@@ -3,6 +3,13 @@ import type { HarnessKind } from "../../../shared/harnesses";
 
 export type CommandType = "claude" | "run" | "assist";
 
+export type PrPreview = {
+	requestId: string;
+	title: string;
+	body: string;
+	prNumber: number | null;
+};
+
 export type SessionInfoBase = {
 	id: string;
 	name: string;
@@ -25,4 +32,5 @@ export type SessionInfoBase = {
 	starred?: boolean;
 	usedPct?: number;
 	design?: boolean;
+	pendingPrPreview?: PrPreview;
 };

@@ -1,15 +1,8 @@
-import { execFileSync } from "node:child_process";
-import { recordSessionRefs } from "../../shared/db/recordSessionRefs";
-import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
-import {
-	buildCreateArgs,
-	buildEditArgs,
-	type CreateOptions,
-} from "./buildCreateArgs";
-import { buildPrBody } from "./buildPrBody";
-import { readSessionPrRef } from "./readSessionPrRef";
+import type { CreateOptions } from "./buildCreateArgs";
+import { buildValidatedBody } from "./buildValidatedBody";
+import { placePr } from "./placePr";
+import { previewAndPlace } from "./previewAndPlace";
 import { findCurrentPrNumber } from "./shared";
-import { validatePrContent } from "./validatePrContent";
 
 type RaiseOptions = Omit<CreateOptions, "body"> & {
 	what?: string;
@@ -19,24 +12,24 @@ type RaiseOptions = Omit<CreateOptions, "body"> & {
 	force?: boolean;
 };
 
+const USAGE =
+	"Usage: assist prs raise --title <title> --what <what> --why <why> [--how <how>] [--resolves <key>] [--force]";
+
 export async function raise(options: RaiseOptions): Promise<void> {
-	if (!options.title || !options.what || !options.why) {
-		console.error(
-			"Usage: assist prs raise --title <title> --what <what> --why <why> [--how <how>] [--resolves <key>] [--force]",
-		);
-		process.exit(1);
-	}
-
-	const body = buildPrBody({
-		what: options.what,
-		why: options.why,
-		how: options.how,
-		resolves: options.resolves,
-	});
-
-	validatePrContent(options.title, body);
-
+	const { title, body } = buildValidatedBody(options, USAGE);
 	const existing = findCurrentPrNumber();
+	const sessionId = process.env.ASSIST_SESSION_ID;
+
+	if (process.env.ASSIST_SESSION === "1" && sessionId) {
+		await previewAndPlace({
+			sessionId,
+			title,
+			body,
+			prNumber: existing,
+			options,
+		});
+		return;
+	}
 
 	if (existing !== null && !options.force) {
 		console.error(
@@ -45,22 +38,5 @@ export async function raise(options: RaiseOptions): Promise<void> {
 		process.exit(1);
 	}
 
-	const args =
-		existing !== null
-			? buildEditArgs(existing, options.title, body)
-			: buildCreateArgs(options.title, body, options);
-
-	try {
-		execFileSync("gh", args, { stdio: "inherit" });
-	} catch {
-		process.exit(1);
-	}
-
-	await recordPrActivity();
-}
-
-async function recordPrActivity(): Promise<void> {
-	if (resolveSessionItemId() === null) return;
-	const pr = readSessionPrRef();
-	if (pr) await recordSessionRefs([pr]);
+	await placePr(existing, title, body, options);
 }

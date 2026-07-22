@@ -1,7 +1,11 @@
 import type { FSWatcher } from "node:fs";
 import type { Activity } from "../../../shared/emitActivity";
 import type { HarnessKind } from "../../../shared/harnesses";
-import type { CommandType, SessionInfoBase } from "../shared/SessionInfoBase";
+import type {
+	CommandType,
+	PrPreview,
+	SessionInfoBase,
+} from "../shared/SessionInfoBase";
 import type { spawnClaude } from "./spawnClaude";
 
 export type SessionStatus = "running" | "waiting" | "done" | "error";
@@ -49,6 +53,7 @@ export type Session = {
 	design?: boolean;
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;
+	pendingPrPreview?: PrPreview;
 	pendingRestart?: () => void;
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };

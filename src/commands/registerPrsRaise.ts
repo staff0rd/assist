@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { raise as prsRaise } from "./prs/index";
+import { raiseHelpText } from "./prs/raiseHelpText";
 
 function collect(value: string, previous: string[]): string[] {
 	return previous.concat([value]);
@@ -43,5 +44,6 @@ export function registerPrsRaise(prsCommand: Command): void {
 			[],
 		)
 		.option("-m, --milestone <name>", "Add the pull request to a milestone")
+		.addHelpText("after", () => raiseHelpText())
 		.action(prsRaise);
 }

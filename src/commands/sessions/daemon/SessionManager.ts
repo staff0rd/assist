@@ -19,6 +19,7 @@ import { dismissSession, drainSessions } from "./dismissSession";
 import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { greetClient } from "./greetClient";
 import { logSpawnedSession } from "./logSpawnedSession";
+import { PrPreviewCoordinator } from "./PrPreviewCoordinator";
 import { applySetStatus } from "./applySetStatus";
 import { applyUsageRecord } from "./applyUsageRecord";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
@@ -43,6 +44,9 @@ import * as sessionIo from "./writeToSession";
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
+	readonly prPreview = new PrPreviewCoordinator(this.sessions, () =>
+		this.notify(),
+	);
 	// why: dispatch calls active.set() on card click; broadcasts include active.toJSON()
 	readonly active = new ActiveSelection(() => this.notify());
 	readonly clients = new ClientHub(persistUsagePeak);
@@ -64,6 +68,7 @@ export class SessionManager {
 	removeClient(client: SessionClient): void {
 		this.clients.delete(client);
 		this.clients.unsubscribeLogs(client);
+		this.prPreview.clearWaiter(client);
 		this.onIdleChange?.(this.isIdle());
 	}
 
