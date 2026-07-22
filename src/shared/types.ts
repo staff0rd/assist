@@ -88,6 +88,7 @@ export const assistConfigSchema = z.strictObject({
 			required: z.boolean().default(false),
 		})
 		.optional(),
+	repos: z.record(z.string(), z.record(z.string(), z.unknown())).optional(),
 	run: z.array(z.union([runConfigSchema, runLinkSchema])).optional(),
 	subtasks: z
 		.array(

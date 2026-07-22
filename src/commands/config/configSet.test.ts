@@ -1,9 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { configSet } from "./configSet";
 
 const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
 const mockLoadGlobalConfigRaw = vi.fn<() => Record<string, unknown>>();
 const mockSaveConfig = vi.fn();
 const mockSaveGlobalConfig = vi.fn();
+
+const mockGetCurrentOrigin = vi.fn<() => string>();
 
 vi.mock("../../shared/loadConfig", () => ({
 	loadConfig: () => ({}),
@@ -13,13 +16,15 @@ vi.mock("../../shared/loadConfig", () => ({
 	saveGlobalConfig: (c: unknown) => mockSaveGlobalConfig(c),
 }));
 
-import { configSet } from ".";
-
+vi.mock("../backlog/getCurrentOrigin", () => ({
+	getCurrentOrigin: () => mockGetCurrentOrigin(),
+}));
 describe("configSet", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockLoadProjectConfig.mockReturnValue({});
 		mockLoadGlobalConfigRaw.mockReturnValue({});
+		mockGetCurrentOrigin.mockReturnValue("github.com/org/assist");
 	});
 
 	describe("without --global", () => {
@@ -85,6 +90,80 @@ describe("configSet", () => {
 			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
 				sync: { autoConfirm: true },
 			});
+		});
+	});
+
+	describe("with --repo", () => {
+		it("should write under the current repo's shortest label", () => {
+			configSet("commit.push", "true", { repo: true });
+
+			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				repos: { assist: { commit: { push: true } } },
+			});
+			expect(mockSaveConfig).not.toHaveBeenCalled();
+		});
+
+		it("should stack into an existing matching repos entry", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({
+				repos: { assist: { commit: { pull: true } } },
+			});
+
+			configSet("commit.push", "true", { repo: true });
+
+			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				repos: { assist: { commit: { pull: true, push: true } } },
+			});
+		});
+
+		it("should reuse an existing org/repo key over the bare label", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({
+				repos: { "org/assist": { commit: { pull: true } } },
+			});
+
+			configSet("commit.push", "true", { repo: true });
+
+			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				repos: {
+					"org/assist": {
+						commit: { pull: true, push: true },
+					},
+				},
+			});
+		});
+
+		it("should preserve global-flat keys alongside the repos block", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({
+				commit: { push: false },
+			});
+
+			configSet("commit.push", "true", { repo: true });
+
+			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				commit: { push: false },
+				repos: { assist: { commit: { push: true } } },
+			});
+		});
+
+		it("should reject invalid keys before writing", () => {
+			const mockExit = vi
+				.spyOn(process, "exit")
+				.mockImplementation(() => undefined as never);
+
+			configSet("bogus.key", "true", { repo: true });
+
+			expect(mockExit).toHaveBeenCalledWith(1);
+			mockExit.mockRestore();
+		});
+
+		it("should reject combining --repo with --global", () => {
+			const mockExit = vi
+				.spyOn(process, "exit")
+				.mockImplementation(() => undefined as never);
+
+			configSet("worktree.enabled", "true", { repo: true, global: true });
+
+			expect(mockExit).toHaveBeenCalledWith(1);
+			mockExit.mockRestore();
 		});
 	});
 

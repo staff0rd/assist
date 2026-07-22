@@ -3,8 +3,10 @@ import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
+import { getCurrentOrigin } from "../commands/backlog/getCurrentOrigin";
 import { loadRawYaml } from "./loadRawYaml";
 import { mergeRawConfigs } from "./mergeDenyRules";
+import { resolveRepoOverride } from "./resolveRepoOverride";
 import {
 	type AssistConfig,
 	assistConfigSchema,
@@ -49,7 +51,12 @@ export function getProjectRoot(): string {
 export function loadConfig(): AssistConfig {
 	const globalRaw = loadRawYaml(getGlobalConfigPath());
 	const projectRaw = loadRawYaml(getConfigPath());
-	const merged = mergeRawConfigs(globalRaw, projectRaw);
+	const repoOverride = globalRaw.repos
+		? resolveRepoOverride(globalRaw, getCurrentOrigin(process.cwd()))
+		: {};
+	const globalWithRepo = mergeRawConfigs(globalRaw, repoOverride);
+	const merged = mergeRawConfigs(globalWithRepo, projectRaw);
+	delete merged.repos;
 	// why: `news.feeds` moved to the backlog DB; drop the legacy key so it doesn't trip the strict schema (seedNewsFeeds migrates it from raw YAML)
 	delete merged.news;
 	return assistConfigSchema.parse(merged);

@@ -174,7 +174,7 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
 - `assist run link <path> --prefix <prefix>` - Link run configurations from another project's assist.yml
 - `assist run remove <name>` - Remove a run configuration from assist.yml and delete its Claude command file
-- `assist config set <key> <value>` - Set a config value (e.g. commit.push true)
+- `assist config set <key> <value>` - Set a config value (e.g. commit.push true). Add `--global` to write to `~/.assist.yml`, or `--repo` to write into `~/.assist.yml` under the current repo's identity (a per-repo override that lands nothing in the repo working tree)
 - `assist config get <key>` - Get a config value
 - `assist config list` - List all config values
   - `prs.slack` - The Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector (optional; can be omitted when only `prs.required` is set)

@@ -1,6 +1,7 @@
 import type { Command } from "commander";
-import { configList, configSet } from "./config";
+import { configList } from "./config";
 import { configGet } from "./config/configGet";
+import { configSet } from "./config/configSet";
 
 export function registerConfig(program: Command): void {
 	const configCommand = program
@@ -11,6 +12,10 @@ export function registerConfig(program: Command): void {
 		.command("set <key> <value>")
 		.description("Set a config value (e.g. commit.push true)")
 		.option("-g, --global", "Write to global ~/.assist.yml")
+		.option(
+			"-r, --repo",
+			"Write to ~/.assist.yml under the current repo's identity",
+		)
 		.action((key, value, options) => configSet(key, value, options));
 
 	configCommand
