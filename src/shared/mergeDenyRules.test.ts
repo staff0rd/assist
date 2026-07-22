@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { mergeDenyRules, mergeRawConfigs } from "./mergeDenyRules";
+import {
+	mergeDenyRules,
+	mergeRawConfigs,
+	mergeRunConfigs,
+} from "./mergeDenyRules";
 
 describe("mergeDenyRules", () => {
 	it("returns undefined when both are undefined", () => {
@@ -46,6 +50,61 @@ describe("mergeDenyRules", () => {
 			{ pattern: "kill", message: "global kill" },
 			{ pattern: "rm", message: "project rm" },
 			{ pattern: "drop", message: "project drop" },
+		]);
+	});
+});
+
+describe("mergeRunConfigs", () => {
+	it("returns undefined when both are undefined", () => {
+		expect(mergeRunConfigs(undefined, undefined)).toBeUndefined();
+	});
+
+	it("returns project run when global is undefined", () => {
+		const project = [{ name: "start", command: "npm" }];
+		expect(mergeRunConfigs(undefined, project)).toEqual(project);
+	});
+
+	it("returns global run when project is undefined", () => {
+		const global = [{ name: "start", command: "npm", server: true }];
+		expect(mergeRunConfigs(global, undefined)).toEqual(global);
+	});
+
+	it("keeps global-only runs alongside project runs", () => {
+		const global = [{ name: "start", command: "npm", server: true }];
+		const project = [{ name: "verify:lint", command: "npm" }];
+		expect(mergeRunConfigs(global, project)).toEqual([
+			{ name: "start", command: "npm", server: true },
+			{ name: "verify:lint", command: "npm" },
+		]);
+	});
+
+	it("project overrides global on matching name", () => {
+		const global = [{ name: "start", command: "old" }];
+		const project = [{ name: "start", command: "new" }];
+		expect(mergeRunConfigs(global, project)).toEqual([
+			{ name: "start", command: "new" },
+		]);
+	});
+
+	it("concatenates nameless run links", () => {
+		const global = [{ link: "https://a", prefix: "a" }];
+		const project = [{ link: "https://b", prefix: "b" }];
+		expect(mergeRunConfigs(global, project)).toEqual([
+			{ link: "https://a", prefix: "a" },
+			{ link: "https://b", prefix: "b" },
+		]);
+	});
+});
+
+describe("mergeRawConfigs run", () => {
+	it("merges global server run with project runs by name", () => {
+		const merged = mergeRawConfigs(
+			{ run: [{ name: "start", command: "npm", server: true }] },
+			{ run: [{ name: "verify:lint", command: "npm" }] },
+		);
+		expect(merged.run).toEqual([
+			{ name: "start", command: "npm", server: true },
+			{ name: "verify:lint", command: "npm" },
 		]);
 	});
 });
