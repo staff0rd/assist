@@ -31,7 +31,7 @@ export function CardActionButtons({
 			{onRestart && (
 				<RestartButton onRestart={onRestart} harness={session.harness} />
 			)}
-			{status === "done" && onRetry && <RetryButton onRetry={onRetry} />}
+			{onRetry && <RetryButton onRetry={onRetry} />}
 			<SessionStarButton session={session} />
 			{target && (
 				<CompleteButton

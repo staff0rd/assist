@@ -19,7 +19,7 @@ export function SessionListCard({
 	initialized: Set<string>;
 	onSelect: (id: string) => void;
 } & SessionListHandlers) {
-	const retryable = session.commandType === "run" && session.status === "done";
+	const retryable = session.commandType === "run";
 	const restartable = session.commandType !== "run";
 
 	return (
