@@ -1,3 +1,10 @@
+# [0.415.0](https://github.com/staff0rd/assist/compare/v0.414.0...v0.415.0) (2026-07-22)
+
+
+### Features
+
+* remote-group serving visibility ([32fd535](https://github.com/staff0rd/assist/commit/32fd5350cec63c4599b9be4bae815ce46b36048f))
+
 # [0.414.0](https://github.com/staff0rd/assist/compare/v0.413.0...v0.414.0) (2026-07-22)
 
 
