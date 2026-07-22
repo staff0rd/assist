@@ -35,11 +35,15 @@ export function PrPreviewPane({
 			<PreviewBody
 				content={preview.body}
 				ranges={pane.ranges}
-				rootRef={pane.contentRef}
-				onMouseUp={pane.capture}
+				wrapperRef={pane.wrapperRef}
+				contentRef={pane.contentRef}
+				dragRects={pane.dragRects}
+				dragColor={pane.dragColor}
+				onMouseDown={pane.onMouseDown}
 			/>
 			<PrPreviewFooter
 				comments={pane.comments}
+				commentColors={pane.commentColors}
 				pending={pane.pending}
 				onRemove={pane.remove}
 				onDecision={pane.onDecide}

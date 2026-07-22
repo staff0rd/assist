@@ -7,6 +7,7 @@ import type { LocalComment } from "./usePrComments";
 
 export function PrPreviewFooter({
 	comments,
+	commentColors,
 	pending,
 	onAdd,
 	onRemove,
@@ -14,6 +15,7 @@ export function PrPreviewFooter({
 	onDecision,
 }: {
 	comments: LocalComment[];
+	commentColors: string[];
 	pending: PendingComment | null;
 	onAdd: (note: string) => void;
 	onRemove: (id: number) => void;
@@ -25,7 +27,11 @@ export function PrPreviewFooter({
 }) {
 	return (
 		<>
-			<PrCommentList comments={comments} onRemove={onRemove} />
+			<PrCommentList
+				comments={comments}
+				colors={commentColors}
+				onRemove={onRemove}
+			/>
 			<Divider />
 			<PrPreviewActions
 				commentCount={comments.length}

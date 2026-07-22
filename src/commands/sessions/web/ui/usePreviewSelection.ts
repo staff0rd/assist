@@ -1,33 +1,54 @@
-import { useRef, useState } from "react";
+import { type MouseEvent as ReactMouseEvent, useRef, useState } from "react";
+import {
+	type Caret,
+	caretFromPoint,
+	type OverlayRect,
+	overlayRects,
+} from "./caretFromPoint";
+import { finishSelection, snappedRange, startCaret } from "./finishSelection";
 import type { PendingComment } from "./PrCommentPopover";
-import { rangeToOffsets } from "./rangeToOffsets";
-import { snapRangeToWords } from "./snapRangeToWords";
 
 export function usePreviewSelection() {
+	const wrapperRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
+	const anchorRef = useRef<Caret | null>(null);
+	const [dragRects, setDragRects] = useState<OverlayRect[] | null>(null);
 	const [pending, setPending] = useState<PendingComment | null>(null);
 
-	const capture = () => {
-		const root = contentRef.current;
-		const sel = globalThis.getSelection();
-		if (!root || !sel || sel.isCollapsed || sel.rangeCount === 0) return;
-		const raw = sel.getRangeAt(0);
-		if (!root.contains(raw.commonAncestorContainer)) return;
+	const onMouseDown = (e: ReactMouseEvent) => {
+		const wrapper = wrapperRef.current;
+		const content = contentRef.current;
+		if (!wrapper || !content) return;
+		const anchor = startCaret(wrapper, content, e.clientX, e.clientY);
+		if (!anchor) return;
 
-		const range = snapRangeToWords(raw);
-		const quote = range.toString().trim();
-		if (!quote) return;
-
-		const rect = range.getBoundingClientRect();
-		const { start, end } = rangeToOffsets(root, range);
-		sel.removeAllRanges();
-		setPending({ quote, top: rect.bottom, left: rect.left, start, end });
-	};
-
-	const clear = () => {
+		e.preventDefault();
+		anchorRef.current = anchor;
 		setPending(null);
-		globalThis.getSelection()?.removeAllRanges();
+		setDragRects([]);
+
+		const onMove = (ev: globalThis.MouseEvent) => {
+			const focus = caretFromPoint(ev.clientX, ev.clientY);
+			if (focus && anchorRef.current)
+				setDragRects(
+					overlayRects(snappedRange(anchorRef.current, focus), wrapper),
+				);
+		};
+		const onUp = (ev: globalThis.MouseEvent) => {
+			globalThis.removeEventListener("mousemove", onMove);
+			globalThis.removeEventListener("mouseup", onUp);
+			setDragRects(null);
+			const anchorAtStart = anchorRef.current;
+			anchorRef.current = null;
+			if (!anchorAtStart) return;
+			const focus = caretFromPoint(ev.clientX, ev.clientY) ?? anchorAtStart;
+			setPending(finishSelection(content, anchorAtStart, focus));
+		};
+		globalThis.addEventListener("mousemove", onMove);
+		globalThis.addEventListener("mouseup", onUp);
 	};
 
-	return { contentRef, pending, capture, clear };
+	const clear = () => setPending(null);
+
+	return { wrapperRef, contentRef, pending, dragRects, onMouseDown, clear };
 }

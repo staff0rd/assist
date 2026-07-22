@@ -5,9 +5,11 @@ import type { LocalComment } from "./usePrComments";
 
 export function PrCommentList({
 	comments,
+	colors,
 	onRemove,
 }: {
 	comments: LocalComment[];
+	colors: string[];
 	onRemove: (id: number) => void;
 }) {
 	if (comments.length === 0) return null;
@@ -19,11 +21,20 @@ export function PrCommentList({
 					Comments ({comments.length})
 				</Typography>
 				<Stack spacing={1}>
-					{comments.map((c) => (
+					{comments.map((c, i) => (
 						<Box
 							key={c.id}
 							sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
 						>
+							<Box
+								sx={{
+									width: 4,
+									alignSelf: "stretch",
+									borderRadius: 2,
+									flexShrink: 0,
+								}}
+								style={{ backgroundColor: colors[i] }}
+							/>
 							<Box sx={{ flex: 1, minWidth: 0 }}>
 								<QuoteBlock text={c.quote} />
 								<Typography

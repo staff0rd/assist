@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { PrPreviewComment } from "../../shared/SessionInfoBase";
 import { clearPersistedComments } from "./PersistedComment";
+import { previewHighlights } from "./previewHighlights";
 import { usePrComments } from "./usePrComments";
 import { usePreviewSelection } from "./usePreviewSelection";
 
@@ -10,14 +11,14 @@ type OnDecision = (
 ) => void;
 
 export function usePrPane(requestId: string, onDecision: OnDecision) {
-	const { contentRef, pending, capture, clear } = usePreviewSelection();
+	const { wrapperRef, contentRef, pending, dragRects, onMouseDown, clear } =
+		usePreviewSelection();
 	const { comments, add, remove } = usePrComments(requestId);
 
-	const ranges = useMemo(() => {
-		const committed = comments.map((c) => ({ start: c.start, end: c.end }));
-		if (!pending) return committed;
-		return [...committed, { start: pending.start, end: pending.end }];
-	}, [comments, pending]);
+	const { commentColors, dragColor, ranges } = useMemo(
+		() => previewHighlights(comments, pending),
+		[comments, pending],
+	);
 
 	const onDecide: OnDecision = (decision, cmts) => {
 		clearPersistedComments(requestId);
@@ -36,12 +37,16 @@ export function usePrPane(requestId: string, onDecision: OnDecision) {
 	};
 
 	return {
+		wrapperRef,
 		contentRef,
-		capture,
+		onMouseDown,
 		comments,
+		commentColors,
 		remove,
 		pending,
 		ranges,
+		dragRects,
+		dragColor,
 		onAdd,
 		onCancel: clear,
 		onDecide,

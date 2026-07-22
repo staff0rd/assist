@@ -68,8 +68,11 @@ drafted title and body are shown automatically in a preview pane beside the
 terminal in the web UI, for the user to approve or reject there — do NOT display
 the title and body or ask for confirmation in the terminal. The command blocks
 until the user decides: on approval it creates or updates the PR and reports it;
-on rejection it exits non-zero with the reason, which you must address before
-running again. Just compose the sections and run the command.`;
+on rejection it exits non-zero with the reason. The reviewer may also attach
+inline comments to specific spans of the preview; on rejection these are printed
+as numbered quoted-span + note pairs on stderr. Address every comment (and the
+reason), then run the command again to re-preview the revised PR. Repeat until it
+is approved. Just compose the sections and run the command.`;
 
 export function raiseHelpText(): string {
 	const confirm =

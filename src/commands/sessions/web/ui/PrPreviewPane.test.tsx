@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PrPreview } from "../../shared/SessionInfoBase";
 import { PrPreviewPane } from "./PrPreviewPane";
@@ -8,10 +14,25 @@ if (!Range.prototype.getBoundingClientRect) {
 	Range.prototype.getBoundingClientRect = () =>
 		({ top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0 }) as DOMRect;
 }
+if (!Range.prototype.getClientRects) {
+	Range.prototype.getClientRects = () =>
+		({
+			length: 0,
+			item: () => null,
+			[Symbol.iterator]: [][Symbol.iterator],
+		}) as unknown as DOMRectList;
+}
+
+type CaretDoc = {
+	caretRangeFromPoint?: ((x: number, y: number) => Range | null) | undefined;
+	elementFromPoint?: ((x: number, y: number) => Element | null) | undefined;
+};
 
 afterEach(() => {
 	cleanup();
 	vi.restoreAllMocks();
+	(document as CaretDoc).caretRangeFromPoint = undefined;
+	(document as CaretDoc).elementFromPoint = undefined;
 	localStorage.clear();
 });
 
@@ -22,36 +43,44 @@ const preview: PrPreview = {
 	prNumber: null,
 };
 
-function mockSelection(container: HTMLElement, text: string) {
+function caretAt(node: Node, offset: number): Range {
+	const range = document.createRange();
+	range.setStart(node, offset);
+	range.collapse(true);
+	return range;
+}
+
+function selectText(container: HTMLElement, text: string) {
 	const root = container.querySelector(".markdown") as HTMLElement;
 	const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
 	let node: Node | null = walker.nextNode();
-	let range: Range | null = null;
 	while (node) {
 		const idx = (node.textContent ?? "").indexOf(text);
-		if (idx !== -1) {
-			range = document.createRange();
-			range.setStart(node, idx);
-			range.setEnd(node, idx + text.length);
-			break;
-		}
+		if (idx !== -1) break;
 		node = walker.nextNode();
 	}
-	if (!range) throw new Error(`text not found: ${text}`);
-	const r = range;
-	vi.spyOn(globalThis, "getSelection").mockReturnValue({
-		isCollapsed: false,
-		rangeCount: 1,
-		getRangeAt: () => r,
-		removeAllRanges: () => {},
-		addRange: () => {},
-		toString: () => text,
-	} as unknown as Selection);
+	if (!node) throw new Error(`text not found: ${text}`);
+	const found = node;
+	const idx = (found.textContent ?? "").indexOf(text);
+
+	(document as CaretDoc).elementFromPoint = vi
+		.fn()
+		.mockReturnValue(found.parentElement as Element);
+	(document as CaretDoc).caretRangeFromPoint = vi
+		.fn()
+		.mockReturnValueOnce(caretAt(found, idx))
+		.mockReturnValue(caretAt(found, idx + text.length));
+
+	fireEvent.mouseDown(root, { clientX: 1, clientY: 1 });
+	act(() => {
+		globalThis.dispatchEvent(
+			new MouseEvent("mouseup", { clientX: 2, clientY: 1, bubbles: true }),
+		);
+	});
 }
 
 function addComment(container: HTMLElement, quote: string, note: string) {
-	mockSelection(container, quote);
-	fireEvent.mouseUp(container.querySelector(".markdown") as Element);
+	selectText(container, quote);
 	fireEvent.change(screen.getByPlaceholderText("Add a note…"), {
 		target: { value: note },
 	});
@@ -77,6 +106,25 @@ describe("PrPreviewPane inline comments", () => {
 		expect(onDecision).toHaveBeenCalledWith("reject", [
 			{ quote: "Adds x", note: "say what x is" },
 		]);
+	});
+
+	it("gives each highlighted span a distinct colour", () => {
+		const { container } = render(
+			<PrPreviewPane preview={preview} onDecision={vi.fn()} />,
+		);
+
+		addComment(container, "Adds x", "first");
+		addComment(container, "the thing", "second");
+
+		const marks = Array.from(
+			container.querySelectorAll<HTMLElement>("mark.pr-comment"),
+		);
+		expect(marks).toHaveLength(2);
+		expect(marks[0].style.backgroundColor).toBeTruthy();
+		expect(marks[1].style.backgroundColor).toBeTruthy();
+		expect(marks[0].style.backgroundColor).not.toBe(
+			marks[1].style.backgroundColor,
+		);
 	});
 
 	it("removes an attached comment", () => {
