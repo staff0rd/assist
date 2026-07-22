@@ -1,3 +1,10 @@
+# [0.416.0](https://github.com/staff0rd/assist/compare/v0.415.1...v0.416.0) (2026-07-22)
+
+
+### Features
+
+* relaunch button on run cards in all states ([25a9e49](https://github.com/staff0rd/assist/commit/25a9e49cb8ee50f57c22f72004723219bb4ba9f1))
+
 ## [0.415.1](https://github.com/staff0rd/assist/compare/v0.415.0...v0.415.1) (2026-07-22)
 
 
