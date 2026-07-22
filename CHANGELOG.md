@@ -1,3 +1,10 @@
+## [0.419.1](https://github.com/staff0rd/assist/compare/v0.419.0...v0.419.1) (2026-07-22)
+
+
+### Bug Fixes
+
+* restart errored session cards ([df1087b](https://github.com/staff0rd/assist/commit/df1087b1d879f1b9a04ed2f3838141b8c3f1d008))
+
 # [0.419.0](https://github.com/staff0rd/assist/compare/v0.418.0...v0.419.0) (2026-07-22)
 
 
