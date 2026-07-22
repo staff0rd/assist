@@ -3,6 +3,7 @@ import { type SessionClient, sendTo } from "./broadcast";
 import { buildHello } from "./buildHello";
 import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
+import { handleCreateRun } from "./handleCreateRun";
 import { handleSetStatus } from "./handleSetStatus";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import type { SessionManager } from "./SessionManager";
@@ -28,13 +29,7 @@ export const messageHandlers: Record<string, Handler> = {
 		m.clients.subscribeLogs(client, d.replay !== false),
 	hello: (client) => sendTo(client, buildHello()),
 	create: creator(true, spawnCreate),
-	"create-run": creator(true, (m, d) =>
-		m.spawnRun(
-			d.runName as string,
-			(d.runArgs as string[]) ?? [],
-			d.cwd as string | undefined,
-		),
-	),
+	"create-run": handleCreateRun,
 	"create-assist": creator(true, (m, d) =>
 		m.spawnAssist(
 			(d.assistArgs as string[]) ?? [],
@@ -67,13 +62,22 @@ export const messageHandlers: Record<string, Handler> = {
 	resize: routed((_client, m, d) =>
 		m.resizeSession(d.sessionId as string, d.cols as number, d.rows as number),
 	),
-	retry: routed((_client, m, d) => m.retrySession(d.sessionId as string)),
+	retry: routed((client, m, d) => {
+		const conflict = m.retrySession(d.sessionId as string, d.replace === true);
+		if (conflict)
+			sendTo(client, {
+				type: "run-conflict",
+				sessionId: d.sessionId,
+				existing: conflict,
+			});
+	}),
 	restart: routed((client, m, d) => {
 		const result = m.restart(d.sessionId as string);
 		if (!result.ok && result.reason)
 			sendTo(client, { type: "error", message: result.reason });
 	}),
 	dismiss: routed((_client, m, d) => m.dismissSession(d.sessionId as string)),
+	stop: routed((_client, m, d) => m.stopSession(d.sessionId as string)),
 	"set-autorun": routed((_client, m, d) =>
 		m.setAutoRun(d.sessionId as string, d.enabled as boolean),
 	),

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { HarnessKind } from "../../../shared/harnesses";
+import { type ServerRunMeta, serverRunMeta } from "./serverRunMeta";
 import { spawnClaude } from "./spawnClaude";
 import { spawnPi } from "./spawnPi";
 import { spawnRun } from "./spawnRun";
@@ -66,6 +67,7 @@ export function createRunSession(
 	runName: string,
 	runArgs: string[],
 	cwd?: string,
+	meta: ServerRunMeta = serverRunMeta(runName, cwd),
 ): Session {
 	return {
 		...sessionBase(id, "running"),
@@ -75,5 +77,8 @@ export function createRunSession(
 		runName,
 		runArgs,
 		cwd,
+		server: meta.server || undefined,
+		serverPort: meta.port,
+		serverOrigin: meta.origin,
 	};
 }

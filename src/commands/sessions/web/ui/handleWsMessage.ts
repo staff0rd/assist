@@ -2,6 +2,7 @@ import type { RateLimits } from "../../../../shared/RateLimits";
 import { handleClear } from "./handleClear";
 import { handleCreated } from "./handleCreated";
 import { handleOutput } from "./handleOutput";
+import { handleRunConflict } from "./handleRunConflict";
 import { handleSessions } from "./handleSessions";
 import type { HistoricalSession, TranscriptMessage } from "./types";
 import type { WsDispatch } from "./WsDispatch";
@@ -35,6 +36,9 @@ export function handleWsMessage(
 			d.failPendingLaunch(message);
 			break;
 		}
+		case "run-conflict":
+			handleRunConflict(msg, d);
+			break;
 		case "limits":
 			d.setRateLimits(msg.rateLimits as RateLimits);
 			break;

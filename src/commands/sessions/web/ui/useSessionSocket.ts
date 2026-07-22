@@ -10,65 +10,20 @@ import { useWsConnection } from "./useWsConnection";
 export type SessionSocket = ReturnType<typeof useSessionSocket>;
 
 export function useSessionSocket() {
-	const {
-		sessions,
-		history,
-		activeId,
-		setActiveId,
-		daemonVersion,
-		transcript,
-		viewingTranscriptSessionId,
-		setViewingTranscriptSessionId,
-		currentCwd,
-		error,
-		clearError,
-		success,
-		setSuccess,
-		clearSuccess,
-		pendingLaunches,
-		addPendingLaunch,
-		dismissPendingLaunch,
-		rateLimits,
-		initialized,
-		wsRef,
-		buffers,
-		handlers,
-		requestHistory,
-		reconnecting,
-	} = useWsConnection();
+	const conn = useWsConnection();
+	const { wsRef, buffers, handlers, addPendingLaunch, activeId, sessions } =
+		conn;
 
 	const send = useSend(wsRef, addPendingLaunch);
-
 	const actions = useSessionActions(send, buffers, handlers);
-	useActiveSelectionSync(activeId, sessions, history, send);
+	useActiveSelectionSync(activeId, sessions, conn.history, send);
 	useReportRenderedStatus(sessions, send);
 
-	const { viewTranscript, clearTranscript, selectSession } =
-		useTranscriptNavigation(send, setActiveId, setViewingTranscriptSessionId);
+	const nav = useTranscriptNavigation(
+		send,
+		conn.setActiveId,
+		conn.setViewingTranscriptSessionId,
+	);
 
-	return {
-		sessions,
-		history,
-		activeId,
-		setActiveId,
-		daemonVersion,
-		selectSession,
-		transcript,
-		viewingTranscriptSessionId,
-		viewTranscript,
-		clearTranscript,
-		currentCwd,
-		error,
-		clearError,
-		success,
-		setSuccess,
-		clearSuccess,
-		pendingLaunches,
-		dismissPendingLaunch,
-		rateLimits,
-		initialized,
-		...actions,
-		requestHistory,
-		reconnecting,
-	};
+	return { ...conn, ...actions, ...nav };
 }

@@ -28,7 +28,10 @@ import {
 } from "./restartManagedSession";
 import { restoreAll } from "./restoreAll";
 import { resumeSession } from "./resumeSession";
-import { retrySession } from "./retrySession";
+import type { ServerConflictInfo } from "./serverConflictInfo";
+import type { ServerRunMeta } from "./serverRunMeta";
+import { runRetry } from "./runRetry";
+import { liveServerRun, stopServerSession } from "./liveServerRun";
 import { reuseSessionForRun } from "./reuseSessionForRun";
 import { sessionLimits } from "./sessionLimits";
 import { shutdownSessions } from "./shutdownSessions";
@@ -104,8 +107,19 @@ export class SessionManager {
 		);
 	}
 
-	spawnRun(runName: string, runArgs: string[], cwd?: string): string {
-		return this.spawnWith((id) => createRunSession(id, runName, runArgs, cwd));
+	spawnRun(
+		runName: string,
+		runArgs: string[],
+		cwd?: string,
+		meta?: ServerRunMeta,
+	): string {
+		return this.spawnWith((id) =>
+			createRunSession(id, runName, runArgs, cwd, meta),
+		);
+	}
+
+	liveServerRun(origin: string, excludeId?: string): Session | undefined {
+		return liveServerRun(this.sessions, origin, excludeId);
 	}
 
 	spawnAssist(
@@ -143,9 +157,13 @@ export class SessionManager {
 		sessionIo.resizeSession(this.sessions, id, cols, rows);
 	}
 
-	retrySession(id: string): void {
-		const s = this.sessions.get(id);
-		if (s && retrySession(s, this.clients, this.onStatusChange)) this.notify();
+	retrySession(id: string, replace = false): ServerConflictInfo | null {
+		return runRetry(this.sessions, id, replace, {
+			clients: this.clients,
+			onStatusChange: this.onStatusChange,
+			dismiss: this.dismissSession,
+			notify: this.notify,
+		});
 	}
 
 	restart(id: string): RestartResult {
@@ -162,6 +180,10 @@ export class SessionManager {
 	dismissSession = (id: string): void => {
 		if (dismissSession(this.sessions, id)) this.notify();
 	};
+
+	stopSession(id: string): void {
+		stopServerSession(this.sessions, id);
+	}
 
 	setAutoRun(id: string, enabled: boolean): void {
 		if (sessionIo.setAutoRun(this.sessions, id, enabled)) this.notify();

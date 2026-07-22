@@ -7,6 +7,7 @@ import { RestartButton } from "./RestartButton";
 import { ReviewButton } from "./ReviewButton";
 import { RetryButton } from "./RetryButton";
 import { reviewTargetPr } from "./reviewTargetPr";
+import { ServerRunControls } from "./ServerRunControls";
 import { SessionStarButton } from "./SessionStarButton";
 import { StopCardActivation } from "./StopCardActivation";
 import type { CardHeaderProps } from "./types";
@@ -23,6 +24,7 @@ export function CardActionButtons({
 	const pr = usePrStatus(session.cwd, reviewTargetPr(session), status);
 	return (
 		<StopCardActivation>
+			<ServerRunControls session={session} />
 			{session.cwd && <OpenInCodeButton cwd={session.cwd} variant="card" />}
 			{pr && session.cwd && <OpenPrButton pr={pr} />}
 			{pr && session.cwd && <ReviewButton cwd={session.cwd} pr={pr} />}

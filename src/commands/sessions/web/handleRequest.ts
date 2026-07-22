@@ -6,6 +6,7 @@ import { handleItemRoute } from "../../backlog/web/handleItemRoute";
 import { listItems } from "../../backlog/web/shared";
 import { getBackups } from "./getBackups";
 import { getHtml } from "./getHtml";
+import { handleServerRuns } from "./handleServerRuns";
 import { getReviewSynthesis } from "./getReviewSynthesis";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
@@ -37,6 +38,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/jira-site": jiraSite,
 	"GET /api/harness": harnessCapabilities,
 	"GET /api/pr-status": prStatus,
+	"GET /api/server-runs": handleServerRuns,
 	"GET /api/pr-list": prList,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/usage/history": listUsageHistory,

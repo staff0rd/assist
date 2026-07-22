@@ -6,6 +6,7 @@ import { ErrorSnackbar } from "./ErrorSnackbar";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { LaunchSnackbar } from "./LaunchSnackbar";
 import { ReconnectingIndicator } from "./ReconnectingIndicator";
+import { ServerRunLayer } from "./ServerRunLayer";
 import { DaemonVersionContext } from "./useDaemonVersionContext";
 import { useRepoSelection } from "./useRepoSelection";
 import { RepoSelectionContext } from "./useRepoSelectionContext";
@@ -46,7 +47,9 @@ export function AppShell({
 					<AppToolbar socket={socket} selection={selection} />
 				</AppBar>
 				<Toolbar variant="dense" sx={toolbarSx} />
-				<AppRoutes socket={socket} />
+				<ServerRunLayer socket={socket}>
+					<AppRoutes socket={socket} />
+				</ServerRunLayer>
 				<ReconnectingIndicator reconnecting={socket.reconnecting} />
 				<ErrorSnackbar error={socket.error} onClose={socket.clearError} />
 				<LaunchSnackbar

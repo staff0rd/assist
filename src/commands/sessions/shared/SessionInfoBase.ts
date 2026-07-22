@@ -12,6 +12,8 @@ export type SessionInfoBase = {
 	harness?: HarnessKind;
 	startedAt: number;
 	runName?: string;
+	server?: boolean;
+	port?: number;
 	assistArgs?: string[];
 	cwd?: string;
 	restored?: boolean;

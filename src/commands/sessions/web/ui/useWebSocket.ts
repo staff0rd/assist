@@ -21,6 +21,7 @@ type WsDeps = {
 	setCurrentCwd: WsDispatch["setCurrentCwd"];
 	setError: WsDispatch["setError"];
 	setSuccess: WsDispatch["setSuccess"];
+	setServerConflict: WsDispatch["setServerConflict"];
 	resolvePendingLaunch: WsDispatch["resolvePendingLaunch"];
 	failPendingLaunch: WsDispatch["failPendingLaunch"];
 	setRateLimits: WsDispatch["setRateLimits"];

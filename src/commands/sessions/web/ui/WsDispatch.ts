@@ -1,6 +1,6 @@
 import type { RateLimits } from "../../../../shared/RateLimits";
 import type { HistoricalSession, SessionInfo, Transcript } from "./types";
-import type { SuccessNotice } from "./useNotices";
+import type { ServerConflict, SuccessNotice } from "./useNotices";
 
 type OutputHandler = (data: string) => void;
 
@@ -15,6 +15,7 @@ export type WsDispatch = {
 	setCurrentCwd: (cwd: string) => void;
 	setError: (message: string) => void;
 	setSuccess: (notice: SuccessNotice) => void;
+	setServerConflict: (conflict: ServerConflict) => void;
 	resolvePendingLaunch: () => void;
 	failPendingLaunch: (message: string) => void;
 	setRateLimits: (limits: RateLimits) => void;

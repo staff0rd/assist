@@ -17,6 +17,8 @@ export const runConfigSchema = z.strictObject({
 	pre: z.array(z.string()).optional(),
 	cwd: z.string().optional(),
 	quiet: z.boolean().optional(),
+	server: z.boolean().optional(),
+	port: z.number().optional(),
 });
 
 export const runLinkSchema = z.strictObject({

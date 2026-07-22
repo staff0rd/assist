@@ -1,5 +1,6 @@
 import { type RefObject, useCallback, useMemo } from "react";
 import {
+	createRunAction,
 	dismissSessionAction,
 	inputAction,
 	outputAction,
@@ -9,6 +10,7 @@ import {
 	setAutoAdvanceAction,
 	setAutoRunAction,
 	setStarredAction,
+	stopSessionAction,
 } from "./createSessionAction";
 import { useLaunchActions } from "./useLaunchActions";
 
@@ -27,6 +29,8 @@ export function useSessionActions(
 		setAutoRun: useMemo(() => setAutoRunAction(send), [send]),
 		setAutoAdvance: useMemo(() => setAutoAdvanceAction(send), [send]),
 		setStarred: useMemo(() => setStarredAction(send), [send]),
+		stopSession: useMemo(() => stopSessionAction(send), [send]),
+		startRun: useMemo(() => createRunAction(send), [send]),
 	};
 
 	const onOutput = useMemo(
@@ -35,8 +39,8 @@ export function useSessionActions(
 	);
 
 	const retrySession = useCallback(
-		(id: string) => {
-			retrySessionAction(send, buffers.current)(id);
+		(id: string, replace?: boolean) => {
+			retrySessionAction(send, buffers.current)(id, replace);
 		},
 		[send, buffers],
 	);

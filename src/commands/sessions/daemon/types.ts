@@ -28,6 +28,10 @@ export type Session = {
 	runName?: string;
 	runArgs?: string[];
 	assistArgs?: string[];
+	server?: boolean;
+	serverPort?: number;
+	serverOrigin?: string;
+	stopping?: boolean;
 	cwd?: string;
 	claudeSessionId?: string;
 	initialPrompt?: string;

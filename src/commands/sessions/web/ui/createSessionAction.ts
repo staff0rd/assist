@@ -35,11 +35,11 @@ export function resumeSessionAction(send: SendFn) {
 }
 
 export function retrySessionAction(send: SendFn, buffers: Map<string, string>) {
-	return (id: string) => {
+	return (id: string, replace?: boolean) => {
 		// Keep the output handler registered: the terminal pane stays mounted
 		// across a retry, and the daemon's clear broadcast resets it
 		buffers.delete(id);
-		send({ type: "retry", sessionId: id });
+		send({ type: "retry", sessionId: id, replace });
 	};
 }
 
@@ -63,6 +63,15 @@ export function dismissSessionAction(
 		buffers.delete(id);
 		handlers.delete(id);
 	};
+}
+
+export function stopSessionAction(send: SendFn) {
+	return (id: string) => send({ type: "stop", sessionId: id });
+}
+
+export function createRunAction(send: SendFn) {
+	return (runName: string, cwd?: string, replace?: boolean) =>
+		send({ type: "create-run", runName, cwd, replace });
 }
 
 export function setAutoRunAction(send: SendFn) {
