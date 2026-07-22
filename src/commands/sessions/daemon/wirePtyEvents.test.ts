@@ -139,4 +139,14 @@ describe("wirePtyEvents exit handling", () => {
 		expect(line).toContain("exited with code 1");
 		expect(line).toContain("marking error");
 	});
+
+	it("clears the dead pty handle when the process exits", () => {
+		const { pty, exit } = fakePty();
+		const session = fakeSession({ pty, status: "running" });
+
+		wirePtyEvents(session, new Set<SessionClient>(), vi.fn());
+		exit(1);
+
+		expect(session.pty).toBeNull();
+	});
 });

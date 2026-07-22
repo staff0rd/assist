@@ -19,6 +19,7 @@ export function handlePtyExit(
 		resume();
 		return;
 	}
+	session.pty = null;
 	if (handleStoppedExit(session, exitCode, onStatusChange)) return;
 	refreshActivity(session);
 	if (handleFailedResume(session, exitCode, onStatusChange)) return;

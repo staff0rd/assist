@@ -21,7 +21,8 @@ export function restartSession(
 	};
 
 	const pty = session.pty;
-	if (pty && session.status !== "done") {
+	const alive = session.status === "running" || session.status === "waiting";
+	if (pty && alive) {
 		daemonLog(
 			`session ${session.id} restart requested: killing running process, will resume on exit`,
 		);

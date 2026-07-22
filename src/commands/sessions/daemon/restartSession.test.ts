@@ -89,6 +89,30 @@ describe("restartSession", () => {
 		killSpy.mockRestore();
 	});
 
+	it("restarts an errored session directly without killing its dead pty", () => {
+		const killSpy = vi.spyOn(process, "kill").mockImplementation(() => true);
+		const ptyKill = vi.fn();
+		const session = makeSession({
+			status: "error",
+			claudeSessionId: "abc-123",
+			cwd: "/home/user/repo",
+			pty: { kill: ptyKill, pid: 4321 } as unknown as Session["pty"],
+		});
+
+		expect(restartSession(session, new Set(), vi.fn())).toBe(true);
+
+		expect(killSpy).not.toHaveBeenCalled();
+		expect(ptyKill).not.toHaveBeenCalled();
+		expect(session.pendingRestart).toBeUndefined();
+		expect(spawnClaudeMock).toHaveBeenCalledWith({
+			resumeSessionId: "abc-123",
+			cwd: "/home/user/repo",
+			sessionId: "1",
+		});
+		expect(session.status).toBe("waiting");
+		killSpy.mockRestore();
+	});
+
 	it("does not restart a claude session without a conversation id or prompt", () => {
 		const session = makeSession({
 			claudeSessionId: undefined,
