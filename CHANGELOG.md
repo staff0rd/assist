@@ -1,3 +1,10 @@
+# [0.414.0](https://github.com/staff0rd/assist/compare/v0.413.0...v0.414.0) (2026-07-22)
+
+
+### Features
+
+* singleton server runs per remote ([8b7cc6b](https://github.com/staff0rd/assist/commit/8b7cc6bbf9267dbd676593dee9682026b9f07a66))
+
 # [0.413.0](https://github.com/staff0rd/assist/compare/v0.412.0...v0.413.0) (2026-07-22)
 
 
