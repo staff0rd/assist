@@ -1,3 +1,10 @@
+## [0.423.1](https://github.com/staff0rd/assist/compare/v0.423.0...v0.423.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* dark-mode preview link color ([0f8675c](https://github.com/staff0rd/assist/commit/0f8675c8727837a8ef1c056d32c48c516ef3e927))
+
 # [0.423.0](https://github.com/staff0rd/assist/compare/v0.422.0...v0.423.0) (2026-07-23)
 
 
