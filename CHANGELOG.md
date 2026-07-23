@@ -1,3 +1,10 @@
+# [0.421.0](https://github.com/staff0rd/assist/compare/v0.420.1...v0.421.0) (2026-07-23)
+
+
+### Features
+
+* update-field --origin retags one item ([12c5810](https://github.com/staff0rd/assist/commit/12c5810cb39644cd1cdc4cb6afc256914c0b83f7))
+
 ## [0.420.1](https://github.com/staff0rd/assist/compare/v0.420.0...v0.420.1) (2026-07-23)
 
 
