@@ -49,7 +49,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
 - `/forward-comments` - Split a coarse PR comment (e.g. from Slack) into per-line review comments on the current branch's PR, attributed to the original reviewer
 - `/handover` - Write a session handover note for the next conversation and save it to the backlog DB (scoped by git origin, never on disk). Can be run any number of times; each call appends a note with a one-line summary. The SessionStart hook advises how many unrecalled handovers exist
-- `/pr` - Raise a PR with a concise description
+- `/pr` - Raise a PR with a concise description, then watch CI in the background (`gh pr checks --watch`) so work can continue; on return, report a pass or the failing checks and offer to fix them
 - `/prs-slack <number>` - Post a PR's title and URL to the Slack channel configured in `prs.slack`
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts

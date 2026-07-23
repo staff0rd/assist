@@ -93,6 +93,7 @@
 			"Skill(subtask)",
 			"SlashCommand(/subtask)",
 			"Bash(git ls-files:*)",
+			"Bash(gh pr checks:*)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
 		"deny": ["Bash(npm run:*)", "Read(~/.assist/restricted/**)"]
