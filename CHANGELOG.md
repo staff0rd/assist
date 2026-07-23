@@ -1,3 +1,10 @@
+# [0.424.0](https://github.com/staff0rd/assist/compare/v0.423.1...v0.424.0) (2026-07-23)
+
+
+### Features
+
+* config set --repo takes optional name ([4c64547](https://github.com/staff0rd/assist/commit/4c64547bba69599896fd36042f2a4aa250d431ab))
+
 ## [0.423.1](https://github.com/staff0rd/assist/compare/v0.423.0...v0.423.1) (2026-07-23)
 
 
