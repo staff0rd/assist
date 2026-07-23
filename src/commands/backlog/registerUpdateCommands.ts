@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { movePhase } from "./movePhase";
 import { registerUpdatePhaseCommand } from "./registerUpdatePhaseCommand";
 import { removePhase } from "./removePhase";
-import { update } from "./update";
+import { update } from "./update/update";
 
 function collect(value: string, previous: string[]): string[] {
 	return [...previous, value];
@@ -30,6 +30,10 @@ export function registerUpdateCommands(cmd: Command): void {
 			"Replace acceptance criterion n (1-based) in place",
 		)
 		.option("--remove-ac <n>", "Remove acceptance criterion n (1-based)")
+		.option(
+			"--origin [origin]",
+			"Retag the item to a different repo (origin URL or key, normalized); with no value, retags to the current repo's origin",
+		)
 		.action(update);
 
 	registerUpdatePhaseCommand(cmd);

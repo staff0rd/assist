@@ -3,8 +3,9 @@ import { eq } from "drizzle-orm";
 import { items } from "../../../shared/db/schema";
 import { formatItemId } from "../formatItemId";
 import { findOneItem } from "../shared";
-import { applyAcMutations, hasAcMutations } from "./applyAcMutations";
 import { buildUpdateValues } from "./buildUpdateValues";
+import { resolveAcUpdate } from "./resolveAcUpdate";
+import { resolveOriginUpdate } from "./resolveOriginUpdate";
 
 type UpdateOptions = {
 	name?: string;
@@ -14,6 +15,7 @@ type UpdateOptions = {
 	addAc?: string[];
 	editAc?: string[];
 	removeAc?: string;
+	origin?: string | boolean;
 };
 
 export async function update(
@@ -23,25 +25,14 @@ export async function update(
 	const found = await findOneItem(id);
 	if (!found) return;
 
-	let ac = options.ac;
-	if (hasAcMutations(options)) {
-		if (options.ac) {
-			console.log(
-				chalk.red("Cannot combine --ac with --add-ac/--edit-ac/--remove-ac."),
-			);
-			process.exitCode = 1;
-			return;
-		}
-		const mutation = applyAcMutations(found.item.acceptanceCriteria, options);
-		if (!mutation.ok) {
-			console.log(chalk.red(mutation.error));
-			process.exitCode = 1;
-			return;
-		}
-		ac = mutation.criteria;
-	}
+	const acResult = resolveAcUpdate(options, found.item.acceptanceCriteria);
+	if (!acResult.ok) return;
 
-	const built = buildUpdateValues({ ...options, ac });
+	const originResult = resolveOriginUpdate(options.origin, found.item);
+	if (originResult.kind === "noop") return;
+	const origin = originResult.kind === "set" ? originResult.origin : undefined;
+
+	const built = buildUpdateValues({ ...options, ac: acResult.ac, origin });
 	if (!built) return;
 
 	const { orm } = found;

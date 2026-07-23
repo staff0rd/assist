@@ -6,6 +6,7 @@ type UpdateOptions = {
 	desc?: string;
 	type?: string;
 	ac?: string[];
+	origin?: string;
 };
 
 /** The subset of item columns an update touches, as a Drizzle `.set()` payload. */
@@ -17,9 +18,9 @@ type ItemUpdate = Partial<typeof items.$inferInsert>;
  * when there is nothing to update or the type is invalid.
  */
 export function buildUpdateValues(options: UpdateOptions) {
-	const { name, desc, type, ac } = options;
+	const { name, desc, type, ac, origin } = options;
 
-	if (!name && !desc && !type && !ac) {
+	if (!name && !desc && !type && !ac && !origin) {
 		console.log(chalk.red("Nothing to update. Provide at least one flag."));
 		process.exitCode = 1;
 		return undefined;
@@ -49,6 +50,10 @@ export function buildUpdateValues(options: UpdateOptions) {
 	if (ac) {
 		set.acceptanceCriteria = JSON.stringify(ac);
 		fieldNames.push("acceptance criteria");
+	}
+	if (origin) {
+		set.origin = origin;
+		fieldNames.push("origin");
 	}
 
 	return { set, fields: fieldNames.join(", ") };
