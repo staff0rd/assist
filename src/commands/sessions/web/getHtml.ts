@@ -6,6 +6,7 @@ export function getHtml(): string {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Assist</title>
 <link rel="stylesheet" href="/xterm.css">
+<link rel="stylesheet" href="/bundle.css">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body, #app { width: 100%; height: 100%; }

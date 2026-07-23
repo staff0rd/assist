@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Container from "@mui/material/Container";
+import type { Breakpoint } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 
@@ -10,10 +11,18 @@ type PageShellProps = {
 	isEmpty: boolean;
 	emptyMessage: string;
 	children: ReactNode;
+	maxWidth?: Breakpoint | false;
 };
 
 export const PageShell = (props: PageShellProps) => {
-	const { loading, title, isEmpty, emptyMessage, children } = props;
+	const {
+		loading,
+		title,
+		isEmpty,
+		emptyMessage,
+		children,
+		maxWidth = "md",
+	} = props;
 
 	if (loading) {
 		return (
@@ -24,7 +33,7 @@ export const PageShell = (props: PageShellProps) => {
 	}
 
 	return (
-		<Container maxWidth="md" sx={{ py: 3, px: 2 }}>
+		<Container maxWidth={maxWidth} sx={{ py: 3, px: 2 }}>
 			<Typography variant="h6" sx={{ mb: 2 }}>
 				{title}
 			</Typography>

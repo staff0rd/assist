@@ -1,5 +1,6 @@
 import { CssBaseline, createTheme, ThemeProvider } from "@mui/material";
 import { useMemo } from "react";
+import "react-diff-view/style/index.css";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import { AppShell } from "./AppShell";

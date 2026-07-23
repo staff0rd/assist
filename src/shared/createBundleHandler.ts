@@ -7,6 +7,7 @@ import type { Handler } from "./web";
 export function createBundleHandler(
 	importMetaUrl: string,
 	bundlePath: string,
+	contentType = "application/javascript",
 ): Handler {
 	const dir = dirname(fileURLToPath(importMetaUrl));
 	let cache: { body: string; etag: string } | undefined;
@@ -27,7 +28,7 @@ export function createBundleHandler(
 			return;
 		}
 		res.writeHead(200, {
-			"Content-Type": "application/javascript",
+			"Content-Type": contentType,
 			...headers,
 		});
 		res.end(cache.body);

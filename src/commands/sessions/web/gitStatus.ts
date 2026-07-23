@@ -1,11 +1,8 @@
-import { execFile } from "node:child_process";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { promisify } from "node:util";
 import { respondJson } from "../../../shared/web";
+import { execGit } from "./execGit";
 import { getCwdParam } from "./getCwdParam";
 import { parseGitStatus } from "./parseGitStatus";
-
-const execFileAsync = promisify(execFile);
 
 export async function gitStatus(
 	req: IncomingMessage,
@@ -14,20 +11,13 @@ export async function gitStatus(
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
 	try {
-		respondJson(res, 200, parseGitStatus(await runGitStatus(cwd)));
+		const output = await execGit(cwd, [
+			"status",
+			"--porcelain",
+			"--untracked-files=all",
+		]);
+		respondJson(res, 200, parseGitStatus(output));
 	} catch {
 		respondJson(res, 200, { new: [], modified: [], deleted: [] });
 	}
-}
-
-// why: a windows-origin repo (C:\…) must run git natively on Windows via interop — git over the /mnt mount walks the whole tree and takes >60s, wedging the server
-function runGitStatus(cwd: string): Promise<string> {
-	const args = ["status", "--porcelain", "--untracked-files=all"];
-	const { file, argv } = /^[A-Za-z]:[\\/]/.test(cwd)
-		? { file: "git.exe", argv: ["-C", cwd, ...args] }
-		: { file: "git", argv: args };
-	return execFileAsync(file, argv, {
-		encoding: "utf8",
-		...(file === "git" ? { cwd } : {}),
-	}).then((r) => r.stdout);
 }

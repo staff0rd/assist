@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router";
 import { BacklogView } from "../../../../commands/backlog/web/ui/BacklogView";
 import { AppLayout } from "./AppLayout";
 import { BackupsView } from "./BackupsView";
+import { DiffView } from "./DiffView";
 import { NewsView } from "./NewsView";
 import { SessionArea } from "./SessionArea";
 import { UsageHistoryView } from "./UsageHistoryView";
@@ -41,6 +42,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 				<Route path="news" element={<NewsView />} />
 				<Route path="usage" element={<UsageHistoryView />} />
 				<Route path="backups" element={<BackupsView />} />
+				<Route path="diff" element={<DiffView />} />
 				<Route path="*" element={<Navigate to="/sessions" replace />} />
 			</Route>
 		</Routes>

@@ -62,6 +62,8 @@
 		"node-pty": "^1.1.0",
 		"pg": "^8.21.0",
 		"pg-copy-streams": "^7.0.0",
+		"react-diff-view": "^3.3.3",
+		"refractor": "^3.6.0",
 		"semver": "^7.7.3",
 		"shell-quote": "^1.8.3",
 		"ts-morph": "^27.0.2",

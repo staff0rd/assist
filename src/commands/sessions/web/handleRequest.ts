@@ -4,6 +4,7 @@ import { createHtmlHandler, type Handler } from "../../../shared/web";
 import { getBacklogSummary } from "../../backlog/web/getBacklogSummary";
 import { handleItemRoute } from "../../backlog/web/handleItemRoute";
 import { listItems } from "../../backlog/web/shared";
+import { diff } from "./diff";
 import { getBackups } from "./getBackups";
 import { getHtml } from "./getHtml";
 import { handleServerRuns } from "./handleServerRuns";
@@ -29,12 +30,18 @@ const routes: Record<string, Handler> = {
 		"commands/sessions/web/bundle.js",
 	),
 	"GET /xterm.css": createCssHandler("@xterm/xterm/css/xterm.css"),
+	"GET /bundle.css": createBundleHandler(
+		import.meta.url,
+		"commands/sessions/web/bundle.css",
+		"text/css",
+	),
 	"GET /api/items": listItems,
 	"GET /api/backlog/summary": getBacklogSummary,
 	"POST /api/open-in-code": openInCode,
 	"POST /api/restart": restartWeb,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,
+	"GET /api/diff": diff,
 	"GET /api/jira-site": jiraSite,
 	"GET /api/harness": harnessCapabilities,
 	"GET /api/pr-status": prStatus,
