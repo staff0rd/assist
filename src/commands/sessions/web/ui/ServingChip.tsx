@@ -1,5 +1,5 @@
 import Chip from "@mui/material/Chip";
-import { isServing } from "./findServingSession";
+import { isServing } from "./findServingSessions";
 import type { SessionInfo } from "./types";
 
 const chipSx = { height: 18, fontSize: "0.65rem" };

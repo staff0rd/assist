@@ -1,4 +1,5 @@
 import type { groupSessionsByRepo } from "./groupSessionsByRepo";
+import { ServingBanners } from "./ServingBanners";
 import { SessionGroupItem } from "./SessionGroupItem";
 import type { SessionListHandlers } from "./types";
 
@@ -33,11 +34,11 @@ export function SessionGroups({
 	);
 	return (
 		<>
+			<ServingBanners sessions={allSessions} onJump={onSelect} />
 			{groups.map((group) => (
 				<SessionGroupItem
 					key={group.kind === "single" ? group.session.id : group.key}
 					group={group}
-					allSessions={allSessions}
 					cardProps={cardProps}
 				/>
 			))}

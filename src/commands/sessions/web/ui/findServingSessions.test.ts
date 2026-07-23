@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findServingSession, isServing } from "./findServingSession";
+import { findServingSessions, isServing } from "./findServingSessions";
 import type { SessionInfo } from "./types";
 
 function session(
@@ -39,35 +39,47 @@ describe("isServing", () => {
 	});
 });
 
-describe("findServingSession", () => {
-	const serving = session({
-		id: "run",
+describe("findServingSessions", () => {
+	const servingA = session({
+		id: "run-a",
 		server: true,
 		port: 1658,
-		remoteOrigin: "host/org/repo",
+		remoteOrigin: "host/org/repo-a",
+	});
+	const servingB = session({
+		id: "run-b",
+		server: true,
+		port: 1659,
+		remoteOrigin: "host/org/repo-b",
 	});
 	const worktree = session({
 		id: "wt",
 		commandType: "claude",
-		remoteOrigin: "host/org/repo",
+		remoteOrigin: "host/org/repo-a",
 	});
 
-	it("finds the live server run for an origin across worktrees", () => {
-		expect(findServingSession([worktree, serving], "host/org/repo")).toBe(
-			serving,
-		);
+	it("returns every live server run", () => {
+		expect(findServingSessions([worktree, servingA, servingB])).toEqual([
+			servingA,
+			servingB,
+		]);
 	});
 
-	it("returns undefined when no server serves that origin", () => {
-		expect(findServingSession([worktree], "host/org/repo")).toBeUndefined();
+	it("returns one entry per instance sharing an origin", () => {
+		const sibling = session({
+			id: "run-a2",
+			server: true,
+			port: 1660,
+			remoteOrigin: "host/org/repo-a",
+		});
+		expect(findServingSessions([servingA, sibling])).toEqual([
+			servingA,
+			sibling,
+		]);
 	});
 
-	it("returns undefined for a different origin", () => {
-		expect(findServingSession([serving], "host/org/other")).toBeUndefined();
-	});
-
-	it("returns undefined when origin is unset", () => {
-		expect(findServingSession([serving], undefined)).toBeUndefined();
+	it("returns empty when nothing is serving", () => {
+		expect(findServingSessions([worktree])).toEqual([]);
 	});
 
 	it("ignores a finished server run", () => {
@@ -77,6 +89,6 @@ describe("findServingSession", () => {
 			status: "done",
 			remoteOrigin: "host/org/repo",
 		});
-		expect(findServingSession([done], "host/org/repo")).toBeUndefined();
+		expect(findServingSessions([done])).toEqual([]);
 	});
 });

@@ -9,10 +9,6 @@ export function isServing(session: SessionInfo): boolean {
 	);
 }
 
-export function findServingSession(
-	sessions: SessionInfo[],
-	remoteOrigin: string | undefined,
-): SessionInfo | undefined {
-	if (!remoteOrigin) return undefined;
-	return sessions.find((s) => s.remoteOrigin === remoteOrigin && isServing(s));
+export function findServingSessions(sessions: SessionInfo[]): SessionInfo[] {
+	return sessions.filter(isServing);
 }
