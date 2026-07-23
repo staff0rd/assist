@@ -1,3 +1,10 @@
+# [0.426.0](https://github.com/staff0rd/assist/compare/v0.425.0...v0.426.0) (2026-07-23)
+
+
+### Features
+
+* /pr watches CI after raise ([cafd167](https://github.com/staff0rd/assist/commit/cafd167b1977a1d9ff9ea22a18fbb4ef04fcb138))
+
 # [0.425.0](https://github.com/staff0rd/assist/compare/v0.424.0...v0.425.0) (2026-07-23)
 
 
