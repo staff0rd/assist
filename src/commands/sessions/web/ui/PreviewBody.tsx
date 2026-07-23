@@ -22,6 +22,7 @@ const wrapperSx = {
 	lineHeight: 1.7,
 	wordBreak: "break-word",
 	"& p": { mt: 0 },
+	"& a": { color: "primary.main" },
 	"& mark.pr-comment": {
 		color: "inherit",
 		borderRadius: "2px",

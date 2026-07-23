@@ -41,7 +41,12 @@ export function ReviewSynthesisDialog({
 				{state.status === "ready" && (
 					<Box
 						className="markdown"
-						sx={{ lineHeight: 1.7, "& p": { mt: 0 }, wordBreak: "break-word" }}
+						sx={{
+							lineHeight: 1.7,
+							"& p": { mt: 0 },
+							"& a": { color: "primary.main" },
+							wordBreak: "break-word",
+						}}
 						dangerouslySetInnerHTML={{
 							__html: marked.parse(state.content) as string,
 						}}
