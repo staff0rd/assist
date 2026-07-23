@@ -9,12 +9,12 @@ export function registerConfig(program: Command): void {
 		.description("View and modify assist.yml configuration");
 
 	configCommand
-		.command("set <key> <value>")
+		.command("set <key> [value]")
 		.description("Set a config value (e.g. commit.push true)")
 		.option("-g, --global", "Write to global ~/.assist.yml")
 		.option(
-			"-r, --repo",
-			"Write to ~/.assist.yml under the current repo's identity",
+			"-r, --repo [name]",
+			"Write to ~/.assist.yml under a repo's identity (defaults to the current repo)",
 		)
 		.action((key, value, options) => configSet(key, value, options));
 

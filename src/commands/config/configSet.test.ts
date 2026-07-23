@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { UnknownRepoConfigError } from "../../shared/resolveNamedRepoWriteLabel";
+import { AmbiguousRepoConfigError } from "../../shared/resolveRepoOverride";
 import { configSet } from "./configSet";
 
 const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
@@ -164,6 +166,68 @@ describe("configSet", () => {
 
 			expect(mockExit).toHaveBeenCalledWith(1);
 			mockExit.mockRestore();
+		});
+	});
+
+	describe("with --repo <name>", () => {
+		it("should write under a named repo's matching block", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({
+				repos: { "org/planner": { commit: { push: true } } },
+			});
+
+			configSet("commit.push", "true", { repo: "org/planner" });
+
+			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				repos: { "org/planner": { commit: { push: true } } },
+			});
+		});
+
+		it("should not derive the target from the current origin", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({
+				repos: { "org/planner": {} },
+			});
+
+			configSet("commit.push", "true", { repo: "org/planner" });
+
+			expect(mockGetCurrentOrigin).not.toHaveBeenCalled();
+			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				repos: { "org/planner": { commit: { push: true } } },
+			});
+		});
+
+		it("should error when the name matches no known repo", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({
+				repos: { assist: {} },
+			});
+
+			expect(() =>
+				configSet("commit.push", "true", { repo: "planner" }),
+			).toThrow(UnknownRepoConfigError);
+			expect(mockSaveGlobalConfig).not.toHaveBeenCalled();
+		});
+
+		it("should error when the name matches multiple repos", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({
+				repos: {
+					planner: {},
+					"org/planner": {},
+				},
+			});
+
+			expect(() =>
+				configSet("commit.push", "true", { repo: "github.com/org/planner" }),
+			).toThrow(AmbiguousRepoConfigError);
+		});
+	});
+
+	describe("--repo optional-value greediness", () => {
+		it("should treat a captured key as bare --repo targeting the cwd origin", () => {
+			configSet("true", undefined, { repo: "commit.push" });
+
+			expect(mockGetCurrentOrigin).toHaveBeenCalled();
+			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				repos: { assist: { commit: { push: true } } },
+			});
 		});
 	});
 
