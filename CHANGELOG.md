@@ -1,3 +1,10 @@
+## [0.419.2](https://github.com/staff0rd/assist/compare/v0.419.1...v0.419.2) (2026-07-23)
+
+
+### Bug Fixes
+
+* one serving banner per run instance ([68180f8](https://github.com/staff0rd/assist/commit/68180f832a76281619f09ebcbd5b410ab4b8d5e5))
+
 ## [0.419.1](https://github.com/staff0rd/assist/compare/v0.419.0...v0.419.1) (2026-07-22)
 
 
