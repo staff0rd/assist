@@ -11,4 +11,9 @@ export const prsConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set prs.required true",
 		note: "require a branch when running a backlog item",
 	},
+	{
+		key: "prs.promptJira",
+		setter: "assist config set prs.promptJira true",
+		note: "'assist prs raise' help asks the user for a Jira key to --resolves (default false)",
+	},
 ];

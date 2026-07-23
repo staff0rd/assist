@@ -1,4 +1,19 @@
-const GUIDANCE = `Raise a pull request for the current branch. Use a concise description with no
+import { loadConfig } from "../../shared/loadConfig";
+
+const RESOLVES_WITH_PROMPT = `  --resolves <key>  Jira issue key resolved by this PR; repeatable. Each key's
+                    browse URL is appended inline to ## Why. Unless a Jira key is
+                    already known from the session, ask the user whether this PR
+                    resolves a Jira issue and for the key before raising; omit
+                    --resolves only if they say there isn't one.`;
+
+const RESOLVES_NO_PROMPT = `  --resolves <key>  Jira issue key resolved by this PR; repeatable. Each key's
+                    browse URL is appended inline to ## Why. Pass it when a Jira
+                    key is known from the session or supplied by the user; omit
+                    it otherwise.`;
+
+function guidance(promptJira: boolean): string {
+	const resolves = promptJira ? RESOLVES_WITH_PROMPT : RESOLVES_NO_PROMPT;
+	return `Raise a pull request for the current branch. Use a concise description with no
 headers, and do not reference Claude or any AI assistance in the title or body.
 
 The body is assembled from discrete section options; supply at minimum --title,
@@ -9,11 +24,7 @@ The body is assembled from discrete section options; supply at minimum --title,
   --why <why>       why the change is needed (rendered as ## Why).
   --how <how>       optional; how the change works (rendered as ## How). Omit it
                     unless the approach genuinely needs explaining.
-  --resolves <key>  Jira issue key resolved by this PR; repeatable. Each key's
-                    browse URL is appended inline to ## Why. Unless a Jira key is
-                    already known from the session, ask the user whether this PR
-                    resolves a Jira issue and for the key before raising; omit
-                    --resolves only if they say there isn't one.
+${resolves}
 
 Wrap symbols, file paths, function names, class names, variable names, config
 keys, CLI commands, and flag names in backticks.
@@ -54,6 +65,7 @@ will be rejected.
 If a pull request already exists for the branch, this command errors — pass
 --force to fully overwrite its title and body, or use 'assist prs edit' to update
 only individual sections (every other section of the existing body is preserved).`;
+}
 
 const TERMINAL_CONFIRM = `Before running this command, the user must see the full proposed title and body —
 do not assume they can see your reasoning or earlier tool output. Write the
@@ -74,8 +86,9 @@ as numbered quoted-span + note pairs on stderr. Address every comment (and the
 reason), then run the command again to re-preview the revised PR. Repeat until it
 is approved. Just compose the sections and run the command.`;
 
-export function raiseHelpText(): string {
+export function raiseHelpText(promptJira?: boolean): string {
+	const prompt = promptJira ?? loadConfig().prs?.promptJira ?? false;
 	const confirm =
 		process.env.ASSIST_SESSION === "1" ? WEB_CONFIRM : TERMINAL_CONFIRM;
-	return `\n${GUIDANCE}\n\n${confirm}\n`;
+	return `\n${guidance(prompt)}\n\n${confirm}\n`;
 }

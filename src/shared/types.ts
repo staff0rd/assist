@@ -86,6 +86,7 @@ export const assistConfigSchema = z.strictObject({
 		.strictObject({
 			slack: z.string().optional(),
 			required: z.boolean().default(false),
+			promptJira: z.boolean().default(false),
 		})
 		.optional(),
 	repos: z.record(z.string(), z.record(z.string(), z.unknown())).optional(),

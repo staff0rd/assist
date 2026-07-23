@@ -180,6 +180,7 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist config list` - List all config values
   - `prs.slack` - The Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector (optional; can be omitted when only `prs.required` is set)
   - `prs.required` - When `true` (default `false`), `assist backlog run` auto-branches a story that has no recorded branch at run start, so a new story never inherits the previous story's branch
+  - `prs.promptJira` - When `true` (default `false`), the `assist prs raise --help` `--resolves` guidance instructs asking the user for a Jira key; when `false`, `--resolves` stays documented but the prompt instruction is omitted
 - `assist verify` - Run all verify:\* commands in parallel (from run configs in assist.yml and scripts in package.json)
 - `assist verify all` - Run all checks, ignoring diff-based filters
 - `assist verify --measure` - After the run, print a summary table of each command's status and duration (slowest first) plus a wall-clock total
