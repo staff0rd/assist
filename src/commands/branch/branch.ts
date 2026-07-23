@@ -5,7 +5,7 @@ import { validateSlug } from "./validateSlug";
 
 export async function branch(
 	slug: string,
-	options: { jira?: string },
+	options: { jira?: string; from?: string },
 ): Promise<void> {
 	const conciseSlug = isConciseSlug(slug)
 		? slug
@@ -21,13 +21,12 @@ export async function branch(
 	}
 
 	try {
-		const { branchName, defaultBranch } = await createBranch({
+		const { branchName, baseRef } = await createBranch({
 			slug: conciseSlug,
 			jira: options.jira,
+			from: options.from,
 		});
-		console.log(
-			`Created and switched to ${branchName} (from origin/${defaultBranch})`,
-		);
+		console.log(`Created and switched to ${branchName} (from ${baseRef})`);
 		process.exit(0);
 	} catch (error) {
 		console.error(

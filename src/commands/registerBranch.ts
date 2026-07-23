@@ -9,7 +9,11 @@ export function registerBranch(program: Command): void {
 			"Create and switch to a branch off the fresh remote default branch",
 		)
 		.option("--jira <key>", "Jira issue key to include in the branch name")
-		.action((slug: string, options: { jira?: string }) =>
+		.option(
+			"--from <ref>",
+			"base the branch off <ref> verbatim (local branch, tag, or origin/*) instead of the fresh remote default",
+		)
+		.action((slug: string, options: { jira?: string; from?: string }) =>
 			branch(slug, options),
 		);
 

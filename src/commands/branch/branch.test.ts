@@ -33,7 +33,7 @@ describe("branch", () => {
 		mockGenerate.mockReturnValue("fix-branch-naming");
 		mockCreateBranch.mockResolvedValue({
 			branchName: "fix-branch-naming",
-			defaultBranch: "main",
+			baseRef: "origin/main",
 		});
 
 		await expect(
@@ -46,6 +46,7 @@ describe("branch", () => {
 		expect(mockCreateBranch).toHaveBeenCalledWith({
 			slug: "fix-branch-naming",
 			jira: undefined,
+			from: undefined,
 		});
 		expect(mockLog).toHaveBeenCalledWith(expect.stringContaining("Shortened"));
 		expect(mockExit).toHaveBeenCalledWith(0);
@@ -55,7 +56,7 @@ describe("branch", () => {
 		vi.clearAllMocks();
 		mockCreateBranch.mockResolvedValue({
 			branchName: "add-login-form",
-			defaultBranch: "main",
+			baseRef: "origin/main",
 		});
 
 		await expect(branch("add-login-form", {})).rejects.toThrow("process.exit");
@@ -64,6 +65,29 @@ describe("branch", () => {
 		expect(mockCreateBranch).toHaveBeenCalledWith({
 			slug: "add-login-form",
 			jira: undefined,
+			from: undefined,
 		});
+	});
+
+	it("threads --from into createBranch and reports the actual base", async () => {
+		vi.clearAllMocks();
+		mockCreateBranch.mockResolvedValue({
+			branchName: "stacked-work",
+			baseRef: "feature/base",
+		});
+
+		await expect(
+			branch("stacked-work", { from: "feature/base" }),
+		).rejects.toThrow("process.exit");
+
+		expect(mockCreateBranch).toHaveBeenCalledWith({
+			slug: "stacked-work",
+			jira: undefined,
+			from: "feature/base",
+		});
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.stringContaining("from feature/base"),
+		);
+		expect(mockExit).toHaveBeenCalledWith(0);
 	});
 });
