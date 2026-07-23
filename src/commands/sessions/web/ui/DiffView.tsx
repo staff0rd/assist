@@ -8,8 +8,6 @@ import { PageShell } from "./PageShell";
 import { useDiff } from "./useDiff";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
-const TITLE = "Working tree diff";
-
 export function DiffView() {
 	const { selectedCwd } = useRepoSelectionContext();
 	const { diff, loading, error } = useDiff(selectedCwd);
@@ -20,7 +18,6 @@ export function DiffView() {
 	return (
 		<PageShell
 			loading={loading}
-			title={TITLE}
 			isEmpty={files.length === 0}
 			emptyMessage={error ? "Failed to load diff." : "No working-tree changes."}
 			maxWidth="lg"

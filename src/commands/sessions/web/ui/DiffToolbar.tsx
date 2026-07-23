@@ -3,7 +3,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import type { ViewType } from "react-diff-view";
 
-export const DIFF_TOOLBAR_HEIGHT = 52;
+export const DIFF_TOOLBAR_HEIGHT = 40;
 
 const toolbarSx = {
 	position: "sticky",

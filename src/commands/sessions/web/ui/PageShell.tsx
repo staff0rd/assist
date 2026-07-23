@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 
 type PageShellProps = {
 	loading: boolean;
-	title: string;
+	title?: string;
 	isEmpty: boolean;
 	emptyMessage: string;
 	children: ReactNode;
@@ -34,9 +34,11 @@ export const PageShell = (props: PageShellProps) => {
 
 	return (
 		<Container maxWidth={maxWidth} sx={{ py: 3, px: 2 }}>
-			<Typography variant="h6" sx={{ mb: 2 }}>
-				{title}
-			</Typography>
+			{title && (
+				<Typography variant="h6" sx={{ mb: 2 }}>
+					{title}
+				</Typography>
+			)}
 			{isEmpty ? (
 				<Typography color="text.secondary" align="center" sx={{ py: 6 }}>
 					{emptyMessage}
