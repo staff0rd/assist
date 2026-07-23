@@ -1,3 +1,10 @@
+# [0.425.0](https://github.com/staff0rd/assist/compare/v0.424.0...v0.425.0) (2026-07-23)
+
+
+### Features
+
+* web working-tree diff viewer ([475a61d](https://github.com/staff0rd/assist/commit/475a61d97ff52e5e64d578f13f1445bc7aa87605))
+
 # [0.424.0](https://github.com/staff0rd/assist/compare/v0.423.1...v0.424.0) (2026-07-23)
 
 
