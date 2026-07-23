@@ -1,3 +1,10 @@
+# [0.422.0](https://github.com/staff0rd/assist/compare/v0.421.0...v0.422.0) (2026-07-23)
+
+
+### Features
+
+* branch --from <ref> to base off any ref ([08137e8](https://github.com/staff0rd/assist/commit/08137e8c677622bc599aa8150d2b98085d1647e6))
+
 # [0.421.0](https://github.com/staff0rd/assist/compare/v0.420.1...v0.421.0) (2026-07-23)
 
 
