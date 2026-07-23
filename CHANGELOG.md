@@ -1,3 +1,11 @@
+# [0.420.0](https://github.com/staff0rd/assist/compare/v0.419.2...v0.420.0) (2026-07-23)
+
+
+### Features
+
+* harness radio in prompt dropdown ([1d8ac7b](https://github.com/staff0rd/assist/commit/1d8ac7b5adee4d7872cfac582870cf6e8a1cfe2c))
+* harness radio in prompt dropdown ([11fc55d](https://github.com/staff0rd/assist/commit/11fc55d7b8c3285ebbc64cbeddd677f8bba2f296))
+
 ## [0.419.2](https://github.com/staff0rd/assist/compare/v0.419.1...v0.419.2) (2026-07-23)
 
 
