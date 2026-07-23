@@ -1,3 +1,10 @@
+# [0.423.0](https://github.com/staff0rd/assist/compare/v0.422.0...v0.423.0) (2026-07-23)
+
+
+### Features
+
+* gate PR Jira prompt behind config key ([9895051](https://github.com/staff0rd/assist/commit/989505116c5648ddc59c560786e379b4bf5981f7))
+
 # [0.422.0](https://github.com/staff0rd/assist/compare/v0.421.0...v0.422.0) (2026-07-23)
 
 
