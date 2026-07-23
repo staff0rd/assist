@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreSession } from "./restoreSession";
 import { spawnClaude } from "./spawnClaude";
@@ -12,6 +13,10 @@ vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({ fake: "pty" })),
 }));
 
+vi.mock("../shared/findTranscriptPathSync", () => ({
+	findTranscriptPathSync: vi.fn(() => "/transcripts/found.jsonl"),
+}));
+
 vi.mock("./deriveRestoreStatus", () => ({
 	deriveRestoreStatus: (p: PersistedSession) =>
 		p.status === "running" ? "running" : "waiting",
@@ -19,10 +24,13 @@ vi.mock("./deriveRestoreStatus", () => ({
 
 const spawnClaudeMock = spawnClaude as unknown as ReturnType<typeof vi.fn>;
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
+const findTranscriptPathSyncMock =
+	findTranscriptPathSync as unknown as ReturnType<typeof vi.fn>;
 
 describe("restoreSession", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		findTranscriptPathSyncMock.mockReturnValue("/transcripts/found.jsonl");
 	});
 
 	it("respawns a claude session with a known sessionId via --resume", () => {
@@ -48,6 +56,28 @@ describe("restoreSession", () => {
 		expect(session.restored).toBe(true);
 		expect(session.claudeSessionId).toBe("abc-123");
 		expect(session.name).toBe("repo/Fix the bug");
+	});
+
+	it("relaunches a never-prompted claude session fresh with the same sessionId when no transcript exists", () => {
+		findTranscriptPathSyncMock.mockReturnValue(null);
+		const persisted: PersistedSession = {
+			name: "repo/Fix the bug",
+			commandType: "claude",
+			status: "running",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "abc-123",
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnClaudeMock).toHaveBeenCalledWith({
+			claudeSessionId: "abc-123",
+			cwd: "/home/user/repo",
+			sessionId: "1",
+		});
+		expect(session.restored).toBe(true);
+		expect(session.claudeSessionId).toBe("abc-123");
 	});
 
 	it("relaunches a backlog run via the assist wrapper, resuming the latest phase's session", () => {

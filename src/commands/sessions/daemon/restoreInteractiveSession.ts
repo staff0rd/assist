@@ -1,3 +1,4 @@
+import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
 import { buildResumePrompt } from "../../backlog/buildResumePrompt";
 import type { Session } from "./createSession";
 import { errorSession } from "./errorSession";
@@ -42,15 +43,30 @@ function resumeViaClaude(
 	base: RestoreBase,
 	idle: boolean,
 ): Session {
-	const pty = spawnClaude({
-		resumeSessionId: persisted.claudeSessionId,
-		prompt: idle ? undefined : buildResumePrompt(),
-		cwd: persisted.cwd,
-		sessionId: id,
-	});
+	const pty = spawnClaude(
+		hasTranscriptOnDisk(persisted)
+			? {
+					resumeSessionId: persisted.claudeSessionId,
+					prompt: idle ? undefined : buildResumePrompt(),
+					cwd: persisted.cwd,
+					sessionId: id,
+				}
+			: {
+					claudeSessionId: persisted.claudeSessionId,
+					cwd: persisted.cwd,
+					sessionId: id,
+				},
+	);
 	return idle
 		? waitingSession(base, persisted, pty)
 		: runningSession(base, persisted, pty);
+}
+
+function hasTranscriptOnDisk(persisted: PersistedSession): boolean {
+	return (
+		!!persisted.claudeSessionId &&
+		!!findTranscriptPathSync(persisted.cwd, persisted.claudeSessionId)
+	);
 }
 
 function unrecoverableClaude(id: string, persisted: PersistedSession): Session {
