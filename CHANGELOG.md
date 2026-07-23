@@ -1,3 +1,10 @@
+## [0.420.1](https://github.com/staff0rd/assist/compare/v0.420.0...v0.420.1) (2026-07-23)
+
+
+### Bug Fixes
+
+* restore never-prompted session fresh ([a921042](https://github.com/staff0rd/assist/commit/a921042b37ef5be86c781c776c56a5db2094ed09))
+
 # [0.420.0](https://github.com/staff0rd/assist/compare/v0.419.2...v0.420.0) (2026-07-23)
 
 
