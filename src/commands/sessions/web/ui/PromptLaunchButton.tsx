@@ -1,13 +1,44 @@
-import Paper from "@mui/material/Paper";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import { useState } from "react";
+import { DropdownWrapper } from "./DropdownWrapper";
 import { FreePromptForm } from "./FreePromptForm";
-import { PromptHarnessMenu } from "./PromptHarnessMenu";
-import { PromptLaunchTrigger } from "./PromptLaunchTrigger";
 import { useHarnessCapabilities } from "./useHarnessCapabilities";
-import { usePromptLauncher } from "./usePromptLauncher";
 
 type Launcher = (prompt: string, cwd: string) => void;
+type Harness = "claude" | "pi";
 
-const wrapperSx = { position: "relative", border: "none", m: 0, p: 0 } as const;
+const labelSx = { "& .MuiFormControlLabel-label": { fontSize: 12 } } as const;
+
+function HarnessRadio({
+	value,
+	onChange,
+}: {
+	value: Harness;
+	onChange: (harness: Harness) => void;
+}) {
+	return (
+		<RadioGroup
+			row
+			value={value}
+			onChange={(e) => onChange(e.target.value as Harness)}
+		>
+			<FormControlLabel
+				value="claude"
+				control={<Radio size="small" />}
+				label="claude"
+				sx={labelSx}
+			/>
+			<FormControlLabel
+				value="pi"
+				control={<Radio size="small" />}
+				label="pi"
+				sx={labelSx}
+			/>
+		</RadioGroup>
+	);
+}
 
 export function PromptLaunchButton({
 	cwd,
@@ -21,37 +52,28 @@ export function PromptLaunchButton({
 	onCreatePi: Launcher;
 }) {
 	const { exposePiActions } = useHarnessCapabilities();
-	const l = usePromptLauncher(cwd, onCreate, onCreatePi);
+	const [prompt, setPrompt] = useState("");
+	const [harness, setHarness] = useState<Harness>("claude");
 
 	return (
-		<Paper
-			component="fieldset"
-			variant="outlined"
-			ref={l.wrapperRef}
-			sx={wrapperSx}
-			onBlur={l.handleBlur}
-		>
-			<PromptLaunchTrigger
-				disabled={disabled}
-				showCaret={exposePiActions}
-				promptOpen={l.armed === "claude"}
-				caretRef={l.caretRef}
-				onPrompt={l.togglePrompt}
-				onCaret={l.openMenu}
-			/>
-			{l.armed && (
+		<DropdownWrapper label="prompt" disabled={disabled}>
+			{(close) => (
 				<FreePromptForm
-					value={l.prompt}
-					onChange={l.setPrompt}
-					onSubmit={l.submit}
+					value={prompt}
+					onChange={setPrompt}
+					header={
+						exposePiActions ? (
+							<HarnessRadio value={harness} onChange={setHarness} />
+						) : undefined
+					}
+					onSubmit={() => {
+						(harness === "pi" ? onCreatePi : onCreate)(prompt, cwd);
+						setPrompt("");
+						setHarness("claude");
+						close();
+					}}
 				/>
 			)}
-			<PromptHarnessMenu
-				anchorEl={l.caretRef.current}
-				open={l.menuOpen}
-				onClose={l.closeMenu}
-				onSelectPi={l.armPi}
-			/>
-		</Paper>
+		</DropdownWrapper>
 	);
 }
