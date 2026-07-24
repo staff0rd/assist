@@ -1,3 +1,11 @@
+# [0.429.0](https://github.com/staff0rd/assist/compare/v0.428.1...v0.429.0) (2026-07-24)
+
+
+### Features
+
+* append screenshots to raised PR ([2213e8e](https://github.com/staff0rd/assist/commit/2213e8e461a6d098dee0022f1dbbdfa191545316))
+* PR preview pane with screenshots ([59748f5](https://github.com/staff0rd/assist/commit/59748f5028d9af376131d2fea5c42748e9accc2f))
+
 ## [0.428.1](https://github.com/staff0rd/assist/compare/v0.428.0...v0.428.1) (2026-07-24)
 
 
