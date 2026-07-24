@@ -20,7 +20,7 @@ export function DiffView() {
 			loading={loading}
 			isEmpty={files.length === 0}
 			emptyMessage={error ? "Failed to load diff." : "No working-tree changes."}
-			maxWidth="lg"
+			maxWidth={false}
 		>
 			<DiffToolbar viewType={viewType} onChange={setViewType} />
 			<Box sx={diffSx}>
