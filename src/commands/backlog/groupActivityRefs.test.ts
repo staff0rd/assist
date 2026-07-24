@@ -7,11 +7,12 @@ function commit(ref: string): GitRef {
 }
 
 describe("groupActivityRefs", () => {
-	it("splits refs into branch, commit, and PR groups", () => {
+	it("splits refs into branch, commit, PR, and slack groups", () => {
 		const refs: GitRef[] = [
 			{ kind: "branch", ref: "feature" },
 			commit("aaa"),
 			{ kind: "pr", ref: "42" },
+			{ kind: "slack", ref: "https://slack/thread", title: "My PR" },
 		];
 
 		const grouped = groupActivityRefs(refs);
@@ -19,6 +20,9 @@ describe("groupActivityRefs", () => {
 		expect(grouped.branches).toEqual([{ kind: "branch", ref: "feature" }]);
 		expect(grouped.commits).toEqual([commit("aaa")]);
 		expect(grouped.prs).toEqual([{ kind: "pr", ref: "42" }]);
+		expect(grouped.slacks).toEqual([
+			{ kind: "slack", ref: "https://slack/thread", title: "My PR" },
+		]);
 		expect(grouped.hiddenCommits).toBe(0);
 	});
 

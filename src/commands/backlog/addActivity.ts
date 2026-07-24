@@ -31,7 +31,9 @@ export async function addActivity(
 	const { orm, item } = found;
 	const url =
 		options.url ??
-		(parsedKind.data === "pr" ? undefined : gitRefUrl(parsedKind.data, ref));
+		(parsedKind.data === "branch" || parsedKind.data === "commit"
+			? gitRefUrl(parsedKind.data, ref)
+			: undefined);
 
 	await recordGitRef(orm, item.id, {
 		kind: parsedKind.data,

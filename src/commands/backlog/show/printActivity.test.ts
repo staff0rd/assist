@@ -66,6 +66,24 @@ describe("printActivity", () => {
 		expect(out).toContain("#9");
 	});
 
+	it("prints a slack ref labelled with its title", () => {
+		printActivity(
+			item([
+				{
+					kind: "slack",
+					ref: "https://slack.com/archives/C/p123",
+					title: "My PR",
+					url: "https://slack.com/archives/C/p123",
+				},
+			]),
+		);
+
+		const out = output();
+		expect(out).toContain("slack");
+		expect(out).toContain("My PR");
+		expect(out).toContain("https://slack.com/archives/C/p123");
+	});
+
 	it("caps the commit list with an overflow indicator", () => {
 		const commits: GitRef[] = Array.from({ length: 13 }, (_, i) => ({
 			kind: "commit",

@@ -58,7 +58,7 @@ const backlogCommentSchema = z.strictObject({
 	type: backlogCommentTypeSchema,
 });
 
-export const gitRefKindSchema = z.enum(["branch", "commit", "pr"]);
+export const gitRefKindSchema = z.enum(["branch", "commit", "pr", "slack"]);
 
 const gitRefSchema = z.strictObject({
 	kind: gitRefKindSchema,

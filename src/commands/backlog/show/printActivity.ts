@@ -8,10 +8,11 @@ function printRef(label: string, text: string, ref: GitRef): void {
 }
 
 export function printActivity(item: BacklogItem): void {
-	const { branches, commits, prs, hiddenCommits } = groupActivityRefs(
+	const { branches, commits, prs, slacks, hiddenCommits } = groupActivityRefs(
 		item.gitRefs ?? [],
 	);
-	if (branches.length + commits.length + prs.length === 0) return;
+	if (branches.length + commits.length + prs.length + slacks.length === 0)
+		return;
 
 	console.log(chalk.bold("Activity"));
 	for (const branch of branches) {
@@ -30,6 +31,9 @@ export function printActivity(item: BacklogItem): void {
 			? ` ${chalk.dim(`(${pr.state.toLowerCase()})`)}`
 			: "";
 		printRef("pr", `#${pr.ref}${title}${state}`, pr);
+	}
+	for (const slack of slacks) {
+		printRef("slack", slack.title ?? slack.ref, slack);
 	}
 	console.log();
 }

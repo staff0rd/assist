@@ -45,8 +45,9 @@ function RefRow({ gitRef }: { gitRef: GitRef }) {
 }
 
 export function ActivitySection({ gitRefs }: { gitRefs: GitRef[] }) {
-	const { branches, commits, prs, hiddenCommits } = groupActivityRefs(gitRefs);
-	const ordered = [...branches, ...commits, ...prs];
+	const { branches, commits, prs, slacks, hiddenCommits } =
+		groupActivityRefs(gitRefs);
+	const ordered = [...branches, ...commits, ...prs, ...slacks];
 	if (ordered.length === 0) return null;
 	return (
 		<Box sx={{ mb: 2 }}>
