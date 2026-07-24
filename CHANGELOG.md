@@ -1,3 +1,10 @@
+# [0.428.0](https://github.com/staff0rd/assist/compare/v0.427.0...v0.428.0) (2026-07-24)
+
+
+### Features
+
+* top-nav server-run launcher dropdown ([c353251](https://github.com/staff0rd/assist/commit/c3532512307caec23fef85b7ac06847beb1806c2))
+
 # [0.427.0](https://github.com/staff0rd/assist/compare/v0.426.1...v0.427.0) (2026-07-24)
 
 
