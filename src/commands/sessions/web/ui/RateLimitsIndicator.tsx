@@ -24,8 +24,6 @@ export function RateLimitsIndicator({
 }: {
 	rateLimits: RateLimits | null;
 }) {
-	if (!hasUsage(rateLimits)) return null;
-
 	return (
 		<Tooltip title="Claude account usage (5h / 7d windows) — view history">
 			<Link
@@ -35,7 +33,11 @@ export function RateLimitsIndicator({
 				color="inherit"
 				sx={containerSx}
 			>
-				<RateLimitChips rateLimits={rateLimits} />
+				{hasUsage(rateLimits) ? (
+					<RateLimitChips rateLimits={rateLimits} />
+				) : (
+					"Usage"
+				)}
 			</Link>
 		</Tooltip>
 	);
