@@ -7,6 +7,7 @@ import { OpenInGitHubButton } from "./OpenInGitHubButton";
 import { RateLimitsIndicator } from "./RateLimitsIndicator";
 import { RefreshWebserverButton } from "./RefreshWebserverButton";
 import { RepoPicker } from "./RepoPicker";
+import { ServerRunMenu } from "./ServerRunMenu";
 import { TopNavActions } from "./TopNavActions";
 import type { RepoSelection } from "./useRepoSelectionContext";
 import type { SessionSocket } from "./useSessionSocket";
@@ -37,6 +38,7 @@ export function AppToolbar({
 				<OpenInCodeButton cwd={selection.selectedCwd} />
 				<OpenInGitHubButton cwd={selection.selectedCwd} />
 			</Box>
+			<ServerRunMenu socket={socket} cwd={selection.selectedCwd} />
 			<TopNavActions
 				onCreate={socket.createSession}
 				onCreateDesign={socket.createDesignSession}
