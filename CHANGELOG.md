@@ -1,3 +1,10 @@
+## [0.428.1](https://github.com/staff0rd/assist/compare/v0.428.0...v0.428.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* diff viewer fills parent width ([b8ee5a6](https://github.com/staff0rd/assist/commit/b8ee5a61f4fc57dad9b1fead09b4593935f15f2f))
+
 # [0.428.0](https://github.com/staff0rd/assist/compare/v0.427.0...v0.428.0) (2026-07-24)
 
 
