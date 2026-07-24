@@ -1,3 +1,10 @@
+# [0.427.0](https://github.com/staff0rd/assist/compare/v0.426.1...v0.427.0) (2026-07-24)
+
+
+### Features
+
+* persist Slack thread ref on item ([e77c448](https://github.com/staff0rd/assist/commit/e77c44842ce53bc58038f135d0f5b20c5a0325ab))
+
 ## [0.426.1](https://github.com/staff0rd/assist/compare/v0.426.0...v0.426.1) (2026-07-24)
 
 
