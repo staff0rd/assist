@@ -1,3 +1,10 @@
+## [0.426.1](https://github.com/staff0rd/assist/compare/v0.426.0...v0.426.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* always show usage nav link ([bbcddd1](https://github.com/staff0rd/assist/commit/bbcddd1193c538d6dbc3d091647176419c4cac60))
+
 # [0.426.0](https://github.com/staff0rd/assist/compare/v0.425.0...v0.426.0) (2026-07-23)
 
 
