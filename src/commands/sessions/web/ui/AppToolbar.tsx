@@ -38,13 +38,13 @@ export function AppToolbar({
 				<OpenInCodeButton cwd={selection.selectedCwd} />
 				<OpenInGitHubButton cwd={selection.selectedCwd} />
 			</Box>
-			<ServerRunMenu socket={socket} cwd={selection.selectedCwd} />
 			<TopNavActions
 				onCreate={socket.createSession}
 				onCreateDesign={socket.createDesignSession}
 				onCreatePi={socket.createPiSession}
 				onCreateAssist={socket.createAssistSession}
 			/>
+			<ServerRunMenu socket={socket} cwd={selection.selectedCwd} />
 			<RateLimitsIndicator rateLimits={socket.rateLimits} />
 		</Toolbar>
 	);
