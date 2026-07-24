@@ -1,3 +1,10 @@
+# [0.430.0](https://github.com/staff0rd/assist/compare/v0.429.0...v0.430.0) (2026-07-24)
+
+
+### Features
+
+* server run menu is last dropdown ([b329bde](https://github.com/staff0rd/assist/commit/b329bde0c7fcc6a040780c409adee3a1ee40df14))
+
 # [0.429.0](https://github.com/staff0rd/assist/compare/v0.428.1...v0.429.0) (2026-07-24)
 
 
