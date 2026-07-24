@@ -1,6 +1,5 @@
-import Box from "@mui/material/Box";
 import type { PrPreviewComment } from "../../shared/SessionInfoBase";
-import { PrPreviewPane } from "./PrPreviewPane";
+import { PrPreviewSplit } from "./PrPreviewSplit";
 import { TerminalArea, type TerminalAreaProps } from "./TerminalArea";
 import { TranscriptArea } from "./TranscriptArea";
 import type { Transcript } from "./types";
@@ -11,6 +10,7 @@ type SendPrDecision = (
 	decision: "approve" | "reject",
 	reason?: string,
 	comments?: PrPreviewComment[],
+	screenshots?: string[],
 ) => void;
 
 export function SessionArea({
@@ -34,24 +34,25 @@ export function SessionArea({
 	const activeSession = terminal.sessions.find(
 		(s) => s.id === terminal.activeId,
 	);
-	const preview = activeSession?.pendingPrPreview;
-	if (!activeSession || !preview) return <TerminalArea {...terminal} />;
+	const preview = activeSession?.pendingPrPreview ?? null;
 
 	return (
-		<Box sx={{ display: "flex", flex: 1, minHeight: 0 }}>
-			<TerminalArea {...terminal} />
-			<PrPreviewPane
-				preview={preview}
-				onDecision={(decision, comments) =>
+		<PrPreviewSplit
+			preview={preview}
+			cwd={activeSession?.cwd}
+			onDecision={(requestId, decision, comments, screenshots) => {
+				if (activeSession)
 					sendPrDecision(
 						activeSession.id,
-						preview.requestId,
+						requestId,
 						decision,
 						undefined,
 						comments,
-					)
-				}
-			/>
-		</Box>
+						screenshots,
+					);
+			}}
+		>
+			<TerminalArea {...terminal} />
+		</PrPreviewSplit>
 	);
 }

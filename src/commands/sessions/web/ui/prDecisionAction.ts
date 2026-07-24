@@ -9,6 +9,7 @@ export function prDecisionAction(send: SendFn) {
 		decision: "approve" | "reject",
 		reason?: string,
 		comments?: PrPreviewComment[],
+		screenshots?: string[],
 	) =>
 		send({
 			type: "pr-decision",
@@ -17,5 +18,6 @@ export function prDecisionAction(send: SendFn) {
 			decision,
 			reason,
 			comments,
+			screenshots,
 		});
 }

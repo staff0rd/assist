@@ -1,8 +1,8 @@
 import { Box, Divider } from "@mui/material";
 import type { PrPreview, PrPreviewComment } from "../../shared/SessionInfoBase";
+import { PrPreviewContent } from "./PrPreviewContent";
 import { PrPreviewFooter } from "./PrPreviewFooter";
 import { PrPreviewHeader } from "./PrPreviewHeader";
-import { PreviewBody } from "./PreviewBody";
 import { usePrPane } from "./usePrPane";
 
 const paneSx = {
@@ -18,29 +18,24 @@ const paneSx = {
 
 export function PrPreviewPane({
 	preview,
+	cwd,
 	onDecision,
 }: {
 	preview: PrPreview;
+	cwd?: string;
 	onDecision: (
 		decision: "approve" | "reject",
 		comments: PrPreviewComment[],
+		screenshots: string[],
 	) => void;
 }) {
-	const pane = usePrPane(preview.requestId, onDecision);
+	const pane = usePrPane(preview.requestId, cwd, onDecision);
 
 	return (
-		<Box sx={paneSx}>
+		<Box sx={paneSx} onDrop={pane.onDrop} onDragOver={pane.onDragOver}>
 			<PrPreviewHeader title={preview.title} prNumber={preview.prNumber} />
 			<Divider />
-			<PreviewBody
-				content={preview.body}
-				ranges={pane.ranges}
-				wrapperRef={pane.wrapperRef}
-				contentRef={pane.contentRef}
-				dragRects={pane.dragRects}
-				dragColor={pane.dragColor}
-				onMouseDown={pane.onMouseDown}
-			/>
+			<PrPreviewContent body={preview.body} pane={pane} />
 			<PrPreviewFooter
 				comments={pane.comments}
 				commentColors={pane.commentColors}

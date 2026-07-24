@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import { marked } from "marked";
 import {
 	type MouseEvent as ReactMouseEvent,
+	type ReactNode,
 	type RefObject,
 	useLayoutEffect,
 	useMemo,
@@ -37,6 +38,7 @@ export function PreviewBody({
 	dragRects,
 	dragColor,
 	onMouseDown,
+	footer,
 }: {
 	content: string;
 	ranges: ColoredOffsets[];
@@ -45,6 +47,7 @@ export function PreviewBody({
 	dragRects: OverlayRect[] | null;
 	dragColor: string;
 	onMouseDown: (e: ReactMouseEvent) => void;
+	footer?: ReactNode;
 }) {
 	const html = useMemo(() => marked.parse(content) as string, [content]);
 	useLayoutEffect(() => {
@@ -57,6 +60,7 @@ export function PreviewBody({
 	return (
 		<Box ref={wrapperRef} onMouseDown={onMouseDown} sx={wrapperSx}>
 			<Box ref={contentRef} className="markdown" />
+			{footer}
 			<DragOverlay rects={dragRects} color={dragColor} />
 		</Box>
 	);

@@ -19,6 +19,7 @@ import { openInCode } from "./openInCode";
 import { prList } from "./prList";
 import { prStatus } from "./prStatus";
 import { restartWeb } from "./restartWeb";
+import { uploadPrImage } from "./uploadPrImage";
 import { createCssHandler } from "./createCssHandler";
 
 const htmlHandler = createHtmlHandler(getHtml);
@@ -38,6 +39,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/items": listItems,
 	"GET /api/backlog/summary": getBacklogSummary,
 	"POST /api/open-in-code": openInCode,
+	"POST /api/pr-preview/upload-image": uploadPrImage,
 	"POST /api/restart": restartWeb,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,

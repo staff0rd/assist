@@ -59,12 +59,14 @@ describe("PrPreviewCoordinator", () => {
 			sessionId: "1",
 			requestId: "r1",
 			decision: "approve",
+			screenshots: ["![a](u1)"],
 		});
 
 		expect(client.sent.at(-1)).toMatchObject({
 			type: "pr-decision",
 			requestId: "r1",
 			decision: "approve",
+			screenshots: ["![a](u1)"],
 		});
 		expect(sessions.get("1")?.pendingPrPreview).toBeUndefined();
 	});

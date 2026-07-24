@@ -4,6 +4,7 @@ export type PrDecision = {
 	decision: "approve" | "reject";
 	reason?: string;
 	comments?: PrPreviewComment[];
+	screenshots?: string[];
 };
 
 type Incoming =
@@ -16,6 +17,7 @@ type IncomingMessage = {
 	decision?: PrDecision["decision"];
 	reason?: string;
 	comments?: PrPreviewComment[];
+	screenshots?: string[];
 	message?: string;
 };
 
@@ -35,6 +37,9 @@ export function parseIncoming(
 				decision: msg.decision,
 				reason: msg.reason,
 				comments: Array.isArray(msg.comments) ? msg.comments : undefined,
+				screenshots: Array.isArray(msg.screenshots)
+					? msg.screenshots
+					: undefined,
 			},
 		};
 	} catch {

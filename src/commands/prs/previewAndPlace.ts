@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { appendScreenshots } from "./appendScreenshots";
 import type { CreateOptions } from "./buildCreateArgs";
 import { placePr } from "./placePr";
+import { reportPrRejection } from "./reportPrRejection";
 import { requestPrDecision } from "./requestPrDecision";
 
 export async function previewAndPlace(args: {
@@ -28,25 +30,9 @@ export async function previewAndPlace(args: {
 		process.exit(1);
 	}
 
-	if (decision.decision === "reject") {
-		console.error(
-			`PR preview rejected${decision.reason ? `: ${decision.reason}` : "."}`,
-		);
-		const comments = decision.comments ?? [];
-		if (comments.length > 0) {
-			console.error(
-				`\nThe reviewer left ${comments.length} comment${comments.length === 1 ? "" : "s"} on the preview. Address each one, then re-run this command:\n`,
-			);
-			for (const [i, c] of comments.entries()) {
-				const quoted = c.quote
-					.split("\n")
-					.map((line) => `  > ${line}`)
-					.join("\n");
-				console.error(`${i + 1}. On:\n${quoted}\n   Comment: ${c.note}\n`);
-			}
-		}
-		process.exit(1);
-	}
+	if (decision.decision === "reject") reportPrRejection(decision);
 
-	await placePr(args.prNumber, args.title, args.body, args.options);
+	const body = appendScreenshots(args.body, decision.screenshots ?? []);
+
+	await placePr(args.prNumber, args.title, body, args.options);
 }

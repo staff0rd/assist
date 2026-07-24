@@ -84,7 +84,10 @@ on rejection it exits non-zero with the reason. The reviewer may also attach
 inline comments to specific spans of the preview; on rejection these are printed
 as numbered quoted-span + note pairs on stderr. Address every comment (and the
 reason), then run the command again to re-preview the revised PR. Repeat until it
-is approved. Just compose the sections and run the command.`;
+is approved. The reviewer may also drop or paste screenshots into the pane; on
+approval these are appended to the PR body under a ## Screenshots section
+automatically (they are discarded on rejection), so you never author that section
+yourself. Just compose the sections and run the command.`;
 
 export function raiseHelpText(promptJira?: boolean): string {
 	const prompt = promptJira ?? loadConfig().prs?.promptJira ?? false;

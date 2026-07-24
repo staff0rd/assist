@@ -22,6 +22,12 @@ if (!Range.prototype.getClientRects) {
 			[Symbol.iterator]: [][Symbol.iterator],
 		}) as unknown as DOMRectList;
 }
+if (!URL.createObjectURL) {
+	URL.createObjectURL = () => "blob:test";
+}
+if (!URL.revokeObjectURL) {
+	URL.revokeObjectURL = () => {};
+}
 
 type CaretDoc = {
 	caretRangeFromPoint?: ((x: number, y: number) => Range | null) | undefined;
@@ -31,6 +37,7 @@ type CaretDoc = {
 afterEach(() => {
 	cleanup();
 	vi.restoreAllMocks();
+	vi.unstubAllGlobals();
 	(document as CaretDoc).caretRangeFromPoint = undefined;
 	(document as CaretDoc).elementFromPoint = undefined;
 	localStorage.clear();
@@ -103,9 +110,11 @@ describe("PrPreviewPane inline comments", () => {
 			screen.getByRole("button", { name: /Request changes \(1\)/ }),
 		);
 
-		expect(onDecision).toHaveBeenCalledWith("reject", [
-			{ quote: "Adds x", note: "say what x is" },
-		]);
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			[{ quote: "Adds x", note: "say what x is" }],
+			[],
+		);
 	});
 
 	it("gives each highlighted span a distinct colour", () => {
@@ -150,10 +159,10 @@ describe("PrPreviewPane inline comments", () => {
 		render(<PrPreviewPane preview={preview} onDecision={onDecision} />);
 
 		fireEvent.click(screen.getByRole("button", { name: "Approve" }));
-		expect(onDecision).toHaveBeenCalledWith("approve", []);
+		expect(onDecision).toHaveBeenCalledWith("approve", [], []);
 
 		fireEvent.click(screen.getByRole("button", { name: "Reject" }));
-		expect(onDecision).toHaveBeenCalledWith("reject", []);
+		expect(onDecision).toHaveBeenCalledWith("reject", [], []);
 	});
 
 	it("restores persisted comments after a remount (page refresh)", () => {
@@ -168,6 +177,65 @@ describe("PrPreviewPane inline comments", () => {
 		render(<PrPreviewPane preview={preview} onDecision={vi.fn()} />);
 		expect(screen.getByText("Comments (1)")).toBeTruthy();
 		expect(screen.getByText("say what x is")).toBeTruthy();
+	});
+
+	function pasteImage(name: string) {
+		const file = new File(["bytes"], name, { type: "image/png" });
+		const event = new Event("paste", { bubbles: true }) as Event & {
+			clipboardData: unknown;
+		};
+		event.clipboardData = {
+			items: [{ kind: "file", type: "image/png", getAsFile: () => file }],
+		};
+		act(() => {
+			globalThis.dispatchEvent(event);
+		});
+	}
+
+	it("uploads a pasted screenshot and shows it in the Screenshots section", async () => {
+		const fetchMock = vi.fn().mockResolvedValue({
+			ok: true,
+			json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+		});
+		vi.stubGlobal("fetch", fetchMock);
+
+		render(
+			<PrPreviewPane preview={preview} cwd="/repo" onDecision={vi.fn()} />,
+		);
+		pasteImage("shot.png");
+
+		const img = (await screen.findByAltText("screenshot")) as HTMLImageElement;
+		expect(img.getAttribute("src")).toMatch(/^blob:/);
+		expect(screen.getByRole("heading", { name: "Screenshots" })).toBeTruthy();
+		const url = fetchMock.mock.calls[0][0] as string;
+		expect(url).toContain("/api/pr-preview/upload-image?");
+		expect(url).toContain("cwd=%2Frepo");
+	});
+
+	it("appends uploaded screenshots to the decision on approve, but not reject", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+			}),
+		);
+		const onDecision = vi.fn();
+		render(
+			<PrPreviewPane preview={preview} cwd="/repo" onDecision={onDecision} />,
+		);
+		pasteImage("shot.png");
+		await screen.findByAltText("screenshot");
+
+		fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+		expect(onDecision).toHaveBeenLastCalledWith("reject", [], []);
+
+		fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+		expect(onDecision).toHaveBeenLastCalledWith(
+			"approve",
+			[],
+			["![shot](https://x/y.png)"],
+		);
 	});
 
 	it("clears persisted comments once a decision is made", () => {

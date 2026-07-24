@@ -20,8 +20,11 @@ export function decidePrPreview(
 		return;
 	}
 	const commentCount = Array.isArray(d.comments) ? d.comments.length : 0;
+	const screenshotCount = Array.isArray(d.screenshots)
+		? d.screenshots.length
+		: 0;
 	daemonLog(
-		`pr-decision received: id=${id} requestId=${requestId} decision=${d.decision} comments=${commentCount}`,
+		`pr-decision received: id=${id} requestId=${requestId} decision=${d.decision} comments=${commentCount} screenshots=${screenshotCount}`,
 	);
 	const waiter = waiters.get(id);
 	if (waiter)
@@ -31,6 +34,7 @@ export function decidePrPreview(
 			decision: d.decision,
 			reason: d.reason,
 			comments: d.comments,
+			screenshots: d.screenshots,
 		});
 	waiters.delete(id);
 	session.pendingPrPreview = undefined;
