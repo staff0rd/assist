@@ -7,7 +7,6 @@ import { OpenInGitHubButton } from "./OpenInGitHubButton";
 import { RateLimitsIndicator } from "./RateLimitsIndicator";
 import { RefreshWebserverButton } from "./RefreshWebserverButton";
 import { RepoPicker } from "./RepoPicker";
-import { ServerRunMenu } from "./ServerRunMenu";
 import { TopNavActions } from "./TopNavActions";
 import type { RepoSelection } from "./useRepoSelectionContext";
 import type { SessionSocket } from "./useSessionSocket";
@@ -43,8 +42,8 @@ export function AppToolbar({
 				onCreateDesign={socket.createDesignSession}
 				onCreatePi={socket.createPiSession}
 				onCreateAssist={socket.createAssistSession}
+				onStartRun={socket.startRun}
 			/>
-			<ServerRunMenu socket={socket} cwd={selection.selectedCwd} />
 			<RateLimitsIndicator rateLimits={socket.rateLimits} />
 		</Toolbar>
 	);

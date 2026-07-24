@@ -5,6 +5,7 @@ import { ModeButtons } from "./ModeButtons";
 import { prLaunchMeta } from "./prLaunchMeta";
 import { PromptComposerDropdowns } from "./PromptComposerDropdowns";
 import { ReviewDropdown } from "./ReviewDropdown";
+import { ServerRunMenu } from "./ServerRunMenu";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 export function TopNavActions({
@@ -12,6 +13,7 @@ export function TopNavActions({
 	onCreateDesign,
 	onCreatePi,
 	onCreateAssist,
+	onStartRun,
 }: {
 	onCreate: (prompt: string, cwd: string) => void;
 	onCreateDesign: (prompt: string, cwd: string) => void;
@@ -21,6 +23,7 @@ export function TopNavActions({
 		cwd?: string,
 		meta?: AssistLaunchMeta,
 	) => void;
+	onStartRun: (runName: string, cwd: string) => void;
 }) {
 	const { selectedCwd } = useRepoSelectionContext();
 	const disabled = !selectedCwd;
@@ -52,6 +55,7 @@ export function TopNavActions({
 					}
 				/>
 			</ModeButtons>
+			<ServerRunMenu onStartRun={onStartRun} cwd={selectedCwd} />
 		</Stack>
 	);
 }

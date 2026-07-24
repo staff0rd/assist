@@ -3,14 +3,13 @@ import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { dropdownStyle, DropdownWrapper } from "./DropdownWrapper";
-import type { SessionSocket } from "./useSessionSocket";
 import { useServerRuns } from "./useServerRuns";
 
 export function ServerRunMenu({
-	socket,
+	onStartRun,
 	cwd,
 }: {
-	socket: SessionSocket;
+	onStartRun: (runName: string, cwd: string) => void;
 	cwd: string | undefined;
 }) {
 	const runs = useServerRuns(cwd);
@@ -32,7 +31,7 @@ export function ServerRunMenu({
 								key={run.name}
 								onMouseDown={(e) => e.preventDefault()}
 								onClick={() => {
-									socket.startRun(run.name, cwd);
+									onStartRun(run.name, cwd);
 									close();
 								}}
 								sx={{ py: 0.75 }}
