@@ -1,3 +1,10 @@
+# [0.431.0](https://github.com/staff0rd/assist/compare/v0.430.0...v0.431.0) (2026-07-24)
+
+
+### Features
+
+* move server run menu into nav actions ([aaa9dd5](https://github.com/staff0rd/assist/commit/aaa9dd5915ac75ca10e3bc811fc65ec234b4d964))
+
 # [0.430.0](https://github.com/staff0rd/assist/compare/v0.429.0...v0.430.0) (2026-07-24)
 
 
