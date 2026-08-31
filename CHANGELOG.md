@@ -1,3 +1,10 @@
+# [0.607.0](https://github.com/staff0rd/assist/compare/v0.606.1...v0.607.0) (2026-08-31)
+
+
+### Features
+
+* issue create --parent ([f69eb7a](https://github.com/staff0rd/assist/commit/f69eb7a8081164e153efc574a163c5ce0a5b66b4))
+
 ## [0.606.1](https://github.com/staff0rd/assist/compare/v0.606.0...v0.606.1) (2026-08-28)
 
 
