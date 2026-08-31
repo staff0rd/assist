@@ -8,6 +8,9 @@ const readGhTokenScopes = vi.fn();
 vi.mock("node:child_process", () => ({
 	execFileSync: (...args: unknown[]) => execFileSync(...args),
 }));
+vi.mock("../../prs/shared", () => ({
+	getRepoInfo: () => ({ org: "acme", repo: "widgets" }),
+}));
 vi.mock("../../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
 		mockRequestPreviewDecision(...args),
@@ -22,6 +25,7 @@ vi.mock("./readGhTokenScopes", () => ({
 import { createIssue } from "./createIssue";
 
 const ISSUE_URL = "https://github.com/acme/widgets/issues/7";
+const CREATED_NUMBER = 7;
 
 const STATUS_FIELD = {
 	id: "F_status",
@@ -38,10 +42,11 @@ type GraphqlWorld = {
 	project?: { id: string; title: string; field?: unknown } | null;
 	projectRoot?: "organization" | "user";
 	labels?: string[];
+	parentExists?: boolean;
 };
 
 function graphqlReplies(world: GraphqlWorld = {}) {
-	return (query: string) => {
+	return (query: string, variables?: Record<string, unknown>) => {
 		if (query.includes("labels(first:")) {
 			return JSON.stringify({
 				data: {
@@ -69,7 +74,20 @@ function graphqlReplies(world: GraphqlWorld = {}) {
 			});
 		}
 		if (query.includes("issue(number:")) {
-			return JSON.stringify({ data: { repository: { issue: { id: "I_1" } } } });
+			if (variables?.number === CREATED_NUMBER) {
+				return JSON.stringify({
+					data: { repository: { issue: { id: "I_1" } } },
+				});
+			}
+			const found = world.parentExists ?? true;
+			return JSON.stringify({
+				data: { repository: { issue: found ? { id: "I_parent" } : null } },
+			});
+		}
+		if (query.includes("addSubIssue")) {
+			return JSON.stringify({
+				data: { addSubIssue: { subIssue: { id: "I_1" } } },
+			});
 		}
 		if (query.includes("addProjectV2ItemById")) {
 			return JSON.stringify({
@@ -516,6 +534,164 @@ describe("createIssue --project", () => {
 		const output = errorText(errorSpy);
 		expect(output).toContain(ISSUE_URL);
 		expect(output).toContain("status to Backlog");
+		expect(output).toContain("HTTP 403");
+	});
+});
+
+describe("createIssue --parent", () => {
+	function errorText(spy: { mock: { calls: unknown[][] } }): string {
+		return spy.mock.calls.map((call) => call.join(" ")).join("\n");
+	}
+
+	function expectParentedTo(owner: string, repo: string, number: number): void {
+		expect(runGhGraphqlJson).toHaveBeenCalledWith(
+			expect.stringContaining("issue(number:"),
+			{ owner, repo, number },
+		);
+		expect(runGhGraphqlJson).toHaveBeenCalledWith(
+			expect.stringContaining("addSubIssue"),
+			{ issueId: "I_parent", subIssueId: "I_1" },
+		);
+	}
+
+	beforeEach(() => {
+		runGhGraphqlJson.mockImplementation(graphqlReplies());
+	});
+
+	it("parents the created issue under owner/repo#number", async () => {
+		await createIssue({
+			title: "Crash on load",
+			body: "Details",
+			repo: "acme/widgets",
+			parent: "acme/widgets#12",
+		});
+
+		expectParentedTo("acme", "widgets", 12);
+	});
+
+	it("parents the created issue under a github.com issue URL", async () => {
+		await createIssue({
+			title: "Crash on load",
+			body: "Details",
+			repo: "acme/widgets",
+			parent: "https://github.com/acme/widgets/issues/12",
+		});
+
+		expectParentedTo("acme", "widgets", 12);
+	});
+
+	it("reads a bare parent number against --repo", async () => {
+		await createIssue({
+			title: "Crash on load",
+			body: "Details",
+			repo: "acme/widgets",
+			parent: "12",
+		});
+
+		expectParentedTo("acme", "widgets", 12);
+	});
+
+	it("reads a bare parent number against the current repo", async () => {
+		await createIssue({
+			title: "Crash on load",
+			body: "Details",
+			parent: "12",
+		});
+
+		expectParentedTo("acme", "widgets", 12);
+	});
+
+	it("accepts a parent in another repository", async () => {
+		await createIssue({
+			title: "Crash on load",
+			body: "Details",
+			repo: "acme/widgets",
+			parent: "other/tools#3",
+		});
+
+		expectParentedTo("other", "tools", 3);
+	});
+
+	it("previews the parent without posting it in the body", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await createIssue({
+			title: "Crash on load",
+			body: "Details",
+			repo: "acme/widgets",
+			parent: "other/tools#3",
+		});
+
+		const request = mockRequestPreviewDecision.mock.calls[0]?.[0];
+		expect(request?.body).toBe("Details");
+		expect(request?.metadata).toEqual([
+			{ label: "Repository", value: "acme/widgets" },
+			{ label: "Parent", value: "other/tools#3" },
+		]);
+	});
+
+	it("creates nothing when the reference is not an issue", async () => {
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+
+		await expect(
+			createIssue({
+				title: "Crash on load",
+				body: "Details",
+				repo: "acme/widgets",
+				parent: "nonsense",
+			}),
+		).rejects.toThrow("process.exit");
+
+		expect(errorText(errorSpy)).toContain("Could not read");
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+
+	it("creates nothing when the parent issue does not exist", async () => {
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+		runGhGraphqlJson.mockImplementation(
+			graphqlReplies({ parentExists: false }),
+		);
+
+		await expect(
+			createIssue({
+				title: "Crash on load",
+				body: "Details",
+				repo: "acme/widgets",
+				parent: "acme/widgets#12",
+			}),
+		).rejects.toThrow("process.exit");
+
+		expect(errorText(errorSpy)).toContain("No issue acme/widgets#12");
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+
+	it("reports the created issue and the failing step when parenting fails", async () => {
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+		const replies = graphqlReplies();
+		runGhGraphqlJson.mockImplementation(
+			(query: string, variables?: Record<string, unknown>) => {
+				if (query.includes("addSubIssue")) throw new Error("HTTP 403");
+				return replies(query, variables);
+			},
+		);
+
+		await expect(
+			createIssue({
+				title: "Crash on load",
+				body: "Details",
+				repo: "acme/widgets",
+				parent: "acme/widgets#12",
+			}),
+		).rejects.toThrow("process.exit");
+
+		const output = errorText(errorSpy);
+		expect(output).toContain(ISSUE_URL);
+		expect(output).toContain("sub-issue of acme/widgets#12");
 		expect(output).toContain("HTTP 403");
 	});
 });

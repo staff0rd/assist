@@ -13,13 +13,14 @@ type CreateIssueOptions = {
 	body?: string;
 	repo?: string;
 	type?: string;
+	parent?: string;
 	project?: string;
 	status?: string;
 	label?: string[];
 };
 
 const USAGE =
-	"Usage: assist github issue create --title <title> --body <body> [-R <owner>/<repo>] [--type <name>] [--project <number>] [--status <name>] [--label <name>]";
+	"Usage: assist github issue create --title <title> --body <body> [-R <owner>/<repo>] [--type <name>] [--parent <issue>] [--project <number>] [--status <name>] [--label <name>]";
 
 function preflight(
 	options: CreateIssueOptions,

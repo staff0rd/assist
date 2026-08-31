@@ -1,4 +1,5 @@
 import { addIssueToProject } from "./addIssueToProject";
+import { addSubIssue } from "./addSubIssue";
 import { fetchIssueNodeId } from "./fetchIssueNodeId";
 import { updateIssueType } from "./fixStructure/updateIssueType";
 import { parseCreatedIssueUrl } from "./parseCreatedIssueUrl";
@@ -12,10 +13,14 @@ export function applyCreatedIssueMetadata(
 	let step = "identifying the created issue";
 	try {
 		const issueId = fetchIssueNodeId(parseCreatedIssueUrl(createOutput));
-		const { issueType, project } = metadata;
+		const { issueType, parent, project } = metadata;
 		if (issueType) {
 			step = `setting its issue type to ${issueType.name}`;
 			updateIssueType(issueId, issueType.id);
+		}
+		if (parent) {
+			step = `adding it as a sub-issue of ${parent.owner}/${parent.repo}#${parent.number}`;
+			addSubIssue(parent.id, issueId);
 		}
 		if (project) {
 			step = `adding it to project ${project.number} (${project.title})`;

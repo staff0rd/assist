@@ -5,11 +5,16 @@ export function issuePreviewMetadata(
 	resolved: CreateIssueMetadata | undefined,
 ): PreviewMetadata[] {
 	if (!resolved) return [];
-	const { target, issueType, project, labels } = resolved;
+	const { target, issueType, parent, project, labels } = resolved;
 	const items: PreviewMetadata[] = [
 		{ label: "Repository", value: `${target.owner}/${target.repo}` },
 	];
 	if (issueType) items.push({ label: "Type", value: issueType.name });
+	if (parent)
+		items.push({
+			label: "Parent",
+			value: `${parent.owner}/${parent.repo}#${parent.number}`,
+		});
 	if (project)
 		items.push({
 			label: "Project",
