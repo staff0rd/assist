@@ -25,7 +25,7 @@ assist slack post '<channel>' [--thread '<ts-or-permalink>'] --body - < <scratch
 
 In an assist web session this renders the markdown in the preview pane for approve/reject. The command posts nothing either way.
 
-- **Approved** — the last line of stdout is the path to the approved body under `~/.assist/slack/`. That file, not your scratch file, is what gets posted: it carries any edit made in the pane. The line above it names the target channel, and the resolved `thread_ts` when `--thread` was passed.
+- **Approved** — the last line of stdout is the path to the approved body under `~/.assist/slack/`. That file, not your scratch file, is what gets posted. The line above it names the target channel, and the resolved `thread_ts` when `--thread` was passed.
 - **Rejected** — the command exits non-zero with the reason and any inline comments, and names the same working file. Address every comment, rewrite that file in place, and re-run the preview against it (`assist slack post '<channel>' --body - < <working file>`). Do not post, and do not recompose the message from scratch.
 
 Outside a web session there is no pane: the body passes straight through and the working file is written immediately.

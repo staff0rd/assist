@@ -6,21 +6,16 @@ type SlackTarget = {
 	threadTs?: string;
 };
 
-type SlackWorkingCopy = {
-	path: string;
-	save: (edited: string) => void;
-};
-
 export async function reviewProposedSlackMessage(
 	target: SlackTarget,
 	body: string,
-	working: SlackWorkingCopy,
-): Promise<string> {
+	workingPath: string,
+): Promise<void> {
 	const sessionId = process.env.ASSIST_SESSION_ID;
-	if (process.env.ASSIST_SESSION !== "1" || !sessionId) return body;
+	if (process.env.ASSIST_SESSION !== "1" || !sessionId) return;
 
 	const { channel, threadTs } = target;
-	const decision = await awaitPreviewApproval(
+	await awaitPreviewApproval(
 		"Slack message preview",
 		{
 			sessionId,
@@ -33,10 +28,7 @@ export async function reviewProposedSlackMessage(
 			kind: "slack-post",
 		},
 		{
-			saveEditedBody: working.save,
-			rejectionAdvice: `Nothing was posted to ${channel}. The previewed markdown is at ${working.path}: revise that file in place and re-run this command to preview the revision.`,
+			rejectionAdvice: `Nothing was posted to ${channel}. The previewed markdown is at ${workingPath}: revise that file in place and re-run this command to preview the revision.`,
 		},
 	);
-
-	return decision.body ?? body;
 }

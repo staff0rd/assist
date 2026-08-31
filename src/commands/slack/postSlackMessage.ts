@@ -31,15 +31,9 @@ export async function postSlackMessage(
 	const threadTs = options.thread;
 	const { dir, bodyPath } = slackWorkingFile(channel);
 	mkdirSync(dir, { recursive: true });
-	const write = (text: string) => writeFileSync(bodyPath, `${text}\n`);
-	write(body);
+	writeFileSync(bodyPath, `${body}\n`);
 
-	const approved = await reviewProposedSlackMessage(
-		{ channel, threadTs },
-		body,
-		{ path: bodyPath, save: write },
-	);
-	write(approved);
+	await reviewProposedSlackMessage({ channel, threadTs }, body, bodyPath);
 
 	const target = threadTs ? `${channel} (thread_ts ${threadTs})` : channel;
 	console.log(`Approved for ${target}. The body to post is at:`);
