@@ -1,3 +1,10 @@
+# [0.608.0](https://github.com/staff0rd/assist/compare/v0.607.0...v0.608.0) (2026-08-31)
+
+
+### Features
+
+* slack post message preview ([f284f09](https://github.com/staff0rd/assist/commit/f284f097ce4cb6b757db040f1c80facd605befe4))
+
 # [0.607.0](https://github.com/staff0rd/assist/compare/v0.606.1...v0.607.0) (2026-08-31)
 
 
