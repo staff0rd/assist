@@ -26,6 +26,12 @@ describe("previewTargetLabel", () => {
 		);
 	});
 
+	it("labels a slack post", () => {
+		expect(previewTargetLabel("slack-post", "story", null, false)).toBe(
+			"slack post",
+		);
+	});
+
 	it("labels a backlog comment", () => {
 		expect(previewTargetLabel("backlog-comment", "story", null, false)).toBe(
 			"backlog comment",

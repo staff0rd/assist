@@ -12,6 +12,7 @@ export function previewTargetLabel(
 	if (kind === "github-issue-edit") return "github issue edit";
 	if (kind === "github-issue") return "github issue";
 	if (kind === "miro-board") return "miro anchors";
+	if (kind === "slack-post") return "slack post";
 	if (kind === "backlog-item") return `backlog ${itemType}`;
 	if (prNumber !== null) return `edit #${prNumber}`;
 	return draft ? "create draft" : "create";

@@ -32,6 +32,13 @@ describe("previewChip", () => {
 		});
 	});
 
+	it("labels a slack post", () => {
+		expect(previewChip(preview({ kind: "slack-post" }), false)).toEqual({
+			label: "Slack post",
+			color: "success",
+		});
+	});
+
 	it("labels a backlog comment neutrally", () => {
 		expect(previewChip(preview({ kind: "backlog-comment" }), false)).toEqual({
 			label: "Comment",

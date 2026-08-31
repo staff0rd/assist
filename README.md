@@ -65,6 +65,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/github [action] [ref] [args]` - GitHub issue actions: `view`, `edit`, `associate`, `update`, `started`, `done`, `help`. `[ref]` is optional — it resolves from the session's backlog item. A bare `/github <ref>` runs `edit`, which opens the issue in the web preview pane; outside a web session the command prints the issue to chat instead
 - `/journal` - Append a journal entry summarising recent work
 - `/next [id]` - Signal completion and chain into the next backlog item
+- `/slack-post <channel> <what to say>` - Compose a markdown message, preview it in the web pane via `assist slack post`, then post the approved body to that Slack channel with the Slack MCP connector and report the permalink
 - `/standup` - Summarise recent journal entries as a standup update
 - `/subtask <text>` - Add a sub-task to the session's current backlog item
 - `/strip-code-comments` - Strip redundant comments from tracked source files
@@ -296,6 +297,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist seq auth remove <name>` - Remove a configured connection
 - `assist seq set-connection <name>` - Set the default Seq connection
 - `assist seq query <filter>` - Query Seq events (`-c <connection>`, `--json`, `-n <count>`, `--from <date>`, `--to <date>`)
+- `assist slack post <channel> --body <body|->` - Preview a markdown message bound for a Slack channel; `--body -` reads it from stdin. Posting is MCP-only, so the command never posts: in an assist web session it renders the markdown in the preview pane for approve/reject (with inline comments), and on approval writes the approved body — including any edit made in the pane — to a working file under `~/.assist/slack/`, printing its path on the last line for `/slack-post` to send. On rejection it exits non-zero with the reason and any inline comments, leaving the previewed markdown in that working file to revise in place and re-preview. Outside a web session there is no preview and the body passes straight through
 - `assist sql auth add` - Add a new MSSQL connection
 - `assist sql auth list` - List configured SQL connections
 - `assist sql auth remove <name>` - Remove a configured connection

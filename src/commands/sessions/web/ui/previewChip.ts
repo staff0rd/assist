@@ -19,6 +19,9 @@ export function previewChip(preview: PrPreview, draft: boolean): ChipSpec {
 	if (preview.kind === "miro-board")
 		return { label: "Miro boxes", color: "info" };
 
+	if (preview.kind === "slack-post")
+		return { label: "Slack post", color: "success" };
+
 	if (preview.kind === "github-issue")
 		return { label: "New issue", color: "success" };
 

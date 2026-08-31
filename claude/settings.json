@@ -98,6 +98,8 @@
 			"SlashCommand(/subtask)",
 			"Skill(miro)",
 			"SlashCommand(/miro)",
+			"Skill(slack-post)",
+			"SlashCommand(/slack-post)",
 			"Bash(git ls-files:*)",
 			"Bash(gh pr checks:*)",
 			"Bash(ls ~/.assist/pr-comments:*)",
