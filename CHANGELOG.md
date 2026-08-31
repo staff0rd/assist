@@ -1,3 +1,10 @@
+## [0.609.1](https://github.com/staff0rd/assist/compare/v0.609.0...v0.609.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* drop slack post pane-edit path ([dd9bae2](https://github.com/staff0rd/assist/commit/dd9bae2627f1304e8587cf2a698b0d24547b6a52))
+
 # [0.609.0](https://github.com/staff0rd/assist/compare/v0.608.0...v0.609.0) (2026-08-31)
 
 
