@@ -20,6 +20,7 @@ import { rootConfigHelp } from "./rootConfigHelp";
 import { runConfigHelp } from "./run/runConfigHelp";
 import { seqConfigHelp } from "./seq/seqConfigHelp";
 import { sessionsConfigHelp } from "./sessions/sessionsConfigHelp";
+import { slackConfigHelp } from "./slack/slackConfigHelp";
 import { sqlConfigHelp } from "./sql/sqlConfigHelp";
 import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
 import { verifyConfigHelp } from "./verify/verifyConfigHelp";
@@ -47,6 +48,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...runConfigHelp,
 	...seqConfigHelp,
 	...sessionsConfigHelp,
+	...slackConfigHelp,
 	...sqlConfigHelp,
 	...transcriptConfigHelp,
 	...verifyConfigHelp,

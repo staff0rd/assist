@@ -1,25 +1,33 @@
 import { randomUUID } from "node:crypto";
 import { awaitPreviewApproval } from "../sessions/shared/awaitPreviewApproval";
 
+type SlackTarget = {
+	channel: string;
+	threadTs?: string;
+};
+
 type SlackWorkingCopy = {
 	path: string;
 	save: (edited: string) => void;
 };
 
 export async function reviewProposedSlackMessage(
-	channel: string,
+	target: SlackTarget,
 	body: string,
 	working: SlackWorkingCopy,
 ): Promise<string> {
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId) return body;
 
+	const { channel, threadTs } = target;
 	const decision = await awaitPreviewApproval(
 		"Slack message preview",
 		{
 			sessionId,
 			requestId: randomUUID(),
-			title: `Post to ${channel}`,
+			title: threadTs
+				? `Reply in ${channel} thread ${threadTs}`
+				: `Post to ${channel}`,
 			body,
 			prNumber: null,
 			kind: "slack-post",

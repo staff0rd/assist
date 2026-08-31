@@ -98,6 +98,11 @@ const assistConfigShape = {
 			tokenExpiresAt: z.number().optional(),
 		})
 		.optional(),
+	slack: z
+		.strictObject({
+			channel: z.string().optional(),
+		})
+		.optional(),
 	prs: z
 		.strictObject({
 			slack: z.string().optional(),

@@ -65,7 +65,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/github [action] [ref] [args]` - GitHub issue actions: `view`, `edit`, `associate`, `update`, `started`, `done`, `help`. `[ref]` is optional — it resolves from the session's backlog item. A bare `/github <ref>` runs `edit`, which opens the issue in the web preview pane; outside a web session the command prints the issue to chat instead
 - `/journal` - Append a journal entry summarising recent work
 - `/next [id]` - Signal completion and chain into the next backlog item
-- `/slack-post <channel> <what to say>` - Compose a markdown message, preview it in the web pane via `assist slack post`, then post the approved body to that Slack channel with the Slack MCP connector and report the permalink
+- `/slack-post [channel] [--thread <ts-or-permalink>] <what to say>` - Compose a markdown message, preview it in the web pane via `assist slack post`, then post the approved body to that Slack channel with the Slack MCP connector and report the permalink. The channel falls back to `slack.channel`; `--thread` posts the message as a reply in that thread
 - `/standup` - Summarise recent journal entries as a standup update
 - `/subtask <text>` - Add a sub-task to the session's current backlog item
 - `/strip-code-comments` - Strip redundant comments from tracked source files
@@ -297,7 +297,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist seq auth remove <name>` - Remove a configured connection
 - `assist seq set-connection <name>` - Set the default Seq connection
 - `assist seq query <filter>` - Query Seq events (`-c <connection>`, `--json`, `-n <count>`, `--from <date>`, `--to <date>`)
-- `assist slack post <channel> --body <body|->` - Preview a markdown message bound for a Slack channel; `--body -` reads it from stdin. Posting is MCP-only, so the command never posts: in an assist web session it renders the markdown in the preview pane for approve/reject (with inline comments), and on approval writes the approved body — including any edit made in the pane — to a working file under `~/.assist/slack/`, printing its path on the last line for `/slack-post` to send. On rejection it exits non-zero with the reason and any inline comments, leaving the previewed markdown in that working file to revise in place and re-preview. Outside a web session there is no preview and the body passes straight through
+- `assist slack post [channel] --body <body|-> [--thread <ts-or-permalink>]` - Preview a markdown message bound for a Slack channel; `--body -` reads it from stdin. The channel falls back to `slack.channel` when the argument is omitted, and the command errors naming the `assist config set slack.channel` setter when neither is given. `--thread` takes a message ts (`1712345678.123456`) or a Slack archives permalink (`.../archives/C012AB3CD/p1712345678123456`, whose `thread_ts` query parameter wins when present, so a link to a reply resolves to its parent) and resolves it to the `thread_ts` the reply is posted under; anything else is a usage error. Posting is MCP-only, so the command never posts: in an assist web session it renders the markdown in the preview pane for approve/reject (with inline comments), and on approval writes the approved body — including any edit made in the pane — to a working file under `~/.assist/slack/`, printing its path on the last line — preceded by the resolved `thread_ts` — for `/slack-post` to send. On rejection it exits non-zero with the reason and any inline comments, leaving the previewed markdown in that working file to revise in place and re-preview. Outside a web session there is no preview and the body passes straight through
 - `assist sql auth add` - Add a new MSSQL connection
 - `assist sql auth list` - List configured SQL connections
 - `assist sql auth remove <name>` - Remove a configured connection
@@ -426,6 +426,7 @@ Web server changes only need the `assist sessions` process restarted — session
 
 ## Other config keys
 
+- `slack.channel` — the Slack channel (e.g. `#example`) that `assist slack post` and `/slack-post` target when no channel argument is given
 - `prs.slack` — the Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector
 - `prs.required` — when `true` (default `false`), `assist backlog run` cuts and records a fresh branch for a story that has no recorded branch at run start, so a new story never inherits the previous one's branch
 - `prs.promptJira` — when `true` (default `false`), the `assist prs raise --help` `--resolves` guidance instructs asking the user for a Jira key
