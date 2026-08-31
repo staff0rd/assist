@@ -1,3 +1,10 @@
+# [0.609.0](https://github.com/staff0rd/assist/compare/v0.608.0...v0.609.0) (2026-08-31)
+
+
+### Features
+
+* slack post default channel, thread ([23798ab](https://github.com/staff0rd/assist/commit/23798abe9727db681519d313657999d6e88ed7f3))
+
 # [0.608.0](https://github.com/staff0rd/assist/compare/v0.607.0...v0.608.0) (2026-08-31)
 
 
