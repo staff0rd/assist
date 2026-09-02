@@ -80,6 +80,8 @@ const themedSx = (theme: Theme) => {
 	};
 };
 
+export const markdownContentSx = (theme: Theme) => themedSx(theme);
+
 export const markdownSx: SxProps<Theme> = themedSx;
 
 export const wideMarkdownSx: SxProps<Theme> = (theme) => ({
