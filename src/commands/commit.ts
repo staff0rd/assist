@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import { loadConfig } from "../shared/loadConfig";
 import { buildCommitMessage } from "./commit/buildCommitMessage";
 import { execCommit } from "./commit/execCommit";
+import { validateCommitRefs } from "./commit/validateCommitRefs";
 import { validateMessage } from "./commit/validateMessage";
 
 type CommitOptions = {
@@ -26,12 +27,10 @@ export async function commit(
 
 	const message = args[0];
 	const files = args.slice(1);
+	const refs = options.ref ?? [];
 	const config = loadConfig();
 
 	validateMessage(message, config);
-	await execCommit(
-		files,
-		buildCommitMessage(message, options.ref ?? []),
-		config,
-	);
+	validateCommitRefs(refs);
+	await execCommit(files, buildCommitMessage(message, refs), config);
 }
