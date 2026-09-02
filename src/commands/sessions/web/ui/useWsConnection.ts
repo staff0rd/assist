@@ -1,12 +1,14 @@
 import { useRef, useState } from "react";
 import type { RateLimits } from "../../../../shared/RateLimits";
-import type { HistoricalSession, SessionInfo, Transcript } from "./types";
+import { resolveActiveId } from "./resolveActiveId";
+import type { HistoricalSession, SessionInfo } from "./types";
 import { useActiveIdReconciler } from "./useActiveIdReconciler";
 import { useDaemonState } from "./useDaemonState";
 import { useInitialized } from "./useInitialized";
 import { useNotices } from "./useNotices";
 import { usePendingLaunches } from "./usePendingLaunches";
 import { useSessionsSync } from "./useSessionsSync";
+import { useTranscriptState } from "./useTranscriptState";
 import { useWebSocket } from "./useWebSocket";
 
 export function useWsConnection() {
@@ -14,10 +16,7 @@ export function useWsConnection() {
 	const [history, setHistory] = useState<HistoricalSession[]>([]);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const daemon = useDaemonState();
-	const [transcript, setTranscript] = useState<Transcript | null>(null);
-	const [viewingTranscriptSessionId, setViewingTranscriptSessionId] = useState<
-		string | null
-	>(null);
+	const transcripts = useTranscriptState();
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const notices = useNotices();
 	const pending = usePendingLaunches();
@@ -32,8 +31,7 @@ export function useWsConnection() {
 		setHistory,
 		setActiveId,
 		...daemon,
-		setTranscript,
-		setViewingTranscriptSessionId,
+		...transcripts,
 		setCurrentCwd,
 		...notices,
 		...pending,
@@ -43,7 +41,11 @@ export function useWsConnection() {
 		handlers,
 	});
 
-	useActiveIdReconciler(sessions, setActiveId, daemon.daemonActiveId);
+	useActiveIdReconciler(
+		sessions,
+		setActiveId,
+		resolveActiveId(daemon.activeByRepo, sessions),
+	);
 
 	return {
 		sessions,
@@ -51,9 +53,7 @@ export function useWsConnection() {
 		activeId,
 		setActiveId,
 		...daemon,
-		transcript,
-		viewingTranscriptSessionId,
-		setViewingTranscriptSessionId,
+		...transcripts,
 		currentCwd,
 		...notices,
 		...pending,

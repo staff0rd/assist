@@ -1,11 +1,11 @@
 import { useState } from "react";
 
 export function useDaemonState() {
-	const [daemonActiveId, setDaemonActiveId] = useState<string | null>(null);
+	const [activeByRepo, setActiveByRepo] = useState<Record<string, string>>({});
 	const [daemonVersion, setDaemonVersion] = useState<string | null>(null);
 	return {
-		daemonActiveId,
-		setDaemonActiveId,
+		activeByRepo,
+		setActiveByRepo,
 		daemonVersion,
 		setDaemonVersion,
 	};

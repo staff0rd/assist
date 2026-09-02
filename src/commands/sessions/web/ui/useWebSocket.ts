@@ -14,7 +14,7 @@ type WsDeps = {
 	handleSessions: WsDispatch["setSessions"];
 	setHistory: WsDispatch["setHistory"];
 	setActiveId: WsDispatch["setActiveId"];
-	setDaemonActiveId: WsDispatch["setDaemonActiveId"];
+	setActiveByRepo: WsDispatch["setActiveByRepo"];
 	setDaemonVersion: WsDispatch["setDaemonVersion"];
 	setTranscript: WsDispatch["setTranscript"];
 	setViewingTranscriptSessionId: WsDispatch["setViewingTranscriptSessionId"];
