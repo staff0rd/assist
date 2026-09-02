@@ -1,3 +1,10 @@
+## [0.613.1](https://github.com/staff0rd/assist/compare/v0.613.0...v0.613.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* scope file palette to selected session ([9e1375b](https://github.com/staff0rd/assist/commit/9e1375b7c39bf61217115776d7cb6be45eb2402b))
+
 # [0.613.0](https://github.com/staff0rd/assist/compare/v0.612.0...v0.613.0) (2026-09-02)
 
 
