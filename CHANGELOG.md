@@ -1,3 +1,10 @@
+## [0.611.1](https://github.com/staff0rd/assist/compare/v0.611.0...v0.611.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* full markdown styles in preview pane ([4ec6821](https://github.com/staff0rd/assist/commit/4ec68219cab9542869979e0c0f8f17879c1302b9))
+
 # [0.611.0](https://github.com/staff0rd/assist/compare/v0.610.0...v0.611.0) (2026-09-02)
 
 
