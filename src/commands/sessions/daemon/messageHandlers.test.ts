@@ -355,3 +355,46 @@ describe("verify-started handler", () => {
 		expect(m.verify.start).not.toHaveBeenCalled();
 	});
 });
+
+describe("rename handler", () => {
+	function renameManager(routeReturns = false) {
+		return {
+			windowsProxy: { route: vi.fn(() => routeReturns) },
+			setTitle: vi.fn(),
+		} as unknown as SessionManager & {
+			windowsProxy: { route: ReturnType<typeof vi.fn> };
+			setTitle: ReturnType<typeof vi.fn>;
+		};
+	}
+
+	it("retitles the local session", () => {
+		const m = renameManager();
+
+		messageHandlers.rename(fakeClient() as never, m, {
+			sessionId: "42",
+			title: "fix login redirect",
+		});
+
+		expect(m.setTitle).toHaveBeenCalledWith("42", "fix login redirect");
+	});
+
+	it("passes a missing title through as blank for the manager to ignore", () => {
+		const m = renameManager();
+
+		messageHandlers.rename(fakeClient() as never, m, { sessionId: "42" });
+
+		expect(m.setTitle).toHaveBeenCalledWith("42", "");
+	});
+
+	it("hands a windows-origin session to the windows daemon instead", () => {
+		const m = renameManager(true);
+
+		messageHandlers.rename(fakeClient() as never, m, {
+			sessionId: "win-3",
+			title: "fix login redirect",
+		});
+
+		expect(m.windowsProxy.route).toHaveBeenCalled();
+		expect(m.setTitle).not.toHaveBeenCalled();
+	});
+});

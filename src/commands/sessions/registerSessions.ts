@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
 import { closeSession } from "./closeSession";
 import { registerSetStatusCommand } from "./registerSetStatusCommand";
+import { renameSession } from "./renameSession";
 import { sessionsConfigHelp } from "./sessionsConfigHelp";
 import { summarise } from "./summarise";
 import { web as sessionsWeb } from "./web";
@@ -37,6 +38,13 @@ export function registerSessions(program: Command): void {
 			"Dismiss the current daemon-managed session, ending it and reaping its worktree",
 		)
 		.action(closeSession);
+
+	cmd
+		.command("rename <title>")
+		.description(
+			"Retitle the current daemon-managed session, overriding the generated title for the rest of its life",
+		)
+		.action(renameSession);
 
 	registerSetStatusCommand(cmd);
 

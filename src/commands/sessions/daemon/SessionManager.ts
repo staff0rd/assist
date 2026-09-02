@@ -30,6 +30,7 @@ import type { ServerConflictInfo } from "./serverConflictInfo";
 import { runRetry } from "./runRetry";
 import { liveServerRun, stopServerSession } from "./liveServerRun";
 import { reuseSessionForRun } from "./reuseSessionForRun";
+import { setSessionTitle } from "./setSessionTitle";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
 import { treeSpawnContext } from "./treeSpawnContext";
@@ -213,6 +214,10 @@ export class SessionManager {
 
 	setStarred(id: string, starred: boolean): void {
 		if (sessionIo.setStarred(this.sessions, id, starred)) this.notify();
+	}
+
+	setTitle(id: string, title: string): void {
+		if (setSessionTitle(this.sessions, id, title)) this.notify();
 	}
 
 	setStatus(report: HookStatusReport): void {

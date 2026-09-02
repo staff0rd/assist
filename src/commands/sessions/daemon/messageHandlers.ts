@@ -90,6 +90,9 @@ export const messageHandlers: Record<string, Handler> = {
 	"set-autoadvance": routed((_client, m, d) =>
 		m.setAutoAdvance(d.sessionId as string, d.enabled as boolean),
 	),
+	rename: routed((_client, m, d) =>
+		m.setTitle(d.sessionId as string, (d.title as string) ?? ""),
+	),
 	"set-starred": routed((_client, m, d) =>
 		m.setStarred(d.sessionId as string, d.starred as boolean),
 	),

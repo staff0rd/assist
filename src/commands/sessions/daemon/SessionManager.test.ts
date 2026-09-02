@@ -3,6 +3,7 @@ import { releaseLock } from "../../backlog/acquireLock";
 import { createAssistSession } from "./createAssistSession";
 import { createRunSession, createSession, type Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { SESSION_TITLE_MAX_LENGTH } from "./generateSessionTitle";
 import {
 	loadPersistedSessions,
 	persistLiveSessions,
@@ -491,6 +492,60 @@ describe("SessionManager", () => {
 			manager.setAutoRun("1", true);
 
 			expect(manager.listSessions()[0]?.autoRun).toBe(true);
+		});
+	});
+
+	describe("setTitle", () => {
+		it("stores the title and surfaces it in broadcast session state", () => {
+			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			const manager = new SessionManager();
+			manager.spawn();
+			const client = { send: vi.fn() };
+			manager.addClient(client);
+			client.send.mockClear();
+
+			manager.setTitle("1", "  fix login\n redirect  ");
+
+			expect(manager.listSessions()[0]?.title).toBe("fix login redirect");
+			const broadcast = client.send.mock.calls
+				.map(([raw]) => JSON.parse(raw as string))
+				.find((msg) => msg.type === "sessions");
+			expect(broadcast.sessions[0].title).toBe("fix login redirect");
+		});
+
+		it("truncates an over-long title", () => {
+			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			const manager = new SessionManager();
+			manager.spawn();
+
+			manager.setTitle("1", "a ".repeat(200));
+
+			expect(manager.listSessions()[0]?.title).toHaveLength(
+				SESSION_TITLE_MAX_LENGTH,
+			);
+		});
+
+		it("ignores a whitespace-only title", () => {
+			createSessionMock.mockReturnValue(
+				fakeSession({ id: "1", title: "kept" }),
+			);
+			const manager = new SessionManager();
+			manager.spawn();
+			persistLiveMock.mockClear();
+
+			manager.setTitle("1", "   \n  ");
+
+			expect(manager.listSessions()[0]?.title).toBe("kept");
+			expect(persistLiveMock).not.toHaveBeenCalled();
+		});
+
+		it("does nothing for an unknown session id", () => {
+			const manager = new SessionManager();
+			persistLiveMock.mockClear();
+
+			manager.setTitle("missing", "new title");
+
+			expect(persistLiveMock).not.toHaveBeenCalled();
 		});
 	});
 
