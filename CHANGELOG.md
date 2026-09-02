@@ -1,3 +1,10 @@
+# [0.613.0](https://github.com/staff0rd/assist/compare/v0.612.0...v0.613.0) (2026-09-02)
+
+
+### Features
+
+* reject a --ref with no URL ([2a7e9d7](https://github.com/staff0rd/assist/commit/2a7e9d7f8630106fbafcf37c45a1cda574556f5c))
+
 # [0.612.0](https://github.com/staff0rd/assist/compare/v0.611.1...v0.612.0) (2026-09-02)
 
 
