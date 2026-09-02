@@ -1,3 +1,10 @@
+# [0.610.0](https://github.com/staff0rd/assist/compare/v0.609.1...v0.610.0) (2026-09-02)
+
+
+### Features
+
+* assist sessions rename ([eaebe39](https://github.com/staff0rd/assist/commit/eaebe390251d32b3091ac5b2cb282c92869a113e))
+
 ## [0.609.1](https://github.com/staff0rd/assist/compare/v0.609.0...v0.609.1) (2026-08-31)
 
 
