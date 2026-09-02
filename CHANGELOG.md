@@ -1,3 +1,10 @@
+# [0.611.0](https://github.com/staff0rd/assist/compare/v0.610.0...v0.611.0) (2026-09-02)
+
+
+### Features
+
+* /rename slash command ([9cf85b6](https://github.com/staff0rd/assist/commit/9cf85b68cf8c9fb927584ae09615c555dc8c9b37))
+
 # [0.610.0](https://github.com/staff0rd/assist/compare/v0.609.1...v0.610.0) (2026-09-02)
 
 
