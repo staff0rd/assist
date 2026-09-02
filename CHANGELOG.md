@@ -1,3 +1,10 @@
+# [0.612.0](https://github.com/staff0rd/assist/compare/v0.611.1...v0.612.0) (2026-09-02)
+
+
+### Features
+
+* --ref trailers on assist commit ([d93be09](https://github.com/staff0rd/assist/commit/d93be09237380c37a598da532871cee43ef0326b))
+
 ## [0.611.1](https://github.com/staff0rd/assist/compare/v0.611.0...v0.611.1) (2026-09-02)
 
 
