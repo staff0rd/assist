@@ -11,6 +11,13 @@ export function validateMessage(message: string, config: AssistConfig): void {
 		process.exit(1);
 	}
 
+	if (message.includes("\n")) {
+		console.error(
+			"Error: Commit message must be a single line; use --ref to add a reference trailer",
+		);
+		process.exit(1);
+	}
+
 	const backlogIds = findBacklogRefs(message);
 	if (backlogIds.length > 0) {
 		console.error(

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import packageJson from "../package.json";
-import { commit } from "./commands/commit";
 import { coverage } from "./commands/coverage";
 import { init } from "./commands/init";
 import { init as lintInit } from "./commands/lint/init";
@@ -15,6 +14,7 @@ import { registerBranch } from "./commands/registerBranch";
 import { registerCliHook } from "./commands/registerCliHook";
 import { registerCodeComment } from "./commands/registerCodeComment";
 import { registerCodexHook } from "./commands/registerCodexHook";
+import { registerCommit } from "./commands/registerCommit";
 import { registerComplexity } from "./commands/registerComplexity";
 import { registerConfig } from "./commands/registerConfig";
 import { registerCriteriaExtension } from "./commands/registerCriteriaExtension";
@@ -80,13 +80,7 @@ program
 	.description("Initialize VS Code and verify configurations")
 	.action(init);
 
-const commitCommand = program
-	.command("commit")
-	.description("Create a git commit with validation")
-	.argument("<args...>", "status | <message> [files...]")
-	.action(commit);
-
-configHelp(commitCommand, rootConfigHelp.commit);
+registerCommit(program);
 
 registerConfig(program);
 

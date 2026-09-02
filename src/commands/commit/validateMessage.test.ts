@@ -42,6 +42,18 @@ describe("validateMessage", () => {
 		});
 	});
 
+	describe("when the message contains a newline", () => {
+		it("should reject", () => {
+			expect(() =>
+				validateMessage(
+					"fix: short msg\n\nRef: https://example.com",
+					baseConfig,
+				),
+			).toThrow("process.exit");
+			expect(mockExit).toHaveBeenCalledWith(1);
+		});
+	});
+
 	describe("when conventional commits are enabled", () => {
 		describe("when the message follows the format", () => {
 			it("should not reject", () => {
