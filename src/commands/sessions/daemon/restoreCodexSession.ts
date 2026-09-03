@@ -1,7 +1,7 @@
-import { buildResumePrompt } from "../../backlog/buildResumePrompt";
 import type { Session } from "./createSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
+import { restoreResumePlan, resumePrompt } from "./restoreResumePlan";
 import { runningSession, waitingSession } from "./runningSession";
 import { spawnCodex } from "./spawnCodex";
 
@@ -14,13 +14,14 @@ export function restoreCodexSession(
 	idle: boolean,
 ): Session | null {
 	if (!persisted.harnessSessionId) return null;
+	const plan = restoreResumePlan(persisted, idle);
 	const pty = spawnCodex({
 		resumeSessionId: persisted.harnessSessionId,
-		prompt: idle ? undefined : buildResumePrompt(),
+		prompt: resumePrompt(plan),
 		cwd: persisted.cwd,
 		sessionId: id,
 	});
-	return idle
+	return plan.idle
 		? waitingSession(base, persisted, pty)
 		: runningSession(base, persisted, pty);
 }

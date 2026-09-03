@@ -5,6 +5,7 @@ import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreBase } from "./restoreBase";
 import { restoreInteractiveSession } from "./restoreInteractiveSession";
+import { restoreResumePlan } from "./restoreResumePlan";
 import { resumedRunEnv } from "./resumedRunEnv";
 import {
 	runningSession,
@@ -37,15 +38,16 @@ export function restoreSession(
 	if (needsWrapperRelaunch(persisted)) {
 		const resumesWrittenConversation = hasTranscriptOnDisk(persisted);
 		const reattachesIdleConversation = idle && resumesWrittenConversation;
+		const plan = restoreResumePlan(persisted, reattachesIdleConversation);
 		const pty = spawnPty(
 			resumesWrittenConversation
 				? assistResumeArgs(persisted)
 				: assistResumeArgs({ assistArgs: persisted.assistArgs }),
 			persisted.cwd,
 			id,
-			resumedRunEnv(persisted.activity?.itemId, reattachesIdleConversation),
+			resumedRunEnv(persisted.activity?.itemId, plan),
 		);
-		return reattachesIdleConversation
+		return plan.idle
 			? waitingSession(base, persisted, pty)
 			: runningSession(base, persisted, pty);
 	}

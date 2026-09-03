@@ -28,6 +28,7 @@ export const persistedSessionSchema = z.object({
 	autoAdvance: z.boolean().optional(),
 	reviewStarted: z.boolean().optional(),
 	launchedFrom: z.string().optional(),
+	interrupted: z.object({ reason: z.string(), at: z.number() }).optional(),
 	undurable: z
 		.object({ reason: z.string(), removesTree: z.boolean().optional() })
 		.optional(),

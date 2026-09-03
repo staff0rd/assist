@@ -29,6 +29,7 @@ export function toPersistedSession(session: Session): PersistedSession {
 		autoAdvance: session.autoAdvance,
 		reviewStarted: session.reviewStarted,
 		launchedFrom: session.launchedFrom,
+		interrupted: session.interrupted,
 		undurable: session.undurable,
 	};
 }

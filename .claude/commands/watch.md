@@ -16,6 +16,10 @@ When it exits, branch on the exit code:
 - **1** — cannot wait at all (no upstream, detached HEAD, not a repo). Stop.
 - **130** — user interrupt. Stop. A killed or torn-down task is not an interrupt — start a new wait.
 
+## If the daemon restarts mid-wait
+
+Restarting the sessions daemon kills this session's processes, the background wait included, and then resumes this conversation with a message naming the restart and the task ids it killed. That is not a stop — the wait never reported an exit code, and nothing was pulled or built. Run `assist watch wait --pull --build` in the background again. An assist auto-update restarts the daemon on its own, so a lap that builds a new assist ends this way routinely.
+
 ## Why the pull is part of the wait
 
 `auto-build` compiles the working tree — it does not fetch or pull. A watch that only detects movement will rebuild the same stale source indefinitely: the build passes, the version in the browser never changes, and the branch silently falls further behind. `--pull` is what makes detect-then-build mean anything.

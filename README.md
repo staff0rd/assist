@@ -427,6 +427,8 @@ Neither flag leaves permanent state on the clone: nothing writes to the clone's 
 
 Web server changes only need the `assist sessions` process restarted — sessions survive. Daemon/session-core changes need `assist daemon restart`: claude sessions are auto-respawned via `claude --resume` with scrollback starting fresh, while run sessions reappear as not-restored tiles that can be retried.
 
+A restart kills every managed session's pty, which also kills any background task running inside it. `daemon.log` names each session it kills, and the shutdown records the reason against them in `sessions.json` before the ptys die. On restore, a session the restart caught mid-turn is resumed with a prompt naming the restart instead of the generic one, and a session that was idle only because it was waiting on a background task — a `/watch` loop, say — is woken with the same prompt, naming the task ids that died. An idle session with no background work in flight is left idle, as before.
+
 ## Other config keys
 
 - `slack.channel` — the Slack channel (e.g. `#example`) that `assist slack post` and `/slack-post` target when no channel argument is given

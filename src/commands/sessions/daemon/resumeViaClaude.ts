@@ -1,7 +1,7 @@
-import { buildResumePrompt } from "../../backlog/buildResumePrompt";
 import type { Session } from "./createSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
+import { restoreResumePlan, resumePrompt } from "./restoreResumePlan";
 import { runningSession, waitingSession } from "./runningSession";
 import { spawnClaude } from "./spawnClaude";
 import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
@@ -15,11 +15,12 @@ export function resumeViaClaude(
 	idle: boolean,
 ): Session {
 	const mode = { design: persisted.design, auto: persisted.auto };
+	const plan = restoreResumePlan(persisted, idle);
 	const pty = spawnClaude(
 		hasTranscriptOnDisk(persisted)
 			? {
 					resumeSessionId: persisted.claudeSessionId,
-					prompt: idle ? undefined : buildResumePrompt(),
+					prompt: resumePrompt(plan),
 					cwd: persisted.cwd,
 					sessionId: id,
 					...mode,
@@ -31,7 +32,7 @@ export function resumeViaClaude(
 					...mode,
 				},
 	);
-	return idle
+	return plan.idle
 		? waitingSession(base, persisted, pty)
 		: runningSession(base, persisted, pty);
 }

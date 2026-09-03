@@ -374,13 +374,28 @@ describe("SessionManager", () => {
 				unknown,
 				(s: Session, status: Session["status"]) => void,
 			];
-			persistLiveMock.mockClear();
-
 			manager.shutdown();
+			persistLiveMock.mockClear();
 			onStatusChange(session, "done");
 
 			expect(kill).toHaveBeenCalledOnce();
 			expect(persistLiveMock).not.toHaveBeenCalled();
+		});
+
+		it("records the restart against the sessions it kills", () => {
+			const session = fakeSession({
+				id: "1",
+				pty: { kill: vi.fn() } as unknown as Session["pty"],
+			});
+			createSessionMock.mockReturnValue(session);
+			const manager = new SessionManager();
+			manager.spawn();
+			persistLiveMock.mockClear();
+
+			manager.shutdown();
+
+			expect(persistLiveMock).toHaveBeenCalledOnce();
+			expect(session.interrupted?.reason).toBe("daemon-restart");
 		});
 	});
 

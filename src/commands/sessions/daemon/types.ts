@@ -6,6 +6,7 @@ import type {
 	PrPreview,
 	SessionInfoBase,
 } from "../shared/SessionInfoBase";
+import type { SessionInterruption } from "./SessionInterruption";
 import type { spawnClaude } from "./spawnClaude";
 import type { StateWatcher } from "./worktree/watchGitState";
 
@@ -59,6 +60,7 @@ export type Session = {
 	harnessSessionId?: string;
 	initialPrompt?: string;
 	restored?: boolean;
+	interrupted?: SessionInterruption;
 	error?: string;
 	activity?: Activity;
 	activityWatcher?: FSWatcher;
