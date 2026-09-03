@@ -1,8 +1,10 @@
-import { Box, Popover } from "@mui/material";
+import { Box, Popover, type PopoverActions } from "@mui/material";
+import { useRef } from "react";
 import {
 	SelectionCommentBody,
 	type SelectionCommentBodyProps,
 } from "./SelectionCommentBody";
+import { useRepositionOnContentResize } from "./useRepositionOnContentResize";
 
 export type SelectionAnchor = {
 	quote: string;
@@ -22,9 +24,16 @@ export function SelectionCommentPopover({
 	pending,
 	...body
 }: SelectionCommentBodyProps & { pending: SelectionAnchor | null }) {
+	const open = pending !== null;
+	const actions = useRef<PopoverActions | null>(null);
+	const content = useRef<HTMLDivElement | null>(null);
+
+	useRepositionOnContentResize(actions, content, open);
+
 	return (
 		<Popover
-			open={pending !== null}
+			open={open}
+			action={actions}
 			onClose={body.onCancel}
 			anchorReference="anchorPosition"
 			anchorPosition={
@@ -32,11 +41,11 @@ export function SelectionCommentPopover({
 			}
 			transformOrigin={{ vertical: "top", horizontal: "left" }}
 		>
-			<Box sx={boxSx}>
+			<Box ref={content} sx={boxSx}>
 				<SelectionCommentBody
 					{...body}
 					quote={pending?.quote ?? ""}
-					open={pending !== null}
+					open={open}
 				/>
 			</Box>
 		</Popover>

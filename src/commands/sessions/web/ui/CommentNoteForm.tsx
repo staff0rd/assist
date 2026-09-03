@@ -25,6 +25,7 @@ export function CommentNoteForm({
 				autoFocus
 				multiline
 				minRows={2}
+				maxRows={8}
 				size="small"
 				placeholder="Add a note…"
 				value={note}
