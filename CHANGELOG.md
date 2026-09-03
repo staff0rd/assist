@@ -1,3 +1,10 @@
+## [0.615.2](https://github.com/staff0rd/assist/compare/v0.615.1...v0.615.2) (2026-09-03)
+
+
+### Bug Fixes
+
+* make preview footer text selectable ([8d124d9](https://github.com/staff0rd/assist/commit/8d124d93eb0da73cf3cbce2e45a10fd167761433))
+
 ## [0.615.1](https://github.com/staff0rd/assist/compare/v0.615.0...v0.615.1) (2026-09-03)
 
 
