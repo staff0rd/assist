@@ -94,6 +94,10 @@ describe("findTruncatedReadDeny", () => {
 		],
 		["assist github issue edit 12 --body y", "assist github issue edit"],
 		["assist github issue comment 12 --body y", "assist github issue comment"],
+		[
+			"assist github issue edit-comment 12 --body y",
+			"assist github issue edit-comment",
+		],
 		["assist slack post general --body y", "assist slack post"],
 		["assist prs raise", "assist prs raise"],
 		["assist prs edit", "assist prs edit"],

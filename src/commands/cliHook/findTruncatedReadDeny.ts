@@ -13,6 +13,7 @@ const APPROVAL_GATED_COMMANDS = [
 	"assist github issue create",
 	"assist github issue edit",
 	"assist github issue comment",
+	"assist github issue edit-comment",
 	"assist slack post",
 	"assist prs raise",
 	"assist prs edit",
