@@ -80,6 +80,7 @@ function useShell(activeByRepo: Record<string, string>) {
 	});
 	return {
 		selection,
+		selectedCardId,
 		selectCard,
 		viewHistoryCard: setViewingTranscriptSessionId,
 	};
@@ -140,6 +141,27 @@ describe("useRepoSelection", () => {
 		expect(result.current.selection.worktreeCwd).toBe(
 			"/repos/live/.worktrees/old",
 		);
+	});
+
+	it("follows a card clicked in a repo other than the selected one", () => {
+		const { result } = renderShell({ [otherClone]: "other" });
+
+		act(() => result.current.selectCard("fix"));
+
+		expect(result.current.selectedCardId).toBe("fix");
+		expect(result.current.selection.selectedCwd).toBe(clone);
+	});
+
+	it("settles on a clicked card when both repos remember one", () => {
+		const { result } = renderShell({
+			[clone]: "feature",
+			[otherClone]: "other",
+		});
+
+		act(() => result.current.selectCard("fix"));
+
+		expect(result.current.selectedCardId).toBe("fix");
+		expect(result.current.selection.selectedCwd).toBe(clone);
 	});
 
 	it("searches the clone for a card that runs in it", () => {

@@ -59,6 +59,29 @@ function renderAdopt(
 	return onSelect;
 }
 
+function renderCardClick(
+	from: string | null,
+	to: string | null,
+	selectedCwd = clone,
+) {
+	const onSelect = vi.fn();
+	const { rerender } = renderHook(
+		({ selectedCardId }: { selectedCardId: string | null }) =>
+			useAdoptRepoCard({
+				selectedCwd,
+				selectedCardId,
+				sessions,
+				history,
+				activeByRepo,
+				onSelect,
+			}),
+		{ initialProps: { selectedCardId: from } },
+	);
+	onSelect.mockClear();
+	rerender({ selectedCardId: to });
+	return onSelect;
+}
+
 describe("useAdoptRepoCard", () => {
 	it("adopts the picked repo's card when the selected card is in another repo", () => {
 		expect(renderAdopt("other-repo")).toHaveBeenCalledWith("worktree");
@@ -82,5 +105,15 @@ describe("useAdoptRepoCard", () => {
 
 	it("does not adopt before a repo is selected", () => {
 		expect(renderAdopt("other-repo", "")).not.toHaveBeenCalled();
+	});
+
+	it("leaves a card just clicked in another repo alone", () => {
+		expect(renderCardClick("worktree", "other-repo")).not.toHaveBeenCalled();
+	});
+
+	it("adopts the picked repo's card when a card is deselected", () => {
+		expect(renderCardClick("other-repo", null)).toHaveBeenCalledWith(
+			"worktree",
+		);
 	});
 });
