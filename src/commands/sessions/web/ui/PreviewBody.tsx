@@ -25,7 +25,7 @@ export function PreviewBody({
 				ranges={ranges}
 				contentRef={contentRef}
 			/>
-			{footer}
+			{footer && <Box sx={{ userSelect: "text" }}>{footer}</Box>}
 			<DragOverlay rects={dragRects} color={dragColor} />
 		</Box>
 	);

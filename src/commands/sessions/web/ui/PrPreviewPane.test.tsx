@@ -588,6 +588,35 @@ describe("PrPreviewPane inline comments", () => {
 		expect(screen.getAllByAltText("screenshot")).toHaveLength(1);
 	});
 
+	function nearestDeclaredUserSelect(el: HTMLElement) {
+		for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+			const value = globalThis.getComputedStyle(node).userSelect;
+			if (value === "text" || value === "none") return value;
+		}
+		return undefined;
+	}
+
+	it("leaves the upload error selectable despite the drag-select body", async () => {
+		const { first } = stubDeferredUploads();
+		const { container } = render(
+			<PrPreviewPane preview={preview} cwd="/repo" onDecision={vi.fn()} />,
+		);
+
+		pasteImage("one.png");
+		await first.fail("gh image failed: SSO required");
+
+		expect(
+			nearestDeclaredUserSelect(
+				screen.getByText("gh image failed: SSO required"),
+			),
+		).toBe("text");
+		expect(
+			nearestDeclaredUserSelect(
+				container.querySelector(".markdown") as HTMLElement,
+			),
+		).toBe("none");
+	});
+
 	it("appends uploaded screenshots to the decision on approve, but not reject", async () => {
 		vi.stubGlobal(
 			"fetch",
