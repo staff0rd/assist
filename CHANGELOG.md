@@ -1,3 +1,10 @@
+## [0.616.2](https://github.com/staff0rd/assist/compare/v0.616.1...v0.616.2) (2026-09-03)
+
+
+### Bug Fixes
+
+* gate github issue edit-comment ([f4caad5](https://github.com/staff0rd/assist/commit/f4caad54c2ae8f049bef614cfdd63f2fd42a18b8))
+
 ## [0.616.1](https://github.com/staff0rd/assist/compare/v0.616.0...v0.616.1) (2026-09-03)
 
 
