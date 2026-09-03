@@ -1,3 +1,10 @@
+## [0.615.3](https://github.com/staff0rd/assist/compare/v0.615.2...v0.615.3) (2026-09-03)
+
+
+### Bug Fixes
+
+* keep selection popover on screen ([827a4fd](https://github.com/staff0rd/assist/commit/827a4fd0886a8843f30124b6986afc3cb066e86b))
+
 ## [0.615.2](https://github.com/staff0rd/assist/compare/v0.615.1...v0.615.2) (2026-09-03)
 
 
