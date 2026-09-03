@@ -40,6 +40,25 @@ function noteField(): HTMLTextAreaElement {
 	return screen.getByPlaceholderText("Add a note…") as HTMLTextAreaElement;
 }
 
+function observeResizes(): () => { element: Element; notify: () => void }[] {
+	const entries: { element: Element; notify: () => void }[] = [];
+	vi.stubGlobal(
+		"ResizeObserver",
+		class {
+			notify: () => void;
+			constructor(callback: () => void) {
+				this.notify = callback;
+			}
+			observe(element: Element) {
+				entries.push({ element, notify: this.notify });
+			}
+			disconnect() {}
+			unobserve() {}
+		},
+	);
+	return () => entries;
+}
+
 describe("SelectionCommentPopover", () => {
 	it("keeps the typed note when the refreshed selection re-anchors", () => {
 		const { rerender } = render(
@@ -255,5 +274,46 @@ describe("SelectionCommentPopover", () => {
 		);
 
 		expect(noteField().value).toBe("");
+	});
+
+	it("watches the popover content box, not just the note field", () => {
+		const observed = observeResizes();
+
+		render(
+			<SelectionCommentPopover
+				pending={anchor}
+				onAdd={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+
+		expect(
+			observed().some(
+				({ element }) =>
+					element !== noteField() && element.contains(noteField()),
+			),
+		).toBe(true);
+	});
+
+	it("pulls the popover back on screen when its content grows taller", () => {
+		const observed = observeResizes();
+
+		render(
+			<SelectionCommentPopover
+				pending={anchor}
+				onAdd={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+		const paper = document.querySelector<HTMLElement>(".MuiPopover-paper");
+		if (!paper) throw new Error("no popover paper");
+		expect(paper.style.top).toBe(`${anchor.top}px`);
+
+		Object.defineProperty(paper, "offsetHeight", { value: 700 });
+		for (const { notify } of observed()) notify();
+
+		expect(paper.style.top).toBe(
+			`${anchor.top - (anchor.top + 700 - (window.innerHeight - 16))}px`,
+		);
 	});
 });

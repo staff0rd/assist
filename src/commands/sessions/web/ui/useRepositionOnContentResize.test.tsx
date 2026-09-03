@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import type { PopoverActions } from "@mui/material";
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { useRepositionOnContentResize } from "./useRepositionOnContentResize";
 
@@ -25,13 +25,13 @@ function setup(open: boolean) {
 	vi.stubGlobal("ResizeObserver", StubResizeObserver);
 	const updatePosition = vi.fn();
 	const actions = { current: { updatePosition } satisfies PopoverActions };
-	const content = { current: document.createElement("div") };
+	const element = document.createElement("div");
 	const hook = renderHook(
 		(props: { open: boolean }) =>
-			useRepositionOnContentResize(actions, content, props.open),
+			useRepositionOnContentResize(actions, props.open),
 		{ initialProps: { open } },
 	);
-	return { hook, updatePosition, content };
+	return { hook, updatePosition, element };
 }
 
 afterEach(() => {
@@ -43,22 +43,36 @@ afterEach(() => {
 
 describe("useRepositionOnContentResize", () => {
 	it("repositions the popover when its content changes size", () => {
-		const { updatePosition, content } = setup(true);
+		const { hook, updatePosition, element } = setup(true);
 
-		expect(observed).toEqual([content.current]);
+		act(() => hook.result.current(element));
+
+		expect(observed).toEqual([element]);
 		resize?.();
 
 		expect(updatePosition).toHaveBeenCalledTimes(1);
 	});
 
+	it("watches the content box even when it attaches after the first render", () => {
+		const { hook, element } = setup(true);
+
+		hook.rerender({ open: true });
+		act(() => hook.result.current(element));
+
+		expect(observed).toEqual([element]);
+	});
+
 	it("watches nothing while the popover is closed", () => {
-		setup(false);
+		const { hook, element } = setup(false);
+
+		act(() => hook.result.current(element));
 
 		expect(observed).toEqual([]);
 	});
 
 	it("stops watching once the popover closes", () => {
-		const { hook } = setup(true);
+		const { hook, element } = setup(true);
+		act(() => hook.result.current(element));
 
 		hook.rerender({ open: false });
 

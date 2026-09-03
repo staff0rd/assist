@@ -1,18 +1,20 @@
 import type { PopoverActions } from "@mui/material";
-import { type RefObject, useEffect } from "react";
+import { type RefObject, useEffect, useState } from "react";
 
 export function useRepositionOnContentResize(
 	actions: RefObject<PopoverActions | null>,
-	content: RefObject<HTMLElement | null>,
 	open: boolean,
-): void {
+): (element: HTMLElement | null) => void {
+	const [content, setContent] = useState<HTMLElement | null>(null);
+
 	useEffect(() => {
-		const element = content.current;
-		if (!open || !element || typeof ResizeObserver === "undefined") return;
+		if (!open || !content || typeof ResizeObserver === "undefined") return;
 		const observer = new ResizeObserver(() =>
 			actions.current?.updatePosition(),
 		);
-		observer.observe(element);
+		observer.observe(content);
 		return () => observer.disconnect();
 	}, [actions, content, open]);
+
+	return setContent;
 }

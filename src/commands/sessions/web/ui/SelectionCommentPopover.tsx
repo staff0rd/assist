@@ -26,9 +26,7 @@ export function SelectionCommentPopover({
 }: SelectionCommentBodyProps & { pending: SelectionAnchor | null }) {
 	const open = pending !== null;
 	const actions = useRef<PopoverActions | null>(null);
-	const content = useRef<HTMLDivElement | null>(null);
-
-	useRepositionOnContentResize(actions, content, open);
+	const content = useRepositionOnContentResize(actions, open);
 
 	return (
 		<Popover
