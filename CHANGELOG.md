@@ -1,3 +1,10 @@
+## [0.615.1](https://github.com/staff0rd/assist/compare/v0.615.0...v0.615.1) (2026-09-03)
+
+
+### Bug Fixes
+
+* deny head/tail on gated commands ([6e38a1b](https://github.com/staff0rd/assist/commit/6e38a1b0e52cd014fb837f10687878af25866b12))
+
 # [0.615.0](https://github.com/staff0rd/assist/compare/v0.614.0...v0.615.0) (2026-09-03)
 
 
