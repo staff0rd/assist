@@ -1,3 +1,16 @@
+# [0.616.0](https://github.com/staff0rd/assist/compare/v0.615.3...v0.616.0) (2026-09-03)
+
+
+### Bug Fixes
+
+* observe popover box via callback ref ([4357303](https://github.com/staff0rd/assist/commit/435730337b6f5ddeb43eac72dc463136591241ba))
+* select cards outside selected repo ([d08b1ba](https://github.com/staff0rd/assist/commit/d08b1ba8946ed3401d6d4a1ba92e07bdc357cbe8))
+
+
+### Features
+
+* gate issue comment amendments ([006f20c](https://github.com/staff0rd/assist/commit/006f20c9ca1c24db363ede38122cf0ad84e09a7d))
+
 ## [0.615.3](https://github.com/staff0rd/assist/compare/v0.615.2...v0.615.3) (2026-09-03)
 
 
