@@ -3,6 +3,7 @@ import { registerFixStructure } from "./github/issue/fixStructure/registerFixStr
 import { registerCommentIssue } from "./github/issue/registerCommentIssue";
 import { registerCreateIssue } from "./github/issue/registerCreateIssue";
 import { registerEditIssue } from "./github/issue/registerEditIssue";
+import { registerEditIssueComment } from "./github/issue/registerEditIssueComment";
 
 export function registerGithubIssue(githubCommand: Command): void {
 	const issueCommand = githubCommand
@@ -12,5 +13,6 @@ export function registerGithubIssue(githubCommand: Command): void {
 	registerCreateIssue(issueCommand);
 	registerEditIssue(issueCommand);
 	registerCommentIssue(issueCommand);
+	registerEditIssueComment(issueCommand);
 	registerFixStructure(issueCommand);
 }

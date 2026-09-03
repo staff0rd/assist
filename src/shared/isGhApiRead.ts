@@ -1,4 +1,5 @@
 import { tokenize } from "./tokenize";
+import { extractGhApiMethod } from "./extractGhApiMethod";
 
 const READ_METHODS = new Set(["GET", "HEAD"]);
 const BODY_FLAGS = new Set(["-f", "-F", "--field", "--raw-field", "--input"]);
@@ -17,27 +18,15 @@ export function isGhApiRead(command: string): boolean {
 		return isGraphqlRead(args);
 	}
 
-	const method = extractMethod(args);
+	const method = extractGhApiMethod(args);
 	if (method) return READ_METHODS.has(method.toUpperCase());
 	if (args.some((t) => BODY_FLAGS.has(t))) return false;
 
 	return true;
 }
 
-function extractMethod(args: string[]): string | undefined {
-	for (let i = 0; i < args.length; i++) {
-		const arg = args[i];
-		if (arg.startsWith("--method=")) return arg.slice("--method=".length);
-		if (arg.startsWith("-X=")) return arg.slice("-X=".length);
-		if ((arg === "--method" || arg === "-X") && i + 1 < args.length) {
-			return args[i + 1];
-		}
-	}
-	return undefined;
-}
-
 function isGraphqlRead(args: string[]): boolean {
-	const method = extractMethod(args);
+	const method = extractGhApiMethod(args);
 	if (method) return READ_METHODS.has(method.toUpperCase());
 
 	const queryBody = extractGraphqlQuery(args);

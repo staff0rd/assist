@@ -100,6 +100,72 @@ describe("findBuiltinDeny gh issue comment", () => {
 	});
 });
 
+describe("findBuiltinDeny gh issue edit", () => {
+	it("denies 'gh issue edit' with a redirect to 'assist github issue edit'", () => {
+		const decision = findBuiltinDeny([
+			"gh issue edit 42 --body-file body.md -R acme/widgets",
+		]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"assist github issue edit",
+		);
+	});
+
+	it("denies 'gh issue edit' buried in a compound command part", () => {
+		const decision = findBuiltinDeny([
+			"cd /repo",
+			"gh issue edit 42 --title x",
+		]);
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("denies 'gh issue edit' in a raw command the prefix path can't decompose", () => {
+		const decision = findBuiltinDenyRaw(
+			"gh issue edit 42 --body-file - <<'EOF'\nbody with `code`\nEOF",
+		);
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("does not deny the assist wrapper that delegates to it", () => {
+		expect(findBuiltinDeny(["assist github issue edit 42"])).toBeUndefined();
+	});
+});
+
+describe("findBuiltinDeny gh api issue writes", () => {
+	it("denies a PATCH of a posted comment with a redirect to the assist command", () => {
+		const decision = findBuiltinDeny([
+			"gh api -X PATCH repos/acme/widgets/issues/comments/12345 --input -",
+		]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"assist github issue edit-comment",
+		);
+	});
+
+	it("denies a POST that creates a comment", () => {
+		const decision = findBuiltinDeny([
+			"gh api -X POST repos/acme/widgets/issues/180/comments -f body=hi",
+		]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"assist github issue comment",
+		);
+	});
+
+	it("denies a raw piped write the prefix path can't decompose", () => {
+		const decision = findBuiltinDenyRaw(
+			"jq -Rs '{body: .}' new-body.md | gh api -X PATCH repos/acme/widgets/issues/comments/12345 --input -",
+		);
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("does not deny a read of the same endpoint", () => {
+		expect(
+			findBuiltinDeny(["gh api repos/acme/widgets/issues/comments/12345"]),
+		).toBeUndefined();
+	});
+});
+
 describe("findBuiltinDeny git commit", () => {
 	it("denies a leading 'git commit'", () => {
 		const decision = findBuiltinDeny(['git commit -m "fix: x"']);
