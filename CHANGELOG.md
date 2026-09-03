@@ -1,3 +1,10 @@
+## [0.616.3](https://github.com/staff0rd/assist/compare/v0.616.2...v0.616.3) (2026-09-03)
+
+
+### Bug Fixes
+
+* name the daemon restart on resume ([1b9b465](https://github.com/staff0rd/assist/commit/1b9b465c860c00f40bc62d7b60325eef02973c29))
+
 ## [0.616.2](https://github.com/staff0rd/assist/compare/v0.616.1...v0.616.2) (2026-09-03)
 
 
