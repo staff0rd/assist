@@ -1,3 +1,10 @@
+# [0.615.0](https://github.com/staff0rd/assist/compare/v0.614.0...v0.615.0) (2026-09-03)
+
+
+### Features
+
+* screenshots on the issue create preview ([7802513](https://github.com/staff0rd/assist/commit/7802513ce370623d12bfbe58102d3d11ea3aa978))
+
 # [0.614.0](https://github.com/staff0rd/assist/compare/v0.613.1...v0.614.0) (2026-09-03)
 
 
