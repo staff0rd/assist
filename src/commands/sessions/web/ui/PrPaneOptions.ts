@@ -9,6 +9,7 @@ export type PrPaneOptions = {
 		details: PrDecisionDetails,
 	) => void;
 	isPr: boolean;
+	screenshots: boolean;
 	resolvedDraft: boolean;
 	initialBody: string;
 	editable: boolean;

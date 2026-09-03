@@ -16,7 +16,7 @@ export function usePrPane(options: PrPaneOptions) {
 	const { wrapperRef, contentRef, pending, dragRects, onMouseDown, clear } =
 		usePreviewSelection();
 	const { comments, add, remove } = usePrComments(requestId);
-	const shots = usePaneScreenshots(cwd, isPr);
+	const shots = usePaneScreenshots(cwd, options.screenshots);
 	const decision = usePrDecision(
 		requestId,
 		sessionId,

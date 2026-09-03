@@ -214,6 +214,61 @@ describe("createIssue preview", () => {
 		expect(execFileSync).toHaveBeenCalled();
 	});
 
+	it("appends approved screenshots under a Screenshots heading", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			screenshots: ["![a](https://x/a.png)", "![b](https://x/b.png)"],
+		});
+
+		await createIssue({ title: "Crash on load", body: "Details" });
+
+		expect(execFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"issue",
+				"create",
+				"--title",
+				"Crash on load",
+				"--body",
+				"Details\n\n## Screenshots\n\n![a](https://x/a.png)\n\n![b](https://x/b.png)",
+			],
+			expect.anything(),
+		);
+	});
+
+	it("leaves the body alone when the reviewer attached nothing", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await createIssue({ title: "Crash on load", body: "Details" });
+
+		expect(execFileSync).toHaveBeenCalledWith(
+			"gh",
+			expect.arrayContaining(["--body", "Details"]),
+			expect.anything(),
+		);
+	});
+
+	it("discards screenshots when the preview is rejected", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "reject",
+			screenshots: ["![a](https://x/a.png)"],
+		});
+
+		await expect(
+			createIssue({ title: "Crash on load", body: "Details" }),
+		).rejects.toThrow("process.exit");
+
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+
 	it("exits non-zero without creating when the preview is rejected", async () => {
 		process.env.ASSIST_SESSION = "1";
 		process.env.ASSIST_SESSION_ID = "s1";

@@ -1,4 +1,5 @@
 import { validateProposedContent } from "../../../shared/validateProposedContent";
+import { appendScreenshots } from "../../prs/appendScreenshots";
 import { applyCreatedIssueMetadata } from "./applyCreatedIssueMetadata";
 import { issuePreviewMetadata } from "./issuePreviewMetadata";
 import {
@@ -48,9 +49,18 @@ export async function createIssue(options: CreateIssueOptions): Promise<void> {
 
 	const resolved = preflight(options);
 
-	await reviewProposedIssue(title, body, issuePreviewMetadata(resolved));
+	const decision = await reviewProposedIssue(
+		title,
+		body,
+		issuePreviewMetadata(resolved),
+	);
 
-	const output = runGhIssueCreate(title, body, options.repo, resolved?.labels);
+	const output = runGhIssueCreate(
+		title,
+		appendScreenshots(body, decision?.screenshots ?? []),
+		options.repo,
+		resolved?.labels,
+	);
 	console.log(output.trim());
 
 	if (resolved) applyCreatedIssueMetadata(output, resolved);

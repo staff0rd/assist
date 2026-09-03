@@ -882,6 +882,97 @@ describe("PrPreviewPane inline comments", () => {
 				"Details about the crash",
 			);
 		});
+
+		it("uploads a pasted screenshot and shows it in the Screenshots section", async () => {
+			const fetchMock = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+			});
+			vi.stubGlobal("fetch", fetchMock);
+
+			render(
+				<PrPreviewPane preview={newIssue} cwd="/repo" onDecision={vi.fn()} />,
+			);
+			pasteImage("shot.png");
+
+			await screen.findByAltText("screenshot");
+			expect(screen.getByRole("heading", { name: "Screenshots" })).toBeTruthy();
+			expect(fetchMock.mock.calls[0][0] as string).toContain(
+				"/api/pr-preview/upload-image?",
+			);
+		});
+
+		it("sends the screenshots on approve but not on reject", async () => {
+			vi.stubGlobal(
+				"fetch",
+				vi.fn().mockResolvedValue({
+					ok: true,
+					json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+				}),
+			);
+			const onDecision = vi.fn();
+			render(
+				<PrPreviewPane
+					preview={newIssue}
+					cwd="/repo"
+					onDecision={onDecision}
+				/>,
+			);
+			pasteImage("shot.png");
+			await screen.findByAltText("screenshot");
+
+			fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+			expect(onDecision).toHaveBeenLastCalledWith(
+				"reject",
+				expect.objectContaining({ screenshots: [] }),
+			);
+
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+			expect(onDecision).toHaveBeenLastCalledWith(
+				"approve",
+				expect.objectContaining({ screenshots: ["![shot](https://x/y.png)"] }),
+			);
+		});
+
+		it("offers no chain toggles", () => {
+			render(<PrPreviewPane preview={newIssue} onDecision={vi.fn()} />);
+
+			expect(screen.queryByLabelText("Review")).toBeNull();
+			expect(screen.queryByLabelText("Post")).toBeNull();
+			expect(screen.queryByLabelText("Draft")).toBeNull();
+		});
+	});
+
+	describe("previews without screenshot capture", () => {
+		const kinds = [
+			"backlog-item",
+			"backlog-comment",
+			"pr-comment",
+			"github-issue-comment",
+			"github-issue-edit",
+			"miro-board",
+			"slack-post",
+		] as const;
+
+		it.each(kinds)("offers no screenshot UI for %s", async (kind) => {
+			const fetchMock = vi.fn();
+			vi.stubGlobal("fetch", fetchMock);
+
+			render(
+				<PrPreviewPane
+					preview={{ ...preview, requestId: `ns-${kind}`, kind }}
+					cwd="/repo"
+					onDecision={vi.fn()}
+				/>,
+			);
+			expect(screen.queryByText(/attach a screenshot/)).toBeNull();
+
+			pasteImage("shot.png");
+			await Promise.resolve();
+
+			expect(fetchMock).not.toHaveBeenCalled();
+			expect(screen.queryByAltText("screenshot")).toBeNull();
+		});
 	});
 
 	describe("github issue edit previews", () => {
