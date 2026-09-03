@@ -1,3 +1,10 @@
+## [0.616.1](https://github.com/staff0rd/assist/compare/v0.616.0...v0.616.1) (2026-09-03)
+
+
+### Bug Fixes
+
+* don't deny on quoted pipe in body ([34471c8](https://github.com/staff0rd/assist/commit/34471c8227aa7a928264b8b446266040f9b11526))
+
 # [0.616.0](https://github.com/staff0rd/assist/compare/v0.615.3...v0.616.0) (2026-09-03)
 
 
