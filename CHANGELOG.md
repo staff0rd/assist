@@ -1,3 +1,10 @@
+# [0.614.0](https://github.com/staff0rd/assist/compare/v0.613.1...v0.614.0) (2026-09-03)
+
+
+### Features
+
+* rule titles, collapsible scopes ([2d026e0](https://github.com/staff0rd/assist/commit/2d026e0a918cbd0577f1254fef78ec59e96f49f6))
+
 ## [0.613.1](https://github.com/staff0rd/assist/compare/v0.613.0...v0.613.1) (2026-09-02)
 
 
