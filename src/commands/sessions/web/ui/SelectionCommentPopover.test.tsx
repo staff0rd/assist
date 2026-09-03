@@ -23,7 +23,7 @@ const rules = [
 ];
 
 function stubRulesFetch(body: {
-	rules: typeof rules;
+	rules: { code: string; title?: string; text: string; source: string }[];
 }): ReturnType<typeof vi.fn> {
 	const fetchMock = vi.fn(async () => ({ json: async () => body }));
 	vi.stubGlobal("fetch", fetchMock);
@@ -104,7 +104,7 @@ describe("SelectionCommentPopover", () => {
 		expect(screen.getByText(anchor.quote)).toBeTruthy();
 	});
 
-	it("lists the rules in scope for the commented file with their text", async () => {
+	it("expands the nearest scope and collapses the ones above it", async () => {
 		const fetchMock = stubRulesFetch({ rules });
 
 		render(
@@ -120,10 +120,60 @@ describe("SelectionCommentPopover", () => {
 
 		expect(await screen.findByText("R2")).toBeTruthy();
 		expect(screen.getByText("Name the decision")).toBeTruthy();
-		expect(screen.getByText("Keep it tight")).toBeTruthy();
+		expect(screen.queryByText("Keep it tight")).toBeNull();
+		expect(screen.getByText("refinement/CLAUDE.md")).toBeTruthy();
+		expect(screen.getByText("CLAUDE.md")).toBeTruthy();
 		expect(fetchMock.mock.calls[0][0]).toBe(
 			"/api/rules?cwd=%2Frepo&path=refinement%2Fspec.md",
 		);
+	});
+
+	it("shows an ancestor scope's rules once its header is clicked", async () => {
+		stubRulesFetch({ rules });
+
+		render(
+			<SelectionCommentPopover
+				pending={anchor}
+				cwd="/repo"
+				path="refinement/spec.md"
+				onAdd={vi.fn()}
+				onCite={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+
+		fireEvent.click(await screen.findByText("CLAUDE.md"));
+
+		expect(await screen.findByText("Keep it tight")).toBeTruthy();
+	});
+
+	it("shows a rule's title in place of its description", async () => {
+		stubRulesFetch({
+			rules: [
+				{
+					code: "R2",
+					title: "Name the decision",
+					text: "Every option considered gets a recorded outcome.",
+					source: "refinement/CLAUDE.md",
+				},
+			],
+		});
+
+		render(
+			<SelectionCommentPopover
+				pending={anchor}
+				cwd="/repo"
+				path="refinement/spec.md"
+				onAdd={vi.fn()}
+				onCite={vi.fn()}
+				onCancel={vi.fn()}
+			/>,
+		);
+
+		expect(await screen.findByText("Name the decision")).toBeTruthy();
+		expect(
+			screen.queryByText("Every option considered gets a recorded outcome."),
+		).toBeNull();
 	});
 
 	it("cites the clicked rule", async () => {

@@ -1,21 +1,10 @@
-import { Box, ListItemButton, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { useMemo, useState } from "react";
 import type { ScopedRule } from "../../../rules/types";
+import { groupRulesByScope } from "./groupRulesByScope";
+import { RuleScopeGroup } from "./RuleScopeGroup";
 
-const listSx = { maxHeight: 132, overflow: "auto" } as const;
-
-const rowSx = {
-	gap: 1,
-	alignItems: "baseline",
-	borderRadius: 1,
-	py: 0.25,
-	px: 0.75,
-} as const;
-
-const textSx = {
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-} as const;
+const listSx = { maxHeight: 220, overflow: "auto" } as const;
 
 export function RuleCitationList({
 	rules,
@@ -24,31 +13,28 @@ export function RuleCitationList({
 	rules: ScopedRule[];
 	onCite: (rule: ScopedRule) => void;
 }) {
+	const scopes = useMemo(() => groupRulesByScope(rules), [rules]);
+	const [toggled, setToggled] = useState<Record<string, boolean>>({});
+
 	return (
 		<Box>
 			<Typography variant="caption" color="text.secondary">
 				Cite a broken rule
 			</Typography>
 			<Box sx={listSx}>
-				{rules.map((rule) => (
-					<ListItemButton
-						key={`${rule.source}:${rule.code}`}
-						dense
-						sx={rowSx}
-						title={`${rule.text} (${rule.source})`}
-						onClick={() => onCite(rule)}
-					>
-						<Typography
-							variant="caption"
-							color="primary"
-							sx={{ fontWeight: "bold" }}
-						>
-							{rule.code}
-						</Typography>
-						<Typography variant="caption" sx={textSx}>
-							{rule.text}
-						</Typography>
-					</ListItemButton>
+				{scopes.map((scope, index) => (
+					<RuleScopeGroup
+						key={scope.source}
+						scope={scope}
+						expanded={toggled[scope.source] ?? index === 0}
+						onToggle={() =>
+							setToggled((current) => ({
+								...current,
+								[scope.source]: !(current[scope.source] ?? index === 0),
+							}))
+						}
+						onCite={onCite}
+					/>
 				))}
 			</Box>
 		</Box>

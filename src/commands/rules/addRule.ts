@@ -11,7 +11,10 @@ function read(file: string): string {
 	return existsSync(file) ? readFileSync(file, "utf8") : "";
 }
 
-export function addRule(text: string, options: { scope?: string }): void {
+export function addRule(
+	text: string,
+	options: { scope?: string; title?: string },
+): void {
 	const rule = text.trim();
 	if (rule === "") {
 		console.error(chalk.red("Rule text is required"));
@@ -24,7 +27,14 @@ export function addRule(text: string, options: { scope?: string }): void {
 	const root = findRepoRoot(targetDir) ?? targetDir;
 	const code = nextRuleCode(root);
 
-	writeFileSync(target, insertRuleBullet(read(target), code, rule));
+	writeFileSync(
+		target,
+		insertRuleBullet(read(target), {
+			code,
+			title: options.title?.trim() || undefined,
+			text: rule,
+		}),
+	);
 	updateScopedRulesIndex(root);
 
 	console.log(

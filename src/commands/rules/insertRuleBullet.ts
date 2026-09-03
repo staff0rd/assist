@@ -5,12 +5,20 @@ import {
 	rulesSectionRange,
 } from "./rulesSectionRange";
 
-export function insertRuleBullet(
-	content: string,
-	code: string,
-	text: string,
-): string {
-	const bullet = `- **${code}** — ${text}`;
+type NewRule = {
+	code: string;
+	title?: string | undefined;
+	text: string;
+};
+
+function ruleBullet({ code, title, text }: NewRule): string {
+	return title
+		? `- **${code}** — **${title}** — ${text}`
+		: `- **${code}** — ${text}`;
+}
+
+export function insertRuleBullet(content: string, rule: NewRule): string {
+	const bullet = ruleBullet(rule);
 	const lines = contentLines(content);
 	const range = rulesSectionRange(lines);
 	if (!range) return appendRulesSection(lines, bullet);

@@ -13,7 +13,10 @@ export function registerRules(program: Command): void {
 		.description(
 			"List the rules from the `## Rules` section of every CLAUDE.md from a path's directory up to the repo root (default: cwd)",
 		)
-		.action((target?: string) => listRules(target));
+		.option("--full", "Show each rule's full description as well as its title")
+		.action((target: string | undefined, options: { full?: boolean }) =>
+			listRules(target, options),
+		);
 
 	rulesCommand
 		.command("add <text>")
@@ -21,10 +24,14 @@ export function registerRules(program: Command): void {
 			"Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating the next repo-wide code and creating the section when absent",
 		)
 		.option(
+			"--title <title>",
+			"As few words as possible summarising the rule, shown in the rule picker in place of the description",
+		)
+		.option(
 			"--scope <path>",
 			"File or directory whose nearest CLAUDE.md receives the rule, or a CLAUDE.md path to write to directly (default: cwd)",
 		)
-		.action((text: string, options: { scope?: string }) =>
+		.action((text: string, options: { scope?: string; title?: string }) =>
 			addRule(text, options),
 		);
 

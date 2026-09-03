@@ -19,6 +19,25 @@ describe("parseRulesSection", () => {
 		]);
 	});
 
+	it("reads a second bold span as the title", () => {
+		const content =
+			"## Rules\n\n- **R1** — **Keep it tight** — Around 30 lines, one line per point.\n";
+
+		expect(parseRulesSection(content)).toEqual([
+			{
+				code: "R1",
+				title: "Keep it tight",
+				text: "Around 30 lines, one line per point.",
+			},
+		]);
+	});
+
+	it("treats a lone bold span after the code as the description", () => {
+		expect(
+			parseRulesSection("## Rules\n\n- **R1** — **Keep it tight**\n"),
+		).toEqual([{ code: "R1", text: "**Keep it tight**" }]);
+	});
+
 	it("returns nothing when there is no Rules section", () => {
 		expect(parseRulesSection("# Title\n\n- **R1** — Nope\n")).toEqual([]);
 	});

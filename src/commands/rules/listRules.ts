@@ -4,7 +4,10 @@ import { findRepoRoot } from "../../shared/findRepoRoot";
 import { readScopedRules } from "./readScopedRules";
 import { scopeDirectory } from "./scopeDirectory";
 
-export function listRules(target?: string): void {
+export function listRules(
+	target?: string,
+	options: { full?: boolean } = {},
+): void {
 	const resolved = path.resolve(target ?? process.cwd());
 	const rules = readScopedRules(resolved);
 
@@ -24,6 +27,10 @@ export function listRules(target?: string): void {
 				chalk.dim(base ? path.relative(base, rule.source) : rule.source),
 			);
 		}
-		console.log(`  ${chalk.cyan(rule.code.padEnd(width))}  ${rule.text}`);
+		console.log(
+			`  ${chalk.cyan(rule.code.padEnd(width))}  ${rule.title ?? rule.text}`,
+		);
+		if (options.full && rule.title)
+			console.log(`  ${" ".repeat(width)}  ${chalk.dim(rule.text)}`);
 	}
 }

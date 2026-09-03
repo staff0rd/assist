@@ -17,7 +17,9 @@ If `$ARGUMENTS` is empty, ask the user what rule they want to add and skip to St
 
 ## Step 2: Word the rule
 
-Write the rule as one short imperative sentence that generalises the note beyond this one instance — what to do (or not do), not what went wrong here. Keep it to a single line: it becomes a `- **<code>** — <text>` bullet.
+Write the rule as one short imperative sentence that generalises the note beyond this one instance — what to do (or not do), not what went wrong here. Keep it to a single line: it becomes a `- **<code>** — **<title>** — <text>` bullet.
+
+Then write its **title**: as few words as possible to tell this rule apart from the others, three or four at most. The rule picker shows the title alone, so it has to identify the rule on its own — "Keep it tight", "No implicit documentation". Not a restatement of the sentence, and not so generic it could name any rule in the file.
 
 Ask the user a clarifying question only when the note is genuinely too vague to word a rule from. One question, then write it.
 
@@ -35,7 +37,7 @@ Ask the user only when two scopes are genuinely defensible and the choice change
 ## Step 4: Write it
 
 ```
-assist rules add '<rule text>' --scope <path> 2>&1
+assist rules add '<rule text>' --title '<title>' --scope <path> 2>&1
 ```
 
 `--scope` takes a file, a directory, or a `CLAUDE.md` path directly. A file or directory resolves to the nearest existing `CLAUDE.md` at or above it; a `CLAUDE.md` path is written to as given, created if absent. The command allocates the next repo-wide code, creates the `## Rules` section when the file has none, and records the directories that carry their own `## Rules` in the root `CLAUDE.md`.

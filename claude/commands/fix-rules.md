@@ -39,15 +39,17 @@ Not rules, and left alone: where files live, what a directory is for, source loc
 
 ## Step 3: Classify each file
 
-**Rename** — the section's bullets are already `- **<code>** — <text>` and the whole section is rules. Rename that heading to `## Rules`. Nothing else changes, and the existing codes are preserved. This is the cheapest and safest fix; prefer it whenever it applies.
+**Rename** — the section's bullets are already `- **<code>** — <text>` and the whole section is rules. Rename that heading to `## Rules`. The existing codes are preserved. This is the cheapest and safest fix; prefer it whenever it applies.
 
 **Reword** — the rules are prose or a numbered list. Word each as one short imperative line, then add them one at a time:
 
 ```
-assist rules add '<rule text>' --scope <path to that CLAUDE.md> 2>&1
+assist rules add '<rule text>' --title '<title>' --scope <path to that CLAUDE.md> 2>&1
 ```
 
 `rules add` allocates the next repo-wide code, creates the `## Rules` section when the file has none, and keeps the root index current. Then delete the prose it replaced, so the rule is not stated twice in the same file. If a prose section carried context beyond the rule itself, keep the context where it is and take only the instruction.
+
+**Title** — a rule already in bullet form but with no title gets one, edited into the bullet as a second bold span: `- **R1** — **Keep it tight** — around 30 lines…`. This applies to the bullets you just renamed, which `rules add` never touched. A title is as few words as possible to tell that rule apart from its neighbours, three or four at most — the rule picker shows it alone, with the description only on hover.
 
 **Leave** — the file has no standing rules. Say so and move on.
 
