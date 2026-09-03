@@ -1,5 +1,6 @@
 import { splitCompound } from "../../shared/splitCompound";
 import { findBuiltinDenyRaw } from "./findBuiltinDeny";
+import { findTruncatedReadDenyRaw } from "./findTruncatedReadDeny";
 import {
 	findDeny,
 	type HookDecision,
@@ -12,5 +13,9 @@ export function decideCommand(
 ): HookDecision | undefined {
 	const result = splitCompound(rawCommand);
 	if (result.ok) return resolvePermission(toolName, result.parts);
-	return findBuiltinDenyRaw(rawCommand) ?? findDeny(toolName, [rawCommand]);
+	return (
+		findBuiltinDenyRaw(rawCommand) ??
+		findTruncatedReadDenyRaw(rawCommand) ??
+		findDeny(toolName, [rawCommand])
+	);
 }

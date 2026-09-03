@@ -1,6 +1,7 @@
 import { isApprovedRead } from "../../shared/isApprovedRead";
 import { splitCompound } from "../../shared/splitCompound";
 import { findBuiltinDenyRaw } from "./findBuiltinDeny";
+import { findTruncatedReadDenyRaw } from "./findTruncatedReadDeny";
 import { findDeny } from "./resolvePermission";
 
 function reportDecision(decision: ReturnType<typeof findDeny>): boolean {
@@ -21,6 +22,7 @@ export function cliHookCheck(command: string, toolName = "Bash"): void {
 
 	if (!result.ok) {
 		if (reportDecision(findBuiltinDenyRaw(trimmed))) return;
+		if (reportDecision(findTruncatedReadDenyRaw(trimmed))) return;
 		if (reportDeny(toolName, [trimmed])) return;
 		console.log(`not approved (${result.error})`);
 		process.exitCode = 1;

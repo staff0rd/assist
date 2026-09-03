@@ -32,31 +32,51 @@ function matchPrefix(prefixes: string[], part: string): string | undefined {
 	);
 }
 
-function isTruncator(part: string): boolean {
+function startsWithTruncator(part: string): boolean {
 	const binary = part.split(/\s+/)[0]?.split("/").pop() ?? "";
-	return TRUNCATOR_BINARIES.includes(binary) || PIPED_TRUNCATOR_RE.test(part);
+	return TRUNCATOR_BINARIES.includes(binary);
 }
 
-export function findTruncatedReadDeny(
-	parts: string[],
+function toDecision(
+	read: string | undefined,
+	gated: string | undefined,
 ): HookDecision | undefined {
-	const read = parts
-		.map((part) => matchPrefix(UNTRUNCATABLE_READS, part))
-		.find(Boolean);
-	const gated = parts
-		.map((part) => matchPrefix(APPROVAL_GATED_COMMANDS, part))
-		.find(Boolean);
-	if (!read && !gated) return undefined;
-	if (!parts.some(isTruncator)) return undefined;
-
 	if (read)
 		return {
 			permissionDecision: "deny",
 			permissionDecisionReason: `Do not pipe '${read}' through head or tail. Plan, Activity and Comments print at the end of the output, so a truncated read drops them and leaves you assuming the item has none. Run '${read} <id>' bare and read all of it, or use a focused view: 'assist backlog comments <id>' for comments only.`,
 		};
 
-	return {
-		permissionDecision: "deny",
-		permissionDecisionReason: `Do not pipe '${gated}' through head or tail. It gates on a preview the reviewer can reject with inline comments, and those comments print at the end of the output. Nothing persists them, so a truncated read discards the reviewer's feedback for good and they have to retype it. Run '${gated}' bare and read all of it.`,
-	};
+	if (gated)
+		return {
+			permissionDecision: "deny",
+			permissionDecisionReason: `Do not pipe '${gated}' through head or tail. It gates on a preview the reviewer can reject with inline comments, and those comments print at the end of the output. Nothing persists them, so a truncated read discards the reviewer's feedback for good and they have to retype it. Run '${gated}' bare and read all of it.`,
+		};
+
+	return undefined;
+}
+
+export function findTruncatedReadDeny(
+	parts: string[],
+): HookDecision | undefined {
+	if (!parts.some(startsWithTruncator)) return undefined;
+
+	return toDecision(
+		parts.map((part) => matchPrefix(UNTRUNCATABLE_READS, part)).find(Boolean),
+		parts
+			.map((part) => matchPrefix(APPROVAL_GATED_COMMANDS, part))
+			.find(Boolean),
+	);
+}
+
+export function findTruncatedReadDenyRaw(
+	rawCommand: string,
+): HookDecision | undefined {
+	if (!startsWithTruncator(rawCommand) && !PIPED_TRUNCATOR_RE.test(rawCommand))
+		return undefined;
+
+	return toDecision(
+		matchPrefix(UNTRUNCATABLE_READS, rawCommand),
+		matchPrefix(APPROVAL_GATED_COMMANDS, rawCommand),
+	);
 }

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { findTruncatedReadDeny } from "./findTruncatedReadDeny";
+import {
+	findTruncatedReadDeny,
+	findTruncatedReadDenyRaw,
+} from "./findTruncatedReadDeny";
 
 describe("findTruncatedReadDeny", () => {
 	it("denies backlog show piped to head", () => {
@@ -37,7 +40,7 @@ describe("findTruncatedReadDeny", () => {
 
 	it("denies a raw command that could not be split into parts", () => {
 		expect(
-			findTruncatedReadDeny(["assist backlog view a930 2>&1 | head -60"])
+			findTruncatedReadDenyRaw("assist backlog view a930 2>&1 | head -60")
 				?.permissionDecision,
 		).toBe("deny");
 	});
@@ -110,8 +113,33 @@ describe("findTruncatedReadDeny", () => {
 
 	it("denies an approval-gated command in a raw unsplit command", () => {
 		expect(
-			findTruncatedReadDeny([
+			findTruncatedReadDenyRaw(
 				"assist github issue create --title x --body y 2>&1 | tail -20",
+			)?.permissionDecision,
+		).toBe("deny");
+	});
+
+	it("allows a gated command whose argument text only quotes a pipe to a truncator", () => {
+		expect(
+			findTruncatedReadDeny([
+				"assist backlog comment a972 denied when piped as | tail -20",
+			]),
+		).toBeUndefined();
+	});
+
+	it("allows a gated body that documents piping through head", () => {
+		expect(
+			findTruncatedReadDeny([
+				"assist github issue create --title x --body repro: run it | head -5",
+			]),
+		).toBeUndefined();
+	});
+
+	it("still denies a gated command truncated by a real pipe alongside such body text", () => {
+		expect(
+			findTruncatedReadDeny([
+				"assist backlog comment a972 mentions | tail -20 in the body",
+				"tail -20",
 			])?.permissionDecision,
 		).toBe("deny");
 	});
