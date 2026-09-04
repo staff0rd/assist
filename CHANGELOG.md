@@ -1,3 +1,10 @@
+# [0.621.0](https://github.com/staff0rd/assist/compare/v0.620.0...v0.621.0) (2026-09-04)
+
+
+### Features
+
+* clean --timestamps for md output ([6671a59](https://github.com/staff0rd/assist/commit/6671a597aca719d4cd3e509769bb12d7abc03324))
+
 # [0.620.0](https://github.com/staff0rd/assist/compare/v0.619.0...v0.620.0) (2026-09-04)
 
 
