@@ -110,6 +110,6 @@
 			"Read(~/.assist/pr-comments/**)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
-		"deny": ["Bash(npm run:*)", "Read(~/.assist/restricted/**)"]
+		"deny": ["Bash(npm run:*)"]
 	}
 }
