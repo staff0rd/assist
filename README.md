@@ -346,7 +346,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 ### Transcripts and voice
 
 - `assist transcript configure` - Configure transcript directories
-- `assist transcript clean <path>` - Clean any .vtt file and write the result to stdout (`--format <md|vtt>`, default `md`). Markdown chat log: `assist transcript clean ./raw.vtt > clean.md`; cleaned WebVTT with timings preserved: `assist transcript clean ./raw.vtt --format vtt > fixed.vtt`
+- `assist transcript clean <path>` - Clean any .vtt file and write the result to stdout (`--format <md|vtt>`, default `md`). Markdown chat log: `assist transcript clean ./raw.vtt > clean.md`; cleaned WebVTT with timings preserved: `assist transcript clean ./raw.vtt --format vtt > fixed.vtt`. `--timestamps` prefixes each markdown speaker turn with `[hh:mm:ss]`, so passages can be cited as ranges for `merge --select`: `assist transcript clean ./raw.vtt --format md --timestamps`
 - `assist transcript list` - List raw .vtt filenames waiting in the pick-up directory
 - `assist transcript merge <path...>` - Collapse several .vtt files into one transcript with `NOTE` provenance, rebasing cue times onto a continuous timeline (`--out <path>` to write a file instead of stdout): `assist transcript merge ./a.vtt ./b.vtt --out ./refinement.vtt`. `--select <file|->` takes keep/removed JSON (`-` reads it from stdin) naming the ranges to keep, so only those passages survive and the dropped ones are counted in the header: `assist transcript merge ./a.vtt ./b.vtt --select ./selection.json`
 - `assist transcript move <file>` - Convert a raw .vtt to a dated markdown transcript and archive the original

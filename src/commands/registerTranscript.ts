@@ -8,11 +8,13 @@ import {
 	move as transcriptMove,
 } from "./transcript";
 import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
+import { transcriptWorkflowHelp } from "./transcript/transcriptWorkflowHelp";
 
 export function registerTranscript(program: Command): void {
 	const transcriptCommand = program
 		.command("transcript")
-		.description("Meeting transcript utilities");
+		.description("Meeting transcript utilities")
+		.addHelpText("after", () => transcriptWorkflowHelp());
 
 	configHelp(transcriptCommand, transcriptConfigHelp);
 
@@ -30,6 +32,10 @@ export function registerTranscript(program: Command): void {
 		.command("clean <path>")
 		.description("Clean any .vtt file and write the result to stdout")
 		.option("--format <md|vtt>", "output format", "md")
+		.option(
+			"--timestamps",
+			"prefix each speaker turn with its start time (--format md only)",
+		)
 		.action(transcriptClean);
 
 	transcriptCommand

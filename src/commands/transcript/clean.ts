@@ -10,16 +10,21 @@ type CleanFormat = (typeof FORMATS)[number];
 
 type CleanOptions = {
 	format?: string;
+	timestamps?: boolean;
 };
 
 function isCleanFormat(value: string): value is CleanFormat {
 	return (FORMATS as readonly string[]).includes(value);
 }
 
-function serialise(cues: VttCue[], format: CleanFormat): string {
+function serialise(
+	cues: VttCue[],
+	format: CleanFormat,
+	timestamps: boolean,
+): string {
 	return format === "vtt"
 		? formatVtt(cues)
-		: formatChatLog(cuesToChatMessages(cues));
+		: formatChatLog(cuesToChatMessages(cues), { timestamps });
 }
 
 export function clean(file: string, options: CleanOptions = {}): void {
@@ -27,6 +32,14 @@ export function clean(file: string, options: CleanOptions = {}): void {
 	if (!isCleanFormat(format)) {
 		console.error(
 			`Error: --format must be one of: ${FORMATS.join(", ")} (got: ${format})`,
+		);
+		process.exit(1);
+	}
+
+	const timestamps = options.timestamps ?? false;
+	if (timestamps && format !== "md") {
+		console.error(
+			`Error: --timestamps applies only to --format md (got: ${format})`,
 		);
 		process.exit(1);
 	}
@@ -42,5 +55,5 @@ export function clean(file: string, options: CleanOptions = {}): void {
 		process.exit(1);
 	}
 
-	console.log(serialise(cues, format));
+	console.log(serialise(cues, format, timestamps));
 }

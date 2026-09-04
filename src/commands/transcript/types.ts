@@ -14,6 +14,7 @@ export type VttPassage = {
 export type ChatMessage = {
 	speaker: string;
 	text: string;
+	startMs: number;
 };
 
 export type VttSource = {

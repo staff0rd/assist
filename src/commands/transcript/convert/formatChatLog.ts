@@ -1,5 +1,10 @@
 import type { ChatMessage, VttCue } from "../types";
+import { formatClock } from "./formatTimestamp";
 import { cleanText } from "./parseVtt";
+
+type ChatLogOptions = {
+	timestamps?: boolean;
+};
 
 export function cuesToChatMessages(cues: VttCue[]): ChatMessage[] {
 	const messages: ChatMessage[] = [];
@@ -11,7 +16,7 @@ export function cuesToChatMessages(cues: VttCue[]): ChatMessage[] {
 		if (lastMessage && lastMessage.speaker === speaker) {
 			lastMessage.text += ` ${cue.text}`;
 		} else {
-			messages.push({ speaker, text: cue.text });
+			messages.push({ speaker, text: cue.text, startMs: cue.startMs });
 		}
 	}
 
@@ -21,6 +26,14 @@ export function cuesToChatMessages(cues: VttCue[]): ChatMessage[] {
 	}));
 }
 
-export function formatChatLog(messages: ChatMessage[]): string {
-	return messages.map((msg) => `${msg.speaker}: ${msg.text}`).join("\n\n");
+export function formatChatLog(
+	messages: ChatMessage[],
+	options: ChatLogOptions = {},
+): string {
+	return messages
+		.map((msg) => {
+			const prefix = options.timestamps ? `[${formatClock(msg.startMs)}] ` : "";
+			return `${prefix}${msg.speaker}: ${msg.text}`;
+		})
+		.join("\n\n");
 }
