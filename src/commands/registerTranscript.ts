@@ -38,6 +38,10 @@ export function registerTranscript(program: Command): void {
 			"Collapse several .vtt files into one transcript with NOTE provenance",
 		)
 		.option("--out <path>", "write the merged transcript to this path")
+		.option(
+			"--select <file|->",
+			"keep/removed JSON naming the passages to keep (- for stdin)",
+		)
 		.action(transcriptMerge);
 
 	transcriptCommand

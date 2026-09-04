@@ -15,3 +15,9 @@ export type ChatMessage = {
 	speaker: string;
 	text: string;
 };
+
+export type VttSource = {
+	path: string;
+	name: string;
+	cues: VttCue[];
+};

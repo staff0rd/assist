@@ -1,60 +1,54 @@
 import { existsSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
+import { readJsonPayload } from "../backlog/readJsonPayload";
 import { formatVttPassages } from "./convert/formatVtt";
 import { readCleanedCues } from "./convert/readCleanedCues";
-import type { VttCue, VttPassage } from "./types";
+import { failTranscript } from "./failTranscript";
+import { headerNotes } from "./headerNotes";
+import { rebasePassages } from "./rebasePassages";
+import { selectPassages } from "./selectPassages";
+import { type Selection, selectionSchema } from "./selectionSchema";
+import type { VttPassage, VttSource } from "./types";
 
 type MergeOptions = {
 	out?: string;
+	select?: string;
 };
 
-const JOIN_GAP_MS = 1000;
-
-function fail(message: string): never {
-	console.error(`Error: ${message}`);
-	process.exit(1);
-}
-
-function readSource(file: string): VttPassage {
-	if (!existsSync(file)) fail(`VTT file not found: ${file}`);
+function readSource(file: string): VttSource {
+	if (!existsSync(file)) failTranscript(`VTT file not found: ${file}`);
 	const cues = readCleanedCues(file);
-	if (cues.length === 0) fail(`no cues found in: ${file}`);
-	return { source: basename(file), sourceStartMs: cues[0].startMs, cues };
+	if (cues.length === 0) failTranscript(`no cues found in: ${file}`);
+	return { path: file, name: basename(file), cues };
 }
 
-function shift(cues: VttCue[], offsetMs: number): VttCue[] {
-	return cues.map((cue) => ({
-		...cue,
-		startMs: cue.startMs + offsetMs,
-		endMs: cue.endMs + offsetMs,
+function wholePassages(sources: VttSource[]): VttPassage[] {
+	return sources.map((source) => ({
+		source: source.name,
+		sourceStartMs: source.cues[0].startMs,
+		cues: source.cues,
 	}));
 }
 
-function lastEndMs(cues: VttCue[]): number {
-	return Math.max(...cues.map((cue) => cue.endMs));
+async function readSelection(
+	source: string | undefined,
+): Promise<Selection | undefined> {
+	if (!source) return undefined;
+	return readJsonPayload(source, selectionSchema, "transcript selection");
 }
 
-function rebase(passages: VttPassage[]): VttPassage[] {
-	let cursorMs = 0;
-	return passages.map((passage) => {
-		const cues = shift(passage.cues, cursorMs - passage.sourceStartMs);
-		cursorMs = lastEndMs(cues) + JOIN_GAP_MS;
-		return { ...passage, cues };
-	});
-}
-
-function headerNotes(sources: string[]): string[] {
-	return [
-		`Collapsed ${new Date().toISOString().slice(0, 10)} from:`,
-		...sources.map((source) => `  ${source}`),
-	];
-}
-
-export function merge(files: string[], options: MergeOptions = {}): void {
-	const passages = rebase(files.map(readSource));
+export async function merge(
+	files: string[],
+	options: MergeOptions = {},
+): Promise<void> {
+	const sources = files.map(readSource);
+	const selection = await readSelection(options.select);
+	const passages = rebasePassages(
+		selection ? selectPassages(sources, selection) : wholePassages(sources),
+	);
 	const document = formatVttPassages(
 		passages,
-		headerNotes(files.map((file) => basename(file))),
+		headerNotes(sources, selection?.removed ?? []),
 	);
 
 	if (!options.out) {
