@@ -1,3 +1,10 @@
+## [0.618.1](https://github.com/staff0rd/assist/compare/v0.618.0...v0.618.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* drop settings read deny rule ([606d202](https://github.com/staff0rd/assist/commit/606d20238b118b342b6516dbb48785ac4af889b9))
+
 # [0.618.0](https://github.com/staff0rd/assist/compare/v0.617.0...v0.618.0) (2026-09-04)
 
 
