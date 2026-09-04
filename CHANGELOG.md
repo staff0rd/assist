@@ -1,3 +1,10 @@
+# [0.620.0](https://github.com/staff0rd/assist/compare/v0.619.0...v0.620.0) (2026-09-04)
+
+
+### Features
+
+* transcript merge --select ranges ([7ad8791](https://github.com/staff0rd/assist/commit/7ad879106751dfef78271160df9ea122d8c69bc9))
+
 # [0.619.0](https://github.com/staff0rd/assist/compare/v0.618.1...v0.619.0) (2026-09-04)
 
 
