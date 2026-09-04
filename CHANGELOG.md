@@ -1,3 +1,10 @@
+# [0.619.0](https://github.com/staff0rd/assist/compare/v0.618.1...v0.619.0) (2026-09-04)
+
+
+### Features
+
+* transcript merge with NOTE provenance ([161c2d2](https://github.com/staff0rd/assist/commit/161c2d2c34077b514c620c43d628d94ac23bad09))
+
 ## [0.618.1](https://github.com/staff0rd/assist/compare/v0.618.0...v0.618.1) (2026-09-04)
 
 
