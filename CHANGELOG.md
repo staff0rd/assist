@@ -1,3 +1,10 @@
+# [0.618.0](https://github.com/staff0rd/assist/compare/v0.617.0...v0.618.0) (2026-09-04)
+
+
+### Features
+
+* deny restricted paths on read tools ([dfa635f](https://github.com/staff0rd/assist/commit/dfa635f4778388287cac63f9ca50f599f59e7302))
+
 # [0.617.0](https://github.com/staff0rd/assist/compare/v0.616.3...v0.617.0) (2026-09-04)
 
 
