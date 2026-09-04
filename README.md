@@ -254,7 +254,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 
 ### Hooks
 
-- `assist cli-hook` - PreToolUse hook auto-approving CLI commands from `allowed.cli-reads` / `allowed.cli-writes` (plus read-only `gh api`), checking each sub-command of a compound command independently
+- `assist cli-hook` - PreToolUse hook auto-approving CLI commands from `allowed.cli-reads` / `allowed.cli-writes` (plus read-only `gh api`), checking each sub-command of a compound command independently; also denies `Read`/`Grep`/`Glob` calls targeting `~/.assist/restricted`
 - `assist cli-hook add <cli>` - Discover a CLI's commands and auto-permit read-only ones
 - `assist cli-hook check <command> [--tool <tool>]` - Check whether a command would be auto-approved
 - `assist cli-hook deny` - List all deny rules

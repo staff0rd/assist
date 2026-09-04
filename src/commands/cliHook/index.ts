@@ -1,39 +1,18 @@
 import { basename } from "node:path";
 import { readStdin } from "../../lib/readStdin";
 import { decideCommand } from "./decideCommand";
+import { findRestrictedPathDeny } from "./findRestrictedPathDeny";
 import { logDeniedToolCall } from "./logDeniedToolCall";
-
-type HookInput = {
-	hook_event_name: string;
-	tool_name: string;
-	tool_input: {
-		command?: string;
-	};
-};
-
-const SUPPORTED_TOOLS = new Set(["Bash", "PowerShell"]);
-
-function tryParseInput(
-	raw: string,
-): { toolName: string; command: string } | undefined {
-	try {
-		const data: HookInput = JSON.parse(raw);
-		if (!SUPPORTED_TOOLS.has(data.tool_name) || !data.tool_input?.command)
-			return undefined;
-		return {
-			toolName: data.tool_name,
-			command: data.tool_input.command.trim(),
-		};
-	} catch {
-		return undefined;
-	}
-}
+import { tryParseInput } from "./tryParseInput";
 
 export async function cliHook(): Promise<void> {
 	const input = tryParseInput(await readStdin());
 	if (!input) return;
 
-	const decision = decideCommand(input.toolName, input.command);
+	const decision =
+		input.kind === "command"
+			? decideCommand(input.toolName, input.command)
+			: findRestrictedPathDeny(input.paths);
 	if (!decision) return;
 
 	console.log(

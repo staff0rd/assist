@@ -367,3 +367,108 @@ describe("cliHook deny logging", () => {
 		consoleSpy.mockRestore();
 	});
 });
+
+describe("cliHook restricted path tools", () => {
+	const restrictedDir = "~/.assist/restricted";
+
+	function makeToolInput(toolName: string, toolInput: Record<string, unknown>) {
+		return JSON.stringify({
+			hook_event_name: "PreToolUse",
+			tool_name: toolName,
+			tool_input: toolInput,
+		});
+	}
+
+	function expectRestrictedDeny(consoleSpy: ReturnType<typeof vi.spyOn>) {
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining('"permissionDecision":"deny"'),
+		);
+		expect(consoleSpy).toHaveBeenCalledWith(
+			expect.stringContaining(".assist/restricted"),
+		);
+	}
+
+	it.each([
+		["Read", { file_path: "/home/stafford/.assist/restricted/notes.md" }],
+		["Grep", { pattern: "secret", path: restrictedDir }],
+		["Grep", { pattern: "$HOME/.assist/restricted/notes.md" }],
+		["Glob", { pattern: ".assist/restricted/**" }],
+		["Glob", { pattern: "**/*.md", path: restrictedDir }],
+	])("denies %s targeting the restricted directory", async (tool, input) => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeToolInput(tool, input));
+
+		await cliHook();
+
+		expectRestrictedDeny(consoleSpy);
+		consoleSpy.mockRestore();
+	});
+
+	it("logs a denied Read with the offending path", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeToolInput("Read", {
+				file_path: "/home/stafford/.assist/restricted/notes.md",
+			}),
+		);
+
+		await cliHook();
+
+		expect(mockLogDeniedToolCall).toHaveBeenCalledWith(
+			expect.objectContaining({
+				tool: "Read",
+				command: "/home/stafford/.assist/restricted/notes.md",
+			}),
+		);
+		consoleSpy.mockRestore();
+	});
+
+	it.each([
+		["Read", { file_path: "src/index.ts" }],
+		["Grep", { pattern: "restricted", path: "src" }],
+		["Glob", { pattern: "src/**/*.ts" }],
+	])(
+		"stays silent for %s outside the restricted directory",
+		async (tool, input) => {
+			const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+			mockReadStdin.mockResolvedValue(makeToolInput(tool, input));
+
+			await cliHook();
+
+			expect(consoleSpy).not.toHaveBeenCalled();
+			consoleSpy.mockRestore();
+		},
+	);
+
+	it("stays silent for a path tool carrying no path fields", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeToolInput("Read", { offset: 10 }));
+
+		await cliHook();
+
+		expect(consoleSpy).not.toHaveBeenCalled();
+		consoleSpy.mockRestore();
+	});
+
+	it("stays silent for an unsupported tool naming the restricted directory", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(
+			makeToolInput("WebFetch", { url: restrictedDir }),
+		);
+
+		await cliHook();
+
+		expect(consoleSpy).not.toHaveBeenCalled();
+		consoleSpy.mockRestore();
+	});
+
+	it("denies a Bash command targeting the restricted directory", async () => {
+		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		mockReadStdin.mockResolvedValue(makeInput(`cat ${restrictedDir}/notes.md`));
+
+		await cliHook();
+
+		expectRestrictedDeny(consoleSpy);
+		consoleSpy.mockRestore();
+	});
+});

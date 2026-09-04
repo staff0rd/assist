@@ -22,6 +22,10 @@
 				"hooks": [{ "type": "command", "command": "assist cli-hook" }]
 			},
 			{
+				"matcher": "Read|Grep|Glob",
+				"hooks": [{ "type": "command", "command": "assist cli-hook" }]
+			},
+			{
 				"matcher": "Edit|Write|MultiEdit",
 				"hooks": [{ "type": "command", "command": "assist edit-hook" }]
 			}
