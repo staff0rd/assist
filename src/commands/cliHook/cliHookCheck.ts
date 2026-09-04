@@ -1,6 +1,7 @@
 import { isApprovedRead } from "../../shared/isApprovedRead";
 import { splitCompound } from "../../shared/splitCompound";
 import { findBuiltinDenyRaw } from "./findBuiltinDeny";
+import { findRestrictedPathDenyRaw } from "./findRestrictedPathDeny";
 import { findTruncatedReadDenyRaw } from "./findTruncatedReadDeny";
 import { findDeny } from "./resolvePermission";
 
@@ -21,6 +22,7 @@ export function cliHookCheck(command: string, toolName = "Bash"): void {
 	const result = splitCompound(trimmed);
 
 	if (!result.ok) {
+		if (reportDecision(findRestrictedPathDenyRaw(trimmed))) return;
 		if (reportDecision(findBuiltinDenyRaw(trimmed))) return;
 		if (reportDecision(findTruncatedReadDenyRaw(trimmed))) return;
 		if (reportDeny(toolName, [trimmed])) return;

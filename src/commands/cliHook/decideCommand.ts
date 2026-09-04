@@ -1,5 +1,6 @@
 import { splitCompound } from "../../shared/splitCompound";
 import { findBuiltinDenyRaw } from "./findBuiltinDeny";
+import { findRestrictedPathDenyRaw } from "./findRestrictedPathDeny";
 import { findTruncatedReadDenyRaw } from "./findTruncatedReadDeny";
 import {
 	findDeny,
@@ -14,6 +15,7 @@ export function decideCommand(
 	const result = splitCompound(rawCommand);
 	if (result.ok) return resolvePermission(toolName, result.parts);
 	return (
+		findRestrictedPathDenyRaw(rawCommand) ??
 		findBuiltinDenyRaw(rawCommand) ??
 		findTruncatedReadDenyRaw(rawCommand) ??
 		findDeny(toolName, [rawCommand])

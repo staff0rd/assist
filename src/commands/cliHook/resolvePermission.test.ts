@@ -113,3 +113,32 @@ describe("built-in git commit deny", () => {
 		expect(findDeny("Bash", ['assist commit "fix: x"'])).toBeUndefined();
 	});
 });
+
+describe("restricted directory deny", () => {
+	it("denies a read of the restricted directory", () => {
+		const decision = findDeny("Bash", ["cat ~/.assist/restricted/notes.md"]);
+
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(".assist/restricted");
+	});
+
+	it("applies even when settings would allow the command", () => {
+		mockIsApprovedRead.mockReturnValue("Allowed by settings: Bash(cat:*)");
+
+		const decision = resolvePermission("Bash", [
+			"cat ~/.assist/restricted/notes.md",
+		]);
+
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("applies even when the read binary is an allowed cli-read", () => {
+		mockIsApprovedRead.mockReturnValue("Read-only CLI command: ls");
+
+		const decision = resolvePermission("Bash", [
+			"ls -la /home/stafford/.assist/restricted/",
+		]);
+
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+});
