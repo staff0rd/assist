@@ -12,8 +12,17 @@ describe("findTruncatedReadDeny", () => {
 		]);
 
 		expect(decision?.permissionDecision).toBe("deny");
-		expect(decision?.permissionDecisionReason).toContain(
-			"assist backlog comments",
+		expect(decision?.permissionDecisionReason).toBe(
+			"Do not pipe 'assist backlog show' through head or tail. Plan, Activity and Comments print at the end of the output, so a truncated read drops them and leaves you assuming the item has none. Run 'assist backlog show <id>' bare and read all of it, or use a focused view: 'assist backlog comments <id>' for comments only.",
+		);
+	});
+
+	it("names the view alias in its reason", () => {
+		expect(
+			findTruncatedReadDeny(["assist backlog view a930", "head -60"])
+				?.permissionDecisionReason,
+		).toBe(
+			"Do not pipe 'assist backlog view' through head or tail. Plan, Activity and Comments print at the end of the output, so a truncated read drops them and leaves you assuming the item has none. Run 'assist backlog view <id>' bare and read all of it, or use a focused view: 'assist backlog comments <id>' for comments only.",
 		);
 	});
 
@@ -77,6 +86,37 @@ describe("findTruncatedReadDeny", () => {
 		).toBeUndefined();
 	});
 
+	it("denies prs list-comments piped to head", () => {
+		const decision = findTruncatedReadDeny([
+			"assist prs list-comments",
+			"head -60",
+		]);
+
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toBe(
+			"Do not pipe 'assist prs list-comments' through head or tail. Every unresolved thread prints in full above the resolved index, with its author, path:line, id, url and body, so a truncated read leaves you the one-line resolved index instead of the threads. Run 'assist prs list-comments' bare and read all of it — do not read or parse the YAML cache; fixed, wontfix and reply locate it themselves.",
+		);
+	});
+
+	it("denies prs list-comments piped to tail", () => {
+		const decision = findTruncatedReadDeny([
+			"assist prs list-comments 12",
+			"tail -20",
+		]);
+
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"assist prs list-comments",
+		);
+		expect(decision?.permissionDecisionReason).toContain(
+			"do not read or parse the YAML cache",
+		);
+	});
+
+	it("allows a bare prs list-comments", () => {
+		expect(findTruncatedReadDeny(["assist prs list-comments"])).toBeUndefined();
+	});
+
 	it("does not match a command that merely mentions the read as an argument", () => {
 		expect(
 			findTruncatedReadDeny(["echo assist backlog show a930", "head -5"]),
@@ -112,6 +152,15 @@ describe("findTruncatedReadDeny", () => {
 		expect(decision?.permissionDecisionReason).toContain(named);
 		expect(decision?.permissionDecisionReason).toContain(
 			"print at the end of the output",
+		);
+	});
+
+	it("keeps the shared approval-gated reason", () => {
+		expect(
+			findTruncatedReadDeny(["assist prs raise", "tail -20"])
+				?.permissionDecisionReason,
+		).toBe(
+			"Do not pipe 'assist prs raise' through head or tail. It gates on a preview the reviewer can reject with inline comments, and those comments print at the end of the output. Nothing persists them, so a truncated read discards the reviewer's feedback for good and they have to retype it. Run 'assist prs raise' bare and read all of it.",
 		);
 	});
 
