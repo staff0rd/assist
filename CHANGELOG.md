@@ -1,3 +1,11 @@
+# [0.617.0](https://github.com/staff0rd/assist/compare/v0.616.3...v0.617.0) (2026-09-04)
+
+
+### Features
+
+* deny restricted dir reads ([8f9f9fc](https://github.com/staff0rd/assist/commit/8f9f9fc0bbaa9b46f86763f73f86070a9b5917c6))
+* deny truncating prs list-comments ([2f220e6](https://github.com/staff0rd/assist/commit/2f220e60b19aa71c339fac04ee14a109b7c34b4d))
+
 ## [0.616.3](https://github.com/staff0rd/assist/compare/v0.616.2...v0.616.3) (2026-09-03)
 
 
