@@ -5,6 +5,12 @@ export type VttCue = {
 	text: string;
 };
 
+export type VttPassage = {
+	source: string;
+	sourceStartMs: number;
+	cues: VttCue[];
+};
+
 export type ChatMessage = {
 	speaker: string;
 	text: string;

@@ -1,4 +1,4 @@
-import type { VttCue } from "../types";
+import type { VttCue, VttPassage } from "../types";
 
 function pad(value: number, width: number): string {
 	return String(value).padStart(width, "0");
@@ -18,6 +18,32 @@ function formatCue(cue: VttCue): string {
 	return `${timing}\n${text}`;
 }
 
+function formatClock(ms: number): string {
+	return formatTimestamp(ms).slice(0, 8);
+}
+
+function formatNoteBlock(lines: string[]): string[] {
+	return lines.length ? [lines.map((line) => `NOTE ${line}`).join("\n")] : [];
+}
+
+function formatPassage(passage: VttPassage): string[] {
+	return [
+		`NOTE source: ${passage.source} @ ${formatClock(passage.sourceStartMs)}`,
+		...passage.cues.map(formatCue),
+	];
+}
+
 export function formatVtt(cues: VttCue[]): string {
 	return ["WEBVTT", ...cues.map(formatCue)].join("\n\n");
+}
+
+export function formatVttPassages(
+	passages: VttPassage[],
+	notes: string[] = [],
+): string {
+	return [
+		"WEBVTT",
+		...formatNoteBlock(notes),
+		...passages.flatMap(formatPassage),
+	].join("\n\n");
 }
