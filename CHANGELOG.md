@@ -1,3 +1,10 @@
+## [0.621.1](https://github.com/staff0rd/assist/compare/v0.621.0...v0.621.1) (2026-09-05)
+
+
+### Bug Fixes
+
+* preview pane links navigate on click ([3772aa8](https://github.com/staff0rd/assist/commit/3772aa8f1d66b2538d82991e6bce31b4c4b51cb0))
+
 # [0.621.0](https://github.com/staff0rd/assist/compare/v0.620.0...v0.621.0) (2026-09-04)
 
 
