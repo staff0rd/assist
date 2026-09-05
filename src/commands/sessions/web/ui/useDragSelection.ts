@@ -1,21 +1,14 @@
 import { type MouseEvent as ReactMouseEvent, useRef } from "react";
-import { type Caret, caretFromPoint } from "./caretFromPoint";
 import { startCaret } from "./finishSelection";
+import { linkDragGuard } from "./linkDragGuard";
+import {
+	type DragSelectionHandlers,
+	trackDragSelection,
+} from "./trackDragSelection";
 
-type SelectionElements = { wrapper: HTMLElement; content: HTMLElement };
-
-export function useDragSelection({
-	onStart,
-	onMove,
-	onEnd,
-}: {
-	onStart?: () => void;
-	onMove?: (anchor: Caret, focus: Caret, els: SelectionElements) => void;
-	onEnd: (anchor: Caret, focus: Caret, els: SelectionElements) => void;
-}) {
+export function useDragSelection(handlers: DragSelectionHandlers) {
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
-	const anchorRef = useRef<Caret | null>(null);
 
 	const onMouseDown = (e: ReactMouseEvent) => {
 		const wrapper = wrapperRef.current;
@@ -24,26 +17,16 @@ export function useDragSelection({
 		const anchor = startCaret(wrapper, content, e.clientX, e.clientY);
 		if (!anchor) return;
 
-		e.preventDefault();
-		anchorRef.current = anchor;
-		onStart?.();
+		const guard = linkDragGuard(e.target);
+		if (!guard) e.preventDefault();
 
-		const els = { wrapper, content };
-		const handleMove = (ev: globalThis.MouseEvent) => {
-			const focus = caretFromPoint(ev.clientX, ev.clientY);
-			if (focus && anchorRef.current) onMove?.(anchorRef.current, focus, els);
-		};
-		const handleUp = (ev: globalThis.MouseEvent) => {
-			globalThis.removeEventListener("mousemove", handleMove);
-			globalThis.removeEventListener("mouseup", handleUp);
-			const anchorAtStart = anchorRef.current;
-			anchorRef.current = null;
-			if (!anchorAtStart) return;
-			const focus = caretFromPoint(ev.clientX, ev.clientY) ?? anchorAtStart;
-			onEnd(anchorAtStart, focus, els);
-		};
-		globalThis.addEventListener("mousemove", handleMove);
-		globalThis.addEventListener("mouseup", handleUp);
+		trackDragSelection({
+			anchor,
+			origin: { x: e.clientX, y: e.clientY },
+			els: { wrapper, content },
+			guard,
+			handlers,
+		});
 	};
 
 	return { wrapperRef, contentRef, onMouseDown };
