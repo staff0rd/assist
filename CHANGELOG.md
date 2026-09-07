@@ -1,3 +1,10 @@
+## [0.623.1](https://github.com/staff0rd/assist/compare/v0.623.0...v0.623.1) (2026-09-07)
+
+
+### Bug Fixes
+
+* keep 'damned if I know' intact ([4eb9cbd](https://github.com/staff0rd/assist/commit/4eb9cbd40212dc8a1de6e331e0d9a267b93a1774))
+
 # [0.623.0](https://github.com/staff0rd/assist/compare/v0.622.0...v0.623.0) (2026-09-07)
 
 
