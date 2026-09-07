@@ -17,8 +17,10 @@ export function transcriptWorkflowHelp(): string {
 		"            removal count and each passage's original start survive as NOTE blocks.",
 		"            Add --no-provenance when the merged file leaves for somewhere the source",
 		"            names and cut points should not follow.",
-		"            Add --strip-profanity to delete the profanity that carries nothing —",
-		"            intensifiers, the fuck/the hell after a wh-word, standalone interjections",
-		"            and whole-expletive cues. Load-bearing uses are left for you to judge.",
+		"            Add --widen-audience when the transcript is going to readers who were",
+		"            not in the call: the casual asides pitched at the people who were —",
+		"            intensifiers, emphasis after a wh-word, standalone interjections and",
+		"            cues that are nothing but one — are deleted. Anything carrying meaning",
+		"            is left for you to judge.",
 	].join("\n");
 }

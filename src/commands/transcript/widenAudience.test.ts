@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { stripProfanity } from "./stripProfanity";
-import { stripProfanityFromText } from "./stripProfanityFromText";
+import { widenAudience } from "./widenAudience";
+import { widenAudienceInText } from "./widenAudienceInText";
 import type { VttCue, VttPassage } from "./types";
 
 function cue(startMs: number, text: string): VttCue {
@@ -11,7 +11,7 @@ function passage(cues: VttCue[]): VttPassage {
 	return { source: "a.vtt", sourceStartMs: cues[0].startMs, cues };
 }
 
-describe("stripProfanityFromText", () => {
+describe("widenAudienceInText", () => {
 	describe("when profanity intensifies the word after it", () => {
 		it.each([
 			["that fucking thing", "that thing"],
@@ -20,7 +20,7 @@ describe("stripProfanityFromText", () => {
 			["the damn pipeline fell over", "the pipeline fell over"],
 			["that goddamn migration again", "that migration again"],
 		])("deletes it from %j", (text, expected) => {
-			expect(stripProfanityFromText(text)).toBe(expected);
+			expect(widenAudienceInText(text)).toBe(expected);
 		});
 	});
 
@@ -30,7 +30,7 @@ describe("stripProfanityFromText", () => {
 			["how the hell does that work", "how does that work"],
 			["I know what the fuck happened", "I know what happened"],
 		])("deletes the fuck/the hell from %j", (text, expected) => {
-			expect(stripProfanityFromText(text)).toBe(expected);
+			expect(widenAudienceInText(text)).toBe(expected);
 		});
 	});
 
@@ -44,7 +44,7 @@ describe("stripProfanityFromText", () => {
 			["The build is broken, fuck.", "The build is broken"],
 			["Oh, fucking hell. Try it again", "Try it again"],
 		])("deletes it from %j", (text, expected) => {
-			expect(stripProfanityFromText(text)).toBe(expected);
+			expect(widenAudienceInText(text)).toBe(expected);
 		});
 	});
 
@@ -60,7 +60,7 @@ describe("stripProfanityFromText", () => {
 			"I probably just went, fuck you. I'm using Clerk",
 			"damned if I know what it was doing",
 		])("leaves %j untouched", (text) => {
-			expect(stripProfanityFromText(text)).toBe(text);
+			expect(widenAudienceInText(text)).toBe(text);
 		});
 	});
 
@@ -69,13 +69,13 @@ describe("stripProfanityFromText", () => {
 			"Goddamn it. The token expired again",
 			"Damn it. That was the wrong branch",
 		])("leaves the word after it standing in %j", (text) => {
-			expect(stripProfanityFromText(text)).toBe(text);
+			expect(widenAudienceInText(text)).toBe(text);
 		});
 	});
 
 	describe("when a deletion would leave a gap", () => {
 		it("collapses the doubled space rather than substituting a marker", () => {
-			const stripped = stripProfanityFromText(
+			const stripped = widenAudienceInText(
 				"we fucking shipped the fucking thing",
 			);
 
@@ -85,13 +85,13 @@ describe("stripProfanityFromText", () => {
 		});
 
 		it("leaves no space before the punctuation that follows", () => {
-			expect(stripProfanityFromText("It was, fucking, ridiculous")).toBe(
+			expect(widenAudienceInText("It was, fucking, ridiculous")).toBe(
 				"It was, ridiculous",
 			);
 		});
 
 		it("drops the comma left stranded at the end", () => {
-			expect(stripProfanityFromText("So we reverted it, shit.")).toBe(
+			expect(widenAudienceInText("So we reverted it, shit.")).toBe(
 				"So we reverted it",
 			);
 		});
@@ -101,15 +101,15 @@ describe("stripProfanityFromText", () => {
 		it("returns it byte-identical", () => {
 			const text = "So the coach screen  is slow, and the sync is worse,";
 
-			expect(stripProfanityFromText(text)).toBe(text);
+			expect(widenAudienceInText(text)).toBe(text);
 		});
 	});
 });
 
-describe("stripProfanity", () => {
+describe("widenAudience", () => {
 	describe("when a cue is nothing but an expletive", () => {
 		it("drops the cue and keeps the rest", () => {
-			const [stripped] = stripProfanity([
+			const [stripped] = widenAudience([
 				passage([
 					cue(0, "Morning all"),
 					cue(3000, "Fuck."),
@@ -124,7 +124,7 @@ describe("stripProfanity", () => {
 		});
 
 		it("moves the passage's source start onto the first surviving cue", () => {
-			const [stripped] = stripProfanity([
+			const [stripped] = widenAudience([
 				passage([cue(0, "Oh, shit!"), cue(3000, "Right")]),
 			]);
 
@@ -134,13 +134,13 @@ describe("stripProfanity", () => {
 
 	describe("when nothing in a passage survives", () => {
 		it("drops the passage", () => {
-			expect(stripProfanity([passage([cue(0, "Fuck.")])])).toEqual([]);
+			expect(widenAudience([passage([cue(0, "Fuck.")])])).toEqual([]);
 		});
 	});
 
 	describe("when a cue keeps its text", () => {
 		it("leaves its timing and speaker alone", () => {
-			const [stripped] = stripProfanity([
+			const [stripped] = widenAudience([
 				passage([cue(4000, "That fucking coach screen")]),
 			]);
 

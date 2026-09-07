@@ -8,14 +8,14 @@ import { headerNotes } from "./headerNotes";
 import { rebasePassages } from "./rebasePassages";
 import { selectPassages } from "./selectPassages";
 import { type Selection, selectionSchema } from "./selectionSchema";
-import { stripProfanity } from "./stripProfanity";
+import { widenAudience } from "./widenAudience";
 import type { VttPassage, VttSource } from "./types";
 
 type MergeOptions = {
 	out?: string;
 	select?: string;
 	provenance?: boolean;
-	stripProfanity?: boolean;
+	widenAudience?: boolean;
 };
 
 function readSource(file: string): VttSource {
@@ -50,7 +50,7 @@ export async function merge(
 		? selectPassages(sources, selection)
 		: wholePassages(sources);
 	const passages = rebasePassages(
-		options.stripProfanity ? stripProfanity(selected) : selected,
+		options.widenAudience ? widenAudience(selected) : selected,
 	);
 	const provenance = options.provenance !== false;
 	const document = formatVttPassages(

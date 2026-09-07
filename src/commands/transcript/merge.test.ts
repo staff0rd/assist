@@ -352,9 +352,9 @@ describe("merge", () => {
 		});
 	});
 
-	describe("when profanity stripping is turned on", () => {
-		it("deletes the removable profanity and drops the whole-expletive cue", async () => {
-			await merge(["./raw/c.vtt"], { stripProfanity: true, provenance: false });
+	describe("when the audience is widened", () => {
+		it("deletes the removable asides and drops the cue that is nothing but one", async () => {
+			await merge(["./raw/c.vtt"], { widenAudience: true, provenance: false });
 
 			expect(logOutput.join("")).toBe(
 				[
@@ -370,7 +370,7 @@ describe("merge", () => {
 		});
 
 		it("keeps the cue times increasing across the dropped cue", async () => {
-			await merge(["./raw/c.vtt", "./raw/b.vtt"], { stripProfanity: true });
+			await merge(["./raw/c.vtt", "./raw/b.vtt"], { widenAudience: true });
 
 			const starts = startTimes(logOutput.join(""));
 
@@ -380,7 +380,7 @@ describe("merge", () => {
 		});
 	});
 
-	describe("when profanity stripping is left off", () => {
+	describe("when the audience is left alone", () => {
 		it("writes every cue through as it stands", async () => {
 			await merge(["./raw/c.vtt"]);
 

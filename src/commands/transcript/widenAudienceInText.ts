@@ -16,7 +16,7 @@ function tidy(text: string): string {
 		.replace(/[\s,;:]+$/, "");
 }
 
-export function stripProfanityFromText(text: string): string {
+export function widenAudienceInText(text: string): string {
 	const stripped = text
 		.replace(INTERJECTION, " ")
 		.replace(WH_EMPHASIS, "$1")

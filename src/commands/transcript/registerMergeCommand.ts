@@ -17,8 +17,8 @@ export function registerMergeCommand(cmd: Command): void {
 			"omit every NOTE: the Collapsed-from header, the per-passage source marks and the removed count",
 		)
 		.option(
-			"--strip-profanity",
-			"delete profanity that carries no meaning: intensifiers, the fuck/the hell after a wh-word, standalone interjections and cues that are nothing but an expletive",
+			"--widen-audience",
+			"delete the casual asides that fit the people in the call but not a reader who was not there: intensifiers, emphasis after a wh-word, standalone interjections and cues that are nothing but one",
 		)
 		.action(merge);
 }
