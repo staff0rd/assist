@@ -58,6 +58,7 @@ describe("stripProfanityFromText", () => {
 			"we had telemetry shit and extra debug shit in there",
 			"we don't give a shit, we're making this shit up",
 			"I probably just went, fuck you. I'm using Clerk",
+			"damned if I know what it was doing",
 		])("leaves %j untouched", (text) => {
 			expect(stripProfanityFromText(text)).toBe(text);
 		});
