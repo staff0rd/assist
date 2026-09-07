@@ -4,9 +4,9 @@ import {
 	clean as transcriptClean,
 	configure as transcriptConfigure,
 	list as transcriptList,
-	merge as transcriptMerge,
 	move as transcriptMove,
 } from "./transcript";
+import { registerMergeCommand } from "./transcript/registerMergeCommand";
 import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
 import { transcriptWorkflowHelp } from "./transcript/transcriptWorkflowHelp";
 
@@ -38,21 +38,7 @@ export function registerTranscript(program: Command): void {
 		)
 		.action(transcriptClean);
 
-	transcriptCommand
-		.command("merge <path...>")
-		.description(
-			"Collapse several .vtt files into one transcript with NOTE provenance",
-		)
-		.option("--out <path>", "write the merged transcript to this path")
-		.option(
-			"--select <file|->",
-			"keep/removed JSON naming the passages to keep (- for stdin)",
-		)
-		.option(
-			"--no-provenance",
-			"omit every NOTE: the Collapsed-from header, the per-passage source marks and the removed count",
-		)
-		.action(transcriptMerge);
+	registerMergeCommand(transcriptCommand);
 
 	transcriptCommand
 		.command("move <file>")

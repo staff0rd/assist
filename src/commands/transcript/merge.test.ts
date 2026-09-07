@@ -41,6 +41,17 @@ const SECOND_VTT = `WEBVTT
 00:14:30.000 --> 00:14:33.000
 <v Alice>Right`;
 
+const PROFANE_VTT = `WEBVTT
+
+00:00:01.000 --> 00:00:03.000
+<v Alice>That fucking coach screen is slow
+
+00:00:06.000 --> 00:00:08.000
+<v Bob>Fuck.
+
+00:00:11.000 --> 00:00:13.000
+<v Bob>Fuck it. We'll just say this one's ready`;
+
 type Keep = { file: string; from: string; to: string };
 
 function selectionFile(keep: Keep[], removed: string[] = []): string {
@@ -61,7 +72,11 @@ beforeEach(() => {
 	exitCode = undefined;
 	errorOutput = [];
 	logOutput = [];
-	files = { "./raw/a.vtt": FIRST_VTT, "./raw/b.vtt": SECOND_VTT };
+	files = {
+		"./raw/a.vtt": FIRST_VTT,
+		"./raw/b.vtt": SECOND_VTT,
+		"./raw/c.vtt": PROFANE_VTT,
+	};
 
 	mockExistsSync.mockImplementation((p) => p in files);
 	mockReadFileSync.mockImplementation((p) => files[p] ?? "");
@@ -334,6 +349,45 @@ describe("merge", () => {
 
 			expect(logOutput.join("")).toBe(unflagged);
 			expect(unflagged).toContain("NOTE Collapsed 2026-09-04 from:");
+		});
+	});
+
+	describe("when profanity stripping is turned on", () => {
+		it("deletes the removable profanity and drops the whole-expletive cue", async () => {
+			await merge(["./raw/c.vtt"], { stripProfanity: true, provenance: false });
+
+			expect(logOutput.join("")).toBe(
+				[
+					"WEBVTT",
+					"",
+					"00:00:00.000 --> 00:00:02.000",
+					"<v Alice>That coach screen is slow",
+					"",
+					"00:00:10.000 --> 00:00:12.000",
+					"<v Bob>Fuck it. We'll just say this one's ready",
+				].join("\n"),
+			);
+		});
+
+		it("keeps the cue times increasing across the dropped cue", async () => {
+			await merge(["./raw/c.vtt", "./raw/b.vtt"], { stripProfanity: true });
+
+			const starts = startTimes(logOutput.join(""));
+
+			expect(starts).toHaveLength(4);
+			expect([...starts].sort()).toEqual(starts);
+			expect(new Set(starts).size).toBe(starts.length);
+		});
+	});
+
+	describe("when profanity stripping is left off", () => {
+		it("writes every cue through as it stands", async () => {
+			await merge(["./raw/c.vtt"]);
+
+			expect(logOutput.join("")).toContain(
+				"<v Alice>That fucking coach screen is slow",
+			);
+			expect(logOutput.join("")).toContain("<v Bob>Fuck.");
 		});
 	});
 
