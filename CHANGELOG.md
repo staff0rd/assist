@@ -1,3 +1,10 @@
+# [0.622.0](https://github.com/staff0rd/assist/compare/v0.621.1...v0.622.0) (2026-09-07)
+
+
+### Features
+
+* merge --no-provenance ([68cca3a](https://github.com/staff0rd/assist/commit/68cca3ab055901a7b8594a1be036b804bb5f5769))
+
 ## [0.621.1](https://github.com/staff0rd/assist/compare/v0.621.0...v0.621.1) (2026-09-05)
 
 
