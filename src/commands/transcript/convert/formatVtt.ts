@@ -11,9 +11,13 @@ function formatNoteBlock(lines: string[]): string[] {
 	return lines.length ? [lines.map((line) => `NOTE ${line}`).join("\n")] : [];
 }
 
-function formatPassage(passage: VttPassage): string[] {
+function formatPassage(passage: VttPassage, sourceMarks: boolean): string[] {
 	return [
-		`NOTE source: ${passage.source} @ ${formatClock(passage.sourceStartMs)}`,
+		...(sourceMarks
+			? [
+					`NOTE source: ${passage.source} @ ${formatClock(passage.sourceStartMs)}`,
+				]
+			: []),
 		...passage.cues.map(formatCue),
 	];
 }
@@ -25,10 +29,11 @@ export function formatVtt(cues: VttCue[]): string {
 export function formatVttPassages(
 	passages: VttPassage[],
 	notes: string[] = [],
+	{ sourceMarks = true }: { sourceMarks?: boolean } = {},
 ): string {
 	return [
 		"WEBVTT",
 		...formatNoteBlock(notes),
-		...passages.flatMap(formatPassage),
+		...passages.flatMap((passage) => formatPassage(passage, sourceMarks)),
 	].join("\n\n");
 }

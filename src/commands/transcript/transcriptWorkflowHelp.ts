@@ -15,5 +15,7 @@ export function transcriptWorkflowHelp(): string {
 		"  3. Merge  assist transcript merge ./a.vtt ./b.vtt --select ./selection.json --out ./merged.vtt",
 		"            Cue times are rebased onto one continuous timeline; the sources, the",
 		"            removal count and each passage's original start survive as NOTE blocks.",
+		"            Add --no-provenance when the merged file leaves for somewhere the source",
+		"            names and cut points should not follow.",
 	].join("\n");
 }

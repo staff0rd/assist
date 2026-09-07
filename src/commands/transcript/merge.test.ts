@@ -17,6 +17,7 @@ vi.mock("../backlog/import/readStdinBuffer", () => ({
 	readStdinBuffer: () => mockReadStdinBuffer(),
 }));
 
+import { parseVtt } from "./convert/parseVtt";
 import { merge } from "./merge";
 
 let exitCode: number | undefined;
@@ -269,6 +270,70 @@ describe("merge", () => {
 			await merge(["./raw/a.vtt"], { select });
 
 			expect(logOutput.join("")).not.toContain("removed");
+		});
+	});
+
+	describe("when provenance is turned off", () => {
+		it("writes a WEBVTT document carrying no NOTE at all", async () => {
+			await merge(["./raw/a.vtt", "./raw/b.vtt"], { provenance: false });
+
+			expect(logOutput.join("")).toBe(
+				[
+					"WEBVTT",
+					"",
+					"00:00:00.000 --> 00:00:02.000",
+					"<v Alice>Morning all",
+					"",
+					"00:00:05.000 --> 00:00:07.000",
+					"<v Bob>Morning",
+					"",
+					"00:00:08.000 --> 00:00:11.000",
+					"<v Shannon>So the coach screen",
+					"",
+					"00:00:16.000 --> 00:00:19.000",
+					"<v Alice>Right",
+				].join("\n"),
+			);
+		});
+
+		it("leaves a document that still parses back to every cue", async () => {
+			await merge(["./raw/a.vtt", "./raw/b.vtt"], { provenance: false });
+
+			const document = logOutput.join("");
+
+			expect(document.startsWith("WEBVTT")).toBe(true);
+			expect(parseVtt(document).map((c) => c.text)).toEqual([
+				"Morning all",
+				"Morning",
+				"So the coach screen",
+				"Right",
+			]);
+		});
+
+		it("drops the removed count along with the source names", async () => {
+			const select = selectionFile(
+				[{ file: "a.vtt", from: "00:00:00.000", to: "00:00:09.000" }],
+				["private", "offensive"],
+			);
+
+			await merge(["./raw/a.vtt"], { select, provenance: false });
+
+			expect(logOutput.join("")).not.toContain("NOTE");
+			expect(logOutput.join("")).not.toContain("removed");
+			expect(logOutput.join("")).not.toContain("private");
+		});
+	});
+
+	describe("when provenance is left alone", () => {
+		it("writes the same bytes as an unflagged merge", async () => {
+			await merge(["./raw/a.vtt", "./raw/b.vtt"]);
+			const unflagged = logOutput.join("");
+
+			logOutput = [];
+			await merge(["./raw/a.vtt", "./raw/b.vtt"], { provenance: true });
+
+			expect(logOutput.join("")).toBe(unflagged);
+			expect(unflagged).toContain("NOTE Collapsed 2026-09-04 from:");
 		});
 	});
 

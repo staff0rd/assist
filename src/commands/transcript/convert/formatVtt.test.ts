@@ -119,6 +119,47 @@ describe("formatVttPassages", () => {
 		});
 	});
 
+	describe("when source marks are turned off", () => {
+		it("writes the cues with no NOTE at all", () => {
+			const output = formatVttPassages(
+				[
+					{
+						source: "a.vtt",
+						sourceStartMs: 862_000,
+						cues: [cue({ startMs: 1000, endMs: 3000, text: "First" })],
+					},
+					{
+						source: "b.vtt",
+						sourceStartMs: 3_723_456,
+						cues: [
+							cue({
+								startMs: 4000,
+								endMs: 6000,
+								speaker: "Bob",
+								text: "Second",
+							}),
+						],
+					},
+				],
+				[],
+				{ sourceMarks: false },
+			);
+
+			expect(output).toBe(
+				[
+					"WEBVTT",
+					"",
+					"00:00:01.000 --> 00:00:03.000",
+					"<v Alice>First",
+					"",
+					"00:00:04.000 --> 00:00:06.000",
+					"<v Bob>Second",
+				].join("\n"),
+			);
+			expect(output).not.toContain("NOTE");
+		});
+	});
+
 	describe("when given no notes", () => {
 		it("writes the source marks without a header block", () => {
 			const output = formatVttPassages([

@@ -13,6 +13,7 @@ import type { VttPassage, VttSource } from "./types";
 type MergeOptions = {
 	out?: string;
 	select?: string;
+	provenance?: boolean;
 };
 
 function readSource(file: string): VttSource {
@@ -46,9 +47,11 @@ export async function merge(
 	const passages = rebasePassages(
 		selection ? selectPassages(sources, selection) : wholePassages(sources),
 	);
+	const provenance = options.provenance !== false;
 	const document = formatVttPassages(
 		passages,
-		headerNotes(sources, selection?.removed ?? []),
+		provenance ? headerNotes(sources, selection?.removed ?? []) : [],
+		{ sourceMarks: provenance },
 	);
 
 	if (!options.out) {

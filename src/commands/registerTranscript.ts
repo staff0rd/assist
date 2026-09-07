@@ -48,6 +48,10 @@ export function registerTranscript(program: Command): void {
 			"--select <file|->",
 			"keep/removed JSON naming the passages to keep (- for stdin)",
 		)
+		.option(
+			"--no-provenance",
+			"omit every NOTE: the Collapsed-from header, the per-passage source marks and the removed count",
+		)
 		.action(transcriptMerge);
 
 	transcriptCommand
