@@ -1,3 +1,10 @@
+# [0.623.0](https://github.com/staff0rd/assist/compare/v0.622.0...v0.623.0) (2026-09-07)
+
+
+### Features
+
+* merge --strip-profanity ([9435c4d](https://github.com/staff0rd/assist/commit/9435c4dbbf7d63c8f93e2cab0633dfa5c21b5039))
+
 # [0.622.0](https://github.com/staff0rd/assist/compare/v0.621.1...v0.622.0) (2026-09-07)
 
 
