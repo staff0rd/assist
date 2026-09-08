@@ -150,6 +150,12 @@ const assistConfigShape = {
 				.default({ suppress: [] }),
 		})
 		.optional(),
+	litellm: z
+		.strictObject({
+			baseUrl: z.string().optional(),
+			apiKey: secretConfigValue(z.string()).optional(),
+		})
+		.optional(),
 	ravendb: z
 		.strictObject({
 			connections: z

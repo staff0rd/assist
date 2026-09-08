@@ -10,6 +10,7 @@ import { denyConfigHelp } from "./deny/denyConfigHelp";
 import { devlogConfigHelp } from "./devlog/devlogConfigHelp";
 import { dotnetConfigHelp } from "./dotnet/dotnetConfigHelp";
 import { jiraConfigHelp } from "./jira/jiraConfigHelp";
+import { litellmConfigHelp } from "./litellm/litellmConfigHelp";
 import { mermaidConfigHelp } from "./mermaid/mermaidConfigHelp";
 import { miroConfigHelp } from "./miro/miroConfigHelp";
 import { prsConfigHelp } from "./prs/prsConfigHelp";
@@ -39,6 +40,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...dotnetConfigHelp,
 	...harnessConfigHelp,
 	...jiraConfigHelp,
+	...litellmConfigHelp,
 	...mermaidConfigHelp,
 	...miroConfigHelp,
 	...prsConfigHelp,
