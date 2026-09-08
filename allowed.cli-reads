@@ -41,6 +41,7 @@ assist jira ac
 assist jira auth
 assist jira view
 assist list
+assist litellm list-models
 assist ls
 assist miro extract
 assist news
