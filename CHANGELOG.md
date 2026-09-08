@@ -1,3 +1,10 @@
+# [0.624.0](https://github.com/staff0rd/assist/compare/v0.623.1...v0.624.0) (2026-09-08)
+
+
+### Features
+
+* add litellm list-models ([1e4061f](https://github.com/staff0rd/assist/commit/1e4061fca3ed7cbb3acecb353ee060e315e5f5bf))
+
 ## [0.623.1](https://github.com/staff0rd/assist/compare/v0.623.0...v0.623.1) (2026-09-07)
 
 
