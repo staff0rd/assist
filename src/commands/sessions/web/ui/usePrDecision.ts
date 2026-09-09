@@ -1,10 +1,9 @@
 import { useState } from "react";
 import type { PrPreviewComment } from "../../shared/SessionInfoBase";
 import { clearPersistedComments } from "./PersistedComment";
+import { initialPrChain } from "./initialPrChain";
 import {
 	clearPersistedPrChain,
-	loadPersistedPrChain,
-	prunePersistedPrChains,
 	savePersistedPrChain,
 } from "./loadPersistedPrChain";
 import type { PrDecisionDetails } from "./PrDecisionDetails";
@@ -25,17 +24,9 @@ export function usePrDecision(
 	screenshotMarkdown: () => string[],
 	editedBody: () => string | undefined,
 ) {
-	const [chain, setChain] = useState<PrPreviewChain>(() => {
-		if (!isPr)
-			return { reviewAfter: false, announceAfter: false, draft: false };
-		prunePersistedPrChains();
-		const saved = loadPersistedPrChain(sessionId);
-		return {
-			reviewAfter: saved?.reviewAfter ?? true,
-			announceAfter: saved?.announceAfter ?? true,
-			draft: saved?.draft ?? resolvedDraft,
-		};
-	});
+	const [chain, setChain] = useState<PrPreviewChain>(() =>
+		initialPrChain(isPr, sessionId, resolvedDraft),
+	);
 
 	const chooseChain = (next: PrPreviewChain) => {
 		setChain(next);

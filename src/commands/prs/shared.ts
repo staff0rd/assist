@@ -25,7 +25,7 @@ export function getRepoInfo(): { org: string; repo: string } {
 	return { org: repoInfo.owner.login, repo: repoInfo.name };
 }
 
-function getCurrentBranch(): string {
+export function getCurrentBranch(): string {
 	return execSync("git rev-parse --abbrev-ref HEAD", {
 		encoding: "utf8",
 	}).trim();

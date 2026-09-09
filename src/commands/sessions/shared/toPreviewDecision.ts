@@ -1,18 +1,13 @@
-import type { PreviewDecision, PreviewSelection } from "./PreviewDecision";
-import type { PrPreviewComment } from "./SessionInfoBase";
+import type {
+	PreviewDecision,
+	PreviewDecisionFields,
+	PreviewSelection,
+} from "./PreviewDecision";
 
-export type DecisionMessage = {
+export type DecisionMessage = PreviewDecisionFields & {
 	type?: string;
 	requestId?: string;
 	decision?: string;
-	reason?: string;
-	comments?: PrPreviewComment[];
-	screenshots?: string[];
-	body?: string;
-	reviewAfter?: boolean;
-	announceAfter?: boolean;
-	draft?: boolean;
-	selection?: PreviewSelection;
 	message?: string;
 };
 
@@ -39,6 +34,7 @@ export function toPreviewDecision(
 		reviewAfter: msg.reviewAfter === true,
 		announceAfter: msg.announceAfter === true,
 		draft: typeof msg.draft === "boolean" ? msg.draft : undefined,
+		autoMerge: msg.autoMerge === true,
 		selection: toSelection(msg.selection),
 	};
 }

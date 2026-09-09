@@ -5,8 +5,7 @@ export type PreviewSelection = {
 	bottomRight: string;
 };
 
-export type PreviewDecision = {
-	decision: "approve" | "reject";
+export type PreviewDecisionFields = {
 	reason?: string;
 	comments?: PrPreviewComment[];
 	screenshots?: string[];
@@ -14,5 +13,10 @@ export type PreviewDecision = {
 	reviewAfter?: boolean;
 	announceAfter?: boolean;
 	draft?: boolean;
+	autoMerge?: boolean;
 	selection?: PreviewSelection;
+};
+
+export type PreviewDecision = PreviewDecisionFields & {
+	decision: "approve" | "reject";
 };

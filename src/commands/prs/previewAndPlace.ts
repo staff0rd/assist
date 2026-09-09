@@ -3,6 +3,7 @@ import { awaitPreviewApproval } from "../sessions/shared/awaitPreviewApproval";
 import { appendScreenshots } from "./appendScreenshots";
 import type { CreateOptions } from "./buildCreateArgs";
 import { chainAfterRaise } from "./chainAfterRaise";
+import { enableAutoMerge } from "./enableAutoMerge";
 import { placePr } from "./placePr";
 
 export async function previewAndPlace(args: {
@@ -28,6 +29,8 @@ export async function previewAndPlace(args: {
 			: { ...args.options, draft: decision.draft };
 
 	await placePr(args.prNumber, args.title, body, options);
+
+	if (decision.autoMerge === true) enableAutoMerge();
 
 	await chainAfterRaise(args.prNumber, decision);
 }

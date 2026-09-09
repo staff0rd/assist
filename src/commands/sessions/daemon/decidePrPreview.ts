@@ -24,7 +24,7 @@ export function decidePrPreview(
 		? d.screenshots.length
 		: 0;
 	daemonLog(
-		`pr-decision received: id=${id} requestId=${requestId} decision=${d.decision} comments=${commentCount} screenshots=${screenshotCount} reviewAfter=${d.reviewAfter === true} announceAfter=${d.announceAfter === true} draft=${d.draft}`,
+		`pr-decision received: id=${id} requestId=${requestId} decision=${d.decision} comments=${commentCount} screenshots=${screenshotCount} reviewAfter=${d.reviewAfter === true} announceAfter=${d.announceAfter === true} draft=${d.draft} autoMerge=${d.autoMerge === true}`,
 	);
 	const waiter = waiters.get(id);
 	if (waiter)
@@ -39,6 +39,7 @@ export function decidePrPreview(
 			reviewAfter: d.reviewAfter,
 			announceAfter: d.announceAfter,
 			draft: d.draft,
+			autoMerge: d.autoMerge,
 		});
 	waiters.delete(id);
 	session.pendingPrPreview = undefined;

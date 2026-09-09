@@ -119,6 +119,7 @@ describe("PrPreviewPane inline comments", () => {
 			reviewAfter: false,
 			announceAfter: false,
 			draft: false,
+			autoMerge: false,
 		});
 	});
 
@@ -170,6 +171,7 @@ describe("PrPreviewPane inline comments", () => {
 			reviewAfter: true,
 			announceAfter: true,
 			draft: false,
+			autoMerge: false,
 		});
 
 		fireEvent.click(screen.getByRole("button", { name: "Reject" }));
@@ -179,6 +181,7 @@ describe("PrPreviewPane inline comments", () => {
 			reviewAfter: false,
 			announceAfter: false,
 			draft: false,
+			autoMerge: false,
 		});
 	});
 
@@ -461,6 +464,112 @@ describe("PrPreviewPane inline comments", () => {
 		});
 	});
 
+	describe("Auto-merge toggle", () => {
+		const toggle = (label: string) =>
+			screen.getByLabelText(label) as HTMLInputElement;
+		const autoMerge = () => toggle("Auto-merge (squash)");
+		const approve = () =>
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+
+		const updatePr: PrPreview = { ...preview, prNumber: 42 };
+
+		it("starts unticked on a new PR", () => {
+			render(<PrPreviewPane preview={preview} onDecision={vi.fn()} />);
+
+			expect(autoMerge().checked).toBe(false);
+		});
+
+		it("is offered on an update to an existing PR", () => {
+			render(<PrPreviewPane preview={updatePr} onDecision={vi.fn()} />);
+
+			expect(autoMerge().checked).toBe(false);
+		});
+
+		it("approves with auto-merge once ticked", () => {
+			const onDecision = vi.fn();
+			render(<PrPreviewPane preview={preview} onDecision={onDecision} />);
+
+			fireEvent.click(autoMerge());
+			approve();
+
+			expect(onDecision).toHaveBeenCalledWith(
+				"approve",
+				expect.objectContaining({ autoMerge: true }),
+			);
+		});
+
+		it("unticks Draft when Auto-merge is ticked", () => {
+			render(
+				<PrPreviewPane
+					preview={{ ...preview, draft: true }}
+					onDecision={vi.fn()}
+				/>,
+			);
+			expect(toggle("Draft").checked).toBe(true);
+
+			fireEvent.click(autoMerge());
+
+			expect(toggle("Draft").checked).toBe(false);
+			expect(autoMerge().checked).toBe(true);
+		});
+
+		it("unticks Auto-merge when Draft is ticked", () => {
+			render(<PrPreviewPane preview={preview} onDecision={vi.fn()} />);
+
+			fireEvent.click(autoMerge());
+			fireEvent.click(toggle("Draft"));
+
+			expect(autoMerge().checked).toBe(false);
+			expect(toggle("Draft").checked).toBe(true);
+		});
+
+		it("remembers a tick across a reject and re-raise in the same session", () => {
+			const first = render(
+				<PrPreviewPane preview={preview} sessionId="s1" onDecision={vi.fn()} />,
+			);
+			fireEvent.click(autoMerge());
+			fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+			first.unmount();
+
+			render(
+				<PrPreviewPane
+					preview={{ ...preview, requestId: "r2" }}
+					sessionId="s1"
+					onDecision={vi.fn()}
+				/>,
+			);
+
+			expect(autoMerge().checked).toBe(true);
+		});
+
+		it("stays unticked when a stored chain predates the toggle", () => {
+			localStorage.setItem(
+				"assist:pr-preview-chain:s1",
+				JSON.stringify({
+					savedAt: Date.now() - 60 * 60 * 1000,
+					items: [{ reviewAfter: false, announceAfter: true }],
+				}),
+			);
+
+			render(
+				<PrPreviewPane preview={preview} sessionId="s1" onDecision={vi.fn()} />,
+			);
+
+			expect(autoMerge().checked).toBe(false);
+		});
+
+		it("is absent on a preview that offers no chain", () => {
+			render(
+				<PrPreviewPane
+					preview={{ ...preview, kind: "backlog-item" }}
+					onDecision={vi.fn()}
+				/>,
+			);
+
+			expect(screen.queryByLabelText("Auto-merge (squash)")).toBeNull();
+		});
+	});
+
 	it("restores persisted comments after a remount (page refresh)", () => {
 		const first = render(
 			<PrPreviewPane preview={preview} onDecision={vi.fn()} />,
@@ -639,6 +748,7 @@ describe("PrPreviewPane inline comments", () => {
 			reviewAfter: false,
 			announceAfter: false,
 			draft: false,
+			autoMerge: false,
 		});
 
 		fireEvent.click(screen.getByRole("button", { name: "Approve" }));
@@ -648,6 +758,7 @@ describe("PrPreviewPane inline comments", () => {
 			reviewAfter: true,
 			announceAfter: true,
 			draft: false,
+			autoMerge: false,
 		});
 	});
 
@@ -713,6 +824,7 @@ describe("PrPreviewPane inline comments", () => {
 				reviewAfter: false,
 				announceAfter: false,
 				draft: false,
+				autoMerge: false,
 			});
 		});
 
@@ -786,6 +898,7 @@ describe("PrPreviewPane inline comments", () => {
 				reviewAfter: false,
 				announceAfter: false,
 				draft: false,
+				autoMerge: false,
 			});
 		});
 	});
@@ -840,6 +953,7 @@ describe("PrPreviewPane inline comments", () => {
 				reviewAfter: false,
 				announceAfter: false,
 				draft: false,
+				autoMerge: false,
 			});
 		});
 	});
@@ -881,6 +995,7 @@ describe("PrPreviewPane inline comments", () => {
 				reviewAfter: false,
 				announceAfter: false,
 				draft: false,
+				autoMerge: false,
 			});
 		});
 	});

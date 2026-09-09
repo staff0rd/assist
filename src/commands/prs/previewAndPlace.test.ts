@@ -3,11 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const placePrMock = vi.fn();
 const requestPrDecisionMock = vi.fn();
 const chainAfterRaiseMock = vi.fn();
+const enableAutoMergeMock = vi.fn();
 vi.mock("./placePr", () => ({
 	placePr: (...args: unknown[]) => placePrMock(...args),
 }));
 vi.mock("./chainAfterRaise", () => ({
 	chainAfterRaise: (...args: unknown[]) => chainAfterRaiseMock(...args),
+}));
+vi.mock("./enableAutoMerge", () => ({
+	enableAutoMerge: (...args: unknown[]) => enableAutoMergeMock(...args),
 }));
 vi.mock("../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
@@ -162,6 +166,42 @@ describe("previewAndPlace", () => {
 				null,
 				expect.objectContaining({ reviewAfter: true, announceAfter: true }),
 			);
+		});
+	});
+
+	describe("the reviewer's auto-merge choice", () => {
+		it("enables auto-merge between placing the PR and chaining", async () => {
+			requestPrDecisionMock.mockResolvedValue({
+				decision: "approve",
+				autoMerge: true,
+			});
+			const order: string[] = [];
+			placePrMock.mockImplementationOnce(() => order.push("place"));
+			enableAutoMergeMock.mockImplementationOnce(() => order.push("auto"));
+			chainAfterRaiseMock.mockImplementationOnce(() => order.push("chain"));
+
+			await previewAndPlace(args);
+
+			expect(order).toEqual(["place", "auto", "chain"]);
+		});
+
+		it("leaves auto-merge alone when the reviewer left it unticked", async () => {
+			requestPrDecisionMock.mockResolvedValue({
+				decision: "approve",
+				autoMerge: false,
+			});
+
+			await previewAndPlace(args);
+
+			expect(enableAutoMergeMock).not.toHaveBeenCalled();
+		});
+
+		it("leaves auto-merge alone when the decision carries no autoMerge field", async () => {
+			requestPrDecisionMock.mockResolvedValue({ decision: "approve" });
+
+			await previewAndPlace(args);
+
+			expect(enableAutoMergeMock).not.toHaveBeenCalled();
 		});
 	});
 });

@@ -15,6 +15,7 @@ export function previewDecisionDetails(
 		reviewAfter: approved && chain.reviewAfter,
 		announceAfter: approved && chain.announceAfter,
 		draft: chain.draft,
+		autoMerge: approved && chain.autoMerge,
 		...(body === undefined ? {} : { body }),
 	};
 }

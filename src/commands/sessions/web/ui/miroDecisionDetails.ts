@@ -10,6 +10,7 @@ export function miroDecisionDetails(
 		reviewAfter: false,
 		announceAfter: false,
 		draft: false,
+		autoMerge: false,
 		...(selection ? { selection } : {}),
 	};
 }

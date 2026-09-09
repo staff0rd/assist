@@ -87,6 +87,7 @@ describe("MiroBoardPane", () => {
 			reviewAfter: false,
 			announceAfter: false,
 			draft: false,
+			autoMerge: false,
 			selection: { topLeft: "a", bottomRight: "c" },
 		});
 	});
@@ -129,6 +130,7 @@ describe("MiroBoardPane", () => {
 			reviewAfter: false,
 			announceAfter: false,
 			draft: false,
+			autoMerge: false,
 		});
 	});
 
