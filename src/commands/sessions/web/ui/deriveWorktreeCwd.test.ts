@@ -59,7 +59,7 @@ describe("deriveWorktreeCwd", () => {
 		);
 	});
 
-	it("returns the selection for a card that is not a worktree", () => {
+	it("returns the clone for a card that runs in it", () => {
 		expect(deriveWorktreeCwd("plain", sessions, history, "/repos/live")).toBe(
 			"/repos/live",
 		);
@@ -71,10 +71,16 @@ describe("deriveWorktreeCwd", () => {
 		);
 	});
 
-	it("ignores the active card once another repo is picked", () => {
+	it("follows the active card even when another repo is picked", () => {
 		expect(
 			deriveWorktreeCwd("worktree", sessions, history, "/repos/other"),
-		).toBe("/repos/other");
+		).toBe("/repos/live/.worktrees/feature");
+	});
+
+	it("follows a history card whose clone is not the picked repo", () => {
+		expect(
+			deriveWorktreeCwd("past-worktree", sessions, history, "/repos/other"),
+		).toBe("/repos/live/.worktrees/old");
 	});
 
 	it("returns the selection for an unknown active id", () => {

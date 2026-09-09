@@ -54,26 +54,26 @@ const history: HistoricalSession[] = [
 	},
 ];
 
-function useShell(activeByRepo: Record<string, string>) {
+function useShell(activeByRepo: Record<string, string>, cards: SessionInfo[]) {
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [viewingTranscriptSessionId, setViewingTranscriptSessionId] = useState<
 		string | null
 	>(null);
 	useActiveIdReconciler(
-		sessions,
+		cards,
 		setActiveId,
-		resolveActiveId(activeByRepo, sessions),
+		resolveActiveId(activeByRepo, cards),
 	);
 	const selectCard = useCallback((id: string) => {
 		setViewingTranscriptSessionId(null);
 		setActiveId(id);
 	}, []);
 	const selectedCardId = viewingTranscriptSessionId ?? activeId;
-	const selection = useRepoSelection("", history, selectedCardId, sessions);
+	const selection = useRepoSelection("", history, selectedCardId, cards);
 	useAdoptRepoCard({
 		selectedCwd: selection.selectedCwd,
 		selectedCardId,
-		sessions,
+		sessions: cards,
 		history,
 		activeByRepo,
 		onSelect: selectCard,
@@ -86,8 +86,13 @@ function useShell(activeByRepo: Record<string, string>) {
 	};
 }
 
-function renderShell(activeByRepo: Record<string, string>) {
-	return renderHook(() => useShell(activeByRepo), { wrapper: MemoryRouter });
+function renderShell(
+	activeByRepo: Record<string, string>,
+	cards: SessionInfo[] = sessions,
+) {
+	return renderHook(() => useShell(activeByRepo, cards), {
+		wrapper: MemoryRouter,
+	});
 }
 
 describe("useRepoSelection", () => {
@@ -124,12 +129,32 @@ describe("useRepoSelection", () => {
 		);
 	});
 
-	it("searches the clone when the picked repo has no card of its own", () => {
+	it("keeps searching the selected card when the picked repo remembers none", () => {
 		const { result } = renderShell({ [otherClone]: "other" });
 
 		act(() => result.current.selection.setSelectedCwd(clone));
 
 		expect(result.current.selection.selectedCwd).toBe(clone);
+		expect(result.current.selection.worktreeCwd).toBe(otherClone);
+	});
+
+	it("keeps searching the selected card when the picked repo's card is gone", () => {
+		const { result } = renderShell({
+			[otherClone]: "other",
+			[clone]: "reaped",
+		});
+
+		act(() => result.current.selection.setSelectedCwd(clone));
+
+		expect(result.current.selection.worktreeCwd).toBe(otherClone);
+	});
+
+	it("searches the picked repo clone when no card is selected", () => {
+		const { result } = renderShell({ [clone]: "feature" }, []);
+
+		act(() => result.current.selection.setSelectedCwd(clone));
+
+		expect(result.current.selectedCardId).toBeNull();
 		expect(result.current.selection.worktreeCwd).toBe(clone);
 	});
 
