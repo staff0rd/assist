@@ -1,3 +1,10 @@
+## [0.624.1](https://github.com/staff0rd/assist/compare/v0.624.0...v0.624.1) (2026-09-09)
+
+
+### Bug Fixes
+
+* scope file palette to selected card ([75eb16c](https://github.com/staff0rd/assist/commit/75eb16c6d5c2476aaa2c7131dd6b3558c77cfbbf))
+
 # [0.624.0](https://github.com/staff0rd/assist/compare/v0.623.1...v0.624.0) (2026-09-08)
 
 
