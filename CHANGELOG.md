@@ -1,3 +1,10 @@
+# [0.626.0](https://github.com/staff0rd/assist/compare/v0.625.0...v0.626.0) (2026-09-09)
+
+
+### Features
+
+* auto-merge toggle on PR preview ([7a0682b](https://github.com/staff0rd/assist/commit/7a0682b9e1efcb1fbcf0bdc2f64dbc0223930295))
+
 # [0.625.0](https://github.com/staff0rd/assist/compare/v0.624.1...v0.625.0) (2026-09-09)
 
 
