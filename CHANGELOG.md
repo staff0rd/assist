@@ -1,3 +1,10 @@
+# [0.625.0](https://github.com/staff0rd/assist/compare/v0.624.1...v0.625.0) (2026-09-09)
+
+
+### Features
+
+* allow prs writes in cli-writes ([3ea197f](https://github.com/staff0rd/assist/commit/3ea197f3a311021b920580259247c09a807669ca))
+
 ## [0.624.1](https://github.com/staff0rd/assist/compare/v0.624.0...v0.624.1) (2026-09-09)
 
 
