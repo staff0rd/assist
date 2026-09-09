@@ -20,6 +20,9 @@ assist commit
 assist devlog
 assist handover
 assist notify
+assist prs comment
+assist prs edit
+assist prs raise
 assist signal next
 assist sync
 assist sync --prune
