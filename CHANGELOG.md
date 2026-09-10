@@ -1,3 +1,10 @@
+## [0.630.1](https://github.com/staff0rd/assist/compare/v0.630.0...v0.630.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* calibrate read-time to 100 wpm ([e51c531](https://github.com/staff0rd/assist/commit/e51c5313cca714b1e5ed98867f2f3183528de8da))
+
 # [0.630.0](https://github.com/staff0rd/assist/compare/v0.629.1...v0.630.0) (2026-09-10)
 
 
