@@ -1,3 +1,20 @@
+# [0.632.0](https://github.com/staff0rd/assist/compare/v0.631.0...v0.632.0) (2026-09-10)
+
+
+### Bug Fixes
+
+* complete the read-time move ([59e1668](https://github.com/staff0rd/assist/commit/59e1668879eaca602f34e8d521dd11cedba14ea7))
+* focus ring on row controls ([7b6c29c](https://github.com/staff0rd/assist/commit/7b6c29c5a6dd8b5669792c0ed37511a55b151e53))
+
+
+### Features
+
+* accept video preview attachments ([0536d18](https://github.com/staff0rd/assist/commit/0536d1855df822347265378173ff475c29aecf6a))
+* assist read-time as a top-level command ([e59392e](https://github.com/staff0rd/assist/commit/e59392e0ac4623ec19213c7d7835c25bba82f4dc))
+* one phase meter, not three chips ([8230a23](https://github.com/staff0rd/assist/commit/8230a233acaca4b699fe96d2ff365dc31b1c8a90))
+* stretched row link, real buttons ([f11ee50](https://github.com/staff0rd/assist/commit/f11ee5016d3233a218d3f1ae6d6eb5fddfe4ba95))
+* usage Items tab ([d13b263](https://github.com/staff0rd/assist/commit/d13b2638e3c9b7f3cb1e95918f7c878d9f1d8292))
+
 # [0.631.0](https://github.com/staff0rd/assist/compare/v0.630.2...v0.631.0) (2026-09-10)
 
 
