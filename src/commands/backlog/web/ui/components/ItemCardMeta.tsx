@@ -1,4 +1,5 @@
 import { Box, Tooltip } from "@mui/material";
+import type { SessionInfo } from "../../../../sessions/web/ui/useSessionSocket";
 import { formatItemId } from "../../../formatItemId";
 import type { BacklogItemSummary } from "../types";
 import { formatActiveTime } from "./formatActiveTime";
@@ -6,6 +7,7 @@ import { formatUsageSummary } from "./formatUsageSummary";
 import { GithubIssueLink } from "./GithubIssueLink";
 import { itemCardStyles } from "./itemCardStyles";
 import { JiraKeyLink } from "./JiraKeyLink";
+import { PhaseSessionLink } from "./PhaseSessionLink";
 import { typeChipColors } from "./typeChipColors";
 
 const typeSx = { display: "inline-flex", alignItems: "center", gap: 0.5 };
@@ -33,13 +35,26 @@ function ActiveTime({ item }: { item: BacklogItemSummary }) {
 	);
 }
 
-export function ItemCardMeta({ item }: { item: BacklogItemSummary }) {
+export function ItemCardMeta({
+	item,
+	openSession,
+	onSelectSession,
+}: {
+	item: BacklogItemSummary;
+	openSession?: SessionInfo;
+	onSelectSession?: (id: string) => void;
+}) {
 	return (
 		<Box sx={itemCardStyles.meta}>
 			<Box component="span" sx={itemCardStyles.id}>
 				{formatItemId(item.id)}
 			</Box>
 			<TypeLabel type={item.type} />
+			<PhaseSessionLink
+				item={item}
+				openSession={openSession}
+				onSelectSession={onSelectSession}
+			/>
 			<JiraKeyLink jiraKey={item.jiraKey} />
 			<GithubIssueLink githubIssue={item.githubIssue} origin={item.origin} />
 			<ActiveTime item={item} />

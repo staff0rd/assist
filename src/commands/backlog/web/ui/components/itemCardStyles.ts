@@ -45,25 +45,4 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 	},
 	id: { color: "text.disabled" },
 	actions: { display: "flex", alignItems: "center", gap: 1, flexShrink: 0 },
-	incompleteSubtasks: {
-		flexShrink: 0,
-		fontWeight: 500,
-		fontSize: "0.75rem",
-		height: 22,
-		color: "text.secondary",
-		borderColor: "divider",
-		"& .MuiChip-icon": {
-			fontSize: "1rem",
-			ml: 0.75,
-			color: "text.secondary",
-		},
-	},
-	phaseProgress: {
-		flexShrink: 0,
-		fontWeight: 500,
-		fontSize: "0.75rem",
-		height: 22,
-		color: "text.secondary",
-		borderColor: "divider",
-	},
 };

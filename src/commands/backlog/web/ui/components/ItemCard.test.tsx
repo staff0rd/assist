@@ -87,3 +87,26 @@ describe("ItemCard meta line", () => {
 		expect(screen.queryByText(/⏱/)).toBeNull();
 	});
 });
+
+describe("ItemCard phase indicator", () => {
+	it("shows one meter and no in-progress chip while in progress", () => {
+		const { container } = renderCard({
+			status: "in-progress",
+			currentPhase: 2,
+			totalPhases: 3,
+		});
+
+		expect(screen.getByTitle("Phase 2 of 3")).toBeTruthy();
+		expect(screen.getByText("2/3")).toBeTruthy();
+		expect(screen.getByText("phase 2 of 3")).toBeTruthy();
+		expect(screen.queryByText("in progress")).toBeNull();
+		expect(container.querySelector(".MuiChip-root")).toBeNull();
+	});
+
+	it("badges the incomplete subtasks instead of chipping them", () => {
+		const { container } = renderCard({ incompleteSubtasks: 2 });
+
+		expect(screen.getByLabelText("2 incomplete subtasks")).toBeTruthy();
+		expect(container.querySelector(".MuiChip-root")).toBeNull();
+	});
+});
