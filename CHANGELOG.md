@@ -1,3 +1,10 @@
+## [0.634.1](https://github.com/staff0rd/assist/compare/v0.634.0...v0.634.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* repo labels across all origins ([247be09](https://github.com/staff0rd/assist/commit/247be09934bcb5694f7c5499be4a2c9d75aff261))
+
 # [0.634.0](https://github.com/staff0rd/assist/compare/v0.633.0...v0.634.0) (2026-09-10)
 
 
