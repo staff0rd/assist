@@ -9,7 +9,7 @@ import {
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { UsagePeakRow } from "../../../../shared/db/listUsagePeaks";
-import type { UsageItemRow } from "./fetchUsageItems";
+import type { UsageItemRow, UsageItemsPage } from "./fetchUsageItems";
 import { UsageHistoryView } from "./UsageHistoryView";
 
 afterEach(() => {
@@ -47,14 +47,46 @@ const item: UsageItemRow = {
 
 type Page<T> = { rows: T[]; total: number };
 
+const noItems: UsageItemsPage = {
+	rows: [],
+	total: 0,
+	summary: {
+		itemCount: 0,
+		doneCount: 0,
+		repoCount: 0,
+		medianPhases: 0,
+		medianActiveMs: 0,
+		medianTokens: 0,
+	},
+	origins: [],
+};
+
+const itemsPage: UsageItemsPage = {
+	rows: [item],
+	total: 3,
+	summary: {
+		itemCount: 3,
+		doneCount: 2,
+		repoCount: 2,
+		medianPhases: 3,
+		medianActiveMs: 2_700_000,
+		medianTokens: 3_000_000,
+	},
+	origins: [
+		{ origin: "github.com/acme/assist", count: 2 },
+		{ origin: "github.com/acme/apm", count: 1 },
+	],
+};
+
 function stubApi(pages: {
 	peaks?: Record<string, Page<UsagePeakRow>>;
-	items?: Page<UsageItemRow>;
+	items?: Record<string, UsageItemsPage>;
 }) {
 	const fetchMock = vi.fn(async (url: string) => {
 		const parsed = new URL(url, "http://localhost");
 		const body = parsed.pathname.endsWith("/items")
-			? (pages.items ?? { rows: [], total: 0 })
+			? ((pages.items ?? {})[parsed.searchParams.get("origin") ?? "all"] ??
+				noItems)
 			: ((pages.peaks ?? {})[parsed.searchParams.get("window") ?? "all"] ?? {
 					rows: [],
 					total: 0,
@@ -121,7 +153,7 @@ describe("UsageHistoryView", () => {
 		it("only loads item usage once the tab is opened", async () => {
 			const fetchMock = stubApi({
 				peaks: { all: { rows: [peak], total: 1 } },
-				items: { rows: [item], total: 1 },
+				items: { all: itemsPage },
 			});
 			renderView();
 
@@ -143,7 +175,7 @@ describe("UsageHistoryView", () => {
 		});
 
 		it("shows each item's cost against its repo and phases", async () => {
-			stubApi({ items: { rows: [item], total: 1 } });
+			stubApi({ items: { all: itemsPage } });
 			renderView();
 
 			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
@@ -162,7 +194,7 @@ describe("UsageHistoryView", () => {
 		});
 
 		it("links each item to its detail page", async () => {
-			stubApi({ items: { rows: [item], total: 1 } });
+			stubApi({ items: { all: itemsPage } });
 			renderView();
 
 			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
@@ -184,6 +216,81 @@ describe("UsageHistoryView", () => {
 
 			await waitFor(() =>
 				expect(screen.getByText("No item usage recorded yet.")).toBeTruthy(),
+			);
+		});
+
+		it("summarises the filtered set above the table", async () => {
+			stubApi({ items: { all: itemsPage } });
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+
+			await waitFor(() =>
+				expect(screen.getByText("Items with recorded usage")).toBeTruthy(),
+			);
+			expect(screen.getByText("across 2 repos · 2 done")).toBeTruthy();
+			expect(screen.getByText("45m")).toBeTruthy();
+			expect(screen.getByText("15m per phase")).toBeTruthy();
+			expect(screen.getByText("3.0M")).toBeTruthy();
+			expect(screen.getByText("1.0M per phase")).toBeTruthy();
+		});
+
+		it("refetches the rows and the summary for the picked repo", async () => {
+			const apm: UsageItemsPage = {
+				...itemsPage,
+				rows: [],
+				total: 1,
+				summary: {
+					...itemsPage.summary,
+					itemCount: 1,
+					doneCount: 1,
+					repoCount: 1,
+				},
+			};
+			const fetchMock = stubApi({
+				items: { all: itemsPage, "github.com/acme/apm": apm },
+			});
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+			await waitFor(() =>
+				expect(screen.getByText("Median phases")).toBeTruthy(),
+			);
+			fireEvent.mouseDown(screen.getByRole("combobox", { name: "Repo" }));
+			fireEvent.click(screen.getByRole("option", { name: "apm (1)" }));
+
+			await waitFor(() =>
+				expect(screen.getByText("across 1 repo · 1 done")).toBeTruthy(),
+			);
+			expect(fetchMock).toHaveBeenLastCalledWith(
+				"/api/usage/items?page=0&pageSize=30&origin=github.com%2Facme%2Fapm",
+			);
+		});
+
+		it("returns to the first page when the repo changes", async () => {
+			const paged: UsageItemsPage = { ...itemsPage, total: 60 };
+			const fetchMock = stubApi({
+				items: { all: paged, "github.com/acme/apm": paged },
+			});
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+			await waitFor(() =>
+				expect(screen.getByText("Median phases")).toBeTruthy(),
+			);
+			fireEvent.click(screen.getByRole("button", { name: "Go to next page" }));
+			await waitFor(() =>
+				expect(fetchMock).toHaveBeenLastCalledWith(
+					"/api/usage/items?page=1&pageSize=30",
+				),
+			);
+			fireEvent.mouseDown(screen.getByRole("combobox", { name: "Repo" }));
+			fireEvent.click(screen.getByRole("option", { name: "apm (1)" }));
+
+			await waitFor(() =>
+				expect(fetchMock).toHaveBeenLastCalledWith(
+					"/api/usage/items?page=0&pageSize=30&origin=github.com%2Facme%2Fapm",
+				),
 			);
 		});
 	});

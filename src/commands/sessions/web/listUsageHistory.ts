@@ -19,9 +19,10 @@ export function listUsageHistory(
 	return respondPagedRows(req, res, async (range, params) => {
 		const window = parseWindow(params.get("window"));
 		const db = await getDb();
-		return Promise.all([
+		const [rows, total] = await Promise.all([
 			listUsagePeaks(db, { ...range, window }),
 			countUsagePeaks(db, window),
 		]);
+		return { rows, total };
 	});
 }

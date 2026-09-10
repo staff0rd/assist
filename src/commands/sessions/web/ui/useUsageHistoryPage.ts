@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import type { UsagePeakRow } from "../../../../shared/db/listUsagePeaks";
 import { fetchUsageHistory } from "./fetchUsageHistory";
 import { usePagedResource } from "./usePagedResource";
 import type { UsageWindowFilterValue } from "./UsageWindowFilter";
@@ -12,7 +13,7 @@ export function useUsageHistoryPage() {
 			fetchUsageHistory(page, pageSize, window),
 		[window],
 	);
-	const paged = usePagedResource(load, PAGE_SIZE);
+	const paged = usePagedResource<UsagePeakRow>(load, PAGE_SIZE);
 
 	const selectWindow = (next: UsageWindowFilterValue) => {
 		setWindow(next);

@@ -8,7 +8,7 @@ import { itemDetailPath } from "../../../backlog/web/ui/itemDetailPath";
 const nameSx = {
 	display: "block",
 	fontWeight: 500,
-	maxWidth: 340,
+	maxWidth: "36ch",
 	overflow: "hidden",
 	textOverflow: "ellipsis",
 	whiteSpace: "nowrap",
@@ -19,6 +19,7 @@ const metaSx = {
 	mt: "2px",
 	fontSize: "0.75rem",
 	color: "text.secondary",
+	whiteSpace: "nowrap",
 } as const;
 
 export function UsageItemNameCell({

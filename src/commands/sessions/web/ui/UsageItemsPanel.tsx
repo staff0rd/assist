@@ -3,7 +3,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 import TablePagination from "@mui/material/TablePagination";
 import Typography from "@mui/material/Typography";
 import { useFullPageHeight } from "./useFullPageHeight";
+import { UsageItemsFilterRow } from "./UsageItemsFilterRow";
 import { UsageItemsTable } from "./UsageItemsTable";
+import { UsageItemStatBand } from "./UsageItemStatBand";
 import type { useUsageItemsPage } from "./useUsageItemsPage";
 
 export function UsageItemsPanel({
@@ -11,7 +13,7 @@ export function UsageItemsPanel({
 }: {
 	items: ReturnType<typeof useUsageItemsPage>;
 }) {
-	const { rows, total, loaded, page, pageSize } = items;
+	const { data, rows, total, page, pageSize } = items;
 	const { ref, height } = useFullPageHeight(rows.length, pageSize);
 
 	return (
@@ -19,12 +21,18 @@ export function UsageItemsPanel({
 			<Box sx={{ height: 4, mb: 1 }}>
 				{items.fetching && <LinearProgress />}
 			</Box>
-			{!loaded ? null : total === 0 ? (
+			{!data ? null : data.origins.length === 0 ? (
 				<Typography color="text.secondary" align="center" sx={{ py: 6 }}>
 					No item usage recorded yet.
 				</Typography>
 			) : (
 				<>
+					<UsageItemStatBand summary={data.summary} />
+					<UsageItemsFilterRow
+						origins={data.origins}
+						origin={items.origin}
+						onChange={items.selectOrigin}
+					/>
 					<Box ref={ref} sx={{ minHeight: height }}>
 						<UsageItemsTable rows={rows} />
 					</Box>

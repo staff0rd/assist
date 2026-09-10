@@ -2,20 +2,15 @@ import { useEffect, useState } from "react";
 
 type PagedResult<T> = { rows: T[]; total: number };
 
-type PagedLoader<T> = (
-	page: number,
-	pageSize: number,
-) => Promise<PagedResult<T>>;
+type PagedLoader<P> = (page: number, pageSize: number) => Promise<P>;
 
-export function usePagedResource<T>(
-	load: PagedLoader<T>,
+export function usePagedResource<T, P extends PagedResult<T> = PagedResult<T>>(
+	load: PagedLoader<P>,
 	pageSize: number,
 	enabled = true,
 ) {
 	const [page, setPage] = useState(0);
-	const [rows, setRows] = useState<T[]>([]);
-	const [total, setTotal] = useState(0);
-	const [loaded, setLoaded] = useState(false);
+	const [data, setData] = useState<P | null>(null);
 	const [fetching, setFetching] = useState(false);
 	const [loadError, setLoadError] = useState<Error | null>(null);
 
@@ -24,11 +19,9 @@ export function usePagedResource<T>(
 		let cancelled = false;
 		setFetching(true);
 		load(page, pageSize).then(
-			(data) => {
+			(next) => {
 				if (cancelled) return;
-				setRows(data.rows);
-				setTotal(data.total);
-				setLoaded(true);
+				setData(next);
 				setFetching(false);
 			},
 			(error: unknown) => {
@@ -42,16 +35,21 @@ export function usePagedResource<T>(
 		};
 	}, [load, page, pageSize, enabled]);
 
+	const total = data?.total ?? 0;
+
 	useEffect(() => {
 		if (total === 0) return;
 		const lastPage = Math.ceil(total / pageSize) - 1;
 		if (page > lastPage) setPage(lastPage);
 	}, [page, pageSize, total]);
 
+	const rows: T[] = data?.rows ?? [];
+
 	return {
+		data,
 		rows,
 		total,
-		loaded,
+		loaded: data !== null,
 		fetching,
 		error: loadError,
 		page,

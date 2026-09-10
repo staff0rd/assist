@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { countItemUsageSummaries } from "./countItemUsageSummaries";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
+import { itemUsageStats } from "./itemUsageStats";
 import { listItemUsageSummaries } from "./listItemUsageSummaries";
 import { items, phaseSessions, phaseUsage, planPhases } from "./schema";
 
@@ -70,7 +70,7 @@ describe("listItemUsageSummaries", () => {
 			await addItem(1);
 
 			expect(await listItemUsageSummaries(orm)).toEqual([]);
-			expect(await countItemUsageSummaries(orm)).toBe(0);
+			expect((await itemUsageStats(orm)).itemCount).toBe(0);
 		});
 	});
 
@@ -109,7 +109,7 @@ describe("listItemUsageSummaries", () => {
 					lastPhaseAt: "2026-09-02T11:00:00.000Z",
 				},
 			]);
-			expect(await countItemUsageSummaries(orm)).toBe(1);
+			expect((await itemUsageStats(orm)).itemCount).toBe(1);
 		});
 	});
 
@@ -171,7 +171,28 @@ describe("listItemUsageSummaries", () => {
 
 			expect(page0.map((r) => r.id)).toEqual([2, 3]);
 			expect(page1.map((r) => r.id)).toEqual([1, 4]);
-			expect(await countItemUsageSummaries(orm)).toBe(4);
+			expect((await itemUsageStats(orm)).itemCount).toBe(4);
+		});
+	});
+
+	describe("when items span several repos", () => {
+		it("keeps only the requested origin", async () => {
+			await addItem(1, { origin: "github.com/acme/assist" });
+			await addItem(2, { origin: "github.com/acme/apm" });
+			for (const id of [1, 2]) {
+				await addUsage(id, 0, {
+					tokensUp: id,
+					tokensDown: id,
+					activeMs: id,
+					peakContextPct: id,
+				});
+			}
+
+			const rows = await listItemUsageSummaries(orm, {
+				origin: "github.com/acme/apm",
+			});
+
+			expect(rows.map((r) => r.id)).toEqual([2]);
 		});
 	});
 });

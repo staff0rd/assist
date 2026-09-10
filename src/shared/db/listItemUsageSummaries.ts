@@ -12,6 +12,7 @@ import {
 type ListItemUsageSummariesOptions = {
 	limit?: number;
 	offset?: number;
+	origin?: string;
 };
 
 export async function listItemUsageSummaries(
@@ -40,6 +41,7 @@ export async function listItemUsageSummaries(
 		.innerJoin(totals, eq(totals.itemId, items.id))
 		.leftJoin(planned, eq(planned.itemId, items.id))
 		.leftJoin(lastPhase, eq(lastPhase.itemId, items.id))
+		.where(options?.origin ? eq(items.origin, options.origin) : undefined)
 		.orderBy(sql`${lastPhase.at} desc nulls last`, desc(items.id));
 	const rows =
 		options?.limit === undefined
