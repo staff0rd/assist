@@ -10,12 +10,24 @@ const EXT_BY_MIME: Record<string, string> = {
 	"image/svg+xml": "svg",
 	"image/bmp": "bmp",
 	"image/avif": "avif",
+	"video/mp4": "mp4",
+	"video/webm": "webm",
+	"video/quicktime": "mov",
+	"video/ogg": "ogv",
 };
+
+function extensionFromMime(contentType: string): string | undefined {
+	const mime = contentType.split(";")[0].trim().toLowerCase();
+	const known = EXT_BY_MIME[mime];
+	if (known) return known;
+	const subtype = mime.split("/")[1]?.replace(/^x-/, "").replace(/\+.*$/, "");
+	return subtype && /^[a-z0-9]+$/.test(subtype) ? subtype : undefined;
+}
 
 function pickExtension(name: string, contentType: string): string {
 	const fromName = extname(name).replace(/^\./, "").toLowerCase();
 	if (fromName) return fromName;
-	return EXT_BY_MIME[contentType.split(";")[0].trim().toLowerCase()] ?? "png";
+	return extensionFromMime(contentType) ?? "png";
 }
 
 function safeBaseName(name: string): string {

@@ -2,7 +2,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton } from "@mui/material";
 import type { LocalScreenshot } from "./useScreenshots";
 
-const imgSx = {
+const mediaSx = {
 	display: "block",
 	maxWidth: "100%",
 	borderRadius: 1,
@@ -25,9 +25,25 @@ export function ScreenshotThumbnail({
 	screenshot: LocalScreenshot;
 	onRemove: (id: number) => void;
 }) {
+	const isVideo = screenshot.contentType.startsWith("video/");
 	return (
 		<Box sx={{ position: "relative" }}>
-			<Box component="img" src={screenshot.url} alt="screenshot" sx={imgSx} />
+			{isVideo ? (
+				<Box
+					component="video"
+					controls
+					src={screenshot.url}
+					aria-label="screenshot"
+					sx={mediaSx}
+				/>
+			) : (
+				<Box
+					component="img"
+					src={screenshot.url}
+					alt="screenshot"
+					sx={mediaSx}
+				/>
+			)}
 			<IconButton
 				size="small"
 				aria-label="Remove screenshot"

@@ -48,6 +48,7 @@ export async function runGhImage(
 		.filter(Boolean);
 	const markdown =
 		lines.find((line) => /^!\[.*]\(.+\)$/.test(line)) ??
+		lines.find((line) => /^https?:\/\/\S+$/.test(line)) ??
 		lines.find((line) => line.includes("http")) ??
 		lines[0];
 	if (!markdown) throw new Error("gh image produced no output");

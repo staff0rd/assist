@@ -33,6 +33,20 @@ describe("runGhImage", () => {
 		);
 	});
 
+	it("picks the bare asset URL for a video upload", async () => {
+		execFileMock.mockImplementation(
+			(_f: string, _a: string[], _o: unknown, cb: Cb) =>
+				cb(null, {
+					stdout:
+						"Uploading clip.mp4 to https://uploads.github.com…\nhttps://github.com/user-attachments/assets/9f1c-4a2b\n",
+					stderr: "",
+				}),
+		);
+		await expect(runGhImage("/tmp/a.mp4", "/repo")).resolves.toBe(
+			"https://github.com/user-attachments/assets/9f1c-4a2b",
+		);
+	});
+
 	it("flags a missing gh binary as unavailable", async () => {
 		execFileMock.mockImplementation(
 			(_f: string, _a: string[], _o: unknown, cb: Cb) =>

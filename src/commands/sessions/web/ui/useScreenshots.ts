@@ -1,12 +1,17 @@
 import { useCallback, useRef, useState } from "react";
 
-export type LocalScreenshot = { markdown: string; url: string; id: number };
+export type LocalScreenshot = {
+	markdown: string;
+	url: string;
+	contentType: string;
+	id: number;
+};
 
 export function useScreenshots() {
 	const [screenshots, setScreenshots] = useState<LocalScreenshot[]>([]);
 	const nextId = useRef(0);
 
-	const add = useCallback((s: { markdown: string; url: string }) => {
+	const add = useCallback((s: Omit<LocalScreenshot, "id">) => {
 		setScreenshots((ss) => [...ss, { ...s, id: nextId.current++ }]);
 	}, []);
 

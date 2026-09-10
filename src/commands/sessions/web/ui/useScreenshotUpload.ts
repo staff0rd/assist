@@ -16,7 +16,11 @@ function toUploadError(error: unknown): UploadError {
 
 export function useScreenshotUpload(
 	cwd: string | undefined,
-	onUploaded: (screenshot: { markdown: string; url: string }) => void,
+	onUploaded: (screenshot: {
+		markdown: string;
+		url: string;
+		contentType: string;
+	}) => void,
 	enabled: boolean,
 ) {
 	const [uploads, setUploads] = useState<ScreenshotUpload[]>([]);
@@ -28,7 +32,11 @@ export function useScreenshotUpload(
 			setUploads((us) => [...us.filter((u) => !u.error), { id }]);
 			try {
 				const markdown = await uploadPreviewImage(file, cwd);
-				onUploaded({ markdown, url: URL.createObjectURL(file) });
+				onUploaded({
+					markdown,
+					url: URL.createObjectURL(file),
+					contentType: file.type,
+				});
 				setUploads((us) => us.filter((u) => u.id !== id));
 			} catch (error) {
 				const failure = toUploadError(error);
