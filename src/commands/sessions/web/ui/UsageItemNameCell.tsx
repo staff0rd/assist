@@ -5,7 +5,7 @@ import { Link as RouterLink } from "react-router";
 import { formatItemId } from "../../../backlog/formatItemId";
 import { itemDetailPath } from "../../../backlog/web/ui/itemDetailPath";
 
-const cellSx = { width: "36ch", maxWidth: 0 } as const;
+const cellSx = { width: "100%", maxWidth: 0 } as const;
 
 const nameSx = {
 	display: "block",
