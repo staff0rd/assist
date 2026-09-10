@@ -12,6 +12,8 @@ import type { UsageItemRow as UsageItemRowData } from "./fetchUsageItems";
 import { UsageItemRow } from "./UsageItemRow";
 import { UsageItemsTableHead } from "./UsageItemsTableHead";
 
+const tableSx = { "& td, & th": { px: 1.5 } } as const;
+
 export function UsageItemsTable({
 	rows,
 	origins,
@@ -29,7 +31,7 @@ export function UsageItemsTable({
 	);
 	return (
 		<TableContainer component={Paper}>
-			<Table size="small">
+			<Table size="small" sx={tableSx}>
 				<UsageItemsTableHead sort={sort} onSort={onSort} />
 				<TableBody>
 					{rows.map((row) => (

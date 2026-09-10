@@ -5,10 +5,11 @@ import { Link as RouterLink } from "react-router";
 import { formatItemId } from "../../../backlog/formatItemId";
 import { itemDetailPath } from "../../../backlog/web/ui/itemDetailPath";
 
+const cellSx = { width: "36ch", maxWidth: 0 } as const;
+
 const nameSx = {
 	display: "block",
 	fontWeight: 500,
-	maxWidth: "36ch",
 	overflow: "hidden",
 	textOverflow: "ellipsis",
 	whiteSpace: "nowrap",
@@ -19,6 +20,8 @@ const metaSx = {
 	mt: "2px",
 	fontSize: "0.75rem",
 	color: "text.secondary",
+	overflow: "hidden",
+	textOverflow: "ellipsis",
 	whiteSpace: "nowrap",
 } as const;
 
@@ -32,7 +35,7 @@ export function UsageItemNameCell({
 	type: string;
 }) {
 	return (
-		<TableCell>
+		<TableCell sx={cellSx}>
 			<Link
 				component={RouterLink}
 				to={itemDetailPath(id)}
