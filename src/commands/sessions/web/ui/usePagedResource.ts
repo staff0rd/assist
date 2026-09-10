@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-export type PagedResult<T> = { rows: T[]; total: number };
+type PagedResult<T> = { rows: T[]; total: number };
 
-export type PagedLoader<T> = (
+type PagedLoader<T> = (
 	page: number,
 	pageSize: number,
 ) => Promise<PagedResult<T>>;
