@@ -109,7 +109,7 @@ const assistConfigShape = {
 			required: z.boolean().default(false),
 			promptJira: z.boolean().default(false),
 			draft: z.boolean().default(false),
-			readingWordsPerMinute: z.number().int().positive().default(100),
+			readingWordsPerMinute: z.number().int().positive().default(80),
 		})
 		.optional(),
 	worktree: z

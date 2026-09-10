@@ -10,7 +10,7 @@ import {
 } from "./resolveReadTimeTarget";
 import { fetchPrBody } from "./fetchPrBody";
 
-const DEFAULT_WORDS_PER_MINUTE = 100;
+const DEFAULT_WORDS_PER_MINUTE = 80;
 
 const DEFAULT_BUDGET_SECONDS = 60;
 
