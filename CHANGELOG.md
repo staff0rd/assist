@@ -1,3 +1,10 @@
+# [0.634.0](https://github.com/staff0rd/assist/compare/v0.633.0...v0.634.0) (2026-09-10)
+
+
+### Features
+
+* usage item sorting and status filter ([10bade7](https://github.com/staff0rd/assist/commit/10bade712a3b3ad978d9faf6c814cb1f31b75d3e))
+
 # [0.633.0](https://github.com/staff0rd/assist/compare/v0.632.1...v0.633.0) (2026-09-10)
 
 
