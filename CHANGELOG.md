@@ -1,3 +1,10 @@
+# [0.635.0](https://github.com/staff0rd/assist/compare/v0.634.3...v0.635.0) (2026-09-10)
+
+
+### Features
+
+* fold the repo into the item meta line ([9c92c49](https://github.com/staff0rd/assist/commit/9c92c499f4d31f7bd8194bccecbec8bf092e440f))
+
 ## [0.634.3](https://github.com/staff0rd/assist/compare/v0.634.2...v0.634.3) (2026-09-10)
 
 
