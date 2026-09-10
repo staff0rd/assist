@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import { itemDetailPath } from "../itemDetailPath";
 import type { BacklogItemSummary } from "../types";
@@ -19,7 +18,6 @@ type ItemListProps = {
 };
 
 export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
-	const navigate = useNavigate();
 	const cwd = useRepoCwd();
 	const { query, setQuery, results, loading: searching } = useSearchItems();
 	const [typeFilter, setTypeFilter] = useState<TypeFilterValue>("all");
@@ -40,7 +38,7 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 				typeFilter={typeFilter}
 				items={filtered}
 				socket={socket}
-				onSelect={(item) => navigate(itemDetailPath(item.id, cwd))}
+				itemPath={(item) => itemDetailPath(item.id, cwd)}
 				onReload={onReload}
 			/>
 		</>

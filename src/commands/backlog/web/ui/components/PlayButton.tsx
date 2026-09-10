@@ -18,8 +18,6 @@ export function PlayButton({
 			<span>
 				{compact ? (
 					<IconButton
-						component="span"
-						role="button"
 						aria-label="Build"
 						color="success"
 						size="small"

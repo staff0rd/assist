@@ -1,5 +1,4 @@
 import { Box, ButtonBase } from "@mui/material";
-import type { MouseEvent } from "react";
 import { useNavigate } from "react-router";
 import type { SessionInfo } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
@@ -36,14 +35,12 @@ export function PhaseSessionLink({
 				{label}
 			</Box>
 		);
-	const handleClick = (event: MouseEvent) => {
-		event.stopPropagation();
+	const handleClick = () => {
 		onSelectSession?.(openSession.id);
 		navigate("/sessions");
 	};
 	return (
 		<ButtonBase
-			component="span"
 			sx={linkSx}
 			title={`Open the ${openSession.status} session`}
 			onClick={handleClick}

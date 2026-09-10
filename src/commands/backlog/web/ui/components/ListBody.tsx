@@ -10,7 +10,7 @@ type ListBodyProps = {
 	typeFilter: TypeFilterValue;
 	items: BacklogItemSummary[];
 	socket: SessionSocket;
-	onSelect: (item: BacklogItemSummary) => void;
+	itemPath: (item: BacklogItemSummary) => string;
 	onReload: () => Promise<void>;
 };
 
@@ -52,7 +52,7 @@ export function ListBody({
 	typeFilter,
 	items,
 	socket,
-	onSelect,
+	itemPath,
 	onReload,
 }: ListBodyProps) {
 	if (loading) {
@@ -70,8 +70,8 @@ export function ListBody({
 				<ItemCard
 					key={item.id}
 					item={item}
+					to={itemPath(item)}
 					socket={socket}
-					onSelect={() => onSelect(item)}
 					onReload={onReload}
 				/>
 			))}

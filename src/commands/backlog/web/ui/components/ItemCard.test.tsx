@@ -1,11 +1,12 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 
 vi.mock("./useJiraSite", () => ({ useJiraSite: () => "acme.atlassian.net" }));
+vi.mock("../api", () => ({ toggleStar: vi.fn(() => Promise.resolve()) }));
 
 import { ItemCard } from "./ItemCard";
 
@@ -23,17 +24,43 @@ const base: BacklogItemSummary = {
 	incompleteSubtasks: 0,
 };
 
+const itemPath = "/backlog/items/a984";
+
+function LocationProbe() {
+	const location = useLocation();
+	return <div data-testid="location">{location.pathname}</div>;
+}
+
 function renderCard(item: Partial<BacklogItemSummary> = {}) {
 	return render(
-		<MemoryRouter>
+		<MemoryRouter initialEntries={["/backlog"]}>
 			<ItemCard
 				item={{ ...base, ...item }}
+				to={itemPath}
 				socket={socket}
-				onSelect={() => {}}
 				onReload={() => Promise.resolve()}
 			/>
+			<LocationProbe />
 		</MemoryRouter>,
 	);
+}
+
+function location() {
+	return screen.getByTestId("location").textContent;
+}
+
+function tabStops(container: HTMLElement) {
+	return Array.from(
+		container.querySelectorAll<HTMLElement>(
+			"a[href], button:not([disabled]), [tabindex]:not([tabindex='-1'])",
+		),
+	);
+}
+
+function stopName(element: HTMLElement) {
+	const name =
+		element.getAttribute("aria-label") ?? element.textContent?.trim() ?? "";
+	return `${element.tagName.toLowerCase()}:${name}`;
 }
 
 const longName = `${"A".repeat(64)} ${"B".repeat(65)}`;
@@ -108,5 +135,95 @@ describe("ItemCard phase indicator", () => {
 
 		expect(screen.getByLabelText("2 incomplete subtasks")).toBeTruthy();
 		expect(container.querySelector(".MuiChip-root")).toBeNull();
+	});
+});
+
+describe("ItemCard tracker reference", () => {
+	it("shows a cross-repo issue as #n with the full reference as its tooltip", async () => {
+		renderCard({
+			origin: "github.com/acme/widgets",
+			githubIssue: "apm-better-life/apm-better-life#79",
+		});
+
+		const link = screen.getByRole("link", {
+			name: "apm-better-life/apm-better-life#79",
+		});
+		expect(link.textContent).toBe("#79");
+		expect(link.querySelector("svg")).toBeTruthy();
+		expect(link.getAttribute("href")).toBe(
+			"https://github.com/apm-better-life/apm-better-life/issues/79",
+		);
+
+		fireEvent.mouseOver(link);
+
+		const tooltip = await screen.findByRole("tooltip");
+		expect(tooltip.textContent).toBe("apm-better-life/apm-better-life#79");
+	});
+
+	it("shows an own-repo issue as #n too", () => {
+		renderCard({
+			origin: "github.com/acme/widgets",
+			githubIssue: "acme/widgets#123",
+		});
+
+		expect(
+			screen.getByRole("link", { name: "acme/widgets#123" }).textContent,
+		).toBe("#123");
+	});
+});
+
+describe("ItemCard row link", () => {
+	it("stretches a real link to the item over the row", () => {
+		renderCard();
+
+		const link = screen.getByRole("link", { name: base.name });
+		expect(link.tagName).toBe("A");
+		expect(link.getAttribute("href")).toBe(itemPath);
+
+		fireEvent.click(link);
+
+		expect(location()).toBe(itemPath);
+	});
+
+	it("puts the row link and each action in the tab order", () => {
+		const { container } = renderCard();
+
+		const stops = tabStops(container);
+
+		expect(stops.map(stopName)).toEqual([
+			`a:${base.name}`,
+			"button:Star",
+			"button:Build",
+		]);
+		for (const stop of stops) {
+			stop.focus();
+			expect(document.activeElement).toBe(stop);
+		}
+	});
+
+	it("keeps the actions above the stretched link", () => {
+		const { container } = renderCard();
+
+		const actions = screen
+			.getByRole("button", { name: "Star" })
+			.closest("div") as HTMLElement;
+		expect(container.contains(actions)).toBe(true);
+		expect(getComputedStyle(actions).zIndex).toBe("2");
+	});
+
+	it("does not open the item when Star is activated", () => {
+		renderCard();
+
+		fireEvent.click(screen.getByRole("button", { name: "Star" }));
+
+		expect(location()).toBe("/backlog");
+	});
+
+	it("does not open the item when Build is activated", () => {
+		renderCard();
+
+		fireEvent.click(screen.getByRole("button", { name: "Build" }));
+
+		expect(location()).toBe("/backlog");
 	});
 });

@@ -1,4 +1,5 @@
-import { Box, ButtonBase, Typography } from "@mui/material";
+import { Box, Link } from "@mui/material";
+import { Link as RouterLink } from "react-router";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 import { itemCardStyles } from "./itemCardStyles";
@@ -9,26 +10,29 @@ import { CardActions } from "./CardActions";
 
 export function ItemCard({
 	item,
+	to,
 	socket,
-	onSelect,
 	onReload,
 }: {
 	item: BacklogItemSummary;
+	to: string;
 	socket: SessionSocket;
-	onSelect: () => void;
 	onReload: () => Promise<void>;
 }) {
 	const inProgress = item.status === "in-progress";
 	return (
-		<ButtonBase
-			onClick={onSelect}
-			sx={inProgress ? itemCardStyles.inProgressCard : itemCardStyles.card}
-		>
+		<Box sx={inProgress ? itemCardStyles.inProgressCard : itemCardStyles.card}>
 			<StatusIcon status={item.status} />
 			<Box sx={itemCardStyles.main}>
-				<Typography sx={itemCardStyles.name} title={item.name}>
+				<Link
+					component={RouterLink}
+					to={to}
+					underline="none"
+					title={item.name}
+					sx={itemCardStyles.stretchedNameLink}
+				>
 					{item.name}
-				</Typography>
+				</Link>
 				<ItemCardMeta
 					item={item}
 					openSession={mostRecentOpenSession(socket.sessions, item.id)}
@@ -38,6 +42,6 @@ export function ItemCard({
 			<Box sx={itemCardStyles.actions}>
 				<CardActions item={item} onReload={onReload} />
 			</Box>
-		</ButtonBase>
+		</Box>
 	);
 }

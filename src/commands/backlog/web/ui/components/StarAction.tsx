@@ -31,8 +31,6 @@ export function StarAction({
 		<Tooltip title={starred ? "Unstar" : "Star"}>
 			<span>
 				<IconButton
-					component="span"
-					role="button"
 					aria-label={starred ? "Unstar" : "Star"}
 					aria-pressed={starred}
 					color={starred ? "warning" : "default"}

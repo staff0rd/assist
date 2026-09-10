@@ -56,7 +56,7 @@ export function ItemCardMeta({
 				onSelectSession={onSelectSession}
 			/>
 			<JiraKeyLink jiraKey={item.jiraKey} />
-			<GithubIssueLink githubIssue={item.githubIssue} origin={item.origin} />
+			<GithubIssueLink githubIssue={item.githubIssue} variant="icon" />
 			<ActiveTime item={item} />
 		</Box>
 	);

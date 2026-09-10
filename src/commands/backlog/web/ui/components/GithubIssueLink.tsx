@@ -1,4 +1,6 @@
+import GitHubIcon from "@mui/icons-material/GitHub";
 import { githubIssueUrl } from "../../../../../shared/githubIssueUrl";
+import { githubIssueNumber } from "../../../githubIssueNumber";
 import { shortenGithubIssue } from "../../../shortenGithubIssue";
 import { TrackerLink, type TrackerLinkVariant } from "./TrackerLink";
 
@@ -16,8 +18,14 @@ export function GithubIssueLink({
 	if (!githubIssue) return null;
 	return (
 		<TrackerLink
-			label={shortenGithubIssue(githubIssue, origin)}
+			label={
+				variant === "icon"
+					? githubIssueNumber(githubIssue)
+					: shortenGithubIssue(githubIssue, origin)
+			}
+			title={githubIssue}
 			url={githubIssueUrl(githubIssue)}
+			icon={<GitHubIcon />}
 			variant={variant}
 		/>
 	);

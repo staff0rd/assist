@@ -147,13 +147,14 @@ describe("ItemList tracker links", () => {
 			},
 		]);
 
-		const link = screen.getByRole("link", { name: "#123" });
+		const link = screen.getByRole("link", { name: "acme/widgets#123" });
+		expect(link.textContent).toBe("#123");
 		expect(link.getAttribute("href")).toBe(
 			"https://github.com/acme/widgets/issues/123",
 		);
 	});
 
-	it("keeps the full owner/repo#N when the issue is from another repo", () => {
+	it("shortens an issue from another repo to #N as well", () => {
 		renderList([
 			{
 				...item(1, "story", "Login flow"),
@@ -163,6 +164,7 @@ describe("ItemList tracker links", () => {
 		]);
 
 		const link = screen.getByRole("link", { name: "other/thing#7" });
+		expect(link.textContent).toBe("#7");
 		expect(link.getAttribute("href")).toBe(
 			"https://github.com/other/thing/issues/7",
 		);
@@ -180,7 +182,8 @@ describe("ItemList tracker links", () => {
 	it("renders no tracker for an item with neither", () => {
 		renderList([item(1, "story", "Login flow")]);
 
-		expect(screen.getByText("Login flow")).toBeTruthy();
-		expect(screen.queryByRole("link")).toBeNull();
+		expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual(
+			["Login flow"],
+		);
 	});
 });
