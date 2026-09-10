@@ -1,35 +1,10 @@
-import { ButtonBase, Chip, Typography } from "@mui/material";
+import { Box, ButtonBase, Typography } from "@mui/material";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
-import { formatItemId } from "../../../formatItemId";
 import type { BacklogItemSummary } from "../types";
-import { GithubIssueLink } from "./GithubIssueLink";
 import { itemCardStyles } from "./itemCardStyles";
-import { JiraKeyLink } from "./JiraKeyLink";
+import { ItemCardMeta } from "./ItemCardMeta";
 import { StatusIcon } from "./StatusIcon";
-import { typeChipColors } from "./typeChipColors";
 import { CardActions } from "./CardActions";
-
-function CardSummary({ item }: { item: BacklogItemSummary }) {
-	return (
-		<>
-			<StatusIcon status={item.status} />
-			<Chip
-				label={item.type}
-				size="small"
-				color={typeChipColors[item.type]}
-				sx={itemCardStyles.chip}
-			/>
-			<Typography variant="body2" sx={itemCardStyles.id}>
-				{formatItemId(item.id)}
-			</Typography>
-			<Typography sx={itemCardStyles.name}>{item.name}</Typography>
-			{item.jiraKey && <JiraKeyLink jiraKey={item.jiraKey} />}
-			{item.githubIssue && (
-				<GithubIssueLink githubIssue={item.githubIssue} origin={item.origin} />
-			)}
-		</>
-	);
-}
 
 export function ItemCard({
 	item,
@@ -48,8 +23,16 @@ export function ItemCard({
 			onClick={onSelect}
 			sx={inProgress ? itemCardStyles.inProgressCard : itemCardStyles.card}
 		>
-			<CardSummary item={item} />
-			<CardActions item={item} socket={socket} onReload={onReload} />
+			<StatusIcon status={item.status} />
+			<Box sx={itemCardStyles.main}>
+				<Typography sx={itemCardStyles.name} title={item.name}>
+					{item.name}
+				</Typography>
+				<ItemCardMeta item={item} />
+			</Box>
+			<Box sx={itemCardStyles.actions}>
+				<CardActions item={item} socket={socket} onReload={onReload} />
+			</Box>
 		</ButtonBase>
 	);
 }

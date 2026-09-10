@@ -1,8 +1,7 @@
 import { Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
 import type { PhaseUsageTotal } from "../types";
-import { formatActiveTime } from "./formatActiveTime";
-import { formatTokens } from "../../../../../shared/formatTokens";
+import { formatUsageSummary } from "./formatUsageSummary";
 
 export function UsageSummary({
 	total,
@@ -11,13 +10,5 @@ export function UsageSummary({
 	total: PhaseUsageTotal;
 	sx?: SxProps<Theme>;
 }) {
-	const peak =
-		total.peakContextPct > 0 ? ` · ▓ ${Math.round(total.peakContextPct)}%` : "";
-	return (
-		<Typography sx={sx}>
-			{`↑ ${formatTokens(total.tokensUp)} ↓ ${formatTokens(
-				total.tokensDown,
-			)} · ⏱ ${formatActiveTime(total.activeMs)}${peak}`}
-		</Typography>
-	);
+	return <Typography sx={sx}>{formatUsageSummary(total)}</Typography>;
 }

@@ -13,7 +13,7 @@ import type { SessionSocket } from "./useSessionSocket";
 
 function BacklogContent({ socket }: { socket: SessionSocket }) {
 	return (
-		<Container maxWidth="md" sx={{ py: 3, px: 2 }}>
+		<Container maxWidth="lg" sx={{ py: 3, px: 2 }}>
 			<BacklogView socket={socket} />
 		</Container>
 	);

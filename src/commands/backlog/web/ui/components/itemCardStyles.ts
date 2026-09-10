@@ -2,9 +2,10 @@ import type { SxProps, Theme } from "@mui/material";
 import { alpha } from "@mui/material";
 
 const baseCardSx = {
-	display: "flex",
+	display: "grid",
+	gridTemplateColumns: "auto minmax(0, 1fr) auto",
 	alignItems: "center",
-	gap: 1.5,
+	columnGap: 1.5,
 	width: "100%",
 	textAlign: "left",
 	p: 2,
@@ -26,14 +27,24 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 		borderLeftColor: "warning.main",
 		bgcolor: (theme: Theme) => alpha(theme.palette.warning.main, 0.08),
 	},
-	id: { color: "text.disabled", flexShrink: 0 },
-	name: { fontWeight: 500, flex: 1, textAlign: "left" },
-	chip: {
-		flexShrink: 0,
+	main: { minWidth: 0, textAlign: "left" },
+	name: {
 		fontWeight: 500,
-		fontSize: "0.75rem",
-		height: 22,
+		overflow: "hidden",
+		textOverflow: "ellipsis",
+		whiteSpace: "nowrap",
 	},
+	meta: {
+		display: "flex",
+		alignItems: "center",
+		gap: 1,
+		minWidth: 0,
+		fontSize: "0.75rem",
+		color: "text.secondary",
+		"& a, & p": { fontSize: "0.75rem" },
+	},
+	id: { color: "text.disabled" },
+	actions: { display: "flex", alignItems: "center", gap: 1, flexShrink: 0 },
 	incompleteSubtasks: {
 		flexShrink: 0,
 		fontWeight: 500,

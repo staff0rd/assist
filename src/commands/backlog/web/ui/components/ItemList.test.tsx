@@ -74,6 +74,14 @@ describe("ItemList type filter", () => {
 		expect(screen.getByText("Dashboard chart")).toBeTruthy();
 	});
 
+	it("gives every row its own meta id", () => {
+		renderList(items);
+
+		expect(screen.getByText("a1")).toBeTruthy();
+		expect(screen.getByText("a2")).toBeTruthy();
+		expect(screen.getByText("a3")).toBeTruthy();
+	});
+
 	it("narrows to stories when Stories is selected", () => {
 		renderList(items);
 
