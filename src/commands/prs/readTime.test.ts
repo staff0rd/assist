@@ -51,6 +51,27 @@ describe("readTime", () => {
 			expect(logged).toEqual(["200 words · ~1m read"]);
 		});
 
+		it("should count fenced code at half the prose rate", async () => {
+			const body = ["```", words(50), "```"].join("\n");
+			mockExecSync.mockReturnValue(JSON.stringify({ body }));
+
+			await readTime("42");
+
+			expect(logged).toEqual(["50 words · ~30s read"]);
+		});
+
+		it("should count an image and a URL as one word each", async () => {
+			mockExecSync.mockReturnValue(
+				JSON.stringify({
+					body: "![a shot of the screen](https://img/x.png) see https://example.com/a",
+				}),
+			);
+
+			await readTime("42");
+
+			expect(logged).toEqual(["3 words · ~1s read"]);
+		});
+
 		it("should handle a PR with an empty body", async () => {
 			mockExecSync.mockReturnValue(JSON.stringify({ body: null }));
 

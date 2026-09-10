@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { countReadingWords } from "./countReadingWords";
 import { formatReadDuration } from "./formatReadDuration";
 import { readBodyArgument } from "./readBodyArgument";
 import {
@@ -10,17 +11,18 @@ import { getRepoInfo, isGhNotInstalled, isNotFound } from "./shared";
 
 const WORDS_PER_MINUTE = 200;
 
+const CODE_SCAN_WORDS_PER_MINUTE = 100;
+
 export async function readTime(target: string): Promise<void> {
 	const body = await loadBody(resolveReadTimeTarget(target));
-	const words = countWords(body);
-	const seconds = Math.round((words / WORDS_PER_MINUTE) * 60);
+	const { prose, code } = countReadingWords(body);
+	const words = prose + code;
+	const seconds = Math.round(
+		(prose / WORDS_PER_MINUTE + code / CODE_SCAN_WORDS_PER_MINUTE) * 60,
+	);
 	const label = words === 1 ? "word" : "words";
 
 	console.log(`${words} ${label} · ~${formatReadDuration(seconds)} read`);
-}
-
-function countWords(body: string): number {
-	return body.split(/\s+/).filter(Boolean).length;
 }
 
 async function loadBody(target: ReadTimeTarget): Promise<string> {
