@@ -1,3 +1,10 @@
+# [0.633.0](https://github.com/staff0rd/assist/compare/v0.632.1...v0.633.0) (2026-09-10)
+
+
+### Features
+
+* usage summary band and repo filter ([fa6795a](https://github.com/staff0rd/assist/commit/fa6795a16032dfe507176c1d6898188ae3266d19))
+
 ## [0.632.1](https://github.com/staff0rd/assist/compare/v0.632.0...v0.632.1) (2026-09-10)
 
 
