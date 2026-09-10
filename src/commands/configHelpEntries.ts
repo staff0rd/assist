@@ -15,6 +15,7 @@ import { mermaidConfigHelp } from "./mermaid/mermaidConfigHelp";
 import { miroConfigHelp } from "./miro/miroConfigHelp";
 import { prsConfigHelp } from "./prs/prsConfigHelp";
 import { ravendbConfigHelp } from "./ravendb/ravendbConfigHelp";
+import { readTimeConfigHelp } from "./readTime/readTimeConfigHelp";
 import { refactorConfigHelp } from "./refactor/refactorConfigHelp";
 import { roamConfigHelp } from "./roam/roamConfigHelp";
 import { rootConfigHelp } from "./rootConfigHelp";
@@ -45,6 +46,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...miroConfigHelp,
 	...prsConfigHelp,
 	...ravendbConfigHelp,
+	...readTimeConfigHelp,
 	...refactorConfigHelp,
 	...roamConfigHelp,
 	...runConfigHelp,

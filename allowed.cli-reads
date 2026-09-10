@@ -50,6 +50,7 @@ assist prs read-time
 assist ravendb auth list
 assist ravendb collections
 assist ravendb query
+assist read-time
 assist refactor
 assist roam show-claude-code-icon
 assist rules list
