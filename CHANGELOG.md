@@ -1,3 +1,10 @@
+## [0.629.1](https://github.com/staff0rd/assist/compare/v0.629.0...v0.629.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* detect gh missing-PR error ([d8c4fb8](https://github.com/staff0rd/assist/commit/d8c4fb8b380bd3403e77b997d028e058af6ae7c3))
+
 # [0.629.0](https://github.com/staff0rd/assist/compare/v0.628.0...v0.629.0) (2026-09-10)
 
 
