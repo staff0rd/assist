@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { loadConfig } from "../../shared/loadConfig";
 import { countReadingWords } from "./countReadingWords";
+import { estimateReadSeconds } from "./estimateReadSeconds";
 import { formatReadDuration } from "./formatReadDuration";
 import { parseReadBudget } from "./parseReadBudget";
 import { readBodyArgument } from "./readBodyArgument";
@@ -10,7 +11,7 @@ import {
 } from "./resolveReadTimeTarget";
 import { fetchPrBody } from "./fetchPrBody";
 
-const DEFAULT_WORDS_PER_MINUTE = 80;
+const DEFAULT_WORDS_PER_MINUTE = 200;
 
 const DEFAULT_BUDGET_SECONDS = 60;
 
@@ -26,8 +27,9 @@ export async function readTime(
 	const words = prose + code;
 	const wordsPerMinute =
 		loadConfig().prs?.readingWordsPerMinute ?? DEFAULT_WORDS_PER_MINUTE;
-	const seconds = Math.round(
-		((prose + code * CODE_WORDS_PER_PROSE_WORD) / wordsPerMinute) * 60,
+	const seconds = estimateReadSeconds(
+		prose + code * CODE_WORDS_PER_PROSE_WORD,
+		wordsPerMinute,
 	);
 	const label = words === 1 ? "word" : "words";
 	const verdict =

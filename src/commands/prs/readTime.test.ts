@@ -45,7 +45,7 @@ beforeEach(() => {
 describe("readTime", () => {
 	describe("when the target is a PR number", () => {
 		it("should print the word count and read time for that PR", async () => {
-			mockExecSync.mockReturnValue(JSON.stringify({ body: words(40) }));
+			mockExecSync.mockReturnValue(JSON.stringify({ body: words(50) }));
 
 			await readTime("42");
 
@@ -53,16 +53,18 @@ describe("readTime", () => {
 				"gh pr view 42 --json body -R acme/widgets",
 				expect.anything(),
 			);
-			expect(logged).toEqual(["40 words · ~30s read"]);
+			expect(logged).toEqual(["50 words · ~29s read"]);
 		});
 
 		it("should count fenced code at half the prose rate", async () => {
 			const body = ["```", words(40), "```"].join("\n");
-			mockExecSync.mockReturnValue(JSON.stringify({ body }));
+			mockExecSync.mockReturnValueOnce(JSON.stringify({ body }));
+			mockExecSync.mockReturnValueOnce(JSON.stringify({ body: words(40) }));
 
 			await readTime("42");
+			await readTime("42");
 
-			expect(logged).toEqual(["40 words · ~1m read"]);
+			expect(logged).toEqual(["40 words · ~51s read", "40 words · ~22s read"]);
 		});
 
 		it("should count an image and a URL as one word each", async () => {
@@ -74,7 +76,7 @@ describe("readTime", () => {
 
 			await readTime("42");
 
-			expect(logged).toEqual(["3 words · ~2s read"]);
+			expect(logged).toEqual(["3 words · ~1s read"]);
 		});
 
 		it("should handle a PR with an empty body", async () => {
@@ -96,18 +98,18 @@ describe("readTime", () => {
 				"gh pr view 7 --json body -R other/project",
 				expect.anything(),
 			);
-			expect(logged).toEqual(["80 words · ~1m read"]);
+			expect(logged).toEqual(["80 words · ~51s read"]);
 		});
 	});
 
 	describe("when the target is -", () => {
 		it("should read the body from stdin", async () => {
-			mockReadBodyArgument.mockResolvedValue(words(40));
+			mockReadBodyArgument.mockResolvedValue(words(50));
 
 			await readTime("-");
 
 			expect(mockReadBodyArgument).toHaveBeenCalledWith("-");
-			expect(logged).toEqual(["40 words · ~30s read"]);
+			expect(logged).toEqual(["50 words · ~29s read"]);
 		});
 	});
 
@@ -118,7 +120,7 @@ describe("readTime", () => {
 			await readTime("drafts/body.md");
 
 			expect(mockReadFileSync).toHaveBeenCalledWith("drafts/body.md", "utf8");
-			expect(logged).toEqual(["3 words · ~2s read"]);
+			expect(logged).toEqual(["3 words · ~1s read"]);
 		});
 
 		it("should print a single word in the singular", async () => {
@@ -126,50 +128,50 @@ describe("readTime", () => {
 
 			await readTime("drafts/body.md");
 
-			expect(logged).toEqual(["1 word · ~1s read"]);
+			expect(logged).toEqual(["1 word · ~0s read"]);
 		});
 
 		it("should note when the estimate is over the default one minute budget", async () => {
-			mockReadFileSync.mockReturnValue(words(120));
+			mockReadFileSync.mockReturnValue(words(150));
 
 			await readTime("drafts/body.md");
 
 			expect(logged).toEqual([
-				"120 words · ~1m 30s read · over the ~1m budget",
+				"150 words · ~1m 45s read · over the ~1m budget",
 			]);
 		});
 
 		it("should not note a budget the estimate lands exactly on", async () => {
-			mockReadFileSync.mockReturnValue(words(80));
+			mockReadFileSync.mockReturnValue(words(92));
 
 			await readTime("drafts/body.md");
 
-			expect(logged).toEqual(["80 words · ~1m read"]);
+			expect(logged).toEqual(["92 words · ~1m read"]);
 		});
 
 		it("should judge the estimate against --budget", async () => {
-			mockReadFileSync.mockReturnValue(words(120));
+			mockReadFileSync.mockReturnValue(words(150));
 
 			await readTime("drafts/body.md", { budget: "2m" });
 
-			expect(logged).toEqual(["120 words · ~1m 30s read"]);
+			expect(logged).toEqual(["150 words · ~1m 45s read"]);
 		});
 
 		it("should note a budget of seconds the estimate exceeds", async () => {
-			mockReadFileSync.mockReturnValue(words(80));
+			mockReadFileSync.mockReturnValue(words(92));
 
 			await readTime("drafts/body.md", { budget: "45s" });
 
-			expect(logged).toEqual(["80 words · ~1m read · over the ~45s budget"]);
+			expect(logged).toEqual(["92 words · ~1m read · over the ~45s budget"]);
 		});
 
 		it("should note a compound budget the estimate exceeds", async () => {
-			mockReadFileSync.mockReturnValue(words(160));
+			mockReadFileSync.mockReturnValue(words(200));
 
 			await readTime("drafts/body.md", { budget: "1m30s" });
 
 			expect(logged).toEqual([
-				"160 words · ~2m read · over the ~1m 30s budget",
+				"200 words · ~2m 28s read · over the ~1m 30s budget",
 			]);
 		});
 
@@ -192,12 +194,12 @@ describe("readTime", () => {
 		});
 
 		it("should read prose at the configured words per minute", async () => {
-			mockConfig = { prs: { readingWordsPerMinute: 200 } };
+			mockConfig = { prs: { readingWordsPerMinute: 400 } };
 			mockReadFileSync.mockReturnValue(words(100));
 
 			await readTime("drafts/body.md");
 
-			expect(logged).toEqual(["100 words · ~30s read"]);
+			expect(logged).toEqual(["100 words · ~33s read"]);
 		});
 
 		it("should exit when the file cannot be read", async () => {
