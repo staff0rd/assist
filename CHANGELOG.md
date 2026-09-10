@@ -1,3 +1,10 @@
+## [0.632.1](https://github.com/staff0rd/assist/compare/v0.632.0...v0.632.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* unexport internal paged types ([7b81f1a](https://github.com/staff0rd/assist/commit/7b81f1a6a8db7521ff3d1f2ebd35d44e6e22e08b))
+
 # [0.632.0](https://github.com/staff0rd/assist/compare/v0.631.0...v0.632.0) (2026-09-10)
 
 
