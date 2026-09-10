@@ -1,3 +1,10 @@
+# [0.627.0](https://github.com/staff0rd/assist/compare/v0.626.0...v0.627.0) (2026-09-10)
+
+
+### Features
+
+* assist prs read-time ([02f31d3](https://github.com/staff0rd/assist/commit/02f31d33f28225489edcf7e025f1c6a4d8240f0d))
+
 # [0.626.0](https://github.com/staff0rd/assist/compare/v0.625.0...v0.626.0) (2026-09-09)
 
 
