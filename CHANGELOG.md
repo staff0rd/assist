@@ -1,3 +1,10 @@
+## [0.634.2](https://github.com/staff0rd/assist/compare/v0.634.1...v0.634.2) (2026-09-10)
+
+
+### Bug Fixes
+
+* let the items table fit its container ([f23d648](https://github.com/staff0rd/assist/commit/f23d648cb0b6deca36f1fc50b1a4e04a57045ae6))
+
 ## [0.634.1](https://github.com/staff0rd/assist/compare/v0.634.0...v0.634.1) (2026-09-10)
 
 
