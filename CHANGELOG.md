@@ -1,3 +1,10 @@
+# [0.630.0](https://github.com/staff0rd/assist/compare/v0.629.1...v0.630.0) (2026-09-10)
+
+
+### Features
+
+* two-line backlog rows, title on its own line ([cd6aa97](https://github.com/staff0rd/assist/commit/cd6aa97508debdbec1e894acd928972e1b544d40))
+
 ## [0.629.1](https://github.com/staff0rd/assist/compare/v0.629.0...v0.629.1) (2026-09-10)
 
 
