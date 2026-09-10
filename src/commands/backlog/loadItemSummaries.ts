@@ -2,8 +2,8 @@ import { asc, eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { items } from "../../shared/db/schema";
 import { incompleteSubtaskCounts } from "./incompleteSubtaskCounts";
-import { planPhaseCounts } from "./planPhaseCounts";
-import { phaseUsageTotals } from "./phaseUsageTotals";
+import { planPhaseCounts } from "../../shared/db/planPhaseCounts";
+import { phaseUsageTotals } from "../../shared/db/phaseUsageTotals";
 import { rowToItemSummary } from "./rowToItemSummary";
 import type { BacklogItemSummary } from "./types";
 

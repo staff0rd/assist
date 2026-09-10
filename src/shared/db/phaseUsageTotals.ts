@@ -1,11 +1,12 @@
 import { sql } from "drizzle-orm";
-import type { Db } from "../../shared/db/Db";
-import { phaseUsage } from "../../shared/db/schema";
+import type { Db } from "./Db";
+import { phaseUsage } from "./schema";
 
 export function phaseUsageTotals(orm: Db) {
 	return orm
 		.select({
 			itemId: phaseUsage.itemId,
+			recordedPhases: sql<number>`count(*)::int`.as("recorded_phases"),
 			tokensUp: sql<number>`sum(${phaseUsage.tokensUp})::bigint`.as(
 				"total_tokens_up",
 			),

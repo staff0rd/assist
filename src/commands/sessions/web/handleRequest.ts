@@ -20,6 +20,7 @@ import { listFiles } from "./listFiles";
 import { listNewsItems } from "./listNewsItems";
 import { listScopedRules } from "./listScopedRules";
 import { listUsageHistory } from "./listUsageHistory";
+import { listUsageItems } from "./listUsageItems";
 import { openInCode } from "./openInCode";
 import { prList } from "./prList";
 import { prStatus } from "./prStatus";
@@ -85,6 +86,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/pr-list": prList,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/usage/history": listUsageHistory,
+	"GET /api/usage/items": listUsageItems,
 	"GET /api/backups/list": getBackups,
 	"GET /api/config": getConfig,
 	"POST /api/config/set": setConfig,

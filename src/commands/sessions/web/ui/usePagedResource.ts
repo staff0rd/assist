@@ -1,23 +1,29 @@
 import { useEffect, useState } from "react";
-import type { UsagePeakRow } from "../../../../shared/db/listUsagePeaks";
-import { fetchUsageHistory } from "./fetchUsageHistory";
-import type { UsageWindowFilterValue } from "./UsageWindowFilter";
 
-export function useUsageHistoryFetch(
+export type PagedResult<T> = { rows: T[]; total: number };
+
+export type PagedLoader<T> = (
 	page: number,
 	pageSize: number,
-	window: UsageWindowFilterValue,
+) => Promise<PagedResult<T>>;
+
+export function usePagedResource<T>(
+	load: PagedLoader<T>,
+	pageSize: number,
+	enabled = true,
 ) {
-	const [rows, setRows] = useState<UsagePeakRow[]>([]);
+	const [page, setPage] = useState(0);
+	const [rows, setRows] = useState<T[]>([]);
 	const [total, setTotal] = useState(0);
 	const [loaded, setLoaded] = useState(false);
 	const [fetching, setFetching] = useState(false);
 	const [loadError, setLoadError] = useState<Error | null>(null);
 
 	useEffect(() => {
+		if (!enabled) return;
 		let cancelled = false;
 		setFetching(true);
-		fetchUsageHistory(page, pageSize, window).then(
+		load(page, pageSize).then(
 			(data) => {
 				if (cancelled) return;
 				setRows(data.rows);
@@ -34,7 +40,22 @@ export function useUsageHistoryFetch(
 		return () => {
 			cancelled = true;
 		};
-	}, [page, pageSize, window]);
+	}, [load, page, pageSize, enabled]);
 
-	return { rows, total, loaded, fetching, error: loadError };
+	useEffect(() => {
+		if (total === 0) return;
+		const lastPage = Math.ceil(total / pageSize) - 1;
+		if (page > lastPage) setPage(lastPage);
+	}, [page, pageSize, total]);
+
+	return {
+		rows,
+		total,
+		loaded,
+		fetching,
+		error: loadError,
+		page,
+		setPage,
+		pageSize,
+	};
 }

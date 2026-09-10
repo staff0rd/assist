@@ -1,41 +1,41 @@
-import Box from "@mui/material/Box";
-import LinearProgress from "@mui/material/LinearProgress";
-import Typography from "@mui/material/Typography";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import { useState } from "react";
 import { PageShell } from "./PageShell";
-import { usagePeakWindow } from "./usagePeakWindow";
-import { UsagePeaksPager } from "./UsagePeaksPager";
-import { UsageWindowFilter } from "./UsageWindowFilter";
+import { UsageItemsPanel } from "./UsageItemsPanel";
+import { UsagePeaksPanel } from "./UsagePeaksPanel";
 import { useUsageHistoryPage } from "./useUsageHistoryPage";
+import { useUsageItemsPage } from "./useUsageItemsPage";
+
+type UsageTab = "limits" | "items";
+
+const tabsSx = { borderBottom: 1, borderColor: "divider", mb: 2 } as const;
 
 export function UsageHistoryView() {
+	const [tab, setTab] = useState<UsageTab>("limits");
 	const history = useUsageHistoryPage();
-	const { window, total, error } = history;
+	const items = useUsageItemsPage(tab === "items");
 
-	if (error) throw error;
+	if (history.error) throw history.error;
+	if (items.error) throw items.error;
 
 	return (
-		<PageShell
-			loading={!history.loaded}
-			title="Usage history"
-			isEmpty={total === 0 && window === "all"}
-			emptyMessage="No usage peaks recorded yet."
-		>
-			<UsageWindowFilter window={window} onChange={history.selectWindow} />
-			<Box sx={{ height: 4, my: 1 }}>
-				{history.fetching && <LinearProgress />}
-			</Box>
-			{window !== "all" && total === 0 ? (
-				<Typography color="text.secondary" align="center" sx={{ py: 6 }}>
-					No {usagePeakWindow[window].label} usage peaks recorded yet.
-				</Typography>
+		<PageShell loading={!history.loaded} title="Usage history" maxWidth="lg">
+			<Tabs
+				value={tab}
+				onChange={(_, next: UsageTab) => setTab(next)}
+				textColor="inherit"
+				indicatorColor="secondary"
+				sx={tabsSx}
+				aria-label="Usage history views"
+			>
+				<Tab label="Rate limits" value="limits" />
+				<Tab label="Items" value="items" />
+			</Tabs>
+			{tab === "limits" ? (
+				<UsagePeaksPanel history={history} />
 			) : (
-				<UsagePeaksPager
-					rows={history.rows}
-					total={total}
-					page={history.page}
-					pageSize={history.pageSize}
-					onPageChange={history.setPage}
-				/>
+				<UsageItemsPanel items={items} />
 			)}
 		</PageShell>
 	);

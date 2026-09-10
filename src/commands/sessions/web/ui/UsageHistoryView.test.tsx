@@ -6,8 +6,10 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { UsagePeakRow } from "../../../../shared/db/listUsagePeaks";
+import type { UsageItemRow } from "./fetchUsageItems";
 import { UsageHistoryView } from "./UsageHistoryView";
 
 afterEach(() => {
@@ -28,26 +30,53 @@ const peak: UsagePeakRow = {
 	phaseCount: 4,
 };
 
-type HistoryPage = { rows: UsagePeakRow[]; total: number };
+const item: UsageItemRow = {
+	id: 985,
+	origin: "github.com/acme/assist",
+	type: "story",
+	name: "Add a litellm command",
+	status: "done",
+	phaseCount: 3,
+	recordedPhases: 3,
+	tokensUp: 6_400_000,
+	tokensDown: 118_000,
+	activeMs: 4_320_000,
+	peakContextPct: 63,
+	lastPhaseAt: new Date(Date.now() - 7_200_000).toISOString(),
+};
 
-function stubHistory(pages: Record<string, HistoryPage>) {
+type Page<T> = { rows: T[]; total: number };
+
+function stubApi(pages: {
+	peaks?: Record<string, Page<UsagePeakRow>>;
+	items?: Page<UsageItemRow>;
+}) {
 	const fetchMock = vi.fn(async (url: string) => {
-		const window =
-			new URL(url, "http://localhost").searchParams.get("window") ?? "all";
-		return {
-			ok: true,
-			status: 200,
-			json: async () => pages[window] ?? { rows: [], total: 0 },
-		};
+		const parsed = new URL(url, "http://localhost");
+		const body = parsed.pathname.endsWith("/items")
+			? (pages.items ?? { rows: [], total: 0 })
+			: ((pages.peaks ?? {})[parsed.searchParams.get("window") ?? "all"] ?? {
+					rows: [],
+					total: 0,
+				});
+		return { ok: true, status: 200, json: async () => body };
 	});
 	vi.stubGlobal("fetch", fetchMock);
 	return fetchMock;
 }
 
+function renderView() {
+	return render(
+		<MemoryRouter initialEntries={["/usage"]}>
+			<UsageHistoryView />
+		</MemoryRouter>,
+	);
+}
+
 describe("UsageHistoryView", () => {
 	it("keeps the toggle visible and names the window when the filter matches nothing", async () => {
-		const fetchMock = stubHistory({ all: { rows: [peak], total: 1 } });
-		render(<UsageHistoryView />);
+		const fetchMock = stubApi({ peaks: { all: { rows: [peak], total: 1 } } });
+		renderView();
 
 		await waitFor(() => expect(screen.getByText("Window")).toBeTruthy());
 		fireEvent.click(screen.getByRole("button", { name: "7d" }));
@@ -64,8 +93,8 @@ describe("UsageHistoryView", () => {
 	});
 
 	it("returns to the unfiltered rows when All is picked again", async () => {
-		stubHistory({ all: { rows: [peak], total: 1 } });
-		render(<UsageHistoryView />);
+		stubApi({ peaks: { all: { rows: [peak], total: 1 } } });
+		renderView();
 
 		await waitFor(() => expect(screen.getByText("Window")).toBeTruthy());
 		fireEvent.click(screen.getByRole("button", { name: "7d" }));
@@ -79,12 +108,83 @@ describe("UsageHistoryView", () => {
 	});
 
 	it("keeps the generic wording when nothing is recorded at all", async () => {
-		stubHistory({});
-		render(<UsageHistoryView />);
+		stubApi({});
+		renderView();
 
 		await waitFor(() =>
 			expect(screen.getByText("No usage peaks recorded yet.")).toBeTruthy(),
 		);
 		expect(screen.queryByText("No 5h usage peaks recorded yet.")).toBeNull();
+	});
+
+	describe("the Items tab", () => {
+		it("only loads item usage once the tab is opened", async () => {
+			const fetchMock = stubApi({
+				peaks: { all: { rows: [peak], total: 1 } },
+				items: { rows: [item], total: 1 },
+			});
+			renderView();
+
+			await waitFor(() => expect(screen.getByText("Window")).toBeTruthy());
+			expect(
+				fetchMock.mock.calls.some(([url]) =>
+					url.startsWith("/api/usage/items"),
+				),
+			).toBe(false);
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+
+			await waitFor(() =>
+				expect(screen.getByText("Add a litellm command")).toBeTruthy(),
+			);
+			expect(fetchMock).toHaveBeenLastCalledWith(
+				"/api/usage/items?page=0&pageSize=30",
+			);
+		});
+
+		it("shows each item's cost against its repo and phases", async () => {
+			stubApi({ items: { rows: [item], total: 1 } });
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+
+			await waitFor(() =>
+				expect(screen.getByText("a985 · story")).toBeTruthy(),
+			);
+			expect(screen.getByText("assist")).toBeTruthy();
+			expect(screen.getByText("done")).toBeTruthy();
+			expect(screen.getByText("1h 12m")).toBeTruthy();
+			expect(screen.getByText("24m / phase")).toBeTruthy();
+			expect(screen.getByText("↑ 6.4M ↓ 118.0k")).toBeTruthy();
+			expect(screen.getByText("2.2M / phase")).toBeTruthy();
+			expect(screen.getByText("63%")).toBeTruthy();
+			expect(screen.getByText("2h ago")).toBeTruthy();
+		});
+
+		it("links each item to its detail page", async () => {
+			stubApi({ items: { rows: [item], total: 1 } });
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+
+			await waitFor(() =>
+				expect(
+					screen
+						.getByRole("link", { name: "Add a litellm command" })
+						.getAttribute("href"),
+				).toBe("/backlog/items/a985"),
+			);
+		});
+
+		it("says so when no item has recorded usage", async () => {
+			stubApi({});
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+
+			await waitFor(() =>
+				expect(screen.getByText("No item usage recorded yet.")).toBeTruthy(),
+			);
+		});
 	});
 });
