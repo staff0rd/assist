@@ -27,8 +27,12 @@ export function UsageItemRow({
 	const perPhase = usageItemPerPhase(row);
 	return (
 		<TableRow hover>
-			<UsageItemNameCell id={row.id} name={row.name} type={row.type} />
-			<TableCell sx={{ whiteSpace: "nowrap" }}>{repoLabel}</TableCell>
+			<UsageItemNameCell
+				id={row.id}
+				name={row.name}
+				type={row.type}
+				repoLabel={repoLabel}
+			/>
 			<UsageItemStatusCell status={row.status} />
 			<UsageItemFigureCell
 				total={String(row.phaseCount || row.recordedPhases)}

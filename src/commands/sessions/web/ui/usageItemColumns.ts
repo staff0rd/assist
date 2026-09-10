@@ -9,7 +9,6 @@ export type UsageItemColumn = {
 
 export const usageItemColumns: UsageItemColumn[] = [
 	{ label: "Item" },
-	{ label: "Repo" },
 	{ label: "Status" },
 	{ label: "Phases", sort: "phases", numeric: true },
 	{

@@ -186,9 +186,8 @@ describe("UsageHistoryView", () => {
 			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
 
 			await waitFor(() =>
-				expect(screen.getByText("a985 · story")).toBeTruthy(),
+				expect(screen.getByText("a985 · story · assist")).toBeTruthy(),
 			);
-			expect(screen.getByText("assist")).toBeTruthy();
 			expect(screen.getByText("done")).toBeTruthy();
 			expect(screen.getByText("1h 12m")).toBeTruthy();
 			expect(screen.getByText("24m / phase")).toBeTruthy();

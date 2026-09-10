@@ -42,10 +42,10 @@ function renderTable(
 }
 
 describe("UsageItemsTable", () => {
-	it("shortens a repo label to its bare name", () => {
+	it("names the item, its type and its repo on one meta line", () => {
 		renderTable([base]);
 
-		expect(screen.getByText("assist")).toBeTruthy();
+		expect(screen.getByText("a1 · story · assist")).toBeTruthy();
 	});
 
 	it("falls back to org/repo when two origins share a repo name", () => {
@@ -54,14 +54,14 @@ describe("UsageItemsTable", () => {
 			{ ...base, id: 2, name: "Item two", origin: "github.com/other/assist" },
 		]);
 
-		expect(screen.getByText("acme/assist")).toBeTruthy();
-		expect(screen.getByText("other/assist")).toBeTruthy();
+		expect(screen.getByText("a1 · story · acme/assist")).toBeTruthy();
+		expect(screen.getByText("a2 · story · other/assist")).toBeTruthy();
 	});
 
 	it("keeps the org/repo fallback when the colliding origin is off this page", () => {
 		renderTable([base], ["github.com/acme/assist", "github.com/other/assist"]);
 
-		expect(screen.getByText("acme/assist")).toBeTruthy();
+		expect(screen.getByText("a1 · story · acme/assist")).toBeTruthy();
 	});
 
 	it("counts the recorded phases when the item has no authored plan", () => {

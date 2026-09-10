@@ -29,10 +29,12 @@ export function UsageItemNameCell({
 	id,
 	name,
 	type,
+	repoLabel,
 }: {
 	id: number;
 	name: string;
 	type: string;
+	repoLabel: string;
 }) {
 	return (
 		<TableCell sx={cellSx}>
@@ -47,7 +49,7 @@ export function UsageItemNameCell({
 				{name}
 			</Link>
 			<Typography component="span" sx={metaSx}>
-				{formatItemId(id)} · {type}
+				{formatItemId(id)} · {type} · {repoLabel}
 			</Typography>
 		</TableCell>
 	);
