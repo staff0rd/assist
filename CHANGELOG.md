@@ -1,3 +1,10 @@
+# [0.628.0](https://github.com/staff0rd/assist/compare/v0.627.0...v0.628.0) (2026-09-10)
+
+
+### Features
+
+* prose-aware read-time counting ([d79404e](https://github.com/staff0rd/assist/commit/d79404e5859307c1e86bdc2e726e39977a2ea6aa))
+
 # [0.627.0](https://github.com/staff0rd/assist/compare/v0.626.0...v0.627.0) (2026-09-10)
 
 
