@@ -1,3 +1,10 @@
+## [0.630.2](https://github.com/staff0rd/assist/compare/v0.630.1...v0.630.2) (2026-09-10)
+
+
+### Bug Fixes
+
+* refit read-time to 80 wpm ([6d19b71](https://github.com/staff0rd/assist/commit/6d19b712a8727018fe0aa7d15a59331b8c7dd67f))
+
 ## [0.630.1](https://github.com/staff0rd/assist/compare/v0.630.0...v0.630.1) (2026-09-10)
 
 
