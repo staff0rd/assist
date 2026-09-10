@@ -37,6 +37,7 @@ export function UsageItemsContent({
 					<Box ref={ref} sx={{ minHeight: height }}>
 						<UsageItemsTable
 							rows={rows}
+							origins={data.origins.map((row) => row.origin)}
 							sort={items.sort}
 							onSort={items.sortBy}
 						/>

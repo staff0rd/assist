@@ -23,11 +23,16 @@ const base: UsageItemRow = {
 	lastPhaseAt: "2026-09-01T00:00:00.000Z",
 };
 
-function renderTable(rows: UsageItemRow[], onSort = vi.fn()) {
+function renderTable(
+	rows: UsageItemRow[],
+	origins = rows.map((row) => row.origin),
+	onSort = vi.fn(),
+) {
 	render(
 		<MemoryRouter>
 			<UsageItemsTable
 				rows={rows}
+				origins={origins}
 				sort={defaultItemUsageSort}
 				onSort={onSort}
 			/>
@@ -51,6 +56,12 @@ describe("UsageItemsTable", () => {
 
 		expect(screen.getByText("acme/assist")).toBeTruthy();
 		expect(screen.getByText("other/assist")).toBeTruthy();
+	});
+
+	it("keeps the org/repo fallback when the colliding origin is off this page", () => {
+		renderTable([base], ["github.com/acme/assist", "github.com/other/assist"]);
+
+		expect(screen.getByText("acme/assist")).toBeTruthy();
 	});
 
 	it("counts the recorded phases when the item has no authored plan", () => {

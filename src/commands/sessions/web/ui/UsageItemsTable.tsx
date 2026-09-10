@@ -14,16 +14,18 @@ import { UsageItemsTableHead } from "./UsageItemsTableHead";
 
 export function UsageItemsTable({
 	rows,
+	origins,
 	sort,
 	onSort,
 }: {
 	rows: UsageItemRowData[];
+	origins: string[];
 	sort: ItemUsageSort;
 	onSort: (field: ItemUsageSortField) => void;
 }) {
 	const labels = useMemo(
-		() => originDisplayLabels(rows.map((row) => row.origin)),
-		[rows],
+		() => originDisplayLabels([...origins, ...rows.map((row) => row.origin)]),
+		[origins, rows],
 	);
 	return (
 		<TableContainer component={Paper}>
