@@ -46,6 +46,7 @@ assist ls
 assist miro extract
 assist news
 assist prs list-comments
+assist prs read-time
 assist ravendb auth list
 assist ravendb collections
 assist ravendb query

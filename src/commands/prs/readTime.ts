@@ -1,28 +1,53 @@
-import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { loadConfig } from "../../shared/loadConfig";
 import { countReadingWords } from "./countReadingWords";
 import { formatReadDuration } from "./formatReadDuration";
+import { parseReadBudget } from "./parseReadBudget";
 import { readBodyArgument } from "./readBodyArgument";
 import {
 	type ReadTimeTarget,
 	resolveReadTimeTarget,
 } from "./resolveReadTimeTarget";
-import { getRepoInfo, isGhNotInstalled, isNotFound } from "./shared";
+import { fetchPrBody } from "./fetchPrBody";
 
-const WORDS_PER_MINUTE = 200;
+const DEFAULT_WORDS_PER_MINUTE = 200;
 
-const CODE_SCAN_WORDS_PER_MINUTE = 100;
+const DEFAULT_BUDGET_SECONDS = 60;
 
-export async function readTime(target: string): Promise<void> {
+const CODE_WORDS_PER_PROSE_WORD = 2;
+
+export async function readTime(
+	target: string,
+	options: { budget?: string } = {},
+): Promise<void> {
+	const budgetSeconds = resolveBudget(options.budget);
 	const body = await loadBody(resolveReadTimeTarget(target));
 	const { prose, code } = countReadingWords(body);
 	const words = prose + code;
+	const wordsPerMinute =
+		loadConfig().prs?.readingWordsPerMinute ?? DEFAULT_WORDS_PER_MINUTE;
 	const seconds = Math.round(
-		(prose / WORDS_PER_MINUTE + code / CODE_SCAN_WORDS_PER_MINUTE) * 60,
+		((prose + code * CODE_WORDS_PER_PROSE_WORD) / wordsPerMinute) * 60,
 	);
 	const label = words === 1 ? "word" : "words";
+	const verdict =
+		seconds > budgetSeconds
+			? ` · over the ~${formatReadDuration(budgetSeconds)} budget`
+			: "";
 
-	console.log(`${words} ${label} · ~${formatReadDuration(seconds)} read`);
+	console.log(
+		`${words} ${label} · ~${formatReadDuration(seconds)} read${verdict}`,
+	);
+}
+
+function resolveBudget(budget: string | undefined): number {
+	if (budget === undefined) return DEFAULT_BUDGET_SECONDS;
+	try {
+		return parseReadBudget(budget);
+	} catch (error) {
+		console.error(`Error: ${(error as Error).message}`);
+		process.exit(1);
+	}
 }
 
 async function loadBody(target: ReadTimeTarget): Promise<string> {
@@ -40,29 +65,5 @@ function readDraftFile(path: string): string {
 			"Pass a pull request number, a GitHub pull request URL, - for stdin, or a path to a file.",
 		);
 		process.exit(1);
-	}
-}
-
-function fetchPrBody(
-	number: number,
-	repo: { org: string; repo: string } | null,
-): string {
-	const { org, repo: name } = repo ?? getRepoInfo();
-	try {
-		const raw = execSync(`gh pr view ${number} --json body -R ${org}/${name}`, {
-			encoding: "utf8",
-		});
-		return (JSON.parse(raw) as { body: string | null }).body ?? "";
-	} catch (error) {
-		if (isGhNotInstalled(error)) {
-			console.error("Error: GitHub CLI (gh) is not installed.");
-			console.error("Install it from https://cli.github.com/");
-			process.exit(1);
-		}
-		if (isNotFound(error)) {
-			console.error(`Error: Pull request ${org}/${name}#${number} not found.`);
-			process.exit(1);
-		}
-		throw error;
 	}
 }

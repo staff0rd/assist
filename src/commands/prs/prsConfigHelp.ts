@@ -13,6 +13,14 @@ export const prsRaiseConfigHelp: ConfigHelpEntry[] = [
 	},
 ];
 
+export const prsReadTimeConfigHelp: ConfigHelpEntry[] = [
+	{
+		key: "prs.readingWordsPerMinute",
+		setter: "assist config set prs.readingWordsPerMinute 250",
+		note: "prose reading speed 'assist prs read-time' estimates with (default 200; fenced code counts at half that)",
+	},
+];
+
 export const prsConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "prs.slack",
@@ -25,4 +33,5 @@ export const prsConfigHelp: ConfigHelpEntry[] = [
 		note: "require a branch when running a backlog item",
 	},
 	...prsRaiseConfigHelp,
+	...prsReadTimeConfigHelp,
 ];

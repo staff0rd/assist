@@ -18,10 +18,14 @@ vi.mock("./shared", () => ({
 	isGhNotInstalled: () => false,
 	isNotFound: () => false,
 }));
+vi.mock("../../shared/loadConfig", () => ({
+	loadConfig: () => mockConfig,
+}));
 
 import { readTime } from "./readTime";
 
 let logged: string[];
+let mockConfig: { prs?: { readingWordsPerMinute?: number } };
 
 function words(count: number): string {
 	return Array.from({ length: count }, (_, i) => `word${i}`).join(" ");
@@ -31,6 +35,7 @@ beforeEach(() => {
 	mockExecSync.mockReset();
 	mockReadFileSync.mockReset();
 	mockReadBodyArgument.mockReset();
+	mockConfig = {};
 	logged = [];
 	vi.spyOn(console, "log").mockImplementation((line: string) => {
 		logged.push(line);
@@ -122,6 +127,77 @@ describe("readTime", () => {
 			await readTime("drafts/body.md");
 
 			expect(logged).toEqual(["1 word · ~0s read"]);
+		});
+
+		it("should note when the estimate is over the default one minute budget", async () => {
+			mockReadFileSync.mockReturnValue(words(300));
+
+			await readTime("drafts/body.md");
+
+			expect(logged).toEqual([
+				"300 words · ~1m 30s read · over the ~1m budget",
+			]);
+		});
+
+		it("should not note a budget the estimate lands exactly on", async () => {
+			mockReadFileSync.mockReturnValue(words(200));
+
+			await readTime("drafts/body.md");
+
+			expect(logged).toEqual(["200 words · ~1m read"]);
+		});
+
+		it("should judge the estimate against --budget", async () => {
+			mockReadFileSync.mockReturnValue(words(300));
+
+			await readTime("drafts/body.md", { budget: "2m" });
+
+			expect(logged).toEqual(["300 words · ~1m 30s read"]);
+		});
+
+		it("should note a budget of seconds the estimate exceeds", async () => {
+			mockReadFileSync.mockReturnValue(words(200));
+
+			await readTime("drafts/body.md", { budget: "45s" });
+
+			expect(logged).toEqual(["200 words · ~1m read · over the ~45s budget"]);
+		});
+
+		it("should note a compound budget the estimate exceeds", async () => {
+			mockReadFileSync.mockReturnValue(words(400));
+
+			await readTime("drafts/body.md", { budget: "1m30s" });
+
+			expect(logged).toEqual([
+				"400 words · ~2m read · over the ~1m 30s budget",
+			]);
+		});
+
+		it("should exit when the budget cannot be parsed", async () => {
+			mockReadFileSync.mockReturnValue(words(10));
+			const exit = vi.spyOn(process, "exit").mockImplementation(() => {
+				throw new Error("process.exit");
+			});
+			const errors: string[] = [];
+			vi.spyOn(console, "error").mockImplementation((line: string) => {
+				errors.push(line);
+			});
+
+			await expect(
+				readTime("drafts/body.md", { budget: "2 hours" }),
+			).rejects.toThrow("process.exit");
+			expect(exit).toHaveBeenCalledWith(1);
+			expect(errors[0]).toContain('Invalid budget "2 hours"');
+			expect(mockReadFileSync).not.toHaveBeenCalled();
+		});
+
+		it("should read prose at the configured words per minute", async () => {
+			mockConfig = { prs: { readingWordsPerMinute: 100 } };
+			mockReadFileSync.mockReturnValue(words(100));
+
+			await readTime("drafts/body.md");
+
+			expect(logged).toEqual(["100 words · ~1m read"]);
 		});
 
 		it("should exit when the file cannot be read", async () => {
