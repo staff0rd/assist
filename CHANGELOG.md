@@ -1,3 +1,10 @@
+# [0.629.0](https://github.com/staff0rd/assist/compare/v0.628.0...v0.629.0) (2026-09-10)
+
+
+### Features
+
+* read-time budget and reading speed ([3f8ca19](https://github.com/staff0rd/assist/commit/3f8ca19d0c04860fd3e27637fd4412e28503256c))
+
 # [0.628.0](https://github.com/staff0rd/assist/compare/v0.627.0...v0.628.0) (2026-09-10)
 
 
