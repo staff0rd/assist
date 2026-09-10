@@ -1,3 +1,10 @@
+## [0.634.3](https://github.com/staff0rd/assist/compare/v0.634.2...v0.634.3) (2026-09-10)
+
+
+### Bug Fixes
+
+* give the item name the leftover width ([3d314ec](https://github.com/staff0rd/assist/commit/3d314ec633b2a547078945cec87ed574226a8f69))
+
 ## [0.634.2](https://github.com/staff0rd/assist/compare/v0.634.1...v0.634.2) (2026-09-10)
 
 
