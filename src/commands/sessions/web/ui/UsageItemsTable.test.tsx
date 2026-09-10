@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { defaultItemUsageSort } from "../../../../shared/db/parseItemUsageSort";
 import type { UsageItemRow } from "./fetchUsageItems";
 import { UsageItemsTable } from "./UsageItemsTable";
 
@@ -22,12 +23,17 @@ const base: UsageItemRow = {
 	lastPhaseAt: "2026-09-01T00:00:00.000Z",
 };
 
-function renderTable(rows: UsageItemRow[]) {
-	return render(
+function renderTable(rows: UsageItemRow[], onSort = vi.fn()) {
+	render(
 		<MemoryRouter>
-			<UsageItemsTable rows={rows} />
+			<UsageItemsTable
+				rows={rows}
+				sort={defaultItemUsageSort}
+				onSort={onSort}
+			/>
 		</MemoryRouter>,
 	);
+	return onSort;
 }
 
 describe("UsageItemsTable", () => {
@@ -57,5 +63,69 @@ describe("UsageItemsTable", () => {
 		renderTable([{ ...base, lastPhaseAt: null }]);
 
 		expect(screen.getByText("—")).toBeTruthy();
+	});
+
+	describe("an item that is not done", () => {
+		it("reads as running and marks its totals partial", () => {
+			renderTable([
+				{ ...base, status: "in-progress", phaseCount: 3, recordedPhases: 1 },
+			]);
+
+			expect(screen.getByText("running")).toBeTruthy();
+			expect(screen.getByText("1 of 3 phases")).toBeTruthy();
+		});
+
+		it("keeps a settled status as its own label", () => {
+			renderTable([{ ...base, status: "wontdo" }]);
+
+			expect(screen.getByText("wontdo")).toBeTruthy();
+			expect(screen.queryByText("running")).toBeNull();
+		});
+
+		it("says nothing about phases it cannot place against a plan", () => {
+			renderTable([
+				{ ...base, status: "in-progress", phaseCount: 0, recordedPhases: 2 },
+			]);
+
+			expect(screen.queryByText("2 of 0 phases")).toBeNull();
+		});
+	});
+
+	describe("a done item", () => {
+		it("carries no partial note", () => {
+			renderTable([{ ...base, phaseCount: 3, recordedPhases: 1 }]);
+
+			expect(screen.queryByText("1 of 3 phases")).toBeNull();
+		});
+	});
+
+	describe("the sortable headers", () => {
+		const ariaSort = (name: string) =>
+			screen.getByRole("columnheader", { name }).getAttribute("aria-sort");
+
+		it("marks the column the rows are sorted by", () => {
+			renderTable([base]);
+
+			expect(ariaSort("Last phase")).toBe("descending");
+			expect(ariaSort("Tokens")).toBeNull();
+		});
+
+		it("reports the field behind a clicked header", () => {
+			const onSort = renderTable([base]);
+
+			fireEvent.click(screen.getByText("Tokens"));
+			fireEvent.click(screen.getByText("Peak ctx"));
+
+			expect(onSort.mock.calls).toEqual([["tokens"], ["peakContext"]]);
+		});
+
+		it("leaves the descriptive columns unsorted", () => {
+			const onSort = renderTable([base]);
+
+			fireEvent.click(screen.getByText("Status"));
+
+			expect(onSort).not.toHaveBeenCalled();
+			expect(ariaSort("Status")).toBeNull();
+		});
 	});
 });

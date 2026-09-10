@@ -113,6 +113,49 @@ describe("itemUsageStats", () => {
 		});
 	});
 
+	describe("when items differ in status", () => {
+		const seed = async () => {
+			await addItem(1, { plannedPhases: 2, activeMs: 60_000, tokens: 100 });
+			await addItem(2, {
+				plannedPhases: 6,
+				activeMs: 600_000,
+				tokens: 900,
+				status: "in-progress",
+			});
+			await addItem(3, {
+				plannedPhases: 4,
+				activeMs: 240_000,
+				tokens: 400,
+				status: "todo",
+			});
+		};
+
+		it("medians only the done items", async () => {
+			await seed();
+
+			expect(await itemUsageStats(orm, { status: "done" })).toEqual({
+				itemCount: 1,
+				doneCount: 1,
+				repoCount: 1,
+				medianPhases: 2,
+				medianActiveMs: 60_000,
+				medianTokens: 100,
+			});
+		});
+
+		it("medians every item that is not done as running", async () => {
+			await seed();
+
+			const stats = await itemUsageStats(orm, { status: "running" });
+
+			expect(stats.itemCount).toBe(2);
+			expect(stats.doneCount).toBe(0);
+			expect(stats.medianPhases).toBe(5);
+			expect(stats.medianActiveMs).toBe(420_000);
+			expect(stats.medianTokens).toBe(650);
+		});
+	});
+
 	describe("when items span several repos", () => {
 		const seed = async () => {
 			await addItem(1, { plannedPhases: 2, activeMs: 60_000, tokens: 100 });

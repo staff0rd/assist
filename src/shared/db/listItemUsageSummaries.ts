@@ -1,6 +1,9 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { Db } from "./Db";
+import { itemUsageOrderBy } from "./itemUsageOrderBy";
+import { type ItemUsageFilter, itemUsageWhere } from "./itemUsageWhere";
 import { lastPhaseActivity } from "./lastPhaseActivity";
+import type { ItemUsageSort } from "./parseItemUsageSort";
 import { phaseUsageTotals } from "./phaseUsageTotals";
 import { planPhaseCounts } from "./planPhaseCounts";
 import { items } from "./schema";
@@ -9,10 +12,10 @@ import {
 	toItemUsageSummary,
 } from "./toItemUsageSummary";
 
-type ListItemUsageSummariesOptions = {
+type ListItemUsageSummariesOptions = ItemUsageFilter & {
 	limit?: number;
 	offset?: number;
-	origin?: string;
+	sort?: ItemUsageSort;
 };
 
 export async function listItemUsageSummaries(
@@ -41,8 +44,10 @@ export async function listItemUsageSummaries(
 		.innerJoin(totals, eq(totals.itemId, items.id))
 		.leftJoin(planned, eq(planned.itemId, items.id))
 		.leftJoin(lastPhase, eq(lastPhase.itemId, items.id))
-		.where(options?.origin ? eq(items.origin, options.origin) : undefined)
-		.orderBy(sql`${lastPhase.at} desc nulls last`, desc(items.id));
+		.where(itemUsageWhere(options))
+		.orderBy(
+			...itemUsageOrderBy({ totals, planned, lastPhase }, options?.sort),
+		);
 	const rows =
 		options?.limit === undefined
 			? await query

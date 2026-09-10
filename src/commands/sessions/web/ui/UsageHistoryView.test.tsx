@@ -81,12 +81,17 @@ const itemsPage: UsageItemsPage = {
 function stubApi(pages: {
 	peaks?: Record<string, Page<UsagePeakRow>>;
 	items?: Record<string, UsageItemsPage>;
+	statuses?: Record<string, UsageItemsPage>;
 }) {
+	const itemsBody = (params: URLSearchParams) => {
+		const status = params.get("status");
+		if (status) return (pages.statuses ?? {})[status] ?? noItems;
+		return (pages.items ?? {})[params.get("origin") ?? "all"] ?? noItems;
+	};
 	const fetchMock = vi.fn(async (url: string) => {
 		const parsed = new URL(url, "http://localhost");
 		const body = parsed.pathname.endsWith("/items")
-			? ((pages.items ?? {})[parsed.searchParams.get("origin") ?? "all"] ??
-				noItems)
+			? itemsBody(parsed.searchParams)
 			: ((pages.peaks ?? {})[parsed.searchParams.get("window") ?? "all"] ?? {
 					rows: [],
 					total: 0,
@@ -264,6 +269,126 @@ describe("UsageHistoryView", () => {
 			);
 			expect(fetchMock).toHaveBeenLastCalledWith(
 				"/api/usage/items?page=0&pageSize=30&origin=github.com%2Facme%2Fapm",
+			);
+		});
+
+		it("marks a running item's totals partial", async () => {
+			const running: UsageItemRow = {
+				...item,
+				id: 987,
+				name: "Usage history: analyse implemented items",
+				status: "in-progress",
+				phaseCount: 3,
+				recordedPhases: 1,
+			};
+			stubApi({ items: { all: { ...itemsPage, rows: [running] } } });
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+
+			await waitFor(() => expect(screen.getByText("running")).toBeTruthy());
+			expect(screen.getByText("1 of 3 phases")).toBeTruthy();
+		});
+
+		it("narrows the rows and the summary to the picked status", async () => {
+			const runningOnly: UsageItemsPage = {
+				...itemsPage,
+				total: 1,
+				summary: {
+					...itemsPage.summary,
+					itemCount: 1,
+					doneCount: 0,
+					repoCount: 1,
+				},
+			};
+			const fetchMock = stubApi({
+				items: { all: itemsPage },
+				statuses: { running: runningOnly },
+			});
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+			await waitFor(() =>
+				expect(screen.getByText("across 2 repos · 2 done")).toBeTruthy(),
+			);
+			fireEvent.click(screen.getByRole("button", { name: "Running" }));
+
+			await waitFor(() =>
+				expect(screen.getByText("across 1 repo · 0 done")).toBeTruthy(),
+			);
+			expect(fetchMock).toHaveBeenLastCalledWith(
+				"/api/usage/items?page=0&pageSize=30&status=running",
+			);
+		});
+
+		it("says when a filter matches nothing without hiding the filters", async () => {
+			const none: UsageItemsPage = {
+				...itemsPage,
+				rows: [],
+				total: 0,
+				summary: { ...itemsPage.summary, itemCount: 0, doneCount: 0 },
+			};
+			stubApi({ items: { all: itemsPage }, statuses: { done: none } });
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+			await waitFor(() =>
+				expect(screen.getByText("Median phases")).toBeTruthy(),
+			);
+			fireEvent.click(screen.getByRole("button", { name: "Done" }));
+
+			await waitFor(() =>
+				expect(screen.getByText("No items match this filter.")).toBeTruthy(),
+			);
+			expect(screen.getByRole("button", { name: "All" })).toBeTruthy();
+			expect(screen.getByRole("combobox", { name: "Repo" })).toBeTruthy();
+		});
+
+		it("sorts by a clicked column and flips it on a second click", async () => {
+			const fetchMock = stubApi({ items: { all: itemsPage } });
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+			await waitFor(() =>
+				expect(screen.getByText("Median phases")).toBeTruthy(),
+			);
+			fireEvent.click(screen.getByText("Active"));
+
+			await waitFor(() =>
+				expect(fetchMock).toHaveBeenLastCalledWith(
+					"/api/usage/items?page=0&pageSize=30&sort=active",
+				),
+			);
+			fireEvent.click(screen.getByText("Active"));
+
+			await waitFor(() =>
+				expect(fetchMock).toHaveBeenLastCalledWith(
+					"/api/usage/items?page=0&pageSize=30&sort=active&direction=asc",
+				),
+			);
+		});
+
+		it("returns to the first page when the sort changes", async () => {
+			const paged: UsageItemsPage = { ...itemsPage, total: 60 };
+			const fetchMock = stubApi({ items: { all: paged } });
+			renderView();
+
+			fireEvent.click(await screen.findByRole("tab", { name: "Items" }));
+			await waitFor(() =>
+				expect(screen.getByText("Median phases")).toBeTruthy(),
+			);
+			fireEvent.click(screen.getByRole("button", { name: "Go to next page" }));
+			await waitFor(() =>
+				expect(fetchMock).toHaveBeenLastCalledWith(
+					"/api/usage/items?page=1&pageSize=30",
+				),
+			);
+			fireEvent.click(screen.getByText("Phases"));
+
+			await waitFor(() =>
+				expect(fetchMock).toHaveBeenLastCalledWith(
+					"/api/usage/items?page=0&pageSize=30&sort=phases",
+				),
 			);
 		});
 

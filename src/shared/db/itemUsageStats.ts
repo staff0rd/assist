@@ -1,5 +1,6 @@
 import { eq, type SQLWrapper, sql } from "drizzle-orm";
 import type { Db } from "./Db";
+import { type ItemUsageFilter, itemUsageWhere } from "./itemUsageWhere";
 import { phaseUsageTotals } from "./phaseUsageTotals";
 import { planPhaseCounts } from "./planPhaseCounts";
 import { items } from "./schema";
@@ -13,17 +14,13 @@ export type ItemUsageStats = {
 	medianTokens: number;
 };
 
-type ItemUsageStatsOptions = {
-	origin?: string;
-};
-
 function median(value: SQLWrapper) {
 	return sql<number>`coalesce(percentile_cont(0.5) within group (order by (${value})::double precision), 0)`;
 }
 
 export async function itemUsageStats(
 	db: Db,
-	options?: ItemUsageStatsOptions,
+	options?: ItemUsageFilter,
 ): Promise<ItemUsageStats> {
 	const totals = phaseUsageTotals(db);
 	const planned = planPhaseCounts(db);
@@ -41,7 +38,7 @@ export async function itemUsageStats(
 		.from(items)
 		.innerJoin(totals, eq(totals.itemId, items.id))
 		.leftJoin(planned, eq(planned.itemId, items.id))
-		.where(options?.origin ? eq(items.origin, options.origin) : undefined);
+		.where(itemUsageWhere(options));
 	return {
 		itemCount: Number(row?.itemCount ?? 0),
 		doneCount: Number(row?.doneCount ?? 0),

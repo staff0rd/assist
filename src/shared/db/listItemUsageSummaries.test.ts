@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createTestDb } from "./createTestDb";
 import type { Db } from "./Db";
+import type { ItemUsageSort } from "./parseItemUsageSort";
 import { itemUsageStats } from "./itemUsageStats";
 import { listItemUsageSummaries } from "./listItemUsageSummaries";
 import { items, phaseSessions, phaseUsage, planPhases } from "./schema";
@@ -172,6 +173,108 @@ describe("listItemUsageSummaries", () => {
 			expect(page0.map((r) => r.id)).toEqual([2, 3]);
 			expect(page1.map((r) => r.id)).toEqual([1, 4]);
 			expect((await itemUsageStats(orm)).itemCount).toBe(4);
+		});
+	});
+
+	describe("when a sort is requested", () => {
+		const seed = async () => {
+			await addItem(1);
+			await addPhases(1, 4);
+			await addUsage(1, 0, {
+				tokensUp: 100,
+				tokensDown: 10,
+				activeMs: 30_000,
+				peakContextPct: 80,
+			});
+			await addSession(1, 0, "2026-09-01T00:00:00Z");
+			await addItem(2);
+			await addPhases(2, 2);
+			await addUsage(2, 0, {
+				tokensUp: 900,
+				tokensDown: 90,
+				activeMs: 10_000,
+				peakContextPct: 20,
+			});
+			await addSession(2, 0, "2026-09-05T00:00:00Z");
+		};
+
+		const ids = async (sort: ItemUsageSort) =>
+			(await listItemUsageSummaries(orm, { sort })).map((row) => row.id);
+
+		it("orders by each sortable field", async () => {
+			await seed();
+
+			expect(await ids({ field: "phases", direction: "desc" })).toEqual([1, 2]);
+			expect(await ids({ field: "active", direction: "desc" })).toEqual([1, 2]);
+			expect(await ids({ field: "tokens", direction: "desc" })).toEqual([2, 1]);
+			expect(await ids({ field: "peakContext", direction: "desc" })).toEqual([
+				1, 2,
+			]);
+			expect(await ids({ field: "lastPhase", direction: "desc" })).toEqual([
+				2, 1,
+			]);
+		});
+
+		it("reverses the order when ascending", async () => {
+			await seed();
+
+			expect(await ids({ field: "phases", direction: "asc" })).toEqual([2, 1]);
+			expect(await ids({ field: "tokens", direction: "asc" })).toEqual([1, 2]);
+			expect(await ids({ field: "lastPhase", direction: "asc" })).toEqual([
+				1, 2,
+			]);
+		});
+
+		it("keeps items with no phase session last either way", async () => {
+			await seed();
+			await addItem(3);
+			await addUsage(3, 0, {
+				tokensUp: 1,
+				tokensDown: 1,
+				activeMs: 1,
+				peakContextPct: 1,
+			});
+
+			expect(await ids({ field: "lastPhase", direction: "desc" })).toEqual([
+				2, 1, 3,
+			]);
+			expect(await ids({ field: "lastPhase", direction: "asc" })).toEqual([
+				1, 2, 3,
+			]);
+		});
+	});
+
+	describe("when items differ in status", () => {
+		const seed = async () => {
+			for (const [id, status] of [
+				[1, "done"],
+				[2, "in-progress"],
+				[3, "todo"],
+			] as const) {
+				await addItem(id, { status });
+				await addUsage(id, 0, {
+					tokensUp: id,
+					tokensDown: id,
+					activeMs: id,
+					peakContextPct: id,
+				});
+			}
+		};
+
+		it("keeps only done items", async () => {
+			await seed();
+
+			const rows = await listItemUsageSummaries(orm, { status: "done" });
+
+			expect(rows.map((r) => r.id)).toEqual([1]);
+		});
+
+		it("treats every item that is not done as running", async () => {
+			await seed();
+
+			const rows = await listItemUsageSummaries(orm, { status: "running" });
+
+			expect(rows.map((r) => r.id)).toEqual([3, 2]);
 		});
 	});
 

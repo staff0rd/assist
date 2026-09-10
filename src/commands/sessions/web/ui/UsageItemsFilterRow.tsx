@@ -1,7 +1,9 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { ItemUsageOriginCount } from "../../../../shared/db/countItemUsageByOrigin";
+import type { UsageItemStatus } from "./fetchUsageItems";
 import { UsageItemRepoFilter } from "./UsageItemRepoFilter";
+import { UsageItemStatusFilter } from "./UsageItemStatusFilter";
 
 const rowSx = {
 	display: "flex",
@@ -17,18 +19,23 @@ const note =
 export function UsageItemsFilterRow({
 	origins,
 	origin,
-	onChange,
+	onOriginChange,
+	status,
+	onStatusChange,
 }: {
 	origins: ItemUsageOriginCount[];
 	origin: string;
-	onChange: (origin: string) => void;
+	onOriginChange: (origin: string) => void;
+	status: UsageItemStatus;
+	onStatusChange: (status: UsageItemStatus) => void;
 }) {
 	return (
 		<Box sx={rowSx}>
+			<UsageItemStatusFilter status={status} onChange={onStatusChange} />
 			<UsageItemRepoFilter
 				origins={origins}
 				origin={origin}
-				onChange={onChange}
+				onChange={onOriginChange}
 			/>
 			<Typography variant="caption" color="text.disabled">
 				{note}

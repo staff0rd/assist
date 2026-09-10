@@ -6,26 +6,32 @@ const cellSx = {
 	fontVariantNumeric: "tabular-nums",
 } as const;
 
-const perPhaseSx = {
+const noteSx = {
 	display: "block",
 	fontSize: "0.75rem",
 	color: "text.disabled",
 	whiteSpace: "nowrap",
 } as const;
 
+const partialSx = { ...noteSx, fontStyle: "italic" } as const;
+
 export function UsageItemFigureCell({
 	total,
 	perPhase,
+	partial,
 }: {
 	total: string;
-	perPhase: string;
+	perPhase?: string;
+	partial?: boolean;
 }) {
 	return (
 		<TableCell align="right" sx={cellSx}>
 			{total}
-			<Typography component="span" sx={perPhaseSx}>
-				{perPhase}
-			</Typography>
+			{perPhase ? (
+				<Typography component="span" sx={partial ? partialSx : noteSx}>
+					{perPhase}
+				</Typography>
+			) : null}
 		</TableCell>
 	);
 }

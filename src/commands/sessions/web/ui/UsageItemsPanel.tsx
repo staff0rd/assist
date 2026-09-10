@@ -1,11 +1,7 @@
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
-import TablePagination from "@mui/material/TablePagination";
 import Typography from "@mui/material/Typography";
-import { useFullPageHeight } from "./useFullPageHeight";
-import { UsageItemsFilterRow } from "./UsageItemsFilterRow";
-import { UsageItemsTable } from "./UsageItemsTable";
-import { UsageItemStatBand } from "./UsageItemStatBand";
+import { UsageItemsContent } from "./UsageItemsContent";
 import type { useUsageItemsPage } from "./useUsageItemsPage";
 
 export function UsageItemsPanel({
@@ -13,8 +9,7 @@ export function UsageItemsPanel({
 }: {
 	items: ReturnType<typeof useUsageItemsPage>;
 }) {
-	const { data, rows, total, page, pageSize } = items;
-	const { ref, height } = useFullPageHeight(rows.length, pageSize);
+	const { data } = items;
 
 	return (
 		<>
@@ -26,25 +21,7 @@ export function UsageItemsPanel({
 					No item usage recorded yet.
 				</Typography>
 			) : (
-				<>
-					<UsageItemStatBand summary={data.summary} />
-					<UsageItemsFilterRow
-						origins={data.origins}
-						origin={items.origin}
-						onChange={items.selectOrigin}
-					/>
-					<Box ref={ref} sx={{ minHeight: height }}>
-						<UsageItemsTable rows={rows} />
-					</Box>
-					<TablePagination
-						component="div"
-						count={total}
-						page={page}
-						rowsPerPage={pageSize}
-						rowsPerPageOptions={[pageSize]}
-						onPageChange={(_, next) => items.setPage(next)}
-					/>
-				</>
+				<UsageItemsContent items={items} data={data} />
 			)}
 		</>
 	);

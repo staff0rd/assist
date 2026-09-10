@@ -9,6 +9,7 @@ import { contextColor } from "./statusColors";
 import { UsageItemFigureCell } from "./UsageItemFigureCell";
 import { UsageItemNameCell } from "./UsageItemNameCell";
 import { usageItemPerPhase } from "./usageItemPerPhase";
+import { usageItemPhaseNote } from "./usageItemPhaseNote";
 import { UsageItemStatusCell } from "./UsageItemStatusCell";
 
 const numericSx = {
@@ -29,9 +30,11 @@ export function UsageItemRow({
 			<UsageItemNameCell id={row.id} name={row.name} type={row.type} />
 			<TableCell sx={{ whiteSpace: "nowrap" }}>{repoLabel}</TableCell>
 			<UsageItemStatusCell status={row.status} />
-			<TableCell align="right" sx={numericSx}>
-				{row.phaseCount || row.recordedPhases}
-			</TableCell>
+			<UsageItemFigureCell
+				total={String(row.phaseCount || row.recordedPhases)}
+				perPhase={usageItemPhaseNote(row)}
+				partial
+			/>
 			<UsageItemFigureCell
 				total={formatActiveTime(row.activeMs)}
 				perPhase={perPhase.active}
