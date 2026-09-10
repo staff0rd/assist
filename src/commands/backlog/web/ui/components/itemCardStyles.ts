@@ -36,6 +36,14 @@ const stretchOverRowSx = {
 
 const aboveStretchedLinkSx = { position: "relative", zIndex: 2 } as const;
 
+const focusRingSx = {
+	"& .MuiButtonBase-root:focus-visible": {
+		outline: "2px solid",
+		outlineColor: "primary.main",
+		outlineOffset: "2px",
+	},
+} as const;
+
 export const itemCardStyles: Record<string, SxProps<Theme>> = {
 	card: baseCardSx,
 	inProgressCard: {
@@ -65,6 +73,7 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 		fontSize: "0.75rem",
 		color: "text.secondary",
 		"& a, & p": { fontSize: "0.75rem" },
+		...focusRingSx,
 	},
 	id: { color: "text.disabled" },
 	actions: {
@@ -73,5 +82,6 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 		gap: 1,
 		flexShrink: 0,
 		...aboveStretchedLinkSx,
+		...focusRingSx,
 	},
 };
