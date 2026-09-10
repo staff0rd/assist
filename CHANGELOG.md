@@ -1,3 +1,10 @@
+# [0.631.0](https://github.com/staff0rd/assist/compare/v0.630.2...v0.631.0) (2026-09-10)
+
+
+### Features
+
+* length-decayed read-time estimate ([ad27757](https://github.com/staff0rd/assist/commit/ad27757d46a685f710680dda03a2be5489b2f566))
+
 ## [0.630.2](https://github.com/staff0rd/assist/compare/v0.630.1...v0.630.2) (2026-09-10)
 
 
