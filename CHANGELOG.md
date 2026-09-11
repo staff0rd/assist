@@ -1,3 +1,10 @@
+# [0.636.0](https://github.com/staff0rd/assist/compare/v0.635.0...v0.636.0) (2026-09-11)
+
+
+### Features
+
+* run codex reviewer on LiteLLM model ([f481482](https://github.com/staff0rd/assist/commit/f48148273c62684282da6dd42ed162117ee0914e))
+
 # [0.635.0](https://github.com/staff0rd/assist/compare/v0.634.3...v0.635.0) (2026-09-10)
 
 
