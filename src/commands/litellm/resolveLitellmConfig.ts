@@ -1,17 +1,11 @@
 import chalk from "chalk";
-import { loadConfig } from "../../shared/loadConfig";
 import { litellmConfigHelp } from "./litellmConfigHelp";
+import { type LitellmConfig, readLitellmConfig } from "./readLitellmConfig";
 
-export function resolveLitellmConfig(): { baseUrl: string; apiKey: string } {
-	const litellm = loadConfig().litellm;
-	const baseUrl = litellm?.baseUrl?.trim();
-	const apiKey = litellm?.apiKey?.trim();
+export function resolveLitellmConfig(): LitellmConfig {
+	const { config, missing } = readLitellmConfig();
 
-	if (!baseUrl || !apiKey) {
-		const missing = [
-			...(baseUrl ? [] : ["litellm.baseUrl"]),
-			...(apiKey ? [] : ["litellm.apiKey"]),
-		];
+	if (!config) {
 		console.error(chalk.red("LiteLLM is not configured"));
 		for (const key of missing) {
 			const entry = litellmConfigHelp.find((help) => help.key === key);
@@ -22,5 +16,5 @@ export function resolveLitellmConfig(): { baseUrl: string; apiKey: string } {
 		process.exit(1);
 	}
 
-	return { baseUrl: baseUrl.replace(/\/+$/, ""), apiKey };
+	return config;
 }

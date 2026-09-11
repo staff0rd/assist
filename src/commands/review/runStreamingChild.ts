@@ -11,6 +11,7 @@ type StreamingChildSpec = {
 	stdin: string;
 	onLine: (line: string) => void;
 	quiet?: boolean;
+	env?: Record<string, string>;
 };
 
 export type ReviewerResult = {
@@ -37,6 +38,7 @@ function startChild(spec: StreamingChildSpec) {
 	const child = spawn(spec.command, spec.args, {
 		stdio: ["pipe", "pipe", "pipe"],
 		shell: process.platform === "win32",
+		...(spec.env ? { env: { ...process.env, ...spec.env } } : {}),
 	});
 	const flushPending = attachLineParser(child, spec.onLine);
 	const stderr = attachStderrCollector(child);

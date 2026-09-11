@@ -1,4 +1,5 @@
 import { existsSync, unlinkSync } from "node:fs";
+import { buildCodexModelArgs } from "./buildCodexModelArgs";
 import { finaliseReviewerRun } from "./finaliseReviewerRun";
 import type { SpinnerHandle } from "./MultiSpinner";
 import { parseCodexEvent } from "./parseCodexEvent";
@@ -12,9 +13,10 @@ type CodexReviewerSpec = {
 	spinner?: SpinnerHandle;
 };
 
-function codexArgs(outputPath: string): string[] {
+function codexArgs(outputPath: string, modelArgs: string[]): string[] {
 	return [
 		"exec",
+		...modelArgs,
 		"--sandbox",
 		"read-only",
 		"--json",
@@ -28,12 +30,14 @@ export async function runCodexReviewer(
 ): Promise<ReviewerResult> {
 	const { spinner } = spec;
 	const command = "codex";
+	const override = buildCodexModelArgs();
 	const result = await runStreamingChild({
 		name: spec.name,
 		command,
-		args: codexArgs(spec.outputPath),
+		args: codexArgs(spec.outputPath, override.args),
 		stdin: spec.stdin,
 		quiet: Boolean(spinner),
+		...(override.args.length > 0 ? { env: override.env } : {}),
 		onLine: (line) => {
 			const event = parseCodexEvent(line);
 			if (event.kind !== "tool_use") return;

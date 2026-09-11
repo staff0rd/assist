@@ -112,6 +112,11 @@ const assistConfigShape = {
 			readingWordsPerMinute: z.number().int().positive().optional(),
 		})
 		.optional(),
+	review: z
+		.strictObject({
+			codexModel: z.string().optional(),
+		})
+		.optional(),
 	readTime: z
 		.strictObject({
 			wordsPerMinute: z.number().int().positive().default(200),
