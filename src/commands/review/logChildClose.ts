@@ -3,6 +3,7 @@ import { formatReviewerFailure } from "./formatReviewerFailure";
 type LogArgs = {
 	name: string;
 	command: string;
+	model?: string;
 	exitCode: number;
 	elapsedMs: number;
 	stderr: string;
@@ -18,6 +19,7 @@ export function logChildClose(args: LogArgs): void {
 	const diagnostic = formatReviewerFailure({
 		name: args.name,
 		command: args.command,
+		model: args.model,
 		exitCode: args.exitCode,
 		stderr: args.stderr,
 		stdout: args.stdout,

@@ -38,6 +38,7 @@ describe("buildCodexModelArgs", () => {
 				"gpt-5-codex",
 			],
 			env: { ASSIST_LITELLM_API_KEY: "sk-test" },
+			model: "gpt-5-codex",
 		});
 	});
 

@@ -16,6 +16,7 @@ type ExitContext = {
 	stdout: { value: string };
 	name: string;
 	command: string;
+	model?: string;
 	startedAt: number;
 	quiet: boolean;
 };
@@ -45,6 +46,7 @@ function onCloseResult(ctx: ExitContext, code: number | null): ExitResult {
 		startedAt: ctx.startedAt,
 		name: ctx.name,
 		command: ctx.command,
+		model: ctx.model,
 		stderr: ctx.stderr.value,
 		stdout: ctx.stdout.value,
 		quiet: ctx.quiet,

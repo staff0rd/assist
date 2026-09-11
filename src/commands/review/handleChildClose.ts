@@ -5,6 +5,7 @@ type CloseHandlerArgs = {
 	startedAt: number;
 	name: string;
 	command: string;
+	model?: string;
 	stderr: string;
 	stdout: string;
 	quiet: boolean;
@@ -22,6 +23,7 @@ export function handleChildClose(args: CloseHandlerArgs): CloseHandlerResult {
 		logChildClose({
 			name: args.name,
 			command: args.command,
+			model: args.model,
 			exitCode,
 			elapsedMs,
 			stderr: args.stderr,

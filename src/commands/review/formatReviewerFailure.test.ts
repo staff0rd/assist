@@ -22,6 +22,15 @@ describe("formatReviewerFailure", () => {
 		expect(d.headerLine).toBe("codex CLI exited with code 2 after 12s");
 	});
 
+	it("names the model in the header when one is in use", () => {
+		const d = formatReviewerFailure(
+			base({ model: "gpt-5-codex", exitCode: 2, elapsedMs: 12345 }),
+		);
+		expect(d.headerLine).toBe(
+			"codex (gpt-5-codex) CLI exited with code 2 after 12s",
+		);
+	});
+
 	it("uses command name when set, otherwise reviewer name", () => {
 		const withCommand = formatReviewerFailure(
 			base({ name: "synthesis", command: "claude" }),

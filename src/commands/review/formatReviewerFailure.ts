@@ -1,9 +1,12 @@
+import { reviewerLabel } from "./reviewerLabel";
+
 const FAST_FAIL_MS = 1000;
 const STDOUT_TAIL_LINES = 20;
 
 export type FailureInput = {
 	name: string;
 	command?: string;
+	model?: string;
 	exitCode: number;
 	stderr: string;
 	stdout?: string;
@@ -58,7 +61,7 @@ function outputDetail(input: FailureInput): string[] {
 export function formatReviewerFailure(input: FailureInput): FailureDiagnostic {
 	const command = input.command ?? input.name;
 	const seconds = Math.round((input.elapsedMs ?? 0) / 1000);
-	const headerLine = `${command} CLI exited with code ${input.exitCode} after ${seconds}s`;
+	const headerLine = `${reviewerLabel(command, input.model)} CLI exited with code ${input.exitCode} after ${seconds}s`;
 	const detailLines: string[] = [];
 	if (isFastFail(input)) detailLines.push(...fastFailHint(command));
 	detailLines.push(...outputDetail(input));

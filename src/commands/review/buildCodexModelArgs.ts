@@ -3,9 +3,10 @@ import { readLitellmConfig } from "../litellm/readLitellmConfig";
 
 const API_KEY_ENV = "ASSIST_LITELLM_API_KEY";
 
-type CodexModelOverride = {
+export type CodexModelOverride = {
 	args: string[];
 	env: Record<string, string>;
+	model?: string;
 };
 
 export function buildCodexModelArgs(): CodexModelOverride {
@@ -27,5 +28,6 @@ export function buildCodexModelArgs(): CodexModelOverride {
 			model,
 		],
 		env: { [API_KEY_ENV]: config.apiKey },
+		model,
 	};
 }

@@ -7,6 +7,7 @@ import { type ExitResult, waitForChildExit } from "./waitForChildExit";
 type StreamingChildSpec = {
 	name: string;
 	command: string;
+	model?: string;
 	args: string[];
 	stdin: string;
 	onLine: (line: string) => void;
@@ -17,6 +18,7 @@ type StreamingChildSpec = {
 export type ReviewerResult = {
 	name: string;
 	command?: string;
+	model?: string;
 	outputPath: string;
 	exitCode: number;
 	stderr: string;
@@ -60,6 +62,7 @@ export function runStreamingChild(
 		stdout,
 		name: spec.name,
 		command: spec.command,
+		model: spec.model,
 		startedAt,
 		quiet: spec.quiet ?? false,
 	});

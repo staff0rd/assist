@@ -1,4 +1,5 @@
 import type { SpinnerHandle } from "./MultiSpinner";
+import { reviewerLabel } from "./reviewerLabel";
 
 const SUMMARY_MAX_LEN = 80;
 
@@ -11,19 +12,27 @@ function summariseStderr(stderr: string): string {
 		: trimmed;
 }
 
+type ReviewerOutcome = {
+	name: string;
+	model?: string;
+	exitCode: number;
+	elapsedMs: number;
+	stderr?: string;
+};
+
 export function finaliseReviewerSpinner(
 	spinner: SpinnerHandle,
-	name: string,
-	exitCode: number,
-	elapsedMs: number,
-	stderr = "",
+	outcome: ReviewerOutcome,
 ): void {
-	const elapsed = Math.round(elapsedMs / 1000);
-	if (exitCode === 0) {
-		spinner.succeed(`${name} — done in ${elapsed}s`);
+	const label = reviewerLabel(outcome.name, outcome.model);
+	const elapsed = Math.round(outcome.elapsedMs / 1000);
+	if (outcome.exitCode === 0) {
+		spinner.succeed(`${label} — done in ${elapsed}s`);
 		return;
 	}
-	const summary = summariseStderr(stderr);
+	const summary = summariseStderr(outcome.stderr ?? "");
 	const suffix = summary ? `: ${summary}` : "";
-	spinner.fail(`${name} — failed in ${elapsed}s (exit ${exitCode})${suffix}`);
+	spinner.fail(
+		`${label} — failed in ${elapsed}s (exit ${outcome.exitCode})${suffix}`,
+	);
 }

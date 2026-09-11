@@ -12,6 +12,7 @@ type RunOutcome = {
 type RunSpec = {
 	name: string;
 	command?: string;
+	model?: string;
 	outputPath: string;
 };
 
@@ -21,16 +22,17 @@ export function finaliseReviewerRun(
 	result: RunOutcome,
 ): ReviewerResult {
 	if (spinner)
-		finaliseReviewerSpinner(
-			spinner,
-			spec.name,
-			result.exitCode,
-			result.elapsedMs,
-			result.stderr,
-		);
+		finaliseReviewerSpinner(spinner, {
+			name: spec.name,
+			model: spec.model,
+			exitCode: result.exitCode,
+			elapsedMs: result.elapsedMs,
+			stderr: result.stderr,
+		});
 	return {
 		name: spec.name,
 		command: spec.command,
+		model: spec.model,
 		outputPath: spec.outputPath,
 		exitCode: result.exitCode,
 		stderr: result.stderr,
