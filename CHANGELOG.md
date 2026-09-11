@@ -1,3 +1,10 @@
+# [0.638.0](https://github.com/staff0rd/assist/compare/v0.637.0...v0.638.0) (2026-09-11)
+
+
+### Features
+
+* resume conversations from Activity ([6c69f2f](https://github.com/staff0rd/assist/commit/6c69f2f55f982c2c9c8d74b7ad262e099015dfe4))
+
 # [0.637.0](https://github.com/staff0rd/assist/compare/v0.636.0...v0.637.0) (2026-09-11)
 
 
