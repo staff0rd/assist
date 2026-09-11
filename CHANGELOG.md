@@ -1,3 +1,10 @@
+# [0.637.0](https://github.com/staff0rd/assist/compare/v0.636.0...v0.637.0) (2026-09-11)
+
+
+### Features
+
+* name codex model in review output ([9289731](https://github.com/staff0rd/assist/commit/928973183d277335510e43e99c04a4489e634bf1))
+
 # [0.636.0](https://github.com/staff0rd/assist/compare/v0.635.0...v0.636.0) (2026-09-11)
 
 
