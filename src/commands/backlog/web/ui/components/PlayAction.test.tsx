@@ -20,6 +20,7 @@ function renderPlay(launchAssist: () => void, sessions: SessionInfo[] = []) {
 					value={{
 						launchAssist,
 						launchAgentInStream: () => {},
+						resumeSession: () => {},
 						armUpdateReload: () => {},
 					}}
 				>

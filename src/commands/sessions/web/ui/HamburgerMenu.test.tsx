@@ -11,7 +11,12 @@ function renderMenu(launchAssist: () => void, armUpdateReload = () => {}) {
 	return render(
 		<MemoryRouter initialEntries={["/sessions"]}>
 			<SessionLaunchContext.Provider
-				value={{ launchAssist, launchAgentInStream: () => {}, armUpdateReload }}
+				value={{
+					launchAssist,
+					launchAgentInStream: () => {},
+					resumeSession: () => {},
+					armUpdateReload,
+				}}
 			>
 				<HamburgerMenu mode="light" toggle={() => {}} reconnecting={false} />
 				<Routes>

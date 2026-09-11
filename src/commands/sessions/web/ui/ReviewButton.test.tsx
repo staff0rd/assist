@@ -20,6 +20,7 @@ function renderButton(launchAssist: () => void, launchedFrom?: string) {
 			value={{
 				launchAssist,
 				launchAgentInStream: () => {},
+				resumeSession: () => {},
 				armUpdateReload: () => {},
 			}}
 		>

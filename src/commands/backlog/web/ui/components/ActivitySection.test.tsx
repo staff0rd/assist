@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
-import type { GitRef } from "../types";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { SessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
+import type { Conversation, GitRef } from "../types";
 import { ActivitySection } from "./ActivitySection";
 
 afterEach(cleanup);
@@ -76,33 +77,61 @@ describe("ActivitySection", () => {
 		expect(screen.getByText("#9")).toBeTruthy();
 	});
 
-	it("renders a session ref labelled by its title, or its bare id", () => {
-		const refs: GitRef[] = [
-			{ kind: "session", ref: "titled-session", title: "Fix the thing" },
-			{ kind: "session", ref: "untitled-session" },
+	it("renders a conversation labelled by its title, or its bare id", () => {
+		const conversations: Conversation[] = [
+			{ sessionId: "titled-session", title: "Fix the thing" },
+			{ sessionId: "untitled-session" },
 		];
 
-		render(<ActivitySection gitRefs={refs} />);
+		render(<ActivitySection gitRefs={[]} conversations={conversations} />);
 
 		expect(screen.getAllByText("session")).toHaveLength(2);
 		expect(screen.getByText("Fix the thing")).toBeTruthy();
 		expect(screen.getByText("untitled-session")).toBeTruthy();
+		expect(screen.queryByRole("link")).toBeNull();
 	});
 
-	it("does not linkify a session's transcript path", () => {
+	it("ignores session git-refs, which arrive as conversations instead", () => {
 		const refs: GitRef[] = [
+			{ kind: "session", ref: "titled-session", title: "Fix the thing" },
+		];
+
+		const { container } = render(<ActivitySection gitRefs={refs} />);
+
+		expect(container.firstChild).toBeNull();
+	});
+
+	it("resumes a conversation with its cwd and harness", () => {
+		const resumeSession = vi.fn();
+		const conversations: Conversation[] = [
 			{
-				kind: "session",
-				ref: "titled-session",
+				sessionId: "codex-session",
 				title: "Fix the thing",
-				url: "/home/dev/.claude/projects/-home-dev-other/titled-session.jsonl",
+				cwd: "/home/dev/repo",
+				harness: "codex",
 			},
 		];
 
-		render(<ActivitySection gitRefs={refs} />);
+		render(
+			<SessionLaunchContext.Provider
+				value={{
+					launchAssist: () => {},
+					launchAgentInStream: () => {},
+					resumeSession,
+					armUpdateReload: () => {},
+				}}
+			>
+				<ActivitySection gitRefs={[]} conversations={conversations} />
+			</SessionLaunchContext.Provider>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Resume" }));
 
-		expect(screen.queryByRole("link")).toBeNull();
-		expect(screen.getByText("Fix the thing")).toBeTruthy();
+		expect(resumeSession).toHaveBeenCalledWith(
+			"codex-session",
+			"/home/dev/repo",
+			"Fix the thing",
+			"codex",
+		);
 	});
 
 	it("shows a timestamp on commits but not on branches or PRs", () => {

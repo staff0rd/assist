@@ -17,6 +17,7 @@ function renderRefine(launchAssist: () => void) {
 				value={{
 					launchAssist,
 					launchAgentInStream: () => {},
+					resumeSession: () => {},
 					armUpdateReload: () => {},
 				}}
 			>

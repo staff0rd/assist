@@ -1,3 +1,5 @@
+import type { HarnessKind } from "../../../../shared/harnesses";
+
 type PlanTask = {
 	task: string;
 };
@@ -28,6 +30,15 @@ export type PhaseSession = {
 	claudeSessionId: string;
 	hostname: string;
 	osUser: string;
+	createdAt?: string;
+};
+
+export type Conversation = {
+	sessionId: string;
+	title?: string;
+	cwd?: string;
+	harness?: HarnessKind;
+	createdAt?: string;
 };
 
 export type BacklogComment = {
@@ -85,6 +96,7 @@ export type BacklogItem = {
 	phaseSessions?: PhaseSession[];
 	usageTotal?: PhaseUsageTotal;
 	gitRefs?: GitRef[];
+	conversations?: Conversation[];
 };
 
 export type ItemTracker = {

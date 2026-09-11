@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import type { HarnessKind } from "../../../../shared/harnesses";
 import type { AssistLaunchMeta } from "./createSessionAction";
 
 type SessionLaunch = {
@@ -12,12 +13,19 @@ type SessionLaunch = {
 		prompt: string,
 		cwd?: string,
 	) => void;
+	resumeSession: (
+		sessionId: string,
+		cwd: string,
+		name?: string,
+		harness?: HarnessKind,
+	) => void;
 	armUpdateReload: () => void;
 };
 
 export const SessionLaunchContext = createContext<SessionLaunch>({
 	launchAssist: () => {},
 	launchAgentInStream: () => {},
+	resumeSession: () => {},
 	armUpdateReload: () => {},
 });
 

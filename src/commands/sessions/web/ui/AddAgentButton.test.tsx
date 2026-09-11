@@ -32,6 +32,7 @@ function renderButton(
 					prompt: string,
 					cwd?: string,
 				) => void,
+				resumeSession: () => {},
 				armUpdateReload: () => {},
 			}}
 		>

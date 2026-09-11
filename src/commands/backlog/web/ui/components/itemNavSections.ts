@@ -41,7 +41,7 @@ export function itemNavSections(item: BacklogItem): ItemNavSection[] {
 	if ((item.subtasks?.length ?? 0) > 0)
 		sections.push({ id: ITEM_SECTION_IDS.subtasks, label: "Sub-tasks" });
 	sections.push(...planSections(item));
-	if ((item.gitRefs?.length ?? 0) > 0)
+	if ((item.gitRefs?.length ?? 0) + (item.conversations?.length ?? 0) > 0)
 		sections.push({ id: ITEM_SECTION_IDS.activity, label: "Activity" });
 	if ((item.comments?.length ?? 0) > 0)
 		sections.push({ id: ITEM_SECTION_IDS.comments, label: "Comments" });

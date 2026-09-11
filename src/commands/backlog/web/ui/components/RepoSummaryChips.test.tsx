@@ -37,6 +37,7 @@ function renderChips(
 				value={{
 					launchAssist,
 					launchAgentInStream: () => {},
+					resumeSession: () => {},
 					armUpdateReload: () => {},
 				}}
 			>
@@ -139,6 +140,7 @@ describe("RepoSummaryChips clone-on-select", () => {
 					value={{
 						launchAssist,
 						launchAgentInStream: () => {},
+						resumeSession: () => {},
 						armUpdateReload: () => {},
 					}}
 				>
@@ -177,6 +179,7 @@ describe("RepoSummaryChips clone-on-select", () => {
 					value={{
 						launchAssist,
 						launchAgentInStream: () => {},
+						resumeSession: () => {},
 						armUpdateReload: () => {},
 					}}
 				>

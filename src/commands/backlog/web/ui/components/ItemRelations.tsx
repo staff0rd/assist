@@ -35,7 +35,10 @@ export function ItemRelations({
 					onRewind={onRewind}
 				/>
 			)}
-			{item.gitRefs && <ActivitySection gitRefs={item.gitRefs} />}
+			<ActivitySection
+				gitRefs={item.gitRefs ?? []}
+				conversations={item.conversations}
+			/>
 			{item.comments && (
 				<CommentsSection
 					comments={item.comments}

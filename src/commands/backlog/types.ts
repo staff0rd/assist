@@ -37,6 +37,7 @@ const phaseSessionSchema = z.strictObject({
 	claudeSessionId: z.string(),
 	hostname: z.string(),
 	osUser: z.string(),
+	createdAt: z.string().optional(),
 });
 
 const phaseUsageTotalSchema = z.strictObject({
@@ -144,3 +145,15 @@ export type Subtask = z.infer<typeof subtaskSchema>;
 export type SubtaskStatus = z.infer<typeof subtaskStatusSchema>;
 export type BacklogLinkType = z.infer<typeof backlogLinkTypeSchema>;
 export type GitRef = z.infer<typeof gitRefSchema>;
+
+export type Conversation = {
+	sessionId: string;
+	title?: string;
+	cwd?: string;
+	harness?: HarnessKind;
+	createdAt?: string;
+};
+
+export type BacklogItemDetail = BacklogItem & {
+	conversations?: Conversation[];
+};

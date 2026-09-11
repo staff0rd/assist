@@ -3,10 +3,11 @@ import { respondJson } from "../../../shared/web";
 import { deleteItem as deleteItemById } from "../deleteItem";
 import { loadItem } from "../loadItem";
 import { getReady } from "../shared";
-import type { BacklogItem } from "../types";
+import type { BacklogItem, BacklogItemDetail } from "../types";
 import { updateStarred } from "../updateStarred";
 import { updateStatus } from "../updateStatus";
 import { applyCwdFromReq } from "./applyCwdFromReq";
+import { itemConversations } from "./itemConversations";
 import { loadVisibleItems } from "./loadVisibleItems";
 import { parseStarBody, parseStatusBody } from "./parseStatusBody";
 import { withReviewPhase } from "./withReviewPhase";
@@ -36,7 +37,11 @@ export async function getItemById(
 	id: number,
 ): Promise<void> {
 	const result = await findItemOr404(res, id);
-	if (result) respondJson(res, 200, withReviewPhase(result.item));
+	if (!result) return;
+	const item: BacklogItemDetail = withReviewPhase(result.item);
+	const conversations = await itemConversations(item);
+	if (conversations.length > 0) item.conversations = conversations;
+	respondJson(res, 200, item);
 }
 
 export async function deleteItem(
