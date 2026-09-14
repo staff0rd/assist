@@ -1,3 +1,10 @@
+# [0.649.0](https://github.com/staff0rd/assist/compare/v0.648.0...v0.649.0) (2026-09-14)
+
+
+### Features
+
+* keep codex model in progress lines ([f2b7cd0](https://github.com/staff0rd/assist/commit/f2b7cd0440347521221e4eec83ac7e197b758f5b))
+
 # [0.648.0](https://github.com/staff0rd/assist/compare/v0.647.0...v0.648.0) (2026-09-14)
 
 
