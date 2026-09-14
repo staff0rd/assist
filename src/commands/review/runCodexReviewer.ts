@@ -42,7 +42,7 @@ export async function runCodexReviewer(
 		onLine: (line) => {
 			const event = parseCodexEvent(line);
 			if (event.kind !== "tool_use") return;
-			reportReviewerToolUse(spec.name, event, spinner);
+			reportReviewerToolUse(spec.name, event, spinner, override.model);
 		},
 	});
 	if (result.exitCode !== 0 && existsSync(spec.outputPath)) {

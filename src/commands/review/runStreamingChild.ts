@@ -2,6 +2,7 @@ import { type ChildProcess, spawn } from "node:child_process";
 import { attachLineParser } from "./attachLineParser";
 import { attachStderrCollector } from "./attachStderrCollector";
 import { attachStdoutTail } from "./attachStdoutTail";
+import { reviewerLabel } from "./reviewerLabel";
 import { type ExitResult, waitForChildExit } from "./waitForChildExit";
 
 type StreamingChildSpec = {
@@ -53,7 +54,8 @@ export function runStreamingChild(
 	spec: StreamingChildSpec,
 ): Promise<ExitResult> {
 	const startedAt = Date.now();
-	if (!spec.quiet) console.log(`[${spec.name}] starting`);
+	if (!spec.quiet)
+		console.log(`[${reviewerLabel(spec.name, spec.model)}] starting`);
 	const { child, flushPending, stderr, stdout } = startChild(spec);
 	return waitForChildExit({
 		child,
