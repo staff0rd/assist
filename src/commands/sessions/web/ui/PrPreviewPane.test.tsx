@@ -195,8 +195,8 @@ describe("PrPreviewPane inline comments", () => {
 			const onDecision = vi.fn();
 			render(<PrPreviewPane preview={preview} onDecision={onDecision} />);
 
-			expect(toggle("Review").checked).toBe(true);
-			expect(toggle("Post").checked).toBe(true);
+			expect(toggle("Review PR").checked).toBe(true);
+			expect(toggle("Post to Slack").checked).toBe(true);
 
 			approve();
 			expect(onDecision).toHaveBeenCalledWith(
@@ -209,9 +209,9 @@ describe("PrPreviewPane inline comments", () => {
 			const onDecision = vi.fn();
 			render(<PrPreviewPane preview={preview} onDecision={onDecision} />);
 
-			fireEvent.click(toggle("Review"));
-			expect(toggle("Review").checked).toBe(false);
-			expect(toggle("Post").checked).toBe(true);
+			fireEvent.click(toggle("Review PR"));
+			expect(toggle("Review PR").checked).toBe(false);
+			expect(toggle("Post to Slack").checked).toBe(true);
 
 			approve();
 			expect(onDecision).toHaveBeenCalledWith(
@@ -224,7 +224,7 @@ describe("PrPreviewPane inline comments", () => {
 			const onDecision = vi.fn();
 			render(<PrPreviewPane preview={preview} onDecision={onDecision} />);
 
-			fireEvent.click(toggle("Post"));
+			fireEvent.click(toggle("Post to Slack"));
 
 			approve();
 			expect(onDecision).toHaveBeenCalledWith(
@@ -237,8 +237,8 @@ describe("PrPreviewPane inline comments", () => {
 			const onDecision = vi.fn();
 			render(<PrPreviewPane preview={preview} onDecision={onDecision} />);
 
-			fireEvent.click(toggle("Review"));
-			fireEvent.click(toggle("Post"));
+			fireEvent.click(toggle("Review PR"));
+			fireEvent.click(toggle("Post to Slack"));
 
 			approve();
 			expect(onDecision).toHaveBeenCalledWith(
@@ -253,7 +253,7 @@ describe("PrPreviewPane inline comments", () => {
 			const first = render(
 				<PrPreviewPane preview={preview} sessionId="s1" onDecision={vi.fn()} />,
 			);
-			fireEvent.click(toggle("Post"));
+			fireEvent.click(toggle("Post to Slack"));
 			fireEvent.click(screen.getByRole("button", { name: "Reject" }));
 			first.unmount();
 
@@ -261,23 +261,23 @@ describe("PrPreviewPane inline comments", () => {
 				<PrPreviewPane preview={retry} sessionId="s1" onDecision={vi.fn()} />,
 			);
 
-			expect(toggle("Review").checked).toBe(true);
-			expect(toggle("Post").checked).toBe(false);
+			expect(toggle("Review PR").checked).toBe(true);
+			expect(toggle("Post to Slack").checked).toBe(false);
 		});
 
 		it("starts a different session at the defaults", () => {
 			const first = render(
 				<PrPreviewPane preview={preview} sessionId="s1" onDecision={vi.fn()} />,
 			);
-			fireEvent.click(toggle("Post"));
+			fireEvent.click(toggle("Post to Slack"));
 			first.unmount();
 
 			render(
 				<PrPreviewPane preview={retry} sessionId="s2" onDecision={vi.fn()} />,
 			);
 
-			expect(toggle("Review").checked).toBe(true);
-			expect(toggle("Post").checked).toBe(true);
+			expect(toggle("Review PR").checked).toBe(true);
+			expect(toggle("Post to Slack").checked).toBe(true);
 		});
 
 		it("prunes a chain older than the 24h TTL and falls back to the defaults", () => {
@@ -302,8 +302,8 @@ describe("PrPreviewPane inline comments", () => {
 				<PrPreviewPane preview={preview} sessionId="s1" onDecision={vi.fn()} />,
 			);
 
-			expect(toggle("Review").checked).toBe(true);
-			expect(toggle("Post").checked).toBe(true);
+			expect(toggle("Review PR").checked).toBe(true);
+			expect(toggle("Post to Slack").checked).toBe(true);
 			expect(localStorage.getItem(key)).toBeNull();
 			expect(
 				localStorage.getItem("assist:pr-preview-chain:stale-other"),
@@ -323,15 +323,15 @@ describe("PrPreviewPane inline comments", () => {
 				<PrPreviewPane preview={preview} sessionId="s1" onDecision={vi.fn()} />,
 			);
 
-			expect(toggle("Review").checked).toBe(false);
-			expect(toggle("Post").checked).toBe(true);
+			expect(toggle("Review PR").checked).toBe(false);
+			expect(toggle("Post to Slack").checked).toBe(true);
 		});
 
 		it("clears the remembered choice once the preview is approved", () => {
 			const first = render(
 				<PrPreviewPane preview={preview} sessionId="s1" onDecision={vi.fn()} />,
 			);
-			fireEvent.click(toggle("Post"));
+			fireEvent.click(toggle("Post to Slack"));
 			approve();
 			first.unmount();
 
@@ -339,7 +339,7 @@ describe("PrPreviewPane inline comments", () => {
 				<PrPreviewPane preview={retry} sessionId="s1" onDecision={vi.fn()} />,
 			);
 
-			expect(toggle("Post").checked).toBe(true);
+			expect(toggle("Post to Slack").checked).toBe(true);
 		});
 	});
 
@@ -399,8 +399,8 @@ describe("PrPreviewPane inline comments", () => {
 			);
 
 			expect(screen.queryByLabelText("Draft")).toBeNull();
-			expect(toggle("Review").checked).toBe(true);
-			expect(toggle("Post").checked).toBe(true);
+			expect(toggle("Review PR").checked).toBe(true);
+			expect(toggle("Post to Slack").checked).toBe(true);
 		});
 
 		const retry: PrPreview = { ...readyPr, requestId: "r2" };
@@ -460,7 +460,7 @@ describe("PrPreviewPane inline comments", () => {
 			);
 
 			expect(toggle("Draft").checked).toBe(true);
-			expect(toggle("Review").checked).toBe(false);
+			expect(toggle("Review PR").checked).toBe(false);
 		});
 	});
 
@@ -831,8 +831,8 @@ describe("PrPreviewPane inline comments", () => {
 		it("offers no chain toggles", () => {
 			render(<PrPreviewPane preview={item} onDecision={vi.fn()} />);
 
-			expect(screen.queryByLabelText("Review")).toBeNull();
-			expect(screen.queryByLabelText("Post")).toBeNull();
+			expect(screen.queryByLabelText("Review PR")).toBeNull();
+			expect(screen.queryByLabelText("Post to Slack")).toBeNull();
 			expect(screen.queryByLabelText("Draft")).toBeNull();
 		});
 	});
@@ -857,8 +857,8 @@ describe("PrPreviewPane inline comments", () => {
 		it("offers no chain toggles", () => {
 			render(<PrPreviewPane preview={comment} onDecision={vi.fn()} />);
 
-			expect(screen.queryByLabelText("Review")).toBeNull();
-			expect(screen.queryByLabelText("Post")).toBeNull();
+			expect(screen.queryByLabelText("Review PR")).toBeNull();
+			expect(screen.queryByLabelText("Post to Slack")).toBeNull();
 			expect(screen.queryByLabelText("Draft")).toBeNull();
 		});
 
@@ -917,8 +917,8 @@ describe("PrPreviewPane inline comments", () => {
 
 			expect(screen.getByText("Comment")).toBeTruthy();
 			expect(screen.queryByText("New PR")).toBeNull();
-			expect(screen.queryByLabelText("Review")).toBeNull();
-			expect(screen.queryByLabelText("Post")).toBeNull();
+			expect(screen.queryByLabelText("Review PR")).toBeNull();
+			expect(screen.queryByLabelText("Post to Slack")).toBeNull();
 			expect(screen.queryByLabelText("Draft")).toBeNull();
 			expect(screen.queryByText(/attach a screenshot/)).toBeNull();
 		});
@@ -933,7 +933,7 @@ describe("PrPreviewPane inline comments", () => {
 
 			expect(screen.getByText("Comment")).toBeTruthy();
 			expect(screen.queryByText("Update #42")).toBeNull();
-			expect(screen.queryByLabelText("Review")).toBeNull();
+			expect(screen.queryByLabelText("Review PR")).toBeNull();
 		});
 
 		it("returns each inline comment with Request changes", () => {
@@ -972,8 +972,8 @@ describe("PrPreviewPane inline comments", () => {
 
 			expect(screen.getByText("Comment")).toBeTruthy();
 			expect(screen.queryByText("New PR")).toBeNull();
-			expect(screen.queryByLabelText("Review")).toBeNull();
-			expect(screen.queryByLabelText("Post")).toBeNull();
+			expect(screen.queryByLabelText("Review PR")).toBeNull();
+			expect(screen.queryByLabelText("Post to Slack")).toBeNull();
 			expect(screen.queryByLabelText("Draft")).toBeNull();
 			expect(screen.queryByText(/attach a screenshot/)).toBeNull();
 		});
@@ -1081,8 +1081,8 @@ describe("PrPreviewPane inline comments", () => {
 		it("offers no chain toggles", () => {
 			render(<PrPreviewPane preview={newIssue} onDecision={vi.fn()} />);
 
-			expect(screen.queryByLabelText("Review")).toBeNull();
-			expect(screen.queryByLabelText("Post")).toBeNull();
+			expect(screen.queryByLabelText("Review PR")).toBeNull();
+			expect(screen.queryByLabelText("Post to Slack")).toBeNull();
 			expect(screen.queryByLabelText("Draft")).toBeNull();
 		});
 	});
@@ -1223,8 +1223,8 @@ describe("PrPreviewPane inline comments", () => {
 
 			expect(screen.getByText("Edit issue")).toBeTruthy();
 			expect(screen.queryByText("New PR")).toBeNull();
-			expect(screen.queryByLabelText("Review")).toBeNull();
-			expect(screen.queryByLabelText("Post")).toBeNull();
+			expect(screen.queryByLabelText("Review PR")).toBeNull();
+			expect(screen.queryByLabelText("Post to Slack")).toBeNull();
 			expect(screen.queryByLabelText("Draft")).toBeNull();
 			expect(screen.queryByText(/attach a screenshot/)).toBeNull();
 		});

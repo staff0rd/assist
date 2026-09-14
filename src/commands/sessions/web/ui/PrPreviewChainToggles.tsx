@@ -40,13 +40,13 @@ export function PrPreviewChainToggles({
 				}
 			/>
 			<ChainToggle
-				label="Review"
+				label="Review PR"
 				title="After raising, run a review that posts its findings and then addresses them"
 				checked={chain.reviewAfter}
 				onChange={(reviewAfter) => onChange({ ...chain, reviewAfter })}
 			/>
 			<ChainToggle
-				label="Post"
+				label="Post to Slack"
 				title="Announce the PR in Slack at the tail of the chain"
 				checked={chain.announceAfter}
 				onChange={(announceAfter) => onChange({ ...chain, announceAfter })}
