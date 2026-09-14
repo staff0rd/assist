@@ -1,3 +1,10 @@
+# [0.648.0](https://github.com/staff0rd/assist/compare/v0.647.0...v0.648.0) (2026-09-14)
+
+
+### Features
+
+* name chain toggles by destination ([29582d5](https://github.com/staff0rd/assist/commit/29582d5f131e03b9541ba1c368024f91d4cd646e))
+
 # [0.647.0](https://github.com/staff0rd/assist/compare/v0.646.0...v0.647.0) (2026-09-14)
 
 
