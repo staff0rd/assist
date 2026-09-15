@@ -19,8 +19,8 @@ export function registerPrsRaise(prsCommand: Command): void {
 		.option("--why <why>", "Why the change is needed (## Why section)")
 		.option("--how <how>", "How the change works (optional ## How section)")
 		.option(
-			"--resolves <key>",
-			"Jira issue key resolved by this PR, appended to ## Why (repeatable)",
+			"--resolves <ref>",
+			"Jira issue key or GitHub issue reference resolved by this PR, appended to ## Why (repeatable)",
 			collect,
 			[],
 		)
