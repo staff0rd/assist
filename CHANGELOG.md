@@ -1,3 +1,10 @@
+# [0.651.0](https://github.com/staff0rd/assist/compare/v0.650.0...v0.651.0) (2026-09-15)
+
+
+### Features
+
+* make the phase dot static ([792903c](https://github.com/staff0rd/assist/commit/792903c4f152cd85cce8f3829f897600175e0f74))
+
 # [0.650.0](https://github.com/staff0rd/assist/compare/v0.649.0...v0.650.0) (2026-09-15)
 
 
