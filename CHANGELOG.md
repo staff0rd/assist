@@ -1,3 +1,10 @@
+# [0.653.0](https://github.com/staff0rd/assist/compare/v0.652.0...v0.653.0) (2026-09-15)
+
+
+### Features
+
+* add assist advise ([a738471](https://github.com/staff0rd/assist/commit/a7384718187004ed7f90af4a8c5cb04c4265e0b7))
+
 # [0.652.0](https://github.com/staff0rd/assist/compare/v0.651.0...v0.652.0) (2026-09-15)
 
 
