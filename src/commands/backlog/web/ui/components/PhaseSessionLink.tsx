@@ -27,7 +27,7 @@ export function PhaseSessionLink({
 	const navigate = useNavigate();
 	if (item.status !== "in-progress" || item.currentPhase == null) return null;
 	const label = `phase ${item.currentPhase} of ${item.totalPhases ?? item.currentPhase}`;
-	const dot = <PhaseSessionDot pulsing={openSession?.status === "running"} />;
+	const dot = <PhaseSessionDot />;
 	if (!openSession)
 		return (
 			<Box component="span" sx={linkSx}>

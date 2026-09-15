@@ -53,25 +53,22 @@ function phaseLink() {
 	return screen.getByText("phase 3 of 4");
 }
 
-function isPulsing(el: HTMLElement) {
+function dotAnimation(el: HTMLElement) {
 	const dot = el.querySelector("span") as HTMLElement;
-	return getComputedStyle(dot).animation.includes("1.6s");
+	return getComputedStyle(dot).animation;
 }
 
 afterEach(cleanup);
 
 describe("PhaseSessionLink", () => {
-	it("pulses when the open session is running", () => {
-		renderLink(session("running"));
+	it.each(["running", "waiting"] as const)(
+		"renders a static dot for a %s session",
+		(status) => {
+			renderLink(session(status));
 
-		expect(isPulsing(phaseLink())).toBe(true);
-	});
-
-	it("stays still when the session is merely open", () => {
-		renderLink(session("waiting"));
-
-		expect(isPulsing(phaseLink())).toBe(false);
-	});
+			expect(dotAnimation(phaseLink())).toBe("");
+		},
+	);
 
 	it("selects the session and navigates to /sessions on click", () => {
 		const onSelectSession = vi.fn();
