@@ -1,3 +1,10 @@
+# [0.652.0](https://github.com/staff0rd/assist/compare/v0.651.0...v0.652.0) (2026-09-15)
+
+
+### Features
+
+* render GitHub refs in --resolves ([7aec717](https://github.com/staff0rd/assist/commit/7aec717ea500b16f9c6fe3d6bd696706e28c528a))
+
 # [0.651.0](https://github.com/staff0rd/assist/compare/v0.650.0...v0.651.0) (2026-09-15)
 
 
