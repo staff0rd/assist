@@ -26,3 +26,48 @@ describe("itemCardStyles focus rings", () => {
 		}
 	});
 });
+
+describe("itemCardStyles sweeping edge", () => {
+	it("sweeps a dash down a transparent left border while running", () => {
+		const running = rules("inProgressRunningCard");
+
+		expect(running.borderLeftColor).toBe("transparent");
+		expect(running.borderLeft).toBe(4);
+		expect(String(running.animation)).toContain("0.9s linear infinite");
+		expect(running.backgroundOrigin).toBe("border-box");
+		expect(running.backgroundRepeat).toBe("repeat-y");
+		expect(running.backgroundSize).toBe("4px 24px");
+	});
+
+	it("holds the dashes still under prefers-reduced-motion", () => {
+		expect(
+			rules("inProgressRunningCard")["@media (prefers-reduced-motion: reduce)"],
+		).toEqual({ animation: "none" });
+	});
+
+	it("leaves the idle in-progress card solid and unanimated", () => {
+		const idle = rules("inProgressCard");
+
+		expect(idle.borderLeftColor).toBe("warning.main");
+		expect(idle.animation).toBeUndefined();
+		expect(idle.backgroundImage).toBeUndefined();
+	});
+
+	it("keeps the running card on the same grid as the idle one", () => {
+		const idle = rules("inProgressCard");
+		const running = rules("inProgressRunningCard");
+
+		for (const key of [
+			"display",
+			"gridTemplateColumns",
+			"columnGap",
+			"p",
+			"mb",
+			"borderRadius",
+			"border",
+			"borderLeft",
+		] as const) {
+			expect(running[key]).toEqual(idle[key]);
+		}
+	});
+});

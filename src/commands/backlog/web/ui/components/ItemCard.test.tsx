@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { SessionInfo } from "../../../../sessions/web/ui/types";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 
@@ -10,10 +11,20 @@ vi.mock("../api", () => ({ toggleStar: vi.fn(() => Promise.resolve()) }));
 
 import { ItemCard } from "./ItemCard";
 
-const socket = {
-	sessions: [],
-	selectSession: vi.fn(),
-} as unknown as SessionSocket;
+function socketWith(sessions: SessionInfo[]) {
+	return { sessions, selectSession: vi.fn() } as unknown as SessionSocket;
+}
+
+function itemSession(status: SessionInfo["status"]): SessionInfo {
+	return {
+		id: "s1",
+		name: "session",
+		commandType: "claude",
+		status,
+		startedAt: 0,
+		activity: { kind: "backlog", itemId: 984 },
+	} as SessionInfo;
+}
 
 const base: BacklogItemSummary = {
 	id: 984,
@@ -31,13 +42,16 @@ function LocationProbe() {
 	return <div data-testid="location">{location.pathname}</div>;
 }
 
-function renderCard(item: Partial<BacklogItemSummary> = {}) {
+function renderCard(
+	item: Partial<BacklogItemSummary> = {},
+	sessions: SessionInfo[] = [],
+) {
 	return render(
 		<MemoryRouter initialEntries={["/backlog"]}>
 			<ItemCard
 				item={{ ...base, ...item }}
 				to={itemPath}
-				socket={socket}
+				socket={socketWith(sessions)}
 				onReload={() => Promise.resolve()}
 			/>
 			<LocationProbe />
@@ -135,6 +149,53 @@ describe("ItemCard phase indicator", () => {
 
 		expect(screen.getByLabelText("2 incomplete subtasks")).toBeTruthy();
 		expect(container.querySelector(".MuiChip-root")).toBeNull();
+	});
+});
+
+describe("ItemCard running edge", () => {
+	const inProgress: Partial<BacklogItemSummary> = {
+		status: "in-progress",
+		currentPhase: 2,
+		totalPhases: 3,
+	};
+	const transparent = "rgba(0, 0, 0, 0)";
+
+	function card(container: HTMLElement) {
+		return getComputedStyle(container.firstElementChild as HTMLElement);
+	}
+
+	it("sweeps the left edge while the open session is running", () => {
+		const { container } = renderCard(inProgress, [itemSession("running")]);
+
+		const style = card(container);
+		expect(style.animation).toContain("0.9s");
+		expect(style.borderLeftColor).toBe(transparent);
+	});
+
+	it("keeps the solid edge when the open session is idle", () => {
+		const { container } = renderCard(inProgress, [itemSession("waiting")]);
+
+		const style = card(container);
+		expect(style.animation).toBe("");
+		expect(style.borderLeftColor).not.toBe(transparent);
+	});
+
+	it("keeps the solid edge when the item has no session", () => {
+		const { container } = renderCard(inProgress);
+
+		const style = card(container);
+		expect(style.animation).toBe("");
+		expect(style.borderLeftColor).not.toBe(transparent);
+	});
+
+	it("leaves a done row unswept even while a session runs on it", () => {
+		const { container } = renderCard({ status: "done" }, [
+			itemSession("running"),
+		]);
+
+		const style = card(container);
+		expect(style.animation).toBe("");
+		expect(style.borderLeftWidth).toBe(card(container).borderRightWidth);
 	});
 });
 

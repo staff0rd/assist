@@ -1,3 +1,4 @@
+import { keyframes } from "@emotion/react";
 import type { SxProps, Theme } from "@mui/material";
 import { alpha } from "@mui/material";
 
@@ -36,6 +37,34 @@ const stretchOverRowSx = {
 
 const aboveStretchedLinkSx = { position: "relative", zIndex: 2 } as const;
 
+const dashLength = 8;
+const dashCycle = 24;
+
+const edgeSweep = keyframes`
+	from { background-position: 0 0; }
+	to { background-position: 0 ${dashCycle}px; }
+`;
+
+const inProgressCardSx = {
+	...baseCardSx,
+	borderColor: "warning.main",
+	borderLeft: 4,
+	borderLeftColor: "warning.main",
+	bgcolor: (theme: Theme) => alpha(theme.palette.warning.main, 0.08),
+} as const;
+
+const sweepingEdgeSx = {
+	...inProgressCardSx,
+	borderLeftColor: "transparent",
+	backgroundImage: (theme: Theme) =>
+		`repeating-linear-gradient(to bottom, ${theme.palette.warning.main} 0 ${dashLength}px, transparent ${dashLength}px ${dashCycle}px)`,
+	backgroundOrigin: "border-box",
+	backgroundRepeat: "repeat-y",
+	backgroundSize: `4px ${dashCycle}px`,
+	animation: `${edgeSweep} 0.9s linear infinite`,
+	"@media (prefers-reduced-motion: reduce)": { animation: "none" },
+} as const;
+
 const focusRingSx = {
 	"& .MuiButtonBase-root:focus-visible": {
 		outline: "2px solid",
@@ -46,13 +75,8 @@ const focusRingSx = {
 
 export const itemCardStyles: Record<string, SxProps<Theme>> = {
 	card: baseCardSx,
-	inProgressCard: {
-		...baseCardSx,
-		borderColor: "warning.main",
-		borderLeft: 4,
-		borderLeftColor: "warning.main",
-		bgcolor: (theme: Theme) => alpha(theme.palette.warning.main, 0.08),
-	},
+	inProgressCard: inProgressCardSx,
+	inProgressRunningCard: sweepingEdgeSx,
 	main: { minWidth: 0, textAlign: "left" },
 	stretchedNameLink: {
 		display: "block",

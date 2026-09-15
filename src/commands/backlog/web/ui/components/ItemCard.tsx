@@ -8,6 +8,13 @@ import { mostRecentOpenSession } from "./mostRecentOpenSession";
 import { StatusIcon } from "./StatusIcon";
 import { CardActions } from "./CardActions";
 
+function cardSx(inProgress: boolean, running: boolean) {
+	if (!inProgress) return itemCardStyles.card;
+	return running
+		? itemCardStyles.inProgressRunningCard
+		: itemCardStyles.inProgressCard;
+}
+
 export function ItemCard({
 	item,
 	to,
@@ -19,9 +26,11 @@ export function ItemCard({
 	socket: SessionSocket;
 	onReload: () => Promise<void>;
 }) {
+	const openSession = mostRecentOpenSession(socket.sessions, item.id);
 	const inProgress = item.status === "in-progress";
+	const running = inProgress && openSession?.status === "running";
 	return (
-		<Box sx={inProgress ? itemCardStyles.inProgressCard : itemCardStyles.card}>
+		<Box sx={cardSx(inProgress, running)}>
 			<StatusIcon status={item.status} />
 			<Box sx={itemCardStyles.main}>
 				<Link
@@ -35,7 +44,7 @@ export function ItemCard({
 				</Link>
 				<ItemCardMeta
 					item={item}
-					openSession={mostRecentOpenSession(socket.sessions, item.id)}
+					openSession={openSession}
 					onSelectSession={socket.selectSession}
 				/>
 			</Box>
