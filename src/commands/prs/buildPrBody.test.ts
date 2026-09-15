@@ -50,4 +50,47 @@ describe("buildPrBody", () => {
 
 		expect(body).toContain("Resolves BAD-671");
 	});
+
+	it("renders a same-repo GitHub issue reference as-is", () => {
+		const body = buildPrBody({ what: "x", why: "y", resolves: ["#123"] });
+
+		expect(body).toContain("Resolves #123");
+	});
+
+	it("renders a GitHub issue shorthand as-is", () => {
+		const body = buildPrBody({
+			what: "x",
+			why: "y",
+			resolves: ["owner/repo#123"],
+		});
+
+		expect(body).toContain("Resolves owner/repo#123");
+	});
+
+	it("normalises a GitHub issue URL to shorthand", () => {
+		const body = buildPrBody({
+			what: "x",
+			why: "y",
+			resolves: ["https://github.com/owner/repo/issues/123"],
+		});
+
+		expect(body).toContain("Resolves owner/repo#123");
+	});
+
+	it("renders each value of a mixed resolves list in its own form", () => {
+		const body = buildPrBody({
+			what: "x",
+			why: "y",
+			resolves: [
+				"BAD-671",
+				"#123",
+				"owner/repo#456",
+				"https://github.com/owner/repo/issues/789",
+			],
+		});
+
+		expect(body).toContain(
+			"Resolves https://example.atlassian.net/browse/BAD-671, #123, owner/repo#456, owner/repo#789",
+		);
+	});
 });
