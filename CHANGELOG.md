@@ -1,3 +1,10 @@
+# [0.654.0](https://github.com/staff0rd/assist/compare/v0.653.0...v0.654.0) (2026-09-15)
+
+
+### Features
+
+* add prs.promptGithub help guidance ([40bd77a](https://github.com/staff0rd/assist/commit/40bd77a0dc2c8ebc9f67f1751e8bc80d73bbda46))
+
 # [0.653.0](https://github.com/staff0rd/assist/compare/v0.652.0...v0.653.0) (2026-09-15)
 
 
