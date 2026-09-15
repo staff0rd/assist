@@ -39,7 +39,10 @@
 		"SessionStart": [
 			{
 				"matcher": "",
-				"hooks": [{ "type": "command", "command": "assist handover load" }]
+				"hooks": [
+					{ "type": "command", "command": "assist handover load" },
+					{ "type": "command", "command": "assist advise --hook" }
+				]
 			}
 		]
 	},

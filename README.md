@@ -270,6 +270,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist code-comment confirm <pin>` - Insert the pinned comment at its file/line and clear the pin state
 - `assist db-migration unlock` - Page a human to approve creating the next new migration module, issuing a pin via desktop notification
 - `assist db-migration confirm <pin>` - Confirm a pin from `db-migration unlock`, letting that migration's file write through once
+- `assist advise [--hook]` - Print the advice fragments from `claude/advice/*.md` that apply to the cwd's repo, each selected by its `when` condition against the merged config and repo facts, composed in filename order. `--hook` reads the SessionStart payload from stdin for the session's cwd and emits the markdown as `hookSpecificOutput.additionalContext`
 - `assist notify` - Show desktop notification from JSON stdin (macOS, Windows, WSL)
 - `assist status-line` - Format Claude Code status line from JSON stdin
 

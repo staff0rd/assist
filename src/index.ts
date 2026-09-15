@@ -8,6 +8,7 @@ import { lint } from "./commands/lint/lint";
 import { registerNew } from "./commands/new/registerNew";
 import { notify } from "./commands/notify";
 import { registerActivity } from "./commands/registerActivity";
+import { registerAdvise } from "./commands/registerAdvise";
 import { registerBackup } from "./commands/registerBackup";
 import { registerBacklog } from "./commands/registerBacklog";
 import { registerBranch } from "./commands/registerBranch";
@@ -143,6 +144,7 @@ const screenshotCommand = program
 configHelp(screenshotCommand, rootConfigHelp.screenshot);
 
 registerActivity(program);
+registerAdvise(program);
 registerBackup(program);
 registerDb(program);
 registerDbMigration(program);
