@@ -441,6 +441,7 @@ A restart kills every managed session's pty, which also kills any background tas
 - `prs.slack` — the Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector
 - `prs.required` — when `true` (default `false`), `assist backlog run` cuts and records a fresh branch for a story that has no recorded branch at run start, so a new story never inherits the previous one's branch
 - `prs.promptJira` — when `true` (default `false`), the `assist prs raise --help` `--resolves` guidance instructs asking the user for a Jira key
+- `prs.promptGithub` — when `true` (default `false`), the `assist prs raise --help` `--resolves` guidance instructs asking the user for a GitHub issue (`#123`, `owner/repo#123`, or a github.com issue URL). With `prs.promptJira` also `true` the guidance asks for either, and a mixed `--resolves` list renders each value in its own form
 - `prs.draft` — when `true` (default `false`), `assist prs raise` creates a draft PR. `--draft` and `--no-draft` override it in either direction; only the create path is affected, `assist prs edit` never changes an existing PR's draft state
 - `readTime.wordsPerMinute` — nominal prose reading speed (default `200`) that `assist read-time` estimates with. The effective rate decays with document length, fitted to timed readings of real documents: ~88 wpm at 129 words, ~70 wpm at 485. Fenced code is scored at half the prose rate
 - `prs.readingWordsPerMinute` — the same speed under the command's former name, read only when `readTime.wordsPerMinute` is unset

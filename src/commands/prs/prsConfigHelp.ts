@@ -7,6 +7,11 @@ export const prsRaiseConfigHelp: ConfigHelpEntry[] = [
 		note: "'assist prs raise' help asks the user for a Jira key to --resolves (default false)",
 	},
 	{
+		key: "prs.promptGithub",
+		setter: "assist config set prs.promptGithub true",
+		note: "'assist prs raise' help asks the user for a GitHub issue to --resolves (default false)",
+	},
+	{
 		key: "prs.draft",
 		setter: "assist config set prs.draft true",
 		note: "'assist prs raise' creates a draft PR when neither --draft nor --no-draft is passed (default false)",

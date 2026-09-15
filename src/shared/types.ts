@@ -108,6 +108,7 @@ const assistConfigShape = {
 			slack: z.string().optional(),
 			required: z.boolean().default(false),
 			promptJira: z.boolean().default(false),
+			promptGithub: z.boolean().default(false),
 			draft: z.boolean().default(false),
 			readingWordsPerMinute: z.number().int().positive().optional(),
 		})
