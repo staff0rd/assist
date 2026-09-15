@@ -1,3 +1,10 @@
+# [0.650.0](https://github.com/staff0rd/assist/compare/v0.649.0...v0.650.0) (2026-09-15)
+
+
+### Features
+
+* sweep the running row's left edge ([0abf1b3](https://github.com/staff0rd/assist/commit/0abf1b327e8d22ba09fecbc9d24b74c680b60d9b))
+
 # [0.649.0](https://github.com/staff0rd/assist/compare/v0.648.0...v0.649.0) (2026-09-14)
 
 
