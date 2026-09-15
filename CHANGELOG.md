@@ -1,3 +1,10 @@
+## [0.654.1](https://github.com/staff0rd/assist/compare/v0.654.0...v0.654.1) (2026-09-15)
+
+
+### Bug Fixes
+
+* widen --resolves option description ([2fb6cb7](https://github.com/staff0rd/assist/commit/2fb6cb7a1229d239bb2b33a6a64fb32b3fa4769b))
+
 # [0.654.0](https://github.com/staff0rd/assist/compare/v0.653.0...v0.654.0) (2026-09-15)
 
 
