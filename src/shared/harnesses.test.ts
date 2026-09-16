@@ -20,31 +20,28 @@ describe("harnesses registry", () => {
 		vi.clearAllMocks();
 	});
 
-	it("maps claude to ~/.claude with commands/*.md and CLAUDE.md", () => {
+	it("maps claude to ~/.claude with commands/*.md", () => {
 		const claude: Harness = harnesses.claude;
 		expect(claude.command).toBe("claude");
 		expect(claude.homeDir).toBe(path.join(os.homedir(), ".claude"));
-		expect(claude.sync.agentsFile).toBe("CLAUDE.md");
 		expect(claude.sync.commandDest("refine")).toBe(
 			path.join("commands", "refine.md"),
 		);
 	});
 
-	it("maps codex to ~/.codex with skills/<name>/SKILL.md and AGENTS.md", () => {
+	it("maps codex to ~/.codex with skills/<name>/SKILL.md", () => {
 		const codex = harnesses.codex;
 		expect(codex.command).toBe("codex");
 		expect(codex.homeDir).toBe(path.join(os.homedir(), ".codex"));
-		expect(codex.sync.agentsFile).toBe("AGENTS.md");
 		expect(codex.sync.commandDest("refine")).toBe(
 			path.join("skills", "refine", "SKILL.md"),
 		);
 	});
 
-	it("maps pi to ~/.pi/agent with prompts/<name>.md and AGENTS.md", () => {
+	it("maps pi to ~/.pi/agent with prompts/<name>.md", () => {
 		const pi = harnesses.pi;
 		expect(pi.command).toBe("pi");
 		expect(pi.homeDir).toBe(path.join(os.homedir(), ".pi", "agent"));
-		expect(pi.sync.agentsFile).toBe("AGENTS.md");
 		expect(pi.sync.commandDest("refine")).toBe(
 			path.join("prompts", "refine.md"),
 		);

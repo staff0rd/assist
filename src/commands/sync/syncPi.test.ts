@@ -87,7 +87,7 @@ describe("syncPi", () => {
 		mockReaddirSync.mockImplementation((dir: string) =>
 			dir.endsWith("commands")
 				? ["refine.md", "notes.txt"]
-				: ["permission-gate.ts", "status-driver.ts"],
+				: ["advice.ts", "permission-gate.ts", "status-driver.ts"],
 		);
 		mockReadFileSync.mockReturnValue("---\ndescription: Refine it\n---\nbody");
 		mockPruneCommands.mockReturnValue({
@@ -158,12 +158,21 @@ describe("syncPi", () => {
 		expect(wrote).toHaveLength(1);
 	});
 
-	it("copies CLAUDE.md to ~/.pi/agent/AGENTS.md verbatim", () => {
+	it("no longer writes ~/.pi/agent/AGENTS.md", () => {
+		syncPi("/claude");
+
+		expect(mockCopyFileSync).not.toHaveBeenCalledWith(
+			expect.anything(),
+			path.join(harnesses.pi.homeDir, "AGENTS.md"),
+		);
+	});
+
+	it("installs the advice extension from the pi source dir", () => {
 		syncPi("/claude");
 
 		expect(mockCopyFileSync).toHaveBeenCalledWith(
-			path.join("/claude", "CLAUDE.md"),
-			path.join(harnesses.pi.homeDir, "AGENTS.md"),
+			path.join("/claude", "..", "pi", "advice.ts"),
+			path.join(harnesses.pi.homeDir, "extensions", "assist-advice.ts"),
 		);
 	});
 

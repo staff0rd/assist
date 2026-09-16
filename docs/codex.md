@@ -123,6 +123,24 @@ terminal reports nothing.
 Caveat: the hook must be trusted once per machine (see the table above), and an
 existing install needs `assist sync` to pick up the added events.
 
+## Repo instructions
+
+`assist sync` used to copy `claude/CLAUDE.md` to `~/.codex/AGENTS.md`, giving
+every repo the same instructions. It no longer writes that file — and the shipped
+`claude/CLAUDE.md` is gone. Instead `assist codex-hook` handles Codex's
+`SessionStart` event and returns `hookSpecificOutput.additionalContext`, the
+markdown `assist advise` composes for the session's repo from `claude/advice/*.md`.
+
+Codex's `SessionStartHookSpecificOutputWire` carries exactly `hookEventName` and
+`additionalContext`, so the payload is the same shape Claude Code's SessionStart
+hook accepts and `adviceHookPayload` builds it for both. Codex sends no `cwd` in
+the hook input on every event, so the hook falls back to its own process cwd,
+which Codex sets to the session's directory.
+
+The hook config supports an `additionalContextLimit` per handler; we do not set
+one, so the default applies. The composed output is the thing to trim if that
+ever bites — the `verify` fragment is the largest section.
+
 ## Hook wire contract (for reference)
 
 Verified against the current Codex hook contract. `assist codex-hook` emits
@@ -130,6 +148,7 @@ these shapes:
 
 - **PreToolUse** — allow: no output, so Codex continues to its permission flow; deny: `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"…"}}`.
 - **PermissionRequest** — `{"hookSpecificOutput":{"hookEventName":"PermissionRequest","decision":{"behavior":"allow"|"deny","message":"…"}}}`.
+- **SessionStart** — `{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"…"}}`, carrying the markdown `assist advise` composes for the session's repo.
 - Unrecognised command → no output, so Codex falls through to its normal approval flow.
 - Status-only events (`UserPromptSubmit`, `PostToolUse`, `Stop`) → no output; the hook only pushes the session status.
 

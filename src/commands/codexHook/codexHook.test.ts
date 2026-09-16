@@ -5,9 +5,14 @@ const mockMatchesConfigDeny = vi.fn();
 const mockMatchesDeny = vi.fn();
 const mockIsApprovedRead = vi.fn();
 const mockReportCodexStatus = vi.fn();
+const mockAdviceHookPayload = vi.fn();
 
 vi.mock("../../lib/readStdin", () => ({
 	readStdin: () => mockReadStdin(),
+}));
+
+vi.mock("../advise/adviceHookPayload", () => ({
+	adviceHookPayload: (cwd: string) => mockAdviceHookPayload(cwd),
 }));
 
 vi.mock("./reportCodexStatus", () => ({
@@ -49,6 +54,68 @@ beforeEach(() => {
 	mockMatchesConfigDeny.mockReturnValue(undefined);
 	mockMatchesDeny.mockReturnValue(undefined);
 	mockIsApprovedRead.mockReturnValue(undefined);
+	mockAdviceHookPayload.mockReturnValue(undefined);
+});
+
+describe("codexHook SessionStart", () => {
+	const payload = {
+		hookSpecificOutput: {
+			hookEventName: "SessionStart",
+			additionalContext: "# Instructions for this repo",
+		},
+	};
+
+	it("emits the composed advice as additionalContext", async () => {
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(
+			JSON.stringify({ hook_event_name: "SessionStart", cwd: "/repo" }),
+		);
+		mockAdviceHookPayload.mockReturnValue(payload);
+
+		await codexHook();
+
+		expect(mockAdviceHookPayload).toHaveBeenCalledWith("/repo");
+		expect(spy).toHaveBeenCalledWith(JSON.stringify(payload));
+		spy.mockRestore();
+	});
+
+	it("falls back to the hook process cwd when the payload carries none", async () => {
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(
+			JSON.stringify({ hook_event_name: "SessionStart" }),
+		);
+		mockAdviceHookPayload.mockReturnValue(payload);
+
+		await codexHook();
+
+		expect(mockAdviceHookPayload).toHaveBeenCalledWith(process.cwd());
+		spy.mockRestore();
+	});
+
+	it("emits nothing when the repo composes no advice", async () => {
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(
+			JSON.stringify({ hook_event_name: "SessionStart", cwd: "/repo" }),
+		);
+
+		await codexHook();
+
+		expect(spy).not.toHaveBeenCalled();
+		spy.mockRestore();
+	});
+
+	it("reports no session status for a session start", async () => {
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(
+			JSON.stringify({ hook_event_name: "SessionStart", cwd: "/repo" }),
+		);
+		mockAdviceHookPayload.mockReturnValue(payload);
+
+		await codexHook();
+
+		expect(mockReportCodexStatus).toHaveBeenCalledWith("SessionStart", false);
+		spy.mockRestore();
+	});
 });
 
 describe("codexHook PreToolUse", () => {

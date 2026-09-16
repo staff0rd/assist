@@ -168,11 +168,11 @@ describe("syncCodex", () => {
 		expect(contents).toContain('command = "assist codex-hook"');
 	});
 
-	it("copies CLAUDE.md to ~/.codex/AGENTS.md verbatim", () => {
+	it("no longer writes ~/.codex/AGENTS.md", () => {
 		syncCodex("/claude");
 
-		expect(mockCopyFileSync).toHaveBeenCalledWith(
-			path.join("/claude", "CLAUDE.md"),
+		expect(mockCopyFileSync).not.toHaveBeenCalledWith(
+			expect.anything(),
 			path.join(harnesses.codex.homeDir, "AGENTS.md"),
 		);
 	});

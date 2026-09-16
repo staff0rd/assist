@@ -22,9 +22,5 @@ export function installHarnessCommands(
 		synced++;
 	}
 
-	const agentsTarget = path.join(harness.homeDir, harness.sync.agentsFile);
-	fs.mkdirSync(path.dirname(agentsTarget), { recursive: true });
-	fs.copyFileSync(path.join(claudeDir, "CLAUDE.md"), agentsTarget);
-
 	return { total: files.length, synced, names };
 }

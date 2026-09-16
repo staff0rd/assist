@@ -12,10 +12,6 @@ const rules = [
 		reason: "claude/settings.json changed",
 	},
 	{
-		matches: (path: string) => path === "claude/CLAUDE.md",
-		reason: "claude/CLAUDE.md changed",
-	},
-	{
 		matches: (path: string) => path === "claude/design-system-prompt.md",
 		reason: "claude/design-system-prompt.md changed",
 	},

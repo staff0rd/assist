@@ -6,6 +6,7 @@ import { loadConfig } from "../shared/loadConfig";
 import { pruneCommands } from "./sync/pruneCommands";
 import type { PruneOptions } from "./sync/pruneTarget";
 import { reportPrune } from "./sync/reportPrune";
+import { reportRetiredAgentsFiles } from "./sync/reportRetiredAgentsFiles";
 import { syncCodex } from "./sync/syncCodex";
 import { syncDesign } from "./sync/syncDesign";
 import { syncPi } from "./sync/syncPi";
@@ -29,6 +30,7 @@ export async function sync(
 	await syncSettings(claudeDir, targetBase, { yes });
 	syncCodex(claudeDir, prune);
 	syncPi(claudeDir, prune);
+	reportRetiredAgentsFiles();
 
 	if (!options?.prune) return;
 

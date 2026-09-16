@@ -1,7 +1,29 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { upsertManagedBlock } from "./syncCodexHooks";
 
 const BODY = '[[hooks.PreToolUse]]\nmatcher = "Bash"';
+
+describe("codex/config.toml", () => {
+	const shipped = readFileSync(
+		resolve(__dirname, "../../../codex/config.toml"),
+		"utf8",
+	);
+
+	it("registers the hook for SessionStart so Codex receives the composed advice", () => {
+		expect(shipped).toContain(
+			'[[hooks.SessionStart]]\n[[hooks.SessionStart.hooks]]\ntype = "command"\ncommand = "assist codex-hook"',
+		);
+	});
+
+	it("registers every event through the one command, so trust is prompted once", () => {
+		const commands = shipped.match(/^command = .*$/gm) ?? [];
+		expect(new Set(commands)).toEqual(
+			new Set(['command = "assist codex-hook"']),
+		);
+	});
+});
 
 describe("upsertManagedBlock", () => {
 	it("wraps the body in a managed block for an empty config", () => {

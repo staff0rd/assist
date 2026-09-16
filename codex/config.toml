@@ -1,7 +1,13 @@
 # Managed by `assist sync`: merged into ~/.codex/config.toml when the codex CLI
 # is detected. Registers the assist codex-hook, which auto-approves read-only
-# commands and reports running/waiting status for daemon-tracked sessions.
+# commands, injects the repo's composed advice at SessionStart, and reports
+# running/waiting status for daemon-tracked sessions.
 # Codex still requires this hook to be trusted once per machine on first run.
+
+[[hooks.SessionStart]]
+[[hooks.SessionStart.hooks]]
+type = "command"
+command = "assist codex-hook"
 
 [[hooks.UserPromptSubmit]]
 [[hooks.UserPromptSubmit.hooks]]

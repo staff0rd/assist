@@ -149,7 +149,7 @@ describe("renderWatchReport", () => {
 			commits,
 			newShas: [],
 			restarts: ["restart the daemon"],
-			syncs: ["claude/CLAUDE.md changed"],
+			syncs: ["claude/settings.json changed"],
 		});
 
 		expect(report.indexOf("**Sync**")).toBeGreaterThan(

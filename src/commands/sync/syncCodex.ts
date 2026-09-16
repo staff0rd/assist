@@ -33,9 +33,7 @@ export function syncCodex(claudeDir: string, options?: PruneOptions): void {
 
 	syncCodexHooks(path.join(claudeDir, "..", "codex", "config.toml"));
 
-	console.log(
-		`Synced ${total} skill(s) to ~/.codex/skills and CLAUDE.md to ~/.codex/AGENTS.md`,
-	);
+	console.log(`Synced ${total} skill(s) to ~/.codex/skills`);
 
 	if (!options?.prune) return;
 

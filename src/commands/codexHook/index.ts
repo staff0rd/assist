@@ -1,31 +1,9 @@
 import { readStdin } from "../../lib/readStdin";
+import { adviceHookPayload } from "../advise/adviceHookPayload";
 import { decideCommand } from "../cliHook/decideCommand";
 import type { HookDecision } from "../cliHook/resolvePermission";
+import { type ParsedInput, parseCodexHookInput } from "./parseCodexHookInput";
 import { reportCodexStatus } from "./reportCodexStatus";
-
-type CodexHookInput = {
-	hook_event_name?: string;
-	tool_name?: string;
-	tool_input?: { command?: unknown };
-};
-
-const SUPPORTED_TOOLS = new Set(["Bash", "PowerShell"]);
-
-type ParsedInput = { event: string; toolName?: string; command?: string };
-
-function parseInput(raw: string): ParsedInput | undefined {
-	try {
-		const data: CodexHookInput = JSON.parse(raw);
-		const event = data.hook_event_name ?? "PreToolUse";
-		const command = data.tool_input?.command;
-		if (typeof command !== "string" || !command.trim()) return { event };
-		if (!data.tool_name || !SUPPORTED_TOOLS.has(data.tool_name))
-			return { event };
-		return { event, toolName: data.tool_name, command: command.trim() };
-	} catch {
-		return undefined;
-	}
-}
 
 function preToolUseOutput(decision: HookDecision) {
 	if (decision.permissionDecision === "allow") return undefined;
@@ -55,18 +33,21 @@ function decide(input: ParsedInput): HookDecision | undefined {
 	return decideCommand(input.toolName, input.command);
 }
 
-function outputFor(event: string, decision: HookDecision | undefined) {
+function outputFor(input: ParsedInput, decision: HookDecision | undefined) {
+	if (input.event === "SessionStart")
+		return adviceHookPayload(input.cwd ?? process.cwd());
 	if (!decision) return undefined;
-	if (event === "PermissionRequest") return permissionRequestOutput(decision);
+	if (input.event === "PermissionRequest")
+		return permissionRequestOutput(decision);
 	return preToolUseOutput(decision);
 }
 
 export async function codexHook(): Promise<void> {
-	const input = parseInput(await readStdin());
+	const input = parseCodexHookInput(await readStdin());
 	if (!input) return;
 
 	const decision = decide(input);
-	const output = outputFor(input.event, decision);
+	const output = outputFor(input, decision);
 	if (output) console.log(JSON.stringify(output));
 
 	await reportCodexStatus(input.event, decision !== undefined);

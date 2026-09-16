@@ -1,5 +1,6 @@
 import { readStdin } from "../../lib/readStdin";
 import { adviceContextFor } from "./adviceContextFor";
+import { adviceHookPayload } from "./adviceHookPayload";
 import { composeAdvice } from "./composeAdvice";
 import { explainAdvice } from "./explainAdvice";
 
@@ -25,25 +26,23 @@ async function hookCwd(options: AdviseOptions): Promise<string | undefined> {
 export async function advise(options: AdviseOptions = {}): Promise<string> {
 	const fallback = options.cwdFallback ?? process.cwd();
 	const cwd = options.hook ? ((await hookCwd(options)) ?? fallback) : fallback;
-	const context = adviceContextFor(cwd);
 
 	if (options.explain) {
-		const explanation = explainAdvice(context);
+		const explanation = explainAdvice(adviceContextFor(cwd));
 		console.log(explanation);
 		return explanation;
 	}
 
-	const markdown = composeAdvice(context);
-	if (!markdown) return "";
+	if (options.hook) {
+		const payload = adviceHookPayload(cwd);
+		if (!payload) return "";
+		const output = JSON.stringify(payload);
+		console.log(output);
+		return output;
+	}
 
-	const output = options.hook
-		? JSON.stringify({
-				hookSpecificOutput: {
-					hookEventName: "SessionStart",
-					additionalContext: markdown,
-				},
-			})
-		: markdown;
-	console.log(output);
-	return output;
+	const markdown = composeAdvice(adviceContextFor(cwd));
+	if (!markdown) return "";
+	console.log(markdown);
+	return markdown;
 }

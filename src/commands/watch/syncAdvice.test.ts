@@ -20,12 +20,6 @@ describe("syncAdvice", () => {
 		]);
 	});
 
-	it("reports a changed CLAUDE.md", () => {
-		expect(syncAdvice(["claude/CLAUDE.md"])).toEqual([
-			"claude/CLAUDE.md changed",
-		]);
-	});
-
 	it("reports a changed design system prompt", () => {
 		expect(syncAdvice(["claude/design-system-prompt.md"])).toEqual([
 			"claude/design-system-prompt.md changed",

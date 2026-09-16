@@ -42,9 +42,7 @@ export function syncPi(claudeDir: string, options?: PruneOptions): void {
 
 	syncPiHooks(path.join(claudeDir, "..", "pi"));
 
-	console.log(
-		`Synced ${synced} prompt(s) to ~/.pi/agent/prompts and CLAUDE.md to ~/.pi/agent/AGENTS.md`,
-	);
+	console.log(`Synced ${synced} prompt(s) to ~/.pi/agent/prompts`);
 
 	if (!options?.prune) return;
 

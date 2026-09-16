@@ -9,7 +9,6 @@ export type Harness = {
 	command: string;
 	homeDir: string;
 	sync: {
-		agentsFile: string;
 		commandDest: (name: string) => string;
 	};
 };
@@ -20,7 +19,6 @@ export const harnesses: Record<HarnessKind, Harness> = {
 		command: "claude",
 		homeDir: path.join(os.homedir(), ".claude"),
 		sync: {
-			agentsFile: "CLAUDE.md",
 			commandDest: (name) => path.join("commands", `${name}.md`),
 		},
 	},
@@ -29,7 +27,6 @@ export const harnesses: Record<HarnessKind, Harness> = {
 		command: "codex",
 		homeDir: path.join(os.homedir(), ".codex"),
 		sync: {
-			agentsFile: "AGENTS.md",
 			commandDest: (name) => path.join("skills", name, "SKILL.md"),
 		},
 	},
@@ -38,7 +35,6 @@ export const harnesses: Record<HarnessKind, Harness> = {
 		command: "pi",
 		homeDir: path.join(os.homedir(), ".pi", "agent"),
 		sync: {
-			agentsFile: "AGENTS.md",
 			commandDest: (name) => path.join("prompts", `${name}.md`),
 		},
 	},

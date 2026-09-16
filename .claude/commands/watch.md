@@ -26,4 +26,4 @@ Restarting the sessions daemon kills this session's processes, the background wa
 
 ## Why the sync comes last
 
-The report's **Sync** section names what the pulled commits changed under the paths `assist sync` installs (`claude/commands/`, `claude/skills/`, `claude/settings.json`, `claude/CLAUDE.md`, `claude/design-system-prompt.md`, `codex/`, `pi/`), or `- not needed`. When it names something, `assist sync --yes` runs as a separate process after the build, so the newly built binary — not the long-running pre-pull one — installs the files. Nothing in that set touched means no sync runs.
+The report's **Sync** section names what the pulled commits changed under the paths `assist sync` installs (`claude/commands/`, `claude/skills/`, `claude/settings.json`, `claude/design-system-prompt.md`, `codex/`, `pi/`), or `- not needed`. When it names something, `assist sync --yes` runs as a separate process after the build, so the newly built binary — not the long-running pre-pull one — installs the files. Nothing in that set touched means no sync runs.
