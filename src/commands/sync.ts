@@ -6,7 +6,6 @@ import { loadConfig } from "../shared/loadConfig";
 import { pruneCommands } from "./sync/pruneCommands";
 import type { PruneOptions } from "./sync/pruneTarget";
 import { reportPrune } from "./sync/reportPrune";
-import { syncClaudeMd } from "./sync/syncClaudeMd";
 import { syncCodex } from "./sync/syncCodex";
 import { syncDesign } from "./sync/syncDesign";
 import { syncPi } from "./sync/syncPi";
@@ -28,7 +27,6 @@ export async function sync(
 	const commandFiles = syncCommands(claudeDir, targetBase);
 	syncDesign(claudeDir, targetBase);
 	await syncSettings(claudeDir, targetBase, { yes });
-	await syncClaudeMd(claudeDir, targetBase, { yes });
 	syncCodex(claudeDir, prune);
 	syncPi(claudeDir, prune);
 

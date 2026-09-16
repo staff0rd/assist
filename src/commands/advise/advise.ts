@@ -1,9 +1,11 @@
 import { readStdin } from "../../lib/readStdin";
 import { adviceContextFor } from "./adviceContextFor";
 import { composeAdvice } from "./composeAdvice";
+import { explainAdvice } from "./explainAdvice";
 
 type AdviseOptions = {
 	hook?: boolean;
+	explain?: boolean;
 	stdin?: () => Promise<string>;
 	cwdFallback?: string;
 };
@@ -23,8 +25,15 @@ async function hookCwd(options: AdviseOptions): Promise<string | undefined> {
 export async function advise(options: AdviseOptions = {}): Promise<string> {
 	const fallback = options.cwdFallback ?? process.cwd();
 	const cwd = options.hook ? ((await hookCwd(options)) ?? fallback) : fallback;
+	const context = adviceContextFor(cwd);
 
-	const markdown = composeAdvice(adviceContextFor(cwd));
+	if (options.explain) {
+		const explanation = explainAdvice(context);
+		console.log(explanation);
+		return explanation;
+	}
+
+	const markdown = composeAdvice(context);
 	if (!markdown) return "";
 
 	const output = options.hook

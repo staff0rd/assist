@@ -2,7 +2,6 @@ import * as fs from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockSyncSettings = vi.fn();
-const mockSyncClaudeMd = vi.fn();
 const mockSyncDesign = vi.fn();
 const mockPruneCommands = vi.fn();
 const mockSyncCodex = vi.fn();
@@ -23,10 +22,6 @@ vi.mock("../shared/loadConfig", () => ({
 
 vi.mock("./sync/syncSettings", () => ({
 	syncSettings: (...args: unknown[]) => mockSyncSettings(...args),
-}));
-
-vi.mock("./sync/syncClaudeMd", () => ({
-	syncClaudeMd: (...args: unknown[]) => mockSyncClaudeMd(...args),
 }));
 
 vi.mock("./sync/syncDesign", () => ({
@@ -135,11 +130,6 @@ describe("sync", () => {
 			expect.any(String),
 			{ yes: false },
 		);
-		expect(mockSyncClaudeMd).toHaveBeenCalledWith(
-			expect.any(String),
-			expect.any(String),
-			{ yes: false },
-		);
 	});
 
 	it("should pass yes=true when autoConfirm is true", async () => {
@@ -148,11 +138,6 @@ describe("sync", () => {
 		await sync();
 
 		expect(mockSyncSettings).toHaveBeenCalledWith(
-			expect.any(String),
-			expect.any(String),
-			{ yes: true },
-		);
-		expect(mockSyncClaudeMd).toHaveBeenCalledWith(
 			expect.any(String),
 			expect.any(String),
 			{ yes: true },

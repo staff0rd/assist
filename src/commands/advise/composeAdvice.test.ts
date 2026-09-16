@@ -1,5 +1,9 @@
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { assistConfigSchema } from "../../shared/types";
+import type { AdviceContext } from "./AdviceContext";
 import { adviceConditions } from "./adviceConditions";
 import { composeAdvice } from "./composeAdvice";
 import { loadAdviceFragments } from "./loadAdviceFragments";
@@ -7,8 +11,14 @@ import { selectAdvice } from "./selectAdvice";
 
 const fragments = loadAdviceFragments();
 
-function contextWith(raw: Record<string, unknown>) {
+function contextWith(raw: Record<string, unknown>): AdviceContext {
 	return { config: assistConfigSchema.parse(raw), rootDir: "/repo" };
+}
+
+function includedNames(context: AdviceContext): string[] {
+	return selectAdvice(fragments, context)
+		.filter((decision) => decision.included)
+		.map((decision) => decision.fragment.name);
 }
 
 const alwaysNames = [
@@ -31,11 +41,7 @@ describe("composeAdvice", () => {
 	});
 
 	it("includes every always-on fragment with no config at all", () => {
-		const included = selectAdvice(fragments, contextWith({}))
-			.filter((decision) => decision.included)
-			.map((decision) => decision.fragment.name);
-
-		expect(included).toEqual(alwaysNames);
+		expect(includedNames(contextWith({}))).toEqual(alwaysNames);
 	});
 
 	it("adds the jira fragments only when jira is configured", () => {
@@ -67,6 +73,60 @@ describe("composeAdvice", () => {
 			"Editing Jira issues with Smart Links",
 			"Writing markdown",
 		]);
+	});
+
+	it("adds the repo-fact fragments only for a repo carrying those files", () => {
+		const dir = mkdtempSync(join(tmpdir(), "advice-repo-"));
+		mkdirSync(join(dir, "oxlint-rules"), { recursive: true });
+		mkdirSync(join(dir, "claude"), { recursive: true });
+		writeFileSync(join(dir, "tsconfig.json"), "{}");
+		writeFileSync(join(dir, "oxlint-rules", "filenameConvention.ts"), "");
+		writeFileSync(join(dir, "claude", "settings.json"), "{}");
+
+		const bare = includedNames(contextWith({}));
+		const equipped = includedNames({
+			config: assistConfigSchema.parse({}),
+			rootDir: dir,
+		});
+
+		expect(bare).not.toContain("refactor");
+		expect(equipped).toContain("refactor");
+		expect(equipped).toContain("filename-convention");
+		expect(equipped).toContain("settings-json");
+	});
+
+	it("names the repo's verify run commands in the verify fragment", () => {
+		const context = contextWith({
+			run: [
+				{ name: "verify:lint", command: "oxlint" },
+				{ name: "dev", command: "vite" },
+			],
+		});
+
+		const markdown = composeAdvice(context, fragments);
+
+		expect(includedNames(context)).toContain("verify");
+		expect(markdown).toContain("`verify:lint`");
+		expect(markdown).not.toContain("`dev`");
+	});
+
+	it("lets advice.verify replace the verify text and force the fragment in", () => {
+		const context = contextWith({ advice: { verify: "Run `make check`." } });
+
+		const markdown = composeAdvice(context, fragments);
+
+		expect(includedNames(context)).toContain("verify");
+		expect(markdown).toContain("Run `make check`.");
+		expect(markdown).not.toContain("assist verify");
+	});
+
+	it("appends advice.extra as its own section", () => {
+		const markdown = composeAdvice(
+			contextWith({ advice: { extra: "Deploy from main only." } }),
+			fragments,
+		);
+
+		expect(markdown).toContain("## Repo notes\n\nDeploy from main only.");
 	});
 
 	it("returns nothing when no fragment applies", () => {

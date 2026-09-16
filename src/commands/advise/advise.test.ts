@@ -60,4 +60,16 @@ describe("advise", () => {
 			"## Editing files",
 		);
 	});
+
+	it("explains each fragment instead of composing when --explain is given", async () => {
+		const output = await advise({
+			explain: true,
+			cwdFallback: makeRepo("notify:\n  enabled: false\n"),
+		});
+
+		expect(output).not.toContain("# Instructions for this repo");
+		expect(output).toContain("editing-files");
+		expect(output).toContain("jira is not configured");
+		expect(logSpy).toHaveBeenCalledWith(output);
+	});
 });

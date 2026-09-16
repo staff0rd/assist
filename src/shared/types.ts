@@ -23,6 +23,14 @@ const DEFAULT_MODELS_DIR = "~/.assist/voice/models";
 const DEFAULT_BACKUP_DIR = "~/.assist/backups";
 const DEFAULT_CLONE_DIR = "~/git";
 const assistConfigShape = {
+	advice: z
+		.strictObject({
+			include: z.array(z.string()).default([]),
+			exclude: z.array(z.string()).default([]),
+			extra: z.string().optional(),
+			verify: z.string().optional(),
+		})
+		.optional(),
 	backlog: z
 		.strictObject({
 			previewComments: z.boolean().default(false),
