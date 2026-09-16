@@ -1,3 +1,10 @@
+# [0.656.0](https://github.com/staff0rd/assist/compare/v0.655.0...v0.656.0) (2026-09-16)
+
+
+### Features
+
+* inject advice into codex and pi ([d58de67](https://github.com/staff0rd/assist/commit/d58de67e6581f7e1df7183c9250f6b1ed8e24158))
+
 # [0.655.0](https://github.com/staff0rd/assist/compare/v0.654.1...v0.655.0) (2026-09-16)
 
 
