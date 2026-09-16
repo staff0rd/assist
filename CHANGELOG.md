@@ -1,3 +1,10 @@
+# [0.655.0](https://github.com/staff0rd/assist/compare/v0.654.1...v0.655.0) (2026-09-16)
+
+
+### Features
+
+* condition the rest of the advice ([b585eef](https://github.com/staff0rd/assist/commit/b585eefeebdf11413bd8110dc7904e2f2f22bc14))
+
 ## [0.654.1](https://github.com/staff0rd/assist/compare/v0.654.0...v0.654.1) (2026-09-15)
 
 
