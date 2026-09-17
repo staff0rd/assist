@@ -22,7 +22,6 @@ export function createWatcherSession(id: string, cwd: string): Session {
 		claudeSessionId,
 		initialPrompt: WATCH_PROMPT,
 		auto: true,
-		starred: true,
 		watcher: true,
 	};
 }

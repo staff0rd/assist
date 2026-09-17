@@ -38,6 +38,10 @@ function inWorktree(id: string, cwd: string): SessionInfo {
 	return { ...session(id, cwd), repoGroup };
 }
 
+function watcher(id: string, cwd: string): SessionInfo {
+	return { ...session(id, cwd), watcher: true };
+}
+
 function backlogRun(id: string, cwd: string): SessionInfo {
 	return {
 		...inWorktree(id, cwd),
@@ -90,6 +94,100 @@ describe("groupSessionsByRepo", () => {
 				rows: [row(sessions[2]), row(sessions[0]), row(sessions[1])],
 			},
 		]);
+	});
+
+	it("pins a watcher above the rest of its group", () => {
+		const sessions = [
+			session("a", "/repo"),
+			session("b", "/repo"),
+			watcher("w", "/repo"),
+		];
+
+		const groups = groupSessionsByRepo(sessions, () => false);
+
+		expect(groups).toEqual([
+			{
+				kind: "repo",
+				key: "/repo",
+				label: "repo",
+				rows: [row(sessions[2]!), row(sessions[0]!), row(sessions[1]!)],
+			},
+		]);
+	});
+
+	it("keeps a starred member above the group's watcher", () => {
+		const sessions = [
+			watcher("w", "/repo"),
+			session("a", "/repo"),
+			session("b", "/repo"),
+		];
+		const starred = new Set(["b"]);
+
+		const groups = groupSessionsByRepo(sessions, (s) => starred.has(s.id));
+
+		expect(groups).toEqual([
+			{
+				kind: "repo",
+				key: "/repo",
+				label: "repo",
+				rows: [row(sessions[2]!), row(sessions[0]!), row(sessions[1]!)],
+			},
+		]);
+	});
+
+	it("keeps a watcher above a waiting member of its group", () => {
+		const sessions = [
+			session("a", "/repo"),
+			session("b", "/repo"),
+			watcher("w", "/repo"),
+		];
+		const waiting = new Set(["b"]);
+
+		const groups = groupSessionsByRepo(
+			sessions,
+			() => false,
+			(s) => waiting.has(s.id),
+		);
+
+		expect(groups).toEqual([
+			{
+				kind: "repo",
+				key: "/repo",
+				label: "repo",
+				rows: [row(sessions[2]!), row(sessions[1]!), row(sessions[0]!)],
+			},
+		]);
+	});
+
+	it("leaves a group holding only an unstarred watcher where it is", () => {
+		const sessions = [
+			session("a", "/one"),
+			session("b", "/one"),
+			session("c", "/two"),
+			watcher("w", "/two"),
+		];
+
+		const groups = groupSessionsByRepo(sessions, () => false);
+
+		expect(
+			groups.map((g) => (g.kind === "repo" ? g.key : g.session.id)),
+		).toEqual(["/one", "/two"]);
+	});
+
+	it("floats the watcher's group once the watcher is starred", () => {
+		const sessions = [
+			session("a", "/one"),
+			session("b", "/one"),
+			session("c", "/two"),
+			watcher("w", "/two"),
+		];
+		const starred = new Set(["w"]);
+
+		const groups = groupSessionsByRepo(sessions, (s) => starred.has(s.id));
+
+		expect(
+			groups.map((g) => (g.kind === "repo" ? g.key : g.session.id)),
+		).toEqual(["/two", "/one"]);
 	});
 
 	it("orders groups by each repo's first appearance", () => {

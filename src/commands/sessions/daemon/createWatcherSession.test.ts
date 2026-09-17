@@ -22,4 +22,12 @@ describe("createWatcherSession", () => {
 	it("records auto on the session so respawns keep it", () => {
 		expect(createWatcherSession("3", "/repo").auto).toBe(true);
 	});
+
+	it("marks the session as a watcher", () => {
+		expect(createWatcherSession("3", "/repo").watcher).toBe(true);
+	});
+
+	it("leaves the star to the user", () => {
+		expect(createWatcherSession("3", "/repo").starred).toBeUndefined();
+	});
 });
