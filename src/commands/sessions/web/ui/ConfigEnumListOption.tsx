@@ -11,10 +11,7 @@ export function ConfigEnumListOption({ option, description, checked }: Props) {
 	return (
 		<>
 			<Checkbox checked={checked} size="small" />
-			<ListItemText
-				primary={description ?? option}
-				secondary={description ? option : undefined}
-			/>
+			<ListItemText primary={option} secondary={description} />
 		</>
 	);
 }
