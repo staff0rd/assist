@@ -1,3 +1,10 @@
+# [0.659.0](https://github.com/staff0rd/assist/compare/v0.658.0...v0.659.0) (2026-09-17)
+
+
+### Features
+
+* validate advice fragment names ([1e9ad60](https://github.com/staff0rd/assist/commit/1e9ad6072955eb77cc66836e930d07b3abb9a034))
+
 # [0.658.0](https://github.com/staff0rd/assist/compare/v0.657.1...v0.658.0) (2026-09-17)
 
 
