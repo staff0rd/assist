@@ -1,3 +1,10 @@
+# [0.660.0](https://github.com/staff0rd/assist/compare/v0.659.1...v0.660.0) (2026-09-17)
+
+
+### Features
+
+* describe advice fragments in pickers ([96bf5f8](https://github.com/staff0rd/assist/commit/96bf5f81b91ddf971d2bc75d0c02ad19145f0343))
+
 ## [0.659.1](https://github.com/staff0rd/assist/compare/v0.659.0...v0.659.1) (2026-09-17)
 
 
