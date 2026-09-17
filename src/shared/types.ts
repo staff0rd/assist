@@ -125,6 +125,13 @@ const assistConfigShape = {
 	review: z
 		.strictObject({
 			codexModel: z.string().optional(),
+			highLevel: z
+				.strictObject({
+					criticalPaths: z.array(z.string()).default([]),
+					uiPaths: z.array(z.string()).default([]),
+					descriptionWordCap: z.number().int().positive().default(300),
+				})
+				.optional(),
 		})
 		.optional(),
 	readTime: z

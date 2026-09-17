@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { type ReviewOptions, review } from "./review";
+import type { ReviewOptions } from "./review/ReviewOptions";
+import { review } from "./review";
 import { reviewConfigHelp } from "./review/reviewConfigHelp";
 
 export function registerReview(program: Command): void {
@@ -40,6 +41,10 @@ export function registerReview(program: Command): void {
 		.option(
 			"--checkout-only",
 			"Check the PR out and start an idle interactive Claude session in the checkout tree instead of reviewing; requires a PR number and cannot be combined with --refine, --apply, --backlog or --submit",
+		)
+		.option(
+			"--high-level",
+			"Skip the LLM review; evaluate the high-level review checklist against the PR description and changed files and print each item as pass, fail or manual. Nothing is posted to GitHub; cannot be combined with --refine, --apply, --backlog, --submit or --checkout-only",
 		)
 		.option(
 			"--address-comments",

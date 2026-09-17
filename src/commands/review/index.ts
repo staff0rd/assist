@@ -1,1 +1,1 @@
-export { type ReviewOptions, review } from "./review";
+export { review } from "./review";
