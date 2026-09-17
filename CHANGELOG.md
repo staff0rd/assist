@@ -1,3 +1,10 @@
+# [0.658.0](https://github.com/staff0rd/assist/compare/v0.657.1...v0.658.0) (2026-09-17)
+
+
+### Features
+
+* chart a piped label/value series ([8118b76](https://github.com/staff0rd/assist/commit/8118b76c623b75cc234e78c68ff5b1314904c995))
+
 ## [0.657.1](https://github.com/staff0rd/assist/compare/v0.657.0...v0.657.1) (2026-09-17)
 
 
