@@ -4,12 +4,12 @@ export const adviceConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "advice.include",
 		setter: 'assist config set advice.include "refactor"',
-		note: "fragment names included whatever their condition says",
+		note: "fragment names included whatever their condition says; 'assist advise --explain' lists every name",
 	},
 	{
 		key: "advice.exclude",
 		setter: 'assist config set advice.exclude "jira-context"',
-		note: "fragment names dropped even when their condition matches",
+		note: "fragment names dropped even when their condition matches; 'assist advise --explain' lists every name",
 	},
 	{
 		key: "advice.extra",

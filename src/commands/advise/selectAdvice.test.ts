@@ -43,9 +43,9 @@ describe("selectAdvice", () => {
 	});
 
 	it("drops a fragment named by advice.exclude despite its condition", () => {
-		const [decision] = selectAdvice([fragment("always-on", "always")], {
+		const [decision] = selectAdvice([fragment("markdown", "always")], {
 			...context,
-			config: assistConfigSchema.parse({ advice: { exclude: ["always-on"] } }),
+			config: assistConfigSchema.parse({ advice: { exclude: ["markdown"] } }),
 		});
 
 		expect(decision).toMatchObject({
@@ -55,9 +55,11 @@ describe("selectAdvice", () => {
 	});
 
 	it("keeps a fragment named by advice.include despite its condition", () => {
-		const [decision] = selectAdvice([fragment("jira-thing", "jira")], {
+		const [decision] = selectAdvice([fragment("jira-context", "jira")], {
 			...context,
-			config: assistConfigSchema.parse({ advice: { include: ["jira-thing"] } }),
+			config: assistConfigSchema.parse({
+				advice: { include: ["jira-context"] },
+			}),
 		});
 
 		expect(decision).toMatchObject({
@@ -67,13 +69,19 @@ describe("selectAdvice", () => {
 	});
 
 	it("lets advice.exclude win over advice.include for the same fragment", () => {
-		const [decision] = selectAdvice([fragment("always-on", "always")], {
+		const [decision] = selectAdvice([fragment("markdown", "always")], {
 			...context,
 			config: assistConfigSchema.parse({
-				advice: { include: ["always-on"], exclude: ["always-on"] },
+				advice: { include: ["markdown"], exclude: ["markdown"] },
 			}),
 		});
 
 		expect(decision.included).toBe(false);
+	});
+
+	it("rejects a name that matches no shipped fragment", () => {
+		expect(() =>
+			assistConfigSchema.parse({ advice: { exclude: ["verfiy"] } }),
+		).toThrow();
 	});
 });

@@ -1,0 +1,15 @@
+export const adviceFragmentNames = [
+	"assist-global",
+	"backlog-ids",
+	"backlog-prs",
+	"code-comments",
+	"drafting-messages",
+	"editing-files",
+	"filename-convention",
+	"jira-context",
+	"jira-smart-links",
+	"markdown",
+	"refactor",
+	"settings-json",
+	"verify",
+] as const;

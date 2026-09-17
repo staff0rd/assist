@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import {
+	adviceFragments,
 	blockCodeComments,
 	configKeys,
 	forbiddenStrings,
@@ -36,6 +37,12 @@ const checks = [
 		description:
 			"Check every assistConfigSchema key is surfaced in some command's --help via configHelp",
 		action: configKeys,
+	},
+	{
+		name: "advice-fragments",
+		description:
+			"Check ADVICE_FRAGMENT_NAMES matches the fragments shipped in claude/advice, so advice.include/exclude can name every one",
+		action: adviceFragments,
 	},
 	{
 		name: "migrations",

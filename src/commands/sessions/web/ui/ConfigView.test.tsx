@@ -642,6 +642,31 @@ describe("ConfigView", () => {
 		expect(screen.getByRole("option", { name: "warn" })).toBeTruthy();
 	});
 
+	it("offers the shipped fragment names when editing advice.exclude", async () => {
+		stubApi([
+			{
+				key: "advice.exclude",
+				type: "array",
+				itemType: "enum",
+				value: [],
+				source: "default",
+				node: node("advice.exclude"),
+			},
+		]);
+		renderView();
+
+		await waitFor(() =>
+			expect(screen.getByText("advice.exclude")).toBeTruthy(),
+		);
+		fireEvent.click(
+			screen.getByRole("button", { name: "Edit advice.exclude" }),
+		);
+		fireEvent.mouseDown(screen.getByRole("combobox"));
+
+		expect(screen.getByRole("option", { name: /verify/ })).toBeTruthy();
+		expect(screen.getByRole("option", { name: /jira-context/ })).toBeTruthy();
+	});
+
 	it("edits a scalar union as text and lists the accepted types", async () => {
 		const fetchMock = stubApi([
 			{

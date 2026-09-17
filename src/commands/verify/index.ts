@@ -1,3 +1,4 @@
+export { adviceFragments } from "./adviceFragments";
 export { blockCodeComments } from "./blockCodeComments";
 export { configKeys } from "./configKeys";
 export { forbiddenStrings } from "./forbiddenStrings";

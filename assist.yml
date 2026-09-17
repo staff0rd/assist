@@ -149,6 +149,13 @@ run:
       - src/index.ts
       - verify
       - config-keys
+  - name: verify:advice-fragments
+    command: npx
+    args:
+      - tsx
+      - src/index.ts
+      - verify
+      - advice-fragments
   - name: verify:migrations
     command: npx
     filter: src/shared/db/migrations/**

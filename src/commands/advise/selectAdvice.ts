@@ -13,9 +13,11 @@ function decide(
 	context: AdviceContext,
 ): AdviceDecision {
 	const advice = context.config.advice;
-	if (advice?.exclude.includes(fragment.name))
+	const exclude: readonly string[] = advice?.exclude ?? [];
+	const include: readonly string[] = advice?.include ?? [];
+	if (exclude.includes(fragment.name))
 		return { fragment, included: false, reason: "excluded by advice.exclude" };
-	if (advice?.include.includes(fragment.name))
+	if (include.includes(fragment.name))
 		return { fragment, included: true, reason: "included by advice.include" };
 
 	const condition = adviceConditions[fragment.when];

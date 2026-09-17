@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { adviceFragmentNames } from "./adviceFragmentNames";
 import { runConfigSchema, runLinkSchema } from "./runConfigSchema";
 import { secretConfigValue } from "./secretConfigValue";
 
@@ -25,8 +26,8 @@ const DEFAULT_CLONE_DIR = "~/git";
 const assistConfigShape = {
 	advice: z
 		.strictObject({
-			include: z.array(z.string()).default([]),
-			exclude: z.array(z.string()).default([]),
+			include: z.array(z.enum(adviceFragmentNames)).default([]),
+			exclude: z.array(z.enum(adviceFragmentNames)).default([]),
 			extra: z.string().optional(),
 			verify: z.string().optional(),
 		})
