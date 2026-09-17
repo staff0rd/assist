@@ -1,3 +1,10 @@
+## [0.659.1](https://github.com/staff0rd/assist/compare/v0.659.0...v0.659.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* fit chart y axis to the data range ([a1ea914](https://github.com/staff0rd/assist/commit/a1ea914e138fe951a0bc54aa1b6adf5f8a0b3e6a))
+
 # [0.659.0](https://github.com/staff0rd/assist/compare/v0.658.0...v0.659.0) (2026-09-17)
 
 
