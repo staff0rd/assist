@@ -30,6 +30,14 @@ describe("parseChartSeries", () => {
 		]);
 	});
 
+	it("should return nothing for input that is entirely blank", () => {
+		expect(parseChartSeries(["", "   ", "\t"])).toEqual([]);
+	});
+
+	it("should return a single point for a one-line series", () => {
+		expect(parseChartSeries(["a 1"])).toEqual([{ label: "a", value: 1 }]);
+	});
+
 	it("should keep the given order", () => {
 		expect(parseChartSeries(["b 2", "a 1"]).map((p) => p.label)).toEqual([
 			"b",
