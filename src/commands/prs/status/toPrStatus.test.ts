@@ -22,7 +22,7 @@ const basePr: GhStatusPullRequest = {
 
 describe("toPrStatus", () => {
 	it("maps a pull request onto the reported facts", () => {
-		expect(toPrStatus(basePr, NOW)).toEqual({
+		expect(toPrStatus(basePr, 2, NOW)).toEqual({
 			number: 12,
 			title: "Add a thing",
 			url: "https://github.com/org/repo/pull/12",
@@ -37,13 +37,20 @@ describe("toPrStatus", () => {
 			reviews: [{ reviewer: "bob", state: "COMMENTED" }],
 			checks: { failing: ["lint"], pending: [] },
 			mergeable: "CONFLICTING",
+			unresolvedThreads: 2,
 		});
 	});
 
 	it("derives the age from updatedAt", () => {
 		const pr = { ...basePr, updatedAt: "2026-09-18T09:00:00Z" };
 
-		expect(toPrStatus(pr, NOW)).toMatchObject({ age: "3h", ageHours: 3 });
+		expect(toPrStatus(pr, 0, NOW)).toMatchObject({ age: "3h", ageHours: 3 });
+	});
+
+	it("carries an unknown unresolved thread count through", () => {
+		expect(toPrStatus(basePr, null, NOW)).toMatchObject({
+			unresolvedThreads: null,
+		});
 	});
 
 	it("flags drafts and bot authors", () => {
@@ -53,7 +60,7 @@ describe("toPrStatus", () => {
 			author: { login: "dependabot", is_bot: true },
 		};
 
-		expect(toPrStatus(pr, NOW)).toMatchObject({
+		expect(toPrStatus(pr, 0, NOW)).toMatchObject({
 			isDraft: true,
 			isBot: true,
 			author: "dependabot",
@@ -70,7 +77,7 @@ describe("toPrStatus", () => {
 				updatedAt: "2026-09-18T11:00:00Z",
 			};
 
-			expect(toPrStatus(pr, NOW)).toMatchObject({
+			expect(toPrStatus(pr, 0, NOW)).toMatchObject({
 				author: "unknown",
 				isBot: false,
 				isDraft: false,
@@ -84,7 +91,7 @@ describe("toPrStatus", () => {
 		it("names a reviewer whose author is missing", () => {
 			const pr = { ...basePr, latestReviews: [{ state: "APPROVED" }] };
 
-			expect(toPrStatus(pr, NOW).reviews).toEqual([
+			expect(toPrStatus(pr, 0, NOW).reviews).toEqual([
 				{ reviewer: "unknown", state: "APPROVED" },
 			]);
 		});

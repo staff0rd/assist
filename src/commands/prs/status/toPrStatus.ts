@@ -11,6 +11,7 @@ function toReviews(pr: GhStatusPullRequest): ReviewerState[] {
 
 export function toPrStatus(
 	pr: GhStatusPullRequest,
+	unresolvedThreads: number | null,
 	now: number = Date.now(),
 ): PrStatus {
 	const age = describeAge(pr.updatedAt, now);
@@ -30,5 +31,6 @@ export function toPrStatus(
 		reviews: toReviews(pr),
 		checks: summariseChecks(pr.statusCheckRollup),
 		mergeable: pr.mergeable || "UNKNOWN",
+		unresolvedThreads,
 	};
 }

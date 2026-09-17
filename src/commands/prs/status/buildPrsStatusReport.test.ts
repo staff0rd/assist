@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockFetchRepoPullRequests = vi.fn();
+const mockCountUnresolvedThreads = vi.fn();
 
 vi.mock("./fetchRepoPullRequests", () => ({
 	fetchRepoPullRequests: (...args: unknown[]) =>
 		mockFetchRepoPullRequests(...args),
+}));
+
+vi.mock("./countUnresolvedThreads", () => ({
+	countUnresolvedThreads: (...args: unknown[]) =>
+		mockCountUnresolvedThreads(...args),
 }));
 
 import { buildPrsStatusReport } from "./buildPrsStatusReport";
@@ -31,6 +37,7 @@ describe("buildPrsStatusReport", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockFetchRepoPullRequests.mockReturnValue([]);
+		mockCountUnresolvedThreads.mockReturnValue(0);
 	});
 
 	it("groups the open pull requests by repo", () => {
@@ -60,6 +67,43 @@ describe("buildPrsStatusReport", () => {
 		expect(buildPrsStatusReport(["org/quiet"], NOW)).toEqual({
 			repos: [{ repo: "org/quiet", pullRequests: [] }],
 			errors: [],
+		});
+	});
+
+	it("counts each pull request's unresolved review threads", () => {
+		mockFetchRepoPullRequests.mockReturnValueOnce([
+			pullRequest(1, "First"),
+			pullRequest(2, "Second"),
+		]);
+		mockCountUnresolvedThreads.mockReturnValueOnce(3).mockReturnValueOnce(0);
+
+		const report = buildPrsStatusReport(["org/foo"], NOW);
+
+		expect(
+			report.repos[0].pullRequests.map((pr) => pr.unresolvedThreads),
+		).toEqual([3, 0]);
+		expect(mockCountUnresolvedThreads.mock.calls).toEqual([
+			["org", "foo", 1],
+			["org", "foo", 2],
+		]);
+	});
+
+	describe("when a pull request's thread query fails", () => {
+		it("keeps the pull request with an unknown count", () => {
+			mockFetchRepoPullRequests.mockReturnValueOnce([
+				pullRequest(1, "First"),
+				pullRequest(2, "Second"),
+			]);
+			mockCountUnresolvedThreads
+				.mockReturnValueOnce(null)
+				.mockReturnValueOnce(1);
+
+			const report = buildPrsStatusReport(["org/foo"], NOW);
+
+			expect(report.errors).toEqual([]);
+			expect(
+				report.repos[0].pullRequests.map((pr) => pr.unresolvedThreads),
+			).toEqual([null, 1]);
 		});
 	});
 

@@ -25,6 +25,7 @@ function prStatus(overrides: Partial<PrStatus> = {}): PrStatus {
 		reviews: [],
 		checks: { failing: [], pending: [] },
 		mergeable: "MERGEABLE",
+		unresolvedThreads: 0,
 		...overrides,
 	};
 }
@@ -96,6 +97,45 @@ describe("printPrsStatus", () => {
 		expect(printed()).toContain("failing: lint");
 		expect(printed()).toContain("pending: e2e");
 		expect(printed()).toContain("conflicting");
+	});
+
+	it("reports the unresolved review thread count", () => {
+		printPrsStatus({
+			repos: [
+				{
+					repo: "org/foo",
+					pullRequests: [prStatus({ unresolvedThreads: 3 })],
+				},
+			],
+			errors: [],
+		});
+
+		expect(printed()).toContain("unresolved comments: 3");
+	});
+
+	it("omits the unresolved count when every thread is resolved", () => {
+		printPrsStatus({
+			repos: [{ repo: "org/foo", pullRequests: [prStatus()] }],
+			errors: [],
+		});
+
+		expect(printed()).not.toContain("unresolved comments");
+	});
+
+	describe("when the unresolved count could not be read", () => {
+		it("reports it as unknown", () => {
+			printPrsStatus({
+				repos: [
+					{
+						repo: "org/foo",
+						pullRequests: [prStatus({ unresolvedThreads: null })],
+					},
+				],
+				errors: [],
+			});
+
+			expect(printed()).toContain("unresolved comments: unknown");
+		});
 	});
 
 	it("reports an unknown mergeable state and an unknown age", () => {

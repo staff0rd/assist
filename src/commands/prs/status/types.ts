@@ -44,6 +44,7 @@ export type PrStatus = {
 	reviews: ReviewerState[];
 	checks: CheckSummary;
 	mergeable: string;
+	unresolvedThreads: number | null;
 };
 
 type RepoStatus = { repo: string; pullRequests: PrStatus[] };

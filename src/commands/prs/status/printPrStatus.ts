@@ -34,6 +34,14 @@ function checkLines(pr: PrStatus): string[] {
 	return lines;
 }
 
+function threadsLine(pr: PrStatus): string | null {
+	if (pr.unresolvedThreads === null) {
+		return chalk.dim("unresolved comments: unknown");
+	}
+	if (pr.unresolvedThreads === 0) return null;
+	return chalk.yellow(`unresolved comments: ${pr.unresolvedThreads}`);
+}
+
 function mergeableLine(pr: PrStatus): string | null {
 	if (pr.mergeable === "CONFLICTING") return chalk.red("conflicting");
 	if (pr.mergeable === "MERGEABLE") return null;
@@ -47,6 +55,7 @@ export function printPrStatus(pr: PrStatus): void {
 	const details = [
 		reviewLine(pr),
 		...checkLines(pr),
+		threadsLine(pr),
 		mergeableLine(pr),
 		chalk.dim(pr.url),
 	];

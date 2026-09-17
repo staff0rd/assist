@@ -1,3 +1,4 @@
+import { countUnresolvedThreads } from "./countUnresolvedThreads";
 import { describeFetchError } from "./describeFetchError";
 import { fetchRepoPullRequests } from "./fetchRepoPullRequests";
 import { parseRepoArgument } from "./parseRepoArgument";
@@ -23,7 +24,12 @@ export function buildPrsStatusReport(
 		const repo = `${parsed.org}/${parsed.repo}`;
 		try {
 			const pullRequests = fetchRepoPullRequests(parsed.org, parsed.repo).map(
-				(pr) => toPrStatus(pr, now),
+				(pr) =>
+					toPrStatus(
+						pr,
+						countUnresolvedThreads(parsed.org, parsed.repo, pr.number),
+						now,
+					),
 			);
 			report.repos.push({ repo, pullRequests });
 		} catch (error) {
