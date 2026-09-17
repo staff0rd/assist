@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import type { ConfigNode } from "../../../../shared/ConfigNode";
 import { ConfigEntryActions } from "./ConfigEntryActions";
 import type { ConfigNodeEditorRenderer } from "./ConfigNodeEditorRenderer";
+import { ConfigRecordKeyCell } from "./ConfigRecordKeyCell";
 
 type Props = {
 	node: ConfigNode;
@@ -11,6 +11,9 @@ type Props = {
 	position: number;
 	value: unknown;
 	disabled: boolean;
+	keyValues?: string[];
+	keyDescriptions?: Record<string, string>;
+	taken?: string[];
 	onRename: (name: string) => void;
 	onChange: (value: unknown) => void;
 	onRemove: () => void;
@@ -24,6 +27,9 @@ export function ConfigRecordRow({
 	position,
 	value,
 	disabled,
+	keyValues,
+	keyDescriptions,
+	taken,
 	onRename,
 	onChange,
 	onRemove,
@@ -31,14 +37,14 @@ export function ConfigRecordRow({
 }: Props) {
 	return (
 		<Box sx={{ display: "flex", gap: 1, width: "100%" }}>
-			<TextField
-				size="small"
-				placeholder="key"
-				value={name}
+			<ConfigRecordKeyCell
+				label={`${label} key ${position}`}
+				name={name}
 				disabled={disabled}
-				slotProps={{ htmlInput: { "aria-label": `${label} key ${position}` } }}
-				onChange={(event) => onRename(event.target.value)}
-				sx={{ minWidth: 180 }}
+				keyValues={keyValues}
+				keyDescriptions={keyDescriptions}
+				taken={taken}
+				onRename={onRename}
 			/>
 			<Render
 				node={node}

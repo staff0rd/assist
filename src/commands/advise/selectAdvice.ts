@@ -12,13 +12,15 @@ function decide(
 	fragment: AdviceFragment,
 	context: AdviceContext,
 ): AdviceDecision {
-	const advice = context.config.advice;
-	const exclude: readonly string[] = advice?.exclude ?? [];
-	const include: readonly string[] = advice?.include ?? [];
-	if (exclude.includes(fragment.name))
-		return { fragment, included: false, reason: "excluded by advice.exclude" };
-	if (include.includes(fragment.name))
-		return { fragment, included: true, reason: "included by advice.include" };
+	const fragments: Record<string, boolean | undefined> =
+		context.config.advice?.fragments ?? {};
+	const override = fragments[fragment.name];
+	if (override !== undefined)
+		return {
+			fragment,
+			included: override,
+			reason: `advice.fragments.${fragment.name} is ${override}`,
+		};
 
 	const condition = adviceConditions[fragment.when];
 	if (!condition)

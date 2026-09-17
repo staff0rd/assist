@@ -42,46 +42,37 @@ describe("selectAdvice", () => {
 		});
 	});
 
-	it("drops a fragment named by advice.exclude despite its condition", () => {
+	it("drops a fragment turned off by advice.fragments despite its condition", () => {
 		const [decision] = selectAdvice([fragment("markdown", "always")], {
 			...context,
-			config: assistConfigSchema.parse({ advice: { exclude: ["markdown"] } }),
+			config: assistConfigSchema.parse({
+				advice: { fragments: { markdown: false } },
+			}),
 		});
 
 		expect(decision).toMatchObject({
 			included: false,
-			reason: "excluded by advice.exclude",
+			reason: "advice.fragments.markdown is false",
 		});
 	});
 
-	it("keeps a fragment named by advice.include despite its condition", () => {
+	it("keeps a fragment turned on by advice.fragments despite its condition", () => {
 		const [decision] = selectAdvice([fragment("jira-context", "jira")], {
 			...context,
 			config: assistConfigSchema.parse({
-				advice: { include: ["jira-context"] },
+				advice: { fragments: { "jira-context": true } },
 			}),
 		});
 
 		expect(decision).toMatchObject({
 			included: true,
-			reason: "included by advice.include",
+			reason: "advice.fragments.jira-context is true",
 		});
-	});
-
-	it("lets advice.exclude win over advice.include for the same fragment", () => {
-		const [decision] = selectAdvice([fragment("markdown", "always")], {
-			...context,
-			config: assistConfigSchema.parse({
-				advice: { include: ["markdown"], exclude: ["markdown"] },
-			}),
-		});
-
-		expect(decision.included).toBe(false);
 	});
 
 	it("rejects a name that matches no shipped fragment", () => {
 		expect(() =>
-			assistConfigSchema.parse({ advice: { exclude: ["verfiy"] } }),
+			assistConfigSchema.parse({ advice: { fragments: { verfiy: false } } }),
 		).toThrow();
 	});
 });

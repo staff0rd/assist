@@ -37,6 +37,9 @@ export function ConfigRecordEditor({
 					position={index + 1}
 					value={entry}
 					disabled={disabled}
+					keyValues={node.keyValues}
+					keyDescriptions={node.keyDescriptions}
+					taken={Object.keys(record)}
 					render={render}
 					onRename={(next) => onChange(renameConfigField(record, index, next))}
 					onChange={(next) => onChange({ ...record, [name]: next })}

@@ -642,29 +642,30 @@ describe("ConfigView", () => {
 		expect(screen.getByRole("option", { name: "warn" })).toBeTruthy();
 	});
 
-	it("offers the shipped fragment names when editing advice.exclude", async () => {
+	it("picks advice.fragments keys from the shipped names, with their titles", async () => {
 		stubApi([
 			{
-				key: "advice.exclude",
-				type: "array",
-				itemType: "enum",
-				value: [],
-				source: "default",
-				node: node("advice.exclude"),
+				key: "advice.fragments",
+				type: "record",
+				value: { verify: false },
+				source: "project",
+				node: node("advice.fragments"),
 			},
 		]);
 		renderView();
 
 		await waitFor(() =>
-			expect(screen.getByText("advice.exclude")).toBeTruthy(),
+			expect(screen.getByText("advice.fragments")).toBeTruthy(),
 		);
 		fireEvent.click(
-			screen.getByRole("button", { name: "Edit advice.exclude" }),
+			screen.getByRole("button", { name: "Edit advice.fragments" }),
 		);
 		fireEvent.mouseDown(screen.getByRole("combobox"));
 
-		expect(screen.getByRole("option", { name: /verify/ })).toBeTruthy();
 		expect(screen.getByRole("option", { name: /jira-context/ })).toBeTruthy();
+		expect(
+			screen.getByRole("option", { name: /Fetching Jira context/ }),
+		).toBeTruthy();
 	});
 
 	it("edits a scalar union as text and lists the accepted types", async () => {

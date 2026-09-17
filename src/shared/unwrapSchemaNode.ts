@@ -16,6 +16,7 @@ export type SchemaNode = {
 		entries?: Record<string, unknown>;
 		options?: SchemaNode[];
 		element?: SchemaNode;
+		keyType?: SchemaNode;
 		valueType?: SchemaNode;
 	};
 };

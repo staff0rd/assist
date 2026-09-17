@@ -44,6 +44,8 @@ export type ConfigObjectListNode = ConfigNodeBase & {
 export type ConfigRecordNode = ConfigNodeBase & {
 	kind: "record";
 	value: ConfigNode;
+	keyValues?: string[];
+	keyDescriptions?: Record<string, string>;
 };
 
 export type ConfigOpaqueNode = ConfigNodeBase & {

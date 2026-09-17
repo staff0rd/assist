@@ -1,8 +1,7 @@
 import { adviceFragmentTitles } from "./adviceFragmentNames";
 
 const byKey: Record<string, Record<string, string>> = {
-	"advice.include": adviceFragmentTitles,
-	"advice.exclude": adviceFragmentTitles,
+	"advice.fragments": adviceFragmentTitles,
 };
 
 export function configEnumDescriptions(
