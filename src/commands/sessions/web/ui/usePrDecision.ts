@@ -21,7 +21,7 @@ export function usePrDecision(
 	onDecision: OnDecision,
 	isPr: boolean,
 	resolvedDraft: boolean,
-	screenshotMarkdown: () => string[],
+	screenshots: { markdown: () => string[]; clearPersisted: () => void },
 	editedBody: () => string | undefined,
 ) {
 	const [chain, setChain] = useState<PrPreviewChain>(() =>
@@ -39,14 +39,17 @@ export function usePrDecision(
 	) => {
 		const approved = decision === "approve";
 		clearPersistedComments(requestId);
-		if (approved) clearPersistedPrChain(sessionId);
+		if (approved) {
+			clearPersistedPrChain(sessionId);
+			screenshots.clearPersisted();
+		}
 		onDecision(
 			decision,
 			previewDecisionDetails(
 				approved,
 				comments,
 				chain,
-				approved ? screenshotMarkdown() : [],
+				approved ? screenshots.markdown() : [],
 				editedBody(),
 			),
 		);

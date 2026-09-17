@@ -1,8 +1,14 @@
 import { useScreenshots } from "./useScreenshots";
 import { useScreenshotUpload } from "./useScreenshotUpload";
 
-export function usePaneScreenshots(cwd: string | undefined, enabled: boolean) {
-	const { screenshots, add, remove } = useScreenshots();
+export function usePaneScreenshots(
+	cwd: string | undefined,
+	enabled: boolean,
+	scope: string | undefined,
+) {
+	const { screenshots, add, remove, clearPersisted } = useScreenshots(
+		enabled ? scope : undefined,
+	);
 	const { uploads, onDrop, onDragOver } = useScreenshotUpload(
 		cwd,
 		add,
@@ -12,6 +18,10 @@ export function usePaneScreenshots(cwd: string | undefined, enabled: boolean) {
 	return {
 		screenshots,
 		removeScreenshot: remove,
+		decision: {
+			markdown: () => screenshots.map((s) => s.markdown),
+			clearPersisted,
+		},
 		uploads,
 		onDrop,
 		onDragOver,

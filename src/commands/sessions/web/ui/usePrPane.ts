@@ -16,14 +16,18 @@ export function usePrPane(options: PrPaneOptions) {
 	const { wrapperRef, contentRef, pending, dragRects, onMouseDown, clear } =
 		usePreviewSelection();
 	const { comments, add, remove } = usePrComments(requestId);
-	const shots = usePaneScreenshots(cwd, options.screenshots);
+	const { decision: shotsForDecision, ...shots } = usePaneScreenshots(
+		cwd,
+		options.screenshots,
+		options.screenshotScope,
+	);
 	const decision = usePrDecision(
 		requestId,
 		sessionId,
 		onDecision,
 		isPr,
 		resolvedDraft,
-		() => shots.screenshots.map((s) => s.markdown),
+		shotsForDecision,
 		edit.editedBody,
 	);
 

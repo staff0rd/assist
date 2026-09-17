@@ -10,6 +10,7 @@ export type PrPaneOptions = {
 	) => void;
 	isPr: boolean;
 	screenshots: boolean;
+	screenshotScope: string | undefined;
 	resolvedDraft: boolean;
 	initialBody: string;
 	editable: boolean;

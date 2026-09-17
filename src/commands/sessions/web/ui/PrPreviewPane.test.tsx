@@ -762,6 +762,106 @@ describe("PrPreviewPane inline comments", () => {
 		});
 	});
 
+	describe("screenshots across a re-proposed preview", () => {
+		const retry: PrPreview = { ...preview, requestId: "r2" };
+
+		function stubUpload(markdown = "![shot](https://x/y.png)") {
+			vi.stubGlobal(
+				"fetch",
+				vi.fn().mockResolvedValue({
+					ok: true,
+					json: async () => ({ markdown }),
+				}),
+			);
+		}
+
+		function renderPane(target: PrPreview, onDecision = vi.fn()) {
+			const result = render(
+				<PrPreviewPane
+					preview={target}
+					sessionId="s1"
+					cwd="/repo"
+					onDecision={onDecision}
+				/>,
+			);
+			return { ...result, onDecision };
+		}
+
+		async function attachScreenshot(target: PrPreview = preview) {
+			stubUpload();
+			const pane = renderPane(target);
+			pasteImage("shot.png");
+			await screen.findByAltText("screenshot");
+			return pane;
+		}
+
+		async function attachThenReject() {
+			const pane = await attachScreenshot();
+			fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+			pane.unmount();
+		}
+
+		it("shows the attachment again in the preview re-proposed after a rejection", async () => {
+			await attachThenReject();
+
+			const { onDecision } = renderPane(retry);
+
+			const img = (await screen.findByAltText(
+				"screenshot",
+			)) as HTMLImageElement;
+			expect(img.getAttribute("src")).toBe("https://x/y.png");
+
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+			expect(onDecision).toHaveBeenLastCalledWith(
+				"approve",
+				expect.objectContaining({ screenshots: ["![shot](https://x/y.png)"] }),
+			);
+		});
+
+		it("lets the reviewer remove a carried-over screenshot before approving", async () => {
+			await attachThenReject();
+
+			const { onDecision } = renderPane(retry);
+			await screen.findByAltText("screenshot");
+
+			fireEvent.click(
+				screen.getByRole("button", { name: "Remove screenshot" }),
+			);
+			expect(screen.queryByAltText("screenshot")).toBeNull();
+
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+			expect(onDecision).toHaveBeenLastCalledWith(
+				"approve",
+				expect.objectContaining({ screenshots: [] }),
+			);
+		});
+
+		it("forgets the attachment once a preview is approved", async () => {
+			const pane = await attachScreenshot();
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+			pane.unmount();
+
+			renderPane(retry);
+
+			expect(screen.queryByAltText("screenshot")).toBeNull();
+		});
+
+		it("keeps an issue preview's screenshots out of a PR preview", async () => {
+			const issue: PrPreview = {
+				...preview,
+				requestId: "i1",
+				kind: "github-issue",
+			};
+			const pane = await attachScreenshot(issue);
+			fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+			pane.unmount();
+
+			renderPane(retry);
+
+			expect(screen.queryByAltText("screenshot")).toBeNull();
+		});
+	});
+
 	describe("backlog item previews", () => {
 		const item: PrPreview = {
 			requestId: "b1",

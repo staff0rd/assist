@@ -1,4 +1,10 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	clearPersistedScreenshots,
+	loadPersistedScreenshots,
+	savePersistedScreenshots,
+} from "./loadPersistedScreenshots";
+import { screenshotPreviewUrl } from "./screenshotPreviewUrl";
 
 export type LocalScreenshot = {
 	markdown: string;
@@ -7,21 +13,48 @@ export type LocalScreenshot = {
 	id: number;
 };
 
-export function useScreenshots() {
+export function useScreenshots(scope: string | undefined) {
 	const [screenshots, setScreenshots] = useState<LocalScreenshot[]>([]);
 	const nextId = useRef(0);
 
-	const add = useCallback((s: Omit<LocalScreenshot, "id">) => {
-		setScreenshots((ss) => [...ss, { ...s, id: nextId.current++ }]);
-	}, []);
+	useEffect(() => {
+		setScreenshots(
+			loadPersistedScreenshots(scope).map((s) => ({
+				...s,
+				url: screenshotPreviewUrl(s.markdown),
+				id: nextId.current++,
+			})),
+		);
+	}, [scope]);
 
-	const remove = useCallback((id: number) => {
-		setScreenshots((ss) => {
-			const target = ss.find((s) => s.id === id);
-			if (target) URL.revokeObjectURL(target.url);
-			return ss.filter((s) => s.id !== id);
-		});
-	}, []);
+	const add = useCallback(
+		(s: Omit<LocalScreenshot, "id">) => {
+			setScreenshots((ss) => {
+				const next = [...ss, { ...s, id: nextId.current++ }];
+				savePersistedScreenshots(scope, next);
+				return next;
+			});
+		},
+		[scope],
+	);
 
-	return { screenshots, add, remove };
+	const remove = useCallback(
+		(id: number) => {
+			setScreenshots((ss) => {
+				const target = ss.find((s) => s.id === id);
+				if (target?.url.startsWith("blob:")) URL.revokeObjectURL(target.url);
+				const next = ss.filter((s) => s.id !== id);
+				savePersistedScreenshots(scope, next);
+				return next;
+			});
+		},
+		[scope],
+	);
+
+	const clearPersisted = useCallback(
+		() => clearPersistedScreenshots(scope),
+		[scope],
+	);
+
+	return { screenshots, add, remove, clearPersisted };
 }
