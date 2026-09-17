@@ -1,3 +1,10 @@
+## [0.660.1](https://github.com/staff0rd/assist/compare/v0.660.0...v0.660.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* put fragment name above its description ([86d7be8](https://github.com/staff0rd/assist/commit/86d7be8a5c59a8973b1a40f398cd7b2921707869))
+
 # [0.660.0](https://github.com/staff0rd/assist/compare/v0.659.1...v0.660.0) (2026-09-17)
 
 
