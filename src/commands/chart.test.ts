@@ -58,6 +58,16 @@ describe("chart", () => {
 		);
 	});
 
+	it("should fit the y axis to the data range", async () => {
+		mockReadStdinLines.mockResolvedValue(["a,3.6", "b,3.45"]);
+
+		await chart({});
+
+		expect(mockRenderLineChart).toHaveBeenCalledWith(
+			expect.objectContaining({ minY: 3.42, maxY: 3.63 }),
+		);
+	});
+
 	it("should skip blank lines", async () => {
 		mockReadStdinLines.mockResolvedValue(["", "a,1", "   ", "b,2", ""]);
 

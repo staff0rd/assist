@@ -1,4 +1,5 @@
 import { renderLineChart } from "../lib/renderLineChart";
+import { chartYRange } from "./chart/chartYRange";
 import { parseChartSeries } from "./chart/parseChartSeries";
 import { readStdinLines } from "./chart/readStdinLines";
 
@@ -19,12 +20,14 @@ export async function chart(options: { title?: string }): Promise<void> {
 	}
 
 	const title = options.title ?? "Chart";
+	const values = points.map((p) => p.value);
 
 	renderLineChart({
 		title,
 		label: title,
 		seriesTitle: title,
 		labels: points.map((p) => p.label),
-		values: points.map((p) => p.value),
+		values,
+		...chartYRange(values),
 	});
 }

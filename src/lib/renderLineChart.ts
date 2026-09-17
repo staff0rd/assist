@@ -10,6 +10,8 @@ type LineChartOptions = {
 	labels: string[];
 	values: number[];
 	wholeNumbersOnly?: boolean;
+	minY?: number;
+	maxY?: number;
 };
 
 const keyboardInput = (): tty.ReadStream | undefined => {
@@ -29,6 +31,8 @@ export function renderLineChart({
 	labels,
 	values,
 	wholeNumbersOnly = false,
+	minY,
+	maxY,
 }: LineChartOptions): void {
 	const input = keyboardInput();
 
@@ -47,6 +51,8 @@ export function renderLineChart({
 		xLabelPadding: 3,
 		xPadding: 5,
 		wholeNumbersOnly,
+		minY,
+		maxY,
 	});
 
 	line.setData([
