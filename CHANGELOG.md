@@ -1,3 +1,10 @@
+# [0.662.0](https://github.com/staff0rd/assist/compare/v0.661.0...v0.662.0) (2026-09-17)
+
+
+### Features
+
+* collapse advice include/exclude into one map ([53404ce](https://github.com/staff0rd/assist/commit/53404ce8aa375685d58ac751815fb6d90fca0a8b))
+
 # [0.661.0](https://github.com/staff0rd/assist/compare/v0.660.2...v0.661.0) (2026-09-17)
 
 
