@@ -1,3 +1,10 @@
+## [0.657.1](https://github.com/staff0rd/assist/compare/v0.657.0...v0.657.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* unstar watchers on restore ([8b7006b](https://github.com/staff0rd/assist/commit/8b7006b20b9b5582ba90f27ce8ff7886da54cbd8))
+
 # [0.657.0](https://github.com/staff0rd/assist/compare/v0.656.0...v0.657.0) (2026-09-17)
 
 
