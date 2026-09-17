@@ -12,11 +12,14 @@ export function explainAdvice(
 	const width = Math.max(
 		...decisions.map((decision) => decision.fragment.name.length),
 	);
+	const titleWidth = Math.max(
+		...decisions.map((decision) => decision.fragment.title.length),
+	);
 
 	return decisions
 		.map(
 			({ fragment, included, reason }) =>
-				`${included ? chalk.green("✓") : chalk.dim("✗")} ${fragment.name.padEnd(width)}  ${reason}`,
+				`${included ? chalk.green("✓") : chalk.dim("✗")} ${fragment.name.padEnd(width)}  ${chalk.dim(fragment.title.padEnd(titleWidth))}  ${reason}`,
 		)
 		.join("\n");
 }

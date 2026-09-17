@@ -16,6 +16,7 @@ export type ConfigScalarNode = ConfigNodeBase & {
 	kind: "scalar";
 	type: ConfigScalarLeafType | "union";
 	enumValues?: string[];
+	enumDescriptions?: Record<string, string>;
 	unionTypes?: ConfigScalarLeafType[];
 };
 

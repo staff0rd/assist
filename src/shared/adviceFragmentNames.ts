@@ -1,3 +1,19 @@
+export const adviceFragmentTitles = {
+	"assist-global": "Using assist",
+	"backlog-ids": "Backlog item IDs",
+	"backlog-prs": "Backlog items, PRs, and commits",
+	"code-comments": "Commenting code",
+	"drafting-messages": "Drafting messages to send on the user's behalf",
+	"editing-files": "Editing files",
+	"filename-convention": "Naming files after their export",
+	"jira-context": "Fetching Jira context",
+	"jira-smart-links": "Editing Jira issues with Smart Links",
+	markdown: "Writing markdown",
+	refactor: "Renaming and extracting TypeScript",
+	"settings-json": "Editing claude/settings.json",
+	verify: "Verifying a change",
+} as const;
+
 export const adviceFragmentNames = [
 	"assist-global",
 	"backlog-ids",

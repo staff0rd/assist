@@ -5,6 +5,8 @@ import type {
 	ConfigObjectListNode,
 	ConfigScalarListNode,
 } from "./ConfigNode";
+import { configEnumDescriptions } from "./configEnumDescriptions";
+import { formatConfigPath } from "./formatConfigPath";
 import { scalarArrayItemType } from "./scalarArrayItemType";
 import type { SchemaNode } from "./unwrapSchemaNode";
 
@@ -15,7 +17,12 @@ function scalarListNode(
 ): ConfigScalarListNode | undefined {
 	const itemType = scalarArrayItemType(inner);
 	if (!itemType || item.kind !== "scalar") return undefined;
-	return { ...base, kind: "scalarList", itemType, item };
+	const descriptions = configEnumDescriptions(formatConfigPath(base.path));
+	const described =
+		descriptions && item.enumValues
+			? { ...item, enumDescriptions: descriptions }
+			: item;
+	return { ...base, kind: "scalarList", itemType, item: described };
 }
 
 function objectListNode(

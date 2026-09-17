@@ -1,11 +1,11 @@
-import Checkbox from "@mui/material/Checkbox";
-import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import { ConfigEnumListOption } from "./ConfigEnumListOption";
 
 type Props = {
 	label: string;
 	options: string[];
+	descriptions?: Record<string, string>;
 	value: unknown;
 	disabled: boolean;
 	onChange: (value: string[]) => void;
@@ -19,6 +19,7 @@ function selectedOf(value: unknown, options: string[]): string[] {
 export function ConfigEnumListInput({
 	label,
 	options,
+	descriptions,
 	value,
 	disabled,
 	onChange,
@@ -51,8 +52,11 @@ export function ConfigEnumListInput({
 		>
 			{options.map((option) => (
 				<MenuItem key={option} value={option}>
-					<Checkbox checked={selected.includes(option)} size="small" />
-					<ListItemText primary={option} />
+					<ConfigEnumListOption
+						option={option}
+						description={descriptions?.[option]}
+						checked={selected.includes(option)}
+					/>
 				</MenuItem>
 			))}
 		</TextField>

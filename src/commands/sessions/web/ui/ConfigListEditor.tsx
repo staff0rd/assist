@@ -22,6 +22,7 @@ export function ConfigListEditor({
 			<ConfigEnumListInput
 				label={label}
 				options={node.item.enumValues}
+				descriptions={node.item.enumDescriptions}
 				value={value}
 				disabled={disabled}
 				onChange={onChange}
