@@ -1,3 +1,11 @@
+# [0.661.0](https://github.com/staff0rd/assist/compare/v0.660.2...v0.661.0) (2026-09-17)
+
+
+### Features
+
+* add prs status across repos ([573b0c3](https://github.com/staff0rd/assist/commit/573b0c356d2858962b001cb5e3ff8df05def863f))
+* high-level PR review checklist ([7bb2541](https://github.com/staff0rd/assist/commit/7bb2541a7d0b0492ce385681622dde3babeadacc)), closes [hi#level](https://github.com/hi/issues/level)
+
 ## [0.660.2](https://github.com/staff0rd/assist/compare/v0.660.1...v0.660.2) (2026-09-17)
 
 
