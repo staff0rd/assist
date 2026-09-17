@@ -278,7 +278,7 @@ describe("persistLiveSessions", () => {
 		expect(restoreBase("1", parsed).starred).toBe(true);
 	});
 
-	it("round-trips the watcher flag and its star so a restart finds the watcher", () => {
+	it("round-trips the watcher flag but drops its persisted star on restore", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
@@ -307,7 +307,7 @@ describe("persistLiveSessions", () => {
 
 		expect(restoreBase("1", parsed)).toMatchObject({
 			watcher: true,
-			starred: true,
+			starred: false,
 			cwd: "/repo",
 		});
 	});

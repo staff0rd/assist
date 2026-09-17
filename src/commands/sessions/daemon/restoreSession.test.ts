@@ -501,7 +501,7 @@ describe("restoreSession", () => {
 		});
 	});
 
-	it("brings a watcher back flagged and starred in the clone, so the next run finds it", () => {
+	it("brings a watcher back flagged but unstarred, so its group stops floating", () => {
 		const persisted: PersistedSession = {
 			name: "repo/Session 1",
 			commandType: "claude",
@@ -517,7 +517,7 @@ describe("restoreSession", () => {
 		const session = restoreSession("1", persisted);
 
 		expect(session.watcher).toBe(true);
-		expect(session.starred).toBe(true);
+		expect(session.starred).toBe(false);
 		expect(session.cwd).toBe("/home/user/repo");
 		expect(session.status).toBe("running");
 	});
