@@ -1,3 +1,10 @@
+## [0.660.2](https://github.com/staff0rd/assist/compare/v0.660.1...v0.660.2) (2026-09-17)
+
+
+### Bug Fixes
+
+* keep preview screenshots on reject ([7355b57](https://github.com/staff0rd/assist/commit/7355b575ac163743377a744f60e8bb1630399683))
+
 ## [0.660.1](https://github.com/staff0rd/assist/compare/v0.660.0...v0.660.1) (2026-09-17)
 
 
