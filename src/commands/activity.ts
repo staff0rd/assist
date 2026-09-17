@@ -1,4 +1,4 @@
-import { activityChart } from "./activity/activityChart";
+import { renderLineChart } from "../lib/renderLineChart";
 import { fetchCommitsPerDay } from "./activity/fetchCommitsPerDay";
 
 export async function activity(options: { since?: string }): Promise<void> {
@@ -30,5 +30,13 @@ export async function activity(options: { since?: string }): Promise<void> {
 		.sort((a, b) => a.date.localeCompare(b.date));
 
 	const until = data[data.length - 1].date;
-	activityChart(weeklyData, { since, until });
+
+	renderLineChart({
+		title: "Commit Activity",
+		label: `Commits per week · ${since} → ${until}`,
+		seriesTitle: "Commits",
+		labels: weeklyData.map((d) => d.date.slice(5)),
+		values: weeklyData.map((d) => d.count),
+		wholeNumbersOnly: true,
+	});
 }

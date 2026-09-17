@@ -326,6 +326,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist handover load` - SessionStart hook entry point advising how many unrecalled handovers exist
 - `assist mermaid export [file.md]` - Render each fenced mermaid block to `<stem>-<index>.svg` via [Kroki](https://kroki.io) (`--out`, `--index`, `mermaid.krokiUrl`)
 - `assist prompts` - Show top 10 denied tool calls by frequency with count and repo breakdown
+- `assist chart [--title <title>]` - Draw a terminal line chart of a `label value` series piped in on stdin, one pair per line, separated by a comma, tab or whitespace. Points are charted in the order given — nothing is sorted or aggregated — and the chart closes on q, Esc or Ctrl-C. Blank lines are skipped, fewer than two points prints `Not enough data points to chart.`, and a non-numeric value exits 1 naming the line
 
 ### Project setup
 
