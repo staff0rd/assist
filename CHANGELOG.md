@@ -1,3 +1,10 @@
+# [0.663.0](https://github.com/staff0rd/assist/compare/v0.662.0...v0.663.0) (2026-09-17)
+
+
+### Features
+
+* unresolved thread count in prs status ([b3885bb](https://github.com/staff0rd/assist/commit/b3885bb9fe70075ead0f41c68e3442c8162a88f1))
+
 # [0.662.0](https://github.com/staff0rd/assist/compare/v0.661.0...v0.662.0) (2026-09-17)
 
 
