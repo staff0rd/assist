@@ -1,3 +1,10 @@
+# [0.657.0](https://github.com/staff0rd/assist/compare/v0.656.0...v0.657.0) (2026-09-17)
+
+
+### Features
+
+* order watchers above their repo group ([384c6db](https://github.com/staff0rd/assist/commit/384c6dbf472eaad97b50d9ac39f4384a78b77a51))
+
 # [0.656.0](https://github.com/staff0rd/assist/compare/v0.655.0...v0.656.0) (2026-09-16)
 
 
