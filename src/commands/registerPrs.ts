@@ -5,6 +5,7 @@ import { prsConfigHelp } from "./prs/prsConfigHelp";
 import { registerPrsComments } from "./registerPrsComments";
 import { registerPrsEdit } from "./registerPrsEdit";
 import { registerPrsRaise } from "./registerPrsRaise";
+import { registerPrsStatus } from "./registerPrsStatus";
 import { registerReadTime } from "./registerReadTime";
 
 export function registerPrs(program: Command): void {
@@ -16,6 +17,7 @@ export function registerPrs(program: Command): void {
 		.action(prs);
 
 	registerPrsRaise(prsCommand);
+	registerPrsStatus(prsCommand);
 	registerPrsEdit(prsCommand);
 	registerPrsComments(prsCommand);
 	registerReadTime(prsCommand);
