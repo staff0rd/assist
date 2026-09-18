@@ -1,13 +1,13 @@
 ---
-description: Write a markdown overview of the open PRs across the named repos
-allowed_args: "<owner/repo>..."
+description: Preview a markdown overview of the open PRs across the named repos, then post it to Slack
+allowed_args: "[channel] <owner/repo>..."
 ---
 
 Report what is still pending merge across the repos in `$ARGUMENTS`.
 
-## Step 1: Resolve the repos
+## Step 1: Resolve the arguments
 
-`$ARGUMENTS` is one or more `owner/repo` arguments. With none, ask the user which repos to report on and stop — do not guess, and do not fall back to the current repo.
+Every argument containing a `/` is an `owner/repo`. An argument without one — `#name`, a bare name or a channel id — is the Slack channel to post to. With no repo arguments, ask the user which repos to report on and stop — do not guess, and do not fall back to the current repo. With no channel argument, omit the channel and let `assist slack post` fall back to the `slack.channel` config key.
 
 ## Step 2: Collect the facts
 
@@ -32,44 +32,59 @@ Each remaining PR belongs in exactly one section, taking the first that matches:
 3. **Failing checks** — `checks.failing` is non-empty or `mergeable` is `CONFLICTING`.
 4. **Ready to merge** — `reviewDecision` is `APPROVED` with clean checks and no unresolved threads.
 
-## Step 4: Write the overview
+## Step 4: Compose the overview
 
-Emit the overview to chat as a single fenced ` ```markdown ` block, so it arrives as raw unrendered markdown the user can copy straight into Slack, a doc or a PR comment. Nothing goes outside the fence. Do not create files, and do not post anywhere.
+Write the overview to a scratch file with the Write tool — it contains backticks, quotes and newlines, so never inline it in a shell command. Plain markdown, no wrapping code fence: Slack renders markdown as it is. Slack does not render headings, so every section label is bold text, not `#`. Each PR line already names its repo, so the opening line does not list the repos again.
 
-````
 ```markdown
-# Open PRs — <repo>, <repo>
+**Open PRs** — <n> open across <n> repos (<n> drafts excluded): <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge.
 
-<n> open across <n> repos (<n> drafts excluded): <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge.
+**Pending review**
 
-## Pending review
-
-- [owner/repo#123](url) — Title (author, updated 3d ago)
+- [repo#123](url) — Title (author, updated 3d ago)
   - awaiting: alice (COMMENTED)
 
-## Changes requested
+**Changes requested**
 
-- [owner/repo#124](url) — Title (author, updated 6h ago)
+- [repo#124](url) — Title (author, updated 6h ago)
   - 2 unresolved comments, bob requested changes
 
-## Failing checks
+**Failing checks**
 
-- [owner/repo#125](url) — Title (author, updated 2d ago)
+- [repo#125](url) — Title (author, updated 2d ago)
   - failing: build, lint
   - conflicting with the base branch
 
-## Ready to merge
+**Ready to merge**
 
-- [owner/repo#126](url) — Title (author, updated 1d ago)
+- [repo#126](url) — Title (author, updated 1d ago)
 
-## Stale — no activity in 7+ days
+**Stale — no activity in 7+ days**
 
-- [owner/repo#127](url) — 9d
+- [repo#127](url) — 9d
 
-## Could not be read
+**Could not be read**
 
 - owner/repo — <error>
 ```
-````
 
-Omit any section with nothing in it. The stale section re-lists any PR whose `ageHours` is 168 or more, whichever bucket it sits in; mark bot-authored PRs with `[bot]` after the title. Include the "Could not be read" section whenever `errors` is non-empty, even if every other repo succeeded. When every open PR is a draft, or there are no open PRs at all, say so in one line instead of emitting empty sections.
+Omit any section with nothing in it. The stale section re-lists any PR whose `ageHours` is 168 or more, whichever bucket it sits in; mark bot-authored PRs with `[bot]` after the title. Include the "Could not be read" section whenever `errors` is non-empty, even if every other repo succeeded. When every open PR is a draft, or there are no open PRs at all, say so in one line and stop — do not preview an empty overview.
+
+## Step 5: Preview it
+
+```bash
+assist slack post '<channel>' --body - < <scratch file>
+```
+
+In an assist web session this renders the overview in the preview pane for approve/reject. The command posts nothing either way.
+
+- **Approved** — the last line of stdout is the path to the approved body under `~/.assist/slack/`. That file, not the scratch file, is what gets posted. The line above it names the target channel.
+- **Rejected** — the command exits non-zero with the reason and any inline comments, and names the same working file. Address every comment, rewrite that file in place, and re-run the preview against it. Do not post, and do not rebuild the overview from scratch — re-run `assist prs status` only if the rejection asks for fresh data.
+
+## Step 6: Post it
+
+Read the approved body from the path the command printed, then:
+
+1. Resolve the channel named on the `Approved for ...` line to its id with `mcp__claude_ai_Slack__slack_search_channels`, passing `channel_types: "public_channel,private_channel"`. If the query returns no match, or more than one plausible match, stop and ask the user which channel to use — do not guess.
+2. Post the file's contents verbatim with `mcp__claude_ai_Slack__slack_send_message` (`channel_id`, `message`).
+3. Report the permalink it returns.
