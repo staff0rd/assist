@@ -23,14 +23,14 @@ Use only what the payload says. `unresolvedThreads: null` means that PR's thread
 
 ## Step 3: Sort each PR into one bucket
 
-Every non-draft PR belongs in exactly one section, taking the first that matches:
+Discard every PR with `isDraft: true` — a draft is not pending merge. Keep a count of the discarded drafts for the summary line.
+
+Each remaining PR belongs in exactly one section, taking the first that matches:
 
 1. **Pending review** — no failing checks, `mergeable` is not `CONFLICTING`, no unresolved threads, and `reviewDecision` is `REVIEW_REQUIRED` or absent with no approval in `reviews`.
 2. **Changes requested** — `reviewDecision` is `CHANGES_REQUESTED`, or `unresolvedThreads` is above zero.
 3. **Failing checks** — `checks.failing` is non-empty or `mergeable` is `CONFLICTING`.
 4. **Ready to merge** — `reviewDecision` is `APPROVED` with clean checks and no unresolved threads.
-
-Drafts go in their own section regardless of the above.
 
 ## Step 4: Write the overview
 
@@ -39,7 +39,7 @@ Write the overview to chat as markdown. Do not create files, and do not post any
 ```markdown
 # Open PRs — <repo>, <repo>
 
-<n> open across <n> repos: <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge, <n> drafts.
+<n> open across <n> repos (<n> drafts excluded): <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge.
 
 ## Pending review
 
@@ -61,10 +61,6 @@ Write the overview to chat as markdown. Do not create files, and do not post any
 
 - [owner/repo#126](url) — Title (author, updated 1d ago)
 
-## Drafts
-
-- [owner/repo#127](url) — Title (author, updated 9d ago)
-
 ## Stale — no activity in 7+ days
 
 - [owner/repo#127](url) — 9d
@@ -74,4 +70,4 @@ Write the overview to chat as markdown. Do not create files, and do not post any
 - owner/repo — <error>
 ```
 
-Omit any section with nothing in it. The stale section re-lists any PR whose `ageHours` is 168 or more, whichever bucket it sits in; mark bot-authored PRs with `[bot]` after the title. Include the "Could not be read" section whenever `errors` is non-empty, even if every other repo succeeded. When there are no open PRs at all, say so in one line instead of emitting empty sections.
+Omit any section with nothing in it. The stale section re-lists any PR whose `ageHours` is 168 or more, whichever bucket it sits in; mark bot-authored PRs with `[bot]` after the title. Include the "Could not be read" section whenever `errors` is non-empty, even if every other repo succeeded. When every open PR is a draft, or there are no open PRs at all, say so in one line instead of emitting empty sections.
