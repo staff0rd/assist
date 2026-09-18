@@ -1,3 +1,10 @@
+# [0.668.0](https://github.com/staff0rd/assist/compare/v0.667.0...v0.668.0) (2026-09-18)
+
+
+### Features
+
+* post /prs-status overview to Slack ([92c474d](https://github.com/staff0rd/assist/commit/92c474df0a4474256b89c865c05db90453e2a05b))
+
 # [0.667.0](https://github.com/staff0rd/assist/compare/v0.666.0...v0.667.0) (2026-09-18)
 
 
