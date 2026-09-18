@@ -6,7 +6,10 @@ type SlackWorkingFile = {
 	bodyPath: string;
 };
 
-export function slackWorkingFile(channel: string): SlackWorkingFile {
+export function slackWorkingFile(
+	channel: string,
+	partIndex?: number,
+): SlackWorkingFile {
 	const slug =
 		channel
 			.replace(/^[#@]/, "")
@@ -14,5 +17,6 @@ export function slackWorkingFile(channel: string): SlackWorkingFile {
 			.replace(/[^a-z0-9._-]+/g, "-")
 			.replace(/^-+|-+$/g, "") || "channel";
 	const dir = join(getStoreDir(), "slack");
-	return { dir, bodyPath: join(dir, `${slug}.md`) };
+	const name = partIndex === undefined ? slug : `${slug}-${partIndex}`;
+	return { dir, bodyPath: join(dir, `${name}.md`) };
 }

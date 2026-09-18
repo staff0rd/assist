@@ -43,4 +43,19 @@ describe("slackWorkingFile", () => {
 			join("/store", "slack", "channel.md"),
 		);
 	});
+
+	it("suffixes the slug with the part's position in the batch", () => {
+		expect(slackWorkingFile("#eng", 1).bodyPath).toBe(
+			join("/store", "slack", "eng-1.md"),
+		);
+		expect(slackWorkingFile("#eng", 2).bodyPath).toBe(
+			join("/store", "slack", "eng-2.md"),
+		);
+	});
+
+	it("gives a part a different file from the single-message body", () => {
+		expect(slackWorkingFile("#eng", 1).bodyPath).not.toBe(
+			slackWorkingFile("#eng").bodyPath,
+		);
+	});
 });
