@@ -1,3 +1,10 @@
+## [0.672.1](https://github.com/staff0rd/assist/compare/v0.672.0...v0.672.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* preview whole /prs-status thread first ([39825fc](https://github.com/staff0rd/assist/commit/39825fc9996253349c292743f7335d6d2859b01e))
+
 # [0.672.0](https://github.com/staff0rd/assist/compare/v0.671.0...v0.672.0) (2026-09-18)
 
 
