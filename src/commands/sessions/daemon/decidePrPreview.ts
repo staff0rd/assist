@@ -23,8 +23,9 @@ export function decidePrPreview(
 	const screenshotCount = Array.isArray(d.screenshots)
 		? d.screenshots.length
 		: 0;
+	const checklistCount = Array.isArray(d.checklist) ? d.checklist.length : 0;
 	daemonLog(
-		`pr-decision received: id=${id} requestId=${requestId} decision=${d.decision} comments=${commentCount} screenshots=${screenshotCount} reviewAfter=${d.reviewAfter === true} announceAfter=${d.announceAfter === true} draft=${d.draft} autoMerge=${d.autoMerge === true}`,
+		`pr-decision received: id=${id} requestId=${requestId} decision=${d.decision} comments=${commentCount} screenshots=${screenshotCount} checklist=${checklistCount} reviewAfter=${d.reviewAfter === true} announceAfter=${d.announceAfter === true} draft=${d.draft} autoMerge=${d.autoMerge === true}`,
 	);
 	const waiter = waiters.get(id);
 	if (waiter)
