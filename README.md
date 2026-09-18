@@ -55,7 +55,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/handover` - Write a session handover note for the next conversation
 - `/pr` - Raise a PR with a concise description, then watch CI in the background
 - `/prs-slack <number> [--no-confirm]` - Post a PR's title and URL to the Slack channel configured in `prs.slack`; `--no-confirm` skips the confirmation and posts straight away (used by chained announces)
-- `/prs-status [channel] <owner/repo>...` - Run `assist prs status <repos> --json` over the named repos and compose a markdown overview of what is still pending merge, sorting each open PR into pending review, changes requested, failing checks or ready to merge, excluding drafts (counted, not listed), re-listing anything untouched for 7+ days as stale, and naming any repo that could not be read. The overview goes through `assist slack post` for approve/reject in the preview pane and is posted to Slack on approval; the channel falls back to `slack.channel`
+- `/prs-status [channel] <owner/repo>...` - Post an overview of the open PRs across the named repos to Slack: a summary line in the channel, the PRs grouped by what they are waiting on in its thread; the channel falls back to `slack.channel`
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
 - `/recall` - Recall the most recent handover note for this repo

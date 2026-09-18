@@ -34,11 +34,17 @@ Each remaining PR belongs in exactly one section, taking the first that matches:
 
 ## Step 4: Compose the overview
 
-Write the overview to a scratch file with the Write tool — it contains backticks, quotes and newlines, so never inline it in a shell command. Plain markdown, no wrapping code fence: Slack renders markdown as it is. Slack does not render headings, so every section label is bold text, not `#`. Each PR line already names its repo, so the opening line does not list the repos again.
+The overview is posted as two messages: the summary line in the channel, and every section under it as a reply in that message's thread. Write each to its own scratch file with the Write tool — they contain backticks, quotes and newlines, so never inline them in a shell command. Plain markdown, no wrapping code fence: Slack renders markdown as it is. Slack does not render headings, so every section label is bold text, not `#`. Each PR line already names its repo, so the summary does not list the repos again.
+
+The summary file is one line, ending in a 🧵 that points at the thread:
 
 ```markdown
-**Open PRs** — <n> open across <n> repos (<n> drafts excluded): <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge.
+**Open PRs** — <n> open across <n> repos (<n> drafts excluded): <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge. 🧵
+```
 
+The reply file holds the sections:
+
+```markdown
 **Pending review**
 
 - [repo#123](url) — Title (author, updated 3d ago)
@@ -70,21 +76,31 @@ Write the overview to a scratch file with the Write tool — it contains backtic
 
 Omit any section with nothing in it. The stale section re-lists any PR whose `ageHours` is 168 or more, whichever bucket it sits in; mark bot-authored PRs with `[bot]` after the title. Include the "Could not be read" section whenever `errors` is non-empty, even if every other repo succeeded. When every open PR is a draft, or there are no open PRs at all, say so in one line and stop — do not preview an empty overview.
 
-## Step 5: Preview it
+## Step 5: Preview and post the summary
 
 ```bash
-assist slack post '<channel>' --body - < <scratch file>
+assist slack post '<channel>' --body - < <summary scratch file>
 ```
 
-In an assist web session this renders the overview in the preview pane for approve/reject. The command posts nothing either way.
+In an assist web session this renders the message in the preview pane for approve/reject. The command posts nothing either way.
 
 - **Approved** — the last line of stdout is the path to the approved body under `~/.assist/slack/`. That file, not the scratch file, is what gets posted. The line above it names the target channel.
-- **Rejected** — the command exits non-zero with the reason and any inline comments, and names the same working file. Address every comment, rewrite that file in place, and re-run the preview against it. Do not post, and do not rebuild the overview from scratch — re-run `assist prs status` only if the rejection asks for fresh data.
-
-## Step 6: Post it
+- **Rejected** — the command exits non-zero with the reason and any inline comments, and names the same working file. Address every comment, rewrite that file in place, and re-run the preview against it. Do not post, and do not rebuild the overview from scratch — re-run `assist prs status` only if the rejection asks for fresh data. A comment on the summary that also applies to the sections is carried into the reply file before Step 6 previews it.
 
 Read the approved body from the path the command printed, then:
 
 1. Resolve the channel named on the `Approved for ...` line to its id with `mcp__claude_ai_Slack__slack_search_channels`, passing `channel_types: "public_channel,private_channel"`. If the query returns no match, or more than one plausible match, stop and ask the user which channel to use — do not guess.
 2. Post the file's contents verbatim with `mcp__claude_ai_Slack__slack_send_message` (`channel_id`, `message`).
-3. Report the permalink it returns.
+3. Keep the permalink it returns — it is both the thread reference for Step 6 and what you report at the end.
+
+## Step 6: Preview and post the sections in the thread
+
+```bash
+assist slack post '<channel>' --thread '<summary permalink>' --body - < <reply scratch file>
+```
+
+`--thread` takes the permalink from Step 5; the command resolves it and prints the `thread_ts` above the approved body's path. Approval and rejection work exactly as in Step 5.
+
+Post the approved body with `mcp__claude_ai_Slack__slack_send_message`, passing the same `channel_id` plus `thread_ts` set to the ts the command printed. Report the summary's permalink.
+
+If the summary posted but the reply is rejected or fails, say so plainly — the channel now holds a 🧵 with nothing under it.
