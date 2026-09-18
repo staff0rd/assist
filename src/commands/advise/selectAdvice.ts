@@ -12,14 +12,14 @@ function decide(
 	fragment: AdviceFragment,
 	context: AdviceContext,
 ): AdviceDecision {
-	const fragments: Record<string, boolean | undefined> =
-		context.config.advice?.fragments ?? {};
-	const override = fragments[fragment.name];
+	const sections: Record<string, boolean | undefined> =
+		context.config.advice?.sections ?? {};
+	const override = sections[fragment.name];
 	if (override !== undefined)
 		return {
 			fragment,
 			included: override,
-			reason: `advice.fragments.${fragment.name} is ${override}`,
+			reason: `advice.sections.${fragment.name} is ${override}`,
 		};
 
 	const condition = adviceConditions[fragment.when];

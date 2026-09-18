@@ -642,23 +642,23 @@ describe("ConfigView", () => {
 		expect(screen.getByRole("option", { name: "warn" })).toBeTruthy();
 	});
 
-	it("picks advice.fragments keys from the shipped names, with their titles", async () => {
+	it("picks advice.sections keys from the shipped names, with their titles", async () => {
 		stubApi([
 			{
-				key: "advice.fragments",
+				key: "advice.sections",
 				type: "record",
 				value: { verify: false },
 				source: "project",
-				node: node("advice.fragments"),
+				node: node("advice.sections"),
 			},
 		]);
 		renderView();
 
 		await waitFor(() =>
-			expect(screen.getByText("advice.fragments")).toBeTruthy(),
+			expect(screen.getByText("advice.sections")).toBeTruthy(),
 		);
 		fireEvent.click(
-			screen.getByRole("button", { name: "Edit advice.fragments" }),
+			screen.getByRole("button", { name: "Edit advice.sections" }),
 		);
 		fireEvent.mouseDown(screen.getByRole("combobox"));
 

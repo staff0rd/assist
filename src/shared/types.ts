@@ -26,7 +26,7 @@ const DEFAULT_CLONE_DIR = "~/git";
 const assistConfigShape = {
 	advice: z
 		.strictObject({
-			fragments: z
+			sections: z
 				.partialRecord(z.enum(adviceFragmentNames), z.boolean())
 				.default({}),
 			extra: z.string().optional(),

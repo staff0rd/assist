@@ -2,9 +2,9 @@ import type { ConfigHelpEntry } from "../../shared/configHelp";
 
 export const adviceConfigHelp: ConfigHelpEntry[] = [
 	{
-		key: "advice.fragments",
-		setter: "assist config set advice.fragments.verify false",
-		note: "force a fragment on (true) or off (false) whatever its condition says; 'assist advise --explain' lists every name",
+		key: "advice.sections",
+		setter: "assist config set advice.sections.verify false",
+		note: "force a section on (true) or off (false) whatever its condition says; 'assist advise --explain' lists every name",
 	},
 	{
 		key: "advice.extra",

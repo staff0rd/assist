@@ -42,37 +42,37 @@ describe("selectAdvice", () => {
 		});
 	});
 
-	it("drops a fragment turned off by advice.fragments despite its condition", () => {
+	it("drops a section turned off by advice.sections despite its condition", () => {
 		const [decision] = selectAdvice([fragment("markdown", "always")], {
 			...context,
 			config: assistConfigSchema.parse({
-				advice: { fragments: { markdown: false } },
+				advice: { sections: { markdown: false } },
 			}),
 		});
 
 		expect(decision).toMatchObject({
 			included: false,
-			reason: "advice.fragments.markdown is false",
+			reason: "advice.sections.markdown is false",
 		});
 	});
 
-	it("keeps a fragment turned on by advice.fragments despite its condition", () => {
+	it("keeps a section turned on by advice.sections despite its condition", () => {
 		const [decision] = selectAdvice([fragment("jira-context", "jira")], {
 			...context,
 			config: assistConfigSchema.parse({
-				advice: { fragments: { "jira-context": true } },
+				advice: { sections: { "jira-context": true } },
 			}),
 		});
 
 		expect(decision).toMatchObject({
 			included: true,
-			reason: "advice.fragments.jira-context is true",
+			reason: "advice.sections.jira-context is true",
 		});
 	});
 
 	it("rejects a name that matches no shipped fragment", () => {
 		expect(() =>
-			assistConfigSchema.parse({ advice: { fragments: { verfiy: false } } }),
+			assistConfigSchema.parse({ advice: { sections: { verfiy: false } } }),
 		).toThrow();
 	});
 });
