@@ -1,3 +1,10 @@
+# [0.664.0](https://github.com/staff0rd/assist/compare/v0.663.0...v0.664.0) (2026-09-18)
+
+
+### Features
+
+* add /prs-status overview command ([d1c1684](https://github.com/staff0rd/assist/commit/d1c16849a3fcf4c88d18c2ece9d1772abe455669))
+
 # [0.663.0](https://github.com/staff0rd/assist/compare/v0.662.0...v0.663.0) (2026-09-17)
 
 
