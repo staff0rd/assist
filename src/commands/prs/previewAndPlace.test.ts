@@ -185,6 +185,31 @@ describe("previewAndPlace", () => {
 			expect(order).toEqual(["place", "auto", "chain"]);
 		});
 
+		it("still chains when enabling auto-merge only warns", async () => {
+			const error = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => undefined);
+			requestPrDecisionMock.mockResolvedValue({
+				decision: "approve",
+				autoMerge: true,
+				reviewAfter: true,
+			});
+			enableAutoMergeMock.mockImplementationOnce(() => {
+				console.error("Warning: could not enable auto-merge: nope");
+			});
+
+			await previewAndPlace(args);
+
+			expect(chainAfterRaiseMock).toHaveBeenCalledWith(
+				null,
+				expect.objectContaining({ reviewAfter: true }),
+			);
+			expect(error.mock.calls[0][0]).toContain(
+				"Warning: could not enable auto-merge",
+			);
+			error.mockRestore();
+		});
+
 		it("leaves auto-merge alone when the reviewer left it unticked", async () => {
 			requestPrDecisionMock.mockResolvedValue({
 				decision: "approve",
