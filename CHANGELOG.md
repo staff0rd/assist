@@ -1,3 +1,10 @@
+# [0.671.0](https://github.com/staff0rd/assist/compare/v0.670.0...v0.671.0) (2026-09-18)
+
+
+### Features
+
+* thread batch posting in /slack-post ([5be1396](https://github.com/staff0rd/assist/commit/5be1396e23714cc6466fc18742e28857b2871beb))
+
 # [0.670.0](https://github.com/staff0rd/assist/compare/v0.669.0...v0.670.0) (2026-09-18)
 
 
