@@ -67,14 +67,15 @@ describe("postSlackMessage with --parts", () => {
 		]);
 		expect(mockLog.mock.calls.map(([line]) => line)).toEqual([
 			"Approved for #eng. The 3 bodies to post, in thread order, are at:",
-			join(slackDir(), "eng-1.md"),
-			join(slackDir(), "eng-2.md"),
-			join(slackDir(), "eng-3.md"),
+			`1/3 ${join(slackDir(), "eng-1.md")}`,
+			`2/3 ${join(slackDir(), "eng-2.md")}`,
+			`3/3 ${join(slackDir(), "eng-3.md")}`,
+			"Post 1/3 to #eng, then the rest with the thread_ts it returns.",
 		]);
 		expect(readFileSync(join(slackDir(), "eng-2.md"), "utf8")).toBe("two\n");
 	});
 
-	it("applies the resolved thread_ts to every part", async () => {
+	it("applies the resolved thread_ts to every part and names it in the approved output", async () => {
 		await postSlackMessage("#eng", {
 			parts: [part("a.md", "one"), part("b.md", "two")],
 			thread: "1712345678.123456",
@@ -83,6 +84,12 @@ describe("postSlackMessage with --parts", () => {
 		expect(review.mock.calls.map(([target]) => target.threadTs)).toEqual([
 			"1712345678.123456",
 			"1712345678.123456",
+		]);
+		expect(mockLog.mock.calls.map(([line]) => line)).toEqual([
+			"Approved for #eng (thread_ts 1712345678.123456). The 2 bodies to post, in thread order, are at:",
+			`1/2 ${join(slackDir(), "eng-1.md")}`,
+			`2/2 ${join(slackDir(), "eng-2.md")}`,
+			"Post every part as a reply with thread_ts 1712345678.123456.",
 		]);
 	});
 

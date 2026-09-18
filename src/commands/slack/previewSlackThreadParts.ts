@@ -36,5 +36,12 @@ export async function previewSlackThreadParts({
 	console.log(
 		`Approved for ${target}. The ${bodies.length} bodies to post, in thread order, are at:`,
 	);
-	for (const path of paths) console.log(path);
+	paths.forEach((path, index) =>
+		console.log(`${index + 1}/${paths.length} ${path}`),
+	);
+	console.log(
+		threadTs
+			? `Post every part as a reply with thread_ts ${threadTs}.`
+			: `Post 1/${paths.length} to ${channel}, then the rest with the thread_ts it returns.`,
+	);
 }
