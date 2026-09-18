@@ -1,3 +1,10 @@
+# [0.666.0](https://github.com/staff0rd/assist/compare/v0.665.1...v0.666.0) (2026-09-18)
+
+
+### Features
+
+* exclude drafts from /prs-status ([153e7d5](https://github.com/staff0rd/assist/commit/153e7d5acfb4bf788804f109a9199e59b57db69b))
+
 ## [0.665.1](https://github.com/staff0rd/assist/compare/v0.665.0...v0.665.1) (2026-09-18)
 
 
