@@ -1,3 +1,15 @@
+# [0.665.0](https://github.com/staff0rd/assist/compare/v0.664.0...v0.665.0) (2026-09-18)
+
+
+### Bug Fixes
+
+* log checklist size on pr-decision ([2cd74eb](https://github.com/staff0rd/assist/commit/2cd74ebb00b5586a5c16f85814f4d611e74ee835))
+
+
+### Features
+
+* step high-level review in overlay ([cb6091c](https://github.com/staff0rd/assist/commit/cb6091c50875975dbb9569f1caaa1a4e463700de)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.664.0](https://github.com/staff0rd/assist/compare/v0.663.0...v0.664.0) (2026-09-18)
 
 
