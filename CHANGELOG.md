@@ -1,3 +1,10 @@
+# [0.672.0](https://github.com/staff0rd/assist/compare/v0.671.0...v0.672.0) (2026-09-18)
+
+
+### Features
+
+* post /prs-status detail in a thread ([350e8b2](https://github.com/staff0rd/assist/commit/350e8b2956b1a779eaadcc777b5e94d05f0d1942))
+
 # [0.671.0](https://github.com/staff0rd/assist/compare/v0.670.0...v0.671.0) (2026-09-18)
 
 
