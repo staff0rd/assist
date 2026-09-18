@@ -1,3 +1,10 @@
+# [0.670.0](https://github.com/staff0rd/assist/compare/v0.669.0...v0.670.0) (2026-09-18)
+
+
+### Features
+
+* batch Slack preview behind 'post --parts' ([37e3593](https://github.com/staff0rd/assist/commit/37e359358a89dd8f1621c2effc69d9aab41b0af2))
+
 # [0.669.0](https://github.com/staff0rd/assist/compare/v0.668.0...v0.669.0) (2026-09-18)
 
 
