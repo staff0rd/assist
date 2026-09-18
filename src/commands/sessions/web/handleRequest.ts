@@ -23,6 +23,7 @@ import { listUsageHistory } from "./listUsageHistory";
 import { listUsageItems } from "./listUsageItems";
 import { openInCode } from "./openInCode";
 import { prList } from "./prList";
+import { previewImage } from "./previewImage";
 import { prStatus } from "./prStatus";
 import { restartWeb } from "./restartWeb";
 import { revertDiffFile } from "./revertDiffFile";
@@ -66,6 +67,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/backlog/summary": getBacklogSummary,
 	"POST /api/open-in-code": openInCode,
 	"POST /api/pr-preview/upload-image": uploadPrImage,
+	"GET /api/pr-preview/image": previewImage,
 	"POST /api/restart": restartWeb,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,

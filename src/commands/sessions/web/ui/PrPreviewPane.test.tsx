@@ -764,8 +764,9 @@ describe("PrPreviewPane inline comments", () => {
 
 	describe("screenshots across a re-proposed preview", () => {
 		const retry: PrPreview = { ...preview, requestId: "r2" };
+		const asset = "https://github.com/user-attachments/assets/9f1c-4a2b";
 
-		function stubUpload(markdown = "![shot](https://x/y.png)") {
+		function stubUpload(markdown = `![shot](${asset})`) {
 			vi.stubGlobal(
 				"fetch",
 				vi.fn().mockResolvedValue({
@@ -809,12 +810,14 @@ describe("PrPreviewPane inline comments", () => {
 			const img = (await screen.findByAltText(
 				"screenshot",
 			)) as HTMLImageElement;
-			expect(img.getAttribute("src")).toBe("https://x/y.png");
+			expect(img.getAttribute("src")).toBe(
+				`/api/pr-preview/image?url=${encodeURIComponent(asset)}&cwd=%2Frepo`,
+			);
 
 			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
 			expect(onDecision).toHaveBeenLastCalledWith(
 				"approve",
-				expect.objectContaining({ screenshots: ["![shot](https://x/y.png)"] }),
+				expect.objectContaining({ screenshots: [`![shot](${asset})`] }),
 			);
 		});
 

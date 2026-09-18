@@ -8,6 +8,7 @@ export function usePaneScreenshots(
 ) {
 	const { screenshots, add, remove, clearPersisted } = useScreenshots(
 		enabled ? scope : undefined,
+		cwd,
 	);
 	const { uploads, onDrop, onDragOver } = useScreenshotUpload(
 		cwd,

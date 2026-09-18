@@ -4,7 +4,7 @@ import {
 	loadPersistedScreenshots,
 	savePersistedScreenshots,
 } from "./loadPersistedScreenshots";
-import { screenshotPreviewUrl } from "./screenshotPreviewUrl";
+import { previewImageSrc } from "./previewImageSrc";
 
 export type LocalScreenshot = {
 	markdown: string;
@@ -13,7 +13,10 @@ export type LocalScreenshot = {
 	id: number;
 };
 
-export function useScreenshots(scope: string | undefined) {
+export function useScreenshots(
+	scope: string | undefined,
+	cwd: string | undefined,
+) {
 	const [screenshots, setScreenshots] = useState<LocalScreenshot[]>([]);
 	const nextId = useRef(0);
 
@@ -21,11 +24,11 @@ export function useScreenshots(scope: string | undefined) {
 		setScreenshots(
 			loadPersistedScreenshots(scope).map((s) => ({
 				...s,
-				url: screenshotPreviewUrl(s.markdown),
+				url: previewImageSrc(s.markdown, cwd),
 				id: nextId.current++,
 			})),
 		);
-	}, [scope]);
+	}, [scope, cwd]);
 
 	const add = useCallback(
 		(s: Omit<LocalScreenshot, "id">) => {
