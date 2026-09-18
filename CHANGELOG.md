@@ -1,3 +1,10 @@
+## [0.665.1](https://github.com/staff0rd/assist/compare/v0.665.0...v0.665.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* render carried-over screenshots ([2641008](https://github.com/staff0rd/assist/commit/2641008f183e6abf2a84464fe636fa9a549b3fc0))
+
 # [0.665.0](https://github.com/staff0rd/assist/compare/v0.664.0...v0.665.0) (2026-09-18)
 
 
