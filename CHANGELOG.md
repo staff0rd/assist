@@ -1,3 +1,10 @@
+# [0.667.0](https://github.com/staff0rd/assist/compare/v0.666.0...v0.667.0) (2026-09-18)
+
+
+### Features
+
+* fence /prs-status overview as raw markdown ([01e851a](https://github.com/staff0rd/assist/commit/01e851a443693d5df8da2caf3dc16fee9b777c37))
+
 # [0.666.0](https://github.com/staff0rd/assist/compare/v0.665.1...v0.666.0) (2026-09-18)
 
 
