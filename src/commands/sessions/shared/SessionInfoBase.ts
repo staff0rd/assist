@@ -18,7 +18,8 @@ export type PreviewKind =
 	| "github-issue-comment"
 	| "github-issue-edit"
 	| "miro-board"
-	| "slack-post";
+	| "slack-post"
+	| "high-level-review";
 
 export type PreviewItemType = "story" | "bug";
 

@@ -50,4 +50,6 @@ With `uiPaths` unset the UI-evidence check passes — a repo that has not said w
 
 ## Scope
 
-`assist review --high-level [number]` evaluates the checklist and renders it. **Nothing is posted to GitHub.** The verdict, per-item state and per-item comments are captured locally under `~/.assist/high-level-reviews/`, so the checklist can be got right before anything it produces reaches a PR.
+`assist review --high-level [number]` checks the PR branch out, evaluates the checklist and opens it in the web UI preview pane, where the deterministic items show their pass or fail, the manual items are ticked, and any item can carry a comment. Finishing records an approve or request-changes verdict and writes it, the per-item state and the comments to `~/.assist/high-level-reviews/<repo>/<branch>-<head-sha>.json`. Outside an assist session the checklist is printed to the terminal instead.
+
+**Nothing is posted to GitHub.** The review is captured locally so the checklist can be got right before anything it produces reaches a PR.

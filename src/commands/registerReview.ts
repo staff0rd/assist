@@ -44,7 +44,7 @@ export function registerReview(program: Command): void {
 		)
 		.option(
 			"--high-level",
-			"Skip the LLM review; evaluate the high-level review checklist against the PR description and changed files and print each item as pass, fail or manual. Nothing is posted to GitHub; cannot be combined with --refine, --apply, --backlog, --submit or --checkout-only",
+			"Skip the LLM review; check the PR branch out and step through the high-level review checklist in the web UI preview pane, writing the verdict, per-item state and comments to ~/.assist/high-level-reviews/. Nothing is posted to GitHub; cannot be combined with --refine, --apply, --backlog, --submit or --checkout-only",
 		)
 		.option(
 			"--address-comments",

@@ -39,6 +39,13 @@ describe("previewChip", () => {
 		});
 	});
 
+	it("labels a high-level review as a checklist", () => {
+		expect(previewChip(preview({ kind: "high-level-review" }), false)).toEqual({
+			label: "Checklist",
+			color: "info",
+		});
+	});
+
 	it("labels a backlog comment neutrally", () => {
 		expect(previewChip(preview({ kind: "backlog-comment" }), false)).toEqual({
 			label: "Comment",

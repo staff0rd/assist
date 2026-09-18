@@ -22,8 +22,11 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	if (options.checkoutOnly && options.number)
 		return checkoutOnlySession(options.number);
 	emitActivity({ kind: "command", name: "review" });
-	if (options.highLevel) return runHighLevelReview(options.number);
-	if (!options.number) return reviewPr(invokedIn, options);
+	if (!options.number)
+		return options.highLevel
+			? runHighLevelReview(undefined)
+			: reviewPr(invokedIn, options);
 	await checkoutPr(options.number);
+	if (options.highLevel) return runHighLevelReview(options.number);
 	return reviewPr(resolveRepoRoot(), options);
 }

@@ -1,10 +1,11 @@
-import chalk from "chalk";
 import { loadConfig } from "../../../shared/loadConfig";
-import { fetchPrBody } from "../../prs/fetchPrBody";
 import { getCurrentPrNumber, getRepoInfo } from "../../prs/shared";
 import { fetchPrChangedFiles } from "../fetchPrDiffInfo";
 import { evaluateHighLevelChecks } from "./evaluateHighLevelChecks";
-import { formatHighLevelChecklist } from "./formatHighLevelChecklist";
+import { fetchHighLevelPr } from "./fetchHighLevelPr";
+import type { HighLevelOverlaySubject } from "./openHighLevelOverlay";
+import { openHighLevelOverlay } from "./openHighLevelOverlay";
+import { printHighLevelChecklist } from "./printHighLevelChecklist";
 import { resolveHighLevelConfig } from "./resolveHighLevelConfig";
 
 function resolvePrNumber(number: string | undefined): number {
@@ -17,21 +18,31 @@ function resolvePrNumber(number: string | undefined): number {
 	return parsed;
 }
 
-export function runHighLevelReview(number: string | undefined): void {
+function gather(number: string | undefined): HighLevelOverlaySubject {
 	const prNumber = resolvePrNumber(number);
 	const { org, repo } = getRepoInfo();
-	const config = resolveHighLevelConfig(loadConfig());
-	const body = fetchPrBody(prNumber, { org, repo });
+	const pr = fetchHighLevelPr(prNumber, { org, repo });
 	const changedFiles = fetchPrChangedFiles(prNumber);
-	const checks = evaluateHighLevelChecks({ body, changedFiles, config });
-	console.log(
-		chalk.bold(`High-level review of ${org}/${repo}#${prNumber}`),
-		chalk.dim(`· ${changedFiles.length} changed files`),
-	);
-	console.log(formatHighLevelChecklist(checks));
-	console.log(
-		chalk.dim(
-			"\nManual items are for the reviewer to judge; see docs/high-level-review.md.",
-		),
-	);
+	return {
+		repo: `${org}/${repo}`,
+		prNumber,
+		headRef: pr.headRef,
+		headSha: pr.headSha,
+		changedFileCount: changedFiles.length,
+		checks: evaluateHighLevelChecks({
+			body: pr.body,
+			changedFiles,
+			config: resolveHighLevelConfig(loadConfig()),
+		}),
+	};
+}
+
+export async function runHighLevelReview(
+	number: string | undefined,
+): Promise<void> {
+	const subject = gather(number);
+	const sessionId = process.env.ASSIST_SESSION_ID;
+	if (process.env.ASSIST_SESSION !== "1" || !sessionId)
+		return printHighLevelChecklist(subject);
+	await openHighLevelOverlay(sessionId, subject);
 }

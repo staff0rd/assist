@@ -40,6 +40,7 @@ export function decidePrPreview(
 			announceAfter: d.announceAfter,
 			draft: d.draft,
 			autoMerge: d.autoMerge,
+			checklist: d.checklist,
 		});
 	waiters.delete(id);
 	session.pendingPrPreview = undefined;

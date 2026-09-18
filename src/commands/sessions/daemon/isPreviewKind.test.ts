@@ -13,6 +13,7 @@ describe("isPreviewKind", () => {
 			"github-issue-edit",
 			"miro-board",
 			"slack-post",
+			"high-level-review",
 		]) {
 			expect(isPreviewKind(kind)).toBe(true);
 		}

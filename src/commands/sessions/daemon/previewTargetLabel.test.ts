@@ -32,6 +32,12 @@ describe("previewTargetLabel", () => {
 		);
 	});
 
+	it("labels a high-level review", () => {
+		expect(previewTargetLabel("high-level-review", "story", 42, false)).toBe(
+			"high-level review",
+		);
+	});
+
 	it("labels a backlog comment", () => {
 		expect(previewTargetLabel("backlog-comment", "story", null, false)).toBe(
 			"backlog comment",

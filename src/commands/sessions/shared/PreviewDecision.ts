@@ -5,6 +5,12 @@ export type PreviewSelection = {
 	bottomRight: string;
 };
 
+export type PreviewChecklistItem = {
+	id: string;
+	ticked: boolean;
+	comment?: string;
+};
+
 export type PreviewDecisionFields = {
 	reason?: string;
 	comments?: PrPreviewComment[];
@@ -15,6 +21,7 @@ export type PreviewDecisionFields = {
 	draft?: boolean;
 	autoMerge?: boolean;
 	selection?: PreviewSelection;
+	checklist?: PreviewChecklistItem[];
 };
 
 export type PreviewDecision = PreviewDecisionFields & {

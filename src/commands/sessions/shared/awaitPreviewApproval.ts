@@ -8,6 +8,7 @@ import {
 type PreviewApprovalOptions = {
 	saveEditedBody?: (body: string) => void;
 	rejectionAdvice?: string;
+	rejectIsOutcome?: boolean;
 };
 
 export async function awaitPreviewApproval(
@@ -28,7 +29,7 @@ export async function awaitPreviewApproval(
 	}
 
 	if (decision.body !== undefined) options.saveEditedBody?.(decision.body);
-	if (decision.decision === "reject")
+	if (decision.decision === "reject" && !options.rejectIsOutcome)
 		reportPreviewRejection(subject, decision, options.rejectionAdvice);
 
 	return decision;

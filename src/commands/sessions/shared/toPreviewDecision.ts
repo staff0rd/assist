@@ -1,4 +1,5 @@
 import type {
+	PreviewChecklistItem,
 	PreviewDecision,
 	PreviewDecisionFields,
 	PreviewSelection,
@@ -21,6 +22,21 @@ function toSelection(value: unknown): PreviewSelection | undefined {
 	return { topLeft: selection.topLeft, bottomRight: selection.bottomRight };
 }
 
+function toChecklist(value: unknown): PreviewChecklistItem[] | undefined {
+	if (!Array.isArray(value)) return undefined;
+	return value.flatMap((entry) => {
+		const { id, ticked, comment } = (entry ?? {}) as Record<string, unknown>;
+		if (typeof id !== "string") return [];
+		return [
+			{
+				id,
+				ticked: ticked === true,
+				...(typeof comment === "string" && comment !== "" ? { comment } : {}),
+			},
+		];
+	});
+}
+
 export function toPreviewDecision(
 	msg: DecisionMessage,
 ): PreviewDecision | null {
@@ -36,5 +52,6 @@ export function toPreviewDecision(
 		draft: typeof msg.draft === "boolean" ? msg.draft : undefined,
 		autoMerge: msg.autoMerge === true,
 		selection: toSelection(msg.selection),
+		checklist: toChecklist(msg.checklist),
 	};
 }
