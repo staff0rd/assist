@@ -34,8 +34,9 @@ Each remaining PR belongs in exactly one section, taking the first that matches:
 
 ## Step 4: Write the overview
 
-Write the overview to chat as markdown. Do not create files, and do not post anywhere.
+Emit the overview to chat as a single fenced ` ```markdown ` block, so it arrives as raw unrendered markdown the user can copy straight into Slack, a doc or a PR comment. Nothing goes outside the fence. Do not create files, and do not post anywhere.
 
+````
 ```markdown
 # Open PRs — <repo>, <repo>
 
@@ -69,5 +70,6 @@ Write the overview to chat as markdown. Do not create files, and do not post any
 
 - owner/repo — <error>
 ```
+````
 
 Omit any section with nothing in it. The stale section re-lists any PR whose `ageHours` is 168 or more, whichever bucket it sits in; mark bot-authored PRs with `[bot]` after the title. Include the "Could not be read" section whenever `errors` is non-empty, even if every other repo succeeded. When every open PR is a draft, or there are no open PRs at all, say so in one line instead of emitting empty sections.
