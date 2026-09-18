@@ -1,3 +1,10 @@
+# [0.669.0](https://github.com/staff0rd/assist/compare/v0.668.0...v0.669.0) (2026-09-18)
+
+
+### Features
+
+* add github issue started command ([bc9f558](https://github.com/staff0rd/assist/commit/bc9f558a9a96caa2c272d580c0df6424374322f7))
+
 # [0.668.0](https://github.com/staff0rd/assist/compare/v0.667.0...v0.668.0) (2026-09-18)
 
 
