@@ -1,3 +1,10 @@
+# [0.678.0](https://github.com/staff0rd/assist/compare/v0.677.0...v0.678.0) (2026-09-21)
+
+
+### Features
+
+* block npm run from the cli hook ([530cf8c](https://github.com/staff0rd/assist/commit/530cf8cfa4fe255dc291050a2cf1e3a96f68b137))
+
 # [0.677.0](https://github.com/staff0rd/assist/compare/v0.676.0...v0.677.0) (2026-09-21)
 
 
