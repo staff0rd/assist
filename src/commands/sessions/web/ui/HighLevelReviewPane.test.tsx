@@ -36,6 +36,8 @@ const checks: HighLevelCheckResult[] = [
 ];
 
 const payload: HighLevelPreviewPayload = {
+	repo: "org/repo",
+	prNumber: 42,
 	checks,
 	structure: {
 		tree: [
@@ -54,6 +56,7 @@ const payload: HighLevelPreviewPayload = {
 						additions: 12,
 						deletions: 3,
 						diffUrl: "https://github.com/org/repo/pull/42/files#diff-abc",
+						patch: "@@ -1,2 +1,2 @@\n-was\n+now",
 					},
 				],
 			},
@@ -89,7 +92,10 @@ function preview(overrides: Partial<PrPreview> = {}): PrPreview {
 	};
 }
 
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	localStorage.clear();
+});
 
 describe("HighLevelReviewPane", () => {
 	it("lists every checklist item under its group", () => {
@@ -172,6 +178,31 @@ describe("HighLevelReviewPane", () => {
 		expect(screen.getByText("Changed files (1)")).toBeTruthy();
 		expect(screen.getByText("src")).toBeTruthy();
 		expect(screen.getByText("app.ts")).toBeTruthy();
+	});
+
+	it("collapses a folder on click and remembers it for the same PR", () => {
+		const { unmount } = render(
+			<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />,
+		);
+
+		fireEvent.click(screen.getByLabelText("src"));
+		expect(screen.queryByText("app.ts")).toBeNull();
+
+		unmount();
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+
+		expect(screen.queryByText("app.ts")).toBeNull();
+		expect(screen.getByLabelText("src").getAttribute("aria-expanded")).toBe(
+			"false",
+		);
+	});
+
+	it("opens a file's diff in the native viewer with a link to GitHub", () => {
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+
+		fireEvent.click(screen.getByLabelText("Show the diff of src/app.ts"));
+
+		expect(screen.getByRole("dialog").textContent).toContain("src/app.ts");
 		expect(
 			screen.getByLabelText("Open src/app.ts on GitHub").getAttribute("href"),
 		).toBe("https://github.com/org/repo/pull/42/files#diff-abc");
@@ -186,7 +217,7 @@ describe("HighLevelReviewPane", () => {
 			status: "manual",
 			reason: "Full diffs of the critical files",
 		};
-		render(
+		const { container } = render(
 			<HighLevelReviewPane
 				preview={preview({
 					body: JSON.stringify({
@@ -200,8 +231,8 @@ describe("HighLevelReviewPane", () => {
 
 		expect(screen.getByText("Critical diffs (1)")).toBeTruthy();
 		expect(screen.getByText("schema.graphql")).toBeTruthy();
-		expect(screen.getByText("+type New")).toBeTruthy();
-		expect(screen.getByText("-type Old")).toBeTruthy();
+		expect(container.textContent).toContain("type New");
+		expect(container.textContent).toContain("type Old");
 	});
 
 	it("reopens a saved review with its ticks and comments", () => {

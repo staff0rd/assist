@@ -54,8 +54,10 @@ With `uiPaths` unset the UI-evidence check passes — a repo that has not said w
 
 The two structural items carry their evidence in the pane, so the judgement is made without leaving it:
 
-- **Structure** expands to the changed-file tree. Directories roll their children's line counts up and a chain of single-child directories reads as one row, so the shape of the change is a glance rather than a scroll. Each file is marked added, deleted or modified, carries its `+`/`-` line counts, and links to its own GitHub diff for when line level is wanted after all.
-- **Critical diffs** expands to the full diff of every changed file matching `review.highLevel.criticalPaths`. With no critical paths configured, or none of them touched, the item says so rather than showing an empty box — it is still the reviewer's to tick.
+- **Structure** expands to the changed-file tree. Directories collapse and expand, and which ones are collapsed is remembered per PR, so a tree folded down to what matters stays folded across a reopen. Directories roll their children's line counts up and a chain of single-child directories reads as one row, so the shape of the change is a glance rather than a scroll. Each file is marked added, deleted or modified and carries its `+`/`-` line counts; clicking one opens its diff in the same viewer the session diff uses — syntax highlighting, word-level edit marks, unified or split — in a dialog, with a link out to GitHub for when the conversation there is what is wanted.
+- **Critical diffs** expands to the full diff of every changed file matching `review.highLevel.criticalPaths`, inline in the pane and in that same viewer. With no critical paths configured, or none of them touched, the item says so rather than showing an empty box — it is still the reviewer's to tick.
+
+Diffs travel with the review rather than being fetched per file, so they are budgeted: a single file is capped at 1500 lines and the whole review at 20000, whole hunks at a time, with critical files served first. Anything past the cap says so and points at GitHub — a lockfile does not get to crowd out the schema.
 
 A review is keyed on the head SHA, so re-running against the same head reopens the saved one with its ticks and comments intact rather than starting over; `--force` discards it and starts fresh. A new push moves the head SHA, and so starts a new review.
 

@@ -1,43 +1,36 @@
-import FolderIcon from "@mui/icons-material/Folder";
-import { Box, Typography } from "@mui/material";
-import type { HighLevelTreeNode } from "../../../review/highLevel/types";
-import { HighLevelLineCounts } from "./HighLevelLineCounts";
+import { Box } from "@mui/material";
+import { HighLevelTreeDirRow } from "./HighLevelTreeDirRow";
 import { HighLevelTreeFileRow } from "./HighLevelTreeFileRow";
-import {
-	HIGH_LEVEL_TREE_INDENT,
-	highLevelTreeNameSx,
-	highLevelTreeRowSx,
-} from "./highLevelTreeRowSx";
+import { HIGH_LEVEL_TREE_INDENT } from "./highLevelTreeRowSx";
+import type { HighLevelTreeRowsProps } from "./HighLevelTreeRowsProps";
 
-export function HighLevelTreeRows({
-	nodes,
-	depth = 0,
-}: {
-	nodes: HighLevelTreeNode[];
-	depth?: number;
-}) {
+export function HighLevelTreeRows(props: HighLevelTreeRowsProps) {
+	const { nodes, depth = 0, collapsed, onToggleDir, onOpenFile } = props;
 	const indent = `${depth * HIGH_LEVEL_TREE_INDENT}px`;
 
 	return nodes.map((node) =>
 		node.kind === "file" ? (
-			<HighLevelTreeFileRow key={node.path} file={node} indent={indent} />
+			<HighLevelTreeFileRow
+				key={node.path}
+				file={node}
+				indent={indent}
+				onOpen={() => onOpenFile(node)}
+			/>
 		) : (
 			<Box key={node.path} sx={{ minWidth: 0 }}>
-				<Box sx={{ ...highLevelTreeRowSx, pl: indent }}>
-					<FolderIcon sx={{ fontSize: 13, color: "text.secondary" }} />
-					<Typography
-						component="span"
-						sx={{ ...highLevelTreeNameSx, fontWeight: 600 }}
-						title={node.path}
-					>
-						{node.name}
-					</Typography>
-					<HighLevelLineCounts
-						additions={node.additions}
-						deletions={node.deletions}
+				<HighLevelTreeDirRow
+					dir={node}
+					collapsed={collapsed.has(node.path)}
+					indent={indent}
+					onToggle={() => onToggleDir(node.path)}
+				/>
+				{!collapsed.has(node.path) && (
+					<HighLevelTreeRows
+						{...props}
+						nodes={node.children}
+						depth={depth + 1}
 					/>
-				</Box>
-				<HighLevelTreeRows nodes={node.children} depth={depth + 1} />
+				)}
 			</Box>
 		),
 	);

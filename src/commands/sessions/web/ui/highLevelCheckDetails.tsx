@@ -13,7 +13,10 @@ export function highLevelCheckDetails(
 			<HighLevelCheckDetail
 				label={`Changed files (${highLevelChangedFileCount(payload.structure)})`}
 			>
-				<HighLevelStructureView structure={payload.structure} />
+				<HighLevelStructureView
+					structure={payload.structure}
+					subject={`${payload.repo}#${payload.prNumber}`}
+				/>
 			</HighLevelCheckDetail>
 		),
 		"critical-diffs-correct": (

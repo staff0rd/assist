@@ -4,6 +4,8 @@ import type {
 } from "../../../review/highLevel/types";
 
 const EMPTY: HighLevelPreviewPayload = {
+	repo: "",
+	prNumber: 0,
 	checks: [],
 	structure: {
 		tree: [],
@@ -42,6 +44,9 @@ export function parseHighLevelPreview(body: string): HighLevelPreviewPayload {
 	}
 	if (typeof parsed !== "object" || parsed === null) return EMPTY;
 	return {
+		repo: typeof parsed.repo === "string" ? parsed.repo : EMPTY.repo,
+		prNumber:
+			typeof parsed.prNumber === "number" ? parsed.prNumber : EMPTY.prNumber,
 		checks: asArray(parsed.checks, isCheck),
 		structure: { ...EMPTY.structure, ...parsed.structure },
 		criticalDiffs: asArray(parsed.criticalDiffs),

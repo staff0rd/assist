@@ -1,46 +1,10 @@
-import { Box, Link, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import type { HighLevelCriticalDiff } from "../../../review/highLevel/types";
-import { HighLevelLineCounts } from "./HighLevelLineCounts";
-import { HighLevelPatch } from "./HighLevelPatch";
-import {
-	HIGH_LEVEL_STATUS_COLOURS,
-	highLevelTreeNameSx,
-} from "./highLevelTreeRowSx";
-
-function Note({ children }: { children: string }) {
-	return (
-		<Typography variant="caption" sx={{ color: "text.secondary" }}>
-			{children}
-		</Typography>
-	);
-}
-
-function DiffHeader({ diff }: { diff: HighLevelCriticalDiff }) {
-	return (
-		<Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
-			<Link
-				href={diff.diffUrl}
-				target="_blank"
-				rel="noreferrer"
-				sx={{ ...highLevelTreeNameSx, fontWeight: 600 }}
-				title={diff.path}
-			>
-				{diff.path}
-			</Link>
-			<Typography
-				variant="caption"
-				sx={{ flexShrink: 0 }}
-				color={HIGH_LEVEL_STATUS_COLOURS[diff.status]}
-			>
-				{diff.status}
-			</Typography>
-			<HighLevelLineCounts
-				additions={diff.additions}
-				deletions={diff.deletions}
-			/>
-		</Box>
-	);
-}
+import { DiffViewTypeToggle } from "./DiffViewTypeToggle";
+import { HighLevelCriticalDiffHeader } from "./HighLevelCriticalDiffHeader";
+import { HighLevelDiffNote } from "./HighLevelDiffNote";
+import { HighLevelNativeDiff } from "./HighLevelNativeDiff";
+import { useDiffViewType } from "./useDiffViewType";
 
 export function HighLevelCriticalDiffs({
 	diffs,
@@ -49,26 +13,33 @@ export function HighLevelCriticalDiffs({
 	diffs: HighLevelCriticalDiff[];
 	criticalPaths: string[];
 }) {
+	const { viewType, onChange } = useDiffViewType();
+
 	if (criticalPaths.length === 0)
 		return (
-			<Note>
+			<HighLevelDiffNote>
 				review.highLevel.criticalPaths is unset, so no diffs are shown here.
-			</Note>
+			</HighLevelDiffNote>
 		);
 	if (diffs.length === 0)
 		return (
-			<Note>{`No changed file matches ${criticalPaths.join(", ")}.`}</Note>
+			<HighLevelDiffNote>{`No changed file matches ${criticalPaths.join(", ")}.`}</HighLevelDiffNote>
 		);
 	return (
 		<Box sx={{ minWidth: 0 }}>
+			<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+				<DiffViewTypeToggle viewType={viewType} onChange={onChange} />
+			</Box>
 			{diffs.map((diff) => (
-				<Box key={diff.path} sx={{ mb: 1 }}>
-					<DiffHeader diff={diff} />
-					{diff.patch === null ? (
-						<Note>No diff available; open the file on GitHub.</Note>
-					) : (
-						<HighLevelPatch patch={diff.patch} />
-					)}
+				<Box key={diff.path} sx={{ mb: 1, minWidth: 0 }}>
+					<HighLevelCriticalDiffHeader diff={diff} />
+					<HighLevelNativeDiff
+						path={diff.path}
+						status={diff.status}
+						patch={diff.patch}
+						truncated={diff.truncated === true}
+						viewType={viewType}
+					/>
 				</Box>
 			))}
 		</Box>

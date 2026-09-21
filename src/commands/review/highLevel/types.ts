@@ -30,6 +30,7 @@ export type HighLevelFile = {
 	deletions: number;
 	diffUrl: string;
 	patch?: string;
+	truncated?: boolean;
 };
 
 export type HighLevelTreeFile = HighLevelFile & {
@@ -64,6 +65,7 @@ export type HighLevelCriticalDiff = {
 	deletions: number;
 	diffUrl: string;
 	patch: string | null;
+	truncated?: boolean;
 };
 
 export type HighLevelReviewItem = {
@@ -87,6 +89,8 @@ export type HighLevelReviewRecord = {
 };
 
 export type HighLevelPreviewPayload = {
+	repo: string;
+	prNumber: number;
 	checks: HighLevelCheckResult[];
 	structure: HighLevelStructure;
 	criticalDiffs: HighLevelCriticalDiff[];

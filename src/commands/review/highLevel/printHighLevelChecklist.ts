@@ -3,7 +3,7 @@ import { formatCriticalDiffs } from "./formatCriticalDiffs";
 import { formatHighLevelChecklist } from "./formatHighLevelChecklist";
 import { formatHighLevelStructure } from "./formatHighLevelStructure";
 import { highLevelChangedFileCount } from "./highLevelChangedFileCount";
-import type { HighLevelOverlaySubject } from "./openHighLevelOverlay";
+import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
 
 export function printHighLevelChecklist(
 	subject: HighLevelOverlaySubject,

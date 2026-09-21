@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import type { HighLevelOverlaySubject } from "./openHighLevelOverlay";
+import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
 
 export function announceSavedReview(
 	subject: HighLevelOverlaySubject,

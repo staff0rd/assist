@@ -1,5 +1,4 @@
-import LaunchIcon from "@mui/icons-material/Launch";
-import { Box, Link, Tooltip, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import type { HighLevelTreeFile } from "../../../review/highLevel/types";
 import { HighLevelLineCounts } from "./HighLevelLineCounts";
 import {
@@ -12,12 +11,29 @@ import {
 export function HighLevelTreeFileRow({
 	file,
 	indent,
+	onOpen,
 }: {
 	file: HighLevelTreeFile;
 	indent: string;
+	onOpen: () => void;
 }) {
 	return (
-		<Box sx={{ ...highLevelTreeRowSx, pl: indent }}>
+		<Box
+			component="button"
+			type="button"
+			onClick={onOpen}
+			aria-label={`Show the diff of ${file.path}`}
+			sx={{
+				...highLevelTreeRowSx,
+				pl: indent,
+				border: 0,
+				bgcolor: "transparent",
+				cursor: "pointer",
+				textAlign: "left",
+				color: "inherit",
+				font: "inherit",
+			}}
+		>
 			<Tooltip title={file.status}>
 				<Typography
 					component="span"
@@ -30,15 +46,6 @@ export function HighLevelTreeFileRow({
 			<Typography component="span" sx={highLevelTreeNameSx} title={file.path}>
 				{file.name}
 			</Typography>
-			<Link
-				href={file.diffUrl}
-				target="_blank"
-				rel="noreferrer"
-				aria-label={`Open ${file.path} on GitHub`}
-				sx={{ display: "flex", flexShrink: 0, color: "text.secondary" }}
-			>
-				<LaunchIcon sx={{ fontSize: 13 }} />
-			</Link>
 			<HighLevelLineCounts
 				additions={file.additions}
 				deletions={file.deletions}

@@ -8,12 +8,15 @@ export function selectCriticalDiffs(
 	if (criticalPaths.length === 0) return [];
 	return files
 		.filter((file) => criticalPaths.some((glob) => minimatch(file.path, glob)))
-		.map(({ path, status, additions, deletions, diffUrl, patch }) => ({
-			path,
-			status,
-			additions,
-			deletions,
-			diffUrl,
-			patch: patch ?? null,
-		}));
+		.map(
+			({ path, status, additions, deletions, diffUrl, patch, truncated }) => ({
+				path,
+				status,
+				additions,
+				deletions,
+				diffUrl,
+				patch: patch ?? null,
+				...(truncated ? { truncated: true } : {}),
+			}),
+		);
 }
