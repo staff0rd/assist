@@ -1,3 +1,10 @@
+# [0.680.0](https://github.com/staff0rd/assist/compare/v0.679.0...v0.680.0) (2026-09-21)
+
+
+### Features
+
+* native diff viewer in high-level review ([4c092d1](https://github.com/staff0rd/assist/commit/4c092d1458745c311618fc6b6e728f9ab2780efd)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.679.0](https://github.com/staff0rd/assist/compare/v0.678.0...v0.679.0) (2026-09-21)
 
 
