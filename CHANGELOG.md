@@ -1,3 +1,10 @@
+# [0.676.0](https://github.com/staff0rd/assist/compare/v0.675.1...v0.676.0) (2026-09-21)
+
+
+### Features
+
+* keyboard nav in the prs dropdown ([02db016](https://github.com/staff0rd/assist/commit/02db016fece12a8224baa19e7e5fa07e3bf38a54))
+
 ## [0.675.1](https://github.com/staff0rd/assist/compare/v0.675.0...v0.675.1) (2026-09-21)
 
 
