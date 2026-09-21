@@ -459,6 +459,7 @@ A restart kills every managed session's pty, which also kills any background tas
 - `commit.expectedBranch` — when set (e.g. `main`), `assist commit` prints a non-blocking warning if HEAD is on any other branch, so work on a stray branch isn't silently orphaned
 - `branch.prefix` — when set (e.g. `sw`), `assist branch <slug>` prepends `<prefix>/` to the branch name
 - `branch.defaultBranch` — override the base branch, which is otherwise resolved live from the remote (`git ls-remote --symref origin HEAD`), falling back to `main`
+- `cliHook.blockNpmRun` — when `true` (default), `assist cli-hook` denies `npm run` and redirects to `assist run <name>`, `assist verify` or `assist build`. Set it to `false` in a repo that genuinely needs npm scripts. `npm install`, `npm ci` and `npm test` are never affected
 
 ## Acceptance criteria outliner extension
 

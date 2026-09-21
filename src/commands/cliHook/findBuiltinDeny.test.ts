@@ -1,5 +1,18 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { AssistConfig } from "../../shared/types";
+
+const mockLoadConfig = vi.fn<() => Partial<AssistConfig>>();
+
+vi.mock("../../shared/loadConfig", () => ({
+	loadConfig: () => mockLoadConfig(),
+}));
+
 import { findBuiltinDeny, findBuiltinDenyRaw } from "./findBuiltinDeny";
+
+beforeEach(() => {
+	vi.clearAllMocks();
+	mockLoadConfig.mockReturnValue({});
+});
 
 describe("findBuiltinDeny gh pr edit", () => {
 	it("denies a leading 'gh pr edit' with a redirect to 'assist prs edit'", () => {
@@ -229,6 +242,38 @@ describe("findBuiltinDeny npm run", () => {
 
 	it("does not deny 'assist run'", () => {
 		expect(findBuiltinDeny(["assist run build"])).toBeUndefined();
+	});
+
+	it("still denies when cliHook.blockNpmRun is explicitly true", () => {
+		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: true } });
+		expect(findBuiltinDeny(["npm run build"])?.permissionDecision).toBe("deny");
+		expect(
+			findBuiltinDenyRaw("cd /repo && npm run build")?.permissionDecision,
+		).toBe("deny");
+	});
+
+	it("does not deny when cliHook.blockNpmRun is false", () => {
+		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: false } });
+		expect(findBuiltinDeny(["npm run build"])).toBeUndefined();
+		expect(findBuiltinDeny(["cd /repo", "npm run test:unit"])).toBeUndefined();
+		expect(findBuiltinDenyRaw("cd /repo && npm run build")).toBeUndefined();
+	});
+
+	it("leaves the other builtin denies unconditional when the toggle is off", () => {
+		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: false } });
+		expect(
+			findBuiltinDeny(['git commit -m "fix: x"'])?.permissionDecision,
+		).toBe("deny");
+		expect(
+			findBuiltinDeny(["gh pr create --title x --body y"])?.permissionDecision,
+		).toBe("deny");
+	});
+
+	it("does not deny 'npm install', 'npm ci' or 'npm test' with the toggle off", () => {
+		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: false } });
+		expect(findBuiltinDeny(["npm install"])).toBeUndefined();
+		expect(findBuiltinDeny(["npm ci"])).toBeUndefined();
+		expect(findBuiltinDeny(["npm test"])).toBeUndefined();
 	});
 });
 
