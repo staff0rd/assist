@@ -1,4 +1,5 @@
 import { describeAge } from "./describeAge";
+import { isDoNotMerge } from "./isDoNotMerge";
 import { summariseChecks } from "./summariseChecks";
 import type { GhStatusPullRequest, PrStatus, ReviewerState } from "./types";
 
@@ -23,6 +24,7 @@ export function toPrStatus(
 		author: pr.author?.login ?? "unknown",
 		isBot: pr.author?.is_bot === true,
 		isDraft: pr.isDraft === true,
+		isDoNotMerge: isDoNotMerge(pr.title),
 		createdAt: pr.createdAt,
 		updatedAt: pr.updatedAt,
 		age: age.label,

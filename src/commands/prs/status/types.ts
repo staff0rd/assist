@@ -36,6 +36,7 @@ export type PrStatus = {
 	author: string;
 	isBot: boolean;
 	isDraft: boolean;
+	isDoNotMerge: boolean;
 	createdAt: string;
 	updatedAt: string;
 	age: string;

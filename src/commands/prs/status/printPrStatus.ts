@@ -4,6 +4,7 @@ import type { PrStatus } from "./types";
 function flags(pr: PrStatus): string {
 	const markers = [];
 	if (pr.isDraft) markers.push("draft");
+	if (pr.isDoNotMerge) markers.push("do not merge");
 	if (pr.isBot) markers.push("bot");
 	return markers.length ? ` ${chalk.yellow(`[${markers.join(", ")}]`)}` : "";
 }

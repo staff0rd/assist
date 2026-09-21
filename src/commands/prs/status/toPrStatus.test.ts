@@ -29,6 +29,7 @@ describe("toPrStatus", () => {
 			author: "alice",
 			isBot: false,
 			isDraft: false,
+			isDoNotMerge: false,
 			createdAt: "2026-09-10T09:00:00Z",
 			updatedAt: "2026-09-16T12:00:00Z",
 			age: "2d",
@@ -67,6 +68,15 @@ describe("toPrStatus", () => {
 		});
 	});
 
+	it("flags a title that asks not to be merged", () => {
+		const pr = { ...basePr, title: "[DO NOT REVIEW] spike" };
+
+		expect(toPrStatus(pr, 0, NOW)).toMatchObject({
+			isDraft: false,
+			isDoNotMerge: true,
+		});
+	});
+
 	describe("when fields are absent", () => {
 		it("falls back to unknown values", () => {
 			const pr: GhStatusPullRequest = {
@@ -81,6 +91,7 @@ describe("toPrStatus", () => {
 				author: "unknown",
 				isBot: false,
 				isDraft: false,
+				isDoNotMerge: false,
 				reviewDecision: null,
 				reviews: [],
 				checks: { failing: [], pending: [] },

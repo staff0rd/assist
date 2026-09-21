@@ -17,13 +17,13 @@ Run:
 assist prs status <repos> --json
 ```
 
-The payload is `{ repos: [{ repo, pullRequests: [...] }], errors: [{ repo, error }] }`. Each pull request carries `number`, `title`, `url`, `author`, `isBot`, `isDraft`, `createdAt`, `updatedAt`, `age` (a label like `3d`, derived from `updatedAt`), `ageHours`, `reviewDecision`, `reviews` (per-reviewer `state`), `checks.failing`, `checks.pending`, `mergeable`, and `unresolvedThreads`.
+The payload is `{ repos: [{ repo, pullRequests: [...] }], errors: [{ repo, error }] }`. Each pull request carries `number`, `title`, `url`, `author`, `isBot`, `isDraft`, `isDoNotMerge`, `createdAt`, `updatedAt`, `age` (a label like `3d`, derived from `updatedAt`), `ageHours`, `reviewDecision`, `reviews` (per-reviewer `state`), `checks.failing`, `checks.pending`, `mergeable`, and `unresolvedThreads`.
 
 Use only what the payload says. `unresolvedThreads: null` means that PR's thread query failed — report it as unknown, never as zero. `ageHours: null` means the timestamp could not be parsed.
 
 ## Step 3: Sort each PR into one bucket
 
-Discard every PR with `isDraft: true` — a draft is not pending merge. Keep a count of the discarded drafts for the summary line.
+Discard every PR with `isDraft: true` or `isDoNotMerge: true` — a draft, or a title opening `[DO NOT ...]` or `[DNM]`, is not pending merge. Keep a count of the discarded PRs for the summary line.
 
 Each remaining PR belongs in exactly one section, taking the first that matches:
 
@@ -39,7 +39,7 @@ The overview is posted as two messages: the summary line in the channel, and eve
 The summary file is one line, ending in a 🧵 that points at the thread:
 
 ```markdown
-**Open PRs** — <n> open across <n> repos (<n> drafts excluded): <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge. 🧵
+**Open PRs** — <n> open across <n> repos (<n> drafts and do-not-merge excluded): <n> pending review, <n> changes requested, <n> failing checks, <n> ready to merge. 🧵
 ```
 
 The reply file holds the sections:

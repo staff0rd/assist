@@ -17,6 +17,7 @@ function prStatus(overrides: Partial<PrStatus> = {}): PrStatus {
 		author: "alice",
 		isBot: false,
 		isDraft: false,
+		isDoNotMerge: false,
 		createdAt: "2026-09-10T09:00:00Z",
 		updatedAt: "2026-09-16T12:00:00Z",
 		age: "2d",
@@ -71,6 +72,20 @@ describe("printPrsStatus", () => {
 		});
 
 		expect(printed()).toContain("[draft, bot]");
+	});
+
+	it("marks a title that asks not to be merged", () => {
+		printPrsStatus({
+			repos: [
+				{
+					repo: "org/foo",
+					pullRequests: [prStatus({ isDoNotMerge: true })],
+				},
+			],
+			errors: [],
+		});
+
+		expect(printed()).toContain("[do not merge]");
 	});
 
 	it("reports the review decision, reviewers, checks and conflicts", () => {
