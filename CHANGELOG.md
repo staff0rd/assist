@@ -1,3 +1,10 @@
+# [0.673.0](https://github.com/staff0rd/assist/compare/v0.672.1...v0.673.0) (2026-09-21)
+
+
+### Features
+
+* flag do-not-merge titles in prs status ([cc12c9a](https://github.com/staff0rd/assist/commit/cc12c9aa8ffa4d30f3da33056da93e3621e9228f))
+
 ## [0.672.1](https://github.com/staff0rd/assist/compare/v0.672.0...v0.672.1) (2026-09-18)
 
 
