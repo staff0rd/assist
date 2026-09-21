@@ -9,10 +9,10 @@ export function FilterInput({
 	placeholder,
 	autoFocus,
 }: {
-	inputRef: Ref<HTMLInputElement>;
+	inputRef?: Ref<HTMLInputElement>;
 	value: string;
 	onChange: (value: string) => void;
-	onKeyDown: (e: KeyboardEvent) => void;
+	onKeyDown?: (e: KeyboardEvent) => void;
 	placeholder: string;
 	autoFocus?: boolean;
 }) {
