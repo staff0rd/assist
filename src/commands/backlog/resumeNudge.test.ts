@@ -1,14 +1,18 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { resumeNudge } from "./resumeNudge";
 
 describe("resumeNudge", () => {
+	beforeEach(() => {
+		delete process.env.ASSIST_RESUME_IDLE;
+		delete process.env.ASSIST_RESUME_PROMPT;
+	});
+
 	afterEach(() => {
 		delete process.env.ASSIST_RESUME_IDLE;
 		delete process.env.ASSIST_RESUME_PROMPT;
 	});
 
 	it("returns the restart nudge for a session that was mid-work", () => {
-		delete process.env.ASSIST_RESUME_IDLE;
 		expect(resumeNudge()).toBe(
 			"A restart interrupted this conversation. Continue from where you left off.",
 		);

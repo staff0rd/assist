@@ -89,6 +89,7 @@ describe("buildSlashCommand", () => {
 describe("launchMode", () => {
 	beforeEach(() => {
 		delete process.env.ASSIST_RESUME_IDLE;
+		delete process.env.ASSIST_RESUME_PROMPT;
 		vi.clearAllMocks();
 		mockSpawnClaude.mockReturnValue({ child, done: Promise.resolve(0) });
 		mockWatchForMarker.mockReturnValue({ killedOnMarker: () => false });

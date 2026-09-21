@@ -26,6 +26,7 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	calls.length = 0;
 	delete process.env.ASSIST_RESUME_IDLE;
+	delete process.env.ASSIST_RESUME_PROMPT;
 });
 
 describe("fixConflict", () => {

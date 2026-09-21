@@ -94,6 +94,7 @@ const phases: PlanPhase[] = [{ name: "Phase 1", tasks: [{ task: "do it" }] }];
 describe("executePhase", () => {
 	beforeEach(() => {
 		delete process.env.ASSIST_RESUME_IDLE;
+		delete process.env.ASSIST_RESUME_PROMPT;
 		vi.clearAllMocks();
 	});
 
