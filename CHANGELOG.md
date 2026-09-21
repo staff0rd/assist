@@ -1,3 +1,10 @@
+# [0.674.0](https://github.com/staff0rd/assist/compare/v0.673.0...v0.674.0) (2026-09-21)
+
+
+### Features
+
+* key server run slot on origin and group ([2cff239](https://github.com/staff0rd/assist/commit/2cff2397dd77629f8160a838872972fa56fa9836))
+
 # [0.673.0](https://github.com/staff0rd/assist/compare/v0.672.1...v0.673.0) (2026-09-21)
 
 
