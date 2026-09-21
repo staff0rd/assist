@@ -1,3 +1,12 @@
+# [0.675.0](https://github.com/staff0rd/assist/compare/v0.674.0...v0.675.0) (2026-09-21)
+
+
+### Features
+
+* add filter field to prs dropdown ([6ffcee4](https://github.com/staff0rd/assist/commit/6ffcee4fcbfb9a513351819262201852daca7ec1))
+* filter the prs dropdown by author and title ([3a911cd](https://github.com/staff0rd/assist/commit/3a911cd127f6774ad4d99eec98d19f5addc82fe3))
+* name server group in replace prompt ([b872f73](https://github.com/staff0rd/assist/commit/b872f73f641100c952daadd5007af3887230b3a8))
+
 # [0.674.0](https://github.com/staff0rd/assist/compare/v0.673.0...v0.674.0) (2026-09-21)
 
 
