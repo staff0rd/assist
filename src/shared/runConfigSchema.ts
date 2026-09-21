@@ -17,7 +17,7 @@ export const runConfigSchema = z.strictObject({
 	pre: z.array(z.string()).optional(),
 	cwd: z.string().optional(),
 	quiet: z.boolean().optional(),
-	server: z.boolean().optional(),
+	server: z.union([z.boolean(), z.string().min(1)]).optional(),
 	port: z.number().optional(),
 });
 

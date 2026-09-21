@@ -16,11 +16,11 @@ export function handleCreateRun(
 	const runArgs = (d.runArgs as string[]) ?? [];
 	const context = spawnContextFrom(d);
 	const meta = serverRunMeta(runName, cwd);
-	if (meta.server && meta.origin) {
-		const existing = m.liveServerRun(meta.origin);
+	if (meta.server && meta.origin && meta.group) {
+		const existing = m.liveServerRun(meta.origin, meta.group);
 		if (existing && d.replace !== true) {
 			daemonLog(
-				`create-run ${runName} rejected: server ${existing.id} already live for ${meta.origin}`,
+				`create-run ${runName} rejected: server ${existing.id} already live for ${meta.origin} (${meta.group})`,
 			);
 			sendTo(client, {
 				type: "run-conflict",
@@ -33,7 +33,7 @@ export function handleCreateRun(
 		}
 		if (existing) {
 			daemonLog(
-				`create-run ${runName} replacing live server ${existing.id} for ${meta.origin}`,
+				`create-run ${runName} replacing live server ${existing.id} for ${meta.origin} (${meta.group})`,
 			);
 			m.dismissSession(existing.id);
 		}

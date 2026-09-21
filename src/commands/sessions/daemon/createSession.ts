@@ -80,5 +80,6 @@ export function createRunSession(
 		server: serverMeta.server || undefined,
 		serverPort: serverMeta.port,
 		serverOrigin: serverMeta.origin,
+		serverGroup: serverMeta.group,
 	};
 }

@@ -52,6 +52,7 @@ export type Session = {
 	server?: boolean;
 	serverPort?: number;
 	serverOrigin?: string;
+	serverGroup?: string;
 	stopping?: boolean;
 	closing?: boolean;
 	cwd?: string;

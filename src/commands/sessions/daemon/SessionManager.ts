@@ -128,8 +128,8 @@ export class SessionManager {
 		return this.spawnWith((id) => createRunSession(id, request), context);
 	}
 
-	liveServerRun(origin: string, excludeId?: string): Session | undefined {
-		return liveServerRun(this.sessions, origin, excludeId);
+	liveServerRun(origin: string, group: string, excludeId?: string) {
+		return liveServerRun(this.sessions, origin, group, excludeId);
 	}
 
 	spawnAssist(

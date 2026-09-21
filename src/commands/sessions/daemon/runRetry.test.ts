@@ -31,7 +31,7 @@ describe("runRetry", () => {
 	});
 
 	it("blocks relaunch with a conflict when another server is live for the origin", () => {
-		meta.mockReturnValue({ server: true, origin: "gh/o/r" });
+		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
 		const target = {
 			id: "2",
 			commandType: "run",
@@ -43,6 +43,7 @@ describe("runRetry", () => {
 			name: "run: dev",
 			server: true,
 			serverOrigin: "gh/o/r",
+			serverGroup: "default",
 			serverPort: 3000,
 			status: "running",
 		} as unknown as Session;
@@ -60,7 +61,7 @@ describe("runRetry", () => {
 	});
 
 	it("replaces the live server and relaunches when replace is true", () => {
-		meta.mockReturnValue({ server: true, origin: "gh/o/r" });
+		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
 		const target = {
 			id: "2",
 			commandType: "run",
@@ -71,6 +72,7 @@ describe("runRetry", () => {
 			id: "1",
 			server: true,
 			serverOrigin: "gh/o/r",
+			serverGroup: "default",
 			status: "running",
 		} as unknown as Session;
 		const d = deps();
@@ -83,10 +85,56 @@ describe("runRetry", () => {
 		expect(d.notify).toHaveBeenCalledOnce();
 		expect(target.server).toBe(true);
 		expect(target.serverOrigin).toBe("gh/o/r");
+		expect(target.serverGroup).toBe("default");
+	});
+
+	it("relaunches beside a live server in another group", () => {
+		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "web" });
+		const target = {
+			id: "2",
+			commandType: "run",
+			runName: "web",
+			status: "done",
+		} as unknown as Session;
+		const live = {
+			id: "1",
+			server: true,
+			serverOrigin: "gh/o/r",
+			serverGroup: "api",
+			status: "running",
+		} as unknown as Session;
+		const d = deps();
+
+		expect(runRetry(map(live, target), "2", false, d)).toBeNull();
+		expect(d.dismiss).not.toHaveBeenCalled();
+		expect(retry).toHaveBeenCalledOnce();
+		expect(target.serverGroup).toBe("web");
+	});
+
+	it("blocks relaunch when the live server shares the group", () => {
+		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "api" });
+		const target = {
+			id: "2",
+			commandType: "run",
+			runName: "api-alt",
+			status: "done",
+		} as unknown as Session;
+		const live = {
+			id: "1",
+			name: "run: api",
+			server: true,
+			serverOrigin: "gh/o/r",
+			serverGroup: "api",
+			status: "running",
+		} as unknown as Session;
+		const d = deps();
+
+		expect(runRetry(map(live, target), "2", false, d)?.id).toBe("1");
+		expect(retry).not.toHaveBeenCalled();
 	});
 
 	it("relaunches without a prompt when no server is live", () => {
-		meta.mockReturnValue({ server: true, origin: "gh/o/r" });
+		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
 		const target = {
 			id: "2",
 			commandType: "run",

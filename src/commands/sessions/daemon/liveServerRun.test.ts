@@ -12,6 +12,7 @@ function session(over: Partial<Session>): Session {
 		status: "running",
 		server: true,
 		serverOrigin: "gh/o/r",
+		serverGroup: "default",
 		...over,
 	} as unknown as Session;
 }
@@ -21,8 +22,8 @@ function map(...sessions: Session[]): Map<string, Session> {
 }
 
 describe("liveServerRun", () => {
-	it("returns a live server run matching the origin", () => {
-		expect(liveServerRun(map(session({})), "gh/o/r")?.id).toBe("1");
+	it("returns a live server run matching the origin and group", () => {
+		expect(liveServerRun(map(session({})), "gh/o/r", "default")?.id).toBe("1");
 	});
 
 	it("ignores done/error servers so the slot frees on exit", () => {
@@ -30,7 +31,7 @@ describe("liveServerRun", () => {
 			session({ status: "done" }),
 			session({ id: "2", status: "error" }),
 		);
-		expect(liveServerRun(sessions, "gh/o/r")).toBeUndefined();
+		expect(liveServerRun(sessions, "gh/o/r", "default")).toBeUndefined();
 	});
 
 	it("ignores non-server runs and other origins", () => {
@@ -38,11 +39,37 @@ describe("liveServerRun", () => {
 			session({ server: undefined }),
 			session({ id: "2", serverOrigin: "gh/o/other" }),
 		);
-		expect(liveServerRun(sessions, "gh/o/r")).toBeUndefined();
+		expect(liveServerRun(sessions, "gh/o/r", "default")).toBeUndefined();
 	});
 
 	it("excludes the given session id", () => {
-		expect(liveServerRun(map(session({})), "gh/o/r", "1")).toBeUndefined();
+		expect(
+			liveServerRun(map(session({})), "gh/o/r", "default", "1"),
+		).toBeUndefined();
+	});
+
+	it("matches another run sharing the same group", () => {
+		const sessions = map(session({ id: "1", serverGroup: "web" }));
+		expect(liveServerRun(sessions, "gh/o/r", "web")?.id).toBe("1");
+	});
+
+	it("ignores a live server in a different group", () => {
+		const sessions = map(session({ id: "1", serverGroup: "api" }));
+		expect(liveServerRun(sessions, "gh/o/r", "web")).toBeUndefined();
+	});
+
+	it("lets api and web servers hold their own slots for one origin", () => {
+		const sessions = map(
+			session({ id: "1", serverGroup: "api" }),
+			session({ id: "2", serverGroup: "web" }),
+		);
+		expect(liveServerRun(sessions, "gh/o/r", "api")?.id).toBe("1");
+		expect(liveServerRun(sessions, "gh/o/r", "web")?.id).toBe("2");
+	});
+
+	it("keeps a group singleton across sibling clones of the same remote", () => {
+		const sessions = map(session({ id: "1", cwd: "/clone-a" }));
+		expect(liveServerRun(sessions, "gh/o/r", "default")?.id).toBe("1");
 	});
 });
 

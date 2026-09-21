@@ -407,7 +407,7 @@ The topnav has a **Design** dropdown: submitting a prompt launches an interactiv
 
 Every live session card carries an **add-agent** button (👥) that starts a second agent inside that session's existing workspace rather than allocating a new one. While several agents share a workspace, only the last one to leave triggers teardown.
 
-A `run:` entry in `assist.yml` flagged `server: true` (with an optional display-only `port:`) is a singleton **dev server**: at most one may be live per normalised git remote, i.e. across a clone and all its sibling clones. Session cards for such a repo show a **▶ start** button; the daemon rejects a second server run for that remote, and the web UI turns the conflict into a "replace running server?" prompt. The serving card shows a `serving :<port>` chip and a **⏹ stop** button, and the slot frees whenever that session stops. Non-`server` runs are unconstrained.
+A `run:` entry in `assist.yml` flagged `server:` (with an optional display-only `port:`) is a singleton **dev server**. `server:` takes a group name — `server: api` and `server: web` are separate slots, so a repo that serves an API and a front end can keep both live at once; `server: true` normalises to the group `default`. At most one server may be live per group per normalised git remote, i.e. across a clone and all its sibling clones. Session cards for such a repo show a **▶ start** button; the daemon rejects a second server run for that remote and group, and the web UI turns the conflict into a "replace running server?" prompt. The serving card shows a `serving :<port>` chip and a **⏹ stop** button, and the slot frees whenever that session stops. Non-`server` runs are unconstrained.
 
 ### Windows-host repos (from WSL)
 

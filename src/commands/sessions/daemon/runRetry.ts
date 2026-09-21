@@ -22,6 +22,7 @@ function tagServerSession(session: Session, meta: ServerRunMeta): void {
 	session.server = meta.server || undefined;
 	session.serverPort = meta.port;
 	session.serverOrigin = meta.origin;
+	session.serverGroup = meta.group;
 }
 
 function findRetryConflict(
@@ -31,8 +32,13 @@ function findRetryConflict(
 	dismiss: (id: string) => void,
 ): ServerConflictInfo | null {
 	const meta = serverRunMeta(session.runName ?? "", session.cwd);
-	if (meta.server && meta.origin) {
-		const existing = liveServerRun(sessions, meta.origin, session.id);
+	if (meta.server && meta.origin && meta.group) {
+		const existing = liveServerRun(
+			sessions,
+			meta.origin,
+			meta.group,
+			session.id,
+		);
 		if (existing && !replace) return serverConflictInfo(existing);
 		if (existing) dismiss(existing.id);
 	}

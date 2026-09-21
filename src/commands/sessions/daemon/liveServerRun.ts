@@ -4,10 +4,12 @@ import { daemonLog } from "./daemonLog";
 export function liveServerRun(
 	sessions: Map<string, Session>,
 	origin: string,
+	group: string,
 	excludeId?: string,
 ): Session | undefined {
 	for (const s of sessions.values()) {
-		if (s.id === excludeId || !s.server || s.serverOrigin !== origin) continue;
+		if (s.id === excludeId || !s.server) continue;
+		if (s.serverOrigin !== origin || s.serverGroup !== group) continue;
 		if (s.status !== "done" && s.status !== "error") return s;
 	}
 	return undefined;
