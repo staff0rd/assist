@@ -1,3 +1,10 @@
+# [0.679.0](https://github.com/staff0rd/assist/compare/v0.678.0...v0.679.0) (2026-09-21)
+
+
+### Features
+
+* gate the npm-run block on config ([6d656fb](https://github.com/staff0rd/assist/commit/6d656fb336ed2b33a7968a91380faedf1c1503eb))
+
 # [0.678.0](https://github.com/staff0rd/assist/compare/v0.677.0...v0.678.0) (2026-09-21)
 
 
