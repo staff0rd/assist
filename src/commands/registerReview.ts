@@ -24,7 +24,7 @@ export function registerReview(program: Command): void {
 		)
 		.option(
 			"--force",
-			"Clear cached claude.md / codex.md / synthesis.md and re-run all phases",
+			"Clear cached claude.md / codex.md / synthesis.md and re-run all phases; with --high-level, discard the review saved for this head SHA and start fresh",
 		)
 		.option(
 			"--refine",
@@ -44,7 +44,7 @@ export function registerReview(program: Command): void {
 		)
 		.option(
 			"--high-level",
-			"Skip the LLM review; check the PR branch out and step through the high-level review checklist in the web UI preview pane, writing the verdict, per-item state and comments to ~/.assist/high-level-reviews/. Nothing is posted to GitHub; cannot be combined with --refine, --apply, --backlog, --submit or --checkout-only",
+			"Skip the LLM review; check the PR branch out and step through the high-level review checklist in the web UI preview pane, backed by the changed-file tree and the diffs of review.highLevel.criticalPaths, writing the verdict, per-item state and comments to ~/.assist/high-level-reviews/. A review already saved for the same head SHA is reopened unless --force is passed. Nothing is posted to GitHub; cannot be combined with --refine, --apply, --backlog, --submit or --checkout-only",
 		)
 		.option(
 			"--address-comments",

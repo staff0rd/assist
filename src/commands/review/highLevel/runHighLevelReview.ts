@@ -1,12 +1,8 @@
-import { loadConfig } from "../../../shared/loadConfig";
-import { getCurrentPrNumber, getRepoInfo } from "../../prs/shared";
-import { fetchPrChangedFiles } from "../fetchPrDiffInfo";
-import { evaluateHighLevelChecks } from "./evaluateHighLevelChecks";
-import { fetchHighLevelPr } from "./fetchHighLevelPr";
-import type { HighLevelOverlaySubject } from "./openHighLevelOverlay";
+import { getCurrentPrNumber } from "../../prs/shared";
+import { announceSavedReview } from "./announceSavedReview";
+import { gatherHighLevelSubject } from "./gatherHighLevelSubject";
 import { openHighLevelOverlay } from "./openHighLevelOverlay";
 import { printHighLevelChecklist } from "./printHighLevelChecklist";
-import { resolveHighLevelConfig } from "./resolveHighLevelConfig";
 
 function resolvePrNumber(number: string | undefined): number {
 	if (number === undefined) return getCurrentPrNumber();
@@ -18,29 +14,13 @@ function resolvePrNumber(number: string | undefined): number {
 	return parsed;
 }
 
-function gather(number: string | undefined): HighLevelOverlaySubject {
-	const prNumber = resolvePrNumber(number);
-	const { org, repo } = getRepoInfo();
-	const pr = fetchHighLevelPr(prNumber, { org, repo });
-	const changedFiles = fetchPrChangedFiles(prNumber);
-	return {
-		repo: `${org}/${repo}`,
-		prNumber,
-		headRef: pr.headRef,
-		headSha: pr.headSha,
-		changedFileCount: changedFiles.length,
-		checks: evaluateHighLevelChecks({
-			body: pr.body,
-			changedFiles,
-			config: resolveHighLevelConfig(loadConfig()),
-		}),
-	};
-}
-
 export async function runHighLevelReview(
 	number: string | undefined,
+	options: { force?: boolean } = {},
 ): Promise<void> {
-	const subject = gather(number);
+	const force = options.force === true;
+	const subject = gatherHighLevelSubject(resolvePrNumber(number), force);
+	announceSavedReview(subject, force);
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId)
 		return printHighLevelChecklist(subject);

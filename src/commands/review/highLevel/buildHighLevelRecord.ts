@@ -34,9 +34,12 @@ export function buildHighLevelRecord(
 	subject: RecordSubject,
 	decision: PreviewDecision,
 ): HighLevelReviewRecord {
-	const { checks, ...pr } = subject;
+	const { checks, repo, prNumber, headRef, headSha } = subject;
 	return {
-		...pr,
+		repo,
+		prNumber,
+		headRef,
+		headSha,
 		verdict: decision.decision === "approve" ? "approve" : "request-changes",
 		reviewedAt: new Date().toISOString(),
 		items: checks.map((check) => toItem(check, decision)),

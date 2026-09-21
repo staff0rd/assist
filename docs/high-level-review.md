@@ -52,4 +52,11 @@ With `uiPaths` unset the UI-evidence check passes — a repo that has not said w
 
 `assist review --high-level [number]` checks the PR branch out, evaluates the checklist and opens it in the web UI preview pane, where the deterministic items show their pass or fail, the manual items are ticked, and any item can carry a comment. Finishing records an approve or request-changes verdict and writes it, the per-item state and the comments to `~/.assist/high-level-reviews/<repo>/<branch>-<head-sha>.json`. Outside an assist session the checklist is printed to the terminal instead.
 
+The two structural items carry their evidence in the pane, so the judgement is made without leaving it:
+
+- **Structure** expands to the changed-file tree. Directories roll their children's line counts up and a chain of single-child directories reads as one row, so the shape of the change is a glance rather than a scroll. Each file is marked added, deleted or modified, carries its `+`/`-` line counts, and links to its own GitHub diff for when line level is wanted after all.
+- **Critical diffs** expands to the full diff of every changed file matching `review.highLevel.criticalPaths`. With no critical paths configured, or none of them touched, the item says so rather than showing an empty box — it is still the reviewer's to tick.
+
+A review is keyed on the head SHA, so re-running against the same head reopens the saved one with its ticks and comments intact rather than starting over; `--force` discards it and starts fresh. A new push moves the head SHA, and so starts a new review.
+
 **Nothing is posted to GitHub.** The review is captured locally so the checklist can be got right before anything it produces reaches a PR.

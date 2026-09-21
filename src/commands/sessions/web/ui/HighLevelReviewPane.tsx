@@ -1,7 +1,8 @@
-import { Box, Divider, Stack } from "@mui/material";
+import { Box, Divider } from "@mui/material";
 import { useMemo } from "react";
 import type { PrPreview } from "../../shared/SessionInfoBase";
-import { HighLevelCheckGroup } from "./HighLevelCheckGroup";
+import { highLevelCheckDetails } from "./highLevelCheckDetails";
+import { HighLevelChecklistBody } from "./HighLevelChecklistBody";
 import { HighLevelReviewActions } from "./HighLevelReviewActions";
 import { highLevelDecisionDetails } from "./highLevelDecisionDetails";
 import { parseHighLevelPreview } from "./parseHighLevelPreview";
@@ -21,11 +22,12 @@ export function HighLevelReviewPane({
 		details: PrDecisionDetails,
 	) => void;
 }) {
-	const checks = useMemo(
+	const payload = useMemo(
 		() => parseHighLevelPreview(preview.body),
 		[preview.body],
 	);
-	const checklist = useHighLevelChecklist(checks);
+	const checklist = useHighLevelChecklist(payload.checks, payload.saved);
+	const details = useMemo(() => highLevelCheckDetails(payload), [payload]);
 
 	const decide = (decision: "approve" | "reject") =>
 		onDecision(decision, highLevelDecisionDetails(checklist.checklist()));
@@ -35,24 +37,16 @@ export function HighLevelReviewPane({
 			<PrPreviewHeader preview={preview} draft={false} />
 			<PreviewMetadataList items={preview.metadata ?? []} />
 			<Divider />
-			<Stack
-				spacing={2}
-				sx={{ flex: 1, minHeight: 0, overflowY: "auto", py: 2 }}
-			>
-				<HighLevelCheckGroup
-					heading="Evaluated for you"
-					checks={checks.filter((check) => check.kind === "deterministic")}
-					checklist={checklist}
-				/>
-				<HighLevelCheckGroup
-					heading="Yours to judge"
-					checks={checks.filter((check) => check.kind === "manual")}
-					checklist={checklist}
-				/>
-			</Stack>
+			<HighLevelChecklistBody
+				checks={payload.checks}
+				checklist={checklist}
+				details={details}
+			/>
 			<Divider />
 			<HighLevelReviewActions
-				failed={checks.filter((check) => check.status === "fail").length}
+				failed={
+					payload.checks.filter((check) => check.status === "fail").length
+				}
 				outstanding={checklist.outstanding}
 				onApprove={() => decide("approve")}
 				onRequestChanges={() => decide("reject")}

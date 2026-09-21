@@ -1,27 +1,24 @@
 import { useMemo, useState } from "react";
-import type { HighLevelCheckResult } from "../../../review/highLevel/types";
+import type {
+	HighLevelCheckResult,
+	HighLevelReviewRecord,
+} from "../../../review/highLevel/types";
 import type { PreviewChecklistItem } from "../../shared/PreviewDecision";
+import type { HighLevelItemState } from "./initialHighLevelState";
+import { initialHighLevelState } from "./initialHighLevelState";
 
-type ItemState = { ticked: boolean; comment: string };
-
-function initialState(
+export function useHighLevelChecklist(
 	checks: HighLevelCheckResult[],
-): Record<string, ItemState> {
-	return Object.fromEntries(
-		checks.map((check) => [
-			check.id,
-			{ ticked: check.status === "pass", comment: "" },
-		]),
+	saved?: HighLevelReviewRecord,
+) {
+	const [state, setState] = useState(() =>
+		initialHighLevelState(checks, saved),
 	);
-}
 
-export function useHighLevelChecklist(checks: HighLevelCheckResult[]) {
-	const [state, setState] = useState(() => initialState(checks));
-
-	const patch = (id: string, change: Partial<ItemState>) =>
+	const patch = (id: string, change: Partial<HighLevelItemState>) =>
 		setState((current) => ({
 			...current,
-			[id]: { ...current[id], ...change } as ItemState,
+			[id]: { ...current[id], ...change } as HighLevelItemState,
 		}));
 
 	const outstanding = useMemo(
@@ -34,11 +31,10 @@ export function useHighLevelChecklist(checks: HighLevelCheckResult[]) {
 
 	const checklist = (): PreviewChecklistItem[] =>
 		checks.map((check) => {
-			const item = state[check.id];
-			const comment = item?.comment.trim() ?? "";
+			const comment = state[check.id]?.comment.trim() ?? "";
 			return {
 				id: check.id,
-				ticked: item?.ticked === true,
+				ticked: state[check.id]?.ticked === true,
 				...(comment ? { comment } : {}),
 			};
 		});

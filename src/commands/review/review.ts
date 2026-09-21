@@ -24,9 +24,10 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	emitActivity({ kind: "command", name: "review" });
 	if (!options.number)
 		return options.highLevel
-			? runHighLevelReview(undefined)
+			? runHighLevelReview(undefined, { force: options.force })
 			: reviewPr(invokedIn, options);
 	await checkoutPr(options.number);
-	if (options.highLevel) return runHighLevelReview(options.number);
+	if (options.highLevel)
+		return runHighLevelReview(options.number, { force: options.force });
 	return reviewPr(resolveRepoRoot(), options);
 }

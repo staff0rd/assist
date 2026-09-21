@@ -1,7 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { HighLevelCheckResult } from "../../../review/highLevel/types";
+import type {
+	HighLevelCheckResult,
+	HighLevelPreviewPayload,
+} from "../../../review/highLevel/types";
 import type { PrPreview } from "../../shared/SessionInfoBase";
 import { HighLevelReviewPane } from "./HighLevelReviewPane";
 
@@ -32,11 +35,53 @@ const checks: HighLevelCheckResult[] = [
 	},
 ];
 
+const payload: HighLevelPreviewPayload = {
+	checks,
+	structure: {
+		tree: [
+			{
+				kind: "dir",
+				name: "src",
+				path: "src",
+				additions: 12,
+				deletions: 3,
+				children: [
+					{
+						kind: "file",
+						name: "app.ts",
+						path: "src/app.ts",
+						status: "modified",
+						additions: 12,
+						deletions: 3,
+						diffUrl: "https://github.com/org/repo/pull/42/files#diff-abc",
+					},
+				],
+			},
+		],
+		added: 0,
+		removed: 0,
+		modified: 1,
+		additions: 12,
+		deletions: 3,
+	},
+	criticalDiffs: [
+		{
+			path: "schema.graphql",
+			status: "modified",
+			additions: 1,
+			deletions: 1,
+			diffUrl: "https://github.com/org/repo/pull/42/files#diff-def",
+			patch: "@@ -1 +1 @@\n-type Old\n+type New",
+		},
+	],
+	criticalPaths: ["**/*.graphql"],
+};
+
 function preview(overrides: Partial<PrPreview> = {}): PrPreview {
 	return {
 		requestId: "req-1",
 		title: "High-level review of org/repo#42",
-		body: JSON.stringify(checks),
+		body: JSON.stringify(payload),
 		prNumber: 42,
 		kind: "high-level-review",
 		metadata: [{ label: "Changed files", value: "12" }],
@@ -119,6 +164,91 @@ describe("HighLevelReviewPane", () => {
 				]),
 			}),
 		);
+	});
+
+	it("backs the structure item with the changed-file tree and diff links", () => {
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+
+		expect(screen.getByText("Changed files (1)")).toBeTruthy();
+		expect(screen.getByText("src")).toBeTruthy();
+		expect(screen.getByText("app.ts")).toBeTruthy();
+		expect(
+			screen.getByLabelText("Open src/app.ts on GitHub").getAttribute("href"),
+		).toBe("https://github.com/org/repo/pull/42/files#diff-abc");
+	});
+
+	it("backs the critical-diff item with the full patch", () => {
+		const criticalCheck: HighLevelCheckResult = {
+			id: "critical-diffs-correct",
+			kind: "manual",
+			title: "The critical-file diffs are correct",
+			backing: "Full diffs of the critical files",
+			status: "manual",
+			reason: "Full diffs of the critical files",
+		};
+		render(
+			<HighLevelReviewPane
+				preview={preview({
+					body: JSON.stringify({
+						...payload,
+						checks: [...checks, criticalCheck],
+					}),
+				})}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		expect(screen.getByText("Critical diffs (1)")).toBeTruthy();
+		expect(screen.getByText("schema.graphql")).toBeTruthy();
+		expect(screen.getByText("+type New")).toBeTruthy();
+		expect(screen.getByText("-type Old")).toBeTruthy();
+	});
+
+	it("reopens a saved review with its ticks and comments", () => {
+		render(
+			<HighLevelReviewPane
+				preview={preview({
+					body: JSON.stringify({
+						...payload,
+						saved: {
+							repo: "org/repo",
+							prNumber: 42,
+							headRef: "feat/thing",
+							headSha: "abc123",
+							verdict: "request-changes",
+							reviewedAt: "2026-01-01T00:00:00.000Z",
+							items: [
+								{
+									id: "structure-sensible",
+									kind: "manual",
+									title: "The structure of the change is sensible",
+									status: "manual",
+									reason: "tree",
+									ticked: true,
+									comment: "looked fine",
+								},
+							],
+						},
+					}),
+				})}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		expect(
+			(
+				screen.getByLabelText(
+					"The structure of the change is sensible",
+				) as HTMLInputElement
+			).checked,
+		).toBe(true);
+		expect(
+			(
+				screen.getByLabelText(
+					"Comment on The structure of the change is sensible",
+				) as HTMLTextAreaElement
+			).value,
+		).toBe("looked fine");
 	});
 
 	it("survives a body that is not a checklist", () => {
