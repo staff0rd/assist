@@ -1,3 +1,10 @@
+## [0.680.1](https://github.com/staff0rd/assist/compare/v0.680.0...v0.680.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* theme the high-level diff viewer ([1ee2ce8](https://github.com/staff0rd/assist/commit/1ee2ce8f127a2fe5e471aa8628b2340950bf7605)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.680.0](https://github.com/staff0rd/assist/compare/v0.679.0...v0.680.0) (2026-09-21)
 
 
