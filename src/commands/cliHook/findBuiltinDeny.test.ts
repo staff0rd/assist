@@ -198,6 +198,40 @@ describe("findBuiltinDeny git commit", () => {
 	});
 });
 
+describe("findBuiltinDeny npm run", () => {
+	it("denies 'npm run <script>' with a redirect to 'assist run'", () => {
+		const decision = findBuiltinDeny(["npm run build"]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("assist run");
+		expect(decision?.permissionDecisionReason).toContain("cliHook.blockNpmRun");
+	});
+
+	it("denies a bare 'npm run'", () => {
+		expect(findBuiltinDeny(["npm run"])?.permissionDecision).toBe("deny");
+	});
+
+	it("denies 'npm run' buried in a compound command part", () => {
+		const decision = findBuiltinDeny(["cd /repo", "npm run test:unit"]);
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("denies 'npm run' in a raw command the prefix path can't decompose", () => {
+		const decision = findBuiltinDenyRaw("cd /repo && npm run build -- --watch");
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("does not deny 'npm install', 'npm ci' or 'npm test'", () => {
+		expect(findBuiltinDeny(["npm install"])).toBeUndefined();
+		expect(findBuiltinDeny(["npm install --save-dev vitest"])).toBeUndefined();
+		expect(findBuiltinDeny(["npm ci"])).toBeUndefined();
+		expect(findBuiltinDeny(["npm test"])).toBeUndefined();
+	});
+
+	it("does not deny 'assist run'", () => {
+		expect(findBuiltinDeny(["assist run build"])).toBeUndefined();
+	});
+});
+
 describe("findBuiltinDeny branch creation", () => {
 	it("denies 'git checkout -b <name>' with a redirect to /branch", () => {
 		const decision = findBuiltinDeny(["git checkout -b feature-x"]);

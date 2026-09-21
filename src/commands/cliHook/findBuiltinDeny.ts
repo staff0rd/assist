@@ -40,6 +40,11 @@ const BUILTIN_DENIES: { pattern: string; message: string }[] = [
 		message:
 			"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead.",
 	},
+	{
+		pattern: "npm run",
+		message:
+			"Do not run 'npm run' directly. Use 'assist run <name>' for a configured command, or 'assist verify' / 'assist build'. If this repo genuinely needs npm run, set cliHook.blockNpmRun to false in its assist.yml.",
+	},
 ];
 
 const GH_ISSUE_API_MESSAGE =

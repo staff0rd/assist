@@ -165,9 +165,9 @@ describe("cliHook config deny", () => {
 
 	it("falls through to settings deny when no config deny matches", async () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-		mockReadStdin.mockResolvedValue(makeInput("npm run build"));
+		mockReadStdin.mockResolvedValue(makeInput("npm install express"));
 		mockMatchesConfigDeny.mockReturnValue(undefined);
-		mockMatchesDeny.mockReturnValue("npm run");
+		mockMatchesDeny.mockReturnValue("npm install");
 
 		await cliHook();
 
@@ -176,7 +176,7 @@ describe("cliHook config deny", () => {
 				hookSpecificOutput: {
 					hookEventName: "PreToolUse",
 					permissionDecision: "deny",
-					permissionDecisionReason: "Denied by settings: npm run",
+					permissionDecisionReason: "Denied by settings: npm install",
 				},
 			}),
 		);
@@ -352,16 +352,18 @@ describe("cliHook deny logging", () => {
 
 	it("logs settings deny with correct reason", async () => {
 		const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-		mockReadStdin.mockResolvedValue(makeInput("npm run build", "PowerShell"));
-		mockMatchesDeny.mockReturnValue("npm run");
+		mockReadStdin.mockResolvedValue(
+			makeInput("npm install express", "PowerShell"),
+		);
+		mockMatchesDeny.mockReturnValue("npm install");
 
 		await cliHook();
 
 		expect(mockLogDeniedToolCall).toHaveBeenCalledWith(
 			expect.objectContaining({
 				tool: "PowerShell",
-				command: "npm run build",
-				denyReason: "Denied by settings: npm run",
+				command: "npm install express",
+				denyReason: "Denied by settings: npm install",
 			}),
 		);
 		consoleSpy.mockRestore();
