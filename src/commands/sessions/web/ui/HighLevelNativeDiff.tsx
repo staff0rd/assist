@@ -1,6 +1,8 @@
+import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { parseDiff, type ViewType } from "react-diff-view";
 import type { HighLevelFileStatus } from "../../../review/highLevel/types";
+import { diffSx } from "./diffSx";
 import { FileDiffBody } from "./FileDiffBody";
 import { HighLevelDiffNote } from "./HighLevelDiffNote";
 import { highLevelUnifiedDiff } from "./highLevelUnifiedDiff";
@@ -37,13 +39,13 @@ export function HighLevelNativeDiff({
 		);
 
 	return (
-		<>
+		<Box sx={[diffSx, { pt: 0.5, minWidth: 0 }]}>
 			<FileDiffBody file={file} path={path} viewType={viewType} />
 			{truncated && (
 				<HighLevelDiffNote>
 					Truncated — the rest of this diff is on GitHub.
 				</HighLevelDiffNote>
 			)}
-		</>
+		</Box>
 	);
 }
