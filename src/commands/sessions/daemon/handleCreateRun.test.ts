@@ -169,7 +169,11 @@ describe("handleCreateRun", () => {
 
 	it("rejects a second run in the same group", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "api" });
-		const existing = { id: "1", name: "run: api" } as unknown as Session;
+		const existing = {
+			id: "1",
+			name: "run: api",
+			serverGroup: "api",
+		} as unknown as Session;
 		const m = fakeManager(existing, "api");
 		const c = client();
 
@@ -181,7 +185,7 @@ describe("handleCreateRun", () => {
 				type: "run-conflict",
 				runName: "api-alt",
 				cwd: "/b",
-				existing: { id: "1", name: "run: api" },
+				existing: { id: "1", name: "run: api", group: "api" },
 			}),
 		);
 	});

@@ -10,6 +10,7 @@ export function handleRunConflict(
 			name: string;
 			cwd?: string;
 			port?: number;
+			group?: string;
 		},
 		runName: msg.runName as string | undefined,
 		cwd: msg.cwd as string | undefined,

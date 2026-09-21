@@ -4,7 +4,13 @@ import { useCallback, useState } from "react";
 export type SuccessNotice = { message: string; sessionId: string | null };
 
 export type ServerConflict = {
-	existing: { id: string; name: string; cwd?: string; port?: number };
+	existing: {
+		id: string;
+		name: string;
+		cwd?: string;
+		port?: number;
+		group?: string;
+	};
 	runName?: string;
 	cwd?: string;
 	sessionId?: string;

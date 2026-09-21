@@ -5,6 +5,7 @@ export type ServerConflictInfo = {
 	name: string;
 	cwd?: string;
 	port?: number;
+	group?: string;
 };
 
 export function serverConflictInfo(session: Session): ServerConflictInfo {
@@ -13,5 +14,6 @@ export function serverConflictInfo(session: Session): ServerConflictInfo {
 		name: session.name,
 		cwd: session.cwd,
 		port: session.serverPort,
+		group: session.serverGroup,
 	};
 }

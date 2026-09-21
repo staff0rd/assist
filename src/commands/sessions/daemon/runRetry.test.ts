@@ -56,6 +56,7 @@ describe("runRetry", () => {
 			name: "run: dev",
 			cwd: undefined,
 			port: 3000,
+			group: "default",
 		});
 		expect(retry).not.toHaveBeenCalled();
 	});
