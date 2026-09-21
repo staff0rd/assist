@@ -1,3 +1,10 @@
+## [0.675.1](https://github.com/staff0rd/assist/compare/v0.675.0...v0.675.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* isolate tests from resume env ([cb37cf7](https://github.com/staff0rd/assist/commit/cb37cf7211e02cbabbecca024db98c9aa0ff7ea8))
+
 # [0.675.0](https://github.com/staff0rd/assist/compare/v0.674.0...v0.675.0) (2026-09-21)
 
 
