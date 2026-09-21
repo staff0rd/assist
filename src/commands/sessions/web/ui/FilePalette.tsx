@@ -5,7 +5,7 @@ import { filePaletteMessage } from "./filePaletteMessage";
 import { FilePaletteResults } from "./FilePaletteResults";
 import { FilterInput } from "./FilterInput";
 import { useFileSearch } from "./useFileSearch";
-import { useRepoKeyboardNav } from "./useRepoKeyboardNav";
+import { useListKeyboardNav } from "./useListKeyboardNav";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 const paperSx = { mt: 6, alignSelf: "flex-start" } as const;
@@ -24,7 +24,7 @@ export function FilePalette({ onClose }: { onClose: () => void }) {
 			)}`,
 		);
 
-	const { highlight, setHighlight, onKeyDown } = useRepoKeyboardNav(
+	const { highlight, setHighlight, onKeyDown } = useListKeyboardNav(
 		search.files,
 		query,
 		openFile,

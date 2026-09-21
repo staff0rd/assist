@@ -1,7 +1,7 @@
 import MenuItem from "@mui/material/MenuItem";
-import { useEffect, useRef } from "react";
 import { isWindowsCwd } from "./isWindowsCwd";
 import { repoName } from "./RepoList";
+import { useHighlightScroll } from "./useHighlightScroll";
 import { WindowsBadge } from "./WindowsBadge";
 
 export function RepoMenuItem({
@@ -17,11 +17,7 @@ export function RepoMenuItem({
 	onHover: () => void;
 	onSelect: () => void;
 }) {
-	const ref = useRef<HTMLLIElement>(null);
-
-	useEffect(() => {
-		if (highlighted) ref.current?.scrollIntoView({ block: "nearest" });
-	}, [highlighted]);
+	const ref = useHighlightScroll(highlighted);
 
 	return (
 		<MenuItem

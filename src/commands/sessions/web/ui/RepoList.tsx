@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { dropdownStyle } from "./DropdownWrapper";
 import { FilterInput } from "./FilterInput";
 import { RepoMenuList } from "./RepoMenuList";
-import { useRepoKeyboardNav } from "./useRepoKeyboardNav";
+import { useListKeyboardNav } from "./useListKeyboardNav";
 
 export function repoName(cwd: string): string {
 	const sep = cwd.includes("\\") ? "\\" : "/";
@@ -38,7 +38,7 @@ export function RepoList({
 		? repos.filter((cwd) => cwd.toLowerCase().includes(query))
 		: repos;
 
-	const { highlight, setHighlight, onKeyDown } = useRepoKeyboardNav(
+	const { highlight, setHighlight, onKeyDown } = useListKeyboardNav(
 		filtered,
 		query,
 		onSelect,

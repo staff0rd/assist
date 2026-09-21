@@ -1,9 +1,9 @@
 import { type KeyboardEvent, useEffect, useState } from "react";
 
-export function useRepoKeyboardNav(
-	filtered: string[],
+export function useListKeyboardNav<T>(
+	filtered: T[],
 	resetKey: string,
-	onSelect: (cwd: string) => void,
+	onSelect: (item: T) => void,
 	close: () => void,
 ) {
 	const [highlight, setHighlight] = useState(0);
@@ -22,9 +22,9 @@ export function useRepoKeyboardNav(
 			if (len > 0) setHighlight((h) => (h - 1 + len) % len);
 		} else if (e.key === "Enter") {
 			e.preventDefault();
-			const cwd = filtered[highlight];
-			if (cwd) {
-				onSelect(cwd);
+			const item = filtered[highlight];
+			if (item !== undefined) {
+				onSelect(item);
 				close();
 			}
 		} else if (e.key === "Escape") {

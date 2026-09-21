@@ -27,10 +27,8 @@ export function ReviewDropdown({
 				{(close) => (
 					<ReviewDropdownContent
 						cwd={cwd}
-						onPick={(pr) => {
-							setSelectedPr(pr);
-							close();
-						}}
+						onPick={setSelectedPr}
+						close={close}
 					/>
 				)}
 			</DropdownWrapper>
