@@ -1,3 +1,10 @@
+# [0.677.0](https://github.com/staff0rd/assist/compare/v0.676.0...v0.677.0) (2026-09-21)
+
+
+### Features
+
+* back high-level review items with views ([1e74e12](https://github.com/staff0rd/assist/commit/1e74e1265bd9ad79adf26336e65e380b22b85056)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.676.0](https://github.com/staff0rd/assist/compare/v0.675.1...v0.676.0) (2026-09-21)
 
 
