@@ -1,3 +1,10 @@
+# [0.681.0](https://github.com/staff0rd/assist/compare/v0.680.1...v0.681.0) (2026-09-22)
+
+
+### Features
+
+* configure high-level review keys ([e464675](https://github.com/staff0rd/assist/commit/e4646750712cbe7cdd5f1af5f6f16700ea861dee)), closes [hi#level](https://github.com/hi/issues/level)
+
 ## [0.680.1](https://github.com/staff0rd/assist/compare/v0.680.0...v0.680.1) (2026-09-21)
 
 
