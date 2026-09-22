@@ -1,3 +1,10 @@
+## [0.684.1](https://github.com/staff0rd/assist/compare/v0.684.0...v0.684.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* releases configure writes, agent derives ([6f786ea](https://github.com/staff0rd/assist/commit/6f786ea7488852dc267eafb0ab441516601d73e6))
+
 # [0.684.0](https://github.com/staff0rd/assist/compare/v0.683.0...v0.684.0) (2026-09-22)
 
 
