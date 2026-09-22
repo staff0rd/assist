@@ -2,63 +2,60 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { useCallback, useMemo, useState } from "react";
 import type { ReleaseStreamState } from "../releases/types";
-import { ReleaseEnvironmentNode } from "./ReleaseEnvironmentNode";
+import { ReleaseGraph } from "./ReleaseGraph";
+import type { ReleaseLayer } from "./releaseLayerLabels";
+import { ReleaseStreamRail } from "./ReleaseStreamRail";
+import { releaseSummaryPills } from "./releaseSummaryPills";
 
-const streamSx = { display: "flex", alignItems: "stretch" } as const;
-
-const railSx = {
-	flex: "0 0 200px",
-	borderRight: 1,
-	borderColor: "divider",
-	px: 1.5,
-	py: 1,
-} as const;
-
-const bodySx = {
-	flex: "1 1 auto",
-	minWidth: 0,
+const streamSx = {
 	display: "flex",
-	alignItems: "center",
-	gap: 2,
-	overflowX: "auto",
-	p: 1.5,
+	alignItems: "stretch",
+	flexDirection: { xs: "column", md: "row" },
 } as const;
 
-const metaSx = { fontFamily: "monospace", display: "block" } as const;
+const noticeSx = { flex: "1 1 auto", minWidth: 0, p: 1.5 } as const;
 
-export function ReleaseStreamRow({ stream }: { stream: ReleaseStreamState }) {
+export function ReleaseStreamRow({
+	stream,
+	layer,
+}: {
+	stream: ReleaseStreamState;
+	layer: ReleaseLayer;
+}) {
+	const [highlight, setHighlight] = useState<Set<string> | null>(null);
+	const pills = useMemo(
+		() => releaseSummaryPills(stream, layer),
+		[stream, layer],
+	);
+	const onHighlight = useCallback(
+		(ids: string[] | null) => setHighlight(ids ? new Set(ids) : null),
+		[],
+	);
+
 	return (
 		<Paper variant="outlined" sx={streamSx}>
-			<Box sx={railSx}>
-				<Typography variant="subtitle2">{stream.name}</Typography>
-				<Typography variant="caption" color="text.secondary" sx={metaSx}>
-					{stream.repo}
-				</Typography>
-				<Typography variant="caption" color="text.secondary" sx={metaSx}>
-					{stream.workflow}
-				</Typography>
-			</Box>
-			<Box sx={bodySx}>
-				{stream.error ? (
-					<Alert severity="warning" variant="outlined" sx={{ flex: 1 }}>
+			<ReleaseStreamRail
+				stream={stream}
+				pills={pills}
+				onHighlight={onHighlight}
+			/>
+			{stream.error ? (
+				<Box sx={noticeSx}>
+					<Alert severity="warning" variant="outlined">
 						{stream.error}
 					</Alert>
-				) : stream.environments.length === 0 ? (
+				</Box>
+			) : stream.nodes.length === 0 ? (
+				<Box sx={noticeSx}>
 					<Typography variant="body2" color="text.secondary">
-						No environment nodes declared.
+						No nodes declared for this stream.
 					</Typography>
-				) : (
-					stream.environments.map((environment) => (
-						<ReleaseEnvironmentNode
-							key={environment.id}
-							environment={environment}
-							repo={stream.repo}
-							defaultBranch={stream.defaultBranch}
-						/>
-					))
-				)}
-			</Box>
+				</Box>
+			) : (
+				<ReleaseGraph stream={stream} layer={layer} highlight={highlight} />
+			)}
 		</Paper>
 	);
 }

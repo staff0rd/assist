@@ -434,7 +434,14 @@ Requires `assist` installed on the Windows host.
 
 ### Releases
 
-The **Releases** tab draws one row per declared release stream: a left rail naming the stream, its repo and its release workflow, and beside it the stream's environments with what is live in each — the commit of its newest deployment whose status is `success`, how long ago that went live, and how many commits behind the repo's default branch it is. A deployment still `waiting` on an approval is gated, not live, so it is passed over. Every timestamp renders in the viewer's own timezone, and every glyph and short token carries a tooltip on hover and on keyboard focus. A stream whose repo cannot be read shows its error in place of its environments, leaving the other streams intact. Live state is read from the repo's GitHub deployments, so two streams deploying into the same environment read the same commit.
+The **Releases** tab draws one row per declared release stream: a left rail naming the stream, its repo, its release workflow, the tip of the default branch, a link to the latest run and a summary pill per group of environments, and beside it the promotion graph the stream declares. Nodes sit in columns by edge depth, so a fan-in gate or a missing step is something you see rather than something you decode, and an SVG edge joins each pair — solid where the promotion has happened, dashed where the target does not carry the source's commit. Hovering or focusing a summary pill dims the graph and rings exactly the nodes that pill counts.
+
+Two layers sit over the one graph, toggled rather than shown side by side:
+
+- **What's live** — per environment, the commit of its newest deployment whose status is `success`, how long ago that went live, and how many commits behind the repo's default branch it is. A deployment still `waiting` on an approval is gated, not live, so it is passed over and shown on its own `queued` line instead.
+- **Latest run** — per node, the state of its job in the latest run of the stream's workflow: how long it took, how long it has been sitting on an environment approval, or that the run never got there. Jobs are matched to nodes by name, most specific node first, so `Deploy to US UAT` goes to the `us-uat` node rather than the `uat` one.
+
+Every timestamp renders in the viewer's own timezone, and every glyph and short token carries a tooltip on hover and on keyboard focus. Commit SHAs link to the commit, and their tooltip carries the commit subject and author. A stream whose repo or workflow cannot be read shows its error in place of its graph, leaving the other streams intact. Live state is read from the repo's GitHub deployments, so two streams deploying into the same environment read the same commit.
 
 Topology is declared, not derived: assist does not parse workflow YAML at runtime.
 

@@ -10,6 +10,7 @@ type Deployment = {
 	environment: string;
 	createdAt: string;
 	commitOid: string;
+	commit: { messageHeadline: string; author: { name: string } } | null;
 	latestStatus: { state: string; createdAt: string } | null;
 };
 
@@ -17,7 +18,14 @@ function withDeployments(nodes: Deployment[], defaultBranch = "main"): void {
 	ghJsonMock.mockResolvedValue({
 		data: {
 			repository: {
-				defaultBranchRef: { name: defaultBranch },
+				defaultBranchRef: {
+					name: defaultBranch,
+					target: {
+						oid: "head999",
+						messageHeadline: "fix: the tip",
+						author: { name: "Robin" },
+					},
+				},
 				deployments: { nodes },
 			},
 		},
@@ -29,6 +37,7 @@ function deployment(overrides: Partial<Deployment> = {}): Deployment {
 		environment: "prod",
 		createdAt: "2026-09-18T00:00:00Z",
 		commitOid: "aaa111",
+		commit: { messageHeadline: "feat: a thing", author: { name: "Sam" } },
 		latestStatus: { state: "SUCCESS", createdAt: "2026-09-18T00:05:00Z" },
 		...overrides,
 	};
@@ -51,12 +60,12 @@ describe("liveDeployments", () => {
 		const { live } = await liveDeployments("/repo", "owner/name", ["prod"]);
 
 		expect(live.get("prod")).toEqual({
-			sha: "new222",
+			commit: { sha: "new222", subject: "feat: a thing", author: "Sam" },
 			at: "2026-09-19T00:00:00Z",
 		});
 	});
 
-	it("treats a waiting deployment as not live", async () => {
+	it("treats a waiting deployment as queued rather than live", async () => {
 		withDeployments([
 			deployment({ commitOid: "live111" }),
 			deployment({
@@ -65,17 +74,49 @@ describe("liveDeployments", () => {
 			}),
 		]);
 
-		const { live } = await liveDeployments("/repo", "owner/name", ["prod"]);
+		const { live, queued } = await liveDeployments("/repo", "owner/name", [
+			"prod",
+		]);
 
-		expect(live.get("prod")?.sha).toBe("live111");
+		expect(live.get("prod")?.commit.sha).toBe("live111");
+		expect(queued.get("prod")?.commit.sha).toBe("gated222");
 	});
 
-	it("reports the repository's default branch", async () => {
+	it("drops a queued commit once it deploys successfully", async () => {
+		withDeployments([
+			deployment({
+				commitOid: "next222",
+				latestStatus: { state: "WAITING", createdAt: "2026-09-19T00:00:00Z" },
+			}),
+			deployment({
+				commitOid: "next222",
+				latestStatus: { state: "SUCCESS", createdAt: "2026-09-19T01:00:00Z" },
+			}),
+		]);
+
+		const { live, queued } = await liveDeployments("/repo", "owner/name", [
+			"prod",
+		]);
+
+		expect(live.get("prod")?.commit.sha).toBe("next222");
+		expect(queued.has("prod")).toBe(false);
+	});
+
+	it("reports the repository's default branch and its head commit", async () => {
 		withDeployments([], "trunk");
 
-		const { defaultBranch } = await liveDeployments("/repo", "owner/name", []);
+		const { defaultBranch, head } = await liveDeployments(
+			"/repo",
+			"owner/name",
+			[],
+		);
 
 		expect(defaultBranch).toBe("trunk");
+		expect(head).toEqual({
+			sha: "head999",
+			subject: "fix: the tip",
+			author: "Robin",
+		});
 	});
 
 	it("rejects a repo that is not owner/name", async () => {

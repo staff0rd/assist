@@ -1,54 +1,32 @@
+import {
+	type CommitNode,
+	type DeploymentNode,
+	deploymentMaps,
+	type LiveDeployment,
+	releaseCommit,
+} from "./deploymentMaps";
+import { deploymentsQuery } from "./deploymentsQuery";
 import { ghJson } from "./ghJson";
+import type { ReleaseCommit } from "./types";
 
-export type LiveDeployment = { sha: string; at: string };
-
-type RepoDeployments = {
+export type RepoDeployments = {
 	defaultBranch: string | null;
+	head: ReleaseCommit | null;
 	live: Map<string, LiveDeployment>;
-};
-
-type DeploymentNode = {
-	environment: string | null;
-	createdAt: string;
-	commitOid: string | null;
-	latestStatus: { state: string; createdAt: string } | null;
+	queued: Map<string, LiveDeployment>;
 };
 
 type DeploymentsResponse = {
 	data?: {
 		repository?: {
-			defaultBranchRef?: { name: string } | null;
+			defaultBranchRef?: { name: string; target?: CommitNode | null } | null;
 			deployments?: { nodes?: (DeploymentNode | null)[] };
 		} | null;
 	};
 };
 
-const DEPLOYMENT_PAGE = 100;
-
-function query(environments: string[]): string {
-	return `query($owner:String!,$name:String!){
-  repository(owner:$owner,name:$name){
-    defaultBranchRef{ name }
-    deployments(environments:${JSON.stringify(environments)}, last:${DEPLOYMENT_PAGE}, orderBy:{field:CREATED_AT,direction:ASC}){
-      nodes{ environment createdAt commitOid latestStatus{ state createdAt } }
-    }
-  }
-}`;
-}
-
-function newestSuccessful(
-	nodes: (DeploymentNode | null)[],
-): Map<string, LiveDeployment> {
-	const live = new Map<string, LiveDeployment>();
-	for (const node of nodes) {
-		if (!node?.environment || !node.commitOid) continue;
-		if (node.latestStatus?.state !== "SUCCESS") continue;
-		live.set(node.environment, {
-			sha: node.commitOid,
-			at: node.latestStatus.createdAt ?? node.createdAt,
-		});
-	}
-	return live;
+function headCommit(node: CommitNode | null | undefined): ReleaseCommit | null {
+	return node?.oid ? releaseCommit(node.oid, node) : null;
 }
 
 export async function liveDeployments(
@@ -62,7 +40,7 @@ export async function liveDeployments(
 		"api",
 		"graphql",
 		"-f",
-		`query=${query(environments)}`,
+		`query=${deploymentsQuery(environments)}`,
 		"-f",
 		`owner=${owner}`,
 		"-f",
@@ -72,6 +50,7 @@ export async function liveDeployments(
 	if (!repository) throw new Error(`Repository not readable: ${repo}`);
 	return {
 		defaultBranch: repository.defaultBranchRef?.name ?? null,
-		live: newestSuccessful(repository.deployments?.nodes ?? []),
+		head: headCommit(repository.defaultBranchRef?.target),
+		...deploymentMaps(repository.deployments?.nodes ?? []),
 	};
 }

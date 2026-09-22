@@ -1,46 +1,56 @@
-import type { ReleaseEnvironmentState } from "../releases/types";
+import type { ReleaseNodeState } from "../releases/types";
+import type { ReleaseTone } from "./releaseToneColors";
 
-type ReleaseNodeTone = "ok" | "drift" | "idle";
-
-type ReleaseNodeState = {
-	tone: ReleaseNodeTone;
+export type ReleaseMarkState = {
+	tone: ReleaseTone;
 	glyph: string;
 	tooltip: string;
 };
 
-export const releaseToneColors: Record<ReleaseNodeTone, string> = {
-	ok: "success.main",
-	drift: "error.main",
-	idle: "text.secondary",
-};
+export type ReleaseRunMark = ReleaseMarkState & { short: string };
 
 export function releaseNodeState(
-	environment: ReleaseEnvironmentState,
+	node: ReleaseNodeState,
 	defaultBranch: string | null,
-): ReleaseNodeState {
+): ReleaseMarkState {
 	const branch = defaultBranch ?? "the default branch";
-	if (!environment.sha)
+	if (node.kind !== "environment")
+		return {
+			tone: "idle",
+			glyph: "○",
+			tooltip:
+				node.kind === "gate"
+					? "An approval step, not a deployable environment"
+					: "A build step, not a deployable environment",
+		};
+	if (!node.live)
 		return {
 			tone: "idle",
 			glyph: "○",
 			tooltip: "No successful deployment recorded for this environment",
 		};
-	if (environment.behind === null)
+	if (node.behind === null)
 		return {
 			tone: "idle",
 			glyph: "●",
 			tooltip: `Live, but its distance from ${branch} could not be read`,
 		};
-	if (environment.behind === 0)
+	if (node.behind === 0)
 		return {
 			tone: "ok",
 			glyph: "●",
 			tooltip: `Running the latest commit on ${branch}`,
 		};
-	const commits = environment.behind === 1 ? "commit" : "commits";
+	const commits = node.behind === 1 ? "commit" : "commits";
+	if (node.queued)
+		return {
+			tone: "gate",
+			glyph: "◑",
+			tooltip: `Behind ${branch} by ${node.behind} ${commits}, with a newer commit waiting for approval`,
+		};
 	return {
 		tone: "drift",
 		glyph: "▲",
-		tooltip: `Behind ${branch} by ${environment.behind} ${commits}`,
+		tooltip: `Behind ${branch} by ${node.behind} ${commits}, and nothing is queued to fix it`,
 	};
 }

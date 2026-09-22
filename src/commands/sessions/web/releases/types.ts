@@ -1,10 +1,39 @@
-export type ReleaseEnvironmentState = {
+export type ReleaseCommit = {
+	sha: string;
+	subject: string | null;
+	author: string | null;
+};
+
+export type ReleaseNodeKind = "environment" | "build" | "gate";
+
+export type ReleaseRunNodeStatus = "ok" | "gate" | "running" | "fail" | "idle";
+
+export type ReleaseRunNodeState = {
+	status: ReleaseRunNodeStatus;
+	conclusion: string | null;
+	startedAt: string | null;
+	completedAt: string | null;
+	url: string | null;
+};
+
+export type ReleaseNodeState = {
 	id: string;
-	environment: string;
+	kind: ReleaseNodeKind;
+	environment: string | null;
 	label: string;
-	sha: string | null;
+	live: ReleaseCommit | null;
 	deployedAt: string | null;
 	behind: number | null;
+	queued: ReleaseCommit | null;
+	run: ReleaseRunNodeState | null;
+};
+
+export type ReleaseRunState = {
+	number: number;
+	url: string;
+	headSha: string;
+	status: string;
+	startedAt: string | null;
 };
 
 export type ReleaseStreamState = {
@@ -12,6 +41,9 @@ export type ReleaseStreamState = {
 	repo: string;
 	workflow: string;
 	defaultBranch: string | null;
-	environments: ReleaseEnvironmentState[];
+	head: ReleaseCommit | null;
+	nodes: ReleaseNodeState[];
+	edges: [string, string][];
+	run: ReleaseRunState | null;
 	error?: string;
 };
