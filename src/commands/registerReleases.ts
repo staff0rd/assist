@@ -13,7 +13,7 @@ export function registerReleases(parent: Command): void {
 	configHelp(
 		releasesCommand,
 		releasesConfigHelp,
-		"Streams are declared by 'assist releases configure <owner/repo>' or by hand in assist.yml, and rendered by the /releases page of the sessions dashboard.",
+		"Streams are declared by '/releases-configure', which derives them from the repo's workflows and writes them with 'assist releases configure', and rendered by the /releases page of the sessions dashboard.",
 	);
 
 	releasesCommand
@@ -22,9 +22,18 @@ export function registerReleases(parent: Command): void {
 		.action(releasesList);
 
 	releasesCommand
-		.command("configure <owner/repo>")
+		.command("configure")
 		.description(
-			"Derive a repo's promotion topology with Claude and write it to releases.streams",
+			"Validate release streams and write them to releases.streams for the current repo",
+		)
+		.requiredOption(
+			"--streams <file>",
+			"JSON or YAML array of streams to declare; '-' reads stdin",
+		)
+		.option(
+			"--scope <project|repo>",
+			"project assist.yml or ~/.assist.yml repo block",
+			"project",
 		)
 		.action(releasesConfigure);
 }

@@ -1,21 +1,50 @@
 import chalk from "chalk";
-import { spawnClaude } from "../../shared/spawnClaude";
-import { buildConfigurePrompt } from "./buildConfigurePrompt";
-import { readRepoStreams } from "./readRepoStreams";
+import { loadConfig } from "../../shared/loadConfig";
+import type { ConfigKeyScope } from "../config/writeConfigKeys";
+import { checkStreamGraph } from "./checkStreamGraph";
+import { readStreamsInput } from "./readStreamsInput";
 import { reportDerivedStreams } from "./reportDerivedStreams";
+import { withCurrentRepo } from "./withCurrentRepo";
+import { writeReleaseStreams } from "./writeReleaseStreams";
 
-const REPO_RE = /^[^/\s]+\/[^/\s]+$/;
+type ConfigureOptions = { streams?: string; scope?: string };
 
-export async function releasesConfigure(repo: string): Promise<void> {
-	if (!REPO_RE.test(repo)) {
-		console.error(chalk.red(`Expected <owner/repo>, got '${repo}'.`));
-		process.exitCode = 1;
-		return;
-	}
-	const before = readRepoStreams(repo);
-	const { done } = spawnClaude(buildConfigurePrompt(repo), {
-		allowEdits: true,
-	});
-	await done;
-	reportDerivedStreams(repo, "streams" in before ? before.streams : []);
+function fail(message: string, details: string[] = []): void {
+	console.error(chalk.red(message));
+	for (const detail of details) console.error(chalk.red(`  ${detail}`));
+	process.exitCode = 1;
+}
+
+function reportWritten(
+	incoming: Record<string, unknown>[],
+	target: string,
+): void {
+	const repos = new Set(incoming.map((s) => String(s.repo).toLowerCase()));
+	const declared = loadConfig().releases?.streams ?? [];
+	reportDerivedStreams(
+		declared.filter((s) => repos.has(s.repo.toLowerCase())),
+		target,
+	);
+}
+
+export function releasesConfigure(options: ConfigureOptions = {}): void {
+	const scope: ConfigKeyScope = options.scope === "repo" ? "repo" : "project";
+	const input = readStreamsInput(options.streams ?? "-");
+	if ("error" in input) return fail(`Could not read --streams: ${input.error}`);
+
+	const incoming = withCurrentRepo(input.streams);
+	const broken = checkStreamGraph(incoming);
+	if (broken.length > 0)
+		return fail(
+			"The graph does not hold together, so nothing was written:",
+			broken,
+		);
+
+	const written = writeReleaseStreams(incoming, scope);
+	if (!written.ok)
+		return fail(
+			"releases.streams does not validate, so nothing was written:",
+			written.errors,
+		);
+	reportWritten(incoming, written.target);
 }

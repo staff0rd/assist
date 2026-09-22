@@ -59,6 +59,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
 - `/recall` - Recall the most recent handover note for this repo
+- `/releases-configure` - Set this repo's release promotion topology: read its workflow files, follow every `uses:` reusable-workflow call to whatever depth it nests, flatten the `needs:` graph across those boundaries into nodes and edges, put the graph to the user to accept or edit, then write it with `assist releases configure --streams ...` to the project `assist.yml` or this repo's block in `~/.assist.yml`. The repo is the one you are in — it is never passed
 - `/refine` - Refine an existing backlog item through conversation
 - `/rename [title]` - Retitle this session's dashboard card via `assist sessions rename`; uses the argument verbatim, or infers a short title from the conversation when given none
 - `/restructure` - Analyze and restructure tightly-coupled files
@@ -160,7 +161,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist github issue fix-structure <target> [-R <owner>/<repo>] [--level <level>] [--type-chain <names>] [--strip-label <label>...] [--apply]` - Normalise the issue types across one issue subtree, reading and writing nothing outside it. `<target>` is `owner/repo#number`, a github.com issue URL, or a bare number with `-R`; a bare number with no repo is refused rather than guessed. Walks the subtree via sub-issues level by level (a single deep query blows the GraphQL node limit) and reports the type each issue should carry: every level below the target is typed to the next level down the chain, matching type names loosely so `Subtask` and `Sub-task` both bind to the leaf. The chain defaults to `Epic` > `Story` > `Subtask`; `--type-chain Initiative,Feature,Task` replaces it, parent level first, and every level named must already exist as an issue type on the organisation or the run fails listing the ones that do. Untyped issues are typed rather than skipped, and cross-repo children are handled in the one run. The target's own level is inferred from its issue type, so aiming at a story types its children as subtasks; when its type is not in the chain the level cannot be inferred and the command exits non-zero naming the type it has. `--level` asserts the position instead, which also types the target itself. No label is touched unless `--strip-label` names it; it is repeatable, matched case-insensitively, and each label is removed by the id found on that issue, since label ids differ per repository. Anything nested below the leaf level fails the run before a single write, naming the offender and its parent; nothing is ever re-parented. Without `--apply` nothing is written. `--apply` announces each write before it is issued and flushes it, so a long run shows progress, then re-walks the subtree and fails with a non-zero exit if any drift remains
 - `assist news add [url]` - Add an RSS feed URL (rendered in the sessions web News tab)
 - `assist releases [list]` - Print the declared release promotion streams — each stream's repo, release workflow, nodes and edges — as read from `releases.streams`. The same declaration drives the [Releases page](#releases) of the sessions dashboard
-- `assist releases configure <owner/repo>` - Derive that repo's promotion topology and write it to `releases.streams`. Launches a Claude session that reads the repo's workflow files from GitHub, follows every `uses:` reusable-workflow call to whatever depth it nests, flattens the `needs:` graph across those boundaries into nodes and edges, and confirms the graph with you before writing. On exit the command re-reads the config: a block that fails the schema is reported field by field and exits non-zero, and a valid one is printed back as the environments, steps and edges it derived for that repo. Streams declared for other repos are left alone
+- `assist releases configure --streams <file> [--scope <project|repo>]` - Validate release streams and write them to `releases.streams`. `<file>` is a JSON or YAML array of streams (`-` reads stdin); a stream that names no `repo` gets the current one, so the caller never passes it. The array is checked twice before anything is written — every edge endpoint must be a declared node id and no two nodes may share one, then the whole config must pass the schema — and a failure prints each error and writes nothing. Streams already declared for other repos are kept, the ones for the repos in the file are replaced, and what was written is printed back as its environments, steps and edges. `--scope` picks the project `assist.yml` (default) or this repo's block in `~/.assist.yml`. The topology itself is derived by [`/releases-configure`](#claude-commands), which reads the repo's workflows and calls this
 
 ### Backlog
 
@@ -453,7 +454,7 @@ releases:
 ```
 
 - `id` names the node within the stream and is what `edges` refer to. A node with an `environment` is a GitHub deployment environment and reads live state; `kind` (`build` or `gate`) marks a node that deploys nothing. `label` overrides the text on the node, which is otherwise the `id`.
-- `assist releases configure <owner/repo>` derives the block for a repo instead of hand-writing it, and `assist releases list` prints whatever is declared back as assist reads it.
+- `/releases-configure` derives the block from the repo's own workflows instead of hand-writing it, and `assist releases list` prints whatever is declared back as assist reads it.
 
 ## Parallel work
 
@@ -489,7 +490,7 @@ A restart kills every managed session's pty, which also kills any background tas
 - `commit.expectedBranch` — when set (e.g. `main`), `assist commit` prints a non-blocking warning if HEAD is on any other branch, so work on a stray branch isn't silently orphaned
 - `branch.prefix` — when set (e.g. `sw`), `assist branch <slug>` prepends `<prefix>/` to the branch name
 - `branch.defaultBranch` — override the base branch, which is otherwise resolved live from the remote (`git ls-remote --symref origin HEAD`), falling back to `main`
-- `releases.streams` — the release promotion streams drawn by the [Releases page](#releases), derived by `assist releases configure <owner/repo>` and printed by `assist releases list`
+- `releases.streams` — the release promotion streams drawn by the [Releases page](#releases), derived by `/releases-configure`, written by `assist releases configure --streams` and printed by `assist releases list`
 - `cliHook.blockNpmRun` — when `true` (default), `assist cli-hook` denies `npm run` and redirects to `assist run <name>`, `assist verify` or `assist build`. Set it to `false` in a repo that genuinely needs npm scripts. `npm install`, `npm ci` and `npm test` are never affected
 
 ## Acceptance criteria outliner extension
