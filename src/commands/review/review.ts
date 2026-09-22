@@ -18,7 +18,11 @@ function resolveRepoRoot(): string {
 
 export async function review(options: ReviewOptions = {}): Promise<void> {
 	validateReviewOptions(options);
-	if (options.configure) return configureHighLevelReview();
+	if (options.configure)
+		return configureHighLevelReview({
+			scope: options.scope,
+			answer: options.answer,
+		});
 	startReviewLog();
 	const invokedIn = resolveRepoRoot();
 	if (options.checkoutOnly && options.number)

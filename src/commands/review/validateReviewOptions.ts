@@ -1,4 +1,5 @@
 import type { ReviewOptions } from "./ReviewOptions";
+import { validateConfigureOptions } from "./validateConfigureOptions";
 
 export function validateReviewOptions(options: ReviewOptions): void {
 	if (options.apply && options.refine) {
@@ -13,19 +14,7 @@ export function validateReviewOptions(options: ReviewOptions): void {
 	}
 	validateCheckoutOnly(options);
 	validateHighLevel(options);
-	validateConfigure(options);
-}
-
-function validateConfigure(options: ReviewOptions): void {
-	if (!options.configure) return;
-	if (!options.highLevel) {
-		console.error("Error: --configure requires --high-level.");
-		process.exit(1);
-	}
-	if (options.number) {
-		console.error("Error: --configure takes no PR number.");
-		process.exit(1);
-	}
+	validateConfigureOptions(options);
 }
 
 function validateCheckoutOnly(options: ReviewOptions): void {

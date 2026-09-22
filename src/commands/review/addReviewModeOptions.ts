@@ -13,5 +13,19 @@ export function addReviewModeOptions(command: Command): Command {
 		.option(
 			"--configure",
 			"With --high-level: review nothing and instead ask for review.highLevel.criticalPaths, uiPaths and descriptionWordCap one at a time, each prefilled with its current value or, when unset, globs Claude proposes from this repo's own tree, then write the answers in one pass to either the project assist.yml or this repo's block in ~/.assist.yml. A blank answer leaves that key unset",
+		)
+		.option(
+			"--scope <scope>",
+			"With --configure: write to 'project' (the repo's own assist.yml) or 'repo' (this repo's block in ~/.assist.yml) instead of asking which",
+		)
+		.option(
+			"--answer <key=value>",
+			"With --configure: answer one key without prompting, for an agent that has already put the choice to the user (repeatable); an empty value leaves that key unset. Answer all three and nothing is prompted for and no globs are proposed",
+			collectAnswer,
+			[],
 		);
+}
+
+function collectAnswer(answer: string, answers: string[]): string[] {
+	return [...answers, answer];
 }

@@ -8,6 +8,8 @@ export type ReviewOptions = {
 	checkoutOnly?: boolean;
 	highLevel?: boolean;
 	configure?: boolean;
+	scope?: string;
+	answer?: string[];
 	verbose?: boolean;
 	addressComments?: boolean;
 	announce?: boolean;

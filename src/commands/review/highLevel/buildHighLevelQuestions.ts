@@ -1,4 +1,5 @@
 import type { ConfigKeyQuestion } from "../../config/resolveConfigKeyAnswer";
+import { highLevelConfigKeys } from "./highLevelConfigKeys";
 import type { ProposedGlobs } from "./ProposedGlobs";
 import type { HighLevelConfig } from "./resolveHighLevelConfig";
 
@@ -8,19 +9,19 @@ export function buildHighLevelQuestions(
 ): ConfigKeyQuestion[] {
 	return [
 		{
-			key: "review.highLevel.criticalPaths",
+			key: highLevelConfigKeys.criticalPaths,
 			question:
 				"Critical paths — comma-separated globs whose full diffs the review shows (blank to leave unset)",
 			suggest: suggestGlobs(current.criticalPaths, proposed.criticalPaths),
 		},
 		{
-			key: "review.highLevel.uiPaths",
+			key: highLevelConfigKeys.uiPaths,
 			question:
 				"UI paths — comma-separated globs that make a change a UI change, so a screenshot or video is required (blank to leave unset)",
 			suggest: suggestGlobs(current.uiPaths, proposed.uiPaths),
 		},
 		{
-			key: "review.highLevel.descriptionWordCap",
+			key: highLevelConfigKeys.descriptionWordCap,
 			question: "Description word cap (blank to leave unset)",
 			suggest: String(current.descriptionWordCap),
 		},
