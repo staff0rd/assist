@@ -7,6 +7,7 @@ export type ReviewOptions = {
 	backlog?: boolean;
 	checkoutOnly?: boolean;
 	highLevel?: boolean;
+	configure?: boolean;
 	verbose?: boolean;
 	addressComments?: boolean;
 	announce?: boolean;

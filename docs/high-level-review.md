@@ -48,6 +48,8 @@ Three keys in `assist.yml`, all under `review.highLevel`:
 
 With `uiPaths` unset the UI-evidence check passes — a repo that has not said which files are UI cannot be told it is missing a screenshot of one.
 
+`assist review --high-level --configure` asks for all three rather than leaving them to be looked up. Each key is asked in turn, prefilled with its current value or, where it is unset, with globs Claude proposes from the repo's own tree — which is the point of asking rather than documenting a default: the critical files of a repo are its own, and nobody outside it can name them. Accept a proposal, edit it, or answer blank to leave the key unset. The flow asks first where the answers go — the project `assist.yml`, checked in so the team reviews against the same globs, or this repo's block in `~/.assist.yml`, personal to one machine — and writes them all in one pass at the end, so a value the schema rejects leaves the file as it was.
+
 ## Scope
 
 `assist review --high-level [number]` checks the PR branch out, evaluates the checklist and opens it in the web UI preview pane, where the deterministic items show their pass or fail, the manual items are ticked, and any item can carry a comment. Finishing records an approve or request-changes verdict and writes it, the per-item state and the comments to `~/.assist/high-level-reviews/<repo>/<branch>-<head-sha>.json`. Outside an assist session the checklist is printed to the terminal instead.
