@@ -1,3 +1,10 @@
+# [0.682.0](https://github.com/staff0rd/assist/compare/v0.681.0...v0.682.0) (2026-09-22)
+
+
+### Features
+
+* /high-level-config for agent sessions ([a211498](https://github.com/staff0rd/assist/commit/a21149838ca03ce9b887dcb3e0d47ae69e1c47f9)), closes [hi#level-config](https://github.com/hi/issues/level-config)
+
 # [0.681.0](https://github.com/staff0rd/assist/compare/v0.680.1...v0.681.0) (2026-09-22)
 
 
