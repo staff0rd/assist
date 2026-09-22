@@ -1,3 +1,10 @@
+# [0.683.0](https://github.com/staff0rd/assist/compare/v0.682.1...v0.683.0) (2026-09-22)
+
+
+### Features
+
+* releases page with live env state ([e305c82](https://github.com/staff0rd/assist/commit/e305c824d6076c870f09a8fe541a40f157211496))
+
 ## [0.682.1](https://github.com/staff0rd/assist/compare/v0.682.0...v0.682.1) (2026-09-22)
 
 
