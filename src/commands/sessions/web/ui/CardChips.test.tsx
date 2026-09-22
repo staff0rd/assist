@@ -1,5 +1,12 @@
 // @vitest-environment jsdom
-import { act, cleanup, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { BacklogItemSummary } from "../../../backlog/web/ui/types";
@@ -200,5 +207,94 @@ describe("CardChips tracker chip", () => {
 			.getAllByRole("link")
 			.filter((link) => link.getAttribute("href")?.startsWith("https://"));
 		expect(external).toEqual([]);
+	});
+});
+
+function reviewSession(overrides: Partial<SessionInfo> = {}): SessionInfo {
+	return {
+		...session,
+		commandType: "assist",
+		assistArgs: ["review", "12"],
+		...overrides,
+	};
+}
+
+function stubPrStatus(url: string | null) {
+	vi.stubGlobal(
+		"fetch",
+		vi.fn(() =>
+			Promise.resolve({
+				json: () =>
+					Promise.resolve({
+						pr: url
+							? { number: 12, title: "t", author: "me", createdAt: "", url }
+							: null,
+					}),
+			}),
+		),
+	);
+}
+
+function renderClickableCard(subject: SessionInfo, onClick = () => {}) {
+	render(
+		<MemoryRouter>
+			<TopBarLayoutContext.Provider value={false}>
+				<InRepoGroupContext.Provider value={false}>
+					<button type="button" onClick={onClick}>
+						<CardChips session={subject} />
+					</button>
+				</InRepoGroupContext.Provider>
+			</TopBarLayoutContext.Provider>
+		</MemoryRouter>,
+	);
+}
+
+const prUrl = "https://github.com/acme/repo/pull/12";
+
+describe("CardChips PR number token", () => {
+	it("links the target PR number to GitHub in a new tab", async () => {
+		stubPrStatus(prUrl);
+		renderClickableCard(reviewSession());
+
+		const link = await screen.findByRole("link", { name: "#12" });
+		expect(link.getAttribute("href")).toBe(prUrl);
+		expect(link.getAttribute("target")).toBe("_blank");
+	});
+
+	it("does not activate the card when the number is clicked", async () => {
+		stubPrStatus(prUrl);
+		const onClick = vi.fn();
+		renderClickableCard(reviewSession(), onClick);
+
+		const link = await screen.findByRole("link", { name: "#12" });
+		fireEvent.mouseDown(link);
+		fireEvent.click(link);
+
+		expect(onClick).not.toHaveBeenCalled();
+	});
+
+	it("shows the number as plain text until the PR url resolves", async () => {
+		stubPrStatus(null);
+		renderClickableCard(reviewSession());
+
+		await waitFor(() => expect(screen.getByText("#12")).toBeTruthy());
+		expect(screen.queryByRole("link", { name: "#12" })).toBeNull();
+	});
+
+	for (const command of ["review", "review-pr-comments", "fix-conflict"]) {
+		it(`shows the number for a ${command} session`, async () => {
+			stubPrStatus(prUrl);
+			renderClickableCard(reviewSession({ assistArgs: [command, "12"] }));
+
+			expect(await screen.findByRole("link", { name: "#12" })).toBeTruthy();
+		});
+	}
+
+	it("renders no PR token for a session with no target PR", async () => {
+		stubPrStatus(prUrl);
+		renderClickableCard(session);
+
+		expect(screen.getByText("assist")).toBeTruthy();
+		expect(screen.queryByText("#12")).toBeNull();
 	});
 });
