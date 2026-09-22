@@ -1,3 +1,11 @@
+## [0.682.1](https://github.com/staff0rd/assist/compare/v0.682.0...v0.682.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* PR number link on review cards ([885e1c5](https://github.com/staff0rd/assist/commit/885e1c578ffbc17421f63ad6e3e3f7413cf05164))
+* rename command to /review-config ([d8cbd94](https://github.com/staff0rd/assist/commit/d8cbd945b923fb44f3a1d6f801220b14defe16a9))
+
 # [0.682.0](https://github.com/staff0rd/assist/compare/v0.681.0...v0.682.0) (2026-09-22)
 
 
