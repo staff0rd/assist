@@ -53,6 +53,7 @@ assist ravendb collections
 assist ravendb query
 assist read-time
 assist refactor
+assist releases
 assist roam show-claude-code-icon
 assist rules list
 assist run
