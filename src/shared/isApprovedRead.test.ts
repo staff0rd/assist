@@ -9,6 +9,7 @@ vi.mock("./loadCliReads", () => ({
 		if (cmd.startsWith("assist github issue fix-structure")) {
 			return "assist github issue fix-structure";
 		}
+		if (cmd.startsWith("assist releases")) return "assist releases";
 		return undefined;
 	},
 	findCliWrite: (cmd: string) =>
@@ -88,6 +89,20 @@ describe("isApprovedRead", () => {
 			const result = isApprovedRead(
 				"assist github issue fix-structure org/repo#1 --apply",
 			);
+
+			expect(result).toBeUndefined();
+		});
+	});
+
+	describe("when the command is a releases subcommand", () => {
+		it("should approve listing the declared streams", () => {
+			const result = isApprovedRead("assist releases list");
+
+			expect(result).toBe("Read-only CLI command: assist releases");
+		});
+
+		it("should not approve configure, which rewrites the config", () => {
+			const result = isApprovedRead("assist releases configure owner/name");
 
 			expect(result).toBeUndefined();
 		});

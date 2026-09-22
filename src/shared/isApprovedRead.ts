@@ -1,5 +1,6 @@
 import { resolve, sep } from "node:path";
 import { appliesFixStructure } from "./appliesFixStructure";
+import { configuresReleases } from "./configuresReleases";
 import { isGhApiRead } from "./isGhApiRead";
 import { findCliRead, findCliWrite } from "./loadCliReads";
 import { matchesAllow } from "./matchesAllow";
@@ -30,6 +31,8 @@ export function isApprovedRead(
 
 	// why: the cli-reads entry matches by prefix, so the read entry would otherwise cover the mutating --apply run too
 	if (appliesFixStructure(command)) return undefined;
+
+	if (configuresReleases(command)) return undefined;
 
 	const matchedRead = findCliRead(command);
 	if (matchedRead) return `Read-only CLI command: ${matchedRead}`;
