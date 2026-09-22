@@ -140,6 +140,28 @@ const assistConfigShape = {
 			wordsPerMinute: z.number().int().positive().default(200),
 		})
 		.optional(),
+	releases: z
+		.strictObject({
+			streams: z
+				.array(
+					z.strictObject({
+						name: z.string(),
+						repo: z.string(),
+						workflow: z.string(),
+						nodes: z.array(
+							z.strictObject({
+								id: z.string(),
+								environment: z.string().optional(),
+								kind: z.enum(["build", "gate"]).optional(),
+								label: z.string().optional(),
+							}),
+						),
+						edges: z.array(z.tuple([z.string(), z.string()])).default([]),
+					}),
+				)
+				.default([]),
+		})
+		.optional(),
 	worktree: z
 		.strictObject({
 			enabled: z.boolean().default(false),
@@ -334,6 +356,10 @@ export type AssistConfig = z.infer<typeof assistConfigSchema>;
 export type ForbiddenStringsRule = NonNullable<
 	AssistConfig["forbiddenStrings"]
 >[number];
+export type ReleaseStream = NonNullable<
+	AssistConfig["releases"]
+>["streams"][number];
+export type ReleaseNode = ReleaseStream["nodes"][number];
 export type RunConfig = z.infer<typeof runConfigSchema>;
 export type RunLink = z.infer<typeof runLinkSchema>;
 export type RunEntry = RunConfig | RunLink;

@@ -18,6 +18,7 @@ import { prsConfigHelp } from "./prs/prsConfigHelp";
 import { ravendbConfigHelp } from "./ravendb/ravendbConfigHelp";
 import { readTimeConfigHelp } from "./readTime/readTimeConfigHelp";
 import { refactorConfigHelp } from "./refactor/refactorConfigHelp";
+import { releasesConfigHelp } from "./releases/releasesConfigHelp";
 import { reviewConfigHelp } from "./review/reviewConfigHelp";
 import { roamConfigHelp } from "./roam/roamConfigHelp";
 import { rootConfigHelp } from "./rootConfigHelp";
@@ -51,6 +52,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...ravendbConfigHelp,
 	...readTimeConfigHelp,
 	...refactorConfigHelp,
+	...releasesConfigHelp,
 	...reviewConfigHelp,
 	...roamConfigHelp,
 	...runConfigHelp,

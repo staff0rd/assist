@@ -7,6 +7,7 @@ import { ConfigView } from "./ConfigView";
 import { DiffView } from "./DiffView";
 import { FileView } from "./FileView";
 import { NewsView } from "./NewsView";
+import { ReleasesView } from "./ReleasesView";
 import { countRender } from "./renderCounters";
 import { RenderRateHud } from "./RenderRateHud";
 import { selectedCardId } from "./selectedCardId";
@@ -36,6 +37,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 						element={<BacklogContent socket={socket} />}
 					/>
 					<Route path="news" element={<NewsView />} />
+					<Route path="releases" element={<ReleasesView />} />
 					<Route path="usage" element={<UsageHistoryView />} />
 					<Route path="backups" element={<BackupsView />} />
 					<Route path="config" element={<ConfigView />} />

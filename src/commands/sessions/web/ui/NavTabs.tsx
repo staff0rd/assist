@@ -2,7 +2,7 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { useLocation, useNavigate } from "react-router";
 
-const TAB_PATHS = ["/sessions", "/backlog", "/news"] as const;
+const TAB_PATHS = ["/sessions", "/backlog", "/releases", "/news"] as const;
 
 export function NavTabs() {
 	const location = useLocation();
@@ -24,6 +24,7 @@ export function NavTabs() {
 		>
 			<Tab label="Sessions" onClick={() => goTo("/sessions")} />
 			<Tab label="Backlog" onClick={() => goTo("/backlog")} />
+			<Tab label="Releases" onClick={() => goTo("/releases")} />
 			<Tab label="News" onClick={() => goTo("/news")} />
 		</Tabs>
 	);

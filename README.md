@@ -159,6 +159,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist github issue started <number> [-R <owner>/<repo>]` - Start work on a GitHub issue on the current repo (or `-R`'s): assigns it to the authenticated user, then moves every project board it sits on to In Progress. The boards are discovered from the issue itself — one GraphQL read returns its `projectItems` with each project's `Status` field and options — so nothing is configured or passed as a flag, and an issue on several boards has all of them moved. The option is matched case-insensitively. The assignment is applied first and is never blocked by the board work: an issue on no board, a `Status` field with no In Progress option (the names it does offer are listed), and a `gh` token without the `project` scope are each reported and exit 0 with the assignment landed. The remediation for the scope is `gh auth refresh -h github.com -s project`
 - `assist github issue fix-structure <target> [-R <owner>/<repo>] [--level <level>] [--type-chain <names>] [--strip-label <label>...] [--apply]` - Normalise the issue types across one issue subtree, reading and writing nothing outside it. `<target>` is `owner/repo#number`, a github.com issue URL, or a bare number with `-R`; a bare number with no repo is refused rather than guessed. Walks the subtree via sub-issues level by level (a single deep query blows the GraphQL node limit) and reports the type each issue should carry: every level below the target is typed to the next level down the chain, matching type names loosely so `Subtask` and `Sub-task` both bind to the leaf. The chain defaults to `Epic` > `Story` > `Subtask`; `--type-chain Initiative,Feature,Task` replaces it, parent level first, and every level named must already exist as an issue type on the organisation or the run fails listing the ones that do. Untyped issues are typed rather than skipped, and cross-repo children are handled in the one run. The target's own level is inferred from its issue type, so aiming at a story types its children as subtasks; when its type is not in the chain the level cannot be inferred and the command exits non-zero naming the type it has. `--level` asserts the position instead, which also types the target itself. No label is touched unless `--strip-label` names it; it is repeatable, matched case-insensitively, and each label is removed by the id found on that issue, since label ids differ per repository. Anything nested below the leaf level fails the run before a single write, naming the offender and its parent; nothing is ever re-parented. Without `--apply` nothing is written. `--apply` announces each write before it is issued and flushes it, so a long run shows progress, then re-walks the subtree and fails with a non-zero exit if any drift remains
 - `assist news add [url]` - Add an RSS feed URL (rendered in the sessions web News tab)
+- `assist releases [list]` - Print the declared release promotion streams — each stream's repo, release workflow, nodes and edges — as read from `releases.streams`. The same declaration drives the [Releases page](#releases) of the sessions dashboard
 
 ### Backlog
 
@@ -429,6 +430,30 @@ Requires `assist` installed on the Windows host.
 - `sessions.floatWaitingAfterMs` — defaults to **5000**: how long a session must have been `waiting` on input before `sessions.floatWaiting` floats it.
 - `sessions.maxLive` — defaults to **24**: the ceiling on concurrent live sessions one daemon holds. Spawning past it is refused (`session ceiling of N reached`) and a daemon birth respawns at most this many persisted sessions, deferring the rest to stopped cards. The daemon serves every repo, so set it globally: `assist config set sessions.maxLive 32 -g`.
 
+### Releases
+
+The **Releases** tab draws one row per declared release stream: a left rail naming the stream, its repo and its release workflow, and beside it the stream's environments with what is live in each — the commit of its newest deployment whose status is `success`, how long ago that went live, and how many commits behind the repo's default branch it is. A deployment still `waiting` on an approval is gated, not live, so it is passed over. Every timestamp renders in the viewer's own timezone, and every glyph and short token carries a tooltip on hover and on keyboard focus. A stream whose repo cannot be read shows its error in place of its environments, leaving the other streams intact. Live state is read from the repo's GitHub deployments, so two streams deploying into the same environment read the same commit.
+
+Topology is declared, not derived: assist does not parse workflow YAML at runtime.
+
+```yaml
+releases:
+  streams:
+    - name: Web App
+      repo: owner/name
+      workflow: release.yml
+      nodes:
+        - { id: build, kind: build }
+        - { id: dev, environment: dev }
+        - { id: uk-prod, environment: UK Production, label: uk-prod }
+      edges:
+        - [build, dev]
+        - [dev, uk-prod]
+```
+
+- `id` names the node within the stream and is what `edges` refer to. A node with an `environment` is a GitHub deployment environment and reads live state; `kind` (`build` or `gate`) marks a node that deploys nothing. `label` overrides the text on the node, which is otherwise the `id`.
+- `assist releases list` prints the block back as assist reads it, which is the quickest way to check a hand-written one.
+
 ## Parallel work
 
 Concurrent sessions in one repo can be isolated with native git worktrees instead of keeping multiple physical clones: see [docs/parallel-work.md](docs/parallel-work.md). All of these flags **default off**:
@@ -463,6 +488,7 @@ A restart kills every managed session's pty, which also kills any background tas
 - `commit.expectedBranch` — when set (e.g. `main`), `assist commit` prints a non-blocking warning if HEAD is on any other branch, so work on a stray branch isn't silently orphaned
 - `branch.prefix` — when set (e.g. `sw`), `assist branch <slug>` prepends `<prefix>/` to the branch name
 - `branch.defaultBranch` — override the base branch, which is otherwise resolved live from the remote (`git ls-remote --symref origin HEAD`), falling back to `main`
+- `releases.streams` — the release promotion streams drawn by the [Releases page](#releases) and printed by `assist releases list`
 - `cliHook.blockNpmRun` — when `true` (default), `assist cli-hook` denies `npm run` and redirects to `assist run <name>`, `assist verify` or `assist build`. Set it to `false` in a repo that genuinely needs npm scripts. `npm install`, `npm ci` and `npm test` are never affected
 
 ## Acceptance criteria outliner extension
