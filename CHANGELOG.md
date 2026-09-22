@@ -1,3 +1,10 @@
+# [0.684.0](https://github.com/staff0rd/assist/compare/v0.683.0...v0.684.0) (2026-09-22)
+
+
+### Features
+
+* assist releases configure ([d942d54](https://github.com/staff0rd/assist/commit/d942d54602a08a7b6388037fd08754e6a0193e7c))
+
 # [0.683.0](https://github.com/staff0rd/assist/compare/v0.682.1...v0.683.0) (2026-09-22)
 
 
