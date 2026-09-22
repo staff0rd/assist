@@ -1,16 +1,12 @@
-import Box from "@mui/material/Box";
-import type { ReactNode } from "react";
 import { ItemTrackerLink } from "../../../backlog/web/ui/components/ItemTrackerLink";
 import type { ItemTracker } from "../../../backlog/web/ui/types";
 import { BacklogItemLink } from "./BacklogItemLink";
-import { isRepoScoped } from "./isRepoScoped";
-import { repoLabel } from "./repoLabel";
+import type { CardToken } from "./CardToken";
+import { PrNumberLink } from "./PrNumberLink";
+import { repoToken } from "./repoToken";
+import { reviewTargetPr } from "./reviewTargetPr";
 import { sessionType } from "./sessionType";
 import type { SessionInfo } from "./types";
-
-type CardToken = { key: string; node: ReactNode };
-
-const repoSx = { color: "text.secondary", whiteSpace: "nowrap" } as const;
 
 export function cardTokenNodes(
 	session: SessionInfo,
@@ -19,18 +15,10 @@ export function cardTokenNodes(
 ): CardToken[] {
 	const tokens: CardToken[] = [];
 	const type = sessionType(session);
-	const repo = !named && isRepoScoped(type) ? repoLabel(session.cwd) : "";
+	const repo = named ? undefined : repoToken(session.cwd, type);
 	const { activity } = session;
 
-	if (repo)
-		tokens.push({
-			key: "repo",
-			node: (
-				<Box component="span" sx={repoSx}>
-					{repo}
-				</Box>
-			),
-		});
+	if (repo) tokens.push(repo);
 
 	if (activity?.kind === "backlog") {
 		if (activity.phase !== activity.totalPhases)
@@ -41,6 +29,13 @@ export function cardTokenNodes(
 	} else {
 		tokens.push({ key: "type", node: type });
 	}
+
+	const targetPr = reviewTargetPr(session);
+	if (targetPr !== undefined)
+		tokens.push({
+			key: "pr",
+			node: <PrNumberLink session={session} prNumber={targetPr} />,
+		});
 
 	if (activity?.itemId != null)
 		tokens.push({
