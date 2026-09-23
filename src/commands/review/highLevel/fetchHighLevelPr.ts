@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 
 type HighLevelPr = {
+	title: string;
 	body: string;
 	headRef: string;
 	headSha: string;
@@ -11,15 +12,17 @@ export function fetchHighLevelPr(
 	repo: { org: string; repo: string },
 ): HighLevelPr {
 	const raw = execSync(
-		`gh pr view ${prNumber} --json body,headRefName,headRefOid -R ${repo.org}/${repo.repo}`,
+		`gh pr view ${prNumber} --json title,body,headRefName,headRefOid -R ${repo.org}/${repo.repo}`,
 		{ encoding: "utf8" },
 	);
 	const pr = JSON.parse(raw) as {
+		title: string | null;
 		body: string | null;
 		headRefName: string;
 		headRefOid: string;
 	};
 	return {
+		title: pr.title ?? "",
 		body: pr.body ?? "",
 		headRef: pr.headRefName,
 		headSha: pr.headRefOid,

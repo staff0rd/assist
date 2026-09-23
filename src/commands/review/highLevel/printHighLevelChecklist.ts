@@ -9,7 +9,9 @@ export function printHighLevelChecklist(
 	subject: HighLevelOverlaySubject,
 ): void {
 	console.log(
-		chalk.bold(`High-level review of ${subject.repo}#${subject.prNumber}`),
+		chalk.bold(
+			`High-level review of ${subject.repo}#${subject.prNumber} — ${subject.title}`,
+		),
 		chalk.dim(
 			`· ${highLevelChangedFileCount(subject.structure)} changed files`,
 		),

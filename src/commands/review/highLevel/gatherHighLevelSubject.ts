@@ -28,6 +28,7 @@ export function gatherHighLevelSubject(
 	return {
 		repo: slug,
 		prNumber,
+		title: pr.title,
 		headRef: pr.headRef,
 		headSha: pr.headSha,
 		checks: evaluateHighLevelChecks({

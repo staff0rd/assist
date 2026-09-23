@@ -16,7 +16,7 @@ export async function openHighLevelOverlay(
 		{
 			sessionId,
 			requestId: randomUUID(),
-			title: `High-level review of ${subject.repo}#${subject.prNumber}`,
+			title: `${subject.repo}#${subject.prNumber} — ${subject.title}`,
 			body: JSON.stringify(highLevelPreviewPayload(subject)),
 			prNumber: subject.prNumber,
 			kind: "high-level-review",

@@ -83,7 +83,7 @@ const payload: HighLevelPreviewPayload = {
 function preview(overrides: Partial<PrPreview> = {}): PrPreview {
 	return {
 		requestId: "req-1",
-		title: "High-level review of org/repo#42",
+		title: "org/repo#42 — Native diff viewer in high-level review",
 		body: JSON.stringify(payload),
 		prNumber: 42,
 		kind: "high-level-review",
@@ -98,6 +98,17 @@ afterEach(() => {
 });
 
 describe("HighLevelReviewPane", () => {
+	it("heads the pane with the PR's own title beside a link to it", () => {
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+
+		expect(
+			screen.getByText(/Native diff viewer in high-level review/),
+		).toBeTruthy();
+		expect(screen.getByText("org/repo#42").getAttribute("href")).toBe(
+			"https://github.com/org/repo/issues/42",
+		);
+	});
+
 	it("lists every checklist item under its group", () => {
 		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
 

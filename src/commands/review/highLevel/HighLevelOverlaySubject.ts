@@ -8,6 +8,7 @@ import type {
 export type HighLevelOverlaySubject = {
 	repo: string;
 	prNumber: number;
+	title: string;
 	headRef: string;
 	headSha: string;
 	checks: HighLevelCheckResult[];
