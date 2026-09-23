@@ -1,3 +1,10 @@
+## [0.688.3](https://github.com/staff0rd/assist/compare/v0.688.2...v0.688.3) (2026-09-23)
+
+
+### Bug Fixes
+
+* batch releases gh calls per repo ([36eac90](https://github.com/staff0rd/assist/commit/36eac90f895a4fb5224b47c03ff7332d5ff69027))
+
 ## [0.688.2](https://github.com/staff0rd/assist/compare/v0.688.1...v0.688.2) (2026-09-23)
 
 
