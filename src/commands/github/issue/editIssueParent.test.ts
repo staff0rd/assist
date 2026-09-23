@@ -57,7 +57,7 @@ function expectParentedTo(owner: string, repo: string, number: number): void {
 		{ owner, repo, number },
 	);
 	expect(runGhGraphqlJson).toHaveBeenCalledWith(
-		expect.stringContaining("addSubIssue"),
+		expect.stringContaining("replaceParent: true"),
 		{ issueId: "I_parent", subIssueId: "I_child" },
 	);
 }

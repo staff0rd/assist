@@ -1,7 +1,7 @@
 import { runGhGraphqlJson } from "../../../shared/runGhGraphqlJson";
 
 const MUTATION = `mutation($issueId: ID!, $subIssueId: ID!) {
-	addSubIssue(input: { issueId: $issueId, subIssueId: $subIssueId }) {
+	addSubIssue(input: { issueId: $issueId, subIssueId: $subIssueId, replaceParent: true }) {
 		subIssue { id }
 	}
 }`;
