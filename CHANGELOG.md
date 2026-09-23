@@ -1,3 +1,10 @@
+# [0.686.0](https://github.com/staff0rd/assist/compare/v0.685.2...v0.686.0) (2026-09-23)
+
+
+### Features
+
+* Ctrl+N / Alt+N new-session dialog ([e542be3](https://github.com/staff0rd/assist/commit/e542be342030a7f49881ba83b77531650008ef82))
+
 ## [0.685.2](https://github.com/staff0rd/assist/compare/v0.685.1...v0.685.2) (2026-09-23)
 
 
