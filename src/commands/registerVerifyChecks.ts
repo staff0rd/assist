@@ -41,7 +41,7 @@ const checks = [
 	{
 		name: "advice-fragments",
 		description:
-			"Check ADVICE_FRAGMENT_NAMES matches the fragments shipped in claude/advice, so advice.include/exclude can name every one",
+			"Check adviceFragmentNames matches the fragments shipped in claude/advice, so advice.sections can name every one",
 		action: adviceFragments,
 	},
 	{

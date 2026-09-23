@@ -242,7 +242,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist verify block-code-comments` - Fail on any comment on a changed line (`blockCodeComments.ignore`); machine directives exempt
 - `assist verify forbidden-strings` - Check configured JSON files for disallowed values (`forbiddenStrings` rules)
 - `assist verify config-keys` - Check every leaf key in `assistConfigSchema` is surfaced in some command's `--help` via `configHelp`
-- `assist verify advice-fragments` - Check `adviceFragmentNames` matches the fragments shipped in `claude/advice`, so `advice.include`/`advice.exclude` can name every one and reject the rest
+- `assist verify advice-fragments` - Check `adviceFragmentNames` matches the fragments shipped in `claude/advice`, so `advice.sections` can name every one and reject the rest
 - `assist verify migrations` - Check bundled DB migrations are sequentially numbered, append-only, and free of unacknowledged destructive DDL
 - `assist lint [-f, --fix]` - Run lint checks for conventions not enforced by oxlint
 - `assist lint init` - Initialize oxlint with baseline linter config
