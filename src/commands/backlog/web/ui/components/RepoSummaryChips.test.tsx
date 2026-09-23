@@ -54,6 +54,27 @@ afterEach(() => {
 });
 
 describe("RepoSummaryChips clone-on-select", () => {
+	it("marks a clonable chip as not cloned", () => {
+		summaries = [
+			{
+				origin: "github.com/org/repo",
+				displayName: "org/repo",
+				openCount: 3,
+				isCurrent: false,
+				cloneTarget: "/home/user/git/repo",
+			},
+		];
+		renderChips([]);
+
+		expect(
+			screen.getByRole("button", {
+				name: "org/repo (3)",
+				description:
+					"Not cloned locally — click to clone into /home/user/git/repo",
+			}),
+		).toBeTruthy();
+	});
+
 	it("makes a no-cwd non-local chip clickable and prompts to clone", () => {
 		summaries = [
 			{

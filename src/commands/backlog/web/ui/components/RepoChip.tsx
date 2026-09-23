@@ -1,4 +1,5 @@
-import { Chip } from "@mui/material";
+import CloudDownloadIcon from "@mui/icons-material/CloudDownloadOutlined";
+import { Chip, Tooltip } from "@mui/material";
 import type { RepoSummary } from "../fetchRepoSummaries";
 import type { ClonePrompt } from "./resolveCloneWatch";
 
@@ -7,6 +8,8 @@ type RepoChipProps = {
 	onSelectCwd: (cwd: string) => void;
 	onRequestClone: (target: ClonePrompt) => void;
 };
+
+const clonableSx = { borderStyle: "dashed" } as const;
 
 export function RepoChip({
 	summary,
@@ -22,7 +25,7 @@ export function RepoChip({
 			? () => onRequestClone({ origin, cloneTarget, displayName })
 			: undefined;
 
-	return (
+	const chip = (
 		<Chip
 			label={`${displayName} (${openCount})`}
 			size="small"
@@ -30,6 +33,17 @@ export function RepoChip({
 			variant={isCurrent ? "filled" : "outlined"}
 			disabled={!cwd && !clonable}
 			onClick={onClick}
+			icon={clonable ? <CloudDownloadIcon /> : undefined}
+			sx={clonable ? clonableSx : undefined}
 		/>
+	);
+	if (!clonable) return chip;
+	return (
+		<Tooltip
+			describeChild
+			title={`Not cloned locally — click to clone into ${cloneTarget}`}
+		>
+			{chip}
+		</Tooltip>
 	);
 }
