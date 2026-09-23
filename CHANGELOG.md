@@ -1,3 +1,10 @@
+## [0.689.5](https://github.com/staff0rd/assist/compare/v0.689.4...v0.689.5) (2026-09-23)
+
+
+### Bug Fixes
+
+* mark uncloned repo chips as clonable ([d9b618a](https://github.com/staff0rd/assist/commit/d9b618aad08ad4524bcd3f4b906f75e2662c3ee3))
+
 ## [0.689.4](https://github.com/staff0rd/assist/compare/v0.689.3...v0.689.4) (2026-09-23)
 
 
