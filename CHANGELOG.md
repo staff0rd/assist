@@ -1,3 +1,10 @@
+# [0.689.0](https://github.com/staff0rd/assist/compare/v0.688.3...v0.689.0) (2026-09-23)
+
+
+### Features
+
+* issue edit --parent ([b02b3ba](https://github.com/staff0rd/assist/commit/b02b3bade7d379c97560e602da9045546a1e94fb))
+
 ## [0.688.3](https://github.com/staff0rd/assist/compare/v0.688.2...v0.688.3) (2026-09-23)
 
 
