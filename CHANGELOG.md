@@ -1,3 +1,16 @@
+# [0.688.0](https://github.com/staff0rd/assist/compare/v0.687.0...v0.688.0) (2026-09-23)
+
+
+### Bug Fixes
+
+* releases page 20% wider and larger ([37a1e42](https://github.com/staff0rd/assist/commit/37a1e425f7845caae7c2967340d645cfc770599f))
+
+
+### Features
+
+* mode selector in new-session dialog ([dd9da4d](https://github.com/staff0rd/assist/commit/dd9da4dbd779e46fbe62fff95b73fca5888c4f0b))
+* wire mode selector into dialog ([6629194](https://github.com/staff0rd/assist/commit/6629194e608874e33a2892ca70554bd6f592109b))
+
 # [0.687.0](https://github.com/staff0rd/assist/compare/v0.686.0...v0.687.0) (2026-09-23)
 
 
