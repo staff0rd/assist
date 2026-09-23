@@ -1,7 +1,15 @@
+import { bucketPr } from "./bucketPr";
 import { describeAge } from "./describeAge";
 import { isDoNotMerge } from "./isDoNotMerge";
 import { summariseChecks } from "./summariseChecks";
-import type { GhStatusPullRequest, PrStatus, ReviewerState } from "./types";
+import type {
+	GhStatusPullRequest,
+	PrStatus,
+	PrStatusFacts,
+	ReviewerState,
+} from "./types";
+
+const STALE_HOURS = 168;
 
 function toReviews(pr: GhStatusPullRequest): ReviewerState[] {
 	return (pr.latestReviews ?? []).map((review) => ({
@@ -17,7 +25,7 @@ export function toPrStatus(
 ): PrStatus {
 	const age = describeAge(pr.updatedAt, now);
 
-	return {
+	const facts: PrStatusFacts = {
 		number: pr.number,
 		title: pr.title,
 		url: pr.url,
@@ -34,5 +42,11 @@ export function toPrStatus(
 		checks: summariseChecks(pr.statusCheckRollup),
 		mergeable: pr.mergeable || "UNKNOWN",
 		unresolvedThreads,
+	};
+
+	return {
+		...facts,
+		bucket: bucketPr(facts),
+		isStale: (age.hours ?? 0) >= STALE_HOURS,
 	};
 }

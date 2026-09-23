@@ -39,7 +39,15 @@ describe("toPrStatus", () => {
 			checks: { failing: ["lint"], pending: [] },
 			mergeable: "CONFLICTING",
 			unresolvedThreads: 2,
+			bucket: "changesRequested",
+			isStale: false,
 		});
+	});
+
+	it("flags a pull request untouched for seven days as stale", () => {
+		const pr = { ...basePr, updatedAt: "2026-09-11T12:00:00Z" };
+
+		expect(toPrStatus(pr, 0, NOW).isStale).toBe(true);
 	});
 
 	it("derives the age from updatedAt", () => {

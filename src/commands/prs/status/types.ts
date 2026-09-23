@@ -29,7 +29,14 @@ export type CheckSummary = { failing: string[]; pending: string[] };
 
 export type ReviewerState = { reviewer: string; state: string };
 
-export type PrStatus = {
+export type PrBucket =
+	| "pendingReview"
+	| "changesRequested"
+	| "failingChecks"
+	| "readyToMerge"
+	| "excluded";
+
+export type PrStatusFacts = {
 	number: number;
 	title: string;
 	url: string;
@@ -48,13 +55,27 @@ export type PrStatus = {
 	unresolvedThreads: number | null;
 };
 
-type RepoStatus = { repo: string; pullRequests: PrStatus[] };
+export type PrStatus = PrStatusFacts & { bucket: PrBucket; isStale: boolean };
+
+export type RepoStatus = { repo: string; pullRequests: PrStatus[] };
 
 type RepoStatusError = { repo: string; error: string };
+
+export type PrsStatusSummary = {
+	repos: number;
+	open: number;
+	excluded: number;
+	pendingReview: number;
+	changesRequested: number;
+	failingChecks: number;
+	readyToMerge: number;
+	stale: number;
+};
 
 export type PrsStatusReport = {
 	repos: RepoStatus[];
 	errors: RepoStatusError[];
+	summary: PrsStatusSummary;
 };
 
 export type PrsStatusOptions = { json?: boolean };

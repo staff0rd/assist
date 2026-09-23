@@ -27,6 +27,8 @@ function prStatus(overrides: Partial<PrStatus> = {}): PrStatus {
 		checks: { failing: [], pending: [] },
 		mergeable: "MERGEABLE",
 		unresolvedThreads: 0,
+		bucket: "pendingReview",
+		isStale: false,
 		...overrides,
 	};
 }

@@ -2,19 +2,21 @@ import { countUnresolvedThreads } from "./countUnresolvedThreads";
 import { describeFetchError } from "./describeFetchError";
 import { fetchRepoPullRequests } from "./fetchRepoPullRequests";
 import { parseRepoArgument } from "./parseRepoArgument";
+import { summarisePrsStatus } from "./summarisePrsStatus";
 import { toPrStatus } from "./toPrStatus";
-import type { PrsStatusReport } from "./types";
+import type { PrsStatusReport, RepoStatus } from "./types";
 
 export function buildPrsStatusReport(
 	repoArguments: string[],
 	now: number = Date.now(),
 ): PrsStatusReport {
-	const report: PrsStatusReport = { repos: [], errors: [] };
+	const repos: RepoStatus[] = [];
+	const errors: PrsStatusReport["errors"] = [];
 
 	for (const argument of repoArguments) {
 		const parsed = parseRepoArgument(argument);
 		if (!parsed) {
-			report.errors.push({
+			errors.push({
 				repo: argument,
 				error: "not an owner/repo argument",
 			});
@@ -31,11 +33,11 @@ export function buildPrsStatusReport(
 						now,
 					),
 			);
-			report.repos.push({ repo, pullRequests });
+			repos.push({ repo, pullRequests });
 		} catch (error) {
-			report.errors.push({ repo, error: describeFetchError(error) });
+			errors.push({ repo, error: describeFetchError(error) });
 		}
 	}
 
-	return report;
+	return { repos, errors, summary: summarisePrsStatus(repos) };
 }

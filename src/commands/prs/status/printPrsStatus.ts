@@ -2,7 +2,9 @@ import chalk from "chalk";
 import { printPrStatus } from "./printPrStatus";
 import type { PrsStatusReport } from "./types";
 
-export function printPrsStatus(report: PrsStatusReport): void {
+export function printPrsStatus(
+	report: Pick<PrsStatusReport, "repos" | "errors">,
+): void {
 	for (const repo of report.repos) {
 		const count = repo.pullRequests.length;
 		console.log(`${chalk.bold(repo.repo)} ${chalk.dim(`(${count} open)`)}`);

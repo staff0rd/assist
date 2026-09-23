@@ -67,6 +67,62 @@ describe("buildPrsStatusReport", () => {
 		expect(buildPrsStatusReport(["org/quiet"], NOW)).toEqual({
 			repos: [{ repo: "org/quiet", pullRequests: [] }],
 			errors: [],
+			summary: {
+				repos: 1,
+				open: 0,
+				excluded: 0,
+				pendingReview: 0,
+				changesRequested: 0,
+				failingChecks: 0,
+				readyToMerge: 0,
+				stale: 0,
+			},
+		});
+	});
+
+	it("leaves drafts and do-not-merge pull requests out of the open count", () => {
+		mockFetchRepoPullRequests
+			.mockReturnValueOnce([
+				{ ...pullRequest(1, "Draft"), isDraft: true },
+				{ ...pullRequest(2, "[DO NOT MERGE] spike") },
+				pullRequest(3, "Ready"),
+				{
+					...pullRequest(4, "Needs review"),
+					reviewDecision: "REVIEW_REQUIRED",
+				},
+			])
+			.mockReturnValueOnce([
+				{ ...pullRequest(5, "[DNM] wip"), updatedAt: "2026-09-01T12:00:00Z" },
+				{
+					...pullRequest(6, "Broken"),
+					statusCheckRollup: [
+						{ name: "build", status: "COMPLETED", conclusion: "FAILURE" },
+					],
+					updatedAt: "2026-09-01T12:00:00Z",
+				},
+			]);
+
+		const report = buildPrsStatusReport(["org/foo", "org/bar"], NOW);
+
+		expect(
+			report.repos.flatMap((repo) => repo.pullRequests.map((pr) => pr.bucket)),
+		).toEqual([
+			"excluded",
+			"excluded",
+			"readyToMerge",
+			"pendingReview",
+			"excluded",
+			"failingChecks",
+		]);
+		expect(report.summary).toEqual({
+			repos: 2,
+			open: 3,
+			excluded: 3,
+			pendingReview: 1,
+			changesRequested: 0,
+			failingChecks: 1,
+			readyToMerge: 1,
+			stale: 1,
 		});
 	});
 
