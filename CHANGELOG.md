@@ -1,3 +1,10 @@
+## [0.688.2](https://github.com/staff0rd/assist/compare/v0.688.1...v0.688.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* center the new-session dialog ([62c7afa](https://github.com/staff0rd/assist/commit/62c7afa90ec24c311fe013ccf1e9f1d56cb0ad9f))
+
 ## [0.688.1](https://github.com/staff0rd/assist/compare/v0.688.0...v0.688.1) (2026-09-23)
 
 
