@@ -1,3 +1,10 @@
+## [0.689.2](https://github.com/staff0rd/assist/compare/v0.689.1...v0.689.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* bucket and count PRs in prs status ([1725484](https://github.com/staff0rd/assist/commit/1725484663eb3439f469a6943bb75a2f499508bf))
+
 ## [0.689.1](https://github.com/staff0rd/assist/compare/v0.689.0...v0.689.1) (2026-09-23)
 
 
