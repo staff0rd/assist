@@ -42,7 +42,7 @@ Ask rather than guess: which jobs deserve a node at all, how jobs split into str
 
 ## Step 5: Write the accepted graph
 
-Write the accepted streams to a JSON file and pass it in. `repo` defaults to the repo you are in, so leave it out.
+Write the accepted streams to a JSON file and pass it in. Run the command from the repo you are in, never from another checkout: the config it writes belongs to the directory it runs in, whichever repos its streams point at. Set `repo` on any stream that releases another repo; one left out defaults to the repo you are in.
 
 ```
 assist releases configure --scope project --streams /tmp/streams.json
