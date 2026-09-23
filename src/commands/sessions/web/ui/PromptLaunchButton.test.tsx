@@ -82,6 +82,22 @@ describe("PromptLaunchButton", () => {
 		expect(onCreate).not.toHaveBeenCalled();
 	});
 
+	it("keeps focus in the prompt box when a harness label is pressed", async () => {
+		mockHarness({ exposeCodexActions: true, exposePiActions: false });
+		const onCreate = vi.fn();
+		const onCreateHarness = vi.fn();
+		renderButton({ onCreate, onCreateHarness });
+
+		openComposer();
+		await screen.findByRole("radio", { name: "Codex" });
+		const label = screen.getByText("Codex");
+		expect(fireEvent.mouseDown(label)).toBe(false);
+		fireEvent.click(label);
+		typeAndSubmit("go");
+
+		expect(onCreateHarness).toHaveBeenCalledWith("codex", "go", "/git/repo");
+	});
+
 	it("still launches Claude when Claude stays selected", async () => {
 		mockHarness({ exposeCodexActions: true, exposePiActions: true });
 		const onCreate = vi.fn();

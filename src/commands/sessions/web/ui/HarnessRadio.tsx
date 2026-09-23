@@ -20,6 +20,7 @@ export function HarnessRadio({
 			row
 			value={value}
 			onChange={(e) => onChange(e.target.value as HarnessKind)}
+			onMouseDown={(e) => e.preventDefault()}
 		>
 			{choices.map((choice) => (
 				<FormControlLabel
