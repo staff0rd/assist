@@ -6,6 +6,8 @@ import { type ReleaseLayer, releaseLayerLabels } from "./releaseLayerLabels";
 
 const wrapSx = { display: "flex", justifyContent: "flex-end" } as const;
 
+const buttonSx = { fontSize: "0.975rem" } as const;
+
 const layerNotes: Record<ReleaseLayer, string> = {
 	live: "What each environment is running right now",
 	run: "How far the latest run of this workflow has reached",
@@ -31,7 +33,9 @@ export function ReleaseLayerToggle({
 			>
 				{(Object.keys(releaseLayerLabels) as ReleaseLayer[]).map((key) => (
 					<Tooltip key={key} title={layerNotes[key]}>
-						<ToggleButton value={key}>{releaseLayerLabels[key]}</ToggleButton>
+						<ToggleButton value={key} sx={buttonSx}>
+							{releaseLayerLabels[key]}
+						</ToggleButton>
 					</Tooltip>
 				))}
 			</ToggleButtonGroup>

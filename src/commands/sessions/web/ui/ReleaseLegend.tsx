@@ -13,7 +13,7 @@ const legendSx = {
 	mt: 1,
 	borderTop: 1,
 	borderColor: "divider",
-	fontSize: 12,
+	fontSize: 14.4,
 	color: "text.secondary",
 } as const;
 
@@ -21,7 +21,7 @@ const entrySx = { display: "inline-flex", alignItems: "center", gap: 0.75 };
 
 const headSx = {
 	fontFamily: "monospace",
-	fontSize: 10.5,
+	fontSize: 12.6,
 	letterSpacing: "0.09em",
 	textTransform: "uppercase",
 } as const;

@@ -8,6 +8,8 @@ import { ReleaseStreamRow } from "./ReleaseStreamRow";
 import { useReleasesState } from "./useReleasesState";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
+const pageSx = { maxWidth: { lg: 1440 } } as const;
+
 export function ReleasesView() {
 	const { selectedCwd } = useRepoSelectionContext();
 	const { streams, loading, error } = useReleasesState(selectedCwd);
@@ -22,6 +24,7 @@ export function ReleasesView() {
 				error ?? "No release streams declared under releases.streams."
 			}
 			maxWidth="lg"
+			sx={pageSx}
 		>
 			<Stack spacing={1}>
 				<ReleaseLayerToggle layer={layer} onChange={setLayer} />

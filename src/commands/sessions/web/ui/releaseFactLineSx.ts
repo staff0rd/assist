@@ -4,6 +4,6 @@ export const releaseFactLineSx = {
 	flexWrap: "wrap",
 	gap: 1,
 	fontFamily: "monospace",
-	fontSize: 11,
+	fontSize: 13.2,
 	color: "text.secondary",
 } as const;

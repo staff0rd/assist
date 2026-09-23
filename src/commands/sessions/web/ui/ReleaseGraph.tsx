@@ -14,7 +14,7 @@ const graphSx = {
 	position: "relative",
 	display: "grid",
 	gridAutoFlow: "column",
-	gridAutoColumns: "minmax(150px, 1fr)",
+	gridAutoColumns: "minmax(180px, 1fr)",
 	gap: 4,
 	minWidth: "min-content",
 } as const;

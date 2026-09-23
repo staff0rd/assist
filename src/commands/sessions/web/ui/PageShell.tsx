@@ -1,5 +1,5 @@
 import Container from "@mui/material/Container";
-import type { Breakpoint } from "@mui/material/styles";
+import type { Breakpoint, SxProps, Theme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 import { PageSpinner } from "./PageSpinner";
@@ -12,6 +12,7 @@ type PageShellProps = {
 	emptyMessage?: string;
 	children: ReactNode;
 	maxWidth?: Breakpoint | false;
+	sx?: SxProps<Theme>;
 };
 
 export const PageShell = (props: PageShellProps) => {
@@ -22,6 +23,7 @@ export const PageShell = (props: PageShellProps) => {
 		emptyMessage,
 		children,
 		maxWidth = "md",
+		sx,
 	} = props;
 
 	useReportContentReady(!loading);
@@ -29,7 +31,10 @@ export const PageShell = (props: PageShellProps) => {
 	if (loading) return <PageSpinner />;
 
 	return (
-		<Container maxWidth={maxWidth} sx={{ py: 3, px: 2 }}>
+		<Container
+			maxWidth={maxWidth}
+			sx={[{ py: 3, px: 2 }, ...(Array.isArray(sx) ? sx : [sx])]}
+		>
 			{title && (
 				<Typography variant="h6" sx={{ mb: 2 }}>
 					{title}

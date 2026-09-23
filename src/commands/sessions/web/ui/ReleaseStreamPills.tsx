@@ -28,7 +28,7 @@ const pillSx = {
 	"& .MuiChip-label": {
 		whiteSpace: "normal",
 		textAlign: "left",
-		fontSize: 11.5,
+		fontSize: 13.8,
 		px: 1,
 	},
 } as const;
