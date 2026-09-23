@@ -6,7 +6,7 @@ import { NewSessionFooter } from "./NewSessionFooter";
 import { NewSessionPromptField } from "./NewSessionPromptField";
 import { type NewSessionMode, newSessionModes } from "./newSessionModes";
 import { RepoCombobox } from "./RepoCombobox";
-import { TopAnchoredDialog } from "./TopAnchoredDialog";
+import { AutoFocusDialog } from "./AutoFocusDialog";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 export function NewSessionDialog({
@@ -31,7 +31,7 @@ export function NewSessionDialog({
 	};
 
 	return (
-		<TopAnchoredDialog onClose={onClose} focusRef={inputRef}>
+		<AutoFocusDialog onClose={onClose} focusRef={inputRef} centered>
 			<form onSubmit={submit}>
 				<Stack spacing={1} sx={{ p: 1 }}>
 					<NewSessionPromptField
@@ -47,6 +47,6 @@ export function NewSessionDialog({
 				</Stack>
 				<NewSessionFooter submitLabel={newSessionModes[mode].submitLabel} />
 			</form>
-		</TopAnchoredDialog>
+		</AutoFocusDialog>
 	);
 }

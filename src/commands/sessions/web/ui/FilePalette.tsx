@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { filePaletteMessage } from "./filePaletteMessage";
 import { FilePaletteResults } from "./FilePaletteResults";
 import { FilterInput } from "./FilterInput";
-import { TopAnchoredDialog } from "./TopAnchoredDialog";
+import { AutoFocusDialog } from "./AutoFocusDialog";
 import { useFileSearch } from "./useFileSearch";
 import { useListKeyboardNav } from "./useListKeyboardNav";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
@@ -35,7 +35,7 @@ export function FilePalette({ onClose }: { onClose: () => void }) {
 	};
 
 	return (
-		<TopAnchoredDialog onClose={onClose} focusRef={inputRef}>
+		<AutoFocusDialog onClose={onClose} focusRef={inputRef}>
 			<FilterInput
 				autoFocus
 				inputRef={inputRef}
@@ -51,6 +51,6 @@ export function FilePalette({ onClose }: { onClose: () => void }) {
 				onHighlight={setHighlight}
 				onSelect={select}
 			/>
-		</TopAnchoredDialog>
+		</AutoFocusDialog>
 	);
 }
