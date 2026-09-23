@@ -1,3 +1,10 @@
+# [0.687.0](https://github.com/staff0rd/assist/compare/v0.686.0...v0.687.0) (2026-09-23)
+
+
+### Features
+
+* repo picker in new-session dialog ([df238cc](https://github.com/staff0rd/assist/commit/df238cc053ce76ef88fb8a69524c0b43217cf244))
+
 # [0.686.0](https://github.com/staff0rd/assist/compare/v0.685.2...v0.686.0) (2026-09-23)
 
 
