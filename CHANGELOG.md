@@ -1,3 +1,10 @@
+## [0.685.1](https://github.com/staff0rd/assist/compare/v0.685.0...v0.685.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* read deployments per environment ([753d588](https://github.com/staff0rd/assist/commit/753d588c12226ef748bdb01227850e1496066b1e))
+
 # [0.685.0](https://github.com/staff0rd/assist/compare/v0.684.1...v0.685.0) (2026-09-22)
 
 
