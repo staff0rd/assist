@@ -1,3 +1,10 @@
+## [0.689.1](https://github.com/staff0rd/assist/compare/v0.689.0...v0.689.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* let issue edit --parent re-parent ([a6ba1c2](https://github.com/staff0rd/assist/commit/a6ba1c2bd9c1abd51ca1d93510a5191d2bacf6f3))
+
 # [0.689.0](https://github.com/staff0rd/assist/compare/v0.688.3...v0.689.0) (2026-09-23)
 
 
