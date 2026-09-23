@@ -14,7 +14,10 @@ type Deployment = {
 	latestStatus: { state: string; createdAt: string } | null;
 };
 
-function withDeployments(nodes: Deployment[], defaultBranch = "main"): void {
+function withEnvironmentDeployments(
+	perEnvironment: Deployment[][],
+	defaultBranch = "main",
+): void {
 	ghJsonMock.mockResolvedValue({
 		data: {
 			repository: {
@@ -26,10 +29,21 @@ function withDeployments(nodes: Deployment[], defaultBranch = "main"): void {
 						author: { name: "Robin" },
 					},
 				},
-				deployments: { nodes },
+				...Object.fromEntries(
+					perEnvironment.map((nodes, index) => [`env${index}`, { nodes }]),
+				),
 			},
 		},
 	} as never);
+}
+
+function withDeployments(nodes: Deployment[], defaultBranch = "main"): void {
+	withEnvironmentDeployments([nodes], defaultBranch);
+}
+
+function queryArg(): string {
+	const args = ghJsonMock.mock.calls[0]?.[1] ?? [];
+	return args.find((arg) => arg.startsWith("query=")) ?? "";
 }
 
 function deployment(overrides: Partial<Deployment> = {}): Deployment {
@@ -100,6 +114,25 @@ describe("liveDeployments", () => {
 
 		expect(live.get("prod")?.commit.sha).toBe("next222");
 		expect(queued.has("prod")).toBe(false);
+	});
+
+	it("reads each environment through its own deployments window", async () => {
+		withEnvironmentDeployments([
+			[deployment({ environment: "dev", commitOid: "dev111" })],
+			[deployment({ environment: "prod", commitOid: "prod222" })],
+		]);
+
+		const { live } = await liveDeployments("/repo", "owner/name", [
+			"dev",
+			"prod",
+			"dev",
+		]);
+
+		expect(queryArg()).toContain('env0: deployments(environments:["dev"]');
+		expect(queryArg()).toContain('env1: deployments(environments:["prod"]');
+		expect(queryArg()).not.toContain("env2:");
+		expect(live.get("dev")?.commit.sha).toBe("dev111");
+		expect(live.get("prod")?.commit.sha).toBe("prod222");
 	});
 
 	it("reports the repository's default branch and its head commit", async () => {

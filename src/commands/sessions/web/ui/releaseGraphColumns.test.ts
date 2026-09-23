@@ -31,28 +31,33 @@ describe("releaseGraphColumns", () => {
 
 	it("fans out siblings into one column", () => {
 		const columns = releaseGraphColumns(
-			[node("dev"), node("uk-uat"), node("us-uat")],
+			[node("dev"), node("eu-staging"), node("ap-staging")],
 			[
-				["dev", "uk-uat"],
-				["dev", "us-uat"],
+				["dev", "eu-staging"],
+				["dev", "ap-staging"],
 			],
 		);
 
-		expect(ids(columns)).toEqual([["dev"], ["uk-uat", "us-uat"]]);
+		expect(ids(columns)).toEqual([["dev"], ["eu-staging", "ap-staging"]]);
 	});
 
 	it("puts a fan-in gate past its deepest input", () => {
 		const columns = releaseGraphColumns(
-			[node("build"), node("dev"), node("uat"), node("promote")],
+			[node("build"), node("dev"), node("staging"), node("promote")],
 			[
 				["build", "dev"],
-				["dev", "uat"],
+				["dev", "staging"],
 				["build", "promote"],
-				["uat", "promote"],
+				["staging", "promote"],
 			],
 		);
 
-		expect(ids(columns)).toEqual([["build"], ["dev"], ["uat"], ["promote"]]);
+		expect(ids(columns)).toEqual([
+			["build"],
+			["dev"],
+			["staging"],
+			["promote"],
+		]);
 	});
 
 	it("keeps a node no edge mentions in the first column", () => {

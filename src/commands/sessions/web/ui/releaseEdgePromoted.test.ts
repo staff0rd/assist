@@ -30,19 +30,19 @@ describe("releaseEdgePromoted", () => {
 	it("is promoted when the target carries the source's commit", () => {
 		const nodes = graph(
 			node("dev", { live: commit("aaa111") }),
-			node("uat", { live: commit("aaa111") }),
+			node("staging", { live: commit("aaa111") }),
 		);
 
-		expect(releaseEdgePromoted(nodes, "live", "dev", "uat")).toBe(true);
+		expect(releaseEdgePromoted(nodes, "live", "dev", "staging")).toBe(true);
 	});
 
 	it("is not promoted when the target carries an older commit", () => {
 		const nodes = graph(
 			node("dev", { live: commit("aaa111") }),
-			node("uat", { live: commit("old000") }),
+			node("staging", { live: commit("old000") }),
 		);
 
-		expect(releaseEdgePromoted(nodes, "live", "dev", "uat")).toBe(false);
+		expect(releaseEdgePromoted(nodes, "live", "dev", "staging")).toBe(false);
 	});
 
 	it("reads a build node's edge against the target's drift", () => {
@@ -56,11 +56,13 @@ describe("releaseEdgePromoted", () => {
 
 	it("leaves an edge into a build or gate node unpromoted", () => {
 		const nodes = graph(
-			node("uat", { live: commit("aaa111") }),
+			node("staging", { live: commit("aaa111") }),
 			node("promote", { kind: "gate", environment: null }),
 		);
 
-		expect(releaseEdgePromoted(nodes, "live", "uat", "promote")).toBe(false);
+		expect(releaseEdgePromoted(nodes, "live", "staging", "promote")).toBe(
+			false,
+		);
 	});
 
 	it("follows the run's own job state on the run layer", () => {
@@ -72,11 +74,11 @@ describe("releaseEdgePromoted", () => {
 			url: null,
 		};
 		const nodes = graph(
-			node("uat", { live: commit("aaa111") }),
+			node("staging", { live: commit("aaa111") }),
 			node("promote", { kind: "gate", environment: null, run: done }),
 		);
 
-		expect(releaseEdgePromoted(nodes, "run", "uat", "promote")).toBe(true);
+		expect(releaseEdgePromoted(nodes, "run", "staging", "promote")).toBe(true);
 	});
 
 	it("is not promoted when either end is missing", () => {

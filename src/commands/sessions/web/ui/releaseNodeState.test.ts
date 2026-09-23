@@ -4,11 +4,11 @@ import { releaseNodeState } from "./releaseNodeState";
 
 function node(overrides: Partial<ReleaseNodeState> = {}): ReleaseNodeState {
 	return {
-		id: "uk-prod",
+		id: "eu-prod",
 		kind: "environment",
-		environment: "UK Production",
-		label: "uk-prod",
-		live: { sha: "fd6d1e2aa", subject: "feat: a thing", author: "Sam" },
+		environment: "EU Production",
+		label: "eu-prod",
+		live: { sha: "3b9c0a1ee", subject: "feat: a thing", author: "Sam" },
 		deployedAt: "2026-09-18T00:00:00Z",
 		behind: 0,
 		queued: null,
@@ -25,10 +25,10 @@ describe("releaseNodeState", () => {
 	});
 
 	it("reads an environment behind the default branch as drift", () => {
-		const state = releaseNodeState(node({ behind: 46 }), "main");
+		const state = releaseNodeState(node({ behind: 9 }), "main");
 		expect(state.tone).toBe("drift");
 		expect(state.tooltip).toBe(
-			"Behind main by 46 commits, and nothing is queued to fix it",
+			"Behind main by 9 commits, and nothing is queued to fix it",
 		);
 	});
 

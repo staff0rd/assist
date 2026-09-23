@@ -439,7 +439,7 @@ The **Releases** tab draws one row per declared release stream: a left rail nami
 Two layers sit over the one graph, toggled rather than shown side by side:
 
 - **What's live** — per environment, the commit of its newest deployment whose status is `success`, how long ago that went live, and how many commits behind the repo's default branch it is. A deployment still `waiting` on an approval is gated, not live, so it is passed over and shown on its own `queued` line instead.
-- **Latest run** — per node, the state of its job in the latest run of the stream's workflow: how long it took, how long it has been sitting on an environment approval, or that the run never got there. Jobs are matched to nodes by name, most specific node first, so `Deploy to US UAT` goes to the `us-uat` node rather than the `uat` one.
+- **Latest run** — per node, the state of its job in the latest run of the stream's workflow: how long it took, how long it has been sitting on an environment approval, or that the run never got there. Jobs are matched to nodes by name, most specific node first, so `Deploy to EU Staging` goes to the `eu-staging` node rather than the `staging` one.
 
 Every timestamp renders in the viewer's own timezone, and every glyph and short token carries a tooltip on hover and on keyboard focus. Commit SHAs link to the commit, and their tooltip carries the commit subject and author. A stream whose repo or workflow cannot be read shows its error in place of its graph, leaving the other streams intact. Live state is read from the repo's GitHub deployments, so two streams deploying into the same environment read the same commit.
 
@@ -454,10 +454,10 @@ releases:
       nodes:
         - { id: build, kind: build }
         - { id: dev, environment: dev }
-        - { id: uk-prod, environment: UK Production, label: uk-prod }
+        - { id: eu-prod, environment: EU Production, label: eu-prod }
       edges:
         - [build, dev]
-        - [dev, uk-prod]
+        - [dev, eu-prod]
 ```
 
 - `id` names the node within the stream and is what `edges` refer to. A node with an `environment` is a GitHub deployment environment and reads live state; `kind` (`build` or `gate`) marks a node that deploys nothing. `label` overrides the text on the node, which is otherwise the `id`.

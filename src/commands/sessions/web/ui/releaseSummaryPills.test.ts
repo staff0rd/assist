@@ -63,7 +63,7 @@ describe("releaseSummaryPills", () => {
 		const pills = releaseSummaryPills(
 			stream([
 				node("dev"),
-				node("uk-prod", {
+				node("eu-prod", {
 					behind: 10,
 					queued: { sha: "bbb222", subject: null, author: null },
 				}),
@@ -74,33 +74,33 @@ describe("releaseSummaryPills", () => {
 		expect(pills[1]).toEqual({
 			tone: "gate",
 			text: "1 waiting for someone to approve",
-			ids: ["uk-prod"],
+			ids: ["eu-prod"],
 		});
 	});
 
 	it("reports the furthest drift", () => {
 		const pills = releaseSummaryPills(
-			stream([node("dev"), node("us-prod", { behind: 46 })]),
+			stream([node("dev"), node("ap-prod", { behind: 9 })]),
 			"live",
 		);
 
 		expect(pills[1]).toEqual({
 			tone: "drift",
-			text: "1 behind main, furthest by 46 commits",
-			ids: ["us-prod"],
+			text: "1 behind main, furthest by 9 commits",
+			ids: ["ap-prod"],
 		});
 	});
 
 	it("counts environments with no successful deployment", () => {
 		const pills = releaseSummaryPills(
-			stream([node("dev"), node("uk-prod", { live: null, behind: null })]),
+			stream([node("dev"), node("eu-prod", { live: null, behind: null })]),
 			"live",
 		);
 
 		expect(pills.at(-1)).toEqual({
 			tone: "idle",
 			text: "1 with no successful deployment",
-			ids: ["uk-prod"],
+			ids: ["eu-prod"],
 		});
 	});
 
@@ -108,8 +108,8 @@ describe("releaseSummaryPills", () => {
 		const pills = releaseSummaryPills(
 			stream([
 				node("dev", { run: runState("ok") }),
-				node("uk-prod", { run: runState("gate") }),
-				node("us-prod", { run: runState("idle") }),
+				node("eu-prod", { run: runState("gate") }),
+				node("ap-prod", { run: runState("idle") }),
 			]),
 			"run",
 		);

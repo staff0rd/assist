@@ -57,12 +57,12 @@ assist releases configure --scope project --streams /tmp/streams.json
 			{ "id": "build", "kind": "build" },
 			{ "id": "dev", "environment": "dev" },
 			{ "id": "promote", "kind": "gate" },
-			{ "id": "uk-prod", "environment": "UK Production", "label": "uk-prod" }
+			{ "id": "eu-prod", "environment": "EU Production", "label": "eu-prod" }
 		],
 		"edges": [
 			["build", "dev"],
 			["dev", "promote"],
-			["promote", "uk-prod"]
+			["promote", "eu-prod"]
 		]
 	}
 ]

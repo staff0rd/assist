@@ -9,10 +9,10 @@ function node(
 	overrides: Partial<ReleaseNodeState> = {},
 ): ReleaseNodeState {
 	return {
-		id: "uk-prod",
+		id: "eu-prod",
 		kind: "environment",
-		environment: "UK Production",
-		label: "uk-prod",
+		environment: "EU Production",
+		label: "eu-prod",
 		live: null,
 		deployedAt: null,
 		behind: null,

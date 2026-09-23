@@ -20,68 +20,68 @@ function job(
 
 const nodes: ReleaseNode[] = [
 	{ id: "build", kind: "build" },
-	{ id: "uat", environment: "UAT" },
-	{ id: "us-uat", environment: "US UAT" },
+	{ id: "staging", environment: "Staging" },
+	{ id: "eu-staging", environment: "EU Staging" },
 ];
 
 describe("matchRunJobs", () => {
 	it("matches a node through the reusable workflow prefix in the job name", () => {
 		const matched = matchRunJobs(nodes, [
-			job("web_release / Build the bundle"),
-			job("web_release / Deploy to UAT"),
-			job("web_release / Deploy to US UAT"),
+			job("site_release / Build the bundle"),
+			job("site_release / Deploy to Staging"),
+			job("site_release / Deploy to EU Staging"),
 		]);
 
 		expect(matched.get("build")?.status).toBe("ok");
-		expect(matched.get("uat")?.url).toContain("Deploy to UAT");
+		expect(matched.get("staging")?.url).toContain("Deploy to Staging");
 	});
 
 	it("gives a job to the most specific node that names it", () => {
 		const matched = matchRunJobs(nodes, [
-			job("release / Deploy to UAT"),
-			job("release / Deploy to US UAT"),
+			job("release / Deploy to Staging"),
+			job("release / Deploy to EU Staging"),
 		]);
 
-		expect(matched.get("us-uat")?.url).toContain("Deploy to US UAT");
-		expect(matched.get("uat")?.url).not.toContain("US UAT");
+		expect(matched.get("eu-staging")?.url).toContain("Deploy to EU Staging");
+		expect(matched.get("staging")?.url).not.toContain("EU Staging");
 	});
 
 	it("reads a job waiting on an environment approval as a gate", () => {
 		const matched = matchRunJobs(nodes, [
-			job("Deploy to UAT", { status: "waiting", conclusion: null }),
+			job("Deploy to Staging", { status: "waiting", conclusion: null }),
 		]);
 
-		expect(matched.get("uat")?.status).toBe("gate");
+		expect(matched.get("staging")?.status).toBe("gate");
 	});
 
 	it("reads a skipped job as one this run never reached", () => {
 		const matched = matchRunJobs(nodes, [
-			job("Deploy to UAT", { conclusion: "skipped" }),
+			job("Deploy to Staging", { conclusion: "skipped" }),
 		]);
 
-		expect(matched.get("uat")?.status).toBe("idle");
+		expect(matched.get("staging")?.status).toBe("idle");
 	});
 
 	it("reads a failed job as a failure", () => {
 		const matched = matchRunJobs(nodes, [
-			job("Deploy to UAT", { conclusion: "failure" }),
+			job("Deploy to Staging", { conclusion: "failure" }),
 		]);
 
-		expect(matched.get("uat")?.status).toBe("fail");
+		expect(matched.get("staging")?.status).toBe("fail");
 	});
 
 	it("reads a running job as in progress", () => {
 		const matched = matchRunJobs(nodes, [
-			job("Deploy to UAT", { status: "in_progress", conclusion: null }),
+			job("Deploy to Staging", { status: "in_progress", conclusion: null }),
 		]);
 
-		expect(matched.get("uat")?.status).toBe("running");
+		expect(matched.get("staging")?.status).toBe("running");
 	});
 
 	it("leaves a node the run never touched with no job", () => {
 		const matched = matchRunJobs(nodes, [job("Build the bundle")]);
 
-		expect(matched.get("us-uat")).toEqual({
+		expect(matched.get("eu-staging")).toEqual({
 			status: "idle",
 			conclusion: null,
 			startedAt: null,

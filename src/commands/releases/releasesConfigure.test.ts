@@ -31,11 +31,11 @@ const webApp = {
 	nodes: [
 		{ id: "build", kind: "build" },
 		{ id: "dev", environment: "dev" },
-		{ id: "uk-prod", environment: "UK Production" },
+		{ id: "eu-prod", environment: "EU Production" },
 	],
 	edges: [
 		["build", "dev"],
-		["dev", "uk-prod"],
+		["dev", "eu-prod"],
 	],
 };
 
@@ -162,9 +162,9 @@ describe("releasesConfigure", () => {
 			releasesConfigure({ streams: "streams.json" });
 
 			const output = logged.join("\n");
-			expect(output).toContain("environments: dev, UK Production");
+			expect(output).toContain("environments: dev, EU Production");
 			expect(output).toContain("steps: build [build]");
-			expect(output).toContain("edges: build → dev, dev → uk-prod");
+			expect(output).toContain("edges: build → dev, dev → eu-prod");
 			expect(output).toContain("Written to project assist.yml");
 		});
 	});
