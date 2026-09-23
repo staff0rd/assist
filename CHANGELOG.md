@@ -1,3 +1,10 @@
+## [0.688.1](https://github.com/staff0rd/assist/compare/v0.688.0...v0.688.1) (2026-09-23)
+
+
+### Bug Fixes
+
+* show the PR title in the review pane ([f394e6a](https://github.com/staff0rd/assist/commit/f394e6a943f75beb92187051d6df81093a158209))
+
 # [0.688.0](https://github.com/staff0rd/assist/compare/v0.687.0...v0.688.0) (2026-09-23)
 
 
