@@ -1,3 +1,10 @@
+## [0.685.2](https://github.com/staff0rd/assist/compare/v0.685.1...v0.685.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* releases configure writes to cwd repo ([3b8ca8d](https://github.com/staff0rd/assist/commit/3b8ca8dcc9614291cfb0ff2eaa9ee16b27e17408))
+
 ## [0.685.1](https://github.com/staff0rd/assist/compare/v0.685.0...v0.685.1) (2026-09-23)
 
 
