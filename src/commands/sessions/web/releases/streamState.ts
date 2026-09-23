@@ -1,6 +1,8 @@
 import type { ReleaseStream } from "../../../../shared/types";
+import { behindBySha } from "./behindBySha";
 import { declaredNodeState } from "./declaredNodeState";
 import { liveDeployments } from "./liveDeployments";
+import { streamEnvironments } from "./streamEnvironments";
 import { streamRunState } from "./streamRunState";
 import type { ReleaseStreamState } from "./types";
 
@@ -12,6 +14,7 @@ function errorMessage(error: unknown): string {
 export async function streamState(
 	cwd: string,
 	stream: ReleaseStream,
+	repoEnvironments: string[] = streamEnvironments(stream),
 ): Promise<ReleaseStreamState> {
 	const declared = {
 		name: stream.name,
@@ -21,32 +24,22 @@ export async function streamState(
 	};
 	try {
 		const [deployments, { run, byNode }] = await Promise.all([
-			liveDeployments(
-				cwd,
-				stream.repo,
-				stream.nodes.flatMap((node) =>
-					node.environment ? [node.environment] : [],
-				),
-			),
+			liveDeployments(cwd, stream.repo, repoEnvironments),
 			streamRunState(cwd, stream),
 		]);
-		const nodes = await Promise.all(
-			stream.nodes.map((node) =>
-				declaredNodeState(
-					cwd,
-					stream.repo,
-					deployments.defaultBranch,
-					node,
-					deployments,
-					byNode.get(node.id) ?? null,
-				),
-			),
-		);
+		const behind = await behindBySha(cwd, stream.repo, deployments);
 		return {
 			...declared,
 			defaultBranch: deployments.defaultBranch,
 			head: deployments.head,
-			nodes,
+			nodes: stream.nodes.map((node) =>
+				declaredNodeState(
+					node,
+					deployments,
+					behind,
+					byNode.get(node.id) ?? null,
+				),
+			),
 			run,
 		};
 	} catch (error) {

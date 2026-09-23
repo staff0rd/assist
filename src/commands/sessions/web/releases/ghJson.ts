@@ -7,14 +7,31 @@ const execFileAsync = promisify(execFile);
 const CACHE_TTL_MS = 30_000;
 const cache = new Map<string, { at: number; result: Promise<unknown> }>();
 
+function partialGraphqlData(error: unknown): unknown {
+	const stdout = (error as { stdout?: unknown }).stdout;
+	if (typeof stdout !== "string") return null;
+	try {
+		const parsed = JSON.parse(stdout) as { data?: unknown };
+		return parsed?.data ? parsed : null;
+	} catch {
+		return null;
+	}
+}
+
 async function runGh<T>(cwd: string, args: string[]): Promise<T> {
-	const { stdout } = await execFileAsync("gh", args, {
-		encoding: "utf8",
-		windowsHide: true,
-		cwd: toGitCwd(cwd),
-		maxBuffer: 16 * 1024 * 1024,
-	});
-	return JSON.parse(stdout) as T;
+	try {
+		const { stdout } = await execFileAsync("gh", args, {
+			encoding: "utf8",
+			windowsHide: true,
+			cwd: toGitCwd(cwd),
+			maxBuffer: 16 * 1024 * 1024,
+		});
+		return JSON.parse(stdout) as T;
+	} catch (error) {
+		const partial = partialGraphqlData(error);
+		if (partial) return partial as T;
+		throw error;
+	}
 }
 
 export function ghJson<T>(cwd: string, args: string[]): Promise<T> {

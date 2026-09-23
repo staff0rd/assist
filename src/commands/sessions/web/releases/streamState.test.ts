@@ -36,7 +36,9 @@ beforeEach(() => {
 	liveDeploymentsMock.mockReset();
 	commitsBehindMock.mockReset();
 	streamRunStateMock.mockReset();
-	commitsBehindMock.mockResolvedValue(3);
+	commitsBehindMock.mockImplementation(
+		async (_cwd, _repo, _base, shas) => new Map(shas.map((sha) => [sha, 3])),
+	);
 	streamRunStateMock.mockResolvedValue({ run: null, byNode: new Map() });
 	liveDeploymentsMock.mockResolvedValue({
 		defaultBranch: "main",
@@ -146,6 +148,28 @@ describe("streamState", () => {
 			"dev",
 			"EU Production",
 		]);
+	});
+
+	it("reads deployments for the repo-wide environments it is given", async () => {
+		await streamState("/repo", stream, ["dev", "EU Production", "staging"]);
+
+		expect(liveDeploymentsMock).toHaveBeenCalledWith("/repo", "owner/name", [
+			"dev",
+			"EU Production",
+			"staging",
+		]);
+	});
+
+	it("reads every live commit's drift in one batch", async () => {
+		await streamState("/repo", stream);
+
+		expect(commitsBehindMock).toHaveBeenCalledTimes(1);
+		expect(commitsBehindMock).toHaveBeenCalledWith(
+			"/repo",
+			"owner/name",
+			"main",
+			["aaa111"],
+		);
 	});
 
 	it("surfaces a stream whose repo cannot be read as an error row", async () => {

@@ -3,6 +3,7 @@ import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import { respondJson } from "../../../../shared/web";
 import { getCwdParam } from "../getCwdParam";
 import { toGitCwd } from "../toGitCwd";
+import { repoEnvironments } from "./repoEnvironments";
 import { streamState } from "./streamState";
 
 export async function releasesState(
@@ -20,7 +21,10 @@ export async function releasesState(
 		});
 		return;
 	}
+	const environments = repoEnvironments(streams);
 	respondJson(res, 200, {
-		streams: await Promise.all(streams.map((s) => streamState(cwd, s))),
+		streams: await Promise.all(
+			streams.map((s) => streamState(cwd, s, environments.get(s.repo))),
+		),
 	});
 }

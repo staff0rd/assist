@@ -1,5 +1,4 @@
 import type { ReleaseNode } from "../../../../shared/types";
-import { commitsBehind } from "./commitsBehind";
 import type { RepoDeployments } from "./liveDeployments";
 import type {
 	ReleaseNodeKind,
@@ -12,23 +11,17 @@ function kindOf(node: ReleaseNode): ReleaseNodeKind {
 	return node.kind === "gate" ? "gate" : "build";
 }
 
-export async function declaredNodeState(
-	cwd: string,
-	repo: string,
-	defaultBranch: string | null,
+export function declaredNodeState(
 	node: ReleaseNode,
 	deployments: RepoDeployments,
+	behindBySha: Map<string, number | null>,
 	run: ReleaseRunNodeState | null,
-): Promise<ReleaseNodeState> {
+): ReleaseNodeState {
 	const environment = node.environment ?? null;
 	const deployment = environment
 		? deployments.live.get(environment)
 		: undefined;
 	const queued = environment ? deployments.queued.get(environment) : undefined;
-	const behind =
-		deployment && defaultBranch
-			? await commitsBehind(cwd, repo, defaultBranch, deployment.commit.sha)
-			: null;
 	return {
 		id: node.id,
 		kind: kindOf(node),
@@ -36,7 +29,9 @@ export async function declaredNodeState(
 		label: node.label ?? node.id,
 		live: deployment?.commit ?? null,
 		deployedAt: deployment?.at ?? null,
-		behind,
+		behind: deployment
+			? (behindBySha.get(deployment.commit.sha) ?? null)
+			: null,
 		queued: queued?.commit ?? null,
 		run,
 	};
