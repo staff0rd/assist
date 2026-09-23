@@ -19,6 +19,7 @@ const repos = [
 
 function renderDialog() {
 	const onCreate = vi.fn();
+	const onCreateAssist = vi.fn();
 	const onClose = vi.fn();
 	const setSelectedCwd = vi.fn();
 	render(
@@ -30,10 +31,14 @@ function renderDialog() {
 				setSelectedCwd,
 			}}
 		>
-			<NewSessionDialog onCreate={onCreate} onClose={onClose} />
+			<NewSessionDialog
+				onCreate={onCreate}
+				onCreateAssist={onCreateAssist}
+				onClose={onClose}
+			/>
 		</RepoSelectionContext.Provider>,
 	);
-	return { onCreate, onClose, setSelectedCwd };
+	return { onCreate, onCreateAssist, onClose, setSelectedCwd };
 }
 
 function repoInput() {
@@ -41,7 +46,18 @@ function repoInput() {
 }
 
 function promptInput() {
-	return screen.getByPlaceholderText("What should Claude do?");
+	return screen.getByRole("textbox", { name: "Prompt" }) as HTMLTextAreaElement;
+}
+
+function modeRadio(name: string) {
+	return screen.getByRole("radio", { name });
+}
+
+function checkedMode() {
+	return screen
+		.getAllByRole("radio")
+		.find((radio) => radio.getAttribute("aria-checked") === "true")
+		?.textContent;
 }
 
 function options() {
@@ -139,5 +155,75 @@ describe("NewSessionDialog repo combobox", () => {
 		submitPrompt();
 
 		expect(onCreate).toHaveBeenCalledWith("", "/git/beta");
+	});
+});
+
+describe("NewSessionDialog mode selector", () => {
+	it("defaults to prompt mode", () => {
+		renderDialog();
+
+		expect(checkedMode()).toBe("prompt");
+		expect(promptInput().placeholder).toBe("Enter prompt...");
+		expect(screen.getByRole("button", { name: "Start session" })).toBeTruthy();
+	});
+
+	it("switches mode with the arrow keys and wraps around", () => {
+		renderDialog();
+
+		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowRight" });
+		expect(checkedMode()).toBe("draft");
+		expect(document.activeElement).toBe(modeRadio("draft"));
+
+		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowLeft" });
+		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowLeft" });
+		expect(checkedMode()).toBe("bug");
+	});
+
+	it("updates the placeholder and submit label to follow the mode", () => {
+		renderDialog();
+
+		fireEvent.click(modeRadio("bug"));
+
+		expect(promptInput().placeholder).toMatch(/^Describe the bug/);
+		expect(screen.getByRole("button", { name: "File bug" })).toBeTruthy();
+	});
+
+	it("launches a Claude session in prompt mode", () => {
+		const { onCreate, onCreateAssist } = renderDialog();
+
+		fireEvent.change(promptInput(), { target: { value: "fix it" } });
+		submitPrompt();
+
+		expect(onCreate).toHaveBeenCalledWith("fix it", "/git/beta");
+		expect(onCreateAssist).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		["draft", ["draft", "--once", "add a thing"]],
+		["bug", ["bug", "--once", "add a thing"]],
+	])("launches assist in %s mode in the chosen repo", (mode, args) => {
+		const { onCreate, onCreateAssist } = renderDialog();
+
+		fireEvent.change(promptInput(), { target: { value: "add a thing" } });
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "alpha" } });
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+		fireEvent.click(modeRadio(mode));
+		fireEvent.keyDown(modeRadio(mode), { key: "Enter" });
+
+		expect(onCreateAssist).toHaveBeenCalledWith(args, "/git/alpha");
+		expect(onCreate).not.toHaveBeenCalled();
+	});
+
+	it("launches assist with no prompt when the prompt is empty", () => {
+		const { onCreateAssist } = renderDialog();
+
+		fireEvent.click(modeRadio("draft"));
+		submitPrompt();
+
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			["draft", "--once"],
+			"/git/beta",
+		);
 	});
 });

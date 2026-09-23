@@ -18,7 +18,7 @@ export function RepoCombobox({
 	const combo = useRepoCombobox(repos, value, onChange);
 
 	return (
-		<Box>
+		<Box sx={{ flex: 1, minWidth: 0 }}>
 			<TextField
 				value={combo.text}
 				onChange={(e) => combo.onType(e.target.value)}
