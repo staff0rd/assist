@@ -1,3 +1,10 @@
+## [0.689.3](https://github.com/staff0rd/assist/compare/v0.689.2...v0.689.3) (2026-09-23)
+
+
+### Bug Fixes
+
+* name advice.sections in verify help ([51ebe49](https://github.com/staff0rd/assist/commit/51ebe49f5abab742c9670e1f37756d0063c32b81))
+
 ## [0.689.2](https://github.com/staff0rd/assist/compare/v0.689.1...v0.689.2) (2026-09-23)
 
 
