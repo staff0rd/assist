@@ -1,14 +1,12 @@
-import Dialog from "@mui/material/Dialog";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { filePaletteMessage } from "./filePaletteMessage";
 import { FilePaletteResults } from "./FilePaletteResults";
 import { FilterInput } from "./FilterInput";
+import { TopAnchoredDialog } from "./TopAnchoredDialog";
 import { useFileSearch } from "./useFileSearch";
 import { useListKeyboardNav } from "./useListKeyboardNav";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
-
-const paperSx = { mt: 6, alignSelf: "flex-start" } as const;
 
 export function FilePalette({ onClose }: { onClose: () => void }) {
 	const { worktreeCwd } = useRepoSelectionContext();
@@ -37,16 +35,7 @@ export function FilePalette({ onClose }: { onClose: () => void }) {
 	};
 
 	return (
-		<Dialog
-			open
-			onClose={onClose}
-			maxWidth="sm"
-			fullWidth
-			slotProps={{
-				paper: { sx: paperSx },
-				transition: { onEntered: () => inputRef.current?.focus() },
-			}}
-		>
+		<TopAnchoredDialog onClose={onClose} focusRef={inputRef}>
 			<FilterInput
 				autoFocus
 				inputRef={inputRef}
@@ -62,6 +51,6 @@ export function FilePalette({ onClose }: { onClose: () => void }) {
 				onHighlight={setHighlight}
 				onSelect={select}
 			/>
-		</Dialog>
+		</TopAnchoredDialog>
 	);
 }

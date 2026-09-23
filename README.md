@@ -382,7 +382,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 ### Sessions
 
 - `assist sessions` - Start the web dashboard (same as `sessions web`)
-- `assist sessions web [-p, --port <number>] [--no-open]` - Start the web dashboard with Sessions, Backlog and News tabs (default port 3100). Ctrl+R in the foreground terminal opens a restart menu; Ctrl+. in the browser jumps to the next session waiting on input
+- `assist sessions web [-p, --port <number>] [--no-open]` - Start the web dashboard with Sessions, Backlog and News tabs (default port 3100). Ctrl+R in the foreground terminal opens a restart menu; Ctrl+. in the browser jumps to the next session waiting on input; Ctrl+N or Alt+N opens a new-session prompt (Chrome and Edge only deliver Ctrl+N to installed app windows)
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions
 - `assist sessions close` - Dismiss the current daemon-managed session: kills its process tree, removes its card from the dashboard and reaps its worktree. Outside such a session it reports there is nothing to close and exits 0
 - `assist sessions rename <title>` - Retitle the current daemon-managed session: the given title replaces the generated title and the backlog item name on its dashboard card for the rest of its life. Outside such a session it reports there is nothing to rename and exits 0

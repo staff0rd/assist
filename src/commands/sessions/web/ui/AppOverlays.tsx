@@ -1,6 +1,7 @@
 import { ErrorSnackbar } from "./ErrorSnackbar";
 import { FilePaletteLayer } from "./FilePaletteLayer";
 import { LaunchSnackbar } from "./LaunchSnackbar";
+import { NewSessionLayer } from "./NewSessionLayer";
 import { ReconnectingIndicator } from "./ReconnectingIndicator";
 import type { SessionSocket } from "./useSessionSocket";
 
@@ -14,6 +15,7 @@ export function AppOverlays({
 	return (
 		<>
 			<FilePaletteLayer />
+			<NewSessionLayer onCreate={socket.createSession} />
 			<ReconnectingIndicator reconnecting={socket.reconnecting} />
 			<ErrorSnackbar error={socket.error} onClose={socket.clearError} />
 			<LaunchSnackbar
