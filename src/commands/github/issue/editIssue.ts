@@ -2,15 +2,18 @@ import { inWebSession } from "../../sessions/shared/inWebSession";
 import { prepareIssueEdit } from "./prepareIssueEdit";
 import { pushUnchangedIssue } from "./pushUnchangedIssue";
 import { reviewProposedIssueEdit } from "./reviewProposedIssueEdit";
+import { setIssueParent } from "./setIssueParent";
 import { validateIssueBody } from "./validateIssueBody";
 import { viewIssue } from "./viewIssue";
 
 type EditIssueOptions = {
 	repo?: string;
 	fresh?: boolean;
+	parent?: string;
 };
 
-const USAGE = "Usage: assist github issue edit <number> [-R <owner>/<repo>]";
+const USAGE =
+	"Usage: assist github issue edit <number> [-R <owner>/<repo>] [--parent <issue>]";
 
 export async function editIssue(
 	numberArg: string,
@@ -20,6 +23,11 @@ export async function editIssue(
 	if (!Number.isInteger(number) || number <= 0) {
 		console.error(USAGE);
 		process.exit(1);
+	}
+
+	if (options.parent) {
+		setIssueParent(number, options.repo, options.parent);
+		return;
 	}
 
 	if (!inWebSession()) {
