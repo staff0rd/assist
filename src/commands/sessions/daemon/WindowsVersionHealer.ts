@@ -1,10 +1,24 @@
+import semver from "semver";
 import { autoHealWindowsDaemon } from "./autoHealWindowsDaemon";
+import { ASSIST_VERSION } from "./buildHello";
 import { daemonLog } from "./daemonLog";
 import type { WindowsConnection } from "./WindowsConnection";
 import type { WindowsProxyState } from "./WindowsProxyState";
 
 const UNRECOVERABLE_MESSAGE =
 	"Windows host is on an incompatible version that auto-update could not resolve; not reconnecting. Update the Windows host manually, then restart.";
+
+function wslStaleMessage(windowsVersion: string): string {
+	return `The WSL daemon (${ASSIST_VERSION}) is older than the Windows host (${windowsVersion}); not reconnecting. Update assist in WSL and restart the daemon.`;
+}
+
+function windowsIsNewer(windowsVersion: string): boolean {
+	return (
+		semver.valid(windowsVersion) !== null &&
+		semver.valid(ASSIST_VERSION) !== null &&
+		semver.gt(windowsVersion, ASSIST_VERSION)
+	);
+}
 
 const HEALED_MESSAGE =
 	"Windows host is up to date — you can reselect the repo now.";
@@ -22,6 +36,7 @@ export class WindowsVersionHealer {
 	private healing = false;
 	private unrecoverable = false;
 	private awaitingConfirmation = false;
+	private refusalMessage = UNRECOVERABLE_MESSAGE;
 
 	constructor(
 		private readonly conn: WindowsConnection,
@@ -34,7 +49,7 @@ export class WindowsVersionHealer {
 	}
 
 	refusal(): { type: string; message: string } {
-		return { type: "error", message: UNRECOVERABLE_MESSAGE };
+		return { type: "error", message: this.refusalMessage };
 	}
 
 	async onMismatch(version: string): Promise<void> {
@@ -63,8 +78,10 @@ export class WindowsVersionHealer {
 	private giveUp(version: string): void {
 		this.unrecoverable = true;
 		this.awaitingConfirmation = false;
+		const wslStale = windowsIsNewer(version);
+		if (wslStale) this.refusalMessage = wslStaleMessage(version);
 		daemonLog(
-			`windows proxy: version mismatch ${version} persists after heal; not reconnecting until the WSL daemon restarts`,
+			`windows proxy: version mismatch ${version} persists after heal${wslStale ? ` (wsl ${ASSIST_VERSION} is the older side)` : ""}; not reconnecting until the WSL daemon restarts`,
 		);
 		this.conn.dispose();
 		this.state.broadcast(this.refusal());

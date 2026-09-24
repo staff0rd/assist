@@ -481,6 +481,33 @@ describe("WindowsProxy", () => {
 		expect(heal.mock.calls.length).toBe(1);
 	});
 
+	it("blames the WSL daemon when the healed Windows host is newer", async () => {
+		await createWindowsSession();
+		const before = daemon.received.length;
+		daemon.send({ type: "hello", version: "0.0.0-mismatch" });
+		await waitFor(() => heal.mock.calls.length === 1);
+		await waitFor(() =>
+			daemon.received.slice(before).some((l) => l.includes('"hello"')),
+		);
+
+		daemon.send({ type: "hello", version: "999.0.0" });
+		const isError = (m: unknown) => (m as { type?: string }).type === "error";
+		await waitFor(() => broadcasts.some(isError));
+		const message = String(
+			(broadcasts.find(isError) as { message?: string }).message,
+		);
+		expect(message).toContain("WSL daemon");
+		expect(message).toContain("restart the daemon");
+		expect(message).not.toContain("Update the Windows host");
+
+		const c = client();
+		proxy.route(c, { type: "create", cwd: "C:\\repo" });
+		await waitFor(() => c.sent.some(isError));
+		expect(String((c.sent.find(isError) as { message?: string }).message)).toBe(
+			message,
+		);
+	});
+
 	it("is inert on the Windows host: never dials, never claims a create", async () => {
 		const original = process.platform;
 		Object.defineProperty(process, "platform", { value: "win32" });
