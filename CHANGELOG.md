@@ -1,3 +1,10 @@
+## [0.689.7](https://github.com/staff0rd/assist/compare/v0.689.6...v0.689.7) (2026-09-24)
+
+
+### Bug Fixes
+
+* block SendFeedback in synced settings ([91a6089](https://github.com/staff0rd/assist/commit/91a60890d714db92b93f696b5a99a85e1a9fb0c2))
+
 ## [0.689.6](https://github.com/staff0rd/assist/compare/v0.689.5...v0.689.6) (2026-09-24)
 
 

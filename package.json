@@ -1,6 +1,6 @@
 {
 	"name": "@staff0rd/assist",
-	"version": "0.689.6",
+	"version": "0.689.7",
 	"type": "module",
 	"main": "dist/index.js",
 	"bin": {
