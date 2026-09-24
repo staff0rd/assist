@@ -1,3 +1,10 @@
+## [0.689.6](https://github.com/staff0rd/assist/compare/v0.689.5...v0.689.6) (2026-09-24)
+
+
+### Bug Fixes
+
+* blame stale WSL daemon on mismatch ([a020acb](https://github.com/staff0rd/assist/commit/a020acbb0f278053d4f3bd2c86d0cdb1fe49f411))
+
 ## [0.689.5](https://github.com/staff0rd/assist/compare/v0.689.4...v0.689.5) (2026-09-23)
 
 
