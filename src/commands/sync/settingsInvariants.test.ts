@@ -11,4 +11,12 @@ describe("claude/settings.json invariants", () => {
 		const assistEntries = allow.filter((entry) => /\(assist\b/.test(entry));
 		expect(assistEntries).toEqual([]);
 	});
+
+	it("denies the SendFeedback tool", () => {
+		expect(settings.permissions?.deny ?? []).toContain("SendFeedback");
+	});
+
+	it("turns feedback drafts off", () => {
+		expect(settings.feedbackDrafts).toBe("off");
+	});
 });

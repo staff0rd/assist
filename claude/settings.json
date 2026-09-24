@@ -1,5 +1,6 @@
 {
 	"autoMemoryEnabled": false,
+	"feedbackDrafts": "off",
 	"attribution": {
 		"commit": "",
 		"pr": ""
@@ -113,6 +114,6 @@
 			"Read(~/.assist/pr-comments/**)",
 			"WebFetch(domain:staffordwilliams.com)"
 		],
-		"deny": []
+		"deny": ["SendFeedback"]
 	}
 }
