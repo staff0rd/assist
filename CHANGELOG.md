@@ -1,3 +1,15 @@
+# [0.694.0](https://github.com/staff0rd/assist/compare/v0.693.1...v0.694.0) (2026-09-25)
+
+
+### Bug Fixes
+
+* log codex-usage in the daemon ([c82ec8d](https://github.com/staff0rd/assist/commit/c82ec8de865e9cbee4ba95a1d50d1e6c0ab589d7))
+
+
+### Features
+
+* restructure --apply and --check modes ([c21a716](https://github.com/staff0rd/assist/commit/c21a716108b976e6a34afccc3a3c4425e70abfeb))
+
 ## [0.693.1](https://github.com/staff0rd/assist/compare/v0.693.0...v0.693.1) (2026-09-25)
 
 
