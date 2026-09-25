@@ -1,3 +1,10 @@
+## [0.694.2](https://github.com/staff0rd/assist/compare/v0.694.1...v0.694.2) (2026-09-25)
+
+
+### Bug Fixes
+
+* keep inline type modifiers on extract ([8383617](https://github.com/staff0rd/assist/commit/8383617d09c4dda4670080f848094ebd5a467946))
+
 ## [0.694.1](https://github.com/staff0rd/assist/compare/v0.694.0...v0.694.1) (2026-09-25)
 
 
