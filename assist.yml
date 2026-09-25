@@ -7,6 +7,9 @@ devlog:
   name: assist
 notify:
   enabled: false
+restructure:
+  ignore:
+    - "**/register*.ts"
 worktree:
   watcher: true
 run:
