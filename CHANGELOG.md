@@ -1,3 +1,11 @@
+## [0.691.1](https://github.com/staff0rd/assist/compare/v0.691.0...v0.691.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* clarify harness.codexModel docs ([18d6cae](https://github.com/staff0rd/assist/commit/18d6caeaeb41bc6b20b8f08255a4d51b7016ee8f))
+* show #N on session GitHub chips ([34e6d06](https://github.com/staff0rd/assist/commit/34e6d0646bca6b2355aa8acd754a339f0a453428)), closes [#N](https://github.com/staff0rd/assist/issues/N)
+
 # [0.691.0](https://github.com/staff0rd/assist/compare/v0.690.0...v0.691.0) (2026-09-25)
 
 
