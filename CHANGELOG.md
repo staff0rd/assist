@@ -1,3 +1,10 @@
+## [0.693.1](https://github.com/staff0rd/assist/compare/v0.693.0...v0.693.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* skip rate windows for limitless Codex runs ([0c23019](https://github.com/staff0rd/assist/commit/0c23019d577233050dfc775757a7e81cb0833b98))
+
 # [0.693.0](https://github.com/staff0rd/assist/compare/v0.692.0...v0.693.0) (2026-09-25)
 
 
