@@ -1,3 +1,10 @@
+# [0.696.0](https://github.com/staff0rd/assist/compare/v0.695.0...v0.696.0) (2026-09-25)
+
+
+### Features
+
+* hide Releases tab without streams ([9b13a9c](https://github.com/staff0rd/assist/commit/9b13a9cb3e92ac0a75486ac5c7e5894007964589))
+
 # [0.695.0](https://github.com/staff0rd/assist/compare/v0.694.4...v0.695.0) (2026-09-25)
 
 
