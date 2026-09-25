@@ -1,3 +1,10 @@
+# [0.692.0](https://github.com/staff0rd/assist/compare/v0.691.2...v0.692.0) (2026-09-25)
+
+
+### Features
+
+* reap clone watcher on last dismissal ([ac06e6f](https://github.com/staff0rd/assist/commit/ac06e6fb0c182772855fbee3d563374caf1d890f))
+
 ## [0.691.2](https://github.com/staff0rd/assist/compare/v0.691.1...v0.691.2) (2026-09-25)
 
 
