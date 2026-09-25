@@ -1,3 +1,10 @@
+# [0.690.0](https://github.com/staff0rd/assist/compare/v0.689.8...v0.690.0) (2026-09-25)
+
+
+### Features
+
+* route daemon Codex through LiteLLM ([40c1147](https://github.com/staff0rd/assist/commit/40c1147c5d89b6501f59ae2e1c3ec9b639ca48cc))
+
 ## [0.689.8](https://github.com/staff0rd/assist/compare/v0.689.7...v0.689.8) (2026-09-25)
 
 
