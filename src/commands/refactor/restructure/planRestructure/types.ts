@@ -6,6 +6,7 @@ export type PlannerInput = {
 	scopeRoot: string;
 	files: string[];
 	edges: PlannerEdge[];
+	pinnedModules?: string[];
 };
 
 export type AnchorMode = "child" | "sibling";
@@ -14,6 +15,7 @@ export type Anchor = { file: string; mode: AnchorMode };
 
 export type Anchoring = {
 	root: boolean;
+	pinned?: boolean;
 	anchors: Anchor[];
 	reason: string;
 };

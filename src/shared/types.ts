@@ -92,6 +92,7 @@ const assistConfigShape = {
 	restructure: z
 		.strictObject({
 			ignore: z.array(z.string()).default([]),
+			pin: z.array(z.string()).default([]),
 		})
 		.optional(),
 	jira: z

@@ -98,6 +98,21 @@ describe("restructure", () => {
 		expect(existsSync(join(dir, "src", "widget.ts"))).toBe(true);
 	});
 
+	it("lifts modules named in restructure.pin into their root's folder", async () => {
+		writeFileSync(
+			join(dir, "assist.yml"),
+			'restructure:\n  pin: ["widgetPart"]\n',
+		);
+
+		await restructure("src", { apply: true });
+
+		expect(existsSync(join(dir, "src/app/widgetPart.ts"))).toBe(true);
+		expect(typeErrors(dir)).toEqual([]);
+		const after = snapshot(join(dir, "src"));
+		await restructure("src", { apply: true });
+		expect(snapshot(join(dir, "src"))).toEqual(after);
+	});
+
 	it("never moves files matched by restructure.ignore", async () => {
 		writeFileSync(
 			join(dir, "assist.yml"),

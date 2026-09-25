@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
+import { loadConfig } from "../../shared/loadConfig";
 import { walkSourceFiles } from "../complexity/walkSourceFiles";
 import { applyPlan } from "./restructure/applyPlan";
 import { buildPlan } from "./restructure/buildPlan";
@@ -31,7 +32,8 @@ export async function restructure(
 		return;
 	}
 
-	const plan = buildPlan(scopeRoot, scoped, ignored);
+	const pinned = loadConfig().restructure?.pin ?? [];
+	const plan = buildPlan(scopeRoot, scoped, ignored, pinned);
 	if (options.check) return checkPlan(plan);
 
 	displayPlan(plan);

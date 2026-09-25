@@ -30,6 +30,7 @@ export function buildPlan(
 	scopeRoot: string,
 	files: string[],
 	ignored: string[] = [],
+	pinnedModules: string[] = [],
 ): RestructurePlan {
 	const graph = buildImportGraph(new Set(files), findTsConfig(files[0]), {
 		includeMocks: true,
@@ -38,6 +39,7 @@ export function buildPlan(
 		scopeRoot,
 		files,
 		edges: graph.edges.filter((e) => !e.mock),
+		pinnedModules,
 	});
 	const allProjectFiles = new Set([
 		...graph.importedBy.keys(),

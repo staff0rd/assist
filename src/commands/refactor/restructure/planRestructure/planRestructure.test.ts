@@ -40,7 +40,7 @@ function shuffle<T>(items: T[], random: () => number): T[] {
 	return copy;
 }
 
-function randomInput(seed: number): PlannerInput {
+function randomInput(seed: number, pinnedModules: string[] = []): PlannerInput {
 	const random = seededRandom(seed);
 	const dirs = ["", "x/", "x/y/", "z/"];
 	const files = Array.from({ length: 40 }, (_, i) => {
@@ -54,7 +54,7 @@ function randomInput(seed: number): PlannerInput {
 		edges.push({ source, target });
 	}
 	edges.push({ source: "/outside/o.ts", target: files[3] });
-	return { scopeRoot: ROOT, files, edges };
+	return { scopeRoot: ROOT, files, edges, pinnedModules };
 }
 
 function applyMoves(
@@ -63,7 +63,7 @@ function applyMoves(
 ): PlannerInput {
 	const moved = (f: string) => plan.targets.get(f) ?? f;
 	return {
-		scopeRoot: plannerInput.scopeRoot,
+		...plannerInput,
 		files: plannerInput.files.map(moved),
 		edges: plannerInput.edges.map((e) => ({
 			source: moved(e.source),
@@ -194,38 +194,98 @@ describe("planRestructure", () => {
 		});
 	});
 
-	describe("when the input order is shuffled", () => {
-		it("should produce an identical plan", () => {
-			for (const seed of [1, 2, 3]) {
-				const original = randomInput(seed);
-				const random = seededRandom(seed + 100);
-				const shuffled: PlannerInput = {
-					...original,
-					files: shuffle(original.files, random),
-					edges: shuffle(original.edges, random),
-				};
+	describe("when a module is pinned", () => {
+		const chain: [string, string][] = [
+			["/r/a.ts", "/r/b.ts"],
+			["/r/b.ts", "/r/c.ts"],
+			["/r/c.ts", "/r/d.ts"],
+			["/r/d.ts", "/r/e.ts"],
+			["/r/c.test.ts", "/r/c.ts"],
+		];
 
-				const a = planRestructure(original);
-				const b = planRestructure(shuffled);
+		it("should lift it into its root's folder with its subtree beneath it", () => {
+			const plan = planRestructure({
+				...input(chain),
+				pinnedModules: ["c"],
+			});
 
-				expect([...b.targets]).toEqual([...a.targets]);
-				expect(b.moves).toEqual(a.moves);
-				expect(b.errors).toEqual(a.errors);
-			}
+			expect(targetOf(plan, "/r/b.ts")).toBe("/r/a/b.ts");
+			expect(targetOf(plan, "/r/c.ts")).toBe("/r/a/c.ts");
+			expect(targetOf(plan, "/r/c.test.ts")).toBe("/r/a/c.test.ts");
+			expect(targetOf(plan, "/r/d.ts")).toBe("/r/a/c/d.ts");
+		});
+
+		it("should lift a nested pin into the nearest pinned module's folder", () => {
+			const plan = planRestructure({
+				...input([...chain, ["/r/e.ts", "/r/f.ts"]]),
+				pinnedModules: ["c", "e"],
+			});
+
+			expect(targetOf(plan, "/r/e.ts")).toBe("/r/a/c/e.ts");
+			expect(targetOf(plan, "/r/f.ts")).toBe("/r/a/c/e/f.ts");
+		});
+
+		it("should pin by module name wherever the file currently sits", () => {
+			const plan = planRestructure({
+				...input(chain.map(([s, t]) => [s, t.replace("/r/c.ts", "/r/x/c.ts")])),
+				pinnedModules: ["c"],
+			});
+
+			expect(plan.moves).toContainEqual({
+				from: "/r/x/c.ts",
+				to: "/r/a/c.ts",
+				reason: "pinned; imported only by b.ts",
+			});
+		});
+
+		it("should keep a file shared by the pin and its importer in their common folder", () => {
+			const plan = planRestructure({
+				...input([...chain, ["/r/b.ts", "/r/s.ts"], ["/r/d.ts", "/r/s.ts"]]),
+				pinnedModules: ["c"],
+			});
+
+			expect(targetOf(plan, "/r/s.ts")).toBe("/r/a/s.ts");
 		});
 	});
 
-	describe("when re-planning after applying the moves", () => {
-		it("should yield zero moves", () => {
-			for (const seed of [1, 2, 3, 4, 5]) {
-				const original = randomInput(seed);
-				const first = planRestructure(original);
-				expect(first.moves.length).toBeGreaterThan(0);
+	describe.each([
+		{ pins: "no pins", pinnedModules: [] },
+		{ pins: "pins", pinnedModules: ["m5", "m12", "m20", "m33"] },
+	])("with $pins", ({ pinnedModules }) => {
+		describe("when the input order is shuffled", () => {
+			it("should produce an identical plan", () => {
+				for (const seed of [1, 2, 3]) {
+					const original = randomInput(seed, pinnedModules);
+					const random = seededRandom(seed + 100);
+					const shuffled: PlannerInput = {
+						...original,
+						files: shuffle(original.files, random),
+						edges: shuffle(original.edges, random),
+						pinnedModules: shuffle(pinnedModules, random),
+					};
 
-				const second = planRestructure(applyMoves(original, first));
+					const a = planRestructure(original);
+					const b = planRestructure(shuffled);
 
-				expect(second.moves).toEqual([]);
-			}
+					expect([...b.targets]).toEqual([...a.targets]);
+					expect(b.moves).toEqual(a.moves);
+					expect(b.errors).toEqual(a.errors);
+				}
+			});
+		});
+
+		describe("when re-planning after applying the moves", () => {
+			it("should yield zero moves", () => {
+				for (const seed of [1, 2, 3, 4, 5]) {
+					const original = randomInput(seed, pinnedModules);
+					const first = planRestructure(original);
+					expect(first.moves.length).toBeGreaterThan(0);
+
+					const second = planRestructure(applyMoves(original, first));
+
+					expect(second.moves).toEqual([]);
+				}
+			});
 		});
 	});
 });

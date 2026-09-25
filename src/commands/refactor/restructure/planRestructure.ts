@@ -11,7 +11,7 @@ export function planRestructure(input: PlannerInput): PlannerResult {
 	const scopeRoot = path.resolve(input.scopeRoot);
 	const files = [...new Set(input.files)].sort();
 	const index = indexEdges(new Set(files), input.edges);
-	const anchorings = collectAnchors(files, index);
+	const anchorings = collectAnchors(files, index, new Set(input.pinnedModules));
 	const placements = placeComponents(files, anchorings, scopeRoot);
 
 	const targets = new Map<string, string>();

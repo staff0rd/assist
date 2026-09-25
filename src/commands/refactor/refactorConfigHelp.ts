@@ -6,4 +6,9 @@ export const refactorConfigHelp: ConfigHelpEntry[] = [
 		setter: 'assist config set restructure.ignore "src/generated/**"',
 		note: "globs (relative to cwd) of files restructure never moves; they are treated as outside the root",
 	},
+	{
+		key: "restructure.pin",
+		setter: 'assist config set restructure.pin "SessionCard"',
+		note: "module names (basename without extension) restructure lifts out of deep import chains into the folder of the nearest root or pinned module above them, together with their subtrees",
+	},
 ];
