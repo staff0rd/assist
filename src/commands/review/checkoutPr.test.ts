@@ -3,6 +3,7 @@ import { gitSyncOrNull } from "../sessions/daemon/worktree/git";
 import { checkoutPr } from "./checkoutPr";
 import { moveToPrCheckoutTree } from "./moveToPrCheckoutTree";
 import { prHeadBranch } from "./prHeadBranch";
+import { reportCwdToDaemon } from "./reportCwdToDaemon";
 import { worktreeHoldingBranch } from "./worktreeHoldingBranch";
 
 const mockExecFileSync = vi.fn();
@@ -20,6 +21,7 @@ vi.mock("./moveToPrCheckoutTree", () => ({
 	moveToPrCheckoutTree: vi.fn(),
 }));
 vi.mock("./prHeadBranch", () => ({ prHeadBranch: vi.fn() }));
+vi.mock("./reportCwdToDaemon", () => ({ reportCwdToDaemon: vi.fn() }));
 vi.mock("./worktreeHoldingBranch", () => ({
 	worktreeHoldingBranch: vi.fn(),
 }));
@@ -54,6 +56,7 @@ describe("checkoutPr", () => {
 			expect(mockExecFileSync).not.toHaveBeenCalled();
 			expect(moveMock).not.toHaveBeenCalled();
 			expect(chdir).not.toHaveBeenCalled();
+			expect(reportCwdToDaemon).not.toHaveBeenCalled();
 		});
 	});
 
@@ -64,6 +67,7 @@ describe("checkoutPr", () => {
 			await checkoutPr("123");
 
 			expect(chdir).toHaveBeenCalledWith("/git/repo");
+			expect(reportCwdToDaemon).toHaveBeenCalledWith("/git/repo");
 			expect(mockExecFileSync).not.toHaveBeenCalled();
 			expect(moveMock).not.toHaveBeenCalled();
 		});

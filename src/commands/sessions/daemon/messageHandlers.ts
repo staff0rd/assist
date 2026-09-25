@@ -1,29 +1,18 @@
 import type { HarnessKind } from "../../../shared/harnesses";
 import type { RateLimits } from "../../../shared/RateLimits";
-import { type SessionClient, sendTo } from "./broadcast";
+import { sendTo } from "./broadcast";
 import { buildHello } from "./buildHello";
 import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
 import { handleCreateRun } from "./handleCreateRun";
 import { handleSetStatus } from "./handleSetStatus";
 import { lifecycleHandlers } from "./lifecycleHandlers";
-import type { SessionManager } from "./SessionManager";
+import { type Handler, routed } from "./routed";
+import { sessionSettingHandlers } from "./sessionSettingHandlers";
 import { spawnContextFrom } from "./spawnContextFrom";
 import { spawnCreate } from "./spawnCreate";
 
-export type Msg = Record<string, unknown>;
-type Handler = (
-	client: SessionClient,
-	manager: SessionManager,
-	data: Msg,
-) => void;
-
-// why: proxied (windows) sessions route to the Windows daemon, else run locally
-function routed(local: Handler): Handler {
-	return (client, m, d) => {
-		if (!m.windowsProxy.route(client, d)) local(client, m, d);
-	};
-}
+export type { Msg } from "./routed";
 
 export const messageHandlers: Record<string, Handler> = {
 	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
@@ -84,18 +73,7 @@ export const messageHandlers: Record<string, Handler> = {
 	dismiss: routed((_client, m, d) => m.dismissSession(d.sessionId as string)),
 	discard: routed((_client, m, d) => m.discardSession(d.sessionId as string)),
 	stop: routed((_client, m, d) => m.stopSession(d.sessionId as string)),
-	"set-autorun": routed((_client, m, d) =>
-		m.setAutoRun(d.sessionId as string, d.enabled as boolean),
-	),
-	"set-autoadvance": routed((_client, m, d) =>
-		m.setAutoAdvance(d.sessionId as string, d.enabled as boolean),
-	),
-	rename: routed((_client, m, d) =>
-		m.setTitle(d.sessionId as string, (d.title as string) ?? ""),
-	),
-	"set-starred": routed((_client, m, d) =>
-		m.setStarred(d.sessionId as string, d.starred as boolean),
-	),
+	...sessionSettingHandlers,
 	"set-active": (_client, m, d) =>
 		m.active.set(d.cwd as string, d.sessionId as string),
 	"set-status": handleSetStatus,

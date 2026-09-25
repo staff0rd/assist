@@ -208,16 +208,12 @@ export class SessionManager {
 		if (sessionIo.setAutoRun(this.sessions, id, enabled)) this.notify();
 	}
 
-	setAutoAdvance(id: string, enabled: boolean): void {
-		if (sessionIo.setAutoAdvance(this.sessions, id, enabled)) this.notify();
-	}
-
-	setStarred(id: string, starred: boolean): void {
-		if (sessionIo.setStarred(this.sessions, id, starred)) this.notify();
-	}
-
 	setTitle(id: string, title: string): void {
-		if (setSessionTitle(this.sessions, id, title)) this.notify();
+		this.update((sessions) => setSessionTitle(sessions, id, title));
+	}
+
+	update(mutate: (sessions: Map<string, Session>) => boolean): void {
+		if (mutate(this.sessions)) this.notify();
 	}
 
 	setStatus(report: HookStatusReport): void {
