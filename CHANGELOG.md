@@ -1,3 +1,10 @@
+## [0.689.8](https://github.com/staff0rd/assist/compare/v0.689.7...v0.689.8) (2026-09-25)
+
+
+### Bug Fixes
+
+* move session cwd with PR review ([9ba78b4](https://github.com/staff0rd/assist/commit/9ba78b4fdb671f61933817377f7798c181604ff2))
+
 ## [0.689.7](https://github.com/staff0rd/assist/compare/v0.689.6...v0.689.7) (2026-09-24)
 
 
