@@ -1,3 +1,10 @@
+## [0.694.4](https://github.com/staff0rd/assist/compare/v0.694.3...v0.694.4) (2026-09-25)
+
+
+### Bug Fixes
+
+* keep command folders on restructure ([00e1166](https://github.com/staff0rd/assist/commit/00e11660efe08ce0b5bae23281c74534c56bd15e))
+
 ## [0.694.3](https://github.com/staff0rd/assist/compare/v0.694.2...v0.694.3) (2026-09-25)
 
 
