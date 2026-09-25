@@ -21,9 +21,9 @@ vi.mock("../../../shared/loadConfigFrom", async (importOriginal) => {
 
 import { readConfigEntries } from "../../config/readConfigEntries";
 import { setConfig } from "./setConfig";
-import { configArrayItems } from "./ui/configArrayItems";
-import { configArrayLayerItems } from "./ui/configArrayLayerItems";
-import { placeConfigArrayItem } from "./ui/placeConfigArrayItem";
+import { configArrayItems } from "./ui/App/AppShell/AppRoutes/ConfigView/ConfigGroupCard/ConfigRow/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/configArrayItems";
+import { configArrayLayerItems } from "./ui/App/AppShell/AppRoutes/ConfigView/ConfigGroupCard/ConfigRow/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/configArrayLayerItems";
+import { placeConfigArrayItem } from "./ui/App/AppShell/AppRoutes/ConfigView/ConfigGroupCard/ConfigRow/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/useConfigArrayItemWrites/placeConfigArrayItem";
 
 const root = join(tmpdir(), "assist-set-config-array-scopes-test");
 const home = join(root, "home");
