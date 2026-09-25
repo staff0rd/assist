@@ -1,6 +1,8 @@
 import path from "node:path";
 import chalk from "chalk";
-import type { ImportRewrite, RestructurePlan } from "./types";
+import { computeDepthStats } from "./computeDepthStats";
+import { formatTree } from "./formatTree";
+import type { RestructurePlan } from "./types";
 
 function relPath(filePath: string): string {
 	return path.relative(process.cwd(), filePath);
@@ -17,40 +19,39 @@ function displayMoves(plan: RestructurePlan): void {
 	}
 }
 
-function displayRewrites(rewrites: ImportRewrite[]): void {
-	if (rewrites.length === 0) return;
-	const affectedFiles = new Set(rewrites.map((r) => r.file));
-	console.log(chalk.bold(`\nImport rewrites (${affectedFiles.size} files):`));
-	for (const file of affectedFiles) {
-		console.log(`  ${chalk.cyan(relPath(file))}:`);
-		for (const { oldSpecifier, newSpecifier } of rewrites.filter(
-			(r) => r.file === file,
-		)) {
-			console.log(
-				`    ${chalk.red(`"${oldSpecifier}"`)} → ${chalk.green(`"${newSpecifier}"`)}`,
-			);
-		}
-	}
+function displayTree(plan: RestructurePlan): void {
+	console.log(
+		chalk.bold(`\nResulting tree (${relPath(plan.scopeRoot) || "."}/):`),
+	);
+	for (const line of formatTree(plan.targets.values(), plan.scopeRoot))
+		console.log(`  ${line}`);
+}
+
+function displayDepthStats(plan: RestructurePlan): void {
+	const { max, distribution } = computeDepthStats(
+		plan.targets.values(),
+		plan.scopeRoot,
+	);
+	console.log(chalk.bold(`\nDepth (max ${max}):`));
+	for (const depth of [...distribution.keys()].sort((a, b) => a - b))
+		console.log(`  ${depth}: ${distribution.get(depth)} file(s)`);
+}
+
+function displayErrors(errors: string[]): void {
+	if (errors.length === 0) return;
+	console.log(chalk.red("\nErrors:"));
+	for (const error of errors) console.log(chalk.red(`  ${error}`));
 }
 
 export function displayPlan(plan: RestructurePlan): void {
-	if (plan.warnings.length > 0) {
-		console.log(chalk.yellow("\nWarnings:"));
-		for (const w of plan.warnings) console.log(chalk.yellow(`  ${w}`));
-	}
-
-	if (plan.newDirectories.length > 0) {
-		console.log(chalk.bold("\nNew directories:"));
-		for (const dir of plan.newDirectories)
-			console.log(chalk.green(`  ${dir}/`));
-	}
-
 	displayMoves(plan);
-	displayRewrites(plan.rewrites);
-
+	displayTree(plan);
+	displayDepthStats(plan);
+	displayErrors(plan.errors);
+	const rewrittenFiles = new Set(plan.rewrites.map((r) => r.file)).size;
 	console.log(
 		chalk.dim(
-			`\nSummary: ${plan.moves.length} file(s) moved, ${plan.rewrites.length} imports rewritten`,
+			`\nSummary: ${plan.moves.length} file(s) moved, ${plan.rewrites.length} imports rewritten across ${rewrittenFiles} file(s), ${plan.errors.length} error(s)`,
 		),
 	);
 }

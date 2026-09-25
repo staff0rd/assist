@@ -254,7 +254,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist refactor rename file <source> <destination>` - Rename/move a TypeScript file and update all imports (`--apply` to execute)
 - `assist refactor rename symbol <file> <oldName> <newName>` - Rename a symbol across the project (`--apply` to execute)
 - `assist refactor extract <file> <functionName> <destination>` - Extract a function and its private dependencies to a new file (`--apply` to execute)
-- `assist refactor restructure [pattern]` - Analyze the import graph and restructure tightly-coupled files into nested directories
+- `assist refactor restructure [root]` - Place every file under `root` (default `src`) by its import graph alone, so re-running on the result makes no moves. Roots (no importers in scope, or imported from outside) sit at `root`; a single-importer file nests in `<importer dir>/<importer basename>/`; a shared file sits directly in the lowest folder common to its importers; cycles stay together; tests sit next to their subject. Dry-run prints the moves, resulting tree, depth statistics and basename collisions (`--apply` to execute)
 
 ### Rules
 

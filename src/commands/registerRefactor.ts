@@ -47,16 +47,11 @@ function registerRename(parent: Command): void {
 
 function registerRestructure(parent: Command): void {
 	const restructureCommand = parent
-		.command("restructure [pattern]")
+		.command("restructure [root]")
 		.description(
-			"Analyze import graph and restructure tightly-coupled files into nested directories",
+			"Place every file under root by its import graph: single-importer files nest under their importer, shared files sit at their importers' lowest common folder",
 		)
 		.option("--apply", "Execute the restructuring (default: dry-run)")
-		.option(
-			"--max-depth <number>",
-			"Maximum nesting iterations (default: 3)",
-			Number.parseInt,
-		)
 		.action(refactorRestructure);
 
 	configHelp(restructureCommand, refactorConfigHelp);

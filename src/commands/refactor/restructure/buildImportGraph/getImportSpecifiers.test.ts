@@ -40,6 +40,23 @@ describe("getImportSpecifiers", () => {
 		});
 	});
 
+	describe("when given a type-only import", () => {
+		it("should return the specifier", () => {
+			const sf = parse('import type { Foo } from "./foo";');
+
+			expect(getImportSpecifiers(sf)).toEqual(["./foo"]);
+		});
+	});
+
+	describe("when given an import type node", () => {
+		it("should return the specifier", () => {
+			const kw = "import";
+			const sf = parse(`type T = typeof ${kw}("./types").Foo;`);
+
+			expect(getImportSpecifiers(sf)).toEqual(["./types"]);
+		});
+	});
+
 	describe("when given no imports", () => {
 		it("should return empty array", () => {
 			const sf = parse("const x = 1;");

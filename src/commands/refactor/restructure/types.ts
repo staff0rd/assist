@@ -24,8 +24,9 @@ export type ImportRewrite = {
 };
 
 export type RestructurePlan = {
+	scopeRoot: string;
+	targets: Map<string, string>;
 	moves: FileMove[];
 	rewrites: ImportRewrite[];
-	newDirectories: string[];
-	warnings: string[];
+	errors: string[];
 };

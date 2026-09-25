@@ -14,11 +14,6 @@ export function executePlan(plan: RestructurePlan): void {
 		);
 	}
 
-	for (const dir of plan.newDirectories) {
-		fs.mkdirSync(dir, { recursive: true });
-		console.log(chalk.green(`  Created ${path.relative(process.cwd(), dir)}/`));
-	}
-
 	for (const move of plan.moves) {
 		const targetDir = path.dirname(move.to);
 		if (!fs.existsSync(targetDir)) {
