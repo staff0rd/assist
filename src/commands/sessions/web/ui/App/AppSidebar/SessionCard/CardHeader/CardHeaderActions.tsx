@@ -3,8 +3,7 @@ import { CardActionButtons } from "./CardHeaderActions/CardActionButtons";
 import type { CardHeaderProps } from "../../../../types";
 
 const actionsSx = {
-	gridColumn: 3,
-	gridRow: 1,
+	flexShrink: 0,
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "flex-end",

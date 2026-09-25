@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { areChipsLoading } from "./areChipsLoading";
@@ -13,9 +14,17 @@ const spinnerSx = { gridColumn: 1, gridRow: 1, justifySelf: "center" } as const;
 
 const busySx = { gridColumn: 2, gridRow: 2, color: "text.disabled" } as const;
 
-const titleSx = {
-	gridColumn: 2,
+const headerRowSx = {
+	gridColumn: "2 / -1",
 	gridRow: 1,
+	display: "flex",
+	alignItems: "center",
+	columnGap: 1,
+	minWidth: 0,
+} as const;
+
+const titleSx = {
+	flex: 1,
 	color: "text.primary",
 	fontSize: "0.845rem",
 	lineHeight: "20px",
@@ -45,16 +54,18 @@ export function CardHeader({
 	return (
 		<>
 			<StatusRail session={session} loading={loading} />
-			<Typography variant="body2" sx={titleSx}>
-				{sessionTitle(session)}
-			</Typography>
-			<CardHeaderActions
-				session={session}
-				loading={loading}
-				onRetry={onRetry}
-				onRestart={onRestart}
-				onDismiss={onDismiss}
-			/>
+			<Box sx={headerRowSx}>
+				<Typography variant="body2" sx={titleSx}>
+					{sessionTitle(session)}
+				</Typography>
+				<CardHeaderActions
+					session={session}
+					loading={loading}
+					onRetry={onRetry}
+					onRestart={onRestart}
+					onDismiss={onDismiss}
+				/>
+			</Box>
 			{loading && (
 				<Typography variant="caption" sx={busySx}>
 					{session.closing ? "Closing…" : "Starting…"}

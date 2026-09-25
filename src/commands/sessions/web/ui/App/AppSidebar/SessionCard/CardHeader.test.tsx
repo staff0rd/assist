@@ -42,6 +42,21 @@ describe("CardHeader title", () => {
 		expect(style.overflow).toBe("hidden");
 	});
 
+	it("shares the row-1 container with the actions, spanning past the data line column", () => {
+		render(
+			<CardHeader session={session} loading={false} onDismiss={() => {}} />,
+			{ wrapper: Stars },
+		);
+
+		const title = screen.getByText("my session");
+		const row = title.parentElement as HTMLElement;
+		const rowStyle = getComputedStyle(row);
+		expect(row.contains(screen.getByTitle("Dismiss session 1"))).toBe(true);
+		expect(rowStyle.gridColumn.replace(/\s/g, "")).toBe("2/-1");
+		expect(rowStyle.display).toBe("flex");
+		expect(getComputedStyle(title).minWidth).toBe("0px");
+	});
+
 	it("keeps a long untruncated title on one line", () => {
 		const wordy: SessionInfo = {
 			...session,
