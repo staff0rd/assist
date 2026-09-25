@@ -1,3 +1,16 @@
+# [0.695.0](https://github.com/staff0rd/assist/compare/v0.694.4...v0.695.0) (2026-09-25)
+
+
+### Bug Fixes
+
+* pin web/ui feature modules ([688c242](https://github.com/staff0rd/assist/commit/688c242c0808c0b663a81e8ded184b1af512aec6))
+
+
+### Features
+
+* build a backlog item with Codex or pi ([b79ac75](https://github.com/staff0rd/assist/commit/b79ac7571f19d350d4d691f3b9ad568dbfa6b867))
+* pin modules out of deep chains ([f3113d2](https://github.com/staff0rd/assist/commit/f3113d229aecf5b92164a8cd69bba1bc625dbcb5))
+
 ## [0.694.4](https://github.com/staff0rd/assist/compare/v0.694.3...v0.694.4) (2026-09-25)
 
 
