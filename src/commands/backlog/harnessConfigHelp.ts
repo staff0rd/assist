@@ -16,4 +16,9 @@ export const harnessConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set harness.exposePiActions <true|false>",
 		note: "force the web UI 'with pi' actions off even when pi is on PATH",
 	},
+	{
+		key: "harness.codexModel",
+		setter: "assist config set harness.codexModel <model>",
+		note: "run non-review Codex launches against this model on the LiteLLM proxy; plain codex when LiteLLM is unconfigured",
+	},
 ];

@@ -1,3 +1,4 @@
+import { buildHarnessCodexArgs } from "../../../shared/buildHarnessCodexArgs";
 import { spawnPty } from "./spawnPty";
 
 type SpawnOpts = {
@@ -8,13 +9,17 @@ type SpawnOpts = {
 };
 
 export function spawnCodex(opts: SpawnOpts = {}) {
-	return spawnPty(codexArgs(opts), opts.cwd, opts.sessionId);
+	const override = buildHarnessCodexArgs();
+	return spawnPty(
+		["codex", ...override.args, ...codexArgs(opts)],
+		opts.cwd,
+		opts.sessionId,
+		override.env,
+	);
 }
 
 function codexArgs(opts: SpawnOpts): string[] {
-	if (opts.resumeSessionId) {
-		const base = ["codex", "resume", opts.resumeSessionId];
-		return opts.prompt ? [...base, opts.prompt] : base;
-	}
-	return opts.prompt ? ["codex", opts.prompt] : ["codex"];
+	const prompt = opts.prompt ? [opts.prompt] : [];
+	if (opts.resumeSessionId) return ["resume", opts.resumeSessionId, ...prompt];
+	return prompt;
 }

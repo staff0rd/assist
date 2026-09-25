@@ -321,6 +321,7 @@ const assistConfigShape = {
 			engine: z.enum(["claude", "codex", "pi"]).default("claude"),
 			exposeCodexActions: z.boolean().optional(),
 			exposePiActions: z.boolean().optional(),
+			codexModel: z.string().optional(),
 		})
 		.default({ engine: "claude" }),
 	voice: z

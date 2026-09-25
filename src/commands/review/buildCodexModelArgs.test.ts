@@ -61,6 +61,15 @@ describe("buildCodexModelArgs", () => {
 		expect(buildCodexModelArgs()).toEqual({ args: [], env: {} });
 	});
 
+	it("should ignore harness.codexModel", () => {
+		withConfig({
+			harness: { engine: "claude", codexModel: "gpt-5-codex" },
+			litellm: { baseUrl: "https://proxy.example", apiKey: "sk-test" },
+		});
+
+		expect(buildCodexModelArgs()).toEqual({ args: [], env: {} });
+	});
+
 	it("should return nothing when the proxy is not configured", () => {
 		withConfig({ review: { codexModel: "gpt-5-codex" } });
 
