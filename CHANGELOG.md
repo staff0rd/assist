@@ -1,3 +1,10 @@
+# [0.699.0](https://github.com/staff0rd/assist/compare/v0.698.0...v0.699.0) (2026-09-25)
+
+
+### Features
+
+* cycle new session modes with Tab ([54ddef3](https://github.com/staff0rd/assist/commit/54ddef3e570122c161df22df8434f650436df938))
+
 # [0.698.0](https://github.com/staff0rd/assist/compare/v0.697.1...v0.698.0) (2026-09-25)
 
 
