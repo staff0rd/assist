@@ -1,75 +1,110 @@
-import { spawn } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { spawnCodex } from "./spawnCodex";
+import { spawnInherit } from "./spawnInherit";
+import type { AssistConfig } from "./types";
 
-vi.mock("node:child_process", () => ({
-	spawn: vi.fn(() => ({ on: vi.fn() })),
+const mockLoadConfig = vi.fn();
+
+vi.mock("./loadConfig", () => ({
+	loadConfig: () => mockLoadConfig(),
 }));
 
-const spawnMock = spawn as unknown as ReturnType<typeof vi.fn>;
+vi.mock("./spawnInherit", () => ({
+	spawnInherit: vi.fn(() => ({ fake: "spawn" })),
+}));
 
-function lastCall() {
-	return spawnMock.mock.lastCall as [
-		string,
-		string[],
-		{ env: Record<string, string | undefined> },
-	];
+const spawnInheritMock = spawnInherit as unknown as ReturnType<typeof vi.fn>;
+
+const LITELLM = { baseUrl: "https://proxy.example/", apiKey: "sk-test" };
+
+const OVERRIDE_ARGS = [
+	"-c",
+	"model_providers.litellm.name=LiteLLM",
+	"-c",
+	"model_providers.litellm.base_url=https://proxy.example/v1",
+	"-c",
+	"model_providers.litellm.env_key=ASSIST_LITELLM_API_KEY",
+	"-c",
+	"model_providers.litellm.wire_api=responses",
+	"-c",
+	"model_provider=litellm",
+	"-m",
+	"gpt-5-codex",
+];
+
+function withConfig(config: Partial<AssistConfig>): void {
+	mockLoadConfig.mockReturnValue({ harness: { engine: "claude" }, ...config });
 }
 
 describe("spawnCodex", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		withConfig({});
 	});
 
-	it("launches codex workspace-write by default in process.cwd()", () => {
-		spawnCodex("/refine a279");
+	it("runs plain codex in the given cwd and sandbox", () => {
+		spawnCodex("Do the thing", { cwd: "/repo", sandbox: "read-only" });
 
-		const [command, args] = lastCall();
-		expect(command).toBe("codex");
-		expect(args).toEqual([
-			"-C",
-			process.cwd(),
-			"--sandbox",
-			"workspace-write",
-			"/refine a279",
-		]);
+		expect(spawnInheritMock).toHaveBeenCalledWith(
+			"codex",
+			["-C", "/repo", "--sandbox", "read-only", "Do the thing"],
+			{ env: {} },
+		);
 	});
 
-	it("honours an explicit cwd", () => {
-		spawnCodex("/refine a279", { cwd: "/repo/x" });
+	it("defaults to the process cwd and a workspace-write sandbox", () => {
+		spawnCodex("Do the thing");
 
-		const [, args] = lastCall();
-		expect(args).toEqual([
-			"-C",
-			"/repo/x",
-			"--sandbox",
-			"workspace-write",
-			"/refine a279",
-		]);
+		expect(spawnInheritMock).toHaveBeenCalledWith(
+			"codex",
+			["-C", process.cwd(), "--sandbox", "workspace-write", "Do the thing"],
+			{ env: {} },
+		);
 	});
 
-	it("launches codex read-only when requested", () => {
-		spawnCodex("/refine a279", { sandbox: "read-only" });
+	it("routes through LiteLLM with the key in its env when harness.codexModel is set", () => {
+		withConfig({
+			harness: { engine: "claude", codexModel: "gpt-5-codex" },
+			litellm: LITELLM,
+		});
 
-		const [, args] = lastCall();
-		expect(args).toEqual([
-			"-C",
-			process.cwd(),
-			"--sandbox",
-			"read-only",
-			"/refine a279",
-		]);
+		spawnCodex("Do the thing", { cwd: "/repo" });
+
+		expect(spawnInheritMock).toHaveBeenCalledWith(
+			"codex",
+			[
+				...OVERRIDE_ARGS,
+				"-C",
+				"/repo",
+				"--sandbox",
+				"workspace-write",
+				"Do the thing",
+			],
+			{ env: { ASSIST_LITELLM_API_KEY: "sk-test" } },
+		);
 	});
 
-	it("strips ASSIST_ACTIVITY_ID and CLAUDE_CODE_CHILD_SESSION from the child env", () => {
-		vi.stubEnv("ASSIST_ACTIVITY_ID", "act-1");
-		vi.stubEnv("CLAUDE_CODE_CHILD_SESSION", "1");
+	it("runs plain codex when LiteLLM is unconfigured", () => {
+		withConfig({ harness: { engine: "claude", codexModel: "gpt-5-codex" } });
 
-		spawnCodex("/refine a279");
+		spawnCodex("Do the thing", { cwd: "/repo" });
 
-		const [, , opts] = lastCall();
-		expect(opts.env).not.toHaveProperty("ASSIST_ACTIVITY_ID");
-		expect(opts.env).not.toHaveProperty("CLAUDE_CODE_CHILD_SESSION");
-		vi.unstubAllEnvs();
+		expect(spawnInheritMock).toHaveBeenCalledWith(
+			"codex",
+			["-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
+			{ env: {} },
+		);
+	});
+
+	it("ignores review.codexModel", () => {
+		withConfig({ review: { codexModel: "gpt-5-codex" }, litellm: LITELLM });
+
+		spawnCodex("Do the thing", { cwd: "/repo" });
+
+		expect(spawnInheritMock).toHaveBeenCalledWith(
+			"codex",
+			["-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
+			{ env: {} },
+		);
 	});
 });

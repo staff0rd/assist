@@ -485,7 +485,7 @@ A restart kills every managed session's pty, which also kills any background tas
 
 ## Other config keys
 
-- `harness.codexModel` — when set (`assist config set harness.codexModel <model>`), Codex sessions the daemon launches (create, resume, restore and respawn) run against that model on the LiteLLM proxy, injected per-invocation so `~/.codex/config.toml` is untouched. Requires `litellm.baseUrl` and `litellm.apiKey`; with either missing, Codex runs plain on the user's own codex auth. Independent of `review.codexModel`, which alone controls `assist review`
+- `harness.codexModel` — when set (`assist config set harness.codexModel <model>`), every non-review Codex launch — daemon sessions (create, resume, restore and respawn) and CLI launches such as `assist backlog run --harness codex`, `assist refine --harness codex` or `harness.engine: codex` — runs against that model on the LiteLLM proxy, injected per-invocation so `~/.codex/config.toml` is untouched. Requires `litellm.baseUrl` and `litellm.apiKey`; with either missing, Codex runs plain on the user's own codex auth. Independent of `review.codexModel`, which alone controls `assist review`
 - `slack.channel` — the Slack channel (e.g. `#example`) that `assist slack post` and `/slack-post` target when no channel argument is given
 - `prs.slack` — the Slack channel (e.g. `#example`) that `/prs-slack` posts pull requests to via the Slack MCP connector
 - `prs.required` — when `true` (default `false`), `assist backlog run` cuts and records a fresh branch for a story that has no recorded branch at run start, so a new story never inherits the previous one's branch

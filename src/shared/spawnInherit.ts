@@ -5,7 +5,7 @@ export type SpawnResult = { child: ChildProcess; done: Promise<number> };
 export function spawnInherit(
 	command: string,
 	args: string[],
-	options: { cwd?: string } = {},
+	options: { cwd?: string; env?: Record<string, string> } = {},
 ): SpawnResult {
 	const {
 		ASSIST_ACTIVITY_ID: _activityId,
@@ -14,7 +14,7 @@ export function spawnInherit(
 	} = process.env;
 	const child = spawn(command, args, {
 		stdio: "inherit",
-		env,
+		env: { ...env, ...options.env },
 		cwd: options.cwd,
 	});
 	const done = new Promise<number>((resolve, reject) => {
