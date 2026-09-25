@@ -2,6 +2,7 @@ import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { useLocation, useNavigate } from "react-router";
 import { useReleasesConfigured } from "./NavTabs/useReleasesConfigured";
+import { useReleasesRedirect } from "./NavTabs/useReleasesRedirect";
 
 type NavTab = { path: string; label: string };
 
@@ -19,7 +20,9 @@ function visibleTabs(releasesConfigured: boolean): NavTab[] {
 export function NavTabs({ cwd }: { cwd: string }) {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const tabs = visibleTabs(useReleasesConfigured(cwd));
+	const releasesConfigured = useReleasesConfigured(cwd);
+	useReleasesRedirect(releasesConfigured);
+	const tabs = visibleTabs(releasesConfigured === true);
 	const tabIndex = tabs.findIndex((t) => location.pathname.startsWith(t.path));
 
 	// Tabs onChange doesn't fire when re-clicking the selected tab, so use

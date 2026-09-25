@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NavTabs } from "./NavTabs";
 
@@ -22,12 +22,21 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
+function CurrentPath() {
+	return <output data-testid="path">{useLocation().pathname}</output>;
+}
+
 function ui(cwd: string, path: string) {
 	return (
 		<MemoryRouter initialEntries={[path]}>
 			<NavTabs cwd={cwd} />
+			<CurrentPath />
 		</MemoryRouter>
 	);
+}
+
+function currentPath(): string {
+	return screen.getByTestId("path").textContent ?? "";
 }
 
 function tabLabels(): string[] {
@@ -93,5 +102,40 @@ describe("NavTabs", () => {
 		render(ui("/with", "/sessions"));
 		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
 		expect(tabLabels()).toEqual(["Sessions", "Backlog", "News"]);
+	});
+
+	it("redirects a deep link under /releases to /sessions when not configured", async () => {
+		render(ui("/without", "/releases/some/stream"));
+		await waitFor(() => expect(currentPath()).toBe("/sessions"));
+	});
+
+	it("stays on /releases when configured", async () => {
+		render(ui("/with", "/releases"));
+		await waitFor(() => expect(tabLabels()).toContain("Releases"));
+		expect(currentPath()).toBe("/releases");
+		expect(selectedLabel()).toBe("Releases");
+	});
+
+	it("redirects /releases to /sessions after switching to an unconfigured repo", async () => {
+		const { rerender } = render(ui("/with", "/releases"));
+		await waitFor(() => expect(tabLabels()).toContain("Releases"));
+
+		rerender(ui("/without", "/releases"));
+		await waitFor(() => expect(currentPath()).toBe("/sessions"));
+	});
+
+	it("does not redirect while the check is pending or when it fails", async () => {
+		fetchMock.mockRejectedValueOnce(new Error("offline"));
+		render(ui("/without", "/releases"));
+		expect(currentPath()).toBe("/releases");
+		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+		await Promise.resolve();
+		expect(currentPath()).toBe("/releases");
+	});
+
+	it("leaves routes that merely share the prefix alone", async () => {
+		render(ui("/without", "/releasesx"));
+		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+		expect(currentPath()).toBe("/releasesx");
 	});
 });
