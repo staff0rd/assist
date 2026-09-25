@@ -14,7 +14,7 @@ export function modeRadioKeyHandler(
 	onChange: (mode: NewSessionMode) => void,
 ) {
 	return (e: KeyboardEvent<HTMLDivElement>) => {
-		const step = STEP[e.key];
+		const step = e.key === "Tab" ? (e.shiftKey ? -1 : 1) : STEP[e.key];
 		if (!step) {
 			handleEnterSubmit(e);
 			return;

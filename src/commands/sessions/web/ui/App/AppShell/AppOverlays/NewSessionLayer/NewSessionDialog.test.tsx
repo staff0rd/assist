@@ -188,6 +188,30 @@ describe("NewSessionDialog mode selector", () => {
 		expect(checkedMode()).toBe("bug");
 	});
 
+	it("switches to the next mode on Tab and wraps around", () => {
+		renderDialog("bug");
+
+		fireEvent.keyDown(modeRadio("bug"), { key: "Tab" });
+		expect(checkedMode()).toBe("prompt");
+		expect(document.activeElement).toBe(modeRadio("prompt"));
+
+		fireEvent.keyDown(modeRadio("prompt"), { key: "Tab" });
+		expect(checkedMode()).toBe("draft");
+		expect(document.activeElement).toBe(modeRadio("draft"));
+	});
+
+	it("switches to the previous mode on Shift+Tab and wraps around", () => {
+		renderDialog("bug");
+
+		fireEvent.keyDown(modeRadio("bug"), { key: "Tab", shiftKey: true });
+		expect(checkedMode()).toBe("draft");
+		expect(document.activeElement).toBe(modeRadio("draft"));
+
+		fireEvent.keyDown(modeRadio("draft"), { key: "Tab", shiftKey: true });
+		expect(checkedMode()).toBe("prompt");
+		expect(document.activeElement).toBe(modeRadio("prompt"));
+	});
+
 	it("updates the placeholder and submit label to follow the mode", () => {
 		renderDialog();
 
