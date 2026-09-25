@@ -11,6 +11,21 @@ function sameMeasure(a: Measure, b: Measure): boolean {
 	);
 }
 
+function outerWidth(item: Element): number {
+	const style = getComputedStyle(item);
+	return (
+		item.getBoundingClientRect().width +
+		(Number.parseFloat(style.marginLeft) || 0) +
+		(Number.parseFloat(style.marginRight) || 0)
+	);
+}
+
+function flexItems(box: Element): Element[] {
+	return Array.from(box.children).flatMap((child) =>
+		getComputedStyle(child).display === "contents" ? flexItems(child) : [child],
+	);
+}
+
 export function useBalancedWrapWidth(
 	ref: RefObject<HTMLElement | null>,
 	available: number | null,
@@ -22,10 +37,7 @@ export function useBalancedWrapWidth(
 		if (!box || typeof ResizeObserver === "undefined") return;
 		const read = () => {
 			const next = {
-				widths: Array.from(
-					box.children,
-					(child) => child.getBoundingClientRect().width,
-				),
+				widths: flexItems(box).map(outerWidth),
 				gap: Number.parseFloat(getComputedStyle(box).columnGap) || 0,
 			};
 			setMeasure((prev) => (sameMeasure(prev, next) ? prev : next));
@@ -33,11 +45,11 @@ export function useBalancedWrapWidth(
 		const resize = new ResizeObserver(read);
 		const observeChildren = () => {
 			resize.disconnect();
-			for (const child of box.children) resize.observe(child);
+			for (const item of flexItems(box)) resize.observe(item);
 			read();
 		};
 		const mutation = new MutationObserver(observeChildren);
-		mutation.observe(box, { childList: true });
+		mutation.observe(box, { childList: true, subtree: true });
 		observeChildren();
 		return () => {
 			resize.disconnect();
