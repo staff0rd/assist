@@ -19,6 +19,6 @@ export const harnessConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "harness.codexModel",
 		setter: "assist config set harness.codexModel <model>",
-		note: "run non-review Codex launches against this model on the LiteLLM proxy; plain codex when LiteLLM is unconfigured",
+		note: "empty uses codex's own configured provider; a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey)",
 	},
 ];
