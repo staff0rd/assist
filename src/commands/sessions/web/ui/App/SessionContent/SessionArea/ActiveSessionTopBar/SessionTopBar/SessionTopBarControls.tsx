@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { useRef } from "react";
 import { SessionActionButtons } from "../../../../SessionActionButtons";
 import { SessionTopBarDiff } from "./SessionTopBarControls/SessionTopBarDiff";
 import { SessionTopBarDismiss } from "./SessionTopBarControls/SessionTopBarDismiss";
@@ -6,6 +7,7 @@ import { SessionTopBarElapsed } from "./SessionTopBarControls/SessionTopBarElaps
 import { SessionTopBarToggles } from "./SessionTopBarControls/SessionTopBarToggles";
 import type { SessionControlHandlers, SessionInfo } from "../../../../../types";
 import { LabelledActionsContext } from "../../../../useLabelledActionsContext";
+import { useBalancedWrapWidth } from "./SessionTopBarControls/useBalancedWrapWidth";
 
 const controlsSx = {
 	display: "flex",
@@ -22,6 +24,7 @@ const controlsSx = {
 export function SessionTopBarControls({
 	session,
 	labelled,
+	available,
 	onRetry,
 	onRestart,
 	onDismiss,
@@ -30,9 +33,13 @@ export function SessionTopBarControls({
 }: {
 	session: SessionInfo;
 	labelled: boolean;
+	available: number | null;
 } & SessionControlHandlers) {
+	const boxRef = useRef<HTMLDivElement>(null);
+	const width = useBalancedWrapWidth(boxRef, available);
+
 	return (
-		<Box sx={controlsSx}>
+		<Box ref={boxRef} sx={{ ...controlsSx, width }}>
 			<SessionTopBarDiff session={session} />
 			<SessionTopBarElapsed session={session} />
 			<SessionTopBarToggles

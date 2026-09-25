@@ -5,13 +5,15 @@ import { SessionTopBarControls } from "./SessionTopBar/SessionTopBarControls";
 import type { SessionControlHandlers, SessionInfo } from "../../../../types";
 import { useElementWidth } from "../../../useElementWidth";
 
+const barGap = 8;
+
 const barSx = {
 	position: "sticky",
 	top: 0,
 	zIndex: 1,
 	display: "flex",
 	alignItems: "center",
-	gap: 1,
+	gap: `${barGap}px`,
 	px: 1.5,
 	py: 0.75,
 	borderBottom: 1,
@@ -40,6 +42,7 @@ export function SessionTopBar({
 			? identityWidth
 			: Math.min(identityWidth, Math.max(width - controlsReserve, 0));
 	const labelled = width === null || width - floor >= labelledMinRemaining;
+	const available = width === null ? null : width - floor - barGap;
 
 	return (
 		<Box ref={barRef} sx={barSx}>
@@ -52,6 +55,7 @@ export function SessionTopBar({
 			<SessionTopBarControls
 				session={session}
 				labelled={labelled}
+				available={available}
 				onRetry={onRetry}
 				onRestart={onRestart}
 				onDismiss={onDismiss}
