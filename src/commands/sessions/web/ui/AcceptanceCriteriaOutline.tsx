@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
 import { useRef } from "react";
-import { criterionNumbers } from "./criterionNumbers";
-import { CriterionDropLine } from "./CriterionDropLine";
-import { CriterionRow } from "./CriterionRow";
+import { criterionNumbers } from "./AcceptanceCriteriaOutline/criterionNumbers";
+import { CriterionDropLine } from "./AcceptanceCriteriaOutline/CriterionDropLine";
+import { CriterionRow } from "./AcceptanceCriteriaOutline/CriterionRow";
 import type { AcceptanceCriterion } from "./splitAcceptanceCriteria";
-import { useCriteriaOutline } from "./useCriteriaOutline";
-import { useCriterionDrag } from "./useCriterionDrag";
+import { useCriteriaOutline } from "./AcceptanceCriteriaOutline/useCriteriaOutline";
+import { useCriterionDrag } from "./AcceptanceCriteriaOutline/useCriterionDrag";
 
 const outlineSx = {
 	my: 1,

@@ -7,9 +7,9 @@ import {
 	outputAction,
 	restartSessionAction,
 } from "./createSessionAction";
-import { handleClear } from "./handleClear";
-import { handleOutput } from "./handleOutput";
-import type { WsDispatch } from "./WsDispatch";
+import { handleClear } from "./useSessionSocket/useWsConnection/useWebSocket/connectWithReconnect/createWsConnection/handleWsMessage/handleClear";
+import { handleOutput } from "./useSessionSocket/useWsConnection/useWebSocket/connectWithReconnect/createWsConnection/handleWsMessage/handleOutput";
+import type { WsDispatch } from "./useSessionSocket/useWsConnection/useWebSocket/WsDispatch";
 
 function terminalState() {
 	const buffers = new Map<string, string>();

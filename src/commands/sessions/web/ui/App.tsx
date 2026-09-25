@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import "react-diff-view/style/index.css";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { AppShell } from "./AppShell";
-import { useColorMode } from "./useColorMode";
+import { AppShell } from "./App/AppShell";
+import { useColorMode } from "./App/useColorMode";
 
 const components = {
 	MuiButtonBase: {

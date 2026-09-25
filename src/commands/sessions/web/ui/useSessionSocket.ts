@@ -1,11 +1,11 @@
 export type { SessionInfo } from "./types";
 
-import { useActiveSelectionSync } from "./useActiveSelectionSync";
-import { useReportRenderedStatus } from "./useReportRenderedStatus";
-import { useSend } from "./useSend";
-import { useSessionActions } from "./useSessionActions";
-import { useTranscriptNavigation } from "./useTranscriptNavigation";
-import { useWsConnection } from "./useWsConnection";
+import { useActiveSelectionSync } from "./useSessionSocket/useActiveSelectionSync";
+import { useReportRenderedStatus } from "./useSessionSocket/useReportRenderedStatus";
+import { useSend } from "./useSessionSocket/useSend";
+import { useSessionActions } from "./useSessionSocket/useSessionActions";
+import { useTranscriptNavigation } from "./useSessionSocket/useTranscriptNavigation";
+import { useWsConnection } from "./useSessionSocket/useWsConnection";
 
 export type SessionSocket = ReturnType<typeof useSessionSocket>;
 
