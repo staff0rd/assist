@@ -1,3 +1,10 @@
+## [0.697.1](https://github.com/staff0rd/assist/compare/v0.697.0...v0.697.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* truncate card title at actions ([28a40be](https://github.com/staff0rd/assist/commit/28a40be95c80ff17e8df6daa1f039892af945fe0))
+
 # [0.697.0](https://github.com/staff0rd/assist/compare/v0.696.0...v0.697.0) (2026-09-25)
 
 
