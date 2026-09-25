@@ -1,3 +1,10 @@
+# [0.697.0](https://github.com/staff0rd/assist/compare/v0.696.0...v0.697.0) (2026-09-25)
+
+
+### Features
+
+* redirect /releases without streams ([62f80f9](https://github.com/staff0rd/assist/commit/62f80f982aae71c2e730fd76a6d2e50332b916aa))
+
 # [0.696.0](https://github.com/staff0rd/assist/compare/v0.695.0...v0.696.0) (2026-09-25)
 
 
