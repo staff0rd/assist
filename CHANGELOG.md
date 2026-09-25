@@ -1,3 +1,10 @@
+## [0.699.3](https://github.com/staff0rd/assist/compare/v0.699.2...v0.699.3) (2026-09-25)
+
+
+### Bug Fixes
+
+* measure top bar items inside contents ([a438cde](https://github.com/staff0rd/assist/commit/a438cdeb8fdcdadba470bd64c0709a2991be29f7))
+
 ## [0.699.2](https://github.com/staff0rd/assist/compare/v0.699.1...v0.699.2) (2026-09-25)
 
 
