@@ -33,7 +33,7 @@ export function AppToolbar({
 				/>
 			)}
 			<RefreshWebserverButton reconnecting={socket.reconnecting} />
-			<NavTabs />
+			<NavTabs cwd={selection.selectedCwd} />
 			<Box sx={pickerSx}>
 				<RepoPicker
 					repos={selection.repos}

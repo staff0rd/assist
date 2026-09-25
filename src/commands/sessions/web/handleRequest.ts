@@ -25,6 +25,7 @@ import { openInCode } from "./openInCode";
 import { prList } from "./prList";
 import { previewImage } from "./previewImage";
 import { prStatus } from "./prStatus";
+import { releasesConfigured } from "./releases/releasesConfigured";
 import { releasesState } from "./releases/releasesState";
 import { restartWeb } from "./restartWeb";
 import { revertDiffFile } from "./revertDiffFile";
@@ -89,6 +90,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/pr-list": prList,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/releases/state": releasesState,
+	"GET /api/releases/configured": releasesConfigured,
 	"GET /api/usage/history": listUsageHistory,
 	"GET /api/usage/items": listUsageItems,
 	"GET /api/backups/list": getBackups,

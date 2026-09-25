@@ -1,13 +1,26 @@
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import { useLocation, useNavigate } from "react-router";
+import { useReleasesConfigured } from "./NavTabs/useReleasesConfigured";
 
-const TAB_PATHS = ["/sessions", "/backlog", "/releases", "/news"] as const;
+type NavTab = { path: string; label: string };
 
-export function NavTabs() {
+const SESSIONS: NavTab = { path: "/sessions", label: "Sessions" };
+const BACKLOG: NavTab = { path: "/backlog", label: "Backlog" };
+const RELEASES: NavTab = { path: "/releases", label: "Releases" };
+const NEWS: NavTab = { path: "/news", label: "News" };
+
+function visibleTabs(releasesConfigured: boolean): NavTab[] {
+	return releasesConfigured
+		? [SESSIONS, BACKLOG, RELEASES, NEWS]
+		: [SESSIONS, BACKLOG, NEWS];
+}
+
+export function NavTabs({ cwd }: { cwd: string }) {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const tabIndex = TAB_PATHS.findIndex((p) => location.pathname.startsWith(p));
+	const tabs = visibleTabs(useReleasesConfigured(cwd));
+	const tabIndex = tabs.findIndex((t) => location.pathname.startsWith(t.path));
 
 	// Tabs onChange doesn't fire when re-clicking the selected tab, so use
 	// per-tab onClick to support navigating back to a section root (e.g. from
@@ -22,10 +35,9 @@ export function NavTabs() {
 			textColor="inherit"
 			indicatorColor="secondary"
 		>
-			<Tab label="Sessions" onClick={() => goTo("/sessions")} />
-			<Tab label="Backlog" onClick={() => goTo("/backlog")} />
-			<Tab label="Releases" onClick={() => goTo("/releases")} />
-			<Tab label="News" onClick={() => goTo("/news")} />
+			{tabs.map((t) => (
+				<Tab key={t.path} label={t.label} onClick={() => goTo(t.path)} />
+			))}
 		</Tabs>
 	);
 }
