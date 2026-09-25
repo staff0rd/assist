@@ -1,3 +1,11 @@
+# [0.698.0](https://github.com/staff0rd/assist/compare/v0.697.1...v0.698.0) (2026-09-25)
+
+
+### Features
+
+* configurable default new session mode ([ef6f94c](https://github.com/staff0rd/assist/commit/ef6f94cc4883b619a7260b59192cbac4f0051127))
+* wire default new session mode config ([b6520bf](https://github.com/staff0rd/assist/commit/b6520bfa98f6d282960588e54e174f06ea304730))
+
 ## [0.697.1](https://github.com/staff0rd/assist/compare/v0.697.0...v0.697.1) (2026-09-25)
 
 
