@@ -1,3 +1,10 @@
+## [0.691.2](https://github.com/staff0rd/assist/compare/v0.691.1...v0.691.2) (2026-09-25)
+
+
+### Bug Fixes
+
+* settle silent respawned run sessions ([2860f39](https://github.com/staff0rd/assist/commit/2860f399413fb3734ef033b6dfe356635ef39ad3))
+
 ## [0.691.1](https://github.com/staff0rd/assist/compare/v0.691.0...v0.691.1) (2026-09-25)
 
 
