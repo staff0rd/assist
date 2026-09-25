@@ -1,3 +1,10 @@
+# [0.691.0](https://github.com/staff0rd/assist/compare/v0.690.0...v0.691.0) (2026-09-25)
+
+
+### Features
+
+* route CLI Codex through LiteLLM ([103cc04](https://github.com/staff0rd/assist/commit/103cc041985ee15bc638685c083abe118c415ad1))
+
 # [0.690.0](https://github.com/staff0rd/assist/compare/v0.689.8...v0.690.0) (2026-09-25)
 
 
