@@ -23,8 +23,10 @@ export function TrackerLink({
 	icon,
 	title,
 }: TrackerLinkProps) {
-	if (variant === "chip") return <TrackerChip label={label} url={url} />;
-	if (variant === "token") return <TrackerToken label={label} url={url} />;
+	if (variant === "chip")
+		return <TrackerChip label={label} url={url} title={title} />;
+	if (variant === "token")
+		return <TrackerToken label={label} url={url} title={title} />;
 	if (variant === "icon")
 		return (
 			<TrackerIconLink

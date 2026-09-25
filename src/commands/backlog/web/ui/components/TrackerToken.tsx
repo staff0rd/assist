@@ -6,12 +6,15 @@ const tokenSx = {
 	whiteSpace: "nowrap",
 } as const;
 
-export function TrackerToken({ label, url }: { label: string; url?: string }) {
+type TrackerTokenProps = { label: string; url?: string; title?: string };
+
+export function TrackerToken({ label, url, title }: TrackerTokenProps) {
 	if (!url) return label;
 
 	return (
 		<Link
 			href={url}
+			title={title}
 			target="_blank"
 			rel="noopener"
 			underline="hover"

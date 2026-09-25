@@ -19,9 +19,9 @@ export function GithubIssueLink({
 	return (
 		<TrackerLink
 			label={
-				variant === "icon"
-					? githubIssueNumber(githubIssue)
-					: shortenGithubIssue(githubIssue, origin)
+				variant === "link"
+					? shortenGithubIssue(githubIssue, origin)
+					: githubIssueNumber(githubIssue)
 			}
 			title={githubIssue}
 			url={githubIssueUrl(githubIssue)}

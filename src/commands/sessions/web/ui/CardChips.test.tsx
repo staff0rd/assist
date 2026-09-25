@@ -175,7 +175,7 @@ describe("CardChips tracker chip", () => {
 		);
 	});
 
-	it("keeps the full owner/repo#N when the issue is from another repo", async () => {
+	it("shortens a GitHub issue from another repo to #N", async () => {
 		await renderTrackerCard("/home/me/gh-other", [
 			trackerItem({
 				origin: "github.com/acme/widgets",
@@ -183,10 +183,20 @@ describe("CardChips tracker chip", () => {
 			}),
 		]);
 
-		const link = await screen.findByRole("link", { name: "other/thing#7" });
+		const link = await screen.findByRole("link", { name: "#7" });
 		expect(link.getAttribute("href")).toBe(
 			"https://github.com/other/thing/issues/7",
 		);
+		expect(link.getAttribute("title")).toBe("other/thing#7");
+	});
+
+	it("shortens a GitHub issue to #N when the item has no origin", async () => {
+		await renderTrackerCard("/home/me/gh-none", [
+			trackerItem({ githubIssue: "other/thing#7" }),
+		]);
+
+		const link = await screen.findByRole("link", { name: "#7" });
+		expect(link.getAttribute("title")).toBe("other/thing#7");
 	});
 
 	it("still renders the Jira chip for a Jira-associated item", async () => {

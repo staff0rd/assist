@@ -2,11 +2,14 @@ import Chip from "@mui/material/Chip";
 
 const chipSx = { height: 18, fontSize: "0.65rem" } as const;
 
-export function TrackerChip({ label, url }: { label: string; url?: string }) {
+type TrackerChipProps = { label: string; url?: string; title?: string };
+
+export function TrackerChip({ label, url, title }: TrackerChipProps) {
 	if (!url)
 		return (
 			<Chip
 				label={label}
+				title={title}
 				size="small"
 				sx={chipSx}
 				clickable={false}
@@ -17,6 +20,7 @@ export function TrackerChip({ label, url }: { label: string; url?: string }) {
 	return (
 		<Chip
 			label={label}
+			title={title}
 			size="small"
 			sx={chipSx}
 			clickable
