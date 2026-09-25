@@ -1,3 +1,10 @@
+## [0.699.2](https://github.com/staff0rd/assist/compare/v0.699.1...v0.699.2) (2026-09-25)
+
+
+### Bug Fixes
+
+* Shift+Tab on first mode leaves group ([6ca2c6c](https://github.com/staff0rd/assist/commit/6ca2c6cc38c3496dba3a47cdf8eacefaec745e91))
+
 ## [0.699.1](https://github.com/staff0rd/assist/compare/v0.699.0...v0.699.1) (2026-09-25)
 
 
