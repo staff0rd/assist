@@ -1,10 +1,9 @@
 import { findRepoRoot } from "../../../../shared/findRepoRoot";
 import { createWatcherSession } from "../createWatcherSession";
 import { daemonLog } from "../daemonLog";
-import type { Session } from "../types";
 import { allocateAndBind, type TreeSpawnContext } from "./allocateAndBind";
-import { canonicalTreePath } from "./canonicalTreePath";
-import { mainWorktree } from "./listWorktreePaths";
+import { liveWatcherFor } from "./liveWatcherFor";
+import { resolveClone } from "./resolveClone";
 import { worktreeConfigFor } from "./worktreeConfigFor";
 
 export function ensureWatcher(
@@ -15,7 +14,7 @@ export function ensureWatcher(
 	const repoRoot = findRepoRoot(cwd) ?? cwd;
 	const cfg = worktreeConfigFor(repoRoot);
 	if (!cfg.enabled || cfg.watcher !== true) return undefined;
-	const clone = canonicalTreePath(mainWorktree(repoRoot) ?? repoRoot);
+	const clone = resolveClone(repoRoot);
 	const live = liveWatcherFor(ctx.sessions, clone);
 	if (live) {
 		daemonLog(
@@ -33,20 +32,4 @@ export function ensureWatcher(
 		`spawned watcher session ${id} running /watch in the clone ${clone}`,
 	);
 	return id;
-}
-
-function liveWatcherFor(
-	sessions: Map<string, Session>,
-	clone: string,
-): Session | undefined {
-	for (const session of sessions.values())
-		if (
-			session.watcher === true &&
-			session.cwd !== undefined &&
-			canonicalTreePath(session.cwd) === clone &&
-			session.status !== "stopped" &&
-			session.status !== "error"
-		)
-			return session;
-	return undefined;
 }
