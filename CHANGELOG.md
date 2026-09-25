@@ -1,3 +1,10 @@
+## [0.694.3](https://github.com/staff0rd/assist/compare/v0.694.2...v0.694.3) (2026-09-25)
+
+
+### Bug Fixes
+
+* replace index.ts with named modules ([cfc81a7](https://github.com/staff0rd/assist/commit/cfc81a757126b0ca3d41f088f9e4802d427bc26d))
+
 ## [0.694.2](https://github.com/staff0rd/assist/compare/v0.694.1...v0.694.2) (2026-09-25)
 
 
