@@ -1,3 +1,11 @@
+## [0.694.1](https://github.com/staff0rd/assist/compare/v0.694.0...v0.694.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* restructure web/ui by import graph ([da60f42](https://github.com/staff0rd/assist/commit/da60f4299623333fdfc6000b650d95dad7ab117b))
+* update test imports to moved web/ui ([79940c8](https://github.com/staff0rd/assist/commit/79940c8624a1cc03454dbe31c8a73f20a1847a81))
+
 # [0.694.0](https://github.com/staff0rd/assist/compare/v0.693.1...v0.694.0) (2026-09-25)
 
 
