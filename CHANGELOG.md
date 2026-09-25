@@ -1,3 +1,10 @@
+# [0.693.0](https://github.com/staff0rd/assist/compare/v0.692.0...v0.693.0) (2026-09-25)
+
+
+### Features
+
+* track Codex usage and per-harness limits ([08ec4f0](https://github.com/staff0rd/assist/commit/08ec4f0d8150ef07573edd69be0d1060776d5ee8))
+
 # [0.692.0](https://github.com/staff0rd/assist/compare/v0.691.2...v0.692.0) (2026-09-25)
 
 
