@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { associateGithub } from "./associate-github";
+import { associateGithub } from "./associateGithub";
 
 export function registerAssociateGithubCommand(cmd: Command): void {
 	cmd

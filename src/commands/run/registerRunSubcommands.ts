@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { listRunConfigs } from ".";
+import { listRunConfigs } from "../run";
 import { add } from "./add";
 import { link } from "./link";
 import { remove } from "./remove";

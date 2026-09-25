@@ -1,6 +1,6 @@
 import type { Command } from "commander";
+import { edit as prsEdit } from "./prs/edit";
 import { editHelpText } from "./prs/editHelpText";
-import { edit as prsEdit } from "./prs/index";
 
 function collect(value: string, previous: string[]): string[] {
 	return previous.concat([value]);

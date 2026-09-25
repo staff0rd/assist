@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { add as newsAdd } from "./news";
+import { add as newsAdd } from "./news/add";
 
 export function registerNews(program: Command): void {
 	const newsCommand = program

@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
-import { run } from ".";
+import { run } from "../run";
 import { formatConfiguredCommands } from "./formatConfiguredCommands";
 import { registerRunSubcommands } from "./registerRunSubcommands";
 import { runConfigHelp } from "./runConfigHelp";

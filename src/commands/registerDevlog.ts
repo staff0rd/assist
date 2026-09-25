@@ -1,13 +1,11 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import {
-	list as devlogList,
-	next as devlogNext,
-	repos as devlogRepos,
-	skip as devlogSkip,
-	version as devlogVersion,
-} from "./devlog";
 import { devlogConfigHelp } from "./devlog/devlogConfigHelp";
+import { list as devlogList } from "./devlog/list";
+import { next as devlogNext } from "./devlog/next";
+import { repos as devlogRepos } from "./devlog/repos";
+import { skip as devlogSkip } from "./devlog/skip";
+import { version as devlogVersion } from "./devlog/version";
 
 export function registerDevlog(program: Command): void {
 	const devlogCommand = program

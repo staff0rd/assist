@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { importBacklog } from "./import";
+import { importBacklog } from "./importBacklog";
 
 export function registerImportCommand(cmd: Command): void {
 	cmd

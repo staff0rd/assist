@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { planRestructure } from "./index";
+import { planRestructure } from "../planRestructure";
 import type { PlannerEdge, PlannerInput } from "./types";
 
 const ROOT = "/r";

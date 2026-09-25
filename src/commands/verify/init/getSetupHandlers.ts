@@ -1,15 +1,12 @@
 import type { ScriptWriter } from "../installPackage";
-import {
-	setupBuild,
-	setupDuplicateCode,
-	setupHardcodedColors,
-	setupKnip,
-	setupLint,
-	setupMaintainability,
-	setupSkott,
-	setupTest,
-	setupTypecheck,
-} from "../setup";
+import { setupBuild, setupTypecheck } from "../setup/setupBuild";
+import { setupDuplicateCode } from "../setup/setupDuplicateCode";
+import { setupHardcodedColors } from "../setup/setupHardcodedColors";
+import { setupKnip } from "../setup/setupKnip";
+import { setupLint } from "../setup/setupLint";
+import { setupMaintainability } from "../setup/setupMaintainability";
+import { setupSkott } from "../setup/setupSkott";
+import { setupTest } from "../setup/setupTest";
 
 export type SetupHandler = (
 	packageJsonPath: string,

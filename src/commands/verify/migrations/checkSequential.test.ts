@@ -40,7 +40,7 @@ describe("checkSequential", () => {
 				["migration0001Baseline.ts", "migration0003Skipped.ts"],
 			);
 			expect(problems).toContain(
-				"Registered migrations must be numbered 1..N in ascending order; index.ts position 1 has id 3, expected 2.",
+				"Registered migrations must be numbered 1..N in ascending order; migrations.ts position 1 has id 3, expected 2.",
 			);
 		});
 	});
@@ -74,7 +74,7 @@ describe("checkSequential", () => {
 				["migration0001Baseline.ts", "migration0002Orphan.ts"],
 			);
 			expect(problems).toContain(
-				"A migration file is numbered 2 but no migration with that id is registered in index.ts.",
+				"A migration file is numbered 2 but no migration with that id is registered in migrations.ts.",
 			);
 		});
 	});

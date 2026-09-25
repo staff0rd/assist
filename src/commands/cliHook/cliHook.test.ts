@@ -26,7 +26,7 @@ vi.mock("./logDeniedToolCall", () => ({
 	logDeniedToolCall: (...args: unknown[]) => mockLogDeniedToolCall(...args),
 }));
 
-import { cliHook } from ".";
+import { cliHook } from "../cliHook";
 
 function makeInput(command: string, toolName = "Bash") {
 	return JSON.stringify({

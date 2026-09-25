@@ -58,9 +58,9 @@ describe("decideMigrationGuard", () => {
 		expect(mockConsume).not.toHaveBeenCalled();
 	});
 
-	it("ignores the migrations index.ts", () => {
+	it("ignores non-migration files in the migrations directory", () => {
 		const reason = decideMigrationGuard(
-			writeInput("src/shared/db/migrations/index.ts"),
+			writeInput("src/shared/db/migrations/applyMigrations.ts"),
 			undefined,
 		);
 		expect(reason).toBeUndefined();

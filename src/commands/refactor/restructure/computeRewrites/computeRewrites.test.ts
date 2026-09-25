@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeRewrites } from "./index";
+import { computeRewrites } from "../computeRewrites";
 
 describe("computeRewrites", () => {
 	describe("when a target file is moved", () => {

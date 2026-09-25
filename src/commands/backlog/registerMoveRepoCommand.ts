@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { moveRepo } from "./move-repo";
+import { moveRepo } from "./moveRepo";
 
 export function registerMoveRepoCommand(cmd: Command): void {
 	cmd

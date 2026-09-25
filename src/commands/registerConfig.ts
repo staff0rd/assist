@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { configList } from "./config";
+import { configList } from "./configList";
 import { configConfigHelp } from "./config/configConfigHelp";
 import { configGet } from "./config/configGet";
 import { configKeys } from "./config/configKeys";

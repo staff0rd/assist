@@ -1,6 +1,6 @@
 import type { Command } from "commander";
-import { next as backlogNext } from "./backlog";
 import { launchMode } from "./backlog/launchMode";
+import { next as backlogNext } from "./backlog/next";
 import { registerRefineLaunch } from "./backlog/registerRefineLaunch";
 import { reviewPrComments } from "./reviewPrComments";
 import { registerFixConflict } from "./registerFixConflict";

@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import { comment } from "./comment";
 import { comments } from "./comments";
-import { deleteCommentCmd } from "./delete-comment";
+import { deleteCommentCmd } from "./deleteCommentCmd";
 
 export function registerCommentCommands(cmd: Command): void {
 	cmd

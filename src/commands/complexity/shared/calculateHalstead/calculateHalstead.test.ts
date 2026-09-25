@@ -1,6 +1,6 @@
 import ts from "typescript";
 import { describe, expect, it } from "vitest";
-import { calculateHalstead } from "./index";
+import { calculateHalstead } from "../calculateHalstead";
 
 function parseFunction(code: string): ts.Node {
 	const sourceFile = ts.createSourceFile(

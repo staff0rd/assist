@@ -2,7 +2,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { describe, expect, it } from "vitest";
 import { applyMigrations } from "./applyMigrations";
 import { compareMigrations, getMigrationStatus } from "./getMigrationStatus";
-import { latestMigrationId, migrations } from "./index";
+import { latestMigrationId, migrations } from "../migrations";
 import { pgliteExecutor } from "./MigrationExecutor";
 
 const bundledIds = migrations.map((m) => m.id);

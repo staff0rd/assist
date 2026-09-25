@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { createPool } from "../shared/db/getDb";
 import { applyMigrations } from "../shared/db/migrations/applyMigrations";
 import { getMigrationStatus } from "../shared/db/migrations/getMigrationStatus";
-import { latestMigrationId } from "../shared/db/migrations/index";
+import { latestMigrationId } from "../shared/db/migrations";
 import { pgExecutor } from "../shared/db/migrations/MigrationExecutor";
 import {
 	reportApplied,

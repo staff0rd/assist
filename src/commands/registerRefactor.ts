@@ -1,14 +1,12 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import {
-	check as refactorCheck,
-	extract as refactorExtract,
-	ignore as refactorIgnore,
-	rename as refactorRename,
-	renameSymbol as refactorRenameSymbol,
-	restructure as refactorRestructure,
-} from "./refactor";
+import { check as refactorCheck } from "./refactor/check";
+import { extract as refactorExtract } from "./refactor/extract";
+import { ignore as refactorIgnore } from "./refactor/ignore";
 import { refactorConfigHelp } from "./refactor/refactorConfigHelp";
+import { rename as refactorRename } from "./refactor/rename";
+import { renameSymbol as refactorRenameSymbol } from "./refactor/renameSymbol";
+import { restructure as refactorRestructure } from "./refactor/restructure";
 
 function registerCheck(parent: Command): void {
 	parent

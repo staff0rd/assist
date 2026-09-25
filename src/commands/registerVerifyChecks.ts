@@ -1,13 +1,11 @@
 import type { Command } from "commander";
-import {
-	adviceFragments,
-	blockCodeComments,
-	configKeys,
-	forbiddenStrings,
-	hardcodedColors,
-	migrations,
-	noVenv,
-} from "./verify";
+import { adviceFragments } from "./verify/adviceFragments";
+import { blockCodeComments } from "./verify/blockCodeComments";
+import { configKeys } from "./verify/configKeys";
+import { forbiddenStrings } from "./verify/forbiddenStrings";
+import { hardcodedColors } from "./verify/hardcodedColors";
+import { migrations } from "./verify/migrations";
+import { noVenv } from "./verify/noVenv";
 
 const checks = [
 	{

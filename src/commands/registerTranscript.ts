@@ -1,11 +1,9 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import {
-	clean as transcriptClean,
-	configure as transcriptConfigure,
-	list as transcriptList,
-	move as transcriptMove,
-} from "./transcript";
+import { clean as transcriptClean } from "./transcript/clean";
+import { configure as transcriptConfigure } from "./transcript/configure";
+import { list as transcriptList } from "./transcript/list";
+import { move as transcriptMove } from "./transcript/move";
 import { registerMergeCommand } from "./transcript/registerMergeCommand";
 import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
 import { transcriptWorkflowHelp } from "./transcript/transcriptWorkflowHelp";

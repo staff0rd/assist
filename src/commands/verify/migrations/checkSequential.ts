@@ -16,7 +16,7 @@ export function checkSequential(
 		const expected = i + 1;
 		if (ids[i] !== expected) {
 			problems.push(
-				`Registered migrations must be numbered 1..N in ascending order; index.ts position ${i} has id ${ids[i]}, expected ${expected}.`,
+				`Registered migrations must be numbered 1..N in ascending order; migrations.ts position ${i} has id ${ids[i]}, expected ${expected}.`,
 			);
 			break;
 		}
@@ -37,7 +37,7 @@ export function checkSequential(
 	for (const id of fileIdSet) {
 		if (!idSet.has(id))
 			problems.push(
-				`A migration file is numbered ${id} but no migration with that id is registered in index.ts.`,
+				`A migration file is numbered ${id} but no migration with that id is registered in migrations.ts.`,
 			);
 	}
 

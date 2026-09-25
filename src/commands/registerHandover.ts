@@ -1,10 +1,8 @@
 import type { Command } from "commander";
-import {
-	load,
-	printPendingHandovers,
-	recallAndPrint,
-	saveHandoverFromStdin,
-} from "./handover";
+import { load } from "./handover/load";
+import { printPendingHandovers } from "./handover/printPendingHandovers";
+import { recallAndPrint } from "./handover/recallAndPrint";
+import { saveHandoverFromStdin } from "./handover/saveHandoverFromStdin";
 
 type SaveCliOptions = {
 	summary: string;

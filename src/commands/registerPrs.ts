@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { prs } from "./prs/index";
+import { prs } from "./prs/prs";
 import { prsConfigHelp } from "./prs/prsConfigHelp";
 import { registerPrsComments } from "./registerPrsComments";
 import { registerPrsEdit } from "./registerPrsEdit";

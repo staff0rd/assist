@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SECRET_MASK } from "../../shared/maskConfigSecrets";
-import { configList } from "./index";
+import { configList } from "../configList";
 
 const mockConfig = vi.fn<() => Record<string, unknown>>();
 

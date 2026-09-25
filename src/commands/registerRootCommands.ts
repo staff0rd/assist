@@ -9,7 +9,7 @@ import { rootConfigHelp } from "./rootConfigHelp";
 import { screenshot } from "./screenshot";
 import { statusLine } from "./statusLine";
 import { update } from "./update";
-import { init as vscodeInit } from "./vscode";
+import { init as vscodeInit } from "./vscode/init";
 
 function registerLint(program: Command): void {
 	const lintCommand = program

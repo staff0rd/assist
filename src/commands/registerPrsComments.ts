@@ -1,13 +1,11 @@
 import type { Command } from "commander";
-import {
-	comment as prsComment,
-	fixed as prsFixed,
-	listComments as prsListComments,
-	printComments as prsPrintComments,
-	reply as prsReply,
-	wontfix as prsWontfix,
-} from "./prs/index";
+import { comment as prsComment } from "./prs/comment";
+import { fixed as prsFixed } from "./prs/fixed";
+import { listComments as prsListComments } from "./prs/listComments";
+import { printComments as prsPrintComments } from "./prs/listComments/printComments";
 import { readBodyArgument } from "./prs/readBodyArgument";
+import { reply as prsReply } from "./prs/reply";
+import { wontfix as prsWontfix } from "./prs/wontfix";
 
 export function registerPrsComments(prsCommand: Command): void {
 	prsCommand

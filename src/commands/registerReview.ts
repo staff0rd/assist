@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { review } from "./review";
+import { review } from "./review/review";
 import { addReviewModeOptions } from "./review/addReviewModeOptions";
 import { addReviewRunOptions } from "./review/addReviewRunOptions";
 import type { ReviewOptions } from "./review/ReviewOptions";

@@ -12,7 +12,7 @@ import {
 	scheduleRemove,
 	scheduleStatus,
 } from "./backup/scheduleBackup";
-import { exportBacklog } from "./backlog/export";
+import { exportBacklog } from "./backlog/exportBacklog";
 import { backupConfigHelp } from "./backup/backupConfigHelp";
 
 type BackupOptions = { out?: string };

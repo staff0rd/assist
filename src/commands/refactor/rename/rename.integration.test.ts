@@ -9,7 +9,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { rename } from "./index";
+import { rename } from "../rename";
 
 const TSCONFIG = JSON.stringify({
 	compilerOptions: { moduleResolution: "bundler", strict: true },

@@ -1,5 +1,6 @@
 import type { Command } from "commander";
-import { phaseDone as backlogPhaseDone, plan as backlogPlan } from "../backlog";
+import { phaseDone as backlogPhaseDone } from "./phaseDone";
+import { plan as backlogPlan } from "./plan";
 
 export function registerPlanCommands(cmd: Command): void {
 	cmd

@@ -1,11 +1,9 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { registerVerifyChecks } from "./registerVerifyChecks";
-import {
-	init as verifyInit,
-	list as verifyList,
-	run as verifyRun,
-} from "./verify";
+import { init as verifyInit } from "./verify/init";
+import { list as verifyList } from "./verify/list";
+import { run as verifyRun } from "./verify/run";
 import { verifyConfigHelp } from "./verify/verifyConfigHelp";
 
 function runScope(scope: string | undefined, options: object): void {

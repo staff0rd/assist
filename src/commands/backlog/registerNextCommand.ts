@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { next as backlogNext } from "../backlog";
+import { next as backlogNext } from "./next";
 
 export function registerNextCommand(cmd: Command): void {
 	cmd

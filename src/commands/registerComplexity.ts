@@ -1,13 +1,11 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import {
-	analyze as complexityAnalyze,
-	cyclomatic as complexityCyclomatic,
-	halstead as complexityHalstead,
-	maintainability as complexityMaintainability,
-	sloc as complexitySloc,
-} from "./complexity";
+import { analyze as complexityAnalyze } from "./complexity/analyze";
 import { complexityConfigHelp } from "./complexity/complexityConfigHelp";
+import { cyclomatic as complexityCyclomatic } from "./complexity/cyclomatic";
+import { halstead as complexityHalstead } from "./complexity/halstead";
+import { maintainability as complexityMaintainability } from "./complexity/maintainability";
+import { sloc as complexitySloc } from "./complexity/sloc";
 
 export function registerComplexity(program: Command): void {
 	const complexityCommand = program

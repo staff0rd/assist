@@ -1,0 +1,67 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+import { getInstallDir, isGitRepo } from "../shared/getInstallDir";
+import { assertCliExists } from "./permitCliReads/assertCliExists";
+import { colorize } from "./permitCliReads/colorize";
+import { discoverAll } from "./permitCliReads/discoverAll";
+import { formatHuman } from "./permitCliReads/formatHuman";
+import { parseCached } from "./permitCliReads/parseCached";
+import { updateSettings } from "./permitCliReads/updateSettings";
+
+type Options = { noCache: boolean };
+
+function logPath(cli: string): string {
+	const safeName = cli.replace(/\s+/g, "-");
+	return join(homedir(), ".assist", `cli-discover-${safeName}.log`);
+}
+
+function readCache(cli: string): string | undefined {
+	const path = logPath(cli);
+	if (!existsSync(path)) return undefined;
+	return readFileSync(path, "utf8");
+}
+
+function writeCache(cli: string, output: string): void {
+	const dir = join(homedir(), ".assist");
+	mkdirSync(dir, { recursive: true });
+	writeFileSync(logPath(cli), output);
+}
+
+export async function permitCliReads(
+	cli: string,
+	options: Options = { noCache: false },
+): Promise<void> {
+	if (!cli) {
+		console.error("Usage: assist cli-hook add <cli>");
+		process.exit(1);
+	}
+
+	const installDir = getInstallDir();
+	if (!isGitRepo(installDir)) {
+		console.error(
+			"cli-hook add must be run from the assist git repo, not a global install.",
+		);
+		process.exit(1);
+	}
+
+	const parts = cli.split(/\s+/);
+	const binary = parts[0];
+	const prefixPath = parts.slice(1);
+
+	if (!options.noCache) {
+		const cached = readCache(cli);
+		if (cached) {
+			console.log(colorize(cached));
+			updateSettings(binary, parseCached(binary, cached));
+			return;
+		}
+	}
+
+	assertCliExists(cli);
+	const commands = await discoverAll(binary, prefixPath);
+	const output = formatHuman(binary, commands);
+	console.log(colorize(output));
+	writeCache(cli, output);
+	updateSettings(binary, commands);
+}

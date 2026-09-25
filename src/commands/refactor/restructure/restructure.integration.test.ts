@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import ts from "typescript";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { restructure } from "./index";
+import { restructure } from "../restructure";
 import {
 	IMPORT_CALL,
 	writeRestructureFixture,

@@ -30,7 +30,6 @@ type RuleContext = {
 const defaultOptions: FilenameConventionOptions = {
 	defaultCase: "export",
 	kebabBasenames: [
-		"index.ts",
 		"shared.ts",
 		"types.ts",
 		"constants.ts",

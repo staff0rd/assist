@@ -21,7 +21,7 @@ vi.mock("../../shared/isApprovedRead", () => ({
 	isApprovedRead: (cmd: string, tool: string) => mockIsApprovedRead(cmd, tool),
 }));
 
-import { piHook } from ".";
+import { piHook } from "../piHook";
 
 function captureOutput() {
 	return vi.spyOn(console, "log").mockImplementation(() => {});

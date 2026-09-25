@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { show as backlogShow } from "../backlog";
+import { show as backlogShow } from "./show";
 
 export function registerShowCommands(cmd: Command): void {
 	cmd

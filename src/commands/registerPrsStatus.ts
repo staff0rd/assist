@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { prsStatus } from "./prs/index";
+import { prsStatus } from "./prs/prsStatus";
 
 export function registerPrsStatus(prsCommand: Command): void {
 	prsCommand

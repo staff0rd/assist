@@ -1,7 +1,7 @@
 import { PGlite } from "@electric-sql/pglite";
 import { describe, expect, it } from "vitest";
 import { applyMigrations } from "./applyMigrations";
-import { migrations } from "./index";
+import { migrations } from "../migrations";
 import { pgliteExecutor } from "./MigrationExecutor";
 
 const bundledIds = migrations.map((m) => m.id);

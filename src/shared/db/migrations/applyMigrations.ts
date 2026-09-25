@@ -1,4 +1,4 @@
-import { migrations } from "./index";
+import { migrations } from "../migrations";
 import type { MigrationExecutor } from "./MigrationExecutor";
 
 export const APPLIED_MIGRATIONS_TABLE = "applied_migrations";

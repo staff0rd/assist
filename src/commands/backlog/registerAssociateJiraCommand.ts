@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { associateJira } from "./associate-jira";
+import { associateJira } from "./associateJira";
 
 export function registerAssociateJiraCommand(cmd: Command): void {
 	cmd

@@ -1,6 +1,11 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { devices, logs, setup, start, status, stop } from "./voice";
+import { devices } from "./voice/devices";
+import { logs } from "./voice/logs";
+import { setup } from "./voice/setup";
+import { start } from "./voice/start";
+import { status } from "./voice/status";
+import { stop } from "./voice/stop";
 import { voiceConfigHelp } from "./voice/voiceConfigHelp";
 
 export function registerVoice(program: Command): void {

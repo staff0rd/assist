@@ -1,5 +1,5 @@
 import { APPLIED_MIGRATIONS_TABLE } from "./applyMigrations";
-import { migrations } from "./index";
+import { migrations } from "../migrations";
 import type { MigrationExecutor } from "./MigrationExecutor";
 
 export type MigrationStatus =

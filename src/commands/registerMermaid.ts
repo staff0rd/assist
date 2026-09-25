@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { type MermaidExportOptions, mermaidExport } from "./mermaid";
+import { type MermaidExportOptions, mermaidExport } from "./mermaidExport";
 import { mermaidConfigHelp } from "./mermaid/mermaidConfigHelp";
 
 export function registerMermaid(program: Command): void {

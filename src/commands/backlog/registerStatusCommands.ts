@@ -1,7 +1,7 @@
 import type { Command } from "commander";
-import { del as backlogDel } from "./delete";
+import { del as backlogDel } from "./del";
 import { done as backlogDone } from "./done";
-import { setStatusCommand as backlogSetStatus } from "./set-status";
+import { setStatusCommand as backlogSetStatus } from "./setStatusCommand";
 import { star as backlogStar } from "./star";
 import { start as backlogStart } from "./start";
 import { stop as backlogStop } from "./stop";

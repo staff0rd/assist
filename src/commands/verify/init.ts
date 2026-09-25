@@ -1,0 +1,69 @@
+import chalk from "chalk";
+import { promptMultiselect } from "../../shared/promptMultiselect";
+import { requirePackageJson } from "../../shared/readPackageJson";
+import type { ScriptWriter } from "./installPackage";
+import { setupVerifyScript } from "./installPackage";
+import { setupVerifyRunEntry } from "./setupVerifyRunEntry";
+import { detectExistingSetup } from "./init/detectExistingSetup";
+import { getAvailableOptions } from "./init/getAvailableOptions";
+import { getSetupHandlers, type SetupHandler } from "./init/getSetupHandlers";
+
+async function runSelectedSetups(
+	selected: string[],
+	packageJsonPath: string,
+	writer: ScriptWriter,
+	handlers: Record<string, SetupHandler>,
+): Promise<void> {
+	for (const choice of selected) {
+		await handlers[choice]?.(packageJsonPath, writer);
+	}
+	console.log(chalk.green(`\nAdded ${selected.length} verify script(s):`));
+	for (const choice of selected) {
+		console.log(chalk.green(`  - verify:${choice}`));
+	}
+	console.log(chalk.dim("\nRun 'assist verify' to run all verify scripts"));
+}
+
+async function promptForScripts(
+	availableOptions: { name: string; value: string; description: string }[],
+): Promise<string[] | null> {
+	if (availableOptions.length === 0) {
+		console.log(chalk.green("All verify scripts are already configured!"));
+		return null;
+	}
+
+	console.log(chalk.bold("Available verify scripts to add:\n"));
+
+	const selected = await promptMultiselect(
+		"Select verify scripts to add:",
+		availableOptions,
+	);
+
+	if (selected.length === 0) {
+		console.log(chalk.yellow("No scripts selected"));
+		return null;
+	}
+
+	return selected;
+}
+
+export async function init(
+	options: { packageJson?: boolean } = {},
+): Promise<void> {
+	const { packageJsonPath, pkg } = requirePackageJson();
+	const setup = detectExistingSetup(pkg);
+	const selected = await promptForScripts(getAvailableOptions(setup));
+
+	if (!selected) return;
+
+	const writer: ScriptWriter = options.packageJson
+		? (name, cmd, opts) => setupVerifyScript(packageJsonPath, name, cmd, opts)
+		: setupVerifyRunEntry;
+
+	const handlers = getSetupHandlers(
+		setup.hasVite,
+		setup.hasTypescript,
+		setup.hasOpenColor,
+	);
+	await runSelectedSetups(selected, packageJsonPath, writer, handlers);
+}

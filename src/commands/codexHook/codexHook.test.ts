@@ -32,7 +32,7 @@ vi.mock("../../shared/isApprovedRead", () => ({
 	isApprovedRead: (cmd: string, tool: string) => mockIsApprovedRead(cmd, tool),
 }));
 
-import { codexHook } from ".";
+import { codexHook } from "../codexHook";
 
 function makeInput(
 	command: string,

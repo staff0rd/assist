@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { raise as prsRaise } from "./prs/index";
+import { raise as prsRaise } from "./prs/raise";
 import { prsRaiseConfigHelp } from "./prs/prsConfigHelp";
 import { raiseHelpText } from "./prs/raiseHelpText";
 
