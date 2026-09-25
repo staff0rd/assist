@@ -1,3 +1,10 @@
+## [0.699.1](https://github.com/staff0rd/assist/compare/v0.699.0...v0.699.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* balance wrapped top bar controls ([a6b4dfd](https://github.com/staff0rd/assist/commit/a6b4dfd01d072c37778d2a378c75c1f430a8d044))
+
 # [0.699.0](https://github.com/staff0rd/assist/compare/v0.698.0...v0.699.0) (2026-09-25)
 
 
