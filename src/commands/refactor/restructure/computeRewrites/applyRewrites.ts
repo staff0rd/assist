@@ -18,25 +18,27 @@ function groupByFile(rewrites: ImportRewrite[]): Map<string, ImportRewrite[]> {
 	return grouped;
 }
 
-function rewriteSpecifier(
-	content: string,
-	oldSpecifier: string,
-	newSpecifier: string,
-): string {
-	const escaped = oldSpecifier.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-	const pattern = new RegExp(`(from\\s+["'])${escaped}(["'])`, "g");
-	return content.replace(pattern, `$1${newSpecifier}$2`);
-}
+const MODULE_REFERENCE =
+	/(\bfrom\s+|\bimport\s+|\bimport\s*\(\s*|\bvi\.\w+(?:<[^>]*>)?\(\s*)(["'])([^"'\n]+)\2/g;
 
 function applyFileRewrites(
 	file: string,
 	fileRewrites: ImportRewrite[],
 ): string {
-	let content = fs.readFileSync(file, "utf8");
-	for (const { oldSpecifier, newSpecifier } of fileRewrites) {
-		content = rewriteSpecifier(content, oldSpecifier, newSpecifier);
-	}
-	return content;
+	const replacements = new Map(
+		fileRewrites.map((r) => [r.oldSpecifier, r.newSpecifier]),
+	);
+	return fs
+		.readFileSync(file, "utf8")
+		.replace(
+			MODULE_REFERENCE,
+			(match, prefix: string, quote: string, specifier: string) => {
+				const replacement = replacements.get(specifier);
+				return replacement === undefined
+					? match
+					: `${prefix}${quote}${replacement}${quote}`;
+			},
+		);
 }
 
 export function applyRewrites(rewrites: ImportRewrite[]): Map<string, string> {

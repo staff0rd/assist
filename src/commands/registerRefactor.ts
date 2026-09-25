@@ -51,7 +51,14 @@ function registerRestructure(parent: Command): void {
 		.description(
 			"Place every file under root by its import graph: single-importer files nest under their importer, shared files sit at their importers' lowest common folder",
 		)
-		.option("--apply", "Execute the restructuring (default: dry-run)")
+		.option(
+			"--apply",
+			"Move files, rewrite their imports and vi.mock paths, and remove emptied folders (default: dry-run)",
+		)
+		.option(
+			"--check",
+			"List files that drift from the plan and exit non-zero if any do",
+		)
 		.action(refactorRestructure);
 
 	configHelp(restructureCommand, refactorConfigHelp);

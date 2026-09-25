@@ -2,6 +2,7 @@ export type ImportEdge = {
 	source: string;
 	target: string;
 	specifier: string;
+	mock?: boolean;
 };
 
 export type ImportGraph = {

@@ -1,13 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
-import { findSourceFiles } from "../../complexity/findSourceFiles";
-import { displayPlan } from "./displayPlan";
-import { executePlan } from "./executePlan";
+import { walkSourceFiles } from "../../complexity/walkSourceFiles";
+import { applyPlan } from "./applyPlan";
 import { buildPlan } from "./buildPlan";
+import { checkPlan } from "./checkPlan";
+import { displayPlan } from "./displayPlan";
+import { partitionIgnored } from "./partitionIgnored";
 
 type RestructureOptions = {
 	apply?: boolean;
+	check?: boolean;
 };
 
 export async function restructure(
@@ -20,16 +23,19 @@ export async function restructure(
 		process.exit(1);
 	}
 
-	const files = findSourceFiles(root ?? "src").map((f) => path.resolve(f));
-	if (files.length === 0) {
+	const found: string[] = [];
+	walkSourceFiles(scopeRoot, found);
+	const { scoped, ignored } = partitionIgnored(found);
+	if (scoped.length === 0) {
 		console.log(chalk.yellow("No files found under root"));
 		return;
 	}
 
-	const plan = buildPlan(scopeRoot, files);
-	displayPlan(plan);
+	const plan = buildPlan(scopeRoot, scoped, ignored);
+	if (options.check) return checkPlan(plan);
 
-	if (plan.moves.length === 0) {
+	displayPlan(plan);
+	if (plan.moves.length === 0 && plan.errors.length === 0) {
 		console.log(chalk.green("No restructuring needed"));
 		return;
 	}
@@ -37,11 +43,5 @@ export async function restructure(
 		console.log(chalk.dim("\nDry run. Use --apply to execute."));
 		return;
 	}
-	if (plan.errors.length > 0) {
-		console.log(chalk.red("\nResolve the errors above before applying."));
-		process.exit(1);
-	}
-	console.log(chalk.bold("\nApplying changes..."));
-	executePlan(plan);
-	console.log(chalk.green("\nRestructuring complete"));
+	applyPlan(plan);
 }
