@@ -1,19 +1,33 @@
 import type { ImportDeclaration } from "ts-morph";
 import type { RequiredImport } from "./types";
 
+type MatchedName = { text: string; isTypeOnly: boolean };
+
 function matchNamedImports(
 	importDecl: ImportDeclaration,
 	neededNames: Set<string>,
-): string[] {
-	const matched: string[] = [];
+): MatchedName[] {
+	const matched: MatchedName[] = [];
 	for (const specifier of importDecl.getNamedImports()) {
 		const name = specifier.getAliasNode()?.getText() ?? specifier.getName();
 		if (!neededNames.has(name)) continue;
 		const original = specifier.getName();
 		const alias = specifier.getAliasNode()?.getText();
-		matched.push(alias ? `${original} as ${alias}` : original);
+		matched.push({
+			text: alias ? `${original} as ${alias}` : original,
+			isTypeOnly: specifier.isTypeOnly(),
+		});
 	}
 	return matched;
+}
+
+function formatNamedImports(
+	matched: MatchedName[],
+	collapseToTypeOnly: boolean,
+): string[] {
+	return matched.map(({ text, isTypeOnly }) =>
+		isTypeOnly && !collapseToTypeOnly ? `type ${text}` : text,
+	);
 }
 
 function matchOptionalImport(
@@ -41,11 +55,15 @@ export function matchImport(
 		return undefined;
 	}
 
+	const allNamedTypeOnly =
+		!defaultImport &&
+		!namespaceImport &&
+		namedImports.every((named) => named.isTypeOnly);
 	return {
 		moduleSpecifier: importDecl.getModuleSpecifierValue(),
-		namedImports,
+		namedImports: formatNamedImports(namedImports, allNamedTypeOnly),
 		defaultImport,
 		namespaceImport,
-		isTypeOnly: importDecl.isTypeOnly(),
+		isTypeOnly: importDecl.isTypeOnly() || allNamedTypeOnly,
 	};
 }

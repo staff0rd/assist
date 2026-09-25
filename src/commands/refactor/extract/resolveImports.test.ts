@@ -83,6 +83,36 @@ describe("resolveImports", () => {
 		});
 	});
 
+	describe("when only inline type specifiers are used", () => {
+		it("should collapse them to a type-only import", () => {
+			const sf = createSourceFile(`
+				import { type Foo, bar } from "./mod";
+				function useFoo(x: Foo) { return x; }
+			`);
+			const fn = requireFunction(sf, "useFoo");
+
+			const imports = resolveImports(fn, [], sf);
+
+			expect(imports[0].isTypeOnly).toBe(true);
+			expect(imports[0].namedImports).toEqual(["Foo"]);
+		});
+	});
+
+	describe("when inline type and value specifiers are both used", () => {
+		it("should keep the inline type modifier", () => {
+			const sf = createSourceFile(`
+				import { type Foo, bar } from "./mod";
+				function useFoo(x: Foo) { return bar(x); }
+			`);
+			const fn = requireFunction(sf, "useFoo");
+
+			const imports = resolveImports(fn, [], sf);
+
+			expect(imports[0].isTypeOnly).toBe(false);
+			expect(imports[0].namedImports.sort()).toEqual(["bar", "type Foo"]);
+		});
+	});
+
 	describe("when a multi-import has partially used names", () => {
 		it("should include only the used names", () => {
 			const sf = createSourceFile(`
