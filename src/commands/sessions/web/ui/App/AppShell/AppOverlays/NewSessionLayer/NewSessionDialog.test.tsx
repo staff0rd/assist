@@ -200,16 +200,23 @@ describe("NewSessionDialog mode selector", () => {
 		expect(document.activeElement).toBe(modeRadio("draft"));
 	});
 
-	it("switches to the previous mode on Shift+Tab and wraps around", () => {
+	it("switches to the previous mode on Shift+Tab", () => {
 		renderDialog("bug");
 
 		fireEvent.keyDown(modeRadio("bug"), { key: "Tab", shiftKey: true });
 		expect(checkedMode()).toBe("draft");
 		expect(document.activeElement).toBe(modeRadio("draft"));
+	});
 
-		fireEvent.keyDown(modeRadio("draft"), { key: "Tab", shiftKey: true });
-		expect(checkedMode()).toBe("prompt");
-		expect(document.activeElement).toBe(modeRadio("prompt"));
+	it("leaves Shift+Tab on the first mode to move focus out of the group", () => {
+		renderDialog("draft");
+
+		const notPrevented = fireEvent.keyDown(modeRadio("draft"), {
+			key: "Tab",
+			shiftKey: true,
+		});
+		expect(notPrevented).toBe(true);
+		expect(checkedMode()).toBe("draft");
 	});
 
 	it("updates the placeholder and submit label to follow the mode", () => {

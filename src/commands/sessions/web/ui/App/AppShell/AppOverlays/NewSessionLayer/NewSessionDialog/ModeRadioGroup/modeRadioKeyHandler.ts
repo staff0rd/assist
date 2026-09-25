@@ -19,9 +19,10 @@ export function modeRadioKeyHandler(
 			handleEnterSubmit(e);
 			return;
 		}
+		const index = newSessionModeOrder.indexOf(value);
+		if (e.key === "Tab" && e.shiftKey && index === 0) return;
 		e.preventDefault();
 		const count = newSessionModeOrder.length;
-		const index = newSessionModeOrder.indexOf(value);
 		const next = newSessionModeOrder[(index + step + count) % count];
 		onChange(next);
 		e.currentTarget
