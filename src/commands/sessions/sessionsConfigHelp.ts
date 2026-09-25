@@ -48,6 +48,11 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "ceiling on concurrent live sessions one daemon holds; spawning past it is refused, and restore respawns at most this many persisted sessions (default: 24)",
 	},
 	{
+		key: "sessions.newSessionMode",
+		setter: "assist config set sessions.newSessionMode bug -g",
+		note: "mode pre-selected in the Ctrl+N new session dialog: draft | bug | prompt (default: draft)",
+	},
+	{
 		key: "worktree.enabled",
 		setter: "assist config set worktree.enabled true -g --repo",
 		note: "opt in per repo: spill concurrent sessions into adjacent <clone>-N worktrees (default off)",

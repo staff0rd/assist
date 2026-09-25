@@ -31,6 +31,7 @@ import { restartWeb } from "./restartWeb";
 import { revertDiffFile } from "./revertDiffFile";
 import { revertDiffPaths } from "./revertDiffPaths";
 import { sessionLayout } from "./sessionLayout";
+import { newSessionDefaults } from "./newSessionDefaults";
 import { sessionView } from "./sessionView";
 import { setConfig } from "./setConfig";
 import { unsetConfig } from "./unsetConfig";
@@ -85,6 +86,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/harness": harnessCapabilities,
 	"GET /api/session-layout": sessionLayout,
 	"GET /api/session-view": sessionView,
+	"GET /api/new-session-defaults": newSessionDefaults,
 	"GET /api/pr-status": prStatus,
 	"GET /api/server-runs": handleServerRuns,
 	"GET /api/pr-list": prList,

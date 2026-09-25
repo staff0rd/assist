@@ -13,10 +13,12 @@ import { AutoFocusDialog } from "../AutoFocusDialog";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
 
 export function NewSessionDialog({
+	defaultMode,
 	onCreate,
 	onCreateAssist,
 	onClose,
 }: {
+	defaultMode: NewSessionMode;
 	onCreate: (prompt: string, cwd?: string) => void;
 	onCreateAssist: (args: string[], cwd?: string) => void;
 	onClose: () => void;
@@ -24,7 +26,7 @@ export function NewSessionDialog({
 	const { repos, selectedCwd } = useRepoSelectionContext();
 	const [prompt, setPrompt] = useState("");
 	const [cwd, setCwd] = useState(selectedCwd);
-	const [mode, setMode] = useState<NewSessionMode>("prompt");
+	const [mode, setMode] = useState<NewSessionMode>(defaultMode);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
 	const submit = (e: FormEvent) => {

@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { NewSessionDialog } from "./NewSessionDialog";
+import type { NewSessionMode } from "./NewSessionDialog/newSessionModes";
 import { RepoSelectionContext } from "../../../../useRepoSelectionContext";
 
 beforeAll(() => {
@@ -17,7 +18,7 @@ const repos = [
 	String.raw`C:\git\delta`,
 ];
 
-function renderDialog() {
+function renderDialog(defaultMode: NewSessionMode = "prompt") {
 	const onCreate = vi.fn();
 	const onCreateAssist = vi.fn();
 	const onClose = vi.fn();
@@ -32,6 +33,7 @@ function renderDialog() {
 			}}
 		>
 			<NewSessionDialog
+				defaultMode={defaultMode}
 				onCreate={onCreate}
 				onCreateAssist={onCreateAssist}
 				onClose={onClose}
@@ -159,12 +161,19 @@ describe("NewSessionDialog repo combobox", () => {
 });
 
 describe("NewSessionDialog mode selector", () => {
-	it("defaults to prompt mode", () => {
-		renderDialog();
+	it("pre-selects prompt mode when it is the default", () => {
+		renderDialog("prompt");
 
 		expect(checkedMode()).toBe("prompt");
 		expect(promptInput().placeholder).toBe("Enter prompt...");
 		expect(screen.getByRole("button", { name: "Start session" })).toBeTruthy();
+	});
+
+	it("pre-selects the configured default mode", () => {
+		renderDialog("bug");
+
+		expect(checkedMode()).toBe("bug");
+		expect(screen.getByRole("button", { name: "File bug" })).toBeTruthy();
 	});
 
 	it("switches mode with the arrow keys and wraps around", () => {
