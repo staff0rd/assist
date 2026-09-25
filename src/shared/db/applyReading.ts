@@ -1,10 +1,13 @@
 import { and, eq, gt } from "drizzle-orm";
 import type { BacklogDatabase } from "./Db";
+import type { UsageWindowKey } from "../usageWindowKey";
 import { usagePeaks } from "./schema";
 
-type Window = "five_hour" | "seven_day";
-
-export type Cycle = { tx: BacklogDatabase; window: Window; resetsAt: number };
+export type Cycle = {
+	tx: BacklogDatabase;
+	window: UsageWindowKey;
+	resetsAt: number;
+};
 
 type Segment = typeof usagePeaks.$inferSelect;
 

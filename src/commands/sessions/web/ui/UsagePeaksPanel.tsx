@@ -23,7 +23,7 @@ export function UsagePeaksPanel({
 				<Typography color="text.secondary" align="center" sx={{ py: 6 }}>
 					{window === "all"
 						? "No usage peaks recorded yet."
-						: `No ${usagePeakWindow[window].label} usage peaks recorded yet.`}
+						: `No ${usagePeakWindow(window).label} usage peaks recorded yet.`}
 				</Typography>
 			) : (
 				<UsagePeaksPager

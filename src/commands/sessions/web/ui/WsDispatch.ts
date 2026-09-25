@@ -1,3 +1,4 @@
+import type { HarnessKind } from "../../../../shared/harnesses";
 import type { RateLimits } from "../../../../shared/RateLimits";
 import type { HistoricalSession, SessionInfo, Transcript } from "./types";
 import type { ServerConflict, SuccessNotice } from "./useNotices";
@@ -19,6 +20,7 @@ export type WsDispatch = {
 	resolvePendingLaunch: () => string | undefined;
 	failPendingLaunch: (message: string) => void;
 	setRateLimits: (limits: RateLimits) => void;
+	setHarnessRateLimits?: (harness: HarnessKind, limits: RateLimits) => void;
 	markInitialized: (id: string) => void;
 	buffers: React.RefObject<Map<string, string>>;
 	handlers: React.RefObject<Map<string, OutputHandler>>;

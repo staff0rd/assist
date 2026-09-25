@@ -1,10 +1,11 @@
 import { and, eq, sql } from "drizzle-orm";
+import type { UsageWindowKey } from "../usageWindowKey";
 import type { Db } from "./Db";
 import { usagePeaks } from "./schema";
 
 export async function recordWindowTokens(
 	db: Db,
-	window: "five_hour" | "seven_day",
+	window: UsageWindowKey,
 	resetsAt: number,
 	tokensUp: number,
 	tokensDown: number,

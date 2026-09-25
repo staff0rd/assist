@@ -1,4 +1,5 @@
 import { contextLevel } from "../../../../shared/contextLevel";
+import type { HarnessKind } from "../../../../shared/harnesses";
 import type { SessionStatus } from "./types";
 
 export const statusColors: Record<SessionStatus, string> = {
@@ -9,8 +10,8 @@ export const statusColors: Record<SessionStatus, string> = {
 	stopped: "text.secondary",
 };
 
-export function contextColor(pct: number): string {
-	switch (contextLevel(pct)) {
+export function contextColor(pct: number, harness?: HarnessKind): string {
+	switch (contextLevel(pct, harness)) {
 		case "red":
 			return "error.main";
 		case "yellow":

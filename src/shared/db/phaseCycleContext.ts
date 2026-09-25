@@ -6,13 +6,14 @@ import {
 	primaryKey,
 	text,
 } from "drizzle-orm/pg-core";
+import type { UsageWindowKey } from "../usageWindowKey";
 
 export const phaseCycleContext = pgTable(
 	"phase_cycle_context",
 	{
 		itemId: integer("item_id").notNull(),
 		phaseIdx: integer("phase_idx").notNull(),
-		window: text().$type<"five_hour" | "seven_day">().notNull(),
+		window: text().$type<UsageWindowKey>().notNull(),
 		resetsAt: bigint("resets_at", { mode: "number" }).notNull(),
 		peakContextPct: doublePrecision("peak_context_pct").notNull().default(0),
 	},

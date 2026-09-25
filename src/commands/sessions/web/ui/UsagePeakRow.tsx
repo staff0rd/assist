@@ -16,7 +16,7 @@ export function UsagePeakRow({
 	peak: UsagePeakRowData;
 	now: number;
 }) {
-	const { label, seconds, tint } = usagePeakWindow[peak.window];
+	const { label, seconds, tint } = usagePeakWindow(peak.window);
 	const level = rateLimitLevel(
 		peak.usedPercentage,
 		peak.resetsAt,

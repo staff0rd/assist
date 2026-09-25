@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import type { RateLimits } from "../../../../shared/RateLimits";
 import { resolveActiveId } from "./resolveActiveId";
 import type { HistoricalSession, SessionInfo } from "./types";
 import { useActiveIdReconciler } from "./useActiveIdReconciler";
@@ -7,6 +6,7 @@ import { useDaemonState } from "./useDaemonState";
 import { useInitialized } from "./useInitialized";
 import { useNotices } from "./useNotices";
 import { usePendingLaunches } from "./usePendingLaunches";
+import { useRateLimitsState } from "./useRateLimitsState";
 import { useSessionsSync } from "./useSessionsSync";
 import { useTranscriptState } from "./useTranscriptState";
 import { useWebSocket } from "./useWebSocket";
@@ -20,7 +20,7 @@ export function useWsConnection() {
 	const [currentCwd, setCurrentCwd] = useState<string>("");
 	const notices = useNotices();
 	const pending = usePendingLaunches();
-	const [rateLimits, setRateLimits] = useState<RateLimits | null>(null);
+	const limits = useRateLimitsState();
 	const { initialized, markInitialized, syncSessions } = useInitialized();
 	const buffers = useRef(new Map<string, string>());
 	const handlers = useRef(new Map<string, (data: string) => void>());
@@ -35,7 +35,7 @@ export function useWsConnection() {
 		setCurrentCwd,
 		...notices,
 		...pending,
-		setRateLimits,
+		...limits,
 		markInitialized,
 		buffers,
 		handlers,
@@ -57,7 +57,7 @@ export function useWsConnection() {
 		currentCwd,
 		...notices,
 		...pending,
-		rateLimits,
+		...limits,
 		initialized,
 		wsRef,
 		buffers,

@@ -5,13 +5,19 @@ import {
 	listUsagePeaks,
 	type UsagePeakWindow,
 } from "../../../shared/db/listUsagePeaks";
+import {
+	parseUsageWindowKey,
+	usageWindowKey,
+} from "../../../shared/usageWindowKey";
 import { respondPagedRows } from "./respondPagedRows";
 
 function parseWindow(value: string | null): UsagePeakWindow | undefined {
-	return value === "five_hour" || value === "seven_day" ? value : undefined;
+	if (!value) return undefined;
+	const parsed = parseUsageWindowKey(value);
+	return parsed ? usageWindowKey(parsed.harness, parsed.window) : undefined;
 }
 
-/** Recorded per-cycle peak 5h/7d usage, newest cycle first, for the history page. */
+/** Recorded per-cycle peak 5h/7d usage per harness, newest cycle first, for the history page. */
 export function listUsageHistory(
 	req: IncomingMessage,
 	res: ServerResponse,

@@ -2,10 +2,12 @@ import type { ActiveWindow } from "../../../shared/activeWindows";
 import { getDb } from "../../../shared/db/getDb";
 import { recordPhaseCycleContext } from "../../../shared/db/recordPhaseCycleContext";
 import { recordPhasePeakContext } from "../../../shared/db/recordPhasePeakContext";
-import { recordPhaseTranscriptUsage } from "../../../shared/db/recordPhaseTranscriptUsage";
+import {
+	type ResponseUsage,
+	recordPhaseTranscriptUsage,
+} from "../../../shared/db/recordPhaseTranscriptUsage";
 import { recordWindowTokens } from "../../../shared/db/recordWindowTokens";
 import { loadConfig } from "../../../shared/loadConfig";
-import { readTranscriptUsage } from "../shared/transcriptUsage";
 import { daemonLog } from "./daemonLog";
 
 /**
@@ -16,7 +18,7 @@ import { daemonLog } from "./daemonLog";
 export async function persistPhaseTokens(
 	itemId: number,
 	phaseIdx: number,
-	transcriptPath: string,
+	loadResponses: () => Promise<ResponseUsage[]>,
 	usedPct: number | undefined,
 	windows: ActiveWindow[],
 ): Promise<void> {
@@ -36,7 +38,7 @@ export async function persistPhaseTokens(
 				);
 			}
 		}
-		const responses = await readTranscriptUsage(transcriptPath);
+		const responses = await loadResponses();
 		if (responses.length === 0) return;
 		const { tokensUp, tokensDown } = await recordPhaseTranscriptUsage(
 			db,

@@ -30,6 +30,7 @@ export function CardDataLine({ session }: { session: SessionInfo }) {
 		<Box sx={dataSx}>
 			<SessionMetaCaptions
 				usedPct={session.usedPct}
+				harness={session.harness}
 				undurable={session.undurable}
 			/>
 			{session.cwd && (

@@ -4,6 +4,7 @@ import { sendTo } from "./broadcast";
 import { buildHello } from "./buildHello";
 import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
+import { handleCodexUsage } from "./handleCodexUsage";
 import { handleCreateRun } from "./handleCreateRun";
 import { handleSetStatus } from "./handleSetStatus";
 import { lifecycleHandlers } from "./lifecycleHandlers";
@@ -50,6 +51,7 @@ export const messageHandlers: Record<string, Handler> = {
 			d.transcriptPath as string | undefined,
 			d.usedPct as number | undefined,
 		),
+	"codex-usage": handleCodexUsage,
 	input: routed((_client, m, d) =>
 		m.writeToSession(d.sessionId as string, d.data as string),
 	),

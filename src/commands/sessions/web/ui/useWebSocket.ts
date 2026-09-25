@@ -25,6 +25,7 @@ type WsDeps = {
 	resolvePendingLaunch: WsDispatch["resolvePendingLaunch"];
 	failPendingLaunch: WsDispatch["failPendingLaunch"];
 	setRateLimits: WsDispatch["setRateLimits"];
+	setHarnessRateLimits?: WsDispatch["setHarnessRateLimits"];
 	markInitialized: WsDispatch["markInitialized"];
 	buffers: RefObject<Map<string, string>>;
 	handlers: RefObject<Map<string, OutputHandler>>;

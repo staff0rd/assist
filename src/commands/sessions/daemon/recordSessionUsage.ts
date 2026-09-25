@@ -1,4 +1,5 @@
 import type { ActiveWindow } from "../../../shared/activeWindows";
+import { readTranscriptUsage } from "../shared/transcriptUsage";
 import type { Session } from "./createSession";
 import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { persistPhaseTokens } from "./persistPhaseTokens";
@@ -19,7 +20,7 @@ export function recordSessionUsage(
 			void persistPhaseTokens(
 				phase.itemId,
 				phase.phaseIdx,
-				transcriptPath,
+				() => readTranscriptUsage(transcriptPath),
 				usedPct,
 				windows,
 			);

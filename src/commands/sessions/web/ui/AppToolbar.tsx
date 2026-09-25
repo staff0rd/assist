@@ -52,7 +52,10 @@ export function AppToolbar({
 				onCreateAssist={socket.createAssistSession}
 				onStartRun={socket.startRun}
 			/>
-			<RateLimitsIndicator rateLimits={socket.rateLimits} />
+			<RateLimitsIndicator
+				rateLimits={socket.rateLimits}
+				harnessRateLimits={socket.harnessRateLimits}
+			/>
 		</Toolbar>
 	);
 }

@@ -1,7 +1,13 @@
 import Link from "@mui/material/Link";
 import Tooltip from "@mui/material/Tooltip";
 import { Link as RouterLink } from "react-router";
-import type { RateLimits } from "../../../../shared/RateLimits";
+import type {
+	HarnessRateLimits,
+	RateLimits,
+} from "../../../../shared/RateLimits";
+import { HarnessRateLimitChips } from "./HarnessRateLimitChips";
+import { HarnessRateLimitsTooltip } from "./HarnessRateLimitsTooltip";
+import { harnessLimitGroups } from "./harnessLimitGroups";
 import { RateLimitChips } from "./RateLimitChips";
 import {
 	RATE_LIMITS_TOOLTIP_HINT,
@@ -16,29 +22,29 @@ const containerSx = {
 	fontSize: 13,
 } as const;
 
-function hasUsage(rateLimits: RateLimits | null): rateLimits is RateLimits {
-	return (
-		rateLimits?.five_hour?.used_percentage != null ||
-		rateLimits?.seven_day?.used_percentage != null
-	);
-}
+const NO_HARNESS_LIMITS: HarnessRateLimits = {};
 
 export function RateLimitsIndicator({
 	rateLimits,
+	harnessRateLimits = NO_HARNESS_LIMITS,
 }: {
 	rateLimits: RateLimits | null;
+	harnessRateLimits?: HarnessRateLimits;
 }) {
-	const usage = hasUsage(rateLimits);
+	const groups = harnessLimitGroups(rateLimits, harnessRateLimits);
+	const claudeOnly = groups.every((g) => g.harness === "claude");
+	const claude = rateLimits as RateLimits;
+	let title: React.ReactNode = RATE_LIMITS_TOOLTIP_HINT;
+	let content: React.ReactNode = "Usage";
+	if (groups.length > 0 && claudeOnly) {
+		title = <RateLimitsTooltip rateLimits={claude} />;
+		content = <RateLimitChips rateLimits={claude} />;
+	} else if (groups.length > 0) {
+		title = <HarnessRateLimitsTooltip groups={groups} />;
+		content = <HarnessRateLimitChips groups={groups} />;
+	}
 	return (
-		<Tooltip
-			title={
-				usage ? (
-					<RateLimitsTooltip rateLimits={rateLimits} />
-				) : (
-					RATE_LIMITS_TOOLTIP_HINT
-				)
-			}
-		>
+		<Tooltip title={title}>
 			<Link
 				component={RouterLink}
 				to="/usage"
@@ -46,7 +52,7 @@ export function RateLimitsIndicator({
 				color="inherit"
 				sx={containerSx}
 			>
-				{usage ? <RateLimitChips rateLimits={rateLimits} /> : "Usage"}
+				{content}
 			</Link>
 		</Tooltip>
 	);

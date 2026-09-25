@@ -1,8 +1,8 @@
+import type { HarnessKind } from "../harnesses";
 import type { RateLimits } from "../RateLimits";
+import { RATE_LIMIT_WINDOWS, usageWindowKey } from "../usageWindowKey";
 import type { Db } from "./Db";
 import { recordWindowPeak } from "./recordWindowPeak";
-
-const WINDOWS = ["five_hour", "seven_day"] as const;
 
 /**
  * Record the latest reading for each present rate-limit window against its
@@ -16,8 +16,9 @@ export async function recordUsagePeak(
 	db: Db,
 	rateLimits: RateLimits,
 	now: number = Math.floor(Date.now() / 1000),
+	harness?: HarnessKind,
 ): Promise<void> {
-	for (const window of WINDOWS) {
+	for (const window of RATE_LIMIT_WINDOWS) {
 		const w = rateLimits[window];
 		if (
 			!w ||
@@ -25,6 +26,12 @@ export async function recordUsagePeak(
 			typeof w.used_percentage !== "number"
 		)
 			continue;
-		await recordWindowPeak(db, window, w.resets_at, w.used_percentage, now);
+		await recordWindowPeak(
+			db,
+			usageWindowKey(harness, window),
+			w.resets_at,
+			w.used_percentage,
+			now,
+		);
 	}
 }

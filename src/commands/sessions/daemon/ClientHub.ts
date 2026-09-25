@@ -2,6 +2,7 @@ import {
 	type ActiveWindow,
 	activeWindows,
 } from "../../../shared/activeWindows";
+import type { HarnessKind } from "../../../shared/harnesses";
 import type { RateLimits } from "../../../shared/RateLimits";
 import { broadcast, type SessionClient, sendTo } from "./broadcast";
 import { recentDaemonLogLines } from "./daemonLog";
@@ -14,11 +15,17 @@ export { persistUsagePeak } from "./persistUsagePeak";
 // passing it directly.
 export class ClientHub extends Set<SessionClient> {
 	private latestLimits: RateLimits | undefined;
+	private readonly harnessLimits = new Map<HarnessKind, RateLimits>();
 	// why: log delivery is opt-in so browser tabs aren't spammed; only connections that ask via subscribe-logs receive daemonLog lines.
 	private readonly logSubscribers = new Set<SessionClient>();
 
 	// why: the daemon injects a best-effort persister; left undefined elsewhere so `new ClientHub()` works and broadcasting never depends on it.
-	constructor(private readonly persistPeak?: (rateLimits: RateLimits) => void) {
+	constructor(
+		private readonly persistPeak?: (
+			rateLimits: RateLimits,
+			harness?: HarnessKind,
+		) => void,
+	) {
 		super();
 	}
 
@@ -28,14 +35,28 @@ export class ClientHub extends Set<SessionClient> {
 		this.persistPeak?.(rateLimits);
 	}
 
-	currentWindows(): ActiveWindow[] {
-		return activeWindows(this.latestLimits);
+	updateHarnessLimits(harness: HarnessKind, rateLimits: RateLimits): void {
+		if (harness === "claude") {
+			this.updateLimits(rateLimits);
+			return;
+		}
+		this.harnessLimits.set(harness, rateLimits);
+		broadcast(this, { type: "limits", harness, rateLimits });
+		this.persistPeak?.(rateLimits, harness);
+	}
+
+	currentWindows(harness?: HarnessKind): ActiveWindow[] {
+		if (!harness || harness === "claude")
+			return activeWindows(this.latestLimits);
+		return activeWindows(this.harnessLimits.get(harness), harness);
 	}
 
 	greet(client: SessionClient): void {
 		if (this.latestLimits) {
 			sendTo(client, { type: "limits", rateLimits: this.latestLimits });
 		}
+		for (const [harness, rateLimits] of this.harnessLimits)
+			sendTo(client, { type: "limits", harness, rateLimits });
 	}
 
 	subscribeLogs(client: SessionClient, replay = true): void {

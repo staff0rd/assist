@@ -1,13 +1,16 @@
 import Typography from "@mui/material/Typography";
+import type { HarnessKind } from "../../../../shared/harnesses";
 import { contextColor } from "./statusColors";
 
 export function SessionMetaCaptions({
 	restored,
 	usedPct,
+	harness,
 	undurable,
 }: {
 	restored?: boolean;
 	usedPct?: number;
+	harness?: HarnessKind;
 	undurable?: { reason: string };
 }) {
 	return (
@@ -29,7 +32,7 @@ export function SessionMetaCaptions({
 				<Typography
 					variant="caption"
 					sx={{
-						color: contextColor(usedPct),
+						color: contextColor(usedPct, harness),
 						opacity: 0.6,
 						fontSize: "0.8rem",
 					}}

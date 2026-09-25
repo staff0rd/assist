@@ -1,12 +1,13 @@
 import { sql } from "drizzle-orm";
 import type { Db } from "./Db";
+import type { UsageWindowKey } from "../usageWindowKey";
 import { phaseCycleContext } from "./schema";
 
 export async function recordPhaseCycleContext(
 	db: Db,
 	itemId: number,
 	phaseIdx: number,
-	window: "five_hour" | "seven_day",
+	window: UsageWindowKey,
 	resetsAt: number,
 	pct: number,
 ): Promise<void> {

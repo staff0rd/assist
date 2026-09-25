@@ -3,6 +3,7 @@ import { adviceHookPayload } from "../advise/adviceHookPayload";
 import { decideCommand } from "../cliHook/decideCommand";
 import type { HookDecision } from "../cliHook/resolvePermission";
 import { type ParsedInput, parseCodexHookInput } from "./parseCodexHookInput";
+import { relayCodexUsage } from "./relayCodexUsage";
 import { reportCodexStatus } from "./reportCodexStatus";
 
 function preToolUseOutput(decision: HookDecision) {
@@ -51,4 +52,5 @@ export async function codexHook(): Promise<void> {
 	if (output) console.log(JSON.stringify(output));
 
 	await reportCodexStatus(input.event, decision !== undefined);
+	await relayCodexUsage(input.event, input.transcriptPath);
 }

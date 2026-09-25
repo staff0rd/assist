@@ -8,10 +8,12 @@ import {
 	text,
 	timestamp,
 } from "drizzle-orm/pg-core";
+import type { UsageWindowKey } from "../usageWindowKey";
 
 /**
- * Per-reset-cycle peak Claude usage. `window` is the rate-limit bucket
- * (`five_hour`/`seven_day`), `resetsAt` identifies the cycle by the bucket's
+ * Per-reset-cycle peak harness usage. `window` is the rate-limit bucket
+ * (`five_hour`/`seven_day` for Claude, `codex:five_hour` etc. for other
+ * harnesses — see {@link ../usageWindowKey}), `resetsAt` identifies the cycle by the bucket's
  * reset time, and `usedPercentage` is the maximum usage observed.
  *
  * A cycle can hold more than one row: usage normally only climbs, so a sharp
@@ -32,7 +34,7 @@ import {
 export const usagePeaks = pgTable(
 	"usage_peaks",
 	{
-		window: text().$type<"five_hour" | "seven_day">().notNull(),
+		window: text().$type<UsageWindowKey>().notNull(),
 		resetsAt: bigint("resets_at", { mode: "number" }).notNull(),
 		segment: integer().notNull().default(0),
 		usedPercentage: doublePrecision("used_percentage").notNull(),

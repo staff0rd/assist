@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import type { UsageWindowKey } from "../usageWindowKey";
 import type { Db } from "./Db";
 import { applyReading, type Cycle } from "./applyReading";
 
@@ -25,7 +26,7 @@ const lock = ({ tx, window, resetsAt }: Cycle) =>
  */
 export async function recordWindowPeak(
 	db: Db,
-	window: "five_hour" | "seven_day",
+	window: UsageWindowKey,
 	resetsAt: number,
 	usedPercentage: number,
 	now: number = Math.floor(Date.now() / 1000),

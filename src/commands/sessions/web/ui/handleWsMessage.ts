@@ -1,7 +1,7 @@
-import type { RateLimits } from "../../../../shared/RateLimits";
 import { handleClear } from "./handleClear";
 import { handleCreated } from "./handleCreated";
 import { handleError } from "./handleError";
+import { handleLimits } from "./handleLimits";
 import { handleNotice } from "./handleNotice";
 import { handleOutput } from "./handleOutput";
 import { handleRunConflict } from "./handleRunConflict";
@@ -42,7 +42,7 @@ export function handleWsMessage(
 			handleRunConflict(msg, d);
 			break;
 		case "limits":
-			d.setRateLimits(msg.rateLimits as RateLimits);
+			handleLimits(msg, d);
 			break;
 		case "clear":
 			handleClear(msg, d);
