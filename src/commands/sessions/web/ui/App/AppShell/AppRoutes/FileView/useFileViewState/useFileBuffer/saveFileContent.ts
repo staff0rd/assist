@@ -1,4 +1,4 @@
-import { postJson } from "../../../postJson";
+import { postJson } from "../../../../../postJson";
 
 export type SavedFile = { content: string; mtimeMs: number };
 

@@ -1,8 +1,8 @@
 import Stack from "@mui/material/Stack";
 import type { AssistLaunchMeta } from "../../../createSessionAction";
-import { dispatchMode } from "../dispatchMode";
+import { dispatchMode } from "../../dispatchMode";
 import { ModeButtons } from "./TopNavActions/ModeButtons";
-import { prLaunchMeta } from "../prLaunchMeta";
+import { prLaunchMeta } from "../../prLaunchMeta";
 import { PromptComposerDropdowns } from "./TopNavActions/PromptComposerDropdowns";
 import { ReviewDropdown } from "./TopNavActions/ReviewDropdown";
 import { ServerRunMenu } from "./TopNavActions/ServerRunMenu";

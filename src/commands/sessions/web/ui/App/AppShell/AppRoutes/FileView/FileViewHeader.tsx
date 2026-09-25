@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { FileTypeIcon } from "../../FileTypeIcon";
+import { FileTypeIcon } from "../../../FileTypeIcon";
 import { FileViewActions } from "./FileViewHeader/FileViewActions";
 import type { FileViewMode } from "./FileViewMode";
 

@@ -3,7 +3,7 @@ import {
 	formatRateLimitTimeLeft,
 	rateLimitLevel,
 } from "../../../../../../../../../shared/rateLimitLevel";
-import { limitLevelColor } from "../../../limitLevelColor";
+import { limitLevelColor } from "../../../../limitLevelColor";
 
 type Window = { used_percentage?: number; resets_at?: number };
 

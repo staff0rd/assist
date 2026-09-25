@@ -1,4 +1,4 @@
-import { ErrorSnackbar } from "./ErrorSnackbar";
+import { ErrorSnackbar } from "../ErrorSnackbar";
 import { FilePaletteLayer } from "./AppOverlays/FilePaletteLayer";
 import { LaunchSnackbar } from "./AppOverlays/LaunchSnackbar";
 import { NewSessionLayer } from "./AppOverlays/NewSessionLayer";

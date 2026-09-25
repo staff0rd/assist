@@ -1,15 +1,15 @@
 import Box from "@mui/material/Box";
 import { Outlet, useLocation } from "react-router";
-import { AppSidebar } from "./AppLayout/AppSidebar";
+import { AppSidebar } from "../../AppSidebar";
 import { ErrorBoundary } from "./AppLayout/ErrorBoundary";
 import { useActivateSession } from "./AppLayout/useActivateSession";
-import { DiffPanelsProvider } from "./useDiffPanels";
+import { DiffPanelsProvider } from "../../useDiffPanels";
 import { useScrollRestoration } from "./AppLayout/useScrollRestoration";
 import { ScrollRestorationContext } from "../../../useScrollRestorationContext";
 import type { SessionSocket } from "../../../useSessionSocket";
-import { useSidebarCollapsedContext } from "../useSidebarCollapsedContext";
+import { useSidebarCollapsedContext } from "../../useSidebarCollapsedContext";
 import { useSidebarTab } from "./AppLayout/useSidebarTab";
-import { StarredSessionsProvider } from "./useStarredSessions";
+import { StarredSessionsProvider } from "../../useStarredSessions";
 
 export function AppLayout({ socket }: { socket: SessionSocket }) {
 	const { pathname } = useLocation();

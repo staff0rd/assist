@@ -1,4 +1,4 @@
-import { dispatchMode } from "../../../dispatchMode";
+import { dispatchMode } from "../../../../dispatchMode";
 import { type NewSessionMode, newSessionModes } from "./newSessionModes";
 
 export function launchNewSession(

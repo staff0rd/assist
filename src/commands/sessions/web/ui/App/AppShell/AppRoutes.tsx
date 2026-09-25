@@ -3,16 +3,16 @@ import { Navigate, Route, Routes } from "react-router";
 import { BacklogView } from "../../../../../backlog/web/ui/BacklogView";
 import { AppLayout } from "./AppRoutes/AppLayout";
 import { BackupsView } from "./AppRoutes/BackupsView";
-import { ConfigView } from "./AppRoutes/ConfigView";
+import { ConfigView } from "../ConfigView";
 import { DiffView } from "./AppRoutes/DiffView";
 import { FileView } from "./AppRoutes/FileView";
 import { NewsView } from "./AppRoutes/NewsView";
-import { ReleasesView } from "./AppRoutes/ReleasesView";
+import { ReleasesView } from "../ReleasesView";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
 import { selectedCardId } from "./selectedCardId";
-import { SessionContent } from "./AppRoutes/SessionContent";
-import { UsageHistoryView } from "./AppRoutes/UsageHistoryView";
+import { SessionContent } from "../SessionContent";
+import { UsageHistoryView } from "../UsageHistoryView";
 import type { SessionSocket } from "../../useSessionSocket";
 
 function BacklogContent({ socket }: { socket: SessionSocket }) {

@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField";
 import type { RefObject } from "react";
-import { handleEnterSubmit } from "../../../handleEnterSubmit";
+import { handleEnterSubmit } from "../../../../handleEnterSubmit";
 
 export function NewSessionPromptField({
 	value,

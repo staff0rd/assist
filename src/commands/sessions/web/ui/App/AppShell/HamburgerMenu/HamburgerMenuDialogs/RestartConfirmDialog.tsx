@@ -1,5 +1,5 @@
 import { ConfirmDialog } from "../../../../../../../backlog/web/ui/components/ConfirmDialog";
-import { ErrorSnackbar } from "../../ErrorSnackbar";
+import { ErrorSnackbar } from "../../../ErrorSnackbar";
 import { RESTART_ITEM } from "../../postRestart";
 import { useWebserverRestart } from "../../useWebserverRestart";
 

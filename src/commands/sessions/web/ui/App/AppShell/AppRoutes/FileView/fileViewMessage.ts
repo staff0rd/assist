@@ -1,4 +1,4 @@
-import type { FileContentState } from "../fetchFileContent";
+import type { FileContentState } from "../../../fetchFileContent";
 
 export function fileViewMessage(
 	status: FileContentState["status"],

@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 import type { ReactNode } from "react";
-import { MODES, type SessionMode } from "../../dispatchMode";
+import { MODES, type SessionMode } from "../../../dispatchMode";
 import { FreePromptDropdown } from "./FreePromptDropdown";
 
 // match FilterTrigger metrics so mode buttons align in height with the dropdowns

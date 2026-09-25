@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { DropdownWrapper } from "../../DropdownWrapper";
-import { FreePromptForm } from "../../FreePromptForm";
+import { DropdownWrapper } from "../../../DropdownWrapper";
+import { FreePromptForm } from "../../../FreePromptForm";
 
 export function FreePromptDropdown({
 	disabled,

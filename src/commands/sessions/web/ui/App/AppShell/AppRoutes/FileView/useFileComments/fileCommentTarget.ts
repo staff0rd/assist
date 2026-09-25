@@ -1,4 +1,4 @@
-import { type CommentTarget, commentTarget } from "../../commentTarget";
+import { type CommentTarget, commentTarget } from "../../../../commentTarget";
 import type { SessionInfo } from "../../../../../types";
 
 export function fileCommentTarget(

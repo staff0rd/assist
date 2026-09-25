@@ -1,5 +1,5 @@
 import { MarkdownBlock } from "../../../../../../../backlog/web/ui/components/MarkdownBlock";
-import { FileCommentLayer } from "../FileCommentLayer";
+import { FileCommentLayer } from "../../../FileCommentLayer";
 import { MonacoEditor } from "./FileViewBody/MonacoEditor";
 import { monacoLanguageForPath } from "./FileViewBody/monacoLanguageForPath";
 import type { FileComments } from "./useFileComments";

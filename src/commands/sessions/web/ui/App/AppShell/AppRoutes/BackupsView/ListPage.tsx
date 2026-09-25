@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useState } from "react";
-import { PageShell } from "../PageShell";
+import { PageShell } from "../../../PageShell";
 
 /**
  * A titled page that fetches a list of rows, showing a spinner while loading,

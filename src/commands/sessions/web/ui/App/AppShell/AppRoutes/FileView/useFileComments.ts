@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { addRuleSender } from "../addRuleSender";
-import { fileCommentSender } from "../fileCommentSender";
+import { addRuleSender } from "../../../addRuleSender";
+import { fileCommentSender } from "../../../fileCommentSender";
 import { fileCommentTarget } from "./useFileComments/fileCommentTarget";
-import type { AddRuleRequest } from "../formatAddRuleCommand";
-import type { FileComment } from "../formatFileComment";
+import type { AddRuleRequest } from "../../../formatAddRuleCommand";
+import type { FileComment } from "../../../formatFileComment";
 import type { SessionInfo } from "../../../../types";
 
 export type FileComments = {

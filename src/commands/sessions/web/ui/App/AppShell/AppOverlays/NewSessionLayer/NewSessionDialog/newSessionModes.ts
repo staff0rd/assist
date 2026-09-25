@@ -1,4 +1,4 @@
-import { PLACEHOLDER, type SessionMode } from "../../../dispatchMode";
+import { PLACEHOLDER, type SessionMode } from "../../../../dispatchMode";
 
 export const newSessionModes = {
 	draft: {

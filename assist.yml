@@ -10,6 +10,16 @@ notify:
 restructure:
   ignore:
     - "**/register*.ts"
+  pin:
+    - SessionContent
+    - ConfigView
+    - DiffContent
+    - ReleasesView
+    - UsageHistoryView
+    - AppSidebar
+    - SessionCard
+    - PrPreviewSlideInPane
+    - ConfigRowValueCell
 worktree:
   watcher: true
 run:

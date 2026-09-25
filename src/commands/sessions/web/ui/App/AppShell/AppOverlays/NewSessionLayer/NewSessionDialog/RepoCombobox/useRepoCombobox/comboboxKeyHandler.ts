@@ -1,5 +1,5 @@
 import type { KeyboardEvent } from "react";
-import { handleEnterSubmit } from "../../../../../handleEnterSubmit";
+import { handleEnterSubmit } from "../../../../../../handleEnterSubmit";
 
 export function comboboxKeyHandler<T>({
 	open,

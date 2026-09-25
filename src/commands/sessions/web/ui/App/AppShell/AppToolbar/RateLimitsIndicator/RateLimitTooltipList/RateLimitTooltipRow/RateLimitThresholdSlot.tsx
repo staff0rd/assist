@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import type { RateLimitLevel } from "../../../../../../../../../../shared/rateLimitLevel";
-import { limitLevelColor } from "../../../../limitLevelColor";
+import { limitLevelColor } from "../../../../../limitLevelColor";
 
 export function RateLimitThresholdSlot({
 	direction,

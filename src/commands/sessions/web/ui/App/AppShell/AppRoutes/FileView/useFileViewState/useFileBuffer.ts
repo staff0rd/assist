@@ -3,7 +3,7 @@ import {
 	type SavedFile,
 	saveFileContent,
 } from "./useFileBuffer/saveFileContent";
-import type { FileContentState } from "../../fetchFileContent";
+import type { FileContentState } from "../../../../fetchFileContent";
 import { loadedFile } from "./useFileBuffer/loadedFile";
 
 type FileBuffer = {

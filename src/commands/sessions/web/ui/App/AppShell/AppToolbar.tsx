@@ -1,16 +1,16 @@
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import { NavTabs } from "./AppToolbar/NavTabs";
-import { OpenInCodeButton } from "./OpenInCodeButton";
+import { OpenInCodeButton } from "../OpenInCodeButton";
 import { OpenInGitHubButton } from "./AppToolbar/OpenInGitHubButton";
 import { RateLimitsIndicator } from "./AppToolbar/RateLimitsIndicator";
 import { RefreshWebserverButton } from "./AppToolbar/RefreshWebserverButton";
 import { RepoPicker } from "./AppToolbar/RepoPicker";
-import { SidebarCollapseToggle } from "./SidebarCollapseToggle";
+import { SidebarCollapseToggle } from "../SidebarCollapseToggle";
 import { TopNavActions } from "./AppToolbar/TopNavActions";
 import type { RepoSelection } from "../../useRepoSelectionContext";
 import type { SessionSocket } from "../../useSessionSocket";
-import { useSidebarCollapsedContext } from "./useSidebarCollapsedContext";
+import { useSidebarCollapsedContext } from "../useSidebarCollapsedContext";
 
 const toolbarSx = { minHeight: 48, pl: 1, pr: 14 } as const;
 const pickerSx = { width: 240, ml: 2 } as const;

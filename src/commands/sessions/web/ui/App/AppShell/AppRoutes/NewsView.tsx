@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { NewsItem } from "./NewsView/NewsItem";
 import { type DateGroup, groupByDate } from "./NewsView/groupByDate";
 import type { FeedItem } from "./NewsView/types";
-import { PageShell } from "./PageShell";
+import { PageShell } from "../../PageShell";
 
 async function fetchNewsItems(): Promise<FeedItem[]> {
 	const res = await fetch("/api/news/items");

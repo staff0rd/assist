@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import type { RateLimits } from "../../../../../../../../shared/RateLimits";
 import { RateLimitTooltipList } from "./RateLimitTooltipList";
-import { useNowSeconds } from "../../useNowSeconds";
+import { useNowSeconds } from "../../../useNowSeconds";
 
 export const RATE_LIMITS_TOOLTIP_HINT =
 	"Claude account usage (5h / 7d windows) — view history";

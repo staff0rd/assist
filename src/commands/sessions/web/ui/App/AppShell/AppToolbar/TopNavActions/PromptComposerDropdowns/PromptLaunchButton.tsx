@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
-import { DropdownWrapper } from "../../../DropdownWrapper";
-import { FreePromptForm } from "../../../FreePromptForm";
+import { DropdownWrapper } from "../../../../DropdownWrapper";
+import { FreePromptForm } from "../../../../FreePromptForm";
 import { harnessChoices } from "./PromptLaunchButton/harnessChoices";
 import { HarnessRadio } from "./PromptLaunchButton/HarnessRadio";
 import { useHarnessCapabilities } from "../../../../../useHarnessCapabilities";

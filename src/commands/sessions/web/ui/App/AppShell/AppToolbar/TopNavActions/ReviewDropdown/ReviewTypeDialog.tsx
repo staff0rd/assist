@@ -10,12 +10,12 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import type { PrSummary } from "../../../../../../prList";
-import { reviewButtonModes } from "../../../reviewButtonModes";
+import { reviewButtonModes } from "../../../../reviewButtonModes";
 import {
 	reviewOptionArgs,
 	reviewOptionDefaults,
 	ReviewOptionToggles,
-} from "../../../ReviewOptionToggles";
+} from "../../../../ReviewOptionToggles";
 
 export function ReviewTypeDialog({
 	pr,

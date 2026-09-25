@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Typography from "@mui/material/Typography";
-import { FileTypeIcon } from "../../../../FileTypeIcon";
+import { FileTypeIcon } from "../../../../../FileTypeIcon";
 
 const rowSx = {
 	display: "flex",

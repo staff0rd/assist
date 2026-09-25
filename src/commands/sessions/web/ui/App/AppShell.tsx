@@ -9,8 +9,8 @@ import { useAppShell } from "./AppShell/useAppShell";
 import { DaemonVersionContext } from "./AppShell/useDaemonVersionContext";
 import { RepoSelectionContext } from "../useRepoSelectionContext";
 import { SessionLaunchContext } from "../useSessionLaunchContext";
-import { SidebarCollapsedContext } from "./AppShell/useSidebarCollapsedContext";
-import { TopBarLayoutContext } from "./AppShell/useTopBarLayoutContext";
+import { SidebarCollapsedContext } from "./useSidebarCollapsedContext";
+import { TopBarLayoutContext } from "./useTopBarLayoutContext";
 
 const appBarSx = {
 	zIndex: (t: { zIndex: { drawer: number } }) => t.zIndex.drawer + 1,

@@ -1,5 +1,5 @@
-import { DiffContent } from "./DiffContent";
-import { PageShell } from "./PageShell";
+import { DiffContent } from "../../DiffContent";
+import { PageShell } from "../../PageShell";
 import type { SessionInfo } from "../../../types";
 import { useDiffTarget } from "./DiffView/useDiffTarget";
 

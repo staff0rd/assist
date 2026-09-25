@@ -4,11 +4,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { AppToolbar } from "./AppToolbar";
 import type { RepoSelection } from "../../useRepoSelectionContext";
 import type { SessionSocket } from "../../useSessionSocket";
-import { SidebarCollapsedContext } from "./useSidebarCollapsedContext";
+import { SidebarCollapsedContext } from "../useSidebarCollapsedContext";
 
 vi.mock("./AppToolbar/NavTabs", () => ({ NavTabs: () => <div /> }));
 vi.mock("./AppToolbar/RepoPicker", () => ({ RepoPicker: () => <div /> }));
-vi.mock("./OpenInCodeButton", () => ({ OpenInCodeButton: () => <div /> }));
+vi.mock("../OpenInCodeButton", () => ({ OpenInCodeButton: () => <div /> }));
 vi.mock("./AppToolbar/OpenInGitHubButton", () => ({
 	OpenInGitHubButton: () => <div />,
 }));

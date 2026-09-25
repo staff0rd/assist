@@ -1,5 +1,5 @@
 import type { SavedFile } from "./saveFileContent";
-import type { FileContentState } from "../../../fetchFileContent";
+import type { FileContentState } from "../../../../../fetchFileContent";
 
 export function loadedFile(state: FileContentState): SavedFile {
 	return state.status === "ready"

@@ -1,5 +1,5 @@
 import { ConfirmDialog } from "../../../../../../backlog/web/ui/components/ConfirmDialog";
-import { repoLabel } from "../repoLabel";
+import { repoLabel } from "../../repoLabel";
 import type { ServerConflict } from "../../../useNotices";
 
 export function ServerConflictDialog({

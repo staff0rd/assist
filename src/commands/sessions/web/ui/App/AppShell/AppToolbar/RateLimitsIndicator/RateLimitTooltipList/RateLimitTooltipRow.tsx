@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { nextRateLimitStep } from "../../../../../../../../../shared/nextRateLimitStep";
 import { rateLimitLevel } from "../../../../../../../../../shared/rateLimitLevel";
-import { limitLevelColor } from "../../../limitLevelColor";
+import { limitLevelColor } from "../../../../limitLevelColor";
 import { rateLimitRecoveryNote } from "./RateLimitTooltipRow/rateLimitRecoveryNote";
 import { RateLimitThresholdSlot } from "./RateLimitTooltipRow/RateLimitThresholdSlot";
 

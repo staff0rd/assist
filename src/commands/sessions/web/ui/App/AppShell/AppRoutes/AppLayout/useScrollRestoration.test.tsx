@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { PageShell } from "../PageShell";
+import { PageShell } from "../../../PageShell";
 import { useScrollRestoration } from "./useScrollRestoration";
 import { ScrollRestorationContext } from "../../../../useScrollRestorationContext";
 

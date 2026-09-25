@@ -6,7 +6,7 @@ import {
 	SEVEN_DAY_SECONDS,
 } from "../../../../../../../../shared/rateLimitLevel";
 import { LimitChip } from "./RateLimitChips/LimitChip";
-import { useNowSeconds } from "../../useNowSeconds";
+import { useNowSeconds } from "../../../useNowSeconds";
 
 /** Comma-separated 5h/7d usage chips; renders the windows that carry a percentage. */
 export function RateLimitChips({ rateLimits }: { rateLimits: RateLimits }) {

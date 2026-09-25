@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import { harnessLabel } from "../../../../../../../../shared/harnessLabel";
 import type { HarnessLimitGroup } from "./harnessLimitGroups";
 import { RateLimitTooltipList } from "./RateLimitTooltipList";
-import { useNowSeconds } from "../../useNowSeconds";
+import { useNowSeconds } from "../../../useNowSeconds";
 
 export function HarnessRateLimitsTooltip({
 	groups,

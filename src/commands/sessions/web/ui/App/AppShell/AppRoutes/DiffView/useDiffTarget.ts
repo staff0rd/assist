@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { DEFAULT_DIFF_SCOPE } from "../diffScopeOptions";
+import { DEFAULT_DIFF_SCOPE } from "../../../diffScopeOptions";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
 
 export function useDiffTarget(): {

@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { useEffect, useRef, useState } from "react";
-import { dropdownStyle } from "./DropdownWrapper";
+import { dropdownStyle } from "../DropdownWrapper";
 import { FilterInput } from "./FilterInput";
 import { RepoMenuList } from "./RepoMenuList";
 import { useListKeyboardNav } from "./useListKeyboardNav";

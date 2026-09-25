@@ -1,4 +1,4 @@
-import { isNewSessionKey } from "../../isNewSessionKey";
+import { isNewSessionKey } from "../../../isNewSessionKey";
 import { useCaptureHotkey } from "../useCaptureHotkey";
 
 export function useNewSessionHotkey(open: () => void): void {

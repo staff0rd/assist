@@ -6,19 +6,16 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { AppLayout } from "./AppLayout";
 import type { SessionInfo } from "../../../types";
 import type { SessionSocket } from "../../../useSessionSocket";
-import { SidebarCollapsedContext } from "../useSidebarCollapsedContext";
+import { SidebarCollapsedContext } from "../../useSidebarCollapsedContext";
 
-vi.mock(
-	"./AppLayout/AppSidebar/useSidebarOrdering/useSessionViewConfig",
-	() => ({
-		useSessionViewConfig: () => ({
-			floatWaiting: false,
-			floatWaitingAfterMs: 0,
-		}),
+vi.mock("../../AppSidebar/useSidebarOrdering/useSessionViewConfig", () => ({
+	useSessionViewConfig: () => ({
+		floatWaiting: false,
+		floatWaitingAfterMs: 0,
 	}),
-);
+}));
 
-vi.mock("./AppLayout/AppSidebar/Sidebar/SidebarBody", () => ({
+vi.mock("../../AppSidebar/Sidebar/SidebarBody", () => ({
 	SidebarBody: () => <div data-testid="sidebar-body" />,
 }));
 

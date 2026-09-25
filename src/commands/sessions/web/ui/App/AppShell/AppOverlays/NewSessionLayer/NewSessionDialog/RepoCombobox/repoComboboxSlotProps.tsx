@@ -1,6 +1,6 @@
 import InputAdornment from "@mui/material/InputAdornment";
 import { isWindowsCwd } from "../../../../../../isWindowsCwd";
-import { WindowsBadge } from "../../../../WindowsBadge";
+import { WindowsBadge } from "../../../../../WindowsBadge";
 
 export function repoComboboxSlotProps(open: boolean, value: string) {
 	return {

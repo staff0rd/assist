@@ -1,7 +1,7 @@
-import { DropdownWrapper } from "../DropdownWrapper";
+import { DropdownWrapper } from "../../DropdownWrapper";
 import { isWindowsCwd } from "../../../isWindowsCwd";
 import { RepoList, repoName } from "../RepoList";
-import { WindowsBadge } from "../WindowsBadge";
+import { WindowsBadge } from "../../WindowsBadge";
 
 function selectedLabel(selected: string) {
 	if (!selected) return "Select repo...";

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
-import { loadPersisted, savePersisted } from "../loadPersisted";
-import type { SidebarCollapse } from "../useSidebarCollapsedContext";
+import { loadPersisted, savePersisted } from "../../loadPersisted";
+import type { SidebarCollapse } from "../../useSidebarCollapsedContext";
 
 const KEY = "assist:sidebar-collapsed";
 

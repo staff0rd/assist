@@ -1,9 +1,9 @@
-import { CommentSentSnackbar } from "./CommentSentSnackbar";
-import { ErrorSnackbar } from "../ErrorSnackbar";
+import { CommentSentSnackbar } from "../../CommentSentSnackbar";
+import { ErrorSnackbar } from "../../ErrorSnackbar";
 import { FileViewBody } from "./FileView/FileViewBody";
 import { FileViewHeader } from "./FileView/FileViewHeader";
 import { fileViewMessage } from "./FileView/fileViewMessage";
-import { PageShell } from "./PageShell";
+import { PageShell } from "../../PageShell";
 import type { SessionInfo } from "../../../types";
 import { UnsavedChangesPrompt } from "./FileView/UnsavedChangesPrompt";
 import { useFileViewState } from "./FileView/useFileViewState";

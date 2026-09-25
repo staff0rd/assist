@@ -1,6 +1,6 @@
 import Paper from "@mui/material/Paper";
 import type { PrSummary } from "../../../../../../../prList";
-import { dropdownStyle } from "../../../../DropdownWrapper";
+import { dropdownStyle } from "../../../../../DropdownWrapper";
 import { FilterInput } from "../../../../FilterInput";
 import { Message } from "./ReviewPrList/Message";
 import { PrMenuList } from "./ReviewPrList/PrMenuList";

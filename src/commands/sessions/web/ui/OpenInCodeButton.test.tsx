@@ -2,9 +2,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { SessionCard } from "./App/AppShell/AppRoutes/AppLayout/AppSidebar/Sidebar/SidebarBody/SessionList/SessionGroups/SessionGroupItem/SessionListCard/SessionCard";
+import { SessionCard } from "./App/AppSidebar/SessionCard";
 import type { SessionInfo } from "./types";
-import { StarredSessionsProvider } from "./App/AppShell/AppRoutes/useStarredSessions";
+import { StarredSessionsProvider } from "./App/useStarredSessions";
 
 afterEach(() => {
 	cleanup();
