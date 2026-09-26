@@ -1,5 +1,5 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { Button, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import type { MouseEvent } from "react";
 
 export function BuildSegment({
@@ -13,7 +13,7 @@ export function BuildSegment({
 }) {
 	return (
 		<Tooltip title={tooltip}>
-			<span>
+			<Box component="span" sx={{ display: "flex" }}>
 				<Button
 					startIcon={<PlayArrowIcon />}
 					disabled={disabled}
@@ -21,7 +21,7 @@ export function BuildSegment({
 				>
 					Build
 				</Button>
-			</span>
+			</Box>
 		</Tooltip>
 	);
 }
