@@ -1,3 +1,10 @@
+## [0.711.3](https://github.com/staff0rd/assist/compare/v0.711.2...v0.711.3) (2026-09-26)
+
+
+### Bug Fixes
+
+* re-apply restructure to web/ui ([45f3101](https://github.com/staff0rd/assist/commit/45f3101d4e4e485814dd6c619e0fcb467cafe6a6))
+
 ## [0.711.2](https://github.com/staff0rd/assist/compare/v0.711.1...v0.711.2) (2026-09-26)
 
 
