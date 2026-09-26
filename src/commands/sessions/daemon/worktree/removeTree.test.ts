@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	realpathSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -28,7 +34,7 @@ function commitSomething(): void {
 
 beforeEach(() => {
 	root = join(
-		tmpdir(),
+		realpathSync(tmpdir()),
 		`assist-removetree-${process.pid}-${performance.now()}`,
 	);
 	clone = join(root, "repo");
