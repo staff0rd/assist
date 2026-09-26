@@ -11,7 +11,7 @@ Rule: any operation that mutates daemon state or acts on a session MUST emit a `
 - Every inbound message handler in `messageHandlers.ts` (`drain`, `dismiss`, `input` is high-volume — see exception below, `resize`, `retry`, `create*`, `resume`, `set-status`, `set-autorun`, `set-autoadvance`, `shutdown`).
 - Session lifecycle mutations: spawn, restore, status change, dismiss, drain, error.
 - Persistence writes (`persistLiveSessions` / `savePersistedSessions`): what was saved and how many.
-- Node link routing decisions, forwards and drops, WebSocket connect/close/reconnect with reason, `hello` outcome, breaker trips, state changes and heal steps (`links/`, prefixed `link <name> ws:` / `link <name> heal:`).
+- Node link routing decisions, forwards and drops, WebSocket connect/close/reconnect with reason, `hello` outcome, breaker trips, state changes and heal steps, ssh tunnel spawn/exit and ssh stderr (`links/`, prefixed `link <name> ws:` / `link <name> heal:` / `link <name> tunnel:` / `link <name> ssh:`).
 
 Log enough to reconstruct the sequence after the fact: include the session id/name and the relevant count or reason. Prefer logging at the daemon-side handler (where the action actually happens) over the client command, so it is captured regardless of who triggered it.
 

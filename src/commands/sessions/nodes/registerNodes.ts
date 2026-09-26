@@ -15,9 +15,18 @@ export function registerNodes(sessions: Command): void {
 		.action(listNodes);
 
 	cmd
-		.command("link <name> <url>")
+		.command("link <name> [url]")
 		.description(
-			"Link a peer node by its web server URL (name must match the peer's sessions.nodeName)",
+			"Link a peer node by its web server URL, or over ssh with --ssh and --port (name must match the peer's sessions.nodeName)",
+		)
+		.option(
+			"--ssh <alias>",
+			"Tunnel to the peer through this ~/.ssh/config alias",
+		)
+		.option("--port <port>", "The peer's loopback web server port (with --ssh)")
+		.option(
+			"--local-port <port>",
+			"Local end of the ssh tunnel (default: 43000 + port % 1000, bumped past other links)",
 		)
 		.action(linkNode);
 

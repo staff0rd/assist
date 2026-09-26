@@ -18,8 +18,10 @@ export async function openLink(ctx: LinkContext): Promise<void> {
 	if (ctx.disposed || ctx.blockedMessage || ctx.socket) return;
 	if (ctx.breaker.tripped()) return scheduleReconnect(ctx);
 	setLinkState(ctx, "connecting");
-	daemonLog(`link ${ctx.spec.name} ws: connecting to ${ctx.spec.url}`);
 	try {
+		await ctx.tunnel?.ready();
+		if (ctx.disposed) return;
+		daemonLog(`link ${ctx.spec.name} ws: connecting to ${ctx.spec.url}`);
 		const socket: LinkSocket = await ctx.deps.transport(ctx.spec.url, {
 			onLine: (line) => onLinkLine(ctx, line),
 			onClose: (reason) => onLinkClose(ctx, socket, reason),

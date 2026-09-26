@@ -9,6 +9,8 @@ import {
 import { describePeerError, peerErrorCode } from "./fetchPeerJson";
 
 function webRemediation(spec: LinkSpec, error: unknown): string {
+	if (spec.ssh && (error as { status?: number }).status === undefined)
+		return `nothing listening on ${spec.ssh.port} on ${spec.ssh.alias} — is project-switch running ${spec.name}'s web server?`;
 	const { hostname, port } = new URL(spec.url);
 	switch (peerErrorCode(error)) {
 		case "ECONNREFUSED":
@@ -40,7 +42,7 @@ export async function webHop(
 			hop: failed(
 				"web",
 				`peer reports nodeName ${health.nodeName}, link expects ${spec.name}`,
-				`relink with \`assist sessions nodes unlink ${spec.name}\` then \`assist sessions nodes link ${health.nodeName} ${spec.url}\`, or set sessions.nodeName on the peer`,
+				`relink with \`assist sessions nodes unlink ${spec.name}\` then \`assist sessions nodes link ${health.nodeName} ${spec.ssh ? `--ssh ${spec.ssh.alias} --port ${spec.ssh.port}` : spec.url}\`, or set sessions.nodeName on the peer`,
 			),
 		};
 	return {

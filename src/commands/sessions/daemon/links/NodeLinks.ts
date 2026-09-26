@@ -1,4 +1,4 @@
-import { loadConfig } from "../../../../shared/loadConfig";
+import { loadLinkSpecs } from "../../shared/loadLinkSpecs";
 import { resolveNodeName } from "../../shared/resolveNodeName";
 import { broadcast, type SessionClient, sendTo } from "../broadcast";
 import type { ClientHub } from "../ClientHub";
@@ -22,7 +22,7 @@ export class NodeLinks {
 	}
 
 	reload(): void {
-		const specs = this.options.specs?.() ?? loadConfig().sessions?.links ?? [];
+		const specs = this.options.specs?.() ?? loadLinkSpecs();
 		const deps = linkDeps(this.options, {
 			viewers: () => this.clients.viewers(),
 			onSessionsChanged: this.onSessionsChanged,

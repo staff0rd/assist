@@ -268,7 +268,17 @@ const assistConfigShape = {
 		.strictObject({
 			nodeName: z.string().optional(),
 			links: z
-				.array(z.strictObject({ name: z.string(), url: z.string() }))
+				.array(
+					z.union([
+						z.strictObject({ name: z.string(), url: z.string() }),
+						z.strictObject({
+							name: z.string(),
+							ssh: z.string(),
+							port: z.number().int(),
+							localPort: z.number().int().optional(),
+						}),
+					]),
+				)
 				.optional(),
 			linkVersionCheck: z.enum(["block", "warn", "off"]).default("block"),
 			includeCommittedChanges: z.boolean().default(true),

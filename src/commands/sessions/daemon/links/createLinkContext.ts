@@ -12,6 +12,7 @@ export function createLinkContext(
 		deps,
 		relay: createRelayState(spec.name, deps.viewers, deps.onSessionsChanged),
 		breaker: new LaunchCircuitBreaker(`link ${spec.name} ws`),
+		tunnel: deps.tunnel(spec),
 		socket: null,
 		greeted: false,
 		state: "disconnected",

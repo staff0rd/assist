@@ -28,6 +28,9 @@ function probes(overrides: Partial<DoctorProbes> = {}): DoctorProbes {
 		health: async () => HEALTHY,
 		hello: async () => HELLO,
 		linkState: () => ({ ...SPEC, state: "connected" }),
+		sshAgent: async () => ({ status: "ok", keys: 1 }),
+		ssh: async () => ({ code: 0, stderr: "" }),
+		tunnel: async () => true,
 		...overrides,
 	};
 }
@@ -133,5 +136,105 @@ describe("diagnoseLink", () => {
 			probes({ linkState: () => "no-daemon" }),
 		);
 		expect(result.hops.at(-1)?.error).toBe("this node's daemon is not running");
+	});
+});
+
+describe("diagnoseLink over ssh", () => {
+	const SSH_SPEC = {
+		name: "pc-windows",
+		url: "http://127.0.0.1:43101",
+		ssh: { alias: "pc", port: 3101, localPort: 43101 },
+	};
+
+	it("probes agent, ssh and tunnel before the peer's web server", async () => {
+		const result = await diagnoseLink(SSH_SPEC, probes());
+		expect(result.ok).toBe(true);
+		expect(result.hops.map((h) => h.hop)).toEqual([
+			"agent",
+			"ssh",
+			"tunnel",
+			"web",
+			"daemon",
+			"ws",
+			"link",
+		]);
+	});
+
+	it("reports a missing IdentityAgent", async () => {
+		const ssh = vi.fn();
+		const result = await diagnoseLink(
+			SSH_SPEC,
+			probes({ sshAgent: async () => ({ status: "missing" }), ssh }),
+		);
+		expect(result.hops).toEqual([
+			expect.objectContaining({
+				hop: "agent",
+				remediation: expect.stringContaining("IdentityAgent missing"),
+			}),
+		]);
+		expect(ssh).not.toHaveBeenCalled();
+	});
+
+	it("reports an unreachable 1Password agent", async () => {
+		const result = await diagnoseLink(
+			SSH_SPEC,
+			probes({
+				sshAgent: async () => ({
+					status: "unreachable",
+					error: "Error connecting to agent: No such file or directory",
+				}),
+			}),
+		);
+		expect(result.hops.at(-1)?.remediation).toContain(
+			"1Password SSH agent not reachable",
+		);
+	});
+
+	it("reports Remote Login off when sshd refuses", async () => {
+		const result = await diagnoseLink(
+			SSH_SPEC,
+			probes({
+				ssh: async () => ({
+					code: 255,
+					stderr: "ssh: connect to host pc port 22: Connection refused",
+				}),
+			}),
+		);
+		expect(result.hops.at(-1)).toMatchObject({
+			hop: "ssh",
+			ok: false,
+			error: "ssh: connect to host pc port 22: Connection refused",
+			remediation: expect.stringContaining("Remote Login is off on pc"),
+		});
+	});
+
+	it("points at the daemon when the tunnel is not bound", async () => {
+		const result = await diagnoseLink(
+			SSH_SPEC,
+			probes({ tunnel: async () => false }),
+		);
+		expect(result.hops.at(-1)).toMatchObject({
+			hop: "tunnel",
+			error: "nothing bound on 127.0.0.1:43101",
+			remediation: expect.stringContaining("link pc-windows tunnel:"),
+		});
+	});
+
+	it("reports nothing listening on the peer port through the tunnel", async () => {
+		const closed = new TypeError("fetch failed", {
+			cause: Object.assign(new Error("other side closed"), {
+				code: "UND_ERR_SOCKET",
+			}),
+		});
+		const result = await diagnoseLink(
+			SSH_SPEC,
+			probes({ health: async () => Promise.reject(closed) }),
+		);
+		expect(result.hops.at(-1)).toMatchObject({
+			hop: "web",
+			remediation: expect.stringContaining(
+				"nothing listening on 3101 on pc — is project-switch running pc-windows's web server?",
+			),
+		});
 	});
 });

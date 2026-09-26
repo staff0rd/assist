@@ -1,5 +1,5 @@
-import { loadConfig } from "../../../shared/loadConfig";
 import type { NodesMessage } from "../daemon/links/LinkStatus";
+import { loadLinkSpecs } from "../shared/loadLinkSpecs";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { diagnoseLink } from "./diagnoseLink";
 import type { DoctorProbes, LinkDiagnosis } from "./DoctorProbes";
@@ -8,7 +8,10 @@ import {
 	findUnlinkedWindowsNode,
 	type LinkSuggestion,
 } from "./findUnlinkedWindowsNode";
+import { portAccepts } from "../shared/portAccepts";
 import { probePeerHello } from "./probePeerHello";
+import { probeSsh } from "./probeSsh";
+import { probeSshAgent } from "./probeSshAgent";
 import { queryNodes } from "./queryNodes";
 import { printReport } from "./printReport";
 
@@ -22,6 +25,9 @@ function doctorProbes(live: NodesMessage | undefined): DoctorProbes {
 	return {
 		health: (url) => fetchPeerJson(url, "/api/health"),
 		hello: probePeerHello,
+		sshAgent: probeSshAgent,
+		ssh: probeSsh,
+		tunnel: (localPort) => portAccepts(localPort),
 		linkState: (name) => {
 			if (!live) return "no-daemon";
 			return live.links.find((l) => l.name === name) ?? "unknown-link";
@@ -33,9 +39,7 @@ export async function doctorNodes(
 	name: string | undefined,
 	options: { json?: boolean },
 ): Promise<void> {
-	const specs = (loadConfig().sessions?.links ?? []).filter(
-		(spec) => !name || spec.name === name,
-	);
+	const specs = loadLinkSpecs().filter((spec) => !name || spec.name === name);
 	if (name && specs.length === 0)
 		throw new Error(`No link named ${name}; see assist sessions nodes`);
 	const probes = doctorProbes(await queryNodes());

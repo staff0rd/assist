@@ -4,17 +4,17 @@ import {
 } from "../../../shared/loadConfig";
 import { validateConfig } from "../../config/validateConfig";
 import { isDaemonRunning } from "../daemon/connectToDaemon";
-import type { LinkSpec } from "../daemon/links/LinkStatus";
 import { sendToDaemon } from "../daemon/sendToDaemon";
+import type { LinkConfig } from "../shared/loadLinkSpecs";
 
-export function readLinks(): LinkSpec[] {
+export function readLinks(): LinkConfig[] {
 	const sessions = loadGlobalConfigRaw().sessions as
-		| { links?: LinkSpec[] }
+		| { links?: LinkConfig[] }
 		| undefined;
 	return sessions?.links ?? [];
 }
 
-export async function writeLinks(links: LinkSpec[]): Promise<void> {
+export async function writeLinks(links: LinkConfig[]): Promise<void> {
 	const config = loadGlobalConfigRaw();
 	const sessions = { ...(config.sessions as Record<string, unknown>) };
 	if (links.length > 0) sessions.links = links;

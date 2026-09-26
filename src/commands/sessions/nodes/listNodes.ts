@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { loadConfig } from "../../../shared/loadConfig";
 import type { LinkStatus } from "../daemon/links/LinkStatus";
+import { loadLinkSpecs } from "../shared/loadLinkSpecs";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { formatLink } from "./formatLink";
 import { queryNodes } from "./queryNodes";
@@ -15,11 +15,10 @@ async function nodesReport(): Promise<NodesReport> {
 	const live = await queryNodes();
 	if (live)
 		return { local: live.local, daemonRunning: true, links: live.links };
-	const configured = loadConfig().sessions?.links ?? [];
 	return {
 		local: resolveNodeName(),
 		daemonRunning: false,
-		links: configured.map((link) => ({ ...link, state: "disconnected" })),
+		links: loadLinkSpecs().map((link) => ({ ...link, state: "disconnected" })),
 	};
 }
 

@@ -7,8 +7,11 @@ import {
 	type PeerHealth,
 	passed,
 } from "./DoctorProbes";
+import { agentHop } from "./agentHop";
 import { helloHop } from "./helloHop";
 import { linkStateHop } from "./linkStateHop";
+import { sshHop } from "./sshHop";
+import { tunnelHop } from "./tunnelHop";
 import { webHop } from "./webHop";
 
 function peerDaemonHop(spec: LinkSpec, health: PeerHealth): Hop {
@@ -26,6 +29,17 @@ export async function diagnoseLink(
 ): Promise<LinkDiagnosis> {
 	const hops: Hop[] = [];
 	const done = () => ({ ...spec, ok: hops.every((h) => h.ok), hops });
+	if (spec.ssh) {
+		const { ssh } = spec;
+		for (const probe of [
+			() => agentHop(ssh, probes),
+			() => sshHop(ssh, probes),
+			() => tunnelHop(spec, ssh, probes),
+		]) {
+			hops.push(await probe());
+			if (!hops.at(-1)?.ok) return done();
+		}
+	}
 	const web = await webHop(spec, probes);
 	hops.push(web.hop);
 	if (!web.health) return done();

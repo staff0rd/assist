@@ -1,5 +1,5 @@
-import { loadConfig } from "../../../shared/loadConfig";
 import { daemonPaths } from "../daemon/daemonPaths";
+import { findLinkSpec } from "../shared/loadLinkSpecs";
 import { readLogTail } from "../shared/readLogTail";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { describePeerError, fetchPeerJson } from "./fetchPeerJson";
@@ -13,7 +13,7 @@ async function fetchLogTail(name: string, lines: number): Promise<LogTail> {
 			path: daemonPaths.log,
 			lines: readLogTail(daemonPaths.log, lines),
 		};
-	const link = loadConfig().sessions?.links?.find((l) => l.name === name);
+	const link = findLinkSpec(name);
 	if (!link)
 		throw new Error(`No link named ${name}; see assist sessions nodes`);
 	try {
