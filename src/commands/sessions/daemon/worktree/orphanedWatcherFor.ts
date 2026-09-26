@@ -1,4 +1,5 @@
 import type { Session } from "../types";
+import { canonicalTreePath } from "./canonicalTreePath";
 import { liveWatcherFor } from "./liveWatcherFor";
 import { resolveClone } from "./resolveClone";
 
@@ -8,7 +9,8 @@ export function orphanedWatcherFor(
 ): { watcher: Session; clone: string } | undefined {
 	if (dismissed.watcher === true || !dismissed.cwd) return undefined;
 	if (!liveWatcherFor(sessions)) return undefined;
-	const clone = resolveClone(dismissed.cwd);
+	const known = dismissed.worktree?.clone ?? dismissed.releasedFromClone;
+	const clone = known ? canonicalTreePath(known) : resolveClone(dismissed.cwd);
 	const watcher = liveWatcherFor(sessions, clone);
 	if (!watcher) return undefined;
 	const kept = [...sessions.values()].some(

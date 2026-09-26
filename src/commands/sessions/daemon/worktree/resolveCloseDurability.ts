@@ -26,6 +26,7 @@ export async function resolveCloseDurability(
 			`session ${session.id} closing: worktree ${tree.path} is gone from disk — released with nothing to land, not landed work`,
 		);
 	if (tree.removable) await reapWorktree(tree.path);
+	if (session.worktree) session.releasedFromClone = session.worktree.clone;
 	session.worktree = undefined;
 	session.undurable = undefined;
 	session.closing = undefined;

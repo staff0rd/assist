@@ -14,6 +14,7 @@ export async function discardTree(
 			holdFailedDiscard(session, removal.reason, notify);
 			return;
 		}
+		session.releasedFromClone = session.worktree.clone;
 		session.worktree = undefined;
 	}
 	discarded();

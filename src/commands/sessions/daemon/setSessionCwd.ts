@@ -12,6 +12,7 @@ export function setSessionCwd(
 	const from = s.cwd;
 	s.cwd = cwd;
 	s.worktree = detectExistingWorktree(cwd);
+	s.releasedFromClone = undefined;
 	daemonLog(
 		`session ${id} cwd moved: ${from ?? "(none)"} -> ${cwd}${s.worktree ? ` (bound worktree of ${s.worktree.clone})` : ""}`,
 	);

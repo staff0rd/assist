@@ -69,6 +69,7 @@ export type Session = {
 	gitWatcher?: StateWatcher;
 	watchedTranscriptId?: string;
 	worktree?: { path: string; clone: string };
+	releasedFromClone?: string;
 	undurable?: { reason: string; removesTree?: boolean };
 	transcriptPath?: string;
 	transcriptFingerprint?: string;
