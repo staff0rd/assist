@@ -1,3 +1,10 @@
+# [0.700.0](https://github.com/staff0rd/assist/compare/v0.699.3...v0.700.0) (2026-09-26)
+
+
+### Features
+
+* open new-session dialog from ?new ([a4f56fe](https://github.com/staff0rd/assist/commit/a4f56fe27209e617cfffc4ac8887b0a2170a6ef9))
+
 ## [0.699.3](https://github.com/staff0rd/assist/compare/v0.699.2...v0.699.3) (2026-09-25)
 
 
