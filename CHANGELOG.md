@@ -1,3 +1,10 @@
+## [0.710.1](https://github.com/staff0rd/assist/compare/v0.710.0...v0.710.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* revert backlog.crossRepo toggle ([41702fa](https://github.com/staff0rd/assist/commit/41702fa99af62d5eda9c436caa52a0c1d417d955))
+
 # [0.710.0](https://github.com/staff0rd/assist/compare/v0.709.0...v0.710.0) (2026-09-26)
 
 
