@@ -1,3 +1,10 @@
+# [0.708.0](https://github.com/staff0rd/assist/compare/v0.707.1...v0.708.0) (2026-09-26)
+
+
+### Features
+
+* node-native panels, clone on node ([257c8e5](https://github.com/staff0rd/assist/commit/257c8e55822061b83571aba7bc7c0fb57e47853c))
+
 ## [0.707.1](https://github.com/staff0rd/assist/compare/v0.707.0...v0.707.1) (2026-09-26)
 
 
