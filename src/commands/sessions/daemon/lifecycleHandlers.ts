@@ -2,6 +2,8 @@ import { discoverSessions } from "../shared/discoverSessions";
 import { parseTranscript } from "../shared/parseTranscript";
 import { type SessionClient, sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
+import { handleFetchUserMessages } from "./handleFetchUserMessages";
+import { routed } from "./routed";
 import type { SessionManager } from "./SessionManager";
 import { withRepoGroups } from "./withRepoGroups";
 
@@ -48,5 +50,6 @@ async function handleShutdown(
 export const lifecycleHandlers = {
 	history: handleHistory,
 	"fetch-transcript": handleFetchTranscript,
+	"fetch-user-messages": routed(handleFetchUserMessages),
 	shutdown: handleShutdown,
 };

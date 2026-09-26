@@ -6,6 +6,7 @@ import {
 import { SessionLastMessage } from "./SessionTerminalColumn/SessionLastMessage";
 import { TerminalArea, type TerminalAreaProps } from "./TerminalArea";
 import type { SessionInfo } from "../../../types";
+import { useLastMessageHistory } from "../../useLastMessageHistory";
 
 const columnSx = {
 	position: "relative",
@@ -25,6 +26,8 @@ export function SessionTerminalColumn({
 	sendPrDecision: SendPrDecision;
 	showLastMessage: boolean;
 }) {
+	const { history, onFetchHistory } = useLastMessageHistory(activeSession?.id);
+
 	return (
 		<Box sx={columnSx}>
 			<SessionPreviewSplit
@@ -35,7 +38,11 @@ export function SessionTerminalColumn({
 				<TerminalArea {...terminal} />
 			</SessionPreviewSplit>
 			{showLastMessage && activeSession !== undefined && (
-				<SessionLastMessage message={activeSession.lastUserMessage} />
+				<SessionLastMessage
+					message={activeSession.lastUserMessage}
+					history={history}
+					onFetchHistory={onFetchHistory}
+				/>
 			)}
 		</Box>
 	);

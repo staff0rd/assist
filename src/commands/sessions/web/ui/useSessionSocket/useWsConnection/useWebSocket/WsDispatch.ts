@@ -5,6 +5,7 @@ import type {
 	NodesState,
 	SessionInfo,
 	Transcript,
+	UserMessages,
 } from "../../../types";
 import type { ServerConflict, SuccessNotice } from "../../../useNotices";
 
@@ -18,6 +19,7 @@ export type WsDispatch = {
 	setDaemonVersion: (version: string) => void;
 	setNodes: (nodes: NodesState) => void;
 	setTranscript: (t: Transcript | null) => void;
+	setUserMessages: (m: UserMessages) => void;
 	setViewingTranscriptSessionId: (id: string | null) => void;
 	setCurrentCwd: (cwd: string) => void;
 	setError: (message: string) => void;

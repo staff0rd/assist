@@ -55,6 +55,8 @@ const relays: Record<string, Relay> = {
 	notice: (state, msg) => broadcastToViewers(state, msg),
 	"run-conflict": relayRunConflict,
 	history: relayHistory,
+	"user-messages": (state, msg) =>
+		broadcastToViewers(state, { ...msg, sessionId: nsId(state, msg) }),
 	log: (state, msg) => {
 		if (typeof msg.line === "string") relayDaemonLog(state.node, msg.line);
 	},

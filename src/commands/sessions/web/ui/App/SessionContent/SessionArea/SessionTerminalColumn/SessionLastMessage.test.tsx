@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { SessionLastMessage } from "./SessionLastMessage";
 
 afterEach(cleanup);
@@ -93,6 +93,58 @@ describe("SessionLastMessage", () => {
 		fireEvent.mouseEnter(readout());
 
 		expect(Number(getComputedStyle(readout()).zIndex)).toBeGreaterThan(11);
+	});
+
+	it("requests the history when the message changes", () => {
+		const onFetchHistory = vi.fn();
+		const { rerender } = render(
+			<SessionLastMessage message="one" onFetchHistory={onFetchHistory} />,
+		);
+
+		rerender(
+			<SessionLastMessage message="two" onFetchHistory={onFetchHistory} />,
+		);
+
+		expect(onFetchHistory).toHaveBeenCalledTimes(2);
+	});
+
+	it("steps back and forward through the history on the wheel, stopping at each end", () => {
+		render(
+			<SessionLastMessage
+				message="third"
+				history={["first", "second", "third"]}
+			/>,
+		);
+		const wheel = (deltaY: number) => fireEvent.wheel(readout(), { deltaY });
+
+		wheel(-100);
+		expect(readout().textContent).toBe("second");
+		wheel(-100);
+		wheel(-100);
+		expect(readout().textContent).toBe("first");
+		wheel(100);
+		expect(readout().textContent).toBe("second");
+		wheel(100);
+		wheel(100);
+		expect(readout().textContent).toBe("third");
+	});
+
+	it("includes the latest message when the history has not caught up", () => {
+		render(<SessionLastMessage message="new" history={["old"]} />);
+
+		fireEvent.wheel(readout(), { deltaY: -100 });
+
+		expect(readout().textContent).toBe("old");
+	});
+
+	it("scrolls the text instead of stepping while pinned", () => {
+		render(<SessionLastMessage message="two" history={["one", "two"]} />);
+
+		fireEvent.click(readout());
+		fireEvent.wheel(readout(), { deltaY: -100 });
+
+		expect(readout().textContent).toBe("two");
+		expect(getComputedStyle(readout()).overflow).toBe("hidden auto");
 	});
 
 	it("renders nothing without a message", () => {

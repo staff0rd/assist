@@ -2,23 +2,10 @@ import { deriveTranscriptStatus } from "../shared/deriveTranscriptStatus";
 import { extractLastUserMessage } from "../shared/extractLastUserMessage";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
 import { transcriptTailFingerprint } from "../shared/transcriptTailFingerprint";
-import { findSessionJsonlPath } from "../shared/findSessionJsonlPath";
-import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
-
-async function resolveTranscriptPath(session: Session): Promise<string | null> {
-	if (session.transcriptPath) return session.transcriptPath;
-	if (!session.claudeSessionId) return null;
-	const direct = session.cwd
-		? findTranscriptPathSync(session.cwd, session.claudeSessionId)
-		: null;
-	const filePath =
-		direct ?? (await findSessionJsonlPath(session.claudeSessionId));
-	if (filePath) session.transcriptPath = filePath;
-	return filePath;
-}
+import { resolveTranscriptPath } from "./resolveTranscriptPath";
 
 function updateLastUserMessage(
 	session: Session,

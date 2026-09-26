@@ -97,3 +97,8 @@ export type Transcript = {
 	sessionId: string;
 	messages: TranscriptMessage[];
 };
+
+export type UserMessages = {
+	sessionId: string;
+	messages: string[];
+};

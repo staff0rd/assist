@@ -24,6 +24,11 @@ const wsHandlers: Record<string, (msg: Msg, d: WsDispatch) => void> = {
 			sessionId: msg.sessionId as string,
 			messages: msg.messages as TranscriptMessage[],
 		}),
+	"user-messages": (msg, d) =>
+		d.setUserMessages({
+			sessionId: msg.sessionId as string,
+			messages: msg.messages as string[],
+		}),
 	hello: (msg, d) => d.setDaemonVersion(msg.version as string),
 	nodes: handleNodes,
 	error: handleError,
