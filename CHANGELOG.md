@@ -1,3 +1,10 @@
+# [0.710.0](https://github.com/staff0rd/assist/compare/v0.709.0...v0.710.0) (2026-09-26)
+
+
+### Features
+
+* node link doctor, logs and traceId ([ebfc5c0](https://github.com/staff0rd/assist/commit/ebfc5c0199f145030d88df5b4360673d91c65824))
+
 # [0.709.0](https://github.com/staff0rd/assist/compare/v0.708.2...v0.709.0) (2026-09-26)
 
 
