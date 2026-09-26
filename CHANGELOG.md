@@ -1,3 +1,10 @@
+# [0.712.0](https://github.com/staff0rd/assist/compare/v0.711.3...v0.712.0) (2026-09-26)
+
+
+### Features
+
+* wheel steps last message history ([b95c91e](https://github.com/staff0rd/assist/commit/b95c91e7e22255c0003561bd5bacc70210580de9))
+
 ## [0.711.3](https://github.com/staff0rd/assist/compare/v0.711.2...v0.711.3) (2026-09-26)
 
 
