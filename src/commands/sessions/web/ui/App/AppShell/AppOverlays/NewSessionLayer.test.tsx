@@ -83,7 +83,7 @@ function fillDraft() {
 	fireEvent.change(promptInput(), { target: { value: "add a thing" } });
 	fireEvent.focus(repoInput());
 	fireEvent.change(repoInput(), { target: { value: "beta" } });
-	fireEvent.keyDown(repoInput(), { key: "Enter" });
+	fireEvent.keyDown(repoInput(), { key: "Tab" });
 	fireEvent.click(screen.getByRole("radio", { name: "draft" }));
 }
 

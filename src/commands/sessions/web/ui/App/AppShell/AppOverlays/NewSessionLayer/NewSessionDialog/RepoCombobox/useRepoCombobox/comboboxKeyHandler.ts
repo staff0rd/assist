@@ -1,4 +1,5 @@
 import type { KeyboardEvent } from "react";
+import { flushSync } from "react-dom";
 import { handleEnterSubmit } from "../../../../../../handleEnterSubmit";
 
 export function comboboxKeyHandler<T>({
@@ -27,6 +28,17 @@ export function comboboxKeyHandler<T>({
 			return;
 		}
 		if (e.key === "Escape") return;
+		if (e.key === "Enter") {
+			e.preventDefault();
+			if (highlighted === undefined) return;
+			// Commit the accepted repo before submitting so the form's submit handler sees the new cwd.
+			flushSync(() => {
+				accept(highlighted);
+				close();
+			});
+			handleEnterSubmit(e);
+			return;
+		}
 		if (e.key !== "Tab") {
 			navigate(e);
 			return;

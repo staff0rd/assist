@@ -181,12 +181,11 @@ describe("NewSessionDialog repo combobox", () => {
 
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
 
-		expect(repoInput().value).toBe("beta");
-		expect(onCreate).not.toHaveBeenCalled();
+		expect(onCreate).toHaveBeenCalledWith("", "/git/beta");
 	});
 
 	it("opens every repo on click with the current repo highlighted", () => {
-		renderDialog();
+		const { onCreate } = renderDialog();
 
 		fireEvent.focus(repoInput());
 		fireEvent.click(repoInput());
@@ -196,7 +195,7 @@ describe("NewSessionDialog repo combobox", () => {
 
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
 
-		expect(repoInput().value).toBe("beta");
+		expect(onCreate).toHaveBeenCalledWith("", "/git/beta");
 	});
 
 	it("submits on Enter while the list is closed", () => {
@@ -226,27 +225,40 @@ describe("NewSessionDialog repo combobox", () => {
 		expect(screen.queryAllByRole("menuitem")).toEqual([]);
 	});
 
-	it("moves the highlight with the arrows and accepts it on Enter", () => {
-		const { onCreate } = renderDialog();
+	it("moves the highlight with the arrows and launches in it on Enter", () => {
+		const { onCreate, onClose } = renderDialog();
 
 		fireEvent.focus(repoInput());
 		fireEvent.keyDown(repoInput(), { key: "ArrowDown" });
 		fireEvent.keyDown(repoInput(), { key: "ArrowDown" });
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
 
-		expect(repoInput().value).toBe("gamma");
-		expect(screen.queryAllByRole("menuitem")).toEqual([]);
-		expect(onCreate).not.toHaveBeenCalled();
+		expect(onCreate).toHaveBeenCalledWith("", "/git/gamma");
+		expect(onClose).toHaveBeenCalled();
 	});
 
-	it("accepts the filtered highlight on Tab", () => {
-		renderDialog();
+	it("accepts the filtered highlight on Tab without launching", () => {
+		const { onCreate } = renderDialog();
 
 		fireEvent.focus(repoInput());
 		fireEvent.change(repoInput(), { target: { value: "al" } });
 		fireEvent.keyDown(repoInput(), { key: "Tab" });
 
 		expect(repoInput().value).toBe("alpha");
+		expect(screen.queryAllByRole("menuitem")).toEqual([]);
+		expect(onCreate).not.toHaveBeenCalled();
+	});
+
+	it("launches nothing on Enter when no repo matches", () => {
+		const { onCreate, onClose } = renderDialog();
+
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "zz" } });
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+
+		expect(onCreate).not.toHaveBeenCalled();
+		expect(onClose).not.toHaveBeenCalled();
+		expect(repoInput().value).toBe("zz");
 	});
 
 	it("restores the chosen repo name when focus leaves mid-filter", () => {
@@ -266,7 +278,6 @@ describe("NewSessionDialog repo combobox", () => {
 		fireEvent.focus(repoInput());
 		fireEvent.change(repoInput(), { target: { value: "delta" } });
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
-		submitPrompt();
 
 		expect(onCreate).toHaveBeenCalledWith("fix it", String.raw`C:\git\delta`);
 		expect(onClose).toHaveBeenCalled();
@@ -399,11 +410,10 @@ describe("NewSessionDialog mode selector", () => {
 		const { onCreate, onCreateAssist } = renderDialog();
 
 		fireEvent.change(promptInput(), { target: { value: "add a thing" } });
+		fireEvent.click(modeRadio(mode));
 		fireEvent.focus(repoInput());
 		fireEvent.change(repoInput(), { target: { value: "alpha" } });
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
-		fireEvent.click(modeRadio(mode));
-		fireEvent.keyDown(modeRadio(mode), { key: "Enter" });
 
 		expect(onCreateAssist).toHaveBeenCalledWith(args, "/git/alpha");
 		expect(onCreate).not.toHaveBeenCalled();
