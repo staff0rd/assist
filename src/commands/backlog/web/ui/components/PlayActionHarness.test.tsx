@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { SessionInfo } from "../../../../sessions/web/ui/types";
 import { LiveSessionsContext } from "../../../../sessions/web/ui/useLiveSessionsContext";
 import { SessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
 import { PlayAction } from "./PlayAction";
@@ -22,10 +23,14 @@ function mockHarness(capabilities: {
 	);
 }
 
-function renderPlay(launchAssist: () => void, compact = false) {
+function renderPlay(
+	launchAssist: () => void,
+	compact = false,
+	sessions: SessionInfo[] = [],
+) {
 	return render(
 		<MemoryRouter initialEntries={["/backlog"]}>
-			<LiveSessionsContext.Provider value={[]}>
+			<LiveSessionsContext.Provider value={sessions}>
 				<SessionLaunchContext.Provider
 					value={{
 						launchAssist,
@@ -63,6 +68,30 @@ describe("PlayAction harness dropdown", () => {
 			["backlog", "run", "a775", "--harness", "codex"],
 			undefined,
 		);
+	});
+
+	it("joins the dropdown to Build and disables both while a run is live", async () => {
+		mockHarness({ exposeCodexActions: true });
+		renderPlay(vi.fn(), false, [
+			{
+				id: "4",
+				name: "assist backlog run a775",
+				commandType: "assist",
+				startedAt: 1,
+				status: "running",
+				assistArgs: ["backlog", "run", "a775"],
+			},
+		]);
+
+		const dropdown = await screen.findByRole("button", {
+			name: "Build with a different harness",
+		});
+		const build = screen.getByRole("button", { name: "Build" });
+		expect(dropdown.closest(".MuiButtonGroup-root")).toBe(
+			build.closest(".MuiButtonGroup-root"),
+		);
+		expect(build.hasAttribute("disabled")).toBe(true);
+		expect(dropdown.hasAttribute("disabled")).toBe(true);
 	});
 
 	it("offers no dropdown when no other harness is available", async () => {

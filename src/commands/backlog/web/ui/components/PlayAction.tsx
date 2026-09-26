@@ -3,7 +3,7 @@ import { useLiveSessionsContext } from "../../../../sessions/web/ui/useLiveSessi
 import { useSessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
 import { formatItemId } from "../../../formatItemId";
 import { useRepoCwd } from "../useRepoCwd";
-import { HarnessDropdownButton } from "./HarnessDropdownButton";
+import { BuildSplitButton } from "./BuildSplitButton";
 import { PlayButton } from "./PlayButton";
 import { runInFlightSession } from "./runInFlightSession";
 
@@ -26,28 +26,26 @@ export function PlayAction({
 		setLaunched(true);
 		launchAssist(["backlog", "run", formatItemId(itemId), ...harnessArgs], cwd);
 	};
-	return (
-		<>
+	const tooltip = inFlight
+		? "Already running — close that session to run it again"
+		: "Build";
+	if (compact)
+		return (
 			<PlayButton
-				tooltip={
-					inFlight
-						? "Already running — close that session to run it again"
-						: "Build"
-				}
+				tooltip={tooltip}
 				disabled={disabled}
-				compact={compact}
 				onClick={(event) => {
 					event.stopPropagation();
 					launch([]);
 				}}
 			/>
-			{!compact && (
-				<HarnessDropdownButton
-					label="Build with a different harness"
-					disabled={disabled}
-					onSelect={(kind) => launch(["--harness", kind])}
-				/>
-			)}
-		</>
+		);
+	return (
+		<BuildSplitButton
+			tooltip={tooltip}
+			disabled={disabled}
+			onBuild={() => launch([])}
+			onSelectHarness={(kind) => launch(["--harness", kind])}
+		/>
 	);
 }

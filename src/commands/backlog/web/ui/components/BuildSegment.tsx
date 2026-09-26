@@ -1,8 +1,8 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { IconButton, Tooltip } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import type { MouseEvent } from "react";
 
-export function PlayButton({
+export function BuildSegment({
 	tooltip,
 	disabled,
 	onClick,
@@ -14,15 +14,13 @@ export function PlayButton({
 	return (
 		<Tooltip title={tooltip}>
 			<span>
-				<IconButton
-					aria-label="Build"
-					color="success"
-					size="small"
+				<Button
+					startIcon={<PlayArrowIcon />}
 					disabled={disabled}
 					onClick={onClick}
 				>
-					<PlayArrowIcon />
-				</IconButton>
+					Build
+				</Button>
 			</span>
 		</Tooltip>
 	);

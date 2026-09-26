@@ -1,41 +1,54 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { IconButton, Tooltip } from "@mui/material";
+import { Button, ButtonGroup } from "@mui/material";
 import { type MouseEvent, useRef, useState } from "react";
 import { useHarnessCapabilities } from "../../../../sessions/web/ui/useHarnessCapabilities";
+import { BuildSegment } from "./BuildSegment";
 import { HarnessMenu, harnessOptions } from "./HarnessMenu";
 
-export function HarnessDropdownButton({
-	label,
+export function BuildSplitButton({
+	tooltip,
 	disabled,
-	onSelect,
+	onBuild,
+	onSelectHarness,
 }: {
-	label: string;
+	tooltip: string;
 	disabled: boolean;
-	onSelect: (kind: string) => void;
+	onBuild: () => void;
+	onSelectHarness: (kind: string) => void;
 }) {
 	const options = harnessOptions(useHarnessCapabilities());
-	const anchorRef = useRef<HTMLButtonElement>(null);
+	const anchorRef = useRef<HTMLDivElement>(null);
 	const [open, setOpen] = useState(false);
 	const stop = (event: MouseEvent) => event.stopPropagation();
-	if (options.length === 0) return null;
 	return (
 		<>
-			<Tooltip title={label}>
-				<span>
-					<IconButton
-						ref={anchorRef}
-						aria-label={label}
-						size="small"
-						disabled={disabled}
+			<ButtonGroup
+				ref={anchorRef}
+				variant="contained"
+				color="success"
+				size="small"
+				disabled={disabled}
+			>
+				<BuildSegment
+					tooltip={tooltip}
+					disabled={disabled}
+					onClick={(event) => {
+						stop(event);
+						onBuild();
+					}}
+				/>
+				{options.length > 0 && (
+					<Button
+						aria-label="Build with a different harness"
 						onClick={(event) => {
 							stop(event);
 							setOpen(true);
 						}}
 					>
 						<ArrowDropDownIcon />
-					</IconButton>
-				</span>
-			</Tooltip>
+					</Button>
+				)}
+			</ButtonGroup>
 			<HarnessMenu
 				anchorEl={anchorRef.current}
 				open={open}
@@ -43,7 +56,7 @@ export function HarnessDropdownButton({
 				options={options}
 				onSelect={(kind) => {
 					setOpen(false);
-					onSelect(kind);
+					onSelectHarness(kind);
 				}}
 				stop={stop}
 			/>
