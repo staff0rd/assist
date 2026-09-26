@@ -13,7 +13,7 @@ Once you have a description (either from $ARGUMENTS or the user's reply), read r
 
 ## Step 2: Ask clarifying questions
 
-Ask 2-4 targeted questions conversationally to flesh out the idea. Focus on:
+Ask 2-4 targeted questions to flesh out the idea. Focus on:
 
 - **Scope**: What exactly should this include? What is out of scope?
 - **Done criteria**: What does "done" look like? How will we know it works?
@@ -21,6 +21,8 @@ Ask 2-4 targeted questions conversationally to flesh out the idea. Focus on:
 - **Edge cases**: What happens when things go wrong?
 
 Ask one question at a time. Wait for the user's response before asking the next.
+
+If the harness provides a structured question tool, ask each question with it — one question per call, with fixed options and a recommended default where they apply. Only fall back to plain chat text when no such tool exists.
 
 ## Step 3: Compose the item
 
