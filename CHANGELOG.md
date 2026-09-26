@@ -1,3 +1,10 @@
+## [0.704.7](https://github.com/staff0rd/assist/compare/v0.704.6...v0.704.7) (2026-09-26)
+
+
+### Bug Fixes
+
+* open repo list on click ([ad583dc](https://github.com/staff0rd/assist/commit/ad583dc83600156f80e257e24885479e049f280e))
+
 ## [0.704.6](https://github.com/staff0rd/assist/compare/v0.704.5...v0.704.6) (2026-09-26)
 
 
