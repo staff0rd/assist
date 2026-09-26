@@ -30,14 +30,6 @@ describe("buildAuthoredPhasePrompt", () => {
 		);
 	});
 
-	it("scopes the agent to the item's own repo", () => {
-		const prompt = buildAuthoredPhasePrompt(makeItem(), 1, phase);
-
-		expect(prompt).toContain(
-			"Do not modify, commit or push any other repo without the user's explicit permission",
-		);
-	});
-
 	it("omits the /jira started instruction on phase 1 when there is no jiraKey", () => {
 		const prompt = buildAuthoredPhasePrompt(makeItem(), 1, phase);
 

@@ -243,7 +243,6 @@ Tasks:
 - {task}
 
 Focus ONLY on this phase. Do not work on other phases.
-Work only in this item's own repo. Do not modify, commit or push any other repo without the user's explicit permission — if a task needs changes elsewhere, stop and ask the user, and suggest filing that work as a separate item in that repo's backlog.
 When you have completed all tasks for this phase, run /verify to check your work.
 
 Before marking this phase as done, ask the user to perform these manual checks:
