@@ -1,7 +1,7 @@
 import type { HarnessKind } from "../../../shared/harnesses";
 import type { RateLimits } from "../../../shared/RateLimits";
 import { sendTo } from "./broadcast";
-import { buildHello } from "./buildHello";
+import { handleHelloRequest } from "./handleHelloRequest";
 import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
 import { handleCodexUsage } from "./handleCodexUsage";
@@ -19,7 +19,12 @@ export const messageHandlers: Record<string, Handler> = {
 	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
 	"subscribe-logs": (client, m, d) =>
 		m.clients.subscribeLogs(client, d.replay !== false),
-	hello: (client) => sendTo(client, buildHello()),
+	hello: handleHelloRequest,
+	nodes: (client, m) => m.links.sendNodes(client),
+	"reload-links": (_client, m) => {
+		daemonLog("reload-links received");
+		m.links.reload();
+	},
 	create: creator(true, spawnCreate),
 	"create-run": handleCreateRun,
 	"create-assist": creator(true, (m, d) =>

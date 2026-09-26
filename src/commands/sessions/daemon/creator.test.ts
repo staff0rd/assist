@@ -7,7 +7,7 @@ function harness(routes = false) {
 	const send = vi.fn();
 	const client: SessionClient = { send };
 	const manager = {
-		windowsProxy: { route: vi.fn(() => routes) },
+		links: { route: vi.fn(() => routes) },
 	} as unknown as SessionManager;
 	const sent = () => send.mock.calls.map(([json]) => JSON.parse(json));
 	return { client, manager, sent };

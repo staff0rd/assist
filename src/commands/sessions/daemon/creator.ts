@@ -13,7 +13,7 @@ export function creator(
 	spawn: (m: SessionManager, d: Msg) => string | { error: string },
 ): Handler {
 	return (client, m, d) => {
-		if (m.windowsProxy.route(client, d)) return;
+		if (m.links.route(client, d)) return;
 		const result = spawn(m, d);
 		if (typeof result !== "string") {
 			sendTo(client, { type: "error", message: result.error });

@@ -7,27 +7,6 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "this install's node label, shown in the web UI hamburger menu and reported by /api/health (default: OS hostname, with -wsl under WSL)",
 	},
 	{
-		key: "sessions.windowsProjectsRoot",
-		setter:
-			"assist config set sessions.windowsProjectsRoot /mnt/c/Users/you/.claude/projects",
-		note: "WSL path to the Windows .claude/projects root to discover",
-	},
-	{
-		key: "sessions.windowsDaemonHost",
-		setter: "assist config set sessions.windowsDaemonHost 127.0.0.1",
-		note: "host the WSL daemon dials to reach the Windows daemon (default: 127.0.0.1)",
-	},
-	{
-		key: "sessions.windowsDaemonPort",
-		setter: "assist config set sessions.windowsDaemonPort 51764",
-		note: "TCP port the Windows daemon listens on (default: 51764)",
-	},
-	{
-		key: "sessions.windowsVersionCheck",
-		setter: "assist config set sessions.windowsVersionCheck block",
-		note: "Windows daemon version mismatch handling: block | warn | off",
-	},
-	{
 		key: "sessions.includeCommittedChanges",
 		setter: "assist config set sessions.includeCommittedChanges false -g",
 		note: "default on: session card counts, /diff and the diff scope picker span the commits recorded against the session's backlog item as well as uncommitted work, so they survive the agent committing. Set false to show only uncommitted changes",

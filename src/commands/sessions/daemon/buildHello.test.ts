@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
 	ASSIST_VERSION,
 	buildHello,
@@ -8,12 +8,27 @@ import {
 	PROTOCOL_VERSION,
 } from "./buildHello";
 
+vi.mock("../shared/resolveNodeName", () => ({
+	resolveNodeName: () => "pc-wsl",
+}));
+
 describe("buildHello", () => {
-	it("carries the app version and the protocol version", () => {
+	it("keeps the frozen shape linked nodes of any version exchange", () => {
+		expect(Object.keys(buildHello({ peer: true })).sort()).toEqual([
+			"nodeName",
+			"peer",
+			"protocol",
+			"type",
+			"version",
+		]);
+	});
+
+	it("carries the app version, protocol version and node name", () => {
 		expect(buildHello()).toEqual({
 			type: "hello",
 			version: ASSIST_VERSION,
 			protocol: PROTOCOL_VERSION,
+			nodeName: "pc-wsl",
 		});
 	});
 });

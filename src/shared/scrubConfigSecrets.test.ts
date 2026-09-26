@@ -52,7 +52,7 @@ describe("scrubConfigSecrets", () => {
 	});
 
 	it("leaves messages alone when the value carries no secret", () => {
-		const messages = ["sessions.windowsDaemonPort: expected a number"];
+		const messages = ["sessions.maxLive: expected a number"];
 
 		expect(scrubConfigSecrets(messages, "soon", nodeAt("commit.push"))).toEqual(
 			messages,

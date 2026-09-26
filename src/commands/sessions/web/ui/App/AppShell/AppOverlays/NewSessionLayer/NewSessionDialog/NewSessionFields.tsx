@@ -1,16 +1,17 @@
 import Stack from "@mui/material/Stack";
 import type { ComponentProps } from "react";
+import { MachineSelector } from "./MachineSelector";
 import { NewSessionPromptField } from "./NewSessionPromptField";
 import { NewSessionSelectors } from "./NewSessionSelectors";
 import { newSessionModes } from "./newSessionModes";
 import { RepoCombobox } from "./RepoCombobox";
-import { useRepoSelectionContext } from "../../../../../useRepoSelectionContext";
+import { useDraftRepos } from "./useDraftRepos";
 
 export function NewSessionFields(
 	props: ComponentProps<typeof NewSessionSelectors>,
 ) {
 	const { draft, focus } = props;
-	const { repos } = useRepoSelectionContext();
+	const { repos, cwd } = useDraftRepos(draft.node, draft.cwd);
 
 	return (
 		<Stack spacing={1} sx={{ p: 1 }}>
@@ -25,7 +26,7 @@ export function NewSessionFields(
 			<Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
 				<RepoCombobox
 					repos={repos}
-					value={draft.cwd}
+					value={cwd}
 					onChange={draft.setCwd}
 					inputRef={focus.repoRef}
 					autoFocus={focus.autoFocus === "repo"}
@@ -33,6 +34,7 @@ export function NewSessionFields(
 				/>
 				<NewSessionSelectors {...props} />
 			</Stack>
+			<MachineSelector value={draft.node} onChange={draft.setNode} />
 		</Stack>
 	);
 }

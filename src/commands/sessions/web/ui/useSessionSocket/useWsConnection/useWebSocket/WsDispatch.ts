@@ -2,6 +2,7 @@ import type { HarnessKind } from "../../../../../../../shared/harnesses";
 import type { RateLimits } from "../../../../../../../shared/RateLimits";
 import type {
 	HistoricalSession,
+	NodesState,
 	SessionInfo,
 	Transcript,
 } from "../../../types";
@@ -15,6 +16,7 @@ export type WsDispatch = {
 	setActiveId: (id: string) => void;
 	setActiveByRepo: (active: Record<string, string>) => void;
 	setDaemonVersion: (version: string) => void;
+	setNodes: (nodes: NodesState) => void;
 	setTranscript: (t: Transcript | null) => void;
 	setViewingTranscriptSessionId: (id: string | null) => void;
 	setCurrentCwd: (cwd: string) => void;

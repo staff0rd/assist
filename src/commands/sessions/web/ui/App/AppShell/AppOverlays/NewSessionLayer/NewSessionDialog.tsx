@@ -8,6 +8,7 @@ import { NewSessionFields } from "./NewSessionDialog/NewSessionFields";
 import { NewSessionFooter } from "./NewSessionDialog/NewSessionFooter";
 import { newSessionModes } from "./NewSessionDialog/newSessionModes";
 import { useDraftFocus } from "./NewSessionDialog/useDraftFocus";
+import { useDraftRepos } from "./NewSessionDialog/useDraftRepos";
 import type { NewSessionDraft } from "./useNewSessionDraft";
 import { AutoFocusDialog } from "../AutoFocusDialog";
 import { useHarnessCapabilities } from "../../../../useHarnessCapabilities";
@@ -24,10 +25,20 @@ export function NewSessionDialog({
 	const focus = useDraftFocus(draft.focus, draft.setFocus);
 	const harnesses = harnessChoices(useHarnessCapabilities());
 	const harness = harnesses.includes(draft.harness) ? draft.harness : "claude";
+	const { cwd } = useDraftRepos(draft.node, draft.cwd);
 
 	const submit = (e: FormEvent) => {
 		e.preventDefault();
-		launchNewSession(draft.mode, harness, draft.prompt, draft.cwd, launchers);
+		launchNewSession(
+			{
+				mode: draft.mode,
+				harness,
+				prompt: draft.prompt,
+				cwd,
+				node: draft.node,
+			},
+			launchers,
+		);
 		draft.clear();
 		onClose();
 	};

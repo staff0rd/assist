@@ -31,6 +31,7 @@ import { releasesConfigured } from "./releases/releasesConfigured";
 import { releasesState } from "./releases/releasesState";
 import { restartWeb } from "./restartWeb";
 import { revertDiffFile } from "./revertDiffFile";
+import { selfUpdate } from "./selfUpdate";
 import { revertDiffPaths } from "./revertDiffPaths";
 import { sessionLayout } from "./sessionLayout";
 import { newSessionDefaults } from "./newSessionDefaults";
@@ -75,6 +76,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/pr-preview/upload-image": uploadPrImage,
 	"GET /api/pr-preview/image": previewImage,
 	"POST /api/restart": restartWeb,
+	"POST /api/self-update": selfUpdate,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,
 	"GET /api/diff": diff,

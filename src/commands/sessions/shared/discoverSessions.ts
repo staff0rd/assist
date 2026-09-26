@@ -1,7 +1,6 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadConfig } from "../../../shared/loadConfig";
 import { discoverCodexSessions } from "./codex/discoverCodexSessions";
 import {
 	type HistoricalSession,
@@ -12,12 +11,9 @@ import {
 type DiscoveredSessionPath = { path: string; origin: SessionOrigin };
 
 function sessionRoots(): { dir: string; origin: SessionOrigin }[] {
-	const roots: { dir: string; origin: SessionOrigin }[] = [
+	return [
 		{ dir: path.join(os.homedir(), ".claude", "projects"), origin: "wsl" },
 	];
-	const windowsRoot = loadConfig().sessions?.windowsProjectsRoot;
-	if (windowsRoot) roots.push({ dir: windowsRoot, origin: "windows" });
-	return roots;
 }
 
 export async function discoverSessionJsonlPaths(): Promise<

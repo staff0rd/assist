@@ -13,7 +13,7 @@ export function handleSetStatus(
 	daemonLog(
 		`set-status received: id=${d.sessionId} status=${d.status}${d.source ? ` source=${d.source}` : ""}`,
 	);
-	if (m.windowsProxy.route(client, d)) return;
+	if (m.links.route(client, d)) return;
 	m.setStatus({
 		id: d.sessionId as string,
 		status: d.status as SessionStatus,

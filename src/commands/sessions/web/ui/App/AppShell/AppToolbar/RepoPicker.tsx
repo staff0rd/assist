@@ -1,27 +1,5 @@
 import { DropdownWrapper } from "../../DropdownWrapper";
-import { isWindowsCwd } from "../../../isWindowsCwd";
 import { RepoList, repoName } from "../RepoList";
-import { WindowsBadge } from "../../WindowsBadge";
-
-function selectedLabel(selected: string) {
-	if (!selected) return "Select repo...";
-	if (!isWindowsCwd(selected)) return repoName(selected);
-	return (
-		<span
-			style={{
-				display: "flex",
-				flexGrow: 1,
-				alignItems: "center",
-				justifyContent: "space-between",
-				gap: 6,
-				minWidth: 0,
-			}}
-		>
-			{repoName(selected)}
-			<WindowsBadge />
-		</span>
-	);
-}
 
 export function RepoPicker({
 	repos,
@@ -33,7 +11,7 @@ export function RepoPicker({
 	onSelect: (cwd: string) => void;
 }) {
 	return (
-		<DropdownWrapper label={selectedLabel(selected)}>
+		<DropdownWrapper label={selected ? repoName(selected) : "Select repo..."}>
 			{(close) => (
 				<RepoList
 					repos={repos}

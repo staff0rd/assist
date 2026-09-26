@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
+import { MachinePicker } from "./AppToolbar/MachinePicker";
 import { NavTabs } from "./AppToolbar/NavTabs";
 import { NewSessionButton } from "./AppToolbar/NewSessionButton";
 import { OpenInCodeButton } from "../OpenInCodeButton";
@@ -35,6 +36,7 @@ export function AppToolbar({
 			)}
 			<RefreshWebserverButton reconnecting={socket.reconnecting} />
 			<NavTabs cwd={selection.selectedCwd} />
+			<MachinePicker />
 			<Box sx={pickerSx}>
 				<RepoPicker
 					repos={selection.repos}

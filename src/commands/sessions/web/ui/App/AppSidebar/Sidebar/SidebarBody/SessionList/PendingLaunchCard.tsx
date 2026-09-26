@@ -32,8 +32,8 @@ function captionSx(failed: boolean) {
 }
 
 function launchingCaption(launch: PendingLaunch): string {
-	return launch.windows
-		? "Starting Windows session… (the Windows daemon may take a moment)"
+	return launch.node
+		? `Starting session on ${launch.node}…`
 		: "Starting session…";
 }
 

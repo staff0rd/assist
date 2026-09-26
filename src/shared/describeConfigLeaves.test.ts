@@ -136,7 +136,7 @@ describe("describeConfigLeaves", () => {
 		expect(leaf(leaves, "sql.connections").type).toBe("array");
 		expect(leaf(leaves, "cliReadVerbs").type).toBe("record");
 		expect(leaf(leaves, "commit.conventional").type).toBe("boolean");
-		expect(leaf(leaves, "sessions.windowsDaemonPort").type).toBe("number");
+		expect(leaf(leaves, "sessions.maxLive").type).toBe("number");
 		expect(leaf(leaves, "harness.engine")).toMatchObject({
 			type: "enum",
 			enumValues: ["claude", "codex", "pi"],

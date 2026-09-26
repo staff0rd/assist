@@ -18,6 +18,7 @@ export type HistoricalSession = {
 	sessionType?: SessionType;
 	itemId?: number;
 	prompt?: string;
+	node?: string;
 };
 
 export async function parseSessionFile(

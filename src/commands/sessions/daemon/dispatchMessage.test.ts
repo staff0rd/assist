@@ -15,7 +15,7 @@ describe("dispatchMessage", () => {
 		it("flags a fresh create as new", () => {
 			const client = { send: vi.fn() };
 			const manager = {
-				windowsProxy: { route: () => false },
+				links: { route: () => false },
 				spawn: vi.fn(() => "s1"),
 			} as unknown as SessionManager;
 
@@ -29,7 +29,7 @@ describe("dispatchMessage", () => {
 		it("flags create-run and create-assist as new", () => {
 			const client = { send: vi.fn() };
 			const manager = {
-				windowsProxy: { route: () => false },
+				links: { route: () => false },
 				spawnRun: vi.fn(() => "s2"),
 				spawnAssist: vi.fn(() => "s3"),
 			} as unknown as SessionManager;
@@ -51,7 +51,7 @@ describe("dispatchMessage", () => {
 			const client = { send: vi.fn() };
 			const spawnAssist = vi.fn(() => "s4");
 			const manager = {
-				windowsProxy: { route: () => false },
+				links: { route: () => false },
 				spawnAssist,
 			} as unknown as SessionManager;
 
@@ -74,7 +74,7 @@ describe("dispatchMessage", () => {
 			const client = { send: vi.fn() };
 			const spawn = vi.fn(() => "s5");
 			const manager = {
-				windowsProxy: { route: () => false },
+				links: { route: () => false },
 				spawn,
 			} as unknown as SessionManager;
 
@@ -101,7 +101,7 @@ describe("dispatchMessage", () => {
 		it("does not flag a resume as new", () => {
 			const client = { send: vi.fn() };
 			const manager = {
-				windowsProxy: { route: () => false },
+				links: { route: () => false },
 				resume: vi.fn(() => "s4"),
 			} as unknown as SessionManager;
 
@@ -138,7 +138,7 @@ describe("dispatchMessage", () => {
 			const client = { send: vi.fn() };
 			const setStatus = vi.fn();
 			const manager = {
-				windowsProxy: { route: () => false },
+				links: { route: () => false },
 				setStatus,
 			} as unknown as SessionManager;
 
@@ -161,7 +161,7 @@ describe("dispatchMessage", () => {
 				const client = { send: vi.fn() };
 				const setStatus = vi.fn();
 				const manager = {
-					windowsProxy: { route: () => true },
+					links: { route: () => true },
 					setStatus,
 				} as unknown as SessionManager;
 

@@ -3,6 +3,8 @@ import { createInterface } from "node:readline";
 import type { WebSocket } from "ws";
 import { connectToDaemon } from "../daemon/connectToDaemon";
 import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
+import { resolveLinkTarget } from "../daemon/links/resolveLinkTarget";
+import { resolveNodeName } from "../shared/resolveNodeName";
 
 export type RelayContext = {
 	serverCwd: string;
@@ -69,11 +71,18 @@ function withDefaultCwd(raw: string, serverCwd: string): string {
 	try {
 		const data = JSON.parse(raw);
 		if (!CWD_DEFAULTED_TYPES.has(data.type) || data.cwd) return raw;
+		if (targetsLinkedNode(data)) return raw;
 		data.cwd = serverCwd;
 		return JSON.stringify(data);
 	} catch {
 		return raw;
 	}
+}
+
+function targetsLinkedNode(data: Record<string, unknown>): boolean {
+	return (
+		resolveLinkTarget(data, resolveNodeName(), () => true).kind !== "local"
+	);
 }
 
 // The repo the web server was started in is per-client context the daemon

@@ -1,8 +1,6 @@
 import MenuItem from "@mui/material/MenuItem";
-import { isWindowsCwd } from "../../isWindowsCwd";
 import { repoName } from "./RepoList";
 import { useHighlightScroll } from "./useHighlightScroll";
-import { WindowsBadge } from "../WindowsBadge";
 
 export function RepoMenuItem({
 	cwd,
@@ -35,7 +33,6 @@ export function RepoMenuItem({
 			}}
 		>
 			{repoName(cwd)}
-			{isWindowsCwd(cwd) && <WindowsBadge />}
 		</MenuItem>
 	);
 }

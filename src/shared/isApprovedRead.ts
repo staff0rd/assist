@@ -4,6 +4,7 @@ import { configuresReleases } from "./configuresReleases";
 import { isGhApiRead } from "./isGhApiRead";
 import { findCliRead, findCliWrite } from "./loadCliReads";
 import { matchesAllow } from "./matchesAllow";
+import { mutatesNodeLinks } from "./mutatesNodeLinks";
 import { readSettingsPerms } from "./readSettingsPerms";
 import { revealsConfigSecret } from "./revealsConfigSecret";
 
@@ -33,6 +34,8 @@ export function isApprovedRead(
 	if (appliesFixStructure(command)) return undefined;
 
 	if (configuresReleases(command)) return undefined;
+
+	if (mutatesNodeLinks(command)) return undefined;
 
 	const matchedRead = findCliRead(command);
 	if (matchedRead) return `Read-only CLI command: ${matchedRead}`;

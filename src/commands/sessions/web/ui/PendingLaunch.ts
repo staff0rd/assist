@@ -1,11 +1,9 @@
-import { isWindowsCwd } from "./isWindowsCwd";
-
 export type PendingLaunch = {
 	id: string;
 	cwd?: string;
 	title: string;
 	named?: boolean;
-	windows: boolean;
+	node?: string;
 	status: "launching" | "error";
 	error?: string;
 	startedAt: number;
@@ -15,6 +13,7 @@ export type NewLaunchInput = {
 	cwd?: string;
 	title: string;
 	named?: boolean;
+	node?: string;
 };
 
 type NewPendingLaunch = NewLaunchInput & {
@@ -26,10 +25,7 @@ export function addLaunch(
 	list: PendingLaunch[],
 	launch: NewPendingLaunch,
 ): PendingLaunch[] {
-	return [
-		...list,
-		{ ...launch, windows: isWindowsCwd(launch.cwd), status: "launching" },
-	];
+	return [...list, { ...launch, status: "launching" }];
 }
 
 export function oldestLaunching(

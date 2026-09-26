@@ -31,6 +31,7 @@ export function onListening(
 			: "no persisted sessions to restore",
 	);
 	daemonLog(`listening on ${daemonPaths.socket}`);
+	manager.links.reload();
 	checkAutoExit(manager.isIdle());
 }
 

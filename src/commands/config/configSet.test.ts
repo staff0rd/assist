@@ -82,12 +82,12 @@ describe("configSet", () => {
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
 
-			configSet("sessions.windowsDaemonPort", "21764", { global: true });
+			configSet("sessions.maxLive", "21764", { global: true });
 
 			expect(mockExit).not.toHaveBeenCalled();
 			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
 				news: { feeds: ["https://example.com/feed"] },
-				sessions: { windowsDaemonPort: 21764 },
+				sessions: { maxLive: 21764 },
 			});
 			mockExit.mockRestore();
 		});
@@ -312,10 +312,10 @@ describe("configSet", () => {
 		});
 
 		it("should write a number key as a number", () => {
-			configSet("sessions.windowsDaemonPort", "51764", { global: true });
+			configSet("sessions.maxLive", "51764", { global: true });
 
 			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
-				sessions: { windowsDaemonPort: 51764 },
+				sessions: { maxLive: 51764 },
 			});
 		});
 
@@ -328,10 +328,10 @@ describe("configSet", () => {
 		});
 
 		it("should keep enum keys as strings", () => {
-			configSet("sessions.windowsVersionCheck", "warn", { global: true });
+			configSet("sessions.linkVersionCheck", "warn", { global: true });
 
 			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
-				sessions: { windowsVersionCheck: "warn" },
+				sessions: { linkVersionCheck: "warn" },
 			});
 		});
 
@@ -341,7 +341,7 @@ describe("configSet", () => {
 			}) as never);
 
 			expect(() =>
-				configSet("sessions.windowsDaemonPort", "abc", { global: true }),
+				configSet("sessions.maxLive", "abc", { global: true }),
 			).toThrow("exit");
 
 			expect(mockExit).toHaveBeenCalledWith(1);

@@ -386,6 +386,9 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions
 - `assist sessions close` - Dismiss the current daemon-managed session: kills its process tree, removes its card from the dashboard and reaps its worktree. Outside such a session it reports there is nothing to close and exits 0
 - `assist sessions rename <title>` - Retitle the current daemon-managed session: the given title replaces the generated title and the backlog item name on its dashboard card for the rest of its life. Outside such a session it reports there is nothing to rename and exits 0
+- `assist sessions nodes [--json]` - List this node and every linked node with its link state (see [Linked nodes](#linked-nodes))
+- `assist sessions nodes link <name> <url>` - Link a peer node by its web server URL
+- `assist sessions nodes unlink <name>` - Remove a linked node
 - `assist sessions set-status <status>` - Report the current session's status (`running`/`waiting`) to the daemon; invoked by the Claude Code hooks the daemon wires into each session
 - `assist daemon run` - Run the sessions daemon in the foreground (normally auto-spawned detached)
 - `assist daemon status` - Show daemon status, live sessions, and any stray processes or stolen socket
@@ -416,13 +419,16 @@ Every live session card carries an **add-agent** button (👥) that starts a sec
 
 A `run:` entry in `assist.yml` flagged `server:` (with an optional display-only `port:`) is a singleton **dev server**. `server:` takes a group name — `server: api` and `server: web` are separate slots, so a repo that serves an API and a front end can keep both live at once; `server: true` normalises to the group `default`. At most one server may be live per group per normalised git remote, i.e. across a clone and all its sibling clones. Session cards for such a repo show a **▶ start** button; the daemon rejects a second server run for that remote and group, and the web UI turns the conflict into a "replace running server?" prompt. The serving card shows a `serving :<port>` chip and a **⏹ stop** button, and the slot frees whenever that session stops. Non-`server` runs are unconstrained.
 
-### Windows-host repos (from WSL)
+### Linked nodes
 
-Requires `assist` installed on the Windows host.
+Each assist install is a **node** with its own daemon and web server. A node can link to other nodes, and its web UI then shows its own sessions merged with each linked node's, as `<node>:<id>` cards carrying a node badge. Links are flat: a node only exports its own sessions and log lines, so two nodes linked to each other show no duplicates. On the PC, the WSL node links to the Windows node's native web server (`pc-windows` on 3101, run by project-switch). See [docs/multi-node-sessions.md](docs/multi-node-sessions.md).
 
-- `sessions.windowsProjectsRoot` — the Windows `.claude/projects` directory as seen from WSL (e.g. `/mnt/c/Users/<user>/.claude/projects`); enables discovery of Windows-host repos, tagged with a `Windows` badge.
-- `sessions.windowsDaemonHost` / `sessions.windowsDaemonPort` — where the WSL daemon reaches the native Windows daemon (defaults `127.0.0.1` / `51764`; set the host to the Windows IP on WSL2 NAT-mode networking).
-- `sessions.windowsVersionCheck` — reaction to a protocol-version mismatch in the WSL↔Windows handshake: `block` (default) refuses creates and auto-heals the host, `warn` proceeds anyway, `off` skips the check.
+- `assist sessions nodes [--json]` — this node and each link's state (connected / connecting / disconnected / version-blocked), peer version and last error.
+- `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link pc-windows http://127.0.0.1:3101`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately.
+- `assist sessions nodes unlink <name>` — remove a link.
+- `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) heals an older peer by calling its `POST /api/self-update` (runs `assist update`, then restarts its daemon and web server) and reconnects, latching with an error if the gap remains or this node is the older side; `warn` proceeds anyway; `off` skips the check.
+
+With more than one node, a machine picker appears in the top nav and a machine selector in the new-session dialog; the dialog's selector defaults to the top nav's choice, which is remembered per browser. Linked nodes' daemon lines appear in this node's `daemon.log` tagged `[<node>]`. The retired `sessions.windows*` keys are ignored.
 
 ### Session config keys
 

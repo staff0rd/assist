@@ -624,21 +624,21 @@ describe("ConfigView", () => {
 	it("offers the schema's options when editing an enum key", async () => {
 		stubApi([
 			{
-				key: "sessions.windowsVersionCheck",
+				key: "sessions.linkVersionCheck",
 				type: "enum",
 				enumValues: ["block", "warn", "off"],
 				value: "block",
 				source: "default",
-				node: node("sessions.windowsVersionCheck"),
+				node: node("sessions.linkVersionCheck"),
 			},
 		]);
 		renderView();
 
 		await waitFor(() =>
-			expect(screen.getByText("sessions.windowsVersionCheck")).toBeTruthy(),
+			expect(screen.getByText("sessions.linkVersionCheck")).toBeTruthy(),
 		);
 		fireEvent.click(
-			screen.getByRole("button", { name: "Edit sessions.windowsVersionCheck" }),
+			screen.getByRole("button", { name: "Edit sessions.linkVersionCheck" }),
 		);
 		fireEvent.mouseDown(screen.getByRole("combobox"));
 

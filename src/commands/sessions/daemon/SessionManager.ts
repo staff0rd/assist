@@ -35,7 +35,8 @@ import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
 import { treeSpawnContext } from "./treeSpawnContext";
 import { VerifyTracker } from "./VerifyTracker";
-import { WindowsProxy } from "./WindowsProxy";
+import { NodeLinks } from "./links/NodeLinks";
+import { replayScrollback } from "./replayScrollback";
 import type { SpawnContext } from "./types";
 import { addAgentToStream } from "./worktree/addAgentToStream";
 import type { AddAgentRequest } from "./worktree/spawnIntoStream";
@@ -60,8 +61,7 @@ export class SessionManager {
 	private readonly idCounter = { next: 1 };
 	private shuttingDown = false;
 
-	// why: dispatch calls windowsProxy.route() to forward windows-origin sessions
-	readonly windowsProxy = new WindowsProxy(this.clients, () => this.notify());
+	readonly links = new NodeLinks(this.clients, () => this.notify());
 
 	constructor(private readonly onIdleChange?: (idle: boolean) => void) {}
 
@@ -69,8 +69,11 @@ export class SessionManager {
 		this.clients.add(client);
 		// why: notify sends the sessions list with the active selection in one message, avoiding a first-card race before greetClient
 		this.notify();
-		greetClient(client, this.sessions, this.windowsProxy);
+		greetClient(client, this.sessions, this.links);
 	}
+
+	replayLocal = (client: SessionClient) =>
+		replayScrollback(this.sessions, client);
 
 	removeClient(client: SessionClient): void {
 		releaseClient(client, this.clients, this.prPreview, this.verify);
@@ -237,17 +240,18 @@ export class SessionManager {
 		);
 	}
 
-	listSessions = (): SessionInfo[] => {
-		const local = [...this.sessions.values()].map(toSessionInfo);
-		return local.concat(this.windowsProxy.sessions());
-	};
+	localSessions = (): SessionInfo[] =>
+		[...this.sessions.values()].map(toSessionInfo);
+
+	listSessions = (): SessionInfo[] =>
+		this.localSessions().concat(this.links.sessions());
 
 	private readonly notify = (): void => {
 		// During shutdown pty exits must not rewrite sessions.json, or the
 		// done statuses would erase the metadata that resume needs on restart
 		if (this.shuttingDown) return;
-		const windows = this.windowsProxy.sessions();
-		broadcastSessions(this.sessions, this.clients, windows, this.active);
+		const linked = this.links.sessions();
+		broadcastSessions(this.sessions, this.clients, linked, this.active);
 		this.onIdleChange?.(this.isIdle());
 	};
 }

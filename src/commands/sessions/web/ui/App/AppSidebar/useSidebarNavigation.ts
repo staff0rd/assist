@@ -25,6 +25,7 @@ export function useSidebarNavigation(
 				session.cwd,
 				session.name,
 				session.harness,
+				session.node,
 			);
 			onTabChange("active");
 			navigate("/sessions");

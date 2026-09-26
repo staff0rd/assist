@@ -9,7 +9,6 @@ import { onListening } from "./onListening";
 import { isPidAlive, readDaemonPidFile } from "./readDaemonPidFile";
 import type { SessionManager } from "./SessionManager";
 import { startDaemonServer } from "./startDaemonServer";
-import { startWindowsBridge } from "./startWindowsBridge";
 
 vi.mock("node:fs", () => ({ unlinkSync: vi.fn() }));
 vi.mock("node:net", () => ({ createServer: vi.fn() }));
@@ -21,14 +20,12 @@ vi.mock("./readDaemonPidFile", () => ({
 	isPidAlive: vi.fn(),
 	readDaemonPidFile: vi.fn(),
 }));
-vi.mock("./startWindowsBridge", () => ({ startWindowsBridge: vi.fn() }));
 
 const createServerMock = net.createServer as unknown as ReturnType<
 	typeof vi.fn
 >;
 const isRunningMock = isDaemonRunning as unknown as ReturnType<typeof vi.fn>;
 const onListeningMock = onListening as unknown as ReturnType<typeof vi.fn>;
-const bridgeMock = startWindowsBridge as unknown as ReturnType<typeof vi.fn>;
 const exitAfterFlushMock = exitAfterFlush as unknown as ReturnType<
 	typeof vi.fn
 >;
@@ -113,9 +110,8 @@ describe("startDaemonServer", () => {
 			asPlatform(realPlatform);
 		});
 
-		it("binds the pipe once the bridge is listening", async () => {
+		it("binds the pipe", async () => {
 			asPlatform("win32");
-			bridgeMock.mockResolvedValue(true);
 			createServerMock.mockReturnValue(new FakeServer(["listening"]));
 
 			await startDaemonServer(manager, checkAutoExit);
@@ -126,7 +122,6 @@ describe("startDaemonServer", () => {
 
 		it("names the wedged holder instead of retrying a held pipe", async () => {
 			asPlatform("win32");
-			bridgeMock.mockResolvedValue(true);
 			readPidMock.mockReturnValue(192936);
 			isPidAliveMock.mockReturnValue(true);
 			const server = new FakeServer(["error", "listening"]);
@@ -149,7 +144,6 @@ describe("startDaemonServer", () => {
 
 		it("reports an unidentifiable holder when daemon.pid is gone", async () => {
 			asPlatform("win32");
-			bridgeMock.mockResolvedValue(true);
 			readPidMock.mockReturnValue(undefined);
 			createServerMock.mockReturnValue(new FakeServer(["error", "listening"]));
 
@@ -160,18 +154,6 @@ describe("startDaemonServer", () => {
 			expect(loggedLines()).toContainEqual(
 				expect.stringContaining("could not be identified"),
 			);
-		});
-
-		it("exits without owning the pipe when the bridge cannot bind", async () => {
-			asPlatform("win32");
-			bridgeMock.mockResolvedValue(false);
-
-			await startDaemonServer(manager, checkAutoExit);
-			await flush();
-
-			expect(exitAfterFlushMock).toHaveBeenCalledWith(1);
-			expect(createServerMock).not.toHaveBeenCalled();
-			expect(onListeningMock).not.toHaveBeenCalled();
 		});
 	});
 });

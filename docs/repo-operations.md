@@ -287,8 +287,9 @@ effects**, **commit/push behaviour**, and **PR-vs-direct-to-main**.
   share one tree. `create-assist` is the generic path by which the web UI can
   run any `assist <cmd>` (including `commit`, `branch`, `prs raise`) inside the
   shared checkout.
-- **Windows note:** windows-origin create/resume forwards to a Windows daemon
-  (`forwardWindowsCreate.ts`), but the tree-sharing model is the same.
+- **Linked nodes:** a create/resume carrying another node's `node` is forwarded
+  over that node's link (`daemon/links/forwardLinkCreate.ts`) and spawned by
+  that node's own daemon, with the same tree-sharing model.
 
 ### `prompts` (not repo-touching)
 
@@ -382,14 +383,12 @@ Three constraints shape any worktree adoption:
    immediately, but dogfooding worktree-based changes _to assist itself_ still
    runs the old global build until it is rebuilt/relinked. Worktrees isolate the
    working tree, not the running binary.
-2. **The Windows-host checkout.** `isWindowsCwd` / `shouldProxyToWindows`
-   (`daemon/isWindowsCwd.ts`): a WSL daemon proxies `C:\…` cwds to a _native
-   Windows daemon_, which drives the checkout with its own PTY. Worktrees for a
-   Windows repo must live on the Windows filesystem and be created/driven on the
-   Windows side — the WSL daemon only forwards create/resume
-   (`forwardWindowsCreate.ts`). Any worktree orchestration has to be aware of,
-   and replicated across, the WSL↔Windows boundary; it cannot be a WSL-only
-   step.
+2. **The Windows-host checkout.** A Windows repo is driven by the Windows
+   node's own daemon; the WSL node only forwards create/resume over its link
+   (`daemon/links/forwardLinkCreate.ts`). Worktrees for a Windows repo must live
+   on the Windows filesystem and be created by the Windows node, so any worktree
+   orchestration runs on the node that owns the checkout; it cannot be a
+   WSL-only step.
 3. **Per-repo PR vs push-to-`main`.** Worktree isolation is orthogonal to the
    commit/push policy (the `commit:` block), so both repo styles keep their
    behaviour — but the _value_ differs. PR-based repos (e.g.

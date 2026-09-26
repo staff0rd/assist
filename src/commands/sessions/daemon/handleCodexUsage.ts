@@ -5,7 +5,7 @@ import { daemonLog } from "./daemonLog";
 import type { Handler } from "./routed";
 
 export const handleCodexUsage: Handler = (client, m, d) => {
-	if (m.windowsProxy.route(client, d)) return;
+	if (m.links.route(client, d)) return;
 	const sessionId = d.sessionId as string;
 	daemonLog(`codex-usage received: id=${sessionId}`);
 	if (d.ack) sendTo(client, { type: "ack", sessionId });

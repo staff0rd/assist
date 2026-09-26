@@ -9,11 +9,11 @@ const daemonLogMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
 
 function fakeManager(routeReturns = false) {
 	return {
-		windowsProxy: { route: vi.fn(() => routeReturns) },
+		links: { route: vi.fn(() => routeReturns) },
 		setStatus: vi.fn(),
 		spawn: vi.fn(() => "5"),
 	} as unknown as SessionManager & {
-		windowsProxy: { route: ReturnType<typeof vi.fn> };
+		links: { route: ReturnType<typeof vi.fn> };
 		setStatus: ReturnType<typeof vi.fn>;
 		spawn: ReturnType<typeof vi.fn>;
 	};
@@ -192,7 +192,7 @@ describe("create handler", () => {
 describe("create-assist handler", () => {
 	function assistManager() {
 		return {
-			windowsProxy: { route: vi.fn(() => false) },
+			links: { route: vi.fn(() => false) },
 			spawnAssist: vi.fn(() => "9"),
 		} as unknown as SessionManager & { spawnAssist: ReturnType<typeof vi.fn> };
 	}
@@ -236,7 +236,7 @@ describe("create-assist handler", () => {
 describe("restart handler", () => {
 	function restartManager(result: { ok: boolean; reason?: string }) {
 		return {
-			windowsProxy: { route: vi.fn(() => false) },
+			links: { route: vi.fn(() => false) },
 			restart: vi.fn(() => result),
 		} as unknown as SessionManager & { restart: ReturnType<typeof vi.fn> };
 	}
@@ -272,10 +272,10 @@ describe("restart handler", () => {
 describe("pr-decision handler", () => {
 	function prManager(routeReturns: boolean) {
 		return {
-			windowsProxy: { route: vi.fn(() => routeReturns) },
+			links: { route: vi.fn(() => routeReturns) },
 			prPreview: { decide: vi.fn() },
 		} as unknown as SessionManager & {
-			windowsProxy: { route: ReturnType<typeof vi.fn> };
+			links: { route: ReturnType<typeof vi.fn> };
 			prPreview: { decide: ReturnType<typeof vi.fn> };
 		};
 	}
@@ -304,7 +304,7 @@ describe("pr-decision handler", () => {
 
 		messageHandlers["pr-decision"](fakeClient() as never, m, d);
 
-		expect(m.windowsProxy.route).toHaveBeenCalledWith(expect.anything(), d);
+		expect(m.links.route).toHaveBeenCalledWith(expect.anything(), d);
 		expect(m.prPreview.decide).not.toHaveBeenCalled();
 	});
 });
@@ -327,10 +327,10 @@ describe("ui-status handler", () => {
 describe("verify-started handler", () => {
 	function verifyManager(routeReturns: boolean) {
 		return {
-			windowsProxy: { route: vi.fn(() => routeReturns) },
+			links: { route: vi.fn(() => routeReturns) },
 			verify: { start: vi.fn() },
 		} as unknown as SessionManager & {
-			windowsProxy: { route: ReturnType<typeof vi.fn> };
+			links: { route: ReturnType<typeof vi.fn> };
 			verify: { start: ReturnType<typeof vi.fn> };
 		};
 	}
@@ -351,7 +351,7 @@ describe("verify-started handler", () => {
 			sessionId: "win-3",
 		});
 
-		expect(m.windowsProxy.route).toHaveBeenCalled();
+		expect(m.links.route).toHaveBeenCalled();
 		expect(m.verify.start).not.toHaveBeenCalled();
 	});
 });
@@ -359,10 +359,10 @@ describe("verify-started handler", () => {
 describe("rename handler", () => {
 	function renameManager(routeReturns = false) {
 		return {
-			windowsProxy: { route: vi.fn(() => routeReturns) },
+			links: { route: vi.fn(() => routeReturns) },
 			setTitle: vi.fn(),
 		} as unknown as SessionManager & {
-			windowsProxy: { route: ReturnType<typeof vi.fn> };
+			links: { route: ReturnType<typeof vi.fn> };
 			setTitle: ReturnType<typeof vi.fn>;
 		};
 	}
@@ -394,7 +394,7 @@ describe("rename handler", () => {
 			title: "fix login redirect",
 		});
 
-		expect(m.windowsProxy.route).toHaveBeenCalled();
+		expect(m.links.route).toHaveBeenCalled();
 		expect(m.setTitle).not.toHaveBeenCalled();
 	});
 });

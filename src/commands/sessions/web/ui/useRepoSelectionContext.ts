@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 
 export type RepoSelection = {
 	repos: string[];
+	reposByNode?: Record<string, string[]>;
 	selectedCwd: string;
 	worktreeCwd: string;
 	setSelectedCwd: (cwd: string) => void;

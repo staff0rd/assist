@@ -7,10 +7,16 @@ import { withRepoGroups } from "./withRepoGroups";
 
 type Msg = Record<string, unknown>;
 
-function handleHistory(client: SessionClient): void {
-	discoverSessions().then((sessions) =>
-		sendTo(client, { type: "history", sessions: withRepoGroups(sessions) }),
-	);
+async function handleHistory(
+	client: SessionClient,
+	manager: SessionManager,
+): Promise<void> {
+	const linked = manager.clients.isPeer(client) ? [] : manager.links.history();
+	const [local, remote] = await Promise.all([discoverSessions(), linked]);
+	sendTo(client, {
+		type: "history",
+		sessions: withRepoGroups(local).concat(remote),
+	});
 }
 
 function handleFetchTranscript(

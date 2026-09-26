@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
 import { closeSession } from "./closeSession";
+import { registerNodes } from "./nodes/registerNodes";
 import { registerSetStatusCommand } from "./registerSetStatusCommand";
 import { renameSession } from "./renameSession";
 import { sessionsConfigHelp } from "./sessionsConfigHelp";
@@ -47,6 +48,7 @@ export function registerSessions(program: Command): void {
 		.action(renameSession);
 
 	registerSetStatusCommand(cmd);
+	registerNodes(cmd);
 
 	configHelp(cmd, sessionsConfigHelp);
 }

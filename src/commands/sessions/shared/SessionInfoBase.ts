@@ -73,4 +73,5 @@ export type SessionInfoBase = {
 	closing?: boolean;
 	verifying?: boolean;
 	lastUserMessage?: string;
+	node?: string;
 };

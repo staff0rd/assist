@@ -23,14 +23,14 @@ describe("validateConfig", () => {
 
 	it("reports the offending path for an invalid value", () => {
 		const result = validateConfig(
-			{ sessions: { windowsDaemonPort: "soon" } },
-			"sessions.windowsDaemonPort",
+			{ sessions: { maxLive: "soon" } },
+			"sessions.maxLive",
 		);
 
 		expect(result).toEqual({
 			ok: false,
 			errors: [
-				"sessions.windowsDaemonPort: Invalid input: expected number, received string",
+				"sessions.maxLive: Invalid input: expected number, received string",
 			],
 		});
 	});
@@ -105,9 +105,9 @@ describe("validateConfig", () => {
 		const result = validateConfig(
 			{
 				database: { url: "postgres://user:hunter2@host/db" },
-				sessions: { windowsVersionCheck: "sometimes" },
+				sessions: { linkVersionCheck: "sometimes" },
 			},
-			"sessions.windowsVersionCheck",
+			"sessions.linkVersionCheck",
 		);
 
 		expect(result.ok).toBe(false);

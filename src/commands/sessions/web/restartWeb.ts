@@ -7,7 +7,7 @@ type RestartTarget = "daemon" | "webserver" | "both";
 
 const TARGETS: RestartTarget[] = ["daemon", "webserver", "both"];
 
-type RestartWebDeps = {
+export type RestartWebDeps = {
 	restartDaemonFn?: () => Promise<void>;
 	reExecFn?: () => void;
 };
@@ -17,7 +17,6 @@ export async function restartWeb(
 	res: ServerResponse,
 	deps: RestartWebDeps = {},
 ): Promise<void> {
-	const { restartDaemonFn = restartDaemon, reExecFn = reExecWebServer } = deps;
 	const url = new URL(req.url ?? "/", "http://localhost");
 	const target = url.searchParams.get("target");
 	if (!target || !TARGETS.includes(target as RestartTarget)) {
@@ -31,6 +30,14 @@ export async function restartWeb(
 		respondJson(res, 200, { ok: true });
 	});
 
+	await performRestart(target as RestartTarget, deps);
+}
+
+export async function performRestart(
+	target: RestartTarget,
+	deps: RestartWebDeps = {},
+): Promise<void> {
+	const { restartDaemonFn = restartDaemon, reExecFn = reExecWebServer } = deps;
 	if (target === "daemon" || target === "both") {
 		await restartDaemonFn();
 	}

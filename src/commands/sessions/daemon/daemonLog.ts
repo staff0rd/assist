@@ -1,28 +1,33 @@
 // why: a daemon that starts before any consumer attaches would lose its startup lines, so keep the most recent ones to replay on subscribe.
 const RING_CAPACITY = 1000;
-const ring: string[] = [];
-let sink: ((line: string) => void) | undefined;
+type LogEntry = { line: string; relayed: boolean };
+const ring: LogEntry[] = [];
+let sink: ((line: string, relayed: boolean) => void) | undefined;
 
 export function daemonLog(message: string): void {
-	emit(`${new Date().toISOString()} [${process.pid}] ${message}`);
+	emit(`${new Date().toISOString()} [${process.pid}] ${message}`, false);
 }
 
-// why: a Windows daemon line arrives already formatted (its own timestamp/pid), so relay it verbatim under a [windows] tag rather than re-stamping it with this daemon's pid.
-export function relayDaemonLog(line: string): void {
-	emit(`[windows] ${line}`);
+// why: a linked node's line arrives already formatted (its own timestamp/pid), so relay it verbatim under its [<node>] tag; relayed lines are marked so they are never re-exported to peers.
+export function relayDaemonLog(node: string, line: string): void {
+	emit(`[${node}] ${line}`, true);
 }
 
-function emit(line: string): void {
+function emit(line: string, relayed: boolean): void {
 	console.log(line);
-	ring.push(line);
+	ring.push({ line, relayed });
 	if (ring.length > RING_CAPACITY) ring.shift();
-	sink?.(line);
+	sink?.(line, relayed);
 }
 
-export function setDaemonLogSink(next: (line: string) => void): void {
+export function setDaemonLogSink(
+	next: (line: string, relayed: boolean) => void,
+): void {
 	sink = next;
 }
 
-export function recentDaemonLogLines(): string[] {
-	return [...ring];
+export function recentDaemonLogLines(includeRelayed = true): string[] {
+	return ring
+		.filter((entry) => includeRelayed || !entry.relayed)
+		.map((entry) => entry.line);
 }

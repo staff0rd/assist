@@ -1,17 +1,14 @@
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
+import type { NodeLinks } from "./links/NodeLinks";
 import { replayScrollback } from "./replayScrollback";
 
 export function greetClient(
 	client: SessionClient,
 	sessions: Map<string, Session>,
-	windowsProxy: {
-		replayScrollback: (client: SessionClient) => void;
-		discover: () => Promise<void>;
-	},
+	links: NodeLinks,
 ): void {
 	replayScrollback(sessions, client);
-	windowsProxy.replayScrollback(client);
-	// why: surface already-running Windows sessions on connect, not only after a create
-	void windowsProxy.discover();
+	links.replayScrollback(client);
+	links.sendNodes(client);
 }

@@ -18,6 +18,10 @@ export function loadPersistedSessions(): PersistedSession[] {
 	const rejected: string[] = [];
 	const loaded = data.flatMap((entry) => {
 		const parsed = persistedSessionSchema.safeParse(entry);
+		if (parsed.success && parsed.data.id?.startsWith("w-")) {
+			rejected.push(`${parsed.data.id}: legacy windows-proxy session`);
+			return [];
+		}
 		if (parsed.success) return [parsed.data];
 		rejected.push(
 			`${describePersistedSession(entry)}: ${parsed.error.issues.map((i) => `${i.path.join(".")} ${i.message}`).join("; ")}`,

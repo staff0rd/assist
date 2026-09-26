@@ -18,6 +18,7 @@ export class ClientHub extends Set<SessionClient> {
 	private readonly harnessLimits = new Map<HarnessKind, RateLimits>();
 	// why: log delivery is opt-in so browser tabs aren't spammed; only connections that ask via subscribe-logs receive daemonLog lines.
 	private readonly logSubscribers = new Set<SessionClient>();
+	private readonly peers = new Set<SessionClient>();
 
 	// why: the daemon injects a best-effort persister; left undefined elsewhere so `new ClientHub()` works and broadcasting never depends on it.
 	constructor(
@@ -59,10 +60,22 @@ export class ClientHub extends Set<SessionClient> {
 			sendTo(client, { type: "limits", harness, rateLimits });
 	}
 
+	markPeer(client: SessionClient): void {
+		this.peers.add(client);
+	}
+
+	isPeer(client: SessionClient): boolean {
+		return this.peers.has(client);
+	}
+
+	viewers(): Set<SessionClient> {
+		return new Set([...this].filter((client) => !this.peers.has(client)));
+	}
+
 	subscribeLogs(client: SessionClient, replay = true): void {
 		// why: replay buffered history before registering, so a line emitted mid-replay isn't sent twice.
 		if (replay) {
-			for (const line of recentDaemonLogLines()) {
+			for (const line of recentDaemonLogLines(!this.isPeer(client))) {
 				sendTo(client, { type: "log", line });
 			}
 		}
@@ -71,11 +84,13 @@ export class ClientHub extends Set<SessionClient> {
 
 	unsubscribeLogs(client: SessionClient): void {
 		this.logSubscribers.delete(client);
+		this.peers.delete(client);
 	}
 
 	// why: bound so it can be handed to setDaemonLogSink as a bare reference.
-	emitLog = (line: string): void => {
+	emitLog = (line: string, relayed = false): void => {
 		for (const client of this.logSubscribers) {
+			if (relayed && this.isPeer(client)) continue;
 			sendTo(client, { type: "log", line });
 		}
 	};

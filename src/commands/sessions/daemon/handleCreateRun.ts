@@ -10,7 +10,7 @@ export function handleCreateRun(
 	m: SessionManager,
 	d: Record<string, unknown>,
 ): void {
-	if (m.windowsProxy.route(client, d)) return;
+	if (m.links.route(client, d)) return;
 	const runName = d.runName as string;
 	const cwd = d.cwd as string | undefined;
 	const runArgs = (d.runArgs as string[]) ?? [];

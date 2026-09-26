@@ -5,11 +5,6 @@ import { repoGroupForCwd } from "./repoGroupForCwd";
 import { mainWorktree } from "./worktree/listWorktreePaths";
 import { worktreeAttributionIncludingReaped } from "./worktree/readWorktreeRegistry";
 
-const platform = vi.hoisted(() => ({ current: "wsl" }));
-
-vi.mock("../../../lib/detectPlatform", () => ({
-	detectPlatform: () => platform.current,
-}));
 vi.mock("./originForCwd", () => ({ originResolutionForCwd: vi.fn() }));
 vi.mock("./repoDirExists", () => ({ repoDirExists: vi.fn() }));
 vi.mock("./worktree/listWorktreePaths", () => ({ mainWorktree: vi.fn() }));
@@ -32,7 +27,6 @@ describe("repoGroupForCwd", () => {
 		dirExists.mockReset();
 		attribution.mockReturnValue(undefined);
 		dirExists.mockReturnValue(true);
-		platform.current = "wsl";
 	});
 
 	it("returns undefined without probing when there is no cwd", () => {
@@ -84,18 +78,7 @@ describe("repoGroupForCwd", () => {
 		expect(repoGroupForCwd("/tmp/scratch-c")).toBeUndefined();
 	});
 
-	it("keeps a windows-host checkout in its own group even on a shared remote", () => {
-		clone.mockReturnValue(String.raw`C:\git\repo-d`);
-		origin.mockReturnValue(stable("host/org/repo"));
-
-		expect(repoGroupForCwd(String.raw`C:\git\repo-d`)).toEqual({
-			origin: "windows:host/org/repo",
-			clone: String.raw`C:\git\repo-d`,
-		});
-	});
-
-	it("keeps the plain origin for a checkout on the native Windows node", () => {
-		platform.current = "windows";
+	it("keeps the plain origin for a Windows checkout", () => {
 		clone.mockReturnValue(String.raw`C:\git\repo-g`);
 		origin.mockReturnValue(stable("host/org/repo"));
 

@@ -12,29 +12,20 @@ import { pendingLaunchFromMessage } from "./useSessionSocket/useSend/pendingLaun
 const base = { startedAt: 0 };
 
 function launching(id: string, cwd?: string): PendingLaunch {
-	return { id, cwd, title: id, windows: false, status: "launching", ...base };
+	return { id, cwd, title: id, status: "launching", ...base };
 }
 
 describe("addLaunch", () => {
-	it("flags a Windows cwd so the card can explain the cold-start delay", () => {
-		const [win] = addLaunch([], {
+	it("keeps the target node so the card can name where it is starting", () => {
+		const [launch] = addLaunch([], {
 			id: "1",
 			cwd: "C:\\Users\\me\\repo",
 			title: "x",
+			node: "pc-windows",
 			...base,
 		});
-		expect(win.windows).toBe(true);
-		expect(win.status).toBe("launching");
-	});
-
-	it("treats a POSIX cwd as non-Windows", () => {
-		const [posix] = addLaunch([], {
-			id: "2",
-			cwd: "/home/me/repo",
-			title: "x",
-			...base,
-		});
-		expect(posix.windows).toBe(false);
+		expect(launch.node).toBe("pc-windows");
+		expect(launch.status).toBe("launching");
 	});
 });
 

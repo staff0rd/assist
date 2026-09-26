@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { ClientHub } from "./ClientHub";
-import { daemonLog } from "./daemonLog";
+import { daemonLog, relayDaemonLog } from "./daemonLog";
 
 const rateLimits = {
 	five_hour: { used_percentage: 12, resets_at: 100 },
@@ -125,6 +125,40 @@ describe("ClientHub", () => {
 			hub.emitLog("after");
 
 			expect(client.send).not.toHaveBeenCalled();
+		});
+
+		it("never re-exports relayed lines to a linked peer", () => {
+			relayDaemonLog("pc-windows", "relayed-marker");
+			const hub = new ClientHub();
+			const peer = { send: vi.fn() };
+			const browser = { send: vi.fn() };
+			hub.markPeer(peer);
+			hub.subscribeLogs(peer);
+			hub.subscribeLogs(browser);
+
+			hub.emitLog("[pc-windows] live relayed", true);
+			hub.emitLog("own line");
+
+			const peerLines = peer.send.mock.calls.map(([d]) => JSON.parse(d).line);
+			expect(peerLines.some((l) => l.includes("relayed"))).toBe(false);
+			expect(peerLines).toContain("own line");
+			expect(browser.send).toHaveBeenCalledWith(
+				JSON.stringify({ type: "log", line: "[pc-windows] live relayed" }),
+			);
+		});
+	});
+
+	describe("peers", () => {
+		it("excludes a linked peer from the viewers that see merged state", () => {
+			const hub = new ClientHub();
+			const peer = { send: vi.fn() };
+			const browser = { send: vi.fn() };
+			hub.add(peer);
+			hub.add(browser);
+
+			hub.markPeer(peer);
+
+			expect([...hub.viewers()]).toEqual([browser]);
 		});
 	});
 });

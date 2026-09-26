@@ -1,5 +1,4 @@
 import type { RepoGroup } from "../shared/RepoGroup";
-import { shouldProxyToWindows } from "./isWindowsCwd";
 import { originResolutionForCwd } from "./originForCwd";
 import { repoDirExists } from "./repoDirExists";
 import { mainWorktree } from "./worktree/listWorktreePaths";
@@ -25,14 +24,14 @@ function resolveRepoGroup(cwd: string): Resolution {
 	const origin = clone ? originResolutionForCwd(clone) : undefined;
 	if (clone && origin)
 		return {
-			group: hostedGroup(cwd, origin.origin, clone),
+			group: hostedGroup(origin.origin, clone),
 			stable: origin.stable,
 		};
 	const reaped = worktreeAttributionIncludingReaped(cwd);
 	if (!reaped) return { group: undefined, stable: repoDirExists(cwd) };
 	const current = currentOriginOfClone(reaped.clone);
 	return {
-		group: hostedGroup(cwd, current?.origin ?? reaped.origin, reaped.clone),
+		group: hostedGroup(current?.origin ?? reaped.origin, reaped.clone),
 		stable: current?.stable === true,
 	};
 }
@@ -48,9 +47,6 @@ function currentOriginOfClone(clone: string) {
 	return main ? originResolutionForCwd(main) : undefined;
 }
 
-function hostedGroup(cwd: string, origin: string, clone: string): RepoGroup {
-	return {
-		origin: shouldProxyToWindows(cwd) ? `windows:${origin}` : origin,
-		clone,
-	};
+function hostedGroup(origin: string, clone: string): RepoGroup {
+	return { origin, clone };
 }

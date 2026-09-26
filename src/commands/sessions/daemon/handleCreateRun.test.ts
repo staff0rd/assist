@@ -11,7 +11,7 @@ const meta = vi.mocked(serverRunMeta);
 
 function fakeManager(existing?: Session, liveGroup = "default") {
 	return {
-		windowsProxy: { route: vi.fn(() => false) },
+		links: { route: vi.fn(() => false) },
 		liveServerRun: vi.fn((_origin: string, group: string) =>
 			group === liveGroup ? existing : undefined,
 		),

@@ -11,11 +11,6 @@ export function unsetConfig(
 		if (!isKnownConfigKey(request.key))
 			return { ok: false, errors: [`Unknown config key "${request.key}"`] };
 
-		return applyScopedConfigUnset(
-			request.key,
-			request.cwd,
-			request.scope,
-			request.globalConfigPath,
-		);
+		return applyScopedConfigUnset(request.key, request.cwd, request.scope);
 	});
 }

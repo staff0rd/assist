@@ -7,6 +7,7 @@ import { HamburgerMenu } from "./AppShell/HamburgerMenu";
 import { ServerRunLayer } from "./AppShell/ServerRunLayer";
 import { useAppShell } from "./AppShell/useAppShell";
 import { DaemonVersionContext } from "./AppShell/useDaemonVersionContext";
+import { NodeSelectionContext } from "../useNodeSelectionContext";
 import { RepoSelectionContext } from "../useRepoSelectionContext";
 import { SessionLaunchContext } from "../useSessionLaunchContext";
 import { SidebarCollapsedContext } from "./useSidebarCollapsedContext";
@@ -37,26 +38,28 @@ export function AppShell({
 		<TopBarLayoutContext.Provider value={topBar}>
 			<SidebarCollapsedContext.Provider value={sidebarCollapse}>
 				<RepoSelectionContext.Provider value={selection}>
-					<SessionLaunchContext.Provider value={launch}>
-						<DaemonVersionContext.Provider value={socket.daemonVersion}>
-							<HamburgerMenu
-								mode={mode}
-								toggle={toggle}
-								reconnecting={socket.reconnecting}
+					<NodeSelectionContext.Provider value={socket.nodeSelection}>
+						<SessionLaunchContext.Provider value={launch}>
+							<DaemonVersionContext.Provider value={socket.daemonVersion}>
+								<HamburgerMenu
+									mode={mode}
+									toggle={toggle}
+									reconnecting={socket.reconnecting}
+								/>
+							</DaemonVersionContext.Provider>
+							<AppBar position="fixed" elevation={1} sx={appBarSx}>
+								<AppToolbar socket={socket} selection={selection} />
+							</AppBar>
+							<Toolbar variant="dense" sx={toolbarSx} />
+							<ServerRunLayer socket={socket}>
+								<AppRoutes socket={socket} />
+							</ServerRunLayer>
+							<AppOverlays
+								socket={socket}
+								onViewLaunchedSession={viewLaunchedSession}
 							/>
-						</DaemonVersionContext.Provider>
-						<AppBar position="fixed" elevation={1} sx={appBarSx}>
-							<AppToolbar socket={socket} selection={selection} />
-						</AppBar>
-						<Toolbar variant="dense" sx={toolbarSx} />
-						<ServerRunLayer socket={socket}>
-							<AppRoutes socket={socket} />
-						</ServerRunLayer>
-						<AppOverlays
-							socket={socket}
-							onViewLaunchedSession={viewLaunchedSession}
-						/>
-					</SessionLaunchContext.Provider>
+						</SessionLaunchContext.Provider>
+					</NodeSelectionContext.Provider>
 				</RepoSelectionContext.Provider>
 			</SidebarCollapsedContext.Provider>
 		</TopBarLayoutContext.Provider>

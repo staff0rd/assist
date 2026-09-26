@@ -1,19 +1,11 @@
+import { sendCreate } from "./createHarnessSessionAction";
+
 type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;
 
 export function createSessionAction(send: SendFn) {
-	return (prompt: string, cwd?: string) =>
-		send({ type: "create", prompt: prompt || undefined, cwd, auto: true });
-}
-
-export function createDesignSessionAction(send: SendFn) {
-	return (prompt: string, cwd?: string) =>
-		send({ type: "create", prompt: prompt || undefined, cwd, design: true });
-}
-
-export function createHarnessSessionAction(send: SendFn) {
-	return (harness: string, prompt: string, cwd?: string) =>
-		send({ type: "create", prompt: prompt || undefined, cwd, harness });
+	return (prompt: string, cwd?: string, node?: string) =>
+		sendCreate(send, { auto: true }, prompt, cwd, node);
 }
 
 export type AssistLaunchMeta = {
@@ -21,6 +13,7 @@ export type AssistLaunchMeta = {
 	subtitle?: string;
 	inPlace?: boolean;
 	launchedFrom?: string;
+	node?: string;
 };
 
 export function createAssistSessionAction(send: SendFn) {
@@ -29,8 +22,13 @@ export function createAssistSessionAction(send: SendFn) {
 }
 
 export function resumeSessionAction(send: SendFn) {
-	return (sessionId: string, cwd: string, name?: string, harness?: string) =>
-		send({ type: "resume", sessionId, cwd, name, harness });
+	return (
+		sessionId: string,
+		cwd: string,
+		name?: string,
+		harness?: string,
+		node?: string,
+	) => send({ type: "resume", sessionId, cwd, name, harness, node });
 }
 
 export function retrySessionAction(send: SendFn, buffers: Map<string, string>) {

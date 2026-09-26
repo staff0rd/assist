@@ -1,4 +1,5 @@
 import type { HarnessKind } from "../../../../shared/harnesses";
+import type { NodesMessage } from "../../daemon/links/LinkStatus";
 import type { SessionType } from "../../shared/deriveHistoryFields";
 import type { SessionOrigin } from "../../shared/parseSessionFile";
 import type { RepoGroup } from "../../shared/RepoGroup";
@@ -75,7 +76,10 @@ export type HistoricalSession = {
 	itemId?: number;
 	prompt?: string;
 	harness?: HarnessKind;
+	node?: string;
 };
+
+export type NodesState = Pick<NodesMessage, "local" | "links">;
 
 export type HistoryCardHandlers = {
 	onView: (session: HistoricalSession) => void;

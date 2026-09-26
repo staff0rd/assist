@@ -18,7 +18,7 @@ const codexWindows = [{ window: "codex:seven_day", resetsAt: 900 }];
 
 function manager() {
 	return {
-		windowsProxy: { route: vi.fn(() => false) },
+		links: { route: vi.fn(() => false) },
 		clients: {
 			updateHarnessLimits: vi.fn(),
 			currentWindows: vi.fn(() => codexWindows),

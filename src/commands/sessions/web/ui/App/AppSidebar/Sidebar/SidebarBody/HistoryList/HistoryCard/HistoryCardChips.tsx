@@ -6,7 +6,7 @@ import { isRepoScoped } from "../../../../../isRepoScoped";
 import { repoLabel } from "../../../../../repoLabel";
 import type { HistoricalSession } from "../../../../../../types";
 import { useItemTrackers } from "../../../../useItemTrackers";
-import { WindowsBadge } from "../../../../../WindowsBadge";
+import { NodeBadge } from "../../../../../NodeBadge";
 
 const chipSx = { height: 18, fontSize: "0.65rem" };
 
@@ -17,7 +17,7 @@ export function HistoryCardChips({ session }: { session: HistoricalSession }) {
 		<>
 			{repo && <Chip label={repo} size="small" sx={chipSx} />}
 			<HarnessBadge harness={session.harness} />
-			{session.origin === "windows" && <WindowsBadge />}
+			<NodeBadge node={session.node} />
 			{session.sessionType && session.sessionType !== "next" && (
 				<Chip
 					label={session.sessionType}

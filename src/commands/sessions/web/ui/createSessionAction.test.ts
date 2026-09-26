@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
+import { createHarnessSessionAction } from "./createHarnessSessionAction";
 import {
 	createAssistSessionAction,
-	createHarnessSessionAction,
 	createSessionAction,
 	dismissSessionAction,
 	outputAction,

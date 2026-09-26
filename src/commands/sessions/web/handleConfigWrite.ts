@@ -1,8 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { globalConfigTargetFor } from "../../../shared/globalConfigTargetFor";
 import { respondJson } from "../../../shared/web";
 import type { ConfigWriteScope } from "../../config/ConfigWriteScope";
-import { writesGlobalConfigFile } from "../../config/writesGlobalConfigFile";
 import { parseConfigWriteRequest } from "./parseConfigWriteRequest";
 import { toGitCwd } from "./toGitCwd";
 
@@ -11,7 +9,6 @@ type ConfigWriteRequest = {
 	value: unknown;
 	cwd: string;
 	scope: ConfigWriteScope;
-	globalConfigPath: string | undefined;
 };
 
 type ConfigWriteResult =
@@ -29,18 +26,8 @@ export async function handleConfigWrite(
 		return;
 	}
 
-	const target = globalConfigTargetFor(parsed.cwd);
-	if (!target.ok && writesGlobalConfigFile(parsed.scope)) {
-		respondJson(res, 400, { error: target.error, errors: [target.error] });
-		return;
-	}
-
 	try {
-		const result = apply({
-			...parsed,
-			cwd: toGitCwd(parsed.cwd),
-			globalConfigPath: target.ok ? target.path : undefined,
-		});
+		const result = apply({ ...parsed, cwd: toGitCwd(parsed.cwd) });
 		if (!result.ok) {
 			respondJson(res, 400, {
 				error: result.errors.join("\n"),

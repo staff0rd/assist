@@ -1,11 +1,10 @@
 import Chip from "@mui/material/Chip";
 import { CloneBadge } from "./CardBadges/CloneBadge";
 import { HarnessBadge } from "../../../../HarnessBadge";
-import { isWindowsCwd } from "../../../../../../isWindowsCwd";
+import { NodeBadge } from "../../../../../NodeBadge";
 import { ServingChip } from "./CardBadges/ServingChip";
 import type { SessionInfo } from "../../../../../../types";
 import { useCloneBadgeContext } from "../../../../useCloneBadgeContext";
-import { WindowsBadge } from "../../../../../WindowsBadge";
 
 const chipSx = { height: 16, fontSize: "0.65rem" };
 
@@ -21,7 +20,7 @@ export function CardBadges({ session }: { session: SessionInfo }) {
 			<ServingChip session={session} />
 			<HarnessBadge harness={session.harness} />
 			{badgeClone && clone && <CloneBadge clone={clone} />}
-			{isWindowsCwd(session.cwd) && <WindowsBadge />}
+			<NodeBadge node={session.node} />
 			{inReview && (
 				<Chip
 					label={`${activity.phase}/${activity.totalPhases}`}

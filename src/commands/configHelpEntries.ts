@@ -25,6 +25,7 @@ import { roamConfigHelp } from "./roam/roamConfigHelp";
 import { rootConfigHelp } from "./rootConfigHelp";
 import { runConfigHelp } from "./run/runConfigHelp";
 import { seqConfigHelp } from "./seq/seqConfigHelp";
+import { nodesConfigHelp } from "./sessions/nodes/nodesConfigHelp";
 import { sessionsConfigHelp } from "./sessions/sessionsConfigHelp";
 import { slackConfigHelp } from "./slack/slackConfigHelp";
 import { sqlConfigHelp } from "./sql/sqlConfigHelp";
@@ -60,6 +61,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...runConfigHelp,
 	...seqConfigHelp,
 	...sessionsConfigHelp,
+	...nodesConfigHelp,
 	...slackConfigHelp,
 	...sqlConfigHelp,
 	...transcriptConfigHelp,

@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import {
-	createAssistSessionAction,
 	createDesignSessionAction,
 	createHarnessSessionAction,
+} from "../../createHarnessSessionAction";
+import {
+	createAssistSessionAction,
 	createSessionAction,
 	resumeSessionAction,
 } from "../../createSessionAction";

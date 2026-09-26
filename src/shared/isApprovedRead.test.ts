@@ -10,6 +10,7 @@ vi.mock("./loadCliReads", () => ({
 			return "assist github issue fix-structure";
 		}
 		if (cmd.startsWith("assist releases")) return "assist releases";
+		if (cmd.startsWith("assist sessions nodes")) return "assist sessions nodes";
 		return undefined;
 	},
 	findCliWrite: (cmd: string) =>
@@ -105,6 +106,23 @@ describe("isApprovedRead", () => {
 			const result = isApprovedRead("assist releases configure owner/name");
 
 			expect(result).toBeUndefined();
+		});
+	});
+
+	describe("when the command is a sessions nodes subcommand", () => {
+		it("should approve listing the nodes", () => {
+			expect(isApprovedRead("assist sessions nodes --json")).toBe(
+				"Read-only CLI command: assist sessions nodes",
+			);
+		});
+
+		it("should not approve link or unlink, which rewrite the config", () => {
+			expect(
+				isApprovedRead("assist sessions nodes link pc-windows http://x"),
+			).toBeUndefined();
+			expect(
+				isApprovedRead("assist sessions nodes unlink pc-windows"),
+			).toBeUndefined();
 		});
 	});
 

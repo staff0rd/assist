@@ -97,7 +97,7 @@ describe("setConfig", () => {
 
 	it("coerces a string body value to the schema's number type", async () => {
 		const [status] = await post({
-			key: "sessions.windowsDaemonPort",
+			key: "sessions.maxLive",
 			value: "4310",
 			cwd: paths.repo,
 			scope: "project",
@@ -106,13 +106,13 @@ describe("setConfig", () => {
 		expect(status).toBe(200);
 		expect(readYaml(paths.repoConfig)).toEqual({
 			commit: { push: false },
-			sessions: { windowsDaemonPort: 4310 },
+			sessions: { maxLive: 4310 },
 		});
 	});
 
 	it("rejects a value the schema refuses and leaves the file untouched", async () => {
 		const [status, payload] = await post({
-			key: "sessions.windowsVersionCheck",
+			key: "sessions.linkVersionCheck",
 			value: "sometimes",
 			cwd: paths.repo,
 			scope: "project",
@@ -120,7 +120,7 @@ describe("setConfig", () => {
 
 		expect(status).toBe(400);
 		expect(payload.errors).toEqual([
-			expect.stringContaining("sessions.windowsVersionCheck"),
+			expect.stringContaining("sessions.linkVersionCheck"),
 		]);
 		expect(readFileSync(paths.repoConfig, "utf8")).toBe(
 			"commit:\n  push: false\n",
@@ -129,7 +129,7 @@ describe("setConfig", () => {
 
 	it("rejects a non-numeric value for a number key", async () => {
 		const [status, payload] = await post({
-			key: "sessions.windowsDaemonPort",
+			key: "sessions.maxLive",
 			value: "soon",
 			cwd: paths.repo,
 			scope: "project",
@@ -349,7 +349,7 @@ describe("setConfig", () => {
 		);
 
 		const [status, payload] = await post({
-			key: "sessions.windowsVersionCheck",
+			key: "sessions.linkVersionCheck",
 			value: "sometimes",
 			cwd: paths.repo,
 			scope: "project",
@@ -578,7 +578,7 @@ describe("setConfig", () => {
 
 	it("rejects a repo-scoped value the schema refuses and leaves the file untouched", async () => {
 		const [status, payload] = await post({
-			key: "sessions.windowsVersionCheck",
+			key: "sessions.linkVersionCheck",
 			value: "sometimes",
 			cwd: paths.repo,
 			scope: "repo",
@@ -586,7 +586,7 @@ describe("setConfig", () => {
 
 		expect(status).toBe(400);
 		expect(payload.errors).toEqual([
-			expect.stringContaining("sessions.windowsVersionCheck"),
+			expect.stringContaining("sessions.linkVersionCheck"),
 		]);
 		expect(readFileSync(paths.globalConfig, "utf8")).toBe(
 			"commit:\n  pull: false\n",

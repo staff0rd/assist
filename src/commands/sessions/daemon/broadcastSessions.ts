@@ -1,21 +1,24 @@
 import type { ActiveSelection } from "./ActiveSelection";
-import { broadcast, type SessionClient } from "./broadcast";
+import { broadcast } from "./broadcast";
+import type { ClientHub } from "./ClientHub";
 import type { Session, SessionInfo } from "./createSession";
 import { persistLiveSessions } from "./loadPersistedSessions";
 import { toSessionInfo } from "./toSessionInfo";
 
 export function broadcastSessions(
 	sessions: Map<string, Session>,
-	clients: Set<SessionClient>,
-	windowsSessions: SessionInfo[] = [],
+	clients: ClientHub,
+	linkedSessions: SessionInfo[] = [],
 	active?: ActiveSelection,
 ): void {
-	// why: only local sessions are persisted; Windows sessions live on the Windows daemon
 	persistLiveSessions(sessions);
 	const local = [...sessions.values()].map(toSessionInfo);
-	broadcast(clients, {
+	const viewers = clients.viewers();
+	broadcast(viewers, {
 		type: "sessions",
-		sessions: local.concat(windowsSessions),
+		sessions: local.concat(linkedSessions),
 		active: active?.toJSON() ?? {},
 	});
+	const peers = new Set([...clients].filter((c) => !viewers.has(c)));
+	broadcast(peers, { type: "sessions", sessions: local, active: {} });
 }

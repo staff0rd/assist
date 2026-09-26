@@ -10,6 +10,6 @@ export type Handler = (
 
 export function routed(local: Handler): Handler {
 	return (client, m, d) => {
-		if (!m.windowsProxy.route(client, d)) local(client, m, d);
+		if (!m.links.route(client, d)) local(client, m, d);
 	};
 }

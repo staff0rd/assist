@@ -30,16 +30,17 @@ describe("daemonLog", () => {
 		expect(sink.mock.calls[0][0]).toContain("sink-marker");
 	});
 
-	it("relays a windows line verbatim under a [windows] tag", () => {
+	it("relays a linked node's line verbatim under its [<node>] tag", () => {
 		const sink = vi.fn();
 		setDaemonLogSink(sink);
-		const windowsLine = "2026-06-25T00:00:00.000Z [4242] spawned win-1";
+		const peerLine = "2026-06-25T00:00:00.000Z [4242] spawned win-1";
 
-		relayDaemonLog(windowsLine);
+		relayDaemonLog("pc-windows", peerLine);
 
-		const tagged = `[windows] ${windowsLine}`;
-		expect(sink).toHaveBeenCalledWith(tagged);
+		const tagged = `[pc-windows] ${peerLine}`;
+		expect(sink).toHaveBeenCalledWith(tagged, true);
 		expect(recentDaemonLogLines()).toContain(tagged);
+		expect(recentDaemonLogLines(false)).not.toContain(tagged);
 	});
 
 	it("bounds the ring buffer to its capacity, dropping the oldest", () => {

@@ -7,21 +7,12 @@ import { exitAfterFlush } from "./exitAfterFlush";
 import { handleConnection } from "./handleConnection";
 import { onListening } from "./onListening";
 import type { SessionManager } from "./SessionManager";
-import { startWindowsBridge } from "./startWindowsBridge";
 import { describeWedgedHolder } from "./describeWedgedHolder";
 
 export async function startDaemonServer(
 	manager: SessionManager,
 	checkAutoExit: (idle: boolean) => void,
 ): Promise<void> {
-	// why: the WSL daemon cannot reach the Windows named pipe, so add a TCP bridge
-	if (process.platform === "win32" && !(await startWindowsBridge(manager))) {
-		daemonLog(
-			"exiting before binding the pipe so the next launch can take over",
-		);
-		exitAfterFlush(1);
-		return;
-	}
 	const server = net.createServer((socket) =>
 		handleConnection(socket, manager),
 	);

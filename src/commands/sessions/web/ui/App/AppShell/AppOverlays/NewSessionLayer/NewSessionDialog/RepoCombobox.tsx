@@ -42,7 +42,7 @@ export function RepoCombobox({
 				placeholder="Repo"
 				size="small"
 				fullWidth
-				slotProps={repoComboboxSlotProps(combo.open, value)}
+				slotProps={repoComboboxSlotProps(combo.open)}
 			/>
 			<RepoComboboxPopper open={combo.open} anchor={anchorRef.current}>
 				<RepoMenuList
