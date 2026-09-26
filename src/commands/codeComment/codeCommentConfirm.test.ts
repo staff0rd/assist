@@ -97,6 +97,14 @@ describe("codeCommentConfirm", () => {
 		expect(writtenContent()).toContain("  // guards a nullable edge case");
 	});
 
+	it("inserts a // comment for a .rs pin", () => {
+		primePin("src/main.rs", 2, "keeps the borrow alive");
+
+		codeCommentConfirm("123");
+
+		expect(writtenContent()).toContain("  // keeps the borrow alive");
+	});
+
 	it("inserts a # comment for a below-header .sh pin", () => {
 		primePin("deploy.sh", 2, "retry accounts for eventual consistency");
 

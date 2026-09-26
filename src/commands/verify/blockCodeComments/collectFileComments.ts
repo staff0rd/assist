@@ -10,6 +10,8 @@ import { isCsharpFile } from "../../../shared/isCsharpFile";
 import { isGeneratedCsharpFile } from "../../../shared/isGeneratedCsharpFile";
 import { isRazorFile } from "../../../shared/isRazorFile";
 import { extractRazorComments } from "../../../shared/extractRazorComments";
+import { extractRustComments } from "../../../shared/extractRustComments";
+import { isRustFile } from "../../../shared/isRustFile";
 import { isYamlFile } from "../../../shared/isYamlFile";
 import type { CommentFinding } from "./types";
 import { collectBicepComments } from "./collectBicepComments";
@@ -50,6 +52,9 @@ export function collectFileComments(
 
 	if (isRazorFile(file))
 		return toFindings(file, lines, extractRazorComments(read()), true);
+
+	if (isRustFile(file))
+		return toFindings(file, lines, extractRustComments(read()), true);
 
 	return collectSourceFindings(file, lines, project);
 }

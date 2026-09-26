@@ -759,6 +759,49 @@ describe("decideCommentGuard", () => {
 		});
 	});
 
+	describe("rust", () => {
+		it.each([
+			["//", "let a = 1; // bump"],
+			["/* */", "/* bump */ let a = 1;"],
+			["///", "/// Bumps it.\nlet a = 1;"],
+			["//!", "//! Crate docs.\nlet a = 1;"],
+		])("blocks introducing a %s comment", (_, new_string) => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/main.rs",
+					old_string: "let a = 1;",
+					new_string,
+				}),
+			);
+
+			expect(decision).toContain("assist code-comment set");
+		});
+
+		it("blocks a comment in a written .rs file", () => {
+			const decision = decideCommentGuard(
+				input("Write", {
+					file_path: "src/lib.rs",
+					content: "fn run() {}\n// explain\n",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("allows comment markers inside rust string literals", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/main.rs",
+					old_string: 'let a = "x";',
+					new_string:
+						'let a = "https://x";\nlet b = r#"/* "// y" */"#;\nlet c = r"//";',
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+	});
+
 	describe("other tools", () => {
 		it("ignores unrelated tools", () => {
 			const decision = decideCommentGuard(

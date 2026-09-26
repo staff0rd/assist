@@ -28,6 +28,7 @@ const SCANNED_EXTENSIONS = [
 	".csx",
 	".razor",
 	".cshtml",
+	".rs",
 ];
 
 function shouldScan(file: string, ignoreGlobs: string[]): boolean {

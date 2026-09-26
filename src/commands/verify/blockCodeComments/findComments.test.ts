@@ -550,3 +550,34 @@ describe("findComments (razor)", () => {
 		expect(findComments({ ignoreGlobs: [] })).toEqual([]);
 	});
 });
+
+describe("findComments (rust)", () => {
+	function diffAddingLinesFor(file: string, lines: number[]): string {
+		return [
+			`+++ b/${file}`,
+			...lines.flatMap((line) => [`@@ -1,0 +${line},1 @@`, "+placeholder"]),
+		].join("\n");
+	}
+
+	it("flags comments added to a .rs file but not markers in strings", () => {
+		const rsPath = path.join(tmpDir, "main.rs");
+		fs.writeFileSync(
+			rsPath,
+			[
+				"//! Crate docs.",
+				"/// Runs it.",
+				"fn run() {",
+				'    let url = r#"https://x /* y */"#;',
+				"    let a = 1; // explain",
+				"}",
+			].join("\n"),
+		);
+		mockExecSync.mockReturnValue(diffAddingLinesFor(rsPath, [1, 2, 4, 5]));
+
+		expect(findComments({ ignoreGlobs: [] })).toEqual([
+			{ file: rsPath, line: 1, text: "//! Crate docs." },
+			{ file: rsPath, line: 2, text: "/// Runs it." },
+			{ file: rsPath, line: 5, text: "// explain" },
+		]);
+	});
+});
