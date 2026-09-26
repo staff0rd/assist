@@ -1,3 +1,10 @@
+# [0.702.0](https://github.com/staff0rd/assist/compare/v0.701.0...v0.702.0) (2026-09-26)
+
+
+### Features
+
+* link News page to news config ([e8473cb](https://github.com/staff0rd/assist/commit/e8473cb54685842b42d12269e08411b554330514))
+
 # [0.701.0](https://github.com/staff0rd/assist/compare/v0.700.1...v0.701.0) (2026-09-26)
 
 
