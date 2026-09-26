@@ -1,3 +1,10 @@
+## [0.711.2](https://github.com/staff0rd/assist/compare/v0.711.1...v0.711.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* show bash-mode input as last typed ([a4ee24b](https://github.com/staff0rd/assist/commit/a4ee24b6834d94d159b0596f2b8709371ccaf56d))
+
 ## [0.711.1](https://github.com/staff0rd/assist/compare/v0.711.0...v0.711.1) (2026-09-26)
 
 
