@@ -1,3 +1,10 @@
+## [0.708.2](https://github.com/staff0rd/assist/compare/v0.708.1...v0.708.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* detect comments in Rust files ([c595a8d](https://github.com/staff0rd/assist/commit/c595a8d543d707c5f3dfe38a3d072146d8eeb529))
+
 ## [0.708.1](https://github.com/staff0rd/assist/compare/v0.708.0...v0.708.1) (2026-09-26)
 
 
