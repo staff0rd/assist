@@ -1,3 +1,16 @@
+# [0.706.0](https://github.com/staff0rd/assist/compare/v0.705.4...v0.706.0) (2026-09-26)
+
+
+### Bug Fixes
+
+* match node name to menu background ([6fef98a](https://github.com/staff0rd/assist/commit/6fef98a9aa5ffd0efee5014258bde5157a15c0de))
+
+
+### Features
+
+* pick harness from the prompt segment ([09cbe23](https://github.com/staff0rd/assist/commit/09cbe236db2c25d982838f5731ca0f6afe67ad2c))
+* pick harness from the prompt segment ([3c08fd4](https://github.com/staff0rd/assist/commit/3c08fd44b220b37c421e9811d5f84a96bd06cd27))
+
 ## [0.705.4](https://github.com/staff0rd/assist/compare/v0.705.3...v0.705.4) (2026-09-26)
 
 
