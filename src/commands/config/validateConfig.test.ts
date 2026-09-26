@@ -47,6 +47,26 @@ describe("validateConfig", () => {
 		).toEqual({ ok: true });
 	});
 
+	it("accepts news.showInNav alongside a legacy news.feeds value", () => {
+		expect(
+			validateConfig(
+				{ news: { feeds: ["https://example.com/feed"], showInNav: true } },
+				"news.showInNav",
+			),
+		).toEqual({ ok: true });
+	});
+
+	it("rejects an invalid news.showInNav", () => {
+		expect(
+			validateConfig({ news: { showInNav: "yes" } }, "news.showInNav"),
+		).toEqual({
+			ok: false,
+			errors: [
+				"news.showInNav: Invalid input: expected boolean, received string",
+			],
+		});
+	});
+
 	it("rejects an unknown top-level key and names it", () => {
 		const result = validateConfig(
 			{ bogus: true, commit: { push: true } },

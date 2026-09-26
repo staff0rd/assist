@@ -5,16 +5,27 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NavTabs } from "./NavTabs";
 
 const configuredByCwd: Record<string, boolean> = {};
+let showNewsInNav = false;
 const fetchMock = vi.fn(async (url: string) => {
-	const cwd = new URL(url, "http://localhost").searchParams.get("cwd") ?? "";
+	const parsed = new URL(url, "http://localhost");
+	if (parsed.pathname === "/api/news/nav")
+		return Response.json({ showInNav: showNewsInNav });
+	const cwd = parsed.searchParams.get("cwd") ?? "";
 	return Response.json({ configured: configuredByCwd[cwd] ?? false });
 });
+
+function releasesChecked() {
+	expect(fetchMock).toHaveBeenCalledWith(
+		expect.stringContaining("/api/releases/configured"),
+	);
+}
 
 beforeEach(() => {
 	fetchMock.mockClear();
 	vi.stubGlobal("fetch", fetchMock);
 	configuredByCwd["/with"] = true;
 	configuredByCwd["/without"] = false;
+	showNewsInNav = false;
 });
 
 afterEach(() => {
@@ -56,7 +67,7 @@ describe("NavTabs", () => {
 	it("shows the Releases tab when the repo declares release streams", async () => {
 		render(ui("/with", "/sessions"));
 		await waitFor(() =>
-			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Releases", "News"]),
+			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Releases"]),
 		);
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/releases/configured?cwd=%2Fwith",
@@ -65,24 +76,53 @@ describe("NavTabs", () => {
 
 	it("hides the Releases tab when the repo declares no release streams", async () => {
 		render(ui("/without", "/sessions"));
-		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-		expect(tabLabels()).toEqual(["Sessions", "Backlog", "News"]);
+		await waitFor(releasesChecked);
+		expect(tabLabels()).toEqual(["Sessions", "Backlog"]);
 	});
 
 	it("keeps the Releases tab hidden while the check is pending", () => {
 		render(ui("/with", "/sessions"));
-		expect(tabLabels()).toEqual(["Sessions", "Backlog", "News"]);
+		expect(tabLabels()).toEqual(["Sessions", "Backlog"]);
+	});
+
+	it("hides the News tab by default", async () => {
+		render(ui("/without", "/sessions"));
+		await waitFor(() =>
+			expect(fetchMock).toHaveBeenCalledWith("/api/news/nav"),
+		);
+		expect(tabLabels()).not.toContain("News");
+	});
+
+	it("shows the News tab when news.showInNav is enabled", async () => {
+		showNewsInNav = true;
+		render(ui("/with", "/sessions"));
+		await waitFor(() =>
+			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Releases", "News"]),
+		);
+	});
+
+	it("highlights no tab on /news with the News tab hidden", async () => {
+		render(ui("/without", "/news"));
+		await waitFor(() =>
+			expect(fetchMock).toHaveBeenCalledWith("/api/news/nav"),
+		);
+		expect(currentPath()).toBe("/news");
+		expect(selectedLabel()).toBeNull();
 	});
 
 	it("keeps News highlighted on /news with the Releases tab hidden", async () => {
+		showNewsInNav = true;
 		render(ui("/without", "/news"));
-		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
+		await waitFor(() => expect(tabLabels()).toContain("News"));
 		expect(selectedLabel()).toBe("News");
 	});
 
 	it("keeps News highlighted on /news with the Releases tab shown", async () => {
+		showNewsInNav = true;
 		render(ui("/with", "/news"));
-		await waitFor(() => expect(tabLabels()).toContain("Releases"));
+		await waitFor(() =>
+			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Releases", "News"]),
+		);
 		expect(selectedLabel()).toBe("News");
 	});
 
@@ -100,8 +140,8 @@ describe("NavTabs", () => {
 	it("hides the Releases tab when the check fails", async () => {
 		fetchMock.mockRejectedValueOnce(new Error("offline"));
 		render(ui("/with", "/sessions"));
-		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-		expect(tabLabels()).toEqual(["Sessions", "Backlog", "News"]);
+		await waitFor(releasesChecked);
+		expect(tabLabels()).toEqual(["Sessions", "Backlog"]);
 	});
 
 	it("redirects a deep link under /releases to /sessions when not configured", async () => {

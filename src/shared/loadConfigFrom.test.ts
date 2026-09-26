@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { loadProjectConfig, saveConfig } from "./loadConfig";
-import { projectConfigPathFrom } from "./loadConfigFrom";
+import { loadConfigFrom, projectConfigPathFrom } from "./loadConfigFrom";
 
 let base: string;
 let clone: string;
@@ -75,6 +75,43 @@ describe("project config reads and writes from a worktree", () => {
 		expect(loadProjectConfig(clone)).toEqual({
 			prs: { required: true },
 			commit: { push: true },
+		});
+	});
+});
+
+describe("loadConfigFrom news config", () => {
+	const missingGlobal = () => join(base, "no-global.yml");
+
+	it("leaves news.showInNav unset by default", () => {
+		writeConfig(clone, "prs:\n  required: true\n");
+
+		expect(loadConfigFrom(clone, missingGlobal()).news).toBeUndefined();
+	});
+
+	it("loads news.showInNav", () => {
+		writeConfig(clone, "news:\n  showInNav: true\n");
+
+		expect(loadConfigFrom(clone, missingGlobal()).news).toEqual({
+			showInNav: true,
+		});
+	});
+
+	it("drops a legacy news.feeds value and keeps news.showInNav", () => {
+		writeConfig(
+			clone,
+			"news:\n  feeds:\n    - https://example.com/feed\n  showInNav: true\n",
+		);
+
+		expect(loadConfigFrom(clone, missingGlobal()).news).toEqual({
+			showInNav: true,
+		});
+	});
+
+	it("defaults news.showInNav to false when only legacy feeds remain", () => {
+		writeConfig(clone, "news:\n  feeds:\n    - https://example.com/feed\n");
+
+		expect(loadConfigFrom(clone, missingGlobal()).news).toEqual({
+			showInNav: false,
 		});
 	});
 });

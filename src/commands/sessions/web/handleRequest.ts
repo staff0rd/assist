@@ -18,6 +18,7 @@ import { harnessCapabilities } from "./harnessCapabilities";
 import { jiraSite } from "./jiraSite";
 import { listFiles } from "./listFiles";
 import { listNewsItems } from "./listNewsItems";
+import { newsNavConfig } from "./newsNavConfig";
 import { listScopedRules } from "./listScopedRules";
 import { listUsageHistory } from "./listUsageHistory";
 import { listUsageItems } from "./listUsageItems";
@@ -91,6 +92,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/server-runs": handleServerRuns,
 	"GET /api/pr-list": prList,
 	"GET /api/news/items": listNewsItems,
+	"GET /api/news/nav": newsNavConfig,
 	"GET /api/releases/state": releasesState,
 	"GET /api/releases/configured": releasesConfigured,
 	"GET /api/usage/history": listUsageHistory,

@@ -296,6 +296,11 @@ const assistConfigShape = {
 			extracts: z.record(z.string(), miroExtractSchema).optional(),
 		})
 		.optional(),
+	news: z
+		.strictObject({
+			showInNav: z.boolean().default(false),
+		})
+		.optional(),
 	deny: z
 		.array(
 			z.strictObject({
