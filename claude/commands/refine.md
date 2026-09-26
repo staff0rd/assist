@@ -79,7 +79,7 @@ When adding or restructuring plan phases, follow the same rules as /draft:
 
 - **Vertical slices, not horizontal layers.** Each phase delivers a thin, working increment verifiable end-to-end — never "backend in phase 1, UI in phase 2".
 - **Every phase must pass `assist verify` on its own.** Verification includes knip, which fails on unused exports — so every export a phase adds must have a caller wired up in that same phase. No "phase 2 will use it" scaffolding.
-- **Every task stays in this repo.** Never add or keep a task that edits, commits or pushes another repo. If the user asks for one, leave it out of the plan and advise filing it as a separate item in that repo's backlog.
+- **Every task stays in this repo** unless `assist config get backlog.crossRepo` prints `true`. Never add or keep a task that edits, commits or pushes another repo. If the user asks for one, leave it out of the plan and ask the user to file it as a separate item in that repo's backlog.
 - If the user proposes a horizontal split, point out that the earlier phase won't verify (knip will flag the unused exports) and suggest a vertical restructure instead.
 
 **To associate an external tracker** (Jira or GitHub — mutually exclusive, one per item; associating one clears the other):

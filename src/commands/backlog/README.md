@@ -243,7 +243,7 @@ Tasks:
 - {task}
 
 Focus ONLY on this phase. Do not work on other phases.
-Work only in this item's own repo. Do not modify, commit or push any other repo without the user's explicit permission — if a task needs changes elsewhere, stop and ask the user, and suggest filing that work as a separate item in that repo's backlog.
+Work only in this item's own repo. Do not modify, commit or push any other repo without the user's explicit permission — if a task needs changes elsewhere, stop and ask the user to file that work as a separate item in that repo's backlog.
 When you have completed all tasks for this phase, run /verify to check your work.
 
 Before marking this phase as done, ask the user to perform these manual checks:
@@ -254,6 +254,8 @@ Wait for the user to confirm all manual checks pass before proceeding.
 
 Once verify passes and the user confirms, run: assist backlog phase-done {id} {phase}
 ```
+
+The "Work only in this item's own repo" line is omitted when `backlog.crossRepo` is `true`.
 
 For the **last phase** without explicit manual checks, the prompt instead includes:
 
