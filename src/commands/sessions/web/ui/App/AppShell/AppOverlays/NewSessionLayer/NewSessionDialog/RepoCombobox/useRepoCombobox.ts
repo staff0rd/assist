@@ -23,6 +23,8 @@ export function useRepoCombobox(
 		setQuery("");
 	};
 	const nav = useListKeyboardNav(filtered, query, accept, close);
+	const seedHighlight = () =>
+		nav.setHighlight(Math.max(repos.indexOf(value), 0));
 
 	return {
 		open,
@@ -36,16 +38,17 @@ export function useRepoCombobox(
 			accept,
 			close,
 			navigate: nav.onKeyDown,
+			openList: () => {
+				seedHighlight();
+				setOpen(true);
+			},
 		}),
 		onType: (next: string) => {
 			setText(next);
 			setQuery(next);
 			setOpen(true);
 		},
-		onFocus: () => {
-			nav.setHighlight(Math.max(repos.indexOf(value), 0));
-			setOpen(true);
-		},
+		onFocus: seedHighlight,
 		onBlur: () => {
 			close();
 			setText(value ? repoName(value) : "");

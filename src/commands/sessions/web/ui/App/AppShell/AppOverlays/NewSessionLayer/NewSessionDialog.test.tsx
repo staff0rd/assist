@@ -154,14 +154,39 @@ describe("NewSessionDialog repo combobox", () => {
 		expect(repoInput().value).toBe("beta");
 	});
 
-	it("selects the repo text on focus and lists every repo", () => {
+	it("selects the repo text on focus and leaves the list closed", () => {
 		renderDialog();
 
 		fireEvent.focus(repoInput());
 
 		expect(repoInput().selectionStart).toBe(0);
 		expect(repoInput().selectionEnd).toBe(4);
+		expect(repoInput().getAttribute("aria-expanded")).toBe("false");
+		expect(screen.queryAllByRole("menuitem")).toEqual([]);
+	});
+
+	it("opens every repo on ArrowDown with the current repo highlighted", () => {
+		const { onCreate } = renderDialog();
+
+		fireEvent.focus(repoInput());
+		fireEvent.keyDown(repoInput(), { key: "ArrowDown" });
+
+		expect(repoInput().getAttribute("aria-expanded")).toBe("true");
 		expect(options()).toEqual(["alpha", "beta", "gamma", "delta"]);
+
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+
+		expect(repoInput().value).toBe("beta");
+		expect(onCreate).not.toHaveBeenCalled();
+	});
+
+	it("submits on Enter while the list is closed", () => {
+		const { onCreate } = renderDialog();
+
+		fireEvent.focus(repoInput());
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+
+		expect(onCreate).toHaveBeenCalledWith("", "/git/beta");
 	});
 
 	it("filters the list by repo name as you type", () => {
@@ -186,6 +211,7 @@ describe("NewSessionDialog repo combobox", () => {
 		const { onCreate } = renderDialog();
 
 		fireEvent.focus(repoInput());
+		fireEvent.keyDown(repoInput(), { key: "ArrowDown" });
 		fireEvent.keyDown(repoInput(), { key: "ArrowDown" });
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
 

@@ -7,15 +7,22 @@ export function comboboxKeyHandler<T>({
 	accept,
 	close,
 	navigate,
+	openList,
 }: {
 	open: boolean;
 	highlighted: T | undefined;
 	accept: (item: T) => void;
 	close: () => void;
 	navigate: (e: KeyboardEvent) => void;
+	openList: () => void;
 }) {
 	return (e: KeyboardEvent<HTMLDivElement>) => {
 		if (!open) {
+			if (e.key === "ArrowDown") {
+				e.preventDefault();
+				openList();
+				return;
+			}
 			handleEnterSubmit(e);
 			return;
 		}
