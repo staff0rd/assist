@@ -3,7 +3,7 @@ import type { ConfigHelpEntry } from "../../shared/configHelp";
 export const sessionsConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "sessions.nodeName",
-		setter: "assist config set sessions.nodeName pc-wsl -g",
+		setter: "assist config set sessions.nodeName <name> -g",
 		note: "this install's node label, shown in the web UI hamburger menu and reported by /api/health (default: OS hostname, with -wsl under WSL)",
 	},
 	{

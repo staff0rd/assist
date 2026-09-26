@@ -421,10 +421,10 @@ A `run:` entry in `assist.yml` flagged `server:` (with an optional display-only 
 
 ### Linked nodes
 
-Each assist install is a **node** with its own daemon and web server. A node can link to other nodes, and its web UI then shows its own sessions merged with each linked node's, as `<node>:<id>` cards carrying a node badge. Links are flat: a node only exports its own sessions and log lines, so two nodes linked to each other show no duplicates. On the PC, the WSL node links to the Windows node's native web server (`pc-windows` on 3101, run by project-switch). See [docs/multi-node-sessions.md](docs/multi-node-sessions.md).
+Each assist install is a **node** with its own daemon and web server. A node can link to other nodes, and its web UI then shows its own sessions merged with each linked node's, as `<node>:<id>` cards carrying a node badge. Links are flat: a node only exports its own sessions and log lines, so two nodes linked to each other show no duplicates. See [docs/multi-node-sessions.md](docs/multi-node-sessions.md).
 
 - `assist sessions nodes [--json]` — this node and each link's state (connected / connecting / disconnected / version-blocked), peer version and last error.
-- `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link pc-windows http://127.0.0.1:3101`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately.
+- `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link <name> http://127.0.0.1:<port>`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately.
 - `assist sessions nodes unlink <name>` — remove a link.
 - `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) heals an older peer by calling its `POST /api/self-update` (runs `assist update`, then restarts its daemon and web server) and reconnects, latching with an error if the gap remains or this node is the older side; `warn` proceeds anyway; `off` skips the check.
 
