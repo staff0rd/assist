@@ -1,3 +1,10 @@
+## [0.705.2](https://github.com/staff0rd/assist/compare/v0.705.1...v0.705.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* reserve harness row space ([cc8a0bd](https://github.com/staff0rd/assist/commit/cc8a0bd943721f72dab074c04854f001cfdefbf3))
+
 ## [0.705.1](https://github.com/staff0rd/assist/compare/v0.705.0...v0.705.1) (2026-09-26)
 
 
