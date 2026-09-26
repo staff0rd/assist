@@ -1,3 +1,10 @@
+# [0.711.0](https://github.com/staff0rd/assist/compare/v0.710.1...v0.711.0) (2026-09-26)
+
+
+### Features
+
+* ssh node links with doctor hops ([b68b949](https://github.com/staff0rd/assist/commit/b68b949b950e07c8331385b8e46d2ad4f7074b1e))
+
 ## [0.710.1](https://github.com/staff0rd/assist/compare/v0.710.0...v0.710.1) (2026-09-26)
 
 
