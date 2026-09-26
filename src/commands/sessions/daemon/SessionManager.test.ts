@@ -30,7 +30,10 @@ vi.mock("./loadActiveSelection", () => ({
 }));
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
 vi.mock("./restartSession", () => ({ restartSession: vi.fn(() => true) }));
-vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("./daemonLog", () => ({
+	daemonLog: vi.fn(),
+	relayDaemonLog: vi.fn(),
+}));
 vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({
 		onData: vi.fn(),

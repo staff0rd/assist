@@ -1,6 +1,10 @@
 import { type SyntheticEvent, useCallback, useRef } from "react";
 import type { DraftFocus } from "../useNewSessionDraft";
 
+function checkedRadio(group: HTMLDivElement | null) {
+	return group?.querySelector<HTMLElement>('[aria-checked="true"]');
+}
+
 export function useDraftFocus(
 	focus: DraftFocus,
 	setFocus: (focus: DraftFocus) => void,
@@ -9,6 +13,7 @@ export function useDraftFocus(
 	const promptEl = useRef<HTMLTextAreaElement | null>(null);
 	const repoRef = useRef<HTMLInputElement>(null);
 	const modeRef = useRef<HTMLDivElement>(null);
+	const harnessRef = useRef<HTMLDivElement>(null);
 
 	const promptRef = useCallback((el: HTMLTextAreaElement | null) => {
 		promptEl.current = el;
@@ -30,12 +35,13 @@ export function useDraftFocus(
 		if (modeRef.current?.closest("form")?.contains(document.activeElement))
 			return;
 		const { field } = initial.current;
-		if (field === "repo") repoRef.current?.focus();
-		else if (field === "mode")
-			modeRef.current
-				?.querySelector<HTMLElement>('[aria-checked="true"]')
-				?.focus();
-		else promptEl.current?.focus();
+		const target = {
+			repo: repoRef.current,
+			mode: checkedRadio(modeRef.current),
+			harness: checkedRadio(harnessRef.current),
+			prompt: promptEl.current,
+		}[field];
+		(target ?? promptEl.current)?.focus();
 	};
 
 	return {
@@ -43,9 +49,11 @@ export function useDraftFocus(
 		promptRef,
 		repoRef,
 		modeRef,
+		harnessRef,
 		trackPrompt,
 		trackRepo: () => setFocus({ ...focus, field: "repo" }),
 		trackMode: () => setFocus({ ...focus, field: "mode" }),
+		trackHarness: () => setFocus({ ...focus, field: "harness" }),
 		restore,
 	};
 }

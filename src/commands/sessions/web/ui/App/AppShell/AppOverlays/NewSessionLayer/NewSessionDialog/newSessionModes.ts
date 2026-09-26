@@ -14,11 +14,14 @@ export const newSessionModes = {
 	prompt: {
 		placeholder: PLACEHOLDER,
 		submitLabel: "Start session",
-		sessionMode: "free",
+	},
+	design: {
+		placeholder: "Describe the design task...",
+		submitLabel: "Start design",
 	},
 } satisfies Record<
 	string,
-	{ placeholder: string; submitLabel: string; sessionMode: SessionMode }
+	{ placeholder: string; submitLabel: string; sessionMode?: SessionMode }
 >;
 
 export type NewSessionMode = keyof typeof newSessionModes;

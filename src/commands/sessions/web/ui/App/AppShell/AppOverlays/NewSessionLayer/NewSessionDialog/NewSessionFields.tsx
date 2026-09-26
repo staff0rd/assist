@@ -1,19 +1,15 @@
 import Stack from "@mui/material/Stack";
-import { ModeRadioGroup } from "./ModeRadioGroup";
+import type { ComponentProps } from "react";
 import { NewSessionPromptField } from "./NewSessionPromptField";
+import { NewSessionSelectors } from "./NewSessionSelectors";
 import { newSessionModes } from "./newSessionModes";
 import { RepoCombobox } from "./RepoCombobox";
-import type { useDraftFocus } from "./useDraftFocus";
-import type { NewSessionDraft } from "../useNewSessionDraft";
 import { useRepoSelectionContext } from "../../../../../useRepoSelectionContext";
 
-export function NewSessionFields({
-	draft,
-	focus,
-}: {
-	draft: NewSessionDraft;
-	focus: ReturnType<typeof useDraftFocus>;
-}) {
+export function NewSessionFields(
+	props: ComponentProps<typeof NewSessionSelectors>,
+) {
+	const { draft, focus } = props;
 	const { repos } = useRepoSelectionContext();
 
 	return (
@@ -35,13 +31,7 @@ export function NewSessionFields({
 					autoFocus={focus.autoFocus === "repo"}
 					onTrack={focus.trackRepo}
 				/>
-				<ModeRadioGroup
-					value={draft.mode}
-					onChange={draft.setMode}
-					groupRef={focus.modeRef}
-					autoFocus={focus.autoFocus === "mode"}
-					onTrack={focus.trackMode}
-				/>
+				<NewSessionSelectors {...props} />
 			</Stack>
 		</Stack>
 	);

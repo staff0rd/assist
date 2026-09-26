@@ -1,31 +1,33 @@
 import type { FormEvent } from "react";
-import { launchNewSession } from "./NewSessionDialog/launchNewSession";
+import { harnessChoices } from "./NewSessionDialog/harnessChoices";
+import {
+	launchNewSession,
+	type NewSessionLaunchers,
+} from "./NewSessionDialog/launchNewSession";
 import { NewSessionFields } from "./NewSessionDialog/NewSessionFields";
 import { NewSessionFooter } from "./NewSessionDialog/NewSessionFooter";
 import { newSessionModes } from "./NewSessionDialog/newSessionModes";
 import { useDraftFocus } from "./NewSessionDialog/useDraftFocus";
 import type { NewSessionDraft } from "./useNewSessionDraft";
 import { AutoFocusDialog } from "../AutoFocusDialog";
+import { useHarnessCapabilities } from "../../../../useHarnessCapabilities";
 
 export function NewSessionDialog({
 	draft,
-	onCreate,
-	onCreateAssist,
+	launchers,
 	onClose,
 }: {
 	draft: NewSessionDraft;
-	onCreate: (prompt: string, cwd?: string) => void;
-	onCreateAssist: (args: string[], cwd?: string) => void;
+	launchers: NewSessionLaunchers;
 	onClose: () => void;
 }) {
 	const focus = useDraftFocus(draft.focus, draft.setFocus);
+	const harnesses = harnessChoices(useHarnessCapabilities());
+	const harness = harnesses.includes(draft.harness) ? draft.harness : "claude";
 
 	const submit = (e: FormEvent) => {
 		e.preventDefault();
-		launchNewSession(draft.mode, draft.prompt, draft.cwd, {
-			onCreate,
-			onCreateAssist,
-		});
+		launchNewSession(draft.mode, harness, draft.prompt, draft.cwd, launchers);
 		draft.clear();
 		onClose();
 	};
@@ -33,7 +35,12 @@ export function NewSessionDialog({
 	return (
 		<AutoFocusDialog onClose={onClose} onEntered={focus.restore} centered>
 			<form onSubmit={submit}>
-				<NewSessionFields draft={draft} focus={focus} />
+				<NewSessionFields
+					draft={draft}
+					harness={harness}
+					harnesses={harnesses}
+					focus={focus}
+				/>
 				<NewSessionFooter
 					submitLabel={newSessionModes[draft.mode].submitLabel}
 				/>

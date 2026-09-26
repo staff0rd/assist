@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { dispatchMode, MODES } from "./dispatchMode";
+import { dispatchMode } from "./dispatchMode";
 
 describe("dispatchMode", () => {
 	it("appends trimmed text to the assist args", () => {
@@ -62,29 +62,5 @@ describe("dispatchMode", () => {
 
 		expect(onCreateAssist).not.toHaveBeenCalled();
 		expect(setMode).toHaveBeenCalledWith("free");
-	});
-});
-
-describe("MODES", () => {
-	it("flags draft, bug, and refine as prompt modes", () => {
-		const promptModes = Object.fromEntries(
-			MODES.map((m) => [m.value, m.prompt]),
-		);
-
-		expect(promptModes).toEqual({
-			"assist-draft": true,
-			"assist-bug": true,
-			"assist-refine": true,
-		});
-	});
-
-	it("keeps refine off the top nav while the other modes stay on it", () => {
-		const navModes = Object.fromEntries(MODES.map((m) => [m.value, m.nav]));
-
-		expect(navModes).toEqual({
-			"assist-draft": true,
-			"assist-bug": true,
-			"assist-refine": false,
-		});
 	});
 });

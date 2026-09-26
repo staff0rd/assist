@@ -16,8 +16,12 @@ export function AppOverlays({
 		<>
 			<FilePaletteLayer />
 			<NewSessionLayer
-				onCreate={socket.createSession}
-				onCreateAssist={socket.createAssistSession}
+				launchers={{
+					onCreate: socket.createSession,
+					onCreateDesign: socket.createDesignSession,
+					onCreateHarness: socket.createHarnessSession,
+					onCreateAssist: socket.createAssistSession,
+				}}
 			/>
 			<ReconnectingIndicator reconnecting={socket.reconnecting} />
 			<ErrorSnackbar error={socket.error} onClose={socket.clearError} />

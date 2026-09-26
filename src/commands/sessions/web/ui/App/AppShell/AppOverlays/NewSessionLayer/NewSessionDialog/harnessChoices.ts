@@ -1,4 +1,4 @@
-import type { HarnessKind } from "../../../../../../../../../../shared/harnesses";
+import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
 
 export function harnessChoices(capabilities: {
 	exposeCodexActions: boolean;

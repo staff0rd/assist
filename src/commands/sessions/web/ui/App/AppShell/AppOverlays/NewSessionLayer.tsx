@@ -1,16 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { NewSessionDialog } from "./NewSessionLayer/NewSessionDialog";
+import type { NewSessionLaunchers } from "./NewSessionLayer/NewSessionDialog/launchNewSession";
 import { useDefaultNewSessionMode } from "./NewSessionLayer/useDefaultNewSessionMode";
 import { useNewSessionDraft } from "./NewSessionLayer/useNewSessionDraft";
 import { useNewSessionHotkey } from "./NewSessionLayer/useNewSessionHotkey";
 
 export function NewSessionLayer({
-	onCreate,
-	onCreateAssist,
+	launchers,
 }: {
-	onCreate: (prompt: string, cwd?: string) => void;
-	onCreateAssist: (args: string[], cwd?: string) => void;
+	launchers: NewSessionLaunchers;
 }) {
 	const [open, setOpen] = useState(false);
 	const draft = useNewSessionDraft(useDefaultNewSessionMode());
@@ -34,8 +33,7 @@ export function NewSessionLayer({
 	return (
 		<NewSessionDialog
 			draft={draft}
-			onCreate={onCreate}
-			onCreateAssist={onCreateAssist}
+			launchers={launchers}
 			onClose={() => setOpen(false)}
 		/>
 	);

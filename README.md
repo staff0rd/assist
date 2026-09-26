@@ -410,7 +410,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 
 Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client relaying WebSocket traffic to the daemon over a local IPC socket (`~/.assist/daemon/daemon.sock`; named pipe `\\.\pipe\assist-sessions-daemon` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` and auto-exits once no sessions remain and no client has connected for 60 seconds. See [docs/session-lifecycle.md](docs/session-lifecycle.md).
 
-The topnav has a **Design** dropdown: submitting a prompt launches an interactive `claude` session with the vendored design system prompt appended via `--append-system-prompt`.
+The topnav's **+** button (or Ctrl+N / Alt+N) opens the new-session dialog, which replaces the old draft / bug / prompt / design topnav buttons. Its mode selector picks `draft`, `bug`, `prompt` or `design`; in `prompt` mode a harness selector picks Claude, Codex or pi when those are exposed. `design` launches an interactive `claude` session with the vendored design system prompt appended via `--append-system-prompt`. Arrow keys change the mode or harness, and Tab steps through a selector's options before moving on to the next control.
 
 Every live session card carries an **add-agent** button (👥) that starts a second agent inside that session's existing workspace rather than allocating a new one. While several agents share a workspace, only the last one to leave triggers teardown.
 
@@ -430,7 +430,7 @@ Requires `assist` installed on the Windows host.
 - `sessions.topBar` — defaults to **true**: a sticky top bar inside the terminal panel carrying the session's ids, backlog chip and story name, the phase caption, elapsed time, the Continue/Auto-run/Dismiss switches and the session actions. Set it false to keep all of that on the card instead.
 - `sessions.floatWaiting` — defaults to **true**: sessions that have been `waiting` on input for longer than the threshold float above the other cards, longest waiting first. Set it false to keep the star-only ordering; starred sessions still sort above everything.
 - `sessions.floatWaitingAfterMs` — defaults to **5000**: how long a session must have been `waiting` on input before `sessions.floatWaiting` floats it.
-- `sessions.newSessionMode` — defaults to **draft**: the mode pre-selected when the Ctrl+N new session dialog opens. One of `draft`, `bug` or `prompt`.
+- `sessions.newSessionMode` — defaults to **draft**: the mode pre-selected when the Ctrl+N new session dialog opens. One of `draft`, `bug`, `prompt` or `design`.
 - `sessions.maxLive` — defaults to **24**: the ceiling on concurrent live sessions one daemon holds. Spawning past it is refused (`session ceiling of N reached`) and a daemon birth respawns at most this many persisted sessions, deferring the rest to stopped cards. The daemon serves every repo, so set it globally: `assist config set sessions.maxLive 32 -g`.
 
 ### Releases

@@ -46,9 +46,6 @@ export function AppToolbar({
 				<OpenInGitHubButton cwd={selection.selectedCwd} />
 			</Box>
 			<TopNavActions
-				onCreate={socket.createSession}
-				onCreateDesign={socket.createDesignSession}
-				onCreateHarness={socket.createHarnessSession}
 				onCreateAssist={socket.createAssistSession}
 				onStartRun={socket.startRun}
 			/>

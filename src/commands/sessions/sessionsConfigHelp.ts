@@ -50,7 +50,7 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "sessions.newSessionMode",
 		setter: "assist config set sessions.newSessionMode bug -g",
-		note: "mode pre-selected in the Ctrl+N new session dialog: draft | bug | prompt (default: draft)",
+		note: "mode pre-selected in the Ctrl+N new session dialog: draft | bug | prompt | design (default: draft)",
 	},
 	{
 		key: "worktree.enabled",

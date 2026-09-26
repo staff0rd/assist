@@ -5,6 +5,7 @@ import {
 	fireEvent,
 	render,
 	screen,
+	within,
 } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -41,8 +42,12 @@ function renderAt(path: string) {
 						}}
 					>
 						<NewSessionLayer
-							onCreate={onCreate}
-							onCreateAssist={onCreateAssist}
+							launchers={{
+								onCreate,
+								onCreateDesign: vi.fn(),
+								onCreateHarness: vi.fn(),
+								onCreateAssist,
+							}}
 						/>
 					</RepoSelectionContext.Provider>
 				),
@@ -55,7 +60,7 @@ function renderAt(path: string) {
 }
 
 function checkedMode() {
-	return screen
+	return within(screen.getByRole("radiogroup", { name: "Mode" }))
 		.getAllByRole("radio")
 		.find((radio) => radio.getAttribute("aria-checked") === "true")
 		?.textContent;

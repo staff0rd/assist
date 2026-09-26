@@ -278,7 +278,9 @@ const assistConfigShape = {
 			floatWaiting: z.boolean().default(true),
 			floatWaitingAfterMs: z.number().default(5000),
 			maxLive: z.number().default(24),
-			newSessionMode: z.enum(["draft", "bug", "prompt"]).default("draft"),
+			newSessionMode: z
+				.enum(["draft", "bug", "prompt", "design"])
+				.default("draft"),
 		})
 		.optional(),
 	database: z
