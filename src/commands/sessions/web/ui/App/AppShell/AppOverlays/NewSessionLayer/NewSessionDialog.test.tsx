@@ -5,6 +5,7 @@ import {
 	fireEvent,
 	render,
 	screen,
+	waitFor,
 	within,
 } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -113,9 +114,13 @@ function modeRadio(name: string) {
 	return screen.getByRole("radio", { name });
 }
 
-function harnessRadio(name: string) {
-	return within(screen.getByRole("radiogroup", { name: "Harness" })).getByRole(
-		"radio",
+function promptSegment() {
+	return screen.getByRole("radio", { name: /^prompt/ });
+}
+
+function harnessItem(name: string) {
+	return within(screen.getByRole("menu", { name: "Harness" })).getByRole(
+		"menuitemradio",
 		{ name },
 	);
 }
@@ -429,72 +434,63 @@ describe("NewSessionDialog mode selector", () => {
 });
 
 describe("NewSessionDialog harness selector", () => {
-	it("is hidden when Claude is the only harness", async () => {
+	it("leaves the prompt segment plain when Claude is the only harness", async () => {
 		renderDialog();
 		await act(async () => {});
 
-		expect(screen.queryByRole("radiogroup", { name: "Harness" })).toBeNull();
+		expect(modeRadio("prompt").textContent).toBe("prompt");
 	});
 
-	it("offers every exposed harness in prompt mode, Claude checked", async () => {
+	it("names the chosen harness on the prompt segment", async () => {
 		await renderWithHarnesses();
 
-		expect(checkedIn("Harness")).toBe("Claude");
-		expect(harnessRadio("Codex")).toBeTruthy();
-		expect(harnessRadio("pi")).toBeTruthy();
+		expect(promptSegment().textContent).toBe("prompt · Claude");
 	});
 
-	it.each(["draft", "bug", "design"] as const)(
-		"is locked to Claude in %s mode",
-		async (mode) => {
-			await renderWithHarnesses(mode);
+	it("switches to prompt without opening the menu from another mode", async () => {
+		await renderWithHarnesses("bug");
 
-			expect(checkedIn("Harness")).toBe("Claude");
-			expect(harnessRadio("Codex").hasAttribute("disabled")).toBe(true);
-			expect(harnessRadio("pi").hasAttribute("disabled")).toBe(true);
+		fireEvent.click(promptSegment());
 
-			fireEvent.keyDown(harnessRadio("Claude"), { key: "ArrowRight" });
-			expect(checkedIn("Harness")).toBe("Claude");
-		},
-	);
-
-	it("switches harness with the arrow keys", async () => {
-		await renderWithHarnesses();
-
-		fireEvent.keyDown(harnessRadio("Claude"), { key: "ArrowRight" });
-		expect(checkedIn("Harness")).toBe("Codex");
-		expect(document.activeElement).toBe(harnessRadio("Codex"));
-
-		fireEvent.keyDown(harnessRadio("Codex"), { key: "ArrowLeft" });
-		fireEvent.keyDown(harnessRadio("Claude"), { key: "ArrowLeft" });
-		expect(checkedIn("Harness")).toBe("pi");
+		expect(checkedMode()).toBe("prompt · Claude");
+		expect(screen.queryByRole("menu", { name: "Harness" })).toBeNull();
 	});
 
-	it("moves focus between the mode and harness rows with up and down", async () => {
+	it("opens the harness menu when prompt is clicked again", async () => {
 		await renderWithHarnesses();
-		fireEvent.click(harnessRadio("Codex"));
 
-		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowDown" });
-		expect(document.activeElement).toBe(harnessRadio("Codex"));
+		fireEvent.click(promptSegment());
 
-		fireEvent.keyDown(harnessRadio("Codex"), { key: "ArrowUp" });
-		expect(document.activeElement).toBe(modeRadio("prompt"));
+		expect(
+			within(screen.getByRole("menu", { name: "Harness" }))
+				.getAllByRole("menuitemradio")
+				.map((item) => item.textContent),
+		).toEqual(["Claude", "Codex", "pi"]);
+		expect(harnessItem("Claude").getAttribute("aria-checked")).toBe("true");
 
-		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowUp" });
-		expect(document.activeElement).toBe(harnessRadio("Codex"));
+		fireEvent.click(harnessItem("Codex"));
 
-		fireEvent.keyDown(harnessRadio("Codex"), { key: "ArrowDown" });
-		expect(document.activeElement).toBe(modeRadio("prompt"));
-		expect(checkedMode()).toBe("prompt");
-		expect(checkedIn("Harness")).toBe("Codex");
+		expect(promptSegment().textContent).toBe("prompt · Codex");
+		await waitFor(() =>
+			expect(screen.queryByRole("menu", { name: "Harness" })).toBeNull(),
+		);
+	});
+
+	it("opens the harness menu on ArrowDown from the prompt segment", async () => {
+		await renderWithHarnesses();
+
+		fireEvent.keyDown(promptSegment(), { key: "ArrowDown" });
+
+		expect(screen.getByRole("menu", { name: "Harness" })).toBeTruthy();
 	});
 
 	it("launches the chosen harness on Enter from the selector", async () => {
 		const { onCreate, onCreateHarness } = await renderWithHarnesses();
 
 		fireEvent.change(promptInput(), { target: { value: "fix it" } });
-		fireEvent.click(harnessRadio("Codex"));
-		fireEvent.keyDown(harnessRadio("Codex"), { key: "Enter" });
+		fireEvent.click(promptSegment());
+		fireEvent.click(harnessItem("Codex"));
+		fireEvent.keyDown(promptSegment(), { key: "Enter" });
 
 		expect(onCreateHarness).toHaveBeenCalledWith(
 			"codex",
@@ -521,19 +517,9 @@ describe("NewSessionDialog keyboard", () => {
 		expect(tabStops()).toEqual([
 			promptInput(),
 			repoInput(),
-			modeRadio("prompt"),
-			harnessRadio("Claude"),
+			promptSegment(),
 			screen.getByRole("button", { name: "Start session" }),
 		]);
-	});
-
-	it("leaves Tab on the last harness to move focus on to submit", async () => {
-		await renderWithHarnesses();
-		fireEvent.click(harnessRadio("pi"));
-
-		const notPrevented = fireEvent.keyDown(harnessRadio("pi"), { key: "Tab" });
-		expect(notPrevented).toBe(true);
-		expect(checkedIn("Harness")).toBe("pi");
 	});
 
 	it("submits on Enter from the mode selector", () => {

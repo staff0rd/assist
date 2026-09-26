@@ -4,7 +4,7 @@ import type { NewSessionMode } from "./NewSessionDialog/newSessionModes";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
 
 export type DraftFocus = {
-	field: "prompt" | "repo" | "mode" | "harness";
+	field: "prompt" | "repo" | "mode";
 	selectionStart: number;
 	selectionEnd: number;
 };

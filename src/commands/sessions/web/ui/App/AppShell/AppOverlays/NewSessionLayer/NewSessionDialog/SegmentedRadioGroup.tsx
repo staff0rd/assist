@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import type { RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 import { SegmentedRadio } from "./SegmentedRadioGroup/SegmentedRadio";
 import { segmentedRadioKeyHandler } from "./SegmentedRadioGroup/segmentedRadioKeyHandler";
 
@@ -22,20 +22,17 @@ export function SegmentedRadioGroup({
 	autoFocus,
 	onTrack,
 	onToggleRow,
-	locked = false,
 }: {
 	label: string;
 	options: readonly string[];
 	value: string;
 	onChange: (value: string) => void;
-	optionLabel?: (option: string) => string;
+	optionLabel?: (option: string) => ReactNode;
 	groupRef: RefObject<HTMLDivElement | null>;
 	autoFocus: boolean;
 	onTrack: () => void;
 	onToggleRow?: () => void;
-	locked?: boolean;
 }) {
-	const selectable = locked ? [value] : options;
 	return (
 		<Stack
 			ref={groupRef}
@@ -45,7 +42,7 @@ export function SegmentedRadioGroup({
 			spacing="2px"
 			onFocus={onTrack}
 			onKeyDown={segmentedRadioKeyHandler(
-				selectable,
+				options,
 				value,
 				onChange,
 				onToggleRow,
@@ -58,7 +55,6 @@ export function SegmentedRadioGroup({
 					value={option}
 					label={optionLabel(option)}
 					checked={option === value}
-					disabled={!selectable.includes(option)}
 					autoFocus={autoFocus}
 					onSelect={() => onChange(option)}
 				/>

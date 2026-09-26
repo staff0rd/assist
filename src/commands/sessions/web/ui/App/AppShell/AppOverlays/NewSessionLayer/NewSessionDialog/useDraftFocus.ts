@@ -10,7 +10,6 @@ export function useDraftFocus(
 	const promptEl = useRef<HTMLTextAreaElement | null>(null);
 	const repoRef = useRef<HTMLInputElement>(null);
 	const modeRef = useRef<HTMLDivElement>(null);
-	const harnessRef = useRef<HTMLDivElement>(null);
 
 	const promptRef = useCallback((el: HTMLTextAreaElement | null) => {
 		promptEl.current = el;
@@ -35,7 +34,6 @@ export function useDraftFocus(
 		const target = {
 			repo: repoRef.current,
 			mode: checkedRadio(modeRef.current),
-			harness: checkedRadio(harnessRef.current),
 			prompt: promptEl.current,
 		}[field];
 		(target ?? promptEl.current)?.focus();
@@ -46,11 +44,9 @@ export function useDraftFocus(
 		promptRef,
 		repoRef,
 		modeRef,
-		harnessRef,
 		trackPrompt,
 		trackRepo: () => setFocus({ ...focus, field: "repo" }),
 		trackMode: () => setFocus({ ...focus, field: "mode" }),
-		trackHarness: () => setFocus({ ...focus, field: "harness" }),
 		restore,
 	};
 }
