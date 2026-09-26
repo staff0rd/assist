@@ -1,3 +1,10 @@
+## [0.704.3](https://github.com/staff0rd/assist/compare/v0.704.2...v0.704.3) (2026-09-26)
+
+
+### Bug Fixes
+
+* invert new session button, tighten gaps ([359405e](https://github.com/staff0rd/assist/commit/359405e93f390f687f4af3df72218fa33eabeace))
+
 ## [0.704.2](https://github.com/staff0rd/assist/compare/v0.704.1...v0.704.2) (2026-09-26)
 
 
