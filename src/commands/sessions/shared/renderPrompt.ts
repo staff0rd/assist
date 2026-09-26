@@ -5,6 +5,8 @@ export function renderPrompt(raw: string): string {
 		const name = `/${command.replace(/^\/+/, "")}`;
 		return args ? `${name} ${args}` : name;
 	}
+	const bashInput = marker(raw, "bash-input");
+	if (bashInput) return `! ${bashInput}`;
 	return stripBlocks(raw);
 }
 
@@ -19,5 +21,6 @@ function stripBlocks(raw: string): string {
 		.replace(/<task-notification>[\s\S]*?<\/task-notification>/g, "")
 		.replace(/<command-[^>]*>[\s\S]*?<\/command-[^>]*>/g, "")
 		.replace(/<local-command-[^>]*>[\s\S]*?<\/local-command-[^>]*>/g, "")
+		.replace(/<bash-(stdout|stderr)>[\s\S]*?<\/bash-\1>/g, "")
 		.trim();
 }

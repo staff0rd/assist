@@ -147,6 +147,37 @@ describe("extractLastUserMessage", () => {
 		expect(extractLastUserMessage(entries)).toBe("earlier prompt");
 	});
 
+	it("renders a bash-mode command followed by its output as the command", () => {
+		const entries = [
+			user("<bash-input>cat ~/.project-switch.yml</bash-input>"),
+			user(
+				"<bash-stdout>webserver: wsl</bash-stdout><bash-stderr>warning</bash-stderr>",
+			),
+		];
+
+		expect(extractLastUserMessage(entries)).toBe("! cat ~/.project-switch.yml");
+	});
+
+	it("skips an entry that holds only bash output", () => {
+		const entries = [
+			user("earlier prompt"),
+			user("<bash-stdout>secret output</bash-stdout>"),
+		];
+
+		expect(extractLastUserMessage(entries)).toBe("earlier prompt");
+	});
+
+	it("skips bash output with an empty stderr block", () => {
+		const entries = [
+			user("earlier prompt"),
+			user(
+				"<bash-stdout>line one\nline two</bash-stdout><bash-stderr></bash-stderr>",
+			),
+		];
+
+		expect(extractLastUserMessage(entries)).toBe("earlier prompt");
+	});
+
 	it("caps a long prompt and marks it as truncated", () => {
 		const entries = [user("x".repeat(50))];
 
