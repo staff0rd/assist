@@ -1,6 +1,5 @@
 import Stack from "@mui/material/Stack";
 import type { AssistLaunchMeta } from "../../../createSessionAction";
-import { NewSessionButton } from "./TopNavActions/NewSessionButton";
 import { prLaunchMeta } from "../../prLaunchMeta";
 import { ReviewDropdown } from "./TopNavActions/ReviewDropdown";
 import { ServerRunMenu } from "./TopNavActions/ServerRunMenu";
@@ -21,7 +20,6 @@ export function TopNavActions({
 
 	return (
 		<Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
-			<NewSessionButton />
 			<ReviewDropdown
 				cwd={selectedCwd}
 				disabled={!selectedCwd}

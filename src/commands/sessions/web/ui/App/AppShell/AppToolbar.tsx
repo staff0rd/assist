@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import { NavTabs } from "./AppToolbar/NavTabs";
+import { NewSessionButton } from "./AppToolbar/NewSessionButton";
 import { OpenInCodeButton } from "../OpenInCodeButton";
 import { OpenInGitHubButton } from "./AppToolbar/OpenInGitHubButton";
 import { RateLimitsIndicator } from "./AppToolbar/RateLimitsIndicator";
@@ -44,6 +45,7 @@ export function AppToolbar({
 			<Box sx={{ display: "flex", ml: 1, mr: 2 }}>
 				<OpenInCodeButton cwd={selection.selectedCwd} />
 				<OpenInGitHubButton cwd={selection.selectedCwd} />
+				<NewSessionButton />
 			</Box>
 			<TopNavActions
 				onCreateAssist={socket.createAssistSession}

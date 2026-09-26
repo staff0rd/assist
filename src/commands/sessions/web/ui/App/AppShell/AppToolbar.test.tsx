@@ -12,6 +12,9 @@ vi.mock("../OpenInCodeButton", () => ({ OpenInCodeButton: () => <div /> }));
 vi.mock("./AppToolbar/OpenInGitHubButton", () => ({
 	OpenInGitHubButton: () => <div />,
 }));
+vi.mock("./AppToolbar/NewSessionButton", () => ({
+	NewSessionButton: () => <div />,
+}));
 vi.mock("./AppToolbar/TopNavActions", () => ({ TopNavActions: () => <div /> }));
 vi.mock("./AppToolbar/RateLimitsIndicator", () => ({
 	RateLimitsIndicator: () => <div />,

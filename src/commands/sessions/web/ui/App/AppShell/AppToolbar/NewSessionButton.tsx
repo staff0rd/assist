@@ -1,8 +1,10 @@
-import AddIcon from "@mui/icons-material/Add";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { useSearchParams } from "react-router";
 import { NewSessionTooltipTitle } from "./NewSessionButton/NewSessionTooltipTitle";
+
+const sx = { color: "inherit" } as const;
 
 export function NewSessionButton() {
 	const [, setSearchParams] = useSearchParams();
@@ -18,8 +20,8 @@ export function NewSessionButton() {
 
 	return (
 		<Tooltip title={<NewSessionTooltipTitle />}>
-			<IconButton size="small" aria-label="New session" onClick={open}>
-				<AddIcon fontSize="small" />
+			<IconButton sx={sx} aria-label="New session" onClick={open}>
+				<AddCircleIcon />
 			</IconButton>
 		</Tooltip>
 	);
