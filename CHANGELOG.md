@@ -1,3 +1,10 @@
+## [0.704.1](https://github.com/staff0rd/assist/compare/v0.704.0...v0.704.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* place new session button with icons ([b063924](https://github.com/staff0rd/assist/commit/b06392441c39e942175d8b94fa252cb7a0b402cd))
+
 # [0.704.0](https://github.com/staff0rd/assist/compare/v0.703.1...v0.704.0) (2026-09-26)
 
 
