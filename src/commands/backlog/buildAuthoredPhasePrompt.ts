@@ -20,6 +20,7 @@ export function buildAuthoredPhasePrompt(
 		...buildJiraStartedLines(item, phaseNumber),
 		"",
 		"Focus ONLY on this phase. Do not work on other phases.",
+		"Work only in this item's own repo. Do not modify, commit or push any other repo without the user's explicit permission — if a task needs changes elsewhere, stop and ask the user, and suggest filing that work as a separate item in that repo's backlog.",
 		"If you need to modify backlog items, run `assist backlog --help` to discover available commands.",
 		"When you have completed all tasks for this phase, run /verify to check your work.",
 		...buildManualCheckLines(manualChecks, options.commitBeforePhaseEnd),

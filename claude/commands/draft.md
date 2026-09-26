@@ -79,6 +79,8 @@ Two tests for each phase before proposing the plan:
 1. **Observable**: can you answer "does this work?" by running or inspecting the result? If a phase only produces internal plumbing with no observable effect, it's horizontal — restructure it.
 2. **Self-contained**: would `assist verify` pass with only this phase's code committed — no unused exports, no dead stubs awaiting a later phase? If not, merge the producer and its consumer into the same phase.
 
+**Every task stays in this repo.** An item belongs to the repo whose backlog it is in, and phase runs work only there. Never plan a task that edits, commits or pushes another repo (e.g. "In ~/git/other-repo, change..."). If the idea needs changes in another repo, leave that work out of the plan and tell the user to file it as a separate item in that repo's backlog.
+
 Keep phases small (2-4 tasks each). A typical item should have 2-3 phases.
 
 Most phases should NOT have manual checks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). Do not add a final phase just for end-to-end verification — a `Review` phase is appended to every plan automatically, and authoring one is rejected.
