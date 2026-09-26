@@ -1,7 +1,7 @@
 import ListSubheader from "@mui/material/ListSubheader";
 import { useNodeName } from "./NodeNameLabel/useNodeName";
 
-const sx = { lineHeight: "32px" } as const;
+const sx = { lineHeight: "32px", bgcolor: "transparent" } as const;
 
 export function NodeNameLabel() {
 	const nodeName = useNodeName();
