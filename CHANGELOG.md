@@ -1,3 +1,10 @@
+# [0.705.0](https://github.com/staff0rd/assist/compare/v0.704.7...v0.705.0) (2026-09-26)
+
+
+### Features
+
+* node name, health API, Windows web ([adc8d81](https://github.com/staff0rd/assist/commit/adc8d81bfdbfc1cabae7493158435b449323283f))
+
 ## [0.704.7](https://github.com/staff0rd/assist/compare/v0.704.6...v0.704.7) (2026-09-26)
 
 
