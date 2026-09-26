@@ -1,3 +1,10 @@
+# [0.703.0](https://github.com/staff0rd/assist/compare/v0.702.0...v0.703.0) (2026-09-26)
+
+
+### Features
+
+* restore new session dialog focus ([199eb0d](https://github.com/staff0rd/assist/commit/199eb0d9264d06a14c269d2ffda17c29ca46a993))
+
 # [0.702.0](https://github.com/staff0rd/assist/compare/v0.701.0...v0.702.0) (2026-09-26)
 
 
