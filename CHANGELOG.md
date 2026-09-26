@@ -1,3 +1,10 @@
+## [0.703.1](https://github.com/staff0rd/assist/compare/v0.703.0...v0.703.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* ask draft questions via question tool ([384b3ab](https://github.com/staff0rd/assist/commit/384b3abdda7fa8e8c3c81f3a0e068492a4233ad7))
+
 # [0.703.0](https://github.com/staff0rd/assist/compare/v0.702.0...v0.703.0) (2026-09-26)
 
 
