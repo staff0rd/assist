@@ -1,3 +1,10 @@
+# [0.713.0](https://github.com/staff0rd/assist/compare/v0.712.0...v0.713.0) (2026-09-26)
+
+
+### Features
+
+* last message history position ([b846bd0](https://github.com/staff0rd/assist/commit/b846bd0d421fb5cd12a4881d97cf16bd93cc916c))
+
 # [0.712.0](https://github.com/staff0rd/assist/compare/v0.711.3...v0.712.0) (2026-09-26)
 
 
