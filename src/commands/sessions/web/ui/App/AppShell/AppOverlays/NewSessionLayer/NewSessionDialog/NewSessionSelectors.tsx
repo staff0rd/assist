@@ -1,8 +1,11 @@
+import Stack from "@mui/material/Stack";
 import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
-import { harnessLabel } from "../../../../../../../../../shared/harnessLabel";
+import { checkedRadio } from "./checkedRadio";
+import { HarnessRow } from "./HarnessRow";
 import { type NewSessionMode, newSessionModeOrder } from "./newSessionModes";
 import { SegmentedRadioGroup } from "./SegmentedRadioGroup";
 import type { useDraftFocus } from "./useDraftFocus";
+import { useOffsetUnderChecked } from "./useOffsetUnderChecked";
 import type { NewSessionDraft } from "../useNewSessionDraft";
 
 export function NewSessionSelectors({
@@ -16,8 +19,15 @@ export function NewSessionSelectors({
 	harnesses: HarnessKind[];
 	focus: ReturnType<typeof useDraftFocus>;
 }) {
+	const showHarness = draft.mode === "prompt" && harnesses.length > 1;
+	const { containerRef, offset } = useOffsetUnderChecked(
+		focus.modeRef,
+		draft.mode,
+	);
+	const focusHarness = () => checkedRadio(focus.harnessRef.current)?.focus();
+
 	return (
-		<>
+		<Stack ref={containerRef} spacing={0.5} sx={{ flexShrink: 0 }}>
 			<SegmentedRadioGroup
 				label="Mode"
 				options={newSessionModeOrder}
@@ -26,19 +36,17 @@ export function NewSessionSelectors({
 				groupRef={focus.modeRef}
 				autoFocus={focus.autoFocus === "mode"}
 				onTrack={focus.trackMode}
+				onToggleRow={showHarness ? focusHarness : undefined}
 			/>
-			{draft.mode === "prompt" && harnesses.length > 1 && (
-				<SegmentedRadioGroup
-					label="Harness"
-					options={harnesses}
-					value={harness}
-					onChange={(choice) => draft.setHarness(choice as HarnessKind)}
-					optionLabel={(choice) => harnessLabel(choice as HarnessKind)}
-					groupRef={focus.harnessRef}
-					autoFocus={focus.autoFocus === "harness"}
-					onTrack={focus.trackHarness}
+			{showHarness && (
+				<HarnessRow
+					harness={harness}
+					harnesses={harnesses}
+					onChange={draft.setHarness}
+					offset={offset}
+					focus={focus}
 				/>
 			)}
-		</>
+		</Stack>
 	);
 }

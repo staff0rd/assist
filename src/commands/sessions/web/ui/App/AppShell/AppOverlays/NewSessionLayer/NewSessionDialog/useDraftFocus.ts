@@ -1,9 +1,6 @@
 import { type SyntheticEvent, useCallback, useRef } from "react";
+import { checkedRadio } from "./checkedRadio";
 import type { DraftFocus } from "../useNewSessionDraft";
-
-function checkedRadio(group: HTMLDivElement | null) {
-	return group?.querySelector<HTMLElement>('[aria-checked="true"]');
-}
 
 export function useDraftFocus(
 	focus: DraftFocus,

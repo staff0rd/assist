@@ -263,18 +263,27 @@ describe("NewSessionDialog mode selector", () => {
 		).toEqual(["draft", "bug", "prompt", "design"]);
 	});
 
-	it("switches mode with the arrow keys and wraps around", () => {
+	it("switches mode with the left and right arrows and wraps around", () => {
 		renderDialog();
 
 		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowRight" });
 		expect(checkedMode()).toBe("design");
 		expect(document.activeElement).toBe(modeRadio("design"));
 
-		fireEvent.keyDown(modeRadio("design"), { key: "ArrowDown" });
+		fireEvent.keyDown(modeRadio("design"), { key: "ArrowRight" });
 		expect(checkedMode()).toBe("draft");
 
 		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowLeft" });
-		fireEvent.keyDown(modeRadio("design"), { key: "ArrowUp" });
+		fireEvent.keyDown(modeRadio("design"), { key: "ArrowLeft" });
+		expect(checkedMode()).toBe("prompt");
+	});
+
+	it("leaves the mode alone on up and down when no harness row shows", () => {
+		renderDialog();
+
+		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowDown" });
+		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowUp" });
+
 		expect(checkedMode()).toBe("prompt");
 	});
 
@@ -414,6 +423,25 @@ describe("NewSessionDialog harness selector", () => {
 		fireEvent.keyDown(harnessRadio("Codex"), { key: "ArrowLeft" });
 		fireEvent.keyDown(harnessRadio("Claude"), { key: "ArrowLeft" });
 		expect(checkedIn("Harness")).toBe("pi");
+	});
+
+	it("moves focus between the mode and harness rows with up and down", async () => {
+		await renderWithHarnesses();
+		fireEvent.click(harnessRadio("Codex"));
+
+		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowDown" });
+		expect(document.activeElement).toBe(harnessRadio("Codex"));
+
+		fireEvent.keyDown(harnessRadio("Codex"), { key: "ArrowUp" });
+		expect(document.activeElement).toBe(modeRadio("prompt"));
+
+		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowUp" });
+		expect(document.activeElement).toBe(harnessRadio("Codex"));
+
+		fireEvent.keyDown(harnessRadio("Codex"), { key: "ArrowDown" });
+		expect(document.activeElement).toBe(modeRadio("prompt"));
+		expect(checkedMode()).toBe("prompt");
+		expect(checkedIn("Harness")).toBe("Codex");
 	});
 
 	it("launches the chosen harness on Enter from the selector", async () => {

@@ -21,6 +21,7 @@ export function SegmentedRadioGroup({
 	groupRef,
 	autoFocus,
 	onTrack,
+	onToggleRow,
 }: {
 	label: string;
 	options: readonly string[];
@@ -30,6 +31,7 @@ export function SegmentedRadioGroup({
 	groupRef: RefObject<HTMLDivElement | null>;
 	autoFocus: boolean;
 	onTrack: () => void;
+	onToggleRow?: () => void;
 }) {
 	return (
 		<Stack
@@ -39,7 +41,12 @@ export function SegmentedRadioGroup({
 			aria-label={label}
 			spacing="2px"
 			onFocus={onTrack}
-			onKeyDown={segmentedRadioKeyHandler(options, value, onChange)}
+			onKeyDown={segmentedRadioKeyHandler(
+				options,
+				value,
+				onChange,
+				onToggleRow,
+			)}
 			sx={groupSx}
 		>
 			{options.map((option) => (
