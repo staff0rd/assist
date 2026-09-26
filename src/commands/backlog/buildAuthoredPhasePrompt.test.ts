@@ -38,15 +38,6 @@ describe("buildAuthoredPhasePrompt", () => {
 		);
 	});
 
-	it("omits the repo scope when crossRepo is enabled", () => {
-		const prompt = buildAuthoredPhasePrompt(makeItem(), 1, phase, {
-			commitBeforePhaseEnd: false,
-			crossRepo: true,
-		});
-
-		expect(prompt).not.toContain("Work only in this item's own repo");
-	});
-
 	it("omits the /jira started instruction on phase 1 when there is no jiraKey", () => {
 		const prompt = buildAuthoredPhasePrompt(makeItem(), 1, phase);
 

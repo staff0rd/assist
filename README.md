@@ -203,7 +203,7 @@ Backlog item ids are written and displayed in an `a`-prefixed form (e.g. item 55
 - `assist backlog rewind <id> <phase> --reason <reason>` - Rewind an item to an earlier phase
 - `assist backlog next [id] [--once]` - Pick and run the next backlog item, or open `/draft` if none remain
 - `assist backlog refine [id] [--once] [--harness <claude|codex|pi>]` - Alias for `refine`
-- `assist backlog run <id> [--harness <claude|codex|pi>] [--write|--no-write]` - Run a backlog item's plan phase-by-phase with the selected harness, defaulting to `harness.engine`; for Codex, write access uses the `workspace-write` sandbox and `--no-write` uses `read-only`. Each phase prompt scopes the agent to the item's own repo: it must ask before modifying, committing or pushing any other repo. Set `backlog.crossRepo` to `true` to lift this limit (and the matching `/draft`/`/refine` rule) for repos whose items span other repos
+- `assist backlog run <id> [--harness <claude|codex|pi>] [--write|--no-write]` - Run a backlog item's plan phase-by-phase with the selected harness, defaulting to `harness.engine`; for Codex, write access uses the `workspace-write` sandbox and `--no-write` uses `read-only`. Each phase prompt scopes the agent to the item's own repo: it must ask before modifying, committing or pushing any other repo
 - `assist backlog export [file]` - Export every table in the backlog database to a file, or stdout
 - `assist backlog import [file]` - Restore every table present in a dump back into the database (`-y, --yes` skips the prompt)
 - `assist backlog associate-jira <id> [key]` - Associate a Jira ticket (bare key or browse URL); clears any GitHub issue on the item. `--clear` removes it

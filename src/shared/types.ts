@@ -36,7 +36,6 @@ const assistConfigShape = {
 	backlog: z
 		.strictObject({
 			previewComments: z.boolean().default(false),
-			crossRepo: z.boolean().default(false),
 		})
 		.optional(),
 	backup: z

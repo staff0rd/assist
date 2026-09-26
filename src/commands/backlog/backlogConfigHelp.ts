@@ -17,11 +17,6 @@ export const backlogConfigHelp: ConfigHelpEntry[] = [
 		note: "review 'backlog comment' in the web preview pane before it is written (default: off)",
 	},
 	{
-		key: "backlog.crossRepo",
-		setter: "assist config set backlog.crossRepo true",
-		note: "let phase runs, /draft and /refine plan and make changes in other repos (default: off, limited to this repo)",
-	},
-	{
 		key: "clone.baseDir",
 		setter: "assist config set clone.baseDir ~/git",
 		note: "base directory 'backlog clone' clones repos into (default: ~/git)",

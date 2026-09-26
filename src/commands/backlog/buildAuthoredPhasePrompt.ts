@@ -2,13 +2,12 @@ import { buildCommentLines } from "./buildCommentLines";
 import { formatItemId } from "./formatItemId";
 import type { BacklogItem, PlanPhase } from "./types";
 import { buildManualCheckLines } from "./buildManualCheckLines";
-import { buildJiraStartedLines } from "./buildJiraStartedLines";
 
 export function buildAuthoredPhasePrompt(
 	item: BacklogItem,
 	phaseNumber: number,
 	phase: PlanPhase,
-	options: { commitBeforePhaseEnd: boolean; crossRepo?: boolean } = {
+	options: { commitBeforePhaseEnd: boolean } = {
 		commitBeforePhaseEnd: false,
 	},
 ): string {
@@ -21,9 +20,7 @@ export function buildAuthoredPhasePrompt(
 		...buildJiraStartedLines(item, phaseNumber),
 		"",
 		"Focus ONLY on this phase. Do not work on other phases.",
-		options.crossRepo
-			? undefined
-			: "Work only in this item's own repo. Do not modify, commit or push any other repo without the user's explicit permission — if a task needs changes elsewhere, stop and ask the user to file that work as a separate item in that repo's backlog.",
+		"Work only in this item's own repo. Do not modify, commit or push any other repo without the user's explicit permission — if a task needs changes elsewhere, stop and ask the user, and suggest filing that work as a separate item in that repo's backlog.",
 		"If you need to modify backlog items, run `assist backlog --help` to discover available commands.",
 		"When you have completed all tasks for this phase, run /verify to check your work.",
 		...buildManualCheckLines(manualChecks, options.commitBeforePhaseEnd),
@@ -55,6 +52,19 @@ function buildContextLines(
 		`Phase ${phaseNumber}: ${phase.name}`,
 		"Tasks:",
 		formatTasks(phase),
+	];
+}
+
+function buildJiraStartedLines(
+	item: BacklogItem,
+	phaseNumber: number,
+): string[] {
+	if (phaseNumber !== 1 || !item.jiraKey) {
+		return [];
+	}
+	return [
+		"",
+		`As your first step, before any implementation, run \`/jira started ${item.jiraKey}\` to assign the issue to yourself and transition it to In Progress.`,
 	];
 }
 

@@ -10,7 +10,7 @@ export function buildPhasePrompt(
 	phaseNumber: number,
 	phase: PlanPhase,
 ): string {
-	const { worktree, backlog } = loadConfig();
+	const worktree = loadConfig().worktree;
 	const commitBeforePhaseEnd =
 		worktree?.commitBeforePhaseEnd ??
 		worktree?.commitBeforeManualChecks ??
@@ -21,6 +21,5 @@ export function buildPhasePrompt(
 	}
 	return buildAuthoredPhasePrompt(item, phaseNumber, phase, {
 		commitBeforePhaseEnd,
-		crossRepo: backlog?.crossRepo ?? false,
 	});
 }
