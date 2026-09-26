@@ -1,3 +1,10 @@
+## [0.711.1](https://github.com/staff0rd/assist/compare/v0.711.0...v0.711.1) (2026-09-26)
+
+
+### Reverts
+
+* Revert "fix: scope backlog phases to own repo" ([1526adc](https://github.com/staff0rd/assist/commit/1526adc77ce863e72d09baede3da8a647b5242a4))
+
 # [0.711.0](https://github.com/staff0rd/assist/compare/v0.710.1...v0.711.0) (2026-09-26)
 
 
