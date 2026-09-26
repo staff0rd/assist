@@ -98,6 +98,18 @@ describe("unfinishedBackgroundTasks", () => {
 		).toEqual(["b44"]);
 	});
 
+	it("clears a killed task once the agent has taken a turn after the report", () => {
+		expect(
+			unfinishedBackgroundTasks([
+				started("b44"),
+				queued("b44", "killed"),
+				delivered("b44", "killed"),
+				{ type: "assistant", message: { content: [] } },
+				started("c55"),
+			]),
+		).toEqual(["c55"]);
+	});
+
 	it.each([
 		["TaskStop", { task_id: "b44" }],
 		["KillShell", { shell_id: "b44" }],
