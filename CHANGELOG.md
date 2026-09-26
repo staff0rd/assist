@@ -1,3 +1,10 @@
+## [0.704.2](https://github.com/staff0rd/assist/compare/v0.704.1...v0.704.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* harness row under prompt mode ([e559ec0](https://github.com/staff0rd/assist/commit/e559ec0a6754b08761626ceb80d89500b95f35a5))
+
 ## [0.704.1](https://github.com/staff0rd/assist/compare/v0.704.0...v0.704.1) (2026-09-26)
 
 
