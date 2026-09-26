@@ -1,5 +1,6 @@
 import Menu from "@mui/material/Menu";
 import { useState } from "react";
+import { NodeNameLabel } from "./HamburgerMenu/NodeNameLabel";
 import { hamburgerMenuItems } from "./HamburgerMenu/hamburgerMenuItems";
 import { HamburgerMenuDialogs } from "./HamburgerMenu/HamburgerMenuDialogs";
 import { MenuTriggerButton } from "./HamburgerMenu/MenuTriggerButton";
@@ -29,6 +30,7 @@ export function HamburgerMenu({
 				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
 				transformOrigin={{ vertical: "top", horizontal: "right" }}
 			>
+				<NodeNameLabel />
 				{hamburgerMenuItems({
 					mode,
 					onToggleColorMode: () => {

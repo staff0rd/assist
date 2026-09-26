@@ -39,6 +39,18 @@ afterEach(() => {
 });
 
 describe("HamburgerMenu", () => {
+	it("shows this node's name at the top of the menu", async () => {
+		fetchMock.mockResolvedValue({
+			ok: true,
+			json: async () => ({ nodeName: "pc-windows" }),
+		});
+		renderMenu(vi.fn());
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+
+		expect(await screen.findByText("pc-windows")).toBeTruthy();
+	});
+
 	it("launches an assist update session with no cwd on confirm", () => {
 		const launchAssist = vi.fn();
 		renderMenu(launchAssist);
@@ -110,6 +122,9 @@ describe("HamburgerMenu", () => {
 		fireEvent.click(screen.getByText("Restart daemon"));
 		fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
 
-		expect(fetchMock).not.toHaveBeenCalled();
+		expect(fetchMock).not.toHaveBeenCalledWith(
+			expect.stringContaining("/api/restart"),
+			expect.anything(),
+		);
 	});
 });
