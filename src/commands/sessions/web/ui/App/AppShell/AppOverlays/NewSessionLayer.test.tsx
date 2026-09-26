@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { act, cleanup, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { NewSessionLayer } from "./NewSessionLayer";
@@ -19,6 +25,8 @@ function renderAt(path: string) {
 		"fetch",
 		vi.fn(async () => Response.json({ mode: "bug" })),
 	);
+	const onCreate = vi.fn();
+	const onCreateAssist = vi.fn();
 	const router = createMemoryRouter(
 		[
 			{
@@ -26,13 +34,16 @@ function renderAt(path: string) {
 				element: (
 					<RepoSelectionContext.Provider
 						value={{
-							repos: ["/git/alpha"],
+							repos: ["/git/alpha", "/git/beta"],
 							selectedCwd: "/git/alpha",
 							worktreeCwd: "/git/alpha",
 							setSelectedCwd: vi.fn(),
 						}}
 					>
-						<NewSessionLayer onCreate={vi.fn()} onCreateAssist={vi.fn()} />
+						<NewSessionLayer
+							onCreate={onCreate}
+							onCreateAssist={onCreateAssist}
+						/>
 					</RepoSelectionContext.Provider>
 				),
 			},
@@ -40,7 +51,7 @@ function renderAt(path: string) {
 		{ initialEntries: [path] },
 	);
 	render(<RouterProvider router={router} />);
-	return router;
+	return Object.assign(router, { onCreate, onCreateAssist });
 }
 
 function checkedMode() {
@@ -48,6 +59,27 @@ function checkedMode() {
 		.getAllByRole("radio")
 		.find((radio) => radio.getAttribute("aria-checked") === "true")
 		?.textContent;
+}
+
+function promptInput() {
+	return screen.getByRole("textbox", { name: "Prompt" }) as HTMLTextAreaElement;
+}
+
+function repoInput() {
+	return screen.getByRole("combobox", { name: "Repo" }) as HTMLInputElement;
+}
+
+async function openDialog() {
+	await act(async () => {});
+	fireEvent.keyDown(document, { key: "n", ctrlKey: true });
+}
+
+function fillDraft() {
+	fireEvent.change(promptInput(), { target: { value: "add a thing" } });
+	fireEvent.focus(repoInput());
+	fireEvent.change(repoInput(), { target: { value: "beta" } });
+	fireEvent.keyDown(repoInput(), { key: "Enter" });
+	fireEvent.click(screen.getByRole("radio", { name: "draft" }));
 }
 
 describe("NewSessionLayer ?new", () => {
@@ -83,5 +115,38 @@ describe("NewSessionLayer ?new", () => {
 
 		expect(await screen.findByRole("textbox", { name: "Prompt" })).toBeTruthy();
 		expect(router.state.location.search).toBe("");
+	});
+});
+
+describe("NewSessionLayer draft", { timeout: 20_000 }, () => {
+	it("restores the prompt, repo and mode after the dialog is dismissed", async () => {
+		renderAt("/sessions");
+
+		await openDialog();
+		fillDraft();
+		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+		expect(screen.queryByRole("dialog")).toBeNull();
+
+		await openDialog();
+		expect(promptInput().value).toBe("add a thing");
+		expect(repoInput().value).toBe("beta");
+		expect(checkedMode()).toBe("draft");
+	});
+
+	it("starts fresh on the selected repo after a session is launched", async () => {
+		const { onCreateAssist } = renderAt("/sessions");
+
+		await openDialog();
+		fillDraft();
+		fireEvent.keyDown(promptInput(), { key: "Enter" });
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			["draft", "--once", "add a thing"],
+			"/git/beta",
+		);
+
+		await openDialog();
+		expect(promptInput().value).toBe("");
+		expect(repoInput().value).toBe("alpha");
+		expect(checkedMode()).toBe("bug");
 	});
 });

@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { NewSessionDialog } from "./NewSessionDialog";
 import type { NewSessionMode } from "./NewSessionDialog/newSessionModes";
+import { useNewSessionDraft } from "./useNewSessionDraft";
 import { RepoSelectionContext } from "../../../../useRepoSelectionContext";
 
 beforeAll(() => {
@@ -18,6 +19,19 @@ const repos = [
 	String.raw`C:\git\delta`,
 ];
 
+function DraftedDialog({
+	defaultMode,
+	...launchers
+}: {
+	defaultMode: NewSessionMode;
+	onCreate: () => void;
+	onCreateAssist: () => void;
+	onClose: () => void;
+}) {
+	const draft = useNewSessionDraft(defaultMode);
+	return draft && <NewSessionDialog draft={draft} {...launchers} />;
+}
+
 function renderDialog(defaultMode: NewSessionMode = "prompt") {
 	const onCreate = vi.fn();
 	const onCreateAssist = vi.fn();
@@ -32,7 +46,7 @@ function renderDialog(defaultMode: NewSessionMode = "prompt") {
 				setSelectedCwd,
 			}}
 		>
-			<NewSessionDialog
+			<DraftedDialog
 				defaultMode={defaultMode}
 				onCreate={onCreate}
 				onCreateAssist={onCreateAssist}
