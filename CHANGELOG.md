@@ -1,3 +1,10 @@
+# [0.707.0](https://github.com/staff0rd/assist/compare/v0.706.4...v0.707.0) (2026-09-26)
+
+
+### Features
+
+* launch session on repo Enter ([bad444a](https://github.com/staff0rd/assist/commit/bad444a7aa21ebd7acc6f4b0e6b42641bf0fd264))
+
 ## [0.706.4](https://github.com/staff0rd/assist/compare/v0.706.3...v0.706.4) (2026-09-26)
 
 
