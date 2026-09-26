@@ -1,3 +1,4 @@
+import { newTraceId } from "../../shared/newTraceId";
 import { type SessionClient, sendTo } from "../broadcast";
 import { daemonLog } from "../daemonLog";
 import { unavailableReason } from "./describeLink";
@@ -39,9 +40,10 @@ export function forwardLinkCreate(
 		});
 		return;
 	}
+	const traceId = newTraceId();
 	daemonLog(
-		`link ${node} ws: routing ${data.type} (cwd=${data.cwd ?? "default"})`,
+		`link ${node} ws: routing ${data.type} (cwd=${data.cwd ?? "default"}) trace=${traceId}`,
 	);
 	armCreateTimeout(ctx, client, data);
-	sendToLink(ctx, toPeerMessage(data));
+	sendToLink(ctx, { ...toPeerMessage(data), traceId });
 }

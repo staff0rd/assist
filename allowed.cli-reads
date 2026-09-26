@@ -61,6 +61,8 @@ assist screenshot
 assist seq auth list
 assist seq query
 assist sessions nodes
+assist sessions nodes doctor
+assist sessions nodes logs
 assist sql auth list
 assist sql columns
 assist sql query

@@ -389,9 +389,11 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist sessions nodes [--json]` - List this node and every linked node with its link state (see [Linked nodes](#linked-nodes))
 - `assist sessions nodes link <name> <url>` - Link a peer node by its web server URL
 - `assist sessions nodes unlink <name>` - Remove a linked node
+- `assist sessions nodes doctor [name] [--json]` - Probe each hop of every link (or one) and stop at the first failure with a remediation
+- `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` - Tail a linked node's `daemon.log` through its web server
 - `assist sessions set-status <status>` - Report the current session's status (`running`/`waiting`) to the daemon; invoked by the Claude Code hooks the daemon wires into each session
 - `assist daemon run` - Run the sessions daemon in the foreground (normally auto-spawned detached)
-- `assist daemon status` - Show daemon status, live sessions, and any stray processes or stolen socket
+- `assist daemon status` - Show daemon status, live sessions, each link's state, and any stray processes or stolen socket
 - `assist daemon stop` - Stop the sessions daemon; running claude sessions resume on next start
 - `assist daemon restart` - Restart the sessions daemon, resuming previously running claude sessions
 - `assist daemon drain [--yes]` - Remove all sessions from the local daemon for a clean slate; a session holding unpushed work is stopped, not removed
@@ -426,9 +428,11 @@ Each assist install is a **node** with its own daemon and web server. A node can
 - `assist sessions nodes [--json]` — this node and each link's state (connected / connecting / disconnected / version-blocked), peer version and last error.
 - `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link <name> http://127.0.0.1:<port>`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately.
 - `assist sessions nodes unlink <name>` — remove a link.
+- `assist sessions nodes doctor [name] [--json]` — probes each link's hops in order: the peer's web server (`GET /api/health`, including that its `nodeName` matches the link), the peer's daemon (as its health reports it), a WebSocket `hello` (version and protocol), then this node's own link state. It stops at the first failing hop and prints the raw error with a remediation, and exits 1 on any failure. On WSL with no links, it reports a Windows node answering on `127.0.0.1:3101` and prints the command that links it.
+- `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` — tail a linked node's `daemon.log` (default 200 lines) through its web server's `GET /api/daemon-log`; naming this node reads the local log.
 - `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) heals an older peer by calling its `POST /api/self-update` (runs `assist update`, then restarts its daemon and web server) and reconnects, latching with an error if the gap remains or this node is the older side; `warn` proceeds anyway; `off` skips the check.
 
-With more than one node, a machine picker appears in the top nav and a machine selector in the new-session dialog; the dialog's selector defaults to the top nav's choice, which is remembered per browser. Linked nodes' daemon lines appear in this node's `daemon.log` tagged `[<node>]`. The retired `sessions.windows*` keys are ignored.
+With more than one node, a machine picker appears in the top nav and a machine selector in the new-session dialog; the dialog's selector defaults to the top nav's choice, which is remembered per browser. Linked nodes' daemon lines appear in this node's `daemon.log` tagged `[<node>]`. Every launch forwarded over a link and every `?node=` panel request carries a `traceId`, logged as `trace=<id>` by both nodes. `GET /api/health` reports the node's name, version, protocol, daemon reachability and its links' states. The retired `sessions.windows*` keys are ignored.
 
 ### Session config keys
 

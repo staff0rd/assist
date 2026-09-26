@@ -1,6 +1,7 @@
 import { type IncomingMessage, type ServerResponse } from "node:http";
 import { loadConfig } from "../../../shared/loadConfig";
 import { respondJson } from "../../../shared/web";
+import { TRACE_HEADER } from "../shared/newTraceId";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { forwardToPeer } from "./forwardToPeer";
 
@@ -31,10 +32,23 @@ function proxyTarget(req: IncomingMessage): ProxyTarget {
 	};
 }
 
+function logLinkedRequest(req: IncomingMessage, res: ServerResponse): void {
+	const started = Date.now();
+	const from = req.headers[LINKED_FROM_HEADER];
+	const trace = req.headers[TRACE_HEADER] ?? "none";
+	const path = new URL(req.url ?? "/", "http://localhost").pathname;
+	res.once("finish", () =>
+		console.log(
+			`link-from ${from} http: ${req.method} ${path} trace=${trace} -> ${res.statusCode} (${Date.now() - started}ms)`,
+		),
+	);
+}
+
 export async function proxyToNode(
 	req: IncomingMessage,
 	res: ServerResponse,
 ): Promise<boolean> {
+	if (arrivedOverLink(req)) logLinkedRequest(req, res);
 	const target = proxyTarget(req);
 	if (target.kind === "local") return false;
 	if (target.kind === "unknown") {

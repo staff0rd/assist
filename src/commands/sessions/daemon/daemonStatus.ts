@@ -1,4 +1,6 @@
 import type * as net from "node:net";
+import { formatLink } from "../nodes/formatLink";
+import { queryNodes } from "../nodes/queryNodes";
 import { connectToDaemon } from "./connectToDaemon";
 import { listDaemonPids } from "./listDaemonPids";
 import { queryDaemon } from "./queryDaemon";
@@ -21,14 +23,19 @@ export async function daemonStatus(): Promise<void> {
 	console.log(`Sessions daemon is running${pid ? ` (PID ${pid})` : ""}`);
 	reportStolenSocket(pid);
 	reportStrays(listDaemonPids().filter((p) => p !== pid));
-	if (sessions.length === 0) {
-		console.log("No sessions");
-		return;
-	}
+	if (sessions.length === 0) console.log("No sessions");
 	for (const session of sessions) {
 		const restored = session.restored === false ? " (not restored)" : "";
 		console.log(`  [${session.status}] ${session.name}${restored}`);
 	}
+	await reportLinks();
+}
+
+async function reportLinks(): Promise<void> {
+	const links = (await queryNodes())?.links ?? [];
+	if (links.length === 0) return;
+	console.log("Links:");
+	for (const link of links) console.log(formatLink(link));
 }
 
 function reportStrays(pids: number[]): void {

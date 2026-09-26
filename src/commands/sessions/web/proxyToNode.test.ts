@@ -80,6 +80,23 @@ describe("proxyToNode", () => {
 		});
 	});
 
+	it("logs the same traceId on the viewer and the peer", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		await fetch(`${viewerUrl}/api/git-status?node=pc-windows`);
+		await vi.waitFor(() => expect(log).toHaveBeenCalledTimes(2));
+		const lines = log.mock.calls.map((call) => String(call[0]));
+		log.mockRestore();
+		const traces = lines.map((line) => line.match(/trace=(\w+)/)?.[1]);
+		expect(traces[0]).toBeDefined();
+		expect(traces[1]).toBe(traces[0]);
+		expect(lines).toEqual(
+			expect.arrayContaining([
+				expect.stringMatching(/^link pc-windows http: GET \/api\/git-status/),
+				expect.stringMatching(/^link-from pc-wsl http: GET \/api\/git-status/),
+			]),
+		);
+	});
+
 	it("serves a request that already crossed a link locally", async () => {
 		const res = await fetch(
 			`${links.current[0].url}/api/diff?node=pc-windows`,

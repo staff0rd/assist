@@ -32,6 +32,10 @@ Each linked node's daemon lines stream over its link and are relayed into this l
 
 The web server tails this same stream: it keeps a dedicated `subscribe-logs` connection (`web/streamDaemonLogs.ts`) that echoes every daemon line — including relayed `[<node>]` lines — to its own stdout, so `assist.log` shows the daemon's logs plus the web server's own output. The project-switch tray (`/mnt/c/git/project-switch`) runs a list of web servers (`webservers` in `~/.project-switch.yml`), each `wsl` or `native`, with its own port; a `native` web server on Windows starts the Windows daemon itself. Each has its stdout/stderr redirected to `%LOCALAPPDATA%\project-switch\assist-<name>.log` (WSL path `/mnt/c/Users/<you>/AppData/Local/project-switch/assist-<name>.log`; the legacy single `webserver` key logs to `assist.log`), which is what its "View logs" item tails. Each such log is therefore a superset of its node's `daemon.log` plus web-server stdout.
 
+### Linked nodes
+
+Start with `assist sessions nodes doctor [name]`: it probes each hop and names the first broken one with a remediation. Then read the peer's side with `assist sessions nodes logs <name>`. A forwarded launch logs `trace=<id>` in both daemons' logs, and a `?node=` panel request logs it in both web servers' stdout (`link <name> http:` on the viewer, `link-from <node> http:` on the peer), so grep the id on each node to follow one request end to end.
+
 ## Rules
 
 - **R1** — Do not document what is implicit — state only what the reader could not infer.

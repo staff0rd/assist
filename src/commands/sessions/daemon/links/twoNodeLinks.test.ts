@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionClient } from "../broadcast";
 import type { Session } from "../createSession";
+import { daemonLog } from "../daemonLog";
 import { dispatchMessage } from "../dispatchMessage";
+import { messageHandlers } from "../messageHandlers";
 import { SessionManager } from "../SessionManager";
 import type { InProcessPeer } from "./inProcessClient";
 import { inProcessTransport } from "./inProcessTransport";
@@ -123,6 +125,46 @@ describe("two linked nodes", () => {
 		});
 
 		expect(write).toHaveBeenCalledWith("3", "hi");
+	});
+
+	it("logs a forwarded launch's traceId on both nodes", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		node("pc-windows");
+		const route = messageHandlers.create;
+		const create = vi
+			.spyOn(messageHandlers, "create")
+			.mockImplementation((client, manager, data) => {
+				if (data.node) route(client, manager, data);
+			});
+		const view = viewer();
+		wsl.addClient(view.client);
+		wsl.links.reload();
+		await vi.waitFor(() =>
+			expect(wsl.links.nodes().links[0].state).toBe("connected"),
+		);
+
+		dispatchMessage(view.client, wsl, {
+			type: "create",
+			node: "pc-windows",
+			prompt: "x",
+		});
+
+		const forwarded = create.mock.lastCall?.[2] as Msg;
+		expect(forwarded.traceId).toEqual(expect.any(String));
+		const logged = vi.mocked(daemonLog).mock.calls.map((c) => c[0]);
+		expect(logged).toEqual(
+			expect.arrayContaining([
+				expect.stringMatching(
+					new RegExp(
+						`^link pc-windows ws: routing create .*trace=${forwarded.traceId}$`,
+					),
+				),
+				expect.stringMatching(
+					new RegExp(`^linked create received .*trace=${forwarded.traceId}$`),
+				),
+			]),
+		);
+		create.mockRestore();
 	});
 
 	it("never re-exports linked sessions under symmetric linking", async () => {

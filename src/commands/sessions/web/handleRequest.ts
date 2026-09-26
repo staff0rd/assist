@@ -5,6 +5,7 @@ import { getBacklogSummary } from "../../backlog/web/getBacklogSummary";
 import { getRepoLocation } from "../../backlog/web/getRepoLocation";
 import { handleItemRoute } from "../../backlog/web/handleItemRoute";
 import { listItems } from "../../backlog/web/shared";
+import { daemonLogTail } from "./daemonLogTail";
 import { diff } from "./diff";
 import { diffScopes } from "./diffScopes";
 import { fileContent } from "./fileContent";
@@ -72,6 +73,7 @@ const routes: Record<string, Handler> = {
 		"text/css",
 	),
 	"GET /api/health": health,
+	"GET /api/daemon-log": daemonLogTail,
 	"GET /api/items": listItems,
 	"GET /api/backlog/summary": getBacklogSummary,
 	"GET /api/repo-location": getRepoLocation,

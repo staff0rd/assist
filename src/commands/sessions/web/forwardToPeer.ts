@@ -5,6 +5,7 @@ import {
 } from "node:http";
 import { request as httpsRequest } from "node:https";
 import { respondJson } from "../../../shared/web";
+import { newTraceId, TRACE_HEADER } from "../shared/newTraceId";
 import { resolveNodeName } from "../shared/resolveNodeName";
 
 const LINKED_FROM_HEADER = "x-assist-linked-from";
@@ -16,7 +17,8 @@ export function forwardToPeer(
 	url: URL,
 ): Promise<void> {
 	const started = Date.now();
-	const label = `link ${node} http: ${req.method} ${url.pathname}`;
+	const traceId = newTraceId();
+	const label = `link ${node} http: ${req.method} ${url.pathname} trace=${traceId}`;
 	const elapsed = () => `${Date.now() - started}ms`;
 	const send = url.protocol === "https:" ? httpsRequest : httpRequest;
 	return new Promise((resolve) => {
@@ -28,6 +30,7 @@ export function forwardToPeer(
 					...req.headers,
 					host: url.host,
 					[LINKED_FROM_HEADER]: resolveNodeName(),
+					[TRACE_HEADER]: traceId,
 				},
 			},
 			(peer) => {
