@@ -7,6 +7,7 @@ import {
 	waitFor,
 	within,
 } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { describeConfigNode } from "../../../../../shared/describeConfigNode";
 import { REDACTED_SECRET } from "../../../../../shared/redactConfigSecrets";
@@ -148,18 +149,20 @@ function keyFilter() {
 	return screen.getByLabelText("Filter config keys and descriptions");
 }
 
-function renderView(selectedCwd = "/repo") {
+function renderView(selectedCwd = "/repo", path = "/config") {
 	render(
-		<RepoSelectionContext.Provider
-			value={{
-				repos: [],
-				selectedCwd,
-				worktreeCwd: selectedCwd,
-				setSelectedCwd: vi.fn(),
-			}}
-		>
-			<ConfigView />
-		</RepoSelectionContext.Provider>,
+		<MemoryRouter initialEntries={[path]}>
+			<RepoSelectionContext.Provider
+				value={{
+					repos: [],
+					selectedCwd,
+					worktreeCwd: selectedCwd,
+					setSelectedCwd: vi.fn(),
+				}}
+			>
+				<ConfigView />
+			</RepoSelectionContext.Provider>
+		</MemoryRouter>,
 	);
 }
 
@@ -1504,6 +1507,27 @@ describe("ConfigView", () => {
 		expect(screen.getByText("commit.push")).toBeTruthy();
 		expect(screen.queryByText("backup.dir")).toBeNull();
 		expect(screen.queryByText("backup")).toBeNull();
+	});
+
+	it("pre-fills the filter from the search query param", async () => {
+		stubEntries([
+			...filterableEntries,
+			{
+				key: "news.showInNav",
+				type: "boolean",
+				value: false,
+				source: "default",
+				node: node("news.showInNav"),
+			},
+		]);
+		renderView("/repo", "/config?search=news");
+
+		await waitFor(() =>
+			expect(screen.getByText("news.showInNav")).toBeTruthy(),
+		);
+		expect(keyFilter()).toHaveProperty("value", "news");
+		expect(screen.queryByText("commit.pull")).toBeNull();
+		expect(screen.queryByText("backup.dir")).toBeNull();
 	});
 
 	it("restores the full list when the filter is cleared", async () => {

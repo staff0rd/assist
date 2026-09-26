@@ -1,6 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { ConfigGroupCard } from "./ConfigView/ConfigGroupCard";
 import { ConfigKeySearchInput } from "./ConfigView/ConfigKeySearchInput";
 import { ErrorSnackbar } from "./ErrorSnackbar";
@@ -14,7 +15,8 @@ export function ConfigView() {
 	const { selectedCwd } = useRepoSelectionContext();
 	const { entries, loading, error, reload } = useConfigEntries(selectedCwd);
 	const [saveError, setSaveError] = useState<string | null>(null);
-	const [search, setSearch] = useState("");
+	const [searchParams] = useSearchParams();
+	const [search, setSearch] = useState(searchParams.get("search") ?? "");
 	const groups = groupConfigEntries(filterConfigEntries(entries, search));
 
 	return (

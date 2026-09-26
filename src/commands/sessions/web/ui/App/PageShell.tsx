@@ -8,6 +8,7 @@ import { useReportContentReady } from "../useReportContentReady";
 type PageShellProps = {
 	loading?: boolean;
 	title?: string;
+	header?: ReactNode;
 	isEmpty?: boolean;
 	emptyMessage?: string;
 	children: ReactNode;
@@ -19,6 +20,7 @@ export const PageShell = (props: PageShellProps) => {
 	const {
 		loading = false,
 		title,
+		header,
 		isEmpty = false,
 		emptyMessage,
 		children,
@@ -40,6 +42,7 @@ export const PageShell = (props: PageShellProps) => {
 					{title}
 				</Typography>
 			)}
+			{header}
 			{isEmpty ? (
 				<Typography color="text.secondary" align="center" sx={{ py: 6 }}>
 					{emptyMessage}

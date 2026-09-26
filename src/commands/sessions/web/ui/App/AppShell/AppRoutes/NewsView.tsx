@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
+import { NewsConfigLink } from "./NewsView/NewsConfigLink";
 import { NewsItem } from "./NewsView/NewsItem";
 import { type DateGroup, groupByDate } from "./NewsView/groupByDate";
 import type { FeedItem } from "./NewsView/types";
@@ -27,6 +28,7 @@ export function NewsView() {
 			loading={loading}
 			isEmpty={groups.length === 0}
 			emptyMessage="No news items."
+			header={<NewsConfigLink />}
 		>
 			{groups.map((group) => (
 				<Box key={group.label} sx={{ mb: 4 }}>
