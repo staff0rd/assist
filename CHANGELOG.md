@@ -1,3 +1,10 @@
+## [0.700.1](https://github.com/staff0rd/assist/compare/v0.700.0...v0.700.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* reap watcher after worktree close ([abf6ef3](https://github.com/staff0rd/assist/commit/abf6ef3891756ecd913858eb6e2c8893d65c191c))
+
 # [0.700.0](https://github.com/staff0rd/assist/compare/v0.699.3...v0.700.0) (2026-09-26)
 
 
