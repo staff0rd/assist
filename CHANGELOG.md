@@ -1,3 +1,10 @@
+## [0.708.1](https://github.com/staff0rd/assist/compare/v0.708.0...v0.708.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* scope backlog phases to own repo ([78b655e](https://github.com/staff0rd/assist/commit/78b655e71307beb02a3213eb3f5c25aeb69b8b6e))
+
 # [0.708.0](https://github.com/staff0rd/assist/compare/v0.707.1...v0.708.0) (2026-09-26)
 
 
