@@ -19,7 +19,8 @@ export function NewSessionSelectors({
 	harnesses: HarnessKind[];
 	focus: ReturnType<typeof useDraftFocus>;
 }) {
-	const showHarness = draft.mode === "prompt" && harnesses.length > 1;
+	const hasHarnessChoice = harnesses.length > 1;
+	const showHarness = draft.mode === "prompt" && hasHarnessChoice;
 	const { containerRef, offset } = useOffsetUnderChecked(
 		focus.modeRef,
 		draft.mode,
@@ -38,13 +39,14 @@ export function NewSessionSelectors({
 				onTrack={focus.trackMode}
 				onToggleRow={showHarness ? focusHarness : undefined}
 			/>
-			{showHarness && (
+			{hasHarnessChoice && (
 				<HarnessRow
 					harness={harness}
 					harnesses={harnesses}
 					onChange={draft.setHarness}
 					offset={offset}
 					focus={focus}
+					hidden={!showHarness}
 				/>
 			)}
 		</Stack>
