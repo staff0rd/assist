@@ -1,4 +1,5 @@
 import { type SpawnSyncReturns, spawnSync } from "node:child_process";
+import { releaseWebServerPort } from "./releaseWebServerPort";
 
 type ExecveFn = (file: string, args: string[], env: NodeJS.ProcessEnv) => void;
 
@@ -13,6 +14,7 @@ export type ReExecDeps = {
 	execveFn?: ExecveFn | null;
 	spawnSyncFn?: SpawnSyncFn;
 	exit?: (code: number) => void;
+	releasePort?: () => void;
 };
 
 function resolveExecve(): ExecveFn | null {
@@ -32,6 +34,7 @@ export function reExecWebServer(deps: ReExecDeps = {}): void {
 		execveFn = resolveExecve(),
 		spawnSyncFn = spawnSync,
 		exit = (code: number) => process.exit(code),
+		releasePort = releaseWebServerPort,
 	} = deps;
 	beforeExec?.();
 	if (execveFn) {
@@ -40,6 +43,7 @@ export function reExecWebServer(deps: ReExecDeps = {}): void {
 		return;
 	}
 	// why: no execve (e.g. Windows) — a blocking, attached child keeps the terminal in the foreground process group; detaching would leave the terminal dead
+	releasePort();
 	const [, ...args] = process.argv;
 	const result = spawnSyncFn(process.execPath, withNoOpen(args), {
 		stdio: "inherit",

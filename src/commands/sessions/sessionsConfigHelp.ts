@@ -2,6 +2,11 @@ import type { ConfigHelpEntry } from "../../shared/configHelp";
 
 export const sessionsConfigHelp: ConfigHelpEntry[] = [
 	{
+		key: "sessions.nodeName",
+		setter: "assist config set sessions.nodeName pc-wsl -g",
+		note: "this install's node label, shown in the web UI header and reported by /api/health (default: OS hostname, with -wsl under WSL)",
+	},
+	{
 		key: "sessions.windowsProjectsRoot",
 		setter:
 			"assist config set sessions.windowsProjectsRoot /mnt/c/Users/you/.claude/projects",

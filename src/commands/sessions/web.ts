@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { WebSocketServer } from "ws";
 import { isGitRepo } from "../../shared/getInstallDir";
 import { startWebServer } from "../../shared/web";
 import { ensureDaemonRunning } from "./daemon/ensureDaemonRunning";
 import { repoGroupForCwd } from "./daemon/repoGroupForCwd";
+import { attachSessionSocket } from "./web/attachSessionSocket";
 import { handleRequest } from "./web/handleRequest";
-import { handleSocket, type RelayContext } from "./web/handleSocket";
+import type { RelayContext } from "./web/handleSocket";
 import { installRestartMenu } from "./web/restartMenu/installRestartMenu";
 import { streamDaemonLogs } from "./web/streamDaemonLogs";
 
@@ -32,18 +32,7 @@ export async function web(options: {
 		repoCwd: isGitRepo(serverCwd) ? repoEntryCwd(serverCwd) : undefined,
 	};
 
-	const wss = new WebSocketServer({ noServer: true });
-
-	server.on("upgrade", (req, socket, head) => {
-		if (req.url === "/ws") {
-			wss.handleUpgrade(req, socket, head, (ws) => {
-				handleSocket(ws, ctx);
-			});
-		} else {
-			socket.destroy();
-		}
-	});
-
+	attachSessionSocket(server, ctx);
 	installRestartMenu();
 
 	// why: keep a dedicated daemon log subscription open so daemonLog output reaches the web server's stdout (assist.log) regardless of whether a browser tab is connected.

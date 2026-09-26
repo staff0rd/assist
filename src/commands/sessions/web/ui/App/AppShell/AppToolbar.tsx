@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import { NavTabs } from "./AppToolbar/NavTabs";
 import { NewSessionButton } from "./AppToolbar/NewSessionButton";
+import { NodeNameLabel } from "./AppToolbar/NodeNameLabel";
 import { OpenInCodeButton } from "../OpenInCodeButton";
 import { OpenInGitHubButton } from "./AppToolbar/OpenInGitHubButton";
 import { RateLimitsIndicator } from "./AppToolbar/RateLimitsIndicator";
@@ -34,6 +35,7 @@ export function AppToolbar({
 				/>
 			)}
 			<RefreshWebserverButton reconnecting={socket.reconnecting} />
+			<NodeNameLabel />
 			<NavTabs cwd={selection.selectedCwd} />
 			<Box sx={pickerSx}>
 				<RepoPicker

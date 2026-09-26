@@ -1,5 +1,5 @@
 import type { RepoGroup } from "../shared/RepoGroup";
-import { isWindowsCwd } from "./isWindowsCwd";
+import { shouldProxyToWindows } from "./isWindowsCwd";
 import { originResolutionForCwd } from "./originForCwd";
 import { repoDirExists } from "./repoDirExists";
 import { mainWorktree } from "./worktree/listWorktreePaths";
@@ -49,5 +49,8 @@ function currentOriginOfClone(clone: string) {
 }
 
 function hostedGroup(cwd: string, origin: string, clone: string): RepoGroup {
-	return { origin: isWindowsCwd(cwd) ? `windows:${origin}` : origin, clone };
+	return {
+		origin: shouldProxyToWindows(cwd) ? `windows:${origin}` : origin,
+		clone,
+	};
 }

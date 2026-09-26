@@ -15,6 +15,7 @@ import { getReviewSynthesis } from "./getReviewSynthesis";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
 import { harnessCapabilities } from "./harnessCapabilities";
+import { health } from "./health";
 import { jiraSite } from "./jiraSite";
 import { listFiles } from "./listFiles";
 import { listNewsItems } from "./listNewsItems";
@@ -67,6 +68,7 @@ const routes: Record<string, Handler> = {
 		"commands/sessions/web/monaco.css",
 		"text/css",
 	),
+	"GET /api/health": health,
 	"GET /api/items": listItems,
 	"GET /api/backlog/summary": getBacklogSummary,
 	"POST /api/open-in-code": openInCode,

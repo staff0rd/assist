@@ -426,6 +426,7 @@ Requires `assist` installed on the Windows host.
 
 ### Session config keys
 
+- `sessions.nodeName` — this install's node label, shown in the web UI header and reported by `GET /api/health` (with the assist version, protocol and whether the daemon is reachable). Defaults to the OS hostname, suffixed `-wsl` under WSL.
 - `sessions.includeCommittedChanges` — defaults to **true**: the card's change counts, the `/diff` view and its scope picker cover the commits recorded against the session's backlog item as well as uncommitted work, so the change link survives the agent committing. Each committed path is diffed against the parent of the earliest of those commits that touched it, so nothing outside the item's own commits is shown. Set it false to count and diff only uncommitted changes. A session whose item has no recorded commits and a clean tree still shows nothing either way.
 - `sessions.topBar` — defaults to **true**: a sticky top bar inside the terminal panel carrying the session's ids, backlog chip and story name, the phase caption, elapsed time, the Continue/Auto-run/Dismiss switches and the session actions. Set it false to keep all of that on the card instead.
 - `sessions.floatWaiting` — defaults to **true**: sessions that have been `waiting` on input for longer than the threshold float above the other cards, longest waiting first. Set it false to keep the star-only ordering; starred sessions still sort above everything.

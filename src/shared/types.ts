@@ -266,6 +266,7 @@ const assistConfigShape = {
 		.default({ outputDir: "./screenshots" }),
 	sessions: z
 		.strictObject({
+			nodeName: z.string().optional(),
 			// why: Windows .claude/projects root as seen from WSL (e.g. /mnt/c/Users/<user>/.claude/projects); when set its transcripts are discovered and tagged windows-origin
 			windowsProjectsRoot: z.string().optional(),
 			// why: host the WSL daemon dials to reach the native Windows daemon over TCP (WSL can't use the Windows named pipe); defaults to 127.0.0.1 (WSL2 mirrored networking). NAT-mode users set the Windows host IP.

@@ -38,8 +38,15 @@ describe("reExecWebServer", () => {
 			return { status: 0 };
 		});
 		const exit = vi.fn(() => order.push("exit"));
+		const releasePort = vi.fn(() => order.push("releasePort"));
 
-		reExecWebServer({ beforeExec, execveFn: null, spawnSyncFn, exit });
+		reExecWebServer({
+			beforeExec,
+			execveFn: null,
+			spawnSyncFn,
+			exit,
+			releasePort,
+		});
 
 		expect(spawnSyncFn).toHaveBeenCalledWith(
 			process.execPath,
@@ -47,7 +54,15 @@ describe("reExecWebServer", () => {
 			expect.objectContaining({ stdio: "inherit" }),
 		);
 		expect(exit).toHaveBeenCalledWith(0);
-		expect(order).toEqual(["beforeExec", "spawnSync", "exit"]);
+		expect(order).toEqual(["beforeExec", "releasePort", "spawnSync", "exit"]);
+	});
+
+	it("keeps the listener when execve replaces the process", () => {
+		const releasePort = vi.fn();
+
+		reExecWebServer({ execveFn: vi.fn(), releasePort });
+
+		expect(releasePort).not.toHaveBeenCalled();
 	});
 
 	it("propagates the child exit code in the fallback path", () => {
