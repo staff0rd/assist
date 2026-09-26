@@ -1,3 +1,12 @@
+## [0.704.4](https://github.com/staff0rd/assist/compare/v0.704.3...v0.704.4) (2026-09-26)
+
+
+### Bug Fixes
+
+* green new session button ([6d60df2](https://github.com/staff0rd/assist/commit/6d60df21bc9ca01de4f773d83f36dd084736f72c))
+* hide harness dropdown on list cards ([a32e3fd](https://github.com/staff0rd/assist/commit/a32e3fd9c9ea1669da4031530a9fad0becf9efd9))
+* resume watch killed by daemon restart ([3020715](https://github.com/staff0rd/assist/commit/3020715b2b3385db4c78481d3fa3f6befa26e7ff))
+
 ## [0.704.3](https://github.com/staff0rd/assist/compare/v0.704.2...v0.704.3) (2026-09-26)
 
 
