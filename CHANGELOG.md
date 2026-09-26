@@ -1,3 +1,10 @@
+## [0.706.4](https://github.com/staff0rd/assist/compare/v0.706.3...v0.706.4) (2026-09-26)
+
+
+### Bug Fixes
+
+* match Build segment height to arrow ([bf6298d](https://github.com/staff0rd/assist/commit/bf6298dca44a8a0771c9000a0b47ee72985f6536))
+
 ## [0.706.3](https://github.com/staff0rd/assist/compare/v0.706.2...v0.706.3) (2026-09-26)
 
 
