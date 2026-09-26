@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material";
+import type { Ref } from "react";
 import type { BacklogItem } from "../types";
 import { BackButton } from "./BackButton";
 import { canPlay } from "./canPlay";
@@ -41,16 +42,18 @@ export function PinnedHeader({
 	item,
 	onDeleted,
 	onStatusChange,
+	ref,
 }: {
 	item: BacklogItem;
 	onDeleted: () => Promise<void>;
 	onStatusChange: (status: BacklogItem["status"]) => void;
+	ref: Ref<HTMLDivElement>;
 }) {
 	const { sentinelRef, stuck } = useStuckSentinel();
 	return (
 		<>
 			<Box ref={sentinelRef} sx={{ height: 0 }} />
-			<Box sx={pinnedSx(stuck)}>
+			<Box ref={ref} sx={pinnedSx(stuck)}>
 				<Stack direction="row" sx={headerSx}>
 					<BackButton to="/backlog" />
 					<Stack direction="row" spacing={1}>

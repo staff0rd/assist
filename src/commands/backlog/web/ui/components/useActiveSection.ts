@@ -1,6 +1,9 @@
-import { STICKY_PINNED_HEADER_HEIGHT } from "./itemSectionAnchor";
+import { DEFAULT_PINNED_HEADER_HEIGHT } from "./itemSectionAnchor";
 import { useActiveAnchor } from "./useActiveAnchor";
 
-export function useActiveSection(ids: string[]): string | undefined {
-	return useActiveAnchor(ids, STICKY_PINNED_HEADER_HEIGHT);
+export function useActiveSection(
+	ids: string[],
+	stickyOffset = DEFAULT_PINNED_HEADER_HEIGHT,
+): string | undefined {
+	return useActiveAnchor(ids, stickyOffset);
 }

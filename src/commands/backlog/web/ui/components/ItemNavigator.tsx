@@ -1,29 +1,27 @@
-import { Stack, useMediaQuery } from "@mui/material";
-import type { Theme } from "@mui/material";
+import { Stack } from "@mui/material";
 import type { BacklogItem } from "../types";
+import { itemDetailLayout } from "./itemDetailLayout";
 import { itemNavSections } from "./itemNavSections";
 import { ItemNavigatorRow } from "./ItemNavigatorRow";
-import { STICKY_PINNED_HEADER_HEIGHT } from "./itemSectionAnchor";
+import { pinnedHeaderHeight } from "./itemSectionAnchor";
 import { useActiveSection } from "./useActiveSection";
 
-const SIDEBAR_PERCENT = 25;
-const ITEM_BODY_MAX_WIDTH = 900;
 const APP_BAR_HEIGHT = 48;
-
-const contentCentrePercent = SIDEBAR_PERCENT + (100 - SIDEBAR_PERCENT) / 2;
-const gutterLeft = `calc(${contentCentrePercent}% + ${ITEM_BODY_MAX_WIDTH / 2}px)`;
+const NAVIGATOR_WIDTH = 260;
 
 const panelSx = {
-	position: "fixed",
-	top: APP_BAR_HEIGHT + STICKY_PINNED_HEADER_HEIGHT,
-	left: gutterLeft,
-	right: 8,
-	bottom: 8,
-	minWidth: 0,
+	display: "none",
+	[itemDetailLayout.wideQuery]: { display: "flex" },
+	position: "sticky",
+	top: pinnedHeaderHeight,
+	alignSelf: "flex-start",
+	width: NAVIGATOR_WIDTH,
+	flexShrink: 0,
+	maxHeight: `calc(100vh - ${APP_BAR_HEIGHT}px - ${pinnedHeaderHeight})`,
 	alignItems: "flex-start",
 	overflowY: "auto",
 	overflowX: "hidden",
-	pb: 1,
+	py: 2,
 } as const;
 
 function scrollToSection(id: string) {
@@ -32,13 +30,19 @@ function scrollToSection(id: string) {
 		?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-export function ItemNavigator({ item }: { item: BacklogItem }) {
-	const wideEnough = useMediaQuery((theme: Theme) =>
-		theme.breakpoints.up("lg"),
-	);
+export function ItemNavigator({
+	item,
+	headerHeight,
+}: {
+	item: BacklogItem;
+	headerHeight: number;
+}) {
 	const sections = itemNavSections(item);
-	const activeId = useActiveSection(sections.map((section) => section.id));
-	if (!wideEnough || sections.length === 0) return null;
+	const activeId = useActiveSection(
+		sections.map((section) => section.id),
+		headerHeight,
+	);
+	if (sections.length === 0) return null;
 	return (
 		<Stack component="nav" spacing={1} sx={panelSx}>
 			{sections.map((section) => (

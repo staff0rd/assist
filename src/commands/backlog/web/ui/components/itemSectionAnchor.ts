@@ -9,9 +9,13 @@ export const ITEM_SECTION_IDS = {
 
 type ItemSectionKey = keyof typeof ITEM_SECTION_IDS;
 
-export const STICKY_PINNED_HEADER_HEIGHT = 140;
+export const DEFAULT_PINNED_HEADER_HEIGHT = 140;
 
-const scrollMarginTop = `${STICKY_PINNED_HEADER_HEIGHT}px`;
+export const PINNED_HEADER_HEIGHT_VAR = "--pinned-header-height";
+
+export const pinnedHeaderHeight = `var(${PINNED_HEADER_HEIGHT_VAR}, ${DEFAULT_PINNED_HEADER_HEIGHT}px)`;
+
+const scrollMarginTop = `calc(${pinnedHeaderHeight} + 8px)`;
 
 export function itemSectionAnchor(key: ItemSectionKey) {
 	return {

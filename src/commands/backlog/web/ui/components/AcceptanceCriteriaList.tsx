@@ -24,7 +24,7 @@ export function AcceptanceCriteriaList({
 			>
 				Acceptance Criteria
 			</Typography>
-			<List disablePadding>
+			<List disablePadding sx={{ maxWidth: "72ch" }}>
 				{criteria.map((ac, i) => (
 					<ListItem
 						key={ac}
