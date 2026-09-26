@@ -1,3 +1,10 @@
+## [0.704.6](https://github.com/staff0rd/assist/compare/v0.704.5...v0.704.6) (2026-09-26)
+
+
+### Bug Fixes
+
+* open repo list on intent, not focus ([de0ca15](https://github.com/staff0rd/assist/commit/de0ca1576307c1466e3bca1cfd31aa29d8be65d0))
+
 ## [0.704.5](https://github.com/staff0rd/assist/compare/v0.704.4...v0.704.5) (2026-09-26)
 
 
