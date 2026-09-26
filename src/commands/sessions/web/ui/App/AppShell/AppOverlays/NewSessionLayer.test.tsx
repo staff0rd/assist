@@ -133,6 +133,47 @@ describe("NewSessionLayer draft", { timeout: 20_000 }, () => {
 		expect(checkedMode()).toBe("draft");
 	});
 
+	it("restores the prompt caret after the dialog is dismissed", async () => {
+		renderAt("/sessions");
+
+		await openDialog();
+		fireEvent.change(promptInput(), { target: { value: "add a thing" } });
+		promptInput().focus();
+		promptInput().setSelectionRange(4, 5);
+		fireEvent.select(promptInput());
+		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+
+		await openDialog();
+		expect(document.activeElement).toBe(promptInput());
+		expect(promptInput().selectionStart).toBe(4);
+		expect(promptInput().selectionEnd).toBe(5);
+	});
+
+	it("refocuses the repo selector when it was focused on dismiss", async () => {
+		renderAt("/sessions");
+
+		await openDialog();
+		repoInput().focus();
+		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+
+		await openDialog();
+		expect(document.activeElement).toBe(repoInput());
+	});
+
+	it("refocuses the checked mode when the mode was focused on dismiss", async () => {
+		renderAt("/sessions");
+
+		await openDialog();
+		fireEvent.click(screen.getByRole("radio", { name: "draft" }));
+		screen.getByRole("radio", { name: "draft" }).focus();
+		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+
+		await openDialog();
+		expect(document.activeElement).toBe(
+			screen.getByRole("radio", { name: "draft" }),
+		);
+	});
+
 	it("starts fresh on the selected repo after a session is launched", async () => {
 		const { onCreateAssist } = renderAt("/sessions");
 
@@ -148,5 +189,6 @@ describe("NewSessionLayer draft", { timeout: 20_000 }, () => {
 		expect(promptInput().value).toBe("");
 		expect(repoInput().value).toBe("alpha");
 		expect(checkedMode()).toBe("bug");
+		expect(document.activeElement).toBe(promptInput());
 	});
 });

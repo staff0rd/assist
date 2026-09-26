@@ -35,7 +35,10 @@ export function FilePalette({ onClose }: { onClose: () => void }) {
 	};
 
 	return (
-		<AutoFocusDialog onClose={onClose} focusRef={inputRef}>
+		<AutoFocusDialog
+			onClose={onClose}
+			onEntered={() => inputRef.current?.focus()}
+		>
 			<FilterInput
 				autoFocus
 				inputRef={inputRef}

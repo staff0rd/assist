@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import type { RefObject } from "react";
 import { RepoMenuList } from "../../../RepoMenuList";
 import { repoComboboxSlotProps } from "./RepoCombobox/repoComboboxSlotProps";
 import { useRepoCombobox } from "./RepoCombobox/useRepoCombobox";
@@ -10,10 +11,16 @@ export function RepoCombobox({
 	repos,
 	value,
 	onChange,
+	inputRef,
+	autoFocus,
+	onTrack,
 }: {
 	repos: string[];
 	value: string;
 	onChange: (cwd: string) => void;
+	inputRef: RefObject<HTMLInputElement | null>;
+	autoFocus: boolean;
+	onTrack: () => void;
 }) {
 	const combo = useRepoCombobox(repos, value, onChange);
 
@@ -25,7 +32,10 @@ export function RepoCombobox({
 				onFocus={(e) => {
 					e.target.select();
 					combo.onFocus();
+					onTrack();
 				}}
+				inputRef={inputRef}
+				autoFocus={autoFocus}
 				onBlur={combo.onBlur}
 				onKeyDown={combo.onKeyDown}
 				placeholder="Repo"

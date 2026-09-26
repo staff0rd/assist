@@ -1,5 +1,5 @@
 import TextField from "@mui/material/TextField";
-import type { RefObject } from "react";
+import type { Ref, SyntheticEvent } from "react";
 import { handleEnterSubmit } from "../../../../handleEnterSubmit";
 
 export function NewSessionPromptField({
@@ -7,20 +7,26 @@ export function NewSessionPromptField({
 	onChange,
 	placeholder,
 	inputRef,
+	autoFocus,
+	onTrack,
 }: {
 	value: string;
 	onChange: (prompt: string) => void;
 	placeholder: string;
-	inputRef: RefObject<HTMLTextAreaElement | null>;
+	inputRef: Ref<HTMLTextAreaElement>;
+	autoFocus: boolean;
+	onTrack: (e: SyntheticEvent) => void;
 }) {
 	return (
 		<TextField
 			value={value}
 			onChange={(e) => onChange(e.target.value)}
 			onKeyDown={handleEnterSubmit}
+			onFocus={onTrack}
+			onSelect={onTrack}
 			inputRef={inputRef}
 			placeholder={placeholder}
-			autoFocus
+			autoFocus={autoFocus}
 			fullWidth
 			multiline
 			minRows={3}

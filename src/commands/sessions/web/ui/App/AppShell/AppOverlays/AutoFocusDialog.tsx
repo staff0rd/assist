@@ -1,16 +1,16 @@
 import Dialog from "@mui/material/Dialog";
-import type { ReactNode, RefObject } from "react";
+import type { ReactNode } from "react";
 
 const topAnchoredSx = { mt: 6, alignSelf: "flex-start" } as const;
 
 export function AutoFocusDialog({
 	onClose,
-	focusRef,
+	onEntered,
 	centered = false,
 	children,
 }: {
 	onClose: () => void;
-	focusRef: RefObject<HTMLElement | null>;
+	onEntered: () => void;
 	centered?: boolean;
 	children: ReactNode;
 }) {
@@ -22,7 +22,7 @@ export function AutoFocusDialog({
 			fullWidth
 			slotProps={{
 				paper: { sx: centered ? undefined : topAnchoredSx },
-				transition: { onEntered: () => focusRef.current?.focus() },
+				transition: { onEntered },
 			}}
 		>
 			{children}
