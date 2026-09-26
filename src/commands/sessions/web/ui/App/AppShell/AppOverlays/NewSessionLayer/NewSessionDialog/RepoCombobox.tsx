@@ -1,11 +1,10 @@
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import type { RefObject } from "react";
+import { type RefObject, useRef } from "react";
 import { RepoMenuList } from "../../../RepoMenuList";
+import { RepoComboboxPopper } from "./RepoCombobox/RepoComboboxPopper";
 import { repoComboboxSlotProps } from "./RepoCombobox/repoComboboxSlotProps";
 import { useRepoCombobox } from "./RepoCombobox/useRepoCombobox";
-
-const listSx = { maxHeight: 240, overflowY: "auto" } as const;
 
 export function RepoCombobox({
 	repos,
@@ -23,9 +22,10 @@ export function RepoCombobox({
 	onTrack: () => void;
 }) {
 	const combo = useRepoCombobox(repos, value, onChange);
+	const anchorRef = useRef<HTMLDivElement>(null);
 
 	return (
-		<Box sx={{ flex: 1, minWidth: 0 }}>
+		<Box ref={anchorRef} sx={{ flex: 1, minWidth: 0 }}>
 			<TextField
 				value={combo.text}
 				onChange={(e) => combo.onType(e.target.value)}
@@ -44,17 +44,15 @@ export function RepoCombobox({
 				fullWidth
 				slotProps={repoComboboxSlotProps(combo.open, value)}
 			/>
-			{combo.open && (
-				<Box sx={listSx} onMouseDown={(e) => e.preventDefault()}>
-					<RepoMenuList
-						repos={combo.filtered}
-						selected={value}
-						highlight={combo.highlight}
-						onHighlight={combo.setHighlight}
-						onSelect={combo.pick}
-					/>
-				</Box>
-			)}
+			<RepoComboboxPopper open={combo.open} anchor={anchorRef.current}>
+				<RepoMenuList
+					repos={combo.filtered}
+					selected={value}
+					highlight={combo.highlight}
+					onHighlight={combo.setHighlight}
+					onSelect={combo.pick}
+				/>
+			</RepoComboboxPopper>
 		</Box>
 	);
 }
