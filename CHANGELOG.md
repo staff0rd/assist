@@ -1,3 +1,11 @@
+# [0.701.0](https://github.com/staff0rd/assist/compare/v0.700.1...v0.701.0) (2026-09-26)
+
+
+### Features
+
+* keep new session draft on dismiss ([6d9a2fa](https://github.com/staff0rd/assist/commit/6d9a2fa9a06cee65d82c801de52cdef9e3ae4f3d))
+* News nav tab via news.showInNav ([7cede8c](https://github.com/staff0rd/assist/commit/7cede8c04cdce8f2cf44009740ff5a72872e4f76))
+
 ## [0.700.1](https://github.com/staff0rd/assist/compare/v0.700.0...v0.700.1) (2026-09-26)
 
 
