@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { useEffect, useRef, useState } from "react";
+import { HistoryPosition } from "./SessionLastMessage/HistoryPosition";
 import { lastMessageSx } from "./SessionLastMessage/lastMessageSx";
 import { useDismissablePin } from "./SessionLastMessage/useDismissablePin";
 import { useHistoryStep } from "./SessionLastMessage/useHistoryStep";
@@ -18,7 +19,11 @@ export function SessionLastMessage({
 	const [hovered, setHovered] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 	const { pinned, pin } = useDismissablePin(ref);
-	const { shown, onWheel } = useHistoryStep(message ?? "", history, !pinned);
+	const { shown, position, onWheel, reset } = useHistoryStep(
+		message ?? "",
+		history,
+		!pinned,
+	);
 
 	useEffect(() => {
 		if (message) onFetchHistory?.();
@@ -32,16 +37,22 @@ export function SessionLastMessage({
 	return (
 		<Box
 			ref={ref}
-			sx={lastMessageSx(pinned, expanded)}
+			sx={{ ...lastMessageSx(pinned, expanded), ...(position && { pr: 8 }) }}
 			data-testid="session-last-message"
 			data-expanded={expanded ? "true" : "false"}
 			data-pinned={pinned ? "true" : "false"}
 			onMouseEnter={() => setHovered(true)}
-			onMouseLeave={() => setHovered(false)}
+			onMouseLeave={() => {
+				setHovered(false);
+				if (!pinned) reset();
+			}}
 			onClick={pin}
 			onWheel={onWheel}
 		>
-			{expanded ? shown.trim() : oneLine}
+			<span data-testid="session-last-message-text">
+				{expanded ? shown.trim() : oneLine}
+			</span>
+			<HistoryPosition position={position} />
 		</Box>
 	);
 }

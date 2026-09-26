@@ -1,14 +1,38 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SessionLastMessage } from "./SessionLastMessage";
 
-afterEach(cleanup);
+beforeEach(() => {
+	vi.useFakeTimers();
+});
+
+afterEach(() => {
+	cleanup();
+	vi.useRealTimers();
+});
 
 const long = "check the parser\n\nthen fix the failing test";
 
 function readout() {
 	return screen.getByTestId("session-last-message");
+}
+
+function text() {
+	return screen.getByTestId("session-last-message-text").textContent;
+}
+
+function position() {
+	return screen.queryByTestId("session-last-message-position");
+}
+
+function wheel(deltaY: number) {
+	fireEvent.wheel(readout(), { deltaY });
+}
+
+function gesture(deltaY: number) {
+	wheel(deltaY);
+	vi.advanceTimersByTime(500);
 }
 
 describe("SessionLastMessage", () => {
@@ -115,35 +139,91 @@ describe("SessionLastMessage", () => {
 				history={["first", "second", "third"]}
 			/>,
 		);
-		const wheel = (deltaY: number) => fireEvent.wheel(readout(), { deltaY });
 
-		wheel(-100);
-		expect(readout().textContent).toBe("second");
-		wheel(-100);
-		wheel(-100);
-		expect(readout().textContent).toBe("first");
-		wheel(100);
-		expect(readout().textContent).toBe("second");
-		wheel(100);
-		wheel(100);
-		expect(readout().textContent).toBe("third");
+		gesture(-100);
+		expect(text()).toBe("second");
+		gesture(-100);
+		gesture(-100);
+		expect(text()).toBe("first");
+		gesture(100);
+		expect(text()).toBe("second");
+		gesture(100);
+		gesture(100);
+		expect(text()).toBe("third");
 	});
 
 	it("includes the latest message when the history has not caught up", () => {
 		render(<SessionLastMessage message="new" history={["old"]} />);
 
-		fireEvent.wheel(readout(), { deltaY: -100 });
+		gesture(-100);
 
-		expect(readout().textContent).toBe("old");
+		expect(text()).toBe("old");
+	});
+
+	it("steps once per trackpad gesture however many events it fires", () => {
+		render(
+			<SessionLastMessage
+				message="third"
+				history={["first", "second", "third"]}
+			/>,
+		);
+
+		for (let i = 0; i < 30; i++) {
+			wheel(-8);
+			vi.advanceTimersByTime(16);
+		}
+
+		expect(text()).toBe("second");
+	});
+
+	it("shows the position while an older message is showing", () => {
+		render(
+			<SessionLastMessage
+				message="third"
+				history={["first", "second", "third"]}
+			/>,
+		);
+
+		expect(position()).toBeNull();
+		gesture(-100);
+		expect(position()?.textContent).toBe("2 / 3");
+		gesture(-100);
+		expect(position()?.textContent).toBe("1 / 3");
+		gesture(100);
+		gesture(100);
+		expect(position()).toBeNull();
+	});
+
+	it("returns to the latest message when the pointer leaves", () => {
+		render(<SessionLastMessage message="two" history={["one", "two"]} />);
+
+		fireEvent.mouseEnter(readout());
+		gesture(-100);
+		fireEvent.mouseLeave(readout());
+
+		expect(text()).toBe("two");
+		expect(position()).toBeNull();
+	});
+
+	it("returns to the latest message when a new message arrives", () => {
+		const { rerender } = render(
+			<SessionLastMessage message="two" history={["one", "two"]} />,
+		);
+
+		gesture(-100);
+		rerender(<SessionLastMessage message="three" history={["one", "two"]} />);
+
+		expect(text()).toBe("three");
+		expect(position()).toBeNull();
 	});
 
 	it("scrolls the text instead of stepping while pinned", () => {
 		render(<SessionLastMessage message="two" history={["one", "two"]} />);
 
 		fireEvent.click(readout());
-		fireEvent.wheel(readout(), { deltaY: -100 });
+		gesture(-100);
 
-		expect(readout().textContent).toBe("two");
+		expect(text()).toBe("two");
 		expect(getComputedStyle(readout()).overflow).toBe("hidden auto");
 	});
 
