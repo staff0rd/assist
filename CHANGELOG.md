@@ -1,3 +1,10 @@
+## [0.706.1](https://github.com/staff0rd/assist/compare/v0.706.0...v0.706.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* resolve tmpdir realpath in tests ([ac5c3fc](https://github.com/staff0rd/assist/commit/ac5c3fc889f2cf77a734daed46031cf1a9852803))
+
 # [0.706.0](https://github.com/staff0rd/assist/compare/v0.705.4...v0.706.0) (2026-09-26)
 
 
