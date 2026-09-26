@@ -1,3 +1,11 @@
+## [0.706.2](https://github.com/staff0rd/assist/compare/v0.706.1...v0.706.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* join harness dropdown to Build ([b1260bc](https://github.com/staff0rd/assist/commit/b1260bc624b4700e5c9fe302eff1fbfd37de06f8))
+* skip task notifications in last typed ([74d06bc](https://github.com/staff0rd/assist/commit/74d06bcdf655ba8420f3a8ce8874bc059cc1dc97))
+
 ## [0.706.1](https://github.com/staff0rd/assist/compare/v0.706.0...v0.706.1) (2026-09-26)
 
 
