@@ -41,11 +41,13 @@ export function PlayAction({
 					launch([]);
 				}}
 			/>
-			<HarnessDropdownButton
-				label="Build with a different harness"
-				disabled={disabled}
-				onSelect={(kind) => launch(["--harness", kind])}
-			/>
+			{!compact && (
+				<HarnessDropdownButton
+					label="Build with a different harness"
+					disabled={disabled}
+					onSelect={(kind) => launch(["--harness", kind])}
+				/>
+			)}
 		</>
 	);
 }

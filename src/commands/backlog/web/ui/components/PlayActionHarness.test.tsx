@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LiveSessionsContext } from "../../../../sessions/web/ui/useLiveSessionsContext";
@@ -16,7 +22,7 @@ function mockHarness(capabilities: {
 	);
 }
 
-function renderPlay(launchAssist: () => void) {
+function renderPlay(launchAssist: () => void, compact = false) {
 	return render(
 		<MemoryRouter initialEntries={["/backlog"]}>
 			<LiveSessionsContext.Provider value={[]}>
@@ -28,7 +34,7 @@ function renderPlay(launchAssist: () => void) {
 						armUpdateReload: () => {},
 					}}
 				>
-					<PlayAction itemId={775} />
+					<PlayAction itemId={775} compact={compact} />
 				</SessionLaunchContext.Provider>
 			</LiveSessionsContext.Provider>
 		</MemoryRouter>,
@@ -64,6 +70,17 @@ describe("PlayAction harness dropdown", () => {
 		renderPlay(vi.fn());
 
 		await screen.findByRole("button", { name: "Build" });
+		expect(
+			screen.queryByRole("button", { name: "Build with a different harness" }),
+		).toBeNull();
+	});
+
+	it("offers no dropdown on the compact variant even when Codex is exposed", async () => {
+		mockHarness({ exposeCodexActions: true });
+		renderPlay(vi.fn(), true);
+
+		await screen.findByRole("button", { name: "Build" });
+		await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
 		expect(
 			screen.queryByRole("button", { name: "Build with a different harness" }),
 		).toBeNull();
