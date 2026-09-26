@@ -1,3 +1,10 @@
+## [0.706.3](https://github.com/staff0rd/assist/compare/v0.706.2...v0.706.3) (2026-09-26)
+
+
+### Bug Fixes
+
+* keep item navigator beside body ([094e7b8](https://github.com/staff0rd/assist/commit/094e7b8f00d9cb065be1e3376f8e3fb7aa7e04bb))
+
 ## [0.706.2](https://github.com/staff0rd/assist/compare/v0.706.1...v0.706.2) (2026-09-26)
 
 
