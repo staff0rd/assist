@@ -19,7 +19,11 @@ export function TopNavActions({
 	const { selectedCwd } = useRepoSelectionContext();
 
 	return (
-		<Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+		<Stack
+			direction="row"
+			spacing={0.5}
+			sx={{ alignItems: "center", "&:not(:empty)": { ml: 2 } }}
+		>
 			<ReviewDropdown
 				cwd={selectedCwd}
 				disabled={!selectedCwd}
