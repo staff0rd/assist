@@ -1,3 +1,10 @@
+## [0.704.5](https://github.com/staff0rd/assist/compare/v0.704.4...v0.704.5) (2026-09-26)
+
+
+### Bug Fixes
+
+* forget killed tasks already handled ([7ec2ead](https://github.com/staff0rd/assist/commit/7ec2ead57d2dca905ed087b373a403ef20162abb))
+
 ## [0.704.4](https://github.com/staff0rd/assist/compare/v0.704.3...v0.704.4) (2026-09-26)
 
 
