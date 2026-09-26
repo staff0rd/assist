@@ -1,3 +1,10 @@
+## [0.705.3](https://github.com/staff0rd/assist/compare/v0.705.2...v0.705.3) (2026-09-26)
+
+
+### Bug Fixes
+
+* lock harness row, align field heights ([0bf09b3](https://github.com/staff0rd/assist/commit/0bf09b3cfbfa7128c54c6b1e896f1cc39a9c55c2))
+
 ## [0.705.2](https://github.com/staff0rd/assist/compare/v0.705.1...v0.705.2) (2026-09-26)
 
 
