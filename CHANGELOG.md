@@ -1,3 +1,11 @@
+## [0.705.4](https://github.com/staff0rd/assist/compare/v0.705.3...v0.705.4) (2026-09-26)
+
+
+### Bug Fixes
+
+* node name in hamburger menu ([114f246](https://github.com/staff0rd/assist/commit/114f246952f00371f31b8ae6b96f50c5fba2315b))
+* node name in hamburger menu ([19dedf6](https://github.com/staff0rd/assist/commit/19dedf658d7dd24a90586a28546bc6a6db80d158))
+
 ## [0.705.3](https://github.com/staff0rd/assist/compare/v0.705.2...v0.705.3) (2026-09-26)
 
 
