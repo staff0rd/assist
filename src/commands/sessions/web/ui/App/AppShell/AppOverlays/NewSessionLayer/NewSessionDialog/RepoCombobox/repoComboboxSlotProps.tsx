@@ -10,7 +10,7 @@ export function repoComboboxSlotProps(open: boolean, value: string) {
 			"aria-expanded": open,
 		},
 		input: {
-			sx: { fontSize: 13 },
+			sx: { fontSize: 13, height: 40 },
 			endAdornment: isWindowsCwd(value) && (
 				<InputAdornment position="end">
 					<WindowsBadge />

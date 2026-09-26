@@ -445,11 +445,16 @@ describe("NewSessionDialog harness selector", () => {
 	});
 
 	it.each(["draft", "bug", "design"] as const)(
-		"is hidden in %s mode",
+		"is locked to Claude in %s mode",
 		async (mode) => {
 			await renderWithHarnesses(mode);
 
-			expect(screen.queryByRole("radiogroup", { name: "Harness" })).toBeNull();
+			expect(checkedIn("Harness")).toBe("Claude");
+			expect(harnessRadio("Codex").hasAttribute("disabled")).toBe(true);
+			expect(harnessRadio("pi").hasAttribute("disabled")).toBe(true);
+
+			fireEvent.keyDown(harnessRadio("Claude"), { key: "ArrowRight" });
+			expect(checkedIn("Harness")).toBe("Claude");
 		},
 	);
 

@@ -22,6 +22,7 @@ export function SegmentedRadioGroup({
 	autoFocus,
 	onTrack,
 	onToggleRow,
+	locked = false,
 }: {
 	label: string;
 	options: readonly string[];
@@ -32,7 +33,9 @@ export function SegmentedRadioGroup({
 	autoFocus: boolean;
 	onTrack: () => void;
 	onToggleRow?: () => void;
+	locked?: boolean;
 }) {
+	const selectable = locked ? [value] : options;
 	return (
 		<Stack
 			ref={groupRef}
@@ -42,7 +45,7 @@ export function SegmentedRadioGroup({
 			spacing="2px"
 			onFocus={onTrack}
 			onKeyDown={segmentedRadioKeyHandler(
-				options,
+				selectable,
 				value,
 				onChange,
 				onToggleRow,
@@ -55,6 +58,7 @@ export function SegmentedRadioGroup({
 					value={option}
 					label={optionLabel(option)}
 					checked={option === value}
+					disabled={!selectable.includes(option)}
 					autoFocus={autoFocus}
 					onSelect={() => onChange(option)}
 				/>

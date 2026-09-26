@@ -12,6 +12,7 @@ const radioSx = {
 		bgcolor: "action.selected",
 	},
 	"&.Mui-focusVisible": { outline: 2, outlineColor: "primary.main" },
+	"&.Mui-disabled": { color: "text.disabled" },
 } as const;
 
 export function SegmentedRadio({
@@ -20,17 +21,20 @@ export function SegmentedRadio({
 	checked,
 	autoFocus,
 	onSelect,
+	disabled,
 }: {
 	value: string;
 	label: string;
 	checked: boolean;
 	autoFocus: boolean;
 	onSelect: () => void;
+	disabled: boolean;
 }) {
 	return (
 		<ButtonBase
 			role="radio"
 			aria-checked={checked}
+			disabled={disabled}
 			data-value={value}
 			tabIndex={checked ? 0 : -1}
 			autoFocus={autoFocus && checked}

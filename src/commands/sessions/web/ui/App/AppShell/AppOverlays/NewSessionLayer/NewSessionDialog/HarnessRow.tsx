@@ -11,26 +11,22 @@ export function HarnessRow({
 	onChange,
 	offset,
 	focus,
-	hidden,
+	locked,
 }: {
 	harness: HarnessKind;
 	harnesses: HarnessKind[];
 	onChange: (harness: HarnessKind) => void;
 	offset: number;
 	focus: ReturnType<typeof useDraftFocus>;
-	hidden: boolean;
+	locked: boolean;
 }) {
 	return (
-		<Box
-			sx={{ display: "flex", ml: `${offset}px` }}
-			style={hidden ? { visibility: "hidden" } : undefined}
-			aria-hidden={hidden || undefined}
-			inert={hidden}
-		>
+		<Box sx={{ display: "flex", ml: `${offset}px` }}>
 			<SegmentedRadioGroup
 				label="Harness"
 				options={harnesses}
-				value={harness}
+				value={locked ? "claude" : harness}
+				locked={locked}
 				onChange={(choice) => onChange(choice as HarnessKind)}
 				optionLabel={(choice) => harnessLabel(choice as HarnessKind)}
 				groupRef={focus.harnessRef}

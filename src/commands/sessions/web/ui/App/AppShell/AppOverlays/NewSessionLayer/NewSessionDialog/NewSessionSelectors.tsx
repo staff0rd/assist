@@ -46,7 +46,7 @@ export function NewSessionSelectors({
 					onChange={draft.setHarness}
 					offset={offset}
 					focus={focus}
-					hidden={!showHarness}
+					locked={!showHarness}
 				/>
 			)}
 		</Stack>
