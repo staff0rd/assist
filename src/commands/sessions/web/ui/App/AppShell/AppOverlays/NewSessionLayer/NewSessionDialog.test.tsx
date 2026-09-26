@@ -180,6 +180,20 @@ describe("NewSessionDialog repo combobox", () => {
 		expect(onCreate).not.toHaveBeenCalled();
 	});
 
+	it("opens every repo on click with the current repo highlighted", () => {
+		renderDialog();
+
+		fireEvent.focus(repoInput());
+		fireEvent.click(repoInput());
+
+		expect(repoInput().getAttribute("aria-expanded")).toBe("true");
+		expect(options()).toEqual(["alpha", "beta", "gamma", "delta"]);
+
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+
+		expect(repoInput().value).toBe("beta");
+	});
+
 	it("submits on Enter while the list is closed", () => {
 		const { onCreate } = renderDialog();
 

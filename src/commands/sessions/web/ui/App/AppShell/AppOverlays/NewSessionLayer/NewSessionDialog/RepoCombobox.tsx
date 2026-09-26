@@ -36,6 +36,7 @@ export function RepoCombobox({
 				}}
 				inputRef={inputRef}
 				autoFocus={autoFocus}
+				onClick={combo.onClick}
 				onBlur={combo.onBlur}
 				onKeyDown={combo.onKeyDown}
 				placeholder="Repo"

@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { comboboxKeyHandler } from "./useRepoCombobox/comboboxKeyHandler";
 import { filterReposByName } from "./useRepoCombobox/filterReposByName";
-import { repoName } from "../../../../RepoList";
+import { useComboboxOpen } from "./useRepoCombobox/useComboboxOpen";
+import { useRepoText } from "./useRepoCombobox/useRepoText";
 import { useListKeyboardNav } from "../../../../useListKeyboardNav";
 
 export function useRepoCombobox(
@@ -9,53 +9,51 @@ export function useRepoCombobox(
 	value: string,
 	onChange: (cwd: string) => void,
 ) {
-	const [open, setOpen] = useState(false);
-	const [text, setText] = useState(() => (value ? repoName(value) : ""));
-	const [query, setQuery] = useState("");
-	const filtered = filterReposByName(repos, query);
+	const list = useComboboxOpen();
+	const input = useRepoText(value);
+	const filtered = filterReposByName(repos, list.query);
 
 	const accept = (cwd: string) => {
 		onChange(cwd);
-		setText(repoName(cwd));
+		input.showRepo(cwd);
 	};
-	const close = () => {
-		setOpen(false);
-		setQuery("");
-	};
-	const nav = useListKeyboardNav(filtered, query, accept, close);
+	const nav = useListKeyboardNav(filtered, list.query, accept, list.close);
 	const seedHighlight = () =>
 		nav.setHighlight(Math.max(repos.indexOf(value), 0));
+	const openList = () => {
+		seedHighlight();
+		list.show();
+	};
 
 	return {
-		open,
-		text,
+		open: list.open,
+		text: input.text,
 		filtered,
 		highlight: nav.highlight,
 		setHighlight: nav.setHighlight,
 		onKeyDown: comboboxKeyHandler({
-			open,
+			open: list.open,
 			highlighted: filtered[nav.highlight],
 			accept,
-			close,
+			close: list.close,
 			navigate: nav.onKeyDown,
-			openList: () => {
-				seedHighlight();
-				setOpen(true);
-			},
+			openList,
 		}),
+		onClick: () => {
+			if (!list.open) openList();
+		},
 		onType: (next: string) => {
-			setText(next);
-			setQuery(next);
-			setOpen(true);
+			input.setText(next);
+			list.filterBy(next);
 		},
 		onFocus: seedHighlight,
 		onBlur: () => {
-			close();
-			setText(value ? repoName(value) : "");
+			list.close();
+			input.showRepo(value);
 		},
 		pick: (cwd: string) => {
 			accept(cwd);
-			close();
+			list.close();
 		},
 	};
 }
