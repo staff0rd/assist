@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import type { SessionInfo, SessionListHandlers } from "../../../types";
-import { ActiveSessionTopBar } from "./ActiveSessionTopBar";
+import { ActiveSessionTopBar } from "./SessionAreaTopBar/ActiveSessionTopBar";
 
 const topBarSx = { flexShrink: 0 } as const;
 

@@ -1,6 +1,6 @@
 import { findActiveSession } from "../../../../findActiveSession";
 import type { HistoricalSession, SessionInfo } from "../../../../types";
-import { deriveWorktreeCwd } from "./deriveWorktreeCwd";
+import { deriveWorktreeCwd } from "./deriveWorktree/deriveWorktreeCwd";
 
 export function deriveWorktree(
 	activeId: string | null,

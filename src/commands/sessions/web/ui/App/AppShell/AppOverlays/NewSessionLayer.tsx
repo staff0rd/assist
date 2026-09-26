@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { NewSessionDialog } from "./NewSessionLayer/NewSessionDialog";
-import type { NewSessionLaunchers } from "./NewSessionLayer/NewSessionDialog/launchNewSession";
+import type { NewSessionLaunchers } from "./NewSessionLayer/launchNewSession";
 import { useDefaultNewSessionMode } from "./NewSessionLayer/useDefaultNewSessionMode";
 import { useNewSessionDraft } from "./NewSessionLayer/useNewSessionDraft";
 import { useNewSessionHotkey } from "./NewSessionLayer/useNewSessionHotkey";

@@ -2,7 +2,7 @@ export type { SessionInfo } from "./types";
 
 import { useActiveSelectionSync } from "./useSessionSocket/useActiveSelectionSync";
 import { useReportRenderedStatus } from "./useSessionSocket/useReportRenderedStatus";
-import { useNodeSelection } from "./useSessionSocket/useNodeSelection";
+import { useNodeSelection } from "./useNodeSelection";
 import { useSend } from "./useSessionSocket/useSend";
 import { useSessionActions } from "./useSessionSocket/useSessionActions";
 import { useTranscriptNavigation } from "./useSessionSocket/useTranscriptNavigation";

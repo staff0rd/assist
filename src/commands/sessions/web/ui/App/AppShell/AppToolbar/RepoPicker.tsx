@@ -1,5 +1,5 @@
-import { DropdownWrapper } from "../../DropdownWrapper";
-import { RepoList, repoName } from "../RepoList";
+import { DropdownWrapper } from "../../../DropdownWrapper";
+import { RepoList, repoName } from "../../../RepoList";
 
 export function RepoPicker({
 	repos,

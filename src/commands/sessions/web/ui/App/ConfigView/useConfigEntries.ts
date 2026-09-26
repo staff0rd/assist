@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConfigEntry } from "../../../../../config/readConfigEntries";
 import { useApiNode } from "../../useApiNode";
-import { fetchEntries } from "./fetchEntries";
+import { fetchEntries } from "./useConfigEntries/fetchEntries";
 
 type ConfigEntriesState = {
 	entries: ConfigEntry[];

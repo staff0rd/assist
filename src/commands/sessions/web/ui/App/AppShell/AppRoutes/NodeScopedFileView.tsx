@@ -1,6 +1,6 @@
 import type { SessionSocket } from "../../../useSessionSocket";
 import { selectedCardId } from "../selectedCardId";
-import { FileView } from "./FileView";
+import { FileView } from "./NodeScopedFileView/FileView";
 import { RouteNodeScope } from "./RouteNodeScope";
 
 export function NodeScopedFileView({ socket }: { socket: SessionSocket }) {

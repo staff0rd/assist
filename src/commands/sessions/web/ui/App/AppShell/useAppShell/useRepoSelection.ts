@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { HistoricalSession, SessionInfo } from "../../../types";
 import type { RepoSelection } from "../../../useRepoSelectionContext";
-import type { NodeSelection } from "../../../useSessionSocket/useNodeSelection";
+import type { NodeSelection } from "../../../useNodeSelection";
 import { deriveWorktree } from "./useRepoSelection/deriveWorktree";
 import { mergeRepos, preferredClone } from "./useRepoSelection/mergeRepos";
 import { nodeKey } from "./useRepoSelection/nodeKey";

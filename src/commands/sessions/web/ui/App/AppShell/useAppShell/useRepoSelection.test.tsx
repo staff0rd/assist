@@ -5,7 +5,7 @@ import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
 import { resolveActiveId } from "../../../useSessionSocket/useWsConnection/resolveActiveId";
 import type { HistoricalSession, SessionInfo } from "../../../types";
-import type { NodeSelection } from "../../../useSessionSocket/useNodeSelection";
+import type { NodeSelection } from "../../../useNodeSelection";
 import { useActiveIdReconciler } from "../../../useSessionSocket/useWsConnection/useActiveIdReconciler";
 import { useAdoptRepoCard } from "./useAdoptRepoCard";
 import { useRepoSelection } from "./useRepoSelection";

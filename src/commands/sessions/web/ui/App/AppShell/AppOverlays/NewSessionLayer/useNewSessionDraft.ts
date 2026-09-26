@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
-import type { NewSessionMode } from "./NewSessionDialog/newSessionModes";
+import type { NewSessionMode } from "./newSessionModes";
 import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
-import { draftNode } from "./draftNode";
+import { draftNode } from "./useNewSessionDraft/draftNode";
 
 export type DraftFocus = {
 	field: "prompt" | "repo" | "mode";

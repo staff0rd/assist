@@ -3,7 +3,7 @@ import { useApiNode } from "../../../../useApiNode";
 import {
 	fetchReviewSynthesis,
 	type ReviewSynthesisState,
-} from "./fetchReviewSynthesis";
+} from "./useReviewSynthesis/fetchReviewSynthesis";
 
 export function useReviewSynthesis(
 	cwd: string | undefined,

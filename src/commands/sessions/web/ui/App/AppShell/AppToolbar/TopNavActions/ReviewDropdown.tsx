@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { PrSummary } from "../../../../../prList";
-import { DropdownWrapper } from "../../../DropdownWrapper";
+import { DropdownWrapper } from "../../../../DropdownWrapper";
 import { useOpenPrs } from "./ReviewDropdown/useOpenPrs";
 import { ReviewDropdownContent } from "./ReviewDropdown/ReviewDropdownContent";
 import { ReviewTypeDialog } from "./ReviewDropdown/ReviewTypeDialog";

@@ -1,7 +1,7 @@
 import Chip from "@mui/material/Chip";
 import { CloneBadge } from "./CardBadges/CloneBadge";
 import { HarnessBadge } from "../../../../HarnessBadge";
-import { NodeBadge } from "../../../../../NodeBadge";
+import { NodeBadge } from "../../../../NodeBadge";
 import { ServingChip } from "./CardBadges/ServingChip";
 import type { SessionInfo } from "../../../../../../types";
 import { useCloneBadgeContext } from "../../../../useCloneBadgeContext";

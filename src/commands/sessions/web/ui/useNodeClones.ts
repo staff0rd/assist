@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
-import { fetchLocations, type RepoLocation } from "./fetchLocations";
+import { useCallback } from "react";
+import {
+	NODE_SEPARATOR,
+	useCloneLocations,
+} from "./useNodeClones/useCloneLocations";
 import { useRepoSelectionContext } from "./useRepoSelectionContext";
 
 export type NodeClone =
 	| { kind: "cloned"; cwd: string }
 	| { kind: "clonable"; origin: string; cloneTarget: string }
 	| { kind: "unavailable" };
-
-type Locations = { origin: string; byNode: Record<string, RepoLocation> };
-
-const NODE_SEPARATOR = "\0";
 
 export function useNodeClones(
 	cwd: string,
@@ -21,19 +20,7 @@ export function useNodeClones(
 		.filter((node) => !cwd || !cloneOn(cwd, node))
 		.map((node) => node ?? "")
 		.join(NODE_SEPARATOR);
-	const [locations, setLocations] = useState<Locations | null>(null);
-
-	useEffect(() => {
-		if (!origin || !missing) return;
-		let cancelled = false;
-		fetchLocations(origin, missing.split(NODE_SEPARATOR)).then((entries) => {
-			if (!cancelled)
-				setLocations({ origin, byNode: Object.fromEntries(entries) });
-		});
-		return () => {
-			cancelled = true;
-		};
-	}, [origin, missing]);
+	const locations = useCloneLocations(origin, missing);
 
 	return useCallback(
 		(node: string | undefined): NodeClone => {

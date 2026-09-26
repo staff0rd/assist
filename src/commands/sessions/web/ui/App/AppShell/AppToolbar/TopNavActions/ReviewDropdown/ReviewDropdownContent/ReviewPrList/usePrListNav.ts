@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { PrSummary } from "../../../../../../../../prList";
 import { filterPrs } from "./usePrListNav/filterPrs";
-import { useListKeyboardNav } from "../../../../../useListKeyboardNav";
+import { useListKeyboardNav } from "../../../../../../../useListKeyboardNav";
 
 export function usePrListNav(
 	prs: PrSummary[],

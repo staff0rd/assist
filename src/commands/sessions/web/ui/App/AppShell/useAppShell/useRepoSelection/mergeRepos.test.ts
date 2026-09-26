@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { HistoricalSession } from "../../../../types";
 import { mergeRepos, preferredClone } from "./mergeRepos";
-import { resolveSelectedNode } from "./resolveSelectedNode";
+import { resolveSelectedNode } from "./useSelectedRepo/resolveSelectedNode";
 
 const origin = "github.com/org/app";
 

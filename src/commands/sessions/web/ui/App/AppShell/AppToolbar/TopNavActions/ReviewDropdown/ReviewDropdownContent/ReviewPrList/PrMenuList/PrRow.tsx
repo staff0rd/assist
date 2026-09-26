@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { PrSummary } from "../../../../../../../../../prList";
 import { formatRelativeTime } from "../../../../../../../../formatRelativeTime";
-import { useHighlightScroll } from "../../../../../../useHighlightScroll";
+import { useHighlightScroll } from "../../../../../../../../useHighlightScroll";
 
 export function PrRow({
 	pr,

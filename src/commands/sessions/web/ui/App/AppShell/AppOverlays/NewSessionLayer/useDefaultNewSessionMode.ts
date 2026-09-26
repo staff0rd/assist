@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-	type NewSessionMode,
-	newSessionModes,
-} from "./NewSessionDialog/newSessionModes";
+import { type NewSessionMode, newSessionModes } from "./newSessionModes";
 
 export function useDefaultNewSessionMode(): NewSessionMode | null {
 	const [mode, setMode] = useState<NewSessionMode | null>(null);

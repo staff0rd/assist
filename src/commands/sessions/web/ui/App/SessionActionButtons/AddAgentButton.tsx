@@ -3,7 +3,7 @@ import Popover from "@mui/material/Popover";
 import { useState } from "react";
 import { ActionButton } from "../ActionButton";
 import { canAddAgent } from "./AddAgentButton/canAddAgent";
-import { FreePromptForm } from "../FreePromptForm";
+import { FreePromptForm } from "./AddAgentButton/FreePromptForm";
 import type { SessionInfo } from "../../types";
 import { useSessionLaunchContext } from "../../useSessionLaunchContext";
 

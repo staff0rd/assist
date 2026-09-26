@@ -4,7 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { useNodeSelectionContext } from "../../../useNodeSelectionContext";
-import { NodeOptionLabel } from "../../NodeOptionLabel";
+import { NodeOptionLabel } from "../NodeOptionLabel";
 
 const buttonSx = { ml: 1, textTransform: "none", fontSize: 12 } as const;
 

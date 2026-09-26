@@ -1,6 +1,6 @@
 import { repoKeyForCwd } from "../../../../repoGroupKey";
 import type { HistoricalSession } from "../../../../types";
-import { uniqueRepos } from "./uniqueRepos";
+import { uniqueRepos } from "./mergeRepos/uniqueRepos";
 
 export const LOCAL_NODE = "";
 

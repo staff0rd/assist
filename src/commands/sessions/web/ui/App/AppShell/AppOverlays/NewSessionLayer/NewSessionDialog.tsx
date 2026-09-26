@@ -1,9 +1,9 @@
 import type { FormEvent } from "react";
 import { harnessChoices } from "./NewSessionDialog/harnessChoices";
-import type { NewSessionLaunchers } from "./NewSessionDialog/launchNewSession";
+import type { NewSessionLaunchers } from "./launchNewSession";
 import { NewSessionFields } from "./NewSessionDialog/NewSessionFields";
 import { NewSessionFooter } from "./NewSessionDialog/NewSessionFooter";
-import { newSessionModes } from "./NewSessionDialog/newSessionModes";
+import { newSessionModes } from "./newSessionModes";
 import { submitDraft } from "./NewSessionDialog/submitDraft";
 import { useDraftFocus } from "./NewSessionDialog/useDraftFocus";
 import { useDraftRepos } from "./NewSessionDialog/useDraftRepos";

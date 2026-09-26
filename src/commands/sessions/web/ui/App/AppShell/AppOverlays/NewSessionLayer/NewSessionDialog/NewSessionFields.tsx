@@ -2,11 +2,11 @@ import Stack from "@mui/material/Stack";
 import type { ComponentProps } from "react";
 import type { NodeClone } from "../../../../../useNodeClones";
 import { useRepoSelectionContext } from "../../../../../useRepoSelectionContext";
-import { MachineSelector } from "./MachineSelector";
-import { NewSessionPromptField } from "./NewSessionPromptField";
-import { NewSessionSelectors } from "./NewSessionSelectors";
-import { newSessionModes } from "./newSessionModes";
-import { RepoCombobox } from "./RepoCombobox";
+import { MachineSelector } from "./NewSessionFields/MachineSelector";
+import { NewSessionPromptField } from "./NewSessionFields/NewSessionPromptField";
+import { NewSessionSelectors } from "./NewSessionFields/NewSessionSelectors";
+import { newSessionModes } from "../newSessionModes";
+import { RepoCombobox } from "./NewSessionFields/RepoCombobox";
 
 export function NewSessionFields({
 	cloneState,

@@ -2,10 +2,10 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { filePaletteMessage } from "./FilePalette/filePaletteMessage";
 import { FilePaletteResults } from "./FilePalette/FilePaletteResults";
-import { FilterInput } from "../../FilterInput";
+import { FilterInput } from "../../../../FilterInput";
 import { AutoFocusDialog } from "../AutoFocusDialog";
 import { useFileSearch } from "./FilePalette/useFileSearch";
-import { useListKeyboardNav } from "../../useListKeyboardNav";
+import { useListKeyboardNav } from "../../../../useListKeyboardNav";
 import { ApiNodeContext } from "../../../../useApiNode";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
 

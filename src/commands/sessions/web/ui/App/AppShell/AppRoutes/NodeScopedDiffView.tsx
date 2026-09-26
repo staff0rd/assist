@@ -1,5 +1,5 @@
 import type { SessionSocket } from "../../../useSessionSocket";
-import { DiffView } from "./DiffView";
+import { DiffView } from "./NodeScopedDiffView/DiffView";
 import { RouteNodeScope } from "./RouteNodeScope";
 
 export function NodeScopedDiffView({ socket }: { socket: SessionSocket }) {

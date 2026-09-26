@@ -10,8 +10,8 @@ import {
 } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { NewSessionDialog } from "./NewSessionDialog";
-import type { NewSessionLaunchers } from "./NewSessionDialog/launchNewSession";
-import type { NewSessionMode } from "./NewSessionDialog/newSessionModes";
+import type { NewSessionLaunchers } from "./launchNewSession";
+import type { NewSessionMode } from "./newSessionModes";
 import { useNewSessionDraft } from "./useNewSessionDraft";
 import { RepoSelectionContext } from "../../../../useRepoSelectionContext";
 

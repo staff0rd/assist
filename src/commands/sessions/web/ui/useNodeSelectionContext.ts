@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { NodeSelection } from "./useSessionSocket/useNodeSelection";
+import type { NodeSelection } from "./useNodeSelection";
 
 export const NodeSelectionContext = createContext<NodeSelection>({
 	nodes: null,
