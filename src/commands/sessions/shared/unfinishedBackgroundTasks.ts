@@ -1,4 +1,8 @@
-const TASK_ID = /<task-id>([^<]+)<\/task-id>/g;
+const NOTIFICATION = /<task-notification>([\s\S]*?)<\/task-notification>/g;
+const TASK_ID = /<task-id>([^<]+)<\/task-id>/;
+const STATUS = /<status>([^<]+)<\/status>/;
+const KILLED_STATUSES = new Set(["killed", "stopped"]);
+const STOP_TOOLS = new Set(["KillShell", "KillBash", "TaskStop"]);
 
 export function unfinishedBackgroundTasks(
 	entries: Record<string, unknown>[],
@@ -7,7 +11,10 @@ export function unfinishedBackgroundTasks(
 	for (const entry of entries) {
 		const started = startedTaskId(entry);
 		if (started) inFlight.add(started);
-		for (const notified of notifiedTaskIds(entry)) inFlight.delete(notified);
+		for (const finished of selfFinishedTaskIds(entry))
+			inFlight.delete(finished);
+		for (const stopped of deliberatelyStoppedTaskIds(entry))
+			inFlight.delete(stopped);
 	}
 	return [...inFlight];
 }
@@ -19,10 +26,31 @@ function startedTaskId(entry: Record<string, unknown>): string | undefined {
 		: undefined;
 }
 
-function notifiedTaskIds(entry: Record<string, unknown>): string[] {
+function selfFinishedTaskIds(entry: Record<string, unknown>): string[] {
 	const text = taskNotificationText(entry);
 	if (!text) return [];
-	return [...text.matchAll(TASK_ID)].map((match) => match[1]);
+	const ids: string[] = [];
+	for (const [, body] of text.matchAll(NOTIFICATION)) {
+		const id = body.match(TASK_ID)?.[1];
+		const status = body.match(STATUS)?.[1]?.trim();
+		if (id && !(status && KILLED_STATUSES.has(status))) ids.push(id);
+	}
+	return ids;
+}
+
+function deliberatelyStoppedTaskIds(entry: Record<string, unknown>): string[] {
+	if (entry.type !== "assistant") return [];
+	const content = asRecord(entry.message)?.content;
+	if (!Array.isArray(content)) return [];
+	const ids: string[] = [];
+	for (const block of content) {
+		const b = asRecord(block);
+		if (b?.type !== "tool_use" || !STOP_TOOLS.has(String(b.name))) continue;
+		const input = asRecord(b.input);
+		const id = input?.task_id ?? input?.shell_id ?? input?.bash_id;
+		if (typeof id === "string") ids.push(id);
+	}
+	return ids;
 }
 
 function taskNotificationText(

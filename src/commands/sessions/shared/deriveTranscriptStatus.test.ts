@@ -62,6 +62,10 @@ function interruptForToolUse(): Entry {
 	};
 }
 
+function taskNotification(status: string): string {
+	return `<task-notification>\n<task-id>b44jdijip</task-id>\n<status>${status}</status>\n<summary>Background shell command didn't finish before the previous session ended</summary>\n</task-notification>`;
+}
+
 function interruptPlain(): Entry {
 	return {
 		type: "user",
@@ -293,6 +297,45 @@ describe("deriveTranscriptStatus — prior regression family", () => {
 				{ permissionActive: true },
 			),
 		).toBe("waiting");
+	});
+
+	it("#a1055: a trailing task-notification the agent never picks up stays waiting", () => {
+		expect(
+			deriveTranscriptStatus([
+				userPrompt("watch it"),
+				assistantText("watching", "end_turn"),
+				userPrompt(taskNotification("killed")),
+			]),
+		).toBe("waiting");
+	});
+
+	it("#a1055: a block-form trailing task-notification stays waiting", () => {
+		expect(
+			deriveTranscriptStatus([
+				assistantText("watching", "end_turn"),
+				userPromptBlocks(taskNotification("killed")),
+			]),
+		).toBe("waiting");
+	});
+
+	it("#a1055: a task-notification mid-turn keeps the turn running", () => {
+		expect(
+			deriveTranscriptStatus([
+				userPrompt("run it"),
+				assistantToolUse("toolu_1", "Bash"),
+				userPrompt(taskNotification("completed")),
+			]),
+		).toBe("running");
+	});
+
+	it("#a1055: the agent answering a task-notification derives running", () => {
+		expect(
+			deriveTranscriptStatus([
+				assistantText("watching", "end_turn"),
+				userPrompt(taskNotification("completed")),
+				assistantToolUse("toolu_1", "Bash"),
+			]),
+		).toBe("running");
 	});
 
 	it("#599: a silent mid-turn stall stays running (never flipped by any timeout)", () => {

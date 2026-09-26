@@ -13,14 +13,21 @@ function notification(taskId: string, status = "completed") {
 	return `<task-notification>\n<task-id>${taskId}</task-id>\n<status>${status}</status>\n</task-notification>`;
 }
 
-function queued(taskId: string): Record<string, unknown> {
-	return { type: "queue-operation", content: notification(taskId) };
+function queued(taskId: string, status?: string): Record<string, unknown> {
+	return { type: "queue-operation", content: notification(taskId, status) };
 }
 
-function delivered(taskId: string): Record<string, unknown> {
+function delivered(taskId: string, status?: string): Record<string, unknown> {
 	return {
 		type: "user",
-		message: { role: "user", content: notification(taskId) },
+		message: { role: "user", content: notification(taskId, status) },
+	};
+}
+
+function stopCall(name: string, input: Record<string, string>) {
+	return {
+		type: "assistant",
+		message: { content: [{ type: "tool_use", id: "t1", name, input }] },
 	};
 }
 
@@ -70,5 +77,37 @@ describe("unfinishedBackgroundTasks", () => {
 				started("three"),
 			]),
 		).toEqual(["two", "three"]);
+	});
+
+	it.each(["killed", "stopped"])(
+		"keeps a task whose queued notification says %s",
+		(status) => {
+			expect(
+				unfinishedBackgroundTasks([started("b44"), queued("b44", status)]),
+			).toEqual(["b44"]);
+		},
+	);
+
+	it("keeps a task killed during teardown and reported again on resume", () => {
+		expect(
+			unfinishedBackgroundTasks([
+				started("b44"),
+				queued("b44", "killed"),
+				delivered("b44", "killed"),
+			]),
+		).toEqual(["b44"]);
+	});
+
+	it.each([
+		["TaskStop", { task_id: "b44" }],
+		["KillShell", { shell_id: "b44" }],
+	])("clears a task the agent stopped with %s", (name, input) => {
+		expect(
+			unfinishedBackgroundTasks([
+				started("b44"),
+				stopCall(name, input),
+				delivered("b44", "killed"),
+			]),
+		).toEqual([]);
 	});
 });

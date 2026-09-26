@@ -3,6 +3,10 @@ import type { ToolUse, TranscriptEvent } from "./TranscriptEvent";
 
 const ASK_USER_QUESTION = "AskUserQuestion";
 const TURN_END_STOP_REASONS = new Set(["end_turn", "stop_sequence"]);
+const NON_DECISIVE_KINDS = new Set<TranscriptEvent["kind"]>([
+	"toolResult",
+	"taskNotification",
+]);
 
 export function deriveTranscriptStatus(
 	entries: Record<string, unknown>[],
@@ -15,7 +19,7 @@ export function deriveTranscriptStatus(
 	const ev = events[lastIdx];
 	if (ev.kind === "interrupt") return "waiting";
 	if (ev.kind === "user") return "running";
-	if (ev.kind === "toolResult") return null;
+	if (ev.kind === "toolResult" || ev.kind === "taskNotification") return null;
 
 	if (ev.stopReason != null && TURN_END_STOP_REASONS.has(ev.stopReason))
 		return "waiting";
@@ -31,7 +35,7 @@ export function deriveTranscriptStatus(
 
 function lastDecisiveIndex(events: TranscriptEvent[]): number {
 	for (let i = events.length - 1; i >= 0; i--)
-		if (events[i].kind !== "toolResult") return i;
+		if (!NON_DECISIVE_KINDS.has(events[i].kind)) return i;
 	return -1;
 }
 
