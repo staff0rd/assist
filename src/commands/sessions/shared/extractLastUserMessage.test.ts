@@ -100,6 +100,34 @@ describe("extractLastUserMessage", () => {
 		expect(extractLastUserMessage(entries)).toBe("real prompt");
 	});
 
+	it("skips a task notification that follows the user's prompt", () => {
+		const entries = [
+			user("/bug the panel is wrong"),
+			assistant("filing"),
+			user(
+				"<task-notification>\n<task-id>b1</task-id>\n<status>completed</status>\n<summary>done</summary>\n</task-notification>",
+				{
+					origin: { kind: "task-notification" },
+					promptSource: "system",
+					turnOrigin: "task_notification",
+				},
+			),
+		];
+
+		expect(extractLastUserMessage(entries)).toBe("/bug the panel is wrong");
+	});
+
+	it("skips a task notification that carries no origin", () => {
+		const entries = [
+			user("earlier prompt"),
+			user(
+				"<task-notification>\n<task-id>b1</task-id>\n<status>completed</status>\n</task-notification>",
+			),
+		];
+
+		expect(extractLastUserMessage(entries)).toBe("earlier prompt");
+	});
+
 	it("strips system-reminder blocks from the prompt", () => {
 		const entries = [
 			user(
