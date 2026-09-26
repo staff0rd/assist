@@ -4,20 +4,19 @@ import {
 	newSessionModes,
 } from "./NewSessionDialog/newSessionModes";
 
-export function useDefaultNewSessionMode(): NewSessionMode {
-	const [mode, setMode] = useState<NewSessionMode>("draft");
+export function useDefaultNewSessionMode(): NewSessionMode | null {
+	const [mode, setMode] = useState<NewSessionMode | null>(null);
 
 	useEffect(() => {
 		let cancelled = false;
 		void (async () => {
+			let loaded: NewSessionMode = "draft";
 			try {
 				const res = await fetch("/api/new-session-defaults");
 				const body = await res.json();
-				if (!cancelled && Object.hasOwn(newSessionModes, body?.mode))
-					setMode(body.mode);
-			} catch {
-				setMode("draft");
-			}
+				if (Object.hasOwn(newSessionModes, body?.mode)) loaded = body.mode;
+			} catch {}
+			if (!cancelled) setMode(loaded);
 		})();
 		return () => {
 			cancelled = true;
