@@ -1,3 +1,10 @@
+# [0.704.0](https://github.com/staff0rd/assist/compare/v0.703.1...v0.704.0) (2026-09-26)
+
+
+### Features
+
+* new session + button and dialog modes ([bf07ffa](https://github.com/staff0rd/assist/commit/bf07fface243df1e111b6f260422f86299d6d68e))
+
 ## [0.703.1](https://github.com/staff0rd/assist/compare/v0.703.0...v0.703.1) (2026-09-26)
 
 
