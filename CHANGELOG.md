@@ -1,3 +1,10 @@
+# [0.709.0](https://github.com/staff0rd/assist/compare/v0.708.2...v0.709.0) (2026-09-26)
+
+
+### Features
+
+* backlog.crossRepo config toggle ([7b8e857](https://github.com/staff0rd/assist/commit/7b8e857bcc8c38bd4ff3bf108cb4782b1d4e2e2c))
+
 ## [0.708.2](https://github.com/staff0rd/assist/compare/v0.708.1...v0.708.2) (2026-09-26)
 
 
