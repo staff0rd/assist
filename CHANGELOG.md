@@ -1,3 +1,10 @@
+## [0.707.1](https://github.com/staff0rd/assist/compare/v0.707.0...v0.707.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* placeholders in node link docs ([b82e5a2](https://github.com/staff0rd/assist/commit/b82e5a2b4323f4d14438f08e60bf1c91fb5c1be9))
+
 # [0.707.0](https://github.com/staff0rd/assist/compare/v0.706.4...v0.707.0) (2026-09-26)
 
 
