@@ -7,6 +7,7 @@ type ServerActions = {
 		cwd?: string,
 		replace?: boolean,
 		launchedFrom?: string,
+		node?: string,
 	) => void;
 	onDiscard: (id: string) => void;
 };

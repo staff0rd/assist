@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useLiveSessionsContext } from "../../../../sessions/web/ui/useLiveSessionsContext";
 import { useSessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
-import { formatItemId } from "../../../formatItemId";
-import { useRepoCwd } from "../useRepoCwd";
 import { BuildSplitButton } from "./BuildSplitButton";
+import { CloneOnNodeButton } from "./CloneOnNodeButton";
+import { launchBuild } from "./launchBuild";
 import { PlayButton } from "./PlayButton";
 import { runInFlightSession } from "./runInFlightSession";
+import { useStartTarget } from "./useStartTarget";
+import { playTooltip } from "./playTooltip";
 
 export function PlayAction({
 	itemId,
@@ -15,20 +17,21 @@ export function PlayAction({
 	compact?: boolean;
 }) {
 	const { launchAssist } = useSessionLaunchContext();
-	const cwd = useRepoCwd();
+	const target = useStartTarget();
 	const inFlight = runInFlightSession(useLiveSessionsContext(), itemId);
 	// Latch on first click so a double-click can't spawn two sessions before
 	// the list refresh flips the item out of the playable state.
 	const [launched, setLaunched] = useState(false);
-	const disabled = launched || inFlight !== undefined;
+	if (target.kind === "clone")
+		return <CloneOnNodeButton target={target.prompt} />;
+	const unavailableOn = target.kind === "unavailable" ? target.node : undefined;
+	const disabled = launched || inFlight !== undefined || !!unavailableOn;
 	const launch = (harnessArgs: string[]) => {
-		if (disabled) return;
+		if (disabled || target.kind !== "ready") return;
 		setLaunched(true);
-		launchAssist(["backlog", "run", formatItemId(itemId), ...harnessArgs], cwd);
+		launchBuild(launchAssist, itemId, target, harnessArgs);
 	};
-	const tooltip = inFlight
-		? "Already running — close that session to run it again"
-		: "Build";
+	const tooltip = playTooltip(inFlight !== undefined, unavailableOn);
 	if (compact)
 		return (
 			<PlayButton

@@ -34,6 +34,7 @@ export function ServerRunLayer({
 				serverConflict.cwd,
 				true,
 				serverConflict.launchedFrom,
+				serverConflict.node,
 			);
 		else if (serverConflict.sessionId)
 			retrySession(serverConflict.sessionId, true);

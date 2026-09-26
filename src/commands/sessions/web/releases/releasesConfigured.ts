@@ -2,7 +2,6 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import { respondJson } from "../../../../shared/web";
 import { getCwdParam } from "../getCwdParam";
-import { toGitCwd } from "../toGitCwd";
 
 export function releasesConfigured(
 	req: IncomingMessage,
@@ -11,7 +10,7 @@ export function releasesConfigured(
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
 	try {
-		const streams = loadConfigFrom(toGitCwd(cwd)).releases?.streams ?? [];
+		const streams = loadConfigFrom(cwd).releases?.streams ?? [];
 		respondJson(res, 200, { configured: streams.length > 0 });
 	} catch (error) {
 		respondJson(res, 500, {

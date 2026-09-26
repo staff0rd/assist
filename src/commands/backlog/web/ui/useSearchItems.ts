@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchItems } from "./fetchItems";
 import type { BacklogItemSummary } from "./types";
+import { useApiNode } from "../../../sessions/web/ui/useApiNode";
 import { useRepoCwd } from "./useRepoCwd";
 import { useBacklogFilter } from "./useBacklogFilter";
 
 export function useSearchItems() {
 	const cwd = useRepoCwd();
+	const node = useApiNode();
 	const [filter] = useBacklogFilter();
 	const [query, setQuery] = useState("");
 	const [results, setResults] = useState<BacklogItemSummary[] | null>(null);
@@ -37,7 +39,7 @@ export function useSearchItems() {
 		setLoading(true);
 		debounceRef.current = setTimeout(async () => {
 			try {
-				const next = await fetchItems({ query, cwd, signal, filter });
+				const next = await fetchItems({ query, cwd, node, signal, filter });
 				if (signal.aborted) return;
 				setResults(next);
 				setLoading(false);
@@ -50,7 +52,7 @@ export function useSearchItems() {
 			if (debounceRef.current !== undefined) clearTimeout(debounceRef.current);
 			controller.abort();
 		};
-	}, [query, cwd, filter]);
+	}, [query, cwd, node, filter]);
 
 	return { query, setQuery, results, loading };
 }

@@ -4,13 +4,12 @@ import { BacklogView } from "../../../../../backlog/web/ui/BacklogView";
 import { AppLayout } from "./AppRoutes/AppLayout";
 import { BackupsView } from "./AppRoutes/BackupsView";
 import { ConfigView } from "../ConfigView";
-import { DiffView } from "./AppRoutes/DiffView";
-import { FileView } from "./AppRoutes/FileView";
+import { NodeScopedDiffView } from "./AppRoutes/NodeScopedDiffView";
+import { NodeScopedFileView } from "./AppRoutes/NodeScopedFileView";
 import { NewsView } from "./AppRoutes/NewsView";
 import { ReleasesView } from "../ReleasesView";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
-import { selectedCardId } from "./selectedCardId";
 import { SessionContent } from "../SessionContent";
 import { UsageHistoryView } from "../UsageHistoryView";
 import type { SessionSocket } from "../../useSessionSocket";
@@ -41,25 +40,8 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					<Route path="usage" element={<UsageHistoryView />} />
 					<Route path="backups" element={<BackupsView />} />
 					<Route path="config" element={<ConfigView />} />
-					<Route
-						path="diff"
-						element={
-							<DiffView
-								sessions={socket.sessions}
-								sendInput={socket.sendInput}
-							/>
-						}
-					/>
-					<Route
-						path="file"
-						element={
-							<FileView
-								sessions={socket.sessions}
-								sendInput={socket.sendInput}
-								cardId={selectedCardId(socket)}
-							/>
-						}
-					/>
+					<Route path="diff" element={<NodeScopedDiffView socket={socket} />} />
+					<Route path="file" element={<NodeScopedFileView socket={socket} />} />
 					<Route path="*" element={<Navigate to="/sessions" replace />} />
 				</Route>
 			</Routes>

@@ -8,7 +8,7 @@ import type { RepoSummary } from "../fetchRepoSummaries";
 
 let summaries: RepoSummary[] = [];
 vi.mock("../useRepoSummaries", () => ({
-	useRepoSummaries: () => summaries,
+	useRepoSummaries: () => ({ summaries, node: undefined }),
 }));
 
 import { RepoSummaryChips } from "./RepoSummaryChips";
@@ -31,7 +31,14 @@ function renderChips(
 ) {
 	const utils = render(
 		<RepoSelectionContext.Provider
-			value={{ repos: [], selectedCwd: "", worktreeCwd: "", setSelectedCwd }}
+			value={{
+				repos: [],
+				selectedCwd: "",
+				worktreeCwd: "",
+				setSelectedCwd,
+				cloneOn: (cwd) => cwd,
+				originOf: () => undefined,
+			}}
 		>
 			<SessionLaunchContext.Provider
 				value={{
@@ -155,7 +162,14 @@ describe("RepoSummaryChips clone-on-select", () => {
 		});
 		const provider = (sessions: SessionInfo[]) => (
 			<RepoSelectionContext.Provider
-				value={{ repos: [], selectedCwd: "", worktreeCwd: "", setSelectedCwd }}
+				value={{
+					repos: [],
+					selectedCwd: "",
+					worktreeCwd: "",
+					setSelectedCwd,
+					cloneOn: (cwd) => cwd,
+					originOf: () => undefined,
+				}}
 			>
 				<SessionLaunchContext.Provider
 					value={{
@@ -194,7 +208,14 @@ describe("RepoSummaryChips clone-on-select", () => {
 
 		const provider = (sessions: SessionInfo[]) => (
 			<RepoSelectionContext.Provider
-				value={{ repos: [], selectedCwd: "", worktreeCwd: "", setSelectedCwd }}
+				value={{
+					repos: [],
+					selectedCwd: "",
+					worktreeCwd: "",
+					setSelectedCwd,
+					cloneOn: (cwd) => cwd,
+					originOf: () => undefined,
+				}}
 			>
 				<SessionLaunchContext.Provider
 					value={{

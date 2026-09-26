@@ -11,7 +11,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 
-vi.mock("../useRepoSummaries", () => ({ useRepoSummaries: () => [] }));
+vi.mock("../useRepoSummaries", () => ({
+	useRepoSummaries: () => ({ summaries: [], node: undefined }),
+}));
 vi.mock("../../../../sessions/web/ui/LastBackedUp", () => ({
 	LastBackedUp: () => null,
 }));

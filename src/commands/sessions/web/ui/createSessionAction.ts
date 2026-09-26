@@ -80,7 +80,8 @@ export function createRunAction(send: SendFn) {
 		cwd?: string,
 		replace?: boolean,
 		launchedFrom?: string,
-	) => send({ type: "create-run", runName, cwd, replace, launchedFrom });
+		node?: string,
+	) => send({ type: "create-run", runName, cwd, replace, launchedFrom, node });
 }
 
 export function setAutoRunAction(send: SendFn) {

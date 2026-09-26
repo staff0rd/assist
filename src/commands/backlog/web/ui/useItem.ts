@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { fetchItem } from "./fetchItem";
 import type { BacklogItem } from "./types";
+import { useApiNode } from "../../../sessions/web/ui/useApiNode";
 import { useRepoCwd } from "./useRepoCwd";
 
 /**
@@ -10,12 +11,13 @@ import { useRepoCwd } from "./useRepoCwd";
  */
 export function useItem(id: number) {
 	const cwd = useRepoCwd();
+	const node = useApiNode();
 	const [item, setItem] = useState<BacklogItem | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	const reload = useCallback(async () => {
-		setItem(await fetchItem(id, cwd));
-	}, [id, cwd]);
+		setItem(await fetchItem(id, { cwd, node }));
+	}, [id, cwd, node]);
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -23,7 +25,7 @@ export function useItem(id: number) {
 		setLoading(true);
 		(async () => {
 			try {
-				const next = await fetchItem(id, cwd, signal);
+				const next = await fetchItem(id, { cwd, node }, signal);
 				if (signal.aborted) return;
 				setItem(next);
 				setLoading(false);
@@ -32,7 +34,7 @@ export function useItem(id: number) {
 			}
 		})();
 		return () => controller.abort();
-	}, [id, cwd]);
+	}, [id, cwd, node]);
 
 	return { item, loading, reload };
 }

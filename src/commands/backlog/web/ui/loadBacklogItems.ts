@@ -7,8 +7,9 @@ export async function loadBacklogItems(
 	cwd: string | undefined,
 	filter: BacklogFilter,
 	signal: AbortSignal,
+	node?: string,
 ): Promise<BacklogItemSummary[]> {
-	const items = await fetchItems({ cwd, signal, filter });
-	if (!signal.aborted) backlogItemsCache.set(cwd, filter, items);
+	const items = await fetchItems({ cwd, node, signal, filter });
+	if (!signal.aborted) backlogItemsCache.set(cwd, filter, items, node);
 	return items;
 }

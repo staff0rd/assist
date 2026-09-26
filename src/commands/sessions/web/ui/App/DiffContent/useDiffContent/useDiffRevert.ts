@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useApiNode } from "../../../useApiNode";
 import { postDiffRevert } from "./useDiffRevert/postDiffRevert";
 import {
 	type DiffRevertFailure,
@@ -23,10 +24,11 @@ export function useDiffRevert(
 	clearError: () => void;
 } {
 	const [error, setError] = useState<string | null>(null);
+	const node = useApiNode();
 
 	const onRevert = useCallback(
 		(path: string) => {
-			postDiffRevert(cwd, path)
+			postDiffRevert(cwd, path, node)
 				.then(refresh)
 				.catch((error: unknown) =>
 					setError(
@@ -34,12 +36,12 @@ export function useDiffRevert(
 					),
 				);
 		},
-		[cwd, refresh],
+		[cwd, node, refresh],
 	);
 
 	const onRevertPaths = useCallback(
 		(paths: string[]) => {
-			postDiffRevertAll(cwd, paths)
+			postDiffRevertAll(cwd, paths, node)
 				.then((failed) => {
 					refresh();
 					if (failed.length > 0) setError(failureSummary(failed));
@@ -50,7 +52,7 @@ export function useDiffRevert(
 					),
 				);
 		},
-		[cwd, refresh],
+		[cwd, node, refresh],
 	);
 
 	return {

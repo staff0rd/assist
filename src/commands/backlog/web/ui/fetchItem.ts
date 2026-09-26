@@ -10,12 +10,13 @@ import { withCwd } from "./withCwd";
  */
 export async function fetchItem(
 	id: number,
-	cwd?: string,
+	scope: { cwd?: string; node?: string },
 	signal?: AbortSignal,
 ): Promise<BacklogItem | null> {
-	const res = await fetch(withCwd(`/api/items/${formatItemId(id)}`, cwd), {
-		signal,
-	});
+	const res = await fetch(
+		withCwd(`/api/items/${formatItemId(id)}`, scope.cwd, scope.node),
+		{ signal },
+	);
 	if (!res.ok) return null;
 	return res.json();
 }

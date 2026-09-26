@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CommitRef } from "../../../../../../../shared/db/listCommitRefs";
+import { useApiNode } from "../../../useApiNode";
+import { withNode } from "../../../withNode";
 import { diffQuery } from "../../diffQuery";
 
 type DiffScopes = {
@@ -12,6 +14,7 @@ const EMPTY: DiffScopes = { commits: [], branchBase: null, loaded: false };
 
 export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
 	const [scopes, setScopes] = useState<DiffScopes>(EMPTY);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
@@ -22,7 +25,7 @@ export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
 		const load = async () => {
 			try {
 				const res = await fetch(
-					`/api/diff-scopes?${diffQuery(cwd, sessionId)}`,
+					withNode(`/api/diff-scopes?${diffQuery(cwd, sessionId)}`, node),
 				);
 				const body = await res.json();
 				if (!cancelled)
@@ -39,7 +42,7 @@ export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, sessionId]);
+	}, [cwd, sessionId, node]);
 
 	return scopes;
 }

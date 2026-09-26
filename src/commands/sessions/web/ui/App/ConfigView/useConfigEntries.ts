@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConfigEntry } from "../../../../../config/readConfigEntries";
+import { useApiNode } from "../../useApiNode";
+import { fetchEntries } from "./fetchEntries";
 
 type ConfigEntriesState = {
 	entries: ConfigEntry[];
@@ -15,32 +17,27 @@ const LOADING: ConfigEntriesState = {
 	error: null,
 };
 
-async function fetchEntries(cwd: string): Promise<ConfigEntry[]> {
-	const res = await fetch(`/api/config?cwd=${encodeURIComponent(cwd)}`);
-	const body = await res.json();
-	if (!res.ok) throw new Error(body?.error ?? `HTTP ${res.status}`);
-	return body;
-}
-
 export function useConfigEntries(cwd: string): UseConfigEntries {
 	const [state, setState] = useState<ConfigEntriesState>(LOADING);
 	const [reloadCount, setReloadCount] = useState(0);
-	const loadedCwd = useRef<string | null>(null);
+	const loadedRepo = useRef<string | null>(null);
 	const reload = useCallback(() => setReloadCount((count) => count + 1), []);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
-			loadedCwd.current = null;
+			loadedRepo.current = null;
 			setState({ entries: [], loading: false, error: "No repo selected." });
 			return;
 		}
 		let cancelled = false;
-		const isRefetchOfSameRepo = loadedCwd.current === cwd;
+		const repo = `${node ?? ""}\0${cwd}`;
+		const isRefetchOfSameRepo = loadedRepo.current === repo;
 		if (!isRefetchOfSameRepo) setState(LOADING);
-		fetchEntries(cwd)
+		fetchEntries(cwd, node)
 			.then((entries) => {
 				if (cancelled) return;
-				loadedCwd.current = cwd;
+				loadedRepo.current = repo;
 				setState({ entries, loading: false, error: null });
 			})
 			.catch((error: unknown) => {
@@ -55,7 +52,7 @@ export function useConfigEntries(cwd: string): UseConfigEntries {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, reloadCount]);
+	}, [cwd, node, reloadCount]);
 
 	return { ...state, reload };
 }

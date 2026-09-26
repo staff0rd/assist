@@ -1,8 +1,7 @@
 import { isAbsolute, relative, resolve } from "node:path";
-import { toGitCwd } from "./toGitCwd";
 
 export function repoRoot(cwd: string): string {
-	return resolve(toGitCwd(cwd));
+	return resolve(cwd);
 }
 
 export function resolveWithinCwd(cwd: string, path: string): string | null {

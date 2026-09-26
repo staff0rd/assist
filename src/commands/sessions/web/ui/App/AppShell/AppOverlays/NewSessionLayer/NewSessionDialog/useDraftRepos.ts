@@ -1,13 +1,30 @@
+import { clonePromptFor } from "../../../../../../../../backlog/web/ui/components/clonePromptFor";
+import type { ClonePrompt } from "../../../../../../../../backlog/web/ui/components/launchClone";
 import { useNodeSelectionContext } from "../../../../../useNodeSelectionContext";
-import { useRepoSelectionContext } from "../../../../../useRepoSelectionContext";
+import { type NodeClone, useNodeClones } from "../../../../../useNodeClones";
+
+type DraftTarget =
+	| { kind: "launch"; cwd: string }
+	| { kind: "clone"; prompt: ClonePrompt }
+	| { kind: "blocked" };
+
+function toTarget(
+	cwd: string,
+	node: string | undefined,
+	clone: NodeClone,
+): DraftTarget {
+	if (!cwd) return { kind: "launch", cwd };
+	if (clone.kind === "cloned") return { kind: "launch", cwd: clone.cwd };
+	if (clone.kind === "clonable")
+		return { kind: "clone", prompt: clonePromptFor(clone, node) };
+	return { kind: "blocked" };
+}
 
 export function useDraftRepos(node: string | undefined, cwd: string) {
-	const { repos, reposByNode } = useRepoSelectionContext();
-	const { nodes } = useNodeSelectionContext();
-	const local = !node || node === nodes?.local;
-	const nodeRepos = local ? repos : (reposByNode?.[node] ?? []);
+	const { names, visible } = useNodeSelectionContext();
+	const clones = useNodeClones(cwd, visible ? names : [undefined]);
 	return {
-		repos: nodeRepos,
-		cwd: local || nodeRepos.includes(cwd) ? cwd : "",
+		cloneState: clones,
+		target: toTarget(cwd, node, clones(node)),
 	};
 }

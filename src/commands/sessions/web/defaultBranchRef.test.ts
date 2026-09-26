@@ -5,7 +5,6 @@ import { execGit } from "./execGit";
 
 vi.mock("./execGit", () => ({ execGit: vi.fn() }));
 vi.mock("../../../shared/loadConfigFrom", () => ({ loadConfigFrom: vi.fn() }));
-vi.mock("./toGitCwd", () => ({ toGitCwd: (cwd: string) => cwd }));
 
 const execGitMock = vi.mocked(execGit);
 const loadConfigFromMock = vi.mocked(loadConfigFrom);

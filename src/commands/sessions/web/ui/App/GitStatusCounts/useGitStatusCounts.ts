@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ItemStatusCounts } from "../../../gitStatus";
+import { useApiNode } from "../../useApiNode";
+import { withNode } from "../../withNode";
 import { diffQuery } from "../diffQuery";
 
 const POLL_INTERVAL_MS = 5000;
@@ -9,6 +11,7 @@ export function useGitStatusCounts(
 	sessionId?: string,
 ): ItemStatusCounts | null {
 	const [counts, setCounts] = useState<ItemStatusCounts | null>(null);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
@@ -18,7 +21,9 @@ export function useGitStatusCounts(
 		let cancelled = false;
 		const poll = async () => {
 			try {
-				const res = await fetch(`/api/git-status?${diffQuery(cwd, sessionId)}`);
+				const res = await fetch(
+					withNode(`/api/git-status?${diffQuery(cwd, sessionId)}`, node),
+				);
 				const body = await res.json();
 				if (!cancelled) setCounts(body ?? null);
 			} catch {
@@ -31,7 +36,7 @@ export function useGitStatusCounts(
 			cancelled = true;
 			clearInterval(id);
 		};
-	}, [cwd, sessionId]);
+	}, [cwd, sessionId, node]);
 
 	return counts;
 }

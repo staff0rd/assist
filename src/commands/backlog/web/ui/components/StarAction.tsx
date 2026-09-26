@@ -3,6 +3,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import { IconButton, Tooltip } from "@mui/material";
 import { type MouseEvent, useState } from "react";
 import { toggleStar } from "../api";
+import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
 import { useRepoCwd } from "../useRepoCwd";
 
 export function StarAction({
@@ -15,13 +16,14 @@ export function StarAction({
 	onToggled: () => Promise<void>;
 }) {
 	const cwd = useRepoCwd();
+	const node = useApiNode();
 	const [busy, setBusy] = useState(false);
 	const handleClick = async (event: MouseEvent) => {
 		event.stopPropagation();
 		if (busy) return;
 		setBusy(true);
 		try {
-			await toggleStar(itemId, !starred, cwd);
+			await toggleStar(itemId, !starred, cwd, node);
 			await onToggled();
 		} finally {
 			setBusy(false);

@@ -14,9 +14,15 @@ export function TopNavActions({
 		cwd?: string,
 		meta?: AssistLaunchMeta,
 	) => void;
-	onStartRun: (runName: string, cwd: string) => void;
+	onStartRun: (
+		runName: string,
+		cwd: string,
+		replace?: boolean,
+		launchedFrom?: string,
+		node?: string,
+	) => void;
 }) {
-	const { selectedCwd } = useRepoSelectionContext();
+	const { selectedCwd, selectedNode } = useRepoSelectionContext();
 
 	return (
 		<Stack
@@ -28,14 +34,18 @@ export function TopNavActions({
 				cwd={selectedCwd}
 				disabled={!selectedCwd}
 				onSelect={(pr, args) =>
-					onCreateAssist(
-						[...args, String(pr.number)],
-						selectedCwd,
-						prLaunchMeta(pr),
-					)
+					onCreateAssist([...args, String(pr.number)], selectedCwd, {
+						...prLaunchMeta(pr),
+						node: selectedNode,
+					})
 				}
 			/>
-			<ServerRunMenu onStartRun={onStartRun} cwd={selectedCwd} />
+			<ServerRunMenu
+				onStartRun={(runName, cwd) =>
+					onStartRun(runName, cwd, undefined, undefined, selectedNode)
+				}
+				cwd={selectedCwd}
+			/>
 		</Stack>
 	);
 }

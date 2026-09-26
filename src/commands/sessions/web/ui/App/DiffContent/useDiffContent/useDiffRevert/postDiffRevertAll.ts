@@ -1,3 +1,4 @@
+import { withNode } from "../../../../withNode";
 import { postJson } from "../../../postJson";
 
 export type DiffRevertFailure = { path: string; error: string };
@@ -5,9 +6,10 @@ export type DiffRevertFailure = { path: string; error: string };
 export async function postDiffRevertAll(
 	cwd: string,
 	paths: string[],
+	node?: string,
 ): Promise<DiffRevertFailure[]> {
 	const body = await postJson(
-		`/api/diff/revert-all?cwd=${encodeURIComponent(cwd)}`,
+		withNode(`/api/diff/revert-all?cwd=${encodeURIComponent(cwd)}`, node),
 		{ paths },
 		"Failed to revert files",
 	);

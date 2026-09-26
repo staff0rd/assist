@@ -30,6 +30,8 @@ const selection: RepoSelection = {
 	selectedCwd: "",
 	worktreeCwd: "",
 	setSelectedCwd: () => {},
+	cloneOn: (cwd) => cwd,
+	originOf: () => undefined,
 };
 
 const socket = { reconnecting: false } as unknown as SessionSocket;

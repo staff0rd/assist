@@ -5,9 +5,18 @@ import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
 import { resolveActiveId } from "../../../useSessionSocket/useWsConnection/resolveActiveId";
 import type { HistoricalSession, SessionInfo } from "../../../types";
+import type { NodeSelection } from "../../../useSessionSocket/useNodeSelection";
 import { useActiveIdReconciler } from "../../../useSessionSocket/useWsConnection/useActiveIdReconciler";
 import { useAdoptRepoCard } from "./useAdoptRepoCard";
 import { useRepoSelection } from "./useRepoSelection";
+
+const singleNode: NodeSelection = {
+	nodes: null,
+	names: [],
+	visible: false,
+	selected: undefined,
+	select: () => {},
+};
 
 const clone = "/repos/live";
 const group = { origin: "host/org/live", clone };
@@ -69,7 +78,13 @@ function useShell(activeByRepo: Record<string, string>, cards: SessionInfo[]) {
 		setActiveId(id);
 	}, []);
 	const selectedCardId = viewingTranscriptSessionId ?? activeId;
-	const selection = useRepoSelection("", history, selectedCardId, cards);
+	const selection = useRepoSelection(
+		"",
+		history,
+		selectedCardId,
+		cards,
+		singleNode,
+	);
 	useAdoptRepoCard({
 		selectedCwd: selection.selectedCwd,
 		selectedCardId,

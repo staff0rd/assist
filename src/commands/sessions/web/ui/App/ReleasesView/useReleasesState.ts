@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReleaseStreamState } from "../../../releases/types";
+import { useApiNode } from "../../useApiNode";
+import { withNode } from "../../withNode";
 
 type ReleasesStateView = {
 	streams: ReleaseStreamState[];
@@ -13,8 +15,13 @@ const LOADING: ReleasesStateView = {
 	error: null,
 };
 
-async function fetchStreams(cwd: string): Promise<ReleaseStreamState[]> {
-	const res = await fetch(`/api/releases/state?cwd=${encodeURIComponent(cwd)}`);
+async function fetchStreams(
+	cwd: string,
+	node?: string,
+): Promise<ReleaseStreamState[]> {
+	const res = await fetch(
+		withNode(`/api/releases/state?cwd=${encodeURIComponent(cwd)}`, node),
+	);
 	const body = await res.json();
 	if (!res.ok) throw new Error(body?.error ?? `HTTP ${res.status}`);
 	return body.streams ?? [];
@@ -22,6 +29,7 @@ async function fetchStreams(cwd: string): Promise<ReleaseStreamState[]> {
 
 export function useReleasesState(cwd: string): ReleasesStateView {
 	const [state, setState] = useState<ReleasesStateView>(LOADING);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
@@ -30,7 +38,7 @@ export function useReleasesState(cwd: string): ReleasesStateView {
 		}
 		let cancelled = false;
 		setState(LOADING);
-		fetchStreams(cwd)
+		fetchStreams(cwd, node)
 			.then((streams) => {
 				if (!cancelled) setState({ streams, loading: false, error: null });
 			})
@@ -48,7 +56,7 @@ export function useReleasesState(cwd: string): ReleasesStateView {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd]);
+	}, [cwd, node]);
 
 	return state;
 }

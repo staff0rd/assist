@@ -5,6 +5,7 @@ import {
 	savePersistedScreenshots,
 } from "./useScreenshots/loadPersistedScreenshots";
 import { previewImageSrc } from "./useScreenshots/previewImageSrc";
+import { useApiNode } from "../../../../useApiNode";
 
 export type LocalScreenshot = {
 	markdown: string;
@@ -19,16 +20,17 @@ export function useScreenshots(
 ) {
 	const [screenshots, setScreenshots] = useState<LocalScreenshot[]>([]);
 	const nextId = useRef(0);
+	const node = useApiNode();
 
 	useEffect(() => {
 		setScreenshots(
 			loadPersistedScreenshots(scope).map((s) => ({
 				...s,
-				url: previewImageSrc(s.markdown, cwd),
+				url: previewImageSrc(s.markdown, cwd, node),
 				id: nextId.current++,
 			})),
 		);
-	}, [scope, cwd]);
+	}, [scope, cwd, node]);
 
 	const add = useCallback(
 		(s: Omit<LocalScreenshot, "id">) => {

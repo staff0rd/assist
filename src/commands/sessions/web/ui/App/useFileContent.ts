@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useApiNode } from "../useApiNode";
 import { type FileContentState, fetchFileContent } from "./fetchFileContent";
 
 export function useFileContent(
@@ -6,6 +7,7 @@ export function useFileContent(
 	path: string,
 ): FileContentState {
 	const [state, setState] = useState<FileContentState>({ status: "loading" });
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
@@ -14,13 +16,13 @@ export function useFileContent(
 		}
 		let cancelled = false;
 		setState({ status: "loading" });
-		fetchFileContent(cwd, path).then((next) => {
+		fetchFileContent(cwd, path, node).then((next) => {
 			if (!cancelled) setState(next);
 		});
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, path]);
+	}, [cwd, path, node]);
 
 	return state;
 }

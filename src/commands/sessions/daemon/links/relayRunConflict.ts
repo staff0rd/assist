@@ -16,6 +16,7 @@ export function relayRunConflict(
 	const namespaced = {
 		...msg,
 		sessionId: ns(msg.sessionId),
+		launchedFrom: ns(msg.launchedFrom),
 		existing: existing && { ...existing, id: ns(existing.id) },
 		node: state.node,
 	};

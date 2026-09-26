@@ -2,7 +2,6 @@ import chalk from "chalk";
 import { readStdin } from "../lib/readStdin";
 import { contextLevel } from "../shared/contextLevel";
 import type { RateLimits } from "../shared/RateLimits";
-import { toGitCwd } from "./sessions/web/toGitCwd";
 import { buildLimitsSegment } from "./buildLimitsSegment";
 import { readGitBranch } from "./readGitBranch";
 import { relayRateLimits } from "./relayRateLimits";
@@ -55,7 +54,7 @@ export async function statusLine(): Promise<void> {
 	const usedPct = data.context_window.used_percentage ?? 0;
 
 	const dir = data.workspace?.current_dir ?? data.cwd;
-	const branch = dir ? readGitBranch(toGitCwd(dir)) : null;
+	const branch = dir ? readGitBranch(dir) : null;
 	// 🌿️ needs trailing U+FE0F for stable width
 	const branchSegment = branch ? `🌿️ ${chalk.cyan(branch)} | ` : "";
 

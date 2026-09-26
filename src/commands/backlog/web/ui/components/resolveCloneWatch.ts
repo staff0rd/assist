@@ -1,15 +1,15 @@
-import type { AssistLaunchMeta } from "../../../../sessions/web/ui/createSessionAction";
 import type { SessionInfo } from "../../../../sessions/web/ui/useSessionSocket";
-
-export type ClonePrompt = {
-	origin: string;
-	cloneTarget: string;
-	displayName: string;
-};
+import {
+	type ClonePrompt,
+	cloneArgs,
+	type LaunchAssist,
+	launchClone,
+} from "./launchClone";
 
 export type CloneWatch = {
 	args: string[];
 	target: string;
+	node?: string;
 	preexisting: Set<string>;
 	id?: string;
 };
@@ -18,12 +18,6 @@ type CloneWatchAction =
 	| { type: "latch"; id: string }
 	| { type: "done" }
 	| { type: "error"; message: string };
-
-type LaunchAssist = (
-	assistArgs: string[],
-	cwd?: string,
-	meta?: AssistLaunchMeta,
-) => void;
 
 function argsEqual(a: string[] | undefined, b: string[]): boolean {
 	return !!a && a.length === b.length && a.every((v, i) => v === b[i]);
@@ -34,15 +28,17 @@ export function startCloneWatch(
 	prompt: ClonePrompt,
 	launchAssist: LaunchAssist,
 ): CloneWatch {
-	const args = ["backlog", "clone", prompt.origin];
+	const args = cloneArgs(prompt.origin);
 	const preexisting = new Set(
 		sessions.filter((s) => argsEqual(s.assistArgs, args)).map((s) => s.id),
 	);
-	launchAssist(args, undefined, {
-		title: `Clone ${prompt.displayName}`,
-		subtitle: prompt.origin,
-	});
-	return { args, target: prompt.cloneTarget, preexisting };
+	launchClone(prompt, launchAssist);
+	return {
+		args,
+		target: prompt.cloneTarget,
+		node: prompt.node,
+		preexisting,
+	};
 }
 
 export function resolveCloneWatch(

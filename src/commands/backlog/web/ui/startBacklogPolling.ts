@@ -15,9 +15,11 @@ export function startBacklogPolling(
 	cwd: string | undefined,
 	filter: BacklogFilter,
 	apply: Apply,
+	node?: string,
 ): () => void {
 	const controller = new AbortController();
-	const poll = () => revalidateBacklog(cwd, filter, controller.signal, apply);
+	const poll = () =>
+		revalidateBacklog(cwd, filter, controller.signal, apply, node);
 	poll();
 	const interval = setInterval(poll, POLL_INTERVAL_MS);
 	return () => {

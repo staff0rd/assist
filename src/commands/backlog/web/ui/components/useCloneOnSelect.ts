@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useRepoSelectionContext } from "../../../../sessions/web/ui/useRepoSelectionContext";
 import { useSessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
 import type { SessionInfo } from "../../../../sessions/web/ui/useSessionSocket";
+import type { ClonePrompt } from "./launchClone";
 import {
-	type ClonePrompt,
 	type CloneWatch,
 	resolveCloneWatch,
 	startCloneWatch,
@@ -36,7 +36,8 @@ export function useCloneOnSelect(sessions: SessionInfo[]) {
 		if (action.type === "latch") {
 			setWatch((w) => (w ? { ...w, id: action.id } : w));
 		} else if (action.type === "done") {
-			setSelectedCwd(watch.target);
+			if (watch.node) setSelectedCwd(watch.target, watch.node);
+			else setSelectedCwd(watch.target);
 			setWatch(null);
 		} else {
 			setError(action.message);

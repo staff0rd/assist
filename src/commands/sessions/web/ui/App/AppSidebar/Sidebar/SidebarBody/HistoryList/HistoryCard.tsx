@@ -12,6 +12,7 @@ import type {
 	HistoricalSession,
 	HistoryCardHandlers,
 } from "../../../../../types";
+import { ApiNodeContext } from "../../../../../useApiNode";
 
 function ResumeButton({ onResume }: { onResume: () => void }) {
 	return (
@@ -35,23 +36,25 @@ export function HistoryCard({
 	onResume,
 }: { session: HistoricalSession } & HistoryCardHandlers) {
 	return (
-		<ButtonBase onClick={() => onView(session)} sx={cardSx(false)}>
-			<Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-				<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-					<HistoryCardChips session={session} />
-					<Box sx={{ flex: 1 }} />
-					<StopCardActivation>
-						<ResumeButton onResume={() => onResume(session)} />
-					</StopCardActivation>
+		<ApiNodeContext.Provider value={session.node}>
+			<ButtonBase onClick={() => onView(session)} sx={cardSx(false)}>
+				<Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+					<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+						<HistoryCardChips session={session} />
+						<Box sx={{ flex: 1 }} />
+						<StopCardActivation>
+							<ResumeButton onResume={() => onResume(session)} />
+						</StopCardActivation>
+					</Box>
+					<Typography
+						variant="body2"
+						sx={{ color: "text.primary", overflowWrap: "anywhere" }}
+					>
+						{historyTitle(session)}
+					</Typography>
+					<HistoryCardFooter session={session} />
 				</Box>
-				<Typography
-					variant="body2"
-					sx={{ color: "text.primary", overflowWrap: "anywhere" }}
-				>
-					{historyTitle(session)}
-				</Typography>
-				<HistoryCardFooter session={session} />
-			</Box>
-		</ButtonBase>
+			</ButtonBase>
+		</ApiNodeContext.Provider>
 	);
 }

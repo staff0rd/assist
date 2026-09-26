@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-
-type ReviewSynthesisState =
-	| { status: "loading" }
-	| { status: "absent" }
-	| { status: "error" }
-	| { status: "ready"; content: string };
+import { useApiNode } from "../../../../useApiNode";
+import {
+	fetchReviewSynthesis,
+	type ReviewSynthesisState,
+} from "./fetchReviewSynthesis";
 
 export function useReviewSynthesis(
 	cwd: string | undefined,
@@ -13,6 +12,7 @@ export function useReviewSynthesis(
 	const [state, setState] = useState<ReviewSynthesisState>({
 		status: "loading",
 	});
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd || !enabled) {
@@ -21,34 +21,13 @@ export function useReviewSynthesis(
 		}
 		let cancelled = false;
 		setState({ status: "loading" });
-		const load = async () => {
-			try {
-				const res = await fetch(
-					`/api/review/synthesis?cwd=${encodeURIComponent(cwd)}`,
-				);
-				if (res.status === 404) {
-					if (!cancelled) setState({ status: "absent" });
-					return;
-				}
-				if (!res.ok) {
-					if (!cancelled) setState({ status: "error" });
-					return;
-				}
-				const body = await res.json();
-				if (typeof body.synthesis !== "string") {
-					if (!cancelled) setState({ status: "absent" });
-					return;
-				}
-				if (!cancelled) setState({ status: "ready", content: body.synthesis });
-			} catch {
-				if (!cancelled) setState({ status: "error" });
-			}
-		};
-		load();
+		fetchReviewSynthesis(cwd, node).then((next) => {
+			if (!cancelled) setState(next);
+		});
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, enabled]);
+	}, [cwd, enabled, node]);
 
 	return state;
 }

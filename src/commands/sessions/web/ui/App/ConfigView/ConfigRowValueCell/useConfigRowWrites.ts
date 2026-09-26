@@ -4,6 +4,7 @@ import { normalizeConfigValue } from "./useConfigRowWrites/normalizeConfigValue"
 import { nothingToClearMessage } from "./useConfigRowWrites/nothingToClearMessage";
 import { type ConfigScope, saveConfigValue } from "./saveConfigValue";
 import { unsetConfigValue } from "./useConfigRowWrites/unsetConfigValue";
+import { useApiNode } from "../../../useApiNode";
 
 type Options = {
 	entry: ConfigEntry;
@@ -14,15 +15,19 @@ type Options = {
 
 export function useConfigRowWrites({ entry, cwd, onSaved, onError }: Options) {
 	const [saving, setSaving] = useState(false);
+	const node = useApiNode();
 
 	async function save(scope: ConfigScope, value: unknown): Promise<boolean> {
 		setSaving(true);
-		const { error } = await saveConfigValue({
-			key: entry.key,
-			value: entry.node ? normalizeConfigValue(entry.node, value) : value,
-			cwd,
-			scope,
-		});
+		const { error } = await saveConfigValue(
+			{
+				key: entry.key,
+				value: entry.node ? normalizeConfigValue(entry.node, value) : value,
+				cwd,
+				scope,
+			},
+			node,
+		);
 		setSaving(false);
 		if (error) {
 			onError(error);
@@ -34,11 +39,10 @@ export function useConfigRowWrites({ entry, cwd, onSaved, onError }: Options) {
 
 	async function clear(scope: ConfigScope): Promise<boolean> {
 		setSaving(true);
-		const { error, removed } = await unsetConfigValue({
-			key: entry.key,
-			cwd,
-			scope,
-		});
+		const { error, removed } = await unsetConfigValue(
+			{ key: entry.key, cwd, scope },
+			node,
+		);
 		setSaving(false);
 		if (error) {
 			onError(error);

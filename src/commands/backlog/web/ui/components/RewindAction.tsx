@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { rewindPhase } from "../api";
+import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
 import { useRepoCwd } from "../useRepoCwd";
 import { RewindDialog } from "./RewindDialog";
 
@@ -18,6 +19,7 @@ export function RewindAction({
 	onRewound,
 }: RewindActionProps) {
 	const cwd = useRepoCwd();
+	const node = useApiNode();
 	const [showDialog, setShowDialog] = useState(false);
 	return (
 		<>
@@ -34,7 +36,7 @@ export function RewindAction({
 				<RewindDialog
 					phaseName={phaseName}
 					onConfirm={async (reason) => {
-						await rewindPhase(itemId, phaseNumber, reason, cwd);
+						await rewindPhase(itemId, phaseNumber, reason, cwd, node);
 						await onRewound();
 					}}
 					onCancel={() => setShowDialog(false)}

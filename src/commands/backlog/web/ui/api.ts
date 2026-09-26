@@ -15,37 +15,27 @@ async function sendJson<T>(
 	return res.json();
 }
 
-export async function deleteItem(id: number, cwd?: string): Promise<void> {
-	await fetch(withCwd(`/api/items/${formatItemId(id)}`, cwd), {
+export async function deleteItem(
+	id: number,
+	cwd?: string,
+	node?: string,
+): Promise<void> {
+	await fetch(withCwd(`/api/items/${formatItemId(id)}`, cwd, node), {
 		method: "DELETE",
 	});
-}
-
-export async function deleteComment(
-	itemId: number,
-	commentId: number,
-	cwd?: string,
-): Promise<void> {
-	const res = await fetch(
-		withCwd(`/api/items/${formatItemId(itemId)}/comments/${commentId}`, cwd),
-		{ method: "DELETE" },
-	);
-	if (!res.ok) {
-		const body = (await res.json().catch(() => undefined)) as
-			| { error?: string }
-			| undefined;
-		throw new Error(body?.error ?? `Failed to delete comment (${res.status})`);
-	}
 }
 
 export function updateItemStatus(
 	id: number,
 	status: BacklogItem["status"],
 	cwd?: string,
+	node?: string,
 ): Promise<BacklogItem> {
-	return sendJson(withCwd(`/api/items/${formatItemId(id)}`, cwd), "PATCH", {
-		status,
-	});
+	return sendJson(
+		withCwd(`/api/items/${formatItemId(id)}`, cwd, node),
+		"PATCH",
+		{ status },
+	);
 }
 
 export function updateSubtaskStatus(
@@ -53,9 +43,10 @@ export function updateSubtaskStatus(
 	idx: number,
 	status: SubtaskStatus,
 	cwd?: string,
+	node?: string,
 ): Promise<BacklogItem> {
 	return sendJson(
-		withCwd(`/api/items/${formatItemId(itemId)}/subtasks/${idx}`, cwd),
+		withCwd(`/api/items/${formatItemId(itemId)}/subtasks/${idx}`, cwd, node),
 		"PATCH",
 		{ status },
 	);
@@ -65,10 +56,13 @@ export function toggleStar(
 	id: number,
 	starred: boolean,
 	cwd?: string,
+	node?: string,
 ): Promise<BacklogItem> {
-	return sendJson(withCwd(`/api/items/${formatItemId(id)}/star`, cwd), "POST", {
-		starred,
-	});
+	return sendJson(
+		withCwd(`/api/items/${formatItemId(id)}/star`, cwd, node),
+		"POST",
+		{ starred },
+	);
 }
 
 export function rewindPhase(
@@ -76,9 +70,10 @@ export function rewindPhase(
 	phase: number,
 	reason: string,
 	cwd?: string,
+	node?: string,
 ): Promise<BacklogItem> {
 	return sendJson(
-		withCwd(`/api/items/${formatItemId(id)}/rewind`, cwd),
+		withCwd(`/api/items/${formatItemId(id)}/rewind`, cwd, node),
 		"POST",
 		{
 			phase,

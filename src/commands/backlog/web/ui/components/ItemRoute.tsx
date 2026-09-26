@@ -2,6 +2,7 @@ import { Box, CircularProgress } from "@mui/material";
 import { useCallback, useMemo } from "react";
 import { useParams, useSearchParams } from "react-router";
 import { countRender } from "../../../../sessions/web/ui/renderCounters";
+import { ApiNodeContext } from "../../../../sessions/web/ui/useApiNode";
 import {
 	RepoSelectionContext,
 	useRepoSelectionContext,
@@ -19,16 +20,22 @@ const loadingSx = {
 export function ItemRoute({ onReload }: { onReload: () => Promise<void> }) {
 	const [searchParams] = useSearchParams();
 	const cwdParam = searchParams.get("cwd") || undefined;
+	const nodeParam = searchParams.get("node") || undefined;
 	const selection = useRepoSelectionContext();
 	const value = useMemo(
-		() => (cwdParam ? { ...selection, selectedCwd: cwdParam } : selection),
-		[selection, cwdParam],
+		() =>
+			cwdParam
+				? { ...selection, selectedCwd: cwdParam, selectedNode: nodeParam }
+				: selection,
+		[selection, cwdParam, nodeParam],
 	);
 	countRender("ItemRoute");
 
 	return (
 		<RepoSelectionContext.Provider value={value}>
-			<ItemRouteContent onReload={onReload} />
+			<ApiNodeContext.Provider value={value.selectedNode}>
+				<ItemRouteContent onReload={onReload} />
+			</ApiNodeContext.Provider>
 		</RepoSelectionContext.Provider>
 	);
 }

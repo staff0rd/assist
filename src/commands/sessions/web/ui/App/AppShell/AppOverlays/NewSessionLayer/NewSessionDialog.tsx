@@ -1,12 +1,10 @@
 import type { FormEvent } from "react";
 import { harnessChoices } from "./NewSessionDialog/harnessChoices";
-import {
-	launchNewSession,
-	type NewSessionLaunchers,
-} from "./NewSessionDialog/launchNewSession";
+import type { NewSessionLaunchers } from "./NewSessionDialog/launchNewSession";
 import { NewSessionFields } from "./NewSessionDialog/NewSessionFields";
 import { NewSessionFooter } from "./NewSessionDialog/NewSessionFooter";
 import { newSessionModes } from "./NewSessionDialog/newSessionModes";
+import { submitDraft } from "./NewSessionDialog/submitDraft";
 import { useDraftFocus } from "./NewSessionDialog/useDraftFocus";
 import { useDraftRepos } from "./NewSessionDialog/useDraftRepos";
 import type { NewSessionDraft } from "./useNewSessionDraft";
@@ -25,22 +23,11 @@ export function NewSessionDialog({
 	const focus = useDraftFocus(draft.focus, draft.setFocus);
 	const harnesses = harnessChoices(useHarnessCapabilities());
 	const harness = harnesses.includes(draft.harness) ? draft.harness : "claude";
-	const { cwd } = useDraftRepos(draft.node, draft.cwd);
+	const { target, cloneState } = useDraftRepos(draft.node, draft.cwd);
 
 	const submit = (e: FormEvent) => {
 		e.preventDefault();
-		launchNewSession(
-			{
-				mode: draft.mode,
-				harness,
-				prompt: draft.prompt,
-				cwd,
-				node: draft.node,
-			},
-			launchers,
-		);
-		draft.clear();
-		onClose();
+		if (submitDraft(draft, harness, target, launchers)) onClose();
 	};
 
 	return (
@@ -51,9 +38,15 @@ export function NewSessionDialog({
 					harness={harness}
 					harnesses={harnesses}
 					focus={focus}
+					cloneState={cloneState}
 				/>
 				<NewSessionFooter
-					submitLabel={newSessionModes[draft.mode].submitLabel}
+					submitLabel={
+						target.kind === "clone"
+							? "Clone"
+							: newSessionModes[draft.mode].submitLabel
+					}
+					disabled={target.kind === "blocked"}
 				/>
 			</form>
 		</AutoFocusDialog>

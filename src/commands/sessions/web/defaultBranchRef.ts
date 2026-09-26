@@ -1,6 +1,5 @@
 import { loadConfigFrom } from "../../../shared/loadConfigFrom";
 import { execGit } from "./execGit";
-import { toGitCwd } from "./toGitCwd";
 
 const ORIGIN_HEAD_REF = "refs/remotes/origin/HEAD";
 const ORIGIN_REF_PREFIX = "refs/remotes/origin/";
@@ -8,7 +7,7 @@ const FALLBACK_BRANCHES = ["main", "master"];
 
 function configuredDefaultBranch(cwd: string): string | undefined {
 	try {
-		return loadConfigFrom(toGitCwd(cwd)).branch?.defaultBranch;
+		return loadConfigFrom(cwd).branch?.defaultBranch;
 	} catch {
 		return undefined;
 	}

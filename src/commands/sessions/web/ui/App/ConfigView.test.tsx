@@ -158,6 +158,8 @@ function renderView(selectedCwd = "/repo", path = "/config") {
 					selectedCwd,
 					worktreeCwd: selectedCwd,
 					setSelectedCwd: vi.fn(),
+					cloneOn: (cwd) => cwd,
+					originOf: () => undefined,
 				}}
 			>
 				<ConfigView />

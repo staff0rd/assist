@@ -33,7 +33,11 @@ describe("useDiffRevert", () => {
 
 		act(() => result.current.onRevert?.("src/app.ts"));
 
-		expect(postDiffRevertMock).toHaveBeenCalledWith("/repo", "src/app.ts");
+		expect(postDiffRevertMock).toHaveBeenCalledWith(
+			"/repo",
+			"src/app.ts",
+			undefined,
+		);
 		await waitFor(() => expect(refresh).toHaveBeenCalledOnce());
 		expect(result.current.error).toBeNull();
 	});
@@ -61,10 +65,11 @@ describe("useDiffRevert", () => {
 
 		act(() => result.current.onRevertPaths?.(["src/a.ts", "src/b.ts"]));
 
-		expect(postDiffRevertAllMock).toHaveBeenCalledExactlyOnceWith("/repo", [
-			"src/a.ts",
-			"src/b.ts",
-		]);
+		expect(postDiffRevertAllMock).toHaveBeenCalledExactlyOnceWith(
+			"/repo",
+			["src/a.ts", "src/b.ts"],
+			undefined,
+		);
 		await waitFor(() => expect(refresh).toHaveBeenCalledOnce());
 		expect(result.current.error).toBeNull();
 	});

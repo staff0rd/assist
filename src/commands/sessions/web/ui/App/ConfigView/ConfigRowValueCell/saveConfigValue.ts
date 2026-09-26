@@ -1,4 +1,5 @@
 import type { ConfigWriteScope } from "../../../../../../config/ConfigWriteScope";
+import { withNode } from "../../../withNode";
 import { postConfigWrite } from "./postConfigWrite";
 
 export type ConfigScope = ConfigWriteScope;
@@ -12,6 +13,11 @@ type SaveConfigValueRequest = {
 
 export async function saveConfigValue(
 	request: SaveConfigValueRequest,
+	node?: string,
 ): Promise<{ error?: string }> {
-	return postConfigWrite("/api/config/set", request, "Failed to save config");
+	return postConfigWrite(
+		withNode("/api/config/set", node),
+		request,
+		"Failed to save config",
+	);
 }

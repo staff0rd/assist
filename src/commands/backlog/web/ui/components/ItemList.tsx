@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import { itemDetailPath } from "../itemDetailPath";
 import type { BacklogItemSummary } from "../types";
+import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
 import { useRepoCwd } from "../useRepoCwd";
 import { useSearchItems } from "../useSearchItems";
 import { ListBody } from "./ListBody";
@@ -19,6 +20,7 @@ type ItemListProps = {
 
 export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 	const cwd = useRepoCwd();
+	const node = useApiNode();
 	const { query, setQuery, results, loading: searching } = useSearchItems();
 	const [typeFilter, setTypeFilter] = useState<TypeFilterValue>("all");
 	const visible = results ?? items;
@@ -38,7 +40,7 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 				typeFilter={typeFilter}
 				items={filtered}
 				socket={socket}
-				itemPath={(item) => itemDetailPath(item.id, cwd)}
+				itemPath={(item) => itemDetailPath(item.id, cwd, node)}
 				onReload={onReload}
 			/>
 		</>

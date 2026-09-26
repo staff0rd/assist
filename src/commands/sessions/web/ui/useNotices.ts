@@ -15,6 +15,7 @@ export type ServerConflict = {
 	cwd?: string;
 	sessionId?: string;
 	launchedFrom?: string;
+	node?: string;
 };
 
 /** Transient error and success notices surfaced as snackbars. */

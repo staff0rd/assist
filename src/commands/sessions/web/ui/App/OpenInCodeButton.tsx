@@ -3,6 +3,8 @@ import { useState } from "react";
 import { ActionButton } from "./ActionButton";
 import { ErrorSnackbar } from "./ErrorSnackbar";
 import { VsCodeIcon } from "./OpenInCodeButton/VsCodeIcon";
+import { useApiNode } from "../useApiNode";
+import { withNode } from "../withNode";
 
 export function OpenInCodeButton({
 	cwd,
@@ -13,11 +15,12 @@ export function OpenInCodeButton({
 }) {
 	const [error, setError] = useState<string | null>(null);
 	const isCard = variant === "card";
+	const node = useApiNode();
 
 	async function openInCode(): Promise<void> {
 		try {
 			const res = await fetch(
-				`/api/open-in-code?cwd=${encodeURIComponent(cwd)}`,
+				withNode(`/api/open-in-code?cwd=${encodeURIComponent(cwd)}`, node),
 				{
 					method: "POST",
 				},

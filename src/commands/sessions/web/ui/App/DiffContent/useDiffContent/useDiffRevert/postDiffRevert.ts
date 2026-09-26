@@ -1,6 +1,15 @@
-export async function postDiffRevert(cwd: string, path: string): Promise<void> {
+import { withNode } from "../../../../withNode";
+
+export async function postDiffRevert(
+	cwd: string,
+	path: string,
+	node?: string,
+): Promise<void> {
 	const res = await fetch(
-		`/api/diff/revert?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
+		withNode(
+			`/api/diff/revert?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
+			node,
+		),
 		{ method: "POST" },
 	);
 	if (res.ok) return;

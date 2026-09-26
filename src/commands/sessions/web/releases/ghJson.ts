@@ -1,6 +1,5 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { toGitCwd } from "../toGitCwd";
 
 const execFileAsync = promisify(execFile);
 
@@ -23,7 +22,7 @@ async function runGh<T>(cwd: string, args: string[]): Promise<T> {
 		const { stdout } = await execFileAsync("gh", args, {
 			encoding: "utf8",
 			windowsHide: true,
-			cwd: toGitCwd(cwd),
+			cwd,
 			maxBuffer: 16 * 1024 * 1024,
 		});
 		return JSON.parse(stdout) as T;

@@ -1,9 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
-import { deriveWorktreeCwd } from "./useRepoSelection/deriveWorktreeCwd";
+import { useMemo } from "react";
 import type { HistoricalSession, SessionInfo } from "../../../types";
-import { linkedNodeRepos } from "./useRepoSelection/linkedNodeRepos";
-import { uniqueRepos } from "./useRepoSelection/uniqueRepos";
 import type { RepoSelection } from "../../../useRepoSelectionContext";
+import type { NodeSelection } from "../../../useSessionSocket/useNodeSelection";
+import { deriveWorktree } from "./useRepoSelection/deriveWorktree";
+import { mergeRepos, preferredClone } from "./useRepoSelection/mergeRepos";
+import { nodeKey } from "./useRepoSelection/nodeKey";
+import { useRepoLookups } from "./useRepoSelection/useRepoLookups";
+import { useRetargetOnMachineChange } from "./useRepoSelection/useRetargetOnMachineChange";
+import { useSelectedRepo } from "./useRepoSelection/useSelectedRepo";
 import { useSyncRepoToActiveCard } from "./useRepoSelection/useSyncRepoToActiveCard";
 
 export function useRepoSelection(
@@ -11,36 +15,57 @@ export function useRepoSelection(
 	history: HistoricalSession[],
 	activeId: string | null,
 	sessions: SessionInfo[],
+	nodeSelection: NodeSelection,
 ): RepoSelection {
-	const [selectedCwd, setSelectedCwd] = useState(currentCwd);
-
-	useEffect(() => {
-		if (currentCwd && !selectedCwd) setSelectedCwd(currentCwd);
-	}, [currentCwd, selectedCwd]);
-
-	useSyncRepoToActiveCard(activeId, sessions, history, setSelectedCwd);
-
-	const repos = useMemo(
-		() =>
-			uniqueRepos(
-				currentCwd,
-				history.filter((s) => !s.node),
-			),
+	const localNode = nodeSelection.nodes?.local;
+	const machine = nodeKey(nodeSelection.selected, localNode);
+	const merged = useMemo(
+		() => mergeRepos(currentCwd, history),
 		[currentCwd, history],
 	);
-	const reposByNode = useMemo(() => linkedNodeRepos(history), [history]);
+	const { selectedCwd, selectedNode, setSelectedCwd } = useSelectedRepo(
+		currentCwd,
+		merged,
+		machine,
+		localNode,
+	);
+	useSyncRepoToActiveCard(activeId, sessions, history, setSelectedCwd);
+	useRetargetOnMachineChange(machine, merged, selectedCwd, setSelectedCwd);
+	const { cloneOn, originOf } = useRepoLookups(merged, localNode);
 
-	const worktreeCwd = deriveWorktreeCwd(
+	const repos = useMemo(
+		() => merged.map((repo) => preferredClone(repo, machine)),
+		[merged, machine],
+	);
+	const { cwd: worktreeCwd, node: worktreeNode } = deriveWorktree(
 		activeId,
 		sessions,
 		history,
-		selectedCwd,
+		{ cwd: selectedCwd, node: selectedNode },
 	);
 
 	// Stable identity so RepoSelectionContext consumers only re-render when
 	// the selection actually changes, not on every socket state update
 	return useMemo(
-		() => ({ repos, reposByNode, selectedCwd, worktreeCwd, setSelectedCwd }),
-		[repos, reposByNode, selectedCwd, worktreeCwd],
+		() => ({
+			repos,
+			selectedCwd,
+			selectedNode,
+			worktreeCwd,
+			worktreeNode,
+			setSelectedCwd,
+			cloneOn,
+			originOf,
+		}),
+		[
+			repos,
+			selectedCwd,
+			selectedNode,
+			worktreeCwd,
+			worktreeNode,
+			setSelectedCwd,
+			cloneOn,
+			originOf,
+		],
 	);
 }

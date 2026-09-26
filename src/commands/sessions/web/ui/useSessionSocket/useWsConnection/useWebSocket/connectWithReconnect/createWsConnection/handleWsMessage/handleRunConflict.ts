@@ -16,5 +16,6 @@ export function handleRunConflict(
 		cwd: msg.cwd as string | undefined,
 		sessionId: msg.sessionId as string | undefined,
 		launchedFrom: msg.launchedFrom as string | undefined,
+		node: msg.node as string | undefined,
 	});
 }

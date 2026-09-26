@@ -12,10 +12,6 @@ vi.mock("../../../../shared/web", () => ({
 	respondJson: (...args: unknown[]) => mockRespondJson(...args),
 }));
 
-vi.mock("../toGitCwd", () => ({
-	toGitCwd: (cwd: string) => `git:${cwd}`,
-}));
-
 import { releasesConfigured } from "./releasesConfigured";
 
 function run(url: string): unknown[] {
@@ -36,7 +32,7 @@ describe("releasesConfigured", () => {
 			200,
 			{ configured: true },
 		]);
-		expect(mockLoadConfigFrom).toHaveBeenCalledWith("git:/repo");
+		expect(mockLoadConfigFrom).toHaveBeenCalledWith("/repo");
 	});
 
 	it("reports not configured when releases.streams is empty", () => {

@@ -2,6 +2,7 @@ import { createBundleHandler } from "../../../shared/createBundleHandler";
 import { createFallbackHandler } from "../../../shared/createFallbackHandler";
 import { createHtmlHandler, type Handler } from "../../../shared/web";
 import { getBacklogSummary } from "../../backlog/web/getBacklogSummary";
+import { getRepoLocation } from "../../backlog/web/getRepoLocation";
 import { handleItemRoute } from "../../backlog/web/handleItemRoute";
 import { listItems } from "../../backlog/web/shared";
 import { diff } from "./diff";
@@ -25,6 +26,7 @@ import { listUsageHistory } from "./listUsageHistory";
 import { listUsageItems } from "./listUsageItems";
 import { openInCode } from "./openInCode";
 import { prList } from "./prList";
+import { proxyToNode } from "./proxyToNode";
 import { previewImage } from "./previewImage";
 import { prStatus } from "./prStatus";
 import { releasesConfigured } from "./releases/releasesConfigured";
@@ -72,6 +74,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/health": health,
 	"GET /api/items": listItems,
 	"GET /api/backlog/summary": getBacklogSummary,
+	"GET /api/repo-location": getRepoLocation,
 	"POST /api/open-in-code": openInCode,
 	"POST /api/pr-preview/upload-image": uploadPrImage,
 	"GET /api/pr-preview/image": previewImage,
@@ -111,5 +114,6 @@ const routes: Record<string, Handler> = {
 export const handleRequest = createFallbackHandler(
 	routes,
 	htmlHandler,
-	handleItemRoute,
+	async (req, res, pathname) =>
+		(await proxyToNode(req, res)) || handleItemRoute(req, res, pathname),
 );

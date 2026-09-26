@@ -34,6 +34,8 @@ function renderList(sessions: HistoricalSession[], selectedCwd: string) {
 				selectedCwd,
 				worktreeCwd: selectedCwd,
 				setSelectedCwd: vi.fn(),
+				cloneOn: (cwd) => cwd,
+				originOf: () => undefined,
 			}}
 		>
 			<HistoryList sessions={sessions} onView={vi.fn()} onResume={vi.fn()} />

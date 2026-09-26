@@ -8,10 +8,6 @@ vi.mock("../../../shared/web", () => ({
 	respondJson: (...args: unknown[]) => mockRespondJson(...args),
 }));
 
-vi.mock("../../../lib/detectPlatform", () => ({
-	detectPlatform: () => "wsl",
-}));
-
 import { handleConfigWrite } from "./handleConfigWrite";
 
 async function post(body: unknown, apply: ReturnType<typeof vi.fn>) {
@@ -30,25 +26,7 @@ describe("handleConfigWrite", () => {
 		vi.clearAllMocks();
 	});
 
-	it("translates a Windows-style cwd to the WSL mount before applying", async () => {
-		const apply = vi.fn().mockReturnValue({ ok: true, payload: {} });
-
-		await post(
-			{
-				key: "commit.push",
-				value: true,
-				cwd: String.raw`C:\git\nextgen`,
-				scope: "project",
-			},
-			apply,
-		);
-
-		expect(apply).toHaveBeenCalledWith(
-			expect.objectContaining({ cwd: "/mnt/c/git/nextgen" }),
-		);
-	});
-
-	it("leaves a POSIX cwd untouched", async () => {
+	it("applies the write at the request's cwd", async () => {
 		const apply = vi.fn().mockReturnValue({ ok: true, payload: {} });
 
 		await post(
@@ -64,5 +42,6 @@ describe("handleConfigWrite", () => {
 		expect(apply).toHaveBeenCalledWith(
 			expect.objectContaining({ cwd: "/home/me/repo" }),
 		);
+		expect(mockRespondJson).toHaveBeenCalledWith(expect.anything(), 200, {});
 	});
 });

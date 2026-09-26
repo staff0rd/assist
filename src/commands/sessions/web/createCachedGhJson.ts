@@ -1,6 +1,5 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { toGitCwd } from "./toGitCwd";
 
 const execFileAsync = promisify(execFile);
 
@@ -25,7 +24,7 @@ export function createCachedGhJson<T>(
 			const { stdout } = await execFileAsync("gh", [...args, ...extraArgs], {
 				encoding: "utf8",
 				windowsHide: true,
-				cwd: toGitCwd(cwd),
+				cwd,
 			});
 			value = parse(stdout);
 		} catch {

@@ -29,6 +29,15 @@ const sessions: SessionInfo[] = [
 		cwd: "/repos/live-2",
 		repoGroup: { origin: "host/org/live", clone: "/repos/live" },
 	},
+	{
+		id: "pc-windows:3",
+		name: "linked",
+		commandType: "claude",
+		status: "running",
+		startedAt: 0,
+		cwd: String.raw`C:\git\live`,
+		node: "pc-windows",
+	},
 ];
 
 const history: HistoricalSession[] = [
@@ -59,7 +68,7 @@ describe("useSyncRepoToActiveCard", () => {
 
 		rerender({ id: "live-1" });
 
-		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/live");
+		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/live", "");
 	});
 
 	it("sets the selector to a clicked history card's cwd", () => {
@@ -68,7 +77,7 @@ describe("useSyncRepoToActiveCard", () => {
 
 		rerender({ id: "hist-1" });
 
-		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/hist");
+		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/hist", "");
 	});
 
 	it("selects the clone when the clicked card runs in one of its worktrees", () => {
@@ -77,13 +86,25 @@ describe("useSyncRepoToActiveCard", () => {
 
 		rerender({ id: "live-worktree" });
 
-		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/live");
+		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/live", "");
+	});
+
+	it("pins the selection to a linked card's node", () => {
+		const setSelectedCwd = vi.fn();
+		const { rerender } = renderSync(setSelectedCwd, null);
+
+		rerender({ id: "pc-windows:3" });
+
+		expect(setSelectedCwd).toHaveBeenCalledWith(
+			String.raw`C:\git\live`,
+			"pc-windows",
+		);
 	});
 
 	it("leaves the selection unchanged for a card with no cwd", () => {
 		const setSelectedCwd = vi.fn();
 		const { rerender } = renderSync(setSelectedCwd, "live-1");
-		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/live");
+		expect(setSelectedCwd).toHaveBeenCalledWith("/repos/live", "");
 		setSelectedCwd.mockClear();
 
 		rerender({ id: "live-no-cwd" });

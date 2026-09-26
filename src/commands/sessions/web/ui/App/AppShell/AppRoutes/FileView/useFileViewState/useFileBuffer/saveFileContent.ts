@@ -1,15 +1,28 @@
+import { withNode } from "../../../../../../withNode";
 import { postJson } from "../../../../../postJson";
 
 export type SavedFile = { content: string; mtimeMs: number };
 
-export async function saveFileContent(
-	cwd: string,
-	path: string,
-	content: string,
-	mtimeMs: number,
-): Promise<SavedFile> {
+type SaveRequest = {
+	cwd: string;
+	node?: string;
+	path: string;
+	content: string;
+	mtimeMs: number;
+};
+
+export async function saveFileContent({
+	cwd,
+	node,
+	path,
+	content,
+	mtimeMs,
+}: SaveRequest): Promise<SavedFile> {
 	const body = await postJson(
-		`/api/file?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
+		withNode(
+			`/api/file?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
+			node,
+		),
 		{ content, mtimeMs },
 		"Failed to save file",
 	);

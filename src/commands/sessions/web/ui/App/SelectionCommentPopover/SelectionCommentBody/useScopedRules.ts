@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ScopedRule } from "../../../../../../rules/types";
+import { useApiNode } from "../../../useApiNode";
 
 const EMPTY: ScopedRule[] = [];
 
@@ -9,6 +10,7 @@ export function useScopedRules(
 	enabled: boolean,
 ): ScopedRule[] {
 	const [rules, setRules] = useState<ScopedRule[]>(EMPTY);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!enabled || !cwd) {
@@ -18,6 +20,7 @@ export function useScopedRules(
 		let cancelled = false;
 		const params = new URLSearchParams({ cwd });
 		if (path) params.set("path", path);
+		if (node) params.set("node", node);
 		const load = async () => {
 			try {
 				const res = await fetch(`/api/rules?${params}`);
@@ -31,7 +34,7 @@ export function useScopedRules(
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, path, enabled]);
+	}, [cwd, path, enabled, node]);
 
 	return rules;
 }

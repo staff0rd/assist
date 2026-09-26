@@ -1,5 +1,7 @@
-export function withCwd(url: string, cwd?: string): string {
-	if (!cwd) return url;
+import { withNode } from "../../../sessions/web/ui/withNode";
+
+export function withCwd(url: string, cwd?: string, node?: string): string {
+	if (!cwd) return withNode(url, node);
 	const separator = url.includes("?") ? "&" : "?";
-	return `${url}${separator}cwd=${encodeURIComponent(cwd)}`;
+	return withNode(`${url}${separator}cwd=${encodeURIComponent(cwd)}`, node);
 }

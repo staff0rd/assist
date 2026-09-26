@@ -1,3 +1,5 @@
+import { withNode } from "../withNode";
+
 export type FileContentState =
 	| { status: "loading" }
 	| { status: "absent" }
@@ -8,10 +10,14 @@ export type FileContentState =
 export async function fetchFileContent(
 	cwd: string,
 	path: string,
+	node?: string,
 ): Promise<FileContentState> {
 	try {
 		const res = await fetch(
-			`/api/file?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
+			withNode(
+				`/api/file?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
+				node,
+			),
 		);
 		if (res.status === 404) return { status: "absent" };
 		if (res.status === 413) return { status: "too-large" };

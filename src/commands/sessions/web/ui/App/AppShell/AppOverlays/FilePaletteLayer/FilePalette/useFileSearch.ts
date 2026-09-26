@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useApiNode } from "../../../../../useApiNode";
+import { withNode } from "../../../../../withNode";
 
 type FileSearchState = {
 	files: string[];
@@ -10,6 +12,7 @@ const idle: FileSearchState = { files: [], loading: false, error: false };
 
 export function useFileSearch(cwd: string, query: string): FileSearchState {
 	const [state, setState] = useState<FileSearchState>(idle);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
@@ -21,7 +24,10 @@ export function useFileSearch(cwd: string, query: string): FileSearchState {
 		const search = async () => {
 			try {
 				const res = await fetch(
-					`/api/files?cwd=${encodeURIComponent(cwd)}&q=${encodeURIComponent(query)}`,
+					withNode(
+						`/api/files?cwd=${encodeURIComponent(cwd)}&q=${encodeURIComponent(query)}`,
+						node,
+					),
 				);
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const body = await res.json();
@@ -39,7 +45,7 @@ export function useFileSearch(cwd: string, query: string): FileSearchState {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, query]);
+	}, [cwd, query, node]);
 
 	return state;
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import type { PrSummary } from "../../prList";
 import type { SessionStatus } from "../types";
+import { useApiNode } from "../useApiNode";
+import { withNode } from "../withNode";
 
 export function usePrStatus(
 	cwd: string | undefined,
@@ -8,6 +10,7 @@ export function usePrStatus(
 	status: SessionStatus,
 ): PrSummary | null {
 	const [pr, setPr] = useState<PrSummary | null>(null);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
@@ -16,7 +19,12 @@ export function usePrStatus(
 		}
 		let cancelled = false;
 		const numberParam = prNumber !== undefined ? `&number=${prNumber}` : "";
-		fetch(`/api/pr-status?cwd=${encodeURIComponent(cwd)}${numberParam}`)
+		fetch(
+			withNode(
+				`/api/pr-status?cwd=${encodeURIComponent(cwd)}${numberParam}`,
+				node,
+			),
+		)
 			.then((res) => res.json())
 			.then((body) => {
 				if (!cancelled)
@@ -28,7 +36,7 @@ export function usePrStatus(
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, prNumber, status]);
+	}, [cwd, node, prNumber, status]);
 
 	return pr;
 }

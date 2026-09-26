@@ -6,21 +6,34 @@ import { FilterInput } from "../../FilterInput";
 import { AutoFocusDialog } from "../AutoFocusDialog";
 import { useFileSearch } from "./FilePalette/useFileSearch";
 import { useListKeyboardNav } from "../../useListKeyboardNav";
+import { ApiNodeContext } from "../../../../useApiNode";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
 
+function filePath(path: string, cwd: string, node?: string): string {
+	const params = new URLSearchParams({ path });
+	if (cwd) params.set("cwd", cwd);
+	if (cwd && node) params.set("node", node);
+	return `/file?${params}`;
+}
+
 export function FilePalette({ onClose }: { onClose: () => void }) {
-	const { worktreeCwd } = useRepoSelectionContext();
+	const { worktreeNode } = useRepoSelectionContext();
+	return (
+		<ApiNodeContext.Provider value={worktreeNode}>
+			<FilePaletteDialog onClose={onClose} />
+		</ApiNodeContext.Provider>
+	);
+}
+
+function FilePaletteDialog({ onClose }: { onClose: () => void }) {
+	const { worktreeCwd, worktreeNode } = useRepoSelectionContext();
 	const [query, setQuery] = useState("");
 	const search = useFileSearch(worktreeCwd, query);
 	const navigate = useNavigate();
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const openFile = (path: string) =>
-		navigate(
-			`/file?${new URLSearchParams(
-				worktreeCwd ? { path, cwd: worktreeCwd } : { path },
-			)}`,
-		);
+		navigate(filePath(path, worktreeCwd, worktreeNode));
 
 	const { highlight, setHighlight, onKeyDown } = useListKeyboardNav(
 		search.files,

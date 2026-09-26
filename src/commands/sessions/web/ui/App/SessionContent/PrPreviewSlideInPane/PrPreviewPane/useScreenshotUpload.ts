@@ -4,6 +4,7 @@ import {
 	uploadPreviewImage,
 } from "./useScreenshotUpload/uploadPreviewImage";
 import { useImageDropPaste } from "./useScreenshotUpload/useImageDropPaste";
+import { useApiNode } from "../../../../useApiNode";
 
 export type UploadError = { message: string; command?: string };
 
@@ -28,13 +29,14 @@ export function useScreenshotUpload(
 ) {
 	const [uploads, setUploads] = useState<ScreenshotUpload[]>([]);
 	const nextId = useRef(0);
+	const node = useApiNode();
 
 	const upload = useCallback(
 		async (file: File) => {
 			const id = nextId.current++;
 			setUploads((us) => [...us.filter((u) => !u.error), { id }]);
 			try {
-				const markdown = await uploadPreviewImage(file, cwd);
+				const markdown = await uploadPreviewImage(file, cwd, node);
 				onUploaded({
 					markdown,
 					url: URL.createObjectURL(file),
@@ -48,7 +50,7 @@ export function useScreenshotUpload(
 				);
 			}
 		},
-		[cwd, onUploaded],
+		[cwd, node, onUploaded],
 	);
 
 	const { onDrop, onDragOver } = useImageDropPaste(upload, enabled);

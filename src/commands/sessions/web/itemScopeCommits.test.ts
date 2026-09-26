@@ -5,7 +5,6 @@ import { itemScopeCommits } from "./itemScopeCommits";
 
 vi.mock("../../../shared/loadConfigFrom", () => ({ loadConfigFrom: vi.fn() }));
 vi.mock("./itemCommits", () => ({ itemCommits: vi.fn(async () => []) }));
-vi.mock("./toGitCwd", () => ({ toGitCwd: (cwd: string) => cwd }));
 
 const loadConfigFromMock = vi.mocked(loadConfigFrom);
 const itemCommitsMock = vi.mocked(itemCommits);

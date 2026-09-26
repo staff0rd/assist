@@ -2,11 +2,14 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { useEffect, useState } from "react";
+import { useApiNode } from "../../../useApiNode";
+import { withNode } from "../../../withNode";
 
 const sx = { color: "inherit" } as const;
 
 export function OpenInGitHubButton({ cwd }: { cwd: string }) {
 	const [url, setUrl] = useState<string | null>(null);
+	const node = useApiNode();
 
 	useEffect(() => {
 		if (!cwd) {
@@ -17,7 +20,7 @@ export function OpenInGitHubButton({ cwd }: { cwd: string }) {
 		(async () => {
 			try {
 				const res = await fetch(
-					`/api/github-url?cwd=${encodeURIComponent(cwd)}`,
+					withNode(`/api/github-url?cwd=${encodeURIComponent(cwd)}`, node),
 				);
 				const body = await res.json();
 				if (!cancelled) setUrl(body?.url ?? null);
@@ -28,7 +31,7 @@ export function OpenInGitHubButton({ cwd }: { cwd: string }) {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd]);
+	}, [cwd, node]);
 
 	if (!url) return null;
 

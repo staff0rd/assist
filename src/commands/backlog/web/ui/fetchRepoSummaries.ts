@@ -18,15 +18,19 @@ function summaryUrl(knownCwds: string[]): string {
 
 type FetchRepoSummariesOptions = {
 	cwd?: string;
+	node?: string;
 	knownCwds: string[];
 	signal?: AbortSignal;
 };
 
 export async function fetchRepoSummaries({
 	cwd,
+	node,
 	knownCwds,
 	signal,
 }: FetchRepoSummariesOptions): Promise<RepoSummary[]> {
-	const res = await fetch(withCwd(summaryUrl(knownCwds), cwd), { signal });
+	const res = await fetch(withCwd(summaryUrl(knownCwds), cwd, node), {
+		signal,
+	});
 	return res.json();
 }

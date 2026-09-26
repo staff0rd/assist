@@ -13,6 +13,7 @@ function itemsUrl(query?: string, filter?: BacklogFilter): string {
 type FetchItemsOptions = {
 	query?: string;
 	cwd?: string;
+	node?: string;
 	signal?: AbortSignal;
 	filter?: BacklogFilter;
 };
@@ -20,10 +21,11 @@ type FetchItemsOptions = {
 export async function fetchItems({
 	query,
 	cwd,
+	node,
 	signal,
 	filter,
 }: FetchItemsOptions = {}): Promise<BacklogItemSummary[]> {
-	const res = await fetch(withCwd(itemsUrl(query, filter), cwd), {
+	const res = await fetch(withCwd(itemsUrl(query, filter), cwd, node), {
 		signal,
 	});
 	return res.json();

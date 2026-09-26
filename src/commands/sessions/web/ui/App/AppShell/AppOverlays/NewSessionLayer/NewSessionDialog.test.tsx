@@ -69,6 +69,8 @@ function renderDialog(
 				selectedCwd: "/git/beta",
 				worktreeCwd: "/git/beta",
 				setSelectedCwd,
+				cloneOn: (cwd) => cwd,
+				originOf: () => undefined,
 			}}
 		>
 			<DraftedDialog

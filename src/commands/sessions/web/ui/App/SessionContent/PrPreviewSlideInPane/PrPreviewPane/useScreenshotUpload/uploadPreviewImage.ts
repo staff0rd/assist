@@ -10,9 +10,11 @@ export class UploadImageError extends Error {
 export async function uploadPreviewImage(
 	file: File | Blob,
 	cwd: string | undefined,
+	node?: string,
 ): Promise<string> {
 	const params = new URLSearchParams();
 	if (cwd) params.set("cwd", cwd);
+	if (node) params.set("node", node);
 	if (file instanceof File && file.name) params.set("name", file.name);
 
 	const res = await fetch(`/api/pr-preview/upload-image?${params}`, {

@@ -9,10 +9,11 @@ export function revalidateBacklog(
 	filter: BacklogFilter,
 	signal: AbortSignal,
 	onLoaded: OnLoaded,
+	node?: string,
 ): void {
 	(async () => {
 		try {
-			const items = await loadBacklogItems(cwd, filter, signal);
+			const items = await loadBacklogItems(cwd, filter, signal, node);
 			if (!signal.aborted) onLoaded(items);
 		} catch {
 			// why: a transient failure (network blip, server mid-restart) must not throw

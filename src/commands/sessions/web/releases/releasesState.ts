@@ -2,7 +2,6 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import { respondJson } from "../../../../shared/web";
 import { getCwdParam } from "../getCwdParam";
-import { toGitCwd } from "../toGitCwd";
 import { repoEnvironments } from "./repoEnvironments";
 import { streamState } from "./streamState";
 
@@ -14,7 +13,7 @@ export async function releasesState(
 	if (!cwd) return;
 	let streams;
 	try {
-		streams = loadConfigFrom(toGitCwd(cwd)).releases?.streams ?? [];
+		streams = loadConfigFrom(cwd).releases?.streams ?? [];
 	} catch (error) {
 		respondJson(res, 500, {
 			error: error instanceof Error ? error.message : "Failed to read config",

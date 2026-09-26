@@ -34,6 +34,8 @@ function renderPalette(onClose = vi.fn(), worktreeCwd = "/repo") {
 					selectedCwd: "/repo",
 					worktreeCwd,
 					setSelectedCwd: vi.fn(),
+					cloneOn: (cwd) => cwd,
+					originOf: () => undefined,
 				}}
 			>
 				<FilePalette onClose={onClose} />

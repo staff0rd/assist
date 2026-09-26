@@ -5,7 +5,6 @@ import { respondJson } from "../../../shared/web";
 import { createCachedGhJson } from "./createCachedGhJson";
 import { getCwdParam } from "./getCwdParam";
 import type { PrSummary } from "./prList";
-import { toGitCwd } from "./toGitCwd";
 
 const execFileAsync = promisify(execFile);
 
@@ -53,7 +52,7 @@ async function getCurrentBranch(cwd: string): Promise<string | undefined> {
 		const { stdout } = await execFileAsync(
 			"git",
 			["rev-parse", "--abbrev-ref", "HEAD"],
-			{ encoding: "utf8", windowsHide: true, cwd: toGitCwd(cwd) },
+			{ encoding: "utf8", windowsHide: true, cwd },
 		);
 		const branch = stdout.trim();
 		return branch && branch !== "HEAD" ? branch : undefined;

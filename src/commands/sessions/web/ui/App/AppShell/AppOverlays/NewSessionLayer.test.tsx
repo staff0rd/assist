@@ -39,6 +39,8 @@ function renderAt(path: string) {
 							selectedCwd: "/git/alpha",
 							worktreeCwd: "/git/alpha",
 							setSelectedCwd: vi.fn(),
+							cloneOn: (cwd) => cwd,
+							originOf: () => undefined,
 						}}
 					>
 						<NewSessionLayer

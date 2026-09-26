@@ -1,10 +1,8 @@
 import { useCallback, useRef, useState } from "react";
-import {
-	type SavedFile,
-	saveFileContent,
-} from "./useFileBuffer/saveFileContent";
+import { saveFileContent } from "./useFileBuffer/saveFileContent";
 import type { FileContentState } from "../../../../fetchFileContent";
-import { loadedFile } from "./useFileBuffer/loadedFile";
+import { useLoadedFile } from "./useFileBuffer/useLoadedFile";
+import { useApiNode } from "../../../../../useApiNode";
 
 type FileBuffer = {
 	value: string;
@@ -25,33 +23,31 @@ export function useFileBuffer(
 	path: string,
 	state: FileContentState,
 ): FileBuffer {
-	const [loaded, setLoaded] = useState(state);
-	const [saved, setSaved] = useState<SavedFile>(() => loadedFile(state));
-	const [value, setValue] = useState(() => loadedFile(state).content);
+	const { saved, setSaved, value, setValue } = useLoadedFile(state);
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
 	const latest = useRef(value);
-
-	if (loaded !== state) {
-		const next = loadedFile(state);
-		setLoaded(state);
-		setSaved(next);
-		setValue(next.content);
-	}
+	const node = useApiNode();
 	latest.current = value;
 
 	const dirty = state.status === "ready" && value !== saved.content;
 	const save = useCallback(() => {
 		if (!cwd || !dirty || saving) return;
 		setSaving(true);
-		saveFileContent(cwd, path, latest.current, saved.mtimeMs)
+		saveFileContent({
+			cwd,
+			node,
+			path,
+			content: latest.current,
+			mtimeMs: saved.mtimeMs,
+		})
 			.then((result) => {
 				setSaved(result);
 				setValue(result.content);
 			})
 			.catch((error: unknown) => setSaveError(saveFailure(error)))
 			.finally(() => setSaving(false));
-	}, [cwd, path, dirty, saving, saved.mtimeMs]);
+	}, [cwd, node, path, dirty, saving, saved.mtimeMs, setSaved, setValue]);
 
 	const clearError = useCallback(() => setSaveError(null), []);
 

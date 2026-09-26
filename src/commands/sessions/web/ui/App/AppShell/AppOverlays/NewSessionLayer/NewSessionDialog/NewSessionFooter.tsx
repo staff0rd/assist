@@ -13,7 +13,13 @@ const footerSx = {
 	bgcolor: "action.hover",
 } as const;
 
-export function NewSessionFooter({ submitLabel }: { submitLabel: string }) {
+export function NewSessionFooter({
+	submitLabel,
+	disabled = false,
+}: {
+	submitLabel: string;
+	disabled?: boolean;
+}) {
 	return (
 		<Stack direction="row" spacing={1.5} sx={footerSx}>
 			<Stack direction="row" spacing={1.5} sx={{ mr: "auto" }}>
@@ -23,7 +29,12 @@ export function NewSessionFooter({ submitLabel }: { submitLabel: string }) {
 					</Typography>
 				))}
 			</Stack>
-			<Button type="submit" variant="contained" size="small">
+			<Button
+				type="submit"
+				variant="contained"
+				size="small"
+				disabled={disabled}
+			>
 				{submitLabel}
 			</Button>
 		</Stack>

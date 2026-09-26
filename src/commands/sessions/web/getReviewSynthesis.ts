@@ -7,7 +7,6 @@ import { promisify } from "node:util";
 import { respondJson } from "../../../shared/web";
 import { findSynthesisForBranch } from "./findSynthesisForBranch";
 import { getCwdParam } from "./getCwdParam";
-import { toGitCwd } from "./toGitCwd";
 
 const execFileAsync = promisify(execFile);
 
@@ -15,7 +14,7 @@ function runGit(cwd: string, args: string[]): Promise<string> {
 	return execFileAsync("git", args, {
 		encoding: "utf8",
 		windowsHide: true,
-		cwd: toGitCwd(cwd),
+		cwd,
 	}).then((r) => r.stdout.trim());
 }
 

@@ -115,6 +115,8 @@ function renderView(
 							selectedCwd: "/repo",
 							worktreeCwd,
 							setSelectedCwd: vi.fn(),
+							cloneOn: (cwd) => cwd,
+							originOf: () => undefined,
 						}}
 					>
 						<FileView
