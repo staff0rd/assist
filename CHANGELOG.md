@@ -1,3 +1,10 @@
+## [0.705.1](https://github.com/staff0rd/assist/compare/v0.705.0...v0.705.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* float repo list over dialog ([9223b7c](https://github.com/staff0rd/assist/commit/9223b7c9d44d5dbba710b24df915b86ddcafb9f8))
+
 # [0.705.0](https://github.com/staff0rd/assist/compare/v0.704.7...v0.705.0) (2026-09-26)
 
 
