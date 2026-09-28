@@ -1,3 +1,15 @@
+# [0.714.0](https://github.com/staff0rd/assist/compare/v0.713.3...v0.714.0) (2026-09-28)
+
+
+### Bug Fixes
+
+* make server run controls start-only ([4dfb2d7](https://github.com/staff0rd/assist/commit/4dfb2d73fc77fb240f332e50f20daae217cc4f6b))
+
+
+### Features
+
+* default prs.required to true ([9865498](https://github.com/staff0rd/assist/commit/9865498a10689987308bc2e9f29a563a60df6afc))
+
 ## [0.713.3](https://github.com/staff0rd/assist/compare/v0.713.2...v0.713.3) (2026-09-28)
 
 
