@@ -1,4 +1,3 @@
-import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -6,6 +5,7 @@ import { loadConfig } from "../shared/loadConfig";
 import { pruneCommands } from "./sync/pruneCommands";
 import type { PruneOptions } from "./sync/pruneTarget";
 import { reportPrune } from "./sync/reportPrune";
+import { syncClaudeCommands } from "./sync/syncClaudeCommands";
 import { reportRetiredAgentsFiles } from "./sync/reportRetiredAgentsFiles";
 import { syncCodex } from "./sync/syncCodex";
 import { syncDesign } from "./sync/syncDesign";
@@ -25,7 +25,7 @@ export async function sync(
 	const claudeDir = path.join(__dirname, "..", "claude");
 	const targetBase = path.join(os.homedir(), ".claude");
 
-	const commandFiles = syncCommands(claudeDir, targetBase);
+	const commandFiles = syncClaudeCommands(claudeDir, targetBase);
 	syncDesign(claudeDir, targetBase);
 	await syncSettings(claudeDir, targetBase, { yes });
 	syncCodex(claudeDir, prune);
@@ -44,21 +44,4 @@ export async function sync(
 		pruneCommands(path.join(targetBase, "commands"), commandNames, { force }),
 		force,
 	);
-}
-
-function syncCommands(claudeDir: string, targetBase: string): string[] {
-	const sourceDir = path.join(claudeDir, "commands");
-	const targetDir = path.join(targetBase, "commands");
-
-	fs.mkdirSync(targetDir, { recursive: true });
-
-	const files = fs.readdirSync(sourceDir);
-	for (const file of files) {
-		fs.copyFileSync(path.join(sourceDir, file), path.join(targetDir, file));
-		console.log(`Copied ${file} to ${targetDir}`);
-	}
-
-	console.log(`Synced ${files.length} command(s) to ~/.claude/commands`);
-
-	return files;
 }
