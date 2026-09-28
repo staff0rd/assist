@@ -2,9 +2,9 @@ import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
 import { closeSession } from "./closeSession";
 import { registerNodes } from "./nodes/registerNodes";
+import { registerOutputCommand } from "./registerOutputCommand";
 import { registerSetStatusCommand } from "./registerSetStatusCommand";
 import { renameSession } from "./renameSession";
-import { sessionOutput } from "./sessionOutput";
 import { sessionsConfigHelp } from "./sessionsConfigHelp";
 import { summarise } from "./summarise";
 import { web as sessionsWeb } from "./web";
@@ -48,14 +48,7 @@ export function registerSessions(program: Command): void {
 		)
 		.action(renameSession);
 
-	cmd
-		.command("output <session-id>")
-		.description(
-			"Print a snapshot of a session's output with ANSI codes stripped",
-		)
-		.option("-n, --lines <count>", "Number of lines", "200")
-		.action(sessionOutput);
-
+	registerOutputCommand(cmd);
 	registerSetStatusCommand(cmd);
 	registerNodes(cmd);
 

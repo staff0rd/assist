@@ -6,6 +6,9 @@ import { sessionOutput } from "./sessionOutput";
 vi.mock("./daemon/requestSessionOutput", () => ({
 	requestSessionOutput: vi.fn(),
 }));
+vi.mock("../backlog/getCurrentOrigin", () => ({
+	getCurrentOrigin: () => "github.com/o/r",
+}));
 
 const requestMock = requestSessionOutput as unknown as ReturnType<typeof vi.fn>;
 const ESC = String.fromCharCode(27);
@@ -50,7 +53,7 @@ describe("sessionOutput", () => {
 
 		await sessionOutput("7", { lines: "200" });
 
-		expect(requestMock).toHaveBeenCalledWith("7");
+		expect(requestMock).toHaveBeenCalledWith({ sessionId: "7" });
 		expect(printed()).toEqual(all.slice(-200));
 		expect(process.exitCode).toBeUndefined();
 	});
@@ -70,6 +73,37 @@ describe("sessionOutput", () => {
 		expect(console.error).toHaveBeenCalledWith(
 			"Session win:3 is on a linked node; reading linked-node sessions is not supported yet",
 		);
+		expect(process.exitCode).toBe(1);
+	});
+
+	it("targets the default server group for the current repo's origin", async () => {
+		requestMock.mockResolvedValue("ready\n");
+
+		await sessionOutput(undefined, { lines: "200", server: true });
+
+		expect(requestMock).toHaveBeenCalledWith({
+			server: { origin: "github.com/o/r", group: "default" },
+		});
+		expect(printed()).toEqual(["ready"]);
+	});
+
+	it("targets the named server group", async () => {
+		requestMock.mockResolvedValue("");
+
+		await sessionOutput(undefined, { lines: "200", server: "web" });
+
+		expect(requestMock).toHaveBeenCalledWith({
+			server: { origin: "github.com/o/r", group: "web" },
+		});
+	});
+
+	it.each([
+		[undefined, undefined],
+		["7", true],
+	] as const)("rejects id=%s server=%s", async (id, server) => {
+		await sessionOutput(id, { lines: "200", server });
+
+		expect(requestMock).not.toHaveBeenCalled();
 		expect(process.exitCode).toBe(1);
 	});
 

@@ -59,6 +59,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/refactor` - Run refactoring checks for code quality
 - `/prompts` - Analyze denied tool calls and suggest settings changes to auto-allow recurring prompts
 - `/recall` - Recall the most recent handover note for this repo
+- `/run-logs [session-id|group]` - Read a run session's output via `assist sessions output` — a session id, or else a server group (default `default`) for this repo — and summarise its errors and relevant lines
 - `/releases-configure` - Set this repo's release promotion topology: read its workflow files, follow every `uses:` reusable-workflow call to whatever depth it nests, flatten the `needs:` graph across those boundaries into nodes and edges, put the graph to the user to accept or edit, then write it with `assist releases configure --streams ...` to the project `assist.yml` or this repo's block in `~/.assist.yml`. The repo is the one you are in — it is never passed
 - `/refine` - Refine an existing backlog item through conversation
 - `/rename [title]` - Retitle this session's dashboard card via `assist sessions rename`; uses the argument verbatim, or infers a short title from the conversation when given none
@@ -386,7 +387,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist sessions summarise [-f, --force] [-n, --limit <count>]` - Generate one-line summaries for unsummarised Claude sessions
 - `assist sessions close` - Dismiss the current daemon-managed session: kills its process tree, removes its card from the dashboard and reaps its worktree. Outside such a session it reports there is nothing to close and exits 0
 - `assist sessions rename <title>` - Retitle the current daemon-managed session: the given title replaces the generated title and the backlog item name on its dashboard card for the rest of its life. Outside such a session it reports there is nothing to rename and exits 0
-- `assist sessions output <session-id> [-n, --lines <count>]` - Print the last lines (default 200) of a session's output from the daemon's in-memory scrollback, ANSI codes stripped, then exit. Only sessions on this node; a `<node>:<id>` id, an unknown id or no running daemon prints an error and exits 1
+- `assist sessions output [session-id] [--server [group]] [-n, --lines <count>]` - Print the last lines (default 200) of a session's output from the daemon's in-memory scrollback, ANSI codes stripped, then exit. `--server [group]` (group defaults to `default`) reads the live server run for the current repo's remote and group instead of taking an id. Only sessions on this node; a `<node>:<id>` id, an unknown id, no live server run or no running daemon prints an error and exits 1
 - `assist sessions nodes [--json]` - List this node and every linked node with its link state (see [Linked nodes](#linked-nodes))
 - `assist sessions nodes link <name> [url] [--ssh <alias> --port <port>] [--local-port <port>]` - Link a peer node by its web server URL, or over an ssh tunnel
 - `assist sessions nodes unlink <name>` - Remove a linked node
