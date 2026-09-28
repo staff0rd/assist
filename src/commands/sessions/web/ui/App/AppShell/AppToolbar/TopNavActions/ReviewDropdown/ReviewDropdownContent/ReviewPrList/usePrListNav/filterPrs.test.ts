@@ -44,4 +44,27 @@ describe("filterPrs", () => {
 	it("returns an empty list when nothing matches", () => {
 		expect(filterPrs(prs, "nope")).toEqual([]);
 	});
+
+	describe("PR number", () => {
+		const numbered = [
+			pr(12, "Add session filtering", "Stafford Williams"),
+			pr(120, "Fix daemon restart", "Ada Lovelace"),
+			pr(312, "Bump deps", "renovate"),
+			pr(45, "Tidy logs", "renovate"),
+		];
+
+		it("matches a substring of the number", () => {
+			expect(filterPrs(numbered, "12")).toEqual(numbered.slice(0, 3));
+		});
+
+		it("strips a leading # from the term", () => {
+			expect(filterPrs(numbered, "#12")).toEqual(filterPrs(numbered, "12"));
+			expect(filterPrs(numbered, "#45")).toEqual([numbered[3]]);
+		});
+
+		it("returns an empty list when no number matches", () => {
+			expect(filterPrs(numbered, "999")).toEqual([]);
+			expect(filterPrs(numbered, "#999")).toEqual([]);
+		});
+	});
 });
