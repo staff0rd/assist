@@ -135,6 +135,30 @@ describe("startTranscriptTitleGeneration", () => {
 		expect(mockGenerate).not.toHaveBeenCalled();
 	});
 
+	it.each([
+		"https://github.com/apm-better-life/operational-support/issues/278",
+		"look into https://github.com/apm-better-life/operational-support/issues/278 please",
+	])(
+		"titles a claude session prompted with a reference (%s) from the context after it",
+		async (initialPrompt) => {
+			const session = makeSession({ initialPrompt });
+			const notify = vi.fn();
+
+			startTranscriptTitleGeneration(session, notify);
+			await flush();
+
+			expect(mockExtractContext).toHaveBeenCalledWith(
+				"/projects/repo/abc.jsonl",
+			);
+			expect(mockExtract).not.toHaveBeenCalled();
+			expect(mockGenerate).toHaveBeenCalledWith(
+				"saving a client record twice drops the contact email",
+			);
+			expect(session.generatedTitle).toBe("Add dark mode");
+			expect(notify).toHaveBeenCalledOnce();
+		},
+	);
+
 	it("skips sessions that are not plain claude sessions", () => {
 		startTranscriptTitleGeneration(
 			makeSession({ commandType: "run", runName: "build" }),

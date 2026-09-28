@@ -36,8 +36,8 @@ export function startTranscriptTitleGeneration(
 }
 
 function titleSource(session: Session): TitleSource | undefined {
-	if (session.commandType === "claude")
-		return session.initialPrompt?.trim() ? undefined : "first-message";
+	if (session.commandType === "claude" && !session.initialPrompt?.trim())
+		return "first-message";
 	if (session.activity?.itemName) return undefined;
 	const prompt = sessionTitlePrompt(session);
 	if (!prompt || !isReferenceOnlyPrompt(prompt)) return undefined;
