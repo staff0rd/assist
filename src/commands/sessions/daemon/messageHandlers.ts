@@ -6,6 +6,7 @@ import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
 import { handleCodexUsage } from "./handleCodexUsage";
 import { handleCreateRun } from "./handleCreateRun";
+import { handleOutputRequest } from "./handleOutputRequest";
 import { handleSetStatus } from "./handleSetStatus";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import { type Handler, routed } from "./routed";
@@ -20,6 +21,7 @@ export const messageHandlers: Record<string, Handler> = {
 	"subscribe-logs": (client, m, d) =>
 		m.clients.subscribeLogs(client, d.replay !== false),
 	hello: handleHelloRequest,
+	output: handleOutputRequest,
 	nodes: (client, m) => m.links.sendNodes(client),
 	"reload-links": (client, m) => {
 		daemonLog("reload-links received");
