@@ -117,7 +117,7 @@ const assistConfigShape = {
 	prs: z
 		.strictObject({
 			slack: z.string().optional(),
-			required: z.boolean().default(false),
+			required: z.boolean().default(true),
 			promptJira: z.boolean().default(false),
 			promptGithub: z.boolean().default(false),
 			draft: z.boolean().default(false),

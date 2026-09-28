@@ -88,12 +88,15 @@ describe("ensureStoryBranch", () => {
 		delete process.env.ASSIST_BACKLOG_ITEM_ID;
 	});
 
-	it("does nothing when prs.required is unset", async () => {
+	it("creates a branch when the config has no prs block", async () => {
 		mockLoadConfig.mockReturnValue({});
 
 		await ensureStoryBranch(makeItem());
 
-		expect(mockCreateBranch).not.toHaveBeenCalled();
+		expect(mockCreateBranch).toHaveBeenCalledWith({
+			slug: "add-login-form",
+			jira: undefined,
+		});
 	});
 
 	it("does nothing when prs.required is false", async () => {
@@ -144,13 +147,23 @@ describe("ensureStoryBranch", () => {
 		expect(process.env.ASSIST_BACKLOG_ITEM_ID).toBe("42");
 	});
 
-	it("records why no branch was created when prs.required is unset", async () => {
+	it("records the created branch when prs.required is unset", async () => {
 		mockLoadConfig.mockReturnValue({});
 
 		await ensureStoryBranch(makeItem({ id: 42 }));
 
 		expect(logged()).toEqual([
-			"backlog run 42: prs.required not set; left the session on its current branch",
+			"backlog run 42: prs.required on and no branch recorded; created add-login-form",
+		]);
+	});
+
+	it("records why no branch was created when prs.required is false", async () => {
+		mockLoadConfig.mockReturnValue({ prs: { required: false } });
+
+		await ensureStoryBranch(makeItem({ id: 42 }));
+
+		expect(logged()).toEqual([
+			"backlog run 42: prs.required is false; left the session on its current branch",
 		]);
 	});
 

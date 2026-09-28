@@ -10,8 +10,8 @@ import type { BacklogItem } from "./types";
 
 export async function ensureStoryBranch(item: BacklogItem): Promise<void> {
 	const config = loadConfig();
-	if (!config.prs?.required) {
-		log(item, "prs.required not set; left the session on its current branch");
+	if (config.prs?.required === false) {
+		log(item, "prs.required is false; left the session on its current branch");
 		return;
 	}
 	const recorded = recordedBranch(item);
@@ -23,7 +23,7 @@ export async function ensureStoryBranch(item: BacklogItem): Promise<void> {
 	process.env.ASSIST_BACKLOG_ITEM_ID = String(item.id);
 	const slug = await generateBranchSlug(item.name);
 	const { branchName } = await createBranch({ slug, jira: item.jiraKey });
-	log(item, `prs.required set and no branch recorded; created ${branchName}`);
+	log(item, `prs.required on and no branch recorded; created ${branchName}`);
 }
 
 function recordedBranch(item: BacklogItem): string | undefined {

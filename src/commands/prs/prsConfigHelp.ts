@@ -26,8 +26,8 @@ export const prsConfigHelp: ConfigHelpEntry[] = [
 	},
 	{
 		key: "prs.required",
-		setter: "assist config set prs.required true",
-		note: "require a branch when running a backlog item",
+		setter: "assist config set prs.required false",
+		note: "require a branch when running a backlog item (default true; set false to opt out)",
 	},
 	...prsRaiseConfigHelp,
 ];
