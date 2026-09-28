@@ -1,3 +1,10 @@
+## [0.716.1](https://github.com/staff0rd/assist/compare/v0.716.0...v0.716.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* portal server run dropdown menu ([69b833c](https://github.com/staff0rd/assist/commit/69b833ce6404a8421a074beb6d5bc544918d9aa3))
+
 # [0.716.0](https://github.com/staff0rd/assist/compare/v0.715.0...v0.716.0) (2026-09-28)
 
 
