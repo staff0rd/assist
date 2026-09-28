@@ -1,3 +1,11 @@
+## [0.713.3](https://github.com/staff0rd/assist/compare/v0.713.2...v0.713.3) (2026-09-28)
+
+
+### Bug Fixes
+
+* focus repo default mode on Tab ([9338467](https://github.com/staff0rd/assist/commit/9338467e0f6aaba185e4504446a202abff28e392))
+* push history when a node link connects ([b971fa7](https://github.com/staff0rd/assist/commit/b971fa7654f505159139153492a632d44c0a7afb))
+
 ## [0.713.2](https://github.com/staff0rd/assist/compare/v0.713.1...v0.713.2) (2026-09-28)
 
 
