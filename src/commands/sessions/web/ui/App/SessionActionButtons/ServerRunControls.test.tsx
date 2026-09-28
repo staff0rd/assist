@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionInfo } from "../../types";
+import { ServerActionsContext } from "../useServerActionsContext";
 import { useServerRuns } from "../useServerRuns";
 import { ServerRunControls } from "./ServerRunControls";
 
@@ -20,13 +21,57 @@ const servingSession = {
 	status: "running",
 } as SessionInfo;
 
+function renderControls(runNames: string[]) {
+	vi.mocked(useServerRuns).mockReturnValue(runNames.map((name) => ({ name })));
+	const onStart = vi.fn();
+	const onCardActivate = vi.fn();
+	const card = document.createElement("div");
+	card.addEventListener("click", onCardActivate);
+	card.addEventListener("mousedown", onCardActivate);
+	document.body.appendChild(card);
+	render(
+		<ServerActionsContext.Provider
+			value={{ onStart, onStop: vi.fn(), onDiscard: vi.fn() }}
+		>
+			<ServerRunControls session={servingSession} />
+		</ServerActionsContext.Provider>,
+		{ container: card.appendChild(document.createElement("div")) },
+	);
+	return { onStart, onCardActivate };
+}
+
 describe("ServerRunControls", () => {
 	it("keeps the Start button for a live served run and shows no Stop button", () => {
-		vi.mocked(useServerRuns).mockReturnValue([{ name: "web" }]);
-
-		render(<ServerRunControls session={servingSession} />);
+		renderControls(["web"]);
 
 		expect(screen.getByTitle("Start web")).toBeTruthy();
 		expect(screen.queryByTitle("Stop server")).toBeNull();
+	});
+
+	it("shows one Start button per run for two runs", () => {
+		renderControls(["web", "api"]);
+
+		expect(screen.getByTitle("Start web")).toBeTruthy();
+		expect(screen.getByTitle("Start api")).toBeTruthy();
+		expect(screen.queryByRole("button", { name: "server" })).toBeNull();
+	});
+
+	it("collapses three or more runs into a dropdown that starts the chosen run", () => {
+		const { onStart, onCardActivate } = renderControls(["web", "api", "docs"]);
+
+		expect(screen.queryByTitle("Start web")).toBeNull();
+		fireEvent.click(screen.getByRole("button", { name: "server" }));
+		expect(screen.getByText("web")).toBeTruthy();
+		expect(screen.getByText("api")).toBeTruthy();
+		fireEvent.click(screen.getByText("docs"));
+
+		expect(onStart).toHaveBeenCalledWith(
+			"docs",
+			"/repo",
+			undefined,
+			"daemon-1",
+		);
+		expect(screen.queryByText("docs")).toBeNull();
+		expect(onCardActivate).not.toHaveBeenCalled();
 	});
 });
