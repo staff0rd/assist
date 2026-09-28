@@ -1,3 +1,10 @@
+## [0.713.2](https://github.com/staff0rd/assist/compare/v0.713.1...v0.713.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* title sessions with reference prompts ([27bd45e](https://github.com/staff0rd/assist/commit/27bd45eefe3f1adc45569ee4cb6bbdfd714c9d20))
+
 ## [0.713.1](https://github.com/staff0rd/assist/compare/v0.713.0...v0.713.1) (2026-09-28)
 
 
