@@ -48,7 +48,8 @@ beforeAll(async () => {
 			linkedFrom: req.headers["x-assist-linked-from"] as string | undefined,
 			body: await readBody(req),
 		});
-		res.writeHead(201, { "Content-Type": "application/json" });
+		const status = req.url?.includes("fail=1") ? 500 : 201;
+		res.writeHead(status, { "Content-Type": "application/json" });
 		res.end(JSON.stringify({ served: "peer" }));
 	});
 	viewer = createServer(async (req, res) => {
@@ -82,7 +83,7 @@ describe("proxyToNode", () => {
 
 	it("logs the same traceId on the viewer and the peer", async () => {
 		const log = vi.spyOn(console, "log").mockImplementation(() => {});
-		await fetch(`${viewerUrl}/api/git-status?node=pc-windows`);
+		await fetch(`${viewerUrl}/api/diff?node=pc-windows`);
 		await vi.waitFor(() => expect(log).toHaveBeenCalledTimes(2));
 		const lines = log.mock.calls.map((call) => String(call[0]));
 		log.mockRestore();
@@ -91,8 +92,35 @@ describe("proxyToNode", () => {
 		expect(traces[1]).toBe(traces[0]);
 		expect(lines).toEqual(
 			expect.arrayContaining([
-				expect.stringMatching(/^link pc-windows http: GET \/api\/git-status/),
-				expect.stringMatching(/^link-from pc-wsl http: GET \/api\/git-status/),
+				expect.stringMatching(/^link pc-windows http: GET \/api\/diff/),
+				expect.stringMatching(/^link-from pc-wsl http: GET \/api\/diff/),
+			]),
+		);
+	});
+
+	it("does not log successful git-status polls on either side", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const res = await fetch(`${viewerUrl}/api/git-status?node=pc-windows`);
+		await res.text();
+		expect(res.status).toBe(201);
+		expect(log).not.toHaveBeenCalled();
+		log.mockRestore();
+	});
+
+	it("logs failed git-status polls on both sides with the traceId", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		await fetch(`${viewerUrl}/api/git-status?fail=1&node=pc-windows`);
+		await vi.waitFor(() => expect(log).toHaveBeenCalledTimes(2));
+		const lines = log.mock.calls.map((call) => String(call[0]));
+		log.mockRestore();
+		expect(lines).toEqual(
+			expect.arrayContaining([
+				expect.stringMatching(
+					/^link pc-windows http: GET \/api\/git-status trace=\w+ -> 500/,
+				),
+				expect.stringMatching(
+					/^link-from pc-wsl http: GET \/api\/git-status trace=\w+ -> 500/,
+				),
 			]),
 		);
 	});

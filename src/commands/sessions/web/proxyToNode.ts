@@ -4,6 +4,7 @@ import { findLinkSpec } from "../shared/loadLinkSpecs";
 import { TRACE_HEADER } from "../shared/newTraceId";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { forwardToPeer } from "./forwardToPeer";
+import { isQuietPoll } from "./isQuietPoll";
 
 const LINKED_FROM_HEADER = "x-assist-linked-from";
 
@@ -37,11 +38,12 @@ function logLinkedRequest(req: IncomingMessage, res: ServerResponse): void {
 	const from = req.headers[LINKED_FROM_HEADER];
 	const trace = req.headers[TRACE_HEADER] ?? "none";
 	const path = new URL(req.url ?? "/", "http://localhost").pathname;
-	res.once("finish", () =>
+	res.once("finish", () => {
+		if (isQuietPoll(path, res.statusCode)) return;
 		console.log(
 			`link-from ${from} http: ${req.method} ${path} trace=${trace} -> ${res.statusCode} (${Date.now() - started}ms)`,
-		),
-	);
+		);
+	});
 }
 
 export async function proxyToNode(

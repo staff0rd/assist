@@ -34,7 +34,7 @@ The web server tails this same stream: it keeps a dedicated `subscribe-logs` con
 
 ### Linked nodes
 
-Start with `assist sessions nodes doctor [name]`: it probes each hop and names the first broken one with a remediation. Then read the peer's side with `assist sessions nodes logs <name>`. A forwarded launch logs `trace=<id>` in both daemons' logs, and a `?node=` panel request logs it in both web servers' stdout (`link <name> http:` on the viewer, `link-from <node> http:` on the peer), so grep the id on each node to follow one request end to end.
+Start with `assist sessions nodes doctor [name]`: it probes each hop and names the first broken one with a remediation. Then read the peer's side with `assist sessions nodes logs <name>`. A forwarded launch logs `trace=<id>` in both daemons' logs, and a `?node=` panel request logs it in both web servers' stdout (`link <name> http:` on the viewer, `link-from <node> http:` on the peer; successful `/api/git-status` polls are not logged), so grep the id on each node to follow one request end to end.
 
 ## Rules
 
