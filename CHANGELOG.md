@@ -1,3 +1,10 @@
+# [0.719.0](https://github.com/staff0rd/assist/compare/v0.718.0...v0.719.0) (2026-09-28)
+
+
+### Features
+
+* sync opt-in commands as skills ([986816e](https://github.com/staff0rd/assist/commit/986816eea17a2a1a4462077493bbbdfc1ed250c8))
+
 # [0.718.0](https://github.com/staff0rd/assist/compare/v0.717.0...v0.718.0) (2026-09-28)
 
 
