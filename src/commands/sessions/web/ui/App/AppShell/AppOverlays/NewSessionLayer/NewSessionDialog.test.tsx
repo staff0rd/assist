@@ -31,16 +31,20 @@ const repos = [
 	String.raw`C:\git\delta`,
 ];
 
+type DefaultMode = NewSessionMode | ((cwd: string) => NewSessionMode);
+
 function DraftedDialog({
 	defaultMode,
 	launchers,
 	onClose,
 }: {
-	defaultMode: NewSessionMode;
+	defaultMode: DefaultMode;
 	launchers: NewSessionLaunchers;
 	onClose: () => void;
 }) {
-	const draft = useNewSessionDraft(defaultMode);
+	const draft = useNewSessionDraft((cwd) =>
+		typeof defaultMode === "function" ? defaultMode(cwd) : defaultMode,
+	);
 	return (
 		draft && (
 			<NewSessionDialog draft={draft} launchers={launchers} onClose={onClose} />
@@ -49,7 +53,7 @@ function DraftedDialog({
 }
 
 function renderDialog(
-	defaultMode: NewSessionMode = "prompt",
+	defaultMode: DefaultMode = "prompt",
 	capabilities = { exposeCodexActions: false, exposePiActions: false },
 ) {
 	vi.stubGlobal(
@@ -309,6 +313,29 @@ describe("NewSessionDialog mode selector", () => {
 
 		expect(checkedMode()).toBe("bug");
 		expect(screen.getByRole("button", { name: "File bug" })).toBeTruthy();
+	});
+
+	it("follows the selected repo's default mode", () => {
+		renderDialog((cwd) => (cwd === "/git/alpha" ? "bug" : "prompt"));
+
+		expect(checkedMode()).toBe("prompt");
+
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "al" } });
+		fireEvent.keyDown(repoInput(), { key: "Tab" });
+
+		expect(checkedMode()).toBe("bug");
+	});
+
+	it("keeps a hand-picked mode when the repo changes", () => {
+		renderDialog((cwd) => (cwd === "/git/alpha" ? "bug" : "prompt"));
+
+		fireEvent.click(modeRadio("design"));
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "al" } });
+		fireEvent.keyDown(repoInput(), { key: "Tab" });
+
+		expect(checkedMode()).toBe("design");
 	});
 
 	it("offers draft, bug, prompt and design modes", () => {

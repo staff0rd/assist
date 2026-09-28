@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { NewSessionDialog } from "./NewSessionLayer/NewSessionDialog";
 import type { NewSessionLaunchers } from "./NewSessionLayer/launchNewSession";
-import { useDefaultNewSessionMode } from "./NewSessionLayer/useDefaultNewSessionMode";
 import { useNewSessionDraft } from "./NewSessionLayer/useNewSessionDraft";
 import { useNewSessionHotkey } from "./NewSessionLayer/useNewSessionHotkey";
 
@@ -12,7 +11,7 @@ export function NewSessionLayer({
 	launchers: NewSessionLaunchers;
 }) {
 	const [open, setOpen] = useState(false);
-	const draft = useNewSessionDraft(useDefaultNewSessionMode());
+	const draft = useNewSessionDraft();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const requested = searchParams.has("new");
 	useNewSessionHotkey(useCallback(() => setOpen(true), []));

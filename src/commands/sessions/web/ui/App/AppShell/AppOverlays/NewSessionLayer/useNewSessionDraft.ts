@@ -1,15 +1,13 @@
-import { useCallback, useState } from "react";
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import type { NewSessionMode } from "./newSessionModes";
 import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
+import { useDefaultNewSessionMode } from "./useDefaultNewSessionMode";
 import { draftNode } from "./useNewSessionDraft/draftNode";
-
-export type DraftFocus = {
-	field: "prompt" | "repo" | "mode";
-	selectionStart: number;
-	selectionEnd: number;
-};
+import {
+	type DraftFocus,
+	useDraftState,
+} from "./useNewSessionDraft/useDraftState";
 
 export type NewSessionDraft = {
 	prompt: string;
@@ -27,46 +25,22 @@ export type NewSessionDraft = {
 	clear: () => void;
 };
 
-const initialFocus: DraftFocus = {
-	field: "prompt",
-	selectionStart: 0,
-	selectionEnd: 0,
-};
-
 export function useNewSessionDraft(
-	defaultMode: NewSessionMode | null,
+	useDefaultMode: (
+		cwd: string,
+	) => NewSessionMode | null = useDefaultNewSessionMode,
 ): NewSessionDraft | null {
 	const { selectedCwd } = useRepoSelectionContext();
-	const [prompt, setPrompt] = useState("");
-	const [cwd, setCwd] = useState<string>();
-	const [mode, setMode] = useState<NewSessionMode>();
-	const [harness, setHarness] = useState<HarnessKind>("claude");
-	const [node, setNode] = useState<string>();
-	const [focus, setFocus] = useState(initialFocus);
 	const nodeSelection = useNodeSelectionContext();
-
-	const clear = useCallback(() => {
-		setPrompt("");
-		setCwd(undefined);
-		setMode(undefined);
-		setNode(undefined);
-		setFocus(initialFocus);
-	}, []);
+	const state = useDraftState();
+	const cwd = state.cwd ?? selectedCwd;
+	const defaultMode = useDefaultMode(cwd);
 
 	if (!defaultMode) return null;
 	return {
-		prompt,
-		cwd: cwd ?? selectedCwd,
-		mode: mode ?? defaultMode,
-		harness,
-		node: draftNode(node, nodeSelection),
-		focus,
-		setPrompt,
-		setNode,
-		setCwd,
-		setMode,
-		setHarness,
-		setFocus,
-		clear,
+		...state,
+		cwd,
+		mode: state.mode ?? defaultMode,
+		node: draftNode(state.node, nodeSelection),
 	};
 }
