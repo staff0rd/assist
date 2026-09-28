@@ -21,9 +21,10 @@ export const messageHandlers: Record<string, Handler> = {
 		m.clients.subscribeLogs(client, d.replay !== false),
 	hello: handleHelloRequest,
 	nodes: (client, m) => m.links.sendNodes(client),
-	"reload-links": (_client, m) => {
+	"reload-links": (client, m) => {
 		daemonLog("reload-links received");
 		m.links.reload();
+		sendTo(client, { type: "ack" });
 	},
 	create: creator(true, spawnCreate),
 	"create-run": handleCreateRun,

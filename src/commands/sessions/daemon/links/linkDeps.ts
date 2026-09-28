@@ -13,6 +13,7 @@ export type NodeLinksOptions = {
 	tunnel?: TunnelFactory;
 	heal?: (url: string) => Promise<void>;
 	reconnectMs?: number;
+	blockedRetryMs?: number;
 	createTimeoutMs?: number;
 };
 
@@ -31,6 +32,7 @@ export function linkDeps(
 		tunnel: options.tunnel ?? sshTunnelFor,
 		heal: options.heal ?? selfUpdatePeer,
 		reconnectMs: options.reconnectMs ?? 3_000,
+		blockedRetryMs: options.blockedRetryMs ?? 60_000,
 		createTimeoutMs: options.createTimeoutMs ?? 15_000,
 	};
 }

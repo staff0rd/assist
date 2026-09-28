@@ -3,8 +3,6 @@ import {
 	saveGlobalConfig,
 } from "../../../shared/loadConfig";
 import { validateConfig } from "../../config/validateConfig";
-import { isDaemonRunning } from "../daemon/connectToDaemon";
-import { sendToDaemon } from "../daemon/sendToDaemon";
 import type { LinkConfig } from "../shared/loadLinkSpecs";
 
 export function readLinks(): LinkConfig[] {
@@ -23,5 +21,4 @@ export async function writeLinks(links: LinkConfig[]): Promise<void> {
 	const validation = validateConfig(updated, "sessions.links");
 	if (!validation.ok) throw new Error(validation.errors.join("\n"));
 	saveGlobalConfig(updated);
-	if (await isDaemonRunning()) await sendToDaemon({ type: "reload-links" });
 }

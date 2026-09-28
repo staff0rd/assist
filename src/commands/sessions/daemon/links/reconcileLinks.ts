@@ -17,7 +17,10 @@ export function reconcileLinks(
 ): void {
 	const wanted = new Map(specs.map((spec) => [spec.name, spec]));
 	for (const [name, link] of links) {
-		if (sameTarget(wanted.get(name), link.spec)) continue;
+		if (sameTarget(wanted.get(name), link.spec)) {
+			link.unlatch();
+			continue;
+		}
 		daemonLog(`link ${name}: removed`);
 		link.dispose();
 		links.delete(name);

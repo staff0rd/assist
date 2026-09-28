@@ -1,3 +1,4 @@
+import { daemonLog } from "../daemonLog";
 import { acceptPeerHello } from "./acceptPeerHello";
 import type { LinkContext } from "./LinkContext";
 import { relayLinkMessage } from "./relayLinkMessage";
@@ -12,6 +13,11 @@ function onHello(ctx: LinkContext, msg: Record<string, unknown>): void {
 		return failLink(ctx, verdict.reason);
 	}
 	if (verdict.kind === "heal") return ctx.onMismatch(verdict.peer.version);
+	if (ctx.blockedMessage)
+		daemonLog(
+			`link ${ctx.spec.name} heal: peer now reports ${verdict.peer.version}; latch cleared`,
+		);
+	ctx.blockedMessage = undefined;
 	ctx.greeted = true;
 	ctx.breaker.clear();
 	ctx.lastError = undefined;

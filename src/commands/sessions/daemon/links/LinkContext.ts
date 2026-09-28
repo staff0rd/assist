@@ -14,6 +14,7 @@ export type NodeLinkDeps = {
 	tunnel: TunnelFactory;
 	heal: (url: string) => Promise<void>;
 	reconnectMs: number;
+	blockedRetryMs: number;
 	createTimeoutMs: number;
 };
 

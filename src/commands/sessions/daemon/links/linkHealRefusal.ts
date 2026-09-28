@@ -17,6 +17,6 @@ export function linkHealRefusal(
 	if (peerIsNewer(peerVersion))
 		return `This node (${ASSIST_VERSION}) is older than ${node} (${peerVersion}); update this node and restart its daemon.`;
 	if (healAttempted)
-		return `${node} is still on ${peerVersion} after auto-update (this node is ${ASSIST_VERSION}); update ${node} manually, then restart this daemon.`;
+		return `${node} is still on ${peerVersion} after auto-update (this node is ${ASSIST_VERSION}); update ${node} manually; this node reconnects once it reports a compatible version.`;
 	return undefined;
 }

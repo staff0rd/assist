@@ -6,6 +6,7 @@ import {
 	toLinkSpec,
 } from "../shared/loadLinkSpecs";
 import { resolveNodeName } from "../shared/resolveNodeName";
+import { notifyDaemonLinks } from "./notifyDaemonLinks";
 import { readLinks, writeLinks } from "./writeLinks";
 
 type LinkOptions = { ssh?: string; port?: string; localPort?: string };
@@ -63,4 +64,5 @@ export async function linkNode(
 	console.log(
 		chalk.green(`Linked ${name} (${describeTarget(toLinkSpec(link))})`),
 	);
+	await notifyDaemonLinks();
 }

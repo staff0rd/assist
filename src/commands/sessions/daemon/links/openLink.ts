@@ -15,9 +15,9 @@ function onLinkClose(ctx: LinkContext, socket: LinkSocket, reason: string) {
 }
 
 export async function openLink(ctx: LinkContext): Promise<void> {
-	if (ctx.disposed || ctx.blockedMessage || ctx.socket) return;
+	if (ctx.disposed || ctx.socket) return;
 	if (ctx.breaker.tripped()) return scheduleReconnect(ctx);
-	setLinkState(ctx, "connecting");
+	if (!ctx.blockedMessage) setLinkState(ctx, "connecting");
 	try {
 		await ctx.tunnel?.ready();
 		if (ctx.disposed) return;

@@ -18,7 +18,8 @@ export class LinkHealer {
 		const refusal = linkHealRefusal(node, peerVersion, this.healAttempted);
 		if (refusal) {
 			this.awaitingConfirmation = false;
-			daemonLog(`link ${node} heal: latched, not reconnecting: ${refusal}`);
+			if (this.ctx.blockedMessage !== refusal)
+				daemonLog(`link ${node} heal: latched, retrying slowly: ${refusal}`);
 			return blockLink(this.ctx, refusal);
 		}
 		this.healing = true;
@@ -29,6 +30,11 @@ export class LinkHealer {
 		} finally {
 			this.healing = false;
 		}
+	}
+
+	reset(): void {
+		this.healAttempted = false;
+		this.awaitingConfirmation = false;
 	}
 
 	onCompatible(): void {

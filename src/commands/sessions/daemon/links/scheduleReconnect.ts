@@ -7,7 +7,8 @@ function armReconnect(ctx: LinkContext, delay: number): void {
 }
 
 export function scheduleReconnect(ctx: LinkContext): void {
-	if (ctx.disposed || ctx.blockedMessage) return;
+	if (ctx.disposed) return;
+	if (ctx.blockedMessage) return armReconnect(ctx, ctx.deps.blockedRetryMs);
 	const delay = ctx.breaker.tripped()
 		? ctx.breaker.remainingMs()
 		: ctx.deps.reconnectMs;

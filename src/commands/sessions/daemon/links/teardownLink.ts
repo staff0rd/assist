@@ -28,9 +28,10 @@ export function failLink(ctx: LinkContext, message: string): void {
 }
 
 export function blockLink(ctx: LinkContext, message: string): void {
+	const repeat = ctx.blockedMessage === message;
 	ctx.blockedMessage = message;
-	clearTimeout(ctx.reconnectTimer);
 	disconnectLink(ctx);
 	setLinkState(ctx, "version-blocked");
-	broadcastToViewers(ctx.relay, { type: "error", message });
+	if (!repeat) broadcastToViewers(ctx.relay, { type: "error", message });
+	scheduleReconnect(ctx);
 }

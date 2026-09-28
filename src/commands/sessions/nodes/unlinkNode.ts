@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { notifyDaemonLinks } from "./notifyDaemonLinks";
 import { readLinks, writeLinks } from "./writeLinks";
 
 export async function unlinkNode(name: string): Promise<void> {
@@ -10,4 +11,5 @@ export async function unlinkNode(name: string): Promise<void> {
 	}
 	await writeLinks(remaining);
 	console.log(chalk.green(`Unlinked ${name}`));
+	await notifyDaemonLinks();
 }
