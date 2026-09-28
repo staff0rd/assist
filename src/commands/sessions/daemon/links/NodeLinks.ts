@@ -2,6 +2,8 @@ import { loadLinkSpecs } from "../../shared/loadLinkSpecs";
 import { resolveNodeName } from "../../shared/resolveNodeName";
 import { broadcast, type SessionClient, sendTo } from "../broadcast";
 import type { ClientHub } from "../ClientHub";
+import { collectHistory } from "../collectHistory";
+import { daemonLog } from "../daemonLog";
 import { linkDeps, type NodeLinksOptions } from "./linkDeps";
 import type { NodesMessage } from "./LinkStatus";
 import { NodeLink } from "./NodeLink";
@@ -27,6 +29,7 @@ export class NodeLinks {
 			viewers: () => this.clients.viewers(),
 			onSessionsChanged: this.onSessionsChanged,
 			onStateChanged: () => broadcast(this.clients.viewers(), this.nodes()),
+			onHistoryChanged: () => void this.broadcastHistory(),
 		});
 		reconcileLinks(this.links, specs, (spec) => new NodeLink(spec, deps));
 		this.onSessionsChanged();
@@ -44,6 +47,14 @@ export class NodeLinks {
 
 	history = async () =>
 		(await Promise.all(this.all().map((link) => link.history()))).flat();
+
+	private broadcastHistory = async () => {
+		const sessions = await collectHistory(this.history());
+		daemonLog(
+			`links: pushing history (${sessions.length} sessions) to viewers`,
+		);
+		broadcast(this.clients.viewers(), { type: "history", sessions });
+	};
 
 	nodes = (): NodesMessage => ({
 		type: "nodes",

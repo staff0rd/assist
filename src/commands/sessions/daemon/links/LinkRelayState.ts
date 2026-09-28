@@ -17,15 +17,21 @@ export type LinkRelayState = {
 	scrollback: Map<string, string>;
 	pendingCreators: PendingCreator[];
 	historyWaiters: ((sessions: HistoricalSession[]) => void)[];
+	lastHistory?: HistoricalSession[];
 	lastRequester?: SessionClient;
 	viewers: () => Set<SessionClient>;
 	onSessionsChanged: () => void;
+	onHistoryChanged: () => void;
 };
+
+type RelayCallbacks = Pick<
+	LinkRelayState,
+	"viewers" | "onSessionsChanged" | "onHistoryChanged"
+>;
 
 export function createRelayState(
 	node: string,
-	viewers: () => Set<SessionClient>,
-	onSessionsChanged: () => void,
+	{ viewers, onSessionsChanged, onHistoryChanged }: RelayCallbacks,
 ): LinkRelayState {
 	return {
 		node,
@@ -35,6 +41,7 @@ export function createRelayState(
 		historyWaiters: [],
 		viewers,
 		onSessionsChanged,
+		onHistoryChanged,
 	};
 }
 

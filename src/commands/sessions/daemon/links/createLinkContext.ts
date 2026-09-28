@@ -10,7 +10,7 @@ export function createLinkContext(
 	return {
 		spec,
 		deps,
-		relay: createRelayState(spec.name, deps.viewers, deps.onSessionsChanged),
+		relay: createRelayState(spec.name, deps),
 		breaker: new LaunchCircuitBreaker(`link ${spec.name} ws`),
 		tunnel: deps.tunnel(spec),
 		socket: null,

@@ -23,6 +23,18 @@ vi.mock("../loadActiveSelection", () => ({
 	loadActiveSelection: vi.fn(() => ({})),
 	saveActiveSelection: vi.fn(),
 }));
+vi.mock("../../shared/discoverSessions", () => ({
+	discoverSessions: async () => [
+		{
+			sessionId: "h1",
+			name: "h1",
+			project: "p",
+			cwd: "",
+			timestamp: "2026-01-01T00:00:00Z",
+			origin: "wsl" as const,
+		},
+	],
+}));
 vi.mock("../daemonLog", () => ({
 	daemonLog: vi.fn(),
 	relayDaemonLog: vi.fn(),
@@ -290,6 +302,24 @@ describe("two linked nodes", () => {
 			type: "error",
 			message: expect.stringContaining("update pc-windows manually"),
 		});
+	});
+
+	it("pushes history with the peer's sessions once the link connects", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		node("pc-windows");
+		const view = viewer();
+		wsl.addClient(view.client);
+
+		wsl.links.reload();
+
+		await vi.waitFor(() =>
+			expect(
+				view.received.filter((m) => m.type === "history").at(-1)?.sessions,
+			).toEqual([
+				expect.objectContaining({ sessionId: "h1" }),
+				expect.objectContaining({ sessionId: "h1", node: "pc-windows" }),
+			]),
+		);
 	});
 });
 

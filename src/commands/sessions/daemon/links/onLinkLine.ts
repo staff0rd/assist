@@ -16,6 +16,7 @@ function onHello(ctx: LinkContext, msg: Record<string, unknown>): void {
 	ctx.breaker.clear();
 	ctx.lastError = undefined;
 	setLinkState(ctx, "connected");
+	ctx.deps.onHistoryChanged();
 	ctx.onCompatible();
 }
 

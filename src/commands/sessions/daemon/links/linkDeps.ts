@@ -18,7 +18,7 @@ export type NodeLinksOptions = {
 
 type LinkCallbacks = Pick<
 	NodeLinkDeps,
-	"viewers" | "onSessionsChanged" | "onStateChanged"
+	"viewers" | "onSessionsChanged" | "onStateChanged" | "onHistoryChanged"
 >;
 
 export function linkDeps(

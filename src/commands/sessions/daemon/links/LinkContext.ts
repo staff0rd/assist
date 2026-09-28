@@ -9,6 +9,7 @@ export type NodeLinkDeps = {
 	viewers: () => Set<SessionClient>;
 	onSessionsChanged: () => void;
 	onStateChanged: () => void;
+	onHistoryChanged: () => void;
 	transport: LinkTransport;
 	tunnel: TunnelFactory;
 	heal: (url: string) => Promise<void>;

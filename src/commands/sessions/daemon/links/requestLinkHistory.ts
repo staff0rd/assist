@@ -19,7 +19,7 @@ export function requestLinkHistory(
 			const index = waiters.indexOf(settle);
 			if (index !== -1) waiters.splice(index, 1);
 			daemonLog(`link ${ctx.spec.name} ws: history timed out`);
-			resolve([]);
+			resolve(ctx.relay.lastHistory ?? []);
 		}, HISTORY_TIMEOUT_MS);
 		timer.unref?.();
 		waiters.push(settle);

@@ -39,10 +39,19 @@ const relayToCreator =
 	};
 
 const relayHistory: Relay = (state, msg) => {
-	const sessions = (msg.sessions as HistoricalSession[]) ?? [];
-	state.historyWaiters.shift()?.(
-		sessions.map((s) => ({ ...s, node: state.node })),
-	);
+	const sessions = ((msg.sessions as HistoricalSession[]) ?? []).map((s) => ({
+		...s,
+		node: state.node,
+	}));
+	const changed =
+		JSON.stringify(sessions) !== JSON.stringify(state.lastHistory);
+	state.lastHistory = sessions;
+	const waiter = state.historyWaiters.shift();
+	if (waiter) waiter(sessions);
+	else if (changed) {
+		daemonLog(`link ${state.node} ws: late history reply changed, pushing`);
+		state.onHistoryChanged();
+	}
 };
 
 const relays: Record<string, Relay> = {

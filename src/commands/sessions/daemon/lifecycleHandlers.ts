@@ -1,11 +1,10 @@
-import { discoverSessions } from "../shared/discoverSessions";
 import { parseTranscript } from "../shared/parseTranscript";
 import { type SessionClient, sendTo } from "./broadcast";
+import { collectHistory } from "./collectHistory";
 import { daemonLog } from "./daemonLog";
 import { handleFetchUserMessages } from "./handleFetchUserMessages";
 import { routed } from "./routed";
 import type { SessionManager } from "./SessionManager";
-import { withRepoGroups } from "./withRepoGroups";
 
 type Msg = Record<string, unknown>;
 
@@ -14,11 +13,7 @@ async function handleHistory(
 	manager: SessionManager,
 ): Promise<void> {
 	const linked = manager.clients.isPeer(client) ? [] : manager.links.history();
-	const [local, remote] = await Promise.all([discoverSessions(), linked]);
-	sendTo(client, {
-		type: "history",
-		sessions: withRepoGroups(local).concat(remote),
-	});
+	sendTo(client, { type: "history", sessions: await collectHistory(linked) });
 }
 
 function handleFetchTranscript(
