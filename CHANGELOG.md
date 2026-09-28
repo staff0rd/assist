@@ -1,3 +1,10 @@
+## [0.716.3](https://github.com/staff0rd/assist/compare/v0.716.2...v0.716.3) (2026-09-28)
+
+
+### Bug Fixes
+
+* recover latched and added links live ([f82a7f5](https://github.com/staff0rd/assist/commit/f82a7f5cdb08056ff67f03c10cae699917cf3219))
+
 ## [0.716.2](https://github.com/staff0rd/assist/compare/v0.716.1...v0.716.2) (2026-09-28)
 
 
