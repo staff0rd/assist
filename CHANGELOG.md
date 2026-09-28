@@ -1,3 +1,10 @@
+## [0.713.1](https://github.com/staff0rd/assist/compare/v0.713.0...v0.713.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* new session mode from selected repo ([06a23ba](https://github.com/staff0rd/assist/commit/06a23ba1ca32a00752be3c75948d70faabe36a1c))
+
 # [0.713.0](https://github.com/staff0rd/assist/compare/v0.712.0...v0.713.0) (2026-09-26)
 
 
