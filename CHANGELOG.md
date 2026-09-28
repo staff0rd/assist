@@ -1,3 +1,10 @@
+## [0.716.2](https://github.com/staff0rd/assist/compare/v0.716.1...v0.716.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* stop logging git-status link polls ([458f374](https://github.com/staff0rd/assist/commit/458f37473b31dd5a63aa3c7faf15e40f5b44aceb))
+
 ## [0.716.1](https://github.com/staff0rd/assist/compare/v0.716.0...v0.716.1) (2026-09-28)
 
 
