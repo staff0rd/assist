@@ -1,3 +1,10 @@
+# [0.715.0](https://github.com/staff0rd/assist/compare/v0.714.0...v0.715.0) (2026-09-28)
+
+
+### Features
+
+* collapse 3+ server runs to dropdown ([a67dd11](https://github.com/staff0rd/assist/commit/a67dd111545d1d962df4b7e39f2621da4121ea2f))
+
 # [0.714.0](https://github.com/staff0rd/assist/compare/v0.713.3...v0.714.0) (2026-09-28)
 
 
