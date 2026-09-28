@@ -8,6 +8,7 @@ import {
 	waitFor,
 	within,
 } from "@testing-library/react";
+import { useEffect, useState } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { NewSessionDialog } from "./NewSessionDialog";
 import type { NewSessionLaunchers } from "./launchNewSession";
@@ -325,6 +326,35 @@ describe("NewSessionDialog mode selector", () => {
 		fireEvent.keyDown(repoInput(), { key: "Tab" });
 
 		expect(checkedMode()).toBe("bug");
+	});
+
+	it("moves Tab focus onto the repo's default mode once it loads", async () => {
+		function useLoadedDefault(cwd: string) {
+			const [mode, setMode] = useState<NewSessionMode>("draft");
+			useEffect(() => {
+				const timer = setTimeout(() =>
+					setMode(cwd === "/git/alpha" ? "prompt" : "draft"),
+				);
+				return () => clearTimeout(timer);
+			}, [cwd]);
+			return mode;
+		}
+		renderDialog(useLoadedDefault);
+		await act(async () => {});
+
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "al" } });
+		fireEvent.keyDown(repoInput(), { key: "Tab" });
+		modeRadio("draft").focus();
+		await act(async () => {
+			await new Promise((resolve) => setTimeout(resolve));
+		});
+
+		expect(checkedMode()).toBe("prompt");
+		expect(document.activeElement).toBe(promptSegment());
+
+		fireEvent.keyDown(promptSegment(), { key: "ArrowRight" });
+		expect(document.activeElement).toBe(modeRadio("design"));
 	});
 
 	it("keeps a hand-picked mode when the repo changes", () => {

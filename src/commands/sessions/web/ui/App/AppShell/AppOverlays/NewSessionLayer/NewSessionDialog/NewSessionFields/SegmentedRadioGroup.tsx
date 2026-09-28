@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import type { ReactNode, RefObject } from "react";
 import { SegmentedRadio } from "./SegmentedRadioGroup/SegmentedRadio";
 import { segmentedRadioKeyHandler } from "./SegmentedRadioGroup/segmentedRadioKeyHandler";
+import { useFocusCheckedOnChange } from "./SegmentedRadioGroup/useFocusCheckedOnChange";
 
 const groupSx = {
 	border: 1,
@@ -33,6 +34,8 @@ export function SegmentedRadioGroup({
 	onTrack: () => void;
 	onToggleRow?: () => void;
 }) {
+	useFocusCheckedOnChange(groupRef, value);
+
 	return (
 		<Stack
 			ref={groupRef}
