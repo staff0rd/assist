@@ -1,5 +1,12 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import ButtonBase from "@mui/material/ButtonBase";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionInfo } from "../../types";
 import { ServerActionsContext } from "../useServerActionsContext";
@@ -25,17 +32,19 @@ function renderControls(runNames: string[]) {
 	vi.mocked(useServerRuns).mockReturnValue(runNames.map((name) => ({ name })));
 	const onStart = vi.fn();
 	const onCardActivate = vi.fn();
-	const card = document.createElement("div");
-	card.addEventListener("click", onCardActivate);
-	card.addEventListener("mousedown", onCardActivate);
-	document.body.appendChild(card);
 	render(
 		<ServerActionsContext.Provider
 			value={{ onStart, onStop: vi.fn(), onDiscard: vi.fn() }}
 		>
-			<ServerRunControls session={servingSession} />
+			<ButtonBase
+				component="div"
+				aria-label="session card"
+				onClick={onCardActivate}
+				onMouseDown={onCardActivate}
+			>
+				<ServerRunControls session={servingSession} />
+			</ButtonBase>
 		</ServerActionsContext.Provider>,
-		{ container: card.appendChild(document.createElement("div")) },
 	);
 	return { onStart, onCardActivate };
 }
@@ -56,7 +65,7 @@ describe("ServerRunControls", () => {
 		expect(screen.queryByRole("button", { name: "server" })).toBeNull();
 	});
 
-	it("collapses three or more runs into a dropdown that starts the chosen run", () => {
+	it("collapses three or more runs into a dropdown that starts the chosen run", async () => {
 		const { onStart, onCardActivate } = renderControls(["web", "api", "docs"]);
 
 		expect(screen.queryByTitle("Start web")).toBeNull();
@@ -71,7 +80,7 @@ describe("ServerRunControls", () => {
 			undefined,
 			"daemon-1",
 		);
-		expect(screen.queryByText("docs")).toBeNull();
+		await waitFor(() => expect(screen.queryByText("docs")).toBeNull());
 		expect(onCardActivate).not.toHaveBeenCalled();
 	});
 });

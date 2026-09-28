@@ -1,9 +1,10 @@
+import Box from "@mui/material/Box";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import MenuList from "@mui/material/MenuList";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
+import { useRef, useState } from "react";
 import type { ServerRunInfo } from "../../handleServerRuns";
-import { dropdownStyle, DropdownWrapper } from "../DropdownWrapper";
+import { FilterTrigger } from "../DropdownWrapper/FilterTrigger";
 
 export function ServerRunDropdown({
 	runs,
@@ -12,30 +13,41 @@ export function ServerRunDropdown({
 	runs: ServerRunInfo[];
 	onSelect: (runName: string) => void;
 }) {
+	const [open, setOpen] = useState(false);
+	const anchorRef = useRef<HTMLDivElement>(null);
+	const close = () => setOpen(false);
+
 	return (
-		<DropdownWrapper label="server">
-			{(close) => (
-				<Paper
-					elevation={4}
-					sx={{ ...dropdownStyle, left: "auto", width: 200 }}
-				>
-					<MenuList dense disablePadding>
-						{runs.map((run) => (
-							<MenuItem
-								key={run.name}
-								onMouseDown={(e) => e.preventDefault()}
-								onClick={() => {
-									onSelect(run.name);
-									close();
-								}}
-								sx={{ py: 0.75 }}
-							>
-								<Typography sx={{ fontSize: 13 }}>{run.name}</Typography>
-							</MenuItem>
-						))}
-					</MenuList>
-				</Paper>
-			)}
-		</DropdownWrapper>
+		<Box ref={anchorRef} sx={{ display: "inline-flex" }}>
+			<FilterTrigger
+				label="server"
+				open={open}
+				onClick={() => setOpen(!open)}
+			/>
+			<Menu
+				anchorEl={anchorRef.current}
+				open={open}
+				onClose={close}
+				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+				transformOrigin={{ vertical: "top", horizontal: "right" }}
+				slotProps={{
+					paper: { sx: { width: 200, maxHeight: 200 } },
+					list: { dense: true, disablePadding: true },
+				}}
+			>
+				{runs.map((run) => (
+					<MenuItem
+						key={run.name}
+						onClick={() => {
+							close();
+							onSelect(run.name);
+						}}
+						sx={{ py: 0.75 }}
+					>
+						<Typography sx={{ fontSize: 13 }}>{run.name}</Typography>
+					</MenuItem>
+				))}
+			</Menu>
+		</Box>
 	);
 }
