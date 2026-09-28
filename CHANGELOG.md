@@ -1,3 +1,10 @@
+# [0.718.0](https://github.com/staff0rd/assist/compare/v0.717.0...v0.718.0) (2026-09-28)
+
+
+### Features
+
+* add --server output and /run-logs ([0e1282f](https://github.com/staff0rd/assist/commit/0e1282ff1106418bc825e93bec7412cd94b7e44a))
+
 # [0.717.0](https://github.com/staff0rd/assist/compare/v0.716.3...v0.717.0) (2026-09-28)
 
 
