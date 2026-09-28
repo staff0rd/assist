@@ -1,3 +1,10 @@
+# [0.716.0](https://github.com/staff0rd/assist/compare/v0.715.0...v0.716.0) (2026-09-28)
+
+
+### Features
+
+* filter PR dropdown by PR number ([71d9c20](https://github.com/staff0rd/assist/commit/71d9c2044887d28b3757ee9d1d138ef43e37b187))
+
 # [0.715.0](https://github.com/staff0rd/assist/compare/v0.714.0...v0.715.0) (2026-09-28)
 
 
