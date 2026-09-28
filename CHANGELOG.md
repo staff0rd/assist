@@ -1,3 +1,10 @@
+# [0.717.0](https://github.com/staff0rd/assist/compare/v0.716.3...v0.717.0) (2026-09-28)
+
+
+### Features
+
+* add assist sessions output ([ac7c2cc](https://github.com/staff0rd/assist/commit/ac7c2cc7e9b396dfdb5313bb698a77a3607f7b32))
+
 ## [0.716.3](https://github.com/staff0rd/assist/compare/v0.716.2...v0.716.3) (2026-09-28)
 
 
