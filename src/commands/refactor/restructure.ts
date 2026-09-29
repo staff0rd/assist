@@ -3,13 +3,11 @@ import path from "node:path";
 import chalk from "chalk";
 import { loadConfig } from "../../shared/loadConfig";
 import { walkSourceFiles } from "../complexity/walkSourceFiles";
-import { applyPlan } from "./restructure/applyPlan";
 import { buildPlan } from "./restructure/buildPlan";
 import { checkPlan } from "./restructure/checkPlan";
-import { displayDeepChains } from "./restructure/displayDeepChains";
-import { displayPlan } from "./restructure/displayPlan";
 import { findDeepChains } from "./restructure/findDeepChains";
 import { partitionIgnored } from "./restructure/partitionIgnored";
+import { runPlan } from "./restructure/runPlan";
 
 type RestructureOptions = {
 	apply?: boolean;
@@ -38,16 +36,5 @@ export async function restructure(
 	const plan = buildPlan(scopeRoot, scoped, ignored, pin);
 	const chains = findDeepChains(plan.targets.values(), scopeRoot, maxDepth);
 	if (options.check) return checkPlan(plan, chains, maxDepth);
-
-	displayPlan(plan);
-	displayDeepChains(chains, maxDepth);
-	if (plan.moves.length === 0 && plan.errors.length === 0) {
-		console.log(chalk.green("No restructuring needed"));
-		return;
-	}
-	if (!options.apply) {
-		console.log(chalk.dim("\nDry run. Use --apply to execute."));
-		return;
-	}
-	applyPlan(plan);
+	runPlan(plan, chains, maxDepth, options.apply === true);
 }

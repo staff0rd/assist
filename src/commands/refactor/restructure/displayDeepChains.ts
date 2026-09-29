@@ -3,14 +3,16 @@ import type { DeepChain } from "./findDeepChains";
 
 const shownChains = 10;
 
-const pinGuidance = [
-	"To bring the plan within the limit, add modules to restructure.pin in assist.yml (basename without extension). A pinned module moves up beside the nearest root or pinned module above it, taking its subtree with it.",
-	"- On each chain, pin the highest module that is a feature boundary: a route, view, page, panel, dialog or card a user would recognise as one thing.",
-	"- Never pin hooks, utilities, style files or helpers just because they head a big subtree; they move up with their feature.",
-	"- Add one pin at a time and re-run the dry-run: one feature pin often fixes several chains.",
-	"- After each pin, check the resulting tree for a folder that has grown large with files shared between pinned features; if one has, pin the feature those files belong to or undo the last pin.",
-	"- If no module on a chain is a sensible feature boundary, leave it and report the chain instead of forcing a pin.",
-];
+function pinSteps(apply: string): string[] {
+	return [
+		"Pin feature modules until this check passes:",
+		"1. On each chain, pick the highest module that is a feature boundary: a route, view, page, panel, dialog or card. Never a hook, utility, style file or helper.",
+		"2. Add it to restructure.pin in assist.yml yourself (basename without extension). One pin at a time: one feature pin often fixes several chains.",
+		"3. Re-run this command. Repeat until the plan is within the limit.",
+		"4. If a chain has no sensible feature boundary, or a pin leaves one folder holding far more files than the rest, stop and report it.",
+		`Then run \`${apply}\`.`,
+	];
+}
 
 function formatChain(chain: DeepChain): string {
 	const folders = chain.folders
@@ -19,7 +21,11 @@ function formatChain(chain: DeepChain): string {
 	return `  ${folders} > …  [${chain.tooDeep} file(s) too deep, down to depth ${chain.deepest}]`;
 }
 
-export function displayDeepChains(chains: DeepChain[], maxDepth: number): void {
+export function displayDeepChains(
+	chains: DeepChain[],
+	maxDepth: number,
+	apply: string,
+): void {
 	if (chains.length === 0) return;
 	const tooDeep = chains.reduce((sum, c) => sum + c.tooDeep, 0);
 	console.log(
@@ -37,5 +43,5 @@ export function displayDeepChains(chains: DeepChain[], maxDepth: number): void {
 	if (chains.length > shownChains)
 		console.log(chalk.dim(`  …and ${chains.length - shownChains} more`));
 	console.log("");
-	for (const line of pinGuidance) console.log(chalk.yellow(line));
+	for (const line of pinSteps(apply)) console.log(chalk.yellow(line));
 }
