@@ -1,19 +1,19 @@
 import chalk from "chalk";
 import { applyCommand } from "./applyCommand";
-import { displayDeepChains } from "./displayDeepChains";
+import type { LayoutLimits } from "./checkLayoutLimits";
 import { displayDrift } from "./displayDrift";
-import type { DeepChain } from "./findDeepChains";
+import {
+	displayLayoutLimits,
+	exceedsLayoutLimits,
+} from "./displayLayoutLimits";
 import type { RestructurePlan } from "./types";
 
-export function checkPlan(
-	plan: RestructurePlan,
-	chains: DeepChain[],
-	maxDepth: number,
-): void {
+export function checkPlan(plan: RestructurePlan, limits: LayoutLimits): void {
 	const apply = applyCommand(plan.scopeRoot);
-	displayDrift(plan, chains.length === 0);
-	displayDeepChains(chains, maxDepth, apply);
-	if (chains.length > 0 || plan.errors.length > 0) process.exit(1);
+	const exceeds = exceedsLayoutLimits(limits);
+	displayDrift(plan, !exceeds);
+	displayLayoutLimits(limits, apply);
+	if (exceeds || plan.errors.length > 0) process.exit(1);
 	if (plan.moves.length > 0) {
 		console.log(
 			chalk.yellow(

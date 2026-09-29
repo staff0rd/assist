@@ -53,6 +53,10 @@ describe("restructure", () => {
 			throw new Error(`exit ${code}`);
 		});
 		writeRestructureFixture(dir);
+		writeFileSync(
+			join(dir, "assist.yml"),
+			"restructure:\n  maxFolderPercent: 100\n",
+		);
 	});
 
 	afterEach(() => {
@@ -138,6 +142,24 @@ describe("restructure", () => {
 		expect(
 			output.some((line) =>
 				line.includes("`assist refactor restructure src --apply`"),
+			),
+		).toBe(true);
+	});
+
+	it("check fails and lists folders over the restructure.maxFolderPercent limit", async () => {
+		await restructure("src", { apply: true });
+		writeFileSync(
+			join(dir, "assist.yml"),
+			"restructure:\n  maxFolderPercent: 25\n",
+		);
+		output = [];
+
+		await expect(restructure("src", { check: true })).rejects.toThrow("exit 1");
+
+		expect(output).toContain("  app/ 4 file(s)");
+		expect(
+			output.some((line) =>
+				line.includes("Remove the pin you added most recently"),
 			),
 		).toBe(true);
 	});

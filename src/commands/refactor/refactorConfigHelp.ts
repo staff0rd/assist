@@ -16,4 +16,14 @@ export const refactorConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set restructure.maxDepth 10",
 		note: "deepest folder level the plan may place a file at (default 10); deeper plans list their deep chains with pin guidance, and --check fails",
 	},
+	{
+		key: "restructure.maxFolderPercent",
+		setter: "assist config set restructure.maxFolderPercent 15",
+		note: "most files any folder except the root may hold, as a percentage of all files under the root (default 15, capped by restructure.maxFolderFiles); larger folders are listed with pin guidance, and --check fails",
+	},
+	{
+		key: "restructure.maxFolderFiles",
+		setter: "assist config set restructure.maxFolderFiles 150",
+		note: "cap on the restructure.maxFolderPercent folder limit (default 150)",
+	},
 ];

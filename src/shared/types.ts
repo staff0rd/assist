@@ -94,6 +94,8 @@ const assistConfigShape = {
 			ignore: z.array(z.string()).default([]),
 			pin: z.array(z.string()).default([]),
 			maxDepth: z.number().int().positive().default(10),
+			maxFolderPercent: z.number().positive().max(100).default(15),
+			maxFolderFiles: z.number().int().positive().default(150),
 		})
 		.optional(),
 	jira: z

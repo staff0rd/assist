@@ -5,7 +5,7 @@ import { loadConfig } from "../../shared/loadConfig";
 import { walkSourceFiles } from "../complexity/walkSourceFiles";
 import { buildPlan } from "./restructure/buildPlan";
 import { checkPlan } from "./restructure/checkPlan";
-import { findDeepChains } from "./restructure/findDeepChains";
+import { checkLayoutLimits } from "./restructure/checkLayoutLimits";
 import { partitionIgnored } from "./restructure/partitionIgnored";
 import { runPlan } from "./restructure/runPlan";
 
@@ -32,9 +32,18 @@ export async function restructure(
 		return;
 	}
 
-	const { pin = [], maxDepth = 10 } = loadConfig().restructure ?? {};
+	const {
+		pin = [],
+		maxDepth = 10,
+		maxFolderPercent = 15,
+		maxFolderFiles = 150,
+	} = loadConfig().restructure ?? {};
 	const plan = buildPlan(scopeRoot, scoped, ignored, pin);
-	const chains = findDeepChains(plan.targets.values(), scopeRoot, maxDepth);
-	if (options.check) return checkPlan(plan, chains, maxDepth);
-	runPlan(plan, chains, maxDepth, options.apply === true);
+	const limits = checkLayoutLimits(plan, {
+		maxDepth,
+		maxFolderPercent,
+		maxFolderFiles,
+	});
+	if (options.check) return checkPlan(plan, limits);
+	runPlan(plan, limits, options.apply === true);
 }
