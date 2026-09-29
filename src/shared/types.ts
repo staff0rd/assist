@@ -93,6 +93,7 @@ const assistConfigShape = {
 		.strictObject({
 			ignore: z.array(z.string()).default([]),
 			pin: z.array(z.string()).default([]),
+			maxDepth: z.number().int().positive().default(10),
 		})
 		.optional(),
 	jira: z

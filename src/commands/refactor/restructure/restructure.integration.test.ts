@@ -113,6 +113,19 @@ describe("restructure", () => {
 		expect(snapshot(join(dir, "src"))).toEqual(after);
 	});
 
+	it("check fails and lists deep chains with pin guidance past restructure.maxDepth", async () => {
+		await restructure("src", { apply: true });
+		writeFileSync(join(dir, "assist.yml"), "restructure:\n  maxDepth: 1\n");
+		output = [];
+
+		await expect(restructure("src", { check: true })).rejects.toThrow("exit 1");
+
+		expect(output).toContain(
+			"  app (5) > widget (1) > …  [1 file(s) too deep, down to depth 2]",
+		);
+		expect(output.some((line) => line.includes("feature boundary"))).toBe(true);
+	});
+
 	it("never moves files matched by restructure.ignore", async () => {
 		writeFileSync(
 			join(dir, "assist.yml"),

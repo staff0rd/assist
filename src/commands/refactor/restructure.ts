@@ -6,7 +6,9 @@ import { walkSourceFiles } from "../complexity/walkSourceFiles";
 import { applyPlan } from "./restructure/applyPlan";
 import { buildPlan } from "./restructure/buildPlan";
 import { checkPlan } from "./restructure/checkPlan";
+import { displayDeepChains } from "./restructure/displayDeepChains";
 import { displayPlan } from "./restructure/displayPlan";
+import { findDeepChains } from "./restructure/findDeepChains";
 import { partitionIgnored } from "./restructure/partitionIgnored";
 
 type RestructureOptions = {
@@ -32,11 +34,13 @@ export async function restructure(
 		return;
 	}
 
-	const pinned = loadConfig().restructure?.pin ?? [];
-	const plan = buildPlan(scopeRoot, scoped, ignored, pinned);
-	if (options.check) return checkPlan(plan);
+	const { pin = [], maxDepth = 10 } = loadConfig().restructure ?? {};
+	const plan = buildPlan(scopeRoot, scoped, ignored, pin);
+	const chains = findDeepChains(plan.targets.values(), scopeRoot, maxDepth);
+	if (options.check) return checkPlan(plan, chains, maxDepth);
 
 	displayPlan(plan);
+	displayDeepChains(chains, maxDepth);
 	if (plan.moves.length === 0 && plan.errors.length === 0) {
 		console.log(chalk.green("No restructuring needed"));
 		return;

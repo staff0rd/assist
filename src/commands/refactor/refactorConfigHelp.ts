@@ -11,4 +11,9 @@ export const refactorConfigHelp: ConfigHelpEntry[] = [
 		setter: 'assist config set restructure.pin "SessionCard"',
 		note: "module names (basename without extension) restructure lifts out of deep import chains into the folder of the nearest root or pinned module above them, together with their subtrees",
 	},
+	{
+		key: "restructure.maxDepth",
+		setter: "assist config set restructure.maxDepth 10",
+		note: "deepest folder level the plan may place a file at (default 10); deeper plans list their deep chains with pin guidance, and --check fails",
+	},
 ];
