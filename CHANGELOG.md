@@ -1,3 +1,10 @@
+# [0.720.0](https://github.com/staff0rd/assist/compare/v0.719.0...v0.720.0) (2026-09-29)
+
+
+### Features
+
+* add restructure.maxDepth ([8af3175](https://github.com/staff0rd/assist/commit/8af3175fc0476f15d960cfefca7b72310b996715))
+
 # [0.719.0](https://github.com/staff0rd/assist/compare/v0.718.0...v0.719.0) (2026-09-28)
 
 
