@@ -1,3 +1,10 @@
+## [0.721.2](https://github.com/staff0rd/assist/compare/v0.721.1...v0.721.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* make restructure pin steps imperative ([220c8ca](https://github.com/staff0rd/assist/commit/220c8ca5e795e0acb5c24d6e4f30aa5ed5e71b46))
+
 ## [0.721.1](https://github.com/staff0rd/assist/compare/v0.721.0...v0.721.1) (2026-09-29)
 
 
