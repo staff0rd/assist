@@ -53,10 +53,6 @@ describe("restructure", () => {
 			throw new Error(`exit ${code}`);
 		});
 		writeRestructureFixture(dir);
-		writeFileSync(
-			join(dir, "assist.yml"),
-			"restructure:\n  maxFolderPercent: 100\n",
-		);
 	});
 
 	afterEach(() => {
@@ -146,11 +142,11 @@ describe("restructure", () => {
 		).toBe(true);
 	});
 
-	it("check fails and lists folders over the restructure.maxFolderPercent limit", async () => {
+	it("check fails and lists folders over the folder file limit", async () => {
 		await restructure("src", { apply: true });
 		writeFileSync(
 			join(dir, "assist.yml"),
-			"restructure:\n  maxFolderPercent: 25\n",
+			"restructure:\n  maxFolderFiles: 3\n",
 		);
 		output = [];
 

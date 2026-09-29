@@ -2,6 +2,8 @@ import { type DeepChain, findDeepChains } from "./findDeepChains";
 import { findLargeFolders, type LargeFolder } from "./findLargeFolders";
 import type { RestructurePlan } from "./types";
 
+const minFolderLimit = 20;
+
 type LimitSettings = {
 	maxDepth: number;
 	maxFolderPercent: number;
@@ -20,8 +22,9 @@ export function checkLayoutLimits(
 	settings: LimitSettings,
 ): LayoutLimits {
 	const targets = [...plan.targets.values()];
+	const share = Math.ceil((targets.length * settings.maxFolderPercent) / 100);
 	const folderLimit = Math.min(
-		Math.ceil((targets.length * settings.maxFolderPercent) / 100),
+		Math.max(share, minFolderLimit),
 		settings.maxFolderFiles,
 	);
 	return {

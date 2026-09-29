@@ -19,7 +19,7 @@ export const refactorConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "restructure.maxFolderPercent",
 		setter: "assist config set restructure.maxFolderPercent 15",
-		note: "most files any folder except the root may hold, as a percentage of all files under the root (default 15, capped by restructure.maxFolderFiles); larger folders are listed with pin guidance, and --check fails",
+		note: "most files any folder except the root may hold, as a percentage of all files under the root (default 15, never below 20, capped by restructure.maxFolderFiles); larger folders are listed with pin guidance, and --check fails",
 	},
 	{
 		key: "restructure.maxFolderFiles",
