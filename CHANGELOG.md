@@ -1,3 +1,10 @@
+# [0.721.0](https://github.com/staff0rd/assist/compare/v0.720.0...v0.721.0) (2026-09-29)
+
+
+### Features
+
+* point restructure --check at --apply ([46b9e7c](https://github.com/staff0rd/assist/commit/46b9e7c02102054dbf8be1608baee03e1562fef4))
+
 # [0.720.0](https://github.com/staff0rd/assist/compare/v0.719.0...v0.720.0) (2026-09-29)
 
 
