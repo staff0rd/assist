@@ -1,3 +1,10 @@
+## [0.722.1](https://github.com/staff0rd/assist/compare/v0.722.0...v0.722.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* floor restructure folder limit at 20 ([8fff6ad](https://github.com/staff0rd/assist/commit/8fff6ad9db62a2ed38c39b7082d5a6e6eae2487f))
+
 # [0.722.0](https://github.com/staff0rd/assist/compare/v0.721.2...v0.722.0) (2026-09-29)
 
 
