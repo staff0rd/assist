@@ -15,7 +15,7 @@ export function checkPlan(
 	chains: DeepChain[],
 	maxDepth: number,
 ): void {
-	displayDrift(plan);
+	displayDrift(plan, chains.length === 0);
 	displayDeepChains(chains, maxDepth);
 	if (chains.length > 0) {
 		console.log(

@@ -129,6 +129,7 @@ describe("restructure", () => {
 			"  app (5) > widget (1) > …  [1 file(s) too deep, down to depth 2]",
 		);
 		expect(output.some((line) => line.includes("feature boundary"))).toBe(true);
+		expect(output.some((line) => line.includes(" → "))).toBe(false);
 		expect(
 			output.some((line) =>
 				line.includes("`assist refactor restructure src --apply`"),
