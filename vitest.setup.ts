@@ -13,6 +13,13 @@ function clearResumeEnvInheritedFromADaemonResumedSession() {
 
 clearResumeEnvInheritedFromADaemonResumedSession();
 
-afterAll(() => {
+afterAll(async () => {
 	rmSync(storeDir, { recursive: true, force: true });
+	const key = Symbol.for("assist.sharedTestDb");
+	const holder = globalThis as Record<
+		symbol,
+		{ lite: { close(): Promise<void> } } | undefined
+	>;
+	await holder[key]?.lite.close();
+	delete holder[key];
 });

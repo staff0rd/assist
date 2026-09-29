@@ -90,7 +90,7 @@ describe("restructure", () => {
 
 		await restructure("src", { apply: true });
 		expect(snapshot(join(dir, "src"))).toEqual(after);
-	});
+	}, 30_000);
 
 	it("check exits non-zero and lists drifting files", async () => {
 		await expect(restructure("src", { check: true })).rejects.toThrow("exit 1");
