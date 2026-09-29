@@ -1,3 +1,10 @@
+## [0.721.1](https://github.com/staff0rd/assist/compare/v0.721.0...v0.721.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* trim restructure --check output ([05d45ef](https://github.com/staff0rd/assist/commit/05d45ef18bbdee09eba0104f20e76c69dbfc201d))
+
 # [0.721.0](https://github.com/staff0rd/assist/compare/v0.720.0...v0.721.0) (2026-09-29)
 
 
