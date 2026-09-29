@@ -40,6 +40,7 @@ export function buildPlan(
 		files,
 		edges: graph.edges.filter((e) => !e.mock),
 		pinnedModules,
+		fixedFiles: ignored,
 	});
 	const allProjectFiles = new Set([
 		...graph.importedBy.keys(),

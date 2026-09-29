@@ -7,9 +7,10 @@ export type PlannerInput = {
 	files: string[];
 	edges: PlannerEdge[];
 	pinnedModules?: string[];
+	fixedFiles?: string[];
 };
 
-export type AnchorMode = "child" | "sibling";
+export type AnchorMode = "child" | "sibling" | "fixed";
 
 export type Anchor = { file: string; mode: AnchorMode };
 

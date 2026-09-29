@@ -4,6 +4,7 @@ import type { PlannerEdge } from "./types";
 export type EdgeIndex = {
 	importers: Map<string, Set<string>>;
 	testImporters: Map<string, Set<string>>;
+	fixedImporters: Map<string, Set<string>>;
 	imports: Map<string, Set<string>>;
 	external: Set<string>;
 };
@@ -17,16 +18,22 @@ function add(map: Map<string, Set<string>>, key: string, value: string): void {
 export function indexEdges(
 	scope: Set<string>,
 	edges: PlannerEdge[],
+	fixed: Set<string>,
 ): EdgeIndex {
 	const index: EdgeIndex = {
 		importers: new Map(),
 		testImporters: new Map(),
+		fixedImporters: new Map(),
 		imports: new Map(),
 		external: new Set(),
 	};
 	for (const { source, target } of edges) {
 		if (!scope.has(target) || source === target) continue;
 		const test = isTestFile(source);
+		if (fixed.has(source)) {
+			if (!test) add(index.fixedImporters, target, source);
+			continue;
+		}
 		if (!scope.has(source)) {
 			if (!test) index.external.add(target);
 			continue;

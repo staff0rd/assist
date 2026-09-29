@@ -10,7 +10,11 @@ import type { PlannerInput, PlannerResult } from "./planRestructure/types";
 export function planRestructure(input: PlannerInput): PlannerResult {
 	const scopeRoot = path.resolve(input.scopeRoot);
 	const files = [...new Set(input.files)].sort();
-	const index = indexEdges(new Set(files), input.edges);
+	const index = indexEdges(
+		new Set(files),
+		input.edges,
+		new Set(input.fixedFiles),
+	);
 	const anchorings = collectAnchors(files, index, new Set(input.pinnedModules));
 	const placements = placeComponents(files, anchorings, scopeRoot);
 

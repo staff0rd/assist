@@ -11,6 +11,7 @@ export type Layout = {
 };
 
 function anchorFolder(anchor: Anchor, dirs: Map<string, string>): string {
+	if (anchor.mode === "fixed") return path.dirname(anchor.file);
 	const dir = dirs.get(anchor.file) as string;
 	return anchor.mode === "child"
 		? path.join(dir, moduleStem(anchor.file))

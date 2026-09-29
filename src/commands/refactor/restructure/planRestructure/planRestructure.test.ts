@@ -54,7 +54,12 @@ function randomInput(seed: number, pinnedModules: string[] = []): PlannerInput {
 		edges.push({ source, target });
 	}
 	edges.push({ source: "/outside/o.ts", target: files[3] });
-	return { scopeRoot: ROOT, files, edges, pinnedModules };
+	const fixed = `${ROOT}/x/registerFixed.ts`;
+	edges.push(
+		{ source: fixed, target: files[5] },
+		{ source: fixed, target: files[9] },
+	);
+	return { scopeRoot: ROOT, files, edges, pinnedModules, fixedFiles: [fixed] };
 }
 
 function applyMoves(
@@ -191,6 +196,46 @@ describe("planRestructure", () => {
 			expect(plan.errors).toEqual([
 				"Basename collision in ./: x/types.ts, y/types.ts",
 			]);
+		});
+	});
+
+	describe("when a module is imported by a fixed file", () => {
+		const fixed = (edges: [string, string][], pinnedModules: string[] = []) =>
+			planRestructure({
+				...input(edges),
+				files: input(edges).files.filter((f) => f !== "/r/cmd/registerCmd.ts"),
+				fixedFiles: ["/r/cmd/registerCmd.ts"],
+				pinnedModules,
+			});
+
+		it("should place it beside the fixed file with its subtree beneath it", () => {
+			const plan = fixed([
+				["/r/cmd/registerCmd.ts", "/r/elsewhere/add.ts"],
+				["/r/elsewhere/add.ts", "/r/helper.ts"],
+			]);
+			expect(targetOf(plan, "/r/elsewhere/add.ts")).toBe("/r/cmd/add.ts");
+			expect(targetOf(plan, "/r/helper.ts")).toBe("/r/cmd/add/helper.ts");
+			expect(plan.targets.has("/r/cmd/registerCmd.ts")).toBe(false);
+		});
+
+		it("should place a file it shares with an in-scope importer at their common folder", () => {
+			const plan = fixed([
+				["/r/cmd/registerCmd.ts", "/r/s.ts"],
+				["/r/other.ts", "/r/s.ts"],
+			]);
+			expect(targetOf(plan, "/r/s.ts")).toBe("/r/s.ts");
+		});
+
+		it("should lift a pinned module into the fixed-anchored module's folder", () => {
+			const plan = fixed(
+				[
+					["/r/cmd/registerCmd.ts", "/r/add.ts"],
+					["/r/add.ts", "/r/b.ts"],
+					["/r/b.ts", "/r/c.ts"],
+				],
+				["c"],
+			);
+			expect(targetOf(plan, "/r/c.ts")).toBe("/r/cmd/add/c.ts");
 		});
 	});
 

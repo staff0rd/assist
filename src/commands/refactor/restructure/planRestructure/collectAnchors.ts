@@ -31,15 +31,25 @@ function anchorTest(file: string, index: EdgeIndex): Anchoring {
 	);
 }
 
+function anchorImporters(importers: string[], fixed: string[]): Anchoring {
+	const all = [...importers, ...fixed];
+	const prefix = all.length === 1 ? "imported only by" : "shared by";
+	const anchoring = anchored(all, "child", prefix);
+	const fixedSet = new Set(fixed);
+	return {
+		...anchoring,
+		anchors: anchoring.anchors.map((a) =>
+			fixedSet.has(a.file) ? { ...a, mode: "fixed" as const } : a,
+		),
+	};
+}
+
 function anchorModule(file: string, index: EdgeIndex): Anchoring {
 	if (index.external.has(file)) return root("imported from outside scope");
 	const importers = sorted(index.importers.get(file));
-	if (importers.length > 0)
-		return anchored(
-			importers,
-			"child",
-			importers.length === 1 ? "imported only by" : "shared by",
-		);
+	const fixed = sorted(index.fixedImporters.get(file));
+	if (importers.length + fixed.length > 0)
+		return anchorImporters(importers, fixed);
 	const tests = sorted(index.testImporters.get(file));
 	if (tests.length > 0) return anchored(tests, "sibling", "used only by tests");
 	return root("no importers in scope");

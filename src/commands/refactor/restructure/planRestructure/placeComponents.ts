@@ -7,7 +7,10 @@ import type { Anchoring } from "./types";
 type Placement = { dir: string; reason: string };
 
 function isPinFolderOwner(anchoring: Anchoring): boolean {
-	return anchoring.root || anchoring.pinned === true;
+	const onlyFixed =
+		anchoring.anchors.length > 0 &&
+		anchoring.anchors.every((a) => a.mode === "fixed");
+	return anchoring.root || anchoring.pinned === true || onlyFixed;
 }
 
 function componentReason(
@@ -28,7 +31,9 @@ export function placeComponents(
 	scopeRoot: string,
 ): Map<string, Placement> {
 	const successors = (file: string) =>
-		(anchorings.get(file) as Anchoring).anchors.map((a) => a.file);
+		(anchorings.get(file) as Anchoring).anchors
+			.filter((a) => a.mode !== "fixed")
+			.map((a) => a.file);
 	const layout: Layout = { scopeRoot, dirs: new Map(), pinFolders: new Set() };
 	const placements = new Map<string, Placement>();
 	for (const component of findStronglyConnectedComponents(files, successors)) {
