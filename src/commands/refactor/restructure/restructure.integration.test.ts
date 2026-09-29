@@ -95,6 +95,11 @@ describe("restructure", () => {
 	it("check exits non-zero and lists drifting files", async () => {
 		await expect(restructure("src", { check: true })).rejects.toThrow("exit 1");
 		expect(output).toContain("  src/widget.ts → src/app/widget.ts");
+		expect(
+			output.some((line) =>
+				line.includes("`assist refactor restructure src --apply`"),
+			),
+		).toBe(true);
 		expect(existsSync(join(dir, "src", "widget.ts"))).toBe(true);
 	});
 
@@ -124,6 +129,11 @@ describe("restructure", () => {
 			"  app (5) > widget (1) > …  [1 file(s) too deep, down to depth 2]",
 		);
 		expect(output.some((line) => line.includes("feature boundary"))).toBe(true);
+		expect(
+			output.some((line) =>
+				line.includes("`assist refactor restructure src --apply`"),
+			),
+		).toBe(true);
 	});
 
 	it("never moves files matched by restructure.ignore", async () => {
