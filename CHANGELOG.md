@@ -1,3 +1,10 @@
+## [0.722.2](https://github.com/staff0rd/assist/compare/v0.722.1...v0.722.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* remove restructure folder size limit ([e23af62](https://github.com/staff0rd/assist/commit/e23af62a4d68531af99e8f17ed5b370b1c2236e5))
+
 ## [0.722.1](https://github.com/staff0rd/assist/compare/v0.722.0...v0.722.1) (2026-09-29)
 
 
