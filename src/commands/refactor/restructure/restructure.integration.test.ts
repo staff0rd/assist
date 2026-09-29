@@ -142,24 +142,6 @@ describe("restructure", () => {
 		).toBe(true);
 	});
 
-	it("check fails and lists folders over the folder file limit", async () => {
-		await restructure("src", { apply: true });
-		writeFileSync(
-			join(dir, "assist.yml"),
-			"restructure:\n  maxFolderFiles: 3\n",
-		);
-		output = [];
-
-		await expect(restructure("src", { check: true })).rejects.toThrow("exit 1");
-
-		expect(output).toContain("  app/ 4 file(s)");
-		expect(
-			output.some((line) =>
-				line.includes("Remove the pin you added most recently"),
-			),
-		).toBe(true);
-	});
-
 	it("never moves files matched by restructure.ignore", async () => {
 		writeFileSync(
 			join(dir, "assist.yml"),

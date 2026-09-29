@@ -32,18 +32,9 @@ export async function restructure(
 		return;
 	}
 
-	const {
-		pin = [],
-		maxDepth = 10,
-		maxFolderPercent = 15,
-		maxFolderFiles = 150,
-	} = loadConfig().restructure ?? {};
+	const { pin = [], maxDepth = 10 } = loadConfig().restructure ?? {};
 	const plan = buildPlan(scopeRoot, scoped, ignored, pin);
-	const limits = checkLayoutLimits(plan, {
-		maxDepth,
-		maxFolderPercent,
-		maxFolderFiles,
-	});
+	const limits = checkLayoutLimits(plan, maxDepth);
 	if (options.check) return checkPlan(plan, limits);
 	runPlan(plan, limits, options.apply === true);
 }
