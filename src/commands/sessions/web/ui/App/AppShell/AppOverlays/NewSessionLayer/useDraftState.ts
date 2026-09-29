@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
-import type { NewSessionMode } from "../newSessionModes";
+import type { HarnessKind } from "../../../../../../../../shared/harnesses";
+import type { NewSessionMode } from "./newSessionModes";
 
 export type DraftFocus = {
 	field: "prompt" | "repo" | "mode";

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext } from "react";
-import type { UserMessages } from "../types";
+import type { UserMessages } from "../../types";
 
 type LastMessageHistory = {
 	userMessages: UserMessages | null;

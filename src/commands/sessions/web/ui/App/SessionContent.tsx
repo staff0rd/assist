@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { SessionArea } from "./SessionContent/SessionArea";
-import { LastMessageHistoryContext } from "./useLastMessageHistory";
+import { LastMessageHistoryContext } from "./SessionContent/useLastMessageHistory";
 import type { SessionSocket } from "../useSessionSocket";
 
 export function SessionContent({ socket }: { socket: SessionSocket }) {

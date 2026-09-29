@@ -1,7 +1,7 @@
 import type { SxProps, Theme } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { type ReactNode, useRef, useState } from "react";
-import { FilterTrigger } from "./DropdownWrapper/FilterTrigger";
+import { FilterTrigger } from "./FilterTrigger";
 
 export const dropdownStyle: SxProps<Theme> = {
 	position: "absolute",

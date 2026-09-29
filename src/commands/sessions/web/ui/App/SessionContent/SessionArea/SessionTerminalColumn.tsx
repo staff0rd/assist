@@ -6,7 +6,7 @@ import {
 import { SessionLastMessage } from "./SessionTerminalColumn/SessionLastMessage";
 import { TerminalArea, type TerminalAreaProps } from "./TerminalArea";
 import type { SessionInfo } from "../../../types";
-import { useLastMessageHistory } from "../../useLastMessageHistory";
+import { useLastMessageHistory } from "../useLastMessageHistory";
 
 const columnSx = {
 	position: "relative",

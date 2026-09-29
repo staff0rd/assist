@@ -1,6 +1,6 @@
 import { type SyntheticEvent, useCallback, useRef } from "react";
 import { checkedRadio } from "./checkedRadio";
-import type { DraftFocus } from "../useNewSessionDraft/useDraftState";
+import type { DraftFocus } from "../useDraftState";
 
 export function useDraftFocus(
 	focus: DraftFocus,

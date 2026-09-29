@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { positionSx } from "./positionSx";
+import { positionSx } from "./HistoryPosition/positionSx";
 
 export function HistoryPosition({ position }: { position?: string }) {
 	if (!position) return null;

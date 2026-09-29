@@ -1,5 +1,5 @@
 import { type WheelEvent, useState } from "react";
-import { useWheelGesture } from "./useWheelGesture";
+import { useWheelGesture } from "./useHistoryStep/useWheelGesture";
 
 function withLatest(history: string[], latest: string): string[] {
 	return history.at(-1) === latest ? history : [...history, latest];

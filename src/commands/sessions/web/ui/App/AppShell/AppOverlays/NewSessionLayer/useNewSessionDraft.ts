@@ -2,12 +2,9 @@ import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import type { NewSessionMode } from "./newSessionModes";
 import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
-import { useDefaultNewSessionMode } from "./useDefaultNewSessionMode";
+import { useDefaultNewSessionMode } from "./useNewSessionDraft/useDefaultNewSessionMode";
 import { draftNode } from "./useNewSessionDraft/draftNode";
-import {
-	type DraftFocus,
-	useDraftState,
-} from "./useNewSessionDraft/useDraftState";
+import { type DraftFocus, useDraftState } from "./useDraftState";
 
 export type NewSessionDraft = {
 	prompt: string;

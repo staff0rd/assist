@@ -4,7 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import { useRef, useState } from "react";
 import type { ServerRunInfo } from "../../handleServerRuns";
-import { FilterTrigger } from "../DropdownWrapper/FilterTrigger";
+import { FilterTrigger } from "../FilterTrigger";
 
 export function ServerRunDropdown({
 	runs,
