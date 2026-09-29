@@ -177,6 +177,16 @@ run:
       - src/index.ts
       - verify
       - migrations
+  - name: verify:structure
+    command: npx
+    filter: src/commands/sessions/web/ui/**
+    args:
+      - tsx
+      - src/index.ts
+      - refactor
+      - restructure
+      - src/commands/sessions/web/ui
+      - --check
   - name: verify:custom-lint
     command: assist
     filter: "{src/**/*.ts,src/**/*.tsx}"
