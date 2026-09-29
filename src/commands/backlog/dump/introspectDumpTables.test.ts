@@ -1,7 +1,8 @@
-import { PGlite } from "@electric-sql/pglite";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { PGlite } from "@electric-sql/pglite";
+import { beforeEach, describe, expect, it } from "vitest";
 import { applyMigrations } from "../../../shared/db/migrations/applyMigrations";
 import { pgliteExecutor } from "../../../shared/db/migrations/MigrationExecutor";
+import { sharedTestPglite } from "../../../shared/db/sharedTestPglite";
 import type { DumpTable } from "./DumpTable";
 import { introspectDumpTables } from "./introspectDumpTables";
 
@@ -13,12 +14,8 @@ describe("introspectDumpTables", () => {
 		tables.findIndex((t) => t.name === name);
 
 	beforeEach(async () => {
-		db = new PGlite();
+		db = await sharedTestPglite();
 		await applyMigrations(pgliteExecutor(db));
-	});
-
-	afterEach(async () => {
-		await db.close();
 	});
 
 	it("discovers every base table in the live schema", async () => {

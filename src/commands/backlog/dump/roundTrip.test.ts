@@ -1,7 +1,8 @@
-import { PGlite } from "@electric-sql/pglite";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { PGlite } from "@electric-sql/pglite";
+import { beforeEach, describe, expect, it } from "vitest";
 import { applyMigrations } from "../../../shared/db/migrations/applyMigrations";
 import { pgliteExecutor } from "../../../shared/db/migrations/MigrationExecutor";
+import { sharedTestPglite } from "../../../shared/db/sharedTestPglite";
 import { buildDump } from "./buildDump";
 import type { DumpTable } from "./DumpTable";
 import { introspectDumpTables } from "./introspectDumpTables";
@@ -37,12 +38,8 @@ describe("dump/restore round-trip", () => {
 	let db: PGlite;
 
 	beforeEach(async () => {
-		db = new PGlite();
+		db = await sharedTestPglite();
 		await applyMigrations(pgliteExecutor(db));
-	});
-
-	afterEach(async () => {
-		await db.close();
 	});
 
 	it("captures and restores a table created at runtime, unknown to any constant", async () => {

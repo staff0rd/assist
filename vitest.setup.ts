@@ -15,11 +15,11 @@ clearResumeEnvInheritedFromADaemonResumedSession();
 
 afterAll(async () => {
 	rmSync(storeDir, { recursive: true, force: true });
-	const key = Symbol.for("assist.sharedTestDb");
+	const key = Symbol.for("assist.sharedTestPglite");
 	const holder = globalThis as Record<
 		symbol,
-		{ lite: { close(): Promise<void> } } | undefined
+		{ close(): Promise<void> } | undefined
 	>;
-	await holder[key]?.lite.close();
+	await holder[key]?.close();
 	delete holder[key];
 });

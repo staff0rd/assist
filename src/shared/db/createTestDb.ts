@@ -1,27 +1,9 @@
-import { PGlite } from "@electric-sql/pglite";
 import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
 import type { Db } from "./Db";
 import { applyMigrations } from "./migrations/applyMigrations";
 import { pgliteExecutor } from "./migrations/MigrationExecutor";
 import { schema } from "./schema";
-
-type SharedTestDb = { lite: PGlite; orm: Db };
-
-type SharedTestDbHolder = Record<symbol, SharedTestDb | undefined>;
-
-const SHARED_TEST_DB_KEY = Symbol.for("assist.sharedTestDb");
-
-function sharedTestDb(): SharedTestDb {
-	const holder = globalThis as SharedTestDbHolder;
-	let shared = holder[SHARED_TEST_DB_KEY];
-	if (!shared) {
-		const lite = new PGlite();
-		const orm = drizzlePglite(lite, { schema }) as unknown as Db;
-		shared = { lite, orm };
-		holder[SHARED_TEST_DB_KEY] = shared;
-	}
-	return shared;
-}
+import { sharedTestPglite } from "./sharedTestPglite";
 
 /**
  * Create an in-process Postgres-backed {@link Db} for tests, using PGlite
@@ -34,8 +16,8 @@ export async function createTestDb(): Promise<{
 	orm: Db;
 	close: () => Promise<void>;
 }> {
-	const { lite, orm } = sharedTestDb();
-	await lite.exec("DROP SCHEMA public CASCADE; CREATE SCHEMA public;");
+	const lite = await sharedTestPglite();
 	await applyMigrations(pgliteExecutor(lite));
+	const orm = drizzlePglite(lite, { schema }) as unknown as Db;
 	return { orm, close: async () => {} };
 }
