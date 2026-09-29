@@ -1,3 +1,10 @@
+# [0.722.0](https://github.com/staff0rd/assist/compare/v0.721.2...v0.722.0) (2026-09-29)
+
+
+### Features
+
+* add restructure folder size limit ([1504c72](https://github.com/staff0rd/assist/commit/1504c72a720ee1ecb382bce04d9fe8e0dffa8c1c))
+
 ## [0.721.2](https://github.com/staff0rd/assist/compare/v0.721.1...v0.721.2) (2026-09-29)
 
 
