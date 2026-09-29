@@ -1,3 +1,10 @@
+## [0.722.3](https://github.com/staff0rd/assist/compare/v0.722.2...v0.722.3) (2026-09-29)
+
+
+### Bug Fixes
+
+* keep ignored files' imports beside them ([5cbeac1](https://github.com/staff0rd/assist/commit/5cbeac1b3716f6b1c188c6069f188d239d80c0e3))
+
 ## [0.722.2](https://github.com/staff0rd/assist/compare/v0.722.1...v0.722.2) (2026-09-29)
 
 
