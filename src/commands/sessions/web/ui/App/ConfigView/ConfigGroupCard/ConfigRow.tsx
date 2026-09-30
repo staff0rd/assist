@@ -4,8 +4,10 @@ import type { ConfigEntry } from "../../../../../../config/readConfigEntries";
 import { ConfigKeyCell } from "./ConfigRow/ConfigKeyCell";
 import { ConfigRowTypeCell } from "./ConfigRow/ConfigRowTypeCell";
 import { ConfigRowValueCell } from "../ConfigRowValueCell";
+import { hasDedicatedConfigEditor } from "./ConfigRow/hasDedicatedConfigEditor";
 
 function isReadOnly(entry: ConfigEntry): boolean {
+	if (hasDedicatedConfigEditor(entry.key)) return false;
 	return !entry.node || entry.node.kind === "other";
 }
 

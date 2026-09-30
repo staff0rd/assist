@@ -4,7 +4,7 @@ import {
 	isRedactedSecret,
 	REDACTED_SECRET,
 } from "../../../../../../../../shared/redactConfigSecrets";
-import type { ConfigNodeEditorProps } from "./ConfigNodeEditorRenderer";
+import type { ConfigNodeEditorProps } from "../ConfigNodeEditorRenderer";
 import { maskedSecretText } from "../maskedSecretText";
 
 export function ConfigSecretInput({

@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import type { ConfigObjectListNode } from "../../../../../../../../shared/ConfigNode";
 import { ConfigAddEntryButton } from "../ConfigAddEntryButton";
-import type { ConfigNodeEditorRenderer } from "./ConfigNodeEditorRenderer";
+import type { ConfigNodeEditorRenderer } from "../ConfigNodeEditorRenderer";
 import { ConfigObjectListRow } from "./ConfigObjectListEditor/ConfigObjectListRow";
 import { useConfigObjectList } from "./ConfigObjectListEditor/useConfigObjectList";
 

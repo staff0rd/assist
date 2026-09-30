@@ -3,7 +3,7 @@ import type { ConfigNode } from "../../../../../../../../../shared/ConfigNode";
 import { ConfigEntryActions } from "../../ConfigEntryActions";
 import { ConfigEntryBlock } from "../../ConfigEntryBlock";
 import { configEntrySummary } from "../../configEntrySummary";
-import type { ConfigNodeEditorRenderer } from "../ConfigNodeEditorRenderer";
+import type { ConfigNodeEditorRenderer } from "../../ConfigNodeEditorRenderer";
 import { ConfigScalarText } from "../../ConfigScalarText";
 
 type Props = {

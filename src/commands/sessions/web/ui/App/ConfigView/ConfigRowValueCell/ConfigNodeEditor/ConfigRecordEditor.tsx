@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import type { ConfigRecordNode } from "../../../../../../../../shared/ConfigNode";
 import { asConfigRecord } from "../asConfigRecord";
 import { ConfigAddEntryButton } from "../ConfigAddEntryButton";
-import type { ConfigNodeEditorRenderer } from "./ConfigNodeEditorRenderer";
+import type { ConfigNodeEditorRenderer } from "../ConfigNodeEditorRenderer";
 import { ConfigRecordRow } from "./ConfigRecordEditor/ConfigRecordRow";
 import { emptyConfigEntryValue } from "./ConfigRecordEditor/emptyConfigEntryValue";
 import { removeConfigField, renameConfigField } from "./setConfigField";

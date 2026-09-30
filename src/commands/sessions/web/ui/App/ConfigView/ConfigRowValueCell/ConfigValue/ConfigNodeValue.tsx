@@ -44,6 +44,10 @@ export function ConfigNodeValue({ node, value }: Props): ReactElement {
 				<ConfigRecordValue node={node} value={value} render={ConfigNodeValue} />
 			);
 		default:
-			return <ConfigScalarText value={value} />;
+			return (
+				<ConfigScalarText
+					value={Array.isArray(value) ? value.map(String).join("\n") : value}
+				/>
+			);
 	}
 }

@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { ConfigListEditor } from "./ConfigNodeEditor/ConfigListEditor";
-import type { ConfigNodeEditorProps } from "./ConfigNodeEditor/ConfigNodeEditorRenderer";
+import type { ConfigNodeEditorProps } from "./ConfigNodeEditorRenderer";
 import { ConfigObjectEditor } from "./ConfigNodeEditor/ConfigObjectEditor";
 import { ConfigObjectListEditor } from "./ConfigNodeEditor/ConfigObjectListEditor";
 import { ConfigRecordEditor } from "./ConfigNodeEditor/ConfigRecordEditor";

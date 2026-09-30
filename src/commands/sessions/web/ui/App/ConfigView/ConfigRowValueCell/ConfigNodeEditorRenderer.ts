@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import type { ConfigNode } from "../../../../../../../../shared/ConfigNode";
+import type { ConfigNode } from "../../../../../../../shared/ConfigNode";
 
 export type ConfigNodeEditorProps = {
 	node: ConfigNode;

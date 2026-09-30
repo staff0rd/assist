@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import type { ConfigEntry } from "../../../../../../config/readConfigEntries";
 import { ConfigEditorActions } from "./ConfigEditorActions";
 import { ConfigNodeEditor } from "./ConfigNodeEditor";
+import { dedicatedConfigEditor } from "./ConfigRowEditor/dedicatedConfigEditor";
 import { useConfigRowEditor } from "./ConfigRowEditor/useConfigRowEditor";
 
 type Props = {
@@ -30,11 +31,12 @@ export function ConfigRowEditor({
 		clear,
 		canClear,
 	} = useConfigRowEditor({ entry, cwd, onSaved, onError });
+	const Editor = dedicatedConfigEditor(entry.key) ?? ConfigNodeEditor;
 
 	return (
 		<Stack spacing={1} sx={{ alignItems: "flex-start" }}>
 			{entry.node && (
-				<ConfigNodeEditor
+				<Editor
 					node={entry.node}
 					label={entry.key}
 					value={value}

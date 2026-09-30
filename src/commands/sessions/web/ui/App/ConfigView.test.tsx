@@ -719,26 +719,91 @@ describe("ConfigView", () => {
 		);
 	});
 
-	it("shows worktree.install read-only while it also accepts a list of paths", async () => {
-		stubApi([
-			{
-				key: "worktree.install",
-				type: "other",
-				value: undefined,
-				defaultValue: true,
-				source: "default",
-				node: node("worktree.install"),
-			},
-		]);
-		renderView("/repo/one");
+	function installEntry(value: unknown): ConfigEntry {
+		return {
+			key: "worktree.install",
+			type: "other",
+			value,
+			defaultValue: true,
+			source: value === undefined ? "default" : "project",
+			node: node("worktree.install"),
+		};
+	}
 
+	async function editInstall(value: unknown) {
+		const fetchMock = stubApi([installEntry(value)]);
+		renderView("/repo/one");
 		await waitFor(() =>
 			expect(screen.getByText("worktree.install")).toBeTruthy(),
 		);
-		expect(screen.getByText("read-only")).toBeTruthy();
-		expect(
-			screen.queryByRole("button", { name: "Edit worktree.install" }),
-		).toBeNull();
+		expect(screen.queryByText("read-only")).toBeNull();
+		fireEvent.click(
+			screen.getByRole("button", { name: "Edit worktree.install" }),
+		);
+		return fetchMock;
+	}
+
+	function pickInstallMode(mode: string) {
+		fireEvent.mouseDown(screen.getByLabelText("worktree.install mode"));
+		fireEvent.click(screen.getByRole("option", { name: mode }));
+	}
+
+	async function expectInstallSaved(
+		fetchMock: ReturnType<typeof stubApi>,
+		value: unknown,
+	) {
+		fireEvent.click(screen.getByRole("button", { name: "Save" }));
+		await waitFor(() =>
+			expect(lastSetBody(fetchMock)).toEqual({
+				key: "worktree.install",
+				value,
+				cwd: "/repo/one",
+				scope: "project",
+			}),
+		);
+	}
+
+	it.each([
+		[undefined, "auto-detect"],
+		[false, "off"],
+		["pnpm i", "command"],
+		[[".", "ui"], "paths"],
+	])("opens worktree.install %j in %s mode", async (value, mode) => {
+		await editInstall(value);
+		expect(screen.getByLabelText("worktree.install mode").textContent).toBe(
+			mode,
+		);
+	});
+
+	it("saves worktree.install as false in off mode", async () => {
+		const fetchMock = await editInstall(undefined);
+		pickInstallMode("off");
+		await expectInstallSaved(fetchMock, false);
+	});
+
+	it("saves worktree.install as true in auto-detect mode", async () => {
+		const fetchMock = await editInstall("pnpm i");
+		pickInstallMode("auto-detect");
+		expect(screen.queryByLabelText("worktree.install")).toBeNull();
+		await expectInstallSaved(fetchMock, true);
+	});
+
+	it("saves worktree.install as a command string in command mode", async () => {
+		const fetchMock = await editInstall(true);
+		pickInstallMode("command");
+		fireEvent.change(screen.getByLabelText("worktree.install"), {
+			target: { value: "pnpm install" },
+		});
+		await expectInstallSaved(fetchMock, "pnpm install");
+	});
+
+	it("saves worktree.install as a path list in paths mode", async () => {
+		const fetchMock = await editInstall("pnpm i");
+		pickInstallMode("paths");
+		fireEvent.change(screen.getByLabelText("worktree.install"), {
+			target: { value: ".\n packages/ui \n\n" },
+		});
+		await expectInstallSaved(fetchMock, [".", "packages/ui"]);
 	});
 
 	it("edits an array of scalars as one entry per line", async () => {

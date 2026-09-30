@@ -1,7 +1,7 @@
 import type { ConfigScalarNode } from "../../../../../../../../shared/ConfigNode";
 import { ConfigBooleanInput } from "./ConfigScalarEditor/ConfigBooleanInput";
-import { ConfigEnumInput } from "./ConfigEnumInput";
-import { ConfigTextInput } from "./ConfigScalarEditor/ConfigTextInput";
+import { ConfigEnumInput } from "../ConfigEnumInput";
+import { ConfigTextInput } from "../ConfigTextInput";
 
 type Props = {
 	node: ConfigScalarNode;

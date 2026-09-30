@@ -57,6 +57,15 @@ describe("ConfigNodeValue", () => {
 		expect(screen.getByText("settings.local.json")).toBeTruthy();
 	});
 
+	it("renders a path list for worktree.install one line per entry", () => {
+		renderNode("worktree.install", [".", "packages/ui"]);
+
+		expect(
+			screen.getByText(".\npackages/ui", { normalizer: (t) => t }),
+		).toBeTruthy();
+		expect(screen.queryByText(/\[/)).toBeNull();
+	});
+
 	it("labels an empty list and an empty record", () => {
 		renderNode("worktree.copy", []);
 		expect(screen.getByText("empty list")).toBeTruthy();

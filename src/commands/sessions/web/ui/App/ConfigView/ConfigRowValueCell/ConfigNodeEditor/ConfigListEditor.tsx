@@ -1,6 +1,6 @@
 import type { ConfigScalarListNode } from "../../../../../../../../shared/ConfigNode";
 import { ConfigEnumListInput } from "./ConfigListEditor/ConfigEnumListInput";
-import { ConfigListInput } from "./ConfigListEditor/ConfigListInput";
+import { ConfigListInput } from "../ConfigListInput";
 
 type Props = {
 	node: ConfigScalarListNode;

@@ -3,7 +3,7 @@ import type { ConfigNode } from "../../../../../../../../shared/ConfigNode";
 import { configNodeFieldName } from "../../../../../../../../shared/configNodeFieldName";
 import { asConfigRecord } from "../asConfigRecord";
 import { ConfigFieldRow } from "../ConfigFieldRow";
-import type { ConfigNodeEditorRenderer } from "./ConfigNodeEditorRenderer";
+import type { ConfigNodeEditorRenderer } from "../ConfigNodeEditorRenderer";
 import { setConfigField } from "./setConfigField";
 
 type Props = {

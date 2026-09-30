@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import type { ConfigNode } from "../../../../../../../../../shared/ConfigNode";
 import { ConfigEntryActions } from "../../ConfigEntryActions";
-import type { ConfigNodeEditorRenderer } from "../ConfigNodeEditorRenderer";
+import type { ConfigNodeEditorRenderer } from "../../ConfigNodeEditorRenderer";
 import { ConfigRecordKeyCell } from "./ConfigRecordRow/ConfigRecordKeyCell";
 
 type Props = {
