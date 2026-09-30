@@ -1,4 +1,5 @@
 import Typography from "@mui/material/Typography";
+import type { ReactNode } from "react";
 
 export function NextScopeLine({
 	label,
@@ -8,7 +9,7 @@ export function NextScopeLine({
 	showSetter,
 }: {
 	label: string;
-	value: string | null;
+	value: ReactNode;
 	unset: string;
 	setter: string;
 	showSetter: boolean;

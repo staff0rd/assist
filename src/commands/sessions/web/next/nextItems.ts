@@ -17,7 +17,7 @@ export async function nextItems(
 	if (!cwd) return;
 	const scope = nextScope(cwd);
 	const repos = scopeRepos(scope.repos, scope.selfRepo);
-	const [peerPrs, assignedIssues, pickups] = await Promise.all([
+	const [peerPrs, assignedIssues, { pickups, boards }] = await Promise.all([
 		sectionAcross(
 			repos,
 			(repo) => fetchPeerPrs(cwd, repo, scope.peers),
@@ -30,6 +30,12 @@ export async function nextItems(
 		),
 		fetchPickups(cwd, scope.projects, scope),
 	]);
-	const body: NextResponse = { scope, peerPrs, assignedIssues, pickups };
+	const body: NextResponse = {
+		scope,
+		peerPrs,
+		assignedIssues,
+		pickups,
+		boards,
+	};
 	respondJson(res, 200, body);
 }

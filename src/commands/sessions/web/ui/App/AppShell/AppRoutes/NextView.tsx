@@ -23,9 +23,7 @@ export function NextView() {
 	return (
 		<PageShell
 			loading={loading && !data}
-			header={
-				<NextHeader loading={loading} scope={data?.scope} onRefresh={refresh} />
-			}
+			header={<NextHeader loading={loading} data={data} onRefresh={refresh} />}
 			isEmpty={!data}
 			emptyMessage={error ?? undefined}
 		>

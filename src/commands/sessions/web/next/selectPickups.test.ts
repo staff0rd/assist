@@ -56,6 +56,7 @@ const numbers = (
 		{
 			project: "o/3",
 			title: "Roadmap",
+			url: "",
 			priorityOrder,
 		},
 	).map((p) => p.number);
@@ -117,7 +118,12 @@ describe("selectPickups", () => {
 		const [pickup] = selectPickups(
 			[item(1, { repo: "other/web", priority: "P1" })],
 			defaultFilter,
-			{ project: "o/3", title: "Roadmap", priorityOrder: ["P0", "P1"] },
+			{
+				project: "o/3",
+				title: "Roadmap",
+				url: "",
+				priorityOrder: ["P0", "P1"],
+			},
 		);
 		expect(pickup).toMatchObject({
 			repo: "other/web",

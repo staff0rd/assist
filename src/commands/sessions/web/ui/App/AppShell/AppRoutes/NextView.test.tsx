@@ -103,6 +103,7 @@ function renderView(
 							peerPrs: empty,
 							assignedIssues: empty,
 							pickups: empty,
+							boards: [],
 							...body,
 							scope: { ...defaultScope, ...body.scope },
 						}),
@@ -387,5 +388,24 @@ describe("NextView pickups", () => {
 				"assist config set next.projects my-org/3,my-org/5 -g --repo",
 			),
 		).toBeTruthy();
+	});
+
+	it("links each readable project by its title, leaving unreadable ones as text", async () => {
+		renderView({
+			scope: { projects: ["o/3", "o/9"] },
+			boards: [
+				{
+					project: "o/3",
+					title: "Roadmap",
+					url: "https://github.com/orgs/o/projects/3",
+				},
+			],
+		});
+		const link = await screen.findByRole("link", { name: "Roadmap" });
+		expect(link.getAttribute("href")).toBe(
+			"https://github.com/orgs/o/projects/3",
+		);
+		expect(link.getAttribute("target")).toBe("_blank");
+		expect(screen.getByText(/, o\/9, picking up Ready, Todo/)).toBeTruthy();
 	});
 });

@@ -7,7 +7,12 @@ const MAX_PAGES = 10;
 export async function readProjectItems(cwd: string, project: string) {
 	const [owner, number] = project.split("/");
 	const nodes: GhProjectItemNode[] = [];
-	const board: PickupBoard = { project, title: project, priorityOrder: [] };
+	const board: PickupBoard = {
+		project,
+		title: project,
+		url: "",
+		priorityOrder: [],
+	};
 	let after: string | null = null;
 	for (let page = 0; page < MAX_PAGES; page++) {
 		const response = await readProjectPage(cwd, owner, number, after);
@@ -17,6 +22,7 @@ export async function readProjectItems(cwd: string, project: string) {
 			throw new Error(reason ?? `No project ${number} owned by ${owner}`);
 		}
 		board.title = projectV2.title ?? project;
+		board.url = projectV2.url ?? "";
 		board.priorityOrder = (projectV2.priorityField?.options ?? []).map(
 			(option) => option.name,
 		);

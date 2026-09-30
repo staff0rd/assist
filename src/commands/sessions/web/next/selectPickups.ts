@@ -1,12 +1,13 @@
 import { comparePickups } from "./comparePickups";
 import { isPickable } from "./isPickable";
-import type { GhProjectItemNode, NextPickup, PickupFilter } from "./types";
+import type {
+	GhProjectItemNode,
+	NextBoard,
+	NextPickup,
+	PickupFilter,
+} from "./types";
 
-export type PickupBoard = {
-	project: string;
-	title: string;
-	priorityOrder: string[];
-};
+export type PickupBoard = NextBoard & { priorityOrder: string[] };
 
 function priorityRank(priority: string | null, order: string[]): number {
 	const index = priority ? order.indexOf(priority) : -1;

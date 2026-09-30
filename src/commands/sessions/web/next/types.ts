@@ -24,6 +24,8 @@ export type NextPickup = PrSummary & {
 	priorityRank: number;
 };
 
+export type NextBoard = { project: string; title: string; url: string };
+
 export type NextSection<T> = { items: T[]; error: string | null };
 
 export type NextScope = {
@@ -46,6 +48,7 @@ export type NextResponse = {
 	peerPrs: NextSection<NextPr>;
 	assignedIssues: NextSection<NextIssue>;
 	pickups: NextSection<NextPickup>;
+	boards: NextBoard[];
 };
 
 type Login = { login?: string } | null;

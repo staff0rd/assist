@@ -29,7 +29,12 @@ function item(number: number, priority: string): GhProjectItemNode {
 function board(project: string, nodes: GhProjectItemNode[], order: string[]) {
 	return {
 		nodes,
-		board: { project, title: project, priorityOrder: order },
+		board: {
+			project,
+			title: `Board ${project}`,
+			url: `u/${project}`,
+			priorityOrder: order,
+		},
 	};
 }
 
@@ -44,8 +49,8 @@ beforeEach(() => readProjectItems.mockReset());
 describe("fetchPickups", () => {
 	it("reads nothing and reports nothing when no project is set", async () => {
 		expect(await fetchPickups("/repo", [], filter)).toEqual({
-			items: [],
-			error: null,
+			pickups: { items: [], error: null },
+			boards: [],
 		});
 		expect(readProjectItems).not.toHaveBeenCalled();
 	});
@@ -56,7 +61,11 @@ describe("fetchPickups", () => {
 				? board("o/3", [item(1, "Low"), item(2, "High")], ["High", "Low"])
 				: board("o/5", [item(3, "P0"), item(4, "P2")], ["P0", "P1", "P2"]),
 		);
-		const section = await fetchPickups("/repo", ["o/3", "o/5"], filter);
+		const { pickups: section } = await fetchPickups(
+			"/repo",
+			["o/3", "o/5"],
+			filter,
+		);
 		expect(section.items.map((p) => [p.number, p.project])).toEqual([
 			[2, "o/3"],
 			[3, "o/5"],
@@ -74,8 +83,15 @@ describe("fetchPickups", () => {
 				});
 			return board("o/3", [item(1, "High")], ["High"]);
 		});
-		const section = await fetchPickups("/repo", ["o/3", "o/9"], filter);
-		expect(section.items.map((p) => p.number)).toEqual([1]);
-		expect(section.error).toMatch(/^o\/9: The gh token has no project scope/);
+		const { pickups, boards } = await fetchPickups(
+			"/repo",
+			["o/3", "o/9"],
+			filter,
+		);
+		expect(pickups.items.map((p) => p.number)).toEqual([1]);
+		expect(pickups.error).toMatch(/^o\/9: The gh token has no project scope/);
+		expect(boards).toEqual([
+			{ project: "o/3", title: "Board o/3", url: "u/o/3" },
+		]);
 	});
 });

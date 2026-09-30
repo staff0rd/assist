@@ -7,6 +7,7 @@ type ProjectPageResponse = {
 		repositoryOwner?: {
 			projectV2?: {
 				title?: string;
+				url?: string;
 				priorityField?: { options?: { name: string }[] } | null;
 				items?: {
 					pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };

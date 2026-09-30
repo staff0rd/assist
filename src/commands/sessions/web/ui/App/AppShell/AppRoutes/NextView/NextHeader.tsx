@@ -3,16 +3,16 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Link as RouterLink } from "react-router";
-import type { NextScope } from "../../../../../next/types";
+import type { NextResponse } from "../../../../../next/types";
 import { NextScopeNote } from "./NextHeader/NextScopeNote";
 
 export function NextHeader({
 	loading,
-	scope,
+	data,
 	onRefresh,
 }: {
 	loading: boolean;
-	scope?: NextScope;
+	data: NextResponse | null;
 	onRefresh: () => void;
 }) {
 	return (
@@ -33,7 +33,7 @@ export function NextHeader({
 					Refresh
 				</Button>
 			</Stack>
-			{scope && <NextScopeNote scope={scope} />}
+			{data && <NextScopeNote scope={data.scope} boards={data.boards} />}
 		</Stack>
 	);
 }

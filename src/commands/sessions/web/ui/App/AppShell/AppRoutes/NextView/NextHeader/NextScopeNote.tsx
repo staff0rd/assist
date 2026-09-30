@@ -1,5 +1,6 @@
 import Stack from "@mui/material/Stack";
-import type { NextScope } from "../../../../../../next/types";
+import type { NextBoard, NextScope } from "../../../../../../next/types";
+import { NextProjectLinks } from "./NextScopeNote/NextProjectLinks";
 import { NextScopeLine } from "./NextScopeNote/NextScopeLine";
 
 function repoValue(configured: string[] | null, selfRepo: string | null) {
@@ -7,8 +8,17 @@ function repoValue(configured: string[] | null, selfRepo: string | null) {
 	return selfRepo ? `${selfRepo} (this repo, by default)` : null;
 }
 
-function projectsValue(scope: NextScope) {
+function projectsValue(scope: NextScope, boards: NextBoard[]) {
 	if (scope.projects.length === 0) return null;
+	return (
+		<>
+			<NextProjectLinks projects={scope.projects} boards={boards} />
+			{pickupFilterText(scope)}
+		</>
+	);
+}
+
+function pickupFilterText(scope: NextScope) {
 	const excluded = [
 		scope.excludeLabels.length > 0 &&
 			`labels ${scope.excludeLabels.join(", ")}`,
@@ -16,10 +26,16 @@ function projectsValue(scope: NextScope) {
 	].filter(Boolean);
 	const excluding =
 		excluded.length > 0 ? `, excluding ${excluded.join("; ")}` : "";
-	return `${scope.projects.join(", ")}, picking up ${scope.pickStatuses.join(", ")}${excluding}`;
+	return `, picking up ${scope.pickStatuses.join(", ")}${excluding}`;
 }
 
-export function NextScopeNote({ scope }: { scope: NextScope }) {
+export function NextScopeNote({
+	scope,
+	boards,
+}: {
+	scope: NextScope;
+	boards: NextBoard[];
+}) {
 	return (
 		<Stack spacing={0.25}>
 			<NextScopeLine
@@ -38,7 +54,7 @@ export function NextScopeNote({ scope }: { scope: NextScope }) {
 			/>
 			<NextScopeLine
 				label="Projects"
-				value={projectsValue(scope)}
+				value={projectsValue(scope, boards)}
 				unset="none — no project items are suggested"
 				setter="assist config set next.projects my-org/3,my-org/5 -g --repo"
 				showSetter={scope.projects.length === 0}
