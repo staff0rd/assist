@@ -1,3 +1,10 @@
+# [0.728.0](https://github.com/staff0rd/assist/compare/v0.727.1...v0.728.0) (2026-09-30)
+
+
+### Features
+
+* show Next peer config on the page ([e33646f](https://github.com/staff0rd/assist/commit/e33646f40eb2be7da4e2bff9479a55b4b9232451))
+
 ## [0.727.1](https://github.com/staff0rd/assist/compare/v0.727.0...v0.727.1) (2026-09-30)
 
 
