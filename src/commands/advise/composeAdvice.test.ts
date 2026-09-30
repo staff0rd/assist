@@ -29,6 +29,7 @@ const alwaysNames = [
 	"drafting-messages",
 	"editing-files",
 	"markdown",
+	"show-links",
 ];
 
 describe("composeAdvice", () => {
@@ -72,6 +73,7 @@ describe("composeAdvice", () => {
 			"Fetching Jira context",
 			"Editing Jira issues with Smart Links",
 			"Writing markdown",
+			"Showing long links, paths and snippets",
 		]);
 	});
 

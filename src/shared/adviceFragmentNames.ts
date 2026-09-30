@@ -11,6 +11,7 @@ export const adviceFragmentTitles = {
 	markdown: "Writing markdown",
 	refactor: "Renaming and extracting TypeScript",
 	"settings-json": "Editing claude/settings.json",
+	"show-links": "Showing long links, paths and snippets",
 	verify: "Verifying a change",
 } as const;
 
@@ -27,5 +28,6 @@ export const adviceFragmentNames = [
 	"markdown",
 	"refactor",
 	"settings-json",
+	"show-links",
 	"verify",
 ] as const;

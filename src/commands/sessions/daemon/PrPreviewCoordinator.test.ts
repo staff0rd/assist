@@ -190,4 +190,49 @@ describe("PrPreviewCoordinator", () => {
 
 		expect(sessions.get("1")?.pendingPrPreview).toBeUndefined();
 	});
+
+	it("acknowledges a show so its sender can exit", () => {
+		const client = makeClient();
+		const coord = new PrPreviewCoordinator(makeSessions("1"), vi.fn());
+
+		coord.set(client, { ...previewMsg("1", "r1"), kind: "show" });
+
+		expect(client.sent.at(-1)).toMatchObject({
+			type: "show-ack",
+			requestId: "r1",
+		});
+	});
+
+	it("replaces an earlier show with a later one", () => {
+		const sessions = makeSessions("1");
+		const coord = new PrPreviewCoordinator(sessions, vi.fn());
+		coord.set(makeClient(), { ...previewMsg("1", "r1"), kind: "show" });
+
+		coord.set(makeClient(), { ...previewMsg("1", "r2"), kind: "show" });
+
+		expect(sessions.get("1")?.pendingPrPreview?.requestId).toBe("r2");
+	});
+
+	it("refuses a show while an approval preview is pending", () => {
+		const sessions = makeSessions("1");
+		const coord = new PrPreviewCoordinator(sessions, vi.fn());
+		const waiter = makeClient();
+		coord.set(waiter, previewMsg("1", "r1"));
+		const shower = makeClient();
+
+		coord.set(shower, { ...previewMsg("1", "r2"), kind: "show" });
+
+		expect(shower.sent.at(-1)).toMatchObject({
+			type: "show-refused",
+			requestId: "r2",
+		});
+		expect(sessions.get("1")?.pendingPrPreview?.requestId).toBe("r1");
+		coord.decide({
+			type: "pr-decision",
+			sessionId: "1",
+			requestId: "r1",
+			decision: "approve",
+		});
+		expect(waiter.sent.at(-1)).toMatchObject({ decision: "approve" });
+	});
 });

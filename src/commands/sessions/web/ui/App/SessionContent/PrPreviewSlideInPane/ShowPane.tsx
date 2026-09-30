@@ -5,6 +5,8 @@ import { renderMarkdown } from "../../../../../../backlog/web/ui/components/rend
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
 import { PrPreviewHeader } from "./PrPreviewHeader";
 import { prPreviewPaneSx } from "./prPreviewPaneSx";
+import { addCopyButtons } from "./ShowPane/addCopyButtons";
+import { copyCodeOnClick } from "./ShowPane/copyCodeOnClick";
 import { showBodySx } from "./ShowPane/showBodySx";
 
 export function ShowPane({
@@ -14,13 +16,16 @@ export function ShowPane({
 	preview: PrPreview;
 	onClose: () => void;
 }) {
-	const html = useMemo(() => renderMarkdown(preview.body), [preview.body]);
+	const html = useMemo(
+		() => addCopyButtons(renderMarkdown(preview.body)),
+		[preview.body],
+	);
 
 	return (
 		<Box sx={prPreviewPaneSx}>
 			<PrPreviewHeader preview={preview} draft={false} />
 			<Divider />
-			<Box sx={showBodySx}>
+			<Box sx={showBodySx} onClick={copyCodeOnClick}>
 				<MarkdownHtml className="markdown" html={html} />
 			</Box>
 			<Divider />

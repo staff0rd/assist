@@ -31,12 +31,32 @@ describe("ShowPane", () => {
 		expect(screen.getByText("const x = 1;")).toBeTruthy();
 	});
 
-	it("offers only a Close action", () => {
+	it("offers only a Close action beside the copy buttons", () => {
 		const onClose = vi.fn();
 		render(<ShowPane preview={preview} onClose={onClose} />);
 
-		expect(screen.getAllByRole("button")).toHaveLength(1);
+		const actions = screen
+			.getAllByRole("button")
+			.filter((b) => b.getAttribute("aria-label") !== "Copy");
+		expect(actions).toHaveLength(1);
 		fireEvent.click(screen.getByRole("button", { name: "Close" }));
 		expect(onClose).toHaveBeenCalled();
+	});
+
+	it("copies inline and fenced code to the clipboard", async () => {
+		const writeText = vi.fn().mockResolvedValue(undefined);
+		Object.defineProperty(navigator, "clipboard", {
+			value: { writeText },
+			configurable: true,
+		});
+		render(<ShowPane preview={preview} onClose={vi.fn()} />);
+
+		const copies = screen.getAllByRole("button", { name: "Copy" });
+		expect(copies).toHaveLength(2);
+		fireEvent.click(copies[0]);
+		fireEvent.click(copies[1]);
+
+		expect(writeText).toHaveBeenNthCalledWith(1, "src/deep/file.ts");
+		expect(writeText).toHaveBeenNthCalledWith(2, "const x = 1;");
 	});
 });

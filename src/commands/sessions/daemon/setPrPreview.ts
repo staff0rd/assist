@@ -1,9 +1,10 @@
 import { type SessionClient, sendTo } from "./broadcast";
+import { buildPrPreview } from "./buildPrPreview";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { isPreviewKind } from "./isPreviewKind";
-import { parsePreviewMetadata } from "./parsePreviewMetadata";
 import { previewTargetLabel } from "./previewTargetLabel";
+import { refuseShowOverApproval } from "./refuseShowOverApproval";
 
 type Msg = Record<string, unknown>;
 
@@ -26,20 +27,17 @@ export function setPrPreview(
 	}
 	const prNumber = typeof d.prNumber === "number" ? d.prNumber : null;
 	const kind = isPreviewKind(d.kind) ? d.kind : "pr";
-	const itemType = d.itemType === "bug" ? "bug" : "story";
-	const draft = d.draft === true;
-	session.pendingPrPreview = {
-		requestId: d.requestId as string,
-		title: d.title as string,
-		body: d.body as string,
-		prNumber,
+	if (kind === "show" && refuseShowOverApproval(session, client, d)) return;
+	session.pendingPrPreview = buildPrPreview(d, kind, prNumber);
+	if (kind === "show")
+		sendTo(client, { type: "show-ack", requestId: d.requestId });
+	else waiters.set(id, client);
+	const target = previewTargetLabel(
 		kind,
-		itemType: kind === "backlog-item" ? itemType : undefined,
-		draft: kind === "pr" && prNumber === null ? draft : undefined,
-		metadata: parsePreviewMetadata(d.metadata),
-	};
-	if (kind !== "show") waiters.set(id, client);
-	const target = previewTargetLabel(kind, itemType, prNumber, draft);
+		d.itemType === "bug" ? "bug" : "story",
+		prNumber,
+		d.draft === true,
+	);
 	daemonLog(
 		`pr-preview set: id=${id} requestId=${d.requestId} kind=${kind} target=${target}`,
 	);
