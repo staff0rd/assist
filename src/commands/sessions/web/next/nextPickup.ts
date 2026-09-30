@@ -7,11 +7,15 @@ import { nextScope } from "./nextScope";
 import { type PickupTarget, pickUpItem } from "./pickUpItem";
 
 function parseTarget(body: unknown): PickupTarget | null {
-	const { repo, number, itemId } = (body ?? {}) as Record<string, unknown>;
+	const { project, repo, number, itemId } = (body ?? {}) as Record<
+		string,
+		unknown
+	>;
+	if (typeof project !== "string") return null;
 	if (typeof repo !== "string" || !repo.includes("/")) return null;
 	if (typeof number !== "number" || !Number.isInteger(number)) return null;
 	if (typeof itemId !== "string" || !itemId) return null;
-	return { repo, number, itemId };
+	return { project, repo, number, itemId };
 }
 
 export async function nextPickup(
@@ -28,16 +32,17 @@ export async function nextPickup(
 		return;
 	}
 	if (!target) {
-		respondJson(res, 400, { error: "Missing repo, number or itemId" });
+		respondJson(res, 400, { error: "Missing project, repo, number or itemId" });
 		return;
 	}
-	const { project } = nextScope(cwd);
-	if (!project) {
-		respondJson(res, 400, { error: "next.project is not set for this repo" });
+	if (!nextScope(cwd).projects.includes(target.project)) {
+		respondJson(res, 400, {
+			error: `${target.project} is not in next.projects for this repo`,
+		});
 		return;
 	}
 	try {
-		pickUpItem(project, target);
+		pickUpItem(target);
 		respondJson(res, 200, { ok: true });
 	} catch (error) {
 		respondJson(res, 500, { error: ghErrorText(error) });

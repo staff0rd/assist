@@ -16,7 +16,7 @@ export function nextScope(cwd: string): NextScope {
 		selfRepo: githubRepo(cwd),
 		peers: next?.peers ?? [],
 		repos: next?.repos ?? null,
-		project: next?.project ?? null,
+		projects: next?.projects ?? [],
 		pickStatuses: next?.pickStatuses ?? DEFAULT_PICK_STATUSES,
 	};
 }

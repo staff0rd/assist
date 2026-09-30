@@ -16,9 +16,12 @@ export type NextIssue = PrSummary & { repo: string; labels: string[] };
 export type NextPickup = PrSummary & {
 	repo: string;
 	labels: string[];
+	project: string;
+	projectTitle: string;
 	itemId: string;
 	status: string;
 	priority: string | null;
+	priorityRank: number;
 };
 
 export type NextSection<T> = { items: T[]; error: string | null };
@@ -27,7 +30,7 @@ export type NextScope = {
 	selfRepo: string | null;
 	peers: string[];
 	repos: string[] | null;
-	project: string | null;
+	projects: string[];
 	pickStatuses: string[];
 };
 

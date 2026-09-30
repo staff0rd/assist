@@ -2,6 +2,7 @@ export const pickupsQuery = `query($owner: String!, $number: Int!, $after: Strin
   repositoryOwner(login: $owner) {
     ... on ProjectV2Owner {
       projectV2(number: $number) {
+        title
         priorityField: field(name: "Priority") {
           ... on ProjectV2SingleSelectField { options { name } }
         }

@@ -12,9 +12,9 @@ export const nextConfigHelp: ConfigHelpEntry[] = [
 		note: "GitHub repos the web /next view reads peer PRs and issues assigned to you from: owner/name for one repo, or a bare owner (org or user) for all its unarchived repos (default: the selected repo)",
 	},
 	{
-		key: "next.project",
-		setter: "assist config set next.project my-org/3 -g --repo",
-		note: "GitHub Project (owner/number, from its URL) the web /next view suggests unassigned issues to pick up from; needs the gh project scope",
+		key: "next.projects",
+		setter: "assist config set next.projects my-org/3,my-org/5 -g --repo",
+		note: "GitHub Projects (owner/number, from each URL) the web /next view suggests unassigned issues to pick up from; needs the gh project scope",
 	},
 	{
 		key: "next.pickStatuses",

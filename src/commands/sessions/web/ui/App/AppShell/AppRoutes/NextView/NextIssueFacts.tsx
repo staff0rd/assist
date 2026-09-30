@@ -12,7 +12,11 @@ export function NextIssueFacts({ issue }: { issue: NextIssue | NextPickup }) {
 			useFlexGap
 			sx={{ flexWrap: "wrap", color: "text.secondary" }}
 		>
-			{pickup && <Typography variant="body2">{pickup.status}</Typography>}
+			{pickup && (
+				<Typography variant="body2">
+					{pickup.projectTitle} · {pickup.status}
+				</Typography>
+			)}
 			{pickup?.priority && (
 				<Typography variant="body2">{pickup.priority}</Typography>
 			)}

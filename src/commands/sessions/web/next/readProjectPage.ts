@@ -6,6 +6,7 @@ type ProjectPageResponse = {
 	data?: {
 		repositoryOwner?: {
 			projectV2?: {
+				title?: string;
 				priorityField?: { options?: { name: string }[] } | null;
 				items?: {
 					pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };

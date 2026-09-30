@@ -56,9 +56,12 @@ function pickup(number: number, repo = "o/other"): NextPickup {
 	return {
 		...issue(number, repo),
 		title: `Pickup ${number}`,
+		project: "o/3",
+		projectTitle: "Roadmap",
 		itemId: `PVTI_${number}`,
 		status: "Ready",
 		priority: "P1",
+		priorityRank: 1,
 	};
 }
 
@@ -68,7 +71,7 @@ const defaultScope: NextScope = {
 	selfRepo: "o/r",
 	peers: [],
 	repos: null,
-	project: null,
+	projects: [],
 	pickStatuses: ["Ready", "Todo"],
 };
 
@@ -278,7 +281,7 @@ describe("NextView scope note", () => {
 			scope: {
 				peers: ["alice", "bob"],
 				repos: ["o/a", "o/b"],
-				project: "o/3",
+				projects: ["o/3"],
 			},
 		});
 		expect(await screen.findByText(/Peers: alice, bob/)).toBeTruthy();
@@ -294,11 +297,12 @@ describe("NextView pickups", () => {
 		expect(within(hero).getByText("Pickup 3")).toBeTruthy();
 		expect(
 			within(hero).getByText(
-				/P1, Ready — the highest priority of 2 unassigned project items/,
+				/P1 on Roadmap, Ready — the highest priority of 2 unassigned project items/,
 			),
 		).toBeTruthy();
 		expect(screen.getByText("Project items to pick up")).toBeTruthy();
 		expect(screen.getByText("Pickup 4")).toBeTruthy();
+		expect(screen.getAllByText("Roadmap · Ready").length).toBe(2);
 	});
 
 	it("ranks assigned issues above pickups", async () => {
@@ -326,6 +330,7 @@ describe("NextView pickups", () => {
 			.mock.calls.find(([url]) => String(url).startsWith("/api/next/pickup"));
 		expect(post?.[0]).toBe("/api/next/pickup?cwd=%2Frepo");
 		expect(JSON.parse(String(post?.[1]?.body))).toEqual({
+			project: "o/3",
 			repo: "o/other",
 			number: 3,
 			itemId: "PVTI_3",
@@ -356,15 +361,15 @@ describe("NextView pickups", () => {
 	});
 
 	it("states the project scope, or the command to set it", async () => {
-		renderView({ scope: { project: "o/3" } });
+		renderView({ scope: { projects: ["o/3", "o/5"] } });
 		expect(
-			await screen.findByText(/Project: o\/3, picking up Ready, Todo/),
+			await screen.findByText(/Projects: o\/3, o\/5, picking up Ready, Todo/),
 		).toBeTruthy();
 		cleanup();
 		renderView({});
 		expect(
 			await screen.findByText(
-				"assist config set next.project my-org/3 -g --repo",
+				"assist config set next.projects my-org/3,my-org/5 -g --repo",
 			),
 		).toBeTruthy();
 	});

@@ -318,9 +318,15 @@ const assistConfigShape = {
 		.strictObject({
 			peers: z.array(z.string()).optional(),
 			repos: z.array(z.string()).optional(),
-			project: z
-				.string()
-				.regex(/^[^/\s]+\/\d+$/, "Use <owner>/<project number>, e.g. my-org/3")
+			projects: z
+				.array(
+					z
+						.string()
+						.regex(
+							/^[^/\s]+\/\d+$/,
+							"Use <owner>/<project number>, e.g. my-org/3",
+						),
+				)
 				.optional(),
 			pickStatuses: z.array(z.string()).optional(),
 		})

@@ -37,8 +37,13 @@ function item(
 const numbers = (
 	nodes: GhProjectItemNode[],
 	statuses = ["Ready", "Todo"],
-	priorities = ["P0", "P1", "P2"],
-) => selectPickups(nodes, statuses, priorities).map((p) => p.number);
+	priorityOrder = ["P0", "P1", "P2"],
+) =>
+	selectPickups(nodes, statuses, {
+		project: "o/3",
+		title: "Roadmap",
+		priorityOrder,
+	}).map((p) => p.number);
 
 describe("selectPickups", () => {
 	it("keeps unassigned open issues in a pick status, case-insensitively", () => {
@@ -75,14 +80,17 @@ describe("selectPickups", () => {
 		).toEqual([3, 2, 4, 1, 5]);
 	});
 
-	it("takes each item's repo from its issue", () => {
+	it("takes each item's repo from its issue and its project from the board", () => {
 		const [pickup] = selectPickups(
 			[item(1, { repo: "other/web", priority: "P1" })],
 			["Ready"],
-			["P1"],
+			{ project: "o/3", title: "Roadmap", priorityOrder: ["P0", "P1"] },
 		);
 		expect(pickup).toMatchObject({
 			repo: "other/web",
+			project: "o/3",
+			projectTitle: "Roadmap",
+			priorityRank: 1,
 			itemId: "PVTI_1",
 			status: "Ready",
 			priority: "P1",

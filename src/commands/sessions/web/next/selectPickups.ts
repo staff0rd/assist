@@ -1,10 +1,26 @@
+import { comparePickups } from "./comparePickups";
 import type { GhProjectItemNode, NextPickup } from "./types";
 
-function toPickup(node: GhProjectItemNode): NextPickup | null {
+export type PickupBoard = {
+	project: string;
+	title: string;
+	priorityOrder: string[];
+};
+
+function priorityRank(priority: string | null, order: string[]): number {
+	const index = priority ? order.indexOf(priority) : -1;
+	return index === -1 ? order.length : index;
+}
+
+function toPickup(
+	node: GhProjectItemNode,
+	board: PickupBoard,
+): NextPickup | null {
 	const issue = node.content;
 	const repo = issue?.repository?.nameWithOwner;
 	const status = node.status?.name;
 	if (!issue?.number || !issue.url || !repo || !status) return null;
+	const priority = node.priority?.name ?? null;
 	return {
 		repo,
 		number: issue.number,
@@ -15,31 +31,28 @@ function toPickup(node: GhProjectItemNode): NextPickup | null {
 		labels: (issue.labels?.nodes ?? []).flatMap((label) =>
 			label?.name ? [label.name] : [],
 		),
+		project: board.project,
+		projectTitle: board.title,
 		itemId: node.id,
 		status,
-		priority: node.priority?.name ?? null,
+		priority,
+		priorityRank: priorityRank(priority, board.priorityOrder),
 	};
 }
 
 export function selectPickups(
 	nodes: GhProjectItemNode[],
 	pickStatuses: string[],
-	priorityOrder: string[],
+	board: PickupBoard,
 ): NextPickup[] {
 	const statuses = new Set(pickStatuses.map((status) => status.toLowerCase()));
-	const rank = (pickup: NextPickup) => {
-		const index = pickup.priority ? priorityOrder.indexOf(pickup.priority) : -1;
-		return index === -1 ? priorityOrder.length : index;
-	};
 	return nodes
 		.filter(
 			(node) =>
 				node.content?.state === "OPEN" &&
 				node.content.assignees?.totalCount === 0,
 		)
-		.flatMap((node) => toPickup(node) ?? [])
+		.flatMap((node) => toPickup(node, board) ?? [])
 		.filter((pickup) => statuses.has(pickup.status.toLowerCase()))
-		.sort(
-			(a, b) => rank(a) - rank(b) || a.createdAt.localeCompare(b.createdAt),
-		);
+		.sort(comparePickups);
 }

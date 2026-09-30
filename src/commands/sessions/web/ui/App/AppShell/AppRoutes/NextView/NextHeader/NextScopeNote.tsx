@@ -25,14 +25,15 @@ export function NextScopeNote({ scope }: { scope: NextScope }) {
 				showSetter={!scope.repos}
 			/>
 			<NextScopeLine
-				label="Project"
+				label="Projects"
 				value={
-					scope.project &&
-					`${scope.project}, picking up ${scope.pickStatuses.join(", ")}`
+					scope.projects.length > 0
+						? `${scope.projects.join(", ")}, picking up ${scope.pickStatuses.join(", ")}`
+						: null
 				}
 				unset="none — no project items are suggested"
-				setter="assist config set next.project my-org/3 -g --repo"
-				showSetter={!scope.project}
+				setter="assist config set next.projects my-org/3,my-org/5 -g --repo"
+				showSetter={scope.projects.length === 0}
 			/>
 		</Stack>
 	);

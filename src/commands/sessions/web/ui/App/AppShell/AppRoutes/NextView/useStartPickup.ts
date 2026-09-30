@@ -22,10 +22,10 @@ export function useStartPickup(
 	const start = (pickup: NextPickup, cwd: string) => {
 		setPicking(pickup);
 		setFailure(null);
-		const { repo, number, itemId } = pickup;
+		const { project, repo, number, itemId } = pickup;
 		postJson(
 			withNode(`/api/next/pickup?cwd=${encodeURIComponent(selectedCwd)}`, node),
-			{ repo, number, itemId },
+			{ project, repo, number, itemId },
 			"Failed to pick up the item",
 		)
 			.then(() => {
