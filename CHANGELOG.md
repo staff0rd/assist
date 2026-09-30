@@ -1,3 +1,10 @@
+# [0.740.0](https://github.com/staff0rd/assist/compare/v0.739.0...v0.740.0) (2026-09-30)
+
+
+### Features
+
+* review-ci runs the review pipeline ([5405858](https://github.com/staff0rd/assist/commit/5405858a25dfe60f742ce93d96b98515697f6fa3))
+
 # [0.739.0](https://github.com/staff0rd/assist/compare/v0.738.0...v0.739.0) (2026-09-30)
 
 
