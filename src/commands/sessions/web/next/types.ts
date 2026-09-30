@@ -18,8 +18,7 @@ export type NextSection<T> = { items: T[]; error: string | null };
 export type NextScope = {
 	selfRepo: string | null;
 	peers: string[];
-	prRepos: string[] | null;
-	issueRepos: string[] | null;
+	repos: string[] | null;
 };
 
 export type NextResponse = {

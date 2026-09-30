@@ -508,14 +508,13 @@ releases:
 
 ## Next
 
-The **Next** tab (`/next`) answers "what should I do next?" from the selected repo, across the GitHub repos that repo is configured to span. It lists open, non-draft PRs in any `next.prRepos` repo authored by a login in `next.peers` or requesting your review, hiding peer PRs you approved at their current head commit, ordered by your latest review request (or creation, for an unrequested peer PR), oldest first. Below them come open issues assigned to you in any `next.issueRepos` repo, oldest first. Both repo lists are `owner/name` and default to the selected repo; set them per repo with `-g --repo` so each repo's Next view spans its own set. The header shows the current peers and repos, with the command for any that is unset.
+The **Next** tab (`/next`) answers "what should I do next?" from the selected repo, across the GitHub repos that repo is configured to span. `next.repos` lists the `owner/name` repos it reads, defaulting to the selected repo; set it per repo with `-g --repo` so each repo's Next view spans its own set. Across those repos it lists open, non-draft PRs authored by a login in `next.peers` or requesting your review, hiding peer PRs you approved at their current head commit, ordered by your latest review request (or creation, for an unrequested peer PR), oldest first. Below them come open issues assigned to you, oldest first. The header shows the current peers and repos, with the command for any that is unset.
 
 The top item (peer PRs before issues) is shown as a hero with a line explaining why it was chosen, and every item shows its `owner/name#number`. Every item has **Start session** and **GitHub**. Start session runs in the local clone of the item's repo (matched by origin among the repos the web app knows), and is disabled when there is none: on a PR it opens the same review type dialog as the toolbar `prs` dropdown; on an issue it opens the new-session dialog prefilled with the issue reference. Opening `/?new=<text>&newCwd=<path>` prefills the new-session prompt and repo the same way. A source that fails to load, or one of its repos that cannot be read, shows its error in its own section without hiding the rest. Data comes from `GET /api/next?cwd=<repo>`, with gh results cached for 30s.
 
 ```bash
 assist config set next.peers alice,bob -g --repo
-assist config set next.prRepos owner/api,owner/web -g --repo
-assist config set next.issueRepos owner/api,owner/web -g --repo
+assist config set next.repos owner/api,owner/web -g --repo
 ```
 
 ## Parallel work

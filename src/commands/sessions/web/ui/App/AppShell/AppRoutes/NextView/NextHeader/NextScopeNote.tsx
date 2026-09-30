@@ -18,18 +18,11 @@ export function NextScopeNote({ scope }: { scope: NextScope }) {
 				showSetter={scope.peers.length === 0}
 			/>
 			<NextScopeLine
-				label="PR repos"
-				value={repoValue(scope.prRepos, scope.selfRepo)}
+				label="Repos"
+				value={repoValue(scope.repos, scope.selfRepo)}
 				unset="none"
-				setter="assist config set next.prRepos owner/api,owner/web -g --repo"
-				showSetter={!scope.prRepos}
-			/>
-			<NextScopeLine
-				label="Issue repos"
-				value={repoValue(scope.issueRepos, scope.selfRepo)}
-				unset="none"
-				setter="assist config set next.issueRepos owner/api,owner/web -g --repo"
-				showSetter={!scope.issueRepos}
+				setter="assist config set next.repos owner/api,owner/web -g --repo"
+				showSetter={!scope.repos}
 			/>
 		</Stack>
 	);

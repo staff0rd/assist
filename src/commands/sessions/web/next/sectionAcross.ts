@@ -10,12 +10,12 @@ export async function sectionAcross<T>(
 	repos: string[],
 	load: (repo: string) => Promise<T[]>,
 	compare: (a: T, b: T) => number,
-	unsetKey: string,
 ): Promise<NextSection<T>> {
 	if (repos.length === 0)
 		return {
 			items: [],
-			error: `No GitHub repo to read: set ${unsetKey} or select a repo with a GitHub origin.`,
+			error:
+				"No GitHub repo to read: set next.repos or select a repo with a GitHub origin.",
 		};
 	const results = await Promise.allSettled(repos.map((repo) => load(repo)));
 	const items: T[] = [];

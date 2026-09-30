@@ -15,18 +15,17 @@ export async function nextItems(
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
 	const scope = nextScope(cwd);
+	const repos = scopeRepos(scope.repos, scope.selfRepo);
 	const [peerPrs, assignedIssues] = await Promise.all([
 		sectionAcross(
-			scopeRepos(scope.prRepos, scope.selfRepo),
+			repos,
 			(repo) => fetchPeerPrs(cwd, repo, scope.peers),
 			(a, b) => a.requestedAt.localeCompare(b.requestedAt),
-			"next.prRepos",
 		),
 		sectionAcross(
-			scopeRepos(scope.issueRepos, scope.selfRepo),
+			repos,
 			(repo) => fetchAssignedIssues(cwd, repo),
 			(a, b) => a.createdAt.localeCompare(b.createdAt),
-			"next.issueRepos",
 		),
 	]);
 	const body: NextResponse = { scope, peerPrs, assignedIssues };

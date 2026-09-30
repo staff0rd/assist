@@ -9,7 +9,6 @@ describe("sectionAcross", () => {
 			["o/a", "o/b"],
 			async (repo) => (repo === "o/a" ? [3, 1] : [2]),
 			byValue,
-			"next.prRepos",
 		);
 		expect(section).toEqual({ items: [1, 2, 3], error: null });
 	});
@@ -23,19 +22,13 @@ describe("sectionAcross", () => {
 				return [1];
 			},
 			byValue,
-			"next.prRepos",
 		);
 		expect(section).toEqual({ items: [1], error: "o/b: not found" });
 	});
 
 	it("names the key to set when there is no repo to read", async () => {
-		const section = await sectionAcross(
-			[],
-			async () => [1],
-			byValue,
-			"next.issueRepos",
-		);
+		const section = await sectionAcross([], async () => [1], byValue);
 		expect(section.items).toEqual([]);
-		expect(section.error).toMatch(/set next\.issueRepos/);
+		expect(section.error).toMatch(/set next\.repos/);
 	});
 });

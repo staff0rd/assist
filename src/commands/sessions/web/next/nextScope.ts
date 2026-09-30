@@ -14,7 +14,6 @@ export function nextScope(cwd: string): NextScope {
 	return {
 		selfRepo: githubRepo(cwd),
 		peers: next?.peers ?? [],
-		prRepos: next?.prRepos ?? null,
-		issueRepos: next?.issueRepos ?? null,
+		repos: next?.repos ?? null,
 	};
 }

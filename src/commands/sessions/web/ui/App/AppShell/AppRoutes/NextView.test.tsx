@@ -56,8 +56,7 @@ const empty = { items: [], error: null };
 const defaultScope: NextScope = {
 	selfRepo: "o/r",
 	peers: [],
-	prRepos: null,
-	issueRepos: null,
+	repos: null,
 };
 
 type Body = Partial<Omit<NextResponse, "scope">> & {
@@ -238,14 +237,11 @@ describe("NextView scope note", () => {
 		renderView({});
 		expect(await screen.findByText(/Peers: none/)).toBeTruthy();
 		expect(
-			screen.getByText(/PR repos: o\/r \(this repo, by default\)/),
-		).toBeTruthy();
-		expect(
-			screen.getByText(/Issue repos: o\/r \(this repo, by default\)/),
+			screen.getByText(/Repos: o\/r \(this repo, by default\)/),
 		).toBeTruthy();
 		expect(
 			screen.getByText(
-				"assist config set next.prRepos owner/api,owner/web -g --repo",
+				"assist config set next.repos owner/api,owner/web -g --repo",
 			),
 		).toBeTruthy();
 		expect(
@@ -257,13 +253,11 @@ describe("NextView scope note", () => {
 		renderView({
 			scope: {
 				peers: ["alice", "bob"],
-				prRepos: ["o/a", "o/b"],
-				issueRepos: ["o/c"],
+				repos: ["o/a", "o/b"],
 			},
 		});
 		expect(await screen.findByText(/Peers: alice, bob/)).toBeTruthy();
-		expect(screen.getByText(/PR repos: o\/a, o\/b/)).toBeTruthy();
-		expect(screen.getByText(/Issue repos: o\/c/)).toBeTruthy();
+		expect(screen.getByText(/Repos: o\/a, o\/b/)).toBeTruthy();
 		expect(screen.queryByText(/assist config set/)).toBeNull();
 	});
 });
