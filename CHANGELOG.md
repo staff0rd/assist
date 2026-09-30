@@ -1,3 +1,10 @@
+# [0.736.0](https://github.com/staff0rd/assist/compare/v0.735.0...v0.736.0) (2026-09-30)
+
+
+### Features
+
+* link Next projects in header ([a38a4da](https://github.com/staff0rd/assist/commit/a38a4da5f027e11e58b63440e6e96ccf94ad5cbb))
+
 # [0.735.0](https://github.com/staff0rd/assist/compare/v0.734.0...v0.735.0) (2026-09-30)
 
 
