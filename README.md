@@ -508,7 +508,7 @@ releases:
 
 ## Next
 
-The **Next** tab (`/next`) answers "what should I do next?" for the selected repo. It lists open, non-draft PRs authored by a login in `next.peers` or requesting your review, hiding peer PRs you approved at their current head commit, ordered by your latest review request (or creation, for an unrequested peer PR), oldest first. The top item is shown as a hero with a line explaining why it was chosen. Every item has **Start session**, which opens the same review type dialog as the toolbar `prs` dropdown, and **GitHub**. A source that fails to load shows its error in its own section. Data comes from `GET /api/next?cwd=<repo>`, with gh results cached for 30s.
+The **Next** tab (`/next`) answers "what should I do next?" for the selected repo. It lists open, non-draft PRs authored by a login in `next.peers` or requesting your review, hiding peer PRs you approved at their current head commit, ordered by your latest review request (or creation, for an unrequested peer PR), oldest first. Below them come open issues in the repo assigned to you, oldest first. The top item (peer PRs before issues) is shown as a hero with a line explaining why it was chosen. Every item has **Start session** and **GitHub**: on a PR, Start session opens the same review type dialog as the toolbar `prs` dropdown; on an issue, it opens the new-session dialog prefilled with the issue reference. Opening `/?new=<text>` prefills the new-session prompt the same way. A source that fails to load shows its error in its own section. Data comes from `GET /api/next?cwd=<repo>`, with gh results cached for 30s.
 
 ```bash
 assist config set next.peers alice,bob -g --repo

@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import { respondJson } from "../../../../shared/web";
 import { getCwdParam } from "../getCwdParam";
+import { fetchAssignedIssues } from "./fetchAssignedIssues";
 import { fetchPeerPrs } from "./fetchPeerPrs";
 import type { NextResponse, NextSection } from "./types";
 
@@ -26,8 +27,10 @@ export async function nextItems(
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
 	const peers = loadConfigFrom(cwd).next?.peers ?? [];
-	const body: NextResponse = {
-		peerPrs: await section(() => fetchPeerPrs(cwd, peers)),
-	};
+	const [peerPrs, assignedIssues] = await Promise.all([
+		section(() => fetchPeerPrs(cwd, peers)),
+		section(() => fetchAssignedIssues(cwd)),
+	]);
+	const body: NextResponse = { peerPrs, assignedIssues };
 	respondJson(res, 200, body);
 }

@@ -1,12 +1,12 @@
 import Stack from "@mui/material/Stack";
 import { useState } from "react";
 import type { NextPr } from "../../../../next/types";
-import { AllClear } from "./NextView/AllClear";
+import { NextGroups } from "./NextView/NextGroups";
 import { NextHeader } from "./NextView/NextHeader";
-import { NextHero } from "./NextView/NextHero";
-import { NextPrGroup } from "./NextView/NextPrGroup";
+import { NextRecommended } from "./NextView/NextRecommended";
 import { NextReviewDialog } from "./NextView/NextReviewDialog";
 import { useNextItems } from "./NextView/useNextItems";
+import { useStartIssue } from "./NextView/useStartIssue";
 import { PageShell } from "../../PageShell";
 import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
 
@@ -14,10 +14,7 @@ export function NextView() {
 	const { selectedCwd } = useRepoSelectionContext();
 	const { data, loading, error, refresh } = useNextItems(selectedCwd);
 	const [reviewing, setReviewing] = useState<NextPr | null>(null);
-
-	const peerPrs = data?.peerPrs;
-	const top = peerPrs?.items[0];
-	const allClear = !!peerPrs && !top && !peerPrs.error;
+	const startIssue = useStartIssue();
 
 	return (
 		<PageShell
@@ -26,24 +23,18 @@ export function NextView() {
 			isEmpty={!data}
 			emptyMessage={error ?? undefined}
 		>
-			{peerPrs && (
+			{data && (
 				<Stack spacing={3}>
-					{top && (
-						<NextHero
-							pr={top}
-							waiting={peerPrs.items.length}
-							onStart={() => setReviewing(top)}
-						/>
-					)}
-					{allClear ? (
-						<AllClear />
-					) : (
-						<NextPrGroup
-							section={peerPrs}
-							hidden={top}
-							onStart={setReviewing}
-						/>
-					)}
+					<NextRecommended
+						data={data}
+						onStartPr={setReviewing}
+						onStartIssue={startIssue}
+					/>
+					<NextGroups
+						data={data}
+						onStartPr={setReviewing}
+						onStartIssue={startIssue}
+					/>
 				</Stack>
 			)}
 			{reviewing && (

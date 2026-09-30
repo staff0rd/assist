@@ -8,7 +8,7 @@ export function AllClear() {
 				Nothing needs you here
 			</Typography>
 			<Typography sx={{ color: "text.secondary" }}>
-				No peer PRs await your review.
+				No peer PRs await your review and no issues are assigned to you.
 			</Typography>
 		</Paper>
 	);

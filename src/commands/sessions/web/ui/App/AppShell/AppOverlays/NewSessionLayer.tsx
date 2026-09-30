@@ -4,6 +4,7 @@ import { NewSessionDialog } from "./NewSessionLayer/NewSessionDialog";
 import type { NewSessionLaunchers } from "./NewSessionLayer/launchNewSession";
 import { useNewSessionDraft } from "./NewSessionLayer/useNewSessionDraft";
 import { useNewSessionHotkey } from "./NewSessionLayer/useNewSessionHotkey";
+import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
 
 export function NewSessionLayer({
 	launchers,
@@ -12,12 +13,23 @@ export function NewSessionLayer({
 }) {
 	const [open, setOpen] = useState(false);
 	const draft = useNewSessionDraft();
+	const { selectedCwd } = useRepoSelectionContext();
 	const [searchParams, setSearchParams] = useSearchParams();
-	const requested = searchParams.has("new");
+	const prefill = searchParams.get("new");
+	const { setPrompt, setCwd, setFocus } = draft ?? {};
 	useNewSessionHotkey(useCallback(() => setOpen(true), []));
 
 	useEffect(() => {
-		if (!requested) return;
+		if (prefill === null || !setPrompt || !setCwd || !setFocus) return;
+		if (prefill) {
+			setPrompt(prefill);
+			setCwd(selectedCwd);
+			setFocus({
+				field: "prompt",
+				selectionStart: prefill.length,
+				selectionEnd: prefill.length,
+			});
+		}
 		setOpen(true);
 		setSearchParams(
 			(params) => {
@@ -26,7 +38,7 @@ export function NewSessionLayer({
 			},
 			{ replace: true },
 		);
-	}, [requested, setSearchParams]);
+	}, [prefill, setPrompt, setCwd, setFocus, selectedCwd, setSearchParams]);
 
 	if (!open || !draft) return null;
 	return (

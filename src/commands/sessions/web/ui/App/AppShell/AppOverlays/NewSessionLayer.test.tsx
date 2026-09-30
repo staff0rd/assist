@@ -106,6 +106,15 @@ describe("NewSessionLayer ?new", () => {
 		expect(router.state.historyAction).toBe("REPLACE");
 	});
 
+	it("prefills the prompt from the new param with the caret at the end", async () => {
+		renderAt(`/next?new=${encodeURIComponent("Issue #4: fix it")}`);
+
+		await screen.findByRole("textbox", { name: "Prompt" });
+		expect(promptInput().value).toBe("Issue #4: fix it");
+		expect(promptInput().selectionStart).toBe(16);
+		expect(checkedMode()).toBe("bug");
+	});
+
 	it("stays closed without the new param", async () => {
 		renderAt("/sessions");
 

@@ -8,9 +8,14 @@ export type NextPr = PrSummary & {
 	checks: NextChecks | null;
 };
 
+export type NextIssue = PrSummary & { labels: string[] };
+
 export type NextSection<T> = { items: T[]; error: string | null };
 
-export type NextResponse = { peerPrs: NextSection<NextPr> };
+export type NextResponse = {
+	peerPrs: NextSection<NextPr>;
+	assignedIssues: NextSection<NextIssue>;
+};
 
 type Login = { login?: string } | null;
 

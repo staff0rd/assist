@@ -2,18 +2,25 @@ import Chip from "@mui/material/Chip";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import type { NextPr } from "../../../../../next/types";
-import { nextPrWhy } from "./NextHero/nextPrWhy";
-import { NextItemActions } from "./NextItemActions";
-import { NextPrFacts } from "./NextPrFacts";
+import type { ReactNode } from "react";
+import type { NextChip } from "../nextChips";
+import { NextItemActions } from "../NextItemActions";
 
 export function NextHero({
-	pr,
-	waiting,
+	chip,
+	number,
+	title,
+	facts,
+	why,
+	url,
 	onStart,
 }: {
-	pr: NextPr;
-	waiting: number;
+	chip: NextChip;
+	number: number;
+	title: string;
+	facts: ReactNode;
+	why: string;
+	url: string;
 	onStart: () => void;
 }) {
 	return (
@@ -27,26 +34,26 @@ export function NextHero({
 				</Typography>
 				<Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
 					<Chip
-						label="Review"
+						label={chip.label}
 						size="small"
-						color="primary"
+						color={chip.color}
 						variant="outlined"
 					/>
 					<Typography
 						variant="body2"
 						sx={{ fontFamily: "monospace", color: "text.secondary" }}
 					>
-						#{pr.number}
+						#{number}
 					</Typography>
 				</Stack>
 				<Typography variant="h6" component="h2">
-					{pr.title}
+					{title}
 				</Typography>
-				<NextPrFacts pr={pr} />
+				{facts}
 				<Typography sx={{ color: "text.secondary", maxWidth: "65ch" }}>
-					{nextPrWhy(pr, waiting)}
+					{why}
 				</Typography>
-				<NextItemActions url={pr.url} onStart={onStart} size="medium" />
+				<NextItemActions url={url} onStart={onStart} size="medium" />
 			</Stack>
 		</Paper>
 	);
