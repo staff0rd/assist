@@ -61,7 +61,7 @@ function pickup(number: number, repo = "o/other"): NextPickup {
 		itemId: `PVTI_${number}`,
 		status: "Ready",
 		priority: "P1",
-		priorityRank: 1,
+		position: number,
 	};
 }
 
@@ -300,7 +300,7 @@ describe("NextView pickups", () => {
 		expect(within(hero).getByText("Pickup 3")).toBeTruthy();
 		expect(
 			within(hero).getByText(
-				/P1 on Roadmap, Ready — the highest priority of 2 unassigned project items/,
+				/Ready on Roadmap — the top of 2 unassigned project items/,
 			),
 		).toBeTruthy();
 		expect(screen.getByText("Project items to pick up")).toBeTruthy();

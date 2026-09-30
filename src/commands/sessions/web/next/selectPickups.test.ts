@@ -45,21 +45,15 @@ const defaultFilter: PickupFilter = {
 	excludeTypes: [],
 };
 
+const board = { project: "o/3", title: "Roadmap", url: "" };
+
 const numbers = (
 	nodes: GhProjectItemNode[],
 	filter: Partial<PickupFilter> = {},
-	priorityOrder = ["P0", "P1", "P2"],
 ) =>
-	selectPickups(
-		nodes,
-		{ ...defaultFilter, ...filter },
-		{
-			project: "o/3",
-			title: "Roadmap",
-			url: "",
-			priorityOrder,
-		},
-	).map((p) => p.number);
+	selectPickups(nodes, { ...defaultFilter, ...filter }, board).map(
+		(p) => p.number,
+	);
 
 describe("selectPickups", () => {
 	it("keeps unassigned open issues in a pick status, case-insensitively", () => {
@@ -102,34 +96,35 @@ describe("selectPickups", () => {
 		).toEqual([]);
 	});
 
-	it("orders by priority option order, unprioritised last, then oldest", () => {
-		expect(
-			numbers([
-				item(1),
-				item(2, { priority: "P2" }),
+	it("keeps the board's order, ignoring priority and age", () => {
+		const picked = selectPickups(
+			[
+				item(5, { priority: "P2" }),
+				item(1, { assignees: 1 }),
 				item(3, { priority: "P0" }),
-				item(4, { priority: "P2" }),
-				item(5, { priority: "Unknown" }),
-			]),
-		).toEqual([3, 2, 4, 1, 5]);
+				item(2),
+			],
+			defaultFilter,
+			board,
+		);
+		expect(picked.map((p) => [p.number, p.position])).toEqual([
+			[5, 0],
+			[3, 2],
+			[2, 3],
+		]);
 	});
 
 	it("takes each item's repo from its issue and its project from the board", () => {
 		const [pickup] = selectPickups(
 			[item(1, { repo: "other/web", priority: "P1" })],
 			defaultFilter,
-			{
-				project: "o/3",
-				title: "Roadmap",
-				url: "",
-				priorityOrder: ["P0", "P1"],
-			},
+			board,
 		);
 		expect(pickup).toMatchObject({
 			repo: "other/web",
 			project: "o/3",
 			projectTitle: "Roadmap",
-			priorityRank: 1,
+			position: 0,
 			itemId: "PVTI_1",
 			status: "Ready",
 			priority: "P1",

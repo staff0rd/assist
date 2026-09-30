@@ -5,15 +5,12 @@ export function nextPickupWhy(
 	pickable: number,
 	othersClear: boolean,
 ): string {
-	const priority = pickup.priority
-		? `${pickup.priority} on ${pickup.projectTitle}, `
-		: `On ${pickup.projectTitle}, `;
 	const rank =
 		pickable > 1
-			? `the highest priority of ${pickable} unassigned project items`
+			? `the top of ${pickable} unassigned project items`
 			: "the only unassigned project item";
 	const clear = othersClear
 		? ", and nothing is assigned to you or awaiting your review"
 		: "";
-	return `${priority}${pickup.status} — ${rank} you could pick up${clear}.`;
+	return `${pickup.status} on ${pickup.projectTitle} — ${rank} you could pick up${clear}.`;
 }

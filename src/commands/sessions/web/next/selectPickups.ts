@@ -1,4 +1,3 @@
-import { comparePickups } from "./comparePickups";
 import { isPickable } from "./isPickable";
 import type {
 	GhProjectItemNode,
@@ -7,22 +6,15 @@ import type {
 	PickupFilter,
 } from "./types";
 
-export type PickupBoard = NextBoard & { priorityOrder: string[] };
-
-function priorityRank(priority: string | null, order: string[]): number {
-	const index = priority ? order.indexOf(priority) : -1;
-	return index === -1 ? order.length : index;
-}
-
 function toPickup(
 	node: GhProjectItemNode,
-	board: PickupBoard,
+	board: NextBoard,
+	position: number,
 ): NextPickup | null {
 	const issue = node.content;
 	const repo = issue?.repository?.nameWithOwner;
 	const status = node.status?.name;
 	if (!issue?.number || !issue.url || !repo || !status) return null;
-	const priority = node.priority?.name ?? null;
 	return {
 		repo,
 		number: issue.number,
@@ -37,18 +29,18 @@ function toPickup(
 		projectTitle: board.title,
 		itemId: node.id,
 		status,
-		priority,
-		priorityRank: priorityRank(priority, board.priorityOrder),
+		priority: node.priority?.name ?? null,
+		position,
 	};
 }
 
 export function selectPickups(
 	nodes: GhProjectItemNode[],
 	filter: PickupFilter,
-	board: PickupBoard,
+	board: NextBoard,
 ): NextPickup[] {
-	return nodes
-		.filter(isPickable(filter))
-		.flatMap((node) => toPickup(node, board) ?? [])
-		.sort(comparePickups);
+	const pickable = isPickable(filter);
+	return nodes.flatMap((node, position) =>
+		pickable(node) ? (toPickup(node, board, position) ?? []) : [],
+	);
 }

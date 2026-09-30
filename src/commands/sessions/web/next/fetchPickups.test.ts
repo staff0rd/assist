@@ -26,15 +26,10 @@ function item(number: number, priority: string): GhProjectItemNode {
 	};
 }
 
-function board(project: string, nodes: GhProjectItemNode[], order: string[]) {
+function board(project: string, nodes: GhProjectItemNode[]) {
 	return {
 		nodes,
-		board: {
-			project,
-			title: `Board ${project}`,
-			url: `u/${project}`,
-			priorityOrder: order,
-		},
+		board: { project, title: `Board ${project}`, url: `u/${project}` },
 	};
 }
 
@@ -55,22 +50,22 @@ describe("fetchPickups", () => {
 		expect(readProjectItems).not.toHaveBeenCalled();
 	});
 
-	it("ranks items across projects by each project's own priority order", async () => {
+	it("lists projects in configured order, each in its board order", async () => {
 		readProjectItems.mockImplementation(async (_cwd, project: string) =>
 			project === "o/3"
-				? board("o/3", [item(1, "Low"), item(2, "High")], ["High", "Low"])
-				: board("o/5", [item(3, "P0"), item(4, "P2")], ["P0", "P1", "P2"]),
+				? board("o/3", [item(2, "Low"), item(1, "High")])
+				: board("o/5", [item(4, "P2"), item(3, "P0")]),
 		);
 		const { pickups: section } = await fetchPickups(
 			"/repo",
-			["o/3", "o/5"],
+			["o/5", "o/3"],
 			filter,
 		);
 		expect(section.items.map((p) => [p.number, p.project])).toEqual([
-			[2, "o/3"],
-			[3, "o/5"],
-			[1, "o/3"],
 			[4, "o/5"],
+			[3, "o/5"],
+			[2, "o/3"],
+			[1, "o/3"],
 		]);
 		expect(section.error).toBeNull();
 	});
@@ -81,7 +76,7 @@ describe("fetchPickups", () => {
 				throw Object.assign(new Error("exit 1"), {
 					stderr: "required scopes ['read:project']",
 				});
-			return board("o/3", [item(1, "High")], ["High"]);
+			return board("o/3", [item(1, "High")]);
 		});
 		const { pickups, boards } = await fetchPickups(
 			"/repo",

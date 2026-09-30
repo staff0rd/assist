@@ -1,4 +1,3 @@
-import { comparePickups } from "./comparePickups";
 import { projectErrorText } from "./projectErrorText";
 import { readProjectItems } from "./readProjectItems";
 import { sectionAcross } from "./sectionAcross";
@@ -20,14 +19,15 @@ export async function fetchPickups(
 		async (project) => {
 			try {
 				const { nodes, board } = await readProjectItems(cwd, project);
-				const { priorityOrder: _, ...link } = board;
-				boards.set(project, link);
+				boards.set(project, board);
 				return selectPickups(nodes, filter, board);
 			} catch (error) {
 				throw new Error(projectErrorText(error));
 			}
 		},
-		comparePickups,
+		(a, b) =>
+			projects.indexOf(a.project) - projects.indexOf(b.project) ||
+			a.position - b.position,
 	);
 	return {
 		pickups,

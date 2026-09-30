@@ -21,7 +21,7 @@ export type NextPickup = PrSummary & {
 	itemId: string;
 	status: string;
 	priority: string | null;
-	priorityRank: number;
+	position: number;
 };
 
 export type NextBoard = { project: string; title: string; url: string };
