@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isNotFound } from "./shared";
+import { isNotFound } from "./isNotFound";
 
 describe("isNotFound", () => {
 	it("should match an HTTP 404 from the REST API", () => {

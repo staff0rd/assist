@@ -35,3 +35,6 @@ jobs:
 
       - name: Check review config
         run: node .github/review-ci/check.mjs
+
+      - name: Review PR
+        run: node .github/review-ci/review.mjs

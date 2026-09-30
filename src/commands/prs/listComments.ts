@@ -1,11 +1,6 @@
 import { commentsCachePath } from "./commentsCachePath";
 import { fetchThreadIds } from "./fetchThreadIds";
-import {
-	getCurrentPrNumber,
-	getRepoInfo,
-	isGhNotInstalled,
-	isNotFound,
-} from "./shared";
+import { getCurrentPrNumber, getRepoInfo, isGhNotInstalled } from "./shared";
 import type { PrComment } from "./types";
 import {
 	fetchLineComments,
@@ -13,6 +8,7 @@ import {
 } from "./listComments/fetchReviewComments";
 import type { ListCommentsResult } from "./listComments/printComments";
 import { updateCommentsCache } from "./listComments/updateCommentsCache";
+import { isNotFound } from "./isNotFound";
 
 function handleKnownErrors(error: unknown): PrComment[] | null {
 	if (isGhNotInstalled(error)) {

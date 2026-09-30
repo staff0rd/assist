@@ -1,4 +1,5 @@
 import { execSync } from "node:child_process";
+import { getPinnedPr } from "../prs/pinCurrentPr";
 import { getRepoInfo } from "../prs/shared";
 
 type PrDiffInfo = {
@@ -15,25 +16,45 @@ function getCurrentBranch(): string {
 	}).trim();
 }
 
+type RawPr = {
+	number: number;
+	baseRefName: string;
+	baseRefOid: string;
+	headRefName: string;
+	headRefOid: string;
+};
+
+const FIELDS = "number,baseRefName,baseRefOid,headRefName,headRefOid";
+
+function runGh(command: string): string {
+	return execSync(command, {
+		encoding: "utf8",
+		stdio: ["ignore", "pipe", "pipe"],
+	});
+}
+
+function fetchRawPr(
+	org: string,
+	repo: string,
+	branch: string,
+): RawPr | undefined {
+	const pinned = getPinnedPr();
+	if (pinned !== undefined)
+		return JSON.parse(
+			runGh(`gh pr view ${pinned} --json ${FIELDS} -R ${org}/${repo}`),
+		);
+	const parsed = JSON.parse(
+		runGh(
+			`gh pr list --state open --head ${branch} --json ${FIELDS} -R ${org}/${repo}`,
+		),
+	) as RawPr[];
+	return parsed[0];
+}
+
 export function fetchPrDiffInfo(): PrDiffInfo {
 	const { org, repo } = getRepoInfo();
 	const branch = getCurrentBranch();
-	const fields = "number,baseRefName,baseRefOid,headRefName,headRefOid";
-	const raw = execSync(
-		`gh pr list --state open --head ${branch} --json ${fields} -R ${org}/${repo}`,
-		{
-			encoding: "utf8",
-			stdio: ["ignore", "pipe", "pipe"],
-		},
-	);
-	const parsed = JSON.parse(raw) as {
-		number: number;
-		baseRefName: string;
-		baseRefOid: string;
-		headRefName: string;
-		headRefOid: string;
-	}[];
-	const pr = parsed[0];
+	const pr = fetchRawPr(org, repo, branch);
 	if (!pr) {
 		console.error(
 			`Error: No open pull request found for branch \`${branch}\`. Open a PR for this branch before running \`assist review\`.`,

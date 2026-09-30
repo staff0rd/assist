@@ -42,6 +42,7 @@ export default defineConfig({
 			entryPoints: {
 				init: "src/commands/review/ci/reviewCiInit.ts",
 				check: "src/commands/review/ci/reviewCiCheck.ts",
+				review: "src/commands/review/ci/reviewCiReview.ts",
 			},
 			bundle: true,
 			minify: true,

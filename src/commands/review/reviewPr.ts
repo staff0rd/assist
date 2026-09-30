@@ -1,12 +1,10 @@
-import { buildRequest } from "./buildRequest";
-import { buildReviewPaths, type ReviewPaths } from "./buildReviewPaths";
-import { fetchExistingComments } from "./fetchExistingComments";
 import { gatherContext } from "./gatherContext";
 import { handlePostSynthesis } from "./handlePostSynthesis";
 import type { PrDiffRef } from "./postReviewToPr";
-import { prepareReviewDir } from "./prepareReviewDir";
+import type { ReviewerModels } from "./ReviewerModels";
 import { runReviewPipeline } from "./runReviewPipeline";
 import { attachReviewLog } from "./startReviewLog";
+import { setupReviewDir } from "./setupReviewDir";
 
 type ReviewPrOptions = {
 	prompt?: boolean;
@@ -18,12 +16,8 @@ type ReviewPrOptions = {
 	verbose?: boolean;
 	addressComments?: boolean;
 	announce?: boolean;
+	ci?: { models: ReviewerModels };
 };
-
-function logPriorComments(count: number): void {
-	if (count === 0) return;
-	console.log(`Including ${count} prior review comment(s) in request.md.`);
-}
 
 function gatherChangedContext(): ReturnType<typeof gatherContext> {
 	const context = gatherContext();
@@ -32,22 +26,6 @@ function gatherChangedContext(): ReturnType<typeof gatherContext> {
 		`Error: PR #${context.prNumber} has no changed files — nothing to review.`,
 	);
 	process.exit(1);
-}
-
-function setupReviewDir(
-	repoRoot: string,
-	context: ReturnType<typeof gatherContext>,
-	force: boolean,
-): ReviewPaths {
-	const paths = buildReviewPaths(
-		repoRoot,
-		`${context.branch}-${context.shortSha}`,
-	);
-	const priorComments = fetchExistingComments();
-	logPriorComments(priorComments?.length ?? 0);
-	prepareReviewDir(paths, buildRequest(context, priorComments), force);
-	console.log(`Review folder: ${paths.reviewDir}`);
-	return paths;
 }
 
 function runPostSynthesis(
@@ -75,7 +53,13 @@ export async function reviewPr(
 	attachReviewLog(paths.reviewDir);
 	const synthesisOk = await runReviewPipeline(paths, {
 		verbose: options.verbose ?? false,
+		models: options.ci?.models,
+		strict: options.ci !== undefined,
 	});
+	if (!synthesisOk && options.ci) {
+		console.error("Review failed; nothing was posted.");
+		process.exit(1);
+	}
 	if (synthesisOk)
 		await runPostSynthesis(paths.synthesisPath, context, options);
 	console.log(`Done. Review folder: ${paths.reviewDir}`);

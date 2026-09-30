@@ -17,6 +17,7 @@ Copy each source to its target, relative to the repo root:
 | ---------------------------------- | --------------------------------- |
 | `scripts/init.mjs`                 | `.github/review-ci/init.mjs`      |
 | `scripts/check.mjs`                | `.github/review-ci/check.mjs`     |
+| `scripts/review.mjs`               | `.github/review-ci/review.mjs`    |
 | `review-ci.yml`                    | `.github/workflows/review-ci.yml` |
 
 For each pair:
@@ -42,4 +43,4 @@ Never overwrite a differing target without the user's confirmation.
 
 ## 4. Report
 
-List the files written or skipped, and remind the user to commit `.github/review-ci/` and `.github/workflows/review-ci.yml`. The workflow runs on `pull_request: opened` and fails at its check step, naming the problem, when a variable or the secret is unset or a model cannot be reached.
+List the files written or skipped, and remind the user to commit `.github/review-ci/` and `.github/workflows/review-ci.yml`. The workflow runs on `pull_request: opened` and fails at its check step, naming the problem, when a variable or the secret is unset or a model cannot be reached. Its review step then posts the findings as a `COMMENT` review on the PR.

@@ -1,3 +1,4 @@
+import type { CodexModelOverride } from "../litellm/buildCodexProviderArgs";
 import { buildCodexModelArgs } from "./buildCodexModelArgs";
 import type { MultiSpinner } from "./MultiSpinner";
 import { type CodexPlan, skippedCodexResult } from "./planCodexReviewer";
@@ -10,6 +11,7 @@ type Args = {
 	stdin: string;
 	plan: CodexPlan;
 	multi: MultiSpinner | undefined;
+	override?: CodexModelOverride;
 };
 
 export function resolveCodex(args: Args): Promise<ReviewerResult> {
@@ -17,7 +19,7 @@ export function resolveCodex(args: Args): Promise<ReviewerResult> {
 	if (args.plan.kind === "skipped") {
 		return Promise.resolve(skippedCodexResult(args.codexPath));
 	}
-	const override = buildCodexModelArgs();
+	const override = args.override ?? buildCodexModelArgs();
 	const spinner = args.multi?.create(
 		`${reviewerLabel("codex", override.model)} — starting`,
 	);

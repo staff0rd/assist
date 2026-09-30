@@ -3,15 +3,19 @@ import { buildReviewerStdin } from "./buildReviewerStdin";
 import type { ReviewPaths } from "./buildReviewPaths";
 import type { MultiSpinner } from "./MultiSpinner";
 import type { CodexPlan } from "./planCodexReviewer";
+import type { ReviewerModels } from "./ReviewerModels";
 import { runReviewers } from "./runReviewers";
 import type { ReviewerResult } from "./runStreamingChild";
 import { synthesise } from "./synthesise";
+import { skipReason } from "./skipReason";
 
 type Args = {
 	paths: ReviewPaths;
 	cachedClaude: ReviewerResult | null;
 	codexPlan: CodexPlan;
 	multi: MultiSpinner | undefined;
+	models: ReviewerModels;
+	strict: boolean;
 };
 
 type AndSynthesiseOutcome = {
@@ -32,17 +36,26 @@ export async function runAndSynthesise(
 		paths.claudePath,
 		paths.codexPath,
 		buildReviewerStdin(paths.requestPath),
-		{ multi, codexPlan: args.codexPlan, cachedClaude: args.cachedClaude },
+		{
+			multi,
+			codexPlan: args.codexPlan,
+			cachedClaude: args.cachedClaude,
+			models: args.models,
+		},
 	);
 	const failures = failed(results);
-	if (results.every((r) => r.exitCode !== 0)) {
-		console.error("Both reviewers failed; skipping synthesis.");
+	const reason = skipReason(results, failures, args.strict);
+	if (reason) {
+		console.error(reason);
 		return { ok: false, failures };
 	}
 	if (anyFresh && existsSync(paths.synthesisPath)) {
 		unlinkSync(paths.synthesisPath);
 	}
-	const synthesisResult = await synthesise(paths, { multi });
+	const synthesisResult = await synthesise(paths, {
+		multi,
+		override: args.models.claude,
+	});
 	if (synthesisResult.exitCode !== 0) failures.push(synthesisResult);
 	return { ok: synthesisResult.exitCode === 0, failures };
 }

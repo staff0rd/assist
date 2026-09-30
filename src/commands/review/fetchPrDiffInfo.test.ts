@@ -6,6 +6,7 @@ vi.mock("node:child_process", () => ({
 	execSync: (...args: unknown[]) => mockExecSync(...args),
 }));
 
+import { pinCurrentPr } from "../prs/pinCurrentPr";
 import { fetchPrChangedFiles, fetchPrDiffInfo } from "./fetchPrDiffInfo";
 
 type ExecCall = (cmd: string) => string;
@@ -78,6 +79,33 @@ describe("fetchPrDiffInfo", () => {
 
 		exit.mockRestore();
 		err.mockRestore();
+	});
+
+	it("views the pinned PR instead of looking it up by branch", () => {
+		setupExec((cmd) => {
+			if (cmd.includes("git rev-parse --abbrev-ref HEAD")) return "HEAD";
+			if (cmd.includes("gh pr view 77 ")) {
+				return JSON.stringify({
+					number: 77,
+					baseRefName: "main",
+					baseRefOid: "base-sha",
+					headRefName: "feature",
+					headRefOid: "head-sha",
+				});
+			}
+			return undefined as unknown as string;
+		});
+		pinCurrentPr(77);
+
+		expect(fetchPrDiffInfo()).toMatchObject({
+			prNumber: 77,
+			headRef: "feature",
+		});
+		expect(
+			mockExecSync.mock.calls.some((call) =>
+				(call[0] as string).includes("gh pr list"),
+			),
+		).toBe(false);
 	});
 });
 

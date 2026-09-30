@@ -1,20 +1,11 @@
 import { execSync } from "node:child_process";
 import { getPreferredRemoteRepo } from "./getPreferredRemoteRepo";
+import { currentPrSelector } from "./pinCurrentPr";
 
 export function isGhNotInstalled(error: unknown): boolean {
 	if (error instanceof Error) {
 		const msg = error.message.toLowerCase();
 		return msg.includes("enoent") || msg.includes("command not found");
-	}
-	return false;
-}
-
-export function isNotFound(error: unknown): boolean {
-	if (error instanceof Error) {
-		return (
-			error.message.includes("HTTP 404") ||
-			error.message.includes("Could not resolve to a PullRequest")
-		);
 	}
 	return false;
 }
@@ -36,11 +27,13 @@ export function getCurrentBranch(): string {
 
 function viewCurrentPr<T>(fields: string): T {
 	const { org, repo } = getRepoInfo();
-	const branch = getCurrentBranch();
 	return JSON.parse(
-		execSync(`gh pr view ${branch} --json ${fields} -R ${org}/${repo}`, {
-			encoding: "utf8",
-		}),
+		execSync(
+			`gh pr view ${currentPrSelector(getCurrentBranch)} --json ${fields} -R ${org}/${repo}`,
+			{
+				encoding: "utf8",
+			},
+		),
 	);
 }
 

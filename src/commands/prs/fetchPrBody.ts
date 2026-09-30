@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
-import { getRepoInfo, isGhNotInstalled, isNotFound } from "./shared";
+import { getRepoInfo, isGhNotInstalled } from "./shared";
+import { isNotFound } from "./isNotFound";
 
 function exitGhNotInstalled(): never {
 	console.error("Error: GitHub CLI (gh) is not installed.");

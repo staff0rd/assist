@@ -3,12 +3,15 @@ import { cachedReviewerResult } from "./cachedReviewerResult";
 import { MultiSpinner, type SpinnerHandle } from "./MultiSpinner";
 import { planCodexReviewer } from "./planCodexReviewer";
 import { printReviewerFailures } from "./printReviewerFailures";
+import type { ReviewerModels } from "./ReviewerModels";
 import { runAndSynthesise } from "./runAndSynthesise";
 import type { ReviewerResult } from "./runStreamingChild";
 import { useSpinnerUi } from "./useSpinnerUi";
 
 type PipelineOptions = {
 	verbose: boolean;
+	models?: ReviewerModels;
+	strict?: boolean;
 };
 
 type PipelineUi = {
@@ -57,6 +60,8 @@ export async function runReviewPipeline(
 			cachedClaude,
 			codexPlan,
 			multi: ui.multi,
+			models: options.models ?? {},
+			strict: options.strict ?? false,
 		});
 		finishUi(ui, outcome.ok);
 		reportFailures(outcome.failures, ui.multi !== undefined);

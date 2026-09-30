@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync } from "node:fs";
-import type { CodexModelOverride } from "../litellm/buildLitellmCodexArgs";
+import type { CodexModelOverride } from "../litellm/buildCodexProviderArgs";
 import { finaliseReviewerRun } from "./finaliseReviewerRun";
 import type { SpinnerHandle } from "./MultiSpinner";
 import { parseCodexEvent } from "./parseCodexEvent";

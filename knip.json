@@ -6,7 +6,8 @@
 		"src/commands/sessions/web/ui/installMonacoGlobal.ts",
 		"src/commands/criteriaExtension/criteriaContentScript.ts",
 		"src/commands/review/ci/reviewCiInit.ts",
-		"src/commands/review/ci/reviewCiCheck.ts"
+		"src/commands/review/ci/reviewCiCheck.ts",
+		"src/commands/review/ci/reviewCiReview.ts"
 	],
 	"ignoreDependencies": [
 		"@vitest/coverage-v8",

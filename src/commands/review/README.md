@@ -31,6 +31,16 @@ flowchart LR
 - `parseFindings.ts` / `partitionFindings.ts` — parse `synthesis.md` and split findings into `lineBound`, `unlocated`, and `alreadyRaised` buckets.
 - `postReviewToPr.ts` / `postAndMaybeSubmit.ts` / `postFindings.ts` — post line-bound findings as pending comments and optionally submit the review.
 
+## CI path (`ci/reviewCiReview.ts`)
+
+The `/review-ci` skill's `review.mjs` is `ci/reviewCiReview.ts` bundled by tsup, calling `reviewPr` with a `ci` option so CI and local reviews share one pipeline. It differs from a local run in that:
+
+- config comes from the `ASSIST_REVIEW_*` env (`ci/readReviewCiEnv.ts`), never `loadConfig`;
+- the PR number is read from `GITHUB_EVENT_PATH` and pinned with `pinCurrentPr`, so every `prs/shared` lookup and `fetchPrDiffInfo` resolve that PR on the detached checkout instead of by branch; there is no `gh pr checkout` or worktree move, and no activity is emitted;
+- `ci/buildCiReviewerModels.ts` gives Claude (reviewer and synthesis) `--model` plus `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`, and Codex the provider `-c` overrides, from the endpoints `ci/deriveEndpoints.ts` derives;
+- the pipeline runs strict: any reviewer failure skips synthesis, and a failed pipeline exits 1 before anything is posted;
+- posting runs with `prompt: false, submit: true`, so findings post and a `COMMENT` review is submitted with no spinners or prompts.
+
 ## Re-running on the same PR
 
 The review directory is keyed by `branch-shortSha`, so re-running with no new commits hits the same folder. Existing `claude.md` / `codex.md` / `synthesis.md` are reused unless `--force` is passed. Findings the synthesis tags as `already-raised` (because they overlap with prior comments fetched in step 4) are filtered out before posting, so a second run on an unchanged PR posts zero new comments.
