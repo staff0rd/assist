@@ -1,3 +1,10 @@
+# [0.738.0](https://github.com/staff0rd/assist/compare/v0.737.0...v0.738.0) (2026-09-30)
+
+
+### Features
+
+* pickup type chips and nested board order ([5a71f7c](https://github.com/staff0rd/assist/commit/5a71f7c75a23f5916f09308f4e6dbff66856cb19))
+
 # [0.737.0](https://github.com/staff0rd/assist/compare/v0.736.0...v0.737.0) (2026-09-30)
 
 
