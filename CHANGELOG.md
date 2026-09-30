@@ -1,3 +1,10 @@
+# [0.729.0](https://github.com/staff0rd/assist/compare/v0.728.0...v0.729.0) (2026-09-30)
+
+
+### Features
+
+* Next view spans configured repos ([02a9491](https://github.com/staff0rd/assist/commit/02a94910e274fd90e1fb8b824a5b59096fb67cbf))
+
 # [0.728.0](https://github.com/staff0rd/assist/compare/v0.727.1...v0.728.0) (2026-09-30)
 
 
