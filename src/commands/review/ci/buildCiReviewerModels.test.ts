@@ -33,3 +33,30 @@ describe("buildCiReviewerModels", () => {
 		expect(Object.values(models.codex?.env ?? {})).toEqual(["sk-test"]);
 	});
 });
+
+describe("buildCiReviewerModels with foundry", () => {
+	const foundry = {
+		...config,
+		provider: "foundry",
+		baseUrl: "https://res.services.ai.azure.com",
+	};
+	const models = buildCiReviewerModels(
+		foundry,
+		deriveEndpoints(foundry.provider, foundry.baseUrl),
+	);
+
+	it("runs Claude Code in Foundry mode against the resource's Anthropic endpoint", () => {
+		expect(models.claude?.env).toMatchObject({
+			CLAUDE_CODE_USE_FOUNDRY: "1",
+			ANTHROPIC_FOUNDRY_BASE_URL: "https://res.services.ai.azure.com/anthropic",
+			ANTHROPIC_FOUNDRY_API_KEY: "sk-test",
+		});
+		expect(models.claude?.env).not.toHaveProperty("ANTHROPIC_AUTH_TOKEN");
+	});
+
+	it("points Codex at the resource's OpenAI v1 endpoint", () => {
+		expect(models.codex?.args).toContain(
+			"model_providers.litellm.base_url=https://res.services.ai.azure.com/openai/v1",
+		);
+	});
+});

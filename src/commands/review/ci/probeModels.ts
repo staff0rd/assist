@@ -14,7 +14,7 @@ export async function probeModels(
 		probeEndpoint(
 			messagesUrl,
 			{
-				...auth,
+				...(endpoints.anthropicKind === "gateway" ? auth : {}),
 				"x-api-key": config.apiKey,
 				"anthropic-version": "2023-06-01",
 			},

@@ -12,6 +12,22 @@ function pinEveryClaudeModelAlias(model: string): Record<string, string> {
 	};
 }
 
+function claudeProviderEnv(
+	endpoints: ReviewCiEndpoints,
+	apiKey: string,
+): Record<string, string> {
+	if (endpoints.anthropicKind === "foundry")
+		return {
+			CLAUDE_CODE_USE_FOUNDRY: "1",
+			ANTHROPIC_FOUNDRY_BASE_URL: endpoints.anthropic,
+			ANTHROPIC_FOUNDRY_API_KEY: apiKey,
+		};
+	return {
+		ANTHROPIC_BASE_URL: endpoints.anthropic,
+		ANTHROPIC_AUTH_TOKEN: apiKey,
+	};
+}
+
 export function buildCiReviewerModels(
 	config: ReviewCiConfig,
 	endpoints: ReviewCiEndpoints,
@@ -21,8 +37,7 @@ export function buildCiReviewerModels(
 		claude: {
 			args: ["--model", model],
 			env: {
-				ANTHROPIC_BASE_URL: endpoints.anthropic,
-				ANTHROPIC_AUTH_TOKEN: config.apiKey,
+				...claudeProviderEnv(endpoints, config.apiKey),
 				CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1",
 				...pinEveryClaudeModelAlias(model),
 			},

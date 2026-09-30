@@ -16,4 +16,4 @@ export const reviewCiKeys: ReviewCiKey[] = [
 	reviewCiSecret,
 ];
 
-export const reviewCiProviders = ["litellm"] as const;
+export const reviewCiProviders = ["litellm", "foundry"] as const;

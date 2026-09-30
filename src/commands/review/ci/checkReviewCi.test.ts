@@ -44,7 +44,7 @@ describe("checkReviewCi", () => {
 		});
 
 		expect(errors).toEqual([
-			'Unsupported ASSIST_REVIEW_PROVIDER "bedrock" (expected one of: litellm)',
+			'Unsupported ASSIST_REVIEW_PROVIDER "bedrock" (expected one of: litellm, foundry)',
 		]);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -67,6 +67,34 @@ describe("checkReviewCi", () => {
 				url: "https://proxy.example/v1/responses",
 				body: expect.objectContaining({ model: "gpt-codex" }),
 				auth: "Bearer sk-test",
+			},
+		]);
+	});
+
+	it("sends one request to each model through the Foundry resource endpoints with the key alone for Claude", async () => {
+		expect(
+			await checkReviewCi({
+				...fullEnv,
+				ASSIST_REVIEW_PROVIDER: "foundry",
+				ASSIST_REVIEW_BASE_URL: "https://res.services.ai.azure.com/",
+			}),
+		).toEqual([]);
+
+		const calls = fetchMock.mock.calls.map(([url, init]) => ({
+			url,
+			auth: init.headers.Authorization,
+			apiKey: init.headers["x-api-key"],
+		}));
+		expect(calls).toEqual([
+			{
+				url: "https://res.services.ai.azure.com/anthropic/v1/messages",
+				auth: undefined,
+				apiKey: "sk-test",
+			},
+			{
+				url: "https://res.services.ai.azure.com/openai/v1/responses",
+				auth: "Bearer sk-test",
+				apiKey: undefined,
 			},
 		]);
 	});

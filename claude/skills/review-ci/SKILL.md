@@ -1,6 +1,6 @@
 ---
 name: review-ci
-description: Install a GitHub workflow that reviews new PRs with Claude and Codex through LiteLLM, without depending on assist
+description: Install a GitHub workflow that reviews new PRs with Claude and Codex through LiteLLM or Azure AI Foundry, without depending on assist
 ---
 
 Install the review-ci workflow into the current repo. This skill's directory (`~/.claude/skills/review-ci/`) holds the bundled scripts in `scripts/` and the workflow template `review-ci.yml`. The installed workflow and scripts must never install or invoke assist.
@@ -32,11 +32,13 @@ Never overwrite a differing target without the user's confirmation.
 
 `init.mjs` asks for the provider, base URL, Claude model, Codex model and API key, checks both models can be reached, then sets the repo variables `ASSIST_REVIEW_PROVIDER`, `ASSIST_REVIEW_BASE_URL`, `ASSIST_REVIEW_CLAUDE_MODEL`, `ASSIST_REVIEW_CODEX_MODEL` and the secret `ASSIST_REVIEW_API_KEY` with `gh`. It needs a terminal for its prompts, and the API key must never pass through this conversation.
 
-1. Ask the user for the base URL (e.g. `https://litellm.example.com`), the Claude model and the Codex model, as the provider's model names. The provider is `litellm`. Do not ask for the API key.
+1. Ask the user for the provider (`litellm` or `foundry`), the base URL, the Claude model and the Codex model, as the provider's model names. Do not ask for the API key. The base URL is:
+   - `litellm`: the proxy root (e.g. `https://litellm.example.com`); Claude uses it directly and Codex uses `<url>/v1`.
+   - `foundry`: the Azure AI Foundry resource root, `https://<resource>.services.ai.azure.com`, with no path; Claude uses `<url>/anthropic` and Codex uses `<url>/openai/v1`. The models are the resource's deployment names, and the API key is the resource's key.
 2. Tell the user to run this in their own terminal from the repo root, where it prompts for the API key with masked input:
 
    ```
-   node .github/review-ci/init.mjs --provider litellm --base-url <url> --claude-model <model> --codex-model <model>
+   node .github/review-ci/init.mjs --provider <provider> --base-url <url> --claude-model <model> --codex-model <model>
    ```
 
 3. Once they report it finished, confirm with `gh variable list` and `gh secret list` that the four variables and the secret are set. If init reported an unreachable model, relay its error and let the user re-run it.

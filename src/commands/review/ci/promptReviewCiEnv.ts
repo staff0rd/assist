@@ -20,7 +20,12 @@ const prompts: Record<ReviewCiKey, PromptOptions> = {
 		message: "Provider",
 		choices: [...reviewCiProviders],
 	},
-	ASSIST_REVIEW_BASE_URL: { name: "value", type: "input", message: "Base URL" },
+	ASSIST_REVIEW_BASE_URL: {
+		name: "value",
+		type: "input",
+		message:
+			"Base URL (litellm: the proxy root; foundry: https://<resource>.services.ai.azure.com)",
+	},
 	ASSIST_REVIEW_CLAUDE_MODEL: {
 		name: "value",
 		type: "input",
