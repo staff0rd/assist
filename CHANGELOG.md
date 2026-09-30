@@ -1,3 +1,10 @@
+## [0.729.1](https://github.com/staff0rd/assist/compare/v0.729.0...v0.729.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* one next.repos for PRs and issues ([2b3dd8f](https://github.com/staff0rd/assist/commit/2b3dd8f9079fda7bec5e959f1e8945bae27d8f7d))
+
 # [0.729.0](https://github.com/staff0rd/assist/compare/v0.728.0...v0.729.0) (2026-09-30)
 
 
