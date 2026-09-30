@@ -10,10 +10,10 @@ export function restoreResumePlan(
 	persisted: PersistedSession,
 	idle: boolean,
 ): ResumePlan {
-	if (!killedByDaemonRestart(persisted.interrupted)) return { idle };
-
 	const tasks = interruptedBackgroundTasks(persisted);
-	if (idle && tasks.length === 0) return { idle: true };
+	if (tasks.length > 0)
+		return { prompt: daemonRestartPrompt(tasks), idle: false };
+	if (!killedByDaemonRestart(persisted.interrupted) || idle) return { idle };
 	return { prompt: daemonRestartPrompt(tasks), idle: false };
 }
 

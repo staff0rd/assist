@@ -69,10 +69,22 @@ describe("restoreResumePlan", () => {
 		expect(plan.prompt).toContain("1 background task(s)");
 	});
 
-	it("does not read the transcript for a session the daemon did not kill", () => {
-		restoreResumePlan(persisted(), true);
+	it("wakes a session whose background task a crashed daemon killed", () => {
+		tasksMock.mockReturnValue(["bohwmkrq8"]);
 
-		expect(tasksMock).not.toHaveBeenCalled();
+		const plan = restoreResumePlan(persisted(), true);
+
+		expect(plan.idle).toBe(false);
+		expect(plan.prompt).toContain("bohwmkrq8");
+		expect(plan.prompt).toContain("1 background task(s)");
+	});
+
+	it("names the killed tasks for a mid-work session after a crashed daemon", () => {
+		tasksMock.mockReturnValue(["bohwmkrq8"]);
+
+		const plan = restoreResumePlan(persisted(), false);
+
+		expect(plan.prompt).toContain("bohwmkrq8");
 	});
 
 	it("sends nothing to a session left idle", () => {
