@@ -56,7 +56,12 @@ function renderView(body: Partial<NextResponse>, launchAssist = vi.fn()) {
 		"fetch",
 		vi.fn().mockResolvedValue({
 			ok: true,
-			json: async () => ({ peerPrs: empty, assignedIssues: empty, ...body }),
+			json: async () => ({
+				peers: [],
+				peerPrs: empty,
+				assignedIssues: empty,
+				...body,
+			}),
 		}),
 	);
 	render(
@@ -165,6 +170,22 @@ describe("NextView", () => {
 		expect(screen.getAllByText("Issue 5").length).toBeGreaterThan(0);
 		expect(screen.queryByText(/no peer PRs await your review/)).toBeNull();
 		expect(screen.queryByText("Nothing needs you here")).toBeNull();
+	});
+
+	it("tells you how to configure peers when none are set", async () => {
+		renderView({});
+		expect(await screen.findByText(/No peers configured/)).toBeTruthy();
+		expect(
+			screen.getByText("assist config set next.peers alice,bob -g --repo"),
+		).toBeTruthy();
+		expect(
+			screen.getByRole("link", { name: "Next settings" }).getAttribute("href"),
+		).toBe("/config?search=next");
+	});
+
+	it("names the configured peers", async () => {
+		renderView({ peers: ["alice", "bob"] });
+		expect(await screen.findByText(/Peer PRs from alice, bob/)).toBeTruthy();
 	});
 
 	it("shows the all-clear state when every source is empty", async () => {

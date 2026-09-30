@@ -31,6 +31,6 @@ export async function nextItems(
 		section(() => fetchPeerPrs(cwd, peers)),
 		section(() => fetchAssignedIssues(cwd)),
 	]);
-	const body: NextResponse = { peerPrs, assignedIssues };
+	const body: NextResponse = { peers, peerPrs, assignedIssues };
 	respondJson(res, 200, body);
 }

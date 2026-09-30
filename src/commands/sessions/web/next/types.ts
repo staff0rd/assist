@@ -13,6 +13,7 @@ export type NextIssue = PrSummary & { labels: string[] };
 export type NextSection<T> = { items: T[]; error: string | null };
 
 export type NextResponse = {
+	peers: string[];
 	peerPrs: NextSection<NextPr>;
 	assignedIssues: NextSection<NextIssue>;
 };
