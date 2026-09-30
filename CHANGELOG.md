@@ -1,3 +1,10 @@
+# [0.739.0](https://github.com/staff0rd/assist/compare/v0.738.0...v0.739.0) (2026-09-30)
+
+
+### Features
+
+* review-ci skill checks LiteLLM config ([e88080e](https://github.com/staff0rd/assist/commit/e88080e3bee7cb7601dacfca644fc2523e03a4dd))
+
 # [0.738.0](https://github.com/staff0rd/assist/compare/v0.737.0...v0.738.0) (2026-09-30)
 
 
