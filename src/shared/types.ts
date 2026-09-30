@@ -171,7 +171,9 @@ const assistConfigShape = {
 			trunk: z.boolean().default(false),
 			includeDrafts: z.boolean().default(false),
 			root: z.string().optional(),
-			install: z.union([z.boolean(), z.string()]).default(true),
+			install: z
+				.union([z.boolean(), z.string(), z.array(z.string())])
+				.default(true),
 			commitBeforeManualChecks: z.boolean().default(false),
 			commitBeforePhaseEnd: z.boolean().optional(),
 			copy: z

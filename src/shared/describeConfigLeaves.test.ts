@@ -149,8 +149,7 @@ describe("describeConfigLeaves", () => {
 		expect(leaf(leaves, "sql.connections").itemType).toBeUndefined();
 		expect(leaf(leaves, "run").itemType).toBeUndefined();
 		expect(leaf(leaves, "worktree.install")).toMatchObject({
-			type: "union",
-			unionTypes: ["boolean", "string"],
+			type: "other",
 			defaultValue: true,
 		});
 	});

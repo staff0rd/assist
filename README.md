@@ -518,6 +518,8 @@ Concurrent sessions in one repo can be isolated with native git worktrees instea
 
 - `worktree.includeDrafts` — give draft, bug and refine sessions their own `<clone>-N`. They change no code, so by default they run in the clone's working copy at no worktree, dep-install or teardown cost.
 
+A new worktree installs its deps per `worktree.install` (default `true`, auto-detecting pnpm/yarn/bun/npm at the root). A string is run as the install command instead, `false` skips it, and a list of paths relative to the worktree root — `assist config set worktree.install '[".","packages/ui"]' -g --repo` — runs the auto-detected install in each path in order. The first path that fails or has no `package.json` stops the rest; each outcome lands in `daemon.log`.
+
 Neither flag leaves permanent state on the clone: nothing writes to the clone's `.git/config` (`assist commit` derives its push refspec from the current branch), so turning parallel work back off leaves the repo as it was.
 
 ## Iterating on assist itself

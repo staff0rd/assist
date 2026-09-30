@@ -18,6 +18,12 @@ export function coerceStructuredConfigValue(
 ): StructuredResult {
 	const schema = configLeafSchema(assistConfigSchema, key);
 	if (!schema) return { ok: false, error: `Unknown config key "${key}"` };
+	const fromJson = parseJson(raw);
+	if (fromJson !== undefined) {
+		const parsedJson = schema.safeParse(fromJson);
+		if (parsedJson.success)
+			return { ok: true, value: parsedJson.data as ConfigWritableValue };
+	}
 	const parsed = schema.safeParse(raw);
 	if (parsed.success)
 		return { ok: true, value: parsed.data as ConfigWritableValue };
@@ -27,6 +33,15 @@ export function coerceStructuredConfigValue(
 			.map((issue) => formatIssue(key, issue))
 			.join("\n"),
 	};
+}
+
+function parseJson(raw: unknown): unknown {
+	if (typeof raw !== "string") return undefined;
+	try {
+		return JSON.parse(raw);
+	} catch {
+		return undefined;
+	}
 }
 
 function formatIssue(key: string, issue: SchemaIssue): string {

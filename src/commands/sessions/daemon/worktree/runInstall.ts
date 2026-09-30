@@ -1,43 +1,58 @@
-import { spawn } from "node:child_process";
+import { resolve } from "node:path";
 import { daemonLog } from "../daemonLog";
+import { detectInstallCommand } from "./detectInstallCommand";
 import { resolveInstallCommand } from "./resolveInstallCommand";
-import { trackInstall, untrackInstall } from "./stopInstall";
-import { installInvocation } from "./installInvocation";
-
-const STDERR_TAIL = 2000;
+import { spawnInstall } from "./spawnInstall";
 
 export function runInstall(
 	worktreePath: string,
 	clone: string,
-	install: boolean | string,
+	install: boolean | string | string[],
 	onSeeded: () => void,
 ): void {
+	if (Array.isArray(install)) {
+		installPaths(worktreePath, install, onSeeded);
+		return;
+	}
 	const command = resolveInstallCommand(clone, install);
 	if (!command) {
 		onSeeded();
 		return;
 	}
-	daemonLog(`worktree ${worktreePath} installing deps: ${command}`);
-	const child = spawn(...installInvocation(worktreePath, command));
-	trackInstall(worktreePath, child);
-	let stderr = "";
-	child.stderr?.on("data", (chunk: Buffer) => {
-		stderr = (stderr + chunk.toString()).slice(-STDERR_TAIL);
-	});
-	let settled = false;
-	const settle = (outcome: string) => {
-		if (settled) return;
-		settled = true;
-		untrackInstall(worktreePath, child);
-		daemonLog(`worktree ${worktreePath} install ${outcome}`);
-		onSeeded();
+	spawnInstall(worktreePath, worktreePath, command, "", () => onSeeded());
+}
+
+function installPaths(
+	worktreePath: string,
+	paths: string[],
+	onSeeded: () => void,
+): void {
+	const next = (index: number): void => {
+		const rel = paths[index];
+		if (rel === undefined) {
+			onSeeded();
+			return;
+		}
+		const dir = resolve(worktreePath, rel);
+		const command = detectInstallCommand(dir);
+		if (!command) {
+			daemonLog(
+				`worktree ${worktreePath} install in ${rel} failed: no package.json at ${dir}; skipping remaining paths`,
+			);
+			onSeeded();
+			return;
+		}
+		spawnInstall(worktreePath, dir, command, ` in ${rel}`, (outcome) => {
+			if (outcome.ok && !outcome.stopped) {
+				next(index + 1);
+				return;
+			}
+			if (index < paths.length - 1)
+				daemonLog(
+					`worktree ${worktreePath} install skipping remaining paths: ${paths.slice(index + 1).join(", ")}`,
+				);
+			onSeeded();
+		});
 	};
-	child.on("error", (error) => settle(`failed to start: ${error.message}`));
-	child.on("close", (code, signal) =>
-		settle(
-			code === 0
-				? "complete"
-				: `failed (${signal ? `signal ${signal}` : `exit ${code}`}): ${stderr.trim() || "no output"}`,
-		),
-	);
+	next(0);
 }

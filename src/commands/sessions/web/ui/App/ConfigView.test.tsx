@@ -676,9 +676,54 @@ describe("ConfigView", () => {
 	it("edits a scalar union as text and lists the accepted types", async () => {
 		const fetchMock = stubApi([
 			{
-				key: "worktree.install",
+				key: "demo.either",
 				type: "union",
 				unionTypes: ["boolean", "string"],
+				value: undefined,
+				defaultValue: true,
+				source: "default",
+				node: {
+					path: [
+						{ kind: "key", name: "demo" },
+						{ kind: "key", name: "either" },
+					],
+					kind: "scalar",
+					type: "union",
+					unionTypes: ["boolean", "string"],
+					defaultValue: true,
+				},
+			},
+		]);
+		renderView("/repo/one");
+
+		await waitFor(() => expect(screen.getByText("demo.either")).toBeTruthy());
+		expect(screen.queryByText("read-only")).toBeNull();
+		fireEvent.click(screen.getByRole("button", { name: "Edit demo.either" }));
+		expect(screen.getByText("boolean or string")).toBeTruthy();
+		expect(screen.getByLabelText("demo.either")).toHaveProperty(
+			"value",
+			"true",
+		);
+		fireEvent.change(screen.getByLabelText("demo.either"), {
+			target: { value: "pnpm install" },
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+		await waitFor(() =>
+			expect(lastSetBody(fetchMock)).toEqual({
+				key: "demo.either",
+				value: "pnpm install",
+				cwd: "/repo/one",
+				scope: "project",
+			}),
+		);
+	});
+
+	it("shows worktree.install read-only while it also accepts a list of paths", async () => {
+		stubApi([
+			{
+				key: "worktree.install",
+				type: "other",
 				value: undefined,
 				defaultValue: true,
 				source: "default",
@@ -690,28 +735,10 @@ describe("ConfigView", () => {
 		await waitFor(() =>
 			expect(screen.getByText("worktree.install")).toBeTruthy(),
 		);
-		expect(screen.queryByText("read-only")).toBeNull();
-		fireEvent.click(
-			screen.getByRole("button", { name: "Edit worktree.install" }),
-		);
-		expect(screen.getByText("boolean or string")).toBeTruthy();
-		expect(screen.getByLabelText("worktree.install")).toHaveProperty(
-			"value",
-			"true",
-		);
-		fireEvent.change(screen.getByLabelText("worktree.install"), {
-			target: { value: "pnpm install" },
-		});
-		fireEvent.click(screen.getByRole("button", { name: "Save" }));
-
-		await waitFor(() =>
-			expect(lastSetBody(fetchMock)).toEqual({
-				key: "worktree.install",
-				value: "pnpm install",
-				cwd: "/repo/one",
-				scope: "project",
-			}),
-		);
+		expect(screen.getByText("read-only")).toBeTruthy();
+		expect(
+			screen.queryByRole("button", { name: "Edit worktree.install" }),
+		).toBeNull();
 	});
 
 	it("edits an array of scalars as one entry per line", async () => {

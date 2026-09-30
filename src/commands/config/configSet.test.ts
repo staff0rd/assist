@@ -327,6 +327,22 @@ describe("configSet", () => {
 			});
 		});
 
+		it.each([
+			["true", true],
+			["false", false],
+			["pnpm install", "pnpm install"],
+			['[".","packages/ui"]', [".", "packages/ui"]],
+		])(
+			"should write worktree.install %s as its matching type",
+			(raw, value) => {
+				configSet("worktree.install", raw, { global: true });
+
+				expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+					worktree: { install: value },
+				});
+			},
+		);
+
 		it("should keep enum keys as strings", () => {
 			configSet("sessions.linkVersionCheck", "warn", { global: true });
 

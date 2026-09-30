@@ -10,8 +10,10 @@ export function trackInstall(worktreePath: string, child: ChildProcess): void {
 export function untrackInstall(
 	worktreePath: string,
 	child: ChildProcess,
-): void {
-	if (running.get(worktreePath) === child) running.delete(worktreePath);
+): boolean {
+	if (running.get(worktreePath) !== child) return false;
+	running.delete(worktreePath);
+	return true;
 }
 
 export function stopInstall(worktreePath: string): void {

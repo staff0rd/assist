@@ -4,17 +4,36 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 type FakeChild = EventEmitter & { pid: number; stderr: EventEmitter };
 
 let child: FakeChild;
+const logs: string[] = [];
 
-const mockSpawn = vi.fn((..._args: unknown[]): FakeChild => child);
+function fakeChild(): FakeChild {
+	return Object.assign(new EventEmitter(), {
+		pid: 4321,
+		stderr: new EventEmitter(),
+	});
+}
+
+const mockSpawn = vi.fn((..._args: unknown[]): FakeChild => {
+	child = fakeChild();
+	return child;
+});
+
+const mockDetect = vi.fn((_dir: string): string | null => "npm install");
 
 vi.mock("node:child_process", () => ({
 	spawn: (...args: unknown[]) => mockSpawn(...args),
 }));
 
-vi.mock("../daemonLog", () => ({ daemonLog: () => {} }));
+vi.mock("../daemonLog", () => ({
+	daemonLog: (line: string) => logs.push(line),
+}));
 
 vi.mock("./resolveInstallCommand", () => ({
 	resolveInstallCommand: () => "npm install",
+}));
+
+vi.mock("./detectInstallCommand", () => ({
+	detectInstallCommand: (dir: string) => mockDetect(dir),
 }));
 
 import { runInstall } from "./runInstall";
@@ -41,10 +60,9 @@ function invocation(): {
 describe("runInstall", () => {
 	beforeEach(() => {
 		mockSpawn.mockClear();
-		child = Object.assign(new EventEmitter(), {
-			pid: 4321,
-			stderr: new EventEmitter(),
-		});
+		mockDetect.mockReset();
+		mockDetect.mockReturnValue("npm install");
+		logs.length = 0;
 	});
 
 	it("cds into the worktree so a login shell profile cannot redirect the install", () => {
@@ -119,5 +137,113 @@ describe("runInstall", () => {
 
 		expect(kill).not.toHaveBeenCalled();
 		kill.mockRestore();
+	});
+
+	describe("with a list of paths", () => {
+		const tree = "/home/me/git/assist-2";
+
+		function seedPaths(paths: string[], onSeeded = () => {}): void {
+			runInstall(tree, "/home/me/git/assist", paths, onSeeded);
+		}
+
+		function spawnedCwds(): string[] {
+			return mockSpawn.mock.calls.map(
+				(call) => (call[2] as { cwd: string }).cwd,
+			);
+		}
+
+		it("installs in each path in order, one at a time", () => {
+			const onSeeded = vi.fn();
+
+			seedPaths([".", "packages/ui"], onSeeded);
+			expect(spawnedCwds()).toEqual([tree]);
+			child.emit("close", 0, null);
+			expect(spawnedCwds()).toEqual([tree, `${tree}/packages/ui`]);
+			expect(onSeeded).not.toHaveBeenCalled();
+			child.emit("close", 0, null);
+
+			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(logs).toContain(
+				`worktree ${tree} installing deps in packages/ui: npm install`,
+			);
+			expect(logs).toContain(
+				`worktree ${tree} install in packages/ui complete`,
+			);
+		});
+
+		it("detects the package manager in each path", () => {
+			mockDetect.mockImplementation((dir) =>
+				dir.endsWith("ui") ? "pnpm install" : "npm install",
+			);
+
+			seedPaths([".", "ui"]);
+			child.emit("close", 0, null);
+
+			const [, args] = mockSpawn.mock.calls[1] as unknown as [string, string[]];
+			expect(args.at(-1)).toBe(`cd '${tree}/ui' && pnpm install`);
+		});
+
+		it("skips the remaining paths once one fails, still releasing the session", () => {
+			const onSeeded = vi.fn();
+
+			seedPaths([".", "a", "b"], onSeeded);
+			child.emit("close", 1, null);
+
+			expect(spawnedCwds()).toEqual([tree]);
+			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(logs).toContain(
+				`worktree ${tree} install skipping remaining paths: a, b`,
+			);
+		});
+
+		it("stops at a path with no package.json", () => {
+			const onSeeded = vi.fn();
+			mockDetect.mockImplementation((dir) =>
+				dir.endsWith("missing") ? null : "npm install",
+			);
+
+			seedPaths([".", "missing", "b"], onSeeded);
+			child.emit("close", 0, null);
+
+			expect(spawnedCwds()).toEqual([tree]);
+			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(logs).toContain(
+				`worktree ${tree} install in missing failed: no package.json at ${tree}/missing; skipping remaining paths`,
+			);
+		});
+
+		it("stops when a path's install cannot start", () => {
+			const onSeeded = vi.fn();
+
+			seedPaths([".", "b"], onSeeded);
+			child.emit("error", new Error("spawn bash ENOENT"));
+
+			expect(spawnedCwds()).toEqual([tree]);
+			expect(onSeeded).toHaveBeenCalledTimes(1);
+		});
+
+		it.runIf(process.platform !== "win32")(
+			"kills the running path's install at teardown and starts no further paths",
+			() => {
+				const onSeeded = vi.fn();
+				const killed: number[] = [];
+				const kill = vi.spyOn(process, "kill").mockImplementation(((
+					pid: number,
+				) => {
+					killed.push(pid);
+					return true;
+				}) as typeof process.kill);
+
+				seedPaths([".", "a", "b"], onSeeded);
+				child.emit("close", 0, null);
+				stopInstall(tree);
+				child.emit("close", 0, null);
+
+				expect(killed).toEqual([-4321]);
+				expect(spawnedCwds()).toEqual([tree, `${tree}/a`]);
+				expect(onSeeded).toHaveBeenCalledTimes(1);
+				kill.mockRestore();
+			},
+		);
 	});
 });

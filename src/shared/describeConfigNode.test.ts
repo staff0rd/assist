@@ -143,10 +143,15 @@ describe("describeConfigNode", () => {
 			enumValues: ["claude", "codex", "pi"],
 			defaultValue: "claude",
 		});
-		expect(node("worktree.install")).toMatchObject({
+		expect(node("run[].server")).toMatchObject({
 			kind: "scalar",
 			type: "union",
 			unionTypes: ["boolean", "string"],
+		});
+		expect(node("worktree.install")).toMatchObject({
+			kind: "other",
+			type: "other",
+			defaultValue: true,
 		});
 		expect(node("worktree.copy")).toMatchObject({
 			kind: "scalarList",
