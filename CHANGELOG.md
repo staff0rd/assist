@@ -1,3 +1,10 @@
+## [0.730.2](https://github.com/staff0rd/assist/compare/v0.730.1...v0.730.2) (2026-09-30)
+
+
+### Bug Fixes
+
+* keep tree of refused duplicate run ([5b8eed9](https://github.com/staff0rd/assist/commit/5b8eed94bec5d03e7d85e24b1c0b5cb8daa4dcd6))
+
 ## [0.730.1](https://github.com/staff0rd/assist/compare/v0.730.0...v0.730.1) (2026-09-30)
 
 
