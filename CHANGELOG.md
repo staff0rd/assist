@@ -1,3 +1,10 @@
+## [0.732.1](https://github.com/staff0rd/assist/compare/v0.732.0...v0.732.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* hide do-not-merge PRs from Next ([6a7b3f7](https://github.com/staff0rd/assist/commit/6a7b3f705be745566a1ff97f193bcef41bf36852))
+
 # [0.732.0](https://github.com/staff0rd/assist/compare/v0.731.0...v0.732.0) (2026-09-30)
 
 
