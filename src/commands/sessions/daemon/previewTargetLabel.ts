@@ -14,6 +14,7 @@ export function previewTargetLabel(
 	if (kind === "miro-board") return "miro anchors";
 	if (kind === "slack-post") return "slack post";
 	if (kind === "high-level-review") return "high-level review";
+	if (kind === "show") return "show";
 	if (kind === "backlog-item") return `backlog ${itemType}`;
 	if (prNumber !== null) return `edit #${prNumber}`;
 	return draft ? "create draft" : "create";

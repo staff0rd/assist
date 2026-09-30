@@ -19,7 +19,8 @@ export type PreviewKind =
 	| "github-issue-edit"
 	| "miro-board"
 	| "slack-post"
-	| "high-level-review";
+	| "high-level-review"
+	| "show";
 
 export type PreviewItemType = "story" | "bug";
 

@@ -164,4 +164,30 @@ describe("PrPreviewCoordinator", () => {
 
 		expect(sessions.get("1")?.pendingPrPreview).toBeUndefined();
 	});
+
+	it("keeps a show preview after its sending client disconnects", () => {
+		const sessions = makeSessions("1");
+		const coord = new PrPreviewCoordinator(sessions, vi.fn());
+		const client = makeClient();
+		coord.set(client, { ...previewMsg("1", "r1"), kind: "show" });
+
+		coord.clearWaiter(client);
+
+		expect(sessions.get("1")?.pendingPrPreview?.kind).toBe("show");
+	});
+
+	it("clears a show preview when the user closes it", () => {
+		const sessions = makeSessions("1");
+		const coord = new PrPreviewCoordinator(sessions, vi.fn());
+		coord.set(makeClient(), { ...previewMsg("1", "r1"), kind: "show" });
+
+		coord.decide({
+			type: "pr-decision",
+			sessionId: "1",
+			requestId: "r1",
+			decision: "reject",
+		});
+
+		expect(sessions.get("1")?.pendingPrPreview).toBeUndefined();
+	});
 });

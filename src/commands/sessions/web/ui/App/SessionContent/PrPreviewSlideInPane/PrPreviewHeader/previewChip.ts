@@ -22,6 +22,8 @@ export function previewChip(preview: PrPreview, draft: boolean): ChipSpec {
 	if (preview.kind === "slack-post")
 		return { label: "Slack post", color: "success" };
 
+	if (preview.kind === "show") return { label: "Show", color: "default" };
+
 	if (preview.kind === "high-level-review")
 		return { label: "Checklist", color: "info" };
 

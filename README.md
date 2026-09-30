@@ -81,6 +81,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/test-review` - Review existing tests for quality, coverage gaps, and conventions
 - `/inspect` - Run .NET code inspections on changed files
 - `/screenshot` - Capture a screenshot of a running application window
+- `/show [what to show]` - Open long URLs, paths and snippets in the web preview pane via `assist show`, where the terminal's hard wrapping can't break them. With no arguments it gathers them from the previous reply
 - `/raven` - Query and manage RavenDB connections and collections
 - `/miro [board url | extract name]` - Dump a Miro frame's raw `board_list_items` pages and extract its boxes as an ordered YAML list via `assist miro extract`
 - `/seq` - Query Seq logs from a URL or filter expression
@@ -345,6 +346,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist mermaid export [file.md]` - Render each fenced mermaid block to `<stem>-<index>.svg` via [Kroki](https://kroki.io) (`--out`, `--index`, `mermaid.krokiUrl`)
 - `assist prompts` - Show top 10 denied tool calls by frequency with count and repo breakdown
 - `assist chart [--title <title>]` - Draw a terminal line chart of a `label value` series piped in on stdin, one pair per line, separated by a comma, tab or whitespace. Points are charted in the order given — nothing is sorted or aggregated — and the chart closes on q, Esc or Ctrl-C. The y axis fits the data range with 20% padding rather than starting at zero, so a series that only moves in its third decimal still reads as a shape; a flat series is padded so the line does not sit on the axis. Blank lines are skipped, fewer than two points prints `Not enough data points to chart.`, and a non-numeric value exits 1 naming the line
+- `assist show --body <markdown|-> [--title <title>]` - Render markdown in the session's web preview pane so long links, paths and code can be clicked and copied unbroken; `--body -` reads it from stdin. It returns straight away and the pane stays open, with links opening in a new tab, until the user clicks Close. A later `show` replaces it. Outside a web session it prints the markdown to stdout
 
 ### Project setup
 

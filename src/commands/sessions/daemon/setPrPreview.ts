@@ -38,7 +38,7 @@ export function setPrPreview(
 		draft: kind === "pr" && prNumber === null ? draft : undefined,
 		metadata: parsePreviewMetadata(d.metadata),
 	};
-	waiters.set(id, client);
+	if (kind !== "show") waiters.set(id, client);
 	const target = previewTargetLabel(kind, itemType, prNumber, draft);
 	daemonLog(
 		`pr-preview set: id=${id} requestId=${d.requestId} kind=${kind} target=${target}`,

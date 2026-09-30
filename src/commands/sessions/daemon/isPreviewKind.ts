@@ -11,6 +11,7 @@ const PREVIEW_KINDS: PreviewKind[] = [
 	"miro-board",
 	"slack-post",
 	"high-level-review",
+	"show",
 ];
 
 export function isPreviewKind(value: unknown): value is PreviewKind {

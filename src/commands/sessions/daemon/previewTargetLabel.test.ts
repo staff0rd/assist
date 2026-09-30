@@ -32,6 +32,10 @@ describe("previewTargetLabel", () => {
 		);
 	});
 
+	it("labels a show pane", () => {
+		expect(previewTargetLabel("show", "story", null, false)).toBe("show");
+	});
+
 	it("labels a high-level review", () => {
 		expect(previewTargetLabel("high-level-review", "story", 42, false)).toBe(
 			"high-level review",

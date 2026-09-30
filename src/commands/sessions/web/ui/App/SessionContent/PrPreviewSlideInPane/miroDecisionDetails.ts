@@ -1,5 +1,5 @@
-import type { PreviewSelection } from "../../../../../../shared/PreviewDecision";
-import type { PrDecisionDetails } from "../../../../PrDecisionDetails";
+import type { PreviewSelection } from "../../../../../shared/PreviewDecision";
+import type { PrDecisionDetails } from "../../../PrDecisionDetails";
 
 export function miroDecisionDetails(
 	selection?: PreviewSelection,
