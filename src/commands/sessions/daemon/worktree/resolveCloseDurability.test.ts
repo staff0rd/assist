@@ -1,7 +1,8 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import {
 	mkdirSync,
 	mkdtempSync,
+	readlinkSync,
 	realpathSync,
 	rmSync,
 	writeFileSync,
@@ -12,6 +13,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { dismissSession } from "../dismissSession";
+import { reapWorktree } from "./reapWorktree";
 import { resolveCloseDurability } from "./resolveCloseDurability";
 
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
@@ -90,4 +92,34 @@ describe("resolveCloseDurability", () => {
 			`reaping watcher session 1 for the clone ${clone}: its last session 2 was dismissed`,
 		);
 	});
+
+	it.skipIf(process.platform !== "linux")(
+		"holds the worktree while a live process is running in it",
+		async () => {
+			const { clone, tree } = makeCloneWithWorktree();
+			const orphan = spawn("sleep", ["30"], { cwd: tree });
+			try {
+				await vi.waitFor(() =>
+					expect(readlinkSync(`/proc/${orphan.pid}/cwd`)).toBe(tree),
+				);
+				const worker = session("2", {
+					cwd: tree,
+					worktree: { path: tree, clone },
+				});
+				const finalize = vi.fn();
+
+				await resolveCloseDurability(worker, finalize, vi.fn());
+
+				expect(finalize).not.toHaveBeenCalled();
+				expect(reapWorktree).not.toHaveBeenCalled();
+				expect(worker.status).toBe("stopped");
+				expect(worker.undurable?.reason).toBe(
+					`a live process is still running in it (pid ${orphan.pid})`,
+				);
+				worker.gitWatcher?.close();
+			} finally {
+				orphan.kill("SIGKILL");
+			}
+		},
+	);
 });

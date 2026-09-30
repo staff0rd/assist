@@ -1,5 +1,6 @@
 import { buildHello } from "../buildHello";
 import { daemonLog } from "../daemonLog";
+import { guardLinkCallback } from "./guardLinkCallback";
 import type { LinkContext } from "./LinkContext";
 import type { LinkSocket } from "./LinkTransport";
 import { onLinkLine } from "./onLinkLine";
@@ -23,8 +24,14 @@ export async function openLink(ctx: LinkContext): Promise<void> {
 		if (ctx.disposed) return;
 		daemonLog(`link ${ctx.spec.name} ws: connecting to ${ctx.spec.url}`);
 		const socket: LinkSocket = await ctx.deps.transport(ctx.spec.url, {
-			onLine: (line) => onLinkLine(ctx, line),
-			onClose: (reason) => onLinkClose(ctx, socket, reason),
+			onLine: guardLinkCallback(
+				`link ${ctx.spec.name} ws: line handler`,
+				(line) => onLinkLine(ctx, line),
+			),
+			onClose: guardLinkCallback(
+				`link ${ctx.spec.name} ws: close handler`,
+				(reason) => onLinkClose(ctx, socket, reason),
+			),
 		});
 		if (ctx.disposed) return socket.close();
 		ctx.socket = socket;

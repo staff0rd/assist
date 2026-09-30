@@ -1,4 +1,5 @@
 import { connectLinkWebSocket } from "./connectLinkWebSocket";
+import { guardLinkCallback } from "./guardLinkCallback";
 import type { NodeLinkDeps } from "./LinkContext";
 import type { LinkTransport } from "./LinkTransport";
 import type { LinkSpec } from "./LinkStatus";
@@ -27,7 +28,19 @@ export function linkDeps(
 	callbacks: LinkCallbacks,
 ): NodeLinkDeps {
 	return {
-		...callbacks,
+		viewers: callbacks.viewers,
+		onSessionsChanged: guardLinkCallback(
+			"links: sessions-changed handler",
+			callbacks.onSessionsChanged,
+		),
+		onStateChanged: guardLinkCallback(
+			"links: state-changed handler",
+			callbacks.onStateChanged,
+		),
+		onHistoryChanged: guardLinkCallback(
+			"links: history-changed handler",
+			callbacks.onHistoryChanged,
+		),
 		transport: options.transport ?? connectLinkWebSocket,
 		tunnel: options.tunnel ?? sshTunnelFor,
 		heal: options.heal ?? selfUpdatePeer,

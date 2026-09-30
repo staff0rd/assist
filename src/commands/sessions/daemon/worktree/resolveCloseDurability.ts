@@ -1,8 +1,8 @@
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { setStatus } from "../setStatus";
+import { closeBlockReason } from "./closeBlockReason";
 import { reapWorktree } from "./reapWorktree";
-import { checkDurability } from "./treeDurability";
 import { type ClosingTree, treeUnderClose } from "./treeUnderClose";
 import { watchGitState } from "./watchGitState";
 
@@ -16,15 +16,11 @@ export async function resolveCloseDurability(
 		finalize();
 		return;
 	}
-	const durability = await checkDurability(tree.path);
-	if (!durability.durable) {
-		holdStopped(session, tree, durability.reason, finalize, notify);
+	const blocked = await closeBlockReason(session.id, tree);
+	if (blocked) {
+		holdStopped(session, tree, blocked, finalize, notify);
 		return;
 	}
-	if (durability.gone)
-		daemonLog(
-			`session ${session.id} closing: worktree ${tree.path} is gone from disk — released with nothing to land, not landed work`,
-		);
 	if (tree.removable) await reapWorktree(tree.path);
 	if (session.worktree) session.releasedFromClone = session.worktree.clone;
 	session.worktree = undefined;

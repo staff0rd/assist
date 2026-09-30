@@ -6,6 +6,7 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import { duplicateRunExitCode } from "./duplicateRunExitCode";
 import type { BacklogItem, PlanPhase } from "./types";
 
 vi.mock("./executePhase", () => ({
@@ -905,6 +906,8 @@ describe("run", () => {
 			expect(mockAppendDaemonLog).toHaveBeenCalledWith(
 				expect.stringContaining("refused"),
 			);
+			expect(process.exitCode).toBe(duplicateRunExitCode);
+			process.exitCode = undefined;
 		});
 	});
 });
