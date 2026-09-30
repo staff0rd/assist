@@ -1,3 +1,10 @@
+# [0.730.0](https://github.com/staff0rd/assist/compare/v0.729.1...v0.730.0) (2026-09-30)
+
+
+### Features
+
+* assist show opens markdown in pane ([f6d74f2](https://github.com/staff0rd/assist/commit/f6d74f25cc0555b42e33e9bb490652df873f40ac))
+
 ## [0.729.1](https://github.com/staff0rd/assist/compare/v0.729.0...v0.729.1) (2026-09-30)
 
 
