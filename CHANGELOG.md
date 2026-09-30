@@ -1,3 +1,15 @@
+# [0.727.0](https://github.com/staff0rd/assist/compare/v0.726.0...v0.727.0) (2026-09-30)
+
+
+### Bug Fixes
+
+* remove stale NextRow duplicate ([1bc6d6e](https://github.com/staff0rd/assist/commit/1bc6d6ee71945a56db06e422802911d0faacd56c))
+
+
+### Features
+
+* Next view lists issues assigned to me ([7a0a3ae](https://github.com/staff0rd/assist/commit/7a0a3ae35387d7aecd1d3beed3e1f1507decb13b))
+
 # [0.726.0](https://github.com/staff0rd/assist/compare/v0.725.1...v0.726.0) (2026-09-30)
 
 
