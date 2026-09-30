@@ -1,3 +1,10 @@
+# [0.724.0](https://github.com/staff0rd/assist/compare/v0.723.0...v0.724.0) (2026-09-30)
+
+
+### Features
+
+* worktree.install accepts path list ([7676762](https://github.com/staff0rd/assist/commit/7676762888454a1807f8db77cd9e3f6d64fcf0a3))
+
 # [0.723.0](https://github.com/staff0rd/assist/compare/v0.722.3...v0.723.0) (2026-09-30)
 
 
