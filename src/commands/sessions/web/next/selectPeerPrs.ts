@@ -1,3 +1,4 @@
+import { isDoNotMerge } from "../../../prs/status/isDoNotMerge";
 import { headCommit } from "./headCommit";
 import { sameLogin } from "./sameLogin";
 import { toNextPr } from "./toNextPr";
@@ -27,7 +28,8 @@ export function selectPeerPrs(
 	const selected: RepolessPr[] = [];
 	for (const node of nodes) {
 		const author = node.author?.login ?? "unknown";
-		if (node.isDraft || sameLogin(author, viewer)) continue;
+		if (node.isDraft || isDoNotMerge(node.title) || sameLogin(author, viewer))
+			continue;
 		const requested = isRequested(node, viewer);
 		const byPeer = peers.some((peer) => sameLogin(author, peer));
 		if (!requested && (!byPeer || approvedHead(node, viewer))) continue;

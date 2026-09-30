@@ -84,6 +84,15 @@ describe("selectPeerPrs", () => {
 		).toEqual([]);
 	});
 
+	it("excludes do-not-merge PRs even when they request my review", () => {
+		expect(
+			numbers([
+				pr(1, { title: "[DNM] spike" }),
+				pr(2, { title: "[Do Not Merge] wip", requested: ["me"] }),
+			]),
+		).toEqual([]);
+	});
+
 	it("excludes peer PRs I approved at the current head", () => {
 		expect(
 			numbers([pr(1, { myReview: { state: "APPROVED", oid: "head" } })]),
