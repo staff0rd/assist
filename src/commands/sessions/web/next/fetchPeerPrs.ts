@@ -1,4 +1,6 @@
 import { ghJson } from "../releases/ghJson";
+import { fetchOwnerPeerPrs } from "./fetchOwnerPeerPrs";
+import { isOwnerEntry } from "./isOwnerEntry";
 import { peerPrsQuery } from "./peerPrsQuery";
 import { selectPeerPrs } from "./selectPeerPrs";
 import type { GhPeerPrNode, NextPr } from "./types";
@@ -17,6 +19,7 @@ export async function fetchPeerPrs(
 	repo: string,
 	peers: string[],
 ): Promise<NextPr[]> {
+	if (isOwnerEntry(repo)) return fetchOwnerPeerPrs(cwd, repo, peers);
 	const [owner, name] = repo.split("/");
 	const response = await ghJson<PeerPrsResponse>(cwd, [
 		"api",

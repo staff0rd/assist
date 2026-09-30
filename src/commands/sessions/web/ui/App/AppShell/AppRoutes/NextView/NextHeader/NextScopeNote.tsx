@@ -21,7 +21,7 @@ export function NextScopeNote({ scope }: { scope: NextScope }) {
 				label="Repos"
 				value={repoValue(scope.repos, scope.selfRepo)}
 				unset="none"
-				setter="assist config set next.repos owner/api,owner/web -g --repo"
+				setter="assist config set next.repos my-org,other/web -g --repo"
 				showSetter={!scope.repos}
 			/>
 		</Stack>

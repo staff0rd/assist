@@ -241,7 +241,7 @@ describe("NextView scope note", () => {
 		).toBeTruthy();
 		expect(
 			screen.getByText(
-				"assist config set next.repos owner/api,owner/web -g --repo",
+				"assist config set next.repos my-org,other/web -g --repo",
 			),
 		).toBeTruthy();
 		expect(

@@ -8,7 +8,7 @@ export const nextConfigHelp: ConfigHelpEntry[] = [
 	},
 	{
 		key: "next.repos",
-		setter: "assist config set next.repos owner/api,owner/web -g --repo",
-		note: "owner/name GitHub repos the web /next view reads peer PRs and issues assigned to you from (default: the selected repo)",
+		setter: "assist config set next.repos my-org,other/web -g --repo",
+		note: "GitHub repos the web /next view reads peer PRs and issues assigned to you from: owner/name for one repo, or a bare owner (org or user) for all its unarchived repos (default: the selected repo)",
 	},
 ];

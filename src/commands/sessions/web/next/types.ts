@@ -36,6 +36,7 @@ export type GhPeerPrNode = {
 	createdAt: string;
 	isDraft: boolean;
 	author?: Login;
+	repository?: { nameWithOwner?: string } | null;
 	reviewRequests?: {
 		nodes?: ({ requestedReviewer?: Login } | null)[];
 	} | null;

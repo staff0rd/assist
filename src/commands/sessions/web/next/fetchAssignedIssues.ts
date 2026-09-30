@@ -1,4 +1,5 @@
 import { ghJson } from "../releases/ghJson";
+import { isOwnerEntry } from "./isOwnerEntry";
 import type { NextIssue } from "./types";
 
 type GhIssue = {
@@ -8,28 +9,40 @@ type GhIssue = {
 	createdAt: string;
 	author?: { login?: string } | null;
 	labels?: { name?: string }[] | null;
+	repository?: { nameWithOwner?: string } | null;
 };
+
+const FIELDS = "number,title,url,createdAt,author,labels";
+
+function listArgs(entry: string): string[] {
+	if (isOwnerEntry(entry))
+		return [
+			"search",
+			"issues",
+			"--owner",
+			entry,
+			"--archived=false",
+			"--json",
+			`${FIELDS},repository`,
+		];
+	return ["issue", "list", "--repo", entry, "--json", FIELDS];
+}
 
 export async function fetchAssignedIssues(
 	cwd: string,
-	repo: string,
+	entry: string,
 ): Promise<NextIssue[]> {
 	const issues = await ghJson<GhIssue[]>(cwd, [
-		"issue",
-		"list",
-		"--repo",
-		repo,
+		...listArgs(entry),
 		"--assignee",
 		"@me",
 		"--state",
 		"open",
 		"--limit",
 		"100",
-		"--json",
-		"number,title,url,createdAt,author,labels",
 	]);
 	return issues.map((issue) => ({
-		repo,
+		repo: issue.repository?.nameWithOwner ?? entry,
 		number: issue.number,
 		title: issue.title,
 		url: issue.url,
