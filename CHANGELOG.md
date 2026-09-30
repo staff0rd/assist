@@ -1,3 +1,10 @@
+# [0.726.0](https://github.com/staff0rd/assist/compare/v0.725.1...v0.726.0) (2026-09-30)
+
+
+### Features
+
+* Next view with peer PRs to review ([d4b84eb](https://github.com/staff0rd/assist/commit/d4b84eb2075feac902a916d1b0e1a60b7f52f017))
+
 ## [0.725.1](https://github.com/staff0rd/assist/compare/v0.725.0...v0.725.1) (2026-09-30)
 
 
