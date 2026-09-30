@@ -1,3 +1,10 @@
+# [0.725.0](https://github.com/staff0rd/assist/compare/v0.724.0...v0.725.0) (2026-09-30)
+
+
+### Features
+
+* web mode picker for worktree.install ([f77b1bf](https://github.com/staff0rd/assist/commit/f77b1bf31388b866f9626b3160588a38c3e771ce))
+
 # [0.724.0](https://github.com/staff0rd/assist/compare/v0.723.0...v0.724.0) (2026-09-30)
 
 
