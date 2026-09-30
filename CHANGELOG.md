@@ -1,3 +1,10 @@
+# [0.723.0](https://github.com/staff0rd/assist/compare/v0.722.3...v0.723.0) (2026-09-30)
+
+
+### Features
+
+* add /review-high-level command ([7bd8b26](https://github.com/staff0rd/assist/commit/7bd8b268e52457f7b6e77cae22f8a21e355cf058)), closes [review-hi#level](https://github.com/review-hi/issues/level)
+
 ## [0.722.3](https://github.com/staff0rd/assist/compare/v0.722.2...v0.722.3) (2026-09-29)
 
 
