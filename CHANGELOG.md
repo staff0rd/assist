@@ -1,3 +1,10 @@
+## [0.727.1](https://github.com/staff0rd/assist/compare/v0.727.0...v0.727.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* wake tasks killed by daemon crash ([10736e4](https://github.com/staff0rd/assist/commit/10736e41bd0bf9345d7a41d984ff1ac2ebc2ce03))
+
 # [0.727.0](https://github.com/staff0rd/assist/compare/v0.726.0...v0.727.0) (2026-09-30)
 
 
