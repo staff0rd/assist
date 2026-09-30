@@ -1,3 +1,15 @@
+# [0.733.0](https://github.com/staff0rd/assist/compare/v0.732.1...v0.733.0) (2026-09-30)
+
+
+### Bug Fixes
+
+* wire project pickups into Next ([ef21468](https://github.com/staff0rd/assist/commit/ef214682f77d60f0b8ed46692832879a2493edad))
+
+
+### Features
+
+* Next suggests project pickups ([638b8a8](https://github.com/staff0rd/assist/commit/638b8a8d3919950191ac37eee69865794a878294))
+
 ## [0.732.1](https://github.com/staff0rd/assist/compare/v0.732.0...v0.732.1) (2026-09-30)
 
 
