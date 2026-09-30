@@ -50,6 +50,28 @@ describe("syncDesign", () => {
 		).toBe("WIRE");
 	});
 
+	it("copies a skill directory with its non-markdown files, replacing stale ones", () => {
+		const source = join(claudeDir, "skills", "review-ci");
+		mkdirSync(join(source, "scripts"), { recursive: true });
+		writeFileSync(join(source, "SKILL.md"), "SKILL");
+		writeFileSync(join(source, "review-ci.yml"), "WORKFLOW");
+		writeFileSync(join(source, "scripts", "check.mjs"), "CHECK");
+		const target = join(targetBase, "skills", "review-ci");
+		mkdirSync(target, { recursive: true });
+		writeFileSync(join(target, "stale.mjs"), "OLD");
+
+		syncDesign(claudeDir, targetBase);
+
+		expect(readFileSync(join(target, "SKILL.md"), "utf8")).toBe("SKILL");
+		expect(readFileSync(join(target, "review-ci.yml"), "utf8")).toBe(
+			"WORKFLOW",
+		);
+		expect(readFileSync(join(target, "scripts", "check.mjs"), "utf8")).toBe(
+			"CHECK",
+		);
+		expect(existsSync(join(target, "stale.mjs"))).toBe(false);
+	});
+
 	it("preserves unrelated files already in the target skills directory", () => {
 		mkdirSync(join(targetBase, "skills"));
 		writeFileSync(join(targetBase, "skills", "projects.json"), "{}");

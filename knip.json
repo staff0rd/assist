@@ -4,7 +4,9 @@
 		"oxlint-rules/filenameConvention.ts",
 		"src/commands/sessions/web/ui/App.tsx",
 		"src/commands/sessions/web/ui/installMonacoGlobal.ts",
-		"src/commands/criteriaExtension/criteriaContentScript.ts"
+		"src/commands/criteriaExtension/criteriaContentScript.ts",
+		"src/commands/review/ci/reviewCiInit.ts",
+		"src/commands/review/ci/reviewCiCheck.ts"
 	],
 	"ignoreDependencies": [
 		"@vitest/coverage-v8",

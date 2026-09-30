@@ -13,13 +13,17 @@ export function syncDesign(claudeDir: string, targetBase: string): void {
 	const skillsTarget = path.join(targetBase, "skills");
 	fs.mkdirSync(skillsTarget, { recursive: true });
 
-	const files = fs.readdirSync(skillsSource);
-	for (const file of files) {
-		fs.copyFileSync(
-			path.join(skillsSource, file),
-			path.join(skillsTarget, file),
-		);
+	const entries = fs.readdirSync(skillsSource, { withFileTypes: true });
+	for (const entry of entries) {
+		const source = path.join(skillsSource, entry.name);
+		const target = path.join(skillsTarget, entry.name);
+		if (entry.isDirectory()) {
+			fs.rmSync(target, { recursive: true, force: true });
+			fs.cpSync(source, target, { recursive: true });
+		} else {
+			fs.copyFileSync(source, target);
+		}
 	}
 
-	console.log(`Synced ${files.length} design skill(s) to ~/.claude/skills`);
+	console.log(`Synced ${entries.length} skill(s) to ~/.claude/skills`);
 }

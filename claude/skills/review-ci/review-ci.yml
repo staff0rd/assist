@@ -1,0 +1,37 @@
+name: Review CI
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    env:
+      ASSIST_REVIEW_PROVIDER: ${{ vars.ASSIST_REVIEW_PROVIDER }}
+      ASSIST_REVIEW_BASE_URL: ${{ vars.ASSIST_REVIEW_BASE_URL }}
+      ASSIST_REVIEW_CLAUDE_MODEL: ${{ vars.ASSIST_REVIEW_CLAUDE_MODEL }}
+      ASSIST_REVIEW_CODEX_MODEL: ${{ vars.ASSIST_REVIEW_CODEX_MODEL }}
+      ASSIST_REVIEW_API_KEY: ${{ secrets.ASSIST_REVIEW_API_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Install Claude Code and Codex
+        run: npm install -g @anthropic-ai/claude-code @openai/codex
+
+      - name: Check review config
+        run: node .github/review-ci/check.mjs
