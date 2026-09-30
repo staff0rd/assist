@@ -1,3 +1,10 @@
+# [0.741.0](https://github.com/staff0rd/assist/compare/v0.740.0...v0.741.0) (2026-09-30)
+
+
+### Features
+
+* review-ci supports Azure Foundry ([9270114](https://github.com/staff0rd/assist/commit/9270114989e762c327731d42a8482ce5107557f9))
+
 # [0.740.0](https://github.com/staff0rd/assist/compare/v0.739.0...v0.740.0) (2026-09-30)
 
 
