@@ -1,3 +1,10 @@
+# [0.735.0](https://github.com/staff0rd/assist/compare/v0.734.0...v0.735.0) (2026-09-30)
+
+
+### Features
+
+* exclude labels and types from pickups ([742303a](https://github.com/staff0rd/assist/commit/742303a104a260890afca93b77d68f71fb5a01ea))
+
 # [0.734.0](https://github.com/staff0rd/assist/compare/v0.733.0...v0.734.0) (2026-09-30)
 
 
