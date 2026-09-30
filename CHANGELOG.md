@@ -1,3 +1,10 @@
+## [0.725.1](https://github.com/staff0rd/assist/compare/v0.725.0...v0.725.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* deny gh api graphql issue mutations ([1a237f1](https://github.com/staff0rd/assist/commit/1a237f1aff75a148b5a0cb1a31d6a3fbd74a457c))
+
 # [0.725.0](https://github.com/staff0rd/assist/compare/v0.724.0...v0.725.0) (2026-09-30)
 
 
