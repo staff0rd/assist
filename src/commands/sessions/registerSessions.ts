@@ -5,6 +5,7 @@ import { registerNodes } from "./nodes/registerNodes";
 import { registerOutputCommand } from "./registerOutputCommand";
 import { registerSetStatusCommand } from "./registerSetStatusCommand";
 import { renameSession } from "./renameSession";
+import { nextConfigHelp } from "./nextConfigHelp";
 import { sessionsConfigHelp } from "./sessionsConfigHelp";
 import { summarise } from "./summarise";
 import { web as sessionsWeb } from "./web";
@@ -18,7 +19,7 @@ export function registerSessions(program: Command): void {
 			sessionsWeb({ port: "3100", open: command.optsWithGlobals().open }),
 		);
 
-	cmd
+	const webCmd = cmd
 		.command("web")
 		.description("Start the sessions web dashboard")
 		.option("-p, --port <number>", "Port to listen on", "3100")
@@ -26,6 +27,7 @@ export function registerSessions(program: Command): void {
 		.action((options, command) =>
 			sessionsWeb({ ...options, open: command.optsWithGlobals().open }),
 		);
+	configHelp(webCmd, nextConfigHelp);
 
 	cmd
 		.command("summarise")

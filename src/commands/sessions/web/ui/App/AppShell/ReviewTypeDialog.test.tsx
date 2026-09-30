@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { PrSummary } from "../../../../../../prList";
-import { reviewButtonModes } from "../../../../reviewButtonModes";
+import type { PrSummary } from "../../../prList";
+import { reviewButtonModes } from "../reviewButtonModes";
 import { ReviewTypeDialog } from "./ReviewTypeDialog";
 
 const pr: PrSummary = {

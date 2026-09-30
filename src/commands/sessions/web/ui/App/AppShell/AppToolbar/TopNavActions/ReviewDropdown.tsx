@@ -3,7 +3,7 @@ import type { PrSummary } from "../../../../../prList";
 import { DropdownWrapper } from "../../../../DropdownWrapper";
 import { useOpenPrs } from "./ReviewDropdown/useOpenPrs";
 import { ReviewDropdownContent } from "./ReviewDropdown/ReviewDropdownContent";
-import { ReviewTypeDialog } from "./ReviewDropdown/ReviewTypeDialog";
+import { ReviewTypeDialog } from "../../ReviewTypeDialog";
 
 export function ReviewDropdown({
 	cwd,

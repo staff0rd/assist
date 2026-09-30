@@ -7,6 +7,7 @@ import { ConfigView } from "../ConfigView";
 import { NodeScopedDiffView } from "./AppRoutes/NodeScopedDiffView";
 import { NodeScopedFileView } from "./AppRoutes/NodeScopedFileView";
 import { NewsView } from "./AppRoutes/NewsView";
+import { NextView } from "./AppRoutes/NextView";
 import { ReleasesView } from "../ReleasesView";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
@@ -35,6 +36,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 						path="backlog/*"
 						element={<BacklogContent socket={socket} />}
 					/>
+					<Route path="next" element={<NextView />} />
 					<Route path="news" element={<NewsView />} />
 					<Route path="releases" element={<ReleasesView />} />
 					<Route path="usage" element={<UsageHistoryView />} />

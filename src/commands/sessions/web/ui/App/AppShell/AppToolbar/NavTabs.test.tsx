@@ -67,7 +67,7 @@ describe("NavTabs", () => {
 	it("shows the Releases tab when the repo declares release streams", async () => {
 		render(ui("/with", "/sessions"));
 		await waitFor(() =>
-			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Releases"]),
+			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Next", "Releases"]),
 		);
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/releases/configured?cwd=%2Fwith",
@@ -77,12 +77,12 @@ describe("NavTabs", () => {
 	it("hides the Releases tab when the repo declares no release streams", async () => {
 		render(ui("/without", "/sessions"));
 		await waitFor(releasesChecked);
-		expect(tabLabels()).toEqual(["Sessions", "Backlog"]);
+		expect(tabLabels()).toEqual(["Sessions", "Backlog", "Next"]);
 	});
 
 	it("keeps the Releases tab hidden while the check is pending", () => {
 		render(ui("/with", "/sessions"));
-		expect(tabLabels()).toEqual(["Sessions", "Backlog"]);
+		expect(tabLabels()).toEqual(["Sessions", "Backlog", "Next"]);
 	});
 
 	it("hides the News tab by default", async () => {
@@ -97,7 +97,13 @@ describe("NavTabs", () => {
 		showNewsInNav = true;
 		render(ui("/with", "/sessions"));
 		await waitFor(() =>
-			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Releases", "News"]),
+			expect(tabLabels()).toEqual([
+				"Sessions",
+				"Backlog",
+				"Next",
+				"Releases",
+				"News",
+			]),
 		);
 	});
 
@@ -121,7 +127,13 @@ describe("NavTabs", () => {
 		showNewsInNav = true;
 		render(ui("/with", "/news"));
 		await waitFor(() =>
-			expect(tabLabels()).toEqual(["Sessions", "Backlog", "Releases", "News"]),
+			expect(tabLabels()).toEqual([
+				"Sessions",
+				"Backlog",
+				"Next",
+				"Releases",
+				"News",
+			]),
 		);
 		expect(selectedLabel()).toBe("News");
 	});
@@ -141,7 +153,7 @@ describe("NavTabs", () => {
 		fetchMock.mockRejectedValueOnce(new Error("offline"));
 		render(ui("/with", "/sessions"));
 		await waitFor(releasesChecked);
-		expect(tabLabels()).toEqual(["Sessions", "Backlog"]);
+		expect(tabLabels()).toEqual(["Sessions", "Backlog", "Next"]);
 	});
 
 	it("redirects a deep link under /releases to /sessions when not configured", async () => {

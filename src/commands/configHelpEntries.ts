@@ -15,6 +15,7 @@ import { litellmConfigHelp } from "./litellm/litellmConfigHelp";
 import { mermaidConfigHelp } from "./mermaid/mermaidConfigHelp";
 import { miroConfigHelp } from "./miro/miroConfigHelp";
 import { newsConfigHelp } from "./news/newsConfigHelp";
+import { nextConfigHelp } from "./sessions/nextConfigHelp";
 import { prsConfigHelp } from "./prs/prsConfigHelp";
 import { ravendbConfigHelp } from "./ravendb/ravendbConfigHelp";
 import { readTimeConfigHelp } from "./readTime/readTimeConfigHelp";
@@ -51,6 +52,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...mermaidConfigHelp,
 	...miroConfigHelp,
 	...newsConfigHelp,
+	...nextConfigHelp,
 	...prsConfigHelp,
 	...ravendbConfigHelp,
 	...readTimeConfigHelp,

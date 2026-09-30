@@ -22,6 +22,7 @@ import { jiraSite } from "./jiraSite";
 import { listFiles } from "./listFiles";
 import { listNewsItems } from "./listNewsItems";
 import { newsNavConfig } from "./newsNavConfig";
+import { nextItems } from "./next/nextItems";
 import { listScopedRules } from "./listScopedRules";
 import { listUsageHistory } from "./listUsageHistory";
 import { listUsageItems } from "./listUsageItems";
@@ -100,6 +101,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/pr-status": prStatus,
 	"GET /api/server-runs": handleServerRuns,
 	"GET /api/pr-list": prList,
+	"GET /api/next": nextItems,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/news/nav": newsNavConfig,
 	"GET /api/releases/state": releasesState,

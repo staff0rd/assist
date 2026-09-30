@@ -506,6 +506,14 @@ releases:
 - `id` names the node within the stream and is what `edges` refer to. A node with an `environment` is a GitHub deployment environment and reads live state; `kind` (`build` or `gate`) marks a node that deploys nothing. `label` overrides the text on the node, which is otherwise the `id`.
 - `/releases-configure` derives the block from the repo's own workflows instead of hand-writing it, and `assist releases list` prints whatever is declared back as assist reads it.
 
+## Next
+
+The **Next** tab (`/next`) answers "what should I do next?" for the selected repo. It lists open, non-draft PRs authored by a login in `next.peers` or requesting your review, hiding peer PRs you approved at their current head commit, ordered by your latest review request (or creation, for an unrequested peer PR), oldest first. The top item is shown as a hero with a line explaining why it was chosen. Every item has **Start session**, which opens the same review type dialog as the toolbar `prs` dropdown, and **GitHub**. A source that fails to load shows its error in its own section. Data comes from `GET /api/next?cwd=<repo>`, with gh results cached for 30s.
+
+```bash
+assist config set next.peers alice,bob -g --repo
+```
+
 ## Parallel work
 
 Concurrent sessions in one repo can be isolated with native git worktrees instead of keeping multiple physical clones: see [docs/parallel-work.md](docs/parallel-work.md). All of these flags **default off**:

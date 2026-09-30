@@ -314,6 +314,11 @@ const assistConfigShape = {
 			showInNav: z.boolean().default(false),
 		})
 		.optional(),
+	next: z
+		.strictObject({
+			peers: z.array(z.string()).optional(),
+		})
+		.optional(),
 	deny: z
 		.array(
 			z.strictObject({
