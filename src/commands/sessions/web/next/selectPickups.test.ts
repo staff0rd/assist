@@ -13,6 +13,7 @@ function item(
 		draft?: boolean;
 		labels?: string[];
 		type?: string;
+		parent?: string;
 	} = {},
 ): GhProjectItemNode {
 	const status = overrides.status === undefined ? "Ready" : overrides.status;
@@ -35,6 +36,7 @@ function item(
 						nodes: (overrides.labels ?? ["bug"]).map((name) => ({ name })),
 					},
 					issueType: overrides.type ? { name: overrides.type } : null,
+					parent: overrides.parent ? { url: overrides.parent } : null,
 				},
 	};
 }
@@ -107,10 +109,31 @@ describe("selectPickups", () => {
 			defaultFilter,
 			board,
 		);
-		expect(picked.map((p) => [p.number, p.position])).toEqual([
-			[5, 0],
-			[3, 2],
-			[2, 3],
+		expect(picked.map((p) => [p.number, p.boardOrder])).toEqual([
+			[5, [0]],
+			[3, [2]],
+			[2, [3]],
+		]);
+	});
+
+	it("places a sub-issue under its on-board ancestors, as the board nests it", () => {
+		const url = (number: number) => `https://github.com/o/r/issues/${number}`;
+		const picked = selectPickups(
+			[
+				item(1, { type: "Epic" }),
+				item(2, { type: "Epic" }),
+				item(3, { status: "In Progress", parent: url(1) }),
+				item(4, { parent: url(2) }),
+				item(5, { parent: url(3) }),
+				item(6, { parent: "https://github.com/o/r/issues/99" }),
+			],
+			{ ...defaultFilter, excludeTypes: ["epic"] },
+			board,
+		);
+		expect(picked.map((p) => [p.number, p.boardOrder])).toEqual([
+			[5, [0, 2, 4]],
+			[4, [1, 3]],
+			[6, [5]],
 		]);
 	});
 
@@ -124,7 +147,8 @@ describe("selectPickups", () => {
 			repo: "other/web",
 			project: "o/3",
 			projectTitle: "Roadmap",
-			position: 0,
+			boardOrder: [0],
+			type: null,
 			itemId: "PVTI_1",
 			status: "Ready",
 			priority: "P1",

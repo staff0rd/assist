@@ -1,3 +1,4 @@
+import { compareBoardOrder } from "./compareBoardOrder";
 import { projectErrorText } from "./projectErrorText";
 import { readProjectItems } from "./readProjectItems";
 import { sectionAcross } from "./sectionAcross";
@@ -27,7 +28,7 @@ export async function fetchPickups(
 		},
 		(a, b) =>
 			projects.indexOf(a.project) - projects.indexOf(b.project) ||
-			a.position - b.position,
+			compareBoardOrder(a.boardOrder, b.boardOrder),
 	);
 	return {
 		pickups,

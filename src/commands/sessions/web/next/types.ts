@@ -21,7 +21,8 @@ export type NextPickup = PrSummary & {
 	itemId: string;
 	status: string;
 	priority: string | null;
-	position: number;
+	type: { name: string; color: string } | null;
+	boardOrder: number[];
 };
 
 export type NextBoard = { project: string; title: string; url: string };
@@ -68,7 +69,8 @@ export type GhProjectItemNode = {
 		author?: Login;
 		repository?: { nameWithOwner?: string } | null;
 		assignees?: { totalCount?: number } | null;
-		issueType?: { name?: string } | null;
+		issueType?: { name?: string; color?: string } | null;
+		parent?: { url?: string } | null;
 		labels?: { nodes?: ({ name?: string } | null)[] } | null;
 	} | null;
 };

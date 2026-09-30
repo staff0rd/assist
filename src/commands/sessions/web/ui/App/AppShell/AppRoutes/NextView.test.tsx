@@ -61,7 +61,8 @@ function pickup(number: number, repo = "o/other"): NextPickup {
 		itemId: `PVTI_${number}`,
 		status: "Ready",
 		priority: "P1",
-		position: number,
+		type: { name: "Story", color: "GREEN" },
+		boardOrder: [number],
 	};
 }
 
@@ -306,6 +307,7 @@ describe("NextView pickups", () => {
 		expect(screen.getByText("Project items to pick up")).toBeTruthy();
 		expect(screen.getByText("Pickup 4")).toBeTruthy();
 		expect(screen.getAllByText("Roadmap · Ready").length).toBe(2);
+		expect(screen.getAllByText("Story").length).toBe(2);
 	});
 
 	it("ranks assigned issues above pickups", async () => {
