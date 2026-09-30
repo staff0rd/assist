@@ -1,7 +1,12 @@
 import { useSearchParams } from "react-router";
 import type { NextIssue } from "../../../../../next/types";
 
-export function useStartIssue(): (issue: NextIssue, cwd: string) => void {
+export type StartableIssue = Pick<
+	NextIssue,
+	"repo" | "number" | "title" | "url"
+>;
+
+export function useStartIssue(): (issue: StartableIssue, cwd: string) => void {
 	const [, setSearchParams] = useSearchParams();
 	return (issue, cwd) =>
 		setSearchParams(

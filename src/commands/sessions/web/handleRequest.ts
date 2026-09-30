@@ -23,6 +23,7 @@ import { listFiles } from "./listFiles";
 import { listNewsItems } from "./listNewsItems";
 import { newsNavConfig } from "./newsNavConfig";
 import { nextItems } from "./next/nextItems";
+import { nextPickup } from "./next/nextPickup";
 import { listScopedRules } from "./listScopedRules";
 import { listUsageHistory } from "./listUsageHistory";
 import { listUsageItems } from "./listUsageItems";
@@ -102,6 +103,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/server-runs": handleServerRuns,
 	"GET /api/pr-list": prList,
 	"GET /api/next": nextItems,
+	"POST /api/next/pickup": nextPickup,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/news/nav": newsNavConfig,
 	"GET /api/releases/state": releasesState,

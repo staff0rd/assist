@@ -11,6 +11,7 @@ import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type {
 	NextIssue,
+	NextPickup,
 	NextPr,
 	NextResponse,
 	NextScope,
@@ -51,13 +52,27 @@ function issue(number: number, repo = "o/r"): NextIssue {
 	};
 }
 
+function pickup(number: number, repo = "o/other"): NextPickup {
+	return {
+		...issue(number, repo),
+		title: `Pickup ${number}`,
+		itemId: `PVTI_${number}`,
+		status: "Ready",
+		priority: "P1",
+	};
+}
+
 const empty = { items: [], error: null };
 
 const defaultScope: NextScope = {
 	selfRepo: "o/r",
 	peers: [],
 	repos: null,
+	project: null,
+	pickStatuses: ["Ready", "Todo"],
 };
+
+type Reply = { ok: boolean; json: () => Promise<unknown> };
 
 type Body = Partial<Omit<NextResponse, "scope">> & {
 	scope?: Partial<NextScope>;
@@ -68,19 +83,28 @@ function LocationProbe() {
 	return <div data-testid="location">{location.search}</div>;
 }
 
-function renderView(body: Body, launchAssist = vi.fn()) {
-	vi.stubGlobal(
-		"fetch",
-		vi.fn().mockResolvedValue({
-			ok: true,
-			json: async () => ({
-				peerPrs: empty,
-				assignedIssues: empty,
-				...body,
-				scope: { ...defaultScope, ...body.scope },
-			}),
-		}),
+function renderView(
+	body: Body,
+	launchAssist = vi.fn(),
+	pickupReply: Reply = { ok: true, json: async () => ({ ok: true }) },
+) {
+	const fetchMock = vi.fn((url: string) =>
+		Promise.resolve<Reply>(
+			url.startsWith("/api/next/pickup")
+				? pickupReply
+				: {
+						ok: true,
+						json: async () => ({
+							peerPrs: empty,
+							assignedIssues: empty,
+							pickups: empty,
+							...body,
+							scope: { ...defaultScope, ...body.scope },
+						}),
+					},
+		),
 	);
+	vi.stubGlobal("fetch", fetchMock);
 	const origins: Record<string, string> = {
 		"/git/other": "github.com/o/other",
 	};
@@ -254,10 +278,94 @@ describe("NextView scope note", () => {
 			scope: {
 				peers: ["alice", "bob"],
 				repos: ["o/a", "o/b"],
+				project: "o/3",
 			},
 		});
 		expect(await screen.findByText(/Peers: alice, bob/)).toBeTruthy();
 		expect(screen.getByText(/Repos: o\/a, o\/b/)).toBeTruthy();
 		expect(screen.queryByText(/assist config set/)).toBeNull();
+	});
+});
+
+describe("NextView pickups", () => {
+	it("recommends the top pickup only when nothing else is waiting", async () => {
+		renderView({ pickups: { items: [pickup(3), pickup(4)], error: null } });
+		const hero = await heroCard();
+		expect(within(hero).getByText("Pickup 3")).toBeTruthy();
+		expect(
+			within(hero).getByText(
+				/P1, Ready — the highest priority of 2 unassigned project items/,
+			),
+		).toBeTruthy();
+		expect(screen.getByText("Project items to pick up")).toBeTruthy();
+		expect(screen.getByText("Pickup 4")).toBeTruthy();
+	});
+
+	it("ranks assigned issues above pickups", async () => {
+		renderView({
+			assignedIssues: { items: [issue(5)], error: null },
+			pickups: { items: [pickup(3)], error: null },
+		});
+		const hero = await heroCard();
+		expect(within(hero).getByText("Issue 5")).toBeTruthy();
+		expect(within(hero).queryByText("Pickup 3")).toBeNull();
+		expect(screen.getByText("Pickup 3")).toBeTruthy();
+	});
+
+	it("assigns and moves the item before opening the new-session dialog", async () => {
+		renderView({ pickups: { items: [pickup(3)], error: null } });
+		fireEvent.click(await screen.findByText("Start session"));
+		await waitFor(() =>
+			expect(locationParams().get("new")).toBe(
+				"Issue o/other#3: Pickup 3\nhttps://github.com/o/other/issues/3",
+			),
+		);
+		expect(locationParams().get("newCwd")).toBe("/git/other");
+		const post = vi
+			.mocked(fetch)
+			.mock.calls.find(([url]) => String(url).startsWith("/api/next/pickup"));
+		expect(post?.[0]).toBe("/api/next/pickup?cwd=%2Frepo");
+		expect(JSON.parse(String(post?.[1]?.body))).toEqual({
+			repo: "o/other",
+			number: 3,
+			itemId: "PVTI_3",
+		});
+	});
+
+	it("shows why a pickup failed and does not open the dialog", async () => {
+		renderView({ pickups: { items: [pickup(3)], error: null } }, vi.fn(), {
+			ok: false,
+			json: async () => ({ error: "no project scope" }),
+		});
+		fireEvent.click(await screen.findByText("Start session"));
+		expect(
+			await screen.findByText("Could not pick up o/other#3: no project scope"),
+		).toBeTruthy();
+		expect(locationParams().get("new")).toBeNull();
+	});
+
+	it("shows a missing project scope inline in the pickup section", async () => {
+		renderView({
+			assignedIssues: { items: [issue(5)], error: null },
+			pickups: { items: [], error: "The gh token has no project scope" },
+		});
+		expect(
+			await screen.findByText("The gh token has no project scope"),
+		).toBeTruthy();
+		expect(screen.getAllByText("Issue 5").length).toBeGreaterThan(0);
+	});
+
+	it("states the project scope, or the command to set it", async () => {
+		renderView({ scope: { project: "o/3" } });
+		expect(
+			await screen.findByText(/Project: o\/3, picking up Ready, Todo/),
+		).toBeTruthy();
+		cleanup();
+		renderView({});
+		expect(
+			await screen.findByText(
+				"assist config set next.project my-org/3 -g --repo",
+			),
+		).toBeTruthy();
 	});
 });

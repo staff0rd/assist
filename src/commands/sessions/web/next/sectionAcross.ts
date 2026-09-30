@@ -1,10 +1,5 @@
+import { ghErrorText } from "./ghErrorText";
 import type { NextSection } from "./types";
-
-function errorMessage(error: unknown): string {
-	const stderr = (error as { stderr?: unknown }).stderr;
-	if (typeof stderr === "string" && stderr.trim()) return stderr.trim();
-	return error instanceof Error ? error.message : String(error);
-}
 
 export async function sectionAcross<T extends { url: string }>(
 	repos: string[],
@@ -23,7 +18,7 @@ export async function sectionAcross<T extends { url: string }>(
 	results.forEach((result, index) => {
 		if (result.status === "fulfilled")
 			for (const item of result.value) items.set(item.url, item);
-		else errors.push(`${repos[index]}: ${errorMessage(result.reason)}`);
+		else errors.push(`${repos[index]}: ${ghErrorText(result.reason)}`);
 	});
 	return {
 		items: [...items.values()].sort(compare),

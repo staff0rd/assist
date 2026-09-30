@@ -13,21 +13,51 @@ export type RepolessPr = Omit<NextPr, "repo">;
 
 export type NextIssue = PrSummary & { repo: string; labels: string[] };
 
+export type NextPickup = PrSummary & {
+	repo: string;
+	labels: string[];
+	itemId: string;
+	status: string;
+	priority: string | null;
+};
+
 export type NextSection<T> = { items: T[]; error: string | null };
 
 export type NextScope = {
 	selfRepo: string | null;
 	peers: string[];
 	repos: string[] | null;
+	project: string | null;
+	pickStatuses: string[];
 };
 
 export type NextResponse = {
 	scope: NextScope;
 	peerPrs: NextSection<NextPr>;
 	assignedIssues: NextSection<NextIssue>;
+	pickups: NextSection<NextPickup>;
 };
 
 type Login = { login?: string } | null;
+
+type SingleSelectValue = { name?: string } | null;
+
+export type GhProjectItemNode = {
+	id: string;
+	status?: SingleSelectValue;
+	priority?: SingleSelectValue;
+	content?: {
+		number?: number;
+		title?: string;
+		url?: string;
+		createdAt?: string;
+		state?: string;
+		author?: Login;
+		repository?: { nameWithOwner?: string } | null;
+		assignees?: { totalCount?: number } | null;
+		labels?: { nodes?: ({ name?: string } | null)[] } | null;
+	} | null;
+};
 
 export type GhPeerPrNode = {
 	number: number;

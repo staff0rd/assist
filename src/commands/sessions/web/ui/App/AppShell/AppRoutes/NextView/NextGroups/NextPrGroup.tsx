@@ -6,11 +6,11 @@ import { NextRow } from "./NextRow";
 
 export function NextPrGroup({
 	section,
-	hidden,
+	hiddenUrl,
 	onStart,
 }: {
 	section: NextSection<NextPr>;
-	hidden?: NextPr;
+	hiddenUrl?: string;
 	onStart: (pr: NextPr, cwd: string) => void;
 }) {
 	return (
@@ -20,7 +20,7 @@ export function NextPrGroup({
 			count={section.items.length}
 			error={section.error}
 			rows={section.items
-				.filter((pr) => pr !== hidden)
+				.filter((pr) => pr.url !== hiddenUrl)
 				.map((pr) => (
 					<NextRow
 						key={pr.url}

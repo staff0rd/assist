@@ -21,7 +21,12 @@ export function startIssue(
 	const { owner, repo } = resolveIssueRepoTarget(options.repo);
 	const slug = `${owner}/${repo}`;
 
-	assignIssueToSelf(number, slug);
+	try {
+		assignIssueToSelf(number, slug);
+	} catch (error) {
+		console.error(error instanceof Error ? error.message : String(error));
+		process.exit(1);
+	}
 	console.log(`Assigned ${slug}#${number} to you`);
 
 	moveIssueToInProgress({ owner, repo, number });

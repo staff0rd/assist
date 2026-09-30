@@ -3,6 +3,7 @@ import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import type { NextScope } from "./types";
 
 const GITHUB = "github.com/";
+const DEFAULT_PICK_STATUSES = ["Ready", "Todo"];
 
 function githubRepo(cwd: string): string | null {
 	const { origin } = resolveCurrentOrigin(cwd);
@@ -15,5 +16,7 @@ export function nextScope(cwd: string): NextScope {
 		selfRepo: githubRepo(cwd),
 		peers: next?.peers ?? [],
 		repos: next?.repos ?? null,
+		project: next?.project ?? null,
+		pickStatuses: next?.pickStatuses ?? DEFAULT_PICK_STATUSES,
 	};
 }

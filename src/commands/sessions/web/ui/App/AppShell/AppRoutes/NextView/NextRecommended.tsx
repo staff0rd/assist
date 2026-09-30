@@ -1,43 +1,19 @@
-import { NextIssueFacts } from "./NextIssueFacts";
-import { NextPrFacts } from "./NextPrFacts";
-import { nextChips } from "./nextChips";
+import { nextTopItem } from "../../../../../next/nextTopItem";
 import { NextHero } from "./NextRecommended/NextHero";
-import { nextIssueWhy } from "./NextRecommended/nextIssueWhy";
-import { nextPrWhy } from "./NextRecommended/nextPrWhy";
+import { nextHeroDetails } from "./NextRecommended/nextHeroDetails";
 import type { NextSectionsProps } from "./NextSectionsProps";
 
-export function NextRecommended({
-	data,
-	onStartPr,
-	onStartIssue,
-}: NextSectionsProps) {
-	const { peerPrs, assignedIssues } = data;
-	const pr = peerPrs.items[0];
-	if (pr)
-		return (
-			<NextHero
-				chip={nextChips.review}
-				repo={pr.repo}
-				number={pr.number}
-				title={pr.title}
-				facts={<NextPrFacts pr={pr} />}
-				why={nextPrWhy(pr, peerPrs.items.length)}
-				url={pr.url}
-				onStart={(cwd) => onStartPr(pr, cwd)}
-			/>
-		);
-	const issue = assignedIssues.items[0];
-	if (!issue) return null;
+export function NextRecommended(props: NextSectionsProps) {
+	const top = nextTopItem(props.data);
+	if (!top) return null;
+	const { repo, number, title, url } = top.item;
 	return (
 		<NextHero
-			chip={nextChips.assigned}
-			repo={issue.repo}
-			number={issue.number}
-			title={issue.title}
-			facts={<NextIssueFacts issue={issue} />}
-			why={nextIssueWhy(issue, assignedIssues.items.length, !peerPrs.error)}
-			url={issue.url}
-			onStart={(cwd) => onStartIssue(issue, cwd)}
+			repo={repo}
+			number={number}
+			title={title}
+			url={url}
+			{...nextHeroDetails(top, props)}
 		/>
 	);
 }

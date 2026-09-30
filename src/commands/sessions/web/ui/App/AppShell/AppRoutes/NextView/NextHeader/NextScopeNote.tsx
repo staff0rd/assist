@@ -24,6 +24,16 @@ export function NextScopeNote({ scope }: { scope: NextScope }) {
 				setter="assist config set next.repos my-org,other/web -g --repo"
 				showSetter={!scope.repos}
 			/>
+			<NextScopeLine
+				label="Project"
+				value={
+					scope.project &&
+					`${scope.project}, picking up ${scope.pickStatuses.join(", ")}`
+				}
+				unset="none — no project items are suggested"
+				setter="assist config set next.project my-org/3 -g --repo"
+				showSetter={!scope.project}
+			/>
 		</Stack>
 	);
 }
