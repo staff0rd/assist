@@ -1,3 +1,10 @@
+# [0.734.0](https://github.com/staff0rd/assist/compare/v0.733.0...v0.734.0) (2026-09-30)
+
+
+### Features
+
+* Next reads pickups from projects ([3999a54](https://github.com/staff0rd/assist/commit/3999a540c14794d9ae10a72fe834fd1afe54654b))
+
 # [0.733.0](https://github.com/staff0rd/assist/compare/v0.732.1...v0.733.0) (2026-09-30)
 
 
