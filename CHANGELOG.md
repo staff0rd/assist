@@ -1,3 +1,10 @@
+# [0.731.0](https://github.com/staff0rd/assist/compare/v0.730.2...v0.731.0) (2026-09-30)
+
+
+### Features
+
+* show refusal, copy buttons, advice ([a07147b](https://github.com/staff0rd/assist/commit/a07147b4b0dedf654a21814c0e9b9add1b177f39))
+
 ## [0.730.2](https://github.com/staff0rd/assist/compare/v0.730.1...v0.730.2) (2026-09-30)
 
 
