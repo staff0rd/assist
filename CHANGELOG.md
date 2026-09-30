@@ -1,3 +1,10 @@
+# [0.737.0](https://github.com/staff0rd/assist/compare/v0.736.0...v0.737.0) (2026-09-30)
+
+
+### Features
+
+* order pickups by board position ([af957b0](https://github.com/staff0rd/assist/commit/af957b0788930e918cd6a4b5cab5d1affd4373d1))
+
 # [0.736.0](https://github.com/staff0rd/assist/compare/v0.735.0...v0.736.0) (2026-09-30)
 
 
