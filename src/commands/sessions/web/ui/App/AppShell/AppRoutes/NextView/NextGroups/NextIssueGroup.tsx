@@ -1,8 +1,8 @@
 import type { NextIssue, NextSection } from "../../../../../../next/types";
-import { NextGroup } from "./NextGroup";
 import { NextIssueFacts } from "../NextIssueFacts";
-import { NextRow } from "./NextRow";
 import { nextChips } from "../nextChips";
+import { NextGroup } from "./NextGroup";
+import { NextRow } from "./NextRow";
 
 export function NextIssueGroup({
 	section,
@@ -11,7 +11,7 @@ export function NextIssueGroup({
 }: {
 	section: NextSection<NextIssue>;
 	hidden?: NextIssue;
-	onStart: (issue: NextIssue) => void;
+	onStart: (issue: NextIssue, cwd: string) => void;
 }) {
 	return (
 		<NextGroup
@@ -23,12 +23,13 @@ export function NextIssueGroup({
 				.filter((issue) => issue !== hidden)
 				.map((issue) => (
 					<NextRow
-						key={issue.number}
+						key={issue.url}
+						repo={issue.repo}
 						number={issue.number}
 						title={issue.title}
 						facts={<NextIssueFacts issue={issue} />}
 						url={issue.url}
-						onStart={() => onStart(issue)}
+						onStart={(cwd) => onStart(issue, cwd)}
 					/>
 				))}
 		/>

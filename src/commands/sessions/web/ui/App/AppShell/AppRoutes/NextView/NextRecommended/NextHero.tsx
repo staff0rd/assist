@@ -5,9 +5,11 @@ import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 import type { NextChip } from "../nextChips";
 import { NextItemActions } from "../NextItemActions";
+import { NextRepoRef } from "../NextRepoRef";
 
 export function NextHero({
 	chip,
+	repo,
 	number,
 	title,
 	facts,
@@ -16,12 +18,13 @@ export function NextHero({
 	onStart,
 }: {
 	chip: NextChip;
+	repo: string;
 	number: number;
 	title: string;
 	facts: ReactNode;
 	why: string;
 	url: string;
-	onStart: () => void;
+	onStart: (cwd: string) => void;
 }) {
 	return (
 		<Paper variant="outlined" sx={{ p: 2.5 }}>
@@ -39,12 +42,7 @@ export function NextHero({
 						color={chip.color}
 						variant="outlined"
 					/>
-					<Typography
-						variant="body2"
-						sx={{ fontFamily: "monospace", color: "text.secondary" }}
-					>
-						#{number}
-					</Typography>
+					<NextRepoRef repo={repo} number={number} />
 				</Stack>
 				<Typography variant="h6" component="h2">
 					{title}
@@ -53,7 +51,12 @@ export function NextHero({
 				<Typography sx={{ color: "text.secondary", maxWidth: "65ch" }}>
 					{why}
 				</Typography>
-				<NextItemActions url={url} onStart={onStart} size="medium" />
+				<NextItemActions
+					repo={repo}
+					url={url}
+					onStart={onStart}
+					size="medium"
+				/>
 			</Stack>
 		</Paper>
 	);

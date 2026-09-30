@@ -1,6 +1,6 @@
 import { headCommit } from "./headCommit";
 import { sameLogin } from "./sameLogin";
-import type { GhPeerPrNode, NextChecks, NextPr } from "./types";
+import type { GhPeerPrNode, NextChecks, RepolessPr } from "./types";
 
 const CHECK_STATES: Record<string, NextChecks> = {
 	SUCCESS: "success",
@@ -22,7 +22,7 @@ export function toNextPr(
 	author: string,
 	requested: boolean,
 	viewer: string,
-): NextPr {
+): RepolessPr {
 	const rollup = headCommit(node)?.statusCheckRollup?.state;
 	return {
 		number: node.number,

@@ -3,15 +3,16 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Link as RouterLink } from "react-router";
-import { NextPeersNote } from "./NextHeader/NextPeersNote";
+import type { NextScope } from "../../../../../next/types";
+import { NextScopeNote } from "./NextHeader/NextScopeNote";
 
 export function NextHeader({
 	loading,
-	peers,
+	scope,
 	onRefresh,
 }: {
 	loading: boolean;
-	peers?: string[];
+	scope?: NextScope;
 	onRefresh: () => void;
 }) {
 	return (
@@ -32,7 +33,7 @@ export function NextHeader({
 					Refresh
 				</Button>
 			</Stack>
-			{peers && <NextPeersNote peers={peers} />}
+			{scope && <NextScopeNote scope={scope} />}
 		</Stack>
 	);
 }

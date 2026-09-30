@@ -10,10 +10,15 @@ type GhIssue = {
 	labels?: { name?: string }[] | null;
 };
 
-export async function fetchAssignedIssues(cwd: string): Promise<NextIssue[]> {
+export async function fetchAssignedIssues(
+	cwd: string,
+	repo: string,
+): Promise<NextIssue[]> {
 	const issues = await ghJson<GhIssue[]>(cwd, [
 		"issue",
 		"list",
+		"--repo",
+		repo,
 		"--assignee",
 		"@me",
 		"--state",
@@ -23,16 +28,15 @@ export async function fetchAssignedIssues(cwd: string): Promise<NextIssue[]> {
 		"--json",
 		"number,title,url,createdAt,author,labels",
 	]);
-	return issues
-		.map((issue) => ({
-			number: issue.number,
-			title: issue.title,
-			url: issue.url,
-			createdAt: issue.createdAt,
-			author: issue.author?.login ?? "unknown",
-			labels: (issue.labels ?? []).flatMap((label) =>
-				label.name ? [label.name] : [],
-			),
-		}))
-		.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+	return issues.map((issue) => ({
+		repo,
+		number: issue.number,
+		title: issue.title,
+		url: issue.url,
+		createdAt: issue.createdAt,
+		author: issue.author?.login ?? "unknown",
+		labels: (issue.labels ?? []).flatMap((label) =>
+			label.name ? [label.name] : [],
+		),
+	}));
 }

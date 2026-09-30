@@ -1,7 +1,7 @@
 import { headCommit } from "./headCommit";
 import { sameLogin } from "./sameLogin";
 import { toNextPr } from "./toNextPr";
-import type { GhPeerPrNode, NextPr } from "./types";
+import type { GhPeerPrNode, RepolessPr } from "./types";
 
 function isRequested(node: GhPeerPrNode, viewer: string): boolean {
 	return (node.reviewRequests?.nodes ?? []).some((request) =>
@@ -23,8 +23,8 @@ export function selectPeerPrs(
 	nodes: GhPeerPrNode[],
 	viewer: string,
 	peers: string[],
-): NextPr[] {
-	const selected: NextPr[] = [];
+): RepolessPr[] {
+	const selected: RepolessPr[] = [];
 	for (const node of nodes) {
 		const author = node.author?.login ?? "unknown";
 		if (node.isDraft || sameLogin(author, viewer)) continue;

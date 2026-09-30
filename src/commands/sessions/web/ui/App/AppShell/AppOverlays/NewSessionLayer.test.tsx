@@ -115,6 +115,16 @@ describe("NewSessionLayer ?new", () => {
 		expect(checkedMode()).toBe("bug");
 	});
 
+	it("targets the repo from the newCwd param and strips it", async () => {
+		const router = renderAt(
+			`/next?new=${encodeURIComponent("Issue o/b#4: fix it")}&newCwd=${encodeURIComponent("/git/beta")}`,
+		);
+
+		await screen.findByRole("textbox", { name: "Prompt" });
+		expect(repoInput().value).toBe("beta");
+		expect(router.state.location.search).toBe("");
+	});
+
 	it("stays closed without the new param", async () => {
 		renderAt("/sessions");
 

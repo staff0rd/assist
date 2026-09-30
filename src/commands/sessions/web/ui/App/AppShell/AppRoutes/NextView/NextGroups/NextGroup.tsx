@@ -36,7 +36,11 @@ export function NextGroup({
 					{count}
 				</Typography>
 			</Stack>
-			{error && <Alert severity="error">{error}</Alert>}
+			{error && (
+				<Alert severity="error" sx={{ whiteSpace: "pre-line" }}>
+					{error}
+				</Alert>
+			)}
 			{rows.length > 0 && (
 				<Paper variant="outlined" sx={{ overflow: "hidden" }}>
 					{rows}

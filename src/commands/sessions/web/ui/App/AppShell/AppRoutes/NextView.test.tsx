@@ -9,7 +9,12 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { NextIssue, NextPr, NextResponse } from "../../../../next/types";
+import type {
+	NextIssue,
+	NextPr,
+	NextResponse,
+	NextScope,
+} from "../../../../next/types";
 import { RepoSelectionContext } from "../../../useRepoSelectionContext";
 import { SessionLaunchContext } from "../../../useSessionLaunchContext";
 import { NextView } from "./NextView";
@@ -21,6 +26,7 @@ afterEach(() => {
 
 function pr(number: number, overrides: Partial<NextPr> = {}): NextPr {
 	return {
+		repo: "o/r",
 		number,
 		title: `PR ${number}`,
 		author: "alice",
@@ -33,47 +39,62 @@ function pr(number: number, overrides: Partial<NextPr> = {}): NextPr {
 	};
 }
 
-function issue(number: number): NextIssue {
+function issue(number: number, repo = "o/r"): NextIssue {
 	return {
+		repo,
 		number,
 		title: `Issue ${number}`,
 		author: "bob",
 		createdAt: "2026-09-01T00:00:00Z",
-		url: `https://github.com/o/r/issues/${number}`,
+		url: `https://github.com/${repo}/issues/${number}`,
 		labels: ["bug"],
 	};
 }
 
 const empty = { items: [], error: null };
 
+const defaultScope: NextScope = {
+	selfRepo: "o/r",
+	peers: [],
+	prRepos: null,
+	issueRepos: null,
+};
+
+type Body = Partial<Omit<NextResponse, "scope">> & {
+	scope?: Partial<NextScope>;
+};
+
 function LocationProbe() {
 	const location = useLocation();
 	return <div data-testid="location">{location.search}</div>;
 }
 
-function renderView(body: Partial<NextResponse>, launchAssist = vi.fn()) {
+function renderView(body: Body, launchAssist = vi.fn()) {
 	vi.stubGlobal(
 		"fetch",
 		vi.fn().mockResolvedValue({
 			ok: true,
 			json: async () => ({
-				peers: [],
 				peerPrs: empty,
 				assignedIssues: empty,
 				...body,
+				scope: { ...defaultScope, ...body.scope },
 			}),
 		}),
 	);
+	const origins: Record<string, string> = {
+		"/git/other": "github.com/o/other",
+	};
 	render(
 		<MemoryRouter initialEntries={["/next"]}>
 			<RepoSelectionContext.Provider
 				value={{
-					repos: [],
+					repos: ["/repo", "/git/other"],
 					selectedCwd: "/repo",
 					worktreeCwd: "/repo",
 					setSelectedCwd: () => {},
 					cloneOn: (cwd) => cwd,
-					originOf: () => undefined,
+					originOf: (cwd) => origins[cwd],
 				}}
 			>
 				<SessionLaunchContext.Provider
@@ -98,15 +119,21 @@ async function heroCard() {
 	return hero.closest(".MuiPaper-root") as HTMLElement;
 }
 
-describe("NextView", () => {
+function locationParams() {
+	return new URLSearchParams(screen.getByTestId("location").textContent ?? "");
+}
+
+describe("NextView ranking", () => {
 	it("shows the top PR as the hero with a why line and the rest grouped", async () => {
 		renderView({ peerPrs: { items: [pr(1), pr(2)], error: null } });
 		const hero = await heroCard();
 		expect(within(hero).getByText("PR 1")).toBeTruthy();
+		expect(within(hero).getByText("o/r#1")).toBeTruthy();
 		expect(
 			within(hero).getByText(/the oldest of 2 PRs waiting on your review/),
 		).toBeTruthy();
 		expect(screen.getByText("PR 2")).toBeTruthy();
+		expect(screen.getByText("o/r#2")).toBeTruthy();
 		expect(screen.getAllByText("Start session")).toHaveLength(2);
 		expect(screen.getAllByText("GitHub")).toHaveLength(2);
 	});
@@ -136,8 +163,10 @@ describe("NextView", () => {
 		expect(screen.getByText("Issue 6")).toBeTruthy();
 		expect(screen.queryByText("Peer PRs awaiting your review")).toBeNull();
 	});
+});
 
-	it("launches the chosen review from the review type dialog", async () => {
+describe("NextView Start session", () => {
+	it("launches the chosen review in the selected repo", async () => {
 		const launchAssist = renderView({
 			peerPrs: { items: [pr(7)], error: null },
 		});
@@ -150,46 +179,91 @@ describe("NextView", () => {
 		);
 	});
 
-	it("opens the new-session dialog prefilled with the issue", async () => {
-		renderView({ assignedIssues: { items: [issue(5)], error: null } });
+	it("launches a PR from another repo in that repo's local clone", async () => {
+		const launchAssist = renderView({
+			peerPrs: { items: [pr(7, { repo: "O/Other" })], error: null },
+		});
 		fireEvent.click(await screen.findByText("Start session"));
-		const params = new URLSearchParams(
-			screen.getByTestId("location").textContent ?? "",
-		);
-		expect(params.get("new")).toBe(
-			"Issue #5: Issue 5\nhttps://github.com/o/r/issues/5",
+		fireEvent.click(screen.getByText("Address Comments"));
+		expect(launchAssist).toHaveBeenCalledWith(
+			["review-pr-comments", "7"],
+			"/git/other",
+			expect.anything(),
 		);
 	});
 
+	it("disables Start session when the item's repo has no local clone", async () => {
+		renderView({
+			assignedIssues: { items: [issue(5, "o/elsewhere")], error: null },
+		});
+		const start = (await screen.findByText("Start session")).closest("button");
+		expect(start?.disabled).toBe(true);
+		expect(
+			screen.getByRole("link", { name: "GitHub" }).getAttribute("href"),
+		).toBe("https://github.com/o/elsewhere/issues/5");
+	});
+
+	it("opens the new-session dialog prefilled with the issue in its clone", async () => {
+		renderView({
+			assignedIssues: { items: [issue(5, "o/other")], error: null },
+		});
+		fireEvent.click(await screen.findByText("Start session"));
+		expect(locationParams().get("new")).toBe(
+			"Issue o/other#5: Issue 5\nhttps://github.com/o/other/issues/5",
+		);
+		expect(locationParams().get("newCwd")).toBe("/git/other");
+	});
+});
+
+describe("NextView sections", () => {
 	it("shows a failing source inline while the others still render", async () => {
 		renderView({
-			peerPrs: { items: [], error: "gh: not logged in" },
+			peerPrs: { items: [], error: "o/r: gh: not logged in" },
 			assignedIssues: { items: [issue(5)], error: null },
 		});
-		await waitFor(() => expect(screen.getByText("gh: not logged in")));
+		await waitFor(() => expect(screen.getByText("o/r: gh: not logged in")));
 		expect(screen.getAllByText("Issue 5").length).toBeGreaterThan(0);
 		expect(screen.queryByText(/no peer PRs await your review/)).toBeNull();
 		expect(screen.queryByText("Nothing needs you here")).toBeNull();
 	});
 
-	it("tells you how to configure peers when none are set", async () => {
+	it("shows the all-clear state when every source is empty", async () => {
 		renderView({});
-		expect(await screen.findByText(/No peers configured/)).toBeTruthy();
+		expect(await screen.findByText("Nothing needs you here")).toBeTruthy();
+	});
+});
+
+describe("NextView scope note", () => {
+	it("shows defaults with the commands to set each source", async () => {
+		renderView({});
+		expect(await screen.findByText(/Peers: none/)).toBeTruthy();
 		expect(
-			screen.getByText("assist config set next.peers alice,bob -g --repo"),
+			screen.getByText(/PR repos: o\/r \(this repo, by default\)/),
+		).toBeTruthy();
+		expect(
+			screen.getByText(/Issue repos: o\/r \(this repo, by default\)/),
+		).toBeTruthy();
+		expect(
+			screen.getByText(
+				"assist config set next.prRepos owner/api,owner/web -g --repo",
+			),
 		).toBeTruthy();
 		expect(
 			screen.getByRole("link", { name: "Next settings" }).getAttribute("href"),
 		).toBe("/config?search=next");
 	});
 
-	it("names the configured peers", async () => {
-		renderView({ peers: ["alice", "bob"] });
-		expect(await screen.findByText(/Peer PRs from alice, bob/)).toBeTruthy();
-	});
-
-	it("shows the all-clear state when every source is empty", async () => {
-		renderView({});
-		expect(await screen.findByText("Nothing needs you here")).toBeTruthy();
+	it("lists configured peers and repos without setters", async () => {
+		renderView({
+			scope: {
+				peers: ["alice", "bob"],
+				prRepos: ["o/a", "o/b"],
+				issueRepos: ["o/c"],
+			},
+		});
+		expect(await screen.findByText(/Peers: alice, bob/)).toBeTruthy();
+		expect(screen.getByText(/PR repos: o\/a, o\/b/)).toBeTruthy();
+		expect(screen.getByText(/Issue repos: o\/c/)).toBeTruthy();
+		expect(screen.queryByText(/assist config set/)).toBeNull();
 	});
 });

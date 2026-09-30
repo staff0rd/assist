@@ -1,8 +1,8 @@
 import type { NextPr, NextSection } from "../../../../../../next/types";
-import { NextGroup } from "./NextGroup";
 import { NextPrFacts } from "../NextPrFacts";
-import { NextRow } from "./NextRow";
 import { nextChips } from "../nextChips";
+import { NextGroup } from "./NextGroup";
+import { NextRow } from "./NextRow";
 
 export function NextPrGroup({
 	section,
@@ -11,7 +11,7 @@ export function NextPrGroup({
 }: {
 	section: NextSection<NextPr>;
 	hidden?: NextPr;
-	onStart: (pr: NextPr) => void;
+	onStart: (pr: NextPr, cwd: string) => void;
 }) {
 	return (
 		<NextGroup
@@ -23,12 +23,13 @@ export function NextPrGroup({
 				.filter((pr) => pr !== hidden)
 				.map((pr) => (
 					<NextRow
-						key={pr.number}
+						key={pr.url}
+						repo={pr.repo}
 						number={pr.number}
 						title={pr.title}
 						facts={<NextPrFacts pr={pr} />}
 						url={pr.url}
-						onStart={() => onStart(pr)}
+						onStart={(cwd) => onStart(pr, cwd)}
 					/>
 				))}
 		/>

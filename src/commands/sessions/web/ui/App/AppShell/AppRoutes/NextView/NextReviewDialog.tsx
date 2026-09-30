@@ -4,20 +4,22 @@ import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
 import { useSessionLaunchContext } from "../../../../useSessionLaunchContext";
 import { ReviewTypeDialog } from "../../ReviewTypeDialog";
 
+export type NextReview = { pr: NextPr; cwd: string };
+
 export function NextReviewDialog({
-	pr,
+	review: { pr, cwd },
 	onClose,
 }: {
-	pr: NextPr;
+	review: NextReview;
 	onClose: () => void;
 }) {
-	const { selectedCwd, selectedNode } = useRepoSelectionContext();
+	const { selectedNode } = useRepoSelectionContext();
 	const { launchAssist } = useSessionLaunchContext();
 	return (
 		<ReviewTypeDialog
 			pr={pr}
 			onSelect={(args) => {
-				launchAssist([...args, String(pr.number)], selectedCwd, {
+				launchAssist([...args, String(pr.number)], cwd, {
 					...prLaunchMeta(pr),
 					node: selectedNode,
 				});

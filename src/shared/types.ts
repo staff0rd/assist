@@ -317,6 +317,8 @@ const assistConfigShape = {
 	next: z
 		.strictObject({
 			peers: z.array(z.string()).optional(),
+			prRepos: z.array(z.string()).optional(),
+			issueRepos: z.array(z.string()).optional(),
 		})
 		.optional(),
 	deny: z

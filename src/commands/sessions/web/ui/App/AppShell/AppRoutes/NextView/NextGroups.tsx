@@ -1,21 +1,13 @@
-import type {
-	NextIssue,
-	NextPr,
-	NextResponse,
-} from "../../../../../next/types";
 import { AllClear } from "./NextGroups/AllClear";
 import { NextIssueGroup } from "./NextGroups/NextIssueGroup";
 import { NextPrGroup } from "./NextGroups/NextPrGroup";
+import type { NextSectionsProps } from "./NextSectionsProps";
 
 export function NextGroups({
 	data,
 	onStartPr,
 	onStartIssue,
-}: {
-	data: NextResponse;
-	onStartPr: (pr: NextPr) => void;
-	onStartIssue: (issue: NextIssue) => void;
-}) {
+}: NextSectionsProps) {
 	const { peerPrs, assignedIssues } = data;
 	const allClear = [peerPrs, assignedIssues].every(
 		(section) => section.items.length === 0 && !section.error,

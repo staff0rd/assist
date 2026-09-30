@@ -14,17 +14,19 @@ type PeerPrsResponse = {
 
 export async function fetchPeerPrs(
 	cwd: string,
+	repo: string,
 	peers: string[],
 ): Promise<NextPr[]> {
+	const [owner, name] = repo.split("/");
 	const response = await ghJson<PeerPrsResponse>(cwd, [
 		"api",
 		"graphql",
 		"-f",
 		`query=${peerPrsQuery}`,
 		"-F",
-		"owner={owner}",
+		`owner=${owner}`,
 		"-F",
-		"name={repo}",
+		`name=${name}`,
 	]);
 	const viewer = response.data?.viewer?.login;
 	const repository = response.data?.repository;
@@ -32,5 +34,5 @@ export async function fetchPeerPrs(
 	const nodes = (repository.pullRequests?.nodes ?? []).filter(
 		(node): node is GhPeerPrNode => !!node,
 	);
-	return selectPeerPrs(nodes, viewer, peers);
+	return selectPeerPrs(nodes, viewer, peers).map((pr) => ({ ...pr, repo }));
 }

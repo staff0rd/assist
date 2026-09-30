@@ -3,17 +3,27 @@ import type { PrSummary } from "../prList";
 export type NextChecks = "success" | "failure" | "pending";
 
 export type NextPr = PrSummary & {
+	repo: string;
 	requestedAt: string;
 	reason: "requested" | "peer";
 	checks: NextChecks | null;
 };
 
-export type NextIssue = PrSummary & { labels: string[] };
+export type RepolessPr = Omit<NextPr, "repo">;
+
+export type NextIssue = PrSummary & { repo: string; labels: string[] };
 
 export type NextSection<T> = { items: T[]; error: string | null };
 
-export type NextResponse = {
+export type NextScope = {
+	selfRepo: string | null;
 	peers: string[];
+	prRepos: string[] | null;
+	issueRepos: string[] | null;
+};
+
+export type NextResponse = {
+	scope: NextScope;
 	peerPrs: NextSection<NextPr>;
 	assignedIssues: NextSection<NextIssue>;
 };

@@ -1,24 +1,12 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import { respondJson } from "../../../../shared/web";
 import { getCwdParam } from "../getCwdParam";
 import { fetchAssignedIssues } from "./fetchAssignedIssues";
 import { fetchPeerPrs } from "./fetchPeerPrs";
-import type { NextResponse, NextSection } from "./types";
-
-function errorMessage(error: unknown): string {
-	const stderr = (error as { stderr?: unknown }).stderr;
-	if (typeof stderr === "string" && stderr.trim()) return stderr.trim();
-	return error instanceof Error ? error.message : String(error);
-}
-
-async function section<T>(load: () => Promise<T[]>): Promise<NextSection<T>> {
-	try {
-		return { items: await load(), error: null };
-	} catch (error) {
-		return { items: [], error: errorMessage(error) };
-	}
-}
+import { nextScope } from "./nextScope";
+import { scopeRepos } from "./scopeRepos";
+import { sectionAcross } from "./sectionAcross";
+import type { NextResponse } from "./types";
 
 export async function nextItems(
 	req: IncomingMessage,
@@ -26,11 +14,21 @@ export async function nextItems(
 ): Promise<void> {
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
-	const peers = loadConfigFrom(cwd).next?.peers ?? [];
+	const scope = nextScope(cwd);
 	const [peerPrs, assignedIssues] = await Promise.all([
-		section(() => fetchPeerPrs(cwd, peers)),
-		section(() => fetchAssignedIssues(cwd)),
+		sectionAcross(
+			scopeRepos(scope.prRepos, scope.selfRepo),
+			(repo) => fetchPeerPrs(cwd, repo, scope.peers),
+			(a, b) => a.requestedAt.localeCompare(b.requestedAt),
+			"next.prRepos",
+		),
+		sectionAcross(
+			scopeRepos(scope.issueRepos, scope.selfRepo),
+			(repo) => fetchAssignedIssues(cwd, repo),
+			(a, b) => a.createdAt.localeCompare(b.createdAt),
+			"next.issueRepos",
+		),
 	]);
-	const body: NextResponse = { peers, peerPrs, assignedIssues };
+	const body: NextResponse = { scope, peerPrs, assignedIssues };
 	respondJson(res, 200, body);
 }
