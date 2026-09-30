@@ -1,4 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterAll, describe, expect, it } from "vitest";
 import { isGhIssueApiWrite } from "./isGhIssueApiWrite";
 
 describe("isGhIssueApiWrite write methods", () => {
@@ -126,6 +129,95 @@ describe("isGhIssueApiWrite reads and other endpoints", () => {
 		expect(
 			isGhIssueApiWrite(
 				"gh api repos/acme/widgets/issues/180 && curl -X PATCH elsewhere",
+			),
+		).toBe(false);
+	});
+});
+
+describe("isGhIssueApiWrite graphql mutations", () => {
+	const dir = mkdtempSync(join(tmpdir(), "gh-graphql-"));
+	afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+	function queryFile(name: string, query: string): string {
+		const path = join(dir, name);
+		writeFileSync(path, query);
+		return path;
+	}
+
+	it("flags the createIssue mutation from the repro", () => {
+		expect(
+			isGhIssueApiWrite(
+				`gh api graphql -f query='mutation{createIssue(input:{repositoryId:"R_1",title:"t",body:"b"}){issue{url}}}'`,
+			),
+		).toBe(true);
+	});
+
+	it("flags a variable-driven createIssue with a body file", () => {
+		expect(
+			isGhIssueApiWrite(
+				'gh api graphql -f query=\'mutation($body:String!){createIssue(input:{repositoryId:"R_1",title:"t",body:$body}){issue{url}}}\' -F body=@body.md',
+			),
+		).toBe(true);
+	});
+
+	it.each(["updateIssue", "addComment", "updateIssueComment", "addSubIssue"])(
+		"flags a %s mutation",
+		(name) => {
+			expect(
+				isGhIssueApiWrite(
+					`gh api graphql -f query='mutation { ${name}(input: {id: "I_1"}) { clientMutationId } }'`,
+				),
+			).toBe(true);
+		},
+	);
+
+	it("flags a query passed however the field flag is spelled", () => {
+		const query = "'query=mutation{addComment(input:{}){clientMutationId}}'";
+		expect(isGhIssueApiWrite(`gh api graphql --raw-field ${query}`)).toBe(true);
+		expect(isGhIssueApiWrite(`gh api graphql --field=${query}`)).toBe(true);
+		expect(isGhIssueApiWrite(`gh api graphql -f${query}`)).toBe(true);
+	});
+
+	it("flags a mutation read from a query file", () => {
+		const path = queryFile(
+			"create.graphql",
+			'mutation($id: ID!) {\n  createIssue(input: {repositoryId: $id, title: "t"}) { issue { url } }\n}\n',
+		);
+		expect(
+			isGhIssueApiWrite(`gh api graphql -F query=@${path} -f id=R_1`),
+		).toBe(true);
+	});
+
+	it("flags a mutation in a --input request body", () => {
+		const path = queryFile(
+			"body.json",
+			JSON.stringify({ query: "mutation{updateIssue(input:{}){issue{id}}}" }),
+		);
+		expect(isGhIssueApiWrite(`gh api graphql --input ${path}`)).toBe(true);
+	});
+
+	it("falls back to the command text for a query file it cannot read", () => {
+		expect(
+			isGhIssueApiWrite(
+				'cat > missing.graphql <<\'EOF\'\nmutation { addComment(input: {subjectId: "I_1", body: "x"}) { clientMutationId } }\nEOF\ngh api graphql -F query=@missing.graphql',
+			),
+		).toBe(true);
+	});
+
+	it("leaves read-only graphql queries alone", () => {
+		expect(
+			isGhIssueApiWrite(
+				`gh api graphql -f query='query{repository(owner:"acme",name:"widgets"){issue(number:1){title}}}'`,
+			),
+		).toBe(false);
+		const path = queryFile("read.graphql", "{ viewer { login } }");
+		expect(isGhIssueApiWrite(`gh api graphql -F query=@${path}`)).toBe(false);
+	});
+
+	it("leaves non-issue mutations alone", () => {
+		expect(
+			isGhIssueApiWrite(
+				`gh api graphql -f query='mutation{addStar(input:{starrableId:"R_1"}){clientMutationId}}'`,
 			),
 		).toBe(false);
 	});

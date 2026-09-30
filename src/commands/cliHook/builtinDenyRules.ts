@@ -51,7 +51,7 @@ const PATTERN_DENIES: {
 ];
 
 const GH_ISSUE_API_MESSAGE =
-	"Do not write to GitHub issue endpoints with 'gh api' — it bypasses the content validation and the approval pane that every outward-facing issue write goes through. Use 'assist github issue create --title <title> --body <body>' to open an issue, 'assist github issue edit <number>' to rework one's body, 'assist github issue comment <number> --body <body>' to post a comment, or 'assist github issue edit-comment <comment-id> --body <body>' to amend a comment that is already posted. Each validates the content and gates it on the user's approval before anything reaches GitHub; run the command's --help for how to compose it.";
+	"Do not write to GitHub issues with 'gh api' (REST issue endpoints or GraphQL issue mutations) — it bypasses the content validation and the approval pane that every outward-facing issue write goes through. Use 'assist github issue create --title <title> --body <body>' to open an issue, 'assist github issue edit <number>' to rework one's body, 'assist github issue comment <number> --body <body>' to post a comment, or 'assist github issue edit-comment <comment-id> --body <body>' to amend a comment that is already posted. Each validates the content and gates it on the user's approval before anything reaches GitHub; run the command's --help for how to compose it.";
 
 const BRANCH_CREATION_MESSAGE =
 	"Do not create branches with raw git. Use the /branch command, or 'assist branch <slug> [--jira <KEY>]' — it branches off the fresh remote default and enforces the team naming convention.";

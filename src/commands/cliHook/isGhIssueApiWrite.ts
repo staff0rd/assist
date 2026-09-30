@@ -1,5 +1,6 @@
 import { extractGhApiMethod } from "../../shared/extractGhApiMethod";
 import { tokenize } from "../../shared/tokenize";
+import { isGhGraphqlIssueMutation } from "./isGhGraphqlIssueMutation";
 
 const WRITE_METHODS = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 const BODY_FLAGS = ["-f", "-F", "--field", "--raw-field", "--input"];
@@ -14,6 +15,7 @@ export function isGhIssueApiWrite(command: string): boolean {
 		if (tokens[i] !== "gh" || tokens[i + 1] !== "api") continue;
 		const args = argsUntilNextCommand(tokens.slice(i + 2));
 		if (targetsIssueEndpoint(args) && isWrite(args)) return true;
+		if (isGhGraphqlIssueMutation(args, command)) return true;
 	}
 
 	return false;
