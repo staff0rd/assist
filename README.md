@@ -65,6 +65,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/rename [title]` - Retitle this session's dashboard card via `assist sessions rename`; uses the argument verbatim, or infers a short title from the conversation when given none
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-config` - Set this repo's high-level review checklist keys: propose `review.highLevel.criticalPaths` and `uiPaths` from the repo's own tree with the files each glob matches, put them to the user to accept or edit, then write the accepted answers with `assist review --high-level --configure --answer ...` to the project `assist.yml` or this repo's block in `~/.assist.yml`
+- `/review-high-level [number]` - Open the high-level review checklist for the current branch's PR, or PR `<number>`, via `assist review --high-level`, then report the verdict, the saved review path and any item comments
 - `/review-pr-comments` - Process PR review comments one by one
 - `/jira [action] [KEY] [args]` - Jira actions: `view`, `associate`, `update`, `started`, `done`, `help`. `[KEY]` is optional — it resolves from the session's backlog item
 - `/github [action] [ref] [args]` - GitHub issue actions: `view`, `edit`, `associate`, `update`, `started`, `done`, `help`. `[ref]` is optional — it resolves from the session's backlog item. A bare `/github <ref>` runs `edit`, which opens the issue in the web preview pane; outside a web session the command prints the issue to chat instead
