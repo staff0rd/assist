@@ -1,3 +1,10 @@
+# [0.732.0](https://github.com/staff0rd/assist/compare/v0.731.0...v0.732.0) (2026-09-30)
+
+
+### Features
+
+* next.repos accepts an org or user ([140ca1a](https://github.com/staff0rd/assist/commit/140ca1a2acca29f3f146af09a30432b5301aff16))
+
 # [0.731.0](https://github.com/staff0rd/assist/compare/v0.730.2...v0.731.0) (2026-09-30)
 
 
