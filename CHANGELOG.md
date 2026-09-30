@@ -1,3 +1,10 @@
+## [0.730.1](https://github.com/staff0rd/assist/compare/v0.730.0...v0.730.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* assist show exits once sent ([087186a](https://github.com/staff0rd/assist/commit/087186a073c3406eb8d130a6ebf01967b4fcf4ed))
+
 # [0.730.0](https://github.com/staff0rd/assist/compare/v0.729.1...v0.730.0) (2026-09-30)
 
 
