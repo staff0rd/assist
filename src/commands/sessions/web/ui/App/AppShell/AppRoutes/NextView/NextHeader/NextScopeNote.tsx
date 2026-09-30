@@ -7,6 +7,18 @@ function repoValue(configured: string[] | null, selfRepo: string | null) {
 	return selfRepo ? `${selfRepo} (this repo, by default)` : null;
 }
 
+function projectsValue(scope: NextScope) {
+	if (scope.projects.length === 0) return null;
+	const excluded = [
+		scope.excludeLabels.length > 0 &&
+			`labels ${scope.excludeLabels.join(", ")}`,
+		scope.excludeTypes.length > 0 && `types ${scope.excludeTypes.join(", ")}`,
+	].filter(Boolean);
+	const excluding =
+		excluded.length > 0 ? `, excluding ${excluded.join("; ")}` : "";
+	return `${scope.projects.join(", ")}, picking up ${scope.pickStatuses.join(", ")}${excluding}`;
+}
+
 export function NextScopeNote({ scope }: { scope: NextScope }) {
 	return (
 		<Stack spacing={0.25}>
@@ -26,11 +38,7 @@ export function NextScopeNote({ scope }: { scope: NextScope }) {
 			/>
 			<NextScopeLine
 				label="Projects"
-				value={
-					scope.projects.length > 0
-						? `${scope.projects.join(", ")}, picking up ${scope.pickStatuses.join(", ")}`
-						: null
-				}
+				value={projectsValue(scope)}
 				unset="none — no project items are suggested"
 				setter="assist config set next.projects my-org/3,my-org/5 -g --repo"
 				showSetter={scope.projects.length === 0}

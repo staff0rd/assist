@@ -28,7 +28,7 @@ export async function nextItems(
 			(repo) => fetchAssignedIssues(cwd, repo),
 			(a, b) => a.createdAt.localeCompare(b.createdAt),
 		),
-		fetchPickups(cwd, scope.projects, scope.pickStatuses),
+		fetchPickups(cwd, scope.projects, scope),
 	]);
 	const body: NextResponse = { scope, peerPrs, assignedIssues, pickups };
 	respondJson(res, 200, body);

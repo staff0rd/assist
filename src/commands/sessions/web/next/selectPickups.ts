@@ -1,5 +1,6 @@
 import { comparePickups } from "./comparePickups";
-import type { GhProjectItemNode, NextPickup } from "./types";
+import { isPickable } from "./isPickable";
+import type { GhProjectItemNode, NextPickup, PickupFilter } from "./types";
 
 export type PickupBoard = {
 	project: string;
@@ -42,17 +43,11 @@ function toPickup(
 
 export function selectPickups(
 	nodes: GhProjectItemNode[],
-	pickStatuses: string[],
+	filter: PickupFilter,
 	board: PickupBoard,
 ): NextPickup[] {
-	const statuses = new Set(pickStatuses.map((status) => status.toLowerCase()));
 	return nodes
-		.filter(
-			(node) =>
-				node.content?.state === "OPEN" &&
-				node.content.assignees?.totalCount === 0,
-		)
+		.filter(isPickable(filter))
 		.flatMap((node) => toPickup(node, board) ?? [])
-		.filter((pickup) => statuses.has(pickup.status.toLowerCase()))
 		.sort(comparePickups);
 }

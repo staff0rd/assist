@@ -26,6 +26,7 @@ export const pickupsQuery = `query($owner: String!, $number: Int!, $after: Strin
                 author { login }
                 repository { nameWithOwner }
                 assignees(first: 1) { totalCount }
+                issueType { name }
                 labels(first: 20) { nodes { name } }
               }
             }

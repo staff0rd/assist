@@ -73,6 +73,8 @@ const defaultScope: NextScope = {
 	repos: null,
 	projects: [],
 	pickStatuses: ["Ready", "Todo"],
+	excludeLabels: [],
+	excludeTypes: [],
 };
 
 type Reply = { ok: boolean; json: () => Promise<unknown> };
@@ -364,6 +366,19 @@ describe("NextView pickups", () => {
 		renderView({ scope: { projects: ["o/3", "o/5"] } });
 		expect(
 			await screen.findByText(/Projects: o\/3, o\/5, picking up Ready, Todo/),
+		).toBeTruthy();
+		cleanup();
+		renderView({
+			scope: {
+				projects: ["o/3"],
+				excludeLabels: ["blocked", "spike"],
+				excludeTypes: ["Epic"],
+			},
+		});
+		expect(
+			await screen.findByText(
+				/o\/3, picking up Ready, Todo, excluding labels blocked, spike; types Epic/,
+			),
 		).toBeTruthy();
 		cleanup();
 		renderView({});

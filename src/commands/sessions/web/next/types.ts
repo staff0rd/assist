@@ -32,7 +32,14 @@ export type NextScope = {
 	repos: string[] | null;
 	projects: string[];
 	pickStatuses: string[];
+	excludeLabels: string[];
+	excludeTypes: string[];
 };
+
+export type PickupFilter = Pick<
+	NextScope,
+	"pickStatuses" | "excludeLabels" | "excludeTypes"
+>;
 
 export type NextResponse = {
 	scope: NextScope;
@@ -58,6 +65,7 @@ export type GhProjectItemNode = {
 		author?: Login;
 		repository?: { nameWithOwner?: string } | null;
 		assignees?: { totalCount?: number } | null;
+		issueType?: { name?: string } | null;
 		labels?: { nodes?: ({ name?: string } | null)[] } | null;
 	} | null;
 };

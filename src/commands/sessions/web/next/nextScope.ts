@@ -18,5 +18,7 @@ export function nextScope(cwd: string): NextScope {
 		repos: next?.repos ?? null,
 		projects: next?.projects ?? [],
 		pickStatuses: next?.pickStatuses ?? DEFAULT_PICK_STATUSES,
+		excludeLabels: next?.excludeLabels ?? [],
+		excludeTypes: next?.excludeTypes ?? [],
 	};
 }

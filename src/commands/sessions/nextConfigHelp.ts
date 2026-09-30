@@ -21,4 +21,14 @@ export const nextConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set next.pickStatuses Ready,Todo -g --repo",
 		note: "Project Status values whose unassigned items the web /next view offers to pick up (default: Ready, Todo)",
 	},
+	{
+		key: "next.excludeLabels",
+		setter: "assist config set next.excludeLabels blocked,spike -g --repo",
+		note: "Labels whose project items the web /next view never offers to pick up (case-insensitive)",
+	},
+	{
+		key: "next.excludeTypes",
+		setter: "assist config set next.excludeTypes Epic -g --repo",
+		note: "GitHub issue types whose project items the web /next view never offers to pick up (case-insensitive)",
+	},
 ];

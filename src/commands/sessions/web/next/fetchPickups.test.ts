@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { GhProjectItemNode } from "./types";
+import type { GhProjectItemNode, PickupFilter } from "./types";
 
 const readProjectItems = vi.fn();
 
@@ -33,11 +33,17 @@ function board(project: string, nodes: GhProjectItemNode[], order: string[]) {
 	};
 }
 
+const filter: PickupFilter = {
+	pickStatuses: ["Ready"],
+	excludeLabels: [],
+	excludeTypes: [],
+};
+
 beforeEach(() => readProjectItems.mockReset());
 
 describe("fetchPickups", () => {
 	it("reads nothing and reports nothing when no project is set", async () => {
-		expect(await fetchPickups("/repo", [], ["Ready"])).toEqual({
+		expect(await fetchPickups("/repo", [], filter)).toEqual({
 			items: [],
 			error: null,
 		});
@@ -50,7 +56,7 @@ describe("fetchPickups", () => {
 				? board("o/3", [item(1, "Low"), item(2, "High")], ["High", "Low"])
 				: board("o/5", [item(3, "P0"), item(4, "P2")], ["P0", "P1", "P2"]),
 		);
-		const section = await fetchPickups("/repo", ["o/3", "o/5"], ["Ready"]);
+		const section = await fetchPickups("/repo", ["o/3", "o/5"], filter);
 		expect(section.items.map((p) => [p.number, p.project])).toEqual([
 			[2, "o/3"],
 			[3, "o/5"],
@@ -68,7 +74,7 @@ describe("fetchPickups", () => {
 				});
 			return board("o/3", [item(1, "High")], ["High"]);
 		});
-		const section = await fetchPickups("/repo", ["o/3", "o/9"], ["Ready"]);
+		const section = await fetchPickups("/repo", ["o/3", "o/9"], filter);
 		expect(section.items.map((p) => p.number)).toEqual([1]);
 		expect(section.error).toMatch(/^o\/9: The gh token has no project scope/);
 	});

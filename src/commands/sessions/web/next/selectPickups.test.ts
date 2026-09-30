@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { selectPickups } from "./selectPickups";
-import type { GhProjectItemNode } from "./types";
+import type { GhProjectItemNode, PickupFilter } from "./types";
 
 function item(
 	number: number,
@@ -11,6 +11,8 @@ function item(
 		state?: string;
 		repo?: string;
 		draft?: boolean;
+		labels?: string[];
+		type?: string;
 	} = {},
 ): GhProjectItemNode {
 	const status = overrides.status === undefined ? "Ready" : overrides.status;
@@ -29,27 +31,58 @@ function item(
 					author: { login: "alice" },
 					repository: { nameWithOwner: overrides.repo ?? "o/r" },
 					assignees: { totalCount: overrides.assignees ?? 0 },
-					labels: { nodes: [{ name: "bug" }] },
+					labels: {
+						nodes: (overrides.labels ?? ["bug"]).map((name) => ({ name })),
+					},
+					issueType: overrides.type ? { name: overrides.type } : null,
 				},
 	};
 }
 
+const defaultFilter: PickupFilter = {
+	pickStatuses: ["Ready", "Todo"],
+	excludeLabels: [],
+	excludeTypes: [],
+};
+
 const numbers = (
 	nodes: GhProjectItemNode[],
-	statuses = ["Ready", "Todo"],
+	filter: Partial<PickupFilter> = {},
 	priorityOrder = ["P0", "P1", "P2"],
 ) =>
-	selectPickups(nodes, statuses, {
-		project: "o/3",
-		title: "Roadmap",
-		priorityOrder,
-	}).map((p) => p.number);
+	selectPickups(
+		nodes,
+		{ ...defaultFilter, ...filter },
+		{
+			project: "o/3",
+			title: "Roadmap",
+			priorityOrder,
+		},
+	).map((p) => p.number);
 
 describe("selectPickups", () => {
 	it("keeps unassigned open issues in a pick status, case-insensitively", () => {
 		expect(
-			numbers([item(1), item(2, { status: "todo" })], ["ready", "Todo"]),
+			numbers([item(1), item(2, { status: "todo" })], {
+				pickStatuses: ["ready", "Todo"],
+			}),
 		).toEqual([1, 2]);
+	});
+
+	it("excludes items carrying an excluded label, case-insensitively", () => {
+		expect(
+			numbers([item(1, { labels: ["Blocked", "bug"] }), item(2)], {
+				excludeLabels: ["blocked"],
+			}),
+		).toEqual([2]);
+	});
+
+	it("excludes items of an excluded issue type, case-insensitively", () => {
+		expect(
+			numbers([item(1, { type: "Epic" }), item(2, { type: "Task" }), item(3)], {
+				excludeTypes: ["epic"],
+			}),
+		).toEqual([2, 3]);
 	});
 
 	it("excludes items in other statuses or with no status", () => {
@@ -83,7 +116,7 @@ describe("selectPickups", () => {
 	it("takes each item's repo from its issue and its project from the board", () => {
 		const [pickup] = selectPickups(
 			[item(1, { repo: "other/web", priority: "P1" })],
-			["Ready"],
+			defaultFilter,
 			{ project: "o/3", title: "Roadmap", priorityOrder: ["P0", "P1"] },
 		);
 		expect(pickup).toMatchObject({

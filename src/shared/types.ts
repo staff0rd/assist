@@ -329,6 +329,8 @@ const assistConfigShape = {
 				)
 				.optional(),
 			pickStatuses: z.array(z.string()).optional(),
+			excludeLabels: z.array(z.string()).optional(),
+			excludeTypes: z.array(z.string()).optional(),
 		})
 		.optional(),
 	deny: z
