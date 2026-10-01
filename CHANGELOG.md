@@ -1,3 +1,10 @@
+# [0.745.0](https://github.com/staff0rd/assist/compare/v0.744.0...v0.745.0) (2026-10-01)
+
+
+### Features
+
+* Open in GitHub in PR review dialog ([b9c1b1d](https://github.com/staff0rd/assist/commit/b9c1b1da64ab7c3492f2dd7167871c59193da476))
+
 # [0.744.0](https://github.com/staff0rd/assist/compare/v0.743.2...v0.744.0) (2026-10-01)
 
 
