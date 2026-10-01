@@ -36,7 +36,15 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 						path="backlog/*"
 						element={<BacklogContent socket={socket} />}
 					/>
-					<Route path="next" element={<NextView />} />
+					<Route
+						path="next"
+						element={
+							<NextView
+								sessions={socket.sessions}
+								selectSession={socket.selectSession}
+							/>
+						}
+					/>
 					<Route path="news" element={<NewsView />} />
 					<Route path="releases" element={<ReleasesView />} />
 					<Route path="usage" element={<UsageHistoryView />} />

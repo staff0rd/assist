@@ -8,10 +8,19 @@ import { useCloneLookup } from "./NextView/useCloneLookup";
 import { useNextActions } from "./NextView/useNextActions";
 import { NextCloneContext } from "./NextView/useNextClone";
 import { useNextItems } from "./NextView/useNextItems";
+import { NextSessionsContext } from "./NextView/useNextSessions";
+import { useNextSessionsValue } from "./NextView/useNextSessionsValue";
 import { PageShell } from "../../PageShell";
+import type { SessionInfo } from "../../../types";
 import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
 
-export function NextView() {
+export function NextView({
+	sessions,
+	selectSession,
+}: {
+	sessions: SessionInfo[];
+	selectSession: (id: string) => void;
+}) {
 	const { selectedCwd } = useRepoSelectionContext();
 	const { data, loading, error, refresh } = useNextItems(selectedCwd);
 	const { actions, pickup, reviewing, closeReview } = useNextActions(
@@ -19,6 +28,7 @@ export function NextView() {
 		refresh,
 	);
 	const cloneFor = useCloneLookup(data?.scope.selfRepo ?? null);
+	const nextSessions = useNextSessionsValue(sessions, selectSession);
 
 	return (
 		<PageShell
@@ -29,11 +39,13 @@ export function NextView() {
 		>
 			{data && (
 				<NextCloneContext.Provider value={cloneFor}>
-					<Stack spacing={3}>
-						<NextPickupStatus {...pickup} />
-						<NextRecommended data={data} {...actions} />
-						<NextGroups data={data} {...actions} />
-					</Stack>
+					<NextSessionsContext.Provider value={nextSessions}>
+						<Stack spacing={3}>
+							<NextPickupStatus {...pickup} />
+							<NextRecommended data={data} {...actions} />
+							<NextGroups data={data} {...actions} />
+						</Stack>
+					</NextSessionsContext.Provider>
 				</NextCloneContext.Provider>
 			)}
 			{reviewing && (

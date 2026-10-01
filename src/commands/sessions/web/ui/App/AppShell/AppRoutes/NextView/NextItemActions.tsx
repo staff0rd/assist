@@ -3,22 +3,32 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
+import type { SessionInfo } from "../../../../types";
+import { NextSessionLinks } from "./NextItemActions/NextSessionLinks";
 import { useNextClone } from "./useNextClone";
 
 export function NextItemActions({
 	repo,
 	url,
 	onStart,
+	sessions = [],
 	size = "small",
 }: {
 	repo: string;
 	url: string;
 	onStart: (cwd: string) => void;
+	sessions?: SessionInfo[];
 	size?: "small" | "medium";
 }) {
 	const cwd = useNextClone()(repo);
 	return (
-		<Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+		<Stack
+			direction="row"
+			spacing={1}
+			useFlexGap
+			sx={{ flexShrink: 0, flexWrap: "wrap" }}
+		>
+			<NextSessionLinks sessions={sessions} size={size} />
 			<Tooltip
 				title={cwd ? "" : `No local clone of ${repo} to start a session in`}
 			>

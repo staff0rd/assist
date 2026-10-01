@@ -1,6 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
+import type { SessionInfo } from "../../../../../types";
 import { NextItemActions } from "../NextItemActions";
 import { NextRepoRef } from "../NextRepoRef";
 
@@ -11,6 +12,7 @@ export function NextRow({
 	facts,
 	url,
 	onStart,
+	sessions,
 }: {
 	repo: string;
 	number: number;
@@ -18,6 +20,7 @@ export function NextRow({
 	facts: ReactNode;
 	url: string;
 	onStart: (cwd: string) => void;
+	sessions?: SessionInfo[];
 }) {
 	return (
 		<Stack
@@ -44,7 +47,12 @@ export function NextRow({
 				</Stack>
 				{facts}
 			</Stack>
-			<NextItemActions repo={repo} url={url} onStart={onStart} />
+			<NextItemActions
+				repo={repo}
+				url={url}
+				onStart={onStart}
+				sessions={sessions}
+			/>
 		</Stack>
 	);
 }

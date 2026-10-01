@@ -1,5 +1,7 @@
 import type { NextPr, NextSection } from "../../../../../../next/types";
+import { matchPrSessions } from "../matchPrSessions";
 import { NextPrFacts } from "../NextPrFacts";
+import { useNextSessions } from "../useNextSessions";
 import { nextChips } from "../nextChips";
 import { NextGroup } from "./NextGroup";
 import { NextRow } from "./NextRow";
@@ -13,6 +15,7 @@ export function NextPrGroup({
 	hiddenUrl?: string;
 	onStart: (pr: NextPr, cwd: string) => void;
 }) {
+	const { sessions } = useNextSessions();
 	return (
 		<NextGroup
 			chip={nextChips.review}
@@ -30,6 +33,7 @@ export function NextPrGroup({
 						facts={<NextPrFacts pr={pr} />}
 						url={pr.url}
 						onStart={(cwd) => onStart(pr, cwd)}
+						sessions={matchPrSessions(sessions, pr.repo, pr.number)}
 					/>
 				))}
 		/>

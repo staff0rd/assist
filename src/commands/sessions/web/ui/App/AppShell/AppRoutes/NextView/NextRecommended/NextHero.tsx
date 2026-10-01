@@ -3,6 +3,7 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
+import type { SessionInfo } from "../../../../../types";
 import type { NextChip } from "../nextChips";
 import { NextItemActions } from "../NextItemActions";
 import { NextRepoRef } from "../NextRepoRef";
@@ -16,6 +17,7 @@ export function NextHero({
 	why,
 	url,
 	onStart,
+	sessions,
 }: {
 	chip: NextChip;
 	repo: string;
@@ -25,6 +27,7 @@ export function NextHero({
 	why: string;
 	url: string;
 	onStart: (cwd: string) => void;
+	sessions?: SessionInfo[];
 }) {
 	return (
 		<Paper variant="outlined" sx={{ p: 2.5 }}>
@@ -55,6 +58,7 @@ export function NextHero({
 					repo={repo}
 					url={url}
 					onStart={onStart}
+					sessions={sessions}
 					size="medium"
 				/>
 			</Stack>

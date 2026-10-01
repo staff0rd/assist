@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import { Outlet, useLocation } from "react-router";
 import { AppSidebar } from "../../AppSidebar";
 import { ErrorBoundary } from "./AppLayout/ErrorBoundary";
-import { useActivateSession } from "./AppLayout/useActivateSession";
+import { useActivateSession } from "./useActivateSession";
 import { DiffPanelsProvider } from "../../useDiffPanels";
 import { useScrollRestoration } from "./AppLayout/useScrollRestoration";
 import { ScrollRestorationContext } from "../../../useScrollRestorationContext";

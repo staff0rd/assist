@@ -16,6 +16,7 @@ import type {
 	NextResponse,
 	NextScope,
 } from "../../../../next/types";
+import type { SessionInfo } from "../../../types";
 import { RepoSelectionContext } from "../../../useRepoSelectionContext";
 import { SessionLaunchContext } from "../../../useSessionLaunchContext";
 import { NextView } from "./NextView";
@@ -86,13 +87,20 @@ type Body = Partial<Omit<NextResponse, "scope">> & {
 
 function LocationProbe() {
 	const location = useLocation();
-	return <div data-testid="location">{location.search}</div>;
+	return (
+		<>
+			<div data-testid="location">{location.search}</div>
+			<div data-testid="pathname">{location.pathname}</div>
+		</>
+	);
 }
 
 function renderView(
 	body: Body,
 	launchAssist = vi.fn(),
 	pickupReply: Reply = { ok: true, json: async () => ({ ok: true }) },
+	sessions: SessionInfo[] = [],
+	selectSession: (id: string) => void = () => {},
 ) {
 	const fetchMock = vi.fn((url: string) =>
 		Promise.resolve<Reply>(
@@ -135,7 +143,7 @@ function renderView(
 						armUpdateReload: () => {},
 					}}
 				>
-					<NextView />
+					<NextView sessions={sessions} selectSession={selectSession} />
 					<LocationProbe />
 				</SessionLaunchContext.Provider>
 			</RepoSelectionContext.Provider>
@@ -242,6 +250,48 @@ describe("NextView Start session", () => {
 			"Issue o/other#5: Issue 5\nhttps://github.com/o/other/issues/5",
 		);
 		expect(locationParams().get("newCwd")).toBe("/git/other");
+	});
+});
+
+describe("NextView session links", () => {
+	function reviewSession(
+		id: string,
+		number: number,
+		overrides: Partial<SessionInfo> = {},
+	): SessionInfo {
+		return {
+			id,
+			name: id,
+			commandType: "assist",
+			status: "running",
+			startedAt: 0,
+			assistArgs: ["review", String(number)],
+			remoteOrigin: "github.com/o/r",
+			...overrides,
+		};
+	}
+
+	it("links PR recommendations to the local sessions reviewing them", async () => {
+		const selectSession = vi.fn();
+		renderView(
+			{ peerPrs: { items: [pr(1), pr(2)], error: null } },
+			vi.fn(),
+			undefined,
+			[
+				reviewSession("7", 1),
+				reviewSession("8", 2),
+				reviewSession("9", 2, { node: "peer" }),
+			],
+			selectSession,
+		);
+		const hero = await heroCard();
+		expect(within(hero).getByText("Start session")).toBeTruthy();
+		expect(within(hero).queryByText("Session 8")).toBeNull();
+		expect(screen.getByText("Session 8")).toBeTruthy();
+		expect(screen.queryByText("Session 9")).toBeNull();
+		fireEvent.click(within(hero).getByText("Session 7"));
+		expect(selectSession).toHaveBeenCalledWith("7");
+		expect(screen.getByTestId("pathname").textContent).toBe("/sessions");
 	});
 });
 
