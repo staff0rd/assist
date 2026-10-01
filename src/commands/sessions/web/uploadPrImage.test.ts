@@ -87,32 +87,32 @@ describe("uploadPrImage", () => {
 		expect((res.body as { error: string }).error).toContain("Empty");
 	});
 
-	it("rejects a video over 10MB before running gh image", async () => {
+	it("rejects a video over 100MB before running gh image", async () => {
 		runGhImageMock.mockResolvedValue("https://x/y.mp4");
 		const res = makeRes();
 		await uploadPrImage(
 			makeReq(
 				"/api/pr-preview/upload-image?cwd=/repo&name=clip.mp4",
 				"video/mp4",
-				Buffer.alloc(10 * 1024 * 1024 + 1),
+				Buffer.alloc(100 * 1024 * 1024 + 1),
 			),
 			res,
 		);
 		expect(res.status).toBe(413);
 		expect((res.body as { error: string }).error).toBe(
-			"Video too large (max 10MB).",
+			"Video too large (max 100MB).",
 		);
 		expect(runGhImageMock).not.toHaveBeenCalled();
 	});
 
-	it("accepts a video under 10MB", async () => {
+	it("accepts a 14MB video", async () => {
 		runGhImageMock.mockResolvedValue("https://x/y.mp4");
 		const res = makeRes();
 		await uploadPrImage(
 			makeReq(
 				"/api/pr-preview/upload-image?cwd=/repo&name=clip.mov",
 				"video/quicktime",
-				Buffer.alloc(9 * 1024 * 1024),
+				Buffer.alloc(14 * 1024 * 1024),
 			),
 			res,
 		);
