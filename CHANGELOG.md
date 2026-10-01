@@ -1,3 +1,10 @@
+# [0.746.0](https://github.com/staff0rd/assist/compare/v0.745.0...v0.746.0) (2026-10-01)
+
+
+### Features
+
+* assist ask reviewable preview ([7dc0148](https://github.com/staff0rd/assist/commit/7dc01488dd769faf87f4cba8dc2978a89eeb13a0))
+
 # [0.745.0](https://github.com/staff0rd/assist/compare/v0.744.0...v0.745.0) (2026-10-01)
 
 
