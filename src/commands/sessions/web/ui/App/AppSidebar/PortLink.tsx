@@ -7,6 +7,7 @@ export function PortLink({ port }: { port: number }) {
 			target="_blank"
 			rel="noopener noreferrer"
 			color="inherit"
+			onMouseDown={(e) => e.stopPropagation()}
 			onClick={(e) => e.stopPropagation()}
 		>
 			:{port}

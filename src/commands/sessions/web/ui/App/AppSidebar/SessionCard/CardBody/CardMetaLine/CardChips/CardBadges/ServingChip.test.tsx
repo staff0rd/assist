@@ -53,4 +53,17 @@ describe("ServingChip", () => {
 
 		expect(onCardClick).not.toHaveBeenCalled();
 	});
+
+	it("does not bubble the port mousedown to the card's ripple", () => {
+		const onCardMouseDown = vi.fn();
+		render(
+			<div onMouseDown={onCardMouseDown}>
+				<ServingChip session={{ ...serving, port: 5173 }} />
+			</div>,
+		);
+
+		fireEvent.mouseDown(screen.getByRole("link", { name: ":5173" }));
+
+		expect(onCardMouseDown).not.toHaveBeenCalled();
+	});
 });
