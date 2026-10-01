@@ -22,6 +22,7 @@ function includedNames(context: AdviceContext): string[] {
 }
 
 const alwaysNames = [
+	"ask",
 	"assist-global",
 	"backlog-ids",
 	"backlog-prs",
@@ -64,6 +65,7 @@ describe("composeAdvice", () => {
 
 		expect(markdown.startsWith("# Instructions for this repo")).toBe(true);
 		expect(titles).toEqual([
+			"Asking for sign-off",
 			"Using assist",
 			"Backlog item IDs",
 			"Backlog items, PRs, and commits",
