@@ -6,6 +6,8 @@ Watch this repo for new upstream commits and build them as they land.
 
 Run `assist watch wait --pull --build` as a **background task**. It blocks until the current branch's upstream actually moves, then pulls, prints the build report, builds, and — when the pulled commits touched the files `assist sync` installs — syncs `~/.claude` with the freshly built binary, so no agent turn runs while the branch is quiet. You are re-invoked when the process exits, not on a clock tick. Takes no arguments; ignore any that were passed.
 
+Every time you start the wait, launch it with the longest `timeout` the background task allows (the Bash tool's `run_in_background` maximum, 7200000 ms), never the default. The harness stops a background command when its `timeout` runs out, and a quiet branch outlasts the default.
+
 Say you are watching, then stop. Do not poll the background task or do anything else while it runs.
 
 When it exits, branch on the exit code:
@@ -19,6 +21,10 @@ When it exits, branch on the exit code:
 ## If the daemon restarts mid-wait
 
 Restarting the sessions daemon kills this session's processes, the background wait included, and then resumes this conversation with a message naming the restart and the task ids it killed. That is not a stop — the wait never reported an exit code, and nothing was pulled or built. Run `assist watch wait --pull --build` in the background again. An assist auto-update restarts the daemon on its own, so a lap that builds a new assist ends this way routinely.
+
+## If the harness time limit kills the wait
+
+A background task stopped because its `timeout` ran out is not a stop either — it only means the branch stayed quiet that long. Start a new wait at once, with the maximum timeout, however many times it happens, and without asking the user. This holds after a resume too: a killed `assist watch wait` task in this conversation is one you started, so restart it.
 
 ## Why the pull is part of the wait
 
