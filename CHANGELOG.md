@@ -1,3 +1,10 @@
+# [0.747.0](https://github.com/staff0rd/assist/compare/v0.746.0...v0.747.0) (2026-10-01)
+
+
+### Features
+
+* /ask skill and ask advice fragment ([d561a9e](https://github.com/staff0rd/assist/commit/d561a9efe0c4bc33eafa8a2d85756bd1550d7d85))
+
 # [0.746.0](https://github.com/staff0rd/assist/compare/v0.745.0...v0.746.0) (2026-10-01)
 
 
