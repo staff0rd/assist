@@ -1,3 +1,10 @@
+## [0.747.1](https://github.com/staff0rd/assist/compare/v0.747.0...v0.747.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* raise PR video upload cap to 100MB ([c6cc5a7](https://github.com/staff0rd/assist/commit/c6cc5a77870dc38b4a2df462bfad68329d142c7b))
+
 # [0.747.0](https://github.com/staff0rd/assist/compare/v0.746.0...v0.747.0) (2026-10-01)
 
 
