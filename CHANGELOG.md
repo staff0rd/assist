@@ -1,3 +1,10 @@
+# [0.743.0](https://github.com/staff0rd/assist/compare/v0.742.0...v0.743.0) (2026-10-01)
+
+
+### Features
+
+* serving banner port links to localhost ([a77ec0c](https://github.com/staff0rd/assist/commit/a77ec0c59718515c975ea88a346fd8214a0ef68d))
+
 # [0.742.0](https://github.com/staff0rd/assist/compare/v0.741.0...v0.742.0) (2026-10-01)
 
 
