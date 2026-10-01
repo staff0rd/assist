@@ -1,3 +1,10 @@
+# [0.744.0](https://github.com/staff0rd/assist/compare/v0.743.2...v0.744.0) (2026-10-01)
+
+
+### Features
+
+* link Next PRs to review sessions ([7451d48](https://github.com/staff0rd/assist/commit/7451d48eeb8d58f64e190605afa6937ef77d8a64))
+
 ## [0.743.2](https://github.com/staff0rd/assist/compare/v0.743.1...v0.743.2) (2026-10-01)
 
 
