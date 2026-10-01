@@ -1,3 +1,10 @@
+## [0.743.1](https://github.com/staff0rd/assist/compare/v0.743.0...v0.743.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* port link skips card ripple ([09dc707](https://github.com/staff0rd/assist/commit/09dc70726e88768846424b15593adc83014ac607))
+
 # [0.743.0](https://github.com/staff0rd/assist/compare/v0.742.0...v0.743.0) (2026-10-01)
 
 
