@@ -1,6 +1,6 @@
 import Chip from "@mui/material/Chip";
 import { isServing } from "../../../../../findServingSessions";
-import { PortLink } from "./ServingChip/PortLink";
+import { PortLink } from "../../../../../PortLink";
 import type { SessionInfo } from "../../../../../../../types";
 
 const chipSx = { height: 18, fontSize: "0.65rem" };

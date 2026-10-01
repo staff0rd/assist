@@ -2,6 +2,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { PortLink } from "../../../../../PortLink";
 import { repoLabel } from "../../../../../../repoLabel";
 import type { SessionInfo } from "../../../../../../../types";
 
@@ -32,15 +33,20 @@ export function RemoteServingBanner({
 	serving: SessionInfo;
 	onJump: () => void;
 }) {
-	const where = serving.port ? `serving :${serving.port}` : "serving";
 	const repo = repoLabel(serving.cwd);
-	const label = repo
-		? `${where} · ${repo} · ${serving.name}`
-		: `${where} · ${serving.name}`;
+	const rest = repo ? ` · ${repo} · ${serving.name}` : ` · ${serving.name}`;
+	const title = `${serving.port ? `serving :${serving.port}` : "serving"}${rest}`;
 	return (
 		<Box sx={bannerSx}>
-			<Typography variant="caption" title={label} sx={labelSx}>
-				{label}
+			<Typography variant="caption" title={title} sx={labelSx}>
+				serving
+				{serving.port ? (
+					<>
+						{" "}
+						<PortLink port={serving.port} />
+					</>
+				) : null}
+				{rest}
 			</Typography>
 			<Button
 				size="small"
