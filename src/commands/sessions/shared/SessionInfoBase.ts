@@ -20,7 +20,8 @@ export type PreviewKind =
 	| "miro-board"
 	| "slack-post"
 	| "high-level-review"
-	| "show";
+	| "show"
+	| "ask";
 
 export type PreviewItemType = "story" | "bug";
 

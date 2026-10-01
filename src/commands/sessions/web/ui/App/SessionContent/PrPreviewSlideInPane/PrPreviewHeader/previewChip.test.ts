@@ -39,6 +39,13 @@ describe("previewChip", () => {
 		});
 	});
 
+	it("labels an ask as a review", () => {
+		expect(previewChip(preview({ kind: "ask" }), false)).toEqual({
+			label: "Review",
+			color: "info",
+		});
+	});
+
 	it("labels a high-level review as a checklist", () => {
 		expect(previewChip(preview({ kind: "high-level-review" }), false)).toEqual({
 			label: "Checklist",

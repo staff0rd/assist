@@ -12,6 +12,7 @@ const PREVIEW_KINDS: PreviewKind[] = [
 	"slack-post",
 	"high-level-review",
 	"show",
+	"ask",
 ];
 
 export function isPreviewKind(value: unknown): value is PreviewKind {

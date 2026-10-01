@@ -1,3 +1,4 @@
+import { formatPreviewComments } from "./formatPreviewComments";
 import type { PreviewDecision } from "./PreviewDecision";
 
 export function reportPreviewRejection(
@@ -13,13 +14,7 @@ export function reportPreviewRejection(
 		console.error(
 			`\nThe reviewer left ${comments.length} comment${comments.length === 1 ? "" : "s"} on the preview. Address each one, then re-run this command:\n`,
 		);
-		for (const [i, c] of comments.entries()) {
-			const quoted = c.quote
-				.split("\n")
-				.map((line) => `  > ${line}`)
-				.join("\n");
-			console.error(`${i + 1}. On:\n${quoted}\n   Comment: ${c.note}\n`);
-		}
+		for (const line of formatPreviewComments(comments)) console.error(line);
 	}
 	if (advice) console.error(advice);
 	process.exit(1);
