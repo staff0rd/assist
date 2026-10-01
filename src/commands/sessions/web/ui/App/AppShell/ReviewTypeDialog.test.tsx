@@ -141,16 +141,33 @@ describe("ReviewTypeDialog", () => {
 		expect(onSelect).toHaveBeenCalledWith(["fix-conflict", "--rebase"]);
 	});
 
-	it("lists both fix-conflict items after Address Comments, below Checkout", () => {
+	it("lists both fix-conflict items after Address Comments, below Checkout, then Open in GitHub", () => {
 		render(<ReviewTypeDialog pr={pr} onSelect={vi.fn()} onCancel={vi.fn()} />);
 
 		const items = screen
 			.getAllByRole("menuitem")
 			.map((item) => item.textContent);
 
-		expect(items.at(-1)).toBe("Fix conflicts (rebase)");
-		expect(items.at(-2)).toBe("Fix conflicts (merge)");
-		expect(items.at(-3)).toBe("Address Comments");
-		expect(items.at(-4)).toBe("Checkout");
+		expect(items.at(-1)).toBe("Open in GitHub");
+		expect(items.at(-2)).toBe("Fix conflicts (rebase)");
+		expect(items.at(-3)).toBe("Fix conflicts (merge)");
+		expect(items.at(-4)).toBe("Address Comments");
+		expect(items.at(-5)).toBe("Checkout");
+	});
+
+	it("opens the PR in GitHub and closes without starting a session", () => {
+		const open = vi.spyOn(globalThis, "open").mockReturnValue(null);
+		const onSelect = vi.fn();
+		const onCancel = vi.fn();
+		render(
+			<ReviewTypeDialog pr={pr} onSelect={onSelect} onCancel={onCancel} />,
+		);
+
+		fireEvent.click(screen.getByText("Open in GitHub"));
+
+		expect(open).toHaveBeenCalledWith(pr.url, "_blank");
+		expect(onCancel).toHaveBeenCalled();
+		expect(onSelect).not.toHaveBeenCalled();
+		open.mockRestore();
 	});
 });

@@ -16,6 +16,7 @@ import {
 	reviewOptionDefaults,
 	ReviewOptionToggles,
 } from "../ReviewOptionToggles";
+import { PrActionItems } from "./ReviewTypeDialog/PrActionItems";
 
 export function ReviewTypeDialog({
 	pr,
@@ -46,18 +47,7 @@ export function ReviewTypeDialog({
 					<Divider />
 					<ReviewOptionToggles value={options} onChange={setOptions} />
 					<Divider />
-					<MenuItem onClick={() => onSelect(["review", "--checkout-only"])}>
-						Checkout
-					</MenuItem>
-					<MenuItem onClick={() => onSelect(["review-pr-comments"])}>
-						Address Comments
-					</MenuItem>
-					<MenuItem onClick={() => onSelect(["fix-conflict"])}>
-						Fix conflicts (merge)
-					</MenuItem>
-					<MenuItem onClick={() => onSelect(["fix-conflict", "--rebase"])}>
-						Fix conflicts (rebase)
-					</MenuItem>
+					<PrActionItems pr={pr} onSelect={onSelect} onCancel={onCancel} />
 				</MenuList>
 			</DialogContent>
 			<DialogActions>
