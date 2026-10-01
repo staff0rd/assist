@@ -1,3 +1,10 @@
+## [0.743.2](https://github.com/staff0rd/assist/compare/v0.743.1...v0.743.2) (2026-10-01)
+
+
+### Bug Fixes
+
+* /watch waits use max timeout ([ced2705](https://github.com/staff0rd/assist/commit/ced27051e3a561dd82da4d234de365d6b755a3a4))
+
 ## [0.743.1](https://github.com/staff0rd/assist/compare/v0.743.0...v0.743.1) (2026-10-01)
 
 
