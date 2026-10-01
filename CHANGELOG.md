@@ -1,3 +1,10 @@
+# [0.742.0](https://github.com/staff0rd/assist/compare/v0.741.0...v0.742.0) (2026-10-01)
+
+
+### Features
+
+* serving chip port links to localhost ([6d098ee](https://github.com/staff0rd/assist/commit/6d098ee51386fdc55d1270658bfac8eb0844ec53))
+
 # [0.741.0](https://github.com/staff0rd/assist/compare/v0.740.0...v0.741.0) (2026-09-30)
 
 
