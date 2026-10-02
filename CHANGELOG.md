@@ -1,3 +1,10 @@
+## [0.747.4](https://github.com/staff0rd/assist/compare/v0.747.3...v0.747.4) (2026-10-02)
+
+
+### Bug Fixes
+
+* stop fetching unused head commit oid ([1c50cf7](https://github.com/staff0rd/assist/commit/1c50cf7952204b9e3af83f96c5808c163bde3341))
+
 ## [0.747.3](https://github.com/staff0rd/assist/compare/v0.747.2...v0.747.3) (2026-10-02)
 
 
