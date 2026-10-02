@@ -1,3 +1,10 @@
+## [0.747.3](https://github.com/staff0rd/assist/compare/v0.747.2...v0.747.3) (2026-10-02)
+
+
+### Bug Fixes
+
+* skip peer PRs I've already approved ([4b8ffb3](https://github.com/staff0rd/assist/commit/4b8ffb3f53780cebb2a2b139eae044ab33c40f23))
+
 ## [0.747.2](https://github.com/staff0rd/assist/compare/v0.747.1...v0.747.2) (2026-10-02)
 
 
