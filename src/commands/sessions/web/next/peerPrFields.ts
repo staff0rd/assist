@@ -8,7 +8,7 @@ export const peerPrFields = `number
           nodes { requestedReviewer { ... on User { login } } }
         }
         latestReviews(first: 50) {
-          nodes { author { login } state commit { oid } }
+          nodes { author { login } state }
         }
         commits(last: 1) {
           nodes { commit { oid statusCheckRollup { state } } }

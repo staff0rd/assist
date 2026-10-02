@@ -7,13 +7,11 @@ function pr(
 	overrides: Partial<GhPeerPrNode> & {
 		requested?: string[];
 		requestEvents?: { login: string; at: string }[];
-		myReview?: { state: string; oid: string };
-		head?: string;
+		myReview?: string;
 		rollup?: string;
 	} = {},
 ): GhPeerPrNode {
-	const { requested, requestEvents, myReview, head, rollup, ...rest } =
-		overrides;
+	const { requested, requestEvents, myReview, rollup, ...rest } = overrides;
 	return {
 		number,
 		title: `PR ${number}`,
@@ -27,21 +25,13 @@ function pr(
 			})),
 		},
 		latestReviews: {
-			nodes: myReview
-				? [
-						{
-							author: { login: "me" },
-							state: myReview.state,
-							commit: { oid: myReview.oid },
-						},
-					]
-				: [],
+			nodes: myReview ? [{ author: { login: "me" }, state: myReview }] : [],
 		},
 		commits: {
 			nodes: [
 				{
 					commit: {
-						oid: head ?? "head",
+						oid: "head",
 						statusCheckRollup: rollup ? { state: rollup } : null,
 					},
 				},
@@ -93,34 +83,23 @@ describe("selectPeerPrs", () => {
 		).toEqual([]);
 	});
 
-	it("excludes peer PRs I approved at the current head", () => {
-		expect(
-			numbers([pr(1, { myReview: { state: "APPROVED", oid: "head" } })]),
-		).toEqual([]);
-	});
-
-	it("keeps peer PRs with commits newer than my approval", () => {
-		expect(
-			numbers([pr(1, { myReview: { state: "APPROVED", oid: "older" } })]),
-		).toEqual([1]);
+	it("excludes peer PRs with my standing approval, even after new commits", () => {
+		expect(numbers([pr(1, { myReview: "APPROVED" })])).toEqual([]);
 	});
 
 	it("keeps peer PRs where my latest review was not an approval", () => {
 		expect(
 			numbers([
-				pr(1, { myReview: { state: "CHANGES_REQUESTED", oid: "head" } }),
+				pr(1, { myReview: "DISMISSED" }),
+				pr(2, { myReview: "COMMENTED" }),
+				pr(3, { myReview: "CHANGES_REQUESTED" }),
 			]),
-		).toEqual([1]);
+		).toEqual([1, 2, 3]);
 	});
 
 	it("keeps approved PRs that re-request my review", () => {
 		expect(
-			numbers([
-				pr(1, {
-					requested: ["me"],
-					myReview: { state: "APPROVED", oid: "head" },
-				}),
-			]),
+			numbers([pr(1, { requested: ["me"], myReview: "APPROVED" })]),
 		).toEqual([1]);
 	});
 

@@ -90,7 +90,6 @@ export type GhPeerPrNode = {
 		nodes?: ({
 			author?: Login;
 			state?: string;
-			commit?: { oid?: string } | null;
 		} | null)[];
 	} | null;
 	commits?: {
