@@ -95,7 +95,6 @@ export type GhPeerPrNode = {
 	commits?: {
 		nodes?: ({
 			commit?: {
-				oid?: string;
 				statusCheckRollup?: { state?: string } | null;
 			} | null;
 		} | null)[];

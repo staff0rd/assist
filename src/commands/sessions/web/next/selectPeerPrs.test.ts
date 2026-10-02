@@ -31,7 +31,6 @@ function pr(
 			nodes: [
 				{
 					commit: {
-						oid: "head",
 						statusCheckRollup: rollup ? { state: rollup } : null,
 					},
 				},

@@ -11,7 +11,7 @@ export const peerPrFields = `number
           nodes { author { login } state }
         }
         commits(last: 1) {
-          nodes { commit { oid statusCheckRollup { state } } }
+          nodes { commit { statusCheckRollup { state } } }
         }
         timelineItems(itemTypes: [REVIEW_REQUESTED_EVENT], last: 50) {
           nodes {
