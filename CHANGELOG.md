@@ -1,3 +1,10 @@
+## [0.747.2](https://github.com/staff0rd/assist/compare/v0.747.1...v0.747.2) (2026-10-02)
+
+
+### Bug Fixes
+
+* backlog runs always spill to worktree ([836106e](https://github.com/staff0rd/assist/commit/836106e20094c27daf35e6642416add4ec9671d0))
+
 ## [0.747.1](https://github.com/staff0rd/assist/compare/v0.747.0...v0.747.1) (2026-10-01)
 
 
