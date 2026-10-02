@@ -211,7 +211,7 @@ describe("reuseSessionForRun", () => {
 			expect(bindNewWorktree).not.toHaveBeenCalled();
 		});
 
-		it("asks the allocator for a workspace that can take the run's commits", () => {
+		it("asks the allocator for a backlog-run workspace that can take the run's commits", () => {
 			const session = makeSession();
 			const tree = treeCtx();
 
@@ -219,6 +219,7 @@ describe("reuseSessionForRun", () => {
 
 			expect(planReuseTree).toHaveBeenCalledWith(session, tree, {
 				commits: true,
+				backlogRun: true,
 			});
 		});
 	});

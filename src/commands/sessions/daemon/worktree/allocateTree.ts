@@ -20,6 +20,7 @@ export type AllocateOptions = {
 	draftLike?: boolean;
 	inPlace?: boolean;
 	commits?: boolean;
+	backlogRun?: boolean;
 	replacesTree?: string;
 };
 

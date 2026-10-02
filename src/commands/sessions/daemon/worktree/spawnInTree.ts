@@ -59,6 +59,7 @@ export function spawnAssistInTree(
 		{
 			forCheckout: isPrCheckoutArgs(assistArgs),
 			commits: isCommittingArgs(assistArgs),
+			backlogRun: isBacklogRunArgs(assistArgs),
 			draftLike: isDraftCommand(assistArgs[0]),
 			inPlace: meta?.inPlace,
 		},

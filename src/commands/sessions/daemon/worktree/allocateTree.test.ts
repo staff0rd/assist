@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { daemonLog } from "../daemonLog";
 import { allocateTree } from "./allocateTree";
 import { createWorktree } from "./createWorktree";
 import { checkDurabilitySync } from "./treeDurability";
@@ -30,6 +31,7 @@ vi.mock("./createWorktree", () => ({
 const configMock = vi.mocked(worktreeConfigFor);
 const durabilityMock = vi.mocked(checkDurabilitySync);
 const createMock = vi.mocked(createWorktree);
+const logMock = vi.mocked(daemonLog);
 
 describe("allocateTree", () => {
 	beforeEach(() => {
@@ -356,6 +358,42 @@ describe("allocateTree", () => {
 			expect(
 				allocateTree("/git/repo/src", new Set(), { commits: true }),
 			).toEqual({ cwd: "/git/repo/src", kind: "primary", created: false });
+			expect(createMock).not.toHaveBeenCalled();
+		});
+	});
+
+	describe("for a backlog run", () => {
+		it("spills out of a free, clean clone even with worktree.trunk off", () => {
+			expect(
+				allocateTree("/git/repo", new Set(), {
+					commits: true,
+					backlogRun: true,
+				}),
+			).toEqual({
+				cwd: "/git/repo-2",
+				kind: "worktree",
+				created: true,
+				clone: "/git/repo",
+			});
+			expect(logMock).toHaveBeenCalledWith(
+				"backlog run spilled out of the clone /git/repo: backlog runs never use the clone",
+			);
+		});
+
+		it("stays in the clone when parallel work is off", () => {
+			configMock.mockReturnValue({
+				enabled: false,
+				watcher: false,
+				trunk: false,
+				includeDrafts: false,
+				install: true,
+				commitBeforeManualChecks: false,
+				copy: [],
+			});
+
+			expect(
+				allocateTree("/git/repo", new Set(), { backlogRun: true }),
+			).toEqual({ cwd: "/git/repo", kind: "primary", created: false });
 			expect(createMock).not.toHaveBeenCalled();
 		});
 	});

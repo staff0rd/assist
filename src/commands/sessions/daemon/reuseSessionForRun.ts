@@ -26,6 +26,7 @@ export function reuseSessionForRun(
 	try {
 		alloc = planReuseTree(session, tree, {
 			commits: isCommittingArgs(assistArgs),
+			backlogRun: true,
 		});
 	} catch (error) {
 		failChainedRun(session, itemId, error, clients, tree);
