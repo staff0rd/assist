@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makeSession } from "../../../test/mothers/makeSession";
 
 const mockResolveRunConfig = vi.fn();
 
@@ -18,10 +18,6 @@ vi.mock("node:fs", () => ({
 
 import { exitDetail, exitReason } from "./exitReason";
 
-function session(overrides: Partial<Session>): Session {
-	return { id: "1", name: "run: start", ...overrides } as Session;
-}
-
 beforeEach(() => {
 	vi.clearAllMocks();
 	mockResolveRunConfig.mockReturnValue(undefined);
@@ -29,7 +25,7 @@ beforeEach(() => {
 
 describe("exitDetail", () => {
 	it("reports a session cwd that no longer exists", () => {
-		expect(exitDetail(session({ cwd: "/gone" }))).toBe(
+		expect(exitDetail(makeSession({ cwd: "/gone" }))).toBe(
 			"working directory /gone no longer exists",
 		);
 	});
@@ -42,7 +38,7 @@ describe("exitDetail", () => {
 		});
 
 		const detail = exitDetail(
-			session({ commandType: "run", runName: "start", cwd: "/repo" }),
+			makeSession({ commandType: "run", runName: "start", cwd: "/repo" }),
 		);
 
 		expect(mockResolveRunConfig).toHaveBeenCalledWith("start", "/repo");
@@ -54,14 +50,14 @@ describe("exitDetail", () => {
 
 		expect(
 			exitDetail(
-				session({ commandType: "run", runName: "start", cwd: "/repo" }),
+				makeSession({ commandType: "run", runName: "start", cwd: "/repo" }),
 			),
 		).toBeUndefined();
 	});
 
 	it("ignores run config lookup for a claude session", () => {
 		expect(
-			exitDetail(session({ commandType: "claude", cwd: "/repo" })),
+			exitDetail(makeSession({ commandType: "claude", cwd: "/repo" })),
 		).toBeUndefined();
 		expect(mockResolveRunConfig).not.toHaveBeenCalled();
 	});

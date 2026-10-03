@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { loadPersistedSessions } from "../loadPersistedSessions";
@@ -129,19 +130,12 @@ describe("reconcileWorktreesOnRestore", () => {
 	});
 
 	it("leaves a worktree a restored session still holds alone", async () => {
-		const held: Session = {
+		const held = makeSession({
 			id: "1",
 			name: "s",
-			commandType: "claude",
 			status: "stopped",
-			startedAt: 1,
-			runningMs: 0,
-			runningSince: null,
-			waitingSince: null,
-			pty: null,
-			scrollback: "",
 			cwd: "/git/repo-2",
-		};
+		});
 
 		await reconcile(new Map([["1", held]]));
 
@@ -170,19 +164,12 @@ describe("reconcileWorktreesOnRestore", () => {
 
 	it("reclaims a vanished worktree a restored session still claims", async () => {
 		existsMock.mockImplementation((path: string) => path !== "/git/repo-2");
-		const held: Session = {
+		const held = makeSession({
 			id: "1",
 			name: "s",
-			commandType: "claude",
 			status: "error",
-			startedAt: 1,
-			runningMs: 0,
-			runningSince: null,
-			waitingSince: null,
-			pty: null,
-			scrollback: "",
 			cwd: "/git/repo-2",
-		};
+		});
 
 		await reconcile(new Map([["1", held]]));
 

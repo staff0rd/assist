@@ -10,25 +10,8 @@ vi.mock("./persistPhaseActiveMs", () => ({
 		persistPhaseActiveMs(itemId, phaseIdx, activeMs),
 }));
 
+import { makeSession } from "../../../test/mothers/makeSession";
 import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
-import type { Session } from "./types";
-
-function backlogSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1000,
-		runningMs: 0,
-		runningSince: 1000,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
-		...overrides,
-	};
-}
 
 describe("flushPhaseActiveMs", () => {
 	beforeEach(() => {
@@ -43,7 +26,11 @@ describe("flushPhaseActiveMs", () => {
 	});
 
 	it("persists the elapsed interval and advances the watermark", async () => {
-		const session = backlogSession();
+		const session = makeSession({
+			status: "running",
+			runningSince: 1000,
+			activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
+		});
 		vi.setSystemTime(6000);
 		await flushPhaseActiveMs(session);
 		expect(persistPhaseActiveMs).toHaveBeenCalledWith(7, 1, 5000);
@@ -54,7 +41,11 @@ describe("flushPhaseActiveMs", () => {
 	});
 
 	it("persists only the new delta on a later flush", async () => {
-		const session = backlogSession();
+		const session = makeSession({
+			status: "running",
+			runningSince: 1000,
+			activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
+		});
 		vi.setSystemTime(6000);
 		await flushPhaseActiveMs(session);
 		vi.setSystemTime(9000);
@@ -67,14 +58,20 @@ describe("flushPhaseActiveMs", () => {
 	});
 
 	it("does nothing when the session is not running", async () => {
-		const session = backlogSession({ status: "waiting", runningSince: null });
+		const session = makeSession({
+			status: "waiting",
+			runningSince: null,
+			activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
+		});
 		vi.setSystemTime(6000);
 		await flushPhaseActiveMs(session);
 		expect(persistPhaseActiveMs).not.toHaveBeenCalled();
 	});
 
 	it("does nothing when the session is not on a backlog phase", async () => {
-		const session = backlogSession({
+		const session = makeSession({
+			status: "running",
+			runningSince: 1000,
 			activity: { kind: "command", startedAt: 1000 },
 		});
 		vi.setSystemTime(6000);
@@ -84,7 +81,11 @@ describe("flushPhaseActiveMs", () => {
 
 	it("leaves the watermark unadvanced on a failed write, retrying the interval next flush", async () => {
 		persistPhaseActiveMs.mockResolvedValueOnce(false);
-		const session = backlogSession();
+		const session = makeSession({
+			status: "running",
+			runningSince: 1000,
+			activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
+		});
 		vi.setSystemTime(6000);
 		await flushPhaseActiveMs(session);
 		expect(session.activeMsFlushedForStretch).toBeUndefined();
@@ -98,7 +99,11 @@ describe("flushPhaseActiveMs", () => {
 	});
 
 	it("resets the watermark for a new running stretch", async () => {
-		const session = backlogSession();
+		const session = makeSession({
+			status: "running",
+			runningSince: 1000,
+			activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
+		});
 		vi.setSystemTime(6000);
 		await flushPhaseActiveMs(session);
 		session.runningSince = 20000;
@@ -112,7 +117,11 @@ describe("flushPhaseActiveMs", () => {
 	});
 
 	it("serializes concurrent flushes so an interval is never double-counted", async () => {
-		const session = backlogSession();
+		const session = makeSession({
+			status: "running",
+			runningSince: 1000,
+			activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
+		});
 		vi.setSystemTime(6000);
 		await Promise.all([
 			flushPhaseActiveMs(session),

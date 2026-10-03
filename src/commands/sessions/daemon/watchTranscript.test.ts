@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { watch } from "node:fs";
-import type { Session } from "./createSession";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { ensureProjectDirExists } from "./ensureProjectDirExists";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
 import { watchTranscript } from "./watchTranscript";
@@ -35,16 +35,6 @@ const titleMock = startTranscriptTitleGeneration as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "3",
-		status: "running",
-		cwd: "/home/me/repo",
-		claudeSessionId: "phase-1",
-		...overrides,
-	} as unknown as Session;
-}
-
 describe("watchTranscript", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -53,7 +43,11 @@ describe("watchTranscript", () => {
 	});
 
 	it("creates the project dir so a fresh worktree still binds", () => {
-		const s = session({ cwd: "/home/me/fresh-worktree" });
+		const s = makeSession({
+			id: "3",
+			cwd: "/home/me/fresh-worktree",
+			claudeSessionId: "phase-1",
+		});
 
 		watchTranscript(s, vi.fn(), vi.fn());
 
@@ -67,7 +61,7 @@ describe("watchTranscript", () => {
 
 	it("skips binding when the project dir cannot be created", () => {
 		ensureDirMock.mockReturnValue(false);
-		const s = session();
+		const s = makeSession({ cwd: "/home/me/repo", claudeSessionId: "phase-1" });
 
 		watchTranscript(s, vi.fn(), vi.fn());
 
@@ -76,7 +70,7 @@ describe("watchTranscript", () => {
 	});
 
 	it("binds a watcher for the session's current transcript", () => {
-		const s = session();
+		const s = makeSession({ cwd: "/home/me/repo", claudeSessionId: "phase-1" });
 
 		watchTranscript(s, vi.fn(), vi.fn());
 
@@ -85,7 +79,7 @@ describe("watchTranscript", () => {
 	});
 
 	it("does not re-bind while the claude session id is unchanged", () => {
-		const s = session();
+		const s = makeSession({ cwd: "/home/me/repo", claudeSessionId: "phase-1" });
 
 		watchTranscript(s, vi.fn(), vi.fn());
 		watchTranscript(s, vi.fn(), vi.fn());
@@ -95,7 +89,7 @@ describe("watchTranscript", () => {
 
 	it("offers each watcher fire to title generation", () => {
 		const notify = vi.fn();
-		const s = session();
+		const s = makeSession({ cwd: "/home/me/repo", claudeSessionId: "phase-1" });
 
 		watchTranscript(s, notify, vi.fn());
 
@@ -105,7 +99,9 @@ describe("watchTranscript", () => {
 	it("follows a phase transition to a new claude session id, closing the stale watcher", () => {
 		const close = vi.fn();
 		watchMock.mockImplementationOnce(() => ({ close }));
-		const s = session({
+		const s = makeSession({
+			cwd: "/home/me/repo",
+			claudeSessionId: "phase-1",
 			transcriptPath: "/projects/home/me/repo/phase-1.jsonl",
 		});
 

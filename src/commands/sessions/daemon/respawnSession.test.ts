@@ -1,25 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session, SessionStatus } from "./createSession";
 import { respawnSession } from "./respawnSession";
 import { MissingCwdError } from "./spawnPty";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
-
-function card(): Session {
-	return {
-		id: "9",
-		name: "vanished tree session",
-		commandType: "claude",
-		status: "waiting",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "old output",
-		cwd: "/git/repo-2",
-	};
-}
 
 function respawnWith(session: Session, respawn: () => Session["pty"]) {
 	const sent: string[] = [];
@@ -32,7 +18,14 @@ function respawnWith(session: Session, respawn: () => Session["pty"]) {
 
 describe("respawnSession", () => {
 	it("surfaces a refused spawn on the card rather than throwing out of the restart", () => {
-		const session = card();
+		const session = makeSession({
+			id: "9",
+			name: "vanished tree session",
+			status: "waiting",
+			pty: null,
+			scrollback: "old output",
+			cwd: "/git/repo-2",
+		});
 
 		const messages = respawnWith(session, () => {
 			throw new MissingCwdError("/git/repo-2");
@@ -48,11 +41,15 @@ describe("respawnSession", () => {
 	});
 
 	it("leaves a successful respawn untouched", () => {
-		const session = card();
-		const pty = {
-			onData: vi.fn(),
-			onExit: vi.fn(),
-		} as unknown as Session["pty"];
+		const session = makeSession({
+			id: "9",
+			name: "vanished tree session",
+			status: "waiting",
+			pty: null,
+			scrollback: "old output",
+			cwd: "/git/repo-2",
+		});
+		const { pty } = makePty();
 
 		respawnWith(session, () => pty);
 

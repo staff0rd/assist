@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { handleCreateRun } from "./handleCreateRun";
 import { serverRunMeta } from "./serverRunMeta";
@@ -38,12 +39,12 @@ describe("handleCreateRun", () => {
 			origin: "gh/o/r",
 			group: "default",
 		});
-		const existing = {
+		const existing = makeSession({
 			id: "1",
 			name: "run: dev",
 			cwd: "/a",
 			serverPort: 3000,
-		} as unknown as Session;
+		});
 		const m = fakeManager(existing);
 		const c = client();
 
@@ -62,7 +63,7 @@ describe("handleCreateRun", () => {
 
 	it("stops the live server then spawns when replace is true", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
-		const existing = { id: "1", name: "run: dev" } as unknown as Session;
+		const existing = makeSession({ id: "1", name: "run: dev" });
 		const m = fakeManager(existing);
 		const c = client();
 
@@ -125,7 +126,7 @@ describe("handleCreateRun", () => {
 
 	it("echoes the launching session id back on a run-conflict", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
-		const existing = { id: "1", name: "run: dev" } as unknown as Session;
+		const existing = makeSession({ id: "1", name: "run: dev" });
 		const m = fakeManager(existing);
 		const c = client();
 
@@ -169,11 +170,11 @@ describe("handleCreateRun", () => {
 
 	it("rejects a second run in the same group", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "api" });
-		const existing = {
+		const existing = makeSession({
 			id: "1",
 			name: "run: api",
 			serverGroup: "api",
-		} as unknown as Session;
+		});
 		const m = fakeManager(existing, "api");
 		const c = client();
 
@@ -192,7 +193,7 @@ describe("handleCreateRun", () => {
 
 	it("starts a run in another group beside the live one", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "web" });
-		const existing = { id: "1", name: "run: api" } as unknown as Session;
+		const existing = makeSession({ id: "1", name: "run: api" });
 		const m = fakeManager(existing, "api");
 		const c = client();
 

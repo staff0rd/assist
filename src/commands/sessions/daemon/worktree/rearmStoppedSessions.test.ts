@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { dismissSession } from "../dismissSession";
 import { rearmStoppedSessions } from "./rearmStoppedSessions";
@@ -14,23 +15,12 @@ const resolveMock = resolveCloseDurability as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "stopped",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		cwd: "/git/repo-2",
-		worktree: { path: "/git/repo-2", clone: "/git/repo" },
-		...overrides,
-	};
-}
+const stoppedInTree = {
+	id: "1",
+	status: "stopped",
+	cwd: "/git/repo-2",
+	worktree: { path: "/git/repo-2", clone: "/git/repo" },
+} satisfies Partial<Session>;
 
 function map(...sessions: Session[]): Map<string, Session> {
 	return new Map(sessions.map((s) => [s.id, s]));
@@ -42,7 +32,7 @@ describe("rearmStoppedSessions", () => {
 	});
 
 	it("re-runs the durability gate for a stopped card restored across a restart", () => {
-		const s = session();
+		const s = makeSession(stoppedInTree);
 
 		rearmStoppedSessions(map(s), () => {});
 
@@ -51,13 +41,16 @@ describe("rearmStoppedSessions", () => {
 	});
 
 	it("re-arms a stopped card holding the clone's own tree", () => {
-		rearmStoppedSessions(map(session({ worktree: undefined })), () => {});
+		rearmStoppedSessions(
+			map(makeSession({ ...stoppedInTree, worktree: undefined })),
+			() => {},
+		);
 
 		expect(resolveMock).toHaveBeenCalledTimes(1);
 	});
 
 	it("removes the card when the gate now finds the work landed", () => {
-		const sessions = map(session());
+		const sessions = map(makeSession(stoppedInTree));
 		resolveMock.mockImplementation((_s, finalize: () => void) => {
 			finalize();
 			return Promise.resolve();
@@ -73,8 +66,8 @@ describe("rearmStoppedSessions", () => {
 	it("leaves live and finished cards alone", () => {
 		rearmStoppedSessions(
 			map(
-				session({ id: "1", status: "running" }),
-				session({ id: "2", status: "done" }),
+				makeSession({ ...stoppedInTree, id: "1", status: "running" }),
+				makeSession({ ...stoppedInTree, id: "2", status: "done" }),
 			),
 			() => {},
 		);

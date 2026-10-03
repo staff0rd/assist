@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadJson, saveJson } from "../../../shared/loadJson";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import {
@@ -29,23 +31,6 @@ const validEntry: PersistedSession = {
 };
 
 const NOW = 5000;
-
-function fakeSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: NOW,
-		waitingSince: null,
-		pty: {} as Session["pty"],
-		scrollback: "",
-		cwd: "/repo",
-		...overrides,
-	};
-}
 
 describe("loadPersistedSessions", () => {
 	beforeEach(() => {
@@ -107,9 +92,34 @@ describe("persistLiveSessions", () => {
 
 	it("persists only live sessions with a pty", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ id: "1", name: "live", claudeSessionId: "abc" })],
-			["2", fakeSession({ id: "2", name: "done", status: "done" })],
-			["3", fakeSession({ id: "3", name: "stub", pty: null })],
+			[
+				"1",
+				makeSession({
+					id: "1",
+					name: "live",
+					commandType: "claude",
+					status: "running",
+					cwd: "/repo",
+					startedAt: 1,
+					runningMs: 0,
+					runningSince: NOW,
+					pty: makePty().pty,
+					claudeSessionId: "abc",
+				}),
+			],
+			[
+				"2",
+				makeSession({
+					id: "2",
+					name: "done",
+					status: "done",
+					pty: makePty().pty,
+				}),
+			],
+			[
+				"3",
+				makeSession({ id: "3", name: "stub", status: "running", pty: null }),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -135,7 +145,7 @@ describe("persistLiveSessions", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
-				fakeSession({
+				makeSession({
 					name: "repo-2",
 					status: "stopped",
 					pty: null,
@@ -161,7 +171,15 @@ describe("persistLiveSessions", () => {
 
 	it("folds the in-flight running stretch into the persisted runningMs", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ runningMs: 1000, runningSince: NOW - 2000 })],
+			[
+				"1",
+				makeSession({
+					status: "running",
+					runningMs: 1000,
+					runningSince: NOW - 2000,
+					pty: makePty().pty,
+				}),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -177,7 +195,12 @@ describe("persistLiveSessions", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
-				fakeSession({ status: "waiting", runningMs: 7000, runningSince: null }),
+				makeSession({
+					status: "waiting",
+					runningMs: 7000,
+					runningSince: null,
+					pty: makePty().pty,
+				}),
 			],
 		]);
 
@@ -194,7 +217,8 @@ describe("persistLiveSessions", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
-				fakeSession({
+				makeSession({
+					pty: makePty().pty,
 					id: "1",
 					name: "assist review 1234",
 					title: "fix: something",
@@ -218,7 +242,8 @@ describe("persistLiveSessions", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
-				fakeSession({
+				makeSession({
+					pty: makePty().pty,
 					id: "1",
 					name: "backlog",
 					claudeSessionId: "abc",
@@ -254,7 +279,8 @@ describe("persistLiveSessions", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
-				fakeSession({
+				makeSession({
+					pty: makePty().pty,
 					id: "1",
 					name: "assist review 1234",
 					claudeSessionId: "abc",
@@ -282,7 +308,8 @@ describe("persistLiveSessions", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
-				fakeSession({
+				makeSession({
+					pty: makePty().pty,
 					id: "1",
 					name: "Session 1",
 					claudeSessionId: "abc",
@@ -314,7 +341,10 @@ describe("persistLiveSessions", () => {
 
 	it("leaves an ordinary session unflagged as a watcher after restore", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ id: "1", claudeSessionId: "abc" })],
+			[
+				"1",
+				makeSession({ id: "1", claudeSessionId: "abc", pty: makePty().pty }),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -333,7 +363,8 @@ describe("persistLiveSessions", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
-				fakeSession({
+				makeSession({
+					pty: makePty().pty,
 					id: "1",
 					claudeSessionId: "abc",
 					autoRun: true,
@@ -367,7 +398,10 @@ describe("persistLiveSessions", () => {
 
 	it("leaves untouched toggles undefined so their defaults apply after restore", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ id: "1", claudeSessionId: "abc" })],
+			[
+				"1",
+				makeSession({ id: "1", claudeSessionId: "abc", pty: makePty().pty }),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -387,8 +421,24 @@ describe("persistLiveSessions", () => {
 
 	it("round-trips the auto and design launch modes so a restart respawns in them", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ id: "1", claudeSessionId: "abc", auto: true })],
-			["2", fakeSession({ id: "2", claudeSessionId: "def", design: true })],
+			[
+				"1",
+				makeSession({
+					id: "1",
+					claudeSessionId: "abc",
+					auto: true,
+					pty: makePty().pty,
+				}),
+			],
+			[
+				"2",
+				makeSession({
+					id: "2",
+					claudeSessionId: "def",
+					design: true,
+					pty: makePty().pty,
+				}),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -409,7 +459,10 @@ describe("persistLiveSessions", () => {
 
 	it("leaves an ordinary session's launch modes undefined after restore", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ id: "1", claudeSessionId: "abc" })],
+			[
+				"1",
+				makeSession({ id: "1", claudeSessionId: "abc", pty: makePty().pty }),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -428,7 +481,15 @@ describe("persistLiveSessions", () => {
 
 	it("round-trips the harness through persist, schema parse, and restore", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ id: "1", claudeSessionId: "abc", harness: "pi" })],
+			[
+				"1",
+				makeSession({
+					id: "1",
+					claudeSessionId: "abc",
+					harness: "pi",
+					pty: makePty().pty,
+				}),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -448,7 +509,10 @@ describe("persistLiveSessions", () => {
 
 	it("defaults an absent harness to undefined so consumers fall back to claude", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ id: "1", claudeSessionId: "abc" })],
+			[
+				"1",
+				makeSession({ id: "1", claudeSessionId: "abc", pty: makePty().pty }),
+			],
 		]);
 
 		persistLiveSessions(sessions);
@@ -462,7 +526,7 @@ describe("persistLiveSessions", () => {
 
 	it("defaults cwd to the process cwd", () => {
 		const sessions = new Map<string, Session>([
-			["1", fakeSession({ cwd: undefined })],
+			["1", makeSession({ cwd: undefined, pty: makePty().pty })],
 		]);
 
 		persistLiveSessions(sessions);

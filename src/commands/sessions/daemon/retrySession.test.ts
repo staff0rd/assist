@@ -1,34 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makePty } from "../../../test/mothers/makePty";
+import type * as makePtyModule from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { handlePtyExit } from "./handlePtyExit";
 import { retrySession } from "./retrySession";
 import { spawnPty } from "./spawnPty";
 
-vi.mock("./spawnPty", () => ({
-	spawnPty: vi.fn(() => ({
-		onData: vi.fn(),
-		onExit: vi.fn(),
-	})),
-}));
+vi.mock("./spawnPty", async () => {
+	const { makePty } = await vi.importActual<typeof makePtyModule>(
+		"../../../test/mothers/makePty",
+	);
+	return { spawnPty: vi.fn(() => makePty().pty) };
+});
 
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
-
-function makeSession(overrides: Partial<Session>): Session {
-	return {
-		id: "1",
-		name: "repo/session",
-		commandType: "claude",
-		status: "done",
-		startedAt: 123,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "old output",
-		restored: false,
-		...overrides,
-	};
-}
 
 describe("retrySession", () => {
 	beforeEach(() => {
@@ -37,9 +22,13 @@ describe("retrySession", () => {
 
 	it("respawns a run session via assist run", () => {
 		const session = makeSession({
+			id: "1",
+			status: "done",
 			commandType: "run",
 			runName: "build",
 			runArgs: ["--watch"],
+			scrollback: "old output",
+			restored: false,
 			cwd: "/home/user/repo",
 		});
 
@@ -56,8 +45,12 @@ describe("retrySession", () => {
 
 	it("respawns an assist session from its persisted args", () => {
 		const session = makeSession({
+			id: "1",
+			status: "done",
 			commandType: "assist",
 			assistArgs: ["draft"],
+			scrollback: "old output",
+			restored: false,
 			cwd: "/home/user/repo",
 		});
 
@@ -74,20 +67,21 @@ describe("retrySession", () => {
 
 	it("kills the running process tree and defers the respawn until it exits", () => {
 		const killSpy = vi.spyOn(process, "kill").mockImplementation(() => true);
-		const ptyKill = vi.fn();
+		const { pty } = makePty(4321);
 		const session = makeSession({
+			id: "1",
 			commandType: "run",
 			status: "running",
 			runName: "start:dev",
 			runArgs: [],
 			cwd: "/home/user/repo",
-			pty: { kill: ptyKill, pid: 4321 } as unknown as Session["pty"],
+			pty,
 		});
 
 		expect(retrySession(session, new Set(), vi.fn())).toBe(true);
 
 		expect(killSpy).toHaveBeenCalledWith(-4321, "SIGHUP");
-		expect(ptyKill).not.toHaveBeenCalled();
+		expect(pty.kill).not.toHaveBeenCalled();
 		expect(spawnPtyMock).not.toHaveBeenCalled();
 		expect(session.pendingRestart).toBeTypeOf("function");
 
@@ -105,12 +99,13 @@ describe("retrySession", () => {
 		const killSpy = vi.spyOn(process, "kill").mockImplementation(() => true);
 		const onStatusChange = vi.fn();
 		const session = makeSession({
+			id: "1",
 			commandType: "run",
 			status: "running",
 			runName: "start:dev",
 			runArgs: [],
 			cwd: "/home/user/repo",
-			pty: { kill: vi.fn(), pid: 4321 } as unknown as Session["pty"],
+			pty: makePty(4321).pty,
 		});
 
 		retrySession(session, new Set(), onStatusChange);
@@ -124,14 +119,22 @@ describe("retrySession", () => {
 	});
 
 	it("does not retry claude sessions", () => {
-		const session = makeSession({ commandType: "claude" });
+		const session = makeSession({
+			id: "1",
+			commandType: "claude",
+			status: "done",
+		});
 
 		expect(retrySession(session, new Set(), vi.fn())).toBe(false);
 		expect(spawnPtyMock).not.toHaveBeenCalled();
 	});
 
 	it("does not retry an assist session without persisted args", () => {
-		const session = makeSession({ commandType: "assist" });
+		const session = makeSession({
+			id: "1",
+			commandType: "assist",
+			status: "done",
+		});
 
 		expect(retrySession(session, new Set(), vi.fn())).toBe(false);
 		expect(spawnPtyMock).not.toHaveBeenCalled();

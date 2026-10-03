@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { drainSessions } from "./drainSessions";
 import { killPtyTree } from "./killPtyTree";
 import { resolveCloseDurability } from "./worktree/resolveCloseDurability";
@@ -20,30 +21,14 @@ const resolveMock = resolveCloseDurability as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: { pid: 1, kill: vi.fn() } as unknown as Session["pty"],
-		scrollback: "",
-		...overrides,
-	};
-}
-
 describe("drainSessions", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it("removes plain sessions outright", () => {
-		const a = session({ id: "1" });
-		const b = session({ id: "2" });
+		const a = makeSession({ id: "1", pty: makePty().pty });
+		const b = makeSession({ id: "2", pty: makePty().pty });
 		const sessions = new Map([
 			[a.id, a],
 			[b.id, b],
@@ -56,8 +41,9 @@ describe("drainSessions", () => {
 	});
 
 	it("routes a worktree session through the durability gate instead of deleting its card", () => {
-		const held = session({
+		const held = makeSession({
 			id: "1",
+			pty: makePty().pty,
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
 		const sessions = new Map([[held.id, held]]);
@@ -70,8 +56,8 @@ describe("drainSessions", () => {
 	});
 
 	it("group-kills the process tree of a worktree session rather than the pty leader alone", () => {
-		const pty = { pid: 42, kill: vi.fn() } as unknown as Session["pty"];
-		const held = session({
+		const { pty } = makePty(42);
+		const held = makeSession({
 			id: "1",
 			pty,
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
@@ -80,7 +66,7 @@ describe("drainSessions", () => {
 		drainSessions(new Map([[held.id, held]]), vi.fn());
 
 		expect(killMock).toHaveBeenCalledWith(pty);
-		expect(pty?.kill).not.toHaveBeenCalled();
+		expect(pty.kill).not.toHaveBeenCalled();
 	});
 
 	it("returns zero when there is nothing to drain", () => {

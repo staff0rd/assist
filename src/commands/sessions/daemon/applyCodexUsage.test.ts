@@ -12,26 +12,8 @@ vi.mock("./flushPhaseActiveMs", () => ({
 	flushPhaseActiveMs: (...args: unknown[]) => flushPhaseActiveMs(...args),
 }));
 
+import { makeSession } from "../../../test/mothers/makeSession";
 import { applyCodexUsage } from "./applyCodexUsage";
-import type { Session } from "./types";
-
-function codexSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "s1",
-		name: "s",
-		commandType: "assist",
-		harness: "codex",
-		status: "running",
-		startedAt: 1000,
-		runningMs: 0,
-		runningSince: 1000,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
-		...overrides,
-	};
-}
 
 const responses: ResponseUsage[] = [
 	{ messageId: "codex:c:10", inputTokens: 8, outputTokens: 2 },
@@ -44,7 +26,13 @@ beforeEach(() => {
 
 describe("applyCodexUsage", () => {
 	it("records context and accrues tokens against the running backlog phase", async () => {
-		const session = codexSession();
+		const session = makeSession({
+			id: "s1",
+			harness: "codex",
+			status: "running",
+			runningSince: 1000,
+			activity: { kind: "backlog", startedAt: 1000, itemId: 7, phase: 2 },
+		});
 		const sessions = new Map([[session.id, session]]);
 
 		const changed = applyCodexUsage(
@@ -69,7 +57,7 @@ describe("applyCodexUsage", () => {
 	});
 
 	it("skips token accrual for a session that is not on a backlog phase", () => {
-		const session = codexSession({ activity: undefined });
+		const session = makeSession({ id: "s1", harness: "codex" });
 
 		applyCodexUsage(new Map([[session.id, session]]), "s1", { responses }, []);
 

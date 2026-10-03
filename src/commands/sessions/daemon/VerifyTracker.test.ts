@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
@@ -7,10 +8,6 @@ import { VerifyTracker } from "./VerifyTracker";
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 const daemonLogMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
-
-function session(id: string): Session {
-	return { id, status: "running" } as Session;
-}
 
 function client(): SessionClient {
 	return { send: vi.fn() };
@@ -23,7 +20,7 @@ describe("VerifyTracker", () => {
 
 	beforeEach(() => {
 		daemonLogMock.mockClear();
-		sessions = new Map([["1", session("1")]]);
+		sessions = new Map([["1", makeSession({ id: "1" })]]);
 		notify = vi.fn();
 		tracker = new VerifyTracker(sessions, notify);
 	});

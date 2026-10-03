@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { persistLiveSessions } from "./loadPersistedSessions";
@@ -14,19 +16,6 @@ function loggedLines(): string[] {
 	return logMock.mock.calls.map((call) => String(call[0]));
 }
 
-function fakeSession(
-	id: string,
-	kill: () => void,
-	status: Session["status"] = "running",
-): Session {
-	return {
-		id,
-		name: `Session ${id}`,
-		status,
-		pty: { kill } as unknown as Session["pty"],
-	} as Session;
-}
-
 function sessionMap(...sessions: Session[]): Map<string, Session> {
 	return new Map(sessions.map((session) => [session.id, session]));
 }
@@ -37,31 +26,34 @@ describe("shutdownSessions", () => {
 	});
 
 	it("kills every live pty", () => {
-		const first = vi.fn();
-		const second = vi.fn();
+		const first = makePty().pty;
+		const second = makePty().pty;
 
 		shutdownSessions(
-			sessionMap(fakeSession("1", first), fakeSession("2", second)),
+			sessionMap(
+				makeSession({ id: "1", status: "running", pty: first }),
+				makeSession({ id: "2", status: "running", pty: second }),
+			),
 		);
 
-		expect(first).toHaveBeenCalledOnce();
-		expect(second).toHaveBeenCalledOnce();
+		expect(first.kill).toHaveBeenCalledOnce();
+		expect(second.kill).toHaveBeenCalledOnce();
 	});
 
 	it("skips sessions that are already done", () => {
-		const kill = vi.fn();
+		const { pty } = makePty();
 
-		shutdownSessions(sessionMap(fakeSession("1", kill, "done")));
+		shutdownSessions(sessionMap(makeSession({ status: "done", pty })));
 
-		expect(kill).not.toHaveBeenCalled();
+		expect(pty.kill).not.toHaveBeenCalled();
 	});
 
 	it("names every session it kills so the loss is traceable", () => {
 		shutdownSessions(
 			sessionMap(
-				fakeSession("1", vi.fn()),
-				fakeSession("2", vi.fn()),
-				fakeSession("3", vi.fn(), "done"),
+				makeSession({ id: "1", name: "Session 1", status: "running" }),
+				makeSession({ id: "2", name: "Session 2", status: "running" }),
+				makeSession({ id: "3", name: "Session 3", status: "done" }),
 			),
 		);
 
@@ -72,8 +64,8 @@ describe("shutdownSessions", () => {
 
 	it("records the daemon restart against each killed session", () => {
 		const sessions = sessionMap(
-			fakeSession("1", vi.fn()),
-			fakeSession("2", vi.fn(), "done"),
+			makeSession({ id: "1", status: "running" }),
+			makeSession({ id: "2", status: "done" }),
 		);
 
 		shutdownSessions(sessions);
@@ -86,40 +78,50 @@ describe("shutdownSessions", () => {
 	});
 
 	it("persists the recorded reason before the ptys die", () => {
-		const kill = vi.fn(() => {
+		const { pty } = makePty();
+		pty.kill.mockImplementation(() => {
 			expect(persistMock).toHaveBeenCalledOnce();
 		});
 
-		shutdownSessions(sessionMap(fakeSession("1", kill)));
+		shutdownSessions(sessionMap(makeSession({ status: "running", pty })));
 
-		expect(kill).toHaveBeenCalledOnce();
+		expect(pty.kill).toHaveBeenCalledOnce();
 	});
 
 	it("still kills the ptys when the reason cannot be persisted", () => {
 		persistMock.mockImplementationOnce(() => {
 			throw new Error("EACCES");
 		});
-		const kill = vi.fn();
+		const { pty } = makePty();
 
-		shutdownSessions(sessionMap(fakeSession("1", kill)));
+		shutdownSessions(sessionMap(makeSession({ status: "running", pty })));
 
-		expect(kill).toHaveBeenCalledOnce();
+		expect(pty.kill).toHaveBeenCalledOnce();
 		expect(loggedLines()).toContainEqual(
 			expect.stringContaining("could not record the restart"),
 		);
 	});
 
 	it("tears down the remaining sessions when a kill throws", () => {
-		const survivor = vi.fn();
-		const thrower = vi.fn(() => {
+		const thrower = makePty().pty;
+		const survivor = makePty().pty;
+		thrower.kill.mockImplementation(() => {
 			throw new Error("AttachConsole failed");
 		});
 
 		shutdownSessions(
-			sessionMap(fakeSession("1", thrower), fakeSession("2", survivor)),
+			sessionMap(
+				makeSession({
+					id: "1",
+					name: "Session 1",
+					status: "running",
+					pty: thrower,
+				}),
+				makeSession({ id: "2", status: "running", pty: survivor }),
+			),
 		);
 
-		expect(survivor).toHaveBeenCalledOnce();
+		expect(survivor.kill).toHaveBeenCalledOnce();
 		expect(loggedLines()).toContainEqual(
 			expect.stringContaining("Session 1 (1) failed: AttachConsole failed"),
 		);
@@ -129,12 +131,13 @@ describe("shutdownSessions", () => {
 	});
 
 	it("does not throw out of the shutdown loop", () => {
-		const thrower = vi.fn(() => {
+		const { pty } = makePty();
+		pty.kill.mockImplementation(() => {
 			throw new Error("AttachConsole failed");
 		});
 
 		expect(() =>
-			shutdownSessions(sessionMap(fakeSession("1", thrower))),
+			shutdownSessions(sessionMap(makeSession({ status: "running", pty }))),
 		).not.toThrow();
 	});
 });

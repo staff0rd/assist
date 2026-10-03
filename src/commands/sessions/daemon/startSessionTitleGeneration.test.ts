@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { daemonLog } from "./daemonLog";
 import { generateSessionTitle } from "./generateSessionTitle";
 import { startSessionTitleGeneration } from "./startSessionTitleGeneration";
-import type { Session } from "./types";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./generateSessionTitle", () => ({
@@ -15,22 +15,6 @@ const mockGenerate = generateSessionTitle as unknown as ReturnType<
 >;
 const mockLog = daemonLog as unknown as ReturnType<typeof vi.fn>;
 
-function makeSession(overrides: Partial<Session>): Session {
-	return {
-		id: "7",
-		name: "Session 7",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		...overrides,
-	};
-}
-
 async function flush(): Promise<void> {
 	await new Promise((resolve) => setImmediate(resolve));
 }
@@ -42,7 +26,11 @@ describe("startSessionTitleGeneration", () => {
 	});
 
 	it("assigns, logs and broadcasts a title for a prompted claude session", async () => {
-		const session = makeSession({ initialPrompt: "the login page redirects" });
+		const session = makeSession({
+			id: "7",
+			commandType: "claude",
+			initialPrompt: "the login page redirects",
+		});
 		const notify = vi.fn();
 
 		startSessionTitleGeneration(session, notify);
@@ -59,7 +47,10 @@ describe("startSessionTitleGeneration", () => {
 	it("returns before spawning anything for a promptless session", () => {
 		const notify = vi.fn();
 
-		startSessionTitleGeneration(makeSession({}), notify);
+		startSessionTitleGeneration(
+			makeSession({ id: "7", commandType: "claude" }),
+			notify,
+		);
 
 		expect(mockGenerate).not.toHaveBeenCalled();
 		expect(notify).not.toHaveBeenCalled();
@@ -67,6 +58,7 @@ describe("startSessionTitleGeneration", () => {
 
 	it("summarises the prompt text of a draft card", async () => {
 		const session = makeSession({
+			id: "7",
 			commandType: "assist",
 			assistArgs: ["draft", "--once", "add dark mode to the settings page"],
 		});
@@ -81,7 +73,11 @@ describe("startSessionTitleGeneration", () => {
 
 	it("skips a draft card launched without prompt text", () => {
 		startSessionTitleGeneration(
-			makeSession({ commandType: "assist", assistArgs: ["draft", "--once"] }),
+			makeSession({
+				id: "7",
+				commandType: "assist",
+				assistArgs: ["draft", "--once"],
+			}),
 			vi.fn(),
 		);
 
@@ -91,6 +87,7 @@ describe("startSessionTitleGeneration", () => {
 	it("skips a refine card whose only arg is a backlog item id", () => {
 		startSessionTitleGeneration(
 			makeSession({
+				id: "7",
 				commandType: "assist",
 				assistArgs: ["refine", "--once", "254"],
 			}),
@@ -102,6 +99,7 @@ describe("startSessionTitleGeneration", () => {
 
 	it("defers titling a bug card whose whole prompt is a tracker reference", () => {
 		const session = makeSession({
+			id: "7",
 			commandType: "assist",
 			assistArgs: [
 				"bug",
@@ -122,7 +120,11 @@ describe("startSessionTitleGeneration", () => {
 	});
 
 	it("defers titling a claude session whose whole prompt is a bare issue key", () => {
-		const session = makeSession({ initialPrompt: "PA-556" });
+		const session = makeSession({
+			id: "7",
+			commandType: "claude",
+			initialPrompt: "PA-556",
+		});
 
 		startSessionTitleGeneration(session, vi.fn());
 
@@ -132,6 +134,8 @@ describe("startSessionTitleGeneration", () => {
 
 	it("defers titling a prompt that wraps a tracker url in prose", () => {
 		const session = makeSession({
+			id: "7",
+			commandType: "claude",
 			initialPrompt:
 				"have a look at https://centium.atlassian.net/browse/PA-556",
 		});
@@ -144,6 +148,7 @@ describe("startSessionTitleGeneration", () => {
 
 	it("still titles a prompt that mixes a reference with real text", async () => {
 		const session = makeSession({
+			id: "7",
 			commandType: "assist",
 			assistArgs: ["bug", "--once", "PA-556 is failing on save"],
 		});
@@ -158,6 +163,7 @@ describe("startSessionTitleGeneration", () => {
 	it("skips assist commands outside draft, bug and refine", () => {
 		startSessionTitleGeneration(
 			makeSession({
+				id: "7",
 				commandType: "assist",
 				assistArgs: ["next", "--once", "some text"],
 			}),
@@ -169,7 +175,7 @@ describe("startSessionTitleGeneration", () => {
 
 	it("skips run sessions", () => {
 		startSessionTitleGeneration(
-			makeSession({ commandType: "run", runName: "build" }),
+			makeSession({ id: "7", commandType: "run", runName: "build" }),
 			vi.fn(),
 		);
 
@@ -179,6 +185,8 @@ describe("startSessionTitleGeneration", () => {
 	it("skips a session that already carries a generated title", () => {
 		startSessionTitleGeneration(
 			makeSession({
+				id: "7",
+				commandType: "claude",
 				initialPrompt: "the login page redirects",
 				generatedTitle: "Fix login redirect",
 			}),
@@ -191,6 +199,8 @@ describe("startSessionTitleGeneration", () => {
 	it("falls back to a single line of the prompt when generation fails", async () => {
 		mockGenerate.mockResolvedValue(undefined);
 		const session = makeSession({
+			id: "7",
+			commandType: "claude",
 			initialPrompt: "the login page\nredirects  badly",
 		});
 		const notify = vi.fn();
@@ -207,7 +217,11 @@ describe("startSessionTitleGeneration", () => {
 
 	it("caps the fallback so a failed card never wraps", async () => {
 		mockGenerate.mockResolvedValue(undefined);
-		const session = makeSession({ initialPrompt: "a ".repeat(200) });
+		const session = makeSession({
+			id: "7",
+			commandType: "claude",
+			initialPrompt: "a ".repeat(200),
+		});
 
 		startSessionTitleGeneration(session, vi.fn());
 		await flush();
@@ -217,7 +231,11 @@ describe("startSessionTitleGeneration", () => {
 
 	it("does not throw when generation rejects", async () => {
 		mockGenerate.mockRejectedValue(new Error("boom"));
-		const session = makeSession({ initialPrompt: "the login page redirects" });
+		const session = makeSession({
+			id: "7",
+			commandType: "claude",
+			initialPrompt: "the login page redirects",
+		});
 
 		startSessionTitleGeneration(session, vi.fn());
 		await flush();

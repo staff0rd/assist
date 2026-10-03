@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { dismissSessionGated } from "./dismissSessionGated";
 import { dismissSession } from "./dismissSession";
 import { killPtyTree } from "./killPtyTree";
@@ -26,22 +27,6 @@ const resolveMock = resolveCloseDurability as unknown as ReturnType<
 >;
 const dismissMock = dismissSession as unknown as ReturnType<typeof vi.fn>;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "3",
-		name: "worktree session",
-		commandType: "claude",
-		status: "waiting",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		...overrides,
-	};
-}
-
 describe("dismissSessionGated", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -49,7 +34,7 @@ describe("dismissSessionGated", () => {
 	});
 
 	it("dismisses a non-worktree session immediately", () => {
-		const s = session();
+		const s = makeSession({ id: "3" });
 		const sessions = new Map([[s.id, s]]);
 		const notify = vi.fn();
 
@@ -61,8 +46,8 @@ describe("dismissSessionGated", () => {
 	});
 
 	it("group-kills the process tree and defers durability until the pty exits", () => {
-		const pty = { pid: 42 } as unknown as Session["pty"];
-		const s = session({
+		const { pty } = makePty(42);
+		const s = makeSession({
 			pty,
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
@@ -76,7 +61,7 @@ describe("dismissSessionGated", () => {
 	});
 
 	it("resolves durability immediately when the worktree session has no live pty", () => {
-		const s = session({
+		const s = makeSession({
 			pty: null,
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
@@ -89,9 +74,8 @@ describe("dismissSessionGated", () => {
 	});
 
 	it("marks the card closing and broadcasts it so the teardown is visible", () => {
-		const pty = { pid: 42 } as unknown as Session["pty"];
-		const s = session({
-			pty,
+		const s = makeSession({
+			pty: makePty(42).pty,
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
 		const sessions = new Map([[s.id, s]]);
@@ -104,7 +88,8 @@ describe("dismissSessionGated", () => {
 	});
 
 	it("force-reaps and removes the card on an explicit discard, bypassing the gate", async () => {
-		const s = session({
+		const s = makeSession({
+			id: "3",
 			pty: null,
 			status: "stopped",
 			undurable: { reason: "uncommitted changes" },
@@ -125,7 +110,7 @@ describe("dismissSessionGated", () => {
 			removed: false,
 			reason: "EBUSY: resource busy or locked",
 		});
-		const s = session({
+		const s = makeSession({
 			pty: null,
 			status: "stopped",
 			undurable: { reason: "uncommitted changes", removesTree: true },
@@ -149,8 +134,8 @@ describe("dismissSessionGated", () => {
 	});
 
 	it("holds a live session in the clone's own tree instead of deleting its card", () => {
-		const pty = { pid: 42, kill: vi.fn() } as unknown as Session["pty"];
-		const s = session({ pty, status: "running", cwd: "/git/repo" });
+		const { pty } = makePty(42);
+		const s = makeSession({ pty, status: "running", cwd: "/git/repo" });
 		const sessions = new Map([[s.id, s]]);
 
 		dismissSessionGated(sessions, s.id, vi.fn());
@@ -161,12 +146,12 @@ describe("dismissSessionGated", () => {
 	});
 
 	it("closes an added agent outright while another card still holds the tree", () => {
-		const agent = session({
+		const agent = makeSession({
 			id: "3",
 			cwd: "/git/repo-2",
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
-		const sibling = session({
+		const sibling = makeSession({
 			id: "4",
 			cwd: "/git/repo-2",
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { setStatusFromHook } from "./setStatusFromHook";
 import { watchTranscript } from "./watchTranscript";
 
@@ -8,23 +8,16 @@ vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 const watchMock = watchTranscript as unknown as ReturnType<typeof vi.fn>;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "3",
-		status: "waiting",
-		cwd: "/home/me/repo",
-		claudeSessionId: "before-clear",
-		...overrides,
-	} as unknown as Session;
-}
-
 describe("setStatusFromHook", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it("rebinds to the post-/clear conversation before applying the status", () => {
-		const s = session();
+		const s = makeSession({
+			status: "waiting",
+			claudeSessionId: "before-clear",
+		});
 		const onStatusChange = vi.fn();
 		const notify = vi.fn();
 
@@ -46,7 +39,10 @@ describe("setStatusFromHook", () => {
 	});
 
 	it("leaves the watcher alone for a hook from the bound conversation", () => {
-		const s = session();
+		const s = makeSession({
+			status: "waiting",
+			claudeSessionId: "before-clear",
+		});
 
 		setStatusFromHook(
 			new Map([[s.id, s]]),

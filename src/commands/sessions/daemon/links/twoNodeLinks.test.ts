@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../../test/mothers/makePty";
+import { makeSession } from "../../../../test/mothers/makeSession";
 import type { SessionClient } from "../broadcast";
-import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { dispatchMessage } from "../dispatchMessage";
 import { messageHandlers } from "../messageHandlers";
@@ -54,24 +55,17 @@ function viewer() {
 	return { client, received, lastSessions };
 }
 
-function fakeSession(id: string): Session {
-	return {
-		id,
-		name: `s${id}`,
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: { write: vi.fn(), kill: vi.fn(), resize: vi.fn() },
-		scrollback: "",
-	} as unknown as Session;
-}
-
 function addSession(manager: SessionManager, id: string): void {
 	manager.update((sessions) => {
-		sessions.set(id, fakeSession(id));
+		sessions.set(
+			id,
+			makeSession({
+				id,
+				name: `s${id}`,
+				status: "running",
+				pty: makePty().pty,
+			}),
+		);
 		return true;
 	});
 }

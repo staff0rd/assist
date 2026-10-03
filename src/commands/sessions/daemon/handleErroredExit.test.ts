@@ -13,19 +13,11 @@ vi.mock("./exitReason", () => ({
 	exitReason: vi.fn((code: number) => `process exited with code ${code}`),
 }));
 
-import type { Session } from "./createSession";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { daemonLog } from "./daemonLog";
 import { handleErroredExit } from "./handleErroredExit";
 
 const mockDaemonLog = daemonLog as unknown as MockInstance;
-
-function fakeSession(scrollback: string): Session {
-	return {
-		id: "5",
-		name: "assist fix-conflict 195",
-		scrollback,
-	} as Session;
-}
 
 describe("handleErroredExit", () => {
 	beforeEach(() => {
@@ -34,7 +26,9 @@ describe("handleErroredExit", () => {
 
 	it("logs the failed process's output so the cause is visible in daemon.log", () => {
 		handleErroredExit(
-			fakeSession("error: unknown option '--resume-session'\r\n"),
+			makeSession({
+				scrollback: "error: unknown option '--resume-session'\r\n",
+			}),
 			1,
 			"running",
 			vi.fn(),
@@ -49,7 +43,7 @@ describe("handleErroredExit", () => {
 
 	it("marks the session errored", () => {
 		const onStatusChange = vi.fn();
-		const session = fakeSession("");
+		const session = makeSession();
 
 		handleErroredExit(session, 1, "running", onStatusChange);
 

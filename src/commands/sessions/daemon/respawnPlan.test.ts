@@ -6,13 +6,13 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 
 vi.mock("node:crypto", () => ({ randomUUID: vi.fn(() => "fresh-uuid") }));
 vi.mock("./spawnClaude", () => ({ spawnClaude: vi.fn(() => "claude-pty") }));
 vi.mock("./spawnPty", () => ({ spawnPty: vi.fn(() => "assist-pty") }));
 vi.mock("./spawnCodex", () => ({ spawnCodex: vi.fn(() => "codex-pty") }));
 
-import type { Session } from "./createSession";
 import { respawnPlan } from "./respawnPlan";
 import { spawnClaude } from "./spawnClaude";
 import { spawnCodex } from "./spawnCodex";
@@ -22,23 +22,6 @@ const mockSpawnClaude = spawnClaude as unknown as MockInstance;
 const mockSpawnPty = spawnPty as unknown as MockInstance;
 const mockSpawnCodex = spawnCodex as unknown as MockInstance;
 
-function fakeSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		cwd: "/repo",
-		...overrides,
-	} as Session;
-}
-
 describe("respawnPlan", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -47,7 +30,12 @@ describe("respawnPlan", () => {
 	describe("for a claude session", () => {
 		it("resumes the recorded conversation", () => {
 			const plan = respawnPlan(
-				fakeSession({ claudeSessionId: "conv-1" }),
+				makeSession({
+					id: "1",
+					commandType: "claude",
+					cwd: "/repo",
+					claudeSessionId: "conv-1",
+				}),
 			) as NonNullable<ReturnType<typeof respawnPlan>>;
 			plan.spawn();
 
@@ -60,14 +48,22 @@ describe("respawnPlan", () => {
 		});
 
 		it("starts a fresh conversation in the cwd when none was recorded", () => {
-			const plan = respawnPlan(fakeSession());
+			const plan = respawnPlan(
+				makeSession({ id: "1", commandType: "claude", cwd: "/repo" }),
+			);
 
 			expect(plan?.status).toBe("waiting");
 		});
 
 		it("resumes an auto session in auto mode", () => {
 			const plan = respawnPlan(
-				fakeSession({ claudeSessionId: "conv-1", auto: true }),
+				makeSession({
+					id: "1",
+					commandType: "claude",
+					cwd: "/repo",
+					claudeSessionId: "conv-1",
+					auto: true,
+				}),
 			) as NonNullable<ReturnType<typeof respawnPlan>>;
 			plan.spawn();
 
@@ -78,7 +74,13 @@ describe("respawnPlan", () => {
 
 		it("relaunches an auto session in auto mode when no conversation was recorded", () => {
 			const plan = respawnPlan(
-				fakeSession({ initialPrompt: "go", auto: true }),
+				makeSession({
+					id: "1",
+					commandType: "claude",
+					cwd: "/repo",
+					initialPrompt: "go",
+					auto: true,
+				}),
 			) as NonNullable<ReturnType<typeof respawnPlan>>;
 			plan.spawn();
 
@@ -89,7 +91,13 @@ describe("respawnPlan", () => {
 
 		it("keeps a design session's system prompt and auto mode on respawn", () => {
 			const plan = respawnPlan(
-				fakeSession({ claudeSessionId: "conv-1", design: true }),
+				makeSession({
+					id: "1",
+					commandType: "claude",
+					cwd: "/repo",
+					claudeSessionId: "conv-1",
+					design: true,
+				}),
 			) as NonNullable<ReturnType<typeof respawnPlan>>;
 			plan.spawn();
 
@@ -103,7 +111,13 @@ describe("respawnPlan", () => {
 		it("has no plan rather than respawning it as claude", () => {
 			expect(
 				respawnPlan(
-					fakeSession({ harness: "pi", initialPrompt: "/refine a279" }),
+					makeSession({
+						id: "1",
+						commandType: "claude",
+						cwd: "/repo",
+						harness: "pi",
+						initialPrompt: "/refine a279",
+					}),
 				),
 			).toBeNull();
 			expect(mockSpawnClaude).not.toHaveBeenCalled();
@@ -113,7 +127,13 @@ describe("respawnPlan", () => {
 	describe("for a codex session", () => {
 		it("resumes the bound codex conversation", () => {
 			const plan = respawnPlan(
-				fakeSession({ harness: "codex", harnessSessionId: "codex-conv" }),
+				makeSession({
+					id: "1",
+					commandType: "claude",
+					cwd: "/repo",
+					harness: "codex",
+					harnessSessionId: "codex-conv",
+				}),
 			) as NonNullable<ReturnType<typeof respawnPlan>>;
 			plan.spawn();
 
@@ -128,7 +148,13 @@ describe("respawnPlan", () => {
 
 		it("relaunches from its prompt when no conversation was bound", () => {
 			const plan = respawnPlan(
-				fakeSession({ harness: "codex", initialPrompt: "refine a279" }),
+				makeSession({
+					id: "1",
+					commandType: "claude",
+					cwd: "/repo",
+					harness: "codex",
+					initialPrompt: "refine a279",
+				}),
 			) as NonNullable<ReturnType<typeof respawnPlan>>;
 			plan.spawn();
 
@@ -144,7 +170,9 @@ describe("respawnPlan", () => {
 	describe("for an assist session on a harness that cannot resume", () => {
 		it("relaunches the command without a claude resume flag", () => {
 			const plan = respawnPlan(
-				fakeSession({
+				makeSession({
+					id: "1",
+					cwd: "/repo",
 					commandType: "assist",
 					harness: "codex",
 					assistArgs: ["refine", "--once", "--harness", "codex", "a279"],
@@ -165,7 +193,9 @@ describe("respawnPlan", () => {
 	describe("for an assist session on claude", () => {
 		it("keeps resuming the recorded conversation", () => {
 			const plan = respawnPlan(
-				fakeSession({
+				makeSession({
+					id: "1",
+					cwd: "/repo",
 					commandType: "assist",
 					assistArgs: ["draft"],
 					claudeSessionId: "conv-2",

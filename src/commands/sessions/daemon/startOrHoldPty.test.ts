@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../test/mothers/makePty";
 import { startOrHoldPty } from "./startOrHoldPty";
-import type { Session } from "./types";
 
-const pty = {} as unknown as Session["pty"];
+const { pty } = makePty();
 
 describe("startOrHoldPty", () => {
 	it("starts the process immediately when nothing has to be seeded first", () => {

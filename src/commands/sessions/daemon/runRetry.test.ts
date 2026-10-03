@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { retrySession } from "./retrySession";
 import { runRetry } from "./runRetry";
@@ -32,13 +33,13 @@ describe("runRetry", () => {
 
 	it("blocks relaunch with a conflict when another server is live for the origin", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
-		const target = {
+		const target = makeSession({
 			id: "2",
 			commandType: "run",
 			runName: "dev",
 			status: "done",
-		} as unknown as Session;
-		const live = {
+		});
+		const live = makeSession({
 			id: "1",
 			name: "run: dev",
 			server: true,
@@ -46,7 +47,7 @@ describe("runRetry", () => {
 			serverGroup: "default",
 			serverPort: 3000,
 			status: "running",
-		} as unknown as Session;
+		});
 		const d = deps();
 
 		const conflict = runRetry(map(live, target), "2", false, d);
@@ -63,19 +64,19 @@ describe("runRetry", () => {
 
 	it("replaces the live server and relaunches when replace is true", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
-		const target = {
+		const target = makeSession({
 			id: "2",
 			commandType: "run",
 			runName: "dev",
 			status: "done",
-		} as unknown as Session;
-		const live = {
+		});
+		const live = makeSession({
 			id: "1",
 			server: true,
 			serverOrigin: "gh/o/r",
 			serverGroup: "default",
 			status: "running",
-		} as unknown as Session;
+		});
 		const d = deps();
 
 		const conflict = runRetry(map(live, target), "2", true, d);
@@ -91,19 +92,19 @@ describe("runRetry", () => {
 
 	it("relaunches beside a live server in another group", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "web" });
-		const target = {
+		const target = makeSession({
 			id: "2",
 			commandType: "run",
 			runName: "web",
 			status: "done",
-		} as unknown as Session;
-		const live = {
+		});
+		const live = makeSession({
 			id: "1",
 			server: true,
 			serverOrigin: "gh/o/r",
 			serverGroup: "api",
 			status: "running",
-		} as unknown as Session;
+		});
 		const d = deps();
 
 		expect(runRetry(map(live, target), "2", false, d)).toBeNull();
@@ -114,20 +115,20 @@ describe("runRetry", () => {
 
 	it("blocks relaunch when the live server shares the group", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "api" });
-		const target = {
+		const target = makeSession({
 			id: "2",
 			commandType: "run",
 			runName: "api-alt",
 			status: "done",
-		} as unknown as Session;
-		const live = {
+		});
+		const live = makeSession({
 			id: "1",
 			name: "run: api",
 			server: true,
 			serverOrigin: "gh/o/r",
 			serverGroup: "api",
 			status: "running",
-		} as unknown as Session;
+		});
 		const d = deps();
 
 		expect(runRetry(map(live, target), "2", false, d)?.id).toBe("1");
@@ -136,12 +137,12 @@ describe("runRetry", () => {
 
 	it("relaunches without a prompt when no server is live", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
-		const target = {
+		const target = makeSession({
 			id: "2",
 			commandType: "run",
 			runName: "dev",
 			status: "done",
-		} as unknown as Session;
+		});
 		const d = deps();
 
 		expect(runRetry(map(target), "2", false, d)).toBeNull();

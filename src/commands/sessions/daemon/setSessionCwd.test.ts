@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { setSessionCwd } from "./setSessionCwd";
 import { detectExistingWorktree } from "./worktree/detectExistingWorktree";
@@ -11,7 +12,7 @@ vi.mock("./worktree/detectExistingWorktree", () => ({
 const detectMock = vi.mocked(detectExistingWorktree);
 
 function sessionsWith(session: Partial<Session>): Map<string, Session> {
-	return new Map([["17", { id: "17", ...session } as Session]]);
+	return new Map([["17", makeSession({ id: "17", ...session })]]);
 }
 
 beforeEach(() => {

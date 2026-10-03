@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { PrPreviewCoordinator } from "./PrPreviewCoordinator";
@@ -9,7 +10,7 @@ function makeClient(): SessionClient & { sent: Record<string, unknown>[] } {
 }
 
 function makeSessions(...ids: string[]): Map<string, Session> {
-	return new Map(ids.map((id) => [id, { id } as Session]));
+	return new Map(ids.map((id) => [id, makeSession({ id })]));
 }
 
 function previewMsg(sessionId: string, requestId: string) {

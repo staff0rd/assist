@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
 import { extractContextAfterReference } from "../summarise/extractContextAfterReference";
 import { extractFirstUserMessage } from "../summarise/extractFirstUserMessage";
@@ -37,24 +38,13 @@ const mockFindPath = findTranscriptPathSync as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function makeSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "7",
-		name: "Session 7",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		cwd: "/home/me/repo",
-		claudeSessionId: "abc",
-		transcriptPath: "/projects/repo/abc.jsonl",
-		...overrides,
-	};
-}
+const transcriptSession = {
+	id: "7",
+	commandType: "claude",
+	cwd: "/home/me/repo",
+	claudeSessionId: "abc",
+	transcriptPath: "/projects/repo/abc.jsonl",
+} satisfies Partial<Session>;
 
 async function flush(): Promise<void> {
 	await new Promise((resolve) => setImmediate(resolve));
@@ -72,7 +62,7 @@ describe("startTranscriptTitleGeneration", () => {
 	});
 
 	it("titles a promptless session from its first transcript message", async () => {
-		const session = makeSession();
+		const session = makeSession(transcriptSession);
 		const notify = vi.fn();
 
 		startTranscriptTitleGeneration(session, notify);
@@ -92,7 +82,7 @@ describe("startTranscriptTitleGeneration", () => {
 	});
 
 	it("generates once no matter how often the watcher fires", async () => {
-		const session = makeSession();
+		const session = makeSession(transcriptSession);
 		const notify = vi.fn();
 
 		startTranscriptTitleGeneration(session, notify);
@@ -108,7 +98,7 @@ describe("startTranscriptTitleGeneration", () => {
 
 	it("skips a session that already carries a generated title", () => {
 		startTranscriptTitleGeneration(
-			makeSession({ generatedTitle: "Add dark mode" }),
+			makeSession({ ...transcriptSession, generatedTitle: "Add dark mode" }),
 			vi.fn(),
 		);
 
@@ -118,7 +108,7 @@ describe("startTranscriptTitleGeneration", () => {
 
 	it("skips a session whose generation is already in flight", () => {
 		startTranscriptTitleGeneration(
-			makeSession({ titleGenerationStarted: true }),
+			makeSession({ ...transcriptSession, titleGenerationStarted: true }),
 			vi.fn(),
 		);
 
@@ -128,7 +118,10 @@ describe("startTranscriptTitleGeneration", () => {
 
 	it("leaves prompted sessions to the spawn-time path", () => {
 		startTranscriptTitleGeneration(
-			makeSession({ initialPrompt: "the login page redirects" }),
+			makeSession({
+				...transcriptSession,
+				initialPrompt: "the login page redirects",
+			}),
 			vi.fn(),
 		);
 
@@ -141,7 +134,7 @@ describe("startTranscriptTitleGeneration", () => {
 	])(
 		"titles a claude session prompted with a reference (%s) from the context after it",
 		async (initialPrompt) => {
-			const session = makeSession({ initialPrompt });
+			const session = makeSession({ ...transcriptSession, initialPrompt });
 			const notify = vi.fn();
 
 			startTranscriptTitleGeneration(session, notify);
@@ -161,7 +154,11 @@ describe("startTranscriptTitleGeneration", () => {
 
 	it("skips sessions that are not plain claude sessions", () => {
 		startTranscriptTitleGeneration(
-			makeSession({ commandType: "run", runName: "build" }),
+			makeSession({
+				...transcriptSession,
+				commandType: "run",
+				runName: "build",
+			}),
 			vi.fn(),
 		);
 
@@ -169,7 +166,7 @@ describe("startTranscriptTitleGeneration", () => {
 	});
 
 	it("stays retryable while the transcript has no user message yet", async () => {
-		const session = makeSession();
+		const session = makeSession(transcriptSession);
 		mockExtract.mockReturnValueOnce(undefined);
 
 		startTranscriptTitleGeneration(session, vi.fn());
@@ -186,7 +183,7 @@ describe("startTranscriptTitleGeneration", () => {
 
 	it("falls back to locating the transcript when the path is unresolved", async () => {
 		startTranscriptTitleGeneration(
-			makeSession({ transcriptPath: undefined }),
+			makeSession({ ...transcriptSession, transcriptPath: undefined }),
 			vi.fn(),
 		);
 		await flush();
@@ -197,7 +194,7 @@ describe("startTranscriptTitleGeneration", () => {
 
 	it("keeps the Session placeholder when generation fails", async () => {
 		mockGenerate.mockResolvedValue(undefined);
-		const session = makeSession();
+		const session = makeSession(transcriptSession);
 		const notify = vi.fn();
 
 		startTranscriptTitleGeneration(session, notify);
@@ -211,7 +208,10 @@ describe("startTranscriptTitleGeneration", () => {
 	});
 
 	it("stays retryable while no transcript exists on disk", () => {
-		const session = makeSession({ transcriptPath: undefined });
+		const session = makeSession({
+			...transcriptSession,
+			transcriptPath: undefined,
+		});
 		mockFindPath.mockReturnValue(null);
 
 		startTranscriptTitleGeneration(session, vi.fn());
@@ -223,6 +223,7 @@ describe("startTranscriptTitleGeneration", () => {
 	describe("assist card whose prompt was a reference", () => {
 		function referenceCard(overrides: Partial<Session> = {}): Session {
 			return makeSession({
+				...transcriptSession,
 				commandType: "assist",
 				assistArgs: [
 					"bug",

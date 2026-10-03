@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Session } from "../createSession";
+import { makeSession } from "../../../../test/mothers/makeSession";
 import { boundTreeRoots } from "./boundTreeRoots";
 import { checkDurabilitySync } from "./treeDurability";
 import { worktreeConfigFor } from "./worktreeConfigFor";
@@ -20,23 +21,6 @@ const durabilityMock = checkDurabilitySync as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		cwd: "/git/repo",
-		...overrides,
-	};
-}
-
 function map(...sessions: Session[]): Map<string, Session> {
 	return new Map(sessions.map((s) => [s.id, s]));
 }
@@ -49,23 +33,27 @@ describe("boundTreeRoots", () => {
 	});
 
 	it("counts a live session as holding its tree", () => {
-		expect(boundTreeRoots(map(session()))).toEqual(new Set(["/git/repo"]));
+		expect(
+			boundTreeRoots(map(makeSession({ status: "running", cwd: "/git/repo" }))),
+		).toEqual(new Set(["/git/repo"]));
 	});
 
 	it("counts a stopped session as holding its tree", () => {
-		expect(boundTreeRoots(map(session({ status: "stopped" })))).toEqual(
-			new Set(["/git/repo"]),
-		);
+		expect(
+			boundTreeRoots(map(makeSession({ status: "stopped", cwd: "/git/repo" }))),
+		).toEqual(new Set(["/git/repo"]));
 	});
 
 	it("frees the tree of a finished session whose work is landed", () => {
-		expect(boundTreeRoots(map(session({ status: "done" })))).toEqual(new Set());
+		expect(
+			boundTreeRoots(map(makeSession({ status: "done", cwd: "/git/repo" }))),
+		).toEqual(new Set());
 	});
 
 	it("frees the tree of an errored session whose work is landed", () => {
-		expect(boundTreeRoots(map(session({ status: "error" })))).toEqual(
-			new Set(),
-		);
+		expect(
+			boundTreeRoots(map(makeSession({ status: "error", cwd: "/git/repo" }))),
+		).toEqual(new Set());
 	});
 
 	it("keeps holding a finished session's tree while it carries unlanded work", () => {
@@ -74,29 +62,34 @@ describe("boundTreeRoots", () => {
 			reason: "uncommitted changes",
 		});
 
-		expect(boundTreeRoots(map(session({ status: "done" })))).toEqual(
-			new Set(["/git/repo"]),
-		);
+		expect(
+			boundTreeRoots(map(makeSession({ status: "done", cwd: "/git/repo" }))),
+		).toEqual(new Set(["/git/repo"]));
 	});
 
 	it("keeps holding a tree whose teardown is still in flight", () => {
 		expect(
-			boundTreeRoots(map(session({ status: "done", closing: true }))),
+			boundTreeRoots(
+				map(makeSession({ status: "done", closing: true, cwd: "/git/repo" })),
+			),
 		).toEqual(new Set(["/git/repo"]));
 	});
 
 	it("never probes git when parallel work is off for the repo", () => {
 		configMock.mockReturnValue({ enabled: false, install: true, copy: [] });
 
-		expect(boundTreeRoots(map(session({ status: "done" })))).toEqual(
-			new Set(["/git/repo"]),
-		);
+		expect(
+			boundTreeRoots(map(makeSession({ status: "done", cwd: "/git/repo" }))),
+		).toEqual(new Set(["/git/repo"]));
 		expect(durabilityMock).not.toHaveBeenCalled();
 	});
 
 	it("does not re-probe a tree a live session already holds", () => {
 		const roots = boundTreeRoots(
-			map(session({ id: "1" }), session({ id: "2", status: "done" })),
+			map(
+				makeSession({ id: "1", status: "running", cwd: "/git/repo" }),
+				makeSession({ id: "2", status: "done", cwd: "/git/repo" }),
+			),
 		);
 
 		expect(roots).toEqual(new Set(["/git/repo"]));

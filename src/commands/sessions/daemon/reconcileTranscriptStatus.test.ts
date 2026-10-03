@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { reconcileTranscriptStatus } from "./reconcileTranscriptStatus";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
 
@@ -11,16 +11,7 @@ vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 const readMock = readTranscriptTail as unknown as ReturnType<typeof vi.fn>;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		status: "running",
-		cwd: "/home/me/repo",
-		claudeSessionId: "abc-123",
-		transcriptPath: "/path/abc-123.jsonl",
-		...overrides,
-	} as unknown as Session;
-}
+const transcriptPath = "/path/abc-123.jsonl";
 
 function endTurn() {
 	return [
@@ -75,7 +66,7 @@ describe("reconcileTranscriptStatus", () => {
 	it("heals a stranded running card to waiting on the next append (dropped waiting edge)", async () => {
 		readMock.mockResolvedValue(endTurn());
 		const onStatusChange = vi.fn();
-		const s = session({ status: "running" });
+		const s = makeSession({ transcriptPath, status: "running" });
 
 		await reconcileTranscriptStatus(s, onStatusChange);
 
@@ -87,7 +78,7 @@ describe("reconcileTranscriptStatus", () => {
 		const onStatusChange = vi.fn();
 
 		await reconcileTranscriptStatus(
-			session({ status: "running" }),
+			makeSession({ transcriptPath, status: "running" }),
 			onStatusChange,
 		);
 
@@ -99,7 +90,11 @@ describe("reconcileTranscriptStatus", () => {
 		const onStatusChange = vi.fn();
 
 		await reconcileTranscriptStatus(
-			session({ status: "waiting", permissionActive: true }),
+			makeSession({
+				transcriptPath,
+				status: "waiting",
+				permissionActive: true,
+			}),
 			onStatusChange,
 		);
 
@@ -108,7 +103,11 @@ describe("reconcileTranscriptStatus", () => {
 
 	it("leaves the permission flag for a set-status running hook to clear", async () => {
 		readMock.mockResolvedValue(resolvedBash("u-result"));
-		const s = session({ status: "waiting", permissionActive: true });
+		const s = makeSession({
+			transcriptPath,
+			status: "waiting",
+			permissionActive: true,
+		});
 
 		await reconcileTranscriptStatus(s, vi.fn());
 
@@ -118,7 +117,11 @@ describe("reconcileTranscriptStatus", () => {
 	it("#a856: keeps a waiting permission prompt waiting when the transcript has not advanced", async () => {
 		readMock.mockResolvedValue(resolvedBash("u-result"));
 		const onStatusChange = vi.fn();
-		const s = session({ status: "waiting", permissionActive: true });
+		const s = makeSession({
+			transcriptPath,
+			status: "waiting",
+			permissionActive: true,
+		});
 
 		await reconcileTranscriptStatus(s, onStatusChange);
 		await reconcileTranscriptStatus(s, onStatusChange);
@@ -130,7 +133,7 @@ describe("reconcileTranscriptStatus", () => {
 	it("skips re-deriving when the conversational tail is unchanged", async () => {
 		readMock.mockResolvedValue(resolvedBash("u-result"));
 		const onStatusChange = vi.fn();
-		const s = session({ status: "waiting" });
+		const s = makeSession({ transcriptPath, status: "waiting" });
 
 		await reconcileTranscriptStatus(s, onStatusChange);
 		onStatusChange.mockClear();
@@ -143,7 +146,11 @@ describe("reconcileTranscriptStatus", () => {
 	it("re-derives once the transcript advances", async () => {
 		readMock.mockResolvedValue(resolvedBash("u-result"));
 		const onStatusChange = vi.fn();
-		const s = session({ status: "waiting", permissionActive: true });
+		const s = makeSession({
+			transcriptPath,
+			status: "waiting",
+			permissionActive: true,
+		});
 
 		await reconcileTranscriptStatus(s, onStatusChange);
 		s.permissionActive = false;
@@ -158,11 +165,11 @@ describe("reconcileTranscriptStatus", () => {
 		const onStatusChange = vi.fn();
 
 		await reconcileTranscriptStatus(
-			session({ status: "done" }),
+			makeSession({ transcriptPath, status: "done" }),
 			onStatusChange,
 		);
 		await reconcileTranscriptStatus(
-			session({ status: "error" }),
+			makeSession({ transcriptPath, status: "error" }),
 			onStatusChange,
 		);
 
@@ -174,7 +181,7 @@ describe("reconcileTranscriptStatus", () => {
 		const onStatusChange = vi.fn();
 
 		await reconcileTranscriptStatus(
-			session({ status: "stopped" }),
+			makeSession({ transcriptPath, status: "stopped" }),
 			onStatusChange,
 		);
 
@@ -188,7 +195,7 @@ describe("reconcileTranscriptStatus last user message", () => {
 	it("stores the newest prompt and notifies", async () => {
 		readMock.mockResolvedValue(endTurn());
 		const notify = vi.fn();
-		const s = session({ status: "running" });
+		const s = makeSession({ transcriptPath, status: "running" });
 
 		await reconcileTranscriptStatus(s, vi.fn(), notify);
 
@@ -199,7 +206,7 @@ describe("reconcileTranscriptStatus last user message", () => {
 	it("keeps extracting for a finished card", async () => {
 		readMock.mockResolvedValue(endTurn());
 		const notify = vi.fn();
-		const s = session({ status: "done" });
+		const s = makeSession({ transcriptPath, status: "done" });
 
 		await reconcileTranscriptStatus(s, vi.fn(), notify);
 
@@ -210,7 +217,7 @@ describe("reconcileTranscriptStatus last user message", () => {
 	it("does not notify when the prompt is unchanged", async () => {
 		readMock.mockResolvedValue(resolvedBash("u-result"));
 		const notify = vi.fn();
-		const s = session({ status: "waiting" });
+		const s = makeSession({ transcriptPath, status: "waiting" });
 
 		await reconcileTranscriptStatus(s, vi.fn(), notify);
 		notify.mockClear();

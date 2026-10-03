@@ -10,7 +10,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "../createSession";
+import { makeSession } from "../../../../test/mothers/makeSession";
 import { daemonLog } from "../daemonLog";
 import { dismissSession } from "../dismissSession";
 import { reapWorktree } from "./reapWorktree";
@@ -55,27 +55,21 @@ function makeCloneWithWorktree(): { clone: string; tree: string } {
 	return { clone, tree };
 }
 
-function session(id: string, overrides: Partial<Session>): Session {
-	return {
-		id,
-		name: `Session ${id}`,
-		commandType: "claude",
-		status: "waiting",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: 1,
-		pty: null,
-		scrollback: "",
-		...overrides,
-	};
-}
-
 describe("resolveCloseDurability", () => {
 	it("reaps the clone's watcher when its last session closes from a reaped worktree", async () => {
 		const { clone, tree } = makeCloneWithWorktree();
-		const watcher = session("1", { cwd: clone, watcher: true });
-		const worker = session("2", { cwd: tree, worktree: { path: tree, clone } });
+		const watcher = makeSession({
+			id: "1",
+			status: "waiting",
+			cwd: clone,
+			watcher: true,
+		});
+		const worker = makeSession({
+			id: "2",
+			status: "waiting",
+			cwd: tree,
+			worktree: { path: tree, clone },
+		});
 		const sessions = new Map([
 			[watcher.id, watcher],
 			[worker.id, worker],
@@ -102,7 +96,9 @@ describe("resolveCloseDurability", () => {
 				await vi.waitFor(() =>
 					expect(readlinkSync(`/proc/${orphan.pid}/cwd`)).toBe(tree),
 				);
-				const worker = session("2", {
+				const worker = makeSession({
+					id: "2",
+					status: "waiting",
 					cwd: tree,
 					worktree: { path: tree, clone },
 				});

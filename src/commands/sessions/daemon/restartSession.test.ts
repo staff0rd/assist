@@ -1,42 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makePty } from "../../../test/mothers/makePty";
+import type * as makePtyModule from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { restartSession } from "./restartSession";
 import { spawnClaude } from "./spawnClaude";
 import { spawnPty } from "./spawnPty";
 
-vi.mock("./spawnClaude", () => ({
-	spawnClaude: vi.fn(() => ({
-		onData: vi.fn(),
-		onExit: vi.fn(),
-	})),
-}));
+vi.mock("./spawnClaude", async () => {
+	const { makePty } = await vi.importActual<typeof makePtyModule>(
+		"../../../test/mothers/makePty",
+	);
+	return { spawnClaude: vi.fn(() => makePty().pty) };
+});
 
-vi.mock("./spawnPty", () => ({
-	spawnPty: vi.fn(() => ({
-		onData: vi.fn(),
-		onExit: vi.fn(),
-	})),
-}));
+vi.mock("./spawnPty", async () => {
+	const { makePty } = await vi.importActual<typeof makePtyModule>(
+		"../../../test/mothers/makePty",
+	);
+	return { spawnPty: vi.fn(() => makePty().pty) };
+});
 
 const spawnClaudeMock = spawnClaude as unknown as ReturnType<typeof vi.fn>;
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
-
-function makeSession(overrides: Partial<Session>): Session {
-	return {
-		id: "1",
-		name: "repo/session",
-		commandType: "claude",
-		status: "done",
-		startedAt: 123,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "old output",
-		restored: false,
-		...overrides,
-	};
-}
 
 describe("restartSession", () => {
 	beforeEach(() => {
@@ -45,6 +30,11 @@ describe("restartSession", () => {
 
 	it("resumes a claude session by its conversation id", () => {
 		const session = makeSession({
+			id: "1",
+			commandType: "claude",
+			status: "done",
+			scrollback: "old output",
+			restored: false,
 			claudeSessionId: "abc-123",
 			cwd: "/home/user/repo",
 		});
@@ -64,12 +54,13 @@ describe("restartSession", () => {
 	it("kills the running process group and defers resume until it exits", () => {
 		const killSpy = vi.spyOn(process, "kill").mockImplementation(() => true);
 		const session = makeSession({
+			id: "1",
 			commandType: "assist",
 			status: "running",
 			assistArgs: ["backlog", "run", "601"],
 			claudeSessionId: "abc-123",
 			cwd: "/home/user/repo",
-			pty: { kill: vi.fn(), pid: 4321 } as unknown as Session["pty"],
+			pty: makePty(4321).pty,
 		});
 
 		expect(restartSession(session, new Set(), vi.fn())).toBe(true);
@@ -92,18 +83,20 @@ describe("restartSession", () => {
 
 	it("restarts an errored session directly without killing its dead pty", () => {
 		const killSpy = vi.spyOn(process, "kill").mockImplementation(() => true);
-		const ptyKill = vi.fn();
+		const { pty } = makePty(4321);
 		const session = makeSession({
+			id: "1",
+			commandType: "claude",
 			status: "error",
 			claudeSessionId: "abc-123",
 			cwd: "/home/user/repo",
-			pty: { kill: ptyKill, pid: 4321 } as unknown as Session["pty"],
+			pty,
 		});
 
 		expect(restartSession(session, new Set(), vi.fn())).toBe(true);
 
 		expect(killSpy).not.toHaveBeenCalled();
-		expect(ptyKill).not.toHaveBeenCalled();
+		expect(pty.kill).not.toHaveBeenCalled();
 		expect(session.pendingRestart).toBeUndefined();
 		expect(spawnClaudeMock).toHaveBeenCalledWith({
 			resumeSessionId: "abc-123",
@@ -116,6 +109,9 @@ describe("restartSession", () => {
 
 	it("does not restart a claude session without a conversation id or prompt", () => {
 		const session = makeSession({
+			id: "1",
+			commandType: "claude",
+			status: "done",
 			claudeSessionId: undefined,
 			initialPrompt: undefined,
 		});
@@ -126,6 +122,8 @@ describe("restartSession", () => {
 
 	it("opens a fresh agent in the workspace of a recovered card with no conversation", () => {
 		const session = makeSession({
+			id: "1",
+			commandType: "claude",
 			status: "stopped",
 			claudeSessionId: undefined,
 			initialPrompt: undefined,
@@ -148,6 +146,9 @@ describe("restartSession", () => {
 
 	it("restarts a claude session fresh from its prompt when no conversation id is known", () => {
 		const session = makeSession({
+			id: "1",
+			commandType: "claude",
+			status: "done",
 			claudeSessionId: undefined,
 			initialPrompt: "do the thing",
 			cwd: "/home/user/repo",
@@ -167,6 +168,7 @@ describe("restartSession", () => {
 
 	it("resumes a running assist session via the wrapper with --resume-session", () => {
 		const session = makeSession({
+			id: "1",
 			commandType: "assist",
 			status: "running",
 			assistArgs: ["backlog", "run", "601"],
@@ -187,6 +189,7 @@ describe("restartSession", () => {
 
 	it("resumes an idle assist session as waiting with ASSIST_RESUME_IDLE", () => {
 		const session = makeSession({
+			id: "1",
 			commandType: "assist",
 			status: "waiting",
 			assistArgs: ["draft"],
@@ -207,6 +210,7 @@ describe("restartSession", () => {
 
 	it("restarts an assist session fresh when no conversation id is known", () => {
 		const session = makeSession({
+			id: "1",
 			commandType: "assist",
 			status: "running",
 			assistArgs: ["draft"],
@@ -226,6 +230,8 @@ describe("restartSession", () => {
 
 	it("does not restart run sessions", () => {
 		const run = makeSession({
+			id: "1",
+			status: "done",
 			commandType: "run",
 			runName: "build",
 			claudeSessionId: "abc-123",

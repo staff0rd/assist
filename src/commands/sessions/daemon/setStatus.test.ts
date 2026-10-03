@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Session } from "./createSession";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { daemonLog } from "./daemonLog";
 import { setStatus } from "./setStatus";
 
@@ -7,21 +7,11 @@ vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 const daemonLogMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		status: "running",
-		runningMs: 0,
-		runningSince: null,
-		...overrides,
-	} as Session;
-}
-
 describe("setStatus verifying", () => {
 	beforeEach(() => daemonLogMock.mockClear());
 
 	it("clears a verifying flag stranded by a session that finished", () => {
-		const s = session({ verifying: true });
+		const s = makeSession({ id: "1", status: "running", verifying: true });
 
 		setStatus(s, "done");
 
@@ -32,7 +22,7 @@ describe("setStatus verifying", () => {
 	});
 
 	it("holds the flag while the session stays running", () => {
-		const s = session({ verifying: true });
+		const s = makeSession({ id: "1", status: "running", verifying: true });
 
 		setStatus(s, "running");
 
@@ -40,7 +30,7 @@ describe("setStatus verifying", () => {
 	});
 
 	it("says nothing about verify for a session that was not verifying", () => {
-		const s = session();
+		const s = makeSession({ status: "running" });
 
 		setStatus(s, "stopped");
 

@@ -1,4 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as makePtyModule from "../../../../test/mothers/makePty";
+import { makeSession } from "../../../../test/mothers/makeSession";
+import type * as makeSessionModule from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { createWatcherSession } from "../createWatcherSession";
 import { daemonLog } from "../daemonLog";
@@ -14,27 +17,27 @@ vi.mock("./listWorktreePaths", () => ({ mainWorktree: () => "/git/repo" }));
 vi.mock("./worktreeConfigFor", () => ({
 	worktreeConfigFor: vi.fn(),
 }));
-vi.mock("../createWatcherSession", () => ({
-	createWatcherSession: vi.fn(
-		(id: string, cwd: string) =>
-			({
+vi.mock("../createWatcherSession", async () => {
+	const { makeSession } = await vi.importActual<typeof makeSessionModule>(
+		"../../../../test/mothers/makeSession",
+	);
+	const { makePty } = await vi.importActual<typeof makePtyModule>(
+		"../../../../test/mothers/makePty",
+	);
+	return {
+		createWatcherSession: vi.fn((id: string, cwd: string) =>
+			makeSession({
 				id,
-				name: `Session ${id}`,
-				commandType: "claude",
 				status: "running",
-				startedAt: 1,
-				runningMs: 0,
-				runningSince: 1,
-				waitingSince: null,
-				pty: {} as Session["pty"],
-				scrollback: "",
+				pty: makePty().pty,
 				cwd,
 				initialPrompt: "/watch",
 				starred: true,
 				watcher: true,
-			}) as Session,
-	),
-}));
+			}),
+		),
+	};
+});
 
 const configMock = vi.mocked(worktreeConfigFor);
 
@@ -51,24 +54,13 @@ function config(overrides: Partial<ReturnType<typeof worktreeConfigFor>> = {}) {
 	});
 }
 
-function watcherSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "Session 1",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: {} as Session["pty"],
-		scrollback: "",
-		cwd: "/git/repo",
-		watcher: true,
-		starred: true,
-		...overrides,
-	};
-}
+const liveWatcher = {
+	id: "1",
+	status: "running",
+	cwd: "/git/repo",
+	watcher: true,
+	starred: true,
+} satisfies Partial<Session>;
 
 function context(existing: Session[] = []): TreeSpawnContext {
 	const sessions = new Map(existing.map((s) => [s.id, s]));
@@ -118,7 +110,7 @@ describe("ensureWatcher", () => {
 	});
 
 	it("spawns nothing when a live watcher already holds the clone", () => {
-		const ctx = context([watcherSession()]);
+		const ctx = context([makeSession(liveWatcher)]);
 
 		expect(ensureWatcher(ctx, "/git/repo-2")).toBeUndefined();
 		expect(createWatcherSession).not.toHaveBeenCalled();
@@ -131,7 +123,7 @@ describe("ensureWatcher", () => {
 		for (const status of ["stopped", "error"] as const) {
 			vi.clearAllMocks();
 			config();
-			const ctx = context([watcherSession({ status })]);
+			const ctx = context([makeSession({ ...liveWatcher, status })]);
 
 			expect(ensureWatcher(ctx, "/git/repo")).toBe("9");
 			expect(createWatcherSession).toHaveBeenCalledWith("9", "/git/repo");
@@ -142,13 +134,13 @@ describe("ensureWatcher", () => {
 	});
 
 	it("ignores a live session in the clone that is not a watcher", () => {
-		const ctx = context([watcherSession({ watcher: undefined })]);
+		const ctx = context([makeSession({ ...liveWatcher, watcher: undefined })]);
 
 		expect(ensureWatcher(ctx, "/git/repo")).toBe("9");
 	});
 
 	it("ignores a watcher for another clone", () => {
-		const ctx = context([watcherSession({ cwd: "/git/other" })]);
+		const ctx = context([makeSession({ ...liveWatcher, cwd: "/git/other" })]);
 
 		expect(ensureWatcher(ctx, "/git/repo")).toBe("9");
 	});

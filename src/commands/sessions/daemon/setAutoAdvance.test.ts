@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session } from "./createSession";
 import { setAutoAdvance } from "./writeToSession";
@@ -11,22 +12,11 @@ vi.mock("../../backlog/consumePause", () => ({
 const requestPauseMock = requestPause as unknown as ReturnType<typeof vi.fn>;
 const clearPauseMock = clearPause as unknown as ReturnType<typeof vi.fn>;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "assist",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		activity: { kind: "backlog", itemId: 42, startedAt: 1 },
-		...overrides,
-	};
-}
+const backlogActivity: Session["activity"] = {
+	kind: "backlog",
+	itemId: 42,
+	startedAt: 1,
+};
 
 describe("setAutoAdvance", () => {
 	beforeEach(() => {
@@ -34,7 +24,9 @@ describe("setAutoAdvance", () => {
 	});
 
 	it("records the state on the session", () => {
-		const sessions = new Map([["1", session()]]);
+		const sessions = new Map([
+			["1", makeSession({ activity: backlogActivity })],
+		]);
 
 		setAutoAdvance(sessions, "1", false);
 
@@ -42,7 +34,9 @@ describe("setAutoAdvance", () => {
 	});
 
 	it("writes the control file for the item when toggled off", () => {
-		const sessions = new Map([["1", session()]]);
+		const sessions = new Map([
+			["1", makeSession({ activity: backlogActivity })],
+		]);
 
 		setAutoAdvance(sessions, "1", false);
 
@@ -51,7 +45,9 @@ describe("setAutoAdvance", () => {
 	});
 
 	it("clears the control file for the item when toggled on", () => {
-		const sessions = new Map([["1", session()]]);
+		const sessions = new Map([
+			["1", makeSession({ activity: backlogActivity })],
+		]);
 
 		setAutoAdvance(sessions, "1", true);
 
@@ -60,7 +56,7 @@ describe("setAutoAdvance", () => {
 	});
 
 	it("does not touch the control file when the session has no backlog item", () => {
-		const sessions = new Map([["1", session({ activity: undefined })]]);
+		const sessions = new Map([["1", makeSession({ activity: undefined })]]);
 
 		setAutoAdvance(sessions, "1", false);
 

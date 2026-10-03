@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { allocateTree } from "./allocateTree";
 import { planReuseTree } from "./planReuseTree";
@@ -16,23 +17,6 @@ vi.mock("./boundTreeRoots", () => ({
 }));
 
 const allocateMock = vi.mocked(allocateTree);
-
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "assist draft",
-		commandType: "assist",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		cwd: "/git/repo",
-		...overrides,
-	} as Session;
-}
 
 function ctx(...sessions: Session[]): TreeSpawnContext {
 	return {
@@ -55,7 +39,7 @@ describe("planReuseTree", () => {
 			created: true,
 			clone: "/git/repo",
 		});
-		const draft = session();
+		const draft = makeSession({ id: "1", cwd: "/git/repo" });
 
 		expect(planReuseTree(draft, ctx(draft))?.cwd).toBe("/git/repo-2");
 	});
@@ -67,7 +51,7 @@ describe("planReuseTree", () => {
 			created: false,
 			clone: "/git/repo",
 		});
-		const draft = session();
+		const draft = makeSession({ id: "1", cwd: "/git/repo" });
 
 		planReuseTree(draft, ctx(draft));
 
@@ -81,7 +65,7 @@ describe("planReuseTree", () => {
 			created: true,
 			clone: "/git/repo",
 		});
-		const draft = session();
+		const draft = makeSession({ id: "1", cwd: "/git/repo" });
 
 		planReuseTree(draft, ctx(draft), { commits: true });
 
@@ -97,8 +81,8 @@ describe("planReuseTree", () => {
 			created: true,
 			clone: "/git/repo",
 		});
-		const draft = session();
-		const coding = session({ id: "2" });
+		const draft = makeSession({ id: "1", cwd: "/git/repo" });
+		const coding = makeSession({ id: "2", cwd: "/git/repo" });
 
 		planReuseTree(draft, ctx(draft, coding));
 
@@ -116,13 +100,13 @@ describe("planReuseTree", () => {
 			created: false,
 			clone: "/git/repo",
 		});
-		const draft = session();
+		const draft = makeSession({ id: "1", cwd: "/git/repo" });
 
 		expect(planReuseTree(draft, ctx(draft))).toBeUndefined();
 	});
 
 	it("leaves a card that already has a workspace alone", () => {
-		const inTree = session({
+		const inTree = makeSession({
 			cwd: "/git/repo-2",
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
@@ -132,7 +116,9 @@ describe("planReuseTree", () => {
 	});
 
 	it("does nothing without a tree context", () => {
-		expect(planReuseTree(session(), undefined)).toBeUndefined();
+		expect(
+			planReuseTree(makeSession({ id: "1", cwd: "/git/repo" }), undefined),
+		).toBeUndefined();
 		expect(allocateMock).not.toHaveBeenCalled();
 	});
 });

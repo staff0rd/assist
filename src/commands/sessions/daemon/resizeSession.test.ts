@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { resizeSession } from "./writeToSession";
@@ -7,42 +9,27 @@ vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 const daemonLogMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
 
-function makeSession(overrides: Partial<Session>): Session {
-	return {
-		id: "1",
-		name: "repo/session",
-		commandType: "claude",
-		status: "waiting",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		...overrides,
-	};
-}
-
 describe("resizeSession", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("resizes a live pty", () => {
-		const resize = vi.fn();
+		const { pty } = makePty();
 		const sessions = new Map<string, Session>([
-			["1", makeSession({ pty: { resize } as unknown as Session["pty"] })],
+			["1", makeSession({ id: "1", status: "waiting", pty })],
 		]);
 
 		resizeSession(sessions, "1", 120, 40);
 
-		expect(resize).toHaveBeenCalledWith(120, 40);
+		expect(pty.resize).toHaveBeenCalledWith(120, 40);
 	});
 
 	it("does not throw and logs when the pty is dead (ENOTTY)", () => {
-		const resize = vi.fn(() => {
+		const { pty } = makePty();
+		pty.resize.mockImplementation(() => {
 			throw new Error("ioctl(2) failed, ENOTTY");
 		});
 		const sessions = new Map<string, Session>([
-			["1", makeSession({ pty: { resize } as unknown as Session["pty"] })],
+			["1", makeSession({ id: "1", status: "waiting", pty })],
 		]);
 
 		expect(() => resizeSession(sessions, "1", 120, 40)).not.toThrow();
@@ -52,19 +39,13 @@ describe("resizeSession", () => {
 	});
 
 	it("skips a done session", () => {
-		const resize = vi.fn();
+		const { pty } = makePty();
 		const sessions = new Map<string, Session>([
-			[
-				"1",
-				makeSession({
-					status: "done",
-					pty: { resize } as unknown as Session["pty"],
-				}),
-			],
+			["1", makeSession({ id: "1", status: "done", pty })],
 		]);
 
 		resizeSession(sessions, "1", 120, 40);
 
-		expect(resize).not.toHaveBeenCalled();
+		expect(pty.resize).not.toHaveBeenCalled();
 	});
 });

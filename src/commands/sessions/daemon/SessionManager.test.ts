@@ -1,4 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../test/mothers/makePty";
+import type * as makePtyModule from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { releaseLock } from "../../backlog/acquireLock";
 import { createAssistSession } from "./createAssistSession";
 import { createRunSession, createSession, type Session } from "./createSession";
@@ -34,13 +37,12 @@ vi.mock("./daemonLog", () => ({
 	daemonLog: vi.fn(),
 	relayDaemonLog: vi.fn(),
 }));
-vi.mock("./spawnPty", () => ({
-	spawnPty: vi.fn(() => ({
-		onData: vi.fn(),
-		onExit: vi.fn(),
-		kill: vi.fn(),
-	})),
-}));
+vi.mock("./spawnPty", async () => {
+	const { makePty } = await vi.importActual<typeof makePtyModule>(
+		"../../../test/mothers/makePty",
+	);
+	return { spawnPty: vi.fn(() => makePty().pty) };
+});
 vi.mock("../../backlog/acquireLock", () => ({ releaseLock: vi.fn() }));
 const maxLive = vi.fn(() => 24);
 vi.mock("./maxLiveSessions", () => ({ maxLiveSessions: () => maxLive() }));
@@ -76,22 +78,6 @@ function lastStatusChange(): StatusChange {
 	return wirePtyMock.mock.lastCall?.[2] as StatusChange;
 }
 
-function fakeSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: { kill: vi.fn() } as unknown as Session["pty"],
-		scrollback: "",
-		...overrides,
-	};
-}
-
 describe("SessionManager", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -112,8 +98,8 @@ describe("SessionManager", () => {
 			]);
 			restoreSessionMock.mockImplementation((id: string, p: { name: string }) =>
 				p.name === "live"
-					? fakeSession({ id, name: "live", restored: true })
-					: fakeSession({
+					? makeSession({ id, name: "live", restored: true })
+					: makeSession({
 							id,
 							name: "stub",
 							commandType: "run",
@@ -144,7 +130,7 @@ describe("SessionManager", () => {
 				},
 			]);
 			restoreSessionMock.mockReturnValue(
-				fakeSession({
+				makeSession({
 					id: "1",
 					name: "repo/Session 1",
 					status: "error",
@@ -176,7 +162,7 @@ describe("SessionManager", () => {
 				})),
 			);
 			restoreSessionMock.mockImplementation((id: string, p: { name: string }) =>
-				fakeSession({ id, name: p.name, restored: true }),
+				makeSession({ id, name: p.name, restored: true }),
 			);
 
 			const manager = new SessionManager();
@@ -204,7 +190,7 @@ describe("SessionManager", () => {
 				})),
 			);
 			restoreSessionMock.mockImplementation((id: string, p: { name: string }) =>
-				fakeSession({ id, name: p.name, restored: true }),
+				makeSession({ id, name: p.name, restored: true }),
 			);
 
 			const manager = new SessionManager();
@@ -253,7 +239,7 @@ describe("SessionManager", () => {
 
 	describe("spawn", () => {
 		it("persists the new session", () => {
-			createSessionMock.mockReturnValue(fakeSession({ name: "new" }));
+			createSessionMock.mockReturnValue(makeSession({ name: "new" }));
 
 			new SessionManager().spawn();
 
@@ -264,7 +250,7 @@ describe("SessionManager", () => {
 		});
 
 		it("stamps the launching card onto a claude session", () => {
-			createSessionMock.mockReturnValue(fakeSession({ name: "new" }));
+			createSessionMock.mockReturnValue(makeSession({ name: "new" }));
 			const manager = new SessionManager();
 
 			manager.spawn({ prompt: "go" }, { launchedFrom: "2" });
@@ -274,7 +260,7 @@ describe("SessionManager", () => {
 
 		it("stamps the launching card onto a run", () => {
 			vi.mocked(createRunSession).mockReturnValue(
-				fakeSession({ name: "run: dev", commandType: "run" }),
+				makeSession({ name: "run: dev", commandType: "run" }),
 			);
 			const manager = new SessionManager();
 
@@ -285,7 +271,7 @@ describe("SessionManager", () => {
 
 		it("stamps the launching card onto an assist session", () => {
 			createAssistMock.mockReturnValue(
-				fakeSession({ name: "assist review 42", commandType: "assist" }),
+				makeSession({ name: "assist review 42", commandType: "assist" }),
 			);
 			const manager = new SessionManager();
 
@@ -297,7 +283,7 @@ describe("SessionManager", () => {
 		});
 
 		it("leaves a session with no launching card top-level", () => {
-			createSessionMock.mockReturnValue(fakeSession({ name: "new" }));
+			createSessionMock.mockReturnValue(makeSession({ name: "new" }));
 			const manager = new SessionManager();
 
 			manager.spawn({ prompt: "go" }, { launchedFrom: undefined });
@@ -308,7 +294,7 @@ describe("SessionManager", () => {
 		it("refuses to spawn past the configured live-session ceiling", () => {
 			maxLive.mockReturnValue(3);
 			createSessionMock.mockImplementation((id: string) =>
-				fakeSession({ id, name: id }),
+				makeSession({ id, name: id }),
 			);
 			const manager = new SessionManager();
 
@@ -323,7 +309,7 @@ describe("SessionManager", () => {
 
 		it("allows 24 live sessions by default", () => {
 			createSessionMock.mockImplementation((id: string) =>
-				fakeSession({ id, name: id }),
+				makeSession({ id, name: id }),
 			);
 			const manager = new SessionManager();
 
@@ -348,7 +334,7 @@ describe("SessionManager", () => {
 		});
 
 		it("reports busy while sessions exist even without clients", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const onIdleChange = vi.fn();
 			const manager = new SessionManager(onIdleChange);
 
@@ -362,11 +348,8 @@ describe("SessionManager", () => {
 
 	describe("shutdown", () => {
 		it("kills live ptys and ignores their exit events", () => {
-			const kill = vi.fn();
-			const session = fakeSession({
-				id: "1",
-				pty: { kill } as unknown as Session["pty"],
-			});
+			const { pty } = makePty();
+			const session = makeSession({ id: "1", status: "running", pty });
 			createSessionMock.mockReturnValue(session);
 			const manager = new SessionManager();
 			manager.spawn();
@@ -381,14 +364,15 @@ describe("SessionManager", () => {
 			persistLiveMock.mockClear();
 			onStatusChange(session, "done");
 
-			expect(kill).toHaveBeenCalledOnce();
+			expect(pty.kill).toHaveBeenCalledOnce();
 			expect(persistLiveMock).not.toHaveBeenCalled();
 		});
 
 		it("records the restart against the sessions it kills", () => {
-			const session = fakeSession({
+			const session = makeSession({
 				id: "1",
-				pty: { kill: vi.fn() } as unknown as Session["pty"],
+				status: "running",
+				pty: makePty().pty,
 			});
 			createSessionMock.mockReturnValue(session);
 			const manager = new SessionManager();
@@ -404,7 +388,7 @@ describe("SessionManager", () => {
 
 	describe("dismissSession", () => {
 		it("updates persistence after removal", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const manager = new SessionManager();
 			manager.spawn();
 
@@ -419,7 +403,7 @@ describe("SessionManager", () => {
 
 		it("releases the lock for a backlog session being dismissed", () => {
 			createSessionMock.mockReturnValue(
-				fakeSession({
+				makeSession({
 					id: "1",
 					activity: { kind: "backlog", itemId: 301, startedAt: 1 },
 				}),
@@ -433,7 +417,7 @@ describe("SessionManager", () => {
 		});
 
 		it("does not release a lock for a session without a backlog item", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const manager = new SessionManager();
 			manager.spawn();
 
@@ -445,13 +429,12 @@ describe("SessionManager", () => {
 
 	describe("drain", () => {
 		it("removes every session, killing ptys and persisting the empty set", () => {
-			const killed = vi.fn();
-			restoreSessionMock.mockImplementation((id: string) =>
-				fakeSession({
-					id,
-					pty: { kill: killed } as unknown as Session["pty"],
-				}),
-			);
+			const ptys: ReturnType<typeof makePty>["pty"][] = [];
+			restoreSessionMock.mockImplementation((id: string) => {
+				const { pty } = makePty();
+				ptys.push(pty);
+				return makeSession({ id, status: "running", pty });
+			});
 			loadPersistedMock.mockReturnValue([
 				{ name: "a", commandType: "assist", cwd: "/r", startedAt: 1 },
 				{ name: "b", commandType: "assist", cwd: "/r", startedAt: 1 },
@@ -461,7 +444,8 @@ describe("SessionManager", () => {
 
 			expect(manager.drain()).toBe(2);
 
-			expect(killed).toHaveBeenCalledTimes(2);
+			expect(ptys).toHaveLength(2);
+			for (const pty of ptys) expect(pty.kill).toHaveBeenCalledOnce();
 			expect(manager.listSessions()).toEqual([]);
 			const [sessions] = persistLiveMock.mock.lastCall as [
 				Map<string, Session>,
@@ -503,7 +487,7 @@ describe("SessionManager", () => {
 
 	describe("setAutoRun", () => {
 		it("stores the flag and surfaces it in broadcast session state", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const manager = new SessionManager();
 			manager.spawn();
 
@@ -515,7 +499,7 @@ describe("SessionManager", () => {
 
 	describe("setTitle", () => {
 		it("stores the title and surfaces it in broadcast session state", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const manager = new SessionManager();
 			manager.spawn();
 			const client = { send: vi.fn() };
@@ -532,7 +516,7 @@ describe("SessionManager", () => {
 		});
 
 		it("truncates an over-long title", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const manager = new SessionManager();
 			manager.spawn();
 
@@ -545,7 +529,7 @@ describe("SessionManager", () => {
 
 		it("ignores a whitespace-only title", () => {
 			createSessionMock.mockReturnValue(
-				fakeSession({ id: "1", title: "kept" }),
+				makeSession({ id: "1", title: "kept" }),
 			);
 			const manager = new SessionManager();
 			manager.spawn();
@@ -569,7 +553,9 @@ describe("SessionManager", () => {
 
 	describe("setStatus", () => {
 		it("applies the new status and surfaces it in broadcast session state", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+			createSessionMock.mockReturnValue(
+				makeSession({ id: "1", status: "running" }),
+			);
 			const manager = new SessionManager();
 			manager.spawn();
 
@@ -579,7 +565,7 @@ describe("SessionManager", () => {
 		});
 
 		it("marks the session permission-active on a permission-sourced waiting", () => {
-			const session = fakeSession({ id: "1", status: "running" });
+			const session = makeSession({ id: "1", status: "running" });
 			createSessionMock.mockReturnValue(session);
 			const manager = new SessionManager();
 			manager.spawn();
@@ -590,7 +576,7 @@ describe("SessionManager", () => {
 		});
 
 		it("clears permission-active whenever the session goes running", () => {
-			const session = fakeSession({
+			const session = makeSession({
 				id: "1",
 				status: "waiting",
 				permissionActive: true,
@@ -627,7 +613,9 @@ describe("SessionManager", () => {
 
 		describe("when the status is unchanged", () => {
 			it("does not re-broadcast", () => {
-				createSessionMock.mockReturnValue(fakeSession({ id: "1" }));
+				createSessionMock.mockReturnValue(
+					makeSession({ id: "1", status: "running" }),
+				);
 				const manager = new SessionManager();
 				manager.spawn();
 				persistLiveMock.mockClear();
@@ -655,7 +643,7 @@ describe("SessionManager", () => {
 		});
 
 		it("logs on entry and reports success when the session restarts", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1", name: "s" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1", name: "s" }));
 			restartSessionMock.mockReturnValue(true);
 			const manager = new SessionManager();
 			manager.spawn();
@@ -670,7 +658,7 @@ describe("SessionManager", () => {
 		});
 
 		it("reports a reason and logs when there is no respawn plan", () => {
-			createSessionMock.mockReturnValue(fakeSession({ id: "1", name: "s" }));
+			createSessionMock.mockReturnValue(makeSession({ id: "1", name: "s" }));
 			restartSessionMock.mockReturnValue(false);
 			const manager = new SessionManager();
 			manager.spawn();
@@ -688,8 +676,9 @@ describe("SessionManager", () => {
 
 	describe("auto-run on done", () => {
 		function drive(overrides: Partial<Session>): Session {
-			const draft = fakeSession({
+			const draft = makeSession({
 				id: "1",
+				status: "running",
 				commandType: "assist",
 				assistArgs: ["draft", "--once"],
 				pty: null,

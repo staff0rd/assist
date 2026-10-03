@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { removeActivity } from "../../../shared/emitActivity";
+import { makePty } from "../../../test/mothers/makePty";
+import type * as makePtyModule from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { reuseSessionForRun } from "./reuseSessionForRun";
@@ -10,13 +13,12 @@ import { ensureWatcher } from "./worktree/ensureWatcher";
 import { planReuseTree } from "./worktree/planReuseTree";
 import type { TreeSpawnContext } from "./worktree/spawnInTree";
 
-vi.mock("./spawnPty", () => ({
-	spawnPty: vi.fn(() => ({
-		onData: vi.fn(),
-		onExit: vi.fn(),
-		kill: vi.fn(),
-	})),
-}));
+vi.mock("./spawnPty", async () => {
+	const { makePty } = await vi.importActual<typeof makePtyModule>(
+		"../../../test/mothers/makePty",
+	);
+	return { spawnPty: vi.fn(() => makePty().pty) };
+});
 vi.mock("./wirePtyEvents", () => ({ wirePtyEvents: vi.fn() }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../../../shared/emitActivity", () => ({ removeActivity: vi.fn() }));
@@ -32,23 +34,17 @@ const removeActivityMock = removeActivity as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function makeSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "7",
-		name: "assist draft --once",
-		commandType: "assist",
-		status: "done",
-		startedAt: 100,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "draft transcript",
-		assistArgs: ["draft", "--once"],
-		cwd: "/home/user/repo",
-		...overrides,
-	};
-}
+const draft: Partial<Session> = {
+	id: "7",
+	name: "assist draft --once",
+	commandType: "assist",
+	status: "done",
+	startedAt: 100,
+	pty: null,
+	scrollback: "draft transcript",
+	assistArgs: ["draft", "--once"],
+	cwd: "/home/user/repo",
+};
 
 describe("reuseSessionForRun", () => {
 	beforeEach(() => {
@@ -56,7 +52,7 @@ describe("reuseSessionForRun", () => {
 	});
 
 	it("swaps args and name to the backlog run and respawns on the same id", () => {
-		const session = makeSession();
+		const session = makeSession(draft);
 
 		reuseSessionForRun(session, 42, new Set(), vi.fn());
 
@@ -70,7 +66,7 @@ describe("reuseSessionForRun", () => {
 	});
 
 	it("resets status to running and refreshes startedAt", () => {
-		const session = makeSession({ startedAt: 100 });
+		const session = makeSession({ ...draft, startedAt: 100 });
 
 		reuseSessionForRun(session, 42, new Set(), vi.fn());
 
@@ -79,7 +75,7 @@ describe("reuseSessionForRun", () => {
 	});
 
 	it("clears scrollback so the draft tail is not shown under the run", () => {
-		const session = makeSession({ scrollback: "draft transcript" });
+		const session = makeSession({ ...draft, scrollback: "draft transcript" });
 
 		reuseSessionForRun(session, 42, new Set(), vi.fn());
 
@@ -88,7 +84,7 @@ describe("reuseSessionForRun", () => {
 
 	it("broadcasts a clear so terminals drop the draft output", () => {
 		const client: SessionClient = { send: vi.fn() };
-		const session = makeSession();
+		const session = makeSession(draft);
 
 		reuseSessionForRun(session, 42, new Set([client]), vi.fn());
 
@@ -99,6 +95,7 @@ describe("reuseSessionForRun", () => {
 
 	it("resets stale draft activity on the reused session", () => {
 		const session = makeSession({
+			...draft,
 			activity: {
 				kind: "command",
 				name: "draft",
@@ -113,7 +110,7 @@ describe("reuseSessionForRun", () => {
 	});
 
 	it("re-wires pty events on the reused session", () => {
-		const session = makeSession();
+		const session = makeSession(draft);
 		const onStatusChange = vi.fn();
 		const clients = new Set<SessionClient>();
 
@@ -123,27 +120,21 @@ describe("reuseSessionForRun", () => {
 	});
 
 	it("kills a still-running pty before respawning", () => {
-		const kill = vi.fn();
-		const session = makeSession({
-			status: "running",
-			pty: { kill } as unknown as Session["pty"],
-		});
+		const { pty } = makePty();
+		const session = makeSession({ ...draft, status: "running", pty });
 
 		reuseSessionForRun(session, 42, new Set(), vi.fn());
 
-		expect(kill).toHaveBeenCalledOnce();
+		expect(pty.kill).toHaveBeenCalledOnce();
 	});
 
 	it("kills the old pty even when the draft is already done", () => {
-		const kill = vi.fn();
-		const session = makeSession({
-			status: "done",
-			pty: { kill } as unknown as Session["pty"],
-		});
+		const { pty } = makePty();
+		const session = makeSession({ ...draft, status: "done", pty });
 
 		reuseSessionForRun(session, 42, new Set(), vi.fn());
 
-		expect(kill).toHaveBeenCalledOnce();
+		expect(pty.kill).toHaveBeenCalledOnce();
 	});
 
 	describe("when the chained run needs its own workspace", () => {
@@ -168,7 +159,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("moves the reused card into the allocated workspace", () => {
-			const session = makeSession();
+			const session = makeSession(draft);
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx());
 
@@ -177,7 +168,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("holds the run until the workspace has been seeded", () => {
-			const session = makeSession();
+			const session = makeSession(draft);
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx());
 
@@ -188,7 +179,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("starts the held run in the new workspace once seeding releases it", () => {
-			const session = makeSession();
+			const session = makeSession(draft);
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx());
 			session.pendingStart?.();
@@ -202,7 +193,7 @@ describe("reuseSessionForRun", () => {
 
 		it("starts immediately when the allocator leaves it where it is", () => {
 			vi.mocked(planReuseTree).mockReturnValue(undefined);
-			const session = makeSession();
+			const session = makeSession(draft);
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx());
 
@@ -212,7 +203,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("asks the allocator for a backlog-run workspace that can take the run's commits", () => {
-			const session = makeSession();
+			const session = makeSession(draft);
 			const tree = treeCtx();
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), tree);
@@ -239,7 +230,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("ensures a watcher for the clone the chained run came from", () => {
-			const session = makeSession();
+			const session = makeSession(draft);
 			const tree = treeCtx();
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), tree);
@@ -254,7 +245,7 @@ describe("reuseSessionForRun", () => {
 				created: true,
 				clone: "/home/user/repo",
 			});
-			const session = makeSession();
+			const session = makeSession(draft);
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx());
 
@@ -265,7 +256,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("ensures no watcher when the run is not daemon-allocated", () => {
-			reuseSessionForRun(makeSession(), 42, new Set(), vi.fn());
+			reuseSessionForRun(makeSession(draft), 42, new Set(), vi.fn());
 
 			expect(ensureWatcher).not.toHaveBeenCalled();
 		});
@@ -275,7 +266,7 @@ describe("reuseSessionForRun", () => {
 				throw new Error("too many live sessions");
 			});
 
-			reuseSessionForRun(makeSession(), 42, new Set(), vi.fn(), treeCtx());
+			reuseSessionForRun(makeSession(draft), 42, new Set(), vi.fn(), treeCtx());
 
 			expect(ensureWatcher).not.toHaveBeenCalled();
 		});
@@ -298,7 +289,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("fails the card instead of throwing out of the status-change handler", () => {
-			const session = makeSession();
+			const session = makeSession(draft);
 
 			expect(() =>
 				reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx()),
@@ -311,7 +302,7 @@ describe("reuseSessionForRun", () => {
 		});
 
 		it("never starts the run in the tree the session was sitting in", () => {
-			const session = makeSession();
+			const session = makeSession(draft);
 
 			reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx());
 
@@ -326,7 +317,13 @@ describe("reuseSessionForRun", () => {
 			const client: SessionClient = { send: vi.fn() };
 			const tree = treeCtx();
 
-			reuseSessionForRun(makeSession(), 42, new Set([client]), vi.fn(), tree);
+			reuseSessionForRun(
+				makeSession(draft),
+				42,
+				new Set([client]),
+				vi.fn(),
+				tree,
+			);
 
 			expect(
 				vi

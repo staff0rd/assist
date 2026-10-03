@@ -1,6 +1,7 @@
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { loadPersistedSessions } from "./loadPersistedSessions";
@@ -52,12 +53,12 @@ describe("restoreAll", () => {
 		maxLive.mockReturnValue(24);
 		restoreSessionMock.mockImplementation(
 			(id: string, p: { name: string; launchedFrom?: string }) =>
-				({
+				makeSession({
 					id,
 					name: p.name,
 					status: "running",
 					launchedFrom: p.launchedFrom,
-				}) as Session,
+				}),
 		);
 	});
 
@@ -177,7 +178,7 @@ describe("restoreAll", () => {
 		restoreSessionMock.mockImplementation(
 			(_id: string, p: { name: string }) => {
 				if (p.name === entries[1].name) throw new Error("pty refused");
-				return { id: "1", name: p.name, status: "running" } as Session;
+				return makeSession({ id: "1", name: p.name, status: "running" });
 			},
 		);
 		const { sessions, spawner } = harness();

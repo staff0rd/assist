@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { dismissSession } from "./dismissSession";
@@ -23,37 +25,22 @@ vi.mock("./worktree/reapWorktree", () => ({
 const killMock = killPtyTree as unknown as ReturnType<typeof vi.fn>;
 const reapMock = reapWorktree as unknown as ReturnType<typeof vi.fn>;
 
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: { pid: 7, kill: vi.fn() } as unknown as Session["pty"],
-		scrollback: "",
-		...overrides,
-	};
-}
-
 describe("dismissSession", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it("group-kills the process tree rather than the pty leader alone", () => {
-		const s = session();
+		const { pty } = makePty(7);
+		const s = makeSession({ status: "running", pty });
 
 		dismissSession(new Map([[s.id, s]]), s.id);
 
-		expect(killMock).toHaveBeenCalledWith(s.pty);
+		expect(killMock).toHaveBeenCalledWith(pty);
 	});
 
 	it("reaps the worktree of the last card holding it", () => {
-		const s = session({
+		const s = makeSession({
 			cwd: "/git/repo-2",
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
@@ -64,12 +51,12 @@ describe("dismissSession", () => {
 	});
 
 	it("never reaps a worktree another card is still working in", () => {
-		const agent = session({
+		const agent = makeSession({
 			id: "1",
 			cwd: "/git/repo-2",
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 		});
-		const sibling = session({
+		const sibling = makeSession({
 			id: "2",
 			cwd: "/git/repo-2",
 			worktree: { path: "/git/repo-2", clone: "/git/repo" },
@@ -92,14 +79,14 @@ describe("dismissSession watcher reaping", () => {
 	});
 
 	const watcher = () =>
-		session({ id: "w", cwd: "/git/repo", watcher: true, starred: true });
+		makeSession({ id: "w", cwd: "/git/repo", watcher: true, starred: true });
 
 	function sessionsOf(...list: Session[]) {
 		return new Map(list.map((s) => [s.id, s]));
 	}
 
 	it("dismisses the clone's watcher with its last session and logs the reap", () => {
-		const run = session({ id: "1", cwd: "/git/repo-2" });
+		const run = makeSession({ id: "1", cwd: "/git/repo-2" });
 		const sessions = sessionsOf(run, watcher());
 
 		dismissSession(sessions, run.id);
@@ -112,8 +99,8 @@ describe("dismissSession watcher reaping", () => {
 
 	it("keeps the watcher while a session remains in the clone or a worktree", () => {
 		for (const cwd of ["/git/repo", "/git/repo-3"]) {
-			const run = session({ id: "1", cwd: "/git/repo-2" });
-			const other = session({ id: "2", cwd, status: "done" });
+			const run = makeSession({ id: "1", cwd: "/git/repo-2" });
+			const other = makeSession({ id: "2", cwd, status: "done" });
 			const sessions = sessionsOf(run, other, watcher());
 
 			dismissSession(sessions, run.id);
@@ -123,8 +110,8 @@ describe("dismissSession watcher reaping", () => {
 	});
 
 	it("does not let a session in another clone keep the watcher alive", () => {
-		const run = session({ id: "1", cwd: "/git/repo-2" });
-		const elsewhere = session({ id: "2", cwd: "/git/other" });
+		const run = makeSession({ id: "1", cwd: "/git/repo-2" });
+		const elsewhere = makeSession({ id: "2", cwd: "/git/other" });
 		const sessions = sessionsOf(run, elsewhere, watcher());
 
 		dismissSession(sessions, run.id);
@@ -133,7 +120,7 @@ describe("dismissSession watcher reaping", () => {
 	});
 
 	it("reaps nothing further when the watcher itself is dismissed", () => {
-		const second = session({ id: "v", cwd: "/git/repo", watcher: true });
+		const second = makeSession({ id: "v", cwd: "/git/repo", watcher: true });
 		const sessions = sessionsOf(watcher(), second);
 
 		dismissSession(sessions, "w");

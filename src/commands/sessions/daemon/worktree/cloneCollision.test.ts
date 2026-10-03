@@ -10,6 +10,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { allocateAndBind, type TreeSpawnContext } from "./allocateAndBind";
 import { planReuseTree } from "./planReuseTree";
@@ -46,22 +47,6 @@ function makeRepo(): { base: string; clone: string } {
 	return { base, clone };
 }
 
-function liveSession(id: string, cwd: string): Session {
-	return {
-		id,
-		name: `Session ${id}`,
-		commandType: "claude",
-		status: "waiting",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: 1,
-		pty: null,
-		scrollback: "",
-		cwd,
-	} as Session;
-}
-
 function ctxHolding(...held: Session[]): TreeSpawnContext {
 	const sessions = new Map(held.map((s) => [s.id, s]));
 	return {
@@ -78,7 +63,7 @@ function ctxHolding(...held: Session[]): TreeSpawnContext {
 
 function spawnInto(ctx: TreeSpawnContext, cwd: string): Session {
 	const id = allocateAndBind(ctx, cwd, (sid, resolvedCwd) =>
-		liveSession(sid, resolvedCwd ?? cwd),
+		makeSession({ id: sid, status: "waiting", cwd: resolvedCwd ?? cwd }),
 	);
 	return ctx.sessions.get(id) as Session;
 }
@@ -86,7 +71,9 @@ function spawnInto(ctx: TreeSpawnContext, cwd: string): Session {
 describe("a second session colliding with a held clone", () => {
 	it("is allocated a worktree rather than the clone", () => {
 		const { clone } = makeRepo();
-		const ctx = ctxHolding(liveSession("1", clone));
+		const ctx = ctxHolding(
+			makeSession({ id: "1", status: "waiting", cwd: clone }),
+		);
 
 		const second = spawnInto(ctx, clone);
 
@@ -96,7 +83,9 @@ describe("a second session colliding with a held clone", () => {
 
 	it("spills a third session into a further worktree", () => {
 		const { clone } = makeRepo();
-		const ctx = ctxHolding(liveSession("1", clone));
+		const ctx = ctxHolding(
+			makeSession({ id: "1", status: "waiting", cwd: clone }),
+		);
 
 		spawnInto(ctx, clone);
 		const third = spawnInto(ctx, clone);
@@ -106,21 +95,31 @@ describe("a second session colliding with a held clone", () => {
 
 	it("recognises the held clone through a symlinked cwd", () => {
 		const { base, clone } = makeRepo();
-		const ctx = ctxHolding(liveSession("1", join(base, "link", "myrepo")));
+		const ctx = ctxHolding(
+			makeSession({
+				id: "1",
+				status: "waiting",
+				cwd: join(base, "link", "myrepo"),
+			}),
+		);
 
 		expect(spawnInto(ctx, clone).cwd).toBe(`${clone}-2`);
 	});
 
 	it("recognises the held clone through a trailing-slash cwd", () => {
 		const { clone } = makeRepo();
-		const ctx = ctxHolding(liveSession("1", `${clone}/`));
+		const ctx = ctxHolding(
+			makeSession({ id: "1", status: "waiting", cwd: `${clone}/` }),
+		);
 
 		expect(spawnInto(ctx, clone).cwd).toBe(`${clone}-2`);
 	});
 
 	it("recognises the held clone from a subdirectory spawn", () => {
 		const { clone } = makeRepo();
-		const ctx = ctxHolding(liveSession("1", clone));
+		const ctx = ctxHolding(
+			makeSession({ id: "1", status: "waiting", cwd: clone }),
+		);
 
 		expect(spawnInto(ctx, join(clone, ".claude")).cwd).toBe(`${clone}-2`);
 	});
@@ -136,18 +135,25 @@ describe("a second session colliding with a held clone", () => {
 describe("a chained run reusing a card that shares the clone", () => {
 	it("moves the reused card into a worktree", () => {
 		const { clone } = makeRepo();
-		const reused = liveSession("1", clone);
-		const ctx = ctxHolding(reused, liveSession("2", clone));
+		const reused = makeSession({ id: "1", status: "waiting", cwd: clone });
+		const ctx = ctxHolding(
+			reused,
+			makeSession({ id: "2", status: "waiting", cwd: clone }),
+		);
 
 		expect(planReuseTree(reused, ctx)?.cwd).toBe(`${clone}-2`);
 	});
 
 	it("recognises the other holder through a symlinked cwd", () => {
 		const { base, clone } = makeRepo();
-		const reused = liveSession("1", clone);
+		const reused = makeSession({ id: "1", status: "waiting", cwd: clone });
 		const ctx = ctxHolding(
 			reused,
-			liveSession("2", join(base, "link", "myrepo")),
+			makeSession({
+				id: "2",
+				status: "waiting",
+				cwd: join(base, "link", "myrepo"),
+			}),
 		);
 
 		expect(planReuseTree(reused, ctx)?.cwd).toBe(`${clone}-2`);
@@ -155,7 +161,7 @@ describe("a chained run reusing a card that shares the clone", () => {
 
 	it("leaves the reused card in the clone when it is the only holder", () => {
 		const { clone } = makeRepo();
-		const reused = liveSession("1", clone);
+		const reused = makeSession({ id: "1", status: "waiting", cwd: clone });
 
 		expect(planReuseTree(reused, ctxHolding(reused))).toBeUndefined();
 	});

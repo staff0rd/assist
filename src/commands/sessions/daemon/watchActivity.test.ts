@@ -7,6 +7,7 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 
 vi.mock("node:fs", () => ({
@@ -29,22 +30,11 @@ const mockWatch = watch as unknown as MockInstance;
 const mockReadActivity = readActivity as unknown as MockInstance;
 const mockReconcileActivity = reconcileActivity as unknown as MockInstance;
 
-function fakeSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "assist",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: {} as Session["pty"],
-		scrollback: "",
-		cwd: "/repo",
-		...overrides,
-	};
-}
+const assistSession = {
+	id: "1",
+	commandType: "assist",
+	cwd: "/repo",
+} satisfies Partial<Session>;
 
 const backlogActivity = {
 	kind: "backlog" as const,
@@ -66,7 +56,7 @@ describe("watchActivity", () => {
 
 	it("copies the reported claude session id onto the session and notifies", () => {
 		mockReadActivity.mockReturnValue(backlogActivity);
-		const session = fakeSession();
+		const session = makeSession(assistSession);
 		const notify = vi.fn();
 
 		watchActivity(session, notify);
@@ -101,7 +91,7 @@ describe("watchActivity", () => {
 				totalPhases: 3,
 				startedAt: 5,
 			});
-			const session = fakeSession({ autoAdvance: true });
+			const session = makeSession({ ...assistSession, autoAdvance: true });
 
 			triggerRead(session);
 
@@ -119,7 +109,7 @@ describe("watchActivity", () => {
 					startedAt: 5,
 				};
 				mockReadActivity.mockReturnValue(reviewActivity);
-				const session = fakeSession({ autoAdvance: true });
+				const session = makeSession({ ...assistSession, autoAdvance: true });
 				triggerRead(session);
 				expect(session.autoAdvance).toBe(false);
 
@@ -132,7 +122,7 @@ describe("watchActivity", () => {
 
 		describe("when the review phase re-enters after a rewind", () => {
 			it("re-flips Continue off", () => {
-				const session = fakeSession({ autoAdvance: true });
+				const session = makeSession({ ...assistSession, autoAdvance: true });
 
 				mockReadActivity.mockReturnValue({
 					kind: "backlog",
@@ -178,7 +168,7 @@ describe("watchActivity", () => {
 				totalPhases: 3,
 				startedAt: 5,
 			});
-			const session = fakeSession({ autoAdvance: true });
+			const session = makeSession({ ...assistSession, autoAdvance: true });
 
 			triggerRead(session);
 
@@ -195,7 +185,7 @@ describe("watchActivity", () => {
 				harness: "codex",
 				startedAt: 5,
 			});
-			const session = fakeSession();
+			const session = makeSession(assistSession);
 
 			triggerRead(session);
 
@@ -207,7 +197,7 @@ describe("watchActivity", () => {
 	describe("when the activity reports no harness", () => {
 		it("leaves the harness absent so consumers fall back to claude", () => {
 			mockReadActivity.mockReturnValue(backlogActivity);
-			const session = fakeSession();
+			const session = makeSession(assistSession);
 
 			triggerRead(session);
 
@@ -217,7 +207,8 @@ describe("watchActivity", () => {
 
 	describe("when the session was restored", () => {
 		it("reconciles the reused id's activity file with the session's own activity", () => {
-			const session = fakeSession({
+			const session = makeSession({
+				...assistSession,
 				restored: true,
 				activity: backlogActivity,
 			});
@@ -230,7 +221,10 @@ describe("watchActivity", () => {
 
 	describe("when a fresh (non-restored) session reuses an id", () => {
 		it("clears the stale activity file so a prior backlog item's chip does not leak", () => {
-			watchActivity(fakeSession({ activity: undefined }), vi.fn());
+			watchActivity(
+				makeSession({ ...assistSession, activity: undefined }),
+				vi.fn(),
+			);
 
 			expect(mockReconcileActivity).toHaveBeenCalledWith("1", undefined);
 		});
@@ -244,7 +238,7 @@ describe("refreshActivity", () => {
 
 	it("loads the latest reported claude session id synchronously", () => {
 		mockReadActivity.mockReturnValue(backlogActivity);
-		const session = fakeSession();
+		const session = makeSession(assistSession);
 
 		refreshActivity(session);
 
@@ -259,7 +253,7 @@ describe("refreshActivity", () => {
 			harness: "codex",
 			startedAt: 5,
 		});
-		const session = fakeSession();
+		const session = makeSession(assistSession);
 
 		refreshActivity(session);
 
@@ -268,7 +262,10 @@ describe("refreshActivity", () => {
 
 	it("leaves the session untouched when there is no activity", () => {
 		mockReadActivity.mockReturnValue(undefined);
-		const session = fakeSession({ claudeSessionId: "existing" });
+		const session = makeSession({
+			...assistSession,
+			claudeSessionId: "existing",
+		});
 
 		refreshActivity(session);
 

@@ -1,24 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { applySetStatus } from "./applySetStatus";
-import type { Session } from "./createSession";
+import { makeSession } from "../../../test/mothers/makeSession";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
-
-function session(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "3",
-		name: "worktree session",
-		commandType: "claude",
-		status: "waiting",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		...overrides,
-	};
-}
 
 describe("applySetStatus", () => {
 	beforeEach(() => {
@@ -26,7 +10,7 @@ describe("applySetStatus", () => {
 	});
 
 	it("forwards a status change for a live session", () => {
-		const s = session({ status: "waiting" });
+		const s = makeSession({ status: "waiting" });
 		const onStatusChange = vi.fn();
 
 		applySetStatus(
@@ -41,7 +25,7 @@ describe("applySetStatus", () => {
 	});
 
 	it("rebinds a live session before applying the hook's status", () => {
-		const s = session({ status: "waiting" });
+		const s = makeSession({ status: "waiting" });
 		const rebind = vi.fn();
 
 		applySetStatus(
@@ -57,7 +41,7 @@ describe("applySetStatus", () => {
 	});
 
 	it("does not rebind a stopped session", () => {
-		const s = session({ status: "stopped" });
+		const s = makeSession({ status: "stopped" });
 		const rebind = vi.fn();
 
 		applySetStatus(
@@ -73,7 +57,7 @@ describe("applySetStatus", () => {
 	});
 
 	it("ignores hooks for a stopped session so a zombie process cannot resurrect it", () => {
-		const s = session({
+		const s = makeSession({
 			status: "stopped",
 			undurable: { reason: "unpushed commits" },
 		});

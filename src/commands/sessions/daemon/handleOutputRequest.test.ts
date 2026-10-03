@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { messageHandlers } from "./messageHandlers";
 import type { SessionManager } from "./SessionManager";
 
@@ -11,7 +12,7 @@ function fakeManager(
 	const sessions = new Map(
 		Object.entries(scrollbacks).map(([id, scrollback]) => [
 			id,
-			{ id, scrollback },
+			makeSession({ id, scrollback }),
 		]),
 	);
 	return {

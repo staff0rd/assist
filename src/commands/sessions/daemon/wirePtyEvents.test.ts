@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makePty } from "../../../test/mothers/makePty";
+import { makeSession } from "../../../test/mothers/makeSession";
 import type { SessionClient } from "./broadcast";
 import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
@@ -8,47 +10,17 @@ vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 const daemonLogMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
 
-type ExitHandler = (e: { exitCode: number }) => void;
-
-function fakePty() {
-	let onExit: ExitHandler = () => {};
-	let onData: (data: string) => void = () => {};
-	return {
-		pty: {
-			onData: vi.fn((cb: (data: string) => void) => {
-				onData = cb;
-			}),
-			onExit: vi.fn((cb: ExitHandler) => {
-				onExit = cb;
-			}),
-		} as unknown as Session["pty"],
-		exit: (exitCode: number) => onExit({ exitCode }),
-		emit: (data: string) => onData(data),
-	};
-}
-
-function fakeSession(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "1",
-		name: "repo/Session 1",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		...overrides,
-	};
-}
-
 describe("wirePtyEvents output handling", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("appends output to scrollback and broadcasts it without changing status", () => {
-		const { pty, emit } = fakePty();
-		const session = fakeSession({ pty });
+		const { pty, emitData } = makePty();
+		const session = makeSession({
+			id: "1",
+			status: "running",
+			scrollback: "",
+			pty,
+		});
 		const onStatusChange = vi.fn();
 		const client = { send: vi.fn() };
 
@@ -57,7 +29,7 @@ describe("wirePtyEvents output handling", () => {
 			new Set<SessionClient>([client as unknown as SessionClient]),
 			onStatusChange,
 		);
-		emit("hello");
+		emitData("hello");
 
 		expect(session.scrollback).toBe("hello");
 		expect(onStatusChange).not.toHaveBeenCalled();
@@ -71,8 +43,13 @@ describe("wirePtyEvents exit handling", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("marks a restored session that exits silently with a non-zero code as an error and logs it", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({ pty, restored: true, scrollback: "" });
+		const { pty, exit } = makePty();
+		const session = makeSession({
+			pty,
+			status: "running",
+			restored: true,
+			scrollback: "",
+		});
 		const onStatusChange =
 			vi.fn<(s: Session, status: SessionStatus, exitCode?: number) => void>();
 
@@ -87,8 +64,8 @@ describe("wirePtyEvents exit handling", () => {
 	});
 
 	it("logs a clean exit from running as an expected completion", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({ pty, restored: true, status: "running" });
+		const { pty, exit } = makePty();
+		const session = makeSession({ pty, restored: true, status: "running" });
 		const onStatusChange = vi.fn();
 
 		wirePtyEvents(session, new Set<SessionClient>(), onStatusChange);
@@ -104,8 +81,8 @@ describe("wirePtyEvents exit handling", () => {
 	});
 
 	it("logs an exit from waiting as an unexpected mid-session death with its exit code", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({
+		const { pty, exit } = makePty();
+		const session = makeSession({
 			pty,
 			status: "waiting",
 			scrollback: "prior conversation",
@@ -123,8 +100,8 @@ describe("wirePtyEvents exit handling", () => {
 	});
 
 	it("marks a non-zero exit as an error and logs it", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({
+		const { pty, exit } = makePty();
+		const session = makeSession({
 			pty,
 			status: "running",
 			scrollback: "startup failed: EMAXCONNSESSION",
@@ -142,8 +119,8 @@ describe("wirePtyEvents exit handling", () => {
 	});
 
 	it("writes the failure reason to the terminal when the process dies without output", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({ pty, status: "running", scrollback: "" });
+		const { pty, exit } = makePty();
+		const session = makeSession({ pty, status: "running", scrollback: "" });
 		const client = { send: vi.fn() };
 
 		wirePtyEvents(
@@ -162,8 +139,8 @@ describe("wirePtyEvents exit handling", () => {
 	});
 
 	it("names the vanished working directory so a reaped-tree failure explains itself", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({
+		const { pty, exit } = makePty();
+		const session = makeSession({
 			pty,
 			status: "running",
 			cwd: "/git/repo-4-was-reaped",
@@ -182,8 +159,8 @@ describe("wirePtyEvents exit handling", () => {
 	});
 
 	it("leaves the terminal alone when the failing process already printed output", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({
+		const { pty, exit } = makePty();
+		const session = makeSession({
 			pty,
 			status: "running",
 			scrollback: "real error from the process",
@@ -198,8 +175,8 @@ describe("wirePtyEvents exit handling", () => {
 	});
 
 	it("clears the dead pty handle when the process exits", () => {
-		const { pty, exit } = fakePty();
-		const session = fakeSession({ pty, status: "running" });
+		const { pty, exit } = makePty();
+		const session = makeSession({ pty, status: "running" });
 
 		wirePtyEvents(session, new Set<SessionClient>(), vi.fn());
 		exit(1);

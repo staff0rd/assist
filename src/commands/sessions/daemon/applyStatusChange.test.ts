@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../test/mothers/makeSession";
 import { applyStatusChange } from "./applyStatusChange";
-import type { Session } from "./createSession";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
 import { resolveCloseDurability } from "./worktree/resolveCloseDurability";
 
@@ -22,31 +22,18 @@ const titleMock = startTranscriptTitleGeneration as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function backlogRun(overrides: Partial<Session> = {}): Session {
-	return {
-		id: "9",
-		name: "assist backlog run 5",
-		commandType: "assist",
-		assistArgs: ["backlog", "run", "5"],
-		status: "running",
-		startedAt: 1,
-		runningMs: 0,
-		runningSince: 1,
-		waitingSince: null,
-		pty: null,
-		scrollback: "",
-		worktree: { path: "/git/repo-2", clone: "/git/repo" },
-		...overrides,
-	};
-}
-
 describe("applyStatusChange worktree reap gating", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it("never reaps a worktree-backed backlog run between phase transitions", () => {
-		const session = backlogRun({ status: "running" });
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
+			status: "running",
+		});
 		const dismiss = vi.fn();
 
 		applyStatusChange(session, "waiting", undefined, dismiss, vi.fn(), vi.fn());
@@ -62,7 +49,12 @@ describe("applyStatusChange worktree reap gating", () => {
 	});
 
 	it("routes through the durability gate only on the final done transition", () => {
-		const session = backlogRun({ status: "waiting" });
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
+			status: "waiting",
+		});
 
 		applyStatusChange(session, "done", 0, vi.fn(), vi.fn(), vi.fn());
 
@@ -76,7 +68,9 @@ describe("applyStatusChange worktree reap gating", () => {
 	});
 
 	it("keeps the worktree when a done transition chains straight into an auto-run", () => {
-		const session = backlogRun({
+		const session = makeSession({
+			commandType: "assist",
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 			status: "running",
 			name: "assist draft --once something",
 			assistArgs: ["draft", "--once", "something"],
@@ -101,7 +95,12 @@ describe("applyStatusChange worktree reap gating", () => {
 	});
 
 	it("keeps the workspace when another agent in that stream is still working", () => {
-		const session = backlogRun({ status: "running" });
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
+			status: "running",
+		});
 		const dismiss = vi.fn();
 
 		applyStatusChange(
@@ -124,7 +123,12 @@ describe("applyStatusChange worktree reap gating", () => {
 	});
 
 	it("runs the gate on done once no other agent shares the workspace", () => {
-		const session = backlogRun({ status: "running" });
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
+			status: "running",
+		});
 
 		applyStatusChange(
 			session,
@@ -140,7 +144,11 @@ describe("applyStatusChange worktree reap gating", () => {
 	});
 
 	it("skips the gate for a done transition on a non-worktree session", () => {
-		const session = backlogRun({ status: "waiting", worktree: undefined });
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			status: "waiting",
+		});
 
 		applyStatusChange(session, "done", 0, vi.fn(), vi.fn(), vi.fn());
 
@@ -155,7 +163,10 @@ describe("applyStatusChange undurable hold reason", () => {
 	});
 
 	it("keeps the hold reason when the card is held as stopped", () => {
-		const session = backlogRun({
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 			status: "waiting",
 			undurable: { reason: "unpushed commits" },
 		});
@@ -166,7 +177,10 @@ describe("applyStatusChange undurable hold reason", () => {
 	});
 
 	it("clears a stale hold reason once the card leaves stopped", () => {
-		const session = backlogRun({
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 			status: "stopped",
 			undurable: { reason: "unpushed commits" },
 		});
@@ -177,7 +191,10 @@ describe("applyStatusChange undurable hold reason", () => {
 	});
 
 	it("clears a stale hold reason on a waiting phase transition", () => {
-		const session = backlogRun({
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
 			status: "running",
 			undurable: { reason: "unpushed commits" },
 		});
@@ -188,7 +205,12 @@ describe("applyStatusChange undurable hold reason", () => {
 	});
 
 	it("retries the transcript title when a card parks at waiting", () => {
-		const session = backlogRun({ status: "running" });
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
+			status: "running",
+		});
 		const notify = vi.fn();
 
 		applyStatusChange(session, "waiting", undefined, vi.fn(), notify, vi.fn());
@@ -197,7 +219,12 @@ describe("applyStatusChange undurable hold reason", () => {
 	});
 
 	it("leaves the transcript title alone while the card is still running", () => {
-		const session = backlogRun({ status: "waiting" });
+		const session = makeSession({
+			commandType: "assist",
+			assistArgs: ["backlog", "run", "5"],
+			worktree: { path: "/git/repo-2", clone: "/git/repo" },
+			status: "waiting",
+		});
 
 		applyStatusChange(session, "running", undefined, vi.fn(), vi.fn(), vi.fn());
 
