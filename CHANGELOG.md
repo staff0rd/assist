@@ -1,3 +1,10 @@
+## [0.748.1](https://github.com/staff0rd/assist/compare/v0.748.0...v0.748.1) (2026-10-03)
+
+
+### Bug Fixes
+
+* leave Tab native with one card ([96c4aef](https://github.com/staff0rd/assist/commit/96c4aef2f13cf4270014810a9a162fcb529e8e58))
+
 # [0.748.0](https://github.com/staff0rd/assist/compare/v0.747.5...v0.748.0) (2026-10-03)
 
 
