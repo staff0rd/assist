@@ -248,6 +248,27 @@ describe("SelectionCommentPopover", () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it("copies only the quote and stays open with the note intact", async () => {
+		const writeText = vi.fn(async () => {});
+		vi.stubGlobal("navigator", { clipboard: { writeText } });
+		const onCancel = vi.fn();
+
+		render(
+			<SelectionCommentPopover
+				pending={anchor}
+				onAdd={vi.fn()}
+				onCancel={onCancel}
+			/>,
+		);
+		fireEvent.change(noteField(), { target: { value: "needs a guard" } });
+		fireEvent.click(screen.getByRole("button", { name: "Copy quote" }));
+
+		expect(writeText).toHaveBeenCalledWith(anchor.quote);
+		expect(await screen.findByRole("button", { name: "Copied" })).toBeTruthy();
+		expect(onCancel).not.toHaveBeenCalled();
+		expect(noteField().value).toBe("needs a guard");
+	});
+
 	it("drops the draft once the popover has closed", () => {
 		const { rerender } = render(
 			<SelectionCommentPopover

@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import type { ScopedRule } from "../../../../../rules/types";
 import { CommentNoteForm } from "./SelectionCommentBody/CommentNoteForm";
-import { QuoteBlock } from "../QuoteBlock";
+import { CopyableQuote } from "./SelectionCommentBody/CopyableQuote";
 import { RuleCitationList } from "./SelectionCommentBody/RuleCitationList";
 import { useScopedRules } from "./SelectionCommentBody/useScopedRules";
 
@@ -40,7 +40,7 @@ export function SelectionCommentBody({
 					quotes the text below.
 				</Typography>
 			)}
-			<QuoteBlock text={quote} />
+			<CopyableQuote text={quote} />
 			{onCite && rules.length > 0 && (
 				<RuleCitationList rules={rules} onCite={onCite} />
 			)}
