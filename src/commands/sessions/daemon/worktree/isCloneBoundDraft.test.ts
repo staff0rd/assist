@@ -73,12 +73,12 @@ describe("isCloneBoundDraft", () => {
 		expect(isCloneBoundDraft(session())).toBe(false);
 	});
 
-	it("excludes a draft on a repo with parallel work off", () => {
+	it("recognises a draft on a repo with parallel work off", () => {
 		configMock.mockReturnValue({
 			enabled: false,
-			includeDrafts: false,
+			includeDrafts: true,
 		} as ReturnType<typeof worktreeConfigFor>);
 
-		expect(isCloneBoundDraft(session())).toBe(false);
+		expect(isCloneBoundDraft(session())).toBe(true);
 	});
 });

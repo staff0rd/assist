@@ -57,11 +57,38 @@ describe("closeGateApplies", () => {
 		expect(closeGateApplies(map(s), s)).toBe(false);
 	});
 
-	it("does not gate anything when worktree mode is off", () => {
-		configMock.mockReturnValue({ enabled: false, install: true, copy: [] });
-		const s = session();
+	describe("with worktree mode off", () => {
+		beforeEach(() => {
+			configMock.mockReturnValue({ enabled: false, install: true, copy: [] });
+		});
 
-		expect(closeGateApplies(map(s), s)).toBe(false);
+		it("gates a live session in the clone's own tree", () => {
+			const s = session({ status: "waiting" });
+
+			expect(closeGateApplies(map(s), s)).toBe(true);
+		});
+
+		it("does not gate a draft kept in the clone", () => {
+			const s = session({
+				commandType: "assist",
+				assistArgs: ["draft", "--once"],
+			});
+
+			expect(closeGateApplies(map(s), s)).toBe(false);
+		});
+
+		it("does not gate a clone session that already finished", () => {
+			const s = session({ status: "done" });
+
+			expect(closeGateApplies(map(s), s)).toBe(false);
+		});
+
+		it("does not gate a clone session another card still holds", () => {
+			const closing = session({ id: "1" });
+			const other = session({ id: "2" });
+
+			expect(closeGateApplies(map(closing, other), closing)).toBe(false);
+		});
 	});
 
 	it("does not gate a draft kept in the clone", () => {
