@@ -1,3 +1,15 @@
+# [0.754.0](https://github.com/staff0rd/assist/compare/v0.753.0...v0.754.0) (2026-10-03)
+
+
+### Bug Fixes
+
+* remove unused serveNode ([61a22a4](https://github.com/staff0rd/assist/commit/61a22a4631c00660a92196f20ce50fc27e0a0d8c))
+
+
+### Features
+
+* copy button on comment quote ([abc7d14](https://github.com/staff0rd/assist/commit/abc7d14b6c15995c4420aa0b9d4ab9081c8eed16))
+
 # [0.753.0](https://github.com/staff0rd/assist/compare/v0.752.0...v0.753.0) (2026-10-03)
 
 
