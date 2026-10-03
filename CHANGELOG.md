@@ -1,3 +1,10 @@
+## [0.748.2](https://github.com/staff0rd/assist/compare/v0.748.1...v0.748.2) (2026-10-03)
+
+
+### Bug Fixes
+
+* re-ask pending question after restart ([8c5d71f](https://github.com/staff0rd/assist/commit/8c5d71f44788f1cf88e8d70e9366dd802146f17b))
+
 ## [0.748.1](https://github.com/staff0rd/assist/compare/v0.748.0...v0.748.1) (2026-10-03)
 
 
