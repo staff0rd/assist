@@ -27,12 +27,9 @@ export function useCycleSessionCards({
 				isStarred,
 				isFloatingWaiter,
 			).map((s) => s.id);
-			const id = adjacentSessionId(
-				order,
-				card.getAttribute("data-session-id"),
-				event.shiftKey ? -1 : 1,
-			);
-			if (!id) return;
+			const currentId = card.getAttribute("data-session-id");
+			const id = adjacentSessionId(order, currentId, event.shiftKey ? -1 : 1);
+			if (!id || id === currentId) return;
 			event.preventDefault();
 			onSelect(id);
 			holdSessionCardFocus(id);

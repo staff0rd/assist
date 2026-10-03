@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { isSessionCardFocusHeld } from "../../../holdSessionCardFocus";
+import type { PendingLaunch } from "../../../../PendingLaunch";
 import { SessionList } from "./SessionList";
 import type { SessionInfo } from "../../../../types";
 import { StarredSessionsProvider } from "../../../useStarredSessions";
@@ -32,12 +33,20 @@ function session(id: string): SessionInfo {
 	};
 }
 
+const group = { origin: "host/org/assist", clone: "/git/assist" };
+
+function worktreeSession(id: string, cwd: string): SessionInfo {
+	return { ...session(id), cwd, repoGroup: group };
+}
+
 function List({
 	sessions,
 	onSelect,
+	pendingLaunches = [],
 }: {
 	sessions: SessionInfo[];
 	onSelect: (id: string) => void;
+	pendingLaunches?: PendingLaunch[];
 }) {
 	const [activeId, setActiveId] = useState<string | null>(
 		sessions[0]?.id ?? null,
@@ -46,7 +55,7 @@ function List({
 		<StarredSessionsProvider sessions={[]} setSessionStarred={() => {}}>
 			<SessionList
 				sessions={sessions}
-				pendingLaunches={[]}
+				pendingLaunches={pendingLaunches}
 				activeId={activeId}
 				initialized={new Set(sessions.map((s) => s.id))}
 				onSelect={(id) => {
@@ -134,14 +143,94 @@ describe("SessionList Tab cycling", () => {
 
 	it("switches card when Tab comes from a button inside a card", () => {
 		const onSelect = renderCycling();
-		const inner = document.createElement("button");
-		card("b").append(inner);
+		const inner = card("b").querySelector<HTMLElement>("button")!;
 		inner.focus();
 
 		pressTab();
 
 		expect(onSelect).toHaveBeenLastCalledWith("c");
 		expect(document.activeElement).toBe(card("c"));
+	});
+
+	it("skips pending-launch placeholders and leaves Tab on them native", () => {
+		const onSelect = vi.fn();
+		render(
+			<List
+				sessions={[session("a"), session("b")]}
+				pendingLaunches={[
+					{ id: "p", title: "pending", status: "launching", startedAt: 0 },
+				]}
+				onSelect={onSelect}
+			/>,
+		);
+		card("b").scrollIntoView = vi.fn();
+		card("a").scrollIntoView = vi.fn();
+		card("b").focus();
+
+		pressTab();
+		expect(onSelect).toHaveBeenLastCalledWith("a");
+
+		onSelect.mockClear();
+		screen.getByTitle("Dismiss").focus();
+		expect(pressTab()).toBe(true);
+		expect(onSelect).not.toHaveBeenCalled();
+	});
+
+	it("steps through a backlog run's nested children in visible order", () => {
+		const onSelect = vi.fn();
+		render(
+			<List
+				sessions={[
+					{
+						...worktreeSession("run", "/git/assist-2"),
+						activity: { kind: "backlog", startedAt: 0 },
+					},
+					worktreeSession("other", "/git/assist-3"),
+					worktreeSession("child", "/git/assist-2"),
+				]}
+				onSelect={onSelect}
+			/>,
+		);
+		for (const id of ["run", "other", "child"])
+			card(id).scrollIntoView = vi.fn();
+		card("run").focus();
+
+		pressTab();
+		pressTab();
+		pressTab();
+
+		expect(onSelect.mock.calls.map(([id]) => id)).toEqual([
+			"child",
+			"other",
+			"run",
+		]);
+	});
+
+	it("leaves Tab native when there is only one card", () => {
+		const onSelect = vi.fn();
+		render(<List sessions={[session("a")]} onSelect={onSelect} />);
+		card("a").focus();
+
+		expect(pressTab()).toBe(true);
+		expect(pressTab(true)).toBe(true);
+		expect(onSelect).not.toHaveBeenCalled();
+	});
+
+	it("leaves Tab native outside the cards", () => {
+		const onSelect = vi.fn();
+		render(
+			<>
+				<input aria-label="filter" />
+				<div data-testid="terminal" tabIndex={0} />
+				<List sessions={[session("a"), session("b")]} onSelect={onSelect} />
+			</>,
+		);
+
+		screen.getByLabelText("filter").focus();
+		expect(pressTab()).toBe(true);
+		screen.getByTestId("terminal").focus();
+		expect(pressTab()).toBe(true);
+		expect(onSelect).not.toHaveBeenCalled();
 	});
 
 	it("releases the focus hold once focus leaves the card", () => {

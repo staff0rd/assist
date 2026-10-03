@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { HistoryList } from "./HistoryList";
 import type { HistoricalSession } from "../../../../types";
@@ -100,5 +100,14 @@ describe("HistoryList", () => {
 
 		expect(screen.getByText("ungrouped")).toBeTruthy();
 		expect(screen.queryByText("elsewhere")).toBeNull();
+	});
+
+	it("leaves Tab on a history row native", () => {
+		renderList([session("first", "/git/assist", group)], "/git/assist");
+		const row = screen.getByText("first").closest("button")!;
+		row.focus();
+
+		expect(fireEvent.keyDown(row, { key: "Tab" })).toBe(true);
+		expect(document.activeElement).toBe(row);
 	});
 });
