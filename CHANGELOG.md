@@ -1,3 +1,10 @@
+# [0.755.0](https://github.com/staff0rd/assist/compare/v0.754.0...v0.755.0) (2026-10-03)
+
+
+### Features
+
+* close all sessions in a repo group ([9237719](https://github.com/staff0rd/assist/commit/92377195e98932114f97206245c2a3eadeb44d6b))
+
 # [0.754.0](https://github.com/staff0rd/assist/compare/v0.753.0...v0.754.0) (2026-10-03)
 
 
