@@ -47,10 +47,12 @@ flowchart LR
 
 A link is a WebSocket (sessions) plus HTTP (panels) to the peer node's **web server**. The web server's WebSocket (`handleSocket.ts`) is already a near-transparent line relay to its daemon, so a link needs no new listener on the peer.
 
+Every web server listens on `127.0.0.1` only, so another machine reaches it through Tailscale or ssh, never the LAN.
+
 Two transports:
 
-- **direct** — dial a URL. Used for WSL → Windows on the same machine (`http://127.0.0.1:3101`).
-- **ssh** — the linking node keeps `ssh -N -L <local>:127.0.0.1:<port> <alias>` up and dials the local end. Keys come from the 1Password SSH agent via `~/.ssh/config`. Peer web servers stay loopback-bound; nothing new listens on the LAN.
+- **direct** — dial a URL. Used for WSL → Windows on the same machine (`http://127.0.0.1:3101`), and for a Tailscale peer at `https://<host>.<tailnet>.ts.net:<port>`, which the peer exposes with `assist sessions nodes serve` (`tailscale serve --bg --https=<port> http://127.0.0.1:<port>`). On the PC, Windows' `tailscale serve` also fronts the WSL web server, reaching its `127.0.0.1:3100` through WSL localhost forwarding.
+- **ssh** — the linking node keeps `ssh -N -L <local>:127.0.0.1:<port> <alias>` up and dials the local end. Keys come from the 1Password SSH agent via `~/.ssh/config`.
 
 Config on the linking node:
 

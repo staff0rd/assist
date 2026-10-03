@@ -1,10 +1,11 @@
 import type { Command } from "commander";
 import { configHelp } from "../../../shared/configHelp";
 import { doctorNodes } from "./doctorNodes";
-import { linkNode } from "./linkNode";
 import { listNodes } from "./listNodes";
 import { nodeLogs } from "./nodeLogs";
 import { nodesConfigHelp } from "./nodesConfigHelp";
+import { registerLinkCommand } from "./registerLinkCommand";
+import { serveNode } from "./serveNode";
 import { unlinkNode } from "./unlinkNode";
 
 export function registerNodes(sessions: Command): void {
@@ -14,33 +15,20 @@ export function registerNodes(sessions: Command): void {
 		.option("--json", "Output as JSON")
 		.action(listNodes);
 
-	cmd
-		.command("link <name> [url]")
-		.description(
-			"Link a peer node by its web server URL, by its Tailscale name with --tailscale and --port, or over ssh with --ssh and --port (name must match the peer's sessions.nodeName)",
-		)
-		.option(
-			"--tailscale <host>",
-			"Dial the peer at https://<host>.<tailnet>.ts.net:<port> (the peer runs tailscale serve for its web server port)",
-		)
-		.option(
-			"--ssh <alias>",
-			"Tunnel to the peer through this ~/.ssh/config alias",
-		)
-		.option(
-			"--port <port>",
-			"The peer's web server port (with --tailscale or --ssh)",
-		)
-		.option(
-			"--local-port <port>",
-			"Local end of the ssh tunnel (default: 43000 + port % 1000, bumped past other links)",
-		)
-		.action(linkNode);
+	registerLinkCommand(cmd);
 
 	cmd
 		.command("unlink <name>")
 		.description("Remove a linked node")
 		.action(unlinkNode);
+
+	cmd
+		.command("serve")
+		.description(
+			"Expose this node's web server on the tailnet with tailscale serve (idempotent) and print the command that links it",
+		)
+		.option("-p, --port <port>", "This node's web server port", "3100")
+		.action(serveNode);
 
 	cmd
 		.command("doctor [name]")

@@ -68,7 +68,7 @@ export function startWebServer(
 	const server = createServer((req, res) => {
 		runHandler(handler, req, res, port);
 	});
-	server.listen(port, () => {
+	server.listen(port, "127.0.0.1", () => {
 		console.log(chalk.green(`${label}: ${url}`));
 		console.log(chalk.dim("Press Ctrl+C to stop"));
 		if (open) {

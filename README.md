@@ -397,6 +397,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist sessions nodes [--json]` - List this node and every linked node with its link state (see [Linked nodes](#linked-nodes))
 - `assist sessions nodes link <name> [url] [--tailscale <host> --port <port>] [--ssh <alias> --port <port>] [--local-port <port>]` - Link a peer node by its web server URL, its Tailscale name, or over an ssh tunnel
 - `assist sessions nodes unlink <name>` - Remove a linked node
+- `assist sessions nodes serve [-p, --port <port>]` - Expose this node's web server on the tailnet with `tailscale serve` and print the command that links it
 - `assist sessions nodes doctor [name] [--json]` - Probe each hop of every link (or one) and stop at the first failure with a remediation
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` - Tail a linked node's `daemon.log` through its web server
 - `assist sessions set-status <status>` - Report the current session's status (`running`/`waiting`) to the daemon; invoked by the Claude Code hooks the daemon wires into each session
@@ -436,6 +437,7 @@ Each assist install is a **node** with its own daemon and web server. A node can
 - `assist sessions nodes [--json]` — this node and each link's state (connected / connecting / disconnected / version-blocked), peer version and last error.
 - `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link <name> http://127.0.0.1:<port>`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately; the command confirms the reload, or warns when the daemon could not be notified. With `--tailscale <host> --port <port>` it writes a url link to `https://<host>.<tailnet>.ts.net:<port>`, reading the tailnet's MagicDNS suffix from `tailscale status --json` (`tailscale.exe` under WSL); see [Linking machines over Tailscale](#linking-machines-over-tailscale). With `--ssh <alias> --port <port>` the link goes over ssh instead: the daemon keeps `ssh -N -L <local-port>:127.0.0.1:<port> <alias>` up, restarting it behind the link's circuit breaker and logging its stderr to `daemon.log` as `link <name> ssh:`, and the link and `?node=` panel requests dial the local end. `--local-port` defaults to 43000 + `port` % 1000, bumped past any other link's.
 - `assist sessions nodes unlink <name>` — remove a link.
+- `assist sessions nodes serve [-p, --port <port>]` — runs `tailscale serve --bg --https=<port> http://127.0.0.1:<port>` for this node's web server port (default 3100; `tailscale.exe` under WSL), skipping it when `tailscale serve status --json` already proxies that port there, then prints the `https://<host>.<tailnet>.ts.net:<port>` URL and the `assist sessions nodes link <this node> --tailscale <host> --port <port>` command to run on other nodes.
 - `assist sessions nodes doctor [name] [--json]` — probes each link's hops in order: for a `*.ts.net` link, local Tailscale running and the peer host online in `tailscale status`; for an ssh link, the SSH agent (the alias's `IdentityAgent` answering `ssh-add -l`), `ssh -o BatchMode=yes <alias>` reach and auth, and the local tunnel port accepting; then the peer's web server (`GET /api/health`, including that its `nodeName` matches the link), the peer's daemon (as its health reports it), a WebSocket `hello` (version and protocol), then this node's own link state. It stops at the first failing hop and prints the raw error with a remediation, and exits 1 on any failure. On WSL with no links, it reports a Windows node answering on `127.0.0.1:3101` and prints the command that links it.
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` — tail a linked node's `daemon.log` (default 200 lines) through its web server's `GET /api/daemon-log`; naming this node reads the local log.
 - `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) heals an older peer by calling its `POST /api/self-update` (runs `assist update`, then restarts its daemon and web server) and reconnects, latching with an error if the gap remains or this node is the older side (a latched link re-checks the peer every minute and reconnects once the versions match); `warn` proceeds anyway; `off` skips the check.
@@ -444,14 +446,14 @@ With more than one node, a machine picker appears in the top nav and a machine s
 
 #### Linking machines over Tailscale
 
-Each peer exposes its loopback web server on its tailnet name with `tailscale serve`, and the linking node dials it over HTTPS, so links keep working off the home network.
+The sessions web server listens on `127.0.0.1` only. Each peer exposes it on its tailnet name with `tailscale serve`, and the linking node dials it over HTTPS, so links keep working off the home network.
 
 1. Install Tailscale on every machine and sign in to the same tailnet. In the admin console's DNS page, turn on MagicDNS and HTTPS certificates. On WSL the Tailscale CLI is the Windows one, `tailscale.exe`.
-2. On each peer, serve its web server port on the tailnet, e.g. on a PC whose WSL node serves 3100 and Windows node 3101 (Windows' `tailscale serve` reaches WSL's `127.0.0.1:3100` through localhost forwarding):
+2. On each peer, serve its web server port on the tailnet with `assist sessions nodes serve --port <port>`, which prints the link command for step 3. On a PC whose WSL node serves 3100 and Windows node 3101, run it in WSL and in Windows (Windows' `tailscale serve` reaches WSL's `127.0.0.1:3100` through localhost forwarding):
 
    ```
-   tailscale.exe serve --bg --https=3100 http://127.0.0.1:3100
-   tailscale.exe serve --bg --https=3101 http://127.0.0.1:3101
+   assist sessions nodes serve --port 3100   # in WSL
+   assist sessions nodes serve --port 3101   # in Windows
    ```
 
 3. Link the nodes by Tailscale host name. From the Mac to both PC nodes:
@@ -461,11 +463,11 @@ Each peer exposes its loopback web server on its tailnet name with `tailscale se
    assist sessions nodes link pc-windows --tailscale pc --port 3101
    ```
 
-4. Check each link with `assist sessions nodes doctor`; a failed web hop on a `*.ts.net` link names the `tailscale serve` command to run on the peer.
+4. Check each link with `assist sessions nodes doctor`; a failed web hop on a `*.ts.net` link names the `assist sessions nodes serve` command to run on the peer.
 
 #### Linking machines over ssh
 
-Peer web servers stay bound to loopback; a remote node is reached through an ssh tunnel, with keys held by the 1Password SSH agent.
+A remote node is reached through an ssh tunnel to its loopback web server, with keys held by the 1Password SSH agent.
 
 1. On a Windows peer, install and start OpenSSH Server: `Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0`, then `Set-Service sshd -StartupType Automatic; Start-Service sshd`. For an administrator account, put the linking node's public key in `C:\ProgramData\ssh\administrators_authorized_keys`, otherwise in `~\.ssh\authorized_keys`.
 2. On a Mac peer, turn on System Settings → General → Sharing → Remote Login and add the linking node's public key to `~/.ssh/authorized_keys`.

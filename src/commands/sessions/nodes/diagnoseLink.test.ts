@@ -225,7 +225,7 @@ describe("diagnoseLink over Tailscale", () => {
 		expect(result.hops.at(-1)).toMatchObject({
 			hop: "web",
 			remediation: expect.stringContaining(
-				"run `tailscale serve --bg --https=3101 http://127.0.0.1:3101` on pc-windows",
+				"run `assist sessions nodes serve --port 3101` on pc-windows",
 			),
 		});
 	});
