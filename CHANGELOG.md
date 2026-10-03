@@ -1,3 +1,10 @@
+# [0.750.0](https://github.com/staff0rd/assist/compare/v0.749.0...v0.750.0) (2026-10-03)
+
+
+### Features
+
+* link nodes by Tailscale name ([f686889](https://github.com/staff0rd/assist/commit/f6868898f8ac48c0f6e571c4732ed2617806cef4))
+
 # [0.749.0](https://github.com/staff0rd/assist/compare/v0.748.2...v0.749.0) (2026-10-03)
 
 
