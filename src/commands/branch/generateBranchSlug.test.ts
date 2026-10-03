@@ -1,21 +1,29 @@
 import { execFile } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { validateSlug } from "./validateSlug";
 
-vi.mock("node:child_process", () => ({
-	execFile: vi.fn(),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 import { generateBranchSlug } from "./generateBranchSlug";
 
-const mockExecFile = execFile as unknown as ReturnType<typeof vi.fn>;
+const mockExecFile = vi.mocked(execFile);
 
 function resolveWith(stdout: string): void {
-	mockExecFile.mockImplementation(
-		(_file, _args, _opts, cb: (e: unknown, r: unknown) => void) => {
-			cb(null, { stdout, stderr: "" });
-		},
-	);
+	mockExecFile.mockImplementation(((
+		_file: string,
+		_args: string[],
+		_opts: unknown,
+		cb: (e: unknown, r: unknown) => void,
+	) => {
+		cb(null, { stdout, stderr: "" });
+	}) as never);
 }
 
 describe("generateBranchSlug", () => {
@@ -53,11 +61,14 @@ describe("generateBranchSlug", () => {
 	});
 
 	it("falls back to the derived slug when the LLM fails", async () => {
-		mockExecFile.mockImplementation(
-			(_file, _args, _opts, cb: (e: unknown, r: unknown) => void) => {
-				cb(new Error("timeout"), null);
-			},
-		);
+		mockExecFile.mockImplementation(((
+			_file: string,
+			_args: string[],
+			_opts: unknown,
+			cb: (e: unknown, r: unknown) => void,
+		) => {
+			cb(new Error("timeout"), null);
+		}) as never);
 
 		expect(await generateBranchSlug("Add login form")).toBe("add-login-form");
 	});

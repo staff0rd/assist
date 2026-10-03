@@ -1,11 +1,16 @@
+import { execFileSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 
-const execFileSync = vi.fn();
 const mockRequestPreviewDecision = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => execFileSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 vi.mock("../../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
 		mockRequestPreviewDecision(...args),
@@ -14,7 +19,7 @@ vi.mock("../../sessions/shared/requestPreviewDecision", () => ({
 import { commentIssue } from "./commentIssue";
 
 beforeEach(() => {
-	execFileSync.mockReset();
+	vi.mocked(execFileSync).mockReset();
 	mockRequestPreviewDecision.mockReset();
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;

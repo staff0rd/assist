@@ -19,12 +19,13 @@ import {
 	planPhases,
 	planTasks,
 } from "../../shared/db/schema";
-import type { AssistConfig } from "../../shared/types";
+import { loadConfig } from "../../shared/loadConfig";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { propose } from "./propose";
 
 let orm: Db;
 let close: () => Promise<void>;
-let mockConfig: AssistConfig;
 let claudeCode: boolean;
 
 const mockRequestPreviewDecision = vi.fn();
@@ -45,9 +46,15 @@ vi.mock("../../lib/isClaudeCode", () => ({
 	isClaudeCode: () => claudeCode,
 }));
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockConfig,
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadConfig = vi.mocked(loadConfig);
 
 vi.mock("../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
@@ -93,7 +100,7 @@ let logSpy: MockInstance<typeof console.log>;
 
 beforeEach(async () => {
 	({ orm, close } = await createTestDb());
-	mockConfig = {} as AssistConfig;
+	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	claudeCode = false;
 	process.exitCode = undefined;
 	mockRequestPreviewDecision.mockReset();
@@ -194,7 +201,9 @@ describe("propose inside a web session", () => {
 	});
 
 	it("writes the item, the bug's Fix phase and configured sub-tasks on approval", async () => {
-		mockConfig = { subtasks: [{ title: "Write tests" }] } as AssistConfig;
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ subtasks: [{ title: "Write tests" }] }),
+		);
 		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
 
 		await propose({ json: writePayload(bug) });

@@ -1,13 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AssistConfig } from "../../../shared/types";
+import { loadConfig } from "../../../shared/loadConfig";
+import {
+	type AssistConfigInput,
+	makeAssistConfig,
+} from "../../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../../test/mocks/loadConfigMock";
 import { spawnCodex } from "./spawnCodex";
 import { spawnPty } from "./spawnPty";
 
-const mockLoadConfig = vi.fn();
+vi.mock("../../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
-vi.mock("../../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+const mockLoadConfig = vi.mocked(loadConfig);
 
 vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({ fake: "pty" })),
@@ -32,8 +41,10 @@ const OVERRIDE_ARGS = [
 	"gpt-5-codex",
 ];
 
-function withConfig(config: Partial<AssistConfig>): void {
-	mockLoadConfig.mockReturnValue({ harness: { engine: "claude" }, ...config });
+function withConfig(config: AssistConfigInput): void {
+	mockLoadConfig.mockReturnValue(
+		makeAssistConfig({ harness: { engine: "claude" }, ...config }),
+	);
 }
 
 describe("spawnCodex", () => {

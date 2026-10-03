@@ -7,7 +7,8 @@
 		"src/commands/criteriaExtension/criteriaContentScript.ts",
 		"src/commands/review/ci/reviewCiInit.ts",
 		"src/commands/review/ci/reviewCiCheck.ts",
-		"src/commands/review/ci/reviewCiReview.ts"
+		"src/commands/review/ci/reviewCiReview.ts",
+		"src/test/mocks/*Mock.ts"
 	],
 	"ignoreDependencies": [
 		"@vitest/coverage-v8",

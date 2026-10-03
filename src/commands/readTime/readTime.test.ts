@@ -1,15 +1,27 @@
+import { execSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../shared/loadConfig";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+import type * as fsMockModule from "../../test/mocks/fsMock";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
+import { readTime } from "./readTime";
 
-const mockExecSync = vi.fn();
-const mockReadFileSync = vi.fn();
 const mockReadBodyArgument = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
-vi.mock("node:fs", () => ({
-	readFileSync: (...args: unknown[]) => mockReadFileSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("../prs/readBodyArgument", () => ({
 	readBodyArgument: (...args: unknown[]) => mockReadBodyArgument(...args),
 }));
@@ -18,17 +30,19 @@ vi.mock("../prs/shared", () => ({
 	isGhNotInstalled: () => false,
 	isNotFound: () => false,
 }));
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockConfig,
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
-import { readTime } from "./readTime";
+const mockExecSync = vi.mocked(execSync);
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockLoadConfig = vi.mocked(loadConfig);
 
 let logged: string[];
-let mockConfig: {
-	readTime?: { wordsPerMinute?: number };
-	prs?: { readingWordsPerMinute?: number };
-};
 
 function words(count: number): string {
 	return Array.from({ length: count }, (_, i) => `word${i}`).join(" ");
@@ -38,7 +52,7 @@ beforeEach(() => {
 	mockExecSync.mockReset();
 	mockReadFileSync.mockReset();
 	mockReadBodyArgument.mockReset();
-	mockConfig = {};
+	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	logged = [];
 	vi.spyOn(console, "log").mockImplementation((line: string) => {
 		logged.push(line);
@@ -197,7 +211,9 @@ describe("readTime", () => {
 		});
 
 		it("should read prose at the configured words per minute", async () => {
-			mockConfig = { readTime: { wordsPerMinute: 400 } };
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ readTime: { wordsPerMinute: 400 } }),
+			);
 			mockReadFileSync.mockReturnValue(words(100));
 
 			await readTime("drafts/body.md");
@@ -206,7 +222,9 @@ describe("readTime", () => {
 		});
 
 		it("should fall back to prs.readingWordsPerMinute", async () => {
-			mockConfig = { prs: { readingWordsPerMinute: 400 } };
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { readingWordsPerMinute: 400 } }),
+			);
 			mockReadFileSync.mockReturnValue(words(100));
 
 			await readTime("drafts/body.md");
@@ -215,10 +233,12 @@ describe("readTime", () => {
 		});
 
 		it("should prefer readTime.wordsPerMinute over the prs fallback", async () => {
-			mockConfig = {
-				readTime: { wordsPerMinute: 400 },
-				prs: { readingWordsPerMinute: 100 },
-			};
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({
+					readTime: { wordsPerMinute: 400 },
+					prs: { readingWordsPerMinute: 100 },
+				}),
+			);
 			mockReadFileSync.mockReturnValue(words(100));
 
 			await readTime("drafts/body.md");

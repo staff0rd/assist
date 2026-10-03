@@ -1,30 +1,41 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockLoadConfig = vi.fn();
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
-
+import { loadConfig } from "../../shared/loadConfig";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { resolveDraftState } from "./resolveDraftState";
+
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadConfig = vi.mocked(loadConfig);
 
 function commandWithSource(source: string | undefined) {
 	return { getOptionValueSource: () => source };
 }
 
 beforeEach(() => {
-	mockLoadConfig.mockReturnValue({});
+	mockLoadConfig.mockReturnValue(makeAssistConfig());
 });
 
 describe("resolveDraftState", () => {
 	describe("when no flag was supplied", () => {
 		it("falls back to prs.draft when it is true", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: true } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: true } }),
+			);
 
 			expect(resolveDraftState({}, commandWithSource("default"))).toBe(true);
 		});
 
 		it("falls back to prs.draft when it is false", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: false } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: false } }),
+			);
 
 			expect(resolveDraftState({}, commandWithSource("default"))).toBe(false);
 		});
@@ -40,7 +51,9 @@ describe("resolveDraftState", () => {
 		});
 
 		it("falls back to config when no command is available", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: true } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: true } }),
+			);
 
 			expect(resolveDraftState({})).toBe(true);
 		});
@@ -48,7 +61,9 @@ describe("resolveDraftState", () => {
 
 	describe("when a flag was supplied", () => {
 		it("--draft wins over prs.draft false", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: false } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: false } }),
+			);
 
 			expect(resolveDraftState({ draft: true }, commandWithSource("cli"))).toBe(
 				true,
@@ -56,7 +71,9 @@ describe("resolveDraftState", () => {
 		});
 
 		it("--no-draft wins over prs.draft true", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: true } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: true } }),
+			);
 
 			expect(
 				resolveDraftState({ draft: false }, commandWithSource("cli")),

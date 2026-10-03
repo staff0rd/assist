@@ -1,8 +1,14 @@
+import { existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import { createWorktree } from "./createWorktree";
 import { gitSync, gitSyncOrNull } from "./git";
 
-vi.mock("node:fs", () => ({ existsSync: vi.fn(() => false) }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./git", () => ({ gitSync: vi.fn(() => ""), gitSyncOrNull: vi.fn() }));
 vi.mock("./listWorktreePaths", () => ({
@@ -34,6 +40,7 @@ function worktreeAdd(): string[] | undefined {
 describe("createWorktree", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(existsSync).mockReturnValue(false);
 		gitState();
 	});
 

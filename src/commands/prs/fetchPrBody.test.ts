@@ -1,11 +1,17 @@
+import { execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-const mockExecSync = vi.fn();
+const mockExecSync = vi.mocked(execSync);
 const mockGetPreferredRemoteRepo = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 vi.mock("./getPreferredRemoteRepo", () => ({
 	getPreferredRemoteRepo: () => mockGetPreferredRemoteRepo(),
 }));

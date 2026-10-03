@@ -1,17 +1,17 @@
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
-const mockExistsSync = vi.fn<(p: string) => boolean>();
-const mockReadFileSync = vi.fn<(p: string) => string>();
-const mockWriteFileSync =
-	vi.fn<(p: string, data: string, encoding: string) => void>();
+const mockExistsSync = vi.mocked(existsSync);
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
 const mockReadStdinBuffer = vi.fn<() => Promise<Buffer>>();
 
-vi.mock("node:fs", () => ({
-	existsSync: (p: string) => mockExistsSync(p),
-	readFileSync: (p: string) => mockReadFileSync(p),
-	writeFileSync: (p: string, data: string, encoding: string) =>
-		mockWriteFileSync(p, data, encoding),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 vi.mock("../backlog/import/readStdinBuffer", () => ({
 	readStdinBuffer: () => mockReadStdinBuffer(),
@@ -78,8 +78,8 @@ beforeEach(() => {
 		"./raw/c.vtt": PROFANE_VTT,
 	};
 
-	mockExistsSync.mockImplementation((p) => p in files);
-	mockReadFileSync.mockImplementation((p) => files[p] ?? "");
+	mockExistsSync.mockImplementation((p) => String(p) in files);
+	mockReadFileSync.mockImplementation((p) => files[String(p)] ?? "");
 
 	vi.spyOn(process, "exit").mockImplementation((code) => {
 		exitCode = code as number;
@@ -163,7 +163,7 @@ describe("merge", () => {
 
 			expect(path).toBe("./out/merged.vtt");
 			expect(data).toContain("NOTE source: a.vtt @ 00:00:01");
-			expect(data.endsWith("\n")).toBe(true);
+			expect(String(data).endsWith("\n")).toBe(true);
 			expect(logOutput.join("")).not.toContain("WEBVTT");
 		});
 	});

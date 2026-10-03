@@ -2,14 +2,20 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockLoadConfig = vi.fn();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
-
+import { loadConfig } from "../../shared/loadConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
 import { findSourceFiles } from "./findSourceFiles";
+
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadConfig = vi.mocked(loadConfig);
 
 function makeTempDir(): string {
 	return mkdtempSync(join(tmpdir(), "findSourceFiles-"));
@@ -18,9 +24,9 @@ function makeTempDir(): string {
 describe("findSourceFiles", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockLoadConfig.mockReturnValue({
-			complexity: { ignore: ["**/*test.ts*"] },
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ complexity: { ignore: ["**/*test.ts*"] } }),
+		);
 	});
 
 	afterEach(() => {

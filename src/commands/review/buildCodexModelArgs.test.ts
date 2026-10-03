@@ -1,17 +1,25 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AssistConfig } from "../../shared/types";
-
-const mockLoadConfig = vi.fn();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
-
+import { loadConfig } from "../../shared/loadConfig";
+import {
+	type AssistConfigInput,
+	makeAssistConfig,
+} from "../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { buildCodexModelArgs } from "./buildCodexModelArgs";
 
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadConfig = vi.mocked(loadConfig);
+
 describe("buildCodexModelArgs", () => {
-	function withConfig(config: Partial<AssistConfig>): void {
-		mockLoadConfig.mockReturnValue(config);
+	function withConfig(config: AssistConfigInput): void {
+		mockLoadConfig.mockReturnValue(makeAssistConfig(config));
 	}
 
 	beforeEach(() => {

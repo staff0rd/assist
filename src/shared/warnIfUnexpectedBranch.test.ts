@@ -1,16 +1,23 @@
+import { execSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../test/mocks/childProcessMock";
+import { makeAssistConfig } from "../test/mothers/makeAssistConfig";
 import type { AssistConfig } from "./types";
 
-const mockExecSync = vi.fn();
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
+const mockExecSync = vi.mocked(execSync);
 
 import { warnIfUnexpectedBranch } from "./warnIfUnexpectedBranch";
 
 function configWithExpected(expectedBranch?: string): AssistConfig {
-	return { commit: { expectedBranch } } as unknown as AssistConfig;
+	return makeAssistConfig({ commit: { expectedBranch } });
 }
 
 describe("warnIfUnexpectedBranch", () => {

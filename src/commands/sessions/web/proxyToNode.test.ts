@@ -1,15 +1,22 @@
 import { createServer, type IncomingMessage, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../../shared/loadConfig";
+import { makeAssistConfig } from "../../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../../test/mocks/loadConfigMock";
 import { proxyToNode } from "./proxyToNode";
 
-const links = vi.hoisted(() => ({
+const links = {
 	current: [] as { name: string; url: string }[],
-}));
+};
 
-vi.mock("../../../shared/loadConfig", () => ({
-	loadConfig: () => ({ sessions: { links: links.current } }),
-}));
+vi.mock("../../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 vi.mock("../shared/resolveNodeName", () => ({
 	resolveNodeName: () => "pc-wsl",
 }));
@@ -41,6 +48,9 @@ function readBody(req: IncomingMessage): Promise<string> {
 let viewerUrl = "";
 
 beforeAll(async () => {
+	vi.mocked(loadConfig).mockImplementation(() =>
+		makeAssistConfig({ sessions: { links: links.current } }),
+	);
 	peer = createServer(async (req, res) => {
 		if (await proxyToNode(req, res)) return;
 		seen.push({

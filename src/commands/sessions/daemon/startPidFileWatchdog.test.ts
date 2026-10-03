@@ -1,10 +1,15 @@
 import { readFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { ownsPidFile, startPidFileWatchdog } from "./startPidFileWatchdog";
 
-vi.mock("node:fs", () => ({ readFileSync: vi.fn() }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
-const readMock = readFileSync as unknown as ReturnType<typeof vi.fn>;
+const readMock = vi.mocked(readFileSync);
 
 describe("pidFileWatchdog", () => {
 	beforeEach(() => {

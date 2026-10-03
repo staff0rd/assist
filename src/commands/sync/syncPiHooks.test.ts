@@ -1,15 +1,17 @@
+import { copyFileSync, mkdirSync, readdirSync } from "node:fs";
 import * as path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
-const mockMkdirSync = vi.fn();
-const mockCopyFileSync = vi.fn();
-const mockReaddirSync = vi.fn();
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
-vi.mock("node:fs", () => ({
-	mkdirSync: (...args: unknown[]) => mockMkdirSync(...args),
-	copyFileSync: (...args: unknown[]) => mockCopyFileSync(...args),
-	readdirSync: (...args: unknown[]) => mockReaddirSync(...args),
-}));
+const mockMkdirSync = vi.mocked(mkdirSync);
+const mockCopyFileSync = vi.mocked(copyFileSync);
+const mockReaddirSync = vi.mocked(readdirSync);
 
 import { harnesses } from "../../shared/harnesses";
 import { piExtensionsDir, syncPiHooks } from "./syncPiHooks";
@@ -21,7 +23,7 @@ describe("syncPiHooks", () => {
 			"permission-gate.ts",
 			"status-driver.ts",
 			"README.md",
-		]);
+		] as never);
 	});
 
 	it("copies every .ts extension into ~/.pi/agent/extensions, namespaced with assist-", () => {

@@ -2,20 +2,20 @@ import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
-vi.mock("node:fs", () => ({
-	existsSync: vi.fn(),
-	mkdirSync: vi.fn(),
-	writeFileSync: vi.fn(),
-	unlinkSync: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 import { consumePause, isPausePending, requestPause } from "./consumePause";
 
-const mockExistsSync = existsSync as unknown as ReturnType<typeof vi.fn>;
-const mockMkdirSync = mkdirSync as unknown as ReturnType<typeof vi.fn>;
-const mockWriteFileSync = writeFileSync as unknown as ReturnType<typeof vi.fn>;
-const mockUnlinkSync = unlinkSync as unknown as ReturnType<typeof vi.fn>;
+const mockExistsSync = vi.mocked(existsSync);
+const mockMkdirSync = vi.mocked(mkdirSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
+const mockUnlinkSync = vi.mocked(unlinkSync);
 
 const expectedPausePath = join(
 	homedir(),

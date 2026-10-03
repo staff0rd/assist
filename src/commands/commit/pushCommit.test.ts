@@ -1,17 +1,22 @@
+import { execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockExecSync = vi.fn();
-
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
-
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { pushCommit } from "./pushCommit";
+
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
+
+const mockExecSync = vi.mocked(execSync);
 
 type GitOutputs = Record<string, string>;
 
 function gitState(outputs: GitOutputs): void {
-	mockExecSync.mockImplementation((command: string) => {
+	mockExecSync.mockImplementation((command) => {
 		if (command in outputs) return outputs[command];
 		if (command.startsWith("git config --get")) throw new Error("exit 1");
 		return "";
@@ -20,7 +25,7 @@ function gitState(outputs: GitOutputs): void {
 
 const pushed = () =>
 	mockExecSync.mock.calls
-		.map(([command]) => command as string)
+		.map(([command]) => command)
 		.filter((command) => command.startsWith("git push"));
 
 beforeEach(() => {
@@ -84,7 +89,7 @@ describe("pushCommit", () => {
 
 	describe("when HEAD is detached", () => {
 		it("should push plainly", () => {
-			mockExecSync.mockImplementation((command: string) => {
+			mockExecSync.mockImplementation((command) => {
 				if (command === "git symbolic-ref --short HEAD")
 					throw new Error("not a symbolic ref");
 				return "";

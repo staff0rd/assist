@@ -1,12 +1,16 @@
-import * as fs from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../shared/loadConfig";
+import { makeAssistConfig } from "../test/mothers/makeAssistConfig";
+import type * as fsMockModule from "../test/mocks/fsMock";
+import type * as loadConfigMockModule from "../test/mocks/loadConfigMock";
 
 const mockSyncSettings = vi.fn();
 const mockSyncDesign = vi.fn();
 const mockPruneCommands = vi.fn();
 const mockSyncCodex = vi.fn();
 const mockSyncPi = vi.fn();
-const mockLoadConfig = vi.fn();
+const mockLoadConfig = vi.mocked(loadConfig);
 
 vi.mock("./sync/syncCodex", () => ({
 	syncCodex: (...args: unknown[]) => mockSyncCodex(...args),
@@ -16,9 +20,13 @@ vi.mock("./sync/syncPi", () => ({
 	syncPi: (...args: unknown[]) => mockSyncPi(...args),
 }));
 
-vi.mock("../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+vi.mock("../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 vi.mock("./sync/syncSettings", () => ({
 	syncSettings: (...args: unknown[]) => mockSyncSettings(...args),
@@ -32,21 +40,21 @@ vi.mock("./sync/pruneCommands", () => ({
 	pruneCommands: (...args: unknown[]) => mockPruneCommands(...args),
 }));
 
-vi.mock("node:fs", () => ({
-	mkdirSync: vi.fn(),
-	readdirSync: vi.fn(() => ["commit.md", "verify.md"]),
-	copyFileSync: vi.fn(),
-	existsSync: vi.fn(() => false),
-	readFileSync: vi.fn(() => ""),
-	writeFileSync: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(await vi.importActual<typeof fsMockModule>("../test/mocks/fsMock")).fsMock(),
+);
 
 import { sync } from "./sync";
 
 describe("sync", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockLoadConfig.mockReturnValue({ sync: { autoConfirm: false } });
+		vi.mocked(readdirSync).mockReturnValue(["commit.md", "verify.md"] as never);
+		vi.mocked(existsSync).mockReturnValue(false);
+		vi.mocked(readFileSync).mockReturnValue("");
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ sync: { autoConfirm: false } }),
+		);
 		mockPruneCommands.mockReturnValue({
 			orphans: [],
 			removed: [],
@@ -72,10 +80,10 @@ describe("sync", () => {
 	});
 
 	it("should compare only against the source .md names", async () => {
-		vi.mocked(fs.readdirSync).mockReturnValueOnce([
+		vi.mocked(readdirSync).mockReturnValueOnce([
 			"commit.md",
 			"notes.txt",
-		] as unknown as ReturnType<typeof fs.readdirSync>);
+		] as never);
 
 		await sync({ prune: true });
 
@@ -133,7 +141,9 @@ describe("sync", () => {
 	});
 
 	it("should pass yes=true when autoConfirm is true", async () => {
-		mockLoadConfig.mockReturnValue({ sync: { autoConfirm: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ sync: { autoConfirm: true } }),
+		);
 
 		await sync();
 
@@ -145,7 +155,9 @@ describe("sync", () => {
 	});
 
 	it("should prefer explicit --yes flag over config", async () => {
-		mockLoadConfig.mockReturnValue({ sync: { autoConfirm: false } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ sync: { autoConfirm: false } }),
+		);
 
 		await sync({ yes: true });
 
@@ -157,7 +169,9 @@ describe("sync", () => {
 	});
 
 	it("should use autoConfirm when --yes is not provided", async () => {
-		mockLoadConfig.mockReturnValue({ sync: { autoConfirm: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ sync: { autoConfirm: true } }),
+		);
 
 		await sync({});
 

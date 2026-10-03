@@ -1,25 +1,30 @@
 import { spawn } from "node:child_process";
-import { openSync, statSync, unlinkSync } from "node:fs";
+import { openSync, type Stats, statSync, unlinkSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { isDaemonRunning } from "./connectToDaemon";
 import { ensureDaemonRunning } from "./ensureDaemonRunning";
 
-vi.mock("node:child_process", () => ({ spawn: vi.fn() }));
-vi.mock("node:fs", () => ({
-	mkdirSync: vi.fn(),
-	openSync: vi.fn(() => 3),
-	closeSync: vi.fn(),
-	writeSync: vi.fn(),
-	unlinkSync: vi.fn(),
-	statSync: vi.fn(),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("./connectToDaemon", () => ({ isDaemonRunning: vi.fn() }));
 
 const isRunningMock = isDaemonRunning as unknown as ReturnType<typeof vi.fn>;
-const spawnMock = spawn as unknown as ReturnType<typeof vi.fn>;
-const openSyncMock = openSync as unknown as ReturnType<typeof vi.fn>;
-const statSyncMock = statSync as unknown as ReturnType<typeof vi.fn>;
-const unlinkSyncMock = unlinkSync as unknown as ReturnType<typeof vi.fn>;
+const spawnMock = vi.mocked(spawn);
+const openSyncMock = vi.mocked(openSync);
+const statSyncMock = vi.mocked(statSync);
+const unlinkSyncMock = vi.mocked(unlinkSync);
 
 function eexist(): Error {
 	return Object.assign(new Error("EEXIST"), { code: "EEXIST" });
@@ -28,7 +33,7 @@ function eexist(): Error {
 describe("ensureDaemonRunning", () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
-		spawnMock.mockReturnValue({ unref: vi.fn() });
+		spawnMock.mockReturnValue({ unref: vi.fn() } as never);
 		openSyncMock.mockReturnValue(3);
 	});
 
@@ -84,7 +89,7 @@ describe("ensureDaemonRunning", () => {
 			.mockResolvedValueOnce(false)
 			.mockResolvedValue(true);
 		let lockHeld = false;
-		openSyncMock.mockImplementation((_path: string, flags?: string) => {
+		openSyncMock.mockImplementation((_path, flags) => {
 			if (flags !== "wx") return 3;
 			if (lockHeld) throw eexist();
 			lockHeld = true;
@@ -93,7 +98,7 @@ describe("ensureDaemonRunning", () => {
 		unlinkSyncMock.mockImplementation(() => {
 			lockHeld = false;
 		});
-		statSyncMock.mockReturnValue({ mtimeMs: Date.now() });
+		statSyncMock.mockReturnValue({ mtimeMs: Date.now() } as Stats);
 
 		const first = ensureDaemonRunning();
 		const second = ensureDaemonRunning();
@@ -105,11 +110,11 @@ describe("ensureDaemonRunning", () => {
 
 	it("does not spawn while another process holds a fresh lock", async () => {
 		isRunningMock.mockResolvedValueOnce(false).mockResolvedValue(true);
-		openSyncMock.mockImplementation((_path: string, flags?: string) => {
+		openSyncMock.mockImplementation((_path, flags) => {
 			if (flags === "wx") throw eexist();
 			return 3;
 		});
-		statSyncMock.mockReturnValue({ mtimeMs: Date.now() });
+		statSyncMock.mockReturnValue({ mtimeMs: Date.now() } as Stats);
 
 		const promise = ensureDaemonRunning();
 		await vi.advanceTimersByTimeAsync(1_000);
@@ -122,13 +127,13 @@ describe("ensureDaemonRunning", () => {
 	it("steals a stale lock left by a crashed spawner", async () => {
 		isRunningMock.mockResolvedValueOnce(false).mockResolvedValue(true);
 		let attempts = 0;
-		openSyncMock.mockImplementation((_path: string, flags?: string) => {
+		openSyncMock.mockImplementation((_path, flags) => {
 			if (flags !== "wx") return 3;
 			attempts++;
 			if (attempts === 1) throw eexist();
 			return 4;
 		});
-		statSyncMock.mockReturnValue({ mtimeMs: Date.now() - 60_000 });
+		statSyncMock.mockReturnValue({ mtimeMs: Date.now() - 60_000 } as Stats);
 
 		const promise = ensureDaemonRunning();
 		await vi.advanceTimersByTimeAsync(1_000);

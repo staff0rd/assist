@@ -2,13 +2,11 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../test/mocks/fsMock";
 
-vi.mock("node:fs", () => ({
-	mkdirSync: vi.fn(),
-	readFileSync: vi.fn(),
-	rmSync: vi.fn(),
-	writeFileSync: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(await vi.importActual<typeof fsMockModule>("../test/mocks/fsMock")).fsMock(),
+);
 
 import {
 	activityPath,
@@ -17,9 +15,9 @@ import {
 	removeActivity,
 } from "./emitActivity";
 
-const mockMkdirSync = mkdirSync as unknown as ReturnType<typeof vi.fn>;
-const mockWriteFileSync = writeFileSync as unknown as ReturnType<typeof vi.fn>;
-const mockRmSync = rmSync as unknown as ReturnType<typeof vi.fn>;
+const mockMkdirSync = vi.mocked(mkdirSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
+const mockRmSync = vi.mocked(rmSync);
 
 const expectedDir = join(homedir(), ".assist", "activity");
 const expectedPath = join(expectedDir, "activity-abc123.json");
@@ -58,7 +56,7 @@ describe("emitActivity", () => {
 			expect(mockWriteFileSync).toHaveBeenCalledTimes(1);
 			const [path, content] = mockWriteFileSync.mock.calls[0];
 			expect(path).toBe(expectedPath);
-			const parsed = JSON.parse(content);
+			const parsed = JSON.parse(String(content));
 			expect(parsed.kind).toBe("command");
 			expect(parsed.name).toBe("/commit");
 			expect(parsed.startedAt).toBeTypeOf("number");
@@ -79,7 +77,7 @@ describe("emitActivity", () => {
 			expect(mockWriteFileSync).toHaveBeenCalledTimes(1);
 			const [path, content] = mockWriteFileSync.mock.calls[0];
 			expect(path).toBe(expectedPath);
-			expect(JSON.parse(content)).toEqual({
+			expect(JSON.parse(String(content))).toEqual({
 				kind: "backlog",
 				itemId: 408,
 				startedAt: 5,

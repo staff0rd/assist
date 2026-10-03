@@ -7,14 +7,15 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 
-vi.mock("node:fs", () => ({
-	existsSync: vi.fn(() => false),
-	mkdirSync: vi.fn(),
-	watch: vi.fn(() => ({ close: vi.fn() })),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 vi.mock("../../../shared/emitActivity", () => ({
 	activityPath: (id: string) => `/activity/activity-${id}.json`,
@@ -22,11 +23,16 @@ vi.mock("../../../shared/emitActivity", () => ({
 	reconcileActivity: vi.fn(),
 }));
 
-import { watch } from "node:fs";
+import { existsSync, watch } from "node:fs";
 import { readActivity, reconcileActivity } from "../../../shared/emitActivity";
 import { refreshActivity, watchActivity } from "./watchActivity";
 
-const mockWatch = watch as unknown as MockInstance;
+const mockWatch = vi.mocked(watch);
+
+beforeEach(() => {
+	vi.mocked(existsSync).mockReturnValue(false);
+	mockWatch.mockImplementation((() => ({ close: vi.fn() })) as never);
+});
 const mockReadActivity = readActivity as unknown as MockInstance;
 const mockReconcileActivity = reconcileActivity as unknown as MockInstance;
 

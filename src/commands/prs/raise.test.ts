@@ -1,9 +1,18 @@
+import { execFileSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../shared/loadConfig";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 
-const mockExecFileSync = vi.fn();
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => mockExecFileSync(...args),
-}));
+const mockExecFileSync = vi.mocked(execFileSync);
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 const mockFindCurrentPrNumber = vi.fn();
 vi.mock("./shared", () => ({
@@ -16,10 +25,14 @@ vi.mock("../../shared/loadJson", () => ({
 
 vi.mock("./recordPrActivity", () => ({ recordPrActivity: vi.fn() }));
 
-const mockLoadConfig = vi.fn();
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+const mockLoadConfig = vi.mocked(loadConfig);
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 const mockRequestPrDecision = vi.fn();
 vi.mock("../sessions/shared/requestPreviewDecision", () => ({
@@ -37,7 +50,7 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	mockExecFileSync.mockReset();
 	mockFindCurrentPrNumber.mockReturnValue(null);
-	mockLoadConfig.mockReturnValue({});
+	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;
 });
@@ -136,7 +149,9 @@ describe("raise", () => {
 		}
 
 		it("passes --draft when prs.draft is true and no flag is given", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: true } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: true } }),
+			);
 
 			raise({ title: "t", what: "w", why: "y" }, DEFAULTED);
 
@@ -150,7 +165,9 @@ describe("raise", () => {
 		});
 
 		it("passes --draft when the flag is given and prs.draft is false", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: false } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: false } }),
+			);
 
 			raise({ title: "t", what: "w", why: "y", draft: true }, CLI);
 
@@ -158,7 +175,9 @@ describe("raise", () => {
 		});
 
 		it("omits --draft for --no-draft even when prs.draft is true", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: true } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: true } }),
+			);
 
 			raise({ title: "t", what: "w", why: "y", draft: false }, CLI);
 
@@ -166,7 +185,9 @@ describe("raise", () => {
 		});
 
 		it("never sends a draft flag when updating an existing PR", () => {
-			mockLoadConfig.mockReturnValue({ prs: { draft: true } });
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ prs: { draft: true } }),
+			);
 			mockFindCurrentPrNumber.mockReturnValue(42);
 
 			raise({ title: "t", what: "w", why: "y", force: true }, DEFAULTED);

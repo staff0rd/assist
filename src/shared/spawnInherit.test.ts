@@ -1,12 +1,17 @@
 import { spawn } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../test/mocks/childProcessMock";
 import { spawnInherit } from "./spawnInherit";
 
-vi.mock("node:child_process", () => ({
-	spawn: vi.fn(() => ({ on: vi.fn() })),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
-const spawnMock = spawn as unknown as ReturnType<typeof vi.fn>;
+const spawnMock = vi.mocked(spawn);
 
 function lastEnv() {
 	const [, , opts] = spawnMock.mock.lastCall as [
@@ -20,6 +25,7 @@ function lastEnv() {
 describe("spawnInherit", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		spawnMock.mockReturnValue({ on: vi.fn() } as never);
 	});
 
 	afterEach(() => {

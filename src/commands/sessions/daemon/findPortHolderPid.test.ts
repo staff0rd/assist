@@ -1,10 +1,17 @@
 import { execFileSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 import { findPortHolderPid } from "./findPortHolderPid";
 
-vi.mock("node:child_process", () => ({ execFileSync: vi.fn() }));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
-const execMock = execFileSync as unknown as ReturnType<typeof vi.fn>;
+const execMock = vi.mocked(execFileSync);
 
 function asPlatform(platform: NodeJS.Platform): void {
 	Object.defineProperty(process, "platform", {

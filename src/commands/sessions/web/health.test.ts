@@ -1,13 +1,20 @@
 import type { ServerResponse } from "node:http";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../../shared/loadConfig";
+import { makeAssistConfig } from "../../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../../test/mocks/loadConfigMock";
 
-const mockLoadConfig = vi.fn();
+const mockLoadConfig = vi.mocked(loadConfig);
 const mockRespondJson = vi.fn();
 const mockIsDaemonRunning = vi.fn();
 
-vi.mock("../../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+vi.mock("../../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 vi.mock("../../../shared/web", () => ({
 	respondJson: (...args: unknown[]) => mockRespondJson(...args),
@@ -39,7 +46,9 @@ async function run(): Promise<Record<string, unknown>> {
 describe("health", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockLoadConfig.mockReturnValue({ sessions: { nodeName: "pc-windows" } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ sessions: { nodeName: "pc-windows" } }),
+		);
 		mockIsDaemonRunning.mockResolvedValue(true);
 		mockQueryNodes.mockResolvedValue({
 			type: "nodes",
@@ -68,7 +77,7 @@ describe("health", () => {
 	});
 
 	it("falls back to the hostname-derived name when unset", async () => {
-		mockLoadConfig.mockReturnValue({});
+		mockLoadConfig.mockReturnValue(makeAssistConfig());
 		const body = await run();
 		expect(typeof body.nodeName).toBe("string");
 		expect(body.nodeName).not.toBe("");

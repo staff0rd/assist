@@ -1,11 +1,12 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 
-vi.mock("node:fs", () => ({
-	existsSync: vi.fn(),
-	readFileSync: vi.fn(),
-	writeFileSync: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 import {
 	hasSummary,
@@ -14,9 +15,9 @@ import {
 	writeSummary,
 } from "./shared";
 
-const mockExistsSync = existsSync as unknown as ReturnType<typeof vi.fn>;
-const mockReadFileSync = readFileSync as unknown as ReturnType<typeof vi.fn>;
-const mockWriteFileSync = writeFileSync as unknown as ReturnType<typeof vi.fn>;
+const mockExistsSync = vi.mocked(existsSync);
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
 
 describe("summaryFile", () => {
 	beforeEach(() => {

@@ -1,18 +1,21 @@
-import { watch } from "node:fs";
+import { existsSync, watch } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import { gitCommonDir } from "./listWorktreePaths";
 import { watchGitState } from "./watchGitState";
 
-vi.mock("node:fs", () => ({
-	existsSync: vi.fn(() => true),
-	watch: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./listWorktreePaths", () => ({
 	gitCommonDir: vi.fn(() => "/git/repo/.git"),
 }));
 
-const watchMock = watch as unknown as ReturnType<typeof vi.fn>;
+const existsMock = vi.mocked(existsSync);
+const watchMock = vi.mocked(watch);
 const commonDirMock = gitCommonDir as unknown as ReturnType<typeof vi.fn>;
 
 describe("watchGitState", () => {
@@ -20,7 +23,8 @@ describe("watchGitState", () => {
 		vi.clearAllMocks();
 		vi.useFakeTimers();
 		commonDirMock.mockReturnValue("/git/repo/.git");
-		watchMock.mockReturnValue({ close: vi.fn() });
+		existsMock.mockReturnValue(true);
+		watchMock.mockReturnValue({ close: vi.fn() } as never);
 	});
 
 	afterEach(() => {
@@ -51,10 +55,14 @@ describe("watchGitState", () => {
 
 	it("reports fs events after a debounce", () => {
 		const onChange = vi.fn();
-		watchMock.mockImplementation((_dir, _opts, listener: () => void) => {
+		watchMock.mockImplementation(((
+			_dir: string,
+			_opts: unknown,
+			listener: () => void,
+		) => {
 			listener();
 			return { close: vi.fn() };
-		});
+		}) as never);
 
 		watchGitState("/git/repo-2", onChange);
 		vi.advanceTimersByTime(500);
@@ -64,7 +72,7 @@ describe("watchGitState", () => {
 
 	it("stops both the watch and the poll on close", () => {
 		const close = vi.fn();
-		watchMock.mockReturnValue({ close });
+		watchMock.mockReturnValue({ close } as never);
 		const onChange = vi.fn();
 
 		watchGitState("/git/repo-2", onChange)?.close();

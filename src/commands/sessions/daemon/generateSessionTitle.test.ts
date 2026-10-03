@@ -1,28 +1,38 @@
 import { execFile } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 
-vi.mock("node:child_process", () => ({
-	execFile: vi.fn(),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 import { generateSessionTitle } from "./generateSessionTitle";
 
-const mockExecFile = execFile as unknown as ReturnType<typeof vi.fn>;
+const mockExecFile = vi.mocked(execFile);
+
+type ExecFileCallback = (e: unknown, r: unknown) => void;
+
+function respondWith(error: unknown, result: unknown): void {
+	mockExecFile.mockImplementation(((
+		_file: string,
+		_args: string[],
+		_opts: unknown,
+		cb: ExecFileCallback,
+	) => {
+		cb(error, result);
+	}) as never);
+}
 
 function resolveWith(stdout: string): void {
-	mockExecFile.mockImplementation(
-		(_file, _args, _opts, cb: (e: unknown, r: unknown) => void) => {
-			cb(null, { stdout, stderr: "" });
-		},
-	);
+	respondWith(null, { stdout, stderr: "" });
 }
 
 function rejectWith(error: Error): void {
-	mockExecFile.mockImplementation(
-		(_file, _args, _opts, cb: (e: unknown, r: unknown) => void) => {
-			cb(error, null);
-		},
-	);
+	respondWith(error, null);
 }
 
 describe("generateSessionTitle", () => {

@@ -1,16 +1,18 @@
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
+import { codeCommentConfirm } from "./codeCommentConfirm";
 
-const mockExistsSync = vi.fn();
-const mockReadFileSync = vi.fn();
-const mockWriteFileSync = vi.fn();
-const mockUnlinkSync = vi.fn();
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
-vi.mock("node:fs", () => ({
-	existsSync: (...args: unknown[]) => mockExistsSync(...args),
-	readFileSync: (...args: unknown[]) => mockReadFileSync(...args),
-	writeFileSync: (...args: unknown[]) => mockWriteFileSync(...args),
-	unlinkSync: (...args: unknown[]) => mockUnlinkSync(...args),
-}));
+const mockExistsSync = vi.mocked(existsSync);
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
+const mockUnlinkSync = vi.mocked(unlinkSync);
 
 vi.mock("./getRestrictedDir", () => ({
 	getPinStatePath: (pin: string) => `/pins/${pin}.json`,
@@ -20,8 +22,6 @@ vi.mock("./sweepRestrictedDir", () => ({
 	sweepRestrictedDir: vi.fn(),
 }));
 
-import { codeCommentConfirm } from "./codeCommentConfirm";
-
 describe("codeCommentConfirm", () => {
 	let logSpy: ReturnType<typeof vi.spyOn>;
 	let errorSpy: ReturnType<typeof vi.spyOn>;
@@ -29,9 +29,9 @@ describe("codeCommentConfirm", () => {
 	function primePin(file: string, line: number, text: string): void {
 		const pinPath = "/pins/123.json";
 		mockExistsSync.mockImplementation(
-			(path: string) => path === pinPath || path === file,
+			(path) => path === pinPath || path === file,
 		);
-		mockReadFileSync.mockImplementation((path: string) => {
+		mockReadFileSync.mockImplementation((path) => {
 			if (path === pinPath) {
 				return JSON.stringify({ pin: "123", file, line, text });
 			}
@@ -40,7 +40,7 @@ describe("codeCommentConfirm", () => {
 	}
 
 	function writtenContent(): string {
-		return mockWriteFileSync.mock.calls[0][1] as string;
+		return String(mockWriteFileSync.mock.calls[0][1]);
 	}
 
 	beforeEach(() => {

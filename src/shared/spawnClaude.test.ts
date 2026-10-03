@@ -1,14 +1,19 @@
 import { spawn } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../test/mocks/childProcessMock";
 import {
 	type SpawnClaudeOptions,
 	spawnClaude,
 	withoutResumeSession,
 } from "./spawnClaude";
 
-vi.mock("node:child_process", () => ({
-	spawn: vi.fn(() => ({ on: vi.fn() })),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 vi.mock("../commands/sessions/daemon/ensureHooksSettings", () => ({
 	ensureHooksSettings: vi.fn(() => "/hooks.json"),
@@ -16,7 +21,7 @@ vi.mock("../commands/sessions/daemon/ensureHooksSettings", () => ({
 
 const SETTINGS = ["--settings", "/hooks.json"];
 
-const spawnMock = spawn as unknown as ReturnType<typeof vi.fn>;
+const spawnMock = vi.mocked(spawn);
 
 function spawnedArgs(): string[] {
 	return spawnMock.mock.lastCall?.[1] as string[];
@@ -32,6 +37,7 @@ function spawnedEnv(): Record<string, string | undefined> {
 describe("spawnClaude", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		spawnMock.mockReturnValue({ on: vi.fn() } as never);
 	});
 
 	it("passes the prompt as the first argument for a fresh session", () => {

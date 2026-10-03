@@ -1,13 +1,21 @@
+import {
+	copyFileSync,
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as HarnessModule from "../../shared/harnesses";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
 const mockIsHarnessAvailable = vi.fn();
-const mockReaddirSync = vi.fn();
-const mockReadFileSync = vi.fn();
-const mockWriteFileSync = vi.fn();
-const mockMkdirSync = vi.fn();
-const mockCopyFileSync = vi.fn();
+const mockReaddirSync = vi.mocked(readdirSync);
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
+const mockMkdirSync = vi.mocked(mkdirSync);
+const mockCopyFileSync = vi.mocked(copyFileSync);
 const mockPruneCommands = vi.fn();
 
 vi.mock("./pruneCommands", () => ({
@@ -22,13 +30,11 @@ vi.mock("../../shared/harnesses", async (importOriginal) => {
 	};
 });
 
-vi.mock("node:fs", () => ({
-	readdirSync: (...args: unknown[]) => mockReaddirSync(...args),
-	readFileSync: (...args: unknown[]) => mockReadFileSync(...args),
-	writeFileSync: (...args: unknown[]) => mockWriteFileSync(...args),
-	mkdirSync: (...args: unknown[]) => mockMkdirSync(...args),
-	copyFileSync: (...args: unknown[]) => mockCopyFileSync(...args),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 import { harnesses } from "../../shared/harnesses";
 import { commandToPrompt, syncPi } from "./syncPi";
@@ -84,10 +90,11 @@ describe("syncPi", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockIsHarnessAvailable.mockReturnValue(true);
-		mockReaddirSync.mockImplementation((dir: string) =>
-			dir.endsWith("commands")
-				? ["refine.md", "notes.txt"]
-				: ["advice.ts", "permission-gate.ts", "status-driver.ts"],
+		mockReaddirSync.mockImplementation(
+			(dir) =>
+				(String(dir).endsWith("commands")
+					? ["refine.md", "notes.txt"]
+					: ["advice.ts", "permission-gate.ts", "status-driver.ts"]) as never,
 		);
 		mockReadFileSync.mockReturnValue("---\ndescription: Refine it\n---\nbody");
 		mockPruneCommands.mockReturnValue({
@@ -153,7 +160,7 @@ describe("syncPi", () => {
 			recursive: true,
 		});
 		const wrote = mockWriteFileSync.mock.calls.filter(([target]) =>
-			(target as string).endsWith(".md"),
+			String(target).endsWith(".md"),
 		);
 		expect(wrote).toHaveLength(1);
 	});

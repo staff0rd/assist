@@ -10,10 +10,17 @@ import {
 	it,
 	vi,
 } from "vitest";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { postSlackMessage } from "./postSlackMessage";
 import { reviewProposedSlackMessage } from "./reviewProposedSlackMessage";
 
-vi.mock("../../shared/loadConfig", () => ({ loadConfig: () => ({}) }));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 vi.mock("./reviewProposedSlackMessage", () => ({
 	reviewProposedSlackMessage: vi.fn(),
 }));

@@ -8,14 +8,13 @@ import {
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
-vi.mock("node:fs", () => ({
-	existsSync: vi.fn(),
-	mkdirSync: vi.fn(),
-	readFileSync: vi.fn(),
-	writeFileSync: vi.fn(),
-	unlinkSync: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 import {
 	acquireLock,
@@ -24,11 +23,11 @@ import {
 	releaseLock,
 } from "./acquireLock";
 
-const mockExistsSync = existsSync as unknown as ReturnType<typeof vi.fn>;
-const mockMkdirSync = mkdirSync as unknown as ReturnType<typeof vi.fn>;
-const mockReadFileSync = readFileSync as unknown as ReturnType<typeof vi.fn>;
-const mockWriteFileSync = writeFileSync as unknown as ReturnType<typeof vi.fn>;
-const mockUnlinkSync = unlinkSync as unknown as ReturnType<typeof vi.fn>;
+const mockExistsSync = vi.mocked(existsSync);
+const mockMkdirSync = vi.mocked(mkdirSync);
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
+const mockUnlinkSync = vi.mocked(unlinkSync);
 
 const expectedLockPath = join(homedir(), ".assist", "locks", "lock-42.json");
 
@@ -115,7 +114,7 @@ describe("lockFile", () => {
 			expect(mockWriteFileSync).toHaveBeenCalledTimes(1);
 			const [path, content] = mockWriteFileSync.mock.calls[0];
 			expect(path).toBe(expectedLockPath);
-			const parsed = JSON.parse(content);
+			const parsed = JSON.parse(String(content));
 			expect(parsed.pid).toBe(process.pid);
 			expect(parsed.timestamp).toBeDefined();
 		});

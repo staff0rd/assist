@@ -1,14 +1,20 @@
+import { execFileSync as execFileSyncFn } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 
-const execFileSync = vi.fn();
+const execFileSync = vi.mocked(execFileSyncFn);
 const mockRequestPreviewDecision = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => execFileSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 vi.mock("../../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
 		mockRequestPreviewDecision(...args),
@@ -32,8 +38,8 @@ function issueJson(overrides: Record<string, unknown> = {}): string {
 
 function ghViewReturns(...responses: string[]): void {
 	let call = 0;
-	execFileSync.mockImplementation((_command: string, args: string[]) => {
-		if (args[1] !== "view") return "";
+	execFileSync.mockImplementation((_command, args) => {
+		if (args?.[1] !== "view") return "";
 		const response = responses[Math.min(call, responses.length - 1)];
 		call += 1;
 		return response;
@@ -70,7 +76,7 @@ function previewedBody(call = 0): string {
 }
 
 function ghCalls(verb: string) {
-	return execFileSync.mock.calls.filter((call) => call[1][1] === verb);
+	return execFileSync.mock.calls.filter((call) => call[1]?.[1] === verb);
 }
 
 beforeEach(() => {

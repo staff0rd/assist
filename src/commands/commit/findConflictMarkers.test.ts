@@ -1,13 +1,17 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("node:child_process", () => ({
-	execSync: vi.fn(),
-}));
-
 import { execSync } from "node:child_process";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { findConflictMarkers, findUnmergedPaths } from "./findConflictMarkers";
 
-const mockExecSync = execSync as unknown as ReturnType<typeof vi.fn>;
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
+
+const mockExecSync = vi.mocked(execSync);
 
 function checkError(stdout: string): Error {
 	const error = new Error("git diff --check exited 2") as Error & {
@@ -23,7 +27,7 @@ describe("findConflictMarkers", () => {
 	});
 
 	it("returns files reported with leftover conflict markers", () => {
-		mockExecSync.mockImplementation((cmd: string) => {
+		mockExecSync.mockImplementation((cmd) => {
 			if (cmd.startsWith("git diff --check")) {
 				throw checkError(
 					"src/Home.tsx:2: leftover conflict marker\n" +
@@ -46,7 +50,7 @@ describe("findConflictMarkers", () => {
 
 	it("checks only the staged index when no files are given", () => {
 		const calls: string[] = [];
-		mockExecSync.mockImplementation((cmd: string) => {
+		mockExecSync.mockImplementation((cmd) => {
 			calls.push(cmd);
 			return "";
 		});
@@ -58,7 +62,7 @@ describe("findConflictMarkers", () => {
 
 	it("checks working tree and index scoped to the given files", () => {
 		const calls: string[] = [];
-		mockExecSync.mockImplementation((cmd: string) => {
+		mockExecSync.mockImplementation((cmd) => {
 			calls.push(cmd);
 			return "";
 		});

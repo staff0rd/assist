@@ -1,4 +1,6 @@
+import { existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { makeSession } from "../../../test/mothers/makeSession";
 
 const mockResolveRunConfig = vi.fn();
@@ -12,15 +14,18 @@ vi.mock("../../../shared/runConfigBaseDir", () => ({
 	runConfigBaseDirFrom: (cwd: string) => cwd,
 }));
 
-vi.mock("node:fs", () => ({
-	existsSync: (path: string) => path === "/repo",
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 import { exitDetail, exitReason } from "./exitReason";
 
 beforeEach(() => {
 	vi.clearAllMocks();
 	mockResolveRunConfig.mockReturnValue(undefined);
+	vi.mocked(existsSync).mockImplementation((path) => path === "/repo");
 });
 
 describe("exitDetail", () => {

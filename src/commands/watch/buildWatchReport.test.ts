@@ -1,10 +1,16 @@
+import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-const mockExecFileSync = vi.fn();
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => mockExecFileSync(...args),
-}));
+const mockExecFileSync = vi.mocked(execFileSync);
 
 vi.mock("../../shared/readPackageJson", () => ({
 	readPackageJson: () => ({ version: "0.488.2" }),
@@ -16,8 +22,8 @@ const logLine = (sha: string, when: string, subject: string): string =>
 	[sha.padEnd(40, "0"), sha, when, subject].join("\t");
 
 function respond(responses: Record<string, string>): void {
-	mockExecFileSync.mockImplementation((_cmd: string, args: string[]) => {
-		const key = args.join(" ");
+	mockExecFileSync.mockImplementation((_cmd, args) => {
+		const key = (args ?? []).join(" ");
 		const response = responses[key];
 		if (response === undefined) throw new Error(`unexpected git ${key}`);
 		return `${response}\n`;

@@ -1,22 +1,28 @@
+import { existsSync, unlinkSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
-const mockSaveConfig = vi.fn();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadProjectConfig: () => mockLoadProjectConfig(),
-	saveConfig: (c: unknown) => mockSaveConfig(c),
-}));
-
-const mockExistsSync = vi.fn<(p: string) => boolean>();
-const mockUnlinkSync = vi.fn();
-
-vi.mock("node:fs", () => ({
-	existsSync: (p: string) => mockExistsSync(p),
-	unlinkSync: (p: string) => mockUnlinkSync(p),
-}));
-
+import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import type * as fsMockModule from "../../test/mocks/fsMock";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { remove } from "./remove";
+
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
+
+const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
+const mockSaveConfig = vi.mocked(saveConfig);
+const mockExistsSync = vi.mocked(existsSync);
+const mockUnlinkSync = vi.mocked(unlinkSync);
 
 let exitCode: number | undefined;
 let errorOutput: string[];

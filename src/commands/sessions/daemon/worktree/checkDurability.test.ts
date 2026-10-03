@@ -1,12 +1,17 @@
 import { existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import { gitResult, gitSyncResult } from "./git";
 import { checkDurability, checkDurabilitySync } from "./treeDurability";
 
-vi.mock("node:fs", () => ({ existsSync: vi.fn(() => true) }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("./git", () => ({ gitResult: vi.fn(), gitSyncResult: vi.fn() }));
 
-const existsMock = existsSync as unknown as ReturnType<typeof vi.fn>;
+const existsMock = vi.mocked(existsSync);
 const gitMock = gitResult as unknown as ReturnType<typeof vi.fn>;
 const gitSyncMock = gitSyncResult as unknown as ReturnType<typeof vi.fn>;
 

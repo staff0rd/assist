@@ -9,12 +9,14 @@ import {
 } from "./readWorktreeRegistry";
 import { reapWorktree } from "./reapWorktree";
 import { stopInstall } from "./stopInstall";
+import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import { checkDurability } from "./treeDurability";
 
-vi.mock("node:fs", () => ({
-	existsSync: vi.fn(() => true),
-	statSync: vi.fn(() => undefined),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("node:fs/promises", () => ({ rm: vi.fn(() => Promise.resolve()) }));
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./git", () => ({ git: vi.fn(), gitOrNull: vi.fn() }));
@@ -29,7 +31,7 @@ vi.mock("./readWorktreeRegistry", () => ({
 vi.mock("./stopInstall", () => ({ stopInstall: vi.fn() }));
 vi.mock("./treeDurability", () => ({ checkDurability: vi.fn() }));
 
-const existsMock = existsSync as unknown as ReturnType<typeof vi.fn>;
+const existsMock = vi.mocked(existsSync);
 const rmMock = rm as unknown as ReturnType<typeof vi.fn>;
 const gitMock = git as unknown as ReturnType<typeof vi.fn>;
 const gitOrNullMock = gitOrNull as unknown as ReturnType<typeof vi.fn>;
@@ -49,7 +51,7 @@ function gitClones(): string[] {
 }
 
 function strandedTree(): void {
-	existsMock.mockImplementation((path: string) => path !== "/git/repo-2/.git");
+	existsMock.mockImplementation((path) => String(path) !== "/git/repo-2/.git");
 	gitMock.mockImplementation((_cwd: string, args: string[]) =>
 		args[1] === "remove"
 			? Promise.reject(
@@ -157,7 +159,7 @@ describe("reapWorktree", () => {
 
 	it("forgets a discarded stranded tree even when every git command fails", async () => {
 		existsMock.mockImplementation(
-			(path: string) => path !== "/git/repo-2/.git",
+			(path) => String(path) !== "/git/repo-2/.git",
 		);
 		gitMock.mockRejectedValue(
 			new Error("fatal: 'repo-2' is not a working tree"),

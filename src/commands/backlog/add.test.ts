@@ -8,13 +8,14 @@ import {
 	planPhases,
 	planTasks,
 } from "../../shared/db/schema";
-import type { AssistConfig } from "../../shared/types";
+import { loadConfig } from "../../shared/loadConfig";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { add } from "./add";
 import { insertPhaseAt } from "./insertPhaseAt";
 
 let orm: Db;
 let close: () => Promise<void>;
-let mockConfig: AssistConfig;
 
 vi.mock("../../shared/db/getDb", () => ({
 	getDb: () => Promise.resolve(orm),
@@ -35,9 +36,15 @@ vi.mock("./ensureRemoteOrigin", () => ({
 	ensureRemoteOrigin: () => remoteOrigin,
 }));
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockConfig,
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadConfig = vi.mocked(loadConfig);
 
 function getPhases(itemId: number) {
 	return orm
@@ -79,7 +86,7 @@ async function onlyItemId(): Promise<number> {
 
 beforeEach(async () => {
 	({ orm, close } = await createTestDb());
-	mockConfig = {} as AssistConfig;
+	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	remoteOrigin = true;
 	claudeCode = false;
 	process.exitCode = 0;
@@ -122,12 +129,14 @@ describe("add", () => {
 	});
 
 	it("applies configured sub-tasks to a new story", async () => {
-		mockConfig = {
-			subtasks: [
-				{ title: "Write tests" },
-				{ title: "Update docs", description: "README + CLAUDE.md" },
-			],
-		} as AssistConfig;
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				subtasks: [
+					{ title: "Write tests" },
+					{ title: "Update docs", description: "README + CLAUDE.md" },
+				],
+			}),
+		);
 
 		await add({ type: "story", name: "Feature", desc: "", ac: [] });
 
@@ -144,7 +153,9 @@ describe("add", () => {
 	});
 
 	it("applies configured sub-tasks to a new bug", async () => {
-		mockConfig = { subtasks: [{ title: "Write tests" }] } as AssistConfig;
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ subtasks: [{ title: "Write tests" }] }),
+		);
 
 		await add({ type: "bug", name: "Broken", desc: "", ac: [] });
 

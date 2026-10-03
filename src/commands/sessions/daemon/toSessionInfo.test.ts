@@ -1,10 +1,15 @@
 import { existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { toSessionInfo } from "./toSessionInfo";
 
-vi.mock("node:fs", () => ({ existsSync: vi.fn(() => true) }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 const exists = vi.mocked(existsSync);
 

@@ -1,12 +1,17 @@
 import { mkdirSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { daemonLog } from "./daemonLog";
 import { ensureProjectDirExists } from "./ensureProjectDirExists";
 
-vi.mock("node:fs", () => ({ mkdirSync: vi.fn() }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
-const mkdirMock = mkdirSync as unknown as ReturnType<typeof vi.fn>;
+const mkdirMock = vi.mocked(mkdirSync);
 const mockLog = daemonLog as unknown as ReturnType<typeof vi.fn>;
 
 describe("ensureProjectDirExists", () => {

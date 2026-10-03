@@ -1,18 +1,26 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	loadGlobalConfigRaw,
+	loadProjectConfig,
+	saveConfig,
+	saveGlobalConfig,
+} from "../../shared/loadConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { writeConfigKeys } from "./writeConfigKeys";
 
-const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
-const mockLoadGlobalConfigRaw = vi.fn<() => Record<string, unknown>>();
-const mockSaveConfig = vi.fn();
-const mockSaveGlobalConfig = vi.fn();
+const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
+const mockLoadGlobalConfigRaw = vi.mocked(loadGlobalConfigRaw);
+const mockSaveConfig = vi.mocked(saveConfig);
+const mockSaveGlobalConfig = vi.mocked(saveGlobalConfig);
 const mockGetCurrentOrigin = vi.fn<() => string>();
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadProjectConfig: () => mockLoadProjectConfig(),
-	loadGlobalConfigRaw: () => mockLoadGlobalConfigRaw(),
-	saveConfig: (config: unknown) => mockSaveConfig(config),
-	saveGlobalConfig: (config: unknown) => mockSaveGlobalConfig(config),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 vi.mock("../backlog/getCurrentOrigin", () => ({
 	getCurrentOrigin: () => mockGetCurrentOrigin(),
@@ -37,14 +45,17 @@ describe("writeConfigKeys", () => {
 
 		expect(result).toEqual({ ok: true, target: "project assist.yml" });
 		expect(mockSaveConfig).toHaveBeenCalledTimes(1);
-		expect(mockSaveConfig).toHaveBeenCalledWith({
-			review: {
-				highLevel: {
-					criticalPaths: ["**/*.graphql"],
-					descriptionWordCap: 250,
+		expect(mockSaveConfig).toHaveBeenCalledWith(
+			{
+				review: {
+					highLevel: {
+						criticalPaths: ["**/*.graphql"],
+						descriptionWordCap: 250,
+					},
 				},
 			},
-		});
+			expect.any(String),
+		);
 	});
 
 	it("preserves the keys the project config already has", () => {
@@ -55,10 +66,13 @@ describe("writeConfigKeys", () => {
 			"project",
 		);
 
-		expect(mockSaveConfig).toHaveBeenCalledWith({
-			commit: { push: true },
-			review: { highLevel: { uiPaths: ["src/ui/**"] } },
-		});
+		expect(mockSaveConfig).toHaveBeenCalledWith(
+			{
+				commit: { push: true },
+				review: { highLevel: { uiPaths: ["src/ui/**"] } },
+			},
+			expect.any(String),
+		);
 	});
 
 	it("writes to the current repo's block in the global config", () => {
@@ -71,13 +85,16 @@ describe("writeConfigKeys", () => {
 			ok: true,
 			target: "~/.assist.yml, repo: assist",
 		});
-		expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
-			repos: {
-				assist: {
-					review: { highLevel: { uiPaths: ["src/ui/**"] } },
+		expect(mockSaveGlobalConfig).toHaveBeenCalledWith(
+			{
+				repos: {
+					assist: {
+						review: { highLevel: { uiPaths: ["src/ui/**"] } },
+					},
 				},
 			},
-		});
+			undefined,
+		);
 		expect(mockSaveConfig).not.toHaveBeenCalled();
 	});
 

@@ -1,14 +1,21 @@
+import { execFileSync } from "node:child_process";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-const execFileSync = vi.fn();
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => execFileSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 import { normalizeOrigin, resolveCurrentOrigin } from "./getCurrentOrigin";
 
+const mockExecFileSync = vi.mocked(execFileSync);
+
 afterEach(() => {
-	execFileSync.mockReset();
+	mockExecFileSync.mockReset();
 });
 
 describe("normalizeOrigin", () => {
@@ -56,8 +63,8 @@ describe("normalizeOrigin", () => {
 });
 
 function respond(replies: Record<string, string | Error>): void {
-	execFileSync.mockImplementation((_file: string, argv: string[]) => {
-		const key = argv.join(" ");
+	mockExecFileSync.mockImplementation((_file, argv) => {
+		const key = (argv ?? []).join(" ");
 		const reply = replies[key];
 		if (reply === undefined) throw new Error(`unexpected git ${key}`);
 		if (reply instanceof Error) throw reply;

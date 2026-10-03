@@ -1,11 +1,15 @@
+import { existsSync } from "node:fs";
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
-const mockExistsSync = vi.fn();
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
-vi.mock("node:fs", () => ({
-	existsSync: (...args: unknown[]) => mockExistsSync(...args),
-}));
+const mockExistsSync = vi.mocked(existsSync);
 
 import { harnesses } from "../../shared/harnesses";
 import { reportRetiredAgentsFiles } from "./reportRetiredAgentsFiles";
@@ -46,7 +50,7 @@ describe("reportRetiredAgentsFiles", () => {
 	});
 
 	it("names only the files that still exist", () => {
-		mockExistsSync.mockImplementation((file: string) => file === codexAgents);
+		mockExistsSync.mockImplementation((file) => file === codexAgents);
 
 		reportRetiredAgentsFiles();
 

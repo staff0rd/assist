@@ -1,6 +1,8 @@
+import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-const mockExecFileSync = vi.fn();
+const mockExecFileSync = vi.mocked(execFileSync);
 const mockReviewPr = vi.fn();
 const mockMoveToPrCheckoutTree = vi.fn();
 const mockSpawnClaude = vi.fn((_prompt: string, _options?: unknown) => ({
@@ -8,9 +10,13 @@ const mockSpawnClaude = vi.fn((_prompt: string, _options?: unknown) => ({
 }));
 const mockEmitActivity = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => mockExecFileSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 vi.mock("../../shared/emitActivity", () => ({
 	emitActivity: (...args: unknown[]) => mockEmitActivity(...args),

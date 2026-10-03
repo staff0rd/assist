@@ -3,17 +3,25 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
 import { comments, items } from "../../shared/db/schema";
+import { loadConfig } from "../../shared/loadConfig";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { comment } from "./comment";
 
 let orm: Db;
 let close: () => Promise<void>;
 
 const mockRequestPreviewDecision = vi.fn();
-const mockLoadConfig = vi.fn();
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadConfig = vi.mocked(loadConfig);
 
 vi.mock("../../shared/db/getDb", () => ({
 	getDb: () => Promise.resolve(orm),
@@ -50,7 +58,9 @@ beforeEach(async () => {
 		.values({ id: 1, origin: "test", name: "Preview items", status: "todo" });
 	mockRequestPreviewDecision.mockReset();
 	mockLoadConfig.mockReset();
-	mockLoadConfig.mockReturnValue({ backlog: { previewComments: true } });
+	mockLoadConfig.mockReturnValue(
+		makeAssistConfig({ backlog: { previewComments: true } }),
+	);
 	vi.spyOn(console, "log").mockImplementation(() => {});
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;
@@ -85,7 +95,7 @@ describe("comment", () => {
 	});
 
 	it("appends the comment without a preview when backlog.previewComments is off", async () => {
-		mockLoadConfig.mockReturnValue({});
+		mockLoadConfig.mockReturnValue(makeAssistConfig());
 		process.env.ASSIST_SESSION = "1";
 		process.env.ASSIST_SESSION_ID = "7";
 

@@ -1,10 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 
 vi.mock("node-pty", () => ({
 	spawn: vi.fn(() => ({})),
 }));
 
-vi.mock("node:fs", () => ({ existsSync: vi.fn(() => true) }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
@@ -17,7 +22,7 @@ import * as pty from "node-pty";
 import { MissingCwdError, spawnPty } from "./spawnPty";
 
 const spawnMock = pty.spawn as unknown as ReturnType<typeof vi.fn>;
-const existsMock = existsSync as unknown as ReturnType<typeof vi.fn>;
+const existsMock = vi.mocked(existsSync);
 
 function spawnedEnv(): Record<string, string | undefined> {
 	const opts = spawnMock.mock.lastCall?.[2] as

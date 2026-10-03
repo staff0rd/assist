@@ -1,6 +1,7 @@
-import { existsSync } from "node:fs";
+import { existsSync, realpathSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import { makeSession } from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
@@ -12,7 +13,11 @@ import { reconcileWorktreesOnRestore } from "./reconcileWorktreesOnRestore";
 import { armStoppedSession } from "./rearmStoppedSessions";
 import { checkDurability } from "./treeDurability";
 
-vi.mock("node:fs", () => ({ existsSync: vi.fn(() => true) }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../../../../shared/findRepoRoot", () => ({
 	findRepoRoot: (cwd: string) => cwd,
@@ -42,7 +47,7 @@ vi.mock("./describeHeldWork", () => ({
 }));
 vi.mock("./treeDurability", () => ({ checkDurability: vi.fn() }));
 
-const existsMock = existsSync as unknown as ReturnType<typeof vi.fn>;
+const existsMock = vi.mocked(existsSync);
 const registryMock = readWorktreeRegistry as unknown as ReturnType<
 	typeof vi.fn
 >;
@@ -72,6 +77,7 @@ describe("reconcileWorktreesOnRestore", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		existsMock.mockReturnValue(true);
+		vi.mocked(realpathSync).mockImplementation((path) => String(path));
 		persistedMock.mockReturnValue([]);
 		registryMock.mockReturnValue([
 			{ path: "/git/repo-2", clone: "/git/repo", origin: "git@x:y.git" },
@@ -152,7 +158,7 @@ describe("reconcileWorktreesOnRestore", () => {
 	});
 
 	it("reclaims the bookkeeping and branch of a worktree already gone from disk", async () => {
-		existsMock.mockImplementation((path: string) => path !== "/git/repo-2");
+		existsMock.mockImplementation((path) => String(path) !== "/git/repo-2");
 
 		await reconcile(new Map());
 
@@ -163,7 +169,7 @@ describe("reconcileWorktreesOnRestore", () => {
 	});
 
 	it("reclaims a vanished worktree a restored session still claims", async () => {
-		existsMock.mockImplementation((path: string) => path !== "/git/repo-2");
+		existsMock.mockImplementation((path) => String(path) !== "/git/repo-2");
 		const held = makeSession({
 			id: "1",
 			name: "s",
@@ -184,7 +190,7 @@ describe("reconcileWorktreesOnRestore", () => {
 	});
 
 	it("reclaims a vanished worktree a persisted session still claims", async () => {
-		existsMock.mockImplementation((path: string) => path !== "/git/repo-2");
+		existsMock.mockImplementation((path) => String(path) !== "/git/repo-2");
 		persistedMock.mockReturnValue([{ cwd: "/git/repo-2" }]);
 
 		await reconcile(new Map());

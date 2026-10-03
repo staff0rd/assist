@@ -1,20 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	loadGlobalConfigRaw,
+	loadProjectConfig,
+	saveConfig,
+	saveGlobalConfig,
+} from "../../shared/loadConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { configUnset } from "./configUnset";
 
-const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
-const mockLoadGlobalConfigRaw = vi.fn<() => Record<string, unknown>>();
-const mockSaveConfig = vi.fn();
-const mockSaveGlobalConfig = vi.fn();
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
+const mockLoadGlobalConfigRaw = vi.mocked(loadGlobalConfigRaw);
+const mockSaveConfig = vi.mocked(saveConfig);
+const mockSaveGlobalConfig = vi.mocked(saveGlobalConfig);
 
 const mockGetCurrentOrigin = vi.fn<() => string>();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => ({}),
-	loadProjectConfig: () => mockLoadProjectConfig(),
-	loadGlobalConfigRaw: () => mockLoadGlobalConfigRaw(),
-	saveConfig: (c: unknown) => mockSaveConfig(c),
-	saveGlobalConfig: (c: unknown) => mockSaveGlobalConfig(c),
-}));
 
 vi.mock("../backlog/getCurrentOrigin", () => ({
 	getCurrentOrigin: () => mockGetCurrentOrigin(),
@@ -36,7 +43,9 @@ describe("configUnset", () => {
 
 			configUnset("commit.push");
 
-			expect(mockSaveConfig).toHaveBeenCalledWith({ commit: { pull: true } });
+			expect(mockSaveConfig.mock.lastCall?.[0]).toEqual({
+				commit: { pull: true },
+			});
 			expect(mockSaveGlobalConfig).not.toHaveBeenCalled();
 		});
 
@@ -45,7 +54,7 @@ describe("configUnset", () => {
 
 			configUnset("worktree.enabled");
 
-			expect(mockSaveConfig).toHaveBeenCalledWith({});
+			expect(mockSaveConfig.mock.lastCall?.[0]).toEqual({});
 		});
 
 		it("should preserve unrelated keys", () => {
@@ -56,7 +65,9 @@ describe("configUnset", () => {
 
 			configUnset("worktree.enabled");
 
-			expect(mockSaveConfig).toHaveBeenCalledWith({ commit: { push: true } });
+			expect(mockSaveConfig.mock.lastCall?.[0]).toEqual({
+				commit: { push: true },
+			});
 		});
 	});
 
@@ -69,7 +80,7 @@ describe("configUnset", () => {
 
 			configUnset("sync.autoConfirm", { global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				commit: { push: true },
 			});
 			expect(mockSaveConfig).not.toHaveBeenCalled();
@@ -87,7 +98,7 @@ describe("configUnset", () => {
 			configUnset("sync.autoConfirm", { global: true });
 
 			expect(mockExit).not.toHaveBeenCalled();
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				news: { feeds: ["https://example.com/feed"] },
 			});
 			mockExit.mockRestore();
@@ -103,7 +114,7 @@ describe("configUnset", () => {
 
 			configUnset("commit.push", { repo: true, global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				commit: { push: false },
 				repos: { assist: { commit: { pull: true } } },
 			});
@@ -117,7 +128,7 @@ describe("configUnset", () => {
 
 			configUnset("commit.push", { repo: true, global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({});
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({});
 		});
 
 		it("should keep sibling repo blocks when one is pruned", () => {
@@ -130,7 +141,7 @@ describe("configUnset", () => {
 
 			configUnset("commit.push", { repo: true, global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { other: { commit: { push: false } } },
 			});
 		});
@@ -145,7 +156,7 @@ describe("configUnset", () => {
 
 			configUnset("commit.push", { repo: "other", global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: {
 					assist: { commit: { push: true } },
 					other: { commit: { pull: true } },
@@ -160,7 +171,7 @@ describe("configUnset", () => {
 
 			configUnset(undefined, { repo: "commit.push", global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { assist: { commit: { pull: true } } },
 			});
 		});

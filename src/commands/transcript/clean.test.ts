@@ -1,12 +1,15 @@
+import { existsSync, readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
-const mockExistsSync = vi.fn<(p: string) => boolean>();
-const mockReadFileSync = vi.fn<(p: string) => string>();
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
-vi.mock("node:fs", () => ({
-	existsSync: (p: string) => mockExistsSync(p),
-	readFileSync: (p: string) => mockReadFileSync(p),
-}));
+const mockExistsSync = vi.mocked(existsSync);
+const mockReadFileSync = vi.mocked(readFileSync);
 
 import { clean } from "./clean";
 
@@ -104,7 +107,10 @@ describe("clean", () => {
 
 			clean("./some/where/raw.vtt");
 
-			expect(mockReadFileSync).toHaveBeenCalledWith("./some/where/raw.vtt");
+			expect(mockReadFileSync).toHaveBeenCalledWith(
+				"./some/where/raw.vtt",
+				"utf8",
+			);
 		});
 	});
 

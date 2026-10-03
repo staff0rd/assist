@@ -1,12 +1,18 @@
+import { execFileSync as execFileSyncFn } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 
-const execFileSync = vi.fn();
+const execFileSync = vi.mocked(execFileSyncFn);
 const mockRequestPreviewDecision = vi.fn();
 const mockGetRepoInfo = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => execFileSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 vi.mock("../../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
 		mockRequestPreviewDecision(...args),

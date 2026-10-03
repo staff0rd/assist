@@ -1,13 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { watch } from "node:fs";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { makeSession } from "../../../test/mothers/makeSession";
 import { ensureProjectDirExists } from "./ensureProjectDirExists";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
 import { watchTranscript } from "./watchTranscript";
 
-vi.mock("node:fs", () => ({
-	watch: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 vi.mock("./ensureProjectDirExists", () => ({
 	ensureProjectDirExists: vi.fn(() => true),
@@ -27,7 +30,7 @@ vi.mock("./startTranscriptTitleGeneration", () => ({
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
-const watchMock = watch as unknown as ReturnType<typeof vi.fn>;
+const watchMock = vi.mocked(watch);
 const ensureDirMock = ensureProjectDirExists as unknown as ReturnType<
 	typeof vi.fn
 >;
@@ -39,7 +42,7 @@ describe("watchTranscript", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		ensureDirMock.mockReturnValue(true);
-		watchMock.mockImplementation(() => ({ close: vi.fn() }));
+		watchMock.mockImplementation((() => ({ close: vi.fn() })) as never);
 	});
 
 	it("creates the project dir so a fresh worktree still binds", () => {
@@ -98,7 +101,7 @@ describe("watchTranscript", () => {
 
 	it("follows a phase transition to a new claude session id, closing the stale watcher", () => {
 		const close = vi.fn();
-		watchMock.mockImplementationOnce(() => ({ close }));
+		watchMock.mockImplementationOnce((() => ({ close })) as never);
 		const s = makeSession({
 			cwd: "/home/me/repo",
 			claudeSessionId: "phase-1",

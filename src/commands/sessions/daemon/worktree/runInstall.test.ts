@@ -1,5 +1,7 @@
+import { spawn } from "node:child_process";
 import { EventEmitter } from "node:events";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../../test/mocks/childProcessMock";
 
 type FakeChild = EventEmitter & { pid: number; stderr: EventEmitter };
 
@@ -13,16 +15,17 @@ function fakeChild(): FakeChild {
 	});
 }
 
-const mockSpawn = vi.fn((..._args: unknown[]): FakeChild => {
-	child = fakeChild();
-	return child;
-});
+const mockSpawn = vi.mocked(spawn);
 
 const mockDetect = vi.fn((_dir: string): string | null => "npm install");
 
-vi.mock("node:child_process", () => ({
-	spawn: (...args: unknown[]) => mockSpawn(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 vi.mock("../daemonLog", () => ({
 	daemonLog: (line: string) => logs.push(line),
@@ -60,6 +63,10 @@ function invocation(): {
 describe("runInstall", () => {
 	beforeEach(() => {
 		mockSpawn.mockClear();
+		mockSpawn.mockImplementation(() => {
+			child = fakeChild();
+			return child as never;
+		});
 		mockDetect.mockReset();
 		mockDetect.mockReturnValue("npm install");
 		logs.length = 0;

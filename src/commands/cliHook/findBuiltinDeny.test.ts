@@ -1,17 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AssistConfig } from "../../shared/types";
-
-const mockLoadConfig = vi.fn<() => Partial<AssistConfig>>();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
-
+import { loadConfig } from "../../shared/loadConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
 import { findBuiltinDeny, findBuiltinDenyRaw } from "./findBuiltinDeny";
+
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadConfig = vi.mocked(loadConfig);
 
 beforeEach(() => {
 	vi.clearAllMocks();
-	mockLoadConfig.mockReturnValue({});
+	mockLoadConfig.mockReturnValue(makeAssistConfig());
 });
 
 describe("findBuiltinDeny gh pr edit", () => {
@@ -245,7 +250,9 @@ describe("findBuiltinDeny npm run", () => {
 	});
 
 	it("still denies when cliHook.blockNpmRun is explicitly true", () => {
-		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ cliHook: { blockNpmRun: true } }),
+		);
 		expect(findBuiltinDeny(["npm run build"])?.permissionDecision).toBe("deny");
 		expect(
 			findBuiltinDenyRaw("cd /repo && npm run build")?.permissionDecision,
@@ -253,14 +260,18 @@ describe("findBuiltinDeny npm run", () => {
 	});
 
 	it("does not deny when cliHook.blockNpmRun is false", () => {
-		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: false } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ cliHook: { blockNpmRun: false } }),
+		);
 		expect(findBuiltinDeny(["npm run build"])).toBeUndefined();
 		expect(findBuiltinDeny(["cd /repo", "npm run test:unit"])).toBeUndefined();
 		expect(findBuiltinDenyRaw("cd /repo && npm run build")).toBeUndefined();
 	});
 
 	it("leaves the other builtin denies unconditional when the toggle is off", () => {
-		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: false } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ cliHook: { blockNpmRun: false } }),
+		);
 		expect(
 			findBuiltinDeny(['git commit -m "fix: x"'])?.permissionDecision,
 		).toBe("deny");
@@ -270,7 +281,9 @@ describe("findBuiltinDeny npm run", () => {
 	});
 
 	it("does not deny 'npm install', 'npm ci' or 'npm test' with the toggle off", () => {
-		mockLoadConfig.mockReturnValue({ cliHook: { blockNpmRun: false } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ cliHook: { blockNpmRun: false } }),
+		);
 		expect(findBuiltinDeny(["npm install"])).toBeUndefined();
 		expect(findBuiltinDeny(["npm ci"])).toBeUndefined();
 		expect(findBuiltinDeny(["npm test"])).toBeUndefined();

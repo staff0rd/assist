@@ -1,9 +1,14 @@
 import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 
-vi.mock("node:child_process", () => ({
-	execFileSync: vi.fn(),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 vi.mock("./extractFirstUserMessage", () => ({
 	extractFirstUserMessage: vi.fn(),
@@ -17,7 +22,7 @@ import { extractFirstUserMessage } from "./extractFirstUserMessage";
 import { scanSessionBacklogRefs } from "./scanSessionBacklogRefs";
 import { summariseSession } from "./summariseSession";
 
-const mockExecFileSync = execFileSync as unknown as ReturnType<typeof vi.fn>;
+const mockExecFileSync = vi.mocked(execFileSync);
 const mockExtract = extractFirstUserMessage as unknown as ReturnType<
 	typeof vi.fn
 >;
@@ -58,7 +63,7 @@ describe("summariseSession", () => {
 
 		summariseSession("/s.jsonl");
 
-		const prompt = mockExecFileSync.mock.calls[0][1].at(-1) as string;
+		const prompt = mockExecFileSync.mock.calls[0][1]?.at(-1) as string;
 		expect(prompt).toContain("a10, a20");
 	});
 

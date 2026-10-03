@@ -1,14 +1,27 @@
+import { execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../shared/loadConfig";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 
-const mockExecSync = vi.fn();
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => ({}),
-}));
+const mockExecSync = vi.mocked(execSync);
 
 vi.mock("./resolveDefaultBranch", () => ({
 	resolveDefaultBranch: (override?: string) => override ?? "main",
@@ -31,6 +44,7 @@ function commandsRun(): string[] {
 describe("createBranch", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(loadConfig).mockReturnValue(makeAssistConfig());
 	});
 
 	it("bases off the fresh remote default when --from is omitted", async () => {

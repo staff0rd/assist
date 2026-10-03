@@ -1,5 +1,8 @@
+import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 import type { LineBoundFinding } from "./partitionFindings";
+import { postReviewToPr } from "./postReviewToPr";
 
 const mockPostAndMaybeSubmit = vi.fn();
 const mockChainAfterReview = vi.fn();
@@ -7,9 +10,11 @@ const mockSelectPostableFindings = vi.fn();
 const mockPromptConfirm = vi.fn();
 const mockStillOnReviewedPr = vi.fn();
 
-vi.mock("node:fs", () => ({
-	readFileSync: () => "synthesis markdown",
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 vi.mock("./stillOnReviewedPr", () => ({
 	stillOnReviewedPr: (...args: unknown[]) => mockStillOnReviewedPr(...args),
@@ -32,8 +37,6 @@ vi.mock("../../shared/promptConfirm", () => ({
 	promptConfirm: (...args: unknown[]) => mockPromptConfirm(...args),
 }));
 
-import { postReviewToPr } from "./postReviewToPr";
-
 const finding = { file: "a.ts", line: 1 } as LineBoundFinding;
 const prInfo = { prNumber: 42, baseSha: "base", headSha: "head" };
 const options = {
@@ -46,6 +49,7 @@ const options = {
 beforeEach(() => {
 	vi.clearAllMocks();
 	vi.spyOn(console, "log").mockImplementation(() => {});
+	vi.mocked(readFileSync).mockReturnValue("synthesis markdown");
 	mockSelectPostableFindings.mockReturnValue({
 		inDiff: [finding],
 		unanchored: [],

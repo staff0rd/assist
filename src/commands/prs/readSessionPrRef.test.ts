@@ -1,13 +1,18 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("node:child_process", () => ({
-	execSync: vi.fn(),
-}));
-
 import { execSync } from "node:child_process";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
+
 import { readSessionPrRef } from "./readSessionPrRef";
 
-const mockExecSync = execSync as unknown as ReturnType<typeof vi.fn>;
+const mockExecSync = vi.mocked(execSync);
 
 function stubGit(responses: Record<string, string | Error>) {
 	mockExecSync.mockImplementation((cmd: string) => {

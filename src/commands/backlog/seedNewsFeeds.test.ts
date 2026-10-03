@@ -1,18 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 
-const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
-const mockLoadGlobalConfigRaw = vi.fn<() => Record<string, unknown>>();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadProjectConfig: () => mockLoadProjectConfig(),
-	loadGlobalConfigRaw: () => mockLoadGlobalConfigRaw(),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
+import {
+	loadGlobalConfigRaw,
+	loadProjectConfig,
+} from "../../shared/loadConfig";
 import { addFeed } from "./addFeed";
 import { listFeeds } from "./listFeeds";
 import { seedNewsFeeds } from "./seedNewsFeeds";
+
+const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
+const mockLoadGlobalConfigRaw = vi.mocked(loadGlobalConfigRaw);
 
 let orm: Db;
 let close: () => Promise<void>;

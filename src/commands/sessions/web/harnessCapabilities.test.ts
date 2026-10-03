@@ -1,13 +1,20 @@
 import type { ServerResponse } from "node:http";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../../shared/loadConfig";
+import { makeAssistConfig } from "../../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../../test/mocks/loadConfigMock";
 
-const mockLoadConfig = vi.fn();
+const mockLoadConfig = vi.mocked(loadConfig);
 const mockIsHarnessAvailable = vi.fn();
 const mockRespondJson = vi.fn();
 
-vi.mock("../../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+vi.mock("../../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 vi.mock("../../../shared/harnesses", () => ({
 	isHarnessAvailable: (kind: string) => mockIsHarnessAvailable(kind),
@@ -30,7 +37,7 @@ function run(): [ServerResponse, number, Body] {
 describe("harnessCapabilities", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockLoadConfig.mockReturnValue({ harness: {} });
+		mockLoadConfig.mockReturnValue(makeAssistConfig({ harness: {} }));
 	});
 
 	it("exposes codex and pi actions when both are on PATH and not forced off", () => {
@@ -49,9 +56,9 @@ describe("harnessCapabilities", () => {
 	});
 
 	it("hides codex actions when exposeCodexActions is forced off, without probing codex", () => {
-		mockLoadConfig.mockReturnValue({
-			harness: { exposeCodexActions: false },
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ harness: { exposeCodexActions: false } }),
+		);
 		mockIsHarnessAvailable.mockReturnValue(true);
 		const [, , body] = run();
 		expect(body.exposeCodexActions).toBe(false);
@@ -59,9 +66,9 @@ describe("harnessCapabilities", () => {
 	});
 
 	it("hides pi actions when exposePiActions is forced off, without probing pi", () => {
-		mockLoadConfig.mockReturnValue({
-			harness: { exposePiActions: false },
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ harness: { exposePiActions: false } }),
+		);
 		mockIsHarnessAvailable.mockReturnValue(true);
 		const [, , body] = run();
 		expect(body.exposePiActions).toBe(false);

@@ -1,9 +1,15 @@
+import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-const mockExecFileSync = vi.fn();
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => mockExecFileSync(...args),
-}));
+const mockExecFileSync = vi.mocked(execFileSync);
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 const mockGetCurrentBranch = vi.fn();
 vi.mock("./shared", () => ({

@@ -7,12 +7,13 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
-vi.mock("node:fs", () => ({
-	existsSync: vi.fn(),
-	unwatchFile: vi.fn(),
-	watchFile: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 vi.mock("./readSignal", () => ({
 	readSignal: vi.fn(),
@@ -26,9 +27,9 @@ import { existsSync, unwatchFile, watchFile } from "node:fs";
 import { readSignal } from "./readSignal";
 import { watchForMarker } from "./watchForMarker";
 
-const mockExistsSync = existsSync as unknown as MockInstance;
-const mockWatchFile = watchFile as unknown as MockInstance;
-const mockUnwatchFile = unwatchFile as unknown as MockInstance;
+const mockExistsSync = vi.mocked(existsSync);
+const mockWatchFile = vi.mocked(watchFile);
+const mockUnwatchFile = vi.mocked(unwatchFile);
 const mockReadSignal = readSignal as unknown as MockInstance;
 
 function makeChild(): ChildProcess {
@@ -36,7 +37,7 @@ function makeChild(): ChildProcess {
 }
 
 function fireWatcher(): void {
-	const listener = mockWatchFile.mock.calls[0][2] as () => void;
+	const listener = (mockWatchFile.mock.calls[0] as unknown[])[2] as () => void;
 	listener();
 }
 

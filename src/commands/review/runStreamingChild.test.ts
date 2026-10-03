@@ -1,7 +1,15 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { type ChildProcess, spawn } from "node:child_process";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { runStreamingChild } from "./runStreamingChild";
 
-vi.mock("node:child_process", () => ({ spawn: vi.fn(() => ({})) }));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 vi.mock("./waitForChildExit", () => ({
 	waitForChildExit: vi.fn(async () => ({
@@ -24,6 +32,10 @@ function run(extra: { model?: string; quiet?: boolean }) {
 }
 
 describe("runStreamingChild", () => {
+	beforeEach(() => {
+		vi.mocked(spawn).mockReturnValue({} as ChildProcess);
+	});
+
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});

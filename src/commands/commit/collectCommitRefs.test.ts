@@ -1,8 +1,15 @@
+import { execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+import { collectCommitRefs } from "./collectCommitRefs";
 
-vi.mock("node:child_process", () => ({
-	execSync: vi.fn(),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 vi.mock("../../shared/gitRefUrl", () => ({
 	gitRefUrl: vi.fn(
@@ -11,13 +18,10 @@ vi.mock("../../shared/gitRefUrl", () => ({
 	),
 }));
 
-import { execSync } from "node:child_process";
-import { collectCommitRefs } from "./collectCommitRefs";
-
-const mockExecSync = execSync as unknown as ReturnType<typeof vi.fn>;
+const mockExecSync = vi.mocked(execSync);
 
 function stubGit(responses: Record<string, string | Error>) {
-	mockExecSync.mockImplementation((cmd: string) => {
+	mockExecSync.mockImplementation((cmd) => {
 		for (const [fragment, value] of Object.entries(responses)) {
 			if (cmd.includes(fragment)) {
 				if (value instanceof Error) throw value;

@@ -1,23 +1,30 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	loadGlobalConfigRaw,
+	loadProjectConfig,
+	saveConfig,
+	saveGlobalConfig,
+} from "../../shared/loadConfig";
 import { SECRET_MASK } from "../../shared/maskConfigSecrets";
 import { UnknownRepoConfigError } from "../../shared/resolveNamedRepoWriteLabel";
 import { AmbiguousRepoConfigError } from "../../shared/resolveRepoOverride";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { configSet } from "./configSet";
 
-const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
-const mockLoadGlobalConfigRaw = vi.fn<() => Record<string, unknown>>();
-const mockSaveConfig = vi.fn();
-const mockSaveGlobalConfig = vi.fn();
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
+const mockLoadGlobalConfigRaw = vi.mocked(loadGlobalConfigRaw);
+const mockSaveConfig = vi.mocked(saveConfig);
+const mockSaveGlobalConfig = vi.mocked(saveGlobalConfig);
 
 const mockGetCurrentOrigin = vi.fn<() => string>();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => ({}),
-	loadProjectConfig: () => mockLoadProjectConfig(),
-	loadGlobalConfigRaw: () => mockLoadGlobalConfigRaw(),
-	saveConfig: (c: unknown) => mockSaveConfig(c),
-	saveGlobalConfig: (c: unknown) => mockSaveGlobalConfig(c),
-}));
 
 vi.mock("../backlog/getCurrentOrigin", () => ({
 	getCurrentOrigin: () => mockGetCurrentOrigin(),
@@ -35,7 +42,9 @@ describe("configSet", () => {
 			configSet("commit.push", "true");
 
 			expect(mockLoadProjectConfig).toHaveBeenCalled();
-			expect(mockSaveConfig).toHaveBeenCalledWith({ commit: { push: true } });
+			expect(mockSaveConfig.mock.lastCall?.[0]).toEqual({
+				commit: { push: true },
+			});
 			expect(mockSaveGlobalConfig).not.toHaveBeenCalled();
 		});
 
@@ -44,7 +53,7 @@ describe("configSet", () => {
 
 			configSet("commit.push", "true");
 
-			expect(mockSaveConfig).toHaveBeenCalledWith({
+			expect(mockSaveConfig.mock.lastCall?.[0]).toEqual({
 				commit: { pull: true, push: true },
 			});
 		});
@@ -55,7 +64,7 @@ describe("configSet", () => {
 			configSet("sync.autoConfirm", "true", { global: true });
 
 			expect(mockLoadGlobalConfigRaw).toHaveBeenCalled();
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				sync: { autoConfirm: true },
 			});
 			expect(mockSaveConfig).not.toHaveBeenCalled();
@@ -68,7 +77,7 @@ describe("configSet", () => {
 
 			configSet("sync.autoConfirm", "true", { global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				commit: { conventional: true },
 				sync: { autoConfirm: true },
 			});
@@ -85,7 +94,7 @@ describe("configSet", () => {
 			configSet("sessions.maxLive", "21764", { global: true });
 
 			expect(mockExit).not.toHaveBeenCalled();
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				news: { feeds: ["https://example.com/feed"] },
 				sessions: { maxLive: 21764 },
 			});
@@ -108,7 +117,7 @@ describe("configSet", () => {
 		it("should allow sync.autoConfirm with --global", () => {
 			configSet("sync.autoConfirm", "true", { global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				sync: { autoConfirm: true },
 			});
 		});
@@ -118,7 +127,7 @@ describe("configSet", () => {
 		it("should write under the current repo's shortest label", () => {
 			configSet("commit.push", "true", { repo: true, global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { assist: { commit: { push: true } } },
 			});
 			expect(mockSaveConfig).not.toHaveBeenCalled();
@@ -131,7 +140,7 @@ describe("configSet", () => {
 
 			configSet("commit.push", "true", { repo: true, global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { assist: { commit: { pull: true, push: true } } },
 			});
 		});
@@ -143,7 +152,7 @@ describe("configSet", () => {
 
 			configSet("commit.push", "true", { repo: true, global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: {
 					"org/assist": {
 						commit: { pull: true, push: true },
@@ -159,7 +168,7 @@ describe("configSet", () => {
 
 			configSet("commit.push", "true", { repo: true, global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				commit: { push: false },
 				repos: { assist: { commit: { push: true } } },
 			});
@@ -184,7 +193,7 @@ describe("configSet", () => {
 			configSet("worktree.enabled", "true", { repo: true, global: true });
 
 			expect(mockExit).not.toHaveBeenCalled();
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { assist: { worktree: { enabled: true } } },
 			});
 			mockExit.mockRestore();
@@ -224,7 +233,7 @@ describe("configSet", () => {
 
 			configSet("commit.push", "true", { repo: "org/planner", global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { "org/planner": { commit: { push: true } } },
 			});
 		});
@@ -237,7 +246,7 @@ describe("configSet", () => {
 			configSet("commit.push", "true", { repo: "org/planner", global: true });
 
 			expect(mockGetCurrentOrigin).not.toHaveBeenCalled();
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { "org/planner": { commit: { push: true } } },
 			});
 		});
@@ -275,7 +284,7 @@ describe("configSet", () => {
 			configSet("true", undefined, { repo: "commit.push", global: true });
 
 			expect(mockGetCurrentOrigin).toHaveBeenCalled();
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { assist: { commit: { push: true } } },
 			});
 		});
@@ -287,7 +296,7 @@ describe("configSet", () => {
 				global: true,
 			});
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				worktree: { copy: [".env", ".claude/settings.local.json"] },
 			});
 		});
@@ -295,7 +304,7 @@ describe("configSet", () => {
 		it("should trim whitespace around list items", () => {
 			configSet("voice.wakeWords", "hey claude, ok claude", { global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				voice: { wakeWords: ["hey claude", "ok claude"] },
 			});
 		});
@@ -306,7 +315,7 @@ describe("configSet", () => {
 				repo: true,
 			});
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				repos: { assist: { worktree: { copy: [".env", ".env.local"] } } },
 			});
 		});
@@ -314,7 +323,7 @@ describe("configSet", () => {
 		it("should write a number key as a number", () => {
 			configSet("sessions.maxLive", "51764", { global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				sessions: { maxLive: 51764 },
 			});
 		});
@@ -322,7 +331,7 @@ describe("configSet", () => {
 		it("should keep string keys as strings", () => {
 			configSet("branch.prefix", "sw", { global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				branch: { prefix: "sw" },
 			});
 		});
@@ -337,7 +346,7 @@ describe("configSet", () => {
 			(raw, value) => {
 				configSet("worktree.install", raw, { global: true });
 
-				expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+				expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 					worktree: { install: value },
 				});
 			},
@@ -346,7 +355,7 @@ describe("configSet", () => {
 		it("should keep enum keys as strings", () => {
 			configSet("sessions.linkVersionCheck", "warn", { global: true });
 
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				sessions: { linkVersionCheck: "warn" },
 			});
 		});
@@ -379,7 +388,7 @@ describe("configSet", () => {
 			const printed = mockLog.mock.calls.flat().join("\n");
 			expect(printed).toContain(SECRET_MASK);
 			expect(printed).not.toContain("hunter2");
-			expect(mockSaveGlobalConfig).toHaveBeenCalledWith({
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				database: { url: "postgres://user:hunter2@host/db" },
 			});
 			mockLog.mockRestore();

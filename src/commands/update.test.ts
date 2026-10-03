@@ -1,14 +1,20 @@
+import { execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../test/mocks/childProcessMock";
 
-const mockExecSync = vi.fn();
+const mockExecSync = vi.mocked(execSync);
 const mockGetInstallDir = vi.fn();
 const mockIsGitRepo = vi.fn();
 const mockIsDaemonRunning = vi.fn();
 const mockRestartDaemon = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 vi.mock("../shared/getInstallDir", () => ({
 	getInstallDir: () => mockGetInstallDir(),
@@ -48,9 +54,9 @@ describe("update", () => {
 
 	it("should call assist sync without --yes for npm install", async () => {
 		mockIsGitRepo.mockReturnValue(false);
-		mockExecSync.mockImplementation((cmd: string) => {
+		mockExecSync.mockImplementation((cmd) => {
 			if (cmd === "npm prefix -g") return Buffer.from("/some");
-			return undefined;
+			return undefined as never;
 		});
 
 		await update();

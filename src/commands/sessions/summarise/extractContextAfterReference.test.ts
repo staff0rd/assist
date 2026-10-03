@@ -1,17 +1,18 @@
 import { closeSync, openSync, readSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 
-vi.mock("node:fs", () => ({
-	openSync: vi.fn(),
-	readSync: vi.fn(),
-	closeSync: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 import { extractContextAfterReference } from "./extractContextAfterReference";
 
-const mockOpenSync = openSync as unknown as ReturnType<typeof vi.fn>;
-const mockReadSync = readSync as unknown as ReturnType<typeof vi.fn>;
-const mockCloseSync = closeSync as unknown as ReturnType<typeof vi.fn>;
+const mockOpenSync = vi.mocked(openSync);
+const mockReadSync = vi.mocked(readSync);
+const mockCloseSync = vi.mocked(closeSync);
 
 const JIRA_URL = "https://centium.atlassian.net/browse/PA-556";
 
@@ -66,9 +67,9 @@ function toolUseLine(): string {
 
 function mockFileContent(lines: string[]) {
 	mockOpenSync.mockReturnValue(42);
-	mockReadSync.mockImplementation((_fd: number, buf: Buffer) => {
+	mockReadSync.mockImplementation((_fd, buf) => {
 		const bytes = Buffer.from(lines.join("\n"), "utf8");
-		bytes.copy(buf);
+		bytes.copy(buf as Buffer);
 		return bytes.length;
 	});
 }

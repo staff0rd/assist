@@ -6,11 +6,18 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
 import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: vi.fn(),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 vi.mock("../branch/createBranch", () => ({
 	createBranch: vi.fn(),
@@ -28,9 +35,13 @@ vi.mock("../../shared/linkedWorktree", () => ({
 	linkedWorktree: vi.fn(() => null),
 }));
 
-vi.mock("node:child_process", () => ({
-	execSync: vi.fn(() => ""),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
 import { execSync } from "node:child_process";
 import { linkedWorktree } from "../../shared/linkedWorktree";
@@ -41,11 +52,11 @@ import { generateBranchSlug } from "../branch/generateBranchSlug";
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { ensureStoryBranch } from "./ensureStoryBranch";
 
-const mockLoadConfig = loadConfig as unknown as MockInstance;
+const mockLoadConfig = vi.mocked(loadConfig);
 const mockCreateBranch = createBranch as unknown as MockInstance;
 const mockGenerate = generateBranchSlug as unknown as MockInstance;
 const mockLog = appendDaemonLog as unknown as MockInstance;
-const mockExec = execSync as unknown as MockInstance;
+const mockExec = vi.mocked(execSync);
 const mockLinked = linkedWorktree as unknown as MockInstance;
 
 function inWorktree(root: string, head: string): void {
@@ -77,7 +88,7 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("creates a branch when the config has no prs block", async () => {
-		mockLoadConfig.mockReturnValue({});
+		mockLoadConfig.mockReturnValue(makeAssistConfig());
 
 		await ensureStoryBranch(makeBacklogItem({ name: "Add login form" }));
 
@@ -88,7 +99,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("does nothing when prs.required is false", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: false } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: false } }),
+		);
 
 		await ensureStoryBranch(makeBacklogItem());
 
@@ -96,7 +109,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("does nothing when the story already has a recorded branch", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 
 		await ensureStoryBranch(
 			makeBacklogItem({ gitRefs: [{ kind: "branch", ref: "existing" }] }),
@@ -106,7 +121,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("creates a branch from the item name when required and none recorded", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 
 		await ensureStoryBranch(makeBacklogItem({ name: "Add login form" }));
 
@@ -117,7 +134,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("passes the associated Jira key through to the branch name", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 
 		await ensureStoryBranch(
 			makeBacklogItem({ name: "Add login form", jiraKey: "BAD-671" }),
@@ -130,7 +149,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("records the item id in the environment so the branch is tied to the story", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 
 		await ensureStoryBranch(makeBacklogItem({ id: 42 }));
 
@@ -138,7 +159,7 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("records the created branch when prs.required is unset", async () => {
-		mockLoadConfig.mockReturnValue({});
+		mockLoadConfig.mockReturnValue(makeAssistConfig());
 
 		await ensureStoryBranch(makeBacklogItem({ id: 42 }));
 
@@ -148,7 +169,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("records why no branch was created when prs.required is false", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: false } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: false } }),
+		);
 
 		await ensureStoryBranch(makeBacklogItem({ id: 42 }));
 
@@ -158,7 +181,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("records why no branch was created when one is already recorded", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 
 		await ensureStoryBranch(
 			makeBacklogItem({
@@ -173,7 +198,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("switches a worktree parked on its tree branch onto the recorded branch", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 		inWorktree("/git/repo-6", "repo-6");
 
 		await ensureStoryBranch(
@@ -190,7 +217,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("leaves a worktree already on the recorded branch alone", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 		inWorktree("/git/repo-6", "staff0rd/story");
 
 		await ensureStoryBranch(
@@ -201,7 +230,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("keeps going when the switch onto the recorded branch fails", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 		inWorktree("/git/repo-6", "repo-6");
 		mockExec.mockImplementation((command: string) => {
 			if (command.startsWith("git rev-parse")) return "repo-6\n";
@@ -223,7 +254,9 @@ describe("ensureStoryBranch", () => {
 	});
 
 	it("treats a story whose only ref is a commit as having no branch", async () => {
-		mockLoadConfig.mockReturnValue({ prs: { required: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ prs: { required: true } }),
+		);
 
 		await ensureStoryBranch(
 			makeBacklogItem({ gitRefs: [{ kind: "commit", ref: "abc123" }] }),

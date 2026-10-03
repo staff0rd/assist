@@ -2,6 +2,7 @@ import { EventEmitter } from "node:events";
 import { unlinkSync } from "node:fs";
 import * as net from "node:net";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { isDaemonRunning } from "./connectToDaemon";
 import { daemonLog } from "./daemonLog";
 import { exitAfterFlush } from "./exitAfterFlush";
@@ -10,7 +11,11 @@ import { isPidAlive, readDaemonPidFile } from "./readDaemonPidFile";
 import type { SessionManager } from "./SessionManager";
 import { startDaemonServer } from "./startDaemonServer";
 
-vi.mock("node:fs", () => ({ unlinkSync: vi.fn() }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("node:net", () => ({ createServer: vi.fn() }));
 vi.mock("./connectToDaemon", () => ({ isDaemonRunning: vi.fn() }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));

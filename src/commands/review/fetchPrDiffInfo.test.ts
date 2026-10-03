@@ -1,13 +1,18 @@
+import { execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockExecSync = vi.fn();
-
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
-
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { pinCurrentPr } from "../prs/pinCurrentPr";
 import { fetchPrChangedFiles, fetchPrDiffInfo } from "./fetchPrDiffInfo";
+
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
+
+const mockExecSync = vi.mocked(execSync);
 
 type ExecCall = (cmd: string) => string;
 

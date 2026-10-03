@@ -1,17 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { configureConfigKeys } from "./configureConfigKeys";
 
-const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
-const mockSaveConfig = vi.fn();
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
+const mockSaveConfig = vi.mocked(saveConfig);
 const mockPromptInput = vi.fn<() => Promise<string>>();
 const mockPromptConfigScope = vi.fn<() => Promise<"project" | "repo">>();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadProjectConfig: () => mockLoadProjectConfig(),
-	loadGlobalConfigRaw: () => ({}),
-	saveConfig: (config: unknown) => mockSaveConfig(config),
-	saveGlobalConfig: vi.fn(),
-}));
 
 vi.mock("../../shared/promptInput", () => ({
 	promptInput: () => mockPromptInput(),
@@ -55,7 +58,7 @@ describe("configureConfigKeys", () => {
 			},
 			{ key: "review.highLevel.descriptionWordCap", value: 250 },
 		]);
-		expect(mockSaveConfig).toHaveBeenCalledWith({
+		expect(mockSaveConfig.mock.lastCall?.[0]).toEqual({
 			review: {
 				highLevel: {
 					criticalPaths: ["**/*.graphql", "src/schema/**"],
@@ -92,7 +95,7 @@ describe("configureConfigKeys", () => {
 			"review.highLevel.criticalPaths",
 			"review.highLevel.descriptionWordCap",
 		]);
-		expect(mockSaveConfig).toHaveBeenCalledWith({});
+		expect(mockSaveConfig.mock.lastCall?.[0]).toEqual({});
 	});
 
 	it("asks which scope to write to when the caller names none", async () => {

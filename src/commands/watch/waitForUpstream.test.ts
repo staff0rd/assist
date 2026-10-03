@@ -1,10 +1,16 @@
+import { execFileSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-const mockExecFileSync = vi.fn();
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => mockExecFileSync(...args),
-}));
+const mockExecFileSync = vi.mocked(execFileSync);
 
 import { waitForUpstream } from "./waitForUpstream";
 
@@ -33,8 +39,8 @@ function installGit(overrides: Partial<GitState> = {}): void {
 		...overrides,
 	};
 
-	mockExecFileSync.mockImplementation((_cmd: string, args: string[]) => {
-		const key = args.join(" ");
+	mockExecFileSync.mockImplementation((_cmd, args) => {
+		const key = (args ?? []).join(" ");
 		if (key === "rev-parse --is-inside-work-tree") {
 			if (!git.repo) throw new Error("not a repository");
 			return "true\n";

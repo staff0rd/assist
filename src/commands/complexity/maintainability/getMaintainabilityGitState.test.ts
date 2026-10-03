@@ -1,18 +1,23 @@
+import { execSync } from "node:child_process";
 import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockExecSync = vi.fn();
-
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
-
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 import { getMaintainabilityGitState } from "./getMaintainabilityGitState";
+
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
+
+const mockExecSync = vi.mocked(execSync);
 
 const ROOT = "/repo";
 
 function respond(map: Record<string, string>): void {
-	mockExecSync.mockImplementation((command: string) => {
+	mockExecSync.mockImplementation((command) => {
 		if (command.includes("rev-parse")) return `${ROOT}\n`;
 		if (command.includes("--numstat")) return map.numstat ?? "";
 		if (command.includes("status")) return map.status ?? "";

@@ -1,15 +1,17 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { daemonPaths } from "./daemonPaths";
 import { ensureHooksSettings } from "./ensureHooksSettings";
 
-vi.mock("node:fs", () => ({
-	mkdirSync: vi.fn(),
-	writeFileSync: vi.fn(),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../../test/mocks/fsMock")
+	).fsMock(),
+);
 
-const writeMock = writeFileSync as unknown as ReturnType<typeof vi.fn>;
-const mkdirMock = mkdirSync as unknown as ReturnType<typeof vi.fn>;
+const writeMock = vi.mocked(writeFileSync);
+const mkdirMock = vi.mocked(mkdirSync);
 
 type HookEntry = { matcher?: string; hooks: { command: string }[] };
 
@@ -33,7 +35,7 @@ describe("ensureHooksSettings", () => {
 	it("maps prompt and tool-use events to running best-effort hints (no ack)", () => {
 		ensureHooksSettings();
 
-		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		const written = JSON.parse(String(writeMock.mock.calls[0][1]));
 		expect(written.hooks.UserPromptSubmit[0].hooks[0].command).toBe(
 			"assist sessions set-status running --source prompt",
 		);
@@ -45,7 +47,7 @@ describe("ensureHooksSettings", () => {
 	it("uses ack'd delivery for the blocking and terminal set only", () => {
 		ensureHooksSettings();
 
-		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		const written = JSON.parse(String(writeMock.mock.calls[0][1]));
 		expect(written.hooks.PermissionRequest[0].hooks[0].command).toBe(
 			"assist sessions set-status waiting --source permission --ack",
 		);
@@ -60,7 +62,7 @@ describe("ensureHooksSettings", () => {
 	it("does not ack any PreToolUse or PostToolUse hook", () => {
 		ensureHooksSettings();
 
-		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		const written = JSON.parse(String(writeMock.mock.calls[0][1]));
 		const toolCommands = [
 			...written.hooks.PreToolUse.map((e: HookEntry) => e.hooks[0].command),
 			written.hooks.PostToolUse[0].hooks[0].command,
@@ -72,7 +74,7 @@ describe("ensureHooksSettings", () => {
 	it("sets waiting for AskUserQuestion as a best-effort hint (no ack, derivable)", () => {
 		ensureHooksSettings();
 
-		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		const written = JSON.parse(String(writeMock.mock.calls[0][1]));
 		const askEntry = written.hooks.PreToolUse.find(
 			(e: HookEntry) => e.matcher === "AskUserQuestion",
 		) as HookEntry;
@@ -84,7 +86,7 @@ describe("ensureHooksSettings", () => {
 	it("keeps running for normal tools and excludes AskUserQuestion from it", () => {
 		ensureHooksSettings();
 
-		const written = JSON.parse(writeMock.mock.calls[0][1]);
+		const written = JSON.parse(String(writeMock.mock.calls[0][1]));
 		const runningEntry = written.hooks.PreToolUse.find(
 			(e: HookEntry) =>
 				e.hooks[0].command ===

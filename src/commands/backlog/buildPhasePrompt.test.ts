@@ -1,19 +1,28 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../shared/loadConfig";
+import {
+	type AssistConfigInput,
+	makeAssistConfig,
+} from "../../test/mothers/makeAssistConfig";
 import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { buildPhasePrompt } from "./buildPhasePrompt";
 import type { PlanPhase } from "./types";
 
-vi.mock("../../shared/loadConfig", () => ({ loadConfig: vi.fn() }));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 const loadConfigMock = vi.mocked(loadConfig);
 
 const phase: PlanPhase = { name: "Phase 1", tasks: [{ task: "do it" }] };
 
-function mockWorktree(worktree: Record<string, unknown>): void {
-	loadConfigMock.mockReturnValue({ worktree } as unknown as ReturnType<
-		typeof loadConfig
-	>);
+function mockWorktree(worktree: AssistConfigInput["worktree"]): void {
+	loadConfigMock.mockReturnValue(makeAssistConfig({ worktree }));
 }
 
 const COMMIT_LINE =
@@ -33,9 +42,7 @@ describe("buildPhasePrompt", () => {
 	});
 
 	it("adds no commit instruction when there is no worktree config at all", () => {
-		loadConfigMock.mockReturnValue(
-			{} as unknown as ReturnType<typeof loadConfig>,
-		);
+		loadConfigMock.mockReturnValue(makeAssistConfig());
 
 		expect(buildPhasePrompt(makeBacklogItem(), 1, phase)).not.toContain(
 			"/commit",

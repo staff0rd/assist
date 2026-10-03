@@ -1,29 +1,37 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AssistConfig } from "./types";
+import type * as loadConfigMockModule from "../test/mocks/loadConfigMock";
+import { makeAssistConfig } from "../test/mothers/makeAssistConfig";
+import { loadConfig } from "./loadConfig";
 
-const mockLoadConfig = vi.fn<() => Partial<AssistConfig>>();
+vi.mock("./loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
-vi.mock("./loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+const mockLoadConfig = vi.mocked(loadConfig);
 
 import { matchesConfigDeny } from "./matchesConfigDeny";
 
 beforeEach(() => {
 	vi.clearAllMocks();
-	mockLoadConfig.mockReturnValue({});
+	mockLoadConfig.mockReturnValue(makeAssistConfig());
 });
 
 describe("matchesConfigDeny", () => {
 	it("returns undefined when no deny rules configured", () => {
-		mockLoadConfig.mockReturnValue({});
+		mockLoadConfig.mockReturnValue(makeAssistConfig());
 		expect(matchesConfigDeny("rm -rf /")).toBeUndefined();
 	});
 
 	it("matches exact command", () => {
-		mockLoadConfig.mockReturnValue({
-			deny: [{ pattern: "rm -rf", message: "Do not use rm -rf" }],
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				deny: [{ pattern: "rm -rf", message: "Do not use rm -rf" }],
+			}),
+		);
 		expect(matchesConfigDeny("rm -rf")).toEqual({
 			pattern: "rm -rf",
 			message: "Do not use rm -rf",
@@ -31,14 +39,16 @@ describe("matchesConfigDeny", () => {
 	});
 
 	it("matches command with prefix matching", () => {
-		mockLoadConfig.mockReturnValue({
-			deny: [
-				{
-					pattern: "git push --force",
-					message: "Use --force-with-lease instead",
-				},
-			],
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				deny: [
+					{
+						pattern: "git push --force",
+						message: "Use --force-with-lease instead",
+					},
+				],
+			}),
+		);
 		expect(matchesConfigDeny("git push --force origin main")).toEqual({
 			pattern: "git push --force",
 			message: "Use --force-with-lease instead",
@@ -46,26 +56,30 @@ describe("matchesConfigDeny", () => {
 	});
 
 	it("does not match partial prefix (no word boundary)", () => {
-		mockLoadConfig.mockReturnValue({
-			deny: [{ pattern: "rm", message: "no rm" }],
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ deny: [{ pattern: "rm", message: "no rm" }] }),
+		);
 		expect(matchesConfigDeny("rmdir temp")).toBeUndefined();
 	});
 
 	it("does not match unrelated command", () => {
-		mockLoadConfig.mockReturnValue({
-			deny: [{ pattern: "rm -rf", message: "Do not use rm -rf" }],
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				deny: [{ pattern: "rm -rf", message: "Do not use rm -rf" }],
+			}),
+		);
 		expect(matchesConfigDeny("git status")).toBeUndefined();
 	});
 
 	it("returns the first matching rule", () => {
-		mockLoadConfig.mockReturnValue({
-			deny: [
-				{ pattern: "git push", message: "No pushing" },
-				{ pattern: "git push --force", message: "No force push" },
-			],
-		});
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				deny: [
+					{ pattern: "git push", message: "No pushing" },
+					{ pattern: "git push --force", message: "No force push" },
+				],
+			}),
+		);
 		expect(matchesConfigDeny("git push --force origin")).toEqual({
 			pattern: "git push",
 			message: "No pushing",

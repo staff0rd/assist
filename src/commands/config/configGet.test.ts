@@ -1,12 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../shared/loadConfig";
 import { SECRET_MASK } from "../../shared/maskConfigSecrets";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
 import { configGet } from "./configGet";
 
-const mockConfig = vi.fn<() => Record<string, unknown>>();
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockConfig(),
-}));
+const mockConfig = vi.mocked(loadConfig);
 
 function output(run: () => void): string {
 	const lines: string[] = [];
@@ -24,13 +31,24 @@ function output(run: () => void): string {
 describe("configGet", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockConfig.mockReturnValue({
-			database: { url: "postgres://user:pass@host/db" },
-			commit: { push: true },
-			sql: {
-				connections: [{ name: "main", user: "sa", password: "hunter2" }],
-			},
-		});
+		mockConfig.mockReturnValue(
+			makeAssistConfig({
+				database: { url: "postgres://user:pass@host/db" },
+				commit: { push: true },
+				sql: {
+					connections: [
+						{
+							name: "main",
+							server: "localhost",
+							port: 1433,
+							user: "sa",
+							password: "hunter2",
+							database: "app",
+						},
+					],
+				},
+			}),
+		);
 	});
 
 	it("masks a secret value", () => {
@@ -57,7 +75,7 @@ describe("configGet", () => {
 	});
 
 	it("reports an unset secret as not set", () => {
-		mockConfig.mockReturnValue({ database: {} });
+		mockConfig.mockReturnValue(makeAssistConfig({ database: {} }));
 
 		expect(errorOutput(() => configGet("database.url"))).toContain(
 			'"database.url" is not set',
@@ -65,7 +83,7 @@ describe("configGet", () => {
 	});
 
 	it("reports the schema default and note for a valid unset key", () => {
-		mockConfig.mockReturnValue({});
+		mockConfig.mockReturnValue(makeAssistConfig());
 
 		const text = errorOutput(() => configGet("worktree.enabled"));
 
@@ -76,7 +94,7 @@ describe("configGet", () => {
 	});
 
 	it("says a valid unset key has no default when the schema gives none", () => {
-		mockConfig.mockReturnValue({});
+		mockConfig.mockReturnValue(makeAssistConfig());
 
 		expect(errorOutput(() => configGet("worktree.root"))).toContain(
 			'Key "worktree.root" is not set and has no schema default',
@@ -84,7 +102,7 @@ describe("configGet", () => {
 	});
 
 	it("reports an unknown key as not set with no default", () => {
-		mockConfig.mockReturnValue({});
+		mockConfig.mockReturnValue(makeAssistConfig());
 
 		const text = errorOutput(() => configGet("nope.nope"));
 
@@ -93,7 +111,9 @@ describe("configGet", () => {
 	});
 
 	it("still prints an explicitly set falsy value instead of the default", () => {
-		mockConfig.mockReturnValue({ worktree: { enabled: false } });
+		mockConfig.mockReturnValue(
+			makeAssistConfig({ worktree: { enabled: false } }),
+		);
 
 		expect(output(() => configGet("worktree.enabled"))).toBe("false");
 	});

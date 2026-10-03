@@ -1,16 +1,20 @@
+import { writeFileSync } from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
 const mockShowNotification = vi.fn();
-const mockWriteFileSync = vi.fn();
 
 vi.mock("../notify/showNotification", () => ({
 	showNotification: (...args: unknown[]) => mockShowNotification(...args),
 }));
 
-vi.mock("node:fs", () => ({
-	mkdirSync: vi.fn(),
-	writeFileSync: (...args: unknown[]) => mockWriteFileSync(...args),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
+
+const mockWriteFileSync = vi.mocked(writeFileSync);
 
 vi.mock("./sweepRestrictedDir", () => ({
 	sweepRestrictedDir: vi.fn(),
@@ -37,7 +41,7 @@ describe("codeCommentSet", () => {
 	});
 
 	function issuedPin(): string {
-		const payload = JSON.parse(mockWriteFileSync.mock.calls[0][1] as string);
+		const payload = JSON.parse(String(mockWriteFileSync.mock.calls[0][1]));
 		return payload.pin as string;
 	}
 

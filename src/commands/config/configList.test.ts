@@ -1,12 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../shared/loadConfig";
 import { SECRET_MASK } from "../../shared/maskConfigSecrets";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
 import { configList } from "../configList";
 
-const mockConfig = vi.fn<() => Record<string, unknown>>();
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockConfig(),
-}));
+const mockConfig = vi.mocked(loadConfig);
 
 function output(run: () => void): string {
 	const lines: string[] = [];
@@ -27,13 +34,15 @@ describe("configList", () => {
 	});
 
 	it("masks secrets and keeps the rest of the config readable", () => {
-		mockConfig.mockReturnValue({
-			commit: { push: true },
-			database: { url: "postgres://user:pass@host/db" },
-			seq: {
-				connections: [{ name: "prod", url: "https://seq", apiToken: "t0k" }],
-			},
-		});
+		mockConfig.mockReturnValue(
+			makeAssistConfig({
+				commit: { push: true },
+				database: { url: "postgres://user:pass@host/db" },
+				seq: {
+					connections: [{ name: "prod", url: "https://seq", apiToken: "t0k" }],
+				},
+			}),
+		);
 
 		const text = output(configList);
 
@@ -46,13 +55,13 @@ describe("configList", () => {
 	});
 
 	it("omits an unset secret entirely", () => {
-		mockConfig.mockReturnValue({ commit: { push: true } });
+		mockConfig.mockReturnValue(makeAssistConfig({ commit: { push: true } }));
 
 		expect(output(configList)).not.toContain(SECRET_MASK);
 	});
 
 	it("says it shows only what is set and points at config keys", () => {
-		mockConfig.mockReturnValue({ commit: { push: true } });
+		mockConfig.mockReturnValue(makeAssistConfig({ commit: { push: true } }));
 
 		const text = output(configList);
 

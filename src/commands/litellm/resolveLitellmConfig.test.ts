@@ -1,11 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../shared/loadConfig";
 import type { AssistConfig } from "../../shared/types";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 
-const mockLoadConfig = vi.fn();
+const mockLoadConfig = vi.mocked(loadConfig);
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 import { resolveLitellmConfig } from "./resolveLitellmConfig";
 
@@ -14,7 +21,7 @@ describe("resolveLitellmConfig", () => {
 	let exitSpy: ReturnType<typeof vi.spyOn>;
 
 	function withLitellm(litellm: AssistConfig["litellm"]): void {
-		mockLoadConfig.mockReturnValue({ litellm });
+		mockLoadConfig.mockReturnValue(makeAssistConfig({ litellm }));
 	}
 
 	function errored(): string {

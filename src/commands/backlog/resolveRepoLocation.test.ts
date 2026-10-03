@@ -1,9 +1,14 @@
 import { existsSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 import { getCurrentOrigin } from "./getCurrentOrigin";
 import { resolveRepoLocation } from "./resolveRepoLocation";
 
-vi.mock("node:fs", () => ({ existsSync: vi.fn() }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 vi.mock("./getCurrentOrigin", () => ({ getCurrentOrigin: vi.fn() }));
 
 const mockExists = vi.mocked(existsSync);

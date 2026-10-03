@@ -1,13 +1,18 @@
+import { execFileSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 
-const execFileSync = vi.fn();
 const mockRequestPreviewDecision = vi.fn();
 const runGhGraphqlJson = vi.fn();
 const readGhTokenScopes = vi.fn();
 
-vi.mock("node:child_process", () => ({
-	execFileSync: (...args: unknown[]) => execFileSync(...args),
-}));
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../../../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 vi.mock("../../prs/shared", () => ({
 	getRepoInfo: () => ({ org: "acme", repo: "widgets" }),
 }));
@@ -108,8 +113,8 @@ function graphqlReplies(world: GraphqlWorld = {}) {
 }
 
 beforeEach(() => {
-	execFileSync.mockReset();
-	execFileSync.mockReturnValue(`${ISSUE_URL}\n`);
+	vi.mocked(execFileSync).mockReset();
+	vi.mocked(execFileSync).mockReturnValue(`${ISSUE_URL}\n`);
 	mockRequestPreviewDecision.mockReset();
 	runGhGraphqlJson.mockReset();
 	readGhTokenScopes.mockReset();

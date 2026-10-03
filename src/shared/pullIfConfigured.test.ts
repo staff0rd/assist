@@ -1,15 +1,28 @@
+import { execSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as childProcessMockModule from "../test/mocks/childProcessMock";
+import type * as loadConfigMockModule from "../test/mocks/loadConfigMock";
+import { makeAssistConfig } from "../test/mothers/makeAssistConfig";
+import { loadConfig } from "./loadConfig";
 
-const mockExecSync = vi.fn();
-const mockLoadConfig = vi.fn();
+vi.mock("node:child_process", async () =>
+	(
+		await vi.importActual<typeof childProcessMockModule>(
+			"../test/mocks/childProcessMock",
+		)
+	).childProcessMock(),
+);
 
-vi.mock("node:child_process", () => ({
-	execSync: (...args: unknown[]) => mockExecSync(...args),
-}));
+vi.mock("./loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
-vi.mock("./loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+const mockExecSync = vi.mocked(execSync);
+const mockLoadConfig = vi.mocked(loadConfig);
 
 import { pullIfConfigured } from "./pullIfConfigured";
 
@@ -29,7 +42,9 @@ describe("pullIfConfigured", () => {
 	});
 
 	it("does nothing when commit.pull is disabled", () => {
-		mockLoadConfig.mockReturnValue({ commit: { pull: false } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ commit: { pull: false } }),
+		);
 
 		pullIfConfigured();
 
@@ -38,7 +53,9 @@ describe("pullIfConfigured", () => {
 	});
 
 	it("runs git pull --ff-only and proceeds on success", () => {
-		mockLoadConfig.mockReturnValue({ commit: { pull: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ commit: { pull: true } }),
+		);
 		mockExecSync.mockReturnValue("");
 
 		pullIfConfigured();
@@ -50,7 +67,9 @@ describe("pullIfConfigured", () => {
 	});
 
 	it("exits with code 1 when the pull fails", () => {
-		mockLoadConfig.mockReturnValue({ commit: { pull: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ commit: { pull: true } }),
+		);
 		mockExecSync.mockImplementation((command: string) => {
 			if (command === "git pull --ff-only") throw new Error("pull failed");
 			return "";
@@ -61,7 +80,9 @@ describe("pullIfConfigured", () => {
 	});
 
 	it("skips the pull when the branch has no upstream", () => {
-		mockLoadConfig.mockReturnValue({ commit: { pull: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ commit: { pull: true } }),
+		);
 		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 		mockExecSync.mockImplementation((command: string) => {
 			if (command.includes("@{upstream}")) throw new Error("no upstream");
@@ -78,7 +99,9 @@ describe("pullIfConfigured", () => {
 	});
 
 	it("skips the pull when the working copy has local changes", () => {
-		mockLoadConfig.mockReturnValue({ commit: { pull: true } });
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ commit: { pull: true } }),
+		);
 		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 		mockExecSync.mockImplementation((command: string) =>
 			command === "git status --porcelain" ? " M src/foo.ts\n" : "",

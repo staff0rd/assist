@@ -1,20 +1,34 @@
+import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadConfig } from "../../shared/loadConfig";
+import type { ReleaseStream } from "../../shared/types";
+import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
+import type * as fsMockModule from "../../test/mocks/fsMock";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
+import { releasesConfigure } from "./releasesConfigure";
 
 const mockWriteConfigKeys = vi.fn();
-const mockLoadConfig = vi.fn();
 const mockDeclaredStreamsInScope = vi.fn();
 const mockGetRepoInfo = vi.fn(() => ({ org: "owner", repo: "name" }));
 let input = "";
 
-vi.mock("node:fs", () => ({ readFileSync: () => input }));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 vi.mock("../config/writeConfigKeys", () => ({
 	writeConfigKeys: (...args: unknown[]) => mockWriteConfigKeys(...(args as [])),
 }));
 
-vi.mock("../../shared/loadConfig", () => ({
-	loadConfig: () => mockLoadConfig(),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
 vi.mock("./declaredStreamsInScope", () => ({
 	declaredStreamsInScope: (...args: unknown[]) =>
@@ -23,9 +37,10 @@ vi.mock("./declaredStreamsInScope", () => ({
 
 vi.mock("../prs/shared", () => ({ getRepoInfo: () => mockGetRepoInfo() }));
 
-import { releasesConfigure } from "./releasesConfigure";
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockLoadConfig = vi.mocked(loadConfig);
 
-const webApp = {
+const webApp: Omit<ReleaseStream, "repo"> = {
 	name: "Web App",
 	workflow: "release.yml",
 	nodes: [
@@ -55,6 +70,7 @@ beforeEach(() => {
 	errored = [];
 	process.exitCode = undefined;
 	input = JSON.stringify([webApp]);
+	mockReadFileSync.mockImplementation(() => input);
 	vi.spyOn(console, "log").mockImplementation((...args: unknown[]) => {
 		logged.push(args.join(" "));
 	});
@@ -66,9 +82,11 @@ beforeEach(() => {
 		ok: true,
 		target: "project assist.yml",
 	});
-	mockLoadConfig.mockReturnValue({
-		releases: { streams: [{ ...webApp, repo: "owner/name" }] },
-	});
+	mockLoadConfig.mockReturnValue(
+		makeAssistConfig({
+			releases: { streams: [{ ...webApp, repo: "owner/name" }] },
+		}),
+	);
 });
 
 describe("releasesConfigure", () => {

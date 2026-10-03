@@ -1,14 +1,23 @@
+import {
+	copyFileSync,
+	existsSync,
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as HarnessModule from "../../shared/harnesses";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 
 const mockIsHarnessAvailable = vi.fn();
-const mockReaddirSync = vi.fn();
-const mockReadFileSync = vi.fn();
-const mockWriteFileSync = vi.fn();
-const mockMkdirSync = vi.fn();
-const mockCopyFileSync = vi.fn();
-const mockExistsSync = vi.fn();
+const mockReaddirSync = vi.mocked(readdirSync);
+const mockReadFileSync = vi.mocked(readFileSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
+const mockMkdirSync = vi.mocked(mkdirSync);
+const mockCopyFileSync = vi.mocked(copyFileSync);
+const mockExistsSync = vi.mocked(existsSync);
 const mockPruneSkills = vi.fn();
 
 vi.mock("./pruneSkills", () => ({
@@ -23,14 +32,11 @@ vi.mock("../../shared/harnesses", async (importOriginal) => {
 	};
 });
 
-vi.mock("node:fs", () => ({
-	readdirSync: (...args: unknown[]) => mockReaddirSync(...args),
-	readFileSync: (...args: unknown[]) => mockReadFileSync(...args),
-	writeFileSync: (...args: unknown[]) => mockWriteFileSync(...args),
-	mkdirSync: (...args: unknown[]) => mockMkdirSync(...args),
-	copyFileSync: (...args: unknown[]) => mockCopyFileSync(...args),
-	existsSync: (...args: unknown[]) => mockExistsSync(...args),
-}));
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
 
 import { harnesses } from "../../shared/harnesses";
 import { commandToSkill, syncCodex } from "./syncCodex";
@@ -81,9 +87,9 @@ describe("syncCodex", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockIsHarnessAvailable.mockReturnValue(true);
-		mockReaddirSync.mockReturnValue(["refine.md", "notes.txt"]);
-		mockReadFileSync.mockImplementation((target: string) =>
-			target.endsWith(path.join("codex", "config.toml"))
+		mockReaddirSync.mockReturnValue(["refine.md", "notes.txt"] as never);
+		mockReadFileSync.mockImplementation((target) =>
+			String(target).endsWith(path.join("codex", "config.toml"))
 				? '[[hooks.PreToolUse]]\nmatcher = "Bash"\n[[hooks.PreToolUse.hooks]]\ntype = "command"\ncommand = "assist codex-hook"\n\n[[hooks.PermissionRequest]]\n[[hooks.PermissionRequest.hooks]]\ntype = "command"\ncommand = "assist codex-hook"'
 				: "---\ndescription: Refine it\n---\nbody",
 		);

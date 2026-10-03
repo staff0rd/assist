@@ -1,22 +1,28 @@
+import { mkdirSync, writeFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-const mockLoadProjectConfig = vi.fn<() => Record<string, unknown>>();
-const mockSaveConfig = vi.fn();
-
-vi.mock("../../shared/loadConfig", () => ({
-	loadProjectConfig: () => mockLoadProjectConfig(),
-	saveConfig: (c: unknown) => mockSaveConfig(c),
-}));
-
-const mockMkdirSync = vi.fn();
-const mockWriteFileSync = vi.fn();
-
-vi.mock("node:fs", () => ({
-	mkdirSync: (p: string, opts: unknown) => mockMkdirSync(p, opts),
-	writeFileSync: (p: string, c: string) => mockWriteFileSync(p, c),
-}));
-
+import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import type * as fsMockModule from "../../test/mocks/fsMock";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { add } from "./add";
+
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
+
+vi.mock("node:fs", async () =>
+	(
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
+	).fsMock(),
+);
+
+const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
+const mockSaveConfig = vi.mocked(saveConfig);
+const mockMkdirSync = vi.mocked(mkdirSync);
+const mockWriteFileSync = vi.mocked(writeFileSync);
 
 let exitCode: number | undefined;
 let errorOutput: string[];
