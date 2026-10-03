@@ -5,6 +5,7 @@ import { getMigrationStatus } from "../shared/db/migrations/getMigrationStatus";
 import { latestMigrationId } from "../shared/db/migrations";
 import { pgExecutor } from "../shared/db/migrations/MigrationExecutor";
 import { findRetiredTables } from "../shared/db/retired/findRetiredTables";
+import { dropRetiredTables } from "./db/dropRetiredTables";
 import { reportRetiredTables } from "./db/reportRetiredTables";
 import {
 	reportApplied,
@@ -52,4 +53,10 @@ export function registerDb(program: Command): void {
 			"Report whether the database is in sync, behind, or ahead of this build",
 		)
 		.action(status);
+
+	db.command("drop-retired")
+		.description(
+			"Drop retired tables left by removed features, after confirming each",
+		)
+		.action(() => withPool(dropRetiredTables));
 }

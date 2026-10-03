@@ -100,6 +100,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist backup schedule remove` - Remove the backup schedule block from the crontab
 - `assist db migrate` - Apply pending backlog database migrations in order
 - `assist db status` - Report whether the database is in sync with the build's bundled migrations
+- `assist db drop-retired` - Drop retired tables left by removed features (e.g. `handovers`), showing each table's row count and asking for confirmation first
 
 ### Git and GitHub
 
