@@ -1,3 +1,10 @@
+# [0.751.0](https://github.com/staff0rd/assist/compare/v0.750.0...v0.751.0) (2026-10-03)
+
+
+### Features
+
+* serve nodes on the tailnet ([4f1e35b](https://github.com/staff0rd/assist/commit/4f1e35bbe3c9d4e4a82e1cb114e9c8419c505f6b))
+
 # [0.750.0](https://github.com/staff0rd/assist/compare/v0.749.0...v0.750.0) (2026-10-03)
 
 
