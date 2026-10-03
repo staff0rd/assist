@@ -70,10 +70,8 @@ After installation, the `assist` command will be available globally. You can als
 - `/review-pr-comments` - Process PR review comments one by one
 - `/jira [action] [KEY] [args]` - Jira actions: `view`, `associate`, `update`, `started`, `done`, `help`. `[KEY]` is optional — it resolves from the session's backlog item
 - `/github [action] [ref] [args]` - GitHub issue actions: `view`, `edit`, `associate`, `update`, `started`, `done`, `help`. `[ref]` is optional — it resolves from the session's backlog item. A bare `/github <ref>` runs `edit`, which opens the issue in the web preview pane; outside a web session the command prints the issue to chat instead
-- `/journal` - Append a journal entry summarising recent work
 - `/next [id]` - Signal completion and chain into the next backlog item
 - `/slack-post [channel] [--thread <ts-or-permalink>] <what to say>` - Compose a markdown message, preview it in the web pane via `assist slack post`, then post the approved body to that Slack channel with the Slack MCP connector and report the permalink. The channel falls back to `slack.channel`; `--thread` posts the message as a reply in that thread. Asked for a thread of several messages, it composes all of them up front and previews the batch in a single `assist slack post --parts` call — a pane per message, in order — and posts nothing until every one is approved: the first message opens the thread and the rest follow under the `thread_ts` it returns, or all of them reply under the resolved `thread_ts` when `--thread` was given. A rejection posts nothing at all; the rejected message is revised in its working file and the whole batch re-previewed from the first message
-- `/standup` - Summarise recent journal entries as a standup update
 - `/subtask <text>` - Add a sub-task to the session's current backlog item
 - `/strip-code-comments` - Strip redundant comments from tracked source files
 - `/sync` - Sync commands and settings to ~/.claude
@@ -91,11 +89,6 @@ After installation, the `assist` command will be available globally. You can als
 - `/verify` - Run all verification commands in parallel
 - `/verify-new` - Add a new verify:\* run command to assist.yml
 - `/transcripts` - Format and summarise meeting transcripts end to end
-- `/voice-setup` - Download required voice models (VAD, STT)
-- `/voice-start` - Start the voice interaction daemon
-- `/voice-stop` - Stop the voice interaction daemon
-- `/voice-status` - Check voice daemon status
-- `/voice-logs` - Show recent voice daemon logs
 
 ## CLI Commands
 
@@ -372,19 +365,13 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist complexity maintainability [pattern]` - Calculate maintainability index per file (`--ignore <glob>`, plus `complexity.ignore`). A file can declare its own threshold with a `// assist-maintainability-override: N` comment in its first ~10 lines, replacing `--threshold` for that file only
 - `assist complexity sloc [pattern]` - Count source lines of code per file
 
-### Transcripts and voice
+### Transcripts
 
 - `assist transcript configure` - Configure transcript directories
 - `assist transcript clean <path>` - Clean any .vtt file and write the result to stdout (`--format <md|vtt>`, default `md`). Markdown chat log: `assist transcript clean ./raw.vtt > clean.md`; cleaned WebVTT with timings preserved: `assist transcript clean ./raw.vtt --format vtt > fixed.vtt`. `--timestamps` prefixes each markdown speaker turn with `[hh:mm:ss]`, so passages can be cited as ranges for `merge --select`: `assist transcript clean ./raw.vtt --format md --timestamps`
 - `assist transcript list` - List raw .vtt filenames waiting in the pick-up directory
 - `assist transcript merge <path...>` - Collapse several .vtt files into one transcript with `NOTE` provenance, rebasing cue times onto a continuous timeline (`--out <path>` to write a file instead of stdout): `assist transcript merge ./a.vtt ./b.vtt --out ./refinement.vtt`. `--select <file|->` takes keep/removed JSON (`-` reads it from stdin) naming the ranges to keep, so only those passages survive and the dropped ones are counted in the header: `assist transcript merge ./a.vtt ./b.vtt --select ./selection.json`. `--no-provenance` omits every `NOTE` — the Collapsed-from header, the per-passage source marks and the removed count — for an output going somewhere the source names and cut points should not follow: `assist transcript merge ./a.vtt ./b.vtt --select ./selection.json --no-provenance`. `--widen-audience` retunes the language for a reader who was not in the call: the casual asides pitched at the people who were — an intensifier before a word, emphasis after a wh-word, a standalone interjection — are deleted, along with any cue that is nothing but one, leaving anything that carries meaning (verb, idiom, decision marker, predicate adjective, noun, reported speech) for you to judge: `assist transcript merge ./a.vtt ./b.vtt --no-provenance --widen-audience`
 - `assist transcript move <file>` - Convert a raw .vtt to a dated markdown transcript and archive the original
-- `assist voice setup` - Download required voice models (VAD, STT)
-- `assist voice start [--foreground]` - Start the voice daemon (always-on, listens for wake word)
-- `assist voice stop` - Stop the voice daemon
-- `assist voice status` - Check voice daemon status and recent events
-- `assist voice devices` - List available audio input devices
-- `assist voice logs [-n <count>]` - Show recent voice daemon log entries
 
 ### Sessions
 

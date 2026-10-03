@@ -73,7 +73,6 @@ assist sql tables
 assist status-line
 assist transcript list
 assist verify
-assist voice
 assist watch report
 az account list
 az account lock list

@@ -302,10 +302,10 @@ describe("configSet", () => {
 		});
 
 		it("should trim whitespace around list items", () => {
-			configSet("voice.wakeWords", "hey claude, ok claude", { global: true });
+			configSet("complexity.ignore", "a.ts, b.ts", { global: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
-				voice: { wakeWords: ["hey claude", "ok claude"] },
+				complexity: { ignore: ["a.ts", "b.ts"] },
 			});
 		});
 

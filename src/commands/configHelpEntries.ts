@@ -32,7 +32,6 @@ import { slackConfigHelp } from "./slack/slackConfigHelp";
 import { sqlConfigHelp } from "./sql/sqlConfigHelp";
 import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
 import { verifyConfigHelp } from "./verify/verifyConfigHelp";
-import { voiceConfigHelp } from "./voice/voiceConfigHelp";
 
 export const configHelpEntries: ConfigHelpEntry[] = [
 	...Object.values(rootConfigHelp).flat(),
@@ -68,5 +67,4 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...sqlConfigHelp,
 	...transcriptConfigHelp,
 	...verifyConfigHelp,
-	...voiceConfigHelp,
 ];

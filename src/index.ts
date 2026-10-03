@@ -51,7 +51,6 @@ import { registerSql } from "./commands/registerSql";
 import { registerSync } from "./commands/registerSync";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
-import { registerVoice } from "./commands/registerVoice";
 import { registerWatch } from "./commands/registerWatch";
 import { registerRoam } from "./commands/roam/registerRoam";
 import { registerRun } from "./commands/run/registerRun";
@@ -123,7 +122,6 @@ registerAsk(program);
 registerSlack(program);
 registerSql(program);
 registerTranscript(program);
-registerVoice(program);
 registerWatch(program);
 
 registerSessions(program);

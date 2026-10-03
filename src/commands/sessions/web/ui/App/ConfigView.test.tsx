@@ -226,19 +226,19 @@ describe("ConfigView", () => {
 	it("renders a complex leaf from its descriptor, keeping source and default", async () => {
 		stubEntries([
 			{
-				key: "voice.wakeWords",
+				key: "complexity.ignore",
 				type: "array",
 				itemType: "string",
 				value: undefined,
 				defaultValue: ["hey assist"],
 				source: "default",
-				node: node("voice.wakeWords"),
+				node: node("complexity.ignore"),
 			},
 		]);
 		renderView();
 
 		await waitFor(() =>
-			expect(screen.getByText("voice.wakeWords")).toBeTruthy(),
+			expect(screen.getByText("complexity.ignore")).toBeTruthy(),
 		);
 		expect(screen.getByText("hey assist")).toBeTruthy();
 		expect(screen.getByText("default")).toBeTruthy();

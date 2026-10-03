@@ -16,9 +16,6 @@ export default defineConfig({
 		cpSync("allowed.cli-reads", "dist/allowed.cli-reads");
 		cpSync("allowed.cli-writes", "dist/allowed.cli-writes");
 		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });
-		cpSync("src/commands/voice/python", "dist/commands/voice/python", {
-			recursive: true,
-		});
 		cpSync("netcap-extension", "dist/commands/netcap/netcap-extension", {
 			recursive: true,
 		});

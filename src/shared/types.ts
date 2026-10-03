@@ -19,8 +19,6 @@ export const miroExtractSchema = z.strictObject({
 	out: z.string().optional(),
 });
 
-const DEFAULT_WAKE_WORDS = ["computer"];
-const DEFAULT_MODELS_DIR = "~/.assist/voice/models";
 const DEFAULT_BACKUP_DIR = "~/.assist/backups";
 const DEFAULT_CLONE_DIR = "~/git";
 const assistConfigShape = {
@@ -363,26 +361,6 @@ const assistConfigShape = {
 			codexModel: z.string().optional(),
 		})
 		.default({ engine: "claude" }),
-	voice: z
-		.strictObject({
-			wakeWords: z.array(z.string()).default(DEFAULT_WAKE_WORDS),
-			mic: z.string().optional(),
-			cwd: z.string().optional(),
-			modelsDir: z.string().default(DEFAULT_MODELS_DIR),
-			lockDir: z.string().optional(),
-			submitWindows: z.array(z.string()).optional(),
-			models: z
-				.strictObject({
-					vad: z.string().optional(),
-					smartTurn: z.string().optional(),
-				})
-				.default({}),
-		})
-		.default({
-			wakeWords: DEFAULT_WAKE_WORDS,
-			modelsDir: DEFAULT_MODELS_DIR,
-			models: {},
-		}),
 };
 
 export const repoConfigSchema = z.strictObject(assistConfigShape).partial();

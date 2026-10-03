@@ -37,6 +37,6 @@ describe("enumerateConfigLeafKeys", () => {
 		const keys = enumerateConfigLeafKeys(assistConfigSchema);
 		expect(keys).toContain("branch.prefix");
 		expect(keys).toContain("sql.connections");
-		expect(keys).toContain("voice.models.vad");
+		expect(keys).toContain("review.highLevel.criticalPaths");
 	});
 });

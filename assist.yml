@@ -23,62 +23,6 @@ restructure:
 worktree:
   watcher: true
 run:
-  - name: verify:python-lint
-    command: uv
-    filter: src/commands/voice/python/**
-    env:
-      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
-    args:
-      - run
-      - --project
-      - src/commands/voice/python
-      - --extra
-      - dev
-      - ruff
-      - check
-      - src/commands/voice/python
-  - name: verify:python-format
-    command: uv
-    filter: src/commands/voice/python/**
-    env:
-      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
-    args:
-      - run
-      - --project
-      - src/commands/voice/python
-      - --extra
-      - dev
-      - ruff
-      - format
-      - src/commands/voice/python
-  - name: verify:maintainability-python
-    command: uv
-    filter: src/commands/voice/python/**
-    env:
-      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
-    args:
-      - run
-      - --project
-      - src/commands/voice/python
-      - --extra
-      - dev
-      - xenon
-      - src/commands/voice/python
-      - --max-absolute
-      - C
-  - name: verify:python-maintainability
-    command: uv
-    filter: src/commands/voice/python/**
-    env:
-      UV_PROJECT_ENVIRONMENT: ~/.assist/voice/.venv
-    args:
-      - run
-      - --project
-      - src/commands/voice/python
-      - --extra
-      - dev
-      - python
-      - src/commands/voice/python/check_mi.py
   - name: verify:lint
     command: npx
     filter: "{src/**,*.ts}"
@@ -114,11 +58,11 @@ run:
       - --treat-config-hints-as-errors
   - name: verify:duplicate-code
     command: npx
-    filter: "{src/**/*.ts,src/**/*.tsx,src/**/*.py}"
+    filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
       - jscpd
       - --format
-      - typescript,tsx,python
+      - typescript,tsx
       - --exitCode
       - "1"
       - --ignore
