@@ -1,3 +1,10 @@
+# [0.752.0](https://github.com/staff0rd/assist/compare/v0.751.0...v0.752.0) (2026-10-03)
+
+
+### Features
+
+* add assist db drop-retired ([436bd46](https://github.com/staff0rd/assist/commit/436bd4606286734cc62f5c9a95e4fa157d5d55a6))
+
 # [0.751.0](https://github.com/staff0rd/assist/compare/v0.750.0...v0.751.0) (2026-10-03)
 
 
