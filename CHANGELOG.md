@@ -1,3 +1,10 @@
+# [0.749.0](https://github.com/staff0rd/assist/compare/v0.748.2...v0.749.0) (2026-10-03)
+
+
+### Features
+
+* self-update the criteria extension ([234167b](https://github.com/staff0rd/assist/commit/234167bd08e404f942013b9c49e2fc0b19adeffb))
+
 ## [0.748.2](https://github.com/staff0rd/assist/compare/v0.748.1...v0.748.2) (2026-10-03)
 
 
