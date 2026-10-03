@@ -1,3 +1,10 @@
+## [0.747.5](https://github.com/staff0rd/assist/compare/v0.747.4...v0.747.5) (2026-10-03)
+
+
+### Bug Fixes
+
+* hold clone close on unlanded work ([d027ad5](https://github.com/staff0rd/assist/commit/d027ad5f443c1205682d338fd8cae60e6afe08b9))
+
 ## [0.747.4](https://github.com/staff0rd/assist/compare/v0.747.3...v0.747.4) (2026-10-02)
 
 
