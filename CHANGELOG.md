@@ -1,3 +1,10 @@
+# [0.748.0](https://github.com/staff0rd/assist/compare/v0.747.5...v0.748.0) (2026-10-03)
+
+
+### Features
+
+* Tab cycles focused session cards ([53972cd](https://github.com/staff0rd/assist/commit/53972cdc282036aed0a6f6bf98bf01e4c869fff8))
+
 ## [0.747.5](https://github.com/staff0rd/assist/compare/v0.747.4...v0.747.5) (2026-10-03)
 
 
