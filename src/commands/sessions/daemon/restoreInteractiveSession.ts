@@ -1,5 +1,6 @@
 import { resolveHarness } from "../../../shared/harnessLabel";
 import type { Session } from "./createSession";
+import type { RestoreStatus } from "./deriveRestoreStatus";
 import { errorSession } from "./errorSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
@@ -17,7 +18,7 @@ export function restoreInteractiveSession(
 	id: string,
 	persisted: PersistedSession,
 	base: RestoreBase,
-	idle: boolean,
+	status: RestoreStatus,
 ): Session {
 	/* why: assist sessions that wrap claude (e.g. `assist draft`) and plain claude
 	 * sessions resume via their discovered sessionId. Pass the same restart nudge
@@ -28,11 +29,11 @@ export function restoreInteractiveSession(
 		persisted.claudeSessionId &&
 		resolveHarness(persisted.harness) === "claude"
 	) {
-		return resumeViaClaude(id, persisted, base, idle);
+		return resumeViaClaude(id, persisted, base, status);
 	}
 
 	if (persisted.commandType !== "run" && isCodex(persisted.harness)) {
-		const resumed = restoreCodexSession(id, persisted, base, idle);
+		const resumed = restoreCodexSession(id, persisted, base, status);
 		if (resumed) return resumed;
 	}
 

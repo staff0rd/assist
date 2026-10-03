@@ -33,11 +33,11 @@ describe("restoreResumePlan", () => {
 	});
 
 	it("leaves an idle session alone when no restart was recorded", () => {
-		expect(restoreResumePlan(persisted(), true)).toEqual({ idle: true });
+		expect(restoreResumePlan(persisted(), "waiting")).toEqual({ idle: true });
 	});
 
 	it("leaves a mid-work session on the default nudge when no restart was recorded", () => {
-		const plan = restoreResumePlan(persisted(), false);
+		const plan = restoreResumePlan(persisted(), "running");
 
 		expect(plan).toEqual({ idle: false });
 		expect(resumePrompt(plan)).toBe(
@@ -46,7 +46,7 @@ describe("restoreResumePlan", () => {
 	});
 
 	it("names the daemon restart for a session that was mid-work", () => {
-		const plan = restoreResumePlan(persisted(restarted), false);
+		const plan = restoreResumePlan(persisted(restarted), "running");
 
 		expect(plan.idle).toBe(false);
 		expect(plan.prompt).toContain("assist sessions daemon restarted");
@@ -54,15 +54,31 @@ describe("restoreResumePlan", () => {
 	});
 
 	it("leaves an idle session idle when the restart killed no background work", () => {
-		expect(restoreResumePlan(persisted(restarted), true)).toEqual({
+		expect(restoreResumePlan(persisted(restarted), "waiting")).toEqual({
 			idle: true,
 		});
+	});
+
+	it("asks a session waiting on an unanswered AskUserQuestion to ask it again", () => {
+		const plan = restoreResumePlan(persisted(restarted), "asking");
+
+		expect(plan.idle).toBe(false);
+		expect(resumePrompt(plan)).toContain(
+			"Ask the same question again with AskUserQuestion",
+		);
+	});
+
+	it("asks the pending question again even when no restart was recorded", () => {
+		const plan = restoreResumePlan(persisted(), "asking");
+
+		expect(plan.idle).toBe(false);
+		expect(plan.prompt).toContain("AskUserQuestion");
 	});
 
 	it("wakes an idle session whose background task the restart killed", () => {
 		tasksMock.mockReturnValue(["bh1hjrdah"]);
 
-		const plan = restoreResumePlan(persisted(restarted), true);
+		const plan = restoreResumePlan(persisted(restarted), "waiting");
 
 		expect(plan.idle).toBe(false);
 		expect(plan.prompt).toContain("bh1hjrdah");
@@ -72,7 +88,7 @@ describe("restoreResumePlan", () => {
 	it("wakes a session whose background task a crashed daemon killed", () => {
 		tasksMock.mockReturnValue(["bohwmkrq8"]);
 
-		const plan = restoreResumePlan(persisted(), true);
+		const plan = restoreResumePlan(persisted(), "waiting");
 
 		expect(plan.idle).toBe(false);
 		expect(plan.prompt).toContain("bohwmkrq8");
@@ -82,7 +98,7 @@ describe("restoreResumePlan", () => {
 	it("names the killed tasks for a mid-work session after a crashed daemon", () => {
 		tasksMock.mockReturnValue(["bohwmkrq8"]);
 
-		const plan = restoreResumePlan(persisted(), false);
+		const plan = restoreResumePlan(persisted(), "running");
 
 		expect(plan.prompt).toContain("bohwmkrq8");
 	});

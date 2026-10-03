@@ -24,7 +24,11 @@ vi.mock("../../backlog/consumePause", () => ({
 
 vi.mock("./deriveRestoreStatus", () => ({
 	deriveRestoreStatus: (p: PersistedSession) =>
-		p.status === "running" ? "running" : "waiting",
+		p.claudeSessionId === "asking-1"
+			? "asking"
+			: p.status === "running"
+				? "running"
+				: "waiting",
 }));
 
 const isPausePendingMock = isPausePending as unknown as ReturnType<
@@ -277,6 +281,50 @@ describe("restoreSession", () => {
 		});
 		expect(session.status).toBe("waiting");
 		expect(session.runningSince).toBeNull();
+	});
+
+	it("nudges a --once wrapper session left on an unanswered AskUserQuestion to ask it again", () => {
+		const persisted: PersistedSession = {
+			name: "repo/assist draft",
+			commandType: "assist",
+			status: "waiting",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "asking-1",
+			assistArgs: ["draft", "--once", "fix the thing"],
+		};
+
+		const session = restoreSession("1", persisted);
+
+		const env = spawnPtyMock.mock.calls[0][3];
+		expect(env.ASSIST_RESUME_IDLE).toBeUndefined();
+		expect(env.ASSIST_RESUME_PROMPT).toContain(
+			"Ask the same question again with AskUserQuestion",
+		);
+		expect(session.status).toBe("running");
+	});
+
+	it("nudges an interactive claude session left on an unanswered AskUserQuestion to ask it again", () => {
+		const persisted: PersistedSession = {
+			name: "repo/Fix the bug",
+			commandType: "claude",
+			status: "waiting",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			claudeSessionId: "asking-1",
+		};
+
+		const session = restoreSession("1", persisted);
+
+		expect(spawnClaudeMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				resumeSessionId: "asking-1",
+				prompt: expect.stringContaining(
+					"Ask the same question again with AskUserQuestion",
+				),
+			}),
+		);
+		expect(session.status).toBe("running");
 	});
 
 	it("restores a --once wrapper session with no recorded status as waiting, not nudged", () => {

@@ -1,10 +1,11 @@
 import type { Session } from "./createSession";
+import type { RestoreStatus } from "./deriveRestoreStatus";
+import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
 import { restoreResumePlan, resumePrompt } from "./restoreResumePlan";
 import { runningSession, waitingSession } from "./runningSession";
 import { spawnClaude } from "./spawnClaude";
-import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 
 type RestoreBase = ReturnType<typeof restoreBase>;
 
@@ -12,10 +13,10 @@ export function resumeViaClaude(
 	id: string,
 	persisted: PersistedSession,
 	base: RestoreBase,
-	idle: boolean,
+	status: RestoreStatus,
 ): Session {
 	const mode = { design: persisted.design, auto: persisted.auto };
-	const plan = restoreResumePlan(persisted, idle);
+	const plan = restoreResumePlan(persisted, status);
 	const pty = spawnClaude(
 		hasTranscriptOnDisk(persisted)
 			? {

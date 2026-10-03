@@ -26,7 +26,7 @@ export function restoreSession(
 
 	if (isUpdate(persisted)) return updatedSession(id, persisted);
 
-	const idle = deriveRestoreStatus(persisted) !== "running";
+	const status = deriveRestoreStatus(persisted);
 
 	/* why: `assist backlog run` is a phase-orchestrating wrapper; a bare
 	 * `claude --resume` pty never exits on completion, so re-launch the wrapper
@@ -37,8 +37,10 @@ export function restoreSession(
 	 * and the command re-runs from its original prompt (a777). */
 	if (needsWrapperRelaunch(persisted)) {
 		const resumesWrittenConversation = hasTranscriptOnDisk(persisted);
-		const reattachesIdleConversation = idle && resumesWrittenConversation;
-		const plan = restoreResumePlan(persisted, reattachesIdleConversation);
+		const plan = restoreResumePlan(
+			persisted,
+			resumesWrittenConversation ? status : "running",
+		);
 		const pty = spawnPty(
 			resumesWrittenConversation
 				? assistResumeArgs(persisted)
@@ -52,5 +54,5 @@ export function restoreSession(
 			: runningSession(base, persisted, pty);
 	}
 
-	return restoreInteractiveSession(id, persisted, base, idle);
+	return restoreInteractiveSession(id, persisted, base, status);
 }

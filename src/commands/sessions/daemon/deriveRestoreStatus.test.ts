@@ -82,6 +82,23 @@ describe("deriveRestoreStatus", () => {
 		);
 	});
 
+	it("reopens asking when the last turn left an AskUserQuestion unanswered", () => {
+		findMock.mockReturnValue("/path/abc-123.jsonl");
+		readMock.mockReturnValue([
+			{ type: "user", message: { content: "draft it" } },
+			{
+				type: "assistant",
+				message: {
+					stop_reason: "tool_use",
+					content: [
+						{ type: "tool_use", id: "q1", name: "AskUserQuestion", input: {} },
+					],
+				},
+			},
+		]);
+		expect(deriveRestoreStatus(persisted())).toBe("asking");
+	});
+
 	it("converges from a transcript even when persisted status is absent (first restart after deploy)", () => {
 		findMock.mockReturnValue("/path/abc-123.jsonl");
 		readMock.mockReturnValue(midTurn());

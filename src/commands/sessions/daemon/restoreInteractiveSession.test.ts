@@ -42,7 +42,7 @@ function restore(persisted: PersistedSession) {
 		"1",
 		persisted,
 		restoreBase("1", persisted),
-		false,
+		"running",
 	);
 }
 
