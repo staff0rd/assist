@@ -1,3 +1,10 @@
+# [0.753.0](https://github.com/staff0rd/assist/compare/v0.752.0...v0.753.0) (2026-10-03)
+
+
+### Features
+
+* serve each web server on tailnet ([f3c291c](https://github.com/staff0rd/assist/commit/f3c291c7ceb82192838c43cf57695acbd58232a2))
+
 # [0.752.0](https://github.com/staff0rd/assist/compare/v0.751.0...v0.752.0) (2026-10-03)
 
 
