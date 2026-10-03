@@ -2,11 +2,15 @@ import { EventEmitter } from "node:events";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { startWebServer } from "../../shared/web";
 import { ensureDaemonRunning } from "./daemon/ensureDaemonRunning";
+import { ensureTailscaleServe } from "./nodes/ensureTailscaleServe";
 import { web } from "./web";
 
 vi.mock("../../shared/web", () => ({ startWebServer: vi.fn() }));
 vi.mock("./daemon/ensureDaemonRunning", () => ({
 	ensureDaemonRunning: vi.fn(() => Promise.resolve()),
+}));
+vi.mock("./nodes/ensureTailscaleServe", () => ({
+	ensureTailscaleServe: vi.fn(() => Promise.resolve("served")),
 }));
 vi.mock("./web/handleRequest", () => ({ handleRequest: vi.fn() }));
 vi.mock("./web/handleSocket", () => ({ handleSocket: vi.fn() }));
@@ -58,5 +62,20 @@ describe("web", () => {
 		await flush();
 
 		expect(startMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("serves its port on the tailnet without failing when that rejects", async () => {
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		vi.mocked(ensureTailscaleServe).mockRejectedValueOnce(
+			new Error("access denied"),
+		);
+
+		await expect(web({ port: "3110" })).resolves.toBeUndefined();
+		await flush();
+
+		expect(ensureTailscaleServe).toHaveBeenCalledWith(3110);
+		expect(errorSpy).toHaveBeenCalledWith(
+			expect.stringContaining("tailscale serve failed: access denied"),
+		);
 	});
 });

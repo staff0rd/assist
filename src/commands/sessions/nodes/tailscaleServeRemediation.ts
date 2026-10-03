@@ -10,5 +10,5 @@ export function tailscaleServeRemediation(
 	const servePort = port || "443";
 	return status === 502
 		? `tailscale serve on ${hostname} answered but nothing listens on 127.0.0.1:${servePort} behind it — is ${spec.name}'s web server running (project-switch webservers)?`
-		: `nothing serves https on ${servePort} on ${hostname} — run \`assist sessions nodes serve --port ${servePort}\` on ${spec.name}`;
+		: `nothing serves https on ${servePort} on ${hostname} — ${spec.name}'s web server runs tailscale serve when it starts: check the \`tailscale serve:\` line in its log (project-switch "View logs") and that sessions.tailscaleServe is not false there`;
 }

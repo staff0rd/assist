@@ -217,7 +217,7 @@ describe("diagnoseLink over Tailscale", () => {
 		);
 	});
 
-	it("names the tailscale serve command when the peer's port is not served", async () => {
+	it("points at the peer's web server log when its port is not served", async () => {
 		const result = await diagnoseLink(
 			TS_SPEC,
 			probes({ health: async () => Promise.reject(refused()) }),
@@ -225,7 +225,7 @@ describe("diagnoseLink over Tailscale", () => {
 		expect(result.hops.at(-1)).toMatchObject({
 			hop: "web",
 			remediation: expect.stringContaining(
-				"run `assist sessions nodes serve --port 3101` on pc-windows",
+				"nothing serves https on 3101 on pc.tail1234.ts.net — pc-windows's web server runs tailscale serve",
 			),
 		});
 	});

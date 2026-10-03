@@ -9,6 +9,7 @@ import { nextConfigHelp } from "./nextConfigHelp";
 import { sessionsConfigHelp } from "./sessionsConfigHelp";
 import { summarise } from "./summarise";
 import { web as sessionsWeb } from "./web";
+import { webConfigHelp } from "./webConfigHelp";
 
 export function registerSessions(program: Command): void {
 	const cmd = program
@@ -27,7 +28,7 @@ export function registerSessions(program: Command): void {
 		.action((options, command) =>
 			sessionsWeb({ ...options, open: command.optsWithGlobals().open }),
 		);
-	configHelp(webCmd, nextConfigHelp);
+	configHelp(webCmd, [...nextConfigHelp, ...webConfigHelp]);
 
 	cmd
 		.command("summarise")

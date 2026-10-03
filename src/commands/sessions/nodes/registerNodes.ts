@@ -5,7 +5,6 @@ import { listNodes } from "./listNodes";
 import { nodeLogs } from "./nodeLogs";
 import { nodesConfigHelp } from "./nodesConfigHelp";
 import { registerLinkCommand } from "./registerLinkCommand";
-import { serveNode } from "./serveNode";
 import { unlinkNode } from "./unlinkNode";
 
 export function registerNodes(sessions: Command): void {
@@ -21,14 +20,6 @@ export function registerNodes(sessions: Command): void {
 		.command("unlink <name>")
 		.description("Remove a linked node")
 		.action(unlinkNode);
-
-	cmd
-		.command("serve")
-		.description(
-			"Expose this node's web server on the tailnet with tailscale serve (idempotent) and print the command that links it",
-		)
-		.option("-p, --port <port>", "This node's web server port", "3100")
-		.action(serveNode);
 
 	cmd
 		.command("doctor [name]")
