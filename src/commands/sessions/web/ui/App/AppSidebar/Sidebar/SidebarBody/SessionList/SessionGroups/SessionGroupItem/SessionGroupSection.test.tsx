@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { SessionGroupSection } from "./SessionGroupSection";
 import { useInRepoGroupContext } from "../../../../../useInRepoGroupContext";
 import { TopBarLayoutContext } from "../../../../../../useTopBarLayoutContext";
@@ -11,14 +17,29 @@ function Probe() {
 	return <div data-testid="probe">{String(useInRepoGroupContext())}</div>;
 }
 
-function renderSection(topBar: boolean) {
+function renderSection(
+	topBar: boolean,
+	sessionIds = ["run", "review"],
+	onDismiss: (id: string) => void = () => {},
+) {
 	render(
 		<TopBarLayoutContext.Provider value={topBar}>
-			<SessionGroupSection label="assist" count={2}>
+			<SessionGroupSection
+				label="assist"
+				sessionIds={sessionIds}
+				onDismiss={onDismiss}
+			>
 				<Probe />
 			</SessionGroupSection>
 		</TopBarLayoutContext.Provider>,
 	);
+}
+
+function openCloseDialog() {
+	fireEvent.click(
+		screen.getByRole("button", { name: "Close all sessions in assist" }),
+	);
+	return screen.getByRole("dialog");
 }
 
 function header() {
@@ -51,5 +72,33 @@ describe("SessionGroupSection", () => {
 		renderSection(false);
 
 		expect(getComputedStyle(header()).position).not.toBe("sticky");
+	});
+
+	it("asks before closing, naming the group and how many sessions close", () => {
+		renderSection(false, ["run", "review", "fix"]);
+
+		const dialog = openCloseDialog();
+
+		expect(dialog.textContent).toContain("all 3 sessions in assist");
+	});
+
+	it("dismisses every session in the group, nested children included, on confirm", () => {
+		const onDismiss = vi.fn();
+		renderSection(false, ["run", "review", "fix"], onDismiss);
+
+		const dialog = openCloseDialog();
+		fireEvent.click(within(dialog).getByRole("button", { name: "Close 3" }));
+
+		expect(onDismiss.mock.calls).toEqual([["run"], ["review"], ["fix"]]);
+	});
+
+	it("dismisses nothing when the close is cancelled", () => {
+		const onDismiss = vi.fn();
+		renderSection(false, ["run", "review"], onDismiss);
+
+		const dialog = openCloseDialog();
+		fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
+
+		expect(onDismiss).not.toHaveBeenCalled();
 	});
 });
