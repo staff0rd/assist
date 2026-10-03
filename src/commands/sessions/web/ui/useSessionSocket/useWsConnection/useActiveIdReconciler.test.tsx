@@ -6,17 +6,7 @@ import { describe, expect, it } from "vitest";
 import { resolveActiveId } from "./resolveActiveId";
 import type { SessionInfo } from "../../types";
 import { useActiveIdReconciler } from "./useActiveIdReconciler";
-
-function session(id: string): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		cwd: "/repo",
-	};
-}
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 
 function renderReconciler(
 	route: string,
@@ -40,19 +30,33 @@ function renderReconciler(
 describe("useActiveIdReconciler", () => {
 	it("keeps activeId null on /backlog after a dismiss removes a card", () => {
 		const { result, rerender } = renderReconciler("/backlog", {
-			sessions: [session("a"), session("b"), session("c")],
+			sessions: [
+				makeSessionInfo({ id: "a", cwd: "/repo" }),
+				makeSessionInfo({ id: "b", cwd: "/repo" }),
+				makeSessionInfo({ id: "c", cwd: "/repo" }),
+			],
 			daemonActiveId: "b",
 		});
 		expect(result.current).toBeNull();
 
-		rerender({ sessions: [session("b"), session("c")], daemonActiveId: "b" });
+		rerender({
+			sessions: [
+				makeSessionInfo({ id: "b", cwd: "/repo" }),
+				makeSessionInfo({ id: "c", cwd: "/repo" }),
+			],
+			daemonActiveId: "b",
+		});
 
 		expect(result.current).toBeNull();
 	});
 
 	it("keeps activeId null on /usage", () => {
 		const { result } = renderReconciler("/usage", {
-			sessions: [session("a"), session("b"), session("c")],
+			sessions: [
+				makeSessionInfo({ id: "a", cwd: "/repo" }),
+				makeSessionInfo({ id: "b", cwd: "/repo" }),
+				makeSessionInfo({ id: "c", cwd: "/repo" }),
+			],
 			daemonActiveId: "b",
 		});
 		expect(result.current).toBeNull();
@@ -60,12 +64,22 @@ describe("useActiveIdReconciler", () => {
 
 	it("auto-selects the top card after a dismiss on the sessions route", () => {
 		const { result, rerender } = renderReconciler("/sessions", {
-			sessions: [session("a"), session("b"), session("c")],
+			sessions: [
+				makeSessionInfo({ id: "a", cwd: "/repo" }),
+				makeSessionInfo({ id: "b", cwd: "/repo" }),
+				makeSessionInfo({ id: "c", cwd: "/repo" }),
+			],
 			daemonActiveId: null,
 		});
 		expect(result.current).toBe("a");
 
-		rerender({ sessions: [session("b"), session("c")], daemonActiveId: null });
+		rerender({
+			sessions: [
+				makeSessionInfo({ id: "b", cwd: "/repo" }),
+				makeSessionInfo({ id: "c", cwd: "/repo" }),
+			],
+			daemonActiveId: null,
+		});
 
 		expect(result.current).toBe("b");
 	});
@@ -76,9 +90,9 @@ let goBacklog: () => void = () => {};
 
 function Harness() {
 	const [sessions, setSessions] = useState<SessionInfo[]>([
-		session("a"),
-		session("b"),
-		session("c"),
+		makeSessionInfo({ id: "a", cwd: "/repo" }),
+		makeSessionInfo({ id: "b", cwd: "/repo" }),
+		makeSessionInfo({ id: "c", cwd: "/repo" }),
 	]);
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const navigate = useNavigate();

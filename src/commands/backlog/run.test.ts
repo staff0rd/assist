@@ -7,6 +7,7 @@ import {
 	vi,
 } from "vitest";
 import { duplicateRunExitCode } from "./duplicateRunExitCode";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import type { BacklogItem, PlanPhase } from "./types";
 
 vi.mock("./executePhase", () => ({
@@ -66,21 +67,10 @@ const mockIsPausePending = isPausePending as unknown as MockInstance;
 const mockClearPause = clearPause as unknown as MockInstance;
 const mockAppendDaemonLog = appendDaemonLog as unknown as MockInstance;
 
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Test item",
-		acceptanceCriteria: ["AC1", "AC2"],
-		status: "todo",
-		starred: false,
-		plan: [
-			{ name: "Phase 1", tasks: [{ task: "Do something" }] },
-			{ name: "Phase 2", tasks: [{ task: "Do more" }] },
-		],
-		...overrides,
-	};
-}
+const plan: PlanPhase[] = [
+	{ name: "Phase 1", tasks: [{ task: "Do something" }] },
+	{ name: "Phase 2", tasks: [{ task: "Do more" }] },
+];
 
 function makePlan(item: BacklogItem): PlanPhase[] {
 	return item.plan ?? [];
@@ -114,7 +104,7 @@ describe("run", () => {
 
 	describe("when authored phases complete and review succeeds", () => {
 		it("should execute all authored phases then the review phase", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -131,7 +121,7 @@ describe("run", () => {
 		});
 
 		it("uses the selected harness for every authored phase and review", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -152,7 +142,7 @@ describe("run", () => {
 		});
 
 		it("should pass the review phase as the last element", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -171,7 +161,7 @@ describe("run", () => {
 		});
 
 		it("should ensure item is marked done after review completes", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -188,7 +178,7 @@ describe("run", () => {
 		});
 
 		it("should not fail if setStatus throws when marking done", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -210,7 +200,7 @@ describe("run", () => {
 
 	describe("when an authored phase fails", () => {
 		it("should not run the review phase", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -224,7 +214,7 @@ describe("run", () => {
 		});
 
 		it("should not mark done", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -241,7 +231,7 @@ describe("run", () => {
 
 	describe("when the review phase fails", () => {
 		it("should not mark done", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -261,7 +251,7 @@ describe("run", () => {
 
 	describe("when the review phase rewinds", () => {
 		it("should resume execution from the rewound phase instead of finishing", async () => {
-			const item = makeItem(); // [Phase 1, Phase 2]
+			const item = makeBacklogItem({ plan }); // [Phase 1, Phase 2]
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -283,7 +273,7 @@ describe("run", () => {
 		});
 
 		it("should mark done once a resumed run completes review cleanly", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -304,7 +294,7 @@ describe("run", () => {
 		});
 
 		it("should not mark done if a resumed phase fails", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -325,7 +315,7 @@ describe("run", () => {
 
 	describe("when the review phase exits without a completion signal", () => {
 		it("leaves the item in-progress and does not mark it done", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -344,7 +334,7 @@ describe("run", () => {
 		});
 
 		it("resolves false so an auto-chain does not advance to the next item", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -362,7 +352,7 @@ describe("run", () => {
 
 	describe("when Retry is chosen at the incomplete review prompt", () => {
 		it("re-runs the review phase without completing the item", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -384,7 +374,7 @@ describe("run", () => {
 		});
 
 		it("completes the item only once the re-run review passes", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -405,7 +395,7 @@ describe("run", () => {
 
 	describe("when resuming from a mid-plan phase", () => {
 		it("should skip completed phases", async () => {
-			const item = makeItem({ currentPhase: 2 });
+			const item = makeBacklogItem({ plan, currentPhase: 2 });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -424,7 +414,7 @@ describe("run", () => {
 
 	describe("when resuming at the review phase", () => {
 		it("should run only the review phase", async () => {
-			const item = makeItem({ currentPhase: 3 });
+			const item = makeBacklogItem({ plan, currentPhase: 3 });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -441,7 +431,7 @@ describe("run", () => {
 		});
 
 		it("counts the review phase in the resume progress line", async () => {
-			const item = makeItem({
+			const item = makeBacklogItem({
 				plan: [{ name: "Phase 1", tasks: [{ task: "t1" }] }],
 				currentPhase: 2,
 			});
@@ -463,7 +453,7 @@ describe("run", () => {
 
 	describe("when item has no plan", () => {
 		it("should synthesize a plan from acceptance criteria", async () => {
-			const item = makeItem({ plan: undefined });
+			const item = makeBacklogItem({ acceptanceCriteria: ["AC1", "AC2"] });
 			const synthesizedPlan: PlanPhase[] = [
 				{
 					name: "Implement",
@@ -491,7 +481,7 @@ describe("run", () => {
 
 	describe("when phases are added mid-run", () => {
 		it("runs a phase appended while the last authored phase executes", async () => {
-			const item = makeItem(); // [Phase 1, Phase 2]
+			const item = makeBacklogItem({ plan }); // [Phase 1, Phase 2]
 			const extended: PlanPhase[] = [
 				...makePlan(item),
 				{ name: "Phase 3", tasks: [{ task: "Added mid-run" }] },
@@ -520,7 +510,7 @@ describe("run", () => {
 		});
 
 		it("runs the review phase only after all phases including added ones", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			const extended: PlanPhase[] = [
 				...makePlan(item),
 				{ name: "Phase 3", tasks: [{ task: "Added mid-run" }] },
@@ -551,7 +541,7 @@ describe("run", () => {
 		});
 
 		it("runs a phase inserted ahead of the current phase without skipping it", async () => {
-			const item = makeItem({
+			const item = makeBacklogItem({
 				plan: [
 					{ name: "Phase 1", tasks: [{ task: "t1" }] },
 					{ name: "Phase 2", tasks: [{ task: "t2" }] },
@@ -590,7 +580,7 @@ describe("run", () => {
 
 	describe("when resuming an interrupted Claude session after a restart", () => {
 		it("resumes only the interrupted authored phase, not the review phase", async () => {
-			const item = makeItem({ currentPhase: 2 });
+			const item = makeBacklogItem({ plan, currentPhase: 2 });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -609,7 +599,7 @@ describe("run", () => {
 		});
 
 		it("does not resume the review phase when an authored phase was interrupted", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -626,7 +616,7 @@ describe("run", () => {
 		});
 
 		it("resumes the review phase when the restart interrupted it", async () => {
-			const item = makeItem({ currentPhase: 3 });
+			const item = makeBacklogItem({ plan, currentPhase: 3 });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -643,7 +633,7 @@ describe("run", () => {
 		});
 
 		it("does not resume a rewound phase", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -669,7 +659,7 @@ describe("run", () => {
 
 	describe("when auto-advance is turned off mid-phase", () => {
 		it("stops after the current phase without starting the next", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -684,7 +674,7 @@ describe("run", () => {
 		});
 
 		it("does not run the review phase", async () => {
-			const item = makeItem({
+			const item = makeBacklogItem({
 				plan: [{ name: "Phase 1", tasks: [{ task: "t1" }] }],
 			});
 			mockPrepareRun.mockReturnValue({
@@ -701,7 +691,7 @@ describe("run", () => {
 		});
 
 		it("leaves the item in-progress without marking it done", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -717,7 +707,7 @@ describe("run", () => {
 		});
 
 		it("exits cleanly (resolves true) so the process returns 0", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -730,7 +720,7 @@ describe("run", () => {
 		});
 
 		it("consumes the pause request once (one-shot)", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -748,7 +738,7 @@ describe("run", () => {
 
 	describe("stale pause file from an earlier run", () => {
 		it("discards a pre-existing pause file at run start so the run auto-advances", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -767,7 +757,7 @@ describe("run", () => {
 		});
 
 		it("does not clear or log when no pause file is present", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -786,7 +776,7 @@ describe("run", () => {
 		});
 
 		it("records the discard in the daemon log", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -809,7 +799,7 @@ describe("run", () => {
 
 	describe("pausing on a mid-run Continue-off toggle", () => {
 		it("records the pause in the daemon log", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -829,7 +819,7 @@ describe("run", () => {
 
 	describe("lock lifecycle", () => {
 		it("should acquire lock before phases and release after completion", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -847,7 +837,7 @@ describe("run", () => {
 		});
 
 		it("should release lock when an authored phase fails", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),
@@ -862,7 +852,7 @@ describe("run", () => {
 		});
 
 		it("should release lock when the review phase fails", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ id: 1, plan });
 			mockPrepareRun.mockReturnValue({
 				item,
 				plan: makePlan(item),

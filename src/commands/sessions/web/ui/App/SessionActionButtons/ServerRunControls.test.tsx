@@ -8,7 +8,7 @@ import {
 	waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { SessionInfo } from "../../types";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { ServerActionsContext } from "../useServerActionsContext";
 import { useServerRuns } from "../useServerRuns";
 import { ServerRunControls } from "./ServerRunControls";
@@ -17,16 +17,15 @@ vi.mock("../useServerRuns", () => ({ useServerRuns: vi.fn() }));
 
 afterEach(cleanup);
 
-const servingSession = {
+const servingSession = makeSessionInfo({
 	id: "daemon-1",
 	name: "web",
 	commandType: "run",
 	runName: "web",
 	server: true,
 	cwd: "/repo",
-	startedAt: 0,
 	status: "running",
-} as SessionInfo;
+});
 
 function renderControls(runNames: string[]) {
 	vi.mocked(useServerRuns).mockReturnValue(runNames.map((name) => ({ name })));

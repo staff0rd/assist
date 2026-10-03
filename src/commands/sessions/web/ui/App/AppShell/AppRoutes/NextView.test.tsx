@@ -16,6 +16,7 @@ import type {
 	NextResponse,
 	NextScope,
 } from "../../../../next/types";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import type { SessionInfo } from "../../../types";
 import { RepoSelectionContext } from "../../../useRepoSelectionContext";
 import { SessionLaunchContext } from "../../../useSessionLaunchContext";
@@ -254,22 +255,11 @@ describe("NextView Start session", () => {
 });
 
 describe("NextView session links", () => {
-	function reviewSession(
-		id: string,
-		number: number,
-		overrides: Partial<SessionInfo> = {},
-	): SessionInfo {
-		return {
-			id,
-			name: id,
-			commandType: "assist",
-			status: "running",
-			startedAt: 0,
-			assistArgs: ["review", String(number)],
-			remoteOrigin: "github.com/o/r",
-			...overrides,
-		};
-	}
+	const onRepo = {
+		commandType: "assist",
+		status: "running",
+		remoteOrigin: "github.com/o/r",
+	} satisfies Partial<SessionInfo>;
 
 	it("links PR recommendations to the local sessions reviewing them", async () => {
 		const selectSession = vi.fn();
@@ -278,9 +268,14 @@ describe("NextView session links", () => {
 			vi.fn(),
 			undefined,
 			[
-				reviewSession("7", 1),
-				reviewSession("8", 2),
-				reviewSession("9", 2, { node: "peer" }),
+				makeSessionInfo({ ...onRepo, id: "7", assistArgs: ["review", "1"] }),
+				makeSessionInfo({ ...onRepo, id: "8", assistArgs: ["review", "2"] }),
+				makeSessionInfo({
+					...onRepo,
+					id: "9",
+					assistArgs: ["review", "2"],
+					node: "peer",
+				}),
 			],
 			selectSession,
 		);

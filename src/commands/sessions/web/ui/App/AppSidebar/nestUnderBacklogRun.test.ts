@@ -1,33 +1,20 @@
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { nestUnderBacklogRun } from "./nestUnderBacklogRun";
-import type { SessionInfo } from "../../types";
 
 const group = { origin: "host/org/assist", clone: "/git/assist" };
-
-function session(id: string, cwd: string): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "assist",
-		status: "running",
-		startedAt: 0,
-		cwd,
-		repoGroup: group,
-	};
-}
-
-function run(id: string, cwd: string): SessionInfo {
-	return {
-		...session(id, cwd),
-		activity: { kind: "backlog", startedAt: 0 },
-	};
-}
+const backlog = { kind: "backlog" as const, startedAt: 0 };
 
 describe("nestUnderBacklogRun", () => {
 	it("nests a session sharing a worktree cwd under the backlog run", () => {
 		const sessions = [
-			run("run", "/git/assist-2"),
-			session("review", "/git/assist-2"),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup: group }),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -37,8 +24,13 @@ describe("nestUnderBacklogRun", () => {
 
 	it("nests a child listed before its run beneath it", () => {
 		const sessions = [
-			session("review", "/git/assist-2"),
-			run("run", "/git/assist-2"),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup: group }),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -48,8 +40,13 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps sessions in the main clone un-nested", () => {
 		const sessions = [
-			run("run", "/git/assist"),
-			session("review", "/git/assist"),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist", repoGroup: group }),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -60,8 +57,8 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps sessions without a repo group un-nested", () => {
 		const sessions = [
-			{ ...run("run", "/git/assist-2"), repoGroup: undefined },
-			{ ...session("review", "/git/assist-2"), repoGroup: undefined },
+			makeSessionInfo({ id: "run", cwd: "/git/assist-2", activity: backlog }),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2" }),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -72,8 +69,8 @@ describe("nestUnderBacklogRun", () => {
 
 	it("leaves an orphaned child at the top level when no run shares its tree", () => {
 		const sessions = [
-			session("review", "/git/assist-2"),
-			session("prompt", "/git/assist-3"),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup: group }),
+			makeSessionInfo({ id: "prompt", cwd: "/git/assist-3", repoGroup: group }),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -84,10 +81,19 @@ describe("nestUnderBacklogRun", () => {
 
 	it("nests every non-backlog session in the tree, in their original order", () => {
 		const sessions = [
-			run("run", "/git/assist-2"),
-			session("review", "/git/assist-2"),
-			session("comments", "/git/assist-2"),
-			session("prompt", "/git/assist-2"),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup: group }),
+			makeSessionInfo({
+				id: "comments",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+			}),
+			makeSessionInfo({ id: "prompt", cwd: "/git/assist-2", repoGroup: group }),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -100,9 +106,19 @@ describe("nestUnderBacklogRun", () => {
 
 	it("attaches children to the first run when two runs share a tree", () => {
 		const sessions = [
-			run("first", "/git/assist-2"),
-			run("second", "/git/assist-2"),
-			session("review", "/git/assist-2"),
+			makeSessionInfo({
+				id: "first",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "second",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup: group }),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -113,8 +129,18 @@ describe("nestUnderBacklogRun", () => {
 
 	it("nests a run launched from a clone-hosted card under that card", () => {
 		const sessions = [
-			run("run", "/git/assist"),
-			{ ...session("dev", "/git/assist"), launchedFrom: "run" },
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -124,8 +150,13 @@ describe("nestUnderBacklogRun", () => {
 
 	it("nests under the launching card even when it is not a backlog run", () => {
 		const sessions = [
-			session("review", "/git/assist"),
-			{ ...session("dev", "/git/assist"), launchedFrom: "review" },
+			makeSessionInfo({ id: "review", cwd: "/git/assist", repoGroup: group }),
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "review",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -135,9 +166,23 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps an unrelated session sharing the clone cwd at the top level", () => {
 		const sessions = [
-			run("run", "/git/assist"),
-			{ ...session("dev", "/git/assist"), launchedFrom: "run" },
-			session("unrelated", "/git/assist"),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
+			makeSessionInfo({
+				id: "unrelated",
+				cwd: "/git/assist",
+				repoGroup: group,
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -147,7 +192,15 @@ describe("nestUnderBacklogRun", () => {
 	});
 
 	it("keeps a run with no launchedFrom at the top level", () => {
-		const sessions = [run("run", "/git/assist"), session("dev", "/git/assist")];
+		const sessions = [
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "dev", cwd: "/git/assist", repoGroup: group }),
+		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
 			{ session: sessions[0], children: [] },
@@ -157,7 +210,12 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps a run whose launching card is gone at the top level", () => {
 		const sessions = [
-			{ ...session("dev", "/git/assist"), launchedFrom: "dismissed" },
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "dismissed",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -167,8 +225,18 @@ describe("nestUnderBacklogRun", () => {
 
 	it("nests a launched run under a card listed after it", () => {
 		const sessions = [
-			{ ...session("dev", "/git/assist"), launchedFrom: "run" },
-			run("run", "/git/assist"),
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -178,9 +246,24 @@ describe("nestUnderBacklogRun", () => {
 
 	it("collapses a launch chain onto the root card's row", () => {
 		const sessions = [
-			run("run", "/git/assist"),
-			{ ...session("review", "/git/assist"), launchedFrom: "run" },
-			{ ...session("dev", "/git/assist"), launchedFrom: "review" },
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "review",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "review",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -190,9 +273,19 @@ describe("nestUnderBacklogRun", () => {
 
 	it("prefers the launching card over the run sharing the cwd", () => {
 		const sessions = [
-			run("run", "/git/assist-2"),
-			session("review", "/git/assist-2"),
-			{ ...session("dev", "/git/assist-2"), launchedFrom: "review" },
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup: group }),
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				launchedFrom: "review",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -202,8 +295,18 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps both sessions at the top level when launchedFrom forms a cycle", () => {
 		const sessions = [
-			{ ...session("a", "/git/assist"), launchedFrom: "b" },
-			{ ...session("b", "/git/assist"), launchedFrom: "a" },
+			makeSessionInfo({
+				id: "a",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "b",
+			}),
+			makeSessionInfo({
+				id: "b",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "a",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -214,10 +317,29 @@ describe("nestUnderBacklogRun", () => {
 
 	it("nests a review and its address-comments run under the clone-hosted PR card", () => {
 		const sessions = [
-			run("run", "/git/assist"),
-			{ ...session("review", "/git/assist"), launchedFrom: "run" },
-			{ ...session("comments", "/git/assist"), launchedFrom: "run" },
-			session("unrelated", "/git/assist"),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "review",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
+			makeSessionInfo({
+				id: "comments",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
+			makeSessionInfo({
+				id: "unrelated",
+				cwd: "/git/assist",
+				repoGroup: group,
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -228,8 +350,18 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps a watcher in the clone at the top level when a worktree run launched it", () => {
 		const sessions = [
-			run("run", "/git/assist-2"),
-			{ ...session("watch", "/git/assist"), launchedFrom: "run" },
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "watch",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -240,7 +372,12 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps the watcher in place once the run that launched it is gone", () => {
 		const sessions = [
-			{ ...session("watch", "/git/assist"), launchedFrom: "run" },
+			makeSessionInfo({
+				id: "watch",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([
@@ -250,10 +387,28 @@ describe("nestUnderBacklogRun", () => {
 
 	it("keeps sessions in sibling worktrees on separate rows", () => {
 		const sessions = [
-			run("run-a", "/git/assist-2"),
-			run("run-b", "/git/assist-3"),
-			session("review-b", "/git/assist-3"),
-			session("review-a", "/git/assist-2"),
+			makeSessionInfo({
+				id: "run-a",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "run-b",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "review-b",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+			}),
+			makeSessionInfo({
+				id: "review-a",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+			}),
 		];
 
 		expect(nestUnderBacklogRun(sessions)).toEqual([

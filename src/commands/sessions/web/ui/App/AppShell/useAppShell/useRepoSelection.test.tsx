@@ -3,6 +3,7 @@ import { act, renderHook } from "@testing-library/react";
 import { useCallback, useState } from "react";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { resolveActiveId } from "../../../useSessionSocket/useWsConnection/resolveActiveId";
 import type { HistoricalSession, SessionInfo } from "../../../types";
 import type { NodeSelection } from "../../../useNodeSelection";
@@ -22,27 +23,19 @@ const clone = "/repos/live";
 const group = { origin: "host/org/live", clone };
 const otherClone = "/repos/other";
 
-function session(
-	id: string,
-	cwd: string,
-	repoGroup?: typeof group,
-): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		cwd,
-		...(repoGroup && { repoGroup }),
-	};
-}
-
-const sessions: SessionInfo[] = [
-	session("clone-card", clone, group),
-	session("feature", "/repos/live/.worktrees/feature", group),
-	session("fix", "/repos/live/.worktrees/fix", group),
-	session("other", otherClone),
+const sessions = [
+	makeSessionInfo({ id: "clone-card", cwd: clone, repoGroup: group }),
+	makeSessionInfo({
+		id: "feature",
+		cwd: "/repos/live/.worktrees/feature",
+		repoGroup: group,
+	}),
+	makeSessionInfo({
+		id: "fix",
+		cwd: "/repos/live/.worktrees/fix",
+		repoGroup: group,
+	}),
+	makeSessionInfo({ id: "other", cwd: otherClone }),
 ];
 
 const history: HistoricalSession[] = [

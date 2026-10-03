@@ -11,6 +11,7 @@ import {
 	useDiffPanels,
 } from "../../../../../../useDiffPanels";
 import { useGitStatusCounts } from "../../../../../../GitStatusCounts/useGitStatusCounts";
+import { makeSessionInfo } from "../../../../../../../../../../../test/mothers/makeSessionInfo";
 
 vi.mock("../../../../../../GitStatusCounts/useGitStatusCounts", () => ({
 	useGitStatusCounts: vi.fn(),
@@ -32,16 +33,6 @@ function openedPanel(): DiffPanel | null {
 	return text === "none" ? null : (JSON.parse(text) as DiffPanel);
 }
 
-const session: SessionInfo = {
-	id: "card-1",
-	name: "my session",
-	commandType: "claude",
-	status: "running",
-	startedAt: 0,
-	cwd: "/git/repo",
-	claudeSessionId: "sess-1",
-};
-
 function renderDiff(
 	counts: ItemStatusCounts | null,
 	overrides: Partial<SessionInfo> = {},
@@ -50,7 +41,14 @@ function renderDiff(
 	render(
 		<MemoryRouter>
 			<DiffPanelsProvider sessionIds={["card-1"]} onActivateSession={() => {}}>
-				<SessionTopBarDiff session={{ ...session, ...overrides }} />
+				<SessionTopBarDiff
+					session={makeSessionInfo({
+						id: "card-1",
+						cwd: "/git/repo",
+						claudeSessionId: "sess-1",
+						...overrides,
+					})}
+				/>
 				<PanelProbe />
 			</DiffPanelsProvider>
 		</MemoryRouter>,

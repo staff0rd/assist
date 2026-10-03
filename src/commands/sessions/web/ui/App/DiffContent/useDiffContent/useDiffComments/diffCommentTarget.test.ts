@@ -1,17 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 import { diffCommentTarget } from "./diffCommentTarget";
-import type { SessionInfo } from "../../../../types";
 
-const sessions = [
-	{
-		id: "daemon-1",
-		claudeSessionId: "claude-1",
-		name: "one",
-		commandType: "claude",
-		startedAt: 0,
-		status: "running",
-	},
-] as SessionInfo[];
+const live = { id: "daemon-1", claudeSessionId: "claude-1" };
+const sessions = [makeSessionInfo({ ...live, status: "running" })];
 
 describe("diffCommentTarget", () => {
 	it("resolves the claude session id to the live daemon session", () => {
@@ -35,7 +27,7 @@ describe("diffCommentTarget", () => {
 	});
 
 	it("rejects a session that has stopped", () => {
-		const stopped = [{ ...sessions[0], status: "stopped" }] as SessionInfo[];
+		const stopped = [makeSessionInfo({ ...live, status: "stopped" })];
 
 		const { session, unavailable } = diffCommentTarget(stopped, "claude-1");
 
@@ -44,7 +36,9 @@ describe("diffCommentTarget", () => {
 	});
 
 	it("rejects a session that is closing", () => {
-		const closing = [{ ...sessions[0], closing: true }] as SessionInfo[];
+		const closing = [
+			makeSessionInfo({ ...live, status: "running", closing: true }),
+		];
 
 		const { session, unavailable } = diffCommentTarget(closing, "claude-1");
 

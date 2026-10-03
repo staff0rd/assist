@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { HistoricalSession } from "../../sessions/shared/parseSessionFile";
-import type { BacklogItem } from "../types";
+import { makeBacklogItem } from "../../../test/mothers/makeBacklogItem";
 import { itemConversations } from "./itemConversations";
 
 const lookupSessionsById = vi.hoisted(() => vi.fn());
@@ -8,18 +8,6 @@ const lookupSessionsById = vi.hoisted(() => vi.fn());
 vi.mock("../../sessions/shared/lookupSessionsById", () => ({
 	lookupSessionsById,
 }));
-
-function item(overrides: Partial<BacklogItem>): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "An item",
-		acceptanceCriteria: [],
-		status: "todo",
-		starred: false,
-		...overrides,
-	};
-}
 
 function transcript(
 	overrides: Partial<HistoricalSession> & { sessionId: string },
@@ -41,13 +29,13 @@ beforeEach(() => {
 
 describe("itemConversations", () => {
 	it("returns nothing when the item has no conversation ids", async () => {
-		expect(await itemConversations(item({}))).toEqual([]);
+		expect(await itemConversations(makeBacklogItem())).toEqual([]);
 		expect(lookupSessionsById).not.toHaveBeenCalled();
 	});
 
 	it("merges session git-refs with phase sessions, deduped and newest first", async () => {
 		const conversations = await itemConversations(
-			item({
+			makeBacklogItem({
 				gitRefs: [
 					{
 						kind: "session",
@@ -106,7 +94,7 @@ describe("itemConversations", () => {
 		);
 
 		const conversations = await itemConversations(
-			item({
+			makeBacklogItem({
 				gitRefs: [
 					{
 						kind: "session",
@@ -146,7 +134,7 @@ describe("itemConversations", () => {
 
 	it("keeps an id whose transcript is gone, leaving the cwd unresolved", async () => {
 		const conversations = await itemConversations(
-			item({
+			makeBacklogItem({
 				phaseSessions: [
 					{
 						phaseIdx: 0,

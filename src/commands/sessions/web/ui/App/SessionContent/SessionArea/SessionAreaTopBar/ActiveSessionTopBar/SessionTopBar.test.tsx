@@ -11,6 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SessionTopBar } from "./SessionTopBar";
 import type { SessionInfo } from "../../../../../types";
 import { StarredSessionsProvider } from "../../../../useStarredSessions";
+import { makeSessionInfo } from "../../../../../../../../../test/mothers/makeSessionInfo";
 
 let panelWidth = 1200;
 let identityWidth = 0;
@@ -46,19 +47,6 @@ afterEach(() => {
 	Reflect.deleteProperty(navigator, "clipboard");
 });
 
-function session(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		id: "1",
-		name: "my session",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		runningMs: 90_000,
-		runningSince: null,
-		...overrides,
-	};
-}
-
 function renderTopBar(
 	info: SessionInfo,
 	handlers: {
@@ -87,7 +75,8 @@ function renderTopBar(
 describe("SessionTopBar", () => {
 	it("shows the backlog phase name, elapsed and the restored indicator", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
+				runningMs: 90_000,
 				subtitle: "a subtitle",
 				restored: true,
 				activity: {
@@ -105,7 +94,7 @@ describe("SessionTopBar", () => {
 
 	it("falls back to the subtitle once the backlog session is done", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				status: "done",
 				subtitle: "a subtitle",
 				activity: {
@@ -122,9 +111,10 @@ describe("SessionTopBar", () => {
 
 	it("puts the status and restored state on the id line", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				id: "7",
 				status: "waiting",
+				runningMs: 90_000,
 				restored: true,
 				claudeSessionId: "conv-1",
 			}),
@@ -138,13 +128,13 @@ describe("SessionTopBar", () => {
 	});
 
 	it("says not restored when the session could not be resumed", () => {
-		renderTopBar(session({ restored: false }));
+		renderTopBar(makeSessionInfo({ restored: false }));
 
 		expect(screen.getByText("not restored")).toBeTruthy();
 	});
 
 	it("omits the restored indicator when the session has no restore state", () => {
-		renderTopBar(session());
+		renderTopBar(makeSessionInfo());
 
 		expect(screen.queryByText("restored")).toBeNull();
 		expect(screen.queryByText("not restored")).toBeNull();
@@ -152,7 +142,7 @@ describe("SessionTopBar", () => {
 
 	it("shows the story name alongside the phase", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				subtitle: "a subtitle",
 				activity: {
 					kind: "backlog",
@@ -169,7 +159,7 @@ describe("SessionTopBar", () => {
 
 	it("shows the assist session id and the Claude Code conversation id", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				id: "7",
 				claudeSessionId: "2f1c0b8e-dead-beef-cafe-000000000001",
 			}),
@@ -188,7 +178,7 @@ describe("SessionTopBar", () => {
 	});
 
 	it("leads the id line with the repo the session works in", () => {
-		renderTopBar(session({ id: "7", cwd: "/home/me/assist" }));
+		renderTopBar(makeSessionInfo({ id: "7", cwd: "/home/me/assist" }));
 
 		const repo = screen.getByText("assist");
 		expect(repo.getAttribute("title")).toBe("/home/me/assist");
@@ -200,7 +190,7 @@ describe("SessionTopBar", () => {
 
 	it("omits the repo for a session that is not repo scoped", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				commandType: "assist",
 				assistArgs: ["update"],
 				cwd: "/home/me/assist",
@@ -211,7 +201,7 @@ describe("SessionTopBar", () => {
 	});
 
 	it("omits the conversation id before the harness reports one", () => {
-		renderTopBar(session({ id: "7" }));
+		renderTopBar(makeSessionInfo({ id: "7" }));
 
 		expect(screen.getByText("#7")).toBeTruthy();
 		expect(screen.queryByTitle(/Claude Code conversation/)).toBeNull();
@@ -219,7 +209,7 @@ describe("SessionTopBar", () => {
 
 	it("links the backlog item ahead of the story name", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				cwd: "/git/repo",
 				activity: {
 					kind: "backlog",
@@ -244,7 +234,7 @@ describe("SessionTopBar", () => {
 
 	it("truncates the story name rather than wrapping it", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				title:
 					"A story name long enough that it would never fit beside the bar's buttons",
 			}),
@@ -262,7 +252,7 @@ describe("SessionTopBar", () => {
 
 	it("stacks the ids above the story name above the phase", () => {
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				id: "7",
 				claudeSessionId: "conv-1",
 				subtitle: "Phase 3: label the actions",
@@ -300,7 +290,7 @@ describe("SessionTopBar identity", () => {
 	it("never truncates the worktree name, however narrow the panel", () => {
 		panelWidth = 320;
 		identityWidth = 900;
-		renderTopBar(session({ cwd: "/home/me/a-long-worktree-name" }));
+		renderTopBar(makeSessionInfo({ cwd: "/home/me/a-long-worktree-name" }));
 
 		const style = getComputedStyle(screen.getByText("a-long-worktree-name"));
 		expect(style.whiteSpace).toBe("nowrap");
@@ -312,7 +302,7 @@ describe("SessionTopBar identity", () => {
 	it("floors the identity column at the width the id line needs", () => {
 		panelWidth = 1200;
 		identityWidth = 420;
-		renderTopBar(session({ id: "7", cwd: "/git/repo" }));
+		renderTopBar(makeSessionInfo({ id: "7", cwd: "/git/repo" }));
 
 		const column = screen.getByText("#7").parentElement?.parentElement;
 		expect(getComputedStyle(column as Element).minWidth).toBe("420px");
@@ -322,7 +312,7 @@ describe("SessionTopBar identity", () => {
 		panelWidth = 1200;
 		identityWidth = 420;
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				id: "7",
 				title:
 					"A story name long enough that its max-content width would dwarf the controls",
@@ -338,7 +328,7 @@ describe("SessionTopBar identity", () => {
 	it("keeps the conversation id whole while identity has the room", () => {
 		panelWidth = 1200;
 		identityWidth = 420;
-		renderTopBar(session({ claudeSessionId: conversationId }));
+		renderTopBar(makeSessionInfo({ claudeSessionId: conversationId }));
 
 		expect(screen.getByText(conversationId)).toBeTruthy();
 	});
@@ -346,7 +336,7 @@ describe("SessionTopBar identity", () => {
 	it("collapses the conversation id to a copy affordance when space is tight", () => {
 		panelWidth = 420;
 		identityWidth = 900;
-		renderTopBar(session({ claudeSessionId: conversationId }));
+		renderTopBar(makeSessionInfo({ claudeSessionId: conversationId }));
 
 		expect(screen.queryByText(conversationId)).toBeNull();
 		const collapsed = screen.getByText("2f1c0b8e");
@@ -360,7 +350,7 @@ describe("SessionTopBar identity", () => {
 		panelWidth = 420;
 		identityWidth = 900;
 		const writeText = stubClipboard();
-		renderTopBar(session({ claudeSessionId: conversationId }));
+		renderTopBar(makeSessionInfo({ claudeSessionId: conversationId }));
 
 		fireEvent.click(screen.getByText("2f1c0b8e"));
 
@@ -375,7 +365,7 @@ describe("SessionTopBar control cluster", () => {
 	it("wraps its controls rather than shrinking identity", () => {
 		panelWidth = 700;
 		identityWidth = 900;
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry: () => {},
 		});
@@ -394,7 +384,7 @@ describe("SessionTopBar control cluster", () => {
 		panelWidth = 700;
 		identityWidth = 900;
 		const onRetry = vi.fn();
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry,
 		});
@@ -413,7 +403,7 @@ describe("SessionTopBar control cluster", () => {
 	it("never lets the bar scroll sideways", () => {
 		panelWidth = 320;
 		identityWidth = 900;
-		renderTopBar(session({ cwd: "/git/repo" }));
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }));
 
 		const bar =
 			screen.getByText("#1").parentElement?.parentElement?.parentElement;
@@ -423,7 +413,7 @@ describe("SessionTopBar control cluster", () => {
 
 describe("SessionTopBar actions", () => {
 	it("carries the session's actions", () => {
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry: () => {},
 		});
@@ -438,7 +428,7 @@ describe("SessionTopBar actions", () => {
 
 	it("invokes the handler behind an action", () => {
 		const onRetry = vi.fn();
-		renderTopBar(session(), { onRetry });
+		renderTopBar(makeSessionInfo(), { onRetry });
 
 		fireEvent.click(screen.getByTitle("Retry session 1"));
 
@@ -446,19 +436,21 @@ describe("SessionTopBar actions", () => {
 	});
 
 	it("withholds restart from a stopped session so the card can offer it", () => {
-		renderTopBar(session({ status: "stopped" }), { onRestart: () => {} });
+		renderTopBar(makeSessionInfo({ status: "stopped" }), {
+			onRestart: () => {},
+		});
 
 		expect(screen.queryByTitle("Restart session 1")).toBeNull();
 	});
 
 	it("closes a running session with the card's dismiss button", () => {
-		renderTopBar(session({ status: "waiting" }));
+		renderTopBar(makeSessionInfo({ status: "waiting" }));
 
 		expect(screen.queryByTitle("Dismiss session 1")).not.toBeNull();
 	});
 
 	it("holds the dismiss button at the bar's right edge", () => {
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry: () => {},
 		});
@@ -470,14 +462,14 @@ describe("SessionTopBar actions", () => {
 
 	it("keeps the dismiss button when the bar collapses its labels", () => {
 		panelWidth = 400;
-		renderTopBar(session());
+		renderTopBar(makeSessionInfo());
 
 		expect(screen.getByTitle("Dismiss session 1")).toBeTruthy();
 	});
 
 	it("dismisses a done session without confirming, like the card", () => {
 		const onDismiss = vi.fn();
-		renderTopBar(session({ status: "done" }), { onDismiss });
+		renderTopBar(makeSessionInfo({ status: "done" }), { onDismiss });
 
 		fireEvent.click(screen.getByTitle("Dismiss session 1"));
 
@@ -487,7 +479,7 @@ describe("SessionTopBar actions", () => {
 
 	it("confirms before ending a running session", () => {
 		const onDismiss = vi.fn();
-		renderTopBar(session(), { onDismiss });
+		renderTopBar(makeSessionInfo(), { onDismiss });
 
 		fireEvent.click(screen.getByTitle("Dismiss session 1"));
 
@@ -499,13 +491,13 @@ describe("SessionTopBar actions", () => {
 	});
 
 	it("offers no dismiss once the session is stopped", () => {
-		renderTopBar(session({ status: "stopped" }));
+		renderTopBar(makeSessionInfo({ status: "stopped" }));
 
 		expect(screen.queryByTitle("Dismiss session 1")).toBeNull();
 	});
 
 	it("offers no dismiss while the session is closing", () => {
-		renderTopBar(session({ closing: true }));
+		renderTopBar(makeSessionInfo({ closing: true }));
 
 		expect(screen.queryByTitle("Dismiss session 1")).toBeNull();
 	});
@@ -529,7 +521,7 @@ describe("SessionTopBar review synthesis", () => {
 	it("carries the review button for a review session", async () => {
 		stubSynthesis();
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				commandType: "assist",
 				assistArgs: ["review-pr-comments", "12"],
 				cwd: "/git/repo",
@@ -541,7 +533,7 @@ describe("SessionTopBar review synthesis", () => {
 
 	it("omits the review button for a session that is not a review", async () => {
 		stubSynthesis();
-		renderTopBar(session({ cwd: "/git/repo" }));
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }));
 
 		expect(screen.queryByText("Findings")).toBeNull();
 		await waitFor(() => expect(fetch).toHaveBeenCalled());
@@ -553,7 +545,7 @@ describe("SessionTopBar toggles", () => {
 	it("carries the backlog session's continue switch", () => {
 		const onSetAutoAdvance = vi.fn();
 		renderTopBar(
-			session({
+			makeSessionInfo({
 				activity: { kind: "backlog", startedAt: 0, phase: 1, totalPhases: 3 },
 			}),
 			{ onSetAutoAdvance },
@@ -567,7 +559,7 @@ describe("SessionTopBar toggles", () => {
 	});
 
 	it("offers no switch for a session with nothing to advance", () => {
-		renderTopBar(session());
+		renderTopBar(makeSessionInfo());
 
 		expect(screen.queryByRole("switch")).toBeNull();
 	});
@@ -575,7 +567,7 @@ describe("SessionTopBar toggles", () => {
 
 describe("SessionTopBar action labels", () => {
 	it("labels its actions when the panel is wide", () => {
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry: () => {},
 		});
@@ -588,7 +580,7 @@ describe("SessionTopBar action labels", () => {
 
 	it("collapses to icons when the panel is narrow", () => {
 		panelWidth = 400;
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry: () => {},
 		});
@@ -602,7 +594,7 @@ describe("SessionTopBar action labels", () => {
 	it("collapses on the space left after identity, not the bar width", () => {
 		panelWidth = 900;
 		identityWidth = 500;
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry: () => {},
 		});
@@ -614,7 +606,7 @@ describe("SessionTopBar action labels", () => {
 	it("keeps its labels at that same bar width when identity is short", () => {
 		panelWidth = 900;
 		identityWidth = 200;
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry: () => {},
 		});
@@ -625,7 +617,7 @@ describe("SessionTopBar action labels", () => {
 	it("keeps every action reachable once collapsed", () => {
 		panelWidth = 400;
 		const onRetry = vi.fn();
-		renderTopBar(session({ cwd: "/git/repo" }), {
+		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},
 			onRetry,
 		});

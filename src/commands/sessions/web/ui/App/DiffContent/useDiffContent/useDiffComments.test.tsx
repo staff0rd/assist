@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { SessionInfo } from "../../../types";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { useDiffComments } from "./useDiffComments";
 
 afterEach(cleanup);
@@ -9,15 +9,13 @@ beforeEach(() => vi.useFakeTimers());
 afterEach(() => vi.useRealTimers());
 
 const sessions = [
-	{
+	makeSessionInfo({
 		id: "daemon-1",
 		claudeSessionId: "claude-1",
 		name: "one",
-		commandType: "claude",
-		startedAt: 0,
 		status: "running",
-	},
-] as SessionInfo[];
+	}),
+];
 
 const comment = {
 	path: "a.ts",

@@ -27,7 +27,7 @@ import { findPhaseBySessionId } from "../../shared/db/findPhaseBySessionId";
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { appendComment } from "./appendComment";
 import { reconcileResumePhase } from "./reconcileResumePhase";
-import type { BacklogItem } from "./types";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import { updateCurrentPhase } from "./updateCurrentPhase";
 
 const mockFindPhase = findPhaseBySessionId as unknown as MockInstance;
@@ -37,23 +37,18 @@ const mockUpdateCurrentPhase = updateCurrentPhase as unknown as MockInstance;
 
 const orm = {} as never;
 
-const item = (overrides: Partial<BacklogItem> = {}): BacklogItem => ({
-	id: 7,
-	name: "Test item",
-	acceptanceCriteria: [],
-	starred: false,
-	type: "story",
-	status: "in-progress",
-	...overrides,
-});
-
 describe("reconcileResumePhase", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 	});
 
 	it("returns the DB start phase unchanged when not resuming", async () => {
-		const result = await reconcileResumePhase(orm, item(), 1, undefined);
+		const result = await reconcileResumePhase(
+			orm,
+			makeBacklogItem({ id: 7, status: "in-progress" }),
+			1,
+			undefined,
+		);
 
 		expect(result).toBe(1);
 		expect(mockFindPhase).not.toHaveBeenCalled();
@@ -63,7 +58,12 @@ describe("reconcileResumePhase", () => {
 	it("returns the DB start phase unchanged when the session is unknown", async () => {
 		mockFindPhase.mockResolvedValue(undefined);
 
-		const result = await reconcileResumePhase(orm, item(), 1, "sess-abc");
+		const result = await reconcileResumePhase(
+			orm,
+			makeBacklogItem({ id: 7, status: "in-progress" }),
+			1,
+			"sess-abc",
+		);
 
 		expect(result).toBe(1);
 		expect(mockUpdateCurrentPhase).not.toHaveBeenCalled();
@@ -73,7 +73,12 @@ describe("reconcileResumePhase", () => {
 	it("returns the DB start phase unchanged when session matches the phase", async () => {
 		mockFindPhase.mockResolvedValue(1);
 
-		const result = await reconcileResumePhase(orm, item(), 1, "sess-abc");
+		const result = await reconcileResumePhase(
+			orm,
+			makeBacklogItem({ id: 7, status: "in-progress" }),
+			1,
+			"sess-abc",
+		);
 
 		expect(result).toBe(1);
 		expect(mockUpdateCurrentPhase).not.toHaveBeenCalled();
@@ -85,7 +90,7 @@ describe("reconcileResumePhase", () => {
 
 		const result = await reconcileResumePhase(
 			orm,
-			item({ currentPhase: 2 }),
+			makeBacklogItem({ id: 7, status: "in-progress", currentPhase: 2 }),
 			1,
 			"f4f18318",
 		);
@@ -97,7 +102,12 @@ describe("reconcileResumePhase", () => {
 	it("leaves an audit trail (daemon log + comment) on divergence", async () => {
 		mockFindPhase.mockResolvedValue(2);
 
-		await reconcileResumePhase(orm, item({ currentPhase: 2 }), 1, "f4f18318");
+		await reconcileResumePhase(
+			orm,
+			makeBacklogItem({ id: 7, status: "in-progress", currentPhase: 2 }),
+			1,
+			"f4f18318",
+		);
 
 		expect(mockAppendDaemonLog).toHaveBeenCalledTimes(1);
 		expect(mockAppendDaemonLog.mock.calls[0][0]).toContain("f4f18318");

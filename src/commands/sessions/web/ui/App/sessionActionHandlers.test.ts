@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { sessionActionHandlers } from "./sessionActionHandlers";
-import type { SessionInfo, SessionLifecycleHandlers } from "../types";
+import type { SessionLifecycleHandlers } from "../types";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 
 const handlers: SessionLifecycleHandlers = {
 	onRetry: vi.fn(),
@@ -8,20 +9,12 @@ const handlers: SessionLifecycleHandlers = {
 	onDismiss: vi.fn(),
 };
 
-function session(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "claude",
-		status: "running",
-		startedAt: 1,
-		...overrides,
-	} as SessionInfo;
-}
-
 describe("sessionActionHandlers", () => {
 	it("offers restart for a claude session", () => {
-		const actions = sessionActionHandlers(session(), handlers);
+		const actions = sessionActionHandlers(
+			makeSessionInfo({ commandType: "claude" }),
+			handlers,
+		);
 
 		expect(actions.onRestart).toBeDefined();
 		expect(actions.onRetry).toBeUndefined();
@@ -29,7 +22,7 @@ describe("sessionActionHandlers", () => {
 
 	it("offers retry instead of restart for a run", () => {
 		const actions = sessionActionHandlers(
-			session({ commandType: "run" }),
+			makeSessionInfo({ commandType: "run" }),
 			handlers,
 		);
 
@@ -40,7 +33,7 @@ describe("sessionActionHandlers", () => {
 	describe("for an interactive session on a harness that cannot resume", () => {
 		it("offers no restart, since the daemon has no plan to respawn it", () => {
 			const actions = sessionActionHandlers(
-				session({ harness: "pi" }),
+				makeSessionInfo({ commandType: "claude", harness: "pi" }),
 				handlers,
 			);
 
@@ -51,7 +44,7 @@ describe("sessionActionHandlers", () => {
 	describe("for an assist session on a harness that cannot resume", () => {
 		it("still offers restart, which relaunches the assist command", () => {
 			const actions = sessionActionHandlers(
-				session({
+				makeSessionInfo({
 					commandType: "assist",
 					harness: "codex",
 					assistArgs: ["refine", "--harness", "codex", "a279"],

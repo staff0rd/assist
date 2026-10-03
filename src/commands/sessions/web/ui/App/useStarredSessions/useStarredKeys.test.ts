@@ -1,21 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { applyToggle, checkStarred } from "./useStarredKeys";
-import type { SessionInfo } from "../../types";
-
-function session(overrides: Partial<SessionInfo>): SessionInfo {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "run",
-		status: "running",
-		startedAt: 0,
-		...overrides,
-	};
-}
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 
 describe("checkStarred", () => {
 	it("counts a backlog session as starred when its key is in the set", () => {
-		const s = session({
+		const s = makeSessionInfo({
 			cwd: "/repo",
 			activity: { kind: "backlog", itemId: 7, startedAt: 0 },
 		});
@@ -24,9 +13,13 @@ describe("checkStarred", () => {
 	});
 
 	it("falls back to the session record flag for an item-less session", () => {
-		expect(checkStarred(new Set(), session({ starred: true }))).toBe(true);
-		expect(checkStarred(new Set(), session({ starred: false }))).toBe(false);
-		expect(checkStarred(new Set(), session({}))).toBe(false);
+		expect(checkStarred(new Set(), makeSessionInfo({ starred: true }))).toBe(
+			true,
+		);
+		expect(checkStarred(new Set(), makeSessionInfo({ starred: false }))).toBe(
+			false,
+		);
+		expect(checkStarred(new Set(), makeSessionInfo())).toBe(false);
 	});
 });
 
@@ -37,7 +30,7 @@ describe("applyToggle", () => {
 		applyToggle(
 			setKeys,
 			setSessionStarred,
-			session({ id: "9", starred: false }),
+			makeSessionInfo({ id: "9", starred: false }),
 		);
 		expect(setSessionStarred).toHaveBeenCalledWith("9", true);
 		expect(setKeys).not.toHaveBeenCalled();
@@ -48,7 +41,7 @@ describe("applyToggle", () => {
 		applyToggle(
 			vi.fn(),
 			setSessionStarred,
-			session({ id: "9", starred: true }),
+			makeSessionInfo({ id: "9", starred: true }),
 		);
 		expect(setSessionStarred).toHaveBeenCalledWith("9", false);
 	});
@@ -59,7 +52,7 @@ describe("applyToggle", () => {
 		applyToggle(
 			setKeys,
 			setSessionStarred,
-			session({
+			makeSessionInfo({
 				cwd: "/repo",
 				activity: { kind: "backlog", itemId: 7, startedAt: 0 },
 			}),

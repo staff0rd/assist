@@ -3,19 +3,16 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { SessionTopBarStatus } from "./SessionTopBarStatus";
 import type { SessionInfo } from "../../../../../../../types";
+import { makeSessionInfo } from "../../../../../../../../../../../test/mothers/makeSessionInfo";
 
 afterEach(cleanup);
 
-const session: SessionInfo = {
-	id: "1",
-	name: "my session",
-	commandType: "claude",
-	status: "running",
-	startedAt: 0,
-};
-
 function renderStatus(overrides: Partial<SessionInfo> = {}) {
-	return render(<SessionTopBarStatus session={{ ...session, ...overrides }} />);
+	return render(
+		<SessionTopBarStatus
+			session={makeSessionInfo({ status: "running", ...overrides })}
+		/>,
+	);
 }
 
 describe("SessionTopBarStatus", () => {

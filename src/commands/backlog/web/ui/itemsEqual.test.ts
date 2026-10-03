@@ -1,60 +1,63 @@
 import { describe, expect, it } from "vitest";
+import { makeBacklogItemSummary } from "../../../../test/mothers/makeBacklogItemSummary";
 import { itemsEqual } from "./itemsEqual";
-import type { BacklogItemSummary } from "./types";
 
-function item(
-	id: number,
-	overrides: Partial<BacklogItemSummary> = {},
-): BacklogItemSummary {
-	return {
-		id,
-		type: "story",
-		name: `item ${id}`,
-		status: "todo",
-		starred: false,
-		incompleteSubtasks: 0,
-		...overrides,
-	};
-}
+const first = makeBacklogItemSummary({ id: 1 });
+const second = makeBacklogItemSummary({ id: 2 });
 
 describe("itemsEqual", () => {
 	it("treats the same reference as equal", () => {
-		const items = [item(1)];
+		const items = [first];
 		expect(itemsEqual(items, items)).toBe(true);
 	});
 
 	it("treats structurally identical lists as equal", () => {
-		expect(itemsEqual([item(1), item(2)], [item(1), item(2)])).toBe(true);
+		expect(
+			itemsEqual(
+				[makeBacklogItemSummary({ id: 1 }), makeBacklogItemSummary({ id: 2 })],
+				[makeBacklogItemSummary({ id: 1 }), makeBacklogItemSummary({ id: 2 })],
+			),
+		).toBe(true);
 	});
 
 	it("returns false when lengths differ", () => {
-		expect(itemsEqual([item(1)], [item(1), item(2)])).toBe(false);
+		expect(itemsEqual([first], [first, second])).toBe(false);
 	});
 
 	it("returns false when a status differs", () => {
-		expect(itemsEqual([item(1)], [item(1, { status: "done" })])).toBe(false);
+		expect(
+			itemsEqual([first], [makeBacklogItemSummary({ id: 1, status: "done" })]),
+		).toBe(false);
 	});
 
 	it("returns false when a name differs", () => {
-		expect(itemsEqual([item(1)], [item(1, { name: "renamed" })])).toBe(false);
+		expect(
+			itemsEqual([first], [makeBacklogItemSummary({ id: 1, name: "renamed" })]),
+		).toBe(false);
 	});
 
 	it("returns false when a starred flag differs", () => {
-		expect(itemsEqual([item(1)], [item(1, { starred: true })])).toBe(false);
+		expect(
+			itemsEqual([first], [makeBacklogItemSummary({ id: 1, starred: true })]),
+		).toBe(false);
 	});
 
 	it("returns false when the incomplete sub-task count differs", () => {
-		expect(itemsEqual([item(1)], [item(1, { incompleteSubtasks: 2 })])).toBe(
-			false,
-		);
+		expect(
+			itemsEqual(
+				[first],
+				[makeBacklogItemSummary({ id: 1, incompleteSubtasks: 2 })],
+			),
+		).toBe(false);
 	});
 
 	it("returns false when order differs", () => {
-		expect(itemsEqual([item(1), item(2)], [item(2), item(1)])).toBe(false);
+		expect(itemsEqual([first, second], [second, first])).toBe(false);
 	});
 
 	it("returns false when the usage total differs", () => {
-		const before = item(1, {
+		const before = makeBacklogItemSummary({
+			id: 1,
 			usageTotal: {
 				tokensUp: 100,
 				tokensDown: 200,
@@ -62,7 +65,8 @@ describe("itemsEqual", () => {
 				peakContextPct: 40,
 			},
 		});
-		const after = item(1, {
+		const after = makeBacklogItemSummary({
+			id: 1,
 			usageTotal: {
 				tokensUp: 150,
 				tokensDown: 200,
@@ -74,7 +78,8 @@ describe("itemsEqual", () => {
 	});
 
 	it("returns false when only the peak context differs", () => {
-		const before = item(1, {
+		const before = makeBacklogItemSummary({
+			id: 1,
 			usageTotal: {
 				tokensUp: 100,
 				tokensDown: 200,
@@ -82,7 +87,8 @@ describe("itemsEqual", () => {
 				peakContextPct: 40,
 			},
 		});
-		const after = item(1, {
+		const after = makeBacklogItemSummary({
+			id: 1,
 			usageTotal: {
 				tokensUp: 100,
 				tokensDown: 200,
@@ -94,7 +100,8 @@ describe("itemsEqual", () => {
 	});
 
 	it("returns false when a usage total appears", () => {
-		const after = item(1, {
+		const after = makeBacklogItemSummary({
+			id: 1,
 			usageTotal: {
 				tokensUp: 100,
 				tokensDown: 200,
@@ -102,7 +109,7 @@ describe("itemsEqual", () => {
 				peakContextPct: 40,
 			},
 		});
-		expect(itemsEqual([item(1)], [after])).toBe(false);
+		expect(itemsEqual([first], [after])).toBe(false);
 	});
 
 	it("treats matching usage totals as equal", () => {
@@ -114,8 +121,8 @@ describe("itemsEqual", () => {
 		};
 		expect(
 			itemsEqual(
-				[item(1, { usageTotal: total })],
-				[item(1, { usageTotal: total })],
+				[makeBacklogItemSummary({ id: 1, usageTotal: total })],
+				[makeBacklogItemSummary({ id: 1, usageTotal: total })],
 			),
 		).toBe(true);
 	});

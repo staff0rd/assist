@@ -1,25 +1,17 @@
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 import { cardForRepo } from "./cardForRepo";
-import type { SessionInfo } from "../../../../types";
 
 const clone = "/repos/live";
 const group = { origin: "host/org/live", clone };
 
-function session(id: string, cwd: string, grouped = true): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		cwd,
-		...(grouped && { repoGroup: group }),
-	};
-}
-
 const sessions = [
-	session("worktree", "/repos/live/.worktrees/feature"),
-	session("plain", "/repos/other", false),
+	makeSessionInfo({
+		id: "worktree",
+		cwd: "/repos/live/.worktrees/feature",
+		repoGroup: group,
+	}),
+	makeSessionInfo({ id: "plain", cwd: "/repos/other" }),
 ];
 
 describe("cardForRepo", () => {

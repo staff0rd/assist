@@ -1,22 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { sessionStarTarget, starTargetKey } from "./sessionStarTarget";
-import type { SessionInfo } from "../../types";
-
-function session(overrides: Partial<SessionInfo>): SessionInfo {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "run",
-		status: "running",
-		startedAt: 0,
-		...overrides,
-	};
-}
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 
 describe("sessionStarTarget", () => {
 	it("returns the cwd and item id for a backlog session", () => {
 		const target = sessionStarTarget(
-			session({
+			makeSessionInfo({
 				cwd: "/repo",
 				activity: { kind: "backlog", itemId: 7, startedAt: 0 },
 			}),
@@ -27,7 +16,9 @@ describe("sessionStarTarget", () => {
 	it("returns undefined without a cwd", () => {
 		expect(
 			sessionStarTarget(
-				session({ activity: { kind: "backlog", itemId: 7, startedAt: 0 } }),
+				makeSessionInfo({
+					activity: { kind: "backlog", itemId: 7, startedAt: 0 },
+				}),
 			),
 		).toBeUndefined();
 	});
@@ -35,7 +26,7 @@ describe("sessionStarTarget", () => {
 	it("returns undefined for non-backlog activity", () => {
 		expect(
 			sessionStarTarget(
-				session({
+				makeSessionInfo({
 					cwd: "/repo",
 					activity: { kind: "command", itemId: 7, startedAt: 0 },
 				}),
@@ -46,7 +37,10 @@ describe("sessionStarTarget", () => {
 	it("returns undefined when there is no item id", () => {
 		expect(
 			sessionStarTarget(
-				session({ cwd: "/repo", activity: { kind: "backlog", startedAt: 0 } }),
+				makeSessionInfo({
+					cwd: "/repo",
+					activity: { kind: "backlog", startedAt: 0 },
+				}),
 			),
 		).toBeUndefined();
 	});

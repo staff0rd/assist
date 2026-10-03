@@ -7,6 +7,7 @@ import type { PendingLaunch } from "../../../../PendingLaunch";
 import { SessionList } from "./SessionList";
 import type { SessionInfo } from "../../../../types";
 import { StarredSessionsProvider } from "../../../useStarredSessions";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 
 let frames: FrameRequestCallback[] = [];
 
@@ -23,21 +24,7 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
-function session(id: string): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-	};
-}
-
 const group = { origin: "host/org/assist", clone: "/git/assist" };
-
-function worktreeSession(id: string, cwd: string): SessionInfo {
-	return { ...session(id), cwd, repoGroup: group };
-}
 
 function List({
 	sessions,
@@ -81,7 +68,11 @@ function renderCycling() {
 	const onSelect = vi.fn();
 	render(
 		<List
-			sessions={[session("a"), session("b"), session("c")]}
+			sessions={[
+				makeSessionInfo({ id: "a" }),
+				makeSessionInfo({ id: "b" }),
+				makeSessionInfo({ id: "c" }),
+			]}
 			onSelect={onSelect}
 		/>,
 	);
@@ -156,7 +147,7 @@ describe("SessionList Tab cycling", () => {
 		const onSelect = vi.fn();
 		render(
 			<List
-				sessions={[session("a"), session("b")]}
+				sessions={[makeSessionInfo({ id: "a" }), makeSessionInfo({ id: "b" })]}
 				pendingLaunches={[
 					{ id: "p", title: "pending", status: "launching", startedAt: 0 },
 				]}
@@ -181,12 +172,22 @@ describe("SessionList Tab cycling", () => {
 		render(
 			<List
 				sessions={[
-					{
-						...worktreeSession("run", "/git/assist-2"),
+					makeSessionInfo({
+						id: "run",
+						cwd: "/git/assist-2",
+						repoGroup: group,
 						activity: { kind: "backlog", startedAt: 0 },
-					},
-					worktreeSession("other", "/git/assist-3"),
-					worktreeSession("child", "/git/assist-2"),
+					}),
+					makeSessionInfo({
+						id: "other",
+						cwd: "/git/assist-3",
+						repoGroup: group,
+					}),
+					makeSessionInfo({
+						id: "child",
+						cwd: "/git/assist-2",
+						repoGroup: group,
+					}),
 				]}
 				onSelect={onSelect}
 			/>,
@@ -208,7 +209,9 @@ describe("SessionList Tab cycling", () => {
 
 	it("leaves Tab native when there is only one card", () => {
 		const onSelect = vi.fn();
-		render(<List sessions={[session("a")]} onSelect={onSelect} />);
+		render(
+			<List sessions={[makeSessionInfo({ id: "a" })]} onSelect={onSelect} />,
+		);
 		card("a").focus();
 
 		expect(pressTab()).toBe(true);
@@ -222,7 +225,13 @@ describe("SessionList Tab cycling", () => {
 			<>
 				<input aria-label="filter" />
 				<div data-testid="terminal" tabIndex={0} />
-				<List sessions={[session("a"), session("b")]} onSelect={onSelect} />
+				<List
+					sessions={[
+						makeSessionInfo({ id: "a" }),
+						makeSessionInfo({ id: "b" }),
+					]}
+					onSelect={onSelect}
+				/>
 			</>,
 		);
 

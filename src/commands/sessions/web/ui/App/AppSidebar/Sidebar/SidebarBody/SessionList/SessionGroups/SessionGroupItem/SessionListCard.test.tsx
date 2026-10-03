@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { SessionListCard } from "./SessionListCard";
 import type { SessionInfo } from "../../../../../../../types";
 import { StarredSessionsProvider } from "../../../../../../useStarredSessions";
+import { makeSessionInfo } from "../../../../../../../../../../../test/mothers/makeSessionInfo";
 
 afterEach(() => {
 	cleanup();
@@ -35,14 +36,13 @@ function renderListCard(session: SessionInfo) {
 	);
 }
 
-const assistSession: SessionInfo = {
+const assistSession = makeSessionInfo({
 	id: "1",
 	name: "repo/assist draft",
 	commandType: "assist",
 	status: "done",
-	startedAt: 0,
 	assistArgs: ["draft"],
-};
+});
 
 describe("SessionListCard retry affordance", () => {
 	it("offers retry on an assist card that was not restored", () => {
@@ -65,14 +65,15 @@ describe("SessionListCard retry affordance", () => {
 	});
 
 	it("still offers retry on a run card", () => {
-		renderListCard({
-			id: "1",
-			name: "repo/run: build",
-			commandType: "run",
-			status: "done",
-			startedAt: 0,
-			runName: "build",
-		});
+		renderListCard(
+			makeSessionInfo({
+				id: "1",
+				name: "repo/run: build",
+				commandType: "run",
+				status: "done",
+				runName: "build",
+			}),
+		);
 		expect(screen.getByTitle("Retry session 1")).toBeTruthy();
 	});
 });

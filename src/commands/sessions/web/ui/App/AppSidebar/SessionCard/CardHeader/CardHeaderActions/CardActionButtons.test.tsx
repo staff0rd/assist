@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../../../../test/mothers/makeSessionInfo";
 import { CardActionButtons } from "./CardActionButtons";
 import type { SessionInfo } from "../../../../../types";
 import { StarredSessionsProvider } from "../../../../useStarredSessions";
@@ -17,22 +18,11 @@ function Stars({ children }: { children: ReactNode }) {
 	);
 }
 
-function session(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		id: "3",
-		name: "worktree session",
-		commandType: "claude",
-		status: "waiting",
-		startedAt: 0,
-		...overrides,
-	};
-}
-
 describe("CardActionButtons dismiss visibility", () => {
 	it("offers the plain dismiss on an ordinary waiting card", () => {
 		render(
 			<CardActionButtons
-				session={session({ status: "waiting" })}
+				session={makeSessionInfo({ id: "3", status: "waiting" })}
 				loading={false}
 				onDismiss={() => {}}
 			/>,
@@ -45,7 +35,7 @@ describe("CardActionButtons dismiss visibility", () => {
 	it("withholds the plain dismiss while a card is stopped", () => {
 		render(
 			<CardActionButtons
-				session={session({ status: "stopped" })}
+				session={makeSessionInfo({ id: "3", status: "stopped" })}
 				loading={false}
 				onRestart={() => {}}
 				onDismiss={() => {}}
@@ -60,7 +50,7 @@ describe("CardActionButtons dismiss visibility", () => {
 	it("offers discard only when a stopped card holds undurable work", () => {
 		const { rerender } = render(
 			<CardActionButtons
-				session={session({ status: "stopped" })}
+				session={makeSessionInfo({ id: "3", status: "stopped" })}
 				loading={false}
 				onRestart={() => {}}
 				onDismiss={() => {}}
@@ -74,7 +64,8 @@ describe("CardActionButtons dismiss visibility", () => {
 		rerender(
 			<Stars>
 				<CardActionButtons
-					session={session({
+					session={makeSessionInfo({
+						id: "3",
 						status: "stopped",
 						undurable: { reason: "uncommitted changes", removesTree: true },
 					})}
@@ -92,7 +83,8 @@ describe("CardActionButtons dismiss visibility", () => {
 	it("confirms a worktree discard by naming the tree and what it holds", () => {
 		render(
 			<CardActionButtons
-				session={session({
+				session={makeSessionInfo({
+					id: "3",
 					status: "stopped",
 					cwd: "/git/assist-2",
 					undurable: { reason: "unpushed commits", removesTree: true },
@@ -117,7 +109,8 @@ describe("CardActionButtons dismiss visibility", () => {
 	it("promises to delete nothing when discarding a card held in the clone's own tree", () => {
 		render(
 			<CardActionButtons
-				session={session({
+				session={makeSessionInfo({
+					id: "3",
 					status: "stopped",
 					cwd: "/git/assist",
 					undurable: { reason: "uncommitted changes" },
@@ -159,7 +152,10 @@ describe("CardActionButtons under the top bar layout", () => {
 	}
 
 	it("drops the moving actions from the card when the flag is on", () => {
-		renderButtons(true, session({ status: "waiting", commandType: "run" }));
+		renderButtons(
+			true,
+			makeSessionInfo({ id: "3", status: "waiting", commandType: "run" }),
+		);
 
 		expect(screen.queryByTitle("Restart session 3")).toBeNull();
 		expect(screen.queryByTitle("Retry session 3")).toBeNull();
@@ -167,19 +163,22 @@ describe("CardActionButtons under the top bar layout", () => {
 	});
 
 	it("keeps dismiss on the card when the flag is on", () => {
-		renderButtons(true, session({ status: "waiting" }));
+		renderButtons(true, makeSessionInfo({ id: "3", status: "waiting" }));
 
 		expect(screen.queryByTitle("Dismiss session 3")).not.toBeNull();
 	});
 
 	it("keeps restart on a stopped card when the flag is on", () => {
-		renderButtons(true, session({ status: "stopped" }));
+		renderButtons(true, makeSessionInfo({ id: "3", status: "stopped" }));
 
 		expect(screen.queryByTitle("Restart session 3")).not.toBeNull();
 	});
 
 	it("keeps the moving actions on the card when the flag is off", () => {
-		renderButtons(false, session({ status: "waiting", commandType: "run" }));
+		renderButtons(
+			false,
+			makeSessionInfo({ id: "3", status: "waiting", commandType: "run" }),
+		);
 
 		expect(screen.queryByTitle("Retry session 3")).not.toBeNull();
 	});

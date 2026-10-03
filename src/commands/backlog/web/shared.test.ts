@@ -7,7 +7,8 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
-import type { BacklogItemSummary, BacklogStatus } from "../types";
+import { makeBacklogItemSummary } from "../../../test/mothers/makeBacklogItemSummary";
+import type { BacklogItemSummary } from "../types";
 
 vi.mock("../shared", () => ({
 	getReady: vi.fn(),
@@ -30,21 +31,6 @@ import { listItems } from "./shared";
 
 const mockLoadBacklog = loadBacklogSummaries as unknown as MockInstance;
 const mockSearchBacklog = searchBacklogSummaries as unknown as MockInstance;
-
-function makeItem(
-	id: number,
-	status: BacklogStatus = "todo",
-	starred = false,
-): BacklogItemSummary {
-	return {
-		id,
-		type: "story",
-		name: `Item ${id}`,
-		status,
-		starred,
-		incompleteSubtasks: 0,
-	};
-}
 
 function makeReqRes(url: string): {
 	req: IncomingMessage;
@@ -70,9 +56,9 @@ describe("listItems", () => {
 	describe("when listing without a query", () => {
 		it("returns items in descending-id order", async () => {
 			mockLoadBacklog.mockResolvedValue([
-				makeItem(1),
-				makeItem(2),
-				makeItem(3),
+				makeBacklogItemSummary({ id: 1 }),
+				makeBacklogItemSummary({ id: 2 }),
+				makeBacklogItemSummary({ id: 3 }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/backlog");
 
@@ -86,10 +72,10 @@ describe("listItems", () => {
 	describe("when the filter is todo (default)", () => {
 		it("lists only todo and in-progress items", async () => {
 			mockLoadBacklog.mockResolvedValue([
-				makeItem(1, "todo"),
-				makeItem(2, "done"),
-				makeItem(3, "in-progress"),
-				makeItem(4, "wontdo"),
+				makeBacklogItemSummary({ id: 1, status: "todo" }),
+				makeBacklogItemSummary({ id: 2, status: "done" }),
+				makeBacklogItemSummary({ id: 3, status: "in-progress" }),
+				makeBacklogItemSummary({ id: 4, status: "wontdo" }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/items");
 
@@ -100,8 +86,8 @@ describe("listItems", () => {
 
 		it("excludes completed items from search results", async () => {
 			mockSearchBacklog.mockResolvedValue([
-				makeItem(5, "todo"),
-				makeItem(6, "done"),
+				makeBacklogItemSummary({ id: 5, status: "todo" }),
+				makeBacklogItemSummary({ id: 6, status: "done" }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/items?q=foo");
 
@@ -112,8 +98,8 @@ describe("listItems", () => {
 
 		it("falls back to todo when the filter param is unrecognised", async () => {
 			mockLoadBacklog.mockResolvedValue([
-				makeItem(1, "todo"),
-				makeItem(2, "done"),
+				makeBacklogItemSummary({ id: 1, status: "todo" }),
+				makeBacklogItemSummary({ id: 2, status: "done" }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/items?filter=bogus");
 
@@ -126,10 +112,10 @@ describe("listItems", () => {
 	describe("when the filter is done", () => {
 		it("lists only done and wontdo items", async () => {
 			mockLoadBacklog.mockResolvedValue([
-				makeItem(1, "todo"),
-				makeItem(2, "done"),
-				makeItem(3, "in-progress"),
-				makeItem(4, "wontdo"),
+				makeBacklogItemSummary({ id: 1, status: "todo" }),
+				makeBacklogItemSummary({ id: 2, status: "done" }),
+				makeBacklogItemSummary({ id: 3, status: "in-progress" }),
+				makeBacklogItemSummary({ id: 4, status: "wontdo" }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/items?filter=done");
 
@@ -140,8 +126,8 @@ describe("listItems", () => {
 
 		it("keeps only completed items in search results", async () => {
 			mockSearchBacklog.mockResolvedValue([
-				makeItem(5, "todo"),
-				makeItem(6, "done"),
+				makeBacklogItemSummary({ id: 5, status: "todo" }),
+				makeBacklogItemSummary({ id: 6, status: "done" }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/items?q=foo&filter=done");
 
@@ -154,10 +140,10 @@ describe("listItems", () => {
 	describe("when the filter is all", () => {
 		it("lists every item regardless of status", async () => {
 			mockLoadBacklog.mockResolvedValue([
-				makeItem(1, "todo"),
-				makeItem(2, "done"),
-				makeItem(3, "in-progress"),
-				makeItem(4, "wontdo"),
+				makeBacklogItemSummary({ id: 1, status: "todo" }),
+				makeBacklogItemSummary({ id: 2, status: "done" }),
+				makeBacklogItemSummary({ id: 3, status: "in-progress" }),
+				makeBacklogItemSummary({ id: 4, status: "wontdo" }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/items?filter=all");
 
@@ -168,8 +154,8 @@ describe("listItems", () => {
 
 		it("includes completed items in search results", async () => {
 			mockSearchBacklog.mockResolvedValue([
-				makeItem(5, "todo"),
-				makeItem(6, "done"),
+				makeBacklogItemSummary({ id: 5, status: "todo" }),
+				makeBacklogItemSummary({ id: 6, status: "done" }),
 			]);
 			const { req, res, getJson } = makeReqRes("/api/items?q=foo&filter=all");
 
@@ -181,7 +167,10 @@ describe("listItems", () => {
 
 	describe("when searching with a query", () => {
 		it("returns matching items in descending-id order", async () => {
-			mockSearchBacklog.mockResolvedValue([makeItem(5), makeItem(9)]);
+			mockSearchBacklog.mockResolvedValue([
+				makeBacklogItemSummary({ id: 5 }),
+				makeBacklogItemSummary({ id: 9 }),
+			]);
 			const { req, res, getJson } = makeReqRes("/api/backlog?q=foo");
 
 			await listItems(req, res);

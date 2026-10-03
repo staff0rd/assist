@@ -1,28 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { groupSessionsByRepo } from "./groupSessionsByRepo";
 import { hasWaitedPastThreshold } from "./useSidebarOrdering/sortSessionsByWaiting";
 import type { SessionInfo } from "../../types";
 
 const NOW = 1_000_000;
-
-function session(id: string, cwd?: string): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "run",
-		status: "running",
-		startedAt: 0,
-		cwd,
-	};
-}
-
-function waiting(id: string, cwd: string, waitingForMs: number): SessionInfo {
-	return {
-		...session(id, cwd),
-		status: "waiting",
-		waitingSince: NOW - waitingForMs,
-	};
-}
 
 function waitedPast(thresholdMs: number): (session: SessionInfo) => boolean {
 	return (session) => hasWaitedPastThreshold(session, NOW, thresholdMs);
@@ -33,27 +15,13 @@ function row(session: SessionInfo, ...children: SessionInfo[]) {
 }
 
 const repoGroup = { origin: "host/org/assist", clone: "/git/assist" };
-
-function inWorktree(id: string, cwd: string): SessionInfo {
-	return { ...session(id, cwd), repoGroup };
-}
-
-function watcher(id: string, cwd: string): SessionInfo {
-	return { ...session(id, cwd), watcher: true };
-}
-
-function backlogRun(id: string, cwd: string): SessionInfo {
-	return {
-		...inWorktree(id, cwd),
-		activity: { kind: "backlog", startedAt: 0 },
-	};
-}
+const backlog = { kind: "backlog" as const, startedAt: 0 };
 
 describe("groupSessionsByRepo", () => {
 	it("groups 2+ sessions sharing a cwd under a repo entry", () => {
 		const sessions = [
-			session("a", "/home/me/git/assist"),
-			session("b", "/home/me/git/assist"),
+			makeSessionInfo({ id: "a", cwd: "/home/me/git/assist" }),
+			makeSessionInfo({ id: "b", cwd: "/home/me/git/assist" }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -69,7 +37,7 @@ describe("groupSessionsByRepo", () => {
 	});
 
 	it("renders a repo with a single session as a standalone card", () => {
-		const sessions = [session("a", "/home/me/git/assist")];
+		const sessions = [makeSessionInfo({ id: "a", cwd: "/home/me/git/assist" })];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
 
@@ -78,9 +46,9 @@ describe("groupSessionsByRepo", () => {
 
 	it("pins starred sessions above non-starred within a group", () => {
 		const sessions = [
-			session("a", "/repo"),
-			session("b", "/repo"),
-			session("c", "/repo"),
+			makeSessionInfo({ id: "a", cwd: "/repo" }),
+			makeSessionInfo({ id: "b", cwd: "/repo" }),
+			makeSessionInfo({ id: "c", cwd: "/repo" }),
 		];
 		const starred = new Set(["c"]);
 
@@ -98,9 +66,9 @@ describe("groupSessionsByRepo", () => {
 
 	it("pins a watcher above the rest of its group", () => {
 		const sessions = [
-			session("a", "/repo"),
-			session("b", "/repo"),
-			watcher("w", "/repo"),
+			makeSessionInfo({ id: "a", cwd: "/repo" }),
+			makeSessionInfo({ id: "b", cwd: "/repo" }),
+			makeSessionInfo({ id: "w", cwd: "/repo", watcher: true }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -117,9 +85,9 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps a starred member above the group's watcher", () => {
 		const sessions = [
-			watcher("w", "/repo"),
-			session("a", "/repo"),
-			session("b", "/repo"),
+			makeSessionInfo({ id: "w", cwd: "/repo", watcher: true }),
+			makeSessionInfo({ id: "a", cwd: "/repo" }),
+			makeSessionInfo({ id: "b", cwd: "/repo" }),
 		];
 		const starred = new Set(["b"]);
 
@@ -137,9 +105,9 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps a watcher above a waiting member of its group", () => {
 		const sessions = [
-			session("a", "/repo"),
-			session("b", "/repo"),
-			watcher("w", "/repo"),
+			makeSessionInfo({ id: "a", cwd: "/repo" }),
+			makeSessionInfo({ id: "b", cwd: "/repo" }),
+			makeSessionInfo({ id: "w", cwd: "/repo", watcher: true }),
 		];
 		const waiting = new Set(["b"]);
 
@@ -161,10 +129,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("leaves a group holding only an unstarred watcher where it is", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			session("c", "/two"),
-			watcher("w", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({ id: "w", cwd: "/two", watcher: true }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -176,10 +144,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("floats the watcher's group once the watcher is starred", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			session("c", "/two"),
-			watcher("w", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({ id: "w", cwd: "/two", watcher: true }),
 		];
 		const starred = new Set(["w"]);
 
@@ -192,10 +160,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("orders groups by each repo's first appearance", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/two"),
-			session("c", "/one"),
-			session("d", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/two" }),
+			makeSessionInfo({ id: "c", cwd: "/one" }),
+			makeSessionInfo({ id: "d", cwd: "/two" }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -206,7 +174,10 @@ describe("groupSessionsByRepo", () => {
 	});
 
 	it("keeps no-cwd sessions as separate standalone cards", () => {
-		const sessions = [session("a"), session("b")];
+		const sessions = [
+			makeSessionInfo({ id: "a" }),
+			makeSessionInfo({ id: "b" }),
+		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
 
@@ -219,8 +190,8 @@ describe("groupSessionsByRepo", () => {
 	it("groups a clone and its worktrees under one entry named after the clone", () => {
 		const group = { origin: "host/org/assist", clone: "/git/assist" };
 		const sessions = [
-			{ ...session("a", "/git/assist"), repoGroup: group },
-			{ ...session("b", "/git/assist-2"), repoGroup: group },
+			makeSessionInfo({ id: "a", cwd: "/git/assist", repoGroup: group }),
+			makeSessionInfo({ id: "b", cwd: "/git/assist-2", repoGroup: group }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -237,14 +208,16 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps clones of different repos apart even in the same directory tree", () => {
 		const sessions = [
-			{
-				...session("a", "/git/assist"),
+			makeSessionInfo({
+				id: "a",
+				cwd: "/git/assist",
 				repoGroup: { origin: "host/org/assist", clone: "/git/assist" },
-			},
-			{
-				...session("b", "/git/other"),
+			}),
+			makeSessionInfo({
+				id: "b",
+				cwd: "/git/other",
 				repoGroup: { origin: "host/org/other", clone: "/git/other" },
-			},
+			}),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -257,9 +230,9 @@ describe("groupSessionsByRepo", () => {
 
 	it("floats the waiting member to the top of its group", () => {
 		const sessions = [
-			session("a", "/repo"),
-			session("b", "/repo"),
-			session("c", "/repo"),
+			makeSessionInfo({ id: "a", cwd: "/repo" }),
+			makeSessionInfo({ id: "b", cwd: "/repo" }),
+			makeSessionInfo({ id: "c", cwd: "/repo" }),
 		];
 		const waiting = new Set(["c"]);
 
@@ -281,9 +254,9 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps a starred member above a waiting one inside a group", () => {
 		const sessions = [
-			session("a", "/repo"),
-			session("b", "/repo"),
-			session("c", "/repo"),
+			makeSessionInfo({ id: "a", cwd: "/repo" }),
+			makeSessionInfo({ id: "b", cwd: "/repo" }),
+			makeSessionInfo({ id: "c", cwd: "/repo" }),
 		];
 		const starred = new Set(["b"]);
 		const waiting = new Set(["c"]);
@@ -306,10 +279,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("floats a whole group above the rest when one member is waiting", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			session("c", "/two"),
-			session("d", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({ id: "d", cwd: "/two" }),
 		];
 		const waiting = new Set(["d"]);
 
@@ -337,10 +310,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps a group with a starred member above a group with a waiting one", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			session("c", "/two"),
-			session("d", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({ id: "d", cwd: "/two" }),
 		];
 		const starred = new Set(["b"]);
 		const waiting = new Set(["c"]);
@@ -358,9 +331,9 @@ describe("groupSessionsByRepo", () => {
 
 	it("floats a waiting standalone session above a group with none", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			session("c", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
 		];
 		const waiting = new Set(["c"]);
 
@@ -383,10 +356,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps floated groups in the order their waiters were given, longest waiting first", () => {
 		const sessions = [
-			session("longest", "/two"),
-			session("shorter", "/one"),
-			session("idle", "/one"),
-			session("other", "/two"),
+			makeSessionInfo({ id: "longest", cwd: "/two" }),
+			makeSessionInfo({ id: "shorter", cwd: "/one" }),
+			makeSessionInfo({ id: "idle", cwd: "/one" }),
+			makeSessionInfo({ id: "other", cwd: "/two" }),
 		];
 		const waiting = new Set(["longest", "shorter"]);
 
@@ -403,10 +376,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("never splits a group, even when only one member is waiting", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			session("c", "/two"),
-			session("d", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({ id: "d", cwd: "/two" }),
 		];
 		const waiting = new Set(["b"]);
 
@@ -427,10 +400,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("leaves the order untouched when no waiting predicate is given", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			session("c", "/two"),
-			session("d", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({ id: "d", cwd: "/two" }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -453,10 +426,20 @@ describe("groupSessionsByRepo", () => {
 
 	it("floats only the group past a longer configured threshold", () => {
 		const sessions = [
-			session("a", "/one"),
-			waiting("b", "/one", 8000),
-			session("c", "/two"),
-			waiting("d", "/two", 12_000),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({
+				id: "b",
+				cwd: "/one",
+				status: "waiting",
+				waitingSince: NOW - 8000,
+			}),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({
+				id: "d",
+				cwd: "/two",
+				status: "waiting",
+				waitingSince: NOW - 12_000,
+			}),
 		];
 
 		const groups = groupSessionsByRepo(
@@ -483,10 +466,15 @@ describe("groupSessionsByRepo", () => {
 
 	it("floats a briefly waiting member on a shorter configured threshold", () => {
 		const sessions = [
-			session("a", "/one"),
-			session("b", "/one"),
-			waiting("c", "/two", 900),
-			session("d", "/two"),
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/one" }),
+			makeSessionInfo({
+				id: "c",
+				cwd: "/two",
+				status: "waiting",
+				waitingSince: NOW - 900,
+			}),
+			makeSessionInfo({ id: "d", cwd: "/two" }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false, waitedPast(500));
@@ -509,10 +497,10 @@ describe("groupSessionsByRepo", () => {
 
 	it("treats repos sharing a last segment but differing in full path as distinct", () => {
 		const sessions = [
-			session("a", "/home/me/work/assist"),
-			session("b", "/home/me/work/assist"),
-			session("c", "/home/me/play/assist"),
-			session("d", "/home/me/play/assist"),
+			makeSessionInfo({ id: "a", cwd: "/home/me/work/assist" }),
+			makeSessionInfo({ id: "b", cwd: "/home/me/work/assist" }),
+			makeSessionInfo({ id: "c", cwd: "/home/me/play/assist" }),
+			makeSessionInfo({ id: "d", cwd: "/home/me/play/assist" }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -535,8 +523,13 @@ describe("groupSessionsByRepo", () => {
 
 	it("nests a worktree session under the backlog run sharing its cwd", () => {
 		const sessions = [
-			backlogRun("run", "/git/assist-2"),
-			inWorktree("review", "/git/assist-2"),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);
@@ -553,9 +546,14 @@ describe("groupSessionsByRepo", () => {
 
 	it("floats a whole nested row when only its child is waiting", () => {
 		const sessions = [
-			inWorktree("other", "/git/assist-3"),
-			backlogRun("run", "/git/assist-2"),
-			inWorktree("review", "/git/assist-2"),
+			makeSessionInfo({ id: "other", cwd: "/git/assist-3", repoGroup }),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup }),
 		];
 		const waiting = new Set(["review"]);
 
@@ -578,10 +576,15 @@ describe("groupSessionsByRepo", () => {
 	it("floats a whole repo group whose only waiter is a nested child", () => {
 		const otherGroup = { origin: "host/org/other", clone: "/git/other" };
 		const sessions = [
-			{ ...session("x", "/git/other"), repoGroup: otherGroup },
-			{ ...session("y", "/git/other-2"), repoGroup: otherGroup },
-			backlogRun("run", "/git/assist-2"),
-			inWorktree("review", "/git/assist-2"),
+			makeSessionInfo({ id: "x", cwd: "/git/other", repoGroup: otherGroup }),
+			makeSessionInfo({ id: "y", cwd: "/git/other-2", repoGroup: otherGroup }),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup }),
 		];
 		const waiting = new Set(["review"]);
 
@@ -609,10 +612,15 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps children adjacent beneath a starred parent lifted to the front", () => {
 		const sessions = [
-			inWorktree("other", "/git/assist-3"),
-			backlogRun("run", "/git/assist-2"),
-			inWorktree("review", "/git/assist-2"),
-			inWorktree("comments", "/git/assist-2"),
+			makeSessionInfo({ id: "other", cwd: "/git/assist-3", repoGroup }),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist-2", repoGroup }),
+			makeSessionInfo({ id: "comments", cwd: "/git/assist-2", repoGroup }),
 		];
 		const starred = new Set(["run"]);
 
@@ -633,10 +641,20 @@ describe("groupSessionsByRepo", () => {
 
 	it("keeps a starred nested row above a row floated by a waiting child", () => {
 		const sessions = [
-			backlogRun("waitingRun", "/git/assist-2"),
-			inWorktree("waitingReview", "/git/assist-2"),
-			backlogRun("starredRun", "/git/assist-3"),
-			inWorktree("starredReview", "/git/assist-3"),
+			makeSessionInfo({
+				id: "waitingRun",
+				cwd: "/git/assist-2",
+				repoGroup,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "waitingReview", cwd: "/git/assist-2", repoGroup }),
+			makeSessionInfo({
+				id: "starredRun",
+				cwd: "/git/assist-3",
+				repoGroup,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "starredReview", cwd: "/git/assist-3", repoGroup }),
 		];
 		const starred = new Set(["starredReview"]);
 		const waiting = new Set(["waitingReview"]);
@@ -662,8 +680,13 @@ describe("groupSessionsByRepo", () => {
 
 	it("leaves a main-clone session un-nested alongside a run in the clone", () => {
 		const sessions = [
-			backlogRun("run", "/git/assist"),
-			inWorktree("review", "/git/assist"),
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup,
+				activity: backlog,
+			}),
+			makeSessionInfo({ id: "review", cwd: "/git/assist", repoGroup }),
 		];
 
 		const groups = groupSessionsByRepo(sessions, () => false);

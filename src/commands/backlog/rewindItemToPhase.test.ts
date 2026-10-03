@@ -25,7 +25,7 @@ vi.mock("./writeSignal", () => ({
 
 import { appendComment } from "./appendComment";
 import { rewindItemToPhase } from "./rewindItemToPhase";
-import type { BacklogItem } from "./types";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import { updateCurrentPhase } from "./updateCurrentPhase";
 import { updateStatus } from "./updateStatus";
 import { writeSignal } from "./writeSignal";
@@ -43,16 +43,6 @@ const threePhasePlan = [
 	{ name: "Polish", tasks: [] },
 ];
 
-const item = (overrides: Partial<BacklogItem>): BacklogItem => ({
-	id: 1,
-	name: "Test item",
-	acceptanceCriteria: [],
-	starred: false,
-	type: "story",
-	status: "in-progress",
-	...overrides,
-});
-
 describe("rewindItemToPhase", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -61,7 +51,12 @@ describe("rewindItemToPhase", () => {
 	it("should move the item to the target phase as in-progress", async () => {
 		const result = await rewindItemToPhase(
 			orm,
-			item({ currentPhase: 3, plan: threePhasePlan }),
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
+				currentPhase: 3,
+				plan: threePhasePlan,
+			}),
 			2,
 			"Need to redo",
 		);
@@ -74,7 +69,12 @@ describe("rewindItemToPhase", () => {
 	it("should write a rewind signal targeting the zero-based phase index", async () => {
 		await rewindItemToPhase(
 			orm,
-			item({ currentPhase: 3, plan: threePhasePlan }),
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
+				currentPhase: 3,
+				plan: threePhasePlan,
+			}),
 			2,
 			"Need to redo",
 		);
@@ -88,7 +88,12 @@ describe("rewindItemToPhase", () => {
 	it("should append a comment recording the rewind", async () => {
 		await rewindItemToPhase(
 			orm,
-			item({ currentPhase: 3, plan: threePhasePlan }),
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
+				currentPhase: 3,
+				plan: threePhasePlan,
+			}),
 			1,
 			"Tests failed",
 		);
@@ -104,7 +109,12 @@ describe("rewindItemToPhase", () => {
 	it("should rewind a done story to the appended Review phase", async () => {
 		const result = await rewindItemToPhase(
 			orm,
-			item({ status: "done", currentPhase: 5, plan: threePhasePlan }),
+			makeBacklogItem({
+				id: 1,
+				status: "done",
+				currentPhase: 5,
+				plan: threePhasePlan,
+			}),
 			4,
 			"Reopening for review",
 		);
@@ -120,7 +130,12 @@ describe("rewindItemToPhase", () => {
 	it("should reject if target phase is not earlier than current", async () => {
 		const result = await rewindItemToPhase(
 			orm,
-			item({ currentPhase: 2, plan: threePhasePlan }),
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
+				currentPhase: 2,
+				plan: threePhasePlan,
+			}),
 			2,
 			"No reason",
 		);
@@ -134,7 +149,12 @@ describe("rewindItemToPhase", () => {
 	it("should reject if phase number is out of range", async () => {
 		const result = await rewindItemToPhase(
 			orm,
-			item({ currentPhase: 3, plan: threePhasePlan }),
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
+				currentPhase: 3,
+				plan: threePhasePlan,
+			}),
 			0,
 			"No reason",
 		);
@@ -146,7 +166,9 @@ describe("rewindItemToPhase", () => {
 	it("should rewind a plan-less item that has advanced past phase 1", async () => {
 		const result = await rewindItemToPhase(
 			orm,
-			item({
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
 				type: "bug",
 				currentPhase: 2,
 				acceptanceCriteria: ["Fix the thing"],
@@ -169,7 +191,9 @@ describe("rewindItemToPhase", () => {
 	it("should reject a plan-less item when target is not earlier than current", async () => {
 		const result = await rewindItemToPhase(
 			orm,
-			item({
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
 				type: "bug",
 				currentPhase: 1,
 				acceptanceCriteria: ["Fix the thing"],

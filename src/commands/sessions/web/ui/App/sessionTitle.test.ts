@@ -1,21 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { sessionTitle } from "./sessionTitle";
-import type { SessionInfo } from "../types";
-
-function makeSession(overrides: Partial<SessionInfo>): SessionInfo {
-	return {
-		id: "1",
-		name: "fallback",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		...overrides,
-	};
-}
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 
 describe("sessionTitle", () => {
 	it("shows the first arg (slash command) for assist sessions", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["draft", "--once"],
 			name: "assist draft --once",
@@ -25,13 +14,13 @@ describe("sessionTitle", () => {
 	});
 
 	it("falls back to the name when an assist session has no args", () => {
-		const session = makeSession({ commandType: "assist", name: "assist" });
+		const session = makeSessionInfo({ commandType: "assist", name: "assist" });
 
 		expect(sessionTitle(session)).toBe("assist");
 	});
 
 	it("shows 'run: <name>' for run sessions", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "run",
 			runName: "build",
 			name: "run: build",
@@ -41,13 +30,16 @@ describe("sessionTitle", () => {
 	});
 
 	it("shows the prompt-derived name for claude sessions", () => {
-		const session = makeSession({ commandType: "claude", name: "fix the bug" });
+		const session = makeSessionInfo({
+			commandType: "claude",
+			name: "fix the bug",
+		});
 
 		expect(sessionTitle(session)).toBe("fix the bug");
 	});
 
 	it("shows the placeholder while a prompted draft card awaits its title", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			id: "11",
 			commandType: "assist",
 			assistArgs: ["draft", "--once", "add dark mode"],
@@ -57,7 +49,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("shows the item name for a backlog activity (id is shown as a chip)", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["next", "--once"],
 			activity: {
@@ -74,7 +66,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("shows the item name for a refine session (id is shown as a chip)", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["refine", "--once", "254"],
 			activity: {
@@ -90,7 +82,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("shows the generated title for a claude session in place of the name", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "claude",
 			name: "Session 7",
 			generatedTitle: "Fix login redirect",
@@ -100,7 +92,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("shows the generated title for an assist session in place of the raw prompt", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["draft", "--once", "add dark mode to the settings page"],
 			generatedTitle: "Dark mode setting",
@@ -110,7 +102,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("prefers an explicit title over a generated one", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			title: "Explicit title",
 			generatedTitle: "Generated title",
@@ -120,7 +112,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("prefers a backlog item name over a generated title", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["next", "--once"],
 			generatedTitle: "Generated title",
@@ -138,7 +130,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("prefers a refine session's item name over a generated title", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["refine", "--once", "254"],
 			generatedTitle: "Generated title",
@@ -155,7 +147,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("prefers a filed item name over a bug card's generated title", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: [
 				"bug",
@@ -178,7 +170,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("shows the entered prompt text for an assist command that gets no title", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["next", "--once", "add dark mode"],
 		});
@@ -187,7 +179,7 @@ describe("sessionTitle", () => {
 	});
 
 	it("keeps the run name for run sessions even with a generated title", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "run",
 			runName: "build",
 			generatedTitle: "Generated title",

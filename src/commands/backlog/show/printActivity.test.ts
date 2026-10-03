@@ -1,18 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { BacklogItem, GitRef } from "../types";
+import { makeBacklogItem } from "../../../test/mothers/makeBacklogItem";
+import type { GitRef } from "../types";
 import { printActivity } from "./printActivity";
-
-function item(gitRefs?: GitRef[]): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Item",
-		acceptanceCriteria: [],
-		status: "in-progress",
-		starred: false,
-		...(gitRefs ? { gitRefs } : {}),
-	};
-}
 
 describe("printActivity", () => {
 	let logSpy: ReturnType<typeof vi.spyOn>;
@@ -29,19 +18,21 @@ describe("printActivity", () => {
 		logSpy.mock.calls.map((c: unknown[]) => String(c[0])).join("\n");
 
 	it("prints nothing when there are no refs", () => {
-		printActivity(item());
-		printActivity(item([]));
+		printActivity(makeBacklogItem());
+		printActivity(makeBacklogItem({ gitRefs: [] }));
 
 		expect(logSpy).not.toHaveBeenCalled();
 	});
 
 	it("prints branch, commits, and PR with their URLs", () => {
 		printActivity(
-			item([
-				{ kind: "branch", ref: "feature", url: "https://gh/tree/feature" },
-				{ kind: "commit", ref: "abcdef1234", title: "Do it" },
-				{ kind: "pr", ref: "42", title: "My PR", state: "OPEN" },
-			]),
+			makeBacklogItem({
+				gitRefs: [
+					{ kind: "branch", ref: "feature", url: "https://gh/tree/feature" },
+					{ kind: "commit", ref: "abcdef1234", title: "Do it" },
+					{ kind: "pr", ref: "42", title: "My PR", state: "OPEN" },
+				],
+			}),
 		);
 
 		const out = output();
@@ -55,10 +46,12 @@ describe("printActivity", () => {
 
 	it("renders gracefully when a ref has no URL (branch/PR gone)", () => {
 		printActivity(
-			item([
-				{ kind: "branch", ref: "deleted-branch" },
-				{ kind: "pr", ref: "9" },
-			]),
+			makeBacklogItem({
+				gitRefs: [
+					{ kind: "branch", ref: "deleted-branch" },
+					{ kind: "pr", ref: "9" },
+				],
+			}),
 		);
 
 		const out = output();
@@ -68,14 +61,16 @@ describe("printActivity", () => {
 
 	it("prints a slack ref labelled with its title", () => {
 		printActivity(
-			item([
-				{
-					kind: "slack",
-					ref: "https://slack.com/archives/C/p123",
-					title: "My PR",
-					url: "https://slack.com/archives/C/p123",
-				},
-			]),
+			makeBacklogItem({
+				gitRefs: [
+					{
+						kind: "slack",
+						ref: "https://slack.com/archives/C/p123",
+						title: "My PR",
+						url: "https://slack.com/archives/C/p123",
+					},
+				],
+			}),
 		);
 
 		const out = output();
@@ -86,13 +81,15 @@ describe("printActivity", () => {
 
 	it("prints a session ref labelled with its transcript title", () => {
 		printActivity(
-			item([
-				{
-					kind: "session",
-					ref: "0f2a-session-id",
-					title: "Attach sessions to backlog items",
-				},
-			]),
+			makeBacklogItem({
+				gitRefs: [
+					{
+						kind: "session",
+						ref: "0f2a-session-id",
+						title: "Attach sessions to backlog items",
+					},
+				],
+			}),
 		);
 
 		const out = output();
@@ -101,7 +98,11 @@ describe("printActivity", () => {
 	});
 
 	it("prints a session with no transcript title by its bare id", () => {
-		printActivity(item([{ kind: "session", ref: "0f2a-session-id" }]));
+		printActivity(
+			makeBacklogItem({
+				gitRefs: [{ kind: "session", ref: "0f2a-session-id" }],
+			}),
+		);
 
 		expect(output()).toContain("0f2a-session-id");
 	});
@@ -112,7 +113,7 @@ describe("printActivity", () => {
 			ref: `commit${i}`,
 		}));
 
-		printActivity(item(commits));
+		printActivity(makeBacklogItem({ gitRefs: commits }));
 
 		const out = output();
 		expect(out).toContain("and 3 more commits");
@@ -127,7 +128,7 @@ describe("printActivity", () => {
 			title: `Subject ${i}`,
 		}));
 
-		printActivity(item(commits), { allCommits: true });
+		printActivity(makeBacklogItem({ gitRefs: commits }), { allCommits: true });
 
 		const out = output();
 		expect(out).toContain("commit0 Subject 0");

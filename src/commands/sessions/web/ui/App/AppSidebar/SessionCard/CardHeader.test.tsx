@@ -3,6 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { CardHeader } from "./CardHeader";
 import type { SessionInfo } from "../../../types";
 import { DiffPanelsProvider } from "../../useDiffPanels";
@@ -11,13 +12,12 @@ import { TopBarLayoutContext } from "../../useTopBarLayoutContext";
 
 afterEach(cleanup);
 
-const session: SessionInfo = {
+const session = makeSessionInfo({
 	id: "1",
 	name: "my session",
 	commandType: "claude",
 	status: "running",
-	startedAt: 0,
-};
+});
 
 function Stars({ children }: { children: ReactNode }) {
 	return (

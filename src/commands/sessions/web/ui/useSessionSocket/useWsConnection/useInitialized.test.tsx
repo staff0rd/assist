@@ -1,19 +1,8 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { SessionInfo } from "../../types";
 import { RUN_SETTLE_MS, useInitialized } from "./useInitialized";
-
-function session(overrides: Partial<SessionInfo>): SessionInfo {
-	return {
-		id: "1",
-		name: "s",
-		commandType: "run",
-		status: "running",
-		startedAt: 100,
-		...overrides,
-	};
-}
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 
 describe("useInitialized", () => {
 	beforeEach(() => vi.useFakeTimers());
@@ -22,11 +11,17 @@ describe("useInitialized", () => {
 	it("settles a respawned run session that emits no further output", () => {
 		const { result } = renderHook(() => useInitialized());
 		act(() => {
-			result.current.syncSessions([session({})]);
+			result.current.syncSessions([
+				makeSessionInfo({ id: "1", commandType: "run", startedAt: 100 }),
+			]);
 			result.current.markInitialized("1");
 		});
 
-		act(() => result.current.syncSessions([session({ startedAt: 200 })]));
+		act(() =>
+			result.current.syncSessions([
+				makeSessionInfo({ id: "1", commandType: "run", startedAt: 200 }),
+			]),
+		);
 		expect(result.current.initialized.has("1")).toBe(false);
 
 		act(() => vi.advanceTimersByTime(RUN_SETTLE_MS));
@@ -36,13 +31,15 @@ describe("useInitialized", () => {
 	it("leaves a respawned claude session starting until it prints", () => {
 		const { result } = renderHook(() => useInitialized());
 		act(() => {
-			result.current.syncSessions([session({ commandType: "claude" })]);
+			result.current.syncSessions([
+				makeSessionInfo({ id: "1", commandType: "claude", startedAt: 100 }),
+			]);
 			result.current.markInitialized("1");
 		});
 
 		act(() =>
 			result.current.syncSessions([
-				session({ commandType: "claude", startedAt: 200 }),
+				makeSessionInfo({ id: "1", commandType: "claude", startedAt: 200 }),
 			]),
 		);
 		act(() => vi.advanceTimersByTime(RUN_SETTLE_MS));

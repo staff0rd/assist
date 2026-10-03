@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { SessionInfo } from "../../../types";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { LabelledActionsContext } from "../../useLabelledActionsContext";
 import { ViewReviewButton } from "./ViewReviewButton";
 
@@ -10,17 +10,11 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
-const session: SessionInfo = {
-	id: "5",
-	name: "assist review-pr-comments 12",
+const session = makeSessionInfo({
 	commandType: "assist",
 	assistArgs: ["review-pr-comments", "12"],
-	status: "running",
-	startedAt: 0,
-	runningMs: 0,
-	runningSince: null,
 	cwd: "/git/repo",
-};
+});
 
 function stubFetch(response: () => Promise<unknown>) {
 	const fetch = vi.fn(response);

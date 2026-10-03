@@ -1,43 +1,23 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import type { HistoricalSession, SessionInfo } from "../../../../types";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
+import type { HistoricalSession } from "../../../../types";
 import { useSyncRepoToActiveCard } from "./useSyncRepoToActiveCard";
 
-const sessions: SessionInfo[] = [
-	{
-		id: "live-1",
-		name: "live",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		cwd: "/repos/live",
-	},
-	{
-		id: "live-no-cwd",
-		name: "no cwd",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-	},
-	{
+const sessions = [
+	makeSessionInfo({ id: "live-1", cwd: "/repos/live" }),
+	makeSessionInfo({ id: "live-no-cwd" }),
+	makeSessionInfo({
 		id: "live-worktree",
-		name: "worktree",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
 		cwd: "/repos/live-2",
 		repoGroup: { origin: "host/org/live", clone: "/repos/live" },
-	},
-	{
+	}),
+	makeSessionInfo({
 		id: "pc-windows:3",
-		name: "linked",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
 		cwd: String.raw`C:\git\live`,
 		node: "pc-windows",
-	},
+	}),
 ];
 
 const history: HistoricalSession[] = [

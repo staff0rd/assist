@@ -3,8 +3,8 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { AppLayout } from "./AppLayout";
-import type { SessionInfo } from "../../../types";
 import type { SessionSocket } from "../../../useSessionSocket";
 import { SidebarCollapsedContext } from "../../useSidebarCollapsedContext";
 
@@ -21,21 +21,9 @@ vi.mock("../../AppSidebar/Sidebar/SidebarBody", () => ({
 
 afterEach(cleanup);
 
-const sessions: SessionInfo[] = [
-	{
-		id: "a",
-		name: "a",
-		commandType: "claude",
-		startedAt: 0,
-		status: "running",
-	},
-	{
-		id: "b",
-		name: "b",
-		commandType: "claude",
-		startedAt: 0,
-		status: "waiting",
-	},
+const sessions = [
+	makeSessionInfo({ id: "a", status: "running" }),
+	makeSessionInfo({ id: "b", status: "waiting" }),
 ];
 
 function socketStub(selectSession: (id: string) => void): SessionSocket {

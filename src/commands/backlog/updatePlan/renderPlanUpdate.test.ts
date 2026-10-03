@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { BacklogItem, PlanPhase } from "../types";
+import { makeBacklogItem } from "../../../test/mothers/makeBacklogItem";
+import type { PlanPhase } from "../types";
 import type { PlanUpdatePhase } from "./planUpdateSchema";
 import { renderPlanUpdate } from "./renderPlanUpdate";
 
@@ -21,19 +22,6 @@ function payload(
 	return { name, tasks, manualChecks };
 }
 
-function item(plan: PlanPhase[], currentPhase?: number): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Bulk plan changes",
-		acceptanceCriteria: [],
-		plan,
-		starred: false,
-		status: currentPhase === undefined ? "todo" : "in-progress",
-		...(currentPhase === undefined ? {} : { currentPhase }),
-	};
-}
-
 const threePhasePlan = [
 	stored("Read the payload", ["Parse the JSON"]),
 	stored("Render the pane", ["Render the phases"], ["Open the pane"]),
@@ -42,7 +30,7 @@ const threePhasePlan = [
 
 describe("renderPlanUpdate", () => {
 	it("marks a phase kept in place as unchanged", () => {
-		const body = renderPlanUpdate(item(threePhasePlan), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: threePhasePlan }), [
 			payload("Read the payload", ["Parse the JSON"]),
 			payload("Render the pane", ["Render the phases"], ["Open the pane"]),
 			payload("Wire the command", ["Register update-plan"]),
@@ -55,7 +43,7 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("marks a phase the payload introduces as added", () => {
-		const body = renderPlanUpdate(item(threePhasePlan), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: threePhasePlan }), [
 			payload("Read the payload", ["Parse the JSON"]),
 			payload("Render the pane", ["Render the phases"], ["Open the pane"]),
 			payload("Wire the command", ["Register update-plan"]),
@@ -67,7 +55,7 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("lists a dropped phase under removed phases at its old position", () => {
-		const body = renderPlanUpdate(item(threePhasePlan), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: threePhasePlan }), [
 			payload("Read the payload", ["Parse the JSON"]),
 			payload("Wire the command", ["Register update-plan"]),
 		]);
@@ -81,7 +69,7 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("marks a phase that only changed position as moved", () => {
-		const body = renderPlanUpdate(item(threePhasePlan), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: threePhasePlan }), [
 			payload("Wire the command", ["Register update-plan"]),
 			payload("Read the payload", ["Parse the JSON"]),
 			payload("Render the pane", ["Render the phases"], ["Open the pane"]),
@@ -99,7 +87,7 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("marks a rewritten phase as edited and shows the tasks it replaces", () => {
-		const body = renderPlanUpdate(item(threePhasePlan), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: threePhasePlan }), [
 			payload("Read the payload", ["Parse the JSON"]),
 			payload("Render the pane", ["Render the diff", "Await approval"]),
 			payload("Wire the command", ["Register update-plan"]),
@@ -112,7 +100,7 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("reports a phase that was both rewritten and reordered as edited and moved", () => {
-		const body = renderPlanUpdate(item(threePhasePlan), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: threePhasePlan }), [
 			payload("Wire the command", ["Register update-plan", "Document it"]),
 			payload("Read the payload", ["Parse the JSON"]),
 			payload("Render the pane", ["Render the phases"], ["Open the pane"]),
@@ -124,7 +112,7 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("reports a renamed phase as edited rather than added and removed", () => {
-		const body = renderPlanUpdate(item(threePhasePlan), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: threePhasePlan }), [
 			payload("Read the payload", ["Parse the JSON"]),
 			payload("Render the diff", ["Render the phases"], ["Open the pane"]),
 			payload("Wire the command", ["Register update-plan"]),
@@ -137,11 +125,14 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("flags a rewrite of a completed phase", () => {
-		const body = renderPlanUpdate(item(threePhasePlan, 3), [
-			payload("Read the payload", ["Parse the JSON", "Validate the phases"]),
-			payload("Render the pane", ["Render the phases"], ["Open the pane"]),
-			payload("Wire the command", ["Register update-plan"]),
-		]);
+		const body = renderPlanUpdate(
+			makeBacklogItem({ plan: threePhasePlan, currentPhase: 3 }),
+			[
+				payload("Read the payload", ["Parse the JSON", "Validate the phases"]),
+				payload("Render the pane", ["Render the phases"], ["Open the pane"]),
+				payload("Wire the command", ["Register update-plan"]),
+			],
+		);
 
 		expect(body).toContain(
 			"### Phase 1: Read the payload (edited, already completed)",
@@ -150,10 +141,13 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("flags a phase removed from behind currentPhase", () => {
-		const body = renderPlanUpdate(item(threePhasePlan, 3), [
-			payload("Render the pane", ["Render the phases"], ["Open the pane"]),
-			payload("Wire the command", ["Register update-plan"]),
-		]);
+		const body = renderPlanUpdate(
+			makeBacklogItem({ plan: threePhasePlan, currentPhase: 3 }),
+			[
+				payload("Render the pane", ["Render the phases"], ["Open the pane"]),
+				payload("Wire the command", ["Register update-plan"]),
+			],
+		);
 
 		expect(body).toContain(
 			"### Phase 1: Read the payload (removed, already completed)",
@@ -162,7 +156,7 @@ describe("renderPlanUpdate", () => {
 	});
 
 	it("marks every phase as added when the item has no plan yet", () => {
-		const body = renderPlanUpdate(item([]), [
+		const body = renderPlanUpdate(makeBacklogItem({ plan: [] }), [
 			payload("Read the payload", ["Parse the JSON"]),
 		]);
 

@@ -1,23 +1,12 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { AddAgentButton } from "./AddAgentButton";
 import type { SessionInfo } from "../../types";
 import { SessionLaunchContext } from "../../useSessionLaunchContext";
 
 afterEach(cleanup);
-
-const session: SessionInfo = {
-	id: "3",
-	name: "assist backlog run 5",
-	commandType: "claude",
-	status: "running",
-	startedAt: 0,
-	runningMs: 0,
-	runningSince: null,
-	cwd: "/git/repo-2",
-	joinable: true,
-};
 
 function renderButton(
 	launchAgentInStream: (...args: never[]) => void,
@@ -36,7 +25,15 @@ function renderButton(
 				armUpdateReload: () => {},
 			}}
 		>
-			<AddAgentButton session={{ ...session, ...overrides }} />
+			<AddAgentButton
+				session={makeSessionInfo({
+					id: "3",
+					status: "running",
+					cwd: "/git/repo-2",
+					joinable: true,
+					...overrides,
+				})}
+			/>
 		</SessionLaunchContext.Provider>,
 	);
 }

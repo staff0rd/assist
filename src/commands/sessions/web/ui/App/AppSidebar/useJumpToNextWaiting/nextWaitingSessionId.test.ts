@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { nextWaitingSessionId } from "./nextWaitingSessionId";
-import type { SessionInfo, SessionStatus } from "../../../types";
 
 const prPreview = {
 	requestId: "r1",
@@ -9,28 +9,13 @@ const prPreview = {
 	prNumber: 1,
 };
 
-function session(
-	id: string,
-	status: SessionStatus,
-	pendingPrPreview?: SessionInfo["pendingPrPreview"],
-): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "run",
-		status,
-		startedAt: 0,
-		pendingPrPreview,
-	};
-}
-
 describe("nextWaitingSessionId", () => {
 	it("returns the first waiting session after the active one", () => {
 		const sessions = [
-			session("a", "waiting"),
-			session("b", "running"),
-			session("c", "waiting"),
-			session("d", "waiting"),
+			makeSessionInfo({ id: "a", status: "waiting" }),
+			makeSessionInfo({ id: "b", status: "running" }),
+			makeSessionInfo({ id: "c", status: "waiting" }),
+			makeSessionInfo({ id: "d", status: "waiting" }),
 		];
 
 		expect(nextWaitingSessionId(sessions, "b")).toBe("c");
@@ -38,9 +23,9 @@ describe("nextWaitingSessionId", () => {
 
 	it("wraps past the end back to the top", () => {
 		const sessions = [
-			session("a", "waiting"),
-			session("b", "running"),
-			session("c", "waiting"),
+			makeSessionInfo({ id: "a", status: "waiting" }),
+			makeSessionInfo({ id: "b", status: "running" }),
+			makeSessionInfo({ id: "c", status: "waiting" }),
 		];
 
 		expect(nextWaitingSessionId(sessions, "c")).toBe("a");
@@ -48,9 +33,9 @@ describe("nextWaitingSessionId", () => {
 
 	it("walks every waiting card across repeated presses", () => {
 		const sessions = [
-			session("a", "waiting"),
-			session("b", "running"),
-			session("c", "waiting"),
+			makeSessionInfo({ id: "a", status: "waiting" }),
+			makeSessionInfo({ id: "b", status: "running" }),
+			makeSessionInfo({ id: "c", status: "waiting" }),
 		];
 
 		const first = nextWaitingSessionId(sessions, null);
@@ -61,16 +46,19 @@ describe("nextWaitingSessionId", () => {
 	});
 
 	it("starts from the top when nothing is selected", () => {
-		const sessions = [session("a", "running"), session("b", "waiting")];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting" }),
+		];
 
 		expect(nextWaitingSessionId(sessions, null)).toBe("b");
 	});
 
 	it("returns the active session when it is the only waiting one", () => {
 		const sessions = [
-			session("a", "running"),
-			session("b", "waiting"),
-			session("c", "done"),
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting" }),
+			makeSessionInfo({ id: "c", status: "done" }),
 		];
 
 		expect(nextWaitingSessionId(sessions, "b")).toBe("b");
@@ -78,15 +66,22 @@ describe("nextWaitingSessionId", () => {
 
 	it("treats a running session holding a PR preview as waiting", () => {
 		const sessions = [
-			session("a", "running"),
-			session("b", "running", prPreview),
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({
+				id: "b",
+				status: "running",
+				pendingPrPreview: prPreview,
+			}),
 		];
 
 		expect(nextWaitingSessionId(sessions, "a")).toBe("b");
 	});
 
 	it("returns null when nothing is waiting", () => {
-		const sessions = [session("a", "running"), session("b", "done")];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "done" }),
+		];
 
 		expect(nextWaitingSessionId(sessions, "a")).toBeNull();
 	});
@@ -96,7 +91,10 @@ describe("nextWaitingSessionId", () => {
 	});
 
 	it("ignores an active id that is no longer in the list", () => {
-		const sessions = [session("a", "waiting"), session("b", "waiting")];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "waiting" }),
+			makeSessionInfo({ id: "b", status: "waiting" }),
+		];
 
 		expect(nextWaitingSessionId(sessions, "gone")).toBe("a");
 	});

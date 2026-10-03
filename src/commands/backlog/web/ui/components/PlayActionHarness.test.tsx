@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import type { SessionInfo } from "../../../../sessions/web/ui/types";
 import { LiveSessionsContext } from "../../../../sessions/web/ui/useLiveSessionsContext";
 import { SessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
@@ -73,14 +74,12 @@ describe("PlayAction harness dropdown", () => {
 	it("joins the dropdown to Build and disables both while a run is live", async () => {
 		mockHarness({ exposeCodexActions: true });
 		renderPlay(vi.fn(), false, [
-			{
+			makeSessionInfo({
 				id: "4",
-				name: "assist backlog run a775",
 				commandType: "assist",
-				startedAt: 1,
 				status: "running",
 				assistArgs: ["backlog", "run", "a775"],
-			},
+			}),
 		]);
 
 		const dropdown = await screen.findByRole("button", {

@@ -1,20 +1,18 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { SessionInfo } from "../../../../../../../types";
+import { makeSessionInfo } from "../../../../../../../../../../../test/mothers/makeSessionInfo";
 import { RemoteServingBanner } from "./RemoteServingBanner";
 
 afterEach(cleanup);
 
-const serving: SessionInfo = {
-	id: "1",
+const serving = makeSessionInfo({
 	name: "dev",
 	commandType: "run",
 	server: true,
 	status: "running",
-	startedAt: 0,
 	cwd: "/home/me/repo",
-};
+});
 
 describe("RemoteServingBanner", () => {
 	it("links the port to localhost in a new tab", () => {

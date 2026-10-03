@@ -1,12 +1,8 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { SessionInfo } from "../types";
 import { useReportRenderedStatus } from "./useReportRenderedStatus";
-
-function session(id: string, status: SessionInfo["status"]): SessionInfo {
-	return { id, name: id, commandType: "claude", status, startedAt: 0 };
-}
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -17,7 +13,10 @@ describe("useReportRenderedStatus", () => {
 
 		renderHook(({ sessions }) => useReportRenderedStatus(sessions, send), {
 			initialProps: {
-				sessions: [session("1", "running"), session("2", "waiting")],
+				sessions: [
+					makeSessionInfo({ id: "1", status: "running" }),
+					makeSessionInfo({ id: "2", status: "waiting" }),
+				],
 			},
 		});
 
@@ -42,10 +41,14 @@ describe("useReportRenderedStatus", () => {
 
 		const { rerender } = renderHook(
 			({ sessions }) => useReportRenderedStatus(sessions, send),
-			{ initialProps: { sessions: [session("7", "running")] } },
+			{
+				initialProps: {
+					sessions: [makeSessionInfo({ id: "7", status: "running" })],
+				},
+			},
 		);
-		rerender({ sessions: [session("7", "running")] });
-		rerender({ sessions: [session("7", "waiting")] });
+		rerender({ sessions: [makeSessionInfo({ id: "7", status: "running" })] });
+		rerender({ sessions: [makeSessionInfo({ id: "7", status: "waiting" })] });
 
 		expect(send).toHaveBeenCalledTimes(2);
 		expect(send).toHaveBeenLastCalledWith({

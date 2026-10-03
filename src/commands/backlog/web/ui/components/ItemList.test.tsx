@@ -9,6 +9,7 @@ import {
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
+import { makeBacklogItemSummary } from "../../../../../test/mothers/makeBacklogItemSummary";
 import type { BacklogItemSummary } from "../types";
 
 vi.mock("../useRepoSummaries", () => ({
@@ -20,21 +21,6 @@ vi.mock("../../../../sessions/web/ui/LastBackedUp", () => ({
 vi.mock("./useJiraSite", () => ({ useJiraSite: () => "acme.atlassian.net" }));
 
 import { ItemList } from "./ItemList";
-
-function item(
-	id: number,
-	type: "story" | "bug",
-	name: string,
-): BacklogItemSummary {
-	return {
-		id,
-		type,
-		name,
-		status: "todo",
-		starred: false,
-		incompleteSubtasks: 0,
-	};
-}
 
 const socket = {
 	sessions: [],
@@ -63,9 +49,9 @@ afterEach(cleanup);
 
 describe("ItemList type filter", () => {
 	const items = [
-		item(1, "story", "Login flow"),
-		item(2, "bug", "Crash on save"),
-		item(3, "story", "Dashboard chart"),
+		makeBacklogItemSummary({ id: 1, type: "story", name: "Login flow" }),
+		makeBacklogItemSummary({ id: 2, type: "bug", name: "Crash on save" }),
+		makeBacklogItemSummary({ id: 3, type: "story", name: "Dashboard chart" }),
 	];
 
 	it("shows every item under All", () => {
@@ -117,7 +103,9 @@ describe("ItemList type filter", () => {
 
 describe("ItemList empty state", () => {
 	it("reflects the bug filter when no bugs exist", () => {
-		renderList([item(1, "story", "Login flow")]);
+		renderList([
+			makeBacklogItemSummary({ id: 1, type: "story", name: "Login flow" }),
+		]);
 
 		clickFilter("Bugs");
 
@@ -125,7 +113,9 @@ describe("ItemList empty state", () => {
 	});
 
 	it("reflects the story filter when no stories exist", () => {
-		renderList([item(1, "bug", "Crash on save")]);
+		renderList([
+			makeBacklogItemSummary({ id: 1, type: "bug", name: "Crash on save" }),
+		]);
 
 		clickFilter("Stories");
 
@@ -142,11 +132,13 @@ describe("ItemList empty state", () => {
 describe("ItemList tracker links", () => {
 	it("shortens a GitHub issue from the item's own origin", () => {
 		renderList([
-			{
-				...item(1, "story", "Login flow"),
+			makeBacklogItemSummary({
+				id: 1,
+				type: "story",
+				name: "Login flow",
 				origin: "github.com/acme/widgets",
 				githubIssue: "acme/widgets#123",
-			},
+			}),
 		]);
 
 		const link = screen.getByRole("link", { name: "acme/widgets#123" });
@@ -158,11 +150,13 @@ describe("ItemList tracker links", () => {
 
 	it("shortens an issue from another repo to #N as well", () => {
 		renderList([
-			{
-				...item(1, "story", "Login flow"),
+			makeBacklogItemSummary({
+				id: 1,
+				type: "story",
+				name: "Login flow",
 				origin: "github.com/acme/widgets",
 				githubIssue: "other/thing#7",
-			},
+			}),
 		]);
 
 		const link = screen.getByRole("link", { name: "other/thing#7" });
@@ -173,7 +167,14 @@ describe("ItemList tracker links", () => {
 	});
 
 	it("links a Jira key", () => {
-		renderList([{ ...item(1, "story", "Login flow"), jiraKey: "BAD-671" }]);
+		renderList([
+			makeBacklogItemSummary({
+				id: 1,
+				type: "story",
+				name: "Login flow",
+				jiraKey: "BAD-671",
+			}),
+		]);
 
 		const link = screen.getByRole("link", { name: "BAD-671" });
 		expect(link.getAttribute("href")).toBe(
@@ -182,7 +183,9 @@ describe("ItemList tracker links", () => {
 	});
 
 	it("renders no tracker for an item with neither", () => {
-		renderList([item(1, "story", "Login flow")]);
+		renderList([
+			makeBacklogItemSummary({ id: 1, type: "story", name: "Login flow" }),
+		]);
 
 		expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual(
 			["Login flow"],

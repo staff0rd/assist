@@ -1,17 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { displayStatus } from "./displayStatus";
-import type { SessionInfo, SessionStatus } from "../types";
-
-function session(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		id: "5",
-		name: "assist draft --once something",
-		commandType: "assist",
-		status: "running",
-		startedAt: 0,
-		...overrides,
-	};
-}
+import type { SessionStatus } from "../types";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 
 const preview = {
 	requestId: "req-1",
@@ -23,13 +13,17 @@ const preview = {
 
 describe("displayStatus", () => {
 	it("reads waiting while a preview sits unreviewed", () => {
-		expect(displayStatus(session({ pendingPrPreview: preview }))).toBe(
-			"waiting",
-		);
+		expect(
+			displayStatus(
+				makeSessionInfo({ status: "running", pendingPrPreview: preview }),
+			),
+		).toBe("waiting");
 	});
 
 	it("returns to the real status once the preview is cleared", () => {
-		expect(displayStatus(session())).toBe("running");
+		expect(displayStatus(makeSessionInfo({ status: "running" }))).toBe(
+			"running",
+		);
 	});
 
 	it("leaves a non-running status alone", () => {
@@ -40,7 +34,7 @@ describe("displayStatus", () => {
 			"stopped",
 		] satisfies SessionStatus[])
 			expect(
-				displayStatus(session({ status, pendingPrPreview: preview })),
+				displayStatus(makeSessionInfo({ status, pendingPrPreview: preview })),
 			).toBe(status);
 	});
 });

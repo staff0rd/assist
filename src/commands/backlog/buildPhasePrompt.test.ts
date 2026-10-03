@@ -1,22 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../shared/loadConfig";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import { buildPhasePrompt } from "./buildPhasePrompt";
-import type { BacklogItem, PlanPhase } from "./types";
+import type { PlanPhase } from "./types";
 
 vi.mock("../../shared/loadConfig", () => ({ loadConfig: vi.fn() }));
 
 const loadConfigMock = vi.mocked(loadConfig);
-
-function makeItem(): BacklogItem {
-	return {
-		id: 7,
-		type: "story",
-		name: "Test item",
-		acceptanceCriteria: ["AC1"],
-		status: "in-progress",
-		starred: false,
-	};
-}
 
 const phase: PlanPhase = { name: "Phase 1", tasks: [{ task: "do it" }] };
 
@@ -37,7 +27,9 @@ describe("buildPhasePrompt", () => {
 	it("adds no commit instruction when neither key is set", () => {
 		mockWorktree({ enabled: true });
 
-		expect(buildPhasePrompt(makeItem(), 1, phase)).not.toContain("/commit");
+		expect(buildPhasePrompt(makeBacklogItem(), 1, phase)).not.toContain(
+			"/commit",
+		);
 	});
 
 	it("adds no commit instruction when there is no worktree config at all", () => {
@@ -45,19 +37,25 @@ describe("buildPhasePrompt", () => {
 			{} as unknown as ReturnType<typeof loadConfig>,
 		);
 
-		expect(buildPhasePrompt(makeItem(), 1, phase)).not.toContain("/commit");
+		expect(buildPhasePrompt(makeBacklogItem(), 1, phase)).not.toContain(
+			"/commit",
+		);
 	});
 
 	it("honours worktree.commitBeforePhaseEnd", () => {
 		mockWorktree({ commitBeforePhaseEnd: true });
 
-		expect(buildPhasePrompt(makeItem(), 1, phase)).toContain(COMMIT_LINE);
+		expect(buildPhasePrompt(makeBacklogItem(), 1, phase)).toContain(
+			COMMIT_LINE,
+		);
 	});
 
 	it("falls back to worktree.commitBeforeManualChecks when the new key is unset", () => {
 		mockWorktree({ commitBeforeManualChecks: true });
 
-		expect(buildPhasePrompt(makeItem(), 1, phase)).toContain(COMMIT_LINE);
+		expect(buildPhasePrompt(makeBacklogItem(), 1, phase)).toContain(
+			COMMIT_LINE,
+		);
 	});
 
 	it("lets the new key win when both are set", () => {
@@ -66,13 +64,17 @@ describe("buildPhasePrompt", () => {
 			commitBeforeManualChecks: true,
 		});
 
-		expect(buildPhasePrompt(makeItem(), 1, phase)).not.toContain("/commit");
+		expect(buildPhasePrompt(makeBacklogItem(), 1, phase)).not.toContain(
+			"/commit",
+		);
 
 		mockWorktree({
 			commitBeforePhaseEnd: true,
 			commitBeforeManualChecks: false,
 		});
 
-		expect(buildPhasePrompt(makeItem(), 1, phase)).toContain(COMMIT_LINE);
+		expect(buildPhasePrompt(makeBacklogItem(), 1, phase)).toContain(
+			COMMIT_LINE,
+		);
 	});
 });

@@ -1,27 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { BacklogItem, PhaseSession, PlanPhase } from "../types";
+import { makeBacklogItem } from "../../../test/mothers/makeBacklogItem";
+import type { PlanPhase } from "../types";
 import { printPlan } from "./printPlan";
 
 const phases: PlanPhase[] = [
 	{ name: "First", tasks: [{ task: "do a" }] },
 	{ name: "Second", tasks: [{ task: "do b" }] },
 ];
-
-function item(
-	phaseSessions?: PhaseSession[],
-	plan: PlanPhase[] = phases,
-): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Item",
-		acceptanceCriteria: [],
-		status: "in-progress",
-		starred: false,
-		plan,
-		...(phaseSessions ? { phaseSessions } : {}),
-	};
-}
 
 describe("printPlan", () => {
 	let logSpy: ReturnType<typeof vi.spyOn>;
@@ -38,7 +23,7 @@ describe("printPlan", () => {
 		logSpy.mock.calls.map((c: unknown[]) => String(c[0])).join("\n");
 
 	it("prints no session section when a phase has no sessions", () => {
-		printPlan(item());
+		printPlan(makeBacklogItem({ plan: phases }));
 
 		const out = output();
 		expect(out).not.toContain("Sessions:");
@@ -46,20 +31,23 @@ describe("printPlan", () => {
 
 	it("prints machine, user, and session id under the phase that ran", () => {
 		printPlan(
-			item([
-				{
-					phaseIdx: 0,
-					claudeSessionId: "sess-a",
-					hostname: "host-1",
-					osUser: "alice",
-				},
-				{
-					phaseIdx: 0,
-					claudeSessionId: "sess-b",
-					hostname: "host-2",
-					osUser: "bob",
-				},
-			]),
+			makeBacklogItem({
+				plan: phases,
+				phaseSessions: [
+					{
+						phaseIdx: 0,
+						claudeSessionId: "sess-a",
+						hostname: "host-1",
+						osUser: "alice",
+					},
+					{
+						phaseIdx: 0,
+						claudeSessionId: "sess-b",
+						hostname: "host-2",
+						osUser: "bob",
+					},
+				],
+			}),
 		);
 
 		const out = output();
@@ -70,14 +58,17 @@ describe("printPlan", () => {
 
 	it("renders sessions for the auto-appended review phase beyond the plan", () => {
 		printPlan(
-			item([
-				{
-					phaseIdx: 2,
-					claudeSessionId: "sess-review",
-					hostname: "host-r",
-					osUser: "carol",
-				},
-			]),
+			makeBacklogItem({
+				plan: phases,
+				phaseSessions: [
+					{
+						phaseIdx: 2,
+						claudeSessionId: "sess-review",
+						hostname: "host-r",
+						osUser: "carol",
+					},
+				],
+			}),
 		);
 
 		const out = output();
@@ -92,8 +83,9 @@ describe("printPlan", () => {
 		];
 
 		printPlan(
-			item(
-				[
+			makeBacklogItem({
+				plan: authoredReview,
+				phaseSessions: [
 					{
 						phaseIdx: 2,
 						claudeSessionId: "sess-review",
@@ -101,8 +93,7 @@ describe("printPlan", () => {
 						osUser: "carol",
 					},
 				],
-				authoredReview,
-			),
+			}),
 		);
 
 		const out = output();
@@ -113,14 +104,17 @@ describe("printPlan", () => {
 
 	it("scopes sessions to their own phase", () => {
 		printPlan(
-			item([
-				{
-					phaseIdx: 1,
-					claudeSessionId: "sess-second",
-					hostname: "host-1",
-					osUser: "alice",
-				},
-			]),
+			makeBacklogItem({
+				plan: phases,
+				phaseSessions: [
+					{
+						phaseIdx: 1,
+						claudeSessionId: "sess-second",
+						hostname: "host-1",
+						osUser: "alice",
+					},
+				],
+			}),
 		);
 
 		const lines = logSpy.mock.calls.map((c: unknown[]) => String(c[0]));

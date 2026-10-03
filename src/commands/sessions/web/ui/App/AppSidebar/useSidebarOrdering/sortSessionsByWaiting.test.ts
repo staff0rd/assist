@@ -1,28 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { sortSessionsByWaiting } from "./sortSessionsByWaiting";
-import type { SessionInfo, SessionStatus } from "../../../types";
+import type { SessionInfo } from "../../../types";
 
 const NOW = 1_000_000;
 const THRESHOLD_MS = 5000;
-
-function session(
-	id: string,
-	status: SessionStatus = "running",
-	waitingSince: number | null = null,
-): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "run",
-		status,
-		startedAt: 0,
-		waitingSince,
-	};
-}
-
-function waiting(id: string, waitingForMs: number): SessionInfo {
-	return session(id, "waiting", NOW - waitingForMs);
-}
 
 function ids(sessions: SessionInfo[]): string[] {
 	return sessions.map((s) => s.id);
@@ -30,7 +12,11 @@ function ids(sessions: SessionInfo[]): string[] {
 
 describe("sortSessionsByWaiting", () => {
 	it("floats a session waiting past the threshold above the other unstarred sessions", () => {
-		const sessions = [session("a"), waiting("b", 6000), session("c")];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: NOW - 6000 }),
+			makeSessionInfo({ id: "c", status: "running" }),
+		];
 
 		const sorted = sortSessionsByWaiting(
 			sessions,
@@ -43,7 +29,11 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("keeps starred sessions above floated waiters", () => {
-		const sessions = [session("a"), waiting("b", 6000), session("c")];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: NOW - 6000 }),
+			makeSessionInfo({ id: "c", status: "running" }),
+		];
 		const starred = new Set(["c"]);
 
 		const sorted = sortSessionsByWaiting(
@@ -57,7 +47,11 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("never floats a starred session out of the starred tier", () => {
-		const sessions = [session("a"), waiting("b", 6000), waiting("c", 9000)];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: NOW - 6000 }),
+			makeSessionInfo({ id: "c", status: "waiting", waitingSince: NOW - 9000 }),
+		];
 		const starred = new Set(["b"]);
 
 		const sorted = sortSessionsByWaiting(
@@ -72,10 +66,18 @@ describe("sortSessionsByWaiting", () => {
 
 	it("orders several floated sessions longest waiting first", () => {
 		const sessions = [
-			waiting("a", 6000),
-			session("b"),
-			waiting("c", 30_000),
-			waiting("d", 10_000),
+			makeSessionInfo({ id: "a", status: "waiting", waitingSince: NOW - 6000 }),
+			makeSessionInfo({ id: "b", status: "running" }),
+			makeSessionInfo({
+				id: "c",
+				status: "waiting",
+				waitingSince: NOW - 30_000,
+			}),
+			makeSessionInfo({
+				id: "d",
+				status: "waiting",
+				waitingSince: NOW - 10_000,
+			}),
 		];
 
 		const sorted = sortSessionsByWaiting(
@@ -89,7 +91,11 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("leaves a session waiting less than the threshold in place", () => {
-		const sessions = [session("a"), waiting("b", 4999), session("c")];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: NOW - 4999 }),
+			makeSessionInfo({ id: "c", status: "running" }),
+		];
 
 		const sorted = sortSessionsByWaiting(
 			sessions,
@@ -102,7 +108,10 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("floats a session that has waited exactly the threshold", () => {
-		const sessions = [session("a"), waiting("b", 5000)];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: NOW - 5000 }),
+		];
 
 		const sorted = sortSessionsByWaiting(
 			sessions,
@@ -115,7 +124,14 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("ignores a stale waitingSince on a session that is no longer waiting", () => {
-		const sessions = [session("a"), session("b", "running", NOW - 60_000)];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({
+				id: "b",
+				status: "running",
+				waitingSince: NOW - 60_000,
+			}),
+		];
 
 		const sorted = sortSessionsByWaiting(
 			sessions,
@@ -128,7 +144,10 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("ignores a waiting session with no waitingSince stamp", () => {
-		const sessions = [session("a"), session("b", "waiting")];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: null }),
+		];
 
 		const sorted = sortSessionsByWaiting(
 			sessions,
@@ -141,7 +160,15 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("floats on a longer configured threshold only once it is passed", () => {
-		const sessions = [session("a"), waiting("b", 12_000), waiting("c", 8000)];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({
+				id: "b",
+				status: "waiting",
+				waitingSince: NOW - 12_000,
+			}),
+			makeSessionInfo({ id: "c", status: "waiting", waitingSince: NOW - 8000 }),
+		];
 
 		const sorted = sortSessionsByWaiting(sessions, () => false, NOW, 10_000);
 
@@ -149,7 +176,10 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("floats a briefly waiting session on a shorter configured threshold", () => {
-		const sessions = [session("a"), waiting("b", 900)];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: NOW - 900 }),
+		];
 
 		const sorted = sortSessionsByWaiting(sessions, () => false, NOW, 500);
 
@@ -157,7 +187,11 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("floats every waiting session when the threshold is zero", () => {
-		const sessions = [session("a"), waiting("b", 0), waiting("c", 1)];
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting", waitingSince: NOW }),
+			makeSessionInfo({ id: "c", status: "waiting", waitingSince: NOW - 1 }),
+		];
 
 		const sorted = sortSessionsByWaiting(sessions, () => false, NOW, 0);
 
@@ -165,7 +199,9 @@ describe("sortSessionsByWaiting", () => {
 	});
 
 	it("matches the star-only order when nothing has waited past the threshold", () => {
-		const sessions = ["a", "b", "c", "d"].map((id) => session(id));
+		const sessions = ["a", "b", "c", "d"].map((id) =>
+			makeSessionInfo({ id, status: "running" }),
+		);
 		const starred = new Set(["b", "d"]);
 
 		const sorted = sortSessionsByWaiting(

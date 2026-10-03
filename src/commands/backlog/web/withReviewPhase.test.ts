@@ -1,24 +1,11 @@
 import { describe, expect, it } from "vitest";
+import { makeBacklogItem } from "../../../test/mothers/makeBacklogItem";
 import { REVIEW_PHASE_NAME } from "../buildPhasePrompt";
-import type { BacklogItem } from "../types";
 import { withReviewPhase } from "./withReviewPhase";
-
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Item",
-		acceptanceCriteria: ["does the thing"],
-		status: "in-progress",
-		starred: false,
-		origin: "cli",
-		...overrides,
-	};
-}
 
 describe("withReviewPhase", () => {
 	it("appends the Review phase to an item with authored phases", () => {
-		const item = makeItem({
+		const item = makeBacklogItem({
 			plan: [{ name: "Design", tasks: [{ task: "sketch" }] }],
 		});
 
@@ -31,7 +18,7 @@ describe("withReviewPhase", () => {
 	});
 
 	it("renders one Review phase when the stored plan already ends with one", () => {
-		const item = makeItem({
+		const item = makeBacklogItem({
 			plan: [
 				{ name: "Fix", tasks: [{ task: "patch it" }] },
 				{ name: REVIEW_PHASE_NAME, tasks: [{ task: "check it" }] },
@@ -45,13 +32,13 @@ describe("withReviewPhase", () => {
 	});
 
 	it("leaves a plan-less item unchanged", () => {
-		const item = makeItem();
+		const item = makeBacklogItem();
 
 		expect(withReviewPhase(item)).toBe(item);
 	});
 
 	it("does not mutate the original plan", () => {
-		const item = makeItem({
+		const item = makeBacklogItem({
 			plan: [{ name: "Design", tasks: [{ task: "sketch" }] }],
 		});
 

@@ -4,6 +4,8 @@ import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionInfo } from "../../../../sessions/web/ui/types";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
+import { makeBacklogItemSummary } from "../../../../../test/mothers/makeBacklogItemSummary";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import type { BacklogItemSummary } from "../types";
 
 vi.mock("./useJiraSite", () => ({ useJiraSite: () => "acme.atlassian.net" }));
@@ -15,25 +17,9 @@ function socketWith(sessions: SessionInfo[]) {
 	return { sessions, selectSession: vi.fn() } as unknown as SessionSocket;
 }
 
-function itemSession(status: SessionInfo["status"]): SessionInfo {
-	return {
-		id: "s1",
-		name: "session",
-		commandType: "claude",
-		status,
-		startedAt: 0,
-		activity: { kind: "backlog", itemId: 984 },
-	} as SessionInfo;
-}
+const itemActivity = { kind: "backlog", itemId: 984, startedAt: 0 } as const;
 
-const base: BacklogItemSummary = {
-	id: 984,
-	type: "story",
-	name: "Login flow",
-	status: "todo",
-	starred: false,
-	incompleteSubtasks: 0,
-};
+const base = makeBacklogItemSummary({ id: 984, name: "Login flow" });
 
 const itemPath = "/backlog/items/a984";
 
@@ -165,7 +151,9 @@ describe("ItemCard running edge", () => {
 	}
 
 	it("sweeps the left edge while the open session is running", () => {
-		const { container } = renderCard(inProgress, [itemSession("running")]);
+		const { container } = renderCard(inProgress, [
+			makeSessionInfo({ id: "s1", status: "running", activity: itemActivity }),
+		]);
 
 		const style = card(container);
 		expect(style.animation).toContain("0.9s");
@@ -173,7 +161,9 @@ describe("ItemCard running edge", () => {
 	});
 
 	it("keeps the solid edge when the open session is idle", () => {
-		const { container } = renderCard(inProgress, [itemSession("waiting")]);
+		const { container } = renderCard(inProgress, [
+			makeSessionInfo({ id: "s1", status: "waiting", activity: itemActivity }),
+		]);
 
 		const style = card(container);
 		expect(style.animation).toBe("");
@@ -190,7 +180,7 @@ describe("ItemCard running edge", () => {
 
 	it("leaves a done row unswept even while a session runs on it", () => {
 		const { container } = renderCard({ status: "done" }, [
-			itemSession("running"),
+			makeSessionInfo({ id: "s1", status: "running", activity: itemActivity }),
 		]);
 
 		const style = card(container);

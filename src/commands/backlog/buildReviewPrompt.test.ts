@@ -1,34 +1,22 @@
 import { describe, expect, it } from "vitest";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import { buildReviewPrompt } from "./buildReviewPrompt";
-import type { BacklogItem } from "./types";
-
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 7,
-		type: "story",
-		name: "Test item",
-		acceptanceCriteria: ["AC1"],
-		status: "in-progress",
-		starred: false,
-		...overrides,
-	};
-}
 
 describe("buildReviewPrompt", () => {
 	describe("commitBeforePhaseEnd", () => {
 		it("leaves the prompt unchanged when the flag is off", () => {
-			const prompt = buildReviewPrompt(makeItem(), 3, {
+			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
 				commitBeforePhaseEnd: false,
 			});
 
-			expect(prompt).toBe(buildReviewPrompt(makeItem(), 3));
+			expect(prompt).toBe(buildReviewPrompt(makeBacklogItem(), 3));
 			expect(prompt).not.toContain(
 				"Before asking the user to confirm manual checks, run /commit",
 			);
 		});
 
 		it("instructs the agent to commit before the manual check confirmation when the flag is on", () => {
-			const prompt = buildReviewPrompt(makeItem(), 3, {
+			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
 				commitBeforePhaseEnd: true,
 			});
 
@@ -43,7 +31,7 @@ describe("buildReviewPrompt", () => {
 		});
 
 		it("keeps the post-confirmation commit step when the flag is on", () => {
-			const prompt = buildReviewPrompt(makeItem(), 3, {
+			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
 				commitBeforePhaseEnd: true,
 			});
 

@@ -1,32 +1,16 @@
 import { describe, expect, it } from "vitest";
+import { makeSessionInfo } from "../../../../../../../../../test/mothers/makeSessionInfo";
 import { deriveWorktreeCwd } from "./deriveWorktreeCwd";
-import type { HistoricalSession, SessionInfo } from "../../../../../types";
+import type { HistoricalSession } from "../../../../../types";
 
-const sessions: SessionInfo[] = [
-	{
-		id: "plain",
-		name: "plain",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		cwd: "/repos/live",
-	},
-	{
+const sessions = [
+	makeSessionInfo({ id: "plain", cwd: "/repos/live" }),
+	makeSessionInfo({
 		id: "worktree",
-		name: "worktree",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
 		cwd: "/repos/live/.worktrees/feature",
 		repoGroup: { origin: "host/org/live", clone: "/repos/live" },
-	},
-	{
-		id: "no-cwd",
-		name: "no cwd",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-	},
+	}),
+	makeSessionInfo({ id: "no-cwd" }),
 ];
 
 const history: HistoricalSession[] = [

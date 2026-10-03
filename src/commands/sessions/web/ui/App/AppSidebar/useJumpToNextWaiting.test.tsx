@@ -2,7 +2,8 @@
 import { cleanup, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { SessionInfo, SessionStatus, SidebarTab } from "../../types";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
+import type { SessionInfo, SidebarTab } from "../../types";
 import { useJumpToNextWaiting } from "./useJumpToNextWaiting";
 import { StarredSessionsProvider } from "../useStarredSessions";
 
@@ -12,10 +13,6 @@ function Stars({ children }: { children: ReactNode }) {
 			{children}
 		</StarredSessionsProvider>
 	);
-}
-
-function session(id: string, status: SessionStatus): SessionInfo {
-	return { id, name: id, commandType: "claude", status, startedAt: 0 };
 }
 
 function card(id: string) {
@@ -71,8 +68,8 @@ afterEach(() => {
 describe("useJumpToNextWaiting", () => {
 	it("flips the sidebar back to active before selecting from the history tab", () => {
 		const { onSelect, onTabChange } = renderJump("history", [
-			session("a", "running"),
-			session("b", "waiting"),
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting" }),
 		]);
 
 		pressJumpKey();
@@ -83,7 +80,7 @@ describe("useJumpToNextWaiting", () => {
 
 	it("leaves the tab alone when the active tab is already showing", () => {
 		const { onSelect, onTabChange } = renderJump("active", [
-			session("a", "waiting"),
+			makeSessionInfo({ id: "a", status: "waiting" }),
 		]);
 
 		pressJumpKey();
@@ -94,7 +91,10 @@ describe("useJumpToNextWaiting", () => {
 
 	it("scrolls the jumped-to card into view", () => {
 		const target = card("b");
-		renderJump("active", [session("a", "running"), session("b", "waiting")]);
+		renderJump("active", [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({ id: "b", status: "waiting" }),
+		]);
 
 		pressJumpKey();
 
@@ -104,7 +104,7 @@ describe("useJumpToNextWaiting", () => {
 	it("changes nothing when no session is waiting", () => {
 		const target = card("a");
 		const { onSelect, onTabChange } = renderJump("history", [
-			session("a", "running"),
+			makeSessionInfo({ id: "a", status: "running" }),
 		]);
 
 		pressJumpKey();

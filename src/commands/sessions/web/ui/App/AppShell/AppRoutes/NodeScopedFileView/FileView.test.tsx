@@ -10,6 +10,7 @@ import {
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ScopedRule } from "../../../../../../../rules/types";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 import { FileView } from "./FileView";
 import type { SessionInfo } from "../../../../types";
 import { RepoSelectionContext } from "../../../../useRepoSelectionContext";
@@ -507,14 +508,12 @@ describe("FileView", () => {
 const DOC =
 	"# Notes\n\nThe first paragraph\nwraps over two lines.\n\nA **bold** claim here.\n";
 
-const liveSession = {
+const liveSession = makeSessionInfo({
 	id: "daemon-1",
 	claudeSessionId: "claude-1",
 	name: "one",
-	commandType: "claude",
-	startedAt: 0,
 	status: "running",
-} as SessionInfo;
+});
 
 function caretAt(node: Node, offset: number): Range {
 	const range = document.createRange();

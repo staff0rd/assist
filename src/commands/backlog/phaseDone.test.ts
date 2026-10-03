@@ -8,7 +8,7 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
-import type { BacklogItem } from "./types";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 
 vi.mock("./shared", () => ({
 	getBacklogDir: () => process.cwd(),
@@ -38,18 +38,6 @@ const mockAppendComment = appendComment as unknown as MockInstance;
 
 const orm = {} as never;
 
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Item",
-		acceptanceCriteria: [],
-		status: "in-progress",
-		starred: false,
-		...overrides,
-	};
-}
-
 function cleanup(): void {
 	const path = getSignalPath();
 	if (path && existsSync(path)) unlinkSync(path);
@@ -67,7 +55,9 @@ describe("phaseDone", () => {
 		process.env.ASSIST_SESSION_ID = "test-session";
 		process.exitCode = undefined;
 		mockGetReady.mockResolvedValue({ orm });
-		mockLoadItem.mockResolvedValue(makeItem());
+		mockLoadItem.mockResolvedValue(
+			makeBacklogItem({ id: 1, status: "in-progress" }),
+		);
 		recordSignalOwner(1);
 		cleanup();
 	});
@@ -151,7 +141,9 @@ describe("phaseDone", () => {
 
 	describe("when item is already done", () => {
 		it("should not advance currentPhase", async () => {
-			mockLoadItem.mockResolvedValue(makeItem({ status: "done" }));
+			mockLoadItem.mockResolvedValue(
+				makeBacklogItem({ id: 1, status: "done" }),
+			);
 
 			await phaseDone("a1", "1", "Done");
 
@@ -160,7 +152,9 @@ describe("phaseDone", () => {
 		});
 
 		it("should skip the summary (already saved by done command)", async () => {
-			mockLoadItem.mockResolvedValue(makeItem({ status: "done" }));
+			mockLoadItem.mockResolvedValue(
+				makeBacklogItem({ id: 1, status: "done" }),
+			);
 
 			await phaseDone("a1", "3", "Review complete");
 
@@ -182,7 +176,9 @@ describe("phaseDone", () => {
 	});
 
 	describe("when the review phase has incomplete sub-tasks", () => {
-		const withPlanAndSubtask = makeItem({
+		const withPlanAndSubtask = makeBacklogItem({
+			id: 1,
+			status: "in-progress",
 			plan: [{ name: "Implement", tasks: [] }],
 			subtasks: [{ title: "Wire it up", status: "todo" }],
 		});
@@ -209,7 +205,9 @@ describe("phaseDone", () => {
 
 		it("should allow the review phase once all sub-tasks are done", async () => {
 			mockLoadItem.mockResolvedValue(
-				makeItem({
+				makeBacklogItem({
+					id: 1,
+					status: "in-progress",
 					plan: [{ name: "Implement", tasks: [] }],
 					subtasks: [{ title: "Wire it up", status: "done" }],
 				}),

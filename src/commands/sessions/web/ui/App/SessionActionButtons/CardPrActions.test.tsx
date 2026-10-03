@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { CardPrActions } from "./CardPrActions";
 import type { SessionInfo } from "../../types";
 
@@ -9,20 +10,12 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
-function session(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		id: "5",
-		name: "assist review-pr-comments 12",
-		commandType: "assist",
-		assistArgs: ["review-pr-comments", "12"],
-		status: "running",
-		startedAt: 0,
-		runningMs: 0,
-		runningSince: null,
-		cwd: "/git/repo",
-		...overrides,
-	};
-}
+const reviewSession = makeSessionInfo({
+	commandType: "assist",
+	assistArgs: ["review-pr-comments", "12"],
+	status: "running",
+	cwd: "/git/repo",
+});
 
 function stubFetch({ pr, synthesis }: { pr: boolean; synthesis: boolean }) {
 	vi.stubGlobal(
@@ -51,7 +44,7 @@ function stubFetch({ pr, synthesis }: { pr: boolean; synthesis: boolean }) {
 	);
 }
 
-function renderActions(s: SessionInfo = session()) {
+function renderActions(s: SessionInfo = reviewSession) {
 	render(<CardPrActions session={s} />);
 }
 
@@ -87,10 +80,12 @@ describe("CardPrActions review pairing", () => {
 	it("gives a fix-conflict session the same PR-scoped actions", async () => {
 		stubFetch({ pr: true, synthesis: true });
 		renderActions(
-			session({
-				name: "assist fix-conflict 12",
+			makeSessionInfo({
+				commandType: "assist",
 				assistArgs: ["fix-conflict", "12"],
 				subtitle: "#12 · someone · 2h ago",
+				status: "running",
+				cwd: "/git/repo",
 			}),
 		);
 

@@ -1,21 +1,14 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { makeBacklogItemSummary } from "../../../../../test/mothers/makeBacklogItemSummary";
 import type { BacklogItemSummary } from "../types";
 import { PhaseMeter } from "./PhaseMeter";
 
-const base: BacklogItemSummary = {
-	id: 984,
-	type: "story",
-	name: "Login flow",
-	status: "todo",
-	starred: false,
-	incompleteSubtasks: 0,
-	totalPhases: 4,
-};
-
 function renderMeter(item: Partial<BacklogItemSummary>) {
-	const { container } = render(<PhaseMeter item={{ ...base, ...item }} />);
+	const { container } = render(
+		<PhaseMeter item={makeBacklogItemSummary({ totalPhases: 4, ...item })} />,
+	);
 	return container;
 }
 

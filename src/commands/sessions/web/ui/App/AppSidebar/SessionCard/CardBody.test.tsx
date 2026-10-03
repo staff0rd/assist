@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { CardBody } from "./CardBody";
 import type { SessionInfo } from "../../../types";
 import { DiffPanelsProvider } from "../../useDiffPanels";
@@ -31,19 +32,15 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 });
 
-function session(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		id: "5",
-		name: "assist draft --once something",
-		commandType: "assist",
-		status: "running",
-		startedAt: 0,
-		runningMs: 0,
-		runningSince: null,
-		cwd: "/git/repo-2",
-		...overrides,
-	};
-}
+const draft = makeSessionInfo({
+	id: "5",
+	name: "assist draft --once something",
+	commandType: "assist",
+	status: "running",
+	runningMs: 0,
+	runningSince: null,
+	cwd: "/git/repo-2",
+});
 
 function renderBody(
 	s: SessionInfo,
@@ -73,7 +70,7 @@ function renderBody(
 
 describe("CardBody while busy", () => {
 	it("leaves no bottom row for a session that is booting", () => {
-		const { container } = renderBody(session(), true);
+		const { container } = renderBody(draft, true);
 
 		expect(container.innerHTML).toBe("");
 		expect(screen.queryByRole("progressbar")).toBeNull();
@@ -81,7 +78,10 @@ describe("CardBody while busy", () => {
 	});
 
 	it("leaves no bottom row while the worktree is being torn down", () => {
-		const { container } = renderBody(session({ closing: true }), true);
+		const { container } = renderBody(
+			makeSessionInfo({ ...draft, closing: true }),
+			true,
+		);
 
 		expect(container.innerHTML).toBe("");
 		expect(screen.queryByText("Closing…")).toBeNull();
@@ -90,20 +90,27 @@ describe("CardBody while busy", () => {
 
 describe("CardBody meta line", () => {
 	it("names the repo as plain text once the activity resolves", () => {
-		renderBody(session({ activity: { kind: "command", startedAt: 0 } }), false);
+		renderBody(
+			makeSessionInfo({
+				...draft,
+				activity: { kind: "command", startedAt: 0 },
+			}),
+			false,
+		);
 
 		const repo = screen.getByText("repo-2");
 		expect(repo.closest(".MuiChip-root")).toBeNull();
 	});
 
 	it("holds the meta line back while the activity is still unknown", () => {
-		renderBody(session(), false);
+		renderBody(draft, false);
 
 		expect(screen.queryByText("repo-2")).toBeNull();
 	});
 
 	const phased = () =>
-		session({
+		makeSessionInfo({
+			...draft,
 			activity: { kind: "backlog", startedAt: 0, phaseName: "Phase 1: flag" },
 		});
 
@@ -130,14 +137,14 @@ describe("CardBody status caption", () => {
 	};
 
 	it("says waiting while a proposed item sits in the preview pane", () => {
-		renderBody(session({ pendingPrPreview: preview }), false);
+		renderBody(makeSessionInfo({ ...draft, pendingPrPreview: preview }), false);
 
 		expect(screen.getByText("● waiting")).toBeTruthy();
 		expect(screen.queryByText("● running")).toBeNull();
 	});
 
 	it("says running once the preview has been decided", () => {
-		renderBody(session(), false);
+		renderBody(draft, false);
 
 		expect(screen.getByText("● running")).toBeTruthy();
 	});
@@ -145,7 +152,7 @@ describe("CardBody status caption", () => {
 
 describe("CardBody git status counts", () => {
 	it("shows the card's own working-tree counts", async () => {
-		renderBody(session(), false);
+		renderBody(draft, false);
 
 		expect(await screen.findByText("+1")).toBeTruthy();
 		expect(screen.getByText("~2")).toBeTruthy();
@@ -154,7 +161,7 @@ describe("CardBody git status counts", () => {
 
 	it("activates the card's session when its counts are clicked", async () => {
 		const onActivateSession = vi.fn();
-		renderBody(session(), false, onActivateSession);
+		renderBody(draft, false, onActivateSession);
 
 		fireEvent.click(await screen.findByText("+1"));
 
@@ -162,7 +169,7 @@ describe("CardBody git status counts", () => {
 	});
 
 	it("carries the claude session id into the counts request", async () => {
-		renderBody(session({ claudeSessionId: "sess-1" }), false);
+		renderBody(makeSessionInfo({ ...draft, claudeSessionId: "sess-1" }), false);
 
 		expect(await screen.findByText("+1")).toBeTruthy();
 		expect(fetch).toHaveBeenCalledWith(
@@ -171,7 +178,10 @@ describe("CardBody git status counts", () => {
 	});
 
 	it("shows no counts while the card is starting or closing", async () => {
-		const { container } = renderBody(session({ closing: true }), true);
+		const { container } = renderBody(
+			makeSessionInfo({ ...draft, closing: true }),
+			true,
+		);
 
 		await waitFor(() => expect(container.innerHTML).toBe(""));
 		expect(screen.queryByText("+1")).toBeNull();
@@ -181,7 +191,10 @@ describe("CardBody git status counts", () => {
 
 describe("CardBody review button", () => {
 	it("leaves the review button to the session action row", async () => {
-		renderBody(session({ assistArgs: ["review-pr-comments", "12"] }), false);
+		renderBody(
+			makeSessionInfo({ ...draft, assistArgs: ["review-pr-comments", "12"] }),
+			false,
+		);
 
 		expect(await screen.findByText("+1")).toBeTruthy();
 		expect(screen.queryByText("Findings")).toBeNull();
@@ -195,7 +208,11 @@ describe("CardBody top bar layout", () => {
 				<TopBarLayoutContext.Provider value={topBar}>
 					<DiffPanelsProvider sessionIds={[]} onActivateSession={vi.fn()}>
 						<CardBody
-							session={session({ runningMs: 65_000, restored: true })}
+							session={makeSessionInfo({
+								...draft,
+								runningMs: 65_000,
+								restored: true,
+							})}
 							loading={false}
 							onSetAutoRun={vi.fn()}
 							onSetAutoAdvance={vi.fn()}

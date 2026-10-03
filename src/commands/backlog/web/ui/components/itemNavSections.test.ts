@@ -1,24 +1,15 @@
 import { describe, expect, it } from "vitest";
-import type { BacklogItem } from "../types";
+import { makeBacklogItem } from "../../../../../test/mothers/makeBacklogItem";
 import { itemNavSections } from "./itemNavSections";
-
-const item = (overrides: Partial<BacklogItem> = {}): BacklogItem => ({
-	id: 1,
-	type: "story",
-	name: "An item",
-	acceptanceCriteria: [],
-	status: "todo",
-	...overrides,
-});
 
 describe("itemNavSections", () => {
 	it("returns no rows for an empty item", () => {
-		expect(itemNavSections(item())).toEqual([]);
+		expect(itemNavSections(makeBacklogItem())).toEqual([]);
 	});
 
 	it("omits rows for sections the item does not have", () => {
 		const sections = itemNavSections(
-			item({
+			makeBacklogItem({
 				description: "d",
 				acceptanceCriteria: ["a"],
 				subtasks: [],
@@ -35,7 +26,7 @@ describe("itemNavSections", () => {
 
 	it("renders a nested numbered row per phase, status-tinted, named only in the title", () => {
 		const sections = itemNavSections(
-			item({
+			makeBacklogItem({
 				plan: [
 					{ name: "First", tasks: [] },
 					{ name: "Second", tasks: [] },
@@ -73,9 +64,9 @@ describe("itemNavSections", () => {
 
 	it("appends a Review phase row only when review sessions exist", () => {
 		const plan = [{ name: "First", tasks: [] }];
-		const withoutReview = itemNavSections(item({ plan }));
+		const withoutReview = itemNavSections(makeBacklogItem({ plan }));
 		const withReview = itemNavSections(
-			item({
+			makeBacklogItem({
 				plan,
 				phaseSessions: [
 					{
@@ -101,7 +92,7 @@ describe("itemNavSections", () => {
 
 	it("does not append a Review row when the plan already ends with one", () => {
 		const sections = itemNavSections(
-			item({
+			makeBacklogItem({
 				plan: [
 					{ name: "First", tasks: [] },
 					{ name: "Review", tasks: [] },
@@ -126,7 +117,7 @@ describe("itemNavSections", () => {
 
 	it("places phase rows between Sub-tasks and Activity", () => {
 		const sections = itemNavSections(
-			item({
+			makeBacklogItem({
 				description: "d",
 				subtasks: [{ title: "t", status: "todo" }],
 				plan: [{ name: "First", tasks: [] }],

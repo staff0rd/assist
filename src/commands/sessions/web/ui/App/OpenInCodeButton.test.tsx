@@ -2,9 +2,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { SessionCard } from "./App/AppSidebar/SessionCard";
-import type { SessionInfo } from "./types";
-import { StarredSessionsProvider } from "./App/useStarredSessions";
+import { SessionCard } from "./AppSidebar/SessionCard";
+import { StarredSessionsProvider } from "./useStarredSessions";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 
 afterEach(() => {
 	cleanup();
@@ -18,14 +18,7 @@ beforeEach(() => {
 	);
 });
 
-const session: SessionInfo = {
-	id: "1",
-	name: "my session",
-	commandType: "claude",
-	status: "running",
-	startedAt: 0,
-	cwd: "/home/me/repo",
-};
+const session = makeSessionInfo({ cwd: "/home/me/repo" });
 
 function Stars({ children }: { children: ReactNode }) {
 	return (

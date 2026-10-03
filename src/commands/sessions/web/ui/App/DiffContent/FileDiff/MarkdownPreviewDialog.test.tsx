@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MarkdownPreviewDialog } from "./MarkdownPreviewDialog";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import type { SessionInfo } from "../../../types";
 import { useDiffComments } from "../useDiffContent/useDiffComments";
 
@@ -148,14 +149,12 @@ describe("MarkdownPreviewDialog", () => {
 const DOC =
 	"# Notes\n\nThe first paragraph\nwraps over two lines.\n\nA **bold** claim here.\n";
 
-const liveSession = {
+const liveSession = makeSessionInfo({
 	id: "daemon-1",
 	claudeSessionId: "claude-1",
-	name: "one",
 	commandType: "claude",
-	startedAt: 0,
 	status: "running",
-} as SessionInfo;
+});
 
 function stubDoc() {
 	const fetch = vi.fn(async (url: string) =>

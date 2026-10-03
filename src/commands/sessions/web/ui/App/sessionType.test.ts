@@ -1,17 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { sessionType } from "./sessionType";
-import type { SessionInfo } from "../types";
-
-function makeSession(overrides: Partial<SessionInfo>): SessionInfo {
-	return {
-		id: "1",
-		name: "fallback",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		...overrides,
-	};
-}
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 
 describe("sessionType", () => {
 	it("derives the assist command as the type", () => {
@@ -23,7 +12,7 @@ describe("sessionType", () => {
 			"review",
 			"update",
 		] as const) {
-			const session = makeSession({
+			const session = makeSessionInfo({
 				commandType: "assist",
 				assistArgs: [cmd, "--once"],
 			});
@@ -32,7 +21,7 @@ describe("sessionType", () => {
 	});
 
 	it("maps review-pr-comments to the review type", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["review-pr-comments", "123"],
 		});
@@ -40,7 +29,7 @@ describe("sessionType", () => {
 	});
 
 	it("maps fix-conflict to the review type", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["fix-conflict", "123"],
 		});
@@ -48,11 +37,13 @@ describe("sessionType", () => {
 	});
 
 	it("treats a free claude session as a prompt", () => {
-		expect(sessionType(makeSession({ commandType: "claude" }))).toBe("prompt");
+		expect(sessionType(makeSessionInfo({ commandType: "claude" }))).toBe(
+			"prompt",
+		);
 	});
 
 	it("treats an unrecognised assist command as a prompt", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["something-else"],
 		});
@@ -60,7 +51,7 @@ describe("sessionType", () => {
 	});
 
 	it("switches to 'next' once a backlog activity is present", () => {
-		const session = makeSession({
+		const session = makeSessionInfo({
 			commandType: "assist",
 			assistArgs: ["draft", "--once"],
 			activity: { kind: "backlog", itemId: 1, startedAt: 0 },
@@ -70,7 +61,7 @@ describe("sessionType", () => {
 
 	it("uses 'run' for run sessions", () => {
 		expect(
-			sessionType(makeSession({ commandType: "run", runName: "build" })),
+			sessionType(makeSessionInfo({ commandType: "run", runName: "build" })),
 		).toBe("run");
 	});
 });

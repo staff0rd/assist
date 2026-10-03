@@ -9,6 +9,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestDb } from "../../shared/db/createTestDb";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import type { Db } from "../../shared/db/Db";
 import { items as itemsTable } from "../../shared/db/schema";
 import { loadAllItems } from "./loadAllItems";
@@ -21,13 +22,10 @@ const ORIGIN = "github.com/test/repo";
 // Old ids (10, 20) deliberately differ from the ids a fresh DB assigns (1, 2…)
 // so the id remap is observable.
 const ITEMS: BacklogItem[] = [
-	{
+	makeBacklogItem({
 		id: 10,
-		type: "story",
 		name: "First",
 		acceptanceCriteria: ["a"],
-		status: "todo",
-		starred: false,
 		comments: [
 			{
 				id: 99,
@@ -37,16 +35,13 @@ const ITEMS: BacklogItem[] = [
 			},
 		],
 		links: [{ type: "relates-to", targetId: 20 }],
-	},
-	{
+	}),
+	makeBacklogItem({
 		id: 20,
 		type: "bug",
 		name: "Second",
-		acceptanceCriteria: [],
-		status: "todo",
-		starred: false,
 		plan: [{ name: "Phase 1", tasks: [{ task: "do it" }] }],
-	},
+	}),
 ];
 
 function writeJsonl(dir: string, items: BacklogItem[]): void {

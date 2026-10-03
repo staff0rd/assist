@@ -6,7 +6,8 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
-import type { BacklogFile, BacklogItem } from "./types";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
+import type { BacklogFile } from "./types";
 
 vi.mock("enquirer", () => ({
 	default: { prompt: vi.fn() },
@@ -50,18 +51,6 @@ const mockRun = run as unknown as MockInstance;
 const mockPrompt = enquirer.prompt as unknown as MockInstance;
 const mockPullIfConfigured = pullIfConfigured as unknown as MockInstance;
 
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Test item",
-		acceptanceCriteria: ["AC1"],
-		status: "todo",
-		starred: false,
-		...overrides,
-	};
-}
-
 describe("next", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -69,7 +58,9 @@ describe("next", () => {
 
 	describe("when first pick has exactly one unblocked todo", () => {
 		it("auto-selects without prompting", async () => {
-			const items: BacklogFile = [makeItem({ id: 5, name: "Only item" })];
+			const items: BacklogFile = [
+				makeBacklogItem({ id: 5, name: "Only item" }),
+			];
 			mockLoadBacklog.mockReturnValue(items);
 			mockRun.mockResolvedValueOnce(false);
 
@@ -83,8 +74,8 @@ describe("next", () => {
 	describe("when first pick has multiple unblocked todos", () => {
 		it("shows the selection prompt", async () => {
 			const items: BacklogFile = [
-				makeItem({ id: 1, name: "Item A" }),
-				makeItem({ id: 2, name: "Item B" }),
+				makeBacklogItem({ id: 1, name: "Item A" }),
+				makeBacklogItem({ id: 2, name: "Item B" }),
 			];
 			mockLoadBacklog.mockReturnValue(items);
 			mockPrompt.mockResolvedValueOnce({ selected: "story a1: Item A" });
@@ -98,7 +89,7 @@ describe("next", () => {
 
 	describe("when first pick has one todo but it is blocked", () => {
 		it("exits without prompting", async () => {
-			const items: BacklogFile = [makeItem({ id: 1 })];
+			const items: BacklogFile = [makeBacklogItem({ id: 1 })];
 			mockIsBlocked.mockReturnValue(true);
 			mockLoadBacklog.mockReturnValue(items);
 
@@ -123,7 +114,7 @@ describe("next", () => {
 
 		it("continues picking after the given id completes", async () => {
 			mockIsBlocked.mockReturnValue(false);
-			const items: BacklogFile = [makeItem({ id: 2, name: "Item B" })];
+			const items: BacklogFile = [makeBacklogItem({ id: 2, name: "Item B" })];
 			mockLoadBacklog.mockReturnValue(items);
 			mockRun.mockResolvedValueOnce(true); // given id completes
 			mockPrompt.mockResolvedValueOnce({ selected: "story a2: Item B" });
@@ -151,7 +142,7 @@ describe("next", () => {
 
 	describe("when once mode is enabled", () => {
 		it("returns after the first completed run without picking again", async () => {
-			const items: BacklogFile = [makeItem({ id: 1, name: "Item A" })];
+			const items: BacklogFile = [makeBacklogItem({ id: 1, name: "Item A" })];
 			mockLoadBacklog.mockReturnValue(items);
 			mockRun.mockResolvedValueOnce(true);
 
@@ -177,8 +168,12 @@ describe("next", () => {
 	describe("on subsequent iterations", () => {
 		it("shows the selection prompt even with one unblocked todo", async () => {
 			mockIsBlocked.mockReturnValue(false);
-			const firstItems: BacklogFile = [makeItem({ id: 1, name: "Item A" })];
-			const secondItems: BacklogFile = [makeItem({ id: 2, name: "Item B" })];
+			const firstItems: BacklogFile = [
+				makeBacklogItem({ id: 1, name: "Item A" }),
+			];
+			const secondItems: BacklogFile = [
+				makeBacklogItem({ id: 2, name: "Item B" }),
+			];
 			mockLoadBacklog
 				.mockReturnValueOnce(firstItems)
 				.mockReturnValueOnce(secondItems);

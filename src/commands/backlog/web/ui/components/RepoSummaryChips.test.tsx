@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import type { SessionInfo } from "../../../../sessions/web/ui/types";
 import { RepoSelectionContext } from "../../../../sessions/web/ui/useRepoSelectionContext";
 import { SessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
@@ -12,17 +13,6 @@ vi.mock("../useRepoSummaries", () => ({
 }));
 
 import { RepoSummaryChips } from "./RepoSummaryChips";
-
-function session(overrides: Partial<SessionInfo>): SessionInfo {
-	return {
-		id: "s1",
-		name: "assist backlog clone github.com/org/repo",
-		commandType: "assist",
-		startedAt: 1,
-		status: "running",
-		...overrides,
-	} as SessionInfo;
-}
 
 function renderChips(
 	sessions: SessionInfo[],
@@ -155,8 +145,9 @@ describe("RepoSummaryChips clone-on-select", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Clone" }));
 		expect(launchAssist).toHaveBeenCalled();
 
-		const running = session({
+		const running = makeSessionInfo({
 			id: "clone-1",
+			commandType: "assist",
 			assistArgs: ["backlog", "clone", "github.com/org/repo"],
 			status: "running",
 		});
@@ -232,8 +223,9 @@ describe("RepoSummaryChips clone-on-select", () => {
 
 		rerender(
 			provider([
-				session({
+				makeSessionInfo({
 					id: "clone-1",
+					commandType: "assist",
 					assistArgs: ["backlog", "clone", "github.com/org/repo"],
 					status: "error",
 					error: "git clone failed with exit code 128.",

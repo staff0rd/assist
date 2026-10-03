@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PrPreview } from "../../../../shared/SessionInfoBase";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { SessionArea } from "./SessionArea";
 import type { SessionInfo, SessionListHandlers } from "../../types";
 import { DiffPanelsProvider, useDiffPanels } from "../useDiffPanels";
@@ -40,21 +41,9 @@ afterEach(() => {
 	cleanup();
 });
 
-const sessions: SessionInfo[] = [
-	{
-		id: "1",
-		name: "first",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-	},
-	{
-		id: "2",
-		name: "second",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-	},
+const sessions = [
+	makeSessionInfo({ id: "1", status: "running" }),
+	makeSessionInfo({ id: "2", status: "running" }),
 ];
 
 function renderArea(
@@ -104,14 +93,11 @@ describe("SessionArea loading state", () => {
 
 	it("does not show a loading indicator for a stopped session with no process", () => {
 		renderArea("3", new Set(), [
-			{
+			makeSessionInfo({
 				id: "3",
-				name: "held",
-				commandType: "claude",
 				status: "stopped",
-				startedAt: 0,
 				undurable: { reason: "uncommitted changes" },
-			},
+			}),
 		]);
 		expect(screen.queryByText("Starting session…")).toBeNull();
 	});
@@ -178,19 +164,13 @@ describe("SessionArea transcript view", () => {
 	});
 });
 
-function barSession(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		id: "1",
-		name: "my session",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		runningMs: 5_000,
-		runningSince: null,
-		subtitle: "first subtitle",
-		...overrides,
-	};
-}
+const bar = {
+	id: "1",
+	status: "running",
+	runningMs: 5_000,
+	runningSince: null,
+	subtitle: "first subtitle",
+} satisfies Partial<SessionInfo>;
 
 const pendingPreview: PrPreview = {
 	requestId: "req-1",
@@ -266,27 +246,27 @@ function nearestAncestorOfTerminalAndPreview(): HTMLElement {
 
 describe("SessionArea top bar", () => {
 	it("shows the active session's phase and elapsed when the flag is on", () => {
-		renderWithTopBar(true, [barSession()], "1");
+		renderWithTopBar(true, [makeSessionInfo(bar)], "1");
 
 		expect(screen.getByText("first subtitle")).toBeTruthy();
 		expect(screen.getByText("5s")).toBeTruthy();
 	});
 
 	it("renders no top bar when the flag is off", () => {
-		renderWithTopBar(false, [barSession()], "1");
+		renderWithTopBar(false, [makeSessionInfo(bar)], "1");
 
 		expect(screen.queryByText("first subtitle")).toBeNull();
 		expect(screen.queryByText("5s")).toBeNull();
 	});
 
 	it("renders no top bar when no session is active", () => {
-		renderWithTopBar(true, [barSession()], "other");
+		renderWithTopBar(true, [makeSessionInfo(bar)], "other");
 
 		expect(screen.queryByText("first subtitle")).toBeNull();
 	});
 
 	it("renders no top bar in the transcript view", () => {
-		renderWithTopBar(true, [barSession()], "1", {
+		renderWithTopBar(true, [makeSessionInfo(bar)], "1", {
 			viewingTranscriptSessionId: "abc",
 		});
 
@@ -296,8 +276,13 @@ describe("SessionArea top bar", () => {
 
 	it("follows the active session when it changes", () => {
 		const list = [
-			barSession(),
-			barSession({ id: "2", subtitle: "second subtitle", runningMs: 65_000 }),
+			makeSessionInfo(bar),
+			makeSessionInfo({
+				...bar,
+				id: "2",
+				subtitle: "second subtitle",
+				runningMs: 65_000,
+			}),
 		];
 		renderWithTopBar(true, list, "2");
 
@@ -309,7 +294,7 @@ describe("SessionArea top bar", () => {
 	it("sits above the split rather than inside it when a preview is open", () => {
 		renderWithTopBar(
 			true,
-			[barSession({ pendingPrPreview: pendingPreview })],
+			[makeSessionInfo({ ...bar, pendingPrPreview: pendingPreview })],
 			"1",
 		);
 
@@ -327,7 +312,7 @@ describe("SessionArea last message", () => {
 	it("shows the active session's last prompt beside the bar", () => {
 		renderWithTopBar(
 			true,
-			[barSession({ lastUserMessage: "fix the failing test" })],
+			[makeSessionInfo({ ...bar, lastUserMessage: "fix the failing test" })],
 			"1",
 		);
 
@@ -339,7 +324,12 @@ describe("SessionArea last message", () => {
 	it("collapses a multi-line prompt onto one line", () => {
 		renderWithTopBar(
 			true,
-			[barSession({ lastUserMessage: "first line\n\nsecond line" })],
+			[
+				makeSessionInfo({
+					...bar,
+					lastUserMessage: "first line\n\nsecond line",
+				}),
+			],
 			"1",
 		);
 
@@ -349,7 +339,7 @@ describe("SessionArea last message", () => {
 	});
 
 	it("renders nothing when the session has no prompt yet", () => {
-		renderWithTopBar(true, [barSession()], "1");
+		renderWithTopBar(true, [makeSessionInfo(bar)], "1");
 
 		expect(screen.queryByTestId("session-last-message")).toBeNull();
 	});
@@ -357,7 +347,7 @@ describe("SessionArea last message", () => {
 	it("renders nothing when the top bar is hidden", () => {
 		renderWithTopBar(
 			false,
-			[barSession({ lastUserMessage: "fix the failing test" })],
+			[makeSessionInfo({ ...bar, lastUserMessage: "fix the failing test" })],
 			"1",
 		);
 
@@ -381,7 +371,7 @@ describe("SessionArea last message beside the diff panel", () => {
 	it("stays within the terminal column so the diff toolbar keeps its controls", () => {
 		renderWithTopBar(
 			true,
-			[barSession({ lastUserMessage: "fix the failing test" })],
+			[makeSessionInfo({ ...bar, lastUserMessage: "fix the failing test" })],
 			"1",
 		);
 
@@ -397,7 +387,7 @@ describe("SessionArea last message beside the diff panel", () => {
 	it("goes away with the terminal when the diff fills the area", () => {
 		renderWithTopBar(
 			true,
-			[barSession({ lastUserMessage: "fix the failing test" })],
+			[makeSessionInfo({ ...bar, lastUserMessage: "fix the failing test" })],
 			"1",
 		);
 
@@ -414,7 +404,7 @@ describe("SessionArea last message beside the diff panel", () => {
 	it("hugs the left edge of the terminal, away from every right-hand panel", () => {
 		renderWithTopBar(
 			true,
-			[barSession({ lastUserMessage: "fix the failing test" })],
+			[makeSessionInfo({ ...bar, lastUserMessage: "fix the failing test" })],
 			"1",
 		);
 
@@ -430,9 +420,12 @@ describe("SessionArea last message beside the diff panel", () => {
 describe("SessionArea top bar actions", () => {
 	it("restarts the active session", () => {
 		const onRestart = vi.fn();
-		renderWithTopBar(true, [barSession(), barSession({ id: "2" })], "2", {
-			lifecycle: { onRestart },
-		});
+		renderWithTopBar(
+			true,
+			[makeSessionInfo(bar), makeSessionInfo({ ...bar, id: "2" })],
+			"2",
+			{ lifecycle: { onRestart } },
+		);
 
 		fireEvent.click(screen.getByTitle("Restart session 2"));
 		fireEvent.click(screen.getByRole("button", { name: "Restart" }));
@@ -442,9 +435,12 @@ describe("SessionArea top bar actions", () => {
 
 	it("retries the active session", () => {
 		const onRetry = vi.fn();
-		renderWithTopBar(true, [barSession({ commandType: "run" })], "1", {
-			lifecycle: { onRetry },
-		});
+		renderWithTopBar(
+			true,
+			[makeSessionInfo({ ...bar, commandType: "run" })],
+			"1",
+			{ lifecycle: { onRetry } },
+		);
 
 		fireEvent.click(screen.getByTitle("Retry session 1"));
 
@@ -452,13 +448,13 @@ describe("SessionArea top bar actions", () => {
 	});
 
 	it("offers no retry on a session that cannot be retried", () => {
-		renderWithTopBar(true, [barSession()], "1");
+		renderWithTopBar(true, [makeSessionInfo(bar)], "1");
 
 		expect(screen.queryByTitle("Retry session 1")).toBeNull();
 	});
 
 	it("keeps the actions out of the session area when the flag is off", () => {
-		renderWithTopBar(false, [barSession()], "1");
+		renderWithTopBar(false, [makeSessionInfo(bar)], "1");
 
 		expect(screen.queryByTitle("Restart session 1")).toBeNull();
 	});
@@ -466,7 +462,8 @@ describe("SessionArea top bar actions", () => {
 	it("advances the active session's continue switch", () => {
 		const onSetAutoAdvance = vi.fn();
 		const backlog = (id: string) =>
-			barSession({
+			makeSessionInfo({
+				...bar,
 				id,
 				activity: { kind: "backlog", startedAt: 0, phase: 1, totalPhases: 3 },
 			});
@@ -481,7 +478,7 @@ describe("SessionArea top bar actions", () => {
 
 	it("dismisses the active session from the bar", () => {
 		const onDismiss = vi.fn();
-		renderWithTopBar(true, [barSession({ status: "done" })], "1", {
+		renderWithTopBar(true, [makeSessionInfo({ ...bar, status: "done" })], "1", {
 			lifecycle: { onDismiss },
 		});
 

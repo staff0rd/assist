@@ -1,17 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { diffCommentSender } from "./diffCommentSender";
-import type { SessionInfo } from "../../../../types";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 
 const ESC = String.fromCharCode(27);
 
-const session = {
-	id: "daemon-1",
-	claudeSessionId: "claude-1",
-	name: "one",
-	commandType: "claude",
-	startedAt: 0,
-	status: "running",
-} as SessionInfo;
+const session = makeSessionInfo({ id: "daemon-1" });
 
 const comment = {
 	path: "a.ts",

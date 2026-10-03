@@ -3,7 +3,8 @@ import { renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it, vi } from "vitest";
-import type { HistoricalSession, SessionInfo } from "../../../types";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
+import type { HistoricalSession } from "../../../types";
 import { useAdoptRepoCard } from "./useAdoptRepoCard";
 
 const routerAt = (path: string) =>
@@ -14,24 +15,13 @@ const routerAt = (path: string) =>
 const clone = "/repos/live";
 const group = { origin: "host/org/live", clone };
 
-const sessions: SessionInfo[] = [
-	{
+const sessions = [
+	makeSessionInfo({
 		id: "worktree",
-		name: "worktree",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
 		cwd: "/repos/live/.worktrees/feature",
 		repoGroup: group,
-	},
-	{
-		id: "other-repo",
-		name: "other",
-		commandType: "claude",
-		status: "running",
-		startedAt: 0,
-		cwd: "/repos/other",
-	},
+	}),
+	makeSessionInfo({ id: "other-repo", cwd: "/repos/other" }),
 ];
 
 const history: HistoricalSession[] = [

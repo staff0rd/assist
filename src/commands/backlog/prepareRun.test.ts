@@ -6,7 +6,8 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
-import type { BacklogItem } from "./types";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
+import type { PlanPhase } from "./types";
 
 vi.mock("./shared", () => ({
 	findOneItem: vi.fn(),
@@ -25,21 +26,10 @@ const mockFindOneItem = findOneItem as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;
 const mockReconcile = reconcileResumePhase as unknown as MockInstance;
 
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Test item",
-		acceptanceCriteria: ["AC1", "AC2"],
-		status: "todo",
-		starred: false,
-		plan: [
-			{ name: "Phase 1", tasks: [{ task: "Do something" }] },
-			{ name: "Phase 2", tasks: [{ task: "Do more" }] },
-		],
-		...overrides,
-	};
-}
+const plan: PlanPhase[] = [
+	{ name: "Phase 1", tasks: [{ task: "Do something" }] },
+	{ name: "Phase 2", tasks: [{ task: "Do more" }] },
+];
 
 describe("prepareRun", () => {
 	beforeEach(() => {
@@ -59,7 +49,7 @@ describe("prepareRun", () => {
 
 	describe("when item is already done", () => {
 		it("returns undefined without updating status", async () => {
-			const item = makeItem({ currentPhase: 2, status: "done" });
+			const item = makeBacklogItem({ plan, currentPhase: 2, status: "done" });
 			mockFindOneItem.mockReturnValue({ orm: {}, item });
 
 			expect(await prepareRun("1")).toBeUndefined();
@@ -67,7 +57,7 @@ describe("prepareRun", () => {
 		});
 
 		it("returns undefined even when currentPhase exceeds plan length", async () => {
-			const item = makeItem({ currentPhase: 4, status: "done" });
+			const item = makeBacklogItem({ plan, currentPhase: 4, status: "done" });
 			mockFindOneItem.mockReturnValue({ orm: {}, item });
 
 			expect(await prepareRun("1")).toBeUndefined();
@@ -77,7 +67,11 @@ describe("prepareRun", () => {
 
 	describe("when all phases including review are already complete", () => {
 		it("marks done and returns undefined", async () => {
-			const item = makeItem({ currentPhase: 4, status: "in-progress" });
+			const item = makeBacklogItem({
+				plan,
+				currentPhase: 4,
+				status: "in-progress",
+			});
 			mockFindOneItem.mockReturnValue({ orm: {}, item });
 
 			expect(await prepareRun("1")).toBeUndefined();
@@ -87,7 +81,7 @@ describe("prepareRun", () => {
 
 	describe("when item is ready to run", () => {
 		it("returns item, plan, and startPhase", async () => {
-			const item = makeItem();
+			const item = makeBacklogItem({ plan });
 			mockFindOneItem.mockReturnValue({ orm: {}, item });
 
 			const result = await prepareRun("1");
@@ -100,7 +94,7 @@ describe("prepareRun", () => {
 		});
 
 		it("defaults startPhase to 0 when currentPhase is undefined", async () => {
-			const item = makeItem({ currentPhase: undefined });
+			const item = makeBacklogItem({ plan, currentPhase: undefined });
 			mockFindOneItem.mockReturnValue({ orm: {}, item });
 
 			const result = await prepareRun("1");
@@ -109,7 +103,7 @@ describe("prepareRun", () => {
 		});
 
 		it("uses currentPhase as startPhase when resuming", async () => {
-			const item = makeItem({ currentPhase: 2 });
+			const item = makeBacklogItem({ plan, currentPhase: 2 });
 			mockFindOneItem.mockReturnValue({ orm: {}, item });
 
 			const result = await prepareRun("1");
@@ -118,7 +112,7 @@ describe("prepareRun", () => {
 		});
 
 		it("uses the reconciled phase when a resumed conversation diverges", async () => {
-			const item = makeItem({ currentPhase: 2 });
+			const item = makeBacklogItem({ plan, currentPhase: 2 });
 			mockFindOneItem.mockReturnValue({ orm: {}, item });
 			mockReconcile.mockResolvedValue(2);
 

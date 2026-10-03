@@ -6,7 +6,7 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
-import type { BacklogItem } from "./types";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 
 vi.mock("./run", () => ({
 	run: vi.fn(),
@@ -38,18 +38,6 @@ const mockLoadItem = loadItem as unknown as MockInstance;
 const mockRun = run as unknown as MockInstance;
 const mockIsBlocked = isBlocked as unknown as MockInstance;
 
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 1,
-		type: "story",
-		name: "Test item",
-		acceptanceCriteria: ["AC1"],
-		status: "todo",
-		starred: false,
-		...overrides,
-	};
-}
-
 describe("tryRunById", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -69,7 +57,7 @@ describe("tryRunById", () => {
 
 	describe("when the id is a bare number", () => {
 		it("tolerates it, resolves the item, and calls run", async () => {
-			mockLoadItem.mockResolvedValue(makeItem({ id: 42 }));
+			mockLoadItem.mockResolvedValue(makeBacklogItem({ id: 42 }));
 
 			const result = await tryRunById("42", { allowEdits: true });
 
@@ -80,7 +68,9 @@ describe("tryRunById", () => {
 
 	describe("when the item is already done", () => {
 		it("returns false and does not call run", async () => {
-			mockLoadItem.mockResolvedValue(makeItem({ id: 1, status: "done" }));
+			mockLoadItem.mockResolvedValue(
+				makeBacklogItem({ id: 1, status: "done" }),
+			);
 
 			const result = await tryRunById("a1");
 
@@ -91,7 +81,9 @@ describe("tryRunById", () => {
 
 	describe("when the item is marked won't do", () => {
 		it("returns false and does not call run", async () => {
-			mockLoadItem.mockResolvedValue(makeItem({ id: 1, status: "wontdo" }));
+			mockLoadItem.mockResolvedValue(
+				makeBacklogItem({ id: 1, status: "wontdo" }),
+			);
 
 			const result = await tryRunById("a1");
 
@@ -103,7 +95,10 @@ describe("tryRunById", () => {
 	describe("when the item is blocked by dependencies", () => {
 		it("returns false and does not call run", async () => {
 			mockLoadItem.mockResolvedValue(
-				makeItem({ id: 1, links: [{ type: "depends-on", targetId: 2 }] }),
+				makeBacklogItem({
+					id: 1,
+					links: [{ type: "depends-on", targetId: 2 }],
+				}),
 			);
 			mockIsBlocked.mockReturnValue(true);
 
@@ -116,7 +111,7 @@ describe("tryRunById", () => {
 
 	describe("when the item is runnable", () => {
 		it("calls run with the id and returns true", async () => {
-			mockLoadItem.mockResolvedValue(makeItem({ id: 1 }));
+			mockLoadItem.mockResolvedValue(makeBacklogItem({ id: 1 }));
 
 			const result = await tryRunById("a1", { allowEdits: true });
 
@@ -126,7 +121,7 @@ describe("tryRunById", () => {
 
 		it("treats in-progress items as runnable", async () => {
 			mockLoadItem.mockResolvedValue(
-				makeItem({ id: 1, status: "in-progress" }),
+				makeBacklogItem({ id: 1, status: "in-progress" }),
 			);
 
 			const result = await tryRunById("a1");

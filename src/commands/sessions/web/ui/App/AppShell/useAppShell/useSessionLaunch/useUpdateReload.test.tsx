@@ -9,7 +9,8 @@ import {
 	type Mock,
 	vi,
 } from "vitest";
-import type { SessionInfo, SessionStatus } from "../../../../types";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
+import type { SessionInfo } from "../../../../types";
 import type { SuccessNotice } from "../../../../useNotices";
 import { useUpdateReload } from "./useUpdateReload";
 
@@ -19,28 +20,11 @@ const { postRestart } = vi.hoisted(() => ({
 
 vi.mock("../../postRestart", () => ({ postRestart }));
 
-function updateSession(id: string, status: SessionStatus): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "assist",
-		assistArgs: ["update"],
-		status,
-		startedAt: 0,
-		cwd: "/repo",
-	};
-}
-
-function otherSession(id: string, status: SessionStatus): SessionInfo {
-	return {
-		id,
-		name: id,
-		commandType: "claude",
-		status,
-		startedAt: 0,
-		cwd: "/repo",
-	};
-}
+const update = {
+	commandType: "assist",
+	assistArgs: ["update"],
+	cwd: "/repo",
+} satisfies Partial<SessionInfo>;
 
 let reload: ReturnType<typeof vi.fn>;
 let setSuccess: Mock<(notice: SuccessNotice) => void>;
@@ -80,20 +64,29 @@ function render(initial: Props) {
 
 function armAndCompleteUpdate() {
 	const { result, rerender } = render({
-		sessions: [updateSession("u1", "running")],
+		sessions: [makeSessionInfo({ ...update, id: "u1", status: "running" })],
 		reconnecting: false,
 	});
 
 	act(() => result.current.armUpdateReload());
 	rerender({ sessions: [], reconnecting: true });
-	rerender({ sessions: [updateSession("u2", "done")], reconnecting: false });
+	rerender({
+		sessions: [makeSessionInfo({ ...update, id: "u2", status: "done" })],
+		reconnecting: false,
+	});
 
 	return { rerender };
 }
 
 function reconnectWebserver(rerender: (props: Props) => void) {
-	rerender({ sessions: [updateSession("u2", "done")], reconnecting: true });
-	rerender({ sessions: [updateSession("u2", "done")], reconnecting: false });
+	rerender({
+		sessions: [makeSessionInfo({ ...update, id: "u2", status: "done" })],
+		reconnecting: true,
+	});
+	rerender({
+		sessions: [makeSessionInfo({ ...update, id: "u2", status: "done" })],
+		reconnecting: false,
+	});
 }
 
 describe("useUpdateReload", () => {
@@ -110,13 +103,19 @@ describe("useUpdateReload", () => {
 	it("reloads and leaves a breadcrumb only once the re-execed web server is back", async () => {
 		const { rerender } = armAndCompleteUpdate();
 
-		rerender({ sessions: [updateSession("u2", "done")], reconnecting: true });
+		rerender({
+			sessions: [makeSessionInfo({ ...update, id: "u2", status: "done" })],
+			reconnecting: true,
+		});
 		expect(reload).not.toHaveBeenCalled();
 		expect(
 			globalThis.sessionStorage.getItem("assist:reloaded-after-update"),
 		).toBeNull();
 
-		rerender({ sessions: [updateSession("u2", "done")], reconnecting: false });
+		rerender({
+			sessions: [makeSessionInfo({ ...update, id: "u2", status: "done" })],
+			reconnecting: false,
+		});
 		await waitFor(() => expect(reload).toHaveBeenCalledTimes(1));
 		expect(
 			globalThis.sessionStorage.getItem("assist:reloaded-after-update"),
@@ -127,7 +126,10 @@ describe("useUpdateReload", () => {
 		const { rerender } = armAndCompleteUpdate();
 
 		rerender({
-			sessions: [updateSession("u2", "done"), updateSession("u3", "done")],
+			sessions: [
+				makeSessionInfo({ ...update, id: "u2", status: "done" }),
+				makeSessionInfo({ ...update, id: "u3", status: "done" }),
+			],
 			reconnecting: false,
 		});
 
@@ -188,14 +190,14 @@ describe("useUpdateReload", () => {
 
 	it("ignores a restored/pre-existing done update session across a reconnect", () => {
 		const { result, rerender } = render({
-			sessions: [updateSession("pre", "done")],
+			sessions: [makeSessionInfo({ ...update, id: "pre", status: "done" })],
 			reconnecting: false,
 		});
 
 		act(() => result.current.armUpdateReload());
 		rerender({ sessions: [], reconnecting: true });
 		rerender({
-			sessions: [updateSession("pre", "done")],
+			sessions: [makeSessionInfo({ ...update, id: "pre", status: "done" })],
 			reconnecting: false,
 		});
 
@@ -205,14 +207,17 @@ describe("useUpdateReload", () => {
 
 	it("restarts only for the newly completed update, not the pre-existing done session", () => {
 		const { result, rerender } = render({
-			sessions: [updateSession("pre", "done")],
+			sessions: [makeSessionInfo({ ...update, id: "pre", status: "done" })],
 			reconnecting: false,
 		});
 
 		act(() => result.current.armUpdateReload());
 		rerender({ sessions: [], reconnecting: true });
 		rerender({
-			sessions: [updateSession("pre", "done"), updateSession("new", "done")],
+			sessions: [
+				makeSessionInfo({ ...update, id: "pre", status: "done" }),
+				makeSessionInfo({ ...update, id: "new", status: "done" }),
+			],
 			reconnecting: false,
 		});
 
@@ -221,14 +226,14 @@ describe("useUpdateReload", () => {
 
 	it("does not restart when the update ends in error after a reconnect", () => {
 		const { result, rerender } = render({
-			sessions: [updateSession("u1", "running")],
+			sessions: [makeSessionInfo({ ...update, id: "u1", status: "running" })],
 			reconnecting: false,
 		});
 
 		act(() => result.current.armUpdateReload());
 		rerender({ sessions: [], reconnecting: true });
 		rerender({
-			sessions: [updateSession("u1", "error")],
+			sessions: [makeSessionInfo({ ...update, id: "u1", status: "error" })],
 			reconnecting: false,
 		});
 
@@ -238,12 +243,15 @@ describe("useUpdateReload", () => {
 
 	it("does not restart when the update fails without restarting the daemon", () => {
 		const { result, rerender } = render({
-			sessions: [updateSession("u1", "running")],
+			sessions: [makeSessionInfo({ ...update, id: "u1", status: "running" })],
 			reconnecting: false,
 		});
 
 		act(() => result.current.armUpdateReload());
-		rerender({ sessions: [updateSession("u1", "error")], reconnecting: false });
+		rerender({
+			sessions: [makeSessionInfo({ ...update, id: "u1", status: "error" })],
+			reconnecting: false,
+		});
 
 		expect(postRestart).not.toHaveBeenCalled();
 		expect(reload).not.toHaveBeenCalled();
@@ -256,7 +264,10 @@ describe("useUpdateReload", () => {
 		});
 
 		act(() => result.current.armUpdateReload());
-		rerender({ sessions: [updateSession("u1", "done")], reconnecting: false });
+		rerender({
+			sessions: [makeSessionInfo({ ...update, id: "u1", status: "done" })],
+			reconnecting: false,
+		});
 
 		expect(postRestart).not.toHaveBeenCalled();
 		expect(reload).not.toHaveBeenCalled();
@@ -264,11 +275,14 @@ describe("useUpdateReload", () => {
 
 	it("does not restart when not armed", () => {
 		const { rerender } = render({
-			sessions: [updateSession("old", "done")],
+			sessions: [makeSessionInfo({ ...update, id: "old", status: "done" })],
 			reconnecting: true,
 		});
 
-		rerender({ sessions: [updateSession("old", "done")], reconnecting: false });
+		rerender({
+			sessions: [makeSessionInfo({ ...update, id: "old", status: "done" })],
+			reconnecting: false,
+		});
 
 		expect(postRestart).not.toHaveBeenCalled();
 		expect(reload).not.toHaveBeenCalled();
@@ -282,7 +296,10 @@ describe("useUpdateReload", () => {
 
 		act(() => result.current.armUpdateReload());
 		rerender({ sessions: [], reconnecting: true });
-		rerender({ sessions: [otherSession("c1", "done")], reconnecting: false });
+		rerender({
+			sessions: [makeSessionInfo({ id: "c1", status: "done", cwd: "/repo" })],
+			reconnecting: false,
+		});
 
 		expect(postRestart).not.toHaveBeenCalled();
 		expect(reload).not.toHaveBeenCalled();

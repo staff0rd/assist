@@ -6,7 +6,7 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
-import type { BacklogItem } from "./types";
+import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 
 vi.mock("../../shared/loadConfig", () => ({
 	loadConfig: vi.fn(),
@@ -63,18 +63,6 @@ function gitCommands(): string[] {
 	return mockExec.mock.calls.map((call) => String(call[0]));
 }
 
-function makeItem(overrides: Partial<BacklogItem> = {}): BacklogItem {
-	return {
-		id: 42,
-		type: "story",
-		name: "Add login form",
-		acceptanceCriteria: [],
-		status: "todo",
-		starred: false,
-		...overrides,
-	};
-}
-
 describe("ensureStoryBranch", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -91,7 +79,7 @@ describe("ensureStoryBranch", () => {
 	it("creates a branch when the config has no prs block", async () => {
 		mockLoadConfig.mockReturnValue({});
 
-		await ensureStoryBranch(makeItem());
+		await ensureStoryBranch(makeBacklogItem({ name: "Add login form" }));
 
 		expect(mockCreateBranch).toHaveBeenCalledWith({
 			slug: "add-login-form",
@@ -102,7 +90,7 @@ describe("ensureStoryBranch", () => {
 	it("does nothing when prs.required is false", async () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: false } });
 
-		await ensureStoryBranch(makeItem());
+		await ensureStoryBranch(makeBacklogItem());
 
 		expect(mockCreateBranch).not.toHaveBeenCalled();
 	});
@@ -111,7 +99,7 @@ describe("ensureStoryBranch", () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: true } });
 
 		await ensureStoryBranch(
-			makeItem({ gitRefs: [{ kind: "branch", ref: "existing" }] }),
+			makeBacklogItem({ gitRefs: [{ kind: "branch", ref: "existing" }] }),
 		);
 
 		expect(mockCreateBranch).not.toHaveBeenCalled();
@@ -120,7 +108,7 @@ describe("ensureStoryBranch", () => {
 	it("creates a branch from the item name when required and none recorded", async () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: true } });
 
-		await ensureStoryBranch(makeItem({ name: "Add login form" }));
+		await ensureStoryBranch(makeBacklogItem({ name: "Add login form" }));
 
 		expect(mockCreateBranch).toHaveBeenCalledWith({
 			slug: "add-login-form",
@@ -131,7 +119,9 @@ describe("ensureStoryBranch", () => {
 	it("passes the associated Jira key through to the branch name", async () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: true } });
 
-		await ensureStoryBranch(makeItem({ jiraKey: "BAD-671" }));
+		await ensureStoryBranch(
+			makeBacklogItem({ name: "Add login form", jiraKey: "BAD-671" }),
+		);
 
 		expect(mockCreateBranch).toHaveBeenCalledWith({
 			slug: "add-login-form",
@@ -142,7 +132,7 @@ describe("ensureStoryBranch", () => {
 	it("records the item id in the environment so the branch is tied to the story", async () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: true } });
 
-		await ensureStoryBranch(makeItem({ id: 42 }));
+		await ensureStoryBranch(makeBacklogItem({ id: 42 }));
 
 		expect(process.env.ASSIST_BACKLOG_ITEM_ID).toBe("42");
 	});
@@ -150,7 +140,7 @@ describe("ensureStoryBranch", () => {
 	it("records the created branch when prs.required is unset", async () => {
 		mockLoadConfig.mockReturnValue({});
 
-		await ensureStoryBranch(makeItem({ id: 42 }));
+		await ensureStoryBranch(makeBacklogItem({ id: 42 }));
 
 		expect(logged()).toEqual([
 			"backlog run 42: prs.required on and no branch recorded; created add-login-form",
@@ -160,7 +150,7 @@ describe("ensureStoryBranch", () => {
 	it("records why no branch was created when prs.required is false", async () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: false } });
 
-		await ensureStoryBranch(makeItem({ id: 42 }));
+		await ensureStoryBranch(makeBacklogItem({ id: 42 }));
 
 		expect(logged()).toEqual([
 			"backlog run 42: prs.required is false; left the session on its current branch",
@@ -171,7 +161,10 @@ describe("ensureStoryBranch", () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: true } });
 
 		await ensureStoryBranch(
-			makeItem({ id: 42, gitRefs: [{ kind: "branch", ref: "existing" }] }),
+			makeBacklogItem({
+				id: 42,
+				gitRefs: [{ kind: "branch", ref: "existing" }],
+			}),
 		);
 
 		expect(logged()).toEqual([
@@ -184,7 +177,7 @@ describe("ensureStoryBranch", () => {
 		inWorktree("/git/repo-6", "repo-6");
 
 		await ensureStoryBranch(
-			makeItem({
+			makeBacklogItem({
 				id: 42,
 				gitRefs: [{ kind: "branch", ref: "staff0rd/story" }],
 			}),
@@ -201,7 +194,7 @@ describe("ensureStoryBranch", () => {
 		inWorktree("/git/repo-6", "staff0rd/story");
 
 		await ensureStoryBranch(
-			makeItem({ gitRefs: [{ kind: "branch", ref: "staff0rd/story" }] }),
+			makeBacklogItem({ gitRefs: [{ kind: "branch", ref: "staff0rd/story" }] }),
 		);
 
 		expect(gitCommands()).not.toContain("git switch staff0rd/story");
@@ -218,7 +211,7 @@ describe("ensureStoryBranch", () => {
 		});
 
 		await ensureStoryBranch(
-			makeItem({
+			makeBacklogItem({
 				id: 42,
 				gitRefs: [{ kind: "branch", ref: "staff0rd/story" }],
 			}),
@@ -233,7 +226,7 @@ describe("ensureStoryBranch", () => {
 		mockLoadConfig.mockReturnValue({ prs: { required: true } });
 
 		await ensureStoryBranch(
-			makeItem({ gitRefs: [{ kind: "commit", ref: "abc123" }] }),
+			makeBacklogItem({ gitRefs: [{ kind: "commit", ref: "abc123" }] }),
 		);
 
 		expect(mockCreateBranch).toHaveBeenCalled();

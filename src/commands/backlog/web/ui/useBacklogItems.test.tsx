@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { makeBacklogItemSummary } from "../../../../test/mothers/makeBacklogItemSummary";
 import { backlogItemsCache } from "./backlogItemsCache";
 import type { BacklogFilter } from "../parseBacklogFilter";
 import type { BacklogItemSummary } from "./types";
@@ -18,21 +19,6 @@ vi.mock("./useBacklogFilter", () => ({
 }));
 
 import { useBacklogItems } from "./useBacklogItems";
-
-function item(
-	id: number,
-	overrides: Partial<BacklogItemSummary> = {},
-): BacklogItemSummary {
-	return {
-		id,
-		type: "story",
-		name: `item ${id}`,
-		status: "todo",
-		starred: false,
-		incompleteSubtasks: 0,
-		...overrides,
-	};
-}
 
 function resolveLoad(items: BacklogItemSummary[]) {
 	loadBacklogItems.mockResolvedValue(items);
@@ -52,35 +38,41 @@ describe("useBacklogItems", () => {
 	it("shows the spinner on a true first load (cache miss)", async () => {
 		// No cache entry for this cwd yet.
 		cwd = "/fresh";
-		resolveLoad([item(1)]);
+		resolveLoad([makeBacklogItemSummary({ id: 1 })]);
 
 		const { result } = renderHook(() => useBacklogItems());
 
 		expect(result.current.loading).toBe(true);
 		await waitFor(() => expect(result.current.loading).toBe(false));
-		expect(result.current.items).toEqual([item(1)]);
+		expect(result.current.items).toEqual([makeBacklogItemSummary({ id: 1 })]);
 	});
 
 	it("renders cached items immediately with no spinner, then revalidates silently", async () => {
-		backlogItemsCache.set("/repo", "todo", [item(1)]);
-		resolveLoad([item(1), item(2)]);
+		backlogItemsCache.set("/repo", "todo", [makeBacklogItemSummary({ id: 1 })]);
+		resolveLoad([
+			makeBacklogItemSummary({ id: 1 }),
+			makeBacklogItemSummary({ id: 2 }),
+		]);
 
 		const { result } = renderHook(() => useBacklogItems());
 
 		// Cache hit: items present and no spinner from the very first render.
 		expect(result.current.loading).toBe(false);
-		expect(result.current.items).toEqual([item(1)]);
+		expect(result.current.items).toEqual([makeBacklogItemSummary({ id: 1 })]);
 
 		// Background revalidation updates the list without ever flipping loading.
 		await waitFor(() =>
-			expect(result.current.items).toEqual([item(1), item(2)]),
+			expect(result.current.items).toEqual([
+				makeBacklogItemSummary({ id: 1 }),
+				makeBacklogItemSummary({ id: 2 }),
+			]),
 		);
 		expect(result.current.loading).toBe(false);
 	});
 
 	it("keeps the same items reference when revalidation finds no change", async () => {
-		backlogItemsCache.set("/repo", "todo", [item(1)]);
-		resolveLoad([item(1)]);
+		backlogItemsCache.set("/repo", "todo", [makeBacklogItemSummary({ id: 1 })]);
+		resolveLoad([makeBacklogItemSummary({ id: 1 })]);
 
 		const { result } = renderHook(() => useBacklogItems());
 		const before = result.current.items;
@@ -93,41 +85,45 @@ describe("useBacklogItems", () => {
 	});
 
 	it("shows the spinner when switching to an uncached cwd", async () => {
-		backlogItemsCache.set("/repo", "todo", [item(1)]);
-		resolveLoad([item(1)]);
+		backlogItemsCache.set("/repo", "todo", [makeBacklogItemSummary({ id: 1 })]);
+		resolveLoad([makeBacklogItemSummary({ id: 1 })]);
 
 		const { result, rerender } = renderHook(() => useBacklogItems());
 		await waitFor(() => expect(result.current.loading).toBe(false));
 
 		cwd = "/uncached";
-		resolveLoad([item(9)]);
+		resolveLoad([makeBacklogItemSummary({ id: 9 })]);
 		rerender();
 
 		expect(result.current.loading).toBe(true);
 		expect(result.current.items).toEqual([]);
-		await waitFor(() => expect(result.current.items).toEqual([item(9)]));
+		await waitFor(() =>
+			expect(result.current.items).toEqual([makeBacklogItemSummary({ id: 9 })]),
+		);
 		expect(result.current.loading).toBe(false);
 	});
 
 	it("picks up a cross-machine status change via background polling without remount", async () => {
 		vi.useFakeTimers();
 		try {
-			backlogItemsCache.set("/repo", "todo", [item(1)]);
-			resolveLoad([item(1)]);
+			backlogItemsCache.set("/repo", "todo", [
+				makeBacklogItemSummary({ id: 1 }),
+			]);
+			resolveLoad([makeBacklogItemSummary({ id: 1 })]);
 
 			const { result } = renderHook(() => useBacklogItems());
 			await act(async () => {
 				await vi.advanceTimersByTimeAsync(0);
 			});
-			expect(result.current.items).toEqual([item(1)]);
+			expect(result.current.items).toEqual([makeBacklogItemSummary({ id: 1 })]);
 
-			resolveLoad([item(1, { status: "in-progress" })]);
+			resolveLoad([makeBacklogItemSummary({ id: 1, status: "in-progress" })]);
 			await act(async () => {
 				await vi.advanceTimersByTimeAsync(5000);
 			});
 
 			expect(result.current.items).toEqual([
-				item(1, { status: "in-progress" }),
+				makeBacklogItemSummary({ id: 1, status: "in-progress" }),
 			]);
 		} finally {
 			vi.useRealTimers();
@@ -135,18 +131,22 @@ describe("useBacklogItems", () => {
 	});
 
 	it("re-seeds from the matching cache entry when the filter changes", async () => {
-		backlogItemsCache.set("/repo", "todo", [item(1)]);
-		backlogItemsCache.set("/repo", "done", [item(2, { status: "done" })]);
-		resolveLoad([item(1)]);
+		backlogItemsCache.set("/repo", "todo", [makeBacklogItemSummary({ id: 1 })]);
+		backlogItemsCache.set("/repo", "done", [
+			makeBacklogItemSummary({ id: 2, status: "done" }),
+		]);
+		resolveLoad([makeBacklogItemSummary({ id: 1 })]);
 
 		const { result, rerender } = renderHook(() => useBacklogItems());
-		expect(result.current.items).toEqual([item(1)]);
+		expect(result.current.items).toEqual([makeBacklogItemSummary({ id: 1 })]);
 
 		filter = "done";
-		resolveLoad([item(2, { status: "done" })]);
+		resolveLoad([makeBacklogItemSummary({ id: 2, status: "done" })]);
 		rerender();
 
 		expect(result.current.loading).toBe(false);
-		expect(result.current.items).toEqual([item(2, { status: "done" })]);
+		expect(result.current.items).toEqual([
+			makeBacklogItemSummary({ id: 2, status: "done" }),
+		]);
 	});
 });

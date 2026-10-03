@@ -2,21 +2,20 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { SessionCard } from "./SessionCard";
-import type { SessionInfo } from "../../types";
 import { StarredSessionsProvider } from "../useStarredSessions";
 
 afterEach(() => {
 	cleanup();
 });
 
-const session: SessionInfo = {
+const session = makeSessionInfo({
 	id: "1",
 	name: "my session",
 	commandType: "claude",
 	status: "running",
-	startedAt: 0,
-};
+});
 
 function Stars({ children }: { children: ReactNode }) {
 	return (

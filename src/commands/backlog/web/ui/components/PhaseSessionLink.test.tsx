@@ -3,29 +3,10 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionInfo } from "../../../../sessions/web/ui/types";
+import { makeBacklogItemSummary } from "../../../../../test/mothers/makeBacklogItemSummary";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import type { BacklogItemSummary } from "../types";
 import { PhaseSessionLink } from "./PhaseSessionLink";
-
-const base: BacklogItemSummary = {
-	id: 984,
-	type: "story",
-	name: "Login flow",
-	status: "in-progress",
-	starred: false,
-	incompleteSubtasks: 0,
-	currentPhase: 3,
-	totalPhases: 4,
-};
-
-function session(status: SessionInfo["status"]): SessionInfo {
-	return {
-		id: "s1",
-		name: "session",
-		commandType: "claude",
-		status,
-		startedAt: 0,
-	};
-}
 
 function LocationProbe() {
 	const location = useLocation();
@@ -40,7 +21,12 @@ function renderLink(
 	return render(
 		<MemoryRouter initialEntries={["/backlog"]}>
 			<PhaseSessionLink
-				item={{ ...base, ...item }}
+				item={makeBacklogItemSummary({
+					status: "in-progress",
+					currentPhase: 3,
+					totalPhases: 4,
+					...item,
+				})}
 				openSession={openSession}
 				onSelectSession={onSelectSession}
 			/>
@@ -64,7 +50,7 @@ describe("PhaseSessionLink", () => {
 	it.each(["running", "waiting"] as const)(
 		"renders a static dot for a %s session",
 		(status) => {
-			renderLink(session(status));
+			renderLink(makeSessionInfo({ status }));
 
 			expect(dotAnimation(phaseLink())).toBe("");
 		},
@@ -72,7 +58,10 @@ describe("PhaseSessionLink", () => {
 
 	it("selects the session and navigates to /sessions on click", () => {
 		const onSelectSession = vi.fn();
-		renderLink(session("running"), onSelectSession);
+		renderLink(
+			makeSessionInfo({ id: "s1", status: "running" }),
+			onSelectSession,
+		);
 
 		fireEvent.click(phaseLink());
 
@@ -81,7 +70,7 @@ describe("PhaseSessionLink", () => {
 	});
 
 	it("names the session status in the tooltip", () => {
-		renderLink(session("waiting"));
+		renderLink(makeSessionInfo({ status: "waiting" }));
 
 		expect(phaseLink().getAttribute("title")).toBe("Open the waiting session");
 	});
@@ -100,7 +89,7 @@ describe("PhaseSessionLink", () => {
 	});
 
 	it("renders nothing for an item that is not in progress", () => {
-		const { container } = renderLink(session("running"), undefined, {
+		const { container } = renderLink(makeSessionInfo(), undefined, {
 			status: "done",
 		});
 
@@ -109,7 +98,7 @@ describe("PhaseSessionLink", () => {
 	});
 
 	it("renders nothing for an in-progress item with no current phase", () => {
-		renderLink(session("running"), undefined, { currentPhase: undefined });
+		renderLink(makeSessionInfo(), undefined, { currentPhase: undefined });
 
 		expect(screen.queryByText(/^phase /)).toBeNull();
 	});

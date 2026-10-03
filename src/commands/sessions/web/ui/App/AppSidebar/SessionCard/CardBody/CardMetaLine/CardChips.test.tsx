@@ -15,6 +15,8 @@ import type { SessionInfo } from "../../../../../types";
 import { CloneBadgeContext } from "../../../useCloneBadgeContext";
 import { InRepoGroupContext } from "../../../useInRepoGroupContext";
 import { TopBarLayoutContext } from "../../../../useTopBarLayoutContext";
+import { makeBacklogItemSummary } from "../../../../../../../../../test/mothers/makeBacklogItemSummary";
+import { makeSessionInfo } from "../../../../../../../../../test/mothers/makeSessionInfo";
 
 vi.mock(
 	"../../../../../../../../backlog/web/ui/components/useJiraSite",
@@ -27,14 +29,7 @@ import { CardChips } from "./CardChips";
 
 afterEach(cleanup);
 
-const session: SessionInfo = {
-	id: "1",
-	name: "my session",
-	commandType: "claude",
-	status: "running",
-	startedAt: 0,
-	cwd: "/home/me/assist",
-};
+const session = makeSessionInfo({ cwd: "/home/me/assist" });
 
 function renderChips(topBar: boolean, grouped: boolean) {
 	render(
@@ -73,10 +68,6 @@ const repoGroup = {
 	clone: "/home/me/assist",
 };
 
-function cloneSession(id: string, cwd: string): SessionInfo {
-	return { ...session, id, cwd, repoGroup };
-}
-
 function renderBadgeCard(visible: SessionInfo[], subject: SessionInfo) {
 	render(
 		<MemoryRouter>
@@ -92,8 +83,16 @@ function renderBadgeCard(visible: SessionInfo[], subject: SessionInfo) {
 }
 
 describe("CardChips clone badge", () => {
-	const clone = cloneSession("1", "/home/me/assist");
-	const worktree = cloneSession("2", "/home/me/assist-3");
+	const clone = makeSessionInfo({
+		id: "1",
+		cwd: "/home/me/assist",
+		repoGroup,
+	});
+	const worktree = makeSessionInfo({
+		id: "2",
+		cwd: "/home/me/assist-3",
+		repoGroup,
+	});
 
 	it("badges the clone session when a worktree sibling is visible", () => {
 		renderBadgeCard([clone, worktree], clone);
@@ -114,25 +113,13 @@ describe("CardChips clone badge", () => {
 	});
 
 	it("leaves a session with no repo group unbadged", () => {
-		const ungrouped: SessionInfo = { ...session, repoGroup: undefined };
+		const ungrouped = makeSessionInfo({ cwd: "/home/me/assist" });
 
 		renderBadgeCard([ungrouped], ungrouped);
 
 		expect(screen.queryByLabelText(/^Clone — /)).toBeNull();
 	});
 });
-
-function trackerItem(tracker: Partial<BacklogItemSummary>): BacklogItemSummary {
-	return {
-		id: 7,
-		type: "story",
-		name: "Login flow",
-		status: "todo",
-		starred: false,
-		incompleteSubtasks: 0,
-		...tracker,
-	};
-}
 
 async function renderTrackerCard(
 	cwd: string,
@@ -143,11 +130,10 @@ async function renderTrackerCard(
 		"fetch",
 		vi.fn(() => Promise.resolve({ json: () => Promise.resolve(items) })),
 	);
-	const trackerSession: SessionInfo = {
-		...session,
+	const trackerSession = makeSessionInfo({
 		cwd,
 		activity: { kind: "backlog", itemId, startedAt: 0 },
-	};
+	});
 	await act(async () => {
 		render(
 			<MemoryRouter>
@@ -166,7 +152,8 @@ afterEach(() => vi.unstubAllGlobals());
 describe("CardChips tracker chip", () => {
 	it("shortens a GitHub issue from the item's own origin", async () => {
 		await renderTrackerCard("/home/me/gh-own", [
-			trackerItem({
+			makeBacklogItemSummary({
+				id: 7,
 				origin: "github.com/acme/widgets",
 				githubIssue: "acme/widgets#123",
 			}),
@@ -180,7 +167,8 @@ describe("CardChips tracker chip", () => {
 
 	it("shortens a GitHub issue from another repo to #N", async () => {
 		await renderTrackerCard("/home/me/gh-other", [
-			trackerItem({
+			makeBacklogItemSummary({
+				id: 7,
 				origin: "github.com/acme/widgets",
 				githubIssue: "other/thing#7",
 			}),
@@ -195,7 +183,10 @@ describe("CardChips tracker chip", () => {
 
 	it("shortens a GitHub issue to #N when the item has no origin", async () => {
 		await renderTrackerCard("/home/me/gh-none", [
-			trackerItem({ githubIssue: "other/thing#7" }),
+			makeBacklogItemSummary({
+				id: 7,
+				githubIssue: "other/thing#7",
+			}),
 		]);
 
 		const link = await screen.findByRole("link", { name: "#7" });
@@ -204,7 +195,10 @@ describe("CardChips tracker chip", () => {
 
 	it("still renders the Jira chip for a Jira-associated item", async () => {
 		await renderTrackerCard("/home/me/jira", [
-			trackerItem({ jiraKey: "BAD-671" }),
+			makeBacklogItemSummary({
+				id: 7,
+				jiraKey: "BAD-671",
+			}),
 		]);
 
 		const link = await screen.findByRole("link", { name: "BAD-671" });
@@ -214,7 +208,11 @@ describe("CardChips tracker chip", () => {
 	});
 
 	it("renders no tracker chip for an item with neither", async () => {
-		await renderTrackerCard("/home/me/none", [trackerItem({})]);
+		await renderTrackerCard("/home/me/none", [
+			makeBacklogItemSummary({
+				id: 7,
+			}),
+		]);
 
 		const external = screen
 			.getAllByRole("link")
@@ -223,14 +221,11 @@ describe("CardChips tracker chip", () => {
 	});
 });
 
-function reviewSession(overrides: Partial<SessionInfo> = {}): SessionInfo {
-	return {
-		...session,
-		commandType: "assist",
-		assistArgs: ["review", "12"],
-		...overrides,
-	};
-}
+const reviewSession = makeSessionInfo({
+	cwd: "/home/me/assist",
+	commandType: "assist",
+	assistArgs: ["review", "12"],
+});
 
 function stubPrStatus(url: string | null) {
 	vi.stubGlobal(
@@ -267,7 +262,7 @@ const prUrl = "https://github.com/acme/repo/pull/12";
 describe("CardChips PR number token", () => {
 	it("links the target PR number to GitHub in a new tab", async () => {
 		stubPrStatus(prUrl);
-		renderClickableCard(reviewSession());
+		renderClickableCard(reviewSession);
 
 		const link = await screen.findByRole("link", { name: "#12" });
 		expect(link.getAttribute("href")).toBe(prUrl);
@@ -277,7 +272,7 @@ describe("CardChips PR number token", () => {
 	it("does not activate the card when the number is clicked", async () => {
 		stubPrStatus(prUrl);
 		const onClick = vi.fn();
-		renderClickableCard(reviewSession(), onClick);
+		renderClickableCard(reviewSession, onClick);
 
 		const link = await screen.findByRole("link", { name: "#12" });
 		fireEvent.mouseDown(link);
@@ -288,7 +283,7 @@ describe("CardChips PR number token", () => {
 
 	it("shows the number as plain text until the PR url resolves", async () => {
 		stubPrStatus(null);
-		renderClickableCard(reviewSession());
+		renderClickableCard(reviewSession);
 
 		await waitFor(() => expect(screen.getByText("#12")).toBeTruthy());
 		expect(screen.queryByRole("link", { name: "#12" })).toBeNull();
@@ -297,7 +292,13 @@ describe("CardChips PR number token", () => {
 	for (const command of ["review", "review-pr-comments", "fix-conflict"]) {
 		it(`shows the number for a ${command} session`, async () => {
 			stubPrStatus(prUrl);
-			renderClickableCard(reviewSession({ assistArgs: [command, "12"] }));
+			renderClickableCard(
+				makeSessionInfo({
+					cwd: "/home/me/assist",
+					commandType: "assist",
+					assistArgs: [command, "12"],
+				}),
+			);
 
 			expect(await screen.findByRole("link", { name: "#12" })).toBeTruthy();
 		});
