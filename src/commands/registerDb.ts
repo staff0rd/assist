@@ -4,6 +4,8 @@ import { applyMigrations } from "../shared/db/migrations/applyMigrations";
 import { getMigrationStatus } from "../shared/db/migrations/getMigrationStatus";
 import { latestMigrationId } from "../shared/db/migrations";
 import { pgExecutor } from "../shared/db/migrations/MigrationExecutor";
+import { findRetiredTables } from "../shared/db/retired/findRetiredTables";
+import { reportRetiredTables } from "./db/reportRetiredTables";
 import {
 	reportApplied,
 	reportMigrationStatus,
@@ -21,13 +23,17 @@ async function withPool(
 }
 
 async function migrate(): Promise<void> {
-	await withPool(async (exec) => reportApplied(await applyMigrations(exec)));
+	await withPool(async (exec) => {
+		reportApplied(await applyMigrations(exec));
+		reportRetiredTables(await findRetiredTables(exec));
+	});
 }
 
 async function status(): Promise<void> {
-	await withPool(async (exec) =>
-		reportMigrationStatus(await getMigrationStatus(exec)),
-	);
+	await withPool(async (exec) => {
+		reportMigrationStatus(await getMigrationStatus(exec));
+		reportRetiredTables(await findRetiredTables(exec));
+	});
 }
 
 export function registerDb(program: Command): void {

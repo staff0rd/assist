@@ -18,7 +18,6 @@ assist code-comment confirm
 assist code-comment set
 assist commit
 assist devlog
-assist handover
 assist notify
 assist prs comment
 assist prs edit

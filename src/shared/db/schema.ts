@@ -1,7 +1,6 @@
 import { integer, pgTable, text } from "drizzle-orm/pg-core";
 import { backups } from "./backups";
 import { comments } from "./comments";
-import { handovers } from "./handovers";
 import { itemGitRefs } from "./itemGitRefs";
 import { items } from "./items";
 import { itemSubtasks } from "./itemSubtasks";
@@ -16,7 +15,6 @@ import { usagePeaks } from "./usagePeaks";
 
 export { backups } from "./backups";
 export { comments } from "./comments";
-export { handovers } from "./handovers";
 export { itemGitRefs } from "./itemGitRefs";
 export { items } from "./items";
 export { itemSubtasks } from "./itemSubtasks";
@@ -50,7 +48,6 @@ export const schema = {
 	itemGitRefs,
 	metadata,
 	feeds,
-	handovers,
 	usagePeaks,
 	backups,
 	phaseUsage,

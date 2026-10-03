@@ -40,10 +40,7 @@
 		"SessionStart": [
 			{
 				"matcher": "",
-				"hooks": [
-					{ "type": "command", "command": "assist handover load" },
-					{ "type": "command", "command": "assist advise --hook" }
-				]
+				"hooks": [{ "type": "command", "command": "assist advise --hook" }]
 			}
 		]
 	},
@@ -82,10 +79,6 @@
 			"SlashCommand(/test-cover)",
 			"Skill(test-review)",
 			"SlashCommand(/test-review)",
-			"Skill(handover)",
-			"SlashCommand(/handover)",
-			"Skill(recall)",
-			"SlashCommand(/recall)",
 			"Skill(strip-code-comments)",
 			"SlashCommand(/strip-code-comments)",
 			"Skill(subtask)",
