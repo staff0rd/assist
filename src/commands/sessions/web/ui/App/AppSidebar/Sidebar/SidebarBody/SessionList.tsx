@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+import { CardCyclingScrollport } from "./SessionList/CardCyclingScrollport";
 import { groupSessionsByRepo } from "../../groupSessionsByRepo";
 import { NoSessionsMessage } from "./SessionList/NoSessionsMessage";
 import type { PendingLaunch } from "../../../../PendingLaunch";
@@ -7,10 +7,6 @@ import { SessionGroups } from "./SessionList/SessionGroups";
 import type { SessionListHandlers } from "../../../../types";
 import type { SessionInfo } from "../../../../useSessionSocket";
 import { useStarredSessions } from "../../../useStarredSessions";
-
-const unpaddedScrollportSx = { flex: 1, overflow: "auto" } as const;
-
-const paddedContentSx = { py: 0.5 } as const;
 
 export function SessionList({
 	sessions,
@@ -38,30 +34,32 @@ export function SessionList({
 	const groups = groupSessionsByRepo(sessions, isStarred, isFloatingWaiter);
 
 	return (
-		<Box sx={unpaddedScrollportSx}>
-			<Box sx={paddedContentSx}>
-				{pendingLaunches.map((launch) => (
-					<PendingLaunchCard
-						key={launch.id}
-						launch={launch}
-						onDismiss={onDismissPending}
-					/>
-				))}
-				<SessionGroups
-					groups={groups}
-					activeId={activeId}
-					initialized={initialized}
-					onSelect={onSelect}
-					onRetry={onRetry}
-					onRestart={onRestart}
-					onDismiss={onDismiss}
-					onSetAutoRun={onSetAutoRun}
-					onSetAutoAdvance={onSetAutoAdvance}
+		<CardCyclingScrollport
+			sessions={sessions}
+			onSelect={onSelect}
+			isFloatingWaiter={isFloatingWaiter}
+		>
+			{pendingLaunches.map((launch) => (
+				<PendingLaunchCard
+					key={launch.id}
+					launch={launch}
+					onDismiss={onDismissPending}
 				/>
-				{sessions.length === 0 && pendingLaunches.length === 0 && (
-					<NoSessionsMessage />
-				)}
-			</Box>
-		</Box>
+			))}
+			<SessionGroups
+				groups={groups}
+				activeId={activeId}
+				initialized={initialized}
+				onSelect={onSelect}
+				onRetry={onRetry}
+				onRestart={onRestart}
+				onDismiss={onDismiss}
+				onSetAutoRun={onSetAutoRun}
+				onSetAutoAdvance={onSetAutoAdvance}
+			/>
+			{sessions.length === 0 && pendingLaunches.length === 0 && (
+				<NoSessionsMessage />
+			)}
+		</CardCyclingScrollport>
 	);
 }

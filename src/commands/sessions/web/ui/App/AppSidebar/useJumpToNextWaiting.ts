@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { nextWaitingSessionId } from "./useJumpToNextWaiting/nextWaitingSessionId";
-import { scrollSessionCardIntoView } from "./useJumpToNextWaiting/scrollSessionCardIntoView";
+import { scrollSessionCardIntoView } from "./scrollSessionCardIntoView";
 import type { SessionInfo, SidebarTab } from "../../types";
 import { useNextWaitingHotkey } from "./useJumpToNextWaiting/useNextWaitingHotkey";
 import { useStarredSessions } from "../useStarredSessions";
-import { visibleSessionOrder } from "./useJumpToNextWaiting/visibleSessionOrder";
+import { visibleSessionOrder } from "./visibleSessionOrder";
 
 export function useJumpToNextWaiting({
 	sessions,

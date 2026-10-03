@@ -1,6 +1,6 @@
-import { flattenSessionGroups } from "../flattenSessionGroups";
-import { groupSessionsByRepo } from "../groupSessionsByRepo";
-import type { SessionInfo } from "../../../types";
+import { flattenSessionGroups } from "./flattenSessionGroups";
+import { groupSessionsByRepo } from "./groupSessionsByRepo";
+import type { SessionInfo } from "../../types";
 
 export function visibleSessionOrder(
 	sessions: SessionInfo[],

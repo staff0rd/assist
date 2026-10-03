@@ -1,5 +1,6 @@
 import { type RefObject, useEffect, useRef } from "react";
 import type { TerminalHandle } from "./useTerminal/createTerminal";
+import { isSessionCardFocusHeld } from "../../../../../holdSessionCardFocus";
 import { hasTerminalSize } from "./useTerminal/hasTerminalSize";
 import { setupTerminal } from "./useTerminal/setupTerminal";
 
@@ -38,7 +39,7 @@ export function useTerminal(
 		const id = setTimeout(() => {
 			if (!hasTerminalSize(containerRef.current)) return;
 			h.fitAddon.fit();
-			h.term.focus();
+			if (!isSessionCardFocusHeld()) h.term.focus();
 			sendResize(sessionId, h.term.cols, h.term.rows);
 		}, 50);
 		return () => clearTimeout(id);
