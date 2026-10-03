@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { ASSIST_VERSION, PROTOCOL_VERSION } from "../daemon/buildHello";
 import { diagnoseLink } from "./diagnoseLink";
 import type { DoctorProbes, PeerHealth } from "./DoctorProbes";
+import type { TailscaleStatus } from "./tailscaleStatus";
 
 vi.mock("../daemon/links/linkVersionCheck", () => ({
 	linkVersionCheck: () => "block",
@@ -23,6 +24,18 @@ const HELLO = {
 	nodeName: "pc-windows",
 };
 
+const TAILSCALE: TailscaleStatus = {
+	BackendState: "Running",
+	Self: { DNSName: "mac.tail1234.ts.net.", Online: false },
+	Peer: {
+		"nodekey:pc": {
+			DNSName: "pc.tail1234.ts.net.",
+			Online: true,
+			TailscaleIPs: ["100.64.0.2"],
+		},
+	},
+};
+
 function probes(overrides: Partial<DoctorProbes> = {}): DoctorProbes {
 	return {
 		health: async () => HEALTHY,
@@ -31,6 +44,7 @@ function probes(overrides: Partial<DoctorProbes> = {}): DoctorProbes {
 		sshAgent: async () => ({ status: "ok", keys: 1 }),
 		ssh: async () => ({ code: 0, stderr: "" }),
 		tunnel: async () => true,
+		tailscale: async () => TAILSCALE,
 		...overrides,
 	};
 }
@@ -136,6 +150,100 @@ describe("diagnoseLink", () => {
 			probes({ linkState: () => "no-daemon" }),
 		);
 		expect(result.hops.at(-1)?.error).toBe("this node's daemon is not running");
+	});
+});
+
+describe("diagnoseLink over Tailscale", () => {
+	const TS_SPEC = {
+		name: "pc-windows",
+		url: "https://pc.tail1234.ts.net:3101",
+	};
+
+	it("probes Tailscale before the peer's web server", async () => {
+		const result = await diagnoseLink(TS_SPEC, probes());
+		expect(result.ok).toBe(true);
+		expect(result.hops[0]).toEqual({
+			hop: "tailscale",
+			ok: true,
+			detail: "pc.tail1234.ts.net online (100.64.0.2)",
+		});
+		expect(result.hops.map((h) => h.hop)).toEqual([
+			"tailscale",
+			"web",
+			"daemon",
+			"ws",
+			"link",
+		]);
+	});
+
+	it("stops when Tailscale is not running here", async () => {
+		const health = vi.fn();
+		const result = await diagnoseLink(
+			TS_SPEC,
+			probes({
+				tailscale: async () => ({ BackendState: "Stopped" }),
+				health,
+			}),
+		);
+		expect(result.hops).toEqual([
+			expect.objectContaining({
+				hop: "tailscale",
+				error: "Tailscale on this node is Stopped",
+				remediation: expect.stringContaining(" up` on this node"),
+			}),
+		]);
+		expect(health).not.toHaveBeenCalled();
+	});
+
+	it("reports a peer that is offline or missing from the tailnet", async () => {
+		const offline = await diagnoseLink(
+			TS_SPEC,
+			probes({
+				tailscale: async () => ({
+					...TAILSCALE,
+					Peer: { pc: { DNSName: "pc.tail1234.ts.net.", Online: false } },
+				}),
+			}),
+		);
+		expect(offline.hops.at(-1)?.error).toBe(
+			"pc.tail1234.ts.net is offline in the tailnet",
+		);
+		const missing = await diagnoseLink(
+			{ ...TS_SPEC, url: "https://nas.tail1234.ts.net:3101" },
+			probes(),
+		);
+		expect(missing.hops.at(-1)?.error).toBe(
+			"nas.tail1234.ts.net is not in this node's tailnet",
+		);
+	});
+
+	it("names the tailscale serve command when the peer's port is not served", async () => {
+		const result = await diagnoseLink(
+			TS_SPEC,
+			probes({ health: async () => Promise.reject(refused()) }),
+		);
+		expect(result.hops.at(-1)).toMatchObject({
+			hop: "web",
+			remediation: expect.stringContaining(
+				"run `tailscale serve --bg --https=3101 http://127.0.0.1:3101` on pc-windows",
+			),
+		});
+	});
+
+	it("points at the peer's web server when tailscale serve answers 502", async () => {
+		const badGateway = Object.assign(
+			new Error("GET /api/health returned 502"),
+			{
+				status: 502,
+			},
+		);
+		const result = await diagnoseLink(
+			TS_SPEC,
+			probes({ health: async () => Promise.reject(badGateway) }),
+		);
+		expect(result.hops.at(-1)?.remediation).toContain(
+			"nothing listens on 127.0.0.1:3101",
+		);
 	});
 });
 

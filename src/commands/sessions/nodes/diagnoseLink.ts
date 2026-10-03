@@ -1,27 +1,18 @@
 import type { LinkSpec } from "../daemon/links/LinkStatus";
 import {
 	type DoctorProbes,
-	failed,
 	type Hop,
 	type LinkDiagnosis,
-	type PeerHealth,
-	passed,
 } from "./DoctorProbes";
 import { agentHop } from "./agentHop";
 import { helloHop } from "./helloHop";
 import { linkStateHop } from "./linkStateHop";
 import { sshHop } from "./sshHop";
+import { tailscaleHop } from "./tailscaleHop";
 import { tunnelHop } from "./tunnelHop";
 import { webHop } from "./webHop";
-
-function peerDaemonHop(spec: LinkSpec, health: PeerHealth): Hop {
-	if (health.daemon?.reachable) return passed("daemon", "reachable");
-	return failed(
-		"daemon",
-		`${spec.name}'s web server reports its daemon unreachable`,
-		`run \`assist daemon status\` on ${spec.name}; restarting its web server starts the daemon`,
-	);
-}
+import { peerDaemonHop } from "./peerDaemonHop";
+import { isTailscaleLink } from "./isTailscaleLink";
 
 export async function diagnoseLink(
 	spec: LinkSpec,
@@ -39,6 +30,10 @@ export async function diagnoseLink(
 			hops.push(await probe());
 			if (!hops.at(-1)?.ok) return done();
 		}
+	}
+	if (isTailscaleLink(spec)) {
+		hops.push(await tailscaleHop(spec, probes));
+		if (!hops.at(-1)?.ok) return done();
 	}
 	const web = await webHop(spec, probes);
 	hops.push(web.hop);

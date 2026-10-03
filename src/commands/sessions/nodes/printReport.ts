@@ -24,7 +24,7 @@ function printDiagnosis(diagnosis: LinkDiagnosis): void {
 	console.log(`${chalk.bold(diagnosis.name)} ${chalk.dim(diagnosis.url)}`);
 	for (const hop of diagnosis.hops) {
 		const mark = hop.ok ? chalk.green("✓") : chalk.red("✗");
-		console.log(`  ${mark} ${hop.hop.padEnd(6)} ${hop.detail ?? hop.error}`);
+		console.log(`  ${mark} ${hop.hop.padEnd(9)} ${hop.detail ?? hop.error}`);
 		if (hop.remediation) console.log(`    ${chalk.yellow(hop.remediation)}`);
 	}
 }

@@ -7,10 +7,16 @@ import {
 	passed,
 } from "./DoctorProbes";
 import { describePeerError, peerErrorCode } from "./fetchPeerJson";
+import { tailscaleServeRemediation } from "./tailscaleServeRemediation";
+import { isTailscaleLink } from "./isTailscaleLink";
 
 function webRemediation(spec: LinkSpec, error: unknown): string {
 	if (spec.ssh && (error as { status?: number }).status === undefined)
 		return `nothing listening on ${spec.ssh.port} on ${spec.ssh.alias} — is project-switch running ${spec.name}'s web server?`;
+	const serve = isTailscaleLink(spec)
+		? tailscaleServeRemediation(spec, error)
+		: undefined;
+	if (serve) return serve;
 	const { hostname, port } = new URL(spec.url);
 	switch (peerErrorCode(error)) {
 		case "ECONNREFUSED":

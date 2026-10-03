@@ -14,6 +14,7 @@ import { probeSsh } from "./probeSsh";
 import { probeSshAgent } from "./probeSshAgent";
 import { queryNodes } from "./queryNodes";
 import { printReport } from "./printReport";
+import { tailscaleStatus } from "./tailscaleStatus";
 
 type DoctorReport = {
 	local: string;
@@ -28,6 +29,7 @@ function doctorProbes(live: NodesMessage | undefined): DoctorProbes {
 		sshAgent: probeSshAgent,
 		ssh: probeSsh,
 		tunnel: (localPort) => portAccepts(localPort),
+		tailscale: tailscaleStatus,
 		linkState: (name) => {
 			if (!live) return "no-daemon";
 			return live.links.find((l) => l.name === name) ?? "unknown-link";

@@ -395,7 +395,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist sessions rename <title>` - Retitle the current daemon-managed session: the given title replaces the generated title and the backlog item name on its dashboard card for the rest of its life. Outside such a session it reports there is nothing to rename and exits 0
 - `assist sessions output [session-id] [--server [group]] [-n, --lines <count>]` - Print the last lines (default 200) of a session's output from the daemon's in-memory scrollback, ANSI codes stripped, then exit. `--server [group]` (group defaults to `default`) reads the live server run for the current repo's remote and group instead of taking an id. Only sessions on this node; a `<node>:<id>` id, an unknown id, no live server run or no running daemon prints an error and exits 1
 - `assist sessions nodes [--json]` - List this node and every linked node with its link state (see [Linked nodes](#linked-nodes))
-- `assist sessions nodes link <name> [url] [--ssh <alias> --port <port>] [--local-port <port>]` - Link a peer node by its web server URL, or over an ssh tunnel
+- `assist sessions nodes link <name> [url] [--tailscale <host> --port <port>] [--ssh <alias> --port <port>] [--local-port <port>]` - Link a peer node by its web server URL, its Tailscale name, or over an ssh tunnel
 - `assist sessions nodes unlink <name>` - Remove a linked node
 - `assist sessions nodes doctor [name] [--json]` - Probe each hop of every link (or one) and stop at the first failure with a remediation
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` - Tail a linked node's `daemon.log` through its web server
@@ -434,13 +434,34 @@ A `run:` entry in `assist.yml` flagged `server:` (with an optional display-only 
 Each assist install is a **node** with its own daemon and web server. A node can link to other nodes, and its web UI then shows its own sessions merged with each linked node's, as `<node>:<id>` cards carrying a node badge. Links are flat: a node only exports its own sessions and log lines, so two nodes linked to each other show no duplicates. See [docs/multi-node-sessions.md](docs/multi-node-sessions.md).
 
 - `assist sessions nodes [--json]` — this node and each link's state (connected / connecting / disconnected / version-blocked), peer version and last error.
-- `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link <name> http://127.0.0.1:<port>`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately; the command confirms the reload, or warns when the daemon could not be notified. With `--ssh <alias> --port <port>` the link goes over ssh instead: the daemon keeps `ssh -N -L <local-port>:127.0.0.1:<port> <alias>` up, restarting it behind the link's circuit breaker and logging its stderr to `daemon.log` as `link <name> ssh:`, and the link and `?node=` panel requests dial the local end. `--local-port` defaults to 43000 + `port` % 1000, bumped past any other link's.
+- `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link <name> http://127.0.0.1:<port>`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately; the command confirms the reload, or warns when the daemon could not be notified. With `--tailscale <host> --port <port>` it writes a url link to `https://<host>.<tailnet>.ts.net:<port>`, reading the tailnet's MagicDNS suffix from `tailscale status --json` (`tailscale.exe` under WSL); see [Linking machines over Tailscale](#linking-machines-over-tailscale). With `--ssh <alias> --port <port>` the link goes over ssh instead: the daemon keeps `ssh -N -L <local-port>:127.0.0.1:<port> <alias>` up, restarting it behind the link's circuit breaker and logging its stderr to `daemon.log` as `link <name> ssh:`, and the link and `?node=` panel requests dial the local end. `--local-port` defaults to 43000 + `port` % 1000, bumped past any other link's.
 - `assist sessions nodes unlink <name>` — remove a link.
-- `assist sessions nodes doctor [name] [--json]` — probes each link's hops in order: for an ssh link, the SSH agent (the alias's `IdentityAgent` answering `ssh-add -l`), `ssh -o BatchMode=yes <alias>` reach and auth, and the local tunnel port accepting; then the peer's web server (`GET /api/health`, including that its `nodeName` matches the link), the peer's daemon (as its health reports it), a WebSocket `hello` (version and protocol), then this node's own link state. It stops at the first failing hop and prints the raw error with a remediation, and exits 1 on any failure. On WSL with no links, it reports a Windows node answering on `127.0.0.1:3101` and prints the command that links it.
+- `assist sessions nodes doctor [name] [--json]` — probes each link's hops in order: for a `*.ts.net` link, local Tailscale running and the peer host online in `tailscale status`; for an ssh link, the SSH agent (the alias's `IdentityAgent` answering `ssh-add -l`), `ssh -o BatchMode=yes <alias>` reach and auth, and the local tunnel port accepting; then the peer's web server (`GET /api/health`, including that its `nodeName` matches the link), the peer's daemon (as its health reports it), a WebSocket `hello` (version and protocol), then this node's own link state. It stops at the first failing hop and prints the raw error with a remediation, and exits 1 on any failure. On WSL with no links, it reports a Windows node answering on `127.0.0.1:3101` and prints the command that links it.
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` — tail a linked node's `daemon.log` (default 200 lines) through its web server's `GET /api/daemon-log`; naming this node reads the local log.
 - `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) heals an older peer by calling its `POST /api/self-update` (runs `assist update`, then restarts its daemon and web server) and reconnects, latching with an error if the gap remains or this node is the older side (a latched link re-checks the peer every minute and reconnects once the versions match); `warn` proceeds anyway; `off` skips the check.
 
 With more than one node, a machine picker appears in the top nav and a machine selector in the new-session dialog; the dialog's selector defaults to the top nav's choice, which is remembered per browser. Linked nodes' daemon lines appear in this node's `daemon.log` tagged `[<node>]`. Every launch forwarded over a link and every `?node=` panel request carries a `traceId`, logged as `trace=<id>` by both nodes. `GET /api/health` reports the node's name, version, protocol, daemon reachability and its links' states. The retired `sessions.windows*` keys are ignored.
+
+#### Linking machines over Tailscale
+
+Each peer exposes its loopback web server on its tailnet name with `tailscale serve`, and the linking node dials it over HTTPS, so links keep working off the home network.
+
+1. Install Tailscale on every machine and sign in to the same tailnet. In the admin console's DNS page, turn on MagicDNS and HTTPS certificates. On WSL the Tailscale CLI is the Windows one, `tailscale.exe`.
+2. On each peer, serve its web server port on the tailnet, e.g. on a PC whose WSL node serves 3100 and Windows node 3101 (Windows' `tailscale serve` reaches WSL's `127.0.0.1:3100` through localhost forwarding):
+
+   ```
+   tailscale.exe serve --bg --https=3100 http://127.0.0.1:3100
+   tailscale.exe serve --bg --https=3101 http://127.0.0.1:3101
+   ```
+
+3. Link the nodes by Tailscale host name. From the Mac to both PC nodes:
+
+   ```
+   assist sessions nodes link pc-wsl --tailscale pc --port 3100
+   assist sessions nodes link pc-windows --tailscale pc --port 3101
+   ```
+
+4. Check each link with `assist sessions nodes doctor`; a failed web hop on a `*.ts.net` link names the `tailscale serve` command to run on the peer.
 
 #### Linking machines over ssh
 

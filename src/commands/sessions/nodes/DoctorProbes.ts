@@ -1,4 +1,5 @@
 import type { LinkSpec, LinkStatus } from "../daemon/links/LinkStatus";
+import type { TailscaleStatus } from "./tailscaleStatus";
 
 export type PeerHealth = {
 	nodeName?: string;
@@ -8,7 +9,15 @@ export type PeerHealth = {
 	links?: LinkStatus[];
 };
 
-type HopName = "agent" | "ssh" | "tunnel" | "web" | "daemon" | "ws" | "link";
+type HopName =
+	| "agent"
+	| "ssh"
+	| "tunnel"
+	| "tailscale"
+	| "web"
+	| "daemon"
+	| "ws"
+	| "link";
 
 export type Hop = {
 	hop: HopName;
@@ -37,6 +46,7 @@ export type DoctorProbes = {
 	sshAgent(alias: string): Promise<AgentProbe>;
 	ssh(alias: string): Promise<SshProbe>;
 	tunnel(localPort: number): Promise<boolean>;
+	tailscale(): Promise<TailscaleStatus>;
 };
 
 export function passed(hop: HopName, detail: string): Hop {
