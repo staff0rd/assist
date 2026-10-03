@@ -1,4 +1,5 @@
 import {
+	existsSync,
 	mkdirSync,
 	mkdtempSync,
 	readFileSync,
@@ -55,6 +56,12 @@ describe("stageCriteriaExtension", () => {
 		expect(readFileSync(join(staging, "content.js"), "utf8")).toBe(
 			"console.log(1)",
 		);
+	});
+
+	it("leaves the update manifest out of the package", async () => {
+		writeFileSync(join(source, "updates.json"), "{}");
+		await stageCriteriaExtension(source, staging, "0.592.1");
+		expect(existsSync(join(staging, "updates.json"))).toBe(false);
 	});
 
 	it("clears a stale staging directory", async () => {

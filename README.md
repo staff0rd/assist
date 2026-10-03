@@ -590,7 +590,9 @@ Signing runs in CI, so the AMO key lives only as repo secrets and never on a dev
 2. Download `criteria-extension.xpi` from the release — the URL follows from the version, `https://github.com/staff0rd/assist/releases/download/v<version>/criteria-extension.xpi`.
 3. Open the `.xpi` in Firefox (drag it onto a window, or `about:addons` → gear → **Install Add-on From File…**). It survives restarts.
 
-AMO refuses a version it has already signed, which is why the staged manifest carries assist's version instead of the manifest's `1.0.0` placeholder — sign once per release, not twice at the same version. Unlisted add-ons get no updates from AMO, so a new build means installing the new `.xpi`; wiring up self-hosted `update_url` auto-updates is not done.
+AMO refuses a version it has already signed, which is why the staged manifest carries assist's version instead of the manifest's `1.0.0` placeholder — sign once per release, not twice at the same version.
+
+Unlisted add-ons get no updates from AMO, so the manifest's `gecko.update_url` points at `criteria-extension/updates.json` on `main` instead. `--sign` writes that update manifest next to the `.xpi`, pointing at the signed version's release asset, and the workflow commits it back to `main` with `[skip ci]`; an installed add-on then upgrades itself on Firefox's next update check (or **Check for Updates** in `about:addons`).
 
 `assist criteria-extension --sign` still signs locally for someone who holds an AMO key: export `WEB_EXT_API_KEY` and `WEB_EXT_API_SECRET`, run `npm run build` (to refresh `content.js`), then the command. It stages a copy of the extension with assist's version stamped into `manifest.json`, shells out to `npx web-ext sign`, and writes the signed add-on to `~/.assist/criteria-extension/criteria-extension.xpi`. Under WSL it copies that to `C:\tools\criteria-extension.xpi` and prints the Windows path.
 

@@ -10,6 +10,7 @@ import { findSignedXpi } from "./findSignedXpi";
 import { signedAddonInstallPath } from "./signedAddonInstallPath";
 import { signPreflightProblem } from "./signPreflightProblem";
 import { stageCriteriaExtension } from "./stageCriteriaExtension";
+import { writeUpdateManifest } from "./writeUpdateManifest";
 
 const ARTIFACTS_DIR = join(homedir(), ".assist", "criteria-extension");
 const STAGING_DIR = join(tmpdir(), "assist-criteria-extension");
@@ -49,6 +50,7 @@ export async function signCriteriaExtension(): Promise<void> {
 		process.exitCode = 1;
 		return;
 	}
+	await writeUpdateManifest(source, ARTIFACTS_DIR, version);
 	const path = await signedAddonInstallPath(
 		await copySignedXpi(xpi, ARTIFACTS_DIR),
 	);
