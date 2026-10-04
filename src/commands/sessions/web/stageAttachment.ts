@@ -11,10 +11,21 @@ function extensionFromMime(contentType: string): string | undefined {
 	return subtype && /^[a-z0-9]+$/.test(subtype) ? subtype : undefined;
 }
 
+const ghAttachableExtensions = new Set([
+	...Object.values(attachmentMimeTypes),
+	"jpeg",
+]);
+
 function pickExtension(name: string, contentType: string): string {
 	const fromName = extname(name).replace(/^\./, "").toLowerCase();
-	if (/^[a-z0-9]+$/.test(fromName)) return fromName;
-	return extensionFromMime(contentType) ?? "png";
+	const ext = /^[a-z0-9]+$/.test(fromName)
+		? fromName
+		: (extensionFromMime(contentType) ?? "png");
+	if (!ghAttachableExtensions.has(ext))
+		throw new Error(
+			`gh cannot attach .${ext} files (supported: ${[...ghAttachableExtensions].join(", ")}).`,
+		);
+	return ext;
 }
 
 function safeBaseName(name: string): string {
@@ -27,10 +38,11 @@ export async function stageAttachment(
 	contentType: string,
 	body: Buffer,
 ): Promise<{ dir: string; filePath: string; alt: string }> {
+	const ext = pickExtension(name, contentType);
 	await mkdir(stagedAttachmentsDir, { recursive: true });
 	const dir = await mkdtemp(join(stagedAttachmentsDir, "upload-"));
 	const alt = safeBaseName(name);
-	const filePath = join(dir, `${alt}.${pickExtension(name, contentType)}`);
+	const filePath = join(dir, `${alt}.${ext}`);
 	await writeFile(filePath, body);
 	return { dir, filePath, alt };
 }

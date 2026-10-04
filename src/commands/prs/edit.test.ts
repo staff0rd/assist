@@ -274,9 +274,9 @@ describe("edit", () => {
 					"--body",
 					"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.mp4)",
 					"--attach",
-					"/s/a.png#a",
+					"/s/a.png",
 					"--attach",
-					"/s/b.mp4#b",
+					"/s/b.mp4",
 				],
 				{ encoding: "utf8", stdio: ["inherit", "pipe", "pipe"] },
 			);

@@ -242,9 +242,9 @@ describe("createIssue preview", () => {
 				"--body",
 				"Details\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.png)",
 				"--attach",
-				"/s/a.png#a",
+				"/s/a.png",
 				"--attach",
-				"/s/b.png#b",
+				"/s/b.png",
 			],
 			expect.anything(),
 		);

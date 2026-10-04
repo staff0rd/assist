@@ -53,7 +53,6 @@ describe("stageAttachment", () => {
 		["video/mp4", "mp4"],
 		["video/webm", "webm"],
 		["video/quicktime", "mov"],
-		["video/ogg", "ogv"],
 		["image/jpeg", "jpg"],
 	])("names an unnamed %s upload .%s", async (contentType, ext) => {
 		const { fileName } = await write("", contentType);
@@ -61,8 +60,17 @@ describe("stageAttachment", () => {
 	});
 
 	it("derives the extension from an unlisted content type", async () => {
-		const { fileName } = await write("", "video/x-m4v; codecs=avc1");
-		expect(fileName).toBe("screenshot.m4v");
+		const { fileName } = await write("", "image/x-png; charset=binary");
+		expect(fileName).toBe("screenshot.png");
+	});
+
+	it.each([
+		["clip.ogv", "video/ogg"],
+		["", "image/bmp"],
+	])("refuses %s (%s), which gh cannot attach", async (name, contentType) => {
+		await expect(write(name, contentType)).rejects.toThrow(
+			/gh cannot attach \.(ogv|bmp) files/,
+		);
 	});
 
 	it("falls back to png when the content type says nothing usable", async () => {
