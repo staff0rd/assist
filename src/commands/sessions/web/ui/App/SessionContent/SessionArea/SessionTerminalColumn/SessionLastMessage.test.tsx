@@ -205,6 +205,19 @@ describe("SessionLastMessage", () => {
 		expect(position()).toBeNull();
 	});
 
+	it("returns to the latest message when unpinned after the pointer left", () => {
+		render(<SessionLastMessage message="two" history={["one", "two"]} />);
+
+		fireEvent.mouseEnter(readout());
+		gesture(-100);
+		fireEvent.click(readout());
+		fireEvent.mouseLeave(readout());
+		fireEvent.mouseDown(document.body);
+
+		expect(text()).toBe("two");
+		expect(position()).toBeNull();
+	});
+
 	it("returns to the latest message when a new message arrives", () => {
 		const { rerender } = render(
 			<SessionLastMessage message="two" history={["one", "two"]} />,

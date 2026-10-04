@@ -1,4 +1,4 @@
-import { type WheelEvent, useState } from "react";
+import { type WheelEvent, useEffect, useState } from "react";
 import { useWheelGesture } from "./useHistoryStep/useWheelGesture";
 
 function withLatest(history: string[], latest: string): string[] {
@@ -11,6 +11,11 @@ export function useHistoryStep(
 	enabled: boolean,
 ) {
 	const [step, setStep] = useState({ message, offset: 0 });
+
+	useEffect(() => {
+		if (enabled) setStep((s) => ({ ...s, offset: 0 }));
+	}, [enabled]);
+
 	const messages = withLatest(history, message);
 	const offset = step.message === message ? step.offset : 0;
 	const clamped = Math.min(offset, messages.length - 1);
