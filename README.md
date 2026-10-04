@@ -48,6 +48,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/comment` - Add pending review comments to the current PR
 - `/commit` - Commit only relevant files from the session
 - `/devlog` - Generate devlog entry for the next unversioned day
+- `/extension` - Get the install link for the assist browser extension
 - `/draft` - Draft a new backlog item with LLM-assisted questioning
 - `/fix-conflict [--rebase]` - Resolve the current PR branch's conflicts against the remote default; `--rebase` rebases instead of merging
 - `/fix-rules [dir]` - Put existing rules into the `## Rules` format `assist rules` reads
@@ -326,7 +327,7 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 
 - `assist netcap [-p, --port <port>] [-o, --out <dir>] [-f, --filter <pattern>]` - Capture browser network traffic under `--out` (default `~/.assist/netcap`), paired with the [netcap browser extension](#netcap-browser-extension)
 - `assist netcap extract-linkedin-posts [file]` - Parse a netcap capture into structured LinkedIn posts
-- `assist criteria-extension [--sign]` - Locate the [acceptance criteria outliner extension](#acceptance-criteria-outliner-extension) to load unpacked; `--sign` signs it for a permanent Firefox install
+- `assist criteria-extension [--sign] [--url]` - Locate the [acceptance criteria outliner extension](#acceptance-criteria-outliner-extension) to load unpacked; `--sign` signs it for a permanent Firefox install; `--url` prints the latest signed build's download URL
 - `assist screenshot <process>` - Capture a screenshot of a running application window (`screenshot.outputDir`, default `./screenshots`)
 - `assist mermaid export [file.md]` - Render each fenced mermaid block to SVG via [Kroki](https://kroki.io) (`--out`, `--index`, `mermaid.krokiUrl`)
 - `assist prompts` - Show the most frequently denied tool calls
@@ -553,7 +554,7 @@ Firefox release and beta only install signed add-ons, so a permanent install mea
 Signing runs in CI, so the AMO key lives only as repo secrets and never on a developer machine. One-time setup: create an AMO API key at [addons.mozilla.org/developers/addon/api/key](https://addons.mozilla.org/en-US/developers/addon/api/key/) and add its two halves as the repo secrets `AMO_JWT_ISSUER` (the `user:12345678:123` issuer) and `AMO_JWT_SECRET`. The **Criteria extension** workflow maps them onto the `WEB_EXT_API_KEY` / `WEB_EXT_API_SECRET` that `web-ext` reads.
 
 1. Run the **Criteria extension** workflow from the Actions tab (`gh workflow run criteria-extension.yml`). It checks out `main`, builds, signs the extension at assist's current version, and uploads the signed add-on to that version's GitHub release as `criteria-extension.xpi`. A failed AMO submission fails the job and attaches nothing.
-2. Download `criteria-extension.xpi` from the release — the URL follows from the version, `https://github.com/staff0rd/assist/releases/download/v<version>/criteria-extension.xpi`.
+2. Download `criteria-extension.xpi` from the release — the URL follows from the version, `https://github.com/staff0rd/assist/releases/download/v<version>/criteria-extension.xpi`. `assist criteria-extension --url` (or `/extension`) prints the latest signed build's URL, read from the update manifest on `main`.
 3. Open the `.xpi` in Firefox (drag it onto a window, or `about:addons` → gear → **Install Add-on From File…**). It survives restarts.
 
 AMO refuses a version it has already signed, which is why the staged manifest carries assist's version instead of the manifest's `1.0.0` placeholder — sign once per release, not twice at the same version.
