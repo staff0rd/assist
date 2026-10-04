@@ -1,14 +1,6 @@
 import { daemonLog } from "../daemonLog";
-import { describeTarget } from "./describeTarget";
 import type { LinkSpec } from "./LinkStatus";
 import type { NodeLink } from "./NodeLink";
-
-function sameTarget(wanted: LinkSpec | undefined, current: LinkSpec) {
-	return (
-		wanted?.url === current.url &&
-		JSON.stringify(wanted.ssh) === JSON.stringify(current.ssh)
-	);
-}
 
 export function reconcileLinks(
 	links: Map<string, NodeLink>,
@@ -17,7 +9,7 @@ export function reconcileLinks(
 ): void {
 	const wanted = new Map(specs.map((spec) => [spec.name, spec]));
 	for (const [name, link] of links) {
-		if (sameTarget(wanted.get(name), link.spec)) {
+		if (wanted.get(name)?.url === link.spec.url) {
 			link.unlatch();
 			continue;
 		}
@@ -27,7 +19,7 @@ export function reconcileLinks(
 	}
 	for (const spec of specs) {
 		if (links.has(spec.name)) continue;
-		daemonLog(`link ${spec.name}: added (${describeTarget(spec)})`);
+		daemonLog(`link ${spec.name}: added (${spec.url})`);
 		const link = create(spec);
 		links.set(spec.name, link);
 		link.start();

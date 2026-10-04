@@ -2,6 +2,7 @@ import { z } from "zod";
 import { adviceFragmentNames } from "./adviceFragmentNames";
 import { runConfigSchema, runLinkSchema } from "./runConfigSchema";
 import { secretConfigValue } from "./secretConfigValue";
+import { sessionLinkSchema } from "./sessionLinkSchema";
 
 const transcriptConfigSchema = z.strictObject({
 	vttDir: z.string(),
@@ -268,19 +269,7 @@ const assistConfigShape = {
 	sessions: z
 		.strictObject({
 			nodeName: z.string().optional(),
-			links: z
-				.array(
-					z.union([
-						z.strictObject({ name: z.string(), url: z.string() }),
-						z.strictObject({
-							name: z.string(),
-							ssh: z.string(),
-							port: z.number().int(),
-							localPort: z.number().int().optional(),
-						}),
-					]),
-				)
-				.optional(),
+			links: z.array(sessionLinkSchema).optional(),
 			linkVersionCheck: z.enum(["block", "warn", "off"]).default("block"),
 			tailscaleServe: z.boolean().default(true),
 			includeCommittedChanges: z.boolean().default(true),

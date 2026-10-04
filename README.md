@@ -377,7 +377,7 @@ The Config tab of the sessions web dashboard never receives secret values: `GET 
 - `assist sessions rename <title>` - Retitle the current daemon-managed session: the given title replaces the generated title and the backlog item name on its dashboard card for the rest of its life. Outside such a session it reports there is nothing to rename and exits 0
 - `assist sessions output [session-id] [--server [group]] [-n, --lines <count>]` - Print the last lines (default 200) of a session's output from the daemon's in-memory scrollback, ANSI codes stripped, then exit. `--server [group]` (group defaults to `default`) reads the live server run for the current repo's remote and group instead of taking an id. Only sessions on this node; a `<node>:<id>` id, an unknown id, no live server run or no running daemon prints an error and exits 1
 - `assist sessions nodes [--json]` - List this node and every linked node with its link state (see [Linked nodes](#linked-nodes))
-- `assist sessions nodes link <name> [url] [--tailscale <host> --port <port>] [--ssh <alias> --port <port>] [--local-port <port>]` - Link a peer node by its web server URL, its Tailscale name, or over an ssh tunnel
+- `assist sessions nodes link <name> [url] [--tailscale <host> --port <port>]` - Link a peer node by its web server URL or its Tailscale name
 - `assist sessions nodes unlink <name>` - Remove a linked node
 - `assist sessions nodes doctor [name] [--json]` - Probe each hop of every link (or one) and stop at the first failure with a remediation
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` - Tail a linked node's `daemon.log` through its web server
@@ -416,7 +416,7 @@ A `run:` entry in `assist.yml` flagged `server:` (with an optional display-only 
 Each assist install is a **node** with its own daemon and web server. A node can link to other nodes, and its web UI then shows its own sessions merged with each linked node's, as `<node>:<id>` cards carrying a node badge. Links are flat: a node only exports its own sessions and log lines, so two nodes linked to each other show no duplicates. See [docs/multi-node-sessions.md](docs/multi-node-sessions.md).
 
 - `assist sessions nodes [--json]` — this node and each link's state (connected / connecting / disconnected / version-blocked), peer version and last error.
-- `assist sessions nodes link <name> <url>` — link a peer by its web server URL. `<name>` must match the peer's `sessions.nodeName`. See [Linking machines over Tailscale](#linking-machines-over-tailscale).
+- `assist sessions nodes link <name> --tailscale <host> --port <port>` (or `<url>`) — link a peer by its Tailscale host name, or by any web server URL. `<name>` must match the peer's `sessions.nodeName`. See [Linking machines over Tailscale](#linking-machines-over-tailscale).
 - `assist sessions nodes unlink <name>` — remove a link.
 - `assist sessions nodes doctor [name] [--json]` — find where a link is broken and how to fix it.
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` — tail a linked node's `daemon.log` (default 200 lines) through its web server's `GET /api/daemon-log`; naming this node reads the local log.
@@ -426,42 +426,21 @@ With more than one node, a machine picker appears in the top nav and a machine s
 
 #### Linking machines over Tailscale
 
-Each web server exposes itself on the tailnet when it starts.
+Every web server listens on `127.0.0.1` only and, when it starts, exposes itself on the tailnet with `tailscale serve` (`tailscale.exe` under WSL) at `https://<host>.<tailnet>.ts.net:<port>`. Windows' `tailscale serve` fronts the WSL web server on `<port>` + 1000, because mirrored WSL networking holds `<port>` itself.
 
 1. Install Tailscale on every machine, sign in to the same tailnet, and turn on MagicDNS and HTTPS certificates in the admin console.
-2. Link each peer by its Tailscale host name:
+2. Link each peer by its Tailscale host name. From the Mac to both PC nodes:
 
    ```
-   assist sessions nodes link <name> --tailscale <host> --port <port>
+   assist sessions nodes link pc-wsl --tailscale pc --port 4100
+   assist sessions nodes link pc-windows --tailscale pc --port 3101
    ```
 
-#### Linking machines over ssh
+   and optionally from the PC's WSL node back to the Mac: `assist sessions nodes link mac --tailscale mac --port 3100`.
 
-A remote node is reached through an ssh tunnel to its loopback web server, with keys held by the 1Password SSH agent.
+3. Check each link with `assist sessions nodes doctor`.
 
-1. On a Windows peer, install and start OpenSSH Server: `Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0`, then `Set-Service sshd -StartupType Automatic; Start-Service sshd`. For an administrator account, put the linking node's public key in `C:\ProgramData\ssh\administrators_authorized_keys`, otherwise in `~\.ssh\authorized_keys`.
-2. On a Mac peer, turn on System Settings → General → Sharing → Remote Login and add the linking node's public key to `~/.ssh/authorized_keys`.
-3. On the linking node, turn on 1Password → Settings → Developer → Use the SSH agent, and add a host entry to `~/.ssh/config`:
-
-   ```
-   Host pc
-     HostName <pc hostname or IP>
-     User <user>
-     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-   ```
-
-   On Windows 1Password serves the agent on the OpenSSH pipe, so no `IdentityAgent` is needed there. Run `ssh pc` once to accept the host key.
-
-4. Link the nodes. From the Mac to both PC nodes:
-
-   ```
-   assist sessions nodes link pc-wsl --ssh pc --port 3100
-   assist sessions nodes link pc-windows --ssh pc --port 3101
-   ```
-
-   and optionally from the PC's WSL node back to the Mac (with a `Host mac` entry): `assist sessions nodes link mac --ssh mac --port 3100`.
-
-5. Check each link with `assist sessions nodes doctor`.
+A config still holding a retired ssh link (`ssh:` / `port:` / `localPort:`) fails to load; `assist sessions nodes link` and `unlink` remove such links and name them so they can be relinked with `--tailscale`.
 
 ### Session config keys
 

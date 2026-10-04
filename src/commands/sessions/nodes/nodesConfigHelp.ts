@@ -4,8 +4,8 @@ export const nodesConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "sessions.links",
 		setter:
-			"assist sessions nodes link <name> http://127.0.0.1:<port> (or --tailscale <host> --port <port>, or --ssh <alias> --port <port>)",
-		note: "linked nodes whose sessions merge into this node's web UI, each direct (url, including a Tailscale <host>.<tailnet>.ts.net https url) or over an ssh tunnel (ssh alias, peer port, localPort); each name must match the peer's sessions.nodeName",
+			"assist sessions nodes link <name> --tailscale <host> --port <port> (or a peer <url>)",
+		note: "linked nodes whose sessions merge into this node's web UI, each dialled at its url (a Tailscale https://<host>.<tailnet>.ts.net:<port> url, or any direct url); each name must match the peer's sessions.nodeName",
 	},
 	{
 		key: "sessions.linkVersionCheck",

@@ -1,5 +1,4 @@
 import chalk from "chalk";
-import { describeTarget } from "../daemon/links/describeTarget";
 import type { LinkStatus } from "../daemon/links/LinkStatus";
 
 const STATE_COLOURS: Record<string, (text: string) => string> = {
@@ -15,5 +14,5 @@ export function formatLink(link: LinkStatus): string {
 	const error = link.error
 		? `\n    ${chalk.dim(`last error${link.errorAt ? ` ${link.errorAt}` : ""}: ${link.error}`)}`
 		: "";
-	return `  ${link.name} ${colour(link.state)} ${describeTarget(link)}${peer}${error}`;
+	return `  ${link.name} ${colour(link.state)} ${link.url}${peer}${error}`;
 }

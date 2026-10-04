@@ -20,8 +20,6 @@ export async function openLink(ctx: LinkContext): Promise<void> {
 	if (ctx.breaker.tripped()) return scheduleReconnect(ctx);
 	if (!ctx.blockedMessage) setLinkState(ctx, "connecting");
 	try {
-		await ctx.tunnel?.ready();
-		if (ctx.disposed) return;
 		daemonLog(`link ${ctx.spec.name} ws: connecting to ${ctx.spec.url}`);
 		const socket: LinkSocket = await ctx.deps.transport(ctx.spec.url, {
 			onLine: guardLinkCallback(

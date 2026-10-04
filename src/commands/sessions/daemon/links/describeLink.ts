@@ -5,7 +5,6 @@ export function describeLink(ctx: LinkContext): LinkStatus {
 	return {
 		name: ctx.spec.name,
 		url: ctx.spec.url,
-		ssh: ctx.spec.ssh,
 		state: ctx.state,
 		error: ctx.blockedMessage ?? ctx.lastError?.message,
 		errorAt: ctx.lastError?.at,

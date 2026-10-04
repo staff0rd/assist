@@ -11,48 +11,48 @@
 flowchart LR
   subgraph Mac["Mac"]
     MacBrowser["Browser"]
-    MacWeb["mac<br/>web server :3100"]
+    MacWeb["mac<br/>web server 127.0.0.1:3100"]
     MacDaemon["mac daemon"]
-    MacSshd["sshd (Remote Login)"]
+    MacServe["tailscale serve<br/>https://mac.&lt;tailnet&gt;.ts.net:3100"]
     MacBrowser --> MacWeb
     MacWeb -- "unix socket" --> MacDaemon
+    MacServe --> MacWeb
   end
 
   subgraph PC["PC"]
-    WinSshd["Windows OpenSSH :22"]
+    WinServe["Windows tailscale serve<br/>https://pc.&lt;tailnet&gt;.ts.net:4100 / :3101"]
     subgraph WSL["WSL"]
-      WslWeb["pc-wsl<br/>web server :3100"]
+      WslWeb["pc-wsl<br/>web server 127.0.0.1:3100"]
       WslDaemon["pc-wsl daemon"]
       WslWeb -- "unix socket" --> WslDaemon
     end
     subgraph Win["Windows"]
-      WinWeb["pc-windows<br/>web server :3101"]
+      WinWeb["pc-windows<br/>web server 127.0.0.1:3101"]
       WinDaemon["pc-windows daemon"]
       WinWeb -- "named pipe" --> WinDaemon
     end
     PCBrowser["Browser"]
     PCBrowser --> WslWeb
-    WinSshd -- "127.0.0.1:3100" --> WslWeb
-    WinSshd -- "127.0.0.1:3101" --> WinWeb
+    WinServe -- ":4100 → 127.0.0.1:3100" --> WslWeb
+    WinServe -- ":3101 → 127.0.0.1:3101" --> WinWeb
   end
 
-  MacWeb == "link: ssh pc → :3100" ==> WinSshd
-  MacWeb == "link: ssh pc → :3101" ==> WinSshd
+  MacWeb == "link: https://pc.&lt;tailnet&gt;.ts.net:4100" ==> WinServe
+  MacWeb == "link: https://pc.&lt;tailnet&gt;.ts.net:3101" ==> WinServe
   WslWeb -- "link: direct http://127.0.0.1:3101" --> WinWeb
-  WslWeb -. "link: ssh mac → :3100 (optional reverse)" .-> MacSshd
-  MacSshd -.-> MacWeb
+  WslWeb -. "link: https://mac.&lt;tailnet&gt;.ts.net:3100 (optional reverse)" .-> MacServe
 ```
 
 ## Links
 
 A link is a WebSocket (sessions) plus HTTP (panels) to the peer node's **web server**. The web server's WebSocket (`handleSocket.ts`) is already a near-transparent line relay to its daemon, so a link needs no new listener on the peer.
 
-Every web server listens on `127.0.0.1` only, so another machine reaches it through Tailscale or ssh, never the LAN.
+Every web server listens on `127.0.0.1` only, so another machine reaches it through Tailscale, never the LAN.
 
-Two transports:
+A link dials a URL:
 
-- **direct** — dial a URL. Used for WSL → Windows on the same machine (`http://127.0.0.1:3101`), and for a Tailscale peer at `https://<host>.<tailnet>.ts.net:<port>`, which the peer's web server exposes when it starts (`tailscale serve --bg --https=<port> http://127.0.0.1:<port>`, off with `sessions.tailscaleServe: false`). On the PC, Windows' `tailscale serve` also fronts the WSL web server on `<port>` + 1000, since mirrored WSL networking holds `<port>` itself on every Windows address.
-- **ssh** — the linking node keeps `ssh -N -L <local>:127.0.0.1:<port> <alias>` up and dials the local end. Keys come from the 1Password SSH agent via `~/.ssh/config`.
+- **Tailscale** — `https://<host>.<tailnet>.ts.net:<port>`, which the peer's web server exposes when it starts (`tailscale serve --bg --https=<port> http://127.0.0.1:<port>`, `tailscale.exe` under WSL, off with `sessions.tailscaleServe: false`). On the PC, Windows' `tailscale serve` also fronts the WSL web server on `<port>` + 1000, since mirrored WSL networking holds `<port>` itself on every Windows address. `assist sessions nodes link <name> --tailscale <host> --port <port>` resolves the tailnet suffix from `tailscale status --json`. This needs MagicDNS and HTTPS certificates turned on in the tailnet admin.
+- **direct** — any other URL, e.g. WSL → Windows on the same machine (`http://127.0.0.1:3101`).
 
 Config on the linking node:
 
@@ -61,11 +61,9 @@ sessions:
   nodeName: mac # this node's label everywhere; default: OS hostname (+ "-wsl" under WSL)
   links:
     - name: pc-wsl
-      ssh: pc # ~/.ssh/config alias
-      port: 3100
+      url: https://pc.tail1234.ts.net:4100
     - name: pc-windows
-      ssh: pc
-      port: 3101
+      url: https://pc.tail1234.ts.net:3101
 ```
 
 ```yaml
@@ -76,20 +74,12 @@ sessions:
     - name: pc-windows
       url: http://127.0.0.1:3101
     - name: mac # optional reverse link
-      ssh: mac
-      port: 3100
+      url: https://mac.tail1234.ts.net:3100
 ```
 
 A link's `name` must match the peer's own `nodeName`; the handshake verifies it.
 
-An ssh link also carries a `localPort`, the tunnel's local end; `assist sessions nodes link <name> --ssh <alias> --port <port>` writes 43000 + `port` % 1000, bumped past any other link's. The daemon owns each tunnel (`SshTunnel`): before every connect attempt it spawns `ssh -N -o BatchMode=yes -o ExitOnForwardFailure=yes -L <localPort>:127.0.0.1:<port> <alias>` if none is running and waits for the local port to accept. An exited ssh fails that attempt, so tunnel restarts share the link's reconnect and circuit breaker. The web server's `?node=` proxy and the CLI dial the same local port, so panels, `nodes logs` and heal need the daemon's tunnel to be up.
-
-### Setting up ssh links
-
-- **Windows peer** — install OpenSSH Server (`Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0`), `Set-Service sshd -StartupType Automatic; Start-Service sshd`. An administrator's authorized key goes in `C:\ProgramData\ssh\administrators_authorized_keys`. The one sshd forwards to both `pc-wsl` (3100, via WSL's localhost forwarding) and `pc-windows` (3101).
-- **Mac peer** — System Settings → General → Sharing → Remote Login, key in `~/.ssh/authorized_keys`.
-- **Linking node** — 1Password → Settings → Developer → Use the SSH agent, then a `Host` entry per peer in `~/.ssh/config` with `IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"` (macOS; on Windows 1Password serves the OpenSSH pipe and needs none). Run `ssh <alias>` once to accept the host key, because the tunnel runs with `BatchMode=yes`.
-- **Links** — Mac: `assist sessions nodes link pc-wsl --ssh pc --port 3100` and `assist sessions nodes link pc-windows --ssh pc --port 3101`. PC (WSL node) back to the Mac: `assist sessions nodes link mac --ssh mac --port 3100`.
+The ssh transport is retired: a config holding an `ssh:` link fails to load with a pointer at `--tailscale`, and `assist sessions nodes link` / `unlink` drop such links when they rewrite `sessions.links`.
 
 ## Flat, no chaining
 
@@ -186,27 +176,25 @@ Goal: an agent on **any** node, starting cold, can find which hop is broken with
 
 ### Hops
 
-| #   | Hop                                                | Probe                               | Log prefix            |
-| --- | -------------------------------------------------- | ----------------------------------- | --------------------- |
-| 0   | SSH agent (ssh links)                              | `ssh -G <alias>` → `ssh-add -l`     | —                     |
-| 1   | sshd reach + auth (ssh links)                      | `ssh -o BatchMode=yes <alias> exit` | `link <name> ssh:`    |
-| 2   | Tunnel bound locally (ssh links)                   | local port accepts                  | `link <name> tunnel:` |
-| 3   | Peer web server reachable                          | `GET /api/health`                   | `link <name> web:`    |
-| 4   | WebSocket + `hello` (version, protocol, node name) | handshake result                    | `link <name> ws:`     |
-| 5   | Peer web server → peer daemon                      | reported in peer health             | (peer's own log)      |
-| 6   | Panel proxy (`?node=`)                             | per-request status + duration       | `link <name> http:`   |
-| 7   | Heal (`/api/self-update`)                          | status + peer output                | `link <name> heal:`   |
+| #   | Hop                                                | Probe                         | Log prefix          |
+| --- | -------------------------------------------------- | ----------------------------- | ------------------- |
+| 1   | Tailscale up + peer online (`*.ts.net` links)      | `tailscale status --json`     | —                   |
+| 2   | Peer web server reachable                          | `GET /api/health`             | `link <name> web:`  |
+| 3   | WebSocket + `hello` (version, protocol, node name) | handshake result              | `link <name> ws:`   |
+| 4   | Peer web server → peer daemon                      | reported in peer health       | (peer's own log)    |
+| 5   | Panel proxy (`?node=`)                             | per-request status + duration | `link <name> http:` |
+| 6   | Heal (`/api/self-update`)                          | status + peer output          | `link <name> heal:` |
 
 ### Commands (read-only, added to `allowed.cli-reads`)
 
-- `assist sessions nodes` — this node plus every link, with state: transport, tunnel pid + local port, WS state, peer version + protocol, breaker, heal state, last error and when. `--json`.
-- `assist sessions nodes doctor [name]` — runs hops 0–5 in order, stops at the first failure, prints the hop, raw error, and a specific remediation (e.g. "Remote Login is off on mac", "1Password SSH agent not reachable", "nothing listening on 3101 on pc — is project-switch running the Windows web server?", "peer reports nodeName pc-wsl, link expects pc-windows", "version mismatch — heal latched"). `--json`.
+- `assist sessions nodes` — this node plus every link, with state: url, WS state, peer version + protocol, breaker, heal state, last error and when. `--json`.
+- `assist sessions nodes doctor [name]` — runs hops 1–4 in order, stops at the first failure, prints the hop, raw error, and a specific remediation (e.g. "pc.<tailnet>.ts.net is offline in the tailnet", "nothing serves https on 3101 on pc.<tailnet>.ts.net — check the `tailscale serve:` line in its log", "peer reports nodeName pc-wsl, link expects pc-windows", "version mismatch — heal latched"). `--json`.
 - `assist sessions nodes logs <name> [-n <lines>]` — tails the peer's `daemon.log` through its web server, so any node can read any linked node's logs.
 - `assist daemon status` gains one summary line per link.
 
 ### Logging
 
-- The rule in `src/commands/sessions/daemon/CLAUDE.md` ("every daemon operation MUST be logged") extends to: tunnel spawn/exit (`link <name> tunnel:`, with ssh stderr as `link <name> ssh:`), WS connect/close/reconnect with reason, `hello` outcome, breaker trips, heal steps, launch routing decisions, and every proxied panel request (method, path, node, status, duration; never bodies).
+- The rule in `src/commands/sessions/daemon/CLAUDE.md` ("every daemon operation MUST be logged") extends to: WS connect/close/reconnect with reason, `hello` outcome, breaker trips, heal steps, launch routing decisions, and every proxied panel request (method, path, node, status, duration; never bodies).
 - Each peer's daemon logs stream over its link's `subscribe-logs` and are relayed tagged `[<node>]`, so a node's `daemon.log` / `assist.log` interleaves every linked node's lines. Relayed lines are never re-exported.
 - **Correlation id:** every forwarded launch and proxied panel request carries a `traceId`, logged on both nodes, so one grep follows a request end to end.
 
@@ -221,7 +209,7 @@ Goal: an agent on **any** node, starting cold, can find which hop is broken with
 
 ### Tests
 
-The link transport is injectable, so tests wire two or three in-process nodes (daemon + web server) together without SSH, covering: session merge and `<node>:` namespacing, no re-export under symmetric linking, panel proxying, disconnect/reconnect, version mismatch → heal, legacy `windows*` keys being stripped, and `doctor` reporting the first failing hop.
+The link transport is injectable, so tests wire two or three in-process nodes (daemon + web server) together in memory, covering: session merge and `<node>:` namespacing, no re-export under symmetric linking, panel proxying, disconnect/reconnect, version mismatch → heal, legacy `windows*` keys being stripped, and `doctor` reporting the first failing hop.
 
 ## Delivery order
 
@@ -230,4 +218,4 @@ The link transport is injectable, so tests wire two or three in-process nodes (d
 3. WSL ↔ Windows as a direct link, replacing the Windows proxy — including heal, so the existing Windows auto-heal never regresses.
 4. Node-native panels, repos merged by origin, clone-on-node.
 5. Diagnostics (`doctor`, `logs`, `traceId`).
-6. Mac over SSH, including symmetric linking.
+6. Mac over Tailscale, including symmetric linking.

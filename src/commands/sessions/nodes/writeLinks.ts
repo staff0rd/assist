@@ -3,16 +3,9 @@ import {
 	saveGlobalConfig,
 } from "../../../shared/loadConfig";
 import { validateConfig } from "../../config/validateConfig";
-import type { LinkConfig } from "../shared/loadLinkSpecs";
+import type { LinkSpec } from "../daemon/links/LinkStatus";
 
-export function readLinks(): LinkConfig[] {
-	const sessions = loadGlobalConfigRaw().sessions as
-		| { links?: LinkConfig[] }
-		| undefined;
-	return sessions?.links ?? [];
-}
-
-export async function writeLinks(links: LinkConfig[]): Promise<void> {
+export async function writeLinks(links: LinkSpec[]): Promise<void> {
 	const config = loadGlobalConfigRaw();
 	const sessions = { ...(config.sessions as Record<string, unknown>) };
 	if (links.length > 0) sessions.links = links;

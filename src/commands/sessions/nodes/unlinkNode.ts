@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { notifyDaemonLinks } from "./notifyDaemonLinks";
-import { readLinks, writeLinks } from "./writeLinks";
+import { readLinks } from "./readLinks";
+import { writeLinks } from "./writeLinks";
 
 export async function unlinkNode(name: string): Promise<void> {
-	const links = readLinks();
+	const links = await readLinks();
 	const remaining = links.filter((link) => link.name !== name);
 	if (remaining.length === links.length) {
 		console.log(chalk.yellow(`No link named ${name}`));

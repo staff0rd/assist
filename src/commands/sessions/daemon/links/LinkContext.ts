@@ -3,7 +3,6 @@ import type { LaunchCircuitBreaker } from "../LaunchCircuitBreaker";
 import type { LinkRelayState } from "./LinkRelayState";
 import type { LinkSocket, LinkTransport } from "./LinkTransport";
 import type { LinkSpec, LinkState } from "./LinkStatus";
-import type { LinkTunnel, TunnelFactory } from "./LinkTunnel";
 
 export type NodeLinkDeps = {
 	viewers: () => Set<SessionClient>;
@@ -11,7 +10,6 @@ export type NodeLinkDeps = {
 	onStateChanged: () => void;
 	onHistoryChanged: () => void;
 	transport: LinkTransport;
-	tunnel: TunnelFactory;
 	heal: (url: string) => Promise<void>;
 	reconnectMs: number;
 	blockedRetryMs: number;
@@ -23,7 +21,6 @@ export type LinkContext = {
 	deps: NodeLinkDeps;
 	relay: LinkRelayState;
 	breaker: LaunchCircuitBreaker;
-	tunnel?: LinkTunnel;
 	socket: LinkSocket | null;
 	greeted: boolean;
 	state: LinkState;

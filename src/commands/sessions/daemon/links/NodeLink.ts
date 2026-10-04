@@ -57,6 +57,5 @@ export class NodeLink {
 		this.ctx.disposed = true;
 		clearTimeout(this.ctx.reconnectTimer);
 		disconnectLink(this.ctx);
-		this.ctx.tunnel?.dispose();
 	}
 }

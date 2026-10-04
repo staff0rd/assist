@@ -1,9 +1,8 @@
 import chalk from "chalk";
-import { describeTarget } from "../daemon/links/describeTarget";
-import { toLinkSpec } from "../shared/loadLinkSpecs";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { notifyDaemonLinks } from "./notifyDaemonLinks";
-import { readLinks, writeLinks } from "./writeLinks";
+import { readLinks } from "./readLinks";
+import { writeLinks } from "./writeLinks";
 import { buildLink, type LinkOptions } from "./buildLink";
 
 export async function linkNode(
@@ -12,13 +11,11 @@ export async function linkNode(
 	options: LinkOptions,
 ): Promise<void> {
 	if (name.includes(":")) throw new Error("node names cannot contain ':'");
+	const others = (await readLinks()).filter((link) => link.name !== name);
 	if (name === resolveNodeName())
 		throw new Error(`${name} is this node; link to a different node`);
-	const others = readLinks().filter((link) => link.name !== name);
-	const link = await buildLink(name, url, options, others);
+	const link = await buildLink(name, url, options);
 	await writeLinks([...others, link]);
-	console.log(
-		chalk.green(`Linked ${name} (${describeTarget(toLinkSpec(link))})`),
-	);
+	console.log(chalk.green(`Linked ${name} (${link.url})`));
 	await notifyDaemonLinks();
 }

@@ -9,7 +9,6 @@ import { SessionManager } from "../SessionManager";
 import type { InProcessPeer } from "./inProcessClient";
 import { inProcessTransport } from "./inProcessTransport";
 import type { LinkSpec } from "./LinkStatus";
-import type { LinkTunnel } from "./LinkTunnel";
 
 const helloName = vi.hoisted(() => ({ current: "pc-windows" }));
 
@@ -75,35 +74,12 @@ const bridge = inProcessTransport(peers, (name) => {
 	helloName.current = name;
 });
 
-const tunnelReady = vi.fn();
-
-function sshLink(name: string, alias: string, port: number, localPort: number) {
-	return {
-		name,
-		url: `http://127.0.0.1:${localPort}`,
-		ssh: { alias, port, localPort },
-	};
-}
-
-function fakeTunnel(spec: LinkSpec): LinkTunnel | undefined {
-	if (!spec.ssh) return undefined;
-	return {
-		ready: async () => {
-			tunnelReady(spec.url);
-			const peer = peers.get(`http://${spec.name}`);
-			if (peer) peers.set(spec.url, peer);
-		},
-		dispose: () => peers.delete(spec.url),
-	};
-}
-
 function node(name: string, links: LinkSpec[] = []) {
 	const manager = new SessionManager();
 	manager.links.configure({
 		specs: () => links,
 		localNode: () => name,
 		transport: bridge.transport,
-		tunnel: fakeTunnel,
 		heal: vi.fn(async () => {}),
 		reconnectMs: 5,
 		createTimeoutMs: 200,
@@ -363,13 +339,10 @@ describe("two linked nodes", () => {
 	});
 });
 
-describe("a Mac linked to the PC over ssh with a reverse link", () => {
-	it("merges both PC nodes through their tunnels and loops nothing back", async () => {
-		const mac = node("mac", [
-			sshLink("pc-wsl", "pc", 3100, 43100),
-			sshLink("pc-windows", "pc", 3101, 43101),
-		]);
-		const wsl = node("pc-wsl", [WINDOWS, sshLink("mac", "mac", 3100, 43200)]);
+describe("a Mac linked to both PC nodes with a reverse link", () => {
+	it("merges both PC nodes and loops nothing back", async () => {
+		const mac = node("mac", [WSL, WINDOWS]);
+		const wsl = node("pc-wsl", [WINDOWS, { name: "mac", url: "http://mac" }]);
 		const windows = node("pc-windows");
 		addSession(mac, "1");
 		addSession(wsl, "2");
@@ -391,11 +364,6 @@ describe("a Mac linked to the PC over ssh with a reverse link", () => {
 			expect(ids(macView)).toEqual(["1", "pc-windows:3", "pc-wsl:2"]);
 			expect(ids(wslView)).toEqual(["2", "mac:1", "pc-windows:3"]);
 		});
-		expect(tunnelReady.mock.calls.map((c) => c[0]).sort()).toEqual([
-			"http://127.0.0.1:43100",
-			"http://127.0.0.1:43101",
-			"http://127.0.0.1:43200",
-		]);
 		const settled = macView.received.length + wslView.received.length;
 		await new Promise((resolve) => setTimeout(resolve, 50));
 		expect(macView.received.length + wslView.received.length).toBe(settled);

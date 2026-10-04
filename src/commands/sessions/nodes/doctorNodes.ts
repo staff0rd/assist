@@ -8,10 +8,7 @@ import {
 	findUnlinkedWindowsNode,
 	type LinkSuggestion,
 } from "./findUnlinkedWindowsNode";
-import { portAccepts } from "../shared/portAccepts";
 import { probePeerHello } from "./probePeerHello";
-import { probeSsh } from "./probeSsh";
-import { probeSshAgent } from "./probeSshAgent";
 import { queryNodes } from "./queryNodes";
 import { printReport } from "./printReport";
 import { tailscaleStatus } from "./tailscaleStatus";
@@ -26,9 +23,6 @@ function doctorProbes(live: NodesMessage | undefined): DoctorProbes {
 	return {
 		health: (url) => fetchPeerJson(url, "/api/health"),
 		hello: probePeerHello,
-		sshAgent: probeSshAgent,
-		ssh: probeSsh,
-		tunnel: (localPort) => portAccepts(localPort),
 		tailscale: tailscaleStatus,
 		linkState: (name) => {
 			if (!live) return "no-daemon";
