@@ -1,3 +1,15 @@
+# [0.770.0](https://github.com/staff0rd/assist/compare/v0.769.0...v0.770.0) (2026-10-04)
+
+
+### Bug Fixes
+
+* unpinning returns to latest message ([ea591a7](https://github.com/staff0rd/assist/commit/ea591a7e53bbac1773efc28275f0be276721537d))
+
+
+### Features
+
+* add Alt Q/W/E, R and Z/X/C hotkeys ([e74b9c7](https://github.com/staff0rd/assist/commit/e74b9c7763310e1106969f49e52cf70adeec440c))
+
 # [0.769.0](https://github.com/staff0rd/assist/compare/v0.768.4...v0.769.0) (2026-10-04)
 
 
