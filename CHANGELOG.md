@@ -1,3 +1,10 @@
+# [0.773.0](https://github.com/staff0rd/assist/compare/v0.772.0...v0.773.0) (2026-10-04)
+
+
+### Features
+
+* configurable sessions hotkeys ([9b989b1](https://github.com/staff0rd/assist/commit/9b989b1730ba28e2f1890c74231bec225706b9f4))
+
 # [0.772.0](https://github.com/staff0rd/assist/compare/v0.771.0...v0.772.0) (2026-10-04)
 
 
