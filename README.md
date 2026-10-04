@@ -377,6 +377,8 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 - `assist sessions nodes unlink <name>` - Remove a linked node
 - `assist sessions nodes doctor [name] [--json]` - Find where a link is broken and how to fix it
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` - Tail a linked node's `daemon.log`
+- `assist sessions nodes restart <name> [--target daemon|webserver|both]` - Restart a linked node and wait for its link to reconnect
+- `assist sessions nodes update <name>` - Update assist on a linked node and wait for its link to reconnect
 - `assist sessions set-status <status>` - Report the current session's status (`running`/`waiting`) to the daemon
 - `assist daemon run` - Run the sessions daemon in the foreground
 - `assist daemon status` - Show daemon status, live sessions and each link's state
@@ -426,7 +428,11 @@ Each assist install is a **node** with its own daemon and web server. A node can
 - `assist sessions nodes unlink <name>` — remove a link.
 - `assist sessions nodes doctor [name] [--json]` — find where a link is broken and how to fix it.
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` — tail a linked node's `daemon.log`; naming this node reads the local log.
+- `assist sessions nodes restart <name> [--target daemon|webserver|both]` — the CLI form of **Restart <node>**: posts the node's `/api/restart`, waits up to 90s for its link to reconnect and prints its version.
+- `assist sessions nodes update <name>` — the CLI form of **Update assist on <node>**: over a connected link it opens an `assist update` card on the node, waits for its daemon to come back, then restarts its web server; otherwise it posts the node's `/api/self-update`. It then prints the node's new version.
 - `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) updates an older peer and holds the link until the versions match; `warn` proceeds anyway; `off` skips the check.
+
+`nodes restart` and `nodes update` log `nodes <action> <name> trace=<id>` here and send that trace id to the node, and when the node can't be reached or doesn't come back they name the first broken `nodes doctor` hop.
 
 With more than one node, a machine picker appears in the top nav and a machine selector in the new-session dialog; the dialog's selector defaults to the top nav's choice, which is remembered per browser. With a linked node selected in the picker, the hamburger's restart item becomes **Restart <node>**: it restarts that node's daemon and web server via `POST /api/restart?target=both&node=<node>` without reloading the page, toasts once the node's link reconnects, and on failure names the first broken `nodes doctor` hop (served locally by `GET /api/node-doctor?link=<node>`). The peer logs each restart as `restart <target> from=<viewer> trace=<id>`. The update item likewise becomes **Update assist on <node>**: over a connected link it opens an `assist update` card on that node, restarts the node's web server once the card completes, and toasts the node's new version; when the link is disconnected or `version-blocked` it falls back to `POST /api/self-update?node=<node>` (logged by the peer as `self-update: requested from=<viewer> trace=<id>`). The picker's menu shows each linked node's version, and the picker marks a node **behind** or **ahead** of this node's version. Linked nodes' daemon lines appear in this node's `daemon.log` tagged `[<node>]`. Every launch forwarded over a link and every `?node=` panel request carries a `traceId`, logged as `trace=<id>` by both nodes. `GET /api/health` reports the node's name, version, protocol, daemon reachability and its links' states. The retired `sessions.windows*` keys are ignored.
 

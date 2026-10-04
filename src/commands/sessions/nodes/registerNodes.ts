@@ -5,7 +5,9 @@ import { listNodes } from "./listNodes";
 import { nodeLogs } from "./nodeLogs";
 import { nodesConfigHelp } from "./nodesConfigHelp";
 import { registerLinkCommand } from "./registerLinkCommand";
+import { restartNode } from "./restartNode";
 import { unlinkNode } from "./unlinkNode";
+import { updateNode } from "./updateNode";
 
 export function registerNodes(sessions: Command): void {
 	const cmd = sessions
@@ -39,6 +41,21 @@ export function registerNodes(sessions: Command): void {
 		.action((name: string, _options, command: Command) =>
 			nodeLogs(name, command.optsWithGlobals()),
 		);
+
+	cmd
+		.command("restart <name>")
+		.description(
+			"Restart a linked node's daemon and/or web server, wait for its link to reconnect and print its version",
+		)
+		.option("--target <target>", "daemon, webserver or both", "both")
+		.action(restartNode);
+
+	cmd
+		.command("update <name>")
+		.description(
+			"Run assist update on a linked node, restart it, wait for its link to reconnect and print its version",
+		)
+		.action((name: string) => updateNode(name));
 
 	configHelp(cmd, nodesConfigHelp);
 }
