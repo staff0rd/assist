@@ -32,7 +32,12 @@ export async function restartWeb(
 		respondJson(res, 200, { ok: true });
 	});
 
-	await performRestart(target as RestartTarget, deps);
+	try {
+		await performRestart(target as RestartTarget, deps);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
+		console.log(`restart ${target} failed: ${message}`);
+	}
 }
 
 export async function performRestart(

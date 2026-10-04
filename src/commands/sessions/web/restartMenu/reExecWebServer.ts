@@ -1,7 +1,6 @@
 import { type SpawnSyncReturns, spawnSync } from "node:child_process";
 import { releaseWebServerPort } from "./releaseWebServerPort";
-
-type ExecveFn = (file: string, args: string[], env: NodeJS.ProcessEnv) => void;
+import { type ExecveFn, resolveExecve } from "./resolveExecve";
 
 type SpawnSyncFn = (
 	command: string,
@@ -16,12 +15,6 @@ export type ReExecDeps = {
 	exit?: (code: number) => void;
 	releasePort?: () => void;
 };
-
-function resolveExecve(): ExecveFn | null {
-	return typeof process.execve === "function"
-		? process.execve.bind(process)
-		: null;
-}
 
 // why: the restart path must not re-open a browser; pass --no-open through, but only once across repeated restarts
 function withNoOpen(args: string[]): string[] {

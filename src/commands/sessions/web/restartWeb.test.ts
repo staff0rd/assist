@@ -102,4 +102,21 @@ describe("restartWeb", () => {
 		expect(log).toHaveBeenCalledWith("restart both from=wsl trace=7f3a1c2d");
 		log.mockRestore();
 	});
+
+	it("logs a re-exec that throws instead of failing silently", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const { res } = createRes();
+
+		await restartWeb(createReq("/api/restart?target=both"), res, {
+			restartDaemonFn: async () => {},
+			reExecFn: () => {
+				throw new Error("process.execve is not available on win32");
+			},
+		});
+
+		expect(log).toHaveBeenCalledWith(
+			"restart both failed: process.execve is not available on win32",
+		);
+		log.mockRestore();
+	});
 });
