@@ -18,6 +18,7 @@ export function dismissSession(
 	s.activityWatcher?.close();
 	s.transcriptWatcher?.close();
 	s.gitWatcher?.close();
+	s.closeGrace?.cancel();
 	removeActivity(s.id);
 	if (s.activity?.itemId != null) releaseLock(s.activity.itemId);
 	sessions.delete(id);

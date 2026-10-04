@@ -55,6 +55,7 @@ export type Session = {
 	serverGroup?: string;
 	stopping?: boolean;
 	closing?: boolean;
+	closeGrace?: { cancel: () => void };
 	cwd?: string;
 	launchedFrom?: string;
 	claudeSessionId?: string;

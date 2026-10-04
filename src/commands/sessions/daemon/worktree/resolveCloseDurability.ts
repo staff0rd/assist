@@ -1,15 +1,16 @@
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
-import { setStatus } from "../setStatus";
+import { awaitTreeVacated } from "./awaitTreeVacated";
 import { closeBlockReason } from "./closeBlockReason";
 import { reapWorktree } from "./reapWorktree";
-import { type ClosingTree, treeUnderClose } from "./treeUnderClose";
-import { watchGitState } from "./watchGitState";
+import { treeUnderClose } from "./treeUnderClose";
+import { holdStopped } from "./holdStopped";
 
 export async function resolveCloseDurability(
 	session: Session,
 	finalize: () => void,
 	notify: () => void,
+	graceSpent = false,
 ): Promise<void> {
 	const tree = treeUnderClose(session);
 	if (!tree) {
@@ -17,8 +18,23 @@ export async function resolveCloseDurability(
 		return;
 	}
 	const blocked = await closeBlockReason(session.id, tree);
+	if (blocked?.live && session.closing && !graceSpent) {
+		daemonLog(
+			`session ${session.id} closing: waiting for live processes to leave ${tree.path} (${blocked.reason})`,
+		);
+		const outcome = await awaitTreeVacated(session, tree.path);
+		daemonLog(`session ${session.id} closing: live-process wait ${outcome}`);
+		if (outcome === "cancelled") return;
+		return resolveCloseDurability(session, finalize, notify, true);
+	}
 	if (blocked) {
-		holdStopped(session, tree, blocked, finalize, notify);
+		holdStopped(
+			session,
+			tree,
+			blocked.reason,
+			() => resolveCloseDurability(session, finalize, notify),
+			notify,
+		);
 		return;
 	}
 	if (tree.removable) await reapWorktree(tree.path);
@@ -29,31 +45,4 @@ export async function resolveCloseDurability(
 	session.gitWatcher?.close();
 	session.gitWatcher = undefined;
 	finalize();
-}
-
-function holdStopped(
-	session: Session,
-	tree: ClosingTree,
-	reason: string,
-	finalize: () => void,
-	notify: () => void,
-): void {
-	if (session.undurable?.reason !== reason)
-		daemonLog(
-			`session ${session.id} stopped; ${tree.removable ? "reap" : "close"} blocked in ${tree.path}: ${reason}`,
-		);
-	session.undurable = { reason, removesTree: tree.removable };
-	session.closing = undefined;
-	setStatus(session, "stopped");
-	if (!session.gitWatcher) {
-		let rechecking = false;
-		session.gitWatcher = watchGitState(tree.path, () => {
-			if (session.status !== "stopped" || rechecking) return;
-			rechecking = true;
-			void resolveCloseDurability(session, finalize, notify).finally(() => {
-				rechecking = false;
-			});
-		});
-	}
-	notify();
 }

@@ -1,4 +1,4 @@
-import { execFileSync, spawn } from "node:child_process";
+import { type ChildProcess, execFileSync, spawn } from "node:child_process";
 import {
 	mkdirSync,
 	mkdtempSync,
@@ -15,6 +15,7 @@ import { daemonLog } from "../daemonLog";
 import { dismissSession } from "../dismissSession";
 import { reapWorktree } from "./reapWorktree";
 import { resolveCloseDurability } from "./resolveCloseDurability";
+import { checkDurability } from "./treeDurability";
 
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../../../../shared/emitActivity", () => ({ removeActivity: vi.fn() }));
@@ -87,35 +88,112 @@ describe("resolveCloseDurability", () => {
 		);
 	});
 
-	it.skipIf(process.platform !== "linux")(
-		"holds the worktree while a live process is running in it",
-		async () => {
+	describe.skipIf(process.platform !== "linux")("with a live process", () => {
+		let orphan: ChildProcess | undefined;
+
+		afterEach(() => {
+			vi.useRealTimers();
+			orphan?.kill("SIGKILL");
+			orphan = undefined;
+		});
+
+		async function occupiedWorker(closing?: boolean) {
 			const { clone, tree } = makeCloneWithWorktree();
-			const orphan = spawn("sleep", ["30"], { cwd: tree });
-			try {
-				await vi.waitFor(() =>
-					expect(readlinkSync(`/proc/${orphan.pid}/cwd`)).toBe(tree),
-				);
-				const worker = makeSession({
-					id: "2",
-					status: "waiting",
-					cwd: tree,
-					worktree: { path: tree, clone },
-				});
-				const finalize = vi.fn();
+			const child = spawn("sleep", ["30"], { cwd: tree });
+			orphan = child;
+			await vi.waitFor(() =>
+				expect(readlinkSync(`/proc/${child.pid}/cwd`)).toBe(tree),
+			);
+			const worker = makeSession({
+				id: "2",
+				status: "waiting",
+				cwd: tree,
+				worktree: { path: tree, clone },
+				closing,
+			});
+			return { worker, child, finalize: vi.fn(), notify: vi.fn() };
+		}
 
-				await resolveCloseDurability(worker, finalize, vi.fn());
+		function liveReason(child: ChildProcess) {
+			return `a live process is still running in it (pid ${child.pid})`;
+		}
 
-				expect(finalize).not.toHaveBeenCalled();
-				expect(reapWorktree).not.toHaveBeenCalled();
-				expect(worker.status).toBe("stopped");
-				expect(worker.undurable?.reason).toBe(
-					`a live process is still running in it (pid ${orphan.pid})`,
-				);
-				worker.gitWatcher?.close();
-			} finally {
-				orphan.kill("SIGKILL");
-			}
-		},
-	);
+		it("holds a stopped card at once when it is not closing", async () => {
+			const { worker, child, finalize, notify } = await occupiedWorker();
+
+			await resolveCloseDurability(worker, finalize, notify);
+
+			expect(finalize).not.toHaveBeenCalled();
+			expect(reapWorktree).not.toHaveBeenCalled();
+			expect(worker.status).toBe("stopped");
+			expect(worker.undurable?.reason).toBe(liveReason(child));
+			worker.gitWatcher?.close();
+		});
+
+		it("keeps closing and reaps once the process exits inside the window", async () => {
+			const { worker, child, finalize, notify } = await occupiedWorker(true);
+			vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+			const closing = resolveCloseDurability(worker, finalize, notify);
+			await vi.advanceTimersByTimeAsync(1000);
+			expect(worker.closing).toBe(true);
+			expect(worker.status).toBe("waiting");
+			const exited = new Promise((resolve) => child.once("exit", resolve));
+			child.kill("SIGKILL");
+			await exited;
+			await vi.advanceTimersByTimeAsync(500);
+			await closing;
+
+			expect(finalize).toHaveBeenCalledOnce();
+			expect(reapWorktree).toHaveBeenCalled();
+			expect(worker.undurable).toBeUndefined();
+			expect(worker.closing).toBeUndefined();
+		});
+
+		it("holds a stopped card when the process outlives the window", async () => {
+			const { worker, child, finalize, notify } = await occupiedWorker(true);
+			vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+			const closing = resolveCloseDurability(worker, finalize, notify);
+			await vi.advanceTimersByTimeAsync(4500);
+			expect(worker.status).toBe("waiting");
+			await vi.advanceTimersByTimeAsync(500);
+			await closing;
+
+			expect(finalize).not.toHaveBeenCalled();
+			expect(worker.status).toBe("stopped");
+			expect(worker.closing).toBeUndefined();
+			expect(worker.undurable?.reason).toBe(liveReason(child));
+			worker.gitWatcher?.close();
+		});
+
+		it("holds a durability block at once without waiting", async () => {
+			vi.mocked(checkDurability).mockResolvedValueOnce({
+				durable: false,
+				reason: "uncommitted changes",
+			});
+			const { worker, finalize, notify } = await occupiedWorker(true);
+
+			await resolveCloseDurability(worker, finalize, notify);
+
+			expect(worker.closeGrace).toBeUndefined();
+			expect(worker.status).toBe("stopped");
+			expect(worker.undurable?.reason).toBe("uncommitted changes");
+			worker.gitWatcher?.close();
+		});
+
+		it("abandons the wait when the session is respawned mid-wait", async () => {
+			const { worker, finalize, notify } = await occupiedWorker(true);
+			vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+			const closing = resolveCloseDurability(worker, finalize, notify);
+			await vi.advanceTimersByTimeAsync(500);
+			worker.closeGrace?.cancel();
+			await closing;
+
+			expect(finalize).not.toHaveBeenCalled();
+			expect(worker.status).toBe("waiting");
+			expect(worker.undurable).toBeUndefined();
+		});
+	});
 });

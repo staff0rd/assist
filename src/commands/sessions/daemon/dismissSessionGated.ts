@@ -25,6 +25,7 @@ export function dismissSessionGated(
 	const settle = discard
 		? () => void discardTree(s, removeCard, notify)
 		: () => void resolveCloseDurability(s, removeCard, notify);
+	s.closeGrace?.cancel();
 	s.closing = true;
 	daemonLog(
 		`session ${id} closing: ${discard ? "discarding" : "checking durability of"} ${tree.path}`,
