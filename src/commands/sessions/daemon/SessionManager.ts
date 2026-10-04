@@ -19,7 +19,7 @@ import { greetClient } from "./greetClient";
 import { PrPreviewCoordinator } from "./PrPreviewCoordinator";
 import { makeSessionSpawner } from "./makeSessionSpawner";
 import { applyUsageRecord } from "./applyUsageRecord";
-import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
+import { managerStatusChangeHandler } from "./managerStatusChangeHandler";
 import { type HookStatusReport, setStatusFromHook } from "./setStatusFromHook";
 import { restartAndNotify } from "./restartAndNotify";
 import type { RestartResult } from "./restartManagedSession";
@@ -28,7 +28,6 @@ import { restoreAllSessions } from "./restoreAllSessions";
 import type { ServerConflictInfo } from "./serverConflictInfo";
 import { runRetry } from "./runRetry";
 import { liveServerRun, stopServerSession } from "./liveServerRun";
-import { reuseSessionForRun } from "./reuseSessionForRun";
 import { setSessionTitle } from "./setSessionTitle";
 import { shutdownSessions } from "./shutdownSessions";
 import { toSessionInfo } from "./toSessionInfo";
@@ -153,18 +152,12 @@ export class SessionManager {
 		return resumeInTree(this.treeCtx(), sessionId, cwd, name, harness);
 	}
 
-	private readonly onStatusChange = makeStatusChangeHandler(
+	private readonly onStatusChange = managerStatusChangeHandler(
 		this.sessions,
+		this.clients,
 		(id) => this.dismissSession(id),
 		() => this.notify(),
-		(session, itemId) =>
-			reuseSessionForRun(
-				session,
-				itemId,
-				this.clients,
-				this.onStatusChange,
-				this.treeCtx(),
-			),
+		() => this.treeCtx(),
 	);
 
 	readonly io = new SessionIo(

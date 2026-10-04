@@ -17,6 +17,7 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		initialPrompt: persisted.initialPrompt,
 		starred: persisted.watcher ? false : persisted.starred,
 		watcher: persisted.watcher,
+		divergenceEscalation: persisted.divergenceEscalation,
 		design: persisted.design,
 		auto: persisted.auto,
 		autoRun: persisted.autoRun,

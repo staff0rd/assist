@@ -80,6 +80,7 @@ export type Session = {
 	autoAdvance?: boolean;
 	starred?: boolean;
 	watcher?: boolean;
+	divergenceEscalation?: boolean;
 	design?: boolean;
 	auto?: boolean;
 	verifying?: boolean;

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../test/mothers/makeSession";
 import { applyStatusChange } from "./applyStatusChange";
+import type { StatusChangeDeps } from "./finishStatusChange";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
 import { resolveCloseDurability } from "./worktree/resolveCloseDurability";
 
@@ -22,6 +23,48 @@ const titleMock = startTranscriptTitleGeneration as unknown as ReturnType<
 	typeof vi.fn
 >;
 
+function deps(overrides: Partial<StatusChangeDeps> = {}): StatusChangeDeps {
+	return {
+		dismiss: vi.fn(),
+		notify: vi.fn(),
+		reuseForRun: vi.fn(),
+		...overrides,
+	};
+}
+
+describe("applyStatusChange divergence escalation", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it("escalates when a watcher exits 3", () => {
+		const watcher = makeSession({ watcher: true, status: "running" });
+		const escalateDivergence = vi.fn();
+
+		applyStatusChange(watcher, "error", 3, deps({ escalateDivergence }));
+
+		expect(escalateDivergence).toHaveBeenCalledWith(watcher);
+	});
+
+	it.each([1, 130])("does not escalate a watcher that exits %i", (code) => {
+		const watcher = makeSession({ watcher: true, status: "running" });
+		const escalateDivergence = vi.fn();
+
+		applyStatusChange(watcher, "error", code, deps({ escalateDivergence }));
+
+		expect(escalateDivergence).not.toHaveBeenCalled();
+	});
+
+	it("does not escalate a non-watcher session that exits 3", () => {
+		const session = makeSession({ status: "running" });
+		const escalateDivergence = vi.fn();
+
+		applyStatusChange(session, "error", 3, deps({ escalateDivergence }));
+
+		expect(escalateDivergence).not.toHaveBeenCalled();
+	});
+});
+
 describe("applyStatusChange worktree reap gating", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -36,9 +79,9 @@ describe("applyStatusChange worktree reap gating", () => {
 		});
 		const dismiss = vi.fn();
 
-		applyStatusChange(session, "waiting", undefined, dismiss, vi.fn(), vi.fn());
-		applyStatusChange(session, "running", undefined, dismiss, vi.fn(), vi.fn());
-		applyStatusChange(session, "waiting", undefined, dismiss, vi.fn(), vi.fn());
+		applyStatusChange(session, "waiting", undefined, deps({ dismiss }));
+		applyStatusChange(session, "running", undefined, deps({ dismiss }));
+		applyStatusChange(session, "waiting", undefined, deps({ dismiss }));
 
 		expect(resolveMock).not.toHaveBeenCalled();
 		expect(dismiss).not.toHaveBeenCalled();
@@ -56,7 +99,7 @@ describe("applyStatusChange worktree reap gating", () => {
 			status: "waiting",
 		});
 
-		applyStatusChange(session, "done", 0, vi.fn(), vi.fn(), vi.fn());
+		applyStatusChange(session, "done", 0, deps());
 
 		expect(resolveMock).toHaveBeenCalledTimes(1);
 		expect(resolveMock).toHaveBeenCalledWith(
@@ -84,7 +127,7 @@ describe("applyStatusChange worktree reap gating", () => {
 		});
 		const reuseForRun = vi.fn();
 
-		applyStatusChange(session, "done", 0, vi.fn(), vi.fn(), reuseForRun);
+		applyStatusChange(session, "done", 0, deps({ reuseForRun }));
 
 		expect(resolveMock).not.toHaveBeenCalled();
 		expect(reuseForRun).toHaveBeenCalledWith(session, 772);
@@ -103,15 +146,7 @@ describe("applyStatusChange worktree reap gating", () => {
 		});
 		const dismiss = vi.fn();
 
-		applyStatusChange(
-			session,
-			"done",
-			0,
-			dismiss,
-			vi.fn(),
-			vi.fn(),
-			() => true,
-		);
+		applyStatusChange(session, "done", 0, deps({ dismiss }), () => true);
 
 		expect(resolveMock).not.toHaveBeenCalled();
 		expect(session.status).toBe("done");
@@ -130,15 +165,7 @@ describe("applyStatusChange worktree reap gating", () => {
 			status: "running",
 		});
 
-		applyStatusChange(
-			session,
-			"done",
-			0,
-			vi.fn(),
-			vi.fn(),
-			vi.fn(),
-			() => false,
-		);
+		applyStatusChange(session, "done", 0, deps(), () => false);
 
 		expect(resolveMock).toHaveBeenCalledTimes(1);
 	});
@@ -150,7 +177,7 @@ describe("applyStatusChange worktree reap gating", () => {
 			status: "waiting",
 		});
 
-		applyStatusChange(session, "done", 0, vi.fn(), vi.fn(), vi.fn());
+		applyStatusChange(session, "done", 0, deps());
 
 		expect(resolveMock).not.toHaveBeenCalled();
 		expect(session.status).toBe("done");
@@ -171,7 +198,7 @@ describe("applyStatusChange undurable hold reason", () => {
 			undurable: { reason: "unpushed commits" },
 		});
 
-		applyStatusChange(session, "stopped", undefined, vi.fn(), vi.fn(), vi.fn());
+		applyStatusChange(session, "stopped", undefined, deps());
 
 		expect(session.undurable).toEqual({ reason: "unpushed commits" });
 	});
@@ -185,7 +212,7 @@ describe("applyStatusChange undurable hold reason", () => {
 			undurable: { reason: "unpushed commits" },
 		});
 
-		applyStatusChange(session, "running", undefined, vi.fn(), vi.fn(), vi.fn());
+		applyStatusChange(session, "running", undefined, deps());
 
 		expect(session.undurable).toBeUndefined();
 	});
@@ -199,7 +226,7 @@ describe("applyStatusChange undurable hold reason", () => {
 			undurable: { reason: "unpushed commits" },
 		});
 
-		applyStatusChange(session, "waiting", undefined, vi.fn(), vi.fn(), vi.fn());
+		applyStatusChange(session, "waiting", undefined, deps());
 
 		expect(session.undurable).toBeUndefined();
 	});
@@ -213,7 +240,7 @@ describe("applyStatusChange undurable hold reason", () => {
 		});
 		const notify = vi.fn();
 
-		applyStatusChange(session, "waiting", undefined, vi.fn(), notify, vi.fn());
+		applyStatusChange(session, "waiting", undefined, deps({ notify }));
 
 		expect(titleMock).toHaveBeenCalledWith(session, notify);
 	});
@@ -226,7 +253,7 @@ describe("applyStatusChange undurable hold reason", () => {
 			status: "waiting",
 		});
 
-		applyStatusChange(session, "running", undefined, vi.fn(), vi.fn(), vi.fn());
+		applyStatusChange(session, "running", undefined, deps());
 
 		expect(titleMock).not.toHaveBeenCalled();
 	});
