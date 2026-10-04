@@ -1,7 +1,8 @@
-import type { SessionStatus } from "../../../../../types";
+import type { DisplayStatus } from "../../../../displayStatus";
 
-export const statusGlyph: Record<SessionStatus, string> = {
+export const statusGlyph: Record<DisplayStatus, string> = {
 	running: "●",
+	idle: "●",
 	waiting: "◆",
 	done: "✓",
 	error: "✕",

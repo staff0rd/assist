@@ -1,9 +1,10 @@
 import { contextLevel } from "../../../../../shared/contextLevel";
 import type { HarnessKind } from "../../../../../shared/harnesses";
-import type { SessionStatus } from "../types";
+import type { DisplayStatus } from "./displayStatus";
 
-export const statusColors: Record<SessionStatus, string> = {
+export const statusColors: Record<DisplayStatus, string> = {
 	running: "success.main",
+	idle: "text.disabled",
 	waiting: "warning.main",
 	done: "info.main",
 	error: "error.main",

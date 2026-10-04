@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { SessionMetaCaptions } from "../SessionMetaCaptions";
 import { SessionStatusDot } from "../../../../SessionStatusDot";
-import type { SessionStatus } from "../../../../../types";
+import type { DisplayStatus } from "../../../../displayStatus";
 
 export function SessionStatusCaptions({
 	status,
@@ -9,7 +9,7 @@ export function SessionStatusCaptions({
 	usedPct,
 	undurable,
 }: {
-	status: SessionStatus;
+	status: DisplayStatus;
 	restored?: boolean;
 	usedPct?: number;
 	undurable?: { reason: string };

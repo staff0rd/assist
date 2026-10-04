@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import { SessionRunningDot } from "../../../SessionRunningDot";
 import { statusColors } from "../../../statusColors";
 import { statusGlyph } from "./SessionStatusGlyph/statusGlyph";
-import type { SessionStatus } from "../../../../types";
+import type { DisplayStatus } from "../../../displayStatus";
 
 const pulse = keyframes`
 	0%, 100% { opacity: 1; }
@@ -24,7 +24,7 @@ const pulsingGlyphSx = {
 	"@media (prefers-reduced-motion: reduce)": { animation: "none" },
 } as const;
 
-export function SessionStatusGlyph({ status }: { status: SessionStatus }) {
+export function SessionStatusGlyph({ status }: { status: DisplayStatus }) {
 	if (status === "running") return <SessionRunningDot />;
 	return (
 		<Typography

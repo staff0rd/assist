@@ -26,6 +26,41 @@ describe("displayStatus", () => {
 		);
 	});
 
+	it("reads idle for a running watcher that is waiting on its upstream", () => {
+		for (const watchState of ["waiting", undefined] as const)
+			expect(
+				displayStatus(
+					makeSessionInfo({
+						status: "running",
+						watcher: true,
+						activity: {
+							kind: "command",
+							name: "watch",
+							watchState,
+							startedAt: 0,
+						},
+					}),
+				),
+			).toBe("idle");
+	});
+
+	it("reads running for a watcher that is pulling and building", () => {
+		expect(
+			displayStatus(
+				makeSessionInfo({
+					status: "running",
+					watcher: true,
+					activity: {
+						kind: "command",
+						name: "watch",
+						watchState: "updating",
+						startedAt: 0,
+					},
+				}),
+			),
+		).toBe("running");
+	});
+
 	it("leaves a non-running status alone", () => {
 		for (const status of [
 			"waiting",

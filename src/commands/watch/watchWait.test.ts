@@ -7,6 +7,7 @@ const mockBuildWatchReport = vi.fn();
 const mockRunWatchBuild = vi.fn<(...args: unknown[]) => Promise<unknown>>();
 const mockRunPostBuildSync = vi.fn<() => Promise<unknown>>();
 const mockChangedPaths = vi.fn<(...args: unknown[]) => string[]>();
+const mockEmitWatchState = vi.fn();
 
 vi.mock("./waitForUpstream", () => ({
 	waitForUpstream: (...args: unknown[]) => mockWaitForUpstream(...args),
@@ -26,6 +27,10 @@ vi.mock("./runWatchBuild", () => ({
 
 vi.mock("./runPostBuildSync", () => ({
 	runPostBuildSync: () => mockRunPostBuildSync(),
+}));
+
+vi.mock("./emitWatchState", () => ({
+	emitWatchState: (...args: unknown[]) => mockEmitWatchState(...args),
 }));
 
 vi.mock("./changedPaths", () => ({
@@ -261,5 +266,41 @@ describe("watchWait --build sync", () => {
 
 		expect(mockRunPostBuildSync).not.toHaveBeenCalled();
 		expect(exitCode).toBe(0);
+	});
+});
+
+describe("watchWait watch state", () => {
+	it("reports waiting once it starts waiting on the upstream", async () => {
+		mockWaitForUpstream.mockImplementation(
+			(options: { onStart: (upstream: string) => void }) => {
+				options.onStart("origin/main");
+				return Promise.resolve({
+					kind: "timeout",
+					upstream: "origin/main",
+					timeout: "60m",
+				});
+			},
+		);
+
+		await run({ timeout: "60m" });
+
+		expect(mockEmitWatchState.mock.calls).toEqual([["waiting"]]);
+	});
+
+	it("reports updating when the upstream moves and it pulls", async () => {
+		mockWaitForUpstream.mockResolvedValue(moved);
+		mockPullFastForward.mockReturnValue(fastForwarded);
+
+		await run();
+
+		expect(mockEmitWatchState).toHaveBeenCalledWith("updating");
+	});
+
+	it("does not report updating when it waits without pulling", async () => {
+		mockWaitForUpstream.mockResolvedValue(moved);
+
+		await run({ pull: false });
+
+		expect(mockEmitWatchState).not.toHaveBeenCalledWith("updating");
 	});
 });

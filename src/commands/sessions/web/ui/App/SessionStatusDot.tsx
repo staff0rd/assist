@@ -1,7 +1,7 @@
 import { keyframes } from "@emotion/react";
 import Typography from "@mui/material/Typography";
 import { statusColors } from "./statusColors";
-import type { SessionStatus } from "../types";
+import type { DisplayStatus } from "./displayStatus";
 
 const pulse = keyframes`
 	0%, 100% { opacity: 1; transform: scale(1); }
@@ -26,7 +26,7 @@ export function SessionStatusDot({
 	status,
 	label = false,
 }: {
-	status: SessionStatus;
+	status: DisplayStatus;
 	label?: boolean;
 }) {
 	if (label)

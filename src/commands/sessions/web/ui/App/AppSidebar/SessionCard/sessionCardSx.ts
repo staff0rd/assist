@@ -1,14 +1,14 @@
 import type { SxProps, Theme } from "@mui/material";
-import type { SessionStatus } from "../../../types";
+import type { DisplayStatus } from "../../displayStatus";
 
-const attentionBg: Partial<Record<SessionStatus, string>> = {
+const attentionBg: Partial<Record<DisplayStatus, string>> = {
 	waiting: "rgba(255, 167, 38, 0.09)",
 	error: "rgba(244, 67, 54, 0.09)",
 };
 
 export function sessionCardSx(
 	active: boolean,
-	status: SessionStatus,
+	status: DisplayStatus,
 ): SxProps<Theme> {
 	return {
 		display: "grid",
