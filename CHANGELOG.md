@@ -1,3 +1,10 @@
+# [0.769.0](https://github.com/staff0rd/assist/compare/v0.768.4...v0.769.0) (2026-10-04)
+
+
+### Features
+
+* print the extension install link ([92f618a](https://github.com/staff0rd/assist/commit/92f618a2e09ab6826bc10a2d276e4f819dcb37d2))
+
 ## [0.768.4](https://github.com/staff0rd/assist/compare/v0.768.3...v0.768.4) (2026-10-04)
 
 
