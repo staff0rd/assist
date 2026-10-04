@@ -1,3 +1,10 @@
+## [0.761.1](https://github.com/staff0rd/assist/compare/v0.761.0...v0.761.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* quiet watcher build, fix its card ([7f32038](https://github.com/staff0rd/assist/commit/7f32038347ee822bc6714069ca3fdd19fb5f97f2))
+
 # [0.761.0](https://github.com/staff0rd/assist/compare/v0.760.0...v0.761.0) (2026-10-04)
 
 
