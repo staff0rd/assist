@@ -1,7 +1,6 @@
-import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import { ConfigButton } from "./MenuTriggerButton/ConfigButton";
+import { MenuButton } from "./MenuTriggerButton/MenuButton";
 import { VersionBadge } from "./MenuTriggerButton/VersionBadge";
 
 export function MenuTriggerButton({
@@ -26,16 +25,7 @@ export function MenuTriggerButton({
 		>
 			<VersionBadge />
 			<ConfigButton />
-			<IconButton
-				onClick={(e) => onOpen(e.currentTarget)}
-				size="small"
-				sx={{ color: "inherit" }}
-				aria-label="Open menu"
-				aria-haspopup="true"
-				aria-expanded={open ? "true" : undefined}
-			>
-				<MenuIcon fontSize="small" />
-			</IconButton>
+			<MenuButton open={open} onOpen={onOpen} />
 		</Box>
 	);
 }

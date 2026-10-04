@@ -114,6 +114,24 @@ describe("HamburgerMenu", () => {
 		expect(screen.getByText("config page")).toBeTruthy();
 	});
 
+	it("navigates to the config page on Alt+X", () => {
+		renderMenu(vi.fn());
+
+		fireEvent.keyDown(document.body, { code: "KeyX", altKey: true });
+
+		expect(screen.getByText("config page")).toBeTruthy();
+	});
+
+	it("opens the menu on Alt+C", () => {
+		renderMenu(vi.fn());
+
+		fireEvent.keyDown(document.body, { code: "KeyC", altKey: true });
+
+		expect(
+			screen.getByRole("menuitem", { name: /Keyboard shortcuts/ }),
+		).toBeTruthy();
+	});
+
 	it("does not launch when the update is cancelled", () => {
 		const launchAssist = vi.fn();
 		renderMenu(launchAssist);

@@ -25,20 +25,32 @@ export const shortcutRegistry = {
 	focusSidebar: {
 		label: "Focus sidebar",
 		group: "Navigate",
-		chords: [["Alt", "E"]],
-		matches: (event) => altChordCode(event) === "KeyE",
+		chords: [["Alt", "A"]],
+		matches: (event) => altChordCode(event) === "KeyA",
 	},
 	focusTerminal: {
 		label: "Focus terminal",
 		group: "Navigate",
-		chords: [["Alt", "`"]],
-		matches: (event) => altChordCode(event) === "Backquote",
+		chords: [["Alt", "S"]],
+		matches: (event) => altChordCode(event) === "KeyS",
 	},
 	toggleDiff: {
 		label: "Open / close diff panel",
 		group: "Navigate",
 		chords: [["Alt", "D"]],
 		matches: (event) => altChordCode(event) === "KeyD",
+	},
+	openConfig: {
+		label: "Open config",
+		group: "Navigate",
+		chords: [["Alt", "X"]],
+		matches: (event) => altChordCode(event) === "KeyX",
+	},
+	openMenu: {
+		label: "Open menu",
+		group: "Navigate",
+		chords: [["Alt", "C"]],
+		matches: (event) => altChordCode(event) === "KeyC",
 	},
 	cycleCards: {
 		label: "Next / previous sidebar card",

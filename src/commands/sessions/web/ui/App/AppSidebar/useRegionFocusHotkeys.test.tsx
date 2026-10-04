@@ -113,29 +113,29 @@ afterEach(() => {
 });
 
 describe("useRegionFocusHotkeys", () => {
-	it("Alt+E reveals a collapsed sidebar on the history tab from another route, then focuses the active card", () => {
+	it("Alt+A reveals a collapsed sidebar on the history tab from another route, then focuses the active card", () => {
 		renderShell({ path: "/backlog", tab: "history", collapsed: true });
 
-		pressAlt("KeyE");
+		pressAlt("KeyA");
 
 		expect(screen.getByLabelText("path").textContent).toBe("/sessions");
 		expect(screen.getByLabelText("tab").textContent).toBe("active");
 		expect(document.activeElement).toBe(screen.getByText("card"));
 	});
 
-	it("Alt+E holds card focus so the terminal auto-focus leaves it alone", () => {
+	it("Alt+A holds card focus so the terminal auto-focus leaves it alone", () => {
 		renderShell();
 
-		pressAlt("KeyE");
+		pressAlt("KeyA");
 
 		expect(isSessionCardFocusHeld()).toBe(true);
 	});
 
-	it("Alt+` focuses the active terminal", () => {
+	it("Alt+S focuses the active terminal", () => {
 		renderShell();
 		screen.getByText("card").focus();
 
-		pressAlt("Backquote");
+		pressAlt("KeyS");
 
 		expect(document.activeElement).toBe(screen.getByLabelText("terminal"));
 	});
@@ -164,7 +164,7 @@ describe("useRegionFocusHotkeys", () => {
 	it("rings the region that receives focus", () => {
 		renderShell();
 
-		pressAlt("Backquote");
+		pressAlt("KeyS");
 
 		const [keyframes] = animate.mock.calls[0] as [Keyframe[]];
 		expect(keyframes[0]).toMatchObject({ outlineOffset: "-2px" });
