@@ -1,3 +1,12 @@
+## [0.774.1](https://github.com/staff0rd/assist/compare/v0.774.0...v0.774.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* close menu when a shortcut fires ([8f53707](https://github.com/staff0rd/assist/commit/8f53707c2f2a3432df140795a70b8d4433ec4abb))
+* focus restart in restart dialog ([7afbb8f](https://github.com/staff0rd/assist/commit/7afbb8f2d516c24f78c61bcd84786aa1db33e40e))
+* re-run release after manifest push ([8a216c7](https://github.com/staff0rd/assist/commit/8a216c7226e817f5a751ab98f736189749ca381e))
+
 # [0.774.0](https://github.com/staff0rd/assist/compare/v0.773.1...v0.774.0) (2026-10-04)
 
 
