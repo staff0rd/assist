@@ -1,3 +1,10 @@
+# [0.763.0](https://github.com/staff0rd/assist/compare/v0.762.0...v0.763.0) (2026-10-04)
+
+
+### Features
+
+* update the selected linked node ([dffaff6](https://github.com/staff0rd/assist/commit/dffaff644736efb0780cf5ec86529dda7206584e))
+
 # [0.762.0](https://github.com/staff0rd/assist/compare/v0.761.1...v0.762.0) (2026-10-04)
 
 
