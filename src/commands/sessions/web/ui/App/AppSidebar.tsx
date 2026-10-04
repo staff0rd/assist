@@ -1,6 +1,7 @@
 import { Sidebar } from "./AppSidebar/Sidebar";
 import type { SidebarTab } from "../types";
 import { useJumpToNextWaiting } from "./AppSidebar/useJumpToNextWaiting";
+import { useRegionFocusHotkeys } from "./AppSidebar/useRegionFocusHotkeys";
 import type { useSessionSocket } from "../useSessionSocket";
 import { useSidebarNavigation } from "./AppSidebar/useSidebarNavigation";
 import { useSidebarOrdering } from "./AppSidebar/useSidebarOrdering";
@@ -26,6 +27,12 @@ export function AppSidebar({ socket, tab, onTabChange, collapsed }: Props) {
 		onSelect: handleSelect,
 		onTabChange,
 		isFloatingWaiter,
+	});
+	useRegionFocusHotkeys({
+		sessions: socket.sessions,
+		activeId: socket.activeId,
+		tab,
+		onTabChange,
 	});
 
 	return (

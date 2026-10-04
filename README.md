@@ -401,7 +401,7 @@ Web sessions are owned by a long-lived daemon process, not the web server: the s
 
 The topnav's **+** button (or Ctrl+N / Alt+N) opens the new-session dialog, which replaces the old draft / bug / prompt / design topnav buttons. Its mode selector picks `draft`, `bug`, `prompt` or `design`; in `prompt` mode a harness selector under it picks Claude, Codex or pi when those are exposed, and Up/Down moves between the two rows. `design` launches an interactive `claude` session with the vendored design system prompt appended via `--append-system-prompt`. Left/Right change the mode or harness, and Tab steps through a selector's options before moving on to the next control.
 
-Alt+1 to Alt+5 select the Nth visible top-level tab (with Releases hidden, News is Alt+4), including while the terminal has focus; on macOS use Option. Ctrl+/ (Cmd+/ on macOS) or the menu's **Keyboard shortcuts** item opens a sheet listing every sessions-view shortcut.
+Alt+1 to Alt+5 select the Nth visible top-level tab (with Releases hidden, News is Alt+4), including while the terminal has focus; on macOS use Option. Alt+E focuses the active session's sidebar card (expanding the sidebar and switching to Active), Alt+` focuses its terminal, and Alt+D opens and focuses its diff panel, or closes it back to the terminal when the diff already has focus; each returns to Sessions first. Ctrl+/ (Cmd+/ on macOS) or the menu's **Keyboard shortcuts** item opens a sheet listing every sessions-view shortcut.
 
 Every live session card carries an **add-agent** button (👥) that starts a second agent inside that session's existing workspace rather than allocating a new one. While several agents share a workspace, only the last one to leave triggers teardown.
 

@@ -9,6 +9,7 @@ const columnSx = {
 	overflow: "auto",
 	px: 1,
 	borderColor: "divider",
+	"&:focus": { outline: "none" },
 } as const;
 
 const halfSx = { ...columnSx, width: "50%", borderLeft: 1 } as const;
@@ -28,7 +29,11 @@ export function DiffPanelColumn({
 	const { closePanel, setPanelScope, togglePanelMode } = useDiffPanels();
 
 	return (
-		<Box sx={panel.mode === "full" ? fullSx : halfSx}>
+		<Box
+			data-diff-session-id={sessionId}
+			tabIndex={-1}
+			sx={panel.mode === "full" ? fullSx : halfSx}
+		>
 			<DiffContent
 				cwd={panel.cwd}
 				sessionId={panel.claudeSessionId}

@@ -28,6 +28,8 @@ describe("isAppHotkey", () => {
 		expect(isAppHotkey(event({ ctrlKey: true, key: "n", code: "KeyN" }))).toBe(
 			true,
 		);
+		for (const code of ["KeyE", "Backquote", "KeyD"])
+			expect(isAppHotkey(event({ altKey: true, code }))).toBe(true);
 	});
 
 	it("passes ordinary terminal keys through", () => {

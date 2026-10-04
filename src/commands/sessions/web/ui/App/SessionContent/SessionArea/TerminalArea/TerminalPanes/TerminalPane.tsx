@@ -32,6 +32,7 @@ export function TerminalPane({
 
 	return (
 		<Box
+			data-terminal-session-id={sessionId}
 			sx={{
 				position: "absolute",
 				inset: "0 0 0 8px",

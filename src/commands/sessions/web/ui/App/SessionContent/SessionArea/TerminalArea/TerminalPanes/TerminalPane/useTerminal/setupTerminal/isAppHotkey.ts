@@ -5,6 +5,9 @@ const APP_HOTKEYS = [
 	shortcutRegistry.newSession,
 	shortcutRegistry.navTab,
 	shortcutRegistry.shortcutsSheet,
+	shortcutRegistry.focusSidebar,
+	shortcutRegistry.focusTerminal,
+	shortcutRegistry.toggleDiff,
 ];
 
 export function isAppHotkey(event: KeyboardEvent): boolean {

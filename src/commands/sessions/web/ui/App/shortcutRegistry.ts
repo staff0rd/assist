@@ -6,6 +6,7 @@ import type { Chord } from "./chordKeys";
 import { isCycleCardKey } from "./shortcutRegistry/isCycleCardKey";
 import { isShortcutsSheetKey } from "./shortcutRegistry/isShortcutsSheetKey";
 import { navTabIndex } from "./navTabIndex";
+import { altChordCode } from "./altChordCode";
 
 export type Shortcut = {
 	label: string;
@@ -20,6 +21,24 @@ export const shortcutRegistry = {
 		group: "Navigate",
 		chords: [["Alt", "1–5"]],
 		matches: (event) => navTabIndex(event) !== undefined,
+	},
+	focusSidebar: {
+		label: "Focus sidebar",
+		group: "Navigate",
+		chords: [["Alt", "E"]],
+		matches: (event) => altChordCode(event) === "KeyE",
+	},
+	focusTerminal: {
+		label: "Focus terminal",
+		group: "Navigate",
+		chords: [["Alt", "`"]],
+		matches: (event) => altChordCode(event) === "Backquote",
+	},
+	toggleDiff: {
+		label: "Open / close diff panel",
+		group: "Navigate",
+		chords: [["Alt", "D"]],
+		matches: (event) => altChordCode(event) === "KeyD",
 	},
 	cycleCards: {
 		label: "Next / previous sidebar card",

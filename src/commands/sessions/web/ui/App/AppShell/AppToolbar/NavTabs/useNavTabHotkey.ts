@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { navTabIndex } from "../../../navTabIndex";
-import { useCaptureHotkey } from "../../useCaptureHotkey";
+import { useCaptureHotkey } from "../../../useCaptureHotkey";
 
 export function useNavTabHotkey(
 	paths: readonly string[],
