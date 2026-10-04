@@ -1,3 +1,10 @@
+# [0.756.0](https://github.com/staff0rd/assist/compare/v0.755.2...v0.756.0) (2026-10-04)
+
+
+### Features
+
+* ask before closing nested sessions ([1bcef01](https://github.com/staff0rd/assist/commit/1bcef012f0d2fb4bc9901d12cc1c5429447065d1))
+
 ## [0.755.2](https://github.com/staff0rd/assist/compare/v0.755.1...v0.755.2) (2026-10-04)
 
 
