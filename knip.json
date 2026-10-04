@@ -5,6 +5,7 @@
 		"src/commands/sessions/web/ui/App.tsx",
 		"src/commands/sessions/web/ui/installMonacoGlobal.ts",
 		"src/commands/criteriaExtension/criteriaContentScript.ts",
+		"src/commands/criteriaExtension/criteriaExtensionChanged.ts",
 		"src/commands/review/ci/reviewCiInit.ts",
 		"src/commands/review/ci/reviewCiCheck.ts",
 		"src/commands/review/ci/reviewCiReview.ts",
@@ -15,8 +16,7 @@
 		"jscpd",
 		"oxfmt",
 		"oxlint",
-		"skott",
-		"tsx"
+		"skott"
 	],
 	"ignore": [
 		"**/.venv/**",

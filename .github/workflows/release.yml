@@ -14,6 +14,7 @@ permissions:
   issues: write
   pull-requests: write
   id-token: write
+  actions: write
 
 jobs:
   release:
@@ -42,3 +43,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      - name: Sign criteria extension if it changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(git tag --points-at HEAD --list 'v*' | head -n1)
+          if [ -n "$tag" ]; then
+            gh workflow run criteria-extension.yml --ref main -f tag="$tag" -f only-if-changed=true
+          fi

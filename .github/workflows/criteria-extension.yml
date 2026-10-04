@@ -2,6 +2,14 @@ name: Criteria extension
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to sign (defaults to the version on main)
+        required: false
+      only-if-changed:
+        description: Skip unless the extension changed since the last signed version
+        type: boolean
+        default: false
 
 concurrency:
   group: criteria-extension
@@ -17,7 +25,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ inputs.tag || 'main' }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,25 +37,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
       - name: Read version
         id: version
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
+      - name: Check for extension changes since the last signed version
+        id: changes
+        if: inputs.only-if-changed
+        run: npx tsx src/commands/criteriaExtension/criteriaExtensionChanged.ts
+
+      - name: Build
+        if: steps.changes.outputs.changed != 'false'
+        run: npm run build
+
       - name: Sign on AMO
+        if: steps.changes.outputs.changed != 'false'
         env:
           WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
         run: node dist/index.js criteria-extension --sign
 
       - name: Attach to release
+        if: steps.changes.outputs.changed != 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "v${{ steps.version.outputs.version }}" ~/.assist/criteria-extension/criteria-extension.xpi --clobber
 
       - name: Commit update manifest
+        if: steps.changes.outputs.changed != 'false'
         run: |
           cp ~/.assist/criteria-extension/updates.json criteria-extension/updates.json
           git config user.name "github-actions[bot]"
