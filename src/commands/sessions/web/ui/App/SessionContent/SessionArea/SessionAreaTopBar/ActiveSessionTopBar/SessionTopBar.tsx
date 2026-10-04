@@ -28,7 +28,7 @@ export function SessionTopBar({
 	const layout = useTopBarLayout(barRef);
 
 	return (
-		<Box ref={barRef} sx={barSx}>
+		<Box ref={barRef} sx={barSx} data-top-bar-session-id={session.id}>
 			<SessionTopBarCaptions
 				session={session}
 				minWidth={layout.floor}

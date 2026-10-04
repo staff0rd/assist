@@ -1,6 +1,6 @@
 import { type KeyboardEvent, useCallback } from "react";
 import { adjacentSessionId } from "./useCycleSessionCards/adjacentSessionId";
-import { holdSessionCardFocus } from "../../../../../holdSessionCardFocus";
+import { holdSessionCardFocus } from "../../../../holdSessionCardFocus";
 import { scrollSessionCardIntoView } from "../../../../scrollSessionCardIntoView";
 import { shortcutRegistry } from "../../../../../shortcutRegistry";
 import type { SessionInfo } from "../../../../../../types";

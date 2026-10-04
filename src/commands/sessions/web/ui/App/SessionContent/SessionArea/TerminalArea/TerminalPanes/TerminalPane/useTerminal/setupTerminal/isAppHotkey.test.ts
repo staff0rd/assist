@@ -28,7 +28,17 @@ describe("isAppHotkey", () => {
 		expect(isAppHotkey(event({ ctrlKey: true, key: "n", code: "KeyN" }))).toBe(
 			true,
 		);
-		for (const code of ["KeyA", "KeyS", "KeyD", "KeyX", "KeyC"])
+		for (const code of [
+			"KeyA",
+			"KeyS",
+			"KeyD",
+			"KeyW",
+			"KeyE",
+			"KeyR",
+			"KeyZ",
+			"KeyX",
+			"KeyC",
+		])
 			expect(isAppHotkey(event({ altKey: true, code }))).toBe(true);
 	});
 

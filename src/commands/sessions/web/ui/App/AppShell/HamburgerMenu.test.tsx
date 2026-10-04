@@ -114,22 +114,30 @@ describe("HamburgerMenu", () => {
 		expect(screen.getByText("config page")).toBeTruthy();
 	});
 
-	it("navigates to the config page on Alt+X", () => {
+	it("navigates to the config page on Alt+W", () => {
 		renderMenu(vi.fn());
 
-		fireEvent.keyDown(document.body, { code: "KeyX", altKey: true });
+		fireEvent.keyDown(document.body, { code: "KeyW", altKey: true });
 
 		expect(screen.getByText("config page")).toBeTruthy();
 	});
 
-	it("opens the menu on Alt+C", () => {
+	it("opens the menu on Alt+E with focus on its first item", async () => {
 		renderMenu(vi.fn());
 
-		fireEvent.keyDown(document.body, { code: "KeyC", altKey: true });
+		fireEvent.keyDown(document.body, { code: "KeyE", altKey: true });
 
-		expect(
-			screen.getByRole("menuitem", { name: /Keyboard shortcuts/ }),
-		).toBeTruthy();
+		const [first] = screen.getAllByRole("menuitem");
+		await waitFor(() => expect(document.activeElement).toBe(first));
+	});
+
+	it("does nothing on Alt+Q yet", () => {
+		renderMenu(vi.fn());
+
+		fireEvent.keyDown(document.body, { code: "KeyQ", altKey: true });
+
+		expect(screen.queryByRole("menuitem")).toBeNull();
+		expect(screen.getByText("sessions page")).toBeTruthy();
 	});
 
 	it("does not launch when the update is cancelled", () => {

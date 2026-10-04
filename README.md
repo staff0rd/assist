@@ -403,7 +403,15 @@ Web sessions are owned by a long-lived daemon process, not the web server: the s
 
 The topnav's **+** button (or Ctrl+N / Alt+N) opens the new-session dialog, which replaces the old draft / bug / prompt / design topnav buttons. Its mode selector picks `draft`, `bug`, `prompt` or `design`; in `prompt` mode a harness selector under it picks Claude, Codex or pi when those are exposed, and Up/Down moves between the two rows. `design` launches an interactive `claude` session with the vendored design system prompt appended via `--append-system-prompt`. Left/Right change the mode or harness, and Tab steps through a selector's options before moving on to the next control.
 
-Alt+1 to Alt+5 select the Nth visible top-level tab (with Releases hidden, News is Alt+4), including while the terminal has focus; on macOS use Option. Alt+A, Alt+S and Alt+D follow the main area left to right: Alt+A focuses the active session's sidebar card (expanding the sidebar and switching to Active), Alt+S focuses its terminal, and Alt+D opens and focuses its diff panel, or closes it back to the terminal when the diff already has focus; each returns to Sessions first. Alt+X opens the config page and Alt+C opens the menu. Ctrl+/ (Cmd+/ on macOS) or the menu's **Keyboard shortcuts** item opens a sheet listing every sessions-view shortcut. The top-level tabs, the new-session button, the active session's diff counts, the config cog and the menu button show their chord in their tooltip on hover and keyboard focus.
+Every hotkey is Alt plus a left-hand key, one keyboard row per screen region, and works while the terminal has focus; on macOS use Option.
+
+- **Numbers**: Alt+1 to Alt+5 select the Nth visible top-level tab (with Releases hidden, News is Alt+4).
+- **Q W E** (top right): Alt+W opens the config page and Alt+E opens the menu with focus on its first item. Alt+Q is reserved for the version item and does nothing yet.
+- **R** (toolbar): Alt+R focuses the toolbar's repo picker; Tab / Shift+Tab then move along the toolbar.
+- **A S D** (main area, left to right): Alt+A focuses the active session's sidebar card (expanding the sidebar and switching to Active), Alt+S focuses its terminal, and Alt+D opens and focuses its diff panel, or closes it back to the terminal when the diff already has focus. While the session's preview pane is open, Alt+D focuses the pane instead, and pressing it again returns focus to the terminal, leaving the pane open.
+- **Z X C** (session top bar): Alt+Z, Alt+X and Alt+C focus the active session's top-bar **Add agent**, **VS Code** and **Done** buttons; Tab / Shift+Tab then move to neighbouring top-bar buttons. A key whose button isn't shown does nothing.
+
+Keys whose target is on Sessions return there first. Ctrl+/ (Cmd+/ on macOS) or the menu's **Keyboard shortcuts** item opens a sheet listing every sessions-view shortcut. The top-level tabs, the new-session button, the repo picker, the top-bar add agent / VS Code / done buttons, the active session's diff counts, the config cog and the menu button show their chord in their tooltip on hover and keyboard focus.
 
 Every live session card carries an **add-agent** button (👥) that starts a second agent inside that session's existing workspace rather than allocating a new one. While several agents share a workspace, only the last one to leave triggers teardown.
 

@@ -6,16 +6,19 @@ import { ConfirmDialog } from "../../../../../backlog/web/ui/components/ConfirmD
 import { ActionButton } from "../ActionButton";
 import type { BacklogTarget } from "../../backlogTarget";
 import { ErrorSnackbar } from "../ErrorSnackbar";
+import type { ShortcutName } from "../shortcutRegistry";
 import { StopCardActivation } from "../StopCardActivation";
 
 export function CompleteButton({
 	target,
 	cwd,
 	onDismiss,
+	shortcut,
 }: {
 	target: BacklogTarget;
 	cwd?: string;
 	onDismiss: () => void;
+	shortcut?: ShortcutName;
 }) {
 	const { itemId, phase, totalPhases } = target;
 	const [confirming, setConfirming] = useState(false);
@@ -36,6 +39,7 @@ export function CompleteButton({
 			<ActionButton
 				label="Done"
 				title="Mark done"
+				shortcut={shortcut}
 				icon={<CheckIcon sx={{ fontSize: 16 }} />}
 				onClick={(e) => {
 					e.stopPropagation();

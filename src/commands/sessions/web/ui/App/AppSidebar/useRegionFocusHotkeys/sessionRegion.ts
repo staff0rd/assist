@@ -1,13 +1,16 @@
-import { holdSessionCardFocus } from "../../holdSessionCardFocus";
-import type { Region } from "./focusRegion";
+import { holdSessionCardFocus } from "../holdSessionCardFocus";
+import type { Region } from "../../focusRegion";
 
-type RegionKind = "card" | "terminal" | "diff";
+export type RegionKind = "card" | "terminal" | "diff" | "preview";
 
 export const REGION_ATTRIBUTE: Record<RegionKind, string> = {
 	card: "data-session-id",
 	terminal: "data-terminal-session-id",
 	diff: "data-diff-session-id",
+	preview: "data-preview-session-id",
 };
+
+const focusPanel = (panel: HTMLElement) => panel.focus({ preventScroll: true });
 
 const FOCUS: Record<RegionKind, (element: HTMLElement, id: string) => void> = {
 	card: (card, id) => {
@@ -15,7 +18,8 @@ const FOCUS: Record<RegionKind, (element: HTMLElement, id: string) => void> = {
 		card.scrollIntoView?.({ block: "nearest" });
 	},
 	terminal: (pane) => pane.querySelector<HTMLElement>("textarea")?.focus(),
-	diff: (panel) => panel.focus({ preventScroll: true }),
+	diff: focusPanel,
+	preview: focusPanel,
 };
 
 export function sessionRegion(kind: RegionKind, id: string): Region {

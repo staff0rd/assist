@@ -412,6 +412,31 @@ describe("SessionTopBar control cluster", () => {
 });
 
 describe("SessionTopBar actions", () => {
+	it("tags add agent, VS Code and done as Alt+Z / X / C targets with chord tooltips", async () => {
+		renderTopBar(
+			makeSessionInfo({
+				cwd: "/git/repo",
+				joinable: true,
+				activity: { kind: "backlog", startedAt: 0, itemId: 1 },
+			}),
+		);
+
+		const targets = [
+			["add agent", "focusAddAgent", "Alt+Z"],
+			["Open in VS Code", "focusVsCode", "Alt+X"],
+			["Mark done", "focusDone", "Alt+C"],
+		];
+		for (const [name, shortcut, chord] of targets) {
+			const button = screen.getByRole("button", { name });
+			expect(button.getAttribute("data-shortcut")).toBe(shortcut);
+			fireEvent.mouseOver(button);
+			await waitFor(() =>
+				expect(screen.getByRole("tooltip").textContent).toContain(chord),
+			);
+			fireEvent.mouseLeave(button);
+		}
+	});
+
 	it("carries the session's actions", () => {
 		renderTopBar(makeSessionInfo({ cwd: "/git/repo" }), {
 			onRestart: () => {},

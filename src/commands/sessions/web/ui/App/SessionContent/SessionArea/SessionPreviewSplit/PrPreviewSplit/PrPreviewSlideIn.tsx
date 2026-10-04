@@ -34,6 +34,8 @@ export function PrPreviewSlideIn({
 	return (
 		<Box
 			aria-hidden={!open}
+			data-preview-session-id={open ? sessionId : undefined}
+			tabIndex={open ? -1 : undefined}
 			onTransitionEnd={handleTransitionEnd}
 			sx={slideInSx(open)}
 		>

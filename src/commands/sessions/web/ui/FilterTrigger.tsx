@@ -1,6 +1,7 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
 import type { ReactNode } from "react";
 import { filterTriggerSx } from "./FilterTrigger/filterTriggerSx";
 import { SplitFilterTrigger } from "./FilterTrigger/SplitFilterTrigger";
@@ -11,12 +12,14 @@ export function FilterTrigger({
 	onClick,
 	onDefaultAction,
 	disabled = false,
+	tooltip,
 }: {
 	label: ReactNode;
 	open: boolean;
 	onClick: () => void;
 	onDefaultAction?: () => void;
 	disabled?: boolean;
+	tooltip?: ReactNode;
 }) {
 	if (onDefaultAction)
 		return (
@@ -29,7 +32,7 @@ export function FilterTrigger({
 			/>
 		);
 
-	return (
+	const button = (
 		<Button
 			size="small"
 			variant="outlined"
@@ -43,5 +46,11 @@ export function FilterTrigger({
 		>
 			{label}
 		</Button>
+	);
+	if (!tooltip) return button;
+	return (
+		<Tooltip describeChild title={tooltip}>
+			{button}
+		</Tooltip>
 	);
 }

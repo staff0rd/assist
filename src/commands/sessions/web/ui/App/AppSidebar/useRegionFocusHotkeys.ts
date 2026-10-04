@@ -4,10 +4,11 @@ import { useLocation, useNavigate } from "react-router";
 import { shortcutRegistry } from "../shortcutRegistry";
 import type { SessionInfo, SidebarTab } from "../../types";
 import { useCaptureHotkey } from "../useCaptureHotkey";
-import { focusRegion } from "./useRegionFocusHotkeys/focusRegion";
+import { focusRegion } from "../focusRegion";
 import { sessionRegion } from "./useRegionFocusHotkeys/sessionRegion";
 import { useFocusSidebarHotkey } from "./useRegionFocusHotkeys/useFocusSidebarHotkey";
 import { useToggleDiffHotkey } from "./useRegionFocusHotkeys/useToggleDiffHotkey";
+import { useTopBarActionHotkey } from "./useRegionFocusHotkeys/useTopBarActionHotkey";
 
 export function useRegionFocusHotkeys({
 	sessions,
@@ -50,4 +51,9 @@ export function useRegionFocusHotkeys({
 		showSessions,
 		ringColor,
 	});
+
+	const topBarTarget = { activeId, showSessions, ringColor };
+	useTopBarActionHotkey("focusAddAgent", topBarTarget);
+	useTopBarActionHotkey("focusVsCode", topBarTarget);
+	useTopBarActionHotkey("focusDone", topBarTarget);
 }

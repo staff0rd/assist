@@ -6,7 +6,7 @@ import type { Chord } from "./chordKeys";
 import { isCycleCardKey } from "./shortcutRegistry/isCycleCardKey";
 import { isShortcutsSheetKey } from "./shortcutRegistry/isShortcutsSheetKey";
 import { navTabIndex } from "./navTabIndex";
-import { altChordCode } from "./altChordCode";
+import { altLetterShortcut } from "./shortcutRegistry/altLetterShortcut";
 
 export type Shortcut = {
 	label: string;
@@ -22,36 +22,16 @@ export const shortcutRegistry = {
 		chords: [["Alt", "1–5"]],
 		matches: (event) => navTabIndex(event) !== undefined,
 	},
-	focusSidebar: {
-		label: "Focus sidebar",
-		group: "Navigate",
-		chords: [["Alt", "A"]],
-		matches: (event) => altChordCode(event) === "KeyA",
-	},
-	focusTerminal: {
-		label: "Focus terminal",
-		group: "Navigate",
-		chords: [["Alt", "S"]],
-		matches: (event) => altChordCode(event) === "KeyS",
-	},
-	toggleDiff: {
-		label: "Open / close diff panel",
-		group: "Navigate",
-		chords: [["Alt", "D"]],
-		matches: (event) => altChordCode(event) === "KeyD",
-	},
-	openConfig: {
-		label: "Open config",
-		group: "Navigate",
-		chords: [["Alt", "X"]],
-		matches: (event) => altChordCode(event) === "KeyX",
-	},
-	openMenu: {
-		label: "Open menu",
-		group: "Navigate",
-		chords: [["Alt", "C"]],
-		matches: (event) => altChordCode(event) === "KeyC",
-	},
+	focusSidebar: altLetterShortcut("Focus sidebar", "Navigate", "A"),
+	focusTerminal: altLetterShortcut("Focus terminal", "Navigate", "S"),
+	toggleDiff: altLetterShortcut(
+		"Open / close diff panel, or focus preview pane",
+		"Navigate",
+		"D",
+	),
+	focusRepoPicker: altLetterShortcut("Focus repo picker", "Navigate", "R"),
+	openConfig: altLetterShortcut("Open config", "Navigate", "W"),
+	openMenu: altLetterShortcut("Open menu", "Navigate", "E"),
 	cycleCards: {
 		label: "Next / previous sidebar card",
 		group: "Navigate",
@@ -64,6 +44,9 @@ export const shortcutRegistry = {
 		chords: [["Ctrl", "."]],
 		matches: isNextWaitingKey,
 	},
+	focusAddAgent: altLetterShortcut("Focus add agent", "Sessions", "Z"),
+	focusVsCode: altLetterShortcut("Focus VS Code", "Sessions", "X"),
+	focusDone: altLetterShortcut("Focus done", "Sessions", "C"),
 	newSession: {
 		label: "New session",
 		group: "Sessions",
@@ -92,3 +75,5 @@ export const shortcutRegistry = {
 		matches: isShortcutsSheetKey,
 	},
 } satisfies Record<string, Shortcut>;
+
+export type ShortcutName = keyof typeof shortcutRegistry;

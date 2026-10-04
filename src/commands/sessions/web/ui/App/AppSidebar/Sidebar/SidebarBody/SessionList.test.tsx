@@ -2,7 +2,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { isSessionCardFocusHeld } from "../../../holdSessionCardFocus";
+import { isFocusHeld } from "../../../holdFocus";
 import type { PendingLaunch } from "../../../../PendingLaunch";
 import { SessionList } from "./SessionList";
 import type { SessionInfo } from "../../../../types";
@@ -129,7 +129,7 @@ describe("SessionList Tab cycling", () => {
 
 		expect(onSelect.mock.calls.map(([id]) => id)).toEqual(["b", "c", "a"]);
 		expect(document.activeElement).toBe(card("a"));
-		expect(isSessionCardFocusHeld()).toBe(true);
+		expect(isFocusHeld()).toBe(true);
 	});
 
 	it("switches card when Tab comes from a button inside a card", () => {
@@ -248,7 +248,7 @@ describe("SessionList Tab cycling", () => {
 
 		card("b").blur();
 
-		expect(isSessionCardFocusHeld()).toBe(false);
+		expect(isFocusHeld()).toBe(false);
 	});
 
 	it("leaves Tab with other modifiers alone", () => {

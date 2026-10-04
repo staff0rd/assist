@@ -10,6 +10,10 @@ const APP_HOTKEYS = [
 	shortcutRegistry.toggleDiff,
 	shortcutRegistry.openConfig,
 	shortcutRegistry.openMenu,
+	shortcutRegistry.focusRepoPicker,
+	shortcutRegistry.focusAddAgent,
+	shortcutRegistry.focusVsCode,
+	shortcutRegistry.focusDone,
 ];
 
 export function isAppHotkey(event: KeyboardEvent): boolean {

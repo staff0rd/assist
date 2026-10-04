@@ -15,7 +15,6 @@ import type { SessionSocket } from "../../useSessionSocket";
 import { useSidebarCollapsedContext } from "../useSidebarCollapsedContext";
 
 const toolbarSx = { minHeight: 48, pl: 1, pr: 14 } as const;
-const pickerSx = { width: 240, ml: 2 } as const;
 
 export function AppToolbar({
 	socket,
@@ -37,13 +36,11 @@ export function AppToolbar({
 			<RefreshWebserverButton reconnecting={socket.reconnecting} />
 			<NavTabs cwd={selection.selectedCwd} />
 			<MachinePicker />
-			<Box sx={pickerSx}>
-				<RepoPicker
-					repos={selection.repos}
-					selected={selection.selectedCwd}
-					onSelect={selection.setSelectedCwd}
-				/>
-			</Box>
+			<RepoPicker
+				repos={selection.repos}
+				selected={selection.selectedCwd}
+				onSelect={selection.setSelectedCwd}
+			/>
 			<Box sx={{ display: "flex", alignItems: "center", ml: 1 }}>
 				<OpenInCodeButton cwd={selection.selectedCwd} />
 				<OpenInGitHubButton cwd={selection.selectedCwd} />

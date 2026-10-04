@@ -3,7 +3,7 @@ import { shortcutRegistry } from "../../shortcutRegistry";
 import type { SidebarTab } from "../../../types";
 import { useCaptureHotkey } from "../../useCaptureHotkey";
 import { useSidebarCollapsedContext } from "../../useSidebarCollapsedContext";
-import { focusRegion } from "./focusRegion";
+import { focusRegion } from "../../focusRegion";
 import { sessionRegion } from "./sessionRegion";
 
 export function useFocusSidebarHotkey({

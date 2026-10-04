@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { AddAgentButton } from "./AddAgentButton";
-import type { SessionInfo } from "../../types";
-import { SessionLaunchContext } from "../../useSessionLaunchContext";
+import type { SessionInfo } from "../../../types";
+import { SessionLaunchContext } from "../../../useSessionLaunchContext";
 
 afterEach(cleanup);
 

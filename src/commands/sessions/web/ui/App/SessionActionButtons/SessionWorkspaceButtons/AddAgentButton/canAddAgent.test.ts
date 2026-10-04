@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
+import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 import { canAddAgent } from "./canAddAgent";
 
 describe("canAddAgent", () => {

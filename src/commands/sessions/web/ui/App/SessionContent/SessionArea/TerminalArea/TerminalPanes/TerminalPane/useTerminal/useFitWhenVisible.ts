@@ -1,7 +1,7 @@
 import { type RefObject, useCallback, useEffect } from "react";
 import type { Ownership } from "../../Ownership";
 import type { ResizeFn } from "../../../ResizeFn";
-import { isSessionCardFocusHeld } from "../../../../../../holdSessionCardFocus";
+import { isFocusHeld } from "../../../../../../holdFocus";
 import { isUserPresent } from "./isUserPresent";
 import type { TerminalHandle } from "./createTerminal";
 import { hasTerminalSize } from "./hasTerminalSize";
@@ -24,7 +24,7 @@ export function useFitWhenVisible(
 		const h = handleRef.current;
 		if (!h || !mayResize() || !hasTerminalSize(containerRef.current)) return;
 		h.fitAddon.fit();
-		if (!isSessionCardFocusHeld()) h.term.focus();
+		if (!isFocusHeld()) h.term.focus();
 		sendResize(sessionId, h.term.cols, h.term.rows);
 	}, [containerRef, handleRef, mayResize, sessionId, sendResize]);
 

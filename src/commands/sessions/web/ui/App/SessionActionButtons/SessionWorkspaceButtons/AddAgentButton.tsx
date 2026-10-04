@@ -1,13 +1,20 @@
 import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
 import Popover from "@mui/material/Popover";
 import { useState } from "react";
-import { ActionButton } from "../ActionButton";
+import { ActionButton } from "../../ActionButton";
 import { canAddAgent } from "./AddAgentButton/canAddAgent";
 import { FreePromptForm } from "./AddAgentButton/FreePromptForm";
-import type { SessionInfo } from "../../types";
-import { useSessionLaunchContext } from "../../useSessionLaunchContext";
+import type { ShortcutName } from "../../shortcutRegistry";
+import type { SessionInfo } from "../../../types";
+import { useSessionLaunchContext } from "../../../useSessionLaunchContext";
 
-export function AddAgentButton({ session }: { session: SessionInfo }) {
+export function AddAgentButton({
+	session,
+	shortcut,
+}: {
+	session: SessionInfo;
+	shortcut?: ShortcutName;
+}) {
 	const { launchAgentInStream } = useSessionLaunchContext();
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const [prompt, setPrompt] = useState("");
@@ -19,6 +26,7 @@ export function AddAgentButton({ session }: { session: SessionInfo }) {
 				label="Add agent"
 				title="Add another agent to this session's workspace"
 				ariaLabel="add agent"
+				shortcut={shortcut}
 				icon={<GroupAddOutlinedIcon sx={{ fontSize: 14 }} />}
 				onClick={(e) => {
 					e.stopPropagation();

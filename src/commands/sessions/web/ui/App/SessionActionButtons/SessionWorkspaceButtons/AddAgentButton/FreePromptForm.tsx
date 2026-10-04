@@ -3,8 +3,8 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import type { FormEvent, ReactNode } from "react";
-import { PLACEHOLDER } from "../../dispatchMode";
-import { handleEnterSubmit } from "../../handleEnterSubmit";
+import { PLACEHOLDER } from "../../../dispatchMode";
+import { handleEnterSubmit } from "../../../handleEnterSubmit";
 import { promptFormSx } from "./FreePromptForm/promptFormSx";
 
 export function FreePromptForm({

@@ -3,9 +3,10 @@ import { shortcutRegistry } from "../../shortcutRegistry";
 import type { SessionInfo } from "../../../types";
 import { useCaptureHotkey } from "../../useCaptureHotkey";
 import { useDiffPanels } from "../../useDiffPanels";
-import { focusRegion } from "./focusRegion";
-import { isDiffFocused } from "./useToggleDiffHotkey/isDiffFocused";
+import { focusRegion } from "../../focusRegion";
+import { isRegionFocused } from "./useToggleDiffHotkey/isRegionFocused";
 import { sessionRegion } from "./sessionRegion";
+import { togglePreviewFocus } from "./useToggleDiffHotkey/togglePreviewFocus";
 
 export function useToggleDiffHotkey({
 	session,
@@ -21,9 +22,14 @@ export function useToggleDiffHotkey({
 	useCaptureHotkey(
 		shortcutRegistry.toggleDiff.matches,
 		useCallback(() => {
-			if (!session?.cwd) return;
+			if (!session) return;
 			const { id } = session;
-			if (isDiffFocused(id)) {
+			if (session.pendingPrPreview) {
+				togglePreviewFocus(id, showSessions, ringColor);
+				return;
+			}
+			if (!session.cwd) return;
+			if (isRegionFocused("diff", id)) {
 				closePanel(id);
 				focusRegion(sessionRegion("terminal", id), ringColor);
 				return;

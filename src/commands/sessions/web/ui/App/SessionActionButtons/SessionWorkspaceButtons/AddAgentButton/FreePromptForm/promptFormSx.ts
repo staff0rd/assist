@@ -1,5 +1,5 @@
 import type { SxProps, Theme } from "@mui/material";
-import { dropdownStyle } from "../../../../DropdownWrapper";
+import { dropdownStyle } from "../../../../../DropdownWrapper";
 
 export function promptFormSx(anchored: boolean): SxProps<Theme> {
 	if (anchored) return { width: 320 };

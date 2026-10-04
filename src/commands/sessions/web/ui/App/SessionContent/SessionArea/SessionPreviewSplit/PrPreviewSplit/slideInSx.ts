@@ -11,6 +11,7 @@ export function slideInSx(open: boolean) {
 		display: "flex",
 		transform: open ? "none" : "translateX(100%)",
 		opacity: open ? 1 : 0,
+		"&:focus": { outline: "none" },
 		transition: `transform ${SPLIT_MS}ms ${SPLIT_EASE}, opacity ${SPLIT_MS}ms ${SPLIT_EASE}`,
 	} as const;
 }

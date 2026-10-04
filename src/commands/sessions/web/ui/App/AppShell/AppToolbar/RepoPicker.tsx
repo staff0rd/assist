@@ -1,5 +1,12 @@
+import Box from "@mui/material/Box";
+import { useRef } from "react";
 import { DropdownWrapper } from "../../../DropdownWrapper";
 import { RepoList, repoName } from "../../../RepoList";
+import { ChordTooltipTitle } from "../../ChordTooltipTitle";
+import { shortcutRegistry } from "../../shortcutRegistry";
+import { useFocusRepoPickerHotkey } from "./RepoPicker/useFocusRepoPickerHotkey";
+
+const pickerSx = { width: 240, ml: 2 } as const;
 
 export function RepoPicker({
 	repos,
@@ -10,16 +17,29 @@ export function RepoPicker({
 	selected: string;
 	onSelect: (cwd: string) => void;
 }) {
+	const pickerRef = useRef<HTMLDivElement>(null);
+	useFocusRepoPickerHotkey(pickerRef);
+
 	return (
-		<DropdownWrapper label={selected ? repoName(selected) : "Select repo..."}>
-			{(close) => (
-				<RepoList
-					repos={repos}
-					selected={selected}
-					onSelect={onSelect}
-					close={close}
-				/>
-			)}
-		</DropdownWrapper>
+		<Box ref={pickerRef} sx={pickerSx}>
+			<DropdownWrapper
+				label={selected ? repoName(selected) : "Select repo..."}
+				tooltip={
+					<ChordTooltipTitle
+						label="Repo"
+						chords={shortcutRegistry.focusRepoPicker.chords}
+					/>
+				}
+			>
+				{(close) => (
+					<RepoList
+						repos={repos}
+						selected={selected}
+						onSelect={onSelect}
+						close={close}
+					/>
+				)}
+			</DropdownWrapper>
+		</Box>
 	);
 }
