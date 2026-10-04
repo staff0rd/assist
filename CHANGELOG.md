@@ -1,3 +1,10 @@
+# [0.775.0](https://github.com/staff0rd/assist/compare/v0.774.1...v0.775.0) (2026-10-04)
+
+
+### Features
+
+* updates page from the version badge ([9df79e2](https://github.com/staff0rd/assist/commit/9df79e2f1ed43d720dabf5fb51438a822124a173))
+
 ## [0.774.1](https://github.com/staff0rd/assist/compare/v0.774.0...v0.774.1) (2026-10-04)
 
 
