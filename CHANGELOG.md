@@ -1,3 +1,10 @@
+# [0.772.0](https://github.com/staff0rd/assist/compare/v0.771.0...v0.772.0) (2026-10-04)
+
+
+### Features
+
+* restart and update nodes from the CLI ([b569464](https://github.com/staff0rd/assist/commit/b56946433639c13e8cd3e229756d10d9aa092c53))
+
 # [0.771.0](https://github.com/staff0rd/assist/compare/v0.770.0...v0.771.0) (2026-10-04)
 
 
