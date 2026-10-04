@@ -1,3 +1,10 @@
+## [0.766.2](https://github.com/staff0rd/assist/compare/v0.766.1...v0.766.2) (2026-10-04)
+
+
+### Bug Fixes
+
+* note escalations in watcher log ([13d9483](https://github.com/staff0rd/assist/commit/13d948367e879531413c91bc0158ae69779f8716))
+
 ## [0.766.1](https://github.com/staff0rd/assist/compare/v0.766.0...v0.766.1) (2026-10-04)
 
 
