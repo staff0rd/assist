@@ -1,3 +1,10 @@
+# [0.757.0](https://github.com/staff0rd/assist/compare/v0.756.0...v0.757.0) (2026-10-04)
+
+
+### Features
+
+* ask about nested sessions in top bar ([7bb3a32](https://github.com/staff0rd/assist/commit/7bb3a326c273b832f1c718a4c0dc3fc75b304849))
+
 # [0.756.0](https://github.com/staff0rd/assist/compare/v0.755.2...v0.756.0) (2026-10-04)
 
 
