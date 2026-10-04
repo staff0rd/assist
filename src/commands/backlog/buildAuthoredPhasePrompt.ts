@@ -17,7 +17,7 @@ export function buildAuthoredPhasePrompt(
 
 	return [
 		...buildContextLines(item, phaseNumber, phase),
-		...buildJiraStartedLines(item, phaseNumber),
+		...buildStartedLines(item, phaseNumber),
 		"",
 		"Focus ONLY on this phase. Do not work on other phases.",
 		"If you need to modify backlog items, run `assist backlog --help` to discover available commands.",
@@ -54,16 +54,17 @@ function buildContextLines(
 	];
 }
 
-function buildJiraStartedLines(
-	item: BacklogItem,
-	phaseNumber: number,
-): string[] {
-	if (phaseNumber !== 1 || !item.jiraKey) {
-		return [];
-	}
+function buildStartedLines(item: BacklogItem, phaseNumber: number): string[] {
+	if (phaseNumber !== 1) return [];
+	const command = item.jiraKey
+		? `/jira started ${item.jiraKey}`
+		: item.githubIssue
+			? `/github started ${item.githubIssue}`
+			: undefined;
+	if (!command) return [];
 	return [
 		"",
-		`As your first step, before any implementation, run \`/jira started ${item.jiraKey}\` to assign the issue to yourself and transition it to In Progress.`,
+		`As your first step, before any implementation, run \`${command}\` to assign the issue to yourself and transition it to In Progress.`,
 	];
 }
 

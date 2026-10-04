@@ -35,6 +35,35 @@ describe("buildAuthoredPhasePrompt", () => {
 		expect(prompt).not.toContain("/jira started");
 	});
 
+	it("injects /github started as the first step on phase 1 when a githubIssue is set", () => {
+		const prompt = buildAuthoredPhasePrompt(
+			makeBacklogItem({ githubIssue: "staff0rd/assist#5" }),
+			1,
+			phase,
+		);
+
+		expect(prompt).toContain("/github started staff0rd/assist#5");
+		expect(prompt.indexOf("/github started staff0rd/assist#5")).toBeLessThan(
+			prompt.indexOf("Focus ONLY on this phase."),
+		);
+	});
+
+	it("omits the /github started instruction on phase 1 when there is no githubIssue", () => {
+		const prompt = buildAuthoredPhasePrompt(makeBacklogItem(), 1, phase);
+
+		expect(prompt).not.toContain("/github started");
+	});
+
+	it("omits the /github started instruction for phase 2 even when a githubIssue is set", () => {
+		const prompt = buildAuthoredPhasePrompt(
+			makeBacklogItem({ githubIssue: "staff0rd/assist#5" }),
+			2,
+			phase,
+		);
+
+		expect(prompt).not.toContain("/github started");
+	});
+
 	describe("commitBeforePhaseEnd", () => {
 		const phaseWithChecks: PlanPhase = {
 			name: "Phase 1",

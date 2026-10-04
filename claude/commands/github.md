@@ -111,15 +111,13 @@ Display the result so the user can see it landed. If the command exits non-zero,
 
 ## Action: started
 
-Assign the resolved issue to yourself:
+Assign the resolved issue to yourself and move every project board it sits on to In Progress:
 
 ```
-gh issue edit <number> -R <owner>/<repo> --add-assignee @me 2>&1
+assist github issue started <number> -R <owner>/<repo> 2>&1
 ```
 
-GitHub issues have no generic "In Progress" state (only open/closed), so `started` only self-assigns. If the repo tracks status via a project board, tell the user that must be moved manually.
-
-Report the final assignee.
+The command always assigns first and exits 0 when the board can't be moved (no board, no In Progress option, missing `project` scope). Relay what it reports: the assignee and each board's outcome.
 
 ## Action: done
 
@@ -140,7 +138,7 @@ List the available actions and their arguments:
 - `/github edit [ref]` — rework the issue body in the web preview pane (what a bare `/github <ref>` runs; the command prints the issue instead when there is no web session).
 - `/github associate <ref> [id]` — associate a GitHub issue with a backlog item (id optional; falls back to the session item).
 - `/github update [ref]` — post a concise session-summary comment to the issue (previewed for approval before posting).
-- `/github started [ref]` — assign the issue to yourself.
+- `/github started [ref]` — assign the issue to yourself and move its project boards to In Progress.
 - `/github done [ref]` — close the issue (no assignment change).
 - `/github help` — show this list.
 
