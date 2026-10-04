@@ -1,3 +1,15 @@
+# [0.759.0](https://github.com/staff0rd/assist/compare/v0.758.0...v0.759.0) (2026-10-04)
+
+
+### Bug Fixes
+
+* wait for processes before close holds ([ab23f24](https://github.com/staff0rd/assist/commit/ab23f2423aba2346c5b26875febc947ea6fe8ea3))
+
+
+### Features
+
+* run the clone watcher as a console ([7d5d4ed](https://github.com/staff0rd/assist/commit/7d5d4ed5d3f257fa6003b5866cac45c1bb9f8007))
+
 # [0.758.0](https://github.com/staff0rd/assist/compare/v0.757.1...v0.758.0) (2026-10-04)
 
 
