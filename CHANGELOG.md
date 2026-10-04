@@ -1,3 +1,10 @@
+# [0.771.0](https://github.com/staff0rd/assist/compare/v0.770.0...v0.771.0) (2026-10-04)
+
+
+### Features
+
+* start GitHub issues on phase-1 runs ([5365761](https://github.com/staff0rd/assist/commit/5365761c10d82b228d94545de9003b1ff3c1963d))
+
 # [0.770.0](https://github.com/staff0rd/assist/compare/v0.769.0...v0.770.0) (2026-10-04)
 
 
