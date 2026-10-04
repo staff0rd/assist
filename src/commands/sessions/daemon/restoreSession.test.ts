@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { isPausePending } from "../../backlog/consumePause";
 import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
 import type { PersistedSession } from "./loadPersistedSessions";
+import { daemonLog } from "./daemonLog";
 import { restoreSession } from "./restoreSession";
 import { spawnClaude } from "./spawnClaude";
 import { spawnPty } from "./spawnPty";
@@ -9,6 +10,8 @@ import { spawnPty } from "./spawnPty";
 vi.mock("./spawnClaude", () => ({
 	spawnClaude: vi.fn(() => ({ fake: "pty" })),
 }));
+
+vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({ fake: "pty" })),
@@ -587,6 +590,73 @@ describe("restoreSession", () => {
 		expect(session.watcher).toBe(true);
 		expect(session.status).toBe("stopped");
 		expect(session.pty).toBeNull();
+	});
+
+	describe("for a console watcher", () => {
+		const consoleWatcher: PersistedSession = {
+			name: "assist watch loop",
+			commandType: "assist",
+			status: "running",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			assistArgs: ["watch", "loop"],
+			watcher: true,
+		};
+
+		it("relaunches it from its stored args so the clone keeps building", () => {
+			const session = restoreSession("1", consoleWatcher);
+
+			expect(spawnPtyMock).toHaveBeenCalledWith(
+				["assist", "watch", "loop"],
+				"/home/user/repo",
+				"1",
+			);
+			expect(spawnClaudeMock).not.toHaveBeenCalled();
+			expect(session.status).toBe("running");
+			expect(session.restored).toBe(true);
+			expect(session.watcher).toBe(true);
+			expect(session.starred).toBe(false);
+		});
+
+		it("relaunches it even when its last lap had exited", () => {
+			const session = restoreSession("1", {
+				...consoleWatcher,
+				status: "done",
+			});
+
+			expect(spawnPtyMock).toHaveBeenCalled();
+			expect(session.status).toBe("running");
+		});
+
+		it("logs the relaunch to daemon.log", () => {
+			restoreSession("1", consoleWatcher);
+
+			expect(daemonLog).toHaveBeenCalledWith(
+				expect.stringContaining(
+					"relaunching watcher session 1 running assist watch loop",
+				),
+			);
+		});
+
+		it("leaves a stopped one stopped", () => {
+			const session = restoreSession("1", {
+				...consoleWatcher,
+				status: "stopped",
+			});
+
+			expect(spawnPtyMock).not.toHaveBeenCalled();
+			expect(session.status).toBe("stopped");
+		});
+
+		it("does not relaunch a plain assist session that is not a watcher", () => {
+			const session = restoreSession("1", {
+				...consoleWatcher,
+				watcher: undefined,
+			});
+
+			expect(spawnPtyMock).not.toHaveBeenCalled();
+			expect(session.status).toBe("done");
+		});
 	});
 
 	it("returns a not-restored stub for a run session, keeping retry args", () => {

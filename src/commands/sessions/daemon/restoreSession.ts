@@ -15,6 +15,10 @@ import {
 import { spawnPty } from "./spawnPty";
 import { isUpdate, updatedSession } from "./updatedSession";
 import { needsWrapperRelaunch } from "./needsWrapperRelaunch";
+import {
+	isConsoleWatcher,
+	relaunchConsoleWatcher,
+} from "./relaunchConsoleWatcher";
 
 export function restoreSession(
 	id: string,
@@ -25,6 +29,9 @@ export function restoreSession(
 	if (persisted.status === "stopped") return stoppedSession(base, persisted);
 
 	if (isUpdate(persisted)) return updatedSession(id, persisted);
+
+	if (isConsoleWatcher(persisted))
+		return relaunchConsoleWatcher(id, persisted, base);
 
 	const status = deriveRestoreStatus(persisted);
 

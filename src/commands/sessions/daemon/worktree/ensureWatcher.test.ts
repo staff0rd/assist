@@ -25,13 +25,15 @@ vi.mock("../createWatcherSession", async () => {
 		"../../../../test/mothers/makePty",
 	);
 	return {
+		WATCHER_ARGS: ["watch", "loop"],
 		createWatcherSession: vi.fn((id: string, cwd: string) =>
 			makeSession({
 				id,
 				status: "running",
 				pty: makePty().pty,
 				cwd,
-				initialPrompt: "/watch",
+				assistArgs: ["watch", "loop"],
+				commandType: "assist",
 				starred: true,
 				watcher: true,
 			}),
@@ -97,7 +99,9 @@ describe("ensureWatcher", () => {
 		expect(watcher?.starred).toBe(true);
 		expect(watcher?.watcher).toBe(true);
 		expect(daemonLog).toHaveBeenCalledWith(
-			expect.stringContaining("spawned watcher session 9"),
+			expect.stringContaining(
+				"spawned watcher session 9 running assist watch loop",
+			),
 		);
 	});
 

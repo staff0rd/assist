@@ -1,5 +1,5 @@
 import { findRepoRoot } from "../../../../shared/findRepoRoot";
-import { createWatcherSession } from "../createWatcherSession";
+import { createWatcherSession, WATCHER_ARGS } from "../createWatcherSession";
 import { daemonLog } from "../daemonLog";
 import { allocateAndBind, type TreeSpawnContext } from "./allocateAndBind";
 import { liveWatcherFor } from "./liveWatcherFor";
@@ -29,7 +29,7 @@ export function ensureWatcher(
 		{ inPlace: true },
 	);
 	daemonLog(
-		`spawned watcher session ${id} running /watch in the clone ${clone}`,
+		`spawned watcher session ${id} running assist ${WATCHER_ARGS.join(" ")} in the clone ${clone}`,
 	);
 	return id;
 }

@@ -4,23 +4,25 @@ import { spawnPty } from "./spawnPty";
 
 vi.mock("./spawnPty", () => ({ spawnPty: vi.fn(() => ({ fake: "pty" })) }));
 
-vi.mock("./ensureHooksSettings", () => ({
-	ensureHooksSettings: vi.fn(() => "/hooks.json"),
-}));
-
 const spawnPtyMock = vi.mocked(spawnPty);
 
 describe("createWatcherSession", () => {
-	it("launches the watcher in auto mode", () => {
+	it("runs assist watch loop in the clone instead of a claude process", () => {
 		createWatcherSession("3", "/repo");
 
-		expect(spawnPtyMock.mock.calls.at(-1)?.[0]).toEqual(
-			expect.arrayContaining(["--permission-mode", "auto"]),
+		expect(spawnPtyMock).toHaveBeenLastCalledWith(
+			["assist", "watch", "loop"],
+			"/repo",
+			"3",
 		);
 	});
 
-	it("records auto on the session so respawns keep it", () => {
-		expect(createWatcherSession("3", "/repo").auto).toBe(true);
+	it("is an assist console session that can be relaunched from its args", () => {
+		const session = createWatcherSession("3", "/repo");
+
+		expect(session.commandType).toBe("assist");
+		expect(session.assistArgs).toEqual(["watch", "loop"]);
+		expect(session.claudeSessionId).toBeUndefined();
 	});
 
 	it("marks the session as a watcher", () => {
