@@ -1,3 +1,15 @@
+# [0.764.0](https://github.com/staff0rd/assist/compare/v0.763.0...v0.764.0) (2026-10-04)
+
+
+### Bug Fixes
+
+* show watcher green only when updating ([7750308](https://github.com/staff0rd/assist/commit/7750308d8aaf5de051bced49c97f81e54e40d793))
+
+
+### Features
+
+* simulate a watcher divergence ([10f028b](https://github.com/staff0rd/assist/commit/10f028b406f934355a3fb1883e4dc573cc6c2833))
+
 # [0.763.0](https://github.com/staff0rd/assist/compare/v0.762.0...v0.763.0) (2026-10-04)
 
 
