@@ -17,6 +17,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   sign:
@@ -73,3 +74,9 @@ jobs:
           git commit -m "chore: criteria extension ${{ steps.version.outputs.version }} update manifest [skip ci]"
           git pull --rebase origin main
           git push origin HEAD:main
+
+      - name: Re-run release for commits a busy release run skipped as behind main
+        if: steps.changes.outputs.changed != 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run release.yml --ref main
