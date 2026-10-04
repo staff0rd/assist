@@ -1,9 +1,9 @@
 import Menu from "@mui/material/Menu";
-import { useState } from "react";
 import { NodeNameLabel } from "./HamburgerMenu/NodeNameLabel";
 import { hamburgerMenuItems } from "./HamburgerMenu/hamburgerMenuItems";
 import { HamburgerMenuDialogs } from "./HamburgerMenu/HamburgerMenuDialogs";
 import { MenuTriggerButton } from "./HamburgerMenu/MenuTriggerButton";
+import { useMenuAnchor } from "./HamburgerMenu/useMenuAnchor";
 import { type MenuDialog, useMenuDialog } from "./HamburgerMenu/useMenuDialog";
 import { useSelectedPeer } from "./HamburgerMenu/useSelectedPeer";
 import { menuTargetLabels } from "./HamburgerMenu/menuTargetLabels";
@@ -20,11 +20,9 @@ export function HamburgerMenu({
 	sessions: SessionInfo[];
 	reconnecting: boolean;
 }) {
-	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+	const { anchorEl, open, close, openAt, restoreFocus } = useMenuAnchor();
 	const { dialog, showDialog, closeDialog } = useMenuDialog();
 	const peer = useSelectedPeer();
-	const open = Boolean(anchorEl);
-	const close = () => setAnchorEl(null);
 	const closeAndShow = (next: MenuDialog) => () => {
 		close();
 		showDialog(next);
@@ -32,11 +30,12 @@ export function HamburgerMenu({
 
 	return (
 		<>
-			<MenuTriggerButton open={open} onOpen={setAnchorEl} />
+			<MenuTriggerButton open={open} onOpen={openAt} />
 			<Menu
 				anchorEl={anchorEl}
 				open={open}
 				onClose={close}
+				disableRestoreFocus={!restoreFocus}
 				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
 				transformOrigin={{ vertical: "top", horizontal: "right" }}
 			>

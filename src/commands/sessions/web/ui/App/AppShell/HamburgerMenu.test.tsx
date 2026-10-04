@@ -164,6 +164,33 @@ describe("HamburgerMenu", () => {
 		await waitFor(() => expect(document.activeElement).toBe(first));
 	});
 
+	it("closes the menu when another shortcut fires, without refocusing its trigger", async () => {
+		renderMenu(vi.fn());
+		fireEvent.keyDown(document.body, { code: "KeyE", altKey: true });
+		const [first] = screen.getAllByRole("menuitem");
+		await waitFor(() => expect(document.activeElement).toBe(first));
+
+		fireEvent.keyDown(first, { code: "KeyS", altKey: true });
+
+		await waitFor(() => expect(screen.queryByRole("menuitem")).toBeNull());
+		expect(document.activeElement).not.toBe(
+			screen.getByRole("button", { name: "Open menu" }),
+		);
+	});
+
+	it("closes the menu and runs the shortcut's action", async () => {
+		renderMenu(vi.fn());
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+
+		fireEvent.keyDown(screen.getAllByRole("menuitem")[0], {
+			code: "KeyW",
+			altKey: true,
+		});
+
+		expect(screen.getByText("config page")).toBeTruthy();
+		await waitFor(() => expect(screen.queryByRole("menuitem")).toBeNull());
+	});
+
 	it("does nothing on Alt+Q yet", () => {
 		renderMenu(vi.fn());
 
