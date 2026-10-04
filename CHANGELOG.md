@@ -1,3 +1,10 @@
+## [0.768.3](https://github.com/staff0rd/assist/compare/v0.768.2...v0.768.3) (2026-10-04)
+
+
+### Bug Fixes
+
+* clicking a free terminal claims it ([15f209a](https://github.com/staff0rd/assist/commit/15f209a9f7218d39ff261e8510be3c011c4a8b24))
+
 ## [0.768.2](https://github.com/staff0rd/assist/compare/v0.768.1...v0.768.2) (2026-10-04)
 
 
