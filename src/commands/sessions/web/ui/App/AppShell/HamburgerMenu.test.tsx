@@ -211,6 +211,21 @@ describe("HamburgerMenu", () => {
 		expect(launchAssist).not.toHaveBeenCalled();
 	});
 
+	it("focuses the restart button when the restart dialog opens from the keyboard", async () => {
+		renderMenu(vi.fn());
+		fireEvent.keyDown(document.body, { code: "KeyE", altKey: true });
+		const item = screen.getByText("Restart daemon").closest("li");
+		await waitFor(() =>
+			expect(screen.getAllByRole("menuitem")[0]).toBe(document.activeElement),
+		);
+
+		fireEvent.click(item as HTMLElement);
+
+		const restart = await screen.findByRole("button", { name: "Restart" });
+		await waitFor(() => expect(screen.queryByRole("menuitem")).toBeNull());
+		expect(document.activeElement).toBe(restart);
+	});
+
 	it("offers a single restart item", () => {
 		renderMenu(vi.fn());
 

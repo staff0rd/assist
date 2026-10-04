@@ -15,6 +15,7 @@ export function ConfirmDialog({
 	confirmLabel = "Delete",
 	confirmColor = "error",
 	busy = false,
+	autoFocusConfirm = false,
 }: {
 	onConfirm: () => void;
 	onCancel: () => void;
@@ -23,6 +24,7 @@ export function ConfirmDialog({
 	confirmLabel?: string;
 	confirmColor?: "error" | "primary";
 	busy?: boolean;
+	autoFocusConfirm?: boolean;
 }) {
 	return (
 		<Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
@@ -39,6 +41,7 @@ export function ConfirmDialog({
 					color={confirmColor}
 					onClick={onConfirm}
 					disabled={busy}
+					autoFocus={autoFocusConfirm}
 				>
 					{confirmLabel}
 				</Button>

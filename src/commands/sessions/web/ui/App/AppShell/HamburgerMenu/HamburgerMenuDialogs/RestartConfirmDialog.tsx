@@ -22,6 +22,7 @@ export function RestartConfirmDialog({
 				message={RESTART_ITEM.message}
 				confirmLabel="Restart"
 				busy={pending}
+				autoFocusConfirm
 				onConfirm={() => void restart()}
 				onCancel={onClose}
 			/>

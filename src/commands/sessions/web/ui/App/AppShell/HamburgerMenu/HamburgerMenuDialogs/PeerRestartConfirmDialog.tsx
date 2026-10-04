@@ -18,6 +18,7 @@ export function PeerRestartConfirmDialog({
 			message={`Restarts the sessions daemon and web server on ${peer}. Its sessions resume when the daemon is back. This page stays open.`}
 			confirmLabel="Restart"
 			busy={pending}
+			autoFocusConfirm
 			onConfirm={() => {
 				setPending(true);
 				void onRestart(peer).finally(onClose);
