@@ -27,6 +27,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		undurable,
 		lastUserMessage,
 		activeViewer,
+		activeViewerNode,
 	} = session;
 	return {
 		...toSessionRunInfo(session),
@@ -53,6 +54,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		undurable,
 		lastUserMessage,
 		activeViewer,
+		activeViewerNode,
 		joinable: joinRefusal(session) === undefined,
 	};
 }

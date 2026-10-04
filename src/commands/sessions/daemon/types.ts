@@ -92,6 +92,7 @@ export type Session = {
 	cols?: number;
 	rows?: number;
 	activeViewer?: string;
+	activeViewerNode?: string;
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };
 	activeMsFlushChain?: Promise<void>;

@@ -21,10 +21,8 @@ import { makeSessionSpawner } from "./makeSessionSpawner";
 import { applyUsageRecord } from "./applyUsageRecord";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import { type HookStatusReport, setStatusFromHook } from "./setStatusFromHook";
-import {
-	restartManagedSession,
-	type RestartResult,
-} from "./restartManagedSession";
+import { restartAndNotify } from "./restartAndNotify";
+import type { RestartResult } from "./restartManagedSession";
 import { releaseClient } from "./releaseClient";
 import { restoreAllSessions } from "./restoreAllSessions";
 import type { ServerConflictInfo } from "./serverConflictInfo";
@@ -77,6 +75,7 @@ export class SessionManager {
 		replayScrollback(this.sessions, client);
 
 	removeClient(client: SessionClient): void {
+		this.io.viewerLeft(client);
 		releaseClient(client, this.clients, this.prPreview, this.verify);
 		this.onIdleChange?.(this.isIdle());
 	}
@@ -172,6 +171,7 @@ export class SessionManager {
 		this.sessions,
 		() => this.onStatusChange,
 		() => this.notify(),
+		this.links,
 	);
 
 	retrySession(id: string, replace = false): ServerConflictInfo | null {
@@ -184,14 +184,13 @@ export class SessionManager {
 	}
 
 	restart(id: string): RestartResult {
-		const result = restartManagedSession(
+		return restartAndNotify(
 			this.sessions,
 			id,
 			this.clients,
 			this.onStatusChange,
+			this.notify,
 		);
-		if (result.ok) this.notify();
-		return result;
 	}
 
 	dismissSession = (id: string): void => {

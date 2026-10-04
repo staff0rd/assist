@@ -10,6 +10,7 @@ import { handleOutputRequest } from "./handleOutputRequest";
 import { handleSetStatus } from "./handleSetStatus";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import { type Handler, routed } from "./routed";
+import { viewerHandlers } from "./viewerHandlers";
 import { sessionSettingHandlers } from "./sessionSettingHandlers";
 import { spawnContextFrom } from "./spawnContextFrom";
 import { spawnCreate } from "./spawnCreate";
@@ -60,19 +61,7 @@ export const messageHandlers: Record<string, Handler> = {
 			d.usedPct as number | undefined,
 		),
 	"codex-usage": handleCodexUsage,
-	input: routed((_client, m, d) =>
-		m.io.write(
-			d.sessionId as string,
-			d.data as string,
-			d.viewerId as string | undefined,
-		),
-	),
-	resize: routed((_client, m, d) =>
-		m.io.resize(d.sessionId as string, d.cols as number, d.rows as number, {
-			viewerId: d.viewerId as string | undefined,
-			claim: d.claim === true,
-		}),
-	),
+	...viewerHandlers,
 	retry: routed((client, m, d) => {
 		const conflict = m.retrySession(d.sessionId as string, d.replace === true);
 		if (conflict)

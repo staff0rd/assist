@@ -34,6 +34,7 @@ export function TerminalPanes({
 					sessionId={s.id}
 					visible={s.id === activeId}
 					inactive={s.activeViewer !== undefined && s.activeViewer !== viewerId}
+					activeNode={s.activeViewerNode}
 					onOutput={onOutput}
 					sendInput={sendInput}
 					sendResize={sendResize}

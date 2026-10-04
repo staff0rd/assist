@@ -132,7 +132,39 @@ describe("two linked nodes", () => {
 			viewerId: "tab-1",
 		});
 
-		expect(write).toHaveBeenCalledWith("3", "hi", "tab-1");
+		expect(write).toHaveBeenCalledWith("3", "hi", {
+			viewerId: "tab-1",
+			viewerNode: "pc-wsl",
+		});
+	});
+
+	it("names the viewer's node and releases it when the viewer disconnects", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		const windows = node("pc-windows");
+		addSession(windows, "3");
+		const view = viewer();
+		wsl.addClient(view.client);
+		wsl.links.reload();
+		await vi.waitFor(() => expect(view.lastSessions()).toHaveLength(1));
+		const owned = () => windows.localSessions()[0];
+
+		dispatchMessage(view.client, wsl, {
+			type: "input",
+			sessionId: "pc-windows:3",
+			data: "hi",
+			viewerId: "tab-1",
+		});
+		await vi.waitFor(() =>
+			expect(owned()).toMatchObject({
+				activeViewer: "tab-1",
+				activeViewerNode: "pc-wsl",
+			}),
+		);
+
+		wsl.removeClient(view.client);
+
+		await vi.waitFor(() => expect(owned().activeViewer).toBeUndefined());
+		expect(owned().activeViewerNode).toBeUndefined();
 	});
 
 	it("logs a forwarded launch's traceId on both nodes", async () => {

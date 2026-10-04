@@ -8,6 +8,7 @@ export function TerminalPane({
 	sessionId,
 	visible,
 	inactive,
+	activeNode,
 	onOutput,
 	sendInput,
 	sendResize,
@@ -15,6 +16,7 @@ export function TerminalPane({
 	sessionId: string;
 	visible: boolean;
 	inactive: boolean;
+	activeNode?: string;
 	onOutput: (sessionId: string, handler: (data: string) => void) => () => void;
 	sendInput: (sessionId: string, data: string) => void;
 	sendResize: ResizeFn;
@@ -38,7 +40,9 @@ export function TerminalPane({
 			}}
 		>
 			<Box ref={containerRef} sx={{ position: "absolute", inset: 0 }} />
-			{inactive && <TakeOverOverlay onTakeOver={takeOver} />}
+			{inactive && (
+				<TakeOverOverlay activeNode={activeNode} onTakeOver={takeOver} />
+			)}
 		</Box>
 	);
 }

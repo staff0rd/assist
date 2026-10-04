@@ -37,7 +37,7 @@ export class NodeLinks {
 	}
 
 	private all = () => [...this.links.values()];
-	private localNode = () => this.options.localNode?.() ?? resolveNodeName();
+	localNode = () => this.options.localNode?.() ?? resolveNodeName();
 
 	sessions = () => this.all().flatMap((link) => link.sessions());
 
@@ -67,6 +67,11 @@ export class NodeLinks {
 	route(client: SessionClient, data: Record<string, unknown>): boolean {
 		if (this.clients.isPeer(client)) return false;
 		return routeToLink(this.links, this.localNode(), client, data);
+	}
+
+	viewerLeft(client: SessionClient, viewerId: string): void {
+		if (this.clients.isPeer(client)) return;
+		for (const link of this.all()) link.viewerLeft(viewerId);
 	}
 
 	dispose(): void {

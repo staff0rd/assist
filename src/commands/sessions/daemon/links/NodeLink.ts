@@ -10,7 +10,7 @@ import type { LinkSpec } from "./LinkStatus";
 import { openLink } from "./openLink";
 import { requestLinkHistory } from "./requestLinkHistory";
 import { reconnectNow } from "./scheduleReconnect";
-import { setLinkState } from "./setLinkState";
+import { sendToLink, setLinkState } from "./setLinkState";
 import { disconnectLink } from "./teardownLink";
 
 export class NodeLink {
@@ -47,6 +47,12 @@ export class NodeLink {
 
 	route(client: SessionClient, data: Record<string, unknown>): void {
 		forwardToLink(this.ctx, client, data);
+	}
+
+	viewerLeft(viewerId: string): void {
+		if (!this.ctx.greeted) return;
+		if (sendToLink(this.ctx, { type: "viewer-left", viewerId }))
+			daemonLog(`link ${this.spec.name} ws: viewer ${viewerId} left`);
 	}
 
 	replayScrollback(client: SessionClient): void {

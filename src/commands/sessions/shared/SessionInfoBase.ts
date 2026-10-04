@@ -76,5 +76,6 @@ export type SessionInfoBase = {
 	verifying?: boolean;
 	lastUserMessage?: string;
 	activeViewer?: string;
+	activeViewerNode?: string;
 	node?: string;
 };

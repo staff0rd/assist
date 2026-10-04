@@ -1,7 +1,13 @@
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 
-export function TakeOverOverlay({ onTakeOver }: { onTakeOver: () => void }) {
+export function TakeOverOverlay({
+	activeNode,
+	onTakeOver,
+}: {
+	activeNode?: string;
+	onTakeOver: () => void;
+}) {
 	return (
 		<ButtonBase
 			onClick={onTakeOver}
@@ -17,7 +23,7 @@ export function TakeOverOverlay({ onTakeOver }: { onTakeOver: () => void }) {
 				variant="body2"
 				color="text.secondary"
 			>
-				Active on another viewer — click to take over
+				Active on {activeNode ?? "another viewer"} — click to take over
 			</Typography>
 		</ButtonBase>
 	);
