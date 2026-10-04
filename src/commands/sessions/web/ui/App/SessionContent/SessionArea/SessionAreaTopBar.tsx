@@ -7,16 +7,22 @@ const topBarSx = { flexShrink: 0 } as const;
 export function SessionAreaTopBar({
 	shown,
 	session,
+	sessions,
 	lifecycle,
 }: {
 	shown: boolean;
 	session: SessionInfo | undefined;
+	sessions: SessionInfo[];
 	lifecycle: SessionListHandlers;
 }) {
 	if (!shown || session === undefined) return null;
 	return (
 		<Box sx={topBarSx}>
-			<ActiveSessionTopBar session={session} lifecycle={lifecycle} />
+			<ActiveSessionTopBar
+				session={session}
+				sessions={sessions}
+				lifecycle={lifecycle}
+			/>
 		</Box>
 	);
 }

@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import type { ReactNode } from "react";
-import type { NestedSessionRow } from "../../../../../nestUnderBacklogRun";
+import type { NestedSessionRow } from "../../../../../../nestUnderBacklogRun";
 import type { SessionInfo } from "../../../../../../../useSessionSocket";
 
 const branchSx = {

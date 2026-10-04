@@ -1,4 +1,4 @@
-import type { SessionInfo } from "../../../types";
+import type { SessionInfo } from "../../types";
 
 export function launcherBySession(
 	sessions: SessionInfo[],

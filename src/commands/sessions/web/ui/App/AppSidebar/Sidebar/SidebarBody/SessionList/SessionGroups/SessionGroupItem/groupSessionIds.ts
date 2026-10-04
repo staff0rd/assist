@@ -1,4 +1,4 @@
-import type { NestedSessionRow } from "../../../../../nestUnderBacklogRun";
+import type { NestedSessionRow } from "../../../../../../nestUnderBacklogRun";
 
 export function groupSessionIds(rows: NestedSessionRow[]): string[] {
 	return rows.flatMap((row) => [

@@ -48,6 +48,7 @@ export function SessionArea({
 				<SessionAreaTopBar
 					shown={topBar}
 					session={activeSession}
+					sessions={terminal.sessions}
 					lifecycle={lifecycle}
 				/>
 				<SessionDiffSplit

@@ -1,5 +1,5 @@
 import { launcherBySession } from "./nestUnderBacklogRun/launcherBySession";
-import type { SessionInfo } from "../../types";
+import type { SessionInfo } from "../types";
 
 export type NestedSessionRow = {
 	session: SessionInfo;

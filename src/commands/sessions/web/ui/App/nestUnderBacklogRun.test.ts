@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
+import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import { nestUnderBacklogRun } from "./nestUnderBacklogRun";
 
 const group = { origin: "host/org/assist", clone: "/git/assist" };

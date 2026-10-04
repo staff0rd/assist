@@ -1,10 +1,8 @@
+import { childDismissFor } from "../../../../../../childDismissFor";
 import { isSessionStarting } from "../../../../../../isSessionStarting";
 import { SessionCard } from "../../../../../SessionCard";
 import { sessionActionHandlers } from "../../../../../../sessionActionHandlers";
-import type {
-	ChildDismiss,
-	SessionListHandlers,
-} from "../../../../../../../types";
+import type { SessionListHandlers } from "../../../../../../../types";
 import type { SessionInfo } from "../../../../../../../useSessionSocket";
 
 export function SessionListCard({
@@ -30,16 +28,6 @@ export function SessionListCard({
 		onRestart,
 		onDismiss,
 	});
-	const childDismiss: ChildDismiss | undefined =
-		nestedSessions.length > 0
-			? {
-					childCount: nestedSessions.length,
-					onDismissAll: () => {
-						for (const s of [session, ...nestedSessions]) onDismiss(s.id);
-					},
-				}
-			: undefined;
-
 	return (
 		<SessionCard
 			session={session}
@@ -49,7 +37,7 @@ export function SessionListCard({
 			onRetry={actions.onRetry}
 			onRestart={actions.onRestart}
 			onDismiss={actions.onDismiss}
-			childDismiss={childDismiss}
+			childDismiss={childDismissFor(session, nestedSessions, onDismiss)}
 			onSetAutoRun={(enabled) => onSetAutoRun(session.id, enabled)}
 			onSetAutoAdvance={(enabled) => onSetAutoAdvance(session.id, enabled)}
 		/>

@@ -31,6 +31,7 @@ export function SessionTopBarControls({
 	onRetry,
 	onRestart,
 	onDismiss,
+	childDismiss,
 	onSetAutoRun,
 	onSetAutoAdvance,
 }: {
@@ -58,7 +59,11 @@ export function SessionTopBarControls({
 					onDismiss={onDismiss}
 				/>
 			</LabelledActionsContext.Provider>
-			<SessionTopBarDismiss session={session} onDismiss={onDismiss} />
+			<SessionTopBarDismiss
+				session={session}
+				onDismiss={onDismiss}
+				childDismiss={childDismiss}
+			/>
 		</Box>
 	);
 }

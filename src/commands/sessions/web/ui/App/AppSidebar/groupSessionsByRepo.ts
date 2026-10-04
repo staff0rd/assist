@@ -2,7 +2,7 @@ import { bucketSessionsByRepoKey } from "./groupSessionsByRepo/bucketSessionsByR
 import {
 	type NestedSessionRow,
 	nestUnderBacklogRun,
-} from "./nestUnderBacklogRun";
+} from "../nestUnderBacklogRun";
 import type { SessionInfo } from "../../types";
 import { starredThenWaitingFirst } from "./groupSessionsByRepo/starredThenWaitingFirst";
 
