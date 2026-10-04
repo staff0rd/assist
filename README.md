@@ -416,9 +416,9 @@ A `run:` entry in `assist.yml` flagged `server:` (with an optional display-only 
 Each assist install is a **node** with its own daemon and web server. A node can link to other nodes, and its web UI then shows its own sessions merged with each linked node's, as `<node>:<id>` cards carrying a node badge. Links are flat: a node only exports its own sessions and log lines, so two nodes linked to each other show no duplicates. See [docs/multi-node-sessions.md](docs/multi-node-sessions.md).
 
 - `assist sessions nodes [--json]` — this node and each link's state (connected / connecting / disconnected / version-blocked), peer version and last error.
-- `assist sessions nodes link <name> <url>` — link a peer by its web server URL, e.g. `assist sessions nodes link <name> http://127.0.0.1:<port>`. `<name>` must match the peer's `sessions.nodeName`. A running daemon picks up the change immediately; the command confirms the reload, or warns when the daemon could not be notified. With `--tailscale <host> --port <port>` it writes a url link to `https://<host>.<tailnet>.ts.net:<port>`, reading the tailnet's MagicDNS suffix from `tailscale status --json` (`tailscale.exe` under WSL); see [Linking machines over Tailscale](#linking-machines-over-tailscale). With `--ssh <alias> --port <port>` the link goes over ssh instead: the daemon keeps `ssh -N -L <local-port>:127.0.0.1:<port> <alias>` up, restarting it behind the link's circuit breaker and logging its stderr to `daemon.log` as `link <name> ssh:`, and the link and `?node=` panel requests dial the local end. `--local-port` defaults to 43000 + `port` % 1000, bumped past any other link's.
+- `assist sessions nodes link <name> <url>` — link a peer by its web server URL. `<name>` must match the peer's `sessions.nodeName`. See [Linking machines over Tailscale](#linking-machines-over-tailscale).
 - `assist sessions nodes unlink <name>` — remove a link.
-- `assist sessions nodes doctor [name] [--json]` — probes each link's hops in order: for a `*.ts.net` link, local Tailscale running and the peer host online in `tailscale status`; for an ssh link, the SSH agent (the alias's `IdentityAgent` answering `ssh-add -l`), `ssh -o BatchMode=yes <alias>` reach and auth, and the local tunnel port accepting; then the peer's web server (`GET /api/health`, including that its `nodeName` matches the link), the peer's daemon (as its health reports it), a WebSocket `hello` (version and protocol), then this node's own link state. It stops at the first failing hop and prints the raw error with a remediation, and exits 1 on any failure. On WSL with no links, it reports a Windows node answering on `127.0.0.1:3101` and prints the command that links it.
+- `assist sessions nodes doctor [name] [--json]` — find where a link is broken and how to fix it.
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` — tail a linked node's `daemon.log` (default 200 lines) through its web server's `GET /api/daemon-log`; naming this node reads the local log.
 - `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) heals an older peer by calling its `POST /api/self-update` (runs `assist update`, then restarts its daemon and web server) and reconnects, latching with an error if the gap remains or this node is the older side (a latched link re-checks the peer every minute and reconnects once the versions match); `warn` proceeds anyway; `off` skips the check.
 
@@ -426,18 +426,14 @@ With more than one node, a machine picker appears in the top nav and a machine s
 
 #### Linking machines over Tailscale
 
-The sessions web server listens on `127.0.0.1` only. Each peer exposes it on its tailnet name with `tailscale serve`, and the linking node dials it over HTTPS, so links keep working off the home network.
+Each web server exposes itself on the tailnet when it starts.
 
-1. Install Tailscale on every machine and sign in to the same tailnet. In the admin console's DNS page, turn on MagicDNS and HTTPS certificates. On WSL the Tailscale CLI is the Windows one, `tailscale.exe`.
-2. Each web server serves its own port on the tailnet when it starts: `tailscale serve --bg --https=<port> http://127.0.0.1:<port>`, skipped when `tailscale serve status --json` already proxies that port there, when Tailscale is not installed or running, or when `sessions.tailscaleServe` is false. It logs one `tailscale serve:` line to its stdout. On a PC whose WSL node serves 3100 and Windows node 3101, both go through the Windows Tailscale (WSL's through `tailscale.exe`, reaching its `127.0.0.1:3100` through localhost forwarding), retrying when their writes to its serve config collide at login.
-3. Link the nodes by Tailscale host name. From the Mac to both PC nodes:
+1. Install Tailscale on every machine, sign in to the same tailnet, and turn on MagicDNS and HTTPS certificates in the admin console.
+2. Link each peer by its Tailscale host name:
 
    ```
-   assist sessions nodes link pc-wsl --tailscale pc --port 3100
-   assist sessions nodes link pc-windows --tailscale pc --port 3101
+   assist sessions nodes link <name> --tailscale <host> --port <port>
    ```
-
-4. Check each link with `assist sessions nodes doctor`; a failed web hop on a `*.ts.net` link points at the `tailscale serve:` line in the peer's web server log.
 
 #### Linking machines over ssh
 
@@ -470,7 +466,7 @@ A remote node is reached through an ssh tunnel to its loopback web server, with 
 ### Session config keys
 
 - `sessions.nodeName` — this install's node label, shown at the top of the web UI's hamburger menu and reported by `GET /api/health` (with the assist version, protocol and whether the daemon is reachable). Defaults to the OS hostname, suffixed `-wsl` under WSL.
-- `sessions.tailscaleServe` — defaults to **true**: the web server exposes its port on the tailnet with `tailscale serve` when it starts (see [Linking machines over Tailscale](#linking-machines-over-tailscale)). Set it false to keep that node off the tailnet.
+- `sessions.tailscaleServe` — defaults to **true**; set false to keep the web server off the tailnet.
 - `sessions.includeCommittedChanges` — defaults to **true**: the card's change counts, the `/diff` view and its scope picker cover the commits recorded against the session's backlog item as well as uncommitted work, so the change link survives the agent committing. Each committed path is diffed against the parent of the earliest of those commits that touched it, so nothing outside the item's own commits is shown. Set it false to count and diff only uncommitted changes. A session whose item has no recorded commits and a clean tree still shows nothing either way.
 - `sessions.topBar` — defaults to **true**: a sticky top bar inside the terminal panel carrying the session's ids, backlog chip and story name, the phase caption, elapsed time, the Continue/Auto-run/Dismiss switches and the session actions. Set it false to keep all of that on the card instead.
 - `sessions.floatWaiting` — defaults to **true**: sessions that have been `waiting` on input for longer than the threshold float above the other cards, longest waiting first. Set it false to keep the star-only ordering; starred sessions still sort above everything.

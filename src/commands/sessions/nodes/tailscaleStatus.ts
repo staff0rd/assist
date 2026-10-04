@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
 import { promisify } from "node:util";
 import { detectPlatform } from "../../../lib/detectPlatform";
 
@@ -23,8 +24,19 @@ export type TailscaleStatus = {
 	Peer?: Record<string, TailscalePeer> | null;
 };
 
+const INSTALLED_CLI: Partial<
+	Record<ReturnType<typeof detectPlatform>, string>
+> = {
+	wsl: "/mnt/c/Program Files/Tailscale/tailscale.exe",
+	windows: "C:\\Program Files\\Tailscale\\tailscale.exe",
+	macos: "/Applications/Tailscale.app/Contents/MacOS/Tailscale",
+};
+
 export function tailscaleCli(): string {
-	return detectPlatform() === "wsl" ? "tailscale.exe" : "tailscale";
+	const platform = detectPlatform();
+	const installed = INSTALLED_CLI[platform];
+	if (installed && existsSync(installed)) return installed;
+	return platform === "wsl" ? "tailscale.exe" : "tailscale";
 }
 
 export async function tailscaleStatus(): Promise<TailscaleStatus> {
