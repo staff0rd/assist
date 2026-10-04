@@ -119,7 +119,7 @@ describe("two linked nodes", () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		const windows = node("pc-windows");
 		addSession(windows, "3");
-		const write = vi.spyOn(windows, "writeToSession");
+		const write = vi.spyOn(windows.io, "write");
 		const view = viewer();
 		wsl.addClient(view.client);
 		wsl.links.reload();
@@ -129,9 +129,10 @@ describe("two linked nodes", () => {
 			type: "input",
 			sessionId: "pc-windows:3",
 			data: "hi",
+			viewerId: "tab-1",
 		});
 
-		expect(write).toHaveBeenCalledWith("3", "hi");
+		expect(write).toHaveBeenCalledWith("3", "hi", "tab-1");
 	});
 
 	it("logs a forwarded launch's traceId on both nodes", async () => {

@@ -3,7 +3,7 @@ import { makePty } from "../../../test/mothers/makePty";
 import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
-import { resizeSession } from "./writeToSession";
+import { resizeSession } from "./resizeSession";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 

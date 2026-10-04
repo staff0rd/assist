@@ -61,10 +61,17 @@ export const messageHandlers: Record<string, Handler> = {
 		),
 	"codex-usage": handleCodexUsage,
 	input: routed((_client, m, d) =>
-		m.writeToSession(d.sessionId as string, d.data as string),
+		m.io.write(
+			d.sessionId as string,
+			d.data as string,
+			d.viewerId as string | undefined,
+		),
 	),
 	resize: routed((_client, m, d) =>
-		m.resizeSession(d.sessionId as string, d.cols as number, d.rows as number),
+		m.io.resize(d.sessionId as string, d.cols as number, d.rows as number, {
+			viewerId: d.viewerId as string | undefined,
+			claim: d.claim === true,
+		}),
 	),
 	retry: routed((client, m, d) => {
 		const conflict = m.retrySession(d.sessionId as string, d.replace === true);

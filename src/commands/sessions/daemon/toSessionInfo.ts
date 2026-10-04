@@ -26,6 +26,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		pendingPrPreview,
 		undurable,
 		lastUserMessage,
+		activeViewer,
 	} = session;
 	return {
 		...toSessionRunInfo(session),
@@ -51,6 +52,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		pendingPrPreview,
 		undurable,
 		lastUserMessage,
+		activeViewer,
 		joinable: joinRefusal(session) === undefined,
 	};
 }

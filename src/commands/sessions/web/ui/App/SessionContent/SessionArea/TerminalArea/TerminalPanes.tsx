@@ -1,8 +1,10 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import type { ResizeFn } from "./ResizeFn";
 import { SessionLoadingOverlay } from "./TerminalPanes/SessionLoadingOverlay";
 import { TerminalPane } from "./TerminalPanes/TerminalPane";
 import type { SessionInfo } from "../../../../types";
+import { viewerId } from "../../../../viewerId";
 
 type OutputSubscriber = (
 	sessionId: string,
@@ -22,7 +24,7 @@ export function TerminalPanes({
 	activeLoading: boolean;
 	onOutput: OutputSubscriber;
 	sendInput: (sessionId: string, data: string) => void;
-	sendResize: (sessionId: string, cols: number, rows: number) => void;
+	sendResize: ResizeFn;
 }) {
 	return (
 		<Box sx={{ flex: 1, position: "relative", bgcolor: "background.default" }}>
@@ -31,6 +33,7 @@ export function TerminalPanes({
 					key={s.id}
 					sessionId={s.id}
 					visible={s.id === activeId}
+					inactive={s.activeViewer !== undefined && s.activeViewer !== viewerId}
 					onOutput={onOutput}
 					sendInput={sendInput}
 					sendResize={sendResize}

@@ -1,4 +1,5 @@
 import { isSessionStarting } from "../../isSessionStarting";
+import type { ResizeFn } from "./TerminalArea/ResizeFn";
 import { TerminalPanes } from "./TerminalArea/TerminalPanes";
 import type { SessionInfo } from "../../../types";
 
@@ -13,7 +14,7 @@ export type TerminalAreaProps = {
 	initialized: Set<string>;
 	onOutput: OutputSubscriber;
 	sendInput: (sessionId: string, data: string) => void;
-	sendResize: (sessionId: string, cols: number, rows: number) => void;
+	sendResize: ResizeFn;
 };
 
 export function TerminalArea({

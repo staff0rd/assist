@@ -1,4 +1,5 @@
 import { sendCreate } from "./createHarnessSessionAction";
+import { viewerId } from "./viewerId";
 
 type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;
@@ -101,12 +102,12 @@ export function setStarredAction(send: SendFn) {
 
 export function inputAction(send: SendFn) {
 	return (sessionId: string, data: string) =>
-		send({ type: "input", sessionId, data });
+		send({ type: "input", sessionId, data, viewerId });
 }
 
 export function resizeAction(send: SendFn) {
-	return (sessionId: string, cols: number, rows: number) =>
-		send({ type: "resize", sessionId, cols, rows });
+	return (sessionId: string, cols: number, rows: number, claim?: boolean) =>
+		send({ type: "resize", sessionId, cols, rows, viewerId, claim });
 }
 
 export function outputAction(

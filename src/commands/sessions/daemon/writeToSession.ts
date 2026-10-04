@@ -1,5 +1,6 @@
 import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session, SessionStatus } from "./createSession";
+import { claimViewer, type ViewerClaim } from "./claimViewer";
 import { daemonLog } from "./daemonLog";
 import { watchPromptSubmit } from "./watchPromptSubmit";
 
@@ -8,30 +9,13 @@ export function writeToSession(
 	id: string,
 	data: string,
 	onStatusChange: (session: Session, status: SessionStatus) => void,
+	viewer: ViewerClaim = {},
 ): void {
 	const s = sessions.get(id);
 	if (!s || s.status === "done") return;
 	s.pty?.write(data);
 	watchPromptSubmit(s, data, onStatusChange);
-}
-
-export function resizeSession(
-	sessions: Map<string, Session>,
-	id: string,
-	cols: number,
-	rows: number,
-): void {
-	const s = sessions.get(id);
-	if (!s || s.status === "done" || !s.pty) return;
-	s.cols = cols;
-	s.rows = rows;
-	try {
-		s.pty.resize(cols, rows);
-	} catch (error) {
-		daemonLog(
-			`session ${id} resize skipped (dead pty): ${error instanceof Error ? error.message : String(error)}`,
-		);
-	}
+	claimViewer(s, viewer, "input");
 }
 
 export function setAutoRun(

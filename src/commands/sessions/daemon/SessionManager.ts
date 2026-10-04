@@ -3,6 +3,7 @@ import type { HarnessKind } from "../../../shared/harnesses";
 import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
 import { broadcastSessions } from "./broadcastSessions";
+import { SessionIo } from "./SessionIo";
 import { ClientHub, persistUsagePeak } from "./ClientHub";
 import type { AssistSessionMeta } from "./createAssistSession";
 import {
@@ -167,13 +168,11 @@ export class SessionManager {
 			),
 	);
 
-	writeToSession(id: string, data: string): void {
-		sessionIo.writeToSession(this.sessions, id, data, this.onStatusChange);
-	}
-
-	resizeSession(id: string, cols: number, rows: number): void {
-		sessionIo.resizeSession(this.sessions, id, cols, rows);
-	}
+	readonly io = new SessionIo(
+		this.sessions,
+		() => this.onStatusChange,
+		() => this.notify(),
+	);
 
 	retrySession(id: string, replace = false): ServerConflictInfo | null {
 		return runRetry(this.sessions, id, replace, {

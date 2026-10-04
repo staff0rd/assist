@@ -91,6 +91,7 @@ export type Session = {
 	pendingStart?: () => Session["pty"];
 	cols?: number;
 	rows?: number;
+	activeViewer?: string;
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };
 	activeMsFlushChain?: Promise<void>;

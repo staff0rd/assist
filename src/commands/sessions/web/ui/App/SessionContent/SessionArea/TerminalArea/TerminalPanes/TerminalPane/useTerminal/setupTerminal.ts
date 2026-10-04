@@ -1,17 +1,21 @@
+import type { ResizeFn } from "../../../ResizeFn";
 import { createTerminal, type TerminalHandle } from "./createTerminal";
 import { handleClipboardKey } from "./setupTerminal/handleClipboardKey";
 import { hasTerminalSize } from "./hasTerminalSize";
 import { isNewSessionKey } from "../../../../../../isNewSessionKey";
 import { isQuickOpenKey } from "../../../../../../isQuickOpenKey";
 
-type ResizeFn = (sessionId: string, cols: number, rows: number) => void;
+type TerminalIo = {
+	sendInput: (sessionId: string, data: string) => void;
+	onOutput: (sessionId: string, handler: (data: string) => void) => () => void;
+	sendResize: ResizeFn;
+	isInactive: () => boolean;
+};
 
 export function setupTerminal(
 	el: HTMLElement,
 	sessionId: string,
-	sendInput: (sessionId: string, data: string) => void,
-	onOutput: (sessionId: string, handler: (data: string) => void) => () => void,
-	sendResize: ResizeFn,
+	{ sendInput, onOutput, sendResize, isInactive }: TerminalIo,
 ): { handle: TerminalHandle; cleanup: () => void } {
 	const handle = createTerminal(el);
 
@@ -22,10 +26,12 @@ export function setupTerminal(
 			handle.term.paste(text),
 		);
 	});
-	const unsubOutput = onOutput(sessionId, (data) => handle.term.write(data));
+	const unsubOutput = onOutput(sessionId, (data) => {
+		if (!isInactive()) handle.term.write(data);
+	});
 
 	const observer = new ResizeObserver(() => {
-		if (!hasTerminalSize(el)) return;
+		if (isInactive() || !hasTerminalSize(el)) return;
 		handle.fitAddon.fit();
 		sendResize(sessionId, handle.term.cols, handle.term.rows);
 	});
