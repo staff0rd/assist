@@ -1,3 +1,10 @@
+## [0.757.1](https://github.com/staff0rd/assist/compare/v0.757.0...v0.757.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* time out hung node-scoped requests ([e8de73f](https://github.com/staff0rd/assist/commit/e8de73f438ee4314e49527db8c0850d217c4e1c8))
+
 # [0.757.0](https://github.com/staff0rd/assist/compare/v0.756.0...v0.757.0) (2026-10-04)
 
 
