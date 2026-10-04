@@ -15,6 +15,7 @@ export async function runAutoUpdateLoop(
 	for (let lap = 1; lap <= maxLaps; lap++) {
 		if (held) await holdForEscalation(held, deps);
 		held = undefined;
+		deps.enter("waiting");
 		deps.note(
 			`lap ${lap} at ${new Date().toLocaleString()}: assist ${WATCH_LAP_ARGS.join(" ")}`,
 		);
@@ -22,10 +23,10 @@ export async function runAutoUpdateLoop(
 		try {
 			result = await runLapCapturingTail(deps);
 		} catch (error) {
-			deps.note(
-				`lap ${lap} could not start (${error instanceof Error ? error.message : String(error)}); retrying in ${RETRY_AFTER_FAILURE_MS / 60000}m`,
+			await backOff(
+				`lap ${lap} could not start (${error instanceof Error ? error.message : String(error)})`,
+				deps,
 			);
-			await deps.sleep(RETRY_AFTER_FAILURE_MS);
 			continue;
 		}
 		const { end, tail } = result;
@@ -39,9 +40,12 @@ export async function runAutoUpdateLoop(
 			deps.note(`lap ${lap} ${how}; relaunching`);
 			continue;
 		}
-		deps.note(
-			`lap ${lap} ${how}; retrying in ${RETRY_AFTER_FAILURE_MS / 60000}m`,
-		);
-		await deps.sleep(RETRY_AFTER_FAILURE_MS);
+		await backOff(`lap ${lap} ${how}`, deps);
 	}
+}
+
+async function backOff(reason: string, deps: AutoUpdateDeps): Promise<void> {
+	deps.enter("retrying", { reason });
+	deps.note(`${reason}; retrying in ${RETRY_AFTER_FAILURE_MS / 60000}m`);
+	await deps.sleep(RETRY_AFTER_FAILURE_MS);
 }

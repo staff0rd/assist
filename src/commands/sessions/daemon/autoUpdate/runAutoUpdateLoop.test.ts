@@ -19,6 +19,7 @@ function deps(overrides: Partial<AutoUpdateDeps> = {}): AutoUpdateDeps {
 		runLap: lapsEnding(),
 		record: vi.fn(),
 		note: vi.fn(),
+		enter: vi.fn(),
 		liveEscalation: vi.fn(() => undefined),
 		escalate: vi.fn(() => "7"),
 		isLive: vi.fn(() => false),
@@ -61,6 +62,11 @@ describe("runAutoUpdateLoop", () => {
 		expect(d.isLive).toHaveBeenCalledWith("7");
 		expect(d.sleep).toHaveBeenCalledWith(ESCALATION_POLL_MS);
 		expect(d.runLap).toHaveBeenCalledTimes(2);
+		expect(vi.mocked(d.enter).mock.calls).toEqual([
+			["waiting"],
+			["diverged", { escalationId: "7" }],
+			["waiting"],
+		]);
 	});
 
 	it("holds behind an escalation already live at startup", async () => {
@@ -84,5 +90,8 @@ describe("runAutoUpdateLoop", () => {
 		expect(d.sleep).toHaveBeenCalledTimes(2);
 		expect(d.sleep).toHaveBeenCalledWith(RETRY_AFTER_FAILURE_MS);
 		expect(d.escalate).not.toHaveBeenCalled();
+		expect(d.enter).toHaveBeenCalledWith("retrying", {
+			reason: "lap 2 could not start (ENOENT)",
+		});
 	});
 });

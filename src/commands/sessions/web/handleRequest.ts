@@ -45,6 +45,7 @@ import { nodeDoctor } from "./nodeDoctor";
 import { sessionView } from "./sessionView";
 import { setConfig } from "./setConfig";
 import { unsetConfig } from "./unsetConfig";
+import { updates } from "./updates/updates";
 import { uploadPrImage } from "./uploadPrImage";
 import { writeFileContent } from "./writeFileContent";
 import { createCssHandler } from "./createCssHandler";
@@ -119,6 +120,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/config/set": setConfig,
 	"POST /api/config/unset": unsetConfig,
 	"GET /api/review/synthesis": getReviewSynthesis,
+	"GET /api/updates": updates,
 };
 
 export const handleRequest = createFallbackHandler(

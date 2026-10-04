@@ -6,6 +6,7 @@ export async function holdForEscalation(
 	sessionId: string,
 	deps: AutoUpdateDeps,
 ): Promise<void> {
+	deps.enter("diverged", { escalationId: sessionId });
 	deps.note(`paused while session ${sessionId} reconciles the divergence`);
 	while (deps.isLive(sessionId)) await deps.sleep(ESCALATION_POLL_MS);
 	deps.note(`session ${sessionId} ended; resuming`);

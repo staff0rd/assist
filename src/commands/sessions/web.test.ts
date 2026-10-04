@@ -18,6 +18,9 @@ vi.mock("./web/restartMenu/installRestartMenu", () => ({
 	installRestartMenu: vi.fn(),
 }));
 vi.mock("../../shared/getInstallDir", () => ({ isGitRepo: () => false }));
+vi.mock("./web/updates/webStartCommit", () => ({
+	webStartCommit: { capture: vi.fn() },
+}));
 vi.mock("../../shared/sweepStagedAttachments", () => ({
 	sweepStagedAttachments: vi.fn(),
 }));

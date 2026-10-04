@@ -3,23 +3,21 @@ import { isGitRepo } from "../../shared/getInstallDir";
 import { sweepStagedAttachments } from "../../shared/sweepStagedAttachments";
 import { startWebServer } from "../../shared/web";
 import { ensureDaemonRunning } from "./daemon/ensureDaemonRunning";
-import { repoGroupForCwd } from "./daemon/repoGroupForCwd";
 import { ensureTailscaleServe } from "./nodes/ensureTailscaleServe";
 import { attachSessionSocket } from "./web/attachSessionSocket";
 import { handleRequest } from "./web/handleRequest";
 import type { RelayContext } from "./web/handleSocket";
 import { installRestartMenu } from "./web/restartMenu/installRestartMenu";
 import { streamDaemonLogs } from "./web/streamDaemonLogs";
-
-function repoEntryCwd(serverCwd: string): string {
-	return repoGroupForCwd(serverCwd)?.clone ?? serverCwd;
-}
+import { webStartCommit } from "./web/updates/webStartCommit";
+import { repoEntryCwd } from "./repoEntryCwd";
 
 export async function web(options: {
 	port: string;
 	initialPath?: string;
 	open?: boolean;
 }): Promise<void> {
+	webStartCommit.capture();
 	const port = Number.parseInt(options.port, 10);
 	const server = startWebServer(
 		"Assist",

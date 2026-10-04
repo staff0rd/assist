@@ -12,6 +12,7 @@ import { ReleasesView } from "../ReleasesView";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
 import { SessionContent } from "../SessionContent";
+import { UpdatesView } from "./AppRoutes/UpdatesView";
 import { UsageHistoryView } from "../UsageHistoryView";
 import type { SessionSocket } from "../../useSessionSocket";
 
@@ -50,6 +51,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					<Route path="usage" element={<UsageHistoryView />} />
 					<Route path="backups" element={<BackupsView />} />
 					<Route path="config" element={<ConfigView />} />
+					<Route path="updates" element={<UpdatesView />} />
 					<Route path="diff" element={<NodeScopedDiffView socket={socket} />} />
 					<Route path="file" element={<NodeScopedFileView socket={socket} />} />
 					<Route path="*" element={<Navigate to="/sessions" replace />} />

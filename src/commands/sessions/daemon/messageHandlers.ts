@@ -1,5 +1,6 @@
 import type { HarnessKind } from "../../../shared/harnesses";
 import type { RateLimits } from "../../../shared/RateLimits";
+import { autoUpdateReply } from "./autoUpdate/autoUpdateReply";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
 import { creator } from "./creator";
@@ -24,6 +25,7 @@ export const messageHandlers: Record<string, Handler> = {
 	hello: handleHelloRequest,
 	output: handleOutputRequest,
 	nodes: (client, m) => m.links.sendNodes(client),
+	"auto-update": (client) => sendTo(client, autoUpdateReply()),
 	"reload-links": (client, m) => {
 		daemonLog("reload-links received");
 		m.links.reload();
