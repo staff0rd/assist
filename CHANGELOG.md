@@ -1,3 +1,10 @@
+## [0.759.1](https://github.com/staff0rd/assist/compare/v0.759.0...v0.759.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* show backlog load errors ([82170e2](https://github.com/staff0rd/assist/commit/82170e210fcbfd0bec79be3eded7e4c0d81cfb68))
+
 # [0.759.0](https://github.com/staff0rd/assist/compare/v0.758.0...v0.759.0) (2026-10-04)
 
 
