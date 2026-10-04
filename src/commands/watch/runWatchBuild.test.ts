@@ -47,7 +47,7 @@ afterAll(() => {
 });
 
 describe("runWatchBuild", () => {
-	it("runs the resolved run entry and reports success", async () => {
+	it("runs the resolved run entry quietly and reports success", async () => {
 		mockRunCommandToCompletion.mockResolvedValue({
 			kind: "completed",
 			exitCode: 0,
@@ -63,7 +63,7 @@ describe("runWatchBuild", () => {
 			["-c", "npm i && npm run build"],
 			undefined,
 			undefined,
-			undefined,
+			true,
 		);
 	});
 
@@ -111,6 +111,7 @@ describe("runWatchBuild", () => {
 		expect(mockRunPreCommands).toHaveBeenCalledWith(
 			["npm ci"],
 			join(baseDir, "packages", "api"),
+			true,
 		);
 	});
 

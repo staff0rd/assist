@@ -46,6 +46,16 @@ describe("areChipsLoading", () => {
 		},
 	);
 
+	it("should not spin for a running console watcher, which never emits activity", () => {
+		const session = makeSessionInfo({
+			commandType: "assist",
+			status: "running",
+			watcher: true,
+		});
+
+		expect(areChipsLoading(session, false)).toBe(false);
+	});
+
 	it("should not spin for a non-assist session", () => {
 		const session = makeSessionInfo({
 			commandType: "claude",

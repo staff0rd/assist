@@ -22,10 +22,13 @@ describe("runPostBuildSync", () => {
 		});
 
 		await expect(runPostBuildSync()).resolves.toEqual({ kind: "built" });
-		expect(mockRunCommandToCompletion).toHaveBeenCalledWith("assist", [
-			"sync",
-			"--yes",
-		]);
+		expect(mockRunCommandToCompletion).toHaveBeenCalledWith(
+			"assist",
+			["sync", "--yes"],
+			undefined,
+			undefined,
+			true,
+		);
 	});
 
 	it("carries the exit code and output of a failing sync", async () => {

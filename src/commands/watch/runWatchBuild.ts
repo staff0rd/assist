@@ -15,7 +15,7 @@ export async function runWatchBuild(entry: string): Promise<BuildOutcome> {
 		if (!(error instanceof MissingRunCwdError)) throw error;
 		return { kind: "failed", exitCode: 1, output: error.message };
 	}
-	if (config.pre) runPreCommands(config.pre, cwd);
+	if (config.pre) runPreCommands(config.pre, cwd, true);
 
 	return toBuildOutcome(
 		await runCommandToCompletion(
@@ -23,7 +23,7 @@ export async function runWatchBuild(entry: string): Promise<BuildOutcome> {
 			[...(config.args ?? []), ...resolveParams(config.params, [])],
 			config.env,
 			cwd,
-			config.quiet,
+			true,
 		),
 	);
 }

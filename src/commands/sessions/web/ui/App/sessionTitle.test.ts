@@ -13,6 +13,17 @@ describe("sessionTitle", () => {
 		expect(sessionTitle(session)).toBe("draft");
 	});
 
+	it("titles a console watcher 'Watcher' rather than its loop arg", () => {
+		const session = makeSessionInfo({
+			commandType: "assist",
+			assistArgs: ["watch", "loop"],
+			name: "assist watch loop",
+			watcher: true,
+		});
+
+		expect(sessionTitle(session)).toBe("Watcher");
+	});
+
 	it("falls back to the name when an assist session has no args", () => {
 		const session = makeSessionInfo({ commandType: "assist", name: "assist" });
 
