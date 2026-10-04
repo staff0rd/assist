@@ -18,6 +18,17 @@ describe("planServe", () => {
 		});
 	});
 
+	it("serves on a separate https port when given one", () => {
+		const plan = planServe(STATUS, {}, 3100, 4100);
+		expect(plan.url).toBe("https://pc.tail1234.ts.net:4100");
+		expect(plan.args).toEqual([
+			"serve",
+			"--bg",
+			"--https=4100",
+			"http://127.0.0.1:3100",
+		]);
+	});
+
 	it("skips a port already proxied to the web server", () => {
 		const config = {
 			Web: {

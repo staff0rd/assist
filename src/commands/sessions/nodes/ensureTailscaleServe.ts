@@ -3,6 +3,7 @@ import { planServe, type TailscaleServeConfig } from "./planServe";
 import { type TailscaleStatus, tailscaleStatus } from "./tailscaleStatus";
 import { runningStatus } from "./runningStatus";
 import { runTailscale } from "./runTailscale";
+import { tailnetHttpsPort } from "./tailnetHttpsPort";
 
 const SERVE_WRITE_ATTEMPTS = 5;
 
@@ -12,6 +13,7 @@ type ServeDeps = {
 	serveStatus: () => Promise<TailscaleServeConfig>;
 	serve: (args: string[]) => Promise<void>;
 	sleep: (ms: number) => Promise<void>;
+	httpsPort: (port: number) => number;
 };
 const defaultDeps: ServeDeps = {
 	enabled: () => loadConfig().sessions?.tailscaleServe !== false,
@@ -24,13 +26,14 @@ const defaultDeps: ServeDeps = {
 		await runTailscale(args);
 	},
 	sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+	httpsPort: tailnetHttpsPort,
 };
 
 export async function ensureTailscaleServe(
 	port: number,
 	deps: Partial<ServeDeps> = {},
 ): Promise<string> {
-	const { enabled, status, serveStatus, serve, sleep } = {
+	const { enabled, status, serveStatus, serve, sleep, httpsPort } = {
 		...defaultDeps,
 		...deps,
 	};
@@ -38,7 +41,7 @@ export async function ensureTailscaleServe(
 	const current = await runningStatus(status);
 	if (typeof current === "string") return current;
 	for (let attempt = 1; ; attempt++) {
-		const plan = planServe(current, await serveStatus(), port);
+		const plan = planServe(current, await serveStatus(), port, httpsPort(port));
 		if (plan.alreadyServing) return `${plan.url} already serves ${plan.target}`;
 		try {
 			await serve(plan.args);

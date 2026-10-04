@@ -14,6 +14,7 @@ function deps(overrides = {}) {
 		serveStatus: async () => ({}),
 		serve: vi.fn(async () => {}),
 		sleep: vi.fn(async () => {}),
+		httpsPort: (port: number) => port,
 		...overrides,
 	};
 }
