@@ -4,6 +4,7 @@ import type { ResizeFn } from "../../ResizeFn";
 import { isUserPresent } from "./useTerminal/isUserPresent";
 import type { TerminalHandle } from "./useTerminal/createTerminal";
 import { maySizeSession } from "./useTerminal/maySizeSession";
+import { pressHandler } from "./useTerminal/pressHandler";
 import { setupTerminal } from "./useTerminal/setupTerminal";
 import { useFitWhenVisible } from "./useTerminal/useFitWhenVisible";
 import { useTakeOver } from "./useTerminal/useTakeOver";
@@ -20,7 +21,7 @@ export function useTerminal(
 	containerRef: RefObject<HTMLDivElement | null>,
 	sessionId: string,
 	{ visible, ownership, sendInput, onOutput, sendResize }: TerminalOptions,
-): () => void {
+): (() => void) | undefined {
 	const handleRef = useRef<TerminalHandle | null>(null);
 	const staleRef = useRef(ownership === "other");
 	const stateRef = useRef({ visible, ownership });
@@ -52,11 +53,11 @@ export function useTerminal(
 
 	const refs = { containerRef, handleRef, staleRef };
 	const takeOver = useTakeOver(refs, sessionId, ownership, sendResize);
-	useFitWhenVisible(
+	const fit = useFitWhenVisible(
 		{ ...refs, mayResize: mayResizeRef.current, takeOver },
 		sessionId,
 		{ visible, ownership },
 		sendResize,
 	);
-	return takeOver;
+	return pressHandler(ownership, takeOver, fit);
 }

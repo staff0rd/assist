@@ -24,7 +24,7 @@ export function TerminalPane({
 }) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const inactive = ownership === "other";
-	const takeOver = useTerminal(containerRef, sessionId, {
+	const onPress = useTerminal(containerRef, sessionId, {
 		visible,
 		ownership,
 		sendInput,
@@ -41,7 +41,7 @@ export function TerminalPane({
 				visibility: visible ? "visible" : "hidden",
 				pointerEvents: visible ? "auto" : "none",
 			}}
-			onPointerDownCapture={inactive ? takeOver : undefined}
+			onPointerDownCapture={onPress}
 		>
 			<Box
 				ref={containerRef}

@@ -19,7 +19,7 @@ export function useFitWhenVisible(
 	sessionId: string,
 	{ visible, ownership }: { visible: boolean; ownership: Ownership },
 	sendResize: ResizeFn,
-): void {
+): () => void {
 	const fit = useCallback(() => {
 		const h = handleRef.current;
 		if (!h || !mayResize() || !hasTerminalSize(containerRef.current)) return;
@@ -43,4 +43,5 @@ export function useFitWhenVisible(
 		window.addEventListener("focus", fit);
 		return () => window.removeEventListener("focus", fit);
 	}, [visible, ownership, fit]);
+	return fit;
 }
