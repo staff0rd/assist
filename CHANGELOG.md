@@ -1,3 +1,10 @@
+# [0.765.0](https://github.com/staff0rd/assist/compare/v0.764.0...v0.765.0) (2026-10-04)
+
+
+### Features
+
+* auto-resolve watcher divergence ([53b4957](https://github.com/staff0rd/assist/commit/53b4957ccdc322a06f5789b13b1bc141c3bca913))
+
 # [0.764.0](https://github.com/staff0rd/assist/compare/v0.763.0...v0.764.0) (2026-10-04)
 
 
