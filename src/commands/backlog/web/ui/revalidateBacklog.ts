@@ -10,8 +10,8 @@ export function revalidateBacklog(
 	signal: AbortSignal,
 	onLoaded: OnLoaded,
 	node?: string,
-): void {
-	(async () => {
+): Promise<void> {
+	return (async () => {
 		try {
 			const items = await loadBacklogItems(cwd, filter, signal, node);
 			if (!signal.aborted) onLoaded(items);

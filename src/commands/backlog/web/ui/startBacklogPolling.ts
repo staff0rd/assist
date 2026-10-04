@@ -18,8 +18,17 @@ export function startBacklogPolling(
 	node?: string,
 ): () => void {
 	const controller = new AbortController();
-	const poll = () =>
-		revalidateBacklog(cwd, filter, controller.signal, apply, node);
+	let inFlight = false;
+	// why: a peer that never answers would otherwise stack a stuck request per tick until the browser's per-origin connection pool is exhausted and every tab stalls.
+	const poll = () => {
+		if (inFlight) return;
+		inFlight = true;
+		void revalidateBacklog(cwd, filter, controller.signal, apply, node).finally(
+			() => {
+				inFlight = false;
+			},
+		);
+	};
 	poll();
 	const interval = setInterval(poll, POLL_INTERVAL_MS);
 	return () => {

@@ -7,6 +7,7 @@ import { request as httpsRequest } from "node:https";
 import { respondJson } from "../../../shared/web";
 import { newTraceId, TRACE_HEADER } from "../shared/newTraceId";
 import { resolveNodeName } from "../shared/resolveNodeName";
+import { boundUpstream } from "./boundUpstream";
 import { relayPeerResponse } from "./relayPeerResponse";
 
 const LINKED_FROM_HEADER = "x-assist-linked-from";
@@ -37,6 +38,7 @@ export function forwardToPeer(
 			},
 			(peer) => relayPeerResponse(peer, res, url.pathname, log, resolve),
 		);
+		boundUpstream(upstream, res);
 		upstream.on("error", (error) => {
 			log(`failed: ${error.message}`);
 			if (res.headersSent) res.destroy();

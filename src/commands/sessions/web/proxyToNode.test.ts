@@ -20,6 +20,7 @@ vi.mock("../../../shared/loadConfig", async () =>
 vi.mock("../shared/resolveNodeName", () => ({
 	resolveNodeName: () => "pc-wsl",
 }));
+vi.mock("./peerTimeoutMs", () => ({ peerTimeoutMs: 100 }));
 
 type Seen = { url?: string; linkedFrom?: string; body: string };
 
@@ -53,6 +54,7 @@ beforeAll(async () => {
 	);
 	peer = createServer(async (req, res) => {
 		if (await proxyToNode(req, res)) return;
+		if (req.url?.includes("hang=1")) return;
 		seen.push({
 			url: req.url,
 			linkedFrom: req.headers["x-assist-linked-from"] as string | undefined,
@@ -151,6 +153,16 @@ describe("proxyToNode", () => {
 		expect(
 			await (await fetch(`${viewerUrl}/api/diff?node=pc-wsl`)).text(),
 		).toBe("local");
+	});
+
+	it("fails a peer request that never responds with a 502", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const res = await fetch(`${viewerUrl}/api/next?hang=1&node=pc-windows`);
+		log.mockRestore();
+		expect(res.status).toBe(502);
+		expect(await res.json()).toEqual({
+			error: "pc-windows unreachable: no response after 100ms",
+		});
 	});
 
 	it("responds 404 for a node with no link", async () => {
