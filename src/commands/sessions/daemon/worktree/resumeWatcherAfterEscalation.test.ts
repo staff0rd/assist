@@ -29,14 +29,14 @@ describe("resumeWatcherAfterEscalation", () => {
 		"restarts a %s watcher in the escalation's clone",
 		(status) => {
 			const ended = escalation();
+			const stopped = watcher(status);
 
-			resumeWatcherAfterEscalation(
-				sessionsOf(watcher(status), ended),
-				ended,
-				restart,
-			);
+			resumeWatcherAfterEscalation(sessionsOf(stopped, ended), ended, restart);
 
 			expect(restart).toHaveBeenCalledWith("1");
+			expect(stopped.watcherRestartReason).toBe(
+				"after escalation session 9 ended",
+			);
 		},
 	);
 

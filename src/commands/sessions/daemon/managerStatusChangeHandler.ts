@@ -1,5 +1,7 @@
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
+import { emitSessionOutput } from "./emitSessionOutput";
+import { watcherNote } from "./watcherNote";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import { reuseSessionForRun } from "./reuseSessionForRun";
 import type { OnStatusChange } from "./types";
@@ -20,7 +22,17 @@ export function managerStatusChangeHandler(
 		notify,
 		reuseForRun: (session, itemId) =>
 			reuseSessionForRun(session, itemId, clients, handler, treeCtx()),
-		escalateDivergence: (watcher) => escalateDivergence(treeCtx(), watcher),
+		escalateDivergence: (watcher) => {
+			const id = escalateDivergence(treeCtx(), watcher);
+			if (id)
+				emitSessionOutput(
+					watcher,
+					clients,
+					watcherNote(
+						`divergence escalated to session ${id}; the watcher restarts once it ends`,
+					),
+				);
+		},
 		resumeWatcher: (escalation) =>
 			resumeWatcherAfterEscalation(sessions, escalation, (watcherId) => {
 				if (restartManagedSession(sessions, watcherId, clients, handler).ok)

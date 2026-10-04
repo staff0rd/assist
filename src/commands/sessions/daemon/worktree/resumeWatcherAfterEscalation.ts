@@ -36,5 +36,6 @@ export function resumeWatcherAfterEscalation(
 	daemonLog(
 		`escalation session ${escalation.id} ended: restarting watcher session ${watcher.id} in the clone ${clone}`,
 	);
+	watcher.watcherRestartReason = `after escalation session ${escalation.id} ended`;
 	restart(watcher.id);
 }

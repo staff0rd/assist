@@ -81,6 +81,7 @@ export type Session = {
 	starred?: boolean;
 	watcher?: boolean;
 	divergenceEscalation?: boolean;
+	watcherRestartReason?: string;
 	design?: boolean;
 	auto?: boolean;
 	verifying?: boolean;

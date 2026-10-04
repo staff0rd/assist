@@ -9,7 +9,9 @@ export async function watchLoop(): Promise<void> {
 	process.on("SIGINT", recordInterruptAndLetLapFinish);
 
 	for (let lap = 1; ; lap++) {
-		console.log(`lap ${lap}: assist ${WATCH_LAP_ARGS.join(" ")}`);
+		console.log(
+			`lap ${lap} at ${new Date().toLocaleTimeString()}: assist ${WATCH_LAP_ARGS.join(" ")}`,
+		);
 		const end = await runWatchLap();
 		const decision = decideLap(end, interrupted);
 		const how = end.signal ? `killed by ${end.signal}` : `exited ${end.code}`;

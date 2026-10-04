@@ -5,8 +5,7 @@ import type { OnStatusChange } from "./types";
 import { wirePtyEvents } from "./wirePtyEvents";
 import { refuseSpawn } from "./refuseSpawn";
 import { emitSessionOutput } from "./emitSessionOutput";
-
-const WATCHER_RESTART_MARK = "\r\n\x1b[2m── watcher restarted ──\x1b[0m\r\n";
+import { watcherNote } from "./watcherNote";
 
 export function respawnSession(
 	session: Session,
@@ -38,7 +37,14 @@ export function respawnSession(
 		try {
 			session.pty?.resize(session.cols, session.rows);
 		} catch {}
-	if (keepHistory) emitSessionOutput(session, clients, WATCHER_RESTART_MARK);
-	else broadcast(clients, { type: "clear", sessionId: session.id });
+	if (keepHistory) {
+		const reason = session.watcherRestartReason;
+		session.watcherRestartReason = undefined;
+		emitSessionOutput(
+			session,
+			clients,
+			watcherNote(reason ? `watcher restarted ${reason}` : "watcher restarted"),
+		);
+	} else broadcast(clients, { type: "clear", sessionId: session.id });
 	wirePtyEvents(session, clients, onStatusChange);
 }

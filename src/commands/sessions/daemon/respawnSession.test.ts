@@ -82,4 +82,20 @@ describe("respawnSession", () => {
 		expect(session.scrollback).toContain("watcher restarted");
 		expect(messages.map((m) => m.type)).toEqual(["output"]);
 	});
+
+	it("names why a watcher restarted, once", () => {
+		const session = makeSession({
+			watcher: true,
+			watcherRestartReason: "after escalation session 7 ended",
+			pty: null,
+		});
+		const { pty } = makePty();
+
+		respawnWith(session, () => pty);
+
+		expect(session.scrollback).toContain(
+			"watcher restarted after escalation session 7 ended",
+		);
+		expect(session.watcherRestartReason).toBeUndefined();
+	});
 });
