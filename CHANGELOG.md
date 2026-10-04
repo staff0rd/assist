@@ -1,3 +1,10 @@
+## [0.768.2](https://github.com/staff0rd/assist/compare/v0.768.1...v0.768.2) (2026-10-04)
+
+
+### Bug Fixes
+
+* switching to a session takes it over ([b86425e](https://github.com/staff0rd/assist/commit/b86425eed099681ef2ca89bea3c9a8de3d758dfe))
+
 ## [0.768.1](https://github.com/staff0rd/assist/compare/v0.768.0...v0.768.1) (2026-10-04)
 
 
