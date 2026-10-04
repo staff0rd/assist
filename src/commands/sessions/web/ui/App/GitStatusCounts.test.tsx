@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ItemStatusCounts } from "../../gitStatus";
@@ -7,6 +13,9 @@ import { GitStatusCounts } from "./GitStatusCounts";
 import type { DiffPanel } from "./toggleDiffPanel";
 import { DiffPanelsProvider, useDiffPanels } from "./useDiffPanels";
 import { useGitStatusCounts } from "./GitStatusCounts/useGitStatusCounts";
+import { formatChord } from "./formatChord";
+import { openTooltipChords } from "./openTooltipChords";
+import { shortcutRegistry } from "./shortcutRegistry";
 
 vi.mock("./GitStatusCounts/useGitStatusCounts", () => ({
 	useGitStatusCounts: vi.fn(),
@@ -31,6 +40,7 @@ function openedPanel(): DiffPanel | null {
 function renderCounts(
 	counts: ItemStatusCounts | null,
 	onActivateSession: (id: string) => void = () => {},
+	toggleChordHint = false,
 ): void {
 	useGitStatusCountsMock.mockReturnValue(counts);
 	render(
@@ -43,6 +53,7 @@ function renderCounts(
 					panelSessionId="card-1"
 					cwd="/repo"
 					sessionId="sess-1"
+					toggleChordHint={toggleChordHint}
 				/>
 				<PanelProbe />
 			</DiffPanelsProvider>
@@ -144,6 +155,30 @@ describe("GitStatusCounts diff panel", () => {
 		fireEvent.click(screen.getByRole("button", { name: "(+1)" }));
 
 		expect(openedPanel()?.scope).toBe("uncommitted");
+	});
+
+	it("shows the diff toggle's registry chord when asked to", async () => {
+		renderCounts(bothScopes, undefined, true);
+
+		const { text, chords } = await openTooltipChords(
+			screen.getByRole("button", { name: "+1" }),
+		);
+
+		expect(text).toContain(shortcutRegistry.toggleDiff.label);
+		expect(chords).toEqual(
+			shortcutRegistry.toggleDiff.chords.map((chord) => formatChord(chord)),
+		);
+		expect(chords).toEqual(["Alt+D"]);
+	});
+
+	it("shows no chord tooltip by default", async () => {
+		renderCounts(bothScopes);
+
+		await act(async () => {
+			fireEvent.mouseOver(screen.getByRole("button", { name: "+1" }));
+		});
+
+		expect(screen.queryByRole("tooltip")).toBeNull();
 	});
 
 	it("closes the panel when the same counts are clicked again", () => {

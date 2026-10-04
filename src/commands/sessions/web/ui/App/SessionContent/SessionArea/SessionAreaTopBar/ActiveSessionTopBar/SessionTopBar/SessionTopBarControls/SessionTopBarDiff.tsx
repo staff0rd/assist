@@ -10,6 +10,7 @@ export function SessionTopBarDiff({ session }: { session: SessionInfo }) {
 			cwd={session.cwd}
 			sessionId={session.claudeSessionId}
 			offerBranchDiff
+			toggleChordHint
 		/>
 	);
 }

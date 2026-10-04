@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
-import { CountsLink, type StatusGroup } from "./CountsLink";
+import { CountsLink } from "./GitStatusLink/CountsLink";
+import type { StatusGroup } from "./GitStatusChips";
 import { StopCardActivation } from "../StopCardActivation";
 
 const rowSx = {
@@ -21,12 +22,14 @@ export function GitStatusLink({
 	sessionId,
 	groups,
 	uncommitted,
+	toggleChordHint,
 }: {
 	panelSessionId: string;
 	cwd: string;
 	sessionId?: string;
 	groups: StatusGroup[];
 	uncommitted?: StatusGroup[];
+	toggleChordHint?: boolean;
 }) {
 	return (
 		<StopCardActivation>
@@ -38,6 +41,7 @@ export function GitStatusLink({
 						sessionId={sessionId}
 						scope="all"
 						groups={groups}
+						toggleChordHint={toggleChordHint}
 					/>
 				)}
 				{uncommitted && uncommitted.length > 0 && (

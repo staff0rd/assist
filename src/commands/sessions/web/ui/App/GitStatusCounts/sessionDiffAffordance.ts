@@ -1,6 +1,6 @@
 import type { ItemStatusCounts } from "../../../gitStatus";
 import type { GitStatusCounts as Counts } from "../../../parseGitStatus";
-import type { StatusGroup } from "./CountsLink";
+import type { StatusGroup } from "./GitStatusChips";
 import { GROUPS } from "./GitStatusLink";
 
 type SessionDiffAffordance =

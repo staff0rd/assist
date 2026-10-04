@@ -8,7 +8,13 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { navTabChord } from "./NavTabs/NavTab/navTabChord";
+import { openTooltipChords } from "../../openTooltipChords";
+import { formatChord } from "../../formatChord";
 import { NavTabs } from "./NavTabs";
+
+let mac = false;
+vi.mock("../../isMacPlatform", () => ({ isMacPlatform: () => mac }));
 
 const configuredByCwd: Record<string, boolean> = {};
 let showNewsInNav = false;
@@ -36,6 +42,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	cleanup();
+	mac = false;
 	vi.unstubAllGlobals();
 });
 
@@ -217,6 +224,32 @@ describe("NavTabs", () => {
 		});
 		expect(unhandled).toBe(true);
 		expect(currentPath()).toBe("/sessions");
+	});
+
+	it("shows the tab's registry chord in its tooltip on hover", async () => {
+		render(ui("/without", "/sessions"));
+		await waitFor(releasesChecked);
+
+		const { text, chords } = await openTooltipChords(
+			screen.getByRole("tab", { name: "Backlog" }),
+		);
+
+		expect(text).toContain("Backlog");
+		expect(chords).toEqual([formatChord(navTabChord(1))]);
+		expect(chords).toEqual(["Alt+2"]);
+	});
+
+	it("shows the tab's chord with macOS glyphs on keyboard focus", async () => {
+		mac = true;
+		render(ui("/without", "/sessions"));
+		await waitFor(releasesChecked);
+
+		const { chords } = await openTooltipChords(
+			screen.getByRole("tab", { name: "Next" }),
+			"focus",
+		);
+
+		expect(chords).toEqual(["⌥3"]);
 	});
 
 	it("leaves routes that merely share the prefix alone", async () => {

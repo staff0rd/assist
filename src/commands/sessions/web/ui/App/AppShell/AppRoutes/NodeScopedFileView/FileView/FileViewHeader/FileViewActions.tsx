@@ -6,7 +6,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { CloseViewButton } from "../../../../../CloseViewButton";
 import type { FileViewMode } from "../FileViewMode";
 import { shortcutRegistry } from "../../../../../shortcutRegistry";
-import { formatChord } from "../../../../formatChord";
+import { formatChord } from "../../../../../formatChord";
 
 const actionsSx = {
 	display: "flex",

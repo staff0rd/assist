@@ -1,16 +1,19 @@
 // @vitest-environment jsdom
-import {
-	act,
-	cleanup,
-	fireEvent,
-	render,
-	screen,
-} from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { openTooltipChords } from "../../openTooltipChords";
+import { shortcutRegistry } from "../../shortcutRegistry";
+import { formatChord } from "../../formatChord";
 import { NewSessionButton } from "./NewSessionButton";
 
-afterEach(cleanup);
+let mac = false;
+vi.mock("../../isMacPlatform", () => ({ isMacPlatform: () => mac }));
+
+afterEach(() => {
+	cleanup();
+	mac = false;
+});
 
 function renderAt(path: string) {
 	const router = createMemoryRouter(
@@ -34,17 +37,29 @@ describe("NewSessionButton", () => {
 		expect(router.state.historyAction).toBe("REPLACE");
 	});
 
-	it("shows the hotkeys as key chips in its tooltip", async () => {
+	it("shows the registry's hotkeys as key chips in its tooltip", async () => {
 		renderAt("/");
 
-		await act(async () => {
-			fireEvent.mouseOver(screen.getByRole("button", { name: "New session" }));
-		});
+		const { text, chords } = await openTooltipChords(
+			screen.getByRole("button", { name: "New session" }),
+		);
 
-		const tooltip = await screen.findByRole("tooltip");
-		expect(tooltip.textContent).toContain("New session");
-		expect(
-			Array.from(tooltip.querySelectorAll("kbd")).map((k) => k.textContent),
-		).toEqual(["Ctrl+N", "Alt+N"]);
+		expect(text).toContain(shortcutRegistry.newSession.label);
+		expect(chords).toEqual(
+			shortcutRegistry.newSession.chords.map((chord) => formatChord(chord)),
+		);
+		expect(chords).toEqual(["Ctrl+N", "Alt+N"]);
+	});
+
+	it("shows macOS glyphs on a Mac", async () => {
+		mac = true;
+		renderAt("/");
+
+		const { chords } = await openTooltipChords(
+			screen.getByRole("button", { name: "New session" }),
+			"focus",
+		);
+
+		expect(chords).toEqual(["⌃N", "⌥N"]);
 	});
 });
