@@ -5,6 +5,7 @@ import { afterAll } from "vitest";
 
 const storeDir = mkdtempSync(join(tmpdir(), "assist-test-store-"));
 process.env.ASSIST_STORE_DIR = storeDir;
+process.env.ASSIST_WATCHER_LOG_DIR = join(storeDir, "watchers");
 
 function clearResumeEnvInheritedFromADaemonResumedSession() {
 	delete process.env.ASSIST_RESUME_PROMPT;

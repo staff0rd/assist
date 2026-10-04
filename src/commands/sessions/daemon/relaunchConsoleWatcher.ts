@@ -4,6 +4,7 @@ import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
 import { runningSession } from "./runningSession";
 import { spawnPty } from "./spawnPty";
+import { seedWatcherScrollback } from "./worktree/seedWatcherScrollback";
 
 type ConsoleWatcher = PersistedSession & { assistArgs: string[] };
 
@@ -26,5 +27,15 @@ export function relaunchConsoleWatcher(
 	daemonLog(
 		`relaunching watcher session ${id} running ${command.join(" ")} in ${persisted.cwd ?? "(no cwd)"}`,
 	);
-	return runningSession(base, persisted, spawnPty(command, persisted.cwd, id));
+	const session = runningSession(
+		base,
+		persisted,
+		spawnPty(command, persisted.cwd, id),
+	);
+	if (persisted.cwd)
+		session.scrollback = seedWatcherScrollback(
+			persisted.cwd,
+			"daemon restarted; watcher relaunched",
+		);
+	return session;
 }
