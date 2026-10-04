@@ -1,3 +1,10 @@
+# [0.774.0](https://github.com/staff0rd/assist/compare/v0.773.1...v0.774.0) (2026-10-04)
+
+
+### Features
+
+* sign criteria extension on release ([ca19435](https://github.com/staff0rd/assist/commit/ca19435a6cd0d6ddbd08f2291df7497ec365b176))
+
 ## [0.773.1](https://github.com/staff0rd/assist/compare/v0.773.0...v0.773.1) (2026-10-04)
 
 
