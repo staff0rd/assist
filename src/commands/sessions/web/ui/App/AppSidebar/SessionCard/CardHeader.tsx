@@ -50,6 +50,7 @@ export function CardHeader({
 	onRetry,
 	onRestart,
 	onDismiss,
+	childDismiss,
 }: CardHeaderProps) {
 	return (
 		<>
@@ -64,6 +65,7 @@ export function CardHeader({
 					onRetry={onRetry}
 					onRestart={onRestart}
 					onDismiss={onDismiss}
+					childDismiss={childDismiss}
 				/>
 			</Box>
 			{loading && (

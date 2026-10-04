@@ -19,8 +19,13 @@ export function SessionGroupItem({
 	group: ReturnType<typeof groupSessionsByRepo>[number];
 	cardProps: SessionCardProps;
 }) {
-	const renderCard = (session: SessionInfo) => (
-		<SessionListCard key={session.id} session={session} {...cardProps} />
+	const renderCard = (session: SessionInfo, nested?: SessionInfo[]) => (
+		<SessionListCard
+			key={session.id}
+			session={session}
+			nestedSessions={nested}
+			{...cardProps}
+		/>
 	);
 	return group.kind === "single" ? (
 		renderCard(group.session)

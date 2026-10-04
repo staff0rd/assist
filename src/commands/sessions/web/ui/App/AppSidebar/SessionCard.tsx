@@ -14,6 +14,7 @@ export function SessionCard({
 	onRetry,
 	onRestart,
 	onDismiss,
+	childDismiss,
 	onSetAutoRun,
 	onSetAutoAdvance,
 }: {
@@ -35,6 +36,7 @@ export function SessionCard({
 					onRetry={onRetry}
 					onRestart={onRestart}
 					onDismiss={onDismiss}
+					childDismiss={childDismiss}
 				/>
 				<CardBody
 					session={session}

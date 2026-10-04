@@ -27,11 +27,11 @@ export function NestedSessionRows({
 	renderCard,
 }: {
 	rows: NestedSessionRow[];
-	renderCard: (session: SessionInfo) => ReactNode;
+	renderCard: (session: SessionInfo, nested?: SessionInfo[]) => ReactNode;
 }) {
-	const renderBranch = (session: SessionInfo) => (
+	const renderBranch = (session: SessionInfo, nested?: SessionInfo[]) => (
 		<Box key={session.id} sx={branchSx}>
-			{renderCard(session)}
+			{renderCard(session, nested)}
 		</Box>
 	);
 	return rows.map((row) =>
@@ -39,8 +39,10 @@ export function NestedSessionRows({
 			renderBranch(row.session)
 		) : (
 			<Box key={row.session.id}>
-				{renderBranch(row.session)}
-				<Box sx={nestedChildrenSx}>{row.children.map(renderBranch)}</Box>
+				{renderBranch(row.session, row.children)}
+				<Box sx={nestedChildrenSx}>
+					{row.children.map((child) => renderBranch(child))}
+				</Box>
 			</Box>
 		),
 	);

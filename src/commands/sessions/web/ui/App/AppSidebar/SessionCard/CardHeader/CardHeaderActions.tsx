@@ -16,6 +16,7 @@ export function CardHeaderActions({
 	onRetry,
 	onRestart,
 	onDismiss,
+	childDismiss,
 }: CardHeaderProps) {
 	return (
 		<Box sx={actionsSx}>
@@ -25,6 +26,7 @@ export function CardHeaderActions({
 				onRetry={onRetry}
 				onRestart={onRestart}
 				onDismiss={onDismiss}
+				childDismiss={childDismiss}
 			/>
 		</Box>
 	);

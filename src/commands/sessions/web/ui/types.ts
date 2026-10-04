@@ -26,6 +26,12 @@ export type CardHeaderProps = {
 	onRetry?: () => void;
 	onRestart?: () => void;
 	onDismiss: () => void;
+	childDismiss?: ChildDismiss;
+};
+
+export type ChildDismiss = {
+	childCount: number;
+	onDismissAll: () => void;
 };
 
 export type SidebarProps = {
@@ -59,6 +65,7 @@ export type SessionControlHandlers = {
 	onRetry?: () => void;
 	onRestart?: () => void;
 	onDismiss: () => void;
+	childDismiss?: ChildDismiss;
 	onSetAutoRun: (enabled: boolean) => void;
 	onSetAutoAdvance: (enabled: boolean) => void;
 };

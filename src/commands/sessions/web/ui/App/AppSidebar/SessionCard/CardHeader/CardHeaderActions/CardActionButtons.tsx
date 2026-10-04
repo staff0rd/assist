@@ -9,6 +9,7 @@ export function CardActionButtons({
 	onRetry,
 	onRestart,
 	onDismiss,
+	childDismiss,
 }: CardHeaderProps) {
 	const topBar = useTopBarLayoutContext();
 	return (
@@ -25,6 +26,7 @@ export function CardActionButtons({
 				session={session}
 				onRestart={onRestart}
 				onDismiss={onDismiss}
+				childDismiss={childDismiss}
 			/>
 		</StopCardActivation>
 	);
