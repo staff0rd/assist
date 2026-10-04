@@ -6,11 +6,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import { ColorModeIcon } from "./hamburgerMenuItems/ColorModeIcon";
-import { RESTART_ITEM } from "../postRestart";
 import { RenderHudMenuItem } from "./hamburgerMenuItems/RenderHudMenuItem";
 
 type HamburgerMenuHandlers = {
 	mode: "light" | "dark";
+	restartLabel: string;
 	onToggleColorMode: () => void;
 	onShowShortcuts: () => void;
 	onRestart: () => void;
@@ -19,6 +19,7 @@ type HamburgerMenuHandlers = {
 
 export function hamburgerMenuItems({
 	mode,
+	restartLabel,
 	onToggleColorMode,
 	onShowShortcuts,
 	onRestart,
@@ -43,7 +44,7 @@ export function hamburgerMenuItems({
 			<ListItemIcon>
 				<RestartAltIcon fontSize="small" />
 			</ListItemIcon>
-			<ListItemText>{RESTART_ITEM.label}</ListItemText>
+			<ListItemText>{restartLabel}</ListItemText>
 		</MenuItem>,
 		<MenuItem key="update" onClick={onUpdate}>
 			<ListItemIcon>

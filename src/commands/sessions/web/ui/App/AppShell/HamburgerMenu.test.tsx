@@ -10,27 +10,47 @@ import {
 import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HamburgerMenu } from "./HamburgerMenu";
+import { NodeSelectionContext } from "../../useNodeSelectionContext";
 import { SessionLaunchContext } from "../../useSessionLaunchContext";
 
 let fetchMock: ReturnType<typeof vi.fn>;
 
-function renderMenu(launchAssist: () => void, armUpdateReload = () => {}) {
+function renderMenu(
+	launchAssist: () => void,
+	armUpdateReload = () => {},
+	selected = "wsl",
+) {
 	return render(
 		<MemoryRouter initialEntries={["/sessions"]}>
-			<SessionLaunchContext.Provider
+			<NodeSelectionContext.Provider
 				value={{
-					launchAssist,
-					launchAgentInStream: () => {},
-					resumeSession: () => {},
-					armUpdateReload,
+					nodes: {
+						local: "wsl",
+						links: [
+							{ name: "win", url: "http://win:3100", state: "connected" },
+						],
+					},
+					names: ["wsl", "win"],
+					visible: true,
+					selected,
+					select: () => {},
 				}}
 			>
-				<HamburgerMenu mode="light" toggle={() => {}} reconnecting={false} />
-				<Routes>
-					<Route path="/config" element={<div>config page</div>} />
-					<Route path="/sessions" element={<div>sessions page</div>} />
-				</Routes>
-			</SessionLaunchContext.Provider>
+				<SessionLaunchContext.Provider
+					value={{
+						launchAssist,
+						launchAgentInStream: () => {},
+						resumeSession: () => {},
+						armUpdateReload,
+					}}
+				>
+					<HamburgerMenu mode="light" toggle={() => {}} reconnecting={false} />
+					<Routes>
+						<Route path="/config" element={<div>config page</div>} />
+						<Route path="/sessions" element={<div>sessions page</div>} />
+					</Routes>
+				</SessionLaunchContext.Provider>
+			</NodeSelectionContext.Provider>
 		</MemoryRouter>,
 	);
 }
@@ -150,6 +170,33 @@ describe("HamburgerMenu", () => {
 		await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
 		expect(document.activeElement).toBe(terminal);
 		terminal.remove();
+	});
+
+	it("names the selected peer on the restart item and dialog", () => {
+		renderMenu(vi.fn(), () => {}, "win");
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		expect(screen.queryByText("Restart daemon")).toBeNull();
+		fireEvent.click(screen.getByText("Restart win"));
+
+		expect(screen.getByText("Restart win?")).toBeTruthy();
+	});
+
+	it("restarts the selected peer without reloading the page", async () => {
+		const reload = vi.fn();
+		vi.stubGlobal("location", { reload });
+		renderMenu(vi.fn(), () => {}, "win");
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		fireEvent.click(screen.getByText("Restart win"));
+		fireEvent.click(screen.getByRole("button", { name: "Restart" }));
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			"/api/restart?target=both&node=win",
+			{ method: "POST" },
+		);
+		await waitFor(() => expect(screen.queryByText("Restart win?")).toBeNull());
+		expect(reload).not.toHaveBeenCalled();
 	});
 
 	it("does not restart when the restart is cancelled", () => {

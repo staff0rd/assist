@@ -40,6 +40,7 @@ import { selfUpdate } from "./selfUpdate";
 import { revertDiffPaths } from "./revertDiffPaths";
 import { sessionLayout } from "./sessionLayout";
 import { newSessionDefaults } from "./newSessionDefaults";
+import { nodeDoctor } from "./nodeDoctor";
 import { sessionView } from "./sessionView";
 import { setConfig } from "./setConfig";
 import { unsetConfig } from "./unsetConfig";
@@ -83,6 +84,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/pr-preview/upload-image": uploadPrImage,
 	"GET /api/pr-preview/image": previewImage,
 	"POST /api/restart": restartWeb,
+	"GET /api/node-doctor": nodeDoctor,
 	"POST /api/self-update": selfUpdate,
 	"GET /api/github-url": githubUrl,
 	"GET /api/git-status": gitStatus,

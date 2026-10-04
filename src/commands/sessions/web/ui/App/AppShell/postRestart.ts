@@ -11,6 +11,10 @@ export const RESTART_ITEM: {
 		"This restarts the sessions daemon and the web server, then reloads the page once the server is back.",
 };
 
-export function postRestart(target: RestartTarget): Promise<Response> {
-	return fetch(`/api/restart?target=${target}`, { method: "POST" });
+export function postRestart(
+	target: RestartTarget,
+	node?: string,
+): Promise<Response> {
+	const nodeParam = node ? `&node=${encodeURIComponent(node)}` : "";
+	return fetch(`/api/restart?target=${target}${nodeParam}`, { method: "POST" });
 }

@@ -5,6 +5,8 @@ import { hamburgerMenuItems } from "./HamburgerMenu/hamburgerMenuItems";
 import { HamburgerMenuDialogs } from "./HamburgerMenu/HamburgerMenuDialogs";
 import { MenuTriggerButton } from "./HamburgerMenu/MenuTriggerButton";
 import { type MenuDialog, useMenuDialog } from "./HamburgerMenu/useMenuDialog";
+import { useSelectedPeer } from "./HamburgerMenu/useSelectedPeer";
+import { RESTART_ITEM } from "./postRestart";
 
 export function HamburgerMenu({
 	mode,
@@ -17,6 +19,7 @@ export function HamburgerMenu({
 }) {
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const { dialog, showDialog, closeDialog } = useMenuDialog();
+	const peer = useSelectedPeer();
 	const open = Boolean(anchorEl);
 	const close = () => setAnchorEl(null);
 	const closeAndShow = (next: MenuDialog) => () => {
@@ -37,6 +40,7 @@ export function HamburgerMenu({
 				<NodeNameLabel />
 				{hamburgerMenuItems({
 					mode,
+					restartLabel: peer ? `Restart ${peer}` : RESTART_ITEM.label,
 					onToggleColorMode: () => {
 						toggle();
 						close();
@@ -48,6 +52,7 @@ export function HamburgerMenu({
 			</Menu>
 			<HamburgerMenuDialogs
 				dialog={dialog}
+				peer={peer}
 				reconnecting={reconnecting}
 				onClose={closeDialog}
 			/>

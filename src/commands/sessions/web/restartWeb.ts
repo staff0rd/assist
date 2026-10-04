@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { restartDaemon } from "../daemon/restartDaemon";
+import { TRACE_HEADER } from "../shared/newTraceId";
 import { reExecWebServer } from "./restartMenu/reExecWebServer";
 
 type RestartTarget = "daemon" | "webserver" | "both";
@@ -23,6 +24,9 @@ export async function restartWeb(
 		respondJson(res, 400, { error: "Invalid target" });
 		return;
 	}
+	console.log(
+		`restart ${target} from=${req.headers["x-assist-linked-from"] ?? "local"} trace=${req.headers[TRACE_HEADER] ?? "none"}`,
+	);
 
 	// why: a webserver re-exec replaces this process, so the response must fully flush before restarting or the client never hears back
 	await new Promise<void>((resolve) => {

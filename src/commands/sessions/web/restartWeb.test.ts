@@ -3,8 +3,11 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { describe, expect, it, vi } from "vitest";
 import { restartWeb } from "./restartWeb";
 
-function createReq(url: string): IncomingMessage {
-	return { url } as IncomingMessage;
+function createReq(
+	url: string,
+	headers: IncomingMessage["headers"] = {},
+): IncomingMessage {
+	return { url, headers } as IncomingMessage;
 }
 
 function createRes() {
@@ -81,5 +84,22 @@ describe("restartWeb", () => {
 		});
 
 		expect(order).toEqual(["finish", "daemon", "reExec"]);
+	});
+
+	it("logs a forwarded restart with the viewer's node and trace id", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const { res } = createRes();
+
+		await restartWeb(
+			createReq("/api/restart?target=both", {
+				"x-assist-linked-from": "wsl",
+				"x-assist-trace-id": "7f3a1c2d",
+			}),
+			res,
+			{ restartDaemonFn: async () => {}, reExecFn: () => {} },
+		);
+
+		expect(log).toHaveBeenCalledWith("restart both from=wsl trace=7f3a1c2d");
+		log.mockRestore();
 	});
 });
