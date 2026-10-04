@@ -1,19 +1,16 @@
-import ButtonBase from "@mui/material/ButtonBase";
+import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
-export function TakeOverOverlay({
-	activeNode,
-	onTakeOver,
-}: {
-	activeNode?: string;
-	onTakeOver: () => void;
-}) {
+export function TakeOverOverlay({ activeNode }: { activeNode?: string }) {
 	return (
-		<ButtonBase
-			onClick={onTakeOver}
+		<Box
 			sx={{
 				position: "absolute",
 				inset: 0,
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				cursor: "pointer",
 				bgcolor: "background.default",
 				"&:hover .take-over-label": { color: "text.primary" },
 			}}
@@ -25,6 +22,6 @@ export function TakeOverOverlay({
 			>
 				Active on {activeNode ?? "another viewer"} — click to take over
 			</Typography>
-		</ButtonBase>
+		</Box>
 	);
 }

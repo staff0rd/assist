@@ -37,13 +37,14 @@ function paneOfSize(width: number, height: number): HTMLElement {
 	return el;
 }
 
-function attach(el: HTMLElement, inactive = false) {
+function attach(el: HTMLElement, mayResize = true) {
 	const sendResize = vi.fn();
 	setupTerminal(el, "session-1", {
 		sendInput: vi.fn(),
 		onOutput: () => () => {},
 		sendResize,
-		isInactive: () => inactive,
+		isStale: () => !mayResize,
+		mayResize: () => mayResize,
 	});
 	return sendResize;
 }
@@ -72,8 +73,8 @@ describe("setupTerminal resize reporting", () => {
 		expect(sendResize).not.toHaveBeenCalled();
 	});
 
-	it("stays silent while another viewer is active", () => {
-		const sendResize = attach(paneOfSize(600, 400), true);
+	it("stays silent while it may not size the session", () => {
+		const sendResize = attach(paneOfSize(600, 400), false);
 
 		notifyResize();
 

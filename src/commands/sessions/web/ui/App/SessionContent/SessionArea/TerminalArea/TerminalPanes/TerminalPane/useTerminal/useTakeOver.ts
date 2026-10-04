@@ -16,32 +16,21 @@ export function useTakeOver(
 	ownership: Ownership,
 	sendResize: ResizeFn,
 ): () => void {
-	const fit = useCallback(() => {
-		const h = handleRef.current;
-		if (!h || !hasTerminalSize(containerRef.current)) return undefined;
-		h.fitAddon.fit();
-		return h;
-	}, [containerRef, handleRef]);
-
 	const takeOver = useCallback(() => {
 		staleRef.current = false;
-		handleRef.current?.term.reset();
-		const h = fit();
+		const h = handleRef.current;
 		if (!h) return;
+		h.term.reset();
+		if (!hasTerminalSize(containerRef.current)) return;
+		h.fitAddon.fit();
 		h.term.focus();
 		sendResize(sessionId, h.term.cols, h.term.rows, true);
-	}, [fit, handleRef, staleRef, sessionId, sendResize]);
+	}, [containerRef, handleRef, staleRef, sessionId, sendResize]);
 
 	useEffect(() => {
-		if (ownership === "other") {
-			staleRef.current = true;
-			return;
-		}
-		if (!staleRef.current) return;
-		if (ownership === "mine") return takeOver();
-		const h = fit();
-		if (h) sendResize(sessionId, h.term.cols, h.term.rows);
-	}, [staleRef, ownership, takeOver, fit, sessionId, sendResize]);
+		if (ownership === "other") staleRef.current = true;
+		else if (ownership === "mine" && staleRef.current) takeOver();
+	}, [staleRef, ownership, takeOver]);
 
 	return takeOver;
 }

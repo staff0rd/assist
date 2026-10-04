@@ -41,11 +41,13 @@ export function TerminalPane({
 				visibility: visible ? "visible" : "hidden",
 				pointerEvents: visible ? "auto" : "none",
 			}}
+			onPointerDownCapture={inactive ? takeOver : undefined}
 		>
-			<Box ref={containerRef} sx={{ position: "absolute", inset: 0 }} />
-			{inactive && (
-				<TakeOverOverlay activeNode={activeNode} onTakeOver={takeOver} />
-			)}
+			<Box
+				ref={containerRef}
+				sx={{ position: "absolute", inset: 0, isolation: "isolate" }}
+			/>
+			{inactive && <TakeOverOverlay activeNode={activeNode} />}
 		</Box>
 	);
 }

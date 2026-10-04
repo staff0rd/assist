@@ -8,13 +8,14 @@ type TerminalIo = {
 	sendInput: (sessionId: string, data: string) => void;
 	onOutput: (sessionId: string, handler: (data: string) => void) => () => void;
 	sendResize: ResizeFn;
-	isInactive: () => boolean;
+	isStale: () => boolean;
+	mayResize: () => boolean;
 };
 
 export function setupTerminal(
 	el: HTMLElement,
 	sessionId: string,
-	{ sendInput, onOutput, sendResize, isInactive }: TerminalIo,
+	{ sendInput, onOutput, sendResize, isStale, mayResize }: TerminalIo,
 ): { handle: TerminalHandle; cleanup: () => void } {
 	const handle = createTerminal(el);
 
@@ -26,11 +27,11 @@ export function setupTerminal(
 		);
 	});
 	const unsubOutput = onOutput(sessionId, (data) => {
-		if (!isInactive()) handle.term.write(data);
+		if (!isStale()) handle.term.write(data);
 	});
 
 	const observer = new ResizeObserver(() => {
-		if (isInactive() || !hasTerminalSize(el)) return;
+		if (!mayResize() || !hasTerminalSize(el)) return;
 		handle.fitAddon.fit();
 		sendResize(sessionId, handle.term.cols, handle.term.rows);
 	});
