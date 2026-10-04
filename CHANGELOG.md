@@ -1,3 +1,15 @@
+# [0.762.0](https://github.com/staff0rd/assist/compare/v0.761.1...v0.762.0) (2026-10-04)
+
+
+### Bug Fixes
+
+* wire chord tooltips into components ([78fc53a](https://github.com/staff0rd/assist/commit/78fc53ac6b74130832b84ddaf250e2a54bdf6d00))
+
+
+### Features
+
+* show shortcut chords in tooltips ([76bb1e5](https://github.com/staff0rd/assist/commit/76bb1e5c43edfb59dd4d1d52acbbfd75f8803f3e))
+
 ## [0.761.1](https://github.com/staff0rd/assist/compare/v0.761.0...v0.761.1) (2026-10-04)
 
 
