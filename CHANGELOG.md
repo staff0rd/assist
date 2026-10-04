@@ -1,3 +1,10 @@
+## [0.768.1](https://github.com/staff0rd/assist/compare/v0.768.0...v0.768.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* push peer version changes to viewers ([acefd2c](https://github.com/staff0rd/assist/commit/acefd2c5bcc6e954baada5dfb8c0bb2657c083d6))
+
 # [0.768.0](https://github.com/staff0rd/assist/compare/v0.767.2...v0.768.0) (2026-10-04)
 
 
