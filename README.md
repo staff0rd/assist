@@ -227,7 +227,7 @@ The Config tab of the sessions web dashboard never shows secret values; their fi
 
 - `assist verify` - Run all verify:\* commands in parallel (from assist.yml run configs and package.json scripts)
 - `assist verify all` - Run all checks, ignoring diff-based filters
-- `assist verify --measure` - Print a summary table of each command's status and duration
+- `assist verify --measure` - Run all verify:\* commands and time each one
 - `assist verify init [--package-json]` - Add verify scripts to a project
 - `assist verify hardcoded-colors` - Check for hardcoded hex colors in src/ (`hardcodedColors.ignore`)
 - `assist verify block-code-comments` - Fail on any comment on a changed line (`blockCodeComments.ignore`); machine directives exempt
@@ -501,7 +501,7 @@ assist config set next.excludeTypes Epic -g --repo
 
 ## Parallel work
 
-Concurrent sessions in one repo can be isolated with native git worktrees instead of keeping multiple physical clones: see [docs/parallel-work.md](docs/parallel-work.md). All of these flags **default off**:
+Concurrent sessions in one repo can be isolated with native git worktrees instead of keeping multiple physical clones: see [docs/parallel-work.md](docs/parallel-work.md). All of these keys **default off** except `worktree.install`:
 
 - `worktree.enabled` (parallel work) — spill concurrent sessions into adjacent `<clone>-N` worktrees instead of sharing the clone's working copy.
 - `worktree.watcher` — keep a watcher session in the clone while a backlog run works in a worktree, so the clone stays pulled and rebuilt. Needs `worktree.enabled` and an `auto-build` run entry.
@@ -509,7 +509,7 @@ Concurrent sessions in one repo can be isolated with native git worktrees instea
 - `worktree.includeDrafts` — give draft, bug and refine sessions their own `<clone>-N` instead of the clone's working copy.
 - `worktree.install` — how a new worktree installs its deps: `true` (default) auto-detects pnpm/yarn/bun/npm, a string is the install command, `false` skips it, and a list of paths installs in each in order.
 
-Neither flag leaves permanent state on the clone, so turning parallel work back off leaves the repo as it was.
+None of them leaves permanent state on the clone, so turning parallel work back off leaves the repo as it was.
 
 ## Iterating on assist itself
 
@@ -572,4 +572,4 @@ Two alternatives need no signing: **Firefox Developer Edition** or **Nightly** h
    - **Firefox**: open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** → pick `manifest.json` inside the printed extension directory. (Requires Firefox 128+ for MAIN-world content scripts.)
    - **Chrome**: open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select the extension directory.
 3. On load the background worker pings the receiver; `ping from extension` appears in the `assist netcap` log, confirming browser→server connectivity.
-4. Browse a site; matching requests append to the capture file live and survive page refreshes. Press Ctrl-C to stop the receiver; it prints how many entries were captured.
+4. Browse a site; matching requests append to the capture file live and survive page refreshes. Press Ctrl-C to stop the receiver.
