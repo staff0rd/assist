@@ -7,7 +7,10 @@ import { disconnectLink, failLink } from "./teardownLink";
 
 function onHello(ctx: LinkContext, msg: Record<string, unknown>): void {
 	const verdict = acceptPeerHello(ctx.spec.name, msg);
+	const previousVersion = ctx.peer?.version;
 	if (verdict.peer) ctx.peer = verdict.peer;
+	if (verdict.peer && verdict.peer.version !== previousVersion)
+		ctx.deps.onStateChanged();
 	if (verdict.kind === "reject") {
 		disconnectLink(ctx);
 		return failLink(ctx, verdict.reason);

@@ -335,6 +335,37 @@ describe("two linked nodes", () => {
 		);
 	});
 
+	it("pushes a latched peer's new version to viewers while it stays blocked", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		node("pc-windows");
+		const peer = peers.get(WINDOWS.url) as InProcessPeer;
+		peer.reportVersion = "0.0.1";
+		wsl.links.configure({
+			specs: () => [WINDOWS],
+			localNode: () => "pc-wsl",
+			transport: bridge.transport,
+			heal: vi.fn(async () => {}),
+			reconnectMs: 5,
+			blockedRetryMs: 20,
+		});
+		const view = viewer();
+		wsl.addClient(view.client);
+
+		wsl.links.reload();
+
+		await vi.waitFor(() =>
+			expect(wsl.links.nodes().links[0].state).toBe("version-blocked"),
+		);
+		peer.reportVersion = "0.0.2";
+		await vi.waitFor(() =>
+			expect(
+				view.received.filter((m) => m.type === "nodes").at(-1),
+			).toMatchObject({
+				links: [{ state: "version-blocked", peerVersion: "0.0.2" }],
+			}),
+		);
+	});
+
 	it("clears a latched link on reload-links", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		node("pc-windows");
