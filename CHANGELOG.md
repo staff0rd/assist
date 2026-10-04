@@ -1,3 +1,10 @@
+## [0.755.1](https://github.com/staff0rd/assist/compare/v0.755.0...v0.755.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* find tailscale CLI at install path ([0ef0660](https://github.com/staff0rd/assist/commit/0ef06603932061773b078e14acf62e267f4f56ba))
+
 # [0.755.0](https://github.com/staff0rd/assist/compare/v0.754.0...v0.755.0) (2026-10-03)
 
 
