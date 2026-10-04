@@ -1,3 +1,10 @@
+# [0.767.0](https://github.com/staff0rd/assist/compare/v0.766.3...v0.767.0) (2026-10-04)
+
+
+### Features
+
+* sweep stale staged attachments ([5a51ccc](https://github.com/staff0rd/assist/commit/5a51ccc7b7fca3c0e2dfd2a34cf34e9972f205ec))
+
 ## [0.766.3](https://github.com/staff0rd/assist/compare/v0.766.2...v0.766.3) (2026-10-04)
 
 
