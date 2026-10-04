@@ -1,3 +1,10 @@
+## [0.767.2](https://github.com/staff0rd/assist/compare/v0.767.1...v0.767.2) (2026-10-04)
+
+
+### Bug Fixes
+
+* only a focused pane claims a session ([67bf028](https://github.com/staff0rd/assist/commit/67bf0282d144b950145306e764e7f38ba606b46a))
+
 ## [0.767.1](https://github.com/staff0rd/assist/compare/v0.767.0...v0.767.1) (2026-10-04)
 
 
