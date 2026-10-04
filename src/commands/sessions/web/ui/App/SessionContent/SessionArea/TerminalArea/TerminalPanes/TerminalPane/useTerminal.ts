@@ -1,6 +1,7 @@
 import { type RefObject, useEffect, useRef } from "react";
 import type { Ownership } from "../Ownership";
 import type { ResizeFn } from "../../ResizeFn";
+import { isUserPresent } from "./useTerminal/isUserPresent";
 import type { TerminalHandle } from "./useTerminal/createTerminal";
 import { maySizeSession } from "./useTerminal/maySizeSession";
 import { setupTerminal } from "./useTerminal/setupTerminal";
@@ -28,7 +29,7 @@ export function useTerminal(
 		maySizeSession(
 			stateRef.current.ownership,
 			stateRef.current.visible,
-			document.hasFocus(),
+			isUserPresent(),
 		),
 	);
 
@@ -52,7 +53,7 @@ export function useTerminal(
 	const refs = { containerRef, handleRef, staleRef };
 	const takeOver = useTakeOver(refs, sessionId, ownership, sendResize);
 	useFitWhenVisible(
-		{ ...refs, mayResize: mayResizeRef.current },
+		{ ...refs, mayResize: mayResizeRef.current, takeOver },
 		sessionId,
 		{ visible, ownership },
 		sendResize,

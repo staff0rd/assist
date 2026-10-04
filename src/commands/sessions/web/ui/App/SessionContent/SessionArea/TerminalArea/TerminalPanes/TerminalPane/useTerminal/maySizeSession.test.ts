@@ -10,7 +10,7 @@ describe("maySizeSession", () => {
 		expect(maySizeSession("other", true, true)).toBe(false);
 	});
 
-	it("claims a free session only from a visible pane in a focused window", () => {
+	it("claims a free session only from a visible pane the user is at", () => {
 		expect(maySizeSession("free", true, true)).toBe(true);
 		expect(maySizeSession("free", false, true)).toBe(false);
 		expect(maySizeSession("free", true, false)).toBe(false);
