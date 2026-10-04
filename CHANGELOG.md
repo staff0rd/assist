@@ -1,3 +1,10 @@
+# [0.766.0](https://github.com/staff0rd/assist/compare/v0.765.0...v0.766.0) (2026-10-04)
+
+
+### Features
+
+* attach screenshots with gh --attach ([156d459](https://github.com/staff0rd/assist/commit/156d459645c704156592034e7f6b53ecbb41fe96))
+
 # [0.765.0](https://github.com/staff0rd/assist/compare/v0.764.0...v0.765.0) (2026-10-04)
 
 
