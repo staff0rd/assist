@@ -1,3 +1,19 @@
+# [0.761.0](https://github.com/staff0rd/assist/compare/v0.760.0...v0.761.0) (2026-10-04)
+
+
+### Bug Fixes
+
+* name active node, release on leave ([6a900cf](https://github.com/staff0rd/assist/commit/6a900cfde473c75936338c02a965522da21bc72a))
+* wire watcher divergence escalation ([91db018](https://github.com/staff0rd/assist/commit/91db018ee4c8b8925b7caa37d3e3fb507dbdb112))
+
+
+### Features
+
+* add Alt+E, Alt+` and Alt+D focus keys ([295ee70](https://github.com/staff0rd/assist/commit/295ee701a6b4dffaddd04935d55d98d7f4442e9f))
+* escalate watcher divergence to agent ([bcd76c3](https://github.com/staff0rd/assist/commit/bcd76c3c4c714e9047e76fd96cf3fd9394cdec5f))
+* restart the selected linked node ([8d14ea5](https://github.com/staff0rd/assist/commit/8d14ea5210cde6fa1843b3bd2f6ae02df911199f))
+* retire /watch for console watcher ([ae94458](https://github.com/staff0rd/assist/commit/ae94458a8e9c0f812081af36b8a68326ad79fe2d))
+
 # [0.760.0](https://github.com/staff0rd/assist/compare/v0.759.2...v0.760.0) (2026-10-04)
 
 
