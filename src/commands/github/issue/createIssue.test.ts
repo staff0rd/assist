@@ -219,12 +219,15 @@ describe("createIssue preview", () => {
 		expect(execFileSync).toHaveBeenCalled();
 	});
 
-	it("appends approved screenshots under a Screenshots heading", async () => {
+	it("references approved screenshots under a Screenshots heading and attaches them", async () => {
 		process.env.ASSIST_SESSION = "1";
 		process.env.ASSIST_SESSION_ID = "s1";
 		mockRequestPreviewDecision.mockResolvedValue({
 			decision: "approve",
-			screenshots: ["![a](https://x/a.png)", "![b](https://x/b.png)"],
+			screenshots: [
+				{ path: "/s/a.png", alt: "a" },
+				{ path: "/s/b.png", alt: "b" },
+			],
 		});
 
 		await createIssue({ title: "Crash on load", body: "Details" });
@@ -237,7 +240,11 @@ describe("createIssue preview", () => {
 				"--title",
 				"Crash on load",
 				"--body",
-				"Details\n\n## Screenshots\n\n![a](https://x/a.png)\n\n![b](https://x/b.png)",
+				"Details\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.png)",
+				"--attach",
+				"/s/a.png#a",
+				"--attach",
+				"/s/b.png#b",
 			],
 			expect.anything(),
 		);
@@ -264,7 +271,7 @@ describe("createIssue preview", () => {
 		exitThrows();
 		mockRequestPreviewDecision.mockResolvedValue({
 			decision: "reject",
-			screenshots: ["![a](https://x/a.png)"],
+			screenshots: [{ path: "/s/a.png", alt: "a" }],
 		});
 
 		await expect(

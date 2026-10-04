@@ -37,7 +37,10 @@ describe("previewAndPlace", () => {
 	it("appends approved screenshots under a ## Screenshots section", async () => {
 		requestPrDecisionMock.mockResolvedValue({
 			decision: "approve",
-			screenshots: ["![a](u1)", "![b](u2)"],
+			screenshots: [
+				{ path: "/s/a.png", alt: "a" },
+				{ path: "/s/b.png", alt: "b" },
+			],
 		});
 
 		await previewAndPlace(args);
@@ -45,8 +48,12 @@ describe("previewAndPlace", () => {
 		expect(placePrMock).toHaveBeenCalledWith(
 			null,
 			"t",
-			"## What\n\nx\n\n## Screenshots\n\n![a](u1)\n\n![b](u2)",
+			"## What\n\nx\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.png)",
 			{},
+			[
+				{ path: "/s/a.png", alt: "a" },
+				{ path: "/s/b.png", alt: "b" },
+			],
 		);
 	});
 
@@ -55,7 +62,7 @@ describe("previewAndPlace", () => {
 
 		await previewAndPlace(args);
 
-		expect(placePrMock).toHaveBeenCalledWith(null, "t", "## What\n\nx", {});
+		expect(placePrMock).toHaveBeenCalledWith(null, "t", "## What\n\nx", {}, []);
 	});
 
 	it("sends the resolved draft state to the preview pane", async () => {
@@ -123,11 +130,13 @@ describe("previewAndPlace", () => {
 				options: { draft: false, base: "main", reviewer: ["someone"] },
 			});
 
-			expect(placePrMock).toHaveBeenCalledWith(null, "t", "## What\n\nx", {
-				draft: true,
-				base: "main",
-				reviewer: ["someone"],
-			});
+			expect(placePrMock).toHaveBeenCalledWith(
+				null,
+				"t",
+				"## What\n\nx",
+				{ draft: true, base: "main", reviewer: ["someone"] },
+				[],
+			);
 		});
 	});
 

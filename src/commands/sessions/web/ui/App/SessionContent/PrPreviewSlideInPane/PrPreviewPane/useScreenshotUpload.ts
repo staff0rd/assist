@@ -1,30 +1,16 @@
 import { useCallback, useRef, useState } from "react";
-import {
-	UploadImageError,
-	uploadPreviewImage,
-} from "./useScreenshotUpload/uploadPreviewImage";
+import type { PreviewAttachment } from "../../../../../../shared/PreviewAttachment";
+import { uploadPreviewImage } from "./useScreenshotUpload/uploadPreviewImage";
 import { useImageDropPaste } from "./useScreenshotUpload/useImageDropPaste";
 import { useApiNode } from "../../../../useApiNode";
 
-export type UploadError = { message: string; command?: string };
-
-export type ScreenshotUpload = { id: number; error?: UploadError };
-
-function toUploadError(error: unknown): UploadError {
-	if (error instanceof UploadImageError)
-		return { message: error.message, command: error.command };
-	return {
-		message: error instanceof Error ? error.message : "Failed to upload image",
-	};
-}
+export type ScreenshotUpload = { id: number; error?: string };
 
 export function useScreenshotUpload(
 	cwd: string | undefined,
-	onUploaded: (screenshot: {
-		markdown: string;
-		url: string;
-		contentType: string;
-	}) => void,
+	onUploaded: (
+		screenshot: PreviewAttachment & { url: string; contentType: string },
+	) => void,
 	enabled: boolean,
 ) {
 	const [uploads, setUploads] = useState<ScreenshotUpload[]>([]);
@@ -36,15 +22,16 @@ export function useScreenshotUpload(
 			const id = nextId.current++;
 			setUploads((us) => [...us.filter((u) => !u.error), { id }]);
 			try {
-				const markdown = await uploadPreviewImage(file, cwd, node);
+				const staged = await uploadPreviewImage(file, cwd, node);
 				onUploaded({
-					markdown,
+					...staged,
 					url: URL.createObjectURL(file),
 					contentType: file.type,
 				});
 				setUploads((us) => us.filter((u) => u.id !== id));
 			} catch (error) {
-				const failure = toUploadError(error);
+				const failure =
+					error instanceof Error ? error.message : "Failed to attach file";
 				setUploads((us) =>
 					us.map((u) => (u.id === id ? { id, error: failure } : u)),
 				);

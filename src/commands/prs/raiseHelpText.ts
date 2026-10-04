@@ -1,5 +1,6 @@
 import { loadConfig } from "../../shared/loadConfig";
 import { raiseGuidance } from "./raiseGuidance";
+import { minGhAttachVersion } from "./minGhAttachVersion";
 
 const TERMINAL_CONFIRM = `Before running this command, the user must see the full proposed title and body —
 do not assume they can see your reasoning or earlier tool output. Write the
@@ -19,7 +20,7 @@ inline comments to specific spans of the preview; on rejection these are printed
 as numbered quoted-span + note pairs on stderr. Address every comment (and the
 reason), then run the command again to re-preview the revised PR. Repeat until it
 is approved. The reviewer may also drop or paste screenshots or video into the
-pane; on approval these are appended to the PR body under a ## Screenshots section
+pane; on approval gh attaches them (gh ${minGhAttachVersion}+) under a ## Screenshots section
 automatically; on rejection they stay attached and reappear in the preview you
 re-propose, so you never author that section yourself. Just compose the sections
 and run the command.`;

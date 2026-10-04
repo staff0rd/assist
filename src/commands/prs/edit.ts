@@ -43,10 +43,12 @@ export async function edit(options: EditOptions): Promise<void> {
 			prNumber: number,
 		});
 
+		const attachments = decision.screenshots ?? [];
 		applyEdit(
 			number,
 			options.title,
-			appendScreenshots(newBody, decision.screenshots ?? []),
+			appendScreenshots(newBody, attachments),
+			attachments,
 		);
 		return;
 	}

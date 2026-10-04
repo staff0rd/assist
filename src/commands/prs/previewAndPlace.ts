@@ -22,13 +22,14 @@ export async function previewAndPlace(args: {
 		draft: args.options.draft === true,
 	});
 
-	const body = appendScreenshots(args.body, decision.screenshots ?? []);
+	const attachments = decision.screenshots ?? [];
+	const body = appendScreenshots(args.body, attachments);
 	const options =
 		decision.draft === undefined
 			? args.options
 			: { ...args.options, draft: decision.draft };
 
-	await placePr(args.prNumber, args.title, body, options);
+	await placePr(args.prNumber, args.title, body, options, attachments);
 
 	if (decision.autoMerge === true) enableAutoMerge();
 

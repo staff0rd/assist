@@ -1,17 +1,10 @@
-export class UploadImageError extends Error {
-	name = "UploadImageError";
-	command?: string;
-	constructor(message: string, command?: string) {
-		super(message);
-		this.command = command;
-	}
-}
+import type { PreviewAttachment } from "../../../../../../../shared/PreviewAttachment";
 
 export async function uploadPreviewImage(
 	file: File | Blob,
 	cwd: string | undefined,
 	node?: string,
-): Promise<string> {
+): Promise<PreviewAttachment> {
 	const params = new URLSearchParams();
 	if (cwd) params.set("cwd", cwd);
 	if (node) params.set("node", node);
@@ -23,14 +16,11 @@ export async function uploadPreviewImage(
 		body: file,
 	});
 	const body = (await res.json().catch(() => null)) as {
-		markdown?: string;
+		path?: string;
+		alt?: string;
 		error?: string;
-		command?: string;
 	} | null;
-	if (!res.ok || !body?.markdown)
-		throw new UploadImageError(
-			body?.error ?? "Failed to upload image",
-			body?.command,
-		);
-	return body.markdown;
+	if (!res.ok || !body?.path)
+		throw new Error(body?.error ?? "Failed to attach file");
+	return { path: body.path, alt: body.alt ?? "screenshot" };
 }

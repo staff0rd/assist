@@ -1,3 +1,4 @@
+import type { PreviewAttachment } from "./PreviewAttachment";
 import type { PrPreviewComment } from "./SessionInfoBase";
 
 export type PreviewSelection = {
@@ -14,7 +15,7 @@ export type PreviewChecklistItem = {
 export type PreviewDecisionFields = {
 	reason?: string;
 	comments?: PrPreviewComment[];
-	screenshots?: string[];
+	screenshots?: PreviewAttachment[];
 	body?: string;
 	reviewAfter?: boolean;
 	announceAfter?: boolean;

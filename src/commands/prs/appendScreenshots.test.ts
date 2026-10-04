@@ -6,9 +6,18 @@ describe("appendScreenshots", () => {
 		expect(appendScreenshots("body", [])).toBe("body");
 	});
 
-	it("appends a ## Screenshots section with the markdown joined", () => {
-		expect(appendScreenshots("body", ["![a](u1)", "![b](u2)"])).toBe(
-			"body\n\n## Screenshots\n\n![a](u1)\n\n![b](u2)",
-		);
+	it("appends a ## Screenshots section referencing each staged path", () => {
+		expect(
+			appendScreenshots("body", [
+				{ path: "/s/a.png", alt: "a" },
+				{ path: "/s/b.mp4", alt: "b" },
+			]),
+		).toBe("body\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.mp4)");
+	});
+
+	it("wraps a path containing spaces in angle brackets", () => {
+		expect(
+			appendScreenshots("body", [{ path: "C:/Users/A B/a.png", alt: "a" }]),
+		).toBe("body\n\n## Screenshots\n\n![a](<C:/Users/A B/a.png>)");
 	});
 });

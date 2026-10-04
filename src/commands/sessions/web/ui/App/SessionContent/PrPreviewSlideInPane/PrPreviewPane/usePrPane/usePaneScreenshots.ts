@@ -8,7 +8,6 @@ export function usePaneScreenshots(
 ) {
 	const { screenshots, add, remove, clearPersisted } = useScreenshots(
 		enabled ? scope : undefined,
-		cwd,
 	);
 	const { uploads, onDrop, onDragOver } = useScreenshotUpload(
 		cwd,
@@ -20,7 +19,7 @@ export function usePaneScreenshots(
 		screenshots,
 		removeScreenshot: remove,
 		decision: {
-			markdown: () => screenshots.map((s) => s.markdown),
+			attachments: () => screenshots.map(({ path, alt }) => ({ path, alt })),
 			clearPersisted,
 		},
 		uploads,

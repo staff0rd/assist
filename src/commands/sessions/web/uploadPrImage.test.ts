@@ -1,16 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const runGhImageMock = vi.fn();
-vi.mock("./runGhImage", () => ({
-	runGhImage: (...args: unknown[]) => runGhImageMock(...args),
-	GH_IMAGE_INSTALL_COMMAND: "gh extension install drogers0/gh-image",
-	GhImageUnavailableError: class GhImageUnavailableError extends Error {
-		name = "GhImageUnavailableError";
-	},
+const stageAttachmentMock = vi.fn();
+vi.mock("./stageAttachment", () => ({
+	stageAttachment: (...args: unknown[]) => stageAttachmentMock(...args),
 }));
 
-import { GhImageUnavailableError } from "./runGhImage";
 import { uploadPrImage } from "./uploadPrImage";
 
 function makeReq(
@@ -45,11 +40,14 @@ function makeRes() {
 
 describe("uploadPrImage", () => {
 	beforeEach(() => {
-		runGhImageMock.mockReset();
+		stageAttachmentMock.mockReset().mockResolvedValue({
+			dir: "/s/u",
+			filePath: "/s/u/shot.png",
+			alt: "shot",
+		});
 	});
 
-	it("hosts the image and returns its markdown", async () => {
-		runGhImageMock.mockResolvedValue("![shot](https://x/y.png)");
+	it("stages the file locally and returns its path and alt text", async () => {
 		const res = makeRes();
 		await uploadPrImage(
 			makeReq(
@@ -60,17 +58,12 @@ describe("uploadPrImage", () => {
 			res,
 		);
 		expect(res.status).toBe(200);
-		expect(res.body).toEqual({ markdown: "![shot](https://x/y.png)" });
-		expect(runGhImageMock).toHaveBeenCalledWith(expect.any(String), "/repo");
-	});
-
-	it("rejects a request with no cwd", async () => {
-		const res = makeRes();
-		await uploadPrImage(
-			makeReq("/api/pr-preview/upload-image", "image/png", Buffer.from([1])),
-			res,
+		expect(res.body).toEqual({ path: "/s/u/shot.png", alt: "shot" });
+		expect(stageAttachmentMock).toHaveBeenCalledWith(
+			"shot.png",
+			"image/png",
+			Buffer.from([1, 2, 3]),
 		);
-		expect(res.status).toBe(400);
 	});
 
 	it("rejects an empty upload", async () => {
@@ -87,8 +80,7 @@ describe("uploadPrImage", () => {
 		expect((res.body as { error: string }).error).toContain("Empty");
 	});
 
-	it("rejects a video over 100MB before running gh image", async () => {
-		runGhImageMock.mockResolvedValue("https://x/y.mp4");
+	it("rejects a video over 100MB before staging it", async () => {
 		const res = makeRes();
 		await uploadPrImage(
 			makeReq(
@@ -102,11 +94,10 @@ describe("uploadPrImage", () => {
 		expect((res.body as { error: string }).error).toBe(
 			"Video too large (max 100MB).",
 		);
-		expect(runGhImageMock).not.toHaveBeenCalled();
+		expect(stageAttachmentMock).not.toHaveBeenCalled();
 	});
 
 	it("accepts a 14MB video", async () => {
-		runGhImageMock.mockResolvedValue("https://x/y.mp4");
 		const res = makeRes();
 		await uploadPrImage(
 			makeReq(
@@ -117,22 +108,9 @@ describe("uploadPrImage", () => {
 			res,
 		);
 		expect(res.status).toBe(200);
-		expect(res.body).toEqual({ markdown: "https://x/y.mp4" });
 	});
 
 	it("keeps the 25MB cap for images", async () => {
-		runGhImageMock.mockResolvedValue("![shot](https://x/y.png)");
-		const res = makeRes();
-		await uploadPrImage(
-			makeReq(
-				"/api/pr-preview/upload-image?cwd=/repo&name=shot.png",
-				"image/png",
-				Buffer.alloc(11 * 1024 * 1024),
-			),
-			res,
-		);
-		expect(res.status).toBe(200);
-
 		const tooBig = makeRes();
 		await uploadPrImage(
 			makeReq(
@@ -148,8 +126,8 @@ describe("uploadPrImage", () => {
 		);
 	});
 
-	it("returns 501 when gh-image is unavailable", async () => {
-		runGhImageMock.mockRejectedValue(new GhImageUnavailableError("install it"));
+	it("reports a staging failure", async () => {
+		stageAttachmentMock.mockRejectedValue(new Error("disk full"));
 		const res = makeRes();
 		await uploadPrImage(
 			makeReq(
@@ -159,9 +137,7 @@ describe("uploadPrImage", () => {
 			),
 			res,
 		);
-		expect(res.status).toBe(501);
-		const body = res.body as { error: string; command: string };
-		expect(body.error).toContain("install it");
-		expect(body.command).toBe("gh extension install drogers0/gh-image");
+		expect(res.status).toBe(500);
+		expect((res.body as { error: string }).error).toBe("disk full");
 	});
 });

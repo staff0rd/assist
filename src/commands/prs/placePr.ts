@@ -1,10 +1,9 @@
 import { execFileSync } from "node:child_process";
-import {
-	buildCreateArgs,
-	buildEditArgs,
-	type CreateOptions,
-} from "./buildCreateArgs";
+import { buildCreateArgs, type CreateOptions } from "./buildCreateArgs";
+import type { PreviewAttachment } from "../sessions/shared/PreviewAttachment";
 import { recordPrActivity } from "./recordPrActivity";
+import { runGhWithAttachments } from "./runGhWithAttachments";
+import { buildEditArgs } from "./buildEditArgs";
 
 function hasUpstream(): boolean {
 	try {
@@ -31,18 +30,19 @@ export async function placePr(
 	title: string,
 	body: string,
 	options: CreateOptions,
+	attachments: PreviewAttachment[] = [],
 ): Promise<void> {
 	const args =
 		prNumber !== null
-			? buildEditArgs(prNumber, title, body)
-			: buildCreateArgs(title, body, options);
+			? buildEditArgs(prNumber, title, body, attachments)
+			: buildCreateArgs(title, body, options, attachments);
 
 	try {
 		if (prNumber === null && !options.head) ensureBranchPushed();
-		execFileSync("gh", args, { stdio: "inherit" });
 	} catch {
 		process.exit(1);
 	}
+	process.stdout.write(runGhWithAttachments(args, attachments));
 
 	await recordPrActivity();
 }

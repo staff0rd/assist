@@ -597,10 +597,10 @@ describe("PrPreviewPane inline comments", () => {
 		});
 	}
 
-	it("uploads a pasted screenshot and shows it in the Screenshots section", async () => {
+	it("stages a pasted screenshot and shows it in the Screenshots section", async () => {
 		const fetchMock = vi.fn().mockResolvedValue({
 			ok: true,
-			json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+			json: async () => ({ path: "/staged/u1/shot.png", alt: "shot" }),
 		});
 		vi.stubGlobal("fetch", fetchMock);
 
@@ -626,9 +626,9 @@ describe("PrPreviewPane inline comments", () => {
 		});
 		return {
 			promise,
-			succeed: async (markdown: string) => {
+			succeed: async (path: string) => {
 				await act(async () => {
-					settle({ ok: true, json: async () => ({ markdown }) });
+					settle({ ok: true, json: async () => ({ path, alt: "shot" }) });
 				});
 			},
 			fail: async (error: string) => {
@@ -653,7 +653,7 @@ describe("PrPreviewPane inline comments", () => {
 	}
 
 	const uploadingIndicators = () =>
-		screen.queryAllByText("Uploading screenshot or video…");
+		screen.queryAllByText("Attaching screenshot or video…");
 
 	it("shows an indicator per in-flight upload and keeps them independent", async () => {
 		const { first, second } = stubDeferredUploads();
@@ -665,11 +665,11 @@ describe("PrPreviewPane inline comments", () => {
 		pasteImage("two.png");
 		expect(uploadingIndicators()).toHaveLength(2);
 
-		await first.succeed("![one](https://x/one.png)");
+		await first.succeed("/staged/u1/one.png");
 		expect(uploadingIndicators()).toHaveLength(1);
 		expect(screen.getAllByAltText("screenshot")).toHaveLength(1);
 
-		await second.succeed("![two](https://x/two.png)");
+		await second.succeed("/staged/u2/two.png");
 		expect(uploadingIndicators()).toHaveLength(0);
 		const images = screen.getAllByAltText("screenshot") as HTMLImageElement[];
 		expect(images).toHaveLength(2);
@@ -688,12 +688,12 @@ describe("PrPreviewPane inline comments", () => {
 		pasteImage("one.png");
 		pasteImage("two.png");
 
-		await first.fail("gh image blew up");
-		expect(screen.getByText("gh image blew up")).toBeTruthy();
+		await first.fail("staging blew up");
+		expect(screen.getByText("staging blew up")).toBeTruthy();
 		expect(uploadingIndicators()).toHaveLength(1);
 
-		await second.succeed("![two](https://x/two.png)");
-		expect(screen.getByText("gh image blew up")).toBeTruthy();
+		await second.succeed("/staged/u2/two.png");
+		expect(screen.getByText("staging blew up")).toBeTruthy();
 		expect(screen.getAllByAltText("screenshot")).toHaveLength(1);
 	});
 
@@ -712,11 +712,11 @@ describe("PrPreviewPane inline comments", () => {
 		);
 
 		pasteImage("one.png");
-		await first.fail("gh image failed: SSO required");
+		await first.fail("Image too large (max 25MB).");
 
 		expect(
 			nearestDeclaredUserSelect(
-				screen.getByText("gh image failed: SSO required"),
+				screen.getByText("Image too large (max 25MB)."),
 			),
 		).toBe("text");
 		expect(
@@ -726,12 +726,12 @@ describe("PrPreviewPane inline comments", () => {
 		).toBe("none");
 	});
 
-	it("appends uploaded screenshots to the decision on approve, but not reject", async () => {
+	it("appends staged screenshots to the decision on approve, but not reject", async () => {
 		vi.stubGlobal(
 			"fetch",
 			vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+				json: async () => ({ path: "/staged/u1/shot.png", alt: "shot" }),
 			}),
 		);
 		const onDecision = vi.fn();
@@ -754,7 +754,7 @@ describe("PrPreviewPane inline comments", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Approve" }));
 		expect(onDecision).toHaveBeenLastCalledWith("approve", {
 			comments: [],
-			screenshots: ["![shot](https://x/y.png)"],
+			screenshots: [{ path: "/staged/u1/shot.png", alt: "shot" }],
 			reviewAfter: true,
 			announceAfter: true,
 			draft: false,
@@ -764,14 +764,14 @@ describe("PrPreviewPane inline comments", () => {
 
 	describe("screenshots across a re-proposed preview", () => {
 		const retry: PrPreview = { ...preview, requestId: "r2" };
-		const asset = "https://github.com/user-attachments/assets/9f1c-4a2b";
+		const staged = "/staged/u1/shot.png";
 
-		function stubUpload(markdown = `![shot](${asset})`) {
+		function stubUpload() {
 			vi.stubGlobal(
 				"fetch",
 				vi.fn().mockResolvedValue({
 					ok: true,
-					json: async () => ({ markdown }),
+					json: async () => ({ path: staged, alt: "shot" }),
 				}),
 			);
 		}
@@ -811,13 +811,15 @@ describe("PrPreviewPane inline comments", () => {
 				"screenshot",
 			)) as HTMLImageElement;
 			expect(img.getAttribute("src")).toBe(
-				`/api/pr-preview/image?url=${encodeURIComponent(asset)}&cwd=%2Frepo`,
+				`/api/pr-preview/image?path=${encodeURIComponent(staged)}`,
 			);
 
 			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
 			expect(onDecision).toHaveBeenLastCalledWith(
 				"approve",
-				expect.objectContaining({ screenshots: [`![shot](${asset})`] }),
+				expect.objectContaining({
+					screenshots: [{ path: staged, alt: "shot" }],
+				}),
 			);
 		});
 
@@ -1130,10 +1132,10 @@ describe("PrPreviewPane inline comments", () => {
 			);
 		});
 
-		it("uploads a pasted screenshot and shows it in the Screenshots section", async () => {
+		it("stages a pasted screenshot and shows it in the Screenshots section", async () => {
 			const fetchMock = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+				json: async () => ({ path: "/staged/u1/shot.png", alt: "shot" }),
 			});
 			vi.stubGlobal("fetch", fetchMock);
 
@@ -1154,7 +1156,7 @@ describe("PrPreviewPane inline comments", () => {
 				"fetch",
 				vi.fn().mockResolvedValue({
 					ok: true,
-					json: async () => ({ markdown: "![shot](https://x/y.png)" }),
+					json: async () => ({ path: "/staged/u1/shot.png", alt: "shot" }),
 				}),
 			);
 			const onDecision = vi.fn();
@@ -1177,7 +1179,9 @@ describe("PrPreviewPane inline comments", () => {
 			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
 			expect(onDecision).toHaveBeenLastCalledWith(
 				"approve",
-				expect.objectContaining({ screenshots: ["![shot](https://x/y.png)"] }),
+				expect.objectContaining({
+					screenshots: [{ path: "/staged/u1/shot.png", alt: "shot" }],
+				}),
 			);
 		});
 

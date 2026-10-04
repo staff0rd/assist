@@ -1,3 +1,4 @@
+import type { PreviewAttachment } from "../../../../../../../../shared/PreviewAttachment";
 import type { PrPreviewComment } from "../../../../../../../../shared/SessionInfoBase";
 import type { PrDecisionDetails } from "../../../../../../PrDecisionDetails";
 import type { PrPreviewChain } from "../../../../../../PrPreviewChain";
@@ -6,7 +7,7 @@ export function previewDecisionDetails(
 	approved: boolean,
 	comments: PrPreviewComment[],
 	chain: PrPreviewChain,
-	screenshots: string[],
+	screenshots: PreviewAttachment[],
 	body: string | undefined,
 ): PrDecisionDetails {
 	return {

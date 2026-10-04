@@ -11,7 +11,8 @@ describe("ScreenshotThumbnail", () => {
 			<ScreenshotThumbnail
 				screenshot={{
 					id: 1,
-					markdown: "![shot](https://x/y.png)",
+					path: "/staged/u1/shot.png",
+					alt: "shot",
 					url: "blob:image",
 					contentType: "image/png",
 				}}
@@ -27,7 +28,8 @@ describe("ScreenshotThumbnail", () => {
 			<ScreenshotThumbnail
 				screenshot={{
 					id: 1,
-					markdown: "https://github.com/user-attachments/assets/9f1c",
+					path: "/staged/u2/clip.mov",
+					alt: "clip",
 					url: "blob:video",
 					contentType: "video/quicktime",
 				}}

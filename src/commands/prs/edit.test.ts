@@ -35,9 +35,11 @@ import { edit } from "./edit";
 const EXISTING =
 	"## What\n\nold what\n\n## Why\n\nold why\n\n## How\n\nold how";
 
+const GH_OPTIONS = { encoding: "utf8", stdio: ["inherit", "pipe", "inherit"] };
+
 beforeEach(() => {
 	vi.clearAllMocks();
-	mockExecFileSync.mockReset();
+	mockExecFileSync.mockReset().mockReturnValue("");
 	mockGetCurrentPr.mockReturnValue({
 		number: 42,
 		title: "fix: current title",
@@ -66,7 +68,7 @@ describe("edit", () => {
 				"--body",
 				"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how",
 			],
-			{ stdio: "inherit" },
+			GH_OPTIONS,
 		);
 	});
 
@@ -84,7 +86,7 @@ describe("edit", () => {
 				"--body",
 				"## What\n\nold what\n\n## Why\n\nold why\n\n## How\n\nold how",
 			],
-			{ stdio: "inherit" },
+			GH_OPTIONS,
 		);
 	});
 
@@ -98,7 +100,7 @@ describe("edit", () => {
 					"## Why\n\nnew why\n\nResolves https://example.atlassian.net/browse/BAD-671",
 				),
 			]),
-			{ stdio: "inherit" },
+			GH_OPTIONS,
 		);
 	});
 
@@ -112,7 +114,7 @@ describe("edit", () => {
 					"## Why\n\nold why\n\nResolves https://example.atlassian.net/browse/BAD-671",
 				),
 			]),
-			{ stdio: "inherit" },
+			GH_OPTIONS,
 		);
 	});
 
@@ -163,7 +165,7 @@ describe("edit", () => {
 		expect(mockExecFileSync).toHaveBeenCalledWith(
 			"gh",
 			expect.arrayContaining([expect.stringContaining("## How\n\nnew how")]),
-			{ stdio: "inherit" },
+			GH_OPTIONS,
 		);
 	});
 
@@ -248,23 +250,35 @@ describe("edit", () => {
 					"--body",
 					"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how",
 				],
-				{ stdio: "inherit" },
+				GH_OPTIONS,
 			);
 		});
 
-		it("appends screenshots pasted into the preview pane", async () => {
+		it("references and attaches screenshots pasted into the preview pane", async () => {
 			mockRequestPreviewDecision.mockResolvedValue({
 				decision: "approve",
-				screenshots: ["![a](u1)", "![b](u2)"],
+				screenshots: [
+					{ path: "/s/a.png", alt: "a" },
+					{ path: "/s/b.mp4", alt: "b" },
+				],
 			});
 
 			await edit({ what: "new what" });
 
-			const body = (mockExecFileSync.mock.calls[0][1] as string[]).at(
-				-1,
-			) as string;
-			expect(body).toBe(
-				"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how\n\n## Screenshots\n\n![a](u1)\n\n![b](u2)",
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"edit",
+					"42",
+					"--body",
+					"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.mp4)",
+					"--attach",
+					"/s/a.png#a",
+					"--attach",
+					"/s/b.mp4#b",
+				],
+				{ encoding: "utf8", stdio: ["inherit", "pipe", "pipe"] },
 			);
 		});
 

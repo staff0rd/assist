@@ -46,9 +46,11 @@ const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 
 import { raise } from "./raise";
 
+const GH_OPTIONS = { encoding: "utf8", stdio: ["inherit", "pipe", "inherit"] };
+
 beforeEach(() => {
 	vi.clearAllMocks();
-	mockExecFileSync.mockReset();
+	mockExecFileSync.mockReset().mockReturnValue("");
 	mockFindCurrentPrNumber.mockReturnValue(null);
 	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	delete process.env.ASSIST_SESSION;
@@ -106,7 +108,7 @@ describe("raise", () => {
 					"--body",
 					"## What\n\nAdds x\n\n## Why\n\nNeeded x",
 				],
-				{ stdio: "inherit" },
+				GH_OPTIONS,
 			);
 		});
 
@@ -135,7 +137,7 @@ describe("raise", () => {
 						"Resolves https://example.atlassian.net/browse/BAD-671",
 					),
 				]),
-				{ stdio: "inherit" },
+				GH_OPTIONS,
 			);
 		});
 	});
@@ -203,7 +205,7 @@ describe("raise", () => {
 					"--body",
 					"## What\n\nw\n\n## Why\n\ny",
 				],
-				{ stdio: "inherit" },
+				GH_OPTIONS,
 			);
 		});
 	});
@@ -235,7 +237,7 @@ describe("raise", () => {
 					"--body",
 					"## What\n\nw\n\n## Why\n\ny",
 				],
-				{ stdio: "inherit" },
+				GH_OPTIONS,
 			);
 			expect(mockExecFileSync).not.toHaveBeenCalledWith(
 				"git",
@@ -280,7 +282,7 @@ describe("raise", () => {
 			expect(mockExecFileSync).toHaveBeenCalledWith(
 				"gh",
 				expect.arrayContaining(["pr", "create"]),
-				{ stdio: "inherit" },
+				GH_OPTIONS,
 			);
 		});
 
@@ -329,7 +331,7 @@ describe("raise", () => {
 			expect(mockExecFileSync).toHaveBeenCalledWith(
 				"gh",
 				expect.arrayContaining(["pr", "edit", "42"]),
-				{ stdio: "inherit" },
+				GH_OPTIONS,
 			);
 		});
 	});

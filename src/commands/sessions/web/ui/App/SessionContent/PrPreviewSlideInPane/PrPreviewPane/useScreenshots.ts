@@ -4,20 +4,17 @@ import {
 	loadPersistedScreenshots,
 	savePersistedScreenshots,
 } from "./useScreenshots/loadPersistedScreenshots";
-import { previewImageSrc } from "./useScreenshots/previewImageSrc";
+import { stagedPreviewSrc } from "./useScreenshots/stagedPreviewSrc";
+import type { PreviewAttachment } from "../../../../../../shared/PreviewAttachment";
 import { useApiNode } from "../../../../useApiNode";
 
-export type LocalScreenshot = {
-	markdown: string;
+export type LocalScreenshot = PreviewAttachment & {
 	url: string;
 	contentType: string;
 	id: number;
 };
 
-export function useScreenshots(
-	scope: string | undefined,
-	cwd: string | undefined,
-) {
+export function useScreenshots(scope: string | undefined) {
 	const [screenshots, setScreenshots] = useState<LocalScreenshot[]>([]);
 	const nextId = useRef(0);
 	const node = useApiNode();
@@ -26,11 +23,11 @@ export function useScreenshots(
 		setScreenshots(
 			loadPersistedScreenshots(scope).map((s) => ({
 				...s,
-				url: previewImageSrc(s.markdown, cwd, node),
+				url: stagedPreviewSrc(s.path, node),
 				id: nextId.current++,
 			})),
 		);
-	}, [scope, cwd, node]);
+	}, [scope, node]);
 
 	const add = useCallback(
 		(s: Omit<LocalScreenshot, "id">) => {

@@ -1,3 +1,4 @@
+import type { PreviewAttachment } from "./PreviewAttachment";
 import type {
 	PreviewChecklistItem,
 	PreviewDecision,
@@ -37,6 +38,15 @@ function toChecklist(value: unknown): PreviewChecklistItem[] | undefined {
 	});
 }
 
+function toAttachments(value: unknown): PreviewAttachment[] | undefined {
+	if (!Array.isArray(value)) return undefined;
+	return value.flatMap((entry) => {
+		const { path, alt } = (entry ?? {}) as Record<string, unknown>;
+		if (typeof path !== "string" || path === "") return [];
+		return [{ path, alt: typeof alt === "string" ? alt : "" }];
+	});
+}
+
 export function toPreviewDecision(
 	msg: DecisionMessage,
 ): PreviewDecision | null {
@@ -45,7 +55,7 @@ export function toPreviewDecision(
 		decision: msg.decision,
 		reason: msg.reason,
 		comments: Array.isArray(msg.comments) ? msg.comments : undefined,
-		screenshots: Array.isArray(msg.screenshots) ? msg.screenshots : undefined,
+		screenshots: toAttachments(msg.screenshots),
 		body: typeof msg.body === "string" ? msg.body : undefined,
 		reviewAfter: msg.reviewAfter === true,
 		announceAfter: msg.announceAfter === true,

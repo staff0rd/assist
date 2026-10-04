@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { PreviewAttachment } from "../../../../../../../shared/PreviewAttachment";
 import type { PrPreviewComment } from "../../../../../../../shared/SessionInfoBase";
 import { clearPersistedComments } from "../PersistedComment";
 import { initialPrChain } from "./usePrDecision/initialPrChain";
@@ -21,7 +22,10 @@ export function usePrDecision(
 	onDecision: OnDecision,
 	isPr: boolean,
 	resolvedDraft: boolean,
-	screenshots: { markdown: () => string[]; clearPersisted: () => void },
+	screenshots: {
+		attachments: () => PreviewAttachment[];
+		clearPersisted: () => void;
+	},
 	editedBody: () => string | undefined,
 ) {
 	const [chain, setChain] = useState<PrPreviewChain>(() =>
@@ -49,7 +53,7 @@ export function usePrDecision(
 				approved,
 				comments,
 				chain,
-				approved ? screenshots.markdown() : [],
+				approved ? screenshots.attachments() : [],
 				editedBody(),
 			),
 		);

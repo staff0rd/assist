@@ -1,32 +1,26 @@
 import { CircularProgress, Stack, Typography } from "@mui/material";
-import { CopyButton } from "./ScreenshotUploadStatus/CopyButton";
-import type { ScreenshotUpload, UploadError } from "../../useScreenshotUpload";
+import type { ScreenshotUpload } from "../../useScreenshotUpload";
 
 function UploadingRow() {
 	return (
 		<Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
 			<CircularProgress size={16} />
 			<Typography variant="caption" color="text.secondary">
-				Uploading screenshot or video…
+				Attaching screenshot or video…
 			</Typography>
 		</Stack>
 	);
 }
 
-function UploadErrorRow({ error }: { error: UploadError }) {
+function UploadErrorRow({ error }: { error: string }) {
 	return (
-		<Stack direction="row" spacing={0.5} sx={{ alignItems: "flex-start" }}>
-			<Typography
-				variant="caption"
-				color="error"
-				sx={{ flex: 1, wordBreak: "break-word" }}
-			>
-				{error.message}
-			</Typography>
-			{error.command && (
-				<CopyButton text={error.command} label="Copy install command" />
-			)}
-		</Stack>
+		<Typography
+			variant="caption"
+			color="error"
+			sx={{ wordBreak: "break-word" }}
+		>
+			{error}
+		</Typography>
 	);
 }
 

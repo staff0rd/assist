@@ -1,23 +1,13 @@
-import { rm } from "node:fs/promises";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
-import { getCwdParam } from "./getCwdParam";
-import {
-	GH_IMAGE_INSTALL_COMMAND,
-	GhImageUnavailableError,
-	runGhImage,
-} from "./runGhImage";
 import { readRequestBuffer } from "./readRequestBuffer";
+import { stageAttachment } from "./stageAttachment";
 import { uploadSizeLimit } from "./uploadSizeLimit";
-import { writeTempImage } from "./writeTempImage";
 
 export async function uploadPrImage(
 	req: IncomingMessage,
 	res: ServerResponse,
 ): Promise<void> {
-	const cwd = getCwdParam(req, res);
-	if (!cwd) return;
-
 	const url = new URL(req.url ?? "/", "http://localhost");
 	const name = url.searchParams.get("name") ?? "";
 	const contentType = req.headers["content-type"] ?? "";
@@ -33,22 +23,12 @@ export async function uploadPrImage(
 		return;
 	}
 
-	const { dir, filePath } = await writeTempImage(name, contentType, body);
 	try {
-		const markdown = await runGhImage(filePath, cwd);
-		respondJson(res, 200, { markdown });
+		const { filePath, alt } = await stageAttachment(name, contentType, body);
+		respondJson(res, 200, { path: filePath, alt });
 	} catch (error) {
-		if (error instanceof GhImageUnavailableError) {
-			respondJson(res, 501, {
-				error: error.message,
-				command: GH_IMAGE_INSTALL_COMMAND,
-			});
-		} else {
-			respondJson(res, 500, {
-				error: error instanceof Error ? error.message : "Upload failed",
-			});
-		}
-	} finally {
-		await rm(dir, { recursive: true, force: true }).catch(() => {});
+		respondJson(res, 500, {
+			error: error instanceof Error ? error.message : "Staging failed",
+		});
 	}
 }

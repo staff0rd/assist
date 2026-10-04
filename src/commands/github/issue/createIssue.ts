@@ -55,11 +55,13 @@ export async function createIssue(options: CreateIssueOptions): Promise<void> {
 		issuePreviewMetadata(resolved),
 	);
 
+	const attachments = decision?.screenshots ?? [];
 	const output = runGhIssueCreate(
 		title,
-		appendScreenshots(body, decision?.screenshots ?? []),
+		appendScreenshots(body, attachments),
 		options.repo,
 		resolved?.labels,
+		attachments,
 	);
 	console.log(output.trim());
 

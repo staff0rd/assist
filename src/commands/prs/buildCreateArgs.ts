@@ -1,3 +1,6 @@
+import type { PreviewAttachment } from "../sessions/shared/PreviewAttachment";
+import { attachArgs } from "./attachArgs";
+
 export type CreateOptions = {
 	title?: string;
 	body?: string;
@@ -11,16 +14,21 @@ export type CreateOptions = {
 	milestone?: string;
 };
 
-export function buildEditArgs(number: number, title: string, body: string) {
-	return ["pr", "edit", String(number), "--title", title, "--body", body];
-}
-
 export function buildCreateArgs(
 	title: string,
 	body: string,
 	options: CreateOptions,
+	attachments: PreviewAttachment[] = [],
 ) {
-	const args = ["pr", "create", "--title", title, "--body", body];
+	const args = [
+		"pr",
+		"create",
+		"--title",
+		title,
+		"--body",
+		body,
+		...attachArgs(attachments),
+	];
 
 	const valueFlags = [
 		["--base", options.base],
