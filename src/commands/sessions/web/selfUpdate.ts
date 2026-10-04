@@ -9,7 +9,10 @@ type SelfUpdateDeps = RestartWebDeps & {
 };
 
 async function runAssistUpdate(): Promise<void> {
-	const result = await runCommandToCompletion("assist", ["update"]);
+	const result = await runCommandToCompletion(process.execPath, [
+		process.argv[1],
+		"update",
+	]);
 	if (result.kind === "failed") throw new Error(result.message);
 	if (result.exitCode !== 0)
 		throw new Error(`assist update exited with code ${result.exitCode}`);
