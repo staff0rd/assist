@@ -1,3 +1,4 @@
+import { consumeSimulatedDivergence } from "./consumeSimulatedDivergence";
 import { fetchQuietly } from "./fetchQuietly";
 import { pollForMovement } from "./pollForMovement";
 import { readMovement } from "./readMovement";
@@ -26,6 +27,9 @@ export function waitForUpstream(options: WaitOptions): Promise<WatchOutcome> {
 	}
 
 	onStart?.(upstream);
+
+	if (consumeSimulatedDivergence(cwd))
+		return Promise.resolve({ kind: "simulated-divergence", upstream });
 
 	fetchQuietly(cwd, intervalMs);
 	const moved = readMovement(cwd);

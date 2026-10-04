@@ -15,6 +15,11 @@ export function describeOutcome(outcome: WatchOutcome): OutcomeReport {
 				exitCode: 2,
 				message: `no movement on ${outcome.upstream} after ${outcome.timeout}`,
 			};
+		case "simulated-divergence":
+			return {
+				exitCode: 3,
+				message: `simulated divergence from ${outcome.upstream} (requested by assist watch simulate-divergence; nothing has actually diverged)`,
+			};
 		case "unavailable":
 			return { exitCode: 1, message: `cannot wait: ${outcome.reason}` };
 		case "interrupted":

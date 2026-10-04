@@ -111,6 +111,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist branch <slug> [--jira <key>] [--from <ref>]` - Create and switch to a new branch off the fresh remote default (or `--from <ref>`)
 - `assist watch wait [--interval <d>] [--timeout <d>|none] [--pull] [--build [entry]]` - Wait until the current branch's upstream gains commits; `--pull` fast-forwards to them and `--build` then runs the `auto-build` run entry (or `[entry]`), showing its output only if it fails
 - `assist watch loop` - Keep the current branch pulled and built as its upstream moves
+- `assist watch simulate-divergence` - Make the next `assist watch wait` poll in this repo exit 3 as a simulated divergence, to test the watcher's escalation
 - `assist watch report [--from <sha>]` - Summarise recent commits and the restarts and sync they call for, since `<sha>` when given
 - `assist read-time <target> [--budget <duration>]` - Estimate how long a PR (number or URL), file or stdin (`-`) takes to read, against `--budget` (default 1m)
 - `assist prs` - List pull requests for the current repository

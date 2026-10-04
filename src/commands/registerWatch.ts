@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { simulateDivergence } from "./watch/simulateDivergence";
 import { watchLoop } from "./watch/watchLoop";
 import { watchReport } from "./watch/watchReport";
 import { watchWait } from "./watch/watchWait";
@@ -46,6 +47,13 @@ export function registerWatch(program: Command): void {
 			"Run assist watch wait --pull --build as a fresh child per lap, relaunching after exit 0, 2 or 4 or a signal kill, and exit with the child's code on 1, 3 or 130",
 		)
 		.action(() => watchLoop());
+
+	watchCommand
+		.command("simulate-divergence")
+		.description(
+			"Make the next assist watch wait poll in this repo exit 3 as if the branch had diverged, to test the watcher's divergence escalation",
+		)
+		.action(() => simulateDivergence());
 
 	watchCommand
 		.command("report")

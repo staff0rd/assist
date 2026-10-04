@@ -1,3 +1,4 @@
+import { consumeSimulatedDivergence } from "./consumeSimulatedDivergence";
 import { fetchQuietly } from "./fetchQuietly";
 import { readMovement } from "./readMovement";
 import type { WatchOutcome } from "./WatchOutcome";
@@ -28,6 +29,8 @@ export function pollForMovement(options: PollOptions): Promise<WatchOutcome> {
 		const onInterrupt = (): void => finish({ kind: "interrupted" });
 
 		const ticker = setInterval(() => {
+			if (consumeSimulatedDivergence(cwd))
+				return finish({ kind: "simulated-divergence", upstream });
 			fetchQuietly(cwd, intervalMs);
 			const found = readMovement(cwd);
 			if (found) finish({ kind: "moved", upstream, ...found });

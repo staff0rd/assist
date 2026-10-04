@@ -42,6 +42,16 @@ describe("describeOutcome", () => {
 		});
 	});
 
+	it("exits 3 for a simulated divergence, saying nothing really diverged", () => {
+		const report = describeOutcome({
+			kind: "simulated-divergence",
+			upstream: "origin/main",
+		});
+
+		expect(report.exitCode).toBe(3);
+		expect(report.message).toContain("nothing has actually diverged");
+	});
+
 	it("exits 1 with the reason when waiting is impossible", () => {
 		expect(
 			describeOutcome({

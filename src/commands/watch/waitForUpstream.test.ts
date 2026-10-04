@@ -1,5 +1,16 @@
 import { execFileSync } from "node:child_process";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import {
+	afterAll,
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
 vi.mock("node:child_process", async () =>
@@ -26,6 +37,11 @@ type GitState = {
 };
 
 let git: GitState;
+
+const sentinelDir = mkdtempSync(join(tmpdir(), "watch-sentinel-"));
+const sentinel = join(sentinelDir, "assist-simulate-divergence");
+
+afterAll(() => rmSync(sentinelDir, { recursive: true, force: true }));
 
 function installGit(overrides: Partial<GitState> = {}): void {
 	git = {
@@ -56,6 +72,8 @@ function installGit(overrides: Partial<GitState> = {}): void {
 		if (key === "rev-parse @") return `${git.head}\n`;
 		if (key === "rev-parse @{u}") return `${git.upstreamSha}\n`;
 		if (key === "rev-list --count @..@{u}") return `${git.behind}\n`;
+		if (key === "rev-parse --git-path assist-simulate-divergence")
+			return `${sentinel}\n`;
 		if (key === "fetch --quiet") {
 			git.fetches += 1;
 			git.onFetch?.(git);
@@ -77,6 +95,30 @@ describe("waitForUpstream", () => {
 
 	afterEach(() => {
 		vi.useRealTimers();
+		rmSync(sentinel, { force: true });
+	});
+
+	it("resolves a simulated divergence at startup and consumes the request", async () => {
+		writeFileSync(sentinel, "");
+
+		await expect(wait()).resolves.toEqual({
+			kind: "simulated-divergence",
+			upstream: "origin/assist-3",
+		});
+		expect(existsSync(sentinel)).toBe(false);
+		expect(git.fetches).toBe(0);
+	});
+
+	it("resolves a simulated divergence requested while polling on the next tick", async () => {
+		const pending = wait();
+		writeFileSync(sentinel, "");
+		await vi.advanceTimersByTimeAsync(30_000);
+
+		await expect(pending).resolves.toEqual({
+			kind: "simulated-divergence",
+			upstream: "origin/assist-3",
+		});
+		expect(existsSync(sentinel)).toBe(false);
 	});
 
 	it("resolves moved on the first check when the upstream is already ahead", async () => {
