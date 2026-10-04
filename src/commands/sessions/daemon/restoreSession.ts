@@ -14,16 +14,15 @@ import {
 } from "./runningSession";
 import { spawnPty } from "./spawnPty";
 import { isUpdate, updatedSession } from "./updatedSession";
+import { migrateClaudeWatcher } from "./migrateClaudeWatcher";
 import { needsWrapperRelaunch } from "./needsWrapperRelaunch";
 import {
 	isConsoleWatcher,
 	relaunchConsoleWatcher,
 } from "./relaunchConsoleWatcher";
 
-export function restoreSession(
-	id: string,
-	persisted: PersistedSession,
-): Session {
+export function restoreSession(id: string, stored: PersistedSession): Session {
+	const persisted = migrateClaudeWatcher(id, stored);
 	const base = restoreBase(id, persisted);
 
 	if (persisted.status === "stopped") return stoppedSession(base, persisted);

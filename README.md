@@ -504,7 +504,7 @@ assist config set next.excludeTypes Epic -g --repo
 Concurrent sessions in one repo can be isolated with native git worktrees instead of keeping multiple physical clones: see [docs/parallel-work.md](docs/parallel-work.md). All of these keys **default off** except `worktree.install`:
 
 - `worktree.enabled` (parallel work) — spill concurrent sessions into adjacent `<clone>-N` worktrees instead of sharing the clone's working copy.
-- `worktree.watcher` — keep a watcher session in the clone while a backlog run works in a worktree, so the clone stays pulled and rebuilt. If the branch diverges, the daemon starts one claude session in the clone to diagnose it, barred from force-pushing or resetting. Needs `worktree.enabled` and an `auto-build` run entry.
+- `worktree.watcher` — keep an `assist watch loop` console session in the clone while a backlog run works in a worktree, so the clone stays pulled and rebuilt. If the branch diverges, the daemon starts one claude session in the clone to diagnose it, barred from force-pushing or resetting. Needs `worktree.enabled` and an `auto-build` run entry.
 - `worktree.trunk` (trunk-based) — a worktree's branch tracks `origin/<trunk>` so commits land on the mainline, and jobs that commit (`backlog run`, PR checkouts) always run in a worktree, never the clone. Off, worktrees start off the remote default branch with no mainline tracking.
 - `worktree.includeDrafts` — give draft, bug and refine sessions their own `<clone>-N` instead of the clone's working copy.
 - `worktree.install` — how a new worktree installs its deps: `true` (default) auto-detects pnpm/yarn/bun/npm, a string is the install command, `false` skips it, and a list of paths installs in each in order.
@@ -515,7 +515,7 @@ None of them leaves permanent state on the clone, so turning parallel work back 
 
 Web server changes only need the `assist sessions` process restarted — sessions survive. Daemon/session-core changes need `assist daemon restart`: claude sessions are auto-respawned via `claude --resume` with scrollback starting fresh, while run sessions reappear as not-restored tiles that can be retried.
 
-A restart kills every managed session's pty, which also kills any background task running inside it. `daemon.log` names each session it kills, and the shutdown records the reason against them in `sessions.json` before the ptys die. On restore, a session the restart caught mid-turn is resumed with a prompt naming the restart instead of the generic one, and a session that was idle only because it was waiting on a background task — a `/watch` loop, say — is woken with the same prompt, naming the task ids that died. An idle session with no background work in flight is left idle, as before.
+A restart kills every managed session's pty, which also kills any background task running inside it. `daemon.log` names each session it kills, and the shutdown records the reason against them in `sessions.json` before the ptys die. On restore, a session the restart caught mid-turn is resumed with a prompt naming the restart instead of the generic one, and a session that was idle only because it was waiting on a background task is woken with the same prompt, naming the task ids that died. An idle session with no background work in flight is left idle, as before.
 
 ## Other config keys
 

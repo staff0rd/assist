@@ -552,8 +552,8 @@ describe("restoreSession", () => {
 		});
 	});
 
-	it("brings a watcher back flagged but unstarred, so its group stops floating", () => {
-		const persisted: PersistedSession = {
+	describe("for a persisted claude /watch watcher", () => {
+		const claudeWatcher: PersistedSession = {
 			name: "repo/Session 1",
 			commandType: "claude",
 			status: "running",
@@ -565,31 +565,68 @@ describe("restoreSession", () => {
 			watcher: true,
 		};
 
-		const session = restoreSession("1", persisted);
+		it("relaunches it as a console watcher in the same clone", () => {
+			const session = restoreSession("1", claudeWatcher);
 
-		expect(session.watcher).toBe(true);
-		expect(session.starred).toBe(false);
-		expect(session.cwd).toBe("/home/user/repo");
-		expect(session.status).toBe("running");
-	});
+			expect(spawnClaudeMock).not.toHaveBeenCalled();
+			expect(spawnPtyMock).toHaveBeenCalledWith(
+				["assist", "watch", "loop"],
+				"/home/user/repo",
+				"1",
+			);
+			expect(session).toMatchObject({
+				name: "assist watch loop",
+				commandType: "assist",
+				assistArgs: ["watch", "loop"],
+				status: "running",
+				watcher: true,
+				starred: false,
+				cwd: "/home/user/repo",
+			});
+			expect(session.initialPrompt).toBeUndefined();
+			expect(session.claudeSessionId).toBeUndefined();
+		});
 
-	it("brings a stopped watcher back flagged but not live, so the next run replaces it", () => {
-		const persisted: PersistedSession = {
-			name: "repo/Session 1",
-			commandType: "claude",
-			status: "stopped",
-			cwd: "/home/user/repo",
-			startedAt: 123,
-			initialPrompt: "/watch",
-			starred: true,
-			watcher: true,
-		};
+		it("relaunches it when it was waiting", () => {
+			const session = restoreSession("1", {
+				...claudeWatcher,
+				status: "waiting",
+			});
 
-		const session = restoreSession("1", persisted);
+			expect(spawnPtyMock).toHaveBeenCalled();
+			expect(session.status).toBe("running");
+		});
 
-		expect(session.watcher).toBe(true);
-		expect(session.status).toBe("stopped");
-		expect(session.pty).toBeNull();
+		it("logs the migration to daemon.log", () => {
+			restoreSession("1", claudeWatcher);
+
+			expect(daemonLog).toHaveBeenCalledWith(
+				"migrating claude /watch watcher session 1 to assist watch loop",
+			);
+		});
+
+		it("brings a stopped one back as a stopped console watcher, so the next run replaces it", () => {
+			const session = restoreSession("1", {
+				...claudeWatcher,
+				status: "stopped",
+			});
+
+			expect(spawnPtyMock).not.toHaveBeenCalled();
+			expect(session.watcher).toBe(true);
+			expect(session.commandType).toBe("assist");
+			expect(session.status).toBe("stopped");
+			expect(session.pty).toBeNull();
+		});
+
+		it("leaves a claude session that is not a watcher alone", () => {
+			const session = restoreSession("1", {
+				...claudeWatcher,
+				watcher: undefined,
+			});
+
+			expect(spawnClaudeMock).toHaveBeenCalled();
+			expect(session.commandType).toBe("claude");
+		});
 	});
 
 	describe("for a console watcher", () => {
