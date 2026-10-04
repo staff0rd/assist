@@ -1,3 +1,12 @@
+## [0.767.1](https://github.com/staff0rd/assist/compare/v0.767.0...v0.767.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* attach files gh accepts, sans alt ([c4fac65](https://github.com/staff0rd/assist/commit/c4fac65b3f56d7f0732a8498ffef07ea1f44b6d5))
+* persist watcher history per clone ([9248974](https://github.com/staff0rd/assist/commit/92489749f2f198c14d871fd786198f5f7c0181f8))
+* repaint only when ownership granted ([062006d](https://github.com/staff0rd/assist/commit/062006d86432d3fc410f9f5590e699c3ead9d8d6))
+
 # [0.767.0](https://github.com/staff0rd/assist/compare/v0.766.3...v0.767.0) (2026-10-04)
 
 
