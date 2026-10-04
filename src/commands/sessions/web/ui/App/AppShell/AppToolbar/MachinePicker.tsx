@@ -37,7 +37,7 @@ export function MachinePicker() {
 						}}
 						sx={{ fontSize: 13 }}
 					>
-						<NodeOptionLabel nodes={nodes} name={name} />
+						<NodeOptionLabel nodes={nodes} name={name} showVersion />
 					</MenuItem>
 				))}
 			</Menu>

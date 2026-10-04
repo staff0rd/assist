@@ -1,7 +1,7 @@
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { assistVersion } from "./VersionBadge/assistVersion";
+import { assistVersion } from "../../assistVersion";
 import { useDaemonVersionContext } from "../../useDaemonVersionContext";
 
 export function VersionBadge() {

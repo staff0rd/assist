@@ -6,15 +6,18 @@ import { HamburgerMenuDialogs } from "./HamburgerMenu/HamburgerMenuDialogs";
 import { MenuTriggerButton } from "./HamburgerMenu/MenuTriggerButton";
 import { type MenuDialog, useMenuDialog } from "./HamburgerMenu/useMenuDialog";
 import { useSelectedPeer } from "./HamburgerMenu/useSelectedPeer";
-import { RESTART_ITEM } from "./postRestart";
+import { menuTargetLabels } from "./HamburgerMenu/menuTargetLabels";
+import type { SessionInfo } from "../../types";
 
 export function HamburgerMenu({
 	mode,
 	toggle,
+	sessions,
 	reconnecting,
 }: {
 	mode: "light" | "dark";
 	toggle: () => void;
+	sessions: SessionInfo[];
 	reconnecting: boolean;
 }) {
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -40,7 +43,7 @@ export function HamburgerMenu({
 				<NodeNameLabel />
 				{hamburgerMenuItems({
 					mode,
-					restartLabel: peer ? `Restart ${peer}` : RESTART_ITEM.label,
+					...menuTargetLabels(peer),
 					onToggleColorMode: () => {
 						toggle();
 						close();
@@ -53,6 +56,7 @@ export function HamburgerMenu({
 			<HamburgerMenuDialogs
 				dialog={dialog}
 				peer={peer}
+				sessions={sessions}
 				reconnecting={reconnecting}
 				onClose={closeDialog}
 			/>

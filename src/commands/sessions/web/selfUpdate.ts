@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { runCommandToCompletion } from "../../run/runCommandToCompletion";
+import { linkedRequester } from "./linkedRequester";
 import { performRestart, type RestartWebDeps } from "./restartWeb";
 
 type SelfUpdateDeps = RestartWebDeps & {
@@ -15,12 +16,14 @@ async function runAssistUpdate(): Promise<void> {
 }
 
 export async function selfUpdate(
-	_req: IncomingMessage,
+	req: IncomingMessage,
 	res: ServerResponse,
 	deps: SelfUpdateDeps = {},
 ): Promise<void> {
 	const { runUpdate = runAssistUpdate, ...restartDeps } = deps;
-	console.log("self-update: requested by a linked node; running assist update");
+	console.log(
+		`self-update: requested ${linkedRequester(req)}; running assist update`,
+	);
 	try {
 		await runUpdate();
 	} catch (error) {

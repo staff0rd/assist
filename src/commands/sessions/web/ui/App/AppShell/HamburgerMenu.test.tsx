@@ -44,7 +44,12 @@ function renderMenu(
 						armUpdateReload,
 					}}
 				>
-					<HamburgerMenu mode="light" toggle={() => {}} reconnecting={false} />
+					<HamburgerMenu
+						mode="light"
+						toggle={() => {}}
+						sessions={[]}
+						reconnecting={false}
+					/>
 					<Routes>
 						<Route path="/config" element={<div>config page</div>} />
 						<Route path="/sessions" element={<div>sessions page</div>} />
@@ -197,6 +202,23 @@ describe("HamburgerMenu", () => {
 		);
 		await waitFor(() => expect(screen.queryByText("Restart win?")).toBeNull());
 		expect(reload).not.toHaveBeenCalled();
+	});
+
+	it("updates the selected peer as a card on that node", () => {
+		const launchAssist = vi.fn();
+		const armUpdateReload = vi.fn();
+		renderMenu(launchAssist, armUpdateReload, "win");
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		expect(screen.queryByText("Update assist")).toBeNull();
+		fireEvent.click(screen.getByText("Update assist on win"));
+		expect(screen.getByText("Update assist on win?")).toBeTruthy();
+		fireEvent.click(screen.getByRole("button", { name: "Update" }));
+
+		expect(launchAssist).toHaveBeenCalledWith(["update"], undefined, {
+			node: "win",
+		});
+		expect(armUpdateReload).not.toHaveBeenCalled();
 	});
 
 	it("does not restart when the restart is cancelled", () => {

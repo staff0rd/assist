@@ -11,6 +11,7 @@ import { RenderHudMenuItem } from "./hamburgerMenuItems/RenderHudMenuItem";
 type HamburgerMenuHandlers = {
 	mode: "light" | "dark";
 	restartLabel: string;
+	updateLabel: string;
 	onToggleColorMode: () => void;
 	onShowShortcuts: () => void;
 	onRestart: () => void;
@@ -20,6 +21,7 @@ type HamburgerMenuHandlers = {
 export function hamburgerMenuItems({
 	mode,
 	restartLabel,
+	updateLabel,
 	onToggleColorMode,
 	onShowShortcuts,
 	onRestart,
@@ -50,7 +52,7 @@ export function hamburgerMenuItems({
 			<ListItemIcon>
 				<SystemUpdateAltIcon fontSize="small" />
 			</ListItemIcon>
-			<ListItemText>Update assist</ListItemText>
+			<ListItemText>{updateLabel}</ListItemText>
 		</MenuItem>,
 	];
 }

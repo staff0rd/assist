@@ -8,6 +8,7 @@ import { respondJson } from "../../../shared/web";
 import { newTraceId, TRACE_HEADER } from "../shared/newTraceId";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { boundUpstream } from "./boundUpstream";
+import { peerTimeoutFor } from "./peerTimeoutFor";
 import { relayPeerResponse } from "./relayPeerResponse";
 
 const LINKED_FROM_HEADER = "x-assist-linked-from";
@@ -38,7 +39,7 @@ export function forwardToPeer(
 			},
 			(peer) => relayPeerResponse(peer, res, url.pathname, log, resolve),
 		);
-		boundUpstream(upstream, res);
+		boundUpstream(upstream, res, peerTimeoutFor(url.pathname));
 		upstream.on("error", (error) => {
 			log(`failed: ${error.message}`);
 			if (res.headersSent) res.destroy();

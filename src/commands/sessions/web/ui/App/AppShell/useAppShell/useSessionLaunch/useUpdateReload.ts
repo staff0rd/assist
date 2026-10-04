@@ -5,7 +5,7 @@ import {
 	RELOAD_FLAG,
 	useReloadNotice,
 } from "./useUpdateReload/useReloadNotice";
-import { useUpdateCompletion } from "./useUpdateReload/useUpdateCompletion";
+import { useUpdateCompletion } from "../../useUpdateCompletion";
 import { useWebserverRestart } from "../../useWebserverRestart";
 
 export function useUpdateReload(

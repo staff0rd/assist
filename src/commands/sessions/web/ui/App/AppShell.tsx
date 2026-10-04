@@ -30,20 +30,21 @@ export function AppShell({
 				<HamburgerMenu
 					mode={mode}
 					toggle={toggle}
+					sessions={socket.sessions}
 					reconnecting={socket.reconnecting}
 				/>
+				<AppBar position="fixed" elevation={1} sx={appBarSx}>
+					<AppToolbar socket={socket} selection={selection} />
+				</AppBar>
+				<Toolbar variant="dense" sx={toolbarSx} />
+				<ServerRunLayer socket={socket}>
+					<AppRoutes socket={socket} />
+				</ServerRunLayer>
+				<AppOverlays
+					socket={socket}
+					onViewLaunchedSession={viewLaunchedSession}
+				/>
 			</DaemonVersionContext.Provider>
-			<AppBar position="fixed" elevation={1} sx={appBarSx}>
-				<AppToolbar socket={socket} selection={selection} />
-			</AppBar>
-			<Toolbar variant="dense" sx={toolbarSx} />
-			<ServerRunLayer socket={socket}>
-				<AppRoutes socket={socket} />
-			</ServerRunLayer>
-			<AppOverlays
-				socket={socket}
-				onViewLaunchedSession={viewLaunchedSession}
-			/>
 		</AppShellProviders>
 	);
 }
