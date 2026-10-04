@@ -66,7 +66,9 @@ describe("escalateDivergence", () => {
 		expect(opts?.prompt).toContain(
 			"fatal: Not possible to fast-forward, aborting.",
 		);
-		expect(opts?.prompt).toContain("Do not force-push, `git reset`");
+		expect(opts?.prompt).toContain("Never force-push, `git reset`");
+		expect(opts?.prompt).toContain("git rebase @{u}");
+		expect(opts?.prompt).toContain("Run /close");
 		expect(logMock).toHaveBeenCalledWith(
 			expect.stringContaining("spawned escalation session 9"),
 		);

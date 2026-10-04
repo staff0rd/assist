@@ -13,6 +13,7 @@ export type StatusChangeDeps = {
 	notify: () => void;
 	reuseForRun: (session: Session, itemId: number) => void;
 	escalateDivergence?: (watcher: Session) => void;
+	resumeWatcher?: (escalation: Session) => void;
 };
 
 export function finishStatusChange(
@@ -29,6 +30,7 @@ export function finishStatusChange(
 	if (status !== "stopped") session.undurable = undefined;
 	if (session.watcher === true && exitCode === DIVERGED_EXIT_CODE)
 		deps.escalateDivergence?.(session);
+	if (status === "done" || status === "error") deps.resumeWatcher?.(session);
 	const autoRun = shouldAutoRun(session);
 	if (autoRun.run) {
 		deps.reuseForRun(session, autoRun.itemId);

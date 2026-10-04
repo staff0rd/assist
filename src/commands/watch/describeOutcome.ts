@@ -1,4 +1,5 @@
 import type { OutcomeReport } from "./OutcomeReport";
+import { simulatedDivergenceNote } from "./simulatedDivergenceNote";
 import type { WatchOutcome } from "./WatchOutcome";
 
 const short = (sha: string): string => sha.slice(0, 7);
@@ -18,7 +19,7 @@ export function describeOutcome(outcome: WatchOutcome): OutcomeReport {
 		case "simulated-divergence":
 			return {
 				exitCode: 3,
-				message: `simulated divergence from ${outcome.upstream} (requested by assist watch simulate-divergence; nothing has actually diverged)`,
+				message: `simulated divergence from ${outcome.upstream} (${simulatedDivergenceNote})`,
 			};
 		case "unavailable":
 			return { exitCode: 1, message: `cannot wait: ${outcome.reason}` };

@@ -63,6 +63,38 @@ describe("applyStatusChange divergence escalation", () => {
 
 		expect(escalateDivergence).not.toHaveBeenCalled();
 	});
+
+	it.each(["done", "error"] as const)(
+		"offers an ended (%s) session to resume its clone's watcher",
+		(status) => {
+			const escalation = makeSession({
+				status: "running",
+				divergenceEscalation: true,
+			});
+			const resumeWatcher = vi.fn();
+
+			applyStatusChange(escalation, status, 0, deps({ resumeWatcher }));
+
+			expect(resumeWatcher).toHaveBeenCalledWith(escalation);
+		},
+	);
+
+	it("does not resume the watcher while the escalation is still waiting", () => {
+		const escalation = makeSession({
+			status: "running",
+			divergenceEscalation: true,
+		});
+		const resumeWatcher = vi.fn();
+
+		applyStatusChange(
+			escalation,
+			"waiting",
+			undefined,
+			deps({ resumeWatcher }),
+		);
+
+		expect(resumeWatcher).not.toHaveBeenCalled();
+	});
 });
 
 describe("applyStatusChange worktree reap gating", () => {
