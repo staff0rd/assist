@@ -1,7 +1,8 @@
 import type { Chord } from "../../../../chordKeys";
-import { shortcutRegistry } from "../../../../shortcutRegistry";
 
-export function navTabChord(index: number): Chord {
-	const [modifier] = shortcutRegistry.navTab.chords[0];
-	return [modifier, String(index + 1)];
+export function navTabChord(
+	navTabChords: readonly Chord[],
+	index: number,
+): Chord {
+	return [...navTabChords[0].slice(0, -1), String(index + 1)];
 }

@@ -1,21 +1,26 @@
-import { shortcutRegistry } from "../../../../../../../shortcutRegistry";
+import { hotkeyBindingsStore } from "../../../../../../../hotkeyBindingsStore";
+import { resolveShortcut } from "../../../../../../../resolveShortcut";
+import type { ShortcutName } from "../../../../../../../shortcutRegistry";
 
-const APP_HOTKEYS = [
-	shortcutRegistry.quickOpen,
-	shortcutRegistry.newSession,
-	shortcutRegistry.navTab,
-	shortcutRegistry.shortcutsSheet,
-	shortcutRegistry.focusSidebar,
-	shortcutRegistry.focusTerminal,
-	shortcutRegistry.toggleDiff,
-	shortcutRegistry.openConfig,
-	shortcutRegistry.openMenu,
-	shortcutRegistry.focusRepoPicker,
-	shortcutRegistry.focusAddAgent,
-	shortcutRegistry.focusVsCode,
-	shortcutRegistry.focusDone,
+const APP_HOTKEYS: ShortcutName[] = [
+	"quickOpen",
+	"newSession",
+	"navTab",
+	"shortcutsSheet",
+	"focusSidebar",
+	"focusTerminal",
+	"toggleDiff",
+	"openConfig",
+	"openMenu",
+	"focusRepoPicker",
+	"focusAddAgent",
+	"focusVsCode",
+	"focusDone",
 ];
 
 export function isAppHotkey(event: KeyboardEvent): boolean {
-	return APP_HOTKEYS.some((shortcut) => shortcut.matches(event));
+	const bindings = hotkeyBindingsStore.get();
+	return APP_HOTKEYS.some((name) =>
+		resolveShortcut(name, bindings).matches(event),
+	);
 }

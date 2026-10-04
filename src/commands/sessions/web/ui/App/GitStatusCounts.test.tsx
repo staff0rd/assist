@@ -13,7 +13,6 @@ import { GitStatusCounts } from "./GitStatusCounts";
 import type { DiffPanel } from "./toggleDiffPanel";
 import { DiffPanelsProvider, useDiffPanels } from "./useDiffPanels";
 import { useGitStatusCounts } from "./GitStatusCounts/useGitStatusCounts";
-import { formatChord } from "./formatChord";
 import { openTooltipChords } from "./openTooltipChords";
 import { shortcutRegistry } from "./shortcutRegistry";
 
@@ -165,9 +164,6 @@ describe("GitStatusCounts diff panel", () => {
 		);
 
 		expect(text).toContain(shortcutRegistry.toggleDiff.label);
-		expect(chords).toEqual(
-			shortcutRegistry.toggleDiff.chords.map((chord) => formatChord(chord)),
-		);
 		expect(chords).toEqual(["Alt+D"]);
 	});
 

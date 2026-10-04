@@ -27,7 +27,12 @@ let frames: FrameRequestCallback[] = [];
 
 function pressJumpKey() {
 	document.dispatchEvent(
-		new KeyboardEvent("keydown", { key: ".", ctrlKey: true, bubbles: true }),
+		new KeyboardEvent("keydown", {
+			key: ".",
+			code: "Period",
+			ctrlKey: true,
+			bubbles: true,
+		}),
 	);
 	const pending = frames;
 	frames = [];

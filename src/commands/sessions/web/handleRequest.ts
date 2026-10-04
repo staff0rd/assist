@@ -18,6 +18,7 @@ import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
 import { harnessCapabilities } from "./harnessCapabilities";
 import { health } from "./health";
+import { hotkeyBindings } from "./hotkeyBindings";
 import { jiraSite } from "./jiraSite";
 import { listFiles } from "./listFiles";
 import { listNewsItems } from "./listNewsItems";
@@ -100,6 +101,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/harness": harnessCapabilities,
 	"GET /api/session-layout": sessionLayout,
 	"GET /api/session-view": sessionView,
+	"GET /api/hotkeys": hotkeyBindings,
 	"GET /api/new-session-defaults": newSessionDefaults,
 	"GET /api/pr-status": prStatus,
 	"GET /api/server-runs": handleServerRuns,

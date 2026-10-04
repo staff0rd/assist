@@ -5,7 +5,7 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { CloseViewButton } from "../../../../../CloseViewButton";
 import type { FileViewMode } from "../FileViewMode";
-import { shortcutRegistry } from "../../../../../shortcutRegistry";
+import { useShortcut } from "../../../../../useShortcut";
 import { formatChord } from "../../../../../formatChord";
 
 const actionsSx = {
@@ -28,6 +28,7 @@ export function FileViewActions({
 	saving: boolean;
 	dirty: boolean;
 }) {
+	const saveChords = useShortcut("save").chords;
 	return (
 		<Box sx={actionsSx}>
 			{mode && (
@@ -49,7 +50,7 @@ export function FileViewActions({
 				startIcon={<SaveIcon sx={{ fontSize: 16 }} />}
 				onClick={onSave}
 				disabled={saving || !dirty}
-				title={`Save (${formatChord(shortcutRegistry.save.chords[0])})`}
+				title={`Save (${formatChord(saveChords[0])})`}
 			>
 				Save
 			</Button>

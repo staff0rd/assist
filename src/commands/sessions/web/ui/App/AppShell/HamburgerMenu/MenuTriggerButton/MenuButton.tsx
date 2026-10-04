@@ -3,8 +3,8 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { useCallback, useRef } from "react";
 import { ChordTooltipTitle } from "../../../ChordTooltipTitle";
-import { shortcutRegistry } from "../../../shortcutRegistry";
 import { useCaptureHotkey } from "../../../useCaptureHotkey";
+import { useShortcut } from "../../../useShortcut";
 
 export function MenuButton({
 	open,
@@ -14,8 +14,9 @@ export function MenuButton({
 	onOpen: (anchor: HTMLElement) => void;
 }) {
 	const buttonRef = useRef<HTMLButtonElement>(null);
+	const { matches, chords } = useShortcut("openMenu");
 	useCaptureHotkey(
-		shortcutRegistry.openMenu.matches,
+		matches,
 		useCallback(() => {
 			if (buttonRef.current) onOpen(buttonRef.current);
 		}, [onOpen]),
@@ -24,12 +25,7 @@ export function MenuButton({
 	return (
 		<Tooltip
 			describeChild
-			title={
-				<ChordTooltipTitle
-					label="Menu"
-					chords={shortcutRegistry.openMenu.chords}
-				/>
-			}
+			title={<ChordTooltipTitle label="Menu" chords={chords} />}
 		>
 			<IconButton
 				ref={buttonRef}

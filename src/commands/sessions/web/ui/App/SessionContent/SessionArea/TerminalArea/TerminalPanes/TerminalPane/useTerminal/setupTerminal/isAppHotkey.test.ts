@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { defaultHotkeys } from "../../../../../../../../../../../../shared/hotkeys/defaultHotkeys";
+import { hotkeyBindingsStore } from "../../../../../../../hotkeyBindingsStore";
 import { isAppHotkey } from "./isAppHotkey";
 
 function event(overrides: Partial<KeyboardEvent>): KeyboardEvent {
@@ -40,6 +42,21 @@ describe("isAppHotkey", () => {
 			"KeyC",
 		])
 			expect(isAppHotkey(event({ altKey: true, code }))).toBe(true);
+	});
+
+	it("follows a remapped binding", () => {
+		hotkeyBindingsStore.set({
+			...defaultHotkeys,
+			focusTerminal: ["Ctrl+Alt+J"],
+		});
+		try {
+			expect(isAppHotkey(event({ altKey: true, code: "KeyS" }))).toBe(false);
+			expect(
+				isAppHotkey(event({ ctrlKey: true, altKey: true, code: "KeyJ" })),
+			).toBe(true);
+		} finally {
+			hotkeyBindingsStore.set(defaultHotkeys);
+		}
 	});
 
 	it("passes ordinary terminal keys through", () => {

@@ -1,7 +1,8 @@
 import Tooltip from "@mui/material/Tooltip";
 import type { ReactElement } from "react";
 import { ChordTooltipTitle } from "../ChordTooltipTitle";
-import { type ShortcutName, shortcutRegistry } from "../shortcutRegistry";
+import type { ShortcutName } from "../shortcutRegistry";
+import { useShortcut } from "../useShortcut";
 
 export function ShortcutTooltip({
 	label,
@@ -16,14 +17,21 @@ export function ShortcutTooltip({
 	return (
 		<Tooltip
 			describeChild
-			title={
-				<ChordTooltipTitle
-					label={label}
-					chords={shortcutRegistry[shortcut].chords}
-				/>
-			}
+			title={<ShortcutTooltipTitle label={label} shortcut={shortcut} />}
 		>
 			{children}
 		</Tooltip>
+	);
+}
+
+function ShortcutTooltipTitle({
+	label,
+	shortcut,
+}: {
+	label: string;
+	shortcut: ShortcutName;
+}) {
+	return (
+		<ChordTooltipTitle label={label} chords={useShortcut(shortcut).chords} />
 	);
 }

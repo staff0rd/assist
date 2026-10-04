@@ -27,6 +27,7 @@ import { rootConfigHelp } from "./rootConfigHelp";
 import { runConfigHelp } from "./run/runConfigHelp";
 import { seqConfigHelp } from "./seq/seqConfigHelp";
 import { nodesConfigHelp } from "./sessions/nodes/nodesConfigHelp";
+import { hotkeysConfigHelp } from "./sessions/hotkeysConfigHelp";
 import { sessionsConfigHelp } from "./sessions/sessionsConfigHelp";
 import { webConfigHelp } from "./sessions/webConfigHelp";
 import { slackConfigHelp } from "./slack/slackConfigHelp";
@@ -65,6 +66,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...sessionsConfigHelp,
 	...nodesConfigHelp,
 	...webConfigHelp,
+	...hotkeysConfigHelp,
 	...slackConfigHelp,
 	...sqlConfigHelp,
 	...transcriptConfigHelp,

@@ -123,7 +123,11 @@ function hideSidebarButton(): HTMLElement {
 }
 
 function pressNextWaitingHotkey() {
-	fireEvent.keyDown(globalThis.window, { key: ".", ctrlKey: true });
+	fireEvent.keyDown(globalThis.window, {
+		key: ".",
+		code: "Period",
+		ctrlKey: true,
+	});
 }
 
 describe("AppLayout sidebar collapse", () => {

@@ -1,6 +1,6 @@
-import { shortcutRegistry } from "../../../shortcutRegistry";
 import { useCaptureHotkey } from "../../../useCaptureHotkey";
+import { useShortcut } from "../../../useShortcut";
 
 export function useQuickOpenHotkey(open: () => void): void {
-	useCaptureHotkey(shortcutRegistry.quickOpen.matches, open);
+	useCaptureHotkey(useShortcut("quickOpen").matches, open);
 }

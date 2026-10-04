@@ -7,8 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { ShortcutChords } from "../../../ShortcutChords";
-import { shortcutRegistry } from "../../../shortcutRegistry";
-import { groupShortcuts } from "./ShortcutsDialog/groupShortcuts";
+import { useShortcutGroups } from "./ShortcutsDialog/useShortcutGroups";
 
 const titleSx = {
 	display: "flex",
@@ -23,9 +22,9 @@ const rowSx = {
 	gap: 2,
 	py: 0.5,
 } as const;
-const groups = groupShortcuts(Object.values(shortcutRegistry));
 
 export function ShortcutsDialog({ onClose }: { onClose: () => void }) {
+	const groups = useShortcutGroups();
 	return (
 		<Dialog
 			open

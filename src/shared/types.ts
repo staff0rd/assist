@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { adviceFragmentNames } from "./adviceFragmentNames";
+import { hotkeysSchema } from "./hotkeys/hotkeysSchema";
 import { runConfigSchema, runLinkSchema } from "./runConfigSchema";
 import { secretConfigValue } from "./secretConfigValue";
 import { sessionLinkSchema } from "./sessionLinkSchema";
@@ -280,6 +281,7 @@ const assistConfigShape = {
 			newSessionMode: z
 				.enum(["draft", "bug", "prompt", "design"])
 				.default("draft"),
+			hotkeys: hotkeysSchema.optional(),
 		})
 		.optional(),
 	database: z

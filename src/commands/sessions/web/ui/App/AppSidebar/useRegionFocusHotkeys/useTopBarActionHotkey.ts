@@ -1,6 +1,7 @@
 import { useCallback } from "react";
-import { type ShortcutName, shortcutRegistry } from "../../shortcutRegistry";
+import type { ShortcutName } from "../../shortcutRegistry";
 import { useCaptureHotkey } from "../../useCaptureHotkey";
+import { useShortcut } from "../../useShortcut";
 import { focusRegion } from "../../focusRegion";
 import { topBarActionRegion } from "./useTopBarActionHotkey/topBarActionRegion";
 
@@ -17,7 +18,7 @@ export function useTopBarActionHotkey(
 	},
 ): void {
 	useCaptureHotkey(
-		shortcutRegistry[shortcut].matches,
+		useShortcut(shortcut).matches,
 		useCallback(() => {
 			if (!activeId) return;
 			showSessions();

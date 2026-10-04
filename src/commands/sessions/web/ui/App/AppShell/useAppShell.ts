@@ -5,6 +5,7 @@ import { useRepoSelection } from "./useAppShell/useRepoSelection";
 import { useSessionLaunch } from "./useAppShell/useSessionLaunch";
 import { useSessionSocket } from "../../useSessionSocket";
 import { useSidebarCollapsed } from "./useAppShell/useSidebarCollapsed";
+import { useLoadHotkeyBindings } from "./useAppShell/useLoadHotkeyBindings";
 import { useTopBarLayout } from "./useAppShell/useTopBarLayout";
 
 export function useAppShell() {
@@ -27,6 +28,7 @@ export function useAppShell() {
 	});
 	const { launch, viewLaunchedSession } = useSessionLaunch(socket);
 	const topBar = useTopBarLayout();
+	useLoadHotkeyBindings();
 	const sidebarCollapse = useSidebarCollapsed();
 	trackChangedValues("shell", {
 		...socket,

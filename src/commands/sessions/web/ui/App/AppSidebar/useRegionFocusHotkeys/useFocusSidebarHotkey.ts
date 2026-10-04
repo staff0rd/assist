@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { shortcutRegistry } from "../../shortcutRegistry";
 import type { SidebarTab } from "../../../types";
 import { useCaptureHotkey } from "../../useCaptureHotkey";
+import { useShortcut } from "../../useShortcut";
 import { useSidebarCollapsedContext } from "../../useSidebarCollapsedContext";
 import { focusRegion } from "../../focusRegion";
 import { sessionRegion } from "./sessionRegion";
@@ -22,7 +22,7 @@ export function useFocusSidebarHotkey({
 	const { collapsed, onToggleCollapsed } = useSidebarCollapsedContext();
 
 	useCaptureHotkey(
-		shortcutRegistry.focusSidebar.matches,
+		useShortcut("focusSidebar").matches,
 		useCallback(() => {
 			if (!activeId) return;
 			showSessions();

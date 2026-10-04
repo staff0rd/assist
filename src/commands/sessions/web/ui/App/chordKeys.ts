@@ -7,6 +7,7 @@ const MAC_GLYPHS: Record<string, string> = {
 	Alt: "⌥",
 	Shift: "⇧",
 	Mod: "⌘",
+	Meta: "⌘",
 };
 const OTHER_GLYPHS: Record<string, string> = { Mod: "Ctrl" };
 

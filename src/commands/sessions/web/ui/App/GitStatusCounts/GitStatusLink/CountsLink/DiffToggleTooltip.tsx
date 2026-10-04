@@ -1,7 +1,7 @@
 import Tooltip from "@mui/material/Tooltip";
 import type { ReactElement } from "react";
 import { ChordTooltipTitle } from "../../../ChordTooltipTitle";
-import { shortcutRegistry } from "../../../shortcutRegistry";
+import { useShortcut } from "../../../useShortcut";
 
 export function DiffToggleTooltip({
 	show,
@@ -10,7 +10,7 @@ export function DiffToggleTooltip({
 	show: boolean;
 	children: ReactElement;
 }) {
-	const { label, chords } = shortcutRegistry.toggleDiff;
+	const { label, chords } = useShortcut("toggleDiff");
 	return (
 		<Tooltip
 			describeChild

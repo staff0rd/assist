@@ -1,9 +1,9 @@
 import { useTheme } from "@mui/material/styles";
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { shortcutRegistry } from "../shortcutRegistry";
 import type { SessionInfo, SidebarTab } from "../../types";
 import { useCaptureHotkey } from "../useCaptureHotkey";
+import { useShortcut } from "../useShortcut";
 import { focusRegion } from "../focusRegion";
 import { sessionRegion } from "./useRegionFocusHotkeys/sessionRegion";
 import { useFocusSidebarHotkey } from "./useRegionFocusHotkeys/useFocusSidebarHotkey";
@@ -38,7 +38,7 @@ export function useRegionFocusHotkeys({
 	});
 
 	useCaptureHotkey(
-		shortcutRegistry.focusTerminal.matches,
+		useShortcut("focusTerminal").matches,
 		useCallback(() => {
 			if (!activeId) return;
 			showSessions();

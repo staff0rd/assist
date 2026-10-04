@@ -2,9 +2,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { defaultHotkeys } from "../../../../../../../shared/hotkeys/defaultHotkeys";
+import { hotkeyBindingsStore } from "../../hotkeyBindingsStore";
 import { openTooltipChords } from "../../openTooltipChords";
-import { shortcutRegistry } from "../../shortcutRegistry";
-import { formatChord } from "../../formatChord";
 import { NewSessionButton } from "./NewSessionButton";
 
 let mac = false;
@@ -44,10 +44,7 @@ describe("NewSessionButton", () => {
 			screen.getByRole("button", { name: "New session" }),
 		);
 
-		expect(text).toContain(shortcutRegistry.newSession.label);
-		expect(chords).toEqual(
-			shortcutRegistry.newSession.chords.map((chord) => formatChord(chord)),
-		);
+		expect(text).toContain("New session");
 		expect(chords).toEqual(["Ctrl+N", "Alt+N"]);
 	});
 
@@ -60,6 +57,22 @@ describe("NewSessionButton", () => {
 			"focus",
 		);
 
-		expect(chords).toEqual(["⌃N", "⌥N"]);
+		expect(chords).toEqual(["⌘N", "⌥N"]);
+	});
+
+	it("shows a remapped chord with macOS glyphs", async () => {
+		mac = true;
+		hotkeyBindingsStore.set({ ...defaultHotkeys, newSession: ["Mod+Shift+K"] });
+		try {
+			renderAt("/");
+
+			const { chords } = await openTooltipChords(
+				screen.getByRole("button", { name: "New session" }),
+			);
+
+			expect(chords).toEqual(["⌘⇧K"]);
+		} finally {
+			hotkeyBindingsStore.set(defaultHotkeys);
+		}
 	});
 });

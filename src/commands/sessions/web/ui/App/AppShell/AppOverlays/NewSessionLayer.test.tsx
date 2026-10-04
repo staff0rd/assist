@@ -78,7 +78,7 @@ function repoInput() {
 
 async function openDialog() {
 	await act(async () => {});
-	fireEvent.keyDown(document, { key: "n", ctrlKey: true });
+	fireEvent.keyDown(document, { key: "n", code: "KeyN", ctrlKey: true });
 }
 
 function fillDraft() {

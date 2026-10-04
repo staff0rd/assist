@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { shortcutRegistry } from "../../shortcutRegistry";
 import type { SessionInfo } from "../../../types";
 import { useCaptureHotkey } from "../../useCaptureHotkey";
+import { useShortcut } from "../../useShortcut";
 import { useDiffPanels } from "../../useDiffPanels";
 import { focusRegion } from "../../focusRegion";
 import { isRegionFocused } from "./useToggleDiffHotkey/isRegionFocused";
@@ -20,7 +20,7 @@ export function useToggleDiffHotkey({
 	const { panelFor, togglePanel, closePanel } = useDiffPanels();
 
 	useCaptureHotkey(
-		shortcutRegistry.toggleDiff.matches,
+		useShortcut("toggleDiff").matches,
 		useCallback(() => {
 			if (!session) return;
 			const { id } = session;

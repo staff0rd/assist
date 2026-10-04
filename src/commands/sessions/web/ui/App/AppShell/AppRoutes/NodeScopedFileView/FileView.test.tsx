@@ -233,7 +233,7 @@ describe("FileView", () => {
 			target: { value: "const a = 2;\n" },
 		});
 
-		fireEvent.keyDown(document, { key: "s", ctrlKey: true });
+		fireEvent.keyDown(document, { key: "s", code: "KeyS", ctrlKey: true });
 
 		await waitFor(() =>
 			expect(postCall(fetchMock).body).toEqual({

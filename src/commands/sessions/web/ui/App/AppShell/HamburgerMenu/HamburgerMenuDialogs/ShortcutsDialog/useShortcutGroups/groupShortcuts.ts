@@ -1,4 +1,4 @@
-import type { Shortcut } from "../../../../shortcutRegistry";
+import type { Shortcut } from "../../../../../shortcutRegistry";
 
 type ShortcutGroup = { name: string; shortcuts: Shortcut[] };
 

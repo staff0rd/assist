@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import {
+	act,
 	cleanup,
 	fireEvent,
 	render,
@@ -9,6 +10,9 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { defaultHotkeys } from "../../../../../../shared/hotkeys/defaultHotkeys";
+import { hotkeyBindingsStore } from "../hotkeyBindingsStore";
+import { openTooltipChords } from "../openTooltipChords";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { NodeSelectionContext } from "../../useNodeSelectionContext";
 import { SessionLaunchContext } from "../../useSessionLaunchContext";
@@ -120,6 +124,35 @@ describe("HamburgerMenu", () => {
 		fireEvent.keyDown(document.body, { code: "KeyW", altKey: true });
 
 		expect(screen.getByText("config page")).toBeTruthy();
+	});
+
+	it("follows a remapped config chord once the bindings load", async () => {
+		renderMenu(vi.fn());
+		act(() =>
+			hotkeyBindingsStore.set({
+				...defaultHotkeys,
+				openConfig: ["Ctrl+Alt+J"],
+			}),
+		);
+
+		try {
+			const { chords } = await openTooltipChords(
+				screen.getByRole("button", { name: "Config" }),
+			);
+			expect(chords).toEqual(["Ctrl+Alt+J"]);
+
+			fireEvent.keyDown(document.body, { code: "KeyW", altKey: true });
+			expect(screen.queryByText("config page")).toBeNull();
+
+			fireEvent.keyDown(document.body, {
+				code: "KeyJ",
+				ctrlKey: true,
+				altKey: true,
+			});
+			expect(screen.getByText("config page")).toBeTruthy();
+		} finally {
+			hotkeyBindingsStore.set(defaultHotkeys);
+		}
 	});
 
 	it("opens the menu on Alt+E with focus on its first item", async () => {

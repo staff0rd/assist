@@ -423,5 +423,36 @@ describe("configSet", () => {
 			expect(mockExit).toHaveBeenCalledWith(1);
 			mockExit.mockRestore();
 		});
+
+		it("should write a valid hotkey chord", () => {
+			configSet("sessions.hotkeys.focusTerminal", "Ctrl+Alt+J", {
+				global: true,
+			});
+
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
+				sessions: { hotkeys: { focusTerminal: "Ctrl+Alt+J" } },
+			});
+		});
+
+		it.each([
+			["sessions.hotkeys.focusTerminal", "Hyper+J"],
+			["sessions.hotkeys.focusTerminal", "J"],
+			["sessions.hotkeys.focusTerminal", "Alt+NotAKey"],
+			["sessions.hotkeys.navTab", "Alt+1"],
+		])("should reject the invalid chord %s=%s", (key, value) => {
+			const mockError = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => undefined);
+			const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
+				throw new Error("exit");
+			});
+
+			expect(() => configSet(key, value, { global: true })).toThrow("exit");
+
+			expect(mockError.mock.calls.flat().join("\n")).toContain(key);
+			expect(mockSaveGlobalConfig).not.toHaveBeenCalled();
+			mockError.mockRestore();
+			mockExit.mockRestore();
+		});
 	});
 });

@@ -8,9 +8,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { navTabChord } from "./NavTabs/NavTab/navTabChord";
 import { openTooltipChords } from "../../openTooltipChords";
-import { formatChord } from "../../formatChord";
 import { NavTabs } from "./NavTabs";
 
 let mac = false;
@@ -235,7 +233,6 @@ describe("NavTabs", () => {
 		);
 
 		expect(text).toContain("Backlog");
-		expect(chords).toEqual([formatChord(navTabChord(1))]);
 		expect(chords).toEqual(["Alt+2"]);
 	});
 
