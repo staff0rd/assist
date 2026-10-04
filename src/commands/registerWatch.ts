@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { watchLoop } from "./watch/watchLoop";
 import { watchReport } from "./watch/watchReport";
 import { watchWait } from "./watch/watchWait";
 
@@ -38,6 +39,13 @@ export function registerWatch(program: Command): void {
 				build?: boolean | string;
 			}) => watchWait(options),
 		);
+
+	watchCommand
+		.command("loop")
+		.description(
+			"Run assist watch wait --pull --build as a fresh child per lap, relaunching after exit 0, 2 or 4 or a signal kill, and exit with the child's code on 1, 3 or 130",
+		)
+		.action(() => watchLoop());
 
 	watchCommand
 		.command("report")
