@@ -1,3 +1,10 @@
+## [0.768.4](https://github.com/staff0rd/assist/compare/v0.768.3...v0.768.4) (2026-10-04)
+
+
+### Bug Fixes
+
+* restart the web server on Windows ([ebc58de](https://github.com/staff0rd/assist/commit/ebc58de731db963540f633db8f371a87e3cdf29f))
+
 ## [0.768.3](https://github.com/staff0rd/assist/compare/v0.768.2...v0.768.3) (2026-10-04)
 
 
