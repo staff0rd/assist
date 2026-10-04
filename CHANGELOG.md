@@ -1,3 +1,10 @@
+## [0.766.3](https://github.com/staff0rd/assist/compare/v0.766.2...v0.766.3) (2026-10-04)
+
+
+### Bug Fixes
+
+* spawn self-update via node on Windows ([f9eba14](https://github.com/staff0rd/assist/commit/f9eba1403d56ac1e896a89a880815c7be72b88b0))
+
 ## [0.766.2](https://github.com/staff0rd/assist/compare/v0.766.1...v0.766.2) (2026-10-04)
 
 
