@@ -1,0 +1,103 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../../test/mothers/makeSession";
+import type * as makeSessionModule from "../../../../test/mothers/makeSession";
+import { createSession } from "../createSession";
+import { daemonLog } from "../daemonLog";
+import type { Session } from "../types";
+import type { TreeSpawnContext } from "./allocateAndBind";
+import { escalateDivergence } from "./escalateDivergence";
+
+vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("./listWorktreePaths", () => ({ mainWorktree: () => "/git/repo" }));
+vi.mock("../createSession", async () => {
+	const { makeSession } = await vi.importActual<typeof makeSessionModule>(
+		"../../../../test/mothers/makeSession",
+	);
+	return {
+		createSession: vi.fn((id: string, opts: { cwd?: string }) =>
+			makeSession({ id, status: "running", cwd: opts.cwd }),
+		),
+	};
+});
+
+const createMock = vi.mocked(createSession);
+const logMock = vi.mocked(daemonLog);
+
+const watcher = () =>
+	makeSession({
+		id: "1",
+		watcher: true,
+		status: "error",
+		cwd: "/git/repo",
+		commandType: "assist",
+		scrollback:
+			"lap 3: assist watch wait --pull --build\r\npull was not a fast-forward:\r\nfatal: Not possible to fast-forward, aborting.\r\n",
+	});
+
+function context(existing: Session[] = []): TreeSpawnContext {
+	const sessions = new Map(existing.map((s) => [s.id, s]));
+	return {
+		sessions,
+		spawnWith: (create) => {
+			const session = create("9");
+			sessions.set(session.id, session);
+			return session.id;
+		},
+		notify: vi.fn(),
+		startHeld: vi.fn(),
+	};
+}
+
+describe("escalateDivergence", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it("spawns a claude session in the clone carrying git's reason", () => {
+		const w = watcher();
+		const ctx = context([w]);
+
+		const id = escalateDivergence(ctx, w);
+
+		expect(id).toBe("9");
+		expect(ctx.sessions.get("9")?.divergenceEscalation).toBe(true);
+		const [, opts] = createMock.mock.calls[0];
+		expect(opts?.cwd).toBe("/git/repo");
+		expect(opts?.prompt).toContain(
+			"fatal: Not possible to fast-forward, aborting.",
+		);
+		expect(opts?.prompt).toContain("Do not force-push, `git reset`");
+		expect(logMock).toHaveBeenCalledWith(
+			expect.stringContaining("spawned escalation session 9"),
+		);
+	});
+
+	it("spawns no second escalation while one is live for the clone", () => {
+		const w = watcher();
+		const live = makeSession({
+			id: "5",
+			status: "running",
+			cwd: "/git/repo",
+			divergenceEscalation: true,
+		});
+		const ctx = context([w, live]);
+
+		expect(escalateDivergence(ctx, w)).toBeUndefined();
+		expect(createMock).not.toHaveBeenCalled();
+		expect(logMock).toHaveBeenCalledWith(
+			expect.stringContaining("no escalation spawned, session 5"),
+		);
+	});
+
+	it("spawns again once the earlier escalation has finished", () => {
+		const w = watcher();
+		const finished = makeSession({
+			id: "5",
+			status: "done",
+			cwd: "/git/repo",
+			divergenceEscalation: true,
+		});
+
+		expect(escalateDivergence(context([w, finished]), w)).toBe("9");
+	});
+});
