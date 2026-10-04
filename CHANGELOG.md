@@ -1,3 +1,10 @@
+# [0.758.0](https://github.com/staff0rd/assist/compare/v0.757.1...v0.758.0) (2026-10-04)
+
+
+### Features
+
+* add assist watch loop ([bee0a85](https://github.com/staff0rd/assist/commit/bee0a850bc3daf59469895d153cb059de3258300))
+
 ## [0.757.1](https://github.com/staff0rd/assist/compare/v0.757.0...v0.757.1) (2026-10-04)
 
 
