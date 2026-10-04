@@ -1,3 +1,10 @@
+# [0.760.0](https://github.com/staff0rd/assist/compare/v0.759.2...v0.760.0) (2026-10-04)
+
+
+### Features
+
+* add Alt+1-5 tabs and shortcuts sheet ([bf4d39c](https://github.com/staff0rd/assist/commit/bf4d39cff21bff408243a6798aa0156b7f5511dd))
+
 ## [0.759.2](https://github.com/staff0rd/assist/compare/v0.759.1...v0.759.2) (2026-10-04)
 
 
