@@ -42,11 +42,6 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "opt in per repo: spill concurrent sessions into adjacent <clone>-N worktrees (default off)",
 	},
 	{
-		key: "worktree.watcher",
-		setter: "assist config set worktree.watcher true -g --repo",
-		note: "a backlog run also starts one starred console session in the clone running assist watch loop (no claude, relaunched after a daemon restart), so the built version stays current while the run works in its worktree; requires worktree.enabled and an auto-build run entry (default off)",
-	},
-	{
 		key: "worktree.trunk",
 		setter: "assist config set worktree.trunk true -g --repo",
 		note: "trunk-based: a spilled worktree lands on the mainline, and committing jobs (backlog run <id>, review/review-pr-comments) never run in the clone — they always get a <clone>-N (default off: a worktree starts off the remote default with no mainline tracking, so the session raises its own branch and PR)",

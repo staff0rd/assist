@@ -3,7 +3,6 @@ import { releaseLock } from "../../backlog/acquireLock";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { killPtyTree } from "./killPtyTree";
-import { orphanedWatcherFor } from "./worktree/orphanedWatcherFor";
 import { otherTreeHolders } from "./worktree/otherTreeHolders";
 import { reapWorktree } from "./worktree/reapWorktree";
 
@@ -23,13 +22,6 @@ export function dismissSession(
 	if (s.activity?.itemId != null) releaseLock(s.activity.itemId);
 	sessions.delete(id);
 	daemonLog(`session ${id} dismissed (${s.name})`);
-	const orphan = orphanedWatcherFor(sessions, s);
-	if (orphan) {
-		daemonLog(
-			`reaping watcher session ${orphan.watcher.id} for the clone ${orphan.clone}: its last session ${id} was dismissed`,
-		);
-		dismissSession(sessions, orphan.watcher.id);
-	}
 	if (!s.worktree) return true;
 	if (sharedWith.length > 0)
 		daemonLog(

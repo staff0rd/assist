@@ -5,6 +5,15 @@ const LEGACY_SESSIONS_KEYS = [
 	"windowsVersionCheck",
 ];
 
+const LEGACY_WORKTREE_KEYS = ["watcher"];
+
+function withoutKeys(value: unknown, keys: string[]): unknown {
+	if (!value || typeof value !== "object") return value;
+	const rest = { ...(value as Record<string, unknown>) };
+	for (const key of keys) delete rest[key];
+	return rest;
+}
+
 export function stripLegacyConfigKeys(
 	config: Record<string, unknown>,
 ): Record<string, unknown> {
@@ -14,11 +23,9 @@ export function stripLegacyConfigKeys(
 		const { feeds: _feeds, ...rest } = news as Record<string, unknown>;
 		stripped.news = rest;
 	}
-	const sessions = stripped.sessions;
-	if (sessions && typeof sessions === "object") {
-		const rest = { ...(sessions as Record<string, unknown>) };
-		for (const key of LEGACY_SESSIONS_KEYS) delete rest[key];
-		stripped.sessions = rest;
-	}
+	if (stripped.sessions)
+		stripped.sessions = withoutKeys(stripped.sessions, LEGACY_SESSIONS_KEYS);
+	if (stripped.worktree)
+		stripped.worktree = withoutKeys(stripped.worktree, LEGACY_WORKTREE_KEYS);
 	return stripped;
 }

@@ -6,7 +6,6 @@ import { resetCardForRun } from "./resetCardForRun";
 import { startReusedRunPty } from "./startReusedRunPty";
 import type { OnStatusChange } from "./types";
 import type { Allocation } from "./worktree/allocateTree";
-import { ensureWatcher } from "./worktree/ensureWatcher";
 import { isCommittingArgs } from "./worktree/isCommittingArgs";
 import { planReuseTree } from "./worktree/planReuseTree";
 import type { TreeSpawnContext } from "./worktree/spawnInTree";
@@ -20,7 +19,6 @@ export function reuseSessionForRun(
 	tree?: TreeSpawnContext,
 ): void {
 	const assistArgs = ["backlog", "run", String(itemId)];
-	const originCwd = session.cwd;
 	resetCardForRun(session, assistArgs);
 	let alloc: Allocation | undefined;
 	try {
@@ -42,7 +40,6 @@ export function reuseSessionForRun(
 		onStatusChange,
 	);
 	if (!started) return;
-	if (tree) ensureWatcher(tree, originCwd);
 	attachReusedRun(session, alloc, clients, onStatusChange, tree);
 	daemonLog(
 		`session ${session.id} reused for backlog run ${itemId}: ${session.name}`,

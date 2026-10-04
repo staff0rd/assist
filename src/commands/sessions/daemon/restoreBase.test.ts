@@ -18,14 +18,14 @@ function persisted(
 }
 
 describe("restoreBase", () => {
-	it("drops a persisted star from a watcher", () => {
-		const base = restoreBase("1", persisted({ watcher: true, starred: true }));
-
-		expect(base.starred).toBe(false);
-		expect(base.watcher).toBe(true);
+	it("keeps a persisted star", () => {
+		expect(restoreBase("1", persisted({ starred: true })).starred).toBe(true);
 	});
 
-	it("keeps a persisted star on a non-watcher", () => {
-		expect(restoreBase("1", persisted({ starred: true })).starred).toBe(true);
+	it("keeps the divergence escalation flag", () => {
+		expect(
+			restoreBase("1", persisted({ divergenceEscalation: true }))
+				.divergenceEscalation,
+		).toBe(true);
 	});
 });

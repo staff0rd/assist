@@ -7,7 +7,6 @@ import { createSession } from "../createSession";
 import type { SpawnContext } from "../types";
 import { isDraftCommand } from "../../shared/isDraftCommand";
 import { allocateAndBind, type TreeSpawnContext } from "./allocateAndBind";
-import { ensureWatcher } from "./ensureWatcher";
 import { isBacklogRunArgs } from "./isBacklogRunArgs";
 import { isCommittingArgs } from "./isCommittingArgs";
 import { isPrCheckoutArgs } from "./isPrCheckoutArgs";
@@ -51,7 +50,7 @@ export function spawnAssistInTree(
 	meta: AssistSessionMeta | undefined,
 	context?: SpawnContext,
 ): string {
-	const id = allocateAndBind(
+	return allocateAndBind(
 		ctx,
 		cwd,
 		(sid, resolvedCwd, holdUntilSeeded) =>
@@ -65,6 +64,4 @@ export function spawnAssistInTree(
 		},
 		context,
 	);
-	if (isBacklogRunArgs(assistArgs)) ensureWatcher(ctx, cwd);
-	return id;
 }

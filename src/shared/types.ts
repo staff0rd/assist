@@ -164,10 +164,14 @@ const assistConfigShape = {
 				.default([]),
 		})
 		.optional(),
+	autoUpdate: z
+		.strictObject({
+			enabled: z.boolean().default(true),
+		})
+		.optional(),
 	worktree: z
 		.strictObject({
 			enabled: z.boolean().default(false),
-			watcher: z.boolean().default(false),
 			trunk: z.boolean().default(false),
 			includeDrafts: z.boolean().default(false),
 			root: z.string().optional(),

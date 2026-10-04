@@ -5,7 +5,6 @@ import type { SessionInfo } from "../types";
 export function sessionTitle(session: SessionInfo): string {
 	const { activity } = session;
 	if (session.title) return session.title;
-	if (session.watcher) return "Watcher";
 	if (activity?.kind === "backlog") {
 		return activity.itemName ?? session.generatedTitle ?? session.name;
 	}

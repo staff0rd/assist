@@ -12,13 +12,13 @@ const RECONCILE_STEPS = [
 	"3. Rebase the local commits onto the upstream with `git rebase @{u}`, resolving conflicts so both sides' changes survive. If the rebase cannot be resolved cleanly, `git rebase --abort` and `git merge @{u}` instead.",
 	"4. Push the result with a plain `git push` so the branch matches its upstream again.",
 	"5. Build the clone with `assist run auto-build`.",
-	"6. Run /close. The daemon restarts the watcher once this session closes.",
+	"6. Run /close. The daemon resumes its auto-update loop once this session closes.",
 	"",
 	"Never force-push, `git reset`, or otherwise discard commits. If you cannot reconcile the branch without doing so, explain what is blocking it and leave this session open for the user instead of closing it.",
 ];
 
 const SIMULATED_STEPS = [
-	"This divergence was simulated to test the escalation; there is nothing to reconcile. Run /close now. The daemon restarts the watcher once this session closes.",
+	"This divergence was simulated to test the escalation; there is nothing to reconcile. Run /close now. The daemon resumes its auto-update loop once this session closes.",
 ];
 
 function divergenceReason(scrollback: string): string {
@@ -34,7 +34,7 @@ function divergenceReason(scrollback: string): string {
 export function divergencePrompt(clone: string, scrollback: string): string {
 	const reason = divergenceReason(scrollback);
 	return [
-		`The watcher in ${clone} stopped because \`assist watch wait --pull --build\` could not fast-forward the branch (exit 3). The tail of its output:`,
+		`The daemon's auto-update loop for the assist install in ${clone} paused because \`assist watch wait --pull --build\` could not fast-forward the branch (exit 3). The tail of its output:`,
 		"",
 		"```",
 		reason || "(no output captured)",

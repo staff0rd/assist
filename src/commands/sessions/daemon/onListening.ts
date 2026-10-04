@@ -32,6 +32,7 @@ export function onListening(
 	);
 	daemonLog(`listening on ${daemonPaths.socket}`);
 	manager.links.reload();
+	manager.startAutoUpdate();
 	checkAutoExit(manager.isIdle());
 }
 

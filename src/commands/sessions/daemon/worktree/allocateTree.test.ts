@@ -13,7 +13,6 @@ vi.mock("./listWorktreePaths", () => ({ mainWorktree: () => "/git/repo" }));
 vi.mock("./worktreeConfigFor", () => ({
 	worktreeConfigFor: vi.fn(() => ({
 		enabled: true,
-		watcher: false,
 		trunk: false,
 		includeDrafts: false,
 		install: true,
@@ -38,7 +37,6 @@ describe("allocateTree", () => {
 		vi.clearAllMocks();
 		configMock.mockReturnValue({
 			enabled: true,
-			watcher: false,
 			trunk: false,
 			includeDrafts: false,
 			install: true,
@@ -68,7 +66,6 @@ describe("allocateTree", () => {
 		it("passes the repo's branch strategy to the worktree it creates", () => {
 			configMock.mockReturnValue({
 				enabled: true,
-				watcher: false,
 				trunk: true,
 				includeDrafts: false,
 				root: "~/git",
@@ -139,7 +136,6 @@ describe("allocateTree", () => {
 		it("spills like any other session once includeDrafts is on", () => {
 			configMock.mockReturnValue({
 				enabled: true,
-				watcher: false,
 				trunk: false,
 				includeDrafts: true,
 				install: true,
@@ -160,7 +156,6 @@ describe("allocateTree", () => {
 		it("is inert when parallel work is off", () => {
 			configMock.mockReturnValue({
 				enabled: false,
-				watcher: false,
 				trunk: false,
 				includeDrafts: false,
 				install: true,
@@ -198,7 +193,6 @@ describe("allocateTree", () => {
 		it("stays put when worktrees are off, as it always did", () => {
 			configMock.mockReturnValue({
 				enabled: false,
-				watcher: false,
 				trunk: false,
 				includeDrafts: false,
 				install: true,
@@ -274,7 +268,6 @@ describe("allocateTree", () => {
 		it("leaves the requested tree alone when parallel work is off", () => {
 			configMock.mockReturnValue({
 				enabled: false,
-				watcher: false,
 				trunk: false,
 				includeDrafts: false,
 				install: true,
@@ -297,7 +290,6 @@ describe("allocateTree", () => {
 		beforeEach(() => {
 			configMock.mockReturnValue({
 				enabled: true,
-				watcher: false,
 				trunk: true,
 				includeDrafts: false,
 				install: true,
@@ -347,7 +339,6 @@ describe("allocateTree", () => {
 		it("stays inert when parallel work is off", () => {
 			configMock.mockReturnValue({
 				enabled: false,
-				watcher: false,
 				trunk: true,
 				includeDrafts: false,
 				install: true,
@@ -383,7 +374,6 @@ describe("allocateTree", () => {
 		it("stays in the clone when parallel work is off", () => {
 			configMock.mockReturnValue({
 				enabled: false,
-				watcher: false,
 				trunk: false,
 				includeDrafts: false,
 				install: true,

@@ -9,7 +9,6 @@ import { reuseSessionForRun } from "./reuseSessionForRun";
 import { spawnPty } from "./spawnPty";
 import { wirePtyEvents } from "./wirePtyEvents";
 import { bindNewWorktree } from "./worktree/bindNewWorktree";
-import { ensureWatcher } from "./worktree/ensureWatcher";
 import { planReuseTree } from "./worktree/planReuseTree";
 import type { TreeSpawnContext } from "./worktree/spawnInTree";
 
@@ -26,7 +25,6 @@ vi.mock("./worktree/planReuseTree", () => ({
 	planReuseTree: vi.fn(() => undefined),
 }));
 vi.mock("./worktree/bindNewWorktree", () => ({ bindNewWorktree: vi.fn() }));
-vi.mock("./worktree/ensureWatcher", () => ({ ensureWatcher: vi.fn() }));
 
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 const wirePtyMock = wirePtyEvents as unknown as ReturnType<typeof vi.fn>;
@@ -212,63 +210,6 @@ describe("reuseSessionForRun", () => {
 				commits: true,
 				backlogRun: true,
 			});
-		});
-	});
-
-	describe("keeping the clone watched", () => {
-		function treeCtx(): TreeSpawnContext {
-			return {
-				sessions: new Map(),
-				spawnWith: vi.fn(),
-				notify: vi.fn(),
-				startHeld: vi.fn(),
-			};
-		}
-
-		beforeEach(() => {
-			vi.mocked(planReuseTree).mockReturnValue(undefined);
-		});
-
-		it("ensures a watcher for the clone the chained run came from", () => {
-			const session = makeSession(draft);
-			const tree = treeCtx();
-
-			reuseSessionForRun(session, 42, new Set(), vi.fn(), tree);
-
-			expect(ensureWatcher).toHaveBeenCalledWith(tree, "/home/user/repo");
-		});
-
-		it("resolves the clone from where the session sat, not the workspace it moved to", () => {
-			vi.mocked(planReuseTree).mockReturnValue({
-				cwd: "/home/user/repo-2",
-				kind: "worktree",
-				created: true,
-				clone: "/home/user/repo",
-			});
-			const session = makeSession(draft);
-
-			reuseSessionForRun(session, 42, new Set(), vi.fn(), treeCtx());
-
-			expect(ensureWatcher).toHaveBeenCalledWith(
-				expect.anything(),
-				"/home/user/repo",
-			);
-		});
-
-		it("ensures no watcher when the run is not daemon-allocated", () => {
-			reuseSessionForRun(makeSession(draft), 42, new Set(), vi.fn());
-
-			expect(ensureWatcher).not.toHaveBeenCalled();
-		});
-
-		it("ensures no watcher when the chained run never starts", () => {
-			spawnPtyMock.mockImplementationOnce(() => {
-				throw new Error("too many live sessions");
-			});
-
-			reuseSessionForRun(makeSession(draft), 42, new Set(), vi.fn(), treeCtx());
-
-			expect(ensureWatcher).not.toHaveBeenCalled();
 		});
 	});
 

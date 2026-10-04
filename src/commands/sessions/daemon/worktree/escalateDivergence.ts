@@ -1,32 +1,24 @@
 import { createSession } from "../createSession";
 import { daemonLog } from "../daemonLog";
-import type { Session } from "../types";
 import { allocateAndBind, type TreeSpawnContext } from "./allocateAndBind";
 import { canonicalTreePath } from "./canonicalTreePath";
 import { divergencePrompt } from "./divergencePrompt";
-
-const ENDED: Session["status"][] = ["done", "error", "stopped"];
+import { liveEscalationIn } from "./liveEscalationIn";
 
 export function escalateDivergence(
 	ctx: TreeSpawnContext,
-	watcher: Session,
-): string | undefined {
-	if (!watcher.cwd) return undefined;
-	const clone = canonicalTreePath(watcher.cwd);
-	const live = [...ctx.sessions.values()].find(
-		(s) =>
-			s.divergenceEscalation === true &&
-			s.cwd !== undefined &&
-			canonicalTreePath(s.cwd) === clone &&
-			!ENDED.includes(s.status),
-	);
+	cwd: string,
+	output: string,
+): string {
+	const clone = canonicalTreePath(cwd);
+	const live = liveEscalationIn(ctx.sessions, clone);
 	if (live) {
 		daemonLog(
-			`watcher session ${watcher.id} exited 3 (divergence) in the clone ${clone}: no escalation spawned, session ${live.id} is already diagnosing it (${live.status})`,
+			`auto-update diverged in the clone ${clone}: no escalation spawned, session ${live.id} is already diagnosing it (${live.status})`,
 		);
-		return undefined;
+		return live.id;
 	}
-	const prompt = divergencePrompt(clone, watcher.scrollback);
+	const prompt = divergencePrompt(clone, output);
 	const id = allocateAndBind(
 		ctx,
 		clone,
@@ -37,7 +29,7 @@ export function escalateDivergence(
 		{ inPlace: true },
 	);
 	daemonLog(
-		`watcher session ${watcher.id} exited 3 (divergence) in the clone ${clone}: spawned escalation session ${id} to diagnose it`,
+		`auto-update diverged in the clone ${clone}: spawned escalation session ${id} to diagnose it`,
 	);
 	return id;
 }

@@ -1,4 +1,6 @@
 import type { Command } from "commander";
+import { configHelp } from "../../../shared/configHelp";
+import { autoUpdateConfigHelp } from "./autoUpdateConfigHelp";
 import { daemonStatus } from "./daemonStatus";
 import { drainDaemon } from "./drainDaemon";
 import { restartDaemon } from "./restartDaemon";
@@ -45,4 +47,6 @@ export function registerDaemon(program: Command): void {
 		)
 		.option("--yes", "Close live sessions without confirming")
 		.action((options: { yes?: boolean }) => drainDaemon(options));
+
+	configHelp(cmd, autoUpdateConfigHelp);
 }

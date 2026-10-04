@@ -11,8 +11,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../../test/mothers/makeSession";
-import { daemonLog } from "../daemonLog";
-import { dismissSession } from "../dismissSession";
 import { reapWorktree } from "./reapWorktree";
 import { resolveCloseDurability } from "./resolveCloseDurability";
 import { checkDurability } from "./treeDurability";
@@ -30,7 +28,6 @@ vi.mock("./reapWorktree", () => ({
 	}),
 }));
 
-const logMock = daemonLog as unknown as ReturnType<typeof vi.fn>;
 const created: string[] = [];
 
 afterEach(() => {
@@ -57,37 +54,6 @@ function makeCloneWithWorktree(): { clone: string; tree: string } {
 }
 
 describe("resolveCloseDurability", () => {
-	it("reaps the clone's watcher when its last session closes from a reaped worktree", async () => {
-		const { clone, tree } = makeCloneWithWorktree();
-		const watcher = makeSession({
-			id: "1",
-			status: "waiting",
-			cwd: clone,
-			watcher: true,
-		});
-		const worker = makeSession({
-			id: "2",
-			status: "waiting",
-			cwd: tree,
-			worktree: { path: tree, clone },
-		});
-		const sessions = new Map([
-			[watcher.id, watcher],
-			[worker.id, worker],
-		]);
-
-		await resolveCloseDurability(
-			worker,
-			() => dismissSession(sessions, worker.id),
-			vi.fn(),
-		);
-
-		expect(sessions.size).toBe(0);
-		expect(logMock).toHaveBeenCalledWith(
-			`reaping watcher session 1 for the clone ${clone}: its last session 2 was dismissed`,
-		);
-	});
-
 	describe.skipIf(process.platform !== "linux")("with a live process", () => {
 		let orphan: ChildProcess | undefined;
 

@@ -4,8 +4,6 @@ import { setStatus } from "./setStatus";
 import type { OnStatusChange } from "./types";
 import { wirePtyEvents } from "./wirePtyEvents";
 import { refuseSpawn } from "./refuseSpawn";
-import { emitSessionOutput } from "./emitSessionOutput";
-import { watcherNote } from "./watcherNote";
 
 export function respawnSession(
 	session: Session,
@@ -20,8 +18,7 @@ export function respawnSession(
 	session.pendingDismiss = undefined;
 	session.closeGrace?.cancel();
 	session.closing = undefined;
-	const keepHistory = session.watcher === true;
-	if (!keepHistory) session.scrollback = "";
+	session.scrollback = "";
 	session.startedAt = Date.now();
 	session.runningMs = 0;
 	session.runningSince = null;
@@ -37,14 +34,6 @@ export function respawnSession(
 		try {
 			session.pty?.resize(session.cols, session.rows);
 		} catch {}
-	if (keepHistory) {
-		const reason = session.watcherRestartReason;
-		session.watcherRestartReason = undefined;
-		emitSessionOutput(
-			session,
-			clients,
-			watcherNote(reason ? `watcher restarted ${reason}` : "watcher restarted"),
-		);
-	} else broadcast(clients, { type: "clear", sessionId: session.id });
+	broadcast(clients, { type: "clear", sessionId: session.id });
 	wirePtyEvents(session, clients, onStatusChange);
 }

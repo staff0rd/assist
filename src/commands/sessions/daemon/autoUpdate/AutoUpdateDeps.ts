@@ -1,0 +1,11 @@
+import type { LapEnd } from "../../../watch/decideLap";
+
+export type AutoUpdateDeps = {
+	runLap: (onOutput: (text: string) => void) => Promise<LapEnd>;
+	record: (text: string) => void;
+	note: (text: string) => void;
+	liveEscalation: () => string | undefined;
+	escalate: (output: string) => string;
+	isLive: (sessionId: string) => boolean;
+	sleep: (ms: number) => Promise<void>;
+};

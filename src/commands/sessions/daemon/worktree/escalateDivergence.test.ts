@@ -23,16 +23,8 @@ vi.mock("../createSession", async () => {
 const createMock = vi.mocked(createSession);
 const logMock = vi.mocked(daemonLog);
 
-const watcher = () =>
-	makeSession({
-		id: "1",
-		watcher: true,
-		status: "error",
-		cwd: "/git/repo",
-		commandType: "assist",
-		scrollback:
-			"lap 3: assist watch wait --pull --build\r\npull was not a fast-forward:\r\nfatal: Not possible to fast-forward, aborting.\r\n",
-	});
+const output =
+	"lap 3: assist watch wait --pull --build\r\npull was not a fast-forward:\r\nfatal: Not possible to fast-forward, aborting.\r\n";
 
 function context(existing: Session[] = []): TreeSpawnContext {
 	const sessions = new Map(existing.map((s) => [s.id, s]));
@@ -54,10 +46,9 @@ describe("escalateDivergence", () => {
 	});
 
 	it("spawns a claude session in the clone carrying git's reason", () => {
-		const w = watcher();
-		const ctx = context([w]);
+		const ctx = context();
 
-		const id = escalateDivergence(ctx, w);
+		const id = escalateDivergence(ctx, "/git/repo", output);
 
 		expect(id).toBe("9");
 		expect(ctx.sessions.get("9")?.divergenceEscalation).toBe(true);
@@ -74,17 +65,15 @@ describe("escalateDivergence", () => {
 		);
 	});
 
-	it("spawns no second escalation while one is live for the clone", () => {
-		const w = watcher();
+	it("returns the live escalation instead of spawning a second one", () => {
 		const live = makeSession({
 			id: "5",
 			status: "running",
 			cwd: "/git/repo",
 			divergenceEscalation: true,
 		});
-		const ctx = context([w, live]);
 
-		expect(escalateDivergence(ctx, w)).toBeUndefined();
+		expect(escalateDivergence(context([live]), "/git/repo", output)).toBe("5");
 		expect(createMock).not.toHaveBeenCalled();
 		expect(logMock).toHaveBeenCalledWith(
 			expect.stringContaining("no escalation spawned, session 5"),
@@ -92,7 +81,6 @@ describe("escalateDivergence", () => {
 	});
 
 	it("spawns again once the earlier escalation has finished", () => {
-		const w = watcher();
 		const finished = makeSession({
 			id: "5",
 			status: "done",
@@ -100,6 +88,8 @@ describe("escalateDivergence", () => {
 			divergenceEscalation: true,
 		});
 
-		expect(escalateDivergence(context([w, finished]), w)).toBe("9");
+		expect(escalateDivergence(context([finished]), "/git/repo", output)).toBe(
+			"9",
+		);
 	});
 });

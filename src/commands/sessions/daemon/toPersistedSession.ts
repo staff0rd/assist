@@ -22,7 +22,6 @@ export function toPersistedSession(session: Session): PersistedSession {
 		assistArgs: session.assistArgs,
 		activity: session.activity,
 		starred: session.starred,
-		watcher: session.watcher,
 		divergenceEscalation: session.divergenceEscalation,
 		design: session.design,
 		auto: session.auto,

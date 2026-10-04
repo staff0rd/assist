@@ -58,7 +58,7 @@ describe("respawnSession", () => {
 		expect(session.pty).toBe(pty);
 	});
 
-	it("clears a non-watcher's scrollback on respawn", () => {
+	it("clears the scrollback on respawn", () => {
 		const session = makeSession({ scrollback: "old output", pty: null });
 		const { pty } = makePty();
 
@@ -66,36 +66,5 @@ describe("respawnSession", () => {
 
 		expect(session.scrollback).toBe("");
 		expect(messages.map((m) => m.type)).toEqual(["clear"]);
-	});
-
-	it("keeps a watcher's scrollback and marks the restart instead of clearing", () => {
-		const session = makeSession({
-			watcher: true,
-			scrollback: "fatal: Not possible to fast-forward\r\n",
-			pty: null,
-		});
-		const { pty } = makePty();
-
-		const messages = respawnWith(session, () => pty);
-
-		expect(session.scrollback).toContain("fatal: Not possible to fast-forward");
-		expect(session.scrollback).toContain("watcher restarted");
-		expect(messages.map((m) => m.type)).toEqual(["output"]);
-	});
-
-	it("names why a watcher restarted, once", () => {
-		const session = makeSession({
-			watcher: true,
-			watcherRestartReason: "after escalation session 7 ended",
-			pty: null,
-		});
-		const { pty } = makePty();
-
-		respawnWith(session, () => pty);
-
-		expect(session.scrollback).toContain(
-			"watcher restarted after escalation session 7 ended",
-		);
-		expect(session.watcherRestartReason).toBeUndefined();
 	});
 });

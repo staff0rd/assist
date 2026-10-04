@@ -12,7 +12,7 @@ import {
 	type Session,
 	type SessionInfo,
 } from "./createSession";
-import { dismissAndResumeWatcher } from "./dismissAndResumeWatcher";
+import { startAutoUpdate } from "./autoUpdate/startAutoUpdate";
 import { dismissSessionGated } from "./dismissSessionGated";
 import { drainSessions } from "./drainSessions";
 import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
@@ -188,10 +188,12 @@ export class SessionManager {
 	}
 
 	dismissSession = (id: string): void => {
-		dismissAndResumeWatcher(this.sessions, id, this.notify, (watcherId) =>
-			this.restart(watcherId),
-		);
+		dismissSessionGated(this.sessions, id, this.notify);
 	};
+
+	startAutoUpdate(): void {
+		startAutoUpdate(() => this.treeCtx());
+	}
 
 	discardSession = (id: string): void => {
 		dismissSessionGated(this.sessions, id, this.notify, true);

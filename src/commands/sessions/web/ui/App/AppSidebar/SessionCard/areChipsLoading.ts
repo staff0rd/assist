@@ -6,9 +6,7 @@ export function areChipsLoading(
 ): boolean {
 	if (loading) return true;
 	const awaitingActivity =
-		session.commandType === "assist" &&
-		session.watcher !== true &&
-		session.activity === undefined;
+		session.commandType === "assist" && session.activity === undefined;
 	const finished = session.status === "done" || session.status === "error";
 	return awaitingActivity && !finished;
 }

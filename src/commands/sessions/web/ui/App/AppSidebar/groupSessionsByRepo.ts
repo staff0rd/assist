@@ -12,8 +12,6 @@ type SessionGroup =
 
 const never = () => false;
 
-const isWatcher = (session: SessionInfo) => session.watcher === true;
-
 export function groupSessionsByRepo(
 	sessions: SessionInfo[],
 	isStarred: (session: SessionInfo) => boolean,
@@ -31,7 +29,6 @@ export function groupSessionsByRepo(
 							nestUnderBacklogRun(members),
 							(row) => rowMembers(row).some(isStarred),
 							(row) => rowMembers(row).some(isFloatingWaiter),
-							(row) => rowMembers(row).some(isWatcher),
 						),
 					},
 	);

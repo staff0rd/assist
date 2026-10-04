@@ -112,7 +112,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist branch <slug> [--jira <key>] [--from <ref>]` - Create and switch to a new branch off the fresh remote default (or `--from <ref>`)
 - `assist watch wait [--interval <d>] [--timeout <d>|none] [--pull] [--build [entry]]` - Wait until the current branch's upstream gains commits; `--pull` fast-forwards to them and `--build` then runs the `auto-build` run entry (or `[entry]`), showing its output only if it fails
 - `assist watch loop` - Keep the current branch pulled and built as its upstream moves
-- `assist watch simulate-divergence` - Make the next `assist watch wait` poll in this repo exit 3 as a simulated divergence, to test the watcher's escalation
+- `assist watch simulate-divergence` - Make the next `assist watch wait` poll in this repo exit 3 as a simulated divergence, to test the auto-update loop's escalation
 - `assist watch report [--from <sha>]` - Summarise recent commits and the restarts and sync they call for, since `<sha>` when given
 - `assist read-time <target> [--budget <duration>]` - Estimate how long a PR (number or URL), file or stdin (`-`) takes to read, against `--budget` (default 1m)
 - `assist prs` - List pull requests for the current repository
@@ -403,6 +403,8 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 
 Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client relaying WebSocket traffic to the daemon over a local IPC socket (`~/.assist/daemon/daemon.sock`; named pipe `\\.\pipe\assist-sessions-daemon` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` and auto-exits once no sessions remain and no client has connected for 60 seconds. See [docs/session-lifecycle.md](docs/session-lifecycle.md).
 
+When assist is installed as a git clone, each daemon keeps that install current in the background: it runs `assist watch wait --pull --build` in the clone lap after lap, with no session card, logging each lap to `daemon.log` (prefixed `auto-update:`) and to the clone's history in `~/.assist/watchers/`. If the clone cannot fast-forward, the daemon starts one claude session in it that rebases (or merges) onto the upstream without force-pushing or resetting, pushes, rebuilds and closes; the loop pauses until that session ends. A rebuilt version takes effect once the daemon and web server are restarted. Turn it off with `assist config set autoUpdate.enabled false -g`.
+
 The topnav's **+** button (or Ctrl+N / Alt+N; Cmd+N on macOS) opens the new-session dialog, which replaces the old draft / bug / prompt / design topnav buttons. Its mode selector picks `draft`, `bug`, `prompt` or `design`; in `prompt` mode a harness selector under it picks Claude, Codex or pi when those are exposed, and Up/Down moves between the two rows. `design` launches an interactive `claude` session with the vendored design system prompt appended via `--append-system-prompt`. Left/Right change the mode or harness, and Tab steps through a selector's options before moving on to the next control.
 
 Every hotkey is Alt plus a left-hand key, one keyboard row per screen region, and works while the terminal has focus; on macOS use Option.
@@ -522,7 +524,6 @@ assist config set next.excludeTypes Epic -g --repo
 Concurrent sessions in one repo can be isolated with native git worktrees instead of keeping multiple physical clones: see [docs/parallel-work.md](docs/parallel-work.md). All of these keys **default off** except `worktree.install`:
 
 - `worktree.enabled` (parallel work) — spill concurrent sessions into adjacent `<clone>-N` worktrees instead of sharing the clone's working copy.
-- `worktree.watcher` — keep an `assist watch loop` console session in the clone while a backlog run works in a worktree, so the clone stays pulled and rebuilt. If the branch diverges, the daemon starts one claude session in the clone that rebases (or merges) onto the upstream without force-pushing or resetting, pushes, rebuilds and closes; the daemon then restarts the watcher. The watcher's output, escalations, restarts and relaunches accumulate per clone in `~/.assist/watchers/`, so each new or relaunched watcher shows the clone's history. Needs `worktree.enabled` and an `auto-build` run entry.
 - `worktree.trunk` (trunk-based) — a worktree's branch tracks `origin/<trunk>` so commits land on the mainline, and jobs that commit (`backlog run`, PR checkouts) always run in a worktree, never the clone. Off, worktrees start off the remote default branch with no mainline tracking.
 - `worktree.includeDrafts` — give draft, bug and refine sessions their own `<clone>-N` instead of the clone's working copy.
 - `worktree.install` — how a new worktree installs its deps: `true` (default) auto-detects pnpm/yarn/bun/npm, a string is the install command, `false` skips it, and a list of paths installs in each in order.

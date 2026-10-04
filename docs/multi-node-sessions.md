@@ -129,7 +129,7 @@ Each web server gets its own running check, stop-by-port, and log file, and "Vie
 - `/api/self-update` and the `hello` handshake are a **frozen contract**: they never change shape, so an old node can always be healed by a new one.
 - The existing guard (heal once, then latch) is kept. If the linking node is the older side, it blocks with "update this node".
 - A latched link re-probes the peer's `hello` every minute and returns to connected once the versions match; `reload-links` (sent by `nodes link`/`unlink`) clears the latch and allows one more heal.
-- If the peer's own watcher has already rebuilt it, heal finds nothing to do and the link just reconnects.
+- If the peer's own auto-update loop has already rebuilt it, heal finds nothing to do and the link just reconnects.
 
 ## Nodes in the UI
 

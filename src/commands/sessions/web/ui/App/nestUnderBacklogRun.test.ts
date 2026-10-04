@@ -348,7 +348,7 @@ describe("nestUnderBacklogRun", () => {
 		]);
 	});
 
-	it("keeps a watcher in the clone at the top level when a worktree run launched it", () => {
+	it("keeps a session in the clone at the top level when a worktree run launched it", () => {
 		const sessions = [
 			makeSessionInfo({
 				id: "run",
@@ -370,7 +370,7 @@ describe("nestUnderBacklogRun", () => {
 		]);
 	});
 
-	it("keeps the watcher in place once the run that launched it is gone", () => {
+	it("keeps a launched session in place once the run that launched it is gone", () => {
 		const sessions = [
 			makeSessionInfo({
 				id: "watch",

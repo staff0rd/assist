@@ -3,6 +3,7 @@ import { adviceConfigHelp } from "./advise/adviceConfigHelp";
 import { backlogConfigHelp } from "./backlog/backlogConfigHelp";
 import { harnessConfigHelp } from "./backlog/harnessConfigHelp";
 import { backupConfigHelp } from "./backup/backupConfigHelp";
+import { autoUpdateConfigHelp } from "./sessions/daemon/autoUpdateConfigHelp";
 import { branchConfigHelp } from "./branch/branchConfigHelp";
 import { cliHookConfigHelp } from "./cliHook/cliHookConfigHelp";
 import { complexityConfigHelp } from "./complexity/complexityConfigHelp";
@@ -38,6 +39,7 @@ import { verifyConfigHelp } from "./verify/verifyConfigHelp";
 export const configHelpEntries: ConfigHelpEntry[] = [
 	...Object.values(rootConfigHelp).flat(),
 	...adviceConfigHelp,
+	...autoUpdateConfigHelp,
 	...backlogConfigHelp,
 	...backupConfigHelp,
 	...branchConfigHelp,

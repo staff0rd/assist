@@ -102,13 +102,6 @@ One further per-repo switch, also **default off**: whether draft-type work gets 
 workspace. Off is the behaviour in 1 — drafting, bug filing and refining stay in the
 repo's own working copy; on, they are placed like any other session.
 
-A last per-repo switch, also **default off**: whether a run keeps the repo's own working
-copy current. With parallel work on, a run works in a workspace and the working copy the
-user actually builds and runs sits idle, going stale as the branch moves. On, starting a
-run also ensures exactly one **watcher** session in that working copy, watching for
-upstream movement and rebuilding each time it moves. There is at most one per repo: a run
-that finds a live watcher starts no second one.
-
 Turning either on and back off again leaves **no trace on the repo**. Neither writes
 settings into the repo's own git configuration, so how the repo pushes when you work in
 it by hand is never changed underneath you.
