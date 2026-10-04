@@ -15,6 +15,10 @@ export function resizeSession(
 	if (isInactiveViewer(s, viewer)) return;
 	claimViewer(s, viewer, "resize");
 	const unchanged = s.cols === cols && s.rows === rows;
+	if (!unchanged || viewer.claim)
+		daemonLog(
+			`session ${id} resize ${s.cols}x${s.rows} -> ${cols}x${rows} by ${viewer.viewerId ?? "unknown viewer"} on ${viewer.viewerNode ?? "unknown node"}${viewer.claim ? " (takeover)" : ""}`,
+		);
 	s.cols = cols;
 	s.rows = rows;
 	const resize = (c: number, r: number) => resizePty(s, c, r);

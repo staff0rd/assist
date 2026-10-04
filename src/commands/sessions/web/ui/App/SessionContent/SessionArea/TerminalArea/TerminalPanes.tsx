@@ -1,10 +1,16 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { ResizeFn } from "./ResizeFn";
+import type { Ownership } from "./TerminalPanes/Ownership";
 import { SessionLoadingOverlay } from "./TerminalPanes/SessionLoadingOverlay";
 import { TerminalPane } from "./TerminalPanes/TerminalPane";
 import type { SessionInfo } from "../../../../types";
 import { viewerId } from "../../../../viewerId";
+
+function ownershipOf(activeViewer: string | undefined): Ownership {
+	if (activeViewer === undefined) return "free";
+	return activeViewer === viewerId ? "mine" : "other";
+}
 
 type OutputSubscriber = (
 	sessionId: string,
@@ -33,7 +39,7 @@ export function TerminalPanes({
 					key={s.id}
 					sessionId={s.id}
 					visible={s.id === activeId}
-					inactive={s.activeViewer !== undefined && s.activeViewer !== viewerId}
+					ownership={ownershipOf(s.activeViewer)}
 					activeNode={s.activeViewerNode}
 					onOutput={onOutput}
 					sendInput={sendInput}

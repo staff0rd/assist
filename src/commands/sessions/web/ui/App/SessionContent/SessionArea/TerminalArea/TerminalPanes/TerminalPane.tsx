@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { useRef } from "react";
+import type { Ownership } from "./Ownership";
 import type { ResizeFn } from "../ResizeFn";
 import { TakeOverOverlay } from "./TerminalPane/TakeOverOverlay";
 import { useTerminal } from "./TerminalPane/useTerminal";
@@ -7,7 +8,7 @@ import { useTerminal } from "./TerminalPane/useTerminal";
 export function TerminalPane({
 	sessionId,
 	visible,
-	inactive,
+	ownership,
 	activeNode,
 	onOutput,
 	sendInput,
@@ -15,16 +16,17 @@ export function TerminalPane({
 }: {
 	sessionId: string;
 	visible: boolean;
-	inactive: boolean;
+	ownership: Ownership;
 	activeNode?: string;
 	onOutput: (sessionId: string, handler: (data: string) => void) => () => void;
 	sendInput: (sessionId: string, data: string) => void;
 	sendResize: ResizeFn;
 }) {
 	const containerRef = useRef<HTMLDivElement>(null);
+	const inactive = ownership === "other";
 	const takeOver = useTerminal(containerRef, sessionId, {
 		visible,
-		inactive,
+		ownership,
 		sendInput,
 		onOutput,
 		sendResize,

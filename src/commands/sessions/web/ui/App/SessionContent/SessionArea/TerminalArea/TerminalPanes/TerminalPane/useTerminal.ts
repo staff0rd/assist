@@ -1,14 +1,14 @@
 import { type RefObject, useEffect, useRef } from "react";
+import type { Ownership } from "../Ownership";
 import type { ResizeFn } from "../../ResizeFn";
 import type { TerminalHandle } from "./useTerminal/createTerminal";
-import { isSessionCardFocusHeld } from "../../../../../holdSessionCardFocus";
-import { hasTerminalSize } from "./useTerminal/hasTerminalSize";
 import { setupTerminal } from "./useTerminal/setupTerminal";
+import { useFitWhenVisible } from "./useTerminal/useFitWhenVisible";
 import { useTakeOver } from "./useTerminal/useTakeOver";
 
 type TerminalOptions = {
 	visible: boolean;
-	inactive: boolean;
+	ownership: Ownership;
 	sendInput: (sessionId: string, data: string) => void;
 	onOutput: (sessionId: string, handler: (data: string) => void) => () => void;
 	sendResize: ResizeFn;
@@ -17,10 +17,10 @@ type TerminalOptions = {
 export function useTerminal(
 	containerRef: RefObject<HTMLDivElement | null>,
 	sessionId: string,
-	{ visible, inactive, sendInput, onOutput, sendResize }: TerminalOptions,
+	{ visible, ownership, sendInput, onOutput, sendResize }: TerminalOptions,
 ): () => void {
 	const handleRef = useRef<TerminalHandle | null>(null);
-	const inactiveRef = useRef(inactive);
+	const staleRef = useRef(ownership === "other");
 
 	useEffect(() => {
 		const el = containerRef.current;
@@ -29,7 +29,7 @@ export function useTerminal(
 			sendInput,
 			onOutput,
 			sendResize,
-			isInactive: () => inactiveRef.current,
+			isInactive: () => staleRef.current,
 		});
 		handleRef.current = handle;
 		return () => {
@@ -38,24 +38,8 @@ export function useTerminal(
 		};
 	}, [containerRef, sessionId, onOutput, sendInput, sendResize]);
 
-	const takeOver = useTakeOver(
-		{ containerRef, handleRef, inactiveRef },
-		sessionId,
-		inactive,
-		sendResize,
-	);
-
-	useEffect(() => {
-		const h = handleRef.current;
-		if (!visible || !h) return;
-		const id = setTimeout(() => {
-			if (inactiveRef.current || !hasTerminalSize(containerRef.current)) return;
-			h.fitAddon.fit();
-			if (!isSessionCardFocusHeld()) h.term.focus();
-			sendResize(sessionId, h.term.cols, h.term.rows);
-		}, 50);
-		return () => clearTimeout(id);
-	}, [containerRef, visible, sessionId, sendResize]);
-
+	const refs = { containerRef, handleRef, staleRef };
+	const takeOver = useTakeOver(refs, sessionId, ownership, sendResize);
+	useFitWhenVisible(refs, sessionId, visible, sendResize);
 	return takeOver;
 }

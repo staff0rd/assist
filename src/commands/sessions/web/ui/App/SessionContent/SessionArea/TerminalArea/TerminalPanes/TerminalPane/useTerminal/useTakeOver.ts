@@ -1,36 +1,47 @@
 import { type RefObject, useCallback, useEffect } from "react";
 import type { ResizeFn } from "../../../ResizeFn";
+import type { Ownership } from "../../Ownership";
 import type { TerminalHandle } from "./createTerminal";
 import { hasTerminalSize } from "./hasTerminalSize";
 
 type TakeOverRefs = {
 	containerRef: RefObject<HTMLDivElement | null>;
 	handleRef: RefObject<TerminalHandle | null>;
-	inactiveRef: RefObject<boolean>;
+	staleRef: RefObject<boolean>;
 };
 
 export function useTakeOver(
-	{ containerRef, handleRef, inactiveRef }: TakeOverRefs,
+	{ containerRef, handleRef, staleRef }: TakeOverRefs,
 	sessionId: string,
-	inactive: boolean,
+	ownership: Ownership,
 	sendResize: ResizeFn,
 ): () => void {
-	const takeOver = useCallback(() => {
-		inactiveRef.current = false;
+	const fit = useCallback(() => {
 		const h = handleRef.current;
-		if (!h) return;
-		h.term.reset();
-		if (!hasTerminalSize(containerRef.current)) return;
+		if (!h || !hasTerminalSize(containerRef.current)) return undefined;
 		h.fitAddon.fit();
+		return h;
+	}, [containerRef, handleRef]);
+
+	const takeOver = useCallback(() => {
+		staleRef.current = false;
+		handleRef.current?.term.reset();
+		const h = fit();
+		if (!h) return;
 		h.term.focus();
 		sendResize(sessionId, h.term.cols, h.term.rows, true);
-	}, [containerRef, handleRef, inactiveRef, sessionId, sendResize]);
+	}, [fit, handleRef, staleRef, sessionId, sendResize]);
 
 	useEffect(() => {
-		const wasInactive = inactiveRef.current;
-		inactiveRef.current = inactive;
-		if (wasInactive && !inactive) takeOver();
-	}, [inactiveRef, inactive, takeOver]);
+		if (ownership === "other") {
+			staleRef.current = true;
+			return;
+		}
+		if (!staleRef.current) return;
+		if (ownership === "mine") return takeOver();
+		const h = fit();
+		if (h) sendResize(sessionId, h.term.cols, h.term.rows);
+	}, [staleRef, ownership, takeOver, fit, sessionId, sendResize]);
 
 	return takeOver;
 }
