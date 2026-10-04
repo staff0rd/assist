@@ -57,4 +57,29 @@ describe("respawnSession", () => {
 		expect(session.error).toBeUndefined();
 		expect(session.pty).toBe(pty);
 	});
+
+	it("clears a non-watcher's scrollback on respawn", () => {
+		const session = makeSession({ scrollback: "old output", pty: null });
+		const { pty } = makePty();
+
+		const messages = respawnWith(session, () => pty);
+
+		expect(session.scrollback).toBe("");
+		expect(messages.map((m) => m.type)).toEqual(["clear"]);
+	});
+
+	it("keeps a watcher's scrollback and marks the restart instead of clearing", () => {
+		const session = makeSession({
+			watcher: true,
+			scrollback: "fatal: Not possible to fast-forward\r\n",
+			pty: null,
+		});
+		const { pty } = makePty();
+
+		const messages = respawnWith(session, () => pty);
+
+		expect(session.scrollback).toContain("fatal: Not possible to fast-forward");
+		expect(session.scrollback).toContain("watcher restarted");
+		expect(messages.map((m) => m.type)).toEqual(["output"]);
+	});
 });
