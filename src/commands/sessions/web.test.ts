@@ -18,6 +18,9 @@ vi.mock("./web/restartMenu/installRestartMenu", () => ({
 	installRestartMenu: vi.fn(),
 }));
 vi.mock("../../shared/getInstallDir", () => ({ isGitRepo: () => false }));
+vi.mock("../../shared/sweepStagedAttachments", () => ({
+	sweepStagedAttachments: vi.fn(),
+}));
 
 const startMock = startWebServer as unknown as ReturnType<typeof vi.fn>;
 const ensureMock = ensureDaemonRunning as unknown as ReturnType<typeof vi.fn>;

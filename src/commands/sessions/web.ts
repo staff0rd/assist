@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { isGitRepo } from "../../shared/getInstallDir";
+import { sweepStagedAttachments } from "../../shared/sweepStagedAttachments";
 import { startWebServer } from "../../shared/web";
 import { ensureDaemonRunning } from "./daemon/ensureDaemonRunning";
 import { repoGroupForCwd } from "./daemon/repoGroupForCwd";
@@ -35,6 +36,7 @@ export async function web(options: {
 
 	attachSessionSocket(server, ctx);
 	installRestartMenu();
+	sweepStagedAttachments();
 
 	// why: keep a dedicated daemon log subscription open so daemonLog output reaches the web server's stdout (assist.log) regardless of whether a browser tab is connected.
 	streamDaemonLogs();
