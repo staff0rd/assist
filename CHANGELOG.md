@@ -1,3 +1,10 @@
+## [0.759.2](https://github.com/staff0rd/assist/compare/v0.759.1...v0.759.2) (2026-10-04)
+
+
+### Bug Fixes
+
+* let one viewer own a terminal's size ([2bb2abe](https://github.com/staff0rd/assist/commit/2bb2abec865a1013fee956880fa970b9efe91b68))
+
 ## [0.759.1](https://github.com/staff0rd/assist/compare/v0.759.0...v0.759.1) (2026-10-04)
 
 
