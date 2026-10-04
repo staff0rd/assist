@@ -1,3 +1,10 @@
+# [0.768.0](https://github.com/staff0rd/assist/compare/v0.767.2...v0.768.0) (2026-10-04)
+
+
+### Features
+
+* move region keys to Alt+A/S/D/X/C ([2a7ab9d](https://github.com/staff0rd/assist/commit/2a7ab9d99cc5232cfe7409e962daa1dbe17a29c6))
+
 ## [0.767.2](https://github.com/staff0rd/assist/compare/v0.767.1...v0.767.2) (2026-10-04)
 
 
