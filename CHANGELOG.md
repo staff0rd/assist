@@ -1,3 +1,10 @@
+## [0.766.1](https://github.com/staff0rd/assist/compare/v0.766.0...v0.766.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* keep watcher history across restart ([91fad41](https://github.com/staff0rd/assist/commit/91fad41c2b2577db4de8157e1447ba5d97b90196))
+
 # [0.766.0](https://github.com/staff0rd/assist/compare/v0.765.0...v0.766.0) (2026-10-04)
 
 
