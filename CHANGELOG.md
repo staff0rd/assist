@@ -1,3 +1,10 @@
+## [0.755.2](https://github.com/staff0rd/assist/compare/v0.755.1...v0.755.2) (2026-10-04)
+
+
+### Bug Fixes
+
+* serve WSL node on port + 1000 ([c1c9ad4](https://github.com/staff0rd/assist/commit/c1c9ad46f5fe0cf9abd80fc213912a7301fbae66))
+
 ## [0.755.1](https://github.com/staff0rd/assist/compare/v0.755.0...v0.755.1) (2026-10-04)
 
 
