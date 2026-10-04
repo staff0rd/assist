@@ -1,3 +1,4 @@
+import KeyboardIcon from "@mui/icons-material/Keyboard";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 import Divider from "@mui/material/Divider";
@@ -11,6 +12,7 @@ import { RenderHudMenuItem } from "./hamburgerMenuItems/RenderHudMenuItem";
 type HamburgerMenuHandlers = {
 	mode: "light" | "dark";
 	onToggleColorMode: () => void;
+	onShowShortcuts: () => void;
 	onRestart: () => void;
 	onUpdate: () => void;
 };
@@ -18,6 +20,7 @@ type HamburgerMenuHandlers = {
 export function hamburgerMenuItems({
 	mode,
 	onToggleColorMode,
+	onShowShortcuts,
 	onRestart,
 	onUpdate,
 }: HamburgerMenuHandlers) {
@@ -29,6 +32,12 @@ export function hamburgerMenuItems({
 			<ListItemText>Toggle dark mode</ListItemText>
 		</MenuItem>,
 		<RenderHudMenuItem key="render-hud" />,
+		<MenuItem key="shortcuts" onClick={onShowShortcuts}>
+			<ListItemIcon>
+				<KeyboardIcon fontSize="small" />
+			</ListItemIcon>
+			<ListItemText>Keyboard shortcuts</ListItemText>
+		</MenuItem>,
 		<Divider key="restart-divider" />,
 		<MenuItem key="restart" onClick={onRestart}>
 			<ListItemIcon>

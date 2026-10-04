@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NavTabs } from "./NavTabs";
@@ -183,6 +189,34 @@ describe("NavTabs", () => {
 		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
 		await Promise.resolve();
 		expect(currentPath()).toBe("/releases");
+	});
+
+	it("selects the Nth visible tab on Alt+N, even from inside the terminal", async () => {
+		showNewsInNav = true;
+		render(ui("/without", "/sessions"));
+		await waitFor(() => expect(tabLabels()).toContain("News"));
+		const terminal = document.createElement("textarea");
+		document.body.append(terminal);
+
+		fireEvent.keyDown(terminal, { key: "2", code: "Digit2", altKey: true });
+		expect(currentPath()).toBe("/backlog");
+
+		fireEvent.keyDown(terminal, { key: "¢", code: "Digit4", altKey: true });
+		expect(currentPath()).toBe("/news");
+		terminal.remove();
+	});
+
+	it("does nothing on Alt+N beyond the visible tabs", async () => {
+		render(ui("/without", "/sessions"));
+		await waitFor(releasesChecked);
+
+		const unhandled = fireEvent.keyDown(document.body, {
+			key: "4",
+			code: "Digit4",
+			altKey: true,
+		});
+		expect(unhandled).toBe(true);
+		expect(currentPath()).toBe("/sessions");
 	});
 
 	it("leaves routes that merely share the prefix alone", async () => {

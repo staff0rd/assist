@@ -2,6 +2,7 @@ import { type KeyboardEvent, useCallback } from "react";
 import { adjacentSessionId } from "./useCycleSessionCards/adjacentSessionId";
 import { holdSessionCardFocus } from "../../../../../holdSessionCardFocus";
 import { scrollSessionCardIntoView } from "../../../../scrollSessionCardIntoView";
+import { shortcutRegistry } from "../../../../../shortcutRegistry";
 import type { SessionInfo } from "../../../../../../types";
 import { useStarredSessions } from "../../../../../useStarredSessions";
 import { visibleSessionOrder } from "../../../../visibleSessionOrder";
@@ -18,8 +19,7 @@ export function useCycleSessionCards({
 	const { isStarred } = useStarredSessions();
 	return useCallback(
 		(event: KeyboardEvent) => {
-			if (event.key !== "Tab" || event.ctrlKey || event.altKey || event.metaKey)
-				return;
+			if (!shortcutRegistry.cycleCards.matches(event.nativeEvent)) return;
 			const card = (event.target as Element).closest("[data-session-id]");
 			if (!card) return;
 			const order = visibleSessionOrder(

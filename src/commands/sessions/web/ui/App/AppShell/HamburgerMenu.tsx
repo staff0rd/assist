@@ -4,6 +4,7 @@ import { NodeNameLabel } from "./HamburgerMenu/NodeNameLabel";
 import { hamburgerMenuItems } from "./HamburgerMenu/hamburgerMenuItems";
 import { HamburgerMenuDialogs } from "./HamburgerMenu/HamburgerMenuDialogs";
 import { MenuTriggerButton } from "./HamburgerMenu/MenuTriggerButton";
+import { type MenuDialog, useMenuDialog } from "./HamburgerMenu/useMenuDialog";
 
 export function HamburgerMenu({
 	mode,
@@ -15,10 +16,13 @@ export function HamburgerMenu({
 	reconnecting: boolean;
 }) {
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-	const [restarting, setRestarting] = useState(false);
-	const [updatePending, setUpdatePending] = useState(false);
+	const { dialog, showDialog, closeDialog } = useMenuDialog();
 	const open = Boolean(anchorEl);
 	const close = () => setAnchorEl(null);
+	const closeAndShow = (next: MenuDialog) => () => {
+		close();
+		showDialog(next);
+	};
 
 	return (
 		<>
@@ -37,22 +41,15 @@ export function HamburgerMenu({
 						toggle();
 						close();
 					},
-					onRestart: () => {
-						close();
-						setRestarting(true);
-					},
-					onUpdate: () => {
-						close();
-						setUpdatePending(true);
-					},
+					onShowShortcuts: closeAndShow("shortcuts"),
+					onRestart: closeAndShow("restart"),
+					onUpdate: closeAndShow("update"),
 				})}
 			</Menu>
 			<HamburgerMenuDialogs
-				restarting={restarting}
+				dialog={dialog}
 				reconnecting={reconnecting}
-				onCloseRestart={() => setRestarting(false)}
-				updating={updatePending}
-				onCloseUpdate={() => setUpdatePending(false)}
+				onClose={closeDialog}
 			/>
 		</>
 	);

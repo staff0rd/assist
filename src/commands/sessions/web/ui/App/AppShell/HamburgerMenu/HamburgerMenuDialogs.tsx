@@ -1,39 +1,33 @@
+import { ShortcutsDialog } from "./HamburgerMenuDialogs/ShortcutsDialog";
 import { RestartConfirmDialog } from "./HamburgerMenuDialogs/RestartConfirmDialog";
 import { UpdateAssistConfirmDialog } from "./HamburgerMenuDialogs/UpdateAssistConfirmDialog";
+import type { MenuDialog } from "./useMenuDialog";
 import { useSessionLaunchContext } from "../../../useSessionLaunchContext";
 
-type HamburgerMenuDialogsProps = {
-	restarting: boolean;
-	reconnecting: boolean;
-	onCloseRestart: () => void;
-	updating: boolean;
-	onCloseUpdate: () => void;
-};
-
 export function HamburgerMenuDialogs({
-	restarting,
+	dialog,
 	reconnecting,
-	onCloseRestart,
-	updating,
-	onCloseUpdate,
-}: HamburgerMenuDialogsProps) {
+	onClose,
+}: {
+	dialog: MenuDialog | null;
+	reconnecting: boolean;
+	onClose: () => void;
+}) {
 	const { launchAssist, armUpdateReload } = useSessionLaunchContext();
 
 	return (
 		<>
-			{restarting && (
-				<RestartConfirmDialog
-					reconnecting={reconnecting}
-					onClose={onCloseRestart}
-				/>
+			{dialog === "shortcuts" && <ShortcutsDialog onClose={onClose} />}
+			{dialog === "restart" && (
+				<RestartConfirmDialog reconnecting={reconnecting} onClose={onClose} />
 			)}
-			{updating && (
+			{dialog === "update" && (
 				<UpdateAssistConfirmDialog
 					onConfirm={() => {
 						armUpdateReload();
 						launchAssist(["update"]);
 					}}
-					onClose={onCloseUpdate}
+					onClose={onClose}
 				/>
 			)}
 		</>

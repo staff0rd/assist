@@ -4,13 +4,13 @@ const beforeXtermAndBrowser = true;
 
 export function useCaptureHotkey(
 	matches: (event: KeyboardEvent) => boolean,
-	onHotkey: () => void,
+	onHotkey: (event: KeyboardEvent) => void,
 ): void {
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (!matches(event)) return;
 			event.preventDefault();
-			onHotkey();
+			onHotkey(event);
 		};
 		globalThis.addEventListener("keydown", onKeyDown, beforeXtermAndBrowser);
 		return () =>

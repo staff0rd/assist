@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { isSaveKey } from "./useSaveHotkey/isSaveKey";
+import { shortcutRegistry } from "../../../../../shortcutRegistry";
 
 const beforeMonacoAndBrowser = true;
 
 export function useSaveHotkey(save: () => void): void {
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
-			if (!isSaveKey(event)) return;
+			if (!shortcutRegistry.save.matches(event)) return;
 			event.preventDefault();
 			save();
 		};

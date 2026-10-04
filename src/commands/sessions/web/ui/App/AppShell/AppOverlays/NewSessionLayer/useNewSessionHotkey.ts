@@ -1,6 +1,6 @@
-import { isNewSessionKey } from "../../../isNewSessionKey";
-import { useCaptureHotkey } from "../useCaptureHotkey";
+import { shortcutRegistry } from "../../../shortcutRegistry";
+import { useCaptureHotkey } from "../../useCaptureHotkey";
 
 export function useNewSessionHotkey(open: () => void): void {
-	useCaptureHotkey(isNewSessionKey, open);
+	useCaptureHotkey(shortcutRegistry.newSession.matches, open);
 }

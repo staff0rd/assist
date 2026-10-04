@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { isNextWaitingKey } from "./useNextWaitingHotkey/isNextWaitingKey";
+import { shortcutRegistry } from "../../shortcutRegistry";
 
 const beforeXtermAndBrowser = true;
 
 export function useNextWaitingHotkey(onJump: () => void): void {
 	useEffect(() => {
 		const onKeyDown = (event: KeyboardEvent) => {
-			if (!isNextWaitingKey(event)) return;
+			if (!shortcutRegistry.nextWaiting.matches(event)) return;
 			event.preventDefault();
 			onJump();
 		};

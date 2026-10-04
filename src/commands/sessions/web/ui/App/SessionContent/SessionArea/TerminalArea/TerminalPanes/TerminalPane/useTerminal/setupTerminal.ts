@@ -2,8 +2,7 @@ import type { ResizeFn } from "../../../ResizeFn";
 import { createTerminal, type TerminalHandle } from "./createTerminal";
 import { handleClipboardKey } from "./setupTerminal/handleClipboardKey";
 import { hasTerminalSize } from "./hasTerminalSize";
-import { isNewSessionKey } from "../../../../../../isNewSessionKey";
-import { isQuickOpenKey } from "../../../../../../isQuickOpenKey";
+import { isAppHotkey } from "./setupTerminal/isAppHotkey";
 
 type TerminalIo = {
 	sendInput: (sessionId: string, data: string) => void;
@@ -21,7 +20,7 @@ export function setupTerminal(
 
 	handle.term.onData((data) => sendInput(sessionId, data));
 	handle.term.attachCustomKeyEventHandler((event) => {
-		if (isQuickOpenKey(event) || isNewSessionKey(event)) return false;
+		if (isAppHotkey(event)) return false;
 		return handleClipboardKey(event, handle.term, navigator.clipboard, (text) =>
 			handle.term.paste(text),
 		);

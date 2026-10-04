@@ -1,5 +1,12 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+	within,
+} from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { HamburgerMenu } from "./HamburgerMenu";
@@ -113,6 +120,36 @@ describe("HamburgerMenu", () => {
 		expect(fetchMock).toHaveBeenCalledWith("/api/restart?target=both", {
 			method: "POST",
 		});
+	});
+
+	it("opens the keyboard shortcuts sheet from the menu", () => {
+		renderMenu(vi.fn());
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		fireEvent.click(screen.getByText("Keyboard shortcuts"));
+
+		const sheet = screen.getByRole("dialog", { name: "Keyboard shortcuts" });
+		expect(within(sheet).getByText("Navigate")).toBeTruthy();
+		expect(within(sheet).getByText("Switch top-level tab")).toBeTruthy();
+		expect(within(sheet).getByText("Alt+1–5")).toBeTruthy();
+		expect(within(sheet).getByText("Ctrl+/")).toBeTruthy();
+	});
+
+	it("opens the sheet on Ctrl+/ and restores focus when Esc closes it", async () => {
+		renderMenu(vi.fn());
+		const terminal = document.createElement("textarea");
+		document.body.append(terminal);
+		terminal.focus();
+
+		fireEvent.keyDown(terminal, { key: "/", code: "Slash", ctrlKey: true });
+		const sheet = await screen.findByRole("dialog", {
+			name: "Keyboard shortcuts",
+		});
+		fireEvent.keyDown(sheet, { key: "Escape" });
+
+		await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+		expect(document.activeElement).toBe(terminal);
+		terminal.remove();
 	});
 
 	it("does not restart when the restart is cancelled", () => {
