@@ -6,7 +6,7 @@ import { ViewRouter } from "./components/ViewRouter";
 import { useBacklogItems } from "./useBacklogItems";
 
 export function BacklogView({ socket }: { socket: SessionSocket }) {
-	const { items, loading, reload } = useBacklogItems();
+	const { items, loading, error, reload } = useBacklogItems();
 
 	useReportContentReady(!loading);
 
@@ -19,6 +19,7 @@ export function BacklogView({ socket }: { socket: SessionSocket }) {
 						<ViewRouter
 							items={items}
 							loading={loading}
+							error={error}
 							socket={socket}
 							onReload={reload}
 						/>

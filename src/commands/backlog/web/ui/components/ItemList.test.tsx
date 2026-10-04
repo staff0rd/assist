@@ -33,6 +33,7 @@ function renderList(items: BacklogItemSummary[]) {
 			<ItemList
 				items={items}
 				loading={false}
+				error={null}
 				socket={socket}
 				onReload={() => Promise.resolve()}
 			/>

@@ -7,6 +7,7 @@ import { ItemRoute } from "./ItemRoute";
 type ViewRouterProps = {
 	items: BacklogItemSummary[];
 	loading: boolean;
+	error: string | null;
 	socket: SessionSocket;
 	onReload: () => Promise<void>;
 };
@@ -14,6 +15,7 @@ type ViewRouterProps = {
 export function ViewRouter({
 	items,
 	loading,
+	error,
 	socket,
 	onReload,
 }: ViewRouterProps) {
@@ -25,6 +27,7 @@ export function ViewRouter({
 					<ItemList
 						items={items}
 						loading={loading}
+						error={error}
 						socket={socket}
 						onReload={onReload}
 					/>

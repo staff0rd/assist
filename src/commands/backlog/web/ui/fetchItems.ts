@@ -28,6 +28,9 @@ export async function fetchItems({
 	const res = await fetch(withCwd(itemsUrl(query, filter), cwd, node), {
 		signal,
 	});
-	if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	if (!res.ok) {
+		const body = await res.json().catch(() => null);
+		throw new Error(body?.error ?? `HTTP ${res.status}`);
+	}
 	return res.json();
 }

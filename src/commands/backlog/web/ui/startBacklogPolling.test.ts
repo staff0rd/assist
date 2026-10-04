@@ -19,7 +19,10 @@ describe("startBacklogPolling", () => {
 					finish = resolve;
 				}),
 		);
-		const stop = startBacklogPolling("/repo", "todo", () => {});
+		const stop = startBacklogPolling("/repo", "todo", {
+			onLoaded: () => {},
+			onError: () => {},
+		});
 		await vi.advanceTimersByTimeAsync(20_000);
 		expect(revalidateBacklog).toHaveBeenCalledTimes(1);
 		finish();

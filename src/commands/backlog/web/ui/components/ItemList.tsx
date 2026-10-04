@@ -14,11 +14,18 @@ import { Header } from "./Header";
 type ItemListProps = {
 	items: BacklogItemSummary[];
 	loading: boolean;
+	error: string | null;
 	socket: SessionSocket;
 	onReload: () => Promise<void>;
 };
 
-export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
+export function ItemList({
+	items,
+	loading,
+	error,
+	socket,
+	onReload,
+}: ItemListProps) {
 	const cwd = useRepoCwd();
 	const node = useApiNode();
 	const { query, setQuery, results, loading: searching } = useSearchItems();
@@ -36,6 +43,7 @@ export function ItemList({ items, loading, socket, onReload }: ItemListProps) {
 			<RepoSummaryChips sessions={socket.sessions} />
 			<ListBody
 				loading={loading || searching}
+				error={results ? null : error}
 				query={query}
 				typeFilter={typeFilter}
 				items={filtered}

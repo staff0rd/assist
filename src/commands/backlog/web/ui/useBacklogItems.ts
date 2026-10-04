@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useApiNode } from "../../../sessions/web/ui/useApiNode";
 import { backlogItemsCache } from "./backlogItemsCache";
+import { backlogLoadHandlers } from "./backlogLoadHandlers";
 import { fetchItems } from "./fetchItems";
-import { itemsEqual } from "./itemsEqual";
 import { startBacklogPolling } from "./startBacklogPolling";
 import type { BacklogItemSummary } from "./types";
 import { useBacklogFilter } from "./useBacklogFilter";
@@ -17,6 +17,7 @@ export function useBacklogItems() {
 	const isMiss = cached === undefined;
 	const [items, setItems] = useState<BacklogItemSummary[]>(seed);
 	const [loading, setLoading] = useState(isMiss);
+	const [error, setError] = useState<string | null>(null);
 	const [loadedCwd, setLoadedCwd] = useState(cwd);
 	const [loadedNode, setLoadedNode] = useState(node);
 	const [loadedFilter, setLoadedFilter] = useState(filter);
@@ -28,6 +29,7 @@ export function useBacklogItems() {
 		setLoadedFilter(filter);
 		setItems(seed);
 		setLoading(isMiss);
+		setError(null);
 	}
 
 	const reload = useCallback(async () => {
@@ -42,14 +44,11 @@ export function useBacklogItems() {
 			startBacklogPolling(
 				cwd,
 				filter,
-				(next) => {
-					setItems((prev) => (itemsEqual(prev, next) ? prev : next));
-					setLoading(false);
-				},
+				backlogLoadHandlers({ setItems, setLoading, setError }),
 				node,
 			),
 		[cwd, node, filter],
 	);
 
-	return { items, loading, reload };
+	return { items, loading, error, reload };
 }

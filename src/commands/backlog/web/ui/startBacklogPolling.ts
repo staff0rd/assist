@@ -1,11 +1,11 @@
 import type { BacklogFilter } from "../parseBacklogFilter";
-import { revalidateBacklog } from "./revalidateBacklog";
-import type { BacklogItemSummary } from "./types";
+import {
+	type BacklogLoadHandlers,
+	revalidateBacklog,
+} from "./revalidateBacklog";
 
 // why: other machines change status in the shared DB; poll so their flips show without a reload (#418).
 const POLL_INTERVAL_MS = 5000;
-
-type Apply = (items: BacklogItemSummary[]) => void;
 
 /**
  * Revalidate the backlog list immediately and then on an interval, returning a
@@ -14,7 +14,7 @@ type Apply = (items: BacklogItemSummary[]) => void;
 export function startBacklogPolling(
 	cwd: string | undefined,
 	filter: BacklogFilter,
-	apply: Apply,
+	handlers: BacklogLoadHandlers,
 	node?: string,
 ): () => void {
 	const controller = new AbortController();
@@ -23,11 +23,15 @@ export function startBacklogPolling(
 	const poll = () => {
 		if (inFlight) return;
 		inFlight = true;
-		void revalidateBacklog(cwd, filter, controller.signal, apply, node).finally(
-			() => {
-				inFlight = false;
-			},
-		);
+		void revalidateBacklog(
+			cwd,
+			filter,
+			controller.signal,
+			handlers,
+			node,
+		).finally(() => {
+			inFlight = false;
+		});
 	};
 	poll();
 	const interval = setInterval(poll, POLL_INTERVAL_MS);
