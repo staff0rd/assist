@@ -224,7 +224,7 @@ A run entry's relative `cwd` (and a `link` path) resolves against the **repo roo
 - `assist config unset <key>` - Remove a config value so the key falls back to the global value or schema default (`-g` targets `~/.assist.yml`; `-g --repo [name]` removes it from the shared per-repo override)
 - `assist config import-repos` - Move this machine's `~/.assist.yml` `repos:` overrides into the shared database: prints a per-key diff against each repo's shared override, then on confirmation writes the keys and removes `repos:` from `~/.assist.yml`
 
-Each node mirrors the shared per-repo overrides into `~/.assist/repo-config-cache.json` when its daemon starts and after its own `--repo` writes, and resolves config from that snapshot, so an unreachable database leaves the last snapshot in effect. A `repos:` entry in `~/.assist.yml` still applies, with a warning naming `assist config import-repos`, until the shared database holds an override for that repo, after which it is ignored.
+The web config page's "This repo" scope reads and writes the same shared override. Each node mirrors the shared per-repo overrides into `~/.assist/repo-config-cache.json` when its daemon starts, every minute while it runs, and after its own repo-scope writes, and resolves config from that snapshot, so an unreachable database leaves the last snapshot in effect. A `repos:` entry in `~/.assist.yml` still applies, with a warning naming `assist config import-repos`, until the shared database holds an override for that repo, after which it is ignored.
 
 The Config tab of the sessions web dashboard never shows secret values; their fields are write-only.
 

@@ -9,6 +9,7 @@ export type ConfigEntry = ConfigLeaf & {
 	sources?: ConfigSource[];
 	layers?: ConfigEntryLayers;
 	repoKey?: string;
+	repoSource?: "db" | "yml";
 	globalConfigFile?: string;
 	globalOnly?: boolean;
 	node?: ConfigNode;

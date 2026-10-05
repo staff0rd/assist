@@ -9,8 +9,8 @@ export function configScopeFiles(
 	return {
 		project: "this repo's assist.yml",
 		repo: repoKey
-			? `repos.${repoKey} in ${globalConfigFile}`
-			: `this repo's entry under repos: in ${globalConfigFile}`,
+			? `repos.${repoKey} in the shared db (all nodes)`
+			: "this repo's override in the shared db (all nodes)",
 		global: globalConfigFile,
 	};
 }

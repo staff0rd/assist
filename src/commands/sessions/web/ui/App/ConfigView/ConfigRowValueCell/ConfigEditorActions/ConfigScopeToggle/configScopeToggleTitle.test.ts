@@ -31,13 +31,15 @@ const selectedTitle = (
 describe("configScopeToggleTitle", () => {
 	it("names the file a scope is not set in", () => {
 		expect(title("project", [])).toBe("Not set in this repo's assist.yml");
-		expect(title("repo", [])).toBe("Not set in repos.assist in ~/.assist.yml");
+		expect(title("repo", [])).toBe(
+			"Not set in repos.assist in the shared db (all nodes)",
+		);
 		expect(title("global", [])).toBe("Not set in ~/.assist.yml");
 	});
 
 	it("marks the highest-precedence scope as in effect", () => {
 		expect(title("repo", ["repo", "global"])).toBe(
-			"Set in repos.assist in ~/.assist.yml — in effect",
+			"Set in repos.assist in the shared db (all nodes) — in effect",
 		);
 	});
 
@@ -46,7 +48,7 @@ describe("configScopeToggleTitle", () => {
 			"Set in ~/.assist.yml — overridden by Project",
 		);
 		expect(title("repo", ["repo", "global"], false)).toBe(
-			"Set in repos.assist in ~/.assist.yml — in effect",
+			"Set in repos.assist in the shared db (all nodes) — in effect",
 		);
 		expect(title("global", ["repo", "global"])).toBe(
 			"Set in ~/.assist.yml — overridden by This repo",
@@ -70,12 +72,12 @@ describe("configScopeToggleTitle", () => {
 				lockedToGlobal: false,
 				selected: false,
 			}),
-		).toBe("Not set in this repo's entry under repos: in ~/.assist.yml");
+		).toBe("Not set in this repo's override in the shared db (all nodes)");
 	});
 
 	it("names the file the pending save will be written to", () => {
 		expect(selectedTitle("repo", ["repo"])).toBe(
-			"This save will be written to repos.assist in ~/.assist.yml — currently set here, in effect",
+			"This save will be written to repos.assist in the shared db (all nodes) — currently set here, in effect",
 		);
 		expect(selectedTitle("project", ["repo"])).toBe(
 			"This save will be written to this repo's assist.yml — not currently set here",

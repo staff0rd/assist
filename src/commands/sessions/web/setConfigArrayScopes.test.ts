@@ -19,6 +19,18 @@ vi.mock("../../../shared/loadConfigFrom", async (importOriginal) => {
 	return { ...actual, getGlobalConfigPath: () => globalConfigPath.path };
 });
 
+let orm: Db;
+
+vi.mock("../../../shared/db/getDb", () => ({
+	getDb: () => Promise.resolve(orm),
+}));
+
+import { createTestDb } from "../../../shared/db/createTestDb";
+import type { Db } from "../../../shared/db/Db";
+import { listRepoConfigs } from "../../../shared/db/listRepoConfigs";
+import type { RepoConfigOverrides } from "../../../shared/readRepoConfigCache";
+import { writeRepoConfigCache } from "../../../shared/writeRepoConfigCache";
+import { seedRepoConfigs } from "../../../test/mothers/seedRepoConfigs";
 import { readConfigEntries } from "../../config/readConfigEntries";
 import { setConfig } from "./setConfig";
 import { configArrayItems } from "./ui/App/ConfigView/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/configArrayItems";
@@ -67,6 +79,11 @@ function readYaml(path: string): Record<string, unknown> {
 	return parseYaml(readFileSync(path, "utf8")) as Record<string, unknown>;
 }
 
+async function seedShared(repos: RepoConfigOverrides): Promise<void> {
+	await seedRepoConfigs(orm, repos);
+	writeRepoConfigCache(repos);
+}
+
 function entryFor(key: string) {
 	const entry = readConfigEntries(repo).find((leaf) => leaf.key === key);
 	if (!entry) throw new Error(`no entry for ${key}`);
@@ -99,16 +116,13 @@ async function postItemSaveAsTheArrayEditorWould(
 }
 
 describe("array config writes at a chosen scope", () => {
-	beforeEach(() => {
+	beforeEach(async () => {
+		({ orm } = await createTestDb());
 		vi.clearAllMocks();
 		vi.stubEnv("HOME", home);
 		writeFileSync(repoConfig, stringifyYaml(projectConfig));
-		writeFileSync(
-			globalConfig,
-			stringifyYaml({
-				repos: { [originKey]: { worktree: { enabled: true } } },
-			}),
-		);
+		writeFileSync(globalConfig, "");
+		await seedShared({ [originKey]: { worktree: { enabled: true } } });
 	});
 
 	it("adds one run command to the repo override and leaves the project file alone", async () => {
@@ -120,12 +134,10 @@ describe("array config writes at a chosen scope", () => {
 		);
 
 		expect(status).toBe(200);
-		expect(readYaml(globalConfig)).toEqual({
-			repos: {
-				[originKey]: {
-					worktree: { enabled: true },
-					run: [{ name: "deploy", command: "./deploy" }],
-				},
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: {
+				worktree: { enabled: true },
+				run: [{ name: "deploy", command: "./deploy" }],
 			},
 		});
 		expect(readYaml(repoConfig)).toEqual(projectConfig);
@@ -140,12 +152,10 @@ describe("array config writes at a chosen scope", () => {
 		);
 
 		expect(status).toBe(200);
-		expect(readYaml(globalConfig)).toEqual({
-			repos: {
-				[originKey]: {
-					worktree: { enabled: true },
-					deny: [{ pattern: "curl", message: "ask first" }],
-				},
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: {
+				worktree: { enabled: true },
+				deny: [{ pattern: "curl", message: "ask first" }],
 			},
 		});
 		expect(readYaml(repoConfig)).toEqual(projectConfig);
@@ -160,12 +170,10 @@ describe("array config writes at a chosen scope", () => {
 		);
 
 		expect(status).toBe(200);
-		expect(readYaml(globalConfig)).toEqual({
-			repos: {
-				[originKey]: {
-					worktree: { enabled: true },
-					subtasks: [{ title: "update docs" }],
-				},
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: {
+				worktree: { enabled: true },
+				subtasks: [{ title: "update docs" }],
 			},
 		});
 		expect(readYaml(repoConfig)).toEqual(projectConfig);
@@ -181,14 +189,12 @@ describe("array config writes at a chosen scope", () => {
 			command: "./smoke",
 		});
 
-		expect(readYaml(globalConfig)).toMatchObject({
-			repos: {
-				[originKey]: {
-					run: [
-						{ name: "deploy", command: "./deploy" },
-						{ name: "smoke", command: "./smoke" },
-					],
-				},
+		expect(await listRepoConfigs(orm)).toMatchObject({
+			[originKey]: {
+				run: [
+					{ name: "deploy", command: "./deploy" },
+					{ name: "smoke", command: "./smoke" },
+				],
 			},
 		});
 		expect(readYaml(repoConfig)).toEqual(projectConfig);
@@ -213,20 +219,15 @@ describe("array config writes at a chosen scope", () => {
 				{ name: "test", command: "vitest run" },
 			],
 		});
-		expect(readYaml(globalConfig)).toEqual({
-			repos: { [originKey]: { worktree: { enabled: true } } },
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: { worktree: { enabled: true } },
 		});
 	});
 
 	it("edits a repo-owned run command without touching the project's commands", async () => {
-		writeFileSync(
-			globalConfig,
-			stringifyYaml({
-				repos: {
-					[originKey]: { run: [{ name: "deploy", command: "./deploy" }] },
-				},
-			}),
-		);
+		await seedShared({
+			[originKey]: { run: [{ name: "deploy", command: "./deploy" }] },
+		});
 
 		const status = await postItemSaveAsTheArrayEditorWould("run", "repo", 0, {
 			name: "deploy",
@@ -234,10 +235,8 @@ describe("array config writes at a chosen scope", () => {
 		});
 
 		expect(status).toBe(200);
-		expect(readYaml(globalConfig)).toEqual({
-			repos: {
-				[originKey]: { run: [{ name: "deploy", command: "./deploy --prod" }] },
-			},
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: { run: [{ name: "deploy", command: "./deploy --prod" }] },
 		});
 		expect(readYaml(repoConfig)).toEqual(projectConfig);
 	});

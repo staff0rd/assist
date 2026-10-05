@@ -15,7 +15,7 @@ const entry = (sources: ConfigSource[]): ConfigEntry =>
 describe("configClearTitle", () => {
 	it("names the layer a clear falls back to", () => {
 		expect(configClearTitle(entry(["repo", "global"]), "repo")).toBe(
-			"Remove commit.push from repos.assist in ~/.assist.yml — falls back to Global",
+			"Remove commit.push from repos.assist in the shared db (all nodes) — falls back to Global",
 		);
 	});
 
@@ -29,7 +29,7 @@ describe("configClearTitle", () => {
 
 	it("says the schema default when clearing the only value", () => {
 		expect(configClearTitle(entry(["repo"]), "repo")).toBe(
-			"Remove commit.push from repos.assist in ~/.assist.yml — reverts to the schema default",
+			"Remove commit.push from repos.assist in the shared db (all nodes) — reverts to the schema default",
 		);
 	});
 });

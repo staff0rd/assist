@@ -17,8 +17,20 @@ vi.mock("../../../shared/loadConfigFrom", async (importOriginal) => {
 	return { ...actual, getGlobalConfigPath: () => globalConfigPath.path };
 });
 
+let orm: Db;
+
+vi.mock("../../../shared/db/getDb", () => ({
+	getDb: () => Promise.resolve(orm),
+}));
+
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { createTestDb } from "../../../shared/db/createTestDb";
+import type { Db } from "../../../shared/db/Db";
+import { listRepoConfigs } from "../../../shared/db/listRepoConfigs";
+import { readRepoConfigCache } from "../../../shared/readRepoConfigCache";
+import { writeRepoConfigCache } from "../../../shared/writeRepoConfigCache";
+import { seedRepoConfigs } from "../../../test/mothers/seedRepoConfigs";
 import { unsetConfig } from "./unsetConfig";
 
 const root = join(tmpdir(), "assist-unset-config-test");
@@ -54,8 +66,12 @@ function readYaml(path: string): Record<string, unknown> {
 	return parseYaml(readFileSync(path, "utf8")) as Record<string, unknown>;
 }
 
+const originKey = `local:${paths.repo}`;
+
 describe("unsetConfig", () => {
-	beforeEach(() => {
+	beforeEach(async () => {
+		({ orm } = await createTestDb());
+		writeRepoConfigCache({});
 		vi.clearAllMocks();
 		writeFileSync(paths.repoConfig, "commit:\n  push: false\n  pull: true\n");
 		writeFileSync(paths.globalConfig, "commit:\n  pull: false\n");
@@ -194,11 +210,10 @@ describe("unsetConfig", () => {
 		expect(badScope).toBe(400);
 	});
 
-	it("removes only the key from the repos block", async () => {
-		writeFileSync(
-			paths.globalConfig,
-			"commit:\n  pull: false\nrepos:\n  repo:\n    commit:\n      push: true\n      pull: true\n",
-		);
+	it("removes only the key from the shared db override and refreshes the cache", async () => {
+		await seedRepoConfigs(orm, {
+			[originKey]: { commit: { push: true, pull: true } },
+		});
 
 		const [status, payload] = await post({
 			key: "commit.push",
@@ -209,23 +224,26 @@ describe("unsetConfig", () => {
 		expect(status).toBe(200);
 		expect(payload).toEqual({
 			target: "repo",
-			repoKey: "repo",
+			repoKey: originKey,
 			removed: true,
 		});
-		expect(readYaml(paths.globalConfig)).toEqual({
-			commit: { pull: false },
-			repos: { repo: { commit: { pull: true } } },
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: { commit: { pull: true } },
 		});
+		expect(readRepoConfigCache()).toEqual({
+			[originKey]: { commit: { pull: true } },
+		});
+		expect(readYaml(paths.globalConfig)).toEqual({ commit: { pull: false } });
 		expect(readYaml(paths.repoConfig)).toEqual({
 			commit: { push: false, pull: true },
 		});
 	});
 
-	it("prunes a repos block left empty by the removal", async () => {
-		writeFileSync(
-			paths.globalConfig,
-			"commit:\n  pull: false\nrepos:\n  repo:\n    commit:\n      push: true\n  other:\n    commit:\n      push: false\n",
-		);
+	it("deletes the db override left empty by the removal", async () => {
+		await seedRepoConfigs(orm, {
+			repo: { commit: { push: true } },
+			other: { commit: { push: false } },
+		});
 
 		const [status] = await post({
 			key: "commit.push",
@@ -234,33 +252,32 @@ describe("unsetConfig", () => {
 		});
 
 		expect(status).toBe(200);
-		expect(readYaml(paths.globalConfig)).toEqual({
-			commit: { pull: false },
-			repos: { other: { commit: { push: false } } },
+		expect(await listRepoConfigs(orm)).toEqual({
+			other: { commit: { push: false } },
 		});
 	});
 
-	it("drops the repos map when its last block is pruned", async () => {
+	it("leaves a yml repos entry alone", async () => {
 		writeFileSync(
 			paths.globalConfig,
 			"repos:\n  repo:\n    commit:\n      push: true\n",
 		);
 
-		const [status] = await post({
+		const [status, payload] = await post({
 			key: "commit.push",
 			cwd: paths.repo,
 			scope: "repo",
 		});
 
 		expect(status).toBe(200);
-		expect(readYaml(paths.globalConfig)).toEqual({});
-	});
-
-	it("reports a key absent from the repos block without writing", async () => {
-		writeFileSync(
-			paths.globalConfig,
+		expect(payload.removed).toBe(false);
+		expect(readFileSync(paths.globalConfig, "utf8")).toBe(
 			"repos:\n  repo:\n    commit:\n      push: true\n",
 		);
+	});
+
+	it("reports a key absent from the db override without writing", async () => {
+		await seedRepoConfigs(orm, { repo: { commit: { push: true } } });
 
 		const [status, payload] = await post({
 			key: "worktree.enabled",
@@ -274,16 +291,13 @@ describe("unsetConfig", () => {
 			repoKey: "repo",
 			removed: false,
 		});
-		expect(readFileSync(paths.globalConfig, "utf8")).toBe(
-			"repos:\n  repo:\n    commit:\n      push: true\n",
-		);
+		expect(await listRepoConfigs(orm)).toEqual({
+			repo: { commit: { push: true } },
+		});
 	});
 
 	it("rejects a repo unset of a global-only key", async () => {
-		writeFileSync(
-			paths.globalConfig,
-			"repos:\n  repo:\n    commit:\n      push: true\n",
-		);
+		await seedRepoConfigs(orm, { repo: { commit: { push: true } } });
 
 		const [status, payload] = await post({
 			key: "sync.autoConfirm",
@@ -293,8 +307,8 @@ describe("unsetConfig", () => {
 
 		expect(status).toBe(400);
 		expect(payload.error).toContain("global-only");
-		expect(readFileSync(paths.globalConfig, "utf8")).toBe(
-			"repos:\n  repo:\n    commit:\n      push: true\n",
-		);
+		expect(await listRepoConfigs(orm)).toEqual({
+			repo: { commit: { push: true } },
+		});
 	});
 });

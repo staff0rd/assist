@@ -10,6 +10,7 @@ export type RawConfigLayers = {
 	global: Record<string, unknown>;
 	repoOverride: Record<string, unknown>;
 	repoKey?: string;
+	repoSource?: "db" | "yml";
 };
 
 export function readRawConfigLayers(
@@ -23,5 +24,6 @@ export function readRawConfigLayers(
 		global,
 		repoOverride: repo.override,
 		...(repo.key === undefined ? {} : { repoKey: repo.key }),
+		...(repo.source === undefined ? {} : { repoSource: repo.source }),
 	};
 }

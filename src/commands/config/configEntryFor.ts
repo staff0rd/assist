@@ -27,6 +27,7 @@ export function configEntryFor(
 		sources,
 		layers: configEntryLayers(leaf.key, layers, node),
 		...(layers.repoKey ? { repoKey: layers.repoKey } : {}),
+		...(layers.repoSource ? { repoSource: layers.repoSource } : {}),
 		globalConfigFile,
 		globalOnly: isGlobalOnlyConfigKey(leaf.key),
 		node,

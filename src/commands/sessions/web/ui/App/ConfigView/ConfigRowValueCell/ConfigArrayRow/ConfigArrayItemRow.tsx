@@ -34,6 +34,7 @@ export function ConfigArrayItemRow({ entry, node, index, editor }: Props) {
 				<ConfigSourceChip
 					source={editor.items[index]?.owner?.scope ?? "default"}
 					repoKey={entry.repoKey}
+					repoSource={entry.repoSource}
 				/>
 				<ConfigArrayItemActions entry={entry} index={index} editor={editor} />
 			</Box>

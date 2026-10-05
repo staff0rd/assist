@@ -13,9 +13,9 @@ describe("configArrayItemActionTitles", () => {
 				canMoveDown: true,
 			}),
 		).toEqual({
-			moveUp: "Move run[1] up in repos.assist in ~/.assist.yml",
-			moveDown: "Move run[1] down in repos.assist in ~/.assist.yml",
-			remove: "Remove run[1] from repos.assist in ~/.assist.yml",
+			moveUp: "Move run[1] up in repos.assist in the shared db (all nodes)",
+			moveDown: "Move run[1] down in repos.assist in the shared db (all nodes)",
+			remove: "Remove run[1] from repos.assist in the shared db (all nodes)",
 		});
 	});
 

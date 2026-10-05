@@ -361,7 +361,7 @@ describe("ConfigView", () => {
 		);
 		expect(
 			screen.getByRole("button", { name: "This repo" }).getAttribute("title"),
-		).toBe("Not set in repos.assist in ~/.assist.yml");
+		).toBe("Not set in repos.assist in the shared db (all nodes)");
 
 		fireEvent.click(screen.getByRole("button", { name: "This repo" }));
 		fireEvent.click(screen.getByLabelText("worktree.enabled value"));
@@ -406,7 +406,7 @@ describe("ConfigView", () => {
 		fireEvent.click(screen.getByRole("button", { name: "This repo" }));
 
 		expect(screen.getByTestId("config-write-target").textContent).toBe(
-			"This save writes to repos.nextgen in /mnt/c/Users/me/.assist.yml on the Windows host. Dots mark where the saved value lives now.",
+			"This save writes to repos.nextgen in the shared db (all nodes). Dots mark where the saved value lives now.",
 		);
 		expect(
 			screen.getByRole("button", { name: "Global" }).getAttribute("title"),
@@ -489,7 +489,7 @@ describe("ConfigView", () => {
 				.getAttribute("aria-pressed"),
 		).toBe("false");
 		expect(screen.getByTestId("config-write-target").textContent).toBe(
-			"This save writes to repos.assist in ~/.assist.yml. Dots mark where the saved value lives now.",
+			"This save writes to repos.assist in the shared db (all nodes). Dots mark where the saved value lives now.",
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "Save" }));
@@ -542,7 +542,7 @@ describe("ConfigView", () => {
 			screen.getByTestId("scope-dot-repo").getAttribute("data-state"),
 		).toBe("effective");
 		expect(screen.getByTestId("config-write-target").textContent).toBe(
-			"This save writes to repos.planner-assistant in ~/.assist.yml. Dots mark where the saved value lives now.",
+			"This save writes to repos.planner-assistant in the shared db (all nodes). Dots mark where the saved value lives now.",
 		);
 	});
 
@@ -1401,7 +1401,7 @@ describe("ConfigView", () => {
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
 		).toBe(
-			"Remove worktree.enabled from repos.assist in ~/.assist.yml — reverts to the schema default",
+			"Remove worktree.enabled from repos.assist in the shared db (all nodes) — reverts to the schema default",
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "Clear" }));

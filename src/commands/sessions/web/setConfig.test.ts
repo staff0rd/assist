@@ -17,9 +17,21 @@ vi.mock("../../../shared/loadConfigFrom", async (importOriginal) => {
 	return { ...actual, getGlobalConfigPath: () => globalConfigPath.path };
 });
 
+let orm: Db;
+
+vi.mock("../../../shared/db/getDb", () => ({
+	getDb: () => Promise.resolve(orm),
+}));
+
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { createTestDb } from "../../../shared/db/createTestDb";
+import type { Db } from "../../../shared/db/Db";
+import { listRepoConfigs } from "../../../shared/db/listRepoConfigs";
+import { readRepoConfigCache } from "../../../shared/readRepoConfigCache";
 import { REDACTED_SECRET } from "../../../shared/redactConfigSecrets";
+import { writeRepoConfigCache } from "../../../shared/writeRepoConfigCache";
+import { seedRepoConfigs } from "../../../test/mothers/seedRepoConfigs";
 import { setConfig } from "./setConfig";
 
 const root = join(tmpdir(), "assist-set-config-test");
@@ -56,8 +68,12 @@ function readYaml(path: string): Record<string, unknown> {
 	return parseYaml(readFileSync(path, "utf8")) as Record<string, unknown>;
 }
 
+const originKey = `local:${paths.repo}`;
+
 describe("setConfig", () => {
-	beforeEach(() => {
+	beforeEach(async () => {
+		({ orm } = await createTestDb());
+		writeRepoConfigCache({});
 		vi.clearAllMocks();
 		vi.stubEnv("HOME", join(root, "home"));
 		writeFileSync(paths.repoConfig, "commit:\n  push: false\n");
@@ -524,7 +540,29 @@ describe("setConfig", () => {
 		expect(badScope).toBe(400);
 	});
 
-	it("writes under repos[label] in the global config for the repo scope", async () => {
+	it("writes the repo scope to the shared db and refreshes the cache", async () => {
+		const [status, payload] = await post({
+			key: "worktree.enabled",
+			value: true,
+			cwd: paths.repo,
+			scope: "repo",
+		});
+
+		expect(status).toBe(200);
+		expect(payload).toEqual({ target: "repo", repoKey: originKey });
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: { worktree: { enabled: true } },
+		});
+		expect(readRepoConfigCache()).toEqual({
+			[originKey]: { worktree: { enabled: true } },
+		});
+		expect(readYaml(paths.globalConfig)).toEqual({ commit: { pull: false } });
+		expect(readYaml(paths.repoConfig)).toEqual({ commit: { push: false } });
+	});
+
+	it("stacks a repo-scoped write into the db override matched by bare name", async () => {
+		await seedRepoConfigs(orm, { repo: { worktree: { trunk: true } } });
+
 		const [status, payload] = await post({
 			key: "worktree.enabled",
 			value: true,
@@ -534,29 +572,29 @@ describe("setConfig", () => {
 
 		expect(status).toBe(200);
 		expect(payload).toEqual({ target: "repo", repoKey: "repo" });
-		expect(readYaml(paths.globalConfig)).toEqual({
-			commit: { pull: false },
-			repos: { repo: { worktree: { enabled: true } } },
+		expect(await listRepoConfigs(orm)).toEqual({
+			repo: { worktree: { trunk: true, enabled: true } },
 		});
-		expect(readYaml(paths.repoConfig)).toEqual({ commit: { push: false } });
 	});
 
-	it("stacks a repo-scoped write into an existing repos entry", async () => {
+	it("leaves a yml repos entry alone when writing the repo scope", async () => {
 		writeFileSync(
 			paths.globalConfig,
 			"repos:\n  repo:\n    worktree:\n      trunk: true\n",
 		);
 
-		const [status] = await post({
+		await post({
 			key: "worktree.enabled",
 			value: true,
 			cwd: paths.repo,
 			scope: "repo",
 		});
 
-		expect(status).toBe(200);
 		expect(readYaml(paths.globalConfig)).toEqual({
-			repos: { repo: { worktree: { trunk: true, enabled: true } } },
+			repos: { repo: { worktree: { trunk: true } } },
+		});
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: { worktree: { enabled: true } },
 		});
 	});
 
@@ -570,13 +608,12 @@ describe("setConfig", () => {
 		});
 
 		expect(status).toBe(200);
-		expect(readYaml(paths.globalConfig)).toEqual({
-			commit: { pull: false },
-			repos: { repo: { seq: { connections } } },
+		expect(await listRepoConfigs(orm)).toEqual({
+			[originKey]: { seq: { connections } },
 		});
 	});
 
-	it("rejects a repo-scoped value the schema refuses and leaves the file untouched", async () => {
+	it("rejects a repo-scoped value the schema refuses and leaves the db untouched", async () => {
 		const [status, payload] = await post({
 			key: "sessions.linkVersionCheck",
 			value: "sometimes",
@@ -588,9 +625,7 @@ describe("setConfig", () => {
 		expect(payload.errors).toEqual([
 			expect.stringContaining("sessions.linkVersionCheck"),
 		]);
-		expect(readFileSync(paths.globalConfig, "utf8")).toBe(
-			"commit:\n  pull: false\n",
-		);
+		expect(await listRepoConfigs(orm)).toEqual({});
 	});
 
 	it("rejects a repo-scoped write of a global-only key", async () => {
@@ -603,8 +638,6 @@ describe("setConfig", () => {
 
 		expect(status).toBe(400);
 		expect(payload.error).toContain("global-only");
-		expect(readFileSync(paths.globalConfig, "utf8")).toBe(
-			"commit:\n  pull: false\n",
-		);
+		expect(await listRepoConfigs(orm)).toEqual({});
 	});
 });

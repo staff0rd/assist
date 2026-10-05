@@ -53,7 +53,7 @@ describe("ConfigScopeToggle", () => {
 		expect(
 			screen.getByRole("button", { name: "This repo" }).getAttribute("title"),
 		).toBe(
-			"This save will be written to repos.assist in ~/.assist.yml — currently set here, in effect",
+			"This save will be written to repos.assist in the shared db (all nodes) — currently set here, in effect",
 		);
 	});
 

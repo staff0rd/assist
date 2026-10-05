@@ -17,7 +17,9 @@ type ConfigWriteResult =
 export async function handleConfigWrite(
 	req: IncomingMessage,
 	res: ServerResponse,
-	apply: (request: ConfigWriteRequest) => ConfigWriteResult,
+	apply: (
+		request: ConfigWriteRequest,
+	) => ConfigWriteResult | Promise<ConfigWriteResult>,
 ): Promise<void> {
 	const parsed = await parseConfigWriteRequest(req);
 	if (!parsed.ok) {
@@ -26,7 +28,7 @@ export async function handleConfigWrite(
 	}
 
 	try {
-		const result = apply(parsed);
+		const result = await apply(parsed);
 		if (!result.ok) {
 			respondJson(res, 400, {
 				error: result.errors.join("\n"),

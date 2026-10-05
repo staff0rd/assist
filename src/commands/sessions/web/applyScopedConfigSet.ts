@@ -2,28 +2,22 @@ import {
 	applyConfigSet,
 	type ConfigWritableValue,
 } from "../../config/applyConfigSet";
-import { applyRepoConfigSet } from "../../config/applyRepoConfigSet";
+import { applySharedRepoConfigSet } from "../../config/applySharedRepoConfigSet";
 import type { ConfigWriteScope } from "../../config/ConfigWriteScope";
 
 type ScopedConfigSetResult =
 	| { ok: true; payload: Record<string, unknown> }
 	| { ok: false; errors: string[] };
 
-export function applyScopedConfigSet(
+export async function applyScopedConfigSet(
 	key: string,
 	value: ConfigWritableValue,
 	cwd: string,
 	scope: ConfigWriteScope,
 	globalConfigPath?: string,
-): ScopedConfigSetResult {
+): Promise<ScopedConfigSetResult> {
 	if (scope === "repo") {
-		const result = applyRepoConfigSet(
-			key,
-			value,
-			undefined,
-			cwd,
-			globalConfigPath,
-		);
+		const result = await applySharedRepoConfigSet(key, value, undefined, cwd);
 		return result.ok
 			? { ok: true, payload: { target: result.target, repoKey: result.label } }
 			: result;

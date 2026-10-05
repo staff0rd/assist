@@ -1,19 +1,19 @@
 import { applyConfigUnset } from "../../config/applyConfigUnset";
-import { applyRepoConfigUnset } from "../../config/applyRepoConfigUnset";
+import { applySharedRepoConfigUnset } from "../../config/applySharedRepoConfigUnset";
 import type { ConfigWriteScope } from "../../config/ConfigWriteScope";
 
 type ScopedConfigUnsetResult =
 	| { ok: true; payload: Record<string, unknown> }
 	| { ok: false; errors: string[] };
 
-export function applyScopedConfigUnset(
+export async function applyScopedConfigUnset(
 	key: string,
 	cwd: string,
 	scope: ConfigWriteScope,
 	globalConfigPath?: string,
-): ScopedConfigUnsetResult {
+): Promise<ScopedConfigUnsetResult> {
 	if (scope === "repo") {
-		const result = applyRepoConfigUnset(key, undefined, cwd, globalConfigPath);
+		const result = await applySharedRepoConfigUnset(key, undefined, cwd);
 		return result.ok
 			? {
 					ok: true,
