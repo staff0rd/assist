@@ -10,6 +10,7 @@ export function describeLink(ctx: LinkContext): LinkStatus {
 		errorAt: ctx.lastError?.at,
 		peerVersion: ctx.peer?.version,
 		peerProtocol: ctx.peer?.protocol,
+		protocol: ctx.protocol,
 	};
 }
 

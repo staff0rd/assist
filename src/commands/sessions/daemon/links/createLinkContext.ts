@@ -17,7 +17,5 @@ export function createLinkContext(
 		state: "disconnected",
 		disposed: false,
 		connect: () => {},
-		onMismatch: () => {},
-		onCompatible: () => {},
 	};
 }

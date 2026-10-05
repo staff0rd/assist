@@ -60,10 +60,7 @@ export function takePendingCreator(
 	return pending.client;
 }
 
-export function failPendingCreators(
-	state: LinkRelayState,
-	message: string,
-): void {
+function failPendingCreators(state: LinkRelayState, message: string): void {
 	for (const { client, timer } of state.pendingCreators) {
 		clearTimeout(timer);
 		sendTo(client, { type: "error", message });

@@ -434,7 +434,7 @@ Each assist install is a **node** with its own daemon and web server. A node can
 - `assist sessions nodes logs <name> [-n, --lines <count>] [--json]` — tail a linked node's `daemon.log`; naming this node reads the local log.
 - `assist sessions nodes restart <name> [--target daemon|webserver|both]` — the CLI form of **Restart <node>**: posts the node's `/api/restart`, waits up to 90s for its link to reconnect and prints its version.
 - `assist sessions nodes update <name>` — the CLI form of **Update assist on <node>**: over a connected link it opens an `assist update` card on the node, waits for its daemon to come back, then restarts its web server; otherwise it posts the node's `/api/self-update`. It then prints the node's new version.
-- `sessions.linkVersionCheck` — reaction to a version mismatch with a linked node: `block` (default) updates an older peer and holds the link until the versions match; `warn` proceeds anyway; `off` skips the check.
+- `sessions.linkVersionCheck` — reaction when a linked node's protocol range doesn't overlap this node's (links use the highest shared protocol, whatever the app versions, and never restart a peer): `block` (default) holds the link `version-blocked` until the older node is updated; `warn` proceeds anyway; `off` skips the check.
 
 `nodes restart` and `nodes update` log `nodes <action> <name> trace=<id>` here and send that trace id to the node, and when the node can't be reached or doesn't come back they name the first broken `nodes doctor` hop.
 

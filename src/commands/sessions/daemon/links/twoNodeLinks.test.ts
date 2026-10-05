@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { makePty } from "../../../../test/mothers/makePty";
 import { makeSession } from "../../../../test/mothers/makeSession";
 import { broadcast, type SessionClient } from "../broadcast";
+import { MIN_PROTOCOL_VERSION, PROTOCOL_VERSION } from "../buildHello";
 import { daemonLog } from "../daemonLog";
 import { dispatchMessage } from "../dispatchMessage";
 import { messageHandlers } from "../messageHandlers";
@@ -80,8 +81,8 @@ function node(name: string, links: LinkSpec[] = []) {
 		specs: () => links,
 		localNode: () => name,
 		transport: bridge.transport,
-		heal: vi.fn(async () => {}),
 		reconnectMs: 5,
+		blockedRetryMs: 20,
 		createTimeoutMs: 200,
 	});
 	peers.set(`http://${name}`, { name, manager });
@@ -251,21 +252,10 @@ describe("two linked nodes", () => {
 		);
 	});
 
-	it("heals an older peer once, then reconnects in step", async () => {
+	it("stays connected to a peer on another app version without restarting it", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		const windows = node("pc-windows");
-		const peer = peers.get(WINDOWS.url) as InProcessPeer;
-		peer.reportVersion = "0.0.1";
-		const heal = vi.fn(async () => {
-			peer.reportVersion = undefined;
-		});
-		wsl.links.configure({
-			specs: () => [WINDOWS],
-			localNode: () => "pc-wsl",
-			transport: bridge.transport,
-			heal,
-			reconnectMs: 5,
-		});
+		(peers.get(WINDOWS.url) as InProcessPeer).reportVersion = "0.0.1";
 		addSession(windows, "3");
 		const view = viewer();
 		wsl.addClient(view.client);
@@ -277,56 +267,88 @@ describe("two linked nodes", () => {
 				expect.objectContaining({ id: "pc-windows:3" }),
 			]),
 		);
-		expect(heal).toHaveBeenCalledOnce();
-		expect(heal).toHaveBeenCalledWith(WINDOWS.url);
-		expect(view.received).toContainEqual(
-			expect.objectContaining({ type: "notice" }),
+		expect(wsl.links.nodes().links[0]).toMatchObject({
+			state: "connected",
+			peerVersion: "0.0.1",
+			protocol: PROTOCOL_VERSION,
+		});
+		expect(view.received).not.toContainEqual(
+			expect.objectContaining({ type: "error" }),
 		);
 	});
 
-	it("latches and refuses launches when the mismatch persists after heal", async () => {
-		const wsl = node("pc-wsl", [WINDOWS]);
-		node("pc-windows");
-		(peers.get(WINDOWS.url) as InProcessPeer).reportVersion = "0.0.1";
-		const view = viewer();
-		wsl.addClient(view.client);
+	it.each([
+		["a newer", { protocol: PROTOCOL_VERSION + 3 }, PROTOCOL_VERSION],
+		[
+			"an older",
+			{ protocol: MIN_PROTOCOL_VERSION, minProtocol: MIN_PROTOCOL_VERSION },
+			MIN_PROTOCOL_VERSION,
+		],
+	])(
+		"links to %s peer at the highest shared protocol",
+		async (_, hello, expected) => {
+			const wsl = node("pc-wsl", [WINDOWS]);
+			node("pc-windows");
+			(peers.get(WINDOWS.url) as InProcessPeer).helloExtra = hello;
 
-		wsl.links.reload();
+			wsl.links.reload();
 
-		await vi.waitFor(() =>
-			expect(wsl.links.nodes().links[0].state).toBe("version-blocked"),
-		);
-		dispatchMessage(view.client, wsl, {
-			type: "create",
-			node: "pc-windows",
-			prompt: "x",
-		});
-		expect(view.received.at(-1)).toEqual({
-			type: "error",
-			message: expect.stringContaining("update pc-windows manually"),
-		});
-	});
+			await vi.waitFor(() =>
+				expect(wsl.links.nodes().links[0]).toMatchObject({
+					state: "connected",
+					protocol: expected,
+				}),
+			);
+		},
+	);
 
-	it("reconnects a latched link once the peer reports a compatible version", async () => {
+	it.each([
+		["update pc-windows", { protocol: 0, minProtocol: 0 }],
+		[
+			"update this node",
+			{
+				protocol: PROTOCOL_VERSION + 2,
+				minProtocol: PROTOCOL_VERSION + 1,
+			},
+		],
+	])(
+		"blocks without overlapping ranges and says to %s",
+		async (advice, hello) => {
+			const wsl = node("pc-wsl", [WINDOWS]);
+			node("pc-windows");
+			(peers.get(WINDOWS.url) as InProcessPeer).helloExtra = hello;
+			const view = viewer();
+			wsl.addClient(view.client);
+
+			wsl.links.reload();
+
+			await vi.waitFor(() =>
+				expect(wsl.links.nodes().links[0].state).toBe("version-blocked"),
+			);
+			dispatchMessage(view.client, wsl, {
+				type: "create",
+				node: "pc-windows",
+				prompt: "x",
+			});
+			expect(view.received.at(-1)).toEqual({
+				type: "error",
+				message: expect.stringContaining(advice),
+			});
+		},
+	);
+
+	it("reconnects a blocked link once the peer's range overlaps", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		node("pc-windows");
 		const peer = peers.get(WINDOWS.url) as InProcessPeer;
-		peer.reportVersion = "0.0.1";
-		wsl.links.configure({
-			specs: () => [WINDOWS],
-			localNode: () => "pc-wsl",
-			transport: bridge.transport,
-			heal: vi.fn(async () => {}),
-			reconnectMs: 5,
-			blockedRetryMs: 20,
-		});
+		peer.helloExtra = { protocol: 0, minProtocol: 0 };
 
 		wsl.links.reload();
 
 		await vi.waitFor(() =>
 			expect(wsl.links.nodes().links[0].state).toBe("version-blocked"),
 		);
-		peer.reportVersion = undefined;
+		peer.helloExtra = undefined;
 		await vi.waitFor(() =>
 			expect(wsl.links.nodes().links[0]).toMatchObject({
 				state: "connected",
@@ -335,19 +357,12 @@ describe("two linked nodes", () => {
 		);
 	});
 
-	it("pushes a latched peer's new version to viewers while it stays blocked", async () => {
+	it("pushes a blocked peer's new version to viewers while it stays blocked", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		node("pc-windows");
 		const peer = peers.get(WINDOWS.url) as InProcessPeer;
+		peer.helloExtra = { protocol: 0, minProtocol: 0 };
 		peer.reportVersion = "0.0.1";
-		wsl.links.configure({
-			specs: () => [WINDOWS],
-			localNode: () => "pc-wsl",
-			transport: bridge.transport,
-			heal: vi.fn(async () => {}),
-			reconnectMs: 5,
-			blockedRetryMs: 20,
-		});
 		const view = viewer();
 		wsl.addClient(view.client);
 
@@ -366,18 +381,24 @@ describe("two linked nodes", () => {
 		);
 	});
 
-	it("clears a latched link on reload-links", async () => {
+	it("clears a blocked link on reload-links", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		node("pc-windows");
 		const peer = peers.get(WINDOWS.url) as InProcessPeer;
-		peer.reportVersion = "0.0.1";
+		peer.helloExtra = { protocol: 0, minProtocol: 0 };
+		wsl.links.configure({
+			specs: () => [WINDOWS],
+			localNode: () => "pc-wsl",
+			transport: bridge.transport,
+			reconnectMs: 5,
+		});
 
 		wsl.links.reload();
 
 		await vi.waitFor(() =>
 			expect(wsl.links.nodes().links[0].state).toBe("version-blocked"),
 		);
-		peer.reportVersion = undefined;
+		peer.helloExtra = undefined;
 		wsl.links.reload();
 		await vi.waitFor(() =>
 			expect(wsl.links.nodes().links[0].state).toBe("connected"),

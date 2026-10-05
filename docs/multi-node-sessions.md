@@ -105,7 +105,7 @@ The special-case Windows proxy is removed and replaced by a generic link:
 | `WindowsProxy`, `WindowsConnection`, `WindowsProxyState`, `forwardWindowsCreate`, `forwardWindowsIo`, `handleWindowsClose`, `discoverWindowsSessions` | `NodeLink` (one per configured link)                                                                   |
 | Windows TCP bridge (`startWindowsBridge`, `sessions.windowsDaemonPort`, `windowsDaemonHost`)                                                          | the Windows node's web server                                                                          |
 | `pwsh.exe` launch of the Windows daemon (`ensureWindowsDaemonRunning`)                                                                                | Windows node's web server (a `native` project-switch web server) running its own `ensureDaemonRunning` |
-| `healWindowsDaemon` / `WindowsVersionHealer` (pwsh)                                                                                                   | generic link healer (see Heal)                                                                         |
+| `healWindowsDaemon` / `WindowsVersionHealer` (pwsh)                                                                                                   | protocol negotiation (see Compatibility)                                                               |
 | `windowsProjectsRoot` transcript discovery, `hasPersistedWindowsSessions`                                                                             | Windows node reports its own history and restores its own sessions                                     |
 | `isWindowsCwd` / `shouldProxyToWindows` routing                                                                                                       | explicit `node` on launch messages                                                                     |
 | `toGitCwd` / `windowsCwdToWslPath`                                                                                                                    | Windows node reads its own repos                                                                       |
@@ -123,14 +123,15 @@ The special-case Windows proxy is removed and replaced by a generic link:
 
 Each web server gets its own running check, stop-by-port, and log file, and "View logs" offers each. The Windows node's web server starts the Windows daemon itself via `ensureDaemonRunning`; nothing launches it from WSL any more.
 
-## Heal
+## Compatibility
 
-- Peers are compatible when their `protocol` matches, whatever their app versions; bump `PROTOCOL_VERSION` (`daemon/buildHello.ts`) only for a breaking wire change. A legacy peer that sends no `protocol` must match the app version exactly.
-- On a protocol mismatch (or a legacy version mismatch) where the peer is older, the linking node calls `POST /api/self-update` on the peer. The peer runs `assist update`, then restarts its daemon and web server (via the existing `restartWeb` path). The link reconnects through the breaker and re-handshakes.
-- `/api/self-update` and the `hello` handshake are a **frozen contract**: they never change shape, so an old node can always be healed by a new one.
-- The existing guard (heal once, then latch) is kept. If the linking node is the older side, it blocks with "update this node".
-- A latched link re-probes the peer's `hello` every minute and returns to connected once the peer is compatible; `reload-links` (sent by `nodes link`/`unlink`) clears the latch and allows one more heal.
-- If the peer's own auto-update loop has already rebuilt it, heal finds nothing to do and the link just reconnects.
+- App versions never decide compatibility; only the protocol range does.
+- Nodes ignore message types and fields they don't recognise (logging each unknown type once), so adding a message type or field needs no protocol bump. Bump `PROTOCOL_VERSION` (`daemon/buildHello.ts`) only when a node can no longer understand an older peer's messages, and raise `MIN_PROTOCOL_VERSION` only when this node drops support for the older shape.
+- The `hello` carries `protocol` (the highest version the node speaks) and `minProtocol` (the lowest). A peer that sends no `minProtocol` speaks only its `protocol`; one that sends no `protocol` predates it and is refused.
+- A link uses the highest protocol both ranges share (shown as `protocol` in `assist sessions nodes --json`). When the ranges don't overlap, `sessions.linkVersionCheck` decides: `block` (default) holds the link `version-blocked` and names the node to update, `warn` and `off` connect anyway.
+- A difference never updates or restarts a peer. The picker marks an out-of-date node **behind**, and the user updates and restarts it when they choose (**Update assist on <node>**, or `assist sessions nodes update <name>`).
+- A `version-blocked` link re-probes the peer's `hello` every minute and connects once the ranges overlap; `reload-links` (sent by `nodes link`/`unlink`) retries immediately.
+- `/api/self-update` and the `hello` fields `type`, `version`, `protocol` and `nodeName` are a **frozen contract**, so a node on any release can update and link to any other.
 
 ## Nodes in the UI
 
@@ -184,18 +185,17 @@ Goal: an agent on **any** node, starting cold, can find which hop is broken with
 | 3   | WebSocket + `hello` (version, protocol, node name) | handshake result              | `link <name> ws:`   |
 | 4   | Peer web server → peer daemon                      | reported in peer health       | (peer's own log)    |
 | 5   | Panel proxy (`?node=`)                             | per-request status + duration | `link <name> http:` |
-| 6   | Heal (`/api/self-update`)                          | status + peer output          | `link <name> heal:` |
 
 ### Commands (read-only, added to `allowed.cli-reads`)
 
-- `assist sessions nodes` — this node plus every link, with state: url, WS state, peer version + protocol, breaker, heal state, last error and when. `--json`.
-- `assist sessions nodes doctor [name]` — runs hops 1–4 in order, stops at the first failure, prints the hop, raw error, and a specific remediation (e.g. "pc.<tailnet>.ts.net is offline in the tailnet", "nothing serves https on 3101 on pc.<tailnet>.ts.net — check the `tailscale serve:` line in its log", "peer reports nodeName pc-wsl, link expects pc-windows", "version mismatch — heal latched"). `--json`.
+- `assist sessions nodes` — this node plus every link, with state: url, WS state, peer version + protocol, negotiated protocol, breaker, last error and when. `--json`.
+- `assist sessions nodes doctor [name]` — runs hops 1–4 in order, stops at the first failure, prints the hop, raw error, and a specific remediation (e.g. "pc.<tailnet>.ts.net is offline in the tailnet", "nothing serves https on 3101 on pc.<tailnet>.ts.net — check the `tailscale serve:` line in its log", "peer reports nodeName pc-wsl, link expects pc-windows", "no common protocol — update the older node"). `--json`.
 - `assist sessions nodes logs <name> [-n <lines>]` — tails the peer's `daemon.log` through its web server, so any node can read any linked node's logs.
 - `assist daemon status` gains one summary line per link.
 
 ### Logging
 
-- The rule in `src/commands/sessions/daemon/CLAUDE.md` ("every daemon operation MUST be logged") extends to: WS connect/close/reconnect with reason, `hello` outcome, breaker trips, heal steps, launch routing decisions, and every proxied panel request (method, path, node, status, duration; never bodies).
+- The rule in `src/commands/sessions/daemon/CLAUDE.md` ("every daemon operation MUST be logged") extends to: WS connect/close/reconnect with reason, `hello` outcome, breaker trips, protocol blocks, launch routing decisions, and every proxied panel request (method, path, node, status, duration; never bodies).
 - Each peer's daemon logs stream over its link's `subscribe-logs` and are relayed tagged `[<node>]`, so a node's `daemon.log` / `assist.log` interleaves every linked node's lines. Relayed lines are never re-exported.
 - **Correlation id:** every forwarded launch and proxied panel request carries a `traceId`, logged on both nodes, so one grep follows a request end to end.
 
@@ -210,7 +210,7 @@ Goal: an agent on **any** node, starting cold, can find which hop is broken with
 
 ### Tests
 
-The link transport is injectable, so tests wire two or three in-process nodes (daemon + web server) together in memory, covering: session merge and `<node>:` namespacing, no re-export under symmetric linking, panel proxying, disconnect/reconnect, version mismatch → heal, legacy `windows*` keys being stripped, and `doctor` reporting the first failing hop.
+The link transport is injectable, so tests wire two or three in-process nodes (daemon + web server) together in memory, covering: session merge and `<node>:` namespacing, no re-export under symmetric linking, panel proxying, disconnect/reconnect, protocol negotiation and blocking without a forced update, unknown message types and fields, legacy `windows*` keys being stripped, and `doctor` reporting the first failing hop.
 
 ## Delivery order
 

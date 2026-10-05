@@ -14,6 +14,7 @@ export type LinkStatus = {
 	errorAt?: string;
 	peerVersion?: string;
 	peerProtocol?: number;
+	protocol?: number;
 };
 
 export type NodesMessage = {

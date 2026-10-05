@@ -1,9 +1,7 @@
 import {
-	ASSIST_VERSION,
-	helloCompatible,
-	helloMismatchKind,
+	describeProtocolGap,
 	isHello,
-	PROTOCOL_VERSION,
+	negotiateProtocol,
 } from "../daemon/buildHello";
 import { linkVersionCheck } from "../daemon/links/linkVersionCheck";
 import type { LinkSpec } from "../daemon/links/LinkStatus";
@@ -30,18 +28,16 @@ export async function helloHop(
 			`malformed hello: ${JSON.stringify(msg)}`,
 			`run \`assist update\` on ${spec.name}`,
 		);
-	const detail = `hello ${msg.version} (protocol ${msg.protocol ?? "legacy"})`;
-	if (helloCompatible(msg)) return passed("ws", detail);
-	const mismatch = `${helloMismatchKind(msg)} mismatch: peer ${msg.version} (protocol ${msg.protocol ?? "legacy"}), this node ${ASSIST_VERSION} (protocol ${PROTOCOL_VERSION})`;
+	const protocol = negotiateProtocol(msg);
+	if (protocol !== undefined)
+		return passed("ws", `hello ${msg.version} (protocol ${protocol})`);
+	const gap = describeProtocolGap(spec.name, msg);
 	const mode = linkVersionCheck();
 	if (mode !== "block")
-		return passed(
-			"ws",
-			`${mismatch}; allowed by sessions.linkVersionCheck=${mode}`,
-		);
+		return passed("ws", `${gap}; allowed by sessions.linkVersionCheck=${mode}`);
 	return failed(
 		"ws",
-		mismatch,
-		`this node heals an older peer via its /api/self-update on connect; if the heal latched, run \`assist update\` on the older node, then \`assist daemon restart\` here`,
+		gap,
+		`run \`assist update\` on the older node, then restart its daemon (\`assist daemon restart\`) when convenient`,
 	);
 }

@@ -18,7 +18,11 @@ export function linkStateHop(spec: LinkSpec, probes: DoctorProbes): Hop {
 	if (status.state === "connected") return passed("link", "connected");
 	const error = status.error ?? status.state;
 	if (status.state === "version-blocked")
-		return failed("link", error, `version mismatch — heal latched. ${error}`);
+		return failed(
+			"link",
+			error,
+			"no common protocol — update the older node and restart its daemon when convenient; the link retries every minute",
+		);
 	return failed(
 		"link",
 		error,

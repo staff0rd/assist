@@ -111,7 +111,25 @@ describe("diagnoseLink", () => {
 		]);
 	});
 
-	it("fails the hello hop on a protocol mismatch", async () => {
+	it("passes the hello hop when the protocol ranges overlap", async () => {
+		const result = await diagnoseLink(
+			SPEC,
+			probes({
+				hello: async () => ({
+					...HELLO,
+					version: "0.0.1",
+					protocol: PROTOCOL_VERSION + 1,
+					minProtocol: PROTOCOL_VERSION,
+				}),
+			}),
+		);
+		expect(result.hops.find((h) => h.hop === "ws")).toMatchObject({
+			ok: true,
+			detail: `hello 0.0.1 (protocol ${PROTOCOL_VERSION})`,
+		});
+	});
+
+	it("fails the hello hop when the protocol ranges don't overlap", async () => {
 		const result = await diagnoseLink(
 			SPEC,
 			probes({
@@ -125,25 +143,25 @@ describe("diagnoseLink", () => {
 		expect(result.hops.at(-1)).toMatchObject({
 			hop: "ws",
 			ok: false,
-			error: expect.stringContaining("protocol mismatch: peer 0.0.1"),
+			error: expect.stringContaining("no common protocol: pc-windows 0.0.1"),
 		});
 	});
 
-	it("reports a latched link from this node's daemon", async () => {
+	it("reports a version-blocked link from this node's daemon", async () => {
 		const result = await diagnoseLink(
 			SPEC,
 			probes({
 				linkState: () => ({
 					...SPEC,
 					state: "version-blocked",
-					error: "update pc-windows manually",
+					error: "no common protocol",
 				}),
 			}),
 		);
 		expect(result.hops.at(-1)).toMatchObject({
 			hop: "link",
 			ok: false,
-			remediation: expect.stringContaining("heal latched"),
+			remediation: expect.stringContaining("update the older node"),
 		});
 	});
 

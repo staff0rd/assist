@@ -10,7 +10,6 @@ export type NodeLinkDeps = {
 	onStateChanged: () => void;
 	onHistoryChanged: () => void;
 	transport: LinkTransport;
-	heal: (url: string) => Promise<void>;
 	reconnectMs: number;
 	blockedRetryMs: number;
 	createTimeoutMs: number;
@@ -26,10 +25,9 @@ export type LinkContext = {
 	state: LinkState;
 	lastError?: { message: string; at: string };
 	peer?: { version: string; protocol?: number };
+	protocol?: number;
 	blockedMessage?: string;
 	reconnectTimer?: ReturnType<typeof setTimeout>;
 	disposed: boolean;
 	connect: () => void;
-	onMismatch: (peerVersion: string) => void;
-	onCompatible: () => void;
 };

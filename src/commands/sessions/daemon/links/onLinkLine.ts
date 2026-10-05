@@ -3,7 +3,7 @@ import { acceptPeerHello } from "./acceptPeerHello";
 import type { LinkContext } from "./LinkContext";
 import { relayLinkMessage } from "./relayLinkMessage";
 import { setLinkState } from "./setLinkState";
-import { disconnectLink, failLink } from "./teardownLink";
+import { blockLink, disconnectLink, failLink } from "./teardownLink";
 
 function onHello(ctx: LinkContext, msg: Record<string, unknown>): void {
 	const verdict = acceptPeerHello(ctx.spec.name, msg);
@@ -15,18 +15,18 @@ function onHello(ctx: LinkContext, msg: Record<string, unknown>): void {
 		disconnectLink(ctx);
 		return failLink(ctx, verdict.reason);
 	}
-	if (verdict.kind === "heal") return ctx.onMismatch(verdict.peer.version);
+	if (verdict.kind === "block") return blockLink(ctx, verdict.reason);
 	if (ctx.blockedMessage)
 		daemonLog(
-			`link ${ctx.spec.name} heal: peer now reports ${verdict.peer.version}; latch cleared`,
+			`link ${ctx.spec.name} ws: peer now reports ${verdict.peer.version}; protocol block cleared`,
 		);
 	ctx.blockedMessage = undefined;
+	ctx.protocol = verdict.protocol;
 	ctx.greeted = true;
 	ctx.breaker.clear();
 	ctx.lastError = undefined;
 	setLinkState(ctx, "connected");
 	ctx.deps.onHistoryChanged();
-	ctx.onCompatible();
 }
 
 export function onLinkLine(ctx: LinkContext, line: string): void {
