@@ -1,8 +1,8 @@
 import type { LinkSpec } from "../daemon/links/LinkStatus";
 import { type DoctorProbes, failed, type Hop, passed } from "./DoctorProbes";
-import { describePeerError } from "./fetchPeerJson";
 import { type TailscaleStatus, tailscaleCli } from "./tailscaleStatus";
 import { findTailscalePeer } from "./findTailscalePeer";
+import { tailscaleCliFailure } from "./tailscaleCliFailure";
 
 export async function tailscaleHop(
 	spec: LinkSpec,
@@ -13,11 +13,7 @@ export async function tailscaleHop(
 	try {
 		status = await probes.tailscale();
 	} catch (error) {
-		return failed(
-			"tailscale",
-			describePeerError(error),
-			`\`${cli} status --json\` failed — install Tailscale on this node and sign in with \`${cli} up\``,
-		);
+		return tailscaleCliFailure(error, cli);
 	}
 	if (status.BackendState !== "Running")
 		return failed(
@@ -37,7 +33,7 @@ export async function tailscaleHop(
 		return failed(
 			"tailscale",
 			`${hostname} is offline in the tailnet`,
-			`is ${spec.name}'s machine awake with Tailscale running and signed in?`,
+			`is ${spec.name}'s machine awake with Tailscale running and signed in? On Windows, Tailscale disconnects while a user other than the one who signed it in is active unless it runs unattended — run \`assist sessions nodes doctor\` on ${spec.name}`,
 		);
 	return passed(
 		"tailscale",

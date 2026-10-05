@@ -192,6 +192,29 @@ describe("diagnoseLink over Tailscale", () => {
 		expect(health).not.toHaveBeenCalled();
 	});
 
+	it("names the Windows user holding Tailscale and how to run it unattended", async () => {
+		const result = await diagnoseLink(
+			TS_SPEC,
+			probes({
+				tailscale: async () =>
+					Promise.reject(
+						new Error(
+							"Command failed: tailscale.exe status --json\nfailed to connect to local tailscaled (which appears to be running as tailscaled.exe, pid 7712). Got error: 401 Unauthorized: Tailscale already in use by pc\\alice, pid 44168",
+						),
+					),
+			}),
+		);
+		expect(result.hops).toEqual([
+			expect.objectContaining({
+				hop: "tailscale",
+				error: expect.stringContaining(
+					String.raw`signed in by Windows user pc\alice`,
+				),
+				remediation: expect.stringContaining("up --unattended"),
+			}),
+		]);
+	});
+
 	it("reports a peer that is offline or missing from the tailnet", async () => {
 		const offline = await diagnoseLink(
 			TS_SPEC,
