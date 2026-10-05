@@ -1,3 +1,10 @@
+# [0.779.0](https://github.com/staff0rd/assist/compare/v0.778.0...v0.779.0) (2026-10-05)
+
+
+### Features
+
+* add config import-repos ([954aea5](https://github.com/staff0rd/assist/commit/954aea59af738975a35d44d10f586947d02f149f))
+
 # [0.778.0](https://github.com/staff0rd/assist/compare/v0.777.0...v0.778.0) (2026-10-05)
 
 
