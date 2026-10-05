@@ -32,7 +32,7 @@ export function isHello(msg: Record<string, unknown>): msg is Hello {
 }
 
 export function helloCompatible(msg: Hello): boolean {
-	if (protocolMismatched(msg)) return false;
+	if (typeof msg.protocol === "number") return !protocolMismatched(msg);
 	return msg.version === ASSIST_VERSION;
 }
 

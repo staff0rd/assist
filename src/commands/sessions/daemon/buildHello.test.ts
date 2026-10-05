@@ -67,14 +67,14 @@ describe("helloCompatible", () => {
 		).toBe(true);
 	});
 
-	it("rejects a differing app version even when the protocol matches", () => {
+	it("accepts a differing app version when the protocol matches", () => {
 		expect(
 			helloCompatible({
 				type: "hello",
 				version: "9.9.9-different",
 				protocol: PROTOCOL_VERSION,
 			}),
-		).toBe(false);
+		).toBe(true);
 	});
 
 	it("rejects a genuinely different protocol", () => {

@@ -111,15 +111,21 @@ describe("diagnoseLink", () => {
 		]);
 	});
 
-	it("fails the hello hop on a version mismatch", async () => {
+	it("fails the hello hop on a protocol mismatch", async () => {
 		const result = await diagnoseLink(
 			SPEC,
-			probes({ hello: async () => ({ ...HELLO, version: "0.0.1" }) }),
+			probes({
+				hello: async () => ({
+					...HELLO,
+					version: "0.0.1",
+					protocol: PROTOCOL_VERSION + 1,
+				}),
+			}),
 		);
 		expect(result.hops.at(-1)).toMatchObject({
 			hop: "ws",
 			ok: false,
-			error: expect.stringContaining("version mismatch: peer 0.0.1"),
+			error: expect.stringContaining("protocol mismatch: peer 0.0.1"),
 		});
 	});
 

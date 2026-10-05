@@ -10,6 +10,6 @@ export const nodesConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "sessions.linkVersionCheck",
 		setter: "assist config set sessions.linkVersionCheck block -g",
-		note: "reaction to a version mismatch with a linked node: block (default) heals an older peer via its /api/self-update and latches if the gap remains, warn proceeds, off skips the check",
+		note: "reaction to a protocol mismatch with a linked node (app versions may differ): block (default) heals an older peer via its /api/self-update and latches if the gap remains, warn proceeds, off skips the check",
 	},
 ];

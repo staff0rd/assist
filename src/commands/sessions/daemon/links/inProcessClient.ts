@@ -1,4 +1,5 @@
 import type { SessionClient } from "../broadcast";
+import { PROTOCOL_VERSION } from "../buildHello";
 import type { SessionManager } from "../SessionManager";
 import type { LinkHandlers } from "./LinkTransport";
 
@@ -12,8 +13,10 @@ export function inProcessClient(peer: InProcessPeer, handlers: LinkHandlers) {
 	const conn = { open: true };
 	const deliver = (data: string) => {
 		const msg = JSON.parse(data);
-		if (msg.type === "hello" && peer.reportVersion)
+		if (msg.type === "hello" && peer.reportVersion) {
 			msg.version = peer.reportVersion;
+			msg.protocol = PROTOCOL_VERSION - 1;
+		}
 		if (conn.open) handlers.onLine(JSON.stringify(msg));
 	};
 	const client: SessionClient = {
