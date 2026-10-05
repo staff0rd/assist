@@ -22,9 +22,10 @@ export function pullIfConfigured(): void {
 		return;
 	}
 	try {
-		execSync("git pull --ff-only", { stdio: "inherit" });
+		execSync("git fetch", { stdio: "inherit" });
+		execSync("git merge --ff-only @{u}", { stdio: "inherit" });
 	} catch {
-		console.error(chalk.red("git pull --ff-only failed; aborting."));
+		console.error(chalk.red("git fast-forward to upstream failed; aborting."));
 		process.exit(1);
 	}
 }

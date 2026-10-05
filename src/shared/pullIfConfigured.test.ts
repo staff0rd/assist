@@ -52,7 +52,7 @@ describe("pullIfConfigured", () => {
 		expect(exitSpy).not.toHaveBeenCalled();
 	});
 
-	it("runs git pull --ff-only and proceeds on success", () => {
+	it("fetches then fast-forwards to upstream without git pull", () => {
 		mockLoadConfig.mockReturnValue(
 			makeAssistConfig({ commit: { pull: true } }),
 		);
@@ -60,18 +60,26 @@ describe("pullIfConfigured", () => {
 
 		pullIfConfigured();
 
-		expect(mockExecSync).toHaveBeenCalledWith("git pull --ff-only", {
+		expect(mockExecSync).toHaveBeenCalledWith("git fetch", {
 			stdio: "inherit",
 		});
+		expect(mockExecSync).toHaveBeenCalledWith("git merge --ff-only @{u}", {
+			stdio: "inherit",
+		});
+		expect(mockExecSync).not.toHaveBeenCalledWith(
+			expect.stringContaining("git pull"),
+			expect.anything(),
+		);
 		expect(exitSpy).not.toHaveBeenCalled();
 	});
 
-	it("exits with code 1 when the pull fails", () => {
+	it("exits with code 1 when the fast-forward fails", () => {
 		mockLoadConfig.mockReturnValue(
 			makeAssistConfig({ commit: { pull: true } }),
 		);
 		mockExecSync.mockImplementation((command: string) => {
-			if (command === "git pull --ff-only") throw new Error("pull failed");
+			if (command === "git merge --ff-only @{u}")
+				throw new Error("not possible to fast-forward");
 			return "";
 		});
 
@@ -91,7 +99,7 @@ describe("pullIfConfigured", () => {
 
 		pullIfConfigured();
 
-		expect(mockExecSync).not.toHaveBeenCalledWith("git pull --ff-only", {
+		expect(mockExecSync).not.toHaveBeenCalledWith("git fetch", {
 			stdio: "inherit",
 		});
 		expect(warnSpy).toHaveBeenCalled();
@@ -109,7 +117,7 @@ describe("pullIfConfigured", () => {
 
 		pullIfConfigured();
 
-		expect(mockExecSync).not.toHaveBeenCalledWith("git pull --ff-only", {
+		expect(mockExecSync).not.toHaveBeenCalledWith("git fetch", {
 			stdio: "inherit",
 		});
 		expect(warnSpy).toHaveBeenCalled();
