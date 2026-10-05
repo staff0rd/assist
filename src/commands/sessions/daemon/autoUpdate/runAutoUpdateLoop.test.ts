@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import type { LapEnd } from "../../../watch/decideLap";
 import type { AutoUpdateDeps } from "./AutoUpdateDeps";
 import { ESCALATION_POLL_MS } from "./holdForEscalation";
-import { RETRY_AFTER_FAILURE_MS, runAutoUpdateLoop } from "./runAutoUpdateLoop";
+import { RETRY_AFTER_FAILURE_MS } from "./backOff";
+import { PAUSE_POLL_MS, runAutoUpdateLoop } from "./runAutoUpdateLoop";
 
 function lapsEnding(...ends: (LapEnd | Error)[]): AutoUpdateDeps["runLap"] {
 	const queue = [...ends];
@@ -23,6 +24,7 @@ function deps(overrides: Partial<AutoUpdateDeps> = {}): AutoUpdateDeps {
 		liveEscalation: vi.fn(() => undefined),
 		escalate: vi.fn(() => "7"),
 		isLive: vi.fn(() => false),
+		paused: vi.fn(() => false),
 		sleep: vi.fn(() => Promise.resolve()),
 		...overrides,
 	};
@@ -93,5 +95,34 @@ describe("runAutoUpdateLoop", () => {
 		expect(d.enter).toHaveBeenCalledWith("retrying", {
 			reason: "lap 2 could not start (ENOENT)",
 		});
+	});
+
+	it("starts no lap until resumed", async () => {
+		const paused = vi
+			.fn()
+			.mockReturnValueOnce(true)
+			.mockReturnValueOnce(true)
+			.mockReturnValue(false);
+		const d = deps({ paused });
+
+		await runAutoUpdateLoop(d, 1);
+
+		expect(d.sleep).toHaveBeenCalledTimes(2);
+		expect(d.sleep).toHaveBeenCalledWith(PAUSE_POLL_MS);
+		expect(d.runLap).toHaveBeenCalledTimes(1);
+	});
+
+	it("holds without backing off when a pause stops the lap", async () => {
+		const paused = vi
+			.fn()
+			.mockReturnValueOnce(false)
+			.mockReturnValueOnce(true)
+			.mockReturnValue(false);
+		const d = deps({ runLap: lapsEnding(exit(130)), paused });
+
+		await runAutoUpdateLoop(d, 1);
+
+		expect(d.sleep).not.toHaveBeenCalled();
+		expect(d.note).toHaveBeenCalledWith("lap 1 exited 130; paused");
 	});
 });

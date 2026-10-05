@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { describePeerFailure } from "./useAwaitPeerReturn/describePeerFailure";
-import { requestFailure } from "./useAwaitPeerReturn/requestFailure";
+import { requestFailure } from "../../requestFailure";
 import {
 	type DescribeBack,
 	usePeerReconnect,

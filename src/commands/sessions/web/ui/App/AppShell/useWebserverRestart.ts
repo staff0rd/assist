@@ -20,24 +20,35 @@ export function useWebserverRestart(
 
 	useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
-	const restart = useCallback(async (): Promise<void> => {
-		setPending(true);
-		arm();
-		timeoutRef.current = setTimeout(() => {
-			abandon();
-			setPending(false);
-			setError("Web server did not come back");
-		}, RESTART_TIMEOUT_MS);
-		try {
-			const res = await postRestart(target);
-			if (!res.ok) throw new Error("restart failed");
-		} catch {
-			abandon();
-			clearTimeout(timeoutRef.current);
-			setPending(false);
-			setError("Failed to restart web server");
-		}
-	}, [target, arm, abandon]);
+	const restartTo = useCallback(
+		async (to: RestartTarget): Promise<void> => {
+			setPending(true);
+			arm();
+			timeoutRef.current = setTimeout(() => {
+				abandon();
+				setPending(false);
+				setError("Web server did not come back");
+			}, RESTART_TIMEOUT_MS);
+			try {
+				const res = await postRestart(to);
+				if (!res.ok) throw new Error("restart failed");
+			} catch {
+				abandon();
+				clearTimeout(timeoutRef.current);
+				setPending(false);
+				setError("Failed to restart web server");
+			}
+		},
+		[arm, abandon],
+	);
 
-	return { pending, error, clearError: () => setError(null), restart };
+	const restart = useCallback(() => restartTo(target), [restartTo, target]);
+
+	return {
+		pending,
+		error,
+		clearError: () => setError(null),
+		restart,
+		restartTo,
+	};
 }

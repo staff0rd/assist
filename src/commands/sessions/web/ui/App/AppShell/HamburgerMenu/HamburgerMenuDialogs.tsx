@@ -1,5 +1,5 @@
 import { PeerRestartConfirmDialog } from "./HamburgerMenuDialogs/PeerRestartConfirmDialog";
-import { PeerSnackbars } from "./HamburgerMenuDialogs/PeerSnackbars";
+import { PeerSnackbars } from "../PeerSnackbars";
 import { ShortcutsDialog } from "./HamburgerMenuDialogs/ShortcutsDialog";
 import { RestartConfirmDialog } from "./HamburgerMenuDialogs/RestartConfirmDialog";
 import { UpdateAssistConfirmDialog } from "./HamburgerMenuDialogs/UpdateAssistConfirmDialog";

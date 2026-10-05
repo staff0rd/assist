@@ -1,11 +1,11 @@
-import { decideLap, type LapEnd } from "../../../watch/decideLap";
 import { WATCH_LAP_ARGS } from "../../../watch/runWatchLap";
 import type { AutoUpdateDeps } from "./AutoUpdateDeps";
+import { backOff } from "./backOff";
 import { holdForEscalation } from "./holdForEscalation";
 import { runLapCapturingTail } from "./runLapCapturingTail";
+import { settleLap } from "./settleLap";
 
-const DIVERGED_EXIT_CODE = 3;
-export const RETRY_AFTER_FAILURE_MS = 5 * 60 * 1000;
+export const PAUSE_POLL_MS = 60 * 1000;
 
 export async function runAutoUpdateLoop(
 	deps: AutoUpdateDeps,
@@ -15,37 +15,18 @@ export async function runAutoUpdateLoop(
 	for (let lap = 1; lap <= maxLaps; lap++) {
 		if (held) await holdForEscalation(held, deps);
 		held = undefined;
+		while (deps.paused()) await deps.sleep(PAUSE_POLL_MS);
 		deps.enter("waiting");
 		deps.note(
 			`lap ${lap} at ${new Date().toLocaleString()}: assist ${WATCH_LAP_ARGS.join(" ")}`,
 		);
-		let result: { end: LapEnd; tail: string };
 		try {
-			result = await runLapCapturingTail(deps);
+			held = await settleLap(lap, await runLapCapturingTail(deps), deps);
 		} catch (error) {
 			await backOff(
 				`lap ${lap} could not start (${error instanceof Error ? error.message : String(error)})`,
 				deps,
 			);
-			continue;
 		}
-		const { end, tail } = result;
-		const how = end.signal ? `killed by ${end.signal}` : `exited ${end.code}`;
-		if (end.code === DIVERGED_EXIT_CODE) {
-			held = deps.escalate(tail);
-			deps.note(`lap ${lap} ${how} (divergence); escalated to session ${held}`);
-			continue;
-		}
-		if (decideLap(end, false).kind === "relaunch") {
-			deps.note(`lap ${lap} ${how}; relaunching`);
-			continue;
-		}
-		await backOff(`lap ${lap} ${how}`, deps);
 	}
-}
-
-async function backOff(reason: string, deps: AutoUpdateDeps): Promise<void> {
-	deps.enter("retrying", { reason });
-	deps.note(`${reason}; retrying in ${RETRY_AFTER_FAILURE_MS / 60000}m`);
-	await deps.sleep(RETRY_AFTER_FAILURE_MS);
 }

@@ -1,5 +1,5 @@
 import type { Theme } from "@mui/material/styles";
-import type { UpdateStateKind } from "../updateState";
+import type { UpdateStateKind } from "../UpdateStateKind";
 
 const accent: Partial<Record<UpdateStateKind, "warning" | "error">> = {
 	ready: "warning",
@@ -12,7 +12,7 @@ export const nodeUpdateRowSx = (kind: UpdateStateKind) => (t: Theme) => {
 		display: "grid",
 		gridTemplateColumns: {
 			xs: "28px minmax(0,1fr)",
-			sm: "28px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.6fr)",
+			sm: "28px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.6fr) auto",
 		},
 		alignItems: "center",
 		columnGap: 1.5,

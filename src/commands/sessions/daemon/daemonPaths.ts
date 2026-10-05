@@ -16,6 +16,7 @@ export const daemonPaths = {
 			: join(DAEMON_DIR, "daemon.sock"),
 	log: join(DAEMON_DIR, "daemon.log"),
 	pid: join(DAEMON_DIR, "daemon.pid"),
+	autoUpdatePaused: join(DAEMON_DIR, "auto-update-paused"),
 	spawnLock: join(DAEMON_DIR, "spawn.lock"),
 	hooksSettings: join(DAEMON_DIR, "hooks-settings.json"),
 };

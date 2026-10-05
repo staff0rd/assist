@@ -1,6 +1,4 @@
-import Container from "@mui/material/Container";
 import { Navigate, Route, Routes } from "react-router";
-import { BacklogView } from "../../../../../backlog/web/ui/BacklogView";
 import { AppLayout } from "./AppRoutes/AppLayout";
 import { BackupsView } from "./AppRoutes/BackupsView";
 import { ConfigView } from "../ConfigView";
@@ -15,14 +13,7 @@ import { SessionContent } from "../SessionContent";
 import { UpdatesView } from "./AppRoutes/UpdatesView";
 import { UsageHistoryView } from "../UsageHistoryView";
 import type { SessionSocket } from "../../useSessionSocket";
-
-function BacklogContent({ socket }: { socket: SessionSocket }) {
-	return (
-		<Container maxWidth="lg" sx={{ py: 3, px: 2 }}>
-			<BacklogView socket={socket} />
-		</Container>
-	);
-}
+import { BacklogContent } from "./AppRoutes/BacklogContent";
 
 export function AppRoutes({ socket }: { socket: SessionSocket }) {
 	countRender("AppRoutes");
@@ -51,7 +42,15 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					<Route path="usage" element={<UsageHistoryView />} />
 					<Route path="backups" element={<BackupsView />} />
 					<Route path="config" element={<ConfigView />} />
-					<Route path="updates" element={<UpdatesView />} />
+					<Route
+						path="updates"
+						element={
+							<UpdatesView
+								reconnecting={socket.reconnecting}
+								selectSession={socket.selectSession}
+							/>
+						}
+					/>
 					<Route path="diff" element={<NodeScopedDiffView socket={socket} />} />
 					<Route path="file" element={<NodeScopedFileView socket={socket} />} />
 					<Route path="*" element={<Navigate to="/sessions" replace />} />

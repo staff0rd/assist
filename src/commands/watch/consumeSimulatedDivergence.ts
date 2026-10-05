@@ -1,12 +1,9 @@
-import { existsSync, rmSync } from "node:fs";
+import { consumeMarker } from "./consumeMarker";
 import { simulatedDivergencePath } from "./simulatedDivergencePath";
 
 export function consumeSimulatedDivergence(cwd?: string): boolean {
 	try {
-		const path = simulatedDivergencePath(cwd);
-		if (!existsSync(path)) return false;
-		rmSync(path);
-		return true;
+		return consumeMarker(simulatedDivergencePath(cwd));
 	} catch {
 		return false;
 	}

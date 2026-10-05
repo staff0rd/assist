@@ -1,24 +1,25 @@
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
 import { ExpandButton } from "./NodeUpdateRow/ExpandButton";
+import { NodeName } from "./NodeUpdateRow/NodeName";
 import { NodeUpdateDetail } from "./NodeUpdateRow/NodeUpdateDetail";
+import { RowActions } from "./NodeUpdateRow/RowActions";
 import { nodeUpdateRowSx } from "./NodeUpdateRow/nodeUpdateRowSx";
-import { UpdateStateChip } from "./NodeUpdateRow/UpdateStateChip";
+import { StateCell } from "./NodeUpdateRow/StateCell";
 import { Versions } from "./NodeUpdateRow/Versions";
 import { updateState } from "./updateState";
+import type { UpdateActions } from "./useUpdateActions";
 
-const stackSx = {
-	display: "flex",
-	flexDirection: "column",
-	minWidth: 0,
-} as const;
-
-export function NodeUpdateRow({ entry }: { entry: NodeUpdateEntry }) {
+export function NodeUpdateRow({
+	entry,
+	actions,
+}: {
+	entry: NodeUpdateEntry;
+	actions: UpdateActions;
+}) {
 	const [open, setOpen] = useState(false);
 	const state = updateState(entry);
-	const where = entry.local ? "this machine" : "linked";
 	return (
 		<Box
 			component="article"
@@ -30,25 +31,14 @@ export function NodeUpdateRow({ entry }: { entry: NodeUpdateEntry }) {
 					label={`${open ? "Hide" : "Show"} history for ${entry.name}`}
 					onToggle={() => setOpen((o) => !o)}
 				/>
-				<Box sx={stackSx}>
-					<Typography variant="body2" sx={{ fontWeight: 500 }}>
-						{entry.name}
-					</Typography>
-					<Typography variant="caption" color="text.secondary" noWrap>
-						{entry.status ? `${where} · ${entry.status.installDir}` : where}
-					</Typography>
-				</Box>
+				<NodeName entry={entry} />
 				<Versions entry={entry} />
-				<Box
-					sx={{ ...stackSx, gridColumn: { xs: "2", sm: "auto" }, gap: 0.25 }}
-				>
-					<UpdateStateChip state={state} />
-					<Typography variant="caption" color="text.secondary" noWrap>
-						{state.line}
-					</Typography>
-				</Box>
+				<StateCell state={state} />
+				<RowActions entry={entry} state={state} actions={actions} />
 			</Box>
-			{open && <NodeUpdateDetail entry={entry} state={state} />}
+			{open && (
+				<NodeUpdateDetail entry={entry} state={state} actions={actions} />
+			)}
 		</Box>
 	);
 }

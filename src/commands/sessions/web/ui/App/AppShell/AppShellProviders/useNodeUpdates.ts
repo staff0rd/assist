@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { NodeSelection } from "../../../useNodeSelection";
-import { fetchNodeUpdate } from "./useNodeUpdates/fetchNodeUpdate";
+import { fetchNodeUpdate } from "../fetchNodeUpdate";
 import type { NodeUpdateEntry, NodeUpdates } from "../NodeUpdateEntry";
 
 const POLL_MS = 60_000;

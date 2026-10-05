@@ -1,16 +1,19 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { NodeUpdateEntry } from "../../../NodeUpdateEntry";
-import type { UpdateState } from "../updateState";
+import type { UpdateState } from "../UpdateStateKind";
+import type { UpdateActions } from "../useUpdateActions";
 import { Advice } from "./NodeUpdateDetail/Advice";
 import { History } from "./NodeUpdateDetail/History";
 
 export function NodeUpdateDetail({
 	entry,
 	state,
+	actions,
 }: {
 	entry: NodeUpdateEntry;
 	state: UpdateState;
+	actions: UpdateActions;
 }) {
 	return (
 		<Box
@@ -22,7 +25,7 @@ export function NodeUpdateDetail({
 				gap: 1.5,
 			}}
 		>
-			<Advice entry={entry} state={state} />
+			<Advice entry={entry} state={state} actions={actions} />
 			<Typography variant="caption" color="text.secondary">
 				History · ~/.assist/watchers/
 			</Typography>

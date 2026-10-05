@@ -40,6 +40,8 @@ let git: GitState;
 
 const sentinelDir = mkdtempSync(join(tmpdir(), "watch-sentinel-"));
 const sentinel = join(sentinelDir, "assist-simulate-divergence");
+const checkMarker = join(sentinelDir, "assist-watch-check");
+const stopMarker = join(sentinelDir, "assist-watch-stop");
 
 afterAll(() => rmSync(sentinelDir, { recursive: true, force: true }));
 
@@ -72,8 +74,8 @@ function installGit(overrides: Partial<GitState> = {}): void {
 		if (key === "rev-parse @") return `${git.head}\n`;
 		if (key === "rev-parse @{u}") return `${git.upstreamSha}\n`;
 		if (key === "rev-list --count @..@{u}") return `${git.behind}\n`;
-		if (key === "rev-parse --git-path assist-simulate-divergence")
-			return `${sentinel}\n`;
+		if (key.startsWith("rev-parse --git-path "))
+			return `${join(sentinelDir, key.slice("rev-parse --git-path ".length))}\n`;
 		if (key === "fetch --quiet") {
 			git.fetches += 1;
 			git.onFetch?.(git);
@@ -95,7 +97,8 @@ describe("waitForUpstream", () => {
 
 	afterEach(() => {
 		vi.useRealTimers();
-		rmSync(sentinel, { force: true });
+		for (const marker of [sentinel, checkMarker, stopMarker])
+			rmSync(marker, { force: true });
 	});
 
 	it("resolves a simulated divergence at startup and consumes the request", async () => {
@@ -228,6 +231,39 @@ describe("waitForUpstream", () => {
 
 		await vi.advanceTimersByTimeAsync(120_000);
 		expect(git.fetches).toBe(2);
+	});
+
+	it("fetches straight away when a check is requested", async () => {
+		const pending = wait();
+		writeFileSync(checkMarker, "");
+		git.upstreamSha = "fff6666";
+		git.behind = 1;
+		await vi.advanceTimersByTimeAsync(1_000);
+
+		await expect(pending).resolves.toMatchObject({ kind: "moved", count: 1 });
+		expect(git.fetches).toBe(2);
+		expect(existsSync(checkMarker)).toBe(false);
+	});
+
+	it("resolves interrupted when a stop is requested while polling", async () => {
+		const pending = wait();
+		writeFileSync(stopMarker, "");
+		await vi.advanceTimersByTimeAsync(1_000);
+
+		await expect(pending).resolves.toEqual({ kind: "interrupted" });
+		expect(existsSync(stopMarker)).toBe(false);
+	});
+
+	it("stops before pulling when a stop was requested during the first fetch", async () => {
+		installGit({
+			onFetch: (state) => {
+				writeFileSync(stopMarker, "");
+				state.upstreamSha = "bbb2222";
+				state.behind = 2;
+			},
+		});
+
+		await expect(wait()).resolves.toEqual({ kind: "interrupted" });
 	});
 
 	it("reports unavailable outside a git repository", async () => {

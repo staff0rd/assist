@@ -1,6 +1,6 @@
-import type { NodeUpdateStatus } from "../../../../../../shared/NodeUpdateStatus";
-import { withNode } from "../../../../withNode";
-import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
+import type { NodeUpdateStatus } from "../../../../shared/NodeUpdateStatus";
+import { withNode } from "../../withNode";
+import type { NodeUpdateEntry } from "./NodeUpdateEntry";
 
 export async function fetchNodeUpdate(
 	name: string,

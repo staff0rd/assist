@@ -1,8 +1,10 @@
+import { consumeMarker } from "./consumeMarker";
 import { consumeSimulatedDivergence } from "./consumeSimulatedDivergence";
 import { fetchQuietly } from "./fetchQuietly";
 import { pollForMovement } from "./pollForMovement";
 import { readMovement } from "./readMovement";
 import { resolveUpstream } from "./resolveUpstream";
+import { watchControlPaths } from "./watchControlPaths";
 import type { WatchOutcome } from "./WatchOutcome";
 
 type WaitOptions = {
@@ -31,9 +33,19 @@ export function waitForUpstream(options: WaitOptions): Promise<WatchOutcome> {
 	if (consumeSimulatedDivergence(cwd))
 		return Promise.resolve({ kind: "simulated-divergence", upstream });
 
+	const control = watchControlPaths(cwd);
 	fetchQuietly(cwd, intervalMs);
+	if (control && consumeMarker(control.stop))
+		return Promise.resolve({ kind: "interrupted" });
 	const moved = readMovement(cwd);
 	if (moved) return Promise.resolve({ kind: "moved", upstream, ...moved });
 
-	return pollForMovement({ upstream, intervalMs, timeoutMs, timeout, cwd });
+	return pollForMovement({
+		upstream,
+		intervalMs,
+		timeoutMs,
+		timeout,
+		cwd,
+		control,
+	});
 }

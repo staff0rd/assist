@@ -46,6 +46,7 @@ import { sessionView } from "./sessionView";
 import { setConfig } from "./setConfig";
 import { unsetConfig } from "./unsetConfig";
 import { updates } from "./updates/updates";
+import { updatesControl } from "./updates/updatesControl";
 import { uploadPrImage } from "./uploadPrImage";
 import { writeFileContent } from "./writeFileContent";
 import { createCssHandler } from "./createCssHandler";
@@ -121,6 +122,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/config/unset": unsetConfig,
 	"GET /api/review/synthesis": getReviewSynthesis,
 	"GET /api/updates": updates,
+	"POST /api/updates/control": updatesControl,
 };
 
 export const handleRequest = createFallbackHandler(

@@ -1,6 +1,7 @@
 import { getInstallDir, isGitRepo } from "../../../../shared/getInstallDir";
 import { daemonLog } from "../daemonLog";
 import type { TreeSpawnContext } from "../worktree/allocateAndBind";
+import { autoUpdateControl } from "./autoUpdateControl";
 import { autoUpdateEnabled } from "./autoUpdateEnabled";
 import { autoUpdateState } from "./autoUpdateState";
 import { headCommit } from "../../../watch/headCommit";
@@ -25,7 +26,11 @@ export function startAutoUpdate(ctx: () => TreeSpawnContext): void {
 		return;
 	}
 	trimWatcherLog(installDir);
-	daemonLog(`auto-update: pulling and building ${installDir} as origin moves`);
+	daemonLog(
+		autoUpdateControl.paused()
+			? `auto-update: paused for ${installDir}; resume it from the Updates page`
+			: `auto-update: pulling and building ${installDir} as origin moves`,
+	);
 	void runAutoUpdateLoop(loopDeps(installDir, ctx)).catch((error) =>
 		daemonLog(
 			`auto-update: loop stopped: ${error instanceof Error ? error.message : String(error)}`,

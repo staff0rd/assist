@@ -2,12 +2,13 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import CheckIcon from "@mui/icons-material/Check";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
 import PauseIcon from "@mui/icons-material/Pause";
+import PowerOffIcon from "@mui/icons-material/PowerSettingsNew";
 import ReplayIcon from "@mui/icons-material/Replay";
 import WarningIcon from "@mui/icons-material/Warning";
 import Box from "@mui/material/Box";
 import { alpha, type Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
-import type { UpdateState, UpdateStateKind } from "../updateState";
+import type { UpdateState, UpdateStateKind } from "../../UpdateStateKind";
 
 type Tone = "success" | "warning" | "error" | "neutral";
 
@@ -16,7 +17,8 @@ const look: Record<UpdateStateKind, { tone: Tone; icon: ReactNode }> = {
 	ready: { tone: "warning", icon: <ArrowUpwardIcon /> },
 	diverged: { tone: "error", icon: <WarningIcon /> },
 	retrying: { tone: "warning", icon: <ReplayIcon /> },
-	off: { tone: "neutral", icon: <PauseIcon /> },
+	paused: { tone: "neutral", icon: <PauseIcon /> },
+	off: { tone: "neutral", icon: <PowerOffIcon /> },
 	unavailable: { tone: "neutral", icon: <CloudOffIcon /> },
 };
 

@@ -1,6 +1,6 @@
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import { ErrorSnackbar } from "../../../ErrorSnackbar";
+import { ErrorSnackbar } from "../ErrorSnackbar";
 
 type PeerNotices = {
 	back: string | null;

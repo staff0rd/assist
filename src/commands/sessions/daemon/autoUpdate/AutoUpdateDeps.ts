@@ -12,5 +12,6 @@ export type AutoUpdateDeps = {
 	liveEscalation: () => string | undefined;
 	escalate: (output: string) => string;
 	isLive: (sessionId: string) => boolean;
+	paused: () => boolean;
 	sleep: (ms: number) => Promise<void>;
 };
