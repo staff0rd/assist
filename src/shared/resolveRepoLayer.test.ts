@@ -61,6 +61,9 @@ describe("loadConfigFrom repo overrides", () => {
 		expect(warn.mock.calls.flat().join("\n")).toContain(
 			"repos.org/assist in ~/.assist.yml is not in the shared db",
 		);
+		expect(warn.mock.calls.flat().join("\n")).toContain(
+			"assist config import-repos",
+		);
 	});
 
 	it("ignores the yml entry once the cache holds an override for the repo", () => {

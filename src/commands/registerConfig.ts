@@ -3,6 +3,7 @@ import { configHelp } from "../shared/configHelp";
 import { configList } from "./configList";
 import { configConfigHelp } from "./config/configConfigHelp";
 import { configGet } from "./config/configGet";
+import { configImportRepos } from "./config/configImportRepos";
 import { configKeys } from "./config/configKeys";
 import { configSet } from "./config/configSet";
 import { configUnset } from "./config/configUnset";
@@ -35,6 +36,13 @@ export function registerConfig(program: Command): void {
 			"Requires -g: remove the key from a repo's shared db override (defaults to the current repo)",
 		)
 		.action((key, options) => configUnset(key, options));
+
+	configCommand
+		.command("import-repos")
+		.description(
+			"Move this machine's ~/.assist.yml repos: overrides into the shared db, showing a per-key diff and asking first",
+		)
+		.action(configImportRepos);
 
 	configCommand
 		.command("get <key>")

@@ -45,7 +45,7 @@ function warnYmlRepoOverride(key: string): void {
 	warnedYmlKeys.add(key);
 	console.error(
 		chalk.yellow(
-			`repos.${key} in ~/.assist.yml is not in the shared db, so other nodes don't see it. Re-set its keys with 'assist config set -g --repo' to share them.`,
+			`repos.${key} in ~/.assist.yml is not in the shared db, so other nodes don't see it. Run 'assist config import-repos' to share it.`,
 		),
 	);
 }
