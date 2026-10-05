@@ -1,3 +1,10 @@
+## [0.775.3](https://github.com/staff0rd/assist/compare/v0.775.2...v0.775.3) (2026-10-05)
+
+
+### Bug Fixes
+
+* fast-forward without git pull ([cd21784](https://github.com/staff0rd/assist/commit/cd21784c88c2cf7ada29675adc44f375f52c7519))
+
 ## [0.775.2](https://github.com/staff0rd/assist/compare/v0.775.1...v0.775.2) (2026-10-05)
 
 
