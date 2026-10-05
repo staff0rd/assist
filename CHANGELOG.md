@@ -1,3 +1,10 @@
+# [0.776.0](https://github.com/staff0rd/assist/compare/v0.775.6...v0.776.0) (2026-10-05)
+
+
+### Features
+
+* negotiate link protocol ranges ([6ccea3e](https://github.com/staff0rd/assist/commit/6ccea3eada0521a1a0f81948a172f066b0b32d16))
+
 ## [0.775.6](https://github.com/staff0rd/assist/compare/v0.775.5...v0.775.6) (2026-10-05)
 
 
