@@ -1,3 +1,10 @@
+# [0.777.0](https://github.com/staff0rd/assist/compare/v0.776.0...v0.777.0) (2026-10-05)
+
+
+### Features
+
+* restart, pause and check from Updates ([ad060a5](https://github.com/staff0rd/assist/commit/ad060a545fb2fd8794392bbfd3c68a43d3739368))
+
 # [0.776.0](https://github.com/staff0rd/assist/compare/v0.775.6...v0.776.0) (2026-10-05)
 
 
