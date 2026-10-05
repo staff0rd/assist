@@ -1,3 +1,10 @@
+## [0.775.2](https://github.com/staff0rd/assist/compare/v0.775.1...v0.775.2) (2026-10-05)
+
+
+### Bug Fixes
+
+* per-user daemon pipe on Windows ([f18747b](https://github.com/staff0rd/assist/commit/f18747b4424d27e7bc093a048a9c68273e5e8572))
+
 ## [0.775.1](https://github.com/staff0rd/assist/compare/v0.775.0...v0.775.1) (2026-10-05)
 
 
