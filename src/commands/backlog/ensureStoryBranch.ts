@@ -43,7 +43,7 @@ function adoptRecordedBranch(item: BacklogItem, branch: string): void {
 		execSync("git fetch", { stdio: "ignore" });
 	} catch {}
 	try {
-		execSync(`git switch ${shellQuote(branch)}`, { stdio: "inherit" });
+		execSync(`git switch ${shellQuote(branch)}`, { stdio: "pipe" });
 		log(
 			item,
 			`branch ${branch} already recorded; switched off ${parked} onto it`,
