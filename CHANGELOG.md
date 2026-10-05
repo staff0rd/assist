@@ -1,3 +1,10 @@
+# [0.778.0](https://github.com/staff0rd/assist/compare/v0.777.0...v0.778.0) (2026-10-05)
+
+
+### Features
+
+* share repo config overrides via db ([5da5f31](https://github.com/staff0rd/assist/commit/5da5f31993f1fc1d8ade34d562736342badbac64))
+
 # [0.777.0](https://github.com/staff0rd/assist/compare/v0.776.0...v0.777.0) (2026-10-05)
 
 
