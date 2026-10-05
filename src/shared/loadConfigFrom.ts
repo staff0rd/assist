@@ -1,11 +1,10 @@
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
-import { getCurrentOrigin } from "../commands/backlog/getCurrentOrigin";
 import { linkedWorktree } from "./linkedWorktree";
 import { loadRawYaml } from "./loadRawYaml";
 import { mergeRawConfigs } from "./mergeDenyRules";
-import { resolveRepoOverride } from "./resolveRepoOverride";
+import { resolveRepoLayer } from "./resolveRepoLayer";
 import { stripLegacyConfigKeys } from "./stripLegacyConfigKeys";
 import { type AssistConfig, assistConfigSchema } from "./types";
 
@@ -46,10 +45,10 @@ export function loadConfigFrom(
 ): AssistConfig {
 	const globalRaw = loadRawYaml(globalConfigPath);
 	const projectRaw = loadRawYaml(projectConfigPathFrom(cwd));
-	const repoOverride = globalRaw.repos
-		? resolveRepoOverride(globalRaw, getCurrentOrigin(cwd))
-		: {};
-	const globalWithRepo = mergeRawConfigs(globalRaw, repoOverride);
+	const globalWithRepo = mergeRawConfigs(
+		globalRaw,
+		resolveRepoLayer(globalRaw, cwd).override,
+	);
 	const merged = stripLegacyConfigKeys(
 		mergeRawConfigs(globalWithRepo, projectRaw),
 	);

@@ -10,6 +10,7 @@ export class UnknownRepoConfigError extends Error {
 export function resolveNamedRepoWriteLabel(
 	globalRaw: Record<string, unknown>,
 	name: string,
+	source = "~/.assist.yml",
 ): string {
 	const repos = globalRaw.repos;
 	const entries =
@@ -21,13 +22,13 @@ export function resolveNamedRepoWriteLabel(
 
 	if (matches.length === 0) {
 		throw new UnknownRepoConfigError(
-			`No repo in ~/.assist.yml matches "${name}". ` +
+			`No repo in ${source} matches "${name}". ` +
 				"Use an existing repos key (full origin, org/repo, or bare repo name).",
 		);
 	}
 	if (matches.length > 1) {
 		throw new AmbiguousRepoConfigError(
-			`Ambiguous repos config in ~/.assist.yml: keys ${matches
+			`Ambiguous repos config in ${source}: keys ${matches
 				.map((m) => `"${m}"`)
 				.join(", ")} all match "${name}". Keep a single key per repository.`,
 		);

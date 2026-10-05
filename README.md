@@ -220,8 +220,10 @@ A run entry's relative `cwd` (and a `link` path) resolves against the **repo roo
 - `assist config keys [filter]` - List every config key with its type, default, effect and setter, optionally filtered by name
 - `assist config get <key>` - Get a config value; secret values are hidden unless `--reveal` is passed
 - `assist config list` - List the config values that are set, with secret values hidden
-- `assist config set <key> <value>` - Set a config value. `--global` writes to `~/.assist.yml`; `-g --repo [name]` writes a per-repo override there
-- `assist config unset <key>` - Remove a config value so the key falls back to the global value or schema default (`-g` targets `~/.assist.yml`; `-g --repo [name]` removes it from a per-repo override there)
+- `assist config set <key> <value>` - Set a config value. `--global` writes to `~/.assist.yml`; `-g --repo [name]` writes a per-repo override to the shared assist database, so every node on that database sees it
+- `assist config unset <key>` - Remove a config value so the key falls back to the global value or schema default (`-g` targets `~/.assist.yml`; `-g --repo [name]` removes it from the shared per-repo override)
+
+Each node mirrors the shared per-repo overrides into `~/.assist/repo-config-cache.json` when its daemon starts and after its own `--repo` writes, and resolves config from that snapshot, so an unreachable database leaves the last snapshot in effect. A `repos:` entry in `~/.assist.yml` still applies, with a warning, until the shared database holds an override for that repo, after which it is ignored.
 
 The Config tab of the sessions web dashboard never shows secret values; their fields are write-only.
 

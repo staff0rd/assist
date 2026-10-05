@@ -1,9 +1,7 @@
 import { saveGlobalConfig } from "../../shared/loadConfig";
-import { repoConfigSchema } from "../../shared/types";
-import { isGlobalOnlyConfigKey } from "./isGlobalOnlyConfigKey";
+import { globalOnlyRepoKeyError } from "./globalOnlyRepoKeyError";
 import { resolveRepoConfigBlock } from "./resolveRepoConfigBlock";
-import { unsetNestedValue } from "./unsetNestedValue";
-import { validateConfig } from "./validateConfig";
+import { unsetRepoBlockKey } from "./unsetRepoBlockKey";
 
 type RepoConfigUnsetResult =
 	| { ok: true; target: "repo"; label: string; removed: boolean }
@@ -15,24 +13,18 @@ export function applyRepoConfigUnset(
 	cwd: string = process.cwd(),
 	globalConfigPath?: string,
 ): RepoConfigUnsetResult {
-	if (isGlobalOnlyConfigKey(key)) {
-		return {
-			ok: false,
-			errors: [
-				`"${key}" is a global-only key. Unset it in ~/.assist.yml rather than under repos:`,
-			],
-		};
-	}
+	const globalOnly = globalOnlyRepoKeyError(key, "Unset");
+	if (globalOnly) return globalOnly;
 	const { globalRaw, repos, label, block } = resolveRepoConfigBlock(
 		repoName,
 		cwd,
 		globalConfigPath,
 	);
-	const { config: updatedBlock, removed } = unsetNestedValue(block, key);
-	if (!removed) return { ok: true, target: "repo", label, removed: false };
-
-	const validation = validateConfig(updatedBlock, key, repoConfigSchema);
-	if (!validation.ok) return validation;
+	const unset = unsetRepoBlockKey(block, key);
+	if (!unset.ok) return unset;
+	if (!unset.removed)
+		return { ok: true, target: "repo", label, removed: false };
+	const updatedBlock = unset.block;
 
 	if (Object.keys(updatedBlock).length === 0) delete repos[label];
 	else repos[label] = updatedBlock;

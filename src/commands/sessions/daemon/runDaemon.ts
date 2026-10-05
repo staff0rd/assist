@@ -3,6 +3,7 @@ import { isDaemonRunning } from "./connectToDaemon";
 import { createAutoExit } from "./createAutoExit";
 import { daemonLog, setDaemonLogSink } from "./daemonLog";
 import { daemonPaths } from "./daemonPaths";
+import { refreshRepoConfigCacheOnStart } from "./refreshRepoConfigCacheOnStart";
 import { SessionManager } from "./SessionManager";
 import { startDaemonServer } from "./startDaemonServer";
 
@@ -24,5 +25,6 @@ export async function runDaemon(): Promise<void> {
 	const manager = new SessionManager(checkAutoExit);
 	// why: forward every daemonLog line to log subscribers (e.g. the web server) so they reach assist.log alongside web-server lifecycle output.
 	setDaemonLogSink(manager.clients.emitLog);
+	void refreshRepoConfigCacheOnStart();
 	await startDaemonServer(manager, checkAutoExit);
 }

@@ -15,6 +15,7 @@ export function originKeyCandidates(origin: string): Set<string> {
 export function matchRepoConfigKey(
 	globalRaw: Record<string, unknown>,
 	origin: string,
+	source = "~/.assist.yml",
 ): string | undefined {
 	const repos = globalRaw.repos;
 	if (!repos || typeof repos !== "object" || Array.isArray(repos))
@@ -27,7 +28,7 @@ export function matchRepoConfigKey(
 	if (matches.length === 0) return undefined;
 	if (matches.length > 1) {
 		throw new AmbiguousRepoConfigError(
-			`Ambiguous repos config in ~/.assist.yml: keys ${matches
+			`Ambiguous repos config in ${source}: keys ${matches
 				.map((m) => `"${m}"`)
 				.join(", ")} all match the current repository (${origin}). ` +
 				"Keep a single key per repository.",
@@ -40,8 +41,9 @@ export function matchRepoConfigKey(
 export function resolveRepoOverride(
 	globalRaw: Record<string, unknown>,
 	origin: string,
+	source?: string,
 ): Record<string, unknown> {
-	const matched = matchRepoConfigKey(globalRaw, origin);
+	const matched = matchRepoConfigKey(globalRaw, origin, source);
 	if (matched === undefined) return {};
 
 	const override = (globalRaw.repos as Record<string, unknown>)[matched];

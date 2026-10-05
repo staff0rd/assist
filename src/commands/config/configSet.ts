@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { applyConfigSet, type ConfigWritableValue } from "./applyConfigSet";
-import { applyRepoConfigSet } from "./applyRepoConfigSet";
+import { applySharedRepoConfigSet } from "./applySharedRepoConfigSet";
 import { coerceCliConfigValue } from "./coerceCliConfigValue";
 import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { maskConfigKeySecrets } from "./maskConfigKeySecrets";
@@ -11,11 +11,11 @@ type ConfigSetOptions = {
 	repo?: boolean | string;
 };
 
-export function configSet(
+export async function configSet(
 	key: string,
 	value: string | undefined,
 	options: ConfigSetOptions = {},
-): void {
+): Promise<void> {
 	if (options.repo !== undefined && !options.global) {
 		console.error(
 			chalk.red("--repo writes to the global config; add -g (e.g. -g --repo)"),
@@ -33,7 +33,7 @@ export function configSet(
 	if (!coercion.ok) exitWithConfigErrors([coercion.error]);
 	const coerced = coercion.value;
 	const target = resolved.useRepo
-		? `repo: ${applyRepoOrExit(resolved.key, coerced, resolved.repoName)}`
+		? `repo: ${await applyRepoOrExit(resolved.key, coerced, resolved.repoName)}`
 		: applyOrExit(resolved.key, coerced, options.global ?? false);
 	const shown = JSON.stringify(maskConfigKeySecrets(resolved.key, coerced));
 	console.log(chalk.green(`Set ${resolved.key} = ${shown} (${target})`));
@@ -49,12 +49,12 @@ function applyOrExit(
 	return result.target;
 }
 
-function applyRepoOrExit(
+async function applyRepoOrExit(
 	key: string,
 	coerced: ConfigWritableValue,
 	repoName: string | undefined,
-): string {
-	const result = applyRepoConfigSet(key, coerced, repoName);
+): Promise<string> {
+	const result = await applySharedRepoConfigSet(key, coerced, repoName);
 	if (!result.ok) exitWithConfigErrors(result.errors);
 	return result.label;
 }

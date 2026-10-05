@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { applyConfigUnset } from "./applyConfigUnset";
-import { applyRepoConfigUnset } from "./applyRepoConfigUnset";
+import { applySharedRepoConfigUnset } from "./applySharedRepoConfigUnset";
 import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { resolveRepoUnsetTarget } from "./resolveRepoUnsetTarget";
 
@@ -13,10 +13,10 @@ type UnsetTarget =
 	| { target: "global" | "project" }
 	| { target: "repo"; label: string };
 
-export function configUnset(
+export async function configUnset(
 	key: string | undefined,
 	options: ConfigUnsetOptions = {},
-): void {
+): Promise<void> {
 	if (options.repo !== undefined && !options.global) {
 		console.error(
 			chalk.red(
@@ -34,7 +34,7 @@ export function configUnset(
 	}
 
 	const result = resolved.useRepo
-		? applyRepoConfigUnset(resolved.key, resolved.repoName)
+		? await applySharedRepoConfigUnset(resolved.key, resolved.repoName)
 		: applyConfigUnset(resolved.key, options.global ?? false);
 	if (!result.ok) exitWithConfigErrors(result.errors);
 	if (!result.removed) {

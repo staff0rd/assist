@@ -22,7 +22,7 @@ export function registerConfig(program: Command): void {
 		.option("-g, --global", "Write to global ~/.assist.yml")
 		.option(
 			"-r, --repo [name]",
-			"Requires -g: scope the global write to a repo's identity (defaults to the current repo)",
+			"Requires -g: write a repo's override to the shared db, seen by every node (defaults to the current repo)",
 		)
 		.action((key, value, options) => configSet(key, value, options));
 
@@ -32,7 +32,7 @@ export function registerConfig(program: Command): void {
 		.option("-g, --global", "Remove from global ~/.assist.yml")
 		.option(
 			"-r, --repo [name]",
-			"Requires -g: remove the key from a repo's identity block (defaults to the current repo)",
+			"Requires -g: remove the key from a repo's shared db override (defaults to the current repo)",
 		)
 		.action((key, options) => configUnset(key, options));
 

@@ -12,6 +12,11 @@ describe("resolveExecve", () => {
 	});
 
 	it("falls back when this Node has no execve", () => {
-		expect(resolveExecve("darwin", undefined)).toBeNull();
+		vi.stubGlobal("process", { ...process, execve: undefined });
+		try {
+			expect(resolveExecve("darwin", undefined)).toBeNull();
+		} finally {
+			vi.unstubAllGlobals();
+		}
 	});
 });

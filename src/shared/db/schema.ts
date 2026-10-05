@@ -11,6 +11,7 @@ import { phaseUsage } from "./phaseUsage";
 import { phaseUsageMessages } from "./phaseUsageMessages";
 import { planPhases } from "./planPhases";
 import { planTasks } from "./planTasks";
+import { repoConfigs } from "./repoConfigs";
 import { usagePeaks } from "./usagePeaks";
 
 export { backups } from "./backups";
@@ -54,6 +55,7 @@ export const schema = {
 	phaseUsageMessages,
 	phaseCycleContext,
 	phaseSessions,
+	repoConfigs,
 };
 
 export type ItemRow = typeof items.$inferSelect;
