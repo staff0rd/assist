@@ -1,13 +1,18 @@
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 const DAEMON_DIR = join(homedir(), ".assist", "daemon");
+
+function perUserWindowsPipe(): string {
+	const user = basename(homedir()).replace(/[^\w.-]/g, "_");
+	return String.raw`\\.\pipe\assist-sessions-daemon-${user}`;
+}
 
 export const daemonPaths = {
 	dir: DAEMON_DIR,
 	socket:
 		process.platform === "win32"
-			? String.raw`\\.\pipe\assist-sessions-daemon`
+			? perUserWindowsPipe()
 			: join(DAEMON_DIR, "daemon.sock"),
 	log: join(DAEMON_DIR, "daemon.log"),
 	pid: join(DAEMON_DIR, "daemon.pid"),
