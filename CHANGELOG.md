@@ -1,3 +1,10 @@
+## [0.775.4](https://github.com/staff0rd/assist/compare/v0.775.3...v0.775.4) (2026-10-05)
+
+
+### Bug Fixes
+
+* quiet failed story branch switch ([6cdc97d](https://github.com/staff0rd/assist/commit/6cdc97db5060fdeb6070163a4163d859f4e1609e))
+
 ## [0.775.3](https://github.com/staff0rd/assist/compare/v0.775.2...v0.775.3) (2026-10-05)
 
 
