@@ -1,3 +1,10 @@
+# [0.780.0](https://github.com/staff0rd/assist/compare/v0.779.0...v0.780.0) (2026-10-05)
+
+
+### Features
+
+* share web repo config via db ([a13339c](https://github.com/staff0rd/assist/commit/a13339c4ab9368c9f2380b388d96a20067f1a02b))
+
 # [0.779.0](https://github.com/staff0rd/assist/compare/v0.778.0...v0.779.0) (2026-10-05)
 
 
