@@ -1,3 +1,10 @@
+## [0.775.1](https://github.com/staff0rd/assist/compare/v0.775.0...v0.775.1) (2026-10-05)
+
+
+### Bug Fixes
+
+* diagnose Tailscale held by other user ([87f930c](https://github.com/staff0rd/assist/commit/87f930cb673ad5482ca9ca6d1cf1d60084d846c9))
+
 # [0.775.0](https://github.com/staff0rd/assist/compare/v0.774.1...v0.775.0) (2026-10-04)
 
 
