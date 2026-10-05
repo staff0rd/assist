@@ -1,3 +1,10 @@
+## [0.775.5](https://github.com/staff0rd/assist/compare/v0.775.4...v0.775.5) (2026-10-05)
+
+
+### Bug Fixes
+
+* link compatibility by protocol only ([f8811d2](https://github.com/staff0rd/assist/commit/f8811d2c83c092c20ba49cf11cb1ae634e3014f6))
+
 ## [0.775.4](https://github.com/staff0rd/assist/compare/v0.775.3...v0.775.4) (2026-10-05)
 
 
