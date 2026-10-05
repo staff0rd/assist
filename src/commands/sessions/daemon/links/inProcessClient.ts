@@ -7,16 +7,18 @@ export type InProcessPeer = {
 	name: string;
 	manager: SessionManager;
 	reportVersion?: string;
+	helloExtra?: Record<string, unknown>;
 };
 
 export function inProcessClient(peer: InProcessPeer, handlers: LinkHandlers) {
 	const conn = { open: true };
 	const deliver = (data: string) => {
-		const msg = JSON.parse(data);
+		let msg = JSON.parse(data);
 		if (msg.type === "hello" && peer.reportVersion) {
 			msg.version = peer.reportVersion;
 			msg.protocol = PROTOCOL_VERSION - 1;
 		}
+		if (msg.type === "hello") msg = { ...msg, ...peer.helloExtra };
 		if (conn.open) handlers.onLine(JSON.stringify(msg));
 	};
 	const client: SessionClient = {

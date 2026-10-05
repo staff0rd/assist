@@ -11,6 +11,31 @@ describe("dispatchMessage", () => {
 		vi.restoreAllMocks();
 	});
 
+	describe("unknown message types", () => {
+		it("ignores them without replying and logs each type once", () => {
+			const log = vi.spyOn(console, "log").mockImplementation(() => {});
+			const client = { send: vi.fn() };
+			const manager = {} as SessionManager;
+
+			dispatchMessage(client, manager, { type: "dispatch-future", extra: 1 });
+			dispatchMessage(client, manager, { type: "dispatch-future" });
+			dispatchMessage(client, manager, { type: "toString" });
+
+			expect(client.send).not.toHaveBeenCalled();
+			const lines = log.mock.calls.map((c) => String(c[0]));
+			expect(
+				lines.filter((l) =>
+					l.includes("ignoring unrecognised message type dispatch-future"),
+				),
+			).toHaveLength(1);
+			expect(
+				lines.filter((l) =>
+					l.includes("ignoring unrecognised message type toString"),
+				),
+			).toHaveLength(1);
+		});
+	});
+
 	describe("created acks", () => {
 		it("flags a fresh create as new", () => {
 			const client = { send: vi.fn() };

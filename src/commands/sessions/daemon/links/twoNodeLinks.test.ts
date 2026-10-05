@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makePty } from "../../../../test/mothers/makePty";
 import { makeSession } from "../../../../test/mothers/makeSession";
-import type { SessionClient } from "../broadcast";
+import { broadcast, type SessionClient } from "../broadcast";
 import { daemonLog } from "../daemonLog";
 import { dispatchMessage } from "../dispatchMessage";
 import { messageHandlers } from "../messageHandlers";
@@ -399,6 +399,96 @@ describe("two linked nodes", () => {
 				expect.objectContaining({ sessionId: "h1" }),
 				expect.objectContaining({ sessionId: "h1", node: "pc-windows" }),
 			]),
+		);
+	});
+});
+
+describe("a peer speaking a newer dialect", () => {
+	async function connected() {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		const windows = node("pc-windows");
+		const view = viewer();
+		wsl.addClient(view.client);
+		wsl.links.reload();
+		await vi.waitFor(() =>
+			expect(wsl.links.nodes().links[0].state).toBe("connected"),
+		);
+		return { wsl, windows, view };
+	}
+
+	const logged = () => vi.mocked(daemonLog).mock.calls.map((c) => c[0]);
+
+	it("stays connected and logs an unknown message type once", async () => {
+		const { wsl, windows, view } = await connected();
+
+		broadcast(windows.clients, { type: "future-type", payload: 1 });
+		broadcast(windows.clients, { type: "future-type", payload: 2 });
+		addSession(windows, "3");
+
+		await vi.waitFor(() => expect(view.lastSessions()).toHaveLength(1));
+		expect(wsl.links.nodes().links[0].state).toBe("connected");
+		expect(
+			logged().filter(
+				(line) =>
+					line ===
+					"link pc-windows ws: ignoring unrecognised message type future-type (logged once)",
+			),
+		).toHaveLength(1);
+	});
+
+	it("relays a message carrying an extra field", async () => {
+		const { windows, view } = await connected();
+
+		broadcast(windows.clients, {
+			type: "output",
+			sessionId: "3",
+			data: "hi",
+			futureField: true,
+		});
+
+		await vi.waitFor(() =>
+			expect(view.received).toContainEqual(
+				expect.objectContaining({
+					type: "output",
+					sessionId: "pc-windows:3",
+					data: "hi",
+				}),
+			),
+		);
+	});
+
+	it("accepts a hello carrying an extra field and logs it", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		node("pc-windows");
+		(peers.get(WINDOWS.url) as InProcessPeer).helloExtra = {
+			protocols: [2, 3],
+		};
+
+		wsl.links.reload();
+
+		await vi.waitFor(() =>
+			expect(wsl.links.nodes().links[0].state).toBe("connected"),
+		);
+		expect(logged()).toContainEqual(
+			expect.stringMatching(
+				/^link pc-windows ws: hello ok .*; ignoring unrecognised fields protocols$/,
+			),
+		);
+	});
+
+	it("ignores an unknown message type from a client without erroring", async () => {
+		const { wsl, windows, view } = await connected();
+
+		dispatchMessage(view.client, wsl, {
+			type: "future-request",
+			sessionId: "pc-windows:3",
+		});
+		addSession(windows, "3");
+
+		await vi.waitFor(() => expect(view.lastSessions()).toHaveLength(1));
+		expect(wsl.links.nodes().links[0].state).toBe("connected");
+		expect(view.received).not.toContainEqual(
+			expect.objectContaining({ type: "error" }),
 		);
 	});
 });

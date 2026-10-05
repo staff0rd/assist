@@ -19,6 +19,7 @@ export type LinkRelayState = {
 	historyWaiters: ((sessions: HistoricalSession[]) => void)[];
 	lastHistory?: HistoricalSession[];
 	lastRequester?: SessionClient;
+	unrecognisedTypes: Set<string>;
 	viewers: () => Set<SessionClient>;
 	onSessionsChanged: () => void;
 	onHistoryChanged: () => void;
@@ -39,6 +40,7 @@ export function createRelayState(
 		scrollback: new Map(),
 		pendingCreators: [],
 		historyWaiters: [],
+		unrecognisedTypes: new Set(),
 		viewers,
 		onSessionsChanged,
 		onHistoryChanged,

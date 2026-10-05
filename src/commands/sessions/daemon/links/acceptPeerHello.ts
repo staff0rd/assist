@@ -15,6 +15,21 @@ type HelloVerdict =
 	| { kind: "heal"; peer: PeerVersion }
 	| { kind: "reject"; reason: string; peer?: PeerVersion };
 
+const helloFields = new Set([
+	"type",
+	"version",
+	"protocol",
+	"nodeName",
+	"peer",
+]);
+
+function unrecognisedHelloFields(msg: Record<string, unknown>): string {
+	const extra = Object.keys(msg).filter((key) => !helloFields.has(key));
+	return extra.length
+		? `; ignoring unrecognised fields ${extra.join(",")}`
+		: "";
+}
+
 export function acceptPeerHello(
 	linkName: string,
 	msg: Record<string, unknown>,
@@ -28,7 +43,9 @@ export function acceptPeerHello(
 			peer,
 		};
 	if (helloCompatible(msg)) {
-		daemonLog(`link ${linkName} ws: hello ok (${msg.version})`);
+		daemonLog(
+			`link ${linkName} ws: hello ok (${msg.version})${unrecognisedHelloFields(msg)}`,
+		);
 		return { kind: "accept", peer };
 	}
 	const mode = linkVersionCheck();

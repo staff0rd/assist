@@ -1,6 +1,7 @@
 import type { HistoricalSession } from "../../shared/parseSessionFile";
 import { sendTo } from "../broadcast";
 import { daemonLog, relayDaemonLog } from "../daemonLog";
+import { logUnrecognisedType } from "../logUnrecognisedType";
 import {
 	appendScrollback,
 	broadcastToViewers,
@@ -71,6 +72,15 @@ const relays: Record<string, Relay> = {
 	},
 };
 
+const notRelayed = new Set(["limits", "nodes"]);
+
 export function relayLinkMessage(state: LinkRelayState, msg: Msg): void {
-	relays[msg.type as string]?.(state, msg);
+	const type = msg.type as string;
+	if (Object.hasOwn(relays, type)) relays[type](state, msg);
+	else if (!notRelayed.has(type))
+		logUnrecognisedType(
+			state.unrecognisedTypes,
+			`link ${state.node} ws: `,
+			msg.type,
+		);
 }
