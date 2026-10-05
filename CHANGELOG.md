@@ -1,3 +1,10 @@
+## [0.775.6](https://github.com/staff0rd/assist/compare/v0.775.5...v0.775.6) (2026-10-05)
+
+
+### Bug Fixes
+
+* log and ignore unknown link messages ([b85c163](https://github.com/staff0rd/assist/commit/b85c16360e8b024e963739a35a3aaa7b5e5ff221))
+
 ## [0.775.5](https://github.com/staff0rd/assist/compare/v0.775.4...v0.775.5) (2026-10-05)
 
 
