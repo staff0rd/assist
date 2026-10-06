@@ -1,6 +1,7 @@
 import type { configArrayRowState } from "./configArrayRowState";
 import type { useConfigArrayDraft } from "./useConfigArrayDraft";
 import type { useConfigArrayItemWrites } from "./useConfigArrayItemWrites";
+import { configArrayDraftPlacement } from "./configArrayItemOperations/configArrayDraftPlacement";
 
 type Options = {
 	state: ReturnType<typeof configArrayRowState>;
@@ -12,13 +13,13 @@ export function configArrayItemOperations({ state, draft, writes }: Options) {
 	async function save(): Promise<void> {
 		const open = draft.current;
 		if (!open) return;
-		const owner = state.ownerOf(open.index);
-		const replaceAt =
-			owner && owner.scope === open.scope ? owner.indexInScope : undefined;
 		const written = await writes.saveItem(
 			open.scope,
 			state.layerOf(open.scope),
-			replaceAt,
+			configArrayDraftPlacement(
+				open,
+				state.ownerOf(open.insertAfter ?? open.index),
+			),
 			open.value,
 		);
 		if (written) draft.close();

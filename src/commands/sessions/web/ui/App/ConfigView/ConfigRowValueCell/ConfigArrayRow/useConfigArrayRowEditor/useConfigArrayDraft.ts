@@ -5,6 +5,7 @@ export type ConfigArrayDraft = {
 	index: number;
 	value: unknown;
 	scope: ConfigScope;
+	insertAfter?: number;
 };
 
 export function useConfigArrayDraft() {
@@ -16,6 +17,8 @@ export function useConfigArrayDraft() {
 		current,
 		openAt: (index: number, value: unknown, scope: ConfigScope) =>
 			setCurrent({ index, value, scope }),
+		openAfter: (source: number, value: unknown, scope: ConfigScope) =>
+			setCurrent({ index: source + 1, value, scope, insertAfter: source }),
 		close: () => setCurrent(undefined),
 		setValue: (value: unknown) =>
 			setCurrent((draft) => draft && { ...draft, value }),

@@ -35,7 +35,7 @@ import { readConfigEntries } from "../../config/readConfigEntries";
 import { setConfig } from "./setConfig";
 import { configArrayItems } from "./ui/App/ConfigView/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/configArrayItems";
 import { configArrayLayerItems } from "./ui/App/ConfigView/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/configArrayLayerItems";
-import { placeConfigArrayItem } from "./ui/App/ConfigView/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/useConfigArrayItemWrites/placeConfigArrayItem";
+import { placeConfigArrayItem } from "./ui/App/ConfigView/ConfigRowValueCell/ConfigArrayRow/useConfigArrayRowEditor/placeConfigArrayItem";
 
 const root = join(tmpdir(), "assist-set-config-array-scopes-test");
 const home = join(root, "home");
@@ -101,13 +101,13 @@ async function postItemSaveAsTheArrayEditorWould(
 		itemIndex === undefined
 			? undefined
 			: configArrayItems(entry)[itemIndex]?.owner;
-	const replaceAt =
-		owner && owner.scope === scope ? owner.indexInScope : undefined;
 	return post({
 		key,
 		value: placeConfigArrayItem(
 			configArrayLayerItems(entry, scope),
-			replaceAt,
+			owner && owner.scope === scope
+				? { kind: "replace", index: owner.indexInScope }
+				: undefined,
 			value,
 		),
 		cwd: repo,

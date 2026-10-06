@@ -32,7 +32,7 @@ export function ConfigArrayItemRow({ entry, node, index, editor }: Props) {
 					onChange={editor.setValue}
 				/>
 				<ConfigSourceChip
-					source={editor.items[index]?.owner?.scope ?? "default"}
+					source={editor.itemAt(index)?.owner?.scope ?? "default"}
 					repoKey={entry.repoKey}
 					repoSource={entry.repoSource}
 				/>

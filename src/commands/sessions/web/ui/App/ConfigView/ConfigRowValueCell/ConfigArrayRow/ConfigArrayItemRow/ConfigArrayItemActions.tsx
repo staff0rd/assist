@@ -11,7 +11,7 @@ type Props = {
 
 export function ConfigArrayItemActions({ entry, index, editor }: Props) {
 	const label = `${entry.key}[${index}]`;
-	const ownerScope = editor.items[index]?.owner?.scope;
+	const ownerScope = editor.itemAt(index)?.owner?.scope;
 	const canMoveUp = editor.canMove(index, -1);
 	const canMoveDown = editor.canMove(index, 1);
 

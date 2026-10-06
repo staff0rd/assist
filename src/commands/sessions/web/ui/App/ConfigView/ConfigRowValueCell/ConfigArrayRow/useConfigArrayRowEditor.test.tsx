@@ -331,17 +331,38 @@ describe("useConfigArrayRowEditor", () => {
 		act(() => result.current.duplicate(0));
 
 		expect(result.current.rowCount).toBe(3);
-		expect(result.current.isOpen(2)).toBe(true);
-		expect(result.current.valueOf(2)).toEqual({
+		expect(result.current.isOpen(1)).toBe(true);
+		expect(result.current.valueOf(1)).toEqual({
 			name: "lint-copy",
 			command: "oxlint",
 		});
-		expect(result.current.scopeOf(2)).toBe("global");
+		expect(result.current.scopeOf(1)).toBe("global");
 		expect(result.current.valueOf(0)).toEqual({
 			name: "lint",
 			command: "oxlint",
 		});
+		expect(result.current.valueOf(2)).toEqual({
+			name: "build",
+			command: "npm run build",
+		});
+		expect(result.current.ownerOf(2)).toEqual({
+			scope: "project",
+			indexInScope: 0,
+		});
 		expect(fetchMock.mock.calls).toHaveLength(0);
+	});
+
+	it("edits the item below an open duplicate when its row is toggled", () => {
+		const { result } = renderEditor(
+			entryFor("run", { project: [{ name: "build" }, { name: "test" }] }),
+		);
+
+		act(() => result.current.duplicate(0));
+		act(() => result.current.toggle(2));
+
+		expect(result.current.rowCount).toBe(2);
+		expect(result.current.isOpen(1)).toBe(true);
+		expect(result.current.valueOf(1)).toEqual({ name: "test" });
 	});
 
 	it("copies an item without a string name unchanged", () => {
@@ -367,7 +388,7 @@ describe("useConfigArrayRowEditor", () => {
 		expect(fetchMock.mock.calls).toHaveLength(0);
 	});
 
-	it("appends a saved duplicate to the source's scope", async () => {
+	it("inserts a saved duplicate directly after its source", async () => {
 		const fetchMock = stubWrites();
 		const { result } = renderEditor(
 			entryFor("run", {
@@ -384,9 +405,35 @@ describe("useConfigArrayRowEditor", () => {
 				url: "/api/config/set",
 				body: {
 					key: "run",
-					value: [{ name: "build" }, { name: "test" }, { name: "build-copy" }],
+					value: [{ name: "build" }, { name: "build-copy" }, { name: "test" }],
 					cwd: "/repo",
 					scope: "project",
+				},
+			},
+		]);
+	});
+
+	it("appends a duplicate saved into another scope", async () => {
+		const fetchMock = stubWrites();
+		const { result } = renderEditor(
+			entryFor("run", {
+				project: [{ name: "build" }, { name: "test" }],
+				global: [{ name: "lint" }, { name: "fmt" }],
+			}),
+		);
+
+		act(() => result.current.duplicate(2));
+		act(() => result.current.setScope("global"));
+		await act(() => result.current.save());
+
+		expect(posted(fetchMock)).toEqual([
+			{
+				url: "/api/config/set",
+				body: {
+					key: "run",
+					value: [{ name: "lint" }, { name: "fmt" }, { name: "build-copy" }],
+					cwd: "/repo",
+					scope: "global",
 				},
 			},
 		]);

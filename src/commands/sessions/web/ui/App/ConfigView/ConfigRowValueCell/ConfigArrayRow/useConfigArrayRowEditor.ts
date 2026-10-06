@@ -30,20 +30,20 @@ export function useConfigArrayRowEditor({
 		...configArrayItemOperations({ state, draft, writes }),
 		items,
 		saving: writes.saving,
-		toggle: (index: number) =>
-			state.isOpen(index)
-				? draft.close()
-				: draft.openAt(
-						index,
-						items[index]?.value ?? {},
-						state.scopeToWrite(index),
-					),
-		duplicate: (index: number) =>
-			draft.openAt(
-				items.length,
+		toggle: (row: number) => {
+			const index = state.itemIndexOf(row);
+			if (state.isOpen(row) || index === undefined) return draft.close();
+			draft.openAt(index, items[index]?.value ?? {}, state.scopeToWrite(row));
+		},
+		duplicate: (row: number) => {
+			const index = state.itemIndexOf(row);
+			if (index === undefined) return;
+			draft.openAfter(
+				index,
 				duplicateConfigArrayValue(items[index]?.value),
-				state.scopeToWrite(index),
-			),
+				state.scopeToWrite(row),
+			);
+		},
 		add: () => draft.openAt(items.length, {}, defaultConfigScope(entry)),
 		setValue: draft.setValue,
 		setScope: draft.setScope,

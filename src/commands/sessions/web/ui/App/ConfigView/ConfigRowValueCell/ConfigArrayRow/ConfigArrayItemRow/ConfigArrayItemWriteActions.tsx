@@ -20,7 +20,7 @@ export function ConfigArrayItemWriteActions({ entry, index, editor }: Props) {
 			saving={editor.saving}
 			note={configArrayItemWriteNote({
 				key: entry.key,
-				ownerScope: editor.items[index]?.owner?.scope,
+				ownerScope: editor.itemAt(index)?.owner?.scope,
 				arrayOwnerScope: editor.items[0]?.owner?.scope,
 				targetScope: scope,
 				repoKey: entry.repoKey,

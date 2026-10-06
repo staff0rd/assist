@@ -3,7 +3,10 @@ import {
 	moveConfigListItem,
 	removeConfigListItem,
 } from "../../moveConfigListItem";
-import { placeConfigArrayItem } from "./useConfigArrayItemWrites/placeConfigArrayItem";
+import {
+	type ConfigArrayItemPlacement,
+	placeConfigArrayItem,
+} from "./placeConfigArrayItem";
 import type { ConfigScope } from "../../saveConfigValue";
 import { useConfigRowWrites } from "../../useConfigRowWrites";
 
@@ -32,9 +35,9 @@ export function useConfigArrayItemWrites({
 		saveItem: (
 			scope: ConfigScope,
 			layerItems: unknown[],
-			replaceAt: number | undefined,
+			placement: ConfigArrayItemPlacement,
 			value: unknown,
-		) => save(scope, placeConfigArrayItem(layerItems, replaceAt, value)),
+		) => save(scope, placeConfigArrayItem(layerItems, placement, value)),
 		removeItem: (scope: ConfigScope, layerItems: unknown[], index: number) => {
 			const left = removeConfigListItem(layerItems, index);
 			return left.length === 0 ? clear(scope) : save(scope, left);
