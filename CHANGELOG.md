@@ -1,3 +1,10 @@
+# [0.784.0](https://github.com/staff0rd/assist/compare/v0.783.0...v0.784.0) (2026-10-06)
+
+
+### Features
+
+* add server and repo flags to run add ([48425ab](https://github.com/staff0rd/assist/commit/48425ab7bdfa5f600eb9793414f052f9ab025066))
+
 # [0.783.0](https://github.com/staff0rd/assist/compare/v0.782.0...v0.783.0) (2026-10-06)
 
 
