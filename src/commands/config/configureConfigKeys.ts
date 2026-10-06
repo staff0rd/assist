@@ -35,7 +35,7 @@ export async function configureConfigKeys(
 		if (value === undefined) skipped.push(question.key);
 		else written.push({ key: question.key, value });
 	}
-	const result = writeConfigKeys(written, scope, options.cwd);
+	const result = await writeConfigKeys(written, scope, options.cwd);
 	if (!result.ok) exitWithConfigErrors(result.errors);
 	return { scope, target: result.target, written, skipped };
 }

@@ -1,4 +1,3 @@
-import { originDisplayLabels } from "../commands/backlog/originDisplayLabels";
 import { originDisplayName } from "../commands/backlog/originDisplayName";
 
 export class AmbiguousRepoConfigError extends Error {
@@ -50,19 +49,4 @@ export function resolveRepoOverride(
 	if (!override || typeof override !== "object" || Array.isArray(override))
 		return {};
 	return override as Record<string, unknown>;
-}
-
-export function resolveRepoWriteLabel(
-	globalRaw: Record<string, unknown>,
-	origin: string,
-): string {
-	const repos = globalRaw.repos;
-	if (repos && typeof repos === "object" && !Array.isArray(repos)) {
-		const candidates = originKeyCandidates(origin);
-		const existing = Object.keys(repos as Record<string, unknown>).find((key) =>
-			candidates.has(key),
-		);
-		if (existing) return existing;
-	}
-	return originDisplayLabels([origin]).get(origin) ?? origin;
 }

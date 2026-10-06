@@ -25,7 +25,7 @@ export async function promptConfigScope(): Promise<ConfigKeyScope> {
 				{
 					name: "repo",
 					message:
-						"this repo's block in ~/.assist.yml — personal, as 'config set -g --repo' writes it",
+						"this repo's override in the shared db — personal, seen by every node, as 'config set -g --repo' writes it",
 				},
 			],
 		}).run(),

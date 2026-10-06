@@ -32,7 +32,7 @@ export function registerReleases(parent: Command): void {
 		)
 		.option(
 			"--scope <project|repo>",
-			"project assist.yml or ~/.assist.yml repo block",
+			"project assist.yml or this repo's shared db override",
 			"project",
 		)
 		.action(releasesConfigure);

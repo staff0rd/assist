@@ -9,15 +9,15 @@ type WriteResult =
 	| { ok: true; target: string }
 	| { ok: false; errors: string[] };
 
-export function writeReleaseStreams(
+export async function writeReleaseStreams(
 	incoming: Record<string, unknown>[],
 	scope: ConfigKeyScope,
-): WriteResult {
+): Promise<WriteResult> {
 	return writeConfigKeys(
 		[
 			{
 				key: "releases.streams",
-				value: mergeRepoStreams(declaredStreamsInScope(scope), incoming),
+				value: mergeRepoStreams(await declaredStreamsInScope(scope), incoming),
 			},
 		],
 		scope,

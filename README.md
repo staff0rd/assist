@@ -154,7 +154,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist github issue fix-structure <target> [-R <owner>/<repo>] [--level <level>] [--type-chain <names>] [--strip-label <label>...] [--apply]` - Normalise the issue types across an issue's sub-issue subtree to a type chain (default `Epic,Story,Subtask`); `--level` sets the target's position in the chain, `--strip-label` removes a label, and nothing is written without `--apply`
 - `assist news add [url]` - Add an RSS feed URL (rendered in the sessions web News tab)
 - `assist releases [list]` - Print the release promotion streams declared in `releases.streams`
-- `assist releases configure --streams <file> [--scope <project|repo>]` - Write release streams from a JSON or YAML file (`-` for stdin) to `releases.streams`, in the project `assist.yml` (default) or this repo's block in `~/.assist.yml`
+- `assist releases configure --streams <file> [--scope <project|repo>]` - Write release streams from a JSON or YAML file (`-` for stdin) to `releases.streams`, in the project `assist.yml` (default) or this repo's shared override in the assist database
 
 ### Backlog
 

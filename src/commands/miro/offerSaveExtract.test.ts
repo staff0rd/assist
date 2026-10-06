@@ -24,7 +24,7 @@ let logged: string[];
 
 beforeEach(() => {
 	logged = [];
-	save.mockReturnValue("/repo/assist.yml");
+	save.mockResolvedValue("/repo/assist.yml");
 	vi.spyOn(console, "log").mockImplementation((line: unknown) => {
 		logged.push(String(line));
 	});

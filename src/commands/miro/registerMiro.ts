@@ -42,7 +42,7 @@ export function registerMiro(program: Command): void {
 		.option("-g, --global", "Save the extract to global ~/.assist.yml")
 		.option(
 			"-r, --repo [name]",
-			"Requires -g: scope the saved extract to a repo's identity (defaults to the current repo)",
+			"Requires -g: save the extract to a repo's shared db override instead (defaults to the current repo)",
 		)
 		.action((name: string | undefined, options: MiroExtractOptions) =>
 			runExtract(name, options),

@@ -27,7 +27,9 @@ function reportWritten(
 	);
 }
 
-export function releasesConfigure(options: ConfigureOptions = {}): void {
+export async function releasesConfigure(
+	options: ConfigureOptions = {},
+): Promise<void> {
 	const scope: ConfigKeyScope = options.scope === "repo" ? "repo" : "project";
 	const input = readStreamsInput(options.streams ?? "-");
 	if ("error" in input) return fail(`Could not read --streams: ${input.error}`);
@@ -40,7 +42,7 @@ export function releasesConfigure(options: ConfigureOptions = {}): void {
 			broken,
 		);
 
-	const written = writeReleaseStreams(incoming, scope);
+	const written = await writeReleaseStreams(incoming, scope);
 	if (!written.ok)
 		return fail(
 			"releases.streams does not validate, so nothing was written:",

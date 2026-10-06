@@ -2,36 +2,36 @@ import {
 	getGlobalConfigPath,
 	projectConfigPathFrom,
 } from "../../shared/loadConfigFrom";
+import { SHARED_REPO_CONFIG_SOURCE } from "../../shared/resolveRepoLayer";
 import type { MiroExtractConfig } from "../../shared/types";
 import { applyConfigSet } from "../config/applyConfigSet";
-import { applyRepoConfigSet } from "../config/applyRepoConfigSet";
+import { applySharedRepoConfigSet } from "../config/applySharedRepoConfigSet";
 import { globalConfigFileLabel } from "../config/globalConfigFileLabel";
 import { MiroExtractError } from "./MiroExtractError";
 import type { MiroExtractOptions, MiroExtractPaths } from "./types";
 
-function saveToRepo(
+async function saveToRepo(
 	key: string,
 	extract: MiroExtractConfig,
 	repo: boolean | string,
-	{ cwd, globalConfigPath }: Required<MiroExtractPaths>,
-): string {
-	const result = applyRepoConfigSet(
+	cwd: string,
+): Promise<string> {
+	const result = await applySharedRepoConfigSet(
 		key,
 		extract,
 		typeof repo === "string" ? repo : undefined,
 		cwd,
-		globalConfigPath,
 	);
 	if (!result.ok) throw new MiroExtractError(result.errors.join("\n"));
-	return `${globalConfigFileLabel(globalConfigPath)} under repos.${result.label}`;
+	return `${SHARED_REPO_CONFIG_SOURCE} under repos.${result.label}`;
 }
 
-export function saveMiroExtract(
+export async function saveMiroExtract(
 	name: string,
 	extract: MiroExtractConfig,
 	options: MiroExtractOptions,
 	paths: MiroExtractPaths = {},
-): string {
+): Promise<string> {
 	const resolved = {
 		cwd: paths.cwd ?? process.cwd(),
 		globalConfigPath: paths.globalConfigPath ?? getGlobalConfigPath(),
@@ -42,7 +42,7 @@ export function saveMiroExtract(
 		);
 	const key = `miro.extracts.${name}`;
 	if (options.repo !== undefined)
-		return saveToRepo(key, extract, options.repo, resolved);
+		return saveToRepo(key, extract, options.repo, resolved.cwd);
 	const result = applyConfigSet(
 		key,
 		extract,

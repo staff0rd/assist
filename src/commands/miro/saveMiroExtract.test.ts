@@ -1,11 +1,25 @@
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { parse, stringify } from "yaml";
+import { createTestDb } from "../../shared/db/createTestDb";
+import type { Db } from "../../shared/db/Db";
+import { listRepoConfigs } from "../../shared/db/listRepoConfigs";
 import type { MiroExtractConfig } from "../../shared/types";
+import { seedRepoConfigs } from "../../test/mothers/seedRepoConfigs";
 import { saveMiroExtract } from "./saveMiroExtract";
 import type { MiroExtractOptions } from "./types";
+
+let orm: Db;
+
+vi.mock("../../shared/db/getDb", () => ({
+	getDb: () => Promise.resolve(orm),
+}));
+
+vi.mock("../backlog/getCurrentOrigin", () => ({
+	getCurrentOrigin: () => "github.com/org/assist",
+}));
 
 let dir: string;
 let globalConfigPath: string;
@@ -31,7 +45,8 @@ function save(options: MiroExtractOptions, name = "epics") {
 	return saveMiroExtract(name, epics, options, { cwd: dir, globalConfigPath });
 }
 
-beforeEach(() => {
+beforeEach(async () => {
+	({ orm } = await createTestDb());
 	dir = mkdtempSync(join(tmpdir(), "miro-save-"));
 	globalConfigPath = join(dir, "global.yml");
 	writeFileSync(globalConfigPath, stringify({}));
@@ -40,26 +55,26 @@ beforeEach(() => {
 
 describe("saveMiroExtract", () => {
 	describe("with no scope flags", () => {
-		it("should write the project config and report its path", () => {
-			expect(save({})).toBe(projectConfigPath());
+		it("should write the project config and report its path", async () => {
+			expect(await save({})).toBe(projectConfigPath());
 			expect(read(projectConfigPath())).toEqual({
 				miro: { extracts: { epics } },
 			});
 		});
 
-		it("should leave the global config alone", () => {
-			save({});
+		it("should leave the global config alone", async () => {
+			await save({});
 
 			expect(read(globalConfigPath)).toEqual({});
 		});
 
-		it("should keep extracts already saved", () => {
+		it("should keep extracts already saved", async () => {
 			writeFileSync(
 				projectConfigPath(),
 				stringify({ miro: { extracts: { risks: epics } } }),
 			);
 
-			save({});
+			await save({});
 
 			expect(Object.keys(read(projectConfigPath()).miro as object)).toEqual([
 				"extracts",
@@ -73,44 +88,47 @@ describe("saveMiroExtract", () => {
 	});
 
 	describe("with --global", () => {
-		it("should write the global config and report its path", () => {
-			expect(save({ global: true })).toBe(globalConfigPath);
+		it("should write the global config and report its path", async () => {
+			expect(await save({ global: true })).toBe(globalConfigPath);
 			expect(read(globalConfigPath)).toEqual({ miro: { extracts: { epics } } });
 			expect(read(projectConfigPath())).toEqual({});
 		});
 	});
 
 	describe("with --global --repo", () => {
-		it("should write under the current repo's key in the global config", () => {
-			const path = save({ global: true, repo: true });
+		it("should write the current repo's shared db override", async () => {
+			const path = await save({ global: true, repo: true });
 
-			const repos = read(globalConfigPath).repos as Record<string, unknown>;
-			const label = Object.keys(repos)[0];
-			expect(path).toBe(`${globalConfigPath} under repos.${label}`);
-			expect(repos[label]).toEqual({ miro: { extracts: { epics } } });
+			expect(path).toBe("the shared db under repos.github.com/org/assist");
+			expect(await listRepoConfigs(orm)).toEqual({
+				"github.com/org/assist": { miro: { extracts: { epics } } },
+			});
+			expect(read(globalConfigPath)).toEqual({});
 			expect(read(projectConfigPath())).toEqual({});
 		});
 	});
 
 	describe("with --global --repo <name>", () => {
-		it("should write under that repo's key", () => {
-			writeFileSync(
-				globalConfigPath,
-				stringify({ repos: { "github.com/org/other": {} } }),
-			);
+		it("should write under that repo's shared db key", async () => {
+			await seedRepoConfigs(orm, {
+				"github.com/org/other": { worktree: { enabled: true } },
+			});
 
-			const path = save({ global: true, repo: "github.com/org/other" });
+			const path = await save({ global: true, repo: "github.com/org/other" });
 
-			expect(path).toBe(`${globalConfigPath} under repos.github.com/org/other`);
-			expect(read(globalConfigPath)).toEqual({
-				repos: { "github.com/org/other": { miro: { extracts: { epics } } } },
+			expect(path).toBe("the shared db under repos.github.com/org/other");
+			expect(await listRepoConfigs(orm)).toEqual({
+				"github.com/org/other": {
+					worktree: { enabled: true },
+					miro: { extracts: { epics } },
+				},
 			});
 		});
 	});
 
 	describe("with --repo but no --global", () => {
-		it("should refuse, naming the flag to add", () => {
-			expect(() => save({ repo: true })).toThrow(
+		it("should refuse, naming the flag to add", async () => {
+			await expect(save({ repo: true })).rejects.toThrow(
 				/--repo writes to the global config; add -g/,
 			);
 		});

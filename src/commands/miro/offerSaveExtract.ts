@@ -22,7 +22,6 @@ export async function offerSaveExtract(
 ): Promise<void> {
 	const name = await extractName(options);
 	if (!name) return;
-	console.log(
-		`Saved extract "${name}" to ${saveMiroExtract(name, extract, options, paths)}`,
-	);
+	const target = await saveMiroExtract(name, extract, options, paths);
+	console.log(`Saved extract "${name}" to ${target}`);
 }

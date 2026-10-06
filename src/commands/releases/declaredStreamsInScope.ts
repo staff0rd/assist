@@ -1,6 +1,7 @@
+import { getDb } from "../../shared/db/getDb";
 import { loadProjectConfig } from "../../shared/loadConfig";
+import { resolveSharedRepoBlock } from "../config/resolveSharedRepoBlock";
 import type { ConfigKeyScope } from "../config/writeConfigKeys";
-import { resolveRepoConfigBlock } from "../config/resolveRepoConfigBlock";
 
 function streamsOf(block: Record<string, unknown>): Record<string, unknown>[] {
 	const releases = block.releases;
@@ -9,11 +10,11 @@ function streamsOf(block: Record<string, unknown>): Record<string, unknown>[] {
 	return Array.isArray(streams) ? (streams as Record<string, unknown>[]) : [];
 }
 
-export function declaredStreamsInScope(
+export async function declaredStreamsInScope(
 	scope: ConfigKeyScope,
 	cwd: string = process.cwd(),
-): Record<string, unknown>[] {
-	if (scope === "repo")
-		return streamsOf(resolveRepoConfigBlock(undefined, cwd).block);
-	return streamsOf(loadProjectConfig(cwd));
+): Promise<Record<string, unknown>[]> {
+	if (scope !== "repo") return streamsOf(loadProjectConfig(cwd));
+	const { block } = await resolveSharedRepoBlock(await getDb(), undefined, cwd);
+	return streamsOf(block);
 }

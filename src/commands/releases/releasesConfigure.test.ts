@@ -77,8 +77,8 @@ beforeEach(() => {
 	vi.spyOn(console, "error").mockImplementation((...args: unknown[]) => {
 		errored.push(args.join(" "));
 	});
-	mockDeclaredStreamsInScope.mockReturnValue([]);
-	mockWriteConfigKeys.mockReturnValue({
+	mockDeclaredStreamsInScope.mockResolvedValue([]);
+	mockWriteConfigKeys.mockResolvedValue({
 		ok: true,
 		target: "project assist.yml",
 	});
@@ -91,17 +91,17 @@ beforeEach(() => {
 
 describe("releasesConfigure", () => {
 	describe("the repo a stream belongs to", () => {
-		it("should be inferred from the current directory, not passed in", () => {
-			releasesConfigure({ streams: "streams.json" });
+		it("should be inferred from the current directory, not passed in", async () => {
+			await releasesConfigure({ streams: "streams.json" });
 
 			expect(mockGetRepoInfo).toHaveBeenCalled();
 			expect(writtenStreams()[0].repo).toBe("owner/name");
 		});
 
-		it("should be left alone when the stream names one itself", () => {
+		it("should be left alone when the stream names one itself", async () => {
 			input = JSON.stringify([{ ...webApp, repo: "other/name" }]);
 
-			releasesConfigure({ streams: "streams.json" });
+			await releasesConfigure({ streams: "streams.json" });
 
 			expect(mockGetRepoInfo).not.toHaveBeenCalled();
 			expect(writtenStreams()[0].repo).toBe("other/name");
@@ -109,13 +109,13 @@ describe("releasesConfigure", () => {
 	});
 
 	describe("when streams are already declared", () => {
-		it("should replace this repo's and keep the others", () => {
-			mockDeclaredStreamsInScope.mockReturnValue([
+		it("should replace this repo's and keep the others", async () => {
+			mockDeclaredStreamsInScope.mockResolvedValue([
 				{ name: "Stale", repo: "OWNER/NAME" },
 				{ name: "Elsewhere", repo: "other/repo" },
 			]);
 
-			releasesConfigure({ streams: "streams.json" });
+			await releasesConfigure({ streams: "streams.json" });
 
 			expect(writtenStreams().map((s) => s.name)).toEqual([
 				"Elsewhere",
@@ -125,10 +125,10 @@ describe("releasesConfigure", () => {
 	});
 
 	describe("when an edge refers to a node that does not exist", () => {
-		it("should write nothing and name the edge", () => {
+		it("should write nothing and name the edge", async () => {
 			input = JSON.stringify([{ ...webApp, edges: [["build", "staging"]] }]);
 
-			releasesConfigure({ streams: "streams.json" });
+			await releasesConfigure({ streams: "streams.json" });
 
 			expect(mockWriteConfigKeys).not.toHaveBeenCalled();
 			expect(process.exitCode).toBe(1);
@@ -137,12 +137,12 @@ describe("releasesConfigure", () => {
 	});
 
 	describe("when two nodes share an id", () => {
-		it("should write nothing and name the id", () => {
+		it("should write nothing and name the id", async () => {
 			input = JSON.stringify([
 				{ ...webApp, nodes: [{ id: "dev" }, { id: "dev" }], edges: [] },
 			]);
 
-			releasesConfigure({ streams: "streams.json" });
+			await releasesConfigure({ streams: "streams.json" });
 
 			expect(mockWriteConfigKeys).not.toHaveBeenCalled();
 			expect(errored.join("\n")).toContain('duplicate node id "dev"');
@@ -150,10 +150,10 @@ describe("releasesConfigure", () => {
 	});
 
 	describe("when the input is not an array of streams", () => {
-		it("should report it rather than writing", () => {
+		it("should report it rather than writing", async () => {
 			input = JSON.stringify({ name: "Web App" });
 
-			releasesConfigure({ streams: "streams.json" });
+			await releasesConfigure({ streams: "streams.json" });
 
 			expect(mockWriteConfigKeys).not.toHaveBeenCalled();
 			expect(errored.join("\n")).toContain("Expected an array of streams");
@@ -161,13 +161,13 @@ describe("releasesConfigure", () => {
 	});
 
 	describe("when the block fails the config schema", () => {
-		it("should print each error and exit non-zero", () => {
-			mockWriteConfigKeys.mockReturnValue({
+		it("should print each error and exit non-zero", async () => {
+			mockWriteConfigKeys.mockResolvedValue({
 				ok: false,
 				errors: ["releases.streams.0.workflow: Invalid input"],
 			});
 
-			releasesConfigure({ streams: "streams.json" });
+			await releasesConfigure({ streams: "streams.json" });
 
 			expect(process.exitCode).toBe(1);
 			expect(errored.join("\n")).toContain("nothing was written");
@@ -176,8 +176,8 @@ describe("releasesConfigure", () => {
 	});
 
 	describe("when the write succeeds", () => {
-		it("should report the environments, steps and edges it derived", () => {
-			releasesConfigure({ streams: "streams.json" });
+		it("should report the environments, steps and edges it derived", async () => {
+			await releasesConfigure({ streams: "streams.json" });
 
 			const output = logged.join("\n");
 			expect(output).toContain("environments: dev, EU Production");
@@ -188,8 +188,8 @@ describe("releasesConfigure", () => {
 	});
 
 	describe("--scope repo", () => {
-		it("should read and write the repo block", () => {
-			releasesConfigure({ streams: "streams.json", scope: "repo" });
+		it("should read and write the repo block", async () => {
+			await releasesConfigure({ streams: "streams.json", scope: "repo" });
 
 			expect(mockDeclaredStreamsInScope).toHaveBeenCalledWith("repo");
 			expect(mockWriteConfigKeys).toHaveBeenCalledWith(
