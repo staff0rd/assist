@@ -1,16 +1,13 @@
-type RunEntry = {
-	name: string;
-	command: string;
-	args?: string[];
-	cwd?: string;
-};
+import type { RunConfig } from "../../shared/types";
+
+type RunEntryOptions = Pick<RunConfig, "cwd" | "server" | "port">;
 
 export function buildRunEntry(
 	name: string,
 	command: string,
 	args: string[],
-	options?: { cwd?: string },
-): RunEntry {
+	options?: RunEntryOptions,
+): RunConfig {
 	const effectiveArgs =
 		args.length === 0 && command.includes(" ")
 			? command.split(/\s+/).slice(1)
@@ -20,8 +17,10 @@ export function buildRunEntry(
 			? command.split(/\s+/)[0]
 			: command;
 
-	const entry: RunEntry = { name, command: effectiveCommand };
+	const entry: RunConfig = { name, command: effectiveCommand };
 	if (effectiveArgs.length > 0) entry.args = effectiveArgs;
 	if (options?.cwd) entry.cwd = options.cwd;
+	if (options?.server !== undefined) entry.server = options.server;
+	if (options?.port !== undefined) entry.port = options.port;
 	return entry;
 }

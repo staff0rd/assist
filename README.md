@@ -211,7 +211,7 @@ Backlog item ids are written in an `a`-prefixed form (e.g. item 555 is `a555`) t
 ### Config and run commands
 
 - `assist run <name> [params...]` - Run a configured command from assist.yml, or a backlog item (`a555` / `555`) when no command matches
-- `assist run add` - Add a new run configuration to assist.yml and create a Claude command file
+- `assist run add <name> <command> [args...] [--cwd <dir>] [--server [group]] [--port <port>] [--repo [name]]` - Add a new run configuration to assist.yml and create a Claude command file; `--server`/`--port` mark it as a dev server, and `--repo` writes it to the repo's shared db override instead (no command file)
 - `assist run link <path> --prefix <prefix>` - Link run configurations from another project's assist.yml
 - `assist run remove <name>` - Remove a run configuration and delete its Claude command file
 

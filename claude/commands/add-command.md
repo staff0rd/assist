@@ -21,7 +21,7 @@ Run `assist run add <name> <command> [args...]` with the appropriate arguments. 
 assist run add lint oxlint --fix
 ```
 
-If the command needs a working directory, use `--cwd <dir>`.
+If the command needs a working directory, use `--cwd <dir>`. For a dev server, add `--server [group]` and optionally `--port <port>`. To share the entry across every node without touching the repo's `assist.yml`, add `--repo [name]` (writes the repo's shared db override; defaults to the current repo).
 
 ## Step 4: Verify
 

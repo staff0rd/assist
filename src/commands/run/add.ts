@@ -1,66 +1,22 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import type { RunConfig } from "../../shared/types";
+import { addRepoRunConfig } from "./addRepoRunConfig";
 import { buildRunEntry } from "./buildRunEntry";
-import { extractOption } from "./extractOption";
-
-function findAddIndex(): number {
-	const addIndex = process.argv.indexOf("add");
-	if (addIndex === -1 || addIndex + 2 >= process.argv.length) return -1;
-	return addIndex;
-}
-
-function extractAddArgs(addIndex: number) {
-	const rawArgs = process.argv.slice(addIndex + 3);
-	const { value: cwd, remaining: args } = extractOption(rawArgs, "--cwd");
-	return {
-		name: process.argv[addIndex + 1],
-		command: process.argv[addIndex + 2],
-		args,
-		cwd,
-	};
-}
-
-function parseAddArguments() {
-	const addIndex = findAddIndex();
-	return addIndex === -1 ? null : extractAddArgs(addIndex);
-}
-
-function ensureNoDuplicate(configs: { name: string }[], name: string): void {
-	if (configs.find((r) => r.name === name)) {
-		console.error(`Run configuration with name "${name}" already exists`);
-		process.exit(1);
-	}
-}
+import { ensureNoDuplicateRun } from "./ensureNoDuplicateRun";
+import { requireParsedArgs } from "./requireParsedArgs";
 
 function formatDisplay(command: string, args: string[]): string {
 	return args.length > 0 ? `${command} ${args.join(" ")}` : command;
 }
 
-function requireParsedArgs() {
-	const parsed = parseAddArguments();
-	if (!parsed) {
-		console.error("Usage: assist run add <name> <command> [args...]");
-		process.exit(1);
-	}
-	return parsed;
-}
-
-function getOrInitRunList() {
+function saveProjectRunConfig(entry: RunConfig): void {
 	const config = loadProjectConfig();
 	if (!config.run) config.run = [];
-	return { config, runList: config.run as { name: string }[] };
-}
-
-function saveNewRunConfig(
-	name: string,
-	command: string,
-	args: string[],
-	cwd?: string,
-): void {
-	const { config, runList } = getOrInitRunList();
-	ensureNoDuplicate(runList, name);
-	runList.push(buildRunEntry(name, command, args, { cwd }));
+	const runList = config.run as object[];
+	ensureNoDuplicateRun(runList, entry.name);
+	runList.push(entry);
 	saveConfig(config);
 }
 
@@ -73,13 +29,23 @@ function createCommandFile(name: string): void {
 	console.log(`Created command file: ${filePath}`);
 }
 
-export function add(): void {
-	const { name, command, args, cwd } = requireParsedArgs();
-	saveNewRunConfig(name, command, args, cwd);
+export async function add(): Promise<void> {
+	const { name, command, args, options, repo } = requireParsedArgs();
+	const entry = buildRunEntry(name, command, args, options);
+	const display = formatDisplay(command, args);
+	if (repo !== undefined) {
+		const label = await addRepoRunConfig(
+			entry,
+			typeof repo === "string" ? repo : undefined,
+		);
+		console.log(
+			`Added run configuration: ${name} -> ${display} (repo: ${label})`,
+		);
+		return;
+	}
+	saveProjectRunConfig(entry);
 	if (!name.startsWith("verify:")) {
 		createCommandFile(name);
 	}
-	console.log(
-		`Added run configuration: ${name} -> ${formatDisplay(command, args)}`,
-	);
+	console.log(`Added run configuration: ${name} -> ${display}`);
 }

@@ -13,7 +13,9 @@ export function registerRunSubcommands(runCommand: Command): void {
 
 	runCommand
 		.command("add")
-		.description("Add a new run configuration to assist.yml")
+		.description(
+			"Add a new run configuration to assist.yml, or with --repo to the shared db",
+		)
 		.argument("<name>", "Name for the run configuration")
 		.argument("<command>", "Command to execute")
 		.argument("[args...]", "Static args to pass to the command")
@@ -21,9 +23,18 @@ export function registerRunSubcommands(runCommand: Command): void {
 			"--cwd <dir>",
 			"Working directory (resolved relative to the config file)",
 		)
+		.option(
+			"--server [group]",
+			"Mark as a singleton dev server, optionally in a named group (default group: default)",
+		)
+		.option("--port <port>", "Display-only port shown on the serving card")
+		.option(
+			"--repo [name]",
+			"Write to a repo's override in the shared db, seen by every node, instead of assist.yml (defaults to the current repo; no command file is created)",
+		)
 		.addHelpText(
 			"after",
-			'\nPositional params can be added to the config manually:\n  params:\n    - name: env        # assist run deploy prod → appends "prod"\n      required: true\n    - name: tag\n      default: latest',
+			'\nOptions go after <command>. --server and --repo take the next argument as their value unless it starts with "-", so put them last or before another option:\n  assist run add dev npm run dev --server --port 3000 --repo\n\nPositional params can be added to the config manually:\n  params:\n    - name: env        # assist run deploy prod → appends "prod"\n      required: true\n    - name: tag\n      default: latest',
 		)
 		.allowUnknownOption()
 		.allowExcessArguments()
