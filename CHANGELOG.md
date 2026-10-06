@@ -1,3 +1,10 @@
+## [0.784.1](https://github.com/staff0rd/assist/compare/v0.784.0...v0.784.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* add --repo option to run remove ([149febf](https://github.com/staff0rd/assist/commit/149febfdd45f90832e4a693c94b80f93f07aeaa9))
+
 # [0.784.0](https://github.com/staff0rd/assist/compare/v0.783.0...v0.784.0) (2026-10-06)
 
 
