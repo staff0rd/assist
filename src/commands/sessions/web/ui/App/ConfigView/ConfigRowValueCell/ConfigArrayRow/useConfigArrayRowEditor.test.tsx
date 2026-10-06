@@ -319,6 +319,79 @@ describe("useConfigArrayRowEditor", () => {
 		expect(fetchMock.mock.calls).toHaveLength(0);
 	});
 
+	it("opens a duplicate as an unsaved draft in the source's scope", () => {
+		const fetchMock = stubWrites();
+		const { result } = renderEditor(
+			entryFor("run", {
+				project: [{ name: "build", command: "npm run build" }],
+				global: [{ name: "lint", command: "oxlint" }],
+			}),
+		);
+
+		act(() => result.current.duplicate(0));
+
+		expect(result.current.rowCount).toBe(3);
+		expect(result.current.isOpen(2)).toBe(true);
+		expect(result.current.valueOf(2)).toEqual({
+			name: "lint-copy",
+			command: "oxlint",
+		});
+		expect(result.current.scopeOf(2)).toBe("global");
+		expect(result.current.valueOf(0)).toEqual({
+			name: "lint",
+			command: "oxlint",
+		});
+		expect(fetchMock.mock.calls).toHaveLength(0);
+	});
+
+	it("copies an item without a string name unchanged", () => {
+		const { result } = renderEditor(
+			entryFor("subtasks", { project: [{ title: "write tests" }] }),
+		);
+
+		act(() => result.current.duplicate(0));
+
+		expect(result.current.valueOf(1)).toEqual({ title: "write tests" });
+	});
+
+	it("discards a cancelled duplicate without writing", () => {
+		const fetchMock = stubWrites();
+		const { result } = renderEditor(
+			entryFor("run", { project: [{ name: "build" }] }),
+		);
+
+		act(() => result.current.duplicate(0));
+		act(() => result.current.cancel());
+
+		expect(result.current.rowCount).toBe(1);
+		expect(fetchMock.mock.calls).toHaveLength(0);
+	});
+
+	it("appends a saved duplicate to the source's scope", async () => {
+		const fetchMock = stubWrites();
+		const { result } = renderEditor(
+			entryFor("run", {
+				project: [{ name: "build" }, { name: "test" }],
+				global: [{ name: "lint" }],
+			}),
+		);
+
+		act(() => result.current.duplicate(1));
+		await act(() => result.current.save());
+
+		expect(posted(fetchMock)).toEqual([
+			{
+				url: "/api/config/set",
+				body: {
+					key: "run",
+					value: [{ name: "build" }, { name: "test" }, { name: "build-copy" }],
+					cwd: "/repo",
+					scope: "project",
+				},
+			},
+		]);
+	});
+
 	it("keeps a rejected edit open", async () => {
 		vi.stubGlobal(
 			"fetch",

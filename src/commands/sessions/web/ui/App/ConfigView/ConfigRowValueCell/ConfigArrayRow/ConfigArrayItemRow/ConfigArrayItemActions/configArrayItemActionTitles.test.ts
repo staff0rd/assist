@@ -13,6 +13,8 @@ describe("configArrayItemActionTitles", () => {
 				canMoveDown: true,
 			}),
 		).toEqual({
+			duplicate:
+				"Duplicate run[1] into a new unsaved entry in repos.assist in the shared db (all nodes)",
 			moveUp: "Move run[1] up in repos.assist in the shared db (all nodes)",
 			moveDown: "Move run[1] down in repos.assist in the shared db (all nodes)",
 			remove: "Remove run[1] from repos.assist in the shared db (all nodes)",

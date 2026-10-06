@@ -3,6 +3,7 @@ import { configArrayItemOperations } from "./useConfigArrayRowEditor/configArray
 import { configArrayItems } from "./useConfigArrayRowEditor/configArrayItems";
 import { configArrayRowState } from "./useConfigArrayRowEditor/configArrayRowState";
 import { defaultConfigScope } from "../defaultConfigScope";
+import { duplicateConfigArrayValue } from "./useConfigArrayRowEditor/duplicateConfigArrayValue";
 import { useConfigArrayDraft } from "./useConfigArrayRowEditor/useConfigArrayDraft";
 import { useConfigArrayItemWrites } from "./useConfigArrayRowEditor/useConfigArrayItemWrites";
 
@@ -37,6 +38,12 @@ export function useConfigArrayRowEditor({
 						items[index]?.value ?? {},
 						state.scopeToWrite(index),
 					),
+		duplicate: (index: number) =>
+			draft.openAt(
+				items.length,
+				duplicateConfigArrayValue(items[index]?.value),
+				state.scopeToWrite(index),
+			),
 		add: () => draft.openAt(items.length, {}, defaultConfigScope(entry)),
 		setValue: draft.setValue,
 		setScope: draft.setScope,

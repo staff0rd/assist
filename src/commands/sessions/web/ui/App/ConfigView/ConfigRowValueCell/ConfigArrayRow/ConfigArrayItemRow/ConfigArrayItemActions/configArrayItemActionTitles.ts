@@ -11,6 +11,7 @@ type Options = {
 };
 
 type ConfigArrayItemActionTitles = {
+	duplicate: string;
 	moveUp: string;
 	moveDown: string;
 	remove: string;
@@ -26,7 +27,12 @@ export function configArrayItemActionTitles({
 }: Options): ConfigArrayItemActionTitles {
 	if (ownerScope === undefined) {
 		const unowned = `${label} comes from the schema default — it is not set in any file yet`;
-		return { moveUp: unowned, moveDown: unowned, remove: unowned };
+		return {
+			duplicate: `Duplicate ${label} into a new unsaved entry`,
+			moveUp: unowned,
+			moveDown: unowned,
+			remove: unowned,
+		};
 	}
 
 	const where = configScopeFiles(repoKey, globalConfigFile)[ownerScope];
@@ -34,6 +40,7 @@ export function configArrayItemActionTitles({
 		`${label} is the ${position} entry in ${where} — entries cannot move across scopes`;
 
 	return {
+		duplicate: `Duplicate ${label} into a new unsaved entry in ${where}`,
 		moveUp: canMoveUp ? `Move ${label} up in ${where}` : edge("first"),
 		moveDown: canMoveDown ? `Move ${label} down in ${where}` : edge("last"),
 		remove: `Remove ${label} from ${where}`,

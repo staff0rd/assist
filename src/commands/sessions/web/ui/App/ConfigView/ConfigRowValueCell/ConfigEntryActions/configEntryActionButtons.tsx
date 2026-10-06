@@ -2,6 +2,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditIcon from "@mui/icons-material/Edit";
 import type { ReactNode } from "react";
 
@@ -17,11 +18,17 @@ export type ConfigEntryActionOptions = {
 	label: string;
 	disabled: boolean;
 	open?: boolean;
-	titles?: { moveUp: string; moveDown: string; remove: string };
+	titles?: {
+		duplicate?: string;
+		moveUp: string;
+		moveDown: string;
+		remove: string;
+	};
 	canMoveUp?: boolean;
 	canMoveDown?: boolean;
 	canRemove?: boolean;
 	onToggle?: () => void;
+	onDuplicate?: () => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
 	onRemove: () => void;
@@ -37,6 +44,16 @@ function toggleButton(o: ConfigEntryActionOptions): ConfigEntryActionButton {
 			<EditIcon fontSize="inherit" />
 		),
 		onClick: o.onToggle,
+	};
+}
+
+function duplicateButton(o: ConfigEntryActionOptions): ConfigEntryActionButton {
+	return {
+		label: `Duplicate ${o.label}`,
+		title: o.titles?.duplicate,
+		disabled: o.disabled,
+		icon: <ContentCopyIcon fontSize="inherit" />,
+		onClick: o.onDuplicate,
 	};
 }
 
@@ -75,6 +92,7 @@ export function configEntryActionButtons(
 ): ConfigEntryActionButton[] {
 	return [
 		toggleButton(options),
+		duplicateButton(options),
 		moveUpButton(options),
 		moveDownButton(options),
 		removeButton(options),

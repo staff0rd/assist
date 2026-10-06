@@ -32,6 +32,7 @@ export function ConfigArrayItemActions({ entry, index, editor }: Props) {
 			canMoveDown={canMoveDown}
 			canRemove={ownerScope !== undefined}
 			onToggle={() => editor.toggle(index)}
+			onDuplicate={() => editor.duplicate(index)}
 			onMoveUp={() => void editor.move(index, -1)}
 			onMoveDown={() => void editor.move(index, 1)}
 			onRemove={() => void editor.remove(index)}
