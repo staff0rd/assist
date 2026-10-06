@@ -76,5 +76,6 @@ export type SessionInfoBase = {
 	lastUserMessage?: string;
 	activeViewer?: string;
 	activeViewerNode?: string;
+	promptIssue?: string;
 	node?: string;
 };

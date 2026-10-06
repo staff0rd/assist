@@ -288,6 +288,27 @@ describe("NextView session links", () => {
 		expect(selectSession).toHaveBeenCalledWith("7");
 		expect(screen.getByTestId("pathname").textContent).toBe("/sessions");
 	});
+
+	it("links issue recommendations to the sessions launched for them", async () => {
+		const issueSession = (id: string, number: number) =>
+			makeSessionInfo({
+				...onRepo,
+				id,
+				commandType: "claude",
+				promptIssue: `o/r#${number}`,
+			});
+		renderView(
+			{ assignedIssues: { items: [issue(5), issue(6)], error: null } },
+			vi.fn(),
+			undefined,
+			[issueSession("3", 5), issueSession("4", 6)],
+		);
+		const hero = await heroCard();
+		expect(within(hero).getByText("Session 3")).toBeTruthy();
+		expect(within(hero).getByText("Start session")).toBeTruthy();
+		expect(within(hero).queryByText("Session 4")).toBeNull();
+		expect(screen.getByText("Session 4")).toBeTruthy();
+	});
 });
 
 describe("NextView sections", () => {

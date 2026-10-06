@@ -1,6 +1,6 @@
 import type { SessionInfo } from "../../../../types";
 import { reviewTargetPr } from "../../../reviewTargetPr";
-import { sessionRepo } from "./matchPrSessions/sessionRepo";
+import { sessionRepo } from "./sessionRepo";
 
 export function matchPrSessions(
 	sessions: SessionInfo[],

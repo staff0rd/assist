@@ -25,6 +25,18 @@ beforeEach(() => {
 	exists.mockReturnValue(true);
 });
 
+describe("toSessionInfo promptIssue", () => {
+	it("ships the issue a Next view launch prompt names", () => {
+		const info = toSessionInfo(
+			makeSession({
+				commandType: "claude",
+				initialPrompt: "Issue o/r#4: Go\nurl",
+			}),
+		);
+		expect(info.promptIssue).toBe("o/r#4");
+	});
+});
+
 describe("toSessionInfo joinable", () => {
 	it("ships the daemon's verdict for a finished session with a workspace", () => {
 		expect(toSessionInfo(makeSession(finished)).joinable).toBe(true);

@@ -1,3 +1,4 @@
+import { promptIssueRef } from "../shared/promptIssueRef";
 import type { Session, SessionInfo } from "./createSession";
 import { repoGroupForCwd } from "./repoGroupForCwd";
 import { toSessionRunInfo } from "./toSessionRunInfo";
@@ -53,6 +54,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		lastUserMessage,
 		activeViewer,
 		activeViewerNode,
+		promptIssue: promptIssueRef(session.initialPrompt),
 		joinable: joinRefusal(session) === undefined,
 	};
 }

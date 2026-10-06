@@ -5,6 +5,7 @@ import { NextGroup } from "./NextGroups/NextGroup";
 import { NextPrGroup } from "./NextGroups/NextPrGroup";
 import { nextIssueRows } from "./NextGroups/nextIssueRows";
 import type { NextSectionsProps } from "./NextSectionsProps";
+import { useNextSessions } from "./useNextSessions";
 
 export function NextGroups({
 	data,
@@ -12,6 +13,7 @@ export function NextGroups({
 	onStartIssue,
 	onStartPickup,
 }: NextSectionsProps) {
+	const nextSessions = useNextSessions();
 	const { peerPrs, assignedIssues, pickups } = data;
 	const allClear = [peerPrs, assignedIssues, pickups].every(
 		(section) => section.items.length === 0 && !section.error,
@@ -30,14 +32,24 @@ export function NextGroups({
 				title="Issues assigned to you"
 				count={assignedIssues.items.length}
 				error={assignedIssues.error}
-				rows={nextIssueRows(assignedIssues.items, hiddenUrl, onStartIssue)}
+				rows={nextIssueRows(
+					assignedIssues.items,
+					hiddenUrl,
+					onStartIssue,
+					nextSessions,
+				)}
 			/>
 			<NextGroup
 				chip={nextChips.pickup}
 				title="Project items to pick up"
 				count={pickups.items.length}
 				error={pickups.error}
-				rows={nextIssueRows(pickups.items, hiddenUrl, onStartPickup)}
+				rows={nextIssueRows(
+					pickups.items,
+					hiddenUrl,
+					onStartPickup,
+					nextSessions,
+				)}
 			/>
 		</>
 	);
