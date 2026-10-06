@@ -50,7 +50,13 @@ export function registerRunSubcommands(runCommand: Command): void {
 
 	runCommand
 		.command("remove")
-		.description("Remove a run configuration from assist.yml")
+		.description(
+			"Remove a run configuration from assist.yml, or with --repo from the shared db",
+		)
 		.argument("<name>", "Name of the run configuration to remove")
-		.action(() => remove());
+		.option(
+			"--repo [name]",
+			"Remove from a repo's override in the shared db instead of assist.yml (defaults to the current repo)",
+		)
+		.action((name, opts) => remove(name, opts));
 }

@@ -1,21 +1,9 @@
 import { existsSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
+import { removeRepoRunConfig } from "./removeRepoRunConfig";
 
-function findRemoveIndex(): number {
-	const idx = process.argv.indexOf("remove");
-	if (idx === -1 || idx + 1 >= process.argv.length) return -1;
-	return idx;
-}
-
-function parseRemoveName(): string {
-	const idx = findRemoveIndex();
-	if (idx === -1) {
-		console.error("Usage: assist run remove <name>");
-		process.exit(1);
-	}
-	return process.argv[idx + 1];
-}
+type RemoveOptions = { repo?: string | boolean };
 
 function deleteCommandFile(name: string): void {
 	const filePath = join(".claude", "commands", `${name}.md`);
@@ -25,8 +13,7 @@ function deleteCommandFile(name: string): void {
 	}
 }
 
-export function remove(): void {
-	const name = parseRemoveName();
+function removeProjectRunConfig(name: string): void {
 	const config = loadProjectConfig();
 	const runList = config.run as { name: string }[] | undefined;
 
@@ -38,5 +25,20 @@ export function remove(): void {
 	config.run = runList.filter((r) => r.name !== name);
 	saveConfig(config);
 	deleteCommandFile(name);
+}
+
+export async function remove(
+	name: string,
+	options: RemoveOptions = {},
+): Promise<void> {
+	if (options.repo !== undefined) {
+		const label = await removeRepoRunConfig(
+			name,
+			typeof options.repo === "string" ? options.repo : undefined,
+		);
+		console.log(`Removed run configuration: ${name} (repo: ${label})`);
+		return;
+	}
+	removeProjectRunConfig(name);
 	console.log(`Removed run configuration: ${name}`);
 }
