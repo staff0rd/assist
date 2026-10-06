@@ -158,12 +158,12 @@ Documented, not fixed.
 `worktree` in `assistConfigSchema`, surfaced in `--help` via
 `sessionsConfigHelp.ts`:
 
-| Key                | Default                                                      | Effect                                                                                  |
-| ------------------ | ------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| `worktree.enabled` | `false`                                                      | off ⇒ `allocateTree` always returns the requested cwd                                   |
-| `worktree.root`    | the clone's parent                                           | where `<repo>-N` worktrees are created                                                  |
-| `worktree.install` | `true`                                                       | `true` auto-detects the package manager; a string is an explicit command; `false` skips |
-| `worktree.copy`    | `.env`, `settings.local.json`, `.claude/settings.local.json` | gitignored files copied into a new worktree                                             |
+| Key                | Default                                                      | Effect                                                                                                                                                                             |
+| ------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `worktree.enabled` | `false`                                                      | off ⇒ `allocateTree` always returns the requested cwd                                                                                                                              |
+| `worktree.root`    | the clone's parent                                           | where `<repo>-N` worktrees are created                                                                                                                                             |
+| `worktree.install` | `true`                                                       | `true` auto-detects the package manager; a string is an explicit command; `false` skips; a list of paths auto-detects and installs in each in order, stopping at the first failure |
+| `worktree.copy`    | `.env`, `settings.local.json`, `.claude/settings.local.json` | gitignored files copied into a new worktree                                                                                                                                        |
 
 Set per repo without committing anything to it:
 `assist config set worktree.enabled true -g --repo`, which writes a `repos:`

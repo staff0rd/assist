@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { EventEmitter } from "node:events";
+import { resolve } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../../../test/mocks/childProcessMock";
 
@@ -147,7 +148,7 @@ describe("runInstall", () => {
 	});
 
 	describe("with a list of paths", () => {
-		const tree = "/home/me/git/assist-2";
+		const tree = resolve("/home/me/git/assist-2");
 
 		function seedPaths(paths: string[], onSeeded = () => {}): void {
 			runInstall(tree, "/home/me/git/assist", paths, onSeeded);
@@ -165,7 +166,7 @@ describe("runInstall", () => {
 			seedPaths([".", "packages/ui"], onSeeded);
 			expect(spawnedCwds()).toEqual([tree]);
 			child.emit("close", 0, null);
-			expect(spawnedCwds()).toEqual([tree, `${tree}/packages/ui`]);
+			expect(spawnedCwds()).toEqual([tree, resolve(tree, "packages/ui")]);
 			expect(onSeeded).not.toHaveBeenCalled();
 			child.emit("close", 0, null);
 
@@ -186,8 +187,13 @@ describe("runInstall", () => {
 			seedPaths([".", "ui"]);
 			child.emit("close", 0, null);
 
-			const [, args] = mockSpawn.mock.calls[1] as unknown as [string, string[]];
-			expect(args.at(-1)).toBe(`cd '${tree}/ui' && pnpm install`);
+			const [, args, options] = mockSpawn.mock.calls[1] as unknown as [
+				string,
+				string[],
+				{ cwd: string },
+			];
+			expect(options.cwd).toBe(resolve(tree, "ui"));
+			expect(args.at(-1)).toMatch(/&& pnpm install$/);
 		});
 
 		it("skips the remaining paths once one fails, still releasing the session", () => {
@@ -215,7 +221,7 @@ describe("runInstall", () => {
 			expect(spawnedCwds()).toEqual([tree]);
 			expect(onSeeded).toHaveBeenCalledTimes(1);
 			expect(logs).toContain(
-				`worktree ${tree} install in missing failed: no package.json at ${tree}/missing; skipping remaining paths`,
+				`worktree ${tree} install in missing failed: no package.json at ${resolve(tree, "missing")}; skipping remaining paths`,
 			);
 		});
 
@@ -247,7 +253,7 @@ describe("runInstall", () => {
 				child.emit("close", 0, null);
 
 				expect(killed).toEqual([-4321]);
-				expect(spawnedCwds()).toEqual([tree, `${tree}/a`]);
+				expect(spawnedCwds()).toEqual([tree, resolve(tree, "a")]);
 				expect(onSeeded).toHaveBeenCalledTimes(1);
 				kill.mockRestore();
 			},
