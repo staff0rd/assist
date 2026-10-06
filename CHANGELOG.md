@@ -1,3 +1,10 @@
+# [0.783.0](https://github.com/staff0rd/assist/compare/v0.782.0...v0.783.0) (2026-10-06)
+
+
+### Features
+
+* insert duplicate after its source ([1a18b62](https://github.com/staff0rd/assist/commit/1a18b62b737d007893c872cc73d0799b404809dd))
+
 # [0.782.0](https://github.com/staff0rd/assist/compare/v0.781.0...v0.782.0) (2026-10-06)
 
 
