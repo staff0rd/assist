@@ -1,3 +1,10 @@
+## [0.780.1](https://github.com/staff0rd/assist/compare/v0.780.0...v0.780.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* platform-safe install path tests ([b4ee63a](https://github.com/staff0rd/assist/commit/b4ee63a805abbb9e9618a81d6e38ea8306d75ddb))
+
 # [0.780.0](https://github.com/staff0rd/assist/compare/v0.779.0...v0.780.0) (2026-10-05)
 
 
