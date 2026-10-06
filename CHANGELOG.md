@@ -1,3 +1,10 @@
+# [0.782.0](https://github.com/staff0rd/assist/compare/v0.781.0...v0.782.0) (2026-10-06)
+
+
+### Features
+
+* duplicate config array items ([c75cf21](https://github.com/staff0rd/assist/commit/c75cf21a4a23a48dc2282a1ade2cd9717958defa))
+
 # [0.781.0](https://github.com/staff0rd/assist/compare/v0.780.1...v0.781.0) (2026-10-06)
 
 
