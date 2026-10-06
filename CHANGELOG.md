@@ -1,3 +1,16 @@
+# [0.781.0](https://github.com/staff0rd/assist/compare/v0.780.1...v0.781.0) (2026-10-06)
+
+
+### Bug Fixes
+
+* drop yml repo config writers ([cd3cd39](https://github.com/staff0rd/assist/commit/cd3cd390eb51c5714a8685e718aa6bf05cb9aa4a))
+* write all repo-scope config to db ([4dda73d](https://github.com/staff0rd/assist/commit/4dda73d4d4468492ccdbf4950ec36b94fd5fa42a))
+
+
+### Features
+
+* link Next issues to live sessions ([fd320fd](https://github.com/staff0rd/assist/commit/fd320fd188331193b071a32961917bdae5211ac2))
+
 ## [0.780.1](https://github.com/staff0rd/assist/compare/v0.780.0...v0.780.1) (2026-10-06)
 
 
