@@ -1,3 +1,10 @@
+# [0.786.0](https://github.com/staff0rd/assist/compare/v0.785.1...v0.786.0) (2026-10-07)
+
+
+### Features
+
+* ALT+S focuses backlog search or back ([80f5256](https://github.com/staff0rd/assist/commit/80f52567d51cccad07bba1b571a1db00a44f8ec8))
+
 ## [0.785.1](https://github.com/staff0rd/assist/compare/v0.785.0...v0.785.1) (2026-10-07)
 
 
