@@ -1,3 +1,10 @@
+# [0.785.0](https://github.com/staff0rd/assist/compare/v0.784.3...v0.785.0) (2026-10-07)
+
+
+### Features
+
+* show Draft chip in Review dropdown ([58f3e21](https://github.com/staff0rd/assist/commit/58f3e21a7347827e8ba3e5e31362f9f525e605b5))
+
 ## [0.784.3](https://github.com/staff0rd/assist/compare/v0.784.2...v0.784.3) (2026-10-07)
 
 
