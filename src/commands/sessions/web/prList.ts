@@ -9,6 +9,7 @@ export type PrSummary = {
 	author: string;
 	createdAt: string;
 	url: string;
+	isDraft: boolean;
 };
 
 type GhPr = {
@@ -17,6 +18,7 @@ type GhPr = {
 	author?: { login?: string; name?: string };
 	createdAt: string;
 	url: string;
+	isDraft?: boolean;
 };
 
 const getOpenPrs = createCachedGhJson<PrSummary[]>(
@@ -26,7 +28,7 @@ const getOpenPrs = createCachedGhJson<PrSummary[]>(
 		"--state",
 		"open",
 		"--json",
-		"number,title,author,createdAt,url",
+		"number,title,author,createdAt,url,isDraft",
 	],
 	(stdout) => {
 		const parsed = JSON.parse(stdout) as GhPr[];
@@ -37,6 +39,7 @@ const getOpenPrs = createCachedGhJson<PrSummary[]>(
 			author: pr.author?.name || pr.author?.login || "unknown",
 			createdAt: pr.createdAt,
 			url: pr.url,
+			isDraft: pr.isDraft === true,
 		}));
 	},
 	[],

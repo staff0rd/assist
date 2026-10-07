@@ -1,12 +1,9 @@
-import { execFile } from "node:child_process";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { promisify } from "node:util";
 import { respondJson } from "../../../shared/web";
 import { createCachedGhJson } from "./createCachedGhJson";
 import { getCwdParam } from "./getCwdParam";
 import type { PrSummary } from "./prList";
-
-const execFileAsync = promisify(execFile);
+import { getCurrentBranch } from "./getCurrentBranch";
 
 type GhPr = {
 	number?: number;
@@ -14,6 +11,7 @@ type GhPr = {
 	author?: { login?: string; name?: string };
 	createdAt?: string;
 	url?: string;
+	isDraft?: boolean;
 };
 
 function toPrSummary(parsed: GhPr): PrSummary | null {
@@ -24,10 +22,11 @@ function toPrSummary(parsed: GhPr): PrSummary | null {
 		author: parsed.author?.name || parsed.author?.login || "unknown",
 		createdAt: parsed.createdAt ?? "",
 		url: parsed.url ?? "",
+		isDraft: parsed.isDraft === true,
 	};
 }
 
-const prFields = "number,title,author,createdAt,url";
+const prFields = "number,title,author,createdAt,url,isDraft";
 
 const getPrByNumber = createCachedGhJson<PrSummary | null>(
 	["pr", "view", "--json", prFields],
@@ -46,20 +45,6 @@ const getOpenPrForBranch = createCachedGhJson<PrSummary | null>(
 	null,
 	{ cacheFallback: false },
 );
-
-async function getCurrentBranch(cwd: string): Promise<string | undefined> {
-	try {
-		const { stdout } = await execFileAsync(
-			"git",
-			["rev-parse", "--abbrev-ref", "HEAD"],
-			{ encoding: "utf8", windowsHide: true, cwd },
-		);
-		const branch = stdout.trim();
-		return branch && branch !== "HEAD" ? branch : undefined;
-	} catch {
-		return undefined;
-	}
-}
 
 function getNumberParam(req: IncomingMessage): number | undefined {
 	const raw = new URL(req.url ?? "/", "http://localhost").searchParams.get(

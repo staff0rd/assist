@@ -17,6 +17,7 @@ const prs: PrSummary[] = [
 		author: "ada",
 		createdAt: "2026-09-20T00:00:00Z",
 		url: "https://example.test/1",
+		isDraft: true,
 	},
 	{
 		number: 2,
@@ -24,6 +25,7 @@ const prs: PrSummary[] = [
 		author: "grace",
 		createdAt: "2026-09-20T00:00:00Z",
 		url: "https://example.test/2",
+		isDraft: false,
 	},
 	{
 		number: 3,
@@ -31,6 +33,7 @@ const prs: PrSummary[] = [
 		author: "linus",
 		createdAt: "2026-09-20T00:00:00Z",
 		url: "https://example.test/3",
+		isDraft: false,
 	},
 ];
 
@@ -95,6 +98,16 @@ describe("ReviewPrList keyboard navigation", () => {
 		const { input } = await renderList();
 		fireEvent.change(input, { target: { value: "zzz" } });
 		expect(screen.getByText("No PRs match")).toBeTruthy();
+	});
+
+	it("shows a Draft chip only on draft PRs", async () => {
+		await renderList();
+		const chips = screen.getAllByText("Draft");
+		expect(chips).toHaveLength(1);
+		expect(screen.getByText("Add login page").contains(chips[0])).toBe(true);
+		expect(
+			screen.getByText("Fix cache eviction").querySelector(".MuiChip-root"),
+		).toBeNull();
 	});
 
 	it("clicking a PR picks it and closes", async () => {

@@ -30,6 +30,7 @@ export function toNextPr(
 		author,
 		createdAt: node.createdAt,
 		url: node.url,
+		isDraft: node.isDraft,
 		requestedAt: requested ? lastRequestedAt(node, viewer) : node.createdAt,
 		reason: requested ? "requested" : "peer",
 		checks: (rollup && CHECK_STATES[rollup]) || null,

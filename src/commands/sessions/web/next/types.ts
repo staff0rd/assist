@@ -11,9 +11,11 @@ export type NextPr = PrSummary & {
 
 export type RepolessPr = Omit<NextPr, "repo">;
 
-export type NextIssue = PrSummary & { repo: string; labels: string[] };
+type IssueSummary = Omit<PrSummary, "isDraft">;
 
-export type NextPickup = PrSummary & {
+export type NextIssue = IssueSummary & { repo: string; labels: string[] };
+
+export type NextPickup = IssueSummary & {
 	repo: string;
 	labels: string[];
 	project: string;

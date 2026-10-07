@@ -9,6 +9,7 @@ function pr(number: number, title: string, author: string): PrSummary {
 		author,
 		createdAt: "2026-01-01T00:00:00Z",
 		url: `https://github.com/org/repo/pull/${number}`,
+		isDraft: false,
 	};
 }
 

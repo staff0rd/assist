@@ -1,3 +1,4 @@
+import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -30,6 +31,19 @@ export function PrRow({
 			<Stack spacing={0.25} sx={{ minWidth: 0 }}>
 				<Typography sx={{ fontSize: 13, lineHeight: 1.3, fontWeight: 500 }}>
 					{pr.title}
+					{pr.isDraft && (
+						<Chip
+							label="Draft"
+							size="small"
+							variant="outlined"
+							sx={{
+								ml: 0.75,
+								height: 18,
+								fontSize: 10,
+								verticalAlign: "middle",
+							}}
+						/>
+					)}
 				</Typography>
 				<Typography sx={{ fontSize: 11, color: "text.secondary" }}>
 					#{pr.number} · {pr.author} · {formatRelativeTime(pr.createdAt)}

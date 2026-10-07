@@ -11,6 +11,7 @@ const pr: PrSummary = {
 	author: "someone",
 	createdAt: new Date(0).toISOString(),
 	url: "https://github.com/org/repo/pull/42",
+	isDraft: false,
 };
 
 function checkbox(label: string): HTMLInputElement {

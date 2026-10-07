@@ -35,6 +35,7 @@ function pr(number: number, overrides: Partial<NextPr> = {}): NextPr {
 		author: "alice",
 		createdAt: "2026-09-01T00:00:00Z",
 		url: `https://github.com/o/r/pull/${number}`,
+		isDraft: false,
 		requestedAt: "2026-09-01T00:00:00Z",
 		reason: "requested",
 		checks: "success",
