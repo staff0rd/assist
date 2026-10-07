@@ -1,3 +1,12 @@
+# [0.791.0](https://github.com/staff0rd/assist/compare/v0.790.0...v0.791.0) (2026-10-07)
+
+
+### Features
+
+* review-ci skips init when configured ([af61b43](https://github.com/staff0rd/assist/commit/af61b43df704d6dd24413294cda5ee84d33ccd20))
+* reviewers flag tautological tests ([4e5a3df](https://github.com/staff0rd/assist/commit/4e5a3df09f2f5f317058d5d35dae5ebf40f79556))
+* synthesis keeps tautological tests ([1772816](https://github.com/staff0rd/assist/commit/1772816faff4cf5d7088e1f208ad6f11432e888d))
+
 # [0.790.0](https://github.com/staff0rd/assist/compare/v0.789.1...v0.790.0) (2026-10-07)
 
 
