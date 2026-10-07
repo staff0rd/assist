@@ -43,6 +43,10 @@ jobs:
         if: startsWith(vars.REVIEW_CI_REVIEWER_1, 'codex:') || startsWith(vars.REVIEW_CI_REVIEWER_2, 'codex:') || startsWith(vars.REVIEW_CI_SYNTHESIS, 'codex:')
         run: npm install -g @openai/codex
 
+      - name: Allow unprivileged user namespaces for the Codex sandbox
+        if: startsWith(vars.REVIEW_CI_REVIEWER_1, 'codex:') || startsWith(vars.REVIEW_CI_REVIEWER_2, 'codex:') || startsWith(vars.REVIEW_CI_SYNTHESIS, 'codex:')
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
       - name: Check review config
         run: node .github/review-ci/check.mjs
 
