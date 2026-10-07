@@ -1,3 +1,10 @@
+## [0.786.1](https://github.com/staff0rd/assist/compare/v0.786.0...v0.786.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* ask review-config proposal via assist ask ([288cd06](https://github.com/staff0rd/assist/commit/288cd06bc74291f6e996794808c732f043d9c26d))
+
 # [0.786.0](https://github.com/staff0rd/assist/compare/v0.785.1...v0.786.0) (2026-10-07)
 
 
