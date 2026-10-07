@@ -1,3 +1,10 @@
+## [0.784.2](https://github.com/staff0rd/assist/compare/v0.784.1...v0.784.2) (2026-10-07)
+
+
+### Bug Fixes
+
+* deny gh close/reopen with --comment ([6bf2f83](https://github.com/staff0rd/assist/commit/6bf2f83a47f2aecf1da82ec96229ffd15d8227b7))
+
 ## [0.784.1](https://github.com/staff0rd/assist/compare/v0.784.0...v0.784.1) (2026-10-06)
 
 
