@@ -123,6 +123,7 @@ describe("findBuiltinDeny close/reopen with a comment", () => {
 		'gh issue close 310 -R acme/widgets --reason completed --comment "done"',
 		'gh issue close 310 -c "done"',
 		"gh issue close 310 --comment=done",
+		'gh issue close 310 -c"done"',
 		'gh issue reopen 310 --comment "again"',
 		'gh issue reopen 310 -c "again"',
 		'gh pr close 89 --comment "superseded"',

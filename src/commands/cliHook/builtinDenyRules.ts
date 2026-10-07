@@ -60,7 +60,7 @@ const CLOSE_WITH_COMMENT_MESSAGE =
 	"Do not post a comment through 'gh issue close', 'gh issue reopen' or 'gh pr close' with --comment/-c — it goes to GitHub without the approval pane. Post the comment first with 'assist github issue comment <number> --body <body> [-R <owner>/<repo>]', which validates it and gates it on the user's approval, then run the same close/reopen without --comment.";
 
 const CLOSE_WITH_COMMENT_REGEX =
-	/(?<=^|\s)gh\s+(?:issue\s+(?:close|reopen)|pr\s+close)(?=\s|$)[^;&|\n]*?\s(?:--comment|-c)(?=[\s=]|$)/;
+	/(?<=^|\s)gh\s+(?:issue\s+(?:close|reopen)|pr\s+close)(?=\s|$)[^;&|\n]*?\s(?:--comment(?=[\s=]|$)|-c)/;
 
 const COMMAND_BOUNDARY = String.raw`(?<=(?:^|[;&|(\n])\s*)`;
 
