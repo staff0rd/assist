@@ -30,14 +30,15 @@ export async function runReviewers(
 		stdin: stdinPrompt,
 		cached: options.cachedClaude,
 		multi: options.multi,
-		override: options.models.claude,
+		slot: options.models.claude,
 	});
 	const codexPromise = resolveCodex({
+		reviewDir,
 		codexPath,
 		stdin: stdinPrompt,
 		plan: options.codexPlan,
 		multi: options.multi,
-		override: options.models.codex,
+		slot: options.models.codex,
 	});
 	const results = await Promise.all([claudePromise, codexPromise]);
 	const anyFresh =

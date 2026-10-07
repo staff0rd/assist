@@ -5,20 +5,25 @@ import { buildCiReviewerModels } from "./buildCiReviewerModels";
 import { deriveEndpoints } from "./deriveEndpoints";
 import { readEventPrNumber } from "./readEventPrNumber";
 import { readReviewCiEnv } from "./readReviewCiEnv";
+import { resolveReviewCiToken } from "./resolveReviewCiToken";
 
 export async function reviewCiReview(env: NodeJS.ProcessEnv): Promise<void> {
-	const { config, missing } = readReviewCiEnv(env);
-	if (!config) throw new Error(`${missing.join(", ")} not set`);
+	const { config, errors } = readReviewCiEnv(env);
+	if (!config) throw new Error(errors.join("; "));
 	const endpoints = deriveEndpoints(config.provider, config.baseUrl);
-	for (const cli of ["claude", "codex"])
+	const harnesses = new Set(
+		Object.values(config.slots).map((slot) => slot.harness),
+	);
+	for (const cli of harnesses)
 		if (!checkCliAvailable(cli)) throw new Error(`${cli} is not on PATH`);
+	const token = await resolveReviewCiToken(config.auth, env);
 	pinCurrentPr(readEventPrNumber(env));
 	await reviewPr(process.cwd(), {
 		prompt: false,
 		submit: true,
 		force: true,
 		verbose: true,
-		ci: { models: buildCiReviewerModels(config, endpoints) },
+		ci: { models: buildCiReviewerModels(config, endpoints, token) },
 	});
 }
 

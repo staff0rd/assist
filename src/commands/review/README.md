@@ -37,7 +37,9 @@ The `/review-ci` skill's `review.mjs` is `ci/reviewCiReview.ts` bundled by tsup,
 
 - config comes from the `ASSIST_REVIEW_*` env (`ci/readReviewCiEnv.ts`), never `loadConfig`;
 - the PR number is read from `GITHUB_EVENT_PATH` and pinned with `pinCurrentPr`, so every `prs/shared` lookup and `fetchPrDiffInfo` resolve that PR on the detached checkout instead of by branch; there is no `gh pr checkout` or worktree move, and no activity is emitted;
-- `ci/buildCiReviewerModels.ts` gives Claude (reviewer and synthesis) `--model` plus `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN` (`litellm`) or `CLAUDE_CODE_USE_FOUNDRY`/`ANTHROPIC_FOUNDRY_BASE_URL`/`ANTHROPIC_FOUNDRY_API_KEY` (`foundry`, whose Anthropic endpoint takes the key as `x-api-key`, a Bearer token being read as Entra), and Codex the provider `-c` overrides, from the endpoints `ci/deriveEndpoints.ts` derives;
+- each of the three slots (the `claude.md` reviewer, the `codex.md` reviewer, synthesis) names its own harness and model (`ASSIST_REVIEW_REVIEWER_1`/`_2`/`_SYNTHESIS` as `claude:<model>` or `codex:<model>`), and `runSlot.ts` runs whichever harness a slot names; locally the slots keep Claude, Codex and Claude;
+- `ci/buildCiReviewerModels.ts` gives a Claude slot `--model` plus `ANTHROPIC_BASE_URL`/`ANTHROPIC_AUTH_TOKEN`, or with a `foundry` API key `CLAUDE_CODE_USE_FOUNDRY`/`ANTHROPIC_FOUNDRY_BASE_URL`/`ANTHROPIC_FOUNDRY_API_KEY` (Foundry's Anthropic endpoint takes a key as `x-api-key`, a Bearer token being read as Entra), and a Codex slot the provider `-c` overrides, from the endpoints `ci/deriveEndpoints.ts` derives;
+- with `foundry` and `ASSIST_REVIEW_AZURE_CLIENT_ID` set, `ci/resolveReviewCiToken.ts` uses an Entra token instead of the key, sent as a Bearer token to both endpoints: in a workflow it exchanges the GitHub OIDC token for one (`ci/exchangeGithubOidcToken.ts`), locally it reads `az account get-access-token`;
 - the pipeline runs strict: any reviewer failure skips synthesis, and a failed pipeline exits 1 before anything is posted;
 - posting runs with `prompt: false, submit: true`, so findings post and a `COMMENT` review is submitted with no spinners or prompts.
 

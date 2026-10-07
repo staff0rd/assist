@@ -1,17 +1,17 @@
 import { readFileSync } from "node:fs";
-import type { CodexModelOverride } from "../litellm/buildCodexProviderArgs";
 import type { ReviewPaths } from "./buildReviewPaths";
 import { buildReviewSummary } from "./buildReviewSummary";
 import { buildSynthesisStdin } from "./buildSynthesisStdin";
 import { cachedReviewerResult } from "./cachedReviewerResult";
 import type { MultiSpinner, SpinnerHandle } from "./MultiSpinner";
+import type { SlotModel } from "./ReviewerModels";
 import { reviewerLabel } from "./reviewerLabel";
-import { runClaudeReviewer } from "./runClaudeReviewer";
+import { runSlot } from "./runSlot";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type SynthesiseOptions = {
 	multi: MultiSpinner | undefined;
-	override?: CodexModelOverride;
+	slot?: SlotModel;
 };
 
 function printSummary(synthesisPath: string): void {
@@ -30,11 +30,12 @@ export async function synthesise(
 		printSummary(paths.synthesisPath);
 		return cached;
 	}
-	const { multi, override } = options;
+	const { multi, slot } = options;
+	const override = slot?.override;
 	const spinner: SpinnerHandle | undefined = multi?.create(
 		`${reviewerLabel("synthesis", override?.model)} — starting`,
 	);
-	const result = await runClaudeReviewer({
+	const result = await runSlot(slot?.harness ?? "claude", {
 		name: "synthesis",
 		reviewDir: paths.reviewDir,
 		stdin: buildSynthesisStdin(

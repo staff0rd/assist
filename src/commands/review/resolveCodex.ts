@@ -1,17 +1,18 @@
-import type { CodexModelOverride } from "../litellm/buildCodexProviderArgs";
 import { buildCodexModelArgs } from "./buildCodexModelArgs";
 import type { MultiSpinner } from "./MultiSpinner";
 import { type CodexPlan, skippedCodexResult } from "./planCodexReviewer";
+import type { SlotModel } from "./ReviewerModels";
 import { reviewerLabel } from "./reviewerLabel";
-import { runCodexReviewer } from "./runCodexReviewer";
+import { runSlot } from "./runSlot";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type Args = {
+	reviewDir: string;
 	codexPath: string;
 	stdin: string;
 	plan: CodexPlan;
 	multi: MultiSpinner | undefined;
-	override?: CodexModelOverride;
+	slot?: SlotModel;
 };
 
 export function resolveCodex(args: Args): Promise<ReviewerResult> {
@@ -19,15 +20,16 @@ export function resolveCodex(args: Args): Promise<ReviewerResult> {
 	if (args.plan.kind === "skipped") {
 		return Promise.resolve(skippedCodexResult(args.codexPath));
 	}
-	const override = args.override ?? buildCodexModelArgs();
+	const override = args.slot?.override ?? buildCodexModelArgs();
 	const spinner = args.multi?.create(
 		`${reviewerLabel("codex", override.model)} — starting`,
 	);
-	return runCodexReviewer({
+	return runSlot(args.slot?.harness ?? "codex", {
 		name: "codex",
+		reviewDir: args.reviewDir,
 		stdin: args.stdin,
 		outputPath: args.codexPath,
-		override,
 		spinner,
+		override,
 	});
 }

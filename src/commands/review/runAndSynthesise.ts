@@ -54,7 +54,7 @@ export async function runAndSynthesise(
 	}
 	const synthesisResult = await synthesise(paths, {
 		multi,
-		override: args.models.claude,
+		slot: args.models.synthesis,
 	});
 	if (synthesisResult.exitCode !== 0) failures.push(synthesisResult);
 	return { ok: synthesisResult.exitCode === 0, failures };

@@ -7,15 +7,20 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  id-token: write
 
 jobs:
   review:
     runs-on: ubuntu-latest
+    environment: ${{ vars.ASSIST_REVIEW_ENVIRONMENT }}
     env:
       ASSIST_REVIEW_PROVIDER: ${{ vars.ASSIST_REVIEW_PROVIDER }}
       ASSIST_REVIEW_BASE_URL: ${{ vars.ASSIST_REVIEW_BASE_URL }}
-      ASSIST_REVIEW_CLAUDE_MODEL: ${{ vars.ASSIST_REVIEW_CLAUDE_MODEL }}
-      ASSIST_REVIEW_CODEX_MODEL: ${{ vars.ASSIST_REVIEW_CODEX_MODEL }}
+      ASSIST_REVIEW_REVIEWER_1: ${{ vars.ASSIST_REVIEW_REVIEWER_1 }}
+      ASSIST_REVIEW_REVIEWER_2: ${{ vars.ASSIST_REVIEW_REVIEWER_2 }}
+      ASSIST_REVIEW_SYNTHESIS: ${{ vars.ASSIST_REVIEW_SYNTHESIS }}
+      ASSIST_REVIEW_AZURE_CLIENT_ID: ${{ vars.ASSIST_REVIEW_AZURE_CLIENT_ID }}
+      ASSIST_REVIEW_AZURE_TENANT_ID: ${{ vars.ASSIST_REVIEW_AZURE_TENANT_ID }}
       ASSIST_REVIEW_API_KEY: ${{ secrets.ASSIST_REVIEW_API_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -30,8 +35,13 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - name: Install Claude Code and Codex
-        run: npm install -g @anthropic-ai/claude-code @openai/codex
+      - name: Install Claude Code
+        if: startsWith(vars.ASSIST_REVIEW_REVIEWER_1, 'claude:') || startsWith(vars.ASSIST_REVIEW_REVIEWER_2, 'claude:') || startsWith(vars.ASSIST_REVIEW_SYNTHESIS, 'claude:')
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Install Codex
+        if: startsWith(vars.ASSIST_REVIEW_REVIEWER_1, 'codex:') || startsWith(vars.ASSIST_REVIEW_REVIEWER_2, 'codex:') || startsWith(vars.ASSIST_REVIEW_SYNTHESIS, 'codex:')
+        run: npm install -g @openai/codex
 
       - name: Check review config
         run: node .github/review-ci/check.mjs

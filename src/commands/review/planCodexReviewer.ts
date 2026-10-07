@@ -7,9 +7,13 @@ export type CodexPlan =
 	| { kind: "run" }
 	| { kind: "skipped" };
 
-export async function planCodexReviewer(codexPath: string): Promise<CodexPlan> {
+export async function planCodexReviewer(
+	codexPath: string,
+	slotAssigned: boolean,
+): Promise<CodexPlan> {
 	const cached = cachedReviewerResult("codex", codexPath);
 	if (cached) return { kind: "cached", cached };
+	if (slotAssigned) return { kind: "run" };
 	const status = await ensureCodexAvailable();
 	if (status === "available") return { kind: "run" };
 	return { kind: "skipped" };

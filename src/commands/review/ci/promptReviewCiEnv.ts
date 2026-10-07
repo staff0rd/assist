@@ -1,71 +1,39 @@
-import enquirer from "enquirer";
-import { exitOnCancel } from "../../../shared/exitOnCancel";
+import { askReviewCiKey } from "./askReviewCiKey";
 import {
 	type ReviewCiKey,
-	reviewCiKeys,
-	reviewCiProviders,
 	reviewCiSecret,
+	reviewCiVariables,
 } from "./reviewCiVariables";
-import { readFlags } from "./readFlags";
-
-type PromptOptions = Exclude<
-	Parameters<typeof enquirer.prompt>[0],
-	unknown[] | ((...args: never[]) => unknown)
->;
-
-const prompts: Record<ReviewCiKey, PromptOptions> = {
-	ASSIST_REVIEW_PROVIDER: {
-		name: "value",
-		type: "select",
-		message: "Provider",
-		choices: [...reviewCiProviders],
-	},
-	ASSIST_REVIEW_BASE_URL: {
-		name: "value",
-		type: "input",
-		message:
-			"Base URL (litellm: the proxy root; foundry: https://<resource>.services.ai.azure.com)",
-	},
-	ASSIST_REVIEW_CLAUDE_MODEL: {
-		name: "value",
-		type: "input",
-		message: "Claude model",
-	},
-	ASSIST_REVIEW_CODEX_MODEL: {
-		name: "value",
-		type: "input",
-		message: "Codex model",
-	},
-	ASSIST_REVIEW_API_KEY: {
-		name: "value",
-		type: "password",
-		message: "API key",
-	},
-};
 
 export async function promptReviewCiEnv(
-	argv: string[],
+	flags: Partial<Record<ReviewCiKey, string>>,
 	env: NodeJS.ProcessEnv,
-): Promise<Record<ReviewCiKey, string>> {
-	const given: Partial<Record<ReviewCiKey, string>> = {
-		...readFlags(argv),
-		[reviewCiSecret]: env[reviewCiSecret],
-	};
-	const result = {} as Record<ReviewCiKey, string>;
-	for (const key of reviewCiKeys) {
-		const value = given[key]?.trim();
-		if (value) {
-			result[key] = value;
-			continue;
-		}
-		if (!process.stdin.isTTY)
-			throw new Error(
-				`${key} was not given and stdin is not a terminal to prompt for it`,
-			);
-		const answer = await exitOnCancel(
-			enquirer.prompt<{ value: string }>(prompts[key]),
+): Promise<Partial<Record<ReviewCiKey, string>>> {
+	const given = { ...flags, [reviewCiSecret]: env[reviewCiSecret] };
+	const result: Partial<Record<ReviewCiKey, string>> = {};
+	for (const key of reviewCiVariables)
+		result[key] = await askReviewCiKey(key, given);
+
+	if (result.ASSIST_REVIEW_PROVIDER === "foundry") {
+		const clientId = await askReviewCiKey(
+			"ASSIST_REVIEW_AZURE_CLIENT_ID",
+			given,
+			true,
 		);
-		result[key] = answer.value.trim();
+		if (clientId) {
+			result.ASSIST_REVIEW_AZURE_CLIENT_ID = clientId;
+			result.ASSIST_REVIEW_AZURE_TENANT_ID = await askReviewCiKey(
+				"ASSIST_REVIEW_AZURE_TENANT_ID",
+				given,
+			);
+			result.ASSIST_REVIEW_ENVIRONMENT = await askReviewCiKey(
+				"ASSIST_REVIEW_ENVIRONMENT",
+				given,
+				true,
+			);
+			return result;
+		}
 	}
+	result[reviewCiSecret] = await askReviewCiKey(reviewCiSecret, given);
 	return result;
 }

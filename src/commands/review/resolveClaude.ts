@@ -1,7 +1,7 @@
-import type { CodexModelOverride } from "../litellm/buildCodexProviderArgs";
 import type { MultiSpinner } from "./MultiSpinner";
+import type { SlotModel } from "./ReviewerModels";
 import { reviewerLabel } from "./reviewerLabel";
-import { runClaudeReviewer } from "./runClaudeReviewer";
+import { runSlot } from "./runSlot";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type Args = {
@@ -10,20 +10,21 @@ type Args = {
 	stdin: string;
 	cached: ReviewerResult | null;
 	multi: MultiSpinner | undefined;
-	override?: CodexModelOverride;
+	slot?: SlotModel;
 };
 
 export function resolveClaude(args: Args): Promise<ReviewerResult> {
 	if (args.cached) return Promise.resolve(args.cached);
+	const override = args.slot?.override;
 	const spinner = args.multi?.create(
-		`${reviewerLabel("claude", args.override?.model)} — starting`,
+		`${reviewerLabel("claude", override?.model)} — starting`,
 	);
-	return runClaudeReviewer({
+	return runSlot(args.slot?.harness ?? "claude", {
 		name: "claude",
 		reviewDir: args.reviewDir,
 		stdin: args.stdin,
 		outputPath: args.claudePath,
 		spinner,
-		override: args.override,
+		override,
 	});
 }

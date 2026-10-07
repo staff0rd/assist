@@ -52,7 +52,10 @@ export async function runReviewPipeline(
 	options: PipelineOptions,
 ): Promise<boolean> {
 	const cachedClaude = cachedReviewerResult("claude", paths.claudePath);
-	const codexPlan = await planCodexReviewer(paths.codexPath);
+	const codexPlan = await planCodexReviewer(
+		paths.codexPath,
+		options.models?.codex !== undefined,
+	);
 	const ui = createUi(useSpinnerUi(options.verbose));
 	try {
 		const outcome = await runAndSynthesise({

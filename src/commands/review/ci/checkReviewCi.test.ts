@@ -4,35 +4,80 @@ import { checkReviewCi } from "./checkReviewCi";
 const fullEnv = {
 	ASSIST_REVIEW_PROVIDER: "litellm",
 	ASSIST_REVIEW_BASE_URL: "https://proxy.example/",
-	ASSIST_REVIEW_CLAUDE_MODEL: "claude-sonnet",
-	ASSIST_REVIEW_CODEX_MODEL: "gpt-codex",
+	ASSIST_REVIEW_REVIEWER_1: "claude:claude-sonnet",
+	ASSIST_REVIEW_REVIEWER_2: "codex:gpt-codex",
+	ASSIST_REVIEW_SYNTHESIS: "claude:claude-sonnet",
 	ASSIST_REVIEW_API_KEY: "sk-test",
 };
 
+const foundryEntraEnv = {
+	ASSIST_REVIEW_PROVIDER: "foundry",
+	ASSIST_REVIEW_BASE_URL: "https://res.services.ai.azure.com",
+	ASSIST_REVIEW_REVIEWER_1: "codex:gpt-5.6-terra",
+	ASSIST_REVIEW_REVIEWER_2: "codex:gpt-5.4",
+	ASSIST_REVIEW_SYNTHESIS: "codex:gpt-5.6-terra",
+	ASSIST_REVIEW_AZURE_CLIENT_ID: "client-id",
+	ASSIST_REVIEW_AZURE_TENANT_ID: "tenant-id",
+	GITHUB_ACTIONS: "true",
+	ACTIONS_ID_TOKEN_REQUEST_URL: "https://oidc.example/token?api-version=2.0",
+	ACTIONS_ID_TOKEN_REQUEST_TOKEN: "request-token",
+};
+
+type Call = { url: string; init: RequestInit & { headers?: object } };
+
 describe("checkReviewCi", () => {
 	const fetchMock = vi.fn();
+	const calls = (): Call[] =>
+		fetchMock.mock.calls.map(([url, init]) => ({ url: String(url), init }));
 
 	beforeEach(() => {
 		vi.stubGlobal("fetch", fetchMock);
-		fetchMock.mockResolvedValue(new Response("{}", { status: 200 }));
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		fetchMock.mockImplementation(async () => new Response("{}"));
 	});
 
 	afterEach(() => {
 		vi.unstubAllGlobals();
+		vi.restoreAllMocks();
 		fetchMock.mockReset();
 	});
 
 	it("names every unset variable and the secret without making a request", async () => {
 		const errors = await checkReviewCi({
 			ASSIST_REVIEW_PROVIDER: "litellm",
-			ASSIST_REVIEW_CODEX_MODEL: " ",
+			ASSIST_REVIEW_REVIEWER_2: " ",
 		});
 
 		expect(errors).toEqual([
 			"ASSIST_REVIEW_BASE_URL is not set",
-			"ASSIST_REVIEW_CLAUDE_MODEL is not set",
-			"ASSIST_REVIEW_CODEX_MODEL is not set",
+			"ASSIST_REVIEW_REVIEWER_1 is not set",
+			"ASSIST_REVIEW_REVIEWER_2 is not set",
+			"ASSIST_REVIEW_SYNTHESIS is not set",
 			"ASSIST_REVIEW_API_KEY is not set",
+		]);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it("asks for the tenant instead of the key when foundry has a client ID", async () => {
+		const errors = await checkReviewCi({
+			...foundryEntraEnv,
+			ASSIST_REVIEW_AZURE_TENANT_ID: "",
+		});
+
+		expect(errors).toEqual(["ASSIST_REVIEW_AZURE_TENANT_ID is not set"]);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it("names each slot that is not harness:model", async () => {
+		const errors = await checkReviewCi({
+			...fullEnv,
+			ASSIST_REVIEW_REVIEWER_1: "gpt-5.4",
+			ASSIST_REVIEW_SYNTHESIS: "pi:gpt-5.4",
+		});
+
+		expect(errors).toEqual([
+			'ASSIST_REVIEW_REVIEWER_1 "gpt-5.4" must be claude:<model> or codex:<model>',
+			'ASSIST_REVIEW_SYNTHESIS "pi:gpt-5.4" must be claude:<model> or codex:<model>',
 		]);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -49,15 +94,16 @@ describe("checkReviewCi", () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it("sends one request to each model through the LiteLLM endpoints", async () => {
+	it("sends one request per distinct slot model through the LiteLLM endpoints", async () => {
 		expect(await checkReviewCi(fullEnv)).toEqual([]);
 
-		const calls = fetchMock.mock.calls.map(([url, init]) => ({
-			url,
-			body: JSON.parse(init.body),
-			auth: init.headers.Authorization,
-		}));
-		expect(calls).toEqual([
+		expect(
+			calls().map(({ url, init }) => ({
+				url,
+				body: JSON.parse(String(init.body)),
+				auth: (init.headers as Record<string, string>).Authorization,
+			})),
+		).toEqual([
 			{
 				url: "https://proxy.example/v1/messages",
 				body: expect.objectContaining({ model: "claude-sonnet" }),
@@ -71,7 +117,7 @@ describe("checkReviewCi", () => {
 		]);
 	});
 
-	it("sends one request to each model through the Foundry resource endpoints with the key alone for Claude", async () => {
+	it("sends a Foundry key alone to the Anthropic endpoint", async () => {
 		expect(
 			await checkReviewCi({
 				...fullEnv,
@@ -80,12 +126,16 @@ describe("checkReviewCi", () => {
 			}),
 		).toEqual([]);
 
-		const calls = fetchMock.mock.calls.map(([url, init]) => ({
-			url,
-			auth: init.headers.Authorization,
-			apiKey: init.headers["x-api-key"],
-		}));
-		expect(calls).toEqual([
+		expect(
+			calls().map(({ url, init }) => {
+				const headers = init.headers as Record<string, string>;
+				return {
+					url,
+					auth: headers.Authorization,
+					apiKey: headers["x-api-key"],
+				};
+			}),
+		).toEqual([
 			{
 				url: "https://res.services.ai.azure.com/anthropic/v1/messages",
 				auth: undefined,
@@ -97,6 +147,62 @@ describe("checkReviewCi", () => {
 				apiKey: undefined,
 			},
 		]);
+	});
+
+	it("exchanges the GitHub OIDC token for an Entra token and probes with it", async () => {
+		fetchMock
+			.mockResolvedValueOnce(Response.json({ value: "github-jwt" }))
+			.mockResolvedValueOnce(Response.json({ access_token: "entra-token" }));
+
+		expect(await checkReviewCi(foundryEntraEnv)).toEqual([]);
+
+		const [oidc, entra, ...probes] = calls();
+		expect(oidc.url).toBe(
+			"https://oidc.example/token?api-version=2.0&audience=api%3A%2F%2FAzureADTokenExchange",
+		);
+		expect(entra.url).toBe(
+			"https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token",
+		);
+		expect(
+			Object.fromEntries(entra.init.body as URLSearchParams),
+		).toMatchObject({
+			client_id: "client-id",
+			client_assertion: "github-jwt",
+			scope: "https://cognitiveservices.azure.com/.default",
+		});
+		expect(
+			probes.map(({ url, init }) => ({
+				url,
+				model: JSON.parse(String(init.body)).model,
+				auth: (init.headers as Record<string, string>).Authorization,
+			})),
+		).toEqual([
+			{
+				url: "https://res.services.ai.azure.com/openai/v1/responses",
+				model: "gpt-5.6-terra",
+				auth: "Bearer entra-token",
+			},
+			{
+				url: "https://res.services.ai.azure.com/openai/v1/responses",
+				model: "gpt-5.4",
+				auth: "Bearer entra-token",
+			},
+		]);
+	});
+
+	it("names the failed exchange without probing any model", async () => {
+		fetchMock
+			.mockResolvedValueOnce(Response.json({ value: "github-jwt" }))
+			.mockResolvedValueOnce(
+				new Response("AADSTS70021: No matching federated identity record", {
+					status: 400,
+				}),
+			);
+
+		expect(await checkReviewCi(foundryEntraEnv)).toEqual([
+			"Entra token exchange for client client-id failed: HTTP 400: AADSTS70021: No matching federated identity record",
+		]);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
 	it("names the model, endpoint and error for each failing model", async () => {
