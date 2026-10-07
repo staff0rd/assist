@@ -12,12 +12,26 @@ type TerminalIo = {
 	mayResize: () => boolean;
 };
 
+export type SessionTerminal = TerminalHandle & { replayOutput: () => void };
+
 export function setupTerminal(
 	el: HTMLElement,
 	sessionId: string,
 	{ sendInput, onOutput, sendResize, isStale, mayResize }: TerminalIo,
-): { handle: TerminalHandle; cleanup: () => void } {
-	const handle = createTerminal(el);
+): { handle: SessionTerminal; cleanup: () => void } {
+	const terminal = createTerminal(el);
+	const subscribe = () =>
+		onOutput(sessionId, (data) => {
+			if (!isStale()) terminal.term.write(data);
+		});
+	let unsubOutput = subscribe();
+	const handle: SessionTerminal = {
+		...terminal,
+		replayOutput: () => {
+			unsubOutput();
+			unsubOutput = subscribe();
+		},
+	};
 
 	handle.term.onData((data) => sendInput(sessionId, data));
 	handle.term.attachCustomKeyEventHandler((event) => {
@@ -26,10 +40,6 @@ export function setupTerminal(
 			handle.term.paste(text),
 		);
 	});
-	const unsubOutput = onOutput(sessionId, (data) => {
-		if (!isStale()) handle.term.write(data);
-	});
-
 	const observer = new ResizeObserver(() => {
 		if (!mayResize() || !hasTerminalSize(el)) return;
 		handle.fitAddon.fit();

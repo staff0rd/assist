@@ -9,6 +9,7 @@ export function TerminalPane({
 	sessionId,
 	visible,
 	ownership,
+	ended,
 	activeNode,
 	onOutput,
 	sendInput,
@@ -17,6 +18,7 @@ export function TerminalPane({
 	sessionId: string;
 	visible: boolean;
 	ownership: Ownership;
+	ended: boolean;
 	activeNode?: string;
 	onOutput: (sessionId: string, handler: (data: string) => void) => () => void;
 	sendInput: (sessionId: string, data: string) => void;
@@ -27,6 +29,7 @@ export function TerminalPane({
 	const onPress = useTerminal(containerRef, sessionId, {
 		visible,
 		ownership,
+		ended,
 		sendInput,
 		onOutput,
 		sendResize,

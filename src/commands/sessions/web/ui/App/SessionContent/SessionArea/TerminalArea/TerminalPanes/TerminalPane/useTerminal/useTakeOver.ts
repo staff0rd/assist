@@ -1,19 +1,19 @@
 import { type RefObject, useCallback, useEffect } from "react";
 import type { ResizeFn } from "../../../ResizeFn";
 import type { Ownership } from "../../Ownership";
-import type { TerminalHandle } from "./createTerminal";
 import { hasTerminalSize } from "./hasTerminalSize";
+import type { SessionTerminal } from "./setupTerminal";
 
 type TakeOverRefs = {
 	containerRef: RefObject<HTMLDivElement | null>;
-	handleRef: RefObject<TerminalHandle | null>;
+	handleRef: RefObject<SessionTerminal | null>;
 	staleRef: RefObject<boolean>;
 };
 
 export function useTakeOver(
 	{ containerRef, handleRef, staleRef }: TakeOverRefs,
 	sessionId: string,
-	ownership: Ownership,
+	{ ownership, ended }: { ownership: Ownership; ended: boolean },
 	sendResize: ResizeFn,
 ): () => void {
 	const takeOver = useCallback(() => {
@@ -21,11 +21,12 @@ export function useTakeOver(
 		const h = handleRef.current;
 		if (!h) return;
 		h.term.reset();
+		if (ended) h.replayOutput();
 		if (!hasTerminalSize(containerRef.current)) return;
 		h.fitAddon.fit();
 		h.term.focus();
 		sendResize(sessionId, h.term.cols, h.term.rows, true);
-	}, [containerRef, handleRef, staleRef, sessionId, sendResize]);
+	}, [containerRef, handleRef, staleRef, sessionId, ended, sendResize]);
 
 	useEffect(() => {
 		if (ownership === "other") staleRef.current = true;

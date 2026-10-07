@@ -11,9 +11,9 @@ export function resizeSession(
 	viewer: ViewerClaim = {},
 ): void {
 	const s = sessions.get(id);
-	if (!s || s.status === "done" || !s.pty) return;
-	if (isInactiveViewer(s, viewer)) return;
+	if (!s || isInactiveViewer(s, viewer)) return;
 	claimViewer(s, viewer, "resize");
+	if (s.status === "done" || !s.pty) return;
 	const unchanged = s.cols === cols && s.rows === rows;
 	if (!unchanged || viewer.claim)
 		daemonLog(

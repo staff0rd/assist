@@ -81,3 +81,25 @@ describe("setupTerminal resize reporting", () => {
 		expect(sendResize).not.toHaveBeenCalled();
 	});
 });
+
+describe("setupTerminal output replay", () => {
+	it("rewrites the buffered output that was dropped while stale", () => {
+		let stale = true;
+		const { handle } = setupTerminal(paneOfSize(600, 400), "session-1", {
+			sendInput: vi.fn(),
+			onOutput: (_id, handler) => {
+				handler("crash reason");
+				return () => {};
+			},
+			sendResize: vi.fn(),
+			isStale: () => stale,
+			mayResize: () => true,
+		});
+		expect(handle.term.write).not.toHaveBeenCalled();
+
+		stale = false;
+		handle.replayOutput();
+
+		expect(handle.term.write).toHaveBeenCalledWith("crash reason");
+	});
+});

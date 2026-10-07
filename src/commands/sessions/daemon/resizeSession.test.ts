@@ -48,4 +48,44 @@ describe("resizeSession", () => {
 
 		expect(pty.resize).not.toHaveBeenCalled();
 	});
+
+	it("lets a takeover claim a done session without resizing it", () => {
+		const { pty } = makePty();
+		const onClaim = vi.fn();
+		const sessions = new Map<string, Session>([
+			["1", makeSession({ id: "1", status: "done", pty, activeViewer: "a" })],
+		]);
+
+		resizeSession(sessions, "1", 120, 40, {
+			viewerId: "b",
+			viewerNode: "node-b",
+			claim: true,
+			onClaim,
+		});
+
+		expect(sessions.get("1")?.activeViewer).toBe("b");
+		expect(sessions.get("1")?.activeViewerNode).toBe("node-b");
+		expect(onClaim).toHaveBeenCalled();
+		expect(pty.resize).not.toHaveBeenCalled();
+	});
+
+	it("lets a takeover claim a stopped session with no pty", () => {
+		const sessions = new Map<string, Session>([
+			["1", makeSession({ id: "1", status: "stopped", activeViewer: "a" })],
+		]);
+
+		resizeSession(sessions, "1", 120, 40, { viewerId: "b", claim: true });
+
+		expect(sessions.get("1")?.activeViewer).toBe("b");
+	});
+
+	it("does not let an inactive viewer claim a done session without a takeover", () => {
+		const sessions = new Map<string, Session>([
+			["1", makeSession({ id: "1", status: "done", activeViewer: "a" })],
+		]);
+
+		resizeSession(sessions, "1", 120, 40, { viewerId: "b" });
+
+		expect(sessions.get("1")?.activeViewer).toBe("a");
+	});
 });
