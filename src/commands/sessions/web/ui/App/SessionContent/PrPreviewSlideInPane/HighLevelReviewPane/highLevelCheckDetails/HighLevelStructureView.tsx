@@ -6,7 +6,7 @@ import type {
 } from "../../../../../../../../review/highLevel/types";
 import { HighLevelDiffDialog } from "./HighLevelStructureView/HighLevelDiffDialog";
 import { HighLevelTreeRows } from "./HighLevelStructureView/HighLevelTreeRows";
-import { useHighLevelTreeCollapse } from "./HighLevelStructureView/useHighLevelTreeCollapse";
+import { useHighLevelCollapse } from "./useHighLevelCollapse";
 
 export function HighLevelStructureView({
 	structure,
@@ -15,7 +15,7 @@ export function HighLevelStructureView({
 	structure: HighLevelStructure;
 	subject: string;
 }) {
-	const { collapsed, onToggle } = useHighLevelTreeCollapse(subject);
+	const { collapsed, onToggle } = useHighLevelCollapse(subject);
 	const [open, setOpen] = useState<HighLevelTreeFile | undefined>();
 
 	if (structure.tree.length === 0)

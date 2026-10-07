@@ -1,4 +1,6 @@
-import { Box, Link, Typography } from "@mui/material";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Box, IconButton, Link, Typography } from "@mui/material";
 import type { HighLevelCriticalDiff } from "../../../../../../../../../review/highLevel/types";
 import { HighLevelLineCounts } from "../HighLevelLineCounts";
 import {
@@ -8,11 +10,25 @@ import {
 
 export function HighLevelCriticalDiffHeader({
 	diff,
+	collapsed,
+	onToggle,
 }: {
 	diff: HighLevelCriticalDiff;
+	collapsed: boolean;
+	onToggle: () => void;
 }) {
+	const Chevron = collapsed ? ChevronRightIcon : ExpandMoreIcon;
 	return (
 		<Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
+			<IconButton
+				size="small"
+				onClick={onToggle}
+				aria-expanded={!collapsed}
+				aria-label={`${collapsed ? "Expand" : "Collapse"} ${diff.path}`}
+				sx={{ p: 0.25, flexShrink: 0 }}
+			>
+				<Chevron sx={{ fontSize: 16 }} />
+			</IconButton>
 			<Link
 				href={diff.diffUrl}
 				target="_blank"

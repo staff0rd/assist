@@ -5,15 +5,19 @@ import { HighLevelCriticalDiffHeader } from "./HighLevelCriticalDiffs/HighLevelC
 import { HighLevelDiffNote } from "./HighLevelDiffNote";
 import { HighLevelNativeDiff } from "./HighLevelNativeDiff";
 import { useDiffViewType } from "../../../../useDiffViewType";
+import { useHighLevelCollapse } from "./useHighLevelCollapse";
 
 export function HighLevelCriticalDiffs({
 	diffs,
 	criticalPaths,
+	subject,
 }: {
 	diffs: HighLevelCriticalDiff[];
 	criticalPaths: string[];
+	subject: string;
 }) {
 	const { viewType, onChange } = useDiffViewType();
+	const { collapsed, onToggle } = useHighLevelCollapse(`critical:${subject}`);
 
 	if (criticalPaths.length === 0)
 		return (
@@ -32,14 +36,20 @@ export function HighLevelCriticalDiffs({
 			</Box>
 			{diffs.map((diff) => (
 				<Box key={diff.path} sx={{ mb: 1, minWidth: 0 }}>
-					<HighLevelCriticalDiffHeader diff={diff} />
-					<HighLevelNativeDiff
-						path={diff.path}
-						status={diff.status}
-						patch={diff.patch}
-						truncated={diff.truncated === true}
-						viewType={viewType}
+					<HighLevelCriticalDiffHeader
+						diff={diff}
+						collapsed={collapsed.has(diff.path)}
+						onToggle={() => onToggle(diff.path)}
 					/>
+					{!collapsed.has(diff.path) && (
+						<HighLevelNativeDiff
+							path={diff.path}
+							status={diff.status}
+							patch={diff.patch}
+							truncated={diff.truncated === true}
+							viewType={viewType}
+						/>
+					)}
 				</Box>
 			))}
 		</Box>

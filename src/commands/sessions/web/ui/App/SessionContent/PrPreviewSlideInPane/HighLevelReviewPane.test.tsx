@@ -244,6 +244,15 @@ describe("HighLevelReviewPane", () => {
 		expect(screen.getByText("schema.graphql")).toBeTruthy();
 		expect(container.textContent).toContain("type New");
 		expect(container.textContent).toContain("type Old");
+
+		fireEvent.click(
+			screen.getByRole("button", { name: "Collapse schema.graphql" }),
+		);
+		expect(container.textContent).not.toContain("type New");
+		fireEvent.click(
+			screen.getByRole("button", { name: "Expand schema.graphql" }),
+		);
+		expect(container.textContent).toContain("type New");
 	});
 
 	it("reopens a saved review with its ticks and comments", () => {

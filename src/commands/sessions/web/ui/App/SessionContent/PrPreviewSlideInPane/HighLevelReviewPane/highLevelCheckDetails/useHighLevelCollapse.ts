@@ -3,11 +3,11 @@ import {
 	loadPersisted,
 	prunePersisted,
 	savePersisted,
-} from "../../../../../loadPersisted";
+} from "../../../../loadPersisted";
 
 const PREFIX = "assist:high-level-tree:";
 
-export function useHighLevelTreeCollapse(subject: string): {
+export function useHighLevelCollapse(subject: string): {
 	collapsed: Set<string>;
 	onToggle: (path: string) => void;
 } {

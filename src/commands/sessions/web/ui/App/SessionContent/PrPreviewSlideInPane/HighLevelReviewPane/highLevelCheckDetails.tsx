@@ -8,6 +8,7 @@ import { highLevelChangedFileCount } from "../../../../../../../review/highLevel
 export function highLevelCheckDetails(
 	payload: HighLevelPreviewPayload,
 ): Record<string, ReactNode> {
+	const subject = `${payload.repo}#${payload.prNumber}`;
 	return {
 		"structure-sensible": (
 			<HighLevelCheckDetail
@@ -15,7 +16,7 @@ export function highLevelCheckDetails(
 			>
 				<HighLevelStructureView
 					structure={payload.structure}
-					subject={`${payload.repo}#${payload.prNumber}`}
+					subject={subject}
 				/>
 			</HighLevelCheckDetail>
 		),
@@ -26,6 +27,7 @@ export function highLevelCheckDetails(
 				<HighLevelCriticalDiffs
 					diffs={payload.criticalDiffs}
 					criticalPaths={payload.criticalPaths}
+					subject={subject}
 				/>
 			</HighLevelCheckDetail>
 		),
