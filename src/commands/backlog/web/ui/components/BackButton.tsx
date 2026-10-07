@@ -9,6 +9,7 @@ export function BackButton({ to }: BackButtonProps) {
 	const navigate = useNavigate();
 	return (
 		<Button
+			data-backlog-focus="back"
 			variant="text"
 			size="small"
 			onClick={() => navigate(to)}

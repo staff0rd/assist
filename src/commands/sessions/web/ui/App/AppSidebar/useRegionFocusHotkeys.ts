@@ -5,6 +5,7 @@ import type { SessionInfo, SidebarTab } from "../../types";
 import { useCaptureHotkey } from "../useCaptureHotkey";
 import { useShortcut } from "../useShortcut";
 import { focusRegion } from "../focusRegion";
+import { backlogRegion } from "./useRegionFocusHotkeys/backlogRegion";
 import { sessionRegion } from "./useRegionFocusHotkeys/sessionRegion";
 import { useFocusSidebarHotkey } from "./useRegionFocusHotkeys/useFocusSidebarHotkey";
 import { useToggleDiffHotkey } from "./useRegionFocusHotkeys/useToggleDiffHotkey";
@@ -40,10 +41,15 @@ export function useRegionFocusHotkeys({
 	useCaptureHotkey(
 		useShortcut("focusTerminal").matches,
 		useCallback(() => {
+			const backlog = backlogRegion(pathname);
+			if (backlog) {
+				focusRegion(backlog, ringColor);
+				return;
+			}
 			if (!activeId) return;
 			showSessions();
 			focusRegion(sessionRegion("terminal", activeId), ringColor);
-		}, [activeId, showSessions, ringColor]),
+		}, [pathname, activeId, showSessions, ringColor]),
 	);
 
 	useToggleDiffHotkey({

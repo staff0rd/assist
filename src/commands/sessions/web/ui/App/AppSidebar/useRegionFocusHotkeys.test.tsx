@@ -51,6 +51,16 @@ function Regions({ tab, collapsed }: { tab: SidebarTab; collapsed: boolean }) {
 					</div>
 				</>
 			)}
+			{pathname === "/backlog" && (
+				<div data-backlog-focus="search">
+					<input aria-label="search" />
+				</div>
+			)}
+			{pathname.startsWith("/backlog/items/") && (
+				<button type="button" data-backlog-focus="back">
+					back
+				</button>
+			)}
 			{pathname === "/sessions" && preview && (
 				<div data-preview-session-id="a" tabIndex={-1}>
 					preview
@@ -175,6 +185,24 @@ describe("useRegionFocusHotkeys", () => {
 		pressAlt("KeyS");
 
 		expect(document.activeElement).toBe(screen.getByLabelText("terminal"));
+	});
+
+	it("Alt+S on the backlog list focuses the search field without leaving the backlog", () => {
+		renderShell({ path: "/backlog" });
+
+		pressAlt("KeyS");
+
+		expect(screen.getByLabelText("path").textContent).toBe("/backlog");
+		expect(document.activeElement).toBe(screen.getByLabelText("search"));
+	});
+
+	it("Alt+S on a backlog item page focuses the back button", () => {
+		renderShell({ path: "/backlog/items/a1" });
+
+		pressAlt("KeyS");
+
+		expect(screen.getByLabelText("path").textContent).toBe("/backlog/items/a1");
+		expect(document.activeElement).toBe(screen.getByText("back"));
 	});
 
 	it("Alt+D opens and focuses the diff, then closes it back to the terminal", () => {

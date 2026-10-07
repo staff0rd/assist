@@ -13,7 +13,10 @@ export type Shortcut = {
 export const shortcutRegistry = {
 	navTab: { label: "Switch top-level tab", group: "Navigate" },
 	focusSidebar: { label: "Focus sidebar", group: "Navigate" },
-	focusTerminal: { label: "Focus terminal", group: "Navigate" },
+	focusTerminal: {
+		label: "Focus terminal (backlog: search / back)",
+		group: "Navigate",
+	},
 	toggleDiff: {
 		label: "Open / close diff panel, or focus preview pane",
 		group: "Navigate",

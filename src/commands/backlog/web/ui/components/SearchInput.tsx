@@ -8,6 +8,7 @@ type SearchInputProps = {
 export function SearchInput({ value, onChange }: SearchInputProps) {
 	return (
 		<TextField
+			data-backlog-focus="search"
 			fullWidth
 			size="small"
 			placeholder="Search backlog…"
