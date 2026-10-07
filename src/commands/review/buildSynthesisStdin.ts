@@ -29,6 +29,10 @@ Severity rubric (recalibrate each finding against this — reviewers tend to inf
 
 Default to the lower tier when uncertain. Code-style preferences, refactor suggestions, and "I would have written it differently" belong in nit — not major. A finding is only major if you can name a concrete failure mode or regression. If a reviewer marked something major but the impact reads as taste or hypothetical, downgrade it.
 
+## Keep tautological-test findings
+
+A finding that a test added or changed by this change is tautological or vacuous — it asserts a mock returns its stub, computes its expected value with the code under test, only checks a mock was called, has no real assertions, snapshots mocked output, or would still pass if the implementation broke — is a legitimate defect, not taste. Keep it even when only one reviewer raised it, and do not downgrade it below minor. Keep major when the test is the sole coverage of a behaviour the change introduces or modifies.
+
 Rules:
 - \`confirmed\` = both reviewers raised it.
 - \`disputed\` = the reviewers disagreed on the diagnosis or fix.
