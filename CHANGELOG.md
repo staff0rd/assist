@@ -1,3 +1,10 @@
+## [0.785.1](https://github.com/staff0rd/assist/compare/v0.785.0...v0.785.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* take over ended sessions ([359117f](https://github.com/staff0rd/assist/commit/359117fe1a55b9f80ad61dc95034c8808ccc40a5))
+
 # [0.785.0](https://github.com/staff0rd/assist/compare/v0.784.3...v0.785.0) (2026-10-07)
 
 
