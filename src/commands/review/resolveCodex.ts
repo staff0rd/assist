@@ -20,12 +20,13 @@ export function resolveCodex(args: Args): Promise<ReviewerResult> {
 	if (args.plan.kind === "skipped") {
 		return Promise.resolve(skippedCodexResult(args.codexPath));
 	}
+	const name = args.slot?.label ?? "codex";
 	const override = args.slot?.override ?? buildCodexModelArgs();
 	const spinner = args.multi?.create(
-		`${reviewerLabel("codex", override.model)} — starting`,
+		`${reviewerLabel(name, override.model)} — starting`,
 	);
 	return runSlot(args.slot?.harness ?? "codex", {
-		name: "codex",
+		name,
 		reviewDir: args.reviewDir,
 		stdin: args.stdin,
 		outputPath: args.codexPath,

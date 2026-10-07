@@ -23,6 +23,6 @@ export function deriveEndpoints(
 			anthropicKind: "foundry",
 		};
 	throw new Error(
-		`Unsupported ASSIST_REVIEW_PROVIDER "${provider}" (expected one of: ${reviewCiProviders.join(", ")})`,
+		`Unsupported REVIEW_CI_PROVIDER "${provider}" (expected one of: ${reviewCiProviders.join(", ")})`,
 	);
 }

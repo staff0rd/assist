@@ -23,7 +23,10 @@ export async function reviewCiReview(env: NodeJS.ProcessEnv): Promise<void> {
 		submit: true,
 		force: true,
 		verbose: true,
-		ci: { models: buildCiReviewerModels(config, endpoints, token) },
+		ci: {
+			models: buildCiReviewerModels(config, endpoints, token),
+			summaryPath: env.GITHUB_STEP_SUMMARY,
+		},
 	});
 }
 

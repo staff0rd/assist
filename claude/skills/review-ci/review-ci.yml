@@ -12,16 +12,16 @@ permissions:
 jobs:
   review:
     runs-on: ubuntu-latest
-    environment: ${{ vars.ASSIST_REVIEW_ENVIRONMENT }}
+    environment: ${{ vars.REVIEW_CI_ENVIRONMENT }}
     env:
-      ASSIST_REVIEW_PROVIDER: ${{ vars.ASSIST_REVIEW_PROVIDER }}
-      ASSIST_REVIEW_BASE_URL: ${{ vars.ASSIST_REVIEW_BASE_URL }}
-      ASSIST_REVIEW_REVIEWER_1: ${{ vars.ASSIST_REVIEW_REVIEWER_1 }}
-      ASSIST_REVIEW_REVIEWER_2: ${{ vars.ASSIST_REVIEW_REVIEWER_2 }}
-      ASSIST_REVIEW_SYNTHESIS: ${{ vars.ASSIST_REVIEW_SYNTHESIS }}
-      ASSIST_REVIEW_AZURE_CLIENT_ID: ${{ vars.ASSIST_REVIEW_AZURE_CLIENT_ID }}
-      ASSIST_REVIEW_AZURE_TENANT_ID: ${{ vars.ASSIST_REVIEW_AZURE_TENANT_ID }}
-      ASSIST_REVIEW_API_KEY: ${{ secrets.ASSIST_REVIEW_API_KEY }}
+      REVIEW_CI_PROVIDER: ${{ vars.REVIEW_CI_PROVIDER }}
+      REVIEW_CI_BASE_URL: ${{ vars.REVIEW_CI_BASE_URL }}
+      REVIEW_CI_REVIEWER_1: ${{ vars.REVIEW_CI_REVIEWER_1 }}
+      REVIEW_CI_REVIEWER_2: ${{ vars.REVIEW_CI_REVIEWER_2 }}
+      REVIEW_CI_SYNTHESIS: ${{ vars.REVIEW_CI_SYNTHESIS }}
+      REVIEW_CI_AZURE_CLIENT_ID: ${{ vars.REVIEW_CI_AZURE_CLIENT_ID }}
+      REVIEW_CI_AZURE_TENANT_ID: ${{ vars.REVIEW_CI_AZURE_TENANT_ID }}
+      REVIEW_CI_API_KEY: ${{ secrets.REVIEW_CI_API_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
@@ -36,11 +36,11 @@ jobs:
           node-version: "lts/*"
 
       - name: Install Claude Code
-        if: startsWith(vars.ASSIST_REVIEW_REVIEWER_1, 'claude:') || startsWith(vars.ASSIST_REVIEW_REVIEWER_2, 'claude:') || startsWith(vars.ASSIST_REVIEW_SYNTHESIS, 'claude:')
+        if: startsWith(vars.REVIEW_CI_REVIEWER_1, 'claude:') || startsWith(vars.REVIEW_CI_REVIEWER_2, 'claude:') || startsWith(vars.REVIEW_CI_SYNTHESIS, 'claude:')
         run: npm install -g @anthropic-ai/claude-code
 
       - name: Install Codex
-        if: startsWith(vars.ASSIST_REVIEW_REVIEWER_1, 'codex:') || startsWith(vars.ASSIST_REVIEW_REVIEWER_2, 'codex:') || startsWith(vars.ASSIST_REVIEW_SYNTHESIS, 'codex:')
+        if: startsWith(vars.REVIEW_CI_REVIEWER_1, 'codex:') || startsWith(vars.REVIEW_CI_REVIEWER_2, 'codex:') || startsWith(vars.REVIEW_CI_SYNTHESIS, 'codex:')
         run: npm install -g @openai/codex
 
       - name: Check review config

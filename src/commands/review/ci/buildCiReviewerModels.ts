@@ -57,13 +57,14 @@ export function buildCiReviewerModels(
 	endpoints: ReviewCiEndpoints,
 	token: string,
 ): Required<ReviewerModels> {
-	const slotModel = (slot: ReviewCiSlot): SlotModel => ({
+	const slotModel = (slot: ReviewCiSlot, label: string): SlotModel => ({
 		harness: slot.harness,
+		label,
 		override: buildOverride(slot, config, endpoints, token),
 	});
 	return {
-		claude: slotModel(config.slots.claude),
-		codex: slotModel(config.slots.codex),
-		synthesis: slotModel(config.slots.synthesis),
+		claude: slotModel(config.slots.claude, "reviewer-1"),
+		codex: slotModel(config.slots.codex, "reviewer-2"),
+		synthesis: slotModel(config.slots.synthesis, "synthesis"),
 	};
 }

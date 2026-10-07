@@ -55,13 +55,14 @@ describe("buildCiReviewerModels", () => {
 		});
 		expect(
 			Object.values(allCodex).map((slot) => [
+				slot.label,
 				slot.harness,
 				slot.override.model,
 			]),
 		).toEqual([
-			["codex", "gpt-5.6-terra"],
-			["codex", "gpt-5.4"],
-			["codex", "gpt-5.6-terra"],
+			["reviewer-1", "codex", "gpt-5.6-terra"],
+			["reviewer-2", "codex", "gpt-5.4"],
+			["synthesis", "codex", "gpt-5.6-terra"],
 		]);
 	});
 });

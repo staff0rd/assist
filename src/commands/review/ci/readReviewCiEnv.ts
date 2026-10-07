@@ -18,9 +18,9 @@ export type ReviewCiConfig = {
 };
 
 const slotVariables: Record<ReviewCiSlotName, ReviewCiVariable> = {
-	claude: "ASSIST_REVIEW_REVIEWER_1",
-	codex: "ASSIST_REVIEW_REVIEWER_2",
-	synthesis: "ASSIST_REVIEW_SYNTHESIS",
+	claude: "REVIEW_CI_REVIEWER_1",
+	codex: "REVIEW_CI_REVIEWER_2",
+	synthesis: "REVIEW_CI_SYNTHESIS",
 };
 
 export function readReviewCiEnv(env: NodeJS.ProcessEnv): {
@@ -28,7 +28,7 @@ export function readReviewCiEnv(env: NodeJS.ProcessEnv): {
 	errors: string[];
 } {
 	const value = (key: ReviewCiKey) => env[key]?.trim() ?? "";
-	const provider = value("ASSIST_REVIEW_PROVIDER");
+	const provider = value("REVIEW_CI_PROVIDER");
 	const missing = [
 		...reviewCiVariables,
 		...reviewCiAuthKeys(provider, value),
@@ -47,7 +47,7 @@ export function readReviewCiEnv(env: NodeJS.ProcessEnv): {
 	return {
 		config: {
 			provider,
-			baseUrl: value("ASSIST_REVIEW_BASE_URL").replace(/\/+$/, ""),
+			baseUrl: value("REVIEW_CI_BASE_URL").replace(/\/+$/, ""),
 			slots: Object.fromEntries(parsed) as ReviewCiConfig["slots"],
 			auth: readReviewCiAuth(provider, value),
 		},

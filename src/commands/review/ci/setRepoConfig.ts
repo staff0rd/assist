@@ -7,12 +7,22 @@ import {
 } from "./reviewCiVariables";
 
 const retiredVariables = [
+	"ASSIST_REVIEW_PROVIDER",
+	"ASSIST_REVIEW_BASE_URL",
 	"ASSIST_REVIEW_CLAUDE_MODEL",
 	"ASSIST_REVIEW_CODEX_MODEL",
+	"ASSIST_REVIEW_REVIEWER_1",
+	"ASSIST_REVIEW_REVIEWER_2",
+	"ASSIST_REVIEW_SYNTHESIS",
+	"ASSIST_REVIEW_AZURE_CLIENT_ID",
+	"ASSIST_REVIEW_AZURE_TENANT_ID",
+	"ASSIST_REVIEW_ENVIRONMENT",
 ];
 
-function deleteVariableIfSet(key: string): void {
-	spawnSync("gh", ["variable", "delete", key], { stdio: "ignore" });
+const retiredSecret = "ASSIST_REVIEW_API_KEY";
+
+function deleteIfSet(kind: "variable" | "secret", key: string): void {
+	spawnSync("gh", [kind, "delete", key], { stdio: "ignore" });
 }
 
 export function setRepoConfig(
@@ -21,14 +31,15 @@ export function setRepoConfig(
 	for (const key of [...reviewCiVariables, ...reviewCiEntraVariables]) {
 		const value = values[key];
 		if (!value) {
-			deleteVariableIfSet(key);
+			deleteIfSet("variable", key);
 			continue;
 		}
 		execFileSync("gh", ["variable", "set", key, "--body", value], {
 			stdio: ["ignore", "inherit", "inherit"],
 		});
 	}
-	for (const key of retiredVariables) deleteVariableIfSet(key);
+	for (const key of retiredVariables) deleteIfSet("variable", key);
+	deleteIfSet("secret", retiredSecret);
 	const apiKey = values[reviewCiSecret];
 	if (!apiKey) return;
 	execFileSync("gh", ["secret", "set", reviewCiSecret], {

@@ -1,10 +1,11 @@
-import { gatherContext } from "./gatherContext";
+import { writeJobSummary } from "./ci/writeJobSummary";
 import { handlePostSynthesis } from "./handlePostSynthesis";
 import type { PrDiffRef } from "./postReviewToPr";
 import type { ReviewerModels } from "./ReviewerModels";
 import { runReviewPipeline } from "./runReviewPipeline";
 import { attachReviewLog } from "./startReviewLog";
 import { setupReviewDir } from "./setupReviewDir";
+import { gatherChangedContext } from "./gatherChangedContext";
 
 type ReviewPrOptions = {
 	prompt?: boolean;
@@ -16,17 +17,8 @@ type ReviewPrOptions = {
 	verbose?: boolean;
 	addressComments?: boolean;
 	announce?: boolean;
-	ci?: { models: ReviewerModels };
+	ci?: { models: ReviewerModels; summaryPath?: string };
 };
-
-function gatherChangedContext(): ReturnType<typeof gatherContext> {
-	const context = gatherContext();
-	if (context.changedFiles.length > 0) return context;
-	console.error(
-		`Error: PR #${context.prNumber} has no changed files — nothing to review.`,
-	);
-	process.exit(1);
-}
 
 function runPostSynthesis(
 	synthesisPath: string,
@@ -60,6 +52,8 @@ export async function reviewPr(
 		console.error("Review failed; nothing was posted.");
 		process.exit(1);
 	}
+	if (synthesisOk && options.ci)
+		writeJobSummary(paths.synthesisPath, context, options.ci.summaryPath);
 	if (synthesisOk)
 		await runPostSynthesis(paths.synthesisPath, context, options);
 	console.log(`Done. Review folder: ${paths.reviewDir}`);

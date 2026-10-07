@@ -13,7 +13,7 @@ export function readReviewCiAuth(
 		return { kind: "key", apiKey: value(reviewCiSecret) };
 	return {
 		kind: "entra",
-		clientId: value("ASSIST_REVIEW_AZURE_CLIENT_ID"),
-		tenantId: value("ASSIST_REVIEW_AZURE_TENANT_ID"),
+		clientId: value("REVIEW_CI_AZURE_CLIENT_ID"),
+		tenantId: value("REVIEW_CI_AZURE_TENANT_ID"),
 	};
 }

@@ -2,22 +2,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { checkReviewCi } from "./checkReviewCi";
 
 const fullEnv = {
-	ASSIST_REVIEW_PROVIDER: "litellm",
-	ASSIST_REVIEW_BASE_URL: "https://proxy.example/",
-	ASSIST_REVIEW_REVIEWER_1: "claude:claude-sonnet",
-	ASSIST_REVIEW_REVIEWER_2: "codex:gpt-codex",
-	ASSIST_REVIEW_SYNTHESIS: "claude:claude-sonnet",
-	ASSIST_REVIEW_API_KEY: "sk-test",
+	REVIEW_CI_PROVIDER: "litellm",
+	REVIEW_CI_BASE_URL: "https://proxy.example/",
+	REVIEW_CI_REVIEWER_1: "claude:claude-sonnet",
+	REVIEW_CI_REVIEWER_2: "codex:gpt-codex",
+	REVIEW_CI_SYNTHESIS: "claude:claude-sonnet",
+	REVIEW_CI_API_KEY: "sk-test",
 };
 
 const foundryEntraEnv = {
-	ASSIST_REVIEW_PROVIDER: "foundry",
-	ASSIST_REVIEW_BASE_URL: "https://res.services.ai.azure.com",
-	ASSIST_REVIEW_REVIEWER_1: "codex:gpt-5.6-terra",
-	ASSIST_REVIEW_REVIEWER_2: "codex:gpt-5.4",
-	ASSIST_REVIEW_SYNTHESIS: "codex:gpt-5.6-terra",
-	ASSIST_REVIEW_AZURE_CLIENT_ID: "client-id",
-	ASSIST_REVIEW_AZURE_TENANT_ID: "tenant-id",
+	REVIEW_CI_PROVIDER: "foundry",
+	REVIEW_CI_BASE_URL: "https://res.services.ai.azure.com",
+	REVIEW_CI_REVIEWER_1: "codex:gpt-5.6-terra",
+	REVIEW_CI_REVIEWER_2: "codex:gpt-5.4",
+	REVIEW_CI_SYNTHESIS: "codex:gpt-5.6-terra",
+	REVIEW_CI_AZURE_CLIENT_ID: "client-id",
+	REVIEW_CI_AZURE_TENANT_ID: "tenant-id",
 	GITHUB_ACTIONS: "true",
 	ACTIONS_ID_TOKEN_REQUEST_URL: "https://oidc.example/token?api-version=2.0",
 	ACTIONS_ID_TOKEN_REQUEST_TOKEN: "request-token",
@@ -44,16 +44,16 @@ describe("checkReviewCi", () => {
 
 	it("names every unset variable and the secret without making a request", async () => {
 		const errors = await checkReviewCi({
-			ASSIST_REVIEW_PROVIDER: "litellm",
-			ASSIST_REVIEW_REVIEWER_2: " ",
+			REVIEW_CI_PROVIDER: "litellm",
+			REVIEW_CI_REVIEWER_2: " ",
 		});
 
 		expect(errors).toEqual([
-			"ASSIST_REVIEW_BASE_URL is not set",
-			"ASSIST_REVIEW_REVIEWER_1 is not set",
-			"ASSIST_REVIEW_REVIEWER_2 is not set",
-			"ASSIST_REVIEW_SYNTHESIS is not set",
-			"ASSIST_REVIEW_API_KEY is not set",
+			"REVIEW_CI_BASE_URL is not set",
+			"REVIEW_CI_REVIEWER_1 is not set",
+			"REVIEW_CI_REVIEWER_2 is not set",
+			"REVIEW_CI_SYNTHESIS is not set",
+			"REVIEW_CI_API_KEY is not set",
 		]);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -61,23 +61,23 @@ describe("checkReviewCi", () => {
 	it("asks for the tenant instead of the key when foundry has a client ID", async () => {
 		const errors = await checkReviewCi({
 			...foundryEntraEnv,
-			ASSIST_REVIEW_AZURE_TENANT_ID: "",
+			REVIEW_CI_AZURE_TENANT_ID: "",
 		});
 
-		expect(errors).toEqual(["ASSIST_REVIEW_AZURE_TENANT_ID is not set"]);
+		expect(errors).toEqual(["REVIEW_CI_AZURE_TENANT_ID is not set"]);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it("names each slot that is not harness:model", async () => {
 		const errors = await checkReviewCi({
 			...fullEnv,
-			ASSIST_REVIEW_REVIEWER_1: "gpt-5.4",
-			ASSIST_REVIEW_SYNTHESIS: "pi:gpt-5.4",
+			REVIEW_CI_REVIEWER_1: "gpt-5.4",
+			REVIEW_CI_SYNTHESIS: "pi:gpt-5.4",
 		});
 
 		expect(errors).toEqual([
-			'ASSIST_REVIEW_REVIEWER_1 "gpt-5.4" must be claude:<model> or codex:<model>',
-			'ASSIST_REVIEW_SYNTHESIS "pi:gpt-5.4" must be claude:<model> or codex:<model>',
+			'REVIEW_CI_REVIEWER_1 "gpt-5.4" must be claude:<model> or codex:<model>',
+			'REVIEW_CI_SYNTHESIS "pi:gpt-5.4" must be claude:<model> or codex:<model>',
 		]);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -85,11 +85,11 @@ describe("checkReviewCi", () => {
 	it("rejects an unsupported provider without making a request", async () => {
 		const errors = await checkReviewCi({
 			...fullEnv,
-			ASSIST_REVIEW_PROVIDER: "bedrock",
+			REVIEW_CI_PROVIDER: "bedrock",
 		});
 
 		expect(errors).toEqual([
-			'Unsupported ASSIST_REVIEW_PROVIDER "bedrock" (expected one of: litellm, foundry)',
+			'Unsupported REVIEW_CI_PROVIDER "bedrock" (expected one of: litellm, foundry)',
 		]);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -121,8 +121,8 @@ describe("checkReviewCi", () => {
 		expect(
 			await checkReviewCi({
 				...fullEnv,
-				ASSIST_REVIEW_PROVIDER: "foundry",
-				ASSIST_REVIEW_BASE_URL: "https://res.services.ai.azure.com/",
+				REVIEW_CI_PROVIDER: "foundry",
+				REVIEW_CI_BASE_URL: "https://res.services.ai.azure.com/",
 			}),
 		).toEqual([]);
 

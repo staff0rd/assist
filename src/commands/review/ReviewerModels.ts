@@ -4,6 +4,7 @@ export type Harness = "claude" | "codex";
 
 export type SlotModel = {
 	harness: Harness;
+	label: string;
 	override: CodexModelOverride;
 };
 

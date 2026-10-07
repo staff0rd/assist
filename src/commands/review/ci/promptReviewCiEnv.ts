@@ -14,20 +14,20 @@ export async function promptReviewCiEnv(
 	for (const key of reviewCiVariables)
 		result[key] = await askReviewCiKey(key, given);
 
-	if (result.ASSIST_REVIEW_PROVIDER === "foundry") {
+	if (result.REVIEW_CI_PROVIDER === "foundry") {
 		const clientId = await askReviewCiKey(
-			"ASSIST_REVIEW_AZURE_CLIENT_ID",
+			"REVIEW_CI_AZURE_CLIENT_ID",
 			given,
 			true,
 		);
 		if (clientId) {
-			result.ASSIST_REVIEW_AZURE_CLIENT_ID = clientId;
-			result.ASSIST_REVIEW_AZURE_TENANT_ID = await askReviewCiKey(
-				"ASSIST_REVIEW_AZURE_TENANT_ID",
+			result.REVIEW_CI_AZURE_CLIENT_ID = clientId;
+			result.REVIEW_CI_AZURE_TENANT_ID = await askReviewCiKey(
+				"REVIEW_CI_AZURE_TENANT_ID",
 				given,
 			);
-			result.ASSIST_REVIEW_ENVIRONMENT = await askReviewCiKey(
-				"ASSIST_REVIEW_ENVIRONMENT",
+			result.REVIEW_CI_ENVIRONMENT = await askReviewCiKey(
+				"REVIEW_CI_ENVIRONMENT",
 				given,
 				true,
 			);
