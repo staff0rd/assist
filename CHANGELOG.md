@@ -1,3 +1,10 @@
+# [0.788.0](https://github.com/staff0rd/assist/compare/v0.787.0...v0.788.0) (2026-10-07)
+
+
+### Features
+
+* review-ci per-slot models, Entra ([3a0bcbc](https://github.com/staff0rd/assist/commit/3a0bcbc1e923c42588e80b21800e83397e935fc4))
+
 # [0.787.0](https://github.com/staff0rd/assist/compare/v0.786.1...v0.787.0) (2026-10-07)
 
 
