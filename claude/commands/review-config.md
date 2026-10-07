@@ -27,10 +27,24 @@ Every glob must match files this repo actually has. Check each one does before p
 
 ## Step 3: Put the proposal to the user
 
-Show the globs with, for each, the files in this repo it matches (a count, plus a few names). Ask them to accept or edit, and ask which config file the values go to:
+Do not ask in chat. Write the proposal as markdown to a scratch file with the Write tool, one heading per key so each can be commented on:
 
-- `project` — the repo's own `assist.yml`, checked in, so the team reviews against the same globs
-- `repo` — this repo's block in `~/.assist.yml`, personal to this machine
+- each glob as its own bullet, with the files in this repo it matches (a count, plus a few names), and why it belongs
+- `descriptionWordCap` with its value
+- the scope you propose, with the other one named so the user can swap it:
+  - `project` — the repo's own `assist.yml`, checked in, so the team reviews against the same globs (propose this unless the user has said otherwise)
+  - `repo` — this repo's block in `~/.assist.yml`, personal to this machine
+
+Then run, **as a background task**, doing no other work until it returns:
+
+```
+assist ask --title 'High-level review config' --body - < <scratch file>
+```
+
+- **Approved (exit 0)** — fold every printed inline comment into the answers (a comment on a glob edits or drops it; a comment on the scope switches it), then write.
+- **Rejected (non-zero exit)** — write nothing. Address the reason and each comment, re-check any changed glob still matches files, revise the scratch file and re-run `assist ask`.
+
+Outside a web session `assist ask` only prints the markdown and exits 0 without a decision: ask the user in chat instead, and write only once they have answered.
 
 ## Step 4: Write the answers
 
