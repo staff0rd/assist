@@ -1,3 +1,10 @@
+## [0.784.3](https://github.com/staff0rd/assist/compare/v0.784.2...v0.784.3) (2026-10-07)
+
+
+### Bug Fixes
+
+* deny attached -c on gh close ([8c5827f](https://github.com/staff0rd/assist/commit/8c5827f9b52c5f54a2a66746dda6d1a99cc8e9af))
+
 ## [0.784.2](https://github.com/staff0rd/assist/compare/v0.784.1...v0.784.2) (2026-10-07)
 
 
