@@ -56,6 +56,12 @@ const GH_ISSUE_API_MESSAGE =
 const BRANCH_CREATION_MESSAGE =
 	"Do not create branches with raw git. Use the /branch command, or 'assist branch <slug> [--jira <KEY>]' — it branches off the fresh remote default and enforces the team naming convention.";
 
+const CLOSE_WITH_COMMENT_MESSAGE =
+	"Do not post a comment through 'gh issue close', 'gh issue reopen' or 'gh pr close' with --comment/-c — it goes to GitHub without the approval pane. Post the comment first with 'assist github issue comment <number> --body <body> [-R <owner>/<repo>]', which validates it and gates it on the user's approval, then run the same close/reopen without --comment.";
+
+const CLOSE_WITH_COMMENT_REGEX =
+	/(?<=^|\s)gh\s+(?:issue\s+(?:close|reopen)|pr\s+close)(?=\s|$)[^;&|\n]*?\s(?:--comment|-c)(?=[\s=]|$)/;
+
 const COMMAND_BOUNDARY = String.raw`(?<=(?:^|[;&|(\n])\s*)`;
 
 const BRANCH_CREATION_REGEXES: RegExp[] = [
@@ -90,6 +96,10 @@ export const builtinDenyRules: BuiltinDenyRule[] = [
 		message: BRANCH_CREATION_MESSAGE,
 		matches: (text: string) => regex.test(text),
 	})),
+	{
+		message: CLOSE_WITH_COMMENT_MESSAGE,
+		matches: (text: string) => CLOSE_WITH_COMMENT_REGEX.test(text),
+	},
 	{
 		message: GH_ISSUE_API_MESSAGE,
 		matches: isGhIssueApiWrite,

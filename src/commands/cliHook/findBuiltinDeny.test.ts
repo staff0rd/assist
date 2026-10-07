@@ -118,6 +118,54 @@ describe("findBuiltinDeny gh issue comment", () => {
 	});
 });
 
+describe("findBuiltinDeny close/reopen with a comment", () => {
+	it.each([
+		'gh issue close 310 -R acme/widgets --reason completed --comment "done"',
+		'gh issue close 310 -c "done"',
+		"gh issue close 310 --comment=done",
+		'gh issue reopen 310 --comment "again"',
+		'gh issue reopen 310 -c "again"',
+		'gh pr close 89 --comment "superseded"',
+		'gh pr close 89 -c "superseded" --delete-branch',
+	])("denies '%s' with a redirect to 'assist github issue comment'", (cmd) => {
+		const decision = findBuiltinDeny([cmd]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"assist github issue comment",
+		);
+		expect(decision?.permissionDecisionReason).toContain("without --comment");
+	});
+
+	it("denies it buried in a compound command part", () => {
+		const decision = findBuiltinDeny([
+			"cd /repo",
+			'gh issue close 310 --comment "done"',
+		]);
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("denies it in a raw compound command", () => {
+		const decision = findBuiltinDenyRaw(
+			'cd /repo && gh pr close 89 -c "done" && echo ok',
+		);
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it.each([
+		"gh issue close 310 -R acme/widgets --reason completed",
+		"gh issue reopen 310",
+		"gh pr close 89 --delete-branch",
+	])("does not deny '%s'", (cmd) => {
+		expect(findBuiltinDeny([cmd])).toBeUndefined();
+	});
+
+	it("does not deny a comment flag on a later command in a raw compound", () => {
+		expect(
+			findBuiltinDenyRaw("gh issue close 310 && git log -c"),
+		).toBeUndefined();
+	});
+});
+
 describe("findBuiltinDeny gh issue edit", () => {
 	it("denies 'gh issue edit' with a redirect to 'assist github issue edit'", () => {
 		const decision = findBuiltinDeny([
