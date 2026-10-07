@@ -1,3 +1,10 @@
+# [0.789.0](https://github.com/staff0rd/assist/compare/v0.788.1...v0.789.0) (2026-10-07)
+
+
+### Features
+
+* review-ci job summary, REVIEW_CI vars ([ba0e6cb](https://github.com/staff0rd/assist/commit/ba0e6cbc3a1b4159b20c9c23f947337933fd4699))
+
 ## [0.788.1](https://github.com/staff0rd/assist/compare/v0.788.0...v0.788.1) (2026-10-07)
 
 
