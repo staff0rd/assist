@@ -1,3 +1,10 @@
+## [0.789.1](https://github.com/staff0rd/assist/compare/v0.789.0...v0.789.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* allow Codex sandbox on CI runners ([b5c8bd9](https://github.com/staff0rd/assist/commit/b5c8bd9089f9ba83dd8bcee84c1a0620709ddba4))
+
 # [0.789.0](https://github.com/staff0rd/assist/compare/v0.788.1...v0.789.0) (2026-10-07)
 
 
