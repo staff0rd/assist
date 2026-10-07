@@ -1,3 +1,10 @@
+# [0.787.0](https://github.com/staff0rd/assist/compare/v0.786.1...v0.787.0) (2026-10-07)
+
+
+### Features
+
+* ALT+A focuses last card on backlog ([5e477b2](https://github.com/staff0rd/assist/commit/5e477b2509e07e2cf530db542ed3d9987efbf14e))
+
 ## [0.786.1](https://github.com/staff0rd/assist/compare/v0.786.0...v0.786.1) (2026-10-07)
 
 
