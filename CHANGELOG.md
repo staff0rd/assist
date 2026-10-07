@@ -1,3 +1,10 @@
+# [0.790.0](https://github.com/staff0rd/assist/compare/v0.789.1...v0.790.0) (2026-10-07)
+
+
+### Features
+
+* review-ci skips bot-authored PRs ([b60e06e](https://github.com/staff0rd/assist/commit/b60e06e5a62a8d9097c29ba4622f2c48f0e60df6))
+
 ## [0.789.1](https://github.com/staff0rd/assist/compare/v0.789.0...v0.789.1) (2026-10-07)
 
 
