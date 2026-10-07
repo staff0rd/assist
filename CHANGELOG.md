@@ -1,3 +1,10 @@
+## [0.788.1](https://github.com/staff0rd/assist/compare/v0.788.0...v0.788.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* collapse critical diffs in review pane ([0bc6897](https://github.com/staff0rd/assist/commit/0bc689711380786b958caff4986276f6dab55863))
+
 # [0.788.0](https://github.com/staff0rd/assist/compare/v0.787.0...v0.788.0) (2026-10-07)
 
 
