@@ -7,7 +7,7 @@ import {
 	screen,
 } from "@testing-library/react";
 import { useState } from "react";
-import { MemoryRouter, useLocation } from "react-router";
+import { MemoryRouter, useLocation, useNavigate } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { isFocusHeld } from "../holdFocus";
@@ -19,19 +19,27 @@ import { useRegionFocusHotkeys } from "./useRegionFocusHotkeys";
 const ALL_TOP_BAR_ACTIONS = ["focusAddAgent", "focusVsCode", "focusDone"];
 let preview = false;
 let topBarActions = ALL_TOP_BAR_ACTIONS;
+let sessionIds = ["a"];
+let selectedId = "a";
 
 function Regions({ tab, collapsed }: { tab: SidebarTab; collapsed: boolean }) {
 	const { pathname } = useLocation();
+	const navigate = useNavigate();
 	const panel = useDiffPanels().panelFor("a");
 	return (
 		<>
 			<output aria-label="path">{pathname}</output>
 			<output aria-label="tab">{tab}</output>
+			<button type="button" onClick={() => navigate("/backlog")}>
+				open backlog
+			</button>
 			{!collapsed && tab === "active" && (
 				<>
-					<button type="button" data-session-id="a">
-						card
-					</button>
+					{sessionIds.map((id) => (
+						<button key={id} type="button" data-session-id={id}>
+							{id === "a" ? "card" : `card ${id}`}
+						</button>
+					))}
 					<button type="button" data-shortcut="focusDone">
 						card done
 					</button>
@@ -77,17 +85,18 @@ function Regions({ tab, collapsed }: { tab: SidebarTab; collapsed: boolean }) {
 
 function Hotkeys({ tab, collapsed }: { tab: SidebarTab; collapsed: boolean }) {
 	const [currentTab, setCurrentTab] = useState(tab);
+	const deselected = useLocation().pathname.startsWith("/backlog");
 	useRegionFocusHotkeys({
-		sessions: [
+		sessions: sessionIds.map((id) =>
 			makeSessionInfo({
-				id: "a",
+				id,
 				cwd: "/repo",
 				pendingPrPreview: preview
 					? { requestId: "r", title: "t", body: "b", prNumber: null }
 					: undefined,
 			}),
-		],
-		activeId: "a",
+		),
+		activeId: deselected ? null : selectedId,
 		tab: currentTab,
 		onTabChange: setCurrentTab,
 	});
@@ -144,6 +153,8 @@ const animate = vi.fn();
 beforeEach(() => {
 	preview = false;
 	topBarActions = ALL_TOP_BAR_ACTIONS;
+	sessionIds = ["a"];
+	selectedId = "a";
 	frames = [];
 	vi.stubGlobal("requestAnimationFrame", (frame: FrameRequestCallback) => {
 		frames.push(frame);
@@ -160,13 +171,48 @@ afterEach(() => {
 });
 
 describe("useRegionFocusHotkeys", () => {
-	it("Alt+A reveals a collapsed sidebar on the history tab from another route, then focuses the active card", () => {
-		renderShell({ path: "/backlog", tab: "history", collapsed: true });
+	it("Alt+A on /sessions reveals a collapsed sidebar on the history tab, then focuses the active card", () => {
+		renderShell({ tab: "history", collapsed: true });
 
 		pressAlt("KeyA");
 
 		expect(screen.getByLabelText("path").textContent).toBe("/sessions");
 		expect(screen.getByLabelText("tab").textContent).toBe("active");
+		expect(document.activeElement).toBe(screen.getByText("card"));
+	});
+
+	it("Alt+A on the backlog focuses the last-selected card without leaving the backlog", () => {
+		sessionIds = ["a", "b"];
+		selectedId = "b";
+		renderShell();
+		fireEvent.click(screen.getByText("open backlog"));
+
+		pressAlt("KeyA");
+
+		expect(screen.getByLabelText("path").textContent).toBe("/backlog");
+		expect(document.activeElement).toBe(screen.getByText("card b"));
+		expect(isFocusHeld()).toBe(true);
+	});
+
+	it("Alt+A on a backlog item reveals a collapsed sidebar on the history tab before focusing", () => {
+		renderShell({ path: "/backlog/items/a1", tab: "history", collapsed: true });
+
+		pressAlt("KeyA");
+
+		expect(screen.getByLabelText("path").textContent).toBe("/backlog/items/a1");
+		expect(screen.getByLabelText("tab").textContent).toBe("active");
+		expect(document.activeElement).toBe(screen.getByText("card"));
+	});
+
+	it("Alt+A on the backlog falls back to the first card when the last-selected session is gone", () => {
+		sessionIds = ["a", "b"];
+		selectedId = "c";
+		renderShell();
+		fireEvent.click(screen.getByText("open backlog"));
+
+		pressAlt("KeyA");
+
+		expect(screen.getByLabelText("path").textContent).toBe("/backlog");
 		expect(document.activeElement).toBe(screen.getByText("card"));
 	});
 
@@ -259,7 +305,7 @@ describe("useRegionFocusHotkeys", () => {
 	])(
 		"%s focuses the top bar's %s button from another route, holding focus from the terminal",
 		(code, action) => {
-			renderShell({ path: "/backlog" });
+			renderShell({ path: "/config" });
 
 			pressAlt(code);
 

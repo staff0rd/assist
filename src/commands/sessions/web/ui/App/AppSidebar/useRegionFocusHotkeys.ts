@@ -31,6 +31,7 @@ export function useRegionFocusHotkeys({
 	}, [pathname, navigate]);
 
 	useFocusSidebarHotkey({
+		sessions,
 		activeId,
 		tab,
 		onTabChange,
