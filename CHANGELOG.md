@@ -1,3 +1,26 @@
+# [0.792.0](https://github.com/staff0rd/assist/compare/v0.791.0...v0.792.0) (2026-10-08)
+
+
+### Features
+
+* review-ci on reopen and ready ([69b159b](https://github.com/staff0rd/assist/commit/69b159b37d2ae0a0b102448f50649a41b8e160fb))
+
+# [0.791.0](https://github.com/staff0rd/assist/compare/v0.790.0...v0.791.0) (2026-10-07)
+
+
+### Features
+
+* review-ci skips init when configured ([af61b43](https://github.com/staff0rd/assist/commit/af61b43df704d6dd24413294cda5ee84d33ccd20))
+* reviewers flag tautological tests ([4e5a3df](https://github.com/staff0rd/assist/commit/4e5a3df09f2f5f317058d5d35dae5ebf40f79556))
+* synthesis keeps tautological tests ([1772816](https://github.com/staff0rd/assist/commit/1772816faff4cf5d7088e1f208ad6f11432e888d))
+
+# [0.790.0](https://github.com/staff0rd/assist/compare/v0.789.1...v0.790.0) (2026-10-07)
+
+
+### Features
+
+* review-ci skips bot-authored PRs ([b60e06e](https://github.com/staff0rd/assist/commit/b60e06e5a62a8d9097c29ba4622f2c48f0e60df6))
+
 ## [0.789.1](https://github.com/staff0rd/assist/compare/v0.789.0...v0.789.1) (2026-10-07)
 
 

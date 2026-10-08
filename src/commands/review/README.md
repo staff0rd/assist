@@ -26,8 +26,9 @@ flowchart LR
 - `fetchExistingComments.ts` — pulls PR review comments via REST (`--paginate`) and enriches them with thread IDs / resolved state via GraphQL. Returns `null` when no PR exists.
 - `formatPriorComments.ts` — groups comments into threads (by `threadId`, falling back to `inReplyToId`) and renders the `## Prior review comments` section.
 - `buildRequest.ts` — assembles `request.md` (branch metadata, changed files, optional prior comments, unified diff).
+- `buildReviewerStdin.ts` — the reviewer prompt. Besides correctness, it has reviewers flag tautological and vacuous tests added or changed by the PR (mock-returns-stub assertions, expected values derived from the code under test, assertion-free tests, snapshots of mocked output), recommending an independent expected value or deletion: minor by default, major when the test is the sole coverage of a changed behaviour.
 - `runReviewers.ts` — runs Claude and Codex in parallel. Skips a reviewer when its output file already exists (caching across re-runs).
-- `synthesise.ts` / `buildSynthesisStdin.ts` — consolidates the two reviews. The synthesis prompt defines the `Source` enum including `already-raised` for findings substantively covered by a prior comment.
+- `synthesise.ts` / `buildSynthesisStdin.ts` — consolidates the two reviews. The synthesis prompt defines the `Source` enum including `already-raised` for findings substantively covered by a prior comment, and keeps tautological-test findings rather than downgrading them below minor as taste.
 - `parseFindings.ts` / `partitionFindings.ts` — parse `synthesis.md` and split findings into `lineBound`, `unlocated`, and `alreadyRaised` buckets.
 - `postReviewToPr.ts` / `postAndMaybeSubmit.ts` / `postFindings.ts` — post line-bound findings as pending comments and optionally submit the review.
 

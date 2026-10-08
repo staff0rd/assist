@@ -30,6 +30,8 @@ Never overwrite a differing target without the user's confirmation.
 
 ## 3. Run init
 
+First check whether the repo is already configured: run `gh variable list --json name -q '.[].name'` and `gh secret list --json name -q '.[].name'`. The repo is configured when `REVIEW_CI_PROVIDER`, `REVIEW_CI_BASE_URL`, `REVIEW_CI_REVIEWER_1`, `REVIEW_CI_REVIEWER_2` and `REVIEW_CI_SYNTHESIS` are all set, plus either the secret `REVIEW_CI_API_KEY` or both `REVIEW_CI_AZURE_CLIENT_ID` and `REVIEW_CI_AZURE_TENANT_ID`. If it is configured and the user did not ask to reconfigure, skip the rest of this step, say init was skipped because the config is already set, and go to step 4. Otherwise run init as below.
+
 `init.mjs` asks for the config, checks every model can be reached, then sets the repo variables (and the secret, when an API key is used) with `gh`. It needs a terminal for its prompts, and the API key must never pass through this conversation.
 
 The review has three slots: two reviewers and the synthesis. Each slot is `claude:<model>` (run by Claude Code) or `codex:<model>` (run by Codex), so a provider with only GPT deployments can run every slot on Codex.
@@ -64,4 +66,4 @@ The review has three slots: two reviewers and the synthesis. Each slot is `claud
 
 ## 4. Report
 
-List the files written or skipped, and remind the user to commit `.github/review-ci/` and `.github/workflows/review-ci.yml`. The workflow runs on `pull_request: opened`, skipping PRs opened by bots and GitHub Apps (Snyk, Dependabot and the like), and fails at its check step, naming the problem, when a variable or the secret is unset, the Entra token cannot be obtained, or a model cannot be reached. Its review step then posts the findings as a `COMMENT` review on the PR.
+List the files written or skipped, and remind the user to commit `.github/review-ci/` and `.github/workflows/review-ci.yml`. The workflow runs when a PR is opened, reopened or marked ready for review, skipping drafts and PRs opened by bots and GitHub Apps (Snyk, Dependabot and the like), and fails at its check step, naming the problem, when a variable or the secret is unset, the Entra token cannot be obtained, or a model cannot be reached. Its review step then posts the findings as a `COMMENT` review on the PR.

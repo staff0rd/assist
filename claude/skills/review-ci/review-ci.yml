@@ -2,7 +2,7 @@ name: Review CI
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   review:
-    if: github.event.pull_request.user.type != 'Bot'
+    if: github.event.pull_request.user.type != 'Bot' && !github.event.pull_request.draft
     runs-on: ubuntu-latest
     environment: ${{ vars.REVIEW_CI_ENVIRONMENT }}
     env:

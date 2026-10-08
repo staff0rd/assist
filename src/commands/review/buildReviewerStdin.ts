@@ -26,6 +26,19 @@ Two cases are still legitimate findings:
 1. A comment this change made stale or wrong. Recommend removing or correcting it.
 2. Genuinely misleading code. You may raise it, but the recommendation must be a clearer name, a smaller function, or a test. Only as a last resort, when none of those can carry the meaning, may you mention that \`assist code-comment\` exists for a single short comment.
 
+## Tautological and vacuous tests
+
+Flag tests added or changed by this change that cannot fail when the behaviour they claim to cover breaks. Do not flag pre-existing tests the change left untouched. Patterns:
+
+1. Asserting a mock returns what it was stubbed to return.
+2. Computing the expected value with the code under test, or with a copy of its logic.
+3. Asserting only that a mocked function was called, when that mock is the whole subject of the test.
+4. Any test that would still pass if the implementation were broken.
+5. No assertions, or only \`toBeDefined\`/truthy checks.
+6. Snapshots of mocked output.
+
+Recommendation: assert against an independent expected value (a literal or a hand-derived result) or real behaviour, or delete the test. Severity is **minor** by default; **major** when the test is the sole coverage of a behaviour this change introduces or modifies, since that behaviour is then effectively untested.
+
 ## How to write the comment (Impact + Recommendation)
 
 1. Make clear *why* the issue is a bug.
