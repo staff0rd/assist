@@ -1,3 +1,10 @@
+# [0.799.0](https://github.com/staff0rd/assist/compare/v0.798.0...v0.799.0) (2026-10-08)
+
+
+### Features
+
+* run high-level review in a session ([afa2d10](https://github.com/staff0rd/assist/commit/afa2d100003919cf87698fbef6d45de51bfa28c6)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.798.0](https://github.com/staff0rd/assist/compare/v0.797.1...v0.798.0) (2026-10-08)
 
 
