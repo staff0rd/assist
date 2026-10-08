@@ -214,6 +214,33 @@ describe("isGhIssueApiWrite graphql mutations", () => {
 		expect(isGhIssueApiWrite(`gh api graphql -F query=@${path}`)).toBe(false);
 	});
 
+	it("flags an issue write inside a command substitution", () => {
+		const mutation = `gh api graphql -f query='mutation($repo:ID!){createIssue(input:{repositoryId:$repo}){issue{id}}}' -f repo=x`;
+		expect(isGhIssueApiWrite(mutation)).toBe(true);
+		expect(isGhIssueApiWrite(`R=$(${mutation})`)).toBe(true);
+		expect(isGhIssueApiWrite(`R=\`${mutation}\``)).toBe(true);
+		expect(
+			isGhIssueApiWrite("echo $(gh api -X POST repos/acme/widgets/issues)"),
+		).toBe(true);
+		expect(
+			isGhIssueApiWrite("echo `gh api -X POST repos/acme/widgets/issues`"),
+		).toBe(true);
+	});
+
+	it("leaves issue reads inside a command substitution alone", () => {
+		expect(isGhIssueApiWrite("R=$(gh api repos/acme/widgets/issues/180)")).toBe(
+			false,
+		);
+		expect(isGhIssueApiWrite("R=`gh api repos/acme/widgets/issues/180`")).toBe(
+			false,
+		);
+		expect(
+			isGhIssueApiWrite(
+				"echo $(gh api repos/acme/widgets/issues/180) -X POST -f x=y",
+			),
+		).toBe(false);
+	});
+
 	it("leaves non-issue mutations alone", () => {
 		expect(
 			isGhIssueApiWrite(
