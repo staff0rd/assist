@@ -5,7 +5,8 @@ import { NextPrFacts } from "../NextPrFacts";
 import { type NextChip, nextChips } from "../nextChips";
 import type { NextSectionsProps } from "../NextSectionsProps";
 import { nextIssueWhy } from "./nextHeroDetails/nextIssueWhy";
-import { nextPickupWhy } from "./nextHeroDetails/nextPickupWhy";
+import { nextMineHeroDetails } from "./nextHeroDetails/nextMineHeroDetails";
+import { nextPickupHeroDetails } from "./nextHeroDetails/nextPickupHeroDetails";
 import { nextPrWhy } from "./nextHeroDetails/nextPrWhy";
 
 type HeroDetails = {
@@ -17,9 +18,10 @@ type HeroDetails = {
 
 export function nextHeroDetails(
 	top: NonNullable<ReturnType<typeof nextTopItem>>,
-	{ data, onStartPr, onStartIssue, onStartPickup }: NextSectionsProps,
+	props: NextSectionsProps,
 ): HeroDetails {
-	const { peerPrs, assignedIssues, pickups } = data;
+	const { data, onStartPr, onStartIssue } = props;
+	const { peerPrs, assignedIssues } = data;
 	switch (top.kind) {
 		case "pr":
 			return {
@@ -40,15 +42,8 @@ export function nextHeroDetails(
 				onStart: (cwd) => onStartIssue(top.item, cwd),
 			};
 		case "pickup":
-			return {
-				chip: nextChips.pickup,
-				facts: <NextIssueFacts issue={top.item} />,
-				why: nextPickupWhy(
-					top.item,
-					pickups.items.length,
-					!peerPrs.error && !assignedIssues.error,
-				),
-				onStart: (cwd) => onStartPickup(top.item, cwd),
-			};
+			return nextPickupHeroDetails(top.item, props);
+		case "mine":
+			return nextMineHeroDetails(top.item, props);
 	}
 }

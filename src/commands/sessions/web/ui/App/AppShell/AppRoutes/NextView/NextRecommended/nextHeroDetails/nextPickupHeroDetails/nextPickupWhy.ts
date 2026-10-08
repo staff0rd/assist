@@ -1,4 +1,4 @@
-import type { NextPickup } from "../../../../../../../next/types";
+import type { NextPickup } from "../../../../../../../../next/types";
 
 export function nextPickupWhy(
 	pickup: NextPickup,

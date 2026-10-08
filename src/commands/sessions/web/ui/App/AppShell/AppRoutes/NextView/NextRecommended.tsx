@@ -18,7 +18,7 @@ export function NextRecommended(props: NextSectionsProps) {
 			title={title}
 			url={url}
 			sessions={
-				top.kind === "pr"
+				top.kind === "pr" || top.kind === "mine"
 					? matchPrSessions(sessions, repo, number)
 					: matchIssueSessions(sessions, trackedIssues, repo, number)
 			}

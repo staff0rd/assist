@@ -328,14 +328,33 @@ describe("NextView sections", () => {
 	it("lists my open PRs, drafts included, instead of the all-clear state", async () => {
 		renderView({
 			myPrs: {
-				items: [pr(3, { author: "me", reason: "peer", isDraft: true })],
+				items: [
+					pr(3, { author: "me", reason: "peer", isDraft: true }),
+					pr(4, { author: "me", reason: "peer" }),
+				],
 				error: null,
 			},
 		});
-		expect(await screen.findByText("Your open PRs")).toBeTruthy();
-		expect(screen.getByText("PR 3")).toBeTruthy();
-		expect(screen.getByText("Start session")).toBeTruthy();
+		const hero = await heroCard();
+		expect(within(hero).getByText("PR 3")).toBeTruthy();
+		expect(
+			within(hero).getByText(/You drafted it .* the oldest of your 2 open PRs/),
+		).toBeTruthy();
+		expect(screen.getByText("Your open PRs")).toBeTruthy();
+		expect(screen.getAllByText("PR 3")).toHaveLength(1);
+		expect(screen.getByText("PR 4")).toBeTruthy();
+		expect(screen.getAllByText("Start session")).toHaveLength(2);
 		expect(screen.queryByText("Nothing needs you here")).toBeNull();
+	});
+
+	it("ranks pickups above your own PRs in the hero", async () => {
+		renderView({
+			pickups: { items: [pickup(3)], error: null },
+			myPrs: { items: [pr(7, { author: "me", reason: "peer" })], error: null },
+		});
+		const hero = await heroCard();
+		expect(within(hero).getByText("Pickup 3")).toBeTruthy();
+		expect(screen.getByText("PR 7")).toBeTruthy();
 	});
 
 	it("shows the all-clear state when every source is empty", async () => {
