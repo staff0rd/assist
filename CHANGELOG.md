@@ -1,3 +1,10 @@
+# [0.798.0](https://github.com/staff0rd/assist/compare/v0.797.1...v0.798.0) (2026-10-08)
+
+
+### Features
+
+* fast-forward no-upstream branches ([105c4aa](https://github.com/staff0rd/assist/commit/105c4aa1aa6edfb918d303ca41948d0b5fa26dee))
+
 ## [0.797.1](https://github.com/staff0rd/assist/compare/v0.797.0...v0.797.1) (2026-10-08)
 
 
