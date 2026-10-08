@@ -19,16 +19,16 @@ export async function promptConfigScope(): Promise<ConfigKeyScope> {
 			message: "Where should these values be written?",
 			choices: [
 				{
-					name: "project",
-					message: "assist.yml in this repo — checked in, shared with the team",
-				},
-				{
 					name: "repo",
 					message:
 						"this repo's override in the shared db — personal, seen by every node, as 'config set -g --repo' writes it",
 				},
+				{
+					name: "project",
+					message: "assist.yml in this repo — checked in, shared with the team",
+				},
 			],
 		}).run(),
 	);
-	return answer === "repo" ? "repo" : "project";
+	return answer === "project" ? "project" : "repo";
 }

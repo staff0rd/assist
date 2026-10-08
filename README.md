@@ -136,7 +136,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
   - `--checkout-only` - Skip the review; check the PR out and leave an idle Claude session in it
   - `--high-level` - Skip the LLM review; step through the high-level review checklist in the web preview pane. See [docs/high-level-review.md](docs/high-level-review.md)
   - `--configure` - With `--high-level`: configure the checklist's `review.highLevel.*` keys instead of reviewing
-  - `--scope <project|repo>` - With `--configure`: write to the project `assist.yml` or this repo's block in `~/.assist.yml` instead of asking
+  - `--scope <repo|project>` - With `--configure`: write to this repo's override in the shared assist database or the project `assist.yml` instead of asking
   - `--answer <key=value>` - With `--configure`: answer one key without prompting, repeatable; an empty value leaves the key unset
   - `--address-comments` - Start an Address Comments session for the PR once comments are posted and the review submitted
   - `--announce` - Announce the PR in Slack at the end of the chain

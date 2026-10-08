@@ -32,8 +32,8 @@ Do not ask in chat. Write the proposal as markdown to a scratch file with the Wr
 - each glob as its own bullet, with the files in this repo it matches (a count, plus a few names), and why it belongs
 - `descriptionWordCap` with its value
 - the scope you propose, with the other one named so the user can swap it:
-  - `project` — the repo's own `assist.yml`, checked in, so the team reviews against the same globs (propose this unless the user has said otherwise)
-  - `repo` — this repo's block in `~/.assist.yml`, personal to this machine
+  - `repo` — this repo's override in the shared assist database, personal to the user and seen by every node (propose this unless the user has said otherwise)
+  - `project` — the repo's own `assist.yml`, a file to check in so the team reviews against the same globs; only when the user asks for it, since it leaves a new file in a repo they may not own
 
 Then run, **as a background task**, doing no other work until it returns:
 
@@ -51,7 +51,7 @@ Outside a web session `assist ask` only prints the markdown and exits 0 without 
 Pass every key, so nothing is prompted for — you have already asked:
 
 ```
-assist review --high-level --configure --scope project \
+assist review --high-level --configure --scope repo \
   --answer 'review.highLevel.criticalPaths=**/*.graphql,en-AU/translation.json' \
   --answer 'review.highLevel.uiPaths=src/ui/**' \
   --answer 'review.highLevel.descriptionWordCap=300'
