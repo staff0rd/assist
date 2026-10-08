@@ -27,6 +27,13 @@ export function NextGroups({
 				hiddenUrl={hiddenUrl}
 				onStart={onStartPr}
 			/>
+			<NextPrGroup
+				chip={nextChips.mine}
+				title="Your open PRs"
+				section={myPrs}
+				hiddenUrl={hiddenUrl}
+				onStart={onStartPr}
+			/>
 			<NextGroup
 				chip={nextChips.assigned}
 				title="Issues assigned to you"
@@ -50,13 +57,6 @@ export function NextGroups({
 					onStartPickup,
 					nextSessions,
 				)}
-			/>
-			<NextPrGroup
-				chip={nextChips.mine}
-				title="Your open PRs"
-				section={myPrs}
-				hiddenUrl={hiddenUrl}
-				onStart={onStartPr}
 			/>
 		</>
 	);
