@@ -1,3 +1,10 @@
+# [0.792.0](https://github.com/staff0rd/assist/compare/v0.791.0...v0.792.0) (2026-10-08)
+
+
+### Features
+
+* review-ci on reopen and ready ([69b159b](https://github.com/staff0rd/assist/commit/69b159b37d2ae0a0b102448f50649a41b8e160fb))
+
 # [0.791.0](https://github.com/staff0rd/assist/compare/v0.790.0...v0.791.0) (2026-10-07)
 
 
