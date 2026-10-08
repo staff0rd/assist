@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
+import { catchUpToRemoteDefault } from "./catchUpToRemoteDefault";
 import { loadConfig } from "./loadConfig";
 
 export function pullIfConfigured(): void {
@@ -14,11 +15,7 @@ export function pullIfConfigured(): void {
 		return;
 	}
 	if (!hasUpstream()) {
-		console.warn(
-			chalk.yellow(
-				"git pull skipped: the current branch has no upstream. Continuing.",
-			),
-		);
+		catchUpToRemoteDefault();
 		return;
 	}
 	try {

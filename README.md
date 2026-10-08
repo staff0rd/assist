@@ -550,7 +550,7 @@ A restart kills every managed session's pty, which also kills any background tas
 - `prs.draft` — raise PRs as drafts. Defaults to `false`.
 - `readTime.wordsPerMinute` — the prose reading speed `assist read-time` assumes. Defaults to `200`.
 - `prs.readingWordsPerMinute` — the former name of `readTime.wordsPerMinute`, read only when that is unset.
-- `commit.pull` — fast-forward before `assist draft`, `bug`, `refine`, `next` and `backlog run` start, aborting if that fails. Defaults to off.
+- `commit.pull` — fast-forward before `assist draft`, `bug`, `refine`, `next` and `backlog run` start, aborting if that fails. A branch with no upstream (such as a fresh worktree branch) fast-forwards onto `origin/<default>` when it has no commits of its own. Defaults to off.
 - `commit.expectedBranch` — warn on `assist commit` when HEAD is on any other branch. Unset by default.
 - `branch.prefix` — prefix for branch names from `assist branch`. Unset by default.
 - `branch.defaultBranch` — the base branch for new branches. Defaults to the remote's default branch.

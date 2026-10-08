@@ -1,4 +1,6 @@
 import { gitSyncOrNull } from "./git";
+import { cloneHead } from "./cloneHead";
+import { remoteDefaultBranch } from "./remoteDefaultBranch";
 
 type StartPoint = { ref: string; track: boolean };
 
@@ -12,19 +14,4 @@ export function worktreeStartPoint(clone: string, trunk: boolean): StartPoint {
 
 function cloneTrunkBranch(clone: string): string {
 	return cloneHead(clone) ?? remoteDefaultBranch(clone);
-}
-
-function remoteDefaultBranch(clone: string): string {
-	const head = gitSyncOrNull(clone, [
-		"symbolic-ref",
-		"--short",
-		"refs/remotes/origin/HEAD",
-	]);
-	if (!head) return cloneHead(clone) ?? "main";
-	const slash = head.indexOf("/");
-	return slash === -1 ? head : head.slice(slash + 1);
-}
-
-function cloneHead(clone: string): string | null {
-	return gitSyncOrNull(clone, ["symbolic-ref", "--short", "HEAD"]);
 }

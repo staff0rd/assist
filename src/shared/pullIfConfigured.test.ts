@@ -21,6 +21,10 @@ vi.mock("./loadConfig", async () =>
 	).loadConfigMock(),
 );
 
+vi.mock("../commands/sessions/daemon/worktree/remoteDefaultBranch", () => ({
+	remoteDefaultBranch: () => "main",
+}));
+
 const mockExecSync = vi.mocked(execSync);
 const mockLoadConfig = vi.mocked(loadConfig);
 
@@ -87,23 +91,65 @@ describe("pullIfConfigured", () => {
 		expect(exitSpy).toHaveBeenCalledWith(1);
 	});
 
-	it("skips the pull when the branch has no upstream", () => {
-		mockLoadConfig.mockReturnValue(
-			makeAssistConfig({ commit: { pull: true } }),
-		);
-		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-		mockExecSync.mockImplementation((command: string) => {
-			if (command.includes("@{upstream}")) throw new Error("no upstream");
-			return "";
+	describe("when the branch has no upstream", () => {
+		function setup(failing: string[]) {
+			mockLoadConfig.mockReturnValue(
+				makeAssistConfig({ commit: { pull: true } }),
+			);
+			mockExecSync.mockImplementation((command: string) => {
+				if (command.includes("@{upstream}")) throw new Error("no upstream");
+				if (failing.some((prefix) => command.startsWith(prefix)))
+					throw new Error("failed");
+				return "";
+			});
+			return vi.spyOn(console, "warn").mockImplementation(() => {});
+		}
+
+		it("fetches and fast-forwards onto origin/<default> when HEAD is an ancestor", () => {
+			const warnSpy = setup([]);
+
+			pullIfConfigured();
+
+			expect(mockExecSync).toHaveBeenCalledWith("git fetch", {
+				stdio: "inherit",
+			});
+			expect(mockExecSync).toHaveBeenCalledWith(
+				"git merge --ff-only origin/main",
+				{ stdio: "inherit" },
+			);
+			expect(warnSpy).not.toHaveBeenCalled();
+			expect(exitSpy).not.toHaveBeenCalled();
 		});
 
-		pullIfConfigured();
+		it("skips when the branch has commits of its own", () => {
+			const warnSpy = setup(["git merge-base --is-ancestor"]);
 
-		expect(mockExecSync).not.toHaveBeenCalledWith("git fetch", {
-			stdio: "inherit",
+			pullIfConfigured();
+
+			expect(mockExecSync).not.toHaveBeenCalledWith(
+				expect.stringContaining("git merge --ff-only"),
+				expect.anything(),
+			);
+			expect(warnSpy).toHaveBeenCalledWith(
+				expect.stringContaining("commits of its own"),
+			);
+			expect(exitSpy).not.toHaveBeenCalled();
 		});
-		expect(warnSpy).toHaveBeenCalled();
-		expect(exitSpy).not.toHaveBeenCalled();
+
+		it("skips when there is no origin/<default>", () => {
+			const warnSpy = setup(["git rev-parse --verify"]);
+
+			pullIfConfigured();
+
+			expect(mockExecSync).not.toHaveBeenCalledWith(
+				expect.stringContaining("git merge"),
+				expect.anything(),
+			);
+			expect(warnSpy).toHaveBeenCalledWith(
+				expect.stringContaining("there is no origin/main"),
+			);
+			expect(exitSpy).not.toHaveBeenCalled();
+		});
 	});
 
 	it("skips the pull when the working copy has local changes", () => {
