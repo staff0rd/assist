@@ -2,6 +2,7 @@ import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session, SessionStatus } from "./createSession";
 import { claimViewer, type ViewerClaim } from "./claimViewer";
 import { daemonLog } from "./daemonLog";
+import { isTerminalResponse } from "./isTerminalResponse";
 import { watchPromptSubmit } from "./watchPromptSubmit";
 
 export function writeToSession(
@@ -13,9 +14,16 @@ export function writeToSession(
 ): void {
 	const s = sessions.get(id);
 	if (!s || s.status === "done") return;
+	const response = isTerminalResponse(data);
+	if (response && s.activeViewer && viewer.viewerId !== s.activeViewer) {
+		daemonLog(
+			`session ${id} dropped terminal response from inactive viewer ${viewer.viewerId ?? "unknown"} on ${viewer.viewerNode ?? "unknown node"}`,
+		);
+		return;
+	}
 	s.pty?.write(data);
 	watchPromptSubmit(s, data, onStatusChange);
-	claimViewer(s, viewer, "input");
+	if (!response) claimViewer(s, viewer, "input");
 }
 
 export function setAutoRun(

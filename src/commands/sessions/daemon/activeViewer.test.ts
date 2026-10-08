@@ -74,6 +74,44 @@ describe("active viewer", () => {
 		expect(pty.write).toHaveBeenCalledWith("x");
 	});
 
+	it("drops automatic terminal responses from an inactive viewer", () => {
+		const { pty, session, sessions } = liveSession({ activeViewer: "a" });
+
+		writeToSession(sessions, "1", "\x1b[?62;22c\x1b[12;1R", vi.fn(), {
+			viewerId: "b",
+			onClaim,
+		});
+
+		expect(onClaim).not.toHaveBeenCalled();
+		expect(session.activeViewer).toBe("a");
+		expect(pty.write).not.toHaveBeenCalled();
+	});
+
+	it("forwards terminal responses without claiming a free session", () => {
+		const { pty, session, sessions } = liveSession();
+
+		writeToSession(sessions, "1", "\x1b]11;rgb:0000/0000/0000\x1b\\", vi.fn(), {
+			viewerId: "b",
+			onClaim,
+		});
+
+		expect(onClaim).not.toHaveBeenCalled();
+		expect(session.activeViewer).toBeUndefined();
+		expect(pty.write).toHaveBeenCalledOnce();
+	});
+
+	it("still claims on keystrokes that are escape sequences", () => {
+		const { session, sessions } = liveSession({ activeViewer: "a" });
+
+		writeToSession(sessions, "1", "\x1b[A", vi.fn(), {
+			viewerId: "b",
+			onClaim,
+		});
+
+		expect(onClaim).toHaveBeenCalledOnce();
+		expect(session.activeViewer).toBe("b");
+	});
+
 	it("lets a takeover resize claim from another viewer", () => {
 		const { pty, session, sessions } = liveSession({
 			activeViewer: "a",
