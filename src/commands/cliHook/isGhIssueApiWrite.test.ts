@@ -227,6 +227,34 @@ describe("isGhIssueApiWrite graphql mutations", () => {
 		).toBe(true);
 	});
 
+	it("flags an issue write inside a double-quoted command substitution", () => {
+		expect(
+			isGhIssueApiWrite('R="$(gh api -X POST repos/acme/widgets/issues)"'),
+		).toBe(true);
+		expect(
+			isGhIssueApiWrite(
+				`R="$(gh api graphql -f query='mutation{createIssue(input:{}){issue{id}}}')"`,
+			),
+		).toBe(true);
+		expect(
+			isGhIssueApiWrite('echo "`gh api -X POST repos/acme/widgets/issues`"'),
+		).toBe(true);
+		expect(
+			isGhIssueApiWrite(
+				'echo "id: $(gh api -X POST repos/acme/widgets/issues -f title="a (b)")"',
+			),
+		).toBe(true);
+	});
+
+	it("leaves issue reads inside a double-quoted command substitution alone", () => {
+		expect(
+			isGhIssueApiWrite('R="$(gh api repos/acme/widgets/issues/180)"'),
+		).toBe(false);
+		expect(
+			isGhIssueApiWrite(`echo '"$(gh api -X POST repos/acme/widgets/issues)"'`),
+		).toBe(false);
+	});
+
 	it("leaves issue reads inside a command substitution alone", () => {
 		expect(isGhIssueApiWrite("R=$(gh api repos/acme/widgets/issues/180)")).toBe(
 			false,

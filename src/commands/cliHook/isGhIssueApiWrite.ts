@@ -1,5 +1,6 @@
 import { extractGhApiMethod } from "../../shared/extractGhApiMethod";
 import { tokenize } from "../../shared/tokenize";
+import { extractQuotedSubstitutions } from "./extractQuotedSubstitutions";
 import { isGhGraphqlIssueMutation } from "./isGhGraphqlIssueMutation";
 import {
 	SUBSTITUTION_CLOSE,
@@ -29,7 +30,7 @@ export function isGhIssueApiWrite(command: string): boolean {
 		if (isGhGraphqlIssueMutation(args, command)) return true;
 	}
 
-	return false;
+	return extractQuotedSubstitutions(command).some(isGhIssueApiWrite);
 }
 
 function argsUntilNextCommand(tokens: string[]): string[] {
