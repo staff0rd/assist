@@ -1,3 +1,10 @@
+# [0.797.0](https://github.com/staff0rd/assist/compare/v0.796.0...v0.797.0) (2026-10-08)
+
+
+### Features
+
+* always badge clone session cards ([b4b8653](https://github.com/staff0rd/assist/commit/b4b865309f29320a6c4d81fbb428305affe16613))
+
 # [0.796.0](https://github.com/staff0rd/assist/compare/v0.795.2...v0.796.0) (2026-10-08)
 
 
