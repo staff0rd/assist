@@ -7,6 +7,7 @@ export function runGit(args: string[], cwd?: string): string {
 		encoding: "utf8",
 		stdio: ["pipe", "pipe", "pipe"],
 		cwd,
+		windowsHide: true,
 	}).trim();
 }
 

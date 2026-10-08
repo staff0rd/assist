@@ -79,11 +79,14 @@ async function flush(): Promise<void> {
 }
 
 describe("startDaemonServer", () => {
+	const realPlatform = process.platform;
+
 	beforeEach(() => {
 		isRunningMock.mockResolvedValue(false);
 	});
 
 	afterEach(() => {
+		asPlatform(realPlatform);
 		vi.clearAllMocks();
 	});
 
@@ -97,6 +100,7 @@ describe("startDaemonServer", () => {
 	});
 
 	it("restores sessions once when recovering from a stale socket", async () => {
+		asPlatform("linux");
 		const server = new FakeServer(["error", "listening"]);
 		createServerMock.mockReturnValue(server);
 
@@ -109,12 +113,6 @@ describe("startDaemonServer", () => {
 	});
 
 	describe("on the windows host", () => {
-		const realPlatform = process.platform;
-
-		afterEach(() => {
-			asPlatform(realPlatform);
-		});
-
 		it("binds the pipe", async () => {
 			asPlatform("win32");
 			createServerMock.mockReturnValue(new FakeServer(["listening"]));
