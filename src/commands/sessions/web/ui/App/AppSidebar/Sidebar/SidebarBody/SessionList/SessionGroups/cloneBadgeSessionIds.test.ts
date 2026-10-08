@@ -28,17 +28,17 @@ describe("cloneBadgeSessionIds", () => {
 		expect([...ids]).toEqual(["a", "b"]);
 	});
 
-	it("badges nothing when every session for the repo is in the clone", () => {
+	it("badges every session when all sessions for the repo are in the clone", () => {
 		const ids = cloneBadgeSessionIds([
 			session("a", clone),
 			session("b", clone),
 		]);
 
-		expect([...ids]).toEqual([]);
+		expect([...ids]).toEqual(["a", "b"]);
 	});
 
-	it("badges nothing for a lone clone session", () => {
-		expect([...cloneBadgeSessionIds([session("a", clone)])]).toEqual([]);
+	it("badges a lone clone session", () => {
+		expect([...cloneBadgeSessionIds([session("a", clone)])]).toEqual(["a"]);
 	});
 
 	it("badges nothing when only worktree sessions are visible", () => {
@@ -61,7 +61,7 @@ describe("cloneBadgeSessionIds", () => {
 			{ id: "c", cwd: other.clone, repoGroup: other },
 		]);
 
-		expect([...ids]).toEqual(["a"]);
+		expect([...ids]).toEqual(["a", "c"]);
 	});
 
 	it("ignores sessions with no repo group", () => {

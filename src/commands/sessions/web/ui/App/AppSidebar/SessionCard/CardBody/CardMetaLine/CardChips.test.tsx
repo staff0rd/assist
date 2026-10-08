@@ -106,10 +106,10 @@ describe("CardChips clone badge", () => {
 		expect(screen.queryByLabelText("Clone — /home/me/assist")).toBeNull();
 	});
 
-	it("leaves the clone unbadged when it is the repo's only session", () => {
+	it("badges the clone when it is the repo's only session", () => {
 		renderBadgeCard([clone], clone);
 
-		expect(screen.queryByLabelText(/^Clone — /)).toBeNull();
+		expect(screen.getByLabelText("Clone — /home/me/assist")).toBeTruthy();
 	});
 
 	it("leaves a session with no repo group unbadged", () => {
