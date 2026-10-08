@@ -527,9 +527,8 @@ assist config set next.excludeTypes Epic -g --repo
 
 Concurrent sessions in one repo can be isolated with native git worktrees instead of keeping multiple physical clones: see [docs/parallel-work.md](docs/parallel-work.md). All of these keys **default off** except `worktree.install`:
 
-- `worktree.enabled` (parallel work) — spill concurrent sessions into adjacent `<clone>-N` worktrees instead of sharing the clone's working copy.
+- `worktree.enabled` (parallel work) — spill concurrent prompt sessions into adjacent `<clone>-N` worktrees instead of sharing the clone's working copy. Assist-command sessions (draft, bug, backlog run, next, review, …) always get a fresh worktree off `origin/<default>`.
 - `worktree.trunk` (trunk-based) — a worktree's branch tracks `origin/<trunk>` so commits land on the mainline, and jobs that commit (`backlog run`, PR checkouts) always run in a worktree, never the clone. Off, worktrees start off the remote default branch with no mainline tracking.
-- `worktree.includeDrafts` — give draft, bug and refine sessions their own `<clone>-N` instead of the clone's working copy.
 - `worktree.install` — how a new worktree installs its deps: `true` (default) auto-detects pnpm/yarn/bun/npm, a string is the install command, `false` skips it, and a list of paths installs in each in order.
 
 None of them leaves permanent state on the clone, so turning parallel work back off leaves the repo as it was.

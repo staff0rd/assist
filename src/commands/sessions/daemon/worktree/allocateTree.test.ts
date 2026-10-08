@@ -14,7 +14,6 @@ vi.mock("./worktreeConfigFor", () => ({
 	worktreeConfigFor: vi.fn(() => ({
 		enabled: true,
 		trunk: false,
-		includeDrafts: false,
 		install: true,
 		commitBeforeManualChecks: false,
 		copy: [],
@@ -38,7 +37,6 @@ describe("allocateTree", () => {
 		configMock.mockReturnValue({
 			enabled: true,
 			trunk: false,
-			includeDrafts: false,
 			install: true,
 			commitBeforeManualChecks: false,
 			copy: [],
@@ -47,7 +45,13 @@ describe("allocateTree", () => {
 		createMock.mockReturnValue("/git/repo-2");
 	});
 
-	describe("for an ordinary session", () => {
+	describe("for a prompt session", () => {
+		it("spills when a live session holds the clone", () => {
+			expect(allocateTree("/git/repo", new Set(["/git/repo"])).kind).toBe(
+				"worktree",
+			);
+		});
+
 		it("reuses the clone even when it holds uncommitted work", () => {
 			durabilityMock.mockReturnValue({
 				durable: false,
@@ -67,7 +71,6 @@ describe("allocateTree", () => {
 			configMock.mockReturnValue({
 				enabled: true,
 				trunk: true,
-				includeDrafts: false,
 				root: "~/git",
 				install: true,
 				commitBeforeManualChecks: false,
@@ -113,51 +116,48 @@ describe("allocateTree", () => {
 		});
 	});
 
-	describe("for a draft-type session", () => {
-		it("stays in the clone even when another session already holds it", () => {
-			expect(
-				allocateTree("/git/repo", new Set(["/git/repo"]), { draftLike: true }),
-			).toEqual({
-				cwd: "/git/repo",
-				kind: "primary",
-				created: false,
-				clone: "/git/repo",
+	describe("for an assist-command session", () => {
+		it.each(["draft", "bug", "next", "review"])(
+			"spills assist %s out of an idle clone",
+			(command) => {
+				expect(
+					allocateTree("/git/repo", new Set(), { assistCommand: command }),
+				).toEqual({
+					cwd: "/git/repo-2",
+					kind: "worktree",
+					created: true,
+					clone: "/git/repo",
+				});
+				expect(logMock).toHaveBeenCalledWith(
+					`assist ${command} session spilled out of the clone /git/repo: only prompt sessions use the clone`,
+				);
+			},
+		);
+
+		it("spills a PR checkout without checking the clone's durability", () => {
+			allocateTree("/git/repo", new Set(), {
+				assistCommand: "review",
+				forCheckout: true,
 			});
+
+			expect(createMock).toHaveBeenCalled();
+			expect(durabilityMock).not.toHaveBeenCalled();
+		});
+
+		it("still runs in the tree it was launched against when inPlace", () => {
+			expect(
+				allocateTree("/git/repo", new Set(), {
+					assistCommand: "draft",
+					inPlace: true,
+				}),
+			).toEqual({ cwd: "/git/repo", kind: "primary", created: false });
 			expect(createMock).not.toHaveBeenCalled();
 		});
 
-		it("normalises a worktree cwd back to the clone", () => {
-			expect(
-				allocateTree("/git/repo-2", new Set(["/git/repo"]), { draftLike: true })
-					.cwd,
-			).toBe("/git/repo");
-		});
-
-		it("spills like any other session once includeDrafts is on", () => {
-			configMock.mockReturnValue({
-				enabled: true,
-				trunk: false,
-				includeDrafts: true,
-				install: true,
-				commitBeforeManualChecks: false,
-				copy: [],
-			});
-
-			expect(
-				allocateTree("/git/repo", new Set(["/git/repo"]), { draftLike: true }),
-			).toEqual({
-				cwd: "/git/repo-2",
-				kind: "worktree",
-				created: true,
-				clone: "/git/repo",
-			});
-		});
-
-		it("is inert when parallel work is off", () => {
+		it("stays in the clone when parallel work is off", () => {
 			configMock.mockReturnValue({
 				enabled: false,
 				trunk: false,
-				includeDrafts: false,
 				install: true,
 				commitBeforeManualChecks: false,
 				copy: [],
@@ -165,9 +165,10 @@ describe("allocateTree", () => {
 
 			expect(
 				allocateTree("/git/repo/src", new Set(["/git/repo"]), {
-					draftLike: true,
+					assistCommand: "draft",
 				}),
 			).toEqual({ cwd: "/git/repo/src", kind: "primary", created: false });
+			expect(createMock).not.toHaveBeenCalled();
 		});
 	});
 
@@ -194,7 +195,6 @@ describe("allocateTree", () => {
 			configMock.mockReturnValue({
 				enabled: false,
 				trunk: false,
-				includeDrafts: false,
 				install: true,
 				commitBeforeManualChecks: false,
 				copy: [],
@@ -269,7 +269,6 @@ describe("allocateTree", () => {
 			configMock.mockReturnValue({
 				enabled: false,
 				trunk: false,
-				includeDrafts: false,
 				install: true,
 				commitBeforeManualChecks: false,
 				copy: [],
@@ -291,7 +290,6 @@ describe("allocateTree", () => {
 			configMock.mockReturnValue({
 				enabled: true,
 				trunk: true,
-				includeDrafts: false,
 				install: true,
 				commitBeforeManualChecks: false,
 				copy: [],
@@ -322,11 +320,15 @@ describe("allocateTree", () => {
 			expect(createMock).not.toHaveBeenCalled();
 		});
 
-		it("still keeps a draft-type session in the clone", () => {
-			expect(
-				allocateTree("/git/repo", new Set(), { draftLike: true }).kind,
-			).toBe("primary");
-			expect(createMock).not.toHaveBeenCalled();
+		it("names the trunk reason for a committing assist command", () => {
+			allocateTree("/git/repo", new Set(), {
+				assistCommand: "review",
+				commits: true,
+			});
+
+			expect(logMock).toHaveBeenCalledWith(
+				expect.stringContaining("worktree.trunk is on"),
+			);
 		});
 
 		it("still honours a session pinned to the tree it was launched from", () => {
@@ -340,7 +342,6 @@ describe("allocateTree", () => {
 			configMock.mockReturnValue({
 				enabled: false,
 				trunk: true,
-				includeDrafts: false,
 				install: true,
 				commitBeforeManualChecks: false,
 				copy: [],
@@ -375,7 +376,6 @@ describe("allocateTree", () => {
 			configMock.mockReturnValue({
 				enabled: false,
 				trunk: false,
-				includeDrafts: false,
 				install: true,
 				commitBeforeManualChecks: false,
 				copy: [],

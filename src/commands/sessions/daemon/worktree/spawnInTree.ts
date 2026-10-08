@@ -5,7 +5,6 @@ import {
 } from "../createAssistSession";
 import { createSession } from "../createSession";
 import type { SpawnContext } from "../types";
-import { isDraftCommand } from "../../shared/isDraftCommand";
 import { allocateAndBind, type TreeSpawnContext } from "./allocateAndBind";
 import { isBacklogRunArgs } from "./isBacklogRunArgs";
 import { isCommittingArgs } from "./isCommittingArgs";
@@ -59,7 +58,7 @@ export function spawnAssistInTree(
 			forCheckout: isPrCheckoutArgs(assistArgs),
 			commits: isCommittingArgs(assistArgs),
 			backlogRun: isBacklogRunArgs(assistArgs),
-			draftLike: isDraftCommand(assistArgs[0]),
+			assistCommand: assistArgs[0] ?? "",
 			inPlace: meta?.inPlace,
 		},
 		context,

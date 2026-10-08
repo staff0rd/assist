@@ -2,23 +2,11 @@ import { daemonLog } from "../daemonLog";
 import { planAllocation } from "./planAllocation";
 import { checkDurabilitySync } from "./treeDurability";
 
-type ReuseOptions = {
-	forCheckout?: boolean;
-	draftLike?: boolean;
-	includeDrafts?: boolean;
-};
-
 export function reusesClone(
 	clone: string,
 	boundTreeRoots: Set<string>,
-	options: ReuseOptions,
+	options: { forCheckout?: boolean },
 ): boolean {
-	if (options.draftLike === true && options.includeDrafts !== true) {
-		daemonLog(
-			`draft-type session kept in the clone ${clone}: worktree.includeDrafts is off`,
-		);
-		return true;
-	}
 	if (planAllocation(clone, boundTreeRoots) !== "primary") {
 		daemonLog(
 			`clone ${clone} is held by a live session — spilling to a worktree`,

@@ -26,4 +26,13 @@ describe("stripLegacyConfigKeys", () => {
 		expect(stripped).toEqual({ worktree: { enabled: true } });
 		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
 	});
+
+	it("drops the retired worktree.includeDrafts key so old configs still parse", () => {
+		const stripped = stripLegacyConfigKeys({
+			worktree: { enabled: true, includeDrafts: true },
+		});
+
+		expect(stripped).toEqual({ worktree: { enabled: true } });
+		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
+	});
 });

@@ -39,17 +39,12 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "worktree.enabled",
 		setter: "assist config set worktree.enabled true -g --repo",
-		note: "opt in per repo: spill concurrent sessions into adjacent <clone>-N worktrees (default off)",
+		note: "opt in per repo: spill concurrent prompt sessions into adjacent <clone>-N worktrees, and give every assist-command session (draft, bug, backlog run, review, …) a fresh one (default off)",
 	},
 	{
 		key: "worktree.trunk",
 		setter: "assist config set worktree.trunk true -g --repo",
 		note: "trunk-based: a spilled worktree lands on the mainline, and committing jobs (backlog run <id>, review/review-pr-comments) never run in the clone — they always get a <clone>-N (default off: a worktree starts off the remote default with no mainline tracking, so the session raises its own branch and PR)",
-	},
-	{
-		key: "worktree.includeDrafts",
-		setter: "assist config set worktree.includeDrafts true -g --repo",
-		note: "draft/bug/refine sessions get their own <clone>-N too (default off: they run in the clone, since they change no code)",
 	},
 	{
 		key: "worktree.root",

@@ -6,7 +6,6 @@ type WorktreeConfig = NonNullable<AssistConfig["worktree"]>;
 const DISABLED: WorktreeConfig = {
 	enabled: false,
 	trunk: false,
-	includeDrafts: false,
 	install: true,
 	commitBeforeManualChecks: false,
 	copy: [".env", "settings.local.json", ".claude/settings.local.json"],

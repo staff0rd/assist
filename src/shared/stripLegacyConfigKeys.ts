@@ -5,7 +5,7 @@ const LEGACY_SESSIONS_KEYS = [
 	"windowsVersionCheck",
 ];
 
-const LEGACY_WORKTREE_KEYS = ["watcher"];
+const LEGACY_WORKTREE_KEYS = ["watcher", "includeDrafts"];
 
 function withoutKeys(value: unknown, keys: string[]): unknown {
 	if (!value || typeof value !== "object") return value;

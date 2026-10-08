@@ -17,7 +17,7 @@ export type Allocation = {
 
 export type AllocateOptions = {
 	forCheckout?: boolean;
-	draftLike?: boolean;
+	assistCommand?: string;
 	inPlace?: boolean;
 	commits?: boolean;
 	backlogRun?: boolean;
@@ -47,10 +47,9 @@ export function allocateTree(
 		);
 
 	const clone = canonicalTreePath(mainWorktree(repoRoot) ?? repoRoot);
-	const reuse = { ...options, includeDrafts: cfg.includeDrafts };
 	const forcedSpill = forcedSpillReason(clone, cfg.trunk, options);
 	if (forcedSpill) daemonLog(forcedSpill);
-	else if (reusesClone(clone, boundTreeRoots, reuse))
+	else if (reusesClone(clone, boundTreeRoots, options))
 		return { cwd: clone, kind: "primary", created: false, clone };
 
 	const path = createWorktree(

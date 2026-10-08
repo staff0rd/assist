@@ -21,11 +21,11 @@ where you are or where any in-progress changes live. The tool tracks that; you d
   progress. A workspace is only reused for a checkout when it holds nothing
   unlanded, so whatever you had going is left exactly where it was; otherwise the
   PR gets a workspace of its own.
-- Only work that changes code needs a workspace. Drafting, filing a bug and refining
-  an item touch no code, so they run in the repo's own working copy — even while
-  something else is working there — and are never given a workspace of their own, nor
-  charged the wait to set one up. If one of them carries on into a coding run, **that**
-  is when the run is placed, and it is placed like any other session.
+- Only a plain prompt session may use the repo's own working copy, and only while
+  nothing live holds it. Every assist command — drafting, filing a bug, a backlog
+  run, a review — gets a fresh workspace off the freshly fetched remote default, even
+  when the working copy is free, so it never plans or works against whatever branch
+  the working copy happens to be on.
 - Isolation is per session, not per task. The same piece of work is never started
   twice: ask to run a backlog item that already has a live run and the tool
   **refuses and points at the run that holds it**, rather than isolating a duplicate
@@ -97,10 +97,6 @@ Two per-repo settings, both **default off**:
   tracking is deliberate and the commit is pushed there; off, it is git's own doing when a
   branch was cut from the mainline, so the commit is pushed to the branch's own remote
   branch and never onto the mainline.
-
-One further per-repo switch, also **default off**: whether draft-type work gets its own
-workspace. Off is the behaviour in 1 — drafting, bug filing and refining stay in the
-repo's own working copy; on, they are placed like any other session.
 
 Turning either on and back off again leaves **no trace on the repo**. Neither writes
 settings into the repo's own git configuration, so how the repo pushes when you work in

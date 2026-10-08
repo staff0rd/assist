@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { basename, dirname } from "node:path";
 import { expandTilde } from "../../../../shared/expandTilde";
 import { getCurrentOrigin } from "../../../backlog/getCurrentOrigin";
+import { fetchQuietly } from "../../../watch/fetchQuietly";
 import { daemonLog } from "../daemonLog";
 import { gitSync } from "./git";
 import { listLocalBranches, listWorktreePaths } from "./listWorktreePaths";
@@ -27,6 +28,11 @@ export function createWorktree(
 		preferredPath && !isTaken(preferredPath)
 			? preferredPath
 			: nextWorktreePath(clone, base, isTaken);
+	const fetchError = fetchQuietly(clone, 0);
+	if (fetchError)
+		daemonLog(
+			`fetch before allocating a worktree for clone ${clone} failed, branching off local refs: ${fetchError}`,
+		);
 	const start = worktreeStartPoint(clone, strategy.trunk);
 	gitSync(clone, [
 		"worktree",

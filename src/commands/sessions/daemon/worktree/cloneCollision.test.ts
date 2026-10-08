@@ -41,7 +41,7 @@ function makeRepo(): { base: string; clone: string } {
 	mkdirSync(join(clone, ".claude"));
 	writeFileSync(
 		join(clone, ".claude", "assist.yml"),
-		"worktree:\n  enabled: true\n  trunk: false\n  includeDrafts: true\n  install: false\n",
+		"worktree:\n  enabled: true\n  trunk: false\n  install: false\n",
 	);
 	symlinkSync(real, join(base, "link"));
 	return { base, clone };

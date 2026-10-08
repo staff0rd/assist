@@ -1,14 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { makeSession } from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { isCloneBoundDraft } from "./isCloneBoundDraft";
-import { worktreeConfigFor } from "./worktreeConfigFor";
-
-vi.mock("./worktreeConfigFor", () => ({
-	worktreeConfigFor: vi.fn(() => ({ enabled: true, includeDrafts: false })),
-}));
-
-const configMock = vi.mocked(worktreeConfigFor);
 
 const draft = {
 	commandType: "assist",
@@ -18,14 +11,6 @@ const draft = {
 } satisfies Partial<Session>;
 
 describe("isCloneBoundDraft", () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-		configMock.mockReturnValue({
-			enabled: true,
-			includeDrafts: false,
-		} as ReturnType<typeof worktreeConfigFor>);
-	});
-
 	it("recognises a draft kept in the clone", () => {
 		expect(isCloneBoundDraft(makeSession(draft))).toBe(true);
 	});
@@ -57,23 +42,5 @@ describe("isCloneBoundDraft", () => {
 				}),
 			),
 		).toBe(false);
-	});
-
-	it("excludes a draft on a repo that opted drafts into workspaces", () => {
-		configMock.mockReturnValue({
-			enabled: true,
-			includeDrafts: true,
-		} as ReturnType<typeof worktreeConfigFor>);
-
-		expect(isCloneBoundDraft(makeSession(draft))).toBe(false);
-	});
-
-	it("recognises a draft on a repo with parallel work off", () => {
-		configMock.mockReturnValue({
-			enabled: false,
-			includeDrafts: true,
-		} as ReturnType<typeof worktreeConfigFor>);
-
-		expect(isCloneBoundDraft(makeSession(draft))).toBe(true);
 	});
 });

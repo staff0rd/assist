@@ -1,6 +1,8 @@
 import { existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as fsMockModule from "../../../../test/mocks/fsMock";
+import { fetchQuietly } from "../../../watch/fetchQuietly";
+import { daemonLog } from "../daemonLog";
 import { createWorktree } from "./createWorktree";
 import { gitSync, gitSyncOrNull } from "./git";
 
@@ -15,6 +17,7 @@ vi.mock("./listWorktreePaths", () => ({
 	listWorktreePaths: () => ["/git/repo"],
 	listLocalBranches: () => ["main"],
 }));
+vi.mock("../../../watch/fetchQuietly", () => ({ fetchQuietly: vi.fn() }));
 vi.mock("./readWorktreeRegistry", () => ({ recordWorktree: vi.fn() }));
 vi.mock("../../../backlog/getCurrentOrigin", () => ({
 	getCurrentOrigin: () => "github.com/acme/repo",
@@ -138,5 +141,26 @@ describe("createWorktree", () => {
 			"/git/repo-2",
 			"HEAD",
 		]);
+	});
+
+	it("fetches before resolving the start point", () => {
+		createWorktree("/git/repo", { root: undefined, trunk: false }, new Set());
+
+		expect(fetchQuietly).toHaveBeenCalledWith("/git/repo", 0);
+		const fetchOrder = vi.mocked(fetchQuietly).mock.invocationCallOrder[0];
+		const verifyOrder = gitSyncOrNullMock.mock.invocationCallOrder[0];
+		expect(fetchOrder).toBeLessThan(verifyOrder ?? Infinity);
+	});
+
+	it("logs a failed fetch and still creates the worktree off local refs", () => {
+		vi.mocked(fetchQuietly).mockReturnValueOnce("could not resolve host");
+
+		expect(
+			createWorktree("/git/repo", { root: undefined, trunk: false }, new Set()),
+		).toBe("/git/repo-2");
+		expect(daemonLog).toHaveBeenCalledWith(
+			expect.stringContaining("could not resolve host"),
+		);
+		expect(worktreeAdd()).toBeDefined();
 	});
 });

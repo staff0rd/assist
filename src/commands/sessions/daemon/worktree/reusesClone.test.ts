@@ -51,11 +51,4 @@ describe("reusesClone", () => {
 		);
 		expect(logged()).toContain("uncommitted changes");
 	});
-
-	it("records why a draft-type session is pinned to the clone", () => {
-		expect(reusesClone("/git/repo", new Set(), { draftLike: true })).toBe(true);
-		expect(logged()).toContain(
-			"draft-type session kept in the clone /git/repo",
-		);
-	});
 });
