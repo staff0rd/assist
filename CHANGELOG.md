@@ -1,3 +1,10 @@
+## [0.793.2](https://github.com/staff0rd/assist/compare/v0.793.1...v0.793.2) (2026-10-08)
+
+
+### Bug Fixes
+
+* terminal replies don't claim viewer ([f48efa2](https://github.com/staff0rd/assist/commit/f48efa2ef809b810a015c443db3136d68b1e03bd))
+
 ## [0.793.1](https://github.com/staff0rd/assist/compare/v0.793.0...v0.793.1) (2026-10-08)
 
 
