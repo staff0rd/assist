@@ -1,3 +1,10 @@
+## [0.795.1](https://github.com/staff0rd/assist/compare/v0.795.0...v0.795.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* deny issue API writes in $( ) ([0e4b355](https://github.com/staff0rd/assist/commit/0e4b355086a68272cd648abd5f734583131e9a70))
+
 # [0.795.0](https://github.com/staff0rd/assist/compare/v0.794.0...v0.795.0) (2026-10-08)
 
 
