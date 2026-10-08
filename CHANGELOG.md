@@ -1,3 +1,10 @@
+## [0.797.1](https://github.com/staff0rd/assist/compare/v0.797.0...v0.797.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* list your PRs after peer PRs ([bfeec72](https://github.com/staff0rd/assist/commit/bfeec72f83a10ee284514a8e0bf0181d96c94c49))
+
 # [0.797.0](https://github.com/staff0rd/assist/compare/v0.796.0...v0.797.0) (2026-10-08)
 
 
