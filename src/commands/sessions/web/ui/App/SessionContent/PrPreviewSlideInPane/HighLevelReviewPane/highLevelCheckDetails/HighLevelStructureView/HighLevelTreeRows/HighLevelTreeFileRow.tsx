@@ -4,6 +4,7 @@ import { HighLevelLineCounts } from "../../HighLevelLineCounts";
 import {
 	HIGH_LEVEL_STATUS_COLOURS,
 	HIGH_LEVEL_STATUS_LETTERS,
+	highLevelButtonResetSx,
 	highLevelTreeNameSx,
 	highLevelTreeRowSx,
 } from "../../highLevelTreeRowSx";
@@ -26,12 +27,7 @@ export function HighLevelTreeFileRow({
 			sx={{
 				...highLevelTreeRowSx,
 				pl: indent,
-				border: 0,
-				bgcolor: "transparent",
-				cursor: "pointer",
-				textAlign: "left",
-				color: "inherit",
-				font: "inherit",
+				...highLevelButtonResetSx,
 			}}
 		>
 			<Tooltip title={file.status}>

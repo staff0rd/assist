@@ -1,5 +1,5 @@
 import { alpha, type Theme } from "@mui/material/styles";
-import { syntaxTokenSx } from "./diffSx/syntaxTokenSx";
+import { syntaxTokenSx } from "./syntaxTokenSx";
 
 export const diffSx = (theme: Theme) => {
 	const { success, error, text, primary, divider } = theme.palette;

@@ -3,6 +3,7 @@ import type {
 	HighLevelCriticalDiff,
 	HighLevelReviewRecord,
 	HighLevelStructure,
+	HighLevelTestFile,
 } from "./types";
 
 export type HighLevelOverlaySubject = {
@@ -15,5 +16,7 @@ export type HighLevelOverlaySubject = {
 	structure: HighLevelStructure;
 	criticalDiffs: HighLevelCriticalDiff[];
 	criticalPaths: string[];
+	tests: HighLevelTestFile[];
+	testPaths: string[];
 	saved?: HighLevelReviewRecord;
 };

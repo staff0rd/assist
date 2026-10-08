@@ -1,6 +1,7 @@
 import type { PreviewMetadata } from "../../sessions/shared/SessionInfoBase";
 import { highLevelChangedFileCount } from "./highLevelChangedFileCount";
 import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
+import { highLevelTestCount } from "./highLevelTestCount";
 
 export function highLevelPreviewMetadata(
 	subject: HighLevelOverlaySubject,
@@ -13,6 +14,10 @@ export function highLevelPreviewMetadata(
 			value: String(highLevelChangedFileCount(subject.structure)),
 		},
 		{ label: "Critical files", value: String(subject.criticalDiffs.length) },
+		{
+			label: "Changed tests",
+			value: String(highLevelTestCount(subject.tests)),
+		},
 		...(subject.saved
 			? [{ label: "Reopened from", value: subject.saved.reviewedAt }]
 			: []),

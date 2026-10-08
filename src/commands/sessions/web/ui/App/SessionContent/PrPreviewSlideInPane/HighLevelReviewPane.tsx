@@ -12,6 +12,8 @@ import { PrPreviewHeader } from "./PrPreviewHeader";
 import { prPreviewPaneSx } from "./prPreviewPaneSx";
 import { useHighLevelChecklist } from "./HighLevelReviewPane/useHighLevelChecklist";
 
+const TESTS_ITEM = "tests-worth-having";
+
 export function HighLevelReviewPane({
 	preview,
 	onDecision,
@@ -27,7 +29,10 @@ export function HighLevelReviewPane({
 		[preview.body],
 	);
 	const checklist = useHighLevelChecklist(payload.checks, payload.saved);
-	const details = useMemo(() => highLevelCheckDetails(payload), [payload]);
+	const details = highLevelCheckDetails(payload, {
+		note: (testId) => checklist.note(TESTS_ITEM, testId),
+		onNote: (testId, note) => checklist.onNote(TESTS_ITEM, testId, note),
+	});
 
 	const decide = (decision: "approve" | "reject") =>
 		onDecision(decision, highLevelDecisionDetails(checklist.checklist()));

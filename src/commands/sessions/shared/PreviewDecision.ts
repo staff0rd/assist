@@ -6,10 +6,16 @@ export type PreviewSelection = {
 	bottomRight: string;
 };
 
+export type PreviewChecklistNote = {
+	id: string;
+	comment: string;
+};
+
 export type PreviewChecklistItem = {
 	id: string;
 	ticked: boolean;
 	comment?: string;
+	notes?: PreviewChecklistNote[];
 };
 
 export type PreviewDecisionFields = {

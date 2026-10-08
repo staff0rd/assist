@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { formatCriticalDiffs } from "./formatCriticalDiffs";
 import { formatHighLevelChecklist } from "./formatHighLevelChecklist";
 import { formatHighLevelStructure } from "./formatHighLevelStructure";
+import { formatHighLevelTests } from "./formatHighLevelTests";
 import { highLevelChangedFileCount } from "./highLevelChangedFileCount";
 import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
 
@@ -23,6 +24,8 @@ export function printHighLevelChecklist(
 	console.log(
 		formatCriticalDiffs(subject.criticalDiffs, subject.criticalPaths),
 	);
+	console.log("");
+	console.log(formatHighLevelTests(subject.tests, subject.testPaths));
 	console.log(
 		chalk.dim(
 			"\nManual items are for the reviewer to judge; see docs/high-level-review.md.",

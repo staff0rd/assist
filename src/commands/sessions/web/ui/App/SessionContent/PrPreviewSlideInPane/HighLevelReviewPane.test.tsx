@@ -78,7 +78,52 @@ const payload: HighLevelPreviewPayload = {
 		},
 	],
 	criticalPaths: ["**/*.graphql"],
+	tests: [
+		{
+			path: "src/app.test.ts",
+			status: "modified",
+			additions: 4,
+			deletions: 0,
+			diffUrl: "https://github.com/org/repo/pull/42/files#diff-ghi",
+			tests: [
+				{
+					kind: "describe",
+					name: "app",
+					line: 3,
+					children: [
+						{
+							kind: "it",
+							id: "src/app.test.ts:4",
+							name: "starts",
+							line: 4,
+							source: 'it("starts", () => {\n\texpect(start()).toBe(true);\n})',
+						},
+					],
+				},
+			],
+		},
+	],
+	testPaths: ["**/*.test.ts"],
 };
+
+const testsCheck: HighLevelCheckResult = {
+	id: "tests-worth-having",
+	kind: "manual",
+	title: "The tests are worth having",
+	backing: "The describe/it hierarchy of changed tests",
+	status: "manual",
+	reason: "The describe/it hierarchy of changed tests",
+};
+
+function withTestsCheck(extra: Partial<HighLevelPreviewPayload> = {}) {
+	return preview({
+		body: JSON.stringify({
+			...payload,
+			checks: [...checks, testsCheck],
+			...extra,
+		}),
+	});
+}
 
 function preview(overrides: Partial<PrPreview> = {}): PrPreview {
 	return {
@@ -300,6 +345,90 @@ describe("HighLevelReviewPane", () => {
 				) as HTMLTextAreaElement
 			).value,
 		).toBe("looked fine");
+	});
+
+	it("backs the tests item with the hierarchy, revealing a test's source only on click", () => {
+		const { container } = render(
+			<HighLevelReviewPane preview={withTestsCheck()} onDecision={vi.fn()} />,
+		);
+
+		expect(screen.getByText("Changed tests (1)")).toBeTruthy();
+		expect(screen.getByText("app")).toBeTruthy();
+		expect(screen.getByText("starts")).toBeTruthy();
+		expect(container.textContent).not.toContain("expect(start())");
+
+		fireEvent.click(screen.getByLabelText("Show the source of starts"));
+
+		expect(container.textContent).toContain("expect(start()).toBe(true)");
+	});
+
+	it("carries a comment on an individual test into the decision", () => {
+		const onDecision = vi.fn();
+		render(
+			<HighLevelReviewPane
+				preview={withTestsCheck()}
+				onDecision={onDecision}
+			/>,
+		);
+
+		fireEvent.click(screen.getByLabelText("Comment on the test starts"));
+		fireEvent.change(screen.getByLabelText("Comment for starts"), {
+			target: { value: "asserts nothing useful" },
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Request changes" }));
+
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			expect.objectContaining({
+				checklist: expect.arrayContaining([
+					{
+						id: "tests-worth-having",
+						ticked: false,
+						notes: [
+							{ id: "src/app.test.ts:4", comment: "asserts nothing useful" },
+						],
+					},
+				]),
+			}),
+		);
+	});
+
+	it("reopens a saved per-test comment", () => {
+		render(
+			<HighLevelReviewPane
+				preview={withTestsCheck({
+					saved: {
+						repo: "org/repo",
+						prNumber: 42,
+						headRef: "feat/thing",
+						headSha: "abc123",
+						verdict: "request-changes",
+						reviewedAt: "2026-01-01T00:00:00.000Z",
+						items: [
+							{
+								...testsCheck,
+								ticked: false,
+								testComments: [
+									{
+										id: "src/app.test.ts:4",
+										path: "src/app.test.ts",
+										line: 4,
+										title: ["app", "starts"],
+										comment: "weak",
+									},
+								],
+							},
+						],
+					},
+				})}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		expect(
+			(screen.getByLabelText("Comment for starts") as HTMLTextAreaElement)
+				.value,
+		).toBe("weak");
 	});
 
 	it("survives a body that is not a checklist", () => {

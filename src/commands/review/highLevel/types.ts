@@ -68,6 +68,35 @@ export type HighLevelCriticalDiff = {
 	truncated?: boolean;
 };
 
+type HighLevelTestBase = { name: string; line: number };
+
+export type HighLevelTestCase = HighLevelTestBase & {
+	kind: "it";
+	id: string;
+	source?: string;
+	truncated?: boolean;
+};
+
+type HighLevelTestSuite = HighLevelTestBase & {
+	kind: "describe";
+	children: HighLevelTestNode[];
+};
+
+export type HighLevelTestNode = HighLevelTestSuite | HighLevelTestCase;
+
+export type HighLevelTestFile = Pick<
+	HighLevelFile,
+	"path" | "status" | "additions" | "deletions" | "diffUrl"
+> & { tests: HighLevelTestNode[] };
+
+export type HighLevelTestComment = {
+	id: string;
+	path: string;
+	line: number;
+	title: string[];
+	comment: string;
+};
+
 export type HighLevelReviewItem = {
 	id: HighLevelCheckId;
 	kind: "deterministic" | "manual";
@@ -76,6 +105,7 @@ export type HighLevelReviewItem = {
 	reason: string;
 	ticked: boolean;
 	comment?: string;
+	testComments?: HighLevelTestComment[];
 };
 
 export type HighLevelReviewRecord = {
@@ -95,5 +125,7 @@ export type HighLevelPreviewPayload = {
 	structure: HighLevelStructure;
 	criticalDiffs: HighLevelCriticalDiff[];
 	criticalPaths: string[];
+	tests: HighLevelTestFile[];
+	testPaths: string[];
 	saved?: HighLevelReviewRecord;
 };

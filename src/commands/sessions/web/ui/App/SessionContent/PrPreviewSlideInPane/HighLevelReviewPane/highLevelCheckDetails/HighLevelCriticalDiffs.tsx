@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import type { HighLevelCriticalDiff } from "../../../../../../../../review/highLevel/types";
 import { DiffViewTypeToggle } from "../../../../DiffViewTypeToggle";
-import { HighLevelCriticalDiffHeader } from "./HighLevelCriticalDiffs/HighLevelCriticalDiffHeader";
+import { HighLevelCriticalDiffHeader } from "./HighLevelCriticalDiffHeader";
 import { HighLevelDiffNote } from "./HighLevelDiffNote";
 import { HighLevelNativeDiff } from "./HighLevelNativeDiff";
 import { useDiffViewType } from "../../../../useDiffViewType";

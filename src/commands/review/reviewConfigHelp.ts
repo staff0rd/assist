@@ -22,4 +22,10 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set review.highLevel.descriptionWordCap 300",
 		note: "word cap --high-level holds the PR description to (default 300)",
 	},
+	{
+		key: "review.highLevel.testPaths",
+		setter:
+			'assist config set review.highLevel.testPaths "**/*.test.ts,e2e/**/*.spec.ts"',
+		note: "comma-separated globs of test files whose describe/it hierarchy backs the tests item (default **/*.{test,spec}.{ts,tsx,js,jsx})",
+	},
 ];

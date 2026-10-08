@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { buildHighLevelQuestions } from "./buildHighLevelQuestions";
 
-const unset = { criticalPaths: [], uiPaths: [], descriptionWordCap: 300 };
+const unset = {
+	criticalPaths: [],
+	uiPaths: [],
+	descriptionWordCap: 300,
+	testPaths: [],
+};
 
 function suggestionFor(
 	questions: ReturnType<typeof buildHighLevelQuestions>,

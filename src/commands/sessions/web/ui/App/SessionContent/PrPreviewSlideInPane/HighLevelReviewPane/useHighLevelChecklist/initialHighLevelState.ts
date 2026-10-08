@@ -3,7 +3,11 @@ import type {
 	HighLevelReviewRecord,
 } from "../../../../../../../../review/highLevel/types";
 
-export type HighLevelItemState = { ticked: boolean; comment: string };
+export type HighLevelItemState = {
+	ticked: boolean;
+	comment: string;
+	notes: Record<string, string>;
+};
 
 export function initialHighLevelState(
 	checks: HighLevelCheckResult[],
@@ -17,6 +21,12 @@ export function initialHighLevelState(
 				{
 					ticked: previous?.ticked ?? check.status === "pass",
 					comment: previous?.comment ?? "",
+					notes: Object.fromEntries(
+						(previous?.testComments ?? []).map((note) => [
+							note.id,
+							note.comment,
+						]),
+					),
 				},
 			];
 		}),

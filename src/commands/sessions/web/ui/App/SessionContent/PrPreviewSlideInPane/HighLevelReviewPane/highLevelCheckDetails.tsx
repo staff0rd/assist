@@ -3,10 +3,16 @@ import type { HighLevelPreviewPayload } from "../../../../../../../review/highLe
 import { HighLevelCheckDetail } from "./highLevelCheckDetails/HighLevelCheckDetail";
 import { HighLevelCriticalDiffs } from "./highLevelCheckDetails/HighLevelCriticalDiffs";
 import { HighLevelStructureView } from "./highLevelCheckDetails/HighLevelStructureView";
+import {
+	HighLevelTestsView,
+	type HighLevelTestNotes,
+} from "./highLevelCheckDetails/HighLevelTestsView";
 import { highLevelChangedFileCount } from "../../../../../../../review/highLevel/highLevelChangedFileCount";
+import { highLevelTestCount } from "../../../../../../../review/highLevel/highLevelTestCount";
 
 export function highLevelCheckDetails(
 	payload: HighLevelPreviewPayload,
+	notes: HighLevelTestNotes,
 ): Record<string, ReactNode> {
 	const subject = `${payload.repo}#${payload.prNumber}`;
 	return {
@@ -28,6 +34,18 @@ export function highLevelCheckDetails(
 					diffs={payload.criticalDiffs}
 					criticalPaths={payload.criticalPaths}
 					subject={subject}
+				/>
+			</HighLevelCheckDetail>
+		),
+		"tests-worth-having": (
+			<HighLevelCheckDetail
+				label={`Changed tests (${highLevelTestCount(payload.tests)})`}
+			>
+				<HighLevelTestsView
+					files={payload.tests}
+					testPaths={payload.testPaths}
+					subject={subject}
+					notes={notes}
 				/>
 			</HighLevelCheckDetail>
 		),

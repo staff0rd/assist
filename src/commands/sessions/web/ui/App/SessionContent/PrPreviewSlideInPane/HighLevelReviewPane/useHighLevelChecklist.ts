@@ -3,9 +3,9 @@ import type {
 	HighLevelCheckResult,
 	HighLevelReviewRecord,
 } from "../../../../../../../review/highLevel/types";
-import type { PreviewChecklistItem } from "../../../../../../shared/PreviewDecision";
 import type { HighLevelItemState } from "./useHighLevelChecklist/initialHighLevelState";
 import { initialHighLevelState } from "./useHighLevelChecklist/initialHighLevelState";
+import { highLevelChecklistItems } from "./useHighLevelChecklist/highLevelChecklistItems";
 
 export function useHighLevelChecklist(
 	checks: HighLevelCheckResult[],
@@ -29,21 +29,16 @@ export function useHighLevelChecklist(
 		[checks, state],
 	);
 
-	const checklist = (): PreviewChecklistItem[] =>
-		checks.map((check) => {
-			const comment = state[check.id]?.comment.trim() ?? "";
-			return {
-				id: check.id,
-				ticked: state[check.id]?.ticked === true,
-				...(comment ? { comment } : {}),
-			};
-		});
+	const checklist = () => highLevelChecklistItems(checks, state);
 
 	return {
 		ticked: (id: string) => state[id]?.ticked === true,
 		comment: (id: string) => state[id]?.comment ?? "",
 		onTick: (id: string, ticked: boolean) => patch(id, { ticked }),
 		onComment: (id: string, comment: string) => patch(id, { comment }),
+		note: (id: string, noteId: string) => state[id]?.notes[noteId] ?? "",
+		onNote: (id: string, noteId: string, note: string) =>
+			patch(id, { notes: { ...state[id]?.notes, [noteId]: note } }),
 		outstanding,
 		checklist,
 	};

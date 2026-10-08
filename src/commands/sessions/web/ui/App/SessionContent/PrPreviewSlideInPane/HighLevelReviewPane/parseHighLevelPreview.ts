@@ -17,6 +17,8 @@ const EMPTY: HighLevelPreviewPayload = {
 	},
 	criticalDiffs: [],
 	criticalPaths: [],
+	tests: [],
+	testPaths: [],
 };
 
 function isCheck(value: unknown): value is HighLevelCheckResult {
@@ -51,6 +53,8 @@ export function parseHighLevelPreview(body: string): HighLevelPreviewPayload {
 		structure: { ...EMPTY.structure, ...parsed.structure },
 		criticalDiffs: asArray(parsed.criticalDiffs),
 		criticalPaths: asArray(parsed.criticalPaths),
+		tests: asArray(parsed.tests),
+		testPaths: asArray(parsed.testPaths),
 		...(parsed.saved ? { saved: parsed.saved } : {}),
 	};
 }

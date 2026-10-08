@@ -10,6 +10,15 @@ export const highLevelTreeRowSx = {
 	"&:hover": { bgcolor: "action.hover" },
 } as const;
 
+export const highLevelButtonResetSx = {
+	border: 0,
+	bgcolor: "transparent",
+	cursor: "pointer",
+	textAlign: "left",
+	color: "inherit",
+	font: "inherit",
+} as const;
+
 export const highLevelTreeNameSx = {
 	fontFamily: "monospace",
 	fontSize: 12,

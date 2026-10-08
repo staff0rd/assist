@@ -145,6 +145,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
   - `review.highLevel.criticalPaths` - Globs of files whose diffs back the critical-diff checklist item; unset, no file is critical
   - `review.highLevel.uiPaths` - Globs that make a change a UI change, requiring a screenshot or video; unset, the check passes
   - `review.highLevel.descriptionWordCap` - Word cap for the PR description; defaults to 300
+  - `review.highLevel.testPaths` - Globs of test files whose changed tests back the tests checklist item as a file > describe > it hierarchy, each test's source a click away and each open to its own comment; defaults to `**/*.{test,spec}.{ts,tsx,js,jsx}`
 - `assist github commits <org> [--since <date>] [--top <n>] [--json]` - Report commit activity across a GitHub organisation
 - `assist github issue create --title <title> --body <body> [-R <owner>/<repo>] [--type <name>] [--parent <issue>] [--project <number>] [--status <name>] [--label <name>]` - Create a GitHub issue on the current repo (or `-R`'s), previewed for approval in a web session; the options set its issue type, parent issue, project, project status and labels
 - `assist github issue edit <number> [-R <owner>/<repo>] [--fresh] [--parent <issue>]` - Rework an issue's body in the web preview pane; `--fresh` discards an unpushed revision, and `--parent` instead makes the issue a sub-issue of `<issue>`

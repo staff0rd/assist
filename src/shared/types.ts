@@ -133,6 +133,9 @@ const assistConfigShape = {
 					criticalPaths: z.array(z.string()).default([]),
 					uiPaths: z.array(z.string()).default([]),
 					descriptionWordCap: z.number().int().positive().default(300),
+					testPaths: z
+						.array(z.string())
+						.default(["**/*.{test,spec}.{ts,tsx,js,jsx}"]),
 				})
 				.optional(),
 		})

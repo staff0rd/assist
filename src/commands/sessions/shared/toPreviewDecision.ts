@@ -1,10 +1,10 @@
 import type { PreviewAttachment } from "./PreviewAttachment";
 import type {
-	PreviewChecklistItem,
 	PreviewDecision,
 	PreviewDecisionFields,
 	PreviewSelection,
 } from "./PreviewDecision";
+import { toChecklist } from "./toChecklist";
 
 export type DecisionMessage = PreviewDecisionFields & {
 	type?: string;
@@ -21,21 +21,6 @@ function toSelection(value: unknown): PreviewSelection | undefined {
 	)
 		return undefined;
 	return { topLeft: selection.topLeft, bottomRight: selection.bottomRight };
-}
-
-function toChecklist(value: unknown): PreviewChecklistItem[] | undefined {
-	if (!Array.isArray(value)) return undefined;
-	return value.flatMap((entry) => {
-		const { id, ticked, comment } = (entry ?? {}) as Record<string, unknown>;
-		if (typeof id !== "string") return [];
-		return [
-			{
-				id,
-				ticked: ticked === true,
-				...(typeof comment === "string" && comment !== "" ? { comment } : {}),
-			},
-		];
-	});
 }
 
 function toAttachments(value: unknown): PreviewAttachment[] | undefined {

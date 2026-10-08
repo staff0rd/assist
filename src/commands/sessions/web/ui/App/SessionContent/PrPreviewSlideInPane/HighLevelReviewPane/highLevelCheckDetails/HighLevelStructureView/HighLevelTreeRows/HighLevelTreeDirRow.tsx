@@ -4,6 +4,7 @@ import { Box, Typography } from "@mui/material";
 import type { HighLevelTreeDir } from "../../../../../../../../../../review/highLevel/types";
 import { HighLevelLineCounts } from "../../HighLevelLineCounts";
 import {
+	highLevelButtonResetSx,
 	highLevelTreeNameSx,
 	highLevelTreeRowSx,
 } from "../../highLevelTreeRowSx";
@@ -30,12 +31,7 @@ export function HighLevelTreeDirRow({
 			sx={{
 				...highLevelTreeRowSx,
 				pl: indent,
-				border: 0,
-				bgcolor: "transparent",
-				cursor: "pointer",
-				textAlign: "left",
-				color: "inherit",
-				font: "inherit",
+				...highLevelButtonResetSx,
 			}}
 		>
 			<Chevron sx={{ fontSize: 15, color: "text.secondary", flexShrink: 0 }} />

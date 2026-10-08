@@ -7,6 +7,7 @@ export type DeterministicCheckId =
 type ManualCheckId =
 	| "structure-sensible"
 	| "critical-diffs-correct"
+	| "tests-worth-having"
 	| "backend-pr-linked";
 
 export type HighLevelCheckId = DeterministicCheckId | ManualCheckId;
@@ -59,6 +60,13 @@ export const highLevelChecklist: HighLevelCheck[] = [
 		kind: "manual",
 		title: "The critical-file diffs are correct",
 		backing: "Full diffs of files matching review.highLevel.criticalPaths",
+	},
+	{
+		id: "tests-worth-having",
+		kind: "manual",
+		title: "The tests are worth having",
+		backing:
+			"The describe/it hierarchy of changed tests in files matching review.highLevel.testPaths",
 	},
 	{
 		id: "backend-pr-linked",

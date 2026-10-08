@@ -15,7 +15,12 @@ function subject(overrides: Partial<HighLevelSubject> = {}): HighLevelSubject {
 	return {
 		body: BODY,
 		changedFiles: ["src/orders/filter.ts"],
-		config: { criticalPaths: [], uiPaths: [], descriptionWordCap: 300 },
+		config: {
+			criticalPaths: [],
+			uiPaths: [],
+			descriptionWordCap: 300,
+			testPaths: [],
+		},
 		...overrides,
 	};
 }
@@ -39,6 +44,7 @@ describe("evaluateHighLevelChecks", () => {
 		expect(manual.map((result) => result.id)).toEqual([
 			"structure-sensible",
 			"critical-diffs-correct",
+			"tests-worth-having",
 			"backend-pr-linked",
 		]);
 		expect(manual.every((result) => result.status === "manual")).toBe(true);
@@ -81,7 +87,12 @@ describe("evaluateHighLevelChecks", () => {
 	it("fails a description over the word cap, naming the overage", () => {
 		const result = check("description-word-cap", {
 			body: `## What\n\n${"word ".repeat(40)}\n\n## Why\n\nBecause.`,
-			config: { criticalPaths: [], uiPaths: [], descriptionWordCap: 10 },
+			config: {
+				criticalPaths: [],
+				uiPaths: [],
+				descriptionWordCap: 10,
+				testPaths: [],
+			},
 		});
 		expect(result.status).toBe("fail");
 		expect(result.reason).toContain("over the 10-word cap");
@@ -129,6 +140,7 @@ describe("evaluateHighLevelChecks", () => {
 				criticalPaths: [],
 				uiPaths: ["src/ui/**"],
 				descriptionWordCap: 300,
+				testPaths: [],
 			},
 		});
 		expect(result.status).toBe("pass");
@@ -142,6 +154,7 @@ describe("evaluateHighLevelChecks", () => {
 				criticalPaths: [],
 				uiPaths: ["src/ui/**"],
 				descriptionWordCap: 300,
+				testPaths: [],
 			},
 		});
 		expect(result.status).toBe("fail");
@@ -160,6 +173,7 @@ describe("evaluateHighLevelChecks", () => {
 				criticalPaths: [],
 				uiPaths: ["src/ui/**"],
 				descriptionWordCap: 300,
+				testPaths: [],
 			},
 		});
 		expect(result.status).toBe("pass");

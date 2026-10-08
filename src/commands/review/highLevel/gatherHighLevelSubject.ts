@@ -1,7 +1,10 @@
+import { findRepoRoot } from "../../../shared/findRepoRoot";
 import { loadConfig } from "../../../shared/loadConfig";
 import { getRepoInfo } from "../../prs/shared";
 import { buildHighLevelStructure } from "./buildHighLevelStructure";
 import { capHighLevelPatches } from "./capHighLevelPatches";
+import { capHighLevelTestSources } from "./capHighLevelTestSources";
+import { collectHighLevelTests } from "./collectHighLevelTests";
 import { evaluateHighLevelChecks } from "./evaluateHighLevelChecks";
 import { fetchHighLevelFiles } from "./fetchHighLevelFiles";
 import { fetchHighLevelPr } from "./fetchHighLevelPr";
@@ -18,10 +21,8 @@ export function gatherHighLevelSubject(
 	const slug = `${org}/${repo}`;
 	const pr = fetchHighLevelPr(prNumber, { org, repo });
 	const config = resolveHighLevelConfig(loadConfig());
-	const files = capHighLevelPatches(
-		fetchHighLevelFiles(prNumber, slug),
-		config.criticalPaths,
-	);
+	const fetched = fetchHighLevelFiles(prNumber, slug);
+	const files = capHighLevelPatches(fetched, config.criticalPaths);
 	const saved = force
 		? undefined
 		: loadHighLevelReview(slug, pr.headRef, pr.headSha);
@@ -39,6 +40,14 @@ export function gatherHighLevelSubject(
 		structure: buildHighLevelStructure(files),
 		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
 		criticalPaths: config.criticalPaths,
+		tests: capHighLevelTestSources(
+			collectHighLevelTests(
+				fetched,
+				config.testPaths,
+				findRepoRoot(process.cwd()) ?? process.cwd(),
+			),
+		),
+		testPaths: config.testPaths,
 		...(saved ? { saved } : {}),
 	};
 }
