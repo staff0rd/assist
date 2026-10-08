@@ -1,3 +1,10 @@
+## [0.793.3](https://github.com/staff0rd/assist/compare/v0.793.2...v0.793.3) (2026-10-08)
+
+
+### Bug Fixes
+
+* hide git console from watch helpers ([5614cd9](https://github.com/staff0rd/assist/commit/5614cd95908d280d556b3a4f224b9c734e99c69d))
+
 ## [0.793.2](https://github.com/staff0rd/assist/compare/v0.793.1...v0.793.2) (2026-10-08)
 
 
