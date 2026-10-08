@@ -1,14 +1,19 @@
 import { Button, Dialog, DialogActions, DialogContent } from "@mui/material";
 import type { HighLevelTreeFile } from "../../../../../../../../../review/highLevel/types";
+import { HighLevelDiffDialogNav } from "./HighLevelDiffDialog/HighLevelDiffDialogNav";
 import { HighLevelDiffDialogTitle } from "./HighLevelDiffDialog/HighLevelDiffDialogTitle";
 import { HighLevelNativeDiff } from "../HighLevelNativeDiff";
 import { useDiffViewType } from "../../../../../useDiffViewType";
 
 export function HighLevelDiffDialog({
+	files,
 	file,
+	onSelect,
 	onClose,
 }: {
+	files: HighLevelTreeFile[];
 	file: HighLevelTreeFile;
+	onSelect: (file: HighLevelTreeFile) => void;
 	onClose: () => void;
 }) {
 	const { viewType, onChange } = useDiffViewType();
@@ -30,6 +35,7 @@ export function HighLevelDiffDialog({
 				/>
 			</DialogContent>
 			<DialogActions>
+				<HighLevelDiffDialogNav files={files} file={file} onSelect={onSelect} />
 				<Button onClick={onClose}>Close</Button>
 			</DialogActions>
 		</Dialog>

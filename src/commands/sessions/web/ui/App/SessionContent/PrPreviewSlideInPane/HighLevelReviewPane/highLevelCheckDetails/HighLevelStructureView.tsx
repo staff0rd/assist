@@ -1,11 +1,12 @@
 import { Box, Typography } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type {
 	HighLevelStructure,
 	HighLevelTreeFile,
 } from "../../../../../../../../review/highLevel/types";
 import { HighLevelDiffDialog } from "./HighLevelStructureView/HighLevelDiffDialog";
 import { HighLevelTreeRows } from "./HighLevelStructureView/HighLevelTreeRows";
+import { flattenHighLevelTree } from "./HighLevelStructureView/flattenHighLevelTree";
 import { useHighLevelCollapse } from "./useHighLevelCollapse";
 
 export function HighLevelStructureView({
@@ -17,6 +18,10 @@ export function HighLevelStructureView({
 }) {
 	const { collapsed, onToggle } = useHighLevelCollapse(subject);
 	const [open, setOpen] = useState<HighLevelTreeFile | undefined>();
+	const files = useMemo(
+		() => flattenHighLevelTree(structure.tree),
+		[structure.tree],
+	);
 
 	if (structure.tree.length === 0)
 		return (
@@ -41,7 +46,12 @@ export function HighLevelStructureView({
 				/>
 			</Box>
 			{open && (
-				<HighLevelDiffDialog file={open} onClose={() => setOpen(undefined)} />
+				<HighLevelDiffDialog
+					files={files}
+					file={open}
+					onSelect={setOpen}
+					onClose={() => setOpen(undefined)}
+				/>
 			)}
 		</Box>
 	);
