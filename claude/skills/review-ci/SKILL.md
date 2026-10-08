@@ -66,4 +66,4 @@ The review has three slots: two reviewers and the synthesis. Each slot is `claud
 
 ## 4. Report
 
-List the files written or skipped, and remind the user to commit `.github/review-ci/` and `.github/workflows/review-ci.yml`. The workflow runs on `pull_request: opened`, skipping PRs opened by bots and GitHub Apps (Snyk, Dependabot and the like), and fails at its check step, naming the problem, when a variable or the secret is unset, the Entra token cannot be obtained, or a model cannot be reached. Its review step then posts the findings as a `COMMENT` review on the PR.
+List the files written or skipped, and remind the user to commit `.github/review-ci/` and `.github/workflows/review-ci.yml`. The workflow runs when a PR is opened, reopened or marked ready for review, skipping drafts and PRs opened by bots and GitHub Apps (Snyk, Dependabot and the like), and fails at its check step, naming the problem, when a variable or the secret is unset, the Entra token cannot be obtained, or a model cannot be reached. Its review step then posts the findings as a `COMMENT` review on the PR.
