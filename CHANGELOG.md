@@ -1,3 +1,11 @@
+## [0.793.1](https://github.com/staff0rd/assist/compare/v0.793.0...v0.793.1) (2026-10-08)
+
+
+### Bug Fixes
+
+* default review-config scope to repo ([635c3e5](https://github.com/staff0rd/assist/commit/635c3e517952a03bd0b8eecf82ff51862f6ca449))
+* review-ci skips fork PRs ([25ea307](https://github.com/staff0rd/assist/commit/25ea307843b27fee1cb331335b8876b86ee73046))
+
 # [0.793.0](https://github.com/staff0rd/assist/compare/v0.792.0...v0.793.0) (2026-10-08)
 
 
