@@ -1,3 +1,10 @@
+# [0.795.0](https://github.com/staff0rd/assist/compare/v0.794.0...v0.795.0) (2026-10-08)
+
+
+### Features
+
+* recommend own PRs as last resort ([fc8c0ca](https://github.com/staff0rd/assist/commit/fc8c0ca552b861d0792377504d04aa0d3c648221))
+
 # [0.794.0](https://github.com/staff0rd/assist/compare/v0.793.3...v0.794.0) (2026-10-08)
 
 
