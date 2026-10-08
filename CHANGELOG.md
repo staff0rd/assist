@@ -1,3 +1,10 @@
+# [0.796.0](https://github.com/staff0rd/assist/compare/v0.795.2...v0.796.0) (2026-10-08)
+
+
+### Features
+
+* spill assist commands out of clone ([f993446](https://github.com/staff0rd/assist/commit/f9934460856238aa7574a7510966bbdfd06ad343))
+
 ## [0.795.2](https://github.com/staff0rd/assist/compare/v0.795.1...v0.795.2) (2026-10-08)
 
 
