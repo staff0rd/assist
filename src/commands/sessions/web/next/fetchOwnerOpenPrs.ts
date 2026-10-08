@@ -1,15 +1,16 @@
 import { ghJson } from "../releases/ghJson";
-import { ownerPeerPrsQuery } from "./ownerPeerPrsQuery";
-import { selectPeerPrs } from "./selectPeerPrs";
-import type { GhPeerPrNode, NextPr } from "./types";
+import { ownerOpenPrsQuery } from "./ownerOpenPrsQuery";
+import { splitOpenPrs } from "./splitOpenPrs";
+import type { GhPeerPrNode, OpenPrs } from "./types";
 
 type SearchResult = { nodes?: (GhPeerPrNode | null)[] } | null;
 
-type OwnerPeerPrsResponse = {
+type OwnerOpenPrsResponse = {
 	data?: {
 		viewer?: { login?: string } | null;
 		requested?: SearchResult;
 		authored?: SearchResult;
+		mine?: SearchResult;
 	};
 };
 
@@ -20,34 +21,39 @@ function uniqueNodes(...results: (SearchResult | undefined)[]): GhPeerPrNode[] {
 	return [...byUrl.values()];
 }
 
-export async function fetchOwnerPeerPrs(
+export async function fetchOwnerOpenPrs(
 	cwd: string,
 	owner: string,
 	peers: string[],
-): Promise<NextPr[]> {
+): Promise<OpenPrs> {
 	const base = `user:${owner} is:pr is:open archived:false`;
 	const authors = peers.map((peer) => `author:${peer}`).join(" ");
-	const response = await ghJson<OwnerPeerPrsResponse>(cwd, [
+	const response = await ghJson<OwnerOpenPrsResponse>(cwd, [
 		"api",
 		"graphql",
 		"-f",
-		`query=${ownerPeerPrsQuery}`,
+		`query=${ownerOpenPrsQuery}`,
 		"-f",
 		`requested=${base} review-requested:@me`,
 		"-f",
 		`authored=${base} ${authors}`,
+		"-f",
+		`mine=${base} author:@me`,
 		"-F",
 		`hasPeers=${peers.length > 0}`,
 	]);
 	const viewer = response.data?.viewer?.login;
 	if (!viewer || !response.data?.requested)
 		throw new Error("Owner not searchable");
-	const nodes = uniqueNodes(response.data.requested, response.data.authored);
+	const { requested, authored, mine } = response.data;
+	const nodes = uniqueNodes(requested, authored, mine);
 	const repoOf = new Map(
 		nodes.map((node) => [node.url, node.repository?.nameWithOwner ?? owner]),
 	);
-	return selectPeerPrs(nodes, viewer, peers).map((pr) => ({
-		...pr,
-		repo: repoOf.get(pr.url) ?? owner,
-	}));
+	return splitOpenPrs(
+		nodes,
+		viewer,
+		peers,
+		(pr) => repoOf.get(pr.url) ?? owner,
+	);
 }

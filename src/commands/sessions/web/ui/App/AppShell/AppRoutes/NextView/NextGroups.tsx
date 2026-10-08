@@ -1,6 +1,7 @@
 import { nextTopItem } from "../../../../../next/nextTopItem";
 import { nextChips } from "./nextChips";
 import { AllClear } from "./NextGroups/AllClear";
+import { isAllClear } from "./NextGroups/isAllClear";
 import { NextGroup } from "./NextGroups/NextGroup";
 import { NextPrGroup } from "./NextGroups/NextPrGroup";
 import { nextIssueRows } from "./NextGroups/nextIssueRows";
@@ -14,15 +15,14 @@ export function NextGroups({
 	onStartPickup,
 }: NextSectionsProps) {
 	const nextSessions = useNextSessions();
-	const { peerPrs, assignedIssues, pickups } = data;
-	const allClear = [peerPrs, assignedIssues, pickups].every(
-		(section) => section.items.length === 0 && !section.error,
-	);
-	if (allClear) return <AllClear />;
+	const { peerPrs, myPrs, assignedIssues, pickups } = data;
+	if (isAllClear(data)) return <AllClear />;
 	const hiddenUrl = nextTopItem(data)?.item.url;
 	return (
 		<>
 			<NextPrGroup
+				chip={nextChips.review}
+				title="Peer PRs awaiting your review"
 				section={peerPrs}
 				hiddenUrl={hiddenUrl}
 				onStart={onStartPr}
@@ -50,6 +50,13 @@ export function NextGroups({
 					onStartPickup,
 					nextSessions,
 				)}
+			/>
+			<NextPrGroup
+				chip={nextChips.mine}
+				title="Your open PRs"
+				section={myPrs}
+				hiddenUrl={hiddenUrl}
+				onStart={onStartPr}
 			/>
 		</>
 	);

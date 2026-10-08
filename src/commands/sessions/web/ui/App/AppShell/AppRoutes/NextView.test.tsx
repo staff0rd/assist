@@ -112,6 +112,7 @@ function renderView(
 						ok: true,
 						json: async () => ({
 							peerPrs: empty,
+							myPrs: empty,
 							assignedIssues: empty,
 							pickups: empty,
 							boards: [],
@@ -321,6 +322,19 @@ describe("NextView sections", () => {
 		await waitFor(() => expect(screen.getByText("o/r: gh: not logged in")));
 		expect(screen.getAllByText("Issue 5").length).toBeGreaterThan(0);
 		expect(screen.queryByText(/no peer PRs await your review/)).toBeNull();
+		expect(screen.queryByText("Nothing needs you here")).toBeNull();
+	});
+
+	it("lists my open PRs, drafts included, instead of the all-clear state", async () => {
+		renderView({
+			myPrs: {
+				items: [pr(3, { author: "me", reason: "peer", isDraft: true })],
+				error: null,
+			},
+		});
+		expect(await screen.findByText("Your open PRs")).toBeTruthy();
+		expect(screen.getByText("PR 3")).toBeTruthy();
+		expect(screen.getByText("Start session")).toBeTruthy();
 		expect(screen.queryByText("Nothing needs you here")).toBeNull();
 	});
 

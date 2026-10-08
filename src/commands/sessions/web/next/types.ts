@@ -11,6 +11,8 @@ export type NextPr = PrSummary & {
 
 export type RepolessPr = Omit<NextPr, "repo">;
 
+export type OpenPrs = { peerPrs: NextPr[]; myPrs: NextPr[] };
+
 type IssueSummary = Omit<PrSummary, "isDraft">;
 
 export type NextIssue = IssueSummary & { repo: string; labels: string[] };
@@ -49,6 +51,7 @@ export type PickupFilter = Pick<
 export type NextResponse = {
 	scope: NextScope;
 	peerPrs: NextSection<NextPr>;
+	myPrs: NextSection<NextPr>;
 	assignedIssues: NextSection<NextIssue>;
 	pickups: NextSection<NextPickup>;
 	boards: NextBoard[];

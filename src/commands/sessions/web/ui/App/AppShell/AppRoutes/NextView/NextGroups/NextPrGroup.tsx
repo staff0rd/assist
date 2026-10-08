@@ -2,15 +2,19 @@ import type { NextPr, NextSection } from "../../../../../../next/types";
 import { matchPrSessions } from "../matchPrSessions";
 import { NextPrFacts } from "../NextPrFacts";
 import { useNextSessions } from "../useNextSessions";
-import { nextChips } from "../nextChips";
+import type { NextChip } from "../nextChips";
 import { NextGroup } from "./NextGroup";
 import { NextRow } from "./NextRow";
 
 export function NextPrGroup({
+	chip,
+	title,
 	section,
 	hiddenUrl,
 	onStart,
 }: {
+	chip: NextChip;
+	title: string;
 	section: NextSection<NextPr>;
 	hiddenUrl?: string;
 	onStart: (pr: NextPr, cwd: string) => void;
@@ -18,8 +22,8 @@ export function NextPrGroup({
 	const { sessions } = useNextSessions();
 	return (
 		<NextGroup
-			chip={nextChips.review}
-			title="Peer PRs awaiting your review"
+			chip={chip}
+			title={title}
 			count={section.items.length}
 			error={section.error}
 			rows={section.items
