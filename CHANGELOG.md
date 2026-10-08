@@ -1,3 +1,10 @@
+# [0.800.0](https://github.com/staff0rd/assist/compare/v0.799.0...v0.800.0) (2026-10-08)
+
+
+### Features
+
+* step through structure diffs ([86eaf48](https://github.com/staff0rd/assist/commit/86eaf480d7bdadf856e133d0c1047f8ae46e76f4))
+
 # [0.799.0](https://github.com/staff0rd/assist/compare/v0.798.0...v0.799.0) (2026-10-08)
 
 
