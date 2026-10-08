@@ -65,7 +65,7 @@ After installation, the `assist` command will be available globally. You can als
 - `/restructure` - Analyze and restructure tightly-coupled files
 - `/review-config` - Configure this repo's high-level review checklist keys
 - `/review-ci` - Install a GitHub workflow that reviews new PRs with Claude and Codex through LiteLLM or Azure AI Foundry, without depending on assist
-- `/review-high-level [number]` - Open the high-level review checklist for the current branch's PR, or PR `<number>`
+- `/review-high-level [number]` - Open the high-level review checklist for the current branch's PR, or PR `<number>`, as a background task, answering diff questions while it is open
 - `/review-pr-comments` - Process PR review comments one by one
 - `/jira [action] [KEY] [args]` - Jira actions: `view`, `associate`, `update`, `started`, `done`, `help`. `[KEY]` defaults to the session's backlog item's
 - `/github [action] [ref] [args]` - GitHub issue actions: `view`, `edit`, `associate`, `update`, `started`, `done`, `help`. `[ref]` defaults to the session's backlog item's; a bare `/github <ref>` runs `edit`
@@ -134,7 +134,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
   - `--apply` - Skip posting; walk through each finding asking apply/skip
   - `--backlog` - Skip posting; file all findings as a single bug backlog item with one phase per finding
   - `--checkout-only` - Skip the review; check the PR out and leave an idle Claude session in it
-  - `--high-level` - Skip the LLM review; step through the high-level review checklist in the web preview pane. See [docs/high-level-review.md](docs/high-level-review.md)
+  - `--high-level` - Skip the LLM review; step through the high-level review checklist in the web preview pane. With `[number]` outside a Claude session, check the PR out and start a Claude session running `/review-high-level <number>`, which opens the checklist as a background task so the agent can answer questions meanwhile. See [docs/high-level-review.md](docs/high-level-review.md)
   - `--configure` - With `--high-level`: configure the checklist's `review.highLevel.*` keys instead of reviewing
   - `--scope <repo|project>` - With `--configure`: write to this repo's override in the shared assist database or the project `assist.yml` instead of asking
   - `--answer <key=value>` - With `--configure`: answer one key without prompting, repeatable; an empty value leaves the key unset

@@ -1,7 +1,8 @@
+import { isClaudeCode } from "../../lib/isClaudeCode";
 import { emitActivity } from "../../shared/emitActivity";
 import { findRepoRoot } from "../../shared/findRepoRoot";
 import type { ReviewOptions } from "./ReviewOptions";
-import { checkoutOnlySession } from "./checkoutOnlySession";
+import { checkoutPrSession } from "./checkoutPrSession";
 import { checkoutPr } from "./checkoutPr";
 import { configureHighLevelReview } from "./highLevel/configureHighLevelReview";
 import { runHighLevelReview } from "./highLevel/runHighLevelReview";
@@ -26,7 +27,12 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	startReviewLog();
 	const invokedIn = resolveRepoRoot();
 	if (options.checkoutOnly && options.number)
-		return checkoutOnlySession(options.number);
+		return checkoutPrSession(options.number);
+	if (options.highLevel && options.number && !isClaudeCode())
+		return checkoutPrSession(
+			options.number,
+			`/review-high-level ${options.number}${options.force ? " --force" : ""}`,
+		);
 	emitActivity({ kind: "command", name: "review" });
 	if (!options.number)
 		return options.highLevel

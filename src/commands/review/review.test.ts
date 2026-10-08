@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
 const mockExecFileSync = vi.mocked(execFileSync);
@@ -37,6 +37,11 @@ vi.mock("../../shared/findRepoRoot", () => ({
 
 vi.mock("./reviewPr", () => ({
 	reviewPr: (...args: unknown[]) => mockReviewPr(...args),
+}));
+
+const mockRunHighLevelReview = vi.fn();
+vi.mock("./highLevel/runHighLevelReview", () => ({
+	runHighLevelReview: (...args: unknown[]) => mockRunHighLevelReview(...args),
 }));
 
 const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
@@ -176,6 +181,65 @@ describe("review", () => {
 				name: "review",
 				claudeSessionId: sessionId,
 			});
+		});
+	});
+
+	describe("when --high-level is given with a PR number outside a Claude session", () => {
+		beforeEach(() => {
+			vi.stubEnv("CLAUDECODE", undefined);
+		});
+		afterEach(() => {
+			vi.unstubAllEnvs();
+		});
+
+		it("should check the PR out through the worktree allocator", async () => {
+			await review({ highLevel: true, number: "123" });
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				["pr", "checkout", "123"],
+				{ stdio: "inherit" },
+			);
+			expect(mockMoveToPrCheckoutTree).toHaveBeenCalled();
+		});
+
+		it("should start a Claude session running /review-high-level instead of opening the checklist", async () => {
+			await review({ highLevel: true, number: "123" });
+
+			const [prompt, options] = mockSpawnClaude.mock.calls[0];
+			expect(prompt).toBe("/review-high-level 123");
+			expect(options).toMatchObject({
+				permissionMode: "acceptEdits",
+				sessionId: expect.any(String),
+			});
+			expect(mockRunHighLevelReview).not.toHaveBeenCalled();
+		});
+
+		it("should pass --force through to the skill", async () => {
+			await review({ highLevel: true, number: "123", force: true });
+
+			expect(mockSpawnClaude.mock.calls[0][0]).toBe(
+				"/review-high-level 123 --force",
+			);
+		});
+	});
+
+	describe("when --high-level is given with a PR number inside a Claude session", () => {
+		beforeEach(() => {
+			vi.stubEnv("CLAUDECODE", "1");
+		});
+		afterEach(() => {
+			vi.unstubAllEnvs();
+		});
+
+		it("should check the PR out and open the checklist without spawning Claude", async () => {
+			await review({ highLevel: true, number: "123" });
+
+			expect(mockMoveToPrCheckoutTree).toHaveBeenCalled();
+			expect(mockRunHighLevelReview).toHaveBeenCalledWith("123", {
+				force: undefined,
+			});
+			expect(mockSpawnClaude).not.toHaveBeenCalled();
 		});
 	});
 

@@ -3,11 +3,14 @@ import { emitActivity } from "../../shared/emitActivity";
 import { spawnClaude } from "../../shared/spawnClaude";
 import { checkoutPr } from "./checkoutPr";
 
-export async function checkoutOnlySession(number: string): Promise<void> {
+export async function checkoutPrSession(
+	number: string,
+	prompt = "",
+): Promise<void> {
 	await checkoutPr(number);
 	const claudeSessionId = randomUUID();
 	emitActivity({ kind: "command", name: "review", claudeSessionId });
-	const { done } = spawnClaude("", {
+	const { done } = spawnClaude(prompt, {
 		permissionMode: "acceptEdits",
 		sessionId: claudeSessionId,
 	});
