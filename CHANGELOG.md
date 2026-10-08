@@ -1,3 +1,11 @@
+# [0.793.0](https://github.com/staff0rd/assist/compare/v0.792.0...v0.793.0) (2026-10-08)
+
+
+### Features
+
+* test hierarchy in high-level review ([c868dbc](https://github.com/staff0rd/assist/commit/c868dbcfceef9c6f738adda0a844ac4fa3ecb6ba)), closes [hi#level](https://github.com/hi/issues/level)
+* wire test review into checklist ([bfbff8f](https://github.com/staff0rd/assist/commit/bfbff8f8b4ceae0455a74a4cfe6ace8a7a2f5f16))
+
 # [0.792.0](https://github.com/staff0rd/assist/compare/v0.791.0...v0.792.0) (2026-10-08)
 
 
