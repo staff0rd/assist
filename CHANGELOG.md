@@ -1,3 +1,10 @@
+# [0.794.0](https://github.com/staff0rd/assist/compare/v0.793.3...v0.794.0) (2026-10-08)
+
+
+### Features
+
+* show your open PRs on Next screen ([1fdcb47](https://github.com/staff0rd/assist/commit/1fdcb47aab41cc3786fc786f35a3fd273aa11e5a))
+
 ## [0.793.3](https://github.com/staff0rd/assist/compare/v0.793.2...v0.793.3) (2026-10-08)
 
 
