@@ -1,3 +1,10 @@
+## [0.801.1](https://github.com/staff0rd/assist/compare/v0.801.0...v0.801.1) (2026-10-09)
+
+
+### Bug Fixes
+
+* run high-level review in auto mode ([2f8ef06](https://github.com/staff0rd/assist/commit/2f8ef06faf6ffe1fed87faa6157095d452e4daa5)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.801.0](https://github.com/staff0rd/assist/compare/v0.800.0...v0.801.0) (2026-10-09)
 
 
