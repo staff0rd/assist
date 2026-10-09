@@ -14,6 +14,7 @@ import { NewSessionDialog } from "./NewSessionDialog";
 import type { NewSessionLaunchers } from "./launchNewSession";
 import type { NewSessionMode } from "./newSessionModes";
 import { useNewSessionDraft } from "./useNewSessionDraft";
+import type { LoadedDefaultMode } from "./useNewSessionDraft/useDefaultNewSessionMode";
 import { RepoSelectionContext } from "../../../../useRepoSelectionContext";
 
 beforeAll(() => {
@@ -32,7 +33,16 @@ const repos = [
 	String.raw`C:\git\delta`,
 ];
 
-type DefaultMode = NewSessionMode | ((cwd: string) => NewSessionMode);
+type DefaultMode =
+	| NewSessionMode
+	| ((cwd: string) => NewSessionMode)
+	| ((cwd: string) => LoadedDefaultMode);
+
+function useInjectedDefault(defaultMode: DefaultMode, cwd: string) {
+	if (typeof defaultMode !== "function") return { cwd, mode: defaultMode };
+	const loaded = defaultMode(cwd);
+	return typeof loaded === "string" ? { cwd, mode: loaded } : loaded;
+}
 
 function DraftedDialog({
 	defaultMode,
@@ -44,7 +54,7 @@ function DraftedDialog({
 	onClose: () => void;
 }) {
 	const draft = useNewSessionDraft((cwd) =>
-		typeof defaultMode === "function" ? defaultMode(cwd) : defaultMode,
+		useInjectedDefault(defaultMode, cwd),
 	);
 	return (
 		draft && (
@@ -328,17 +338,61 @@ describe("NewSessionDialog mode selector", () => {
 		expect(checkedMode()).toBe("bug");
 	});
 
+	function useLoadedDefault(cwd: string) {
+		const [loaded, setLoaded] = useState<LoadedDefaultMode>({
+			cwd: "/git/beta",
+			mode: "draft",
+		});
+		useEffect(() => {
+			const timer = setTimeout(() =>
+				setLoaded({ cwd, mode: cwd === "/git/alpha" ? "prompt" : "draft" }),
+			);
+			return () => clearTimeout(timer);
+		}, [cwd]);
+		return loaded;
+	}
+
+	it("does not submit the previous repo's default mode while the new one loads", async () => {
+		const { onCreate, onCreateAssist, onClose } =
+			renderDialog(useLoadedDefault);
+		await act(async () => {});
+
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "al" } });
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+
+		expect(onCreateAssist).not.toHaveBeenCalled();
+		expect(onCreate).not.toHaveBeenCalled();
+		expect(onClose).not.toHaveBeenCalled();
+
+		await act(async () => {
+			await new Promise((resolve) => setTimeout(resolve));
+		});
+		expect(checkedMode()).toBe("prompt");
+
+		fireEvent.change(promptInput(), { target: { value: "fix it" } });
+		submitPrompt();
+
+		expect(onCreate).toHaveBeenCalledWith("fix it", "/git/alpha");
+		expect(onCreateAssist).not.toHaveBeenCalled();
+	});
+
+	it("submits a hand-picked mode while the new repo's default loads", async () => {
+		const { onCreateAssist } = renderDialog(useLoadedDefault);
+		await act(async () => {});
+
+		fireEvent.click(modeRadio("bug"));
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "al" } });
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			["bug", "--once"],
+			"/git/alpha",
+		);
+	});
+
 	it("moves Tab focus onto the repo's default mode once it loads", async () => {
-		function useLoadedDefault(cwd: string) {
-			const [mode, setMode] = useState<NewSessionMode>("draft");
-			useEffect(() => {
-				const timer = setTimeout(() =>
-					setMode(cwd === "/git/alpha" ? "prompt" : "draft"),
-				);
-				return () => clearTimeout(timer);
-			}, [cwd]);
-			return mode;
-		}
 		renderDialog(useLoadedDefault);
 		await act(async () => {});
 

@@ -2,7 +2,10 @@ import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import type { NewSessionMode } from "./newSessionModes";
 import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
-import { useDefaultNewSessionMode } from "./useNewSessionDraft/useDefaultNewSessionMode";
+import {
+	type LoadedDefaultMode,
+	useDefaultNewSessionMode,
+} from "./useNewSessionDraft/useDefaultNewSessionMode";
 import { draftNode } from "./useNewSessionDraft/draftNode";
 import { type DraftFocus, useDraftState } from "./useDraftState";
 
@@ -10,6 +13,7 @@ export type NewSessionDraft = {
 	prompt: string;
 	cwd: string;
 	mode: NewSessionMode;
+	modePending: boolean;
 	harness: HarnessKind;
 	node: string | undefined;
 	focus: DraftFocus;
@@ -25,7 +29,7 @@ export type NewSessionDraft = {
 export function useNewSessionDraft(
 	useDefaultMode: (
 		cwd: string,
-	) => NewSessionMode | null = useDefaultNewSessionMode,
+	) => LoadedDefaultMode | null = useDefaultNewSessionMode,
 ): NewSessionDraft | null {
 	const { selectedCwd } = useRepoSelectionContext();
 	const nodeSelection = useNodeSelectionContext();
@@ -37,7 +41,8 @@ export function useNewSessionDraft(
 	return {
 		...state,
 		cwd,
-		mode: state.mode ?? defaultMode,
+		mode: state.mode ?? defaultMode.mode,
+		modePending: state.mode === undefined && defaultMode.cwd !== cwd,
 		node: draftNode(state.node, nodeSelection),
 	};
 }

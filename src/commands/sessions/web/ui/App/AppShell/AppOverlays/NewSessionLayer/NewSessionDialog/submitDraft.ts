@@ -15,7 +15,7 @@ export function submitDraft(
 	target: DraftTarget,
 	launchers: NewSessionLaunchers,
 ): boolean {
-	if (target.kind === "blocked") return false;
+	if (target.kind === "blocked" || draft.modePending) return false;
 	if (target.kind === "clone") {
 		launchClone(target.prompt, launchers.onCreateAssist);
 		return true;
