@@ -1,3 +1,10 @@
+## [0.801.5](https://github.com/staff0rd/assist/compare/v0.801.4...v0.801.5) (2026-10-09)
+
+
+### Bug Fixes
+
+* submit Enter once repo mode loads ([2482fff](https://github.com/staff0rd/assist/commit/2482fff0354373af022f2ab6d886e9b29f5e2915))
+
 ## [0.801.4](https://github.com/staff0rd/assist/compare/v0.801.3...v0.801.4) (2026-10-09)
 
 
