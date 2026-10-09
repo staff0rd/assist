@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import { stagedAttachmentsDir } from "../../../shared/stagedAttachmentsDir";
 import { attachmentMimeTypes } from "./attachmentMimeTypes";
+import { ghAttachableExtensions } from "./ghAttachableExtensions";
 
 function extensionFromMime(contentType: string): string | undefined {
 	const mime = contentType.split(";")[0].trim().toLowerCase();
@@ -10,11 +11,6 @@ function extensionFromMime(contentType: string): string | undefined {
 	const subtype = mime.split("/")[1]?.replace(/^x-/, "").replace(/\+.*$/, "");
 	return subtype && /^[a-z0-9]+$/.test(subtype) ? subtype : undefined;
 }
-
-const ghAttachableExtensions = new Set([
-	...Object.values(attachmentMimeTypes),
-	"jpeg",
-]);
 
 function pickExtension(name: string, contentType: string): string {
 	const fromName = extname(name).replace(/^\./, "").toLowerCase();

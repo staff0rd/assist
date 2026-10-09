@@ -22,6 +22,12 @@ export function registerPrsEdit(prsCommand: Command): void {
 			collect,
 			[],
 		)
+		.option(
+			"--screenshot <spec>",
+			"Attach a screenshot as '[Group/]Caption=path', replacing the ## Screenshots section (repeatable)",
+			collect,
+			[],
+		)
 		.addHelpText("after", () => editHelpText())
 		.action(prsEdit);
 }

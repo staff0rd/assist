@@ -25,6 +25,12 @@ export function registerPrsRaise(prsCommand: Command): void {
 			[],
 		)
 		.option(
+			"--screenshot <spec>",
+			"Attach a screenshot as '[Group/]Caption=path' under ## Screenshots (repeatable)",
+			collect,
+			[],
+		)
+		.option(
 			"--force",
 			"Overwrite the title and body of an existing pull request",
 		)

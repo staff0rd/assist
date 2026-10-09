@@ -1,8 +1,8 @@
-import { randomUUID } from "node:crypto";
-import { awaitPreviewApproval } from "../sessions/shared/awaitPreviewApproval";
 import { appendScreenshots } from "./appendScreenshots";
 import { applyEdit } from "./applyEdit";
 import { editPrBody } from "./editPrBody";
+import { parseScreenshotSpecs } from "./parseScreenshotSpecs";
+import { previewAndApplyEdit } from "./previewAndApplyEdit";
 import { getCurrentPr } from "./shared";
 import { validatePrContent } from "./validatePrContent";
 
@@ -12,6 +12,7 @@ type EditOptions = {
 	why?: string;
 	how?: string;
 	resolves?: string[];
+	screenshot?: string[];
 };
 
 export async function edit(options: EditOptions): Promise<void> {
@@ -21,10 +22,11 @@ export async function edit(options: EditOptions): Promise<void> {
 		options.why !== undefined ||
 		options.how !== undefined ||
 		hasResolves;
+	const screenshots = parseScreenshotSpecs(options.screenshot);
 
-	if (!options.title && !hasSection) {
+	if (!options.title && !hasSection && screenshots.length === 0) {
 		console.error(
-			"Usage: assist prs edit [--title <title>] [--what <what>] [--why <why>] [--how <how>] [--resolves <key>]",
+			"Usage: assist prs edit [--title <title>] [--what <what>] [--why <why>] [--how <how>] [--resolves <key>] [--screenshot '[Group/]Caption=path']",
 		);
 		process.exit(1);
 	}
@@ -35,23 +37,21 @@ export async function edit(options: EditOptions): Promise<void> {
 
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION === "1" && sessionId) {
-		const decision = await awaitPreviewApproval("PR preview", {
+		await previewAndApplyEdit({
 			sessionId,
-			requestId: randomUUID(),
-			title: options.title ?? title,
-			body: newBody,
-			prNumber: number,
-		});
-
-		const attachments = decision.screenshots ?? [];
-		applyEdit(
 			number,
-			options.title,
-			appendScreenshots(newBody, attachments),
-			attachments,
-		);
+			title: options.title,
+			currentTitle: title,
+			body: newBody,
+			screenshots,
+		});
 		return;
 	}
 
-	applyEdit(number, options.title, newBody);
+	applyEdit(
+		number,
+		options.title,
+		appendScreenshots(newBody, screenshots),
+		screenshots,
+	);
 }

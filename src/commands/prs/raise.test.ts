@@ -1,4 +1,7 @@
 import { execFileSync } from "node:child_process";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../shared/loadConfig";
 import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
@@ -110,6 +113,58 @@ describe("raise", () => {
 				],
 				GH_OPTIONS,
 			);
+		});
+
+		it("renders --screenshot specs grouped and attaches the files", async () => {
+			const dir = mkdtempSync(join(tmpdir(), "raise-screenshot-"));
+			const light = join(dir, "a.png");
+			const dark = join(dir, "b.png");
+			writeFileSync(light, "");
+			writeFileSync(dark, "");
+
+			await raise({
+				title: "feat: x",
+				what: "Adds x",
+				why: "Needed x",
+				screenshot: [
+					`Profile/Career Connect light=${light}`,
+					`Profile/Career Connect dark=${dark}`,
+				],
+			});
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"create",
+					"--title",
+					"feat: x",
+					"--body",
+					`## What\n\nAdds x\n\n## Why\n\nNeeded x\n\n## Screenshots\n\n### Profile\n\n| Career Connect light | Career Connect dark |\n| --- | --- |\n| ![Career Connect light](${light}) | ![Career Connect dark](${dark}) |`,
+					"--attach",
+					light,
+					"--attach",
+					dark,
+				],
+				{ encoding: "utf8", stdio: ["inherit", "pipe", "pipe"] },
+			);
+		});
+
+		it("exits naming a bad --screenshot spec before any gh call", async () => {
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+			await expect(
+				raise({
+					title: "feat: x",
+					what: "Adds x",
+					why: "Needed x",
+					screenshot: ["X=missing.png"],
+				}),
+			).rejects.toThrow("process.exit");
+
+			expect(mockExecFileSync).not.toHaveBeenCalled();
+			expect(errorSpy.mock.calls[0][0]).toContain("'X=missing.png'");
+			errorSpy.mockRestore();
 		});
 
 		it("pushes the branch before creating", () => {

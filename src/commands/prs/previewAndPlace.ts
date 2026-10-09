@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { PreviewAttachment } from "../sessions/shared/PreviewAttachment";
 import { awaitPreviewApproval } from "../sessions/shared/awaitPreviewApproval";
 import { appendScreenshots } from "./appendScreenshots";
 import type { CreateOptions } from "./buildCreateArgs";
@@ -12,6 +13,7 @@ export async function previewAndPlace(args: {
 	body: string;
 	prNumber: number | null;
 	options: CreateOptions;
+	screenshots?: PreviewAttachment[];
 }): Promise<void> {
 	const decision = await awaitPreviewApproval("PR preview", {
 		sessionId: args.sessionId,
@@ -22,7 +24,10 @@ export async function previewAndPlace(args: {
 		draft: args.options.draft === true,
 	});
 
-	const attachments = decision.screenshots ?? [];
+	const attachments = [
+		...(args.screenshots ?? []),
+		...(decision.screenshots ?? []),
+	];
 	const body = appendScreenshots(args.body, attachments);
 	const options =
 		decision.draft === undefined

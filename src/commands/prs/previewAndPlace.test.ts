@@ -48,13 +48,29 @@ describe("previewAndPlace", () => {
 		expect(placePrMock).toHaveBeenCalledWith(
 			null,
 			"t",
-			"## What\n\nx\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.png)",
+			"## What\n\nx\n\n## Screenshots\n\n| a | b |\n| --- | --- |\n| ![a](/s/a.png) | ![b](/s/b.png) |",
 			{},
 			[
 				{ path: "/s/a.png", alt: "a" },
 				{ path: "/s/b.png", alt: "b" },
 			],
 		);
+	});
+
+	it("places flag screenshots grouped ahead of pane-dropped ones", async () => {
+		requestPrDecisionMock.mockResolvedValue({
+			decision: "approve",
+			screenshots: [{ path: "/s/drop.png", alt: "drop" }],
+		});
+		const flag = { path: "/f/l.png", alt: "light", group: "Profile" };
+
+		await previewAndPlace({ ...args, screenshots: [flag] });
+
+		const [, , body, , attachments] = placePrMock.mock.calls[0];
+		expect(body).toContain(
+			"### Profile\n\n| light |  |\n| --- | --- |\n| ![light](/f/l.png) |  |\n\n| drop |",
+		);
+		expect(attachments).toEqual([flag, { path: "/s/drop.png", alt: "drop" }]);
 	});
 
 	it("leaves the body untouched when there are no screenshots", async () => {

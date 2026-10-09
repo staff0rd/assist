@@ -240,7 +240,7 @@ describe("createIssue preview", () => {
 				"--title",
 				"Crash on load",
 				"--body",
-				"Details\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.png)",
+				"Details\n\n## Screenshots\n\n| a | b |\n| --- | --- |\n| ![a](/s/a.png) | ![b](/s/b.png) |",
 				"--attach",
 				"/s/a.png",
 				"--attach",

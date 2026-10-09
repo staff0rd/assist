@@ -1,4 +1,5 @@
 import { prConcisenessGuidance } from "./prConcisenessGuidance";
+import { screenshotGuidance } from "./screenshotGuidance";
 
 export function editHelpText(): string {
 	return `
@@ -19,6 +20,9 @@ rescue a body that is already long-winded.
   ## Why   the problem or motivation that made the change worth doing.
   ## How   only non-obvious decisions the diff alone won't explain; omit by
            default.
+
+${screenshotGuidance} On edit, any supplied screenshots replace the existing
+## Screenshots section rather than adding a second one, so pass the full set.
 
 ${prConcisenessGuidance}
 `;

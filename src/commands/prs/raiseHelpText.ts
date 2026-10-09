@@ -19,11 +19,12 @@ on rejection it exits non-zero with the reason. The reviewer may also attach
 inline comments to specific spans of the preview; on rejection these are printed
 as numbered quoted-span + note pairs on stderr. Address every comment (and the
 reason), then run the command again to re-preview the revised PR. Repeat until it
-is approved. The reviewer may also drop or paste screenshots or video into the
-pane; on approval gh attaches them (gh ${minGhAttachVersion}+) under a ## Screenshots section
-automatically; on rejection they stay attached and reappear in the preview you
-re-propose, so you never author that section yourself. Just compose the sections
-and run the command.`;
+is approved. When the session captured screenshots, supply them yourself with
+--screenshot rather than asking the reviewer to drag them in. The reviewer may
+also drop or paste more screenshots or video into the pane; on approval gh
+attaches them (gh ${minGhAttachVersion}+) as ungrouped images after yours in the
+## Screenshots section; on rejection they stay attached and reappear in the
+preview you re-propose. Just compose the sections and run the command.`;
 
 export function raiseHelpText(
 	promptJira?: boolean,

@@ -1,5 +1,6 @@
 import { prConcisenessGuidance } from "./prConcisenessGuidance";
 import { resolvesBlurb } from "./resolvesBlurb";
+import { screenshotGuidance } from "./screenshotGuidance";
 
 const DRAFT_DEFAULT_ON = `This repo has prs.draft set, so a raise creates a draft pull request unless
 --no-draft is passed.`;
@@ -28,6 +29,8 @@ The body is assembled from discrete section options; supply at minimum --title,
   --how <how>       optional; how the change works (rendered as ## How). Omit it
                     unless the approach genuinely needs explaining.
 ${resolves}
+
+${screenshotGuidance}
 
 Wrap symbols, file paths, function names, class names, variable names, config
 keys, CLI commands, and flag names in backticks.

@@ -1,5 +1,16 @@
 import { execFileSync } from "node:child_process";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import {
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
 const mockExecFileSync = vi.mocked(execFileSync);
@@ -186,6 +197,51 @@ describe("edit", () => {
 		expect(mockExit).toHaveBeenCalledWith(1);
 	});
 
+	describe("--screenshot", () => {
+		let dir: string;
+		beforeAll(() => {
+			dir = mkdtempSync(join(tmpdir(), "edit-screenshot-"));
+			writeFileSync(join(dir, "a.png"), "");
+		});
+
+		it("replaces the existing ## Screenshots section and attaches the file", async () => {
+			mockGetCurrentPr.mockReturnValue({
+				number: 42,
+				title: "fix: current title",
+				body: "## What\n\nw\n\n## Screenshots\n\n![old](https://x/old.png)",
+			});
+			const path = join(dir, "a.png");
+
+			await edit({ screenshot: [`Profile/Light=${path}`] });
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"edit",
+					"42",
+					"--body",
+					`## What\n\nw\n\n## Screenshots\n\n### Profile\n\n| Light |  |\n| --- | --- |\n| ![Light](${path}) |  |`,
+					"--attach",
+					path,
+				],
+				{ encoding: "utf8", stdio: ["inherit", "pipe", "pipe"] },
+			);
+		});
+
+		it("exits naming the spec before calling gh when the file is missing", async () => {
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+			await expect(edit({ screenshot: ["X=nope.png"] })).rejects.toThrow(
+				"process.exit",
+			);
+
+			expect(mockGetCurrentPr).not.toHaveBeenCalled();
+			expect(mockExecFileSync).not.toHaveBeenCalled();
+			expect(errorSpy.mock.calls.at(-1)?.[0]).toContain("'X=nope.png'");
+		});
+	});
+
 	it("does not preview when a session id is missing", async () => {
 		process.env.ASSIST_SESSION = "1";
 
@@ -272,7 +328,7 @@ describe("edit", () => {
 					"edit",
 					"42",
 					"--body",
-					"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how\n\n## Screenshots\n\n![a](/s/a.png)\n\n![b](/s/b.mp4)",
+					"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how\n\n## Screenshots\n\n| a |  |\n| --- | --- |\n| ![a](/s/a.png) |  |\n\n![b](/s/b.mp4)",
 					"--attach",
 					"/s/a.png",
 					"--attach",

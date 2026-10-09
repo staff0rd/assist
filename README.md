@@ -117,8 +117,8 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist read-time <target> [--budget <duration>]` - Estimate how long a PR (number or URL), file or stdin (`-`) takes to read, against `--budget` (default 1m)
 - `assist prs` - List pull requests for the current repository
 - `assist prs status <owner/repo>... [--json]` - Report the open pull requests across the named repos and what each is waiting on
-- `assist prs raise --title <t> --what <w> --why <y> [--how <h>] [--resolves <ref>] [--force] [--draft|--no-draft]` - Raise a PR with a What/Why/How body, previewed for approval in a web session; `--draft`/`--no-draft` override `prs.draft`
-- `assist prs edit [--title <t>] [--what <w>] [--why <y>] [--how <h>] [--resolves <ref>]` - Update the supplied sections of the current PR's body, previewed for approval in a web session
+- `assist prs raise --title <t> --what <w> --why <y> [--how <h>] [--resolves <ref>] [--screenshot '[Group/]Caption=path']... [--force] [--draft|--no-draft]` - Raise a PR with a What/Why/How body, previewed for approval in a web session; `--draft`/`--no-draft` override `prs.draft`; each `--screenshot` is uploaded via `gh --attach` and rendered under `## Screenshots` as a `### Group` heading with a 2-column captioned table, ungrouped images last
+- `assist prs edit [--title <t>] [--what <w>] [--why <y>] [--how <h>] [--resolves <ref>] [--screenshot '[Group/]Caption=path']...` - Update the supplied sections of the current PR's body, previewed for approval in a web session; `--screenshot` replaces the existing `## Screenshots` section
 - `assist prs read-time <target> [--budget <duration>]` - Alias of `assist read-time`
 - `assist prs list-comments` - List all comments on the current branch's pull request
 - `assist prs fixed <comment-id> <sha>` - Reply with commit link and resolve thread
