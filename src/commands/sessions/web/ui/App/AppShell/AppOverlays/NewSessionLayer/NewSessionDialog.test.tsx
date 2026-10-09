@@ -377,6 +377,25 @@ describe("NewSessionDialog mode selector", () => {
 		expect(onCreateAssist).not.toHaveBeenCalled();
 	});
 
+	it("submits once the new repo's default loads after a single Enter", async () => {
+		const { onCreateAssist, onClose } = renderDialog(useLoadedDefault);
+		await act(async () => {});
+
+		fireEvent.focus(repoInput());
+		fireEvent.change(repoInput(), { target: { value: "ga" } });
+		fireEvent.keyDown(repoInput(), { key: "Enter" });
+		expect(onCreateAssist).not.toHaveBeenCalled();
+
+		await act(async () => {
+			await new Promise((resolve) => setTimeout(resolve));
+		});
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			expect.arrayContaining(["draft"]),
+			"/git/gamma",
+		);
+		expect(onClose).toHaveBeenCalled();
+	});
+
 	it("submits a hand-picked mode while the new repo's default loads", async () => {
 		const { onCreateAssist } = renderDialog(useLoadedDefault);
 		await act(async () => {});

@@ -7,6 +7,7 @@ import { newSessionModes } from "./newSessionModes";
 import { submitDraft } from "./NewSessionDialog/submitDraft";
 import { useDraftFocus } from "./NewSessionDialog/useDraftFocus";
 import { useDraftRepos } from "./NewSessionDialog/useDraftRepos";
+import { useQueuedSubmit } from "./NewSessionDialog/useQueuedSubmit";
 import type { NewSessionDraft } from "./useNewSessionDraft";
 import { AutoFocusDialog } from "../AutoFocusDialog";
 import { useHarnessCapabilities } from "../../../../useHarnessCapabilities";
@@ -25,9 +26,12 @@ export function NewSessionDialog({
 	const harness = harnesses.includes(draft.harness) ? draft.harness : "claude";
 	const { target, cloneState } = useDraftRepos(draft.node, draft.cwd);
 
+	const requestSubmit = useQueuedSubmit(draft, () => {
+		if (submitDraft(draft, harness, target, launchers)) onClose();
+	});
 	const submit = (e: FormEvent) => {
 		e.preventDefault();
-		if (submitDraft(draft, harness, target, launchers)) onClose();
+		requestSubmit();
 	};
 
 	return (
