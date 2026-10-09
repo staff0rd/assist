@@ -1,27 +1,15 @@
 import { extractGhApiMethod } from "../../shared/extractGhApiMethod";
 import { tokenize } from "../../shared/tokenize";
-import { extractQuotedSubstitutions } from "./extractQuotedSubstitutions";
 import { isGhGraphqlIssueMutation } from "./isGhGraphqlIssueMutation";
-import {
-	SUBSTITUTION_CLOSE,
-	splitSubstitutionTokens,
-} from "./splitSubstitutionTokens";
 
 const WRITE_METHODS = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 const BODY_FLAGS = ["-f", "-F", "--field", "--raw-field", "--input"];
-const COMMAND_OPERATORS = new Set([
-	"&&",
-	"||",
-	";",
-	"|",
-	"&",
-	SUBSTITUTION_CLOSE,
-]);
+const COMMAND_OPERATORS = new Set(["&&", "||", ";", "|", "&"]);
 const ISSUE_ENDPOINT =
 	/(?:^|[/"'`])repos\/[^/\s"'`]+\/[^/\s"'`]+\/issues(?:$|[/?"'`])/;
 
 export function isGhIssueApiWrite(command: string): boolean {
-	const tokens = splitSubstitutionTokens(tokenize(command));
+	const tokens = tokenize(command);
 
 	for (let i = 0; i + 1 < tokens.length; i++) {
 		if (tokens[i] !== "gh" || tokens[i + 1] !== "api") continue;
@@ -30,7 +18,7 @@ export function isGhIssueApiWrite(command: string): boolean {
 		if (isGhGraphqlIssueMutation(args, command)) return true;
 	}
 
-	return extractQuotedSubstitutions(command).some(isGhIssueApiWrite);
+	return false;
 }
 
 function argsUntilNextCommand(tokens: string[]): string[] {

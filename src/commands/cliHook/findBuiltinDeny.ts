@@ -1,4 +1,5 @@
 import { builtinDenyRules } from "./builtinDenyRules";
+import { extractNestedCommands } from "./extractNestedCommands";
 
 type HookDecision = {
 	permissionDecision: "allow" | "deny";
@@ -6,8 +7,11 @@ type HookDecision = {
 };
 
 function matchBuiltinDeny(text: string) {
+	const commands = [text, ...extractNestedCommands(text)];
 	return builtinDenyRules.find(
-		(rule) => rule.matches(text) && (rule.enabled?.() ?? true),
+		(rule) =>
+			commands.some((command) => rule.matches(command)) &&
+			(rule.enabled?.() ?? true),
 	);
 }
 

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
 const ISSUE_MUTATION =
-	/\bmutation\b[\s\S]*\b(?:createIssue|updateIssue|deleteIssue|closeIssue|reopenIssue|transferIssue|pinIssue|unpinIssue|addComment|updateIssueComment|deleteIssueComment|addSubIssue|removeSubIssue|reprioritizeSubIssue)\s*\(/;
+	/\bmutation\b[\s\S]*(?:issue|comment|label|assign|reaction|milestone)/i;
 const FIELD_FLAGS = ["-f", "-F", "--field", "--raw-field"];
 
 export function isGhGraphqlIssueMutation(

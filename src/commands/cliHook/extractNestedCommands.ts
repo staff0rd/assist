@@ -1,25 +1,38 @@
 type Visit = (i: number, inDouble: boolean) => number | undefined;
 
-export function extractQuotedSubstitutions(command: string): string[] {
+export function extractNestedCommands(command: string): string[] {
 	const bodies: string[] = [];
 
 	scanUnquoted(command, 0, (i, inDouble) => {
-		if (!inDouble) return undefined;
-		if (command[i] === "$" && command[i + 1] === "(") {
-			const end = findClosingParen(command, i + 2);
-			bodies.push(command.slice(i + 2, end));
-			return end;
-		}
-		if (command[i] === "`") {
-			const end = command.indexOf("`", i + 1);
-			const stop = end === -1 ? command.length : end;
-			bodies.push(command.slice(i + 1, stop));
-			return stop;
-		}
-		return undefined;
+		const opener = openerLength(command, i, inDouble);
+		if (opener === undefined) return undefined;
+		const start = i + opener;
+		const end =
+			command[i] === "`"
+				? findClosingBacktick(command, start)
+				: findClosingParen(command, start);
+		const body = command.slice(start, end);
+		bodies.push(body, ...extractNestedCommands(body));
+		return end;
 	});
 
 	return bodies;
+}
+
+function openerLength(
+	command: string,
+	i: number,
+	inDouble: boolean,
+): number | undefined {
+	if (command[i] === "$" && command[i + 1] === "(") return 2;
+	if (command[i] === "`") return 1;
+	if (command[i] === "(" && !inDouble) return 1;
+	return undefined;
+}
+
+function findClosingBacktick(command: string, start: number): number {
+	const end = command.indexOf("`", start);
+	return end === -1 ? command.length : end;
 }
 
 function findClosingParen(command: string, start: number): number {
