@@ -1,3 +1,10 @@
+# [0.803.0](https://github.com/staff0rd/assist/compare/v0.802.0...v0.803.0) (2026-10-09)
+
+
+### Features
+
+* grouped --screenshot for prs ([d691020](https://github.com/staff0rd/assist/commit/d691020c8a7491c64f03b654bdd47257a2e424e0))
+
 # [0.802.0](https://github.com/staff0rd/assist/compare/v0.801.6...v0.802.0) (2026-10-09)
 
 
