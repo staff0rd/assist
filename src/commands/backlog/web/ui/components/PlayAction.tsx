@@ -3,6 +3,7 @@ import { useLiveSessionsContext } from "../../../../sessions/web/ui/useLiveSessi
 import { useSessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
 import { BuildSplitButton } from "./BuildSplitButton";
 import { CloneOnNodeButton } from "./CloneOnNodeButton";
+import { InFlightSessionButton } from "./InFlightSessionButton";
 import { launchBuild } from "./launchBuild";
 import { PlayButton } from "./PlayButton";
 import { runInFlightSession } from "./runInFlightSession";
@@ -43,6 +44,7 @@ export function PlayAction({
 				}}
 			/>
 		);
+	if (inFlight) return <InFlightSessionButton session={inFlight} />;
 	return (
 		<BuildSplitButton
 			tooltip={tooltip}

@@ -4,6 +4,7 @@ import { useReportContentReady } from "../../../sessions/web/ui/useReportContent
 import type { SessionSocket } from "../../../sessions/web/ui/useSessionSocket";
 import { ViewRouter } from "./components/ViewRouter";
 import { useBacklogItems } from "./useBacklogItems";
+import { SelectSessionContext } from "./useSelectSessionContext";
 
 export function BacklogView({ socket }: { socket: SessionSocket }) {
 	const { items, loading, error, reload } = useBacklogItems();
@@ -12,20 +13,22 @@ export function BacklogView({ socket }: { socket: SessionSocket }) {
 
 	return (
 		<LiveSessionsContext.Provider value={socket.sessions}>
-			<Routes>
-				<Route
-					path="/*"
-					element={
-						<ViewRouter
-							items={items}
-							loading={loading}
-							error={error}
-							socket={socket}
-							onReload={reload}
-						/>
-					}
-				/>
-			</Routes>
+			<SelectSessionContext.Provider value={socket.selectSession}>
+				<Routes>
+					<Route
+						path="/*"
+						element={
+							<ViewRouter
+								items={items}
+								loading={loading}
+								error={error}
+								socket={socket}
+								onReload={reload}
+							/>
+						}
+					/>
+				</Routes>
+			</SelectSessionContext.Provider>
 		</LiveSessionsContext.Provider>
 	);
 }

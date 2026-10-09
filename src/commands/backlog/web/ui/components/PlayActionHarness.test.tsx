@@ -8,9 +8,6 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
-import type { SessionInfo } from "../../../../sessions/web/ui/types";
-import { LiveSessionsContext } from "../../../../sessions/web/ui/useLiveSessionsContext";
 import { SessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
 import { PlayAction } from "./PlayAction";
 
@@ -24,25 +21,19 @@ function mockHarness(capabilities: {
 	);
 }
 
-function renderPlay(
-	launchAssist: () => void,
-	compact = false,
-	sessions: SessionInfo[] = [],
-) {
+function renderPlay(launchAssist: () => void, compact = false) {
 	return render(
 		<MemoryRouter initialEntries={["/backlog"]}>
-			<LiveSessionsContext.Provider value={sessions}>
-				<SessionLaunchContext.Provider
-					value={{
-						launchAssist,
-						launchAgentInStream: () => {},
-						resumeSession: () => {},
-						armUpdateReload: () => {},
-					}}
-				>
-					<PlayAction itemId={775} compact={compact} />
-				</SessionLaunchContext.Provider>
-			</LiveSessionsContext.Provider>
+			<SessionLaunchContext.Provider
+				value={{
+					launchAssist,
+					launchAgentInStream: () => {},
+					resumeSession: () => {},
+					armUpdateReload: () => {},
+				}}
+			>
+				<PlayAction itemId={775} compact={compact} />
+			</SessionLaunchContext.Provider>
 		</MemoryRouter>,
 	);
 }
@@ -71,16 +62,9 @@ describe("PlayAction harness dropdown", () => {
 		);
 	});
 
-	it("joins the dropdown to Build and disables both while a run is live", async () => {
+	it("joins the dropdown to Build", async () => {
 		mockHarness({ exposeCodexActions: true });
-		renderPlay(vi.fn(), false, [
-			makeSessionInfo({
-				id: "4",
-				commandType: "assist",
-				status: "running",
-				assistArgs: ["backlog", "run", "a775"],
-			}),
-		]);
+		renderPlay(vi.fn());
 
 		const dropdown = await screen.findByRole("button", {
 			name: "Build with a different harness",
@@ -89,8 +73,6 @@ describe("PlayAction harness dropdown", () => {
 		expect(dropdown.closest(".MuiButtonGroup-root")).toBe(
 			build.closest(".MuiButtonGroup-root"),
 		);
-		expect(build.hasAttribute("disabled")).toBe(true);
-		expect(dropdown.hasAttribute("disabled")).toBe(true);
 	});
 
 	it("offers no dropdown when no other harness is available", async () => {
