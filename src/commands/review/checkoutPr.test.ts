@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { gitSyncOrNull } from "../sessions/daemon/worktree/git";
 import { checkoutPr } from "./checkoutPr";
+import { clearStalePrBranch } from "./clearStalePrBranch";
 import { moveToPrCheckoutTree } from "./moveToPrCheckoutTree";
 import { prHeadBranch } from "./prHeadBranch";
 import { reportCwdToDaemon } from "./reportCwdToDaemon";
@@ -23,6 +24,7 @@ vi.mock("../sessions/daemon/appendDaemonLog", () => ({
 vi.mock("../sessions/daemon/worktree/git", () => ({
 	gitSyncOrNull: vi.fn(),
 }));
+vi.mock("./clearStalePrBranch", () => ({ clearStalePrBranch: vi.fn() }));
 vi.mock("./moveToPrCheckoutTree", () => ({
 	moveToPrCheckoutTree: vi.fn(),
 }));
@@ -34,6 +36,7 @@ vi.mock("./worktreeHoldingBranch", () => ({
 
 const gitMock = vi.mocked(gitSyncOrNull);
 const headBranchMock = vi.mocked(prHeadBranch);
+const staleMock = vi.mocked(clearStalePrBranch);
 const holderMock = vi.mocked(worktreeHoldingBranch);
 const moveMock = vi.mocked(moveToPrCheckoutTree);
 
@@ -46,6 +49,7 @@ beforeEach(() => {
 	headBranchMock.mockReturnValue("feature");
 	holderMock.mockReturnValue(null);
 	gitMock.mockReturnValue("other-branch");
+	staleMock.mockReturnValue("absent");
 });
 
 afterEach(() => {
@@ -103,6 +107,41 @@ describe("checkoutPr", () => {
 				"gh",
 				["pr", "checkout", "123"],
 				{ stdio: "inherit" },
+			);
+		});
+	});
+
+	describe("when gh pr checkout fails", () => {
+		let errors: ReturnType<typeof vi.spyOn>;
+
+		beforeEach(() => {
+			errors = vi.spyOn(console, "error").mockImplementation(() => {});
+			vi.spyOn(process, "exit").mockImplementation(() => {
+				throw new Error("exit");
+			});
+			mockExecFileSync.mockImplementation(() => {
+				gitMock.mockReturnValue("feature");
+				throw new Error("gh failed");
+			});
+		});
+
+		it("returns the tree to the branch it was on", async () => {
+			await expect(checkoutPr("123")).rejects.toThrow("exit");
+
+			expect(gitMock).toHaveBeenCalledWith(process.cwd(), [
+				"checkout",
+				"--quiet",
+				"other-branch",
+			]);
+		});
+
+		it("explains that the local branch holds unpushed work", async () => {
+			staleMock.mockReturnValue("local-work");
+
+			await expect(checkoutPr("123")).rejects.toThrow("exit");
+
+			expect(String(errors.mock.calls[0][0])).toContain(
+				"Local branch feature has commits that are not on the remote",
 			);
 		});
 	});

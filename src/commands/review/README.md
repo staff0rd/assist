@@ -2,7 +2,7 @@
 
 Orchestrates two independent LLM code reviewers (Claude and Codex), consolidates their findings into a single synthesis, and posts the result as pending line comments on the current PR.
 
-`assist review` diffs the open PR for the current branch, fetches prior PR comments, and posts the synthesis as pending line comments on the PR. `assist review <number>` first runs `gh pr checkout <number>` and then performs the same review on that branch; if the checkout fails (dirty working tree, unknown PR number), gh/git's error is surfaced and the review aborts.
+`assist review` diffs the open PR for the current branch, fetches prior PR comments, and posts the synthesis as pending line comments on the PR. `assist review <number>` first runs `gh pr checkout <number>` and then performs the same review on that branch; if the checkout fails (dirty working tree, unknown PR number), gh/git's error is surfaced, the tree is returned to the branch it was on, and the review aborts. A leftover local branch of the PR's head that holds no local-only commits (its tip was last set from the remote) is deleted first (`clearStalePrBranch.ts`), so a force-pushed PR head is checked out fresh instead of failing to fast-forward; one that does hold local commits is kept and, if gh cannot fast-forward it, named in the error.
 
 ## End-to-end flow
 
