@@ -203,13 +203,13 @@ describe("review", () => {
 			expect(mockMoveToPrCheckoutTree).toHaveBeenCalled();
 		});
 
-		it("should start a Claude session running /review-high-level instead of opening the checklist", async () => {
+		it("should start an auto-mode Claude session running /review-high-level instead of opening the checklist", async () => {
 			await review({ highLevel: true, number: "123" });
 
 			const [prompt, options] = mockSpawnClaude.mock.calls[0];
 			expect(prompt).toBe("/review-high-level 123");
 			expect(options).toMatchObject({
-				permissionMode: "acceptEdits",
+				permissionMode: "auto",
 				sessionId: expect.any(String),
 			});
 			expect(mockRunHighLevelReview).not.toHaveBeenCalled();

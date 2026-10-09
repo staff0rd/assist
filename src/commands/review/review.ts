@@ -32,6 +32,7 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 		return checkoutPrSession(
 			options.number,
 			`/review-high-level ${options.number}${options.force ? " --force" : ""}`,
+			"auto",
 		);
 	emitActivity({ kind: "command", name: "review" });
 	if (!options.number)
