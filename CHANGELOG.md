@@ -1,3 +1,10 @@
+## [0.801.3](https://github.com/staff0rd/assist/compare/v0.801.2...v0.801.3) (2026-10-09)
+
+
+### Bug Fixes
+
+* reset stale local PR branch on checkout ([39669da](https://github.com/staff0rd/assist/commit/39669da4e8ec6df578137c0fbd907a9a9f2c0344))
+
 ## [0.801.2](https://github.com/staff0rd/assist/compare/v0.801.1...v0.801.2) (2026-10-09)
 
 
