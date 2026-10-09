@@ -1,3 +1,10 @@
+# [0.804.0](https://github.com/staff0rd/assist/compare/v0.803.0...v0.804.0) (2026-10-09)
+
+
+### Features
+
+* seed flag screenshots into PR pane ([4705b7d](https://github.com/staff0rd/assist/commit/4705b7db0c5a00be1f086d4a4a5f77631f6cfc7d))
+
 # [0.803.0](https://github.com/staff0rd/assist/compare/v0.802.0...v0.803.0) (2026-10-09)
 
 
