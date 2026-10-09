@@ -1,3 +1,10 @@
+# [0.801.0](https://github.com/staff0rd/assist/compare/v0.800.0...v0.801.0) (2026-10-09)
+
+
+### Features
+
+* comment on high-level review diffs ([99c1569](https://github.com/staff0rd/assist/commit/99c1569946c57c74cc06a0986b80e2b895a268c0)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.800.0](https://github.com/staff0rd/assist/compare/v0.799.0...v0.800.0) (2026-10-08)
 
 
