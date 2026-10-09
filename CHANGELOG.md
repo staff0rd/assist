@@ -1,3 +1,10 @@
+## [0.801.6](https://github.com/staff0rd/assist/compare/v0.801.5...v0.801.6) (2026-10-09)
+
+
+### Bug Fixes
+
+* deny gh writes nested in subshells ([6f5c387](https://github.com/staff0rd/assist/commit/6f5c38755f38b657d351f0611c5a59aada18b84f))
+
 ## [0.801.5](https://github.com/staff0rd/assist/compare/v0.801.4...v0.801.5) (2026-10-09)
 
 
