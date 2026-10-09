@@ -1,3 +1,10 @@
+# [0.802.0](https://github.com/staff0rd/assist/compare/v0.801.6...v0.802.0) (2026-10-09)
+
+
+### Features
+
+* link to running session from item ([84ef60f](https://github.com/staff0rd/assist/commit/84ef60f19f29797036ff0405519ffa0aef273393))
+
 ## [0.801.6](https://github.com/staff0rd/assist/compare/v0.801.5...v0.801.6) (2026-10-09)
 
 
