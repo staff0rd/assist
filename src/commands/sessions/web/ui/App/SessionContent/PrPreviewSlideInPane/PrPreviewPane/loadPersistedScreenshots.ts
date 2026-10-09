@@ -1,16 +1,21 @@
-import type { PreviewAttachment } from "../../../../../../../shared/PreviewAttachment";
+import type { PreviewAttachment } from "../../../../../../shared/PreviewAttachment";
 import {
 	clearPersisted,
 	loadPersisted,
 	prunePersisted,
 	savePersisted,
-} from "../../../../loadPersisted";
+} from "../../../loadPersisted";
 
-type PersistedScreenshot = PreviewAttachment & { contentType: string };
+export type PersistedScreenshot = PreviewAttachment & {
+	contentType: string;
+	seeded?: boolean;
+};
 
 const PREFIX = "assist:preview-screenshots:";
 
 const key = (scope: string) => `${PREFIX}${scope}`;
+
+export const seededKey = (scope: string) => `${PREFIX}seeded:${scope}`;
 
 export function loadPersistedScreenshots(
 	scope: string | undefined,
@@ -29,10 +34,12 @@ export function savePersistedScreenshots(
 	if (!scope) return;
 	savePersisted(
 		key(scope),
-		screenshots.map(({ path, alt, contentType }) => ({
+		screenshots.map(({ path, alt, group, contentType, seeded }) => ({
 			path,
 			alt,
+			group,
 			contentType,
+			seeded,
 		})),
 	);
 }
@@ -40,4 +47,5 @@ export function savePersistedScreenshots(
 export function clearPersistedScreenshots(scope: string | undefined): void {
 	if (!scope) return;
 	clearPersisted(key(scope));
+	clearPersisted(seededKey(scope));
 }

@@ -1,4 +1,5 @@
 import type { PrPreview, PreviewKind } from "../shared/SessionInfoBase";
+import { toAttachments } from "../shared/toAttachments";
 import { parsePreviewMetadata } from "./parsePreviewMetadata";
 
 export function buildPrPreview(
@@ -21,5 +22,6 @@ export function buildPrPreview(
 				: undefined,
 		draft: kind === "pr" && prNumber === null ? draft : undefined,
 		metadata: parsePreviewMetadata(d.metadata),
+		screenshots: kind === "pr" ? toAttachments(d.screenshots) : undefined,
 	};
 }

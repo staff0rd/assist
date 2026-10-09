@@ -1,13 +1,18 @@
+import type { PrPaneOptions } from "../PrPaneOptions";
 import { useScreenshots } from "../useScreenshots";
 import { useScreenshotUpload } from "../useScreenshotUpload";
 
-export function usePaneScreenshots(
-	cwd: string | undefined,
-	enabled: boolean,
-	scope: string | undefined,
-) {
+export function usePaneScreenshots({
+	cwd,
+	screenshots: enabled,
+	screenshotScope,
+	requestId,
+	seededScreenshots,
+}: PrPaneOptions) {
 	const { screenshots, add, remove, clearPersisted } = useScreenshots(
-		enabled ? scope : undefined,
+		enabled ? screenshotScope : undefined,
+		requestId,
+		enabled ? seededScreenshots : [],
 	);
 	const { uploads, onDrop, onDragOver } = useScreenshotUpload(
 		cwd,
@@ -19,7 +24,10 @@ export function usePaneScreenshots(
 		screenshots,
 		removeScreenshot: remove,
 		decision: {
-			attachments: () => screenshots.map(({ path, alt }) => ({ path, alt })),
+			attachments: () =>
+				screenshots.map(({ path, alt, group }) =>
+					group ? { path, alt, group } : { path, alt },
+				),
 			clearPersisted,
 		},
 		uploads,

@@ -13,6 +13,13 @@ vi.mock("./chainAfterRaise", () => ({
 vi.mock("./enableAutoMerge", () => ({
 	enableAutoMerge: (...args: unknown[]) => enableAutoMergeMock(...args),
 }));
+const stageScreenshotsMock = vi.fn(async (shots: { path: string }[] = []) =>
+	shots.map((s) => ({ ...s, path: `/staged/${s.path.split("/").pop()}` })),
+);
+vi.mock("./stageScreenshots", () => ({
+	stageScreenshots: (...args: unknown[]) =>
+		stageScreenshotsMock(...(args as [{ path: string }[]])),
+}));
 vi.mock("../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
 		requestPrDecisionMock(...args),
@@ -57,20 +64,39 @@ describe("previewAndPlace", () => {
 		);
 	});
 
-	it("places flag screenshots grouped ahead of pane-dropped ones", async () => {
-		requestPrDecisionMock.mockResolvedValue({
-			decision: "approve",
-			screenshots: [{ path: "/s/drop.png", alt: "drop" }],
-		});
+	it("seeds the pane with staged flag screenshots", async () => {
+		requestPrDecisionMock.mockResolvedValue({ decision: "approve" });
 		const flag = { path: "/f/l.png", alt: "light", group: "Profile" };
 
 		await previewAndPlace({ ...args, screenshots: [flag] });
 
+		expect(stageScreenshotsMock).toHaveBeenCalledWith([flag]);
+		expect(requestPrDecisionMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				screenshots: [{ ...flag, path: "/staged/l.png" }],
+			}),
+		);
+	});
+
+	it("places only the screenshots the reviewer kept, grouped first", async () => {
+		const kept = { path: "/staged/l.png", alt: "light", group: "Profile" };
+		requestPrDecisionMock.mockResolvedValue({
+			decision: "approve",
+			screenshots: [kept, { path: "/s/drop.png", alt: "drop" }],
+		});
+		const removed = { path: "/f/d.png", alt: "dark", group: "Profile" };
+
+		await previewAndPlace({
+			...args,
+			screenshots: [{ ...kept, path: "/f/l.png" }, removed],
+		});
+
 		const [, , body, , attachments] = placePrMock.mock.calls[0];
 		expect(body).toContain(
-			"### Profile\n\n| light |  |\n| --- | --- |\n| ![light](/f/l.png) |  |\n\n| drop |",
+			"### Profile\n\n| light |  |\n| --- | --- |\n| ![light](/staged/l.png) |  |\n\n| drop |",
 		);
-		expect(attachments).toEqual([flag, { path: "/s/drop.png", alt: "drop" }]);
+		expect(body).not.toContain("dark");
+		expect(attachments).toEqual([kept, { path: "/s/drop.png", alt: "drop" }]);
 	});
 
 	it("leaves the body untouched when there are no screenshots", async () => {

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { SessionInfo } from "../../../../types";
 import { useApiNode } from "../../../../useApiNode";
-import { useActivateSession } from "../useActivateSession";
+import { useActivateSession } from "../../../../useActivateSession";
 import type { NextSessions } from "./useNextSessions";
 import { useTrackedIssues } from "./useTrackedIssues";
 

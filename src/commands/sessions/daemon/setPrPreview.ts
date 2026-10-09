@@ -39,7 +39,7 @@ export function setPrPreview(
 		d.draft === true,
 	);
 	daemonLog(
-		`pr-preview set: id=${id} requestId=${d.requestId} kind=${kind} target=${target}`,
+		`pr-preview set: id=${id} requestId=${d.requestId} kind=${kind} target=${target} screenshots=${session.pendingPrPreview.screenshots?.length ?? 0}`,
 	);
 	notify();
 }

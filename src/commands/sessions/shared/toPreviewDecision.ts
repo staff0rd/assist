@@ -1,9 +1,9 @@
-import type { PreviewAttachment } from "./PreviewAttachment";
 import type {
 	PreviewDecision,
 	PreviewDecisionFields,
 	PreviewSelection,
 } from "./PreviewDecision";
+import { toAttachments } from "./toAttachments";
 import { toChecklist } from "./toChecklist";
 
 export type DecisionMessage = PreviewDecisionFields & {
@@ -21,15 +21,6 @@ function toSelection(value: unknown): PreviewSelection | undefined {
 	)
 		return undefined;
 	return { topLeft: selection.topLeft, bottomRight: selection.bottomRight };
-}
-
-function toAttachments(value: unknown): PreviewAttachment[] | undefined {
-	if (!Array.isArray(value)) return undefined;
-	return value.flatMap((entry) => {
-		const { path, alt } = (entry ?? {}) as Record<string, unknown>;
-		if (typeof path !== "string" || path === "") return [];
-		return [{ path, alt: typeof alt === "string" ? alt : "" }];
-	});
 }
 
 export function toPreviewDecision(

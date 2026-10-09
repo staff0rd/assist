@@ -10,17 +10,12 @@ import { usePaneSelectionActions } from "./usePrPane/usePaneSelectionActions";
 import { usePreviewSelection } from "../../../usePreviewSelection";
 
 export function usePrPane(options: PrPaneOptions) {
-	const { requestId, sessionId, cwd, onDecision, isPr, resolvedDraft } =
-		options;
+	const { requestId, sessionId, onDecision, isPr, resolvedDraft } = options;
 	const edit = useEditableBody(options.initialBody, options.editable);
 	const { wrapperRef, contentRef, pending, dragRects, onMouseDown, clear } =
 		usePreviewSelection();
 	const { comments, add, remove } = usePrComments(requestId);
-	const { decision: shotsForDecision, ...shots } = usePaneScreenshots(
-		cwd,
-		options.screenshots,
-		options.screenshotScope,
-	);
+	const { decision: shotsForDecision, ...shots } = usePaneScreenshots(options);
 	const decision = usePrDecision(
 		requestId,
 		sessionId,

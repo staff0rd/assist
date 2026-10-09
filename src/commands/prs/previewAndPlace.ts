@@ -6,6 +6,7 @@ import type { CreateOptions } from "./buildCreateArgs";
 import { chainAfterRaise } from "./chainAfterRaise";
 import { enableAutoMerge } from "./enableAutoMerge";
 import { placePr } from "./placePr";
+import { stageScreenshots } from "./stageScreenshots";
 
 export async function previewAndPlace(args: {
 	sessionId: string;
@@ -22,12 +23,10 @@ export async function previewAndPlace(args: {
 		body: args.body,
 		prNumber: args.prNumber,
 		draft: args.options.draft === true,
+		screenshots: await stageScreenshots(args.screenshots),
 	});
 
-	const attachments = [
-		...(args.screenshots ?? []),
-		...(decision.screenshots ?? []),
-	];
+	const attachments = decision.screenshots ?? [];
 	const body = appendScreenshots(args.body, attachments);
 	const options =
 		decision.draft === undefined

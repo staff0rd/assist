@@ -1,6 +1,6 @@
 import TerminalIcon from "@mui/icons-material/Terminal";
 import Button from "@mui/material/Button";
-import { useActivateSession } from "../../../../sessions/web/ui/App/AppShell/AppRoutes/useActivateSession";
+import { useActivateSession } from "../../../../sessions/web/ui/useActivateSession";
 import type { SessionInfo } from "../../../../sessions/web/ui/types";
 import { useSelectSessionContext } from "../useSelectSessionContext";
 

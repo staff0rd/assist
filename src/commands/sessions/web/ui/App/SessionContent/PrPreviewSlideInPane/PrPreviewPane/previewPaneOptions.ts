@@ -20,6 +20,7 @@ export function previewPaneOptions(
 		cwd,
 		onDecision,
 		screenshotScope: previewScreenshotScope(sessionId, preview.kind),
+		seededScreenshots: preview.screenshots ?? [],
 		resolvedDraft: preview.draft === true,
 		initialBody: preview.body,
 	};

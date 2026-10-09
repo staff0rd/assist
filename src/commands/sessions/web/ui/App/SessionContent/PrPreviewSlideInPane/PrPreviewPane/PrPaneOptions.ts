@@ -1,3 +1,4 @@
+import type { PreviewAttachment } from "../../../../../../shared/PreviewAttachment";
 import type { PrDecisionDetails } from "../../../../PrDecisionDetails";
 
 export type PrPaneOptions = {
@@ -11,6 +12,7 @@ export type PrPaneOptions = {
 	isPr: boolean;
 	screenshots: boolean;
 	screenshotScope: string | undefined;
+	seededScreenshots: PreviewAttachment[];
 	resolvedDraft: boolean;
 	initialBody: string;
 	editable: boolean;

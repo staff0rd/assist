@@ -1,33 +1,27 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback } from "react";
 import {
 	clearPersistedScreenshots,
-	loadPersistedScreenshots,
+	type PersistedScreenshot,
 	savePersistedScreenshots,
-} from "./useScreenshots/loadPersistedScreenshots";
-import { stagedPreviewSrc } from "./useScreenshots/stagedPreviewSrc";
+} from "./loadPersistedScreenshots";
+import { useSeededScreenshots } from "./useSeededScreenshots";
 import type { PreviewAttachment } from "../../../../../../shared/PreviewAttachment";
-import { useApiNode } from "../../../../useApiNode";
 
-export type LocalScreenshot = PreviewAttachment & {
+export type LocalScreenshot = PersistedScreenshot & {
 	url: string;
-	contentType: string;
 	id: number;
 };
 
-export function useScreenshots(scope: string | undefined) {
-	const [screenshots, setScreenshots] = useState<LocalScreenshot[]>([]);
-	const nextId = useRef(0);
-	const node = useApiNode();
-
-	useEffect(() => {
-		setScreenshots(
-			loadPersistedScreenshots(scope).map((s) => ({
-				...s,
-				url: stagedPreviewSrc(s.path, node),
-				id: nextId.current++,
-			})),
-		);
-	}, [scope, node]);
+export function useScreenshots(
+	scope: string | undefined,
+	requestId: string,
+	seeds: PreviewAttachment[],
+) {
+	const { screenshots, setScreenshots, nextId } = useSeededScreenshots(
+		scope,
+		requestId,
+		seeds,
+	);
 
 	const add = useCallback(
 		(s: Omit<LocalScreenshot, "id">) => {
@@ -37,7 +31,7 @@ export function useScreenshots(scope: string | undefined) {
 				return next;
 			});
 		},
-		[scope],
+		[scope, setScreenshots, nextId],
 	);
 
 	const remove = useCallback(
@@ -50,7 +44,7 @@ export function useScreenshots(scope: string | undefined) {
 				return next;
 			});
 		},
-		[scope],
+		[scope, setScreenshots],
 	);
 
 	const clearPersisted = useCallback(

@@ -1,5 +1,6 @@
 import type { Activity } from "../../../shared/emitActivity";
 import type { HarnessKind } from "../../../shared/harnesses";
+import type { PreviewAttachment } from "./PreviewAttachment";
 import type { RepoGroup } from "./RepoGroup";
 
 export type CommandType = "claude" | "run" | "assist";
@@ -39,6 +40,7 @@ export type PrPreview = {
 	itemType?: PreviewItemType;
 	draft?: boolean;
 	metadata?: PreviewMetadata[];
+	screenshots?: PreviewAttachment[];
 };
 
 export type SessionInfoBase = {

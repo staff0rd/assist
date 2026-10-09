@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { toNodeSessionId } from "../../../../../../daemon/links/splitNodeSessionId";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
 import { useNodeUpdatesContext } from "../../useNodeUpdatesContext";
-import { useActivateSession } from "../useActivateSession";
+import { useActivateSession } from "../../../../useActivateSession";
 import { useLoopControl } from "./useUpdateActions/useLoopControl";
 import { useNodeRestart } from "./useUpdateActions/useNodeRestart";
 import { useNotices } from "./useUpdateActions/useNotices";
