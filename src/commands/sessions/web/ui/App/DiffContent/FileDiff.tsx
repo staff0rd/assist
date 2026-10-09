@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import type { FileData } from "react-diff-view";
-import { DiffCommentLayer } from "./FileDiff/DiffCommentLayer";
+import { DiffCommentLayer } from "../DiffCommentLayer";
 import { diffFileDomId } from "./diffFileDomId";
 import { FileDiffBody } from "../FileDiffBody";
 import { FileDiffHeader } from "./FileDiffHeader";

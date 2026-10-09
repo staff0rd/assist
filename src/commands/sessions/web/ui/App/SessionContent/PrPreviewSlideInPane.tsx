@@ -9,6 +9,7 @@ import { ShowPane } from "./PrPreviewSlideInPane/ShowPane";
 export function PrPreviewSlideInPane({
 	preview,
 	onDecision,
+	session,
 	...pane
 }: PrPreviewPaneProps) {
 	if (previewPaneCapabilities(preview.kind).closeOnly)
@@ -23,7 +24,14 @@ export function PrPreviewSlideInPane({
 		return <MiroBoardPane preview={preview} onDecision={onDecision} />;
 
 	if (preview.kind === "high-level-review")
-		return <HighLevelReviewPane preview={preview} onDecision={onDecision} />;
+		return (
+			<HighLevelReviewPane
+				preview={preview}
+				session={session}
+				sendInput={pane.sendInput}
+				onDecision={onDecision}
+			/>
+		);
 
 	return <PrPreviewPane preview={preview} onDecision={onDecision} {...pane} />;
 }

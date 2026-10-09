@@ -24,6 +24,7 @@ export function SessionPreviewSplit({
 	return (
 		<PrPreviewSplit
 			preview={session?.pendingPrPreview ?? null}
+			session={session}
 			sessionId={session?.id}
 			cwd={session?.cwd}
 			sendInput={sendInput}

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { PrPreview } from "../../../../../../shared/SessionInfoBase";
 import type { PrDecisionDetails } from "../../../../PrDecisionDetails";
 import { PrPreviewSlideIn } from "./PrPreviewSplit/PrPreviewSlideIn";
+import type { SessionInfo } from "../../../../types";
 import { SPLIT_EASE, SPLIT_MS } from "./PrPreviewSplit/slideInSx";
 import { useRetainedPreview } from "./PrPreviewSplit/useRetainedPreview";
 
@@ -14,6 +15,7 @@ type OnDecision = (
 
 export function PrPreviewSplit({
 	preview,
+	session,
 	sessionId,
 	cwd,
 	sendInput,
@@ -21,6 +23,7 @@ export function PrPreviewSplit({
 	children,
 }: {
 	preview: PrPreview | null;
+	session?: SessionInfo | undefined;
 	sessionId?: string;
 	cwd?: string;
 	sendInput?: ((sessionId: string, data: string) => void) | undefined;
@@ -51,6 +54,7 @@ export function PrPreviewSplit({
 			</Box>
 			<PrPreviewSlideIn
 				rendered={rendered}
+				session={session}
 				sessionId={sessionId}
 				cwd={cwd}
 				sendInput={sendInput}

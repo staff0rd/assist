@@ -3,10 +3,12 @@ import type { TransitionEvent } from "react";
 import type { PrPreview } from "../../../../../../../shared/SessionInfoBase";
 import type { PrDecisionDetails } from "../../../../../PrDecisionDetails";
 import { PrPreviewSlideInPane } from "../../../PrPreviewSlideInPane";
+import type { SessionInfo } from "../../../../../types";
 import { slideInSx } from "./slideInSx";
 
 export function PrPreviewSlideIn({
 	rendered,
+	session,
 	sessionId,
 	cwd,
 	sendInput,
@@ -15,6 +17,7 @@ export function PrPreviewSlideIn({
 	onDecision,
 }: {
 	rendered: PrPreview | null;
+	session?: SessionInfo | undefined;
 	sessionId?: string;
 	cwd?: string;
 	sendInput?: ((sessionId: string, data: string) => void) | undefined;
@@ -43,6 +46,7 @@ export function PrPreviewSlideIn({
 				<PrPreviewSlideInPane
 					key={rendered.requestId}
 					preview={rendered}
+					session={session}
 					sessionId={sessionId}
 					cwd={cwd}
 					sendInput={sendInput}

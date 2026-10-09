@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { addRuleSender } from "../../addRuleSender";
-import { diffCommentSender } from "./useDiffComments/diffCommentSender";
+import { diffCommentSender } from "../../diffCommentSender";
 import { diffCommentTarget } from "./useDiffComments/diffCommentTarget";
 import { fileCommentSender } from "../../fileCommentSender";
 import type { AddRuleRequest } from "../../formatAddRuleCommand";

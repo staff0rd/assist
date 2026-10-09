@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { commentColor } from "./commentColor";
 import { DragOverlay } from "./DragOverlay";
 import { fileCommentFrom } from "./FileCommentLayer/fileCommentFrom";
-import { FileCommentPopover } from "./FileCommentLayer/FileCommentPopover";
+import { CommentPopover } from "./CommentPopover";
 import type { AddRuleRequest } from "./formatAddRuleCommand";
 import type { FileComment } from "./formatFileComment";
 import { selectionActions } from "./selectionActions";
@@ -42,7 +42,7 @@ export function FileCommentLayer({
 		<Box ref={wrapperRef} onMouseDown={onMouseDown} sx={selectionLayerSx}>
 			<Box ref={contentRef}>{children}</Box>
 			<DragOverlay rects={dragRects} color={commentColor(0).fill} />
-			<FileCommentPopover
+			<CommentPopover
 				pending={pending}
 				cwd={cwd}
 				path={path}

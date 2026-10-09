@@ -1,38 +1,32 @@
 import { Box, Divider } from "@mui/material";
-import { useMemo } from "react";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
-import { highLevelCheckDetails } from "./HighLevelReviewPane/highLevelCheckDetails";
+import { CommentSentSnackbar } from "../../CommentSentSnackbar";
 import { HighLevelChecklistBody } from "./HighLevelReviewPane/HighLevelChecklistBody";
 import { HighLevelReviewActions } from "./HighLevelReviewPane/HighLevelReviewActions";
 import { highLevelDecisionDetails } from "./HighLevelReviewPane/highLevelDecisionDetails";
-import { parseHighLevelPreview } from "./HighLevelReviewPane/parseHighLevelPreview";
 import type { PrDecisionDetails } from "../../../PrDecisionDetails";
 import { PreviewMetadataList } from "./PreviewMetadataList";
 import { PrPreviewHeader } from "./PrPreviewHeader";
 import { prPreviewPaneSx } from "./prPreviewPaneSx";
-import { useHighLevelChecklist } from "./HighLevelReviewPane/useHighLevelChecklist";
-
-const TESTS_ITEM = "tests-worth-having";
+import type { SessionInfo } from "../../../types";
+import { useHighLevelReviewPane } from "./HighLevelReviewPane/useHighLevelReviewPane";
 
 export function HighLevelReviewPane({
 	preview,
+	session,
+	sendInput,
 	onDecision,
 }: {
 	preview: PrPreview;
+	session?: SessionInfo | undefined;
+	sendInput?: ((sessionId: string, data: string) => void) | undefined;
 	onDecision: (
 		decision: "approve" | "reject",
 		details: PrDecisionDetails,
 	) => void;
 }) {
-	const payload = useMemo(
-		() => parseHighLevelPreview(preview.body),
-		[preview.body],
-	);
-	const checklist = useHighLevelChecklist(payload.checks, payload.saved);
-	const details = highLevelCheckDetails(payload, {
-		note: (testId) => checklist.note(TESTS_ITEM, testId),
-		onNote: (testId, note) => checklist.onNote(TESTS_ITEM, testId, note),
-	});
+	const { payload, checklist, details, sentTo, clearSent } =
+		useHighLevelReviewPane(preview, session, sendInput);
 
 	const decide = (decision: "approve" | "reject") =>
 		onDecision(decision, highLevelDecisionDetails(checklist.checklist()));
@@ -56,6 +50,7 @@ export function HighLevelReviewPane({
 				onApprove={() => decide("approve")}
 				onRequestChanges={() => decide("reject")}
 			/>
+			<CommentSentSnackbar sessionName={sentTo} onClose={clearSent} />
 		</Box>
 	);
 }

@@ -1,8 +1,10 @@
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
 import type { PrDecisionDetails } from "../../../PrDecisionDetails";
+import type { SessionInfo } from "../../../types";
 
 export type PrPreviewPaneProps = {
 	preview: PrPreview;
+	session?: SessionInfo | undefined;
 	sessionId?: string;
 	cwd?: string;
 	sendInput?: ((sessionId: string, data: string) => void) | undefined;
