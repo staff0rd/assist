@@ -3,7 +3,8 @@ import { gitSyncOrNull, gitSyncResult } from "../sessions/daemon/worktree/git";
 
 export type StalePrBranch = "absent" | "cleared" | "local-work";
 
-const tipSetFromRemote = /^branch: (Created from|Reset to)|: Fast-forward$/;
+const tipSetFromRemote =
+	/^branch: (Created from|Reset to)|^fetch\b|: Fast-forward$/;
 
 function holdsLocalWork(cwd: string, ref: string): boolean {
 	const unpushed = gitSyncOrNull(cwd, [

@@ -81,6 +81,15 @@ describe("clearStalePrBranch", () => {
 		expect(branchExists(clone, "feat")).toBe(false);
 	});
 
+	it("clears a fork PR branch fetched straight into a local branch", () => {
+		const { clone, forcePush } = cloneWithStalePrBranch();
+		runGit(clone, "fetch", "-q", "origin", "refs/heads/feat:fork-feat");
+		forcePush();
+
+		expect(clearStalePrBranch(clone, "fork-feat")).toBe("cleared");
+		expect(branchExists(clone, "fork-feat")).toBe(false);
+	});
+
 	it("keeps a branch holding commits made locally", () => {
 		const { clone, forcePush } = cloneWithStalePrBranch();
 		runGit(clone, "checkout", "-q", "feat");
