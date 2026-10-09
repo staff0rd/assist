@@ -1,3 +1,10 @@
+## [0.801.2](https://github.com/staff0rd/assist/compare/v0.801.1...v0.801.2) (2026-10-09)
+
+
+### Bug Fixes
+
+* wait for new repo's default mode ([33fdfd7](https://github.com/staff0rd/assist/commit/33fdfd78f441c8f17152273e5cbd38716e5939c9))
+
 ## [0.801.1](https://github.com/staff0rd/assist/compare/v0.801.0...v0.801.1) (2026-10-09)
 
 
