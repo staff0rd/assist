@@ -1,3 +1,10 @@
+# [0.969.0](https://github.com/staff0rd/assist/compare/v0.968.1...v0.969.0) (2026-10-30)
+
+
+### Features
+
+* phone session actions and new session ([cb7cb76](https://github.com/staff0rd/assist/commit/cb7cb7682952af01b5215b820045fc8c62d246de))
+
 ## [0.968.1](https://github.com/staff0rd/assist/compare/v0.968.0...v0.968.1) (2026-10-30)
 
 
