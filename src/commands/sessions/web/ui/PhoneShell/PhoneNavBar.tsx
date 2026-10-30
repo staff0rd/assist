@@ -11,7 +11,9 @@ const barSx = {
 const rowSx = {
 	height: 44,
 	display: "grid",
-	gridTemplateColumns: "1fr auto 1fr",
+	gridTemplateColumns:
+		"minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr)",
+	columnGap: 1,
 	alignItems: "center",
 	px: 1,
 } as const;
