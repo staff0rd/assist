@@ -1,6 +1,6 @@
 When asked to commit, use conventional commits: `fix:` (patch), `feat:` (minor), `feat!:` (major).
 
-When adding, editing, or removing CLI or Claude commands, update the relevant pages in `docs/src/content/docs/` to reflect the change. Also add read-only commands to `allowed.cli-reads`.
+When adding, editing, or removing CLI or Claude commands, tell the user which pages in `docs/src/content/docs/` are affected rather than editing them (R11). Also add read-only commands to `allowed.cli-reads`.
 
 ## Asking the user to test
 
@@ -42,5 +42,6 @@ Start with `assist sessions nodes doctor [name]`: it probes each hop and names t
 
 - **R1** — Do not document what is implicit — state only what the reader could not infer.
 - **R10** — **Deploy iOS builds yourself** — Before asking the user to test an iOS app change, run ios:build and deploy it to the simulator or connected device yourself; never tell the user to build, open or run it.
+- **R11** — **Docs need explicit approval** — Change docs only when the user explicitly asks, and get their explicit approval of the change before committing it
 
 Directories with their own `## Rules`: `docs/`, `src/commands/extension/`, `src/commands/sessions/web/ui/`
