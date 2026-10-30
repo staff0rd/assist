@@ -7,9 +7,3 @@ export function commitStaged(message: string): string {
 		encoding: "utf8",
 	}).trim();
 }
-
-export function stageAndCommit(files: string[], message: string): string {
-	const escaped = files.map(shellQuote).join(" ");
-	execSync(`git add ${escaped}`, { stdio: "inherit" });
-	return commitStaged(message);
-}

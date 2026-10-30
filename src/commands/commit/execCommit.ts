@@ -7,7 +7,9 @@ import { collectCommitRefs } from "./collectCommitRefs";
 import { pullKeepingIndex } from "./pullKeepingIndex";
 import { pushCommit } from "./pushCommit";
 import { shouldPull } from "./shouldPull";
-import { commitStaged, stageAndCommit } from "./stageAndCommit";
+import { refuseLockedDocs } from "./refuseLockedDocs";
+import { commitStaged } from "./commitStaged";
+import { stageFiles } from "./stageFiles";
 
 export async function execCommit(
 	files: string[],
@@ -21,8 +23,9 @@ export async function execCommit(
 			pullKeepingIndex();
 		}
 		abortOnConflicts(files, pulled);
-		const sha =
-			files.length > 0 ? stageAndCommit(files, message) : commitStaged(message);
+		if (files.length > 0) stageFiles(files);
+		await refuseLockedDocs();
+		const sha = commitStaged(message);
 		console.log(`Committed: ${sha}`);
 		if (config.commit?.push) {
 			pushCommit(config.worktree?.trunk === true);
