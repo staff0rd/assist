@@ -1,3 +1,10 @@
+# [0.971.0](https://github.com/staff0rd/assist/compare/v0.970.0...v0.971.0) (2026-10-30)
+
+
+### Features
+
+* docs refresh owns coverage gate ([5222038](https://github.com/staff0rd/assist/commit/52220384d264bfeaa88377f3e3a1354ad351ea6e))
+
 # [0.970.0](https://github.com/staff0rd/assist/compare/v0.969.1...v0.970.0) (2026-10-30)
 
 
