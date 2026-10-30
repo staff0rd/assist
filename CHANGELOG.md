@@ -1,3 +1,10 @@
+## [0.955.2](https://github.com/staff0rd/assist/compare/v0.955.1...v0.955.2) (2026-10-30)
+
+
+### Bug Fixes
+
+* iOS app draws safe areas in theme ([e3ad8db](https://github.com/staff0rd/assist/commit/e3ad8db6bbf99c892fcb2b42c800fdb1eb9adc7f))
+
 ## [0.955.1](https://github.com/staff0rd/assist/compare/v0.955.0...v0.955.1) (2026-10-30)
 
 
