@@ -1,10 +1,12 @@
-import type {
-	BrowserOp,
-	BrowserRelayReply,
-	BrowserRequest,
+import {
+	type BrowserOp,
+	type BrowserRelayReply,
+	type BrowserRequest,
+	RUN_APPROVAL_TIMEOUT_MS,
 } from "../extension/browserLink/types";
 
 const CLI_TIMEOUT_MS = 50_000;
+const RUN_CLI_TIMEOUT_MS = RUN_APPROVAL_TIMEOUT_MS + 75_000;
 
 export async function requestBrowser<O extends BrowserOp>(
 	server: string,
@@ -16,7 +18,9 @@ export async function requestBrowser<O extends BrowserOp>(
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(request),
-			signal: AbortSignal.timeout(CLI_TIMEOUT_MS),
+			signal: AbortSignal.timeout(
+				request.op === "run" ? RUN_CLI_TIMEOUT_MS : CLI_TIMEOUT_MS,
+			),
 		});
 	} catch (error) {
 		if (error instanceof Error && error.name === "TimeoutError")

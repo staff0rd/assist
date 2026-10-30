@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { browserInspect } from "./browser/browserInspect";
+import { browserRun } from "./browser/browserRun";
 import { browserSnapshot } from "./browser/browserSnapshot";
 import { browserStatus } from "./browser/browserStatus";
 
@@ -50,4 +51,13 @@ export function registerBrowser(program: Command): void {
 				"Match elements whose own text contains this, instead of a selector",
 			),
 	).action(browserInspect);
+
+	withTargetOptions(
+		browser
+			.command("run")
+			.description(
+				"Show a script in an approval panel on the target tab and, once the user clicks Run, print its return value or error. The script is the body of an async function: `return` the value to print",
+			)
+			.requiredOption("--file <script>", "JavaScript file to run"),
+	).action(browserRun);
 }

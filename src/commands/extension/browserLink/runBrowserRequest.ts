@@ -2,6 +2,7 @@ import { browserApi } from "./browserApi";
 import { isAssistHost } from "./isAssistHost";
 import { pickTargetTab } from "./pickTargetTab";
 import { probeReply } from "./probeReply";
+import { runApprovedScript } from "./runApprovedScript";
 import {
 	BROWSER_PROBE_TYPE,
 	type BrowserReply,
@@ -36,9 +37,13 @@ export async function runBrowserRequest(
 			tabUrl,
 			error: `the target tab is not on an assist host (${ASSIST_HOSTS})`,
 		};
-	const answer = await api.tabs
-		.sendMessage(tab.id, { ...request, type: BROWSER_PROBE_TYPE })
-		.then((reply) => reply as ProbeAnswer | undefined)
-		.catch(() => undefined);
-	return probeReply(request.op, tabUrl, answer);
+	const tabId = tab.id;
+	const askTab = () =>
+		api.tabs
+			.sendMessage(tabId, { ...request, type: BROWSER_PROBE_TYPE })
+			.then((reply) => reply as ProbeAnswer | undefined)
+			.catch(() => undefined);
+	if (request.op === "run")
+		return runApprovedScript(api, tabId, tabUrl, askTab, request.code);
+	return probeReply(request.op, tabUrl, await askTab());
 }

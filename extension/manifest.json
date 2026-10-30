@@ -32,6 +32,7 @@
 		"extension_pages": "script-src 'self'"
 	},
 	"permissions": ["storage", "alarms"],
+	"optional_permissions": ["userScripts"],
 	"host_permissions": ["http://localhost/*", "http://127.0.0.1/*"],
 	"options_ui": {
 		"page": "options.html"

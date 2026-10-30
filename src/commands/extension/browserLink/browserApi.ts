@@ -2,8 +2,21 @@ import type { BrowserTab } from "./pickTargetTab";
 
 type Listener<T> = { addListener: (listener: (value: T) => void) => void };
 
+type UserScriptInjectionResult = { result?: unknown; error?: string };
+
+export type UserScriptsApi = {
+	execute?: (injection: {
+		js: { code: string }[];
+		target: { tabId: number };
+		injectImmediately?: boolean;
+	}) => Promise<UserScriptInjectionResult[]>;
+};
+
 type BrowserApi = {
-	runtime: { getManifest: () => { version: string } };
+	runtime: {
+		getManifest: () => { version: string };
+		openOptionsPage?: () => Promise<void>;
+	};
 	tabs: {
 		query: (filter: Record<string, unknown>) => Promise<BrowserTab[]>;
 		sendMessage: (tabId: number, message: unknown) => Promise<unknown>;
@@ -14,6 +27,10 @@ type BrowserApi = {
 		onAlarm: Listener<{ name: string }>;
 	};
 	storage?: { onChanged: Listener<Record<string, unknown>> };
+	permissions?: {
+		contains: (permissions: { permissions: string[] }) => Promise<boolean>;
+	};
+	userScripts?: UserScriptsApi;
 };
 
 export function browserApi(): BrowserApi | undefined {
