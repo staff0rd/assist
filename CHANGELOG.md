@@ -1,3 +1,10 @@
+## [0.955.1](https://github.com/staff0rd/assist/compare/v0.955.0...v0.955.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* keep iOS app inside safe area ([37e2025](https://github.com/staff0rd/assist/commit/37e202501e911a1ecf7c0c18145589e73c3c2db5))
+
 # [0.955.0](https://github.com/staff0rd/assist/compare/v0.954.4...v0.955.0) (2026-10-30)
 
 
