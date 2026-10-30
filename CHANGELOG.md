@@ -1,3 +1,10 @@
+# [0.958.0](https://github.com/staff0rd/assist/compare/v0.957.0...v0.958.0) (2026-10-30)
+
+
+### Features
+
+* assist button uses Slate styling ([cba02b4](https://github.com/staff0rd/assist/commit/cba02b418a4f261ed20f11bb191a461a7ef7ca81))
+
 # [0.957.0](https://github.com/staff0rd/assist/compare/v0.956.2...v0.957.0) (2026-10-30)
 
 
