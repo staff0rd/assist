@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { safeAreaInsets } from "../../../designSystem/safeAreaInsets";
 import { HelpButton } from "./MenuTriggerButton/HelpButton";
 import { ConfigButton } from "./MenuTriggerButton/ConfigButton";
 import { MenuButton } from "./MenuTriggerButton/MenuButton";
@@ -14,7 +15,7 @@ export function MenuTriggerButton({
 		<Box
 			sx={{
 				position: "fixed",
-				top: 8,
+				top: `calc(8px + ${safeAreaInsets.top})`,
 				right: 16,
 				zIndex: (t) => t.zIndex.drawer + 2,
 				display: "flex",

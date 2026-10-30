@@ -33,7 +33,7 @@ export function buildIosWeb(): void {
 		join(WEB_DIR, "index.html"),
 		getHtml().replace(
 			"initial-scale=1.0",
-			"initial-scale=1.0, maximum-scale=1.0",
+			"initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover",
 		),
 	);
 	console.log(`iOS web assets written to ${WEB_DIR}`);

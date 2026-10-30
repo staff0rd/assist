@@ -1,8 +1,5 @@
 {
 	"appId": "com.staff0rd.assist",
 	"appName": "Assist",
-	"webDir": "www",
-	"ios": {
-		"contentInset": "always"
-	}
+	"webDir": "www"
 }
