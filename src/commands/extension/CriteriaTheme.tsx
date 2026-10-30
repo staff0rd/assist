@@ -1,5 +1,6 @@
-import { createTheme, ThemeProvider } from "@mui/material";
+import { Box, ThemeProvider } from "@mui/material";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { createDesignTheme } from "../sessions/web/ui/designSystem/createDesignTheme";
 import { githubColorMode } from "./githubColorMode";
 import { watchGithubColorMode } from "./watchGithubColorMode";
 
@@ -10,14 +11,11 @@ export function CriteriaTheme({ children }: { children: ReactNode }) {
 
 	useEffect(() => watchGithubColorMode(document.documentElement, setMode), []);
 
-	const theme = useMemo(
-		() =>
-			createTheme({
-				palette: { mode },
-				typography: { fontFamily: "inherit" },
-			}),
-		[mode],
-	);
+	const theme = useMemo(() => createDesignTheme(mode), [mode]);
 
-	return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+	return (
+		<ThemeProvider theme={theme}>
+			<Box sx={{ fontFamily: "fontFamily" }}>{children}</Box>
+		</ThemeProvider>
+	);
 }

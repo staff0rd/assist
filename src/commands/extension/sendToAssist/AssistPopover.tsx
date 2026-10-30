@@ -3,6 +3,7 @@ import { type ReactNode, useState } from "react";
 import { AssistInstructionsField } from "./AssistInstructionsField";
 import { AssistPopoverButtons } from "./AssistPopoverButtons";
 import { AssistPopoverFooter } from "./AssistPopoverFooter";
+import { popoverPaperSx } from "./popoverPaperSx";
 import { usePopoverHandlers } from "./usePopoverHandlers";
 
 export function AssistPopover({
@@ -38,7 +39,10 @@ export function AssistPopover({
 	});
 
 	return (
-		<Paper elevation={8} sx={{ p: 1.5 }} onBlur={onBlur}>
+		<Paper
+			sx={(theme) => ({ ...popoverPaperSx(theme), p: 1.5 })}
+			onBlur={onBlur}
+		>
 			<AssistInstructionsField
 				value={instructions}
 				onChange={setInstructions}

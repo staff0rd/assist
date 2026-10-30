@@ -3,6 +3,7 @@ import { type FocusEvent, type KeyboardEvent, useState } from "react";
 import { azureDevopsPrActions } from "../../../shared/azureDevops/azureDevopsPrActions";
 import { prActions } from "../../../shared/prActions";
 import { reviewOptionDefaults } from "../../../shared/reviewOptionFlags";
+import { popoverPaperSx } from "./popoverPaperSx";
 import { reviewModeItems } from "./reviewModeItems";
 
 export function AssistReviewMenu({
@@ -29,7 +30,7 @@ export function AssistReviewMenu({
 	};
 
 	return (
-		<Paper elevation={8}>
+		<Paper sx={popoverPaperSx}>
 			<MenuList
 				autoFocusItem
 				dense
