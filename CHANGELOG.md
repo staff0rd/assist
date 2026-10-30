@@ -1,3 +1,15 @@
+# [0.955.0](https://github.com/staff0rd/assist/compare/v0.954.4...v0.955.0) (2026-10-30)
+
+
+### Bug Fixes
+
+* inline Inbox tab count ([6ffd9c1](https://github.com/staff0rd/assist/commit/6ffd9c1a2f1cd75422ea94d59179f817fa3123dc))
+
+
+### Features
+
+* Capacitor iOS sessions viewer ([521f027](https://github.com/staff0rd/assist/commit/521f027d7e5fe9e5ad065f41f34f6da7fa0abb8d))
+
 ## [0.954.4](https://github.com/staff0rd/assist/compare/v0.954.3...v0.954.4) (2026-10-30)
 
 
