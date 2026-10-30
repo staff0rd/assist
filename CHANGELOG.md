@@ -1,3 +1,10 @@
+## [0.974.1](https://github.com/staff0rd/assist/compare/v0.974.0...v0.974.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* say why inbox scan can't run ([69ce23d](https://github.com/staff0rd/assist/commit/69ce23d0553f2e1b931d860c397b6ae033426f14))
+
 # [0.974.0](https://github.com/staff0rd/assist/compare/v0.973.0...v0.974.0) (2026-10-30)
 
 
