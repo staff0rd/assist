@@ -1,3 +1,11 @@
+# [0.974.0](https://github.com/staff0rd/assist/compare/v0.973.0...v0.974.0) (2026-10-30)
+
+
+### Features
+
+* assist browser run approved scripts ([7589362](https://github.com/staff0rd/assist/commit/7589362cf20373269716c703cd1260a72e7a57be))
+* trigger a Refresh docs item on demand ([ed10ebe](https://github.com/staff0rd/assist/commit/ed10ebe9598a11bc925febb2491416773c052432))
+
 # [0.973.0](https://github.com/staff0rd/assist/compare/v0.972.0...v0.973.0) (2026-10-30)
 
 
