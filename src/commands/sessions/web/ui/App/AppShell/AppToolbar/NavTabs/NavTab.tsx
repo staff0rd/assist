@@ -1,11 +1,12 @@
-import Badge from "@mui/material/Badge";
+import Box from "@mui/material/Box";
 import Tab, { type TabProps } from "@mui/material/Tab";
 import Tooltip from "@mui/material/Tooltip";
+import { tokenBadgeSx } from "../../../../designSystem/tokenBadgeSx";
 import { ChordTooltipTitle } from "../../../ChordTooltipTitle";
 import { useShortcut } from "../../../useShortcut";
 import { navTabChord } from "./NavTab/navTabChord";
 
-const badgeSx = { "& .MuiBadge-badge": { right: -10 } } as const;
+const countSx = [tokenBadgeSx("secondary"), { ml: 0.75 }];
 
 export function NavTab({
 	index,
@@ -27,9 +28,12 @@ export function NavTab({
 			<Tab
 				label={
 					count ? (
-						<Badge badgeContent={count} color="secondary" sx={badgeSx}>
+						<span>
 							{label}
-						</Badge>
+							<Box component="span" sx={countSx}>
+								{count}
+							</Box>
+						</span>
 					) : (
 						label
 					)
