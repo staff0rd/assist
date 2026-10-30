@@ -1,3 +1,10 @@
+## [0.966.2](https://github.com/staff0rd/assist/compare/v0.966.1...v0.966.2) (2026-10-30)
+
+
+### Bug Fixes
+
+* nest run command files by namespace ([448508b](https://github.com/staff0rd/assist/commit/448508bd0acbfe71e6e22e96fc49b97bd0871911))
+
 ## [0.966.1](https://github.com/staff0rd/assist/compare/v0.966.0...v0.966.1) (2026-10-30)
 
 
