@@ -41,5 +41,6 @@ Start with `assist sessions nodes doctor [name]`: it probes each hop and names t
 ## Rules
 
 - **R1** — Do not document what is implicit — state only what the reader could not infer.
+- **R10** — **Deploy iOS builds yourself** — Before asking the user to test an iOS app change, run ios:build and deploy it to the simulator or connected device yourself; never tell the user to build, open or run it.
 
 Directories with their own `## Rules`: `docs/`, `src/commands/extension/`, `src/commands/sessions/web/ui/`
