@@ -43,7 +43,7 @@ describe("createDocsRefreshItem", () => {
 			ref: "0123456789abcdef",
 		});
 
-		const id = await createDocsRefreshItem(orm, ORIGIN, [a, b]);
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a, b], false);
 		const item = await loadItem(orm, id);
 
 		const description = item?.description ?? "";
@@ -59,7 +59,7 @@ describe("createDocsRefreshItem", () => {
 	it("plans a walk of the covered stories that skips non-user-facing ones", async () => {
 		const a = await addStory("Add widgets");
 
-		const id = await createDocsRefreshItem(orm, ORIGIN, [a]);
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
 		const tasks = (await loadItem(orm, id))?.plan?.[0].tasks.map((t) => t.task);
 
 		expect(tasks).toHaveLength(3);
@@ -67,5 +67,27 @@ describe("createDocsRefreshItem", () => {
 		expect(tasks?.[1]).toContain("no user-facing change");
 		expect(tasks?.[2]).toContain("docs/src/content/docs/");
 		expect(tasks?.[2]).toContain("docs/CLAUDE.md");
+	});
+
+	it("adds a coverage task when the repo defines docs:coverage", async () => {
+		const a = await addStory("Add widgets");
+
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a], true);
+		const tasks = (await loadItem(orm, id))?.plan?.[0].tasks.map((t) => t.task);
+
+		expect(tasks).toHaveLength(4);
+		expect(tasks?.[3]).toContain("assist run docs:coverage");
+		expect(tasks?.[3]).toContain("--report");
+		expect(tasks?.[3]).toContain("`covers`");
+	});
+
+	it("makes the item own covers entries as well as prose", async () => {
+		const a = await addStory("Add widgets");
+
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
+		const description = (await loadItem(orm, id))?.description ?? "";
+
+		expect(description).not.toContain("Stories already add");
+		expect(description).toContain("`covers` entries");
 	});
 });

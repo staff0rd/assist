@@ -16,7 +16,7 @@ export function buildDocsRefreshDescription(
 	stories: DocsRefreshStory[],
 ): string {
 	return [
-		"Update the docs pages under `docs/src/content/docs/` from what these done stories shipped. Stories already add `covers` entries for new commands and config keys; this item handles prose: wording, new behaviour on existing pages, and removed features.",
+		"Update the docs pages under `docs/src/content/docs/` from what these done stories shipped. Stories leave docs alone during development, so this item owns both the prose (wording, new behaviour on existing pages, removed features) and the `covers` entries that document new commands, skills, config keys and routes.",
 		"For detail on a story, run `assist backlog view <id>` (description, acceptance criteria, summaries and activity) and `git show <sha>` on its commits.",
 		"## Covered stories",
 		...stories.map(storyEntry),
