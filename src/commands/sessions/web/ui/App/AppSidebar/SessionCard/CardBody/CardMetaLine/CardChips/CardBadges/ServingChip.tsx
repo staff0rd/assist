@@ -10,7 +10,11 @@ export function ServingChip({ session }: { session: SessionInfo }) {
 	if (!isServing(session)) return null;
 	return (
 		<Box component="span" sx={sx}>
-			{session.port ? <PortLink port={session.port} /> : "serving"}
+			{session.port ? (
+				<PortLink port={session.port} node={session.node} />
+			) : (
+				"serving"
+			)}
 		</Box>
 	);
 }
