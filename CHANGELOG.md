@@ -1,3 +1,10 @@
+# [0.960.0](https://github.com/staff0rd/assist/compare/v0.959.0...v0.960.0) (2026-10-30)
+
+
+### Features
+
+* route AskUserQuestion to ask-question ([72f5597](https://github.com/staff0rd/assist/commit/72f5597d6d3d6bb2e28b51a115b0cd04c2238ddd))
+
 # [0.959.0](https://github.com/staff0rd/assist/compare/v0.958.0...v0.959.0) (2026-10-30)
 
 
