@@ -81,6 +81,9 @@ export type SessionInfoBase = {
 	verifying?: boolean;
 	seeding?: string;
 	lastUserMessage?: string;
+	lastAssistantMessage?: string;
+	cols?: number;
+	rows?: number;
 	activeViewer?: string;
 	activeViewerNode?: string;
 	promptIssue?: string;

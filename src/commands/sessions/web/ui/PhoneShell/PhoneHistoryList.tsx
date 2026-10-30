@@ -1,0 +1,46 @@
+import Box from "@mui/material/Box";
+import { useEffect } from "react";
+import { safeAreaInsets } from "../designSystem/safeAreaInsets";
+import type { HistoricalSession } from "../types";
+import { PhoneBackButton } from "./PhoneBackButton";
+import { PhoneHistoryRow } from "./PhoneHistoryRow";
+import { PhoneNavBar } from "./PhoneNavBar";
+
+const bodySx = {
+	flex: 1,
+	minHeight: 0,
+	overflowY: "auto",
+	pb: safeAreaInsets.bottom,
+} as const;
+
+type Props = {
+	history: HistoricalSession[];
+	localNode: string | undefined;
+	requestHistory: () => void;
+};
+
+export function PhoneHistoryList({
+	history,
+	localNode,
+	requestHistory,
+}: Props) {
+	useEffect(() => requestHistory(), [requestHistory]);
+
+	return (
+		<>
+			<PhoneNavBar
+				left={<PhoneBackButton label="Sessions" to="/" />}
+				title="History"
+			/>
+			<Box sx={bodySx}>
+				{history.map((h) => (
+					<PhoneHistoryRow
+						key={`${h.node ?? ""}:${h.sessionId}`}
+						entry={h}
+						localNode={localNode}
+					/>
+				))}
+			</Box>
+		</>
+	);
+}

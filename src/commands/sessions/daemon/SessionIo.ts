@@ -77,9 +77,12 @@ export class SessionIo {
 		this.write(id, data, {});
 
 	resize(id: string, cols: number, rows: number, viewer?: ResizeViewer): void {
+		const s = this.sessions.get(id);
+		const before = `${s?.cols}x${s?.rows}`;
 		resizeSession(this.sessions, id, cols, rows, {
 			...viewer,
 			onClaim: this.notify,
 		});
+		if (s && `${s.cols}x${s.rows}` !== before) this.notify();
 	}
 }

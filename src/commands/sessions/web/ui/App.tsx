@@ -8,6 +8,8 @@ import { useColorMode } from "./App/useColorMode";
 import { createDesignTheme } from "./designSystem/createDesignTheme";
 import { loadFontsBeforeTerminalsOpen } from "./designSystem/loadFontsBeforeTerminalsOpen";
 import { HomeNodeGate } from "./HomeNodeGate";
+import { isNativeApp } from "./isNativeApp";
+import { PhoneShell } from "./PhoneShell";
 import { ToastStack } from "./ToastStack";
 import { useNativeStatusBarStyle } from "./useNativeStatusBarStyle";
 
@@ -21,7 +23,11 @@ function Root() {
 			<CssBaseline />
 			<ToastStack>
 				<HomeNodeGate>
-					<AppShell mode={mode} toggle={toggle} />
+					{isNativeApp ? (
+						<PhoneShell />
+					) : (
+						<AppShell mode={mode} toggle={toggle} />
+					)}
 				</HomeNodeGate>
 			</ToastStack>
 		</ThemeProvider>

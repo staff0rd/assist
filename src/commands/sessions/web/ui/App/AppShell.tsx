@@ -1,6 +1,5 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import { AppRoutes } from "./AppShell/AppRoutes";
 import { AppStatusBar } from "./AppShell/AppStatusBar";
 import { AppOverlays } from "./AppShell/AppOverlays";
@@ -13,9 +12,8 @@ import { DaemonVersionContext } from "./AppShell/useDaemonVersionContext";
 
 const appBarSx = {
 	zIndex: (t: { zIndex: { drawer: number } }) => t.zIndex.drawer + 1,
-	pt: safeAreaInsets.top,
 } as const;
-const toolbarSx = { minHeight: 48, mt: safeAreaInsets.top } as const;
+const toolbarSx = { minHeight: 48 } as const;
 
 export function AppShell({
 	mode,

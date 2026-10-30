@@ -2,15 +2,12 @@ import Box from "@mui/material/Box";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import type { Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
-import { safeAreaInsets } from "./safeAreaInsets";
 import { STATUS_BAR_HEIGHT_VAR } from "./statusBarInset";
 
 const STATUS_BAR_HEIGHT = 28;
 
-const barHeight = `calc(${STATUS_BAR_HEIGHT}px + ${safeAreaInsets.bottom})`;
-
 const insetStyles = {
-	":root": { [STATUS_BAR_HEIGHT_VAR]: barHeight },
+	":root": { [STATUS_BAR_HEIGHT_VAR]: `${STATUS_BAR_HEIGHT}px` },
 };
 
 const barSx = {
@@ -18,9 +15,7 @@ const barSx = {
 	left: 0,
 	right: 0,
 	bottom: 0,
-	height: barHeight,
-	boxSizing: "border-box",
-	pb: safeAreaInsets.bottom,
+	height: STATUS_BAR_HEIGHT,
 	zIndex: (t: Theme) => t.zIndex.appBar,
 	display: "flex",
 	alignItems: "center",

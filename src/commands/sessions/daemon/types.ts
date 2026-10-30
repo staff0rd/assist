@@ -77,6 +77,7 @@ export type Session = {
 	transcriptPath?: string;
 	transcriptFingerprint?: string;
 	lastUserMessage?: string;
+	lastAssistantMessage?: string;
 	permissionActive?: boolean;
 	pendingPrompts?: string[];
 	autoAdvance?: boolean;

@@ -3,6 +3,7 @@ import { promptPrNumber } from "../shared/promptPrNumber";
 import type { Session, SessionInfo } from "./createSession";
 import { repoGroupForCwd } from "./repoGroupForCwd";
 import { toSessionRunInfo } from "./toSessionRunInfo";
+import { toSessionViewInfo } from "./toSessionViewInfo";
 import { joinRefusal } from "./worktree/joinRefusal";
 
 export function toSessionInfo(session: Session): SessionInfo {
@@ -28,12 +29,10 @@ export function toSessionInfo(session: Session): SessionInfo {
 		pendingPrPreview,
 		pendingShow,
 		undurable,
-		lastUserMessage,
-		activeViewer,
-		activeViewerNode,
 	} = session;
 	return {
 		...toSessionRunInfo(session),
+		...toSessionViewInfo(session),
 		id,
 		name,
 		title,
@@ -56,9 +55,6 @@ export function toSessionInfo(session: Session): SessionInfo {
 		pendingPrPreview,
 		pendingShow,
 		undurable,
-		lastUserMessage,
-		activeViewer,
-		activeViewerNode,
 		promptIssue: promptIssueRef(session.initialPrompt),
 		promptPr: promptPrNumber(session.initialPrompt),
 		joinable: joinRefusal(session) === undefined,

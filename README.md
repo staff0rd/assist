@@ -494,6 +494,8 @@ Needs macOS with Xcode, an iOS simulator or a device, and the Tailscale app on t
 3. `npm run ios:run` to pick a simulator or connected device, or `npm run ios:open` to build and run from Xcode (a device needs your Apple ID team set under **Signing & Capabilities**).
 4. On first launch, enter the home node's URL, e.g. `https://mac.<tailnet>.ts.net:3100`. It is stored on the device.
 
+The app uses a phone layout rather than the desktop one. The session list groups sessions by status with **Needs you** (waiting and errored) first; pull down to refresh, tap **Done** to expand finished sessions, and use the clock icon for history. Tap a session to open it full screen: the terminal is read-only and never resizes the shared pty, so pinch to zoom and drag to pan. Type in the reply field (Return adds a line, the send button submits) or use the key strip for `1`/`2`/`3`, arrows, Esc, Tab and ⌃C.
+
 ### Session config keys
 
 - `sessions.nodeName` — this install's node label. Defaults to the OS hostname, suffixed `-wsl` under WSL.
