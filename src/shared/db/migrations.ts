@@ -8,6 +8,7 @@ import { migration0006BackfillPhaseSessions } from "./migrations/migration0006Ba
 import { migration0007GithubIssue } from "./migrations/migration0007GithubIssue";
 import { migration0008RepoConfigs } from "./migrations/migration0008RepoConfigs";
 import { migration0009InboxMessages } from "./migrations/migration0009InboxMessages";
+import { migration0010UserConfig } from "./migrations/migration0010UserConfig";
 
 export const migrations: readonly Migration[] = [
 	migration0001Baseline,
@@ -19,6 +20,7 @@ export const migrations: readonly Migration[] = [
 	migration0007GithubIssue,
 	migration0008RepoConfigs,
 	migration0009InboxMessages,
+	migration0010UserConfig,
 ];
 
 export const latestMigrationId: number = migrations.reduce(

@@ -5,8 +5,7 @@ import { configConfigHelp } from "./config/configConfigHelp";
 import { configGet } from "./config/configGet";
 import { configImportRepos } from "./config/configImportRepos";
 import { configKeys } from "./config/configKeys";
-import { configSet } from "./config/configSet";
-import { configUnset } from "./config/configUnset";
+import { registerConfigWrites } from "./config/registerConfigWrites";
 
 export function registerConfig(program: Command): void {
 	const configCommand = configHelp(
@@ -17,25 +16,7 @@ export function registerConfig(program: Command): void {
 		"Run 'assist config keys [filter]' to list every config key with its default,\nwhat it does, and the command that sets it.",
 	);
 
-	configCommand
-		.command("set <key> [value]")
-		.description("Set a config value (e.g. commit.push true)")
-		.option("-g, --global", "Write to global ~/.assist.yml")
-		.option(
-			"-r, --repo [name]",
-			"Requires -g: write a repo's override to the shared db, seen by every node (defaults to the current repo)",
-		)
-		.action((key, value, options) => configSet(key, value, options));
-
-	configCommand
-		.command("unset [key]")
-		.description("Remove a config value (e.g. commit.push)")
-		.option("-g, --global", "Remove from global ~/.assist.yml")
-		.option(
-			"-r, --repo [name]",
-			"Requires -g: remove the key from a repo's shared db override (defaults to the current repo)",
-		)
-		.action((key, options) => configUnset(key, options));
+	registerConfigWrites(configCommand);
 
 	configCommand
 		.command("import-repos")

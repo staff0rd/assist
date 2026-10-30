@@ -1,7 +1,7 @@
 import { getNestedValue } from "./getNestedValue";
 import type { RawConfigLayers } from "./readRawConfigLayers";
 
-export type ConfigSource = "project" | "repo" | "global" | "default";
+export type ConfigSource = "project" | "repo" | "global" | "user" | "default";
 
 export function resolveConfigSources(
 	key: string,
@@ -13,5 +13,6 @@ export function resolveConfigSources(
 	if (getNestedValue(layers.repoOverride, key) !== undefined)
 		sources.push("repo");
 	if (getNestedValue(layers.global, key) !== undefined) sources.push("global");
+	if (getNestedValue(layers.user, key) !== undefined) sources.push("user");
 	return sources;
 }

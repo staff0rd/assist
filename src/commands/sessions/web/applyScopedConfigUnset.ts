@@ -1,5 +1,6 @@
 import { applyConfigUnset } from "../../config/applyConfigUnset";
 import { applySharedRepoConfigUnset } from "../../config/applySharedRepoConfigUnset";
+import { applyUserConfigUnset } from "../../config/applyUserConfigUnset";
 import type { ConfigWriteScope } from "../../config/ConfigWriteScope";
 
 type ScopedConfigUnsetResult =
@@ -22,6 +23,15 @@ export async function applyScopedConfigUnset(
 						repoKey: result.label,
 						removed: result.removed,
 					},
+				}
+			: result;
+	}
+	if (scope === "user") {
+		const result = await applyUserConfigUnset(key);
+		return result.ok
+			? {
+					ok: true,
+					payload: { target: result.target, removed: result.removed },
 				}
 			: result;
 	}

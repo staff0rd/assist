@@ -1,8 +1,13 @@
 import { readRepoConfigCache } from "../../../shared/readRepoConfigCache";
+import { readUserConfigCache } from "../../../shared/readUserConfigCache";
 import { refreshRepoConfigCache } from "../../../shared/refreshRepoConfigCache";
 import { daemonLog } from "./daemonLog";
 
 const POLL_MS = 60_000;
+
+function cacheSnapshot(): string {
+	return JSON.stringify([readRepoConfigCache(), readUserConfigCache()]);
+}
 
 export function pollRepoConfigCache(intervalMs: number = POLL_MS): () => void {
 	let inFlight = false;
@@ -11,11 +16,11 @@ export function pollRepoConfigCache(intervalMs: number = POLL_MS): () => void {
 		if (inFlight) return;
 		inFlight = true;
 		try {
-			const before = JSON.stringify(readRepoConfigCache());
+			const before = cacheSnapshot();
 			const count = await refreshRepoConfigCache();
 			if (failing) daemonLog("repo config cache poll recovered");
 			failing = false;
-			if (JSON.stringify(readRepoConfigCache()) !== before)
+			if (cacheSnapshot() !== before)
 				daemonLog(`repo config cache updated (${count} repos)`);
 		} catch (error) {
 			if (!failing)

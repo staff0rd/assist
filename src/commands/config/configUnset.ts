@@ -1,26 +1,23 @@
 import chalk from "chalk";
 import { isDbBackedConfigKey } from "./dbBackedConfigKeys";
+import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { resolveRepoUnsetTarget } from "./resolveRepoUnsetTarget";
 import { unsetDbBackedConfigKey } from "./unsetDbBackedConfigKey";
 import { unsetFileConfigKey } from "./unsetFileConfigKey";
+import { scopeOptionsError } from "./scopeOptionsError";
 
 type ConfigUnsetOptions = {
 	global?: boolean;
 	repo?: boolean | string;
+	user?: boolean;
 };
 
 export async function configUnset(
 	key: string | undefined,
 	options: ConfigUnsetOptions = {},
 ): Promise<void> {
-	if (options.repo !== undefined && !options.global) {
-		console.error(
-			chalk.red(
-				"--repo removes from the global config; add -g (e.g. -g --repo)",
-			),
-		);
-		process.exit(1);
-	}
+	const scopeError = scopeOptionsError(options, "removes from");
+	if (scopeError) exitWithConfigErrors([scopeError]);
 
 	const resolved = resolveRepoUnsetTarget(key, options.repo);
 	if (resolved.key === undefined) {
@@ -36,5 +33,6 @@ export async function configUnset(
 		useRepo: resolved.useRepo,
 		repoName: resolved.repoName,
 		global: options.global ?? false,
+		user: options.user ?? false,
 	});
 }

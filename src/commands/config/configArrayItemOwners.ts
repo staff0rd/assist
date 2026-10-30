@@ -8,6 +8,7 @@ export type ConfigArrayItemOwner = {
 };
 
 const LOWEST_TO_HIGHEST_PRECEDENCE: ConfigWriteScope[] = [
+	"user",
 	"global",
 	"repo",
 	"project",

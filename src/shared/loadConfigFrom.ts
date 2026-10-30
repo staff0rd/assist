@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { linkedWorktree } from "./linkedWorktree";
 import { loadRawYaml } from "./loadRawYaml";
 import { mergeRawConfigs } from "./mergeDenyRules";
+import { readUserConfigCache } from "./readUserConfigCache";
 import { resolveRepoLayer } from "./resolveRepoLayer";
 import { stripLegacyConfigKeys } from "./stripLegacyConfigKeys";
 import { type AssistConfig, assistConfigSchema } from "./types";
@@ -46,7 +47,7 @@ export function loadConfigFrom(
 	const globalRaw = loadRawYaml(globalConfigPath);
 	const projectRaw = loadRawYaml(projectConfigPathFrom(cwd));
 	const globalWithRepo = mergeRawConfigs(
-		globalRaw,
+		mergeRawConfigs(readUserConfigCache(), globalRaw),
 		resolveRepoLayer(globalRaw, cwd).override,
 	);
 	const merged = stripLegacyConfigKeys(

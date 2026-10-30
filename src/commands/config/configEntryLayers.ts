@@ -6,12 +6,13 @@ import type { RawConfigLayers } from "./readRawConfigLayers";
 
 export type ConfigEntryLayers = Partial<Record<ConfigWriteScope, unknown>>;
 
-type RawLayerName = "project" | "repoOverride" | "global";
+type RawLayerName = "project" | "repoOverride" | "global" | "user";
 
 const LAYERS: [ConfigWriteScope, RawLayerName][] = [
 	["project", "project"],
 	["repo", "repoOverride"],
 	["global", "global"],
+	["user", "user"],
 ];
 
 export function configEntryLayers(

@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { loadProjectConfig, saveConfig } from "./loadConfig";
 import { loadConfigFrom, projectConfigPathFrom } from "./loadConfigFrom";
+import { writeRepoConfigCache } from "./writeRepoConfigCache";
 
 let base: string;
 let clone: string;
@@ -55,6 +56,48 @@ describe("projectConfigPathFrom", () => {
 		mkdirSync(loose, { recursive: true });
 
 		expect(projectConfigPathFrom(loose)).toBe(join(loose, "assist.yml"));
+	});
+});
+
+describe("user (db) layer", () => {
+	afterEach(() => {
+		writeRepoConfigCache({});
+	});
+
+	it("sits below ~/.assist.yml and the repo's assist.yml", () => {
+		writeRepoConfigCache(
+			{},
+			{ commit: { push: true, pull: true }, prs: { required: true } },
+		);
+		const global = writeConfig(base, "commit:\n  pull: false\n");
+		writeConfig(clone, "prs:\n  required: false\n");
+
+		const config = loadConfigFrom(clone, global);
+
+		expect(config.commit.push).toBe(true);
+		expect(config.commit.pull).toBe(false);
+		expect(config.prs?.required).toBe(false);
+	});
+
+	it("concatenates advice.rules with user (db) entries first", () => {
+		const rule = (title: string) => ({ title, text: `${title} text` });
+		writeRepoConfigCache({}, { advice: { rules: [rule("from db")] } });
+		const global = writeConfig(
+			base,
+			"advice:\n  rules:\n    - title: from node\n      text: from node text\n",
+		);
+		writeConfig(
+			clone,
+			"advice:\n  rules:\n    - title: from repo\n      text: from repo text\n",
+		);
+
+		const config = loadConfigFrom(clone, global);
+
+		expect(config.advice?.rules?.map((r) => r.title)).toEqual([
+			"from db",
+			"from node",
+			"from repo",
+		]);
 	});
 });
 

@@ -5,10 +5,12 @@ import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { resolveRepoTarget } from "./resolveRepoTarget";
 import { setDbBackedConfigKey } from "./setDbBackedConfigKey";
 import { setFileConfigKey } from "./setFileConfigKey";
+import { scopeOptionsError } from "./scopeOptionsError";
 
 type ConfigSetOptions = {
 	global?: boolean;
 	repo?: boolean | string;
+	user?: boolean;
 };
 
 export async function configSet(
@@ -16,12 +18,8 @@ export async function configSet(
 	value: string | undefined,
 	options: ConfigSetOptions = {},
 ): Promise<void> {
-	if (options.repo !== undefined && !options.global) {
-		console.error(
-			chalk.red("--repo writes to the global config; add -g (e.g. -g --repo)"),
-		);
-		process.exit(1);
-	}
+	const scopeError = scopeOptionsError(options, "writes to");
+	if (scopeError) exitWithConfigErrors([scopeError]);
 
 	const resolved = resolveRepoTarget(key, value, options.repo);
 	if (resolved.value === undefined) {
@@ -34,7 +32,11 @@ export async function configSet(
 	if (isDbBackedConfigKey(resolved.key))
 		return setDbBackedConfigKey(resolved.key, coercion.value, resolved.useRepo);
 	await setFileConfigKey(
-		{ ...resolved, global: options.global ?? false },
+		{
+			...resolved,
+			global: options.global ?? false,
+			user: options.user ?? false,
+		},
 		coercion.value,
 	);
 }

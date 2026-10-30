@@ -6,6 +6,7 @@ const DESCRIPTIONS: Record<ConfigSource, string> = {
 	project: "Set in this repo's assist.yml",
 	repo: "Pinned by this repo's override in the shared db, seen by every node — a plain global value cannot change it",
 	global: "Set in ~/.assist.yml",
+	user: "Set in user (db), seen by every repo on every node",
 	default: "Not set in any file — using the schema default",
 };
 

@@ -41,6 +41,7 @@ describe("introspectDumpTables", () => {
 				"phase_sessions",
 				"repo_configs",
 				"inbox_messages",
+				"user_config",
 			]),
 		);
 	});

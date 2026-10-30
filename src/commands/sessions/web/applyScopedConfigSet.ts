@@ -3,6 +3,7 @@ import {
 	type ConfigWritableValue,
 } from "../../config/applyConfigSet";
 import { applySharedRepoConfigSet } from "../../config/applySharedRepoConfigSet";
+import { applyUserConfigSet } from "../../config/applyUserConfigSet";
 import type { ConfigWriteScope } from "../../config/ConfigWriteScope";
 
 type ScopedConfigSetResult =
@@ -20,6 +21,12 @@ export async function applyScopedConfigSet(
 		const result = await applySharedRepoConfigSet(key, value, undefined, cwd);
 		return result.ok
 			? { ok: true, payload: { target: result.target, repoKey: result.label } }
+			: result;
+	}
+	if (scope === "user") {
+		const result = await applyUserConfigSet(key, value);
+		return result.ok
+			? { ok: true, payload: { target: result.target } }
 			: result;
 	}
 	const result = applyConfigSet(

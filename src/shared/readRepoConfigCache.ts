@@ -7,21 +7,26 @@ export type RepoConfigOverrides = Record<string, Record<string, unknown>>;
 export type RepoConfigCache = {
 	refreshedAt: string;
 	repos: RepoConfigOverrides;
+	user?: Record<string, unknown>;
 };
 
 export function repoConfigCachePath(): string {
 	return join(getStoreDir(), "repo-config-cache.json");
 }
 
-export function readRepoConfigCache(): RepoConfigOverrides {
+export function readConfigCacheFile(): Partial<RepoConfigCache> {
 	const path = repoConfigCachePath();
 	if (!existsSync(path)) return {};
 	try {
 		const parsed = JSON.parse(readFileSync(path, "utf8")) as
 			| Partial<RepoConfigCache>
 			| undefined;
-		return parsed?.repos ?? {};
+		return parsed ?? {};
 	} catch {
 		return {};
 	}
+}
+
+export function readRepoConfigCache(): RepoConfigOverrides {
+	return readConfigCacheFile().repos ?? {};
 }
