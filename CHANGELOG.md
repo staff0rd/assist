@@ -1,3 +1,10 @@
+## [0.969.1](https://github.com/staff0rd/assist/compare/v0.969.0...v0.969.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* expose docs preview on the tailnet ([6a86d23](https://github.com/staff0rd/assist/commit/6a86d23c0341778f48570f02c3bb60bf7f3bf14f))
+
 # [0.969.0](https://github.com/staff0rd/assist/compare/v0.968.1...v0.969.0) (2026-10-30)
 
 
