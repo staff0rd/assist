@@ -1,3 +1,10 @@
+# [0.970.0](https://github.com/staff0rd/assist/compare/v0.969.1...v0.970.0) (2026-10-30)
+
+
+### Features
+
+* inbox scan now and live interval ([e448fc8](https://github.com/staff0rd/assist/commit/e448fc853614dfda5d0e7b55fbeae5e573fb5bad))
+
 ## [0.969.1](https://github.com/staff0rd/assist/compare/v0.969.0...v0.969.1) (2026-10-30)
 
 
