@@ -1,3 +1,10 @@
+# [0.968.0](https://github.com/staff0rd/assist/compare/v0.967.0...v0.968.0) (2026-10-30)
+
+
+### Features
+
+* opt-in scheduled inbox scans ([d8bb6f2](https://github.com/staff0rd/assist/commit/d8bb6f2bf36c05730ace99afacd611941965ef99))
+
 # [0.967.0](https://github.com/staff0rd/assist/compare/v0.966.3...v0.967.0) (2026-10-30)
 
 
