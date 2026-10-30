@@ -1,6 +1,8 @@
 When asked to commit, use conventional commits: `fix:` (patch), `feat:` (minor), `feat!:` (major).
 
-When adding, editing, or removing CLI or Claude commands, tell the user which pages in `docs/src/content/docs/` are affected rather than editing them (R11). Also add read-only commands to `allowed.cli-reads`.
+When adding read-only CLI or Claude commands, add them to `allowed.cli-reads`.
+
+Do not edit docs or propose docs changes during development; the Refresh docs backlog item updates them after stories ship. Only change docs when the user explicitly asks (R11).
 
 ## Asking the user to test
 
