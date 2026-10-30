@@ -6,6 +6,7 @@ order: 0
 covers:
   - route:/backlog
   - config:clone.baseDir
+  - config:docs.refreshAfter
 screenshots:
   - file: backlog-list.png
     alt: The backlog list for the sandbox repo, with an in-progress story part-way through its plan
@@ -115,3 +116,11 @@ Each phase lists its tasks and any manual checks you'll be asked to confirm, its
 ::screenshot{file="backlog-activity.png"}
 
 **Activity** lists the item's branches, commits, pull requests, Slack threads and agent conversations. :icon[PlayArrow] on a conversation resumes it as a new session. **Comments** holds each phase's summary and the notes agents added; :icon[DeleteOutlined] deletes a comment.
+
+## Docs refresh
+
+Set `docs.refreshAfter` to have a repo queue a **Refresh docs** story once that many stories are done. The story links to each story it covers, and building it updates the docs pages from what those stories shipped. Bugs don't count, and while a refresh is still open, newly done stories wait for the next one. Leave the key unset to turn this off.
+
+```bash
+assist config set docs.refreshAfter 5
+```

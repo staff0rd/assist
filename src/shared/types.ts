@@ -74,6 +74,11 @@ const assistConfigShape = {
 			skip: z.record(z.string(), z.array(z.string())).optional(),
 		})
 		.optional(),
+	docs: z
+		.strictObject({
+			refreshAfter: z.number().int().positive().optional(),
+		})
+		.optional(),
 	extension: z
 		.strictObject({
 			redirects: z.record(z.string(), z.string()).optional(),

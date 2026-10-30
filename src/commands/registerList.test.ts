@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { list as backlogList } from "./backlog/list";
-import { setBacklogDir } from "./backlog/shared";
+import { setBacklogDir } from "./backlog/getBacklogDir";
 import { registerBacklog } from "./registerBacklog";
 import { registerList } from "./registerList";
 
@@ -9,7 +9,7 @@ vi.mock("./backlog/list", () => ({
 	list: vi.fn(),
 }));
 
-vi.mock("./backlog/shared", () => ({
+vi.mock("./backlog/getBacklogDir", () => ({
 	setBacklogDir: vi.fn(),
 }));
 

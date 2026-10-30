@@ -17,9 +17,7 @@ export async function printLinks(orm: Db, item: BacklogItem): Promise<void> {
 	for (const link of links) {
 		const target = targets.find((i) => i.id === link.targetId);
 		const typeLabel =
-			link.type === "depends-on"
-				? chalk.red("depends-on")
-				: chalk.blue("relates-to");
+			link.type === "depends-on" ? chalk.red(link.type) : chalk.blue(link.type);
 		if (target) {
 			console.log(
 				`  ${typeLabel} ${formatItemId(target.id)} ${target.name} ${chalk.dim(`(${target.status})`)}`,

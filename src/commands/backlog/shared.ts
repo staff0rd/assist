@@ -2,10 +2,9 @@ import chalk from "chalk";
 import type { Db } from "../../shared/db/Db";
 import { ensureMigrated } from "../../shared/db/ensureMigrated";
 import { getDb } from "../../shared/db/getDb";
-import { getProjectRoot } from "../../shared/loadConfig";
 import { deleteItem } from "./deleteItem";
-import { findBacklogUp } from "./findBacklogUp";
 import { formatItemId, parseItemId } from "./formatItemId";
+import { getBacklogDir } from "./getBacklogDir";
 import { getCurrentOrigin } from "./getCurrentOrigin";
 import { loadAllItems } from "./loadAllItems";
 import { loadItem } from "./loadItem";
@@ -14,16 +13,6 @@ import { searchItemIds } from "./searchItemIds";
 import type { BacklogFile, BacklogItem, BacklogStatus } from "./types";
 import { updateCurrentPhase } from "./updateCurrentPhase";
 import { updateStatus } from "./updateStatus";
-
-let _backlogDir: string | undefined;
-
-export function setBacklogDir(dir: string | undefined): void {
-	_backlogDir = dir;
-}
-
-export function getBacklogDir(): string {
-	return _backlogDir ?? findBacklogUp(process.cwd()) ?? getProjectRoot();
-}
 
 /** The normalized git origin key for the repository the command is running in. */
 export function getOrigin(): string {

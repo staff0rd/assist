@@ -11,7 +11,6 @@ import {
 import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 
 vi.mock("./shared", () => ({
-	getBacklogDir: () => process.cwd(),
 	getReady: vi.fn(),
 	setCurrentPhase: vi.fn(),
 }));

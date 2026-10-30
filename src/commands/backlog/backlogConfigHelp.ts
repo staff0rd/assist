@@ -11,4 +11,9 @@ export const backlogConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set clone.baseDir ~/git",
 		note: "base directory 'backlog clone' clones repos into (default: ~/git)",
 	},
+	{
+		key: "docs.refreshAfter",
+		setter: "assist config set docs.refreshAfter 5",
+		note: "queue a 'Refresh docs' item once this many done stories are unswept (unset: off)",
+	},
 ];

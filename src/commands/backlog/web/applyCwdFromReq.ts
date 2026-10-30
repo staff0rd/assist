@@ -1,5 +1,5 @@
 import type { IncomingMessage } from "node:http";
-import { setBacklogDir } from "../shared";
+import { setBacklogDir } from "../getBacklogDir";
 
 /**
  * Point the backlog at the repo named by the request's `cwd` query param, or

@@ -20,7 +20,7 @@ import { registerRunCommand } from "./backlog/registerRunCommand";
 import { registerSearchCommand } from "./backlog/registerSearchCommand";
 import { registerStatusCommands } from "./backlog/registerStatusCommands";
 import { registerUpdateCommands } from "./backlog/registerUpdateCommands";
-import { setBacklogDir } from "./backlog/shared";
+import { setBacklogDir } from "./backlog/getBacklogDir";
 import { web as backlogWeb } from "./backlog/web";
 import { registerShowCommands } from "./backlog/registerShowCommands";
 

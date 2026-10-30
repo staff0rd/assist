@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { list as backlogList } from "./backlog/list";
-import { setBacklogDir } from "./backlog/shared";
+import { setBacklogDir } from "./backlog/getBacklogDir";
 
 type ListOptions = {
 	status?: string;
