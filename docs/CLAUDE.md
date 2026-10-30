@@ -1,16 +1,62 @@
 ## Authoring the docs site
 
-The user guide is an [Astro Starlight](https://starlight.astro.build/) site in its own `docs/` package, built from markdown pages in `docs/src/content/docs/` and PNGs in `docs/public/screenshots/`. Astro is a dependency of `docs/` only; run `npm run docs:install` once to install it.
+An [Astro Starlight](https://starlight.astro.build/) site: pages in `src/content/docs/`, PNGs in `public/screenshots/`. Install its dependencies once with `npm run docs:install`.
 
-- **Add a page** — add `docs/src/content/docs/<id>.md`. Its YAML frontmatter, validated by `docsPageSchema` in `src/docs/docsPageSchema.ts`, has `id` (the file name), `title`, `group` (a sidebar group from `docsNavGroups`), `order` within the group, `covers` and optional `screenshots`. Each `##` heading starts a section. `covers` lists the inventory ids the page documents (`cli:<command path>`, `claude:<name>`, `config:<key>`, `route:<path>`, `skill:<name>`). Unknown keys, unknown ids, unknown scenes and missing screenshots fail the build.
-- **Keyboard shortcuts** — write a shortcut as `:kbd[Mod+N]`, with keys joined by `+`. It renders as key caps; `Mod`, `Ctrl`, `Alt` and `Shift` show as ⌘, ⌃, ⌥ and ⇧ on macOS and by name elsewhere, picked from the reader's platform.
-- **Session status glyphs** — write `:status[running]` (or `verifying`, `waiting`, `done`, `error`, `stopped`) to show a session card's status glyph in the dashboard's colours, and `:badge[clone]` (or `harness`, `serving`, `node`) for a card badge.
-- **Icons** — write `:icon[OpenInFull]` to show the icon a dashboard button uses. Add a new icon to the registry in `src/docs/starlight/renderIcon.ts`.
-- **Coverage report** — `npx tsx src/docs/docsCoverage.ts --report` lists the commands, skills, config keys and routes no page covers, by kind. `verify:docs-coverage` fails when any item is covered by no page, so a new command, skill, config key or route needs docs before verify passes.
-- **Screenshots** — each entry in the frontmatter's `screenshots` declares a `file`, `alt` and either a `route` on the capture web server or a `url` on `https://github.com/` (a live page, logged out, with the browser extension's `content.js` injected and its `browser.*` APIs stubbed; a `script: <name>` action runs `docs/capture/github/<name>.js` in the page to stand in for what a logged-out page lacks), and optionally `viewport` (default 1280×800), `theme`, `waitFor` and `crop` selectors, a `scene` (a named list of setup steps in `docs/capture/scenes.json`), `setup` steps run after the scene, and `actions` (`click: <selector>`, `press: <key>`, `type: <text>`, `drag: { from: <selector>, to: <selector> }`) performed on the page before capture, and `highlight` (a list of selectors; every match is outlined in the capture to point the reader at it). Setup steps: `assist: [args]` runs an assist command in the sandbox, `run: <name>` starts a run session from `docs/capture/assist.yml`, and `session: { repo, prompt, title?, reply?, status? }` starts an agent session in the `sandbox`, `api` or `website` repo and sets its status (`running`, `waiting` or `done`). `openPr: { repo, number, title, author? }` gives the repo an open pull request: the capture also puts a fake `gh` (`docs/capture/bin/gh`) on the `PATH`, which answers `gh pr list` and `gh pr view` with it and fails every other call. `gh: { match, json }` makes that fake `gh` print `json` for any call whose arguments contain every string in `match`, with each `"{{ago:<n><m|h|d>}}"` in it replaced by the ISO time that long ago. `sql: <statements>` runs SQL against the capture database, and `newsFeed: { name, title, items }` serves an RSS feed of `{ title, hoursAgo, excerpt? }` items locally and adds it with `assist news add`. Between states the capture also restores `~/.assist.yml` and empties the backlog, backups and usage tables. Preview steps open a preview pane on the session started with the step's `session` prompt and hold it open until the state changes: `preview: { session, kind: ask|show, title, body }`, `pr: { session, title, what, why, how?, resolves?, prNumber?, draft? }`, `proposal: { session, item }` (an `assist backlog propose` payload) and `highLevelReview: { session, prNumber, title, headRef, body, linkedIssues?, criticalPaths?, uiPaths?, files }`, where each file is `{ path, status, content?, patch? }` and an added file's patch is built from its `content`. The capture puts a fake `claude` (`docs/capture/bin/claude`) on the `PATH`, which prints the step's `reply` lines as its transcript and answers title generation with its `title`, so no real harness runs. Screenshots sharing a scene and setup are captured together, and the sessions are drained before the next state is set up. Without a `theme`, it is captured as `<file>` (light) and `<file>-dark.png`, and the site shows the one matching the theme the reader picked. A `::screenshot{file="<file>"}` line in the page places it; a declared screenshot with no such line, or a line naming an undeclared one, fails the build.
-- **Recapture** — `npm run docs:capture [-- <file.png>...] [--skip-build] [--keep-home]` builds assist, starts a throwaway Postgres container (Docker required), clones `staff0rd/sandbox` (plus local `api` and `website` repos) into a temporary `HOME`, runs the real daemon and web server there on a free port, captures the screenshots with Playwright (`npx playwright install chromium` once) and tears everything down. Commit the changed PNGs.
-- **Preview** — `npm run docs:build` builds the site into `docs/dist/`, and `npm run docs:preview` runs the Astro dev server on port 4173, replacing any dev server already running for the checkout, which reloads open tabs as pages change; a tab with a feedback popover open reloads once the popover closes. Set `DOCS_BASE_PATH=<path>` to build for a site hosted under a sub-path. The server restarts itself when a page is added or removed, a page's `group` or `order` changes, a screenshot PNG is added or removed, or code under `src/docs/` or `docs/capture/scenes.json` changes. A page whose frontmatter fails validation shows the error in the browser instead of its last valid copy.
-- **Feedback** — start the `docs` run entry (a `server: docs` run of `docs:preview` on port 4173) from the dashboard and open the preview in Firefox with the [assist browser extension](https://staffordwilliams.com/assist/browser-extension/) installed. Select text on a page with the mouse, and a prompt popover opens at the end of the selection with its textbox focused; type a prompt and press **Enter**: it arrives as a user prompt naming the page id, section heading and source `.md` file, with the selected text quoted, in the live Claude session that shares the docs server's directory — the one the run is grouped under on the dashboard. With several such sessions, the one that most recently wrote that page (else the newest) gets it; with none, the live session that most recently wrote the page or anything under `docs/src/`.
+### Pages
+
+`src/content/docs/<id>.md`, with frontmatter validated by `docsPageSchema` (`src/docs/docsPageSchema.ts`):
+
+- `id` — the file name
+- `group` — a sidebar group from `docsNavGroups`; `order` — position within it
+- `title`
+- `covers` — inventory ids documented: `cli:<command path>`, `claude:<name>`, `config:<key>`, `route:<path>`, `skill:<name>`
+- `screenshots` — optional, see below
+
+Each `##` starts a section. Unknown keys, ids or scenes and missing screenshots fail the build. `verify:docs-coverage` fails when any command, skill, config key or route is covered by no page; `npx tsx src/docs/docsCoverage.ts --report` lists the gaps.
+
+### Directives
+
+- `:kbd[Mod+N]` — key caps; `Mod`/`Ctrl`/`Alt`/`Shift` show as ⌘⌃⌥⇧ on macOS, by name elsewhere
+- `:status[running]` — session status glyph (`running`, `verifying`, `waiting`, `done`, `error`, `stopped`)
+- `:badge[clone]` — card badge (`clone`, `harness`, `serving`, `node`)
+- `:icon[OpenInFull]` — a dashboard button icon; register new ones in `src/docs/starlight/renderIcon.ts`
+- `::screenshot{file="<file>"}` — places a declared screenshot; an undeclared file, or a declared one never placed, fails the build
+
+### Screenshots
+
+Each `screenshots` entry has `file`, `alt` and one target:
+
+- `route` — a path on the capture web server
+- `url` — a live, logged-out `https://github.com/` page with the extension's `content.js` injected and `browser.*` stubbed
+
+Optional fields: `viewport` (default 1280×800), `theme`, `waitFor`, `crop`, `scene` (named setup steps in `capture/scenes.json`), `setup` (steps run after the scene), `actions` and `highlight` (selectors outlined in the capture). Without `theme` it captures `<file>` and `<file>-dark.png` and the site shows the reader's theme.
+
+`actions`, run before capture: `click: <selector>`, `press: <key>`, `type: <text>`, `drag: { from, to }`, `script: <name>` (runs `capture/github/<name>.js` to fill in what a logged-out page lacks).
+
+Setup steps:
+
+- `assist: [args]` — run an assist command in the sandbox
+- `run: <name>` — start a run session from `capture/assist.yml`
+- `session: { repo, prompt, title?, reply?, status? }` — start a session in `sandbox`, `api` or `website` with status `running`, `waiting` or `done`. A fake `claude` (`capture/bin/claude`) prints `reply` as the transcript and answers title generation with `title`
+- `openPr: { repo, number, title, author? }` — an open PR, answered by a fake `gh` (`capture/bin/gh`) for `gh pr list`/`gh pr view`; other `gh` calls fail
+- `gh: { match, json }` — fake `gh` prints `json` when its args contain every `match` string; `"{{ago:<n><m|h|d>}}"` becomes that ISO time ago
+- `sql: <statements>` — run against the capture database
+- `newsFeed: { name, title, items }` — serve an RSS feed of `{ title, hoursAgo, excerpt? }` and `assist news add` it
+- Preview panes, held open on the session with the given `session` prompt until the state changes: `preview: { session, kind: ask|show, title, body }`, `pr: { session, title, what, why, how?, resolves?, prNumber?, draft? }`, `proposal: { session, item }` (an `assist backlog propose` payload), `highLevelReview: { session, prNumber, title, headRef, body, linkedIssues?, criticalPaths?, uiPaths?, files }` with files `{ path, status, content?, patch? }` (an added file's patch is built from `content`)
+
+Screenshots sharing a scene and setup are captured together. Between states sessions are drained, `~/.assist.yml` is restored and the backlog, backups and usage tables are emptied.
+
+### Recapture
+
+`npm run docs:capture [-- <file.png>...] [--skip-build] [--keep-home]` builds assist and, in a temporary `HOME` with a throwaway Postgres container (Docker), clones of `staff0rd/sandbox` plus local `api` and `website` repos, and the real daemon and web server on a free port, captures with Playwright (`npx playwright install chromium` once). Commit the changed PNGs.
+
+### Preview
+
+`npm run docs:build` builds into `docs/dist/` (`DOCS_BASE_PATH=<path>` for a sub-path). `npm run docs:preview` serves on port 4173, replacing any existing dev server for the checkout, and reloads tabs as pages change (a tab with an open feedback popover waits for it to close). It restarts itself when a page is added or removed, a page's `group` or `order` changes, a screenshot PNG is added or removed, or `src/docs/` or `capture/scenes.json` changes. Invalid frontmatter shows its error in the browser.
+
+### Feedback
+
+Start the `docs` run entry (`server: docs`, `docs:preview` on 4173) from the dashboard and open it in Firefox with the [assist browser extension](https://staffordwilliams.com/assist/browser-extension/). Select text, type a prompt in the popover and press **Enter**. It arrives, naming the page id, section and source `.md` and quoting the selection, in the live Claude session sharing the docs server's directory: of several, the one that last wrote that page, else the newest; with none, the live session that last wrote the page or anything under `docs/src/`.
 
 ## Rules
 
