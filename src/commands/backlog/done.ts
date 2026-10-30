@@ -26,12 +26,12 @@ export async function done(id: string, summary?: string): Promise<void> {
 		}
 	}
 
-	await updateStatus(orm, item.id, "done");
-
 	if (summary) {
 		const phase = item.currentPhase ?? 1;
 		await appendComment(orm, item.id, summary, { phase, type: "summary" });
 	}
+
+	await updateStatus(orm, item.id, "done");
 
 	console.log(
 		chalk.green(`Completed item ${formatItemId(item.id)}: ${item.name}`),

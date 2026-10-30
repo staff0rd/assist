@@ -1,6 +1,7 @@
 import type { BacklogItem } from "../types";
 import { ActivitySection } from "./ActivitySection";
 import { CommentsSection } from "./CommentsSection";
+import { DocsRefreshSection } from "./DocsRefreshSection";
 import { PlanSection } from "./PlanSection";
 
 export type ItemRelationsProps = {
@@ -16,6 +17,9 @@ export function ItemRelations({
 }: ItemRelationsProps) {
 	return (
 		<>
+			{item.docsRefreshFor && (
+				<DocsRefreshSection stories={item.docsRefreshFor} />
+			)}
 			{item.plan && (
 				<PlanSection
 					phases={item.plan}

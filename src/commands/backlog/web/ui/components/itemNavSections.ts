@@ -39,6 +39,11 @@ export function itemNavSections(item: BacklogItem): ItemNavSection[] {
 			id: ITEM_SECTION_IDS.acceptanceCriteria,
 			label: "Acceptance Criteria",
 		});
+	if ((item.docsRefreshFor?.length ?? 0) > 0)
+		sections.push({
+			id: ITEM_SECTION_IDS.docsRefreshFor,
+			label: "Refreshes docs for",
+		});
 	sections.push(...planSections(item));
 	if ((item.gitRefs?.length ?? 0) + (item.conversations?.length ?? 0) > 0)
 		sections.push({ id: ITEM_SECTION_IDS.activity, label: "Activity" });

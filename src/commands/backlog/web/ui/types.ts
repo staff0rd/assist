@@ -88,6 +88,13 @@ export type BacklogItem = {
 	usageTotal?: PhaseUsageTotal;
 	gitRefs?: GitRef[];
 	conversations?: Conversation[];
+	docsRefreshFor?: LinkedItem[];
+};
+
+export type LinkedItem = {
+	id: number;
+	name: string;
+	status: BacklogStatus;
 };
 
 export type ItemTracker = {

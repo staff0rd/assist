@@ -1,6 +1,7 @@
 export const ITEM_SECTION_IDS = {
 	description: "item-section-description",
 	acceptanceCriteria: "item-section-acceptance-criteria",
+	docsRefreshFor: "item-section-docs-refresh-for",
 	plan: "item-section-plan",
 	activity: "item-section-activity",
 	comments: "item-section-comments",

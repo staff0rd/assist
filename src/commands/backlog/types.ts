@@ -149,4 +149,5 @@ export type Conversation = {
 
 export type BacklogItemDetail = BacklogItem & {
 	conversations?: Conversation[];
+	docsRefreshFor?: Pick<BacklogItem, "id" | "name" | "status">[];
 };

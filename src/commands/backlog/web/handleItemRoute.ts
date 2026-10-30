@@ -3,12 +3,8 @@ import { parseItemId } from "../formatItemId";
 import { applyCwdFromReq } from "./applyCwdFromReq";
 import { deleteItemComment } from "./deleteItemComment";
 import { rewindItemPhase } from "./rewindItemPhase";
-import {
-	deleteItem,
-	getItemById,
-	patchItemStar,
-	patchItemStatus,
-} from "./shared";
+import { deleteItem, patchItemStar, patchItemStatus } from "./shared";
+import { getItemById } from "./getItemById";
 
 type RouteHandler = (
 	req: IncomingMessage,
