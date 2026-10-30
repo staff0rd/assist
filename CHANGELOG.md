@@ -1,3 +1,10 @@
+## [0.966.1](https://github.com/staff0rd/assist/compare/v0.966.0...v0.966.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* phone back button overlapping title ([77cc63c](https://github.com/staff0rd/assist/commit/77cc63c2d693da1ab3e9581b1d3e13b5ed100b68))
+
 # [0.966.0](https://github.com/staff0rd/assist/compare/v0.965.0...v0.966.0) (2026-10-30)
 
 
