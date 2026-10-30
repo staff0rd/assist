@@ -2,6 +2,7 @@ import { getDb } from "../../shared/db/getDb";
 import { updateUserConfig } from "../../shared/db/updateUserConfig";
 import { refreshRepoConfigCache } from "../../shared/refreshRepoConfigCache";
 import type { ConfigWritableValue } from "./applyConfigSet";
+import { getNestedValue } from "./getNestedValue";
 import { setNestedValue } from "./setNestedValue";
 import { userDbKeyError } from "./userDbKeyError";
 import { validateConfig } from "./validateConfig";
@@ -12,13 +13,17 @@ type UserConfigSetResult =
 
 export async function applyUserConfigSet(
 	key: string,
-	coerced: ConfigWritableValue,
+	coerced: ConfigWritableValue | ((current: unknown) => ConfigWritableValue),
 ): Promise<UserConfigSetResult> {
 	const nodeOnly = userDbKeyError(key, "Set");
 	if (nodeOnly) return nodeOnly;
 	const orm = await getDb();
 	const outcome = await updateUserConfig(orm, (current) => {
-		const config = setNestedValue(current, key, coerced);
+		const value =
+			typeof coerced === "function"
+				? coerced(getNestedValue(current, key))
+				: coerced;
+		const config = setNestedValue(current, key, value);
 		const validation = validateConfig(config, key);
 		return validation.ok ? { ok: true, config, result: undefined } : validation;
 	});

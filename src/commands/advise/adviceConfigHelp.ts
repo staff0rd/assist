@@ -18,7 +18,7 @@ export const adviceConfigHelp: ConfigHelpEntry[] = [
 	},
 	{
 		key: "advice.rules",
-		setter: "assist rules add '<text>' --title '<title>' --global",
-		note: 'listed under "Your rules"; global and repo entries are concatenated, global first',
+		setter: "assist rules add '<text>' --title '<title>' --user",
+		note: "listed under \"Your rules\"; user (db), user (node) and repo entries are concatenated in that order. --node writes ~/.assist.yml instead; 'assist config import-user' moves those into user (db)",
 	},
 ];

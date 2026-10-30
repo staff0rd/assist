@@ -240,6 +240,7 @@ A run entry's relative `cwd` (and a `link` path) resolves against the **repo roo
 - `assist config set <key> <value>` - Set a config value. `--global` writes to `~/.assist.yml`; `-g --repo [name]` writes a per-repo override to the shared assist database, so every node on that database sees it; `--user` writes user (db), a layer in the shared database that applies to every repo on every node, below `~/.assist.yml` (array keys such as `advice.rules` and `deny` concatenate with its entries first; `database.*` and `sync.autoConfirm` stay in `~/.assist.yml`)
 - `assist config unset <key>` - Remove a config value so the key falls back to the global value or schema default (`-g` targets `~/.assist.yml`; `-g --repo [name]` removes it from the shared per-repo override; `--user` removes it from user (db))
 - `assist config import-repos` - Move this machine's `~/.assist.yml` `repos:` overrides into the shared database: prints a per-key diff against each repo's shared override, then on confirmation writes the keys and removes `repos:` from `~/.assist.yml`
+- `assist config import-user [keys...]` - Move keys (default `advice.rules`) from this node's `~/.assist.yml` into user (db): prints a diff against user (db) (array keys gain only the entries it lacks), then on confirmation writes them and removes the keys from `~/.assist.yml`. `loadConfig` warns while `~/.assist.yml` holds `advice.rules` entries user (db) lacks
 
 The web config page's "This repo" scope reads and writes the same shared override. Each node mirrors the shared per-repo overrides into `~/.assist/repo-config-cache.json` when its daemon starts, every minute while it runs, and after its own repo-scope writes, and resolves config from that snapshot, so an unreachable database leaves the last snapshot in effect. A `repos:` entry in `~/.assist.yml` still applies, with a warning naming `assist config import-repos`, until the shared database holds an override for that repo, after which it is ignored.
 
@@ -275,7 +276,8 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 
 - `assist rules list [path] [--full]` - List the rules in scope for a path (default: cwd); `--full` adds each rule's description
 - `assist rules add <text> [--title <title>] [--scope <path>]` - Add a rule to the `## Rules` section of the `CLAUDE.md` nearest `--scope` (default cwd)
-- `assist rules add <text> --title <title> --global` - Append a `{ title, text }` entry to `advice.rules` in `~/.assist.yml` instead, for rules about agent conduct that hold in every repo; it takes no R-code and can't be combined with `--scope`. Global rules are per machine (WSL and Windows each have their own `~/.assist.yml`)
+- `assist rules add <text> --title <title> --user` - Append a `{ title, text }` entry to `advice.rules` in user (db) instead, for rules about agent conduct that hold in every repo on every node; it takes no R-code and can't be combined with `--scope`
+- `assist rules add <text> --title <title> --node` - As `--user`, but append to `advice.rules` in user (node), this node's `~/.assist.yml`
 - `assist rules index` - Record the directories that carry their own `## Rules` in the repo root's `CLAUDE.md`; run it after hand-editing a `## Rules` section
 
 ### Devlog

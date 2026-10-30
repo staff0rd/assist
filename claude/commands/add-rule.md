@@ -25,9 +25,9 @@ Ask the user a clarifying question only when the note is genuinely too vague to 
 
 ## Step 3: Work out the scope
 
-The scope is the directory whose `CLAUDE.md` gets the rule, or global. Infer it — do not ask by default:
+The scope is the directory whose `CLAUDE.md` gets the rule, or `user (db)`. Infer it — do not ask by default:
 
-- If the rule is about agent conduct that holds in every repo rather than about this repo's code or docs (e.g. "give the URL, not a nav path", "don't ask for sign-off in chat"), the scope is **global**: it goes to `advice.rules` in `~/.assist.yml` and reaches every session on this machine. A rule that only makes sense for this repo's files, conventions or tooling is never global.
+- If the rule is about agent conduct that holds in every repo rather than about this repo's code or docs (e.g. "give the URL, not a nav path", "don't ask for sign-off in chat"), the scope is **`user (db)`**: it goes to `advice.rules` in the shared db and reaches every session in every repo on every node. A rule that only makes sense for this repo's files, conventions or tooling never goes there. Use `user (node)` (this node's `~/.assist.yml`) only when the user asks for the rule to stay on this node.
 - With a file path, the default is the nearest `CLAUDE.md` walking up from that file's directory to the repo root. `assist rules list <path>` shows what is already in scope there, which tells you where sibling rules live.
 - If the note is clearly about a kind of document that lives in one directory (and the file sits in it), that directory's `CLAUDE.md` is the scope — pass `--scope <dir>/CLAUDE.md` to create it there when it does not exist yet.
 - If the rule plainly applies repo-wide, use the root `CLAUDE.md`.
@@ -43,20 +43,20 @@ assist rules add '<rule text>' --title '<title>' --scope <path> 2>&1
 
 `--scope` takes a file, a directory, or a `CLAUDE.md` path directly. A file or directory resolves to the nearest existing `CLAUDE.md` at or above it; a `CLAUDE.md` path is written to as given, created if absent. The command allocates the next repo-wide code, creates the `## Rules` section when the file has none, and records the directories that carry their own `## Rules` in the root `CLAUDE.md`.
 
-For a global rule, pass `--global` instead of `--scope` (the two can't be combined); `--title` is required:
+For a `user (db)` rule, pass `--user` instead of `--scope` (the two can't be combined); `--title` is required:
 
 ```
-assist rules add '<rule text>' --title '<title>' --global 2>&1
+assist rules add '<rule text>' --title '<title>' --user 2>&1
 ```
 
-It appends the rule to `advice.rules` in `~/.assist.yml` with no R-code. Global rules are per machine, so on a setup with both WSL and Windows nodes tell the user it only reaches this one.
+It appends the rule to `advice.rules` in `user (db)` with no R-code. For `user (node)`, pass `--node` instead of `--user`.
 
 Use single quotes around the rule text to avoid shell escaping issues.
 
-Show the command output — it names the allocated code (or, for a global rule, the title) and the file — then tell the user in one line which rule was added and where.
+Show the command output — it names the allocated code (or, for a `user (db)` or `user (node)` rule, the title) and where it went — then tell the user in one line which rule was added and where.
 
 ## Step 5: Fix what broke it
 
-The rule exists because something broke it, so the quoted text is now a live violation. Rectify it in the same pass, without being asked: edit the quoted text in the file the `File:` line named, so it follows the rule you just wrote. Where there was no `File:` line, fix the draft or the text the quote came from. A global rule is no exception: the quoted violation still gets fixed, even though the rule went to `~/.assist.yml` rather than a file in this repo.
+The rule exists because something broke it, so the quoted text is now a live violation. Rectify it in the same pass, without being asked: edit the quoted text in the file the `File:` line named, so it follows the rule you just wrote. Where there was no `File:` line, fix the draft or the text the quote came from. A `user (db)` or `user (node)` rule is no exception: the quoted violation still gets fixed, even though the rule went to `advice.rules` rather than a file in this repo.
 
 Fix the instance you were given. Do not sweep the rest of the repo for other violations of the new rule unless the user asks for that.

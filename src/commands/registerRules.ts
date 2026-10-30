@@ -1,9 +1,8 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { addGlobalRule } from "./rules/addGlobalRule";
-import { addRule } from "./rules/addRule";
 import { indexRules } from "./rules/indexRules";
 import { listRules } from "./rules/listRules";
+import { registerRulesAdd } from "./rules/registerRulesAdd";
 
 export function registerRules(program: Command): void {
 	const rulesCommand = program
@@ -20,35 +19,7 @@ export function registerRules(program: Command): void {
 			listRules(target, options),
 		);
 
-	internalCommand(
-		rulesCommand
-			.command("add <text>")
-			.description(
-				"Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating the next repo-wide code and creating the section when absent",
-			)
-			.option(
-				"--title <title>",
-				"As few words as possible summarising the rule, shown in the rule picker in place of the description",
-			)
-			.option(
-				"--scope <path>",
-				"File or directory whose nearest CLAUDE.md receives the rule, or a CLAUDE.md path to write to directly (default: cwd)",
-			)
-			.option(
-				"--global",
-				"Append the rule to advice.rules in ~/.assist.yml instead of a CLAUDE.md, for rules about agent conduct that hold in every repo. Needs --title; takes no R-code and cannot be combined with --scope",
-			)
-			.action(
-				(
-					text: string,
-					options: { scope?: string; title?: string; global?: boolean },
-				) =>
-					options.global
-						? addGlobalRule(text, options)
-						: addRule(text, options),
-			),
-		"/add-rule and /fix-rules",
-	);
+	registerRulesAdd(rulesCommand);
 
 	internalCommand(
 		rulesCommand

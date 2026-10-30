@@ -4,6 +4,7 @@ import { configList } from "./configList";
 import { configConfigHelp } from "./config/configConfigHelp";
 import { configGet } from "./config/configGet";
 import { configImportRepos } from "./config/configImportRepos";
+import { configImportUser } from "./config/configImportUser";
 import { configKeys } from "./config/configKeys";
 import { registerConfigWrites } from "./config/registerConfigWrites";
 
@@ -24,6 +25,13 @@ export function registerConfig(program: Command): void {
 			"Move this machine's ~/.assist.yml repos: overrides into the shared db, showing a per-key diff and asking first",
 		)
 		.action(configImportRepos);
+
+	configCommand
+		.command("import-user [keys...]")
+		.description(
+			"Move keys (default advice.rules) from this node's ~/.assist.yml into user (db), the shared db applied to every repo on every node, showing a diff and asking first. Array keys append the entries user (db) lacks",
+		)
+		.action((keys: string[]) => configImportUser(keys));
 
 	configCommand
 		.command("get <key>")

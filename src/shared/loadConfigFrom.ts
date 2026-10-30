@@ -4,10 +4,11 @@ import { dirname, join } from "node:path";
 import { linkedWorktree } from "./linkedWorktree";
 import { loadRawYaml } from "./loadRawYaml";
 import { mergeRawConfigs } from "./mergeDenyRules";
-import { readUserConfigCache } from "./readUserConfigCache";
+import { readConfigCacheFile } from "./readRepoConfigCache";
 import { resolveRepoLayer } from "./resolveRepoLayer";
 import { stripLegacyConfigKeys } from "./stripLegacyConfigKeys";
 import { type AssistConfig, assistConfigSchema } from "./types";
+import { warnUnsharedAdviceRules } from "./warnUnsharedAdviceRules";
 
 export function findConfigUp(
 	startDir: string,
@@ -46,8 +47,10 @@ export function loadConfigFrom(
 ): AssistConfig {
 	const globalRaw = loadRawYaml(globalConfigPath);
 	const projectRaw = loadRawYaml(projectConfigPathFrom(cwd));
+	const userDb = readConfigCacheFile().user;
+	warnUnsharedAdviceRules(globalRaw, userDb);
 	const globalWithRepo = mergeRawConfigs(
-		mergeRawConfigs(readUserConfigCache(), globalRaw),
+		mergeRawConfigs(userDb ?? {}, globalRaw),
 		resolveRepoLayer(globalRaw, cwd).override,
 	);
 	const merged = stripLegacyConfigKeys(
