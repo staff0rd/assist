@@ -4,10 +4,12 @@ import IconButton from "@mui/material/IconButton";
 import { useRef } from "react";
 import { useNavigate } from "react-router";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
+import { useHomeNodeContext } from "../HomeNodeGate/useHomeNodeContext";
 import type { SessionInfo } from "../types";
 import { PhoneNavBar } from "./PhoneNavBar";
 import { PhoneNodeChip } from "./PhoneNodeChip";
 import { PhoneSessionGroups } from "./PhoneSessionGroups";
+import { PhoneVersionBanner } from "./PhoneVersionBanner";
 import { PullIndicator } from "./PullIndicator";
 import { usePullToRefresh } from "./usePullToRefresh";
 
@@ -24,6 +26,7 @@ type Props = {
 	localNode: string | undefined;
 	reconnecting: boolean;
 	onRefresh: () => void;
+	onOpenNodes?: () => void;
 };
 
 export function PhoneSessionList({
@@ -31,15 +34,23 @@ export function PhoneSessionList({
 	localNode,
 	reconnecting,
 	onRefresh,
+	onOpenNodes,
 }: Props) {
 	const navigate = useNavigate();
 	const bodyRef = useRef<HTMLDivElement | null>(null);
 	const { pull, refreshing } = usePullToRefresh(bodyRef, onRefresh);
+	const homeName = useHomeNodeContext()?.home?.name;
 
 	return (
 		<>
 			<PhoneNavBar
-				left={<PhoneNodeChip name={localNode} reconnecting={reconnecting} />}
+				left={
+					<PhoneNodeChip
+						name={homeName ?? localNode}
+						tone={reconnecting ? "warn" : "ok"}
+						onClick={onOpenNodes}
+					/>
+				}
 				title="Sessions"
 				right={
 					<IconButton
@@ -51,6 +62,7 @@ export function PhoneSessionList({
 					</IconButton>
 				}
 			/>
+			<PhoneVersionBanner />
 			<Box ref={bodyRef} sx={bodySx}>
 				<PullIndicator pull={pull} refreshing={refreshing} />
 				<PhoneSessionGroups sessions={sessions} localNode={localNode} />

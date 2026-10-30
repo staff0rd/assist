@@ -10,12 +10,14 @@ export function NodeUrlField({ value, error, onChange }: Props) {
 	return (
 		<TextField
 			autoFocus
-			label="Node URL"
+			label="Web server URL"
 			placeholder="https://mac.tail1234.ts.net:3100"
 			value={value}
 			onChange={(e) => onChange(e.target.value)}
 			error={!!error}
-			helperText={error}
+			helperText={
+				error ?? "The address where you open the sessions page in a browser."
+			}
 			slotProps={{
 				htmlInput: {
 					autoCapitalize: "none",

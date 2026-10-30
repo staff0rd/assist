@@ -9,9 +9,11 @@ import { PhoneTranscriptScreen } from "./PhoneTranscriptScreen";
 export function PhoneRoutes({
 	socket,
 	keyboardOpen,
+	onOpenNodes,
 }: {
 	socket: SessionSocket;
 	keyboardOpen: boolean;
+	onOpenNodes: () => void;
 }) {
 	const localNode = socket.nodes?.local;
 	const { wsRef, requestHistory } = socket;
@@ -30,6 +32,7 @@ export function PhoneRoutes({
 						localNode={localNode}
 						reconnecting={socket.reconnecting}
 						onRefresh={refresh}
+						onOpenNodes={onOpenNodes}
 					/>
 				}
 			/>

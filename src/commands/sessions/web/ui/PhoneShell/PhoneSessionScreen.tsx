@@ -6,6 +6,7 @@ import type { SessionSocket } from "../useSessionSocket";
 import { PhoneBackButton } from "./PhoneBackButton";
 import { PhoneInputDock } from "./PhoneInputDock";
 import { PhoneNavBar } from "./PhoneNavBar";
+import { PhoneReconnectingBar } from "./PhoneReconnectingBar";
 import { PhoneSessionGone } from "./PhoneSessionGone";
 import { PhoneStatusStrip } from "./PhoneStatusStrip";
 import { PhoneTerminal } from "./PhoneTerminal";
@@ -35,6 +36,7 @@ export function PhoneSessionScreen({
 				title={sessionTitle(session)}
 				subtitle={subtitle}
 			/>
+			{socket.reconnecting && <PhoneReconnectingBar />}
 			<PhoneStatusStrip session={session} localNode={localNode} />
 			<PhoneTerminal
 				key={session.id}

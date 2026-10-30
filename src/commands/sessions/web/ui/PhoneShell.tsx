@@ -1,5 +1,11 @@
 import Box from "@mui/material/Box";
+import { useState } from "react";
+import {
+	type NodesSheetView,
+	PhoneNodesSheet,
+} from "./PhoneShell/PhoneNodesSheet";
 import { PhoneRoutes } from "./PhoneShell/PhoneRoutes";
+import { useHealthRecheck } from "./PhoneShell/useHealthRecheck";
 import { useKeyboardViewport } from "./PhoneShell/useKeyboardViewport";
 import { useSessionSocket } from "./useSessionSocket";
 
@@ -17,6 +23,8 @@ const shellSx = {
 export function PhoneShell() {
 	const socket = useSessionSocket();
 	const viewport = useKeyboardViewport();
+	const [sheet, setSheet] = useState<NodesSheetView | null>(null);
+	useHealthRecheck(socket.reconnecting);
 
 	return (
 		<Box
@@ -24,7 +32,12 @@ export function PhoneShell() {
 			style={{ top: viewport.offsetTop, height: viewport.height }}
 			data-testid="phone-shell"
 		>
-			<PhoneRoutes socket={socket} keyboardOpen={viewport.keyboardOpen} />
+			<PhoneRoutes
+				socket={socket}
+				keyboardOpen={viewport.keyboardOpen}
+				onOpenNodes={() => setSheet({ kind: "list" })}
+			/>
+			<PhoneNodesSheet view={sheet} onView={setSheet} status={socket} />
 		</Box>
 	);
 }

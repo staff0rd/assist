@@ -1,0 +1,56 @@
+import type { Theme } from "@mui/material/styles";
+
+export const nodeListSx = {
+	group: {
+		mx: 2,
+		my: 0.75,
+		borderRadius: "12px",
+		bgcolor: "background.default",
+		border: 1,
+		borderColor: "divider",
+		overflow: "hidden",
+		"& > *:not(:last-child)": {
+			borderBottom: 1,
+			borderColor: (t: Theme) => t.tokens.color.lineSoft,
+		},
+	},
+	item: {
+		width: "100%",
+		minHeight: 48,
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		gap: 1.5,
+		px: 1.75,
+		py: 1,
+		textAlign: "left",
+		fontSize: 16,
+	},
+	grow: { flex: 1, minWidth: 0 },
+	detail: {
+		display: "block",
+		fontSize: 13,
+		color: "text.secondary",
+		fontFamily: "fontFamilyMono",
+		whiteSpace: "nowrap",
+		overflow: "hidden",
+		textOverflow: "ellipsis",
+	},
+	end: {
+		display: "flex",
+		alignItems: "center",
+		gap: 0.75,
+		color: "text.secondary",
+		fontSize: 14,
+	},
+	label: {
+		px: 4,
+		pt: 1.75,
+		pb: 0.25,
+		fontSize: 13,
+		fontWeight: 600,
+		textTransform: "uppercase",
+		letterSpacing: ".04em",
+		color: "text.secondary",
+	},
+} as const;
