@@ -1,3 +1,10 @@
+# [0.961.0](https://github.com/staff0rd/assist/compare/v0.960.0...v0.961.0) (2026-10-30)
+
+
+### Features
+
+* re-ask ask-question after restart ([e79165e](https://github.com/staff0rd/assist/commit/e79165e08e312f0159ac6b17a1add8b1bad99ec1))
+
 # [0.960.0](https://github.com/staff0rd/assist/compare/v0.959.0...v0.960.0) (2026-10-30)
 
 
