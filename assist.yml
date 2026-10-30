@@ -195,6 +195,16 @@ run:
     args:
       - -c
       - npm i && npm run build
+  - name: ios:build
+    command: npm
+    args:
+      - run
+      - ios:build
+  - name: ios:open
+    command: npm
+    args:
+      - run
+      - ios:open
 forbiddenStrings:
   - file: claude/settings.json
     paths:

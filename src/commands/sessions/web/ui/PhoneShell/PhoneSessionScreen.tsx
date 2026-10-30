@@ -1,5 +1,4 @@
 import { useParams } from "react-router";
-import { pasteAndSubmit } from "../../../shared/pasteAndSubmit";
 import { repoLabel } from "../App/repoLabel";
 import { sessionTitle } from "../App/sessionTitle";
 import { displayStatus } from "../displayStatus";
@@ -10,6 +9,7 @@ import { PhoneNavBar } from "./PhoneNavBar";
 import { PhoneSessionGone } from "./PhoneSessionGone";
 import { PhoneStatusStrip } from "./PhoneStatusStrip";
 import { PhoneTerminal } from "./PhoneTerminal";
+import { usePhoneSessionIo } from "./usePhoneSessionIo";
 
 export function PhoneSessionScreen({
 	socket,
@@ -20,6 +20,7 @@ export function PhoneSessionScreen({
 }) {
 	const { id } = useParams();
 	const session = socket.sessions.find((s) => s.id === id);
+	const io = usePhoneSessionIo(session, socket);
 	if (!session) return <PhoneSessionGone />;
 
 	const localNode = socket.nodes?.local;
@@ -41,12 +42,14 @@ export function PhoneSessionScreen({
 				cols={session.cols}
 				rows={session.rows}
 				onOutput={socket.onOutput}
+				sendSize={io.sendSize}
+				reclaimRef={io.reclaimRef}
 			/>
 			<PhoneInputDock
 				waiting={displayStatus(session) === "waiting"}
 				keyboardOpen={keyboardOpen}
-				onKey={(data) => socket.sendInput(session.id, data)}
-				onSend={(text) => pasteAndSubmit(socket.sendInput, session.id, text)}
+				onKey={io.onKey}
+				onSend={io.onSend}
 			/>
 		</>
 	);

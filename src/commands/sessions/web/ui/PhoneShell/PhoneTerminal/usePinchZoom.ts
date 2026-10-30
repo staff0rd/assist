@@ -1,6 +1,7 @@
 import { type RefObject, useEffect, useRef, useState } from "react";
 
-const MIN_ZOOM = 1;
+const DEFAULT_ZOOM = 1;
+const MIN_ZOOM = 0.3;
 const MAX_ZOOM = 3;
 
 function distance(touches: TouchList): number {
@@ -9,8 +10,8 @@ function distance(touches: TouchList): number {
 }
 
 export function usePinchZoom(ref: RefObject<HTMLElement | null>): number {
-	const [zoom, setZoom] = useState(MIN_ZOOM);
-	const zoomRef = useRef(MIN_ZOOM);
+	const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+	const zoomRef = useRef(DEFAULT_ZOOM);
 
 	useEffect(() => {
 		const el = ref.current;

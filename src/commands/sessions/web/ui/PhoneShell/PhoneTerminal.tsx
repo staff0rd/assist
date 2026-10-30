@@ -1,10 +1,12 @@
 import Box from "@mui/material/Box";
 import { type Theme, useTheme } from "@mui/material/styles";
-import { useMemo, useRef } from "react";
+import { type RefObject, useMemo, useRef } from "react";
 import { useElementWidth } from "../App/useElementWidth";
+import type { ResizeMode } from "../ResizeFn";
 import { fitFontSize } from "./PhoneTerminal/fitFontSize";
 import { measureCharWidthRatio } from "./PhoneTerminal/measureCharWidthRatio";
 import { useFollowOutput } from "./PhoneTerminal/useFollowOutput";
+import { usePhoneTakeOver } from "./PhoneTerminal/usePhoneTakeOver";
 import { usePhoneXterm } from "./PhoneTerminal/usePhoneXterm";
 import { usePinchZoom } from "./PhoneTerminal/usePinchZoom";
 
@@ -15,7 +17,6 @@ const scrollSx = {
 	overscrollBehavior: "contain",
 	WebkitOverflowScrolling: "touch",
 	bgcolor: (t: Theme) => t.tokens.terminal.background,
-	px: 0.5,
 	"& .xterm": { width: "max-content" },
 } as const;
 
@@ -24,6 +25,8 @@ type Props = {
 	cols?: number;
 	rows?: number;
 	onOutput: (sessionId: string, handler: (data: string) => void) => () => void;
+	sendSize: (cols: number, rows: number, mode?: ResizeMode) => void;
+	reclaimRef: RefObject<(() => void) | null>;
 };
 
 export function PhoneTerminal({
@@ -31,6 +34,8 @@ export function PhoneTerminal({
 	cols = 120,
 	rows = 30,
 	onOutput,
+	sendSize,
+	reclaimRef,
 }: Props) {
 	const scrollRef = useRef<HTMLDivElement | null>(null);
 	const hostRef = useRef<HTMLDivElement | null>(null);
@@ -43,6 +48,7 @@ export function PhoneTerminal({
 	const zoom = usePinchZoom(scrollRef);
 	const fontSize = fitFontSize(width, cols, ratio, zoom);
 	const { follow, trackStick } = useFollowOutput(scrollRef);
+	reclaimRef.current = usePhoneTakeOver(scrollRef, ratio, sendSize);
 
 	usePhoneXterm(hostRef, sessionId, { cols, rows }, fontSize, onOutput, follow);
 

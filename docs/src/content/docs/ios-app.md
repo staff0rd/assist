@@ -17,6 +17,8 @@ Needs macOS with Xcode, an iOS simulator or a device, and the Tailscale app on t
 3. `npm run ios:run` to pick a simulator or connected device, or `npm run ios:open` to build and run from Xcode (a device needs your Apple ID team set under **Signing & Capabilities**).
 4. On first launch, enter the home node's URL, e.g. `https://mac.<tailnet>.ts.net:3100`. It is stored on the device.
 
+To run on an iPhone, turn on **Developer Mode** (Settings → Privacy & Security), connect it to the Mac, run `npm run ios:open`, set your team under **Signing & Capabilities**, pick the phone and press Run. The first launch needs the developer trusted under Settings → General → VPN & Device Management.
+
 ## Using the app
 
 The session list groups sessions by status with **Needs you** (waiting and errored) first; pull down to refresh, tap **Done** to expand finished sessions, and use the clock icon for history. Tap a session to open it full screen: the terminal is read-only, so pinch to zoom and drag to pan. Type in the reply field (Return adds a line, the send button submits) or use the key strip for `1`/`2`/`3`, arrows, Esc, Tab and ⌃C.
