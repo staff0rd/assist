@@ -8,6 +8,7 @@ import { handleOutput } from "./handleWsMessage/handleOutput";
 import { handleRunConflict } from "./handleWsMessage/handleRunConflict";
 import { handleSessions } from "./handleWsMessage/handleSessions";
 import { handleSnapshot } from "./handleWsMessage/handleSnapshot";
+import { inboxStore } from "../../../../../App/AppShell/AppRoutes/InboxView/inboxStore";
 import type {
 	HistoricalSession,
 	TranscriptMessage,
@@ -34,6 +35,7 @@ const wsHandlers: Record<string, (msg: Msg, d: WsDispatch) => void> = {
 	nodes: handleNodes,
 	error: handleError,
 	notice: handleNotice,
+	inbox: () => void inboxStore.refresh(),
 	"run-conflict": handleRunConflict,
 	limits: handleLimits,
 	clear: handleClear,

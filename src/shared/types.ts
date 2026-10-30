@@ -182,6 +182,11 @@ const assistConfigShape = {
 				.default([]),
 		})
 		.optional(),
+	inbox: z
+		.strictObject({
+			intervalMinutes: z.number().int().positive().optional(),
+		})
+		.optional(),
 	autoUpdate: z
 		.strictObject({
 			enabled: z.boolean().default(true),

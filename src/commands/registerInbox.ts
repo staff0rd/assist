@@ -1,4 +1,6 @@
 import type { Command } from "commander";
+import { configHelp } from "../shared/configHelp";
+import { inboxConfigHelp } from "./inbox/inboxConfigHelp";
 import { list as inboxList } from "./inbox/list";
 import { scan as inboxScan } from "./inbox/scan";
 
@@ -18,4 +20,6 @@ export function registerInbox(program: Command): void {
 		.command("list")
 		.description("List flagged inbox messages, newest first")
 		.action(inboxList);
+
+	configHelp(inboxCommand, inboxConfigHelp);
 }

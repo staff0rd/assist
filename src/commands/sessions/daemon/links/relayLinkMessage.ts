@@ -63,6 +63,7 @@ const relays: Record<string, Relay> = {
 	created: relayToCreator("created session"),
 	error: relayToCreator("peer error:"),
 	notice: (state, msg) => broadcastToViewers(state, msg),
+	inbox: (state, msg) => broadcastToViewers(state, msg),
 	"run-conflict": relayRunConflict,
 	history: relayHistory,
 	"user-messages": (state, msg) =>

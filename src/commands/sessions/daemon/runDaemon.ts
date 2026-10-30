@@ -1,4 +1,5 @@
 import { mkdirSync } from "node:fs";
+import { broadcast } from "./broadcast";
 import { isDaemonRunning } from "./connectToDaemon";
 import { createAutoExit } from "./createAutoExit";
 import { daemonLog, setDaemonLogSink } from "./daemonLog";
@@ -8,6 +9,7 @@ import { refreshRepoConfigCacheOnStart } from "./refreshRepoConfigCacheOnStart";
 import { SessionManager } from "./SessionManager";
 import { startDaemonLogTrimmer } from "./startDaemonLogTrimmer";
 import { startDaemonServer } from "./startDaemonServer";
+import { startInboxScans } from "./startInboxScans";
 
 export async function runDaemon(): Promise<void> {
 	mkdirSync(daemonPaths.dir, { recursive: true });
@@ -29,6 +31,7 @@ export async function runDaemon(): Promise<void> {
 	setDaemonLogSink(manager.clients.emitLog);
 	startDaemonLogTrimmer();
 	pollRepoConfigCache();
+	startInboxScans(() => broadcast(manager.clients, { type: "inbox" }));
 	await startDaemonServer(manager, checkAutoExit);
 	await refreshRepoConfigCacheOnStart();
 }
