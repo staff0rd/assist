@@ -1,16 +1,10 @@
 import Box from "@mui/material/Box";
 import type { LinkStatus } from "../../../../daemon/links/LinkStatus";
-import { NodeDot, type NodeDotTone } from "../../HomeNodeGate/NodeDot";
+import { NodeDot } from "../../HomeNodeGate/NodeDot";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SessionInfo } from "../../types";
 import { linkDetail } from "./linkDetail";
-
-const stateTone: Record<LinkStatus["state"], NodeDotTone> = {
-	connected: "ok",
-	connecting: "warn",
-	disconnected: "error",
-	"version-blocked": "error",
-};
+import { linkStateTone } from "./linkStateTone";
 
 const driftBadgeSx = {
 	fontFamily: "fontFamilyMono",
@@ -35,7 +29,7 @@ export function PhoneLinkedNodes({ links, sessions, homeVersion }: Props) {
 				const { text, drift } = linkDetail(link, sessions, homeVersion);
 				return (
 					<Box key={link.name} sx={nodeListSx.item}>
-						<NodeDot tone={stateTone[link.state]} />
+						<NodeDot tone={linkStateTone[link.state]} />
 						<Box component="span" sx={nodeListSx.grow}>
 							{link.name}
 							<Box component="span" sx={nodeListSx.detail}>

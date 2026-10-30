@@ -7,6 +7,7 @@ import { repoLabel } from "../App/repoLabel";
 import { sessionTitle } from "../App/sessionTitle";
 import { displayStatus } from "../displayStatus";
 import type { SessionInfo } from "../types";
+import { PhoneSwipeRow } from "./PhoneActions/PhoneSwipeRow";
 import { PhoneBadges } from "./PhoneBadges";
 import { phaseLabel } from "./phaseLabel";
 import {
@@ -38,20 +39,26 @@ export function PhoneSessionRow({
 	const message = showMessage ? attentionMessage(session) : undefined;
 
 	return (
-		<ButtonBase
-			sx={phoneRowSx(status)}
-			onClick={() => navigate(`/session/${session.id}`)}
-			data-testid="phone-session-row"
-		>
-			<SessionStatusGlyph status={status} />
-			<Box sx={phoneRowTitleSx}>{sessionTitle(session)}</Box>
-			<ChevronRightIcon fontSize="small" sx={phoneRowChevronSx} />
-			<Box sx={phoneRowMetaSx}>
-				{repo && <span>{repo}</span>}
-				{phase && <span>{phase}</span>}
-				<PhoneBadges session={session} localNode={localNode} />
-			</Box>
-			{message && <Box sx={phoneRowMessageSx}>{message}</Box>}
-		</ButtonBase>
+		<PhoneSwipeRow session={session}>
+			{(consumeClick) => (
+				<ButtonBase
+					sx={phoneRowSx(status)}
+					onClick={() => {
+						if (!consumeClick()) navigate(`/session/${session.id}`);
+					}}
+					data-testid="phone-session-row"
+				>
+					<SessionStatusGlyph status={status} />
+					<Box sx={phoneRowTitleSx}>{sessionTitle(session)}</Box>
+					<ChevronRightIcon fontSize="small" sx={phoneRowChevronSx} />
+					<Box sx={phoneRowMetaSx}>
+						{repo && <span>{repo}</span>}
+						{phase && <span>{phase}</span>}
+						<PhoneBadges session={session} localNode={localNode} />
+					</Box>
+					{message && <Box sx={phoneRowMessageSx}>{message}</Box>}
+				</ButtonBase>
+			)}
+		</PhoneSwipeRow>
 	);
 }

@@ -1,25 +1,16 @@
 import Drawer from "@mui/material/Drawer";
 import { useState } from "react";
-import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import type { SavedNode } from "../HomeNodeGate/SavedNode";
 import { useHomeNodeContext } from "../HomeNodeGate/useHomeNodeContext";
 import { PhoneNodeEditView } from "./PhoneNodesSheet/PhoneNodeEditView";
 import { PhoneNodesList } from "./PhoneNodesSheet/PhoneNodesList";
+import { phoneSheetPaperSx } from "./phoneSheetPaperSx";
 import type { NodesSheetStatus } from "./PhoneNodesSheet/PhoneNodeStatus";
 
 export type NodesSheetView =
 	| { kind: "list" }
 	| { kind: "add" }
 	| { kind: "edit"; node: SavedNode };
-
-const paperSx = {
-	borderRadius: "14px 14px 0 0",
-	maxHeight: "calc(100% - 64px)",
-	overflowY: "auto",
-	pt: 1,
-	pb: `calc(${safeAreaInsets.bottom} + 16px)`,
-	bgcolor: "background.paper",
-} as const;
 
 type Props = {
 	view: NodesSheetView | null;
@@ -41,7 +32,7 @@ export function PhoneNodesSheet({ view, onView, status }: Props) {
 			anchor="bottom"
 			open={!!view}
 			onClose={close}
-			slotProps={{ paper: { sx: paperSx } }}
+			slotProps={{ paper: { sx: phoneSheetPaperSx } }}
 		>
 			{shown.kind === "list" ? (
 				<PhoneNodesList

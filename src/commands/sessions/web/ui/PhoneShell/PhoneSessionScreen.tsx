@@ -3,6 +3,7 @@ import { repoLabel } from "../App/repoLabel";
 import { sessionTitle } from "../App/sessionTitle";
 import { displayStatus } from "../displayStatus";
 import type { SessionSocket } from "../useSessionSocket";
+import { PhoneMoreButton } from "./PhoneActions/PhoneMoreButton";
 import { PhoneBackButton } from "./PhoneBackButton";
 import { PhoneInputDock } from "./PhoneInputDock";
 import { PhoneNavBar } from "./PhoneNavBar";
@@ -35,6 +36,7 @@ export function PhoneSessionScreen({
 				left={<PhoneBackButton label="Sessions" to="/" />}
 				title={sessionTitle(session)}
 				subtitle={subtitle}
+				right={<PhoneMoreButton session={session} />}
 			/>
 			{socket.reconnecting && <PhoneReconnectingBar />}
 			<PhoneStatusStrip session={session} localNode={localNode} />

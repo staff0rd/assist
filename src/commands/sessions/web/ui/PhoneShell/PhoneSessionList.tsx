@@ -1,11 +1,9 @@
-import HistoryIcon from "@mui/icons-material/History";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import { useRef } from "react";
-import { useNavigate } from "react-router";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import { useHomeNodeContext } from "../HomeNodeGate/useHomeNodeContext";
 import type { SessionInfo } from "../types";
+import { PhoneListNavActions } from "./PhoneListNavActions";
 import { PhoneNavBar } from "./PhoneNavBar";
 import { PhoneNodeChip } from "./PhoneNodeChip";
 import { PhoneSessionGroups } from "./PhoneSessionGroups";
@@ -27,6 +25,7 @@ type Props = {
 	reconnecting: boolean;
 	onRefresh: () => void;
 	onOpenNodes?: () => void;
+	onNewSession?: () => void;
 };
 
 export function PhoneSessionList({
@@ -35,8 +34,8 @@ export function PhoneSessionList({
 	reconnecting,
 	onRefresh,
 	onOpenNodes,
+	onNewSession,
 }: Props) {
-	const navigate = useNavigate();
 	const bodyRef = useRef<HTMLDivElement | null>(null);
 	const { pull, refreshing } = usePullToRefresh(bodyRef, onRefresh);
 	const homeName = useHomeNodeContext()?.home?.name;
@@ -52,15 +51,7 @@ export function PhoneSessionList({
 					/>
 				}
 				title="Sessions"
-				right={
-					<IconButton
-						aria-label="History"
-						sx={{ color: "primary.main" }}
-						onClick={() => navigate("/history")}
-					>
-						<HistoryIcon />
-					</IconButton>
-				}
+				right={<PhoneListNavActions onNewSession={onNewSession} />}
 			/>
 			<PhoneVersionBanner />
 			<Box ref={bodyRef} sx={bodySx}>
