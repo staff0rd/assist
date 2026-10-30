@@ -38,7 +38,11 @@ export function ItemList({
 
 	return (
 		<>
-			<Header typeFilter={typeFilter} onTypeFilterChange={setTypeFilter} />
+			<Header
+				typeFilter={typeFilter}
+				onTypeFilterChange={setTypeFilter}
+				revision={items}
+			/>
 			<SearchInput value={query} onChange={setQuery} />
 			<RepoSummaryChips sessions={socket.sessions} />
 			<ListBody

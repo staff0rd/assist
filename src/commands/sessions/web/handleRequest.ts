@@ -1,6 +1,8 @@
 import { createFallbackHandler } from "../../../shared/createFallbackHandler";
 import { createHtmlHandler, type Handler } from "../../../shared/web";
 import { getBacklogSummary } from "../../backlog/web/getBacklogSummary";
+import { getDocsRefresh } from "../../backlog/web/getDocsRefresh";
+import { postDocsRefresh } from "../../backlog/web/postDocsRefresh";
 import { getRepoLocation } from "../../backlog/web/getRepoLocation";
 import { listItems } from "../../backlog/web/shared";
 import { browserRelay } from "./browser/browserRelay";
@@ -70,6 +72,8 @@ const routes: Record<string, Handler> = {
 	"GET /api/daemon-log": daemonLogTail,
 	"GET /api/items": listItems,
 	"GET /api/backlog/summary": getBacklogSummary,
+	"GET /api/backlog/docs-refresh": getDocsRefresh,
+	"POST /api/backlog/docs-refresh": postDocsRefresh,
 	"GET /api/repo-location": getRepoLocation,
 	"POST /api/sessions/from-github": sessionFromGithub,
 	"OPTIONS /api/sessions/from-github": sessionFromGithubPreflight,

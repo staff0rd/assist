@@ -1,11 +1,13 @@
 import { Stack, Typography } from "@mui/material";
 import { LastBackedUp } from "../../../../sessions/web/ui/LastBackedUp";
 import { CompletedToggle } from "./CompletedToggle";
+import { RefreshDocsButton } from "./RefreshDocsButton";
 import { TypeFilter, type TypeFilterValue } from "./TypeFilter";
 
 type HeaderProps = {
 	typeFilter: TypeFilterValue;
 	onTypeFilterChange: (value: TypeFilterValue) => void;
+	revision: unknown;
 };
 
 const headerSx = {
@@ -18,7 +20,11 @@ const titleSx = { fontWeight: 600 } as const;
 
 const actionsSx = { alignItems: "center" } as const;
 
-export function Header({ typeFilter, onTypeFilterChange }: HeaderProps) {
+export function Header({
+	typeFilter,
+	onTypeFilterChange,
+	revision,
+}: HeaderProps) {
 	return (
 		<Stack direction="row" sx={headerSx}>
 			<Typography variant="h5" sx={titleSx}>
@@ -28,6 +34,7 @@ export function Header({ typeFilter, onTypeFilterChange }: HeaderProps) {
 				<LastBackedUp />
 				<TypeFilter value={typeFilter} onChange={onTypeFilterChange} />
 				<CompletedToggle />
+				<RefreshDocsButton revision={revision} />
 			</Stack>
 		</Stack>
 	);

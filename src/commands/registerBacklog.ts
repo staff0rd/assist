@@ -15,6 +15,7 @@ import { registerMoveRepoCommand } from "./backlog/registerMoveRepoCommand";
 import { registerNextCommand } from "./backlog/registerNextCommand";
 import { registerPlanCommands } from "./backlog/registerPlanCommands";
 import { registerRefineCommand } from "./backlog/registerRefineCommand";
+import { registerRefreshDocsCommand } from "./backlog/registerRefreshDocsCommand";
 import { registerRewindCommand } from "./backlog/registerRewindCommand";
 import { registerRunCommand } from "./backlog/registerRunCommand";
 import { registerSearchCommand } from "./backlog/registerSearchCommand";
@@ -44,6 +45,7 @@ const registrars = [
 	registerRewindCommand,
 	registerNextCommand,
 	registerRefineCommand,
+	registerRefreshDocsCommand,
 	registerRunCommand,
 	registerSearchCommand,
 	registerUpdateCommands,

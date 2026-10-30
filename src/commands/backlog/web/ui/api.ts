@@ -1,6 +1,10 @@
 import { formatItemId } from "../../formatItemId";
+import type { DocsRefreshState } from "../../loadDocsRefreshState";
+import type { DocsRefreshRequest } from "../../requestDocsRefresh";
 import type { BacklogItem } from "./types";
 import { withCwd } from "./withCwd";
+
+const DOCS_REFRESH_URL = "/api/backlog/docs-refresh";
 
 async function sendJson<T>(
 	url: string,
@@ -66,4 +70,20 @@ export function rewindPhase(
 			reason,
 		},
 	);
+}
+
+export async function fetchDocsRefreshState(
+	cwd: string | undefined,
+	node: string | undefined,
+	signal?: AbortSignal,
+): Promise<DocsRefreshState> {
+	const res = await fetch(withCwd(DOCS_REFRESH_URL, cwd, node), { signal });
+	return res.json();
+}
+
+export function createDocsRefresh(
+	cwd: string | undefined,
+	node: string | undefined,
+): Promise<DocsRefreshRequest> {
+	return sendJson(withCwd(DOCS_REFRESH_URL, cwd, node), "POST", {});
 }
