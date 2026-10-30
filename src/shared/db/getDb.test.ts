@@ -24,8 +24,13 @@ vi.mock("./cleanupFalseResetSegments", () => ({
 	cleanupFalseResetSegments: vi.fn(() => Promise.resolve()),
 }));
 
+vi.mock("../loadConfig", () => ({
+	loadConfig: vi.fn(() => ({ database: {} })),
+}));
+
 import { assertMigrationsInSync } from "./migrations/assertMigrationsInSync";
 import { closeDb, getDb } from "./getDb";
+import { MissingDatabaseUrlError } from "./MissingDatabaseUrlError";
 
 const assertMock = assertMigrationsInSync as unknown as ReturnType<
 	typeof vi.fn
@@ -63,5 +68,12 @@ describe("getDb", () => {
 
 		expect(first).toBe(second);
 		expect(PoolMock).toHaveBeenCalledTimes(1);
+	});
+
+	it("rejects instead of exiting when no database url is configured", async () => {
+		delete process.env.ASSIST_DATABASE_URL;
+
+		await expect(getDb()).rejects.toBeInstanceOf(MissingDatabaseUrlError);
+		expect(PoolMock).not.toHaveBeenCalled();
 	});
 });

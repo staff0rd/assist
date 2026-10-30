@@ -1,38 +1,10 @@
-import chalk from "chalk";
 import { Pool, type PoolClient } from "pg";
 import { seedNewsFeeds } from "../../commands/backlog/seedNewsFeeds";
-import { loadConfig } from "../loadConfig";
 import { cleanupFalseResetSegments } from "./cleanupFalseResetSegments";
 import { type Db, makeOrmFromPool } from "./Db";
 import { assertMigrationsInSync } from "./migrations/assertMigrationsInSync";
 import { pgExecutor } from "./migrations/MigrationExecutor";
-
-const DATABASE_URL_ENV = "ASSIST_DATABASE_URL";
-
-const MISSING_URL_MESSAGE = `No assist database configured.
-
-Assist storage requires a Postgres-compatible connection string. Set one via either:
-  • the ${DATABASE_URL_ENV} environment variable, or
-  • database.url in ~/.assist.yml
-
-Example:
-  database:
-    url: postgresql://user:password@host:5432/database
-
-Managed Postgres providers such as Supabase or Neon work out of the box.`;
-
-/**
- * Resolve the backlog database connection string. The env var takes precedence
- * over config. Prints a helpful message and exits if neither is set.
- */
-function getDatabaseUrl(): string {
-	const url = process.env[DATABASE_URL_ENV] ?? loadConfig().database.url;
-	if (!url) {
-		console.error(chalk.red(MISSING_URL_MESSAGE));
-		process.exit(1);
-	}
-	return url;
-}
+import { getDatabaseUrl } from "./getDatabaseUrl";
 
 async function runUsagePeakCleanup(orm: Db): Promise<void> {
 	try {
@@ -91,7 +63,11 @@ function discardPool(): void {
 export function getDb(): Promise<Db> {
 	if (_orm) return Promise.resolve(_orm);
 	if (_connecting) return _connecting;
-	_pool = createPool();
+	try {
+		_pool = createPool();
+	} catch (error) {
+		return Promise.reject(error);
+	}
 	_connecting = initDb(_pool);
 	void _connecting.then((orm) => (_orm = orm)).catch(discardPool);
 	return _connecting;

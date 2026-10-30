@@ -28,7 +28,7 @@ export async function runDaemon(): Promise<void> {
 	// why: forward every daemonLog line to log subscribers (e.g. the web server) so they reach assist.log alongside web-server lifecycle output.
 	setDaemonLogSink(manager.clients.emitLog);
 	startDaemonLogTrimmer();
-	void refreshRepoConfigCacheOnStart();
 	pollRepoConfigCache();
 	await startDaemonServer(manager, checkAutoExit);
+	await refreshRepoConfigCacheOnStart();
 }
