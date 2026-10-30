@@ -22,6 +22,8 @@ export function previewChip(preview: PrPreview, draft: boolean): ChipSpec {
 
 	if (preview.kind === "ask") return { label: "Review", color: "info" };
 
+	if (preview.kind === "question") return { label: "Question", color: "info" };
+
 	if (preview.kind === "high-level-review")
 		return { label: "Checklist", color: "info" };
 

@@ -18,4 +18,5 @@ export type PrDecisionDetails = PrPreviewChain & {
 	reviewEvent?: PreviewReviewEvent;
 	reviewComments?: PreviewReviewComment[];
 	dismissed?: boolean;
+	answers?: Record<string, string>;
 };

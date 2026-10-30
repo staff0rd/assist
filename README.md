@@ -357,6 +357,7 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 - `assist prompts` - Show the most frequently denied tool calls
 - `assist chart [--title <title>]` - Draw a terminal line chart of a `label value` series piped in on stdin, one pair per line
 - `assist ask --title <title> --body <markdown|->` - Put a plan, summary or proposed decision in the session's web preview pane and wait for the user to approve or reject it; `--body -` reads stdin
+- `assist ask-question --json <file|->` - Ask `AskUserQuestion` questions (1-4, each with 2-4 options, plus an Other free-text answer) as a form in the session's web preview pane and wait for the answers; prints the same result text as the built-in tool, exits non-zero when dismissed, and outside an assist session or with `sessions.askQuestion` off (the default) exits non-zero so Claude uses the built-in tool
 - `assist show --body <markdown|-> [--title <title>]` - Render markdown in the session's web preview pane so long links, paths and code can be clicked and copied unbroken; `--body -` reads stdin
 
 ### Project setup

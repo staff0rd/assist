@@ -4,6 +4,7 @@ import type {
 	PreviewReviewEvent,
 	PreviewSelection,
 } from "./PreviewDecision";
+import { toAnswers } from "./toAnswers";
 import { toAttachments } from "./toAttachments";
 import { toChecklist } from "./toChecklist";
 import { toReviewComments } from "./toReviewComments";
@@ -51,5 +52,6 @@ export function toPreviewDecision(
 		reviewEvent: REVIEW_EVENTS.find((event) => event === msg.reviewEvent),
 		reviewComments: toReviewComments(msg.reviewComments),
 		dismissed: msg.dismissed === true,
+		answers: toAnswers(msg.answers),
 	};
 }

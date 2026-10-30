@@ -6,6 +6,7 @@ order: 9
 covers:
   - claude:ask
   - claude:show
+  - config:sessions.askQuestion
 screenshots:
   - file: sessions-ask.png
     alt: A proposal waiting for approval in the preview pane, with a comment added
@@ -128,6 +129,10 @@ As in the [diff](../sessions-diff/#commenting), **Cite a broken rule** and **Add
 ## Getting your approval
 
 Ask the agent to `/ask` about something and it puts a proposal, summary or decision in the pane and waits. Approve it and the agent goes ahead, acting on any comments you added; reject it and the agent revises it and asks again.
+
+## Answering questions
+
+Turn on `assist config set sessions.askQuestion true` and questions the agent asks you open in the pane as a form instead of in the terminal. Pick one option, or several where the question allows it, or choose **Other** and type your own answer, then press **Answer**. **Dismiss** declines to answer.
 
 ## Showing links and snippets
 

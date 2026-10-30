@@ -48,6 +48,7 @@ export function decidePrPreview(
 			reviewEvent: d.reviewEvent,
 			reviewComments: d.reviewComments,
 			dismissed: d.dismissed,
+			answers: d.answers,
 		});
 	waiters.delete(id);
 	session.pendingPrPreview = undefined;

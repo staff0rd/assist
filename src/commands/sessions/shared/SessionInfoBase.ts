@@ -21,7 +21,8 @@ export type PreviewKind =
 	| "slack-post"
 	| "high-level-review"
 	| "show"
-	| "ask";
+	| "ask"
+	| "question";
 
 export type PreviewItemType = "story" | "bug";
 

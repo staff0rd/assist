@@ -12,6 +12,7 @@ const PREVIEW_KINDS: PreviewKind[] = [
 	"high-level-review",
 	"show",
 	"ask",
+	"question",
 ];
 
 export function isPreviewKind(value: unknown): value is PreviewKind {

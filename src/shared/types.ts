@@ -286,6 +286,7 @@ const assistConfigShape = {
 				.enum(["draft", "bug", "prompt", "design"])
 				.default("draft"),
 			hotkeys: hotkeysSchema.optional(),
+			askQuestion: z.boolean().default(false),
 		})
 		.optional(),
 	database: z

@@ -4,6 +4,7 @@ import { miroDecisionDetails } from "./miroDecisionDetails";
 import { PrPreviewPane } from "./PrPreviewSlideInPane/PrPreviewPane";
 import { previewPaneCapabilities } from "./PrPreviewSlideInPane/previewPaneCapabilities";
 import type { PrPreviewPaneProps } from "./PrPreviewSlideInPane/PrPreviewPaneProps";
+import { QuestionPane } from "./PrPreviewSlideInPane/QuestionPane";
 import { ShowPane } from "./ShowPane";
 
 export function PrPreviewSlideInPane({
@@ -22,6 +23,9 @@ export function PrPreviewSlideInPane({
 
 	if (preview.kind === "miro-board")
 		return <MiroBoardPane preview={preview} onDecision={onDecision} />;
+
+	if (preview.kind === "question")
+		return <QuestionPane preview={preview} onDecision={onDecision} />;
 
 	if (preview.kind === "high-level-review")
 		return (

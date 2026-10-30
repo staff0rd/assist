@@ -1,5 +1,6 @@
 import type { ConfigHelpEntry } from "../shared/configHelp";
 import { adviceConfigHelp } from "./advise/adviceConfigHelp";
+import { askQuestionConfigHelp } from "./askQuestion/askQuestionConfigHelp";
 import { backlogConfigHelp } from "./backlog/backlogConfigHelp";
 import { harnessConfigHelp } from "./backlog/harnessConfigHelp";
 import { backupConfigHelp } from "./backup/backupConfigHelp";
@@ -38,6 +39,7 @@ import { verifyConfigHelp } from "./verify/verifyConfigHelp";
 export const configHelpEntries: ConfigHelpEntry[] = [
 	...Object.values(rootConfigHelp).flat(),
 	...adviceConfigHelp,
+	...askQuestionConfigHelp,
 	...autoUpdateConfigHelp,
 	...backlogConfigHelp,
 	...backupConfigHelp,
