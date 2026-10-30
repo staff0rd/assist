@@ -1,3 +1,10 @@
+# [0.972.0](https://github.com/staff0rd/assist/compare/v0.971.0...v0.972.0) (2026-10-30)
+
+
+### Features
+
+* lock docs in edit and cli hooks ([0a44b63](https://github.com/staff0rd/assist/commit/0a44b63d5aa19ea56eb8772357701a3502749218))
+
 # [0.971.0](https://github.com/staff0rd/assist/compare/v0.970.0...v0.971.0) (2026-10-30)
 
 
