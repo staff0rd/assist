@@ -132,6 +132,15 @@ describe("askQuestion", () => {
 		);
 	});
 
+	it("exits 0 with no answer when a re-run supersedes the question", async () => {
+		stdin({ questions });
+		mockRequestPreviewDecision.mockResolvedValue("superseded");
+
+		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(0)");
+		expect(logged.at(-1)).toContain("Superseded by a newer preview");
+		expect(logged.join("\n")).not.toContain("User has answered");
+	});
+
 	it("exits non-zero when the user dismisses the questions", async () => {
 		stdin({ questions });
 		mockRequestPreviewDecision.mockResolvedValue({ decision: "reject" });

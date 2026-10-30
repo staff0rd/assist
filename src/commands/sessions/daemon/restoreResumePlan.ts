@@ -13,10 +13,10 @@ export function restoreResumePlan(
 	status: RestoreStatus,
 ): ResumePlan {
 	const tasks = interruptedBackgroundTasks(persisted);
+	if (status === "asking")
+		return { prompt: pendingQuestionPrompt(tasks), idle: false };
 	if (tasks.length > 0)
 		return { prompt: daemonRestartPrompt(tasks), idle: false };
-	if (status === "asking")
-		return { prompt: pendingQuestionPrompt(), idle: false };
 	const idle = status === "waiting";
 	if (!killedByDaemonRestart(persisted.interrupted) || idle) return { idle };
 	return { prompt: daemonRestartPrompt(tasks), idle: false };

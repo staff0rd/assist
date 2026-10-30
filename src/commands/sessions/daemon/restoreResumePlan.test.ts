@@ -68,6 +68,18 @@ describe("restoreResumePlan", () => {
 		);
 	});
 
+	it("asks a session whose assist ask-question task the restart killed to re-run it", () => {
+		tasksMock.mockReturnValue(["bq1"]);
+
+		const plan = restoreResumePlan(persisted(restarted), "asking");
+
+		expect(plan.idle).toBe(false);
+		expect(plan.prompt).toContain("bq1");
+		expect(plan.prompt).toContain(
+			"run the same assist ask-question again as a background task",
+		);
+	});
+
 	it("asks the pending question again even when no restart was recorded", () => {
 		const plan = restoreResumePlan(persisted(), "asking");
 
