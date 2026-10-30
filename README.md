@@ -1,6 +1,6 @@
 # assist
 
-A CLI tool for enforcing determinism in LLM development workflow automation.
+A dashboard and CLI for running coding agents (Claude Code, Codex or pi) across your repos, working from a shared backlog through to verified commits and pull requests.
 
 Documentation: https://staffordwilliams.com/assist/
 
