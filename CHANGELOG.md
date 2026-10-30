@@ -1,3 +1,10 @@
+## [0.968.1](https://github.com/staff0rd/assist/compare/v0.968.0...v0.968.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* open remote port on node tailnet host ([35bb6a2](https://github.com/staff0rd/assist/commit/35bb6a2dd2b31e86d293f63d7b5f127a3a060392))
+
 # [0.968.0](https://github.com/staff0rd/assist/compare/v0.967.0...v0.968.0) (2026-10-30)
 
 
