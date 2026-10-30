@@ -1,3 +1,12 @@
+## [0.956.2](https://github.com/staff0rd/assist/compare/v0.956.1...v0.956.2) (2026-10-30)
+
+
+### Bug Fixes
+
+* missing db url no longer kills daemon ([f64daa5](https://github.com/staff0rd/assist/commit/f64daa54d11b44b18b8520ced6a6bfb80a964f86))
+* toolbar items no longer clip on desktop ([80e119d](https://github.com/staff0rd/assist/commit/80e119d9a2bba46785a42a741ea7fc5062a7a20b))
+* wrap long navigator phase labels ([7ec24a2](https://github.com/staff0rd/assist/commit/7ec24a28e41e1ef8c1271f2c2b1d5748e8cf4016))
+
 ## [0.956.1](https://github.com/staff0rd/assist/compare/v0.956.0...v0.956.1) (2026-10-30)
 
 
