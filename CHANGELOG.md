@@ -1,3 +1,15 @@
+# [0.964.0](https://github.com/staff0rd/assist/compare/v0.963.0...v0.964.0) (2026-10-30)
+
+
+### Bug Fixes
+
+* edit-hook allows marker mentions in markdown ([17f0676](https://github.com/staff0rd/assist/commit/17f0676285b5735ad152f4b4ece53733d950b616))
+
+
+### Features
+
+* --scope takes git|db ([9319f34](https://github.com/staff0rd/assist/commit/9319f347a02f7cfa6b822b1774ddebbbd7b4f3b1))
+
 # [0.963.0](https://github.com/staff0rd/assist/compare/v0.962.0...v0.963.0) (2026-10-30)
 
 
