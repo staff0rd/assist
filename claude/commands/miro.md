@@ -27,7 +27,7 @@ Write the raw response pages to a file (e.g. `board-items.json`) **exactly as re
 
 With no anchor flags the command renders the dump in the assist web UI preview pane, where the user clicks the top-left then the bottom-right box. **That needs the assist web UI running and this conversation attached to an assist session** — without one the command fails naming both flags rather than hanging. If it fails that way, tell the user to start the web UI (or supply the two ids).
 
-Pass `--save <name>` on a first-time run. The interactive "save this selection?" prompt only appears on a TTY, so an agent run that omits `--save` picks anchors and then discards them. Add `-g` (or `-g -r [repo]`) only if the user asks for a config level other than the project `assist.yml`; the command prints the file it wrote and, on later runs, the file the extract came from.
+Pass `--save <name>` on a first-time run. The interactive "save this selection?" prompt only appears on a TTY, so an agent run that omits `--save` picks anchors and then discards them. Add `--node` (user (node)) or `-r [repo]` (repo (db)) only if the user asks for a config scope other than repo (git), the repo's `assist.yml`; the command prints the file it wrote and, on later runs, the file the extract came from.
 
 Add `--ignore <file>` (a YAML list of box texts) to drop banners and containers, and `--out <file>` to write the YAML with a provenance header instead of printing it.
 

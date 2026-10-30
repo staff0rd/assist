@@ -237,12 +237,12 @@ A run entry's relative `cwd` (and a `link` path) resolves against the **repo roo
 - `assist config keys [filter]` - List every config key with its type, default, effect and setter, optionally filtered by name
 - `assist config get <key>` - Get a config value; secret values are hidden unless `--reveal` is passed
 - `assist config list` - List the config values that are set, with secret values hidden
-- `assist config set <key> <value>` - Set a config value. `--global` writes to `~/.assist.yml`; `-g --repo [name]` writes a per-repo override to the shared assist database, so every node on that database sees it; `--user` writes user (db), a layer in the shared database that applies to every repo on every node, below `~/.assist.yml` (array keys such as `advice.rules` and `deny` concatenate with its entries first; `database.*` and `sync.autoConfirm` stay in `~/.assist.yml`)
-- `assist config unset <key>` - Remove a config value so the key falls back to the global value or schema default (`-g` targets `~/.assist.yml`; `-g --repo [name]` removes it from the shared per-repo override; `--user` removes it from user (db))
+- `assist config set <key> <value>` - Set a config value. With no scope flag it writes repo (git), the repo's `assist.yml`; `--repo [name]` writes repo (db), a per-repo override in the shared assist database that every node on that database sees; `--node` writes user (node), this node's `~/.assist.yml`; `--user` writes user (db), a layer in the shared database that applies to every repo on every node. Precedence is repo (git) > repo (db) > user (node) > user (db); array keys such as `advice.rules` and `deny` concatenate across scopes, user (db) entries first. `database.*` and `sync.autoConfirm` stay in user (node)
+- `assist config unset <key>` - Remove a config value so the key falls back to a lower scope or the schema default, taking the same `--repo [name]`, `--node` and `--user` flags
 - `assist config import-repos` - Move this machine's `~/.assist.yml` `repos:` overrides into the shared database: prints a per-key diff against each repo's shared override, then on confirmation writes the keys and removes `repos:` from `~/.assist.yml`
 - `assist config import-user [keys...]` - Move keys (default `advice.rules`) from this node's `~/.assist.yml` into user (db): prints a diff against user (db) (array keys gain only the entries it lacks), then on confirmation writes them and removes the keys from `~/.assist.yml`. `loadConfig` warns while `~/.assist.yml` holds `advice.rules` entries user (db) lacks
 
-The web config page's "This repo" scope reads and writes the same shared override. Each node mirrors the shared per-repo overrides into `~/.assist/repo-config-cache.json` when its daemon starts, every minute while it runs, and after its own repo-scope writes, and resolves config from that snapshot, so an unreachable database leaves the last snapshot in effect. A `repos:` entry in `~/.assist.yml` still applies, with a warning naming `assist config import-repos`, until the shared database holds an override for that repo, after which it is ignored.
+The web config page's "repo (db)" scope reads and writes the same shared override. Each node mirrors the shared per-repo overrides into `~/.assist/repo-config-cache.json` when its daemon starts, every minute while it runs, and after its own repo-scope writes, and resolves config from that snapshot, so an unreachable database leaves the last snapshot in effect. A `repos:` entry in `~/.assist.yml` still applies, with a warning naming `assist config import-repos`, until the shared database holds an override for that repo, after which it is ignored.
 
 The Config tab of the sessions web dashboard never shows secret values; their fields are write-only.
 
@@ -294,8 +294,8 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 - `assist cli-hook add <cli>` - Discover a CLI's commands and auto-permit read-only ones
 - `assist cli-hook check <command> [--tool <tool>]` - Check whether a command would be auto-approved
 - `assist cli-hook deny` - List all deny rules
-- `assist cli-hook deny add <pattern> <message>` - Add a deny rule for a command pattern
-- `assist cli-hook deny remove <pattern>` - Remove a deny rule by pattern
+- `assist cli-hook deny add <pattern> <message> [--node]` - Add a deny rule for a command pattern to the repo's `assist.yml`, or with `--node` to user (node), this node's `~/.assist.yml`
+- `assist cli-hook deny remove <pattern> [--node]` - Remove a deny rule by pattern
 - `assist codex-hook` - Codex hook that auto-approves read-only commands and reports session status to the sessions dashboard
 - `assist pi-hook` - pi permission gate that auto-approves read-only commands
 - `assist edit-hook` - PreToolUse hook that blocks `Edit`/`Write`/`MultiEdit` calls from adding, changing, or removing a `// assist-maintainability-override` marker, or from introducing a code comment (use `code-comment set`/`confirm` for the rare comment that belongs)
@@ -303,7 +303,7 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 - `assist code-comment confirm <pin>` - Insert the pinned comment at its file/line
 - `assist db-migration unlock` - Ask a human to approve creating the next migration module
 - `assist db-migration confirm <pin>` - Confirm a pin from `db-migration unlock`, letting that migration's file be written once
-- `assist advise [--hook] [--explain]` - Print the advice fragments that apply to the current repo; `--hook` runs it as a SessionStart hook and `--explain` shows why each fragment was or wasn't included. `advice.sections` forces a fragment in or out by name, `advice.verify` replaces the verify fragment's text, `advice.extra` appends repo notes and `advice.rules` (`{ title, text }` entries, global and repo lists concatenated, global first) adds a "Your rules" section
+- `assist advise [--hook] [--explain]` - Print the advice fragments that apply to the current repo; `--hook` runs it as a SessionStart hook and `--explain` shows why each fragment was or wasn't included. `advice.sections` forces a fragment in or out by name, `advice.verify` replaces the verify fragment's text, `advice.extra` appends repo notes and `advice.rules` (`{ title, text }` entries, concatenated across every scope, user (db) first) adds a "Your rules" section
 - `assist notify` - Show desktop notification from JSON stdin (macOS, Windows, WSL)
 - `assist status-line` - Format Claude Code status line from JSON stdin
 
@@ -323,7 +323,7 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 - `assist jira auth` - Authenticate with Jira via API token
 - `assist jira ac <issue-key>` - Print acceptance criteria for a Jira issue
 - `assist jira view <issue-key>` - Print the title and description of a Jira issue
-- `assist miro extract [name] [--items <file>] [--top-left <id|link> --bottom-right <id|link>] [--ignore <file>] [--out <file>] [--board <id>] [--frame <id>] [--save <name>] [-g] [-r [repo]]` - Extract the text of every box inside a rectangle on a Miro board as an ordered YAML list. Omit the anchors to pick them in the web preview pane; `--save <name>` saves the selection under `miro.extracts` so `assist miro extract <name>` replays it
+- `assist miro extract [name] [--items <file>] [--top-left <id|link> --bottom-right <id|link>] [--ignore <file>] [--out <file>] [--board <id>] [--frame <id>] [--save <name>] [--node] [-r [repo]]` - Extract the text of every box inside a rectangle on a Miro board as an ordered YAML list. Omit the anchors to pick them in the web preview pane; `--save <name>` saves the selection under `miro.extracts` so `assist miro extract <name>` replays it, in the repo's `assist.yml`, or with `--node` in user (node) or `-r [repo]` in repo (db)
 - `assist litellm list-models [--json]` - List the model ids the configured LiteLLM proxy serves
 - `assist ravendb auth add` - Add a new RavenDB connection
 - `assist ravendb auth list` - List configured RavenDB connections
@@ -428,7 +428,7 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 
 Web sessions are owned by a long-lived daemon process, not the web server: the server is a thin client relaying WebSocket traffic to the daemon over a local IPC socket (`~/.assist/daemon/daemon.sock`; per-user named pipe `\\.\pipe\assist-sessions-daemon-<user>` on Windows). Restarting the web server leaves sessions running with scrollback intact. The daemon logs to `~/.assist/daemon/daemon.log` and auto-exits once no sessions remain and no client has connected for 60 seconds. See [docs/session-lifecycle.md](docs/session-lifecycle.md).
 
-When assist is installed as a git clone, each daemon keeps that install current in the background: it runs `assist watch wait --pull --build` in the clone lap after lap, with no session card, logging each lap to `daemon.log` (prefixed `auto-update:`) and to the clone's history in `~/.assist/watchers/`. If the clone cannot fast-forward, the daemon starts one claude session in it that rebases (or merges) onto the upstream without force-pushing or resetting, pushes, rebuilds and closes; the loop pauses until that session ends. A rebuilt version takes effect once the daemon and web server are restarted. The version badge in the web UI opens the Updates page, which lists every node with its running and built version, restart advice and history, and offers Restart per node or for every ready node, Pause/Resume (a pause persists across daemon restarts) and Check now (an immediate fetch). Turn it off with `assist config set autoUpdate.enabled false -g`.
+When assist is installed as a git clone, each daemon keeps that install current in the background: it runs `assist watch wait --pull --build` in the clone lap after lap, with no session card, logging each lap to `daemon.log` (prefixed `auto-update:`) and to the clone's history in `~/.assist/watchers/`. If the clone cannot fast-forward, the daemon starts one claude session in it that rebases (or merges) onto the upstream without force-pushing or resetting, pushes, rebuilds and closes; the loop pauses until that session ends. A rebuilt version takes effect once the daemon and web server are restarted. The version badge in the web UI opens the Updates page, which lists every node with its running and built version, restart advice and history, and offers Restart per node or for every ready node, Pause/Resume (a pause persists across daemon restarts) and Check now (an immediate fetch). Turn it off with `assist config set autoUpdate.enabled false --node`.
 
 The topnav's **+** button (or Ctrl+N / Alt+N; Cmd+N on macOS) opens the new-session dialog, which replaces the old draft / bug / prompt / design topnav buttons. Its mode selector picks `draft`, `bug`, `prompt` or `design`; in `prompt` mode a harness selector under it picks Claude, Codex or pi when those are exposed, and Up/Down moves between the two rows. `design` launches an interactive `claude` session with the vendored design system prompt appended via `--append-system-prompt`. Left/Right change the mode or harness, and Tab steps through a selector's options before moving on to the next control.
 
@@ -442,7 +442,7 @@ Every hotkey is Alt plus a left-hand key, one keyboard row per screen region, an
 
 Keys whose target is on Sessions return there first. Ctrl+/ (Cmd+/ on macOS) or the menu's **Keyboard shortcuts** item opens a sheet listing every sessions-view shortcut. The top-level tabs, the new-session button, the repo picker, the top-bar add agent / VS Code / done buttons, the active session's diff counts, the version badge, the config cog and the menu button show their chord in their tooltip on hover and keyboard focus.
 
-Each shortcut's chord can be overridden under `sessions.hotkeys.<action>`, e.g. `assist config set sessions.hotkeys.focusTerminal Ctrl+Alt+J -g`; restart the web server and reload the page to apply it. `assist sessions web --help` lists every action with its default. A chord is modifiers plus one key joined by `+`, such as `Alt+S`, `Ctrl+Shift+K` or `Mod+/`: the modifiers are `Ctrl`, `Alt` (`Option`), `Shift`, `Meta` (`Cmd`) and `Mod` (Cmd on macOS, Ctrl elsewhere), at least one of them other than Shift, and the key is a letter, digit, punctuation, `F1`–`F12` or a named key such as `Enter` or `ArrowUp`. Keys match the physical key, so macOS Option chords work. `navTab` takes modifiers only (e.g. `Ctrl+Alt`); its digits stay 1–6. An override replaces all of an action's default chords, and `assist config set` rejects an invalid chord. Tab card-cycling is fixed.
+Each shortcut's chord can be overridden under `sessions.hotkeys.<action>`, e.g. `assist config set sessions.hotkeys.focusTerminal Ctrl+Alt+J --node`; restart the web server and reload the page to apply it. `assist sessions web --help` lists every action with its default. A chord is modifiers plus one key joined by `+`, such as `Alt+S`, `Ctrl+Shift+K` or `Mod+/`: the modifiers are `Ctrl`, `Alt` (`Option`), `Shift`, `Meta` (`Cmd`) and `Mod` (Cmd on macOS, Ctrl elsewhere), at least one of them other than Shift, and the key is a letter, digit, punctuation, `F1`–`F12` or a named key such as `Enter` or `ArrowUp`. Keys match the physical key, so macOS Option chords work. `navTab` takes modifiers only (e.g. `Ctrl+Alt`); its digits stay 1–6. An override replaces all of an action's default chords, and `assist config set` rejects an invalid chord. Tab card-cycling is fixed.
 
 Every live session card carries an **add-agent** button (👥) that starts a second agent inside that session's existing workspace rather than allocating a new one. While several agents share a workspace, only the last one to leave triggers teardown.
 
@@ -546,12 +546,12 @@ The **Next** tab (`/next`) recommends what to do next, in this order:
 **Start session** runs in the item's local clone: PRs open the review dialog, issues open the new-session dialog, and pickups are assigned to you and moved to In Progress first. Project pickups need the gh `project` scope. See `assist sessions web --help` for each key.
 
 ```bash
-assist config set next.peers alice,bob -g --repo
-assist config set next.repos my-org,other/web -g --repo
-assist config set next.projects my-org/3,my-org/5 -g --repo
-assist config set next.pickStatuses Ready,Todo -g --repo
-assist config set next.excludeLabels blocked,spike -g --repo
-assist config set next.excludeTypes Epic -g --repo
+assist config set next.peers alice,bob --repo
+assist config set next.repos my-org,other/web --repo
+assist config set next.projects my-org/3,my-org/5 --repo
+assist config set next.pickStatuses Ready,Todo --repo
+assist config set next.excludeLabels blocked,spike --repo
+assist config set next.excludeTypes Epic --repo
 ```
 
 ## Parallel work

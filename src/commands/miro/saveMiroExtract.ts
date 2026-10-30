@@ -36,9 +36,9 @@ export async function saveMiroExtract(
 		cwd: paths.cwd ?? process.cwd(),
 		globalConfigPath: paths.globalConfigPath ?? getGlobalConfigPath(),
 	};
-	if (options.repo !== undefined && !options.global)
+	if (options.repo !== undefined && options.node)
 		throw new MiroExtractError(
-			"--repo writes to the global config; add -g (e.g. -g --repo)",
+			"--repo writes repo (db) and --node writes user (node); pass one",
 		);
 	const key = `miro.extracts.${name}`;
 	if (options.repo !== undefined)
@@ -46,7 +46,7 @@ export async function saveMiroExtract(
 	const result = applyConfigSet(
 		key,
 		extract,
-		options.global ?? false,
+		options.node ?? false,
 		resolved.cwd,
 		resolved.globalConfigPath,
 	);

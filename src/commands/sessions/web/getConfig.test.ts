@@ -76,16 +76,16 @@ describe("getConfig", () => {
 		expect(entry.value).toEqual([{ name: "build", command: "pnpm build" }]);
 	});
 
-	it("reads news.feeds from the database as a global-only key", async () => {
+	it("reads news.feeds from the database as a user (db)-only key", async () => {
 		vi.stubEnv("ASSIST_DATABASE_URL", "postgresql://test");
 		mockListFeeds.mockResolvedValue(["https://a.test/feed"]);
 
 		const entry = entryFor(await get(repo), "news.feeds");
 
 		expect(entry.value).toEqual(["https://a.test/feed"]);
-		expect(entry.source).toBe("global");
-		expect(entry.layers).toEqual({ global: ["https://a.test/feed"] });
-		expect(entry.globalOnly).toBe(true);
-		expect(entry.globalConfigFile).toBe("the shared db (all nodes)");
+		expect(entry.source).toBe("user");
+		expect(entry.sources).toEqual(["user"]);
+		expect(entry.layers).toEqual({ user: ["https://a.test/feed"] });
+		expect(entry.writableScopes).toEqual(["user"]);
 	});
 });

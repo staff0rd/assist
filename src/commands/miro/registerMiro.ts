@@ -39,10 +39,13 @@ export function registerMiro(program: Command): void {
 			"--save <name>",
 			"Save the selection as this named extract without asking",
 		)
-		.option("-g, --global", "Save the extract to global ~/.assist.yml")
+		.option(
+			"--node",
+			"Save the extract to user (node), this node's ~/.assist.yml",
+		)
 		.option(
 			"-r, --repo [name]",
-			"Requires -g: save the extract to a repo's shared db override instead (defaults to the current repo)",
+			"Save the extract to repo (db), a repo's shared db override (defaults to the current repo)",
 		)
 		.action((name: string | undefined, options: MiroExtractOptions) =>
 			runExtract(name, options),

@@ -1,5 +1,6 @@
 import type { ConfigNode } from "../../shared/ConfigNode";
 import type { ConfigLeaf } from "../../shared/describeConfigLeaves";
+import type { ConfigWriteScope } from "./ConfigWriteScope";
 import type { ConfigEntryLayers } from "./configEntryLayers";
 import type { ConfigSource } from "./resolveConfigSources";
 
@@ -11,7 +12,7 @@ export type ConfigEntry = ConfigLeaf & {
 	repoKey?: string;
 	repoSource?: "db" | "yml";
 	globalConfigFile?: string;
-	globalOnly?: boolean;
+	writableScopes?: ConfigWriteScope[];
 	node?: ConfigNode;
 	note?: string;
 	setter?: string;

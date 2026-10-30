@@ -5,8 +5,8 @@ import type { ConfigEntryContext } from "./configEntryContext";
 import { configEntryLayers } from "./configEntryLayers";
 import { configEntryNode } from "./configEntryNode";
 import { configHelpForKey } from "./configHelpForKey";
+import { configWritableScopes } from "./configWritableScopes";
 import { getNestedValue } from "./getNestedValue";
-import { isGlobalOnlyConfigKey } from "./isGlobalOnlyConfigKey";
 import { resolveConfigSources } from "./resolveConfigSources";
 
 export function configEntryFor(
@@ -16,6 +16,7 @@ export function configEntryFor(
 	const sources = resolveConfigSources(leaf.key, layers);
 	const node = configEntryNode(schema, leaf.key);
 	const help = configHelpForKey(leaf.key);
+	const writableScopes = configWritableScopes(leaf.key);
 	return {
 		...leaf,
 		...(help ? { note: help.note, setter: help.setter } : {}),
@@ -29,7 +30,7 @@ export function configEntryFor(
 		...(layers.repoKey ? { repoKey: layers.repoKey } : {}),
 		...(layers.repoSource ? { repoSource: layers.repoSource } : {}),
 		globalConfigFile,
-		globalOnly: isGlobalOnlyConfigKey(leaf.key),
+		...(writableScopes ? { writableScopes } : {}),
 		node,
 	};
 }

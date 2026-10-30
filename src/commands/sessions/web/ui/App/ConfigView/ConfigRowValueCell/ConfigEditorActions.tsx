@@ -11,7 +11,6 @@ import type { ConfigScope } from "./saveConfigValue";
 type Props = {
 	entry: ConfigEntry;
 	scope: ConfigScope;
-	scopeLocked: boolean;
 	saving: boolean;
 	canClear?: boolean;
 	note?: string;
@@ -24,7 +23,6 @@ type Props = {
 export function ConfigEditorActions({
 	entry,
 	scope,
-	scopeLocked,
 	saving,
 	canClear,
 	note,
@@ -43,7 +41,7 @@ export function ConfigEditorActions({
 				<ConfigScopeToggle
 					scope={scope}
 					disabled={saving}
-					lockedToGlobal={scopeLocked}
+					writableScopes={entry.writableScopes}
 					scopesWithValue={configScopesWithValue(entry)}
 					repoKey={entry.repoKey}
 					globalConfigFile={entry.globalConfigFile}

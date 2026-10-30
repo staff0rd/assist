@@ -506,7 +506,7 @@ describe("setConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("global-only");
+		expect(payload.error).toContain("is a user (node)-only key");
 		expect(readFileSync(paths.repoConfig, "utf8")).toBe(
 			"commit:\n  push: false\n",
 		);
@@ -639,21 +639,22 @@ describe("setConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("global-only");
+		expect(payload.error).toContain("is a user (node)-only key");
 		expect(await listRepoConfigs(orm)).toEqual({});
 	});
 
 	it("replaces news.feeds in the database, not the global yml", async () => {
 		await replaceFeeds(orm, ["https://old.test/feed"]);
 
-		const [status] = await post({
+		const [status, payload] = await post({
 			key: "news.feeds",
 			value: ["https://a.test/feed", "https://b.test/feed"],
 			cwd: paths.repo,
-			scope: "global",
+			scope: "user",
 		});
 
 		expect(status).toBe(200);
+		expect(payload.target).toBe("user (db)");
 		expect(await listFeeds(orm)).toEqual([
 			"https://a.test/feed",
 			"https://b.test/feed",
@@ -661,15 +662,18 @@ describe("setConfig", () => {
 		expect(readYaml(paths.globalConfig)).toEqual({ commit: { pull: false } });
 	});
 
-	it("rejects news.feeds outside the global scope", async () => {
-		const [status] = await post({
-			key: "news.feeds",
-			value: ["https://a.test/feed"],
-			cwd: paths.repo,
-			scope: "project",
-		});
+	it.each(["project", "global"])(
+		"rejects news.feeds in the %s scope",
+		async (scope) => {
+			const [status] = await post({
+				key: "news.feeds",
+				value: ["https://a.test/feed"],
+				cwd: paths.repo,
+				scope,
+			});
 
-		expect(status).toBe(400);
-		expect(await listFeeds(orm)).toEqual([]);
-	});
+			expect(status).toBe(400);
+			expect(await listFeeds(orm)).toEqual([]);
+		},
+	);
 });

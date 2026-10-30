@@ -53,7 +53,7 @@ describe("configUnset", () => {
 		mockGetCurrentOrigin.mockReturnValue("github.com/org/assist");
 	});
 
-	describe("without --global", () => {
+	describe("without --node", () => {
 		it("should remove the key from the project config", () => {
 			mockLoadProjectConfig.mockReturnValue({
 				commit: { push: true, pull: true },
@@ -89,14 +89,14 @@ describe("configUnset", () => {
 		});
 	});
 
-	describe("with --global", () => {
+	describe("with --node", () => {
 		it("should remove the key from the global config", () => {
 			mockLoadGlobalConfigRaw.mockReturnValue({
 				sync: { autoConfirm: true },
 				commit: { push: true },
 			});
 
-			configUnset("sync.autoConfirm", { global: true });
+			configUnset("sync.autoConfirm", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				commit: { push: true },
@@ -113,7 +113,7 @@ describe("configUnset", () => {
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
 
-			configUnset("sync.autoConfirm", { global: true });
+			configUnset("sync.autoConfirm", { node: true });
 
 			expect(mockExit).not.toHaveBeenCalled();
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
@@ -123,11 +123,11 @@ describe("configUnset", () => {
 		});
 	});
 
-	describe("with -g --repo", () => {
+	describe("with --repo", () => {
 		it("should remove only the key from the current repo's row", async () => {
 			await seedRepos({ assist: { commit: { push: true, pull: true } } });
 
-			await configUnset("commit.push", { repo: true, global: true });
+			await configUnset("commit.push", { repo: true });
 
 			expect(await sharedRepos()).toEqual({
 				assist: { commit: { pull: true } },
@@ -142,7 +142,7 @@ describe("configUnset", () => {
 				other: { commit: { push: false } },
 			});
 
-			await configUnset("commit.push", { repo: true, global: true });
+			await configUnset("commit.push", { repo: true });
 
 			expect(await sharedRepos()).toEqual({
 				other: { commit: { push: false } },
@@ -152,7 +152,7 @@ describe("configUnset", () => {
 		it("should refresh the local cache so the key stops resolving", async () => {
 			await seedRepos({ assist: { worktree: { enabled: true } } });
 
-			await configUnset("worktree.enabled", { repo: true, global: true });
+			await configUnset("worktree.enabled", { repo: true });
 
 			expect(readRepoConfigCache()).toEqual({});
 		});
@@ -163,7 +163,7 @@ describe("configUnset", () => {
 				other: { commit: { push: false, pull: true } },
 			});
 
-			await configUnset("commit.push", { repo: "other", global: true });
+			await configUnset("commit.push", { repo: "other" });
 
 			expect(await sharedRepos()).toEqual({
 				assist: { commit: { push: true } },
@@ -174,7 +174,7 @@ describe("configUnset", () => {
 		it("should accept the key as the --repo argument", async () => {
 			await seedRepos({ assist: { commit: { push: true, pull: true } } });
 
-			await configUnset(undefined, { repo: "commit.push", global: true });
+			await configUnset(undefined, { repo: "commit.push" });
 
 			expect(await sharedRepos()).toEqual({
 				assist: { commit: { pull: true } },
@@ -185,25 +185,25 @@ describe("configUnset", () => {
 			await seedRepos({ assist: { commit: { push: true } } });
 			const log = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
-			await configUnset("worktree.enabled", { repo: true, global: true });
+			await configUnset("worktree.enabled", { repo: true });
 
 			expect(await sharedRepos()).toEqual({
 				assist: { commit: { push: true } },
 			});
-			expect(log.mock.calls[0][0]).toContain("not set in repos.assist");
+			expect(log.mock.calls[0][0]).toContain("not set in repo (db): assist");
 			log.mockRestore();
 		});
 
-		it("should reject --repo without --global", async () => {
+		it("should reject --repo combined with --node", async () => {
 			await seedRepos({ assist: { commit: { push: true } } });
 			const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 				throw new Error("exit");
 			});
 			vi.spyOn(console, "error").mockImplementation(() => undefined);
 
-			await expect(configUnset("commit.push", { repo: true })).rejects.toThrow(
-				"exit",
-			);
+			await expect(
+				configUnset("commit.push", { repo: true, node: true }),
+			).rejects.toThrow("exit");
 
 			expect(mockExit).toHaveBeenCalledWith(1);
 			expect(await sharedRepos()).toEqual({
@@ -219,7 +219,7 @@ describe("configUnset", () => {
 			vi.spyOn(console, "error").mockImplementation(() => undefined);
 
 			await expect(
-				configUnset("sync.autoConfirm", { repo: true, global: true }),
+				configUnset("sync.autoConfirm", { repo: true }),
 			).rejects.toThrow("exit");
 
 			expect(mockExit).toHaveBeenCalledWith(1);
@@ -228,7 +228,7 @@ describe("configUnset", () => {
 	});
 
 	describe("global-only keys", () => {
-		it("should reject sync.autoConfirm without --global", () => {
+		it("should reject sync.autoConfirm without --node", () => {
 			const mockExit = vi
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
@@ -277,7 +277,7 @@ describe("configUnset", () => {
 
 			configUnset("worktree.enabled");
 
-			expect(log.mock.calls[0][0]).toContain("not set in the project config");
+			expect(log.mock.calls[0][0]).toContain("not set in repo (git)");
 			log.mockRestore();
 		});
 	});

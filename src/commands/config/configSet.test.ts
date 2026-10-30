@@ -57,7 +57,7 @@ describe("configSet", () => {
 		mockGetCurrentOrigin.mockReturnValue("github.com/org/assist");
 	});
 
-	describe("without --global", () => {
+	describe("without --node", () => {
 		it("should write to project config", () => {
 			configSet("commit.push", "true");
 
@@ -79,9 +79,9 @@ describe("configSet", () => {
 		});
 	});
 
-	describe("with --global", () => {
+	describe("with --node", () => {
 		it("should write to global config", () => {
-			configSet("sync.autoConfirm", "true", { global: true });
+			configSet("sync.autoConfirm", "true", { node: true });
 
 			expect(mockLoadGlobalConfigRaw).toHaveBeenCalled();
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
@@ -95,7 +95,7 @@ describe("configSet", () => {
 				commit: { conventional: true },
 			});
 
-			configSet("sync.autoConfirm", "true", { global: true });
+			configSet("sync.autoConfirm", "true", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				commit: { conventional: true },
@@ -111,7 +111,7 @@ describe("configSet", () => {
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
 
-			configSet("sessions.maxLive", "21764", { global: true });
+			configSet("sessions.maxLive", "21764", { node: true });
 
 			expect(mockExit).not.toHaveBeenCalled();
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
@@ -123,7 +123,7 @@ describe("configSet", () => {
 	});
 
 	describe("global-only keys", () => {
-		it("should reject sync.autoConfirm without --global", () => {
+		it("should reject sync.autoConfirm without --node", () => {
 			const mockExit = vi
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
@@ -134,8 +134,8 @@ describe("configSet", () => {
 			mockExit.mockRestore();
 		});
 
-		it("should allow sync.autoConfirm with --global", () => {
-			configSet("sync.autoConfirm", "true", { global: true });
+		it("should allow sync.autoConfirm with --node", () => {
+			configSet("sync.autoConfirm", "true", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				sync: { autoConfirm: true },
@@ -143,9 +143,9 @@ describe("configSet", () => {
 		});
 	});
 
-	describe("with -g --repo", () => {
+	describe("with --repo", () => {
 		it("should write a new shared row keyed by the full origin", async () => {
-			await configSet("commit.push", "true", { repo: true, global: true });
+			await configSet("commit.push", "true", { repo: true });
 
 			expect(await sharedRepos()).toEqual({
 				[ORIGIN]: { commit: { push: true } },
@@ -157,7 +157,7 @@ describe("configSet", () => {
 		it("should stack into an existing matching row", async () => {
 			await seedRepos({ assist: { commit: { pull: true } } });
 
-			await configSet("commit.push", "true", { repo: true, global: true });
+			await configSet("commit.push", "true", { repo: true });
 
 			expect(await sharedRepos()).toEqual({
 				assist: { commit: { pull: true, push: true } },
@@ -167,7 +167,7 @@ describe("configSet", () => {
 		it("should reuse an existing org/repo key", async () => {
 			await seedRepos({ "org/assist": { commit: { pull: true } } });
 
-			await configSet("commit.push", "true", { repo: true, global: true });
+			await configSet("commit.push", "true", { repo: true });
 
 			expect(await sharedRepos()).toEqual({
 				"org/assist": { commit: { pull: true, push: true } },
@@ -179,7 +179,7 @@ describe("configSet", () => {
 				repos: { assist: { commit: { pull: true } } },
 			});
 
-			await configSet("commit.push", "true", { repo: true, global: true });
+			await configSet("commit.push", "true", { repo: true });
 
 			expect(mockSaveGlobalConfig).not.toHaveBeenCalled();
 			expect(await sharedRepos()).toEqual({
@@ -188,7 +188,7 @@ describe("configSet", () => {
 		});
 
 		it("should refresh the local cache after writing", async () => {
-			await configSet("worktree.enabled", "true", { repo: true, global: true });
+			await configSet("worktree.enabled", "true", { repo: true });
 
 			expect(readRepoConfigCache()).toEqual({
 				[ORIGIN]: { worktree: { enabled: true } },
@@ -200,19 +200,19 @@ describe("configSet", () => {
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
 
-			await configSet("bogus.key", "true", { repo: true, global: true });
+			await configSet("bogus.key", "true", { repo: true });
 
 			expect(mockExit).toHaveBeenCalledWith(1);
 			mockExit.mockRestore();
 		});
 
-		it("should reject --repo without --global", async () => {
+		it("should reject --repo combined with --node", async () => {
 			const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 				throw new Error("exit");
 			});
 
 			await expect(
-				configSet("worktree.enabled", "true", { repo: true }),
+				configSet("worktree.enabled", "true", { repo: true, node: true }),
 			).rejects.toThrow("exit");
 
 			expect(mockExit).toHaveBeenCalledWith(1);
@@ -221,13 +221,12 @@ describe("configSet", () => {
 		});
 	});
 
-	describe("with -g --repo <name>", () => {
+	describe("with --repo <name>", () => {
 		it("should write under a named repo's matching row", async () => {
 			await seedRepos({ "org/planner": { commit: { push: false } } });
 
 			await configSet("commit.push", "true", {
 				repo: "org/planner",
-				global: true,
 			});
 
 			expect(await sharedRepos()).toEqual({
@@ -240,7 +239,7 @@ describe("configSet", () => {
 			await seedRepos({ assist: { commit: { push: false } } });
 
 			await expect(
-				configSet("commit.push", "true", { repo: "planner", global: true }),
+				configSet("commit.push", "true", { repo: "planner" }),
 			).rejects.toThrow(UnknownRepoConfigError);
 		});
 
@@ -253,18 +252,14 @@ describe("configSet", () => {
 			await expect(
 				configSet("commit.push", "true", {
 					repo: "github.com/org/planner",
-					global: true,
 				}),
 			).rejects.toThrow(AmbiguousRepoConfigError);
 		});
 	});
 
-	describe("-g --repo optional-value greediness", () => {
-		it("should treat a captured key as bare -g --repo targeting the cwd origin", async () => {
-			await configSet("true", undefined, {
-				repo: "commit.push",
-				global: true,
-			});
+	describe("--repo optional-value greediness", () => {
+		it("should treat a captured key as bare --repo targeting the cwd origin", async () => {
+			await configSet("true", undefined, { repo: "commit.push" });
 
 			expect(mockGetCurrentOrigin).toHaveBeenCalled();
 			expect(await sharedRepos()).toEqual({
@@ -276,7 +271,7 @@ describe("configSet", () => {
 	describe("typed values", () => {
 		it("should write an array-of-scalars key from comma-separated input", () => {
 			configSet("worktree.copy", ".env,.claude/settings.local.json", {
-				global: true,
+				node: true,
 			});
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
@@ -285,18 +280,15 @@ describe("configSet", () => {
 		});
 
 		it("should trim whitespace around list items", () => {
-			configSet("complexity.ignore", "a.ts, b.ts", { global: true });
+			configSet("complexity.ignore", "a.ts, b.ts", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				complexity: { ignore: ["a.ts", "b.ts"] },
 			});
 		});
 
-		it("should write an array key under -g --repo", async () => {
-			await configSet("worktree.copy", ".env,.env.local", {
-				global: true,
-				repo: true,
-			});
+		it("should write an array key under --repo", async () => {
+			await configSet("worktree.copy", ".env,.env.local", { repo: true });
 
 			expect(await sharedRepos()).toEqual({
 				[ORIGIN]: { worktree: { copy: [".env", ".env.local"] } },
@@ -304,7 +296,7 @@ describe("configSet", () => {
 		});
 
 		it("should write a number key as a number", () => {
-			configSet("sessions.maxLive", "51764", { global: true });
+			configSet("sessions.maxLive", "51764", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				sessions: { maxLive: 51764 },
@@ -316,7 +308,7 @@ describe("configSet", () => {
 				run: [{ name: "dev", command: "npm" }],
 			});
 
-			configSet("run.0.port", "5173", { global: true });
+			configSet("run.0.port", "5173", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				run: [{ name: "dev", command: "npm", port: 5173 }],
@@ -324,7 +316,7 @@ describe("configSet", () => {
 		});
 
 		it("should keep string keys as strings", () => {
-			configSet("branch.prefix", "sw", { global: true });
+			configSet("branch.prefix", "sw", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				branch: { prefix: "sw" },
@@ -339,7 +331,7 @@ describe("configSet", () => {
 		])(
 			"should write worktree.install %s as its matching type",
 			(raw, value) => {
-				configSet("worktree.install", raw, { global: true });
+				configSet("worktree.install", raw, { node: true });
 
 				expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 					worktree: { install: value },
@@ -348,7 +340,7 @@ describe("configSet", () => {
 		);
 
 		it("should keep enum keys as strings", () => {
-			configSet("sessions.linkVersionCheck", "warn", { global: true });
+			configSet("sessions.linkVersionCheck", "warn", { node: true });
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
 				sessions: { linkVersionCheck: "warn" },
@@ -361,7 +353,7 @@ describe("configSet", () => {
 			}) as never);
 
 			await expect(
-				configSet("sessions.maxLive", "abc", { global: true }),
+				configSet("sessions.maxLive", "abc", { node: true }),
 			).rejects.toThrow("exit");
 
 			expect(mockExit).toHaveBeenCalledWith(1);
@@ -377,7 +369,7 @@ describe("configSet", () => {
 				.mockImplementation(() => undefined);
 
 			configSet("database.url", "postgres://user:hunter2@host/db", {
-				global: true,
+				node: true,
 			});
 
 			const printed = mockLog.mock.calls.flat().join("\n");
@@ -397,7 +389,7 @@ describe("configSet", () => {
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
 
-			configSet("sql.connections[0].password", "hunter2", { global: true });
+			configSet("sql.connections[0].password", "hunter2", { node: true });
 
 			expect(mockExit).toHaveBeenCalledWith(1);
 			expect(mockError.mock.calls.flat().join("\n")).not.toContain("hunter2");
@@ -421,7 +413,7 @@ describe("configSet", () => {
 
 		it("should write a valid hotkey chord", () => {
 			configSet("sessions.hotkeys.focusTerminal", "Ctrl+Alt+J", {
-				global: true,
+				node: true,
 			});
 
 			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
@@ -442,7 +434,7 @@ describe("configSet", () => {
 				throw new Error("exit");
 			});
 
-			await expect(configSet(key, value, { global: true })).rejects.toThrow(
+			await expect(configSet(key, value, { node: true })).rejects.toThrow(
 				"exit",
 			);
 

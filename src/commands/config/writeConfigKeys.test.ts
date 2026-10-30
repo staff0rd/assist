@@ -50,7 +50,10 @@ describe("writeConfigKeys", () => {
 			"project",
 		);
 
-		expect(result).toEqual({ ok: true, target: "project assist.yml" });
+		expect(result).toEqual({
+			ok: true,
+			target: "repo (git), this repo's assist.yml",
+		});
 		expect(mockSaveConfig).toHaveBeenCalledTimes(1);
 		expect(mockSaveConfig).toHaveBeenCalledWith(
 			{
@@ -92,7 +95,7 @@ describe("writeConfigKeys", () => {
 
 		expect(result).toEqual({
 			ok: true,
-			target: "the shared db, repo: assist",
+			target: "repo (db), the shared db, repo: assist",
 		});
 		const expected = {
 			assist: {
@@ -139,7 +142,7 @@ describe("writeConfigKeys", () => {
 		expect(result).toEqual({
 			ok: false,
 			errors: [
-				`"sync.autoConfirm" is a global-only key. Set it with 'assist config set sync.autoConfirm <value> -g'`,
+				`"sync.autoConfirm" is a user (node)-only key. Set it with 'assist config set sync.autoConfirm <value> --node'`,
 			],
 		});
 		expect(mockSaveConfig).not.toHaveBeenCalled();

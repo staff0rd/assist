@@ -110,6 +110,6 @@ describe("configureConfigKeys", () => {
 
 		expect(mockPromptConfigScope).toHaveBeenCalled();
 		expect(result.scope).toBe("project");
-		expect(result.target).toBe("project assist.yml");
+		expect(result.target).toBe("repo (git), this repo's assist.yml");
 	});
 });

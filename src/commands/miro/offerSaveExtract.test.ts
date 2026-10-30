@@ -68,9 +68,9 @@ describe("offerSaveExtract", () => {
 			confirm.mockResolvedValue(true);
 			input.mockResolvedValue(" roadmap ");
 
-			await offerSaveExtract(epics, { global: true });
+			await offerSaveExtract(epics, { node: true });
 
-			expect(save).toHaveBeenCalledWith("roadmap", epics, { global: true }, {});
+			expect(save).toHaveBeenCalledWith("roadmap", epics, { node: true }, {});
 		});
 	});
 

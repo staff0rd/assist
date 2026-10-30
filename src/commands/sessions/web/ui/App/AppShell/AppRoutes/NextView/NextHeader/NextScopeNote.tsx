@@ -21,7 +21,7 @@ export function NextScopeNote({
 			label="Peers"
 			value={scope.peers.length > 0 ? scope.peers.join(", ") : null}
 			unset="none — only PRs requesting your review appear"
-			setter="assist config set next.peers alice,bob -g --repo"
+			setter="assist config set next.peers alice,bob --repo"
 			showSetter={scope.peers.length === 0}
 		/>,
 		<NextScopeLine
@@ -29,7 +29,7 @@ export function NextScopeNote({
 			label="Repos"
 			value={repoValue(scope.repos, scope.selfRepo)}
 			unset="none"
-			setter="assist config set next.repos my-org,other/web -g --repo"
+			setter="assist config set next.repos my-org,other/web --repo"
 			showSetter={!scope.repos}
 		/>,
 		<NextScopeLine
@@ -37,7 +37,7 @@ export function NextScopeNote({
 			label="Projects"
 			value={projectsValue(scope, boards)}
 			unset="none — no project items are suggested"
-			setter="assist config set next.projects my-org/3,my-org/5 -g --repo"
+			setter="assist config set next.projects my-org/3,my-org/5 --repo"
 			showSetter={scope.projects.length === 0}
 		/>,
 	];

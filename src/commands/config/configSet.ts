@@ -5,20 +5,14 @@ import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { resolveRepoTarget } from "./resolveRepoTarget";
 import { setDbBackedConfigKey } from "./setDbBackedConfigKey";
 import { setFileConfigKey } from "./setFileConfigKey";
-import { scopeOptionsError } from "./scopeOptionsError";
-
-type ConfigSetOptions = {
-	global?: boolean;
-	repo?: boolean | string;
-	user?: boolean;
-};
+import { type ScopeOptions, scopeOptionsError } from "./scopeOptionsError";
 
 export async function configSet(
 	key: string,
 	value: string | undefined,
-	options: ConfigSetOptions = {},
+	options: ScopeOptions = {},
 ): Promise<void> {
-	const scopeError = scopeOptionsError(options, "writes to");
+	const scopeError = scopeOptionsError(options);
 	if (scopeError) exitWithConfigErrors([scopeError]);
 
 	const resolved = resolveRepoTarget(key, value, options.repo);
@@ -34,7 +28,7 @@ export async function configSet(
 	await setFileConfigKey(
 		{
 			...resolved,
-			global: options.global ?? false,
+			node: options.node ?? false,
 			user: options.user ?? false,
 		},
 		coercion.value,

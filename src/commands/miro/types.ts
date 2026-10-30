@@ -42,7 +42,7 @@ export type MiroExtractOptions = {
 	board?: string;
 	frame?: string;
 	save?: string;
-	global?: boolean;
+	node?: boolean;
 	repo?: boolean | string;
 };
 

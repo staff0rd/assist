@@ -21,11 +21,12 @@ export async function promptConfigScope(): Promise<ConfigKeyScope> {
 				{
 					name: "repo",
 					message:
-						"this repo's override in the shared db — personal, seen by every node, as 'config set -g --repo' writes it",
+						"repo (db): this repo's override in the shared db — personal, seen by every node, as 'config set --repo' writes it",
 				},
 				{
 					name: "project",
-					message: "assist.yml in this repo — checked in, shared with the team",
+					message:
+						"repo (git): assist.yml in this repo — checked in, shared with the team",
 				},
 			],
 		}).run(),

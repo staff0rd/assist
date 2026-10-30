@@ -373,9 +373,7 @@ describe("NextView scope note", () => {
 			screen.getByText(/Repos: o\/r \(this repo, by default\)/),
 		).toBeTruthy();
 		expect(
-			screen.getByText(
-				"assist config set next.repos my-org,other/web -g --repo",
-			),
+			screen.getByText("assist config set next.repos my-org,other/web --repo"),
 		).toBeTruthy();
 		expect(
 			screen.getByRole("link", { name: "Next settings" }).getAttribute("href"),
@@ -489,7 +487,7 @@ describe("NextView pickups", () => {
 		renderView({});
 		expect(
 			await screen.findByText(
-				"assist config set next.projects my-org/3,my-org/5 -g --repo",
+				"assist config set next.projects my-org/3,my-org/5 --repo",
 			),
 		).toBeTruthy();
 	});

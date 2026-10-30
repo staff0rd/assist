@@ -16,4 +16,4 @@ See [Miro](../miro/) for extracting from a board with `/miro`, which also fetche
   - `--top-left <id>` and `--bottom-right <id>` name the corner boxes by widget id or by a **Copy link to object** link.
   - `--ignore <file>` leaves out the box texts listed in a YAML file.
   - `--out <file>` writes the list to a file, headed by where it came from, with `--board <id>` and `--frame <id>` to name them when the items don't.
-  - `--save <name>` saves the selection to `miro.extracts` under that name. It goes in the repo's `assist.yml`; `-g` saves it to `~/.assist.yml` instead, and `-g -r [repo]` to a repo's entry in the database.
+  - `--save <name>` saves the selection to `miro.extracts` under that name. It goes in the repo's `assist.yml`; `--node` saves it to `~/.assist.yml` instead, and `-r [repo]` to a repo's entry in the database.

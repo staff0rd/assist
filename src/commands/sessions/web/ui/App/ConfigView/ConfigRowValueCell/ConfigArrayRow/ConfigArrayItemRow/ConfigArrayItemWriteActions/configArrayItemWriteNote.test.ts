@@ -33,7 +33,19 @@ describe("configArrayItemWriteNote", () => {
 				targetScope: "global",
 			}),
 		).toBe(
-			"Both this repo's assist.yml and ~/.assist.yml will define this entry — Project wins.",
+			"Both this repo's assist.yml and ~/.assist.yml (this node only) will define this entry — repo (git) wins.",
+		);
+	});
+
+	it("ranks the user db below every other scope", () => {
+		expect(
+			configArrayItemWriteNote({
+				...base,
+				ownerScope: "user",
+				targetScope: "global",
+			}),
+		).toBe(
+			"Both the shared db (every repo, all nodes) and ~/.assist.yml (this node only) will define this entry — user (node) wins.",
 		);
 	});
 
@@ -47,7 +59,7 @@ describe("configArrayItemWriteNote", () => {
 				targetScope: "project",
 			}),
 		).toBe(
-			"sql.connections is not merged across scopes — saving here replaces the entries in ~/.assist.yml.",
+			"sql.connections is not merged across scopes — saving here replaces the entries in ~/.assist.yml (this node only).",
 		);
 	});
 

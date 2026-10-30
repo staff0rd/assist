@@ -1,11 +1,8 @@
 import chalk from "chalk";
 import { loadDenyConfig } from "./loadDenyConfig";
 
-export function denyRemove(
-	pattern: string,
-	options: { global?: boolean },
-): void {
-	const { deny, saveDeny } = loadDenyConfig(options.global);
+export function denyRemove(pattern: string, options: { node?: boolean }): void {
+	const { deny, saveDeny } = loadDenyConfig(options.node);
 
 	const index = deny.findIndex((r) => r.pattern === pattern);
 	if (index === -1) {

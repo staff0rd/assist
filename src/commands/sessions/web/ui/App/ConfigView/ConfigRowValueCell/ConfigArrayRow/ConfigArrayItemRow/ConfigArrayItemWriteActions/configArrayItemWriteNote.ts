@@ -1,6 +1,7 @@
 import { configArrayMergeStrategy } from "../../../../../../../../../config/configArrayMergeStrategy";
+import { CONFIG_SCOPES_BY_PRECEDENCE } from "../../../../../../../../../config/ConfigWriteScope";
+import { configScopeNames } from "../../../../../../../../../config/configScopeNames";
 import { configScopeFiles } from "../../../configScopeFiles";
-import { configScopeLabels } from "../../../configScopeLabels";
 import type { ConfigScope } from "../../../saveConfigValue";
 
 type Options = {
@@ -12,16 +13,10 @@ type Options = {
 	globalConfigFile?: string;
 };
 
-const LOWEST_TO_HIGHEST_PRECEDENCE: ConfigScope[] = [
-	"global",
-	"repo",
-	"project",
-];
-
 function winner(a: ConfigScope, b: ConfigScope): ConfigScope {
 	const rank = (scope: ConfigScope) =>
-		LOWEST_TO_HIGHEST_PRECEDENCE.indexOf(scope);
-	return rank(a) > rank(b) ? a : b;
+		CONFIG_SCOPES_BY_PRECEDENCE.indexOf(scope);
+	return rank(a) < rank(b) ? a : b;
 }
 
 function replaceNote(
@@ -53,5 +48,5 @@ export function configArrayItemWriteNote({
 
 	if (ownerScope === undefined || ownerScope === targetScope) return undefined;
 
-	return `Both ${files[ownerScope]} and ${files[targetScope]} will define this entry — ${configScopeLabels[winner(targetScope, ownerScope)]} wins.`;
+	return `Both ${files[ownerScope]} and ${files[targetScope]} will define this entry — ${configScopeNames[winner(targetScope, ownerScope)]} wins.`;
 }

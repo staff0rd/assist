@@ -171,8 +171,8 @@ Documented, not fixed.
 | `worktree.copy`    | `.env`, `settings.local.json`, `.claude/settings.local.json` | gitignored files copied into a new worktree                                                                                                                                        |
 
 Set per repo without committing anything to it:
-`assist config set worktree.enabled true -g --repo`, which writes a `repos:`
-entry in `~/.assist.yml` keyed by origin (`resolveRepoOverride.ts`).
+`assist config set worktree.enabled true --repo`, which writes a repo (db)
+override in the shared db keyed by origin (`resolveRepoOverride.ts`).
 
 ## Not yet covered
 

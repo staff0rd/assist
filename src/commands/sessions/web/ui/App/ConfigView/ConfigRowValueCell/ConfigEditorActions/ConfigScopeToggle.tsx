@@ -1,16 +1,15 @@
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { configScopeLabels } from "../configScopeLabels";
+import { CONFIG_SCOPES_BY_PRECEDENCE } from "../../../../../../../config/ConfigWriteScope";
+import { configScopeNames } from "../../../../../../../config/configScopeNames";
 import { configScopeToggleTitle } from "./ConfigScopeToggle/configScopeToggleTitle";
 import type { ConfigScope } from "../saveConfigValue";
 import { ScopeDot } from "./ConfigScopeToggle/ScopeDot";
 
-const SCOPES: ConfigScope[] = ["project", "repo", "global"];
-
 type Props = {
 	scope: ConfigScope;
 	disabled: boolean;
-	lockedToGlobal: boolean;
+	writableScopes?: ConfigScope[];
 	scopesWithValue: ConfigScope[];
 	repoKey?: string;
 	globalConfigFile?: string;
@@ -20,7 +19,7 @@ type Props = {
 export function ConfigScopeToggle({
 	scope,
 	disabled,
-	lockedToGlobal,
+	writableScopes,
 	scopesWithValue,
 	repoKey,
 	globalConfigFile,
@@ -36,22 +35,24 @@ export function ConfigScopeToggle({
 				if (next) onChange(next);
 			}}
 		>
-			{SCOPES.map((candidate) => (
+			{CONFIG_SCOPES_BY_PRECEDENCE.map((candidate) => (
 				<ToggleButton
 					key={candidate}
 					value={candidate}
-					disabled={lockedToGlobal && candidate !== "global"}
+					disabled={
+						writableScopes !== undefined && !writableScopes.includes(candidate)
+					}
 					title={configScopeToggleTitle({
 						scope: candidate,
 						scopesWithValue,
 						repoKey,
 						globalConfigFile,
-						lockedToGlobal,
+						writableScopes,
 						selected: candidate === scope,
 					})}
 				>
 					<ScopeDot scope={candidate} scopesWithValue={scopesWithValue} />
-					{configScopeLabels[candidate]}
+					{configScopeNames[candidate]}
 				</ToggleButton>
 			))}
 		</ToggleButtonGroup>

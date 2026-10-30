@@ -38,7 +38,10 @@ export async function parseConfigWriteRequest(
 	if (typeof cwd !== "string" || cwd === "")
 		return { ok: false, error: "Missing cwd" };
 	if (!isConfigWriteScope(scope))
-		return { ok: false, error: 'scope must be "project", "global" or "repo"' };
+		return {
+			ok: false,
+			error: 'scope must be "project", "repo", "global" or "user"',
+		};
 
 	return { ok: true, key, value: body.value, cwd, scope };
 }

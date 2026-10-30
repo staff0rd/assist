@@ -10,5 +10,5 @@ export async function setDbBackedConfigKey(
 ): Promise<void> {
 	if (useRepo) exitWithConfigErrors([dbBackedRepoError(key)]);
 	await dbBackedConfigKeys[key].write(await getDb(), value);
-	console.log(chalk.green(`Set ${key} = ${JSON.stringify(value)} (database)`));
+	console.log(chalk.green(`Set ${key} = ${JSON.stringify(value)} (user (db))`));
 }

@@ -16,7 +16,7 @@ export const sessionLimits = {
 				`refusing to spawn: at ceiling of ${ceiling} live sessions (sessions.maxLive)`,
 			);
 			throw new Error(
-				`session ceiling of ${ceiling} reached — raise it with: assist config set sessions.maxLive <n> -g`,
+				`session ceiling of ${ceiling} reached — raise it with: assist config set sessions.maxLive <n> --node`,
 			);
 		}
 		return String(counter.next++);

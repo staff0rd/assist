@@ -87,17 +87,17 @@ describe("saveMiroExtract", () => {
 		});
 	});
 
-	describe("with --global", () => {
+	describe("with --node", () => {
 		it("should write the global config and report its path", async () => {
-			expect(await save({ global: true })).toBe(globalConfigPath);
+			expect(await save({ node: true })).toBe(globalConfigPath);
 			expect(read(globalConfigPath)).toEqual({ miro: { extracts: { epics } } });
 			expect(read(projectConfigPath())).toEqual({});
 		});
 	});
 
-	describe("with --global --repo", () => {
+	describe("with --repo", () => {
 		it("should write the current repo's shared db override", async () => {
-			const path = await save({ global: true, repo: true });
+			const path = await save({ repo: true });
 
 			expect(path).toBe("the shared db under repos.github.com/org/assist");
 			expect(await listRepoConfigs(orm)).toEqual({
@@ -108,13 +108,13 @@ describe("saveMiroExtract", () => {
 		});
 	});
 
-	describe("with --global --repo <name>", () => {
+	describe("with --repo <name>", () => {
 		it("should write under that repo's shared db key", async () => {
 			await seedRepoConfigs(orm, {
 				"github.com/org/other": { worktree: { enabled: true } },
 			});
 
-			const path = await save({ global: true, repo: "github.com/org/other" });
+			const path = await save({ repo: "github.com/org/other" });
 
 			expect(path).toBe("the shared db under repos.github.com/org/other");
 			expect(await listRepoConfigs(orm)).toEqual({
@@ -126,10 +126,10 @@ describe("saveMiroExtract", () => {
 		});
 	});
 
-	describe("with --repo but no --global", () => {
-		it("should refuse, naming the flag to add", async () => {
-			await expect(save({ repo: true })).rejects.toThrow(
-				/--repo writes to the global config; add -g/,
+	describe("with --repo and --node", () => {
+		it("should refuse, asking for one", async () => {
+			await expect(save({ repo: true, node: true })).rejects.toThrow(
+				/--repo writes repo \(db\) and --node writes user \(node\); pass one/,
 			);
 		});
 	});

@@ -26,7 +26,7 @@ export function deferredSession(
 
 function deferralNotice(persisted: PersistedSession, cap: number): string {
 	return [
-		`\r\n\x1b[33mNot resumed: restore was already at its cap of ${cap} session(s) (raise it with: assist config set sessions.maxLive <n> -g)\x1b[0m\r\n`,
+		`\r\n\x1b[33mNot resumed: restore was already at its cap of ${cap} session(s) (raise it with: assist config set sessions.maxLive <n> --node)\x1b[0m\r\n`,
 		`This card is the handle for it. Its command, working directory (${persisted.cwd})\r\n`,
 		"and transcript are intact — restart to put an agent back in it, or dismiss it.\r\n",
 	].join("");

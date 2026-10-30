@@ -30,7 +30,7 @@ export function applyConfigSet(
 		return {
 			ok: false,
 			errors: [
-				`"${key}" is a global-only key. Use --global to set it in ~/.assist.yml`,
+				`"${key}" is a user (node)-only key. Use --node to set it in ~/.assist.yml`,
 			],
 		};
 	}

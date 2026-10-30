@@ -9,7 +9,7 @@ export const nodesConfigHelp: ConfigHelpEntry[] = [
 	},
 	{
 		key: "sessions.linkVersionCheck",
-		setter: "assist config set sessions.linkVersionCheck block -g",
+		setter: "assist config set sessions.linkVersionCheck block --node",
 		note: "reaction when a linked node's protocol range doesn't overlap this node's (app versions may differ; never restarts a peer): block (default) holds the link version-blocked until the older node is updated, warn proceeds, off skips the check",
 	},
 ];

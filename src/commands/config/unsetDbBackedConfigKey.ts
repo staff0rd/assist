@@ -11,7 +11,7 @@ export async function unsetDbBackedConfigKey(
 	const removed = await dbBackedConfigKeys[key].unset(await getDb());
 	console.log(
 		removed
-			? chalk.green(`Unset ${key} (database)`)
-			: chalk.yellow(`${key} is not set in the database`),
+			? chalk.green(`Unset ${key} (user (db))`)
+			: chalk.yellow(`${key} is not set in user (db)`),
 	);
 }

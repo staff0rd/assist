@@ -1,6 +1,6 @@
 import type { ConfigEntry } from "../../../../../../../config/readConfigEntries";
+import { configScopeNames } from "../../../../../../../config/configScopeNames";
 import { configScopeFiles } from "../configScopeFiles";
-import { configScopeLabels } from "../configScopeLabels";
 import { configScopesWithValue } from "../configScopesWithValue";
 import type { ConfigScope } from "../saveConfigValue";
 
@@ -13,6 +13,6 @@ export function configClearTitle(
 		(source) => source !== scope,
 	);
 	return fallback
-		? `Remove ${entry.key} from ${where} — falls back to ${configScopeLabels[fallback]}`
+		? `Remove ${entry.key} from ${where} — falls back to ${configScopeNames[fallback]}`
 		: `Remove ${entry.key} from ${where} — reverts to the schema default`;
 }

@@ -1,19 +1,20 @@
 import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
+import { configScopeNames } from "../../../../../config/configScopeNames";
 import type { ConfigSource } from "../../../../../config/resolveConfigSources";
 
 const DESCRIPTIONS: Record<ConfigSource, string> = {
-	project: "Set in this repo's assist.yml",
-	repo: "Pinned by this repo's override in the shared db, seen by every node — a plain global value cannot change it",
-	global: "Set in ~/.assist.yml",
-	user: "Set in user (db), seen by every repo on every node",
-	default: "Not set in any file — using the schema default",
+	project: "Set in this repo's assist.yml (repo (git), every node)",
+	repo: "Pinned by this repo's override in the shared db, seen by every node — a user (node) or user (db) value cannot change it",
+	global: "Set in ~/.assist.yml (this node only)",
+	user: "Set in the shared db, seen by every repo on every node",
+	default: "Not set in any scope — using the schema default",
 };
 
 function repoDescription(repoKey: string, repoSource?: "db" | "yml"): string {
 	return repoSource === "yml"
 		? `Pinned by repos.${repoKey} in this node's ~/.assist.yml, which other nodes don't see — run 'assist config import-repos' to share it`
-		: `Pinned by repos.${repoKey} in the shared db, seen by every node — a plain global value cannot change it`;
+		: `Pinned by repos.${repoKey} in the shared db, seen by every node — a user (node) or user (db) value cannot change it`;
 }
 
 export function ConfigSourceChip({
@@ -31,7 +32,7 @@ export function ConfigSourceChip({
 		source === "repo" && repoKey
 			? repoDescription(repoKey, repoSource)
 			: source === "global" && globalConfigFile
-				? `Set in ${globalConfigFile}`
+				? `Set in ${globalConfigFile} (this node only)`
 				: DESCRIPTIONS[source];
 
 	return (
@@ -46,7 +47,7 @@ export function ConfigSourceChip({
 							? "warning"
 							: "primary"
 				}
-				label={source}
+				label={source === "default" ? "default" : configScopeNames[source]}
 			/>
 		</Tooltip>
 	);

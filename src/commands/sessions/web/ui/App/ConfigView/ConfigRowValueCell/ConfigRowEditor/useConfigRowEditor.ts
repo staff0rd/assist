@@ -26,7 +26,6 @@ function scopeForSignature(
 }
 
 export function useConfigRowEditor({ entry, cwd, onSaved, onError }: Options) {
-	const scopeLocked = entry.globalOnly === true;
 	const saved = effectiveConfigValue(entry);
 	const [value, setValue] = useState<unknown>(saved);
 	const [picked, setPicked] = useState<ScopePick | null>(null);
@@ -44,7 +43,6 @@ export function useConfigRowEditor({ entry, cwd, onSaved, onError }: Options) {
 		setValue,
 		scope,
 		setScope: (next: ConfigScope) => setPicked({ signature, scope: next }),
-		scopeLocked,
 		saving,
 		save: () => save(scope, value),
 		clear: () => clear(scope),

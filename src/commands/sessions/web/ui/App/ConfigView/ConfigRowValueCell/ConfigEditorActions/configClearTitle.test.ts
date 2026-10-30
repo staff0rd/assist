@@ -15,7 +15,7 @@ const entry = (sources: ConfigSource[]): ConfigEntry =>
 describe("configClearTitle", () => {
 	it("names the layer a clear falls back to", () => {
 		expect(configClearTitle(entry(["repo", "global"]), "repo")).toBe(
-			"Remove commit.push from repos.assist in the shared db (all nodes) — falls back to Global",
+			"Remove commit.push from repos.assist in the shared db (all nodes) — falls back to user (node)",
 		);
 	});
 
@@ -23,7 +23,7 @@ describe("configClearTitle", () => {
 		expect(
 			configClearTitle(entry(["project", "repo", "global"]), "project"),
 		).toBe(
-			"Remove commit.push from this repo's assist.yml — falls back to This repo",
+			"Remove commit.push from this repo's assist.yml — falls back to repo (db)",
 		);
 	});
 

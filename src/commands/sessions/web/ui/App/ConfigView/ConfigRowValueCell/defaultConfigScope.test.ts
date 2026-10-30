@@ -1,15 +1,19 @@
 import { describe, expect, it } from "vitest";
+import type { ConfigWriteScope } from "../../../../../../config/ConfigWriteScope";
 import type { ConfigEntry } from "../../../../../../config/readConfigEntries";
 import type { ConfigSource } from "../../../../../../config/resolveConfigSources";
 import { defaultConfigScope } from "./defaultConfigScope";
 
-const entry = (sources: ConfigSource[], globalOnly = false): ConfigEntry => ({
+const entry = (
+	sources: ConfigSource[],
+	writableScopes?: ConfigWriteScope[],
+): ConfigEntry => ({
 	key: "run",
 	type: "array",
 	value: undefined,
 	source: sources[0] ?? "default",
 	sources,
-	globalOnly,
+	writableScopes,
 });
 
 describe("defaultConfigScope", () => {
@@ -35,7 +39,14 @@ describe("defaultConfigScope", () => {
 	});
 
 	it("stays at global for a global-only key", () => {
-		expect(defaultConfigScope(entry([], true))).toBe("global");
-		expect(defaultConfigScope(entry(["global"], true))).toBe("global");
+		expect(defaultConfigScope(entry([], ["global"]))).toBe("global");
+		expect(defaultConfigScope(entry(["global"], ["global"]))).toBe("global");
+	});
+
+	it("skips a value held in a scope the key can't be written to", () => {
+		expect(
+			defaultConfigScope(entry(["user"], ["project", "repo", "global"])),
+		).toBe("project");
+		expect(defaultConfigScope(entry([], ["user"]))).toBe("user");
 	});
 });

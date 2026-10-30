@@ -25,7 +25,7 @@ export async function writeConfigKeys(
 			ok: false,
 			errors: globalOnly.map(
 				(write) =>
-					`"${write.key}" is a global-only key. Set it with 'assist config set ${write.key} <value> -g'`,
+					`"${write.key}" is a user (node)-only key. Set it with 'assist config set ${write.key} <value> --node'`,
 			),
 		};
 	}
@@ -33,7 +33,7 @@ export async function writeConfigKeys(
 	const applied = applyConfigWrites(loadProjectConfig(cwd), writes);
 	if (!applied.ok) return applied;
 	saveConfig(applied.updated, cwd);
-	return { ok: true, target: "project assist.yml" };
+	return { ok: true, target: "repo (git), this repo's assist.yml" };
 }
 
 async function writeRepoBlock(
@@ -45,5 +45,8 @@ async function writeRepoBlock(
 	const applied = applyConfigWrites(block, writes, repoConfigSchema);
 	if (!applied.ok) return applied;
 	await saveSharedRepoBlock(orm, label, applied.updated);
-	return { ok: true, target: `${SHARED_REPO_CONFIG_SOURCE}, repo: ${label}` };
+	return {
+		ok: true,
+		target: `repo (db), ${SHARED_REPO_CONFIG_SOURCE}, repo: ${label}`,
+	};
 }

@@ -47,7 +47,7 @@ The command is started without a shell, so `FOO=bar cmd`, `&&`, pipes and redire
 | `--param <spec>`   | Adds a positional parameter. See below. Repeatable                                                  |
 | `--filter <glob>`  | For a `verify:` command, only runs it when a changed file matches. See [Verify](../verify/)         |
 | `--quiet`          | Hides the output unless the command fails                                                           |
-| `--repo [name]`    | Stores it in **This repo** in the database instead of `assist.yml`. See [Config](../config/#scopes) |
+| `--repo [name]`    | Stores it in **repo (db)** in the database instead of `assist.yml`. See [Config](../config/#scopes) |
 
 Put options after `<command>`. To pass one of these flags to the command itself, quote the whole command: `assist run add build "pnpm --filter web build"`.
 

@@ -172,7 +172,7 @@ describe("unsetConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("global-only");
+		expect(payload.error).toContain("is a user (node)-only key");
 		expect(readFileSync(paths.repoConfig, "utf8")).toBe(
 			"sync:\n  autoConfirm: true\n",
 		);
@@ -303,7 +303,7 @@ describe("unsetConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("global-only");
+		expect(payload.error).toContain("is a user (node)-only key");
 		expect(await listRepoConfigs(orm)).toEqual({
 			repo: { commit: { push: true } },
 		});

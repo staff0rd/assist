@@ -1,5 +1,5 @@
+import { configScopeNames } from "../../../../../../../../config/configScopeNames";
 import { configScopeFiles } from "../../configScopeFiles";
-import { configScopeLabels } from "../../configScopeLabels";
 import type { ConfigScope } from "../../saveConfigValue";
 
 type Options = {
@@ -7,7 +7,7 @@ type Options = {
 	scopesWithValue: ConfigScope[];
 	repoKey: string | undefined;
 	globalConfigFile?: string;
-	lockedToGlobal: boolean;
+	writableScopes?: ConfigScope[];
 	selected: boolean;
 };
 
@@ -18,7 +18,15 @@ function savedValueState(
 	if (!scopesWithValue.includes(scope)) return "not currently set here";
 	const effective = scopesWithValue[0];
 	if (effective === scope) return "currently set here, in effect";
-	return `currently set here, overridden by ${configScopeLabels[effective]}`;
+	return `currently set here, overridden by ${configScopeNames[effective]}`;
+}
+
+function lockedTitle(writableScopes: ConfigScope[]): string {
+	if (!writableScopes.includes("user"))
+		return writableScopes.length === 1
+			? `Node-only key: only ${configScopeNames.global} can hold it`
+			: `Node-only key: it can't be stored in ${configScopeNames.user}`;
+	return `Only ${writableScopes.map((scope) => configScopeNames[scope]).join(", ")} can hold this key`;
 }
 
 export function configScopeToggleTitle({
@@ -26,10 +34,11 @@ export function configScopeToggleTitle({
 	scopesWithValue,
 	repoKey,
 	globalConfigFile,
-	lockedToGlobal,
+	writableScopes,
 	selected,
 }: Options): string {
-	if (lockedToGlobal && scope !== "global") return "Global-only key";
+	if (writableScopes && !writableScopes.includes(scope))
+		return lockedTitle(writableScopes);
 
 	const where = configScopeFiles(repoKey, globalConfigFile)[scope];
 	if (selected)
@@ -39,5 +48,5 @@ export function configScopeToggleTitle({
 
 	const effective = scopesWithValue[0];
 	if (effective === scope) return `Set in ${where} — in effect`;
-	return `Set in ${where} — overridden by ${configScopeLabels[effective]}`;
+	return `Set in ${where} — overridden by ${configScopeNames[effective]}`;
 }

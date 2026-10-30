@@ -334,7 +334,7 @@ describe("ConfigView", () => {
 		fireEvent.change(screen.getByLabelText("backup.dir"), {
 			target: { value: "~/elsewhere" },
 		});
-		fireEvent.click(screen.getByRole("button", { name: "Global" }));
+		fireEvent.click(screen.getByRole("button", { name: "user (node)" }));
 		fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
 		await waitFor(() =>
@@ -370,10 +370,10 @@ describe("ConfigView", () => {
 			screen.getByRole("button", { name: "Edit worktree.enabled" }),
 		);
 		expect(
-			screen.getByRole("button", { name: "This repo" }).getAttribute("title"),
+			screen.getByRole("button", { name: "repo (db)" }).getAttribute("title"),
 		).toBe("Not set in repos.assist in the shared db (all nodes)");
 
-		fireEvent.click(screen.getByRole("button", { name: "This repo" }));
+		fireEvent.click(screen.getByRole("button", { name: "repo (db)" }));
 		fireEvent.click(screen.getByLabelText("worktree.enabled value"));
 
 		expect(
@@ -413,14 +413,16 @@ describe("ConfigView", () => {
 		fireEvent.click(
 			screen.getByRole("button", { name: "Edit worktree.enabled" }),
 		);
-		fireEvent.click(screen.getByRole("button", { name: "This repo" }));
+		fireEvent.click(screen.getByRole("button", { name: "repo (db)" }));
 
 		expect(screen.getByTestId("config-write-target").textContent).toBe(
 			"This save writes to repos.nextgen in the shared db (all nodes). Dots mark where the saved value lives now.",
 		);
 		expect(
-			screen.getByRole("button", { name: "Global" }).getAttribute("title"),
-		).toBe("Not set in /mnt/c/Users/me/.assist.yml on the Windows host");
+			screen.getByRole("button", { name: "user (node)" }).getAttribute("title"),
+		).toBe(
+			"Not set in /mnt/c/Users/me/.assist.yml on the Windows host (this node only)",
+		);
 	});
 
 	it("saves back to the scope the effective value is already set at", async () => {
@@ -448,7 +450,7 @@ describe("ConfigView", () => {
 		);
 		expect(
 			screen
-				.getByRole("button", { name: "This repo" })
+				.getByRole("button", { name: "repo (db)" })
 				.getAttribute("aria-pressed"),
 		).toBe("true");
 
@@ -490,12 +492,12 @@ describe("ConfigView", () => {
 		});
 		expect(
 			screen
-				.getByRole("button", { name: "This repo" })
+				.getByRole("button", { name: "repo (db)" })
 				.getAttribute("aria-pressed"),
 		).toBe("true");
 		expect(
 			screen
-				.getByRole("button", { name: "Project" })
+				.getByRole("button", { name: "repo (git)" })
 				.getAttribute("aria-pressed"),
 		).toBe("false");
 		expect(screen.getByTestId("config-write-target").textContent).toBe(
@@ -545,7 +547,7 @@ describe("ConfigView", () => {
 
 		expect(
 			screen
-				.getByRole("button", { name: "This repo" })
+				.getByRole("button", { name: "repo (db)" })
 				.getAttribute("aria-pressed"),
 		).toBe("true");
 		expect(
@@ -564,7 +566,7 @@ describe("ConfigView", () => {
 					type: "boolean",
 					value: false,
 					source: "global",
-					globalOnly: true,
+					writableScopes: ["global"],
 					node: node("sync.autoConfirm"),
 				},
 			],
@@ -578,16 +580,21 @@ describe("ConfigView", () => {
 		fireEvent.click(
 			screen.getByRole("button", { name: "Edit sync.autoConfirm" }),
 		);
-		const project = screen.getByRole("button", { name: "Project" });
+		const project = screen.getByRole("button", { name: "repo (git)" });
 		expect(project.hasAttribute("disabled")).toBe(true);
 		expect(
 			screen
-				.getByRole("button", { name: "This repo" })
+				.getByRole("button", { name: "repo (db)" })
 				.hasAttribute("disabled"),
 		).toBe(true);
 		expect(
 			screen
-				.getByRole("button", { name: "Global" })
+				.getByRole("button", { name: "user (db)" })
+				.hasAttribute("disabled"),
+		).toBe(true);
+		expect(
+			screen
+				.getByRole("button", { name: "user (node)" })
 				.getAttribute("aria-pressed"),
 		).toBe("true");
 
@@ -990,7 +997,7 @@ describe("ConfigView", () => {
 		fireEvent.change(screen.getByLabelText("run[2].command"), {
 			target: { value: "./deploy" },
 		});
-		fireEvent.click(screen.getByRole("button", { name: "This repo" }));
+		fireEvent.click(screen.getByRole("button", { name: "repo (db)" }));
 		fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
 		await waitFor(() =>
@@ -1029,8 +1036,10 @@ describe("ConfigView", () => {
 
 		await waitFor(() => expect(screen.getByText("run")).toBeTruthy());
 		const rows = screen.getAllByTestId("config-array-item");
-		expect(within(rows[0] as HTMLElement).getByText("global")).toBeTruthy();
-		expect(within(rows[1] as HTMLElement).getByText("project")).toBeTruthy();
+		expect(
+			within(rows[0] as HTMLElement).getByText("user (node)"),
+		).toBeTruthy();
+		expect(within(rows[1] as HTMLElement).getByText("repo (git)")).toBeTruthy();
 		expect(screen.queryByRole("button", { name: "Save" })).toBeNull();
 
 		fireEvent.click(screen.getByRole("button", { name: "Edit run[0]" }));
@@ -1038,11 +1047,11 @@ describe("ConfigView", () => {
 		expect(screen.getByRole("button", { name: "Save" })).toBeTruthy();
 		expect(
 			screen
-				.getByRole("button", { name: "Global" })
+				.getByRole("button", { name: "user (node)" })
 				.getAttribute("aria-pressed"),
 		).toBe("true");
 		expect(screen.getByTestId("config-write-target").textContent).toBe(
-			"This save writes to ~/.assist.yml. Dots mark where the saved value lives now.",
+			"This save writes to ~/.assist.yml (this node only). Dots mark where the saved value lives now.",
 		);
 	});
 
@@ -1119,7 +1128,7 @@ describe("ConfigView", () => {
 		);
 		await waitFor(() => expect(screen.getByText("default")).toBeTruthy());
 		expect(screen.getByText("true")).toBeTruthy();
-		expect(screen.queryByText("project")).toBeNull();
+		expect(screen.queryByText("repo (git)")).toBeNull();
 	});
 
 	it("does not clear a key when the confirmation is cancelled", async () => {
@@ -1160,7 +1169,7 @@ describe("ConfigView", () => {
 					type: "boolean",
 					value: true,
 					source: "global",
-					globalOnly: true,
+					writableScopes: ["global"],
 					node: node("sync.autoConfirm"),
 				},
 			],
@@ -1235,7 +1244,7 @@ describe("ConfigView", () => {
 			fetchMock.mock.calls.some(([url]) => String(url) === "/api/config/set"),
 		).toBe(false);
 		await waitFor(() => expect(screen.getByText("default")).toBeTruthy());
-		expect(screen.queryByText("project")).toBeNull();
+		expect(screen.queryByText("repo (git)")).toBeNull();
 	});
 
 	it("offers no clear control for a row already using the schema default", async () => {
@@ -1322,19 +1331,21 @@ describe("ConfigView", () => {
 			screen.getByTestId("scope-dot-global").getAttribute("data-state"),
 		).toBe("overridden");
 		expect(
-			screen.getByRole("button", { name: "Global" }).getAttribute("title"),
-		).toBe("Set in ~/.assist.yml — overridden by Project");
+			screen.getByRole("button", { name: "user (node)" }).getAttribute("title"),
+		).toBe("Set in ~/.assist.yml (this node only) — overridden by repo (git)");
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
 		).toBe(
-			"Remove worktree.trunk from this repo's assist.yml — falls back to Global",
+			"Remove worktree.trunk from this repo's assist.yml — falls back to user (node)",
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Global" }));
+		fireEvent.click(screen.getByRole("button", { name: "user (node)" }));
 
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
-		).toBe("Remove worktree.trunk from ~/.assist.yml — falls back to Project");
+		).toBe(
+			"Remove worktree.trunk from ~/.assist.yml (this node only) — falls back to repo (git)",
+		);
 	});
 
 	it("offers Clear only in the scopes that hold a value", async () => {
@@ -1364,15 +1375,15 @@ describe("ConfigView", () => {
 			screen.getByTestId("scope-dot-global").getAttribute("data-state"),
 		).toBe("effective");
 		expect(
-			screen.getByRole("button", { name: "Project" }).getAttribute("title"),
+			screen.getByRole("button", { name: "repo (git)" }).getAttribute("title"),
 		).toBe("Not set in this repo's assist.yml");
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
 		).toBe(
-			"Remove worktree.trunk from ~/.assist.yml — reverts to the schema default",
+			"Remove worktree.trunk from ~/.assist.yml (this node only) — reverts to the schema default",
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Project" }));
+		fireEvent.click(screen.getByRole("button", { name: "repo (git)" }));
 
 		expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
 	});
@@ -1412,7 +1423,7 @@ describe("ConfigView", () => {
 		expect(screen.getByRole("button", { name: "Clear" })).toBeTruthy();
 	});
 
-	it("clears a repos override from the This repo scope", async () => {
+	it("clears a repos override from the repo (db) scope", async () => {
 		const fetchMock = stubUnsetApi(
 			[
 				{
@@ -1481,7 +1492,7 @@ describe("ConfigView", () => {
 		await waitFor(() => expect(screen.getByText("database.url")).toBeTruthy());
 		expect(screen.getByText(maskedSecretText)).toBeTruthy();
 		expect(screen.getByText("not set")).toBeTruthy();
-		expect(screen.getByText("global")).toBeTruthy();
+		expect(screen.getByText("user (node)")).toBeTruthy();
 		expect(screen.getByText("default")).toBeTruthy();
 	});
 

@@ -11,7 +11,7 @@ export function configScopeFiles(
 		repo: repoKey
 			? `repos.${repoKey} in the shared db (all nodes)`
 			: "this repo's override in the shared db (all nodes)",
-		global: globalConfigFile,
-		user: "user (db) in the shared db (all repos, all nodes)",
+		global: `${globalConfigFile} (this node only)`,
+		user: "the shared db (every repo, all nodes)",
 	};
 }

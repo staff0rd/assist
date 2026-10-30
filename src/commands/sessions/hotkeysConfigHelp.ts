@@ -34,6 +34,6 @@ export const hotkeysConfigHelp: ConfigHelpEntry[] = (
 	Object.keys(ACTIONS) as HotkeyName[]
 ).map((name) => ({
 	key: `sessions.hotkeys.${name}`,
-	setter: `assist config set sessions.hotkeys.${name} ${EXAMPLES[name] ?? defaultHotkeys[name][0]} -g`,
+	setter: `assist config set sessions.hotkeys.${name} ${EXAMPLES[name] ?? defaultHotkeys[name][0]} --node`,
 	note: `${ACTIONS[name]}; default ${defaultHotkeys[name].join(" / ")}`,
 }));

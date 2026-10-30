@@ -5,7 +5,7 @@ export function configEntryScopeSignature(entry: ConfigEntry): string {
 	return [
 		entry.key,
 		entry.repoKey ?? "",
-		entry.globalOnly === true ? "global-only" : "",
+		entry.writableScopes?.join(",") ?? "",
 		configScopesWithValue(entry).join(","),
 	].join("|");
 }

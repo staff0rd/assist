@@ -55,11 +55,11 @@ describe("config set/unset --user", () => {
 		expect(await readUserConfig(orm)).toEqual({});
 	});
 
-	it("rejects --user combined with -g", async () => {
+	it("rejects --user combined with --node", async () => {
 		captureExit();
 
 		await expect(
-			configSet("commit.push", "true", { user: true, global: true }),
+			configSet("commit.push", "true", { user: true, node: true }),
 		).rejects.toThrow("exit");
 	});
 

@@ -16,7 +16,6 @@ export function ConfigArrayItemWriteActions({ entry, index, editor }: Props) {
 		<ConfigEditorActions
 			entry={entry}
 			scope={scope}
-			scopeLocked={entry.globalOnly === true}
 			saving={editor.saving}
 			note={configArrayItemWriteNote({
 				key: entry.key,

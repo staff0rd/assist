@@ -4,19 +4,13 @@ import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { resolveRepoUnsetTarget } from "./resolveRepoUnsetTarget";
 import { unsetDbBackedConfigKey } from "./unsetDbBackedConfigKey";
 import { unsetFileConfigKey } from "./unsetFileConfigKey";
-import { scopeOptionsError } from "./scopeOptionsError";
-
-type ConfigUnsetOptions = {
-	global?: boolean;
-	repo?: boolean | string;
-	user?: boolean;
-};
+import { type ScopeOptions, scopeOptionsError } from "./scopeOptionsError";
 
 export async function configUnset(
 	key: string | undefined,
-	options: ConfigUnsetOptions = {},
+	options: ScopeOptions = {},
 ): Promise<void> {
-	const scopeError = scopeOptionsError(options, "removes from");
+	const scopeError = scopeOptionsError(options);
 	if (scopeError) exitWithConfigErrors([scopeError]);
 
 	const resolved = resolveRepoUnsetTarget(key, options.repo);
@@ -32,7 +26,7 @@ export async function configUnset(
 		key: resolved.key,
 		useRepo: resolved.useRepo,
 		repoName: resolved.repoName,
-		global: options.global ?? false,
+		node: options.node ?? false,
 		user: options.user ?? false,
 	});
 }

@@ -22,7 +22,7 @@ export function applyConfigUnset(
 		return {
 			ok: false,
 			errors: [
-				`"${key}" is a global-only key. Use --global to unset it in ~/.assist.yml`,
+				`"${key}" is a user (node)-only key. Use --node to unset it in ~/.assist.yml`,
 			],
 		};
 	}

@@ -3,18 +3,15 @@ import type { ConfigEntry } from "./ConfigEntry";
 import { dbBackedConfigKeys, isDbBackedConfigKey } from "./dbBackedConfigKeys";
 import { dbBackedKeysIn } from "./withDbBackedConfigValues";
 
-export const DB_BACKED_CONFIG_FILE = "the shared db (all nodes)";
-
 function dbBackedEntry(entry: ConfigEntry, value: unknown): ConfigEntry {
 	const set = value !== undefined;
 	return {
 		...entry,
 		value: set ? value : entry.defaultValue,
-		source: set ? "global" : "default",
-		sources: set ? ["global"] : [],
-		layers: set ? { global: value } : {},
-		globalConfigFile: DB_BACKED_CONFIG_FILE,
-		globalOnly: true,
+		source: set ? "user" : "default",
+		sources: set ? ["user"] : [],
+		layers: set ? { user: value } : {},
+		writableScopes: ["user"],
 	};
 }
 

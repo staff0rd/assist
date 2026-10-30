@@ -34,8 +34,8 @@ See [Agent instructions and permissions](../hooks-and-permissions/) for what the
 
 ## Deny rules
 
-- `assist deny add <pattern> <message>` blocks commands starting with `pattern`, showing agents `message` instead. It writes to the repo's `assist.yml`; `-g` writes to `~/.assist.yml`.
-- `assist deny remove <pattern>` removes a rule, with the same `-g` flag.
+- `assist deny add <pattern> <message>` blocks commands starting with `pattern`, showing agents `message` instead. It writes to the repo's `assist.yml`; `--node` writes to `~/.assist.yml`.
+- `assist deny remove <pattern>` removes a rule, with the same `--node` flag.
 - `assist deny list` lists the rules that apply here and where each is set.
 
 `assist cli-hook deny add`, `remove` and `list` are the same commands.

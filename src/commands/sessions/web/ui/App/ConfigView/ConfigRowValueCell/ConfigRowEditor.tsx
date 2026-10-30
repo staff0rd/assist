@@ -20,17 +20,8 @@ export function ConfigRowEditor({
 	onError,
 	onCancel,
 }: Props) {
-	const {
-		value,
-		setValue,
-		scope,
-		setScope,
-		scopeLocked,
-		saving,
-		save,
-		clear,
-		canClear,
-	} = useConfigRowEditor({ entry, cwd, onSaved, onError });
+	const { value, setValue, scope, setScope, saving, save, clear, canClear } =
+		useConfigRowEditor({ entry, cwd, onSaved, onError });
 	const Editor = dedicatedConfigEditor(entry.key) ?? ConfigNodeEditor;
 
 	return (
@@ -47,7 +38,6 @@ export function ConfigRowEditor({
 			<ConfigEditorActions
 				entry={entry}
 				scope={scope}
-				scopeLocked={scopeLocked}
 				saving={saving}
 				canClear={canClear}
 				onScopeChange={setScope}

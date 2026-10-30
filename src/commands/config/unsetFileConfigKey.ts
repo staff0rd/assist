@@ -2,13 +2,14 @@ import chalk from "chalk";
 import { applyConfigUnset } from "./applyConfigUnset";
 import { applySharedRepoConfigUnset } from "./applySharedRepoConfigUnset";
 import { applyUserConfigUnset } from "./applyUserConfigUnset";
+import { configScopeNames } from "./configScopeNames";
 import { exitWithConfigErrors } from "./exitWithConfigErrors";
 
 type FileConfigTarget = {
 	key: string;
 	useRepo: boolean;
 	repoName: string | undefined;
-	global: boolean;
+	node: boolean;
 	user: boolean;
 };
 
@@ -20,30 +21,24 @@ export async function unsetFileConfigKey({
 	key,
 	useRepo,
 	repoName,
-	global,
+	node,
 	user,
 }: FileConfigTarget): Promise<void> {
 	const result = useRepo
 		? await applySharedRepoConfigUnset(key, repoName)
 		: user
 			? await applyUserConfigUnset(key)
-			: applyConfigUnset(key, global);
+			: applyConfigUnset(key, node);
 	if (!result.ok) exitWithConfigErrors(result.errors);
 	if (!result.removed) {
-		console.log(chalk.yellow(`${key} is not set in ${whereLabel(result)}`));
+		console.log(chalk.yellow(`${key} is not set in ${targetLabel(result)}`));
 		return;
 	}
 	console.log(chalk.green(`Unset ${key} (${targetLabel(result)})`));
 }
 
-function whereLabel(result: UnsetTarget): string {
-	if (result.target === "repo") return `repos.${result.label}`;
-	if (result.target === "user") return "user (db)";
-	return `the ${result.target} config`;
-}
-
 function targetLabel(result: UnsetTarget): string {
-	if (result.target === "repo") return `repo: ${result.label}`;
-	if (result.target === "user") return "user (db)";
-	return result.target;
+	if (result.target === "repo")
+		return `${configScopeNames.repo}: ${result.label}`;
+	return configScopeNames[result.target];
 }

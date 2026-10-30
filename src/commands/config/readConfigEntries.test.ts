@@ -69,9 +69,14 @@ describe("readConfigEntries", () => {
 		expect(entry.value).toBe(false);
 	});
 
-	it("flags global-only keys and leaves the rest unflagged", () => {
-		expect(entryFor("sync.autoConfirm").globalOnly).toBe(true);
-		expect(entryFor("commit.push").globalOnly).toBe(false);
+	it("limits the writable scopes of global-only and node-only keys", () => {
+		expect(entryFor("sync.autoConfirm").writableScopes).toEqual(["global"]);
+		expect(entryFor("database.url").writableScopes).toEqual([
+			"project",
+			"repo",
+			"global",
+		]);
+		expect(entryFor("commit.push").writableScopes).toBeUndefined();
 	});
 
 	it("carries a descriptor node for every leaf", () => {

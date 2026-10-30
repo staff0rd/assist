@@ -8,7 +8,7 @@ export function globalOnlyRepoKeyError(
 	return {
 		ok: false,
 		errors: [
-			`"${key}" is a global-only key. ${verb} it in ~/.assist.yml rather than under repos:`,
+			`"${key}" is a user (node)-only key. ${verb} it in ~/.assist.yml with --node rather than in repo (db)`,
 		],
 	};
 }

@@ -30,5 +30,5 @@ export function isDbBackedConfigKey(key: string): boolean {
 }
 
 export function dbBackedRepoError(key: string): string {
-	return `"${key}" is stored in the database and shared by every repo; drop --repo`;
+	return `"${key}" is stored in user (db) and shared by every repo; drop --repo`;
 }

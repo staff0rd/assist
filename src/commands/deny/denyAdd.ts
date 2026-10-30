@@ -4,9 +4,9 @@ import { loadDenyConfig } from "./loadDenyConfig";
 export function denyAdd(
 	pattern: string,
 	message: string,
-	options: { global?: boolean },
+	options: { node?: boolean },
 ): void {
-	const { deny, saveDeny } = loadDenyConfig(options.global);
+	const { deny, saveDeny } = loadDenyConfig(options.node);
 
 	if (deny.some((r) => r.pattern === pattern)) {
 		console.log(chalk.yellow(`Deny rule already exists for: ${pattern}`));

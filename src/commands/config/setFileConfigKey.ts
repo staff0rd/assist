@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { applyConfigSet, type ConfigWritableValue } from "./applyConfigSet";
 import { applySharedRepoConfigSet } from "./applySharedRepoConfigSet";
 import { applyUserConfigSet } from "./applyUserConfigSet";
+import { configScopeNames } from "./configScopeNames";
 import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { maskConfigKeySecrets } from "./maskConfigKeySecrets";
 
@@ -9,19 +10,19 @@ type FileConfigTarget = {
 	key: string;
 	useRepo: boolean;
 	repoName: string | undefined;
-	global: boolean;
+	node: boolean;
 	user: boolean;
 };
 
 export async function setFileConfigKey(
-	{ key, useRepo, repoName, global, user }: FileConfigTarget,
+	{ key, useRepo, repoName, node, user }: FileConfigTarget,
 	coerced: ConfigWritableValue,
 ): Promise<void> {
 	const target = useRepo
-		? `repo: ${await applyRepoOrExit(key, coerced, repoName)}`
+		? `${configScopeNames.repo}: ${await applyRepoOrExit(key, coerced, repoName)}`
 		: user
 			? await applyUserOrExit(key, coerced)
-			: applyOrExit(key, coerced, global);
+			: applyOrExit(key, coerced, node);
 	const shown = JSON.stringify(maskConfigKeySecrets(key, coerced));
 	console.log(chalk.green(`Set ${key} = ${shown} (${target})`));
 }
@@ -29,11 +30,11 @@ export async function setFileConfigKey(
 function applyOrExit(
 	key: string,
 	coerced: ConfigWritableValue,
-	global: boolean,
+	node: boolean,
 ): string {
-	const result = applyConfigSet(key, coerced, global);
+	const result = applyConfigSet(key, coerced, node);
 	if (!result.ok) exitWithConfigErrors(result.errors);
-	return result.target;
+	return configScopeNames[result.target];
 }
 
 async function applyUserOrExit(
@@ -42,7 +43,7 @@ async function applyUserOrExit(
 ): Promise<string> {
 	const result = await applyUserConfigSet(key, coerced);
 	if (!result.ok) exitWithConfigErrors(result.errors);
-	return "user (db)";
+	return configScopeNames.user;
 }
 
 async function applyRepoOrExit(

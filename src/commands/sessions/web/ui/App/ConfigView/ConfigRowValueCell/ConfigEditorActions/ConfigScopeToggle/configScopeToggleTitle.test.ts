@@ -5,26 +5,26 @@ import type { ConfigScope } from "../../saveConfigValue";
 const title = (
 	scope: ConfigScope,
 	scopesWithValue: ConfigScope[],
-	lockedToGlobal = false,
+	writableScopes?: ConfigScope[],
 ) =>
 	configScopeToggleTitle({
 		scope,
 		scopesWithValue,
 		repoKey: "assist",
-		lockedToGlobal,
+		writableScopes,
 		selected: false,
 	});
 
 const selectedTitle = (
 	scope: ConfigScope,
 	scopesWithValue: ConfigScope[],
-	lockedToGlobal = false,
+	writableScopes?: ConfigScope[],
 ) =>
 	configScopeToggleTitle({
 		scope,
 		scopesWithValue,
 		repoKey: "assist",
-		lockedToGlobal,
+		writableScopes,
 		selected: true,
 	});
 
@@ -34,7 +34,12 @@ describe("configScopeToggleTitle", () => {
 		expect(title("repo", [])).toBe(
 			"Not set in repos.assist in the shared db (all nodes)",
 		);
-		expect(title("global", [])).toBe("Not set in ~/.assist.yml");
+		expect(title("global", [])).toBe(
+			"Not set in ~/.assist.yml (this node only)",
+		);
+		expect(title("user", [])).toBe(
+			"Not set in the shared db (every repo, all nodes)",
+		);
 	});
 
 	it("marks the highest-precedence scope as in effect", () => {
@@ -45,21 +50,42 @@ describe("configScopeToggleTitle", () => {
 
 	it("names the scope overriding a lower one", () => {
 		expect(title("global", ["project", "repo", "global"])).toBe(
-			"Set in ~/.assist.yml — overridden by Project",
-		);
-		expect(title("repo", ["repo", "global"], false)).toBe(
-			"Set in repos.assist in the shared db (all nodes) — in effect",
+			"Set in ~/.assist.yml (this node only) — overridden by repo (git)",
 		);
 		expect(title("global", ["repo", "global"])).toBe(
-			"Set in ~/.assist.yml — overridden by This repo",
+			"Set in ~/.assist.yml (this node only) — overridden by repo (db)",
+		);
+		expect(title("user", ["global", "user"])).toBe(
+			"Set in the shared db (every repo, all nodes) — overridden by user (node)",
 		);
 	});
 
-	it("explains why non-global scopes are disabled for a global-only key", () => {
-		expect(title("project", ["global"], true)).toBe("Global-only key");
-		expect(title("repo", ["global"], true)).toBe("Global-only key");
-		expect(title("global", ["global"], true)).toBe(
-			"Set in ~/.assist.yml — in effect",
+	it("explains why other scopes are disabled for a global-only key", () => {
+		const globalOnly: ConfigScope[] = ["global"];
+		expect(title("project", ["global"], globalOnly)).toBe(
+			"Node-only key: only user (node) can hold it",
+		);
+		expect(title("user", ["global"], globalOnly)).toBe(
+			"Node-only key: only user (node) can hold it",
+		);
+		expect(title("global", ["global"], globalOnly)).toBe(
+			"Set in ~/.assist.yml (this node only) — in effect",
+		);
+	});
+
+	it("explains why the user db is disabled for a node-only key", () => {
+		const nodeOnly: ConfigScope[] = ["project", "repo", "global"];
+		expect(title("user", [], nodeOnly)).toBe(
+			"Node-only key: it can't be stored in user (db)",
+		);
+		expect(title("repo", [], nodeOnly)).toBe(
+			"Not set in repos.assist in the shared db (all nodes)",
+		);
+	});
+
+	it("lists the writable scopes for a db-only key", () => {
+		expect(title("global", [], ["user"])).toBe(
+			"Only user (db) can hold this key",
 		);
 	});
 
@@ -69,7 +95,6 @@ describe("configScopeToggleTitle", () => {
 				scope: "repo",
 				scopesWithValue: [],
 				repoKey: undefined,
-				lockedToGlobal: false,
 				selected: false,
 			}),
 		).toBe("Not set in this repo's override in the shared db (all nodes)");
@@ -83,11 +108,13 @@ describe("configScopeToggleTitle", () => {
 			"This save will be written to this repo's assist.yml — not currently set here",
 		);
 		expect(selectedTitle("global", ["repo", "global"])).toBe(
-			"This save will be written to ~/.assist.yml — currently set here, overridden by This repo",
+			"This save will be written to ~/.assist.yml (this node only) — currently set here, overridden by repo (db)",
 		);
 	});
 
-	it("keeps the global-only explanation for a selected disabled scope", () => {
-		expect(selectedTitle("project", ["global"], true)).toBe("Global-only key");
+	it("keeps the lock explanation for a selected disabled scope", () => {
+		expect(selectedTitle("project", ["global"], ["global"])).toBe(
+			"Node-only key: only user (node) can hold it",
+		);
 	});
 });
