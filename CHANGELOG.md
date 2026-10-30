@@ -1,3 +1,15 @@
+# [0.956.0](https://github.com/staff0rd/assist/compare/v0.955.2...v0.956.0) (2026-10-30)
+
+
+### Bug Fixes
+
+* stop upgrading browser link to wss ([7e3738e](https://github.com/staff0rd/assist/commit/7e3738eacfd654447b1f4d958afa5df81c2be5c7))
+
+
+### Features
+
+* user (db) config scope ([c4a36e8](https://github.com/staff0rd/assist/commit/c4a36e82d792f1edfa2169688a7cf7fba81af5e9))
+
 ## [0.955.2](https://github.com/staff0rd/assist/compare/v0.955.1...v0.955.2) (2026-10-30)
 
 
