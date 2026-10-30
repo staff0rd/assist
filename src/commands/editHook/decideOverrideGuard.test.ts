@@ -96,6 +96,29 @@ describe("decideOverrideGuard", () => {
 		});
 	});
 
+	describe("markdown files", () => {
+		it("allows removing a mention of the marker from a markdown file", () => {
+			const decision = decideOverrideGuard(
+				input("Write", { file_path: "README.md", content: "# assist" }),
+				`Declare a \`${MARKER}\` comment`,
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("still blocks the marker in a code file", () => {
+			const decision = decideOverrideGuard(
+				input("Edit", {
+					file_path: "a.ts",
+					old_string: MARKER,
+					new_string: "",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+	});
+
 	describe("other tools", () => {
 		it("ignores unrelated tools", () => {
 			const decision = decideOverrideGuard(

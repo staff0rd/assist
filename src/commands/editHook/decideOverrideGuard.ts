@@ -42,6 +42,7 @@ export function decideOverrideGuard(
 	input: EditHookInput,
 	existingContent?: string,
 ): string | undefined {
+	if (/\.mdx?$/i.test(input.tool_input.file_path ?? "")) return undefined;
 	const touchesMarker = candidateStrings(input, existingContent).some((s) =>
 		s.includes(MAINTAINABILITY_OVERRIDE_MARKER),
 	);
