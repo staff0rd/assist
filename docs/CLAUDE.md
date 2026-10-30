@@ -48,6 +48,8 @@ Screenshots sharing a scene and setup are captured together. Between states sess
 
 ### Recapture
 
+Before recapturing, run `docker info`. If it fails, do not start the capture: stop and ask the user to start Docker (on WSL, enable the distro under Docker Desktop → Settings → Resources → WSL integration), and wait for them to confirm.
+
 `npm run docs:capture [-- <file.png>...] [--skip-build] [--keep-home]` builds assist and, in a temporary `HOME` with a throwaway Postgres container (Docker), clones of `staff0rd/sandbox` plus local `api` and `website` repos, and the real daemon and web server on a free port, captures with Playwright (`npx playwright install chromium` once). Commit the changed PNGs.
 
 ### Preview

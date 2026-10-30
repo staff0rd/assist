@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process";
 import { mkdirSync } from "node:fs";
 import { parseArgs } from "node:util";
 import { captureScreenshots } from "./capture/captureScreenshots";
+import { requireDocker } from "./capture/requireDocker";
 import { withCaptureEnvironment } from "./capture/withCaptureEnvironment";
 import type { DocsScreenshot } from "./docsPageSchema";
 import { docsPaths } from "./docsPaths";
@@ -50,6 +51,7 @@ export async function captureDocs(argv: string[]): Promise<void> {
 		console.log("No screenshots declared to capture");
 		return;
 	}
+	requireDocker();
 	if (!values["skip-build"]) build();
 	mkdirSync(docsPaths.screenshotsDir, { recursive: true });
 
