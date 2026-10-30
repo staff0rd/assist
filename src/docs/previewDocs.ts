@@ -13,6 +13,7 @@ function startAstro(): ChildProcess {
 			"dev",
 			"--port",
 			"4173",
+			"--host",
 			"--force",
 		],
 		{ cwd: docsDir, stdio: "inherit" },

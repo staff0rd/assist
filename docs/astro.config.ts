@@ -23,6 +23,7 @@ export default defineConfig({
 	site,
 	base,
 	redirects: { "/": `${base}${sidebar[0].items[0]}/` },
+	vite: { server: { allowedHosts: [".ts.net"] } },
 	markdown: {
 		processor: satteri({
 			mdastPlugins: [
