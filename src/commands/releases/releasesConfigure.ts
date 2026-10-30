@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { loadConfig } from "../../shared/loadConfig";
-import type { ConfigKeyScope } from "../config/writeConfigKeys";
+import { parseRepoScopeFlag } from "../config/parseRepoScopeFlag";
 import { checkStreamGraph } from "./checkStreamGraph";
 import { readStreamsInput } from "./readStreamsInput";
 import { reportDerivedStreams } from "./reportDerivedStreams";
@@ -30,7 +30,8 @@ function reportWritten(
 export async function releasesConfigure(
 	options: ConfigureOptions = {},
 ): Promise<void> {
-	const scope: ConfigKeyScope = options.scope === "repo" ? "repo" : "project";
+	const scope = parseRepoScopeFlag(options.scope ?? "git");
+	if (!scope) return fail("--scope must be 'git' or 'db'");
 	const input = readStreamsInput(options.streams ?? "-");
 	if ("error" in input) return fail(`Could not read --streams: ${input.error}`);
 

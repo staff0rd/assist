@@ -187,9 +187,9 @@ describe("releasesConfigure", () => {
 		});
 	});
 
-	describe("--scope repo", () => {
+	describe("--scope db", () => {
 		it("should read and write the repo block", async () => {
-			await releasesConfigure({ streams: "streams.json", scope: "repo" });
+			await releasesConfigure({ streams: "streams.json", scope: "db" });
 
 			expect(mockDeclaredStreamsInScope).toHaveBeenCalledWith("repo");
 			expect(mockWriteConfigKeys).toHaveBeenCalledWith(

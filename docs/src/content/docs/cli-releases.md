@@ -12,4 +12,4 @@ covers:
 ## Commands
 
 - `assist releases` or `assist releases list` prints the repo's release streams, each with its workflow, nodes and edges, as drawn by the [Releases](../releases/) page.
-- `assist releases configure --streams <file|-> [--scope project|repo]` :badge[internal] checks a JSON or YAML list of streams and saves it to `releases.streams`, replacing the streams for the same repos. `project` saves to the repo's `assist.yml`, and `repo` saves only for you. Called by `/releases-configure`.
+- `assist releases configure --streams <file|-> [--scope git|db]` :badge[internal] checks a JSON or YAML list of streams and saves it to `releases.streams`, replacing the streams for the same repos. `git` saves to repo (git), the repo's `assist.yml`, and `db` to repo (db), only for you. Called by `/releases-configure`.

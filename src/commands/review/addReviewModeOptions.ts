@@ -16,7 +16,7 @@ export function addReviewModeOptions(command: Command): Command {
 		)
 		.option(
 			"--scope <scope>",
-			"With --configure: write to 'repo' (this repo's override in the shared assist database) or 'project' (the repo's own assist.yml) instead of asking which",
+			"With --configure: write to 'db' (repo (db), this repo's override in the shared assist database) or 'git' (repo (git), the repo's own assist.yml) instead of asking which",
 		)
 		.option(
 			"--answer <key=value>",

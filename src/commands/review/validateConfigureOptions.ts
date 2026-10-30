@@ -1,3 +1,4 @@
+import { parseRepoScopeFlag } from "../config/parseRepoScopeFlag";
 import type { ReviewOptions } from "./ReviewOptions";
 
 export function validateConfigureOptions(options: ReviewOptions): void {
@@ -16,12 +17,8 @@ export function validateConfigureOptions(options: ReviewOptions): void {
 		console.error("Error: --configure takes no PR number.");
 		process.exit(1);
 	}
-	if (
-		options.scope &&
-		options.scope !== "project" &&
-		options.scope !== "repo"
-	) {
-		console.error("Error: --scope must be 'project' or 'repo'.");
+	if (options.scope && !parseRepoScopeFlag(options.scope)) {
+		console.error("Error: --scope must be 'git' or 'db'.");
 		process.exit(1);
 	}
 }

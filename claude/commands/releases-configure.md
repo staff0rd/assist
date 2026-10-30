@@ -35,8 +35,8 @@ A job with `uses: <owner>/<name>/.github/workflows/<file>@<ref>` calls a reusabl
 
 Show the nodes and edges you intend to write, and say which workflow file each node came from — including the reusable ones, so the user can see the chain you followed. Ask them to accept or edit, and ask which config file it goes to:
 
-- `project` — the repo's own `assist.yml`, checked in, so the team sees the same graph
-- `repo` — this repo's block in `~/.assist.yml`, personal to this machine
+- `git` — repo (git), the repo's own `assist.yml`, checked in, so the team sees the same graph
+- `db` — repo (db), this repo's override in the shared assist database, personal to the user and seen by every node
 
 Ask rather than guess: which jobs deserve a node at all, how jobs split into streams, what to call a stream, and any environment name that is computed rather than written literally.
 
@@ -45,7 +45,7 @@ Ask rather than guess: which jobs deserve a node at all, how jobs split into str
 Write the accepted streams to a JSON file and pass it in. Run the command from the repo you are in, never from another checkout: the config it writes belongs to the directory it runs in, whichever repos its streams point at. Set `repo` on any stream that releases another repo; one left out defaults to the repo you are in.
 
 ```
-assist releases configure --scope project --streams /tmp/streams.json
+assist releases configure --scope git --streams /tmp/streams.json
 ```
 
 ```json

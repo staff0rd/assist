@@ -33,9 +33,9 @@ export function registerReleases(parent: Command): void {
 				"JSON or YAML array of streams to declare; '-' reads stdin",
 			)
 			.option(
-				"--scope <project|repo>",
-				"project assist.yml or this repo's shared db override",
-				"project",
+				"--scope <git|db>",
+				"repo (git), the repo's assist.yml, or repo (db), this repo's shared db override",
+				"git",
 			)
 			.action(releasesConfigure),
 		"/releases-configure",

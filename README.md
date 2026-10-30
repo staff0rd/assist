@@ -150,7 +150,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
   - `--checkout-only` - Skip the review; check the PR out and leave an idle Claude session in it. In a clone whose remote is on Azure DevOps it checks out with `az repos pr checkout` instead of `gh` (see [Azure DevOps PRs](#azure-devops-prs))
   - `--high-level` - Open the high-level review checklist in the web preview pane and post it to the PR as an Approve, Comment or Request changes review. Comments on lines selected in a diff or a test's source are either sent to the agent or added to the review, where those on lines in the PR diff post as line-level comments. See [docs/high-level-review.md](docs/high-level-review.md)
   - `--configure` - With `--high-level`: configure the checklist's `review.highLevel.*` keys instead of reviewing
-  - `--scope <repo|project>` - With `--configure`: write to this repo's override in the shared assist database or the project `assist.yml` instead of asking
+  - `--scope <db|git>` - With `--configure`: write to repo (db), this repo's override in the shared assist database, or repo (git), the repo's `assist.yml`, instead of asking
   - `--answer <key=value>` - With `--configure`: answer one key without prompting, repeatable; an empty value leaves the key unset
   - `--address-comments` - Start an Address Comments session for the PR once comments are posted and the review submitted
   - `--announce` - Announce the PR in Slack at the end of the chain
@@ -176,7 +176,7 @@ Every command supports `--help` for full detail on its flags and behaviour.
 - `assist news remove <url>` - Remove a feed URL from `news.feeds`
   - `news.feeds` - The feed URLs, stored in the assist database so every machine shares them; `assist config set news.feeds <url1>,<url2>` replaces the whole list
 - `assist releases [list]` - Print the release promotion streams declared in `releases.streams`
-- `assist releases configure --streams <file> [--scope <project|repo>]` - Write release streams from a JSON or YAML file (`-` for stdin) to `releases.streams`, in the project `assist.yml` (default) or this repo's shared override in the assist database
+- `assist releases configure --streams <file> [--scope <git|db>]` - Write release streams from a JSON or YAML file (`-` for stdin) to `releases.streams`, in repo (git), the repo's `assist.yml` (default), or repo (db), this repo's shared override in the assist database
 
 ### Backlog
 

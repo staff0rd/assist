@@ -5,7 +5,7 @@ import {
 	type ConfigureConfigKeysResult,
 } from "../../config/configureConfigKeys";
 import { isConfigKeySet } from "../../config/isConfigKeySet";
-import type { ConfigKeyScope } from "../../config/writeConfigKeys";
+import { parseRepoScopeFlag } from "../../config/parseRepoScopeFlag";
 import { buildHighLevelQuestions } from "./buildHighLevelQuestions";
 import { highLevelConfigKeys } from "./highLevelConfigKeys";
 import {
@@ -40,20 +40,13 @@ export async function configureHighLevelReview(
 		},
 		proposed,
 	);
-	const scope = asConfigKeyScope(options.scope);
+	const scope = parseRepoScopeFlag(options.scope);
 	reportConfigured(
 		await configureConfigKeys(questions, {
 			answers,
 			...(scope ? { scope } : {}),
 		}),
 	);
-}
-
-function asConfigKeyScope(
-	value: string | undefined,
-): ConfigKeyScope | undefined {
-	if (value === "project" || value === "repo") return value;
-	return undefined;
 }
 
 function reportConfigured(result: ConfigureConfigKeysResult): void {
