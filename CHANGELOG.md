@@ -1,3 +1,10 @@
+# [0.959.0](https://github.com/staff0rd/assist/compare/v0.958.0...v0.959.0) (2026-10-30)
+
+
+### Features
+
+* add assist ask-question pane form ([d2a8c7b](https://github.com/staff0rd/assist/commit/d2a8c7b299741b8da66afba6f5534c85b74bd877))
+
 # [0.958.0](https://github.com/staff0rd/assist/compare/v0.957.0...v0.958.0) (2026-10-30)
 
 
