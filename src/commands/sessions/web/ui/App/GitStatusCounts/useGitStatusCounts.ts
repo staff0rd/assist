@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ItemStatusCounts } from "../../../gitStatus";
+import { apiFetch } from "../../apiFetch";
 import { useApiNode } from "../../useApiNode";
 import { withNode } from "../../withNode";
 import { diffQuery } from "../diffQuery";
@@ -21,7 +22,7 @@ export function useGitStatusCounts(
 		let cancelled = false;
 		const poll = async () => {
 			try {
-				const res = await fetch(
+				const res = await apiFetch(
 					withNode(`/api/git-status?${diffQuery(cwd, sessionId)}`, node),
 				);
 				const body = await res.json();

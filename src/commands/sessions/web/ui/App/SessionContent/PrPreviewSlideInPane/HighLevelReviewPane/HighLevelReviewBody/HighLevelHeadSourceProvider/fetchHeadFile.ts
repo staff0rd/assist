@@ -1,10 +1,12 @@
+import { apiFetch } from "../../../../../../apiFetch";
+
 export async function fetchHeadFile(
 	repo: string,
 	sha: string,
 	path: string,
 ): Promise<string[]> {
 	const params = new URLSearchParams({ repo, sha, path });
-	const res = await fetch(`/api/github-file?${params}`);
+	const res = await apiFetch(`/api/github-file?${params}`);
 	const body = (await res.json().catch(() => ({}))) as {
 		content?: unknown;
 		error?: unknown;

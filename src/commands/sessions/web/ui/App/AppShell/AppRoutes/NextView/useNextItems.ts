@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { NextResponse } from "../../../../../next/types";
+import { apiFetch } from "../../../../apiFetch";
 import { useApiNode } from "../../../../useApiNode";
 import { withNode } from "../../../../withNode";
 
@@ -13,7 +14,7 @@ type NextItemsView = {
 const NEXT_TIMEOUT_MS = 30_000;
 
 async function fetchNext(cwd: string, node?: string): Promise<NextResponse> {
-	const res = await fetch(
+	const res = await apiFetch(
 		withNode(`/api/next?cwd=${encodeURIComponent(cwd)}`, node),
 		{ signal: AbortSignal.timeout(NEXT_TIMEOUT_MS) },
 	).catch((error: unknown) => {

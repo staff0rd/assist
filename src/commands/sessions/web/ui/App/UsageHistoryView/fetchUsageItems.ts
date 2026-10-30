@@ -6,6 +6,7 @@ import {
 } from "../../../../../../shared/db/parseItemUsageSort";
 import type { ItemUsageStats } from "../../../../../../shared/db/itemUsageStats";
 import type { ItemUsageSummaryRow } from "../../../../../../shared/db/toItemUsageSummary";
+import { apiFetch } from "../../apiFetch";
 
 export const ALL_REPOS = "all";
 export const ALL_STATUSES = "all";
@@ -42,7 +43,7 @@ export async function fetchUsageItems(
 		params.set("sort", query.sort.field);
 	if (query.sort.direction !== defaultItemUsageSort.direction)
 		params.set("direction", query.sort.direction);
-	const res = await fetch(`/api/usage/items?${params}`);
+	const res = await apiFetch(`/api/usage/items?${params}`);
 	if (!res.ok)
 		throw new Error(`Failed to load item usage (HTTP ${res.status}).`);
 	return res.json();

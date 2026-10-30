@@ -1,4 +1,5 @@
 import type { AutoUpdateAction } from "../../../../../../../../shared/AutoUpdateAction";
+import { apiFetch } from "../../../../../../apiFetch";
 import { withNode } from "../../../../../../withNode";
 import type { NodeUpdateEntry } from "../../../../NodeUpdateEntry";
 import { requestFailure } from "../../../../requestFailure";
@@ -9,7 +10,7 @@ export async function postLoopControl(
 ): Promise<string | undefined> {
 	let res: Response | undefined;
 	try {
-		res = await fetch(
+		res = await apiFetch(
 			withNode(
 				`/api/updates/control?action=${action}`,
 				entry.local ? undefined : entry.name,

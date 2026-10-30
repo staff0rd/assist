@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../../../../apiFetch";
 import { useApiNode } from "../../../../../useApiNode";
 import { withNode } from "../../../../../withNode";
 
@@ -23,7 +24,7 @@ export function useFileSearch(cwd: string, query: string): FileSearchState {
 		setState((previous) => ({ ...previous, loading: true }));
 		const search = async () => {
 			try {
-				const res = await fetch(
+				const res = await apiFetch(
 					withNode(
 						`/api/files?cwd=${encodeURIComponent(cwd)}&q=${encodeURIComponent(query)}`,
 						node,

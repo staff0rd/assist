@@ -4,6 +4,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useEffect, useState } from "react";
 import { toolbarIconSx } from "../../../designSystem/toolbarIconSx";
 import { GitHubOutlineIcon } from "./OpenInGitHubButton/GitHubOutlineIcon";
+import { apiFetch } from "../../../apiFetch";
 import { useApiNode } from "../../../useApiNode";
 import { withNode } from "../../../withNode";
 
@@ -19,7 +20,7 @@ export function OpenInGitHubButton({ cwd }: { cwd: string }) {
 		let cancelled = false;
 		(async () => {
 			try {
-				const res = await fetch(
+				const res = await apiFetch(
 					withNode(`/api/github-url?cwd=${encodeURIComponent(cwd)}`, node),
 				);
 				const body = await res.json();

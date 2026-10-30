@@ -1,3 +1,4 @@
+import { apiWsUrl } from "../../../../apiUrl";
 import { handleWsMessage } from "./createWsConnection/handleWsMessage";
 import type { WsDispatch } from "../WsDispatch";
 
@@ -10,8 +11,7 @@ export function createWsConnection(
 	d: WsDispatch,
 	lifecycle: WsLifecycle = {},
 ): WebSocket {
-	const protocol = location.protocol === "https:" ? "wss:" : "ws:";
-	const ws = new WebSocket(`${protocol}//${location.host}/ws`);
+	const ws = new WebSocket(apiWsUrl("/ws"));
 
 	ws.onopen = () => {
 		lifecycle.onOpen?.();

@@ -1,3 +1,4 @@
+import { apiFetch } from "../../apiFetch";
 import { withNode } from "../../withNode";
 
 export type RepoLocation = { cwd?: string; cloneTarget?: string };
@@ -15,7 +16,7 @@ async function fetchLocation(
 	origin: string,
 	node: string,
 ): Promise<RepoLocation> {
-	const res = await fetch(
+	const res = await apiFetch(
 		withNode(
 			`/api/repo-location?origin=${encodeURIComponent(origin)}`,
 			node || undefined,

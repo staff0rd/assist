@@ -1,8 +1,10 @@
+import { apiFetch } from "../../../../../apiFetch";
+
 type BrokenHop = { hop: string; error?: string; remediation?: string };
 
 async function fetchBrokenHop(peer: string): Promise<BrokenHop | null> {
 	try {
-		const res = await fetch(
+		const res = await apiFetch(
 			`/api/node-doctor?link=${encodeURIComponent(peer)}`,
 		);
 		if (!res.ok) return null;

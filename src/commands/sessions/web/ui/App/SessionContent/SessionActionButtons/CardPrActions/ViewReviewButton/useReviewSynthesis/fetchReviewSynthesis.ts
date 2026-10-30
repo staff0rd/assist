@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../../../../apiFetch";
 import { withNode } from "../../../../../../withNode";
 
 export type ReviewSynthesisState =
@@ -11,7 +12,7 @@ export async function fetchReviewSynthesis(
 	node: string | undefined,
 ): Promise<ReviewSynthesisState> {
 	try {
-		const res = await fetch(
+		const res = await apiFetch(
 			withNode(`/api/review/synthesis?cwd=${encodeURIComponent(cwd)}`, node),
 		);
 		if (res.status === 404) return { status: "absent" };

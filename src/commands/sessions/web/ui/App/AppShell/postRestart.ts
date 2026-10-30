@@ -1,3 +1,5 @@
+import { apiFetch } from "../../apiFetch";
+
 export type RestartTarget = "daemon" | "webserver" | "both";
 
 export const RESTART_ITEM: {
@@ -16,5 +18,7 @@ export function postRestart(
 	node?: string,
 ): Promise<Response> {
 	const nodeParam = node ? `&node=${encodeURIComponent(node)}` : "";
-	return fetch(`/api/restart?target=${target}${nodeParam}`, { method: "POST" });
+	return apiFetch(`/api/restart?target=${target}${nodeParam}`, {
+		method: "POST",
+	});
 }

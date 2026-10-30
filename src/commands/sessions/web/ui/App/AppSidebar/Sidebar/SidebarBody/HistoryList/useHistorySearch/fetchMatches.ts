@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../../../../apiFetch";
 import type { HistoricalSession } from "../../../../../../types";
 import { withNode } from "../../../../../../withNode";
 
@@ -7,7 +8,7 @@ export async function fetchMatches(
 	node: string | undefined,
 	signal: AbortSignal,
 ): Promise<HistoricalSession[]> {
-	const res = await fetch(
+	const res = await apiFetch(
 		withNode(
 			`/api/history/search?cwd=${encodeURIComponent(cwd)}&q=${encodeURIComponent(query)}`,
 			node,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CommitRef } from "../../../../../../../shared/db/listCommitRefs";
+import { apiFetch } from "../../../apiFetch";
 import { useApiNode } from "../../../useApiNode";
 import { withNode } from "../../../withNode";
 import { diffQuery } from "../../diffQuery";
@@ -24,7 +25,7 @@ export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
 		let cancelled = false;
 		const load = async () => {
 			try {
-				const res = await fetch(
+				const res = await apiFetch(
 					withNode(`/api/diff-scopes?${diffQuery(cwd, sessionId)}`, node),
 				);
 				const body = await res.json();

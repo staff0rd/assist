@@ -1,3 +1,4 @@
+import { apiFetch } from "../../apiFetch";
 import { withNode } from "../../withNode";
 
 const FAILED = "Failed to open VS Code";
@@ -7,7 +8,7 @@ export async function requestOpenInCode(
 	node: string | undefined,
 ): Promise<string | null> {
 	try {
-		const res = await fetch(
+		const res = await apiFetch(
 			withNode(`/api/open-in-code?cwd=${encodeURIComponent(cwd)}`, node),
 			{ method: "POST" },
 		);

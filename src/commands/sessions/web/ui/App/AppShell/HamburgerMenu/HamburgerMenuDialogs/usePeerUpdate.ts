@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../../../apiFetch";
 import type { SessionInfo } from "../../../../types";
 import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
 import { useSessionLaunchContext } from "../../../../useSessionLaunchContext";
@@ -10,7 +11,7 @@ const describeUpdated = (peer: string, version?: string) =>
 	version ? `${peer} updated to v${version}` : `${peer} updated`;
 
 function postSelfUpdate(peer: string): Promise<Response> {
-	return fetch(`/api/self-update?node=${encodeURIComponent(peer)}`, {
+	return apiFetch(`/api/self-update?node=${encodeURIComponent(peer)}`, {
 		method: "POST",
 	});
 }

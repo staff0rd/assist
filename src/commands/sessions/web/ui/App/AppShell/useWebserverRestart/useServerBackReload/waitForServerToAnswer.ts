@@ -1,10 +1,12 @@
+import { apiFetch } from "../../../../apiFetch";
+
 const POLL_INTERVAL_MS = 300;
 const REQUIRED_OK_POLLS = 2;
 const PROBE_URL = "/api/health";
 
 async function serverAnswers(): Promise<boolean> {
 	try {
-		const res = await fetch(PROBE_URL, { cache: "no-store" });
+		const res = await apiFetch(PROBE_URL, { cache: "no-store" });
 		return res.ok;
 	} catch {
 		return false;

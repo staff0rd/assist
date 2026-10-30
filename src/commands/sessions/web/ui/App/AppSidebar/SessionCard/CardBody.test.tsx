@@ -132,6 +132,7 @@ describe("CardBody git status counts", () => {
 		expect(await screen.findByText("+1")).toBeTruthy();
 		expect(fetch).toHaveBeenCalledWith(
 			"/api/git-status?cwd=%2Fgit%2Frepo-2&session=sess-1",
+			undefined,
 		);
 	});
 

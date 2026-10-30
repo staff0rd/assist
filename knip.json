@@ -5,6 +5,7 @@
 		"oxlint-rules/noRawStyleValues.ts",
 		"src/commands/sessions/web/ui/App.tsx",
 		"src/commands/sessions/web/ui/installMonacoGlobal.ts",
+		"src/commands/sessions/web/ios/buildIosWeb.ts",
 		"src/commands/extension/criteriaContentScript.ts",
 		"src/commands/extension/docsFeedback/docsContentScript.ts",
 		"src/commands/extension/sendToAssist/assistBackground.ts",
@@ -40,6 +41,7 @@
 		"**/.venv/**",
 		"netcap-extension/**",
 		"extension/**",
+		"ios-app/**",
 		"pi/**",
 		"docs/**"
 	]

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../../../../apiFetch";
 import { type NewSessionMode, newSessionModes } from "../newSessionModes";
 
 export type LoadedDefaultMode = { mode: NewSessionMode; pending: boolean };
@@ -10,7 +11,7 @@ const RETRY_MS = 1000;
 async function fetchMode(cwd: string): Promise<NewSessionMode | null> {
 	try {
 		const query = cwd ? `?cwd=${encodeURIComponent(cwd)}` : "";
-		const res = await fetch(`/api/new-session-defaults${query}`);
+		const res = await apiFetch(`/api/new-session-defaults${query}`);
 		const body = await res.json();
 		return Object.hasOwn(newSessionModes, body?.mode) ? body.mode : null;
 	} catch {

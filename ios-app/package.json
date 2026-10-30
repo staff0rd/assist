@@ -1,0 +1,17 @@
+{
+	"name": "assist-ios-app",
+	"private": true,
+	"scripts": {
+		"sync": "cap sync ios",
+		"open": "cap open ios",
+		"run": "cap run ios"
+	},
+	"dependencies": {
+		"@capacitor/core": "^8.6.0",
+		"@capacitor/ios": "^8.6.0",
+		"@capacitor/preferences": "^8.0.1"
+	},
+	"devDependencies": {
+		"@capacitor/cli": "^8.6.0"
+	}
+}

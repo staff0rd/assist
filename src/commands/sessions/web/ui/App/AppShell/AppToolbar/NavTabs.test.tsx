@@ -29,6 +29,7 @@ const fetchMock = vi.fn(async (url: string) => {
 function releasesChecked() {
 	expect(fetchMock).toHaveBeenCalledWith(
 		expect.stringContaining("/api/releases/configured"),
+		undefined,
 	);
 }
 
@@ -91,6 +92,7 @@ describe("NavTabs", () => {
 		);
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/releases/configured?cwd=%2Fwith",
+			undefined,
 		);
 	});
 
@@ -108,7 +110,7 @@ describe("NavTabs", () => {
 	it("hides the News tab by default", async () => {
 		render(ui("/without", "/sessions"));
 		await waitFor(() =>
-			expect(fetchMock).toHaveBeenCalledWith("/api/news/nav"),
+			expect(fetchMock).toHaveBeenCalledWith("/api/news/nav", undefined),
 		);
 		expect(tabLabels()).not.toContain("News");
 	});
@@ -131,7 +133,7 @@ describe("NavTabs", () => {
 	it("highlights no tab on /news with the News tab hidden", async () => {
 		render(ui("/without", "/news"));
 		await waitFor(() =>
-			expect(fetchMock).toHaveBeenCalledWith("/api/news/nav"),
+			expect(fetchMock).toHaveBeenCalledWith("/api/news/nav", undefined),
 		);
 		expect(currentPath()).toBe("/news");
 		expect(selectedLabel()).toBeNull();

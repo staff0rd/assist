@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ServerRunInfo } from "../../handleServerRuns";
+import { apiFetch } from "../apiFetch";
 import { useApiNode } from "../useApiNode";
 import { withNode } from "../withNode";
 
@@ -13,7 +14,7 @@ export function useServerRuns(cwd: string | undefined): ServerRunInfo[] {
 			return;
 		}
 		let cancelled = false;
-		fetch(withNode(`/api/server-runs?cwd=${encodeURIComponent(cwd)}`, node))
+		apiFetch(withNode(`/api/server-runs?cwd=${encodeURIComponent(cwd)}`, node))
 			.then((res) => res.json())
 			.then((body) => {
 				if (!cancelled) setRuns(Array.isArray(body?.runs) ? body.runs : []);

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { apiFetch } from "../../../apiFetch";
 import { useApiNode } from "../../../useApiNode";
 import { withNode } from "../../../withNode";
 import { diffQuery } from "../../diffQuery";
@@ -33,7 +34,7 @@ export function useDiff(
 		setState({ diff: "", loading: true, error: false });
 		const poll = async () => {
 			try {
-				const res = await fetch(
+				const res = await apiFetch(
 					withNode(`/api/diff?${diffQuery(cwd, sessionId, scope)}`, node),
 				);
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);

@@ -1,4 +1,5 @@
 import type { NodeUpdateStatus } from "../../../../shared/NodeUpdateStatus";
+import { apiFetch } from "../../apiFetch";
 import { withNode } from "../../withNode";
 import type { NodeUpdateEntry } from "./NodeUpdateEntry";
 
@@ -9,7 +10,7 @@ export async function fetchNodeUpdate(
 	local: boolean,
 ): Promise<NodeUpdateEntry> {
 	try {
-		const res = await fetch(
+		const res = await apiFetch(
 			withNode("/api/updates", local ? undefined : name),
 			{
 				signal: AbortSignal.timeout(UPDATE_TIMEOUT_MS),

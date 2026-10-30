@@ -1,51 +1,19 @@
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import Link from "@mui/material/Link";
-import Tooltip from "@mui/material/Tooltip";
-import { type ReactNode, useEffect, useState } from "react";
-import { Link as RouterLink } from "react-router";
+import { useEffect, useState } from "react";
 import type { BackupRow } from "../../../../shared/db/listBackups";
+import { apiFetch } from "./apiFetch";
 import { formatRelativeTime } from "./formatRelativeTime";
+import { BackupsLink } from "./LastBackedUp/BackupsLink";
 
 type LatestBackup = { row: BackupRow | null; staleAfterMs: number };
 
 async function fetchLatestBackup(): Promise<LatestBackup> {
 	const [listRes, statusRes] = await Promise.all([
-		fetch("/api/backups/list"),
-		fetch("/api/backups/status"),
+		apiFetch("/api/backups/list"),
+		apiFetch("/api/backups/status"),
 	]);
 	const backups: BackupRow[] = await listRes.json();
 	const { staleAfterMs }: { staleAfterMs: number } = await statusRes.json();
 	return { row: backups[0] ?? null, staleAfterMs };
-}
-
-function BackupsLink({
-	warn,
-	tooltip,
-	children,
-}: {
-	warn: boolean;
-	tooltip: string;
-	children: ReactNode;
-}) {
-	return (
-		<Tooltip title={tooltip}>
-			<Link
-				component={RouterLink}
-				to="/backups"
-				underline="hover"
-				color={warn ? "warning.main" : "text.secondary"}
-				variant="body2"
-				sx={
-					warn
-						? { display: "inline-flex", alignItems: "center", gap: 0.5 }
-						: undefined
-				}
-			>
-				{warn && <WarningAmberIcon fontSize="inherit" />}
-				{children}
-			</Link>
-		</Tooltip>
-	);
 }
 
 export function LastBackedUp() {

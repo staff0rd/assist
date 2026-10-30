@@ -480,6 +480,17 @@ Every web server listens on `127.0.0.1` only and, when it starts, exposes itself
 
 A config still holding a retired ssh link (`ssh:` / `port:` / `localPort:`) fails to load; `assist sessions nodes link` and `unlink` remove such links and name them so they can be relinked with `--tailscale`.
 
+#### iOS app
+
+`ios-app/` is a Capacitor iOS app that bundles the sessions web UI and views one **home node** over Tailscale. It has no sessions of its own; the home node already merges its linked nodes' sessions. The web server accepts REST and `/ws` requests from the app's `capacitor://localhost` origin and refuses `/ws` from any other cross-origin browser.
+
+Needs macOS with Xcode, an iOS simulator or a device, and the Tailscale app on the phone signed in to the same tailnet.
+
+1. `npm run ios:install` — install the Capacitor CLI and iOS platform into `ios-app/`.
+2. `npm run ios:build` — build assist, copy the UI bundle into `ios-app/www`, and `cap sync` it into the Xcode project. Re-run after any UI change.
+3. `npm run ios:run` to pick a simulator or connected device, or `npm run ios:open` to build and run from Xcode (a device needs your Apple ID team set under **Signing & Capabilities**).
+4. On first launch, enter the home node's URL, e.g. `https://mac.<tailnet>.ts.net:3100`. It is stored on the device.
+
 ### Session config keys
 
 - `sessions.nodeName` — this install's node label. Defaults to the OS hostname, suffixed `-wsl` under WSL.

@@ -196,7 +196,10 @@ describe("ConfigView", () => {
 		renderView("/repo/one");
 
 		await waitFor(() => expect(screen.getByText("backup.dir")).toBeTruthy());
-		expect(fetchMock).toHaveBeenCalledWith("/api/config?cwd=%2Frepo%2Fone");
+		expect(fetchMock).toHaveBeenCalledWith(
+			"/api/config?cwd=%2Frepo%2Fone",
+			undefined,
+		);
 		expect(screen.getByText("~/.assist/backups")).toBeTruthy();
 		expect(screen.getByText("true")).toBeTruthy();
 		expect(screen.getByText("backup")).toBeTruthy();

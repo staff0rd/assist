@@ -1,4 +1,5 @@
 import type { PreviewAttachment } from "../../../../../../../shared/PreviewAttachment";
+import { apiFetch } from "../../../../../apiFetch";
 
 export async function uploadPreviewImage(
 	file: File | Blob,
@@ -10,7 +11,7 @@ export async function uploadPreviewImage(
 	if (node) params.set("node", node);
 	if (file instanceof File && file.name) params.set("name", file.name);
 
-	const res = await fetch(`/api/pr-preview/upload-image?${params}`, {
+	const res = await apiFetch(`/api/pr-preview/upload-image?${params}`, {
 		method: "POST",
 		headers: { "Content-Type": file.type || "application/octet-stream" },
 		body: file,

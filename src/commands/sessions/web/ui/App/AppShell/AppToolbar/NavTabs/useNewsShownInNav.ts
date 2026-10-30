@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../../../apiFetch";
 
 export function useNewsShownInNav(): boolean {
 	const [showInNav, setShowInNav] = useState(false);
@@ -7,7 +8,7 @@ export function useNewsShownInNav(): boolean {
 		let cancelled = false;
 		void (async () => {
 			try {
-				const res = await fetch("/api/news/nav");
+				const res = await apiFetch("/api/news/nav");
 				const body = await res.json();
 				if (!cancelled) setShowInNav(body?.showInNav === true);
 			} catch {

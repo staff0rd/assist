@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PrSummary } from "../../prList";
+import { apiFetch } from "../apiFetch";
 import type { SessionStatus } from "../types";
 import { useApiNode } from "../useApiNode";
 import { withNode } from "../withNode";
@@ -19,7 +20,7 @@ export function usePrStatus(
 		}
 		let cancelled = false;
 		const numberParam = prNumber !== undefined ? `&number=${prNumber}` : "";
-		fetch(
+		apiFetch(
 			withNode(
 				`/api/pr-status?cwd=${encodeURIComponent(cwd)}${numberParam}`,
 				node,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PrSummary } from "../../../../../../prList";
+import { apiFetch } from "../../../../../apiFetch";
 import { useApiNode } from "../../../../../useApiNode";
 import { withNode } from "../../../../../withNode";
 
@@ -19,7 +20,7 @@ export function useOpenPrs(cwd: string | undefined): {
 		}
 		let cancelled = false;
 		setLoading(true);
-		fetch(withNode(`/api/pr-list?cwd=${encodeURIComponent(cwd)}`, node))
+		apiFetch(withNode(`/api/pr-list?cwd=${encodeURIComponent(cwd)}`, node))
 			.then((res) => res.json())
 			.then((body) => {
 				if (cancelled) return;

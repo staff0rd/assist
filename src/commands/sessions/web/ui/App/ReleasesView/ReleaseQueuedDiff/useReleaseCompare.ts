@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ReleaseCompare } from "../../../../releases/types";
+import { apiFetch } from "../../../apiFetch";
 import { useApiNode } from "../../../useApiNode";
 import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
 import { withNode } from "../../../withNode";
@@ -34,7 +35,7 @@ export function useReleaseCompare(
 		if (!open) return;
 		let cancelled = false;
 		setView({ status: "loading" });
-		fetch(withNode(compareUrl(selectedCwd, repo, base, head), node))
+		apiFetch(withNode(compareUrl(selectedCwd, repo, base, head), node))
 			.then(async (res) => {
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const compare = (await res.json()) as ReleaseCompare;

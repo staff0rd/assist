@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../../../apiFetch";
 import { useApiNode } from "../../../../useApiNode";
 import { withNode } from "../../../../withNode";
 
@@ -8,7 +9,7 @@ async function fetchConfigured(
 	cwd: string,
 	node?: string,
 ): Promise<boolean | undefined> {
-	const res = await fetch(
+	const res = await apiFetch(
 		withNode(`/api/releases/configured?cwd=${encodeURIComponent(cwd)}`, node),
 	);
 	if (!res.ok) return undefined;

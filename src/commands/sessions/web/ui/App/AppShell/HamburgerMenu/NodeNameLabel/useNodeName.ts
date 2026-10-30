@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../../../apiFetch";
 
 export function useNodeName(): string | null {
 	const [nodeName, setNodeName] = useState<string | null>(null);
@@ -7,7 +8,7 @@ export function useNodeName(): string | null {
 		let cancelled = false;
 		void (async () => {
 			try {
-				const res = await fetch("/api/health");
+				const res = await apiFetch("/api/health");
 				const body = await res.json();
 				if (!cancelled && typeof body?.nodeName === "string")
 					setNodeName(body.nodeName);

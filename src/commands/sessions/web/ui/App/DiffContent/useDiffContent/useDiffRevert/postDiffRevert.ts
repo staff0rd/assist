@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../../apiFetch";
 import { withNode } from "../../../../withNode";
 
 export async function postDiffRevert(
@@ -5,7 +6,7 @@ export async function postDiffRevert(
 	path: string,
 	node?: string,
 ): Promise<void> {
-	const res = await fetch(
+	const res = await apiFetch(
 		withNode(
 			`/api/diff/revert?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
 			node,

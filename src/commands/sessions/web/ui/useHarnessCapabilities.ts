@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { apiFetch } from "./apiFetch";
 
 export function useHarnessCapabilities(): {
 	exposeCodexActions: boolean;
@@ -11,7 +12,7 @@ export function useHarnessCapabilities(): {
 		let cancelled = false;
 		void (async () => {
 			try {
-				const res = await fetch("/api/harness");
+				const res = await apiFetch("/api/harness");
 				const body = await res.json();
 				if (!cancelled) {
 					setExposeCodexActions(Boolean(body?.exposeCodexActions));

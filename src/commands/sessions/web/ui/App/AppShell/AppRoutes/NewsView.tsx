@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
+import { apiFetch } from "../../../apiFetch";
 import { NewsConfigLink } from "./NewsView/NewsConfigLink";
 import { NewsItem } from "./NewsView/NewsItem";
 import { type DateGroup, groupByDate } from "./NewsView/groupByDate";
@@ -9,7 +10,7 @@ import type { FeedItem } from "./NewsView/types";
 import { PageShell } from "../../PageShell";
 
 async function fetchNewsItems(): Promise<FeedItem[]> {
-	const res = await fetch("/api/news/items");
+	const res = await apiFetch("/api/news/items");
 	return res.json();
 }
 

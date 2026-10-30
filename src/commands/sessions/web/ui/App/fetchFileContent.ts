@@ -1,3 +1,4 @@
+import { apiFetch } from "../apiFetch";
 import { withNode } from "../withNode";
 
 export type FileContentState =
@@ -13,7 +14,7 @@ export async function fetchFileContent(
 	node?: string,
 ): Promise<FileContentState> {
 	try {
-		const res = await fetch(
+		const res = await apiFetch(
 			withNode(
 				`/api/file?cwd=${encodeURIComponent(cwd)}&path=${encodeURIComponent(path)}`,
 				node,

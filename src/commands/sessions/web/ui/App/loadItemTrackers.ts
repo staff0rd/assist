@@ -3,6 +3,7 @@ import type {
 	ItemTracker,
 } from "../../../../backlog/web/ui/types";
 import { withCwd } from "../../../../backlog/web/ui/withCwd";
+import { apiFetch } from "../apiFetch";
 
 const cache = new Map<string, Promise<Map<number, ItemTracker>>>();
 
@@ -14,7 +15,7 @@ export function loadItemTrackers(
 	let pending = cache.get(key);
 	if (!pending) {
 		pending = (async () => {
-			const res = await fetch(withCwd("/api/items", cwd, node));
+			const res = await apiFetch(withCwd("/api/items", cwd, node));
 			const items = (await res.json()) as BacklogItemSummary[];
 			const map = new Map<number, ItemTracker>();
 			for (const item of items) {

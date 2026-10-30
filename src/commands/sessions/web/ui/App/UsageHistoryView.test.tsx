@@ -129,6 +129,7 @@ describe("UsageHistoryView", () => {
 		expect(screen.queryByText("Window")).toBeNull();
 		expect(fetchMock).toHaveBeenLastCalledWith(
 			"/api/usage/history?page=0&pageSize=30&window=seven_day",
+			undefined,
 		);
 	});
 
@@ -179,6 +180,7 @@ describe("UsageHistoryView", () => {
 			);
 			expect(fetchMock).toHaveBeenLastCalledWith(
 				"/api/usage/items?page=0&pageSize=30",
+				undefined,
 			);
 		});
 
@@ -271,6 +273,7 @@ describe("UsageHistoryView", () => {
 			);
 			expect(fetchMock).toHaveBeenLastCalledWith(
 				"/api/usage/items?page=0&pageSize=30&origin=github.com%2Facme%2Fapm",
+				undefined,
 			);
 		});
 
@@ -320,6 +323,7 @@ describe("UsageHistoryView", () => {
 			);
 			expect(fetchMock).toHaveBeenLastCalledWith(
 				"/api/usage/items?page=0&pageSize=30&status=running",
+				undefined,
 			);
 		});
 
@@ -359,6 +363,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&sort=active",
+					undefined,
 				),
 			);
 			fireEvent.click(screen.getByText("Active"));
@@ -366,6 +371,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&sort=active&direction=asc",
+					undefined,
 				),
 			);
 		});
@@ -383,6 +389,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=1&pageSize=30",
+					undefined,
 				),
 			);
 			fireEvent.click(screen.getByText("Phases"));
@@ -390,6 +397,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&sort=phases",
+					undefined,
 				),
 			);
 		});
@@ -409,6 +417,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=1&pageSize=30",
+					undefined,
 				),
 			);
 			fireEvent.mouseDown(screen.getByRole("combobox", { name: "Repo" }));
@@ -417,6 +426,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&origin=github.com%2Facme%2Fapm",
+					undefined,
 				),
 			);
 		});

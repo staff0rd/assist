@@ -65,7 +65,10 @@ describe("FilePalette", () => {
 		fireEvent.change(input(), { target: { value: "uds" } });
 
 		expect(await screen.findByText("useDaemonState.ts")).toBeTruthy();
-		expect(fetch).toHaveBeenLastCalledWith("/api/files?cwd=%2Frepo&q=uds");
+		expect(fetch).toHaveBeenLastCalledWith(
+			"/api/files?cwd=%2Frepo&q=uds",
+			undefined,
+		);
 	});
 
 	it("opens the highlighted file on Enter", async () => {
@@ -104,6 +107,7 @@ describe("FilePalette", () => {
 
 		expect(fetch).toHaveBeenLastCalledWith(
 			"/api/files?cwd=%2Frepo%2F.worktrees%2Ffeature&q=a",
+			undefined,
 		);
 	});
 

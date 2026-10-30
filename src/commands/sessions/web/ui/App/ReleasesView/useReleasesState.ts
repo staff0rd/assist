@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ReleaseStreamState } from "../../../releases/types";
+import { apiFetch } from "../../apiFetch";
 import { useApiNode } from "../../useApiNode";
 import { withNode } from "../../withNode";
 
@@ -19,7 +20,7 @@ async function fetchStreams(
 	cwd: string,
 	node?: string,
 ): Promise<ReleaseStreamState[]> {
-	const res = await fetch(
+	const res = await apiFetch(
 		withNode(`/api/releases/state?cwd=${encodeURIComponent(cwd)}`, node),
 	);
 	const body = await res.json();

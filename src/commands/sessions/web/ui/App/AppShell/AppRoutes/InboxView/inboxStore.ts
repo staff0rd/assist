@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../../apiFetch";
 import { postJson } from "../../../postJson";
 import type { InboxMessage } from "./types";
 
@@ -11,7 +12,7 @@ function set(messages: InboxMessage[]): void {
 
 async function refresh(): Promise<void> {
 	try {
-		const res = await fetch("/api/inbox");
+		const res = await apiFetch("/api/inbox");
 		const body = await res.json();
 		if (res.ok && Array.isArray(body)) set(body);
 	} catch {

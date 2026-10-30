@@ -7,6 +7,7 @@ import { AppShell } from "./App/AppShell";
 import { useColorMode } from "./App/useColorMode";
 import { createDesignTheme } from "./designSystem/createDesignTheme";
 import { loadFontsBeforeTerminalsOpen } from "./designSystem/loadFontsBeforeTerminalsOpen";
+import { HomeNodeGate } from "./HomeNodeGate";
 import { ToastStack } from "./ToastStack";
 
 function Root() {
@@ -17,7 +18,9 @@ function Root() {
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			<ToastStack>
-				<AppShell mode={mode} toggle={toggle} />
+				<HomeNodeGate>
+					<AppShell mode={mode} toggle={toggle} />
+				</HomeNodeGate>
 			</ToastStack>
 		</ThemeProvider>
 	);
