@@ -1,3 +1,10 @@
+# [0.957.0](https://github.com/staff0rd/assist/compare/v0.956.2...v0.957.0) (2026-10-30)
+
+
+### Features
+
+* extension popovers use Slate theme ([8142b86](https://github.com/staff0rd/assist/commit/8142b86d9ffdbeea7616bcd062a75f277ab151e5))
+
 ## [0.956.2](https://github.com/staff0rd/assist/compare/v0.956.1...v0.956.2) (2026-10-30)
 
 
