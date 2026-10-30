@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
@@ -88,16 +89,20 @@ describe("add", () => {
 		);
 	});
 
-	it("creates a slash command file for test: prefixed names", async () => {
+	it("writes namespaced names into a subdirectory instead of a ':' filename", async () => {
 		setArgv("test:unit", "vitest");
 		mockLoadProjectConfig.mockReturnValue({});
 
 		await add();
 
 		expect(mockSaveConfig).toHaveBeenCalled();
+		expect(mockMkdirSync).toHaveBeenCalledWith(
+			join(".claude", "commands", "test"),
+			{ recursive: true },
+		);
 		expect(mockWriteFileSync).toHaveBeenCalledWith(
-			expect.stringContaining("test:unit.md"),
-			expect.any(String),
+			join(".claude", "commands", "test", "unit.md"),
+			expect.stringContaining("assist run test:unit"),
 		);
 	});
 

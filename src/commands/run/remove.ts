@@ -1,16 +1,29 @@
-import { existsSync, unlinkSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readdirSync, rmdirSync, unlinkSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { loadProjectConfig, saveConfig } from "../../shared/loadConfig";
 import { removeRepoRunConfig } from "./removeRepoRunConfig";
+import { runCommandFilePath } from "./runCommandFilePath";
 
 type RemoveOptions = { repo?: string | boolean };
 
-function deleteCommandFile(name: string): void {
-	const filePath = join(".claude", "commands", `${name}.md`);
-	if (existsSync(filePath)) {
-		unlinkSync(filePath);
-		console.log(`Deleted command file: ${filePath}`);
+function removeEmptyNamespaceDirs(filePath: string): void {
+	const root = join(".claude", "commands");
+	for (let dir = dirname(filePath); dir !== root; dir = dirname(dir)) {
+		if (!existsSync(dir) || readdirSync(dir).length > 0) return;
+		rmdirSync(dir);
 	}
+}
+
+function deleteCommandFile(name: string): void {
+	const filePath = runCommandFilePath(name);
+	const legacyPath = join(".claude", "commands", `${name}.md`);
+	for (const path of new Set([filePath, legacyPath])) {
+		if (existsSync(path)) {
+			unlinkSync(path);
+			console.log(`Deleted command file: ${path}`);
+		}
+	}
+	removeEmptyNamespaceDirs(filePath);
 }
 
 function removeProjectRunConfig(name: string): void {

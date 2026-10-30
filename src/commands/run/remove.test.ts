@@ -1,4 +1,5 @@
-import { existsSync, unlinkSync } from "node:fs";
+import { existsSync, readdirSync, rmdirSync, unlinkSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
@@ -42,6 +43,8 @@ const mockLoadProjectConfig = vi.mocked(loadProjectConfig);
 const mockSaveConfig = vi.mocked(saveConfig);
 const mockExistsSync = vi.mocked(existsSync);
 const mockUnlinkSync = vi.mocked(unlinkSync);
+const mockReaddirSync = vi.mocked(readdirSync);
+const mockRmdirSync = vi.mocked(rmdirSync);
 
 let exitCode: number | undefined;
 let errorOutput: string[];
@@ -128,6 +131,23 @@ describe("remove", () => {
 		expect(mockSaveConfig).toHaveBeenCalledWith({ run: [] });
 		expect(mockUnlinkSync).not.toHaveBeenCalled();
 		expect(logOutput).toContain("Removed run configuration: test");
+	});
+
+	it("deletes the namespaced file add created and its emptied directory", async () => {
+		const filePath = join(".claude", "commands", "ios", "build.md");
+		mockLoadProjectConfig.mockReturnValue({
+			run: [{ name: "ios:build", command: "xcodebuild" }],
+		});
+		mockExistsSync.mockImplementation(
+			(path) => path === filePath || path === dirname(filePath),
+		);
+		mockReaddirSync.mockReturnValue([]);
+
+		await remove("ios:build");
+
+		expect(mockUnlinkSync).toHaveBeenCalledTimes(1);
+		expect(mockUnlinkSync).toHaveBeenCalledWith(filePath);
+		expect(mockRmdirSync).toHaveBeenCalledWith(dirname(filePath));
 	});
 
 	describe("with --repo", () => {
