@@ -1,3 +1,10 @@
+# [0.965.0](https://github.com/staff0rd/assist/compare/v0.964.0...v0.965.0) (2026-10-30)
+
+
+### Features
+
+* queue docs refresh after N stories ([2312c0d](https://github.com/staff0rd/assist/commit/2312c0dbbc0e4fdbf451bd95bf98781a87a8cddf))
+
 # [0.964.0](https://github.com/staff0rd/assist/compare/v0.963.0...v0.964.0) (2026-10-30)
 
 
