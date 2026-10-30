@@ -1,3 +1,10 @@
+## [0.966.3](https://github.com/staff0rd/assist/compare/v0.966.2...v0.966.3) (2026-10-30)
+
+
+### Bug Fixes
+
+* check now releases divergence hold ([373584d](https://github.com/staff0rd/assist/commit/373584da66a7b637590661b72684a94c499345f2))
+
 ## [0.966.2](https://github.com/staff0rd/assist/compare/v0.966.1...v0.966.2) (2026-10-30)
 
 
