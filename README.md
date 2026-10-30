@@ -4,8 +4,6 @@ A dashboard and CLI for running coding agents (Claude Code, Codex or pi) across 
 
 See the [documentation](https://staffordwilliams.com/assist/) to get started.
 
-See [devlog](https://staffordwilliams.com/devlog/assist/) for latest features.
-
 ## Installation
 
 ```bash
