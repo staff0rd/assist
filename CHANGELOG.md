@@ -1,3 +1,10 @@
+# [0.962.0](https://github.com/staff0rd/assist/compare/v0.961.0...v0.962.0) (2026-10-30)
+
+
+### Features
+
+* rules add --user/--node, import-user ([74680a7](https://github.com/staff0rd/assist/commit/74680a7474eea4ecc0820c88f67843a913fea7e4))
+
 # [0.961.0](https://github.com/staff0rd/assist/compare/v0.960.0...v0.961.0) (2026-10-30)
 
 
