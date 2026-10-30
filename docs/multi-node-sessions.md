@@ -54,12 +54,6 @@ A link dials a URL:
 - **Tailscale** — `https://<host>.<tailnet>.ts.net:<port>`, which the peer's web server exposes when it starts (`tailscale serve --bg --https=<port> http://127.0.0.1:<port>`, `tailscale.exe` under WSL, off with `sessions.tailscaleServe: false`). On the PC, Windows' `tailscale serve` also fronts the WSL web server on `<port>` + 1000, since mirrored WSL networking holds `<port>` itself on every Windows address. `assist sessions nodes link <name> --tailscale <host> --port <port>` resolves the tailnet suffix from `tailscale status --json`. This needs MagicDNS and HTTPS certificates turned on in the tailnet admin.
 - **direct** — any other URL, e.g. WSL → Windows on the same machine (`http://127.0.0.1:3101`).
 
-### iOS viewer
-
-The Capacitor app in `ios-app/` is a viewer, not a node: it has no daemon, links or sessions, and dials one **home node** at its Tailscale URL. The home node merges its links as it does for a browser, so the app needs no merging. Its bundled UI sends every REST call and the `/ws` socket through `apiUrl` / `apiFetch` (`web/ui/apiUrl.ts`), whose base is the stored home node in the app and the page's own origin in a browser. The web server adds CORS headers for the app's `capacitor://localhost` origin on `/api/*` (logging each preflight as `app cors:`) and accepts `/ws` only from no origin (link daemons), the server's own host, or the app (`ws: accepted app origin` / `ws: refused origin`).
-
-To run it: install Tailscale on the phone in the same tailnet, then `npm run ios:install`, `npm run ios:build`, and `npm run ios:run` (or `npm run ios:open` for Xcode), and enter the home node's `https://<host>.<tailnet>.ts.net:<port>` on first launch.
-
 Config on the linking node:
 
 ```yaml
