@@ -1,3 +1,10 @@
+# [0.973.0](https://github.com/staff0rd/assist/compare/v0.972.0...v0.973.0) (2026-10-30)
+
+
+### Features
+
+* refuse docs changes in commit ([252786e](https://github.com/staff0rd/assist/commit/252786e3afffa83ecf83d55a8861157bd77d2318))
+
 # [0.972.0](https://github.com/staff0rd/assist/compare/v0.971.0...v0.972.0) (2026-10-30)
 
 
