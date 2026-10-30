@@ -1,3 +1,10 @@
+## [0.956.1](https://github.com/staff0rd/assist/compare/v0.956.0...v0.956.1) (2026-10-30)
+
+
+### Bug Fixes
+
+* iOS status bar follows theme ([e846f29](https://github.com/staff0rd/assist/commit/e846f295e4ed8f087207da5fb030bb6411e2a260))
+
 # [0.956.0](https://github.com/staff0rd/assist/compare/v0.955.2...v0.956.0) (2026-10-30)
 
 
