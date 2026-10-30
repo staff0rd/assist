@@ -18,7 +18,8 @@ export function DivergedAdvice({
 			<Typography variant="body2" sx={bannerTextSx}>
 				<b>{entry.name}'s install can't fast-forward to origin.</b> A Claude
 				session{escalationId ? ` (${escalationId})` : ""} is reconciling it. The
-				update loop resumes when that session closes.
+				update loop resumes when that session closes, or click Check now once
+				it's fixed to run an update straight away.
 			</Typography>
 			<OpenFixButton entry={entry} actions={actions} />
 		</Box>

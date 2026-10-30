@@ -31,6 +31,7 @@ export function loopDeps(
 			const status = ctx().sessions.get(sessionId)?.status;
 			return status !== undefined && status !== "done" && status !== "error";
 		},
+		takeHoldRelease: autoUpdateControl.takeHoldRelease,
 		paused: autoUpdateControl.paused,
 		sleep: autoUpdateControl.sleep,
 	};

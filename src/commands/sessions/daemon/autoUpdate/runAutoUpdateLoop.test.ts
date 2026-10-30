@@ -24,6 +24,7 @@ function deps(overrides: Partial<AutoUpdateDeps> = {}): AutoUpdateDeps {
 		liveEscalation: vi.fn(() => undefined),
 		escalate: vi.fn(() => "7"),
 		isLive: vi.fn(() => false),
+		takeHoldRelease: vi.fn(() => false),
 		paused: vi.fn(() => false),
 		sleep: vi.fn(() => Promise.resolve()),
 		...overrides,
@@ -81,6 +82,27 @@ describe("runAutoUpdateLoop", () => {
 		expect(d.sleep).toHaveBeenCalledWith(ESCALATION_POLL_MS);
 		expect(d.note).toHaveBeenCalledWith(
 			"paused while session 4 reconciles the divergence",
+		);
+	});
+
+	it("runs a lap when a check releases the hold while the session stays open", async () => {
+		const takeHoldRelease = vi
+			.fn()
+			.mockReturnValueOnce(true)
+			.mockReturnValueOnce(false)
+			.mockReturnValueOnce(true);
+		const d = deps({
+			liveEscalation: () => "4",
+			isLive: vi.fn(() => true),
+			takeHoldRelease,
+		});
+
+		await runAutoUpdateLoop(d, 1);
+
+		expect(d.sleep).toHaveBeenCalledTimes(2);
+		expect(d.runLap).toHaveBeenCalledTimes(1);
+		expect(d.note).toHaveBeenCalledWith(
+			"check requested while session 4 is open; resuming",
 		);
 	});
 

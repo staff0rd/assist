@@ -35,6 +35,14 @@ export function applyAutoUpdateAction(
 	}
 	if (autoUpdateControl.paused())
 		return "auto-update is paused; resume it first";
+	if (loop.phase === "diverged") {
+		autoUpdateControl.releaseHold();
+		noteAutoUpdate(
+			installDir,
+			`check requested from Updates; releasing the hold for session ${loop.escalationId}`,
+		);
+		return undefined;
+	}
 	signalLap(installDir, "check");
 	autoUpdateControl.wake();
 	noteAutoUpdate(installDir, "check requested from Updates");

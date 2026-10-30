@@ -3,6 +3,7 @@ import { daemonPaths } from "../daemonPaths";
 
 let paused: boolean | undefined;
 let wake: (() => void) | undefined;
+let holdReleased = false;
 
 function persist(value: boolean): void {
 	try {
@@ -32,4 +33,13 @@ export const autoUpdateControl = {
 			wake = done;
 		}),
 	wake: (): void => wake?.(),
+	releaseHold: (): void => {
+		holdReleased = true;
+		wake?.();
+	},
+	takeHoldRelease: (): boolean => {
+		const released = holdReleased;
+		holdReleased = false;
+		return released;
+	},
 };
