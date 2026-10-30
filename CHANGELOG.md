@@ -1,3 +1,16 @@
+# [0.966.0](https://github.com/staff0rd/assist/compare/v0.965.0...v0.966.0) (2026-10-30)
+
+
+### Bug Fixes
+
+* docs capture checks docker first ([66ae28d](https://github.com/staff0rd/assist/commit/66ae28d339a31e6b81dab77f5af842ba4869807b))
+
+
+### Features
+
+* make docs refresh items actionable ([b6f7515](https://github.com/staff0rd/assist/commit/b6f7515df2184346342679ee5165fd9a3d0ba336))
+* phone takes over pty width ([69660e3](https://github.com/staff0rd/assist/commit/69660e3c2f478333b60c40ca7d662d904ed63677))
+
 # [0.965.0](https://github.com/staff0rd/assist/compare/v0.964.0...v0.965.0) (2026-10-30)
 
 
