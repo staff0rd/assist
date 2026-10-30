@@ -35,7 +35,10 @@ const wsHandlers: Record<string, (msg: Msg, d: WsDispatch) => void> = {
 	nodes: handleNodes,
 	error: handleError,
 	notice: handleNotice,
-	inbox: () => void inboxStore.refresh(),
+	inbox: () => {
+		void inboxStore.refresh();
+		void inboxStore.refreshStatus();
+	},
 	"run-conflict": handleRunConflict,
 	limits: handleLimits,
 	clear: handleClear,

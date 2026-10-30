@@ -13,6 +13,7 @@ import { handleOutputRequest } from "./handleOutputRequest";
 import { handleSetStatus } from "./handleSetStatus";
 import { handleTypePrompt } from "./handleTypePrompt";
 import { handleTypePromptToWriter } from "./handleTypePromptToWriter";
+import { inboxHandlers } from "./inbox/inboxHandlers";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import { type Handler, routed } from "./routed";
 import { viewerHandlers } from "./viewerHandlers";
@@ -32,6 +33,7 @@ export const messageHandlers: Record<string, Handler> = {
 	"auto-update": (client) => sendTo(client, autoUpdateReply()),
 	"auto-update-control": handleAutoUpdateControl,
 	"search-history": (client, _m, d) => handleSearchHistory(client, d),
+	...inboxHandlers,
 	"reload-links": (client, m) => {
 		daemonLog("reload-links received");
 		m.links.reload();

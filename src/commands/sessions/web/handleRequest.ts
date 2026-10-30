@@ -27,7 +27,9 @@ import { handleDynamicRoute } from "./handleDynamicRoute";
 import { harnessCapabilities } from "./harnessCapabilities";
 import { health } from "./health";
 import { historySearch } from "./historySearch";
+import { inboxStatus } from "./inbox/inboxStatus";
 import { listInbox } from "./inbox/listInbox";
+import { scanInbox } from "./inbox/scanInbox";
 import { hotkeyBindings } from "./hotkeyBindings";
 import { jiraSite } from "./jiraSite";
 import { listFiles } from "./listFiles";
@@ -107,6 +109,8 @@ const routes: Record<string, Handler> = {
 	"GET /api/next": nextItems,
 	"POST /api/next/pickup": nextPickup,
 	"GET /api/inbox": listInbox,
+	"GET /api/inbox/status": inboxStatus,
+	"POST /api/inbox/scan": scanInbox,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/news/nav": newsNavConfig,
 	"GET /api/releases/state": releasesState,
