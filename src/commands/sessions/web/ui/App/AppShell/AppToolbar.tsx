@@ -19,7 +19,7 @@ const itemsSx = {
 	minWidth: 0,
 	display: "flex",
 	alignItems: "center",
-	overflowX: "auto",
+	overflowX: { xs: "auto", sm: "visible" },
 	scrollbarWidth: "none",
 	"&::-webkit-scrollbar": { display: "none" },
 } as const;
