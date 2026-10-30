@@ -1,3 +1,11 @@
+# [0.963.0](https://github.com/staff0rd/assist/compare/v0.962.0...v0.963.0) (2026-10-30)
+
+
+### Features
+
+* phone shell for the iOS app ([04f7291](https://github.com/staff0rd/assist/commit/04f7291b6dfc580f5c98434c96eefd42b343d993))
+* rename config scopes, --node flag ([8abba25](https://github.com/staff0rd/assist/commit/8abba25d7dc40021dc3184b5a642e270f0c7c6b4))
+
 # [0.962.0](https://github.com/staff0rd/assist/compare/v0.961.0...v0.962.0) (2026-10-30)
 
 
