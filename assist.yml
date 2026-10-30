@@ -121,7 +121,7 @@ run:
       - src/index.ts
       - verify
       - config-keys
-  - name: verify:docs-coverage
+  - name: docs:coverage
     command: npx
     args:
       - tsx

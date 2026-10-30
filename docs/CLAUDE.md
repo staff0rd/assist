@@ -12,7 +12,7 @@ An [Astro Starlight](https://starlight.astro.build/) site: pages in `src/content
 - `covers` — inventory ids documented: `cli:<command path>`, `claude:<name>`, `config:<key>`, `route:<path>`, `skill:<name>`
 - `screenshots` — optional, see below
 
-Each `##` starts a section. Unknown keys, ids or scenes and missing screenshots fail the build. `verify:docs-coverage` fails when any command, skill, config key or route is covered by no page; `npx tsx src/docs/docsCoverage.ts --report` lists the gaps.
+Each `##` starts a section. Unknown keys, ids or scenes and missing screenshots fail the build. `assist run docs:coverage` fails when any command, skill, config key or route is covered by no page; `npx tsx src/docs/docsCoverage.ts --report` lists the gaps.
 
 ### Directives
 
