@@ -4,6 +4,7 @@ import type { InboxMessage, InboxStatus } from "./types";
 
 let current: InboxMessage[] | undefined;
 let status: InboxStatus | undefined;
+let statusError: string | undefined;
 const listeners = new Set<() => void>();
 
 function emit(): void {
@@ -33,8 +34,17 @@ async function refresh(): Promise<void> {
 async function refreshStatus(): Promise<void> {
 	try {
 		const res = await apiFetch("/api/inbox/status");
-		if (res.ok) setStatus(await res.json());
-	} catch {}
+		const body = await res.json().catch(() => ({}));
+		if (res.ok) {
+			statusError = undefined;
+			setStatus(body);
+			return;
+		}
+		statusError = `Couldn't read scan status: ${body.error ?? `HTTP ${res.status}`}`;
+	} catch (error) {
+		statusError = `Couldn't read scan status: ${String(error)}`;
+	}
+	emit();
 }
 
 async function dismiss(id: string): Promise<void> {
@@ -54,14 +64,19 @@ async function scan(): Promise<void> {
 	if (status) setStatus({ ...status, scanning: true, lastError: null });
 	try {
 		await postJson("/api/inbox/scan", {}, "Failed to start inbox scan");
-	} finally {
-		await refreshStatus();
+	} catch (error) {
+		statusError = error instanceof Error ? error.message : String(error);
+		if (status) status = { ...status, scanning: false };
+		emit();
+		return;
 	}
+	await refreshStatus();
 }
 
 export const inboxStore = {
 	get: (): InboxMessage[] | undefined => current,
 	getStatus: (): InboxStatus | undefined => status,
+	getStatusError: (): string | undefined => statusError,
 	refresh,
 	refreshStatus,
 	dismiss,

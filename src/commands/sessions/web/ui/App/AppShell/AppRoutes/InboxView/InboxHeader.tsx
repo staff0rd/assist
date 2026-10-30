@@ -1,13 +1,22 @@
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { inboxStatusSummary } from "./inboxStatusSummary";
 import { inboxStore } from "./inboxStore";
 import { useInboxStatus } from "./useInboxStatus";
+import { useInboxStatusError } from "./useInboxStatusError";
 
 export function InboxHeader() {
 	const status = useInboxStatus();
+	const statusError = useInboxStatusError();
+	const scanning = status?.scanning === true;
+	const problem =
+		statusError ??
+		(status?.lastError && !scanning
+			? `Last scan failed: ${status.lastError}`
+			: undefined);
 	return (
 		<Box
 			sx={{
@@ -25,21 +34,25 @@ export function InboxHeader() {
 				<Typography variant="body2" color="text.secondary">
 					{inboxStatusSummary(status)}
 				</Typography>
-				{status?.lastError && !status.scanning && (
+				{problem && (
 					<Typography variant="body2" color="error">
-						Last scan failed: {status.lastError}
+						{problem}
 					</Typography>
 				)}
 			</Box>
-			<Button
-				variant="outlined"
-				size="small"
-				startIcon={<RefreshIcon />}
-				disabled={!status || status.scanning}
-				onClick={() => void inboxStore.scan().catch(() => {})}
-			>
-				{status?.scanning ? "Scanning…" : "Scan now"}
-			</Button>
+			<Tooltip title={scanning ? "A scan is already running" : ""}>
+				<span>
+					<Button
+						variant="outlined"
+						size="small"
+						startIcon={<RefreshIcon />}
+						disabled={scanning}
+						onClick={() => void inboxStore.scan()}
+					>
+						{scanning ? "Scanning…" : "Scan now"}
+					</Button>
+				</span>
+			</Tooltip>
 		</Box>
 	);
 }
