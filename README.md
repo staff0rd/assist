@@ -288,7 +288,7 @@ Rules are `- **<code>** — **<title>** — <text>` bullets, the title optional,
 
 ### Hooks
 
-- `assist cli-hook` - PreToolUse hook auto-approving CLI commands from `allowed.cli-reads` / `allowed.cli-writes`, and denying reads of `~/.assist/restricted`
+- `assist cli-hook` - PreToolUse hook auto-approving CLI commands from `allowed.cli-reads` / `allowed.cli-writes`, denying reads of `~/.assist/restricted`, and (with `sessions.askQuestion` on) denying `AskUserQuestion` in assist sessions in favour of `assist ask-question`
 - `assist cli-hook add <cli>` - Discover a CLI's commands and auto-permit read-only ones
 - `assist cli-hook check <command> [--tool <tool>]` - Check whether a command would be auto-approved
 - `assist cli-hook deny` - List all deny rules

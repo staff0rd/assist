@@ -47,7 +47,7 @@ See [Agent instructions and permissions](../hooks-and-permissions/) for what the
 
 ## Hooks
 
-- `assist cli-hook` :badge[internal] approves read-only commands and blocks denied ones. Called by the PreToolUse hook on shell commands and reads.
+- `assist cli-hook` :badge[internal] approves read-only commands and blocks denied ones. With `sessions.askQuestion` on, it also blocks `AskUserQuestion` in dashboard sessions and points the agent at `assist ask-question`. Called by the PreToolUse hook on shell commands, reads and `AskUserQuestion`.
 - `assist edit-hook` :badge[internal] blocks edits that add code comments. Called by the PreToolUse hook on file edits.
 - `assist codex-hook` :badge[internal] approves read-only commands in [Codex](../harnesses/) sessions, starts them with the repo's instructions and keeps their status on the dashboard. Called by Codex's hooks.
 - `assist pi-hook` :badge[internal] approves read-only commands in [pi](../harnesses/) sessions and blocks denied ones. Called by assist's pi permission-gate extension.

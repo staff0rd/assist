@@ -59,6 +59,13 @@ describe("composeAdvice", () => {
 		expect(withJira.length).toBeGreaterThan(without.length);
 	});
 
+	it("adds the ask-question fragment only when sessions.askQuestion is on", () => {
+		expect(includedNames(contextWith({}))).not.toContain("ask-question");
+		expect(
+			includedNames(contextWith({ sessions: { askQuestion: true } })),
+		).toContain("ask-question");
+	});
+
 	it("renders each included fragment under its title, in filename order", () => {
 		const markdown = composeAdvice(contextWith({ jira: {} }), fragments);
 		const titles = [...markdown.matchAll(/^## (.+)$/gm)].map(

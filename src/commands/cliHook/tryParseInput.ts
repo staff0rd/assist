@@ -1,6 +1,7 @@
 type ParsedInput =
 	| { kind: "command"; toolName: string; command: string }
-	| { kind: "path"; toolName: string; command: string; paths: string[] };
+	| { kind: "path"; toolName: string; command: string; paths: string[] }
+	| { kind: "question"; toolName: string; command: string };
 
 type HookInput = {
 	hook_event_name: string;
@@ -39,6 +40,15 @@ export function tryParseInput(raw: string): ParsedInput | undefined {
 				toolName: data.tool_name,
 				command: paths.join(" "),
 				paths,
+			};
+		}
+
+		if (data.tool_name === "AskUserQuestion") {
+			if (!Array.isArray(toolInput.questions)) return undefined;
+			return {
+				kind: "question",
+				toolName: data.tool_name,
+				command: JSON.stringify({ questions: toolInput.questions }),
 			};
 		}
 

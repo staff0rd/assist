@@ -1,6 +1,7 @@
 import { basename } from "node:path";
 import { readStdin } from "../lib/readStdin";
 import { decideCommand } from "./cliHook/decideCommand";
+import { findAskQuestionDeny } from "./cliHook/findAskQuestionDeny";
 import { findRestrictedPathDeny } from "./cliHook/findRestrictedPathDeny";
 import { logDeniedToolCall } from "./cliHook/logDeniedToolCall";
 import { tryParseInput } from "./cliHook/tryParseInput";
@@ -12,7 +13,9 @@ export async function cliHook(): Promise<void> {
 	const decision =
 		input.kind === "command"
 			? decideCommand(input.toolName, input.command)
-			: findRestrictedPathDeny(input.paths);
+			: input.kind === "question"
+				? findAskQuestionDeny(input.command)
+				: findRestrictedPathDeny(input.paths);
 	if (!decision) return;
 
 	console.log(

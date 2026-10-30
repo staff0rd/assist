@@ -28,6 +28,11 @@ export const adviceConditions: Record<string, AdviceCondition> = {
 		whenUnmet: "jira is not configured",
 		matches: ({ config }) => config.jira !== undefined,
 	},
+	askQuestion: {
+		whenMet: "sessions.askQuestion is on",
+		whenUnmet: "sessions.askQuestion is off",
+		matches: ({ config }) => config.sessions?.askQuestion === true,
+	},
 	typescript: repoFile("tsconfig.json", "a tsconfig.json"),
 	filenameConvention: repoFile(
 		join("oxlint-rules", "filenameConvention.ts"),
