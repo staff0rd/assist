@@ -1,6 +1,7 @@
 export function slatePhaseRowSx(active: boolean) {
 	return {
 		justifyContent: "flex-start",
+		alignItems: "flex-start",
 		gap: 1,
 		minWidth: 0,
 		py: "3px",
@@ -12,9 +13,8 @@ export function slatePhaseRowSx(active: boolean) {
 		"&:hover": { color: "text.primary" },
 		"& .phase-label": {
 			minWidth: 0,
-			overflow: "hidden",
-			textOverflow: "ellipsis",
-			whiteSpace: "nowrap",
+			lineHeight: "18px",
+			overflowWrap: "anywhere",
 		},
 	} as const;
 }
