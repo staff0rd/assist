@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { readStdin } from "../lib/readStdin";
 import { decideCommentGuard } from "./editHook/decideCommentGuard";
+import { decideDocsGuard } from "./editHook/decideDocsGuard";
 import { decideMigrationGuard } from "./editHook/decideMigrationGuard";
 import {
 	decideOverrideGuard,
@@ -39,7 +40,8 @@ export async function editHook(): Promise<void> {
 	const reason =
 		decideOverrideGuard(input, existing) ??
 		decideCommentGuard(input, existing) ??
-		decideMigrationGuard(input, existing);
+		decideMigrationGuard(input, existing) ??
+		(await decideDocsGuard(input));
 	if (!reason) return;
 
 	console.log(
