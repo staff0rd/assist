@@ -9,7 +9,8 @@
 	"dependencies": {
 		"@capacitor/core": "^8.6.0",
 		"@capacitor/ios": "^8.6.0",
-		"@capacitor/preferences": "^8.0.1"
+		"@capacitor/preferences": "^8.0.1",
+		"@capacitor/status-bar": "^8.0.4"
 	},
 	"devDependencies": {
 		"@capacitor/cli": "^8.6.0"

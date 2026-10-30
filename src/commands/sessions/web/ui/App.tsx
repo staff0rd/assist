@@ -9,10 +9,12 @@ import { createDesignTheme } from "./designSystem/createDesignTheme";
 import { loadFontsBeforeTerminalsOpen } from "./designSystem/loadFontsBeforeTerminalsOpen";
 import { HomeNodeGate } from "./HomeNodeGate";
 import { ToastStack } from "./ToastStack";
+import { useNativeStatusBarStyle } from "./useNativeStatusBarStyle";
 
 function Root() {
 	const { mode, toggle } = useColorMode();
 	const theme = useMemo(() => createDesignTheme(mode), [mode]);
+	useNativeStatusBarStyle(mode);
 
 	return (
 		<ThemeProvider theme={theme}>
