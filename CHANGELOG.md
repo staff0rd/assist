@@ -1,3 +1,10 @@
+# [0.967.0](https://github.com/staff0rd/assist/compare/v0.966.3...v0.967.0) (2026-10-30)
+
+
+### Features
+
+* phone node list and switching ([2d365ce](https://github.com/staff0rd/assist/commit/2d365ce6e8e40791d0f0c9163cb0d5d1ea2182e0))
+
 ## [0.966.3](https://github.com/staff0rd/assist/compare/v0.966.2...v0.966.3) (2026-10-30)
 
 
