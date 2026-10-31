@@ -975,5 +975,10 @@
 		{
 			"sql": "INSERT INTO backups (created_at, file_path, size_bytes, duration_ms) SELECT now() - n * interval '6 hours' - interval '12 minutes', '/home/sandbox/.assist/backups/backup-' || to_char(now() - n * interval '6 hours' - interval '12 minutes', 'YYYY-MM-DD\"T\"HH24-MI-SS') || '.dump', 4820000 - n * 61000, 1100 + (n * 137) % 600 FROM generate_series(0, 7) AS n"
 		}
+	],
+	"inbox": [
+		{
+			"sql": "INSERT INTO inbox_messages (source, message_id, sender, summary, link, received_at) VALUES ('slack', 'C01-1730350000.000100', 'Priya Natarajan', 'Asks whether the pricing page copy can ship before Friday''s launch email.', 'https://example.slack.com/archives/C01/p1730350000000100', now() - interval '25 minutes'), ('gmail', 'msg-1', 'Tom Becker', 'Wants a time next week to walk through the Q4 roadmap.', 'https://mail.google.com/mail/u/0/#inbox/msg-1', now() - interval '2 hours'), ('slack', 'D02-1730330000.000200', 'Lena Ortiz', 'Asks you to review her PR fixing the checkout totals.', 'https://example.slack.com/archives/D02/p1730330000000200', now() - interval '5 hours'), ('gmail', 'msg-2', 'Sam Okafor', 'Needs your sign-off on the updated contractor agreement.', 'https://mail.google.com/mail/u/0/#inbox/msg-2', now() - interval '1 day'); INSERT INTO metadata (key, value) VALUES ('inbox.lastScanAt', to_char((now() - interval '12 minutes') AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"')) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value"
+		}
 	]
 }

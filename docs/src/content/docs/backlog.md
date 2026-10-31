@@ -52,6 +52,33 @@ screenshots:
       - "#item-section-activity"
       - "#item-section-comments"
     cropPadding: 24
+  - file: backlog-refresh-docs.png
+    alt: The Refresh docs popover, listing the done stories no refresh covers yet with a Create Refresh docs button
+    route: /backlog
+    scene: backlog
+    setup:
+      - backlogItem:
+          item:
+            name: Search the product catalogue
+            type: story
+          status: done
+      - backlogItem:
+          item:
+            name: Save carts between visits
+            type: story
+          status: done
+      - backlogItem:
+          item:
+            name: Email a receipt after checkout
+            type: story
+          status: done
+    waitFor: text=Cart total rounds to the wrong cent
+    actions:
+      - click: "button:has-text('Refresh docs')"
+    crop:
+      - "button:has-text('Refresh docs')"
+      - ".MuiPopover-paper"
+    cropPadding: 16
 ---
 
 The backlog holds each repo's work as items: stories and bugs, each with a description, acceptance criteria and, usually, a plan of phases that an agent works through one at a time. Items are written by [drafting](../backlog-writing/) and built by [running](../backlog-running/) them.
@@ -124,3 +151,7 @@ Set `docs.refreshAfter` to have a repo queue a **Refresh docs** story once that 
 ```bash
 assist config set docs.refreshAfter 5
 ```
+
+To queue one now, click **Refresh docs** at the top of the Backlog tab. It counts the done stories no refresh covers yet; click **Create Refresh docs** in its popover to queue a story for them. While a refresh is open, the button links to it instead.
+
+::screenshot{file="backlog-refresh-docs.png"}

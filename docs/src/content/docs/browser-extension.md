@@ -36,7 +36,7 @@ screenshots:
     crop: "[data-testid='capture-issue-editor']"
 ---
 
-The assist extension for Firefox starts sessions from GitHub pages and edits acceptance criteria in GitHub issues.
+The assist extension for Firefox starts sessions from GitHub, Azure DevOps and Gmail pages and edits acceptance criteria in GitHub issues.
 
 ## Installing
 
@@ -62,7 +62,13 @@ On a pull request, the header button opens the same menu as the dashboard's [Rev
 
 ::screenshot{file="browser-extension-review-menu.png"}
 
-On an Azure DevOps pull request it offers **Checkout**, which needs the Azure CLI with its `azure-devops` extension, logged in with `az login`.
+On an Azure DevOps pull request it offers **Checkout** and **Address Comments**, which need the Azure CLI with its `azure-devops` extension, logged in with `az login`.
+
+## Sending from Gmail
+
+Each open message in Gmail gets an **assist** button beside its date. It opens the same popover, with a repo picker listing your clones under `clone.baseDir`; the session starts in the clone you pick, with a link to the message. The picker remembers your last pick.
+
+If Gmail shows no button after an update, grant the extension access to `mail.google.com` on **about:addons** → **assist** → **Permissions**.
 
 ## Working on issues in another repo
 
