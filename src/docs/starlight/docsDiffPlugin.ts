@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { docsPaths } from "../docsPaths";
-import { applyBlockDiff, type DiffVisitorContext } from "./applyBlockDiff";
+import { applyBlockDiff } from "./applyBlockDiff";
+import type { DiffVisitorContext } from "./applyEdit";
 import { declaredScreenshots } from "./declaredScreenshots";
 import { diffBlocks } from "./diffBlocks";
 import { readHeadSource } from "./readHeadSource";

@@ -1,36 +1,8 @@
+import { applyEdit, type DiffVisitorContext, type NodeEdit } from "./applyEdit";
 import type { BlockDiff } from "./diffBlocks";
-import {
-	docsDiffClasses,
-	isClassable,
-	renderDiffBlock,
-	withClass,
-} from "./renderDiffBlock";
+import { docsDiffClasses, renderDiffBlock } from "./renderDiffBlock";
 import type { MdastNode } from "./toDiffBlocks";
 import { toInsertable } from "./toInsertable";
-
-export type DiffVisitorContext = {
-	source: string;
-	setProperty(node: MdastNode, key: "data", value: MdastNode["data"]): void;
-	replaceNode(node: MdastNode, replacement: MdastNode[]): void;
-	appendChild(node: MdastNode, content: MdastNode[]): void;
-	prependChild(node: MdastNode, content: MdastNode[]): void;
-};
-
-type NodeEdit = { before: MdastNode[]; after: MdastNode[]; added: boolean };
-
-function applyEdit(
-	node: MdastNode,
-	{ before, after, added }: NodeEdit,
-	ctx: DiffVisitorContext,
-): void {
-	const classable = isClassable(node);
-	if (added && classable)
-		ctx.setProperty(node, "data", withClass(node.data, docsDiffClasses.added));
-	const wrapped = added && !classable;
-	if (before.length === 0 && after.length === 0 && !wrapped) return;
-	const self = wrapped ? renderDiffBlock(node, docsDiffClasses.added) : [node];
-	ctx.replaceNode(node, [...before, ...self, ...after]);
-}
 
 export function applyBlockDiff(
 	root: MdastNode,
