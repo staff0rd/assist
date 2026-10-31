@@ -30,4 +30,18 @@ describe("previewPageMeta", () => {
 			},
 		]);
 	});
+
+	it("lists the changed pages in a meta only when there are some", () => {
+		const page = { id: "a", title: "A", source: "docs/a.md" };
+		const changedPages = [{ id: "a", href: "/a/", label: "A" }];
+		expect(previewPageMeta({ ...page, changedPages }).at(-1)).toEqual({
+			tag: "meta",
+			attrs: {
+				name: "assist-docs-changes",
+				content: JSON.stringify(changedPages),
+			},
+			content: "",
+		});
+		expect(previewPageMeta({ ...page, changedPages: [] })).toHaveLength(3);
+	});
 });

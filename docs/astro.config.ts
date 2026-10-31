@@ -103,7 +103,10 @@ export default defineConfig({
 			hooks: {
 				"astro:config:setup": ({ injectScript }) => {
 					injectScript("page", 'import "/src/screenshotLightbox.ts";');
-					if (preview) injectScript("page", 'import "/src/previewReload.ts";');
+					if (preview) {
+						injectScript("page", 'import "/src/previewReload.ts";');
+						injectScript("page", 'import "/src/previewChanges.ts";');
+					}
 				},
 				"astro:build:done": ({ dir }) => patchPagefindBundle(dir),
 			},

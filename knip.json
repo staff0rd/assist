@@ -20,6 +20,7 @@
 		"src/test/mocks/*Mock.ts",
 		"src/docs/docsCoverage.ts",
 		"src/docs/printDocsInventory.ts",
+		"src/docs/starlight/changedDocsPages.ts",
 		"src/docs/starlight/createDocsFrontmatterCheck.ts",
 		"src/docs/starlight/docsDiffPlugin.ts",
 		"src/docs/starlight/docsSectionsPlugin.ts",
@@ -30,6 +31,7 @@
 		"src/docs/starlight/patchPagefindBundle.ts",
 		"src/docs/starlight/previewPageMeta.ts",
 		"src/docs/starlight/screenshotsPlugin.ts",
+		"src/docs/starlight/showDocsChanges.ts",
 		"src/docs/starlight/untilFeedbackClosed.ts"
 	],
 	"ignoreDependencies": [
