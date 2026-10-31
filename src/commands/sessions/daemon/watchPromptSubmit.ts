@@ -1,5 +1,6 @@
 import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { watchSubmitOutcome } from "./watchSubmitOutcome";
 
 type OnStatusChange = (session: Session, status: SessionStatus) => void;
 
@@ -19,4 +20,5 @@ export function watchPromptSubmit(
 	if (!isPromptSubmit(data)) return;
 	daemonLog(`session ${session.id} resumed-prompt submit -> running`);
 	onStatusChange(session, "running");
+	watchSubmitOutcome(session, onStatusChange);
 }

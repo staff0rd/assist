@@ -79,6 +79,7 @@ export type Session = {
 	lastUserMessage?: string;
 	lastAssistantMessage?: string;
 	permissionActive?: boolean;
+	pendingSubmit?: { fingerprint?: string; cancel: () => void };
 	pendingPrompts?: string[];
 	autoAdvance?: boolean;
 	autoApprove?: boolean;

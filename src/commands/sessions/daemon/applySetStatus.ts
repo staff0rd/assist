@@ -1,6 +1,7 @@
 import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
+import { clearPendingSubmit } from "./watchSubmitOutcome";
 
 function opensPrompt(status: SessionStatus, source: string | undefined) {
 	const askUserQuestion = source === "pretool" && status === "waiting";
@@ -29,6 +30,7 @@ export function applySetStatus(
 		return;
 	}
 	rebind?.(session);
+	clearPendingSubmit(session);
 	if (opensPrompt(status, source)) session.permissionActive = true;
 	if (status === "running" || source === "stop")
 		session.permissionActive = false;
