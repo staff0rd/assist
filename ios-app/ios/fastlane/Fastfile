@@ -1,0 +1,62 @@
+default_platform(:ios)
+
+XCODEPROJ = "App/App.xcodeproj"
+SCHEME = "App"
+APP_IDENTIFIER = "com.staff0rd.assist"
+APP_TARGET = "App"
+
+platform :ios do
+  desc "Build, sign and upload a new build to TestFlight"
+  lane :beta do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: ENV.fetch("ASC_KEY_PATH")
+    )
+
+    setup_ci
+
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key: api_key
+    )
+
+    increment_build_number(
+      xcodeproj: XCODEPROJ,
+      build_number: ENV.fetch("BUILD_NUMBER")
+    )
+
+    increment_version_number(
+      xcodeproj: XCODEPROJ,
+      version_number: ENV.fetch("MARKETING_VERSION").delete_prefix("v")
+    )
+
+    profile_name = "match AppStore #{APP_IDENTIFIER}"
+
+    update_code_signing_settings(
+      path: XCODEPROJ,
+      use_automatic_signing: false,
+      team_id: ENV.fetch("APPLE_TEAM_ID"),
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile_name,
+      bundle_identifier: APP_IDENTIFIER,
+      targets: [APP_TARGET]
+    )
+
+    build_app(
+      project: XCODEPROJ,
+      scheme: SCHEME,
+      export_method: "app-store",
+      export_options: {
+        signingStyle: "manual",
+        provisioningProfiles: { APP_IDENTIFIER => profile_name }
+      }
+    )
+
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true
+    )
+  end
+end

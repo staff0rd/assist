@@ -1,0 +1,4 @@
+git_url("https://github.com/staff0rd/collab-love-certificates.git")
+storage_mode("git")
+type("appstore")
+app_identifier(["com.staff0rd.assist"])

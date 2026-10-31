@@ -48,11 +48,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 
-      - name: Sign extension if it changed
+      - name: Sign extension if it changed and upload iOS to TestFlight
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag=$(git tag --points-at HEAD --list 'v*' | head -n1)
           if [ -n "$tag" ]; then
             gh workflow run extension.yml --ref main -f tag="$tag" -f only-if-changed=true
+            gh workflow run ios.yml --ref main -f tag="$tag"
           fi

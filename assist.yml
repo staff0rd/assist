@@ -207,6 +207,14 @@ run:
     args:
       - run
       - ios:open
+  - name: match:sync
+    command: bash
+    args:
+      - scripts/match-sync.sh
+  - name: ios:icon
+    command: bash
+    args:
+      - scripts/ios-icon.sh
 forbiddenStrings:
   - file: claude/settings.json
     paths:
@@ -224,3 +232,16 @@ deny:
     message: STOP. Do not attempt any workaround. Building is a verify command and must be run via /verify (the skill). Do not try npm run, tsc, tsup, or any alternative — invoke /verify now.
   - pattern: npx biome
     message: STOP. This project does not use biome. Formatting is oxfmt and runs as a verify command — invoke /verify (the skill) instead of formatting or linting separately.
+releases:
+  streams:
+    - name: assist
+      repo: staff0rd/assist
+      workflow: release.yml
+      nodes:
+        - id: release
+          kind: build
+        - id: testflight
+          environment: testflight
+      edges:
+        - - release
+          - testflight

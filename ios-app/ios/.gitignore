@@ -1,4 +1,8 @@
 App/build
+fastlane/report.xml
+fastlane/README.md
+*.ipa
+*.dSYM.zip
 App/Pods
 App/output
 App/App/public
