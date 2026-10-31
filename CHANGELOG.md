@@ -1,3 +1,15 @@
+# [0.1005.0](https://github.com/staff0rd/assist/compare/v0.1004.1...v0.1005.0) (2026-10-31)
+
+
+### Bug Fixes
+
+* docs unlock on an item's first phase ([bbc9fbb](https://github.com/staff0rd/assist/commit/bbc9fbb788f70ceca9b3ba7cf3cf89343e5b9d1c))
+
+
+### Features
+
+* live inbox scan activity panel ([ae8b963](https://github.com/staff0rd/assist/commit/ae8b9637c2c8824c40ea86a00b058c72a714d3b4))
+
 ## [0.1004.1](https://github.com/staff0rd/assist/compare/v0.1004.0...v0.1004.1) (2026-10-31)
 
 
