@@ -1,3 +1,10 @@
+## [0.983.1](https://github.com/staff0rd/assist/compare/v0.983.0...v0.983.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* close stacked show on new preview ([00eaa7d](https://github.com/staff0rd/assist/commit/00eaa7d3133298e3de5ba184963106e66e9d362d))
+
 # [0.983.0](https://github.com/staff0rd/assist/compare/v0.982.0...v0.983.0) (2026-10-31)
 
 
