@@ -1,3 +1,10 @@
+## [0.990.1](https://github.com/staff0rd/assist/compare/v0.990.0...v0.990.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* skip iOS export compliance prompt ([a2ab8c3](https://github.com/staff0rd/assist/commit/a2ab8c326f67c1b5adb4a76dd5e18ceb862ede3d))
+
 # [0.990.0](https://github.com/staff0rd/assist/compare/v0.989.0...v0.990.0) (2026-10-31)
 
 
