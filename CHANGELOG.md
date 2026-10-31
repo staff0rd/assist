@@ -1,3 +1,10 @@
+# [0.989.0](https://github.com/staff0rd/assist/compare/v0.988.0...v0.989.0) (2026-10-31)
+
+
+### Features
+
+* show docs unlock approval time ([d08e6a0](https://github.com/staff0rd/assist/commit/d08e6a023884e9ebf5ce08aa5444c85a144c2cd1))
+
 # [0.988.0](https://github.com/staff0rd/assist/compare/v0.987.0...v0.988.0) (2026-10-31)
 
 
