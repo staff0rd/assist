@@ -1,3 +1,10 @@
+## [0.979.1](https://github.com/staff0rd/assist/compare/v0.979.0...v0.979.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* keep Continue as-is on review entry ([1f692c7](https://github.com/staff0rd/assist/commit/1f692c7d4174f6f83a3c21a1f11ca6d118d3a7b9))
+
 # [0.979.0](https://github.com/staff0rd/assist/compare/v0.978.1...v0.979.0) (2026-10-31)
 
 
