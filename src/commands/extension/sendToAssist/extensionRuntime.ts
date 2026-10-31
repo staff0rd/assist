@@ -4,6 +4,7 @@ type ExtensionRuntime = {
 	sendMessage: (message: unknown) => Promise<unknown>;
 	getURL?: (path: string) => string;
 	openOptionsPage?: () => Promise<void>;
+	getManifest?: () => { version?: string };
 	onMessage: {
 		addListener: (
 			listener: (message: unknown, sender?: MessageSender) => unknown,
