@@ -62,11 +62,21 @@ describe("createDocsRefreshItem", () => {
 		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
 		const tasks = (await loadItem(orm, id))?.plan?.[0].tasks.map((t) => t.task);
 
-		expect(tasks).toHaveLength(3);
+		expect(tasks).toHaveLength(4);
 		expect(tasks?.[0]).toContain(formatItemId(a));
 		expect(tasks?.[1]).toContain("no user-facing change");
 		expect(tasks?.[2]).toContain("docs/src/content/docs/");
 		expect(tasks?.[2]).toContain("docs/CLAUDE.md");
+	});
+
+	it("ends with the user approving the docs diff before it is committed", async () => {
+		const a = await addStory("Add widgets");
+
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a], true);
+		const tasks = (await loadItem(orm, id))?.plan?.[0].tasks.map((t) => t.task);
+
+		expect(tasks?.at(-1)).toContain("assist ask");
+		expect(tasks?.at(-1)).toContain("before committing");
 	});
 
 	it("adds a coverage task when the repo defines docs:coverage", async () => {
@@ -75,10 +85,21 @@ describe("createDocsRefreshItem", () => {
 		const id = await createDocsRefreshItem(orm, ORIGIN, [a], true);
 		const tasks = (await loadItem(orm, id))?.plan?.[0].tasks.map((t) => t.task);
 
-		expect(tasks).toHaveLength(4);
+		expect(tasks).toHaveLength(5);
 		expect(tasks?.[3]).toContain("assist run docs:coverage");
 		expect(tasks?.[3]).toContain("--report");
 		expect(tasks?.[3]).toContain("`covers`");
+	});
+
+	it("holds the phase open for the user to approve the docs changes", async () => {
+		const a = await addStory("Add widgets");
+
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
+		const phase = (await loadItem(orm, id))?.plan?.[0];
+
+		expect(phase?.manualChecks).toEqual([
+			"Review every docs page change in the diff and approve it",
+		]);
 	});
 
 	it("makes the item own covers entries as well as prose", async () => {

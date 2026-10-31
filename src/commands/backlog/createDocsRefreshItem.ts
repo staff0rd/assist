@@ -6,6 +6,7 @@ import { hasDocsCoverageRun } from "./hasDocsCoverageRun";
 import { insertItem } from "./insertItem";
 import { insertPhaseAt } from "./insertPhaseAt";
 import { loadDocsRefreshStories } from "./loadDocsRefreshStories";
+import { serializeManualChecks } from "./serializeManualChecks";
 
 export async function createDocsRefreshItem(
 	orm: Db,
@@ -44,8 +45,11 @@ export async function createDocsRefreshItem(
 						"Run `assist run docs:coverage`; while it fails, list the gaps with `assist run docs:coverage --report` and add `covers` entries to the pages that document them (or new pages) until it passes",
 					]
 				: []),
+			"Show the docs diff to the user with `assist ask` and wait for their approval before committing",
 		],
-		null,
+		serializeManualChecks([
+			"Review every docs page change in the diff and approve it",
+		]),
 		undefined,
 	);
 	await orm.insert(links).values(
