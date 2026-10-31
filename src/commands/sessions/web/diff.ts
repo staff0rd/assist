@@ -26,7 +26,9 @@ export async function diff(
 		const body = await scopedDiff(cwd, session, scope);
 		res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
 		res.end(body);
-	} catch {
+	} catch (error) {
+		const cause = error instanceof Error ? error.message : String(error);
+		console.error(`GET /api/diff failed for cwd=${cwd}: ${cause}`);
 		res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" });
 		res.end("");
 	}

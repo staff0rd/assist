@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
+import { useApiNode } from "../../../useApiNode";
 import { useDiffPanels } from "../../useDiffPanels";
 import { DiffToggleTooltip } from "./CountsLink/DiffToggleTooltip";
 import { useCountButton } from "./CountsLink/useCountButton";
@@ -37,6 +38,7 @@ export function CountsLink({
 	countButton?: boolean;
 }) {
 	const { togglePanel } = useDiffPanels();
+	const node = useApiNode();
 	const boxed = useCountButton(panelSessionId, scope, countButton);
 
 	return (
@@ -49,6 +51,7 @@ export function CountsLink({
 						cwd,
 						claudeSessionId: sessionId,
 						scope,
+						node,
 					})
 				}
 				variant="caption"

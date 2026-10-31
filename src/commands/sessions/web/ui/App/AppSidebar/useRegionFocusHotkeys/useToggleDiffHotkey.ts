@@ -40,6 +40,7 @@ export function useToggleDiffHotkey({
 					cwd: session.cwd,
 					claudeSessionId: session.claudeSessionId,
 					scope: "all",
+					node: session.node,
 				});
 			focusRegion(sessionRegion("diff", id), ringColor);
 		}, [session, showSessions, panelFor, togglePanel, closePanel, ringColor]),

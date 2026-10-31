@@ -4,6 +4,7 @@ export type DiffPanelTarget = {
 	cwd: string;
 	claudeSessionId?: string;
 	scope: string;
+	node?: string;
 };
 
 export type DiffPanel = DiffPanelTarget & { mode: DiffPanelMode };

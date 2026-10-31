@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SessionDiffSplit } from "./SessionDiffSplit";
 import { DiffPanelsProvider, useDiffPanels } from "../../useDiffPanels";
+import { useApiNode } from "../../../useApiNode";
 
 vi.mock("../../DiffContent", () => ({
 	DiffContent: ({
@@ -19,8 +20,9 @@ vi.mock("../../DiffContent", () => ({
 		onClose?: () => void;
 	}) => {
 		const [note, setNote] = useState("");
+		const node = useApiNode();
 		return (
-			<div data-testid="diff" data-cwd={cwd} data-mode={mode}>
+			<div data-testid="diff" data-cwd={cwd} data-mode={mode} data-node={node}>
 				<button type="button" onClick={onToggleMode}>
 					toggle mode
 				</button>
@@ -40,6 +42,7 @@ vi.mock("../../DiffContent", () => ({
 afterEach(cleanup);
 
 const cwds: Record<string, string> = { "card-1": "/one", "card-2": "/two" };
+const nodes: Record<string, string> = { "card-2": "mac" };
 
 function OpenPanelButton({ sessionId }: { sessionId: string }) {
 	const { togglePanel } = useDiffPanels();
@@ -47,7 +50,11 @@ function OpenPanelButton({ sessionId }: { sessionId: string }) {
 		<button
 			type="button"
 			onClick={() =>
-				togglePanel(sessionId, { cwd: cwds[sessionId] ?? "", scope: "all" })
+				togglePanel(sessionId, {
+					cwd: cwds[sessionId] ?? "",
+					scope: "all",
+					node: nodes[sessionId],
+				})
 			}
 		>
 			open {sessionId}
@@ -185,6 +192,15 @@ describe("SessionDiffSplit session switching", () => {
 		switchSession();
 
 		expect(screen.getByTestId("diff").dataset.cwd).toBe("/two");
+	});
+
+	it("queries the node the panel was opened for without an outer node context", () => {
+		renderSplit();
+		openPanel("card-2");
+
+		switchSession();
+
+		expect(screen.getByTestId("diff").dataset.node).toBe("mac");
 	});
 
 	it("restores the remembered mode when the session becomes active again", () => {

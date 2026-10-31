@@ -1,5 +1,6 @@
 import Link from "@mui/material/Link";
 import { BRANCH_DIFF_SCOPE } from "../diffScopeOptions";
+import { useApiNode } from "../../useApiNode";
 import { useDiffPanels } from "../useDiffPanels";
 
 export function BranchDiffLink({
@@ -14,6 +15,7 @@ export function BranchDiffLink({
 	defaultBranch: string;
 }) {
 	const { togglePanel } = useDiffPanels();
+	const node = useApiNode();
 	const label = `Diff against ${defaultBranch}`;
 
 	return (
@@ -27,6 +29,7 @@ export function BranchDiffLink({
 					cwd,
 					claudeSessionId: sessionId,
 					scope: BRANCH_DIFF_SCOPE,
+					node,
 				})
 			}
 			variant="caption"

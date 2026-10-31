@@ -3,6 +3,7 @@ import { DiffContent } from "../../../DiffContent";
 import type { DiffPanel } from "../../../toggleDiffPanel";
 import type { SessionInfo } from "../../../../types";
 import { useDiffPanels } from "../../../useDiffPanels";
+import { ApiNodeContext } from "../../../../useApiNode";
 
 const columnSx = {
 	minWidth: 0,
@@ -31,21 +32,23 @@ export function DiffPanelColumn({
 
 	return (
 		<Box sx={panel.mode === "full" ? fullSx : halfSx}>
-			<DiffContent
-				cwd={panel.cwd}
-				sessionId={panel.claudeSessionId}
-				scope={panel.scope}
-				onScopeChange={(scope) => setPanelScope(sessionId, scope)}
-				sessions={sessions}
-				sendInput={sendInput}
-				mode={panel.mode}
-				onToggleMode={() => togglePanelMode(sessionId)}
-				onClose={() => closePanel(sessionId)}
-				scrollRegionProps={{
-					"data-diff-session-id": sessionId,
-					tabIndex: -1,
-				}}
-			/>
+			<ApiNodeContext.Provider value={panel.node}>
+				<DiffContent
+					cwd={panel.cwd}
+					sessionId={panel.claudeSessionId}
+					scope={panel.scope}
+					onScopeChange={(scope) => setPanelScope(sessionId, scope)}
+					sessions={sessions}
+					sendInput={sendInput}
+					mode={panel.mode}
+					onToggleMode={() => togglePanelMode(sessionId)}
+					onClose={() => closePanel(sessionId)}
+					scrollRegionProps={{
+						"data-diff-session-id": sessionId,
+						tabIndex: -1,
+					}}
+				/>
+			</ApiNodeContext.Provider>
 		</Box>
 	);
 }
