@@ -1,3 +1,10 @@
+# [0.982.0](https://github.com/staff0rd/assist/compare/v0.981.0...v0.982.0) (2026-10-31)
+
+
+### Features
+
+* record page console for the CLI ([0052083](https://github.com/staff0rd/assist/commit/0052083c9436d3a9f3bba9d38166c7be9d8272ab))
+
 # [0.981.0](https://github.com/staff0rd/assist/compare/v0.980.0...v0.981.0) (2026-10-31)
 
 
