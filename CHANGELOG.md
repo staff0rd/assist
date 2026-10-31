@@ -1,3 +1,15 @@
+# [0.979.0](https://github.com/staff0rd/assist/compare/v0.978.1...v0.979.0) (2026-10-31)
+
+
+### Bug Fixes
+
+* relabel auto-approve as Auto start ([5daedc7](https://github.com/staff0rd/assist/commit/5daedc77f02ce6568c528bed00680fa4b6205059))
+
+
+### Features
+
+* searchable repo picker in backlog ([7fc23a5](https://github.com/staff0rd/assist/commit/7fc23a5703de7426fa385c83478547dfa989cd81))
+
 ## [0.978.1](https://github.com/staff0rd/assist/compare/v0.978.0...v0.978.1) (2026-10-31)
 
 
