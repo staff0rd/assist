@@ -103,6 +103,9 @@ assist sync
 <span class="assist-landing-card-label"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"></rect><path d="M11 18h2"></path></svg>iOS app</span>
 <h3>Check on sessions from your phone</h3>
 <p>Watch your agents and answer the ones waiting on you, away from your desk.</p>
+
+<a class="assist-landing-more" href="ios-app/">Install and connect <span class="assist-landing-arrow" aria-hidden="true">→</span></a>
+
 </article>
 </div>
 <div class="assist-landing-also">

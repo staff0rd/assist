@@ -35,7 +35,11 @@ screenshots:
 
 ## Raising a pull request
 
-Run `/pr` in a session once its work is committed. The agent writes a short title and a description of what changed and why, and opens them in the [preview pane](../sessions-preview-panes/#previewing-a-pull-request). Comment on them to have them reworded, or approve to raise the pull request. Ask the agent to change a raised pull request's description and the revision opens in the pane the same way.
+Run `/pr` in a session once its work is committed. The agent writes a short title and a description of what changed and why, and opens them in the [preview pane](../sessions-preview-panes/#previewing-a-pull-request). Comment on them to have them reworded, or approve to raise the pull request.
+
+::screenshot{file="sessions-pr-preview.png"}
+
+Ask the agent to change a raised pull request's description and the revision opens in the pane the same way.
 
 Pull requests are raised ready for review. To raise them as drafts unless you tick otherwise:
 
