@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../sessions/web/ui/apiFetch";
 import { formatItemId } from "../../formatItemId";
 import type { DocsRefreshState } from "../../loadDocsRefreshState";
 import type { DocsRefreshRequest } from "../../requestDocsRefresh";
@@ -11,11 +12,12 @@ async function sendJson<T>(
 	method: string,
 	body: unknown,
 ): Promise<T> {
-	const res = await fetch(url, {
+	const res = await apiFetch(url, {
 		method,
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(body),
 	});
+	if (!res.ok) throw new Error(`${method} ${url} failed: ${res.status}`);
 	return res.json();
 }
 
@@ -24,7 +26,7 @@ export async function deleteItem(
 	cwd?: string,
 	node?: string,
 ): Promise<void> {
-	await fetch(withCwd(`/api/items/${formatItemId(id)}`, cwd, node), {
+	await apiFetch(withCwd(`/api/items/${formatItemId(id)}`, cwd, node), {
 		method: "DELETE",
 	});
 }
@@ -77,7 +79,7 @@ export async function fetchDocsRefreshState(
 	node: string | undefined,
 	signal?: AbortSignal,
 ): Promise<DocsRefreshState> {
-	const res = await fetch(withCwd(DOCS_REFRESH_URL, cwd, node), { signal });
+	const res = await apiFetch(withCwd(DOCS_REFRESH_URL, cwd, node), { signal });
 	return res.json();
 }
 
