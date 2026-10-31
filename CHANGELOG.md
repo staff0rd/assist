@@ -1,3 +1,10 @@
+# [0.980.0](https://github.com/staff0rd/assist/compare/v0.979.1...v0.980.0) (2026-10-31)
+
+
+### Features
+
+* native question card on phone ([e42fe99](https://github.com/staff0rd/assist/commit/e42fe999373bd4dea10aff2a5912c26831bb0071))
+
 ## [0.979.1](https://github.com/staff0rd/assist/compare/v0.979.0...v0.979.1) (2026-10-31)
 
 
