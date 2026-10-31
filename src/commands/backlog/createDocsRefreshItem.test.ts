@@ -22,6 +22,7 @@ async function addSummary(itemId: number, idx: number, text: string) {
 		itemId,
 		idx,
 		text,
+		phase: idx + 1,
 		type: "summary",
 		timestamp: "2026-10-31T00:00:00.000Z",
 	});
@@ -32,11 +33,11 @@ describe("createDocsRefreshItem", () => {
 		({ orm } = await createTestDb());
 	});
 
-	it("lists each covered story with its latest summary and commits", async () => {
+	it("lists each covered story with every phase summary and its commits", async () => {
 		const a = await addStory("Add widgets");
 		const b = await addStory("Tidy logs");
-		await addSummary(a, 0, "Phase 1 summary");
-		await addSummary(a, 1, "Widgets shipped");
+		await addSummary(a, 0, "Widgets screen shipped");
+		await addSummary(a, 1, "Release pipeline tidied");
 		await orm.insert(itemGitRefs).values({
 			itemId: a,
 			kind: "commit",
@@ -48,8 +49,9 @@ describe("createDocsRefreshItem", () => {
 
 		const description = item?.description ?? "";
 		expect(description).toContain(`${formatItemId(a)} Add widgets`);
-		expect(description).toContain("Widgets shipped");
-		expect(description).not.toContain("Phase 1 summary");
+		expect(description).toContain("**Phase 1:** Widgets screen shipped");
+		expect(description).toContain("**Phase 2:** Release pipeline tidied");
+		expect(description).toContain("never on its last summary alone");
 		expect(description).toContain("`01234567`");
 		expect(description).toContain(`${formatItemId(b)} Tidy logs`);
 		expect(description).toContain("_No done summary._");
@@ -64,7 +66,10 @@ describe("createDocsRefreshItem", () => {
 
 		expect(tasks).toHaveLength(4);
 		expect(tasks?.[0]).toContain(formatItemId(a));
+		expect(tasks?.[0]).toContain("every one of its commits");
 		expect(tasks?.[1]).toContain("no user-facing change");
+		expect(tasks?.[1]).toContain("after inspecting all of its commits");
+		expect(tasks?.[1]).toContain("reason for each skip");
 		expect(tasks?.[2]).toContain("docs/src/content/docs/");
 		expect(tasks?.[2]).toContain("docs/CLAUDE.md");
 	});
@@ -90,6 +95,17 @@ describe("createDocsRefreshItem", () => {
 		expect(task).toContain("`http://localhost:4173/` for `index.md(x)`");
 	});
 
+	it("keeps the approval a concise summary without the raw diff", async () => {
+		const a = await addStory("Add widgets");
+
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
+		const task = (await loadItem(orm, id))?.plan?.[0].tasks.at(-1)?.task;
+
+		expect(task).toContain("no raw diff");
+		expect(task).toContain("the stories included");
+		expect(task).toContain("each skipped story with its one-line reason");
+	});
+
 	it("adds a coverage task when the repo defines docs:coverage", async () => {
 		const a = await addStory("Add widgets");
 
@@ -109,7 +125,7 @@ describe("createDocsRefreshItem", () => {
 		const phase = (await loadItem(orm, id))?.plan?.[0];
 
 		expect(phase?.manualChecks).toEqual([
-			"Review every docs page change in the diff and approve it",
+			"Review every changed docs page in the docs preview and approve it",
 		]);
 	});
 

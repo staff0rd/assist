@@ -2,10 +2,12 @@ import { and, asc, eq, inArray } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { comments, itemGitRefs, items } from "../../shared/db/schema";
 
+export type DocsRefreshSummary = { phase: number | null; text: string };
+
 export type DocsRefreshStory = {
 	id: number;
 	name: string;
-	summary?: string;
+	summaries: DocsRefreshSummary[];
 	commits: string[];
 };
 
@@ -21,7 +23,11 @@ export async function loadDocsRefreshStories(
 			.where(inArray(items.id, ids))
 			.orderBy(asc(items.id)),
 		orm
-			.select({ itemId: comments.itemId, text: comments.text })
+			.select({
+				itemId: comments.itemId,
+				phase: comments.phase,
+				text: comments.text,
+			})
 			.from(comments)
 			.where(and(inArray(comments.itemId, ids), eq(comments.type, "summary")))
 			.orderBy(asc(comments.id)),
@@ -33,11 +39,12 @@ export async function loadDocsRefreshStories(
 			)
 			.orderBy(asc(itemGitRefs.createdAt)),
 	]);
-	const latestSummary = new Map(summaries.map((s) => [s.itemId, s.text]));
 	return rows.map((r) => ({
 		id: r.id,
 		name: r.name,
-		summary: latestSummary.get(r.id),
+		summaries: summaries
+			.filter((s) => s.itemId === r.id)
+			.map(({ phase, text }) => ({ phase, text })),
 		commits: commits.filter((c) => c.itemId === r.id).map((c) => c.ref),
 	}));
 }
