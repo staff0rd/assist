@@ -1,3 +1,10 @@
+# [0.976.0](https://github.com/staff0rd/assist/compare/v0.975.0...v0.976.0) (2026-10-31)
+
+
+### Features
+
+* show failed requests in status bar ([ca91d2b](https://github.com/staff0rd/assist/commit/ca91d2b527a48d7019072a3a27e99c84ab537e7e))
+
 # [0.975.0](https://github.com/staff0rd/assist/compare/v0.974.2...v0.975.0) (2026-10-31)
 
 
