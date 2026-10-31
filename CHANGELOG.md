@@ -1,3 +1,10 @@
+## [0.999.1](https://github.com/staff0rd/assist/compare/v0.999.0...v0.999.1) (2026-10-31)
+
+
+### Reverts
+
+* Revert "docs: refresh for recent stories" ([4bb114d](https://github.com/staff0rd/assist/commit/4bb114d95a0d37481c30214ced6ff47842fe9a5a))
+
 # [0.999.0](https://github.com/staff0rd/assist/compare/v0.998.0...v0.999.0) (2026-10-31)
 
 
