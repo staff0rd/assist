@@ -1,3 +1,10 @@
+# [0.987.0](https://github.com/staff0rd/assist/compare/v0.986.0...v0.987.0) (2026-10-31)
+
+
+### Features
+
+* offer extension update in web UI ([c23e0be](https://github.com/staff0rd/assist/commit/c23e0bef17f799a17854e7f51ce400affc5bed6d))
+
 # [0.986.0](https://github.com/staff0rd/assist/compare/v0.985.0...v0.986.0) (2026-10-31)
 
 
