@@ -237,6 +237,8 @@ export class SessionManager {
 		);
 	}
 
+	hasSession = (id: string): boolean => this.sessions.has(id);
+
 	localSessions = (): SessionInfo[] =>
 		[...this.sessions.values()].map(toSessionInfo);
 

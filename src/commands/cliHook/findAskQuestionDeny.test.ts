@@ -1,9 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockLoadConfig = vi.fn();
+const mockIsLive = vi.fn();
 
 vi.mock("../../shared/loadConfig", () => ({
 	loadConfig: () => mockLoadConfig(),
+}));
+
+vi.mock("../sessions/shared/isLiveDaemonSession", () => ({
+	isLiveDaemonSession: (id: string) => mockIsLive(id),
 }));
 
 import { findAskQuestionDeny } from "./findAskQuestionDeny";
@@ -33,7 +38,9 @@ function parse(toolInput: Record<string, unknown>) {
 
 beforeEach(() => {
 	vi.stubEnv("ASSIST_SESSION", "1");
+	vi.stubEnv("ASSIST_SESSION_ID", "s1");
 	mockLoadConfig.mockReturnValue({ sessions: { askQuestion: true } });
+	mockIsLive.mockResolvedValue(true);
 });
 
 afterEach(() => {
@@ -55,9 +62,10 @@ describe("tryParseInput AskUserQuestion", () => {
 });
 
 describe("findAskQuestionDeny", () => {
-	it("denies in an assist session, naming assist ask-question and the input", () => {
+	it("denies in a live assist session, naming assist ask-question and the input", async () => {
 		const json = JSON.stringify({ questions });
-		const decision = findAskQuestionDeny(json);
+		const decision = await findAskQuestionDeny(json);
+		expect(mockIsLive).toHaveBeenCalledWith("s1");
 		expect(decision?.permissionDecision).toBe("deny");
 		expect(decision?.permissionDecisionReason).toContain(
 			"assist ask-question --json - < <file>",
@@ -65,13 +73,18 @@ describe("findAskQuestionDeny", () => {
 		expect(decision?.permissionDecisionReason).toContain(json);
 	});
 
-	it("allows outside an assist session", () => {
+	it("allows outside an assist session", async () => {
 		vi.stubEnv("ASSIST_SESSION", "");
-		expect(findAskQuestionDeny("{}")).toBeUndefined();
+		expect(await findAskQuestionDeny("{}")).toBeUndefined();
 	});
 
-	it("allows when sessions.askQuestion is off", () => {
+	it("allows when sessions.askQuestion is off", async () => {
 		mockLoadConfig.mockReturnValue({ sessions: { askQuestion: false } });
-		expect(findAskQuestionDeny("{}")).toBeUndefined();
+		expect(await findAskQuestionDeny("{}")).toBeUndefined();
+	});
+
+	it("allows when the daemon does not know the session", async () => {
+		mockIsLive.mockResolvedValue(false);
+		expect(await findAskQuestionDeny("{}")).toBeUndefined();
 	});
 });

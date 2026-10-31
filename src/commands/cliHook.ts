@@ -28,7 +28,7 @@ export async function cliHook(): Promise<void> {
 		input.kind === "command"
 			? await decideBash(input.toolName, input.command)
 			: input.kind === "question"
-				? findAskQuestionDeny(input.command)
+				? await findAskQuestionDeny(input.command)
 				: findRestrictedPathDeny(input.paths);
 	if (!decision) return;
 

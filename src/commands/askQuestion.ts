@@ -4,6 +4,7 @@ import { formatAskQuestionAnswers } from "./askQuestion/formatAskQuestionAnswers
 import { readJsonPayload } from "./backlog/readJsonPayload";
 import { askQuestionInputSchema } from "./sessions/shared/askQuestionInputSchema";
 import { awaitPreviewApproval } from "./sessions/shared/awaitPreviewApproval";
+import { isLiveDaemonSession } from "./sessions/shared/isLiveDaemonSession";
 
 function useBuiltIn(reason: string): never {
 	console.error(`Error: ${reason}; use the built-in AskUserQuestion tool.`);
@@ -21,6 +22,10 @@ export async function askQuestion(options: { json: string }): Promise<void> {
 		useBuiltIn("not running in an assist session");
 	if (!loadConfig().sessions?.askQuestion)
 		useBuiltIn("assist ask-question is disabled (sessions.askQuestion)");
+	if (!(await isLiveDaemonSession(sessionId)))
+		useBuiltIn(
+			`session ${sessionId} is not live in the assist daemon, so no preview pane can show the form`,
+		);
 
 	const title =
 		questions.length === 1

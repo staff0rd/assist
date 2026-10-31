@@ -87,6 +87,11 @@ export const messageHandlers: Record<string, Handler> = {
 	"verify-started": routed((client, m, d) =>
 		m.verify.start(client, d.sessionId as string),
 	),
+	"session-live": (client, m, d) => {
+		const live = m.hasSession(d.sessionId as string);
+		if (!live) daemonLog(`session-live: unknown session id=${d.sessionId}`);
+		sendTo(client, { type: "session-live", live });
+	},
 	"pr-preview": (client, m, d) => m.prPreview.set(client, d),
 	"pr-decision": routed((_client, m, d) => m.prPreview.decide(d)),
 	"ui-status": (_client, _m, d) =>

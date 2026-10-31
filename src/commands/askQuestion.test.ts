@@ -3,6 +3,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mockRequestPreviewDecision = vi.fn();
 const mockReadStdin = vi.fn();
 const mockLoadConfig = vi.fn();
+const mockIsLive = vi.fn();
+
+vi.mock("./sessions/shared/isLiveDaemonSession", () => ({
+	isLiveDaemonSession: (id: string) => mockIsLive(id),
+}));
 
 vi.mock("./sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (request: unknown) =>
@@ -64,6 +69,7 @@ describe("askQuestion", () => {
 		vi.stubEnv("ASSIST_SESSION", "1");
 		vi.stubEnv("ASSIST_SESSION_ID", "s1");
 		mockLoadConfig.mockReturnValue({ sessions: { askQuestion: true } });
+		mockIsLive.mockResolvedValue(true);
 	});
 
 	afterEach(() => {
@@ -105,6 +111,17 @@ describe("askQuestion", () => {
 
 		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
 		expect(errored.join("\n")).toContain("sessions.askQuestion");
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
+	it("tells Claude to use the built-in tool when the daemon does not know the session", async () => {
+		mockIsLive.mockResolvedValue(false);
+		stdin({ questions });
+
+		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
+		expect(mockIsLive).toHaveBeenCalledWith("s1");
+		expect(errored.join("\n")).toContain("not live");
+		expect(errored.join("\n")).toContain("AskUserQuestion");
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 	});
 
