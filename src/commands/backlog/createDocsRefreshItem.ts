@@ -45,7 +45,7 @@ export async function createDocsRefreshItem(
 						"Run `assist run docs:coverage`; while it fails, list the gaps with `assist run docs:coverage --report` and add `covers` entries to the pages that document them (or new pages) until it passes",
 					]
 				: []),
-			"Show the docs diff to the user with `assist ask` and wait for their approval before committing",
+			"Show the docs diff to the user with `assist ask` and wait for their approval before committing; in the body, list each changed page (`git status --porcelain -- docs/src/content/docs/`) as a link to it in the docs preview: `http://localhost:4173/<page>/` for `docs/src/content/docs/<page>.md(x)`, and `http://localhost:4173/` for `index.md(x)`",
 		],
 		serializeManualChecks([
 			"Review every docs page change in the diff and approve it",

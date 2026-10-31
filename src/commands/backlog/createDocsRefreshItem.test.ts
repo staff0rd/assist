@@ -79,6 +79,17 @@ describe("createDocsRefreshItem", () => {
 		expect(tasks?.at(-1)).toContain("before committing");
 	});
 
+	it("links each changed page to the docs preview in the approval", async () => {
+		const a = await addStory("Add widgets");
+
+		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
+		const task = (await loadItem(orm, id))?.plan?.[0].tasks.at(-1)?.task;
+
+		expect(task).toContain("git status --porcelain -- docs/src/content/docs/");
+		expect(task).toContain("`http://localhost:4173/<page>/`");
+		expect(task).toContain("`http://localhost:4173/` for `index.md(x)`");
+	});
+
 	it("adds a coverage task when the repo defines docs:coverage", async () => {
 		const a = await addStory("Add widgets");
 
