@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildInboxScanArgs, parseInboxScanOutput } from "./runInboxScanClaude";
+import { buildInboxScanArgs } from "./runInboxScanClaude";
+import { parseInboxScanOutput } from "./parseInboxScanOutput";
 
 describe("buildInboxScanArgs", () => {
 	const args = buildInboxScanArgs(new Date("2026-10-30T00:00:00Z"));
@@ -26,6 +27,11 @@ describe("buildInboxScanArgs", () => {
 		expect(listAfter("--disallowedTools")).toContain(
 			"mcp__claude_ai_Gmail__update_message_labels",
 		);
+	});
+
+	it("streams events so the scan can be followed live", () => {
+		expect(args[args.indexOf("--output-format") + 1]).toBe("stream-json");
+		expect(args).toContain("--verbose");
 	});
 
 	it("passes a draft-07 schema, the newest draft claude -p validates", () => {

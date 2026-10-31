@@ -39,6 +39,7 @@ const wsHandlers: Record<string, (msg: Msg, d: WsDispatch) => void> = {
 		void inboxStore.refresh();
 		void inboxStore.refreshStatus();
 	},
+	"inbox-activity": () => void inboxStore.refreshStatus(),
 	"run-conflict": handleRunConflict,
 	limits: handleLimits,
 	clear: handleClear,

@@ -9,8 +9,17 @@ const mockDaemonLog = vi.fn();
 vi.mock("../../../inbox/readInboxIntervalMinutes", () => ({
 	readInboxIntervalMinutes: () => mockInterval(),
 }));
+const mockReadLastRun = vi.fn();
+const mockWriteLastRun = vi.fn();
+
 vi.mock("../../../inbox/runInboxScan", () => ({
-	runInboxScan: () => mockRunScan(),
+	runInboxScan: (_orm: unknown, options: unknown) => mockRunScan(options),
+}));
+vi.mock("../../../../shared/db/readInboxLastRun", () => ({
+	readInboxLastRun: () => mockReadLastRun(),
+}));
+vi.mock("../../../../shared/db/writeInboxLastRun", () => ({
+	writeInboxLastRun: (_orm: unknown, run: unknown) => mockWriteLastRun(run),
 }));
 vi.mock("../../../../shared/db/readInboxLastScan", () => ({
 	readInboxLastScan: () => mockLastScan(),
@@ -28,6 +37,8 @@ describe("createInboxScanner", () => {
 		vi.useFakeTimers();
 		vi.stubEnv("ASSIST_DATABASE_URL", "postgres://test");
 		mockRunScan.mockResolvedValue({ flagged: 0, added: 0 });
+		mockReadLastRun.mockResolvedValue(undefined);
+		mockWriteLastRun.mockResolvedValue(undefined);
 	});
 
 	afterEach(() => {
@@ -91,12 +102,67 @@ describe("createInboxScanner", () => {
 
 		finish({ flagged: 1, added: 1 });
 		await vi.advanceTimersByTimeAsync(0);
-		expect(scanner.status()).toEqual({
+		expect(scanner.status()).toMatchObject({
 			scanning: false,
 			intervalMinutes: null,
 			lastError: null,
+			run: { status: "finished" },
 		});
-		expect(onChange).toHaveBeenCalledTimes(2);
+		expect(onChange.mock.calls).toEqual([["inbox"], ["inbox"]]);
+	});
+
+	it("streams events, throttles activity notifications and persists the run", async () => {
+		mockInterval.mockReturnValue(undefined);
+		let finish: (value: { flagged: number; added: number }) => void = () => {};
+		let onEvent: (event: unknown) => void = () => {};
+		mockRunScan.mockImplementation((options: { onEvent: typeof onEvent }) => {
+			onEvent = options.onEvent;
+			return new Promise((resolve) => {
+				finish = resolve;
+			});
+		});
+		const onChange = vi.fn();
+		const scanner = createInboxScanner();
+		stop = scanner.start(onChange);
+		scanner.scanNow();
+		await vi.advanceTimersByTimeAsync(0);
+
+		const event = {
+			at: "t",
+			kind: "tool",
+			label: "Gmail search_threads",
+			detail: "q",
+		};
+		onEvent(event);
+		onEvent(event);
+		expect(scanner.status().run?.events).toHaveLength(2);
+		await vi.advanceTimersByTimeAsync(1000);
+		expect(onChange.mock.calls).toEqual([["inbox"], ["inbox-activity"]]);
+
+		finish({ flagged: 3, added: 1 });
+		await vi.advanceTimersByTimeAsync(0);
+		const run = scanner.status().run;
+		expect(run?.status).toBe("finished");
+		expect(run?.events.at(-1)).toMatchObject({
+			kind: "result",
+			detail: "Flagged 3 message(s), 1 new",
+		});
+		expect(mockWriteLastRun).toHaveBeenCalledWith(run);
+	});
+
+	it("restores the last run saved before a restart", async () => {
+		mockInterval.mockReturnValue(undefined);
+		const saved = {
+			status: "failed",
+			startedAt: "a",
+			finishedAt: "b",
+			events: [],
+		};
+		mockReadLastRun.mockResolvedValue(saved);
+		const scanner = createInboxScanner();
+		stop = scanner.start(vi.fn());
+		await vi.advanceTimersByTimeAsync(0);
+		expect(scanner.status().run).toEqual(saved);
 	});
 
 	it("reports the last scan's failure", async () => {
@@ -108,5 +174,10 @@ describe("createInboxScanner", () => {
 		scanner.scanNow();
 		await vi.advanceTimersByTimeAsync(0);
 		expect(scanner.status().lastError).toBe("not logged in");
+		expect(scanner.status().run).toMatchObject({ status: "failed" });
+		expect(scanner.status().run?.events.at(-1)).toMatchObject({
+			kind: "error",
+			detail: "not logged in",
+		});
 	});
 });

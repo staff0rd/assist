@@ -1,11 +1,12 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
+import { spawn } from "node:child_process";
 import { z } from "zod";
+import { attachLineParser } from "../review/attachLineParser";
+import { attachStderrCollector } from "../review/attachStderrCollector";
 import { buildInboxScanPrompt } from "./buildInboxScanPrompt";
+import { createInboxScanParser } from "./createInboxScanParser";
+import type { InboxScanEvent } from "./InboxScanEvent";
 import { type FlaggedMessage, inboxScanSchema } from "./inboxScanSchema";
 import { inboxScanTools } from "./inboxScanTools";
-
-const execFileAsync = promisify(execFile);
 
 export function buildInboxScanArgs(since: Date): string[] {
 	return [
@@ -20,7 +21,8 @@ export function buildInboxScanArgs(since: Date): string[] {
 		...inboxScanTools.denied,
 		"--no-session-persistence",
 		"--output-format",
-		"json",
+		"stream-json",
+		"--verbose",
 		"--json-schema",
 		JSON.stringify(z.toJSONSchema(inboxScanSchema, { target: "draft-07" })),
 		"--",
@@ -28,27 +30,27 @@ export function buildInboxScanArgs(since: Date): string[] {
 	];
 }
 
-export function parseInboxScanOutput(stdout: string): FlaggedMessage[] {
-	const result = JSON.parse(stdout) as {
-		is_error?: boolean;
-		result?: string;
-		structured_output?: unknown;
-	};
-	if (result.is_error)
-		throw new Error(`Inbox scan failed: ${result.result ?? "unknown error"}`);
-	return inboxScanSchema.parse(result.structured_output).messages;
+function describeExit(code: number | null, signal: string | null): string {
+	return signal ? `claude was killed (${signal})` : `claude exited ${code}`;
 }
 
 export async function runInboxScanClaude(
 	since: Date,
+	onEvent: (event: InboxScanEvent) => void = () => {},
 ): Promise<FlaggedMessage[]> {
-	const run = execFileAsync("claude", buildInboxScanArgs(since), {
-		encoding: "utf8",
+	const child = spawn("claude", buildInboxScanArgs(since), {
+		stdio: ["ignore", "pipe", "pipe"],
 		windowsHide: true,
 		timeout: 20 * 60_000,
-		maxBuffer: 64 * 1024 * 1024,
 	});
-	run.child.stdin?.end();
-	const { stdout } = await run;
-	return parseInboxScanOutput(stdout);
+	const parser = createInboxScanParser(onEvent);
+	const flush = attachLineParser(child, parser.onLine);
+	const stderr = attachStderrCollector(child);
+	const exit = await new Promise<string>((resolve, reject) => {
+		child.on("error", reject);
+		child.on("close", (code, signal) => resolve(describeExit(code, signal)));
+	});
+	flush();
+	const tail = stderr.value.trim().slice(-500);
+	return parser.finish(tail ? `${exit}: ${tail}` : exit);
 }

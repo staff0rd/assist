@@ -1,41 +1,40 @@
-import { daemonLog } from "../daemonLog";
-import { isInboxScanDue } from "./isInboxScanDue";
-import { type InboxSchedule, readInboxSchedule } from "./readInboxSchedule";
+import { createScanRunLog } from "./createScanRunLog";
+import { createScheduleTracker } from "./createScheduleTracker";
+import { isScheduledScanDue } from "./isScheduledScanDue";
 import { runLoggedInboxScan } from "./runLoggedInboxScan";
 
 const CHECK_MS = 60_000;
 
+type InboxChange = "inbox" | "inbox-activity";
+
 export function createInboxScanner() {
 	let scanning = false;
 	let lastError: string | undefined;
-	let schedule: InboxSchedule = { description: "not started" };
-	let notify: () => void = () => {};
+	let notify: (change: InboxChange) => void = () => {};
+	const schedule = createScheduleTracker();
+	const runLog = createScanRunLog(() => notify("inbox-activity"));
 
 	const scan = async (reason: string) => {
 		scanning = true;
-		notify();
-		lastError = await runLoggedInboxScan(reason);
+		runLog.begin();
+		notify("inbox");
+		const outcome = await runLoggedInboxScan(reason, runLog.add);
+		lastError = outcome.ok ? undefined : outcome.error;
+		await runLog.end(outcome);
 		scanning = false;
-		notify();
+		notify("inbox");
 	};
 
 	const tick = async () => {
-		const next = readInboxSchedule();
-		if (next.description !== schedule.description)
-			daemonLog(`inbox: scheduled scans ${next.description}`);
-		schedule = next;
-		if (!schedule.intervalMinutes || scanning) return;
-		try {
-			if (await isInboxScanDue(schedule.intervalMinutes))
-				await scan("scheduled");
-		} catch (error) {
-			daemonLog(`inbox: reading the last scan time failed: ${String(error)}`);
-		}
+		const { intervalMinutes } = schedule.refresh();
+		if (!intervalMinutes || scanning) return;
+		if (await isScheduledScanDue(intervalMinutes)) await scan("scheduled");
 	};
 
 	return {
-		start(onChange: () => void): () => void {
+		start(onChange: (change: InboxChange) => void): () => void {
 			notify = onChange;
+			void runLog.restore();
 			void tick();
 			const timer = setInterval(() => void tick(), CHECK_MS);
 			timer.unref();
@@ -49,8 +48,9 @@ export function createInboxScanner() {
 		status() {
 			return {
 				scanning,
-				intervalMinutes: schedule.intervalMinutes ?? null,
+				intervalMinutes: schedule.current().intervalMinutes ?? null,
 				lastError: lastError ?? null,
+				run: runLog.current() ?? null,
 			};
 		},
 	};

@@ -2,12 +2,14 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { getDb } from "../../../../shared/db/getDb";
 import { readInboxLastScan } from "../../../../shared/db/readInboxLastScan";
 import { respondJson } from "../../../../shared/web";
+import type { InboxScanRun } from "../../../inbox/InboxScanEvent";
 import { requestDaemonReply } from "../../daemon/requestDaemonReply";
 
 type StatusReply = {
 	scanning: boolean;
 	intervalMinutes: number | null;
 	lastError: string | null;
+	run?: InboxScanRun | null;
 };
 
 export async function inboxStatus(
@@ -27,5 +29,6 @@ export async function inboxStatus(
 		intervalMinutes: reply.intervalMinutes,
 		lastError: reply.lastError,
 		lastScanAt: lastScanAt?.toISOString() ?? null,
+		run: reply.run ?? null,
 	});
 }

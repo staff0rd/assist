@@ -1,3 +1,10 @@
+import type { InboxScanRun } from "../../../../../../../inbox/InboxScanEvent";
+
+export type {
+	InboxScanEvent,
+	InboxScanRun,
+} from "../../../../../../../inbox/InboxScanEvent";
+
 export type InboxMessage = {
 	id: string;
 	source: string;
@@ -12,4 +19,5 @@ export type InboxStatus = {
 	intervalMinutes: number | null;
 	lastError: string | null;
 	lastScanAt: string | null;
+	run: InboxScanRun | null;
 };

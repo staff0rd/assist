@@ -4,6 +4,7 @@ import { PageShell } from "../../PageShell";
 import { InboxHeader } from "./InboxView/InboxHeader";
 import { InboxItem } from "./InboxView/InboxItem";
 import { inboxStore } from "./InboxView/inboxStore";
+import { ScanActivityPanel } from "./InboxView/ScanActivityPanel";
 import { useInboxMessages } from "./InboxView/useInboxMessages";
 
 export function InboxView() {
@@ -17,7 +18,12 @@ export function InboxView() {
 	return (
 		<PageShell
 			loading={messages === undefined}
-			header={<InboxHeader />}
+			header={
+				<>
+					<InboxHeader />
+					<ScanActivityPanel />
+				</>
+			}
 			isEmpty={messages?.length === 0}
 			emptyMessage="No messages need a reply."
 		>

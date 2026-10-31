@@ -31,7 +31,7 @@ export async function runDaemon(): Promise<void> {
 	setDaemonLogSink(manager.clients.emitLog);
 	startDaemonLogTrimmer();
 	pollRepoConfigCache();
-	inboxScanner.start(() => broadcast(manager.clients, { type: "inbox" }));
+	inboxScanner.start((type) => broadcast(manager.clients, { type }));
 	await startDaemonServer(manager, checkAutoExit);
 	await refreshRepoConfigCacheOnStart();
 }
