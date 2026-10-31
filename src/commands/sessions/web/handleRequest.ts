@@ -7,6 +7,7 @@ import { getRepoLocation } from "../../backlog/web/getRepoLocation";
 import { listItems } from "../../backlog/web/shared";
 import { browserRelay } from "./browser/browserRelay";
 import { clientErrors } from "./clientErrors/clientErrors";
+import { connectMobile } from "./connectMobile";
 import { daemonLogTail } from "./daemonLogTail";
 import { diff } from "./diff";
 import { diffScopes } from "./diffScopes";
@@ -70,6 +71,7 @@ const routes: Record<string, Handler> = {
 	"GET /": htmlHandler,
 	...staticRoutes,
 	"GET /api/health": health,
+	"GET /api/connect-mobile": connectMobile,
 	"GET /api/daemon-log": daemonLogTail,
 	"GET /api/items": listItems,
 	"GET /api/backlog/summary": getBacklogSummary,

@@ -1,6 +1,7 @@
 import { loadConfig } from "../../../shared/loadConfig";
 import { planServe, type TailscaleServeConfig } from "./planServe";
 import { type TailscaleStatus, tailscaleStatus } from "./tailscaleStatus";
+import { readServeConfig } from "./readServeConfig";
 import { runningStatus } from "./runningStatus";
 import { runTailscale } from "./runTailscale";
 import { tailnetHttpsPort } from "./tailnetHttpsPort";
@@ -18,10 +19,7 @@ type ServeDeps = {
 const defaultDeps: ServeDeps = {
 	enabled: () => loadConfig().sessions?.tailscaleServe !== false,
 	status: tailscaleStatus,
-	serveStatus: async () => {
-		const stdout = (await runTailscale(["serve", "status", "--json"])).trim();
-		return stdout ? (JSON.parse(stdout) as TailscaleServeConfig) : {};
-	},
+	serveStatus: readServeConfig,
 	serve: async (args) => {
 		await runTailscale(args);
 	},

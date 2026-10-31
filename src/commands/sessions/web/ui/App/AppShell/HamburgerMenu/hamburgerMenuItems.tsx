@@ -6,6 +6,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import { ColorModeIcon } from "./hamburgerMenuItems/ColorModeIcon";
+import { ConnectMobileMenuItem } from "./hamburgerMenuItems/ConnectMobileMenuItem";
 import { RenderHudMenuItem } from "./hamburgerMenuItems/RenderHudMenuItem";
 
 type HamburgerMenuHandlers = {
@@ -14,6 +15,7 @@ type HamburgerMenuHandlers = {
 	updateLabel: string;
 	onToggleColorMode: () => void;
 	onShowShortcuts: () => void;
+	onConnectMobile: () => void;
 	onRestart: () => void;
 	onUpdate: () => void;
 };
@@ -24,6 +26,7 @@ export function hamburgerMenuItems({
 	updateLabel,
 	onToggleColorMode,
 	onShowShortcuts,
+	onConnectMobile,
 	onRestart,
 	onUpdate,
 }: HamburgerMenuHandlers) {
@@ -41,6 +44,7 @@ export function hamburgerMenuItems({
 			</ListItemIcon>
 			<ListItemText>Keyboard shortcuts</ListItemText>
 		</MenuItem>,
+		<ConnectMobileMenuItem key="connect-mobile" onClose={onConnectMobile} />,
 		<Divider key="restart-divider" />,
 		<MenuItem key="restart" onClick={onRestart}>
 			<ListItemIcon>

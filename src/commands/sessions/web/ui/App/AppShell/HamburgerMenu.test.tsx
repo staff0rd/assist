@@ -59,6 +59,10 @@ function renderMenu(
 					<Routes>
 						<Route path="/config" element={<div>config page</div>} />
 						<Route path="/sessions" element={<div>sessions page</div>} />
+						<Route
+							path="/connect-mobile"
+							element={<div>connect mobile page</div>}
+						/>
 					</Routes>
 				</SessionLaunchContext.Provider>
 			</NodeSelectionContext.Provider>
@@ -240,6 +244,15 @@ describe("HamburgerMenu", () => {
 			"/api/restart?target=both",
 			expect.objectContaining({ method: "POST" }),
 		);
+	});
+
+	it("navigates to the connect mobile page from the menu", () => {
+		renderMenu(vi.fn());
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		fireEvent.click(screen.getByText("Connect mobile"));
+
+		expect(screen.getByText("connect mobile page")).toBeTruthy();
 	});
 
 	it("opens the keyboard shortcuts sheet from the menu", () => {

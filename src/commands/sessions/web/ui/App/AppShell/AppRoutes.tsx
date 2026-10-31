@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router";
 import { AppLayout } from "./AppRoutes/AppLayout";
 import { BackupsView } from "./AppRoutes/BackupsView";
 import { ConfigView } from "../ConfigView";
+import { ConnectMobileView } from "./AppRoutes/ConnectMobileView";
 import { NodeScopedDiffView } from "./AppRoutes/NodeScopedDiffView";
 import { NodeScopedFileView } from "./AppRoutes/NodeScopedFileView";
 import { InboxView } from "./AppRoutes/InboxView";
@@ -44,6 +45,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					<Route path="usage" element={<UsageHistoryView />} />
 					<Route path="backups" element={<BackupsView />} />
 					<Route path="config" element={<ConfigView />} />
+					<Route path="connect-mobile" element={<ConnectMobileView />} />
 					<Route
 						path="updates"
 						element={

@@ -48,6 +48,7 @@ export function HamburgerMenu({
 						close();
 					},
 					onShowShortcuts: closeAndShow("shortcuts"),
+					onConnectMobile: close,
 					onRestart: closeAndShow("restart"),
 					onUpdate: closeAndShow("update"),
 				})}
