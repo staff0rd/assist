@@ -1,3 +1,16 @@
+# [0.993.0](https://github.com/staff0rd/assist/compare/v0.992.0...v0.993.0) (2026-10-31)
+
+
+### Bug Fixes
+
+* exclude run sessions from close guard ([0181fa1](https://github.com/staff0rd/assist/commit/0181fa184ff2317ec1cf665978320bd129c0e03e))
+
+
+### Features
+
+* landing page flow and integrations ([2b255c7](https://github.com/staff0rd/assist/commit/2b255c71b98c0ae2492bb29f4d9226a19cff55a1))
+* phone tab bar on the root lists ([227250c](https://github.com/staff0rd/assist/commit/227250c359a4ec9772bfe9ede373dc027084779e))
+
 # [0.992.0](https://github.com/staff0rd/assist/compare/v0.991.1...v0.992.0) (2026-10-31)
 
 
