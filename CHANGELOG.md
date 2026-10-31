@@ -1,3 +1,10 @@
+# [0.1003.0](https://github.com/staff0rd/assist/compare/v0.1002.0...v0.1003.0) (2026-10-31)
+
+
+### Features
+
+* connect mobile page with QR code ([ed1edad](https://github.com/staff0rd/assist/commit/ed1edad9c7b77a9a540b1bd861d6bd8b046644d3))
+
 # [0.1002.0](https://github.com/staff0rd/assist/compare/v0.1001.0...v0.1002.0) (2026-10-31)
 
 
