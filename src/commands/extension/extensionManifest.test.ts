@@ -7,6 +7,8 @@ const manifest = JSON.parse(
 	description: string;
 	content_scripts: { js: string[] }[];
 	content_security_policy?: { extension_pages?: string };
+	action?: { default_icon?: unknown; default_popup?: string };
+	options_ui?: { open_in_tab?: boolean };
 };
 
 describe("extension manifest", () => {
@@ -18,6 +20,15 @@ describe("extension manifest", () => {
 		const csp = manifest.content_security_policy?.extension_pages;
 		expect(csp).toBeDefined();
 		expect(csp).not.toContain("upgrade-insecure-requests");
+	});
+
+	it("declares a toolbar action without a popup so clicking it fires action.onClicked", () => {
+		expect(manifest.action?.default_icon).toBeDefined();
+		expect(manifest.action).not.toHaveProperty("default_popup");
+	});
+
+	it("opens the options page in its own tab", () => {
+		expect(manifest.options_ui?.open_in_tab).toBe(true);
 	});
 
 	it("bundles every content script it declares", () => {

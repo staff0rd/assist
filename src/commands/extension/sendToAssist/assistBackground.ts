@@ -6,6 +6,7 @@ import { assistServerUrl } from "./assistServerUrl";
 import { fetchAssistClones } from "./fetchAssistClones";
 import { isAssistClonesMessage } from "./isAssistClonesMessage";
 import { isAssistSendMessage } from "./isAssistSendMessage";
+import { extensionAction } from "./extensionAction";
 import { extensionRuntime } from "./extensionRuntime";
 import { postToAssist } from "./postToAssist";
 
@@ -20,6 +21,9 @@ export function assistBackground(): void {
 				postDocsFeedback(server, message),
 			);
 		return undefined;
+	});
+	extensionAction()?.onClicked.addListener(() => {
+		void extensionRuntime()?.openOptionsPage?.();
 	});
 }
 
