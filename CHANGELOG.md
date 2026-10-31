@@ -1,3 +1,10 @@
+## [0.977.1](https://github.com/staff0rd/assist/compare/v0.977.0...v0.977.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* hold Refresh docs for user approval ([f0c6c87](https://github.com/staff0rd/assist/commit/f0c6c8716c8e4196d8097bf9348c5f990988ebc4))
+
 # [0.977.0](https://github.com/staff0rd/assist/compare/v0.976.0...v0.977.0) (2026-10-31)
 
 
