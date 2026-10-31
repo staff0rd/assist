@@ -1,3 +1,16 @@
+# [0.1001.0](https://github.com/staff0rd/assist/compare/v0.1000.3...v0.1001.0) (2026-10-31)
+
+
+### Bug Fixes
+
+* backlog API uses server base URL ([ce244e7](https://github.com/staff0rd/assist/commit/ce244e71041a7c4be8594fffa8b087ebe61e1cd7))
+
+
+### Features
+
+* show extension version in options ([5e632c5](https://github.com/staff0rd/assist/commit/5e632c573822e9e6abd035c63c41e1b72db920b5))
+* upload TestFlight daily ([ef40862](https://github.com/staff0rd/assist/commit/ef408623a1ea818bf1e74b1a5d2aa64838828946))
+
 ## [0.1000.3](https://github.com/staff0rd/assist/compare/v0.1000.2...v0.1000.3) (2026-10-31)
 
 
