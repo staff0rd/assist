@@ -1,5 +1,6 @@
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
+import { closeSessionPreviews } from "./closeSessionPreviews";
 import { daemonLog } from "./daemonLog";
 import { decidePrPreview } from "./decidePrPreview";
 import { setPrPreview } from "./setPrPreview";
@@ -20,6 +21,12 @@ export class PrPreviewCoordinator {
 
 	decide(d: Msg): void {
 		decidePrPreview(this.sessions, this.waiters, this.notify, d);
+	}
+
+	closeAll(id: string, reason: string): void {
+		const session = this.sessions.get(id);
+		if (session && closeSessionPreviews(session, this.waiters, reason))
+			this.notify();
 	}
 
 	clearWaiter(client: SessionClient): void {

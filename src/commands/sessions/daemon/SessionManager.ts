@@ -13,7 +13,7 @@ import {
 	type SessionInfo,
 } from "./createSession";
 import { startAutoUpdate } from "./autoUpdate/startAutoUpdate";
-import { dismissSessionGated } from "./dismissSessionGated";
+import { closeSession } from "./closeSession";
 import { drainSessions } from "./drainSessions";
 import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { PrPreviewCoordinator } from "./PrPreviewCoordinator";
@@ -192,7 +192,7 @@ export class SessionManager {
 	}
 
 	dismissSession = (id: string): void => {
-		dismissSessionGated(this.sessions, id, this.notify);
+		closeSession(this.sessions, this.prPreview, this.notify, id, false);
 	};
 
 	startAutoUpdate(): void {
@@ -200,7 +200,7 @@ export class SessionManager {
 	}
 
 	discardSession = (id: string): void => {
-		dismissSessionGated(this.sessions, id, this.notify, true);
+		closeSession(this.sessions, this.prPreview, this.notify, id, true);
 	};
 
 	stopSession(id: string): void {
