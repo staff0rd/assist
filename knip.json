@@ -13,6 +13,7 @@
 		"src/commands/extension/sendToAssist/assistBackground.ts",
 		"src/commands/extension/sendToAssist/assistOptions.ts",
 		"src/commands/extension/extensionChanged.ts",
+		"src/commands/sessions/web/ios/iosChanged.ts",
 		"src/commands/extension/publishUpdateManifest.ts",
 		"src/commands/review/ci/reviewCiInit.ts",
 		"src/commands/review/ci/reviewCiCheck.ts",
