@@ -60,6 +60,7 @@ From left to right:
   - **Sessions** (:kbd[Alt+1]) — this page.
   - [Backlog](../backlog/) (:kbd[Alt+2]) — the selected repo's backlog items.
   - [Next](../next/) (:kbd[Alt+3]) — what to pick up next.
+  - [Inbox](../inbox/) (:kbd[Alt+4]) — messages from people that need a reply, with a count of how many.
 - **Repo picker** (:kbd[Alt+R]) chooses the repo the toolbar acts on. It lists the repo the web server started in plus every repo a session has run in; type to filter. Selecting a card switches it to that card's repo.
 - **VS Code** opens the selected repo in VS Code, and **GitHub** opens it on GitHub.
 - **+** (:kbd[Mod+N] or :kbd[Alt+N]) opens the new-session dialog (see [Creating sessions](../sessions-creating/)).
@@ -83,4 +84,4 @@ The bar along the bottom of every page holds:
 
 ## Releases and News
 
-The [Releases](../releases/) and [News](../news/) tabs appear only once they're set up, so they aren't in the screenshot. They take :kbd[Alt+4] and :kbd[Alt+5].
+The [Releases](../releases/) and [News](../news/) tabs appear only once they're set up, so they aren't in the screenshot. They sit between Next and Inbox, so with both shown they take :kbd[Alt+4] and :kbd[Alt+5] and Inbox moves to :kbd[Alt+6].

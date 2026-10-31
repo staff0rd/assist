@@ -124,3 +124,5 @@ Set `docs.refreshAfter` to have a repo queue a **Refresh docs** story once that 
 ```bash
 assist config set docs.refreshAfter 5
 ```
+
+To queue one now, click **Refresh docs** at the top of the Backlog tab. It counts the done stories no refresh covers yet; click **Create Refresh docs** in its popover to queue a story for them. While a refresh is open, the button links to it instead.

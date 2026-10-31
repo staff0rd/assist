@@ -25,7 +25,7 @@ Each rule has a code, unique across the repo, a short title and the rule itself.
 
 ## Adding a rule
 
-Run `/add-rule` with what the rule should say. The agent words it as one short instruction, picks the `CLAUDE.md` it belongs in and gives it the next free code.
+Run `/add-rule` with what the rule should say. The agent words it as one short instruction, picks the `CLAUDE.md` it belongs in and gives it the next free code. A rule about how agents behave that holds in every repo, rather than about one repo's code, goes in your own rules instead, reaching every repo on every node; ask for it to stay on this node to keep it to this machine.
 
 In the [diff](../sessions-diff/#commenting) and [preview panes](../sessions-preview-panes/), **Add rule** in the comment box runs `/add-rule` with your note and the selected text. The agent adds the rule, then fixes the selected text so it follows it.
 
