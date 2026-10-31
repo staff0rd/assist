@@ -35,7 +35,7 @@ export function PhoneBacklogItemScreen({ socket }: { socket: SessionSocket }) {
 	return (
 		<>
 			<PhoneNavBar
-				left={<PhoneBackButton label="Back" />}
+				left={<PhoneBackButton label="Backlog" />}
 				title={id === undefined ? "Backlog" : formatItemId(id)}
 			/>
 			{load.state === "loaded" ? (

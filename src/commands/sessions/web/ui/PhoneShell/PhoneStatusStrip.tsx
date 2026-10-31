@@ -6,6 +6,7 @@ import { displayStatus } from "../displayStatus";
 import { statusGlyph } from "../statusGlyph";
 import type { SessionInfo } from "../types";
 import { PhoneBadges } from "./PhoneBadges";
+import { PhoneStripOrigin } from "./PhoneStripOrigin";
 import { phaseLabel } from "./phaseLabel";
 
 const stripSx = {
@@ -52,7 +53,8 @@ export function PhoneStatusStrip({
 			>
 				{statusGlyph[status]} {status[0].toUpperCase() + status.slice(1)}
 			</Box>
-			<PhoneBadges session={session} localNode={localNode} />
+			<PhoneStripOrigin session={session} localNode={localNode} />
+			<PhoneBadges session={session} localNode={localNode} hideNode />
 			{phase && <span>phase {phase}</span>}
 			<Box component="span" sx={elapsedSx}>
 				{elapsed(session.startedAt, now)}

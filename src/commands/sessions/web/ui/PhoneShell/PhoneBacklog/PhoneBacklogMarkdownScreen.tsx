@@ -38,7 +38,7 @@ export function PhoneBacklogMarkdownScreen({ page }: { page: Page }) {
 	return (
 		<>
 			<PhoneNavBar
-				left={<PhoneBackButton label="Item" />}
+				left={<PhoneBackButton label="item" />}
 				title={titles[page]}
 			/>
 			{load.state === "loaded" ? (

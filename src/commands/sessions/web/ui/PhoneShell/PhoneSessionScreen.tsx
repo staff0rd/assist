@@ -1,5 +1,4 @@
 import { useParams } from "react-router";
-import { repoLabel } from "../App/repoLabel";
 import { sessionTitle } from "../App/sessionTitle";
 import type { SessionSocket } from "../useSessionSocket";
 import { PhoneMoreButton } from "./PhoneActions/PhoneMoreButton";
@@ -24,16 +23,13 @@ export function PhoneSessionScreen({
 	if (!session) return <PhoneSessionGone />;
 
 	const localNode = socket.nodes?.local;
-	const subtitle = [repoLabel(session.cwd), session.node ?? localNode]
-		.filter(Boolean)
-		.join(" · ");
 
 	return (
 		<>
 			<PhoneNavBar
+				leadingTitle
 				left={<PhoneBackButton label="Sessions" to="/" />}
 				title={sessionTitle(session)}
-				subtitle={subtitle}
 				right={<PhoneMoreButton session={session} />}
 			/>
 			{socket.reconnecting && <PhoneReconnectingBar />}

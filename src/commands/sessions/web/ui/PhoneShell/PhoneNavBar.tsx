@@ -19,13 +19,18 @@ const rowSx = {
 	px: 1.5,
 } as const;
 
+const leadingRowSx = {
+	height: (t: Theme) => t.tokens.density.bar,
+	display: "flex",
+	alignItems: "center",
+	gap: 0.5,
+	px: 0.5,
+} as const;
+
 const titleSx = {
 	textAlign: "center",
 	minWidth: 0,
 	maxWidth: 220,
-} as const;
-
-const titleTextSx = {
 	fontSize: 15,
 	fontWeight: 600,
 	whiteSpace: "nowrap",
@@ -33,35 +38,46 @@ const titleTextSx = {
 	textOverflow: "ellipsis",
 } as const;
 
-const subtitleSx = {
-	fontSize: 12,
-	color: "text.secondary",
-	fontFamily: "fontFamilyMono",
-	whiteSpace: "nowrap",
+const leadingTitleSx = {
+	flex: 1,
+	minWidth: 0,
+	fontSize: 15,
+	fontWeight: 600,
+	lineHeight: 1.25,
+	display: "-webkit-box",
+	WebkitLineClamp: 2,
+	WebkitBoxOrient: "vertical",
 	overflow: "hidden",
-	textOverflow: "ellipsis",
+	overflowWrap: "anywhere",
 } as const;
 
 type Props = {
 	left?: ReactNode;
 	title: string;
-	subtitle?: string;
 	right?: ReactNode;
+	leadingTitle?: boolean;
 };
 
-export function PhoneNavBar({ left, title, subtitle, right }: Props) {
+export function PhoneNavBar({ left, title, right, leadingTitle }: Props) {
 	return (
 		<Box component="header" sx={barSx}>
-			<Box sx={rowSx}>
-				<Box sx={{ justifySelf: "start", minWidth: 0 }}>{left}</Box>
-				<Box sx={titleSx}>
-					<Box sx={titleTextSx}>{title}</Box>
-					{subtitle && <Box sx={subtitleSx}>{subtitle}</Box>}
+			{leadingTitle ? (
+				<Box sx={leadingRowSx}>
+					<Box sx={{ flex: "none" }}>{left}</Box>
+					<Box component="h1" sx={[leadingTitleSx, { m: 0 }]}>
+						{title}
+					</Box>
+					<Box sx={{ flex: "none", display: "flex" }}>{right}</Box>
 				</Box>
-				<Box sx={{ justifySelf: "end", display: "flex", gap: 0.25 }}>
-					{right}
+			) : (
+				<Box sx={rowSx}>
+					<Box sx={{ justifySelf: "start", minWidth: 0 }}>{left}</Box>
+					<Box sx={titleSx}>{title}</Box>
+					<Box sx={{ justifySelf: "end", display: "flex", gap: 0.25 }}>
+						{right}
+					</Box>
 				</Box>
-			</Box>
+			)}
 		</Box>
 	);
 }

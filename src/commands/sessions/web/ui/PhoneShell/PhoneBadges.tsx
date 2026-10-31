@@ -8,14 +8,18 @@ import { reviewPhaseLabel } from "./reviewPhaseLabel";
 export function PhoneBadges({
 	session,
 	localNode,
+	hideNode,
 }: {
 	session: SessionInfo;
 	localNode: string | undefined;
+	hideNode?: boolean;
 }) {
 	const itemId =
 		session.activity?.kind === "backlog" ? session.activity.itemId : undefined;
 	const linkedNode =
-		session.node && session.node !== localNode ? session.node : undefined;
+		!hideNode && session.node && session.node !== localNode
+			? session.node
+			: undefined;
 	const reviewPhase = reviewPhaseLabel(session);
 	return (
 		<>
