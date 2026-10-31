@@ -39,6 +39,10 @@ vi.mock("../../../../../../../backlog/web/ui/components/MarkdownBlock", () => ({
 	),
 }));
 
+vi.mock("../../../../clientFailures/queueClientFailureReport", () => ({
+	queueClientFailureReport: vi.fn(),
+}));
+
 vi.mock("./FileView/FileViewBody/MonacoEditor", () => ({
 	MonacoEditor: ({
 		value,

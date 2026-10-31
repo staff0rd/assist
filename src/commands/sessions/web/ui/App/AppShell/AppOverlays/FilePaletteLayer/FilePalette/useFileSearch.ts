@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../../apiFetch";
+import { reportCaughtError } from "../../../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../../../useApiNode";
 import { withNode } from "../../../../../withNode";
 
@@ -38,7 +39,8 @@ export function useFileSearch(cwd: string, query: string): FileSearchState {
 					loading: false,
 					error: false,
 				});
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "file search");
 				if (!cancelled) setState({ files: [], loading: false, error: true });
 			}
 		};

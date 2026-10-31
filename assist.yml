@@ -142,9 +142,11 @@ run:
       - verify
       - migrations
   - name: verify:custom-lint
-    command: assist
+    command: npx
     filter: "{src/**/*.ts,src/**/*.tsx}"
     args:
+      - tsx
+      - src/index.ts
       - lint
   - name: verify:react-build
     command: npx

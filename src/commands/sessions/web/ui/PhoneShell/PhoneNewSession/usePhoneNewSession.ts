@@ -1,5 +1,6 @@
 import { harnessChoices } from "../../App/AppShell/AppOverlays/NewSessionLayer/NewSessionDialog/harnessChoices";
 import { launchNewSession } from "../../App/AppShell/AppOverlays/NewSessionLayer/launchNewSession";
+import { defaultModeError } from "../../App/AppShell/AppOverlays/NewSessionLayer/useNewSessionDraft/defaultModeError";
 import { useDefaultNewSessionMode } from "../../App/AppShell/AppOverlays/NewSessionLayer/useNewSessionDraft/useDefaultNewSessionMode";
 import { useHarnessCapabilities } from "../../useHarnessCapabilities";
 import type { SessionSocket } from "../../useSessionSocket";
@@ -22,6 +23,8 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 		...draft,
 		...target,
 		mode,
+		modeError: defaultModeError(draft.mode, defaultMode),
+		retryMode: defaultMode?.retry,
 		harness,
 		harnesses,
 		nodes: visible ? names : [],

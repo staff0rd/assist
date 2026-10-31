@@ -1,4 +1,5 @@
 import { apiFetch } from "../../apiFetch";
+import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { withNode } from "../../withNode";
 
 const FAILED = "Failed to open VS Code";
@@ -15,7 +16,8 @@ export async function requestOpenInCode(
 		if (res.ok) return null;
 		const body = await res.json().catch(() => null);
 		return body?.error ?? FAILED;
-	} catch {
+	} catch (error) {
+		reportCaughtError(error, "open in VS Code");
 		return FAILED;
 	}
 }

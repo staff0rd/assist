@@ -3,6 +3,7 @@ import {
 	fetchRepoSummaries,
 	type RepoSummary,
 } from "../../../../../backlog/web/ui/fetchRepoSummaries";
+import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { LOCAL_NODE, mergeRepos } from "../../mergeRepos";
 import type { SessionSocket } from "../../useSessionSocket";
 import { nodeRepos } from "../PhoneNewSession/nodeRepos";
@@ -28,8 +29,10 @@ export function usePhoneBacklogRepos(socket: SessionSocket) {
 					summaries.filter((s): s is PhoneBacklogRepo => Boolean(s.cwd)),
 				),
 			)
-			.catch(() => {
-				if (!controller.signal.aborted) setRepos([]);
+			.catch((error: unknown) => {
+				if (controller.signal.aborted) return;
+				reportCaughtError(error, "backlog repos");
+				setRepos([]);
 			});
 		return () => controller.abort();
 	}, [knownKey]);

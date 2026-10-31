@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { postRestart, type RestartTarget } from "./postRestart";
 import { useServerBackReload } from "./useWebserverRestart/useServerBackReload";
 
@@ -32,7 +33,8 @@ export function useWebserverRestart(
 			try {
 				const res = await postRestart(to);
 				if (!res.ok) throw new Error("restart failed");
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "web server restart");
 				abandon();
 				clearTimeout(timeoutRef.current);
 				setPending(false);

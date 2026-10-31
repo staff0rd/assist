@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { reportCaughtError } from "../../../../clientFailures/reportCaughtError";
 import { describePeerFailure } from "./useAwaitPeerReturn/describePeerFailure";
 import { requestFailure } from "../../requestFailure";
 import {
@@ -34,7 +35,9 @@ export function useAwaitPeerReturn() {
 			let res: Response | undefined;
 			try {
 				res = await request();
-			} catch {}
+			} catch (error) {
+				reportCaughtError(error, `${action} ${peer}`);
+			}
 			if (!res?.ok) {
 				await fail(peer, `${action} failed (${await requestFailure(res)})`);
 				return false;

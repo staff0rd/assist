@@ -1,4 +1,5 @@
 import type { MouseEvent } from "react";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 
 const confirmMs = 1200;
 
@@ -17,5 +18,5 @@ export function copyCodeOnClick(event: MouseEvent<HTMLElement>): void {
 				button.title = "Copy";
 			}, confirmMs);
 		})
-		.catch(() => {});
+		.catch((error: unknown) => reportCaughtError(error, "copy code"));
 }

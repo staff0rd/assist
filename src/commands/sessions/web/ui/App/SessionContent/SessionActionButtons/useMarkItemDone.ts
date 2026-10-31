@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { formatItemId } from "../../../../../../backlog/formatItemId";
 import { updateItemStatus } from "../../../../../../backlog/web/ui/api";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 
 export function useMarkItemDone(
 	itemId: number,
@@ -16,7 +17,8 @@ export function useMarkItemDone(
 		try {
 			await updateItemStatus(itemId, "done", cwd);
 			onSuccess();
-		} catch {
+		} catch (error) {
+			reportCaughtError(error, "mark item done");
 			setError(`Failed to mark item ${formatItemId(itemId)} as done`);
 		} finally {
 			setBusy(false);

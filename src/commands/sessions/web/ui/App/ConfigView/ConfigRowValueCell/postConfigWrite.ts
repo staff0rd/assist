@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../apiFetch";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 
 export async function postConfigWrite(
 	path: string,
@@ -14,7 +15,8 @@ export async function postConfigWrite(
 		const parsed = await res.json().catch(() => null);
 		if (!res.ok) return { error: parsed?.error ?? `HTTP ${res.status}` };
 		return { payload: parsed ?? undefined };
-	} catch {
+	} catch (error) {
+		reportCaughtError(error, "config write");
 		return { error: failureMessage };
 	}
 }

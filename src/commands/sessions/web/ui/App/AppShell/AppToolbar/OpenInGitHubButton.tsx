@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { toolbarIconSx } from "../../../designSystem/toolbarIconSx";
 import { GitHubOutlineIcon } from "./OpenInGitHubButton/GitHubOutlineIcon";
 import { apiFetch } from "../../../apiFetch";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../useApiNode";
 import { withNode } from "../../../withNode";
 
@@ -25,7 +26,8 @@ export function OpenInGitHubButton({ cwd }: { cwd: string }) {
 				);
 				const body = await res.json();
 				if (!cancelled) setUrl(body?.url ?? null);
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "GitHub URL");
 				if (!cancelled) setUrl(null);
 			}
 		})();

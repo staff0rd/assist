@@ -1,5 +1,6 @@
 import type { AutoUpdateAction } from "../../../../../../../../shared/AutoUpdateAction";
 import { apiFetch } from "../../../../../../apiFetch";
+import { reportCaughtError } from "../../../../../../clientFailures/reportCaughtError";
 import { withNode } from "../../../../../../withNode";
 import type { NodeUpdateEntry } from "../../../../NodeUpdateEntry";
 import { requestFailure } from "../../../../requestFailure";
@@ -17,6 +18,8 @@ export async function postLoopControl(
 			),
 			{ method: "POST" },
 		);
-	} catch {}
+	} catch (error) {
+		reportCaughtError(error, "update loop control");
+	}
 	return res?.ok ? undefined : requestFailure(res);
 }

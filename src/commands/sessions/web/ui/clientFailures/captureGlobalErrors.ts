@@ -1,5 +1,5 @@
 import { markReported, wasReported } from "./markReported";
-import { recordClientFailure } from "./recordClientFailure";
+import { recordPageError } from "./recordPageError";
 
 function describe(reason: unknown): string {
 	return reason instanceof Error ? reason.message : String(reason);
@@ -11,22 +11,10 @@ function sourceOf(event: ErrorEvent): string {
 		: "";
 }
 
-function record(kind: "error" | "rejection", error: string): void {
-	recordClientFailure({
-		at: new Date().toISOString(),
-		kind,
-		method: kind === "error" ? "ERROR" : "REJECT",
-		path: location.pathname + location.search,
-		base: location.origin,
-		error,
-		durationMs: 0,
-	});
-}
-
 function onError(event: ErrorEvent): void {
 	if (wasReported(event.error)) return;
 	markReported(event.error);
-	record(
+	recordPageError(
 		"error",
 		`${event.message || describe(event.error)}${sourceOf(event)}`,
 	);
@@ -35,7 +23,7 @@ function onError(event: ErrorEvent): void {
 function onRejection(event: PromiseRejectionEvent): void {
 	if (wasReported(event.reason)) return;
 	markReported(event.reason);
-	record("rejection", describe(event.reason));
+	recordPageError("rejection", describe(event.reason));
 }
 
 export function captureGlobalErrors(): () => void {

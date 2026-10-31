@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ServerRunInfo } from "../../handleServerRuns";
 import { apiFetch } from "../apiFetch";
+import { reportCaughtError } from "../clientFailures/reportCaughtError";
 import { useApiNode } from "../useApiNode";
 import { withNode } from "../withNode";
 
@@ -19,7 +20,8 @@ export function useServerRuns(cwd: string | undefined): ServerRunInfo[] {
 			.then((body) => {
 				if (!cancelled) setRuns(Array.isArray(body?.runs) ? body.runs : []);
 			})
-			.catch(() => {
+			.catch((error: unknown) => {
+				reportCaughtError(error, "server runs");
 				if (!cancelled) setRuns([]);
 			});
 		return () => {

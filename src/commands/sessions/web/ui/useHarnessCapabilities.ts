@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "./apiFetch";
+import { reportCaughtError } from "./clientFailures/reportCaughtError";
 
 export function useHarnessCapabilities(): {
 	exposeCodexActions: boolean;
@@ -18,7 +19,8 @@ export function useHarnessCapabilities(): {
 					setExposeCodexActions(Boolean(body?.exposeCodexActions));
 					setExposePiActions(Boolean(body?.exposePiActions));
 				}
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "harness capabilities");
 				setExposeCodexActions(false);
 				setExposePiActions(false);
 			}

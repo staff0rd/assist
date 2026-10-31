@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../../../apiFetch";
+import { reportCaughtError } from "../../../../../clientFailures/reportCaughtError";
 
 type BrokenHop = { hop: string; error?: string; remediation?: string };
 
@@ -9,7 +10,8 @@ async function fetchBrokenHop(peer: string): Promise<BrokenHop | null> {
 		);
 		if (!res.ok) return null;
 		return ((await res.json()) as { hop: BrokenHop | null }).hop;
-	} catch {
+	} catch (error) {
+		reportCaughtError(error, "node doctor");
 		return null;
 	}
 }

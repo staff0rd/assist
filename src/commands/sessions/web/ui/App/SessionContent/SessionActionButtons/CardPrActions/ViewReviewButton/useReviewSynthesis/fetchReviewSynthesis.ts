@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../../../../apiFetch";
+import { reportCaughtError } from "../../../../../../clientFailures/reportCaughtError";
 import { withNode } from "../../../../../../withNode";
 
 export type ReviewSynthesisState =
@@ -20,7 +21,8 @@ export async function fetchReviewSynthesis(
 		const body = await res.json();
 		if (typeof body.synthesis !== "string") return { status: "absent" };
 		return { status: "ready", content: body.synthesis };
-	} catch {
+	} catch (error) {
+		reportCaughtError(error, "review synthesis");
 		return { status: "error" };
 	}
 }

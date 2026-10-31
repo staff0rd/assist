@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReleaseCompare } from "../../../../releases/types";
 import { apiFetch } from "../../../apiFetch";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../useApiNode";
 import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
 import { withNode } from "../../../withNode";
@@ -41,7 +42,8 @@ export function useReleaseCompare(
 				const compare = (await res.json()) as ReleaseCompare;
 				if (!cancelled) setView({ status: "loaded", compare });
 			})
-			.catch(() => {
+			.catch((error: unknown) => {
+				reportCaughtError(error, "release compare");
 				if (!cancelled) setView({ status: "error" });
 			});
 		return () => {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../apiFetch";
+import { reportCaughtError } from "../../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../../useApiNode";
 import { withNode } from "../../../../withNode";
 
@@ -26,7 +27,10 @@ export function useReleasesConfigured(cwd: string): boolean | undefined {
 		if (!cwd) return;
 		let cancelled = false;
 		fetchConfigured(cwd, node)
-			.catch(() => undefined)
+			.catch((error: unknown) => {
+				reportCaughtError(error, "releases configured");
+				return undefined;
+			})
 			.then((configured) => {
 				if (!cancelled) setResult({ key, configured });
 			});

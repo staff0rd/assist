@@ -1,4 +1,5 @@
 import { type ReactNode, useMemo } from "react";
+import { reportCaughtError } from "../../../../../clientFailures/reportCaughtError";
 import { fetchHeadFile } from "./HighLevelHeadSourceProvider/fetchHeadFile";
 import {
 	type HighLevelHeadSource,
@@ -13,7 +14,10 @@ function cachedHeadSource(repo: string, sha: string): HighLevelHeadSource {
 			if (cached) return cached;
 			const loading = fetchHeadFile(repo, sha, path);
 			files.set(path, loading);
-			loading.catch(() => files.delete(path));
+			loading.catch((error: unknown) => {
+				reportCaughtError(error, `head file ${path}`);
+				files.delete(path);
+			});
 			return loading;
 		},
 	};

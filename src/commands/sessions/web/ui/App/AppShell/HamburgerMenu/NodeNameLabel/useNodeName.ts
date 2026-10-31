@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../apiFetch";
+import { reportCaughtError } from "../../../../clientFailures/reportCaughtError";
 
 export function useNodeName(): string | null {
 	const [nodeName, setNodeName] = useState<string | null>(null);
@@ -12,7 +13,9 @@ export function useNodeName(): string | null {
 				const body = await res.json();
 				if (!cancelled && typeof body?.nodeName === "string")
 					setNodeName(body.nodeName);
-			} catch {}
+			} catch (error) {
+				reportCaughtError(error, "node name");
+			}
 		})();
 		return () => {
 			cancelled = true;

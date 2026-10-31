@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ItemStatusCounts } from "../../../gitStatus";
 import { apiFetch } from "../../apiFetch";
+import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../useApiNode";
 import { withNode } from "../../withNode";
 import { diffQuery } from "../diffQuery";
@@ -27,7 +28,8 @@ export function useGitStatusCounts(
 				);
 				const body = await res.json();
 				if (!cancelled) setCounts(body ?? null);
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "git status counts");
 				if (!cancelled) setCounts(null);
 			}
 		};

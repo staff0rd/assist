@@ -1,6 +1,6 @@
 export type ClientFailure = {
 	at: string;
-	kind?: "error" | "rejection";
+	kind?: "error" | "rejection" | "caught";
 	method: string;
 	path: string;
 	base: string;

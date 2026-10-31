@@ -4,6 +4,7 @@ import type {
 } from "../../../../backlog/web/ui/types";
 import { withCwd } from "../../../../backlog/web/ui/withCwd";
 import { apiFetch } from "../apiFetch";
+import { reportCaughtError } from "../clientFailures/reportCaughtError";
 
 const cache = new Map<string, Promise<Map<number, ItemTracker>>>();
 
@@ -27,7 +28,10 @@ export function loadItemTrackers(
 				});
 			}
 			return map;
-		})().catch(() => new Map<number, ItemTracker>());
+		})().catch((error: unknown) => {
+			reportCaughtError(error, "item trackers");
+			return new Map<number, ItemTracker>();
+		});
 		cache.set(key, pending);
 	}
 	return pending;

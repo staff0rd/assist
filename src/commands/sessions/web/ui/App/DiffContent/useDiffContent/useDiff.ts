@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { apiFetch } from "../../../apiFetch";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../useApiNode";
 import { withNode } from "../../../withNode";
 import { diffQuery } from "../../diffQuery";
@@ -40,7 +41,8 @@ export function useDiff(
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const body = await res.text();
 				if (!cancelled) setState({ diff: body, loading: false, error: false });
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "diff");
 				if (!cancelled) setState({ diff: "", loading: false, error: true });
 			}
 		};

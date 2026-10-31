@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ScopedRule } from "../../../../../../rules/types";
 import { apiFetch } from "../../../apiFetch";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../useApiNode";
 
 const EMPTY: ScopedRule[] = [];
@@ -27,7 +28,8 @@ export function useScopedRules(
 				const res = await apiFetch(`/api/rules?${params}`);
 				const body = await res.json();
 				if (!cancelled) setRules(body?.rules ?? EMPTY);
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "scoped rules");
 				if (!cancelled) setRules(EMPTY);
 			}
 		};

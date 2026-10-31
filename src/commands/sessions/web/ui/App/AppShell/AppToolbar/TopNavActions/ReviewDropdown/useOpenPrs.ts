@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { PrSummary } from "../../../../../../prList";
 import { apiFetch } from "../../../../../apiFetch";
+import { reportCaughtError } from "../../../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../../../useApiNode";
 import { withNode } from "../../../../../withNode";
 
@@ -27,7 +28,8 @@ export function useOpenPrs(cwd: string | undefined): {
 				setPrs(Array.isArray(body?.prs) ? body.prs : []);
 				setLoading(false);
 			})
-			.catch(() => {
+			.catch((error: unknown) => {
+				reportCaughtError(error, "open PRs");
 				if (cancelled) return;
 				setPrs([]);
 				setLoading(false);

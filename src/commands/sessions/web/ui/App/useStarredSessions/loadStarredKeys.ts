@@ -1,4 +1,5 @@
 import { fetchItems } from "../../../../../backlog/web/ui/fetchItems";
+import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { sessionStarTarget, starTargetKey } from "./sessionStarTarget";
 import type { SessionInfo } from "../../types";
 
@@ -18,7 +19,8 @@ async function starredKeysForCwd(cwd: string): Promise<string[]> {
 		return items
 			.filter((item) => item.starred)
 			.map((item) => starTargetKey(cwd, item.id));
-	} catch {
+	} catch (error) {
+		reportCaughtError(error, "starred keys");
 		// A repo whose backlog can't be read contributes no starred keys.
 		return [];
 	}

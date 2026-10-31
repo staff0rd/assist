@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { HotkeyBindings } from "../../../../../../../shared/hotkeys/defaultHotkeys";
 import { apiFetch } from "../../../apiFetch";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 import { hotkeyBindingsStore } from "../../hotkeyBindingsStore";
 
 export function useLoadHotkeyBindings(): void {
@@ -12,7 +13,9 @@ export function useLoadHotkeyBindings(): void {
 				if (!res.ok) return;
 				const bindings = (await res.json()) as HotkeyBindings;
 				if (!cancelled) hotkeyBindingsStore.set(bindings);
-			} catch {}
+			} catch (error) {
+				reportCaughtError(error, "hotkey bindings");
+			}
 		})();
 		return () => {
 			cancelled = true;

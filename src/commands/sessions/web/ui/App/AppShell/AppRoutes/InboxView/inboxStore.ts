@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../../apiFetch";
+import { reportCaughtError } from "../../../../clientFailures/reportCaughtError";
 import { postJson } from "../../../postJson";
 import type { InboxMessage, InboxStatus } from "./types";
 
@@ -26,7 +27,8 @@ async function refresh(): Promise<void> {
 		const res = await apiFetch("/api/inbox");
 		const body = await res.json();
 		if (res.ok && Array.isArray(body)) set(body);
-	} catch {
+	} catch (error) {
+		reportCaughtError(error, "inbox refresh");
 		if (current === undefined) set([]);
 	}
 }

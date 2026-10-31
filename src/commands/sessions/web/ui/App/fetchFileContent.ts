@@ -1,4 +1,5 @@
 import { apiFetch } from "../apiFetch";
+import { reportCaughtError } from "../clientFailures/reportCaughtError";
 import { withNode } from "../withNode";
 
 export type FileContentState =
@@ -30,7 +31,8 @@ export async function fetchFileContent(
 			content: body.content,
 			mtimeMs: typeof body.mtimeMs === "number" ? body.mtimeMs : 0,
 		};
-	} catch {
+	} catch (error) {
+		reportCaughtError(error, "file content");
 		return { status: "error" };
 	}
 }

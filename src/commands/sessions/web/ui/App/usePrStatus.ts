@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { PrSummary } from "../../prList";
 import { apiFetch } from "../apiFetch";
+import { reportCaughtError } from "../clientFailures/reportCaughtError";
 import type { SessionStatus } from "../types";
 import { useApiNode } from "../useApiNode";
 import { withNode } from "../withNode";
@@ -31,7 +32,8 @@ export function usePrStatus(
 				if (!cancelled)
 					setPr(typeof body?.pr?.number === "number" ? body.pr : null);
 			})
-			.catch(() => {
+			.catch((error: unknown) => {
+				reportCaughtError(error, "PR status");
 				if (!cancelled) setPr(null);
 			});
 		return () => {

@@ -714,6 +714,23 @@ describe("NewSessionDialog keyboard", () => {
 		expect(onCreate).toHaveBeenCalledWith("", "/git/beta");
 	});
 
+	it("shows a failed defaults fetch with a retry instead of loading", () => {
+		const retry = vi.fn();
+		renderDialog(() => ({
+			mode: "prompt",
+			pending: false,
+			error: "HTTP 502",
+			retry,
+		}));
+
+		expect(screen.getByRole("alert").textContent).toContain("HTTP 502");
+		expect(
+			screen.getByRole("button", { name: "Start session" }),
+		).not.toHaveProperty("disabled", true);
+		fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+		expect(retry).toHaveBeenCalled();
+	});
+
 	it("closes on Esc without launching", () => {
 		const { onClose, onCreate } = renderDialog();
 

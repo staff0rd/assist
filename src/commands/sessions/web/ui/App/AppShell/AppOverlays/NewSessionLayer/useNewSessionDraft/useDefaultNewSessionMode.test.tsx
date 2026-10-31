@@ -1,13 +1,17 @@
 // @vitest-environment jsdom
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
+import {
+	clearClientFailures,
+	getClientFailures,
+} from "../../../../../clientFailures/recordClientFailure";
 import type { NewSessionMode } from "../newSessionModes";
 import { useDefaultNewSessionMode } from "./useDefaultNewSessionMode";
 
 afterEach(() => {
 	cleanup();
+	clearClientFailures();
 	vi.unstubAllGlobals();
-	vi.useRealTimers();
 });
 
 function stubMode(mode: NewSessionMode) {
@@ -21,7 +25,11 @@ it("fetches only the selected repo's mode", async () => {
 	const { result } = renderHook(() => useDefaultNewSessionMode("/git/apm"));
 	await act(async () => {});
 
-	expect(result.current).toEqual({ mode: "prompt", pending: false });
+	expect(result.current).toMatchObject({
+		mode: "prompt",
+		pending: false,
+		error: undefined,
+	});
 	expect(fetch).toHaveBeenCalledOnce();
 	expect(fetch).toHaveBeenCalledWith(
 		"/api/new-session-defaults?cwd=%2Fgit%2Fapm",
@@ -42,7 +50,11 @@ it("refetches the selected repo's mode each time the dialog opens", async () => 
 	expect(result.current?.pending).toBe(true);
 
 	await act(async () => {});
-	expect(result.current).toEqual({ mode: "prompt", pending: false });
+	expect(result.current).toMatchObject({
+		mode: "prompt",
+		pending: false,
+		error: undefined,
+	});
 	expect(fetch).toHaveBeenCalledOnce();
 });
 
@@ -60,21 +72,36 @@ it("does not refetch when nothing changes", async () => {
 	expect(fetch).toHaveBeenCalledOnce();
 });
 
-it("stays pending and retries a failed fetch instead of guessing draft", async () => {
-	vi.useFakeTimers();
+it("surfaces and reports a failed fetch instead of retrying silently", async () => {
+	const failing = vi.fn(async () => new Response("", { status: 502 }));
+	vi.stubGlobal("fetch", failing);
+	const { result } = renderHook(() => useDefaultNewSessionMode("/git/apm"));
+	await act(async () => {});
+
+	expect(result.current).toMatchObject({ pending: false, error: "HTTP 502" });
+	expect(failing).toHaveBeenCalledOnce();
+	expect(getClientFailures()[0]).toMatchObject({
+		path: "/api/new-session-defaults?cwd=%2Fgit%2Fapm",
+		status: 502,
+	});
+
+	stubMode("draft");
+	await act(async () => result.current?.retry?.());
+	expect(result.current).toMatchObject({
+		mode: "draft",
+		pending: false,
+		error: undefined,
+	});
+});
+
+it("reports an unreadable response body", async () => {
 	vi.stubGlobal(
 		"fetch",
-		vi.fn(async () => {
-			throw new Error("offline");
-		}),
+		vi.fn(async () => new Response("<html>")),
 	);
 	const { result } = renderHook(() => useDefaultNewSessionMode("/git/apm"));
 	await act(async () => {});
-	expect(result.current).toBeNull();
 
-	stubMode("prompt");
-	await act(async () => {
-		await vi.advanceTimersByTimeAsync(1000);
-	});
-	expect(result.current).toEqual({ mode: "prompt", pending: false });
+	expect(result.current?.error).toBeDefined();
+	expect(getClientFailures()[0]).toMatchObject({ kind: "caught" });
 });

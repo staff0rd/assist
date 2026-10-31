@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CommitRef } from "../../../../../../../shared/db/listCommitRefs";
 import { apiFetch } from "../../../apiFetch";
+import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../useApiNode";
 import { withNode } from "../../../withNode";
 import { diffQuery } from "../../diffQuery";
@@ -35,7 +36,8 @@ export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
 						branchBase: body?.branchBase ?? null,
 						loaded: true,
 					});
-			} catch {
+			} catch (error) {
+				reportCaughtError(error, "diff scopes");
 				if (!cancelled) setScopes({ ...EMPTY, loaded: true });
 			}
 		};

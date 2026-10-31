@@ -6,6 +6,7 @@ import {
 	type LoadedDefaultMode,
 	useDefaultNewSessionMode,
 } from "./useNewSessionDraft/useDefaultNewSessionMode";
+import { defaultModeError } from "./useNewSessionDraft/defaultModeError";
 import { draftNode } from "./useNewSessionDraft/draftNode";
 import { type DraftFocus, useDraftState } from "./useDraftState";
 
@@ -14,6 +15,8 @@ export type NewSessionDraft = {
 	cwd: string;
 	mode: NewSessionMode;
 	modePending: boolean;
+	modeError: string | undefined;
+	retryMode: (() => void) | undefined;
 	harness: HarnessKind;
 	node: string | undefined;
 	focus: DraftFocus;
@@ -45,6 +48,8 @@ export function useNewSessionDraft(
 		cwd,
 		mode: state.mode ?? defaultMode.mode,
 		modePending: state.mode === undefined && defaultMode.pending,
+		modeError: defaultModeError(state.mode, defaultMode),
+		retryMode: defaultMode.retry,
 		node: draftNode(state.node, nodeSelection),
 	};
 }

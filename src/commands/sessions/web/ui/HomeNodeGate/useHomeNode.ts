@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-import { loadNodeStore, type NodeStore, nodeStore } from "./nodeStore";
+import { useCallback } from "react";
+import { type NodeStore, nodeStore } from "./nodeStore";
 import type { NodeHealth } from "./probeHealth";
 import type { SavedNode } from "./SavedNode";
 import { useHomeConnection } from "./useHomeConnection";
+import { useLoadedNodeStore } from "./useHomeNode/useLoadedNodeStore";
 
 function upsert(nodes: SavedNode[], oldUrl: string, node: SavedNode) {
 	const rest = nodes.filter((n) => n.url !== node.url || n.url === oldUrl);
@@ -12,21 +13,18 @@ function upsert(nodes: SavedNode[], oldUrl: string, node: SavedNode) {
 }
 
 export function useHomeNode() {
-	const [store, setStore] = useState<NodeStore>();
+	const [store, setStore] = useLoadedNodeStore();
 	const homeUrl = store?.homeUrl ?? store?.nodes[0]?.url;
 	const conn = useHomeConnection(homeUrl);
 
-	useEffect(() => {
-		loadNodeStore()
-			.then(setStore)
-			.catch(() => setStore({ nodes: [], homeUrl: undefined }));
-	}, []);
-
-	const update = useCallback((next: NodeStore) => {
-		setStore(next);
-		void nodeStore.saveNodes(next.nodes);
-		if (next.homeUrl) void nodeStore.saveHomeUrl(next.homeUrl);
-	}, []);
+	const update = useCallback(
+		(next: NodeStore) => {
+			setStore(next);
+			void nodeStore.saveNodes(next.nodes);
+			if (next.homeUrl) void nodeStore.saveHomeUrl(next.homeUrl);
+		},
+		[setStore],
+	);
 
 	const nodes = store?.nodes ?? [];
 

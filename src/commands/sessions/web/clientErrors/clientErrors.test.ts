@@ -72,12 +72,14 @@ describe("clientErrors", () => {
 				failures: [
 					{ ...page, kind: "error", error: "boom (app.js:1:2)" },
 					{ ...page, kind: "rejection", error: "nope" },
+					{ ...page, kind: "caught", error: "inbox: bad json" },
 				],
 			}),
 		);
 		expect(log.mock.calls.map(([line]) => line)).toEqual([
 			"client: uncaught error on /sessions: boom (app.js:1:2) at 2026-10-31T01:02:03.000Z",
 			"client: unhandled rejection on /sessions: nope at 2026-10-31T01:02:03.000Z",
+			"client: caught error on /sessions: inbox: bad json at 2026-10-31T01:02:03.000Z",
 		]);
 	});
 

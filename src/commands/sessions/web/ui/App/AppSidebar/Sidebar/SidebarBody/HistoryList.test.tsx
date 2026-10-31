@@ -16,6 +16,10 @@ import {
 	RepoSelectionContext,
 } from "../../../../useRepoSelectionContext";
 
+vi.mock("../../../../clientFailures/queueClientFailureReport", () => ({
+	queueClientFailureReport: vi.fn(),
+}));
+
 afterEach(() => {
 	cleanup();
 	vi.unstubAllGlobals();

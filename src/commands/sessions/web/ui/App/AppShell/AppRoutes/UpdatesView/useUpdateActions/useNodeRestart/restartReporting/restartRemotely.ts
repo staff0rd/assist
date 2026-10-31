@@ -1,4 +1,5 @@
 import type { RestartTarget as AdvisedTarget } from "../../../../../../../../../../watch/restartRules";
+import { reportCaughtError } from "../../../../../../../clientFailures/reportCaughtError";
 import type { NodeUpdateEntry } from "../../../../../NodeUpdateEntry";
 import { postRestart, type RestartTarget } from "../../../../../postRestart";
 import { requestFailure } from "../../../../../requestFailure";
@@ -12,7 +13,9 @@ export async function restartRemotely(
 	let res: Response | undefined;
 	try {
 		res = await postRestart(target, entry.local ? undefined : entry.name);
-	} catch {}
+	} catch (error) {
+		reportCaughtError(error, "node restart");
+	}
 	if (!res?.ok) throw new Error(await requestFailure(res));
 	const back = await awaitNodeRestarted(entry, advice);
 	if (!back?.status) throw new Error(`${entry.name} did not come back`);

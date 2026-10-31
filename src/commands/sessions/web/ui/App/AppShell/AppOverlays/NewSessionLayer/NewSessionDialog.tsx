@@ -7,6 +7,7 @@ import { useDraftFocus } from "./NewSessionDialog/useDraftFocus";
 import { useDraftRepos } from "./NewSessionDialog/useDraftRepos";
 import { useDraftSubmit } from "./NewSessionDialog/useDraftSubmit";
 import { LoadingFieldset } from "./NewSessionDialog/LoadingFieldset";
+import { NewSessionModeError } from "./NewSessionModeError";
 import type { NewSessionDraft } from "./useNewSessionDraft";
 import { AutoFocusDialog } from "../AutoFocusDialog";
 import { useHarnessCapabilities } from "../../../../useHarnessCapabilities";
@@ -40,6 +41,10 @@ export function NewSessionDialog({
 						harnesses={harnesses}
 						focus={focus}
 						cloneState={cloneState}
+					/>
+					<NewSessionModeError
+						error={draft.modeError}
+						onRetry={draft.retryMode}
 					/>
 					<NewSessionFooter
 						submitLabel={

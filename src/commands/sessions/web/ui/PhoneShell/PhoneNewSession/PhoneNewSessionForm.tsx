@@ -1,4 +1,5 @@
 import InputBase from "@mui/material/InputBase";
+import { NewSessionModeError } from "../../App/AppShell/AppOverlays/NewSessionLayer/NewSessionModeError";
 import { newSessionModes } from "../../App/AppShell/AppOverlays/NewSessionLayer/newSessionModes";
 import { PhoneModeSelector } from "./PhoneModeSelector";
 import { PhoneRepoRow } from "./PhoneRepoRow";
@@ -35,6 +36,7 @@ export function PhoneNewSessionForm({
 	return (
 		<>
 			<PhoneModeSelector form={form} />
+			<NewSessionModeError error={form.modeError} onRetry={form.retryMode} />
 			<InputBase
 				multiline
 				minRows={4}

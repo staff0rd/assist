@@ -1,4 +1,5 @@
 import { apiFetch } from "../../apiFetch";
+import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { withNode } from "../../withNode";
 
 export type RepoLocation = { cwd?: string; cloneTarget?: string };
@@ -6,7 +7,12 @@ export type RepoLocation = { cwd?: string; cloneTarget?: string };
 export function fetchLocations(origin: string, nodes: string[]) {
 	return Promise.all(
 		nodes.map(async (node) => {
-			const location = await fetchLocation(origin, node).catch(() => ({}));
+			const location = await fetchLocation(origin, node).catch(
+				(error: unknown) => {
+					reportCaughtError(error, `clone location on ${node}`);
+					return {};
+				},
+			);
 			return [node, location] as const;
 		}),
 	);
