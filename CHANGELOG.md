@@ -1,3 +1,10 @@
+# [0.996.0](https://github.com/staff0rd/assist/compare/v0.995.0...v0.996.0) (2026-10-31)
+
+
+### Features
+
+* phone sheet Mark done action ([6da885a](https://github.com/staff0rd/assist/commit/6da885a95df73b4f2442fb4ca435e952b81ee6f3))
+
 # [0.995.0](https://github.com/staff0rd/assist/compare/v0.994.0...v0.995.0) (2026-10-31)
 
 
