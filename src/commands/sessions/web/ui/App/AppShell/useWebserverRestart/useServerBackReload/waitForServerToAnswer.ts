@@ -6,7 +6,10 @@ const PROBE_URL = "/api/health";
 
 async function serverAnswers(): Promise<boolean> {
 	try {
-		const res = await apiFetch(PROBE_URL, { cache: "no-store" });
+		const res = await apiFetch(PROBE_URL, {
+			cache: "no-store",
+			capture: false,
+		});
 		return res.ok;
 	} catch {
 		return false;

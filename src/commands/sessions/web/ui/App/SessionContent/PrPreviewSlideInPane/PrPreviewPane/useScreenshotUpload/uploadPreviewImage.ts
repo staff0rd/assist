@@ -15,6 +15,7 @@ export async function uploadPreviewImage(
 		method: "POST",
 		headers: { "Content-Type": file.type || "application/octet-stream" },
 		body: file,
+		timeoutMs: 120_000,
 	});
 	const body = (await res.json().catch(() => null)) as {
 		path?: string;

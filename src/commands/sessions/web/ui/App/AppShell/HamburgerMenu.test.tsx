@@ -236,9 +236,10 @@ describe("HamburgerMenu", () => {
 		fireEvent.click(screen.getByText("Restart daemon"));
 		fireEvent.click(screen.getByRole("button", { name: "Restart" }));
 
-		expect(fetchMock).toHaveBeenCalledWith("/api/restart?target=both", {
-			method: "POST",
-		});
+		expect(fetchMock).toHaveBeenCalledWith(
+			"/api/restart?target=both",
+			expect.objectContaining({ method: "POST" }),
+		);
 	});
 
 	it("opens the keyboard shortcuts sheet from the menu", () => {
@@ -292,7 +293,7 @@ describe("HamburgerMenu", () => {
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/restart?target=both&node=win",
-			{ method: "POST" },
+			expect.objectContaining({ method: "POST" }),
 		);
 		await waitFor(() => expect(screen.queryByText("Restart win?")).toBeNull());
 		expect(reload).not.toHaveBeenCalled();

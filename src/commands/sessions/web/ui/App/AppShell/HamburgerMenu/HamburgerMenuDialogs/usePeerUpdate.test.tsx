@@ -119,7 +119,7 @@ describe("usePeerUpdate", () => {
 		await waitFor(() =>
 			expect(fetchMock).toHaveBeenCalledWith(
 				"/api/restart?target=webserver&node=win",
-				{ method: "POST" },
+				expect.objectContaining({ method: "POST" }),
 			),
 		);
 		expect(result.current.back).toBeNull();
@@ -162,9 +162,10 @@ describe("usePeerUpdate", () => {
 			act(() => result.current.update("win"));
 
 			expect(launchAssist).not.toHaveBeenCalled();
-			expect(fetchMock).toHaveBeenCalledWith("/api/self-update?node=win", {
-				method: "POST",
-			});
+			expect(fetchMock).toHaveBeenCalledWith(
+				"/api/self-update?node=win",
+				expect.objectContaining({ method: "POST" }),
+			);
 			expect(result.current.progress).toBe("Updating assist on win…");
 
 			await act(async () => finish({ ok: true }));

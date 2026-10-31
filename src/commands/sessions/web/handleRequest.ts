@@ -6,6 +6,7 @@ import { postDocsRefresh } from "../../backlog/web/postDocsRefresh";
 import { getRepoLocation } from "../../backlog/web/getRepoLocation";
 import { listItems } from "../../backlog/web/shared";
 import { browserRelay } from "./browser/browserRelay";
+import { clientErrors } from "./clientErrors/clientErrors";
 import { daemonLogTail } from "./daemonLogTail";
 import { diff } from "./diff";
 import { diffScopes } from "./diffScopes";
@@ -85,6 +86,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/sessions/docs-feedback": docsFeedback,
 	"OPTIONS /api/sessions/docs-feedback": sessionFromGithubPreflight,
 	"POST /api/browser": browserRelay,
+	"POST /api/client-errors": clientErrors,
 	"POST /api/open-in-code": openInCode,
 	"POST /api/pr-preview/upload-image": uploadPrImage,
 	"GET /api/pr-preview/image": previewImage,

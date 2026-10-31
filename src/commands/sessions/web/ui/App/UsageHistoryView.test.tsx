@@ -129,7 +129,7 @@ describe("UsageHistoryView", () => {
 		expect(screen.queryByText("Window")).toBeNull();
 		expect(fetchMock).toHaveBeenLastCalledWith(
 			"/api/usage/history?page=0&pageSize=30&window=seven_day",
-			undefined,
+			expect.anything(),
 		);
 	});
 
@@ -180,7 +180,7 @@ describe("UsageHistoryView", () => {
 			);
 			expect(fetchMock).toHaveBeenLastCalledWith(
 				"/api/usage/items?page=0&pageSize=30",
-				undefined,
+				expect.anything(),
 			);
 		});
 
@@ -273,7 +273,7 @@ describe("UsageHistoryView", () => {
 			);
 			expect(fetchMock).toHaveBeenLastCalledWith(
 				"/api/usage/items?page=0&pageSize=30&origin=github.com%2Facme%2Fapm",
-				undefined,
+				expect.anything(),
 			);
 		});
 
@@ -323,7 +323,7 @@ describe("UsageHistoryView", () => {
 			);
 			expect(fetchMock).toHaveBeenLastCalledWith(
 				"/api/usage/items?page=0&pageSize=30&status=running",
-				undefined,
+				expect.anything(),
 			);
 		});
 
@@ -363,7 +363,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&sort=active",
-					undefined,
+					expect.anything(),
 				),
 			);
 			fireEvent.click(screen.getByText("Active"));
@@ -371,7 +371,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&sort=active&direction=asc",
-					undefined,
+					expect.anything(),
 				),
 			);
 		});
@@ -389,7 +389,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=1&pageSize=30",
-					undefined,
+					expect.anything(),
 				),
 			);
 			fireEvent.click(screen.getByText("Phases"));
@@ -397,7 +397,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&sort=phases",
-					undefined,
+					expect.anything(),
 				),
 			);
 		});
@@ -417,7 +417,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=1&pageSize=30",
-					undefined,
+					expect.anything(),
 				),
 			);
 			fireEvent.mouseDown(screen.getByRole("combobox", { name: "Repo" }));
@@ -426,7 +426,7 @@ describe("UsageHistoryView", () => {
 			await waitFor(() =>
 				expect(fetchMock).toHaveBeenLastCalledWith(
 					"/api/usage/items?page=0&pageSize=30&origin=github.com%2Facme%2Fapm",
-					undefined,
+					expect.anything(),
 				),
 			);
 		});

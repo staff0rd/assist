@@ -25,7 +25,7 @@ it("fetches only the selected repo's mode", async () => {
 	expect(fetch).toHaveBeenCalledOnce();
 	expect(fetch).toHaveBeenCalledWith(
 		"/api/new-session-defaults?cwd=%2Fgit%2Fapm",
-		undefined,
+		expect.anything(),
 	);
 });
 

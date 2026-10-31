@@ -67,7 +67,7 @@ describe("FilePalette", () => {
 		expect(await screen.findByText("useDaemonState.ts")).toBeTruthy();
 		expect(fetch).toHaveBeenLastCalledWith(
 			"/api/files?cwd=%2Frepo&q=uds",
-			undefined,
+			expect.anything(),
 		);
 	});
 
@@ -107,7 +107,7 @@ describe("FilePalette", () => {
 
 		expect(fetch).toHaveBeenLastCalledWith(
 			"/api/files?cwd=%2Frepo%2F.worktrees%2Ffeature&q=a",
-			undefined,
+			expect.anything(),
 		);
 	});
 

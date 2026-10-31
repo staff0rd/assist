@@ -449,7 +449,7 @@ describe("FileView", () => {
 		await findEditor();
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/file?cwd=%2Frepo%2F.worktrees%2Ffeature&path=src%2Fa.ts",
-			undefined,
+			expect.anything(),
 		);
 	});
 
@@ -461,7 +461,7 @@ describe("FileView", () => {
 		await findEditor();
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/file?cwd=%2Frepo%2F.worktrees%2Fpinned&path=src%2Fa.ts",
-			undefined,
+			expect.anything(),
 		);
 	});
 

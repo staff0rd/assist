@@ -13,6 +13,7 @@ const describeUpdated = (peer: string, version?: string) =>
 function postSelfUpdate(peer: string): Promise<Response> {
 	return apiFetch(`/api/self-update?node=${encodeURIComponent(peer)}`, {
 		method: "POST",
+		timeoutMs: 660_000,
 	});
 }
 

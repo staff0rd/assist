@@ -64,7 +64,7 @@ describe("usePeerRestart", () => {
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/restart?target=both&node=win",
-			{ method: "POST" },
+			expect.objectContaining({ method: "POST" }),
 		);
 	});
 
@@ -111,7 +111,7 @@ describe("usePeerRestart", () => {
 		expect(started).toBe(false);
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/node-doctor?link=win",
-			undefined,
+			expect.anything(),
 		);
 		expect(result.current.error).toBe(
 			"Restart win failed (win unreachable: ECONNREFUSED): web hop failed: connection refused — is win's web server running?",
