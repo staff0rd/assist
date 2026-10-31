@@ -1,3 +1,10 @@
+# [0.998.0](https://github.com/staff0rd/assist/compare/v0.997.0...v0.998.0) (2026-10-31)
+
+
+### Features
+
+* per-tab stacks on the phone tab bar ([f862660](https://github.com/staff0rd/assist/commit/f862660c8ee526777fe2320c8473b3c7f2e7fb13))
+
 # [0.997.0](https://github.com/staff0rd/assist/compare/v0.996.0...v0.997.0) (2026-10-31)
 
 
