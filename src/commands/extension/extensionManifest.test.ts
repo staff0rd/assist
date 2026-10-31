@@ -24,7 +24,9 @@ describe("extension manifest", () => {
 		const tsup = readFileSync("tsup.config.ts", "utf8");
 		for (const file of manifest.content_scripts.flatMap((s) => s.js))
 			expect(tsup).toMatch(
-				new RegExp(`\\b${file.replace(/\.js$/, "")}: "src/commands/extension/`),
+				new RegExp(
+					`\\b${file.replace(/\.js$/, "")}:\\s*"src/commands/extension/`,
+				),
 			);
 	});
 });

@@ -1,4 +1,5 @@
 import { connectBrowserLink } from "../browserLink/connectBrowserLink";
+import { storeConsoleEntries } from "../consoleCapture/storeConsoleEntries";
 import { isDocsFeedbackMessage } from "../docsFeedback/isDocsFeedbackMessage";
 import { postDocsFeedback } from "../docsFeedback/postDocsFeedback";
 import { assistServerUrl } from "./assistServerUrl";
@@ -24,3 +25,4 @@ export function assistBackground(): void {
 
 assistBackground();
 connectBrowserLink();
+storeConsoleEntries();

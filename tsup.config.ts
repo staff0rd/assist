@@ -23,6 +23,10 @@ export default defineConfig({
 			entryPoints: {
 				content: "src/commands/extension/criteriaContentScript.ts",
 				docs: "src/commands/extension/docsFeedback/docsContentScript.ts",
+				consoleMain:
+					"src/commands/extension/consoleCapture/consoleMainScript.ts",
+				console:
+					"src/commands/extension/consoleCapture/consoleContentScript.ts",
 				background: "src/commands/extension/sendToAssist/assistBackground.ts",
 				options: "src/commands/extension/sendToAssist/assistOptions.ts",
 			},

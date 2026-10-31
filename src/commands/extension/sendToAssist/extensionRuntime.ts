@@ -1,8 +1,12 @@
+type MessageSender = { tab?: { id?: number } };
+
 type ExtensionRuntime = {
 	sendMessage: (message: unknown) => Promise<unknown>;
 	getURL?: (path: string) => string;
 	onMessage: {
-		addListener: (listener: (message: unknown) => unknown) => void;
+		addListener: (
+			listener: (message: unknown, sender?: MessageSender) => unknown,
+		) => void;
 	};
 };
 

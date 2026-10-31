@@ -1,10 +1,22 @@
+import type { ConsoleEntry } from "../consoleCapture/types";
+
 export type InspectQuery = { selector: string } | { text: string };
+
+export type ConsoleRequest = {
+	op: "console";
+	url?: string;
+	all?: boolean;
+	sinceMs?: number;
+	grep?: string;
+	limit?: number;
+};
 
 export type BrowserRequest =
 	| { op: "status"; url?: string }
 	| { op: "snapshot"; url?: string }
 	| ({ op: "inspect"; url?: string } & InspectQuery)
-	| { op: "run"; url?: string; code: string };
+	| { op: "run"; url?: string; code: string }
+	| ConsoleRequest;
 
 export type BrowserOp = BrowserRequest["op"];
 
@@ -22,7 +34,10 @@ export type ProbeResults = {
 	snapshot: { html: string };
 	inspect: InspectResult;
 	run: RunOutcome;
+	console: ConsoleResult;
 };
+
+export type ConsoleResult = { recording: boolean; entries: ConsoleEntry[] };
 
 export type RunOutcome =
 	| { outcome: "ran"; value: string }
@@ -61,3 +76,5 @@ export const BROWSER_KEEPALIVE_TYPE = "assist-browser-keepalive";
 export const RUN_APPROVAL_TIMEOUT_MS = 120_000;
 
 export const BROWSER_LINK_PATH = "/ws/browser";
+
+export const BROWSER_LINK_ALARM = "assist-browser-link";

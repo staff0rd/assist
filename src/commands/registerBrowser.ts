@@ -3,19 +3,8 @@ import { browserInspect } from "./browser/browserInspect";
 import { browserRun } from "./browser/browserRun";
 import { browserSnapshot } from "./browser/browserSnapshot";
 import { browserStatus } from "./browser/browserStatus";
-
-function withTargetOptions(command: Command): Command {
-	return command
-		.option(
-			"--url <substring>",
-			"Target the most recently active tab whose URL contains this, instead of the focused window's active tab",
-		)
-		.option(
-			"--server <url>",
-			"assist web server the extension connects to",
-			"http://localhost:3100",
-		);
-}
+import { registerBrowserConsole } from "./browser/registerBrowserConsole";
+import { withTargetOptions } from "./browser/withTargetOptions";
 
 export function registerBrowser(program: Command): void {
 	const browser = program
@@ -60,4 +49,6 @@ export function registerBrowser(program: Command): void {
 			)
 			.requiredOption("--file <script>", "JavaScript file to run"),
 	).action(browserRun);
+
+	registerBrowserConsole(browser);
 }

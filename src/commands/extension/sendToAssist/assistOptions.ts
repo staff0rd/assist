@@ -1,3 +1,4 @@
+import { attachRecordConsoleToggle } from "../consoleCapture/attachRecordConsoleToggle";
 import { assistServerUrl, SERVER_URL_KEY } from "./assistServerUrl";
 import { attachUserScriptsGrant } from "./attachUserScriptsGrant";
 import { extensionStorage } from "./extensionStorage";
@@ -32,4 +33,5 @@ export async function assistOptions(
 if (typeof document !== "undefined" && document.querySelector("form")) {
 	void assistOptions();
 	void attachUserScriptsGrant();
+	void attachRecordConsoleToggle();
 }

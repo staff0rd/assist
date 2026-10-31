@@ -22,6 +22,6 @@ export async function requestTab<O extends BrowserOp>(
 		if (reply.tabUrl) console.log(`tab: ${reply.tabUrl}`);
 		fail(reply.error);
 	}
-	console.log(`tab: ${reply.result.tabUrl}`);
+	if (reply.result.tabUrl) console.log(`tab: ${reply.result.tabUrl}`);
 	return { ...reply.result, version: reply.version };
 }

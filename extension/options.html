@@ -19,6 +19,9 @@
 				width: 320px;
 				padding: 4px 6px;
 			}
+			input[type="checkbox"] {
+				width: auto;
+			}
 		</style>
 	</head>
 	<body>
@@ -36,6 +39,20 @@
 			</p>
 			<button type="button" data-grant-scripts>Allow scripts</button>
 			<span data-scripts-status role="status"></span>
+		</section>
+		<section>
+			<h2>Console</h2>
+			<p>
+				Stores console warnings and errors, uncaught errors and unhandled
+				promise rejections on assist hosts for 7 days, for
+				<code>assist browser console</code>. Turning this off deletes everything
+				stored.
+			</p>
+			<label>
+				<input type="checkbox" data-record-console />
+				Record console warnings and errors
+			</label>
+			<span data-console-status role="status"></span>
 		</section>
 		<script src="options.js"></script>
 	</body>

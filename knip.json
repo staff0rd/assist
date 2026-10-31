@@ -8,6 +8,8 @@
 		"src/commands/sessions/web/ios/buildIosWeb.ts",
 		"src/commands/extension/criteriaContentScript.ts",
 		"src/commands/extension/docsFeedback/docsContentScript.ts",
+		"src/commands/extension/consoleCapture/consoleMainScript.ts",
+		"src/commands/extension/consoleCapture/consoleContentScript.ts",
 		"src/commands/extension/sendToAssist/assistBackground.ts",
 		"src/commands/extension/sendToAssist/assistOptions.ts",
 		"src/commands/extension/extensionChanged.ts",

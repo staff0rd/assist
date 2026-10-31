@@ -55,6 +55,29 @@
 			"matches": ["http://localhost/*", "http://127.0.0.1/*"],
 			"js": ["docs.js"],
 			"run_at": "document_idle"
+		},
+		{
+			"matches": [
+				"https://github.com/*",
+				"https://dev.azure.com/*",
+				"https://*.visualstudio.com/*",
+				"http://localhost/*",
+				"http://127.0.0.1/*"
+			],
+			"js": ["consoleMain.js"],
+			"run_at": "document_start",
+			"world": "MAIN"
+		},
+		{
+			"matches": [
+				"https://github.com/*",
+				"https://dev.azure.com/*",
+				"https://*.visualstudio.com/*",
+				"http://localhost/*",
+				"http://127.0.0.1/*"
+			],
+			"js": ["console.js"],
+			"run_at": "document_start"
 		}
 	]
 }

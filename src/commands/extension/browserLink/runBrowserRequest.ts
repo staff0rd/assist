@@ -1,7 +1,7 @@
+import { answerConsoleRequest } from "../consoleCapture/answerConsoleRequest";
 import { browserApi } from "./browserApi";
-import { isAssistHost } from "./isAssistHost";
-import { pickTargetTab } from "./pickTargetTab";
 import { probeReply } from "./probeReply";
+import { resolveTargetTab } from "./resolveTargetTab";
 import { runApprovedScript } from "./runApprovedScript";
 import {
 	BROWSER_PROBE_TYPE,
@@ -10,40 +10,22 @@ import {
 	type ProbeAnswer,
 } from "./types";
 
-const ASSIST_HOSTS =
-	"github.com, dev.azure.com, *.visualstudio.com, localhost, 127.0.0.1";
-
 export async function runBrowserRequest(
 	request: BrowserRequest,
 ): Promise<BrowserReply> {
 	const api = browserApi();
 	if (!api) return { ok: false, error: "browser tabs API unavailable" };
-	const [tabs, focused] = await Promise.all([
-		api.tabs.query({}),
-		api.windows?.getLastFocused().catch(() => undefined),
-	]);
-	const tab = pickTargetTab(tabs, focused?.id, request.url);
-	if (!tab || tab.id === undefined)
-		return {
-			ok: false,
-			error: request.url
-				? `no open tab has a URL containing "${request.url}"`
-				: "no active tab found",
-		};
-	const tabUrl = tab.url;
-	if (!tabUrl || !isAssistHost(tabUrl))
-		return {
-			ok: false,
-			tabUrl,
-			error: `the target tab is not on an assist host (${ASSIST_HOSTS})`,
-		};
-	const tabId = tab.id;
+	if (request.op === "console" && request.all)
+		return answerConsoleRequest(request);
+	const tab = await resolveTargetTab(api, request.url);
+	if ("ok" in tab) return tab;
+	if (request.op === "console") return answerConsoleRequest(request, tab);
 	const askTab = () =>
 		api.tabs
-			.sendMessage(tabId, { ...request, type: BROWSER_PROBE_TYPE })
+			.sendMessage(tab.id, { ...request, type: BROWSER_PROBE_TYPE })
 			.then((reply) => reply as ProbeAnswer | undefined)
 			.catch(() => undefined);
 	if (request.op === "run")
-		return runApprovedScript(api, tabId, tabUrl, askTab, request.code);
-	return probeReply(request.op, tabUrl, await askTab());
+		return runApprovedScript(api, tab.id, tab.url, askTab, request.code);
+	return probeReply(request.op, tab.url, await askTab());
 }

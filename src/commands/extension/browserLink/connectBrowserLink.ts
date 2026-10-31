@@ -5,12 +5,12 @@ import {
 import { browserApi } from "./browserApi";
 import { runBrowserRequest } from "./runBrowserRequest";
 import {
+	BROWSER_LINK_ALARM,
 	BROWSER_LINK_PATH,
 	type BrowserLinkMessage,
 	type BrowserRelayRequest,
 } from "./types";
 
-const WAKE_FROM_SUSPEND_ALARM = "assist-browser-link";
 const RECONNECT_MS = 5_000;
 
 let socket: WebSocket | undefined;
@@ -19,9 +19,9 @@ let opening: Promise<void> | undefined;
 export function connectBrowserLink(): void {
 	const api = browserApi();
 	if (!api) return;
-	api.alarms?.create(WAKE_FROM_SUSPEND_ALARM, { periodInMinutes: 0.5 });
+	api.alarms?.create(BROWSER_LINK_ALARM, { periodInMinutes: 0.5 });
 	api.alarms?.onAlarm.addListener((alarm) => {
-		if (alarm.name === WAKE_FROM_SUSPEND_ALARM) ensureSocket();
+		if (alarm.name === BROWSER_LINK_ALARM) ensureSocket();
 	});
 	api.storage?.onChanged.addListener((changes) => {
 		if (SERVER_URL_KEY in changes) socket?.close();

@@ -27,6 +27,7 @@ assist backlog list
 assist backlog show
 assist backlog view
 assist backup schedule status
+assist browser console
 assist browser inspect
 assist browser snapshot
 assist browser status
