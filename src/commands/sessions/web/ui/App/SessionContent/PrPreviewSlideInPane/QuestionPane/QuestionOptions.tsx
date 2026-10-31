@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import type { AskQuestion } from "../../../../../../shared/askQuestionInputSchema";
 import type { QuestionChoice } from "./QuestionChoice";
+import { optionRowProps } from "./optionRowProps";
 import { QuestionOptionRow } from "./QuestionOptionRow";
 import { QuestionOtherRow } from "./QuestionOtherRow";
 
@@ -26,11 +27,7 @@ export function QuestionOptions({
 			{question.options.map((option) => (
 				<QuestionOptionRow
 					key={option.label}
-					name={name}
-					multiSelect={question.multiSelect}
-					checked={choice.labels.includes(option.label)}
-					label={option.label}
-					description={option.description}
+					{...optionRowProps(name, question, choice, option)}
 					onChange={() => onPick(option.label)}
 					onPeek={option.preview ? () => onPeek(option.label) : undefined}
 				/>

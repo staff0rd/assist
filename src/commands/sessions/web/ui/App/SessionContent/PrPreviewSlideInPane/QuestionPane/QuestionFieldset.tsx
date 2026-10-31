@@ -1,6 +1,5 @@
 import { Box } from "@mui/material";
-import type { AskQuestion } from "../../../../../../shared/askQuestionInputSchema";
-import type { QuestionChoice } from "./QuestionChoice";
+import type { QuestionFieldProps } from "./QuestionFieldProps";
 import { QuestionLegend } from "./QuestionLegend";
 import { QuestionOptionPreview } from "./QuestionOptionPreview";
 import { QuestionOptions } from "./QuestionOptions";
@@ -13,14 +12,7 @@ export function QuestionFieldset({
 	onPick,
 	onPickOther,
 	onOtherText,
-}: {
-	index: number;
-	question: AskQuestion;
-	choice: QuestionChoice;
-	onPick: (label: string) => void;
-	onPickOther: () => void;
-	onOtherText: (text: string) => void;
-}) {
+}: QuestionFieldProps) {
 	const { peeked, setPeek } = usePeekedOption(question, choice.labels);
 
 	return (

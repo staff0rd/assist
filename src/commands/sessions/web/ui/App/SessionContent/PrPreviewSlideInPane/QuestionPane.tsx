@@ -1,30 +1,23 @@
 import { Box, Divider } from "@mui/material";
-import { useMemo } from "react";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
-import type { PrDecisionDetails } from "../../../PrDecisionDetails";
 import { miroDecisionDetails } from "../miroDecisionDetails";
 import { PrPreviewHeader } from "../PrPreviewHeader";
 import { prPreviewPaneSx } from "../prPreviewPaneSx";
-import { parseQuestionPreview } from "./QuestionPane/parseQuestionPreview";
 import { QuestionActions } from "./QuestionPane/QuestionActions";
 import { QuestionList } from "./QuestionPane/QuestionList";
-import { useQuestionAnswers } from "./QuestionPane/useQuestionAnswers";
+import {
+	type QuestionDecision,
+	useQuestionPreview,
+} from "./QuestionPane/useQuestionPreview";
 
 export function QuestionPane({
 	preview,
 	onDecision,
 }: {
 	preview: PrPreview;
-	onDecision: (
-		decision: "approve" | "reject",
-		details: PrDecisionDetails,
-	) => void;
+	onDecision: QuestionDecision;
 }) {
-	const questions = useMemo(
-		() => parseQuestionPreview(preview.body),
-		[preview.body],
-	);
-	const state = useQuestionAnswers(questions);
+	const { questions, state } = useQuestionPreview(preview);
 
 	return (
 		<Box sx={prPreviewPaneSx}>

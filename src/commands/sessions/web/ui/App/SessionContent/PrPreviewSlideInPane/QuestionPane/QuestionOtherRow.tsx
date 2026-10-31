@@ -1,6 +1,5 @@
 import { TextField } from "@mui/material";
-import type { AskQuestion } from "../../../../../../shared/askQuestionInputSchema";
-import type { QuestionChoice } from "./QuestionChoice";
+import type { QuestionOtherProps } from "./QuestionFieldProps";
 import { QuestionOptionRow } from "./QuestionOptionRow";
 
 export function QuestionOtherRow({
@@ -9,13 +8,7 @@ export function QuestionOtherRow({
 	choice,
 	onPickOther,
 	onOtherText,
-}: {
-	name: string;
-	question: AskQuestion;
-	choice: QuestionChoice;
-	onPickOther: () => void;
-	onOtherText: (text: string) => void;
-}) {
+}: QuestionOtherProps) {
 	return (
 		<QuestionOptionRow
 			name={name}

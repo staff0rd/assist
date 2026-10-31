@@ -1,16 +1,14 @@
 import { useParams } from "react-router";
 import { repoLabel } from "../App/repoLabel";
 import { sessionTitle } from "../App/sessionTitle";
-import { displayStatus } from "../displayStatus";
 import type { SessionSocket } from "../useSessionSocket";
 import { PhoneMoreButton } from "./PhoneActions/PhoneMoreButton";
 import { PhoneBackButton } from "./PhoneBackButton";
-import { PhoneInputDock } from "./PhoneInputDock";
 import { PhoneNavBar } from "./PhoneNavBar";
 import { PhoneReconnectingBar } from "./PhoneReconnectingBar";
+import { PhoneSessionBody } from "./PhoneSessionBody";
 import { PhoneSessionGone } from "./PhoneSessionGone";
 import { PhoneStatusStrip } from "./PhoneStatusStrip";
-import { PhoneTerminal } from "./PhoneTerminal";
 import { usePhoneSessionIo } from "./usePhoneSessionIo";
 
 export function PhoneSessionScreen({
@@ -40,20 +38,11 @@ export function PhoneSessionScreen({
 			/>
 			{socket.reconnecting && <PhoneReconnectingBar />}
 			<PhoneStatusStrip session={session} localNode={localNode} />
-			<PhoneTerminal
-				key={session.id}
-				sessionId={session.id}
-				cols={session.cols}
-				rows={session.rows}
-				onOutput={socket.onOutput}
-				sendSize={io.sendSize}
-				reclaimRef={io.reclaimRef}
-			/>
-			<PhoneInputDock
-				waiting={displayStatus(session) === "waiting"}
+			<PhoneSessionBody
+				session={session}
+				socket={socket}
+				io={io}
 				keyboardOpen={keyboardOpen}
-				onKey={io.onKey}
-				onSend={io.onSend}
 			/>
 		</>
 	);
