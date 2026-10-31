@@ -18,7 +18,7 @@ describe("sessionToggles auto-approve", () => {
 					makeSessionInfo({ commandType: "assist", assistArgs: [command] }),
 				),
 			).toEqual([
-				{ key: "autoApprove", label: "Auto-approve", checked: false },
+				{ key: "autoApprove", label: "Auto approve & start", checked: false },
 			]);
 		},
 	);
@@ -35,9 +35,9 @@ describe("sessionToggles auto-approve", () => {
 		).toEqual([
 			{
 				key: "autoApprove",
-				label: "Auto-approve",
+				label: "Auto approve & start",
 				checked: true,
-				caption: "will auto-approve",
+				caption: "will approve & start",
 			},
 		]);
 	});
@@ -75,30 +75,19 @@ describe("sessionToggles continue", () => {
 	});
 });
 
-describe("sessionToggles dismiss", () => {
-	const review = {
-		commandType: "assist" as const,
-		activity: {
-			kind: "backlog" as const,
-			startedAt: 0,
-			phase: 3,
-			totalPhases: 3,
+describe("sessionToggles review phase", () => {
+	it.each([true, false])(
+		"offers no continue toggle in the review phase (autoAdvance %s)",
+		(autoAdvance) => {
+			expect(
+				sessionToggles(
+					makeSessionInfo({
+						commandType: "assist",
+						activity: { ...backlogActivity, phase: 3 },
+						autoAdvance,
+					}),
+				),
+			).toEqual([]);
 		},
-	};
-
-	it("captions the review phase only when dismiss is switched on", () => {
-		expect(
-			sessionToggles(makeSessionInfo({ ...review, autoAdvance: false })),
-		).toEqual([{ key: "autoAdvance", label: "Dismiss", checked: false }]);
-		expect(
-			sessionToggles(makeSessionInfo({ ...review, autoAdvance: true })),
-		).toEqual([
-			{
-				key: "autoAdvance",
-				label: "Dismiss",
-				checked: true,
-				caption: "will dismiss",
-			},
-		]);
-	});
+	);
 });

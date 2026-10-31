@@ -16,9 +16,9 @@ export function sessionToggles(session: SessionInfo): SessionToggle[] {
 		const checked = session.autoApprove ?? false;
 		toggles.push({
 			key: "autoApprove",
-			label: "Auto-approve",
+			label: "Auto approve & start",
 			checked,
-			...(checked ? { caption: "will auto-approve" } : {}),
+			...(checked ? { caption: "will approve & start" } : {}),
 		});
 	}
 
@@ -27,21 +27,14 @@ export function sessionToggles(session: SessionInfo): SessionToggle[] {
 		const inReviewPhase =
 			activity.phase !== undefined && activity.phase === activity.totalPhases;
 		const checked = session.autoAdvance ?? true;
-		toggles.push({
-			key: "autoAdvance",
-			label: inReviewPhase ? "Dismiss" : "Continue",
-			checked,
-			...advanceCaption(inReviewPhase, checked),
-		});
+		if (!inReviewPhase)
+			toggles.push({
+				key: "autoAdvance",
+				label: "Continue",
+				checked,
+				...(checked ? {} : { caption: "won't continue" }),
+			});
 	}
 
 	return toggles;
-}
-
-function advanceCaption(
-	inReviewPhase: boolean,
-	checked: boolean,
-): { caption?: string } {
-	if (inReviewPhase) return checked ? { caption: "will dismiss" } : {};
-	return checked ? {} : { caption: "won't continue" };
 }
