@@ -1,3 +1,10 @@
+# [0.978.0](https://github.com/staff0rd/assist/compare/v0.977.1...v0.978.0) (2026-10-31)
+
+
+### Features
+
+* backlog list and Start on the phone ([179af02](https://github.com/staff0rd/assist/commit/179af02c7252c327822fbec1e5582eda63fe3af9))
+
 ## [0.977.1](https://github.com/staff0rd/assist/compare/v0.977.0...v0.977.1) (2026-10-31)
 
 
