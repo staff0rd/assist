@@ -1,7 +1,9 @@
+import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
 import { items, links } from "../../shared/db/schema";
+import { recordDocsUnlock } from "../docs/recordDocsUnlock";
 
 const mockRefreshAfter = vi.fn<() => number | undefined>();
 const mockGetDb = vi.fn<() => Promise<Db>>();
@@ -54,6 +56,30 @@ describe("isDocsLocked", () => {
 			.values({ itemId: refresh, type: "docs-refresh", targetId: story });
 		process.env[ENV] = String(refresh);
 		expect(await isDocsLocked()).toBe(false);
+	});
+
+	it("does not lock an item with a docs unlock approval", async () => {
+		const id = await addStory("Docs landing page");
+		await recordDocsUnlock(orm, id);
+		process.env[ENV] = String(id);
+		expect(await isDocsLocked()).toBe(false);
+	});
+
+	it.each(["done", "wontdo"])(
+		"locks again once the unlocked item is %s",
+		async (status) => {
+			const id = await addStory("Docs landing page");
+			await recordDocsUnlock(orm, id);
+			await orm.update(items).set({ status }).where(eq(items.id, id));
+			process.env[ENV] = String(id);
+			expect(await isDocsLocked()).toBe(true);
+		},
+	);
+
+	it("does not apply another item's docs unlock", async () => {
+		await recordDocsUnlock(orm, await addStory("Docs landing page"));
+		process.env[ENV] = String(await addStory("Add widgets"));
+		expect(await isDocsLocked()).toBe(true);
 	});
 
 	it("does not lock a session with no backlog item", async () => {

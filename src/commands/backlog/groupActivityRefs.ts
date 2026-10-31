@@ -1,10 +1,18 @@
 const ACTIVITY_COMMIT_LIMIT = 10;
 
 type ActivityRef = {
-	kind: "branch" | "commit" | "commit-parent" | "pr" | "slack" | "session";
+	kind:
+		| "branch"
+		| "commit"
+		| "commit-parent"
+		| "pr"
+		| "slack"
+		| "session"
+		| "docs-unlock";
 };
 
 type GroupedActivity<T extends ActivityRef> = {
+	docsUnlocks: T[];
 	branches: T[];
 	commits: T[];
 	overflowCommits: T[];
@@ -21,6 +29,7 @@ export function groupActivityRefs<T extends ActivityRef>(
 		refs.filter((r) => r.kind === kind).reverse();
 	const commits = newestFirst("commit");
 	return {
+		docsUnlocks: newestFirst("docs-unlock"),
 		branches: newestFirst("branch"),
 		commits: commits.slice(0, commitLimit),
 		overflowCommits: commits.slice(commitLimit),

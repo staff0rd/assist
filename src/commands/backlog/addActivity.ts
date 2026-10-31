@@ -6,17 +6,21 @@ import { formatItemId } from "./formatItemId";
 import { findOneItem } from "./shared";
 import { gitRefKindSchema } from "./types";
 
+const kindsAddableWithoutHumanApproval = gitRefKindSchema.exclude([
+	"docs-unlock",
+]);
+
 export async function addActivity(
 	id: string,
 	kind: string,
 	ref: string,
 	options: { title?: string; url?: string; state?: string },
 ): Promise<void> {
-	const parsedKind = gitRefKindSchema.safeParse(kind);
+	const parsedKind = kindsAddableWithoutHumanApproval.safeParse(kind);
 	if (!parsedKind.success) {
 		console.log(
 			chalk.red(
-				`Invalid kind "${kind}". Expected one of: ${gitRefKindSchema.options.join(", ")}.`,
+				`Invalid kind "${kind}". Expected one of: ${kindsAddableWithoutHumanApproval.options.join(", ")}.`,
 			),
 		);
 		process.exitCode = 1;

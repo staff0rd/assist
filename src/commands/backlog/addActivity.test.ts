@@ -119,4 +119,11 @@ describe("addActivity", () => {
 
 		expect(mockResolve).not.toHaveBeenCalled();
 	});
+
+	it("refuses a docs-unlock ref, which only a confirmed pin may record", async () => {
+		await addActivity("1", "docs-unlock", "approved", {});
+
+		expect(process.exitCode).toBe(1);
+		expect(await getRefs(orm)).toEqual([]);
+	});
 });

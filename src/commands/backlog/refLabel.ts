@@ -10,7 +10,11 @@ export function refLabel(ref: GitRef): string {
 		const state = ref.state ? ` (${ref.state.toLowerCase()})` : "";
 		return `#${ref.ref}${title}${state}`;
 	}
-	if (ref.kind === "slack" || ref.kind === "session") {
+	if (
+		ref.kind === "slack" ||
+		ref.kind === "session" ||
+		ref.kind === "docs-unlock"
+	) {
 		return ref.title ?? ref.ref;
 	}
 	return ref.ref;

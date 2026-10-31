@@ -21,6 +21,7 @@ import { registerDbMigration } from "./commands/registerDbMigration";
 import { registerDeny } from "./commands/registerDeny";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
+import { registerDocs } from "./commands/registerDocs";
 import { registerDotnet } from "./commands/registerDotnet";
 import { registerEditHook } from "./commands/registerEditHook";
 import { registerGithub } from "./commands/registerGithub";
@@ -92,6 +93,7 @@ export const programRegistrars: ((program: Command) => void)[] = [
 	registerReview,
 	registerRules,
 	registerDevlog,
+	registerDocs,
 	registerDeploy,
 	registerComplexity,
 	registerDotnet,

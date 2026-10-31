@@ -12,15 +12,30 @@ export function printActivity(
 	item: BacklogItem,
 	options: { allCommits?: boolean } = {},
 ): void {
-	const { branches, commits, overflowCommits, prs, slacks, sessions } =
-		groupActivityRefs(
-			item.gitRefs ?? [],
-			options.allCommits ? Number.POSITIVE_INFINITY : undefined,
-		);
-	const ordered = [...branches, ...commits, ...prs, ...slacks, ...sessions];
+	const {
+		docsUnlocks,
+		branches,
+		commits,
+		overflowCommits,
+		prs,
+		slacks,
+		sessions,
+	} = groupActivityRefs(
+		item.gitRefs ?? [],
+		options.allCommits ? Number.POSITIVE_INFINITY : undefined,
+	);
+	const ordered = [
+		...docsUnlocks,
+		...branches,
+		...commits,
+		...prs,
+		...slacks,
+		...sessions,
+	];
 	if (ordered.length === 0) return;
 
 	console.log(chalk.bold("Activity"));
+	for (const unlock of docsUnlocks) printRef(unlock);
 	for (const branch of branches) printRef(branch);
 	for (const commit of commits) printRef(commit);
 	if (overflowCommits.length > 0) {

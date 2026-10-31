@@ -64,6 +64,7 @@ export const gitRefKindSchema = z.enum([
 	"pr",
 	"slack",
 	"session",
+	"docs-unlock",
 ]);
 
 const gitRefSchema = z.strictObject({

@@ -29,6 +29,7 @@ describe("decideDocsGuard", () => {
 				input(tool, "/repo/docs/src/content/docs/index.md"),
 			);
 			expect(reason).toContain("Refresh docs");
+			expect(reason).toContain("assist docs unlock");
 		},
 	);
 

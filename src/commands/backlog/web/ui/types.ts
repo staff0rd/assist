@@ -59,7 +59,8 @@ type GitRefKind =
 	| "commit-parent"
 	| "pr"
 	| "slack"
-	| "session";
+	| "session"
+	| "docs-unlock";
 
 export type GitRef = {
 	kind: GitRefKind;

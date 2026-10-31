@@ -1,6 +1,6 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, notInArray } from "drizzle-orm";
 import { closeDb, getDb } from "../../shared/db/getDb";
-import { links } from "../../shared/db/schema";
+import { itemGitRefs, items, links } from "../../shared/db/schema";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
 import { docsRefreshAfter } from "./docsRefreshAfter";
 
@@ -14,12 +14,30 @@ async function isDocsRefreshItem(itemId: number): Promise<boolean> {
 	return row !== undefined;
 }
 
+async function hasOpenDocsUnlock(itemId: number): Promise<boolean> {
+	const orm = await getDb();
+	const [row] = await orm
+		.select({ itemId: itemGitRefs.itemId })
+		.from(itemGitRefs)
+		.innerJoin(items, eq(items.id, itemGitRefs.itemId))
+		.where(
+			and(
+				eq(itemGitRefs.itemId, itemId),
+				eq(itemGitRefs.kind, "docs-unlock"),
+				notInArray(items.status, ["done", "wontdo"]),
+			),
+		)
+		.limit(1);
+	return row !== undefined;
+}
+
 export async function isDocsLocked(): Promise<boolean> {
 	if (docsRefreshAfter() === undefined) return false;
 	const itemId = resolveSessionItemId();
 	if (itemId === null) return false;
 	try {
-		return !(await isDocsRefreshItem(itemId));
+		if (await isDocsRefreshItem(itemId)) return false;
+		return !(await hasOpenDocsUnlock(itemId));
 	} catch {
 		return false;
 	} finally {
