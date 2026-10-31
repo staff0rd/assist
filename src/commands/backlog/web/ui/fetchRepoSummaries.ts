@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../sessions/web/ui/apiFetch";
 import { withCwd } from "./withCwd";
 
 export type RepoSummary = {
@@ -29,7 +30,7 @@ export async function fetchRepoSummaries({
 	knownCwds,
 	signal,
 }: FetchRepoSummariesOptions): Promise<RepoSummary[]> {
-	const res = await fetch(withCwd(summaryUrl(knownCwds), cwd, node), {
+	const res = await apiFetch(withCwd(summaryUrl(knownCwds), cwd, node), {
 		signal,
 	});
 	return res.json();

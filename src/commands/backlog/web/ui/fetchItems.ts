@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../sessions/web/ui/apiFetch";
 import type { BacklogFilter } from "../parseBacklogFilter";
 import type { BacklogItemSummary } from "./types";
 import { withCwd } from "./withCwd";
@@ -25,7 +26,7 @@ export async function fetchItems({
 	signal,
 	filter,
 }: FetchItemsOptions = {}): Promise<BacklogItemSummary[]> {
-	const res = await fetch(withCwd(itemsUrl(query, filter), cwd, node), {
+	const res = await apiFetch(withCwd(itemsUrl(query, filter), cwd, node), {
 		signal,
 	});
 	if (!res.ok) {

@@ -1,3 +1,4 @@
+import { apiFetch } from "../../../sessions/web/ui/apiFetch";
 import { formatItemId } from "../../formatItemId";
 import type { BacklogItem } from "./types";
 import { withCwd } from "./withCwd";
@@ -13,7 +14,7 @@ export async function fetchItem(
 	scope: { cwd?: string; node?: string },
 	signal?: AbortSignal,
 ): Promise<BacklogItem | null> {
-	const res = await fetch(
+	const res = await apiFetch(
 		withCwd(`/api/items/${formatItemId(id)}`, scope.cwd, scope.node),
 		{ signal },
 	);

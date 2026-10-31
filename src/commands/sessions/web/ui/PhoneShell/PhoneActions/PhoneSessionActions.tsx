@@ -23,7 +23,11 @@ export function PhoneSessionActions({
 }: Props) {
 	return (
 		<>
-			<PhoneStarGroup session={session} onDone={onClose} />
+			<PhoneStarGroup
+				session={session}
+				localNode={socket.nodes?.local}
+				onDone={onClose}
+			/>
 			<PhoneToggleGroup session={session} socket={socket} />
 			<ApiNodeContext.Provider value={linkedNode}>
 				<PhonePrActions

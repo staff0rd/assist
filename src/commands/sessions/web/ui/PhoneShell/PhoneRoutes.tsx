@@ -1,10 +1,11 @@
-import { useCallback } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import type { SessionSocket } from "../useSessionSocket";
+import { phoneBacklogRoutes } from "./PhoneBacklog/phoneBacklogRoutes";
 import { PhoneHistoryList } from "./PhoneHistoryList";
 import { PhoneSessionList } from "./PhoneSessionList";
 import { PhoneSessionScreen } from "./PhoneSessionScreen";
 import { PhoneTranscriptScreen } from "./PhoneTranscriptScreen";
+import { usePhoneRefresh } from "./usePhoneRefresh";
 
 export function PhoneRoutes({
 	socket,
@@ -18,11 +19,7 @@ export function PhoneRoutes({
 	onNewSession: () => void;
 }) {
 	const localNode = socket.nodes?.local;
-	const { wsRef, requestHistory } = socket;
-	const refresh = useCallback(() => {
-		wsRef.current?.close();
-		requestHistory();
-	}, [wsRef, requestHistory]);
+	const refresh = usePhoneRefresh(socket);
 
 	return (
 		<Routes>
@@ -51,7 +48,7 @@ export function PhoneRoutes({
 					<PhoneHistoryList
 						history={socket.history}
 						localNode={localNode}
-						requestHistory={requestHistory}
+						requestHistory={socket.requestHistory}
 					/>
 				}
 			/>
@@ -59,6 +56,7 @@ export function PhoneRoutes({
 				path="history/:id"
 				element={<PhoneTranscriptScreen socket={socket} />}
 			/>
+			{phoneBacklogRoutes(socket)}
 			<Route path="*" element={<Navigate to="/" replace />} />
 		</Routes>
 	);

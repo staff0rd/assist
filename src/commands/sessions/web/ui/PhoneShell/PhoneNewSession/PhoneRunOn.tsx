@@ -4,7 +4,11 @@ import { PhoneSegmented } from "../PhoneSegmented";
 import { PhoneNodeOption } from "./PhoneNodeOption";
 import type { PhoneNewSession } from "./usePhoneNewSession";
 
-export function PhoneRunOn({ form }: { form: PhoneNewSession }) {
+export function PhoneRunOn({
+	form,
+}: {
+	form: Pick<PhoneNewSession, "nodes" | "node" | "setNode" | "links">;
+}) {
 	if (form.nodes.length === 0) return null;
 	return (
 		<>

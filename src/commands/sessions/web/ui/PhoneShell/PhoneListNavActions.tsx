@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import HistoryIcon from "@mui/icons-material/History";
+import ListIcon from "@mui/icons-material/List";
 import IconButton from "@mui/material/IconButton";
 import { useNavigate } from "react-router";
 
@@ -13,6 +14,13 @@ export function PhoneListNavActions({
 	const navigate = useNavigate();
 	return (
 		<>
+			<IconButton
+				aria-label="Backlog"
+				sx={iconSx}
+				onClick={() => navigate("/backlog")}
+			>
+				<ListIcon />
+			</IconButton>
 			<IconButton
 				aria-label="History"
 				sx={iconSx}

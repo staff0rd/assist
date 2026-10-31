@@ -4,15 +4,9 @@ import { statusGlyph } from "../statusGlyph";
 import type { SessionInfo } from "../types";
 import { groupSessionsByStatus } from "./groupSessionsByStatus";
 import { PhoneDoneTally } from "./PhoneDoneTally";
+import { phoneEmptySx } from "./phoneEmptySx";
 import { PhoneSessionRow } from "./PhoneSessionRow";
 import { PhoneSessionSection } from "./PhoneSessionSection";
-
-const emptySx = {
-	p: 4,
-	textAlign: "center",
-	color: "text.secondary",
-	fontSize: 15,
-} as const;
 
 export function PhoneSessionGroups({
 	sessions,
@@ -22,7 +16,7 @@ export function PhoneSessionGroups({
 	localNode: string | undefined;
 }) {
 	const [doneExpanded, setDoneExpanded] = useState(false);
-	if (sessions.length === 0) return <Box sx={emptySx}>No sessions</Box>;
+	if (sessions.length === 0) return <Box sx={phoneEmptySx}>No sessions</Box>;
 
 	const { needsYou, running, done } = groupSessionsByStatus(sessions);
 	return (

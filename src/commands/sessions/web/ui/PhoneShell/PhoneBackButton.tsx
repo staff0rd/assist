@@ -12,10 +12,13 @@ const backSx = {
 	borderRadius: 1,
 } as const;
 
-export function PhoneBackButton({ label, to }: { label: string; to: string }) {
+export function PhoneBackButton({ label, to }: { label: string; to?: string }) {
 	const navigate = useNavigate();
 	return (
-		<ButtonBase sx={backSx} onClick={() => navigate(to)}>
+		<ButtonBase
+			sx={backSx}
+			onClick={() => (to === undefined ? navigate(-1) : navigate(to))}
+		>
 			<ChevronLeftIcon />
 			{label}
 		</ButtonBase>
