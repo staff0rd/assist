@@ -1,3 +1,10 @@
+## [0.991.1](https://github.com/staff0rd/assist/compare/v0.991.0...v0.991.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* highlight new side of changed blocks ([f86377a](https://github.com/staff0rd/assist/commit/f86377adc80501afba3501b156f7d3d7d85192c2))
+
 # [0.991.0](https://github.com/staff0rd/assist/compare/v0.990.1...v0.991.0) (2026-10-31)
 
 
