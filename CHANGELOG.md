@@ -1,3 +1,10 @@
+# [0.999.0](https://github.com/staff0rd/assist/compare/v0.998.0...v0.999.0) (2026-10-31)
+
+
+### Features
+
+* chevron back, two-line session title ([9d75919](https://github.com/staff0rd/assist/commit/9d7591907e9b0a60f501c997a82c4918b2cbf246))
+
 # [0.998.0](https://github.com/staff0rd/assist/compare/v0.997.0...v0.998.0) (2026-10-31)
 
 
