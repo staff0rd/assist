@@ -1,12 +1,13 @@
 import type { Session } from "../createSession";
 import { isCloneBoundDraft } from "./isCloneBoundDraft";
-import { otherTreeHolders } from "./otherTreeHolders";
+import { otherAgentTreeHolders } from "./otherAgentTreeHolders";
 
 export function closeGateApplies(
 	sessions: Map<string, Session>,
 	session: Session,
 ): boolean {
-	if (otherTreeHolders(sessions, session).length > 0) return false;
+	if (session.commandType === "run") return false;
+	if (otherAgentTreeHolders(sessions, session).length > 0) return false;
 	if (session.worktree) return true;
 	if (isCloneBoundDraft(session)) return false;
 	if (!session.cwd) return false;

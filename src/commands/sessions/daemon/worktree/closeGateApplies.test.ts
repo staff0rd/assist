@@ -113,6 +113,19 @@ describe("closeGateApplies", () => {
 		expect(closeGateApplies(map(agent, sibling), agent)).toBe(false);
 	});
 
+	it("gates an agent whose tree only run sessions share", () => {
+		const agent = makeSession({ ...inTree, id: "1" });
+		const run = makeSession({ ...inTree, id: "2", commandType: "run" });
+
+		expect(closeGateApplies(map(agent, run), agent)).toBe(true);
+	});
+
+	it("never gates a run session", () => {
+		const run = makeSession({ ...inTree, id: "2", commandType: "run" });
+
+		expect(closeGateApplies(map(run), run)).toBe(false);
+	});
+
 	it("gates the last card left holding a shared tree", () => {
 		const last = makeSession({ ...inTree, id: "1" });
 		const elsewhere = makeSession({
