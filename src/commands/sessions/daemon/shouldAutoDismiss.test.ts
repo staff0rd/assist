@@ -90,8 +90,8 @@ describe("shouldAutoDismiss", () => {
 		});
 	});
 
-	describe("when a backlog run reached review and Continue is on", () => {
-		it("dismisses", () => {
+	describe("when a backlog run reached review", () => {
+		it("dismisses on a clean exit", () => {
 			const session = makeSession({
 				status: "done",
 				assistArgs: ["backlog"],
@@ -101,18 +101,16 @@ describe("shouldAutoDismiss", () => {
 
 			expect(shouldAutoDismiss(session, 0)).toBe(true);
 		});
-	});
 
-	describe("when a backlog run reached review and Continue is off", () => {
-		it("dismisses", () => {
+		it("keeps on a non-zero exit", () => {
 			const session = makeSession({
 				status: "done",
 				assistArgs: ["backlog"],
 				reviewStarted: true,
-				autoAdvance: false,
+				autoAdvance: true,
 			});
 
-			expect(shouldAutoDismiss(session, 0)).toBe(true);
+			expect(shouldAutoDismiss(session, 1)).toBe(false);
 		});
 	});
 

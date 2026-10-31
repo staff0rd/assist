@@ -89,7 +89,7 @@ describe("watchActivity", () => {
 	}
 
 	describe("when a backlog run enters its review (last) phase", () => {
-		it("flips Continue off and marks reviewStarted", () => {
+		it("marks reviewStarted and leaves Continue on", () => {
 			mockReadActivity.mockReturnValue({
 				kind: "backlog",
 				itemId: 7,
@@ -101,33 +101,12 @@ describe("watchActivity", () => {
 
 			triggerRead(session);
 
-			expect(session.autoAdvance).toBe(false);
+			expect(session.autoAdvance).toBe(true);
 			expect(session.reviewStarted).toBe(true);
 		});
 
-		describe("when the user re-enables Continue during review", () => {
-			it("does not override it on a later activity write", () => {
-				const reviewActivity = {
-					kind: "backlog" as const,
-					itemId: 7,
-					phase: 3,
-					totalPhases: 3,
-					startedAt: 5,
-				};
-				mockReadActivity.mockReturnValue(reviewActivity);
-				const session = makeSession({ ...assistSession, autoAdvance: true });
-				triggerRead(session);
-				expect(session.autoAdvance).toBe(false);
-
-				session.autoAdvance = true;
-				triggerRead(session);
-
-				expect(session.autoAdvance).toBe(true);
-			});
-		});
-
 		describe("when the review phase re-enters after a rewind", () => {
-			it("re-flips Continue off", () => {
+			it("clears then re-marks reviewStarted without touching Continue", () => {
 				const session = makeSession({ ...assistSession, autoAdvance: true });
 
 				mockReadActivity.mockReturnValue({
@@ -146,9 +125,9 @@ describe("watchActivity", () => {
 					totalPhases: 3,
 					startedAt: 5,
 				});
-				session.autoAdvance = true;
 				triggerRead(session);
 				expect(session.reviewStarted).toBe(false);
+				expect(session.autoAdvance).toBe(true);
 
 				mockReadActivity.mockReturnValue({
 					kind: "backlog",
@@ -159,7 +138,7 @@ describe("watchActivity", () => {
 				});
 				triggerRead(session);
 
-				expect(session.autoAdvance).toBe(false);
+				expect(session.autoAdvance).toBe(true);
 				expect(session.reviewStarted).toBe(true);
 			});
 		});
