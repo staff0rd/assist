@@ -7,7 +7,7 @@ import { PhoneNavBar } from "../PhoneNavBar";
 import { phoneEmptySx } from "../phoneEmptySx";
 import { PhoneSearchField } from "../PhoneSearchField";
 import { PhoneBacklogSections } from "./PhoneBacklogSections";
-import { PhoneRepoTabs } from "./PhoneRepoTabs";
+import { PhoneRepoSelect } from "./PhoneRepoSelect";
 import { usePhoneBacklogRepos } from "./usePhoneBacklogRepos";
 import { usePickedRepo } from "./usePickedRepo";
 
@@ -35,8 +35,8 @@ export function PhoneBacklogList({ socket }: { socket: SessionSocket }) {
 				onChange={setQuery}
 				placeholder="Filter items"
 			/>
-			{repos && repos.length > 1 && (
-				<PhoneRepoTabs repos={repos} value={repo?.origin} onChange={pick} />
+			{repos && repos.length > 0 && (
+				<PhoneRepoSelect repos={repos} repo={repo} onPick={pick} />
 			)}
 			<Box sx={bodySx}>
 				{repo ? (
