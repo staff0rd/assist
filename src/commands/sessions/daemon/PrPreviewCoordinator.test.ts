@@ -424,4 +424,30 @@ describe("PrPreviewCoordinator", () => {
 		expect(sessions.get("1")?.pendingPrPreview).toBeUndefined();
 		expect(sessions.get("1")?.pendingShow?.requestId).toBe("r2");
 	});
+
+	it("closes a stacked show when a new blocking preview arrives", () => {
+		const sessions = makeSessions("1");
+		const coord = new PrPreviewCoordinator(sessions, vi.fn());
+		coord.set(makeClient(), { ...previewMsg("1", "r1"), kind: "ask" });
+		coord.set(makeClient(), { ...previewMsg("1", "r2"), kind: "show" });
+
+		coord.set(makeClient(), { ...previewMsg("1", "r3"), kind: "backlog-item" });
+
+		expect(sessions.get("1")?.pendingPrPreview?.requestId).toBe("r3");
+		expect(sessions.get("1")?.pendingShow).toBeUndefined();
+		coord.set(makeClient(), { ...previewMsg("1", "r4"), kind: "show" });
+		expect(sessions.get("1")?.pendingPrPreview?.requestId).toBe("r3");
+		expect(sessions.get("1")?.pendingShow?.requestId).toBe("r4");
+	});
+
+	it("replaces an open show with a new blocking preview", () => {
+		const sessions = makeSessions("1");
+		const coord = new PrPreviewCoordinator(sessions, vi.fn());
+		coord.set(makeClient(), { ...previewMsg("1", "r1"), kind: "show" });
+
+		coord.set(makeClient(), { ...previewMsg("1", "r2"), kind: "ask" });
+
+		expect(sessions.get("1")?.pendingPrPreview?.requestId).toBe("r2");
+		expect(sessions.get("1")?.pendingShow).toBeUndefined();
+	});
 });
