@@ -1,3 +1,11 @@
+# [0.985.0](https://github.com/staff0rd/assist/compare/v0.984.0...v0.985.0) (2026-10-31)
+
+
+### Features
+
+* extension toolbar opens options ([8c63470](https://github.com/staff0rd/assist/commit/8c634702736de4839d58d943d7d36b7ff565c8e7))
+* node updates from the phone ([59939b7](https://github.com/staff0rd/assist/commit/59939b7abb42d24137bba2142206f543f23ae050))
+
 # [0.984.0](https://github.com/staff0rd/assist/compare/v0.983.1...v0.984.0) (2026-10-31)
 
 
