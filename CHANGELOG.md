@@ -1,3 +1,11 @@
+## [0.978.1](https://github.com/staff0rd/assist/compare/v0.978.0...v0.978.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* show loading while marking item done ([4d84e12](https://github.com/staff0rd/assist/commit/4d84e12aac30500dcd6c65de05e2ad459b5f2923))
+* tidy review and auto-approve toggles ([bb9cd1e](https://github.com/staff0rd/assist/commit/bb9cd1e8e5c0b0eab66a4cff36e1467a0d51ec48))
+
 # [0.978.0](https://github.com/staff0rd/assist/compare/v0.977.1...v0.978.0) (2026-10-31)
 
 
