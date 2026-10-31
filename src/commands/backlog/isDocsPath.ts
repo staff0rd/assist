@@ -3,7 +3,7 @@ import { getProjectRoot } from "../../shared/loadConfig";
 
 const LOCKED_DOCS_DIRS = ["docs/src/content/docs/", "docs/public/screenshots/"];
 
-export const DOCS_LOCK_REASON = `Docs pages and screenshots (${LOCKED_DOCS_DIRS.join(", ")}) are locked during development: they are updated by the Refresh docs backlog item after stories ship, not during development. Leave them untouched and carry on with the phase. If this backlog item genuinely needs to change docs (e.g. it is about the docs site itself), first confirm that with the user, then run \`assist docs unlock\` and wait for the user to confirm the PIN with \`assist docs confirm <pin>\` before retrying.`;
+export const DOCS_LOCK_REASON = `Docs pages and screenshots (${LOCKED_DOCS_DIRS.join(", ")}) are locked during development: they are updated by the Refresh docs backlog item after stories ship, not during development. Leave them untouched and carry on with the phase. If this phase genuinely needs to change docs (e.g. the item is about the docs site itself), first confirm that with the user, then run \`assist docs unlock\` and wait for the user to confirm the PIN with \`assist docs confirm <pin>\` before retrying. The unlock applies to the current phase only.`;
 
 const SEP = String.raw`[/\\]`;
 const LOCKED_DIR_PATTERN = String.raw`docs${SEP}(?:src${SEP}content${SEP}docs|public${SEP}screenshots)(?:${SEP}|(?![\w.-]))`;

@@ -9,14 +9,14 @@ export function registerDocs(parent: Command): void {
 	const docs = parent
 		.command("docs")
 		.description(
-			"Human-in-the-loop approval to unlock docs pages and screenshots for a backlog item",
+			"Human-in-the-loop approval to unlock docs pages and screenshots for a backlog item phase",
 		);
 
 	internalCommand(
 		docs
 			.command("unlock")
 			.description(
-				"Page a human with a pin to unlock docs changes for this session's backlog item",
+				"Page a human with a pin to unlock docs changes for this session's backlog item phase",
 			)
 			.action(docsUnlock),
 		calledBy,
@@ -26,7 +26,7 @@ export function registerDocs(parent: Command): void {
 		docs
 			.command("confirm")
 			.description(
-				"Confirm a pin from 'docs unlock' to approve docs changes for that backlog item",
+				"Confirm a pin from 'docs unlock' to approve docs changes for that backlog item phase",
 			)
 			.argument("<pin>", "Pin issued by 'docs unlock'")
 			.action(docsConfirm),

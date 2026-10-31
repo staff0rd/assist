@@ -1,4 +1,4 @@
-import { and, eq, notInArray } from "drizzle-orm";
+import { and, eq, notInArray, sql } from "drizzle-orm";
 import { closeDb, getDb } from "../../shared/db/getDb";
 import { itemGitRefs, items, links } from "../../shared/db/schema";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
@@ -24,6 +24,7 @@ async function hasOpenDocsUnlock(itemId: number): Promise<boolean> {
 			and(
 				eq(itemGitRefs.itemId, itemId),
 				eq(itemGitRefs.kind, "docs-unlock"),
+				eq(itemGitRefs.ref, sql`'phase-' || ${items.currentPhase}`),
 				notInArray(items.status, ["done", "wontdo"]),
 			),
 		)

@@ -26,7 +26,13 @@ let orm: Db;
 async function addStory(name: string): Promise<number> {
 	const [row] = await orm
 		.insert(items)
-		.values({ origin: ORIGIN, type: "story", name, status: "todo" })
+		.values({
+			origin: ORIGIN,
+			type: "story",
+			name,
+			status: "todo",
+			currentPhase: 1,
+		})
 		.returning({ id: items.id });
 	return row.id;
 }
@@ -58,18 +64,26 @@ describe("isDocsLocked", () => {
 		expect(await isDocsLocked()).toBe(false);
 	});
 
-	it("does not lock an item with a docs unlock approval", async () => {
+	it("does not lock an item phase with a docs unlock approval", async () => {
 		const id = await addStory("Docs landing page");
-		await recordDocsUnlock(orm, id);
+		await recordDocsUnlock(orm, id, 1);
 		process.env[ENV] = String(id);
 		expect(await isDocsLocked()).toBe(false);
+	});
+
+	it("locks again once the item moves on to another phase", async () => {
+		const id = await addStory("Docs landing page");
+		await recordDocsUnlock(orm, id, 1);
+		await orm.update(items).set({ currentPhase: 2 }).where(eq(items.id, id));
+		process.env[ENV] = String(id);
+		expect(await isDocsLocked()).toBe(true);
 	});
 
 	it.each(["done", "wontdo"])(
 		"locks again once the unlocked item is %s",
 		async (status) => {
 			const id = await addStory("Docs landing page");
-			await recordDocsUnlock(orm, id);
+			await recordDocsUnlock(orm, id, 1);
 			await orm.update(items).set({ status }).where(eq(items.id, id));
 			process.env[ENV] = String(id);
 			expect(await isDocsLocked()).toBe(true);
@@ -77,7 +91,7 @@ describe("isDocsLocked", () => {
 	);
 
 	it("does not apply another item's docs unlock", async () => {
-		await recordDocsUnlock(orm, await addStory("Docs landing page"));
+		await recordDocsUnlock(orm, await addStory("Docs landing page"), 1);
 		process.env[ENV] = String(await addStory("Add widgets"));
 		expect(await isDocsLocked()).toBe(true);
 	});

@@ -28,13 +28,20 @@ export async function docsUnlock(): Promise<void> {
 		process.exitCode = 1;
 		return;
 	}
-	const label = `${formatItemId(itemId)} ${found.item.name}`;
+	const phase = found.item.currentPhase;
+	if (!phase) {
+		fail(
+			`${formatItemId(itemId)} has no current phase. Docs unlock applies to the phase a session is running.`,
+		);
+		return;
+	}
+	const label = `${formatItemId(itemId)} ${found.item.name} (phase ${phase})`;
 
 	const pin = randomInt(0, 1000).toString().padStart(3, "0");
 	mkdirSync(getRestrictedDir(), { recursive: true });
 	sweepRestrictedDir();
 	const pinPath = getDocsUnlockPinPath(pin);
-	writeFileSync(pinPath, JSON.stringify({ pin, itemId }));
+	writeFileSync(pinPath, JSON.stringify({ pin, itemId, phase }));
 
 	const delivered = showNotification({
 		title: `assist docs unlock: ${label}`,
@@ -50,6 +57,6 @@ export async function docsUnlock(): Promise<void> {
 	}
 
 	console.log(
-		`A confirmation pin was sent to the user's desktop notifications.\nTo let ${label} edit docs pages and screenshots, the user runs:\n${chalk.cyan("  assist docs confirm <PIN>")}\nWait for the user to confirm before editing docs.`,
+		`A confirmation pin was sent to the user's desktop notifications.\nTo let this phase of ${label} edit docs pages and screenshots, the user runs:\n${chalk.cyan("  assist docs confirm <PIN>")}\nWait for the user to confirm before editing docs.`,
 	);
 }

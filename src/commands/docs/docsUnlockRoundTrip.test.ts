@@ -48,7 +48,12 @@ const ENV = "ASSIST_BACKLOG_ITEM_ID";
 async function addStory(name: string): Promise<number> {
 	const [row] = await orm
 		.insert(items)
-		.values({ origin: "github.com/acme/app", name, status: "in-progress" })
+		.values({
+			origin: "github.com/acme/app",
+			name,
+			status: "in-progress",
+			currentPhase: 1,
+		})
 		.returning({ id: items.id });
 	return row.id;
 }
@@ -103,9 +108,34 @@ describe("docs unlock -> confirm round-trip", () => {
 		expect(process.exitCode).toBeUndefined();
 		expect(issuedPins()).toEqual([]);
 		expect(await unlockRefs()).toEqual([
-			expect.objectContaining({ itemId: id, ref: "approved" }),
+			expect.objectContaining({ itemId: id, ref: "phase-1" }),
 		]);
 		expect(await isDocsLocked()).toBe(false);
+	});
+
+	it("rejects a pin once the item has moved on to another phase", async () => {
+		const id = await addStory("Docs landing page");
+		process.env[ENV] = String(id);
+		await docsUnlock();
+		await orm.update(items).set({ currentPhase: 2 }).where(eq(items.id, id));
+
+		const [pin] = issuedPins();
+		await docsConfirm(pin);
+
+		expect(process.exitCode).toBe(1);
+		expect(await unlockRefs()).toEqual([]);
+	});
+
+	it("fails for an item with no current phase", async () => {
+		const id = await addStory("Docs landing page");
+		await orm.update(items).set({ currentPhase: null }).where(eq(items.id, id));
+		process.env[ENV] = String(id);
+
+		await docsUnlock();
+
+		expect(process.exitCode).toBe(1);
+		expect(mockShowNotification).not.toHaveBeenCalled();
+		expect(issuedPins()).toEqual([]);
 	});
 
 	it("fails without a session item", async () => {
@@ -138,7 +168,7 @@ describe("docs unlock -> confirm round-trip", () => {
 	it("rejects a corrupt pin file", async () => {
 		writeFileSync(
 			getDocsUnlockPinPath("321"),
-			JSON.stringify({ pin: "321", itemId: "nope" }),
+			JSON.stringify({ pin: "321", itemId: "nope", phase: 1 }),
 		);
 
 		await docsConfirm("321");
