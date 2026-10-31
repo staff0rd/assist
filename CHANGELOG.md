@@ -1,3 +1,10 @@
+## [0.1000.1](https://github.com/staff0rd/assist/compare/v0.1000.0...v0.1000.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* back stays in tab after restore ([91c3682](https://github.com/staff0rd/assist/commit/91c3682fa660beed2dc467a0bb1159c16dd8b2c5))
+
 # [0.1000.0](https://github.com/staff0rd/assist/compare/v0.999.1...v0.1000.0) (2026-10-31)
 
 
