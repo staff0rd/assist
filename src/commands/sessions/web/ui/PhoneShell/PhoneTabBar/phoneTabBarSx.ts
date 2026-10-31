@@ -21,18 +21,20 @@ function badge(t: Theme) {
 }
 
 export const phoneTabBarSx = {
-	bar: {
+	bar: (t: Theme) => ({
 		flex: "none",
 		display: "flex",
 		borderTop: 1,
 		borderColor: "divider",
 		bgcolor: "background.default",
-		pb: safeAreaInsets.bottom,
-	},
+		pb: `max(0px, calc(${safeAreaInsets.bottom} - ${t.tokens.density.tabBar.insetTrim}px))`,
+	}),
 	tab: (t: Theme) => ({
 		flex: 1,
 		height: t.tokens.density.tabBar.height,
 		flexDirection: "column",
+		justifyContent: "flex-start",
+		pt: 0.75,
 		gap: 0.25,
 		color: "text.secondary",
 		fontSize: t.tokens.density.tabBar.label,
