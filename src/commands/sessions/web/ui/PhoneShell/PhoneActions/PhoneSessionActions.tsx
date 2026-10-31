@@ -3,6 +3,7 @@ import { ApiNodeContext } from "../../useApiNode";
 import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneLifecycleGroup } from "./PhoneLifecycleGroup";
 import { PhonePrActions } from "./PhonePrActions";
+import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
 import { PhoneStarGroup } from "./PhoneStarGroup";
 import { PhoneToggleGroup } from "./PhoneToggleGroup";
 
@@ -11,7 +12,7 @@ type Props = {
 	socket: SessionSocket;
 	linkedNode: string | undefined;
 	onClose: () => void;
-	onConfirmEnd: () => void;
+	onConfirm: (confirm: PhoneSheetConfirm) => void;
 };
 
 export function PhoneSessionActions({
@@ -19,7 +20,7 @@ export function PhoneSessionActions({
 	socket,
 	linkedNode,
 	onClose,
-	onConfirmEnd,
+	onConfirm,
 }: Props) {
 	return (
 		<>
@@ -41,7 +42,7 @@ export function PhoneSessionActions({
 				session={session}
 				socket={socket}
 				onDone={onClose}
-				onConfirmEnd={onConfirmEnd}
+				onConfirm={onConfirm}
 			/>
 		</>
 	);

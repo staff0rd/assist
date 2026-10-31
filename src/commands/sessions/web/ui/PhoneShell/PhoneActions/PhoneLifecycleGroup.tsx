@@ -1,28 +1,27 @@
-import CloseIcon from "@mui/icons-material/Close";
 import ReplayIcon from "@mui/icons-material/Replay";
 import Box from "@mui/material/Box";
 import { sessionActionHandlers } from "../../App/sessionActionHandlers";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
-import { isFinished } from "./isFinished";
+import { PhoneEndItem } from "./PhoneEndItem";
+import { PhoneMarkDoneItem } from "./PhoneMarkDoneItem";
+import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
 import { PhoneSheetItem } from "./PhoneSheetItem";
-import { usePhoneActions } from "./usePhoneActions";
 
 type Props = {
 	session: SessionInfo;
 	socket: SessionSocket;
 	onDone: () => void;
-	onConfirmEnd: () => void;
+	onConfirm: (confirm: PhoneSheetConfirm) => void;
 };
 
 export function PhoneLifecycleGroup({
 	session,
 	socket,
 	onDone,
-	onConfirmEnd,
+	onConfirm,
 }: Props) {
-	const { dismiss } = usePhoneActions();
 	const { onRetry, onRestart } = sessionActionHandlers(session, {
 		onRetry: socket.retrySession,
 		onRestart: socket.restartSession,
@@ -32,7 +31,6 @@ export function PhoneLifecycleGroup({
 		run();
 		onDone();
 	};
-	const finished = isFinished(session);
 	return (
 		<Box sx={nodeListSx.group}>
 			{onRetry && (
@@ -49,11 +47,14 @@ export function PhoneLifecycleGroup({
 					onClick={then(onRestart)}
 				/>
 			)}
-			<PhoneSheetItem
-				label={finished ? "Dismiss" : "End session…"}
-				icon={<CloseIcon fontSize="small" />}
-				danger
-				onClick={finished ? then(() => dismiss(session)) : onConfirmEnd}
+			<PhoneMarkDoneItem
+				session={session}
+				onClick={() => onConfirm("markDone")}
+			/>
+			<PhoneEndItem
+				session={session}
+				onDone={onDone}
+				onConfirmEnd={() => onConfirm("end")}
 			/>
 		</Box>
 	);

@@ -46,7 +46,7 @@ export function PhoneSwipeRow({
 				onEnd={after(() =>
 					finished
 						? actions.dismiss(session)
-						: actions.openSheet(session, true),
+						: actions.openSheet(session, "end"),
 				)}
 			/>
 			<Box

@@ -7,6 +7,7 @@ export function useMarkItemDone(
 	itemId: number,
 	cwd: string | undefined,
 	onSuccess: () => void,
+	node?: string,
 ) {
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -15,7 +16,7 @@ export function useMarkItemDone(
 		if (busy) return;
 		setBusy(true);
 		try {
-			await updateItemStatus(itemId, "done", cwd);
+			await updateItemStatus(itemId, "done", cwd, node);
 			onSuccess();
 		} catch (error) {
 			reportCaughtError(error, "mark item done");

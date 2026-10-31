@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
 import type { SessionInfo } from "../../types";
+import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
 
 type PhoneActions = {
-	openSheet: (session: SessionInfo, confirmEnd?: boolean) => void;
+	openSheet: (session: SessionInfo, confirm?: PhoneSheetConfirm) => void;
 	isStarred: (session: SessionInfo) => boolean;
 	toggleStar: (session: SessionInfo) => void;
 	dismiss: (session: SessionInfo) => void;

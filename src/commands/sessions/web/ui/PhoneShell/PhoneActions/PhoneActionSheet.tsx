@@ -4,22 +4,23 @@ import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { phoneSheetPaperSx } from "../phoneSheetPaperSx";
 import { PhoneActionSheetHeader } from "./PhoneActionSheetHeader";
-import { PhoneEndConfirm } from "./PhoneEndConfirm";
+import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
+import { PhoneSheetConfirmBody } from "./PhoneSheetConfirmBody";
 import { PhoneSessionActions } from "./PhoneSessionActions";
 import { usePhoneActions } from "./usePhoneActions";
 
 type Props = {
 	session: SessionInfo | undefined;
-	confirmEnd: boolean;
-	onConfirmEnd: () => void;
+	confirm: PhoneSheetConfirm | undefined;
+	onConfirm: (confirm: PhoneSheetConfirm) => void;
 	onClose: () => void;
 	socket: SessionSocket;
 };
 
 export function PhoneActionSheet({
 	session,
-	confirmEnd,
-	onConfirmEnd,
+	confirm,
+	onConfirm,
 	onClose,
 	socket,
 }: Props) {
@@ -41,23 +42,24 @@ export function PhoneActionSheet({
 			slotProps={{ paper: { sx: phoneSheetPaperSx } }}
 		>
 			<PhoneActionSheetHeader session={shown} localNode={localNode} />
-			{confirmEnd ? (
-				<PhoneEndConfirm
-					onEnd={() => {
-						dismiss(shown);
-						onClose();
-					}}
-					onCancel={onClose}
-				/>
-			) : (
+			<PhoneSheetConfirmBody
+				confirm={confirm}
+				session={shown}
+				node={linkedNode}
+				onConfirmed={() => {
+					dismiss(shown);
+					onClose();
+				}}
+				onCancel={onClose}
+			>
 				<PhoneSessionActions
 					session={shown}
 					socket={socket}
 					linkedNode={linkedNode}
 					onClose={onClose}
-					onConfirmEnd={onConfirmEnd}
+					onConfirm={onConfirm}
 				/>
-			)}
+			</PhoneSheetConfirmBody>
 		</Drawer>
 	);
 }

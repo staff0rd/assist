@@ -4,9 +4,10 @@ import { useStarredSessions } from "../../App/useStarredSessions";
 import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneActionSheet } from "./PhoneActionSheet";
+import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
 import { PhoneActionsContext } from "./usePhoneActions";
 
-type Target = { id: string; confirmEnd: boolean };
+type Target = { id: string; confirm?: PhoneSheetConfirm };
 
 export function PhoneActionsLayer({
 	socket,
@@ -29,8 +30,8 @@ export function PhoneActionsLayer({
 		[dismissSession, openRoute, navigate],
 	);
 	const openSheet = useCallback(
-		(session: SessionInfo, confirmEnd = false) =>
-			setTarget({ id: session.id, confirmEnd }),
+		(session: SessionInfo, confirm?: PhoneSheetConfirm) =>
+			setTarget({ id: session.id, confirm }),
 		[],
 	);
 	const value = useMemo(
@@ -43,8 +44,8 @@ export function PhoneActionsLayer({
 			{children}
 			<PhoneActionSheet
 				session={socket.sessions.find((s) => s.id === target?.id)}
-				confirmEnd={target?.confirmEnd ?? false}
-				onConfirmEnd={() => setTarget((t) => t && { ...t, confirmEnd: true })}
+				confirm={target?.confirm}
+				onConfirm={(confirm) => setTarget((t) => t && { ...t, confirm })}
 				onClose={() => setTarget(null)}
 				socket={socket}
 			/>
