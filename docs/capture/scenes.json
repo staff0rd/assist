@@ -51,11 +51,32 @@
 		},
 		{
 			"session": {
+				"repo": "api",
+				"command": "draft",
+				"prompt": "Let customers export their orders as CSV",
+				"title": "Draft CSV order export",
+				"status": "waiting",
+				"reply": [
+					"Should the export include cancelled orders, or only orders that were fulfilled?"
+				]
+			}
+		},
+		{
+			"session": {
 				"repo": "website",
 				"prompt": "Update the pricing page copy",
 				"title": "Pricing page copy",
 				"status": "done",
 				"reply": ["Updated the copy on the pricing page."]
+			}
+		},
+		{
+			"session": {
+				"repo": "website",
+				"command": "bug",
+				"prompt": "The contact form submits twice when Enter is pressed",
+				"title": "Contact form double submit",
+				"reply": ["Read(src/contact/ContactForm.tsx)", "⎿  Read 61 lines"]
 			}
 		}
 	],

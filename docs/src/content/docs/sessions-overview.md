@@ -9,7 +9,7 @@ covers:
   - cli:sessions web
 screenshots:
   - file: sessions-dashboard.png
-    alt: The sessions dashboard with agents in three repos and a dev server
+    alt: The sessions dashboard with agents, /draft and /bug sessions in three repos and a dev server
     route: /sessions
     scene: dashboard
     waitFor: text=Pricing page copy
@@ -39,7 +39,7 @@ A session is either an agent (Claude, Codex or pi) working on a prompt or an ass
 
 ::screenshot{file="sessions-dashboard.png"}
 
-Here the sandbox repo has three sessions, so they share a group: an agent waiting on an answer, a dev server and an agent still working. The `api` and `website` repos have one session each, so their cards stand alone.
+Here the sandbox repo has three sessions, so they share a group: an agent waiting on an answer, a dev server and an agent still working. The `api` repo has a `/draft` session asking a question about a new backlog item, and the `website` repo has a `/bug` session filing a bug.
 
 ## Starting it
 
