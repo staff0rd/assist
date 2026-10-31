@@ -1,3 +1,10 @@
+# [0.1006.0](https://github.com/staff0rd/assist/compare/v0.1005.0...v0.1006.0) (2026-10-31)
+
+
+### Features
+
+* inbox scan token usage and cost ([6893b7c](https://github.com/staff0rd/assist/commit/6893b7cc20c2d29890760c381654d5d64b317bbb))
+
 # [0.1005.0](https://github.com/staff0rd/assist/compare/v0.1004.1...v0.1005.0) (2026-10-31)
 
 
