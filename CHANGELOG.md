@@ -1,3 +1,10 @@
+# [0.986.0](https://github.com/staff0rd/assist/compare/v0.985.0...v0.986.0) (2026-10-31)
+
+
+### Features
+
+* upload iOS app to TestFlight ([9a2e9f8](https://github.com/staff0rd/assist/commit/9a2e9f8de2a4fb2f9ebdbd1394c32697f5e1acdf))
+
 # [0.985.0](https://github.com/staff0rd/assist/compare/v0.984.0...v0.985.0) (2026-10-31)
 
 
