@@ -1,3 +1,10 @@
+# [0.984.0](https://github.com/staff0rd/assist/compare/v0.983.1...v0.984.0) (2026-10-31)
+
+
+### Features
+
+* add assist browser update ([5706a39](https://github.com/staff0rd/assist/commit/5706a394a89b4676fe02e0b86c30b7c2c422578c))
+
 ## [0.983.1](https://github.com/staff0rd/assist/compare/v0.983.0...v0.983.1) (2026-10-31)
 
 
