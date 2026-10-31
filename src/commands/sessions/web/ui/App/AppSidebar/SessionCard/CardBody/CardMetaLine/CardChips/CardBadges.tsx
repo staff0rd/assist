@@ -1,25 +1,15 @@
 import Box from "@mui/material/Box";
-import type { Theme } from "@mui/material/styles";
 import { CloneBadge } from "./CardBadges/CloneBadge";
-import { tokenBadgeSx } from "../../../../../../designSystem/tokenBadgeSx";
+import { reviewPhaseBadgeSx } from "../../../../../../designSystem/reviewPhaseBadgeSx";
 import { HarnessBadge } from "../../../../HarnessBadge";
 import { NodeBadge } from "../../../../NodeBadge";
 import { ServingChip } from "./CardBadges/ServingChip";
 import type { SessionInfo } from "../../../../../../types";
 import { useCloneBadgeContext } from "../../../../useCloneBadgeContext";
 
-const reviewPhaseSx = [
-	tokenBadgeSx("primary"),
-	(t: Theme) => ({
-		bgcolor: t.palette.primary.main,
-		borderColor: t.palette.primary.main,
-		color: t.palette.primary.contrastText,
-	}),
-];
-
 function ReviewPhaseBadge({ label }: { label: string }) {
 	return (
-		<Box component="span" sx={reviewPhaseSx}>
+		<Box component="span" sx={reviewPhaseBadgeSx}>
 			{label}
 		</Box>
 	);
