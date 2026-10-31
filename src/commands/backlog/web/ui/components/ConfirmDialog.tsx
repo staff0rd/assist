@@ -27,7 +27,7 @@ export function ConfirmDialog({
 	autoFocusConfirm?: boolean;
 }) {
 	return (
-		<Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
+		<Dialog open onClose={busy ? undefined : onCancel} maxWidth="xs" fullWidth>
 			<DialogTitle>{title}</DialogTitle>
 			<DialogContent>
 				<DialogContentText>{message}</DialogContentText>
@@ -40,7 +40,7 @@ export function ConfirmDialog({
 					variant="contained"
 					color={confirmColor}
 					onClick={onConfirm}
-					disabled={busy}
+					loading={busy}
 					autoFocus={autoFocusConfirm}
 				>
 					{confirmLabel}

@@ -1,13 +1,13 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { useState } from "react";
 import { formatItemId } from "../../../../../../backlog/formatItemId";
-import { updateItemStatus } from "../../../../../../backlog/web/ui/api";
 import { ConfirmDialog } from "../../../../../../backlog/web/ui/components/ConfirmDialog";
 import { ActionButton } from "../../ActionButton";
 import type { BacklogTarget } from "../../../backlogTarget";
 import { ErrorSnackbar } from "../../../ErrorSnackbar";
 import type { ShortcutName } from "../../shortcutRegistry";
 import { StopCardActivation } from "../../../StopCardActivation";
+import { useMarkItemDone } from "./useMarkItemDone";
 
 export function CompleteButton({
 	target,
@@ -22,17 +22,14 @@ export function CompleteButton({
 }) {
 	const { itemId, phase, totalPhases } = target;
 	const [confirming, setConfirming] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-
-	const handleConfirm = async () => {
-		try {
-			await updateItemStatus(itemId, "done", cwd);
+	const { busy, error, clearError, confirm } = useMarkItemDone(
+		itemId,
+		cwd,
+		() => {
 			setConfirming(false);
 			onDismiss();
-		} catch {
-			setError(`Failed to mark item ${formatItemId(itemId)} as done`);
-		}
-	};
+		},
+	);
 
 	return (
 		<>
@@ -53,13 +50,14 @@ export function CompleteButton({
 						message={`${phase ?? 0} of ${totalPhases ?? 0} phases completed. Mark this backlog item as done and end its session?`}
 						confirmLabel="Mark done"
 						autoFocusConfirm
-						onConfirm={handleConfirm}
+						busy={busy}
+						onConfirm={confirm}
 						onCancel={() => setConfirming(false)}
 					/>
 				</StopCardActivation>
 			)}
 			<StopCardActivation>
-				<ErrorSnackbar error={error} onClose={() => setError(null)} />
+				<ErrorSnackbar error={error} onClose={clearError} />
 			</StopCardActivation>
 		</>
 	);
