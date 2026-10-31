@@ -1,3 +1,10 @@
+# [0.977.0](https://github.com/staff0rd/assist/compare/v0.976.0...v0.977.0) (2026-10-31)
+
+
+### Features
+
+* touch density for the iOS app ([7f303d9](https://github.com/staff0rd/assist/commit/7f303d93278422c618954d1e65c58a4b9390f8f9))
+
 # [0.976.0](https://github.com/staff0rd/assist/compare/v0.975.0...v0.976.0) (2026-10-31)
 
 
