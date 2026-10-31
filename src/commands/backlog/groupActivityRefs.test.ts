@@ -30,6 +30,19 @@ describe("groupActivityRefs", () => {
 		expect(grouped.overflowCommits).toEqual([]);
 	});
 
+	it("groups docs unlock approvals apart from the other refs", () => {
+		const unlock: GitRef = {
+			kind: "docs-unlock",
+			ref: "approved",
+			title: "Docs pages and screenshots unlocked by PIN",
+		};
+
+		const grouped = groupActivityRefs([commit("aaa"), unlock]);
+
+		expect(grouped.docsUnlocks).toEqual([unlock]);
+		expect(grouped.commits).toEqual([commit("aaa")]);
+	});
+
 	it("orders sessions newest-first", () => {
 		const refs: GitRef[] = [
 			{ kind: "session", ref: "older" },

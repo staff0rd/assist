@@ -155,6 +155,29 @@ describe("ActivitySection", () => {
 		expect(screen.getAllByText(expected)).toHaveLength(1);
 	});
 
+	it("shows a docs unlock approval first, unlinked, with its timestamp", () => {
+		const refs: GitRef[] = [
+			{ kind: "branch", ref: "feature", url: "https://gh/tree/feature" },
+			{
+				kind: "docs-unlock",
+				ref: "approved",
+				title: "Docs pages and screenshots unlocked by PIN",
+				createdAt: commitCreatedAt,
+			},
+		];
+
+		const { container } = render(<ActivitySection gitRefs={refs} />);
+
+		const rows = container.querySelectorAll("p");
+		expect(rows[0].textContent).toContain("docs-unlock");
+		expect(rows[0].textContent).toContain(
+			"Docs pages and screenshots unlocked by PIN",
+		);
+		expect(rows[0].textContent).toContain(formattedTimestamp);
+		expect(rows[1].textContent).toContain("feature");
+		expect(screen.getAllByRole("link")).toHaveLength(1);
+	});
+
 	it("orders refs newest-first and caps commits with an overflow indicator", () => {
 		render(<ActivitySection gitRefs={manyCommits()} />);
 

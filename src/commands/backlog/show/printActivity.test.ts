@@ -107,6 +107,28 @@ describe("printActivity", () => {
 		expect(output()).toContain("0f2a-session-id");
 	});
 
+	it("prints a docs unlock approval first, with when it was approved", () => {
+		printActivity(
+			makeBacklogItem({
+				gitRefs: [
+					{ kind: "branch", ref: "feature" },
+					{
+						kind: "docs-unlock",
+						ref: "approved",
+						title: "Docs pages and screenshots unlocked by PIN",
+						createdAt: "2026-10-31T08:10:00.000Z",
+					},
+				],
+			}),
+		);
+
+		const lines = logSpy.mock.calls.map((c: unknown[]) => String(c[0]));
+		expect(lines[1]).toContain("docs-unlock");
+		expect(lines[1]).toContain("Docs pages and screenshots unlocked by PIN");
+		expect(lines[1]).toContain("2026-10-31T08:10:00.000Z");
+		expect(lines[2]).toContain("feature");
+	});
+
 	it("caps the commit list with an overflow indicator", () => {
 		const commits: GitRef[] = Array.from({ length: 13 }, (_, i) => ({
 			kind: "commit",

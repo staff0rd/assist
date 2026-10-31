@@ -5,7 +5,11 @@ import type { BacklogItem, GitRef } from "../types";
 
 function printRef(ref: GitRef): void {
 	const url = ref.url ? ` ${chalk.dim(ref.url)}` : "";
-	console.log(`  ${chalk.cyan(ref.kind)} ${refLabel(ref)}${url}`);
+	const approvedAt =
+		ref.kind === "docs-unlock" && ref.createdAt
+			? ` ${chalk.dim(ref.createdAt)}`
+			: "";
+	console.log(`  ${chalk.cyan(ref.kind)} ${refLabel(ref)}${url}${approvedAt}`);
 }
 
 export function printActivity(

@@ -7,7 +7,11 @@ const timestampSx = {
 } as const;
 
 export function CommitTimestamp({ gitRef }: { gitRef: GitRef }) {
-	if (gitRef.kind !== "commit" || !gitRef.createdAt) return null;
+	if (
+		(gitRef.kind !== "commit" && gitRef.kind !== "docs-unlock") ||
+		!gitRef.createdAt
+	)
+		return null;
 	return (
 		<Box component="span" sx={timestampSx}>
 			{formatTimestamp(gitRef.createdAt)}
