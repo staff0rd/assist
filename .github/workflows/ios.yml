@@ -1,10 +1,12 @@
 name: iOS TestFlight
 
 on:
+  schedule:
+    - cron: "0 18 * * *"
   workflow_dispatch:
     inputs:
       tag:
-        description: Release tag to build (defaults to the version on main)
+        description: Release tag to build (defaults to the latest v* release)
         required: false
 
 concurrency:
@@ -19,10 +21,26 @@ jobs:
     runs-on: macos-15
     environment: testflight
     steps:
+      - name: Resolve release tag
+        id: tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          tag="$INPUT_TAG"
+          if [ -z "$tag" ]; then
+            tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName)
+          fi
+          case "$tag" in
+            v*) ;;
+            *) echo "::error::Not a v* release tag: '$tag'"; exit 1 ;;
+          esac
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.tag || 'main' }}
+          ref: ${{ steps.tag.outputs.tag }}
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
@@ -50,10 +68,6 @@ jobs:
       - name: Build web app and sync to iOS
         run: npm run ios:build
 
-      - name: Read version
-        id: version
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-
       - name: Write App Store Connect API key
         run: echo "$ASC_KEY_CONTENT" | base64 --decode > "$RUNNER_TEMP/AuthKey.p8"
         env:
@@ -68,7 +82,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           ASC_KEY_PATH: ${{ runner.temp }}/AuthKey.p8
           BUILD_NUMBER: ${{ github.run_number }}
-          MARKETING_VERSION: ${{ inputs.tag || steps.version.outputs.version }}
+          MARKETING_VERSION: ${{ steps.tag.outputs.tag }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
 
@@ -76,5 +90,5 @@ jobs:
         run: |
           echo "### Uploaded to TestFlight: ${VERSION#v} ($BUILD_NUMBER)" >> "$GITHUB_STEP_SUMMARY"
         env:
-          VERSION: ${{ inputs.tag || steps.version.outputs.version }}
+          VERSION: ${{ steps.tag.outputs.tag }}
           BUILD_NUMBER: ${{ github.run_number }}
