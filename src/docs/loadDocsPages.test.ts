@@ -42,6 +42,16 @@ describe("loadDocsPages", () => {
 		expect(pages[0].screenshots?.[0].file).toBe("a.png");
 	});
 
+	it("loads a splash landing page with no group, order or covers", () => {
+		writeFileSync(
+			join(dir, "index.md"),
+			"---\nid: index\ntitle: assist\ntemplate: splash\nhero:\n  tagline: Hi\n---\n",
+		);
+		const [landing] = loadDocsPages(dir);
+		expect(landing).toMatchObject({ id: "index", covers: [] });
+		expect("group" in landing).toBe(false);
+	});
+
 	it("names the file when a page has an unknown key", () => {
 		writeFileSync(join(dir, "bad.md"), page("bad", "draft: true\n"));
 		expect(() => loadDocsPages(dir)).toThrow(/bad\.md/);

@@ -9,10 +9,11 @@ const screenshots = [
 	{ file: "b.png", alt: "B", route: "/b" },
 ];
 
+const shared = { file: "shared.png", alt: "Shared", route: "/shared" };
+
 function pluginFor(path: string, preview = false) {
-	return screenshotsPlugin(
-		"/",
-		preview,
+	return screenshotsPlugin("/", preview, (file) =>
+		file === shared.file ? shared : undefined,
 	)({
 		fileURL: pathToFileURL(path),
 		data: { astro: { frontmatter: { screenshots } } },
@@ -50,6 +51,17 @@ describe("screenshotsPlugin", () => {
 		expect(replaceNode.mock.calls[0][1].value).toContain(
 			"Screenshot not captured yet: a.png",
 		);
+	});
+
+	it("places a screenshot declared on another page", () => {
+		const plugin = pluginFor(pagePath);
+		const replaceNode = vi.fn();
+		for (const file of ["a.png", "b.png", "shared.png"])
+			plugin?.leafDirective(directive(file), { replaceNode });
+		expect(replaceNode.mock.calls[2][1].value).toContain(
+			'src="/screenshots/shared.png"',
+		);
+		expect(() => plugin?.after()).not.toThrow();
 	});
 
 	it("fails on a directive for an undeclared screenshot", () => {

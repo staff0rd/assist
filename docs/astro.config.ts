@@ -22,7 +22,6 @@ const description = "Enforce determinism in LLM development workflows.";
 export default defineConfig({
 	site,
 	base,
-	redirects: { "/": `${base}${sidebar[0].items[0]}/` },
 	vite: { server: { allowedHosts: [".ts.net"] } },
 	markdown: {
 		processor: satteri({
@@ -68,6 +67,11 @@ export default defineConfig({
 					tag: "script",
 					content:
 						"if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) document.documentElement.dataset.os = 'mac';",
+				},
+				{
+					tag: "script",
+					content:
+						"try { if (!localStorage.getItem('starlight-theme')) localStorage.setItem('starlight-theme', 'dark'); } catch {}",
 				},
 				{ tag: "meta", attrs: { property: "og:image", content: ogImage } },
 				{ tag: "meta", attrs: { property: "og:image:width", content: "1200" } },

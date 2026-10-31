@@ -2,7 +2,10 @@ import { fileURLToPath } from "node:url";
 import { docsPaths } from "../docsPaths";
 import { renderScreenshot } from "./renderScreenshot";
 import { isCaptured } from "../isCaptured";
+import type { DocsScreenshot } from "../docsPageSchema";
+import { assertScreenshotsPlaced } from "./assertScreenshotsPlaced";
 import { declaredScreenshots } from "./declaredScreenshots";
+import { findDeclaredScreenshot } from "./findDeclaredScreenshot";
 
 type PluginContext = {
 	fileURL: URL | undefined;
@@ -21,7 +24,12 @@ type VisitorContext = {
 	): void;
 };
 
-export function screenshotsPlugin(basePath: string, preview = false) {
+export function screenshotsPlugin(
+	basePath: string,
+	preview = false,
+	findShared: (file: string) => DocsScreenshot | undefined = (file) =>
+		findDeclaredScreenshot(file),
+) {
 	return ({ fileURL, data }: PluginContext) => {
 		const path = fileURL && fileURLToPath(fileURL);
 		if (!path?.startsWith(docsPaths.pagesDir)) return undefined;
@@ -32,7 +40,7 @@ export function screenshotsPlugin(basePath: string, preview = false) {
 			leafDirective(node: LeafDirective, ctx: VisitorContext) {
 				if (node.name !== "screenshot") return;
 				const file = node.attributes?.file ?? "";
-				const screenshot = declared.get(file);
+				const screenshot = declared.get(file) ?? findShared(file);
 				if (!screenshot)
 					throw new Error(`${path}: ::screenshot of undeclared file "${file}"`);
 				placed.add(file);
@@ -46,13 +54,7 @@ export function screenshotsPlugin(basePath: string, preview = false) {
 				});
 			},
 			after() {
-				const unplaced = [...declared.keys()].filter(
-					(file) => !placed.has(file),
-				);
-				if (unplaced.length > 0)
-					throw new Error(
-						`${path}: declared screenshots with no ::screenshot{file="<file>"} line: ${unplaced.join(", ")}`,
-					);
+				assertScreenshotsPlaced(path, declared.keys(), placed);
 			},
 		};
 	};

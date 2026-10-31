@@ -52,7 +52,7 @@ const screenshotSchema = z
 
 export const docsScreenshotsSchema = z.array(screenshotSchema).optional();
 
-export const docsPageSchema = z.strictObject({
+const docsSidebarPageSchema = z.strictObject({
 	id: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
 	title: z.string().min(1),
 	group: z.enum(docsNavGroups),
@@ -61,10 +61,25 @@ export const docsPageSchema = z.strictObject({
 	screenshots: docsScreenshotsSchema,
 });
 
-export type DocsPage = z.infer<typeof docsPageSchema> & {
-	source?: string;
-	body?: string;
-};
+const docsLandingPageSchema = z
+	.strictObject({
+		id: z.literal("index"),
+		title: z.string().min(1),
+		template: z.literal("splash"),
+		hero: z.looseObject({}),
+		screenshots: docsScreenshotsSchema,
+	})
+	.transform((page) => ({ ...page, covers: [] as string[] }));
+
+export const docsPageSchema = z.union([
+	docsSidebarPageSchema,
+	docsLandingPageSchema,
+]);
+
+type DocsPageExtras = { source?: string; body?: string };
+export type DocsSidebarPage = z.infer<typeof docsSidebarPageSchema> &
+	DocsPageExtras;
+export type DocsPage = z.infer<typeof docsPageSchema> & DocsPageExtras;
 export type DocsScreenshot = NonNullable<DocsPage["screenshots"]>[number];
 export type DocsScreenshotAction = NonNullable<
 	DocsScreenshot["actions"]

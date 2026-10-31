@@ -30,6 +30,25 @@ describe("docsPageSchema", () => {
 		expect(docsPageSchema.safeParse(withoutScreenshots).success).toBe(true);
 	});
 
+	it("accepts only an index splash page without group, order or covers", () => {
+		const landing = {
+			id: "index",
+			title: "assist",
+			template: "splash",
+			hero: { tagline: "Run agents" },
+		};
+		expect(docsPageSchema.safeParse(landing).data).toMatchObject({
+			covers: [],
+		});
+		expect(docsPageSchema.safeParse({ ...landing, id: "home" }).success).toBe(
+			false,
+		);
+		const { hero: _hero, ...withoutHero } = landing;
+		expect(docsPageSchema.safeParse(withoutHero).success).toBe(false);
+		const { group: _group, ...withoutGroup } = validPage;
+		expect(docsPageSchema.safeParse(withoutGroup).success).toBe(false);
+	});
+
 	it("crops to one selector or the box around two or more", () => {
 		const parses = (crop: unknown) =>
 			docsPageSchema.safeParse(withScreenshot({ crop })).success;

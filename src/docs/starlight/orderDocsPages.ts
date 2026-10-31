@@ -1,8 +1,12 @@
-import { type DocsPage, docsNavGroups } from "../docsPageSchema";
+import {
+	type DocsPage,
+	type DocsSidebarPage,
+	docsNavGroups,
+} from "../docsPageSchema";
 
 type DocsNavGroup = {
-	group: DocsPage["group"];
-	pages: DocsPage[];
+	group: DocsSidebarPage["group"];
+	pages: DocsSidebarPage[];
 };
 
 export function orderDocsPages(pages: DocsPage[]): DocsNavGroup[] {
@@ -10,7 +14,10 @@ export function orderDocsPages(pages: DocsPage[]): DocsNavGroup[] {
 		.map((group) => ({
 			group,
 			pages: pages
-				.filter((page) => page.group === group)
+				.filter(
+					(page): page is DocsSidebarPage =>
+						"group" in page && page.group === group,
+				)
 				.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title)),
 		}))
 		.filter((entry) => entry.pages.length > 0);
