@@ -7,6 +7,7 @@ import { PhoneNewSessionSheet } from "./PhoneShell/PhoneNewSession/PhoneNewSessi
 import { useNewSessionSheet } from "./PhoneShell/PhoneNewSession/useNewSessionSheet";
 import { PhoneRoutes } from "./PhoneShell/PhoneRoutes";
 import { phoneShellSx } from "./PhoneShell/phoneShellSx";
+import { PhoneTabBar } from "./PhoneShell/PhoneTabBar";
 import { useHealthRecheck } from "./PhoneShell/useHealthRecheck";
 import { useKeyboardViewport } from "./PhoneShell/useKeyboardViewport";
 import { usePhoneNodesSheet } from "./PhoneShell/usePhoneNodesSheet";
@@ -43,6 +44,7 @@ export function PhoneShell() {
 					/>
 				</PhoneActionsLayer>
 			</StarredSessionsProvider>
+			<PhoneTabBar sessions={socket.sessions} />
 			<PhoneNewSessionSheet
 				open={newSession.open}
 				opens={newSession.opens}

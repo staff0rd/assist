@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import { useRef } from "react";
-import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import { useHomeNodeContext } from "../HomeNodeGate/useHomeNodeContext";
 import type { SessionInfo } from "../types";
 import { PhoneListNavActions } from "./PhoneListNavActions";
@@ -16,7 +15,6 @@ const bodySx = {
 	minHeight: 0,
 	overflowY: "auto",
 	WebkitOverflowScrolling: "touch",
-	pb: safeAreaInsets.bottom,
 } as const;
 
 type Props = {

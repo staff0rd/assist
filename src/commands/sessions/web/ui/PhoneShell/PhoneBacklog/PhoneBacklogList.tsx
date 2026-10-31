@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import { safeAreaInsets } from "../../designSystem/safeAreaInsets";
 import type { SessionSocket } from "../../useSessionSocket";
-import { PhoneBackButton } from "../PhoneBackButton";
 import { PhoneNavBar } from "../PhoneNavBar";
 import { phoneEmptySx } from "../phoneEmptySx";
 import { PhoneSearchField } from "../PhoneSearchField";
@@ -16,7 +14,6 @@ const bodySx = {
 	minHeight: 0,
 	overflowY: "auto",
 	WebkitOverflowScrolling: "touch",
-	pb: safeAreaInsets.bottom,
 } as const;
 
 export function PhoneBacklogList({ socket }: { socket: SessionSocket }) {
@@ -26,10 +23,7 @@ export function PhoneBacklogList({ socket }: { socket: SessionSocket }) {
 
 	return (
 		<>
-			<PhoneNavBar
-				left={<PhoneBackButton label="Sessions" to="/" />}
-				title="Backlog"
-			/>
+			<PhoneNavBar title="Backlog" />
 			<PhoneSearchField
 				value={query}
 				onChange={setQuery}

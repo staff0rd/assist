@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
-import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import type { HistoricalSession } from "../types";
-import { PhoneBackButton } from "./PhoneBackButton";
 import { PhoneHistoryRow } from "./PhoneHistoryRow";
 import { PhoneNavBar } from "./PhoneNavBar";
 
@@ -10,7 +8,6 @@ const bodySx = {
 	flex: 1,
 	minHeight: 0,
 	overflowY: "auto",
-	pb: safeAreaInsets.bottom,
 } as const;
 
 type Props = {
@@ -28,10 +25,7 @@ export function PhoneHistoryList({
 
 	return (
 		<>
-			<PhoneNavBar
-				left={<PhoneBackButton label="Sessions" to="/" />}
-				title="History"
-			/>
+			<PhoneNavBar title="History" />
 			<Box sx={bodySx}>
 				{history.map((h) => (
 					<PhoneHistoryRow

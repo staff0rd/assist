@@ -81,6 +81,7 @@ type DensityTokens = {
 	button: { minHeight: number; fontSize: number; paddingX: number };
 	switch: { width: number; height: number; thumb: number };
 	inputFontSize: number;
+	tabBar: { height: number; icon: number; label: number; badge: number };
 };
 
 export type DesignTokens = {
