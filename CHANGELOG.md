@@ -1,3 +1,10 @@
+# [0.1002.0](https://github.com/staff0rd/assist/compare/v0.1001.0...v0.1002.0) (2026-10-31)
+
+
+### Features
+
+* gate TestFlight on iOS changes ([0f8b001](https://github.com/staff0rd/assist/commit/0f8b001041cd983b93887ba5b86363be13bdf2c2))
+
 # [0.1001.0](https://github.com/staff0rd/assist/compare/v0.1000.3...v0.1001.0) (2026-10-31)
 
 
