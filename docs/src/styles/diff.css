@@ -56,13 +56,13 @@
 	outline-offset: 2px;
 }
 
-a[data-assist-changed]::after {
+a[data-assist-changed]::before {
 	content: "";
 	display: inline-block;
-	flex-shrink: 0;
 	width: 0.5rem;
 	height: 0.5rem;
-	margin-inline-start: auto;
+	margin-inline-end: 0.5rem;
+	vertical-align: middle;
 	border-radius: 50%;
 	background: var(--assist-diff-added-bar);
 }
