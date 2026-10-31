@@ -45,7 +45,13 @@ export function PhoneNodesList({
 				onEdit={onEdit}
 				onAdd={onAdd}
 			/>
-			{status && <PhoneNodeStatus status={status} homeVersion={homeVersion} />}
+			{status && (
+				<PhoneNodeStatus
+					status={status}
+					homeVersion={homeVersion}
+					homeNode={homeNode}
+				/>
+			)}
 			{updates && (
 				<PhoneNodeUpdatesGroup updates={updates} onOpen={onOpenUpdate} />
 			)}

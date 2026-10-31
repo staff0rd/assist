@@ -1,4 +1,6 @@
 import Box from "@mui/material/Box";
+import { sameNodeUrl } from "../../HomeNodeGate/sameNodeUrl";
+import type { HomeNodeApi } from "../../HomeNodeGate/useHomeNode";
 import type {
 	HarnessRateLimits,
 	RateLimits,
@@ -18,9 +20,11 @@ export type NodesSheetStatus = {
 export function PhoneNodeStatus({
 	status,
 	homeVersion,
+	homeNode,
 }: {
 	status: NodesSheetStatus;
 	homeVersion: string | undefined;
+	homeNode: HomeNodeApi;
 }) {
 	const links = status.nodes?.links ?? [];
 	return (
@@ -32,6 +36,10 @@ export function PhoneNodeStatus({
 						links={links}
 						sessions={status.sessions}
 						homeVersion={homeVersion}
+						isSaved={(url) =>
+							homeNode.nodes.some((n) => sameNodeUrl(n.url, url))
+						}
+						onSave={({ name, url }) => homeNode.saveNode("", { name, url })}
 					/>
 				</>
 			)}

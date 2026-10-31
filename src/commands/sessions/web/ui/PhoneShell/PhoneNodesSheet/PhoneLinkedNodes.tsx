@@ -5,6 +5,7 @@ import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SessionInfo } from "../../types";
 import { linkDetail } from "./linkDetail";
 import { linkStateTone } from "./linkStateTone";
+import { SaveLinkButton } from "./SaveLinkButton";
 
 const driftBadgeSx = {
 	fontFamily: "fontFamilyMono",
@@ -20,15 +21,23 @@ type Props = {
 	links: LinkStatus[];
 	sessions: SessionInfo[];
 	homeVersion: string | undefined;
+	isSaved: (url: string) => boolean;
+	onSave: (link: LinkStatus) => void;
 };
 
-export function PhoneLinkedNodes({ links, sessions, homeVersion }: Props) {
+export function PhoneLinkedNodes({
+	links,
+	sessions,
+	homeVersion,
+	isSaved,
+	onSave,
+}: Props) {
 	return (
 		<Box sx={nodeListSx.group}>
 			{links.map((link) => {
 				const { text, drift } = linkDetail(link, sessions, homeVersion);
 				return (
-					<Box key={link.name} sx={nodeListSx.item}>
+					<Box key={link.name} sx={[nodeListSx.item, { pr: 0 }]}>
 						<NodeDot tone={linkStateTone[link.state]} />
 						<Box component="span" sx={nodeListSx.grow}>
 							{link.name}
@@ -40,6 +49,9 @@ export function PhoneLinkedNodes({ links, sessions, homeVersion }: Props) {
 							<Box component="span" sx={driftBadgeSx}>
 								{drift}
 							</Box>
+						)}
+						{!isSaved(link.url) && (
+							<SaveLinkButton name={link.name} onSave={() => onSave(link)} />
 						)}
 					</Box>
 				);
