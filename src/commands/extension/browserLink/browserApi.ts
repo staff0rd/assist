@@ -1,4 +1,5 @@
 import type { BrowserTab } from "./pickTargetTab";
+import type { UpdateCheckStatus } from "./types";
 
 type Listener<T> = { addListener: (listener: (value: T) => void) => void };
 
@@ -16,6 +17,12 @@ type BrowserApi = {
 	runtime: {
 		getManifest: () => { version: string };
 		openOptionsPage?: () => Promise<void>;
+		requestUpdateCheck?: () => Promise<{
+			status: UpdateCheckStatus;
+			version?: string;
+		}>;
+		reload?: () => void;
+		onUpdateAvailable?: Listener<unknown>;
 	};
 	tabs: {
 		query: (filter: Record<string, unknown>) => Promise<BrowserTab[]>;

@@ -3,13 +3,9 @@ import {
 	SERVER_URL_KEY,
 } from "../sendToAssist/assistServerUrl";
 import { browserApi } from "./browserApi";
-import { runBrowserRequest } from "./runBrowserRequest";
-import {
-	BROWSER_LINK_ALARM,
-	BROWSER_LINK_PATH,
-	type BrowserLinkMessage,
-	type BrowserRelayRequest,
-} from "./types";
+import { BROWSER_LINK_ALARM, BROWSER_LINK_PATH } from "./types";
+import { sendLinkMessage } from "./sendLinkMessage";
+import { answerRelayRequest } from "./answerRelayRequest";
 
 const RECONNECT_MS = 5_000;
 
@@ -23,6 +19,7 @@ export function connectBrowserLink(): void {
 	api.alarms?.onAlarm.addListener((alarm) => {
 		if (alarm.name === BROWSER_LINK_ALARM) ensureSocket();
 	});
+	api.runtime.onUpdateAvailable?.addListener(() => api.runtime.reload?.());
 	api.storage?.onChanged.addListener((changes) => {
 		if (SERVER_URL_KEY in changes) socket?.close();
 	});
@@ -43,34 +40,18 @@ async function openSocket(): Promise<void> {
 	);
 	socket = ws;
 	ws.addEventListener("open", () =>
-		send(ws, {
+		sendLinkMessage(ws, {
 			type: "hello",
 			version: browserApi()?.runtime.getManifest().version ?? "unknown",
 		}),
 	);
-	ws.addEventListener("message", (event) => void answer(ws, event.data));
+	ws.addEventListener(
+		"message",
+		(event) => void answerRelayRequest(ws, event.data),
+	);
 	ws.addEventListener("close", () => {
 		if (socket !== ws) return;
 		socket = undefined;
 		setTimeout(ensureSocket, RECONNECT_MS);
 	});
-}
-
-async function answer(ws: WebSocket, data: unknown): Promise<void> {
-	let request: BrowserRelayRequest;
-	try {
-		request = JSON.parse(String(data)) as BrowserRelayRequest;
-	} catch {
-		return;
-	}
-	if (request.type !== "request") return;
-	const reply = await runBrowserRequest(request).catch((error: unknown) => ({
-		ok: false as const,
-		error: error instanceof Error ? error.message : String(error),
-	}));
-	send(ws, { ...reply, type: "response", id: request.id });
-}
-
-function send(ws: WebSocket, message: BrowserLinkMessage): void {
-	if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(message));
 }

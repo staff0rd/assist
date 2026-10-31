@@ -16,9 +16,16 @@ export type BrowserRequest =
 	| { op: "snapshot"; url?: string }
 	| ({ op: "inspect"; url?: string } & InspectQuery)
 	| { op: "run"; url?: string; code: string }
-	| ConsoleRequest;
+	| ConsoleRequest
+	| { op: "update" };
 
 export type BrowserOp = BrowserRequest["op"];
+
+export type TabOp = Exclude<BrowserOp, "update">;
+
+export type UpdateCheckStatus = "throttled" | "no_update" | "update_available";
+
+type UpdateResult = { status: UpdateCheckStatus; available?: string };
 
 export type InspectMatch = {
 	chain: string[];
@@ -35,7 +42,12 @@ export type ProbeResults = {
 	inspect: InspectResult;
 	run: RunOutcome;
 	console: ConsoleResult;
+	update: UpdateResult;
 };
+
+type ReplyResult<O extends BrowserOp> = O extends TabOp
+	? { tabUrl: string } & ProbeResults[O]
+	: ProbeResults[O];
 
 export type ConsoleResult = { recording: boolean; entries: ConsoleEntry[] };
 
@@ -48,7 +60,7 @@ export type RunOutcome =
 export type RunDecision = "run" | "declined" | "timeout";
 
 export type BrowserReply<O extends BrowserOp = BrowserOp> =
-	| { ok: true; result: { tabUrl: string } & ProbeResults[O] }
+	| { ok: true; result: ReplyResult<O> }
 	| { ok: false; error: string; tabUrl?: string };
 
 export type ProbeAnswer = {
