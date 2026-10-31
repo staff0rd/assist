@@ -1,3 +1,11 @@
+# [0.983.0](https://github.com/staff0rd/assist/compare/v0.982.0...v0.983.0) (2026-10-31)
+
+
+### Features
+
+* hide status line limits in sessions ([c099a48](https://github.com/staff0rd/assist/commit/c099a48b9a658d9056a42aef147ac7f56ba99aa9))
+* narrow docs lock, add docs diff ([94e5b7f](https://github.com/staff0rd/assist/commit/94e5b7f3771832371e775da502f57aa7b1130d24))
+
 # [0.982.0](https://github.com/staff0rd/assist/compare/v0.981.0...v0.982.0) (2026-10-31)
 
 
