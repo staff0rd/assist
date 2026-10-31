@@ -1,3 +1,10 @@
+# [0.1000.0](https://github.com/staff0rd/assist/compare/v0.999.1...v0.1000.0) (2026-10-31)
+
+
+### Features
+
+* link docs approval to preview ([296da5f](https://github.com/staff0rd/assist/commit/296da5f457b8205843063255561374e7b14e4486))
+
 ## [0.999.1](https://github.com/staff0rd/assist/compare/v0.999.0...v0.999.1) (2026-10-31)
 
 
