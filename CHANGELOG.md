@@ -1,3 +1,10 @@
+## [0.1000.3](https://github.com/staff0rd/assist/compare/v0.1000.2...v0.1000.3) (2026-10-31)
+
+
+### Bug Fixes
+
+* diff HTML cards spanning blank lines ([925b00d](https://github.com/staff0rd/assist/commit/925b00de7b39fa900951ff5ef4d53bef83dbe856))
+
 ## [0.1000.2](https://github.com/staff0rd/assist/compare/v0.1000.1...v0.1000.2) (2026-10-31)
 
 
