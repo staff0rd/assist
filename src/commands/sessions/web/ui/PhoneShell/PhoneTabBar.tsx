@@ -6,10 +6,12 @@ import { groupSessionsByStatus } from "./groupSessionsByStatus";
 import { activePhoneTab } from "./PhoneTabBar/activePhoneTab";
 import { phoneTabBarSx as sx } from "./PhoneTabBar/phoneTabBarSx";
 import { phoneTabs } from "./PhoneTabBar/phoneTabs";
+import { usePhoneTabMemory } from "./PhoneTabBar/usePhoneTabMemory";
 
 export function PhoneTabBar({ sessions }: { sessions: SessionInfo[] }) {
-	const { pathname } = useLocation();
+	const { pathname, search } = useLocation();
 	const navigate = useNavigate();
+	const lastPath = usePhoneTabMemory();
 	const active = activePhoneTab(pathname);
 	if (!active) return null;
 	const needsYou = groupSessionsByStatus(sessions).needsYou.length;
@@ -21,7 +23,11 @@ export function PhoneTabBar({ sessions }: { sessions: SessionInfo[] }) {
 					key={path}
 					sx={sx.tab}
 					aria-current={path === active.path ? "page" : undefined}
-					onClick={() => navigate(path)}
+					onClick={() =>
+						path === active.path
+							? navigate({ pathname: path, search }, { replace: true })
+							: navigate(lastPath(path))
+					}
 				>
 					<Box sx={sx.iconWrap}>
 						<Icon />
