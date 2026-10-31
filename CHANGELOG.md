@@ -1,3 +1,11 @@
+## [0.1004.1](https://github.com/staff0rd/assist/compare/v0.1004.0...v0.1004.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* allow PATCH and DELETE from the app ([6a47c38](https://github.com/staff0rd/assist/commit/6a47c38789046eba4b6a92f2b2287e797afff3d8))
+* dismiss closes open preview panels ([c272872](https://github.com/staff0rd/assist/commit/c272872a0c5f2ea4e207a04a3ae0f3fe3843c205))
+
 # [0.1004.0](https://github.com/staff0rd/assist/compare/v0.1003.0...v0.1004.0) (2026-10-31)
 
 
