@@ -1,3 +1,16 @@
+# [0.997.0](https://github.com/staff0rd/assist/compare/v0.996.0...v0.997.0) (2026-10-31)
+
+
+### Bug Fixes
+
+* changed-page dot left of label ([0daf2b5](https://github.com/staff0rd/assist/commit/0daf2b5076d576cc0fea46975cab1d5e205742ab))
+* lower the phone tab bar ([068d141](https://github.com/staff0rd/assist/commit/068d141d8a5222d7d65508dbbbf4ebfabc5fc44c))
+
+
+### Features
+
+* step change navigator across pages ([84f31d8](https://github.com/staff0rd/assist/commit/84f31d8145c3eda7b9161bc595883f3d61846219))
+
 # [0.996.0](https://github.com/staff0rd/assist/compare/v0.995.0...v0.996.0) (2026-10-31)
 
 
