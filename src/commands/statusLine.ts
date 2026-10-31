@@ -1,11 +1,11 @@
 import chalk from "chalk";
 import { readStdin } from "../lib/readStdin";
-import { contextLevel } from "../shared/contextLevel";
 import type { RateLimits } from "../shared/RateLimits";
 import { buildLimitsSegment } from "./buildLimitsSegment";
 import { readGitBranch } from "./readGitBranch";
 import { relayRateLimits } from "./relayRateLimits";
 import { relayUsage } from "./relayUsage";
+import { colorizePercent } from "./colorizePercent";
 
 // stdout is piped so chalk disables colour; force it on
 chalk.level = 3;
@@ -32,18 +32,6 @@ function formatNumber(num: number): string {
 	return num.toLocaleString("en-US");
 }
 
-function colorizePercent(pct: number): string {
-	const label = `${Math.round(pct)}%`;
-	switch (contextLevel(pct)) {
-		case "red":
-			return chalk.red(label);
-		case "yellow":
-			return chalk.yellow(label);
-		default:
-			return label;
-	}
-}
-
 export async function statusLine(): Promise<void> {
 	const inputData = await readStdin();
 	const data: StatusInput = JSON.parse(inputData);
@@ -58,8 +46,13 @@ export async function statusLine(): Promise<void> {
 	// 🌿️ needs trailing U+FE0F for stable width
 	const branchSegment = branch ? `🌿️ ${chalk.cyan(branch)} | ` : "";
 
+	const limitsSegment =
+		process.env.ASSIST_SESSION === "1"
+			? ""
+			: buildLimitsSegment(data.rate_limits);
+
 	console.log(
-		`${branchSegment}${model} | Tokens - ${formatNumber(totalIn)} ↑ : ${formatNumber(totalOut)} ↓ | Context - ${colorizePercent(usedPct)}${buildLimitsSegment(data.rate_limits)}`,
+		`${branchSegment}${model} | Tokens - ${formatNumber(totalIn)} ↑ : ${formatNumber(totalOut)} ↓ | Context - ${colorizePercent(usedPct)}${limitsSegment}`,
 	);
 
 	await relayRateLimits(data.rate_limits);
