@@ -31,6 +31,30 @@
 	opacity: 0.75;
 }
 
+.sl-markdown-content .assist-landing-card.assist-diff-added,
+.sl-markdown-content .assist-landing-card.assist-diff-removed {
+	padding-inline-start: 1.75rem;
+	border-width: 1px 1px 1px 4px;
+}
+
+.sl-markdown-content .assist-landing-card.assist-diff-added {
+	background:
+		linear-gradient(
+			var(--assist-diff-added-tint),
+			var(--assist-diff-added-tint)
+		),
+		var(--sl-color-gray-6);
+}
+
+.sl-markdown-content .assist-landing-card.assist-diff-removed {
+	background:
+		linear-gradient(
+			var(--assist-diff-removed-tint),
+			var(--assist-diff-removed-tint)
+		),
+		var(--sl-color-gray-6);
+}
+
 .sl-markdown-content tr.assist-diff-added > *,
 .sl-markdown-content tr.assist-diff-removed > * {
 	background: inherit;
