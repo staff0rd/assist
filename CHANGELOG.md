@@ -1,3 +1,12 @@
+## [0.1000.2](https://github.com/staff0rd/assist/compare/v0.1000.1...v0.1000.2) (2026-10-31)
+
+
+### Bug Fixes
+
+* pin diff panel to its session node ([207db69](https://github.com/staff0rd/assist/commit/207db6904654f45caef545ef99552e6fc79b2989))
+* refresh docs reads every phase ([1d33e9e](https://github.com/staff0rd/assist/commit/1d33e9ed0eeff012f42c70d82e877e688632723b))
+* revert empty Enter on restored card ([9d40ce3](https://github.com/staff0rd/assist/commit/9d40ce30defdfed6ab00b0465007c1699d65dcd3))
+
 ## [0.1000.1](https://github.com/staff0rd/assist/compare/v0.1000.0...v0.1000.1) (2026-10-31)
 
 
