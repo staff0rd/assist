@@ -21,6 +21,7 @@
 		"src/docs/docsCoverage.ts",
 		"src/docs/printDocsInventory.ts",
 		"src/docs/starlight/createDocsFrontmatterCheck.ts",
+		"src/docs/starlight/docsDiffPlugin.ts",
 		"src/docs/starlight/docsSectionsPlugin.ts",
 		"src/docs/starlight/docsSidebar.ts",
 		"src/docs/starlight/iconPlugin.ts",

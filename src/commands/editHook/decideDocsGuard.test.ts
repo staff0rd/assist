@@ -32,23 +32,29 @@ describe("decideDocsGuard", () => {
 		},
 	);
 
-	it("denies a relative docs path", async () => {
-		expect(
-			await decideDocsGuard(input("Edit", "docs/CLAUDE.md")),
-		).toBeDefined();
-	});
+	it.each(["docs/src/content/docs/index.md", "docs/public/screenshots/a.png"])(
+		"denies the relative path %s",
+		async (path) => {
+			expect(await decideDocsGuard(input("Edit", path))).toBeDefined();
+		},
+	);
 
 	it("allows docs edits while unlocked", async () => {
 		mockLocked.mockResolvedValue(false);
 		expect(
-			await decideDocsGuard(input("Edit", "/repo/docs/CLAUDE.md")),
+			await decideDocsGuard(
+				input("Edit", "/repo/docs/src/content/docs/index.md"),
+			),
 		).toBeUndefined();
 	});
 
-	it("ignores paths outside docs/ without checking the lock", async () => {
-		expect(
-			await decideDocsGuard(input("Edit", "/repo/src/docs/index.ts")),
-		).toBeUndefined();
+	it.each([
+		"/repo/src/docs/index.ts",
+		"/repo/docs/CLAUDE.md",
+		"/repo/docs/astro.config.ts",
+		"/repo/docs/src/styles/diff.css",
+	])("ignores %s without checking the lock", async (path) => {
+		expect(await decideDocsGuard(input("Edit", path))).toBeUndefined();
 		expect(mockLocked).not.toHaveBeenCalled();
 	});
 

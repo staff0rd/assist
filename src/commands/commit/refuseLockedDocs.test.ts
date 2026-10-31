@@ -41,22 +41,31 @@ afterEach(() => {
 });
 
 describe("refuseLockedDocs", () => {
-	it("refuses when locked and a staged path is under docs/", async () => {
-		stage("src/a.ts");
-		stage("docs/page.md");
+	it.each(["docs/src/content/docs/page.md", "docs/public/screenshots/a.png"])(
+		"refuses when locked and %s is staged",
+		async (path) => {
+			stage("src/a.ts");
+			stage(path);
 
-		await expect(refuseLockedDocs()).rejects.toThrow("exit 1");
-		expect(console.error).toHaveBeenCalledWith(
-			expect.stringContaining("docs/page.md"),
-		);
-		expect(console.error).toHaveBeenCalledWith(
-			expect.stringContaining("Refresh docs"),
-		);
+			await expect(refuseLockedDocs()).rejects.toThrow("exit 1");
+			expect(console.error).toHaveBeenCalledWith(expect.stringContaining(path));
+			expect(console.error).toHaveBeenCalledWith(
+				expect.stringContaining("Refresh docs"),
+			);
+		},
+	);
+
+	it("allows the docs site's code while locked", async () => {
+		stage("docs/astro.config.ts");
+		stage("docs/src/styles/diff.css");
+
+		await expect(refuseLockedDocs()).resolves.toBeUndefined();
+		expect(mockLocked).not.toHaveBeenCalled();
 	});
 
 	it("allows docs changes when not locked", async () => {
 		mockLocked.mockResolvedValue(false);
-		stage("docs/page.md");
+		stage("docs/src/content/docs/page.md");
 
 		await expect(refuseLockedDocs()).resolves.toBeUndefined();
 	});
