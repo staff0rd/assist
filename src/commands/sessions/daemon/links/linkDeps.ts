@@ -15,7 +15,11 @@ export type NodeLinksOptions = {
 
 type LinkCallbacks = Pick<
 	NodeLinkDeps,
-	"viewers" | "onSessionsChanged" | "onStateChanged" | "onHistoryChanged"
+	| "viewers"
+	| "onSessionsChanged"
+	| "onStateChanged"
+	| "onHistoryChanged"
+	| "pins"
 >;
 
 export function linkDeps(
@@ -36,6 +40,7 @@ export function linkDeps(
 			"links: history-changed handler",
 			callbacks.onHistoryChanged,
 		),
+		pins: callbacks.pins,
 		transport: options.transport ?? connectLinkWebSocket,
 		reconnectMs: options.reconnectMs ?? 3_000,
 		blockedRetryMs: options.blockedRetryMs ?? 60_000,

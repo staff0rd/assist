@@ -6,7 +6,7 @@ import { formatItemId } from "../backlog/formatItemId";
 import { findOneItem } from "../backlog/shared";
 import { getRestrictedDir } from "../codeComment/getRestrictedDir";
 import { sweepRestrictedDir } from "../codeComment/sweepRestrictedDir";
-import { showNotification } from "../notify/showNotification";
+import { deliverPinNotification } from "../notify/deliverPinNotification";
 import { getDocsUnlockPinPath } from "./getDocsUnlockPinPath";
 
 function fail(message: string): void {
@@ -37,7 +37,9 @@ export async function docsUnlock(): Promise<void> {
 	const pinPath = getDocsUnlockPinPath(pin);
 	writeFileSync(pinPath, JSON.stringify({ pin, itemId, phase }));
 
-	const delivered = showNotification({
+	const { delivered, node } = await deliverPinNotification({
+		area: "docs",
+		pin,
 		title: `assist docs unlock: ${label}`,
 		message: `Pin ${pin} — run: assist docs confirm ${pin}`,
 	});
@@ -51,6 +53,6 @@ export async function docsUnlock(): Promise<void> {
 	}
 
 	console.log(
-		`A confirmation pin was sent to the user's desktop notifications.\nTo let this phase of ${label} edit docs pages and screenshots, the user runs:\n${chalk.cyan("  assist docs confirm <PIN>")}\nWait for the user to confirm before editing docs.`,
+		`A confirmation pin was sent to the user's desktop notifications${node ? ` on ${node}, the node controlling this session` : ""}.\nTo let this phase of ${label} edit docs pages and screenshots, the user runs${node ? ` on ${node}` : ""}:\n${chalk.cyan("  assist docs confirm <PIN>")}\nWait for the user to confirm before editing docs.`,
 	);
 }

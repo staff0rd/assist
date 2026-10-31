@@ -18,7 +18,7 @@ export class ClientHub extends Set<SessionClient> {
 	private readonly harnessLimits = new Map<HarnessKind, RateLimits>();
 	// why: log delivery is opt-in so browser tabs aren't spammed; only connections that ask via subscribe-logs receive daemonLog lines.
 	private readonly logSubscribers = new Set<SessionClient>();
-	private readonly peers = new Set<SessionClient>();
+	private readonly peers = new Map<SessionClient, string | undefined>();
 
 	// why: the daemon injects a best-effort persister; left undefined elsewhere so `new ClientHub()` works and broadcasting never depends on it.
 	constructor(
@@ -60,12 +60,22 @@ export class ClientHub extends Set<SessionClient> {
 			sendTo(client, { type: "limits", harness, rateLimits });
 	}
 
-	markPeer(client: SessionClient): void {
-		this.peers.add(client);
+	markPeer(client: SessionClient, node?: string): void {
+		this.peers.set(client, node);
 	}
 
 	isPeer(client: SessionClient): boolean {
 		return this.peers.has(client);
+	}
+
+	peerNode(client: SessionClient): string | undefined {
+		return this.peers.get(client);
+	}
+
+	peerFor(node: string): SessionClient | undefined {
+		let latest: SessionClient | undefined;
+		for (const [client, name] of this.peers) if (name === node) latest = client;
+		return latest;
 	}
 
 	viewers(): Set<SessionClient> {

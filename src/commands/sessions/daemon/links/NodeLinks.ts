@@ -4,6 +4,7 @@ import { broadcast, type SessionClient, sendTo } from "../broadcast";
 import type { ClientHub } from "../ClientHub";
 import { collectHistory } from "../collectHistory";
 import { daemonLog } from "../daemonLog";
+import { PinRelay } from "../pins/PinRelay";
 import { linkDeps, type NodeLinksOptions } from "./linkDeps";
 import type { NodesMessage } from "./LinkStatus";
 import { NodeLink } from "./NodeLink";
@@ -13,6 +14,7 @@ import { routeToLink } from "./routeToLink";
 export class NodeLinks {
 	private readonly links = new Map<string, NodeLink>();
 	private options: NodeLinksOptions = {};
+	readonly pins = new PinRelay();
 
 	constructor(
 		private readonly clients: ClientHub,
@@ -30,6 +32,7 @@ export class NodeLinks {
 			onSessionsChanged: this.onSessionsChanged,
 			onStateChanged: () => broadcast(this.clients.viewers(), this.nodes()),
 			onHistoryChanged: () => void this.broadcastHistory(),
+			pins: this.pins,
 		});
 		reconcileLinks(this.links, specs, (spec) => new NodeLink(spec, deps));
 		this.onSessionsChanged();

@@ -15,6 +15,7 @@ import { handleTypePrompt } from "./handleTypePrompt";
 import { handleTypePromptToWriter } from "./handleTypePromptToWriter";
 import { inboxHandlers } from "./inbox/inboxHandlers";
 import { lifecycleHandlers } from "./lifecycleHandlers";
+import { pinHandlers } from "./pins/pinHandlers";
 import { type Handler, routed } from "./routed";
 import { viewerHandlers } from "./viewerHandlers";
 import { sessionSettingHandlers } from "./sessionSettingHandlers";
@@ -61,6 +62,7 @@ export const messageHandlers: Record<string, Handler> = {
 		),
 	"codex-usage": handleCodexUsage,
 	...viewerHandlers,
+	...pinHandlers,
 	"type-prompt": handleTypePrompt,
 	"type-prompt-to-writer": handleTypePromptToWriter,
 	retry: routed((client, m, d) => {

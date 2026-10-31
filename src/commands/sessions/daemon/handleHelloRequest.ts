@@ -9,7 +9,10 @@ export const handleHelloRequest: Handler = (client, m, d) => {
 	daemonLog(
 		`peer link from ${d.nodeName ?? "unknown node"} (${d.version ?? "unknown version"}); exporting local sessions only`,
 	);
-	m.clients.markPeer(client);
+	m.clients.markPeer(
+		client,
+		typeof d.nodeName === "string" ? d.nodeName : undefined,
+	);
 	sendTo(client, { type: "sessions", sessions: m.localSessions(), active: {} });
 	m.replayLocal(client);
 };

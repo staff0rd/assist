@@ -3,6 +3,7 @@ import { acceptPeerHello } from "./acceptPeerHello";
 import type { LinkContext } from "./LinkContext";
 import { relayLinkMessage } from "./relayLinkMessage";
 import { setLinkState } from "./setLinkState";
+import { showRelayedPin } from "./showRelayedPin";
 import { blockLink, disconnectLink, failLink } from "./teardownLink";
 
 function onHello(ctx: LinkContext, msg: Record<string, unknown>): void {
@@ -37,5 +38,22 @@ export function onLinkLine(ctx: LinkContext, line: string): void {
 		return;
 	}
 	if (msg.type === "hello") return onHello(ctx, msg);
-	if (ctx.greeted) relayLinkMessage(ctx.relay, msg);
+	if (!ctx.greeted) return;
+	if (msg.type === "notify-pin") return showRelayedPin(ctx, msg);
+	if (msg.type === "confirm-pin-result") return settleRelayedConfirm(ctx, msg);
+	relayLinkMessage(ctx.relay, msg);
+}
+
+function settleRelayedConfirm(
+	ctx: LinkContext,
+	msg: Record<string, unknown>,
+): void {
+	const ok = msg.ok === true;
+	daemonLog(
+		`link ${ctx.spec.name} ws: PIN confirmation ${ok ? "approved" : "rejected"} by ${ctx.spec.name}`,
+	);
+	ctx.deps.pins.settleConfirm(msg.requestId, {
+		ok,
+		message: typeof msg.message === "string" ? msg.message : "",
+	});
 }

@@ -1,5 +1,6 @@
 import type { SessionClient } from "../broadcast";
 import type { LaunchCircuitBreaker } from "../LaunchCircuitBreaker";
+import type { PinRelay } from "../pins/PinRelay";
 import type { LinkRelayState } from "./LinkRelayState";
 import type { LinkSocket, LinkTransport } from "./LinkTransport";
 import type { LinkSpec, LinkState } from "./LinkStatus";
@@ -9,6 +10,7 @@ export type NodeLinkDeps = {
 	onSessionsChanged: () => void;
 	onStateChanged: () => void;
 	onHistoryChanged: () => void;
+	pins: PinRelay;
 	transport: LinkTransport;
 	reconnectMs: number;
 	blockedRetryMs: number;

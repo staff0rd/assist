@@ -15,6 +15,14 @@ vi.mock("../notify/showNotification", () => ({
 	showNotification: (...args: unknown[]) => mockShowNotification(...args),
 }));
 
+const mockRequestDaemonReply =
+	vi.fn<(request: Record<string, unknown>) => Promise<unknown>>();
+
+vi.mock("../sessions/daemon/requestDaemonReply", () => ({
+	requestDaemonReply: (request: Record<string, unknown>) =>
+		mockRequestDaemonReply(request),
+}));
+
 vi.mock("../codeComment/getRestrictedDir", () => ({
 	getRestrictedDir: () => restrictedDir,
 }));
@@ -76,6 +84,8 @@ describe("docs unlock -> confirm round-trip", () => {
 		({ orm } = await createTestDb());
 		restrictedDir = mkdtempSync(join(tmpdir(), "assist-docs-unlock-"));
 		mockShowNotification.mockReturnValue(true);
+		mockRequestDaemonReply.mockResolvedValue(undefined);
+		vi.stubEnv("ASSIST_SESSION_ID", "");
 		process.exitCode = undefined;
 		vi.spyOn(console, "log").mockImplementation(() => {});
 		vi.spyOn(console, "error").mockImplementation(() => {});
@@ -85,6 +95,7 @@ describe("docs unlock -> confirm round-trip", () => {
 		vi.restoreAllMocks();
 		vi.clearAllMocks();
 		delete process.env[ENV];
+		vi.unstubAllEnvs();
 		process.exitCode = undefined;
 		rmSync(restrictedDir, { recursive: true, force: true });
 	});
@@ -172,6 +183,71 @@ describe("docs unlock -> confirm round-trip", () => {
 
 		expect(process.exitCode).toBe(1);
 		expect(await unlockRefs()).toEqual([]);
+	});
+
+	it("relays the pin to the session's controlling node instead of notifying locally", async () => {
+		const id = await addStory("Docs landing page");
+		process.env[ENV] = String(id);
+		vi.stubEnv("ASSIST_SESSION_ID", "3");
+		mockRequestDaemonReply.mockImplementation(async (request) => ({
+			type: "notify-pin-result",
+			requestId: request.requestId,
+			node: "mac",
+		}));
+
+		await docsUnlock();
+
+		const [pin] = issuedPins();
+		expect(mockRequestDaemonReply).toHaveBeenCalledWith(
+			expect.objectContaining({
+				type: "notify-pin",
+				sessionId: "3",
+				area: "docs",
+				pin,
+			}),
+		);
+		expect(mockShowNotification).not.toHaveBeenCalled();
+		expect(process.exitCode).toBeUndefined();
+		expect(console.log).toHaveBeenCalledWith(expect.stringContaining("mac"));
+		expect(console.log).not.toHaveBeenCalledWith(expect.stringContaining(pin));
+	});
+
+	it("forwards a pin it has no local state for to the daemon and reports its answer", async () => {
+		mockRequestDaemonReply.mockImplementation(async (request) => ({
+			type: "confirm-pin-result",
+			requestId: request.requestId,
+			found: true,
+			ok: true,
+			message: "Approved docs changes on work-wsl",
+		}));
+
+		await docsConfirm("123");
+
+		expect(mockRequestDaemonReply).toHaveBeenCalledWith(
+			expect.objectContaining({
+				type: "confirm-pin",
+				area: "docs",
+				pin: "123",
+			}),
+		);
+		expect(process.exitCode).toBeUndefined();
+		expect(console.log).toHaveBeenCalledWith(
+			expect.stringContaining("Approved docs changes on work-wsl"),
+		);
+	});
+
+	it("fails a forwarded confirm the session's node rejects", async () => {
+		mockRequestDaemonReply.mockImplementation(async (request) => ({
+			type: "confirm-pin-result",
+			requestId: request.requestId,
+			found: true,
+			ok: false,
+			message: "moved on",
+		}));
+
+		await docsConfirm("123");
+
+		expect(process.exitCode).toBe(1);
 	});
 
 	it("rejects a corrupt pin file", async () => {
