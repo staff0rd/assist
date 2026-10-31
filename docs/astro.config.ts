@@ -1,7 +1,9 @@
 import { satteri } from "@astrojs/markdown-satteri";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import { markdownToMdast } from "satteri";
 import starlightLlmsTxt from "starlight-llms-txt";
+import { docsDiffPlugin } from "../src/docs/starlight/docsDiffPlugin";
 import { docsSectionsPlugin } from "../src/docs/starlight/docsSectionsPlugin";
 import { kbdPlugin } from "../src/docs/starlight/kbdPlugin";
 import { docsSidebar } from "../src/docs/starlight/docsSidebar";
@@ -26,6 +28,13 @@ export default defineConfig({
 	markdown: {
 		processor: satteri({
 			mdastPlugins: [
+				...(preview
+					? [
+							docsDiffPlugin((source) =>
+								markdownToMdast(source, { features: { directive: true } }),
+							),
+						]
+					: []),
 				screenshotsPlugin(base, preview),
 				kbdPlugin,
 				statusPlugin,
@@ -61,6 +70,7 @@ export default defineConfig({
 				"./src/styles/dashboard.css",
 				"./src/styles/header.css",
 				"./src/styles/search.css",
+				...(preview ? ["./src/styles/diff.css"] : []),
 			],
 			head: [
 				{

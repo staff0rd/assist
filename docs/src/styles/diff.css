@@ -1,0 +1,52 @@
+:root {
+	--assist-diff-added-bar: #2da44e;
+	--assist-diff-added-tint: rgb(45 164 78 / 0.18);
+	--assist-diff-removed-bar: #f85149;
+	--assist-diff-removed-tint: rgb(248 81 73 / 0.16);
+}
+
+:root[data-theme="light"] {
+	--assist-diff-added-bar: #1a7f37;
+	--assist-diff-added-tint: rgb(26 127 55 / 0.1);
+	--assist-diff-removed-bar: #cf222e;
+	--assist-diff-removed-tint: rgb(207 34 46 / 0.08);
+}
+
+.sl-markdown-content .assist-diff-added,
+.sl-markdown-content .assist-diff-removed {
+	border-inline-start: 4px solid;
+	padding-inline-start: 0.75rem;
+}
+
+.sl-markdown-content .assist-diff-added {
+	border-color: var(--assist-diff-added-bar);
+	background: var(--assist-diff-added-tint);
+}
+
+.sl-markdown-content .assist-diff-removed {
+	border-color: var(--assist-diff-removed-bar);
+	background: var(--assist-diff-removed-tint);
+	text-decoration: line-through;
+	text-decoration-color: var(--assist-diff-removed-bar);
+	opacity: 0.75;
+}
+
+.sl-markdown-content tr.assist-diff-added > *,
+.sl-markdown-content tr.assist-diff-removed > * {
+	background: inherit;
+}
+
+.sl-markdown-content tr.assist-diff-added > :first-child {
+	box-shadow: inset 4px 0 var(--assist-diff-added-bar);
+}
+
+.sl-markdown-content tr.assist-diff-removed > :first-child {
+	box-shadow: inset 4px 0 var(--assist-diff-removed-bar);
+}
+
+.sl-markdown-content .assist-diff-new-page {
+	border-inline-start: 4px solid var(--assist-diff-added-bar);
+	background: var(--assist-diff-added-tint);
+	padding: 0.5rem 0.75rem;
+	font-weight: 600;
+}
