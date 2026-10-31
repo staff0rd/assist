@@ -1,3 +1,10 @@
+## [0.974.2](https://github.com/staff0rd/assist/compare/v0.974.1...v0.974.2) (2026-10-31)
+
+
+### Bug Fixes
+
+* ask in terminal when session not live ([1c3a457](https://github.com/staff0rd/assist/commit/1c3a457918ee90722df20f780db6d375c9ea0453))
+
 ## [0.974.1](https://github.com/staff0rd/assist/compare/v0.974.0...v0.974.1) (2026-10-30)
 
 
