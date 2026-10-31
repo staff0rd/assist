@@ -1,3 +1,11 @@
+# [0.990.0](https://github.com/staff0rd/assist/compare/v0.989.0...v0.990.0) (2026-10-31)
+
+
+### Features
+
+* docs landing page at the site root ([9b123f2](https://github.com/staff0rd/assist/commit/9b123f2a338832070052db5431dbb4eba6992009))
+* scope docs unlock to current phase ([27be8ea](https://github.com/staff0rd/assist/commit/27be8eaee0e287ed91800e0c9f4284f74229fa7c))
+
 # [0.989.0](https://github.com/staff0rd/assist/compare/v0.988.0...v0.989.0) (2026-10-31)
 
 
