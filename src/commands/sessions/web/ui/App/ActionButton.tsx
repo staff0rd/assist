@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import type { MouseEvent, ReactNode } from "react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { actionButtonAttributes } from "./ActionButton/actionButtonAttributes";
 import {
 	type ActionButtonTone,
@@ -28,6 +28,7 @@ export function ActionButton({
 	label: string;
 	icon: ReactNode;
 	onClick: (event: MouseEvent<HTMLElement>) => void;
+	onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
 	title?: string;
 	ariaLabel?: string;
 	tone?: ActionButtonTone;

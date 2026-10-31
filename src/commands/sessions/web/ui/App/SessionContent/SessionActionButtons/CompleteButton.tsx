@@ -7,6 +7,7 @@ import type { BacklogTarget } from "../../../backlogTarget";
 import { ErrorSnackbar } from "../../../ErrorSnackbar";
 import type { ShortcutName } from "../../shortcutRegistry";
 import { StopCardActivation } from "../../../StopCardActivation";
+import { shiftSkipsConfirmHandlers } from "./shiftSkipsConfirmHandlers";
 import { useMarkItemDone } from "./useMarkItemDone";
 
 export function CompleteButton({
@@ -35,13 +36,14 @@ export function CompleteButton({
 		<>
 			<ActionButton
 				label="Done"
-				title="Mark done"
+				title="Mark done (Shift skips confirmation)"
+				ariaLabel="Mark done"
 				shortcut={shortcut}
 				icon={<CheckIcon sx={{ fontSize: 16 }} />}
-				onClick={(e) => {
-					e.stopPropagation();
-					setConfirming(true);
-				}}
+				{...shiftSkipsConfirmHandlers(
+					() => void confirm(),
+					() => setConfirming(true),
+				)}
 			/>
 			{confirming && (
 				<StopCardActivation>

@@ -1,9 +1,10 @@
-import type { MouseEvent } from "react";
+import type { KeyboardEvent, MouseEvent } from "react";
 import type { ShortcutName } from "../shortcutRegistry";
 
 export function actionButtonAttributes({
 	label,
 	onClick,
+	onKeyDown,
 	title,
 	ariaLabel,
 	disabled,
@@ -12,6 +13,7 @@ export function actionButtonAttributes({
 }: {
 	label: string;
 	onClick: (event: MouseEvent<HTMLElement>) => void;
+	onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
 	title?: string;
 	ariaLabel?: string;
 	disabled?: boolean;
@@ -20,6 +22,7 @@ export function actionButtonAttributes({
 }) {
 	return {
 		onClick,
+		onKeyDown,
 		disabled,
 		title: shortcut ? undefined : title,
 		"aria-label": ariaLabel ?? title ?? label,
