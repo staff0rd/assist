@@ -26,7 +26,7 @@ Click the harness conversation id in the top bar to copy it.
 
 ::screenshot{file="sessions-top-bar.png"}
 
-On the right, the git change counts open the [diff](../sessions-diff/), and toggles such as **Auto-approve** apply to draft, bug and refine sessions. Then its actions, shown only when they apply:
+On the right, the git change counts open the [diff](../sessions-diff/), and toggles such as **Auto start** apply to draft, bug and refine sessions. Then its actions, shown only when they apply:
 
 - **Add agent** (:kbd[Alt+Z]) starts another agent in the same working copy, with a prompt you type, so it picks up the work in progress. It is offered while the session is still working.
 - **VS Code** (:kbd[Alt+X]) opens the session's working copy in VS Code.

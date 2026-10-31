@@ -9,6 +9,7 @@ covers:
   - cli:browser snapshot
   - cli:browser inspect
   - cli:browser run
+  - cli:browser console
   - cli:netcap
   - cli:netcap extract-linkedin-posts
 ---
@@ -25,10 +26,11 @@ See [Browser extension](../browser-extension/) for installing and using the assi
 
 With the assist web server running and the extension installed, `assist browser` reads the tab you have open in the browser, on GitHub, Azure DevOps or a local docs preview.
 
-- `assist browser status` prints the extension's version, the tab's URL and whether the extension is active on that tab. If it is not, reload the tab.
+- `assist browser status` prints the extension's version and whether a newer signed build exists, the tab's URL and whether the extension is active on that tab. If it is not, reload the tab.
 - `assist browser snapshot` saves the tab's page HTML to a file under `~/.assist/browser/` and prints its path.
 - `assist browser inspect <selector>` lists the elements matching a CSS selector, each with its size, text and the chain of elements it sits inside. `assist browser inspect --text <text>` lists the elements showing that text instead.
-- `assist browser run --file <script>` shows a JavaScript file in an approval panel on the tab and, once you click **Run**, prints what it returns, or its error. The script is the body of an async function, so `return` the value to print.
+- `assist browser run --file <script>` shows a JavaScript file in an approval panel on the tab and, once you click **Run**, prints what it returns, or its error. The script is the body of an async function, so `return` the value to print. It needs Firefox 153 or later; the first time, click **Allow scripts** on the extension's options page.
+- `assist browser console` prints the tab's console warnings and errors, uncaught errors and unhandled rejections, oldest first. Turn on **Record console warnings and errors** on the extension's options page first. `--all` prints every tab's, `--since <duration>` (such as `10m`) and `--grep <text>` filter them, and `--limit <n>` prints at most the newest `n`, 200 by default.
 
 Every `assist browser` command takes:
 

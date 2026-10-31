@@ -30,7 +30,7 @@ screenshots:
     highlight:
       - "label:has-text('Continue')"
   - file: backlog-dismiss.png
-    alt: The Dismiss toggle and Done on a backlog run in its review phase
+    alt: Done on a backlog run in its review phase
     route: /sessions
     scene: backlog
     setup:
@@ -56,7 +56,6 @@ screenshots:
     actions:
       - click: text=Show prices in the visitor's currency
     highlight:
-      - "label:has-text('Dismiss')"
       - "button:has-text('Done')"
 ---
 
@@ -82,4 +81,4 @@ The run's card in the [sidebar](../sessions-sidebar/) shows :status[running] whi
 
 ::screenshot{file="backlog-dismiss.png"}
 
-Every run ends with a review phase, added automatically after the item's own phases. Its session checks the work against each acceptance criterion and fixes what fails. Tell it the item is done once you're happy, or use **Done** on the session's top bar; the item is then marked done. **Dismiss** on the top bar closes the session once it finishes.
+Every run ends with a review phase, added automatically after the item's own phases. Its session checks the work against each acceptance criterion and fixes what fails. Tell it the item is done once you're happy, or use **Done** on the session's top bar; the item is then marked done.

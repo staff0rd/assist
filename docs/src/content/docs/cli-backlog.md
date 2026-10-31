@@ -29,6 +29,8 @@ covers:
   - cli:backlog delete
   - cli:backlog comment
   - cli:backlog refresh-docs
+  - cli:docs unlock
+  - cli:docs confirm
   - cli:backlog delete-comment
   - cli:backlog link
   - cli:backlog unlink
@@ -103,5 +105,7 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 
 - `assist backlog clone <origin>` clones an item's repo over SSH into `clone.baseDir`.
 - `assist backlog refresh-docs` queues a [Refresh docs](../backlog/#docs-refresh) story now for every done story no refresh covers yet, whatever `docs.refreshAfter` is set to.
+- `assist docs unlock` :badge[internal] lets the current phase of a backlog run edit docs pages and screenshots, which are otherwise left to Refresh docs, once you approve. It sends you a pin as a desktop notification. Called by agents whose docs edit was blocked.
+- `assist docs confirm <pin>` :badge[internal] approves that unlock with the pin from the notification. Called by agents whose docs edit was blocked, once you give them the pin.
 - `assist backlog move-repo <old-origin> [new-origin]` moves every item from one repo to another after a rename, the current repo when no new origin is given. `--yes` skips the prompt.
 - `assist backlog export [file]` writes the whole backlog database to a file, or stdout, and `assist backlog import [file]` replaces the database with an export, from stdin when no file is given. `--yes` skips the prompt.
