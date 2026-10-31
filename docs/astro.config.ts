@@ -70,6 +70,7 @@ export default defineConfig({
 				"./src/styles/dashboard.css",
 				"./src/styles/header.css",
 				"./src/styles/search.css",
+				"./src/styles/landing.css",
 				...(preview ? ["./src/styles/diff.css"] : []),
 			],
 			head: [
