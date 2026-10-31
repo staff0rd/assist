@@ -1,6 +1,5 @@
 import { answerConsoleRequest } from "../consoleCapture/answerConsoleRequest";
 import { browserApi } from "./browserApi";
-import { checkForUpdate } from "./checkForUpdate";
 import { probeReply } from "./probeReply";
 import { resolveTargetTab } from "./resolveTargetTab";
 import { runApprovedScript } from "./runApprovedScript";
@@ -16,7 +15,6 @@ export async function runBrowserRequest(
 ): Promise<BrowserReply> {
 	const api = browserApi();
 	if (!api) return { ok: false, error: "browser tabs API unavailable" };
-	if (request.op === "update") return checkForUpdate(api);
 	if (request.op === "console" && request.all)
 		return answerConsoleRequest(request);
 	const tab = await resolveTargetTab(api, request.url);

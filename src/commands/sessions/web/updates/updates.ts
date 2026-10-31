@@ -8,6 +8,9 @@ import { requestDaemonReply } from "../../daemon/requestDaemonReply";
 import type { AutoUpdateReply } from "../../shared/AutoUpdateLoopState";
 import type { NodeUpdateStatus } from "../../shared/NodeUpdateStatus";
 import { resolveNodeName } from "../../shared/resolveNodeName";
+import { extensionUpdateStatus } from "../../../extension/extensionUpdateStatus";
+import { browserLink } from "../browser/browserLink";
+import { latestSignedExtension } from "./latestSignedExtension";
 import { pendingRestarts } from "./pendingRestarts";
 import { readUpdateHistory } from "./readUpdateHistory";
 import { webStartCommit } from "./webStartCommit";
@@ -51,6 +54,10 @@ export async function updates(
 			reason: "daemon not reachable",
 		},
 		history: readUpdateHistory(installDir),
+		extension: extensionUpdateStatus(
+			browserLink.connectedVersion(),
+			await latestSignedExtension(),
+		),
 	};
 	respondJson(res, 200, status);
 }

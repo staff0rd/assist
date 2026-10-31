@@ -32,6 +32,9 @@ export function createLinkState<S>({
 			link = undefined;
 			lastSeen = now();
 		},
+		version(): string | undefined {
+			return link?.version;
+		},
 		connected(): Promise<Link<S>> {
 			if (link) return Promise.resolve(link);
 			if (now() - lastSeen > recentLinkMs) return Promise.reject(noExtension());

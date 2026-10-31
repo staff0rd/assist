@@ -46,6 +46,8 @@ export function createBrowserLink(options: LinkStateOptions = {}) {
 			});
 		},
 
+		connectedVersion: (): string | undefined => state.version(),
+
 		async request(
 			request: BrowserRequest,
 			timeoutMs: number,

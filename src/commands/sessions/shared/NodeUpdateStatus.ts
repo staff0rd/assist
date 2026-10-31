@@ -1,5 +1,6 @@
 import type { RestartTarget } from "../../watch/restartRules";
 import type { AutoUpdateLoopState } from "./AutoUpdateLoopState";
+import type { ExtensionUpdateStatus } from "./ExtensionUpdateStatus";
 
 export type NodeUpdateStatus = {
 	nodeName: string;
@@ -10,4 +11,5 @@ export type NodeUpdateStatus = {
 	daemonReachable: boolean;
 	loop: AutoUpdateLoopState;
 	history: string[];
+	extension?: ExtensionUpdateStatus;
 };

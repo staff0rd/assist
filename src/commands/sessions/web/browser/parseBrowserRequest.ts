@@ -6,7 +6,6 @@ import type {
 export function parseBrowserRequest(body: unknown): BrowserRequest | undefined {
 	const fields = (body ?? {}) as Record<string, unknown>;
 	const { op, url, selector, text, code } = fields;
-	if (op === "update") return { op };
 	if (!optionalString(url)) return undefined;
 	if (op === "status" || op === "snapshot") return { op, url };
 	if (op === "console") return parseConsoleRequest(url, fields);

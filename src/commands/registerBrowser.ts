@@ -3,7 +3,6 @@ import { browserInspect } from "./browser/browserInspect";
 import { browserRun } from "./browser/browserRun";
 import { browserSnapshot } from "./browser/browserSnapshot";
 import { browserStatus } from "./browser/browserStatus";
-import { browserUpdate } from "./browser/browserUpdate";
 import { registerBrowserConsole } from "./browser/registerBrowserConsole";
 import { withTargetOptions } from "./browser/withTargetOptions";
 
@@ -52,16 +51,4 @@ export function registerBrowser(program: Command): void {
 	).action(browserRun);
 
 	registerBrowserConsole(browser);
-
-	browser
-		.command("update")
-		.description(
-			"Make the connected extension check for an update and install it now, then print the old and new versions",
-		)
-		.option(
-			"--server <url>",
-			"assist web server the extension connects to",
-			"http://localhost:3100",
-		)
-		.action(browserUpdate);
 }

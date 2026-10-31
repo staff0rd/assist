@@ -1,5 +1,3 @@
-import { browserApi } from "./browserApi";
-import { installAvailableUpdate } from "./installAvailableUpdate";
 import { runBrowserRequest } from "./runBrowserRequest";
 import type { BrowserRelayRequest } from "./types";
 import { sendLinkMessage } from "./sendLinkMessage";
@@ -20,6 +18,4 @@ export async function answerRelayRequest(
 		error: error instanceof Error ? error.message : String(error),
 	}));
 	sendLinkMessage(ws, { ...reply, type: "response", id: request.id });
-	const api = browserApi();
-	if (api && request.op === "update") installAvailableUpdate(api, reply);
 }

@@ -1,28 +1,12 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import chalk from "chalk";
-import { extensionDir } from "./extensionDir";
-import { latestUpdateLink } from "./latestUpdateLink";
-
-type UpdateUrlManifest = {
-	browser_specific_settings: { gecko: { update_url: string } };
-};
+import { fetchLatestSignedExtension } from "./fetchLatestSignedExtension";
 
 export async function printExtensionUrl(): Promise<void> {
-	const manifest = await readFile(
-		join(extensionDir(), "manifest.json"),
-		"utf8",
-	);
-	const { update_url } = (JSON.parse(manifest) as UpdateUrlManifest)
-		.browser_specific_settings.gecko;
-	const response = await fetch(update_url);
-	const link = response.ok
-		? latestUpdateLink(manifest, await response.text())
-		: undefined;
-	if (!link) {
-		console.log(chalk.red(`no signed build found in ${update_url}`));
+	const { updateUrl, latest } = await fetchLatestSignedExtension();
+	if (!latest) {
+		console.log(chalk.red(`no signed build found in ${updateUrl}`));
 		process.exitCode = 1;
 		return;
 	}
-	console.log(link);
+	console.log(latest.update_link);
 }
