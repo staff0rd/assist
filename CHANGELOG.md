@@ -1,3 +1,15 @@
+# [0.992.0](https://github.com/staff0rd/assist/compare/v0.991.1...v0.992.0) (2026-10-31)
+
+
+### Bug Fixes
+
+* filled review phase chip on phone ([155f317](https://github.com/staff0rd/assist/commit/155f317306269df34b549aa97ad8ad7f43b75725))
+
+
+### Features
+
+* save linked nodes as home nodes ([c84b326](https://github.com/staff0rd/assist/commit/c84b326417f00accc840790db4e56fb2d5524c79))
+
 ## [0.991.1](https://github.com/staff0rd/assist/compare/v0.991.0...v0.991.1) (2026-10-31)
 
 
