@@ -58,6 +58,29 @@ describe("clientErrors", () => {
 		]);
 	});
 
+	it("prints uncaught errors and unhandled rejections by kind", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const page = {
+			at: failure.at,
+			method: "-",
+			path: "/sessions",
+			base: failure.base,
+			durationMs: 0,
+		};
+		await post(
+			JSON.stringify({
+				failures: [
+					{ ...page, kind: "error", error: "boom (app.js:1:2)" },
+					{ ...page, kind: "rejection", error: "nope" },
+				],
+			}),
+		);
+		expect(log.mock.calls.map(([line]) => line)).toEqual([
+			"client: uncaught error on /sessions: boom (app.js:1:2) at 2026-10-31T01:02:03.000Z",
+			"client: unhandled rejection on /sessions: nope at 2026-10-31T01:02:03.000Z",
+		]);
+	});
+
 	it("rejects a malformed body without logging", async () => {
 		const log = vi.spyOn(console, "log").mockImplementation(() => {});
 		expect((await post("not json")).status).toBe(400);

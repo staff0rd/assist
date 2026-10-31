@@ -4,6 +4,7 @@ import "react-diff-view/style/index.css";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import { AppShell } from "./App/AppShell";
+import { captureGlobalErrors } from "./clientFailures/captureGlobalErrors";
 import { useColorMode } from "./App/useColorMode";
 import { createDesignTheme } from "./designSystem/createDesignTheme";
 import { loadFontsBeforeTerminalsOpen } from "./designSystem/loadFontsBeforeTerminalsOpen";
@@ -44,6 +45,7 @@ export function App() {
 
 const root = document.getElementById("app");
 if (root) {
+	captureGlobalErrors();
 	void loadFontsBeforeTerminalsOpen().then(() => {
 		createRoot(root).render(<App />);
 	});

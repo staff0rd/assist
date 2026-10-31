@@ -1,4 +1,5 @@
 import { apiUrl } from "./apiUrl";
+import { markReported } from "./clientFailures/markReported";
 import { requestFailureRecorder } from "./clientFailures/requestFailureRecorder";
 import { timeoutSignal } from "./timeoutSignal";
 
@@ -32,10 +33,12 @@ export async function apiFetch(
 		return res;
 	} catch (error) {
 		const reason = signal.aborted ? signal.reason : error;
-		if (!signal.aborted || isTimeout(reason))
+		if (!signal.aborted || isTimeout(reason)) {
 			record({
 				error: reason instanceof Error ? reason.message : String(reason),
 			});
+			markReported(reason);
+		}
 		throw reason;
 	} finally {
 		clear();

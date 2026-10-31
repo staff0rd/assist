@@ -5,6 +5,8 @@ import { readJsonBody } from "../readJsonBody";
 import { clientErrorsSchema } from "./clientErrorsSchema";
 
 function formatClientFailure(failure: ClientFailure): string {
+	if (failure.kind)
+		return `client: ${failure.kind === "error" ? "uncaught error" : "unhandled rejection"} on ${failure.path}: ${failure.error ?? "unknown error"} at ${failure.at}`;
 	const target = failure.node
 		? `node=${failure.node} via ${failure.base}`
 		: failure.base;

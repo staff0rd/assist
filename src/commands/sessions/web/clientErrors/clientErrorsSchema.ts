@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const clientFailureSchema = z.object({
 	at: z.string(),
+	kind: z.enum(["error", "rejection"]).optional(),
 	method: z.string(),
 	path: z.string(),
 	base: z.string(),
