@@ -12,6 +12,7 @@ const scriptedConversation = {
 
 const sessionStepSchema = z.strictObject({
 	...scriptedConversation,
+	command: z.enum(["draft", "bug"]).optional(),
 	status: z.enum(["running", "waiting", "done"]).optional(),
 	node: z.string().min(1).optional(),
 	edits: z.record(z.string().min(1), z.string()).optional(),

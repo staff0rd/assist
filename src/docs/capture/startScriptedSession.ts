@@ -1,15 +1,22 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { buildSlashCommand } from "../../commands/backlog/launchMode";
 import type { CaptureSessionStep } from "../captureSetupStepSchema";
 import type { CaptureHome } from "./createCaptureHome";
 import { requestDaemon } from "./requestDaemon";
+
+function claudePrompt(step: CaptureSessionStep): string {
+	return step.command
+		? buildSlashCommand(step.command, step.prompt)
+		: step.prompt;
+}
 
 function scriptFakeClaude(home: string, step: CaptureSessionStep): void {
 	const file = join(home, ".fake-claude.json");
 	const scripts = existsSync(file)
 		? JSON.parse(readFileSync(file, "utf8"))
 		: {};
-	scripts[step.prompt] = {
+	scripts[claudePrompt(step)] = {
 		title: step.title,
 		reply: step.reply,
 		edits: step.edits,
@@ -24,6 +31,16 @@ function nodeHome(capture: CaptureHome, node: string | undefined) {
 	return peer.capture;
 }
 
+function createMessage(cwd: string, step: CaptureSessionStep) {
+	if (!step.command) return { type: "create", cwd, prompt: step.prompt };
+	return {
+		type: "create-assist",
+		cwd,
+		assistArgs: [step.command, "--once", step.prompt],
+		title: step.title,
+	};
+}
+
 export async function startScriptedSession(
 	capture: CaptureHome,
 	step: CaptureSessionStep,
@@ -32,11 +49,7 @@ export async function startScriptedSession(
 	scriptFakeClaude(target.home, step);
 	const { sessionId } = await requestDaemon(
 		target.home,
-		{
-			type: "create",
-			cwd: join(target.reposDir, step.repo),
-			prompt: step.prompt,
-		},
+		createMessage(join(target.reposDir, step.repo), step),
 		"created",
 	);
 	if (sessionId) capture.sessionIds.set(step.prompt, sessionId);
