@@ -16,7 +16,10 @@ import { useNativeStatusBarStyle } from "./useNativeStatusBarStyle";
 
 function Root() {
 	const { mode, toggle } = useColorMode();
-	const theme = useMemo(() => createDesignTheme(mode), [mode]);
+	const theme = useMemo(
+		() => createDesignTheme(mode, isNativeApp ? "touch" : "desktop"),
+		[mode],
+	);
 	useNativeStatusBarStyle(mode);
 
 	return (

@@ -1,4 +1,5 @@
 import type { Theme } from "@mui/material/styles";
+import { touchTarget } from "../designSystem/touchTarget";
 
 export const nodeListSx = {
 	group: {
@@ -16,7 +17,7 @@ export const nodeListSx = {
 	},
 	item: {
 		width: "100%",
-		minHeight: 48,
+		minHeight: touchTarget,
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "flex-start",

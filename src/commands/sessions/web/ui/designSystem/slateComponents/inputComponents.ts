@@ -6,14 +6,16 @@ const outline = ".MuiOutlinedInput-notchedOutline";
 export function inputComponents({
 	color,
 	radius,
+	density,
 }: ActiveTokens): Components<Theme> {
+	const fontSize = density.inputFontSize;
 	return {
 		MuiOutlinedInput: {
 			styleOverrides: {
 				root: {
 					backgroundColor: color.background,
 					borderRadius: radius.sm,
-					fontSize: 13,
+					fontSize,
 					color: color.text.primary,
 					[`& ${outline}`]: { borderColor: color.line },
 					[`&:hover ${outline}`]: { borderColor: color.text.disabled },
@@ -28,7 +30,7 @@ export function inputComponents({
 		MuiInputLabel: {
 			styleOverrides: {
 				root: {
-					fontSize: 13,
+					fontSize,
 					color: color.text.secondary,
 					"&.Mui-focused": { color: color.primary.main },
 				},

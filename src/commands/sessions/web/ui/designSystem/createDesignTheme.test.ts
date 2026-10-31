@@ -27,4 +27,16 @@ describe("createDesignTheme", () => {
 		expect(theme.typography.button.textTransform).toBe("none");
 		expect(theme.components?.MuiAppBar?.defaultProps?.elevation).toBe(0);
 	});
+
+	it.each(["desktop", "touch"] as const)(
+		"sizes controls for %s density",
+		(density) => {
+			const theme = createDesignTheme("dark", density);
+			const tokens = slateDesign.densities[density];
+			const root = theme.components?.MuiIconButton?.styleOverrides
+				?.root as Record<string, unknown>;
+			expect(theme.tokens.density).toEqual(tokens);
+			expect(root.width).toBe(tokens.iconButton.side);
+		},
+	);
 });

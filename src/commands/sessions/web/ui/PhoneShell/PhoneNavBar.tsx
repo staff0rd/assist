@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import type { Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 
@@ -9,13 +10,13 @@ const barSx = {
 } as const;
 
 const rowSx = {
-	height: 44,
+	height: (t: Theme) => t.tokens.density.bar,
 	display: "grid",
 	gridTemplateColumns:
 		"minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr)",
 	columnGap: 1,
 	alignItems: "center",
-	px: 1,
+	px: 1.5,
 } as const;
 
 const titleSx = {

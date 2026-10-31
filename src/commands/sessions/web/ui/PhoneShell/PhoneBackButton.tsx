@@ -1,9 +1,10 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ButtonBase from "@mui/material/ButtonBase";
 import { useNavigate } from "react-router";
+import { touchTarget } from "../designSystem/touchTarget";
 
 const backSx = {
-	minHeight: 44,
+	minHeight: touchTarget,
 	px: 0.5,
 	gap: 0.25,
 	color: "primary.main",

@@ -219,4 +219,22 @@ export const slateDesign: DesignTokens = {
 	},
 	radius: { sm: 6, md: 8 },
 	spacing: 8,
+	densities: {
+		desktop: {
+			target: 30,
+			bar: 40,
+			iconButton: { side: 30, icon: 18, smallSide: 26, smallIcon: 16 },
+			button: { minHeight: 30, fontSize: 13, paddingX: 12 },
+			switch: { width: 34, height: 20, thumb: 16 },
+			inputFontSize: 13,
+		},
+		touch: {
+			target: 48,
+			bar: 60,
+			iconButton: { side: 48, icon: 30, smallSide: 40, smallIcon: 24 },
+			button: { minHeight: 48, fontSize: 17, paddingX: 20 },
+			switch: { width: 51, height: 31, thumb: 27 },
+			inputFontSize: 16,
+		},
+	},
 };

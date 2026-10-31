@@ -3,15 +3,16 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import { raisedBgcolor } from "../designSystem/raisedBgcolor";
 import { NodeDot, type NodeDotTone } from "../HomeNodeGate/NodeDot";
+import { touchTarget } from "../designSystem/touchTarget";
 
 const chipSx = {
 	display: "inline-flex",
 	alignItems: "center",
 	gap: 0.75,
-	height: 32,
+	height: touchTarget,
 	pl: 1.125,
 	pr: 0.75,
-	borderRadius: "16px",
+	borderRadius: "24px",
 	border: 1,
 	borderColor: "divider",
 	bgcolor: raisedBgcolor,

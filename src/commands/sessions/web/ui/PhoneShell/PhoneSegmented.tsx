@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import type { ReactNode } from "react";
 import { raisedBgcolor } from "../designSystem/raisedBgcolor";
+import { touchTarget } from "../designSystem/touchTarget";
 
 const groupSx = {
 	display: "grid",
@@ -16,6 +17,7 @@ const groupSx = {
 } as const;
 
 const optionSx = {
+	minHeight: touchTarget,
 	py: 0.875,
 	gap: 0.75,
 	borderRadius: "7px",

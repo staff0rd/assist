@@ -3,6 +3,7 @@ import ButtonBase from "@mui/material/ButtonBase";
 import type { PointerEvent } from "react";
 import { raisedBgcolor } from "../designSystem/raisedBgcolor";
 import { phoneKeys } from "./phoneKeys";
+import { touchTarget } from "../designSystem/touchTarget";
 
 const stripSx = {
 	flex: "none",
@@ -20,8 +21,8 @@ const stripSx = {
 
 const keySx = {
 	flex: "none",
-	minWidth: 44,
-	height: 36,
+	minWidth: touchTarget,
+	height: touchTarget,
 	px: 1,
 	borderRadius: 1,
 	border: 1,

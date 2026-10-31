@@ -5,6 +5,7 @@ import InputBase from "@mui/material/InputBase";
 import type { PointerEvent } from "react";
 import { useState } from "react";
 import { raisedBgcolor } from "../designSystem/raisedBgcolor";
+import { touchTarget } from "../designSystem/touchTarget";
 
 const barSx = {
 	flex: "none",
@@ -18,10 +19,10 @@ const barSx = {
 
 const fieldSx = {
 	flex: 1,
-	minHeight: 40,
+	minHeight: touchTarget,
 	px: 1.75,
 	py: 1,
-	borderRadius: "20px",
+	borderRadius: "24px",
 	border: 1,
 	borderColor: "divider",
 	bgcolor: "background.default",
@@ -30,8 +31,6 @@ const fieldSx = {
 } as const;
 
 const sendSx = {
-	width: 40,
-	height: 40,
 	flex: "none",
 	bgcolor: "primary.main",
 	color: "primary.contrastText",

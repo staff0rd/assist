@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import { PhoneSheetGrab } from "../PhoneSheetGrab";
+import { touchTarget } from "../../designSystem/touchTarget";
 
 const headerSx = {
 	display: "grid",
@@ -15,7 +16,7 @@ const backSx = {
 	justifySelf: "start",
 	color: "primary.main",
 	fontSize: 16,
-	minHeight: 44,
+	minHeight: touchTarget,
 	px: 0.5,
 	borderRadius: 1,
 } as const;

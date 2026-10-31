@@ -67,6 +67,22 @@ type TypeScale = {
 	button: number;
 };
 
+export type Density = "desktop" | "touch";
+
+type DensityTokens = {
+	target: number;
+	bar: number;
+	iconButton: {
+		side: number;
+		icon: number;
+		smallSide: number;
+		smallIcon: number;
+	};
+	button: { minHeight: number; fontSize: number; paddingX: number };
+	switch: { width: number; height: number; thumb: number };
+	inputFontSize: number;
+};
+
 export type DesignTokens = {
 	dark: ModeTokens;
 	light: ModeTokens;
@@ -79,7 +95,8 @@ export type DesignTokens = {
 	};
 	radius: { sm: number; md: number };
 	spacing: number;
+	densities: Record<Density, DensityTokens>;
 };
 
-export type ActiveTokens = Omit<DesignTokens, "dark" | "light"> &
-	ModeTokens & { mode: PaletteMode };
+export type ActiveTokens = Omit<DesignTokens, "dark" | "light" | "densities"> &
+	ModeTokens & { mode: PaletteMode; density: DensityTokens };

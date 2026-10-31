@@ -1,16 +1,20 @@
 import type { Components, Theme } from "@mui/material/styles";
 import type { ActiveTokens } from "../DesignTokens";
 
-export function switchComponents({ color }: ActiveTokens): Components<Theme> {
+export function switchComponents({
+	color,
+	density,
+}: ActiveTokens): Components<Theme> {
+	const { width, height, thumb } = density.switch;
 	const pill = {
-		width: 34,
-		height: 20,
+		width,
+		height,
 		padding: 0,
 		"& .MuiSwitch-switchBase": {
 			padding: 2,
 			color: color.text.secondary,
 			"&.Mui-checked": {
-				transform: "translateX(14px)",
+				transform: `translateX(${width - height}px)`,
 				color: color.primary.contrastText,
 			},
 			"&.Mui-checked + .MuiSwitch-track": {
@@ -18,9 +22,9 @@ export function switchComponents({ color }: ActiveTokens): Components<Theme> {
 				opacity: 1,
 			},
 		},
-		"& .MuiSwitch-thumb": { width: 16, height: 16, boxShadow: "none" },
+		"& .MuiSwitch-thumb": { width: thumb, height: thumb, boxShadow: "none" },
 		"& .MuiSwitch-track": {
-			borderRadius: 10,
+			borderRadius: height / 2,
 			backgroundColor: color.line,
 			opacity: 1,
 		},

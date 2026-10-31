@@ -6,16 +6,17 @@ import { tonalButtonVariants } from "./tonalButtonVariants";
 const buttonIcon = { "& > *:nth-of-type(1)": { fontSize: 16 } };
 
 export function buttonComponents(tokens: ActiveTokens): Components<Theme> {
-	const { color, radius } = tokens;
+	const { color, radius, density } = tokens;
+	const { minHeight, fontSize, paddingX } = density.button;
 	return {
 		MuiButton: {
 			defaultProps: { disableElevation: true },
 			styleOverrides: {
 				root: {
-					minHeight: 30,
-					padding: "6px 12px",
+					minHeight,
+					padding: `6px ${paddingX}px`,
 					borderRadius: radius.sm,
-					fontSize: 13,
+					fontSize,
 					fontWeight: 600,
 					lineHeight: "18px",
 				},
