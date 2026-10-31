@@ -22,6 +22,12 @@ import { propose } from "./propose";
 let orm: Db;
 let close: () => Promise<void>;
 let claudeCode: boolean;
+let ledgerDir: string;
+
+vi.mock("./propose/proposalLedgerPath", () => ({
+	proposalLedgerPath: (sessionId: string) =>
+		join(ledgerDir, `session-${sessionId}.json`),
+}));
 
 const mockRequestPreviewDecision = vi.fn();
 
@@ -102,6 +108,7 @@ let logSpy: MockInstance<typeof console.log>;
 
 beforeEach(async () => {
 	({ orm, close } = await createTestDb());
+	ledgerDir = mkdtempSync(join(tmpdir(), "assist-proposals-"));
 	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	claudeCode = false;
 	process.exitCode = undefined;
@@ -389,5 +396,95 @@ describe("propose inside a web session", () => {
 		);
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 		expect(await allItems()).toEqual([]);
+	});
+});
+
+describe("re-propose after the earlier preview was approved", () => {
+	type Decision = { decision: "approve" };
+	const revised = {
+		...bug,
+		description: "**Repro:**\n\n1. File a bug\n2. Approve it",
+		acceptanceCriteria: ["The pane opens", "Exactly one item is created"],
+	};
+
+	function deferDecisions() {
+		const resolvers: ((d: Decision) => void)[] = [];
+		mockRequestPreviewDecision.mockImplementation(
+			() =>
+				new Promise<Decision>((resolve) => {
+					resolvers.push(resolve);
+				}),
+		);
+		return resolvers;
+	}
+
+	async function itemRows() {
+		return orm
+			.select({
+				id: items.id,
+				name: items.name,
+				description: items.description,
+				acceptanceCriteria: items.acceptanceCriteria,
+			})
+			.from(items);
+	}
+
+	beforeEach(() => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "7";
+	});
+
+	it("applies the revision to the item its predecessor just created", async () => {
+		const resolvers = deferDecisions();
+
+		const first = propose({ json: writePayload(bug) });
+		await vi.waitFor(() => expect(resolvers).toHaveLength(1));
+		const second = propose({ json: writePayload(revised) });
+		await vi.waitFor(() => expect(resolvers).toHaveLength(2));
+
+		resolvers[0]({ decision: "approve" });
+		await first;
+		resolvers[1]({ decision: "approve" });
+		await second;
+
+		const rows = await itemRows();
+		expect(rows).toHaveLength(1);
+		expect(rows[0].description).toBe(revised.description);
+		expect(JSON.parse(rows[0].acceptanceCriteria)).toEqual(
+			revised.acceptanceCriteria,
+		);
+		const output = logSpy.mock.calls.map((c) => c.join(" ")).join("\n");
+		expect(output).toContain(`Added item a${rows[0].id}`);
+		expect(output).toContain(`Updated item a${rows[0].id} with the revision`);
+	});
+
+	it("shows a re-propose that lands just after creation as an update", async () => {
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await propose({ json: writePayload(bug) });
+		const [created] = await itemRows();
+		await propose({ json: writePayload(revised) });
+
+		expect(mockRequestPreviewDecision.mock.calls[1][0].title).toBe(
+			`Update a${created.id}: Preview never opens`,
+		);
+		const rows = await itemRows();
+		expect(rows).toHaveLength(1);
+		expect(rows[0].description).toBe(revised.description);
+	});
+
+	it("creates a separate item for a proposal made well after the last one", async () => {
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+		const now = Date.now();
+		const clock = vi.spyOn(Date, "now").mockReturnValue(now);
+
+		await propose({ json: writePayload(bug) });
+		clock.mockReturnValue(now + 60_000);
+		await propose({ json: writePayload(story) });
+
+		expect(mockRequestPreviewDecision.mock.calls[1][0].title).toBe(
+			"Preview backlog items",
+		);
+		expect(await itemRows()).toHaveLength(2);
 	});
 });

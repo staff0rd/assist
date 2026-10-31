@@ -1,10 +1,10 @@
 import chalk from "chalk";
-import { createItemWithDefaults } from "./createItemWithDefaults";
 import { ensureRemoteOrigin } from "./ensureRemoteOrigin";
-import { formatItemId } from "./formatItemId";
 import { readProposedItem } from "./propose/readProposedItem";
 import { reviewProposal } from "./propose/reviewProposal";
+import { saveProposedItem } from "./propose/saveProposedItem";
 import { startProposedRun } from "./propose/startProposedRun";
+import { trackProposal } from "./propose/trackProposal";
 
 type ProposeOptions = {
 	json: string;
@@ -31,14 +31,19 @@ export async function propose(options: ProposeOptions): Promise<void> {
 
 	const item = await readProposedItem(options.json);
 
-	const approval = await reviewProposal(
-		item,
-		sessionId,
-		options.confirmed === true,
-	);
-	if (!approval) return;
+	const tracker = sessionId ? trackProposal(sessionId) : undefined;
+	try {
+		const approval = await reviewProposal(
+			item,
+			sessionId,
+			options.confirmed === true,
+			tracker?.knownPredecessor(),
+		);
+		if (!approval) return;
 
-	const id = await createItemWithDefaults(item);
-	console.log(chalk.green(`Added item ${formatItemId(id)}: ${item.name}`));
-	if (approval.autostart) await startProposedRun(id);
+		const id = await saveProposedItem(item, tracker);
+		if (approval.autostart) await startProposedRun(id);
+	} finally {
+		tracker?.close();
+	}
 }

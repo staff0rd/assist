@@ -3,6 +3,7 @@ import chalk from "chalk";
 import { isClaudeCode } from "../../../lib/isClaudeCode";
 import { renderMarkdownTerminal } from "../../../shared/renderMarkdownTerminal";
 import { awaitPreviewApproval } from "../../sessions/shared/awaitPreviewApproval";
+import { formatItemId } from "../formatItemId";
 import type { ProposedItem } from "./proposedItemSchema";
 import { renderProposedItem } from "./renderProposedItem";
 
@@ -12,6 +13,7 @@ export async function reviewProposal(
 	item: ProposedItem,
 	sessionId: string | undefined,
 	confirmed: boolean,
+	revises?: number,
 ): Promise<ProposalApproval | null> {
 	const body = renderProposedItem(item);
 
@@ -19,7 +21,10 @@ export async function reviewProposal(
 		const decision = await awaitPreviewApproval("Backlog item preview", {
 			sessionId,
 			requestId: randomUUID(),
-			title: item.name,
+			title:
+				revises === undefined
+					? item.name
+					: `Update ${formatItemId(revises)}: ${item.name}`,
 			body,
 			prNumber: null,
 			kind: "backlog-item",
