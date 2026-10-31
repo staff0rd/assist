@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { BacklogItemChip } from "../../../../../../BacklogItemChip";
 import { sessionTitle } from "../../../../../../sessionTitle";
+import { repoGroupCwd } from "../../../../../../../repoGroupKey";
 import type { SessionInfo } from "../../../../../../../types";
 
 const rowSx = {
@@ -24,7 +25,9 @@ export function SessionTopBarTitle({ session }: { session: SessionInfo }) {
 	const itemId = session.activity?.itemId;
 	return (
 		<Box sx={rowSx}>
-			{itemId != null && <BacklogItemChip itemId={itemId} cwd={session.cwd} />}
+			{itemId != null && (
+				<BacklogItemChip itemId={itemId} cwd={repoGroupCwd(session)} />
+			)}
 			<Typography variant="body1" sx={titleSx}>
 				{sessionTitle(session)}
 			</Typography>

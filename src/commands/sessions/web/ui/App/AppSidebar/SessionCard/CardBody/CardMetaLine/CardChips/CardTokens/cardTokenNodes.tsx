@@ -43,7 +43,7 @@ export function cardTokenNodes(
 		tokens.push({
 			key: "item",
 			badge: true,
-			node: <BacklogItemLink itemId={activity.itemId} cwd={session.cwd} />,
+			node: <BacklogItemLink itemId={activity.itemId} session={session} />,
 		});
 
 	if (tracker)

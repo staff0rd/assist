@@ -4,6 +4,7 @@ import { BacklogItemChip } from "../../../../../../BacklogItemChip";
 import { HarnessBadge } from "../../../../../HarnessBadge";
 import { isRepoScoped } from "../../../../../../isRepoScoped";
 import { repoLabel } from "../../../../../../repoLabel";
+import { repoGroupCwd } from "../../../../../../../repoGroupKey";
 import type { HistoricalSession } from "../../../../../../../types";
 import { useItemTrackers } from "../../../../../useItemTrackers";
 import { NodeBadge } from "../../../../../NodeBadge";
@@ -28,7 +29,7 @@ export function HistoryCardChips({ session }: { session: HistoricalSession }) {
 				/>
 			)}
 			{session.itemId != null && (
-				<BacklogItemChip itemId={session.itemId} cwd={session.cwd} />
+				<BacklogItemChip itemId={session.itemId} cwd={repoGroupCwd(session)} />
 			)}
 			<ItemTrackerLink variant="chip" tracker={trackerFor(session.itemId)} />
 		</>
