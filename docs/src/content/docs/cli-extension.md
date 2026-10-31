@@ -8,7 +8,6 @@ covers:
   - cli:browser status
   - cli:browser snapshot
   - cli:browser inspect
-  - cli:browser run
   - cli:netcap
   - cli:netcap extract-linkedin-posts
 ---
@@ -28,7 +27,6 @@ With the assist web server running and the extension installed, `assist browser`
 - `assist browser status` prints the extension's version, the tab's URL and whether the extension is active on that tab. If it is not, reload the tab.
 - `assist browser snapshot` saves the tab's page HTML to a file under `~/.assist/browser/` and prints its path.
 - `assist browser inspect <selector>` lists the elements matching a CSS selector, each with its size, text and the chain of elements it sits inside. `assist browser inspect --text <text>` lists the elements showing that text instead.
-- `assist browser run --file <script>` shows a JavaScript file in an approval panel on the tab and, once you click **Run**, prints what it returns, or its error. The script is the body of an async function, so `return` the value to print.
 
 Every `assist browser` command takes:
 
