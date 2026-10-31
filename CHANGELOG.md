@@ -1,3 +1,11 @@
+# [0.975.0](https://github.com/staff0rd/assist/compare/v0.974.2...v0.975.0) (2026-10-31)
+
+
+### Features
+
+* assist icon in script approval panel ([ccdea1f](https://github.com/staff0rd/assist/commit/ccdea1f3c02e120a07af537f6fc56c15b776c3b6))
+* report apiFetch failures to server ([49f75e8](https://github.com/staff0rd/assist/commit/49f75e811c2b9fb7219eae5febd65ceeb0086ec1))
+
 ## [0.974.2](https://github.com/staff0rd/assist/compare/v0.974.1...v0.974.2) (2026-10-31)
 
 
