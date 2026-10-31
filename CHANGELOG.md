@@ -1,3 +1,10 @@
+## [0.1007.1](https://github.com/staff0rd/assist/compare/v0.1007.0...v0.1007.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* link item chips to the repo clone ([10ae3f9](https://github.com/staff0rd/assist/commit/10ae3f92966383ad70f6fa9dafef99e941f5c145))
+
 # [0.1007.0](https://github.com/staff0rd/assist/compare/v0.1006.0...v0.1007.0) (2026-10-31)
 
 
