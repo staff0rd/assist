@@ -1,3 +1,11 @@
+# [0.991.0](https://github.com/staff0rd/assist/compare/v0.990.1...v0.991.0) (2026-10-31)
+
+
+### Features
+
+* register docs diff in preview ([28af6d9](https://github.com/staff0rd/assist/commit/28af6d97400a16dc64316efea0e976703432689e))
+* seed command sessions in capture ([908e89d](https://github.com/staff0rd/assist/commit/908e89d70219acbb98f4dc166776648e8d2e3f56))
+
 ## [0.990.1](https://github.com/staff0rd/assist/compare/v0.990.0...v0.990.1) (2026-10-31)
 
 
