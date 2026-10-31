@@ -1,3 +1,10 @@
+# [0.1008.0](https://github.com/staff0rd/assist/compare/v0.1007.1...v0.1008.0) (2026-10-31)
+
+
+### Features
+
+* send docs unlock PIN to viewer node ([0addbba](https://github.com/staff0rd/assist/commit/0addbbaec1a183aed5020376318b2c2b3610c2d6))
+
 ## [0.1007.1](https://github.com/staff0rd/assist/compare/v0.1007.0...v0.1007.1) (2026-10-31)
 
 
