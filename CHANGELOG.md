@@ -1,3 +1,10 @@
+# [0.1007.0](https://github.com/staff0rd/assist/compare/v0.1006.0...v0.1007.0) (2026-10-31)
+
+
+### Features
+
+* shift skips the Done confirm dialog ([9896c10](https://github.com/staff0rd/assist/commit/9896c1012f5e0d1a4f8be38adf142dccfaa284cf))
+
 # [0.1006.0](https://github.com/staff0rd/assist/compare/v0.1005.0...v0.1006.0) (2026-10-31)
 
 
