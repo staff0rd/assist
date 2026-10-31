@@ -1,3 +1,10 @@
+# [0.995.0](https://github.com/staff0rd/assist/compare/v0.994.0...v0.995.0) (2026-10-31)
+
+
+### Features
+
+* reject ask-question over 30 words ([4d24e23](https://github.com/staff0rd/assist/commit/4d24e23d52f8e7c768ded9d701448f93b6805509))
+
 # [0.994.0](https://github.com/staff0rd/assist/compare/v0.993.0...v0.994.0) (2026-10-31)
 
 
