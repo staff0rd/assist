@@ -28,13 +28,7 @@ export async function docsUnlock(): Promise<void> {
 		process.exitCode = 1;
 		return;
 	}
-	const phase = found.item.currentPhase;
-	if (!phase) {
-		fail(
-			`${formatItemId(itemId)} has no current phase. Docs unlock applies to the phase a session is running.`,
-		);
-		return;
-	}
+	const phase = found.item.currentPhase ?? 1;
 	const label = `${formatItemId(itemId)} ${found.item.name} (phase ${phase})`;
 
 	const pin = randomInt(0, 1000).toString().padStart(3, "0");

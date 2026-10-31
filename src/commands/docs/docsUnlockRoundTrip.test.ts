@@ -126,16 +126,25 @@ describe("docs unlock -> confirm round-trip", () => {
 		expect(await unlockRefs()).toEqual([]);
 	});
 
-	it("fails for an item with no current phase", async () => {
+	it("treats an item with no stored current phase as running phase 1", async () => {
 		const id = await addStory("Docs landing page");
 		await orm.update(items).set({ currentPhase: null }).where(eq(items.id, id));
 		process.env[ENV] = String(id);
 
 		await docsUnlock();
+		expect(mockShowNotification).toHaveBeenCalled();
 
-		expect(process.exitCode).toBe(1);
-		expect(mockShowNotification).not.toHaveBeenCalled();
-		expect(issuedPins()).toEqual([]);
+		const [pin] = issuedPins();
+		await docsConfirm(pin);
+
+		expect(process.exitCode).toBeUndefined();
+		expect(await unlockRefs()).toEqual([
+			expect.objectContaining({ itemId: id, ref: "phase-1" }),
+		]);
+		expect(await isDocsLocked()).toBe(false);
+
+		await orm.update(items).set({ currentPhase: 2 }).where(eq(items.id, id));
+		expect(await isDocsLocked()).toBe(true);
 	});
 
 	it("fails without a session item", async () => {

@@ -24,7 +24,10 @@ async function hasOpenDocsUnlock(itemId: number): Promise<boolean> {
 			and(
 				eq(itemGitRefs.itemId, itemId),
 				eq(itemGitRefs.kind, "docs-unlock"),
-				eq(itemGitRefs.ref, sql`'phase-' || ${items.currentPhase}`),
+				eq(
+					itemGitRefs.ref,
+					sql`'phase-' || coalesce(${items.currentPhase}, 1)`,
+				),
 				notInArray(items.status, ["done", "wontdo"]),
 			),
 		)

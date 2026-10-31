@@ -24,7 +24,7 @@ export async function docsConfirm(pin: string): Promise<void> {
 	}
 
 	const label = `${formatItemId(state.itemId)} ${found.item.name}`;
-	if (found.item.currentPhase !== state.phase) {
+	if ((found.item.currentPhase ?? 1) !== state.phase) {
 		console.error(
 			chalk.red(
 				`${label} has moved on from phase ${state.phase} since the unlock was requested. Nothing was approved; request a new unlock from the current phase.`,
