@@ -4,13 +4,7 @@ import type { NodeHealth } from "./probeHealth";
 import type { SavedNode } from "./SavedNode";
 import { useHomeConnection } from "./useHomeConnection";
 import { useLoadedNodeStore } from "./useHomeNode/useLoadedNodeStore";
-
-function upsert(nodes: SavedNode[], oldUrl: string, node: SavedNode) {
-	const rest = nodes.filter((n) => n.url !== node.url || n.url === oldUrl);
-	return rest.some((n) => n.url === oldUrl)
-		? rest.map((n) => (n.url === oldUrl ? node : n))
-		: [...rest, node];
-}
+import { upsert } from "./useHomeNode/upsert";
 
 export function useHomeNode() {
 	const [store, setStore] = useLoadedNodeStore();
@@ -44,6 +38,11 @@ export function useHomeNode() {
 		update({ nodes: [node], homeUrl: node.url });
 	};
 
+	const adoptNode = (node: SavedNode, health: NodeHealth) => {
+		conn.markConnected(node.url, health);
+		update({ nodes: upsert(nodes, node.url, node), homeUrl: node.url });
+	};
+
 	return {
 		loaded: !!store,
 		nodes,
@@ -53,6 +52,7 @@ export function useHomeNode() {
 		saveNode,
 		removeNode,
 		connectFirstNode,
+		adoptNode,
 	};
 }
 

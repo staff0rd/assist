@@ -1,4 +1,6 @@
 import { Fragment, type ReactNode } from "react";
+import { AddNodeLinkNotice } from "./AddNodeLinkNotice";
+import { useAddNodeLink } from "./useAddNodeLink";
 import { HomeNodeConnecting } from "./HomeNodeConnecting";
 import { HomeNodeContext } from "./useHomeNodeContext";
 import { HomeNodeSetup } from "./HomeNodeSetup";
@@ -28,12 +30,27 @@ function GateScreen({
 	return <Fragment key={home.url}>{children}</Fragment>;
 }
 
-export function NativeHomeNodeGate({ children }: { children: ReactNode }) {
-	const homeNode = useHomeNode();
-	if (!homeNode.loaded) return null;
+function LoadedGate({
+	homeNode,
+	children,
+}: {
+	homeNode: HomeNodeApi;
+	children: ReactNode;
+}) {
+	const addNodeLink = useAddNodeLink(homeNode.adoptNode);
 	return (
 		<HomeNodeContext.Provider value={homeNode}>
 			<GateScreen homeNode={homeNode}>{children}</GateScreen>
+			<AddNodeLinkNotice
+				status={addNodeLink.status}
+				onClose={addNodeLink.dismiss}
+			/>
 		</HomeNodeContext.Provider>
 	);
+}
+
+export function NativeHomeNodeGate({ children }: { children: ReactNode }) {
+	const homeNode = useHomeNode();
+	if (!homeNode.loaded) return null;
+	return <LoadedGate homeNode={homeNode}>{children}</LoadedGate>;
 }
