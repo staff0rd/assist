@@ -96,6 +96,41 @@ describe("askQuestion", () => {
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 	});
 
+	const words = (count: number) =>
+		Array.from({ length: count }, (_, i) => `w${i}`).join(" ");
+
+	it("opens the form for a question at the 30-word limit", async () => {
+		stdin({ questions: [{ ...questions[0], question: words(30) }] });
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await askQuestion({ json: "-" });
+
+		expect(mockRequestPreviewDecision).toHaveBeenCalled();
+	});
+
+	it("rejects questions over 30 words before any session check", async () => {
+		vi.stubEnv("ASSIST_SESSION", "");
+		stdin({
+			questions: [
+				{ ...questions[0], question: words(31) },
+				questions[1],
+				{ ...questions[1], header: "Long", question: `  ${words(45)}\n` },
+			],
+		});
+
+		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
+		expect(errored.join("\n")).toBe(
+			[
+				"Error: questions must be 30 words or fewer:",
+				"- Layout: 31 words",
+				"- Long: 45 words",
+				"Shorten these questions and re-run assist ask-question.",
+			].join("\n"),
+		);
+		expect(mockIsLive).not.toHaveBeenCalled();
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
 	it("tells Claude to use the built-in tool outside a session", async () => {
 		vi.stubEnv("ASSIST_SESSION", "");
 		stdin({ questions });

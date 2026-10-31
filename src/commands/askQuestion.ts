@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { loadConfig } from "../shared/loadConfig";
 import { formatAskQuestionAnswers } from "./askQuestion/formatAskQuestionAnswers";
+import { rejectLongQuestions } from "./askQuestion/rejectLongQuestions";
 import { readJsonPayload } from "./backlog/readJsonPayload";
 import { askQuestionInputSchema } from "./sessions/shared/askQuestionInputSchema";
 import { awaitPreviewApproval } from "./sessions/shared/awaitPreviewApproval";
@@ -17,6 +18,7 @@ export async function askQuestion(options: { json: string }): Promise<void> {
 		askQuestionInputSchema,
 		"AskUserQuestion input",
 	);
+	rejectLongQuestions(questions);
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId)
 		useBuiltIn("not running in an assist session");
