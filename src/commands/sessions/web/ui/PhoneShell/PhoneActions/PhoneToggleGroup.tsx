@@ -6,7 +6,7 @@ import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneSheetToggle } from "./PhoneSheetToggle";
 
 const toggleLabels = {
-	autoApprove: "Auto approve & start",
+	autoApprove: "Auto start",
 	autoAdvance: "Auto-advance phases",
 };
 

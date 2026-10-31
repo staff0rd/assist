@@ -16,9 +16,9 @@ export function sessionToggles(session: SessionInfo): SessionToggle[] {
 		const checked = session.autoApprove ?? false;
 		toggles.push({
 			key: "autoApprove",
-			label: "Auto approve & start",
+			label: "Auto start",
 			checked,
-			...(checked ? { caption: "will approve & start" } : {}),
+			...(checked ? { caption: "will auto start" } : {}),
 		});
 	}
 

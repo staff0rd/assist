@@ -17,9 +17,7 @@ describe("sessionToggles auto-approve", () => {
 				sessionToggles(
 					makeSessionInfo({ commandType: "assist", assistArgs: [command] }),
 				),
-			).toEqual([
-				{ key: "autoApprove", label: "Auto approve & start", checked: false },
-			]);
+			).toEqual([{ key: "autoApprove", label: "Auto start", checked: false }]);
 		},
 	);
 
@@ -35,9 +33,9 @@ describe("sessionToggles auto-approve", () => {
 		).toEqual([
 			{
 				key: "autoApprove",
-				label: "Auto approve & start",
+				label: "Auto start",
 				checked: true,
-				caption: "will approve & start",
+				caption: "will auto start",
 			},
 		]);
 	});
