@@ -11,7 +11,7 @@ export function allowAppOrigin(
 	res.setHeader("Access-Control-Allow-Origin", origin as string);
 	res.setHeader("Vary", "Origin");
 	if (req.method !== "OPTIONS") return false;
-	res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
 	res.setHeader(
 		"Access-Control-Allow-Headers",
 		req.headers["access-control-request-headers"] ?? "Content-Type",

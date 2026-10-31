@@ -37,6 +37,15 @@ describe("allowAppOrigin", () => {
 		expect(res.writeHead).toHaveBeenCalledWith(204);
 	});
 
+	it("allows the methods the backlog item routes use", () => {
+		const { res } = run("OPTIONS", "/api/items/a1", "capacitor://localhost");
+		const methods = res.setHeader.mock.calls.find(
+			([name]) => name === "Access-Control-Allow-Methods",
+		)?.[1];
+		expect(methods).toContain("PATCH");
+		expect(methods).toContain("DELETE");
+	});
+
 	it("leaves other origins and non-api paths alone", () => {
 		expect(run("GET", "/api/health", "https://evil.example").allowOrigin).toBe(
 			undefined,
