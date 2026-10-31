@@ -3,6 +3,7 @@ import { touchTarget } from "../designSystem/touchTarget";
 
 export const nodeListSx = {
 	group: {
+		flexShrink: 0,
 		mx: 2,
 		my: 0.75,
 		borderRadius: "12px",

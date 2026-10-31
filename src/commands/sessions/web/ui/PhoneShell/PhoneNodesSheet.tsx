@@ -2,53 +2,44 @@ import Drawer from "@mui/material/Drawer";
 import { useState } from "react";
 import type { SavedNode } from "../HomeNodeGate/SavedNode";
 import { useHomeNodeContext } from "../HomeNodeGate/useHomeNodeContext";
-import { PhoneNodeEditView } from "./PhoneNodesSheet/PhoneNodeEditView";
-import { PhoneNodesList } from "./PhoneNodesSheet/PhoneNodesList";
+import type { PhoneNodeUpdates } from "./PhoneNodeUpdates/usePhoneNodeUpdates";
+import { PhoneNodesSheetBody } from "./PhoneNodesSheet/PhoneNodesSheetBody";
 import { phoneSheetPaperSx } from "./phoneSheetPaperSx";
 import type { NodesSheetStatus } from "./PhoneNodesSheet/PhoneNodeStatus";
 
 export type NodesSheetView =
 	| { kind: "list" }
 	| { kind: "add" }
-	| { kind: "edit"; node: SavedNode };
+	| { kind: "edit"; node: SavedNode }
+	| { kind: "update"; name: string };
 
 type Props = {
 	view: NodesSheetView | null;
 	onView: (view: NodesSheetView | null) => void;
 	status?: NodesSheetStatus;
+	updates?: PhoneNodeUpdates;
 };
 
-export function PhoneNodesSheet({ view, onView, status }: Props) {
+export function PhoneNodesSheet({ view, onView, status, updates }: Props) {
 	const homeNode = useHomeNodeContext();
 	const [lastView, setLastView] = useState<NodesSheetView>({ kind: "list" });
 	if (view && view !== lastView) setLastView(view);
 	if (!homeNode) return null;
 
-	const shown = view ?? lastView;
-	const close = () => onView(null);
-
 	return (
 		<Drawer
 			anchor="bottom"
 			open={!!view}
-			onClose={close}
+			onClose={() => onView(null)}
 			slotProps={{ paper: { sx: phoneSheetPaperSx } }}
 		>
-			{shown.kind === "list" ? (
-				<PhoneNodesList
-					homeNode={homeNode}
-					status={status}
-					onClose={close}
-					onEdit={(node) => onView({ kind: "edit", node })}
-					onAdd={() => onView({ kind: "add" })}
-				/>
-			) : (
-				<PhoneNodeEditView
-					homeNode={homeNode}
-					node={shown.kind === "edit" ? shown.node : undefined}
-					onDone={() => onView({ kind: "list" })}
-				/>
-			)}
+			<PhoneNodesSheetBody
+				homeNode={homeNode}
+				shown={view ?? lastView}
+				onView={onView}
+				status={status}
+				updates={updates}
+			/>
 		</Drawer>
 	);
 }

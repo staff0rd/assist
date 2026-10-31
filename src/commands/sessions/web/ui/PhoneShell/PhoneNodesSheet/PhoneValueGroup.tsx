@@ -6,7 +6,7 @@ export function PhoneValueGroup({
 	rows,
 }: {
 	title: string;
-	rows: { key: string; label: string; value: string }[];
+	rows: { key: string; label: string; value: string; color?: string }[];
 }) {
 	return (
 		<>
@@ -19,7 +19,11 @@ export function PhoneValueGroup({
 						</Box>
 						<Box
 							component="span"
-							sx={[nodeListSx.end, { fontFamily: "fontFamilyMono" }]}
+							sx={[
+								nodeListSx.end,
+								{ fontFamily: "fontFamilyMono" },
+								row.color ? { color: row.color } : {},
+							]}
 						>
 							{row.value}
 						</Box>

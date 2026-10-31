@@ -1,39 +1,31 @@
 import Box from "@mui/material/Box";
-import { useState } from "react";
 import { StarredSessionsProvider } from "./App/useStarredSessions";
 import { PhoneActionsLayer } from "./PhoneShell/PhoneActions/PhoneActionsLayer";
-import {
-	type NodesSheetView,
-	PhoneNodesSheet,
-} from "./PhoneShell/PhoneNodesSheet";
+import { PhoneNodesSheet } from "./PhoneShell/PhoneNodesSheet";
+import { usePhoneNodeUpdates } from "./PhoneShell/PhoneNodeUpdates/usePhoneNodeUpdates";
 import { PhoneNewSessionSheet } from "./PhoneShell/PhoneNewSession/PhoneNewSessionSheet";
 import { useNewSessionSheet } from "./PhoneShell/PhoneNewSession/useNewSessionSheet";
 import { PhoneRoutes } from "./PhoneShell/PhoneRoutes";
+import { phoneShellSx } from "./PhoneShell/phoneShellSx";
 import { useHealthRecheck } from "./PhoneShell/useHealthRecheck";
 import { useKeyboardViewport } from "./PhoneShell/useKeyboardViewport";
+import { usePhoneNodesSheet } from "./PhoneShell/usePhoneNodesSheet";
 import { useSessionSocket } from "./useSessionSocket";
-
-const shellSx = {
-	position: "fixed",
-	left: 0,
-	right: 0,
-	display: "flex",
-	flexDirection: "column",
-	overflow: "hidden",
-	bgcolor: "background.default",
-	color: "text.primary",
-} as const;
 
 export function PhoneShell() {
 	const socket = useSessionSocket();
 	const viewport = useKeyboardViewport();
-	const [sheet, setSheet] = useState<NodesSheetView | null>(null);
+	const sheet = usePhoneNodesSheet(socket.nodes?.local);
 	const newSession = useNewSessionSheet();
 	useHealthRecheck(socket.reconnecting);
+	const updates = usePhoneNodeUpdates(
+		socket.nodeSelection,
+		socket.reconnecting,
+	);
 
 	return (
 		<Box
-			sx={shellSx}
+			sx={phoneShellSx}
 			style={{ top: viewport.offsetTop, height: viewport.height }}
 			data-testid="phone-shell"
 		>
@@ -45,7 +37,8 @@ export function PhoneShell() {
 					<PhoneRoutes
 						socket={socket}
 						keyboardOpen={viewport.keyboardOpen}
-						onOpenNodes={() => setSheet({ kind: "list" })}
+						onOpenNodes={sheet.openList}
+						onOpenHomeUpdate={sheet.openHomeUpdate}
 						onNewSession={newSession.show}
 					/>
 				</PhoneActionsLayer>
@@ -56,7 +49,12 @@ export function PhoneShell() {
 				onClose={newSession.close}
 				socket={socket}
 			/>
-			<PhoneNodesSheet view={sheet} onView={setSheet} status={socket} />
+			<PhoneNodesSheet
+				view={sheet.view}
+				onView={sheet.setView}
+				status={socket}
+				updates={updates}
+			/>
 		</Box>
 	);
 }

@@ -2,7 +2,9 @@ import Box from "@mui/material/Box";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SavedNode } from "../../HomeNodeGate/SavedNode";
 import type { HomeNodeApi } from "../../HomeNodeGate/useHomeNode";
+import type { PhoneNodeUpdates } from "../PhoneNodeUpdates/usePhoneNodeUpdates";
 import { type NodesSheetStatus, PhoneNodeStatus } from "./PhoneNodeStatus";
+import { PhoneNodeUpdatesGroup } from "./PhoneNodeUpdatesGroup";
 import { PhoneSavedNodes } from "./PhoneSavedNodes";
 import { PhoneSheetHeader } from "./PhoneSheetHeader";
 import { PhoneVersions } from "./PhoneVersions";
@@ -13,6 +15,8 @@ type Props = {
 	onClose: () => void;
 	onEdit: (node: SavedNode) => void;
 	onAdd: () => void;
+	updates: PhoneNodeUpdates | undefined;
+	onOpenUpdate: (name: string) => void;
 };
 
 export function PhoneNodesList({
@@ -21,6 +25,8 @@ export function PhoneNodesList({
 	onClose,
 	onEdit,
 	onAdd,
+	updates,
+	onOpenUpdate,
 }: Props) {
 	const { connection } = homeNode;
 	const homeVersion =
@@ -40,6 +46,9 @@ export function PhoneNodesList({
 				onAdd={onAdd}
 			/>
 			{status && <PhoneNodeStatus status={status} homeVersion={homeVersion} />}
+			{updates && (
+				<PhoneNodeUpdatesGroup updates={updates} onOpen={onOpenUpdate} />
+			)}
 			<PhoneVersions
 				homeName={homeNode.home?.name ?? "Home node"}
 				homeVersion={homeVersion}

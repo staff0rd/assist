@@ -1,21 +1,14 @@
 import { useEffect, useState } from "react";
-import { apiFetch } from "../../../../apiFetch";
 import type { SessionInfo } from "../../../../types";
 import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
 import { useSessionLaunchContext } from "../../../../useSessionLaunchContext";
 import { postRestart } from "../../postRestart";
+import { postSelfUpdate } from "../../postSelfUpdate";
 import { useUpdateCompletion } from "../../useUpdateCompletion";
 import { useAwaitPeerReturn } from "./useAwaitPeerReturn";
 
 const describeUpdated = (peer: string, version?: string) =>
 	version ? `${peer} updated to v${version}` : `${peer} updated`;
-
-function postSelfUpdate(peer: string): Promise<Response> {
-	return apiFetch(`/api/self-update?node=${encodeURIComponent(peer)}`, {
-		method: "POST",
-		timeoutMs: 660_000,
-	});
-}
 
 export function usePeerUpdate(sessions: SessionInfo[]) {
 	const { nodes } = useNodeSelectionContext();

@@ -11,11 +11,13 @@ export function PhoneRoutes({
 	socket,
 	keyboardOpen,
 	onOpenNodes,
+	onOpenHomeUpdate,
 	onNewSession,
 }: {
 	socket: SessionSocket;
 	keyboardOpen: boolean;
 	onOpenNodes: () => void;
+	onOpenHomeUpdate: () => void;
 	onNewSession: () => void;
 }) {
 	const localNode = socket.nodes?.local;
@@ -32,6 +34,7 @@ export function PhoneRoutes({
 						reconnecting={socket.reconnecting}
 						onRefresh={refresh}
 						onOpenNodes={onOpenNodes}
+						onOpenHomeUpdate={onOpenHomeUpdate}
 						onNewSession={onNewSession}
 					/>
 				}
