@@ -32,10 +32,12 @@ function Path() {
 }
 
 let go: (path: string) => void;
+let back: () => void;
 
 function Go() {
 	const navigate = useNavigate();
 	go = (path) => act(() => navigate(path));
+	back = () => act(() => navigate(-1));
 	return null;
 }
 
@@ -123,6 +125,17 @@ describe("PhoneTabBar", () => {
 		go("/");
 		tap("Backlog");
 		expect(path()).toBe("/backlog/12/criteria?cwd=%2Frepo");
+	});
+
+	it("puts the tab's root under a restored screen so back stays in the tab", () => {
+		renderAt("/backlog?repo=origin");
+		go("/backlog/12?cwd=%2Frepo");
+		go("/session/abc");
+		go("/");
+		tap("Backlog");
+		expect(path()).toBe("/backlog/12?cwd=%2Frepo");
+		back();
+		expect(path()).toBe("/backlog?repo=origin");
 	});
 
 	it("returns the active tab to its root list on re-tap", () => {

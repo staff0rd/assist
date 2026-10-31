@@ -11,7 +11,7 @@ import { usePhoneTabMemory } from "./PhoneTabBar/usePhoneTabMemory";
 export function PhoneTabBar({ sessions }: { sessions: SessionInfo[] }) {
 	const { pathname, search } = useLocation();
 	const navigate = useNavigate();
-	const lastPath = usePhoneTabMemory();
+	const restore = usePhoneTabMemory();
 	const active = activePhoneTab(pathname);
 	if (!active) return null;
 	const needsYou = groupSessionsByStatus(sessions).needsYou.length;
@@ -26,7 +26,7 @@ export function PhoneTabBar({ sessions }: { sessions: SessionInfo[] }) {
 					onClick={() =>
 						path === active.path
 							? navigate({ pathname: path, search }, { replace: true })
-							: navigate(lastPath(path))
+							: restore(path).forEach((entry) => navigate(entry))
 					}
 				>
 					<Box sx={sx.iconWrap}>
