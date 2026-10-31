@@ -1,3 +1,10 @@
+# [0.981.0](https://github.com/staff0rd/assist/compare/v0.980.0...v0.981.0) (2026-10-31)
+
+
+### Features
+
+* report dropped UI request errors ([0f8fbbb](https://github.com/staff0rd/assist/commit/0f8fbbb3ddd861a9e9c95fd212a6ba3e9a64094e))
+
 # [0.980.0](https://github.com/staff0rd/assist/compare/v0.979.1...v0.980.0) (2026-10-31)
 
 
