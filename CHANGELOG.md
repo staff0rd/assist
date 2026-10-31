@@ -1,3 +1,15 @@
+# [0.994.0](https://github.com/staff0rd/assist/compare/v0.993.0...v0.994.0) (2026-10-31)
+
+
+### Bug Fixes
+
+* no duplicate item on re-propose ([7162c69](https://github.com/staff0rd/assist/commit/7162c69b4b27ae8bb669d549ecd7f9616c2eade0))
+
+
+### Features
+
+* find changed docs pages in preview ([2fa46c0](https://github.com/staff0rd/assist/commit/2fa46c0d0c483c04bf29b8b549cfc7790193656e))
+
 # [0.993.0](https://github.com/staff0rd/assist/compare/v0.992.0...v0.993.0) (2026-10-31)
 
 
