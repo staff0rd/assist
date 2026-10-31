@@ -1,3 +1,10 @@
+# [0.1004.0](https://github.com/staff0rd/assist/compare/v0.1003.0...v0.1004.0) (2026-10-31)
+
+
+### Features
+
+* iOS app adds node from QR link ([cfb5f60](https://github.com/staff0rd/assist/commit/cfb5f60917a7d1e9622d188f6e1b2e77101f3b4d))
+
 # [0.1003.0](https://github.com/staff0rd/assist/compare/v0.1002.0...v0.1003.0) (2026-10-31)
 
 
