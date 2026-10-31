@@ -18,7 +18,7 @@ export function createInboxScanner() {
 		scanning = true;
 		runLog.begin();
 		notify("inbox");
-		const outcome = await runLoggedInboxScan(reason, runLog.add);
+		const outcome = await runLoggedInboxScan(reason, runLog);
 		lastError = outcome.ok ? undefined : outcome.error;
 		await runLog.end(outcome);
 		scanning = false;

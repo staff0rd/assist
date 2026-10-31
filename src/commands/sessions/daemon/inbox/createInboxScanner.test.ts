@@ -1,10 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { InboxScanUsage } from "../../../inbox/InboxScanEvent";
 import { createInboxScanner } from "./createInboxScanner";
 
 const mockInterval = vi.fn();
 const mockRunScan = vi.fn();
 const mockLastScan = vi.fn();
 const mockDaemonLog = vi.fn();
+const usage: InboxScanUsage = {
+	input: 1,
+	output: 2,
+	cacheRead: 3,
+	cacheWrite: 4,
+	costUsd: 0.19,
+	durationMs: 44000,
+};
+type ScanReply = { flagged: number; added: number; usage: typeof usage };
 
 vi.mock("../../../inbox/readInboxIntervalMinutes", () => ({
 	readInboxIntervalMinutes: () => mockInterval(),
@@ -36,7 +46,7 @@ describe("createInboxScanner", () => {
 		vi.clearAllMocks();
 		vi.useFakeTimers();
 		vi.stubEnv("ASSIST_DATABASE_URL", "postgres://test");
-		mockRunScan.mockResolvedValue({ flagged: 0, added: 0 });
+		mockRunScan.mockResolvedValue({ flagged: 0, added: 0, usage });
 		mockReadLastRun.mockResolvedValue(undefined);
 		mockWriteLastRun.mockResolvedValue(undefined);
 	});
@@ -85,7 +95,7 @@ describe("createInboxScanner", () => {
 
 	it("scans on request, notifies at start and end, and refuses to overlap", async () => {
 		mockInterval.mockReturnValue(undefined);
-		let finish: (value: { flagged: number; added: number }) => void = () => {};
+		let finish: (value: ScanReply) => void = () => {};
 		mockRunScan.mockReturnValue(
 			new Promise((resolve) => {
 				finish = resolve;
@@ -100,7 +110,7 @@ describe("createInboxScanner", () => {
 		expect(scanner.status().scanning).toBe(true);
 		expect(scanner.scanNow()).toBe(false);
 
-		finish({ flagged: 1, added: 1 });
+		finish({ flagged: 1, added: 1, usage });
 		await vi.advanceTimersByTimeAsync(0);
 		expect(scanner.status()).toMatchObject({
 			scanning: false,
@@ -113,14 +123,18 @@ describe("createInboxScanner", () => {
 
 	it("streams events, throttles activity notifications and persists the run", async () => {
 		mockInterval.mockReturnValue(undefined);
-		let finish: (value: { flagged: number; added: number }) => void = () => {};
+		let finish: (value: ScanReply) => void = () => {};
 		let onEvent: (event: unknown) => void = () => {};
-		mockRunScan.mockImplementation((options: { onEvent: typeof onEvent }) => {
-			onEvent = options.onEvent;
-			return new Promise((resolve) => {
-				finish = resolve;
-			});
-		});
+		let onUsage: (value: typeof usage) => void = () => {};
+		mockRunScan.mockImplementation(
+			(options: { onEvent: typeof onEvent; onUsage: typeof onUsage }) => {
+				onEvent = options.onEvent;
+				onUsage = options.onUsage;
+				return new Promise((resolve) => {
+					finish = resolve;
+				});
+			},
+		);
 		const onChange = vi.fn();
 		const scanner = createInboxScanner();
 		stop = scanner.start(onChange);
@@ -135,14 +149,18 @@ describe("createInboxScanner", () => {
 		};
 		onEvent(event);
 		onEvent(event);
+		onUsage({ ...usage, costUsd: null });
 		expect(scanner.status().run?.events).toHaveLength(2);
+		expect(scanner.status().run?.usage?.costUsd).toBeNull();
 		await vi.advanceTimersByTimeAsync(1000);
 		expect(onChange.mock.calls).toEqual([["inbox"], ["inbox-activity"]]);
 
-		finish({ flagged: 3, added: 1 });
+		onUsage(usage);
+		finish({ flagged: 3, added: 1, usage });
 		await vi.advanceTimersByTimeAsync(0);
 		const run = scanner.status().run;
 		expect(run?.status).toBe("finished");
+		expect(run?.usage).toEqual(usage);
 		expect(run?.events.at(-1)).toMatchObject({
 			kind: "result",
 			detail: "Flagged 3 message(s), 1 new",

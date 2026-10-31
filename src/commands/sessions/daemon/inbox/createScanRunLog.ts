@@ -1,23 +1,20 @@
+import { emptyScanUsage } from "../../../inbox/emptyScanUsage";
 import type {
 	InboxScanEvent,
 	InboxScanRun,
+	InboxScanUsage,
 } from "../../../inbox/InboxScanEvent";
+import { createActivityThrottle } from "./createActivityThrottle";
 import { loadScanRun } from "./loadScanRun";
 import { outcomeEvent } from "./outcomeEvent";
 import type { ScanOutcome } from "./runLoggedInboxScan";
 import { saveScanRun } from "./saveScanRun";
 
-const ACTIVITY_THROTTLE_MS = 1000;
 const MAX_EVENTS = 1000;
 
 export function createScanRunLog(onActivity: () => void) {
 	let run: InboxScanRun | undefined;
-	let pending: ReturnType<typeof setTimeout> | undefined;
-
-	const flush = () => {
-		pending = undefined;
-		onActivity();
-	};
+	const throttle = createActivityThrottle(onActivity);
 
 	return {
 		current: () => run,
@@ -27,16 +24,21 @@ export function createScanRunLog(onActivity: () => void) {
 				startedAt: new Date().toISOString(),
 				finishedAt: null,
 				events: [],
+				usage: emptyScanUsage(),
 			};
 		},
-		add(event: InboxScanEvent) {
+		onEvent(event: InboxScanEvent) {
 			if (!run || run.events.length >= MAX_EVENTS) return;
 			run.events.push(event);
-			pending ??= setTimeout(flush, ACTIVITY_THROTTLE_MS);
+			throttle.schedule();
+		},
+		onUsage(usage: InboxScanUsage) {
+			if (!run) return;
+			run.usage = usage;
+			throttle.schedule();
 		},
 		async end(outcome: ScanOutcome) {
-			clearTimeout(pending);
-			pending = undefined;
+			throttle.cancel();
 			if (!run) return;
 			run.events.push(outcomeEvent(outcome));
 			run.status = outcome.ok ? "finished" : "failed";

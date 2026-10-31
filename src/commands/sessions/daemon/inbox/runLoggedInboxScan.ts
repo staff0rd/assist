@@ -1,5 +1,6 @@
 import { getDb } from "../../../../shared/db/getDb";
-import type { InboxScanEvent } from "../../../inbox/InboxScanEvent";
+import { formatScanUsage } from "../../../inbox/formatScanUsage";
+import type { InboxScanListener } from "../../../inbox/InboxScanEvent";
 import { runInboxScan } from "../../../inbox/runInboxScan";
 import { daemonLog } from "../daemonLog";
 
@@ -9,12 +10,17 @@ export type ScanOutcome =
 
 export async function runLoggedInboxScan(
 	reason: string,
-	onEvent: (event: InboxScanEvent) => void,
+	listener: InboxScanListener,
 ): Promise<ScanOutcome> {
 	daemonLog(`inbox: scan started (${reason})`);
 	try {
-		const { flagged, added } = await runInboxScan(await getDb(), { onEvent });
-		daemonLog(`inbox: scan flagged ${flagged} message(s), ${added} new`);
+		const { flagged, added, usage } = await runInboxScan(
+			await getDb(),
+			listener,
+		);
+		daemonLog(
+			`inbox: scan flagged ${flagged} message(s), ${added} new (${formatScanUsage(usage)})`,
+		);
 		return { ok: true, flagged, added };
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);

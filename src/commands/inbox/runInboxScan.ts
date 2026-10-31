@@ -2,7 +2,8 @@ import type { BacklogDatabase } from "../../shared/db/Db";
 import { readInboxLastScan } from "../../shared/db/readInboxLastScan";
 import { upsertInboxMessages } from "../../shared/db/upsertInboxMessages";
 import { writeInboxLastScan } from "../../shared/db/writeInboxLastScan";
-import type { InboxScanEvent } from "./InboxScanEvent";
+import type { InboxScanResult } from "./createInboxScanParser";
+import type { InboxScanListener, InboxScanUsage } from "./InboxScanEvent";
 import type { FlaggedMessage } from "./inboxScanSchema";
 import { runInboxScanClaude } from "./runInboxScanClaude";
 
@@ -23,24 +24,25 @@ function toRow(message: FlaggedMessage) {
 	};
 }
 
-type RunInboxScanOptions = {
+type RunInboxScanOptions = InboxScanListener & {
 	wrap?: (
 		since: Date,
-		run: () => Promise<FlaggedMessage[]>,
-	) => Promise<FlaggedMessage[]>;
-	onEvent?: (event: InboxScanEvent) => void;
+		run: () => Promise<InboxScanResult>,
+	) => Promise<InboxScanResult>;
 };
 
 export async function runInboxScan(
 	orm: BacklogDatabase,
-	{ wrap = (_since, run) => run(), onEvent }: RunInboxScanOptions = {},
-): Promise<{ flagged: number; added: number }> {
+	{ wrap = (_since, run) => run(), ...listener }: RunInboxScanOptions = {},
+): Promise<{ flagged: number; added: number; usage: InboxScanUsage }> {
 	const startedAt = new Date();
 	const since =
 		(await readInboxLastScan(orm)) ??
 		new Date(startedAt.getTime() - FIRST_SCAN_LOOKBACK_MS);
-	const flagged = await wrap(since, () => runInboxScanClaude(since, onEvent));
-	const added = await upsertInboxMessages(orm, flagged.map(toRow));
+	const { messages, usage } = await wrap(since, () =>
+		runInboxScanClaude(since, listener),
+	);
+	const added = await upsertInboxMessages(orm, messages.map(toRow));
 	await writeInboxLastScan(orm, startedAt);
-	return { flagged: flagged.length, added };
+	return { flagged: messages.length, added, usage };
 }

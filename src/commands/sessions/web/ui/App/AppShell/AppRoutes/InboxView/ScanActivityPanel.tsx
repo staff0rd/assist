@@ -3,6 +3,7 @@ import Collapse from "@mui/material/Collapse";
 import Typography from "@mui/material/Typography";
 import { ScanActivityRow } from "./ScanActivityPanel/ScanActivityRow";
 import { ScanActivitySummary } from "./ScanActivityPanel/ScanActivitySummary";
+import { ScanUsageStrip } from "./ScanActivityPanel/ScanUsageStrip";
 import { useAutoOpen } from "./ScanActivityPanel/useAutoOpen";
 import type { InboxScanRun } from "./types";
 import { useInboxStatus } from "./useInboxStatus";
@@ -23,7 +24,8 @@ function RunPanel({ run }: { run: InboxScanRun }) {
 				onToggle={() => setOpen(!open)}
 			/>
 			<Collapse in={open} unmountOnExit>
-				<Box sx={{ px: 2, pb: 1.5, maxHeight: 360, overflowY: "auto" }}>
+				<ScanUsageStrip run={run} />
+				<Box sx={{ px: 2, py: 1, maxHeight: 360, overflowY: "auto" }}>
 					{run.events.length === 0 ? (
 						<Typography variant="caption" color="text.secondary">
 							Waiting for the first tool call…

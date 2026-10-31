@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import { statusPillSx } from "../../../../../designSystem/statusPillSx";
+import { formatScanUsage } from "../../../../../../../../inbox/formatScanUsage";
 import type { InboxScanRun } from "../types";
 import { formatScanElapsed } from "./formatScanElapsed";
 import { useRunElapsed } from "./useRunElapsed";
@@ -54,6 +55,13 @@ export function ScanActivitySummary({
 				color="text.secondary"
 				sx={{ ml: "auto", fontFamily: "fontFamilyMono" }}
 			>
+				{run.usage && (
+					<>
+						{formatScanUsage(run.usage)}
+						{run.status === "scanning" ? " so far" : ""}
+						{" · "}
+					</>
+				)}
 				{formatScanElapsed(elapsed)}
 			</Typography>
 		</ButtonBase>

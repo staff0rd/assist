@@ -1,3 +1,4 @@
+import { formatScanUsage } from "../../../../../../../inbox/formatScanUsage";
 import { formatRelativeTime } from "../../../../formatRelativeTime";
 import type { InboxStatus } from "./types";
 
@@ -7,8 +8,12 @@ export function inboxStatusSummary(status: InboxStatus | undefined): string {
 	const last = status.lastScanAt
 		? `Last scanned ${formatRelativeTime(status.lastScanAt)}`
 		: "Never scanned";
+	const usage =
+		status.run?.status === "finished" && status.run.usage
+			? ` · ${formatScanUsage(status.run.usage)}`
+			: "";
 	const schedule = status.intervalMinutes
 		? `scans every ${status.intervalMinutes} min`
 		: "scheduled scans off";
-	return `${last} · ${schedule}`;
+	return `${last}${usage} · ${schedule}`;
 }

@@ -3,9 +3,12 @@ import { z } from "zod";
 import { attachLineParser } from "../review/attachLineParser";
 import { attachStderrCollector } from "../review/attachStderrCollector";
 import { buildInboxScanPrompt } from "./buildInboxScanPrompt";
-import { createInboxScanParser } from "./createInboxScanParser";
-import type { InboxScanEvent } from "./InboxScanEvent";
-import { type FlaggedMessage, inboxScanSchema } from "./inboxScanSchema";
+import {
+	createInboxScanParser,
+	type InboxScanResult,
+} from "./createInboxScanParser";
+import type { InboxScanListener } from "./InboxScanEvent";
+import { inboxScanSchema } from "./inboxScanSchema";
 import { inboxScanTools } from "./inboxScanTools";
 
 export function buildInboxScanArgs(since: Date): string[] {
@@ -36,14 +39,14 @@ function describeExit(code: number | null, signal: string | null): string {
 
 export async function runInboxScanClaude(
 	since: Date,
-	onEvent: (event: InboxScanEvent) => void = () => {},
-): Promise<FlaggedMessage[]> {
+	listener: InboxScanListener = {},
+): Promise<InboxScanResult> {
 	const child = spawn("claude", buildInboxScanArgs(since), {
 		stdio: ["ignore", "pipe", "pipe"],
 		windowsHide: true,
 		timeout: 20 * 60_000,
 	});
-	const parser = createInboxScanParser(onEvent);
+	const parser = createInboxScanParser(listener);
 	const flush = attachLineParser(child, parser.onLine);
 	const stderr = attachStderrCollector(child);
 	const exit = await new Promise<string>((resolve, reject) => {

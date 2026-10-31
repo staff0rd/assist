@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { InboxScanEvent } from "../types";
 import { formatScanElapsed } from "./formatScanElapsed";
+import { ScanRowTokens } from "./ScanRowTokens";
 
 const labelColor: Record<InboxScanEvent["kind"], string> = {
 	tool: "info.main",
@@ -12,7 +13,7 @@ const labelColor: Record<InboxScanEvent["kind"], string> = {
 
 const rowSx = {
 	display: "grid",
-	gridTemplateColumns: "3.5em 9em 1fr",
+	gridTemplateColumns: { xs: "3.5em 9em 1fr", sm: "3.5em 9em 1fr auto" },
 	gap: 1,
 	py: 0.5,
 	typography: "caption",
@@ -59,6 +60,7 @@ export function ScanActivityRow({
 			>
 				{event.detail}
 			</Typography>
+			<ScanRowTokens tokens={event.tokens} />
 		</Box>
 	);
 }
