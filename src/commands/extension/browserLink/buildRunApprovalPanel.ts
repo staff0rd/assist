@@ -1,3 +1,5 @@
+import { assistIcon } from "../sendToAssist/assistIcon";
+
 const PANEL_CSS = `
 .panel {
 	position: fixed;
@@ -32,6 +34,8 @@ pre {
 .countdown { flex: 1; color: #59636e; font-size: 12px; }
 button { padding: 4px 12px; border-radius: 6px; border: 1px solid #d0d7de; font: inherit; cursor: pointer; background: #f6f8fa; color: inherit; }
 button.run { background: #1f883d; border-color: #1f883d; color: #fff; }
+.title { display: flex; align-items: center; gap: 8px; }
+.title img { width: 20px; height: 20px; }
 `;
 
 export function buildRunApprovalPanel(code: string) {
@@ -40,7 +44,7 @@ export function buildRunApprovalPanel(code: string) {
 	const shadow = host.attachShadow({ mode: "open" });
 	shadow.innerHTML = `<style>${PANEL_CSS}</style>
 <div class="panel" role="dialog" aria-label="assist script approval">
-	<strong>assist wants to run this script on this page</strong>
+	<strong class="title">assist wants to run this script on this page</strong>
 	<pre></pre>
 	<div class="actions">
 		<span class="countdown"></span>
@@ -49,6 +53,8 @@ export function buildRunApprovalPanel(code: string) {
 	</div>
 </div>`;
 	(shadow.querySelector("pre") as HTMLElement).textContent = code;
+	const icon = assistIcon();
+	if (icon) shadow.querySelector(".title")?.prepend(icon);
 	return {
 		host,
 		countdown: shadow.querySelector(".countdown") as HTMLElement,
