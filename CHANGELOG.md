@@ -1,3 +1,10 @@
+# [0.988.0](https://github.com/staff0rd/assist/compare/v0.987.0...v0.988.0) (2026-10-31)
+
+
+### Features
+
+* PIN-approved docs unlock for an item ([6dac260](https://github.com/staff0rd/assist/commit/6dac2607c912822052b6e1af5418d45412a37311))
+
 # [0.987.0](https://github.com/staff0rd/assist/compare/v0.986.0...v0.987.0) (2026-10-31)
 
 
