@@ -4,6 +4,7 @@ import {
 	createAssistSession,
 } from "../createAssistSession";
 import { createSession } from "../createSession";
+import { seedBacklogRunActivity } from "../seedBacklogRunActivity";
 import type { SpawnContext } from "../types";
 import { allocateAndBind, type TreeSpawnContext } from "./allocateAndBind";
 export type { TreeSpawnContext };
@@ -46,7 +47,7 @@ export function spawnAssistInTree(
 	meta: AssistSessionMeta | undefined,
 	context?: SpawnContext,
 ): string {
-	return allocateAndBind(
+	const id = allocateAndBind(
 		ctx,
 		cwd,
 		(sid, resolvedCwd, holdUntilSeeded) =>
@@ -54,4 +55,6 @@ export function spawnAssistInTree(
 		{ inPlace: meta?.inPlace },
 		context,
 	);
+	void seedBacklogRunActivity(ctx.sessions, ctx.sessions.get(id), ctx.notify);
+	return id;
 }

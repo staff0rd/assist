@@ -1,10 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Session } from "../createSession";
+import { seedBacklogRunActivity } from "../seedBacklogRunActivity";
 import { allocateAndBind } from "./allocateAndBind";
 import { spawnAssistInTree, type TreeSpawnContext } from "./spawnInTree";
 
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./allocateAndBind", () => ({ allocateAndBind: vi.fn(() => "4") }));
 vi.mock("../createAssistSession", () => ({ createAssistSession: vi.fn() }));
+vi.mock("../seedBacklogRunActivity", () => ({
+	seedBacklogRunActivity: vi.fn(),
+}));
 
 function context(): TreeSpawnContext {
 	return {
@@ -30,6 +35,20 @@ describe("spawnAssistInTree", () => {
 		);
 
 		expect(id).toBe("4");
+	});
+
+	it("seeds provisional activity on the spawned session", () => {
+		const ctx = context();
+		const session = { id: "4" } as Session;
+		ctx.sessions.set("4", session);
+
+		spawnAssistInTree(ctx, ["backlog", "run", "a825"], "/git/repo", undefined);
+
+		expect(seedBacklogRunActivity).toHaveBeenCalledWith(
+			ctx.sessions,
+			session,
+			ctx.notify,
+		);
 	});
 
 	it("forwards the launching card to the spawn choke point", () => {
