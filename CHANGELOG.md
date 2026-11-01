@@ -1,3 +1,10 @@
+# [0.1027.0](https://github.com/staff0rd/assist/compare/v0.1026.2...v0.1027.0) (2026-11-01)
+
+
+### Features
+
+* record inbox scans as job runs ([1680e22](https://github.com/staff0rd/assist/commit/1680e2244cc3c93859f6b7608cdc7f62231eae2e))
+
 ## [0.1026.2](https://github.com/staff0rd/assist/compare/v0.1026.1...v0.1026.2) (2026-11-01)
 
 
