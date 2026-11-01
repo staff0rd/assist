@@ -1,3 +1,11 @@
+## [0.1011.1](https://github.com/staff0rd/assist/compare/v0.1011.0...v0.1011.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* devlog next from first unwritten week ([f6c0e1e](https://github.com/staff0rd/assist/commit/f6c0e1eeb95955b3e6cf2c2f93d98aff184823c0))
+* don't show files already in the diff ([84d43b1](https://github.com/staff0rd/assist/commit/84d43b1c13121dd8f7f22816f2ce3247bbb03f01))
+
 # [0.1011.0](https://github.com/staff0rd/assist/compare/v0.1010.2...v0.1011.0) (2026-11-01)
 
 
