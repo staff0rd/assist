@@ -1,3 +1,10 @@
+# [0.1018.0](https://github.com/staff0rd/assist/compare/v0.1017.0...v0.1018.0) (2026-11-01)
+
+
+### Features
+
+* carry working copy on node transfer ([8dd9502](https://github.com/staff0rd/assist/commit/8dd9502e1ba68276126f1dfb4a6b7645e61776ce))
+
 # [0.1017.0](https://github.com/staff0rd/assist/compare/v0.1016.2...v0.1017.0) (2026-11-01)
 
 
