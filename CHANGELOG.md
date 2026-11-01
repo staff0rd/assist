@@ -1,3 +1,15 @@
+# [0.1040.0](https://github.com/staff0rd/assist/compare/v0.1039.1...v0.1040.0) (2026-11-01)
+
+
+### Bug Fixes
+
+* name VS Code in close-block reason ([8f6897b](https://github.com/staff0rd/assist/commit/8f6897b0fbebfefc5cb0ac14f563910890c3fe99))
+
+
+### Features
+
+* Firefox extension item in web menu ([56998a9](https://github.com/staff0rd/assist/commit/56998a943e206e85857f5cac1ddf1d6325426076))
+
 ## [0.1039.1](https://github.com/staff0rd/assist/compare/v0.1039.0...v0.1039.1) (2026-11-01)
 
 
