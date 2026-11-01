@@ -1,3 +1,10 @@
+# [0.1011.0](https://github.com/staff0rd/assist/compare/v0.1010.2...v0.1011.0) (2026-11-01)
+
+
+### Features
+
+* question status glyph ([02e460b](https://github.com/staff0rd/assist/commit/02e460bffe622748760a47e555b20be640426316))
+
 ## [0.1010.2](https://github.com/staff0rd/assist/compare/v0.1010.1...v0.1010.2) (2026-11-01)
 
 
