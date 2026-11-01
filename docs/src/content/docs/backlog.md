@@ -6,7 +6,6 @@ order: 0
 covers:
   - route:/backlog
   - config:clone.baseDir
-  - config:docs.refreshAfter
 screenshots:
   - file: backlog-list.png
     alt: The backlog list for the sandbox repo, with an in-progress story part-way through its plan
@@ -52,33 +51,6 @@ screenshots:
       - "#item-section-activity"
       - "#item-section-comments"
     cropPadding: 24
-  - file: backlog-refresh-docs.png
-    alt: The Refresh docs popover, listing the done stories no refresh covers yet with a Create Refresh docs button
-    route: /backlog
-    scene: backlog
-    setup:
-      - backlogItem:
-          item:
-            name: Search the product catalogue
-            type: story
-          status: done
-      - backlogItem:
-          item:
-            name: Save carts between visits
-            type: story
-          status: done
-      - backlogItem:
-          item:
-            name: Email a receipt after checkout
-            type: story
-          status: done
-    waitFor: text=Cart total rounds to the wrong cent
-    actions:
-      - click: "button:has-text('Refresh docs')"
-    crop:
-      - "button:has-text('Refresh docs')"
-      - ".MuiPopover-paper"
-    cropPadding: 16
 ---
 
 The backlog holds each repo's work as items: stories and bugs, each with a description, acceptance criteria and, usually, a plan of phases that an agent works through one at a time. Items are written by [drafting](../backlog-writing/) and built by [running](../backlog-running/) them.
@@ -142,16 +114,4 @@ Each phase lists its tasks and any manual checks you'll be asked to confirm, its
 
 ::screenshot{file="backlog-activity.png"}
 
-**Activity** lists the item's branches, commits, pull requests, Slack threads and agent conversations. :icon[PlayArrow] on a conversation resumes it as a new session. **Comments** holds each phase's summary and the notes agents added; :icon[DeleteOutlined] deletes a comment.
-
-## Docs refresh
-
-Set `docs.refreshAfter` to have a repo queue a **Refresh docs** story once that many stories are done. The story links to each story it covers, and building it updates the docs pages from what those stories shipped. Bugs don't count, and while a refresh is still open, newly done stories wait for the next one. Leave the key unset to turn this off.
-
-```bash
-assist config set docs.refreshAfter 5
-```
-
-To queue one now, click **Refresh docs** at the top of the Backlog tab. It counts the done stories no refresh covers yet; click **Create Refresh docs** in its popover to queue a story for them. While a refresh is open, the button links to it instead.
-
-::screenshot{file="backlog-refresh-docs.png"}
+**Activity** lists the item's designs, branches, commits, pull requests, Slack threads and agent conversations. :icon[PlayArrow] on a conversation resumes it as a new session. **Comments** holds each phase's summary and the notes agents added; :icon[DeleteOutlined] deletes a comment.

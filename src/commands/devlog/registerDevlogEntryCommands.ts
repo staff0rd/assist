@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { internalCommand } from "../../shared/internalCommand";
 import { next } from "./next";
 import { skip } from "./skip";
 import { write } from "./write";
@@ -17,10 +18,13 @@ export function registerDevlogEntryCommands(devlogCommand: Command): void {
 		.description("Add an ISO week (YYYY-Www) to the skip list")
 		.action(skip);
 
-	devlogCommand
-		.command("write")
-		.description(
-			"Write a dev entry from JSON on stdin (week, title, versions, aiGenerated, added/changed/fixed, lede)",
-		)
-		.action(write);
+	internalCommand(
+		devlogCommand
+			.command("write")
+			.description(
+				"Write a dev entry from JSON on stdin (week, title, versions, aiGenerated, added/changed/fixed, lede)",
+			)
+			.action(write),
+		"/devlog",
+	);
 }

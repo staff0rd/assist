@@ -21,7 +21,7 @@ covers:
   - skill:polish-pass
 ---
 
-Run `/design` with a design task, and the agent works on it as a designer: it asks about the audience and constraints first, settles on a look, then builds in HTML.
+Run `/design` with a design task, and the agent works on it as a designer: it asks about the audience and constraints first, settles on a look, then builds in HTML. It works from the Claude Design system prompt and its design skills, taken from [claude-design-system-prompt](https://github.com/Trystan-SA/claude-design-system-prompt).
 
 ```text
 /design a pricing page for the three plans in PLANS.md

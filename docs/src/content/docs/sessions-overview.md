@@ -71,7 +71,7 @@ From left to right:
 
 Every shortcut can be changed, see [Keyboard shortcuts](../sessions-keyboard/).
 
-The menu has **Toggle dark mode**, **Show render HUD**, **Keyboard shortcuts**, **Restart daemon** and **Update assist**. Restart and update both ask before acting.
+The menu has **Toggle dark mode**, **Show render HUD**, **Keyboard shortcuts**, [Connect mobile](../ios-app/#connecting-to-a-home-node) (for the :badge[experimental] iOS app), **Restart daemon** and **Update assist**. Restart and update both ask before acting.
 
 ::screenshot{file="sessions-menu.png"}
 

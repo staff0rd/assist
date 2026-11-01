@@ -13,7 +13,7 @@ covers:
 
 These commands find messages people sent you in Gmail and Slack that look like they need a reply. The [Inbox](../inbox/) page shows the same messages.
 
-- `assist inbox scan` checks your unread Gmail inbox, and your Slack DMs and @mentions since the last scan, and saves each message that needs a reply.
+- `assist inbox scan` checks your unread Gmail inbox, and your Slack DMs and @mentions since the last scan, and saves each message that needs a reply. It prints how many it flagged, with the tokens and cost the scan used.
 - `assist inbox list` prints the saved messages, newest first, with the sender, source, summary and link.
 
 ## Config

@@ -8,6 +8,7 @@ covers:
   - cli:devlog next
   - cli:devlog version
   - cli:devlog skip
+  - cli:devlog write
   - cli:devlog repos
 ---
 
@@ -15,8 +16,9 @@ See [Devlog](../devlog/) for writing entries with `/devlog`.
 
 ## Commands
 
-- `assist devlog list` prints the last 30 days of commits, grouped by day, with each day's devlog entry. `--days <n>` or `--since <date>` changes the range, `-r` lists the earliest first, and `-v` adds the files each commit changed.
-- `assist devlog next` prints the commits of the next day without an entry, and the versions to choose from. `-v` adds the files each commit changed.
-- `assist devlog version` prints the repo's name, its last devlog version and the next patch version.
-- `assist devlog skip <date>` adds a `YYYY-MM-DD` date to `devlog.skip`, so it gets no entry.
-- `assist devlog repos` lists your GitHub repos pushed to in the last 30 days, and whether each one's devlog is missing, behind or up to date. `--days <n>` changes the window, and `--all` lists every repo that isn't archived.
+- `assist devlog list` prints the last 6 weeks of commits, including the current one, grouped by ISO week, with each week's dev entry headline and versions, or whether it is skipped, in progress or missing. `--weeks <n>`, or `--since` with a `YYYY-MM-DD` date or `YYYY-Www` week, changes the range, `-r` lists the earliest first, and `-v` adds the files each commit changed.
+- `assist devlog next` prints the next completed week without an entry: its week id, dates and version range, and its commits, each with the `package.json` version at that commit. `-v` adds the files each commit changed.
+- `assist devlog version` prints the repo's name, its latest dev entry's week and last version, and the current version.
+- `assist devlog skip <week>` adds a `YYYY-Www` week, such as `2026-W33`, to `devlog.skip`, so it gets no entry.
+- `assist devlog write` :badge[internal] writes a dev entry from JSON on stdin, after checking it. Called by `/devlog`.
+- `assist devlog repos` lists your GitHub repos pushed to in the last 30 days, with each one's latest dev entry week, and whether its entries are missing, outdated or up to date. `--days <n>` changes the window, and `--all` lists every repo that isn't archived.

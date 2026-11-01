@@ -90,7 +90,7 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 - `assist backlog unlink <from> <to>` :badge[internal] removes a link. Called by agents working on backlog items.
 - `assist backlog associate-jira <id> [key]` :badge[internal] links a Jira issue by key or browse URL, replacing any GitHub issue; `--clear` removes it. Called by `/draft`, `/bug` and `/refine`.
 - `assist backlog associate-github <id> [issue]` :badge[internal] links a GitHub issue by URL or `owner/repo#number`, replacing any Jira issue; `--clear` removes it. Called by `/draft`, `/bug` and `/refine`.
-- `assist backlog add-activity <id> <branch|commit|pr|slack|session> <ref>` :badge[internal] attaches a ref to an item's activity, with `--title`, `--url` and `--state`. Called by `/draft` and `/bug`.
+- `assist backlog add-activity <id> <branch|commit|pr|slack|session|design> <ref>` :badge[internal] attaches a ref to an item's activity, with `--title`, `--url` and `--state`. Called by `/draft`, `/bug` and `/refine`.
 - `assist backlog record-slack <url>` :badge[internal] attaches a Slack thread to the current session's item. Called by `/prs-slack`.
 
 ## Running
@@ -104,7 +104,7 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 ## Repos and data
 
 - `assist backlog clone <origin>` clones an item's repo over SSH into `clone.baseDir`.
-- `assist backlog refresh-docs` queues a [Refresh docs](../backlog/#docs-refresh) story now for every done story no refresh covers yet, whatever `docs.refreshAfter` is set to.
+- `assist backlog refresh-docs` queues a [Refresh docs](../backlog-docs/) story now for every done story no refresh covers yet, whatever `docs.refreshAfter` is set to.
 - `assist docs unlock` :badge[internal] lets the current phase of a backlog run edit docs pages and screenshots, which are otherwise left to Refresh docs, once you approve. It sends you a pin as a desktop notification. Called by agents whose docs edit was blocked.
 - `assist docs confirm <pin>` :badge[internal] approves that unlock with the pin from the notification. Called by agents whose docs edit was blocked, once you give them the pin.
 - `assist backlog move-repo <old-origin> [new-origin]` moves every item from one repo to another after a rename, the current repo when no new origin is given. `--yes` skips the prompt.

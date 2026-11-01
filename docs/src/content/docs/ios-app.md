@@ -3,7 +3,8 @@ id: ios-app
 title: iOS app
 group: Sessions
 order: 11
-covers: []
+covers:
+  - route:/connect-mobile
 screenshots:
   - file: ios-app-sessions.png
     alt: The iOS app session list, with sessions that need you above running ones
@@ -29,7 +30,26 @@ screenshots:
     waitFor: text=Dark mode toggle
     actions:
       - click: '[aria-label="Nodes"]'
+  - file: ios-app-backlog.png
+    alt: The iOS app's Backlog tab, with the tab bar along the bottom
+    route: /backlog
+    phone: true
+    scene: backlog
+    waitFor: text=Cart total rounds to the wrong cent
+  - file: ios-app-actions.png
+    alt: A backlog item's session actions in the iOS app, including Mark done
+    route: /
+    phone: true
+    scene: backlog
+    setup:
+      - assistSession: [backlog, run, a1]
+    waitFor: text=Dark mode toggle
+    actions:
+      - click: text=Dark mode toggle
+      - click: '[aria-label="Session actions"]'
 ---
+
+:badge[experimental] The iOS app is still being worked out, and its screens and features may change or be removed.
 
 The assist iOS app shows your sessions on your phone: see which agents are waiting on you, read their terminals, reply and answer their questions, away from your desk. It connects to one of your web servers over [Tailscale](https://tailscale.com/) and shows that machine's sessions along with those of every [linked machine](../sessions-linked-nodes/).
 
@@ -37,7 +57,7 @@ The assist iOS app shows your sessions on your phone: see which agents are waiti
 
 ## Installing
 
-The app is distributed through TestFlight. Install [TestFlight](https://apps.apple.com/app/testflight/id899247664) on your iPhone, accept your tester invite, then install **assist** from TestFlight. Each assist release publishes a new build there.
+The app is distributed through TestFlight. Install [TestFlight](https://apps.apple.com/app/testflight/id899247664) on your iPhone, accept your tester invite, then install **assist** from TestFlight.
 
 ## Connecting to a home node
 
@@ -47,6 +67,8 @@ On first launch, enter the address you open the dashboard at in a browser as the
 
 ::screenshot{file="ios-app-connect.png"}
 
+To skip typing the address, open **Connect mobile** from the dashboard's menu on that machine and scan its QR code with the iPhone camera. The app adds the machine and makes it the home node.
+
 ## Switching nodes
 
 Tap the node chip to list your saved nodes. Tap one to make it the home node, the pencil to edit it, or **Add node URL** to save another. The app remembers your choice across launches.
@@ -54,3 +76,15 @@ Tap the node chip to list your saved nodes. Tap one to make it the home node, th
 ::screenshot{file="ios-app-nodes.png"}
 
 When the home node can't be reached, the app shows the error. Press **Retry now**, or pick another node under **Switch home node**.
+
+## Getting around
+
+The tab bar along the bottom switches between **Sessions**, **Backlog** and **History**. Each tab keeps its place, so switching back returns to the screen you left; tap the active tab to return to its list.
+
+::screenshot{file="ios-app-backlog.png"}
+
+## Acting on a session
+
+Tap **⋯** on a session's screen, or long-press its row in the list, for its actions. On a backlog item's session, **Mark done…** marks the item done and ends the session once you confirm.
+
+::screenshot{file="ios-app-actions.png"}

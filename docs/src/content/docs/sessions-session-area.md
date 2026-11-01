@@ -32,7 +32,7 @@ On the right, the git change counts open the [diff](../sessions-diff/), and togg
 - **VS Code** (:kbd[Alt+X]) opens the session's working copy in VS Code.
 - **Restart** ends the agent and resumes its conversation in a fresh process, after asking. **Retry** reruns a run session, or an assist command that couldn't be restored.
 - **Star** pins the session to the top of the sidebar. For a backlog run, the star belongs to the item, so it carries over to the item's next session.
-- **Done** (:kbd[Alt+C]), on a backlog item's session, marks the item done and ends the session after asking.
+- **Done** (:kbd[Alt+C]), on a backlog item's session, marks the item done and ends the session after asking. Hold :kbd[Shift] as you click it or press :kbd[Enter] to skip asking.
 - **×** closes the session, as on its card.
 
 [Pull request](../pull-requests/), [review](../sessions-pr-review/) and [server](../sessions-creating/#run-sessions) buttons appear for sessions that have them.

@@ -108,11 +108,13 @@ The comment box also offers:
 
 ## Reverting
 
-On the **Uncommitted** scope, hover a row in the file tree to revert it:
+On the **Uncommitted**, **All changes** and **Branch** scopes, hover a row in the file tree to revert it:
 
-- **Revert file** discards the file's uncommitted changes, or deletes it if it is new.
-- **Revert folder** does the same for every changed file in the folder.
-- **Revert all files**, on the tree's header, does it for every file listed, so a filter limits what it reverts.
+- **Revert file** discards the file's uncommitted changes, or deletes it if it is new and uncommitted.
+- **Revert folder** does the same for every file in the folder with uncommitted changes.
+- **Revert all files**, on the tree's header, does it for every listed file with uncommitted changes, so a filter limits what it reverts.
+
+Committed changes are never reverted: on **All changes** and **Branch**, only files with uncommitted changes offer a revert, and their committed changes stay in the diff.
 
 ## The file view
 
