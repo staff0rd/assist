@@ -1,3 +1,10 @@
+## [0.1022.3](https://github.com/staff0rd/assist/compare/v0.1022.2...v0.1022.3) (2026-11-01)
+
+
+### Bug Fixes
+
+* use a triangle glyph for checks ([dea1609](https://github.com/staff0rd/assist/commit/dea16097cce96cba7b5aec0c7fea19ab1fb30d8a))
+
 ## [0.1022.2](https://github.com/staff0rd/assist/compare/v0.1022.1...v0.1022.2) (2026-11-01)
 
 
