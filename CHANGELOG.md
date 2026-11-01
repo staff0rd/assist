@@ -1,3 +1,10 @@
+# [0.1025.0](https://github.com/staff0rd/assist/compare/v0.1024.1...v0.1025.0) (2026-11-01)
+
+
+### Features
+
+* Done closes child server runs ([57734ea](https://github.com/staff0rd/assist/commit/57734ea065014a2a52851163ec42b02c97d66380))
+
 ## [0.1024.1](https://github.com/staff0rd/assist/compare/v0.1024.0...v0.1024.1) (2026-11-01)
 
 
