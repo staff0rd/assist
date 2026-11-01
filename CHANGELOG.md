@@ -1,3 +1,10 @@
+## [0.1011.2](https://github.com/staff0rd/assist/compare/v0.1011.1...v0.1011.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* retry failed auto-update sync ([8f4fe2d](https://github.com/staff0rd/assist/commit/8f4fe2df18c5223a04f88b8b85537f2e27f7ce16))
+
 ## [0.1011.1](https://github.com/staff0rd/assist/compare/v0.1011.0...v0.1011.1) (2026-11-01)
 
 
