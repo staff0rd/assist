@@ -1,6 +1,7 @@
 const FRICTION = 0.95;
 const MIN_VELOCITY = 0.02;
 const FRAME_MS = 16;
+const FLICK_MS = 100;
 
 type Drag = { x: number; y: number; t: number; axis?: "x" | "y"; v: number };
 
@@ -35,7 +36,7 @@ export function createVerticalDrag(scrollBy: (dy: number) => void) {
 	};
 	const end = (e: TouchEvent) => {
 		if (!drag || e.touches.length > 0) return;
-		if (drag.axis === "y") glide(drag.v);
+		if (drag.axis === "y" && e.timeStamp - drag.t < FLICK_MS) glide(drag.v);
 		drag = null;
 	};
 	const stop = () => cancelAnimationFrame(frame);
