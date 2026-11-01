@@ -1,3 +1,15 @@
+# [0.1009.0](https://github.com/staff0rd/assist/compare/v0.1008.0...v0.1009.0) (2026-11-01)
+
+
+### Bug Fixes
+
+* end draft session after last item ([7c4d342](https://github.com/staff0rd/assist/commit/7c4d342bdb29b7b9e1384305ffde017959e05766))
+
+
+### Features
+
+* generate weekly devlog entries ([9cb3b78](https://github.com/staff0rd/assist/commit/9cb3b7880d069c9fab1198507903eb212f20d4b1))
+
 # [0.1008.0](https://github.com/staff0rd/assist/compare/v0.1007.1...v0.1008.0) (2026-10-31)
 
 
