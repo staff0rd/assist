@@ -5,7 +5,7 @@ export function ServerRunMenu({
 	onStartRun,
 	cwd,
 }: {
-	onStartRun: (runName: string, cwd: string) => void;
+	onStartRun: (runName: string, cwd: string, replace?: boolean) => void;
 	cwd: string | undefined;
 }) {
 	const runs = useServerRuns(cwd);
@@ -17,7 +17,7 @@ export function ServerRunMenu({
 	return (
 		<ServerRunDropdown
 			runs={runs}
-			onSelect={(runName) => onStartRun(runName, cwd)}
+			onSelect={(runName, replace) => onStartRun(runName, cwd, replace)}
 		/>
 	);
 }

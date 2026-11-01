@@ -13,8 +13,8 @@ export function ServerRunControls({ session }: { session: SessionInfo }) {
 			<StopCardActivation>
 				<ServerRunDropdown
 					runs={runs}
-					onSelect={(runName) =>
-						onStart(runName, session.cwd, undefined, session.id)
+					onSelect={(runName, replace) =>
+						onStart(runName, session.cwd, replace, session.id)
 					}
 				/>
 			</StopCardActivation>

@@ -41,8 +41,8 @@ export function TopNavActions({
 				}
 			/>
 			<ServerRunMenu
-				onStartRun={(runName, cwd) =>
-					onStartRun(runName, cwd, undefined, undefined, selectedNode)
+				onStartRun={(runName, cwd, replace) =>
+					onStartRun(runName, cwd, replace, undefined, selectedNode)
 				}
 				cwd={selectedCwd}
 			/>

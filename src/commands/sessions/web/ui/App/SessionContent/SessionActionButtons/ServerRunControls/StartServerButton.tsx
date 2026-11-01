@@ -15,12 +15,12 @@ export function StartServerButton({
 	return (
 		<ActionButton
 			label={runName}
-			title={`Start ${runName}`}
+			title={`Start ${runName} (shift+click replaces a running server without asking)`}
 			tone="start"
 			icon={<PlayArrowIcon sx={{ fontSize: 16 }} />}
 			onClick={(e) => {
 				e.stopPropagation();
-				onStart(runName, cwd, undefined, launchedFrom);
+				onStart(runName, cwd, e.shiftKey || undefined, launchedFrom);
 			}}
 		/>
 	);

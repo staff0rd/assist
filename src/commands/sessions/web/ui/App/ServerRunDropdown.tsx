@@ -11,7 +11,7 @@ export function ServerRunDropdown({
 	onSelect,
 }: {
 	runs: ServerRunInfo[];
-	onSelect: (runName: string) => void;
+	onSelect: (runName: string, replace?: boolean) => void;
 }) {
 	const [open, setOpen] = useState(false);
 	const anchorRef = useRef<HTMLDivElement>(null);
@@ -42,9 +42,9 @@ export function ServerRunDropdown({
 				{runs.map((run) => (
 					<MenuItem
 						key={run.name}
-						onClick={() => {
+						onClick={(e) => {
 							close();
-							onSelect(run.name);
+							onSelect(run.name, e.shiftKey || undefined);
 						}}
 						sx={{ py: 0.75 }}
 					>
