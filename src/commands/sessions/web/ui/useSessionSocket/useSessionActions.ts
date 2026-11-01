@@ -1,5 +1,6 @@
 import { type RefObject, useMemo } from "react";
 import {
+	cancelTransferAction,
 	createRunAction,
 	inputAction,
 	resizeAction,
@@ -33,6 +34,7 @@ export function useSessionActions(
 		stopSession: useMemo(() => stopSessionAction(send), [send]),
 		startRun: useMemo(() => createRunAction(send), [send]),
 		transferSession: useMemo(() => transferSessionAction(send), [send]),
+		cancelTransfer: useMemo(() => cancelTransferAction(send), [send]),
 	};
 
 	const onOutput = useMemo(

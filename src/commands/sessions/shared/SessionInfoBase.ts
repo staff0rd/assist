@@ -92,4 +92,8 @@ export type SessionInfoBase = {
 	transfer?: SessionTransfer;
 };
 
-export type SessionTransfer = { target: string; error?: string };
+export type SessionTransfer = {
+	target: string;
+	error?: string;
+	queued?: { cwd?: string };
+};

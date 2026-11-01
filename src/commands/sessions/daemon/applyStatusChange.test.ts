@@ -197,3 +197,21 @@ describe("applyStatusChange undurable hold reason", () => {
 		expect(titleMock).not.toHaveBeenCalled();
 	});
 });
+
+describe("applyStatusChange idle hook", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	it("fires idle when a session stops running but not when it starts", () => {
+		const session = makeSession({ commandType: "assist", status: "running" });
+		const idle = vi.fn();
+
+		applyStatusChange(session, "waiting", undefined, deps({ idle }));
+		expect(idle).toHaveBeenCalledWith(session);
+
+		idle.mockClear();
+		applyStatusChange(session, "running", undefined, deps({ idle }));
+		expect(idle).not.toHaveBeenCalled();
+	});
+});

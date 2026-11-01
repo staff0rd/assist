@@ -26,10 +26,10 @@ export function AppShell({
 }) {
 	const shell = useAppShell();
 	const { socket, selection, viewLaunchedSession } = shell;
-	const { nodes, transferSession } = socket;
+	const { nodes, transferSession, cancelTransfer } = socket;
 	const transferActions = useMemo(
-		() => ({ nodes, transfer: transferSession }),
-		[nodes, transferSession],
+		() => ({ nodes, transfer: transferSession, cancel: cancelTransfer }),
+		[nodes, transferSession, cancelTransfer],
 	);
 
 	return (

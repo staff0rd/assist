@@ -19,7 +19,7 @@ import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
 import { PrPreviewCoordinator } from "./PrPreviewCoordinator";
 import { makeSessionSpawner } from "./makeSessionSpawner";
 import { applyUsageRecord } from "./applyUsageRecord";
-import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
+import { makeManagerStatusHandler } from "./makeManagerStatusHandler";
 import { type HookStatusReport, setStatusFromHook } from "./setStatusFromHook";
 import { restartAndNotify } from "./restartAndNotify";
 import type { RestartResult } from "./restartManagedSession";
@@ -160,10 +160,10 @@ export class SessionManager {
 		return resumeInTree(this.treeCtx(), sessionId, cwd, name, harness);
 	}
 
-	private readonly onStatusChange = makeStatusChangeHandler(this.sessions, {
-		dismiss: (id) => this.dismissSession(id),
-		notify: () => this.notify(),
-	});
+	private readonly onStatusChange = makeManagerStatusHandler(
+		this.sessions,
+		this,
+	);
 
 	readonly io = new SessionIo(
 		this.sessions,

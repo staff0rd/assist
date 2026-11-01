@@ -3,6 +3,7 @@ import { backlogRunArgs } from "../../shared/backlogRunArgs";
 import { type SessionClient, sendTo } from "../broadcast";
 import { daemonLog } from "../daemonLog";
 import { handOffToTarget } from "./handOffToTarget";
+import { queueTransfer } from "./queueTransfer";
 import type { TransferDeps } from "./TransferDeps";
 import { transferRefusal } from "./transferRefusal";
 import { snapshotOrFail } from "./snapshotOrFail";
@@ -28,6 +29,8 @@ export async function transferSession(
 	const args = s && backlogRunArgs(s);
 	if (refused || !s || !args)
 		return refuse(client, id, refused ?? "unknown session");
+	if (s.status === "running")
+		return queueTransfer(client, deps.notify, s, target, cwd);
 	const traceId = newTraceId();
 	daemonLog(
 		`session ${id} transfer to ${target} (cwd=${cwd ?? "default"}) trace=${traceId}: snapshotting tree`,

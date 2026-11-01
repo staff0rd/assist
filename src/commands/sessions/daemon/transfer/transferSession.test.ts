@@ -20,6 +20,7 @@ function setup(reply: Msg | undefined) {
 		commandType: "assist",
 		assistArgs: ["backlog", "run", "a1402"],
 		worktree: { path: "/git/assist-3", clone: "/git/assist" },
+		status: "waiting",
 	});
 	const sessions = new Map<string, Session>([["7", session]]);
 	const routed: Msg[] = [];
@@ -126,6 +127,28 @@ describe("transferSession", () => {
 			type: "error",
 			message: "Transfer to mac failed: repo not found",
 		});
+	});
+
+	it("queues the transfer without snapshotting while the agent is mid-turn", async () => {
+		const { session, deps, routed, sent, client } = setup(undefined);
+		session.status = "running";
+		await transferSession(client, deps, request);
+		expect(pushTransferSnapshot).not.toHaveBeenCalled();
+		expect(deps.stop).not.toHaveBeenCalled();
+		expect(routed).toEqual([]);
+		expect(session.transfer).toEqual({
+			target: "mac",
+			queued: { cwd: "/Users/me/assist" },
+		});
+		expect(deps.notify).toHaveBeenCalled();
+		expect(sent[0].type).toBe("notice");
+	});
+
+	it("refuses a second transfer while one is pending", async () => {
+		const { session, deps, sent, client } = setup(undefined);
+		session.transfer = { target: "mac", queued: {} };
+		await transferSession(client, deps, request);
+		expect(sent[0].message).toMatch(/already pending/);
 	});
 
 	it("refuses a target that is not connected without stopping", async () => {

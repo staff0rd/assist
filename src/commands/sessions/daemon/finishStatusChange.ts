@@ -11,6 +11,7 @@ import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration
 export type StatusChangeDeps = {
 	dismiss: (id: string) => void;
 	notify: () => void;
+	idle?: (session: Session) => void;
 };
 
 function endsWithoutRestart(session: Session, status: Session["status"]) {
@@ -40,4 +41,5 @@ export function finishStatusChange(
 		);
 		deps.dismiss(session.id);
 	} else deps.notify();
+	if (status !== "running") deps.idle?.(session);
 }

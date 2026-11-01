@@ -6,7 +6,7 @@ import {
 import type { NodesState, SessionInfo } from "../types";
 import { transferCandidates } from "./transferCandidates";
 
-type TransferTarget = { node: string; cwd: string };
+export type TransferTarget = { node: string; cwd: string };
 
 export function useTransferTargets(
 	session: SessionInfo,

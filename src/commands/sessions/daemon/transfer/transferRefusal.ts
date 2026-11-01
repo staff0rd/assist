@@ -13,6 +13,8 @@ export function transferRefusal(
 ): string | undefined {
 	if (!s) return "unknown session";
 	if (!backlogRunArgs(s)) return "only backlog run sessions can be transferred";
+	if (s.transfer?.queued)
+		return `a transfer to ${s.transfer.target} is already pending`;
 	if (s.transfer && !s.transfer.error)
 		return `already transferring to ${s.transfer.target}`;
 	if (!target || target === links.localNode())
