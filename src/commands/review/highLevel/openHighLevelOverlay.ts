@@ -39,6 +39,6 @@ export async function openHighLevelOverlay(
 	saveHighLevelReview(record);
 	clearHighLevelDraft(record.repo, record.headRef, record.headSha);
 	console.log(`Verdict: ${record.verdict}`);
-	await submitHighLevelReview(sessionId, record);
+	submitHighLevelReview(record);
 	return record;
 }

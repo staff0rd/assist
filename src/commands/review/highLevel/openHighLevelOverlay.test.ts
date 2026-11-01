@@ -219,23 +219,20 @@ describe("openHighLevelOverlay", () => {
 	});
 
 	it.each([
-		["approve", "APPROVE", "Approve org/repo#42"],
-		["approve", "COMMENT", "Comment on org/repo#42"],
-		["reject", "REQUEST_CHANGES", "Request changes on org/repo#42"],
+		["approve", "APPROVE"],
+		["approve", "COMMENT"],
+		["reject", "REQUEST_CHANGES"],
 	] as const)(
-		"previews the queued %s/%s review and submits it once approved",
-		async (decision, reviewEvent, title) => {
-			mockAwaitPreviewApproval
-				.mockResolvedValueOnce(queuedDecision(decision, reviewEvent))
-				.mockResolvedValueOnce({ decision: "approve" });
+		"posts the queued %s/%s review without a second preview",
+		async (decision, reviewEvent) => {
+			mockAwaitPreviewApproval.mockResolvedValueOnce(
+				queuedDecision(decision, reviewEvent),
+			);
 
 			const record = await openHighLevelOverlay("s1", subject);
 
 			expect(record?.reviewComments).toEqual([queued]);
-			expect(mockAwaitPreviewApproval).toHaveBeenLastCalledWith(
-				"Review",
-				expect.objectContaining({ title, body: expectedBody }),
-			);
+			expect(mockAwaitPreviewApproval).toHaveBeenCalledOnce();
 			expect(mockExecFileSync).toHaveBeenCalledOnce();
 			expect(mockExecFileSync).toHaveBeenCalledWith(
 				...ghReview(reviewEvent, expectedBody),
@@ -254,28 +251,13 @@ describe("openHighLevelOverlay", () => {
 				patch: "@@ -3,1 +3,2 @@\n keep\n+starts",
 			},
 		]);
-		mockAwaitPreviewApproval
-			.mockResolvedValueOnce(queuedDecision("approve", "COMMENT"))
-			.mockResolvedValueOnce({ decision: "approve" });
+		mockAwaitPreviewApproval.mockResolvedValueOnce(
+			queuedDecision("approve", "COMMENT"),
+		);
 
 		await openHighLevelOverlay("s1", subject);
 
-		expect(mockAwaitPreviewApproval).toHaveBeenLastCalledWith(
-			"Review",
-			expect.objectContaining({
-				body: [
-					"### Line-level comments",
-					"",
-					"- `src/a.test.ts:4` starts: asserts nothing",
-					"",
-					"### PR-level body",
-					"",
-					"**Structure**",
-					"",
-					"Split it",
-				].join("\n"),
-			}),
-		);
+		expect(mockAwaitPreviewApproval).toHaveBeenCalledOnce();
 		expect(mockExecFileSync).toHaveBeenCalledWith(
 			...ghReview("COMMENT", "**Structure**\n\nSplit it", [
 				{
@@ -292,9 +274,9 @@ describe("openHighLevelOverlay", () => {
 		mockFetchHighLevelFiles.mockImplementation(() => {
 			throw new Error("offline");
 		});
-		mockAwaitPreviewApproval
-			.mockResolvedValueOnce(queuedDecision("approve", "COMMENT"))
-			.mockResolvedValueOnce({ decision: "approve" });
+		mockAwaitPreviewApproval.mockResolvedValueOnce(
+			queuedDecision("approve", "COMMENT"),
+		);
 
 		await openHighLevelOverlay("s1", subject);
 
@@ -304,36 +286,25 @@ describe("openHighLevelOverlay", () => {
 	});
 
 	it.each([
-		["rejected", { decision: "reject" }],
-		["closed", { decision: "reject", dismissed: true }],
+		["approve", "COMMENT", "comment"],
+		["reject", "REQUEST_CHANGES", "request-changes"],
 	] as const)(
-		"posts nothing when the review preview is %s",
-		async (_label, preview) => {
-			mockAwaitPreviewApproval
-				.mockResolvedValueOnce(queuedDecision("approve", "COMMENT"))
-				.mockResolvedValueOnce(preview);
+		"posts nothing for a %s/%s verdict with nothing to say",
+		async (decision, reviewEvent, verdict) => {
+			mockAwaitPreviewApproval.mockResolvedValue({
+				decision,
+				reviewEvent,
+				checklist: [],
+			});
 
 			const record = await openHighLevelOverlay("s1", subject);
 
-			expect(mockSaveHighLevelReview).toHaveBeenCalledWith(record);
+			expect(record?.verdict).toBe(verdict);
+			expect(mockAwaitPreviewApproval).toHaveBeenCalledOnce();
 			expect(mockExecFileSync).not.toHaveBeenCalled();
 			expect(log).toHaveBeenCalledWith("Nothing was posted to GitHub.");
 		},
 	);
-
-	it("posts nothing when changes are requested with nothing to say", async () => {
-		mockAwaitPreviewApproval.mockResolvedValue({
-			decision: "reject",
-			checklist: [],
-		});
-
-		const record = await openHighLevelOverlay("s1", subject);
-
-		expect(record?.verdict).toBe("request-changes");
-		expect(mockAwaitPreviewApproval).toHaveBeenCalledOnce();
-		expect(mockExecFileSync).not.toHaveBeenCalled();
-		expect(log).toHaveBeenCalledWith("Nothing was posted to GitHub.");
-	});
 
 	it("keeps the saved record, prints the gh error and exits non-zero when the review fails", async () => {
 		mockAwaitPreviewApproval.mockResolvedValue({
