@@ -1,3 +1,10 @@
+# [0.1039.0](https://github.com/staff0rd/assist/compare/v0.1038.0...v0.1039.0) (2026-11-01)
+
+
+### Features
+
+* refuse locked schema at commit ([0ff3ec7](https://github.com/staff0rd/assist/commit/0ff3ec7052522d71258c69381dcff8abb9924434))
+
 # [0.1038.0](https://github.com/staff0rd/assist/compare/v0.1037.0...v0.1038.0) (2026-11-01)
 
 
