@@ -7,6 +7,7 @@
 				"prompt": "Add a dark mode toggle to the settings page",
 				"title": "Dark mode toggle",
 				"status": "waiting",
+				"worktree": true,
 				"edits": {
 					"README.md": "# sandbox\n\nSettings include a dark mode toggle.\n",
 					"src/settings/DarkModeToggle.tsx": "export function DarkModeToggle() {\n\treturn null;\n}\n",
@@ -27,6 +28,7 @@
 				"repo": "sandbox",
 				"prompt": "Fix the flaky date formatting test",
 				"title": "Fix flaky date test",
+				"worktree": true,
 				"reply": [
 					"The test formats dates in the machine's local timezone, so it fails west of UTC.",
 					"Read(src/format/formatDate.test.ts)",
@@ -41,6 +43,7 @@
 				"prompt": "Add pagination to the orders endpoint",
 				"title": "Paginate orders endpoint",
 				"status": "waiting",
+				"worktree": true,
 				"reply": [
 					"Added `page` and `pageSize` query parameters to `GET /orders` with a default page size of 50.",
 					"Bash(npm test)",
@@ -56,8 +59,29 @@
 				"prompt": "Let customers export their orders as CSV",
 				"title": "Draft CSV order export",
 				"status": "waiting",
-				"reply": [
-					"Should the export include cancelled orders, or only orders that were fulfilled?"
+				"reply": ["I need two decisions before drafting the story."]
+			}
+		},
+		{
+			"question": {
+				"session": "Let customers export their orders as CSV",
+				"title": "CSV order export",
+				"questions": [
+					{
+						"question": "Which orders should the CSV export include?",
+						"header": "Orders",
+						"multiSelect": false,
+						"options": [
+							{
+								"label": "Fulfilled only",
+								"description": "Skip cancelled and pending orders"
+							},
+							{
+								"label": "All orders",
+								"description": "Include cancelled orders with their status"
+							}
+						]
+					}
 				]
 			}
 		},
@@ -76,13 +100,14 @@
 				"command": "bug",
 				"prompt": "The contact form submits twice when Enter is pressed",
 				"title": "Contact form double submit",
+				"worktree": true,
 				"reply": ["Read(src/contact/ContactForm.tsx)", "⎿  Read 61 lines"]
 			}
 		}
 	],
 	"dev-server": [
-		{ "assist": ["config", "set", "run.0.server", "true", "-g"] },
-		{ "assist": ["config", "set", "run.0.port", "5173", "-g"] },
+		{ "assist": ["config", "set", "run.0.server", "true", "--node"] },
+		{ "assist": ["config", "set", "run.0.port", "5173", "--node"] },
 		{ "run": "dev" },
 		{
 			"session": {
@@ -90,6 +115,7 @@
 				"prompt": "Add a dark mode toggle to the settings page",
 				"title": "Dark mode toggle",
 				"status": "waiting",
+				"worktree": true,
 				"reply": [
 					"Should the toggle also follow the operating system's colour scheme until the user picks one?"
 				]
@@ -100,6 +126,7 @@
 				"repo": "sandbox",
 				"prompt": "Fix the flaky date formatting test",
 				"title": "Fix flaky date test",
+				"worktree": true,
 				"reply": ["Bash(npm test -- formatDate)"]
 			}
 		},
@@ -109,6 +136,7 @@
 				"prompt": "Add pagination to the orders endpoint",
 				"title": "Paginate orders endpoint",
 				"status": "waiting",
+				"worktree": true,
 				"reply": ["Ready for review."]
 			}
 		}
@@ -235,6 +263,7 @@
 				"prompt": "Add a dark mode toggle to the settings page",
 				"title": "Dark mode toggle",
 				"status": "waiting",
+				"worktree": true,
 				"edits": {
 					"README.md": "# sandbox\nA sample app for trying out assist.\n\n## Settings\n\nThe settings page has a dark mode toggle. It follows the operating system's colour scheme until you pick one, then remembers your choice.\n",
 					"src/settings/DarkModeToggle.tsx": "import { useColourScheme } from \"./useColourScheme\";\n\nexport function DarkModeToggle() {\n\tconst [scheme, setScheme] = useColourScheme();\n\treturn (\n\t\t<label>\n\t\t\t<input\n\t\t\t\ttype=\"checkbox\"\n\t\t\t\tchecked={scheme === \"dark\"}\n\t\t\t\tonChange={(event) => setScheme(event.target.checked ? \"dark\" : \"light\")}\n\t\t\t/>\n\t\t\tDark mode\n\t\t</label>\n\t);\n}\n",
@@ -378,8 +407,8 @@
 		}
 	],
 	"next": [
-		{ "assist": ["config", "set", "-g", "next.peers", "alice,bob"] },
-		{ "assist": ["config", "set", "-g", "next.projects", "staff0rd/3"] },
+		{ "assist": ["config", "set", "--node", "next.peers", "alice,bob"] },
+		{ "assist": ["config", "set", "--node", "next.projects", "staff0rd/3"] },
 		{
 			"gh": {
 				"match": ["pullRequests(states: OPEN"],
@@ -606,7 +635,7 @@
 			"assist": [
 				"config",
 				"set",
-				"-g",
+				"--node",
 				"releases.streams",
 				"[{\"name\":\"Web app\",\"repo\":\"staff0rd/sandbox\",\"workflow\":\"release.yml\",\"nodes\":[{\"id\":\"build\",\"kind\":\"build\"},{\"id\":\"staging\",\"environment\":\"staging\"},{\"id\":\"production\",\"environment\":\"production\"}],\"edges\":[[\"build\",\"staging\"],[\"staging\",\"production\"]]},{\"name\":\"API\",\"repo\":\"example/api\",\"workflow\":\"deploy.yml\",\"nodes\":[{\"id\":\"build\",\"kind\":\"build\"},{\"id\":\"dev\",\"environment\":\"dev\"},{\"id\":\"prod\",\"environment\":\"prod\"}],\"edges\":[[\"build\",\"dev\"],[\"dev\",\"prod\"]]}]"
 			]
@@ -862,7 +891,7 @@
 		}
 	],
 	"news": [
-		{ "assist": ["config", "set", "-g", "news.showInNav", "true"] },
+		{ "assist": ["config", "set", "--node", "news.showInNav", "true"] },
 		{
 			"newsFeed": {
 				"name": "ai-digest",

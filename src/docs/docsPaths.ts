@@ -12,6 +12,7 @@ export const docsPaths = {
 	),
 	pagesDir: join(repoRoot, "docs/src/content/docs"),
 	screenshotsDir: join(repoRoot, "docs/public/screenshots"),
+	socialCard: join(repoRoot, "docs/public/og.png"),
 	captureConfig: join(repoRoot, "docs/capture/assist.yml"),
 	captureScenes: join(repoRoot, "docs/capture/scenes.json"),
 	captureBin: join(repoRoot, "docs/capture/bin"),

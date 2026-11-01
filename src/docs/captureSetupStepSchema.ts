@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { proposedItemSchema } from "../commands/backlog/propose/proposedItemSchema";
+import { askQuestionInputSchema } from "../commands/sessions/shared/askQuestionInputSchema";
 
 export const captureRepos = ["sandbox", "api", "website"] as const;
 
@@ -16,6 +17,7 @@ const sessionStepSchema = z.strictObject({
 	status: z.enum(["running", "waiting", "done"]).optional(),
 	node: z.string().min(1).optional(),
 	edits: z.record(z.string().min(1), z.string()).optional(),
+	worktree: z.boolean().optional(),
 });
 
 const transcriptStepSchema = z.strictObject({
@@ -37,6 +39,12 @@ const markdownPreviewSchema = z.strictObject({
 	kind: z.enum(["ask", "show"]),
 	title: z.string().min(1),
 	body: z.string().min(1),
+});
+
+const questionPreviewSchema = z.strictObject({
+	...previewTarget,
+	title: z.string().min(1),
+	questions: askQuestionInputSchema.shape.questions,
 });
 
 const prPreviewSchema = z.strictObject({
@@ -121,6 +129,7 @@ export const captureSetupStepSchema = z.union([
 	z.strictObject({ transcript: transcriptStepSchema }),
 	z.strictObject({ openPr: openPrStepSchema }),
 	z.strictObject({ preview: markdownPreviewSchema }),
+	z.strictObject({ question: questionPreviewSchema }),
 	z.strictObject({ pr: prPreviewSchema }),
 	z.strictObject({ proposal: proposalPreviewSchema }),
 	z.strictObject({ highLevelReview: highLevelReviewSchema }),

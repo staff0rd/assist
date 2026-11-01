@@ -1,5 +1,3 @@
-import { copyFileSync, rmSync } from "node:fs";
-import { join } from "node:path";
 import { chromium } from "playwright";
 import type { CaptureSetupStep } from "../captureSetupStepSchema";
 import type { DocsScreenshot } from "../docsPageSchema";
@@ -7,12 +5,9 @@ import { docsPaths } from "../docsPaths";
 import type { CaptureScenes } from "../loadCaptureScenes";
 import { captureScreenshot } from "./captureScreenshot";
 import { closePreviews } from "./closePreviews";
+import { renderSocialCard, socialCardSource } from "./renderSocialCard";
 import type { CaptureHome } from "./createCaptureHome";
-import { resetBacklog } from "./resetBacklog";
-import { resetPeers } from "./resetPeers";
-import { runAssist } from "./runAssist";
-import { runSetupStep } from "./runSetupStep";
-import { fakeGhResponsesFile } from "./writeFakeGhResponse";
+import { sessionStateTracker } from "./sessionStateTracker";
 
 function setupSteps(
 	screenshot: DocsScreenshot,
@@ -20,29 +15,6 @@ function setupSteps(
 ): CaptureSetupStep[] {
 	const scene = screenshot.scene ? (scenes[screenshot.scene] ?? []) : [];
 	return [...scene, ...(screenshot.setup ?? [])];
-}
-
-function sessionStateTracker(capture: CaptureHome) {
-	let current = "[]";
-	return async (steps: CaptureSetupStep[]) => {
-		const next = JSON.stringify(steps);
-		if (next === current) return;
-		if (current !== "[]") {
-			closePreviews(capture);
-			runAssist(capture, ["daemon", "drain", "--yes"]);
-			resetPeers(capture);
-			rmSync(join(capture.home, ".claude", "projects"), {
-				recursive: true,
-				force: true,
-			});
-			rmSync(join(capture.home, ".fake-gh.json"), { force: true });
-			rmSync(fakeGhResponsesFile(capture), { force: true });
-			copyFileSync(docsPaths.captureConfig, join(capture.home, ".assist.yml"));
-			await resetBacklog(capture);
-		}
-		for (const step of steps) await runSetupStep(capture, step);
-		current = next;
-	};
 }
 
 export async function captureScreenshots(
@@ -58,6 +30,10 @@ export async function captureScreenshots(
 			await enterState(setupSteps(screenshot, scenes));
 			const files = await captureScreenshot(browser, url, screenshot);
 			console.log(`Captured ${files.join(", ")}`);
+		}
+		if (screenshots.some((s) => s.file === socialCardSource)) {
+			await renderSocialCard(browser);
+			console.log(`Rendered ${docsPaths.socialCard}`);
 		}
 	} finally {
 		closePreviews(capture);

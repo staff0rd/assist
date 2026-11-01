@@ -13,13 +13,14 @@ import { badgePlugin } from "../src/docs/starlight/badgePlugin";
 import { iconPlugin } from "../src/docs/starlight/iconPlugin";
 import { screenshotsPlugin } from "../src/docs/starlight/screenshotsPlugin";
 import { statusPlugin } from "../src/docs/starlight/statusPlugin";
+import { docsDescription } from "../src/docs/docsDescription";
 
 const base = normalizeBasePath(process.env.DOCS_BASE_PATH ?? "/");
 const sidebar = docsSidebar();
 const preview = process.env.NODE_ENV === "development";
 const site = "https://staffordwilliams.com";
 const ogImage = `${site}${base}og.png`;
-const description = "Enforce determinism in LLM development workflows.";
+const description = docsDescription;
 
 export default defineConfig({
 	site,

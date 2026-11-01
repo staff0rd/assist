@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { buildSlashCommand } from "../../commands/backlog/launchMode";
 import type { CaptureSessionStep } from "../captureSetupStepSchema";
 import type { CaptureHome } from "./createCaptureHome";
+import { createCaptureWorktree } from "./createCaptureWorktree";
 import { requestDaemon } from "./requestDaemon";
 
 function claudePrompt(step: CaptureSessionStep): string {
@@ -32,13 +33,21 @@ function nodeHome(capture: CaptureHome, node: string | undefined) {
 }
 
 function createMessage(cwd: string, step: CaptureSessionStep) {
-	if (!step.command) return { type: "create", cwd, prompt: step.prompt };
+	const inPlace = step.worktree ? { inPlace: true } : {};
+	if (!step.command)
+		return { type: "create", cwd, prompt: step.prompt, ...inPlace };
 	return {
 		type: "create-assist",
 		cwd,
 		assistArgs: [step.command, "--once", step.prompt],
 		title: step.title,
+		...inPlace,
 	};
+}
+
+function sessionCwd(target: CaptureHome, step: CaptureSessionStep): string {
+	const repoDir = join(target.reposDir, step.repo);
+	return step.worktree ? createCaptureWorktree(repoDir, target.env) : repoDir;
 }
 
 export async function startScriptedSession(
@@ -49,7 +58,7 @@ export async function startScriptedSession(
 	scriptFakeClaude(target.home, step);
 	const { sessionId } = await requestDaemon(
 		target.home,
-		createMessage(join(target.reposDir, step.repo), step),
+		createMessage(sessionCwd(target, step), step),
 		"created",
 	);
 	if (sessionId) capture.sessionIds.set(step.prompt, sessionId);

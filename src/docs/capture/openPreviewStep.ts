@@ -17,6 +17,14 @@ export async function openPreviewStep(
 			body,
 			prNumber: null,
 		});
+	} else if ("question" in step) {
+		const { session, title, questions } = step.question;
+		await holdPreviewOpen(capture, session, {
+			kind: "question",
+			title,
+			body: JSON.stringify({ questions }),
+			prNumber: null,
+		});
 	} else if ("pr" in step) {
 		const { session, title, prNumber, draft, ...sections } = step.pr;
 		await holdPreviewOpen(capture, session, {
