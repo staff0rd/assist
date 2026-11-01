@@ -1,13 +1,13 @@
-import { buildCommentLines } from "./buildCommentLines";
 import { formatItemId } from "./formatItemId";
 import type { BacklogItem, PlanPhase } from "./types";
 import { buildManualCheckLines } from "./buildManualCheckLines";
+import { buildContextLines } from "./buildContextLines";
 
 export function buildAuthoredPhasePrompt(
 	item: BacklogItem,
 	phaseNumber: number,
 	phase: PlanPhase,
-	options: { commitBeforePhaseEnd: boolean } = {
+	options: { commitBeforePhaseEnd: boolean; askCheck?: boolean } = {
 		commitBeforePhaseEnd: false,
 	},
 ): string {
@@ -22,7 +22,11 @@ export function buildAuthoredPhasePrompt(
 		"Focus ONLY on this phase. Do not work on other phases.",
 		"If you need to modify backlog items, run `assist backlog --help` to discover available commands.",
 		"When you have completed all tasks for this phase, run /verify to check your work.",
-		...buildManualCheckLines(manualChecks, options.commitBeforePhaseEnd),
+		...buildManualCheckLines(
+			manualChecks,
+			options.commitBeforePhaseEnd,
+			options.askCheck,
+		),
 		"",
 		`Post concise comments for any notable findings or changes using \`assist backlog comment ${formatItemId(item.id)} "<text>"\`.`,
 		"",
@@ -31,27 +35,6 @@ export function buildAuthoredPhasePrompt(
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");
-}
-
-function buildContextLines(
-	item: BacklogItem,
-	phaseNumber: number,
-	phase: PlanPhase,
-): string[] {
-	const ac = item.acceptanceCriteria.map((c, i) => `${i + 1}. ${c}`).join("\n");
-	return [
-		`You are implementing phase ${phaseNumber} of backlog item ${formatItemId(item.id)}: ${item.name}`,
-		"",
-		item.description ? `Description: ${item.description}` : "",
-		"",
-		"Acceptance criteria:",
-		ac,
-		...buildCommentLines(item.comments),
-		"",
-		`Phase ${phaseNumber}: ${phase.name}`,
-		"Tasks:",
-		formatTasks(phase),
-	];
 }
 
 function buildStartedLines(item: BacklogItem, phaseNumber: number): string[] {
@@ -66,8 +49,4 @@ function buildStartedLines(item: BacklogItem, phaseNumber: number): string[] {
 		"",
 		`As your first step, before any implementation, run \`${command}\` to assign the issue to yourself and transition it to In Progress.`,
 	];
-}
-
-function formatTasks(phase: PlanPhase): string {
-	return phase.tasks.map((t) => `- ${t.task}`).join("\n");
 }

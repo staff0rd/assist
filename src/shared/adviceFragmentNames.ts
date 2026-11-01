@@ -1,5 +1,6 @@
 export const adviceFragmentTitles = {
 	ask: "Asking for sign-off",
+	"ask-check": "Asking for a manual check",
 	"ask-question": "Asking questions",
 	"assist-global": "Using assist",
 	"backlog-ids": "Backlog item IDs",
@@ -21,6 +22,7 @@ export const adviceFragmentTitles = {
 
 export const adviceFragmentNames = [
 	"ask",
+	"ask-check",
 	"ask-question",
 	"assist-global",
 	"backlog-ids",

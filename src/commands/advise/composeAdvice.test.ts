@@ -67,6 +67,19 @@ describe("composeAdvice", () => {
 		).toContain("ask-question");
 	});
 
+	it("adds the ask-check fragment only when sessions.askQuestion is on", () => {
+		expect(includedNames(contextWith({}))).not.toContain("ask-check");
+		const context = contextWith({ sessions: { askQuestion: true } });
+
+		expect(includedNames(context)).toContain("ask-check");
+		expect(composeAdvice(context, fragments)).toContain(
+			"## Asking for a manual check",
+		);
+		expect(composeAdvice(context, fragments)).toContain(
+			"assist ask-check --json -",
+		);
+	});
+
 	it("renders each included fragment under its title, in filename order", () => {
 		const markdown = composeAdvice(contextWith({ jira: {} }), fragments);
 		const titles = [...markdown.matchAll(/^## (.+)$/gm)].map(

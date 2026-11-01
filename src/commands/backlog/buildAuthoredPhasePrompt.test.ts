@@ -148,4 +148,55 @@ describe("buildAuthoredPhasePrompt", () => {
 			);
 		});
 	});
+
+	describe("askCheck", () => {
+		const phaseWithChecks: PlanPhase = {
+			name: "Phase 1",
+			tasks: [{ task: "do it" }],
+			manualChecks: ["click the button"],
+		};
+
+		it("commits, then raises each manual check with assist ask-check when on", () => {
+			const prompt = buildAuthoredPhasePrompt(
+				makeBacklogItem(),
+				1,
+				phaseWithChecks,
+				{ commitBeforePhaseEnd: false, askCheck: true },
+			);
+
+			expect(prompt).toContain("assist ask-check --json -");
+			expect(prompt).toContain("as a background task");
+			expect(prompt).toContain("Keep your chat summary to a few lines");
+			expect(prompt).toContain("- click the button");
+			expect(prompt.indexOf("/commit")).toBeLessThan(
+				prompt.indexOf("assist ask-check"),
+			);
+			expect(prompt).not.toContain(
+				"ask the user to perform these manual checks:",
+			);
+		});
+
+		it("keeps the chat fallback when off", () => {
+			const prompt = buildAuthoredPhasePrompt(
+				makeBacklogItem(),
+				1,
+				phaseWithChecks,
+				{ commitBeforePhaseEnd: false, askCheck: false },
+			);
+
+			expect(prompt).not.toContain("assist ask-check");
+			expect(prompt).toContain(
+				"Before marking this phase as done, ask the user to perform these manual checks:",
+			);
+		});
+
+		it("leaves a phase without manual checks unchanged when on", () => {
+			expect(
+				buildAuthoredPhasePrompt(makeBacklogItem(), 1, phase, {
+					commitBeforePhaseEnd: false,
+					askCheck: true,
+				}),
+			).toBe(buildAuthoredPhasePrompt(makeBacklogItem(), 1, phase));
+		});
+	});
 });

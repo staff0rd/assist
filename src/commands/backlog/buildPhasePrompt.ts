@@ -10,7 +10,8 @@ export function buildPhasePrompt(
 	phaseNumber: number,
 	phase: PlanPhase,
 ): string {
-	const worktree = loadConfig().worktree;
+	const config = loadConfig();
+	const worktree = config.worktree;
 	const commitBeforePhaseEnd =
 		worktree?.commitBeforePhaseEnd ??
 		worktree?.commitBeforeManualChecks ??
@@ -21,5 +22,6 @@ export function buildPhasePrompt(
 	}
 	return buildAuthoredPhasePrompt(item, phaseNumber, phase, {
 		commitBeforePhaseEnd,
+		askCheck: config.sessions?.askQuestion === true,
 	});
 }
