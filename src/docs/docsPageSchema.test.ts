@@ -69,6 +69,16 @@ describe("docsPageSchema", () => {
 		);
 	});
 
+	it("takes phone only as true, and only on a route capture", () => {
+		const parses = (extra: Record<string, unknown>) =>
+			docsPageSchema.safeParse(withScreenshot(extra)).success;
+		const url = "https://github.com/staff0rd/sandbox/pull/12";
+		expect(parses({ phone: true })).toBe(true);
+		expect(parses({ phone: false })).toBe(false);
+		expect(parses({ phone: "yes" })).toBe(false);
+		expect(parses({ phone: true, route: undefined, url })).toBe(false);
+	});
+
 	it("rejects an unknown top-level key", () => {
 		expect(
 			docsPageSchema.safeParse({ ...validPage, summary: "extra" }).success,

@@ -36,6 +36,7 @@ const screenshotSchema = z
 			})
 			.optional(),
 		theme: z.enum(["light", "dark"]).optional(),
+		phone: z.literal(true).optional(),
 		waitFor: z.string().min(1).optional(),
 		crop: z
 			.union([z.string().min(1), z.array(z.string().min(1)).min(2)])
@@ -48,6 +49,9 @@ const screenshotSchema = z
 	})
 	.refine((shot) => (shot.route === undefined) !== (shot.url === undefined), {
 		message: "Give a screenshot exactly one of route or url",
+	})
+	.refine((shot) => !(shot.phone && shot.url), {
+		message: "A phone screenshot needs a route, not a url",
 	});
 
 export const docsScreenshotsSchema = z.array(screenshotSchema).optional();

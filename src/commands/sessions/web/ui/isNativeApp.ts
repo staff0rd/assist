@@ -1,3 +1,6 @@
 import { Capacitor } from "@capacitor/core";
+import { hasPhoneCaptureFlag } from "./hasPhoneCaptureFlag";
 
-export const isNativeApp = Capacitor.isNativePlatform();
+export const isNativePlatform = Capacitor.isNativePlatform();
+
+export const isNativeApp = isNativePlatform || hasPhoneCaptureFlag();

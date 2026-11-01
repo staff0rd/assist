@@ -7,8 +7,8 @@ import { drawHighlights } from "./drawHighlights";
 import { openGithubPage } from "./openGithubPage";
 import { saveScreenshot } from "./saveScreenshot";
 import { performAction } from "./performAction";
+import { newCaptureContext } from "./newCaptureContext";
 
-const DEFAULT_VIEWPORT = { width: 1280, height: 800 };
 const SETTLE_MS = 750;
 
 async function openPage(
@@ -29,14 +29,12 @@ export async function captureScreenshot(
 ): Promise<string[]> {
 	const written: string[] = [];
 	for (const variant of screenshotVariants(screenshot)) {
-		const context = await browser.newContext({
-			viewport: screenshot.viewport ?? DEFAULT_VIEWPORT,
-			colorScheme: variant.theme,
-			bypassCSP: screenshot.url !== undefined,
-		});
-		await context.addInitScript((mode) => {
-			localStorage.setItem("theme-mode", mode);
-		}, variant.theme);
+		const context = await newCaptureContext(
+			browser,
+			baseUrl,
+			screenshot,
+			variant.theme,
+		);
 		const page = await openPage(context, baseUrl, screenshot);
 		if (screenshot.waitFor) await page.waitForSelector(screenshot.waitFor);
 		for (const action of screenshot.actions ?? [])

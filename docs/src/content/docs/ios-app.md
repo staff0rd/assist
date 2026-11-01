@@ -4,9 +4,18 @@ title: iOS app
 group: Sessions
 order: 11
 covers: []
+screenshots:
+  - file: ios-app-sessions.png
+    alt: The iOS app session list, with sessions that need you above running ones
+    route: /
+    phone: true
+    scene: dashboard
+    waitFor: text=Dark mode toggle
 ---
 
 The assist iOS app shows your sessions on your phone: see which agents are waiting on you, read their terminals, reply and answer their questions, away from your desk. It connects to one of your web servers over [Tailscale](https://tailscale.com/) and shows that machine's sessions along with those of every [linked machine](../sessions-linked-nodes/).
+
+::screenshot{file="ios-app-sessions.png"}
 
 ## Installing
 
