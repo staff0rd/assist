@@ -1,3 +1,10 @@
+# [0.1030.0](https://github.com/staff0rd/assist/compare/v0.1029.0...v0.1030.0) (2026-11-01)
+
+
+### Features
+
+* backlog-item previews read question ([9a01f18](https://github.com/staff0rd/assist/commit/9a01f184615be087b0ef91e1043730832ed9bcbd))
+
 # [0.1029.0](https://github.com/staff0rd/assist/compare/v0.1028.0...v0.1029.0) (2026-11-01)
 
 
