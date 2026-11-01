@@ -53,13 +53,13 @@ export function SessionTopBarControls({
 				onSetAutoAdvance={onSetAutoAdvance}
 			/>
 			<LabelledActionsContext.Provider value={labelled}>
+				<TransferButton session={session} />
 				<SessionActionButtons
 					session={session}
 					onRetry={onRetry}
 					onRestart={onRestart}
 					onDismiss={onDismiss}
 				/>
-				<TransferButton session={session} />
 			</LabelledActionsContext.Provider>
 			<SessionTopBarDismiss
 				session={session}
