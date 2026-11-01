@@ -49,6 +49,7 @@ export function HamburgerMenu({
 					},
 					onShowShortcuts: closeAndShow("shortcuts"),
 					onConnectMobile: close,
+					onFirefoxExtension: close,
 					onRestart: closeAndShow("restart"),
 					onUpdate: closeAndShow("update"),
 				})}

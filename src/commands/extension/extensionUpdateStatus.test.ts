@@ -11,6 +11,7 @@ describe("extensionUpdateStatus", () => {
 			connected: "0.984.0",
 			latest: "0.985.0",
 			updateLink: latest.update_link,
+			installLink: latest.update_link,
 			behind: true,
 		});
 		expect(formatExtensionUpdate(status)).toBe(
@@ -22,9 +23,19 @@ describe("extensionUpdateStatus", () => {
 		const status = extensionUpdateStatus("0.985.0", latest);
 		expect(status.behind).toBe(false);
 		expect(status.updateLink).toBeUndefined();
+		expect(status.installLink).toBe(latest.update_link);
 		expect(formatExtensionUpdate(status)).toBe(
 			"latest signed: v0.985.0 (up to date)",
 		);
+	});
+
+	it("keeps the install link when not connected, and drops it when the latest is unknown", () => {
+		expect(extensionUpdateStatus(undefined, latest).installLink).toBe(
+			latest.update_link,
+		);
+		expect(
+			extensionUpdateStatus("0.984.0", undefined).installLink,
+		).toBeUndefined();
 	});
 
 	it("is not behind when newer than the latest signed build or not connected", () => {

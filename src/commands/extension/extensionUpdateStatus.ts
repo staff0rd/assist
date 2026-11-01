@@ -17,6 +17,7 @@ export function extensionUpdateStatus(
 		connected,
 		latest: latest?.version,
 		updateLink: behind ? latest?.update_link : undefined,
+		installLink: latest?.update_link,
 		behind,
 	};
 }
