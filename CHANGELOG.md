@@ -1,3 +1,10 @@
+# [0.1024.0](https://github.com/staff0rd/assist/compare/v0.1023.0...v0.1024.0) (2026-11-01)
+
+
+### Features
+
+* devlog dates, short items, no fake vers ([ccb5cdf](https://github.com/staff0rd/assist/commit/ccb5cdfbb37fc51dc8d03883a471793a28f0ec97))
+
 # [0.1023.0](https://github.com/staff0rd/assist/compare/v0.1022.3...v0.1023.0) (2026-11-01)
 
 
