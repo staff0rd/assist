@@ -28,7 +28,7 @@ If the harness provides a structured question tool, ask each question with it �
 
 From the clarifying answers, decide whether the story involves a **substantial UI change** — a new screen, panel, view or component, or a reworked layout or interaction flow. A trivial UI change (a label, a button, a tweak to an existing control) or no UI change at all is not substantial: skip this step entirely and do not mention it.
 
-If it is substantial, do not ask whether to design it — follow `/design` (`~/.claude/commands/design.md`) for the story's UI, applying it to what the user described and answered. Publish the design as an artifact, give the user its URL, and iterate on it with them — editing the same file and republishing to the same URL — until they say they are happy with it. Only then move on.
+If it is substantial, do not ask whether to design it — follow `/design` (`~/.claude/skills/design/SKILL.md`) for the story's UI, applying it to what the user described and answered. Publish the design as an artifact, give the user its URL, and iterate on it with them — editing the same file and republishing to the same URL — until they say they are happy with it. Only then move on.
 
 Keep the artifact's URL and name: the item's description references the design (Step 4), and the artifact is attached to the item once it is created (Step 5).
 

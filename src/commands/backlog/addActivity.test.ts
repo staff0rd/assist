@@ -120,6 +120,17 @@ describe("addActivity", () => {
 		expect(mockResolve).not.toHaveBeenCalled();
 	});
 
+	it("attaches a design artifact with its url and title", async () => {
+		const url = "https://claude.ai/code/artifact/abc";
+
+		await addActivity("1", "design", url, { url, title: "Board layout" });
+
+		expect(process.exitCode).toBeUndefined();
+		expect(await getRefs(orm)).toEqual([
+			{ kind: "design", ref: url, title: "Board layout", url },
+		]);
+	});
+
 	it("refuses a docs-unlock ref, which only a confirmed pin may record", async () => {
 		await addActivity("1", "docs-unlock", "approved", {});
 
