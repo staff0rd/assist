@@ -3,11 +3,11 @@ import { randomInt } from "node:crypto";
 import chalk from "chalk";
 import { getRestrictedDir } from "../codeComment/getRestrictedDir";
 import { sweepRestrictedDir } from "../codeComment/sweepRestrictedDir";
-import { showNotification } from "../notify/showNotification";
+import { deliverPinNotification } from "../notify/deliverPinNotification";
 import { getMigrationPinPath } from "./getMigrationPinPath";
 import { nextMigrationId } from "./nextMigrationId";
 
-export function dbMigrationUnlock(): void {
+export async function dbMigrationUnlock(): Promise<void> {
 	const migrationId = nextMigrationId();
 	const pin = randomInt(0, 1000).toString().padStart(3, "0");
 
@@ -24,7 +24,9 @@ export function dbMigrationUnlock(): void {
 		),
 	);
 
-	const delivered = showNotification({
+	const { delivered, node } = await deliverPinNotification({
+		area: "db-migration",
+		pin,
 		title: "assist db-migration pin",
 		message: `Pin ${pin} — run: assist db-migration confirm ${pin}`,
 	});
@@ -41,6 +43,6 @@ export function dbMigrationUnlock(): void {
 	}
 
 	console.log(
-		`A confirmation pin was sent to your desktop notifications.\nTo approve creating migration ${migrationId}, run:\n${chalk.cyan("  assist db-migration confirm <PIN>")}\nusing the pin from that notification.`,
+		`A confirmation pin was sent to your desktop notifications${node ? ` on ${node}, the node controlling this session` : ""}.\nTo approve creating migration ${migrationId}, run${node ? ` on ${node}` : ""}:\n${chalk.cyan("  assist db-migration confirm <PIN>")}\nusing the pin from that notification.`,
 	);
 }

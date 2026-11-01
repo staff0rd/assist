@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { randomInt } from "node:crypto";
-import { showNotification } from "../notify/showNotification";
+import { deliverPinNotification } from "../notify/deliverPinNotification";
 import { getPinStatePath, getRestrictedDir } from "./getRestrictedDir";
 import { sweepRestrictedDir } from "./sweepRestrictedDir";
 
@@ -8,7 +8,7 @@ export function issuePin(
 	file: string,
 	lineNumber: number,
 	text: string,
-): boolean {
+): Promise<{ delivered: boolean; node?: string }> {
 	const pin = generatePin();
 	mkdirSync(getRestrictedDir(), { recursive: true });
 	sweepRestrictedDir();
@@ -17,7 +17,9 @@ export function issuePin(
 		JSON.stringify({ pin, file, line: lineNumber, text }),
 	);
 
-	return showNotification({
+	return deliverPinNotification({
+		area: "code-comment",
+		pin,
 		title: "assist code-comment pin",
 		message: `Pin ${pin} — run: assist code-comment confirm ${pin}`,
 	});

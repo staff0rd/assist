@@ -6,8 +6,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mockShowNotification = vi.fn();
 let restrictedDir: string;
 
+const mockRequestDaemonReply =
+	vi.fn<(request: Record<string, unknown>) => Promise<unknown>>();
+
 vi.mock("../notify/showNotification", () => ({
 	showNotification: (...args: unknown[]) => mockShowNotification(...args),
+}));
+
+vi.mock("../sessions/daemon/requestDaemonReply", () => ({
+	requestDaemonReply: (request: Record<string, unknown>) =>
+		mockRequestDaemonReply(request),
 }));
 
 vi.mock("../codeComment/getRestrictedDir", () => ({
@@ -52,6 +60,8 @@ describe("db-migration unlock -> confirm -> write round-trip", () => {
 		process.exitCode = undefined;
 		restrictedDir = mkdtempSync(join(tmpdir(), "assist-migration-"));
 		mockShowNotification.mockReturnValue(true);
+		mockRequestDaemonReply.mockResolvedValue(undefined);
+		vi.stubEnv("ASSIST_SESSION_ID", "");
 		logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 		errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 	});
@@ -59,18 +69,19 @@ describe("db-migration unlock -> confirm -> write round-trip", () => {
 	afterEach(() => {
 		logSpy.mockRestore();
 		errorSpy.mockRestore();
+		vi.unstubAllEnvs();
 		process.exitCode = undefined;
 		rmSync(restrictedDir, { recursive: true, force: true });
 	});
 
-	it("allows an approved new-migration write exactly once", () => {
+	it("allows an approved new-migration write exactly once", async () => {
 		const id = nextMigrationId();
 
 		expect(decideMigrationGuard(writeInput(id), undefined)).toContain(
 			"db-migration unlock",
 		);
 
-		dbMigrationUnlock();
+		await dbMigrationUnlock();
 		expect(mockShowNotification).toHaveBeenCalledTimes(1);
 		const pin = issuedPin();
 
@@ -84,10 +95,39 @@ describe("db-migration unlock -> confirm -> write round-trip", () => {
 		);
 	});
 
-	it("scopes the approval to a single migration id", () => {
+	it("relays the pin to the session's controlling node and confirms there", async () => {
+		const id = nextMigrationId();
+		vi.stubEnv("ASSIST_SESSION_ID", "3");
+		mockRequestDaemonReply.mockImplementation(async (request) => ({
+			type: "notify-pin-result",
+			requestId: request.requestId,
+			node: "mac",
+		}));
+
+		await dbMigrationUnlock();
+
+		const pin = issuedPin();
+		expect(mockRequestDaemonReply).toHaveBeenCalledWith(
+			expect.objectContaining({
+				type: "notify-pin",
+				sessionId: "3",
+				area: "db-migration",
+				pin,
+			}),
+		);
+		expect(mockShowNotification).not.toHaveBeenCalled();
+		expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("on mac"));
+		expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining(pin));
+
+		dbMigrationConfirm(pin);
+		expect(process.exitCode).toBeUndefined();
+		expect(decideMigrationGuard(writeInput(id), undefined)).toBeUndefined();
+	});
+
+	it("scopes the approval to a single migration id", async () => {
 		const id = nextMigrationId();
 
-		dbMigrationUnlock();
+		await dbMigrationUnlock();
 		dbMigrationConfirm(issuedPin());
 
 		expect(decideMigrationGuard(writeInput(id + 1), undefined)).toContain(

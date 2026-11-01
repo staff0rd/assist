@@ -3,7 +3,11 @@ import { isHashCommentFile } from "../../shared/isHashCommentFile";
 import { validateCommentText } from "./validateCommentText";
 import { issuePin } from "./issuePin";
 
-export function codeCommentSet(file: string, line: string, text: string): void {
+export async function codeCommentSet(
+	file: string,
+	line: string,
+	text: string,
+): Promise<void> {
 	const lineNumber = Number.parseInt(line, 10);
 	if (!Number.isInteger(lineNumber) || lineNumber < 1) {
 		console.error(chalk.red(`Invalid line number: ${line}`));
@@ -33,7 +37,7 @@ export function codeCommentSet(file: string, line: string, text: string): void {
 		),
 	);
 
-	const delivered = issuePin(file, lineNumber, validation.text);
+	const { delivered, node } = await issuePin(file, lineNumber, validation.text);
 
 	if (!delivered) {
 		console.error(
@@ -47,6 +51,6 @@ export function codeCommentSet(file: string, line: string, text: string): void {
 	}
 
 	console.log(
-		`A confirmation pin was sent to your desktop notifications.\nTo insert "${marker} ${validation.text}" at ${file}:${lineNumber}, run:\n${chalk.cyan("  assist code-comment confirm <PIN>")}\nusing the pin from that notification.`,
+		`A confirmation pin was sent to your desktop notifications${node ? ` on ${node}, the node controlling this session` : ""}.\nTo insert "${marker} ${validation.text}" at ${file}:${lineNumber}, run${node ? ` on ${node}` : ""}:\n${chalk.cyan("  assist code-comment confirm <PIN>")}\nusing the pin from that notification.`,
 	);
 }
