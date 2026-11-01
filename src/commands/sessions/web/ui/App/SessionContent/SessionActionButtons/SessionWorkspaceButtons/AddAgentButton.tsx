@@ -6,6 +6,7 @@ import { canAddAgent } from "./AddAgentButton/canAddAgent";
 import { FreePromptForm } from "./AddAgentButton/FreePromptForm";
 import type { ShortcutName } from "../../../shortcutRegistry";
 import type { SessionInfo } from "../../../../types";
+import { usePersistedPrompt } from "../../../../usePersistedPrompt";
 import { useSessionLaunchContext } from "../../../../useSessionLaunchContext";
 
 export function AddAgentButton({
@@ -17,7 +18,7 @@ export function AddAgentButton({
 }) {
 	const { launchAgentInStream } = useSessionLaunchContext();
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-	const [prompt, setPrompt] = useState("");
+	const [prompt, setPrompt] = usePersistedPrompt(`add-agent:${session.id}`);
 	if (!canAddAgent(session)) return null;
 
 	return (
