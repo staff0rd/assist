@@ -20,6 +20,7 @@ export function diffBodyProps(
 		onAddRule: diff.comments.onAddRule,
 		onRevert: diff.revert.onRevert,
 		onRevertPaths: diff.revert.onRevertPaths,
+		uncommittedFiles: diff.uncommittedFiles,
 		emptyMessage: diff.emptyMessage,
 	};
 }

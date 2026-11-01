@@ -1,45 +1,9 @@
-import { useEffect, useState } from "react";
 import type { ItemStatusCounts } from "../../../gitStatus";
-import { apiFetch } from "../../apiFetch";
-import { reportCaughtError } from "../../clientFailures/reportCaughtError";
-import { useApiNode } from "../../useApiNode";
-import { withNode } from "../../withNode";
-import { diffQuery } from "../diffQuery";
-
-const POLL_INTERVAL_MS = 5000;
+import { usePolledGitStatus } from "../usePolledGitStatus";
 
 export function useGitStatusCounts(
 	cwd: string,
 	sessionId?: string,
 ): ItemStatusCounts | null {
-	const [counts, setCounts] = useState<ItemStatusCounts | null>(null);
-	const node = useApiNode();
-
-	useEffect(() => {
-		if (!cwd) {
-			setCounts(null);
-			return;
-		}
-		let cancelled = false;
-		const poll = async () => {
-			try {
-				const res = await apiFetch(
-					withNode(`/api/git-status?${diffQuery(cwd, sessionId)}`, node),
-				);
-				const body = await res.json();
-				if (!cancelled) setCounts(body ?? null);
-			} catch (error) {
-				reportCaughtError(error, "git status counts");
-				if (!cancelled) setCounts(null);
-			}
-		};
-		poll();
-		const id = setInterval(poll, POLL_INTERVAL_MS);
-		return () => {
-			cancelled = true;
-			clearInterval(id);
-		};
-	}, [cwd, sessionId, node]);
-
-	return counts;
+	return usePolledGitStatus(cwd, sessionId).counts;
 }

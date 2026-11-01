@@ -5,6 +5,7 @@ import {
 } from "./DiffViewBody/DiffFileList";
 import { DiffFileTree } from "./DiffViewBody/DiffFileTree";
 import { scrollToDiffFile } from "./DiffViewBody/scrollToDiffFile";
+import type { UncommittedFiles } from "./uncommittedFiles";
 
 const columnsSx = { display: "flex", alignItems: "flex-start" } as const;
 
@@ -13,6 +14,7 @@ export type DiffViewBodyProps = DiffFileListProps & {
 	activeFile?: string;
 	onRevert?: (path: string) => void;
 	onRevertPaths?: (paths: string[]) => void;
+	uncommittedFiles?: UncommittedFiles;
 };
 
 export function DiffViewBody({
@@ -20,6 +22,7 @@ export function DiffViewBody({
 	activeFile,
 	onRevert,
 	onRevertPaths,
+	uncommittedFiles,
 	...list
 }: DiffViewBodyProps) {
 	const onSelectFile = (fileKey: string) => {
@@ -36,6 +39,7 @@ export function DiffViewBody({
 					onSelectFile={onSelectFile}
 					onRevert={onRevert}
 					onRevertPaths={onRevertPaths}
+					uncommittedFiles={uncommittedFiles}
 				/>
 			)}
 			<Box sx={{ flex: 1, minWidth: 0 }}>

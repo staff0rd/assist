@@ -7,6 +7,7 @@ import { DiffFileTreeRows } from "./DiffFileTree/DiffFileTreeRows";
 import { slateTreePanelSx } from "./DiffFileTree/slateTreeSx";
 import { DIFF_TOOLBAR_HEIGHT } from "../DiffToolbar";
 import { treeFileKeys } from "../treeFileKeys";
+import type { UncommittedFiles } from "../uncommittedFiles";
 import { useCollapsedDirs } from "./DiffFileTree/useCollapsedDirs";
 import { statusBarInset } from "../../../designSystem/statusBarInset";
 
@@ -28,12 +29,14 @@ export function DiffFileTree({
 	onSelectFile,
 	onRevert,
 	onRevertPaths,
+	uncommittedFiles,
 }: {
 	files: FileData[];
 	activeFile?: string;
 	onSelectFile: (fileKey: string) => void;
 	onRevert?: (path: string) => void;
 	onRevertPaths?: (paths: string[]) => void;
+	uncommittedFiles?: UncommittedFiles;
 }) {
 	const nodes = useMemo(() => buildDiffFileTree(files), [files]);
 	const { collapsed, onToggleDir } = useCollapsedDirs(activeFile);
@@ -57,6 +60,7 @@ export function DiffFileTree({
 				onSelectFile={onSelectFile}
 				onRevert={onRevert}
 				onRevertPaths={onRevertPaths}
+				uncommittedFiles={uncommittedFiles}
 			/>
 		</Box>
 	);

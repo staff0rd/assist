@@ -1,4 +1,5 @@
 import type { DiffFileTreeNode } from "../../../buildDiffFileTree";
+import type { UncommittedFiles } from "../../../uncommittedFiles";
 
 export type DiffFileTreeRowsProps = {
 	nodes: DiffFileTreeNode[];
@@ -9,4 +10,5 @@ export type DiffFileTreeRowsProps = {
 	onSelectFile: (fileKey: string) => void;
 	onRevert?: (path: string) => void;
 	onRevertPaths?: (paths: string[]) => void;
+	uncommittedFiles?: UncommittedFiles;
 };

@@ -2,18 +2,18 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import type { DiffFileTreeFile } from "../../../buildDiffFileTree";
-import { DiffFileRevertButton } from "./DiffFileTreeFileRow/DiffFileRevertButton";
 import { DiffFileTreeLineCounts } from "./DiffFileTreeFileRow/DiffFileTreeLineCounts";
+import { DiffFileTreeRowRevert } from "./DiffFileTreeFileRow/DiffFileTreeRowRevert";
 import {
 	DIFF_TREE_CHEVRON_WIDTH,
 	diffFileTreeActiveRowSx,
 	diffFileTreeFileRowSx,
 	diffFileTreeNameSx,
-	diffFileTreeRevertSx,
 	diffFileTreeRowSx,
 } from "../diffFileTreeRowSx";
 import { slateTreeSx } from "../slateTreeSx";
 import { DiffTreeFileGlyph } from "./DiffFileTreeFileRow/DiffTreeFileGlyph";
+import type { UncommittedFiles } from "../../../uncommittedFiles";
 
 export function DiffFileTreeFileRow({
 	file,
@@ -21,12 +21,14 @@ export function DiffFileTreeFileRow({
 	active,
 	onSelect,
 	onRevert,
+	uncommittedFiles,
 }: {
 	file: DiffFileTreeFile;
 	indent: string;
 	active: boolean;
 	onSelect: (fileKey: string) => void;
 	onRevert?: (path: string) => void;
+	uncommittedFiles?: UncommittedFiles;
 }) {
 	return (
 		<Box
@@ -51,15 +53,11 @@ export function DiffFileTreeFileRow({
 					{file.name}
 				</Typography>
 			</ButtonBase>
-			{onRevert && (
-				<Box className="diff-tree-revert" sx={diffFileTreeRevertSx}>
-					<DiffFileRevertButton
-						path={file.fileKey}
-						added={file.isNew}
-						onRevert={onRevert}
-					/>
-				</Box>
-			)}
+			<DiffFileTreeRowRevert
+				file={file}
+				onRevert={onRevert}
+				uncommittedFiles={uncommittedFiles}
+			/>
 			<DiffFileTreeLineCounts added={file.added} removed={file.removed} />
 		</Box>
 	);

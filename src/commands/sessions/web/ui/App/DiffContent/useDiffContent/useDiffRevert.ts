@@ -15,7 +15,7 @@ function failureSummary(failed: DiffRevertFailure[]): string {
 
 export function useDiffRevert(
 	cwd: string,
-	enabled: boolean,
+	enabled: { file: boolean; paths: boolean },
 	refresh: () => void,
 ): {
 	onRevert?: (path: string) => void;
@@ -56,8 +56,8 @@ export function useDiffRevert(
 	);
 
 	return {
-		onRevert: enabled ? onRevert : undefined,
-		onRevertPaths: enabled ? onRevertPaths : undefined,
+		onRevert: enabled.file ? onRevert : undefined,
+		onRevertPaths: enabled.paths ? onRevertPaths : undefined,
 		error,
 		clearError: () => setError(null),
 	};

@@ -18,6 +18,7 @@ export function DiffFileTreeRows(props: DiffFileTreeRowsProps) {
 				active={node.fileKey === activeFile}
 				onSelect={onSelectFile}
 				onRevert={onRevert}
+				uncommittedFiles={props.uncommittedFiles}
 			/>
 		) : (
 			<Box key={node.path} sx={{ minWidth: 0 }}>

@@ -50,4 +50,23 @@ describe("DiffFileRevertButton", () => {
 
 		expect(screen.getByText(/deletes src\/new\.ts/)).toBeTruthy();
 	});
+
+	it("says committed changes stay when only uncommitted edits are reverted", () => {
+		render(
+			<DiffFileRevertButton
+				path="src/app.ts"
+				added={false}
+				uncommittedOnly
+				onRevert={vi.fn()}
+			/>,
+		);
+
+		fireEvent.click(screen.getByRole("button", revertButton));
+
+		expect(
+			screen.getByText(
+				/only the uncommitted edits to src\/app\.ts\. Its committed changes stay/,
+			),
+		).toBeTruthy();
+	});
 });

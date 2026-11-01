@@ -12,6 +12,8 @@ vi.mock("./useDiffRevert/postDiffRevertAll", () => ({
 
 const postDiffRevertMock = vi.mocked(postDiffRevert);
 const postDiffRevertAllMock = vi.mocked(postDiffRevertAll);
+const NONE = { file: false, paths: false };
+const ALL = { file: true, paths: true };
 
 describe("useDiffRevert", () => {
 	beforeEach(() => {
@@ -21,15 +23,24 @@ describe("useDiffRevert", () => {
 	});
 
 	it("offers no revert handler while it is disabled", () => {
-		const { result } = renderHook(() => useDiffRevert("/repo", false, vi.fn()));
+		const { result } = renderHook(() => useDiffRevert("/repo", NONE, vi.fn()));
 
 		expect(result.current.onRevert).toBeUndefined();
 		expect(result.current.onRevertPaths).toBeUndefined();
 	});
 
+	it("offers only the per-file handler when bulk revert is off", () => {
+		const { result } = renderHook(() =>
+			useDiffRevert("/repo", { file: true, paths: false }, vi.fn()),
+		);
+
+		expect(result.current.onRevert).toBeDefined();
+		expect(result.current.onRevertPaths).toBeUndefined();
+	});
+
 	it("reverts the path and refreshes the diff", async () => {
 		const refresh = vi.fn();
-		const { result } = renderHook(() => useDiffRevert("/repo", true, refresh));
+		const { result } = renderHook(() => useDiffRevert("/repo", ALL, refresh));
 
 		act(() => result.current.onRevert?.("src/app.ts"));
 
@@ -45,7 +56,7 @@ describe("useDiffRevert", () => {
 	it("surfaces a failure and clears it on demand", async () => {
 		const refresh = vi.fn();
 		postDiffRevertMock.mockRejectedValue(new Error("pathspec did not match"));
-		const { result } = renderHook(() => useDiffRevert("/repo", true, refresh));
+		const { result } = renderHook(() => useDiffRevert("/repo", ALL, refresh));
 
 		act(() => result.current.onRevert?.("src/app.ts"));
 
@@ -61,7 +72,7 @@ describe("useDiffRevert", () => {
 
 	it("reverts every path in one request and refreshes once", async () => {
 		const refresh = vi.fn();
-		const { result } = renderHook(() => useDiffRevert("/repo", true, refresh));
+		const { result } = renderHook(() => useDiffRevert("/repo", ALL, refresh));
 
 		act(() => result.current.onRevertPaths?.(["src/a.ts", "src/b.ts"]));
 
@@ -79,7 +90,7 @@ describe("useDiffRevert", () => {
 		postDiffRevertAllMock.mockResolvedValue([
 			{ path: "src/b.ts", error: "pathspec did not match" },
 		]);
-		const { result } = renderHook(() => useDiffRevert("/repo", true, refresh));
+		const { result } = renderHook(() => useDiffRevert("/repo", ALL, refresh));
 
 		act(() => result.current.onRevertPaths?.(["src/a.ts", "src/b.ts"]));
 
@@ -94,7 +105,7 @@ describe("useDiffRevert", () => {
 	it("surfaces a failed bulk request", async () => {
 		const refresh = vi.fn();
 		postDiffRevertAllMock.mockRejectedValue(new Error("Missing paths"));
-		const { result } = renderHook(() => useDiffRevert("/repo", true, refresh));
+		const { result } = renderHook(() => useDiffRevert("/repo", ALL, refresh));
 
 		act(() => result.current.onRevertPaths?.(["src/a.ts"]));
 

@@ -257,3 +257,74 @@ describe("DiffFileTree", () => {
 		expect(container.firstChild).toBeNull();
 	});
 });
+
+describe("DiffFileTree with committed and uncommitted changes", () => {
+	const addedFile = (path: string): FileData =>
+		({ ...file(path), type: "add" }) as FileData;
+
+	function renderMixed(
+		files: FileData[],
+		uncommitted: string[],
+		newPaths: string[] = [],
+	) {
+		const onRevert = vi.fn();
+		render(
+			<DiffFileTree
+				files={files}
+				onSelectFile={vi.fn()}
+				onRevert={onRevert}
+				uncommittedFiles={{
+					paths: new Set(uncommitted),
+					newPaths: new Set(newPaths),
+				}}
+			/>,
+		);
+		return onRevert;
+	}
+
+	it("offers revert only on files with uncommitted changes", () => {
+		const onRevert = renderMixed(
+			[file("src/committed.ts"), file("src/edited.ts")],
+			["src/edited.ts"],
+		);
+
+		const buttons = screen.getAllByRole("button", { name: "Revert file" });
+		expect(buttons).toHaveLength(1);
+		fireEvent.click(buttons[0]);
+		fireEvent.click(screen.getByRole("button", { name: "Revert" }));
+
+		expect(onRevert).toHaveBeenCalledWith("src/edited.ts");
+	});
+
+	it("offers no revert on committed-only files", () => {
+		renderMixed([file("src/committed.ts")], []);
+
+		expect(screen.queryByRole("button", { name: "Revert file" })).toBeNull();
+	});
+
+	it("says only the uncommitted edits are discarded", () => {
+		renderMixed([file("src/edited.ts")], ["src/edited.ts"]);
+
+		fireEvent.click(screen.getByRole("button", { name: "Revert file" }));
+
+		expect(
+			screen.getByText(/only the uncommitted edits.*committed changes stay/),
+		).toBeTruthy();
+	});
+
+	it("does not warn of deletion for a file new only relative to the scope's base", () => {
+		renderMixed([addedFile("src/branch.ts")], ["src/branch.ts"]);
+
+		fireEvent.click(screen.getByRole("button", { name: "Revert file" }));
+
+		expect(screen.queryByText(/deletes/)).toBeNull();
+	});
+
+	it("warns of deletion for a file new in the working tree", () => {
+		renderMixed([addedFile("src/new.ts")], ["src/new.ts"], ["src/new.ts"]);
+
+		fireEvent.click(screen.getByRole("button", { name: "Revert file" }));
+
+		expect(screen.getByText(/deletes src\/new\.ts/)).toBeTruthy();
+	});
+});

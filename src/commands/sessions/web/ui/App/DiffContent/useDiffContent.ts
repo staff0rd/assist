@@ -9,7 +9,7 @@ import { useDiff } from "./useDiffContent/useDiff";
 import { useDiffComments } from "./useDiffContent/useDiffComments";
 import { useDiffFileData } from "./useDiffContent/useDiffFileData";
 import { useDiffFilters } from "./useDiffContent/useDiffFilters";
-import { useDiffRevert } from "./useDiffContent/useDiffRevert";
+import { useScopedDiffRevert } from "./useDiffContent/useScopedDiffRevert";
 import { useDiffScopeState } from "./useDiffScopeState";
 import { useDiffTreePanel } from "./useDiffContent/useDiffTreePanel";
 
@@ -26,9 +26,10 @@ export function useDiffContent(
 		sessionId,
 		scopeState.scope,
 	);
-	const revert = useDiffRevert(
+	const { revert, uncommittedFiles } = useScopedDiffRevert(
 		cwd,
-		scopeState.scope === "uncommitted",
+		sessionId,
+		scopeState.scope,
 		refresh,
 	);
 	const filters = useDiffFilters();
@@ -55,6 +56,7 @@ export function useDiffContent(
 		collapsedFiles,
 		activeFile,
 		revert,
+		uncommittedFiles,
 		collapseAll: collapseAllState(visiblePaths, collapsedFiles),
 		visibleFiles,
 		totals: diffFileTotals(visibleFiles),
