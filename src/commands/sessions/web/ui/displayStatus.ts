@@ -11,7 +11,7 @@ export function displayStatus(session: SessionInfo): DisplayStatus {
 	) {
 		if (preview.kind === "question" || preview.kind === "backlog-item")
 			return "question";
-		if (preview.kind === "check") return "check";
+		if (preview.kind === "check" || preview.kind === "design") return "check";
 		return "waiting";
 	}
 	return session.status;

@@ -4,7 +4,7 @@ import { PrPreviewContent } from "./PrPreviewPane/PrPreviewContent";
 import { PrPreviewFooter } from "./PrPreviewPane/PrPreviewFooter";
 import { PrPreviewHeader } from "../PrPreviewHeader";
 import type { PrPreviewPaneProps } from "./PrPreviewPaneProps";
-import { PreviewMetadataList } from "./PreviewMetadataList";
+import { PreviewLinks } from "./PreviewLinks";
 import { previewFooterProps } from "./PrPreviewPane/previewFooterProps";
 import { previewPaneOptions } from "./PrPreviewPane/previewPaneOptions";
 import { previewRuleActions } from "./PrPreviewPane/previewRuleActions";
@@ -33,7 +33,7 @@ export function PrPreviewPane({
 	return (
 		<Box sx={prPreviewPaneSx} onDrop={pane.onDrop} onDragOver={pane.onDragOver}>
 			<PrPreviewHeader preview={preview} draft={pane.chain.draft} />
-			<PreviewMetadataList items={preview.metadata ?? []} />
+			<PreviewLinks preview={preview} />
 			<Divider />
 			<PrPreviewContent pane={pane} screenshots={screenshots} />
 			<PrPreviewFooter

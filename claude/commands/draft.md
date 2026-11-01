@@ -28,7 +28,16 @@ If the harness provides a structured question tool, ask each question with it �
 
 From the clarifying answers, decide whether the story involves a **substantial UI change** — a new screen, panel, view or component, or a reworked layout or interaction flow. A trivial UI change (a label, a button, a tweak to an existing control) or no UI change at all is not substantial: skip this step entirely and do not mention it.
 
-If it is substantial, do not ask whether to design it — follow `/design` (`~/.claude/skills/design/SKILL.md`) for the story's UI, applying it to what the user described and answered. Publish the design as an artifact, give the user its URL, and iterate on it with them — editing the same file and republishing to the same URL — until they say they are happy with it. Only then move on.
+If it is substantial, do not ask whether to design it — follow `/design` (`~/.claude/skills/design/SKILL.md`) for the story's UI, applying it to what the user described and answered. Publish the design as an artifact, then raise each review round with `ask-design` instead of iterating in chat. Write a short markdown summary of the design (what it shows and the choices to weigh in on) to a scratch file and run, as a background task, doing no other work until it returns:
+
+```
+assist ask-design --url '<artifact-url>' --title '<design title>' --body - < <summary-file>
+```
+
+- **Approved** (exit 0) — fold every printed comment into the design, republishing to the same URL, then move on.
+- **Rejected** (non-zero, printing the reason and comments) — revise the design to address each one, republish to the same artifact URL, and re-run `ask-design` for the next round. Repeat until approved.
+- To revise while a round is still pending, re-run `ask-design` directly; the earlier task exits 0 as superseded — ignore its result.
+- If it prints the design link and exits 0 without `Approved.` (not in an assist web session), ask the user in chat instead and iterate there — editing the same file and republishing to the same URL — until they say they are happy with it.
 
 Keep the artifact's URL and name: the item's description references the design (Step 4), and the artifact is attached to the item once it is created (Step 5).
 

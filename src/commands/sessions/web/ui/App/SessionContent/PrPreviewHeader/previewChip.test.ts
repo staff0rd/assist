@@ -25,6 +25,13 @@ describe("previewChip", () => {
 		).toEqual({ label: "Story", color: "info" });
 	});
 
+	it("labels a design review with the check colour", () => {
+		expect(previewChip(preview({ kind: "design" }), false)).toEqual({
+			label: "Design",
+			color: "check",
+		});
+	});
+
 	it("labels a miro board pick", () => {
 		expect(previewChip(preview({ kind: "miro-board" }), false)).toEqual({
 			label: "Miro boxes",

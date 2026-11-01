@@ -23,7 +23,8 @@ export type PreviewKind =
 	| "show"
 	| "ask"
 	| "question"
-	| "check";
+	| "check"
+	| "design";
 
 export type PreviewItemType = "story" | "bug";
 

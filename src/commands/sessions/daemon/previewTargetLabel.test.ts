@@ -20,6 +20,10 @@ describe("previewTargetLabel", () => {
 		).toBe("github issue comment");
 	});
 
+	it("labels a design review", () => {
+		expect(previewTargetLabel("design", "story", null, false)).toBe("design");
+	});
+
 	it("labels a miro anchor pick", () => {
 		expect(previewTargetLabel("miro-board", "story", null, false)).toBe(
 			"miro anchors",
