@@ -1,3 +1,10 @@
+## [0.1015.1](https://github.com/staff0rd/assist/compare/v0.1015.0...v0.1015.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* show skill skips session-edited files ([78717d5](https://github.com/staff0rd/assist/commit/78717d51a49ec08ad765b30f58a8edee89f0c875))
+
 # [0.1015.0](https://github.com/staff0rd/assist/compare/v0.1014.0...v0.1015.0) (2026-11-01)
 
 
