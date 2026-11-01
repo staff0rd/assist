@@ -1,3 +1,10 @@
+# [0.1021.0](https://github.com/staff0rd/assist/compare/v0.1020.0...v0.1021.0) (2026-11-01)
+
+
+### Features
+
+* edge swipe triggers phone back ([7bcb469](https://github.com/staff0rd/assist/commit/7bcb4695ff125b8b1f9a06a1997651eefd63ffe6))
+
 # [0.1020.0](https://github.com/staff0rd/assist/compare/v0.1019.1...v0.1020.0) (2026-11-01)
 
 
