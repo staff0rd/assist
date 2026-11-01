@@ -13,7 +13,7 @@ export function CheckBody({ check }: { check: AskCheckInput }) {
 					<Label>Before</Label>
 					<Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
 						{before.map((item) => (
-							<Chip key={item} size="small" variant="outlined" label={item} />
+							<Chip key={item} size="small" variant="tonal" label={item} />
 						))}
 					</Box>
 				</Stack>

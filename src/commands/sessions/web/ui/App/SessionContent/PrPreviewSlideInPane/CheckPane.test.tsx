@@ -50,7 +50,7 @@ describe("CheckPane", () => {
 	it("sends doesn't work with the trimmed note", () => {
 		const onDecision = pane();
 
-		fireEvent.change(screen.getByRole("textbox", { name: "Note (optional)" }), {
+		fireEvent.change(screen.getByRole("textbox", { name: "Note" }), {
 			target: { value: "  PIN showed on work-wsl \n" },
 		});
 		fireEvent.click(screen.getByRole("button", { name: "Doesn't work" }));

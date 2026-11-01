@@ -7,6 +7,7 @@ export const tintedColors = [
 	"warning",
 	"error",
 	"info",
+	"check",
 ] as const;
 
 export function tintedStyle(main: string, fill: number) {

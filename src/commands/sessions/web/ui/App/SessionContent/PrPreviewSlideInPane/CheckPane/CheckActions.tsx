@@ -1,6 +1,7 @@
 import { Button, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 import type { CheckResult } from "../../../../../../shared/askCheckInputSchema";
+import { usePreviewPrimaryAction } from "../../../usePreviewPrimaryAction";
 
 export function CheckActions({
 	onResult,
@@ -10,19 +11,30 @@ export function CheckActions({
 	onDismiss: () => void;
 }) {
 	const [note, setNote] = useState("");
+	const primary = usePreviewPrimaryAction();
 	return (
-		<Stack spacing={1.5} sx={{ p: 2 }}>
+		<>
 			<TextField
-				label="Note (optional)"
-				placeholder="Anything the agent should know"
+				placeholder="Add a note for the agent (optional)"
 				multiline
 				minRows={2}
 				size="small"
 				value={note}
 				onChange={(event) => setNote(event.target.value)}
+				slotProps={{ htmlInput: { "aria-label": "Note" } }}
+				sx={{ px: 2, pt: 1.5 }}
 			/>
-			<Stack direction="row" spacing={1}>
-				<Button color="inherit" onClick={onDismiss} sx={{ mr: "auto" }}>
+			<Stack
+				direction="row"
+				spacing={1}
+				sx={{
+					px: 2,
+					py: 1.5,
+					alignItems: "center",
+					justifyContent: "flex-end",
+				}}
+			>
+				<Button variant="tonal" onClick={onDismiss}>
 					Dismiss
 				</Button>
 				<Button
@@ -36,10 +48,11 @@ export function CheckActions({
 					color="success"
 					variant="contained"
 					onClick={() => onResult("works", note)}
+					{...primary}
 				>
 					Works
 				</Button>
 			</Stack>
-		</Stack>
+		</>
 	);
 }

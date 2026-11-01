@@ -37,6 +37,12 @@ declare module "@mui/material/Chip" {
 	}
 }
 
+declare module "@mui/material/Button" {
+	interface ButtonPropsColorOverrides {
+		check: true;
+	}
+}
+
 declare module "@mui/material/ButtonGroup" {
 	interface ButtonGroupPropsVariantOverrides {
 		tonal: true;
