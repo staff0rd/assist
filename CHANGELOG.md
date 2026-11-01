@@ -1,3 +1,10 @@
+## [0.1033.3](https://github.com/staff0rd/assist/compare/v0.1033.2...v0.1033.3) (2026-11-01)
+
+
+### Bug Fixes
+
+* stop failures panel rows overlapping ([505039d](https://github.com/staff0rd/assist/commit/505039d7b0c02c9da51120321ed36a875bffec34))
+
 ## [0.1033.2](https://github.com/staff0rd/assist/compare/v0.1033.1...v0.1033.2) (2026-11-01)
 
 
