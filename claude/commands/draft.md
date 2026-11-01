@@ -81,6 +81,17 @@ Two tests for each phase before proposing the plan:
 
 Keep phases small (2-4 tasks each). A typical item should have 2-3 phases.
 
+### Docs pages belong to Refresh docs
+
+Run `assist config get docs.refreshAfter 2>&1`. If it prints a value, this repo uses **Refresh docs**: docs pages are updated by a separate Refresh docs item after stories ship, and are locked while other items are implemented. In that case:
+
+- Do not add tasks that update docs pages (e.g. `docs/src/content/docs/`, docs screenshots) to any phase.
+- Do not add acceptance criteria about docs pages describing the change.
+- Config help (`configHelp` entries) and command `--help` text are code, not docs pages — keep them in scope as usual.
+- Exception: when the item's subject is the docs site itself (its pages, content, structure or tooling), plan the docs changes as normal.
+
+If it prints nothing, plan docs updates as the change needs them.
+
 Most phases should NOT have manual checks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). Do not add a final phase just for end-to-end verification — a `Review` phase is appended to every plan automatically, and authoring one is rejected.
 
 ## Step 4: Propose the item
