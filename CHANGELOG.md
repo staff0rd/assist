@@ -1,3 +1,10 @@
+## [0.1032.2](https://github.com/staff0rd/assist/compare/v0.1032.1...v0.1032.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* keep session group order stable ([33c97e6](https://github.com/staff0rd/assist/commit/33c97e616a14227a9ced8ddec2f75cd6ce21d0c0))
+
 ## [0.1032.1](https://github.com/staff0rd/assist/compare/v0.1032.0...v0.1032.1) (2026-11-01)
 
 
