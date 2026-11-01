@@ -1,3 +1,10 @@
+# [0.1010.0](https://github.com/staff0rd/assist/compare/v0.1009.0...v0.1010.0) (2026-11-01)
+
+
+### Features
+
+* weekly devlog list, repos, version ([e4b4b88](https://github.com/staff0rd/assist/commit/e4b4b88c898cff483235f2f2d0c44af4fd390ab1))
+
 # [0.1009.0](https://github.com/staff0rd/assist/compare/v0.1008.0...v0.1009.0) (2026-11-01)
 
 
