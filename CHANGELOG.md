@@ -1,3 +1,10 @@
+## [0.1011.3](https://github.com/staff0rd/assist/compare/v0.1011.2...v0.1011.3) (2026-11-01)
+
+
+### Bug Fixes
+
+* never show files edited in session ([753cd9c](https://github.com/staff0rd/assist/commit/753cd9c361282a01dffb74b7c998f3bb3569ec6e))
+
 ## [0.1011.2](https://github.com/staff0rd/assist/compare/v0.1011.1...v0.1011.2) (2026-11-01)
 
 
