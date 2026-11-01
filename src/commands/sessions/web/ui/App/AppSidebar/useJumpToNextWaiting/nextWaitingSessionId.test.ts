@@ -77,6 +77,19 @@ describe("nextWaitingSessionId", () => {
 		expect(nextWaitingSessionId(sessions, "a")).toBe("b");
 	});
 
+	it("treats a session waiting on a question as waiting", () => {
+		const sessions = [
+			makeSessionInfo({ id: "a", status: "running" }),
+			makeSessionInfo({
+				id: "b",
+				status: "running",
+				pendingPrPreview: { ...prPreview, kind: "question" },
+			}),
+		];
+
+		expect(nextWaitingSessionId(sessions, "a")).toBe("b");
+	});
+
 	it("returns null when nothing is waiting", () => {
 		const sessions = [
 			makeSessionInfo({ id: "a", status: "running" }),

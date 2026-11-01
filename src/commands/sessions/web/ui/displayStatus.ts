@@ -1,13 +1,14 @@
 import type { SessionInfo, SessionStatus } from "./types";
 
-export type DisplayStatus = SessionStatus | "idle";
+export type DisplayStatus = SessionStatus | "idle" | "question";
 
 export function displayStatus(session: SessionInfo): DisplayStatus {
+	const preview = session.pendingPrPreview;
 	if (
-		session.pendingPrPreview &&
-		session.pendingPrPreview.kind !== "show" &&
-		session.status === "running"
+		preview &&
+		preview.kind !== "show" &&
+		(session.status === "running" || session.status === "waiting")
 	)
-		return "waiting";
+		return preview.kind === "question" ? "question" : "waiting";
 	return session.status;
 }

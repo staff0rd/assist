@@ -4,6 +4,7 @@ import { SessionRunningDot } from "../../../SessionRunningDot";
 import { statusColors } from "../../../statusColors";
 import { statusGlyph } from "../../../../statusGlyph";
 import type { DisplayStatus } from "../../../../displayStatus";
+import { isAwaitingUser } from "../../../../isAwaitingUser";
 
 const pulse = keyframes`
 	0%, 100% { opacity: 1; }
@@ -30,7 +31,7 @@ export function SessionStatusGlyph({ status }: { status: DisplayStatus }) {
 		<Typography
 			variant="caption"
 			sx={{
-				...(status === "waiting" ? pulsingGlyphSx : glyphSx),
+				...(isAwaitingUser(status) ? pulsingGlyphSx : glyphSx),
 				color: statusColors[status],
 			}}
 			title={status}

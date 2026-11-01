@@ -15,13 +15,19 @@ const rowSx = {
 	borderColor: (t: Theme) => t.tokens.color.lineSoft,
 } as const;
 
+const rowWash: Partial<
+	Record<DisplayStatus, keyof Theme["tokens"]["color"]["wash"]>
+> = {
+	waiting: "warning",
+	question: "accent",
+	error: "error",
+};
+
 export function phoneRowSx(status: DisplayStatus) {
-	const bgcolor =
-		status === "waiting"
-			? (t: Theme) => t.tokens.color.wash.warning
-			: status === "error"
-				? (t: Theme) => t.tokens.color.wash.error
-				: "background.default";
+	const wash = rowWash[status];
+	const bgcolor = wash
+		? (t: Theme) => t.tokens.color.wash[wash]
+		: "background.default";
 	return { ...rowSx, bgcolor };
 }
 

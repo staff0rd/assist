@@ -4,6 +4,7 @@ export const statusGlyph: Record<DisplayStatus, string> = {
 	running: "●",
 	idle: "●",
 	waiting: "◆",
+	question: "?",
 	done: "✓",
 	error: "✕",
 	stopped: "○",

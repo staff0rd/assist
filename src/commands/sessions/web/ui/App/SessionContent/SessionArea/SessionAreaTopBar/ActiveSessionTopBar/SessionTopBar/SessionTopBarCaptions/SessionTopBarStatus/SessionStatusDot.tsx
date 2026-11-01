@@ -5,6 +5,7 @@ import { statusPillSx } from "../../../../../../../../designSystem/statusPillSx"
 import { statusGlyph } from "../../../../../../../../statusGlyph";
 import { statusColors } from "../../../../../../../statusColors";
 import type { DisplayStatus } from "../../../../../../../../displayStatus";
+import { isAwaitingUser } from "../../../../../../../../isAwaitingUser";
 
 const pulse = keyframes`
 	0%, 100% { opacity: 1; transform: scale(1); }
@@ -41,7 +42,7 @@ export function SessionStatusDot({
 		<Typography
 			variant="caption"
 			sx={{
-				...(status === "waiting" ? pulsingDotSx : dotSx),
+				...(isAwaitingUser(status) ? pulsingDotSx : dotSx),
 				color: statusColors[status],
 			}}
 			title={status}

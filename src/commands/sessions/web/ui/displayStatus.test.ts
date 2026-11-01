@@ -37,13 +37,28 @@ describe("displayStatus", () => {
 		);
 	});
 
-	it("leaves a non-running status alone", () => {
-		for (const status of [
-			"waiting",
-			"done",
-			"error",
-			"stopped",
-		] satisfies SessionStatus[])
+	it("reads question while a question preview is pending", () => {
+		for (const status of ["running", "waiting"] satisfies SessionStatus[])
+			expect(
+				displayStatus(
+					makeSessionInfo({
+						status,
+						pendingPrPreview: { ...preview, kind: "question" },
+					}),
+				),
+			).toBe("question");
+	});
+
+	it("keeps a waiting session with a sign-off preview as waiting", () => {
+		expect(
+			displayStatus(
+				makeSessionInfo({ status: "waiting", pendingPrPreview: preview }),
+			),
+		).toBe("waiting");
+	});
+
+	it("leaves a finished status alone", () => {
+		for (const status of ["done", "error", "stopped"] satisfies SessionStatus[])
 			expect(
 				displayStatus(makeSessionInfo({ status, pendingPrPreview: preview })),
 			).toBe(status);

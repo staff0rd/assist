@@ -30,6 +30,7 @@ export const slateDesign: DesignTokens = {
 			wash: {
 				warning: "rgba(242, 180, 90, 0.09)",
 				error: "rgba(242, 122, 122, 0.09)",
+				accent: "rgba(139, 156, 255, 0.1)",
 			},
 			well: ink,
 			stripe: raised,
@@ -107,6 +108,7 @@ export const slateDesign: DesignTokens = {
 			wash: {
 				warning: "rgba(255, 167, 38, 0.09)",
 				error: "rgba(244, 67, 54, 0.09)",
+				accent: "rgba(25, 118, 210, 0.08)",
 			},
 			well: "#f3f4f6",
 			stripe: "rgba(0, 0, 0, 0.1)",

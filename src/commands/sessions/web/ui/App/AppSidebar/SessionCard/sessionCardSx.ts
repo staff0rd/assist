@@ -6,6 +6,7 @@ const attentionWash: Partial<
 	Record<DisplayStatus, keyof Theme["tokens"]["color"]["wash"]>
 > = {
 	waiting: "warning",
+	question: "accent",
 	error: "error",
 };
 

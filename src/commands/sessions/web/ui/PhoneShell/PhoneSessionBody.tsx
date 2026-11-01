@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { displayStatus } from "../displayStatus";
+import { isAwaitingUser } from "../isAwaitingUser";
 import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
 import { PhoneInputDock } from "./PhoneInputDock";
@@ -52,7 +53,7 @@ export function PhoneSessionBody({
 				/>
 			) : (
 				<PhoneInputDock
-					waiting={displayStatus(session) === "waiting"}
+					waiting={isAwaitingUser(displayStatus(session))}
 					keyboardOpen={keyboardOpen}
 					onKey={io.onKey}
 					onSend={io.onSend}

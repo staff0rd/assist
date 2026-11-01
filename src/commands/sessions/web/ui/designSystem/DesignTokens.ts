@@ -25,7 +25,7 @@ type ColorTokens = {
 	lineSoft: string;
 	text: { primary: string; secondary: string; disabled: string };
 	selected: string;
-	wash: { warning: string; error: string };
+	wash: { warning: string; error: string; accent: string };
 	well: string;
 	stripe: string;
 	codeWash: string;
