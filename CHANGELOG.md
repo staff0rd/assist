@@ -1,3 +1,10 @@
+## [0.1032.1](https://github.com/staff0rd/assist/compare/v0.1032.0...v0.1032.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* /bug designs substantial UI fixes ([04f5f3d](https://github.com/staff0rd/assist/commit/04f5f3d6720a79184c626ffcdb0d178e4294822d))
+
 # [0.1032.0](https://github.com/staff0rd/assist/compare/v0.1031.0...v0.1032.0) (2026-11-01)
 
 
