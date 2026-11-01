@@ -6,8 +6,8 @@ import type { PrPreview } from "../../../../../shared/SessionInfoBase";
 import { QuestionPane } from "./QuestionPane";
 
 const toggle = vi.hoisted(() => ({ enabled: false }));
-vi.mock("./QuestionPane/useAskQuestionAutoApprove", () => ({
-	useAskQuestionAutoApprove: () => {
+vi.mock("./QuestionPane/useAskQuestionAutoSubmit", () => ({
+	useAskQuestionAutoSubmit: () => {
 		const [enabled, setEnabled] = useState(toggle.enabled);
 		return [enabled, setEnabled];
 	},
@@ -71,8 +71,8 @@ function pane(asked: unknown[] = questions) {
 	return onDecision;
 }
 
-const autoApproveSwitch = () =>
-	screen.getByRole("switch", { name: "Auto approve" });
+const autoSubmitSwitch = () =>
+	screen.getByRole("switch", { name: "Auto submit" });
 
 const answerButton = () =>
 	screen.getByRole("button", { name: "Answer" }) as HTMLButtonElement;
@@ -122,7 +122,7 @@ describe("QuestionPane", () => {
 		expect(screen.getByText("GROUPED")).toBeTruthy();
 	});
 
-	describe("auto approve", () => {
+	describe("auto submit", () => {
 		it("submits on the pick that completes an all single-select form", () => {
 			toggle.enabled = true;
 			const onDecision = pane(singleSelect);
@@ -170,7 +170,7 @@ describe("QuestionPane", () => {
 
 			fireEvent.click(screen.getByRole("radio", { name: /Compact/ }));
 			fireEvent.click(screen.getByRole("radio", { name: /assist/ }));
-			fireEvent.click(autoApproveSwitch());
+			fireEvent.click(autoSubmitSwitch());
 			expect(onDecision).not.toHaveBeenCalled();
 		});
 

@@ -7,6 +7,7 @@ const LEGACY_SESSIONS_KEYS = [
 	"floatWaiting",
 	"floatWaitingAfterMs",
 	"parkWaitingAfterMs",
+	"askQuestionAutoApprove",
 ];
 
 const LEGACY_WORKTREE_KEYS = ["watcher", "includeDrafts"];

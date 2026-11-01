@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { saveConfigValue } from "../../../ConfigView/ConfigRowValueCell/saveConfigValue";
 import { fetchEntries } from "../../../ConfigView/useConfigEntries/fetchEntries";
 import { ApiNodeContext } from "../../../../useApiNode";
-import { useAskQuestionAutoApprove } from "./useAskQuestionAutoApprove";
+import { useAskQuestionAutoSubmit } from "./useAskQuestionAutoSubmit";
 
 vi.mock("../../../ConfigView/useConfigEntries/fetchEntries", () => ({
 	fetchEntries: vi.fn(),
@@ -23,7 +23,7 @@ afterEach(() => {
 });
 
 function entries(value: unknown) {
-	return [{ key: "sessions.askQuestionAutoApprove", value }] as Awaited<
+	return [{ key: "sessions.askQuestionAutoSubmit", value }] as Awaited<
 		ReturnType<typeof fetchEntries>
 	>;
 }
@@ -32,10 +32,10 @@ function renderToggle(node?: string) {
 	const wrapper = ({ children }: { children: ReactNode }) => (
 		<ApiNodeContext.Provider value={node}>{children}</ApiNodeContext.Provider>
 	);
-	return renderHook(() => useAskQuestionAutoApprove("/repo"), { wrapper });
+	return renderHook(() => useAskQuestionAutoSubmit("/repo"), { wrapper });
 }
 
-describe("useAskQuestionAutoApprove", () => {
+describe("useAskQuestionAutoSubmit", () => {
 	it("loads the node's current value", async () => {
 		fetchMock.mockResolvedValue(entries(true));
 		const { result } = renderToggle("laptop");
@@ -55,7 +55,7 @@ describe("useAskQuestionAutoApprove", () => {
 		expect(result.current[0]).toBe(true);
 		expect(saveMock).toHaveBeenCalledWith(
 			{
-				key: "sessions.askQuestionAutoApprove",
+				key: "sessions.askQuestionAutoSubmit",
 				value: true,
 				cwd: "/repo",
 				scope: "global",

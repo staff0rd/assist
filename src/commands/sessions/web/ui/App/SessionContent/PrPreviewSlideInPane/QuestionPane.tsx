@@ -6,7 +6,7 @@ import { prPreviewPaneSx } from "../prPreviewPaneSx";
 import { autoSubmitAnswers } from "./QuestionPane/autoSubmitAnswers";
 import { QuestionActions } from "./QuestionPane/QuestionActions";
 import { QuestionList } from "./QuestionPane/QuestionList";
-import { useAskQuestionAutoApprove } from "./QuestionPane/useAskQuestionAutoApprove";
+import { useAskQuestionAutoSubmit } from "./QuestionPane/useAskQuestionAutoSubmit";
 import {
 	type QuestionDecision,
 	useQuestionPreview,
@@ -22,13 +22,13 @@ export function QuestionPane({
 	onDecision: QuestionDecision;
 }) {
 	const { questions, state } = useQuestionPreview(preview);
-	const [autoApprove, setAutoApprove] = useAskQuestionAutoApprove(cwd);
+	const [autoSubmit, setAutoSubmit] = useAskQuestionAutoSubmit(cwd);
 	const submit = (answers: Record<string, string>) =>
 		onDecision("approve", { ...miroDecisionDetails(), answers });
 	const pick = (index: number, label: string) => {
 		state.pick(index, label);
 		const answers =
-			autoApprove && autoSubmitAnswers(questions, state.choices, index, label);
+			autoSubmit && autoSubmitAnswers(questions, state.choices, index, label);
 		if (answers) submit(answers);
 	};
 
@@ -41,8 +41,8 @@ export function QuestionPane({
 			<QuestionActions
 				answered={state.answered}
 				total={questions.length}
-				autoApprove={autoApprove}
-				onAutoApproveChange={setAutoApprove}
+				autoSubmit={autoSubmit}
+				onAutoSubmitChange={setAutoSubmit}
 				onAnswer={() => submit(state.answers)}
 				onDismiss={() => onDecision("reject", miroDecisionDetails())}
 			/>

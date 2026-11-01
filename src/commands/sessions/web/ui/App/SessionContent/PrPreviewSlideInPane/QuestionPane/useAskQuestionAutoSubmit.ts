@@ -4,9 +4,9 @@ import { saveConfigValue } from "../../../ConfigView/ConfigRowValueCell/saveConf
 import { fetchEntries } from "../../../ConfigView/useConfigEntries/fetchEntries";
 import { useApiNode } from "../../../../useApiNode";
 
-const KEY = "sessions.askQuestionAutoApprove";
+const KEY = "sessions.askQuestionAutoSubmit";
 
-export function useAskQuestionAutoApprove(
+export function useAskQuestionAutoSubmit(
 	cwd: string | undefined,
 ): [boolean, (enabled: boolean) => void] {
 	const node = useApiNode();
@@ -21,7 +21,7 @@ export function useAskQuestionAutoApprove(
 				if (!cancelled) setEnabled(entry?.value === true);
 			})
 			.catch((error: unknown) =>
-				reportCaughtError(error, "ask-question auto approve"),
+				reportCaughtError(error, "ask-question auto submit"),
 			);
 		return () => {
 			cancelled = true;

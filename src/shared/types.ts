@@ -297,7 +297,7 @@ const assistConfigShape = {
 				.default("draft"),
 			hotkeys: hotkeysSchema.optional(),
 			askQuestion: z.boolean().default(false),
-			askQuestionAutoApprove: z.boolean().default(false),
+			askQuestionAutoSubmit: z.boolean().default(false),
 		})
 		.optional(),
 	database: z

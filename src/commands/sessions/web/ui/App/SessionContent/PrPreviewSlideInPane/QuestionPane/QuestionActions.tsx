@@ -9,15 +9,15 @@ import {
 export function QuestionActions({
 	answered,
 	total,
-	autoApprove,
-	onAutoApproveChange,
+	autoSubmit,
+	onAutoSubmitChange,
 	onAnswer,
 	onDismiss,
 }: {
 	answered: number;
 	total: number;
-	autoApprove: boolean;
-	onAutoApproveChange: (enabled: boolean) => void;
+	autoSubmit: boolean;
+	onAutoSubmitChange: (enabled: boolean) => void;
 	onAnswer: () => void;
 	onDismiss: () => void;
 }) {
@@ -34,11 +34,11 @@ export function QuestionActions({
 				control={
 					<Switch
 						size="small"
-						checked={autoApprove}
-						onChange={(e) => onAutoApproveChange(e.target.checked)}
+						checked={autoSubmit}
+						onChange={(e) => onAutoSubmitChange(e.target.checked)}
 					/>
 				}
-				label="Auto approve"
+				label="Auto submit"
 				slotProps={{
 					typography: { variant: "caption", color: "text.secondary" },
 				}}
