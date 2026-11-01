@@ -1,3 +1,10 @@
+# [0.1023.0](https://github.com/staff0rd/assist/compare/v0.1022.3...v0.1023.0) (2026-11-01)
+
+
+### Features
+
+* answer manual checks on iOS ([7567e0c](https://github.com/staff0rd/assist/commit/7567e0ccdea18bf1e006e47995074bee367c61ec))
+
 ## [0.1022.3](https://github.com/staff0rd/assist/compare/v0.1022.2...v0.1022.3) (2026-11-01)
 
 
