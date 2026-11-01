@@ -1,4 +1,5 @@
 import type { ResizeMode } from "./ResizeFn";
+import type { DismissOptions } from "./types";
 import { sendCreate } from "./createHarnessSessionAction";
 import { viewerId } from "./viewerId";
 
@@ -55,8 +56,8 @@ export function dismissSessionAction(
 	send: SendFn,
 	buffers: Map<string, string>,
 ) {
-	return (id: string) => {
-		send({ type: "dismiss", sessionId: id });
+	return (id: string, opts?: DismissOptions) => {
+		send({ type: "dismiss", sessionId: id, ...opts });
 		buffers.delete(id);
 	};
 }

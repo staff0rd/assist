@@ -7,7 +7,7 @@ import { ServerRunControls } from "./SessionActionButtons/ServerRunControls";
 import { SessionStarButton } from "./SessionActionButtons/SessionStarButton";
 import { SessionWorkspaceButtons } from "./SessionActionButtons/SessionWorkspaceButtons";
 import { TransferButton } from "../../transfer/TransferButton";
-import type { SessionInfo } from "../../types";
+import type { DismissOptions, SessionInfo } from "../../types";
 
 export function SessionActionButtons({
 	session,
@@ -18,7 +18,7 @@ export function SessionActionButtons({
 	session: SessionInfo;
 	onRetry?: () => void;
 	onRestart?: () => void;
-	onDismiss: () => void;
+	onDismiss: (opts?: DismissOptions) => void;
 }) {
 	const stopped = session.status === "stopped" || session.closing === true;
 	const target = backlogTarget(session);

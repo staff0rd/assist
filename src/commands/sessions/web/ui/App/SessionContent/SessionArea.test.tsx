@@ -461,6 +461,6 @@ describe("SessionArea top bar actions", () => {
 
 		fireEvent.click(screen.getByTitle("Dismiss session 1"));
 
-		expect(onDismiss).toHaveBeenCalledWith("1");
+		expect(onDismiss).toHaveBeenCalledWith("1", undefined);
 	});
 });

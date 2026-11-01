@@ -1,5 +1,9 @@
 import { harnessResumesConversation } from "../../../../../shared/harnessResumesConversation";
-import type { SessionInfo, SessionLifecycleHandlers } from "../types";
+import type {
+	DismissOptions,
+	SessionInfo,
+	SessionLifecycleHandlers,
+} from "../types";
 
 export function sessionActionHandlers(
 	session: SessionInfo,
@@ -7,14 +11,14 @@ export function sessionActionHandlers(
 ): {
 	onRetry?: () => void;
 	onRestart?: () => void;
-	onDismiss: () => void;
+	onDismiss: (opts?: DismissOptions) => void;
 } {
 	const retryable = session.commandType === "run" || needsRelaunch(session);
 	const restartable = session.commandType !== "run" && relaunchable(session);
 	return {
 		onRetry: retryable ? () => handlers.onRetry(session.id) : undefined,
 		onRestart: restartable ? () => handlers.onRestart(session.id) : undefined,
-		onDismiss: () => handlers.onDismiss(session.id),
+		onDismiss: (opts) => handlers.onDismiss(session.id, opts),
 	};
 }
 

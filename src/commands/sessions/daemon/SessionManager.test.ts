@@ -405,6 +405,26 @@ describe("SessionManager", () => {
 			expect(releaseLockMock).toHaveBeenCalledWith(301);
 		});
 
+		it("closes child server runs first only when asked to", () => {
+			createSessionMock
+				.mockReturnValueOnce(makeSession({ id: "1" }))
+				.mockReturnValueOnce(
+					makeSession({ id: "2", server: true, launchedFrom: "1" }),
+				)
+				.mockReturnValueOnce(makeSession({ id: "3" }))
+				.mockReturnValueOnce(
+					makeSession({ id: "4", server: true, launchedFrom: "3" }),
+				);
+			const manager = new SessionManager();
+			for (let i = 0; i < 4; i++) manager.spawn();
+
+			manager.dismissSession("1");
+			manager.dismissSession("3", true);
+
+			expect(manager.listSessions().map((s) => s.id)).toEqual(["2"]);
+			expect(daemonLogMock).toHaveBeenCalledWith("closing server run 4 with 3");
+		});
+
 		it("does not release a lock for a session without a backlog item", () => {
 			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const manager = new SessionManager();

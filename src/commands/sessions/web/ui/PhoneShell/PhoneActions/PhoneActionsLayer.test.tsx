@@ -68,7 +68,7 @@ describe("PhoneActionsLayer", () => {
 		expect(socket.dismissSession).not.toHaveBeenCalled();
 
 		fireEvent.click(screen.getByRole("button", { name: "End session" }));
-		expect(socket.dismissSession).toHaveBeenCalledWith("s1");
+		expect(socket.dismissSession).toHaveBeenCalledWith("s1", undefined);
 	});
 
 	it("dismisses a done row from the swipe without confirming", () => {
@@ -76,6 +76,6 @@ describe("PhoneActionsLayer", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: /Done/ }));
 		fireEvent.click(screen.getByRole("button", { name: /Dismiss/ }));
-		expect(socket.dismissSession).toHaveBeenCalledWith("s1");
+		expect(socket.dismissSession).toHaveBeenCalledWith("s1", undefined);
 	});
 });

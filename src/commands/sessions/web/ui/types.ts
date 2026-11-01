@@ -51,10 +51,12 @@ export type SidebarProps = {
 	collapsed?: boolean;
 } & SessionListHandlers;
 
+export type DismissOptions = { closeServerRuns?: boolean };
+
 export type SessionLifecycleHandlers = {
 	onRetry: (id: string) => void;
 	onRestart: (id: string) => void;
-	onDismiss: (id: string) => void;
+	onDismiss: (id: string, opts?: DismissOptions) => void;
 };
 
 export type SessionListHandlers = SessionLifecycleHandlers & {
@@ -65,7 +67,7 @@ export type SessionListHandlers = SessionLifecycleHandlers & {
 export type SessionControlHandlers = {
 	onRetry?: () => void;
 	onRestart?: () => void;
-	onDismiss: () => void;
+	onDismiss: (opts?: DismissOptions) => void;
 	childDismiss?: ChildDismiss;
 	onSetAutoApprove: (enabled: boolean) => void;
 	onSetAutoAdvance: (enabled: boolean) => void;

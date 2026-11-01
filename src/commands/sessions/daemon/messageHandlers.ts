@@ -9,7 +9,9 @@ import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
 import { handleCodexUsage } from "./handleCodexUsage";
 import { handleCreateRun } from "./handleCreateRun";
+import { handleDismiss } from "./handleDismiss";
 import { handleOutputRequest } from "./handleOutputRequest";
+import { handleReloadLinks } from "./handleReloadLinks";
 import { handleSetStatus } from "./handleSetStatus";
 import { handleTypePrompt } from "./handleTypePrompt";
 import { handleTypePromptToWriter } from "./handleTypePromptToWriter";
@@ -39,11 +41,7 @@ export const messageHandlers: Record<string, Handler> = {
 	"auto-update-control": handleAutoUpdateControl,
 	"search-history": (client, _m, d) => handleSearchHistory(client, d),
 	...inboxHandlers,
-	"reload-links": (client, m) => {
-		daemonLog("reload-links received");
-		m.links.reload();
-		sendTo(client, { type: "ack" });
-	},
+	"reload-links": handleReloadLinks,
 	create: creator(true, spawnCreate),
 	"create-run": handleCreateRun,
 	"create-assist": creator(true, spawnAssistCreate),
@@ -83,7 +81,7 @@ export const messageHandlers: Record<string, Handler> = {
 		if (!result.ok && result.reason)
 			sendTo(client, { type: "error", message: result.reason });
 	}),
-	dismiss: routed((_client, m, d) => m.dismissSession(d.sessionId as string)),
+	dismiss: handleDismiss,
 	discard: routed((_client, m, d) => m.discardSession(d.sessionId as string)),
 	stop: routed((_client, m, d) => m.stopSession(d.sessionId as string)),
 	transfer: handleTransfer,

@@ -108,7 +108,9 @@ describe("phone Mark done", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Mark done" }));
 
 		await waitFor(() =>
-			expect(socket.dismissSession).toHaveBeenCalledWith("s1"),
+			expect(socket.dismissSession).toHaveBeenCalledWith("s1", {
+				closeServerRuns: true,
+			}),
 		);
 		expect(updateItemStatus).toHaveBeenCalledWith(
 			1372,

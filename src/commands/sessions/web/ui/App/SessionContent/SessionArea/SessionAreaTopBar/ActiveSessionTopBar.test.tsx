@@ -78,7 +78,7 @@ describe("ActiveSessionTopBar nested dismiss", () => {
 		fireEvent.click(screen.getByTitle("Dismiss session run"));
 		fireEvent.click(screen.getByRole("button", { name: "Close this only" }));
 
-		expect(onDismiss.mock.calls).toEqual([["run"]]);
+		expect(onDismiss.mock.calls).toEqual([["run", undefined]]);
 	});
 
 	it("dismisses a done session without children straight away", () => {
@@ -88,6 +88,6 @@ describe("ActiveSessionTopBar nested dismiss", () => {
 		fireEvent.click(screen.getByTitle("Dismiss session other"));
 
 		expect(screen.queryByRole("dialog")).toBeNull();
-		expect(onDismiss.mock.calls).toEqual([["other"]]);
+		expect(onDismiss.mock.calls).toEqual([["other", undefined]]);
 	});
 });

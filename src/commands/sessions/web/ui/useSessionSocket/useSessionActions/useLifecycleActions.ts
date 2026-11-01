@@ -5,6 +5,7 @@ import {
 	restartSessionAction,
 	retrySessionAction,
 } from "../../createSessionAction";
+import type { DismissOptions } from "../../types";
 
 type SendFn = (msg: object) => void;
 
@@ -27,8 +28,8 @@ export function useLifecycleActions(
 	);
 
 	const dismissSession = useCallback(
-		(id: string) => {
-			dismissSessionAction(send, buffers.current)(id);
+		(id: string, opts?: DismissOptions) => {
+			dismissSessionAction(send, buffers.current)(id, opts);
 		},
 		[send, buffers],
 	);

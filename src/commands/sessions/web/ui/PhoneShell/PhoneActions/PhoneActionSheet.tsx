@@ -1,5 +1,4 @@
 import Drawer from "@mui/material/Drawer";
-import { useState } from "react";
 import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { phoneSheetPaperSx } from "../phoneSheetPaperSx";
@@ -7,6 +6,7 @@ import { PhoneActionSheetHeader } from "./PhoneActionSheetHeader";
 import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
 import { PhoneSheetConfirmBody } from "./PhoneSheetConfirmBody";
 import { PhoneSessionActions } from "./PhoneSessionActions";
+import { useLastSession } from "./useLastSession";
 import { usePhoneActions } from "./usePhoneActions";
 
 type Props = {
@@ -25,9 +25,7 @@ export function PhoneActionSheet({
 	socket,
 }: Props) {
 	const { dismiss } = usePhoneActions();
-	const [last, setLast] = useState(session);
-	if (session && session !== last) setLast(session);
-	const shown = session ?? last;
+	const shown = useLastSession(session);
 	if (!shown) return null;
 
 	const localNode = socket.nodes?.local;
@@ -46,8 +44,8 @@ export function PhoneActionSheet({
 				confirm={confirm}
 				session={shown}
 				node={linkedNode}
-				onConfirmed={() => {
-					dismiss(shown);
+				onConfirmed={(opts) => {
+					dismiss(shown, opts);
 					onClose();
 				}}
 				onCancel={onClose}

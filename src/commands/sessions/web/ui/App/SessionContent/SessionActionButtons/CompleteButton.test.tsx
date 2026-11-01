@@ -70,7 +70,9 @@ describe("CompleteButton", () => {
 
 		fireEvent.click(button, { shiftKey: true });
 
-		await waitFor(() => expect(onDismiss).toHaveBeenCalled());
+		await waitFor(() =>
+			expect(onDismiss).toHaveBeenCalledWith({ closeServerRuns: true }),
+		);
 		expect(updateItemStatus).toHaveBeenCalledWith(
 			42,
 			"done",

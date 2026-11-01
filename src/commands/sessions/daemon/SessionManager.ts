@@ -15,7 +15,7 @@ import {
 import { startAutoUpdate } from "./autoUpdate/startAutoUpdate";
 import { closeSession } from "./closeSession";
 import { drainSessions } from "./drainSessions";
-import { flushPhaseActiveMs } from "./flushPhaseActiveMs";
+import { flushAllPhaseActiveMs } from "./flushAllPhaseActiveMs";
 import { PrPreviewCoordinator } from "./PrPreviewCoordinator";
 import { makeSessionSpawner } from "./makeSessionSpawner";
 import { applyUsageRecord } from "./applyUsageRecord";
@@ -89,11 +89,7 @@ export class SessionManager {
 		shutdownSessions(this.sessions);
 	}
 
-	async flushActiveMs(): Promise<void> {
-		await Promise.all(
-			[...this.sessions.values()].map((s) => flushPhaseActiveMs(s)),
-		);
-	}
+	flushActiveMs = (): Promise<void> => flushAllPhaseActiveMs(this.sessions);
 
 	restore(): string[] {
 		return restoreAllSessions(this.spawner, {
@@ -191,8 +187,10 @@ export class SessionManager {
 		);
 	}
 
-	dismissSession = (id: string): void => {
-		closeSession(this.sessions, this.prPreview, this.notify, id, false);
+	dismissSession = (id: string, closeServerRuns = false): void => {
+		closeSession(this.sessions, this.prPreview, this.notify, id, false, {
+			closeServerRuns,
+		});
 	};
 
 	startAutoUpdate(): void {

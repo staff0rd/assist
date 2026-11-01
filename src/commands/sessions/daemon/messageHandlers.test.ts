@@ -402,3 +402,33 @@ describe("rename handler", () => {
 		expect(m.setTitle).not.toHaveBeenCalled();
 	});
 });
+
+describe("dismiss handler", () => {
+	function dismissManager() {
+		return {
+			links: { route: vi.fn(() => false) },
+			dismissSession: vi.fn(),
+		} as unknown as SessionManager & {
+			dismissSession: ReturnType<typeof vi.fn>;
+		};
+	}
+
+	it("passes closeServerRuns through to the manager", () => {
+		const m = dismissManager();
+
+		messageHandlers.dismiss(fakeClient() as never, m, {
+			sessionId: "42",
+			closeServerRuns: true,
+		});
+
+		expect(m.dismissSession).toHaveBeenCalledWith("42", true);
+	});
+
+	it("leaves server runs open on a plain dismiss", () => {
+		const m = dismissManager();
+
+		messageHandlers.dismiss(fakeClient() as never, m, { sessionId: "42" });
+
+		expect(m.dismissSession).toHaveBeenCalledWith("42", false);
+	});
+});

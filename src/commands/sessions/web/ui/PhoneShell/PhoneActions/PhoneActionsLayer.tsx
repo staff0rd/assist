@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { useMatch, useNavigate } from "react-router";
 import { useStarredSessions } from "../../App/useStarredSessions";
-import type { SessionInfo } from "../../types";
+import type { DismissOptions, SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneActionSheet } from "./PhoneActionSheet";
 import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
@@ -23,8 +23,8 @@ export function PhoneActionsLayer({
 	const { dismissSession } = socket;
 
 	const dismiss = useCallback(
-		(session: SessionInfo) => {
-			dismissSession(session.id);
+		(session: SessionInfo, opts?: DismissOptions) => {
+			dismissSession(session.id, opts);
 			if (openRoute === session.id) navigate("/", { replace: true });
 		},
 		[dismissSession, openRoute, navigate],

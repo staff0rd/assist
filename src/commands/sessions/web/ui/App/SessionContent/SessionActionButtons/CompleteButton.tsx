@@ -4,6 +4,7 @@ import { formatItemId } from "../../../../../../backlog/formatItemId";
 import { ConfirmDialog } from "../../../../../../backlog/web/ui/components/ConfirmDialog";
 import { ActionButton } from "../../ActionButton";
 import type { BacklogTarget } from "../../../backlogTarget";
+import type { DismissOptions } from "../../../types";
 import { ErrorSnackbar } from "../../../ErrorSnackbar";
 import type { ShortcutName } from "../../shortcutRegistry";
 import { StopCardActivation } from "../../../StopCardActivation";
@@ -18,7 +19,7 @@ export function CompleteButton({
 }: {
 	target: BacklogTarget;
 	cwd?: string;
-	onDismiss: () => void;
+	onDismiss: (opts?: DismissOptions) => void;
 	shortcut?: ShortcutName;
 }) {
 	const { itemId, phase, totalPhases } = target;
@@ -28,7 +29,7 @@ export function CompleteButton({
 		cwd,
 		() => {
 			setConfirming(false);
-			onDismiss();
+			onDismiss({ closeServerRuns: true });
 		},
 	);
 
