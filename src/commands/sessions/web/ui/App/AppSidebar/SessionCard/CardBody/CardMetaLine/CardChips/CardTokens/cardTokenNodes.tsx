@@ -1,3 +1,4 @@
+import { activityItemIds } from "../../../../../../../../../../../shared/activityItemIds";
 import { ItemTrackerLink } from "../../../../../../../../../../backlog/web/ui/components/ItemTrackerLink";
 import type { ItemTracker } from "../../../../../../../../../../backlog/web/ui/types";
 import { BacklogItemLink } from "./cardTokenNodes/BacklogItemLink";
@@ -39,11 +40,11 @@ export function cardTokenNodes(
 			node: <PrNumberLink session={session} prNumber={targetPr} />,
 		});
 
-	if (activity?.itemId != null)
+	for (const itemId of activityItemIds(activity))
 		tokens.push({
-			key: "item",
+			key: `item-${itemId}`,
 			badge: true,
-			node: <BacklogItemLink itemId={activity.itemId} session={session} />,
+			node: <BacklogItemLink itemId={itemId} session={session} />,
 		});
 
 	if (tracker)

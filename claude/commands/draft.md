@@ -144,10 +144,12 @@ Use the same permalink verbatim for both the ref and `--url`, and the item's nam
 
 Then show the user the item was created. If `propose` printed `Started a backlog run session for a<id>.`, the user chose **Approve & start** and implementation is already running — say so, and do not suggest running it. Otherwise suggest they can run `assist backlog run a<id>` to start implementation.
 
-Finally, signal that the drafting task is complete, passing the created item id (a-prefixed, e.g. `a555`):
+If the conversation established that more items still need to be drafted (e.g. a follow-up item, or one in another repo), do not signal yet — draft each remaining item now, repeating Steps 3 and 4 for it.
+
+Finally, once the last item is created, signal that the drafting task is complete, passing every item id created in this session (a-prefixed, e.g. `a555 a556`):
 
 ```
-assist signal done a<id> 2>&1
+assist signal done a<id> [a<id> ...] 2>&1
 ```
 
-This lets a wrapping `assist draft --once` session end and surfaces the created item id to the session card; in a plain interactive session it has no effect.
+This ends a wrapping `assist draft --once` session, so run it only once and only after the last item, and it surfaces every created id on the session card; in a plain interactive session it has no effect.

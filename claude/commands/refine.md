@@ -104,10 +104,10 @@ Ask if there is anything else to refine. Continue the conversation until the use
 
 ## Step 5: Signal completion
 
-Once the user confirms they are done refining, signal that the task is complete:
+Once the user confirms they are done refining — and any new items the conversation called for (e.g. a split-out follow-up) have been created — signal that the task is complete, passing the ids of any items created in this session:
 
 ```
-assist signal done 2>&1
+assist signal done [a<id> ...] 2>&1
 ```
 
 This lets a wrapping `assist refine --once` session end; in a plain interactive session it has no effect.

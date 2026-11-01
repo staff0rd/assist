@@ -9,6 +9,7 @@ export const activitySchema = z.object({
 	name: z.string().optional(),
 	itemId: z.number().optional(),
 	itemName: z.string().optional(),
+	itemIds: z.array(z.number()).optional(),
 	phase: z.number().optional(),
 	phaseName: z.string().optional(),
 	totalPhases: z.number().optional(),

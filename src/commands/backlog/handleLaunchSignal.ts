@@ -2,8 +2,14 @@ import chalk from "chalk";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
 import { cleanupSignal } from "./resolvePhaseResult";
-import { surfaceCreatedItem } from "./surfaceCreatedItem";
+import { surfaceCreatedItems } from "./surfaceCreatedItems";
 import { tryRunById } from "./tryRunById";
+import type { Signal } from "./writeSignal";
+
+function createdIds(signal: Signal): string[] {
+	const ids = Array.isArray(signal.ids) ? signal.ids : [signal.id];
+	return ids.filter((id): id is string => typeof id === "string" && !!id);
+}
 
 // Acts on the signal a launched run leaves behind: surface a created item, or
 // chain into the next item (by id when known, otherwise `assist next`).
@@ -15,12 +21,9 @@ export async function handleLaunchSignal(
 	cleanupSignal();
 
 	try {
-		if (
-			signal?.event === "done" &&
-			typeof signal.id === "string" &&
-			signal.id
-		) {
-			await surfaceCreatedItem(slashCommand, signal.id);
+		if (signal?.event === "done") {
+			const ids = createdIds(signal);
+			if (ids.length > 0) await surfaceCreatedItems(slashCommand, ids);
 		}
 
 		if (signal?.event === "next") {

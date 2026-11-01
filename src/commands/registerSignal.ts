@@ -22,10 +22,12 @@ export function registerSignal(program: Command): void {
 	internalCommand(
 		signalCommand
 			.command("done")
-			.argument("[id]", "Backlog item ID created by the session")
-			.description("Write a done signal to end a --once launch session")
-			.action((id?: string) => {
-				writeSignal("done", id ? { id } : undefined);
+			.argument("[ids...]", "Backlog item IDs created by the session")
+			.description(
+				"Write a done signal to end a --once launch session, once every item it set out to create exists",
+			)
+			.action((ids: string[]) => {
+				writeSignal("done", ids.length > 0 ? { ids } : undefined);
 				console.log("Signal written.");
 			}),
 		"/draft, /bug, /refine",
