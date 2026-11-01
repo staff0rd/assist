@@ -422,6 +422,9 @@ describe("dismiss handler", () => {
 		});
 
 		expect(m.dismissSession).toHaveBeenCalledWith("42", true);
+		expect(daemonLogMock).toHaveBeenCalledWith(
+			"dismiss received: id=42 closeServerRuns=true",
+		);
 	});
 
 	it("leaves server runs open on a plain dismiss", () => {
