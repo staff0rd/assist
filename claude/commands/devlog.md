@@ -16,29 +16,32 @@ Decide whether the week is worth an entry:
 
 ## Entry file
 
-Write `~/git/blog/src/content/dev/<name>/<yyyy>-w<NN>.md`, where `<name>` is the `name` from `assist devlog next` and the filename is the week id lowercased (`2026-W33` → `2026-w33.md`). Create the `<name>` directory if needed.
+Never write the entry file yourself. Write the entry as JSON to a scratch file and pipe it to `assist devlog write < <file>`, which validates it and writes `~/git/blog/src/content/dev/<name>/<yyyy>-w<NN>.md` with valid YAML frontmatter. If it reports errors, fix the JSON and re-run.
 
-```markdown
----
-project: <name>
-week: <week id, e.g. 2026-W33>
-title: <one-line headline of the week's main themes>
-versions:
-  first: <earliest version in the week>
-  last: <latest version in the week>
-ai-generated: <model name, e.g. claude-opus-5>
-added:
-  - text: <one line describing something new>
-    version: <version of the commit(s) it came from>
-changed:
-  - text: <one line describing a change to existing behaviour>
-    version: <version>
-fixed:
-  - text: <one line describing a fix>
-    version: <version>
----
-
-<1-2 sentence lede summarising what the week was about.>
+```json
+{
+	"week": "<week id, e.g. 2026-W33>",
+	"title": "<one-line headline of the week's main themes>",
+	"versions": {
+		"first": "<earliest version in the week>",
+		"last": "<latest version in the week>"
+	},
+	"aiGenerated": "<model name, e.g. claude-opus-5>",
+	"added": [
+		{
+			"text": "<one line describing something new>",
+			"version": "<version of the commit(s) it came from>"
+		}
+	],
+	"changed": [
+		{
+			"text": "<one line describing a change to existing behaviour>",
+			"version": "<version>"
+		}
+	],
+	"fixed": [{ "text": "<one line describing a fix>", "version": "<version>" }],
+	"lede": "<1-2 sentence lede summarising what the week was about>"
+}
 ```
 
 - **title**: a terse headline naming the week's 2-3 main themes (e.g. `Comment previews, Windows config writes, collapsible sidebar`), not a sentence.

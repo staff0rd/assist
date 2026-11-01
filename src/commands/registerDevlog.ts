@@ -2,9 +2,8 @@ import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { devlogConfigHelp } from "./devlog/devlogConfigHelp";
 import { list as devlogList } from "./devlog/list";
-import { next as devlogNext } from "./devlog/next";
+import { registerDevlogEntryCommands } from "./devlog/registerDevlogEntryCommands";
 import { repos as devlogRepos } from "./devlog/repos";
-import { skip as devlogSkip } from "./devlog/skip";
 import { version as devlogVersion } from "./devlog/version";
 
 export function registerDevlog(program: Command): void {
@@ -33,18 +32,7 @@ export function registerDevlog(program: Command): void {
 		.description("Show the repo name, its latest dev entry week and versions")
 		.action(devlogVersion);
 
-	devlogCommand
-		.command("next")
-		.description(
-			"Show commits for the next completed ISO week after the last dev entry",
-		)
-		.option("-v, --verbose", "Show file names for each commit")
-		.action(devlogNext);
-
-	devlogCommand
-		.command("skip <week>")
-		.description("Add an ISO week (YYYY-Www) to the skip list")
-		.action(devlogSkip);
+	registerDevlogEntryCommands(devlogCommand);
 
 	devlogCommand
 		.command("repos")
