@@ -1,3 +1,10 @@
+# [0.1017.0](https://github.com/staff0rd/assist/compare/v0.1016.2...v0.1017.0) (2026-11-01)
+
+
+### Features
+
+* transfer backlog run to another node ([4095ad2](https://github.com/staff0rd/assist/commit/4095ad2ff01d4134be12f5c3d05559938db59d51))
+
 ## [0.1016.2](https://github.com/staff0rd/assist/compare/v0.1016.1...v0.1016.2) (2026-11-01)
 
 
