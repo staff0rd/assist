@@ -1,3 +1,10 @@
+## [0.1036.1](https://github.com/staff0rd/assist/compare/v0.1036.0...v0.1036.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* rename question toggle to Auto submit ([1630ba7](https://github.com/staff0rd/assist/commit/1630ba74d387503b155587f03da2dcc4e592c189))
+
 # [0.1036.0](https://github.com/staff0rd/assist/compare/v0.1035.0...v0.1036.0) (2026-11-01)
 
 
