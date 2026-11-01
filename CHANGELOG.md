@@ -1,3 +1,10 @@
+## [0.1033.1](https://github.com/staff0rd/assist/compare/v0.1033.0...v0.1033.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* let child activity beat provisional seed ([bfe98f9](https://github.com/staff0rd/assist/commit/bfe98f9b414e455afc66b70b02caa30b9fc2c953))
+
 # [0.1033.0](https://github.com/staff0rd/assist/compare/v0.1032.2...v0.1033.0) (2026-11-01)
 
 
