@@ -1,3 +1,10 @@
+# [0.1022.0](https://github.com/staff0rd/assist/compare/v0.1021.2...v0.1022.0) (2026-11-01)
+
+
+### Features
+
+* relay all confirm PINs to viewer ([a5865a3](https://github.com/staff0rd/assist/commit/a5865a3a1c93231a0bf86e1d1314f22e6bb6b810))
+
 ## [0.1021.2](https://github.com/staff0rd/assist/compare/v0.1021.1...v0.1021.2) (2026-11-01)
 
 
