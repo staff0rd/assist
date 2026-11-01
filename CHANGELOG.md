@@ -1,3 +1,10 @@
+# [0.1042.0](https://github.com/staff0rd/assist/compare/v0.1041.0...v0.1042.0) (2026-11-01)
+
+
+### Features
+
+* render docs social card on capture ([68bdd94](https://github.com/staff0rd/assist/commit/68bdd9491cb03f9af7fb6fbe2598d8598986edf0))
+
 # [0.1041.0](https://github.com/staff0rd/assist/compare/v0.1040.0...v0.1041.0) (2026-11-01)
 
 
