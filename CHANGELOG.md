@@ -1,3 +1,10 @@
+# [0.1036.0](https://github.com/staff0rd/assist/compare/v0.1035.0...v0.1036.0) (2026-11-01)
+
+
+### Features
+
+* show question and check asks yellow ([b0b9b98](https://github.com/staff0rd/assist/commit/b0b9b98c5fc7ee513998446887882285815a0af1))
+
 # [0.1035.0](https://github.com/staff0rd/assist/compare/v0.1034.0...v0.1035.0) (2026-11-01)
 
 
