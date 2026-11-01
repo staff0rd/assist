@@ -1,3 +1,10 @@
+## [0.1022.2](https://github.com/staff0rd/assist/compare/v0.1022.1...v0.1022.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* align check pane with design system ([1dde1d4](https://github.com/staff0rd/assist/commit/1dde1d42c4d29af2d779739614d4ded177612a76))
+
 ## [0.1022.1](https://github.com/staff0rd/assist/compare/v0.1022.0...v0.1022.1) (2026-11-01)
 
 
