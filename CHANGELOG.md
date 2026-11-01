@@ -1,3 +1,10 @@
+## [0.1039.1](https://github.com/staff0rd/assist/compare/v0.1039.0...v0.1039.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* deny schema heredocs, allow sed -n ([aa4ec21](https://github.com/staff0rd/assist/commit/aa4ec21bb660c29d61dea143187c8eab533c4c54))
+
 # [0.1039.0](https://github.com/staff0rd/assist/compare/v0.1038.0...v0.1039.0) (2026-11-01)
 
 
