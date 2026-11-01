@@ -1,3 +1,10 @@
+## [0.1026.2](https://github.com/staff0rd/assist/compare/v0.1026.1...v0.1026.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* log dismiss receipt with flag ([479598c](https://github.com/staff0rd/assist/commit/479598c0ef841bd688e6b45c0d0978fd6d44d36d))
+
 ## [0.1026.1](https://github.com/staff0rd/assist/compare/v0.1026.0...v0.1026.1) (2026-11-01)
 
 
