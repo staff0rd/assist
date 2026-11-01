@@ -9,6 +9,7 @@ function buildFrontmatter(
 		project,
 		week: entry.week,
 		title: entry.title,
+		dates: entry.dates,
 	};
 	if (entry.versions) frontmatter.versions = entry.versions;
 	frontmatter["ai-generated"] = entry.aiGenerated;

@@ -12,6 +12,7 @@ function frontmatterOf(markdown: string): Record<string, unknown> {
 const w49 = devEntryInputSchema.parse({
 	week: "2025-W49",
 	title: "Autocomplete fix: tidier # config saves",
+	dates: { first: "2025-12-02", last: "2025-12-04" },
 	versions: { first: "v1.0", last: "v1.0" },
 	aiGenerated: "claude-opus-5-5",
 	fixed: [
@@ -31,6 +32,7 @@ describe("formatDevEntry", () => {
 			project: "project-switch",
 			week: "2025-W49",
 			title: "Autocomplete fix: tidier # config saves",
+			dates: { first: "2025-12-02", last: "2025-12-04" },
 			versions: { first: "v1.0", last: "v1.0" },
 			"ai-generated": "claude-opus-5-5",
 			fixed: w49.fixed,
@@ -64,6 +66,27 @@ describe("devEntryInputSchema", () => {
 		expect(result.error?.issues.map((i) => i.path[0])).toEqual([
 			"week",
 			"title",
+			"dates",
+		]);
+	});
+
+	it("rejects dates outside the week or out of order", () => {
+		for (const dates of [
+			{ first: "2025-11-30", last: "2025-12-04" },
+			{ first: "2025-12-04", last: "2025-12-02" },
+		]) {
+			const result = devEntryInputSchema.safeParse({ ...w49, dates });
+			expect(result.error?.issues.map((i) => i.path[0])).toEqual(["dates"]);
+		}
+	});
+
+	it("rejects an item longer than a short changelog phrase", () => {
+		const result = devEntryInputSchema.safeParse({
+			...w49,
+			added: [{ text: "x".repeat(81) }],
+		});
+		expect(result.error?.issues.map((i) => i.path.join("."))).toEqual([
+			"added.0.text",
 		]);
 	});
 });

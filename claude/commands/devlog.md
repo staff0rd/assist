@@ -7,7 +7,7 @@ Parse `$ARGUMENTS`: if `--all` is present, enable **catch-up mode** (described b
 
 ## Single-week mode (default)
 
-Run `assist devlog next`. It prints the project `name`, the ISO `week` (e.g. `2026-W33`), its Monday–Sunday `range`, the `versions` range, and every commit in the week oldest first, each tagged with the version from `package.json` at that commit (no version is shown when the repo has none). It only ever offers completed weeks; if it reports nothing to write, stop.
+Run `assist devlog next`. It prints the project `name`, the ISO `week` (e.g. `2026-W33`), its Monday–Sunday `range`, the `dates` of the first and last commits, the `versions` range, and every commit in the week oldest first, each tagged with the version from `package.json` at that commit. No versions are shown when the repo has no real version history (no tags and a version that never changes in the week). It only ever offers completed weeks; if it reports nothing to write, stop.
 
 Decide whether the week is worth an entry:
 
@@ -22,6 +22,10 @@ Never write the entry file yourself. Write the entry as JSON to a scratch file a
 {
 	"week": "<week id, e.g. 2026-W33>",
 	"title": "<one-line headline of the week's main themes>",
+	"dates": {
+		"first": "<first commit date in the week, YYYY-MM-DD>",
+		"last": "<last commit date in the week, YYYY-MM-DD>"
+	},
 	"versions": {
 		"first": "<earliest version in the week>",
 		"last": "<latest version in the week>"
@@ -29,29 +33,32 @@ Never write the entry file yourself. Write the entry as JSON to a scratch file a
 	"aiGenerated": "<model name, e.g. claude-opus-5>",
 	"added": [
 		{
-			"text": "<one line describing something new>",
+			"text": "<short phrase naming something new>",
 			"version": "<version of the commit(s) it came from>"
 		}
 	],
 	"changed": [
 		{
-			"text": "<one line describing a change to existing behaviour>",
+			"text": "<short phrase naming a change to existing behaviour>",
 			"version": "<version>"
 		}
 	],
-	"fixed": [{ "text": "<one line describing a fix>", "version": "<version>" }],
+	"fixed": [
+		{ "text": "<short phrase naming what was broken>", "version": "<version>" }
+	],
 	"lede": "<1-2 sentence lede summarising what the week was about>"
 }
 ```
 
 - **title**: a terse headline naming the week's 2-3 main themes (e.g. `Comment previews, Windows config writes, collapsible sidebar`), not a sentence.
-- **versions**: the first and last versions reported by `assist devlog next`. Omit `versions` entirely when the repo has no versions.
+- **dates**: the first and last commit dates reported as `dates` by `assist devlog next`.
+- **versions**: the first and last versions reported by `assist devlog next`. Omit `versions` entirely when it reports none.
 - **added / changed / fixed**: one line per user-visible change, newest version first within each list. Merge related commits into one line and drop release commits, refactors, tests and other internal-only work. Use `feat:` commits as a hint for **added** and `fix:` for **fixed**, but classify by what changed for the user. Omit a list that would be empty.
-- **version** on each line: the version shown against the commit(s) the line came from (the latest one when several commits are merged). Omit `version` when the repo has no versions.
-- Write each line as a short changelog item, not first-person prose. Wrap code symbols (commands, function names, file names, config keys) in backticks.
+- **version** on each line: the version shown against the commit(s) the line came from (the latest one when several commits are merged). Omit `version` when `assist devlog next` reports no versions.
+- Write each line as a short changelog phrase (at most 80 characters, which `assist devlog write` enforces), not a sentence: name the thing, drop the explanation. A fix names what was broken, e.g. "`assist backlog show` not printing comments", not "`assist backlog show` collected comments but never printed them". Wrap code symbols (commands, function names, file names, config keys) in backticks.
 - **lede**: one or two sentences, conversational, saying what the week was mostly about and why it matters.
 
-Read existing entries in `~/git/blog/src/content/dev/` for style if any exist.
+Match the style of `~/git/blog/src/content/dev/assist/2026-w33.md`. Older entries in `~/git/blog/src/content/dev/` predate the short-phrase style, so don't copy their item length.
 
 ## Catch-up mode (`--all`)
 

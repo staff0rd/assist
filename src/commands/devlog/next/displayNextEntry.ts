@@ -2,16 +2,8 @@ import chalk from "chalk";
 import { isoWeekRange } from "../isoWeek";
 import type { Commit } from "../types";
 import { getVersionAtCommit } from "../getVersionAtCommit";
-import { stripToMinor } from "../stripToMinor";
-
-type VersionedCommit = Commit & { version: string | null };
-
-function withVersions(commits: Commit[]): VersionedCommit[] {
-	return commits.map((commit) => {
-		const version = getVersionAtCommit(commit.hash);
-		return { ...commit, version: version ? stripToMinor(version) : null };
-	});
-}
+import { repoHasTags } from "./repoHasTags";
+import { type VersionedCommit, withVersions } from "./withVersions";
 
 function versionRange(commits: VersionedCommit[]): string | null {
 	const versions = commits
@@ -57,11 +49,13 @@ export function displayNextEntry(
 	week: string,
 	commits: Commit[],
 ): void {
-	const versioned = withVersions(commits);
+	const versioned = withVersions(commits, getVersionAtCommit, repoHasTags());
 	const { start, end } = isoWeekRange(week);
 	printField("name", ctx.repoName);
 	printField("week", chalk.bold.blue(week));
 	printField("range", `${start} – ${end}`);
+	const dates = commits.map((c) => c.date).sort();
+	if (dates.length > 0) printField("dates", `${dates[0]} – ${dates.at(-1)}`);
 	const versions = versionRange(versioned);
 	if (versions) printField("versions", versions);
 	printCommits(versioned, ctx.ignore, ctx.verbose);
