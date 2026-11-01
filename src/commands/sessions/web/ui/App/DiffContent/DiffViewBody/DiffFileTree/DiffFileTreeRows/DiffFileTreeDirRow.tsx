@@ -6,11 +6,10 @@ import Typography from "@mui/material/Typography";
 import {
 	diffFileTreeFileRowSx,
 	diffFileTreeNameSx,
-	diffFileTreeRevertSx,
 	diffFileTreeRowSx,
 } from "../diffFileTreeRowSx";
 import { slateTreeDirSx } from "../slateTreeSx";
-import { DiffFolderRevertButton } from "./DiffFileTreeDirRow/DiffFolderRevertButton";
+import { DiffFileTreeDirRowRevert } from "./DiffFileTreeDirRow/DiffFileTreeDirRowRevert";
 
 export function DiffFileTreeDirRow({
 	name,
@@ -19,6 +18,7 @@ export function DiffFileTreeDirRow({
 	collapsed,
 	indent,
 	onToggle,
+	uncommittedOnly,
 	onRevertPaths,
 }: {
 	name: string;
@@ -27,6 +27,7 @@ export function DiffFileTreeDirRow({
 	collapsed: boolean;
 	indent: string;
 	onToggle: () => void;
+	uncommittedOnly?: boolean;
 	onRevertPaths?: (paths: string[]) => void;
 }) {
 	return (
@@ -54,15 +55,12 @@ export function DiffFileTreeDirRow({
 					{name}
 				</Typography>
 			</ButtonBase>
-			{onRevertPaths && (
-				<Box className="diff-tree-revert" sx={diffFileTreeRevertSx}>
-					<DiffFolderRevertButton
-						path={path}
-						paths={paths}
-						onRevert={onRevertPaths}
-					/>
-				</Box>
-			)}
+			<DiffFileTreeDirRowRevert
+				path={path}
+				paths={paths}
+				uncommittedOnly={uncommittedOnly}
+				onRevertPaths={onRevertPaths}
+			/>
 		</Box>
 	);
 }

@@ -328,3 +328,72 @@ describe("DiffFileTree with committed and uncommitted changes", () => {
 		expect(screen.getByText(/deletes src\/new\.ts/)).toBeTruthy();
 	});
 });
+
+describe("DiffFileTree bulk revert with committed and uncommitted changes", () => {
+	function renderMixed(files: FileData[], uncommitted: string[]) {
+		const onRevertPaths = vi.fn();
+		render(
+			<DiffFileTree
+				files={files}
+				onSelectFile={vi.fn()}
+				onRevertPaths={onRevertPaths}
+				uncommittedFiles={{
+					paths: new Set(uncommitted),
+					newPaths: new Set(),
+				}}
+			/>,
+		);
+		return onRevertPaths;
+	}
+
+	it("reverts only the uncommitted files from the header and counts them", () => {
+		const onRevertPaths = renderMixed(
+			[file("src/a.ts"), file("src/b.ts"), file("docs/c.md")],
+			["src/b.ts", "docs/c.md"],
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "Revert all files" }));
+		expect(
+			screen.getByText(
+				/only the uncommitted edits to 2 files listed in the tree\. Their committed changes stay/,
+			),
+		).toBeTruthy();
+		fireEvent.click(screen.getByRole("button", { name: "Revert" }));
+
+		expect(onRevertPaths).toHaveBeenCalledWith(["docs/c.md", "src/b.ts"]);
+	});
+
+	it("reverts only a folder's uncommitted files and counts them", () => {
+		const onRevertPaths = renderMixed(
+			[file("src/a.ts"), file("src/b.ts"), file("docs/c.md")],
+			["src/b.ts", "docs/c.md"],
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "Revert folder src" }));
+		expect(
+			screen.getByText(/only the uncommitted edits to 1 file in src\./),
+		).toBeTruthy();
+		fireEvent.click(screen.getByRole("button", { name: "Revert" }));
+
+		expect(onRevertPaths).toHaveBeenCalledWith(["src/b.ts"]);
+	});
+
+	it("hides a folder's revert when nothing under it is uncommitted", () => {
+		renderMixed([file("src/a.ts"), file("docs/c.md")], ["docs/c.md"]);
+
+		expect(
+			screen.queryByRole("button", { name: "Revert folder src" }),
+		).toBeNull();
+		expect(
+			screen.getByRole("button", { name: "Revert folder docs" }),
+		).toBeTruthy();
+	});
+
+	it("hides revert all when no listed file is uncommitted", () => {
+		renderMixed([file("src/a.ts")], []);
+
+		expect(
+			screen.queryByRole("button", { name: "Revert all files" }),
+		).toBeNull();
+	});
+});

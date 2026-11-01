@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { bulkRevertMessage } from "../../bulkRevertMessage";
 import {
 	diffFileTreeHeaderSx,
 	diffFileTreeNameSx,
@@ -9,13 +10,13 @@ import { DiffRevertIconButton } from "./DiffRevertIconButton";
 
 export function DiffFileTreeHeader({
 	paths,
+	uncommittedOnly = false,
 	onRevertPaths,
 }: {
 	paths: string[];
+	uncommittedOnly?: boolean;
 	onRevertPaths: (paths: string[]) => void;
 }) {
-	const label = paths.length === 1 ? "file" : "files";
-
 	return (
 		<Box sx={diffFileTreeHeaderSx}>
 			<Typography
@@ -30,7 +31,11 @@ export function DiffFileTreeHeader({
 					label="Revert all files"
 					title="Revert uncommitted changes to every listed file"
 					confirmTitle="Revert all files"
-					confirmMessage={`This discards all uncommitted changes to ${paths.length} ${label} listed in the tree. This cannot be undone.`}
+					confirmMessage={bulkRevertMessage(
+						paths.length,
+						"listed in the tree",
+						uncommittedOnly,
+					)}
 					onConfirm={() => onRevertPaths(paths)}
 				/>
 			</Box>

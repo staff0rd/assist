@@ -11,7 +11,7 @@ export function diffRevertScope(scope: string): {
 	const mixed = MIXED_SCOPES.has(scope);
 	return {
 		file: uncommitted || mixed,
-		paths: uncommitted,
+		paths: uncommitted || mixed,
 		needsUncommittedFiles: mixed,
 	};
 }

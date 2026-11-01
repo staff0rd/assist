@@ -3,6 +3,7 @@ import { DiffFileTreeDirRow } from "./DiffFileTreeRows/DiffFileTreeDirRow";
 import { DiffFileTreeFileRow } from "./DiffFileTreeRows/DiffFileTreeFileRow";
 import { DIFF_TREE_INDENT } from "./diffFileTreeRowSx";
 import type { DiffFileTreeRowsProps } from "./DiffFileTreeRows/DiffFileTreeRowsProps";
+import { revertablePaths } from "../../revertablePaths";
 import { treeFileKeys } from "../../treeFileKeys";
 
 export function DiffFileTreeRows(props: DiffFileTreeRowsProps) {
@@ -25,10 +26,14 @@ export function DiffFileTreeRows(props: DiffFileTreeRowsProps) {
 				<DiffFileTreeDirRow
 					name={node.name}
 					path={node.path}
-					paths={treeFileKeys(node.children)}
+					paths={revertablePaths(
+						treeFileKeys(node.children),
+						props.uncommittedFiles,
+					)}
 					collapsed={collapsed.has(node.path)}
 					indent={indent}
 					onToggle={() => props.onToggleDir(node.path)}
+					uncommittedOnly={props.uncommittedFiles !== undefined}
 					onRevertPaths={props.onRevertPaths}
 				/>
 				{!collapsed.has(node.path) && (

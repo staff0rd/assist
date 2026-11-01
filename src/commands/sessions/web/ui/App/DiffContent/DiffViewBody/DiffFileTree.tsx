@@ -6,6 +6,7 @@ import { DiffFileTreeHeader } from "./DiffFileTree/DiffFileTreeHeader";
 import { DiffFileTreeRows } from "./DiffFileTree/DiffFileTreeRows";
 import { slateTreePanelSx } from "./DiffFileTree/slateTreeSx";
 import { DIFF_TOOLBAR_HEIGHT } from "../DiffToolbar";
+import { revertablePaths } from "../revertablePaths";
 import { treeFileKeys } from "../treeFileKeys";
 import type { UncommittedFiles } from "../uncommittedFiles";
 import { useCollapsedDirs } from "./DiffFileTree/useCollapsedDirs";
@@ -43,11 +44,14 @@ export function DiffFileTree({
 
 	if (nodes.length === 0) return null;
 
+	const headerPaths = revertablePaths(treeFileKeys(nodes), uncommittedFiles);
+
 	return (
 		<Box sx={[panelSx, slateTreePanelSx]} aria-label="Changed files">
-			{onRevertPaths && (
+			{onRevertPaths && headerPaths.length > 0 && (
 				<DiffFileTreeHeader
-					paths={treeFileKeys(nodes)}
+					paths={headerPaths}
+					uncommittedOnly={uncommittedFiles !== undefined}
 					onRevertPaths={onRevertPaths}
 				/>
 			)}

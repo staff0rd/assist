@@ -11,11 +11,11 @@ describe("diffRevertScope", () => {
 	});
 
 	it.each(["all", "branch"])(
-		"offers only per-file revert, gated on uncommitted files, in the %s scope",
+		"offers per-file and bulk revert, gated on uncommitted files, in the %s scope",
 		(scope) => {
 			expect(diffRevertScope(scope)).toEqual({
 				file: true,
-				paths: false,
+				paths: true,
 				needsUncommittedFiles: true,
 			});
 		},
