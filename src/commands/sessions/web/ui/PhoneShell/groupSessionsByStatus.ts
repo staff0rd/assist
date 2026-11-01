@@ -20,7 +20,7 @@ export function groupSessionsByStatus(
 	for (const session of sessions) {
 		const status = displayStatus(session);
 		if (status === "question") groups.questions.push(session);
-		else if (status === "waiting" || status === "error")
+		else if (status === "check" || status === "waiting" || status === "error")
 			groups.needsYou.push(session);
 		else if (status === "running") groups.running.push(session);
 		else groups.done.push(session);

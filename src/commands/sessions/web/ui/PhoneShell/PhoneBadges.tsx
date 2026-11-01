@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import { formatItemId } from "../../../../backlog/formatItemId";
 import { reviewPhaseBadgeSx } from "../designSystem/reviewPhaseBadgeSx";
 import { tokenBadgeSx } from "../designSystem/tokenBadgeSx";
+import { displayStatus } from "../displayStatus";
 import type { SessionInfo } from "../types";
 import { reviewPhaseLabel } from "./reviewPhaseLabel";
 
@@ -23,6 +24,15 @@ export function PhoneBadges({
 	const reviewPhase = reviewPhaseLabel(session);
 	return (
 		<>
+			{displayStatus(session) === "check" && (
+				<Box
+					component="span"
+					sx={tokenBadgeSx("check")}
+					data-testid="check-badge"
+				>
+					Check
+				</Box>
+			)}
 			{reviewPhase && (
 				<Box
 					component="span"

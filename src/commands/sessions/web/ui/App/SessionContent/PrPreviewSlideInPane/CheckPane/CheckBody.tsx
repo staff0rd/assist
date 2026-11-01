@@ -1,5 +1,6 @@
-import { Box, Chip, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import type { AskCheckInput } from "../../../../../../shared/askCheckInputSchema";
+import { BeforeChips } from "./BeforeChips";
 import { InlineCode } from "./InlineCode";
 import { WhatChanged } from "./WhatChanged";
 import { Label } from "./Label";
@@ -10,12 +11,7 @@ export function CheckBody({ check }: { check: AskCheckInput }) {
 		<Stack spacing={2} sx={{ p: 2, flex: 1, minHeight: 0, overflowY: "auto" }}>
 			{before.length > 0 && (
 				<Stack spacing={0.75}>
-					<Label>Before</Label>
-					<Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
-						{before.map((item) => (
-							<Chip key={item} size="small" variant="tonal" label={item} />
-						))}
-					</Box>
+					<BeforeChips items={before} />
 				</Stack>
 			)}
 			<Stack spacing={0.75}>

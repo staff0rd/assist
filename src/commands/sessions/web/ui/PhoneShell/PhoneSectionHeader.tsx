@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { statusGlyph } from "../statusGlyph";
 
 const headerSx = {
 	display: "flex",
@@ -24,10 +25,12 @@ export function PhoneSectionHeader({
 	label,
 	count,
 	tone,
+	checks = 0,
 }: {
 	label: string;
 	count: number;
 	tone?: PhoneSectionTone;
+	checks?: number;
 }) {
 	return (
 		<Box
@@ -38,7 +41,16 @@ export function PhoneSectionHeader({
 		>
 			<span>{label}</span>
 			<Box component="span" sx={{ fontFamily: "fontFamilyMono" }}>
-				{count}
+				{checks > 0 && (
+					<Box
+						component="span"
+						sx={{ color: "check.main", mr: 1 }}
+						data-testid="section-check-count"
+					>
+						{statusGlyph.check} {checks}
+					</Box>
+				)}
+				{count - checks}
 			</Box>
 		</Box>
 	);

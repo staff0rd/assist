@@ -50,6 +50,23 @@ describe("groupSessionsByStatus", () => {
 		expect(ids(groups.needsYou)).toEqual(["a"]);
 	});
 
+	it("puts a session waiting on a check in Needs you", () => {
+		const groups = groupSessionsByStatus([
+			session("a", "running", {
+				pendingPrPreview: {
+					requestId: "r",
+					title: "Check",
+					body: "",
+					prNumber: null,
+					kind: "check",
+				},
+			}),
+		]);
+
+		expect(ids(groups.needsYou)).toEqual(["a"]);
+		expect(ids(groups.done)).toEqual([]);
+	});
+
 	it("puts a session waiting on a question in Answer here", () => {
 		const groups = groupSessionsByStatus([
 			session("a", "running", {

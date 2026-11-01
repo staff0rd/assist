@@ -1,3 +1,4 @@
+import { displayStatus } from "../displayStatus";
 import type { SessionInfo } from "../types";
 import {
 	PhoneSectionHeader,
@@ -19,7 +20,12 @@ export function PhoneSessionSection({
 	if (sessions.length === 0) return null;
 	return (
 		<>
-			<PhoneSectionHeader label={label} count={sessions.length} tone={tone} />
+			<PhoneSectionHeader
+				label={label}
+				count={sessions.length}
+				tone={tone}
+				checks={sessions.filter((s) => displayStatus(s) === "check").length}
+			/>
 			{sessions.map((s) => (
 				<PhoneSessionRow
 					key={s.id}

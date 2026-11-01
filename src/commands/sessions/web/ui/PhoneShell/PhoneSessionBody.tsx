@@ -1,13 +1,11 @@
 import Box from "@mui/material/Box";
-import { displayStatus } from "../displayStatus";
-import { isAwaitingUser } from "../isAwaitingUser";
 import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
-import { PhoneInputDock } from "./PhoneInputDock";
-import { PhoneSessionQuestion } from "./PhoneSessionQuestion";
 import { PhoneTerminal } from "./PhoneTerminal";
+import { pendingCheck } from "./pendingCheck";
 import { pendingQuestion } from "./pendingQuestion";
 import type { usePhoneSessionIo } from "./usePhoneSessionIo";
+import { PhoneSessionAsk } from "./PhoneSessionAsk";
 
 const terminalSx = {
 	flex: 1,
@@ -16,23 +14,19 @@ const terminalSx = {
 	flexDirection: "column",
 } as const;
 
-const questionTerminalSx = { ...terminalSx, flex: "0 0 22%" } as const;
+const askTerminalSx = { ...terminalSx, flex: "0 0 22%" } as const;
 
-export function PhoneSessionBody({
-	session,
-	socket,
-	io,
-	keyboardOpen,
-}: {
+export function PhoneSessionBody(props: {
 	session: SessionInfo;
 	socket: SessionSocket;
 	io: ReturnType<typeof usePhoneSessionIo>;
 	keyboardOpen: boolean;
 }) {
-	const question = pendingQuestion(session);
+	const { session, socket, io } = props;
+	const asking = Boolean(pendingQuestion(session) ?? pendingCheck(session));
 	return (
 		<>
-			<Box sx={question ? questionTerminalSx : terminalSx}>
+			<Box sx={asking ? askTerminalSx : terminalSx}>
 				<PhoneTerminal
 					key={session.id}
 					sessionId={session.id}
@@ -43,22 +37,7 @@ export function PhoneSessionBody({
 					reclaimRef={io.reclaimRef}
 				/>
 			</Box>
-			{question ? (
-				<PhoneSessionQuestion
-					key={question.requestId}
-					sessionId={session.id}
-					question={question}
-					socket={socket}
-					keyboardOpen={keyboardOpen}
-				/>
-			) : (
-				<PhoneInputDock
-					waiting={isAwaitingUser(displayStatus(session))}
-					keyboardOpen={keyboardOpen}
-					onKey={io.onKey}
-					onSend={io.onSend}
-				/>
-			)}
+			<PhoneSessionAsk {...props} />
 		</>
 	);
 }
