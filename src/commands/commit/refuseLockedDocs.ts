@@ -1,22 +1,12 @@
-import { execSync } from "node:child_process";
-import { getProjectRoot } from "../../shared/loadConfig";
 import { isDocsLocked } from "../backlog/isDocsLocked";
 import {
 	DOCS_LOCK_REASON,
 	isLockedDocsRelativePath,
 } from "../backlog/isDocsPath";
-
-function findStagedDocs(): string[] {
-	return execSync("git diff --cached --name-only --relative", {
-		cwd: getProjectRoot(),
-		encoding: "utf8",
-	})
-		.split("\n")
-		.filter(isLockedDocsRelativePath);
-}
+import { listStagedFiles } from "./listStagedFiles";
 
 export async function refuseLockedDocs(): Promise<void> {
-	const staged = findStagedDocs();
+	const staged = listStagedFiles().filter(isLockedDocsRelativePath);
 	if (staged.length === 0 || !(await isDocsLocked())) return;
 	console.error(
 		`Error: refusing to commit — staged changes touch docs: ${staged.join(", ")}`,

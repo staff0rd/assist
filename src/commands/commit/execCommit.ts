@@ -8,6 +8,7 @@ import { pullKeepingIndex } from "./pullKeepingIndex";
 import { pushCommit } from "./pushCommit";
 import { shouldPull } from "./shouldPull";
 import { refuseLockedDocs } from "./refuseLockedDocs";
+import { refuseLockedSchema } from "./refuseLockedSchema";
 import { commitStaged } from "./commitStaged";
 import { stageFiles } from "./stageFiles";
 
@@ -25,6 +26,7 @@ export async function execCommit(
 		abortOnConflicts(files, pulled);
 		if (files.length > 0) stageFiles(files);
 		await refuseLockedDocs();
+		await refuseLockedSchema();
 		const sha = commitStaged(message);
 		console.log(`Committed: ${sha}`);
 		if (config.commit?.push) {
