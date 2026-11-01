@@ -89,4 +89,14 @@ describe("devEntryInputSchema", () => {
 			"added.0.text",
 		]);
 	});
+
+	it("rejects item versions when versions is omitted", () => {
+		const { versions: _, ...unversioned } = w49;
+		const result = devEntryInputSchema.safeParse(unversioned);
+		expect(result.error?.issues.map((i) => i.path[0])).toEqual(["versions"]);
+		const items = w49.fixed.map(({ text }) => ({ text }));
+		expect(
+			devEntryInputSchema.safeParse({ ...unversioned, fixed: items }).success,
+		).toBe(true);
+	});
 });

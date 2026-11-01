@@ -47,6 +47,17 @@ export const devEntryInputSchema = z
 	.refine((entry) => datesWithinWeek(entry.week, entry.dates), {
 		message: "first and last must be in order and within the week",
 		path: ["dates"],
-	});
+	})
+	.refine(
+		(entry) =>
+			entry.versions !== undefined ||
+			[...entry.added, ...entry.changed, ...entry.fixed].every(
+				(item) => item.version === undefined,
+			),
+		{
+			message: "items must not have a version when versions is omitted",
+			path: ["versions"],
+		},
+	);
 
 export type DevEntryInput = z.infer<typeof devEntryInputSchema>;
