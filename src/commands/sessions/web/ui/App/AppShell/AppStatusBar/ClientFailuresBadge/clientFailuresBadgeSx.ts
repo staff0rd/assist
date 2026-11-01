@@ -37,6 +37,7 @@ export const clientFailuresListSx = {
 	overflow: "auto",
 	display: "grid",
 	gridTemplateColumns: "auto auto minmax(0, 2fr) auto minmax(0, 1.5fr) auto",
+	gridAutoRows: "max-content",
 	columnGap: 1.5,
 	rowGap: 0.5,
 	px: 1.5,
