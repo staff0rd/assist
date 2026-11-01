@@ -1,3 +1,17 @@
+# [0.1032.0](https://github.com/staff0rd/assist/compare/v0.1031.0...v0.1032.0) (2026-11-01)
+
+
+### Bug Fixes
+
+* no phone glide after resting finger ([c1967ca](https://github.com/staff0rd/assist/commit/c1967caea89c0950e73b4f6c2f6e62330b14b6cc))
+* phone terminal touch scrollback ([6a7038d](https://github.com/staff0rd/assist/commit/6a7038d01c943c5f7cf975ade8f8c123d4b5945a))
+
+
+### Features
+
+* job totals, filters and stale runs ([b7c5f0f](https://github.com/staff0rd/assist/commit/b7c5f0fc294dd36b182ab55f713a8c3765f7627e))
+* review previews on iOS ([527a6c8](https://github.com/staff0rd/assist/commit/527a6c832bd83a0b424ea6cd551153d7886ceea2))
+
 # [0.1031.0](https://github.com/staff0rd/assist/compare/v0.1030.0...v0.1031.0) (2026-11-01)
 
 
