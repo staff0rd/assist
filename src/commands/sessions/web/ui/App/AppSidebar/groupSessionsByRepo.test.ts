@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { groupSessionsByRepo } from "./groupSessionsByRepo";
+import { groupOrderStore } from "./groupSessionsByRepo/groupOrderStore";
 import type { SessionInfo } from "../../types";
 
 function row(session: SessionInfo, ...children: SessionInfo[]) {
@@ -14,7 +15,66 @@ function keys(groups: ReturnType<typeof groupSessionsByRepo>) {
 	return groups.map((g) => (g.kind === "repo" ? g.key : g.session.id));
 }
 
+beforeEach(() => groupOrderStore.clear());
+
 describe("groupSessionsByRepo", () => {
+	it("keeps group order when the first member of a group closes", () => {
+		const sessions = [
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/two" }),
+			makeSessionInfo({ id: "c", cwd: "/two" }),
+			makeSessionInfo({ id: "d", cwd: "/one" }),
+			makeSessionInfo({ id: "e", cwd: "/three" }),
+		];
+		expect(keys(groupSessionsByRepo(sessions, () => false))).toEqual([
+			"/one",
+			"/two",
+			"e",
+		]);
+
+		const afterClose = sessions.filter((s) => s.id !== "a");
+
+		expect(keys(groupSessionsByRepo(afterClose, () => false))).toEqual([
+			"d",
+			"/two",
+			"e",
+		]);
+	});
+
+	it("appends a newly opened repo without moving existing groups", () => {
+		const sessions = [
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/two" }),
+		];
+		groupSessionsByRepo(sessions, () => false);
+
+		const opened = [makeSessionInfo({ id: "n", cwd: "/new" }), ...sessions];
+
+		expect(keys(groupSessionsByRepo(opened, () => false))).toEqual([
+			"a",
+			"b",
+			"n",
+		]);
+	});
+
+	it("returns an unstarred group to its remembered position", () => {
+		const sessions = [
+			makeSessionInfo({ id: "a", cwd: "/one" }),
+			makeSessionInfo({ id: "b", cwd: "/two" }),
+			makeSessionInfo({ id: "c", cwd: "/three" }),
+		];
+		const starred = new Set(["c"]);
+		expect(
+			keys(groupSessionsByRepo(sessions, (s) => starred.has(s.id))),
+		).toEqual(["c", "a", "b"]);
+
+		expect(keys(groupSessionsByRepo(sessions, () => false))).toEqual([
+			"a",
+			"b",
+			"c",
+		]);
+	});
+
 	it("groups 2+ sessions sharing a cwd under a repo entry", () => {
 		const sessions = [
 			makeSessionInfo({ id: "a", cwd: "/home/me/git/assist" }),
