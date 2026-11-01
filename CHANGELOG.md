@@ -1,3 +1,17 @@
+# [0.1019.0](https://github.com/staff0rd/assist/compare/v0.1018.0...v0.1019.0) (2026-11-01)
+
+
+### Bug Fixes
+
+* set iOS signing team ([3d5814f](https://github.com/staff0rd/assist/commit/3d5814f35309f47520dd81be7d435c182c7ae8c5))
+* wire queued transfer into daemon/UI ([a81f329](https://github.com/staff0rd/assist/commit/a81f329607e89154ab937623b3e395f5b31f8215))
+
+
+### Features
+
+* more iOS app docs screenshots ([e455f46](https://github.com/staff0rd/assist/commit/e455f4608fd1f87ea07def366759bc5021336d30))
+* queue node transfer until agent idle ([e63cfdb](https://github.com/staff0rd/assist/commit/e63cfdbcc5bee2ea20410fe0bec6ab6c26ccd549))
+
 # [0.1018.0](https://github.com/staff0rd/assist/compare/v0.1017.0...v0.1018.0) (2026-11-01)
 
 
