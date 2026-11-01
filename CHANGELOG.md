@@ -1,3 +1,10 @@
+# [0.1037.0](https://github.com/staff0rd/assist/compare/v0.1036.1...v0.1037.0) (2026-11-01)
+
+
+### Features
+
+* shift+click server start replaces ([98a61cf](https://github.com/staff0rd/assist/commit/98a61cf76d5489cb7477769e9150683be4ac665c))
+
 ## [0.1036.1](https://github.com/staff0rd/assist/compare/v0.1036.0...v0.1036.1) (2026-11-01)
 
 
