@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import Drawer from "@mui/material/Drawer";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -16,7 +17,7 @@ beforeEach(() => {
 	platform.native = true;
 });
 
-function renderAt(to?: string) {
+function renderAt(to?: string, sheetOpen = false) {
 	return render(
 		<MemoryRouter initialEntries={["/history", "/session/1"]} initialIndex={1}>
 			<Routes>
@@ -24,19 +25,30 @@ function renderAt(to?: string) {
 				<Route path="/history" element={<div>history</div>} />
 				<Route
 					path="/session/:id"
-					element={<PhoneBackButton label="Sessions" to={to} />}
+					element={
+						<>
+							<PhoneBackButton label="Sessions" to={to} />
+							<Drawer anchor="bottom" open={sheetOpen}>
+								sheet
+							</Drawer>
+						</>
+					}
 				/>
 			</Routes>
 		</MemoryRouter>,
 	);
 }
 
-function swipe(fromX: number, toX: number) {
+function swipe(fromX: number, toX: number, toY = 300) {
 	fireEvent.touchStart(document, {
 		touches: [{ clientX: fromX, clientY: 300 }],
 	});
-	fireEvent.touchMove(document, { touches: [{ clientX: toX, clientY: 300 }] });
+	fireEvent.touchMove(document, { touches: [{ clientX: toX, clientY: toY }] });
 	fireEvent.touchEnd(document, { touches: [] });
+}
+
+function expectStayed() {
+	expect(screen.queryByText("root")).toBeNull();
 }
 
 describe("PhoneBackButton", () => {
@@ -80,8 +92,39 @@ describe("PhoneBackButton", () => {
 		platform.native = false;
 		renderAt("/");
 		swipe(5, 150);
-		expect(
-			screen.getByRole("button", { name: "Back to Sessions" }),
-		).toBeTruthy();
+		expectStayed();
+	});
+
+	it("ignores a mostly-vertical swipe from the edge", () => {
+		renderAt("/");
+		swipe(5, 100, 500);
+		expectStayed();
+	});
+
+	it("ignores a multi-touch gesture from the edge", () => {
+		renderAt("/");
+		fireEvent.touchStart(document, {
+			touches: [{ clientX: 5, clientY: 300 }],
+		});
+		fireEvent.touchStart(document, {
+			touches: [
+				{ clientX: 5, clientY: 300 },
+				{ clientX: 200, clientY: 400 },
+			],
+		});
+		fireEvent.touchMove(document, {
+			touches: [
+				{ clientX: 150, clientY: 300 },
+				{ clientX: 300, clientY: 400 },
+			],
+		});
+		fireEvent.touchEnd(document, { touches: [] });
+		expectStayed();
+	});
+
+	it("ignores edge swipes while a bottom sheet is open", () => {
+		renderAt("/", true);
+		swipe(5, 150);
+		expectStayed();
 	});
 });
