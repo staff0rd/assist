@@ -1,32 +1,24 @@
 import { isoWeekRange } from "./isoWeek";
-import { loadBlogSkipDays } from "./loadBlogSkipDays";
+import { loadBlogSkipWeeks } from "./loadBlogSkipWeeks";
 import { loadDevWeeks } from "./loadDevWeeks";
 import { displayNextEntry, logNoCommits } from "./next/displayNextEntry";
 import { fetchCommitsAfter } from "./next/fetchCommitsAfter";
 import { findTargetWeek, groupCommitsByWeek } from "./next/findTargetWeek";
-import { getRepoName, loadConfig, loadDevlogEntries } from "./shared";
+import { loadLastDailyDevlogDate } from "./next/loadLastDailyDevlogDate";
+import { getRepoName, loadConfig } from "./shared";
+import { localToday } from "./localToday";
 
 type NextOptions = {
 	ignore?: string[];
 	verbose?: boolean;
 };
 
-function localToday(): string {
-	const now = new Date();
-	const pad = (n: number) => String(n).padStart(2, "0");
-	return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-}
-
-function lastDailyDevlogDate(repoName: string): string | null {
-	return Array.from(loadDevlogEntries(repoName).keys()).sort().at(-1) ?? null;
-}
-
 function resolveAfterDate(
 	repoName: string,
 	lastWeek: string | null,
 ): string | null {
 	if (lastWeek) return isoWeekRange(lastWeek).end;
-	return lastDailyDevlogDate(repoName);
+	return loadLastDailyDevlogDate(repoName);
 }
 
 export function next(options: NextOptions): void {
@@ -38,7 +30,7 @@ export function next(options: NextOptions): void {
 	const byWeek = groupCommitsByWeek(fetchCommitsAfter(ignore, afterDate));
 	const week = findTargetWeek(byWeek.keys(), {
 		lastWeek,
-		skip: loadBlogSkipDays(repoName),
+		skip: loadBlogSkipWeeks(repoName),
 		today: localToday(),
 	});
 	if (!week) {

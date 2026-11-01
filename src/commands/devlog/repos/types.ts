@@ -1,6 +1,6 @@
 export type RepoRow = {
 	name: string;
 	lastPush: string;
-	lastDevlog: string | null;
+	lastWeek: string | null;
 	status: "missing" | "outdated" | "ok";
 };

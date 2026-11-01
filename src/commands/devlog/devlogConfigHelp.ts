@@ -4,7 +4,7 @@ export const devlogConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "devlog.name",
 		setter: "assist config set devlog.name my-repo",
-		note: "override the repo name reported in devlog entries",
+		note: "override the project name weekly dev entries are filed under",
 	},
 	{
 		key: "devlog.ignore",
@@ -14,6 +14,6 @@ export const devlogConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "devlog.skip",
 		setter: "assist devlog skip 2026-W33",
-		note: "ISO weeks (per repo) omitted from devlog output",
+		note: "ISO weeks (YYYY-Www, per repo) that get no dev entry",
 	},
 ];

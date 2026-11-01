@@ -1,7 +1,8 @@
 import chalk from "chalk";
-import { getVersionAtCommit, stripToMinor } from "../getLastVersionInfo";
 import { isoWeekRange } from "../isoWeek";
 import type { Commit } from "../types";
+import { getVersionAtCommit } from "../getVersionAtCommit";
+import { stripToMinor } from "../stripToMinor";
 
 type VersionedCommit = Commit & { version: string | null };
 

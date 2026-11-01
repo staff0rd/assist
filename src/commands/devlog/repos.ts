@@ -1,5 +1,7 @@
 import { execSync } from "node:child_process";
-import { loadAllDevlogLatestDates } from "./loadDevlogEntries";
+import { loadAllDevLatestWeeks } from "./loadAllDevLatestWeeks";
+import { localToday } from "./localToday";
+import { getRepoStatus } from "./repos/getRepoStatus";
 import { printReposTable } from "./repos/printReposTable";
 import type { RepoRow } from "./repos/types";
 
@@ -15,14 +17,6 @@ type GitHubRepo = {
 };
 
 const statusOrder = { missing: 0, outdated: 1, ok: 2 };
-
-function getStatus(
-	lastPush: string,
-	lastDevlog: string | null,
-): RepoRow["status"] {
-	if (!lastDevlog) return "missing";
-	return lastDevlog < lastPush ? "outdated" : "ok";
-}
 
 function fetchRepos(days: number, all: boolean): GitHubRepo[] {
 	const json = execSync(
@@ -42,14 +36,18 @@ function fetchRepos(days: number, all: boolean): GitHubRepo[] {
 	});
 }
 
-function toRow(repo: GitHubRepo, devlogDates: Map<string, string>): RepoRow {
+function toRow(
+	repo: GitHubRepo,
+	latestWeeks: Map<string, string>,
+	today: string,
+): RepoRow {
 	const lastPush = repo.pushedAt.slice(0, 10);
-	const lastDevlog = devlogDates.get(repo.name) ?? null;
+	const lastWeek = latestWeeks.get(repo.name) ?? null;
 	return {
 		name: repo.name,
 		lastPush,
-		lastDevlog,
-		status: getStatus(lastPush, lastDevlog),
+		lastWeek,
+		status: getRepoStatus(lastPush, lastWeek, today),
 	};
 }
 
@@ -69,7 +67,8 @@ export function repos(options: ReposOptions): void {
 		return;
 	}
 
-	const devlogDates = loadAllDevlogLatestDates();
-	const rows = ghRepos.map((repo) => toRow(repo, devlogDates));
+	const latestWeeks = loadAllDevLatestWeeks();
+	const today = localToday();
+	const rows = ghRepos.map((repo) => toRow(repo, latestWeeks, today));
 	printReposTable(sortRows(rows));
 }

@@ -1,8 +1,8 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { BLOG_REPO_ROOT } from "./loadBlogSkipDays";
+import { BLOG_REPO_ROOT } from "./loadBlogSkipWeeks";
 
-const DEV_DIR = join(BLOG_REPO_ROOT, "src/content/dev");
+export const DEV_DIR = join(BLOG_REPO_ROOT, "src/content/dev");
 
 const DEV_FILENAME_PATTERN = /^(\d{4})-w(\d{2})\.md$/;
 

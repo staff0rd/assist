@@ -39,6 +39,10 @@ export function isValidWeek(weekId: string): boolean {
 	return isoWeek(isoWeekRange(weekId).start) === weekId;
 }
 
+export function addDays(date: string, days: number): string {
+	return formatDate(new Date(toUtc(date).getTime() + days * DAY_MS));
+}
+
 export function isCompletedWeek(weekId: string, today: string): boolean {
 	return isoWeekRange(weekId).end < today;
 }

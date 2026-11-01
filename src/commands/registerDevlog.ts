@@ -14,20 +14,23 @@ export function registerDevlog(program: Command): void {
 
 	devlogCommand
 		.command("list")
-		.description("Group git commits by date")
+		.description("Group git commits by ISO week")
 		.option(
-			"--days <number>",
-			"Number of days to show (default: 30)",
+			"--weeks <number>",
+			"Number of weeks to show, including the current one (default: 6)",
 			Number.parseInt,
 		)
-		.option("--since <date>", "Only show commits since this date (YYYY-MM-DD)")
-		.option("-r, --reverse", "Show earliest commits first")
+		.option(
+			"--since <date|week>",
+			"Only show commits since this date (YYYY-MM-DD) or week (YYYY-Www)",
+		)
+		.option("-r, --reverse", "Show earliest weeks first")
 		.option("-v, --verbose", "Show file names for each commit")
 		.action(devlogList);
 
 	devlogCommand
 		.command("version")
-		.description("Show current repo name and version info")
+		.description("Show the repo name, its latest dev entry week and versions")
 		.action(devlogVersion);
 
 	devlogCommand
@@ -45,7 +48,7 @@ export function registerDevlog(program: Command): void {
 
 	devlogCommand
 		.command("repos")
-		.description("Show repos missing devlog entries")
+		.description("Show repos missing weekly dev entries")
 		.option(
 			"--days <number>",
 			"Only show repos pushed within N days (default: 30)",

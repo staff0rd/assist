@@ -4,7 +4,7 @@ import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
 import { loadRawYaml } from "../../shared/loadRawYaml";
 import { isValidWeek } from "./isoWeek";
-import { BLOG_REPO_ROOT } from "./loadBlogSkipDays";
+import { BLOG_REPO_ROOT } from "./loadBlogSkipWeeks";
 import { getRepoName } from "./shared";
 
 function getBlogConfigPath(): string {

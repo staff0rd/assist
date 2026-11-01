@@ -1,16 +1,15 @@
-import { execFileSync } from "node:child_process";
-import { basename } from "node:path";
-import { loadBlogSkipDays } from "./loadBlogSkipDays";
-import {
-	loadConfig,
-	loadDevlogEntries,
-	parseGitLogCommits,
-	printCommitsWithFiles,
-} from "./shared";
-import { printDateHeader } from "./list/printDateHeader";
+import { isCompletedWeek } from "./isoWeek";
+import { printWeekHeader } from "./list/printWeekHeader";
+import { loadBlogSkipWeeks } from "./loadBlogSkipWeeks";
+import { loadDevEntry } from "./loadDevEntry";
+import { localToday } from "./localToday";
+import { fetchCommitsAfter } from "./next/fetchCommitsAfter";
+import { groupCommitsByWeek } from "./next/findTargetWeek";
+import { getRepoName, loadConfig, printCommitsWithFiles } from "./shared";
+import { resolveListAfterDate } from "./list/resolveListAfterDate";
 
 type ListOptions = {
-	days?: number;
+	weeks?: number;
 	ignore?: string[];
 	reverse?: boolean;
 	since?: string;
@@ -19,39 +18,28 @@ type ListOptions = {
 
 export function list(options: ListOptions): void {
 	const config = loadConfig();
-	const days = options.days ?? 30;
 	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
-	const repoName = basename(process.cwd());
-	const skipDays = loadBlogSkipDays(repoName);
-	const devlogEntries = loadDevlogEntries(repoName);
+	const repoName = getRepoName();
+	const today = localToday();
+	const skip = loadBlogSkipWeeks(repoName);
+	const byWeek = groupCommitsByWeek(
+		fetchCommitsAfter(ignore, resolveListAfterDate(options, today)),
+	);
 
-	const args = ["log"];
-	if (options.reverse) args.push("--reverse");
-	else args.push("-n", "500");
-	args.push("--pretty=format:%ad|%h|%s", "--date=short");
-	const output = execFileSync("git", args, { encoding: "utf8" });
+	const weeks = Array.from(byWeek.keys()).sort();
+	if (!options.reverse) weeks.reverse();
 
-	const commitsByDate = parseGitLogCommits(output, ignore);
-
-	let dateCount = 0;
-	let isFirst = true;
-
-	for (const [date, dateCommits] of commitsByDate) {
-		if (options.since) {
-			if (date < options.since) {
-				break;
-			}
-		} else if (dateCount >= days) {
-			break;
-		}
-		dateCount++;
-
-		if (!isFirst) {
-			console.log();
-		}
-		isFirst = false;
-
-		printDateHeader(date, skipDays.has(date), devlogEntries.get(date));
-		printCommitsWithFiles(dateCommits, ignore, options.verbose ?? false);
-	}
+	weeks.forEach((week, index) => {
+		if (index > 0) console.log();
+		printWeekHeader(week, {
+			skipped: skip.has(week),
+			inProgress: !isCompletedWeek(week, today),
+			entry: loadDevEntry(repoName, week),
+		});
+		printCommitsWithFiles(
+			byWeek.get(week) ?? [],
+			ignore,
+			options.verbose ?? false,
+		);
+	});
 }

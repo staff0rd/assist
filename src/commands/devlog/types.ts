@@ -1,7 +1,7 @@
-export type DevlogEntry = {
-	version: string;
-	title: string;
-	filename: string;
+export type DevEntry = {
+	title: string | null;
+	firstVersion: string | null;
+	lastVersion: string | null;
 };
 
 export type Commit = {

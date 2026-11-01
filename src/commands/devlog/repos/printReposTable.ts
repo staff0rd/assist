@@ -8,8 +8,8 @@ function colorStatus(status: RepoRow["status"]): string {
 }
 
 function formatRow(row: RepoRow, nameWidth: number): string {
-	const devlog = (row.lastDevlog ?? "-").padEnd(11);
-	return `${row.name.padEnd(nameWidth)}  ${row.lastPush}  ${devlog}  ${colorStatus(row.status)}`;
+	const week = (row.lastWeek ?? "-").padEnd(9);
+	return `${row.name.padEnd(nameWidth)}  ${row.lastPush}  ${week}  ${colorStatus(row.status)}`;
 }
 
 export function printReposTable(rows: RepoRow[]): void {
@@ -17,7 +17,7 @@ export function printReposTable(rows: RepoRow[]): void {
 	const header = [
 		"Repo".padEnd(nameWidth),
 		"Last Push".padEnd(10),
-		"Last Devlog".padEnd(11),
+		"Last Week".padEnd(9),
 		"Status",
 	].join("  ");
 	console.log(chalk.dim(header));
