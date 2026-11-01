@@ -3,6 +3,7 @@ import type { PrPreview } from "../../../../../shared/SessionInfoBase";
 import { miroDecisionDetails } from "../miroDecisionDetails";
 import { PrPreviewHeader } from "../PrPreviewHeader";
 import { prPreviewPaneSx } from "../prPreviewPaneSx";
+import { autoSubmitAnswers } from "./QuestionPane/autoSubmitAnswers";
 import { QuestionActions } from "./QuestionPane/QuestionActions";
 import { QuestionList } from "./QuestionPane/QuestionList";
 import { useAskQuestionAutoApprove } from "./QuestionPane/useAskQuestionAutoApprove";
@@ -22,24 +23,27 @@ export function QuestionPane({
 }) {
 	const { questions, state } = useQuestionPreview(preview);
 	const [autoApprove, setAutoApprove] = useAskQuestionAutoApprove(cwd);
+	const submit = (answers: Record<string, string>) =>
+		onDecision("approve", { ...miroDecisionDetails(), answers });
+	const pick = (index: number, label: string) => {
+		state.pick(index, label);
+		const answers =
+			autoApprove && autoSubmitAnswers(questions, state.choices, index, label);
+		if (answers) submit(answers);
+	};
 
 	return (
 		<Box sx={prPreviewPaneSx}>
 			<PrPreviewHeader preview={preview} draft={false} />
 			<Divider />
-			<QuestionList questions={questions} state={state} />
+			<QuestionList questions={questions} state={{ ...state, pick }} />
 			<Divider />
 			<QuestionActions
 				answered={state.answered}
 				total={questions.length}
 				autoApprove={autoApprove}
 				onAutoApproveChange={setAutoApprove}
-				onAnswer={() =>
-					onDecision("approve", {
-						...miroDecisionDetails(),
-						answers: state.answers,
-					})
-				}
+				onAnswer={() => submit(state.answers)}
 				onDismiss={() => onDecision("reject", miroDecisionDetails())}
 			/>
 		</Box>
