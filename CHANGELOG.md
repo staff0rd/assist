@@ -1,3 +1,10 @@
+# [0.1029.0](https://github.com/staff0rd/assist/compare/v0.1028.0...v0.1029.0) (2026-11-01)
+
+
+### Features
+
+* record PR reviewer runs as jobs ([9cc4143](https://github.com/staff0rd/assist/commit/9cc4143cee4e92f071df7e20a938af89dcb67067))
+
 # [0.1028.0](https://github.com/staff0rd/assist/compare/v0.1027.0...v0.1028.0) (2026-11-01)
 
 
