@@ -75,6 +75,17 @@ export function stopSessionAction(send: SendFn) {
 	return (id: string) => send({ type: "stop", sessionId: id });
 }
 
+export type TransferSessionFn = (
+	id: string,
+	target: string,
+	cwd: string,
+) => void;
+
+export function transferSessionAction(send: SendFn): TransferSessionFn {
+	return (id, target, cwd) =>
+		send({ type: "transfer", sessionId: id, target, cwd });
+}
+
 export function createRunAction(send: SendFn) {
 	return (
 		runName: string,

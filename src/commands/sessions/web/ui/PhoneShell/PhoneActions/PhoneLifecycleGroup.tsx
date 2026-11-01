@@ -8,6 +8,7 @@ import { PhoneEndItem } from "./PhoneEndItem";
 import { PhoneMarkDoneItem } from "./PhoneMarkDoneItem";
 import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
 import { PhoneSheetItem } from "./PhoneSheetItem";
+import { PhoneTransferItem } from "./PhoneTransferItem";
 
 type Props = {
 	session: SessionInfo;
@@ -47,6 +48,7 @@ export function PhoneLifecycleGroup({
 					onClick={then(onRestart)}
 				/>
 			)}
+			<PhoneTransferItem session={session} socket={socket} onDone={onDone} />
 			<PhoneMarkDoneItem
 				session={session}
 				onClick={() => onConfirm("markDone")}

@@ -65,6 +65,9 @@ export class NodeLinks {
 		links: this.all().map((link) => link.status()),
 	});
 
+	isConnected = (node: string): boolean =>
+		this.links.get(node)?.status().state === "connected";
+
 	sendNodes = (client: SessionClient) => sendTo(client, this.nodes());
 
 	route(client: SessionClient, data: Record<string, unknown>): boolean {

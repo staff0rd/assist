@@ -5,6 +5,7 @@ import type {
 	CommandType,
 	PrPreview,
 	SessionInfoBase,
+	SessionTransfer,
 } from "../shared/SessionInfoBase";
 import type { ScreenMirror } from "./createScreenMirror";
 import type { SessionInterruption } from "./SessionInterruption";
@@ -104,6 +105,7 @@ export type Session = {
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };
 	activeMsFlushChain?: Promise<void>;
+	transfer?: SessionTransfer;
 };
 
 export type SessionInfo = SessionInfoBase & {

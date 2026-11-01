@@ -7,6 +7,7 @@ import {
 	setAutoApproveAction,
 	setStarredAction,
 	stopSessionAction,
+	transferSessionAction,
 } from "../createSessionAction";
 import { prDecisionAction } from "./useSessionActions/prDecisionAction";
 import { useLaunchActions } from "./useSessionActions/useLaunchActions";
@@ -31,6 +32,7 @@ export function useSessionActions(
 		setStarred: useMemo(() => setStarredAction(send), [send]),
 		stopSession: useMemo(() => stopSessionAction(send), [send]),
 		startRun: useMemo(() => createRunAction(send), [send]),
+		transferSession: useMemo(() => transferSessionAction(send), [send]),
 	};
 
 	const onOutput = useMemo(

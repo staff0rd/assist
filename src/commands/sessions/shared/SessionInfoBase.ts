@@ -89,4 +89,7 @@ export type SessionInfoBase = {
 	promptIssue?: string;
 	promptPr?: number;
 	node?: string;
+	transfer?: SessionTransfer;
 };
+
+export type SessionTransfer = { target: string; error?: string };

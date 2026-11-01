@@ -7,8 +7,10 @@ export function toSessionViewInfo({
 	rows,
 	activeViewer,
 	activeViewerNode,
+	transfer,
 }: Session) {
 	return {
+		transfer,
 		lastUserMessage,
 		lastAssistantMessage,
 		cols,

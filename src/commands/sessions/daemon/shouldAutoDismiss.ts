@@ -4,7 +4,7 @@ export function shouldAutoDismiss(
 	session: Session,
 	exitCode?: number,
 ): boolean {
-	if (session.status !== "done" || exitCode !== 0) {
+	if (session.status !== "done" || exitCode !== 0 || session.transfer) {
 		return false;
 	}
 	/* why: a backlog run that reached its review phase (#409) dismisses on a

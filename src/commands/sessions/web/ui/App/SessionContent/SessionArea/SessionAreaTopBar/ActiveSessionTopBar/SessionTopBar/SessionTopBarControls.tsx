@@ -10,6 +10,7 @@ import type {
 	SessionInfo,
 } from "../../../../../../types";
 import { LabelledActionsContext } from "../../../../../useLabelledActionsContext";
+import { TransferButton } from "../../../../../../transfer/TransferButton";
 import { useBalancedWrapWidth } from "./SessionTopBarControls/useBalancedWrapWidth";
 
 const controlsSx = {
@@ -58,6 +59,7 @@ export function SessionTopBarControls({
 					onRestart={onRestart}
 					onDismiss={onDismiss}
 				/>
+				<TransferButton session={session} />
 			</LabelledActionsContext.Provider>
 			<SessionTopBarDismiss
 				session={session}

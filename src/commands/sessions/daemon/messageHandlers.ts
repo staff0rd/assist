@@ -21,6 +21,7 @@ import { viewerHandlers } from "./viewerHandlers";
 import { sessionSettingHandlers } from "./sessionSettingHandlers";
 import { spawnAssistCreate } from "./spawnAssistCreate";
 import { spawnCreate } from "./spawnCreate";
+import { handleTransfer } from "./transfer/handleTransfer";
 
 export type { Msg } from "./routed";
 
@@ -82,6 +83,7 @@ export const messageHandlers: Record<string, Handler> = {
 	dismiss: routed((_client, m, d) => m.dismissSession(d.sessionId as string)),
 	discard: routed((_client, m, d) => m.discardSession(d.sessionId as string)),
 	stop: routed((_client, m, d) => m.stopSession(d.sessionId as string)),
+	transfer: handleTransfer,
 	...sessionSettingHandlers,
 	"set-active": (_client, m, d) =>
 		m.active.set(d.cwd as string, d.sessionId as string),

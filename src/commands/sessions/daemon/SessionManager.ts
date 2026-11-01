@@ -238,6 +238,7 @@ export class SessionManager {
 	}
 
 	hasSession = (id: string): boolean => this.sessions.has(id);
+	session = (id: string): Session | undefined => this.sessions.get(id);
 
 	localSessions = (): SessionInfo[] =>
 		[...this.sessions.values()].map(toSessionInfo);

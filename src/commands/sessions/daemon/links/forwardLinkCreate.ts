@@ -40,7 +40,8 @@ export function forwardLinkCreate(
 		});
 		return;
 	}
-	const traceId = newTraceId();
+	const traceId =
+		typeof data.traceId === "string" ? data.traceId : newTraceId();
 	daemonLog(
 		`link ${node} ws: routing ${data.type} (cwd=${data.cwd ?? "default"}) trace=${traceId}`,
 	);
