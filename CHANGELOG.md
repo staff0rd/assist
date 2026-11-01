@@ -1,3 +1,10 @@
+## [0.1016.2](https://github.com/staff0rd/assist/compare/v0.1016.1...v0.1016.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* devlog writes entries via validated CLI ([1ba676a](https://github.com/staff0rd/assist/commit/1ba676a4a0bd57606a5d5fe8d66c37561fefbc67))
+
 ## [0.1016.1](https://github.com/staff0rd/assist/compare/v0.1016.0...v0.1016.1) (2026-11-01)
 
 
