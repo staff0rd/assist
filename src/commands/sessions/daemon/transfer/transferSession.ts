@@ -2,10 +2,10 @@ import { newTraceId } from "../../shared/newTraceId";
 import { backlogRunArgs } from "../../shared/backlogRunArgs";
 import { type SessionClient, sendTo } from "../broadcast";
 import { daemonLog } from "../daemonLog";
-import { launchOnTarget } from "./launchOnTarget";
-import { settleTransfer } from "./settleTransfer";
+import { handOffToTarget } from "./handOffToTarget";
 import type { TransferDeps } from "./TransferDeps";
-import { heldWorkRefusal, transferRefusal } from "./transferRefusal";
+import { transferRefusal } from "./transferRefusal";
+import { snapshotOrFail } from "./snapshotOrFail";
 
 type TransferRequest = {
 	sessionId: string;
@@ -25,24 +25,26 @@ export async function transferSession(
 ): Promise<void> {
 	const s = deps.session(id);
 	const refused = transferRefusal(s, target, deps.links);
-	if (refused || !s) return refuse(client, id, refused ?? "unknown session");
-	const held = await heldWorkRefusal(s);
-	if (held) return refuse(client, id, held);
+	const args = s && backlogRunArgs(s);
+	if (refused || !s || !args)
+		return refuse(client, id, refused ?? "unknown session");
 	const traceId = newTraceId();
 	daemonLog(
-		`session ${id} transfer to ${target} (cwd=${cwd ?? "default"}) trace=${traceId}: stopping source`,
+		`session ${id} transfer to ${target} (cwd=${cwd ?? "default"}) trace=${traceId}: snapshotting tree`,
 	);
 	s.transfer = { target };
-	deps.stop(id);
 	deps.notify();
-	const outcome = await launchOnTarget(deps.links.route, {
-		type: "create-assist",
-		assistArgs: backlogRunArgs(s),
+	const pushed = await snapshotOrFail(s, args, traceId);
+	if (!pushed.ok) {
+		s.transfer = { target, error: pushed.error };
+		deps.notify();
+		return refuse(client, id, pushed.error);
+	}
+	await handOffToTarget(client, deps, s, {
+		args,
+		target,
 		cwd,
-		node: target,
-		title: s.title,
-		subtitle: s.subtitle,
 		traceId,
+		snapshot: pushed.snapshot,
 	});
-	settleTransfer(client, deps, s, outcome, traceId);
 }

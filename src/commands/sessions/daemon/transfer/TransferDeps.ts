@@ -9,6 +9,6 @@ export type TransferDeps = {
 		route: (client: SessionClient, data: Record<string, unknown>) => boolean;
 	};
 	stop: (id: string) => void;
-	dismiss: (id: string) => void;
+	discard: (id: string) => void;
 	notify: () => void;
 };

@@ -10,7 +10,7 @@ export const handleTransfer = routed((client, m, d) => {
 			session: m.session,
 			links: m.links,
 			stop: (id) => m.stopSession(id),
-			dismiss: m.dismissSession,
+			discard: m.discardSession,
 			notify: () => m.update(() => true),
 		},
 		{

@@ -116,7 +116,7 @@ export class SessionManager {
 
 	private readonly spawnWith = this.spawner.spawn;
 
-	private treeCtx(): TreeSpawnContext {
+	treeCtx(): TreeSpawnContext {
 		return treeSpawnContext(
 			this.sessions,
 			this.spawnWith,
