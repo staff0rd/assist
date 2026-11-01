@@ -1,3 +1,10 @@
+# [0.1026.0](https://github.com/staff0rd/assist/compare/v0.1025.1...v0.1026.0) (2026-11-01)
+
+
+### Features
+
+* raise manual checks with ask-check ([30ba69d](https://github.com/staff0rd/assist/commit/30ba69d94c03ad04b23d32f58d3fe7ab2f2febea))
+
 ## [0.1025.1](https://github.com/staff0rd/assist/compare/v0.1025.0...v0.1025.1) (2026-11-01)
 
 
