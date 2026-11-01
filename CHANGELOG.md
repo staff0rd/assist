@@ -1,3 +1,11 @@
+## [0.1022.1](https://github.com/staff0rd/assist/compare/v0.1022.0...v0.1022.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* confirm PINs in the session ([0e3e2df](https://github.com/staff0rd/assist/commit/0e3e2df9a29bbee6901edfbb0a216ab66ce93060))
+* keep transfer between run and done ([9d3ff52](https://github.com/staff0rd/assist/commit/9d3ff52463f32abb4a9173c9f04e997443d242d7))
+
 # [0.1022.0](https://github.com/staff0rd/assist/compare/v0.1021.2...v0.1022.0) (2026-11-01)
 
 
