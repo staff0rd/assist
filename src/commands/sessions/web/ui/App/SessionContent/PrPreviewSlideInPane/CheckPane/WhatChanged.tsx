@@ -1,7 +1,7 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Box, ButtonBase, Collapse, Typography } from "@mui/material";
 import { useState } from "react";
-import { InlineCode } from "./InlineCode";
+import { InlineMarkdown } from "./InlineMarkdown";
 
 export function WhatChanged({ changed }: { changed: string }) {
 	const [open, setOpen] = useState(false);
@@ -25,7 +25,7 @@ export function WhatChanged({ changed }: { changed: string }) {
 			</ButtonBase>
 			<Collapse in={open}>
 				<Typography variant="body2" sx={{ color: "text.secondary", pl: 3 }}>
-					<InlineCode text={changed} />
+					<InlineMarkdown text={changed} />
 				</Typography>
 			</Collapse>
 		</Box>

@@ -36,6 +36,40 @@ describe("CheckPane", () => {
 		expect(screen.getByText("assist docs unlock").tagName).toBe("CODE");
 	});
 
+	it("renders links and inline markdown in steps, changed and before chips", () => {
+		render(
+			<CheckPane
+				preview={{
+					...preview,
+					body: JSON.stringify({
+						title: "Links",
+						before: ["Start [the app](https://example.com/start)"],
+						steps: [
+							"Open http://localhost:4173/ and check **each** page",
+							"See _the_ [docs](https://example.com/docs)",
+						],
+						changed: "Moved to https://example.com/changed",
+					}),
+				}}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		const hrefs = screen
+			.getAllByRole("link", { hidden: true })
+			.map((link) => [link.getAttribute("href"), link.getAttribute("target")]);
+		expect(hrefs).toEqual(
+			expect.arrayContaining([
+				["https://example.com/start", "_blank"],
+				["http://localhost:4173/", "_blank"],
+				["https://example.com/docs", "_blank"],
+				["https://example.com/changed", "_blank"],
+			]),
+		);
+		expect(screen.getByText("each").tagName).toBe("STRONG");
+		expect(screen.getByText("the").tagName).toBe("EM");
+	});
+
 	it("sends works in one tap without a note", () => {
 		const onDecision = pane();
 
