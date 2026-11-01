@@ -1,3 +1,11 @@
+## [0.1021.2](https://github.com/staff0rd/assist/compare/v0.1021.1...v0.1021.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* confirm relayed PINs in the session ([c334a37](https://github.com/staff0rd/assist/commit/c334a37539bc1682bd75d1a5609734029b2b069c))
+* put transfer before session actions ([273959e](https://github.com/staff0rd/assist/commit/273959eee1e0f4ec43c85dc381ead5f160826b5e))
+
 ## [0.1021.1](https://github.com/staff0rd/assist/compare/v0.1021.0...v0.1021.1) (2026-11-01)
 
 
