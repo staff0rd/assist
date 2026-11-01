@@ -86,4 +86,21 @@ describe("groupSessionsByStatus", () => {
 		expect(ids(groups.needsYou)).toEqual(["c"]);
 		expect(ids(groups.running)).toEqual(["b"]);
 	});
+
+	it("puts a session waiting on a backlog-item preview in Answer here", () => {
+		const groups = groupSessionsByStatus([
+			session("a", "waiting", {
+				pendingPrPreview: {
+					requestId: "r",
+					title: "Backlog item",
+					body: "",
+					prNumber: null,
+					kind: "backlog-item",
+				},
+			}),
+		]);
+
+		expect(ids(groups.questions)).toEqual(["a"]);
+		expect(ids(groups.needsYou)).toEqual([]);
+	});
 });

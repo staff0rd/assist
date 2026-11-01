@@ -9,7 +9,8 @@ export function displayStatus(session: SessionInfo): DisplayStatus {
 		preview.kind !== "show" &&
 		(session.status === "running" || session.status === "waiting")
 	) {
-		if (preview.kind === "question") return "question";
+		if (preview.kind === "question" || preview.kind === "backlog-item")
+			return "question";
 		if (preview.kind === "check") return "check";
 		return "waiting";
 	}

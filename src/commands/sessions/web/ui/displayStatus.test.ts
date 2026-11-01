@@ -8,10 +8,22 @@ const preview = {
 	title: "Bug title",
 	body: "body",
 	prNumber: null,
-	kind: "backlog-item" as const,
+	kind: "pr" as const,
 };
 
 describe("displayStatus", () => {
+	it("reads question while a backlog-item preview is pending", () => {
+		for (const status of ["running", "waiting"] satisfies SessionStatus[])
+			expect(
+				displayStatus(
+					makeSessionInfo({
+						status,
+						pendingPrPreview: { ...preview, kind: "backlog-item" },
+					}),
+				),
+			).toBe("question");
+	});
+
 	it("reads waiting while a preview sits unreviewed", () => {
 		expect(
 			displayStatus(
