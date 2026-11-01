@@ -6,6 +6,7 @@ import { RetryButton } from "./SessionActionButtons/RetryButton";
 import { ServerRunControls } from "./SessionActionButtons/ServerRunControls";
 import { SessionStarButton } from "./SessionActionButtons/SessionStarButton";
 import { SessionWorkspaceButtons } from "./SessionActionButtons/SessionWorkspaceButtons";
+import { TransferButton } from "../../transfer/TransferButton";
 import type { SessionInfo } from "../../types";
 
 export function SessionActionButtons({
@@ -41,6 +42,7 @@ export function SessionActionButtons({
 				/>
 			)}
 			<SessionStarButton session={session} />
+			<TransferButton session={session} />
 			{target && (
 				<CompleteButton
 					target={target}

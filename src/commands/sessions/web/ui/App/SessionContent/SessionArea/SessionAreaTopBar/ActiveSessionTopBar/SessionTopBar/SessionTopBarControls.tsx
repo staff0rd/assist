@@ -10,7 +10,6 @@ import type {
 	SessionInfo,
 } from "../../../../../../types";
 import { LabelledActionsContext } from "../../../../../useLabelledActionsContext";
-import { TransferButton } from "../../../../../../transfer/TransferButton";
 import { useBalancedWrapWidth } from "./SessionTopBarControls/useBalancedWrapWidth";
 
 const controlsSx = {
@@ -53,7 +52,6 @@ export function SessionTopBarControls({
 				onSetAutoAdvance={onSetAutoAdvance}
 			/>
 			<LabelledActionsContext.Provider value={labelled}>
-				<TransferButton session={session} />
 				<SessionActionButtons
 					session={session}
 					onRetry={onRetry}
