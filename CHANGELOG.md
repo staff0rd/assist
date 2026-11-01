@@ -1,3 +1,10 @@
+# [0.1016.0](https://github.com/staff0rd/assist/compare/v0.1015.2...v0.1016.0) (2026-11-01)
+
+
+### Features
+
+* frame phone screenshots as an iPhone ([78d3c19](https://github.com/staff0rd/assist/commit/78d3c198f371ae9d1ef9715eef0f4965522f437f))
+
 ## [0.1015.2](https://github.com/staff0rd/assist/compare/v0.1015.1...v0.1015.2) (2026-11-01)
 
 
