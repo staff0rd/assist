@@ -1,3 +1,10 @@
+## [0.1016.1](https://github.com/staff0rd/assist/compare/v0.1016.0...v0.1016.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* keep unsent prompt drafts on reload ([5ccbe50](https://github.com/staff0rd/assist/commit/5ccbe504d3ea4556290415298c8433d4c7609cc4))
+
 # [0.1016.0](https://github.com/staff0rd/assist/compare/v0.1015.2...v0.1016.0) (2026-11-01)
 
 
