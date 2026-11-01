@@ -1,3 +1,10 @@
+# [0.1015.0](https://github.com/staff0rd/assist/compare/v0.1014.0...v0.1015.0) (2026-11-01)
+
+
+### Features
+
+* bulk revert only uncommitted files ([603f49f](https://github.com/staff0rd/assist/commit/603f49f42eaa64f4048f87f1f1c850b7998599ba))
+
 # [0.1014.0](https://github.com/staff0rd/assist/compare/v0.1013.0...v0.1014.0) (2026-11-01)
 
 
