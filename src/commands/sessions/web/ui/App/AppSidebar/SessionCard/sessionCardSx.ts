@@ -13,8 +13,8 @@ const attentionWash: Partial<
 
 function cardBackground(t: Theme, active: boolean, status: DisplayStatus) {
 	const wash = attentionWash[status];
-	if (active) return t.palette.action.selected;
 	if (wash) return t.tokens.color.wash[wash];
+	if (active) return t.tokens.color.raised;
 	return "transparent";
 }
 
@@ -30,7 +30,8 @@ export function sessionCardSx(
 		...selectionSx(t, active),
 		bgcolor: cardBackground(t, active, status),
 		cursor: active ? "default" : "pointer",
-		transition: "background 0.2s ease, border-color 0.2s ease",
+		transition:
+			"background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
 		"&:hover": !active ? { bgcolor: "action.hover" } : undefined,
 	});
 }

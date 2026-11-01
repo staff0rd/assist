@@ -230,6 +230,7 @@ export const slateDesign: DesignTokens = {
 		button: { textTransform: "none", fontWeight: 600 },
 	},
 	radius: { sm: 6, md: 8 },
+	selection: { ringWidth: 2, titleWeight: 500 },
 	spacing: 8,
 	densities: {
 		desktop: {

@@ -102,6 +102,7 @@ export type DesignTokens = {
 		button: { textTransform: "none"; fontWeight: number };
 	};
 	radius: { sm: number; md: number };
+	selection: { ringWidth: number; titleWeight: number };
 	spacing: number;
 	densities: Record<Density, DensityTokens>;
 };

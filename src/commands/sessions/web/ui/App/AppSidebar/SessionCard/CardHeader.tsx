@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import { areChipsLoading } from "./areChipsLoading";
+import { cardTitleClassName } from "./cardTitleClassName";
 import { CardHeaderActions } from "./CardHeader/CardHeaderActions";
 import { displayStatus } from "../../../displayStatus";
 import { isVerifying } from "../../isVerifying";
@@ -56,7 +57,7 @@ export function CardHeader({
 		<>
 			<StatusRail session={session} loading={loading} />
 			<Box sx={headerRowSx}>
-				<Typography variant="body2" sx={titleSx}>
+				<Typography variant="body2" className={cardTitleClassName} sx={titleSx}>
 					{sessionTitle(session)}
 				</Typography>
 				<CardHeaderActions

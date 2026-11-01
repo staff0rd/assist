@@ -1,5 +1,6 @@
-import { alpha, type Theme } from "@mui/material/styles";
+import type { Theme } from "@mui/material/styles";
 import { cardCloseClassName } from "../../../cardCloseClassName";
+import { cardTitleClassName } from "../cardTitleClassName";
 
 export function selectionSx(t: Theme, active: boolean) {
 	return {
@@ -10,7 +11,13 @@ export function selectionSx(t: Theme, active: boolean) {
 		p: "7px 8px",
 		borderRadius: `${t.tokens.radius.sm}px`,
 		border: 1,
-		borderColor: active ? alpha(t.palette.primary.main, 0.35) : "transparent",
+		borderColor: active ? "primary.main" : "transparent",
+		boxShadow: active
+			? `inset 0 0 0 ${t.tokens.selection.ringWidth - 1}px ${t.palette.primary.main}`
+			: "none",
+		[`& .${cardTitleClassName}`]: {
+			fontWeight: active ? t.tokens.selection.titleWeight : undefined,
+		},
 		[`& .${cardCloseClassName}`]: {
 			display: "inline-flex",
 			opacity: 0,
