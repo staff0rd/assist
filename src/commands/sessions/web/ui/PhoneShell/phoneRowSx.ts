@@ -19,8 +19,8 @@ const rowWash: Partial<
 	Record<DisplayStatus, keyof Theme["tokens"]["color"]["wash"]>
 > = {
 	waiting: "warning",
-	question: "accent",
-	check: "check",
+	question: "warning",
+	check: "warning",
 	error: "error",
 };
 
