@@ -1,3 +1,10 @@
+## [0.1021.1](https://github.com/staff0rd/assist/compare/v0.1021.0...v0.1021.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* edge swipe ignores conflicting gestures ([1e2c314](https://github.com/staff0rd/assist/commit/1e2c314e8b5406fb6c0d686c1e8f296861bb07e8))
+
 # [0.1021.0](https://github.com/staff0rd/assist/compare/v0.1020.0...v0.1021.0) (2026-11-01)
 
 
