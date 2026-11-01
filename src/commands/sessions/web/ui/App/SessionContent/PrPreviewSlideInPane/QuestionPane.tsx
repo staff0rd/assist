@@ -5,6 +5,7 @@ import { PrPreviewHeader } from "../PrPreviewHeader";
 import { prPreviewPaneSx } from "../prPreviewPaneSx";
 import { QuestionActions } from "./QuestionPane/QuestionActions";
 import { QuestionList } from "./QuestionPane/QuestionList";
+import { useAskQuestionAutoApprove } from "./QuestionPane/useAskQuestionAutoApprove";
 import {
 	type QuestionDecision,
 	useQuestionPreview,
@@ -12,12 +13,15 @@ import {
 
 export function QuestionPane({
 	preview,
+	cwd,
 	onDecision,
 }: {
 	preview: PrPreview;
+	cwd?: string | undefined;
 	onDecision: QuestionDecision;
 }) {
 	const { questions, state } = useQuestionPreview(preview);
+	const [autoApprove, setAutoApprove] = useAskQuestionAutoApprove(cwd);
 
 	return (
 		<Box sx={prPreviewPaneSx}>
@@ -28,6 +32,8 @@ export function QuestionPane({
 			<QuestionActions
 				answered={state.answered}
 				total={questions.length}
+				autoApprove={autoApprove}
+				onAutoApproveChange={setAutoApprove}
 				onAnswer={() =>
 					onDecision("approve", {
 						...miroDecisionDetails(),

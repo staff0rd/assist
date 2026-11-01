@@ -26,7 +26,13 @@ export function PrPreviewSlideInPane({
 		return <MiroBoardPane preview={preview} onDecision={onDecision} />;
 
 	if (preview.kind === "question")
-		return <QuestionPane preview={preview} onDecision={onDecision} />;
+		return (
+			<QuestionPane
+				preview={preview}
+				cwd={session?.cwd ?? pane.cwd}
+				onDecision={onDecision}
+			/>
+		);
 
 	if (preview.kind === "check")
 		return <CheckPane preview={preview} onDecision={onDecision} />;

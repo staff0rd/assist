@@ -1,13 +1,23 @@
-import { Button, Stack, Typography } from "@mui/material";
+import {
+	Button,
+	FormControlLabel,
+	Stack,
+	Switch,
+	Typography,
+} from "@mui/material";
 
 export function QuestionActions({
 	answered,
 	total,
+	autoApprove,
+	onAutoApproveChange,
 	onAnswer,
 	onDismiss,
 }: {
 	answered: number;
 	total: number;
+	autoApprove: boolean;
+	onAutoApproveChange: (enabled: boolean) => void;
 	onAnswer: () => void;
 	onDismiss: () => void;
 }) {
@@ -19,6 +29,20 @@ export function QuestionActions({
 					? "All questions answered"
 					: `${answered} of ${total} answered`}
 			</Typography>
+			<FormControlLabel
+				sx={{ m: 0 }}
+				control={
+					<Switch
+						size="small"
+						checked={autoApprove}
+						onChange={(e) => onAutoApproveChange(e.target.checked)}
+					/>
+				}
+				label="Auto approve"
+				slotProps={{
+					typography: { variant: "caption", color: "text.secondary" },
+				}}
+			/>
 			<Button color="error" variant="outlined" onClick={onDismiss}>
 				Dismiss
 			</Button>
