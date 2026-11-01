@@ -1,3 +1,10 @@
+# [0.1041.0](https://github.com/staff0rd/assist/compare/v0.1040.0...v0.1041.0) (2026-11-01)
+
+
+### Features
+
+* post high-level review directly ([e8235ed](https://github.com/staff0rd/assist/commit/e8235edb33c6fb0272505de33f2de17bc7c41ab0)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.1040.0](https://github.com/staff0rd/assist/compare/v0.1039.1...v0.1040.0) (2026-11-01)
 
 
