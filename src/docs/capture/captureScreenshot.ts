@@ -7,6 +7,7 @@ import { drawHighlights } from "./drawHighlights";
 import { openGithubPage } from "./openGithubPage";
 import { saveScreenshot } from "./saveScreenshot";
 import { performAction } from "./performAction";
+import { framePhoneScreenshot } from "./framePhoneScreenshot";
 import { newCaptureContext } from "./newCaptureContext";
 
 const SETTLE_MS = 750;
@@ -41,11 +42,9 @@ export async function captureScreenshot(
 			await performAction(page, action);
 		await page.waitForTimeout(SETTLE_MS);
 		await drawHighlights(page, screenshot.highlight ?? []);
-		await saveScreenshot(
-			page,
-			screenshot,
-			join(docsPaths.screenshotsDir, variant.file),
-		);
+		const path = join(docsPaths.screenshotsDir, variant.file);
+		if (screenshot.phone) await framePhoneScreenshot(page, variant.theme, path);
+		else await saveScreenshot(page, screenshot, path);
 		await context.close();
 		written.push(variant.file);
 	}

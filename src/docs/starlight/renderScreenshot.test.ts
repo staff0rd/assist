@@ -25,6 +25,15 @@ describe("renderScreenshot", () => {
 		);
 	});
 
+	it("marks a phone screenshot's figure", () => {
+		expect(
+			renderScreenshot(
+				{ file: "p.png", alt: "P", route: "/", theme: "dark", phone: true },
+				"/",
+			),
+		).toMatch(/^<figure class="assist-screenshot assist-screenshot-phone">/);
+	});
+
 	it("renders a themed screenshot as a single image", () => {
 		expect(
 			renderScreenshot(

@@ -20,5 +20,8 @@ export function renderScreenshot(
 		? img(screenshot.file)
 		: img(screenshot.file, "dark") +
 			img(darkVariantFile(screenshot.file), "light");
-	return `<figure class="assist-screenshot">${image}<figcaption>${alt}</figcaption></figure>`;
+	const figureClass = screenshot.phone
+		? "assist-screenshot assist-screenshot-phone"
+		: "assist-screenshot";
+	return `<figure class="${figureClass}">${image}<figcaption>${alt}</figcaption></figure>`;
 }
