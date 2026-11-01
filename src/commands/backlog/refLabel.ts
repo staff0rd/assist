@@ -14,6 +14,7 @@ export function refLabel(ref: GitRef): string {
 		ref.kind === "slack" ||
 		ref.kind === "session" ||
 		ref.kind === "docs-unlock" ||
+		ref.kind === "schema-unlock" ||
 		ref.kind === "design"
 	) {
 		return ref.title ?? ref.ref;

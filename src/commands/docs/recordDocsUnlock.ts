@@ -1,6 +1,6 @@
 import type { Db } from "../../shared/db/Db";
 import { recordGitRef } from "../../shared/db/recordGitRef";
-import { docsUnlockRef } from "./docsUnlockRef";
+import { phaseUnlockRef } from "../backlog/phaseUnlockRef";
 
 export async function recordDocsUnlock(
 	orm: Db,
@@ -9,7 +9,7 @@ export async function recordDocsUnlock(
 ): Promise<void> {
 	await recordGitRef(orm, itemId, {
 		kind: "docs-unlock",
-		ref: docsUnlockRef(phase),
+		ref: phaseUnlockRef(phase),
 		title: `Docs pages and screenshots unlocked by PIN for phase ${phase}`,
 	});
 }

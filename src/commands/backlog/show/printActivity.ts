@@ -1,23 +1,14 @@
 import chalk from "chalk";
 import { groupActivityRefs } from "../groupActivityRefs";
-import { refLabel } from "../refLabel";
-import type { BacklogItem, GitRef } from "../types";
-
-function printRef(ref: GitRef): void {
-	const url = ref.url ? ` ${chalk.dim(ref.url)}` : "";
-	const approvedAt =
-		ref.kind === "docs-unlock" && ref.createdAt
-			? ` ${chalk.dim(ref.createdAt)}`
-			: "";
-	console.log(`  ${chalk.cyan(ref.kind)} ${refLabel(ref)}${url}${approvedAt}`);
-}
+import type { BacklogItem } from "../types";
+import { printRef } from "./printRef";
 
 export function printActivity(
 	item: BacklogItem,
 	options: { allCommits?: boolean } = {},
 ): void {
 	const {
-		docsUnlocks,
+		unlocks,
 		designs,
 		branches,
 		commits,
@@ -30,7 +21,7 @@ export function printActivity(
 		options.allCommits ? Number.POSITIVE_INFINITY : undefined,
 	);
 	const ordered = [
-		...docsUnlocks,
+		...unlocks,
 		...designs,
 		...branches,
 		...commits,
@@ -41,7 +32,7 @@ export function printActivity(
 	if (ordered.length === 0) return;
 
 	console.log(chalk.bold("Activity"));
-	for (const unlock of docsUnlocks) printRef(unlock);
+	for (const unlock of unlocks) printRef(unlock);
 	for (const design of designs) printRef(design);
 	for (const branch of branches) printRef(branch);
 	for (const commit of commits) printRef(commit);

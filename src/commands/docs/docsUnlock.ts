@@ -1,12 +1,8 @@
-import { randomInt } from "node:crypto";
-import { mkdirSync, unlinkSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
 import { formatItemId } from "../backlog/formatItemId";
 import { findOneItem } from "../backlog/shared";
-import { getRestrictedDir } from "../codeComment/getRestrictedDir";
-import { sweepRestrictedDir } from "../codeComment/sweepRestrictedDir";
-import { deliverPinNotification } from "../notify/deliverPinNotification";
+import { issueUnlockPin } from "../notify/issueUnlockPin";
 import { getDocsUnlockPinPath } from "./getDocsUnlockPinPath";
 
 function fail(message: string): void {
@@ -31,21 +27,14 @@ export async function docsUnlock(): Promise<void> {
 	const phase = found.item.currentPhase ?? 1;
 	const label = `${formatItemId(itemId)} ${found.item.name} (phase ${phase})`;
 
-	const pin = randomInt(0, 1000).toString().padStart(3, "0");
-	mkdirSync(getRestrictedDir(), { recursive: true });
-	sweepRestrictedDir();
-	const pinPath = getDocsUnlockPinPath(pin);
-	writeFileSync(pinPath, JSON.stringify({ pin, itemId, phase }));
-
-	const { delivered, node } = await deliverPinNotification({
+	const { delivered, node } = await issueUnlockPin({
 		area: "docs",
-		pin,
-		title: `assist docs unlock: ${label}`,
-		message: `Pin ${pin} — run: assist docs confirm ${pin}`,
+		label,
+		pinPath: getDocsUnlockPinPath,
+		state: { itemId, phase },
 	});
 
 	if (!delivered) {
-		unlinkSync(pinPath);
 		fail(
 			"Could not deliver the confirmation pin via notification.\nDocs cannot be unlocked until the notification channel works.",
 		);

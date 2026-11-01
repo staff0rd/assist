@@ -39,7 +39,7 @@ describe("groupActivityRefs", () => {
 
 		const grouped = groupActivityRefs([commit("aaa"), unlock]);
 
-		expect(grouped.docsUnlocks).toEqual([unlock]);
+		expect(grouped.unlocks).toEqual([unlock]);
 		expect(grouped.commits).toEqual([commit("aaa")]);
 	});
 

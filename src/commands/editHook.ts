@@ -2,11 +2,11 @@ import fs from "node:fs";
 import { readStdin } from "../lib/readStdin";
 import { decideCommentGuard } from "./editHook/decideCommentGuard";
 import { decideDocsGuard } from "./editHook/decideDocsGuard";
-import { decideMigrationGuard } from "./editHook/decideMigrationGuard";
 import {
 	decideOverrideGuard,
 	type EditHookInput,
 } from "./editHook/decideOverrideGuard";
+import { decideSchemaGuard } from "./editHook/decideSchemaGuard";
 
 function tryParseInput(raw: string): EditHookInput | undefined {
 	try {
@@ -40,7 +40,7 @@ export async function editHook(): Promise<void> {
 	const reason =
 		decideOverrideGuard(input, existing) ??
 		decideCommentGuard(input, existing) ??
-		decideMigrationGuard(input, existing) ??
+		(await decideSchemaGuard(input)) ??
 		(await decideDocsGuard(input));
 	if (!reason) return;
 

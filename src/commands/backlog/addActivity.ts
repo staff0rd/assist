@@ -8,6 +8,7 @@ import { gitRefKindSchema } from "./types";
 
 const kindsAddableWithoutHumanApproval = gitRefKindSchema.exclude([
 	"docs-unlock",
+	"schema-unlock",
 ]);
 
 export async function addActivity(

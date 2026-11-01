@@ -1,7 +1,6 @@
 import { unlinkSync } from "node:fs";
 import chalk from "chalk";
-import { formatItemId } from "../backlog/formatItemId";
-import { findOneItem } from "../backlog/shared";
+import { findPhaseUnlockItem } from "../backlog/findPhaseUnlockItem";
 import { sweepRestrictedDir } from "../codeComment/sweepRestrictedDir";
 import { getDocsUnlockPinPath } from "./getDocsUnlockPinPath";
 import { readDocsUnlockPinState } from "./readDocsUnlockPinState";
@@ -17,27 +16,13 @@ export async function docsConfirm(pin: string): Promise<void> {
 	}
 	unlinkSync(getDocsUnlockPinPath(pin));
 
-	const found = await findOneItem(String(state.itemId));
-	if (!found) {
-		process.exitCode = 1;
-		return;
-	}
-
-	const label = `${formatItemId(state.itemId)} ${found.item.name}`;
-	if ((found.item.currentPhase ?? 1) !== state.phase) {
-		console.error(
-			chalk.red(
-				`${label} has moved on from phase ${state.phase} since the unlock was requested. Nothing was approved; request a new unlock from the current phase.`,
-			),
-		);
-		process.exitCode = 1;
-		return;
-	}
+	const found = await findPhaseUnlockItem(state.itemId, state.phase);
+	if (!found) return;
 
 	await recordDocsUnlock(found.orm, state.itemId, state.phase);
 	console.log(
 		chalk.green(
-			`Approved docs changes for phase ${state.phase} of ${label}. Its sessions may edit and commit docs pages and screenshots until the item moves on from that phase or is done or won't-do.`,
+			`Approved docs changes for phase ${state.phase} of ${found.label}. Its sessions may edit and commit docs pages and screenshots until the item moves on from that phase or is done or won't-do.`,
 		),
 	);
 }

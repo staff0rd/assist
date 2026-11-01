@@ -19,11 +19,11 @@ import { registerConfig } from "./commands/registerConfig";
 import { registerBrowser } from "./commands/registerBrowser";
 import { registerExtension } from "./commands/registerExtension";
 import { registerDb } from "./commands/registerDb";
-import { registerDbMigration } from "./commands/registerDbMigration";
 import { registerDeny } from "./commands/registerDeny";
 import { registerDeploy } from "./commands/registerDeploy";
 import { registerDevlog } from "./commands/registerDevlog";
 import { registerDocs } from "./commands/registerDocs";
+import { registerSchema } from "./commands/registerSchema";
 import { registerDotnet } from "./commands/registerDotnet";
 import { registerEditHook } from "./commands/registerEditHook";
 import { registerGithub } from "./commands/registerGithub";
@@ -72,7 +72,7 @@ export const programRegistrars: ((program: Command) => void)[] = [
 	registerBackup,
 	registerChart,
 	registerDb,
-	registerDbMigration,
+	registerSchema,
 	registerCliHook,
 	registerCodeComment,
 	registerCodexHook,

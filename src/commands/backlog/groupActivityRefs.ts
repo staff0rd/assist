@@ -9,11 +9,12 @@ type ActivityRef = {
 		| "slack"
 		| "session"
 		| "docs-unlock"
+		| "schema-unlock"
 		| "design";
 };
 
 type GroupedActivity<T extends ActivityRef> = {
-	docsUnlocks: T[];
+	unlocks: T[];
 	designs: T[];
 	branches: T[];
 	commits: T[];
@@ -31,7 +32,9 @@ export function groupActivityRefs<T extends ActivityRef>(
 		refs.filter((r) => r.kind === kind).reverse();
 	const commits = newestFirst("commit");
 	return {
-		docsUnlocks: newestFirst("docs-unlock"),
+		unlocks: refs
+			.filter((r) => r.kind === "docs-unlock" || r.kind === "schema-unlock")
+			.reverse(),
 		designs: newestFirst("design"),
 		branches: newestFirst("branch"),
 		commits: commits.slice(0, commitLimit),

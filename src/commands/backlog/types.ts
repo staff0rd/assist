@@ -65,6 +65,7 @@ export const gitRefKindSchema = z.enum([
 	"slack",
 	"session",
 	"docs-unlock",
+	"schema-unlock",
 	"design",
 ]);
 

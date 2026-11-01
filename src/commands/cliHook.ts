@@ -5,9 +5,11 @@ import { decideCommand } from "./cliHook/decideCommand";
 import { findAskQuestionDeny } from "./cliHook/findAskQuestionDeny";
 import { findDocsPathDeny } from "./cliHook/findDocsPathDeny";
 import { findRestrictedPathDeny } from "./cliHook/findRestrictedPathDeny";
+import { findSchemaPathDeny } from "./cliHook/findSchemaPathDeny";
 import { logDeniedToolCall } from "./cliHook/logDeniedToolCall";
 import type { HookDecision } from "./cliHook/resolvePermission";
 import { tryParseInput } from "./cliHook/tryParseInput";
+import { isSchemaLocked } from "./schema/isSchemaLocked";
 
 async function decideBash(
 	toolName: string,
@@ -17,6 +19,8 @@ async function decideBash(
 	if (decision?.permissionDecision === "deny") return decision;
 	const docsDeny = findDocsPathDeny(toolName, command);
 	if (docsDeny && (await isDocsLocked())) return docsDeny;
+	const schemaDeny = findSchemaPathDeny(toolName, command);
+	if (schemaDeny && (await isSchemaLocked())) return schemaDeny;
 	return decision;
 }
 

@@ -1,17 +1,15 @@
 import { Box } from "@mui/material";
 import type { GitRef } from "../types";
 
+const TIMESTAMPED_KINDS = new Set(["commit", "docs-unlock", "schema-unlock"]);
+
 const timestampSx = {
 	color: "text.disabled",
 	ml: 1,
 } as const;
 
 export function CommitTimestamp({ gitRef }: { gitRef: GitRef }) {
-	if (
-		(gitRef.kind !== "commit" && gitRef.kind !== "docs-unlock") ||
-		!gitRef.createdAt
-	)
-		return null;
+	if (!TIMESTAMPED_KINDS.has(gitRef.kind) || !gitRef.createdAt) return null;
 	return (
 		<Box component="span" sx={timestampSx}>
 			{formatTimestamp(gitRef.createdAt)}

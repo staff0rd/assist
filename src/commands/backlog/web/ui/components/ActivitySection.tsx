@@ -16,17 +16,10 @@ export function ActivitySection({
 	conversations?: Conversation[];
 }) {
 	const [expanded, setExpanded] = useState(false);
-	const {
-		docsUnlocks,
-		designs,
-		branches,
-		commits,
-		overflowCommits,
-		prs,
-		slacks,
-	} = groupActivityRefs(gitRefs);
+	const { unlocks, designs, branches, commits, overflowCommits, prs, slacks } =
+		groupActivityRefs(gitRefs);
 	const ordered = [
-		...docsUnlocks,
+		...unlocks,
 		...designs,
 		...branches,
 		...commits,

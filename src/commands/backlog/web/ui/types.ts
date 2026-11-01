@@ -61,6 +61,7 @@ type GitRefKind =
 	| "slack"
 	| "session"
 	| "docs-unlock"
+	| "schema-unlock"
 	| "design";
 
 export type GitRef = {
