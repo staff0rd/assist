@@ -13,7 +13,8 @@ export function refLabel(ref: GitRef): string {
 	if (
 		ref.kind === "slack" ||
 		ref.kind === "session" ||
-		ref.kind === "docs-unlock"
+		ref.kind === "docs-unlock" ||
+		ref.kind === "design"
 	) {
 		return ref.title ?? ref.ref;
 	}

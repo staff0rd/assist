@@ -60,7 +60,8 @@ type GitRefKind =
 	| "pr"
 	| "slack"
 	| "session"
-	| "docs-unlock";
+	| "docs-unlock"
+	| "design";
 
 export type GitRef = {
 	kind: GitRefKind;

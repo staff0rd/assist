@@ -24,9 +24,19 @@ Ask one question at a time. Wait for the user's response before asking the next.
 
 If the harness provides a structured question tool, ask each question with it — one question per call, with fixed options and a recommended default where they apply. Only fall back to plain chat text when no such tool exists.
 
-## Step 3: Compose the item
+## Step 3: Design the UI change
 
-Compose the item's content, but do not show it to the user yet and do not work out where the review should happen — `propose` decides that in Step 4 and tells you what to do next.
+From the clarifying answers, decide whether the story involves a **substantial UI change** — a new screen, panel, view or component, or a reworked layout or interaction flow. A trivial UI change (a label, a button, a tweak to an existing control) or no UI change at all is not substantial: skip this step entirely and do not mention it.
+
+If it is substantial, do not ask whether to design it — follow `/design` (`~/.claude/commands/design.md`) for the story's UI, applying it to what the user described and answered. Publish the design as an artifact, give the user its URL, and iterate on it with them — editing the same file and republishing to the same URL — until they say they are happy with it. Only then move on.
+
+Keep the artifact's URL and name: the item's description references the design (Step 4), and the artifact is attached to the item once it is created (Step 5).
+
+## Step 4: Compose the item
+
+Compose the item's content, but do not show it to the user yet and do not work out where the review should happen — `propose` decides that in Step 5 and tells you what to do next.
+
+If Step 3 produced a design, the description links to it (e.g. a `## Design` section with the artifact URL) so the implementer builds against it.
 
 **Name:** (concise title)
 **Type:** story or bug
@@ -94,7 +104,7 @@ If it reports the key is not set, plan docs updates as the change needs them.
 
 Most phases should NOT have manual checks. Only add `manualChecks` to a phase when the checks are genuinely difficult to automate (e.g. visual appearance, UX flow, hardware interaction). Do not add a final phase just for end-to-end verification — a `Review` phase is appended to every plan automatically, and authoring one is rejected.
 
-## Step 4: Propose the item
+## Step 5: Propose the item
 
 Propose the item and capture the id it prints. Use `propose`, not `assist backlog add` plus `add-phase` — `propose` is the reviewed path for an agent-authored item, and it writes the item and every phase on a single approval:
 
@@ -153,9 +163,19 @@ assist backlog add-activity a<id> slack "<permalink>" --url "<permalink>" --titl
 
 Use the same permalink verbatim for both the ref and `--url`, and the item's name for `--title`. If no Slack thread was referenced, skip this step.
 
+### Attach the design
+
+If Step 3 published a design artifact, attach it to the created item so it renders as a linked design row in the Activity section:
+
+```
+assist backlog add-activity a<id> design "<artifact-url>" --url "<artifact-url>" --title "<artifact name>" 2>&1
+```
+
+Use the artifact URL verbatim for both the ref and `--url`, and the artifact's name for `--title`. If Step 3 was skipped, skip this step.
+
 Then show the user the item was created. If `propose` printed `Started a backlog run session for a<id>.`, the user chose **Approve & start** and implementation is already running — say so, and do not suggest running it. Otherwise suggest they can run `assist backlog run a<id>` to start implementation.
 
-If the conversation established that more items still need to be drafted (e.g. a follow-up item, or one in another repo), do not signal yet — draft each remaining item now, repeating Steps 3 and 4 for it.
+If the conversation established that more items still need to be drafted (e.g. a follow-up item, or one in another repo), do not signal yet — draft each remaining item now, repeating Steps 3 to 5 for it.
 
 Finally, once the last item is created, signal that the drafting task is complete, passing every item id created in this session (a-prefixed, e.g. `a555 a556`):
 

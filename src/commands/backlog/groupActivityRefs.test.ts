@@ -43,6 +43,20 @@ describe("groupActivityRefs", () => {
 		expect(grouped.commits).toEqual([commit("aaa")]);
 	});
 
+	it("groups design artifacts apart from the other refs", () => {
+		const design: GitRef = {
+			kind: "design",
+			ref: "https://claude.ai/artifact/abc",
+			title: "Board layout",
+			url: "https://claude.ai/artifact/abc",
+		};
+
+		const grouped = groupActivityRefs([commit("aaa"), design]);
+
+		expect(grouped.designs).toEqual([design]);
+		expect(grouped.commits).toEqual([commit("aaa")]);
+	});
+
 	it("orders sessions newest-first", () => {
 		const refs: GitRef[] = [
 			{ kind: "session", ref: "older" },

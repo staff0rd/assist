@@ -59,25 +59,30 @@ describe("printActivity", () => {
 		expect(out).toContain("#9");
 	});
 
-	it("prints a slack ref labelled with its title", () => {
-		printActivity(
-			makeBacklogItem({
-				gitRefs: [
-					{
-						kind: "slack",
-						ref: "https://slack.com/archives/C/p123",
-						title: "My PR",
-						url: "https://slack.com/archives/C/p123",
-					},
-				],
-			}),
-		);
+	it.each([
+		{
+			kind: "slack" as const,
+			title: "My PR",
+			url: "https://slack.com/archives/C/p123",
+		},
+		{
+			kind: "design" as const,
+			title: "Board layout",
+			url: "https://claude.ai/artifact/abc",
+		},
+	])(
+		"prints a $kind ref labelled with its title and url",
+		({ kind, title, url }) => {
+			printActivity(
+				makeBacklogItem({ gitRefs: [{ kind, ref: url, title, url }] }),
+			);
 
-		const out = output();
-		expect(out).toContain("slack");
-		expect(out).toContain("My PR");
-		expect(out).toContain("https://slack.com/archives/C/p123");
-	});
+			const out = output();
+			expect(out).toContain(kind);
+			expect(out).toContain(title);
+			expect(out).toContain(url);
+		},
+	);
 
 	it("prints a session ref labelled with its transcript title", () => {
 		printActivity(

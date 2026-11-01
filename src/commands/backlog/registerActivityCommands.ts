@@ -8,7 +8,7 @@ export function registerActivityCommands(cmd: Command): void {
 		cmd
 			.command("add-activity <id> <kind> <ref>")
 			.description(
-				"Attach an activity ref (branch|commit|pr|slack|session) to a backlog item",
+				"Attach an activity ref (branch|commit|pr|slack|session|design) to a backlog item",
 			)
 			.option("--title <title>", "Title metadata for the ref")
 			.option("--url <url>", "URL metadata (auto-filled for branch/commit)")

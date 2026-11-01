@@ -18,6 +18,7 @@ export function printActivity(
 ): void {
 	const {
 		docsUnlocks,
+		designs,
 		branches,
 		commits,
 		overflowCommits,
@@ -30,6 +31,7 @@ export function printActivity(
 	);
 	const ordered = [
 		...docsUnlocks,
+		...designs,
 		...branches,
 		...commits,
 		...prs,
@@ -40,6 +42,7 @@ export function printActivity(
 
 	console.log(chalk.bold("Activity"));
 	for (const unlock of docsUnlocks) printRef(unlock);
+	for (const design of designs) printRef(design);
 	for (const branch of branches) printRef(branch);
 	for (const commit of commits) printRef(commit);
 	if (overflowCommits.length > 0) {

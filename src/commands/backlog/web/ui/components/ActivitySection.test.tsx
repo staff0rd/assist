@@ -64,6 +64,24 @@ describe("ActivitySection", () => {
 		expect(screen.getByRole("link", { name: "#42 My PR (open)" })).toBeTruthy();
 	});
 
+	it("renders a design artifact as a link labelled by its title", () => {
+		const refs: GitRef[] = [
+			{
+				kind: "design",
+				ref: "https://claude.ai/artifact/abc",
+				title: "Board layout",
+				url: "https://claude.ai/artifact/abc",
+			},
+		];
+
+		render(<ActivitySection gitRefs={refs} />);
+
+		expect(screen.getByText("design")).toBeTruthy();
+		expect(
+			screen.getByRole("link", { name: "Board layout" }).getAttribute("href"),
+		).toBe("https://claude.ai/artifact/abc");
+	});
+
 	it("renders gracefully without a link when the branch or PR is gone", () => {
 		const refs: GitRef[] = [
 			{ kind: "branch", ref: "deleted-branch" },
