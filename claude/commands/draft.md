@@ -26,26 +26,13 @@ If the harness provides a structured question tool, ask each question with it �
 
 ## Step 3: Design the UI change
 
-From the clarifying answers, decide whether the story involves a **substantial UI change** — a new screen, panel, view or component, or a reworked layout or interaction flow. A trivial UI change (a label, a button, a tweak to an existing control) or no UI change at all is not substantial: skip this step entirely and do not mention it.
-
-If it is substantial, do not ask whether to design it — follow `/design` (`~/.claude/skills/design/SKILL.md`) for the story's UI, applying it to what the user described and answered. Publish the design as an artifact, then raise each review round with `ask-design` instead of iterating in chat. Write a short markdown summary of the design (what it shows and the choices to weigh in on) to a scratch file and run, as a background task, doing no other work until it returns:
-
-```
-assist ask-design --url '<artifact-url>' --title '<design title>' --body - < <summary-file>
-```
-
-- **Approved** (exit 0) — fold every printed comment into the design, republishing to the same URL, then move on.
-- **Rejected** (non-zero, printing the reason and comments) — revise the design to address each one, republish to the same artifact URL, and re-run `ask-design` for the next round. Repeat until approved.
-- To revise while a round is still pending, re-run `ask-design` directly; the earlier task exits 0 as superseded — ignore its result.
-- If it prints the design link and exits 0 without `Approved.` (not in an assist web session), ask the user in chat instead and iterate there — editing the same file and republishing to the same URL — until they say they are happy with it.
-
-Keep the artifact's URL and name: the item's description references the design (Step 4), and the artifact is attached to the item once it is created (Step 5).
+Read the **Designing a new backlog item's UI change** section of `/design` (`~/.claude/skills/design/SKILL.md`) and follow its Decide and Design and review steps for the story. If it decides the change is not substantial, skip this step silently. Otherwise its link step applies in Step 4 and its attach step in Step 5.
 
 ## Step 4: Compose the item
 
 Compose the item's content, but do not show it to the user yet and do not work out where the review should happen — `propose` decides that in Step 5 and tells you what to do next.
 
-If Step 3 produced a design, the description links to it (e.g. a `## Design` section with the artifact URL) so the implementer builds against it.
+If Step 3 produced a design, link it from the description as `/design` describes.
 
 **Name:** (concise title)
 **Type:** story or bug
@@ -174,13 +161,7 @@ Use the same permalink verbatim for both the ref and `--url`, and the item's nam
 
 ### Attach the design
 
-If Step 3 published a design artifact, attach it to the created item so it renders as a linked design row in the Activity section:
-
-```
-assist backlog add-activity a<id> design "<artifact-url>" --url "<artifact-url>" --title "<artifact name>" 2>&1
-```
-
-Use the artifact URL verbatim for both the ref and `--url`, and the artifact's name for `--title`. If Step 3 was skipped, skip this step.
+If Step 3 published a design artifact, attach it to the created item as `/design` describes. If Step 3 was skipped, skip this step.
 
 Then show the user the item was created. If `propose` printed `Started a backlog run session for a<id>.`, the user chose **Approve & start** and implementation is already running — say so, and do not suggest running it. Otherwise suggest they can run `assist backlog run a<id>` to start implementation.
 

@@ -21,9 +21,15 @@ Before asking the user about existing functionality — how a feature currently 
 
 Skip questions the user has already answered. Stop asking as soon as you have enough to write a clear bug report — don't over-interrogate.
 
-## Step 3: Compose the bug report
+## Step 3: Design the UI change
 
-Compose the bug report's content, but do not show it to the user yet and do not work out where the review should happen — `propose` decides that in Step 4 and tells you what to do next.
+Read the **Designing a new backlog item's UI change** section of `/design` (`~/.claude/skills/design/SKILL.md`) and follow its Decide and Design and review steps for the fix. If it decides the fix's UI change is not substantial, skip this step silently. Otherwise its link step applies in Step 4 and its attach step in Step 5.
+
+## Step 4: Compose the bug report
+
+Compose the bug report's content, but do not show it to the user yet and do not work out where the review should happen — `propose` decides that in Step 5 and tells you what to do next.
+
+If Step 3 produced a design, link it from the description as `/design` describes.
 
 **Name:** (concise title)
 **Type:** bug
@@ -53,7 +59,7 @@ The description renders as markdown in both the terminal (`assist backlog show`)
 **Actual:** what happens instead.
 ```
 
-## Step 4: Propose the item
+## Step 5: Propose the item
 
 Propose the item and capture the id it prints. Use `propose`, not `assist backlog add` — `propose` is the reviewed path for an agent-authored item:
 
@@ -108,9 +114,13 @@ assist backlog add-activity a<id> slack "<permalink>" --url "<permalink>" --titl
 
 Use the same permalink verbatim for both the ref and `--url`, and the item's name for `--title`. If no Slack thread was referenced, skip this step.
 
+### Attach the design
+
+If Step 3 published a design artifact, attach it to the created item as `/design` describes. If Step 3 was skipped, skip this step.
+
 Then show the user the item was created. If `propose` printed `Started a backlog run session for a<id>.`, the user chose **Approve & start** and implementation is already running — say so, and do not suggest running it. Otherwise suggest they can run `assist backlog run a<id>` to start implementation.
 
-If the conversation established that more items still need to be filed (e.g. a follow-up item, or one in another repo), do not signal yet — create each remaining item now, repeating Steps 3 and 4 for it.
+If the conversation established that more items still need to be filed (e.g. a follow-up item, or one in another repo), do not signal yet — create each remaining item now, repeating Steps 3 to 5 for it.
 
 Finally, once the last item is created, signal that the bug-filing task is complete, passing every item id created in this session (a-prefixed, e.g. `a555 a556`):
 
