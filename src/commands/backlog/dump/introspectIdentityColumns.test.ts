@@ -21,6 +21,7 @@ describe("introspectIdentityColumns", () => {
 			{ table: "feeds", column: "id", rawColumn: "id" },
 			{ table: "handovers", column: "id", rawColumn: "id" },
 			{ table: "items", column: "id", rawColumn: "id" },
+			{ table: "job_runs", column: "id", rawColumn: "id" },
 		]);
 	});
 

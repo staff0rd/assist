@@ -4,6 +4,7 @@ import { comments } from "./comments";
 import { inboxMessages } from "./inboxMessages";
 import { itemGitRefs } from "./itemGitRefs";
 import { items } from "./items";
+import { jobRuns } from "./jobRuns";
 import { links } from "./links";
 import { phaseCycleContext } from "./phaseCycleContext";
 import { phaseSessions } from "./phaseSessions";
@@ -57,6 +58,7 @@ export const schema = {
 	repoConfigs,
 	inboxMessages,
 	userConfig,
+	jobRuns,
 };
 
 export type ItemRow = typeof items.$inferSelect;

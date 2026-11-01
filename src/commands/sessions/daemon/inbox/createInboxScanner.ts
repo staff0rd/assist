@@ -1,7 +1,7 @@
 import { createScanRunLog } from "./createScanRunLog";
 import { createScheduleTracker } from "./createScheduleTracker";
 import { isScheduledScanDue } from "./isScheduledScanDue";
-import { runLoggedInboxScan } from "./runLoggedInboxScan";
+import { runLoggedInboxScan, type ScanReason } from "./runLoggedInboxScan";
 
 const CHECK_MS = 60_000;
 
@@ -14,7 +14,7 @@ export function createInboxScanner() {
 	const schedule = createScheduleTracker();
 	const runLog = createScanRunLog(() => notify("inbox-activity"));
 
-	const scan = async (reason: string) => {
+	const scan = async (reason: ScanReason) => {
 		scanning = true;
 		runLog.begin();
 		notify("inbox");

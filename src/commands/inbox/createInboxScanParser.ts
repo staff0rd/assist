@@ -3,13 +3,10 @@ import { createScanUsageTracker } from "./createScanUsageTracker";
 import type { InboxScanListener, InboxScanUsage } from "./InboxScanEvent";
 import type { FlaggedMessage } from "./inboxScanSchema";
 import { parseInboxScanOutput } from "./parseInboxScanOutput";
-
-type StreamEvent = {
-	type?: unknown;
-	message?: { id?: unknown; content?: unknown; usage?: unknown };
-	total_cost_usd?: unknown;
-	duration_ms?: unknown;
-};
+import {
+	parseScanStreamLine,
+	type ScanStreamEvent as StreamEvent,
+} from "./parseScanStreamLine";
 
 export type InboxScanResult = {
 	messages: FlaggedMessage[];
@@ -19,6 +16,7 @@ export type InboxScanResult = {
 export function createInboxScanParser({
 	onEvent = () => {},
 	onUsage = () => {},
+	onModel = () => {},
 }: InboxScanListener = {}) {
 	const usage = createScanUsageTracker();
 	let resultLine: string | undefined;
@@ -34,13 +32,11 @@ export function createInboxScanParser({
 
 	return {
 		onLine(line: string): void {
-			let event: StreamEvent;
-			try {
-				event = JSON.parse(line) as StreamEvent;
-			} catch {
-				return;
-			}
-			if (event.type === "assistant") onAssistant(event.message);
+			const event = parseScanStreamLine(line);
+			if (!event) return;
+			if (event.type === "system" && typeof event.model === "string")
+				onModel(event.model);
+			else if (event.type === "assistant") onAssistant(event.message);
 			else if (event.type === "result") {
 				resultLine = line;
 				usage.finish(event);

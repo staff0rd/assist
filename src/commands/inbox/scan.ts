@@ -6,6 +6,7 @@ import { runInboxScan } from "./runInboxScan";
 
 export async function scan(): Promise<void> {
 	const { flagged, added, usage } = await runInboxScan(await getDb(), {
+		trigger: "manual",
 		wrap: (since, run) =>
 			withSpinner(
 				`Scanning Gmail and Slack (Slack since ${since.toISOString()})`,

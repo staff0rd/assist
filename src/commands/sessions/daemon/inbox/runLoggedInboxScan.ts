@@ -8,16 +8,18 @@ export type ScanOutcome =
 	| { ok: true; flagged: number; added: number }
 	| { ok: false; error: string };
 
+export type ScanReason = "scheduled" | "requested";
+
 export async function runLoggedInboxScan(
-	reason: string,
+	reason: ScanReason,
 	listener: InboxScanListener,
 ): Promise<ScanOutcome> {
 	daemonLog(`inbox: scan started (${reason})`);
 	try {
-		const { flagged, added, usage } = await runInboxScan(
-			await getDb(),
-			listener,
-		);
+		const { flagged, added, usage } = await runInboxScan(await getDb(), {
+			...listener,
+			trigger: reason === "scheduled" ? "scheduled" : "manual",
+		});
 		daemonLog(
 			`inbox: scan flagged ${flagged} message(s), ${added} new (${formatScanUsage(usage)})`,
 		);

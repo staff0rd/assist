@@ -42,6 +42,7 @@ describe("introspectDumpTables", () => {
 				"repo_configs",
 				"inbox_messages",
 				"user_config",
+				"job_runs",
 			]),
 		);
 	});

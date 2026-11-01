@@ -44,6 +44,7 @@ import { nextPickup } from "./next/nextPickup";
 import { listScopedRules } from "./listScopedRules";
 import { listUsageHistory } from "./listUsageHistory";
 import { listUsageItems } from "./listUsageItems";
+import { listUsageJobs } from "./listUsageJobs";
 import { openInCode } from "./openInCode";
 import { prList } from "./prList";
 import { previewImage } from "./previewImage";
@@ -126,6 +127,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/releases/compare": releasesCompare,
 	"GET /api/usage/history": listUsageHistory,
 	"GET /api/usage/items": listUsageItems,
+	"GET /api/usage/jobs": listUsageJobs,
 	"GET /api/backups/list": getBackups,
 	"GET /api/backups/status": getBackupStatus,
 	"GET /api/config": getConfig,

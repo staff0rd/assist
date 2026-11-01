@@ -35,6 +35,15 @@ describe("createInboxScanParser", () => {
 		]);
 	});
 
+	it("reports the model from the system init line", () => {
+		const models: string[] = [];
+		const parser = createInboxScanParser({ onModel: (m) => models.push(m) });
+		parser.onLine(
+			JSON.stringify({ type: "system", subtype: "init", model: "sonnet-x" }),
+		);
+		expect(models).toEqual(["sonnet-x"]);
+	});
+
 	it("counts each turn's usage once and attaches it to the turn's first row", () => {
 		const events: InboxScanEvent[] = [];
 		const usages: InboxScanUsage[] = [];

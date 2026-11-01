@@ -26,4 +26,5 @@ export type InboxScanRun = {
 export type InboxScanListener = {
 	onEvent?: (event: InboxScanEvent) => void;
 	onUsage?: (usage: InboxScanUsage) => void;
+	onModel?: (model: string) => void;
 };
