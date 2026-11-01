@@ -1,3 +1,10 @@
+# [0.1034.0](https://github.com/staff0rd/assist/compare/v0.1033.3...v0.1034.0) (2026-11-01)
+
+
+### Features
+
+* auto approve toggle on question pane ([b8b1b1d](https://github.com/staff0rd/assist/commit/b8b1b1d0fc34e1c641fce72090a657f0d0f6b128))
+
 ## [0.1033.3](https://github.com/staff0rd/assist/compare/v0.1033.2...v0.1033.3) (2026-11-01)
 
 
