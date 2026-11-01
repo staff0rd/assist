@@ -210,44 +210,11 @@ describe("docs unlock -> confirm round-trip", () => {
 		expect(process.exitCode).toBeUndefined();
 		expect(console.log).toHaveBeenCalledWith(expect.stringContaining("mac"));
 		expect(console.log).not.toHaveBeenCalledWith(expect.stringContaining(pin));
-	});
 
-	it("forwards a pin it has no local state for to the daemon and reports its answer", async () => {
-		mockRequestDaemonReply.mockImplementation(async (request) => ({
-			type: "confirm-pin-result",
-			requestId: request.requestId,
-			found: true,
-			ok: true,
-			message: "Approved docs changes on work-wsl",
-		}));
+		await docsConfirm(pin);
 
-		await docsConfirm("123");
-
-		expect(mockRequestDaemonReply).toHaveBeenCalledWith(
-			expect.objectContaining({
-				type: "confirm-pin",
-				area: "docs",
-				pin: "123",
-			}),
-		);
 		expect(process.exitCode).toBeUndefined();
-		expect(console.log).toHaveBeenCalledWith(
-			expect.stringContaining("Approved docs changes on work-wsl"),
-		);
-	});
-
-	it("fails a forwarded confirm the session's node rejects", async () => {
-		mockRequestDaemonReply.mockImplementation(async (request) => ({
-			type: "confirm-pin-result",
-			requestId: request.requestId,
-			found: true,
-			ok: false,
-			message: "moved on",
-		}));
-
-		await docsConfirm("123");
-
-		expect(process.exitCode).toBe(1);
+		expect(await isDocsLocked()).toBe(false);
 	});
 
 	it("rejects a corrupt pin file", async () => {

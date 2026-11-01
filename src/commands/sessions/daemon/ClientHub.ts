@@ -68,10 +68,6 @@ export class ClientHub extends Set<SessionClient> {
 		return this.peers.has(client);
 	}
 
-	peerNode(client: SessionClient): string | undefined {
-		return this.peers.get(client);
-	}
-
 	peerFor(node: string): SessionClient | undefined {
 		let latest: SessionClient | undefined;
 		for (const [client, name] of this.peers) if (name === node) latest = client;

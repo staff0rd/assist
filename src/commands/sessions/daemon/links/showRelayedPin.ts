@@ -16,10 +16,9 @@ function tryShow(title: unknown, message: unknown): boolean {
 
 export function showRelayedPin(ctx: LinkContext, msg: Msg): void {
 	const node = ctx.spec.name;
-	const { area, pin } = msg;
-	const valid = typeof area === "string" && typeof pin === "string";
+	const { area } = msg;
+	const valid = typeof area === "string";
 	const delivered = valid && tryShow(msg.title, msg.message);
-	if (delivered) ctx.deps.pins.rememberOrigin(area, pin, node);
 	daemonLog(
 		`link ${node} ws: ${valid ? area : "malformed"} PIN notification for a session on ${node} ${delivered ? "shown" : "not shown"}`,
 	);

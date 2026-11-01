@@ -11,13 +11,11 @@ import { SessionManager } from "../SessionManager";
 
 const helloName = vi.hoisted(() => ({ current: "pc-wsl" }));
 const showNotification = vi.hoisted(() => vi.fn(() => true));
-const confirmDocs = vi.hoisted(() => vi.fn());
 
 vi.mock("../../shared/resolveNodeName", () => ({
 	resolveNodeName: () => helloName.current,
 }));
 vi.mock("../../../notify/showNotification", () => ({ showNotification }));
-vi.mock("./pinConfirmers", () => ({ pinConfirmers: { docs: confirmDocs } }));
 vi.mock("../loadPersistedSessions", () => ({
 	loadPersistedSessions: vi.fn(() => []),
 	persistLiveSessions: vi.fn(),
@@ -112,7 +110,6 @@ function loggedLines(): string[] {
 
 beforeEach(() => {
 	showNotification.mockReturnValue(true);
-	confirmDocs.mockResolvedValue({ ok: true, message: "Approved docs" });
 });
 
 afterEach(() => {
@@ -122,9 +119,8 @@ afterEach(() => {
 });
 
 describe("PIN relay between linked nodes", () => {
-	it("shows the PIN on the viewer's node and forwards its confirm back", async () => {
-		const { wsl } = await linkedPair("pc-wsl");
-		const windows = peers.get("http://pc-windows")?.manager as SessionManager;
+	it("shows the PIN on the viewer's node", async () => {
+		const { windows } = await linkedPair("pc-wsl");
 
 		const session = notifyPin(windows);
 		await vi.waitFor(() =>
@@ -139,24 +135,6 @@ describe("PIN relay between linked nodes", () => {
 			title: expect.stringContaining("assist docs unlock"),
 			message: expect.stringContaining(PIN),
 		});
-
-		const confirmer = cli();
-		dispatchMessage(confirmer.client, wsl, {
-			type: "confirm-pin",
-			requestId: "c1",
-			area: "docs",
-			pin: PIN,
-		});
-		await vi.waitFor(() =>
-			expect(confirmer.reply("confirm-pin-result")).toEqual({
-				type: "confirm-pin-result",
-				requestId: "c1",
-				found: true,
-				ok: true,
-				message: "Approved docs",
-			}),
-		);
-		expect(confirmDocs).toHaveBeenCalledWith(PIN);
 		expect(loggedLines().some((line) => line.includes(PIN))).toBe(false);
 	});
 
@@ -193,24 +171,5 @@ describe("PIN relay between linked nodes", () => {
 				requestId: "n1",
 			}),
 		);
-	});
-
-	it("does not forward a confirm for a PIN no peer relayed", async () => {
-		const { wsl } = await linkedPair("pc-wsl");
-
-		const confirmer = cli();
-		dispatchMessage(confirmer.client, wsl, {
-			type: "confirm-pin",
-			requestId: "c1",
-			area: "docs",
-			pin: PIN,
-		});
-
-		expect(confirmer.reply("confirm-pin-result")).toEqual({
-			type: "confirm-pin-result",
-			requestId: "c1",
-			found: false,
-		});
-		expect(confirmDocs).not.toHaveBeenCalled();
 	});
 });
