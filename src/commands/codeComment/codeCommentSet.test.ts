@@ -102,6 +102,7 @@ describe("codeCommentSet", () => {
 		expect(mockShowNotification).not.toHaveBeenCalled();
 		expect(process.exitCode).toBeUndefined();
 		expect(stdout()).toContain("on mac");
+		expect(stdout()).toContain("run in this session:");
 		expect(stdout()).not.toContain(pin);
 	});
 

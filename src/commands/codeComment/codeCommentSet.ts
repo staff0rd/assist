@@ -51,6 +51,6 @@ export async function codeCommentSet(
 	}
 
 	console.log(
-		`A confirmation pin was sent to your desktop notifications${node ? ` on ${node}, the node controlling this session` : ""}.\nTo insert "${marker} ${validation.text}" at ${file}:${lineNumber}, run${node ? ` on ${node}` : ""}:\n${chalk.cyan("  assist code-comment confirm <PIN>")}\nusing the pin from that notification.`,
+		`A confirmation pin was sent to your desktop notifications${node ? ` on ${node}, the node controlling this session` : ""}.\nTo insert "${marker} ${validation.text}" at ${file}:${lineNumber}, run in this session:\n${chalk.cyan("  assist code-comment confirm <PIN>")}\nusing the pin from that notification.`,
 	);
 }

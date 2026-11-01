@@ -43,6 +43,6 @@ export async function dbMigrationUnlock(): Promise<void> {
 	}
 
 	console.log(
-		`A confirmation pin was sent to your desktop notifications${node ? ` on ${node}, the node controlling this session` : ""}.\nTo approve creating migration ${migrationId}, run${node ? ` on ${node}` : ""}:\n${chalk.cyan("  assist db-migration confirm <PIN>")}\nusing the pin from that notification.`,
+		`A confirmation pin was sent to your desktop notifications${node ? ` on ${node}, the node controlling this session` : ""}.\nTo approve creating migration ${migrationId}, run in this session:\n${chalk.cyan("  assist db-migration confirm <PIN>")}\nusing the pin from that notification.`,
 	);
 }
