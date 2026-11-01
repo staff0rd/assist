@@ -1,10 +1,7 @@
 import { sendTo } from "../broadcast";
-import {
-	broadcastToViewers,
-	type LinkRelayState,
-	takePendingCreator,
-} from "./LinkRelayState";
+import { broadcastToViewers, type LinkRelayState } from "./LinkRelayState";
 import { toNodeSessionId } from "./splitNodeSessionId";
+import { takePendingCreator } from "./takePendingCreator";
 
 export function relayRunConflict(
 	state: LinkRelayState,

@@ -8,6 +8,7 @@ const MAX_SCROLLBACK = 256 * 1024;
 type PendingCreator = {
 	client: SessionClient;
 	timer: ReturnType<typeof setTimeout>;
+	traceId?: string;
 };
 
 export type LinkRelayState = {
@@ -49,15 +50,6 @@ export function createRelayState(
 
 export function broadcastToViewers(state: LinkRelayState, msg: object): void {
 	broadcast(state.viewers(), msg);
-}
-
-export function takePendingCreator(
-	state: LinkRelayState,
-): SessionClient | undefined {
-	const pending = state.pendingCreators.shift();
-	if (!pending) return undefined;
-	clearTimeout(pending.timer);
-	return pending.client;
 }
 
 function failPendingCreators(state: LinkRelayState, message: string): void {

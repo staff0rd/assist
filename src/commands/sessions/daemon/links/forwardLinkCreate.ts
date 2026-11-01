@@ -15,7 +15,12 @@ function createTimeoutMs(ctx: LinkContext, data: Msg): number {
 	return data.transfer ? Math.max(base, TRANSFER_CREATE_TIMEOUT_MS) : base;
 }
 
-function armCreateTimeout(ctx: LinkContext, client: SessionClient, data: Msg) {
+function armCreateTimeout(
+	ctx: LinkContext,
+	client: SessionClient,
+	data: Msg,
+	traceId: string,
+) {
 	const node = ctx.spec.name;
 	const timer = setTimeout(
 		() => {
@@ -32,7 +37,7 @@ function armCreateTimeout(ctx: LinkContext, client: SessionClient, data: Msg) {
 		createTimeoutMs(ctx, data),
 	);
 	timer.unref?.();
-	ctx.relay.pendingCreators.push({ client, timer });
+	ctx.relay.pendingCreators.push({ client, timer, traceId });
 }
 
 export function forwardLinkCreate(
@@ -55,6 +60,6 @@ export function forwardLinkCreate(
 	daemonLog(
 		`link ${node} ws: routing ${data.type} (cwd=${data.cwd ?? "default"}) trace=${traceId}`,
 	);
-	armCreateTimeout(ctx, client, data);
+	armCreateTimeout(ctx, client, data, traceId);
 	sendToLink(ctx, { ...toPeerMessage(data), traceId });
 }

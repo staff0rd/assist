@@ -14,25 +14,26 @@ export function creator(
 	isNew: boolean,
 	spawn: (m: SessionManager, d: Msg) => SpawnResult | Promise<SpawnResult>,
 ): Handler {
-	const reply = (client: SessionClient, result: SpawnResult) => {
+	const reply = (client: SessionClient, d: Msg, result: SpawnResult) => {
+		const traceId = typeof d.traceId === "string" ? d.traceId : undefined;
 		if (typeof result !== "string") {
-			sendTo(client, { type: "error", message: result.error });
+			sendTo(client, { type: "error", message: result.error, traceId });
 			return;
 		}
-		sendTo(client, { type: "created", sessionId: result, isNew });
+		sendTo(client, { type: "created", sessionId: result, isNew, traceId });
 	};
 	return (client, m, d) => {
 		if (m.links.route(client, d)) return;
 		const result = spawn(m, d);
 		if (result instanceof Promise)
 			result.then(
-				(resolved) => reply(client, resolved),
+				(resolved) => reply(client, d, resolved),
 				(error: unknown) => {
 					const reason = error instanceof Error ? error.message : String(error);
 					daemonLog(`${d.type} failed: ${reason}`);
-					reply(client, { error: `${d.type} failed: ${reason}` });
+					reply(client, d, { error: `${d.type} failed: ${reason}` });
 				},
 			);
-		else reply(client, result);
+		else reply(client, d, result);
 	};
 }

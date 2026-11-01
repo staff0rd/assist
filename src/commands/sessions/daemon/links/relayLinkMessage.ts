@@ -1,15 +1,14 @@
 import type { HistoricalSession } from "../../shared/parseSessionFile";
-import { sendTo } from "../broadcast";
 import { daemonLog, relayDaemonLog } from "../daemonLog";
 import { logUnrecognisedType } from "../logUnrecognisedType";
 import {
 	appendScrollback,
 	broadcastToViewers,
 	type LinkRelayState,
-	takePendingCreator,
 } from "./LinkRelayState";
 import { relayLinkSessions } from "./relayLinkSessions";
 import { relayRunConflict } from "./relayRunConflict";
+import { relayToCreator } from "./relayToCreator";
 import { toNodeSessionId } from "./splitNodeSessionId";
 
 type Msg = Record<string, unknown>;
@@ -23,21 +22,6 @@ const relayOutput: Relay = (state, msg) => {
 	appendScrollback(state, sessionId, msg.data as string);
 	broadcastToViewers(state, { type: "output", sessionId, data: msg.data });
 };
-
-const relayToCreator =
-	(label: string): Relay =>
-	(state, msg) => {
-		daemonLog(
-			`link ${state.node} ws: ${label} ${msg.sessionId ?? msg.message}`,
-		);
-		const client = takePendingCreator(state);
-		const reply =
-			msg.type === "created" ? { ...msg, sessionId: nsId(state, msg) } : msg;
-		if (client) sendTo(client, reply);
-		else if (msg.type === "error") broadcastToViewers(state, reply);
-		else
-			daemonLog(`link ${state.node} ws: ${msg.type} with no pending creator`);
-	};
 
 const relayHistory: Relay = (state, msg) => {
 	const sessions = ((msg.sessions as HistoricalSession[]) ?? []).map((s) => ({
