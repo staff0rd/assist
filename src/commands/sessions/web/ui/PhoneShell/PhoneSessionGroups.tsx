@@ -18,14 +18,21 @@ export function PhoneSessionGroups({
 	const [doneExpanded, setDoneExpanded] = useState(false);
 	if (sessions.length === 0) return <Box sx={phoneEmptySx}>No sessions</Box>;
 
-	const { needsYou, running, done } = groupSessionsByStatus(sessions);
+	const { questions, needsYou, running, done } =
+		groupSessionsByStatus(sessions);
 	return (
 		<>
+			<PhoneSessionSection
+				label={`${statusGlyph.question} Answer here`}
+				sessions={questions}
+				localNode={localNode}
+				tone="accent"
+			/>
 			<PhoneSessionSection
 				label={`${statusGlyph.waiting} Needs you`}
 				sessions={needsYou}
 				localNode={localNode}
-				attention
+				tone="warning"
 			/>
 			<PhoneSessionSection
 				label="Running"

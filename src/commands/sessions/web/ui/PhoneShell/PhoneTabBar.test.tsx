@@ -15,7 +15,11 @@ import { PhoneTabBar } from "./PhoneTabBar";
 
 afterEach(cleanup);
 
-function session(id: string, status: SessionInfo["status"]): SessionInfo {
+function session(
+	id: string,
+	status: SessionInfo["status"],
+	extra: Partial<SessionInfo> = {},
+): SessionInfo {
 	return {
 		id,
 		name: id,
@@ -23,6 +27,7 @@ function session(id: string, status: SessionInfo["status"]): SessionInfo {
 		status,
 		commandType: "claude",
 		startedAt: 0,
+		...extra,
 	};
 }
 
@@ -90,6 +95,22 @@ describe("PhoneTabBar", () => {
 			session("b", "error"),
 			session("c", "running"),
 			session("d", "done"),
+		]);
+		expect(screen.getByTestId("phone-tab-badge").textContent).toBe("2");
+	});
+
+	it("counts question sessions in the same badge", () => {
+		renderAt("/backlog", [
+			session("a", "waiting"),
+			session("q", "running", {
+				pendingPrPreview: {
+					requestId: "r",
+					title: "Question",
+					body: "",
+					prNumber: null,
+					kind: "question",
+				},
+			}),
 		]);
 		expect(screen.getByTestId("phone-tab-badge").textContent).toBe("2");
 	});

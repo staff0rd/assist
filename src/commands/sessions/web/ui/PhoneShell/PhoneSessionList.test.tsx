@@ -57,6 +57,32 @@ describe("PhoneSessionList", () => {
 		expect(screen.getByText(/Needs you/)).toBeTruthy();
 	});
 
+	it("lists question sessions under Answer here above Needs you", () => {
+		renderList([
+			session("ask", "waiting"),
+			session("q", "running", {
+				pendingPrPreview: {
+					requestId: "r",
+					title: "Question",
+					body: "",
+					prNumber: null,
+					kind: "question",
+				},
+			}),
+		]);
+
+		const rows = rowTitles();
+		expect(rows[0]).toContain("Session q");
+		expect(rows[1]).toContain("Session ask");
+		expect(screen.getByText(/Answer here/)).toBeTruthy();
+	});
+
+	it("hides Answer here when no session has a question", () => {
+		renderList([session("ask", "waiting")]);
+
+		expect(screen.queryByText(/Answer here/)).toBeNull();
+	});
+
 	it("badges only sessions from linked nodes", () => {
 		renderList([
 			session("home", "running", { node: "mac" }),

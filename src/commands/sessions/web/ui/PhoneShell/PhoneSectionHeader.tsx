@@ -13,20 +13,27 @@ const headerSx = {
 	textTransform: "uppercase",
 } as const;
 
+export type PhoneSectionTone = "warning" | "accent";
+
+const toneColor: Record<PhoneSectionTone, string> = {
+	warning: "warning.main",
+	accent: "primary.main",
+};
+
 export function PhoneSectionHeader({
 	label,
 	count,
-	attention,
+	tone,
 }: {
 	label: string;
 	count: number;
-	attention?: boolean;
+	tone?: PhoneSectionTone;
 }) {
 	return (
 		<Box
 			sx={{
 				...headerSx,
-				color: attention ? "warning.main" : "text.secondary",
+				color: tone ? toneColor[tone] : "text.secondary",
 			}}
 		>
 			<span>{label}</span>
