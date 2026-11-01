@@ -4,7 +4,6 @@ import { loadDevWeeks } from "./loadDevWeeks";
 import { displayNextEntry, logNoCommits } from "./next/displayNextEntry";
 import { fetchCommitsAfter } from "./next/fetchCommitsAfter";
 import { findTargetWeek, groupCommitsByWeek } from "./next/findTargetWeek";
-import { loadLastDailyDevlogDate } from "./next/loadLastDailyDevlogDate";
 import { getRepoName, loadConfig } from "./shared";
 import { localToday } from "./localToday";
 
@@ -13,20 +12,12 @@ type NextOptions = {
 	verbose?: boolean;
 };
 
-function resolveAfterDate(
-	repoName: string,
-	lastWeek: string | null,
-): string | null {
-	if (lastWeek) return isoWeekRange(lastWeek).end;
-	return loadLastDailyDevlogDate(repoName);
-}
-
 export function next(options: NextOptions): void {
 	const config = loadConfig();
 	const repoName = getRepoName();
 	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
 	const lastWeek = loadDevWeeks(repoName).at(-1) ?? null;
-	const afterDate = resolveAfterDate(repoName, lastWeek);
+	const afterDate = lastWeek ? isoWeekRange(lastWeek).end : null;
 	const byWeek = groupCommitsByWeek(fetchCommitsAfter(ignore, afterDate));
 	const week = findTargetWeek(byWeek.keys(), {
 		lastWeek,

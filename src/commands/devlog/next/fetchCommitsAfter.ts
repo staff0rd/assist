@@ -40,7 +40,7 @@ export function fetchCommitsAfter(
 	ignore: string[],
 	afterDate: string | null,
 ): Map<string, Commit[]> {
-	const range = afterDate ? [`--since=${afterDate}T00:00:00`] : ["-n", "500"];
+	const range = afterDate ? [`--since=${afterDate}T00:00:00`] : [];
 	const output = execFileSync(
 		"git",
 		[
