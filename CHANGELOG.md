@@ -1,3 +1,10 @@
+# [0.1028.0](https://github.com/staff0rd/assist/compare/v0.1027.0...v0.1028.0) (2026-11-01)
+
+
+### Features
+
+* close and auto-dismiss end server runs ([e8a953a](https://github.com/staff0rd/assist/commit/e8a953a6e2050a6f688e0fce7feb6f3f5cac3239))
+
 # [0.1027.0](https://github.com/staff0rd/assist/compare/v0.1026.2...v0.1027.0) (2026-11-01)
 
 
