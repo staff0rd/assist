@@ -99,11 +99,32 @@ assist backlog comment <id> "Comment text"
 
 After applying changes, show the updated item with `assist backlog view <id> 2>&1` so the user can verify.
 
-## Step 4: Iterate
+## Step 4: Design the UI change
 
-Ask if there is anything else to refine. Continue the conversation until the user is satisfied.
+Check the item's Activity section (from `assist backlog view <id>`) for an existing `design` row, then decide whether a design is needed. A **substantial UI change** is a new screen, panel, view or component, or a reworked layout or interaction flow; a trivial UI change (a label, a button, a tweak to an existing control) or no UI change at all is not.
 
-## Step 5: Signal completion
+- **No `design` activity** and the item, as refined, involves a substantial UI change — produce a new design.
+- **An existing `design` activity** and this refinement changes the UI substantially — update that design, republishing to its existing artifact URL rather than creating a new one.
+- Otherwise — skip this step entirely and do not mention it.
+
+When a design is needed, do not ask whether to design it — follow `/design` (`~/.claude/commands/design.md`) for the item's UI, applying it to the item as refined. To update an existing design, read the artifact at its URL first and build on it, publishing back to the same URL. Give the user the artifact's URL and iterate on it with them — editing the same file and republishing to the same URL — until they say they are happy with it.
+
+Then keep the item in sync with the design:
+
+- **Description** — make sure it links to the design (e.g. a `## Design` section with the artifact URL) so the implementer builds against it. Add the link if it is missing or points elsewhere, using `update-field --desc` with the full description.
+- **Activity** — if the design is new, attach it so it renders as a linked design row in the Activity section:
+
+  ```
+  assist backlog add-activity <id> design "<artifact-url>" --url "<artifact-url>" --title "<artifact name>" 2>&1
+  ```
+
+  Use the artifact URL verbatim for both the ref and `--url`, and the artifact's name for `--title`. A republished design keeps its URL, so its existing activity needs no change.
+
+## Step 5: Iterate
+
+Ask if there is anything else to refine. Continue the conversation until the user is satisfied, revisiting Step 4 whenever a further refinement changes the UI substantially.
+
+## Step 6: Signal completion
 
 Once the user confirms they are done refining — and any new items the conversation called for (e.g. a split-out follow-up) have been created — signal that the task is complete, passing the ids of any items created in this session:
 
