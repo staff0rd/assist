@@ -1,3 +1,10 @@
+## [0.1024.1](https://github.com/staff0rd/assist/compare/v0.1024.0...v0.1024.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* reject item versions w/o versions ([fed552c](https://github.com/staff0rd/assist/commit/fed552c37ece26aa4b26bea856362666d97fc86f))
+
 # [0.1024.0](https://github.com/staff0rd/assist/compare/v0.1023.0...v0.1024.0) (2026-11-01)
 
 
