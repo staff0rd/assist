@@ -1,3 +1,15 @@
+# [0.1014.0](https://github.com/staff0rd/assist/compare/v0.1013.0...v0.1014.0) (2026-11-01)
+
+
+### Bug Fixes
+
+* design skill path in draft/refine ([faee605](https://github.com/staff0rd/assist/commit/faee60525a7c3092050c2bf59cde790120e2c313))
+
+
+### Features
+
+* revert uncommitted in All/Branch ([701eb7b](https://github.com/staff0rd/assist/commit/701eb7b26f789cb5a919a59e5e3c83e17c83ae60))
+
 # [0.1013.0](https://github.com/staff0rd/assist/compare/v0.1012.0...v0.1013.0) (2026-11-01)
 
 
