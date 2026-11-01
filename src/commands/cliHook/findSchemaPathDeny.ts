@@ -5,6 +5,7 @@ import {
 	isSchemaRelativePath,
 	SCHEMA_LOCK_REASON,
 } from "../schema/isSchemaPath";
+import { isSedPrint } from "./isSedPrint";
 import type { HookDecision } from "./resolvePermission";
 
 const DB_PATH =
@@ -19,20 +20,31 @@ function mentionedDbPaths(command: string, root: string): string[] {
 	return [...relativized.matchAll(DB_PATH)].map((match) => match[1]);
 }
 
+function writesSchema(
+	toolName: string,
+	rawCommand: string,
+	root: string,
+): boolean {
+	const touchesSchema = (part: string) =>
+		mentionedDbPaths(part, root).some((rel) =>
+			isSchemaRelativePath(rel, root, [rawCommand]),
+		);
+	const result = splitCompound(rawCommand);
+	if (!result.ok) return touchesSchema(rawCommand);
+	return result.parts.some(
+		(part) =>
+			touchesSchema(part) &&
+			!isApprovedRead(part, toolName) &&
+			!isSedPrint(part),
+	);
+}
+
 export function findSchemaPathDeny(
 	toolName: string,
 	rawCommand: string,
 	root: string = getProjectRoot(),
 ): HookDecision | undefined {
-	const result = splitCompound(rawCommand);
-	const parts = result.ok ? result.parts : [rawCommand];
-	const writes = parts.some(
-		(part) =>
-			mentionedDbPaths(part, root).some((rel) =>
-				isSchemaRelativePath(rel, root, [rawCommand]),
-			) && !isApprovedRead(part, toolName),
-	);
-	if (!writes) return undefined;
+	if (!writesSchema(toolName, rawCommand, root)) return undefined;
 	return {
 		permissionDecision: "deny",
 		permissionDecisionReason: SCHEMA_LOCK_REASON,

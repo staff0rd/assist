@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 vi.mock("../../shared/isApprovedRead", () => ({
 	isApprovedRead: (cmd: string) =>
-		/^(cat|grep|sed -n) [^>]*$/.test(cmd) ? "Read-only CLI command" : undefined,
+		/^(cat|grep|echo)(\s|$)/.test(cmd) ? "Read-only CLI command" : undefined,
 }));
 
 import { findSchemaPathDeny } from "./findSchemaPathDeny";
@@ -68,6 +68,9 @@ describe("findSchemaPathDeny", () => {
 		"sed -i 's/a/b/' src/shared/db/items.ts",
 		"rm ./src/shared/db/schema.ts",
 		"git checkout -- src/shared/db/schema.ts",
+		"cat > src/shared/db/schema.ts <<'EOF'\nexport {};\nEOF",
+		"sed -ni 's/a/b/' src/shared/db/schema.ts",
+		"sed -n 's/a/b/w src/shared/db/schema.ts' src/shared/db/items.ts",
 	])("denies the write %s", (command) => {
 		expect(deny(command)?.permissionDecision).toBe("deny");
 	});
@@ -83,6 +86,7 @@ describe("findSchemaPathDeny", () => {
 		"cat src/shared/db/schema.ts",
 		"grep -n pgTable src/shared/db/items.ts",
 		"sed -n '1,20p' src/shared/db/migrations.ts",
+		"sed --quiet -e '/pgTable/p' src/shared/db/schema.ts",
 		"cat src/shared/db/migrations/migration0011JobRuns.ts",
 	])("allows the read-only %s", (command) => {
 		expect(deny(command)).toBeUndefined();
