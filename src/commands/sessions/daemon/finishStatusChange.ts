@@ -9,7 +9,7 @@ import { shouldAutoDismiss } from "./shouldAutoDismiss";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
 
 export type StatusChangeDeps = {
-	dismiss: (id: string) => void;
+	dismiss: (id: string, closeServerRuns?: boolean) => void;
 	notify: () => void;
 	idle?: (session: Session) => void;
 };
@@ -39,7 +39,7 @@ export function finishStatusChange(
 		daemonLog(
 			`session ${session.id} auto-dismissed: ${autoDismissReason(session)}`,
 		);
-		deps.dismiss(session.id);
+		deps.dismiss(session.id, true);
 	} else deps.notify();
 	if (status !== "running") deps.idle?.(session);
 }

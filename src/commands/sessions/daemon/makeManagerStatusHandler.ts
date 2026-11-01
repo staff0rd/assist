@@ -10,7 +10,7 @@ export function makeManagerStatusHandler(
 	host: TriggerHost,
 ) {
 	return makeStatusChangeHandler(sessions, {
-		dismiss: (id) => host.dismissSession(id),
+		dismiss: (id, closeServerRuns) => host.dismissSession(id, closeServerRuns),
 		notify: () => host.update(() => true),
 		idle: queuedTransferTrigger(host),
 	});

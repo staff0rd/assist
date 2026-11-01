@@ -425,6 +425,37 @@ describe("SessionManager", () => {
 			expect(daemonLogMock).toHaveBeenCalledWith("closing server run 4 with 3");
 		});
 
+		it("closes child server runs when a session auto-dismisses on a clean exit", () => {
+			const parent = makeSession({
+				id: "1",
+				status: "running",
+				commandType: "assist",
+				assistArgs: ["backlog", "run", "5", "--once"],
+			});
+			createSessionMock
+				.mockReturnValueOnce(parent)
+				.mockReturnValueOnce(
+					makeSession({ id: "2", server: true, launchedFrom: "1" }),
+				)
+				.mockReturnValueOnce(makeSession({ id: "3", launchedFrom: "1" }));
+			const manager = new SessionManager();
+			manager.spawn();
+			const [, , onStatusChange] = (
+				wirePtyEvents as unknown as ReturnType<typeof vi.fn>
+			).mock.lastCall as [
+				Session,
+				unknown,
+				(s: Session, status: Session["status"], exitCode?: number) => void,
+			];
+			manager.spawn();
+			manager.spawn();
+
+			onStatusChange(parent, "done", 0);
+
+			expect(manager.listSessions().map((s) => s.id)).toEqual(["3"]);
+			expect(daemonLogMock).toHaveBeenCalledWith("closing server run 2 with 1");
+		});
+
 		it("does not release a lock for a session without a backlog item", () => {
 			createSessionMock.mockReturnValue(makeSession({ id: "1" }));
 			const manager = new SessionManager();

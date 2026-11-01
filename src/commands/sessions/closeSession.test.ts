@@ -25,7 +25,7 @@ describe("closeSession", () => {
 		delete process.env.ASSIST_SESSION_ID;
 	});
 
-	it("dismisses the current session with the daemon", async () => {
+	it("dismisses the current session and its child server runs with the daemon", async () => {
 		process.env.ASSIST_SESSION = "1";
 		process.env.ASSIST_SESSION_ID = "s1";
 
@@ -35,6 +35,7 @@ describe("closeSession", () => {
 		expect(sendMock).toHaveBeenCalledWith({
 			type: "dismiss",
 			sessionId: "s1",
+			closeServerRuns: true,
 		});
 	});
 

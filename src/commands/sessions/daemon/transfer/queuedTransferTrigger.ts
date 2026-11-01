@@ -5,7 +5,7 @@ import { type TransferHost, transferDepsFor } from "./transferDepsFor";
 
 export type TriggerHost = TransferHost & {
 	clients: { viewers: () => Set<SessionClient> };
-	dismissSession: (id: string) => void;
+	dismissSession: (id: string, closeServerRuns?: boolean) => void;
 };
 
 export function queuedTransferTrigger(host: TriggerHost): (s: Session) => void {
