@@ -1,3 +1,10 @@
+## [0.1026.1](https://github.com/staff0rd/assist/compare/v0.1026.0...v0.1026.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* render markdown in check steps ([b16ee58](https://github.com/staff0rd/assist/commit/b16ee5844f8615bfd35f388674057a6d23e31083))
+
 # [0.1026.0](https://github.com/staff0rd/assist/compare/v0.1025.1...v0.1026.0) (2026-11-01)
 
 
