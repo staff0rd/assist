@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { reconcileActivity } from "../../../shared/emitActivity";
+import { writeActivityIfAbsent } from "../../../shared/emitActivity";
 import type { Session } from "./createSession";
 import { createAssistSession } from "./createAssistSession";
+import { daemonLog } from "./daemonLog";
 import { loadProvisionalRunActivity } from "./loadProvisionalRunActivity";
 import { seedBacklogRunActivity } from "./seedBacklogRunActivity";
 
 vi.mock("../../../shared/emitActivity", () => ({
-	activityPath: (id: string) => `/nonexistent/activity-${id}.json`,
-	reconcileActivity: vi.fn(),
+	writeActivityIfAbsent: vi.fn(),
 }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./spawnPty", () => ({ spawnPty: vi.fn() }));
@@ -43,6 +43,7 @@ describe("seedBacklogRunActivity", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.mocked(loadProvisionalRunActivity).mockResolvedValue(provisional);
+		vi.mocked(writeActivityIfAbsent).mockReturnValue(true);
 	});
 
 	it("gives a held backlog run its activity before its pty starts", async () => {
@@ -55,7 +56,7 @@ describe("seedBacklogRunActivity", () => {
 		expect(session.pendingStart).toBeDefined();
 		expect(loadProvisionalRunActivity).toHaveBeenCalledWith(825);
 		expect(session.activity).toMatchObject(provisional);
-		expect(reconcileActivity).toHaveBeenCalledWith(
+		expect(writeActivityIfAbsent).toHaveBeenCalledWith(
 			session.id,
 			session.activity,
 		);
@@ -98,5 +99,59 @@ describe("seedBacklogRunActivity", () => {
 		await seedBacklogRunActivity(new Map(), session, vi.fn());
 
 		expect(session.activity).toBeUndefined();
+	});
+
+	it("lets the child's activity file win when it lands during the lookup", async () => {
+		vi.mocked(writeActivityIfAbsent).mockReturnValue(false);
+		const { sessions, session } = held(["backlog", "run", "a825"]);
+		const notify = vi.fn();
+
+		await seedBacklogRunActivity(sessions, session, notify);
+
+		expect(session.activity).toBeUndefined();
+		expect(notify).not.toHaveBeenCalled();
+		expect(daemonLog).toHaveBeenCalledWith(
+			`session ${session.id} provisional activity skipped: child already reported`,
+		);
+	});
+
+	it("keeps the child's activity applied while the lookup was pending", async () => {
+		let resolve!: (value: typeof provisional) => void;
+		vi.mocked(loadProvisionalRunActivity).mockReturnValue(
+			new Promise((r) => {
+				resolve = r;
+			}),
+		);
+		const { sessions, session } = held(["backlog", "run", "a825"]);
+		const pending = seedBacklogRunActivity(sessions, session, vi.fn());
+		const reported = {
+			...provisional,
+			claudeSessionId: "child",
+			startedAt: Date.now(),
+		};
+		session.activity = reported;
+
+		resolve(provisional);
+		await pending;
+
+		expect(session.activity).toBe(reported);
+		expect(writeActivityIfAbsent).not.toHaveBeenCalled();
+	});
+
+	it("logs instead of throwing when writing the activity fails", async () => {
+		vi.mocked(writeActivityIfAbsent).mockImplementation(() => {
+			throw new Error("EACCES");
+		});
+		const { sessions, session } = held(["backlog", "run", "a825"]);
+
+		await expect(
+			seedBacklogRunActivity(sessions, session, vi.fn()),
+		).resolves.toBeUndefined();
+
+		expect(session.activity).toBeUndefined();
+		expect(session.pendingStart).toBeDefined();
+		expect(daemonLog).toHaveBeenCalledWith(
+			`session ${session.id} provisional activity failed: Error: EACCES`,
+		);
 	});
 });

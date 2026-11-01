@@ -1,5 +1,4 @@
-import { existsSync } from "node:fs";
-import { activityPath, reconcileActivity } from "../../../shared/emitActivity";
+import { writeActivityIfAbsent } from "../../../shared/emitActivity";
 import { backlogRunItemId } from "../../backlog/backlogRunItemId";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
@@ -12,13 +11,25 @@ export async function seedBacklogRunActivity(
 ): Promise<void> {
 	const itemId = backlogRunItemId(session?.assistArgs);
 	if (!session || itemId === undefined) return;
-	const activity = await loadProvisionalRunActivity(itemId);
-	if (!activity || sessions.get(session.id) !== session) return;
-	if (session.activity || existsSync(activityPath(session.id))) return;
-	session.activity = { ...activity, startedAt: Date.now() };
-	reconcileActivity(session.id, session.activity);
-	daemonLog(
-		`session ${session.id} seeded provisional activity for item ${itemId} phase ${activity.phase}/${activity.totalPhases}`,
-	);
-	notify();
+	try {
+		const activity = await loadProvisionalRunActivity(itemId);
+		if (!activity || sessions.get(session.id) !== session) return;
+		if (session.activity) return;
+		const provisional = { ...activity, startedAt: Date.now() };
+		if (!writeActivityIfAbsent(session.id, provisional)) {
+			daemonLog(
+				`session ${session.id} provisional activity skipped: child already reported`,
+			);
+			return;
+		}
+		session.activity = provisional;
+		daemonLog(
+			`session ${session.id} seeded provisional activity for item ${itemId} phase ${activity.phase}/${activity.totalPhases}`,
+		);
+		notify();
+	} catch (error) {
+		daemonLog(
+			`session ${session.id} provisional activity failed: ${String(error)}`,
+		);
+	}
 }

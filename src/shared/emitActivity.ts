@@ -60,6 +60,21 @@ export function reconcileActivity(
 	writeFileSync(path, JSON.stringify(activity));
 }
 
+export function writeActivityIfAbsent(
+	sessionId: string,
+	activity: Activity,
+): boolean {
+	const path = activityPath(sessionId);
+	mkdirSync(dirname(path), { recursive: true });
+	try {
+		writeFileSync(path, JSON.stringify(activity), { flag: "wx" });
+		return true;
+	} catch (error) {
+		if ((error as NodeJS.ErrnoException).code === "EEXIST") return false;
+		throw error;
+	}
+}
+
 export function removeActivity(sessionId: string): void {
 	try {
 		rmSync(activityPath(sessionId));

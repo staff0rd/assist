@@ -13,6 +13,7 @@ import {
 	emitActivity,
 	reconcileActivity,
 	removeActivity,
+	writeActivityIfAbsent,
 } from "./emitActivity";
 
 const mockMkdirSync = vi.mocked(mkdirSync);
@@ -109,6 +110,36 @@ describe("emitActivity", () => {
 			});
 
 			expect(() => removeActivity("abc123")).not.toThrow();
+		});
+	});
+
+	describe("writeActivityIfAbsent", () => {
+		const activity = { kind: "backlog" as const, itemId: 7, startedAt: 1 };
+
+		it("creates the file exclusively", () => {
+			expect(writeActivityIfAbsent("abc123", activity)).toBe(true);
+
+			expect(mockWriteFileSync).toHaveBeenCalledWith(
+				expectedPath,
+				JSON.stringify(activity),
+				{ flag: "wx" },
+			);
+		});
+
+		it("leaves an existing file alone", () => {
+			mockWriteFileSync.mockImplementationOnce(() => {
+				throw Object.assign(new Error("exists"), { code: "EEXIST" });
+			});
+
+			expect(writeActivityIfAbsent("abc123", activity)).toBe(false);
+		});
+
+		it("rethrows other write errors", () => {
+			mockWriteFileSync.mockImplementationOnce(() => {
+				throw Object.assign(new Error("denied"), { code: "EACCES" });
+			});
+
+			expect(() => writeActivityIfAbsent("abc123", activity)).toThrow("denied");
 		});
 	});
 });
