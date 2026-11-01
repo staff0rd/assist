@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { readBodyArgument } from "./prs/readBodyArgument";
 import { sendShowPreview } from "./sessions/shared/sendShowPreview";
+import { refuseSessionFiles } from "./show/refuseSessionFiles";
 
 export async function show(options: {
 	title?: string;
@@ -11,6 +12,7 @@ export async function show(options: {
 		console.error("Error: --body is empty; there is nothing to show.");
 		process.exit(1);
 	}
+	refuseSessionFiles(body);
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId) {
 		console.log(body);
