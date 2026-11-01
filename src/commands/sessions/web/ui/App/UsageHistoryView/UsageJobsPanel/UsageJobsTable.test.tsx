@@ -58,6 +58,28 @@ describe("UsageJobsTable", () => {
 		expect(screen.getByText("Finished")).toBeTruthy();
 	});
 
+	it("renders a review row's PR, repo and reviewer with no cost", () => {
+		render(
+			<UsageJobsTable
+				rows={[
+					{
+						...finished,
+						kind: "review",
+						trigger: "manual",
+						costUsd: null,
+						detail: null,
+						repo: "assist",
+						prNumber: 412,
+						reviewer: "codex",
+					},
+				]}
+			/>,
+		);
+		expect(screen.getByText("PR review")).toBeTruthy();
+		expect(screen.getByText("#412 · assist · codex")).toBeTruthy();
+		expect(screen.getByText("—")).toBeTruthy();
+	});
+
 	it("shows dashes for a running scan's missing figures", () => {
 		render(<UsageJobsTable rows={[running]} />);
 		expect(screen.getByText("Manual")).toBeTruthy();

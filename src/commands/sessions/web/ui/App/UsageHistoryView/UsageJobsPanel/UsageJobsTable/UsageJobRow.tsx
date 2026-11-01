@@ -6,6 +6,7 @@ import { formatRelativeTime } from "../../../../formatRelativeTime";
 import type { UsageJobRow as UsageJobRowData } from "../../fetchUsageJobs";
 import { UsageJobNoteCell } from "./UsageJobRow/UsageJobNoteCell";
 import { UsageJobOutcomeCell } from "./UsageJobRow/UsageJobOutcomeCell";
+import { usageJobDetail } from "./UsageJobRow/usageJobDetail";
 
 const numericSx = {
 	whiteSpace: "nowrap",
@@ -25,7 +26,7 @@ export function UsageJobRow({ row }: { row: UsageJobRowData }) {
 		<TableRow hover>
 			<UsageJobNoteCell
 				value={jobLabels[row.kind] ?? row.kind}
-				note={row.detail}
+				note={usageJobDetail(row)}
 			/>
 			<TableCell sx={{ color: "text.secondary" }}>
 				{capitalise(row.trigger)}

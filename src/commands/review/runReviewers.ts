@@ -8,6 +8,7 @@ import type { ReviewerResult } from "./runStreamingChild";
 type ReviewersOutcome = {
 	results: [ReviewerResult, ReviewerResult];
 	anyFresh: boolean;
+	fresh: ReviewerResult[];
 };
 
 type ReviewersOptions = {
@@ -43,5 +44,8 @@ export async function runReviewers(
 	const results = await Promise.all([claudePromise, codexPromise]);
 	const anyFresh =
 		options.cachedClaude === null || options.codexPlan.kind !== "cached";
-	return { results, anyFresh };
+	const fresh = results.filter((_, i) =>
+		i === 0 ? options.cachedClaude === null : options.codexPlan.kind === "run",
+	);
+	return { results, anyFresh, fresh };
 }

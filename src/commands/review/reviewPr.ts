@@ -1,3 +1,4 @@
+import { basename } from "node:path";
 import { writeJobSummary } from "./ci/writeJobSummary";
 import { exitFailedCiReview } from "./exitFailedCiReview";
 import type { ReviewPrOptions } from "./ReviewPrOptions";
@@ -18,6 +19,9 @@ export async function reviewPr(
 		verbose: options.verbose ?? false,
 		models: options.ci?.models,
 		strict: options.ci !== undefined,
+		job: options.ci
+			? undefined
+			: { repo: basename(repoRoot), prNumber: context.prNumber },
 	});
 	const synthesisOk = outcome.ok;
 	if (!synthesisOk && options.ci)

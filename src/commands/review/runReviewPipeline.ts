@@ -3,6 +3,7 @@ import { cachedReviewerResult } from "./cachedReviewerResult";
 import { MultiSpinner, type SpinnerHandle } from "./MultiSpinner";
 import { planCodexReviewer } from "./planCodexReviewer";
 import type { ReviewerModels } from "./ReviewerModels";
+import type { ReviewJobTarget } from "./recordReviewerRuns";
 import {
 	type AndSynthesiseOutcome,
 	runAndSynthesise,
@@ -14,6 +15,7 @@ type PipelineOptions = {
 	verbose: boolean;
 	models?: ReviewerModels;
 	strict?: boolean;
+	job?: ReviewJobTarget;
 };
 
 type PipelineUi = {
@@ -55,6 +57,7 @@ export async function runReviewPipeline(
 			multi: ui.multi,
 			models: options.models ?? {},
 			strict: options.strict ?? false,
+			job: options.job,
 		});
 		finishUi(ui, outcome.ok);
 		reportFailures(outcome.failures, ui.multi !== undefined);

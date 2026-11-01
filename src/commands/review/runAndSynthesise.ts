@@ -3,6 +3,7 @@ import type { ReviewPaths } from "./buildReviewPaths";
 import type { MultiSpinner } from "./MultiSpinner";
 import type { CodexPlan } from "./planCodexReviewer";
 import type { ReviewerModels } from "./ReviewerModels";
+import { type ReviewJobTarget, recordReviewerRuns } from "./recordReviewerRuns";
 import { runReviewers } from "./runReviewers";
 import type { ReviewerResult } from "./runStreamingChild";
 import { synthesiseAfterReviewers } from "./synthesiseAfterReviewers";
@@ -15,6 +16,7 @@ type Args = {
 	multi: MultiSpinner | undefined;
 	models: ReviewerModels;
 	strict: boolean;
+	job?: ReviewJobTarget;
 };
 
 export type AndSynthesiseOutcome = {
@@ -31,7 +33,8 @@ export async function runAndSynthesise(
 	args: Args,
 ): Promise<AndSynthesiseOutcome> {
 	const { paths, multi } = args;
-	const { results, anyFresh } = await runReviewers(
+	const startedAt = new Date();
+	const { results, anyFresh, fresh } = await runReviewers(
 		paths.reviewDir,
 		paths.claudePath,
 		paths.codexPath,
@@ -43,6 +46,7 @@ export async function runAndSynthesise(
 			models: args.models,
 		},
 	);
+	if (args.job) await recordReviewerRuns(fresh, args.job, startedAt);
 	const failures = failed(results);
 	const reason = skipReason(results, failures, args.strict);
 	if (reason) {

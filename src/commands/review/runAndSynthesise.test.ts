@@ -36,6 +36,7 @@ describe("runAndSynthesise", () => {
 		vi.mocked(runReviewers).mockResolvedValue({
 			results: [result("claude", 0), result("codex", 1)],
 			anyFresh: true,
+			fresh: [],
 		});
 		vi.mocked(synthesise).mockResolvedValue(result("synthesis", 0));
 		vi.spyOn(console, "error").mockImplementation(() => {});
