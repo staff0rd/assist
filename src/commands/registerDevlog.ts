@@ -32,13 +32,15 @@ export function registerDevlog(program: Command): void {
 
 	devlogCommand
 		.command("next")
-		.description("Show commits for the day after the last versioned entry")
+		.description(
+			"Show commits for the next completed ISO week after the last dev entry",
+		)
 		.option("-v, --verbose", "Show file names for each commit")
 		.action(devlogNext);
 
 	devlogCommand
-		.command("skip <date>")
-		.description("Add a date (YYYY-MM-DD) to the skip list")
+		.command("skip <week>")
+		.description("Add an ISO week (YYYY-Www) to the skip list")
 		.action(devlogSkip);
 
 	devlogCommand

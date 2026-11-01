@@ -1,102 +1,77 @@
-import { execFileSync } from "node:child_process";
 import chalk from "chalk";
-import { bumpVersion } from "../getLastVersionInfo";
-import { loadBlogSkipDays } from "../loadBlogSkipDays";
-import { parseGitLogCommits, printCommitsWithFiles } from "../shared";
+import { getVersionAtCommit, stripToMinor } from "../getLastVersionInfo";
+import { isoWeekRange } from "../isoWeek";
 import type { Commit } from "../types";
-import { displayVersion } from "./displayNextEntry/displayVersion";
 
-function computeVersions(lastInfo: { version: string } | null) {
-	if (!lastInfo) return { patch: null, minor: null };
-	return {
-		patch: bumpVersion(lastInfo.version, "patch"),
-		minor: bumpVersion(lastInfo.version, "minor"),
-	};
+type VersionedCommit = Commit & { version: string | null };
+
+function withVersions(commits: Commit[]): VersionedCommit[] {
+	return commits.map((commit) => {
+		const version = getVersionAtCommit(commit.hash);
+		return { ...commit, version: version ? stripToMinor(version) : null };
+	});
 }
 
-export function findTargetDate(
-	commitsByDate: Map<string, unknown>,
-	skipDays: Set<string>,
-): string | undefined {
-	return Array.from(commitsByDate.keys())
-		.filter((d) => !skipDays.has(d))
-		.sort()[0];
+function versionRange(commits: VersionedCommit[]): string | null {
+	const versions = commits
+		.map((c) => c.version)
+		.filter((v): v is string => v !== null);
+	if (versions.length === 0) return null;
+	const first = versions[0];
+	const last = versions[versions.length - 1];
+	return first === last ? first : `${first} – ${last}`;
 }
 
-export function fetchCommitsByDate(ignore: string[], lastDate: string | null) {
-	const output = execFileSync(
-		"git",
-		["log", "--pretty=format:%ad|%h|%s", "--date=short", "-n", "500"],
-		{ encoding: "utf8" },
-	);
-	return parseGitLogCommits(output, ignore, lastDate);
+function printField(label: string, value: string): void {
+	console.log(`${chalk.bold(`${label}:`)} ${value}`);
 }
 
-function printVersionInfo(
-	config: { commit?: { conventional?: boolean } },
-	lastInfo: { version: string } | null,
-	firstHash: string | undefined,
+function printCommits(
+	commits: VersionedCommit[],
+	ignore: string[],
+	verbose: boolean,
 ): void {
-	const versions = computeVersions(lastInfo);
-	displayVersion(
-		!!config.commit?.conventional,
-		firstHash,
-		versions.patch,
-		versions.minor,
-	);
-}
-
-export function resolveIgnoreList(
-	options: { ignore?: string[] },
-	config: { devlog?: { ignore?: string[] } },
-): string[] {
-	return options.ignore ?? config.devlog?.ignore ?? [];
-}
-
-export function resolveSkipDays(repoName: string): Set<string> {
-	return loadBlogSkipDays(repoName);
-}
-
-export function getLastDate(lastInfo: { date?: string } | null): string | null {
-	return lastInfo?.date ?? null;
-}
-
-export function getCommitsForDate(
-	commitsByDate: Map<string, Commit[]>,
-	date: string,
-): Commit[] {
-	return commitsByDate.get(date) ?? [];
-}
-
-function noCommitsMessage(hasLastInfo: boolean): string {
-	return hasLastInfo
-		? "No commits after last versioned entry"
-		: "No commits found";
-}
-
-function logName(repoName: string): void {
-	console.log(`${chalk.bold("name:")} ${repoName}`);
+	for (const commit of commits) {
+		const version = commit.version ? ` ${chalk.cyan(commit.version)}` : "";
+		console.log(
+			`  ${chalk.dim(commit.date)} ${chalk.yellow(commit.hash)}${version} ${commit.message}`,
+		);
+		if (!verbose) continue;
+		for (const file of commit.files) {
+			if (!ignore.some((p) => file.startsWith(p))) {
+				console.log(`    ${chalk.dim(file)}`);
+			}
+		}
+	}
 }
 
 type DisplayContext = {
 	repoName: string;
-	config: { commit?: { conventional?: boolean } };
-	lastInfo: { version: string } | null;
 	ignore: string[];
 	verbose: boolean;
 };
 
 export function displayNextEntry(
 	ctx: DisplayContext,
-	targetDate: string,
+	week: string,
 	commits: Commit[],
 ): void {
-	logName(ctx.repoName);
-	printVersionInfo(ctx.config, ctx.lastInfo, commits[0]?.hash);
-	console.log(chalk.bold.blue(targetDate));
-	printCommitsWithFiles(commits, ctx.ignore, ctx.verbose);
+	const versioned = withVersions(commits);
+	const { start, end } = isoWeekRange(week);
+	printField("name", ctx.repoName);
+	printField("week", chalk.bold.blue(week));
+	printField("range", `${start} – ${end}`);
+	const versions = versionRange(versioned);
+	if (versions) printField("versions", versions);
+	printCommits(versioned, ctx.ignore, ctx.verbose);
 }
 
-export function logNoCommits(lastInfo: unknown): void {
-	console.log(chalk.dim(noCommitsMessage(!!lastInfo)));
+export function logNoCommits(lastWeek: string | null): void {
+	console.log(
+		chalk.dim(
+			lastWeek
+				? `No completed weeks with commits after ${lastWeek}`
+				: "No completed weeks with commits found",
+		),
+	);
 }

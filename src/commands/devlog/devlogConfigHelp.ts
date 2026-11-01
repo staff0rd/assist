@@ -13,7 +13,7 @@ export const devlogConfigHelp: ConfigHelpEntry[] = [
 	},
 	{
 		key: "devlog.skip",
-		setter: "assist devlog skip 2026-07-10",
-		note: "dates (per repo) omitted from devlog output",
+		setter: "assist devlog skip 2026-W33",
+		note: "ISO weeks (per repo) omitted from devlog output",
 	},
 ];

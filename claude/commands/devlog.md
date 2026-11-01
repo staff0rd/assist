@@ -1,79 +1,66 @@
 ---
-description: Generate devlog entry for the next unversioned day
+description: Generate the weekly dev entry for the next unwritten ISO week
 allowed_args: "[--all]"
 ---
 
-Parse `$ARGUMENTS`: if `--all` is present, enable **catch-up mode** (described below). Otherwise, process a single day as normal.
+Parse `$ARGUMENTS`: if `--all` is present, enable **catch-up mode** (described below). Otherwise, process a single week.
 
-## Single-day mode (default)
+## Single-week mode (default)
 
-Run `assist devlog next` to get the next unversioned day's commits and version options.
+Run `assist devlog next`. It prints the project `name`, the ISO `week` (e.g. `2026-W33`), its Monday–Sunday `range`, the `versions` range, and every commit in the week oldest first, each tagged with the version from `package.json` at that commit (no version is shown when the repo has none). It only ever offers completed weeks; if it reports nothing to write, stop.
 
-Analyze the commits for that day to determine the appropriate action:
+Decide whether the week is worth an entry:
 
-1. **Trivial changes** (typos, formatting, config tweaks, dependency updates): Run `assist devlog skip YYYY-MM-DD` and stop. Check the diff before skipping to ensure no meaningful changes were made.
+- **Trivial week** (only typos, formatting, config tweaks, dependency updates, release commits): check the diffs to confirm nothing meaningful changed, then run `assist devlog skip <week>` (e.g. `assist devlog skip 2026-W33`) and stop.
+- Otherwise write the entry below.
 
-2. **Bug fixes** (fixing broken behavior, error handling, corrections): Use the **patch** version.
+## Entry file
 
-3. **New features** (new functionality, enhancements, new commands): Use the **minor** version.
-
-If creating a devlog entry:
-
-1. Write a summary in first-person perspective describing the changes
-2. Create a file in `~/git/blog/src/content/devlog/` with the format `YYYY-MM-DD-slug.md`
-
-The slug should be a short kebab-case description of the main theme of the day's work.
-
-Each devlog file should follow this format:
+Write `~/git/blog/src/content/dev/<name>/<yyyy>-w<NN>.md`, where `<name>` is the `name` from `assist devlog next` and the filename is the week id lowercased (`2026-W33` → `2026-w33.md`). Create the `<name>` directory if needed.
 
 ```markdown
 ---
-title: <short descriptive title>
-date: YYYY-MM-DD
-version: <selected version>
-tags: [<name from the next command output>, <additional-tag>, ...]
-ai-generated: <model name, e.g., "claude-opus-4-5">
+project: <name>
+week: <week id, e.g. 2026-W33>
+title: <one-line headline of the week's main themes>
+versions:
+  first: <earliest version in the week>
+  last: <latest version in the week>
+ai-generated: <model name, e.g. claude-opus-5>
+added:
+  - text: <one line describing something new>
+    version: <version of the commit(s) it came from>
+changed:
+  - text: <one line describing a change to existing behaviour>
+    version: <version>
+fixed:
+  - text: <one line describing a fix>
+    version: <version>
 ---
 
-<First-person summary of the day's work. Group related commits into cohesive paragraphs. Focus on what was accomplished and why, not implementation details. Wrap code symbols (function names, variable names, file names, commands, etc.) in backticks.>
+<1-2 sentence lede summarising what the week was about.>
 ```
 
-## One post per version
+- **title**: a terse headline naming the week's 2-3 main themes (e.g. `Comment previews, Windows config writes, collapsible sidebar`), not a sentence.
+- **versions**: the first and last versions reported by `assist devlog next`. Omit `versions` entirely when the repo has no versions.
+- **added / changed / fixed**: one line per user-visible change, newest version first within each list. Merge related commits into one line and drop release commits, refactors, tests and other internal-only work. Use `feat:` commits as a hint for **added** and `fix:` for **fixed**, but classify by what changed for the user. Omit a list that would be empty.
+- **version** on each line: the version shown against the commit(s) the line came from (the latest one when several commits are merged). Omit `version` when the repo has no versions.
+- Write each line as a short changelog item, not first-person prose. Wrap code symbols (commands, function names, file names, config keys) in backticks.
+- **lede**: one or two sentences, conversational, saying what the week was mostly about and why it matters.
 
-Navigation is keyed by `version`, so **every version may appear in at most one devlog file**. Because `assist devlog next` reports the day's `major.minor` version, consecutive days that only shipped patch releases report the _same_ version — these must not become separate posts.
-
-Before creating a file, check `~/git/blog/src/content/devlog/` for an existing entry whose `version` matches the one being written:
-
-- **If a post with that version already exists**, merge the new day's work into it as additional paragraph(s) instead of creating a new file. Keep the existing post's `date` (the date the version was first cut) and its `title`/`slug`; widen the title only if the merged scope no longer fits it.
-- **If several unversioned days share one version** (catch-up mode), write a single post anchored on the earliest of those days and fold the later days' work into it.
-
-## Tag Selection
-
-Fetch existing tags from https://staffordwilliams.com/tags.json for use when selecting tags.
-
-- The **first tag must always be the repo name** from the `assist devlog next` output
-- Add 1-3 additional tags relevant to the day's work (technologies, patterns, topics)
-- **Strongly prefer existing tags** from the fetched list over creating new ones
-- If a candidate tag is semantically similar to an existing tag, use the existing one (e.g., use `selenium` instead of creating `webdriver` or `selenium-webdriver`)
-- Only create a new tag when no existing tag adequately covers the topic
-- Do not include tags that are too broad or generic (e.g., `javascript`, `web`, `tooling`)
-
-Read existing devlogs in `~/git/blog/src/content/devlog/` for style inspiration if needed. The tone should be conversational and concise.
+Read existing entries in `~/git/blog/src/content/dev/` for style if any exist.
 
 ## Catch-up mode (`--all`)
 
-When `--all` is passed, loop through all unversioned days up to (excluding) today:
+Loop through every completed unwritten week:
 
-1. Run `assist devlog next` to get the next unversioned day
-2. If the target date is today, **stop** — catch-up is complete
-3. If there are no more unversioned days, **stop**
-4. Analyze the commits for that day:
-   - **Trivial days**: automatically run `assist devlog skip YYYY-MM-DD` without prompting the user
-   - **Non-trivial days**: create the devlog entry as normal (following the single-day instructions above), honouring the **One post per version** rule — if the reported version already has a post, merge into it rather than creating a new file
-5. Go back to step 1
-
-This continues until all past unversioned days have been processed. Do not process today's date.
+1. Run `assist devlog next`
+2. If it reports nothing to write, **stop** — catch-up is complete
+3. For the reported week:
+   - **Trivial week**: run `assist devlog skip <week>` without prompting the user
+   - **Otherwise**: write the entry as in single-week mode
+4. Go back to step 1
 
 ## Important
 
-- Do not commit entries, these will be manually reviewed before publishing.
+- Do not commit entries; they are manually reviewed before publishing.
