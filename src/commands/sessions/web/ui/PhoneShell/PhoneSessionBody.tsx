@@ -3,6 +3,7 @@ import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
 import { PhoneTerminal } from "./PhoneTerminal";
 import { pendingCheck } from "./pendingCheck";
+import { pendingPreview } from "./pendingPreview";
 import { pendingQuestion } from "./pendingQuestion";
 import type { usePhoneSessionIo } from "./usePhoneSessionIo";
 import { PhoneSessionAsk } from "./PhoneSessionAsk";
@@ -23,7 +24,11 @@ export function PhoneSessionBody(props: {
 	keyboardOpen: boolean;
 }) {
 	const { session, socket, io } = props;
-	const asking = Boolean(pendingQuestion(session) ?? pendingCheck(session));
+	const asking = Boolean(
+		pendingPreview(session) ??
+		pendingQuestion(session) ??
+		pendingCheck(session),
+	);
 	return (
 		<>
 			<Box sx={asking ? askTerminalSx : terminalSx}>

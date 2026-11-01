@@ -2,12 +2,13 @@ import { displayStatus } from "../displayStatus";
 import { isAwaitingUser } from "../isAwaitingUser";
 import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
-import { PhoneCheckCard } from "./PhoneCheckCard";
 import { PhoneInputDock } from "./PhoneInputDock";
+import { PhonePendingPreview } from "./PhonePendingPreview";
+import { PhoneSessionCheck } from "./PhoneSessionCheck";
 import { PhoneSessionQuestion } from "./PhoneSessionQuestion";
 import { pendingCheck } from "./pendingCheck";
+import { pendingPreview } from "./pendingPreview";
 import { pendingQuestion } from "./pendingQuestion";
-import { phaseLabel } from "./phaseLabel";
 import type { usePhoneSessionIo } from "./usePhoneSessionIo";
 
 export function PhoneSessionAsk({
@@ -21,6 +22,16 @@ export function PhoneSessionAsk({
 	io: ReturnType<typeof usePhoneSessionIo>;
 	keyboardOpen: boolean;
 }) {
+	const shared = { session, socket, keyboardOpen };
+	const preview = pendingPreview(session);
+	if (preview)
+		return (
+			<PhonePendingPreview
+				key={preview.requestId}
+				preview={preview}
+				{...shared}
+			/>
+		);
 	const question = pendingQuestion(session);
 	if (question)
 		return (
@@ -35,15 +46,7 @@ export function PhoneSessionAsk({
 	const check = pendingCheck(session);
 	if (check)
 		return (
-			<PhoneCheckCard
-				key={check.requestId}
-				preview={check}
-				phase={phaseLabel(session)}
-				keyboardOpen={keyboardOpen}
-				onDecision={(decision, details) =>
-					socket.sendPrDecision(session.id, check.requestId, decision, details)
-				}
-			/>
+			<PhoneSessionCheck key={check.requestId} check={check} {...shared} />
 		);
 	return (
 		<PhoneInputDock
