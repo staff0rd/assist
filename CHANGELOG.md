@@ -1,3 +1,11 @@
+# [0.1012.0](https://github.com/staff0rd/assist/compare/v0.1011.3...v0.1012.0) (2026-11-01)
+
+
+### Features
+
+* phone Answer here section ([d7a205b](https://github.com/staff0rd/assist/commit/d7a205bd61aa962eb1c40dea987f283399ad3de1))
+* phone captures for docs screenshots ([7e96461](https://github.com/staff0rd/assist/commit/7e9646143ec35f0a1beaed945f917fef871c32d4))
+
 ## [0.1011.3](https://github.com/staff0rd/assist/compare/v0.1011.2...v0.1011.3) (2026-11-01)
 
 
