@@ -8,7 +8,7 @@ import {
 	timestamp,
 } from "drizzle-orm/pg-core";
 
-type JobKind = "inbox-scan" | "review";
+export type JobKind = "inbox-scan" | "review";
 export type JobTrigger = "scheduled" | "manual";
 export type JobStatus = "running" | "finished" | "failed";
 

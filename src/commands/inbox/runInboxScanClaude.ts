@@ -11,6 +11,8 @@ import type { InboxScanListener } from "./InboxScanEvent";
 import { inboxScanSchema } from "./inboxScanSchema";
 import { inboxScanTools } from "./inboxScanTools";
 
+export const INBOX_SCAN_TIMEOUT_MS = 20 * 60_000;
+
 export function buildInboxScanArgs(since: Date): string[] {
 	return [
 		"-p",
@@ -44,7 +46,7 @@ export async function runInboxScanClaude(
 	const child = spawn("claude", buildInboxScanArgs(since), {
 		stdio: ["ignore", "pipe", "pipe"],
 		windowsHide: true,
-		timeout: 20 * 60_000,
+		timeout: INBOX_SCAN_TIMEOUT_MS,
 	});
 	const parser = createInboxScanParser(listener);
 	const flush = attachLineParser(child, parser.onLine);

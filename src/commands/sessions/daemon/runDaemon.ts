@@ -4,6 +4,7 @@ import { isDaemonRunning } from "./connectToDaemon";
 import { createAutoExit } from "./createAutoExit";
 import { daemonLog, setDaemonLogSink } from "./daemonLog";
 import { daemonPaths } from "./daemonPaths";
+import { failInterruptedJobRuns } from "./failInterruptedJobRuns";
 import { inboxScanner } from "./inbox/inboxScanner";
 import { pollRepoConfigCache } from "./pollRepoConfigCache";
 import { refreshRepoConfigCacheOnStart } from "./refreshRepoConfigCacheOnStart";
@@ -31,6 +32,7 @@ export async function runDaemon(): Promise<void> {
 	setDaemonLogSink(manager.clients.emitLog);
 	startDaemonLogTrimmer();
 	pollRepoConfigCache();
+	void failInterruptedJobRuns();
 	inboxScanner.start((type) => broadcast(manager.clients, { type }));
 	await startDaemonServer(manager, checkAutoExit);
 	await refreshRepoConfigCacheOnStart();

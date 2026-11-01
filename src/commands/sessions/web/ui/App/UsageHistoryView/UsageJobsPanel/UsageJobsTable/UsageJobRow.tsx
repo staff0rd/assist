@@ -4,6 +4,7 @@ import { formatTokens } from "../../../../../../../../shared/formatTokens";
 import { formatActiveTime } from "../../../../../../../backlog/web/ui/components/formatActiveTime";
 import { formatRelativeTime } from "../../../../formatRelativeTime";
 import type { UsageJobRow as UsageJobRowData } from "../../fetchUsageJobs";
+import { usageJobLabels } from "../../usageJobLabels";
 import { UsageJobNoteCell } from "./UsageJobRow/UsageJobNoteCell";
 import { UsageJobOutcomeCell } from "./UsageJobRow/UsageJobOutcomeCell";
 import { usageJobDetail } from "./UsageJobRow/usageJobDetail";
@@ -13,11 +14,6 @@ const numericSx = {
 	fontVariantNumeric: "tabular-nums",
 } as const;
 
-const jobLabels: Record<string, string> = {
-	"inbox-scan": "Inbox scan",
-	review: "PR review",
-};
-
 const capitalise = (value: string) =>
 	value.charAt(0).toUpperCase() + value.slice(1);
 
@@ -25,7 +21,7 @@ export function UsageJobRow({ row }: { row: UsageJobRowData }) {
 	return (
 		<TableRow hover>
 			<UsageJobNoteCell
-				value={jobLabels[row.kind] ?? row.kind}
+				value={usageJobLabels[row.kind] ?? row.kind}
 				note={usageJobDetail(row)}
 			/>
 			<TableCell sx={{ color: "text.secondary" }}>
