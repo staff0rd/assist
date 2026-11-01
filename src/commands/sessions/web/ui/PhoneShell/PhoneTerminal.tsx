@@ -1,14 +1,11 @@
 import Box from "@mui/material/Box";
-import { type Theme, useTheme } from "@mui/material/styles";
-import { type RefObject, useMemo, useRef } from "react";
-import { useElementWidth } from "../App/useElementWidth";
+import type { Theme } from "@mui/material/styles";
+import { type RefObject, useRef } from "react";
 import type { ResizeMode } from "../ResizeFn";
-import { fitFontSize } from "./PhoneTerminal/fitFontSize";
-import { measureCharWidthRatio } from "./PhoneTerminal/measureCharWidthRatio";
-import { useFollowOutput } from "./PhoneTerminal/useFollowOutput";
+import { usePhoneFontSize } from "./PhoneTerminal/usePhoneFontSize";
+import { usePhoneScroll } from "./PhoneTerminal/usePhoneScroll";
 import { usePhoneTakeOver } from "./PhoneTerminal/usePhoneTakeOver";
 import { usePhoneXterm } from "./PhoneTerminal/usePhoneXterm";
-import { usePinchZoom } from "./PhoneTerminal/usePinchZoom";
 
 const scrollSx = {
 	flex: 1,
@@ -39,18 +36,19 @@ export function PhoneTerminal({
 }: Props) {
 	const scrollRef = useRef<HTMLDivElement | null>(null);
 	const hostRef = useRef<HTMLDivElement | null>(null);
-	const { tokens } = useTheme();
-	const ratio = useMemo(
-		() => measureCharWidthRatio(tokens.font.terminal),
-		[tokens.font.terminal],
-	);
-	const width = useElementWidth(scrollRef) ?? window.innerWidth;
-	const zoom = usePinchZoom(scrollRef);
-	const fontSize = fitFontSize(width, cols, ratio, zoom);
-	const { follow, trackStick } = useFollowOutput(scrollRef);
+	const { ratio, fontSize } = usePhoneFontSize(scrollRef, cols);
+	const { termRef, follow, trackStick } = usePhoneScroll(scrollRef);
 	reclaimRef.current = usePhoneTakeOver(scrollRef, ratio, sendSize);
 
-	usePhoneXterm(hostRef, sessionId, { cols, rows }, fontSize, onOutput, follow);
+	usePhoneXterm(
+		hostRef,
+		termRef,
+		sessionId,
+		{ cols, rows },
+		fontSize,
+		onOutput,
+		follow,
+	);
 
 	return (
 		<Box

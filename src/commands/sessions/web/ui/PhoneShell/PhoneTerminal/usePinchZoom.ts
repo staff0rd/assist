@@ -1,4 +1,5 @@
 import { type RefObject, useEffect, useRef, useState } from "react";
+import { listenTouch } from "./listenTouch";
 
 const DEFAULT_ZOOM = 1;
 const MIN_ZOOM = 0.3;
@@ -33,16 +34,7 @@ export function usePinchZoom(ref: RefObject<HTMLElement | null>): number {
 			if (e.touches.length < 2) start = null;
 		};
 
-		el.addEventListener("touchstart", onStart, { passive: true });
-		el.addEventListener("touchmove", onMove, { passive: false });
-		el.addEventListener("touchend", onEnd, { passive: true });
-		el.addEventListener("touchcancel", onEnd, { passive: true });
-		return () => {
-			el.removeEventListener("touchstart", onStart);
-			el.removeEventListener("touchmove", onMove);
-			el.removeEventListener("touchend", onEnd);
-			el.removeEventListener("touchcancel", onEnd);
-		};
+		return listenTouch(el, { start: onStart, move: onMove, end: onEnd });
 	}, [ref]);
 
 	return zoom;

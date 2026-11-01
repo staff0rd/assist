@@ -12,6 +12,7 @@ type XtermSize = { cols: number; rows: number };
 
 export function usePhoneXterm(
 	hostRef: RefObject<HTMLDivElement | null>,
+	termRef: RefObject<Terminal | null>,
 	sessionId: string,
 	{ cols, rows }: XtermSize,
 	fontSize: number,
@@ -19,7 +20,6 @@ export function usePhoneXterm(
 	onWrite: () => void,
 ): void {
 	const { tokens } = useTheme();
-	const termRef = useRef<Terminal | null>(null);
 	const initial = useRef({ tokens, fontSize, cols, rows });
 	const onWriteRef = useRef(onWrite);
 	onWriteRef.current = onWrite;
@@ -45,15 +45,15 @@ export function usePhoneXterm(
 			term.dispose();
 			termRef.current = null;
 		};
-	}, [hostRef, sessionId, onOutput]);
+	}, [hostRef, termRef, sessionId, onOutput]);
 
 	useEffect(() => {
 		termRef.current?.resize(cols, rows);
-	}, [cols, rows]);
+	}, [termRef, cols, rows]);
 
 	useEffect(() => {
 		const term = termRef.current;
 		if (term)
 			Object.assign(term.options, { ...terminalTheme(tokens), fontSize });
-	}, [tokens, fontSize]);
+	}, [termRef, tokens, fontSize]);
 }
