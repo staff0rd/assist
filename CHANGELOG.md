@@ -1,3 +1,10 @@
+## [0.1010.2](https://github.com/staff0rd/assist/compare/v0.1010.1...v0.1010.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* clarify refreshAfter unset check ([5f9cbe3](https://github.com/staff0rd/assist/commit/5f9cbe32f1e04813ed9c4eb3ed078be1ea108bdd))
+
 ## [0.1010.1](https://github.com/staff0rd/assist/compare/v0.1010.0...v0.1010.1) (2026-11-01)
 
 
