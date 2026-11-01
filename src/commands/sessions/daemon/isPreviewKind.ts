@@ -13,6 +13,7 @@ const PREVIEW_KINDS: PreviewKind[] = [
 	"show",
 	"ask",
 	"question",
+	"check",
 ];
 
 export function isPreviewKind(value: unknown): value is PreviewKind {

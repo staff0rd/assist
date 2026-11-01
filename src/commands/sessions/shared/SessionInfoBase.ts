@@ -22,7 +22,8 @@ export type PreviewKind =
 	| "high-level-review"
 	| "show"
 	| "ask"
-	| "question";
+	| "question"
+	| "check";
 
 export type PreviewItemType = "story" | "bug";
 

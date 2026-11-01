@@ -55,6 +55,14 @@ describe("pendingAskQuestionTasks", () => {
 		]);
 	});
 
+	it("finds an assist ask-check background task still running", () => {
+		expect(
+			pendingAskQuestionTasks(
+				launched("t1", "assist ask-check --json - < /tmp/c.json", "bc1"),
+			),
+		).toEqual(["bc1"]);
+	});
+
 	it("ignores other background tasks", () => {
 		expect(
 			pendingAskQuestionTasks(launched("t1", "npm run dev", "bd1")),

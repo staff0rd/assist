@@ -9,6 +9,7 @@ const accent = "#8b9cff";
 const green = "#5fd0a0";
 const amber = "#f2b45a";
 const red = "#f27a7a";
+const teal = "#6cc8d8";
 const onAppBar = {
 	secondary: "rgba(255, 255, 255, 0.7)",
 	hover: "rgba(255, 255, 255, 0.12)",
@@ -31,6 +32,7 @@ export const slateDesign: DesignTokens = {
 				warning: "rgba(242, 180, 90, 0.09)",
 				error: "rgba(242, 122, 122, 0.09)",
 				accent: "rgba(139, 156, 255, 0.1)",
+				check: "rgba(108, 200, 216, 0.09)",
 			},
 			well: ink,
 			stripe: raised,
@@ -61,6 +63,7 @@ export const slateDesign: DesignTokens = {
 			warning: { main: amber, contrastText: ink },
 			error: { main: red, contrastText: ink },
 			info: { main: "#6cb6ff", contrastText: ink },
+			check: { main: teal, contrastText: ink },
 		},
 		terminal: {
 			background: ink,
@@ -74,7 +77,7 @@ export const slateDesign: DesignTokens = {
 			yellow: amber,
 			blue: accent,
 			magenta: "#c99bff",
-			cyan: "#6cc8d8",
+			cyan: teal,
 			white: "#c3c9d4",
 			brightBlack: "#5c6473",
 			brightRed: "#ff9a9a",
@@ -109,6 +112,7 @@ export const slateDesign: DesignTokens = {
 				warning: "rgba(255, 167, 38, 0.09)",
 				error: "rgba(244, 67, 54, 0.09)",
 				accent: "rgba(25, 118, 210, 0.08)",
+				check: "rgba(0, 131, 143, 0.08)",
 			},
 			well: "#f3f4f6",
 			stripe: "rgba(0, 0, 0, 0.1)",
@@ -152,6 +156,12 @@ export const slateDesign: DesignTokens = {
 				main: "#0288d1",
 				light: "#03a9f4",
 				dark: "#01579b",
+				contrastText: "#fff",
+			},
+			check: {
+				main: "#00838f",
+				light: "#4fb3bf",
+				dark: "#005662",
 				contrastText: "#fff",
 			},
 			scrim: "rgba(15, 23, 42, 0.32)",

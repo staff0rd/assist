@@ -2,7 +2,7 @@ import type { PrPreview } from "../../../../../shared/SessionInfoBase";
 
 type ChipSpec = {
 	label: string;
-	color: "success" | "info" | "warning" | "default";
+	color: "success" | "info" | "warning" | "check" | "default";
 };
 
 export function previewChip(preview: PrPreview, draft: boolean): ChipSpec {
@@ -23,6 +23,8 @@ export function previewChip(preview: PrPreview, draft: boolean): ChipSpec {
 	if (preview.kind === "ask") return { label: "Review", color: "info" };
 
 	if (preview.kind === "question") return { label: "Question", color: "info" };
+
+	if (preview.kind === "check") return { label: "Check", color: "check" };
 
 	if (preview.kind === "high-level-review")
 		return { label: "Checklist", color: "info" };

@@ -33,6 +33,7 @@ export function createDesignTheme(
 			warning: color.warning,
 			error: color.error,
 			info: color.info,
+			check: color.check,
 			text: color.text,
 			divider: color.line,
 			action: { hover: color.raised, selected: color.selected },

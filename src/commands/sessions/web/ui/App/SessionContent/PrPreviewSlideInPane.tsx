@@ -1,3 +1,4 @@
+import { CheckPane } from "./PrPreviewSlideInPane/CheckPane";
 import { HighLevelReviewPane } from "./PrPreviewSlideInPane/HighLevelReviewPane";
 import { MiroBoardPane } from "./PrPreviewSlideInPane/MiroBoardPane";
 import { miroDecisionDetails } from "./miroDecisionDetails";
@@ -26,6 +27,9 @@ export function PrPreviewSlideInPane({
 
 	if (preview.kind === "question")
 		return <QuestionPane preview={preview} onDecision={onDecision} />;
+
+	if (preview.kind === "check")
+		return <CheckPane preview={preview} onDecision={onDecision} />;
 
 	if (preview.kind === "high-level-review")
 		return (

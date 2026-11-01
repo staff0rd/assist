@@ -3,6 +3,7 @@ import { registerNew } from "./commands/new/registerNew";
 import { registerActivity } from "./commands/registerActivity";
 import { registerAdvise } from "./commands/registerAdvise";
 import { registerAsk } from "./commands/registerAsk";
+import { registerAskCheck } from "./commands/registerAskCheck";
 import { registerAskQuestion } from "./commands/registerAskQuestion";
 import { registerBackup } from "./commands/registerBackup";
 import { registerChart } from "./commands/registerChart";
@@ -107,6 +108,7 @@ export const programRegistrars: ((program: Command) => void)[] = [
 	registerShow,
 	registerAsk,
 	registerAskQuestion,
+	registerAskCheck,
 	registerSlack,
 	registerSql,
 	registerTranscript,

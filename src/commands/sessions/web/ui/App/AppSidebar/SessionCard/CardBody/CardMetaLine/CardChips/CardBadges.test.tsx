@@ -28,4 +28,45 @@ describe("CardBadges", () => {
 			"rgb(139, 156, 255)",
 		);
 	});
+
+	it("shows a teal Check badge while a manual check is pending", () => {
+		renderWithTheme(
+			<CardBadges
+				session={makeSessionInfo({
+					status: "running",
+					pendingPrPreview: {
+						requestId: "r1",
+						title: "PIN shows on the Mac",
+						body: "{}",
+						prNumber: null,
+						kind: "check",
+					},
+				})}
+			/>,
+			{ mode: "dark" },
+		);
+
+		expect(getComputedStyle(screen.getByText("Check")).color).toBe(
+			"rgb(108, 200, 216)",
+		);
+	});
+
+	it("shows no Check badge for a pending question", () => {
+		renderWithTheme(
+			<CardBadges
+				session={makeSessionInfo({
+					status: "running",
+					pendingPrPreview: {
+						requestId: "r1",
+						title: "q",
+						body: "{}",
+						prNumber: null,
+						kind: "question",
+					},
+				})}
+			/>,
+		);
+
+		expect(screen.queryByText("Check")).toBeNull();
+	});
 });

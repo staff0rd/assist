@@ -25,7 +25,7 @@ type ColorTokens = {
 	lineSoft: string;
 	text: { primary: string; secondary: string; disabled: string };
 	selected: string;
-	wash: { warning: string; error: string; accent: string };
+	wash: { warning: string; error: string; accent: string; check: string };
 	well: string;
 	stripe: string;
 	codeWash: string;
@@ -40,6 +40,7 @@ type ColorTokens = {
 	warning: SimplePaletteColorOptions;
 	error: SimplePaletteColorOptions;
 	info: SimplePaletteColorOptions;
+	check: SimplePaletteColorOptions;
 };
 
 type ElevationTokens = {

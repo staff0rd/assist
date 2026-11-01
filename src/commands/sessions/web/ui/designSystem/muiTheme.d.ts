@@ -8,6 +8,12 @@ declare module "@mui/material/styles" {
 	interface ThemeOptions {
 		tokens?: ActiveTokens;
 	}
+	interface Palette {
+		check: Palette["primary"];
+	}
+	interface PaletteOptions {
+		check?: PaletteOptions["primary"];
+	}
 	interface TypographyVariants {
 		fontFamilyMono: string;
 	}
@@ -25,6 +31,9 @@ declare module "@mui/material/Button" {
 declare module "@mui/material/Chip" {
 	interface ChipPropsVariantOverrides {
 		tonal: true;
+	}
+	interface ChipPropsColorOverrides {
+		check: true;
 	}
 }
 

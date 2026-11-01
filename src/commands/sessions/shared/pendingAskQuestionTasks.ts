@@ -1,7 +1,7 @@
 import { asRecord } from "./asRecord";
 import { unfinishedBackgroundTasks } from "./unfinishedBackgroundTasks";
 
-const ASK_QUESTION_COMMAND = /\bassist ask-question\b/;
+const ASK_QUESTION_COMMAND = /\bassist ask-(question|check)\b/;
 
 export function pendingAskQuestionTasks(
 	entries: Record<string, unknown>[],

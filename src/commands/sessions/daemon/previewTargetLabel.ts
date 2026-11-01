@@ -16,6 +16,7 @@ export function previewTargetLabel(
 	if (kind === "show") return "show";
 	if (kind === "ask") return "ask";
 	if (kind === "question") return "question";
+	if (kind === "check") return "check";
 	if (kind === "backlog-item") return `backlog ${itemType}`;
 	if (prNumber !== null) return `edit #${prNumber}`;
 	return draft ? "create draft" : "create";

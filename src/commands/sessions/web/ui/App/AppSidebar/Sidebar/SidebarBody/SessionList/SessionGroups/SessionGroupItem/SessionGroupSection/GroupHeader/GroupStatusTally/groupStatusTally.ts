@@ -4,7 +4,7 @@ import {
 } from "../../../../../../../../../../displayStatus";
 import type { SessionInfo } from "../../../../../../../../../../types";
 
-const tallyStatuses = ["waiting", "running", "done"] as const;
+const tallyStatuses = ["check", "waiting", "running", "done"] as const;
 
 type TallyEntry = { status: DisplayStatus; count: number };
 

@@ -1,6 +1,6 @@
 import { alpha, type Theme } from "@mui/material/styles";
 
-type TokenBadgeTone = "primary" | "secondary" | "success" | "neutral";
+type TokenBadgeTone = "primary" | "secondary" | "success" | "check" | "neutral";
 
 function toneColors(t: Theme, tone: TokenBadgeTone) {
 	if (tone === "neutral")
