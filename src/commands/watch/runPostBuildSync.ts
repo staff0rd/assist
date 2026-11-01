@@ -5,8 +5,8 @@ import { toBuildOutcome } from "./toBuildOutcome";
 export async function runPostBuildSync(): Promise<BuildOutcome> {
 	return toBuildOutcome(
 		await runCommandToCompletion(
-			"assist",
-			["sync", "--yes"],
+			process.execPath,
+			[process.argv[1], "sync", "--yes"],
 			undefined,
 			undefined,
 			true,

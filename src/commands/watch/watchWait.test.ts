@@ -1,5 +1,13 @@
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { WatchOutcome } from "./WatchOutcome";
+
+const pendingMarker = join(
+	mkdtempSync(join(tmpdir(), "watch-sync-pending-")),
+	"assist-watch-sync-pending",
+);
 
 const mockWaitForUpstream = vi.fn();
 const mockPullFastForward = vi.fn();
@@ -37,6 +45,10 @@ vi.mock("./changedPaths", () => ({
 	changedPaths: (...args: unknown[]) => mockChangedPaths(...args),
 }));
 
+vi.mock("./syncPendingPath", () => ({
+	syncPendingPath: () => pendingMarker,
+}));
+
 import { watchWait } from "./watchWait";
 
 const moved: WatchOutcome = {
@@ -58,6 +70,7 @@ beforeEach(() => {
 	errored = [];
 	written = [];
 	exitCode = undefined;
+	rmSync(pendingMarker, { force: true });
 	mockBuildWatchReport.mockReturnValue("**Version** 0.488.2");
 	mockChangedPaths.mockReturnValue(["src/commands/watch/watchWait.ts"]);
 	mockRunPostBuildSync.mockResolvedValue({ kind: "built" });
@@ -243,6 +256,48 @@ describe("watchWait --build sync", () => {
 		expect(exitCode).toBe(4);
 		expect(written.join("")).toContain("EACCES: permission denied");
 		expect(errored.join("\n")).toContain("sync failed with exit code 2");
+	});
+
+	it("keeps a failed sync pending so a later lap retries it", async () => {
+		mockChangedPaths.mockReturnValue(["claude/commands/watch.md"]);
+		mockRunPostBuildSync.mockResolvedValue({
+			kind: "failed",
+			exitCode: 1,
+			output: "Failed to execute command: spawn assist ENOENT",
+		});
+
+		await run({ build: true });
+
+		expect(existsSync(pendingMarker)).toBe(true);
+		expect(written.join("")).toBe(
+			"Failed to execute command: spawn assist ENOENT\n",
+		);
+	});
+
+	it("retries a pending sync even when the pulled range touched no synced files", async () => {
+		writeFileSync(pendingMarker, "");
+
+		await run({ build: true });
+
+		expect(logged.join("\n")).toContain(
+			"retrying a sync that failed on an earlier lap",
+		);
+		expect(mockRunPostBuildSync).toHaveBeenCalled();
+		expect(existsSync(pendingMarker)).toBe(false);
+		expect(exitCode).toBe(0);
+	});
+
+	it("keeps the sync pending when the build fails before it can run", async () => {
+		mockChangedPaths.mockReturnValue(["claude/commands/watch.md"]);
+		mockRunWatchBuild.mockResolvedValue({
+			kind: "failed",
+			exitCode: 1,
+			output: "tsc: error TS2345",
+		});
+
+		await run({ build: true });
+
+		expect(existsSync(pendingMarker)).toBe(true);
 	});
 
 	it("does not sync when the build failed", async () => {

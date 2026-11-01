@@ -14,7 +14,7 @@ beforeEach(() => {
 });
 
 describe("runPostBuildSync", () => {
-	it("shells out to the freshly built assist sync and reports success", async () => {
+	it("runs the freshly built entry script under node rather than a PATH lookup", async () => {
 		mockRunCommandToCompletion.mockResolvedValue({
 			kind: "completed",
 			exitCode: 0,
@@ -23,8 +23,8 @@ describe("runPostBuildSync", () => {
 
 		await expect(runPostBuildSync()).resolves.toEqual({ kind: "built" });
 		expect(mockRunCommandToCompletion).toHaveBeenCalledWith(
-			"assist",
-			["sync", "--yes"],
+			process.execPath,
+			[process.argv[1], "sync", "--yes"],
 			undefined,
 			undefined,
 			true,
