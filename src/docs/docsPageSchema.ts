@@ -36,7 +36,12 @@ const screenshotSchema = z
 			})
 			.optional(),
 		theme: z.enum(["light", "dark"]).optional(),
-		phone: z.literal(true).optional(),
+		phone: z
+			.union([
+				z.literal(true),
+				z.object({ nodes: z.array(z.string().regex(/^[a-z0-9-]+$/)) }).strict(),
+			])
+			.optional(),
 		waitFor: z.string().min(1).optional(),
 		crop: z
 			.union([z.string().min(1), z.array(z.string().min(1)).min(2)])

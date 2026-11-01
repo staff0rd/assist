@@ -69,11 +69,15 @@ describe("docsPageSchema", () => {
 		);
 	});
 
-	it("takes phone only as true, and only on a route capture", () => {
+	it("takes phone as true or saved node names, and only on a route capture", () => {
 		const parses = (extra: Record<string, unknown>) =>
 			docsPageSchema.safeParse(withScreenshot(extra)).success;
 		const url = "https://github.com/staff0rd/sandbox/pull/12";
 		expect(parses({ phone: true })).toBe(true);
+		expect(parses({ phone: { nodes: [] } })).toBe(true);
+		expect(parses({ phone: { nodes: ["mac", "linux-box"] } })).toBe(true);
+		expect(parses({ phone: { nodes: ["Mac Book"] } })).toBe(false);
+		expect(parses({ phone: { nodes: [], zoom: 2 } })).toBe(false);
 		expect(parses({ phone: false })).toBe(false);
 		expect(parses({ phone: "yes" })).toBe(false);
 		expect(parses({ phone: true, route: undefined, url })).toBe(false);

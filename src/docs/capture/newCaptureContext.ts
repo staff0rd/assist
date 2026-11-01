@@ -1,9 +1,10 @@
 import type { Browser, BrowserContext } from "playwright";
 import type { DocsScreenshot } from "../docsPageSchema";
 import { phoneContextOptions } from "./phoneContextOptions";
-import { seedPhoneHomeNode } from "./seedPhoneHomeNode";
+import { seedPhoneNodes } from "./seedPhoneNodes";
 
 const DEFAULT_VIEWPORT = { width: 1280, height: 800 };
+const DEFAULT_PHONE_NODES = ["laptop"];
 
 export async function newCaptureContext(
 	browser: Browser,
@@ -21,6 +22,11 @@ export async function newCaptureContext(
 	await context.addInitScript((mode) => {
 		localStorage.setItem("theme-mode", mode);
 	}, theme);
-	if (phone) await seedPhoneHomeNode(context, baseUrl);
+	if (screenshot.phone)
+		await seedPhoneNodes(
+			context,
+			baseUrl,
+			screenshot.phone === true ? DEFAULT_PHONE_NODES : screenshot.phone.nodes,
+		);
 	return context;
 }

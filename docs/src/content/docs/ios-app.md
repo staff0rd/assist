@@ -11,6 +11,24 @@ screenshots:
     phone: true
     scene: dashboard
     waitFor: text=Dark mode toggle
+  - file: ios-app-connect.png
+    alt: Connecting the iOS app to a home node on first launch
+    route: /
+    phone:
+      nodes: []
+    waitFor: text=Connect to a home node
+    actions:
+      - click: input[placeholder="https://mac.tail1234.ts.net:3100"]
+      - type: https://mac.tail1234.ts.net:3100
+  - file: ios-app-nodes.png
+    alt: The iOS app's saved nodes, with the home node selected
+    route: /
+    phone:
+      nodes: [laptop, desktop]
+    scene: dashboard
+    waitFor: text=Dark mode toggle
+    actions:
+      - click: '[aria-label="Nodes"]'
 ---
 
 The assist iOS app shows your sessions on your phone: see which agents are waiting on you, read their terminals, reply and answer their questions, away from your desk. It connects to one of your web servers over [Tailscale](https://tailscale.com/) and shows that machine's sessions along with those of every [linked machine](../sessions-linked-nodes/).
@@ -27,8 +45,12 @@ The machine the app connects to is its home node. Before connecting, connect Tai
 
 On first launch, enter the address you open the dashboard at in a browser as the **Web server URL**, such as `https://mac.tail1234.ts.net:3100`, and press **Connect**. **Name** is filled in from the host name and labels the node chip at the top of the session list.
 
+::screenshot{file="ios-app-connect.png"}
+
 ## Switching nodes
 
 Tap the node chip to list your saved nodes. Tap one to make it the home node, the pencil to edit it, or **Add node URL** to save another. The app remembers your choice across launches.
+
+::screenshot{file="ios-app-nodes.png"}
 
 When the home node can't be reached, the app shows the error. Press **Retry now**, or pick another node under **Switch home node**.

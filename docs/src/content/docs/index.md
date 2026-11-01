@@ -104,6 +104,8 @@ assist sync
 <h3>Check on sessions from your phone</h3>
 <p>Watch your agents and answer the ones waiting on you, away from your desk.</p>
 
+::screenshot{file="ios-app-sessions.png"}
+
 <a class="assist-landing-more" href="ios-app/">Install and connect <span class="assist-landing-arrow" aria-hidden="true">→</span></a>
 
 </article>
