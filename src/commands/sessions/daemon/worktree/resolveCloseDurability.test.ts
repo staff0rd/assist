@@ -81,7 +81,7 @@ describe("resolveCloseDurability", () => {
 		}
 
 		function liveReason(child: ChildProcess) {
-			return `a live process is still running in it (pid ${child.pid})`;
+			return `a live process is still running in it: sleep (pid ${child.pid})`;
 		}
 
 		it("holds a stopped card at once when it is not closing", async () => {
