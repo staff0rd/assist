@@ -1,3 +1,10 @@
+## [0.1015.2](https://github.com/staff0rd/assist/compare/v0.1015.1...v0.1015.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* show refuses session-edited files ([b5abce2](https://github.com/staff0rd/assist/commit/b5abce237e99342459ad79dcd3a478ef94f13148))
+
 ## [0.1015.1](https://github.com/staff0rd/assist/compare/v0.1015.0...v0.1015.1) (2026-11-01)
 
 
