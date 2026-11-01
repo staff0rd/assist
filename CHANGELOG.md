@@ -1,3 +1,10 @@
+# [0.1031.0](https://github.com/staff0rd/assist/compare/v0.1030.0...v0.1031.0) (2026-11-01)
+
+
+### Features
+
+* review designs with ask-design ([4d41c91](https://github.com/staff0rd/assist/commit/4d41c91ec9962c39f69bf42f56d63941e681e569))
+
 # [0.1030.0](https://github.com/staff0rd/assist/compare/v0.1029.0...v0.1030.0) (2026-11-01)
 
 
