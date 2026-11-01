@@ -1,3 +1,10 @@
+# [0.1033.0](https://github.com/staff0rd/assist/compare/v0.1032.2...v0.1033.0) (2026-11-01)
+
+
+### Features
+
+* seed backlog run card while seeding ([5665a15](https://github.com/staff0rd/assist/commit/5665a15983f36446352ec8832c019d3f6c4dd353))
+
 ## [0.1032.2](https://github.com/staff0rd/assist/compare/v0.1032.1...v0.1032.2) (2026-11-01)
 
 
