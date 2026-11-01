@@ -1,3 +1,10 @@
+## [0.1033.2](https://github.com/staff0rd/assist/compare/v0.1033.1...v0.1033.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* solid ring for selected session card ([4eb00ea](https://github.com/staff0rd/assist/commit/4eb00eab59e7716d01f3734b0ded80f5d877ebd6))
+
 ## [0.1033.1](https://github.com/staff0rd/assist/compare/v0.1033.0...v0.1033.1) (2026-11-01)
 
 
