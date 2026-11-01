@@ -1,3 +1,11 @@
+# [0.1013.0](https://github.com/staff0rd/assist/compare/v0.1012.0...v0.1013.0) (2026-11-01)
+
+
+### Features
+
+* /refine design step ([009db45](https://github.com/staff0rd/assist/commit/009db45d37be9a1284638bb518aa0419d86ac5b9))
+* design activity kind and /draft step ([8fcf3dd](https://github.com/staff0rd/assist/commit/8fcf3dd91434c539a9f94e75cf98b39695aefe4b))
+
 # [0.1012.0](https://github.com/staff0rd/assist/compare/v0.1011.3...v0.1012.0) (2026-11-01)
 
 
