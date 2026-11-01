@@ -16,7 +16,7 @@ export function SessionActionButtons({
 	onDismiss,
 }: {
 	session: SessionInfo;
-	onRetry?: () => void;
+	onRetry?: (replace?: boolean) => void;
 	onRestart?: () => void;
 	onDismiss: (opts?: DismissOptions) => void;
 }) {
@@ -38,6 +38,7 @@ export function SessionActionButtons({
 				<RetryButton
 					id={session.id}
 					onRetry={onRetry}
+					server={session.server}
 					shortcut={session.commandType === "run" ? "focusVsCode" : undefined}
 				/>
 			)}

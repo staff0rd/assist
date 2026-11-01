@@ -9,14 +9,16 @@ export function sessionActionHandlers(
 	session: SessionInfo,
 	handlers: SessionLifecycleHandlers,
 ): {
-	onRetry?: () => void;
+	onRetry?: (replace?: boolean) => void;
 	onRestart?: () => void;
 	onDismiss: (opts?: DismissOptions) => void;
 } {
 	const retryable = session.commandType === "run" || needsRelaunch(session);
 	const restartable = session.commandType !== "run" && relaunchable(session);
 	return {
-		onRetry: retryable ? () => handlers.onRetry(session.id) : undefined,
+		onRetry: retryable
+			? (replace) => handlers.onRetry(session.id, replace)
+			: undefined,
 		onRestart: restartable ? () => handlers.onRestart(session.id) : undefined,
 		onDismiss: (opts) => handlers.onDismiss(session.id, opts),
 	};

@@ -45,6 +45,20 @@ describe("ServerConflictDialog", () => {
 		);
 	});
 
+	it("tells the user shift+click skips the dialog next time", () => {
+		render(
+			<ServerConflictDialog
+				conflict={conflict({ id: "1", name: "run: dev", port: 3000 })}
+				onConfirm={() => {}}
+				onCancel={() => {}}
+			/>,
+		);
+
+		expect(screen.getByText(/already serving/).textContent).toContain(
+			"Shift+click skips this dialog next time.",
+		);
+	});
+
 	it("falls back to the unnamed wording when no group is known", () => {
 		render(
 			<ServerConflictDialog

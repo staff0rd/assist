@@ -30,6 +30,18 @@ describe("sessionActionHandlers", () => {
 		expect(actions.onRetry).toBeDefined();
 	});
 
+	it("forwards replace to the retry handler", () => {
+		const onRetry = vi.fn();
+		const actions = sessionActionHandlers(
+			makeSessionInfo({ id: "7", commandType: "run" }),
+			{ ...handlers, onRetry },
+		);
+
+		actions.onRetry?.(true);
+
+		expect(onRetry).toHaveBeenCalledWith("7", true);
+	});
+
 	describe("for an interactive session on a harness that cannot resume", () => {
 		it("offers no restart, since the daemon has no plan to respawn it", () => {
 			const actions = sessionActionHandlers(

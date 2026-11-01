@@ -427,7 +427,22 @@ describe("SessionArea top bar actions", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Retry session 1" }));
 
-		expect(onRetry).toHaveBeenCalledWith("1");
+		expect(onRetry).toHaveBeenCalledWith("1", undefined);
+	});
+
+	it("retries an active server session with replace on shift+click", () => {
+		const onRetry = vi.fn();
+		renderWithTopBar(
+			[makeSessionInfo({ ...bar, commandType: "run", server: true })],
+			"1",
+			{ lifecycle: { onRetry } },
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: /^Retry session 1/ }), {
+			shiftKey: true,
+		});
+
+		expect(onRetry).toHaveBeenCalledWith("1", true);
 	});
 
 	it("offers no retry on a session that cannot be retried", () => {

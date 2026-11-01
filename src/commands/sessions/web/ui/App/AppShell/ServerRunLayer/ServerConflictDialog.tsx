@@ -19,7 +19,7 @@ export function ServerConflictDialog({
 	return (
 		<ConfirmDialog
 			title={group ? `Replace the ${group} server?` : "Replace running server?"}
-			message={`"${name}" is already serving${portSuffix}${location}${slot}. Replace it — stop the running server and start this one?`}
+			message={`"${name}" is already serving${portSuffix}${location}${slot}. Replace it — stop the running server and start this one? Shift+click skips this dialog next time.`}
 			confirmLabel="Replace"
 			confirmColor="error"
 			onConfirm={onConfirm}
