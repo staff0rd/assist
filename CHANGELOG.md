@@ -1,3 +1,10 @@
+# [0.1035.0](https://github.com/staff0rd/assist/compare/v0.1034.0...v0.1035.0) (2026-11-01)
+
+
+### Features
+
+* auto-submit single-select answers ([42a4495](https://github.com/staff0rd/assist/commit/42a44952d28498a36ef5f546f891c220882e9572))
+
 # [0.1034.0](https://github.com/staff0rd/assist/compare/v0.1033.3...v0.1034.0) (2026-11-01)
 
 
