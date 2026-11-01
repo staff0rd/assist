@@ -1,3 +1,11 @@
+# [0.1038.0](https://github.com/staff0rd/assist/compare/v0.1037.0...v0.1038.0) (2026-11-01)
+
+
+### Features
+
+* lock schema files behind a PIN ([18c4a17](https://github.com/staff0rd/assist/commit/18c4a1777cf7ca0300981be1b351adf1012f6ed7))
+* shift+click server retry replaces ([d3afc25](https://github.com/staff0rd/assist/commit/d3afc25b77596532e8a91e42cd62a1cec23c3c99))
+
 # [0.1037.0](https://github.com/staff0rd/assist/compare/v0.1036.1...v0.1037.0) (2026-11-01)
 
 
