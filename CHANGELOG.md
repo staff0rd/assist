@@ -1,3 +1,10 @@
+## [0.1010.1](https://github.com/staff0rd/assist/compare/v0.1010.0...v0.1010.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* leave docs pages to Refresh docs ([7117756](https://github.com/staff0rd/assist/commit/71177562521690859135e5f0bcd63a4b5e362eb1))
+
 # [0.1010.0](https://github.com/staff0rd/assist/compare/v0.1009.0...v0.1010.0) (2026-11-01)
 
 
