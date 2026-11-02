@@ -12,8 +12,15 @@ import { selectAdvice } from "./selectAdvice";
 
 const fragments = loadAdviceFragments();
 
-function contextWith(raw: Record<string, unknown>): AdviceContext {
-	return { config: assistConfigSchema.parse(raw), rootDir: "/repo" };
+function contextWith(
+	raw: Record<string, unknown>,
+	assistSession = false,
+): AdviceContext {
+	return {
+		config: assistConfigSchema.parse(raw),
+		rootDir: "/repo",
+		assistSession,
+	};
 }
 
 function includedNames(context: AdviceContext): string[] {
@@ -23,7 +30,6 @@ function includedNames(context: AdviceContext): string[] {
 }
 
 const alwaysNames = [
-	"ask",
 	"assist-global",
 	"backlog-ids",
 	"backlog-prs",
@@ -60,24 +66,53 @@ describe("composeAdvice", () => {
 		expect(withJira.length).toBeGreaterThan(without.length);
 	});
 
-	it("adds the ask-question fragment only when sessions.askQuestion is on", () => {
-		expect(includedNames(contextWith({}))).not.toContain("ask-question");
-		expect(
-			includedNames(contextWith({ sessions: { askQuestion: true } })),
-		).toContain("ask-question");
+	it("adds the ask fragment only in an assist-launched session", () => {
+		expect(includedNames(contextWith({}))).not.toContain("ask");
+		expect(includedNames(contextWith({}, true))).toContain("ask");
 	});
 
-	it("adds the ask-check fragment only when sessions.askQuestion is on", () => {
-		expect(includedNames(contextWith({}))).not.toContain("ask-check");
-		const context = contextWith({ sessions: { askQuestion: true } });
+	it("adds ask-question and ask-check only when sessions.askQuestion is on in an assist session", () => {
+		const askQuestionOn = { sessions: { askQuestion: true } };
 
-		expect(includedNames(context)).toContain("ask-check");
-		expect(composeAdvice(context, fragments)).toContain(
-			"## Asking for a manual check",
+		expect(includedNames(contextWith({}, true))).not.toContain("ask-question");
+		expect(includedNames(contextWith(askQuestionOn))).not.toContain(
+			"ask-question",
 		);
-		expect(composeAdvice(context, fragments)).toContain(
-			"assist ask-check --json -",
+		expect(includedNames(contextWith(askQuestionOn))).not.toContain(
+			"ask-check",
 		);
+		expect(includedNames(contextWith(askQuestionOn, true))).toEqual(
+			expect.arrayContaining(["ask", "ask-check", "ask-question"]),
+		);
+	});
+
+	it("states the ask rules unconditionally in an assist session", () => {
+		const markdown = composeAdvice(
+			contextWith({ sessions: { askQuestion: true } }, true),
+			fragments,
+		);
+
+		expect(markdown).toContain("## Asking for a manual check");
+		expect(markdown).toContain("assist ask-check --json -");
+		expect(markdown).toContain("assist ask-question --json -");
+		expect(markdown).toContain("assist ask --title");
+		expect(markdown).not.toContain("ASSIST_SESSION");
+		for (const name of ["ask", "ask-check", "ask-question"]) {
+			const fragment = fragments.find((entry) => entry.name === name);
+			expect(fragment?.body).not.toMatch(
+				/(outside|in) an? (assist|web) session/i,
+			);
+		}
+	});
+
+	it("omits every ask rule outside an assist session", () => {
+		const markdown = composeAdvice(
+			contextWith({ sessions: { askQuestion: true } }),
+			fragments,
+		);
+
+		expect(markdown).not.toContain("assist ask");
+		expect(markdown).not.toContain("ASSIST_SESSION");
 	});
 
 	it("renders each included fragment under its title, in filename order", () => {
@@ -88,7 +123,6 @@ describe("composeAdvice", () => {
 
 		expect(markdown.startsWith("# Instructions for this repo")).toBe(true);
 		expect(titles).toEqual([
-			"Asking for sign-off",
 			"Using assist",
 			"Backlog item IDs",
 			"Backlog items, PRs, and commits",
@@ -116,6 +150,7 @@ describe("composeAdvice", () => {
 		const equipped = includedNames({
 			config: assistConfigSchema.parse({}),
 			rootDir: dir,
+			assistSession: false,
 		});
 
 		expect(bare).not.toContain("refactor");

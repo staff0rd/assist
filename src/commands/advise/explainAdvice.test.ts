@@ -6,7 +6,11 @@ import { loadAdviceFragments } from "./loadAdviceFragments";
 const fragments = loadAdviceFragments();
 
 const lines = explainAdvice(
-	{ config: assistConfigSchema.parse({}), rootDir: "/repo" },
+	{
+		config: assistConfigSchema.parse({}),
+		rootDir: "/repo",
+		assistSession: false,
+	},
 	fragments,
 ).split("\n");
 

@@ -28,10 +28,17 @@ export const adviceConditions: Record<string, AdviceCondition> = {
 		whenUnmet: "jira is not configured",
 		matches: ({ config }) => config.jira !== undefined,
 	},
+	assistSession: {
+		whenMet: "the session was launched by assist",
+		whenUnmet: "the session was not launched by assist",
+		matches: ({ assistSession }) => assistSession,
+	},
 	askQuestion: {
-		whenMet: "sessions.askQuestion is on",
-		whenUnmet: "sessions.askQuestion is off",
-		matches: ({ config }) => config.sessions?.askQuestion === true,
+		whenMet: "sessions.askQuestion is on in an assist-launched session",
+		whenUnmet:
+			"the session was not launched by assist, or sessions.askQuestion is off",
+		matches: ({ assistSession, config }) =>
+			assistSession && config.sessions?.askQuestion === true,
 	},
 	typescript: repoFile("tsconfig.json", "a tsconfig.json"),
 	filenameConvention: repoFile(

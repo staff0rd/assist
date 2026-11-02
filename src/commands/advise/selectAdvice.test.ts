@@ -6,6 +6,7 @@ import { selectAdvice } from "./selectAdvice";
 const context = {
 	config: assistConfigSchema.parse({}),
 	rootDir: "/repo",
+	assistSession: false,
 };
 
 function fragment(name: string, when: string): AdviceFragment {

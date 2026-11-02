@@ -1,9 +1,13 @@
 import { findConfigUp, loadConfigFrom } from "../../shared/loadConfigFrom";
 import type { AdviceContext } from "./AdviceContext";
 
-export function adviceContextFor(cwd: string): AdviceContext {
+export function adviceContextFor(
+	cwd: string,
+	env: NodeJS.ProcessEnv = process.env,
+): AdviceContext {
 	return {
 		config: loadConfigFrom(cwd),
 		rootDir: findConfigUp(cwd)?.rootDir ?? cwd,
+		assistSession: env.ASSIST_SESSION === "1",
 	};
 }

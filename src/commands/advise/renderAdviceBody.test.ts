@@ -5,7 +5,11 @@ import type { AdviceFragment } from "./parseAdviceFragment";
 import { renderAdviceBody } from "./renderAdviceBody";
 
 function contextWith(raw: Record<string, unknown>): AdviceContext {
-	return { config: assistConfigSchema.parse(raw), rootDir: "/repo" };
+	return {
+		config: assistConfigSchema.parse(raw),
+		rootDir: "/repo",
+		assistSession: false,
+	};
 }
 
 function fragment(name: string, body: string): AdviceFragment {
