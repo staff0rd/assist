@@ -1,3 +1,10 @@
+## [0.1042.1](https://github.com/staff0rd/assist/compare/v0.1042.0...v0.1042.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* show unset Jobs filter labels ([09de79e](https://github.com/staff0rd/assist/commit/09de79e95fca4b5b4a72b563a08e047f4cd02cb0))
+
 # [0.1042.0](https://github.com/staff0rd/assist/compare/v0.1041.0...v0.1042.0) (2026-11-01)
 
 
