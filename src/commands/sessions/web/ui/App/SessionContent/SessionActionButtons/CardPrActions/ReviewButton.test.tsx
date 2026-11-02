@@ -165,19 +165,6 @@ describe("ReviewButton", () => {
 		);
 	});
 
-	it("launches Address Comments (batch) against the PR shown on the card", () => {
-		const launchAssist = vi.fn();
-		renderButton(launchAssist);
-
-		fireEvent.click(screen.getByText("Address Comments (batch)"));
-
-		expect(launchAssist).toHaveBeenCalledWith(
-			["review-pr-comments", "42", "--batch"],
-			"/git/repo",
-			expect.objectContaining({ inPlace: true }),
-		);
-	});
-
 	it("launches Address Comments (auto) against the PR shown on the card", () => {
 		const launchAssist = vi.fn();
 		renderButton(launchAssist);

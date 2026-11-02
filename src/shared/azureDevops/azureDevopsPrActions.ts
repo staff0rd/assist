@@ -3,7 +3,6 @@ import { prActions } from "../prActions";
 const SUPPORTED = new Set([
 	"Checkout",
 	"Address Comments",
-	"Address Comments (batch)",
 	"Address Comments (auto)",
 ]);
 

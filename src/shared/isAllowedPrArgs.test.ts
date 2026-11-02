@@ -18,6 +18,7 @@ describe("isAllowedPrArgs", () => {
 		[["backlog", "run", "a1"]],
 		[["review", "--refine", "--apply"]],
 		[["review", "12"]],
+		[["review-pr-comments", "--batch"]],
 		[["review", "--force", "--force"]],
 		[["review", "--announce", "--force"]],
 		[["fix-conflict", "--force"]],

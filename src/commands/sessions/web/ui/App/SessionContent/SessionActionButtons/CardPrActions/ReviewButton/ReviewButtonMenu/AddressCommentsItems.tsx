@@ -3,7 +3,6 @@ import type { useReviewLaunch } from "../useReviewLaunch";
 
 const addressCommentsModes = [
 	{ label: "Address Comments", args: [] },
-	{ label: "Address Comments (batch)", args: ["--batch"] },
 	{ label: "Address Comments (auto)", args: ["--auto"] },
 ];
 

@@ -26,28 +26,29 @@ describe("planPrReview", () => {
 		);
 	});
 
-	it.each([
-		["review-pr-comments"],
-		["review-pr-comments", "--batch"],
-		["review-pr-comments", "--auto"],
-	])("passes Address Comments args %j through with the PR id", (...args) => {
-		mockFind.mockReturnValue("/base/site");
-		expect(planPrReview({ url: URL, args }, "/base")).toMatchObject({
-			ok: true,
-			assistArgs: [...args, "42"],
-		});
-	});
-
-	it.each([[["review"]], [["fix-conflict"]], [["review-pr-comments", "-x"]]])(
-		"rejects args Azure DevOps does not support: %j",
-		(args) => {
+	it.each([["review-pr-comments"], ["review-pr-comments", "--auto"]])(
+		"passes Address Comments args %j through with the PR id",
+		(...args) => {
+			mockFind.mockReturnValue("/base/site");
 			expect(planPrReview({ url: URL, args }, "/base")).toMatchObject({
-				ok: false,
-				status: 400,
+				ok: true,
+				assistArgs: [...args, "42"],
 			});
-			expect(mockFind).not.toHaveBeenCalled();
 		},
 	);
+
+	it.each([
+		[["review"]],
+		[["fix-conflict"]],
+		[["review-pr-comments", "-x"]],
+		[["review-pr-comments", "--batch"]],
+	])("rejects args Azure DevOps does not support: %j", (args) => {
+		expect(planPrReview({ url: URL, args }, "/base")).toMatchObject({
+			ok: false,
+			status: 400,
+		});
+		expect(mockFind).not.toHaveBeenCalled();
+	});
 
 	it("reports 404 when no clone has the PR's remote", () => {
 		mockFind.mockReturnValue(undefined);

@@ -114,40 +114,6 @@ describe("reviewPrComments", () => {
 		});
 	});
 
-	describe("with --batch", () => {
-		it("should ask the pass to run in batch mode", async () => {
-			await reviewPrComments("123", { batch: true });
-
-			expect(mockSpawnClaude).toHaveBeenCalledWith(
-				"/review-pr-comments --batch",
-				expect.anything(),
-			);
-		});
-
-		it("should compose with --announce", async () => {
-			await reviewPrComments("123", { batch: true, announce: true });
-
-			expect(mockSpawnClaude).toHaveBeenCalledWith(
-				"/review-pr-comments --batch --announce 123",
-				expect.anything(),
-			);
-		});
-
-		it("should exit when combined with --auto", async () => {
-			const exit = vi.spyOn(process, "exit").mockImplementation(() => {
-				throw new Error("process.exit");
-			});
-			vi.spyOn(console, "error").mockImplementation(() => {});
-
-			await expect(
-				reviewPrComments("123", { batch: true, auto: true }),
-			).rejects.toThrow("process.exit");
-			expect(mockSpawnClaude).not.toHaveBeenCalled();
-
-			exit.mockRestore();
-		});
-	});
-
 	describe("without --announce", () => {
 		it("should run the plain pass", async () => {
 			await reviewPrComments("123");

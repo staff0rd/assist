@@ -7,7 +7,6 @@ import { checkoutPr } from "./review/checkoutPr";
 type ReviewPrCommentsOptions = {
 	announce?: boolean;
 	auto?: boolean;
-	batch?: boolean;
 	resumeSessionId?: string;
 };
 
@@ -18,7 +17,6 @@ function buildPrompt(
 ): string {
 	const args = [
 		"/review-pr-comments",
-		...(options.batch ? ["--batch"] : []),
 		...(options.auto ? ["--auto"] : []),
 		...(announce ? [`--announce ${number}`] : []),
 	];
@@ -31,12 +29,6 @@ function validateAnnounce(number: string | undefined, announce: boolean): void {
 	process.exit(1);
 }
 
-function validateMode(options: ReviewPrCommentsOptions): void {
-	if (!options.batch || !options.auto) return;
-	console.error("Error: --batch and --auto cannot be used together.");
-	process.exit(1);
-}
-
 export async function reviewPrComments(
 	number?: string,
 	options: ReviewPrCommentsOptions = {},
@@ -44,7 +36,6 @@ export async function reviewPrComments(
 	const announce = options.announce === true;
 	const resumeSessionId = options.resumeSessionId;
 	validateAnnounce(number, announce);
-	validateMode(options);
 	if (number && !resumeSessionId) await checkoutPr(number);
 	/* why: assign the conversation id up front and report it via activity so the
 	 * daemon binds the card to this transcript rather than guessing via the cwd
