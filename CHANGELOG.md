@@ -1,3 +1,10 @@
+## [0.1042.4](https://github.com/staff0rd/assist/compare/v0.1042.3...v0.1042.4) (2026-11-02)
+
+
+### Bug Fixes
+
+* autostash conflict restore guidance ([59b331d](https://github.com/staff0rd/assist/commit/59b331d17cb0becdf065eb038107b4f5698ef1d7))
+
 ## [0.1042.3](https://github.com/staff0rd/assist/compare/v0.1042.2...v0.1042.3) (2026-11-02)
 
 
