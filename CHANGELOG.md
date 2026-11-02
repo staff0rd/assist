@@ -1,3 +1,10 @@
+## [0.1045.3](https://github.com/staff0rd/assist/compare/v0.1045.2...v0.1045.3) (2026-11-02)
+
+
+### Bug Fixes
+
+* /refine reviews designs via ask-design ([d2716ac](https://github.com/staff0rd/assist/commit/d2716ac8276e4d357109a2b32f6e6a0a958433c5))
+
 ## [0.1045.2](https://github.com/staff0rd/assist/compare/v0.1045.1...v0.1045.2) (2026-11-02)
 
 
