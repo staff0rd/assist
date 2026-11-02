@@ -1,3 +1,10 @@
+## [0.1051.2](https://github.com/staff0rd/assist/compare/v0.1051.1...v0.1051.2) (2026-11-02)
+
+
+### Bug Fixes
+
+* Siri phrases that avoid Notes ([ede265d](https://github.com/staff0rd/assist/commit/ede265d05d57365e73f36d9e871727aed5a2e6b4))
+
 ## [0.1051.1](https://github.com/staff0rd/assist/compare/v0.1051.0...v0.1051.1) (2026-11-02)
 
 
