@@ -1,3 +1,10 @@
+## [0.1042.3](https://github.com/staff0rd/assist/compare/v0.1042.2...v0.1042.3) (2026-11-02)
+
+
+### Bug Fixes
+
+* recover autostash left by commit pull ([fde11da](https://github.com/staff0rd/assist/commit/fde11da0c67b97f9e846f700549394b4069bea1a))
+
 ## [0.1042.2](https://github.com/staff0rd/assist/compare/v0.1042.1...v0.1042.2) (2026-11-02)
 
 
