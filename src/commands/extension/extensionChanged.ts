@@ -1,47 +1,57 @@
-import { execFileSync, spawnSync } from "node:child_process";
-import { appendFileSync, readFileSync } from "node:fs";
-import { bundledSources } from "./bundledSources";
+import { execFileSync } from "node:child_process";
+import {
+	appendFileSync,
+	mkdtempSync,
+	readFileSync,
+	writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { changedBundleFiles } from "./changedBundleFiles";
 import { latestUpdate } from "./latestUpdate";
+import { readBundleFiles } from "./readBundleFiles";
 
-const entryPoints = [
-	"src/commands/extension/criteriaContentScript.ts",
-	"src/commands/extension/docsFeedback/docsContentScript.ts",
-	"src/commands/extension/sendToAssist/assistBackground.ts",
-	"src/commands/extension/sendToAssist/assistOptions.ts",
-];
-
-function lastSignedVersion(): string | undefined {
+function lastSignedUpdate() {
 	const updates = execFileSync(
 		"git",
 		["show", "origin/main:extension/updates.json"],
 		{ encoding: "utf8" },
 	);
-	return latestUpdate(readFileSync("extension/manifest.json", "utf8"), updates)
-		?.version;
+	return latestUpdate(readFileSync("extension/manifest.json", "utf8"), updates);
+}
+
+async function unpackSignedXpi(link: string): Promise<string | undefined> {
+	const response = await fetch(link);
+	if (!response.ok) return undefined;
+	const dir = mkdtempSync(join(tmpdir(), "assist-signed-"));
+	const xpi = join(dir, "signed.xpi");
+	writeFileSync(xpi, Buffer.from(await response.arrayBuffer()));
+	const unpacked = join(dir, "unpacked");
+	execFileSync("unzip", ["-q", xpi, "-d", unpacked]);
+	return unpacked;
 }
 
 export async function extensionChanged(): Promise<boolean> {
-	const signed = lastSignedVersion();
+	const signed = lastSignedUpdate();
 	if (!signed) {
 		console.log("No signed version recorded; signing.");
 		return true;
 	}
-	const range = [`v${signed}`, "HEAD", "--"];
-	const paths = [
-		"extension",
-		"src/commands/extension",
-		...(await Promise.all(entryPoints.map(bundledSources))).flat(),
-		":!extension/updates.json",
-	];
-	const { status } = spawnSync("git", ["diff", "--quiet", ...range, ...paths]);
-	if (status === 0) {
-		console.log(`Extension unchanged since v${signed}; skipping.`);
+	const unpacked = await unpackSignedXpi(signed.update_link);
+	if (!unpacked) {
+		console.log(`Could not download v${signed.version}; signing.`);
+		return true;
+	}
+	const changed = changedBundleFiles(
+		readBundleFiles("extension"),
+		readBundleFiles(unpacked),
+	);
+	if (changed.length === 0) {
+		console.log(`Built extension matches v${signed.version}; skipping.`);
 		return false;
 	}
-	if (status !== 1) throw new Error(`git diff exited with ${status}`);
-	execFileSync("git", ["diff", "--stat", ...range, ...paths], {
-		stdio: "inherit",
-	});
+	console.log(`Built extension differs from v${signed.version}:`);
+	for (const path of changed) console.log(`  ${path}`);
 	return true;
 }
 

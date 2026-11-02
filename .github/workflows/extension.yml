@@ -42,14 +42,13 @@ jobs:
         id: version
         run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
 
-      - name: Check for extension changes since the last signed version
+      - name: Build
+        run: npm run build
+
+      - name: Check whether the built extension differs from the last signed version
         id: changes
         if: inputs.only-if-changed
         run: npx tsx src/commands/extension/extensionChanged.ts
-
-      - name: Build
-        if: steps.changes.outputs.changed != 'false'
-        run: npm run build
 
       - name: Sign on AMO
         if: steps.changes.outputs.changed != 'false'
