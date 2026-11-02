@@ -18,6 +18,8 @@
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		A1457B022FF0000100A14570 /* AddNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B012FF0000100A14570 /* AddNoteIntent.swift */; };
 		A1457B042FF0000100A14570 /* AssistShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B032FF0000100A14570 /* AssistShortcuts.swift */; };
+		A1457B062FF0000100A14570 /* HomeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B052FF0000100A14570 /* HomeNode.swift */; };
+		A1457B082FF0000100A14570 /* RepoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B072FF0000100A14570 /* RepoEntity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,8 @@
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		A1457B012FF0000100A14570 /* AddNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteIntent.swift; sourceTree = "<group>"; };
 		A1457B032FF0000100A14570 /* AssistShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistShortcuts.swift; sourceTree = "<group>"; };
+		A1457B052FF0000100A14570 /* HomeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNode.swift; sourceTree = "<group>"; };
+		A1457B072FF0000100A14570 /* RepoEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoEntity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +77,8 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				A1457B012FF0000100A14570 /* AddNoteIntent.swift */,
 				A1457B032FF0000100A14570 /* AssistShortcuts.swift */,
+				A1457B052FF0000100A14570 /* HomeNode.swift */,
+				A1457B072FF0000100A14570 /* RepoEntity.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -168,6 +174,8 @@
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 				A1457B022FF0000100A14570 /* AddNoteIntent.swift in Sources */,
 				A1457B042FF0000100A14570 /* AssistShortcuts.swift in Sources */,
+				A1457B062FF0000100A14570 /* HomeNode.swift in Sources */,
+				A1457B082FF0000100A14570 /* RepoEntity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,6 +3,7 @@ import { createHtmlHandler, type Handler } from "../../../shared/web";
 import { getBacklogSummary } from "../../backlog/web/getBacklogSummary";
 import { getDocsRefresh } from "../../backlog/web/getDocsRefresh";
 import { postDocsRefresh } from "../../backlog/web/postDocsRefresh";
+import { getNoteRepos } from "../../backlog/web/getNoteRepos";
 import { getRepoLocation } from "../../backlog/web/getRepoLocation";
 import { postItem } from "../../backlog/web/postItem";
 import { listItems } from "../../backlog/web/shared";
@@ -77,6 +78,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/daemon-log": daemonLogTail,
 	"GET /api/items": listItems,
 	"POST /api/items": postItem,
+	"GET /api/note-repos": getNoteRepos,
 	"GET /api/backlog/summary": getBacklogSummary,
 	"GET /api/backlog/docs-refresh": getDocsRefresh,
 	"POST /api/backlog/docs-refresh": postDocsRefresh,
