@@ -1,6 +1,7 @@
 import type { CommitRef } from "../../../shared/db/listCommitRefs";
 import { itemCommits } from "./itemCommits";
 import { resolveCommit } from "./resolveCommit";
+import { transcriptCommits } from "./transcriptCommits";
 
 type CommittedPaths = { commits: CommitRef[]; bases: Map<string, string> };
 
@@ -35,7 +36,11 @@ async function loadCommittedPaths(
 	cwd: string,
 	sessionId: string,
 ): Promise<CommittedPaths> {
-	const commits = await itemCommits(sessionId);
+	const itemCommitRefs = await itemCommits(sessionId);
+	const commits =
+		itemCommitRefs.length > 0
+			? itemCommitRefs
+			: await transcriptCommits(cwd, sessionId);
 	const bases = new Map<string, string>();
 	for (const commit of commits) {
 		const resolved = await resolveCommit(cwd, commit.sha);

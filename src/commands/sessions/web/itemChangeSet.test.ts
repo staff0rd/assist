@@ -3,14 +3,19 @@ import { loadConfigFrom } from "../../../shared/loadConfigFrom";
 import { execGit } from "./execGit";
 import { itemChangeSet } from "./itemChangeSet";
 import { itemCommits } from "./itemCommits";
+import { transcriptCommits } from "./transcriptCommits";
 
 vi.mock("../../../shared/loadConfigFrom", () => ({ loadConfigFrom: vi.fn() }));
 vi.mock("./execGit", () => ({ execGit: vi.fn() }));
 vi.mock("./itemCommits", () => ({ itemCommits: vi.fn(async () => []) }));
+vi.mock("./transcriptCommits", () => ({
+	transcriptCommits: vi.fn(async () => []),
+}));
 
 const loadConfigFromMock = vi.mocked(loadConfigFrom);
 const execGitMock = vi.mocked(execGit);
 const itemCommitsMock = vi.mocked(itemCommits);
+const transcriptCommitsMock = vi.mocked(transcriptCommits);
 
 const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 
@@ -97,6 +102,30 @@ describe("itemChangeSet", () => {
 		withRepo({});
 
 		expect(await itemChangeSet("/repo", nextSession())).toBeUndefined();
+	});
+
+	it("falls back to the commits in the session's transcript when it has no item", async () => {
+		config(true);
+		commits();
+		transcriptCommitsMock.mockResolvedValueOnce([{ sha: "one" }]);
+		withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+		const session = nextSession();
+
+		const changeSet = await itemChangeSet("/repo", session);
+
+		expect(transcriptCommitsMock).toHaveBeenCalledWith("/repo", session);
+		expect(changeSet?.commits).toEqual([{ sha: "one" }]);
+		expect(changeSet?.groups).toEqual([{ base: "base-one", paths: ["a.ts"] }]);
+	});
+
+	it("prefers the item's commits over the transcript", async () => {
+		config(true);
+		commits("one");
+		withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+
+		await itemChangeSet("/repo", nextSession());
+
+		expect(transcriptCommitsMock).not.toHaveBeenCalled();
 	});
 
 	it("groups each path under the parent of the earliest commit that touched it", async () => {
