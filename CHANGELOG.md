@@ -1,3 +1,15 @@
+# [0.1046.0](https://github.com/staff0rd/assist/compare/v0.1045.3...v0.1046.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* post review checks as status bullets ([4fb27fe](https://github.com/staff0rd/assist/commit/4fb27fe33ee22dd1bda155c433afefeea27a1a06))
+
+
+### Features
+
+* add Siri note intent for backlog ([24f5d28](https://github.com/staff0rd/assist/commit/24f5d28ef86cdfbad05da1f4c51d55795561e897))
+
 ## [0.1045.3](https://github.com/staff0rd/assist/compare/v0.1045.2...v0.1045.3) (2026-11-02)
 
 
