@@ -1,9 +1,11 @@
 import Button from "@mui/material/Button";
+import type { MouseEvent } from "react";
 
 export type FooterProps = {
 	submitLabel: string;
 	disabled?: boolean;
 	loading?: boolean;
+	onClick?: (e: MouseEvent) => void;
 };
 
 export const FOOTER_HINTS = [
@@ -16,10 +18,12 @@ export function SubmitButton({
 	submitLabel,
 	disabled = false,
 	loading = false,
+	onClick,
 }: FooterProps) {
 	return (
 		<Button
 			type="submit"
+			onClick={onClick}
 			variant="contained"
 			disabled={disabled}
 			loading={loading}

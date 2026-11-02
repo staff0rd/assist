@@ -16,12 +16,8 @@ export type AssistLaunchMeta = {
 	inPlace?: boolean;
 	launchedFrom?: string;
 	node?: string;
+	autoApprove?: boolean;
 };
-
-export function createAssistSessionAction(send: SendFn) {
-	return (assistArgs: string[], cwd?: string, meta?: AssistLaunchMeta) =>
-		send({ type: "create-assist", assistArgs, cwd, ...meta });
-}
 
 export function resumeSessionAction(send: SendFn) {
 	return (

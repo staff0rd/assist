@@ -4,11 +4,11 @@ import {
 	createHarnessSessionAction,
 } from "../../createHarnessSessionAction";
 import {
-	createAssistSessionAction,
 	createSessionAction,
 	resumeSessionAction,
 } from "../../createSessionAction";
 import { createSessionInStreamAction } from "./useLaunchActions/createSessionInStreamAction";
+import { createAssistSessionAction } from "../../createAssistSessionAction";
 
 type SendFn = (msg: object) => void;
 

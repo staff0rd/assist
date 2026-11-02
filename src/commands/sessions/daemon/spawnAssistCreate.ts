@@ -15,6 +15,7 @@ export function spawnAssistCreate(
 	const meta = {
 		title: d.title as string | undefined,
 		subtitle: d.subtitle as string | undefined,
+		...(d.autoApprove === true && { autoApprove: true }),
 	};
 	const snapshot = parseTransferSnapshot(d.transfer);
 	if (snapshot)

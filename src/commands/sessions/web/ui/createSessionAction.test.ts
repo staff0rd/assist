@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { createHarnessSessionAction } from "./createHarnessSessionAction";
 import {
-	createAssistSessionAction,
 	createSessionAction,
 	dismissSessionAction,
 	restartSessionAction,
@@ -11,6 +10,7 @@ import { handleOutput } from "./useSessionSocket/useWsConnection/useWebSocket/co
 import { handleSnapshot } from "./useSessionSocket/useWsConnection/useWebSocket/connectWithReconnect/createWsConnection/handleWsMessage/handleSnapshot";
 import type { WsDispatch } from "./useSessionSocket/useWsConnection/useWebSocket/WsDispatch";
 import { outputAction } from "./useSessionSocket/useSessionActions/outputAction";
+import { createAssistSessionAction } from "./createAssistSessionAction";
 
 function terminalState() {
 	const buffers = new Map<string, string>();

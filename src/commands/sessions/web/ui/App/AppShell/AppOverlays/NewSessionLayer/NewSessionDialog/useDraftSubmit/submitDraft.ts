@@ -14,6 +14,7 @@ export function submitDraft(
 	harness: HarnessKind,
 	target: DraftTarget,
 	launchers: NewSessionLaunchers,
+	autoApprove = false,
 ): boolean {
 	if (target.kind === "blocked" || draft.modePending) return false;
 	if (target.kind === "clone") {
@@ -27,6 +28,7 @@ export function submitDraft(
 			prompt: draft.prompt,
 			cwd: target.cwd,
 			node: draft.node,
+			autoApprove,
 		},
 		launchers,
 	);

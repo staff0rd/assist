@@ -60,6 +60,28 @@ describe("spawnAssistCreate", () => {
 		);
 	});
 
+	it("carries autoApprove into the session meta", async () => {
+		const { m, spawnAssist } = manager();
+
+		await spawnAssistCreate(m, {
+			assistArgs: ["draft", "--once"],
+			cwd: "/git/app",
+			autoApprove: true,
+		});
+
+		expect(spawnAssist).toHaveBeenCalledWith(
+			["draft", "--once"],
+			"/git/app",
+			{
+				title: undefined,
+				subtitle: undefined,
+				autoApprove: true,
+				inPlace: false,
+			},
+			{ launchedFrom: undefined },
+		);
+	});
+
 	it("skips the lookup for an in-place launch", async () => {
 		const { m } = manager();
 

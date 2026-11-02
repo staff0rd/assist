@@ -4,11 +4,13 @@ export const newSessionModes = {
 	draft: {
 		placeholder: "Describe the backlog item to draft...",
 		submitLabel: "Start draft",
+		autoStartLabel: "Start draft + auto start",
 		sessionMode: "assist-draft",
 	},
 	bug: {
 		placeholder: "Describe the bug: what happened, what you expected...",
 		submitLabel: "File bug",
+		autoStartLabel: "File bug + auto start",
 		sessionMode: "assist-bug",
 	},
 	prompt: {
@@ -21,10 +23,20 @@ export const newSessionModes = {
 	},
 } satisfies Record<
 	string,
-	{ placeholder: string; submitLabel: string; sessionMode?: SessionMode }
+	{
+		placeholder: string;
+		submitLabel: string;
+		autoStartLabel?: string;
+		sessionMode?: SessionMode;
+	}
 >;
 
 export type NewSessionMode = keyof typeof newSessionModes;
+
+export function autoStartLabel(mode: NewSessionMode): string | undefined {
+	const config = newSessionModes[mode];
+	return "autoStartLabel" in config ? config.autoStartLabel : undefined;
+}
 
 export const newSessionModeOrder = Object.keys(
 	newSessionModes,

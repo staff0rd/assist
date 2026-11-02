@@ -208,6 +208,35 @@ describe("two linked nodes", () => {
 		create.mockRestore();
 	});
 
+	it("keeps autoApprove on a forwarded assist launch", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		node("pc-windows");
+		const route = messageHandlers["create-assist"];
+		const create = vi
+			.spyOn(messageHandlers, "create-assist")
+			.mockImplementation((client, manager, data) => {
+				if (data.node) route(client, manager, data);
+			});
+		const view = viewer();
+		wsl.addClient(view.client);
+		wsl.links.reload();
+		await vi.waitFor(() =>
+			expect(wsl.links.nodes().links[0].state).toBe("connected"),
+		);
+
+		dispatchMessage(view.client, wsl, {
+			type: "create-assist",
+			node: "pc-windows",
+			assistArgs: ["draft", "--once"],
+			autoApprove: true,
+		});
+
+		const forwarded = create.mock.lastCall?.[2] as Msg;
+		expect(forwarded.node).toBeUndefined();
+		expect(forwarded.autoApprove).toBe(true);
+		create.mockRestore();
+	});
+
 	it("never re-exports linked sessions under symmetric linking", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		const windows = node("pc-windows", [WSL]);

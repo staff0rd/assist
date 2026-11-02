@@ -617,6 +617,81 @@ describe("NewSessionDialog mode selector", () => {
 	});
 });
 
+describe("NewSessionDialog Shift+click auto start", () => {
+	const win = globalThis as unknown as Window;
+
+	function submitButton() {
+		return screen.getByRole("button", { name: /^(Start|File)/ });
+	}
+
+	it.each([
+		["draft", ["draft", "--once"]],
+		["bug", ["bug", "--once"]],
+	] as const)("launches %s with Auto start on", (mode, args) => {
+		const { onCreateAssist } = renderDialog(mode);
+
+		fireEvent.click(submitButton(), { shiftKey: true });
+
+		expect(onCreateAssist).toHaveBeenCalledWith(args, "/git/beta", {
+			autoApprove: true,
+		});
+	});
+
+	it("launches draft with Auto start off on a plain click", () => {
+		const { onCreateAssist } = renderDialog("draft");
+
+		fireEvent.click(submitButton());
+
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			["draft", "--once"],
+			"/git/beta",
+		);
+	});
+
+	it("leaves Shift+Enter in the prompt as a newline", () => {
+		const { onCreateAssist } = renderDialog("draft");
+
+		fireEvent.keyDown(promptInput(), { key: "Enter", shiftKey: true });
+
+		expect(onCreateAssist).not.toHaveBeenCalled();
+	});
+
+	it("ignores Shift in prompt and design modes", () => {
+		const prompt = renderDialog();
+		fireEvent.click(submitButton(), { shiftKey: true });
+		expect(prompt.onCreate).toHaveBeenCalledWith("", "/git/beta");
+		expect(prompt.onCreateAssist).not.toHaveBeenCalled();
+		cleanup();
+
+		const design = renderDialog("design");
+		fireEvent.click(submitButton(), { shiftKey: true });
+		expect(design.onCreateDesign).toHaveBeenCalledWith("", "/git/beta");
+		expect(design.onCreateAssist).not.toHaveBeenCalled();
+	});
+
+	it("shows the auto start label while Shift is held and reverts on release or blur", () => {
+		renderDialog("bug");
+
+		fireEvent.keyDown(win, { key: "Shift", shiftKey: true });
+		expect(submitButton().textContent).toBe("File bug + auto start");
+
+		fireEvent.keyUp(win, { key: "Shift", shiftKey: false });
+		expect(submitButton().textContent).toBe("File bug");
+
+		fireEvent.keyDown(win, { key: "Shift", shiftKey: true });
+		fireEvent.blur(win);
+		expect(submitButton().textContent).toBe("File bug");
+	});
+
+	it("keeps the prompt mode label while Shift is held", () => {
+		renderDialog();
+
+		fireEvent.keyDown(win, { key: "Shift", shiftKey: true });
+
+		expect(submitButton().textContent).toBe("Start session");
+	});
+});
+
 describe("NewSessionDialog harness selector", () => {
 	it("leaves the prompt segment plain when Claude is the only harness", async () => {
 		renderDialog();

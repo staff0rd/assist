@@ -1,7 +1,11 @@
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import type { AssistLaunchMeta } from "../../../../createSessionAction";
 import { dispatchMode } from "../../../dispatchMode";
-import { type NewSessionMode, newSessionModes } from "./newSessionModes";
+import {
+	autoStartLabel,
+	type NewSessionMode,
+	newSessionModes,
+} from "./newSessionModes";
 
 export type NewSessionLaunchers = {
 	onCreate: (prompt: string, cwd?: string, node?: string) => void;
@@ -25,10 +29,21 @@ type NewSessionLaunch = {
 	prompt: string;
 	cwd: string;
 	node?: string;
+	autoApprove?: boolean;
 };
 
+function assistMetaFor(
+	mode: NewSessionMode,
+	node?: string,
+	autoApprove?: boolean,
+): [AssistLaunchMeta?] {
+	const autoStart = autoApprove === true && autoStartLabel(mode) !== undefined;
+	if (!node && !autoStart) return [];
+	return [{ ...(node && { node }), ...(autoStart && { autoApprove: true }) }];
+}
+
 export function launchNewSession(
-	{ mode, harness, prompt, cwd, node }: NewSessionLaunch,
+	{ mode, harness, prompt, cwd, node, autoApprove }: NewSessionLaunch,
 	launchers: NewSessionLaunchers,
 ) {
 	const target = cwd || undefined;
@@ -42,7 +57,7 @@ export function launchNewSession(
 		launchers.onCreateDesign(prompt, target, ...onNode);
 		return;
 	}
-	const assistMeta: [AssistLaunchMeta?] = node ? [{ node }] : [];
+	const assistMeta = assistMetaFor(mode, node, autoApprove);
 	dispatchMode(
 		newSessionModes[mode].sessionMode,
 		cwd,

@@ -1,8 +1,7 @@
 import { harnessChoices } from "./NewSessionDialog/harnessChoices";
 import type { NewSessionLaunchers } from "./launchNewSession";
 import { NewSessionFields } from "./NewSessionDialog/NewSessionFields";
-import { NewSessionFooter } from "./NewSessionDialog/NewSessionFooter";
-import { newSessionModes } from "./newSessionModes";
+import { DraftFooter } from "./NewSessionDialog/DraftFooter";
 import { useDraftFocus } from "./NewSessionDialog/useDraftFocus";
 import { useDraftRepos } from "./NewSessionDialog/useDraftRepos";
 import { useDraftSubmit } from "./NewSessionDialog/useDraftSubmit";
@@ -26,11 +25,17 @@ export function NewSessionDialog({
 	const harness = harnesses.includes(draft.harness) ? draft.harness : "claude";
 	const { target, cloneState } = useDraftRepos(draft.node, draft.cwd);
 
-	const submit = useDraftSubmit(draft, harness, target, launchers, onClose);
+	const { onSubmit, onSubmitClick } = useDraftSubmit(
+		draft,
+		harness,
+		target,
+		launchers,
+		onClose,
+	);
 
 	return (
 		<AutoFocusDialog onClose={onClose} onEntered={focus.restore} centered>
-			<form onSubmit={submit}>
+			<form onSubmit={onSubmit}>
 				<LoadingFieldset
 					loading={draft.modePending}
 					restoreFocus={focus.restore}
@@ -46,14 +51,10 @@ export function NewSessionDialog({
 						error={draft.modeError}
 						onRetry={draft.retryMode}
 					/>
-					<NewSessionFooter
-						submitLabel={
-							target.kind === "clone"
-								? "Clone"
-								: newSessionModes[draft.mode].submitLabel
-						}
-						disabled={target.kind === "blocked"}
-						loading={draft.modePending}
+					<DraftFooter
+						draft={draft}
+						targetKind={target.kind}
+						onClick={onSubmitClick}
 					/>
 				</LoadingFieldset>
 			</form>
