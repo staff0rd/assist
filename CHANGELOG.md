@@ -1,3 +1,11 @@
+# [0.1052.0](https://github.com/staff0rd/assist/compare/v0.1051.2...v0.1052.0) (2026-11-02)
+
+
+### Features
+
+* manual testing item from slicing ([3d74a33](https://github.com/staff0rd/assist/commit/3d74a33248ea776d28d19514d149c76701fe33c5))
+* pick the Siri note's repo by voice ([4339d30](https://github.com/staff0rd/assist/commit/4339d3098095d7135d9d74ce73608f971b30044e))
+
 ## [0.1051.2](https://github.com/staff0rd/assist/compare/v0.1051.1...v0.1051.2) (2026-11-02)
 
 
