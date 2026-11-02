@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import { findUnmergedPaths } from "./findConflictMarkers";
+import { listStashShas, recoverAutostash } from "./recoverAutostash";
 
 function git(args: string, input?: string): string {
 	return execSync(`git --literal-pathspecs ${args}`, {
@@ -25,7 +26,13 @@ export function pullKeepingIndex(): void {
 		.split("\0")
 		.filter(Boolean);
 	const patch = git("diff-index --cached -p --binary --no-renames HEAD");
-	execSync("git pull --autostash", { stdio: "inherit" });
+	const head = git("rev-parse --verify -q HEAD || true").trim();
+	const stashesBefore = listStashShas();
+	try {
+		execSync("git pull --autostash", { stdio: "inherit" });
+	} finally {
+		recoverAutostash(head, stashesBefore);
+	}
 	if (paths.length === 0 || findUnmergedPaths().length > 0) return;
 	restoreIndex(paths, patch);
 }

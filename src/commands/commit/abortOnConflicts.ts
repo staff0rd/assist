@@ -13,7 +13,7 @@ export function abortOnConflicts(files: string[], pulled: boolean): void {
 		if (unmerged.length > 0) {
 			abort(
 				`git pull --autostash left unresolved conflicts in: ${unmerged.join(", ")}`,
-				"Your local changes are safe in the stash. Resolve the autostash conflict manually (edit the files, then `git stash drop`, or run `git stash pop`), then re-run the commit.",
+				"Resolve the conflicts, then re-run the commit.",
 			);
 		}
 	}
