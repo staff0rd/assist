@@ -1,3 +1,10 @@
+# [0.1048.0](https://github.com/staff0rd/assist/compare/v0.1047.0...v0.1048.0) (2026-11-02)
+
+
+### Features
+
+* hunk-scoped slices with tests inside ([2b8daee](https://github.com/staff0rd/assist/commit/2b8daee8505ca38d422bc4516e0d60909937dc3c))
+
 # [0.1047.0](https://github.com/staff0rd/assist/compare/v0.1046.1...v0.1047.0) (2026-11-02)
 
 
