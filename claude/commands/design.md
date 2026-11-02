@@ -31,7 +31,7 @@ Load the `artifact-design` skill before writing the page, write the HTML to a fi
 
 ## Designing a new backlog item's UI change
 
-`/draft` and `/bug` follow this section while creating an item. It is the single source of the design step for both.
+`/draft` and `/bug` follow this section while creating an item. It is the single source of the design step for both, and `/refine` reuses its `ask-design` review rounds for new and updated designs.
 
 ### Decide
 

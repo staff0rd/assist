@@ -107,7 +107,7 @@ Check the item's Activity section (from `assist backlog view <id>`) for an exist
 - **An existing `design` activity** and this refinement changes the UI substantially — update that design, republishing to its existing artifact URL rather than creating a new one.
 - Otherwise — skip this step entirely and do not mention it.
 
-When a design is needed, do not ask whether to design it — follow `/design` (`~/.claude/skills/design/SKILL.md`) for the item's UI, applying it to the item as refined. To update an existing design, read the artifact at its URL first and build on it, publishing back to the same URL. Give the user the artifact's URL and iterate on it with them — editing the same file and republishing to the same URL — until they say they are happy with it.
+When a design is needed, do not ask whether to design it — follow `/design` (`~/.claude/skills/design/SKILL.md`) for the item's UI, applying it to the item as refined. To update an existing design, read the artifact at its URL first and build on it, publishing back to the same URL. Then review it with `ask-design` rather than iterating in chat: read the **Designing a new backlog item's UI change** section of `/design` and follow the review rounds in its **Design and review** step, republishing to the same artifact URL between rounds until it is approved.
 
 Then keep the item in sync with the design:
 
