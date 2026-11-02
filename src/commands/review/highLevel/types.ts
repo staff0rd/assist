@@ -50,6 +50,7 @@ export type HighLevelFile = {
 	patch?: string;
 	truncated?: boolean;
 	split?: HighLevelSliceSplit;
+	critical?: boolean;
 };
 
 export type HighLevelTreeFile = HighLevelFile & {
@@ -151,6 +152,7 @@ export type HighLevelSlice = {
 	hunks: string[];
 	additions: number;
 	deletions: number;
+	rest?: boolean;
 };
 
 export type HighLevelPreviewPayload = {

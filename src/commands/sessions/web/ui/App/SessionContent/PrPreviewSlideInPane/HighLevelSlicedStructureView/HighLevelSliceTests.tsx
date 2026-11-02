@@ -6,6 +6,7 @@ import { HighLevelDiffNote } from "../HighLevelDiffNote";
 import { HighLevelTestsView } from "../HighLevelTestsView";
 import { highLevelTestChangeSummary } from "../HighLevelTestsView/highLevelTestChangeSummary";
 import { highLevelSliceDomId } from "../highLevelSliceDomId";
+import { highLevelStructureStickyTop } from "../highLevelStructureToolbarSx";
 
 export function HighLevelSliceTests({
 	number,
@@ -23,7 +24,11 @@ export function HighLevelSliceTests({
 			id={`${highLevelSliceDomId(number)}-tests`}
 			aria-label={`Slice ${number} tests`}
 			role="group"
-			sx={{ mt: 0.5, minWidth: 0 }}
+			sx={{
+				mt: 0.5,
+				minWidth: 0,
+				scrollMarginTop: highLevelStructureStickyTop,
+			}}
 		>
 			<Typography
 				variant="overline"

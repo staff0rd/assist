@@ -16,7 +16,7 @@ export function useHighLevelCollapse(
 	overrides: ReadonlySet<string>;
 	onToggle: (path: string) => void;
 	onSet: (paths: Iterable<string>, collapse: boolean) => void;
-	onReset: () => void;
+	onReset: (paths?: Iterable<string>) => void;
 } {
 	const key = `${PREFIX}${subject}`;
 	const [overrides, setOverrides] = useState(() => {
@@ -39,7 +39,12 @@ export function useHighLevelCollapse(
 				else next.add(path);
 			save(next);
 		},
-		onReset: () => save(new Set()),
+		onReset: (paths) => {
+			if (!paths) return save(new Set());
+			const next = new Set(overrides);
+			for (const path of paths) next.delete(path);
+			save(next);
+		},
 	};
 }
 

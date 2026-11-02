@@ -29,10 +29,13 @@ export function sliceHighLevelStructures(
 	structure: HighLevelStructure,
 	slices: HighLevelSlice[],
 	hiddenPaths: ReadonlySet<string> = new Set(),
+	criticalPaths: ReadonlySet<string> = new Set(),
 ): HighLevelStructure[] {
-	const files = filesOf(structure.tree).filter(
-		(file) => !hiddenPaths.has(file.path),
-	);
+	const files = filesOf(structure.tree)
+		.filter((file) => !hiddenPaths.has(file.path))
+		.map((file) =>
+			criticalPaths.has(file.path) ? { ...file, critical: true } : file,
+		);
 	const hunkSlices = hunkSlicesOf(slices);
 	return slices.map((slice, index) => {
 		const paths = new Set(slice.hunks.map(pathOfHunkRef));

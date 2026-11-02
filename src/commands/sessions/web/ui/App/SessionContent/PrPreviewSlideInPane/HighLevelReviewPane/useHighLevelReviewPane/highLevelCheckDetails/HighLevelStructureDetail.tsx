@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { highLevelChangedFileCount } from "../../../../../../../../../review/highLevel/highLevelChangedFileCount";
 import type { HighLevelPreviewPayload } from "../../../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../../../HighLevelDiffComments";
@@ -14,6 +15,10 @@ export function HighLevelStructureDetail({
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 }) {
+	const criticalFiles = useMemo(
+		() => payload.criticalDiffs.map((diff) => diff.path),
+		[payload.criticalDiffs],
+	);
 	return (
 		<HighLevelCheckDetail
 			label={`Changed files (${highLevelChangedFileCount(payload.structure)})`}
@@ -23,6 +28,7 @@ export function HighLevelStructureDetail({
 					structure={payload.structure}
 					slices={payload.slices}
 					tests={payload.tests}
+					criticalFiles={criticalFiles}
 					collapsedPaths={payload.collapsedPaths}
 					subject={subject}
 					comments={comments}

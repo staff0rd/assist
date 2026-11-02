@@ -1,4 +1,5 @@
 import { Box, Link, Typography } from "@mui/material";
+import type { ReactNode } from "react";
 import type { HighLevelCriticalDiff } from "../../../../../../review/highLevel/types";
 import { highLevelDiffHeaderSx } from "./HighLevelCriticalDiffHeader/highLevelDiffHeaderSx";
 import { HighLevelDiffChevron } from "./HighLevelCriticalDiffHeader/HighLevelDiffChevron";
@@ -13,7 +14,9 @@ export function HighLevelCriticalDiffHeader({
 	diff,
 	collapsed,
 	onToggle,
+	children,
 }: {
+	children?: ReactNode;
 	diff: Pick<
 		HighLevelCriticalDiff,
 		"path" | "status" | "additions" | "deletions" | "diffUrl"
@@ -45,6 +48,7 @@ export function HighLevelCriticalDiffHeader({
 			>
 				{diff.status}
 			</Typography>
+			{children}
 			<HighLevelLineCounts
 				additions={diff.additions}
 				deletions={diff.deletions}

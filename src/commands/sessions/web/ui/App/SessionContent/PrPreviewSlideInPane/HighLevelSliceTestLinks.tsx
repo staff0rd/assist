@@ -6,19 +6,7 @@ import type {
 	HighLevelSlice,
 	HighLevelTestFile,
 } from "../../../../../../review/highLevel/types";
-import { highLevelSliceDomId } from "./highLevelSliceDomId";
-
-function jumpToSliceTests(number: number): void {
-	const reduceMotion = globalThis.matchMedia?.(
-		"(prefers-reduced-motion: reduce)",
-	).matches;
-	document
-		.getElementById(`${highLevelSliceDomId(number)}-tests`)
-		?.scrollIntoView?.({
-			block: "start",
-			behavior: reduceMotion ? "auto" : "smooth",
-		});
-}
+import { selectHighLevelSlice } from "./selectHighLevelSlice";
 
 export function HighLevelSliceTestLinks({
 	slices,
@@ -45,7 +33,7 @@ export function HighLevelSliceTestLinks({
 						size="small"
 						variant="outlined"
 						clickable
-						onClick={() => jumpToSliceTests(index + 1)}
+						onClick={() => selectHighLevelSlice(index + 1, true)}
 						label={`${index + 1} ${slice.title} · ${count} test${count === 1 ? "" : "s"}`}
 					/>
 				);

@@ -29,7 +29,13 @@ export function HighLevelSliceHeader({
 			>
 				{number}
 			</Typography>
-			<Typography component="h3" variant="subtitle2">
+			<Typography
+				component="h3"
+				variant="subtitle2"
+				sx={
+					slice.rest ? { color: "text.secondary", fontWeight: 500 } : undefined
+				}
+			>
 				{slice.title}
 			</Typography>
 			<HighLevelLineCounts

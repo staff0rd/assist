@@ -5,6 +5,7 @@ import { HighLevelCriticalDiffHeader } from "../../../../HighLevelCriticalDiffHe
 import type { HighLevelDiffComments } from "../../../../HighLevelDiffComments";
 import { highLevelDiffFileSx } from "../../../../highLevelDiffFileSx";
 import { HighLevelNativeDiff } from "../../../../HighLevelNativeDiff";
+import { HighLevelCriticalSliceTags } from "./HighLevelCriticalSliceTags";
 
 export function HighLevelCriticalDiffItem({
 	diff,
@@ -12,8 +13,10 @@ export function HighLevelCriticalDiffItem({
 	onToggle,
 	viewType,
 	comments,
+	slices,
 }: {
 	diff: HighLevelCriticalDiff;
+	slices?: { number: number; title: string }[] | undefined;
 	collapsed: boolean;
 	onToggle: () => void;
 	viewType: ViewType;
@@ -25,7 +28,9 @@ export function HighLevelCriticalDiffItem({
 				diff={diff}
 				collapsed={collapsed}
 				onToggle={onToggle}
-			/>
+			>
+				{slices && <HighLevelCriticalSliceTags slices={slices} />}
+			</HighLevelCriticalDiffHeader>
 			{!collapsed && (
 				<HighLevelNativeDiff
 					path={diff.path}

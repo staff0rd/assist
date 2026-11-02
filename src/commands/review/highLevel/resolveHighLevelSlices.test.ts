@@ -62,6 +62,7 @@ describe("resolveHighLevelSlices", () => {
 				hunks: ["src/a.ts#1", "logo.png#0"],
 				additions: 4,
 				deletions: 1,
+				rest: true,
 			},
 		]);
 	});

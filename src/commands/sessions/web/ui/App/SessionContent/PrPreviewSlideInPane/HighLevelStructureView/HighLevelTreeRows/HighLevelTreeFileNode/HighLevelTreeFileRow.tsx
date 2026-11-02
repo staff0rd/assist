@@ -9,8 +9,7 @@ import {
 import { HighLevelTreeFileLink } from "./HighLevelTreeFileRow/HighLevelTreeFileLink";
 import { HighLevelTreeFileChevron } from "./HighLevelTreeFileRow/HighLevelTreeFileChevron";
 import { HighLevelTreeFileLabel } from "./HighLevelTreeFileRow/HighLevelTreeFileLabel";
-import { HighLevelTreeIgnoredChip } from "../HighLevelTreeIgnoredChip";
-import { HighLevelTreeSplitChip } from "../HighLevelTreeSplitChip";
+import { HighLevelTreeFileTags } from "./HighLevelTreeFileRow/HighLevelTreeFileTags";
 
 export function HighLevelTreeFileRow({
 	file,
@@ -45,10 +44,10 @@ export function HighLevelTreeFileRow({
 			>
 				<HighLevelTreeFileChevron open={open} />
 				<HighLevelTreeFileLabel file={file} muted={closedByGlob} />
-				{closedByGlob && (
-					<HighLevelTreeIgnoredChip label="ignored" globs={[glob]} />
-				)}
-				{file.split && <HighLevelTreeSplitChip split={file.split} />}
+				<HighLevelTreeFileTags
+					file={file}
+					ignoredBy={closedByGlob ? glob : undefined}
+				/>
 				<HighLevelLineCounts
 					additions={file.additions}
 					deletions={file.deletions}

@@ -5,60 +5,53 @@ import type {
 	HighLevelTestFile,
 } from "../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../HighLevelDiffComments";
-import { HighLevelStructureView } from "../HighLevelStructureView";
+import { HighLevelStructureTree } from "../HighLevelStructureView/HighLevelStructureTree";
+import type { HighLevelTreeRowsProps } from "../HighLevelStructureView/HighLevelTreeRowsProps";
 import { highLevelSliceDomId } from "../highLevelSliceDomId";
 import { HighLevelSliceHeader } from "./HighLevelSliceHeader";
 import { HighLevelSliceTests } from "./HighLevelSliceTests";
+import { highLevelSliceSectionSx } from "./highLevelSliceSectionSx";
 
 export function HighLevelSliceSection({
 	number,
 	slice,
 	structure,
+	tree,
 	tests,
-	collapsedPaths,
 	subject,
 	comments,
 }: {
 	number: number;
 	slice: HighLevelSlice;
 	structure: HighLevelStructure;
+	tree: Omit<HighLevelTreeRowsProps, "nodes" | "comments"> & { glob: string };
 	tests: HighLevelTestFile[];
-	collapsedPaths: string[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 }) {
-	const sliceSubject = `${subject}:slice:${number}`;
 	return (
 		<Box
 			component="section"
 			id={highLevelSliceDomId(number)}
 			aria-label={`Slice ${number}: ${slice.title}`}
-			sx={{
-				borderTop: 1,
-				borderColor: "divider",
-				pt: 1.25,
-				display: "flex",
-				flexDirection: "column",
-				gap: 0.5,
-				minWidth: 0,
-			}}
+			sx={highLevelSliceSectionSx}
 		>
 			<HighLevelSliceHeader number={number} slice={slice} />
 			{structure.tree.length > 0 && (
-				<HighLevelStructureView
-					structure={structure}
-					collapsedPaths={collapsedPaths}
-					subject={sliceSubject}
+				<HighLevelStructureTree
+					{...tree}
+					nodes={structure.tree}
 					comments={comments}
-					hideSummary
 				/>
 			)}
-			<HighLevelSliceTests
-				number={number}
-				files={tests}
-				subject={sliceSubject}
-				comments={comments}
-			/>
+			{(!slice.rest || tests.length > 0) && (
+				<HighLevelSliceTests
+					number={number}
+					files={tests}
+					subject={`${subject}:slice:${number}`}
+					comments={comments}
+				/>
+			)}
 		</Box>
 	);
 }

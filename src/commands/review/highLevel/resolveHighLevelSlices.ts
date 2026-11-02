@@ -38,6 +38,13 @@ export function resolveHighLevelSlices(
 		for (const ref of known) claimed.add(ref);
 	}
 	const rest = [...byRef.keys()].filter((ref) => !claimed.has(ref));
-	if (rest.length > 0) add("Everything else", "Hunks no slice claimed.", rest);
+	if (rest.length > 0)
+		slices.push({
+			title: "Everything else",
+			summary: "Hunks no slice claimed.",
+			hunks: rest,
+			...sliceTotals(rest, byRef),
+			rest: true,
+		});
 	return { slices, warnings };
 }

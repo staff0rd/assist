@@ -11,6 +11,7 @@ export function useSlicedHighLevelReview(
 	structure: HighLevelStructure,
 	slices: HighLevelSlice[],
 	tests: HighLevelTestFile[],
+	criticalPaths: string[],
 ) {
 	return useMemo(
 		() => ({
@@ -18,9 +19,10 @@ export function useSlicedHighLevelReview(
 				structure,
 				slices,
 				new Set(tests.map((file) => file.path)),
+				new Set(criticalPaths),
 			),
 			tests: sliceHighLevelTests(tests, slices),
 		}),
-		[structure, slices, tests],
+		[structure, slices, tests, criticalPaths],
 	);
 }

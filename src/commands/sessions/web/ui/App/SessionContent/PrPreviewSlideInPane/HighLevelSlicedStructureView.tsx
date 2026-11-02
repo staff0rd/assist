@@ -5,40 +5,53 @@ import type {
 	HighLevelTestFile,
 } from "../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "./HighLevelDiffComments";
+import { HighLevelSliceBar } from "./HighLevelSlicedStructureView/HighLevelSliceBar";
 import { HighLevelSliceSection } from "./HighLevelSlicedStructureView/HighLevelSliceSection";
-import { useSlicedHighLevelReview } from "./HighLevelSlicedStructureView/useSlicedHighLevelReview";
+import { useSlicedStructureView } from "./HighLevelSlicedStructureView/useSlicedStructureView";
 import { HighLevelStructureSummary } from "./HighLevelStructureView/HighLevelStructureSummary";
+import { HighLevelStructureToolbar } from "./HighLevelStructureView/HighLevelStructureToolbar";
 
 export function HighLevelSlicedStructureView({
-	structure,
-	slices,
-	tests,
-	collapsedPaths,
-	subject,
 	comments,
+	...props
 }: {
 	structure: HighLevelStructure;
 	slices: HighLevelSlice[];
 	tests: HighLevelTestFile[];
+	criticalFiles: string[];
 	collapsedPaths: string[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 }) {
-	const sliced = useSlicedHighLevelReview(structure, slices, tests);
+	const { slices, structure, subject } = props;
+	const { selection, sections, offsetSx, toolbar } =
+		useSlicedStructureView(props);
+
 	return (
-		<Box sx={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+		<Box
+			sx={{
+				minWidth: 0,
+				display: "flex",
+				flexDirection: "column",
+				gap: 2,
+				...offsetSx,
+			}}
+		>
 			<Typography variant="caption" sx={{ color: "text.secondary" }}>
 				{slices.length} {slices.length === 1 ? "slice" : "slices"} ·{" "}
 				<HighLevelStructureSummary structure={structure} />
 			</Typography>
-			{slices.map((slice, index) => (
+			<HighLevelStructureToolbar {...toolbar}>
+				<HighLevelSliceBar
+					slices={slices}
+					selected={selection.selected}
+					onSelect={selection.onSelect}
+				/>
+			</HighLevelStructureToolbar>
+			{sections.map((section) => (
 				<HighLevelSliceSection
-					key={`${index}:${slice.title}`}
-					number={index + 1}
-					slice={slice}
-					structure={sliced.structures[index] ?? structure}
-					tests={sliced.tests[index] ?? []}
-					collapsedPaths={collapsedPaths}
+					key={`${section.number}:${section.slice.title}`}
+					{...section}
 					subject={subject}
 					comments={comments}
 				/>

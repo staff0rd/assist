@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { buildHighLevelStructure } from "../../../../../../review/highLevel/buildHighLevelStructure";
 import type {
@@ -65,7 +71,7 @@ const tests: HighLevelTestFile[] = [
 
 const slices = [
 	slice("Change a", ["src/a.ts#0", "src/b.ts#0", "src/a.test.ts#0"]),
-	slice("Everything else", ["src/b.ts#1", "package.json#0"]),
+	{ ...slice("Everything else", ["src/b.ts#1", "package.json#0"]), rest: true },
 ];
 
 describe("HighLevelSlicedStructureView", () => {
@@ -77,6 +83,7 @@ describe("HighLevelSlicedStructureView", () => {
 				structure={structure}
 				slices={slices}
 				tests={tests}
+				criticalFiles={[]}
 			/>,
 		);
 
@@ -97,9 +104,65 @@ describe("HighLevelSlicedStructureView", () => {
 		expect(within(second).getByText("package.json")).toBeTruthy();
 		expect(within(second).queryByText("a.ts")).toBeNull();
 		expect(within(second).getByText("1 of 2 hunks")).toBeTruthy();
+		expect(within(second).queryByText(/^Tests/)).toBeNull();
+	});
+
+	it("scopes the view and the toolbar to the slice picked in the slice bar", () => {
+		render(
+			<HighLevelSlicedStructureView
+				subject="sliced-bar"
+				collapsedPaths={[]}
+				structure={structure}
+				slices={slices}
+				tests={tests}
+				criticalFiles={["package.json"]}
+			/>,
+		);
+		const bar = screen.getByRole("group", { name: "Slices" });
+		const collapseCount = () =>
+			screen.getByRole("button", { name: /Collapse all/ }).textContent;
+		expect(collapseCount()).toBe("Collapse all4");
+
+		fireEvent.click(
+			within(bar).getByRole("button", { name: /Everything else/ }),
+		);
+
 		expect(
-			within(second).getByText("No changed tests in this slice."),
-		).toBeTruthy();
+			screen.queryByRole("region", { name: "Slice 1: Change a" }),
+		).toBeNull();
+		const rest = screen.getByRole("region", {
+			name: "Slice 2: Everything else",
+		});
+		expect(within(rest).getByText("critical")).toBeTruthy();
+		expect(collapseCount()).toBe("Collapse all2");
+
+		fireEvent.click(screen.getByRole("button", { name: /Collapse all/ }));
+		fireEvent.click(within(bar).getByRole("button", { name: /All/ }));
+
+		expect(collapseCount()).toBe("Collapse all2");
+	});
+
+	it("selects the slice a Tests link points at", () => {
+		render(
+			<>
+				<HighLevelSlicedStructureView
+					subject="sliced-link"
+					collapsedPaths={[]}
+					structure={structure}
+					slices={slices}
+					tests={tests}
+					criticalFiles={[]}
+				/>
+				<HighLevelSliceTestLinks slices={slices} tests={tests} />
+			</>,
+		);
+
+		fireEvent.click(screen.getByText("1 Change a · 1 test"));
+
+		expect(
+			screen.queryByRole("region", { name: "Slice 2: Everything else" }),
+		).toBeNull();
+		expect(screen.getByRole("group", { name: "Slice 1 tests" })).toBeTruthy();
 	});
 
 	it("lists each slice with its test count in the Tests item", () => {

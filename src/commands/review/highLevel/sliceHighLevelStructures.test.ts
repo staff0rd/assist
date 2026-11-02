@@ -78,6 +78,27 @@ describe("sliceHighLevelStructures", () => {
 
 		expect(only).toEqual(buildHighLevelStructure([file("a.ts", 2, split)]));
 	});
+
+	it("tags critical files in every slice that holds them", () => {
+		const structure = buildHighLevelStructure([
+			file("package.json", 1, "@@ -1 +1 @@\n+x"),
+			file("a.ts", 1, "@@ -1 +1 @@\n+y"),
+		]);
+
+		const [sliced] = sliceHighLevelStructures(
+			structure,
+			[slice(["package.json#0", "a.ts#0"])],
+			new Set(),
+			new Set(["package.json"]),
+		);
+
+		expect(sliced?.tree.map((node) => [node.path, "critical" in node])).toEqual(
+			[
+				["a.ts", false],
+				["package.json", true],
+			],
+		);
+	});
 });
 
 describe("sliceHighLevelTests", () => {
