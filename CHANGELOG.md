@@ -1,3 +1,10 @@
+## [0.1045.1](https://github.com/staff0rd/assist/compare/v0.1045.0...v0.1045.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* pad PR menu checkboxes ([e763f5f](https://github.com/staff0rd/assist/commit/e763f5f9b9af2e78c1bd12d73425da960cddb3da))
+
 # [0.1045.0](https://github.com/staff0rd/assist/compare/v0.1044.1...v0.1045.0) (2026-11-02)
 
 
