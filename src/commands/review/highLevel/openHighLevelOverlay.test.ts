@@ -88,9 +88,7 @@ const queued: PreviewReviewComment = {
 };
 
 const expectedBody = [
-	"**Structure**",
-	"",
-	"Split it",
+	"- 💬 **Structure** — Split it",
 	"",
 	"**Comments**",
 	"",
@@ -259,7 +257,7 @@ describe("openHighLevelOverlay", () => {
 
 		expect(mockAwaitPreviewApproval).toHaveBeenCalledOnce();
 		expect(mockExecFileSync).toHaveBeenCalledWith(
-			...ghReview("COMMENT", "**Structure**\n\nSplit it", [
+			...ghReview("COMMENT", "- 💬 **Structure** — Split it", [
 				{
 					path: "src/a.test.ts",
 					body: "asserts nothing",

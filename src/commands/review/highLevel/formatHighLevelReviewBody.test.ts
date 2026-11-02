@@ -19,15 +19,63 @@ describe("formatHighLevelReviewBody", () => {
 		expect(formatHighLevelReviewBody([item({}), item({})])).toBe("");
 	});
 
-	it("lists each checklist comment under its title", () => {
+	it("lists each commented failed check as a ❌ finding", () => {
 		const body = formatHighLevelReviewBody([
-			item({ title: "Structure", comment: "Nice split" }),
-			item({ title: "Description" }),
-			item({ title: "Tests", comment: "Good coverage" }),
+			item({
+				kind: "deterministic",
+				status: "fail",
+				title: "PR links the GitHub issue it resolves",
+				comment: "no github issue linked",
+			}),
+			item({
+				kind: "deterministic",
+				status: "fail",
+				title: "PR has a description",
+			}),
+			item({
+				kind: "deterministic",
+				status: "fail",
+				title: "No merge conflicts",
+				comment: "has merge conflicts",
+			}),
 		]);
 
 		expect(body).toBe(
-			"**Structure**\n\nNice split\n\n**Tests**\n\nGood coverage",
+			[
+				"- ❌ **PR links the GitHub issue it resolves** — no github issue linked",
+				"- ❌ **No merge conflicts** — has merge conflicts",
+			].join("\n"),
+		);
+	});
+
+	it("marks commented manual checks 💬 and passing checks ✅", () => {
+		const body = formatHighLevelReviewBody([
+			item({ status: "manual", title: "Structure", comment: "Nice split" }),
+			item({ status: "manual", title: "Description" }),
+			item({
+				kind: "deterministic",
+				status: "pass",
+				title: "CI passes",
+				comment: "Green",
+			}),
+		]);
+
+		expect(body).toBe(
+			"- 💬 **Structure** — Nice split\n- ✅ **CI passes** — Green",
+		);
+	});
+
+	it("keeps a multi-line comment inside its bullet", () => {
+		const body = formatHighLevelReviewBody([
+			item({
+				status: "fail",
+				title: "Tests",
+				comment: "Missing cases:\nempty input\nnull input",
+			}),
+		]);
+
+		expect(body).toBe(
+			"- ❌ **Tests** — Missing cases:\n  empty input\n  null input",
 		);
 	});
 
@@ -54,9 +102,7 @@ describe("formatHighLevelReviewBody", () => {
 
 		expect(body).toBe(
 			[
-				"**Tests**",
-				"",
-				"Mostly fine",
+				"- 💬 **Tests** — Mostly fine",
 				"",
 				"**Comments**",
 				"",
