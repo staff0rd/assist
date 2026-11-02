@@ -4,6 +4,7 @@ import { getBacklogSummary } from "../../backlog/web/getBacklogSummary";
 import { getDocsRefresh } from "../../backlog/web/getDocsRefresh";
 import { postDocsRefresh } from "../../backlog/web/postDocsRefresh";
 import { getRepoLocation } from "../../backlog/web/getRepoLocation";
+import { postItem } from "../../backlog/web/postItem";
 import { listItems } from "../../backlog/web/shared";
 import { browserRelay } from "./browser/browserRelay";
 import { clientErrors } from "./clientErrors/clientErrors";
@@ -75,6 +76,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/connect-mobile": connectMobile,
 	"GET /api/daemon-log": daemonLogTail,
 	"GET /api/items": listItems,
+	"POST /api/items": postItem,
 	"GET /api/backlog/summary": getBacklogSummary,
 	"GET /api/backlog/docs-refresh": getDocsRefresh,
 	"POST /api/backlog/docs-refresh": postDocsRefresh,
