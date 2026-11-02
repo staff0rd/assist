@@ -136,6 +136,9 @@ describe("configGet", () => {
 		expect(result.stdout).toContain(
 			'Key "docs.refreshAfter" is not set and has no schema default',
 		);
+		expect(result.stdout).toContain(
+			"queue a 'Refresh docs' item once this many done stories are unswept",
+		);
 		expect(result.stdout).toContain("assist config set docs.refreshAfter 5");
 	});
 
