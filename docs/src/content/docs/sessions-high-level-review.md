@@ -47,6 +47,8 @@ screenshots:
       - click: text=High-level review #14
       - click: "[aria-label='Fill the window with preview']"
       - click: "[aria-label^='Critical diffs']"
+    crop: "#high-level-check-critical-diffs-correct"
+    cropPadding: 16
 ---
 
 A high-level review is a checklist for judging a pull request without reading every line: whether its description is reviewable, whether the shape of the change matches what it says it does, and whether the few files where a mistake is expensive are right. Use it alongside an [adversarial review](../sessions-pr-review/), which does read every line.
