@@ -68,7 +68,7 @@ describe("pullIfConfigured", () => {
 			stdio: "inherit",
 		});
 		expect(mockExecSync).toHaveBeenCalledWith("git merge --ff-only @{u}", {
-			stdio: "inherit",
+			stdio: ["inherit", "inherit", "pipe"],
 		});
 		expect(mockExecSync).not.toHaveBeenCalledWith(
 			expect.stringContaining("git pull"),
@@ -89,6 +89,27 @@ describe("pullIfConfigured", () => {
 
 		expect(() => pullIfConfigured()).toThrow("process.exit");
 		expect(exitSpy).toHaveBeenCalledWith(1);
+	});
+
+	it("retries the fast-forward when another git process holds index.lock", () => {
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ commit: { pull: true } }),
+		);
+		vi.spyOn(console, "warn").mockImplementation(() => {});
+		vi.spyOn(process.stderr, "write").mockImplementation(() => true);
+		let merges = 0;
+		mockExecSync.mockImplementation((command: string) => {
+			if (command === "git merge --ff-only @{u}" && ++merges === 1)
+				throw Object.assign(new Error("merge failed"), {
+					stderr: "fatal: Unable to create '.git/index.lock': File exists.",
+				});
+			return "";
+		});
+
+		pullIfConfigured();
+
+		expect(merges).toBe(2);
+		expect(exitSpy).not.toHaveBeenCalled();
 	});
 
 	describe("when the branch has no upstream", () => {
@@ -115,7 +136,7 @@ describe("pullIfConfigured", () => {
 			});
 			expect(mockExecSync).toHaveBeenCalledWith(
 				"git merge --ff-only origin/main",
-				{ stdio: "inherit" },
+				{ stdio: ["inherit", "inherit", "pipe"] },
 			);
 			expect(warnSpy).not.toHaveBeenCalled();
 			expect(exitSpy).not.toHaveBeenCalled();

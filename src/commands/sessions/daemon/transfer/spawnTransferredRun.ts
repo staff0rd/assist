@@ -6,6 +6,7 @@ import { daemonLog } from "../daemonLog";
 import type { SpawnContext } from "../types";
 import type { TreeSpawnContext } from "../worktree/allocateAndBind";
 import { allocatePreparedAndBind } from "../worktree/allocatePreparedAndBind";
+import { confirmTransferredRun } from "./confirmTransferredRun";
 import { restoreTransferSnapshot } from "./restoreTransferSnapshot";
 import type { TransferSnapshot } from "./TransferSnapshot";
 
@@ -48,5 +49,6 @@ export async function spawnTransferredRun(
 		throw new Error(`restore failed: ${reason}`);
 	}
 	daemonLog(`session ${id} transfer restored ${trace}; starting run`);
+	await confirmTransferredRun(ctx.sessions, id, trace);
 	return id;
 }

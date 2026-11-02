@@ -4,6 +4,7 @@ import type { Session } from "../createSession";
 import type { TreeSpawnContext } from "../worktree/allocateAndBind";
 import { allocateTree } from "../worktree/allocateTree";
 import { seedWorktree } from "../worktree/seedWorktree";
+import { awaitRunEstablished } from "./awaitRunEstablished";
 import { restoreTransferSnapshot } from "./restoreTransferSnapshot";
 import { spawnTransferredRun } from "./spawnTransferredRun";
 
@@ -16,6 +17,9 @@ vi.mock("../worktree/seedWorktree", () => ({
 }));
 vi.mock("../worktree/refuseUnallocatedStart", () => ({
 	refuseUnallocatedStart: vi.fn(),
+}));
+vi.mock("./awaitRunEstablished", () => ({
+	awaitRunEstablished: vi.fn(),
 }));
 vi.mock("./restoreTransferSnapshot", () => ({
 	restoreTransferSnapshot: vi.fn(),
@@ -52,6 +56,10 @@ describe("spawnTransferredRun", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.mocked(restoreTransferSnapshot).mockResolvedValue();
+		vi.mocked(awaitRunEstablished).mockResolvedValue({
+			ok: true,
+			reason: "survived startup",
+		});
 		vi.mocked(allocateTree).mockReturnValue({
 			cwd: "/git/assist-4",
 			kind: "worktree",
@@ -88,6 +96,16 @@ describe("spawnTransferredRun", () => {
 		expect(seedWorktree).not.toHaveBeenCalled();
 		expect(ctx.startHeld).not.toHaveBeenCalled();
 		expect(discard).toHaveBeenCalledWith("4");
+	});
+
+	it("fails the transfer when the run errors during startup on the target", async () => {
+		vi.mocked(awaitRunEstablished).mockResolvedValue({
+			ok: false,
+			error: "process exited with code 1",
+		});
+		await expect(spawnTransferredRun(context(), vi.fn(), run)).rejects.toThrow(
+			"run failed to start on target: process exited with code 1",
+		);
 	});
 
 	it("holds an in-place run until the restore completes", async () => {

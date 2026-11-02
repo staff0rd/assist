@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
 import { remoteDefaultBranch } from "../commands/sessions/daemon/worktree/remoteDefaultBranch";
+import { fastForwardTo } from "./fastForwardTo";
 
 export function catchUpToRemoteDefault(): void {
 	try {
@@ -21,7 +22,7 @@ export function catchUpToRemoteDefault(): void {
 		return;
 	}
 	try {
-		execSync(`git merge --ff-only ${ref}`, { stdio: "inherit" });
+		fastForwardTo(ref);
 	} catch {
 		console.error(chalk.red(`git fast-forward to ${ref} failed; aborting.`));
 		process.exit(1);

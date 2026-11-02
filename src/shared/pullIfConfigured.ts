@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import chalk from "chalk";
 import { catchUpToRemoteDefault } from "./catchUpToRemoteDefault";
 import { loadConfig } from "./loadConfig";
+import { fastForwardTo } from "./fastForwardTo";
 
 export function pullIfConfigured(): void {
 	const config = loadConfig();
@@ -20,7 +21,7 @@ export function pullIfConfigured(): void {
 	}
 	try {
 		execSync("git fetch", { stdio: "inherit" });
-		execSync("git merge --ff-only @{u}", { stdio: "inherit" });
+		fastForwardTo("@{u}");
 	} catch {
 		console.error(chalk.red("git fast-forward to upstream failed; aborting."));
 		process.exit(1);

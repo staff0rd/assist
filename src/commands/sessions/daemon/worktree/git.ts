@@ -6,9 +6,10 @@ function isWindowsPath(cwd: string): boolean {
 
 function gitInvocation(cwd: string, args: string[]) {
 	const windows = isWindowsPath(cwd);
+	const unlocked = ["--no-optional-locks", ...args];
 	return {
 		file: windows ? "git.exe" : "git",
-		argv: windows ? ["-C", cwd, ...args] : args,
+		argv: windows ? ["-C", cwd, ...unlocked] : unlocked,
 		options: {
 			encoding: "utf8" as const,
 			windowsHide: true,
