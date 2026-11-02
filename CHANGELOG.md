@@ -1,3 +1,16 @@
+# [0.1043.0](https://github.com/staff0rd/assist/compare/v0.1042.4...v0.1043.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* docs home links without slash ([1d1457f](https://github.com/staff0rd/assist/commit/1d1457f85c094714aea25395527f13c540003313))
+* read exited server run output ([aec84a4](https://github.com/staff0rd/assist/commit/aec84a4e2f451cbe0d6e467bd89f99351679aafd))
+
+
+### Features
+
+* batch is default Address Comments ([e271ace](https://github.com/staff0rd/assist/commit/e271acec46a4cbfc4a130ac9a42786100be81829))
+
 ## [0.1042.4](https://github.com/staff0rd/assist/compare/v0.1042.3...v0.1042.4) (2026-11-02)
 
 
