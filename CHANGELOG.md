@@ -1,3 +1,10 @@
+# [0.1050.0](https://github.com/staff0rd/assist/compare/v0.1049.0...v0.1050.0) (2026-11-02)
+
+
+### Features
+
+* bump a manual check to a later phase ([102bbc9](https://github.com/staff0rd/assist/commit/102bbc9236da2d0567a654b8d8b9719ef841a713))
+
 # [0.1049.0](https://github.com/staff0rd/assist/compare/v0.1048.0...v0.1049.0) (2026-11-02)
 
 
