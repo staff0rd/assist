@@ -1,3 +1,10 @@
+# [0.1053.0](https://github.com/staff0rd/assist/compare/v0.1052.0...v0.1053.0) (2026-11-02)
+
+
+### Features
+
+* behaviour slices, human-only steps ([63ddc55](https://github.com/staff0rd/assist/commit/63ddc5540aa4e8288ed1ca97059fd6151a961c3c))
+
 # [0.1052.0](https://github.com/staff0rd/assist/compare/v0.1051.2...v0.1052.0) (2026-11-02)
 
 
