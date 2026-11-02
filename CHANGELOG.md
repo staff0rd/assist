@@ -1,3 +1,10 @@
+## [0.1051.1](https://github.com/staff0rd/assist/compare/v0.1051.0...v0.1051.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* shell owns local Updates restart ([d15339c](https://github.com/staff0rd/assist/commit/d15339cc45d6d79051fe4cafe5f668ffe21b55ac))
+
 # [0.1051.0](https://github.com/staff0rd/assist/compare/v0.1050.0...v0.1051.0) (2026-11-02)
 
 
