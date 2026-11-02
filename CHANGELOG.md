@@ -1,3 +1,12 @@
+## [0.1045.2](https://github.com/staff0rd/assist/compare/v0.1045.1...v0.1045.2) (2026-11-02)
+
+
+### Bug Fixes
+
+* keep collapsed groups collapsed ([8aac6a4](https://github.com/staff0rd/assist/commit/8aac6a431b192feec633982a968695db197d97d6))
+* persist high-level review pane state ([0e7c675](https://github.com/staff0rd/assist/commit/0e7c675629926df4d8f2bf8f9086f66f386e09e4)), closes [hi#level](https://github.com/hi/issues/level)
+* sign extension only on bundle change ([0e24035](https://github.com/staff0rd/assist/commit/0e24035cca460e26dd47a0825382db51d753d63f))
+
 ## [0.1045.1](https://github.com/staff0rd/assist/compare/v0.1045.0...v0.1045.1) (2026-11-02)
 
 
