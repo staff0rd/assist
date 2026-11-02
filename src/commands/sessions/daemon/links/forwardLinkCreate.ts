@@ -8,7 +8,7 @@ import { toPeerMessage } from "./toPeerMessage";
 
 type Msg = Record<string, unknown>;
 
-const TRANSFER_CREATE_TIMEOUT_MS = 300_000;
+const TRANSFER_CREATE_TIMEOUT_MS = 600_000;
 
 function createTimeoutMs(ctx: LinkContext, data: Msg): number {
 	const base = ctx.deps.createTimeoutMs;
