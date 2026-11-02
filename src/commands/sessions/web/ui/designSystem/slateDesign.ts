@@ -240,6 +240,7 @@ export const slateDesign: DesignTokens = {
 			button: { minHeight: 30, fontSize: 13, paddingX: 12 },
 			switch: { width: 34, height: 20, thumb: 16 },
 			inputFontSize: 13,
+			filterSelectMinWidth: 160,
 			tabBar: { height: 44, icon: 20, label: 10, badge: 16, insetTrim: 0 },
 		},
 		touch: {
@@ -249,6 +250,7 @@ export const slateDesign: DesignTokens = {
 			button: { minHeight: 48, fontSize: 17, paddingX: 20 },
 			switch: { width: 51, height: 31, thumb: 27 },
 			inputFontSize: 16,
+			filterSelectMinWidth: 200,
 			tabBar: { height: 49, icon: 26, label: 11, badge: 18, insetTrim: 12 },
 		},
 	},

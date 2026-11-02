@@ -1,9 +1,8 @@
-import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import type { UsageJobFilters } from "../fetchUsageJobs";
 import { usageJobLabels } from "../usageJobLabels";
+import { FilterSelect } from "./FilterSelect";
 
 const kindOptions = [
 	{ value: "", label: "All jobs" },
@@ -15,34 +14,6 @@ const triggerOptions = [
 	{ value: "scheduled", label: "Scheduled" },
 	{ value: "manual", label: "Manual" },
 ];
-
-function FilterSelect({
-	label,
-	value,
-	options,
-	onChange,
-}: {
-	label: string;
-	value: string;
-	options: { value: string; label: string }[];
-	onChange: (value: string) => void;
-}) {
-	return (
-		<TextField
-			select
-			size="small"
-			label={label}
-			value={value}
-			onChange={(event) => onChange(event.target.value)}
-		>
-			{options.map((option) => (
-				<MenuItem key={option.value} value={option.value}>
-					{option.label}
-				</MenuItem>
-			))}
-		</TextField>
-	);
-}
 
 export function UsageJobsFilters({
 	filters,
