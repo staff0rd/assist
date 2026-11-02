@@ -50,7 +50,11 @@ describe("CardHeader title", () => {
 		const title = screen.getByText("my session");
 		const row = title.parentElement as HTMLElement;
 		const rowStyle = getComputedStyle(row);
-		expect(row.contains(screen.getByTitle("Dismiss session 1"))).toBe(true);
+		expect(
+			row.contains(
+				screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+			),
+		).toBe(true);
 		expect(rowStyle.gridColumn.replace(/\s/g, "")).toBe("2/-1");
 		expect(rowStyle.display).toBe("flex");
 		expect(getComputedStyle(title).minWidth).toBe("0px");
@@ -294,7 +298,9 @@ describe("CardHeader status glyph", () => {
 
 		const glyph = screen.getByTitle("running");
 		const title = screen.getByText("my session");
-		const dismiss = screen.getByTitle("Dismiss session 1");
+		const dismiss = screen.getByTitle(
+			"Dismiss session 1 (Shift skips confirmation)",
+		);
 		const follows = (from: Node, to: Node) =>
 			Boolean(
 				from.compareDocumentPosition(to) & Node.DOCUMENT_POSITION_FOLLOWING,

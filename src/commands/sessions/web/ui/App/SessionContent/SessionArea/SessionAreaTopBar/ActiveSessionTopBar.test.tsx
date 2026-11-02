@@ -65,7 +65,9 @@ describe("ActiveSessionTopBar nested dismiss", () => {
 		const onDismiss = vi.fn();
 		renderTopBar(parent, onDismiss);
 
-		fireEvent.click(screen.getByTitle("Dismiss session run"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session run (Shift skips confirmation)"),
+		);
 		fireEvent.click(screen.getByRole("button", { name: "Close all 2" }));
 
 		expect(onDismiss.mock.calls).toEqual([["run"], ["review"]]);
@@ -75,7 +77,9 @@ describe("ActiveSessionTopBar nested dismiss", () => {
 		const onDismiss = vi.fn();
 		renderTopBar(parent, onDismiss);
 
-		fireEvent.click(screen.getByTitle("Dismiss session run"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session run (Shift skips confirmation)"),
+		);
 		fireEvent.click(screen.getByRole("button", { name: "Close this only" }));
 
 		expect(onDismiss.mock.calls).toEqual([["run", undefined]]);
@@ -85,7 +89,9 @@ describe("ActiveSessionTopBar nested dismiss", () => {
 		const onDismiss = vi.fn();
 		renderTopBar({ ...unrelated, status: "done" }, onDismiss);
 
-		fireEvent.click(screen.getByTitle("Dismiss session other"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session other (Shift skips confirmation)"),
+		);
 
 		expect(screen.queryByRole("dialog")).toBeNull();
 		expect(onDismiss.mock.calls).toEqual([["other", undefined]]);

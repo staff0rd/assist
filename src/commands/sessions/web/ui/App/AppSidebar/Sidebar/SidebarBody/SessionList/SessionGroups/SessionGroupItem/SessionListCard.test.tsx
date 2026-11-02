@@ -42,7 +42,9 @@ describe("SessionListCard nested dismiss", () => {
 			{ wrapper: Stars },
 		);
 
-		fireEvent.click(screen.getByTitle("Dismiss session 1"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		);
 		fireEvent.click(screen.getByRole("button", { name: "Close all 3" }));
 
 		expect(onDismiss.mock.calls).toEqual([["1"], ["2"], ["3"]]);

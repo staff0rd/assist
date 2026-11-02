@@ -111,7 +111,9 @@ describe("SessionCard ripple", () => {
 
 	it("does not ripple the card when an action button is pressed", async () => {
 		const { container } = renderDefaultCard();
-		fireEvent.mouseDown(screen.getByTitle("Dismiss session 1"));
+		fireEvent.mouseDown(
+			screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		);
 		expect(await cardRipple(container)).toBeNull();
 	});
 });
@@ -133,7 +135,9 @@ describe("SessionCard dismiss confirmation", () => {
 			{ wrapper: Stars },
 		);
 
-		fireEvent.click(screen.getByTitle("Dismiss session 1"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		);
 		fireEvent.click(screen.getByRole("button", { name: "End session" }));
 
 		expect(onDismiss).toHaveBeenCalledTimes(1);

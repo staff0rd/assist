@@ -372,8 +372,9 @@ describe("SessionTopBar control cluster", () => {
 			onRetry: () => {},
 		});
 
-		const controls =
-			screen.getByTitle("Dismiss session 1").parentElement?.parentElement;
+		const controls = screen.getByTitle(
+			"Dismiss session 1 (Shift skips confirmation)",
+		).parentElement?.parentElement;
 		const style = getComputedStyle(controls as Element);
 		expect(style.flexWrap).toBe("wrap");
 		expect(style.justifyContent).toBe("flex-end");
@@ -517,7 +518,9 @@ describe("SessionTopBar actions", () => {
 	it("closes a running session with the card's dismiss button", () => {
 		renderTopBar(makeSessionInfo({ status: "waiting" }));
 
-		expect(screen.queryByTitle("Dismiss session 1")).not.toBeNull();
+		expect(
+			screen.queryByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		).not.toBeNull();
 	});
 
 	it("holds the dismiss button at the bar's right edge", () => {
@@ -526,7 +529,9 @@ describe("SessionTopBar actions", () => {
 			onRetry: () => {},
 		});
 
-		const wrapper = screen.getByTitle("Dismiss session 1").parentElement;
+		const wrapper = screen.getByTitle(
+			"Dismiss session 1 (Shift skips confirmation)",
+		).parentElement;
 		expect(wrapper?.parentElement?.lastElementChild).toBe(wrapper);
 		expect(getComputedStyle(wrapper as Element).flexShrink).toBe("0");
 	});
@@ -535,14 +540,18 @@ describe("SessionTopBar actions", () => {
 		panelWidth = 400;
 		renderTopBar(makeSessionInfo());
 
-		expect(screen.getByTitle("Dismiss session 1")).toBeTruthy();
+		expect(
+			screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		).toBeTruthy();
 	});
 
 	it("dismisses a done session without confirming, like the card", () => {
 		const onDismiss = vi.fn();
 		renderTopBar(makeSessionInfo({ status: "done" }), { onDismiss });
 
-		fireEvent.click(screen.getByTitle("Dismiss session 1"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		);
 
 		expect(onDismiss).toHaveBeenCalled();
 		expect(screen.queryByText("End session")).toBeNull();
@@ -552,7 +561,9 @@ describe("SessionTopBar actions", () => {
 		const onDismiss = vi.fn();
 		renderTopBar(makeSessionInfo(), { onDismiss });
 
-		fireEvent.click(screen.getByTitle("Dismiss session 1"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		);
 
 		expect(onDismiss).not.toHaveBeenCalled();
 
@@ -564,13 +575,17 @@ describe("SessionTopBar actions", () => {
 	it("offers no dismiss once the session is stopped", () => {
 		renderTopBar(makeSessionInfo({ status: "stopped" }));
 
-		expect(screen.queryByTitle("Dismiss session 1")).toBeNull();
+		expect(
+			screen.queryByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		).toBeNull();
 	});
 
 	it("offers no dismiss while the session is closing", () => {
 		renderTopBar(makeSessionInfo({ closing: true }));
 
-		expect(screen.queryByTitle("Dismiss session 1")).toBeNull();
+		expect(
+			screen.queryByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		).toBeNull();
 	});
 });
 

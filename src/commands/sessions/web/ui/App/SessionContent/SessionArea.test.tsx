@@ -474,7 +474,9 @@ describe("SessionArea top bar actions", () => {
 			lifecycle: { onDismiss },
 		});
 
-		fireEvent.click(screen.getByTitle("Dismiss session 1"));
+		fireEvent.click(
+			screen.getByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		);
 
 		expect(onDismiss).toHaveBeenCalledWith("1", undefined);
 	});

@@ -5,7 +5,9 @@ import { DismissButton } from "./DismissButton";
 
 afterEach(cleanup);
 
-function renderParent(status: "done" | "waiting" = "done") {
+const TITLE = "Dismiss session 54 (Shift skips confirmation)";
+
+function renderButton(status: "done" | "waiting", withChildren: boolean) {
 	const onDismiss = vi.fn();
 	const onDismissAll = vi.fn();
 	render(
@@ -13,40 +15,87 @@ function renderParent(status: "done" | "waiting" = "done") {
 			id="54"
 			status={status}
 			onDismiss={onDismiss}
-			childDismiss={{ childCount: 2, onDismissAll }}
+			childDismiss={withChildren ? { childCount: 2, onDismissAll } : undefined}
 		/>,
 	);
-	fireEvent.click(screen.getByTitle("Dismiss session 54"));
 	return { onDismiss, onDismissAll };
 }
 
+function renderParent(status: "done" | "waiting" = "done") {
+	const handlers = renderButton(status, true);
+	fireEvent.click(screen.getByTitle(TITLE));
+	return handlers;
+}
+
 describe("DismissButton", () => {
-	it("names the session id in its tooltip so cards map to daemon.log ids", () => {
+	it("names the session id and the Shift shortcut in its tooltip", () => {
 		render(<DismissButton id="54" status="waiting" onDismiss={() => {}} />);
 
-		expect(screen.getByRole("button").title).toBe("Dismiss session 54");
+		expect(screen.getByRole("button").title).toBe(TITLE);
 	});
 
 	it("dismisses a done childless session without asking", () => {
-		const onDismiss = vi.fn();
-		render(<DismissButton id="54" status="done" onDismiss={onDismiss} />);
+		const { onDismiss } = renderButton("done", false);
 
-		fireEvent.click(screen.getByTitle("Dismiss session 54"));
+		fireEvent.click(screen.getByTitle(TITLE));
 
 		expect(onDismiss).toHaveBeenCalledOnce();
 		expect(screen.queryByRole("dialog")).toBeNull();
 	});
 
 	it("asks before ending a running childless session", () => {
-		const onDismiss = vi.fn();
-		render(<DismissButton id="54" status="waiting" onDismiss={onDismiss} />);
+		const { onDismiss } = renderButton("waiting", false);
 
-		fireEvent.click(screen.getByTitle("Dismiss session 54"));
+		fireEvent.click(screen.getByTitle(TITLE));
 
 		expect(onDismiss).not.toHaveBeenCalled();
 		expect(screen.queryByText("Close this only")).toBeNull();
 		fireEvent.click(screen.getByRole("button", { name: "End session" }));
 		expect(onDismiss).toHaveBeenCalledOnce();
+	});
+
+	it("ends a running childless session on Shift+click without asking", () => {
+		const { onDismiss } = renderButton("waiting", false);
+
+		fireEvent.click(screen.getByTitle(TITLE), { shiftKey: true });
+
+		expect(onDismiss).toHaveBeenCalledOnce();
+		expect(screen.queryByRole("dialog")).toBeNull();
+	});
+
+	it("ends a running childless session on Shift+Enter without asking", () => {
+		const { onDismiss } = renderButton("waiting", false);
+
+		fireEvent.keyDown(screen.getByTitle(TITLE), {
+			key: "Enter",
+			shiftKey: true,
+		});
+
+		expect(onDismiss).toHaveBeenCalledOnce();
+		expect(screen.queryByRole("dialog")).toBeNull();
+	});
+
+	it("closes the parent and its children on Shift+click without asking", () => {
+		const { onDismiss, onDismissAll } = renderButton("waiting", true);
+
+		fireEvent.click(screen.getByTitle(TITLE), { shiftKey: true });
+
+		expect(onDismissAll).toHaveBeenCalledOnce();
+		expect(onDismiss).not.toHaveBeenCalled();
+		expect(screen.queryByRole("dialog")).toBeNull();
+	});
+
+	it("closes the parent and its children on Shift+Enter without asking", () => {
+		const { onDismiss, onDismissAll } = renderButton("done", true);
+
+		fireEvent.keyDown(screen.getByTitle(TITLE), {
+			key: "Enter",
+			shiftKey: true,
+		});
+
+		expect(onDismissAll).toHaveBeenCalledOnce();
+		expect(onDismiss).not.toHaveBeenCalled();
+		expect(screen.queryByRole("dialog")).toBeNull();
 	});
 
 	it("asks about nested sessions even when the parent is done", () => {

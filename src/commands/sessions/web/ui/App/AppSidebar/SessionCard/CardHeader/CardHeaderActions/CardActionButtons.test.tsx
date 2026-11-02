@@ -27,7 +27,9 @@ describe("CardActionButtons dismiss visibility", () => {
 			{ wrapper: Stars },
 		);
 
-		expect(screen.queryByTitle("Dismiss session 3")).not.toBeNull();
+		expect(
+			screen.queryByTitle("Dismiss session 3 (Shift skips confirmation)"),
+		).not.toBeNull();
 	});
 
 	it("withholds the plain dismiss while a card is stopped", () => {
@@ -41,7 +43,9 @@ describe("CardActionButtons dismiss visibility", () => {
 			{ wrapper: Stars },
 		);
 
-		expect(screen.queryByTitle("Dismiss session 3")).toBeNull();
+		expect(
+			screen.queryByTitle("Dismiss session 3 (Shift skips confirmation)"),
+		).toBeNull();
 		expect(screen.queryByTitle("Restart session 3")).not.toBeNull();
 	});
 
