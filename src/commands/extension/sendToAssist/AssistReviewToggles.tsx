@@ -21,7 +21,6 @@ export function AssistReviewToggles({
 			<ListItemIcon>
 				<Checkbox
 					size="small"
-					edge="start"
 					checked={value[key]}
 					tabIndex={-1}
 					disableRipple
