@@ -53,7 +53,7 @@ describe("gatherHighLevelSlices", () => {
 		expect(printed).toMatch(/^Slicing required:/);
 		expect(printed).toContain("### src/a.ts#0\n@@ -1 +1 @@\n-old\n+new");
 		expect(printed).toContain(
-			"Tests go in the same slice as the code they test",
+			"Never split one behaviour by layer or file type",
 		);
 	});
 

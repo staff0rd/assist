@@ -18,6 +18,12 @@ export function HighLevelManualTesting({
 				No manual testing steps — re-run with --force
 			</Typography>
 		);
+	if (manualTesting.steps.length === 0)
+		return (
+			<Typography variant="body2" sx={{ color: "text.secondary" }}>
+				Nothing in this PR needs a human to exercise it
+			</Typography>
+		);
 	const text = (value: string) => (
 		<ManualText text={value} repo={repo} headSha={headSha} />
 	);

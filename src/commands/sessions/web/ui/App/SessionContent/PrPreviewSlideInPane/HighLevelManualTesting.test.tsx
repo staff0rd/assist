@@ -45,6 +45,20 @@ describe("HighLevelManualTesting", () => {
 		).toBe("https://github.com/org/repo/blob/abc/src/a.ts");
 	});
 
+	it("says so when nothing needs a human", () => {
+		render(
+			<HighLevelManualTesting
+				repo="org/repo"
+				headSha="abc"
+				manualTesting={{ setup: [], steps: [] }}
+			/>,
+		);
+
+		expect(
+			screen.getByText("Nothing in this PR needs a human to exercise it"),
+		).toBeTruthy();
+	});
+
 	it("asks for a re-run when saved slices predate manual testing", () => {
 		render(
 			<HighLevelManualTesting
