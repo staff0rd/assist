@@ -4,15 +4,26 @@ import { readDaemonMessage } from "./readDaemonMessage";
 
 const OUTPUT_TIMEOUT_MS = 5_000;
 
-type OutputReply = { scrollback?: string; error?: string };
+type OutputReply = {
+	sessionId?: string;
+	scrollback?: string;
+	exited?: "done" | "error";
+	error?: string;
+};
 
 export type OutputTarget =
 	| { sessionId: string }
 	| { server: { origin: string; group: string } };
 
+type SessionOutput = {
+	sessionId?: string;
+	scrollback: string;
+	exited?: "done" | "error";
+};
+
 export async function requestSessionOutput(
 	target: OutputTarget,
-): Promise<string> {
+): Promise<SessionOutput> {
 	const socket = await connectToDaemon().catch(() => {
 		throw new Error("No sessions daemon is running");
 	});
@@ -27,9 +38,9 @@ export async function requestSessionOutput(
 				data.type === "session-output" ? (data as OutputReply) : undefined,
 		);
 		socket.write(`${JSON.stringify({ type: "output", ...target })}\n`);
-		const { scrollback, error } = await reply;
+		const { sessionId, scrollback, exited, error } = await reply;
 		if (scrollback === undefined) throw new Error(error);
-		return scrollback;
+		return { sessionId, scrollback, exited };
 	} finally {
 		socket.destroy();
 	}

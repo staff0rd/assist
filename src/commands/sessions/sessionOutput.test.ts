@@ -49,7 +49,7 @@ describe("sessionOutput", () => {
 
 	it("prints the last 200 lines by default", async () => {
 		const all = Array.from({ length: 250 }, (_, i) => `line ${i}`);
-		requestMock.mockResolvedValue(all.join("\n"));
+		requestMock.mockResolvedValue({ scrollback: all.join("\n") });
 
 		await sessionOutput("7", { lines: "200" });
 
@@ -59,7 +59,7 @@ describe("sessionOutput", () => {
 	});
 
 	it("prints the requested number of lines", async () => {
-		requestMock.mockResolvedValue("a\nb\nc\n");
+		requestMock.mockResolvedValue({ scrollback: "a\nb\nc\n" });
 
 		await sessionOutput("7", { lines: "2" });
 
@@ -77,7 +77,7 @@ describe("sessionOutput", () => {
 	});
 
 	it("targets the default server group for the current repo's origin", async () => {
-		requestMock.mockResolvedValue("ready\n");
+		requestMock.mockResolvedValue({ scrollback: "ready\n" });
 
 		await sessionOutput(undefined, { lines: "200", server: true });
 
@@ -87,8 +87,29 @@ describe("sessionOutput", () => {
 		expect(printed()).toEqual(["ready"]);
 	});
 
+	it.each([
+		["error", "crashed"],
+		["done", "exited"],
+	] as const)(
+		"notes a %s server run is not live before its output",
+		async (exited, word) => {
+			requestMock.mockResolvedValue({
+				sessionId: "5",
+				scrollback: "boom\n",
+				exited,
+			});
+
+			await sessionOutput(undefined, { lines: "200", server: true });
+
+			expect(printed()).toEqual([
+				`Server run 5 is not live (${word}); showing its final output.`,
+				"boom",
+			]);
+		},
+	);
+
 	it("targets the named server group", async () => {
-		requestMock.mockResolvedValue("");
+		requestMock.mockResolvedValue({ scrollback: "" });
 
 		await sessionOutput(undefined, { lines: "200", server: "web" });
 

@@ -36,7 +36,15 @@ export async function sessionOutput(
 	const target = resolveTarget(sessionId, options.server);
 	if (typeof target === "string") return fail(target);
 	try {
-		const scrollback = await requestSessionOutput(target);
+		const {
+			sessionId: id,
+			scrollback,
+			exited,
+		} = await requestSessionOutput(target);
+		if (exited)
+			console.log(
+				`Server run ${id} is not live (${exited === "error" ? "crashed" : "exited"}); showing its final output.`,
+			);
 		for (const line of lastLines(scrollback, count)) console.log(line);
 	} catch (error) {
 		fail(error instanceof Error ? error.message : String(error));
