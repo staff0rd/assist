@@ -1,3 +1,10 @@
+## [0.1053.1](https://github.com/staff0rd/assist/compare/v0.1053.0...v0.1053.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* await default branch in catch-up ([cfd641b](https://github.com/staff0rd/assist/commit/cfd641b6e1e163577a532b25fa4f03beaab72de2))
+
 # [0.1053.0](https://github.com/staff0rd/assist/compare/v0.1052.0...v0.1053.0) (2026-11-02)
 
 
