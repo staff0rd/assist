@@ -11,7 +11,12 @@ export const askCheckInputSchema = z.object({
 
 export type AskCheckInput = z.infer<typeof askCheckInputSchema>;
 
+export type LaterPhase = { number: number; name: string };
+
+export type CheckPreview = AskCheckInput & { laterPhases: LaterPhase[] };
+
 export const CHECK_RESULT_KEY = "result";
 export const CHECK_NOTE_KEY = "note";
+export const CHECK_PHASE_KEY = "phase";
 
-export type CheckResult = "works" | "doesn't work";
+export type CheckResult = "works" | "doesn't work" | "later";

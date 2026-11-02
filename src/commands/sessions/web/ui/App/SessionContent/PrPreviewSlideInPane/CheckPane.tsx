@@ -26,8 +26,9 @@ export function CheckPane({
 			<CheckBody check={check} />
 			<Divider />
 			<CheckActions
-				onResult={(result, note) =>
-					onDecision("approve", checkAnswerDetails(result, note))
+				laterPhases={check.laterPhases}
+				onResult={(result, note, phase) =>
+					onDecision("approve", checkAnswerDetails(result, note, phase))
 				}
 				onDismiss={() => onDecision("reject", miroDecisionDetails())}
 			/>

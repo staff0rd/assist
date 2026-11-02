@@ -1,4 +1,7 @@
-import type { AskCheckInput } from "../../../../../../shared/askCheckInputSchema";
+import type {
+	CheckPreview,
+	LaterPhase,
+} from "../../../../../../shared/askCheckInputSchema";
 
 function strings(value: unknown): string[] {
 	return Array.isArray(value)
@@ -6,10 +9,18 @@ function strings(value: unknown): string[] {
 		: [];
 }
 
-export function parseCheckPreview(body: string): AskCheckInput {
+function laterPhases(value: unknown): LaterPhase[] {
+	if (!Array.isArray(value)) return [];
+	return value.filter(
+		(item): item is LaterPhase =>
+			typeof item?.number === "number" && typeof item?.name === "string",
+	);
+}
+
+export function parseCheckPreview(body: string): CheckPreview {
 	try {
 		const parsed = JSON.parse(body) as Partial<
-			Record<keyof AskCheckInput, unknown>
+			Record<keyof CheckPreview, unknown>
 		>;
 		return {
 			title: typeof parsed?.title === "string" ? parsed.title : "",
@@ -18,8 +29,9 @@ export function parseCheckPreview(body: string): AskCheckInput {
 			...(typeof parsed?.changed === "string"
 				? { changed: parsed.changed }
 				: {}),
+			laterPhases: laterPhases(parsed?.laterPhases),
 		};
 	} catch {
-		return { title: "", steps: [], before: [] };
+		return { title: "", steps: [], before: [], laterPhases: [] };
 	}
 }

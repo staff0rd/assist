@@ -30,6 +30,13 @@ vi.mock("./reloadPlan", () => ({
 	reloadPlan: vi.fn(),
 }));
 
+vi.mock("./reloadReviewPhase", () => ({
+	reloadReviewPhase: vi.fn(async () => ({
+		name: "Review",
+		tasks: [{ task: "review" }],
+	})),
+}));
+
 vi.mock("./consumePause", () => ({
 	consumePause: vi.fn(() => false),
 	isPausePending: vi.fn(() => false),

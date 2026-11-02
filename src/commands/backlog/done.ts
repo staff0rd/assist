@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { appendComment } from "./appendComment";
+import { authoredPhases } from "./authoredPhases";
 import { formatItemId } from "./formatItemId";
 import { findOneItem } from "./shared";
 import { updateStatus } from "./updateStatus";
@@ -11,7 +12,7 @@ export async function done(id: string, summary?: string): Promise<void> {
 	const { orm, item } = found;
 	if (item.plan && item.plan.length > 0) {
 		const completedCount = (item.currentPhase ?? 1) - 1;
-		const pending = item.plan.slice(completedCount);
+		const pending = authoredPhases(item.plan).slice(completedCount);
 		if (pending.length > 0) {
 			console.log(
 				chalk.red(

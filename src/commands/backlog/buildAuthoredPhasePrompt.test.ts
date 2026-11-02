@@ -164,10 +164,13 @@ describe("buildAuthoredPhasePrompt", () => {
 				{ commitBeforePhaseEnd: false, askCheck: true },
 			);
 
-			expect(prompt).toContain("assist ask-check --json -");
+			expect(prompt).toContain("assist ask-check --check <n> --json -");
 			expect(prompt).toContain("as a background task");
 			expect(prompt).toContain("Keep your chat summary to a few lines");
-			expect(prompt).toContain("- click the button");
+			expect(prompt).toContain("1. click the button");
+			expect(prompt).toContain(
+				'If a check comes back "moved to phase <m>", the user moved it to that later phase: treat it as resolved for this phase',
+			);
 			expect(prompt.indexOf("/commit")).toBeLessThan(
 				prompt.indexOf("assist ask-check"),
 			);

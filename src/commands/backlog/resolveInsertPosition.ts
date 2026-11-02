@@ -1,18 +1,21 @@
 import chalk from "chalk";
-import { count, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { planPhases } from "../../shared/db/schema";
+import { REVIEW_PHASE_NAME } from "./buildPhasePrompt";
 
 export async function resolveInsertPosition(
 	orm: Db,
 	itemId: number,
 	position: string | undefined,
 ): Promise<number | undefined> {
-	const [row] = await orm
-		.select({ cnt: count() })
+	const rows = await orm
+		.select({ name: planPhases.name })
 		.from(planPhases)
-		.where(eq(planPhases.itemId, itemId));
-	const phaseCount = row?.cnt ?? 0;
+		.where(eq(planPhases.itemId, itemId))
+		.orderBy(asc(planPhases.idx));
+	const storedReviewStaysLast = rows.at(-1)?.name === REVIEW_PHASE_NAME;
+	const phaseCount = storedReviewStaysLast ? rows.length - 1 : rows.length;
 
 	if (position === undefined) return phaseCount;
 

@@ -1,7 +1,7 @@
 import { withoutResumeSession } from "../../shared/spawnClaude";
-import { appendReviewPhase } from "./appendReviewPhase";
 import { executePhase } from "./executePhase";
 import { reloadPlan } from "./reloadPlan";
+import { reloadReviewPhase } from "./reloadReviewPhase";
 import type { BacklogItem, BacklogRunOptions, PlanPhase } from "./types";
 
 export type ReviewResult =
@@ -16,7 +16,7 @@ export async function runReview(
 	spawnOptions?: BacklogRunOptions,
 ): Promise<ReviewResult> {
 	const plan = (await reloadPlan(item.id)) ?? fallbackPlan;
-	const allPhases = appendReviewPhase(plan);
+	const allPhases = [...plan, await reloadReviewPhase(item.id)];
 
 	let reviewOptions = spawnOptions;
 	while (true) {

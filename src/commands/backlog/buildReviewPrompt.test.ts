@@ -43,4 +43,29 @@ describe("buildReviewPrompt", () => {
 			).toBeLessThan(prompt.indexOf("1. Run: /commit"));
 		});
 	});
+
+	describe("manual checks moved to Review", () => {
+		const manualChecks = ["Bumped check"];
+
+		it("lists them and raises each with ask-check when askCheck is on", () => {
+			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
+				commitBeforePhaseEnd: false,
+				askCheck: true,
+				manualChecks,
+			});
+
+			expect(prompt).toContain("1. Bumped check");
+			expect(prompt).toContain("assist ask-check --json -");
+		});
+
+		it("lists them for chat confirmation when askCheck is off", () => {
+			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
+				commitBeforePhaseEnd: false,
+				manualChecks,
+			});
+
+			expect(prompt).toContain("1. Bumped check");
+			expect(prompt).not.toContain("assist ask-check");
+		});
+	});
 });

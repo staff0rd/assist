@@ -22,6 +22,21 @@ vi.mock("../shared/loadConfig", () => ({
 	loadConfig: () => mockLoadConfig(),
 }));
 
+const mockLoadItem = vi.fn();
+const mockMoveManualCheck = vi.fn();
+
+vi.mock("./backlog/shared", () => ({
+	getReady: async () => ({ orm: "orm" }),
+}));
+
+vi.mock("./backlog/loadItem", () => ({
+	loadItem: (_orm: unknown, id: number) => mockLoadItem(id),
+}));
+
+vi.mock("./backlog/moveManualCheck", () => ({
+	moveManualCheck: (...args: unknown[]) => mockMoveManualCheck(...args),
+}));
+
 import { askCheck } from "./askCheck";
 
 const check = {
@@ -171,6 +186,98 @@ describe("askCheck", () => {
 		await askCheck({ json: "-" });
 
 		expect(logged.at(-1)).toBe('Manual check "PIN shows on the Mac": works');
+	});
+
+	describe("--check", () => {
+		const backlogItem = {
+			id: 7,
+			name: "Item",
+			currentPhase: 1,
+			acceptanceCriteria: [],
+			plan: [
+				{ name: "Build", tasks: [], manualChecks: ["first", "second"] },
+				{ name: "Polish", tasks: [] },
+			],
+		};
+		const laterPhases = [
+			{ number: 2, name: "Polish" },
+			{ number: 3, name: "Review" },
+		];
+
+		function sentBody() {
+			return JSON.parse(mockRequestPreviewDecision.mock.calls[0][0].body);
+		}
+
+		beforeEach(() => {
+			vi.stubEnv("ASSIST_BACKLOG_ITEM_ID", "7");
+			mockLoadItem.mockResolvedValue(backlogItem);
+			stdin(check);
+		});
+
+		it("lists every later phase, including Review, in the preview body", async () => {
+			mockRequestPreviewDecision.mockResolvedValue({
+				decision: "approve",
+				answers: { result: "works" },
+			});
+
+			await askCheck({ json: "-", check: "2" });
+
+			expect(sentBody()).toEqual({ ...check, laterPhases });
+			expect(logged.at(-1)).toBe('Manual check "PIN shows on the Mac": works');
+		});
+
+		it("moves the check to the chosen phase on a later answer", async () => {
+			mockRequestPreviewDecision.mockResolvedValue({
+				decision: "approve",
+				answers: { result: "later", phase: "3" },
+			});
+
+			await askCheck({ json: "-", check: "2" });
+
+			expect(mockMoveManualCheck).toHaveBeenCalledWith(
+				"orm",
+				backlogItem,
+				0,
+				1,
+				2,
+			);
+			expect(logged.at(-1)).toBe(
+				'Manual check "PIN shows on the Mac": moved to phase 3 (Review)',
+			);
+		});
+
+		it.each([
+			["--check is omitted", () => {}, undefined],
+			[
+				"there is no backlog item",
+				() => vi.stubEnv("ASSIST_BACKLOG_ITEM_ID", ""),
+				"1",
+			],
+			[
+				"the current phase is the last",
+				() =>
+					mockLoadItem.mockResolvedValue({ ...backlogItem, currentPhase: 3 }),
+				"1",
+			],
+		])("sends no later phases when %s", async (_, arrange, index) => {
+			arrange();
+			mockRequestPreviewDecision.mockResolvedValue({
+				decision: "approve",
+				answers: { result: "works" },
+			});
+
+			await askCheck({ json: "-", check: index });
+
+			expect(sentBody()).toEqual(check);
+		});
+
+		it("rejects an index past the phase's manual checks before opening", async () => {
+			await expect(askCheck({ json: "-", check: "3" })).rejects.toThrow(
+				"process.exit(1)",
+			);
+			expect(errored.join("\n")).toContain("--check 3 matches none");
+			expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		});
 	});
 
 	it("exits non-zero when the user dismisses the check", async () => {

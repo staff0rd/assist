@@ -1,8 +1,10 @@
+import { authoredPhases } from "./authoredPhases";
 import type { BacklogItem, PlanPhase } from "./types";
 
 export function resolvePlan(item: BacklogItem): PlanPhase[] {
-	if (item.plan && item.plan.length > 0) {
-		return item.plan;
+	const authored = authoredPhases(item.plan ?? []);
+	if (authored.length > 0) {
+		return authored;
 	}
 	return [
 		{

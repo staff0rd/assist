@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { authoredPhases } from "../authoredPhases";
 import type { BacklogFile, BacklogStatus, BacklogType } from "../types";
 
 /** The minimal shape isBlocked needs from each dependency target. */
@@ -32,7 +33,9 @@ export function typeLabel(type: BacklogType): string {
 
 export function phaseLabel(item: BacklogFile[number]): string {
 	if (!item.plan) return "";
-	return chalk.dim(` (phase ${item.currentPhase ?? 1}/${item.plan.length})`);
+	return chalk.dim(
+		` (phase ${item.currentPhase ?? 1}/${authoredPhases(item.plan).length})`,
+	);
 }
 
 export function isBlocked(

@@ -17,11 +17,16 @@ export function buildPhasePrompt(
 		worktree?.commitBeforeManualChecks ??
 		false;
 
+	const askCheck = config.sessions?.askQuestion === true;
 	if (phase.name === REVIEW_PHASE_NAME) {
-		return buildReviewPrompt(item, phaseNumber, { commitBeforePhaseEnd });
+		return buildReviewPrompt(item, phaseNumber, {
+			commitBeforePhaseEnd,
+			askCheck,
+			manualChecks: phase.manualChecks,
+		});
 	}
 	return buildAuthoredPhasePrompt(item, phaseNumber, phase, {
 		commitBeforePhaseEnd,
-		askCheck: config.sessions?.askQuestion === true,
+		askCheck,
 	});
 }
