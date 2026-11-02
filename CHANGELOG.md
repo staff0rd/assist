@@ -1,3 +1,10 @@
+## [0.1046.1](https://github.com/staff0rd/assist/compare/v0.1046.0...v0.1046.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* keep session if transfer hand-off fails ([158f626](https://github.com/staff0rd/assist/commit/158f626c6dc3130082f655592ac2493b278fe1e6))
+
 # [0.1046.0](https://github.com/staff0rd/assist/compare/v0.1045.3...v0.1046.0) (2026-11-02)
 
 
