@@ -32,6 +32,12 @@ function validateCheckoutOnly(options: ReviewOptions): void {
 }
 
 function validateHighLevel(options: ReviewOptions): void {
+	if (options.slices && (!options.highLevel || options.configure)) {
+		console.error(
+			"Error: --slices requires --high-level and cannot be combined with --configure.",
+		);
+		process.exit(1);
+	}
 	if (!options.highLevel) return;
 	if (
 		options.refine ||

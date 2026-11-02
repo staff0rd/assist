@@ -7,6 +7,7 @@ export type HighLevelConfig = {
 	descriptionWordCap: number;
 	testPaths: string[];
 	collapsedPaths: string[];
+	slices?: boolean;
 };
 
 const DEFAULT_DESCRIPTION_WORD_CAP = 300;
@@ -22,5 +23,6 @@ export function resolveHighLevelConfig(config: AssistConfig): HighLevelConfig {
 			highLevel?.descriptionWordCap ?? DEFAULT_DESCRIPTION_WORD_CAP,
 		testPaths: highLevel?.testPaths ?? DEFAULT_TEST_PATHS,
 		collapsedPaths: highLevel?.collapsedPaths ?? DEFAULT_COLLAPSED_PATHS,
+		slices: highLevel?.slices ?? false,
 	};
 }

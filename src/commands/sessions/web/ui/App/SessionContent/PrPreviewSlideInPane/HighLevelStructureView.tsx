@@ -14,11 +14,13 @@ export function HighLevelStructureView({
 	collapsedPaths,
 	subject,
 	comments,
+	hideSummary = false,
 }: {
 	structure: HighLevelStructure;
 	collapsedPaths: string[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
+	hideSummary?: boolean;
 }) {
 	const { dirs, files, fileGlobs, filePaths, bulk } =
 		useHighLevelStructureCollapse(subject, structure.tree, collapsedPaths);
@@ -35,7 +37,7 @@ export function HighLevelStructureView({
 
 	return (
 		<Box sx={{ minWidth: 0, ...offsetSx }}>
-			<HighLevelStructureSummary structure={structure} />
+			{!hideSummary && <HighLevelStructureSummary structure={structure} />}
 			<HighLevelStructureToolbar
 				ref={toolbarRef}
 				bulk={bulk}

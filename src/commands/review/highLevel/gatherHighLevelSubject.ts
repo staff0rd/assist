@@ -2,12 +2,14 @@ import { loadConfig } from "../../../shared/loadConfig";
 import { getRepoInfo } from "../../prs/shared";
 import { buildHighLevelStructure } from "./buildHighLevelStructure";
 import { capHighLevelPatches } from "./capHighLevelPatches";
-import { capHighLevelTestSources } from "./capHighLevelTestSources";
-import { collectHighLevelTests } from "./collectHighLevelTests";
 import { evaluateHighLevelChecks } from "./evaluateHighLevelChecks";
-import { fetchFileAtSha } from "./fetchFileAtSha";
 import { fetchHighLevelFiles } from "./fetchHighLevelFiles";
 import { fetchHighLevelPr } from "./fetchHighLevelPr";
+import {
+	gatherHighLevelSlices,
+	type HighLevelSlicing,
+} from "./gatherHighLevelSlices";
+import { gatherHighLevelTests } from "./gatherHighLevelTests";
 import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
 import { loadReopenedReview } from "./loadReopenedReview";
 import { resolveHighLevelConfig } from "./resolveHighLevelConfig";
@@ -16,6 +18,7 @@ import { selectCriticalDiffs } from "./selectCriticalDiffs";
 export function gatherHighLevelSubject(
 	prNumber: number,
 	force: boolean,
+	slicing?: HighLevelSlicing,
 ): HighLevelOverlaySubject {
 	const { org, repo } = getRepoInfo();
 	const slug = `${org}/${repo}`;
@@ -23,30 +26,27 @@ export function gatherHighLevelSubject(
 	const config = resolveHighLevelConfig(loadConfig());
 	const fetched = fetchHighLevelFiles(prNumber, slug);
 	const files = capHighLevelPatches(fetched, config.criticalPaths);
+	const head = { repo: slug, headRef: pr.headRef, headSha: pr.headSha };
+	const slices =
+		slicing && config.slices
+			? gatherHighLevelSlices(head, files, slicing)
+			: undefined;
 	return {
-		repo: slug,
+		...head,
 		prNumber,
 		title: pr.title,
-		headRef: pr.headRef,
-		headSha: pr.headSha,
 		checks: evaluateHighLevelChecks({
-			body: pr.body,
-			linkedIssues: pr.linkedIssues,
-			mergeable: pr.mergeable,
-			baseRef: pr.baseRef,
+			...pr,
 			changedFiles: files.map((file) => file.path),
 			config,
 		}),
 		structure: buildHighLevelStructure(files),
 		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
 		criticalPaths: config.criticalPaths,
-		tests: capHighLevelTestSources(
-			collectHighLevelTests(fetched, config.testPaths, (path) =>
-				fetchFileAtSha(slug, pr.headSha, path),
-			),
-		),
+		tests: gatherHighLevelTests(fetched, config.testPaths, slug, pr.headSha),
 		testPaths: config.testPaths,
 		collapsedPaths: config.collapsedPaths,
+		...(slices ? { slices } : {}),
 		...(force ? {} : loadReopenedReview(slug, pr.headRef, pr.headSha)),
 	};
 }

@@ -132,6 +132,14 @@ export type HighLevelReviewRecord = HighLevelReviewHead &
 export type HighLevelReviewDraft = HighLevelReviewHead &
 	HighLevelReviewProgress & { savedAt: string };
 
+export type HighLevelSlice = {
+	title: string;
+	summary: string;
+	hunks: string[];
+	additions: number;
+	deletions: number;
+};
+
 export type HighLevelPreviewPayload = {
 	repo: string;
 	prNumber: number;
@@ -143,6 +151,7 @@ export type HighLevelPreviewPayload = {
 	tests: HighLevelTestFile[];
 	testPaths: string[];
 	collapsedPaths: string[];
+	slices?: HighLevelSlice[];
 	saved?: HighLevelReviewRecord;
 	draft?: HighLevelReviewDraft;
 };

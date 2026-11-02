@@ -1,17 +1,9 @@
+import { hunksOf } from "./hunksOf";
+
 type CappedPatch = {
 	patch?: string;
 	truncated: boolean;
 };
-
-function hunksOf(patch: string): string[] {
-	const hunks: string[] = [];
-	for (const line of patch.split("\n")) {
-		const last = hunks[hunks.length - 1];
-		if (line.startsWith("@@") || last === undefined) hunks.push(line);
-		else hunks[hunks.length - 1] = `${last}\n${line}`;
-	}
-	return hunks;
-}
 
 export function capPatchToBudget(patch: string, budget: number): CappedPatch {
 	const kept: string[] = [];

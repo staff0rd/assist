@@ -3,6 +3,7 @@ import type { HighLevelPreviewPayload } from "../../../../../../../../review/hig
 import type { HighLevelDiffComments } from "../../HighLevelDiffComments";
 import { HighLevelCheckDetail } from "./highLevelCheckDetails/HighLevelCheckDetail";
 import { HighLevelCriticalDiffs } from "./highLevelCheckDetails/HighLevelCriticalDiffs";
+import { HighLevelSlicedStructureView } from "../../HighLevelSlicedStructureView";
 import { HighLevelStructureView } from "../../HighLevelStructureView";
 import { HighLevelTestsView } from "../../HighLevelTestsView";
 import { highLevelChangedFileCount } from "../../../../../../../../review/highLevel/highLevelChangedFileCount";
@@ -18,12 +19,22 @@ export function highLevelCheckDetails(
 			<HighLevelCheckDetail
 				label={`Changed files (${highLevelChangedFileCount(payload.structure)})`}
 			>
-				<HighLevelStructureView
-					structure={payload.structure}
-					collapsedPaths={payload.collapsedPaths}
-					subject={subject}
-					comments={comments}
-				/>
+				{payload.slices ? (
+					<HighLevelSlicedStructureView
+						structure={payload.structure}
+						slices={payload.slices}
+						collapsedPaths={payload.collapsedPaths}
+						subject={subject}
+						comments={comments}
+					/>
+				) : (
+					<HighLevelStructureView
+						structure={payload.structure}
+						collapsedPaths={payload.collapsedPaths}
+						subject={subject}
+						comments={comments}
+					/>
+				)}
 			</HighLevelCheckDetail>
 		),
 		"critical-diffs-correct": (

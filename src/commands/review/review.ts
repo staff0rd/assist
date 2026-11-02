@@ -34,12 +34,13 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 			`/review-high-level ${options.number}${options.force ? " --force" : ""}`,
 		);
 	emitActivity({ kind: "command", name: "review" });
+	const highLevelOptions = { force: options.force, slices: options.slices };
 	if (!options.number)
 		return options.highLevel
-			? runHighLevelReview(undefined, { force: options.force })
+			? runHighLevelReview(undefined, highLevelOptions)
 			: reviewPr(invokedIn, options);
 	await checkoutPr(options.number);
 	if (options.highLevel)
-		return runHighLevelReview(options.number, { force: options.force });
+		return runHighLevelReview(options.number, highLevelOptions);
 	return reviewPr(resolveRepoRoot(), options);
 }
