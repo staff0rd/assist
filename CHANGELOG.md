@@ -1,3 +1,10 @@
+# [0.1049.0](https://github.com/staff0rd/assist/compare/v0.1048.0...v0.1049.0) (2026-11-02)
+
+
+### Features
+
+* slice bar and critical tags ([b2eb607](https://github.com/staff0rd/assist/commit/b2eb607155331911e6c81dfd1e1f6c6d57c7dfef))
+
 # [0.1048.0](https://github.com/staff0rd/assist/compare/v0.1047.0...v0.1048.0) (2026-11-02)
 
 
