@@ -100,6 +100,39 @@ describe("resolveHighLevelSlices", () => {
 		expect(slices.map((slice) => slice.title)).toEqual(["A", "B"]);
 	});
 
+	it("accepts {slices, manualTesting} and passes manualTesting through", () => {
+		const manualTesting = {
+			setup: ["Restart the web server"],
+			steps: [{ action: "Open /x", expect: "It renders" }],
+		};
+		const resolved = resolveHighLevelSlices(
+			{
+				slices: [{ title: "A", summary: "", hunks: ["src/a.ts#0"] }],
+				manualTesting,
+			},
+			hunks,
+		);
+
+		expect(resolved.manualTesting).toEqual(manualTesting);
+		expect(resolved.slices.map((slice) => slice.title)).toEqual([
+			"A",
+			"Everything else",
+		]);
+	});
+
+	it("leaves manualTesting out for a bare slices array", () => {
+		expect(resolveHighLevelSlices([], hunks).manualTesting).toBeUndefined();
+	});
+
+	it("rejects malformed manualTesting steps", () => {
+		expect(() =>
+			resolveHighLevelSlices(
+				{ slices: [], manualTesting: { setup: [], steps: [{ action: "x" }] } },
+				hunks,
+			),
+		).toThrow(/manualTesting/);
+	});
+
 	it("rejects input that is not an array of slices", () => {
 		expect(() => resolveHighLevelSlices({ title: "x" }, hunks)).toThrow(
 			/JSON array of \{title, summary, hunks\[\]\}/,

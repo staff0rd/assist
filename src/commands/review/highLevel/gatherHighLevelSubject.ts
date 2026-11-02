@@ -27,7 +27,7 @@ export function gatherHighLevelSubject(
 	const fetched = fetchHighLevelFiles(prNumber, slug);
 	const files = capHighLevelPatches(fetched, config.criticalPaths);
 	const head = { repo: slug, headRef: pr.headRef, headSha: pr.headSha };
-	const slices =
+	const sliced =
 		slicing && config.slices
 			? gatherHighLevelSlices(head, files, slicing)
 			: undefined;
@@ -39,6 +39,7 @@ export function gatherHighLevelSubject(
 			...pr,
 			changedFiles: files.map((file) => file.path),
 			config,
+			sliced: sliced !== undefined,
 		}),
 		structure: buildHighLevelStructure(files),
 		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
@@ -46,7 +47,7 @@ export function gatherHighLevelSubject(
 		tests: gatherHighLevelTests(fetched, config.testPaths, slug, pr.headSha),
 		testPaths: config.testPaths,
 		collapsedPaths: config.collapsedPaths,
-		...(slices ? { slices } : {}),
+		...sliced,
 		...(force ? {} : loadReopenedReview(slug, pr.headRef, pr.headSha)),
 	};
 }

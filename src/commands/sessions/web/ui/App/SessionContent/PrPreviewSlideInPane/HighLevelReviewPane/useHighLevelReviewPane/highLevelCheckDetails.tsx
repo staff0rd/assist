@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import type { HighLevelPreviewPayload } from "../../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../../HighLevelDiffComments";
+import { HighLevelManualTesting } from "../../HighLevelManualTesting";
 import { HighLevelCheckDetail } from "./highLevelCheckDetails/HighLevelCheckDetail";
 import { HighLevelCriticalDiffs } from "./highLevelCheckDetails/HighLevelCriticalDiffs";
 import { HighLevelStructureDetail } from "./highLevelCheckDetails/HighLevelStructureDetail";
@@ -38,6 +39,17 @@ export function highLevelCheckDetails(
 				subject={subject}
 				comments={comments}
 			/>
+		),
+		"manual-testing": (
+			<HighLevelCheckDetail
+				label={`Manual testing (${payload.manualTesting?.steps.length ?? 0} steps)`}
+			>
+				<HighLevelManualTesting
+					manualTesting={payload.manualTesting}
+					repo={payload.repo}
+					headSha={payload.headSha}
+				/>
+			</HighLevelCheckDetail>
 		),
 	};
 }

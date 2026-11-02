@@ -25,6 +25,7 @@ export type HighLevelSubject = {
 	baseRef: string;
 	changedFiles: string[];
 	config: HighLevelConfig;
+	sliced?: boolean;
 };
 
 export type HighLevelFileStatus = "added" | "removed" | "modified";
@@ -155,6 +156,16 @@ export type HighLevelSlice = {
 	rest?: boolean;
 };
 
+export type HighLevelManualTesting = {
+	setup: string[];
+	steps: { action: string; expect: string }[];
+};
+
+export type HighLevelSliceSet = {
+	slices: HighLevelSlice[];
+	manualTesting?: HighLevelManualTesting;
+};
+
 export type HighLevelPreviewPayload = {
 	repo: string;
 	prNumber: number;
@@ -167,6 +178,7 @@ export type HighLevelPreviewPayload = {
 	testPaths: string[];
 	collapsedPaths: string[];
 	slices?: HighLevelSlice[];
+	manualTesting?: HighLevelManualTesting;
 	saved?: HighLevelReviewRecord;
 	draft?: HighLevelReviewDraft;
 };

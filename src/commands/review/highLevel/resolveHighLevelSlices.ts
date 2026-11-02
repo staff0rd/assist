@@ -4,9 +4,9 @@ import {
 	parseHighLevelSlicesInput,
 } from "./parseHighLevelSlicesInput";
 import { sliceTotals } from "./sliceTotals";
-import type { HighLevelSlice } from "./types";
+import type { HighLevelSlice, HighLevelSliceSet } from "./types";
 
-type ResolvedSlices = { slices: HighLevelSlice[]; warnings: string[] };
+type ResolvedSlices = HighLevelSliceSet & { warnings: string[] };
 
 function knownRefs(
 	input: HighLevelSliceInput,
@@ -30,7 +30,8 @@ export function resolveHighLevelSlices(
 	const slices: HighLevelSlice[] = [];
 	const add = (title: string, summary: string, refs: string[]) =>
 		slices.push({ title, summary, hunks: refs, ...sliceTotals(refs, byRef) });
-	for (const input of parseHighLevelSlicesInput(raw)) {
+	const { slices: inputs, manualTesting } = parseHighLevelSlicesInput(raw);
+	for (const input of inputs) {
 		const known = knownRefs(input, byRef, warnings);
 		if (known.length === 0)
 			warnings.push(`Dropped slice "${input.title}": it has no known hunks.`);
@@ -46,5 +47,5 @@ export function resolveHighLevelSlices(
 			...sliceTotals(rest, byRef),
 			rest: true,
 		});
-	return { slices, warnings };
+	return { slices, ...(manualTesting ? { manualTesting } : {}), warnings };
 }

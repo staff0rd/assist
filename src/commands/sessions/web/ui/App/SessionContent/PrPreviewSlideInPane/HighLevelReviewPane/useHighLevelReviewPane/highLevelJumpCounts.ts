@@ -9,6 +9,7 @@ export function highLevelJumpCounts(
 		["structure-sensible", highLevelChangedFileCount(payload.structure)],
 		["critical-diffs-correct", payload.criticalDiffs.length],
 		["tests-worth-having", highLevelTestCount(payload.tests)],
+		["manual-testing", payload.manualTesting?.steps.length ?? 0],
 	];
 	return Object.fromEntries(
 		counts

@@ -55,6 +55,13 @@ describe("evaluateHighLevelChecks", () => {
 		expect(manual.every((result) => result.reason.length > 0)).toBe(true);
 	});
 
+	it("adds the Manual testing item only when the PR is sliced", () => {
+		const ids = (sliced: boolean) =>
+			evaluateHighLevelChecks(subject({ sliced })).map((result) => result.id);
+		expect(ids(true)).toContain("manual-testing");
+		expect(ids(false)).not.toContain("manual-testing");
+	});
+
 	it("passes a body with a What and a Why", () => {
 		expect(check("description-what-why").status).toBe("pass");
 	});

@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { gatherHighLevelSlices } from "./gatherHighLevelSlices";
 import { highLevelSlicesPath } from "./highLevelSlicesPath";
 import type { HighLevelFile } from "./types";
+import { writeJsonFile } from "./writeJsonFile";
 
 const head = { repo: "org/repo", headRef: "feat/x", headSha: "abc123" };
 const files: HighLevelFile[] = [
@@ -73,6 +74,45 @@ describe("gatherHighLevelSlices", () => {
 		expect(gatherHighLevelSlices(head, files, { force: false })).toEqual(
 			fromFile,
 		);
+	});
+
+	it("asks for manual testing steps in the refusal", () => {
+		expect(() => gatherHighLevelSlices(head, files, { force: false })).toThrow(
+			"exit 2",
+		);
+		const printed = vi.mocked(console.log).mock.calls[0]?.[0] as string;
+		expect(printed).toContain("Manual testing rules:");
+		expect(printed).toContain('"manualTesting"');
+	});
+
+	it("saves manualTesting with the slices and reuses both on reopen", () => {
+		const manualTesting = {
+			setup: ["Restart the daemon"],
+			steps: [{ action: "Run assist x", expect: "It prints y" }],
+		};
+		gatherHighLevelSlices(head, files, {
+			force: false,
+			slicesFile: slicesFile({
+				slices: [{ title: "Swap", summary: "s", hunks: ["src/a.ts#0"] }],
+				manualTesting,
+			}),
+		});
+
+		const reopened = gatherHighLevelSlices(head, files, { force: false });
+
+		expect(reopened.manualTesting).toEqual(manualTesting);
+		expect(reopened.slices.map((slice) => slice.title)).toEqual(["Swap"]);
+	});
+
+	it("reads slices saved as a bare array, with no manual testing steps", () => {
+		writeJsonFile(highLevelSlicesPath(head.repo, head.headRef, head.headSha), [
+			{ title: "Old", summary: "", hunks: ["src/a.ts#0"] },
+		]);
+
+		const reopened = gatherHighLevelSlices(head, files, { force: false });
+
+		expect(reopened.slices.map((slice) => slice.title)).toEqual(["Old"]);
+		expect(reopened.manualTesting).toBeUndefined();
 	});
 
 	it("asks to re-slice with --force even when slices are saved", () => {

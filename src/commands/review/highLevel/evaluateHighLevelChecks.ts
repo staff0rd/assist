@@ -31,7 +31,10 @@ const evaluators: Record<
 export function evaluateHighLevelChecks(
 	subject: HighLevelSubject,
 ): HighLevelCheckResult[] {
-	return highLevelChecklist.map((check) => {
+	const checks = subject.sliced
+		? highLevelChecklist
+		: highLevelChecklist.filter((check) => check.id !== "manual-testing");
+	return checks.map((check) => {
 		if (check.kind === "manual")
 			return { ...check, status: "manual", reason: check.backing };
 		return { ...check, ...evaluators[check.id](subject) };

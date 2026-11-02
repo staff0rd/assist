@@ -1,0 +1,45 @@
+import { Box, Chip, Typography } from "@mui/material";
+import type { HighLevelManualTesting as ManualTesting } from "../../../../../../review/highLevel/types";
+import { ManualTestingSteps } from "./HighLevelManualTesting/ManualTestingSteps";
+import { ManualText } from "./HighLevelManualTesting/ManualText";
+
+export function HighLevelManualTesting({
+	manualTesting,
+	repo,
+	headSha,
+}: {
+	manualTesting: ManualTesting | undefined;
+	repo: string;
+	headSha: string;
+}) {
+	if (!manualTesting)
+		return (
+			<Typography variant="body2" sx={{ color: "text.secondary" }}>
+				No manual testing steps — re-run with --force
+			</Typography>
+		);
+	const text = (value: string) => (
+		<ManualText text={value} repo={repo} headSha={headSha} />
+	);
+	return (
+		<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+			{manualTesting.setup.length > 0 && (
+				<Box
+					role="group"
+					aria-label="Setup"
+					sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}
+				>
+					{manualTesting.setup.map((item, index) => (
+						<Chip
+							key={`${index}:${item}`}
+							size="small"
+							variant="outlined"
+							label={text(item)}
+						/>
+					))}
+				</Box>
+			)}
+			<ManualTestingSteps steps={manualTesting.steps} text={text} />
+		</Box>
+	);
+}

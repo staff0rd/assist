@@ -16,6 +16,7 @@ export function highLevelPreviewPayload(
 		testPaths,
 		collapsedPaths,
 		slices,
+		manualTesting,
 		saved,
 		draft,
 	} = subject;
@@ -31,6 +32,7 @@ export function highLevelPreviewPayload(
 		testPaths,
 		collapsedPaths,
 		...(slices ? { slices } : {}),
+		...(manualTesting ? { manualTesting } : {}),
 		...(saved ? { saved } : {}),
 		...(draft ? { draft } : {}),
 	};

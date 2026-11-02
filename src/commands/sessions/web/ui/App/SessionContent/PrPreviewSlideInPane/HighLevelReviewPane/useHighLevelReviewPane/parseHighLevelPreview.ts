@@ -43,6 +43,8 @@ export function parseHighLevelPreview(body: string): HighLevelPreviewPayload {
 		tests: asArray(parsed.tests),
 		testPaths: asArray(parsed.testPaths),
 		collapsedPaths: asArray(parsed.collapsedPaths),
+		...(Array.isArray(parsed.slices) ? { slices: parsed.slices } : {}),
+		...(parsed.manualTesting ? { manualTesting: parsed.manualTesting } : {}),
 		...(parsed.saved ? { saved: parsed.saved } : {}),
 		...(parsed.draft ? { draft: parsed.draft } : {}),
 	};

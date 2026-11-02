@@ -9,6 +9,7 @@ type ManualCheckId =
 	| "structure-sensible"
 	| "critical-diffs-correct"
 	| "tests-worth-having"
+	| "manual-testing"
 	| "backend-pr-linked";
 
 export type HighLevelCheckId = DeterministicCheckId | ManualCheckId;
@@ -84,6 +85,14 @@ export const highLevelChecklist: HighLevelCheck[] = [
 		short: "Tests",
 		backing:
 			"The describe/it hierarchy of changed tests in files matching review.highLevel.testPaths",
+	},
+	{
+		id: "manual-testing",
+		kind: "manual",
+		title: "The change can be exercised by hand",
+		short: "Manual testing",
+		backing:
+			"Setup and numbered action → expected steps written by the slicing agent",
 	},
 	{
 		id: "backend-pr-linked",

@@ -4,7 +4,7 @@ import { highLevelSlicesPath } from "./highLevelSlicesPath";
 import { listHighLevelHunks } from "./listHighLevelHunks";
 import { readJsonFile } from "./readJsonFile";
 import { resolveHighLevelSlices } from "./resolveHighLevelSlices";
-import type { HighLevelFile, HighLevelSlice } from "./types";
+import type { HighLevelFile, HighLevelSlice, HighLevelSliceSet } from "./types";
 import { writeJsonFile } from "./writeJsonFile";
 
 export type HighLevelSlicing = {
@@ -32,26 +32,29 @@ function sliceFromFile(
 	file: string,
 	files: HighLevelFile[],
 	path: string,
-): HighLevelSlice[] {
-	const { slices, warnings } = resolveHighLevelSlices(
+): HighLevelSliceSet {
+	const { warnings, ...set } = resolveHighLevelSlices(
 		readSlicesFile(file),
 		listHighLevelHunks(files),
 	);
 	for (const warning of warnings) console.warn(`Warning: ${warning}`);
-	writeJsonFile(path, slices);
-	return slices;
+	writeJsonFile(path, set);
+	return set;
+}
+
+function readSavedSlices(path: string): HighLevelSliceSet | undefined {
+	const saved = readJsonFile<HighLevelSlice[] | HighLevelSliceSet>(path);
+	return Array.isArray(saved) ? { slices: saved } : saved;
 }
 
 export function gatherHighLevelSlices(
 	head: SlicedHead,
 	files: HighLevelFile[],
 	slicing: HighLevelSlicing,
-): HighLevelSlice[] {
+): HighLevelSliceSet {
 	const path = highLevelSlicesPath(head.repo, head.headRef, head.headSha);
 	if (slicing.slicesFile) return sliceFromFile(slicing.slicesFile, files, path);
-	const saved = slicing.force
-		? undefined
-		: readJsonFile<HighLevelSlice[]>(path);
+	const saved = slicing.force ? undefined : readSavedSlices(path);
 	if (saved) return saved;
 	console.log(formatSlicingRequest(listHighLevelHunks(files)));
 	process.exit(2);
