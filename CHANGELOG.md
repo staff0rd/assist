@@ -1,3 +1,10 @@
+# [0.1047.0](https://github.com/staff0rd/assist/compare/v0.1046.1...v0.1047.0) (2026-11-02)
+
+
+### Features
+
+* flagged slice-grouped structure ([f922d32](https://github.com/staff0rd/assist/commit/f922d326915c66a4c3bbdd35ae427eb0a5bef0eb))
+
 ## [0.1046.1](https://github.com/staff0rd/assist/compare/v0.1046.0...v0.1046.1) (2026-11-02)
 
 
