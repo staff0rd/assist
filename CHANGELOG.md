@@ -1,3 +1,16 @@
+# [0.1045.0](https://github.com/staff0rd/assist/compare/v0.1044.1...v0.1045.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* keep review session diff after commit ([b690344](https://github.com/staff0rd/assist/commit/b6903445db46cb0e247bb211e92ef61760f94c8c))
+* list review session commits as scopes ([d4163f5](https://github.com/staff0rd/assist/commit/d4163f5222850dfd83811c56fabaf4450c093c4a))
+
+
+### Features
+
+* Shift+click launches with auto start ([2937229](https://github.com/staff0rd/assist/commit/29372297b7f63fd721e94727f7a82ab09674d88c))
+
 ## [0.1044.1](https://github.com/staff0rd/assist/compare/v0.1044.0...v0.1044.1) (2026-11-02)
 
 
