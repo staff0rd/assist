@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import type { NodeUpdateEntry } from "../../../NodeUpdateEntry";
-import { useWebserverRestart } from "../../../useWebserverRestart";
+import type { WebserverRestart } from "../../../useWebserverRestart";
 import { updateState } from "../updateState";
 import type { Notices } from "./useNotices";
 import { reloadsThisPage } from "./useNodeRestart/reloadsThisPage";
@@ -8,11 +8,11 @@ import { restartReporting } from "./useNodeRestart/restartReporting";
 import { restartTargetFor } from "./useNodeRestart/restartTargetFor";
 
 export function useNodeRestart(
-	reconnecting: boolean,
+	localWeb: WebserverRestart,
 	notices: Notices,
 	refresh: () => void,
 ) {
-	const localWeb = useWebserverRestart("webserver", reconnecting);
+	const { restartTo, error, clearError } = localWeb;
 
 	const restart = useCallback(
 		async (entry: NodeUpdateEntry): Promise<void> => {
@@ -20,12 +20,12 @@ export function useNodeRestart(
 			if (!target) return;
 			notices.mark(entry.name, "Restarting");
 			if (reloadsThisPage(entry))
-				return localWeb.restartTo(target === "daemon" ? "both" : target);
+				return restartTo(target === "daemon" ? "both" : target);
 			await restartReporting(entry, target, notices);
 			notices.mark(entry.name);
 			refresh();
 		},
-		[localWeb, notices, refresh],
+		[restartTo, notices, refresh],
 	);
 
 	const restartReady = useCallback(
@@ -42,7 +42,7 @@ export function useNodeRestart(
 	return {
 		restart,
 		restartReady,
-		localError: localWeb.error,
-		clearLocalError: localWeb.clearError,
+		localError: error,
+		clearLocalError: clearError,
 	};
 }

@@ -10,14 +10,12 @@ import { updatesSummary } from "./UpdatesView/updatesSummary";
 import { useUpdateActions } from "./UpdatesView/useUpdateActions";
 
 export function UpdatesView({
-	reconnecting,
 	selectSession,
 }: {
-	reconnecting: boolean;
 	selectSession: (id: string) => void;
 }) {
 	const { entries, loading } = useNodeUpdatesContext();
-	const actions = useUpdateActions(reconnecting, selectSession);
+	const actions = useUpdateActions(selectSession);
 	const { notices } = actions;
 
 	return (

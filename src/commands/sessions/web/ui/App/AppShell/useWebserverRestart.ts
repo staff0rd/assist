@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { postRestart, type RestartTarget } from "./postRestart";
 import { useServerBackReload } from "./useWebserverRestart/useServerBackReload";
@@ -45,12 +45,12 @@ export function useWebserverRestart(
 	);
 
 	const restart = useCallback(() => restartTo(target), [restartTo, target]);
+	const clearError = useCallback(() => setError(null), []);
 
-	return {
-		pending,
-		error,
-		clearError: () => setError(null),
-		restart,
-		restartTo,
-	};
+	return useMemo(
+		() => ({ pending, error, clearError, restart, restartTo }),
+		[pending, error, clearError, restart, restartTo],
+	);
 }
+
+export type WebserverRestart = ReturnType<typeof useWebserverRestart>;

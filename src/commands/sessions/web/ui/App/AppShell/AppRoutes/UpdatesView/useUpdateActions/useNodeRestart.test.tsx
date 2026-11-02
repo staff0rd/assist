@@ -1,8 +1,13 @@
 // @vitest-environment jsdom
-import { act, renderHook } from "@testing-library/react";
+import { act, render as rtlRender, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { RestartTarget } from "../../../../../../../../watch/restartRules";
 import type { NodeUpdateEntry } from "../../../NodeUpdateEntry";
+import {
+	LocalRestartContext,
+	useLocalRestartContext,
+} from "../../../useLocalRestartContext";
+import { useWebserverRestart } from "../../../useWebserverRestart";
 import { useNodeRestart } from "./useNodeRestart";
 import type { Notices } from "./useNotices";
 
@@ -78,9 +83,40 @@ function entry(
 function render() {
 	return renderHook(
 		({ reconnecting }: { reconnecting: boolean }) =>
-			useNodeRestart(reconnecting, notices, vi.fn()),
+			useNodeRestart(
+				useWebserverRestart("webserver", reconnecting),
+				notices,
+				vi.fn(),
+			),
 		{ initialProps: { reconnecting: false } },
 	);
+}
+
+type ShellProps = { reconnecting: boolean; showUpdates: boolean };
+
+function renderInShell() {
+	let restart: ((entry: NodeUpdateEntry) => Promise<void>) | undefined;
+	function Updates() {
+		restart = useNodeRestart(
+			useLocalRestartContext(),
+			notices,
+			vi.fn(),
+		).restart;
+		return null;
+	}
+	function Shell({ reconnecting, showUpdates }: ShellProps) {
+		const web = useWebserverRestart("webserver", reconnecting);
+		return (
+			<LocalRestartContext.Provider value={web}>
+				{showUpdates && <Updates />}
+			</LocalRestartContext.Provider>
+		);
+	}
+	const view = rtlRender(<Shell reconnecting={false} showUpdates />);
+	return {
+		restart: (entry: NodeUpdateEntry) => restart?.(entry),
+		rerender: (props: ShellProps) => view.rerender(<Shell {...props} />),
+	};
 }
 
 async function serverBounces(
@@ -124,6 +160,21 @@ describe("useNodeRestart", () => {
 		expect(postRestart).toHaveBeenCalledWith("daemon", "far");
 		expect(notices.setBack).toHaveBeenCalledWith("far is running v1.2.3");
 		expect(reload).not.toHaveBeenCalled();
+	});
+
+	it("still reloads when the Updates view unmounts during a local restart", async () => {
+		const shell = renderInShell();
+
+		await act(() => shell.restart(entry("me", true, ["daemon"])));
+		shell.rerender({ reconnecting: false, showUpdates: false });
+		shell.rerender({ reconnecting: true, showUpdates: false });
+		shell.rerender({ reconnecting: false, showUpdates: false });
+		await act(async () => {
+			await vi.advanceTimersByTimeAsync(1_000);
+		});
+
+		expect(postRestart).toHaveBeenCalledWith("both");
+		expect(reload).toHaveBeenCalledTimes(1);
 	});
 
 	it("restarts remote nodes before the local daemon-only node, then reloads", async () => {

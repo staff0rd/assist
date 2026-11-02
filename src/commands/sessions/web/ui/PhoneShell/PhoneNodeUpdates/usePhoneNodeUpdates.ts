@@ -1,6 +1,7 @@
 import { useNodeUpdates } from "../../App/AppShell/AppShellProviders/useNodeUpdates";
 import { useLoopControl } from "../../App/AppShell/AppRoutes/UpdatesView/useUpdateActions/useLoopControl";
 import { useNodeRestart } from "../../App/AppShell/AppRoutes/UpdatesView/useUpdateActions/useNodeRestart";
+import { useWebserverRestart } from "../../App/AppShell/useWebserverRestart";
 import { useNotices } from "../../App/AppShell/AppRoutes/UpdatesView/useUpdateActions/useNotices";
 import type { NodeSelection } from "../../useNodeSelection";
 import { latestVersion } from "./latestVersion";
@@ -12,8 +13,9 @@ export function usePhoneNodeUpdates(
 ) {
 	const { entries, refresh } = useNodeUpdates(selection);
 	const notices = useNotices();
+	const localWeb = useWebserverRestart("webserver", reconnecting);
 	const { restart, localError, clearLocalError } = useNodeRestart(
-		reconnecting,
+		localWeb,
 		notices,
 		refresh,
 	);

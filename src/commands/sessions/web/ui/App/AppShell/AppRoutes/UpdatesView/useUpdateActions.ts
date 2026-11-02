@@ -1,19 +1,17 @@
 import { useCallback } from "react";
 import { toNodeSessionId } from "../../../../../../daemon/links/splitNodeSessionId";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
+import { useLocalRestartContext } from "../../useLocalRestartContext";
 import { useNodeUpdatesContext } from "../../useNodeUpdatesContext";
 import { useActivateSession } from "../../../../useActivateSession";
 import { useLoopControl } from "./useUpdateActions/useLoopControl";
 import { useNodeRestart } from "./useUpdateActions/useNodeRestart";
 import { useNotices } from "./useUpdateActions/useNotices";
 
-export function useUpdateActions(
-	reconnecting: boolean,
-	selectSession: (id: string) => void,
-) {
+export function useUpdateActions(selectSession: (id: string) => void) {
 	const { refresh } = useNodeUpdatesContext();
 	const notices = useNotices();
-	const restarts = useNodeRestart(reconnecting, notices, refresh);
+	const restarts = useNodeRestart(useLocalRestartContext(), notices, refresh);
 	const loop = useLoopControl(notices, refresh);
 	const activate = useActivateSession(selectSession);
 

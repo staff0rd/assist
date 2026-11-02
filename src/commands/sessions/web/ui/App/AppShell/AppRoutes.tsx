@@ -48,12 +48,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					<Route path="connect-mobile" element={<ConnectMobileView />} />
 					<Route
 						path="updates"
-						element={
-							<UpdatesView
-								reconnecting={socket.reconnecting}
-								selectSession={socket.selectSession}
-							/>
-						}
+						element={<UpdatesView selectSession={socket.selectSession} />}
 					/>
 					<Route path="diff" element={<NodeScopedDiffView socket={socket} />} />
 					<Route path="file" element={<NodeScopedFileView socket={socket} />} />
