@@ -3,14 +3,14 @@ import chalk from "chalk";
 import { remoteDefaultBranch } from "../commands/sessions/daemon/worktree/remoteDefaultBranch";
 import { fastForwardTo } from "./fastForwardTo";
 
-export function catchUpToRemoteDefault(): void {
+export async function catchUpToRemoteDefault(): Promise<void> {
 	try {
 		execSync("git fetch", { stdio: "inherit" });
 	} catch {
 		skip("git fetch failed");
 		return;
 	}
-	const ref = `origin/${remoteDefaultBranch(process.cwd())}`;
+	const ref = `origin/${await remoteDefaultBranch(process.cwd())}`;
 	if (!succeeds(`git rev-parse --verify --quiet ${ref}`)) {
 		skip(`the current branch has no upstream and there is no ${ref}`);
 		return;

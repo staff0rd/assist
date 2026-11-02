@@ -60,7 +60,7 @@ async function tryBacklogRunAlias(
 ): Promise<boolean> {
 	if (!/^a?\d+$/.test(name)) return false;
 	if (lookupRunConfig(name).kind !== "not-found") return false;
-	pullIfConfigured();
+	await pullIfConfigured();
 	await backlogRun(name, parseBacklogRunOptions(name, args));
 	return true;
 }

@@ -30,7 +30,7 @@ export function registerRunCommand(cmd: Command): void {
 				 * interrupted phase; pulling would move the working tree out from
 				 * under that in-flight conversation, and a pull failure would abort
 				 * the restore entirely. Only pull on a fresh run. */
-				if (!opts.resumeSession) pullIfConfigured();
+				if (!opts.resumeSession) await pullIfConfigured();
 				await backlogRun(id, {
 					allowEdits: opts.write !== false,
 					harness: resolveHarness(opts.harness),

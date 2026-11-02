@@ -77,7 +77,7 @@ export async function next(
 	options?: NextOptions,
 	startId?: string,
 ): Promise<void> {
-	pullIfConfigured();
+	await pullIfConfigured();
 
 	let pendingId = startId;
 	let firstPick = true;

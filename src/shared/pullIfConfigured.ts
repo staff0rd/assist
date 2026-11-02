@@ -4,7 +4,7 @@ import { catchUpToRemoteDefault } from "./catchUpToRemoteDefault";
 import { loadConfig } from "./loadConfig";
 import { fastForwardTo } from "./fastForwardTo";
 
-export function pullIfConfigured(): void {
+export async function pullIfConfigured(): Promise<void> {
 	const config = loadConfig();
 	if (!config.commit?.pull) return;
 	if (hasLocalChanges()) {
@@ -16,7 +16,7 @@ export function pullIfConfigured(): void {
 		return;
 	}
 	if (!hasUpstream()) {
-		catchUpToRemoteDefault();
+		await catchUpToRemoteDefault();
 		return;
 	}
 	try {

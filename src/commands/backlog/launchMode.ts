@@ -30,7 +30,7 @@ export async function launchMode(
 	options?: LaunchModeOptions,
 ): Promise<void> {
 	const resumeSessionId = options?.resumeSessionId;
-	if (!resumeSessionId) pullIfConfigured();
+	if (!resumeSessionId) await pullIfConfigured();
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	/* why: assign the conversation id up front and report it via activity so the
 	 * daemon binds the card to the transcript this run writes, instead of the cwd
