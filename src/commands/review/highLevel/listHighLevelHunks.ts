@@ -1,4 +1,5 @@
-import { hunksOf } from "./hunksOf";
+import { countHunkLines as countLines } from "./countHunkLines";
+import { hunkTextsOf } from "./hunkTextsOf";
 import type { HighLevelFile } from "./types";
 
 export type HighLevelHunk = {
@@ -9,14 +10,8 @@ export type HighLevelHunk = {
 	deletions: number;
 };
 
-function countLines(text: string, prefix: "+" | "-"): number {
-	return text.split("\n").filter((line) => line.startsWith(prefix)).length;
-}
-
 function hunksOfFile(file: HighLevelFile): HighLevelHunk[] {
-	const texts = hunksOf(file.patch ?? "").filter((text) =>
-		text.startsWith("@@"),
-	);
+	const texts = hunkTextsOf(file.patch);
 	if (texts.length === 0)
 		return [
 			{

@@ -3,12 +3,14 @@ import { Box, Button, CircularProgress } from "@mui/material";
 export function GapStatus({
 	hidden,
 	header,
+	elsewhere,
 	loading,
 	error,
 	onRetry,
 }: {
 	hidden: number | null;
 	header: string | undefined;
+	elsewhere?: string | undefined;
 	loading: boolean;
 	error: string | undefined;
 	onRetry: () => void;
@@ -34,10 +36,16 @@ export function GapStatus({
 			{hidden === null
 				? "More lines below"
 				: `${hidden} hidden line${hidden === 1 ? "" : "s"}`}{" "}
-			{header && (
-				<Box component="span" sx={{ color: "text.disabled" }}>
-					{header}
+			{elsewhere ? (
+				<Box component="span" sx={{ color: "text.secondary" }}>
+					· {elsewhere}
 				</Box>
+			) : (
+				header && (
+					<Box component="span" sx={{ color: "text.disabled" }}>
+						{header}
+					</Box>
+				)
 			)}
 		</>
 	);

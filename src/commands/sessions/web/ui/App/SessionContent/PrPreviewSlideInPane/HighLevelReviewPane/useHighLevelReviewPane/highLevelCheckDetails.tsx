@@ -3,11 +3,8 @@ import type { HighLevelPreviewPayload } from "../../../../../../../../review/hig
 import type { HighLevelDiffComments } from "../../HighLevelDiffComments";
 import { HighLevelCheckDetail } from "./highLevelCheckDetails/HighLevelCheckDetail";
 import { HighLevelCriticalDiffs } from "./highLevelCheckDetails/HighLevelCriticalDiffs";
-import { HighLevelSlicedStructureView } from "../../HighLevelSlicedStructureView";
-import { HighLevelStructureView } from "../../HighLevelStructureView";
-import { HighLevelTestsView } from "../../HighLevelTestsView";
-import { highLevelChangedFileCount } from "../../../../../../../../review/highLevel/highLevelChangedFileCount";
-import { highLevelTestCount } from "../../../../../../../../review/highLevel/highLevelTestCount";
+import { HighLevelStructureDetail } from "./highLevelCheckDetails/HighLevelStructureDetail";
+import { HighLevelTestsDetail } from "./highLevelCheckDetails/HighLevelTestsDetail";
 
 export function highLevelCheckDetails(
 	payload: HighLevelPreviewPayload,
@@ -16,26 +13,11 @@ export function highLevelCheckDetails(
 	const subject = `${payload.repo}#${payload.prNumber}`;
 	return {
 		"structure-sensible": (
-			<HighLevelCheckDetail
-				label={`Changed files (${highLevelChangedFileCount(payload.structure)})`}
-			>
-				{payload.slices ? (
-					<HighLevelSlicedStructureView
-						structure={payload.structure}
-						slices={payload.slices}
-						collapsedPaths={payload.collapsedPaths}
-						subject={subject}
-						comments={comments}
-					/>
-				) : (
-					<HighLevelStructureView
-						structure={payload.structure}
-						collapsedPaths={payload.collapsedPaths}
-						subject={subject}
-						comments={comments}
-					/>
-				)}
-			</HighLevelCheckDetail>
+			<HighLevelStructureDetail
+				payload={payload}
+				subject={subject}
+				comments={comments}
+			/>
 		),
 		"critical-diffs-correct": (
 			<HighLevelCheckDetail
@@ -50,16 +32,11 @@ export function highLevelCheckDetails(
 			</HighLevelCheckDetail>
 		),
 		"tests-worth-having": (
-			<HighLevelCheckDetail
-				label={`Changed tests (${highLevelTestCount(payload.tests)})`}
-			>
-				<HighLevelTestsView
-					files={payload.tests}
-					testPaths={payload.testPaths}
-					subject={subject}
-					comments={comments}
-				/>
-			</HighLevelCheckDetail>
+			<HighLevelTestsDetail
+				payload={payload}
+				subject={subject}
+				comments={comments}
+			/>
 		),
 	};
 }

@@ -2,15 +2,19 @@ import { Box } from "@mui/material";
 import type {
 	HighLevelSlice,
 	HighLevelStructure,
+	HighLevelTestFile,
 } from "../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../HighLevelDiffComments";
 import { HighLevelStructureView } from "../HighLevelStructureView";
+import { highLevelSliceDomId } from "../highLevelSliceDomId";
 import { HighLevelSliceHeader } from "./HighLevelSliceHeader";
+import { HighLevelSliceTests } from "./HighLevelSliceTests";
 
 export function HighLevelSliceSection({
 	number,
 	slice,
 	structure,
+	tests,
 	collapsedPaths,
 	subject,
 	comments,
@@ -18,13 +22,16 @@ export function HighLevelSliceSection({
 	number: number;
 	slice: HighLevelSlice;
 	structure: HighLevelStructure;
+	tests: HighLevelTestFile[];
 	collapsedPaths: string[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 }) {
+	const sliceSubject = `${subject}:slice:${number}`;
 	return (
 		<Box
 			component="section"
+			id={highLevelSliceDomId(number)}
 			aria-label={`Slice ${number}: ${slice.title}`}
 			sx={{
 				borderTop: 1,
@@ -37,12 +44,20 @@ export function HighLevelSliceSection({
 			}}
 		>
 			<HighLevelSliceHeader number={number} slice={slice} />
-			<HighLevelStructureView
-				structure={structure}
-				collapsedPaths={collapsedPaths}
-				subject={`${subject}:slice:${number}`}
+			{structure.tree.length > 0 && (
+				<HighLevelStructureView
+					structure={structure}
+					collapsedPaths={collapsedPaths}
+					subject={sliceSubject}
+					comments={comments}
+					hideSummary
+				/>
+			)}
+			<HighLevelSliceTests
+				number={number}
+				files={tests}
+				subject={sliceSubject}
 				comments={comments}
-				hideSummary
 			/>
 		</Box>
 	);

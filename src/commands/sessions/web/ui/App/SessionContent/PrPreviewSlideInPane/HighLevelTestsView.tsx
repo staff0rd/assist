@@ -13,11 +13,13 @@ export function HighLevelTestsView({
 	testPaths,
 	subject,
 	comments,
+	hideSummary = false,
 }: {
 	files: HighLevelTestFile[];
 	testPaths: string[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
+	hideSummary?: boolean;
 }) {
 	const { collapsed, onToggle } = useHighLevelCollapse(`tests:${subject}`);
 
@@ -27,13 +29,15 @@ export function HighLevelTestsView({
 		);
 	return (
 		<Box sx={{ minWidth: 0 }}>
-			<Typography
-				variant="caption"
-				component="div"
-				sx={{ color: "text.secondary", mb: 0.5 }}
-			>
-				{highLevelTestChangeSummary(files)}
-			</Typography>
+			{!hideSummary && (
+				<Typography
+					variant="caption"
+					component="div"
+					sx={{ color: "text.secondary", mb: 0.5 }}
+				>
+					{highLevelTestChangeSummary(files)}
+				</Typography>
+			)}
 			{files.map((file) => (
 				<Box key={file.path} sx={highLevelDiffFileSx}>
 					<HighLevelCriticalDiffHeader

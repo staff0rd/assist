@@ -1,22 +1,25 @@
+import type { HighLevelForeignHunk } from "../../../../../../../review/highLevel/types";
+import { elsewhereInGap } from "./elsewhereInGap";
 import { gapAt } from "./gapAt";
 import { HighLevelGapExpander } from "./gapRenderer/HighLevelGapExpander";
 import type { GapExpansion } from "./useGapExpansion";
 
-export function gapRenderer({
-	hunks,
-	headLength,
-	loading,
-	error,
-	expand,
-}: GapExpansion) {
+export function gapRenderer(
+	{ hunks, headLength, expandable, loading, error, expand }: GapExpansion,
+	elsewhere: HighLevelForeignHunk[] = [],
+) {
 	return (index: number) => {
-		const gap = gapAt(hunks, index, headLength);
-		if (!gap) return null;
+		const found = gapAt(hunks, index, headLength);
+		if (!found) return null;
+		const note = elsewhereInGap(elsewhere, found);
+		if (!expandable && !note) return null;
+		const gap = expandable ? found : { ...found, directions: [] };
 		return (
 			<HighLevelGapExpander
 				key={`gap-${hunks[index]?.content ?? "end"}`}
 				gap={gap}
 				header={hunks[index]?.content}
+				elsewhere={note}
 				disabled={loading !== null}
 				loading={loading === index}
 				error={error?.index === index ? error.message : undefined}

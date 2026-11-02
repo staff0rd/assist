@@ -44,6 +44,7 @@ export function HighLevelTreeFileNode({
 						truncated={file.truncated === true}
 						viewType={viewType}
 						comments={comments}
+						elsewhere={file.split?.elsewhere}
 					/>
 				</Box>
 			)}

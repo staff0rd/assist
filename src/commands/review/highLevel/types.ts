@@ -29,6 +29,18 @@ export type HighLevelSubject = {
 
 export type HighLevelFileStatus = "added" | "removed" | "modified";
 
+export type HighLevelForeignHunk = {
+	oldStart: number;
+	header: string;
+	slice: number;
+};
+
+export type HighLevelSliceSplit = {
+	hunks: number;
+	of: number;
+	elsewhere: HighLevelForeignHunk[];
+};
+
 export type HighLevelFile = {
 	path: string;
 	status: HighLevelFileStatus;
@@ -37,6 +49,7 @@ export type HighLevelFile = {
 	diffUrl: string;
 	patch?: string;
 	truncated?: boolean;
+	split?: HighLevelSliceSplit;
 };
 
 export type HighLevelTreeFile = HighLevelFile & {

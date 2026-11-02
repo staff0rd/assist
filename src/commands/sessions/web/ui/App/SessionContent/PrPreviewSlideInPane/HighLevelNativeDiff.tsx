@@ -1,12 +1,15 @@
 import { Box } from "@mui/material";
 import type { ViewType } from "react-diff-view";
-import type { HighLevelFileStatus } from "../../../../../../review/highLevel/types";
+import type {
+	HighLevelFileStatus,
+	HighLevelForeignHunk,
+} from "../../../../../../review/highLevel/types";
 import { DiffCommentLayer } from "../../DiffCommentLayer";
 import { diffSx } from "../../diffSx";
 import { FileDiffBody } from "../../FileDiffBody";
 import type { HighLevelDiffComments } from "./HighLevelDiffComments";
 import { HighLevelDiffNote } from "./HighLevelDiffNote";
-import { gapRenderer } from "./HighLevelNativeDiff/gapRenderer";
+import { diffGapRenderer } from "./HighLevelNativeDiff/diffGapRenderer";
 import { highLevelGapSx } from "./HighLevelNativeDiff/highLevelGapSx";
 import { useExpandableDiff } from "./HighLevelNativeDiff/useExpandableDiff";
 
@@ -17,6 +20,7 @@ export function HighLevelNativeDiff({
 	truncated,
 	viewType,
 	comments,
+	elsewhere,
 }: {
 	path: string;
 	status: HighLevelFileStatus;
@@ -24,6 +28,7 @@ export function HighLevelNativeDiff({
 	truncated?: boolean;
 	viewType: ViewType;
 	comments?: HighLevelDiffComments | undefined;
+	elsewhere?: HighLevelForeignHunk[] | undefined;
 }) {
 	const { file, expansion } = useExpandableDiff(path, status, patch);
 
@@ -50,7 +55,7 @@ export function HighLevelNativeDiff({
 					file={file}
 					path={path}
 					viewType={viewType}
-					renderGap={expansion.expandable ? gapRenderer(expansion) : undefined}
+					renderGap={diffGapRenderer(expansion, elsewhere)}
 				/>
 			</DiffCommentLayer>
 			{truncated && (

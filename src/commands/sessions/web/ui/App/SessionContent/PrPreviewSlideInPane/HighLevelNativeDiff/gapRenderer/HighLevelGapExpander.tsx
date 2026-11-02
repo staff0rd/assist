@@ -7,6 +7,7 @@ import { GapStatus } from "./HighLevelGapExpander/GapStatus";
 export function HighLevelGapExpander({
 	gap,
 	header,
+	elsewhere,
 	disabled,
 	loading,
 	error,
@@ -15,6 +16,7 @@ export function HighLevelGapExpander({
 }: {
 	gap: Gap;
 	header: string | undefined;
+	elsewhere?: string | undefined;
 	disabled: boolean;
 	loading: boolean;
 	error: string | undefined;
@@ -33,6 +35,7 @@ export function HighLevelGapExpander({
 			<GapStatus
 				hidden={gap.end === null ? null : gap.end - gap.start}
 				header={header}
+				elsewhere={elsewhere}
 				loading={loading}
 				error={error}
 				onRetry={onRetry}
