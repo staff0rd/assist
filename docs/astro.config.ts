@@ -97,7 +97,10 @@ export default defineConfig({
 				},
 				{ tag: "meta", attrs: { name: "twitter:image", content: ogImage } },
 			],
-			routeMiddleware: preview ? "./src/previewRouteData.ts" : [],
+			routeMiddleware: [
+				"./src/homeRouteData.ts",
+				...(preview ? ["./src/previewRouteData.ts"] : []),
+			],
 		}),
 		{
 			name: "assist-docs-preview",
