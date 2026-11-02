@@ -1,3 +1,11 @@
+## [0.1042.2](https://github.com/staff0rd/assist/compare/v0.1042.1...v0.1042.2) (2026-11-02)
+
+
+### Bug Fixes
+
+* config get exits 0 for unset schema key ([9116675](https://github.com/staff0rd/assist/commit/9116675481575952e79fdf05d51b9730a15261d0))
+* recapture next, releases and news docs ([c637ec4](https://github.com/staff0rd/assist/commit/c637ec40606c76ca4dd6d2926f95cd88b4ad4664))
+
 ## [0.1042.1](https://github.com/staff0rd/assist/compare/v0.1042.0...v0.1042.1) (2026-11-02)
 
 
