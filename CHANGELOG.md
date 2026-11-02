@@ -1,3 +1,10 @@
+## [0.1053.2](https://github.com/staff0rd/assist/compare/v0.1053.1...v0.1053.2) (2026-11-02)
+
+
+### Bug Fixes
+
+* keep selection in repo on close ([d8f6c29](https://github.com/staff0rd/assist/commit/d8f6c29b066d330b91c32c89dcccf97bb7115305))
+
 ## [0.1053.1](https://github.com/staff0rd/assist/compare/v0.1053.0...v0.1053.1) (2026-11-02)
 
 
