@@ -1,9 +1,8 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { groupCollapseStore } from "./useCollapsedGroups/groupCollapseStore";
-import type { SessionInfo } from "../../types";
 
 type CollapsedGroups = {
-	isCollapsed: (key: string, members: SessionInfo[]) => boolean;
+	isCollapsed: (key: string) => boolean;
 	setCollapsed: (key: string, collapsed: boolean) => void;
 };
 
@@ -14,13 +13,9 @@ export function useCollapsedGroups(): CollapsedGroups {
 	);
 	const choices = useMemo(() => groupCollapseStore.parse(raw), [raw]);
 	const isCollapsed = useCallback(
-		(key: string, members: SessionInfo[]) => {
+		(key: string) => {
 			const choice = choices[key];
-			return (
-				choice !== undefined &&
-				"collapsedAt" in choice &&
-				members.every((session) => session.startedAt <= choice.collapsedAt)
-			);
+			return choice !== undefined && "collapsedAt" in choice;
 		},
 		[choices],
 	);

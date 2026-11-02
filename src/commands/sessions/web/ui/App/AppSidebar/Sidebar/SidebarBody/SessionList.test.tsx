@@ -169,7 +169,7 @@ describe("SessionList repo group collapse", () => {
 		expect(card("g1")).toBeNull();
 	});
 
-	it("opens a collapsed group when a new session joins it", () => {
+	it("keeps a collapsed group collapsed when a new session joins it", () => {
 		const members = [
 			makeSessionInfo({ id: "g1", cwd: "/git/assist-2", repoGroup: group }),
 			makeSessionInfo({ id: "g2", cwd: "/git/assist-3", repoGroup: group }),
@@ -192,8 +192,9 @@ describe("SessionList repo group collapse", () => {
 			/>,
 		);
 
-		expect(groupToggle().getAttribute("aria-expanded")).toBe("true");
-		expect(card("g3")).not.toBeNull();
+		expect(groupToggle().getAttribute("aria-expanded")).toBe("false");
+		expect(card("g3")).toBeNull();
+		expect(groupToggle().textContent).toContain("3");
 	});
 
 	it("skips sessions in a collapsed group when Tab cycling", () => {

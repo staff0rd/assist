@@ -21,7 +21,7 @@ export function SessionGroupSection({
 	children: ReactNode;
 }) {
 	const { isCollapsed, setCollapsed } = useCollapsedGroups();
-	const collapsed = isCollapsed(groupKey, sessions);
+	const collapsed = isCollapsed(groupKey);
 	return (
 		<Box sx={containerSx}>
 			<GroupHeader
