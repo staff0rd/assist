@@ -52,6 +52,19 @@ describe("recoverAutostash", () => {
 		expect(listStashShas()).toEqual([other]);
 	});
 
+	it("refuses with apply guidance when the autostash cannot be reapplied", () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		const head = sh("git rev-parse HEAD").trim();
+		const before = listStashShas();
+		const sha = strandAutostash("autostash");
+		writeFileSync(join(repo, "file.txt"), "dirty\n");
+
+		expect(() => recoverAutostash(head, before)).toThrow(
+			`git stash apply ${sha}`,
+		);
+		expect(listStashShas()).toEqual([sha]);
+	});
+
 	it("ignores autostash entries that existed before the pull", () => {
 		const head = sh("git rev-parse HEAD").trim();
 		const old = strandAutostash("autostash");

@@ -103,12 +103,20 @@ describe("pullKeepingIndex", () => {
 		writeFileSync(join(local, "tracked.txt"), "local\n");
 		sh("git add tracked.txt", local);
 
-		expect(() => pullKeepingIndex()).toThrow(/git stash apply [0-9a-f]{40}/);
+		let thrown: Error | undefined;
+		try {
+			pullKeepingIndex();
+		} catch (error) {
+			thrown = error as Error;
+		}
 
 		const [sha, subject] = sh("git stash list --format='%H %gs'", local)
 			.trim()
 			.split(" ");
 		expect(subject).toBe("autostash");
+		expect(thrown?.message).toContain(`(${sha})`);
+		expect(thrown?.message).toContain("applied with conflicts in tracked.txt");
+		expect(thrown?.message).not.toContain("git stash apply");
 		expect(sh(`git show ${sha}:tracked.txt`, local)).toBe("local\n");
 	});
 

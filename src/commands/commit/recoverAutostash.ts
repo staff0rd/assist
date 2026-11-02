@@ -28,9 +28,14 @@ function stashRef(sha: string): string {
 }
 
 function strandedError(sha: string, reason: string): Error {
+	const unmerged = findUnmergedPaths();
+	const guidance =
+		unmerged.length > 0
+			? `They were applied with conflicts in ${unmerged.join(", ")}: resolve those, drop that entry by its SHA, then re-run the commit.`
+			: `Restore them with \`git stash apply ${sha}\`, resolve any conflicts, drop that entry by its SHA, then re-run the commit.`;
 	const message = [
 		`Error: refusing to commit — git pull --autostash left your local changes in stash entry ${stashRef(sha)} (${sha}): ${reason}`,
-		`Restore them with \`git stash apply ${sha}\`, resolve any conflicts, drop that entry by its SHA, then re-run the commit.`,
+		guidance,
 		"Nothing was committed or pushed.",
 	].join("\n");
 	console.error(message);
@@ -45,17 +50,13 @@ function dropBySha(sha: string): void {
 export function recoverAutostash(head: string, before: string[]): void {
 	const sha = findStrandedAutostash(head, before);
 	if (!sha) return;
-	const unmerged = findUnmergedPaths();
-	if (unmerged.length > 0) {
-		throw strandedError(sha, `conflicts in ${unmerged.join(", ")}`);
+	if (findUnmergedPaths().length > 0) {
+		throw strandedError(sha, "applying it hit conflicts");
 	}
 	try {
 		git(`stash apply -q ${sha}`);
 	} catch {
 		throw strandedError(sha, "reapplying it failed");
-	}
-	if (findUnmergedPaths().length > 0) {
-		throw strandedError(sha, "reapplying it hit conflicts");
 	}
 	dropBySha(sha);
 	console.log(`Reapplied autostash ${sha} that git pull left in the stash.`);
