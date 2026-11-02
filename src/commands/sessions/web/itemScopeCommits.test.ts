@@ -1,13 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { CommitRef } from "../../../shared/db/listCommitRefs";
 import { loadConfigFrom } from "../../../shared/loadConfigFrom";
-import { itemCommits } from "./itemCommits";
+import { committedPaths } from "./committedPaths";
 import { itemScopeCommits } from "./itemScopeCommits";
 
 vi.mock("../../../shared/loadConfigFrom", () => ({ loadConfigFrom: vi.fn() }));
-vi.mock("./itemCommits", () => ({ itemCommits: vi.fn(async () => []) }));
+vi.mock("./committedPaths", () => ({ committedPaths: vi.fn() }));
 
 const loadConfigFromMock = vi.mocked(loadConfigFrom);
-const itemCommitsMock = vi.mocked(itemCommits);
+const committedPathsMock = vi.mocked(committedPaths);
 
 function config(includeCommittedChanges?: boolean): void {
 	loadConfigFromMock.mockReturnValue({
@@ -16,17 +17,32 @@ function config(includeCommittedChanges?: boolean): void {
 	} as unknown as ReturnType<typeof loadConfigFrom>);
 }
 
+function commits(refs: CommitRef[]): void {
+	committedPathsMock.mockResolvedValue({ commits: refs, bases: new Map() });
+}
+
 describe("itemScopeCommits", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		commits([]);
 	});
 
-	it("lists the item's recorded commits", async () => {
+	it("lists the session's committed changes", async () => {
 		config(true);
-		itemCommitsMock.mockResolvedValue([{ sha: "one", title: "feat: one" }]);
+		commits([{ sha: "one", title: "feat: one" }]);
 
 		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([
 			{ sha: "one", title: "feat: one" },
+		]);
+		expect(committedPathsMock).toHaveBeenCalledWith("/repo", "sess-1");
+	});
+
+	it("lists commits found without a backlog item, such as from the transcript", async () => {
+		config(true);
+		commits([{ sha: "f16e93bc" }]);
+
+		expect(await itemScopeCommits("/repo", "review-sess")).toEqual([
+			{ sha: "f16e93bc" },
 		]);
 	});
 
@@ -34,21 +50,21 @@ describe("itemScopeCommits", () => {
 		config(false);
 
 		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([]);
-		expect(itemCommitsMock).not.toHaveBeenCalled();
+		expect(committedPathsMock).not.toHaveBeenCalled();
 	});
 
-	it("lists the item's commits when the flag is unset", async () => {
+	it("lists the commits when the flag is unset", async () => {
 		config();
-		itemCommitsMock.mockResolvedValue([{ sha: "one" }]);
+		commits([{ sha: "one" }]);
 
 		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([{ sha: "one" }]);
 	});
 
-	it("lists the item's commits when the config cannot be loaded", async () => {
+	it("lists the commits when the config cannot be loaded", async () => {
 		loadConfigFromMock.mockImplementation(() => {
 			throw new Error("bad yaml");
 		});
-		itemCommitsMock.mockResolvedValue([{ sha: "one" }]);
+		commits([{ sha: "one" }]);
 
 		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([{ sha: "one" }]);
 	});
@@ -57,6 +73,6 @@ describe("itemScopeCommits", () => {
 		config(true);
 
 		expect(await itemScopeCommits("/repo")).toEqual([]);
-		expect(itemCommitsMock).not.toHaveBeenCalled();
+		expect(committedPathsMock).not.toHaveBeenCalled();
 	});
 });
