@@ -1,3 +1,10 @@
+# [0.1044.0](https://github.com/staff0rd/assist/compare/v0.1043.0...v0.1044.0) (2026-11-02)
+
+
+### Features
+
+* Shift skips card dismiss dialogs ([ae91da5](https://github.com/staff0rd/assist/commit/ae91da54fad4b34a8b45df61df8e70018db7bf19))
+
 # [0.1043.0](https://github.com/staff0rd/assist/compare/v0.1042.4...v0.1043.0) (2026-11-02)
 
 
