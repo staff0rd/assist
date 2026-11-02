@@ -1,17 +1,6 @@
 import Box from "@mui/material/Box";
 import InputBase from "@mui/material/InputBase";
-
-const fieldSx = {
-	width: "100%",
-	px: 1.5,
-	py: 1,
-	borderRadius: "10px",
-	border: 1,
-	borderColor: "divider",
-	bgcolor: "background.default",
-	fontSize: 16,
-	"&.Mui-focused": { borderColor: "primary.main" },
-} as const;
+import { phoneFieldSx } from "../phoneFieldSx";
 
 export function PhoneRejectReason({
 	value,
@@ -36,7 +25,7 @@ export function PhoneRejectReason({
 				placeholder="Optional"
 				value={value}
 				onChange={(event) => onChange(event.target.value)}
-				sx={fieldSx}
+				sx={phoneFieldSx}
 			/>
 		</Box>
 	);

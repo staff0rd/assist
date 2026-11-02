@@ -1,46 +1,38 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import InputBase from "@mui/material/InputBase";
 import { useState } from "react";
-import type { CheckResult } from "../../../../shared/askCheckInputSchema";
-
-const fieldSx = {
-	width: "100%",
-	px: 1.5,
-	py: 1,
-	borderRadius: "10px",
-	border: 1,
-	borderColor: "divider",
-	bgcolor: "background.default",
-	fontSize: 16,
-	"&.Mui-focused": { borderColor: "primary.main" },
-} as const;
+import type {
+	CheckResult,
+	LaterPhase,
+} from "../../../../shared/askCheckInputSchema";
+import { PhoneCheckNoteField } from "./PhoneCheckNoteField";
+import { PhoneLaterPhasePicker } from "./PhoneLaterPhasePicker";
 
 const buttonSx = { borderRadius: "12px", flex: 1 } as const;
 
 export function PhoneCheckActions({
+	laterPhases,
 	onResult,
 }: {
-	onResult: (result: CheckResult, note: string) => void;
+	laterPhases: LaterPhase[];
+	onResult: (result: CheckResult, note: string, phase?: number) => void;
 }) {
 	const [note, setNote] = useState("");
 	const [sending, setSending] = useState(false);
-	const send = (result: CheckResult) => {
+	const send = (result: CheckResult, phase?: number) => {
 		setSending(true);
-		onResult(result, note);
+		onResult(result, note, phase);
 	};
 	return (
 		<>
-			<InputBase
-				multiline
-				minRows={2}
-				maxRows={5}
-				placeholder="Add a note for the agent (optional)"
-				value={note}
-				onChange={(event) => setNote(event.target.value)}
-				inputProps={{ "aria-label": "Note" }}
-				sx={fieldSx}
-			/>
+			<PhoneCheckNoteField value={note} onChange={setNote} />
+			{laterPhases.length > 0 && (
+				<PhoneLaterPhasePicker
+					phases={laterPhases}
+					disabled={sending}
+					onPick={(phase) => send("later", phase)}
+				/>
+			)}
 			<Box sx={{ display: "flex", gap: 1 }}>
 				<Button
 					variant="outlined"

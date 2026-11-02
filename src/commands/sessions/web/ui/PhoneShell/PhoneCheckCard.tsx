@@ -42,8 +42,9 @@ export function PhoneCheckCard({
 			<PhoneCheckBody check={check} phase={phase} />
 			<Box sx={{ flex: 1 }} />
 			<PhoneCheckActions
-				onResult={(result, note) =>
-					onDecision("approve", checkAnswerDetails(result, note))
+				laterPhases={check.laterPhases}
+				onResult={(result, note, phase) =>
+					onDecision("approve", checkAnswerDetails(result, note, phase))
 				}
 			/>
 		</Box>
