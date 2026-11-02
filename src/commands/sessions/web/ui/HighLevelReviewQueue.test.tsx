@@ -240,6 +240,55 @@ describe("high-level review queue", () => {
 		expect(lastDecision(onDecision)).toMatchObject({ reviewComments: [] });
 	});
 
+	it("keeps a queued comment, ticks and check comments across a reload", () => {
+		renderPane();
+		writeTestComment("asserts nothing useful");
+		fireEvent.click(screen.getByRole("button", { name: "Add to review" }));
+		fireEvent.click(screen.getByLabelText("The tests are worth having"));
+		fireEvent.change(
+			screen.getByLabelText("Comment on The tests are worth having"),
+			{ target: { value: "mostly fine" } },
+		);
+		cleanup();
+
+		const { onDecision } = renderPane();
+
+		expect(screen.getByText("Queued for review (1)")).toBeTruthy();
+		expect(lastDecision(onDecision)).toMatchObject({
+			checklist: [
+				{ id: "tests-worth-having", ticked: true, comment: "mostly fine" },
+			],
+			reviewComments: [queued],
+		});
+	});
+
+	it("keeps a removed queued comment removed across a reload", () => {
+		renderPane();
+		writeTestComment("asserts nothing useful");
+		fireEvent.click(screen.getByRole("button", { name: "Add to review" }));
+		fireEvent.click(
+			screen.getByLabelText("Remove the queued comment on src/app.test.ts:4"),
+		);
+		cleanup();
+
+		const { onDecision } = renderPane();
+
+		expect(screen.queryByText(/Queued for review/)).toBeNull();
+		expect(lastDecision(onDecision)).toMatchObject({ reviewComments: [] });
+	});
+
+	it("forgets the reload state once a verdict is given", () => {
+		const first = renderPane();
+		writeTestComment("asserts nothing useful");
+		fireEvent.click(screen.getByRole("button", { name: "Add to review" }));
+		lastDecision(first.onDecision);
+		cleanup();
+
+		renderPane();
+
+		expect(screen.queryByText(/Queued for review/)).toBeNull();
+	});
+
 	it("restores the queue saved with the review", () => {
 		const { onDecision } = renderPane({
 			saved: {

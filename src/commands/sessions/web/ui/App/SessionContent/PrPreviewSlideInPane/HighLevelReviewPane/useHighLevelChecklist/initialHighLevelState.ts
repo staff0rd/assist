@@ -1,7 +1,5 @@
-import type {
-	HighLevelCheckResult,
-	HighLevelReviewProgress,
-} from "../../../../../../../../review/highLevel/types";
+import type { HighLevelCheckResult } from "../../../../../../../../review/highLevel/types";
+import type { HighLevelPaneProgress } from "../useHighLevelReviewPane/loadPersistedHighLevelProgress";
 
 export type HighLevelItemState = {
 	ticked: boolean;
@@ -10,7 +8,7 @@ export type HighLevelItemState = {
 
 export function initialHighLevelState(
 	checks: HighLevelCheckResult[],
-	saved: HighLevelReviewProgress | undefined,
+	saved: HighLevelPaneProgress | undefined,
 ): Record<string, HighLevelItemState> {
 	return Object.fromEntries(
 		checks.map((check) => {

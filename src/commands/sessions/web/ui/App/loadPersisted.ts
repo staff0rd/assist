@@ -27,7 +27,7 @@ export function clearPersisted(key: string): void {
 	} catch {}
 }
 
-export function prunePersisted(prefix: string): void {
+export function prunePersisted(prefix: string, ttlMs = TTL_MS): void {
 	try {
 		const now = Date.now();
 		for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -37,7 +37,7 @@ export function prunePersisted(prefix: string): void {
 			const savedAt = raw
 				? (JSON.parse(raw) as { savedAt?: number }).savedAt
 				: 0;
-			if (!savedAt || now - savedAt > TTL_MS) localStorage.removeItem(k);
+			if (!savedAt || now - savedAt > ttlMs) localStorage.removeItem(k);
 		}
 	} catch {}
 }

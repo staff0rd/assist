@@ -11,6 +11,7 @@ import { PrPreviewHeader } from "../PrPreviewHeader";
 import { prPreviewPaneSx } from "../prPreviewPaneSx";
 import type { SessionInfo } from "../../../types";
 import { useHighLevelReviewPane } from "./HighLevelReviewPane/useHighLevelReviewPane";
+import { clearPersistedHighLevelProgress } from "./HighLevelReviewPane/useHighLevelReviewPane/loadPersistedHighLevelProgress";
 
 export function HighLevelReviewPane({
 	preview,
@@ -50,7 +51,10 @@ export function HighLevelReviewPane({
 				{...highLevelReviewHandlers(
 					checklist.checklist,
 					queue.queued,
-					onDecision,
+					(decision, decisionDetails) => {
+						clearPersistedHighLevelProgress(preview.requestId);
+						onDecision(decision, decisionDetails);
+					},
 				)}
 			/>
 			<CommentSentSnackbar sessionName={sentTo} onClose={clearSent} />

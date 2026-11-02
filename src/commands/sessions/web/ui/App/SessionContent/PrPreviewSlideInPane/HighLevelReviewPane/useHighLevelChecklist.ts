@@ -1,15 +1,13 @@
 import { useMemo, useState } from "react";
-import type {
-	HighLevelCheckResult,
-	HighLevelReviewProgress,
-} from "../../../../../../../review/highLevel/types";
+import type { HighLevelCheckResult } from "../../../../../../../review/highLevel/types";
 import type { HighLevelItemState } from "./useHighLevelChecklist/initialHighLevelState";
 import { initialHighLevelState } from "./useHighLevelChecklist/initialHighLevelState";
 import { highLevelChecklistItems } from "./useHighLevelChecklist/highLevelChecklistItems";
+import type { HighLevelPaneProgress } from "./useHighLevelReviewPane/loadPersistedHighLevelProgress";
 
 export function useHighLevelChecklist(
 	checks: HighLevelCheckResult[],
-	saved?: HighLevelReviewProgress,
+	saved?: HighLevelPaneProgress,
 ) {
 	const [state, setState] = useState(() =>
 		initialHighLevelState(checks, saved),
@@ -29,7 +27,10 @@ export function useHighLevelChecklist(
 		[checks, state],
 	);
 
-	const checklist = () => highLevelChecklistItems(checks, state);
+	const items = useMemo(
+		() => highLevelChecklistItems(checks, state),
+		[checks, state],
+	);
 
 	return {
 		ticked: (id: string) => state[id]?.ticked === true,
@@ -37,6 +38,7 @@ export function useHighLevelChecklist(
 		onTick: (id: string, ticked: boolean) => patch(id, { ticked }),
 		onComment: (id: string, comment: string) => patch(id, { comment }),
 		outstanding,
-		checklist,
+		items,
+		checklist: () => items,
 	};
 }
