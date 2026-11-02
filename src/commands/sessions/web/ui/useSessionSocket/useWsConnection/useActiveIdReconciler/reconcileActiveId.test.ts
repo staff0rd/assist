@@ -44,6 +44,45 @@ describe("reconcileActiveId", () => {
 		expect(reconcileActiveId([], null)).toBeNull();
 	});
 
+	describe("when the removed active card had repo siblings", () => {
+		const other = makeSessionInfo({ id: "o", cwd: "/other" });
+		const a1 = makeSessionInfo({ id: "a1", cwd: "/repo" });
+		const a2 = makeSessionInfo({ id: "a2", cwd: "/repo" });
+		const a3 = makeSessionInfo({ id: "a3", cwd: "/repo" });
+
+		it("selects the sibling below the removed card", () => {
+			const previous = [other, a1, a2, a3];
+			expect(reconcileActiveId([other, a1, a3], "a2", null, previous)).toBe(
+				"a3",
+			);
+		});
+
+		it("selects the sibling above when the removed card was last in its group", () => {
+			const previous = [other, a1, a2, a3];
+			expect(reconcileActiveId([other, a1, a2], "a3", null, previous)).toBe(
+				"a2",
+			);
+		});
+
+		it("treats a worktree clone of the same origin as a sibling", () => {
+			const repoGroup = { origin: "git@x:repo.git", clone: "/repo" };
+			const main = makeSessionInfo({ id: "m", cwd: "/repo", repoGroup });
+			const clone = makeSessionInfo({
+				id: "c",
+				cwd: "/repo-2",
+				repoGroup: { ...repoGroup, clone: "/repo-2" },
+			});
+			expect(
+				reconcileActiveId([other, clone], "m", null, [other, main, clone]),
+			).toBe("c");
+		});
+
+		it("falls back to the top card when no sibling remains", () => {
+			const previous = [other, a1];
+			expect(reconcileActiveId([other], "a1", null, previous)).toBe("o");
+		});
+	});
+
 	describe("when a daemon selection is provided", () => {
 		it("adopts the daemon selection over the first card when nothing is selected", () => {
 			const sessions = [

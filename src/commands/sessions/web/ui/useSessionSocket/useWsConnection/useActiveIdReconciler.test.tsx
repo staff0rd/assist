@@ -83,6 +83,21 @@ describe("useActiveIdReconciler", () => {
 
 		expect(result.current).toBe("b");
 	});
+
+	it("selects a repo sibling when the selected card closes", () => {
+		const other = makeSessionInfo({ id: "o", cwd: "/other" });
+		const a1 = makeSessionInfo({ id: "a1", cwd: "/repo" });
+		const a2 = makeSessionInfo({ id: "a2", cwd: "/repo" });
+		const { result, rerender } = renderReconciler("/sessions", {
+			sessions: [other, a1, a2],
+			daemonActiveId: "a2",
+		});
+		expect(result.current).toBe("a2");
+
+		rerender({ sessions: [other, a1], daemonActiveId: "a2" });
+
+		expect(result.current).toBe("a1");
+	});
 });
 
 let dismiss: () => void = () => {};
