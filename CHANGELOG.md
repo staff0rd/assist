@@ -1,3 +1,10 @@
+## [0.1044.1](https://github.com/staff0rd/assist/compare/v0.1044.0...v0.1044.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* gate ask advice on assist session ([0bfbd33](https://github.com/staff0rd/assist/commit/0bfbd333d6a427284196c3acf22e04bf29e8f742))
+
 # [0.1044.0](https://github.com/staff0rd/assist/compare/v0.1043.0...v0.1044.0) (2026-11-02)
 
 
