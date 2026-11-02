@@ -15,17 +15,44 @@ vi.mock("../../shared/loadConfig", async () =>
 
 const mockConfig = vi.mocked(loadConfig);
 
-function output(run: () => void): string {
-	const lines: string[] = [];
+type Captured = {
+	stdout: string;
+	stderr: string;
+	exitCode: number | undefined;
+};
+
+const exitCalled = new Error("process.exit called");
+
+function capture(run: () => void): Captured {
+	const stdout: string[] = [];
+	const stderr: string[] = [];
+	let exitCode: number | undefined;
 	const log = vi.spyOn(console, "log").mockImplementation((line) => {
-		lines.push(String(line));
+		stdout.push(String(line));
 	});
+	const error = vi.spyOn(console, "error").mockImplementation((line) => {
+		stderr.push(String(line));
+	});
+	const exit = vi.spyOn(process, "exit").mockImplementation(((
+		code?: number,
+	) => {
+		exitCode = code ?? 0;
+		throw exitCalled;
+	}) as never);
 	try {
 		run();
+	} catch (error_) {
+		if (error_ !== exitCalled) throw error_;
 	} finally {
 		log.mockRestore();
+		error.mockRestore();
+		exit.mockRestore();
 	}
-	return lines.join("\n");
+	return { stdout: stdout.join("\n"), stderr: stderr.join("\n"), exitCode };
+}
+
+function output(run: () => void): string {
+	return capture(run).stdout;
 }
 
 describe("configGet", () => {
@@ -74,66 +101,77 @@ describe("configGet", () => {
 		expect(output(() => configGet("commit.push"))).toBe("true");
 	});
 
-	it("reports an unset secret as not set", () => {
+	it("reports an unset secret as not set on stdout without failing", () => {
 		mockConfig.mockReturnValue(makeAssistConfig({ database: {} }));
 
-		expect(errorOutput(() => configGet("database.url"))).toContain(
-			'"database.url" is not set',
-		);
+		const result = capture(() => configGet("database.url"));
+
+		expect(result.exitCode).toBeUndefined();
+		expect(result.stderr).toBe("");
+		expect(result.stdout).toContain('"database.url" is not set');
 	});
 
-	it("reports the schema default and note for a valid unset key", () => {
+	it("prints the schema default, note and setter for a valid unset key on stdout", () => {
 		mockConfig.mockReturnValue(makeAssistConfig());
 
-		const text = errorOutput(() => configGet("worktree.enabled"));
+		const result = capture(() => configGet("worktree.enabled"));
 
-		expect(text).toContain('Key "worktree.enabled" is not set');
-		expect(text).toContain("the schema default is false");
-		expect(text).toContain(
+		expect(result.exitCode).toBeUndefined();
+		expect(result.stderr).toBe("");
+		expect(result.stdout).toContain('Key "worktree.enabled" is not set');
+		expect(result.stdout).toContain("the schema default is false");
+		expect(result.stdout).toContain(
 			"every session spills into a fresh adjacent <clone>-N worktree",
 		);
-		expect(text).toContain("assist config set worktree.enabled true");
+		expect(result.stdout).toContain("assist config set worktree.enabled true");
 	});
 
-	it("says a valid unset key has no default when the schema gives none", () => {
+	it("prints that a valid unset key with no default is unset, with its note and setter, on stdout", () => {
 		mockConfig.mockReturnValue(makeAssistConfig());
 
-		expect(errorOutput(() => configGet("worktree.root"))).toContain(
-			'Key "worktree.root" is not set and has no schema default',
+		const result = capture(() => configGet("docs.refreshAfter"));
+
+		expect(result.exitCode).toBeUndefined();
+		expect(result.stderr).toBe("");
+		expect(result.stdout).toContain(
+			'Key "docs.refreshAfter" is not set and has no schema default',
 		);
+		expect(result.stdout).toContain("assist config set docs.refreshAfter 5");
 	});
 
-	it("reports an unknown key as not set with no default", () => {
+	it("exits 1 on stderr for a key not in the schema", () => {
 		mockConfig.mockReturnValue(makeAssistConfig());
 
-		const text = errorOutput(() => configGet("nope.nope"));
+		const result = capture(() => configGet("nope.nope"));
 
-		expect(text).toContain('Key "nope.nope" is not set');
-		expect(text).not.toContain("schema default");
+		expect(result.exitCode).toBe(1);
+		expect(result.stdout).toBe("");
+		expect(result.stderr).toContain('Key "nope.nope" is not set');
+		expect(result.stderr).not.toContain("schema default");
 	});
 
-	it("still prints an explicitly set falsy value instead of the default", () => {
+	it("prints just an explicitly set false instead of the default", () => {
 		mockConfig.mockReturnValue(
 			makeAssistConfig({ worktree: { enabled: false } }),
 		);
 
-		expect(output(() => configGet("worktree.enabled"))).toBe("false");
+		const result = capture(() => configGet("worktree.enabled"));
+
+		expect(result).toEqual({
+			stdout: "false",
+			stderr: "",
+			exitCode: undefined,
+		});
+	});
+
+	it("prints just an explicitly set 0", () => {
+		mockConfig.mockReturnValue({
+			...makeAssistConfig(),
+			docs: { refreshAfter: 0 },
+		});
+
+		const result = capture(() => configGet("docs.refreshAfter"));
+
+		expect(result).toEqual({ stdout: "0", stderr: "", exitCode: undefined });
 	});
 });
-
-function errorOutput(run: () => void): string {
-	const lines: string[] = [];
-	const error = vi.spyOn(console, "error").mockImplementation((line) => {
-		lines.push(String(line));
-	});
-	const exit = vi.spyOn(process, "exit").mockImplementation((() => {
-		throw new Error("exit");
-	}) as never);
-	try {
-		expect(run).toThrow("exit");
-	} finally {
-		error.mockRestore();
-		exit.mockRestore();
-	}
-	return lines.join("\n");
-}

@@ -30,7 +30,8 @@ function printValue(
 	key: string,
 	options: ConfigGetOptions,
 ): void {
-	const value = requireNestedValue(config, key);
+	const value = getNestedValue(config, key);
+	if (value === undefined) return printUnset(key);
 	console.log(
 		formatOutput(options.reveal ? value : maskConfigKeySecrets(key, value)),
 	);
@@ -42,34 +43,20 @@ function formatOutput(value: unknown): string {
 		: String(value);
 }
 
-function requireNestedValue(
-	config: Record<string, unknown>,
-	key: string,
-): unknown {
-	const value = getNestedValue(config, key);
-	if (value === undefined) return exitKeyNotSet(key);
-	return value;
-}
-
-function exitKeyNotSet(key: string): never {
-	for (const line of unsetLines(key)) console.error(line);
-	process.exit(1);
-}
-
-function unsetLines(key: string): string[] {
+function printUnset(key: string): void {
 	const leaf = describeConfigLeaves(assistConfigSchema).find(
 		(candidate) => candidate.key === key,
 	);
-	if (!leaf) return [chalk.red(`Key "${key}" is not set`)];
+	if (!leaf) {
+		console.error(chalk.red(`Key "${key}" is not set`));
+		process.exit(1);
+	}
 
-	const lines = [
-		chalk.red(
-			leaf.defaultValue === undefined
-				? `Key "${key}" is not set and has no schema default`
-				: `Key "${key}" is not set; the schema default is ${formatConfigDefault(leaf)}`,
-		),
-	];
+	console.log(
+		leaf.defaultValue === undefined
+			? `Key "${key}" is not set and has no schema default`
+			: `Key "${key}" is not set; the schema default is ${formatConfigDefault(leaf)}`,
+	);
 	const help = configHelpForKey(key);
-	if (help) lines.push(help.note, chalk.green(help.setter));
-	return lines;
+	if (help) console.log(`${help.note}\n${chalk.green(help.setter)}`);
 }
