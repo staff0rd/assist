@@ -49,6 +49,21 @@ screenshots:
       - click: "[aria-label^='Critical diffs']"
     crop: "#high-level-check-critical-diffs-correct"
     cropPadding: 16
+  - file: sessions-high-level-tests.png
+    alt: The changed tests of a pull request under the Tests item, with one test's source shown
+    route: /sessions
+    scene: high-level-review
+    waitFor: text=Description has a What and a Why
+    viewport:
+      width: 1440
+      height: 900
+    actions:
+      - click: text=High-level review #14
+      - click: "[aria-label='Fill the window with preview']"
+      - click: "[aria-label^='Tests']"
+      - click: "[aria-label='Show the source of restores the saved scheme']"
+    crop: "#high-level-check-tests-worth-having"
+    cropPadding: 16
 ---
 
 A high-level review is a checklist for judging a pull request without reading every line: whether its description is reviewable, whether the shape of the change matches what it says it does, and whether the few files where a mistake is expensive are right. Use it alongside an [adversarial review](../sessions-pr-review/), which does read every line.
@@ -82,6 +97,9 @@ You tick the rest yourself, each with what you need to judge it:
 ::screenshot{file="sessions-high-level-critical-diffs.png"}
 
 - **Tests** lists the changed tests by name, grouped by file and `describe`. Click a test to see its source.
+
+::screenshot{file="sessions-high-level-tests.png"}
+
 - **Backend PR** asks whether a change that needs backend work links the backend pull request.
 
 ## Commenting on code

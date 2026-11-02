@@ -240,7 +240,7 @@
 					{
 						"path": "src/settings/useColourScheme.test.ts",
 						"status": "added",
-						"content": "import { describe, expect, it } from \"vitest\";\nimport { useColourScheme } from \"./useColourScheme\";\n\ndescribe(\"useColourScheme\", () => {\n\tit(\"starts light when nothing is saved\", () => {\n\t\texpect(useColourScheme).toBeDefined();\n\t});\n\n\tit(\"restores the saved scheme\", () => {\n\t\texpect(useColourScheme).toBeDefined();\n\t});\n});\n"
+						"content": "import { renderHook } from \"@testing-library/react\";\nimport { beforeEach, describe, expect, it } from \"vitest\";\nimport { useColourScheme } from \"./useColourScheme\";\n\ndescribe(\"useColourScheme\", () => {\n\tbeforeEach(() => localStorage.clear());\n\n\tit(\"starts light when nothing is saved\", () => {\n\t\tconst { result } = renderHook(() => useColourScheme());\n\t\texpect(result.current[0]).toBe(\"light\");\n\t\texpect(document.documentElement.dataset.scheme).toBe(\"light\");\n\t});\n\n\tit(\"restores the saved scheme\", () => {\n\t\tlocalStorage.setItem(\"colour-scheme\", \"dark\");\n\t\tconst { result } = renderHook(() => useColourScheme());\n\t\texpect(result.current[0]).toBe(\"dark\");\n\t\texpect(document.documentElement.dataset.scheme).toBe(\"dark\");\n\t});\n});\n"
 					},
 					{
 						"path": "src/settings/SettingsPage.tsx",
