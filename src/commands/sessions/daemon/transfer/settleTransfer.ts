@@ -28,6 +28,7 @@ export function settleTransfer(
 		`session ${s.id} transferred to ${target} as ${outcome.sessionId} trace=${traceId}; closing source`,
 	);
 	s.transfer = undefined;
+	deps.stop(s.id);
 	deps.discard(s.id);
 	sendTo(client, { type: "notice", message: `Transferred to ${target}` });
 }

@@ -112,12 +112,45 @@ describe("transferSession", () => {
 		expect(sent).toEqual([{ type: "notice", message: "Transferred to mac" }]);
 	});
 
+	it("calls route on the links instance so a method using this works", async () => {
+		class Router {
+			private readonly reply = { type: "created", sessionId: "mac:3" };
+			localNode = () => "work-wsl";
+			isConnected = (node: string) => node === "mac";
+			route(client: SessionClient, _data: Msg): boolean {
+				client.send(JSON.stringify(this.reply));
+				return true;
+			}
+		}
+		const { deps, sent, client } = setup(undefined);
+		deps.links = new Router();
+		await transferSession(client, deps, request);
+		expect(deps.discard).toHaveBeenCalledWith("7");
+		expect(sent).toEqual([{ type: "notice", message: "Transferred to mac" }]);
+	});
+
+	it("keeps the source running with the error when the route throws", async () => {
+		const { session, deps, sent, client } = setup(undefined);
+		deps.links.route = () => {
+			throw new Error("link dropped");
+		};
+		await transferSession(client, deps, request);
+		expect(deps.stop).not.toHaveBeenCalled();
+		expect(deps.discard).not.toHaveBeenCalled();
+		expect(session.transfer).toEqual({ target: "mac", error: "link dropped" });
+		expect(sent[0]).toEqual({
+			type: "error",
+			message: "Transfer to mac failed: link dropped",
+		});
+	});
+
 	it("keeps the source held with the error when the target start fails", async () => {
 		const { session, deps, sent, client } = setup({
 			type: "error",
 			message: "repo not found",
 		});
 		await transferSession(client, deps, request);
+		expect(deps.stop).not.toHaveBeenCalled();
 		expect(deps.discard).not.toHaveBeenCalled();
 		expect(session.transfer).toEqual({
 			target: "mac",

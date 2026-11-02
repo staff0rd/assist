@@ -1,14 +1,15 @@
 import type { SessionClient } from "../broadcast";
+import type { TransferDeps } from "./TransferDeps";
 
 type Msg = Record<string, unknown>;
-type Route = (client: SessionClient, data: Msg) => boolean;
+type Router = Pick<TransferDeps["links"], "route">;
 
 export type LaunchOutcome =
 	| { ok: true; sessionId: string }
 	| { ok: false; error: string };
 
 export function launchOnTarget(
-	route: Route,
+	links: Router,
 	request: Msg,
 ): Promise<LaunchOutcome> {
 	return new Promise((resolve) => {
@@ -21,7 +22,14 @@ export function launchOnTarget(
 					resolve({ ok: false, error: String(msg.message) });
 			},
 		};
-		if (!route(capture, request))
-			resolve({ ok: false, error: `${request.node} is not a linked node` });
+		try {
+			if (!links.route(capture, request))
+				resolve({ ok: false, error: `${request.node} is not a linked node` });
+		} catch (error) {
+			resolve({
+				ok: false,
+				error: error instanceof Error ? error.message : String(error),
+			});
+		}
 	});
 }

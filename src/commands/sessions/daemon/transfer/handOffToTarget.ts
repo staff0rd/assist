@@ -19,9 +19,7 @@ export async function handOffToTarget(
 	s: Session,
 	{ args, target, cwd, traceId, snapshot }: HandOff,
 ): Promise<void> {
-	deps.stop(s.id);
-	deps.notify();
-	const outcome = await launchOnTarget(deps.links.route, {
+	const outcome = await launchOnTarget(deps.links, {
 		type: "create-assist",
 		assistArgs: args,
 		cwd,
