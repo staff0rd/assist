@@ -35,6 +35,18 @@ screenshots:
       - click: text=High-level review #14
       - click: "[aria-label='Fill the window with preview']"
       - click: "[aria-label^='Structure']"
+  - file: sessions-high-level-critical-diffs.png
+    alt: The full diff of a critical file under the Critical diffs item
+    route: /sessions
+    scene: high-level-review
+    waitFor: text=Description has a What and a Why
+    viewport:
+      width: 1440
+      height: 900
+    actions:
+      - click: text=High-level review #14
+      - click: "[aria-label='Fill the window with preview']"
+      - click: "[aria-label^='Critical diffs']"
 ---
 
 A high-level review is a checklist for judging a pull request without reading every line: whether its description is reviewable, whether the shape of the change matches what it says it does, and whether the few files where a mistake is expensive are right. Use it alongside an [adversarial review](../sessions-pr-review/), which does read every line.
@@ -60,11 +72,15 @@ The first items are checked from the pull request itself and show whether they p
 You tick the rest yourself, each with what you need to judge it:
 
 - **Structure** shows the changed files as a tree with their line counts. Click a file to open its diff, or follow its link to the file on GitHub. **Expand all** and **Collapse all** open or close every diff, and typing a file name or glob, or picking a **Quick** glob, lets **Show** or **Hide** just the matching diffs. **Defaults** puts every diff back as it started.
-- **Critical diffs** shows the full diff of every changed critical file.
-- **Tests** lists the changed tests by name, grouped by file and `describe`. Click a test to see its source.
-- **Backend PR** asks whether a change that needs backend work links the backend pull request.
 
 ::screenshot{file="sessions-high-level-structure.png"}
+
+- **Critical diffs** shows the full diff of every changed critical file.
+
+::screenshot{file="sessions-high-level-critical-diffs.png"}
+
+- **Tests** lists the changed tests by name, grouped by file and `describe`. Click a test to see its source.
+- **Backend PR** asks whether a change that needs backend work links the backend pull request.
 
 ## Commenting on code
 
