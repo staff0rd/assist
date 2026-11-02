@@ -1,3 +1,16 @@
+# [0.1051.0](https://github.com/staff0rd/assist/compare/v0.1050.0...v0.1051.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* survive index.lock on transfer run ([d6c2846](https://github.com/staff0rd/assist/commit/d6c28466020df3f580614c322c5ca9bfab84046d))
+* wait longer for transferred run ([1c50312](https://github.com/staff0rd/assist/commit/1c50312e87279af3569e241865b5edaa99db99df))
+
+
+### Features
+
+* later phase choice on phone check ([011ab89](https://github.com/staff0rd/assist/commit/011ab897ced930b7ad53a20bb7d7bf17f22459bb))
+
 # [0.1050.0](https://github.com/staff0rd/assist/compare/v0.1049.0...v0.1050.0) (2026-11-02)
 
 
