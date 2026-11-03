@@ -8,6 +8,10 @@ const pendingMarker = join(
 	mkdtempSync(join(tmpdir(), "watch-sync-pending-")),
 	"assist-watch-sync-pending",
 );
+const buildMarker = join(
+	mkdtempSync(join(tmpdir(), "watch-build-pending-")),
+	"assist-watch-build-pending",
+);
 
 const mockWaitForUpstream = vi.fn();
 const mockPullFastForward = vi.fn();
@@ -49,6 +53,10 @@ vi.mock("./syncPendingPath", () => ({
 	syncPendingPath: () => pendingMarker,
 }));
 
+vi.mock("./buildPendingPath", () => ({
+	buildPendingPath: () => buildMarker,
+}));
+
 import { watchWait } from "./watchWait";
 
 const moved: WatchOutcome = {
@@ -71,6 +79,7 @@ beforeEach(() => {
 	written = [];
 	exitCode = undefined;
 	rmSync(pendingMarker, { force: true });
+	rmSync(buildMarker, { force: true });
 	mockBuildWatchReport.mockReturnValue("**Version** 0.488.2");
 	mockChangedPaths.mockReturnValue(["src/commands/watch/watchWait.ts"]);
 	mockRunPostBuildSync.mockResolvedValue({ kind: "built" });
@@ -321,6 +330,96 @@ describe("watchWait --build sync", () => {
 
 		expect(mockRunPostBuildSync).not.toHaveBeenCalled();
 		expect(exitCode).toBe(0);
+	});
+});
+
+describe("watchWait interrupted build", () => {
+	const neverMoves = (): Promise<WatchOutcome> => new Promise(() => {});
+
+	it("rebuilds on a fresh start after a lap pulled but did not build", async () => {
+		mockWaitForUpstream.mockResolvedValue(moved);
+		mockPullFastForward.mockReturnValue(fastForwarded);
+		mockRunWatchBuild.mockReturnValueOnce(neverMoves());
+
+		void run({ build: true });
+		await vi.waitFor(() => expect(mockRunWatchBuild).toHaveBeenCalled());
+		expect(existsSync(buildMarker)).toBe(true);
+
+		mockRunWatchBuild.mockClear();
+		mockRunWatchBuild.mockResolvedValue({ kind: "built" });
+		mockWaitForUpstream.mockReset();
+		mockWaitForUpstream.mockResolvedValue({
+			kind: "timeout",
+			upstream: "origin/main",
+			timeout: "60m",
+		});
+
+		await run({ build: true, timeout: "60m" });
+
+		expect(mockRunWatchBuild).toHaveBeenCalledWith("auto-build");
+		expect(mockRunWatchBuild.mock.invocationCallOrder[0]).toBeLessThan(
+			mockWaitForUpstream.mock.invocationCallOrder[0],
+		);
+		expect(existsSync(buildMarker)).toBe(false);
+		expect(logged.join("\n")).toContain('built with "auto-build"');
+	});
+
+	it("clears the pending build once a pulled build succeeds", async () => {
+		mockWaitForUpstream.mockResolvedValue(moved);
+		mockPullFastForward.mockReturnValue(fastForwarded);
+		mockRunWatchBuild.mockResolvedValue({ kind: "built" });
+
+		await run({ build: true });
+
+		expect(existsSync(buildMarker)).toBe(false);
+	});
+
+	it("keeps waiting when the pending rebuild fails instead of relaunching into it", async () => {
+		writeFileSync(buildMarker, "");
+		mockRunWatchBuild.mockResolvedValue({
+			kind: "failed",
+			exitCode: 1,
+			output: "tsc: error TS2345",
+		});
+		mockWaitForUpstream.mockResolvedValue({
+			kind: "timeout",
+			upstream: "origin/main",
+			timeout: "60m",
+		});
+
+		await run({ build: true, timeout: "60m" });
+
+		expect(mockWaitForUpstream).toHaveBeenCalled();
+		expect(existsSync(buildMarker)).toBe(true);
+		expect(exitCode).toBe(2);
+	});
+
+	it("runs a sync left pending by the interrupted lap", async () => {
+		writeFileSync(buildMarker, "");
+		writeFileSync(pendingMarker, "");
+		mockRunWatchBuild.mockResolvedValue({ kind: "built" });
+		mockWaitForUpstream.mockResolvedValue({
+			kind: "timeout",
+			upstream: "origin/main",
+			timeout: "60m",
+		});
+
+		await run({ build: true, timeout: "60m" });
+
+		expect(mockRunPostBuildSync).toHaveBeenCalled();
+		expect(existsSync(pendingMarker)).toBe(false);
+	});
+
+	it("does not rebuild when nothing is pending", async () => {
+		mockWaitForUpstream.mockResolvedValue({
+			kind: "timeout",
+			upstream: "origin/main",
+			timeout: "60m",
+		});
+
+		await run({ build: true, timeout: "60m" });
+
+		expect(mockRunWatchBuild).not.toHaveBeenCalled();
 	});
 });
 

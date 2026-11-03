@@ -23,6 +23,12 @@ export function updateState(entry: NodeUpdateEntry): UpdateState {
 			label: "Diverged · fixing",
 			line: `diverged ${since}${loop.escalationId ? ` · session ${loop.escalationId}` : ""}`,
 		};
+	if (status.buildPending)
+		return {
+			kind: "retrying",
+			label: "Build pending",
+			line: `v${status.built} pulled but not built · the watch loop rebuilds it`,
+		};
 	if (isUpdateReady(entry))
 		return {
 			kind: "ready",

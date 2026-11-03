@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { getInstallDir } from "../../../../shared/getInstallDir";
 import { respondJson } from "../../../../shared/web";
-import { changedPaths } from "../../../watch/changedPaths";
+import { isBuildPending } from "../../../watch/isBuildPending";
 import { readBuiltVersion } from "../../../watch/readBuiltVersion";
 import { ASSIST_VERSION } from "../../daemon/buildHello";
 import { requestDaemonReply } from "../../daemon/requestDaemonReply";
@@ -14,16 +14,7 @@ import { latestSignedExtension } from "./latestSignedExtension";
 import { pendingRestarts } from "./pendingRestarts";
 import { readUpdateHistory } from "./readUpdateHistory";
 import { webStartCommit } from "./webStartCommit";
-
-function changedSince(installDir: string) {
-	return (commit: string): string[] => {
-		try {
-			return changedPaths(commit, installDir);
-		} catch {
-			return [];
-		}
-	};
-}
+import { changedSince } from "./changedSince";
 
 export async function updates(
 	_req: IncomingMessage,
@@ -35,16 +26,19 @@ export async function updates(
 		"auto-update",
 	);
 	const built = readBuiltVersion(installDir);
+	const buildPending = isBuildPending(installDir);
 	const status: NodeUpdateStatus = {
 		nodeName: resolveNodeName(),
 		installDir,
 		running: reply?.version ?? ASSIST_VERSION,
 		built,
+		buildPending,
 		restart: pendingRestarts({
 			daemonVersion: reply?.version,
 			daemonStartCommit: reply?.startCommit,
 			webStartCommit: webStartCommit.value(),
 			built,
+			buildPending,
 			changedSince: changedSince(installDir),
 		}),
 		daemonReachable: reply !== undefined,

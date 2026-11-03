@@ -6,6 +6,7 @@ type PendingRestartsInput = {
 	daemonStartCommit?: string;
 	webStartCommit?: string;
 	built: string;
+	buildPending?: boolean;
 	changedSince: (commit: string) => string[];
 };
 
@@ -21,6 +22,7 @@ function targetsSince(
 }
 
 export function pendingRestarts(input: PendingRestartsInput): RestartTarget[] {
+	if (input.buildPending) return [];
 	const { daemonVersion, built, changedSince } = input;
 	const daemon =
 		daemonVersion !== undefined &&

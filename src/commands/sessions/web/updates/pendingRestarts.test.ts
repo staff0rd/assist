@@ -33,6 +33,19 @@ describe("pendingRestarts", () => {
 		).toEqual(["daemon"]);
 	});
 
+	it("asks for no restart while the pulled version is still unbuilt", () => {
+		expect(
+			pendingRestarts({
+				daemonVersion: "1.1.0",
+				daemonStartCommit: "daemonStart",
+				webStartCommit: "webStart",
+				built: "1.2.0",
+				buildPending: true,
+				changedSince,
+			}),
+		).toEqual([]);
+	});
+
 	it("restarts each process whose own code changed since it started", () => {
 		expect(
 			pendingRestarts({

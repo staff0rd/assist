@@ -1,15 +1,8 @@
-import { existsSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { changedPaths } from "./changedPaths";
+import { isSyncPending } from "./isSyncPending";
 import { syncAdvice } from "./syncAdvice";
 import { syncPendingPath } from "./syncPendingPath";
-
-function pendingFromEarlierLap(): boolean {
-	try {
-		return existsSync(syncPendingPath());
-	} catch {
-		return false;
-	}
-}
 
 function writePendingMarker(): void {
 	try {
@@ -18,7 +11,7 @@ function writePendingMarker(): void {
 }
 
 export function markSyncPending(from: string): boolean {
-	const owed = pendingFromEarlierLap();
+	const owed = isSyncPending();
 	if (syncAdvice(changedPaths(from)).length > 0) {
 		writePendingMarker();
 		return true;

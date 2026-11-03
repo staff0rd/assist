@@ -1,9 +1,11 @@
 import { describeOutcome } from "./describeOutcome";
 import { emitWatchState } from "./emitWatchState";
+import { finishPendingBuild } from "./finishPendingBuild";
 import { parseWatchDurations } from "./parseWatchDurations";
 import { pullAndBuild } from "./pullAndBuild";
 import { reportOutcome } from "./reportOutcome";
 import { waitForUpstream } from "./waitForUpstream";
+import { watchBuildEntry } from "./watchBuildEntry";
 
 type WatchWaitOptions = {
 	interval: string;
@@ -17,6 +19,9 @@ export async function watchWait(options: WatchWaitOptions): Promise<void> {
 		options.interval,
 		options.timeout,
 	);
+
+	if (options.pull && options.build)
+		await finishPendingBuild(watchBuildEntry(options.build));
 
 	const outcome = await waitForUpstream({
 		intervalMs,

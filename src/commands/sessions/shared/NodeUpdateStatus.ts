@@ -7,6 +7,7 @@ export type NodeUpdateStatus = {
 	installDir: string;
 	running: string;
 	built: string;
+	buildPending?: boolean;
 	restart: RestartTarget[];
 	daemonReachable: boolean;
 	loop: AutoUpdateLoopState;

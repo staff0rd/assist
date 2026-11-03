@@ -1,13 +1,14 @@
 import { buildWatchReport } from "./buildWatchReport";
+import { clearBuildPending } from "./clearBuildPending";
 import { describePull } from "./describePull";
 import { emitWatchState } from "./emitWatchState";
+import { markBuildPending } from "./markBuildPending";
 import { markSyncPending } from "./markSyncPending";
 import { pullFastForward } from "./pullFastForward";
 import { reportBuildOrExit } from "./reportBuildOrExit";
 import { reportOutcome } from "./reportOutcome";
 import { reportSyncOrExit } from "./reportSyncOrExit";
-
-const DEFAULT_BUILD_ENTRY = "auto-build";
+import { watchBuildEntry } from "./watchBuildEntry";
 
 export async function pullAndBuild(
 	from: string,
@@ -21,13 +22,14 @@ export async function pullAndBuild(
 	if (pullResult.kind !== "fast-forwarded")
 		return process.exit(pullReport.exitCode);
 
+	if (build) markBuildPending();
+
 	console.log(`\n${buildWatchReport(from)}`);
 
 	if (build) {
 		const syncNeeded = markSyncPending(from);
-		await reportBuildOrExit(
-			typeof build === "string" ? build : DEFAULT_BUILD_ENTRY,
-		);
+		await reportBuildOrExit(watchBuildEntry(build));
+		clearBuildPending();
 
 		if (syncNeeded) await reportSyncOrExit();
 	}
