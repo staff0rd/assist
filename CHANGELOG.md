@@ -1,3 +1,10 @@
+# [0.1055.0](https://github.com/staff0rd/assist/compare/v0.1054.0...v0.1055.0) (2026-11-03)
+
+
+### Features
+
+* comment on manual testing text ([27c0237](https://github.com/staff0rd/assist/commit/27c02379afc50da8bdc51f3cc5572ecc11e6910c))
+
 # [0.1054.0](https://github.com/staff0rd/assist/compare/v0.1053.2...v0.1054.0) (2026-11-03)
 
 
