@@ -48,6 +48,7 @@ export function highLevelCheckDetails(
 					manualTesting={payload.manualTesting}
 					repo={payload.repo}
 					headSha={payload.headSha}
+					comments={comments}
 				/>
 			</HighLevelCheckDetail>
 		),

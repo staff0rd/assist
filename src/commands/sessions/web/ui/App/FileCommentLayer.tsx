@@ -1,13 +1,9 @@
-import Box from "@mui/material/Box";
 import type { ReactNode } from "react";
-import { commentColor } from "./commentColor";
-import { DragOverlay } from "./DragOverlay";
 import { fileCommentFrom } from "./FileCommentLayer/fileCommentFrom";
-import { CommentPopover } from "./CommentPopover";
 import type { AddRuleRequest } from "./formatAddRuleCommand";
 import type { FileComment } from "./formatFileComment";
+import { SelectionCommentLayer } from "./SelectionCommentLayer";
 import { selectionActions } from "./selectionActions";
-import { selectionLayerSx } from "./selectionLayerSx";
 import { usePreviewSelection } from "./usePreviewSelection";
 
 export function FileCommentLayer({
@@ -27,30 +23,26 @@ export function FileCommentLayer({
 	unavailable?: string | undefined;
 	children: ReactNode;
 }) {
-	const { wrapperRef, contentRef, pending, dragRects, onMouseDown, clear } =
-		usePreviewSelection();
+	const selection = usePreviewSelection();
 	const { add, addRule } = selectionActions({
 		path,
-		pending,
-		clear,
+		pending: selection.pending,
+		clear: selection.clear,
 		onComment,
 		onAddRule,
-		build: (selection, note) => fileCommentFrom(path, source, selection, note),
+		build: (pending, note) => fileCommentFrom(path, source, pending, note),
 	});
 
 	return (
-		<Box ref={wrapperRef} onMouseDown={onMouseDown} sx={selectionLayerSx}>
-			<Box ref={contentRef}>{children}</Box>
-			<DragOverlay rects={dragRects} color={commentColor(0).fill} />
-			<CommentPopover
-				pending={pending}
-				cwd={cwd}
-				path={path}
-				unavailable={unavailable}
-				onAdd={add}
-				onAddRule={addRule}
-				onCancel={clear}
-			/>
-		</Box>
+		<SelectionCommentLayer
+			selection={selection}
+			path={path}
+			cwd={cwd}
+			unavailable={unavailable}
+			onAdd={add}
+			onAddRule={addRule}
+		>
+			{children}
+		</SelectionCommentLayer>
 	);
 }
