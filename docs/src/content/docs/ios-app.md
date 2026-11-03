@@ -86,7 +86,8 @@ The tab bar along the bottom switches between **Sessions**, **Backlog** and **Hi
 
 ## Acting on a session
 
-Tap **⋯** on a session's screen, or long-press its row in the list, for its actions. On a backlog item's session, **Mark done…** marks the item done and ends the session, with any dev server started from it, once you confirm. On a backlog run, **Auto-advance phases** is the dashboard's [Continue](../backlog-running/#steering-a-run) toggle, and **Transfer to node** moves the run to another node.
+Tap **⋯** on a session's screen, or long-press its row in the list, for its actions. On a backlog item's session, **Mark done…** marks the item done and ends the session, with any dev server started from it. On a backlog run, **Auto-advance phases** is the dashboard's [Continue](../backlog-running/#steering-a-run) toggle, and **Transfer to node** moves the run to another node.
+
+::screenshot{file="ios-app-actions.png"}
 
 Sessions asking you a question sit under **Answer here** at the top of the list, above **Needs you**. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**.
-::screenshot{file="ios-app-actions.png"}
