@@ -8,6 +8,13 @@
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
         <string>Assist</string>
+	<key>INAlternativeAppNames</key>
+	<array>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>Backlog</string>
+		</dict>
+	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>CFBundleExecutable</key>

@@ -3,14 +3,22 @@ import AppIntents
 struct AssistShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
-            intent: AddNoteIntent(),
-            phrases: [
-                "Add an idea to \(.applicationName)",
-                "\(.applicationName) idea",
-                "Add an \(.applicationName) note",
-            ],
-            shortTitle: "Add note",
-            systemImageName: "note.text.badge.plus"
+            intent: DraftNoteIntent(),
+            phrases: ["\(.applicationName) draft"],
+            shortTitle: "Draft",
+            systemImageName: "square.and.pencil"
+        )
+        AppShortcut(
+            intent: BugNoteIntent(),
+            phrases: ["\(.applicationName) bug"],
+            shortTitle: "Bug",
+            systemImageName: "ladybug"
+        )
+        AppShortcut(
+            intent: PromptNoteIntent(),
+            phrases: ["\(.applicationName) prompt"],
+            shortTitle: "Prompt",
+            systemImageName: "text.bubble"
         )
     }
 }

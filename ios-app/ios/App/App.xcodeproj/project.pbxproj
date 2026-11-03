@@ -16,7 +16,8 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
-		A1457B022FF0000100A14570 /* AddNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B012FF0000100A14570 /* AddNoteIntent.swift */; };
+		A1457B022FF0000100A14570 /* NoteIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B012FF0000100A14570 /* NoteIntents.swift */; };
+		A1457B0A2FF0000100A14570 /* NoteSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B092FF0000100A14570 /* NoteSession.swift */; };
 		A1457B042FF0000100A14570 /* AssistShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B032FF0000100A14570 /* AssistShortcuts.swift */; };
 		A1457B062FF0000100A14570 /* HomeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B052FF0000100A14570 /* HomeNode.swift */; };
 		A1457B082FF0000100A14570 /* RepoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B072FF0000100A14570 /* RepoEntity.swift */; };
@@ -34,7 +35,8 @@
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
-		A1457B012FF0000100A14570 /* AddNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteIntent.swift; sourceTree = "<group>"; };
+		A1457B012FF0000100A14570 /* NoteIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteIntents.swift; sourceTree = "<group>"; };
+		A1457B092FF0000100A14570 /* NoteSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSession.swift; sourceTree = "<group>"; };
 		A1457B032FF0000100A14570 /* AssistShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistShortcuts.swift; sourceTree = "<group>"; };
 		A1457B052FF0000100A14570 /* HomeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNode.swift; sourceTree = "<group>"; };
 		A1457B072FF0000100A14570 /* RepoEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoEntity.swift; sourceTree = "<group>"; };
@@ -75,7 +77,8 @@
 				9582B6822FE993A50072D4E8 /* SceneDelegate.swift */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
-				A1457B012FF0000100A14570 /* AddNoteIntent.swift */,
+				A1457B012FF0000100A14570 /* NoteIntents.swift */,
+				A1457B092FF0000100A14570 /* NoteSession.swift */,
 				A1457B032FF0000100A14570 /* AssistShortcuts.swift */,
 				A1457B052FF0000100A14570 /* HomeNode.swift */,
 				A1457B072FF0000100A14570 /* RepoEntity.swift */,
@@ -172,7 +175,8 @@
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
-				A1457B022FF0000100A14570 /* AddNoteIntent.swift in Sources */,
+				A1457B022FF0000100A14570 /* NoteIntents.swift in Sources */,
+				A1457B0A2FF0000100A14570 /* NoteSession.swift in Sources */,
 				A1457B042FF0000100A14570 /* AssistShortcuts.swift in Sources */,
 				A1457B062FF0000100A14570 /* HomeNode.swift in Sources */,
 				A1457B082FF0000100A14570 /* RepoEntity.swift in Sources */,
