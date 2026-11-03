@@ -6,6 +6,7 @@ import { postDocsRefresh } from "../../backlog/web/postDocsRefresh";
 import { getNoteRepos } from "../../backlog/web/getNoteRepos";
 import { getRepoLocation } from "../../backlog/web/getRepoLocation";
 import { postItem } from "../../backlog/web/postItem";
+import { postNoteDraft } from "../../backlog/web/postNoteDraft";
 import { listItems } from "../../backlog/web/shared";
 import { browserRelay } from "./browser/browserRelay";
 import { clientErrors } from "./clientErrors/clientErrors";
@@ -79,6 +80,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/items": listItems,
 	"POST /api/items": postItem,
 	"GET /api/note-repos": getNoteRepos,
+	"POST /api/note-draft": postNoteDraft,
 	"GET /api/backlog/summary": getBacklogSummary,
 	"GET /api/backlog/docs-refresh": getDocsRefresh,
 	"POST /api/backlog/docs-refresh": postDocsRefresh,

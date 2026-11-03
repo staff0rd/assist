@@ -45,7 +45,7 @@ enum HomeNodeError: Error, CustomLocalizedStringResourceConvertible {
         case .unreachable:
             return "Couldn't reach your home node. Check Tailscale is connected."
         case .rejected:
-            return "Your home node didn't save the note."
+            return "Your home node couldn't do that. Check its web server is running."
         }
     }
 }
