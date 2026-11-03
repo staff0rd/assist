@@ -14,6 +14,6 @@ export const backlogConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "docs.refreshAfter",
 		setter: "assist config set docs.refreshAfter 5",
-		note: "queue a 'Refresh docs' item once this many done stories are unswept (unset: off)",
+		note: "queue a 'Refresh docs' item once this many done stories are unswept (unset: Refresh docs is off — no button, no refresh-docs, no docs locking)",
 	},
 ];
