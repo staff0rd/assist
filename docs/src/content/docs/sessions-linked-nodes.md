@@ -32,6 +32,8 @@ screenshots:
     actions:
       - click: text=Dark mode toggle
       - click: "button:has-text('Transfer')"
+    highlight:
+      - "button:has-text('Transfer')"
 ---
 
 Each assist install is a node, with its own daemon, web server, sessions and repos. When one node links to another, its dashboard shows the other node's sessions alongside its own, and you can start, watch and drive sessions on either node from one browser tab. To link nodes, ask an agent to link them.
