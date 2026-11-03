@@ -1,3 +1,16 @@
+# [0.1060.0](https://github.com/staff0rd/assist/compare/v0.1059.2...v0.1060.0) (2026-11-03)
+
+
+### Bug Fixes
+
+* highlight Transfer in docs shot ([956e311](https://github.com/staff0rd/assist/commit/956e311328da2ded728685d533e34ff18019966f))
+
+
+### Features
+
+* gate Refresh docs web on refreshAfter ([eefd371](https://github.com/staff0rd/assist/commit/eefd371cda43f8e94acf1886fa7495b0ca711171))
+* gate refresh-docs on refreshAfter ([beadb99](https://github.com/staff0rd/assist/commit/beadb99a8cce30c746d5788fa13e2ae5a8c6379a))
+
 ## [0.1059.2](https://github.com/staff0rd/assist/compare/v0.1059.1...v0.1059.2) (2026-11-03)
 
 
