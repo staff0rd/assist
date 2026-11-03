@@ -1,3 +1,10 @@
+## [0.1058.3](https://github.com/staff0rd/assist/compare/v0.1058.2...v0.1058.3) (2026-11-03)
+
+
+### Bug Fixes
+
+* new session mode ignores unknown keys ([45d2c7c](https://github.com/staff0rd/assist/commit/45d2c7c4bfe7cf46f042b30337b0b0cade6c003d))
+
 ## [0.1058.2](https://github.com/staff0rd/assist/compare/v0.1058.1...v0.1058.2) (2026-11-03)
 
 
