@@ -1,3 +1,10 @@
+# [0.1058.0](https://github.com/staff0rd/assist/compare/v0.1057.0...v0.1058.0) (2026-11-03)
+
+
+### Features
+
+* devlog skip writes repo db weeks ([eda1a48](https://github.com/staff0rd/assist/commit/eda1a488ac4a91ae30b7e5913788a6fdcdcbd29d))
+
 # [0.1057.0](https://github.com/staff0rd/assist/compare/v0.1056.0...v0.1057.0) (2026-11-03)
 
 
