@@ -45,6 +45,13 @@ export function loadConfigFrom(
 	cwd: string,
 	globalConfigPath: string = getGlobalConfigPath(),
 ): AssistConfig {
+	return assistConfigSchema.parse(loadMergedRawConfig(cwd, globalConfigPath));
+}
+
+export function loadMergedRawConfig(
+	cwd: string,
+	globalConfigPath: string = getGlobalConfigPath(),
+): Record<string, unknown> {
 	const globalRaw = loadRawYaml(globalConfigPath);
 	const projectRaw = loadRawYaml(projectConfigPathFrom(cwd));
 	const userDb = readConfigCacheFile().user;
@@ -57,5 +64,5 @@ export function loadConfigFrom(
 		mergeRawConfigs(globalWithRepo, projectRaw),
 	);
 	delete merged.repos;
-	return assistConfigSchema.parse(merged);
+	return merged;
 }

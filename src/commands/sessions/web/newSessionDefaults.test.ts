@@ -55,4 +55,28 @@ describe("newSessionDefaults", () => {
 	it("falls back to draft when nothing is set", () => {
 		expect(modeFor(other)).toEqual({ mode: "draft" });
 	});
+
+	it("still resolves the mode when an unrelated nested key is unknown", () => {
+		writeFileSync(
+			globalConfig,
+			"review:\n  highLevel:\n    futureKey: true\nsessions:\n  newSessionMode: bug\n",
+		);
+
+		expect(modeFor(other)).toEqual({ mode: "bug" });
+	});
+
+	it("falls back to draft beside an unknown key when the mode is unset", () => {
+		writeFileSync(globalConfig, "review:\n  highLevel:\n    futureKey: true\n");
+
+		expect(modeFor(other)).toEqual({ mode: "draft" });
+	});
+
+	it("names the key when the mode itself is invalid", () => {
+		writeFileSync(globalConfig, "sessions:\n  newSessionMode: nope\n");
+
+		expect(modeFor(other)).toEqual({
+			error: expect.stringContaining("sessions.newSessionMode"),
+		});
+		expect(mockRespondJson.mock.lastCall?.[1]).toBe(422);
+	});
 });

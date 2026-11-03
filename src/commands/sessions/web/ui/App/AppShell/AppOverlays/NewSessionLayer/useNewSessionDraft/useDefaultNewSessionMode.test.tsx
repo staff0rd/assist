@@ -72,6 +72,24 @@ it("does not refetch when nothing changes", async () => {
 	expect(fetch).toHaveBeenCalledOnce();
 });
 
+it("includes the server's error message in the failure", async () => {
+	vi.stubGlobal(
+		"fetch",
+		vi.fn(async () =>
+			Response.json(
+				{ error: "Invalid config sessions.newSessionMode" },
+				{ status: 422 },
+			),
+		),
+	);
+	const { result } = renderHook(() => useDefaultNewSessionMode("/git/apm"));
+	await act(async () => {});
+
+	expect(result.current?.error).toBe(
+		"HTTP 422: Invalid config sessions.newSessionMode",
+	);
+});
+
 it("surfaces and reports a failed fetch instead of retrying silently", async () => {
 	const failing = vi.fn(async () => new Response("", { status: 502 }));
 	vi.stubGlobal("fetch", failing);

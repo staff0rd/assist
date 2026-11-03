@@ -14,11 +14,17 @@ type Outcome = { mode: NewSessionMode } | { error: string };
 
 type Loaded = { cwd: string; opens: number; attempt: number; outcome: Outcome };
 
+async function failureMessage(res: Response): Promise<string> {
+	const status = `HTTP ${res.status}`;
+	const body = await res.json().catch(() => null);
+	return typeof body?.error === "string" ? `${status}: ${body.error}` : status;
+}
+
 async function fetchMode(cwd: string): Promise<Outcome> {
 	try {
 		const query = cwd ? `?cwd=${encodeURIComponent(cwd)}` : "";
 		const res = await apiFetch(`/api/new-session-defaults${query}`);
-		if (!res.ok) return { error: `HTTP ${res.status}` };
+		if (!res.ok) return { error: await failureMessage(res) };
 		const body = await res.json();
 		if (Object.hasOwn(newSessionModes, body?.mode)) return { mode: body.mode };
 		throw new Error(`unknown mode ${JSON.stringify(body?.mode)}`);
