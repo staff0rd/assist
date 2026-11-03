@@ -1,4 +1,4 @@
-import { cpSync } from "node:fs";
+import { cpSync, writeFileSync } from "node:fs";
 import { build } from "esbuild";
 import { defineConfig } from "tsup";
 import pkg from "./package.json";
@@ -13,6 +13,7 @@ export default defineConfig({
 	silent: true,
 	external: ["typescript", "better-sqlite3", "node-pty", "pg"],
 	onSuccess: async () => {
+		writeFileSync("dist/built-version", pkg.version);
 		cpSync("allowed.cli-reads", "dist/allowed.cli-reads");
 		cpSync("allowed.cli-writes", "dist/allowed.cli-writes");
 		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });

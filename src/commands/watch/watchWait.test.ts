@@ -57,6 +57,11 @@ vi.mock("./buildPendingPath", () => ({
 	buildPendingPath: () => buildMarker,
 }));
 
+const mockIsDistBehind = vi.fn<() => boolean>();
+vi.mock("./isDistBehind", () => ({
+	isDistBehind: () => mockIsDistBehind(),
+}));
+
 import { watchWait } from "./watchWait";
 
 const moved: WatchOutcome = {
@@ -80,6 +85,7 @@ beforeEach(() => {
 	exitCode = undefined;
 	rmSync(pendingMarker, { force: true });
 	rmSync(buildMarker, { force: true });
+	mockIsDistBehind.mockReturnValue(false);
 	mockBuildWatchReport.mockReturnValue("**Version** 0.488.2");
 	mockChangedPaths.mockReturnValue(["src/commands/watch/watchWait.ts"]);
 	mockRunPostBuildSync.mockResolvedValue({ kind: "built" });
@@ -362,6 +368,23 @@ describe("watchWait interrupted build", () => {
 		);
 		expect(existsSync(buildMarker)).toBe(false);
 		expect(logged.join("\n")).toContain('built with "auto-build"');
+	});
+
+	it("rebuilds on start when dist is behind package.json even without a marker", async () => {
+		mockIsDistBehind.mockReturnValue(true);
+		mockRunWatchBuild.mockResolvedValue({ kind: "built" });
+		mockWaitForUpstream.mockResolvedValue({
+			kind: "timeout",
+			upstream: "origin/main",
+			timeout: "60m",
+		});
+
+		await run({ build: true, timeout: "60m" });
+
+		expect(mockRunWatchBuild).toHaveBeenCalledWith("auto-build");
+		expect(mockRunWatchBuild.mock.invocationCallOrder[0]).toBeLessThan(
+			mockWaitForUpstream.mock.invocationCallOrder[0],
+		);
 	});
 
 	it("clears the pending build once a pulled build succeeds", async () => {
