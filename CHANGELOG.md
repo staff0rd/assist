@@ -1,3 +1,10 @@
+# [0.1054.0](https://github.com/staff0rd/assist/compare/v0.1053.2...v0.1054.0) (2026-11-03)
+
+
+### Features
+
+* All shows the whole-PR tree ([7a2efe2](https://github.com/staff0rd/assist/commit/7a2efe28fba21b02d1fc6de6167cafe28dc1bde5))
+
 ## [0.1053.2](https://github.com/staff0rd/assist/compare/v0.1053.1...v0.1053.2) (2026-11-02)
 
 
