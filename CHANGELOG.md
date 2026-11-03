@@ -1,3 +1,11 @@
+## [0.1059.1](https://github.com/staff0rd/assist/compare/v0.1059.0...v0.1059.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* rebuild after an interrupted pull ([17a4ee6](https://github.com/staff0rd/assist/commit/17a4ee60866a41720576c88dd8ec2652c9266d8f))
+* Siri speaks home node failures first ([3d9a5c2](https://github.com/staff0rd/assist/commit/3d9a5c277752083b2a53d13be61afd73f64b8964))
+
 # [0.1059.0](https://github.com/staff0rd/assist/compare/v0.1058.3...v0.1059.0) (2026-11-03)
 
 
