@@ -1,3 +1,10 @@
+## [0.1059.2](https://github.com/staff0rd/assist/compare/v0.1059.1...v0.1059.2) (2026-11-03)
+
+
+### Bug Fixes
+
+* treat stale dist as a pending build ([e940e77](https://github.com/staff0rd/assist/commit/e940e77de63ee86a3b53c2b496fbd7d86094c1c3))
+
 ## [0.1059.1](https://github.com/staff0rd/assist/compare/v0.1059.0...v0.1059.1) (2026-11-03)
 
 
