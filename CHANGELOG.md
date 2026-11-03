@@ -1,3 +1,10 @@
+# [0.1059.0](https://github.com/staff0rd/assist/compare/v0.1058.3...v0.1059.0) (2026-11-03)
+
+
+### Features
+
+* Siri draft, bug and prompt phrases ([038af7d](https://github.com/staff0rd/assist/commit/038af7d345426a6212c282bd670be153c8c8a910))
+
 ## [0.1058.3](https://github.com/staff0rd/assist/compare/v0.1058.2...v0.1058.3) (2026-11-03)
 
 
