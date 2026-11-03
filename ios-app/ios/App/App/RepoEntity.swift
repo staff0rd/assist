@@ -27,12 +27,15 @@ struct RepoQuery: EntityStringQuery {
         if !exact.isEmpty {
             return exact
         }
-        return repos.filter { Self.normalize($0.name).contains(spoken) }
+        return Array(repos.filter { Self.normalize($0.name).contains(spoken) }.prefix(Self.maxMatches))
     }
 
+    // Siri reads every suggestion aloud, so offer none and let it ask for a spoken name.
     func suggestedEntities() async throws -> [RepoEntity] {
-        try await fetchRepos()
+        []
     }
+
+    private static let maxMatches = 4
 
     // Spoken names arrive as words ("planner assistant") while repo names are slugs ("planner-assistant").
     private static func normalize(_ text: String) -> String {
