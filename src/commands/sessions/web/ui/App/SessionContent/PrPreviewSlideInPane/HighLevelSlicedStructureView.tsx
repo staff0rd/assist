@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import type {
 	HighLevelSlice,
 	HighLevelStructure,
@@ -6,10 +6,10 @@ import type {
 } from "../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "./HighLevelDiffComments";
 import { HighLevelSliceBar } from "./HighLevelSlicedStructureView/HighLevelSliceBar";
-import { HighLevelSliceSection } from "./HighLevelSlicedStructureView/HighLevelSliceSection";
+import { HighLevelSliceCount } from "./HighLevelSlicedStructureView/HighLevelSliceCount";
+import { HighLevelSliceSections } from "./HighLevelSlicedStructureView/HighLevelSliceSections";
 import { useSlicedStructureView } from "./HighLevelSlicedStructureView/useSlicedStructureView";
-import { HighLevelStructureSummary } from "./HighLevelStructureView/HighLevelStructureSummary";
-import { HighLevelStructureToolbar } from "./HighLevelStructureView/HighLevelStructureToolbar";
+import { HighLevelStructureView } from "./HighLevelStructureView";
 
 export function HighLevelSlicedStructureView({
 	comments,
@@ -23,9 +23,11 @@ export function HighLevelSlicedStructureView({
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 }) {
-	const { slices, structure, subject } = props;
 	const { selection, sections, offsetSx, toolbar } =
 		useSlicedStructureView(props);
+	const all = selection.selected === null;
+	const bar = <HighLevelSliceBar slices={props.slices} {...selection} />;
+	const shared = { subject: props.subject, comments };
 
 	return (
 		<Box
@@ -34,28 +36,29 @@ export function HighLevelSlicedStructureView({
 				display: "flex",
 				flexDirection: "column",
 				gap: 2,
-				...offsetSx,
+				...(all ? {} : offsetSx),
 			}}
 		>
-			<Typography variant="caption" sx={{ color: "text.secondary" }}>
-				{slices.length} {slices.length === 1 ? "slice" : "slices"} ·{" "}
-				<HighLevelStructureSummary structure={structure} />
-			</Typography>
-			<HighLevelStructureToolbar {...toolbar}>
-				<HighLevelSliceBar
-					slices={slices}
-					selected={selection.selected}
-					onSelect={selection.onSelect}
+			<HighLevelSliceCount
+				count={props.slices.length}
+				structure={props.structure}
+			/>
+			{all ? (
+				<HighLevelStructureView
+					{...shared}
+					structure={props.structure}
+					collapsedPaths={props.collapsedPaths}
+					hideSummary
+					toolbarChildren={bar}
 				/>
-			</HighLevelStructureToolbar>
-			{sections.map((section) => (
-				<HighLevelSliceSection
-					key={`${section.number}:${section.slice.title}`}
-					{...section}
-					subject={subject}
-					comments={comments}
+			) : (
+				<HighLevelSliceSections
+					{...shared}
+					toolbar={toolbar}
+					sections={sections}
+					bar={bar}
 				/>
-			))}
+			)}
 		</Box>
 	);
 }

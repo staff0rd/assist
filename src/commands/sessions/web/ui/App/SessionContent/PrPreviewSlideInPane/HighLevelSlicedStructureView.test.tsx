@@ -74,6 +74,11 @@ const slices = [
 	{ ...slice("Everything else", ["src/b.ts#1", "package.json#0"]), rest: true },
 ];
 
+function pickSlice(name: RegExp): void {
+	const bar = screen.getByRole("group", { name: "Slices" });
+	fireEvent.click(within(bar).getByRole("button", { name }));
+}
+
 describe("HighLevelSlicedStructureView", () => {
 	it("draws each slice's files, split tags and its tests, without test files in the tree", () => {
 		render(
@@ -88,6 +93,7 @@ describe("HighLevelSlicedStructureView", () => {
 		);
 
 		expect(screen.getByText(/^2 slices ·/)).toBeTruthy();
+		pickSlice(/Change a/);
 		const first = screen.getByRole("region", { name: "Slice 1: Change a" });
 		expect(within(first).getByText("About Change a.")).toBeTruthy();
 		expect(within(first).getByText("a.ts")).toBeTruthy();
@@ -98,6 +104,7 @@ describe("HighLevelSlicedStructureView", () => {
 			within(first).getByText(/the hunk at @@ -40,1 \+40,1 @@ is in slice 2/),
 		).toBeTruthy();
 
+		pickSlice(/Everything else/);
 		const second = screen.getByRole("region", {
 			name: "Slice 2: Everything else",
 		});
@@ -118,14 +125,11 @@ describe("HighLevelSlicedStructureView", () => {
 				criticalFiles={["package.json"]}
 			/>,
 		);
-		const bar = screen.getByRole("group", { name: "Slices" });
 		const collapseCount = () =>
 			screen.getByRole("button", { name: /Collapse all/ }).textContent;
 		expect(collapseCount()).toBe("Collapse all4");
 
-		fireEvent.click(
-			within(bar).getByRole("button", { name: /Everything else/ }),
-		);
+		pickSlice(/Everything else/);
 
 		expect(
 			screen.queryByRole("region", { name: "Slice 1: Change a" }),
@@ -137,9 +141,30 @@ describe("HighLevelSlicedStructureView", () => {
 		expect(collapseCount()).toBe("Collapse all2");
 
 		fireEvent.click(screen.getByRole("button", { name: /Collapse all/ }));
-		fireEvent.click(within(bar).getByRole("button", { name: /All/ }));
+		pickSlice(/Change a/);
+		pickSlice(/Everything else/);
 
-		expect(collapseCount()).toBe("Collapse all2");
+		expect(collapseCount()).toBe("Collapse all0");
+	});
+
+	it("shows the whole-PR tree, test files included, under All", () => {
+		render(
+			<HighLevelSlicedStructureView
+				subject="sliced-all"
+				collapsedPaths={[]}
+				structure={structure}
+				slices={slices}
+				tests={tests}
+				criticalFiles={[]}
+			/>,
+		);
+		pickSlice(/Change a/);
+		pickSlice(/^\d+All$/);
+
+		expect(screen.queryByRole("region", { name: /^Slice / })).toBeNull();
+		for (const name of ["a.ts", "b.ts", "a.test.ts", "package.json"])
+			expect(screen.getByText(name)).toBeTruthy();
+		expect(screen.getByRole("group", { name: "Slices" })).toBeTruthy();
 	});
 
 	it("selects the slice a Tests link points at", () => {
