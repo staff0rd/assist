@@ -1,3 +1,10 @@
+# [0.1056.0](https://github.com/staff0rd/assist/compare/v0.1055.0...v0.1056.0) (2026-11-03)
+
+
+### Features
+
+* Siri note starts a confirmed /draft ([d84b7d5](https://github.com/staff0rd/assist/commit/d84b7d579754fee4e0cbb317447f813f190ecd31))
+
 # [0.1055.0](https://github.com/staff0rd/assist/compare/v0.1054.0...v0.1055.0) (2026-11-03)
 
 
