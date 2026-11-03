@@ -1,7 +1,7 @@
 import { apiFetch } from "../../../sessions/web/ui/apiFetch";
 import { formatItemId } from "../../formatItemId";
-import type { DocsRefreshState } from "../../loadDocsRefreshState";
 import type { DocsRefreshRequest } from "../../requestDocsRefresh";
+import type { DocsRefreshView } from "../getDocsRefresh";
 import type { BacklogItem } from "./types";
 import { withCwd } from "./withCwd";
 
@@ -78,7 +78,7 @@ export async function fetchDocsRefreshState(
 	cwd: string | undefined,
 	node: string | undefined,
 	signal?: AbortSignal,
-): Promise<DocsRefreshState> {
+): Promise<DocsRefreshView> {
 	const res = await apiFetch(withCwd(DOCS_REFRESH_URL, cwd, node), { signal });
 	return res.json();
 }

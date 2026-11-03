@@ -1,8 +1,14 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
-import { loadDocsRefreshState } from "../loadDocsRefreshState";
+import { docsRefreshAfter } from "../docsRefreshAfter";
+import {
+	type DocsRefreshState,
+	loadDocsRefreshState,
+} from "../loadDocsRefreshState";
 import { getOrigin, getReady } from "../shared";
 import { applyCwdFromReq } from "./applyCwdFromReq";
+
+export type DocsRefreshView = DocsRefreshState & { enabled: boolean };
 
 export async function getDocsRefresh(
 	req: IncomingMessage,
@@ -10,5 +16,10 @@ export async function getDocsRefresh(
 ): Promise<void> {
 	applyCwdFromReq(req);
 	const { orm } = await getReady();
-	respondJson(res, 200, await loadDocsRefreshState(orm, getOrigin()));
+	const state = await loadDocsRefreshState(orm, getOrigin());
+	const view: DocsRefreshView = {
+		...state,
+		enabled: docsRefreshAfter() !== undefined,
+	};
+	respondJson(res, 200, view);
 }
