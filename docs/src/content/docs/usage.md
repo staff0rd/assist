@@ -26,7 +26,7 @@ screenshots:
       - click: "role=tab[name='Items']"
 ---
 
-The **Usage** page tracks how much of your Claude plan's rate limits you use, and what each backlog item cost to build. Open it from the usage figures in the dashboard's [status bar](../sessions-overview/#the-status-bar), which show your current 5-hour and 7-day usage.
+The **Usage** page tracks how much of your Claude plan's rate limits you use, what each backlog item cost to build, and what background jobs such as inbox scans spend. Open it from the usage figures in the dashboard's [status bar](../sessions-overview/#the-status-bar), which show your current 5-hour and 7-day usage.
 
 ## Rate limits
 
@@ -45,3 +45,9 @@ The **Items** tab lists every backlog item with recorded usage: its phases, acti
 - **All**, **Done** and **Running** filter by the item's status, and the repo picker filters by repo.
 - Click a column heading to sort by it, and again to reverse.
 - Click an item to open it in the [backlog](../backlog/).
+
+## Jobs
+
+The **Jobs** tab lists the Claude runs that happen outside your sessions: each [inbox](../inbox/) scan, scheduled or started by hand, and each [PR review](../sessions-pr-review/), with one row per reviewer. Each row shows the trigger, model, start time, duration, tokens, cache use, cost and outcome. The figures across the top total the last 30 days: runs, tokens, cost and failures.
+
+**Job** and **Trigger** filter the table.

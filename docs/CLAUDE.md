@@ -17,7 +17,7 @@ Each `##` starts a section. Unknown keys, ids or scenes and missing screenshots 
 ### Directives
 
 - `:kbd[Mod+N]` — key caps; `Mod`/`Ctrl`/`Alt`/`Shift` show as ⌘⌃⌥⇧ on macOS, by name elsewhere
-- `:status[running]` — session status glyph (`running`, `verifying`, `waiting`, `done`, `error`, `stopped`)
+- `:status[running]` — session status glyph (`running`, `verifying`, `waiting`, `question`, `check`, `done`, `error`, `stopped`)
 - `:badge[clone]` — card badge (`clone`, `harness`, `serving`, `node`)
 - `:icon[OpenInFull]` — a dashboard button icon; register new ones in `src/docs/starlight/renderIcon.ts`
 - `::screenshot{file="<file>"}` — places a declared screenshot; an undeclared file, or a declared one never placed, fails the build
@@ -68,3 +68,6 @@ Start the `docs` run entry (`server: docs`, `docs:preview` on 4173) from the das
 - **R6** — **Never start docs preview** — Never start the docs preview server; the user runs it, so assume it is already running when asking for a review
 - **R7** — **No config scope flags** — Write config examples as `assist config set <key> <value>` with no scope flags, except `--node` for a user (node)-only key, which can't be set without it; explain the repo (git), repo (db), user (node) and user (db) scopes only on the config page
 - **R8** — **Internal commands under CLI** — A command that an agent, slash command or hook runs on the user's behalf is internal: mark it with `internalCommand` and document it only on a CLI page with `:badge[internal]` and who calls it, never on a feature area page
+- **R13** — **No confirmation prompts** — Do not mention that an action asks for confirmation; at most document how to skip the confirmation
+- **R14** — **Toggled settings by key** — For a setting the UI toggles, name only its config key, not an assist config set command
+- **R15** — **No failure paths** — Do not document how a command fails or falls back, such as exit codes or what the agent does instead

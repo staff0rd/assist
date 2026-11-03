@@ -19,7 +19,7 @@ export function MachinePicker() {
 				size="small"
 				color="inherit"
 				startIcon={<ComputerIcon fontSize="small" />}
-				aria-label="Machine"
+				aria-label="Node"
 				aria-haspopup="menu"
 				onClick={(e) => setAnchor(e.currentTarget)}
 				sx={buttonSx}

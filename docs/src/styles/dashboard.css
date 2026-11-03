@@ -48,6 +48,12 @@
 	animation: assist-status-pulse 1.4s ease-in-out infinite;
 }
 
+.assist-status-question,
+.assist-status-check {
+	color: var(--assist-warning);
+	animation: assist-status-pulse 1.4s ease-in-out infinite;
+}
+
 .assist-status-done {
 	color: var(--assist-info);
 }
@@ -135,6 +141,8 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.assist-status-waiting,
+	.assist-status-question,
+	.assist-status-check,
 	.assist-status-ring {
 		animation: none;
 	}

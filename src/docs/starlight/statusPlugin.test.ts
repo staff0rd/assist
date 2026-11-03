@@ -18,6 +18,11 @@ describe("statusPlugin", () => {
 		);
 	});
 
+	it("renders question and check statuses with their glyphs", () => {
+		expect(render("question")).toContain(">?</span>");
+		expect(render("check")).toContain(">▲</span>");
+	});
+
 	it("names a dot status in hidden text", () => {
 		expect(render("running")).toContain('<span class="sr-only">running</span>');
 	});

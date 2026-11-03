@@ -33,14 +33,16 @@ Each card shows a status glyph, the session's title and a line of details.
 
 ::screenshot{file="sessions-sidebar.png"}
 
-| Glyph              | Status                                                                           |
-| ------------------ | -------------------------------------------------------------------------------- |
-| :status[running]   | Running: the agent is working, or the run is live                                |
-| :status[verifying] | Running [`assist verify`](../verify/)                                            |
-| :status[waiting]   | Waiting on you: an answer, a permission prompt or a preview to approve           |
-| :status[done]      | Done                                                                             |
-| :status[error]     | Exited with an error                                                             |
-| :status[stopped]   | Stopped, holding unpushed work (see [Parallel work](../sessions-parallel-work/)) |
+| Glyph              | Status                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| :status[running]   | Running: the agent is working, or the run is live                                     |
+| :status[verifying] | Running [`assist verify`](../verify/)                                                 |
+| :status[waiting]   | Waiting on you: a reply, a permission prompt or a preview to approve                  |
+| :status[question]  | Waiting on you to [answer a question](../sessions-preview-panes/#answering-questions) |
+| :status[check]     | Waiting on you to [try a change by hand](../sessions-preview-panes/#trying-a-change)  |
+| :status[done]      | Done                                                                                  |
+| :status[error]     | Exited with an error                                                                  |
+| :status[stopped]   | Stopped, holding unpushed work (see [Parallel work](../sessions-parallel-work/))      |
 
 The detail line shows the repo, then the session type or, for a backlog run, the phase it is on, followed by any pull request, backlog item and issue it is linked to, and any badges:
 
@@ -49,13 +51,13 @@ The detail line shows the repo, then the session type or, for a backlog run, the
 | :badge[clone]   | The session runs in the repo's own clone rather than a worktree |
 | :badge[harness] | The session runs a harness other than Claude                    |
 | :badge[serving] | The session is a dev server, linking to its port                |
-| :badge[node]    | The session runs on a linked machine                            |
+| :badge[node]    | The session runs on a linked node                               |
 
 ## Grouping and order
 
 Cards are grouped by repo. A repo with one session shows a lone card; two or more get a group header with a count, which collapses the group, and an × on hover that closes every session in it. Sessions a backlog run launches nest under that run's card.
 
-Starred sessions, and the groups holding them, come first; everything else keeps the order it started in. :kbd[Mod+.] jumps straight to the next waiting session.
+Starred sessions, and the groups holding them, come first; everything else keeps the order it started in. :kbd[Mod+.] jumps straight to the next session waiting on you, including those with a question or check.
 
 A group you collapse stays where it is, marked with a pin, until you open it or a new session starts in it.
 

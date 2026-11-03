@@ -22,7 +22,7 @@ Waiting on agents can be boring, and the **News** page gives you something to re
 
 ::screenshot{file="news.png"}
 
-The feeds are the `news.feeds` config key. It's stored in the assist database rather than `assist.yml`, so every machine sharing that database sees the same feeds. Edit it on the [Config](../config/) page, or set the whole list at once:
+The feeds are the `news.feeds` config key. It's stored in the assist database rather than `assist.yml`, so every node sharing that database sees the same feeds. Edit it on the [Config](../config/) page, or set the whole list at once:
 
 ```bash
 assist config set news.feeds https://example.com/feed.xml,https://blog.example.org/rss

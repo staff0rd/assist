@@ -71,6 +71,10 @@ assist also blocks some commands for agents, such as `git commit`, `gh pr create
 assist config set cliHook.blockNpmRun false
 ```
 
+## Approving with a pin
+
+Some agent actions need your approval, such as [adding a code comment](../code-quality/#approving-a-comment), [editing the docs](../backlog-docs/#turning-it-on) during a backlog run or changing a database schema. assist sends a three-digit pin as a desktop notification, on the node you're controlling the session from. Give the agent the pin to approve; withhold it to refuse.
+
 ## Desktop notifications
 
 assist shows a desktop notification when Claude Code needs your permission or is waiting for input. To turn them off:

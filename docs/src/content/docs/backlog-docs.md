@@ -79,7 +79,7 @@ Set `docs.refreshAfter` to the number of done stories that queue a refresh. Leav
 assist config set docs.refreshAfter 5
 ```
 
-While it is set, a backlog run can't change the docs pages or screenshots. When a story genuinely needs to, such as one about the docs site itself, the agent asks you, and you approve with the pin it sends as a desktop notification. That opens the docs to the current phase only.
+While it is set, a backlog run can't change the docs pages or screenshots. When a story genuinely needs to, such as one about the docs site itself, the agent asks you, and you approve [with a pin](../hooks-and-permissions/#approving-with-a-pin). That opens the docs to the current phase only.
 
 ## Queueing a refresh
 

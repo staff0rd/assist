@@ -19,7 +19,7 @@ export function MachineSelector({
 
 	return (
 		<SegmentedRadioGroup
-			label="Machine"
+			label="Node"
 			options={names}
 			value={value}
 			onChange={onChange}

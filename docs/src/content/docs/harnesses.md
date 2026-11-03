@@ -15,7 +15,7 @@ assist runs agents in a coding harness: Claude Code, the Codex CLI or pi. Claude
 
 Install the harness, then run `assist sync`. It installs assist's slash commands into each harness it finds on your `PATH`, and the hooks that let read-only commands run without asking.
 
-Codex asks you to trust assist's hook the first time it runs on a machine.
+Codex asks you to trust assist's hook the first time it runs on a node.
 
 ## Choosing a harness
 

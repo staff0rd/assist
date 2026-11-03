@@ -67,14 +67,14 @@ Each phase gets a fresh agent session, nested under the item's card in the sideb
 
 ## Following a run
 
-The run's card in the [sidebar](../sessions-sidebar/) shows :status[running] while the agent works and :status[waiting] when it needs you, such as to confirm manual checks or answer a question. :kbd[Mod+.] jumps to the next session waiting on you, so you can run several items at once and only step in when one asks.
+The run's card in the [sidebar](../sessions-sidebar/) shows :status[running] while the agent works, :status[check] when it wants you to try a manual check, :status[question] when it asks a question, and :status[waiting] when it needs you otherwise. :kbd[Mod+.] jumps to the next session waiting on you, so you can run several items at once and only step in when one asks.
 
 ## Steering a run
 
 ::screenshot{file="backlog-continue.png"}
 
 - **Continue** on the session's top bar decides whether the next phase starts on its own. Turn it off to stop after the current phase, then **Build** again when you're ready.
-- When a phase has manual checks, the agent asks you to confirm them. Reply in its terminal.
+- When a phase has manual checks, the agent asks you to [try each one](../sessions-preview-panes/#trying-a-change).
 - To send the item back to an earlier phase, **Rewind** that phase on the item's [plan](../backlog/#plan).
 
 ## The review phase

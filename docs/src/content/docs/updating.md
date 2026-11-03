@@ -29,15 +29,15 @@ A global npm install is not updated automatically.
 
 ## The Updates page
 
-The Updates page opens from the version badge in the dashboard's [status bar](../sessions-overview/#the-status-bar), or with :kbd[Alt+Q]. It lists this machine and each [linked machine](../sessions-linked-nodes/), with the version each is running and where its updates are up to.
+The Updates page opens from the version badge in the dashboard's [status bar](../sessions-overview/#the-status-bar), or with :kbd[Alt+Q]. It lists this node and each [linked node](../sessions-linked-nodes/), with the version each is running and where its updates are up to.
 
 ::screenshot{file="updates-panel.png"}
 
-- **Restart** on a row restarts that machine's daemon and web server onto the new build it has ready. **Restart ready nodes** restarts every machine with one ready.
-- **Check now** checks every machine for new commits straight away.
-- **Pause** stops a machine pulling updates until you **Resume** it.
+- **Restart** on a row restarts that node's daemon and web server onto the new build it has ready. **Restart ready nodes** restarts every node with one ready.
+- **Check now** checks every node for new commits straight away.
+- **Pause** stops a node pulling updates until you **Resume** it.
 - **Open fix session** jumps to the session fixing a clone that couldn't fast-forward.
-- Expand a row for that machine's update history.
+- Expand a row for that node's update history.
 
 ## Manual updates
 

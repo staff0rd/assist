@@ -30,16 +30,16 @@ Every assist setting is a config key, such as `commit.push` or `next.repos`. Cha
 
 A key can be set in four places. The first word says which repos a scope covers and the bracket says where it is stored. For the selected repo, the most specific one wins:
 
-| Scope           | Where it's stored                                | Applies to                                       |
-| --------------- | ------------------------------------------------ | ------------------------------------------------ |
-| **repo (git)**  | `assist.yml` or `.claude/assist.yml` in the repo | Everyone working in the repo, once committed     |
-| **repo (db)**   | The assist database                              | The repo, on every machine sharing the database  |
-| **user (node)** | `~/.assist.yml`                                  | Every repo on this machine                       |
-| **user (db)**   | The assist database                              | Every repo on every machine sharing the database |
+| Scope           | Where it's stored                                | Applies to                                    |
+| --------------- | ------------------------------------------------ | --------------------------------------------- |
+| **repo (git)**  | `assist.yml` or `.claude/assist.yml` in the repo | Everyone working in the repo, once committed  |
+| **repo (db)**   | The assist database                              | The repo, on every node sharing the database  |
+| **user (node)** | `~/.assist.yml`                                  | Every repo on this node                       |
+| **user (db)**   | The assist database                              | Every repo on every node sharing the database |
 
 Each scope beats the ones below it. Lists such as `advice.rules` and `deny` instead combine the entries from every scope, **user (db)** entries first. A key set nowhere uses its default.
 
-Use **repo (db)** for personal settings you want in one repo on all your machines without committing them, such as turning on worktrees. Use **user (db)** for settings that follow you to every repo on every machine, such as a branch prefix, and **user (node)** for settings that belong to one machine, such as its node name. The database connection itself (`database.*`) can only be set in **user (node)**.
+Use **repo (db)** for personal settings you want in one repo on all your nodes without committing them, such as turning on worktrees. Use **user (db)** for settings that follow you to every repo on every node, such as a branch prefix, and **user (node)** for settings that belong to one node, such as its node name. Some settings, like the database connection itself (`database.*`), can only be set in **user (node)**.
 
 ## The Config page
 

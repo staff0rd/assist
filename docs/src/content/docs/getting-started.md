@@ -50,7 +50,7 @@ assist config set database.url postgresql://user:password@host:5432/database
 assist db migrate
 ```
 
-The `ASSIST_DATABASE_URL` environment variable works too, and takes precedence. Point every machine you use at the same database and they share one backlog.
+The `ASSIST_DATABASE_URL` environment variable works too, and takes precedence. Point every node you use at the same database and they share one backlog.
 
 ## Open the dashboard
 

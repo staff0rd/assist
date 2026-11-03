@@ -52,10 +52,7 @@ Run `/strip-code-comments` to remove comments that restate the code, label secti
 
 ### Approving a comment
 
-Agents can't add code comments by editing a file. When an agent believes one comment genuinely belongs, it asks for it: a single line of up to 50 characters, at a given line. assist sends a three-digit pin to your desktop notifications.
-
-- To allow the comment, give the agent the pin. It uses the pin to add the comment.
-- To refuse it, don't. The agent has to make the code clearer instead.
+Agents can't add code comments by editing a file. When an agent believes one comment genuinely belongs, it asks for it: a single line of up to 50 characters, at a given line. Approve it [with a pin](../hooks-and-permissions/#approving-with-a-pin); refused, the agent has to make the code clearer instead.
 
 ## Tests
 

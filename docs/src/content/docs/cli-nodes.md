@@ -14,7 +14,7 @@ covers:
   - config:sessions.links
 ---
 
-These manage [links to other machines](../sessions-linked-nodes/). A link's name must match the peer's `sessions.nodeName`, and links are saved in `sessions.links`.
+These manage [links to other nodes](../sessions-linked-nodes/). A link's name must match the peer's `sessions.nodeName`, and links are saved in `sessions.links`.
 
 ## Commands
 

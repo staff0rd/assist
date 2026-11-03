@@ -11,6 +11,7 @@ covers:
   - config:review.highLevel.descriptionWordCap
   - config:review.highLevel.testPaths
   - config:review.highLevel.collapsedPaths
+  - config:review.highLevel.slices
 screenshots:
   - file: sessions-high-level-review.png
     alt: The high-level review checklist for a pull request
@@ -126,15 +127,17 @@ assist config set review.highLevel.uiPaths "src/ui/**"
 assist config set review.highLevel.descriptionWordCap 300
 assist config set review.highLevel.testPaths "**/*.test.ts,e2e/**/*.spec.ts"
 assist config set review.highLevel.collapsedPaths "**/*.test.*,**/generated/**"
+assist config set review.highLevel.slices true
 ```
 
-| Key                  | Default                            | Sets                                                                |
-| -------------------- | ---------------------------------- | ------------------------------------------------------------------- |
-| `criticalPaths`      | see below                          | Files whose full diffs **Critical diffs** shows                     |
-| `uiPaths`            | none, so no screenshot is required | Files that make a change a UI change, needing a screenshot or video |
-| `descriptionWordCap` | 300                                | The most words the description can have                             |
-| `testPaths`          | `**/*.{test,spec}.{ts,tsx,js,jsx}` | Test files whose tests **Tests** lists                              |
-| `collapsedPaths`     | `**/*.test.*`, `**/generated/**`   | Files whose diffs start collapsed under **Structure**               |
+| Key                  | Default                            | Sets                                                                                                                            |
+| -------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `criticalPaths`      | see below                          | Files whose full diffs **Critical diffs** shows                                                                                 |
+| `uiPaths`            | none, so no screenshot is required | Files that make a change a UI change, needing a screenshot or video                                                             |
+| `descriptionWordCap` | 300                                | The most words the description can have                                                                                         |
+| `testPaths`          | `**/*.{test,spec}.{ts,tsx,js,jsx}` | Test files whose tests **Tests** lists                                                                                          |
+| `collapsedPaths`     | `**/*.test.*`, `**/generated/**`   | Files whose diffs start collapsed under **Structure**                                                                           |
+| `slices`             | `false`                            | Experimental: in a dashboard session, the agent splits the pull request into slices and **Structure** groups its files by slice |
 
 Unset, `criticalPaths` covers GitHub workflows and actions, `package.json`, Dockerfiles (`Dockerfile`, `Dockerfile.*`, `*.Dockerfile`) and `CLAUDE.md`, anywhere in the repo. Setting it replaces these, so list them too if you still want them.
 

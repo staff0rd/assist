@@ -36,7 +36,7 @@ The **+** button in the toolbar, :kbd[Mod+N] or :kbd[Alt+N] opens the new-sessio
 | prompt | A plain agent session with your text as its first prompt. When Codex or pi is available, a menu on this mode picks the harness |
 | design | An interactive Claude session with assist's design system prompt appended                                                      |
 
-Draft and bug need a repo. When the repo isn't cloned on the machine you picked, the button offers to clone it first.
+Draft and bug need a repo. When the repo isn't cloned on the node you picked, the button offers to clone it first.
 
 The dialog opens in `draft` mode. To open it in another mode:
 

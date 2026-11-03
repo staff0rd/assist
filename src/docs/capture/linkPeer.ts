@@ -7,6 +7,13 @@ async function ensurePeer(capture: CaptureHome, name: string) {
 	if (existing) return existing;
 	const peerHome = createCaptureHome(capture.databaseUrl);
 	runAssist(peerHome, ["config", "set", "sessions.nodeName", name, "--node"]);
+	runAssist(peerHome, [
+		"config",
+		"set",
+		"clone.baseDir",
+		peerHome.reposDir,
+		"--node",
+	]);
 	const server = await startCaptureServer(peerHome);
 	const peer = { capture: peerHome, ...server };
 	capture.peers.set(name, peer);

@@ -70,7 +70,7 @@ If your team uses Jira or GitHub issues, link the ticket to the item instead. Th
 - **Search backlog…** finds items by keyword.
 - **All / Stories / Bugs** filters by type.
 - **Todo / Done / All** filters by status. **Todo** shows items not yet finished, and the choice is remembered.
-- The chips under the search box switch to another repo, each with its count of open items. A dashed chip is a repo that isn't cloned on the selected machine: click it to clone the repo into `clone.baseDir` (default `~/git`) and switch to it.
+- The chips under the search box switch to another repo, each with its count of open items. A dashed chip is a repo that isn't cloned on the selected node: click it to clone the repo into `clone.baseDir` (default `~/git`) and switch to it.
 
 ```bash
 assist config set clone.baseDir ~/src

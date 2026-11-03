@@ -7,6 +7,7 @@ covers:
   - claude:ask
   - claude:show
   - config:sessions.askQuestion
+  - config:sessions.askQuestionAutoSubmit
 screenshots:
   - file: sessions-ask.png
     alt: A proposal waiting for approval in the preview pane, with a comment added
@@ -39,6 +40,26 @@ screenshots:
           to: text=Save the choice to localStorage
       - type: Store it per user on the server instead, so it follows them between devices
       - click: text=Add to review
+  - file: sessions-check.png
+    alt: A manual check in the preview pane, with its steps and the Works and Doesn't work buttons
+    route: /sessions
+    scene: previews
+    setup:
+      - check:
+          session: Add a dark mode toggle to the settings page
+          title: Toggle switches the theme
+          before: [Restart the web server]
+          steps:
+            - Open Settings
+            - Turn on Dark mode
+            - Reload the page
+          changed: Adds a Dark mode toggle that saves the choice and applies it on load.
+    waitFor: text=Toggle switches the theme
+    viewport:
+      width: 1440
+      height: 720
+    actions:
+      - click: text=Dark mode toggle
   - file: sessions-show.png
     alt: Links, paths and a command shown in the preview pane
     route: /sessions
@@ -133,6 +154,14 @@ Ask the agent to `/ask` about something and it puts a proposal, summary or decis
 ## Answering questions
 
 Turn on `assist config set sessions.askQuestion true` and questions the agent asks you open in the pane as a form instead of in the terminal. Pick one option, or several where the question allows it, or choose **Other** and type your own answer, then press **Answer**. **Dismiss** declines to answer.
+
+Turn on **Auto submit** in the pane (`sessions.askQuestionAutoSubmit`) and a form whose questions each take one option is sent as soon as you pick the option that completes it, without pressing **Answer**.
+
+## Trying a change
+
+With `sessions.askQuestion` on, manual checks open in the pane. Follow the steps, then press **Works** or **Doesn't work**, with an optional note.
+
+::screenshot{file="sessions-check.png"}
 
 ## Showing links and snippets
 
