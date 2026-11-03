@@ -1,3 +1,10 @@
+# [0.1057.0](https://github.com/staff0rd/assist/compare/v0.1056.0...v0.1057.0) (2026-11-03)
+
+
+### Features
+
+* devlog entries dir from devlog.dir ([7cb0878](https://github.com/staff0rd/assist/commit/7cb0878adbaee2826c8abe0acb9dd8d0407d18cf))
+
 # [0.1056.0](https://github.com/staff0rd/assist/compare/v0.1055.0...v0.1056.0) (2026-11-03)
 
 
