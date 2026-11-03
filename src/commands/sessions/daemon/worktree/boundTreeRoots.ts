@@ -36,6 +36,6 @@ function releaseReason(durability: Durability, session: Session): string {
 	if (!durability.durable)
 		return `still held by finished session ${session.id}: ${durability.reason}`;
 	if (durability.gone)
-		return `free for allocation: session ${session.id}'s directory is gone from disk — nothing to land, not landed work`;
+		return `free for allocation: session ${session.id}'s directory is gone from disk or holds no git checkout — nothing to land, not landed work`;
 	return `free for allocation: session ${session.id} finished and its work is landed`;
 }

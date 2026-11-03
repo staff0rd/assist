@@ -13,7 +13,7 @@ export async function closeBlockReason(
 	if (!durability.durable) return { reason: durability.reason, live: false };
 	if (durability.gone) {
 		daemonLog(
-			`session ${sessionId} closing: worktree ${tree.path} is gone from disk — released with nothing to land, not landed work`,
+			`session ${sessionId} closing: worktree ${tree.path} is gone from disk or holds no git checkout — released with nothing to land, not landed work`,
 		);
 		return undefined;
 	}

@@ -60,6 +60,25 @@ describe("checkDurability", () => {
 		);
 	});
 
+	it("treats a leftover directory with no .git as holding nothing to land", async () => {
+		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
+		gitReplies({});
+
+		expect(await checkDurability("/git/leftover")).toEqual({
+			durable: true,
+			gone: true,
+		});
+	});
+
+	it("still holds a tree whose .git link exists but git cannot read", async () => {
+		gitReplies({});
+
+		expect(await checkDurability("/git/broken")).toMatchObject({
+			durable: false,
+			reason: expect.stringContaining("tree state unreadable"),
+		});
+	});
+
 	it("holds a dirty tree", async () => {
 		gitReplies({ status: { ok: true, out: " M src/a.ts" } });
 

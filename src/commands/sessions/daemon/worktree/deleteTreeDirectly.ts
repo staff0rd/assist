@@ -26,10 +26,11 @@ export async function deleteTreeDirectly(
 			retryDelay: 200,
 		});
 	} catch (error) {
+		const failure = deleteFailure(worktreePath, error);
 		daemonLog(
-			`worktree ${worktreePath} directory delete failed, left in place for the next reconcile: ${reason(error)}`,
+			`worktree ${worktreePath} directory delete failed, left in place for the next reconcile: ${failure}`,
 		);
-		return { removed: false, reason: reason(error) };
+		return { removed: false, reason: failure };
 	}
 	daemonLog(`worktree ${worktreePath} directory deleted directly`);
 	await pruneBookkeeping(clone, worktreePath);
@@ -58,6 +59,12 @@ async function pruneBookkeeping(
 			`worktree bookkeeping prune failed in clone ${clone} after deleting ${worktreePath}: ${reason(error)}`,
 		);
 	}
+}
+
+function deleteFailure(worktreePath: string, error: unknown): string {
+	const code = (error as NodeJS.ErrnoException | undefined)?.code;
+	if (code !== "EACCES" && code !== "EPERM") return reason(error);
+	return `${worktreePath} holds files owned by another user (e.g. root, from a Docker bind mount) that assist cannot delete; remove it with \`sudo rm -rf ${worktreePath}\` (${reason(error)})`;
 }
 
 function reason(error: unknown): string {

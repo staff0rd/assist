@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { type GitResult, gitResult, gitSyncResult } from "./git";
+import { holdsNoCheckout } from "./holdsNoCheckout";
 
 type TreeState = {
 	dirty: boolean;
@@ -19,8 +20,11 @@ export function treeDurability(state: TreeState): Durability {
 	return { durable: true };
 }
 
-function* durabilityProbes(): Generator<string[], Durability, GitResult> {
+function* durabilityProbes(
+	cwd: string,
+): Generator<string[], Durability, GitResult> {
 	const status = yield ["status", "--porcelain"];
+	if (!status.ok && notACheckout(cwd, status.error)) return treeIsGone;
 	if (!status.ok)
 		return { durable: false, reason: `tree state unreadable: ${status.error}` };
 	const dirty = status.out !== "";
@@ -42,9 +46,13 @@ function* durabilityProbes(): Generator<string[], Durability, GitResult> {
 	});
 }
 
+function notACheckout(cwd: string, error: string): boolean {
+	return holdsNoCheckout(cwd) && /not a git repository/i.test(error);
+}
+
 export async function checkDurability(cwd: string): Promise<Durability> {
 	if (!existsSync(cwd)) return treeIsGone;
-	const probes = durabilityProbes();
+	const probes = durabilityProbes(cwd);
 	let step = probes.next();
 	while (!step.done) step = probes.next(await gitResult(cwd, step.value));
 	return step.value;
@@ -52,7 +60,7 @@ export async function checkDurability(cwd: string): Promise<Durability> {
 
 export function checkDurabilitySync(cwd: string): Durability {
 	if (!existsSync(cwd)) return treeIsGone;
-	const probes = durabilityProbes();
+	const probes = durabilityProbes(cwd);
 	let step = probes.next();
 	while (!step.done) step = probes.next(gitSyncResult(cwd, step.value));
 	return step.value;
