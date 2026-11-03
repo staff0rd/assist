@@ -16,7 +16,7 @@ Decide whether the week is worth an entry:
 
 ## Entry file
 
-Never write the entry file yourself. Write the entry as JSON to a scratch file and pipe it to `assist devlog write < <file>`, which validates it and writes `~/git/blog/src/content/dev/<name>/<yyyy>-w<NN>.md` with valid YAML frontmatter. If it reports errors, fix the JSON and re-run.
+Never write the entry file yourself. Write the entry as JSON to a scratch file and pipe it to `assist devlog write < <file>`, which validates it and writes `<devlog.dir>/<name>/<yyyy>-w<NN>.md` with valid YAML frontmatter. If it reports errors, fix the JSON and re-run.
 
 ```json
 {
@@ -58,7 +58,7 @@ Never write the entry file yourself. Write the entry as JSON to a scratch file a
 - Write each line as a short changelog phrase (at most 80 characters, which `assist devlog write` enforces), not a sentence: name the thing, drop the explanation. A fix names what was broken, e.g. "`assist backlog show` not printing comments", not "`assist backlog show` collected comments but never printed them". Wrap code symbols (commands, function names, file names, config keys) in backticks.
 - **lede**: one or two sentences, conversational, saying what the week was mostly about and why it matters.
 
-Match the style of `~/git/blog/src/content/dev/assist/2026-w33.md`. Older entries in `~/git/blog/src/content/dev/` predate the short-phrase style, so don't copy their item length.
+Match the style of `<devlog.dir>/assist/2026-w33.md`. Older entries in `<devlog.dir>/` predate the short-phrase style, so don't copy their item length.
 
 ## Catch-up mode (`--all`)
 

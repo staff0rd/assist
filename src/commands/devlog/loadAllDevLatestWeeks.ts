@@ -1,5 +1,5 @@
 import { readdirSync } from "node:fs";
-import { DEV_DIR, loadDevWeeks } from "./loadDevWeeks";
+import { loadDevWeeks } from "./loadDevWeeks";
 
 function readRepoDirs(devDir: string): string[] {
 	try {
@@ -11,7 +11,7 @@ function readRepoDirs(devDir: string): string[] {
 	}
 }
 
-export function loadAllDevLatestWeeks(devDir = DEV_DIR): Map<string, string> {
+export function loadAllDevLatestWeeks(devDir: string): Map<string, string> {
 	const latest = new Map<string, string>();
 	for (const repo of readRepoDirs(devDir)) {
 		const week = loadDevWeeks(repo, devDir).at(-1);

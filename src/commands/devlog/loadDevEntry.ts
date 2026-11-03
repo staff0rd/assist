@@ -1,7 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse as parseYaml } from "yaml";
-import { DEV_DIR } from "./loadDevWeeks";
 import type { DevEntry } from "./types";
 
 function asString(value: unknown): string | null {
@@ -20,7 +19,7 @@ function readFrontmatter(path: string): Record<string, unknown> | null {
 export function loadDevEntry(
 	repoName: string,
 	week: string,
-	devDir = DEV_DIR,
+	devDir: string,
 ): DevEntry | null {
 	const path = join(devDir, repoName, `${week.toLowerCase()}.md`);
 	const frontmatter = readFrontmatter(path);

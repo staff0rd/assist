@@ -1,9 +1,5 @@
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { BLOG_REPO_ROOT } from "./loadBlogSkipWeeks";
-
-export const DEV_DIR = join(BLOG_REPO_ROOT, "src/content/dev");
-
 const DEV_FILENAME_PATTERN = /^(\d{4})-w(\d{2})\.md$/;
 
 export function parseDevWeekFilename(filename: string): string | null {
@@ -19,7 +15,7 @@ function readFilenames(dir: string): string[] {
 	}
 }
 
-export function loadDevWeeks(repoName: string, devDir = DEV_DIR): string[] {
+export function loadDevWeeks(repoName: string, devDir: string): string[] {
 	return readFilenames(join(devDir, repoName))
 		.map(parseDevWeekFilename)
 		.filter((week): week is string => week !== null)

@@ -3,6 +3,7 @@ import { loadAllDevLatestWeeks } from "./loadAllDevLatestWeeks";
 import { localToday } from "./localToday";
 import { getRepoStatus } from "./repos/getRepoStatus";
 import { printReposTable } from "./repos/printReposTable";
+import { resolveDevDir } from "./resolveDevDir";
 import type { RepoRow } from "./repos/types";
 
 type ReposOptions = {
@@ -60,6 +61,7 @@ function sortRows(rows: RepoRow[]): RepoRow[] {
 }
 
 export function repos(options: ReposOptions): void {
+	const devDir = resolveDevDir();
 	const ghRepos = fetchRepos(options.days ?? 30, options.all ?? false);
 
 	if (ghRepos.length === 0) {
@@ -67,7 +69,7 @@ export function repos(options: ReposOptions): void {
 		return;
 	}
 
-	const latestWeeks = loadAllDevLatestWeeks();
+	const latestWeeks = loadAllDevLatestWeeks(devDir);
 	const today = localToday();
 	const rows = ghRepos.map((repo) => toRow(repo, latestWeeks, today));
 	printReposTable(sortRows(rows));

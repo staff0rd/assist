@@ -6,6 +6,7 @@ import { fetchCommitsAfter } from "./next/fetchCommitsAfter";
 import { findTargetWeek, groupCommitsByWeek } from "./next/findTargetWeek";
 import { getRepoName, loadConfig } from "./shared";
 import { localToday } from "./localToday";
+import { resolveDevDir } from "./resolveDevDir";
 
 type NextOptions = {
 	ignore?: string[];
@@ -14,9 +15,10 @@ type NextOptions = {
 
 export function next(options: NextOptions): void {
 	const config = loadConfig();
+	const devDir = resolveDevDir();
 	const repoName = getRepoName();
 	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
-	const lastWeek = loadDevWeeks(repoName).at(-1) ?? null;
+	const lastWeek = loadDevWeeks(repoName, devDir).at(-1) ?? null;
 	const afterDate = lastWeek ? isoWeekRange(lastWeek).end : null;
 	const byWeek = groupCommitsByWeek(fetchCommitsAfter(ignore, afterDate));
 	const week = findTargetWeek(byWeek.keys(), {

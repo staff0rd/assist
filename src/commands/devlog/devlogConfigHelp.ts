@@ -2,6 +2,11 @@ import type { ConfigHelpEntry } from "../../shared/configHelp";
 
 export const devlogConfigHelp: ConfigHelpEntry[] = [
 	{
+		key: "devlog.dir",
+		setter: "assist config set devlog.dir ~/git/blog/src/content/dev",
+		note: "folder holding <repo>/<yyyy>-wNN.md dev entries",
+	},
+	{
 		key: "devlog.name",
 		setter: "assist config set devlog.name my-repo",
 		note: "override the project name weekly dev entries are filed under",

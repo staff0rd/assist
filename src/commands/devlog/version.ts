@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { getVersionAtCommit } from "./getVersionAtCommit";
 import { loadDevEntry } from "./loadDevEntry";
 import { loadDevWeeks } from "./loadDevWeeks";
+import { resolveDevDir } from "./resolveDevDir";
 import { getRepoName } from "./shared";
 import { stripToMinor } from "./stripToMinor";
 
@@ -10,9 +11,10 @@ function printField(label: string, value: string | null | undefined): void {
 }
 
 export function version(): void {
+	const devDir = resolveDevDir();
 	const name = getRepoName();
-	const lastWeek = loadDevWeeks(name).at(-1) ?? null;
-	const entry = lastWeek ? loadDevEntry(name, lastWeek) : null;
+	const lastWeek = loadDevWeeks(name, devDir).at(-1) ?? null;
+	const entry = lastWeek ? loadDevEntry(name, lastWeek, devDir) : null;
 	const current = getVersionAtCommit("HEAD");
 
 	printField("name", name);

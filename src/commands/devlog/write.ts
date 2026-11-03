@@ -2,7 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import chalk from "chalk";
 import { readStdin } from "../../lib/readStdin";
-import { DEV_DIR } from "./loadDevWeeks";
+import { resolveDevDir } from "./resolveDevDir";
 import { getRepoName } from "./shared";
 import { devEntryInputSchema } from "./write/devEntryInputSchema";
 import { formatDevEntry } from "./write/formatDevEntry";
@@ -24,8 +24,9 @@ export async function write(): Promise<void> {
 		}
 		process.exit(1);
 	}
+	const devDir = resolveDevDir();
 	const repoName = getRepoName();
-	const path = join(DEV_DIR, repoName, `${result.data.week.toLowerCase()}.md`);
+	const path = join(devDir, repoName, `${result.data.week.toLowerCase()}.md`);
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, formatDevEntry(repoName, result.data));
 	console.log(chalk.green(`Wrote ${path}`));

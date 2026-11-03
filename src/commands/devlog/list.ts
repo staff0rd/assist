@@ -3,6 +3,7 @@ import { printWeekHeader } from "./list/printWeekHeader";
 import { loadBlogSkipWeeks } from "./loadBlogSkipWeeks";
 import { loadDevEntry } from "./loadDevEntry";
 import { localToday } from "./localToday";
+import { resolveDevDir } from "./resolveDevDir";
 import { fetchCommitsAfter } from "./next/fetchCommitsAfter";
 import { groupCommitsByWeek } from "./next/findTargetWeek";
 import { getRepoName, loadConfig, printCommitsWithFiles } from "./shared";
@@ -20,6 +21,7 @@ export function list(options: ListOptions): void {
 	const config = loadConfig();
 	const ignore = options.ignore ?? config.devlog?.ignore ?? [];
 	const repoName = getRepoName();
+	const devDir = resolveDevDir();
 	const today = localToday();
 	const skip = loadBlogSkipWeeks(repoName);
 	const byWeek = groupCommitsByWeek(
@@ -34,7 +36,7 @@ export function list(options: ListOptions): void {
 		printWeekHeader(week, {
 			skipped: skip.has(week),
 			inProgress: !isCompletedWeek(week, today),
-			entry: loadDevEntry(repoName, week),
+			entry: loadDevEntry(repoName, week, devDir),
 		});
 		printCommitsWithFiles(
 			byWeek.get(week) ?? [],

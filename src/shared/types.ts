@@ -70,6 +70,7 @@ const assistConfigShape = {
 	devlog: z
 		.strictObject({
 			name: z.string().optional(),
+			dir: z.string().optional(),
 			ignore: z.array(z.string()).optional(),
 			skip: z.record(z.string(), z.array(z.string())).optional(),
 		})
