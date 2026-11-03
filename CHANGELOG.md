@@ -1,3 +1,10 @@
+## [0.1058.1](https://github.com/staff0rd/assist/compare/v0.1058.0...v0.1058.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* Siri asks for a repo, not reads all ([dd11bb5](https://github.com/staff0rd/assist/commit/dd11bb5014dba8d9ca0cc5caee28b93d4233b080))
+
 # [0.1058.0](https://github.com/staff0rd/assist/compare/v0.1057.0...v0.1058.0) (2026-11-03)
 
 
