@@ -2,6 +2,9 @@ import AppIntents
 import Foundation
 
 enum HomeNode {
+    // Short enough that Siri speaks the failure instead of giving up on the intent first.
+    static let timeout: TimeInterval = 8
+
     static func url(_ path: String, query: [URLQueryItem] = []) throws -> URL {
         // Capacitor Preferences stores keys in UserDefaults under this prefix (see nodeStore.ts).
         guard let saved = UserDefaults.standard.string(forKey: "CapacitorStorage.homeNodeUrl"),
@@ -43,9 +46,9 @@ enum HomeNodeError: Error, CustomLocalizedStringResourceConvertible {
         case .noHomeNode:
             return "No home node is saved. Open Assist and pick a home node first."
         case .unreachable:
-            return "Couldn't reach your home node. Check Tailscale is connected."
+            return "Your home node is unreachable. Check Tailscale is connected."
         case .rejected:
-            return "Your home node couldn't do that. Check its web server is running."
+            return "Your home node rejected the request. Check Assist is up to date there."
         }
     }
 }

@@ -4,7 +4,7 @@ struct AssistShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
             intent: DraftNoteIntent(),
-            phrases: ["\(.applicationName) draft"],
+            phrases: ["\(.applicationName) draft", "\(.applicationName) idea"],
             shortTitle: "Draft",
             systemImageName: "square.and.pencil"
         )

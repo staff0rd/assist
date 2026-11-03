@@ -17,12 +17,12 @@ struct RepoEntity: AppEntity, Decodable {
 
 struct RepoQuery: EntityStringQuery {
     func entities(for identifiers: [String]) async throws -> [RepoEntity] {
-        try await fetchRepos().filter { identifiers.contains($0.id) }
+        try await Self.fetchRepos().filter { identifiers.contains($0.id) }
     }
 
     func entities(matching string: String) async throws -> [RepoEntity] {
         let spoken = Self.normalize(string)
-        let repos = try await fetchRepos()
+        let repos = try await Self.fetchRepos()
         let exact = repos.filter { Self.normalize($0.name) == spoken }
         if !exact.isEmpty {
             return exact
@@ -42,8 +42,8 @@ struct RepoQuery: EntityStringQuery {
         text.lowercased().filter { $0.isLetter || $0.isNumber }
     }
 
-    private func fetchRepos() async throws -> [RepoEntity] {
-        let request = URLRequest(url: try HomeNode.url("api/note-repos"), timeoutInterval: 10)
+    static func fetchRepos() async throws -> [RepoEntity] {
+        let request = URLRequest(url: try HomeNode.url("api/note-repos"), timeoutInterval: HomeNode.timeout)
         let data = try await HomeNode.send(request, expecting: 200)
         guard let listed = try? JSONDecoder().decode(RepoList.self, from: data) else {
             throw HomeNodeError.rejected
