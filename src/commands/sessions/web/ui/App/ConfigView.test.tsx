@@ -1058,33 +1058,37 @@ describe("ConfigView", () => {
 	it("adds a key/value row to a record", async () => {
 		const fetchMock = stubApi([
 			{
-				key: "devlog.skip",
+				key: "extension.redirects",
 				type: "record",
-				value: { docker: ["ps"] },
+				value: { docker: "ps" },
 				source: "project",
-				node: node("devlog.skip"),
+				node: node("extension.redirects"),
 			},
 		]);
 		renderView("/repo/one");
 
-		await waitFor(() => expect(screen.getByText("devlog.skip")).toBeTruthy());
-		expect(screen.queryByText("read-only")).toBeNull();
-		fireEvent.click(screen.getByRole("button", { name: "Edit devlog.skip" }));
-		fireEvent.click(
-			screen.getByRole("button", { name: "Add devlog.skip entry" }),
+		await waitFor(() =>
+			expect(screen.getByText("extension.redirects")).toBeTruthy(),
 		);
-		fireEvent.change(screen.getByLabelText("devlog.skip key 2"), {
+		expect(screen.queryByText("read-only")).toBeNull();
+		fireEvent.click(
+			screen.getByRole("button", { name: "Edit extension.redirects" }),
+		);
+		fireEvent.click(
+			screen.getByRole("button", { name: "Add extension.redirects entry" }),
+		);
+		fireEvent.change(screen.getByLabelText("extension.redirects key 2"), {
 			target: { value: "kubectl" },
 		});
-		fireEvent.change(screen.getByLabelText("devlog.skip.kubectl"), {
+		fireEvent.change(screen.getByLabelText("extension.redirects.kubectl"), {
 			target: { value: "get" },
 		});
 		fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
 		await waitFor(() =>
 			expect(lastSetBody(fetchMock)).toEqual({
-				key: "devlog.skip",
-				value: { docker: ["ps"], kubectl: ["get"] },
+				key: "extension.redirects",
+				value: { docker: "ps", kubectl: "get" },
 				cwd: "/repo/one",
 				scope: "project",
 			}),

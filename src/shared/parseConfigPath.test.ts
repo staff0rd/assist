@@ -25,7 +25,7 @@ describe("parseConfigPath", () => {
 			"deny[].pattern",
 			"run[2].params[].required",
 			"cliReadVerbs.*",
-			"devlog.skip.*[0]",
+			"extension.redirects.*[0]",
 		]) {
 			expect(formatConfigPath(parseConfigPath(text) ?? [])).toBe(text);
 		}

@@ -72,7 +72,9 @@ const assistConfigShape = {
 			name: z.string().optional(),
 			dir: z.string().optional(),
 			ignore: z.array(z.string()).optional(),
-			skip: z.record(z.string(), z.array(z.string())).optional(),
+			skipWeeks: z
+				.array(z.string().regex(/^\d{4}-W\d{2}$/, "Use YYYY-Www"))
+				.optional(),
 		})
 		.optional(),
 	docs: z

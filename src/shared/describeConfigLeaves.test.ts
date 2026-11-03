@@ -134,7 +134,7 @@ describe("describeConfigLeaves", () => {
 
 		expect(leaf(leaves, "branch.prefix").type).toBe("string");
 		expect(leaf(leaves, "sql.connections").type).toBe("array");
-		expect(leaf(leaves, "devlog.skip").type).toBe("record");
+		expect(leaf(leaves, "extension.redirects").type).toBe("record");
 		expect(leaf(leaves, "commit.conventional").type).toBe("boolean");
 		expect(leaf(leaves, "sessions.maxLive").type).toBe("number");
 		expect(leaf(leaves, "harness.engine")).toMatchObject({

@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { z } from "zod";
 import { configEntryNode } from "../../../../../../config/configEntryNode";
 import { describeConfigNode } from "../../../../../../../shared/describeConfigNode";
 import { assistConfigSchema } from "../../../../../../../shared/types";
@@ -9,7 +10,11 @@ import { ConfigNodeEditor } from "./ConfigNodeEditor";
 
 afterEach(cleanup);
 
-const schema = describeConfigNode(assistConfigSchema);
+const schema = describeConfigNode(
+	assistConfigSchema.extend({
+		aliases: z.record(z.string(), z.array(z.string())).optional(),
+	}),
+);
 
 function nodeFor(key: string) {
 	const node = configEntryNode(schema, key);
@@ -187,17 +192,17 @@ describe("ConfigNodeEditor", () => {
 	});
 
 	it("adds, renames and removes record entries", () => {
-		render(<Harness nodeKey="devlog.skip" initial={{ docker: ["ps"] }} />);
+		render(<Harness nodeKey="aliases" initial={{ docker: ["ps"] }} />);
 
-		click("Add devlog.skip entry");
-		type("devlog.skip key 2", "kubectl");
-		type("devlog.skip.kubectl", "get\ndescribe");
+		click("Add aliases entry");
+		type("aliases key 2", "kubectl");
+		type("aliases.kubectl", "get\ndescribe");
 		expect(edited()).toEqual({
 			docker: ["ps"],
 			kubectl: ["get", "describe"],
 		});
 
-		click("Remove devlog.skip entry 1");
+		click("Remove aliases entry 1");
 		expect(edited()).toEqual({ kubectl: ["get", "describe"] });
 	});
 });

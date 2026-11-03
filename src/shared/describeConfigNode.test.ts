@@ -79,9 +79,12 @@ describe("describeConfigNode", () => {
 		});
 	});
 
-	it("describes devlog.skip as a record of string lists", () => {
-		expect(node("devlog.skip").kind).toBe("record");
-		expect(node("devlog.skip.*")).toMatchObject({
+	it("describes a record of string lists", () => {
+		const record = describeConfigNode(
+			z.record(z.string(), z.array(z.string())),
+		);
+		expect(record.kind).toBe("record");
+		expect(findConfigNode(record, parseConfigPath("*") ?? [])).toMatchObject({
 			kind: "scalarList",
 			itemType: "string",
 		});

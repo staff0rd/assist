@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { z } from "zod";
 import type { ConfigNode } from "../../../../../../../../shared/ConfigNode";
 import { describeConfigNode } from "../../../../../../../../shared/describeConfigNode";
 import { findConfigNode } from "../../../../../../../../shared/findConfigNode";
@@ -10,7 +11,11 @@ import { ConfigNodeValue } from "./ConfigNodeValue";
 
 afterEach(cleanup);
 
-const schema = describeConfigNode(assistConfigSchema);
+const schema = describeConfigNode(
+	assistConfigSchema.extend({
+		aliases: z.record(z.string(), z.array(z.string())).optional(),
+	}),
+);
 
 function node(key: string): ConfigNode {
 	const path = parseConfigPath(key);
@@ -44,7 +49,7 @@ describe("ConfigNodeValue", () => {
 	});
 
 	it("renders a record as key/value rows, recursing into the value type", () => {
-		renderNode("devlog.skip", { docker: ["ps", "logs"], kubectl: ["get"] });
+		renderNode("aliases", { docker: ["ps", "logs"], kubectl: ["get"] });
 
 		expect(textsUnder("docker")).toEqual(["ps", "logs"]);
 		expect(textsUnder("kubectl")).toEqual(["get"]);
@@ -71,7 +76,7 @@ describe("ConfigNodeValue", () => {
 		expect(screen.getByText("empty list")).toBeTruthy();
 
 		cleanup();
-		renderNode("devlog.skip", {});
+		renderNode("aliases", {});
 		expect(screen.getByText("no entries")).toBeTruthy();
 	});
 

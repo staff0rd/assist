@@ -17,7 +17,7 @@ describe("findConfigNode", () => {
 		expect(at("sql.connections[3].password")).toBe(
 			at("sql.connections[].password"),
 		);
-		expect(at("devlog.skip.git")).toBe(at("devlog.skip.*"));
+		expect(at("extension.redirects.git")).toBe(at("extension.redirects.*"));
 	});
 
 	it("resolves a field from either variant of a union of objects", () => {
@@ -29,7 +29,7 @@ describe("findConfigNode", () => {
 		expect(at("sql.connections[].nope")).toBeUndefined();
 		expect(at("harness.engine.deeper")).toBeUndefined();
 		expect(at("deny.pattern")).toBeUndefined();
-		expect(at("devlog.skip[0]")).toBeUndefined();
+		expect(at("extension.redirects[0]")).toBeUndefined();
 	});
 
 	it("returns the root for an empty path", () => {

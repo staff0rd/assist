@@ -15,8 +15,10 @@ export function registerDevlogEntryCommands(devlogCommand: Command): void {
 
 	devlogCommand
 		.command("skip <week>")
-		.description("Add an ISO week (YYYY-Www) to the skip list")
-		.action(skip);
+		.description(
+			"Add an ISO week (YYYY-Www) to this repo's repo (db) devlog.skipWeeks",
+		)
+		.action((week: string) => skip(week));
 
 	internalCommand(
 		devlogCommand

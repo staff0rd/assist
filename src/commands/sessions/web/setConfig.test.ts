@@ -392,10 +392,10 @@ describe("setConfig", () => {
 		);
 	});
 
-	it("writes a record of lists", async () => {
+	it("writes a record of strings", async () => {
 		const [status] = await post({
-			key: "devlog.skip",
-			value: { docker: ["ps", "logs"] },
+			key: "extension.redirects",
+			value: { docker: "https://docs.docker.com" },
 			cwd: paths.repo,
 			scope: "project",
 		});
@@ -403,7 +403,7 @@ describe("setConfig", () => {
 		expect(status).toBe(200);
 		expect(readYaml(paths.repoConfig)).toEqual({
 			commit: { push: false },
-			devlog: { skip: { docker: ["ps", "logs"] } },
+			extension: { redirects: { docker: "https://docs.docker.com" } },
 		});
 	});
 

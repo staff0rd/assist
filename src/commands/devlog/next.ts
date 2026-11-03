@@ -1,5 +1,4 @@
 import { isoWeekRange } from "./isoWeek";
-import { loadBlogSkipWeeks } from "./loadBlogSkipWeeks";
 import { loadDevWeeks } from "./loadDevWeeks";
 import { displayNextEntry, logNoCommits } from "./next/displayNextEntry";
 import { fetchCommitsAfter } from "./next/fetchCommitsAfter";
@@ -23,7 +22,7 @@ export function next(options: NextOptions): void {
 	const byWeek = groupCommitsByWeek(fetchCommitsAfter(ignore, afterDate));
 	const week = findTargetWeek(byWeek.keys(), {
 		lastWeek,
-		skip: loadBlogSkipWeeks(repoName),
+		skip: new Set(config.devlog?.skipWeeks),
 		today: localToday(),
 	});
 	if (!week) {

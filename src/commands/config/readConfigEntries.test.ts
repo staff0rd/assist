@@ -84,7 +84,9 @@ describe("readConfigEntries", () => {
 			kind: "objectList",
 			item: { kind: "object" },
 		});
-		expect(entryFor("devlog.skip").node).toMatchObject({ kind: "record" });
+		expect(entryFor("extension.redirects").node).toMatchObject({
+			kind: "record",
+		});
 		expect(entryFor("run").node).toMatchObject({
 			kind: "objectList",
 			item: { kind: "unionOfObjects" },

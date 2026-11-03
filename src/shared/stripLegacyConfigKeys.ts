@@ -12,6 +12,8 @@ const LEGACY_SESSIONS_KEYS = [
 
 const LEGACY_WORKTREE_KEYS = ["watcher", "includeDrafts"];
 
+const LEGACY_DEVLOG_KEYS = ["skip"];
+
 function withoutKeys(value: unknown, keys: string[]): unknown {
 	if (!value || typeof value !== "object") return value;
 	const rest = { ...(value as Record<string, unknown>) };
@@ -48,5 +50,7 @@ export function stripLegacyConfigKeys(
 		stripped.sessions = withoutKeys(stripped.sessions, LEGACY_SESSIONS_KEYS);
 	if (stripped.worktree)
 		stripped.worktree = withoutKeys(stripped.worktree, LEGACY_WORKTREE_KEYS);
+	if (stripped.devlog)
+		stripped.devlog = withoutKeys(stripped.devlog, LEGACY_DEVLOG_KEYS);
 	return stripped;
 }

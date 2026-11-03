@@ -17,8 +17,8 @@ export const devlogConfigHelp: ConfigHelpEntry[] = [
 		note: "globs excluded when grouping commits",
 	},
 	{
-		key: "devlog.skip",
+		key: "devlog.skipWeeks",
 		setter: "assist devlog skip 2026-W33",
-		note: "ISO weeks (YYYY-Www, per repo) that get no dev entry",
+		note: "ISO weeks (YYYY-Www) that get no dev entry; skip writes repo (db)",
 	},
 ];

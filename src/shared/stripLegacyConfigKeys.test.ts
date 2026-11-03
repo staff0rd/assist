@@ -85,6 +85,20 @@ describe("stripLegacyConfigKeys", () => {
 		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
 	});
 
+	it("drops the retired devlog.skip map so old blog configs still parse", () => {
+		const stripped = stripLegacyConfigKeys({
+			devlog: {
+				dir: "~/git/blog/src/content/dev",
+				skip: { assist: ["2026-W33"] },
+			},
+		});
+
+		expect(stripped).toEqual({
+			devlog: { dir: "~/git/blog/src/content/dev" },
+		});
+		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
+	});
+
 	it("drops retired keys inside repos entries so old global configs still parse", () => {
 		const stripped = stripLegacyConfigKeys({
 			repos: {

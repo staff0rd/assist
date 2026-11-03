@@ -1,6 +1,5 @@
 import { isCompletedWeek } from "./isoWeek";
 import { printWeekHeader } from "./list/printWeekHeader";
-import { loadBlogSkipWeeks } from "./loadBlogSkipWeeks";
 import { loadDevEntry } from "./loadDevEntry";
 import { localToday } from "./localToday";
 import { resolveDevDir } from "./resolveDevDir";
@@ -23,7 +22,7 @@ export function list(options: ListOptions): void {
 	const repoName = getRepoName();
 	const devDir = resolveDevDir();
 	const today = localToday();
-	const skip = loadBlogSkipWeeks(repoName);
+	const skip = new Set(config.devlog?.skipWeeks);
 	const byWeek = groupCommitsByWeek(
 		fetchCommitsAfter(ignore, resolveListAfterDate(options, today)),
 	);

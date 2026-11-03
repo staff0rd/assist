@@ -1,43 +1,45 @@
-import { writeFileSync } from "node:fs";
-import { join } from "node:path";
 import chalk from "chalk";
-import { stringify as stringifyYaml } from "yaml";
-import { loadRawYaml } from "../../shared/loadRawYaml";
+import { getDb } from "../../shared/db/getDb";
+import { applySharedRepoConfigSet } from "../config/applySharedRepoConfigSet";
+import { resolveSharedRepoBlock } from "../config/resolveSharedRepoBlock";
 import { isValidWeek } from "./isoWeek";
-import { BLOG_REPO_ROOT } from "./loadBlogSkipWeeks";
-import { getRepoName } from "./shared";
 
-function getBlogConfigPath(): string {
-	return join(BLOG_REPO_ROOT, "assist.yml");
+const SKIP_WEEKS_KEY = "devlog.skipWeeks";
+
+async function loadRepoSkipWeeks(cwd: string): Promise<string[]> {
+	const { block } = await resolveSharedRepoBlock(await getDb(), undefined, cwd);
+	const devlog = block.devlog as { skipWeeks?: string[] } | undefined;
+	return devlog?.skipWeeks ?? [];
 }
 
-export function skip(week: string): void {
+export async function skip(
+	week: string,
+	cwd: string = process.cwd(),
+): Promise<void> {
 	if (!isValidWeek(week)) {
 		console.log(chalk.red("Invalid week. Use YYYY-Www (e.g. 2026-W33)"));
 		process.exit(1);
 	}
 
-	const repoName = getRepoName();
-	const configPath = getBlogConfigPath();
-	const config = loadRawYaml(configPath);
-	const devlog = (config.devlog ?? {}) as Record<string, unknown>;
-	const skip = (devlog.skip ?? {}) as Record<string, unknown>;
-	const skipWeeks = (skip[repoName] as string[]) ?? [];
-
-	if (skipWeeks.includes(week)) {
-		console.log(
-			chalk.yellow(`${week} is already in skip list for ${repoName}`),
-		);
+	const existing = await loadRepoSkipWeeks(cwd);
+	if (existing.includes(week)) {
+		console.log(chalk.yellow(`${week} is already in ${SKIP_WEEKS_KEY}`));
 		return;
 	}
 
-	skipWeeks.push(week);
-	skipWeeks.sort();
-
-	skip[repoName] = skipWeeks;
-	devlog.skip = skip;
-	config.devlog = devlog;
-
-	writeFileSync(configPath, stringifyYaml(config, { lineWidth: 0 }));
-	console.log(chalk.green(`Added ${week} to skip list for ${repoName}`));
+	const result = await applySharedRepoConfigSet(
+		SKIP_WEEKS_KEY,
+		[...new Set([...existing, week])].sort(),
+		undefined,
+		cwd,
+	);
+	if (!result.ok) {
+		console.log(chalk.red(result.errors.join("\n")));
+		process.exit(1);
+	}
+	console.log(
+		chalk.green(
+			`Added ${week} to ${SKIP_WEEKS_KEY} for repos.${result.label} (repo db)`,
+		),
+	);
 }
