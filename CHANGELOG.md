@@ -1,3 +1,11 @@
+## [0.1060.1](https://github.com/staff0rd/assist/compare/v0.1060.0...v0.1060.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* release no-checkout leftover on discard ([ab7cf2b](https://github.com/staff0rd/assist/commit/ab7cf2bb37c580661fff5ea0c43c3fb63f641f43))
+* tidy ios-app and sessions close docs ([9ec6ac4](https://github.com/staff0rd/assist/commit/9ec6ac4d13e4e5b64f0e037c509d4b91711bad03))
+
 # [0.1060.0](https://github.com/staff0rd/assist/compare/v0.1059.2...v0.1060.0) (2026-11-03)
 
 
