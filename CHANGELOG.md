@@ -1,3 +1,10 @@
+## [0.1062.1](https://github.com/staff0rd/assist/compare/v0.1062.0...v0.1062.1) (2026-11-04)
+
+
+### Bug Fixes
+
+* server runs conflict on shared port ([04885df](https://github.com/staff0rd/assist/commit/04885dfb8e9d1e35ff8038b61e0430204c18c9c1))
+
 # [0.1062.0](https://github.com/staff0rd/assist/compare/v0.1061.0...v0.1062.0) (2026-11-04)
 
 
