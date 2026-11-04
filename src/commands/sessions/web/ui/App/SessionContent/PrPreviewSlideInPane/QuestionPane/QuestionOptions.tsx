@@ -13,6 +13,7 @@ export function QuestionOptions({
 	onPeek,
 	onPickOther,
 	onOtherText,
+	onSubmit,
 }: {
 	name: string;
 	question: AskQuestion;
@@ -21,6 +22,7 @@ export function QuestionOptions({
 	onPeek: (label: string) => void;
 	onPickOther: () => void;
 	onOtherText: (text: string) => void;
+	onSubmit: () => void;
 }) {
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
@@ -38,6 +40,7 @@ export function QuestionOptions({
 				choice={choice}
 				onPickOther={onPickOther}
 				onOtherText={onOtherText}
+				onSubmit={onSubmit}
 			/>
 		</Box>
 	);

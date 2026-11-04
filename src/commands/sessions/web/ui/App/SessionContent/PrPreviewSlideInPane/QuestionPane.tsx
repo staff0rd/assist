@@ -25,6 +25,9 @@ export function QuestionPane({
 	const [autoSubmit, setAutoSubmit] = useAskQuestionAutoSubmit(cwd);
 	const submit = (answers: Record<string, string>) =>
 		onDecision("approve", { ...miroDecisionDetails(), answers });
+	const submitIfAnswered = () => {
+		if (state.answered === questions.length) submit(state.answers);
+	};
 	const pick = (index: number, label: string) => {
 		state.pick(index, label);
 		const answers =
@@ -36,7 +39,11 @@ export function QuestionPane({
 		<Box sx={prPreviewPaneSx}>
 			<PrPreviewHeader preview={preview} draft={false} />
 			<Divider />
-			<QuestionList questions={questions} state={{ ...state, pick }} />
+			<QuestionList
+				questions={questions}
+				state={{ ...state, pick }}
+				onSubmit={submitIfAnswered}
+			/>
 			<Divider />
 			<QuestionActions
 				answered={state.answered}

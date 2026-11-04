@@ -1,4 +1,5 @@
 import { TextField } from "@mui/material";
+import type { KeyboardEvent } from "react";
 import type { QuestionOtherProps } from "./QuestionFieldProps";
 import { QuestionOptionRow } from "./QuestionOptionRow";
 
@@ -8,7 +9,15 @@ export function QuestionOtherRow({
 	choice,
 	onPickOther,
 	onOtherText,
-}: QuestionOtherProps) {
+	onSubmit,
+}: QuestionOtherProps & { onSubmit: () => void }) {
+	const onKeyDown = (event: KeyboardEvent) => {
+		if (event.key !== "Enter" || event.shiftKey) return;
+		if (event.nativeEvent.isComposing) return;
+		event.preventDefault();
+		onSubmit();
+	};
+
 	return (
 		<QuestionOptionRow
 			name={name}
@@ -20,10 +29,12 @@ export function QuestionOtherRow({
 			{choice.otherOn && (
 				<TextField
 					size="small"
+					multiline
 					autoFocus
 					placeholder="Type your answer"
 					value={choice.otherText}
 					onChange={(event) => onOtherText(event.target.value)}
+					onKeyDown={onKeyDown}
 					slotProps={{
 						htmlInput: {
 							"aria-label": `Other answer for ${question.header}`,

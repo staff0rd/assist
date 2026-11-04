@@ -7,9 +7,11 @@ import type { useQuestionAnswers } from "./useQuestionAnswers";
 export function QuestionList({
 	questions,
 	state,
+	onSubmit,
 }: {
 	questions: AskQuestion[];
 	state: ReturnType<typeof useQuestionAnswers>;
+	onSubmit: () => void;
 }) {
 	return (
 		<Box
@@ -33,6 +35,7 @@ export function QuestionList({
 						onPick={(label) => state.pick(i, label)}
 						onPickOther={() => state.pickOther(i)}
 						onOtherText={(text) => state.setOtherText(i, text)}
+						onSubmit={onSubmit}
 					/>
 				</Fragment>
 			))}

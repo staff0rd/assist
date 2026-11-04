@@ -184,6 +184,68 @@ describe("QuestionPane", () => {
 		});
 	});
 
+	describe("Enter in Other", () => {
+		function typeOther(header: string, value: string) {
+			const box = screen.getByRole("textbox", {
+				name: `Other answer for ${header}`,
+			});
+			fireEvent.change(box, { target: { value } });
+			return box;
+		}
+
+		it("submits when every question is answered", () => {
+			const onDecision = pane();
+			fireEvent.click(screen.getByRole("radio", { name: /Compact/ }));
+			fireEvent.click(screen.getByRole("checkbox", { name: /Other/ }));
+			const box = typeOther("Notify", "Build broke");
+
+			expect(fireEvent.keyDown(box, { key: "Enter" })).toBe(false);
+			expect(onDecision).toHaveBeenCalledWith(
+				"approve",
+				expect.objectContaining({
+					answers: {
+						"Which layout?": "Compact",
+						"Which events notify?": "Build broke",
+					},
+				}),
+			);
+		});
+
+		it("is swallowed while a question is unanswered", () => {
+			const onDecision = pane();
+			fireEvent.click(screen.getByRole("checkbox", { name: /Other/ }));
+			const box = typeOther("Notify", "Build broke");
+
+			expect(fireEvent.keyDown(box, { key: "Enter" })).toBe(false);
+			expect(onDecision).not.toHaveBeenCalled();
+		});
+
+		it("does not submit during IME composition", () => {
+			const onDecision = pane();
+			fireEvent.click(screen.getByRole("radio", { name: /Compact/ }));
+			fireEvent.click(screen.getByRole("checkbox", { name: /Other/ }));
+			const box = typeOther("Notify", "ビルド");
+
+			fireEvent.keyDown(box, { key: "Enter", isComposing: true });
+			expect(onDecision).not.toHaveBeenCalled();
+		});
+
+		it("leaves Shift+Enter to insert a line break", () => {
+			const onDecision = pane();
+			fireEvent.click(screen.getByRole("radio", { name: /Compact/ }));
+			fireEvent.click(screen.getByRole("checkbox", { name: /Other/ }));
+			const box = typeOther("Notify", "line one");
+
+			expect(box.tagName).toBe("TEXTAREA");
+			expect(fireEvent.keyDown(box, { key: "Enter", shiftKey: true })).toBe(
+				true,
+			);
+			fireEvent.change(box, { target: { value: "line one\nline two" } });
+			expect((box as HTMLTextAreaElement).value).toBe("line one\nline two");
+			expect(onDecision).not.toHaveBeenCalled();
+		});
+	});
+
 	it("rejects on Dismiss", () => {
 		const onDecision = pane();
 		fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));

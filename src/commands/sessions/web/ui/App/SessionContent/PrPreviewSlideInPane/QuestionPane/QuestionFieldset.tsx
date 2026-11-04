@@ -12,7 +12,8 @@ export function QuestionFieldset({
 	onPick,
 	onPickOther,
 	onOtherText,
-}: QuestionFieldProps) {
+	onSubmit,
+}: QuestionFieldProps & { onSubmit: () => void }) {
 	const { peeked, setPeek } = usePeekedOption(question, choice.labels);
 
 	return (
@@ -40,6 +41,7 @@ export function QuestionFieldset({
 					onPeek={setPeek}
 					onPickOther={onPickOther}
 					onOtherText={onOtherText}
+					onSubmit={onSubmit}
 				/>
 				{peeked?.preview && (
 					<QuestionOptionPreview
