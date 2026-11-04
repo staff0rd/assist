@@ -1,3 +1,10 @@
+# [0.1062.0](https://github.com/staff0rd/assist/compare/v0.1061.0...v0.1062.0) (2026-11-04)
+
+
+### Features
+
+* slice rail with per-slice ticks ([cebebd5](https://github.com/staff0rd/assist/commit/cebebd5d16a6be90e87190ce400983587b494fde))
+
 # [0.1061.0](https://github.com/staff0rd/assist/compare/v0.1060.3...v0.1061.0) (2026-11-04)
 
 
