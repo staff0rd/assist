@@ -10,10 +10,13 @@ function scrollToTarget({ number, tests }: HighLevelSliceTarget): void {
 		"(prefers-reduced-motion: reduce)",
 	).matches;
 	const id = `${highLevelSliceDomId(number)}${tests ? "-tests" : ""}`;
-	document.getElementById(id)?.scrollIntoView?.({
-		block: "start",
-		behavior: reduceMotion ? "auto" : "smooth",
-	});
+	const scroll = () =>
+		document.getElementById(id)?.scrollIntoView?.({
+			block: "start",
+			behavior: reduceMotion ? "auto" : "smooth",
+		});
+	if (typeof requestAnimationFrame === "undefined") scroll();
+	else requestAnimationFrame(scroll);
 }
 
 export function useHighLevelSliceSelection(count: number) {

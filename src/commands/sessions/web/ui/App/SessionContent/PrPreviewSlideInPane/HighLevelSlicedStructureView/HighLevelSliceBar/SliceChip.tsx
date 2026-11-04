@@ -41,6 +41,9 @@ export function SliceChip({
 			}
 			sx={{
 				maxWidth: "100%",
+				typography: "body2",
+				height: "auto",
+				py: 0.25,
 				...(muted && !pressed && { color: "text.secondary" }),
 			}}
 		/>
