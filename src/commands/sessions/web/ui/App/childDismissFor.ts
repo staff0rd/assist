@@ -6,10 +6,15 @@ export function childDismissFor(
 	onDismiss: (id: string) => void,
 ): ChildDismiss | undefined {
 	if (nestedSessions.length === 0) return undefined;
+	const onDismissChildren = () => {
+		for (const s of nestedSessions) onDismiss(s.id);
+	};
 	return {
 		childCount: nestedSessions.length,
 		onDismissAll: () => {
-			for (const s of [session, ...nestedSessions]) onDismiss(s.id);
+			onDismiss(session.id);
+			onDismissChildren();
 		},
+		onDismissChildren,
 	};
 }

@@ -57,6 +57,7 @@ export function SessionTopBarControls({
 					onRetry={onRetry}
 					onRestart={onRestart}
 					onDismiss={onDismiss}
+					childDismiss={childDismiss}
 				/>
 			</LabelledActionsContext.Provider>
 			<SessionTopBarDismiss

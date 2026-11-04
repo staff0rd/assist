@@ -33,6 +33,7 @@ export type CardHeaderProps = {
 export type ChildDismiss = {
 	childCount: number;
 	onDismissAll: () => void;
+	onDismissChildren: () => void;
 };
 
 export type SidebarProps = {

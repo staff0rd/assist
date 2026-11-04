@@ -15,7 +15,11 @@ function renderButton(status: "done" | "waiting", withChildren: boolean) {
 			id="54"
 			status={status}
 			onDismiss={onDismiss}
-			childDismiss={withChildren ? { childCount: 2, onDismissAll } : undefined}
+			childDismiss={
+				withChildren
+					? { childCount: 2, onDismissAll, onDismissChildren: vi.fn() }
+					: undefined
+			}
 		/>,
 	);
 	return { onDismiss, onDismissAll };

@@ -1,35 +1,36 @@
 import CheckIcon from "@mui/icons-material/Check";
 import { useState } from "react";
-import { formatItemId } from "../../../../../../backlog/formatItemId";
-import { ConfirmDialog } from "../../../../../../backlog/web/ui/components/ConfirmDialog";
 import { ActionButton } from "../../ActionButton";
 import type { BacklogTarget } from "../../../backlogTarget";
-import type { DismissOptions } from "../../../types";
+import type { ChildDismiss, DismissOptions } from "../../../types";
 import { ErrorSnackbar } from "../../../ErrorSnackbar";
 import type { ShortcutName } from "../../shortcutRegistry";
 import { StopCardActivation } from "../../../StopCardActivation";
 import { shiftSkipsConfirmHandlers } from "./shiftSkipsConfirmHandlers";
+import { MarkDoneConfirmDialog } from "./MarkDoneConfirmDialog";
 import { useMarkItemDone } from "./useMarkItemDone";
 
 export function CompleteButton({
 	target,
 	cwd,
 	onDismiss,
+	childDismiss,
 	shortcut,
 }: {
 	target: BacklogTarget;
 	cwd?: string;
 	onDismiss: (opts?: DismissOptions) => void;
+	childDismiss?: ChildDismiss;
 	shortcut?: ShortcutName;
 }) {
-	const { itemId, phase, totalPhases } = target;
 	const [confirming, setConfirming] = useState(false);
 	const { busy, error, clearError, confirm } = useMarkItemDone(
-		itemId,
+		target.itemId,
 		cwd,
 		() => {
 			setConfirming(false);
 			onDismiss({ closeServerRuns: true });
+			childDismiss?.onDismissChildren();
 		},
 	);
 
@@ -47,17 +48,13 @@ export function CompleteButton({
 				)}
 			/>
 			{confirming && (
-				<StopCardActivation>
-					<ConfirmDialog
-						title={`Mark ${formatItemId(itemId)} done`}
-						message={`${phase ?? 0} of ${totalPhases ?? 0} phases completed. Mark this backlog item as done and end its session?`}
-						confirmLabel="Mark done"
-						autoFocusConfirm
-						busy={busy}
-						onConfirm={confirm}
-						onCancel={() => setConfirming(false)}
-					/>
-				</StopCardActivation>
+				<MarkDoneConfirmDialog
+					target={target}
+					childDismiss={childDismiss}
+					busy={busy}
+					onConfirm={confirm}
+					onCancel={() => setConfirming(false)}
+				/>
 			)}
 			<StopCardActivation>
 				<ErrorSnackbar error={error} onClose={clearError} />
