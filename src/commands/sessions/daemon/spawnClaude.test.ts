@@ -10,8 +10,8 @@ vi.mock("./ensureHooksSettings", () => ({
 	ensureHooksSettings: vi.fn(() => "/hooks.json"),
 }));
 
-vi.mock("./readDesignSystemPrompt", () => ({
-	readDesignSystemPrompt: vi.fn(() => "DESIGN PROMPT"),
+vi.mock("./designSystemPromptPath", () => ({
+	designSystemPromptPath: vi.fn(() => "/design-system-prompt.md"),
 }));
 
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
@@ -103,8 +103,8 @@ describe("spawnClaude", () => {
 				"claude",
 				"--settings",
 				"/hooks.json",
-				"--append-system-prompt",
-				"DESIGN PROMPT",
+				"--append-system-prompt-file",
+				"/design-system-prompt.md",
 				"--permission-mode",
 				"auto",
 				"make it pop",
@@ -122,8 +122,8 @@ describe("spawnClaude", () => {
 				"claude",
 				"--settings",
 				"/hooks.json",
-				"--append-system-prompt",
-				"DESIGN PROMPT",
+				"--append-system-prompt-file",
+				"/design-system-prompt.md",
 				"--permission-mode",
 				"auto",
 			],

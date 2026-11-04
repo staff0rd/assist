@@ -1,4 +1,4 @@
-import { readDesignSystemPrompt } from "./readDesignSystemPrompt";
+import { designSystemPromptPath } from "./designSystemPromptPath";
 import { ensureHooksSettings } from "./ensureHooksSettings";
 import { spawnPty } from "./spawnPty";
 
@@ -19,7 +19,7 @@ export function spawnClaude(opts: SpawnOpts = {}) {
 function buildArgs(opts: SpawnOpts): string[] {
 	const base = ["claude", "--settings", ensureHooksSettings()];
 	if (opts.design) {
-		base.push("--append-system-prompt", readDesignSystemPrompt());
+		base.push("--append-system-prompt-file", designSystemPromptPath());
 		base.push("--permission-mode", "auto");
 	} else if (opts.auto) {
 		base.push("--permission-mode", "auto");

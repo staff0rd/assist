@@ -8,8 +8,8 @@ vi.mock("./ensureHooksSettings", () => ({
 	ensureHooksSettings: vi.fn(() => "/hooks.json"),
 }));
 
-vi.mock("./readDesignSystemPrompt", () => ({
-	readDesignSystemPrompt: vi.fn(() => "DESIGN PROMPT"),
+vi.mock("./designSystemPromptPath", () => ({
+	designSystemPromptPath: vi.fn(() => "/design-system-prompt.md"),
 }));
 
 const spawnPtyMock = vi.mocked(spawnPty);
@@ -62,8 +62,8 @@ describe("createSession", () => {
 
 		expect(spawnedArgs()).toEqual(
 			expect.arrayContaining([
-				"--append-system-prompt",
-				"DESIGN PROMPT",
+				"--append-system-prompt-file",
+				"/design-system-prompt.md",
 				"--permission-mode",
 				"auto",
 			]),
