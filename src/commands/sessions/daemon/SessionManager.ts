@@ -26,6 +26,7 @@ import type { RestartResult } from "./restartManagedSession";
 import { releaseClient } from "./releaseClient";
 import { restoreAllSessions } from "./restoreAllSessions";
 import type { ServerConflictInfo } from "./serverConflictInfo";
+import type { ServerRunMeta } from "./serverRunMeta";
 import { runRetry } from "./runRetry";
 import { liveServerRun, stopServerSession } from "./liveServerRun";
 import { setSessionTitle } from "./setSessionTitle";
@@ -134,8 +135,8 @@ export class SessionManager {
 		return this.spawnWith((id) => createRunSession(id, request), context);
 	}
 
-	liveServerRun(origin: string, group: string, excludeId?: string) {
-		return liveServerRun(this.sessions, origin, group, excludeId);
+	liveServerRun(meta: ServerRunMeta, excludeId?: string) {
+		return liveServerRun(this.sessions, meta, excludeId);
 	}
 
 	spawnAssist(

@@ -6,7 +6,7 @@ export function latestServerRun(
 	origin: string,
 	group: string,
 ): Session | undefined {
-	const live = liveServerRun(sessions, origin, group);
+	const live = liveServerRun(sessions, { server: true, origin, group });
 	if (live) return live;
 	let latest: Session | undefined;
 	for (const s of sessions.values()) {

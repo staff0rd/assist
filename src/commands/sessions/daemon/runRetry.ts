@@ -32,13 +32,8 @@ function findRetryConflict(
 	dismiss: (id: string) => void,
 ): ServerConflictInfo | null {
 	const meta = serverRunMeta(session.runName ?? "", session.cwd);
-	if (meta.server && meta.origin && meta.group) {
-		const existing = liveServerRun(
-			sessions,
-			meta.origin,
-			meta.group,
-			session.id,
-		);
+	if (meta.server) {
+		const existing = liveServerRun(sessions, meta, session.id);
 		if (existing && !replace) return serverConflictInfo(existing);
 		if (existing) dismiss(existing.id);
 	}
