@@ -1,3 +1,10 @@
+## [0.1060.3](https://github.com/staff0rd/assist/compare/v0.1060.2...v0.1060.3) (2026-11-04)
+
+
+### Bug Fixes
+
+* pass design system prompt via file ([e0c617e](https://github.com/staff0rd/assist/commit/e0c617e6a5d479ac53337fdc62ded5b0f2d2d0da))
+
 ## [0.1060.2](https://github.com/staff0rd/assist/compare/v0.1060.1...v0.1060.2) (2026-11-04)
 
 
