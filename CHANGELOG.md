@@ -1,3 +1,15 @@
+# [0.1061.0](https://github.com/staff0rd/assist/compare/v0.1060.3...v0.1061.0) (2026-11-04)
+
+
+### Bug Fixes
+
+* top bar Done closes nested sessions ([c354355](https://github.com/staff0rd/assist/commit/c35435554489b8324a28511b59c21e23c7d7f159))
+
+
+### Features
+
+* Enter submits from Other box ([3bfe85c](https://github.com/staff0rd/assist/commit/3bfe85c044730fb125eb3ad31844286c641bcaa0))
+
 ## [0.1060.3](https://github.com/staff0rd/assist/compare/v0.1060.2...v0.1060.3) (2026-11-04)
 
 
