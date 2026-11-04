@@ -2,9 +2,7 @@ import { Box, Divider } from "@mui/material";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
 import { CommentSentSnackbar } from "../../CommentSentSnackbar";
 import { HighLevelReviewBody } from "./HighLevelReviewPane/HighLevelReviewBody";
-import { HighLevelReviewActions } from "./HighLevelReviewPane/HighLevelReviewActions";
-import { HighLevelReviewQueue } from "./HighLevelReviewPane/HighLevelReviewQueue";
-import { highLevelReviewHandlers } from "./HighLevelReviewPane/highLevelReviewHandlers";
+import { HighLevelReviewFooter } from "./HighLevelReviewPane/HighLevelReviewFooter";
 import type { PrDecisionDetails } from "../../../PrDecisionDetails";
 import { PreviewMetadataList } from "./PreviewMetadataList";
 import { PrPreviewHeader } from "../PrPreviewHeader";
@@ -27,8 +25,7 @@ export function HighLevelReviewPane({
 		details: PrDecisionDetails,
 	) => void;
 }) {
-	const { payload, checklist, queue, details, counts, sentTo, clearSent } =
-		useHighLevelReviewPane(preview, session, sendInput);
+	const pane = useHighLevelReviewPane(preview, session, sendInput);
 
 	return (
 		<Box sx={prPreviewPaneSx}>
@@ -36,28 +33,23 @@ export function HighLevelReviewPane({
 			<PreviewMetadataList items={preview.metadata ?? []} />
 			<Divider />
 			<HighLevelReviewBody
-				payload={payload}
-				checklist={checklist}
-				details={details}
-				counts={counts}
+				payload={pane.payload}
+				checklist={pane.checklist}
+				details={pane.details}
+				counts={pane.counts}
+				sliced={pane.sliced}
+				nav={pane.nav}
+				comments={pane.diffComments}
 			/>
 			<Divider />
-			<HighLevelReviewQueue queued={queue.queued} onRemove={queue.onRemove} />
-			<HighLevelReviewActions
-				failed={
-					payload.checks.filter((check) => check.status === "fail").length
-				}
-				outstanding={checklist.outstanding}
-				{...highLevelReviewHandlers(
-					checklist.checklist,
-					queue.queued,
-					(decision, decisionDetails) => {
-						clearPersistedHighLevelProgress(preview.requestId);
-						onDecision(decision, decisionDetails);
-					},
-				)}
+			<HighLevelReviewFooter
+				pane={pane}
+				onDecision={(decision, details) => {
+					clearPersistedHighLevelProgress(preview.requestId);
+					onDecision(decision, details);
+				}}
 			/>
-			<CommentSentSnackbar sessionName={sentTo} onClose={clearSent} />
+			<CommentSentSnackbar sessionName={pane.sentTo} onClose={pane.clearSent} />
 		</Box>
 	);
 }

@@ -52,7 +52,10 @@ export type HighLevelFile = {
 	truncated?: boolean;
 	split?: HighLevelSliceSplit;
 	critical?: boolean;
+	slices?: HighLevelSliceRef[];
 };
+
+export type HighLevelSliceRef = { number: number; title: string };
 
 export type HighLevelTreeFile = HighLevelFile & {
 	kind: "file";
@@ -124,6 +127,8 @@ export type HighLevelReviewItem = {
 	reason: string;
 	ticked: boolean;
 	comment?: string;
+	slice?: number;
+	sliceTitle?: string;
 };
 
 export type HighLevelReviewProgress = {

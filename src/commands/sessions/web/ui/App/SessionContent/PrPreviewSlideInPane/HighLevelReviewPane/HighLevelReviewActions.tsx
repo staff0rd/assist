@@ -1,22 +1,12 @@
 import { Button, Stack, Typography } from "@mui/material";
-
-function prompt(failed: number, outstanding: number): string {
-	const parts = [
-		...(failed > 0
-			? [`${failed} deterministic check${failed === 1 ? "" : "s"} failing`]
-			: []),
-		...(outstanding > 0
-			? [
-					`${outstanding} manual item${outstanding === 1 ? "" : "s"} left to tick`,
-				]
-			: []),
-	];
-	return parts.length > 0 ? parts.join(" · ") : "Every item is accounted for";
-}
+import { HighLevelNextSliceButton } from "./HighLevelReviewActions/HighLevelNextSliceButton";
+import { highLevelReviewPrompt } from "./HighLevelReviewActions/highLevelReviewPrompt";
 
 export function HighLevelReviewActions({
 	failed,
 	outstanding,
+	next,
+	approveDisabled = false,
 	onApprove,
 	onComment,
 	onRequestChanges,
@@ -24,6 +14,8 @@ export function HighLevelReviewActions({
 }: {
 	failed: number;
 	outstanding: number;
+	next?: { onNext: () => void; disabled: boolean } | undefined;
+	approveDisabled?: boolean;
 	onApprove: () => void;
 	onComment: () => void;
 	onRequestChanges: () => void;
@@ -33,11 +25,18 @@ export function HighLevelReviewActions({
 		<Stack
 			direction="row"
 			spacing={1}
-			sx={{ p: 2, alignItems: "center", justifyContent: "flex-end" }}
+			sx={{
+				p: 2,
+				alignItems: "center",
+				justifyContent: "flex-end",
+				flexWrap: "wrap",
+				rowGap: 1,
+			}}
 		>
 			<Typography variant="body2" sx={{ flex: 1, color: "text.secondary" }}>
-				{prompt(failed, outstanding)}
+				{highLevelReviewPrompt(failed, outstanding)}
 			</Typography>
+			{next && <HighLevelNextSliceButton {...next} />}
 			<Button variant="outlined" onClick={onClose}>
 				Close
 			</Button>
@@ -47,7 +46,12 @@ export function HighLevelReviewActions({
 			<Button variant="outlined" onClick={onComment}>
 				Comment
 			</Button>
-			<Button color="success" variant="contained" onClick={onApprove}>
+			<Button
+				color="success"
+				variant="contained"
+				onClick={onApprove}
+				disabled={approveDisabled}
+			>
 				Approve
 			</Button>
 		</Stack>

@@ -10,6 +10,7 @@ export type PreviewChecklistItem = {
 	id: string;
 	ticked: boolean;
 	comment?: string;
+	slice?: number;
 };
 
 export type PreviewReviewEvent = "APPROVE" | "COMMENT" | "REQUEST_CHANGES";

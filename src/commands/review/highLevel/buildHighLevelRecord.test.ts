@@ -124,6 +124,50 @@ describe("buildHighLevelRecord", () => {
 		);
 	});
 
+	it("keys the per-slice checks by slice when the review is sliced", () => {
+		const slice = (title: string) => ({
+			title,
+			summary: "",
+			hunks: [],
+			additions: 0,
+			deletions: 0,
+		});
+		const record = buildHighLevelRecord(
+			{ ...subject, slices: [slice("Add gate"), slice("Move helpers")] },
+			decision({
+				checklist: [
+					{ id: "description-what-why", ticked: true },
+					{ id: "structure-sensible", ticked: true, slice: 2, comment: "ok" },
+				],
+			}),
+		);
+
+		expect(
+			record.items.map(({ id, ticked, comment, slice, sliceTitle }) => ({
+				id,
+				ticked,
+				comment,
+				slice,
+				sliceTitle,
+			})),
+		).toEqual([
+			{ id: "description-what-why", ticked: true },
+			{
+				id: "structure-sensible",
+				ticked: false,
+				slice: 1,
+				sliceTitle: "Add gate",
+			},
+			{
+				id: "structure-sensible",
+				ticked: true,
+				comment: "ok",
+				slice: 2,
+				sliceTitle: "Move helpers",
+			},
+		]);
+	});
+
 	it("falls back to the evaluated status when the overlay sent no state", () => {
 		const record = buildHighLevelRecord(subject, decision());
 

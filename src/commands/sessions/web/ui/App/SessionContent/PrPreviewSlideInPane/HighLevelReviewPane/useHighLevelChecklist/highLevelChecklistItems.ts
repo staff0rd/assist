@@ -1,17 +1,18 @@
-import type { HighLevelCheckResult } from "../../../../../../../../review/highLevel/types";
 import type { PreviewChecklistItem } from "../../../../../../../shared/PreviewDecision";
+import type { HighLevelChecklistTarget } from "./highLevelChecklistTargets";
 import type { HighLevelItemState } from "./initialHighLevelState";
 
 export function highLevelChecklistItems(
-	checks: HighLevelCheckResult[],
+	targets: HighLevelChecklistTarget[],
 	state: Record<string, HighLevelItemState>,
 ): PreviewChecklistItem[] {
-	return checks.map((check) => {
-		const comment = state[check.id]?.comment.trim() ?? "";
+	return targets.map(({ key, check, slice, locked }) => {
+		const comment = state[key]?.comment.trim() ?? "";
 		return {
 			id: check.id,
-			ticked: state[check.id]?.ticked === true,
+			ticked: locked || state[key]?.ticked === true,
 			...(comment ? { comment } : {}),
+			...(slice === undefined ? {} : { slice }),
 		};
 	});
 }

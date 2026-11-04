@@ -22,6 +22,6 @@ export function buildHighLevelRecord(
 		headSha,
 		verdict: VERDICTS[highLevelReviewEvent(decision)],
 		reviewedAt: new Date().toISOString(),
-		...highLevelProgress(checks, decision),
+		...highLevelProgress(checks, decision, subject.slices),
 	};
 }

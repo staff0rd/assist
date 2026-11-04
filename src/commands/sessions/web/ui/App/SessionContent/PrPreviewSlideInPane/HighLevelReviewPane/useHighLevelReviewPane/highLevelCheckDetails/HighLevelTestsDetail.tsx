@@ -1,7 +1,6 @@
 import { highLevelTestCount } from "../../../../../../../../../review/highLevel/highLevelTestCount";
 import type { HighLevelPreviewPayload } from "../../../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../../../HighLevelDiffComments";
-import { HighLevelSliceTestLinks } from "../../../HighLevelSliceTestLinks";
 import { HighLevelTestsView } from "../../../HighLevelTestsView";
 import { HighLevelCheckDetail } from "./HighLevelCheckDetail";
 
@@ -18,19 +17,12 @@ export function HighLevelTestsDetail({
 		<HighLevelCheckDetail
 			label={`Changed tests (${highLevelTestCount(payload.tests)})`}
 		>
-			{payload.slices ? (
-				<HighLevelSliceTestLinks
-					slices={payload.slices}
-					tests={payload.tests}
-				/>
-			) : (
-				<HighLevelTestsView
-					files={payload.tests}
-					testPaths={payload.testPaths}
-					subject={subject}
-					comments={comments}
-				/>
-			)}
+			<HighLevelTestsView
+				files={payload.tests}
+				testPaths={payload.testPaths}
+				subject={subject}
+				comments={comments}
+			/>
 		</HighLevelCheckDetail>
 	);
 }

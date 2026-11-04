@@ -14,6 +14,6 @@ export function buildHighLevelDraft(
 		headRef,
 		headSha,
 		savedAt: new Date().toISOString(),
-		...highLevelProgress(checks, decision),
+		...highLevelProgress(checks, decision, subject.slices),
 	};
 }

@@ -1,20 +1,14 @@
 const EVENT = "assist:high-level-slice-select";
 
-export type HighLevelSliceTarget = { number: number; tests: boolean };
-
-export function selectHighLevelSlice(number: number, tests = false): void {
-	globalThis.dispatchEvent(
-		new CustomEvent<HighLevelSliceTarget>(EVENT, {
-			detail: { number, tests },
-		}),
-	);
+export function selectHighLevelSlice(number: number): void {
+	globalThis.dispatchEvent(new CustomEvent<number>(EVENT, { detail: number }));
 }
 
 export function onSelectHighLevelSlice(
-	listener: (target: HighLevelSliceTarget) => void,
+	listener: (number: number) => void,
 ): () => void {
 	const handle = (event: Event) =>
-		listener((event as CustomEvent<HighLevelSliceTarget>).detail);
+		listener((event as CustomEvent<number>).detail);
 	globalThis.addEventListener(EVENT, handle);
 	return () => globalThis.removeEventListener(EVENT, handle);
 }

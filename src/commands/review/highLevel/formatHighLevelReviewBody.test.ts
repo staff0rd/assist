@@ -79,6 +79,39 @@ describe("formatHighLevelReviewBody", () => {
 		);
 	});
 
+	it("lists each slice's comments under that slice, after the PR-wide ones", () => {
+		const body = formatHighLevelReviewBody([
+			item({ title: "Backend PR", comment: "None needed" }),
+			item({
+				title: "Structure",
+				comment: "Split this",
+				slice: 2,
+				sliceTitle: "Move helpers",
+			}),
+			item({ title: "Tests", slice: 1, sliceTitle: "Add gate" }),
+			item({
+				title: "Tests",
+				comment: "Thin",
+				slice: 1,
+				sliceTitle: "Add gate",
+			}),
+		]);
+
+		expect(body).toBe(
+			[
+				"- 💬 **Backend PR** — None needed",
+				"",
+				"**Slice 2: Move helpers**",
+				"",
+				"- 💬 **Structure** — Split this",
+				"",
+				"**Slice 1: Add gate**",
+				"",
+				"- 💬 **Tests** — Thin",
+			].join("\n"),
+		);
+	});
+
 	it("lists each queued comment with its file:lines after the checklist comments", () => {
 		const body = formatHighLevelReviewBody(
 			[item({ title: "Tests", comment: "Mostly fine" })],

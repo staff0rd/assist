@@ -10,6 +10,7 @@ import { HighLevelTreeFileLink } from "./HighLevelTreeFileRow/HighLevelTreeFileL
 import { HighLevelTreeFileChevron } from "./HighLevelTreeFileRow/HighLevelTreeFileChevron";
 import { HighLevelTreeFileLabel } from "./HighLevelTreeFileRow/HighLevelTreeFileLabel";
 import { HighLevelTreeFileTags } from "./HighLevelTreeFileRow/HighLevelTreeFileTags";
+import { HighLevelTreeSliceTags } from "./HighLevelTreeFileRow/HighLevelTreeSliceTags";
 
 export function HighLevelTreeFileRow({
 	file,
@@ -54,6 +55,7 @@ export function HighLevelTreeFileRow({
 					inline
 				/>
 			</Box>
+			<HighLevelTreeSliceTags slices={file.slices} />
 			<HighLevelTreeFileLink file={file} />
 		</Box>
 	);

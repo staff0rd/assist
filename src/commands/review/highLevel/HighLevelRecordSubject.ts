@@ -1,4 +1,4 @@
-import type { HighLevelCheckResult } from "./types";
+import type { HighLevelCheckResult, HighLevelSlice } from "./types";
 
 export type HighLevelRecordSubject = {
 	repo: string;
@@ -6,4 +6,5 @@ export type HighLevelRecordSubject = {
 	headRef: string;
 	headSha: string;
 	checks: HighLevelCheckResult[];
+	slices?: HighLevelSlice[];
 };

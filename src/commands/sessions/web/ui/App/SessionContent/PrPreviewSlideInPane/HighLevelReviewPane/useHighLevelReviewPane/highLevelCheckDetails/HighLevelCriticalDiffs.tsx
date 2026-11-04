@@ -1,7 +1,4 @@
-import type {
-	HighLevelCriticalDiff,
-	HighLevelSlice,
-} from "../../../../../../../../../review/highLevel/types";
+import type { HighLevelCriticalDiff } from "../../../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../../../HighLevelDiffComments";
 import { HighLevelDiffNote } from "../../../HighLevelDiffNote";
 import { HighLevelCriticalDiffList } from "./HighLevelCriticalDiffs/HighLevelCriticalDiffList";
@@ -14,7 +11,6 @@ export function HighLevelCriticalDiffs({
 	criticalPaths: string[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
-	slices?: HighLevelSlice[] | undefined;
 }) {
 	if (criticalPaths.length === 0)
 		return (

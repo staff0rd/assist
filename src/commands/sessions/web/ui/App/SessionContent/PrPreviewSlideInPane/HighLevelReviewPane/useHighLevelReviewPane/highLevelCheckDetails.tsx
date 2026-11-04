@@ -27,7 +27,6 @@ export function highLevelCheckDetails(
 				<HighLevelCriticalDiffs
 					diffs={payload.criticalDiffs}
 					criticalPaths={payload.criticalPaths}
-					slices={payload.slices}
 					subject={subject}
 					comments={comments}
 				/>

@@ -1,12 +1,10 @@
 import { pathOfHunkRef } from "./pathOfHunkRef";
-import type { HighLevelSlice } from "./types";
-
-type SliceRef = { number: number; title: string };
+import type { HighLevelSlice, HighLevelSliceRef } from "./types";
 
 export function highLevelSlicesByPath(
 	slices: HighLevelSlice[],
-): Map<string, SliceRef[]> {
-	const byPath = new Map<string, SliceRef[]>();
+): Map<string, HighLevelSliceRef[]> {
+	const byPath = new Map<string, HighLevelSliceRef[]>();
 	slices.forEach((slice, index) => {
 		const ref = { number: index + 1, title: slice.title };
 		for (const path of new Set(slice.hunks.map(pathOfHunkRef)))
