@@ -1,3 +1,10 @@
+## [0.1060.2](https://github.com/staff0rd/assist/compare/v0.1060.1...v0.1060.2) (2026-11-04)
+
+
+### Bug Fixes
+
+* slice jump lands on its header ([df250fd](https://github.com/staff0rd/assist/commit/df250fdac73f0f041a0cb2c86629df9aa5dd9b17))
+
 ## [0.1060.1](https://github.com/staff0rd/assist/compare/v0.1060.0...v0.1060.1) (2026-11-03)
 
 
