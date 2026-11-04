@@ -2,6 +2,7 @@ import { type SessionClient, sendTo } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { logPrDecision } from "./logPrDecision";
+import { prDecisionMessage } from "./prDecisionMessage";
 
 type Msg = Record<string, unknown>;
 
@@ -30,26 +31,7 @@ export function decidePrPreview(
 	}
 	logPrDecision(id, requestId, d);
 	const waiter = waiters.get(id);
-	if (waiter)
-		sendTo(waiter, {
-			type: "pr-decision",
-			requestId,
-			decision: d.decision,
-			reason: d.reason,
-			comments: d.comments,
-			screenshots: d.screenshots,
-			body: d.body,
-			reviewAfter: d.reviewAfter,
-			announceAfter: d.announceAfter,
-			draft: d.draft,
-			autoMerge: d.autoMerge,
-			autostart: d.autostart,
-			checklist: d.checklist,
-			reviewEvent: d.reviewEvent,
-			reviewComments: d.reviewComments,
-			dismissed: d.dismissed,
-			answers: d.answers,
-		});
+	if (waiter) sendTo(waiter, prDecisionMessage(requestId, d));
 	waiters.delete(id);
 	session.pendingPrPreview = undefined;
 	notify();

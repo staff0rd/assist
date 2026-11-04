@@ -1,6 +1,7 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { HighLevelNextSliceButton } from "./HighLevelReviewActions/HighLevelNextSliceButton";
 import { highLevelReviewPrompt } from "./HighLevelReviewActions/highLevelReviewPrompt";
+import { HighLevelStartFreshButton } from "./HighLevelReviewActions/HighLevelStartFreshButton";
 
 export function HighLevelReviewActions({
 	failed,
@@ -11,6 +12,7 @@ export function HighLevelReviewActions({
 	onComment,
 	onRequestChanges,
 	onClose,
+	onRestart,
 }: {
 	failed: number;
 	outstanding: number;
@@ -20,6 +22,7 @@ export function HighLevelReviewActions({
 	onComment: () => void;
 	onRequestChanges: () => void;
 	onClose: () => void;
+	onRestart: () => void;
 }) {
 	return (
 		<Stack
@@ -36,6 +39,10 @@ export function HighLevelReviewActions({
 			<Typography variant="body2" sx={{ flex: 1, color: "text.secondary" }}>
 				{highLevelReviewPrompt(failed, outstanding)}
 			</Typography>
+			<HighLevelStartFreshButton
+				sliced={next !== undefined}
+				onRestart={onRestart}
+			/>
 			{next && <HighLevelNextSliceButton {...next} />}
 			<Button variant="outlined" onClick={onClose}>
 				Close

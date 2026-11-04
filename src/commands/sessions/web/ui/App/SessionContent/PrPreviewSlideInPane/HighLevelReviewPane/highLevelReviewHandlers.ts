@@ -24,5 +24,7 @@ export function highLevelReviewHandlers(
 		onComment: () => submit("approve", "COMMENT"),
 		onRequestChanges: () => submit("reject", "REQUEST_CHANGES"),
 		onClose: () => onDecision("reject", { ...details(), dismissed: true }),
+		onRestart: () =>
+			onDecision("reject", { ...details(), dismissed: true, restart: true }),
 	};
 }

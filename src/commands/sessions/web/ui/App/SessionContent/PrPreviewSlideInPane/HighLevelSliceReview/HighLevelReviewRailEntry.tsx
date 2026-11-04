@@ -42,15 +42,13 @@ export function HighLevelReviewRailEntry({
 			<Box sx={{ lineHeight: "20px" }}>
 				<HighLevelTickDots ticks={ticks} />
 			</Box>
-			{view && (
-				<Box sx={{ gridColumn: "2 / 4" }}>
-					<HighLevelLineCounts
-						additions={view.slice.additions}
-						deletions={view.slice.deletions}
-						inline
-					/>
-				</Box>
-			)}
+			<Box sx={{ gridColumn: "2 / 4" }}>
+				<HighLevelLineCounts
+					additions={entry.additions}
+					deletions={entry.deletions}
+					inline
+				/>
+			</Box>
 		</ButtonBase>
 	);
 }

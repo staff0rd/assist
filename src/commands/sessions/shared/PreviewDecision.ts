@@ -42,6 +42,7 @@ export type PreviewDecisionFields = {
 	reviewEvent?: PreviewReviewEvent;
 	reviewComments?: PreviewReviewComment[];
 	dismissed?: boolean;
+	restart?: boolean;
 	answers?: Record<string, string>;
 };
 

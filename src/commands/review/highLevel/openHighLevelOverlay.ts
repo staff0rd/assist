@@ -3,6 +3,7 @@ import { awaitPreviewApproval } from "../../sessions/shared/awaitPreviewApproval
 import { buildHighLevelDraft } from "./buildHighLevelDraft";
 import { buildHighLevelRecord } from "./buildHighLevelRecord";
 import { clearHighLevelDraft } from "./clearHighLevelDraft";
+import { discardHighLevelProgress } from "./discardHighLevelProgress";
 import { saveHighLevelDraft } from "./saveHighLevelDraft";
 import { highLevelPreviewMetadata } from "./highLevelPreviewMetadata";
 import { highLevelPreviewPayload } from "./highLevelPreviewPayload";
@@ -14,6 +15,7 @@ import type { HighLevelReviewRecord } from "./types";
 export async function openHighLevelOverlay(
 	sessionId: string,
 	subject: HighLevelOverlaySubject,
+	onRestart: () => Promise<void> = async () => {},
 ): Promise<HighLevelReviewRecord | undefined> {
 	const decision = await awaitPreviewApproval(
 		"High-level review",
@@ -28,6 +30,11 @@ export async function openHighLevelOverlay(
 		},
 		{ rejectIsOutcome: true },
 	);
+	if (decision.restart) {
+		discardHighLevelProgress(subject.repo, subject.headRef, subject.headSha);
+		await onRestart();
+		return undefined;
+	}
 	if (decision.dismissed) {
 		saveHighLevelDraft(buildHighLevelDraft(subject, decision));
 		console.log(

@@ -47,5 +47,7 @@ export async function runHighLevelReview(
 	const subject = gatherSubject(resolvePrNumber(number), force, slicing);
 	announceSavedReview(subject, force);
 	if (!session) return printHighLevelChecklist(subject);
-	await openHighLevelOverlay(session, subject);
+	await openHighLevelOverlay(session, subject, () =>
+		runHighLevelReview(number, { force: true }),
+	);
 }

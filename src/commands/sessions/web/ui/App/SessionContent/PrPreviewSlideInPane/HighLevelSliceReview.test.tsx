@@ -129,6 +129,14 @@ describe("HighLevelSliceReview", () => {
 		expect(screen.getByText("No merge conflicts")).toBeTruthy();
 	});
 
+	it("shows the PR's total +/- on the Overview entry and header", () => {
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+
+		expect(within(railEntry(/Overview/)).getByText("+2")).toBeTruthy();
+		expect(screen.getByText(/^2 slices ·/)).toBeTruthy();
+		expect(screen.getByText(/2 modified · \+2 −2/)).toBeTruthy();
+	});
+
 	it("disables Critical diffs for a slice with no critical file", () => {
 		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
 
@@ -204,6 +212,24 @@ describe("HighLevelSliceReview", () => {
 			slice: 2,
 			ticked: true,
 		});
+	});
+
+	it("starts fresh only after confirming, sending a restart decision", () => {
+		const onDecision = vi.fn();
+		render(<HighLevelReviewPane preview={preview()} onDecision={onDecision} />);
+
+		fireEvent.click(screen.getByRole("button", { name: "Start fresh" }));
+		expect(onDecision).not.toHaveBeenCalled();
+		fireEvent.click(
+			within(screen.getByRole("dialog")).getByRole("button", {
+				name: "Start fresh",
+			}),
+		);
+
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			expect.objectContaining({ dismissed: true, restart: true }),
+		);
 	});
 
 	it("restores a slice's tick and comment from the saved draft", () => {

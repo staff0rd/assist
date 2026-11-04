@@ -6,6 +6,8 @@ import type { HighLevelSliceView } from "./highLevelSliceViews";
 
 export type HighLevelReviewEntry = {
 	view?: HighLevelSliceView;
+	additions: number;
+	deletions: number;
 	areas: HighLevelArea[];
 	disabled: ReadonlySet<HighLevelArea>;
 	counts: Partial<Record<HighLevelArea, number>>;
@@ -21,6 +23,8 @@ function overview(payload: HighLevelPreviewPayload): HighLevelReviewEntry {
 		...(has("backend") ? (["backend"] as const) : []),
 	];
 	return {
+		additions: payload.structure.additions,
+		deletions: payload.structure.deletions,
 		areas,
 		disabled: new Set(),
 		counts: {
@@ -35,6 +39,8 @@ function overview(payload: HighLevelPreviewPayload): HighLevelReviewEntry {
 function sliceEntry(view: HighLevelSliceView): HighLevelReviewEntry {
 	return {
 		view,
+		additions: view.slice.additions,
+		deletions: view.slice.deletions,
 		areas: ["structure", "tests", "critical"],
 		disabled: new Set(view.critical.length === 0 ? ["critical"] : []),
 		counts: {

@@ -32,7 +32,11 @@ export function HighLevelReviewMain({
 		>
 			{entry && (
 				<>
-					<HighLevelEntryHeader entry={entry} />
+					<HighLevelEntryHeader
+						entry={entry}
+						structure={payload.structure}
+						sliceCount={payload.slices?.length ?? 0}
+					/>
 					<HighLevelAreaTabs
 						entry={entry}
 						area={area}

@@ -41,6 +41,13 @@ vi.mock("./clearHighLevelDraft", () => ({
 	clearHighLevelDraft: (...args: unknown[]) => mockClearHighLevelDraft(...args),
 }));
 
+const mockDiscardHighLevelProgress = vi.fn();
+
+vi.mock("./discardHighLevelProgress", () => ({
+	discardHighLevelProgress: (...args: unknown[]) =>
+		mockDiscardHighLevelProgress(...args),
+}));
+
 const mockFetchHighLevelFiles = vi.fn<() => HighLevelFile[]>();
 
 vi.mock("./fetchHighLevelFiles", () => ({
@@ -182,6 +189,29 @@ describe("openHighLevelOverlay", () => {
 				reviewComments: [queued],
 			}),
 		);
+	});
+
+	it("discards the head's progress and asks to restart when the reviewer starts fresh", async () => {
+		mockAwaitPreviewApproval.mockResolvedValue({
+			...queuedDecision("reject", undefined),
+			dismissed: true,
+			restart: true,
+		});
+
+		const onRestart = vi.fn(async () => {});
+
+		const record = await openHighLevelOverlay("s1", subject, onRestart);
+
+		expect(record).toBeUndefined();
+		expect(onRestart).toHaveBeenCalledOnce();
+		expect(mockDiscardHighLevelProgress).toHaveBeenCalledWith(
+			"org/repo",
+			"feat/thing",
+			"abc123",
+		);
+		expect(mockSaveHighLevelDraft).not.toHaveBeenCalled();
+		expect(mockSaveHighLevelReview).not.toHaveBeenCalled();
+		expect(mockExecFileSync).not.toHaveBeenCalled();
 	});
 
 	it("clears the draft once a verdict is saved", async () => {

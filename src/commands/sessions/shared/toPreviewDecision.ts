@@ -52,6 +52,7 @@ export function toPreviewDecision(
 		reviewEvent: REVIEW_EVENTS.find((event) => event === msg.reviewEvent),
 		reviewComments: toReviewComments(msg.reviewComments),
 		dismissed: msg.dismissed === true,
+		restart: msg.restart === true,
 		answers: toAnswers(msg.answers),
 	};
 }
