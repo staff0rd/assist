@@ -1,3 +1,15 @@
+# [0.1063.0](https://github.com/staff0rd/assist/compare/v0.1062.1...v0.1063.0) (2026-11-05)
+
+
+### Bug Fixes
+
+* say why Approve is locked ([00a7018](https://github.com/staff0rd/assist/commit/00a701877ead70bad6db850e7a7e6e4eaeb3f529))
+
+
+### Features
+
+* start a high-level review fresh ([0c31e30](https://github.com/staff0rd/assist/commit/0c31e30d301c67b94aad42887954e0c343ce0211)), closes [hi#level](https://github.com/hi/issues/level)
+
 ## [0.1062.1](https://github.com/staff0rd/assist/compare/v0.1062.0...v0.1062.1) (2026-11-04)
 
 
