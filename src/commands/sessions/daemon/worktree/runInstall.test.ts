@@ -1,17 +1,18 @@
 import { spawn } from "node:child_process";
 import { EventEmitter } from "node:events";
 import { resolve } from "node:path";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../../../test/mocks/childProcessMock";
 
 type FakeChild = EventEmitter & { pid: number; stderr: EventEmitter };
 
 let child: FakeChild;
+let children: FakeChild[] = [];
 const logs: string[] = [];
 
-function fakeChild(): FakeChild {
+function fakeChild(pid: number): FakeChild {
 	return Object.assign(new EventEmitter(), {
-		pid: 4321,
+		pid,
 		stderr: new EventEmitter(),
 	});
 }
@@ -61,16 +62,31 @@ function invocation(): {
 	return { shell, args, cwd: options.cwd, detached: options.detached };
 }
 
+function spyKill(): { killed: number[]; restore: () => void } {
+	const killed: number[] = [];
+	const kill = vi.spyOn(process, "kill").mockImplementation(((pid: number) => {
+		killed.push(pid);
+		return true;
+	}) as typeof process.kill);
+	return { killed, restore: () => kill.mockRestore() };
+}
+
 describe("runInstall", () => {
 	beforeEach(() => {
 		mockSpawn.mockClear();
+		children = [];
 		mockSpawn.mockImplementation(() => {
-			child = fakeChild();
+			child = fakeChild(4321 + children.length);
+			children.push(child);
 			return child as never;
 		});
 		mockDetect.mockReset();
 		mockDetect.mockReturnValue("npm install");
 		logs.length = 0;
+	});
+
+	afterEach(() => {
+		for (const spawned of children) spawned.emit("close", 0, null);
 	});
 
 	it("cds into the worktree so a login shell profile cannot redirect the install", () => {
@@ -118,21 +134,14 @@ describe("runInstall", () => {
 	it.runIf(process.platform !== "win32")(
 		"tracks the install in its own process group so teardown can kill it",
 		() => {
-			const killed: [number, NodeJS.Signals][] = [];
-			const kill = vi.spyOn(process, "kill").mockImplementation(((
-				pid: number,
-				signal: NodeJS.Signals,
-			) => {
-				killed.push([pid, signal]);
-				return true;
-			}) as typeof process.kill);
+			const kill = spyKill();
 
 			seed("/home/me/git/assist-2");
 			stopInstall("/home/me/git/assist-2");
 
 			expect(invocation().detached).toBe(true);
-			expect(killed).toEqual([[-4321, "SIGKILL"]]);
-			kill.mockRestore();
+			expect(kill.killed).toEqual([-4321]);
+			kill.restore();
 		},
 	);
 
@@ -160,26 +169,41 @@ describe("runInstall", () => {
 			);
 		}
 
-		it("installs in each path in order, one at a time", () => {
+		it("installs sibling paths at the same time, releasing the session once all finish", () => {
+			const onSeeded = vi.fn();
+
+			seedPaths(["member-app", "coach-tools"], onSeeded);
+			expect(spawnedCwds()).toEqual([
+				resolve(tree, "member-app"),
+				resolve(tree, "coach-tools"),
+			]);
+			children[1].emit("close", 0, null);
+			expect(onSeeded).not.toHaveBeenCalled();
+			children[0].emit("close", 0, null);
+
+			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(logs).toContain(
+				`worktree ${tree} installing deps in coach-tools: npm install`,
+			);
+			expect(logs).toContain(
+				`worktree ${tree} install in coach-tools complete`,
+			);
+		});
+
+		it("waits for an enclosing path before installing a path nested inside it", () => {
 			const onSeeded = vi.fn();
 
 			seedPaths([".", "packages/ui"], onSeeded);
 			expect(spawnedCwds()).toEqual([tree]);
-			child.emit("close", 0, null);
+			children[0].emit("close", 0, null);
 			expect(spawnedCwds()).toEqual([tree, resolve(tree, "packages/ui")]);
 			expect(onSeeded).not.toHaveBeenCalled();
-			child.emit("close", 0, null);
+			children[1].emit("close", 0, null);
 
 			expect(onSeeded).toHaveBeenCalledTimes(1);
-			expect(logs).toContain(
-				`worktree ${tree} installing deps in packages/ui: npm install`,
-			);
-			expect(logs).toContain(
-				`worktree ${tree} install in packages/ui complete`,
-			);
 		});
 
-		it("reports each path as its install starts", () => {
+		it("reports the paths currently installing as each starts and finishes", () => {
 			const onInstalling = vi.fn();
 
 			runInstall(
@@ -189,10 +213,10 @@ describe("runInstall", () => {
 				() => {},
 				onInstalling,
 			);
-			expect(onInstalling.mock.calls).toEqual([["a"]]);
-			child.emit("close", 0, null);
+			expect(onInstalling.mock.calls).toEqual([["a, b"]]);
+			children[0].emit("close", 0, null);
 
-			expect(onInstalling.mock.calls).toEqual([["a"], ["b"]]);
+			expect(onInstalling.mock.calls).toEqual([["a, b"], ["b"]]);
 		});
 
 		it("detects the package manager in each path", () => {
@@ -200,8 +224,7 @@ describe("runInstall", () => {
 				dir.endsWith("ui") ? "pnpm install" : "npm install",
 			);
 
-			seedPaths([".", "ui"]);
-			child.emit("close", 0, null);
+			seedPaths(["api", "ui"]);
 
 			const [, args, options] = mockSpawn.mock.calls[1] as unknown as [
 				string,
@@ -212,66 +235,74 @@ describe("runInstall", () => {
 			expect(args.at(-1)).toMatch(/&& pnpm install$/);
 		});
 
-		it("skips the remaining paths once one fails, still releasing the session", () => {
+		it("skips the paths nested in one that failed, still releasing the session", () => {
 			const onSeeded = vi.fn();
 
 			seedPaths([".", "a", "b"], onSeeded);
-			child.emit("close", 1, null);
+			children[0].emit("close", 1, null);
 
 			expect(spawnedCwds()).toEqual([tree]);
 			expect(onSeeded).toHaveBeenCalledTimes(1);
-			expect(logs).toContain(
-				`worktree ${tree} install skipping remaining paths: a, b`,
-			);
+			expect(logs).toContain(`worktree ${tree} install skipping a: . failed`);
+			expect(logs).toContain(`worktree ${tree} install skipping b: . failed`);
 		});
 
-		it("stops at a path with no package.json", () => {
+		it("keeps installing sibling paths when one fails", () => {
+			const onSeeded = vi.fn();
+
+			seedPaths(["a", "b"], onSeeded);
+			children[0].emit("close", 1, null);
+			expect(onSeeded).not.toHaveBeenCalled();
+			children[1].emit("close", 0, null);
+
+			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(logs).toContain(`worktree ${tree} install in b complete`);
+		});
+
+		it("skips a path with no package.json and installs the rest", () => {
 			const onSeeded = vi.fn();
 			mockDetect.mockImplementation((dir) =>
 				dir.endsWith("missing") ? null : "npm install",
 			);
 
-			seedPaths([".", "missing", "b"], onSeeded);
-			child.emit("close", 0, null);
+			seedPaths(["missing", "b"], onSeeded);
+			expect(spawnedCwds()).toEqual([resolve(tree, "b")]);
+			children[0].emit("close", 0, null);
 
-			expect(spawnedCwds()).toEqual([tree]);
 			expect(onSeeded).toHaveBeenCalledTimes(1);
 			expect(logs).toContain(
-				`worktree ${tree} install in missing failed: no package.json at ${resolve(tree, "missing")}; skipping remaining paths`,
+				`worktree ${tree} install in missing failed: no package.json at ${resolve(tree, "missing")}`,
 			);
 		});
 
-		it("stops when a path's install cannot start", () => {
+		it("releases the session when nothing can install", () => {
 			const onSeeded = vi.fn();
+			mockDetect.mockReturnValue(null);
 
-			seedPaths([".", "b"], onSeeded);
-			child.emit("error", new Error("spawn bash ENOENT"));
+			seedPaths(["a", "b"], onSeeded);
 
-			expect(spawnedCwds()).toEqual([tree]);
+			expect(spawnedCwds()).toEqual([]);
 			expect(onSeeded).toHaveBeenCalledTimes(1);
 		});
 
 		it.runIf(process.platform !== "win32")(
-			"kills the running path's install at teardown and starts no further paths",
+			"kills every running install at teardown and starts no further paths",
 			() => {
 				const onSeeded = vi.fn();
-				const killed: number[] = [];
-				const kill = vi.spyOn(process, "kill").mockImplementation(((
-					pid: number,
-				) => {
-					killed.push(pid);
-					return true;
-				}) as typeof process.kill);
+				const kill = spyKill();
 
-				seedPaths([".", "a", "b"], onSeeded);
-				child.emit("close", 0, null);
+				seedPaths(["a", "b", "b/nested"], onSeeded);
 				stopInstall(tree);
-				child.emit("close", 0, null);
+				children[0].emit("close", null, "SIGKILL");
+				children[1].emit("close", null, "SIGKILL");
 
-				expect(killed).toEqual([-4321]);
-				expect(spawnedCwds()).toEqual([tree, resolve(tree, "a")]);
+				expect(kill.killed).toEqual([-4321, -4322]);
+				expect(spawnedCwds()).toEqual([resolve(tree, "a"), resolve(tree, "b")]);
 				expect(onSeeded).toHaveBeenCalledTimes(1);
-				kill.mockRestore();
+				expect(logs).toContain(
+					`worktree ${tree} install skipping b/nested: install stopped`,
+				);
+				kill.restore();
 			},
 		);
 	});

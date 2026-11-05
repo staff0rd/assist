@@ -1,29 +1,34 @@
 import { type ChildProcess, execFile } from "node:child_process";
 import { daemonLog } from "../daemonLog";
 
-const running = new Map<string, ChildProcess>();
+const running = new Map<string, Set<ChildProcess>>();
 
 export function trackInstall(worktreePath: string, child: ChildProcess): void {
-	running.set(worktreePath, child);
+	const children = running.get(worktreePath) ?? new Set();
+	children.add(child);
+	running.set(worktreePath, children);
 }
 
 export function untrackInstall(
 	worktreePath: string,
 	child: ChildProcess,
 ): boolean {
-	if (running.get(worktreePath) !== child) return false;
-	running.delete(worktreePath);
+	const children = running.get(worktreePath);
+	if (!children?.delete(child)) return false;
+	if (children.size === 0) running.delete(worktreePath);
 	return true;
 }
 
 export function stopInstall(worktreePath: string): void {
-	const child = running.get(worktreePath);
+	const children = running.get(worktreePath);
 	running.delete(worktreePath);
-	if (!child?.pid) return;
-	daemonLog(
-		`worktree ${worktreePath} install still running at teardown; killing pid ${child.pid} so removal is not racing it`,
-	);
-	killTree(child.pid);
+	for (const child of children ?? []) {
+		if (!child.pid) continue;
+		daemonLog(
+			`worktree ${worktreePath} install still running at teardown; killing pid ${child.pid} so removal is not racing it`,
+		);
+		killTree(child.pid);
+	}
 }
 
 function killTree(pid: number): void {
