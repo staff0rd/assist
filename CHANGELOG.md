@@ -1,3 +1,10 @@
+# [0.1065.0](https://github.com/staff0rd/assist/compare/v0.1064.0...v0.1065.0) (2026-11-05)
+
+
+### Features
+
+* reload tab after auto-restart ([84af088](https://github.com/staff0rd/assist/commit/84af088cefddbfb88516624da9cf2d38666ba786))
+
 # [0.1064.0](https://github.com/staff0rd/assist/compare/v0.1063.1...v0.1064.0) (2026-11-05)
 
 
