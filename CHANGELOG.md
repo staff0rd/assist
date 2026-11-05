@@ -1,3 +1,10 @@
+## [0.1065.1](https://github.com/staff0rd/assist/compare/v0.1065.0...v0.1065.1) (2026-11-05)
+
+
+### Bug Fixes
+
+* flag actionable mail, open all threads ([f525b6a](https://github.com/staff0rd/assist/commit/f525b6a5d2207974b5510ee9f3c342a2a58ad064))
+
 # [0.1065.0](https://github.com/staff0rd/assist/compare/v0.1064.0...v0.1065.0) (2026-11-05)
 
 
