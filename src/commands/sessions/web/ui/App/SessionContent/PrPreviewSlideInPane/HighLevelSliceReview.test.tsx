@@ -214,6 +214,16 @@ describe("HighLevelSliceReview", () => {
 		});
 	});
 
+	it("says which rail entries still need ticks while Approve is locked", () => {
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+
+		expect(
+			screen.getByText(
+				"Approve unlocks once every area is ticked — left: Overview (1), slice 1 (2), slice 2 (3)",
+			),
+		).toBeTruthy();
+	});
+
 	it("starts fresh only after confirming, sending a restart decision", () => {
 		const onDecision = vi.fn();
 		render(<HighLevelReviewPane preview={preview()} onDecision={onDecision} />);

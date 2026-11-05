@@ -1,4 +1,5 @@
 import type { PrDecisionDetails } from "../../../../PrDecisionDetails";
+import { highLevelApproveBlocker } from "../HighLevelSliceReview/highLevelApproveBlocker";
 import { HighLevelReviewActions } from "./HighLevelReviewActions";
 import { HighLevelReviewQueue } from "./HighLevelReviewQueue";
 import { highLevelReviewHandlers } from "./highLevelReviewHandlers";
@@ -27,7 +28,9 @@ export function HighLevelReviewFooter({
 				next={
 					sliced ? { onNext: nav.onNext, disabled: !nav.hasNext } : undefined
 				}
-				approveDisabled={sliced !== undefined && checklist.outstanding > 0}
+				approveBlocker={
+					sliced && highLevelApproveBlocker(sliced.entries, checklist.ticked)
+				}
 				{...highLevelReviewHandlers(
 					checklist.checklist,
 					queue.queued,

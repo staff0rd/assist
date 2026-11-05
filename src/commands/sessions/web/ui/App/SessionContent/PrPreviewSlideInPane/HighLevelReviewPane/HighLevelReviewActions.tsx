@@ -1,4 +1,5 @@
 import { Button, Stack, Typography } from "@mui/material";
+import { HighLevelApproveButton } from "./HighLevelReviewActions/HighLevelApproveButton";
 import { HighLevelNextSliceButton } from "./HighLevelReviewActions/HighLevelNextSliceButton";
 import { highLevelReviewPrompt } from "./HighLevelReviewActions/highLevelReviewPrompt";
 import { HighLevelStartFreshButton } from "./HighLevelReviewActions/HighLevelStartFreshButton";
@@ -7,7 +8,7 @@ export function HighLevelReviewActions({
 	failed,
 	outstanding,
 	next,
-	approveDisabled = false,
+	approveBlocker,
 	onApprove,
 	onComment,
 	onRequestChanges,
@@ -17,7 +18,7 @@ export function HighLevelReviewActions({
 	failed: number;
 	outstanding: number;
 	next?: { onNext: () => void; disabled: boolean } | undefined;
-	approveDisabled?: boolean;
+	approveBlocker?: string | undefined;
 	onApprove: () => void;
 	onComment: () => void;
 	onRequestChanges: () => void;
@@ -37,7 +38,7 @@ export function HighLevelReviewActions({
 			}}
 		>
 			<Typography variant="body2" sx={{ flex: 1, color: "text.secondary" }}>
-				{highLevelReviewPrompt(failed, outstanding)}
+				{approveBlocker ?? highLevelReviewPrompt(failed, outstanding)}
 			</Typography>
 			<HighLevelStartFreshButton
 				sliced={next !== undefined}
@@ -53,14 +54,7 @@ export function HighLevelReviewActions({
 			<Button variant="outlined" onClick={onComment}>
 				Comment
 			</Button>
-			<Button
-				color="success"
-				variant="contained"
-				onClick={onApprove}
-				disabled={approveDisabled}
-			>
-				Approve
-			</Button>
+			<HighLevelApproveButton blocker={approveBlocker} onApprove={onApprove} />
 		</Stack>
 	);
 }
