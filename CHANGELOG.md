@@ -1,3 +1,10 @@
+## [0.1065.3](https://github.com/staff0rd/assist/compare/v0.1065.2...v0.1065.3) (2026-11-05)
+
+
+### Bug Fixes
+
+* catch restarts during reload check ([a1df8e0](https://github.com/staff0rd/assist/commit/a1df8e02b6220674dedd2f220ffd8dc4a4f50ff7))
+
 ## [0.1065.2](https://github.com/staff0rd/assist/compare/v0.1065.1...v0.1065.2) (2026-11-05)
 
 
