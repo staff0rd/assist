@@ -18,7 +18,9 @@ function setup(initial: Partial<AutoRestartSnapshot> = {}, enabled = true) {
 	let clock = 0;
 	const restart = vi.fn(async () => {});
 	const log = vi.fn();
+	const report = vi.fn();
 	const tick = createAutoRestartCheck({
+		report,
 		enabled: () => enabled,
 		snapshot: async () => snap,
 		attempted: {
@@ -35,6 +37,7 @@ function setup(initial: Partial<AutoRestartSnapshot> = {}, enabled = true) {
 		tick,
 		restart,
 		log,
+		report,
 		advance: (ms: number) => {
 			clock += ms;
 		},
@@ -96,7 +99,7 @@ describe("createAutoRestartCheck", () => {
 			"auto-restart: both restart for v1.2.0 failed: boom",
 		);
 		expect(t.log).toHaveBeenCalledWith(
-			"auto-restart: skipped both restart: already attempted for v1.2.0",
+			"auto-restart: skipped both restart for v1.2.0: already attempted",
 		);
 		t.update({ built: "1.3.0" });
 		await t.tick();
@@ -113,6 +116,28 @@ describe("createAutoRestartCheck", () => {
 		expect(t.log).toHaveBeenCalledWith(
 			"auto-restart: skipped both restart for v1.2.0: build pending",
 		);
+	});
+
+	it("reports why it is waiting and clears once nothing is pending", async () => {
+		const t = setup({
+			sessions: [
+				{ name: "a", status: "running" },
+				{ name: "b", status: "running" },
+			],
+		});
+		await t.tick();
+		expect(t.report).toHaveBeenLastCalledWith(
+			"waiting on 2 running sessions (a, b)",
+		);
+		t.update({ sessions: [] });
+		await t.tick();
+		expect(t.report).toHaveBeenLastCalledWith("idle · restarting within 60s");
+		t.advance(AUTO_RESTART_SETTLE_MS);
+		await t.tick();
+		expect(t.report).toHaveBeenLastCalledWith("restarting");
+		t.update({ restart: [] });
+		await t.tick();
+		expect(t.report).toHaveBeenLastCalledWith(undefined);
 	});
 
 	it("does nothing while switched off or with no restart pending", async () => {

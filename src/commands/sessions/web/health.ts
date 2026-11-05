@@ -4,6 +4,7 @@ import { ASSIST_VERSION, PROTOCOL_VERSION } from "../daemon/buildHello";
 import { isDaemonRunning } from "../daemon/connectToDaemon";
 import { queryNodes } from "../nodes/queryNodes";
 import { resolveNodeName } from "../shared/resolveNodeName";
+import { webStartCommit } from "./updates/webStartCommit";
 
 export async function health(
 	_req: IncomingMessage,
@@ -16,6 +17,7 @@ export async function health(
 	respondJson(res, 200, {
 		nodeName: resolveNodeName(),
 		version: ASSIST_VERSION,
+		startCommit: webStartCommit.value(),
 		protocol: PROTOCOL_VERSION,
 		daemon: { reachable },
 		links: nodes?.links ?? [],

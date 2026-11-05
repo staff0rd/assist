@@ -6,6 +6,7 @@ import { SessionLaunchContext } from "../../useSessionLaunchContext";
 import { useNodeUpdates } from "./AppShellProviders/useNodeUpdates";
 import { NodeUpdatesContext } from "./useNodeUpdatesContext";
 import { LocalRestartContext } from "./useLocalRestartContext";
+import { useRestartedServerReload } from "./useRestartedServerReload";
 import { useWebserverRestart } from "./useWebserverRestart";
 import { SidebarCollapsedContext } from "../useSidebarCollapsedContext";
 import { HistorySearchQueryProvider } from "../useHistorySearchQuery";
@@ -21,6 +22,7 @@ export function AppShellProviders({
 	const { socket, selection, launch, sidebarCollapse } = shell;
 	const updates = useNodeUpdates(socket.nodeSelection);
 	const localRestart = useWebserverRestart("webserver", socket.reconnecting);
+	useRestartedServerReload(socket.reconnecting);
 	return (
 		<NodeUpdatesContext.Provider value={updates}>
 			<LocalRestartContext.Provider value={localRestart}>

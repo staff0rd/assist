@@ -7,6 +7,7 @@ import { resolveNodeName } from "../../shared/resolveNodeName";
 import { extensionUpdateStatus } from "../../../extension/extensionUpdateStatus";
 import { browserLink } from "../browser/browserLink";
 import { autoRestartEnabled } from "./autoRestartEnabled";
+import { autoRestartWait } from "./autoRestart/autoRestartWait";
 import { latestSignedExtension } from "./latestSignedExtension";
 import { readRestartState } from "./readRestartState";
 import { readUpdateHistory } from "./readUpdateHistory";
@@ -26,6 +27,7 @@ export async function updates(
 		buildPending,
 		restart,
 		autoRestart: autoRestartEnabled(installDir),
+		autoRestartWait: autoRestartWait.get(),
 		daemonReachable: reply !== undefined,
 		loop: reply?.loop ?? {
 			phase: "off",

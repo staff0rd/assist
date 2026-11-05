@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { reportCaughtError } from "../../clientFailures/reportCaughtError";
 import { postRestart, type RestartTarget } from "./postRestart";
+import { tabRestartPending } from "./useWebserverRestart/tabRestartPending";
 import { useServerBackReload } from "./useWebserverRestart/useServerBackReload";
 
 const RESTART_TIMEOUT_MS = 15_000;
@@ -24,8 +25,10 @@ export function useWebserverRestart(
 	const restartTo = useCallback(
 		async (to: RestartTarget): Promise<void> => {
 			setPending(true);
+			tabRestartPending.set(true);
 			arm();
 			timeoutRef.current = setTimeout(() => {
+				tabRestartPending.set(false);
 				abandon();
 				setPending(false);
 				setError("Web server did not come back");
@@ -35,6 +38,7 @@ export function useWebserverRestart(
 				if (!res.ok) throw new Error("restart failed");
 			} catch (error) {
 				reportCaughtError(error, "web server restart");
+				tabRestartPending.set(false);
 				abandon();
 				clearTimeout(timeoutRef.current);
 				setPending(false);

@@ -10,6 +10,7 @@ export type NodeUpdateStatus = {
 	buildPending?: boolean;
 	restart: RestartTarget[];
 	autoRestart?: boolean;
+	autoRestartWait?: string;
 	daemonReachable: boolean;
 	loop: AutoUpdateLoopState;
 	history: string[];

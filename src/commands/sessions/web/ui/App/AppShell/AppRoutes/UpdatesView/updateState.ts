@@ -33,7 +33,9 @@ export function updateState(entry: NodeUpdateEntry): UpdateState {
 		return {
 			kind: "ready",
 			label: "Restart to update",
-			line: `restart ${status.restart.map(restartLabel).join(" + ")}${loop.paused ? " · paused" : ""}`,
+			line: status.autoRestart
+				? `auto-restart · ${status.autoRestartWait ?? "checking"}`
+				: `restart ${status.restart.map(restartLabel).join(" + ")}${loop.paused ? " · paused" : ""}`,
 		};
 	return loopUpdateState(loop, since);
 }

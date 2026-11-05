@@ -5,6 +5,7 @@ import { autoRestartEnabled } from "../autoRestartEnabled";
 import { readRestartState } from "../readRestartState";
 import type { LiveSession } from "./autoRestartBlocker";
 import { autoRestartAttempts } from "./autoRestartAttempts";
+import { autoRestartWait } from "./autoRestartWait";
 import {
 	type AutoRestartSnapshot,
 	createAutoRestartCheck,
@@ -38,6 +39,7 @@ export function startAutoRestart(port: number): void {
 		attempted: autoRestartAttempts(port),
 		restart: (target) => performRestart(target),
 		log: (message) => void logViaDaemon(message),
+		report: autoRestartWait.set,
 	});
 	let running = false;
 	setInterval(() => {
