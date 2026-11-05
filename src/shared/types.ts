@@ -194,6 +194,7 @@ const assistConfigShape = {
 	autoUpdate: z
 		.strictObject({
 			enabled: z.boolean().default(true),
+			restart: z.boolean().default(false),
 		})
 		.optional(),
 	worktree: z

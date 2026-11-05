@@ -9,6 +9,7 @@ import { handleRequest } from "./web/handleRequest";
 import type { RelayContext } from "./web/handleSocket";
 import { installRestartMenu } from "./web/restartMenu/installRestartMenu";
 import { streamDaemonLogs } from "./web/streamDaemonLogs";
+import { startAutoRestart } from "./web/updates/autoRestart/startAutoRestart";
 import { webStartCommit } from "./web/updates/webStartCommit";
 import { repoEntryCwd } from "./repoEntryCwd";
 
@@ -33,6 +34,7 @@ export async function web(options: {
 	};
 
 	attachSessionSocket(server, ctx);
+	startAutoRestart(port);
 	installRestartMenu();
 	sweepStagedAttachments();
 

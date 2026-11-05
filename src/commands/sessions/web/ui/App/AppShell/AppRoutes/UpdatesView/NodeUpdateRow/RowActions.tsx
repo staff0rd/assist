@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import type { NodeUpdateEntry } from "../../../NodeUpdateEntry";
+import { AutoRestartSwitch } from "./AutoRestartSwitch";
 import { OpenFixButton } from "./OpenFixButton";
 import { RestartNodeButton } from "./RestartNodeButton";
 import type { UpdateState } from "../UpdateStateKind";
@@ -28,6 +29,7 @@ export function RowActions({
 	const paused = entry.status?.loop.paused === true;
 	return (
 		<Box sx={actionsSx}>
+			<AutoRestartSwitch entry={entry} actions={actions} />
 			{state.kind === "ready" && (
 				<RestartNodeButton entry={entry} actions={actions} />
 			)}

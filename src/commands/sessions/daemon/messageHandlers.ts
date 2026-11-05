@@ -4,6 +4,7 @@ import { autoUpdateReply } from "./autoUpdate/autoUpdateReply";
 import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
+import { handleWebLog } from "./handleWebLog";
 import { handleSearchHistory } from "./historySearch/handleSearchHistory";
 import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
@@ -34,6 +35,7 @@ export const messageHandlers: Record<string, Handler> = {
 	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
 	"subscribe-logs": (client, m, d) =>
 		m.clients.subscribeLogs(client, d.replay !== false),
+	"web-log": handleWebLog,
 	hello: handleHelloRequest,
 	output: handleOutputRequest,
 	nodes: (client, m) => m.links.sendNodes(client),

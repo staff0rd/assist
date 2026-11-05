@@ -21,6 +21,9 @@ vi.mock("../../shared/getInstallDir", () => ({ isGitRepo: () => false }));
 vi.mock("./web/updates/webStartCommit", () => ({
 	webStartCommit: { capture: vi.fn() },
 }));
+vi.mock("./web/updates/autoRestart/startAutoRestart", () => ({
+	startAutoRestart: vi.fn(),
+}));
 vi.mock("../../shared/sweepStagedAttachments", () => ({
 	sweepStagedAttachments: vi.fn(),
 }));
