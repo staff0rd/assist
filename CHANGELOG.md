@@ -1,3 +1,10 @@
+## [0.1065.2](https://github.com/staff0rd/assist/compare/v0.1065.1...v0.1065.2) (2026-11-05)
+
+
+### Bug Fixes
+
+* install worktree paths in parallel ([05409bc](https://github.com/staff0rd/assist/commit/05409bc16b17c878b04cc3e3ceb5310c82d299a0))
+
 ## [0.1065.1](https://github.com/staff0rd/assist/compare/v0.1065.0...v0.1065.1) (2026-11-05)
 
 
