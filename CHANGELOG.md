@@ -1,3 +1,10 @@
+## [0.1063.1](https://github.com/staff0rd/assist/compare/v0.1063.0...v0.1063.1) (2026-11-05)
+
+
+### Bug Fixes
+
+* Approve is never locked ([e2c0ff1](https://github.com/staff0rd/assist/commit/e2c0ff1cb12d289754406511a114ae047975a32e))
+
 # [0.1063.0](https://github.com/staff0rd/assist/compare/v0.1062.1...v0.1063.0) (2026-11-05)
 
 
