@@ -1,3 +1,10 @@
+# [0.1064.0](https://github.com/staff0rd/assist/compare/v0.1063.1...v0.1064.0) (2026-11-05)
+
+
+### Features
+
+* auto-restart idle nodes per node ([a3cb13a](https://github.com/staff0rd/assist/commit/a3cb13a2084436f6bc9cfc536a84d02396a113c8))
+
 ## [0.1063.1](https://github.com/staff0rd/assist/compare/v0.1063.0...v0.1063.1) (2026-11-05)
 
 
