@@ -1,34 +1,22 @@
-import { assistantScanEvents } from "./assistantScanEvents";
+import { createGmailCoverage } from "./createGmailCoverage";
 import { createScanUsageTracker } from "./createScanUsageTracker";
+import { handleAssistantTurn } from "./handleAssistantTurn";
 import type { InboxScanListener, InboxScanUsage } from "./InboxScanEvent";
 import type { FlaggedMessage } from "./inboxScanSchema";
 import { parseInboxScanOutput } from "./parseInboxScanOutput";
-import {
-	parseScanStreamLine,
-	type ScanStreamEvent as StreamEvent,
-} from "./parseScanStreamLine";
+import { parseScanStreamLine } from "./parseScanStreamLine";
 
 export type InboxScanResult = {
 	messages: FlaggedMessage[];
 	usage: InboxScanUsage;
+	threads: { found: string[]; opened: string[] };
 };
 
-export function createInboxScanParser({
-	onEvent = () => {},
-	onUsage = () => {},
-	onModel = () => {},
-}: InboxScanListener = {}) {
+export function createInboxScanParser(listener: InboxScanListener = {}) {
+	const { onUsage = () => {}, onModel = () => {} } = listener;
 	const usage = createScanUsageTracker();
+	const coverage = createGmailCoverage();
 	let resultLine: string | undefined;
-
-	const onAssistant = (message: StreamEvent["message"]) => {
-		const counted = usage.addTurn(message?.id, message?.usage);
-		for (const scanEvent of assistantScanEvents(message?.content)) {
-			const tokens = usage.takeTurnTokens();
-			onEvent(tokens === undefined ? scanEvent : { ...scanEvent, tokens });
-		}
-		if (counted) onUsage(usage.current());
-	};
 
 	return {
 		onLine(line: string): void {
@@ -36,7 +24,10 @@ export function createInboxScanParser({
 			if (!event) return;
 			if (event.type === "system" && typeof event.model === "string")
 				onModel(event.model);
-			else if (event.type === "assistant") onAssistant(event.message);
+			else if (event.type === "assistant") {
+				coverage.onAssistant(event.message?.content);
+				handleAssistantTurn(event.message, usage, listener);
+			} else if (event.type === "user") coverage.onUser(event.message?.content);
 			else if (event.type === "result") {
 				resultLine = line;
 				usage.finish(event);
@@ -48,6 +39,7 @@ export function createInboxScanParser({
 			return {
 				messages: parseInboxScanOutput(resultLine),
 				usage: usage.current(),
+				threads: coverage.current(),
 			};
 		},
 	};

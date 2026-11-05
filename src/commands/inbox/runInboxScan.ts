@@ -3,10 +3,12 @@ import type { JobTrigger } from "../../shared/db/jobRuns";
 import { readInboxLastScan } from "../../shared/db/readInboxLastScan";
 import { upsertInboxMessages } from "../../shared/db/upsertInboxMessages";
 import { writeInboxLastScan } from "../../shared/db/writeInboxLastScan";
-import type { InboxScanResult } from "./createInboxScanParser";
 import type { InboxScanListener, InboxScanUsage } from "./InboxScanEvent";
 import type { FlaggedMessage } from "./inboxScanSchema";
-import { runInboxScanClaude } from "./runInboxScanClaude";
+import {
+	type InboxScanOutput,
+	scanInboxWithCoverage,
+} from "./scanInboxWithCoverage";
 import { withInboxScanJob } from "./withInboxScanJob";
 
 const FIRST_SCAN_LOOKBACK_MS = 24 * 60 * 60_000;
@@ -30,8 +32,8 @@ type RunInboxScanOptions = InboxScanListener & {
 	trigger: JobTrigger;
 	wrap?: (
 		since: Date,
-		run: () => Promise<InboxScanResult>,
-	) => Promise<InboxScanResult>;
+		run: () => Promise<InboxScanOutput>,
+	) => Promise<InboxScanOutput>;
 };
 
 export async function runInboxScan(
@@ -44,7 +46,7 @@ export async function runInboxScan(
 			(await readInboxLastScan(orm)) ??
 			new Date(startedAt.getTime() - FIRST_SCAN_LOOKBACK_MS);
 		const { messages, usage } = await wrap(since, () =>
-			runInboxScanClaude(since, tracked),
+			scanInboxWithCoverage(since, tracked),
 		);
 		const added = await upsertInboxMessages(orm, messages.map(toRow));
 		await writeInboxLastScan(orm, startedAt);

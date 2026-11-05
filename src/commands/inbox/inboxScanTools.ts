@@ -2,6 +2,8 @@ const gmail = (tool: string) => `mcp__claude_ai_Gmail__${tool}`;
 const slack = (tool: string) => `mcp__claude_ai_Slack__${tool}`;
 
 export const inboxScanTools = {
+	gmailSearch: gmail("search_threads"),
+	gmailGetThread: gmail("get_thread"),
 	allowed: [
 		gmail("search_threads"),
 		gmail("get_thread"),

@@ -2,7 +2,6 @@ import { spawn } from "node:child_process";
 import { z } from "zod";
 import { attachLineParser } from "../review/attachLineParser";
 import { attachStderrCollector } from "../review/attachStderrCollector";
-import { buildInboxScanPrompt } from "./buildInboxScanPrompt";
 import {
 	createInboxScanParser,
 	type InboxScanResult,
@@ -13,7 +12,12 @@ import { inboxScanTools } from "./inboxScanTools";
 
 export const INBOX_SCAN_TIMEOUT_MS = 20 * 60_000;
 
-export function buildInboxScanArgs(since: Date): string[] {
+export type InboxScanPass = { prompt: string; allowedTools: string[] };
+
+export function buildInboxScanArgs({
+	prompt,
+	allowedTools,
+}: InboxScanPass): string[] {
 	return [
 		"-p",
 		"--tools",
@@ -21,7 +25,7 @@ export function buildInboxScanArgs(since: Date): string[] {
 		"--permission-mode",
 		"dontAsk",
 		"--allowedTools",
-		...inboxScanTools.allowed,
+		...allowedTools,
 		"--disallowedTools",
 		...inboxScanTools.denied,
 		"--no-session-persistence",
@@ -31,7 +35,7 @@ export function buildInboxScanArgs(since: Date): string[] {
 		"--json-schema",
 		JSON.stringify(z.toJSONSchema(inboxScanSchema, { target: "draft-07" })),
 		"--",
-		buildInboxScanPrompt(since),
+		prompt,
 	];
 }
 
@@ -40,10 +44,10 @@ function describeExit(code: number | null, signal: string | null): string {
 }
 
 export async function runInboxScanClaude(
-	since: Date,
+	pass: InboxScanPass,
 	listener: InboxScanListener = {},
 ): Promise<InboxScanResult> {
-	const child = spawn("claude", buildInboxScanArgs(since), {
+	const child = spawn("claude", buildInboxScanArgs(pass), {
 		stdio: ["ignore", "pipe", "pipe"],
 		windowsHide: true,
 		timeout: INBOX_SCAN_TIMEOUT_MS,

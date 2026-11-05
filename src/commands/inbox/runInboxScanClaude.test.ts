@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { buildInboxScanArgs } from "./runInboxScanClaude";
+import { buildInboxScanPrompt } from "./buildInboxScanPrompt";
+import { inboxScanTools } from "./inboxScanTools";
 import { parseInboxScanOutput } from "./parseInboxScanOutput";
+import { buildInboxScanArgs } from "./runInboxScanClaude";
 
 describe("buildInboxScanArgs", () => {
-	const args = buildInboxScanArgs(new Date("2026-10-30T00:00:00Z"));
+	const args = buildInboxScanArgs({
+		prompt: buildInboxScanPrompt(new Date("2026-10-30T00:00:00Z")),
+		allowedTools: inboxScanTools.allowed,
+	});
 	const listAfter = (flag: string) => {
 		const start = args.indexOf(flag) + 1;
 		const end = args.findIndex((a, i) => i >= start && a.startsWith("--"));

@@ -1,5 +1,5 @@
 import { isClaudeCode } from "../../lib/isClaudeCode";
-import { mapAsync } from "./mapAsync";
+import { mapAsync } from "../../shared/mapAsync";
 import { hasSubcommands, parseCommands } from "./parseCommands";
 import { runHelp } from "./runHelp";
 
