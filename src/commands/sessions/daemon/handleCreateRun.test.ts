@@ -13,7 +13,7 @@ const meta = vi.mocked(serverRunMeta);
 function fakeManager(existing?: Session, liveGroup = "default") {
 	return {
 		links: { route: vi.fn(() => false) },
-		liveServerRun: vi.fn((_origin: string, group: string) =>
+		liveServerRun: vi.fn(({ group }: { group?: string }) =>
 			group === liveGroup ? existing : undefined,
 		),
 		dismissSession: vi.fn(),
@@ -158,14 +158,31 @@ describe("handleCreateRun", () => {
 		expect(m.spawnRun).toHaveBeenCalledOnce();
 	});
 
-	it("looks the slot up by origin and group", () => {
-		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "api" });
+	it("looks the slot up by the run's server meta", () => {
+		const runMeta = {
+			server: true,
+			origin: "gh/o/r",
+			group: "api",
+			port: 5173,
+		};
+		meta.mockReturnValue(runMeta);
 		const m = fakeManager(undefined, "api");
 		const c = client();
 
 		handleCreateRun(c as never, m, { runName: "api", cwd: "/b" });
 
-		expect(m.liveServerRun).toHaveBeenCalledWith("gh/o/r", "api");
+		expect(m.liveServerRun).toHaveBeenCalledWith(runMeta);
+	});
+
+	it("checks for a port holder even when the run has no origin", () => {
+		meta.mockReturnValue({ server: true, group: "default", port: 5173 });
+		const existing = makeSession({ id: "1", name: "run: dev" });
+		const m = fakeManager(existing);
+		const c = client();
+
+		handleCreateRun(c as never, m, { runName: "dev", cwd: "/b" });
+
+		expect(m.spawnRun).not.toHaveBeenCalled();
 	});
 
 	it("rejects a second run in the same group", () => {

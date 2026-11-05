@@ -135,6 +135,34 @@ describe("runRetry", () => {
 		expect(retry).not.toHaveBeenCalled();
 	});
 
+	it("blocks relaunch when another repo's live server holds the port", () => {
+		meta.mockReturnValue({
+			server: true,
+			origin: "gh/o/b",
+			group: "coach",
+			port: 5173,
+		});
+		const target = makeSession({
+			id: "2",
+			commandType: "run",
+			runName: "coach-tools:local",
+			status: "done",
+		});
+		const live = makeSession({
+			id: "1",
+			name: "run: dev",
+			server: true,
+			serverOrigin: "gh/o/a",
+			serverGroup: "default",
+			serverPort: 5173,
+			status: "running",
+		});
+		const d = deps();
+
+		expect(runRetry(map(live, target), "2", false, d)?.id).toBe("1");
+		expect(retry).not.toHaveBeenCalled();
+	});
+
 	it("relaunches without a prompt when no server is live", () => {
 		meta.mockReturnValue({ server: true, origin: "gh/o/r", group: "default" });
 		const target = makeSession({
