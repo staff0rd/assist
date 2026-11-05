@@ -176,27 +176,14 @@ describe("HighLevelSliceReview", () => {
 		expect(area(/Structure/).getAttribute("aria-selected")).toBe("true");
 	});
 
-	it("unlocks Approve once every slice and Overview are ticked, sending per-slice items", () => {
+	it("approves at any time, sending each slice's items", () => {
 		const onDecision = vi.fn();
 		render(<HighLevelReviewPane preview={preview()} onDecision={onDecision} />);
-		const approve = () =>
-			screen.getByRole("button", { name: "Approve" }) as HTMLButtonElement;
 
-		fireEvent.click(area(/Manual testing/));
-		fireEvent.click(
-			screen.getByLabelText("The change can be exercised by hand"),
-		);
-		for (const entry of [/1Change a/, /2Change schema/]) {
-			fireEvent.click(railEntry(entry));
-			const areas = [/Structure/, /Tests/, /Critical diffs/];
-			for (const name of areas) {
-				if (area(name).hasAttribute("disabled")) continue;
-				fireEvent.click(area(name));
-				fireEvent.click(screen.getAllByRole("checkbox")[0] as HTMLElement);
-			}
-			expect(approve().disabled).toBe(entry.source.startsWith("1"));
-		}
-		fireEvent.click(approve());
+		fireEvent.click(railEntry(/2Change schema/));
+		fireEvent.click(area(/Tests/));
+		fireEvent.click(screen.getAllByRole("checkbox")[0] as HTMLElement);
+		fireEvent.click(screen.getByRole("button", { name: "Approve" }));
 
 		const [, details] = onDecision.mock.calls[0] ?? [];
 		const { checklist } = details as {
@@ -212,16 +199,6 @@ describe("HighLevelSliceReview", () => {
 			slice: 2,
 			ticked: true,
 		});
-	});
-
-	it("says which rail entries still need ticks while Approve is locked", () => {
-		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
-
-		expect(
-			screen.getByText(
-				"Approve unlocks once every area is ticked — left: Overview (1), slice 1 (2), slice 2 (3)",
-			),
-		).toBeTruthy();
 	});
 
 	it("starts fresh only after confirming, sending a restart decision", () => {
