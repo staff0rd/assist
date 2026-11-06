@@ -1,3 +1,10 @@
+## [0.1069.2](https://github.com/staff0rd/assist/compare/v0.1069.1...v0.1069.2) (2026-11-06)
+
+
+### Bug Fixes
+
+* version devlog from stale-pkg tags ([9e67582](https://github.com/staff0rd/assist/commit/9e67582024aa060ff443882e9e771e0c7cffabae))
+
 ## [0.1069.1](https://github.com/staff0rd/assist/compare/v0.1069.0...v0.1069.1) (2026-11-06)
 
 
