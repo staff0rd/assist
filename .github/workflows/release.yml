@@ -56,3 +56,12 @@ jobs:
           if [ -n "$tag" ]; then
             gh workflow run extension.yml --ref main -f tag="$tag" -f only-if-changed=true
           fi
+
+      - name: Re-run if main moved during the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch -q origin main
+          if [ "$(git rev-parse origin/main)" != "$(git rev-parse HEAD)" ]; then
+            gh workflow run release.yml --ref main
+          fi
