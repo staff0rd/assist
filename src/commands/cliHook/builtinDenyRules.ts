@@ -1,5 +1,6 @@
 import { loadConfig } from "../../shared/loadConfig";
 import { isGhIssueApiWrite } from "./isGhIssueApiWrite";
+import { isGhPullReviewApiWrite } from "./isGhPullReviewApiWrite";
 
 type BuiltinDenyRule = {
 	message: string;
@@ -38,6 +39,11 @@ const PATTERN_DENIES: {
 			"Do not run 'gh issue comment' directly. Use 'assist github issue comment <number> --body <body> [-R <owner>/<repo>]' instead — it validates the body before delegating to gh, and gates the comment on the user's approval itself. Run 'assist github issue comment --help' and follow its guidance to compose the body; it is authoritative on how approval is handled in this environment.",
 	},
 	{
+		pattern: "gh pr comment",
+		message:
+			"Do not run 'gh pr comment' directly — it posts to the PR without the approval pane. Use 'assist github issue comment <number> --body <body> [-R <owner>/<repo>]' instead (PR numbers are issue numbers) — it validates the body before delegating to gh, and gates the comment on the user's approval itself. To reply in a review thread, use 'assist prs reply <comment-id> <body>'. Run the command's --help and follow its guidance; it is authoritative on how approval is handled in this environment.",
+	},
+	{
 		pattern: "git commit",
 		message:
 			"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead.",
@@ -62,6 +68,15 @@ const CLOSE_WITH_COMMENT_MESSAGE =
 const CLOSE_WITH_COMMENT_REGEX =
 	/gh (?:issue (?:close|reopen)|pr close)[^;&|]*? (?:--comment|-c)/;
 
+const PR_REVIEW_MESSAGE =
+	"Do not run 'gh pr review' with a body or a verdict (--comment, --approve, --request-changes) — it posts to the PR without the approval pane. To reply on the PR conversation, use 'assist github issue comment <number> --body <body> [-R <owner>/<repo>]' (PR numbers are issue numbers); to reply in a review thread, use 'assist prs reply <comment-id> <body>'; to add a line comment to the pending review, use 'assist prs comment <path> <line> <body>'. Each gates the text on the user's approval. Leave approving or requesting changes to the user.";
+
+const PR_REVIEW_REGEX =
+	/gh pr review[^;&|]*? (?:-[bcaFr]\b|--(?:body|body-file|comment|approve|request-changes)\b)/;
+
+const GH_PULL_REVIEW_API_MESSAGE =
+	"Do not write to pull request comments or reviews with 'gh api' — it bypasses the content validation and the approval pane. Use 'assist github issue comment <number> --body <body>' for a PR conversation comment (PR numbers are issue numbers), 'assist prs reply <comment-id> <body>' to reply in a review thread, or 'assist prs comment <path> <line> <body>' to add a line comment to the pending review. Each gates the text on the user's approval before anything reaches GitHub.";
+
 const BRANCH_CREATION_REGEXES: RegExp[] = [
 	/git (?:checkout|co) -[bB]/,
 	/git switch (?:-[cC]|--create)/,
@@ -83,7 +98,15 @@ export const builtinDenyRules: BuiltinDenyRule[] = [
 		matches: (text: string) => CLOSE_WITH_COMMENT_REGEX.test(text),
 	},
 	{
+		message: PR_REVIEW_MESSAGE,
+		matches: (text: string) => PR_REVIEW_REGEX.test(text),
+	},
+	{
 		message: GH_ISSUE_API_MESSAGE,
 		matches: isGhIssueApiWrite,
+	},
+	{
+		message: GH_PULL_REVIEW_API_MESSAGE,
+		matches: isGhPullReviewApiWrite,
 	},
 ];

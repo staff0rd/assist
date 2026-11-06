@@ -118,6 +118,95 @@ describe("findBuiltinDeny gh issue comment", () => {
 	});
 });
 
+describe("findBuiltinDeny gh pr comment", () => {
+	it("denies the repro with a redirect to 'assist github issue comment'", () => {
+		const decision = findBuiltinDenyRaw(
+			"gh pr comment 2210 -R acme/widgets --body-file - <<'EOF'\nThanks, fixed.\nEOF",
+		);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"assist github issue comment",
+		);
+	});
+
+	it("denies it buried in a compound command part", () => {
+		const decision = findBuiltinDeny(["cd /repo", "gh pr comment 89 -b hi"]);
+		expect(decision?.permissionDecision).toBe("deny");
+	});
+
+	it("does not deny the gated assist commands", () => {
+		expect(
+			findBuiltinDeny(["assist github issue comment 89 --body hi"]),
+		).toBeUndefined();
+		expect(findBuiltinDeny(["assist prs comment a.ts 3 hi"])).toBeUndefined();
+	});
+});
+
+describe("findBuiltinDeny gh pr review", () => {
+	it.each([
+		'gh pr review 89 --comment -b "looks good"',
+		'gh pr review 89 --body "x" --comment',
+		"gh pr review 89 --body-file review.md --request-changes",
+		"gh pr review 89 -F review.md -r",
+		"gh pr review 89 --approve",
+		"gh pr review 89 -a -R acme/widgets",
+		'gh pr review 89 -c -b "x"',
+		"gh pr review --body=x --comment",
+	])("denies '%s'", (cmd) => {
+		const decision = findBuiltinDeny([cmd]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"assist github issue comment",
+		);
+	});
+
+	it("denies it in a raw compound command", () => {
+		expect(
+			findBuiltinDenyRaw('cd /repo && gh pr review 89 -c -b "x"')
+				?.permissionDecision,
+		).toBe("deny");
+	});
+
+	it("does not deny a flag on a later command in a raw compound", () => {
+		expect(findBuiltinDenyRaw("gh pr review 89 && git log -c")).toBeUndefined();
+	});
+});
+
+describe("findBuiltinDeny gh api pull request comment and review writes", () => {
+	it.each([
+		"gh api -X POST repos/acme/widgets/pulls/89/comments -f body=hi",
+		"gh api repos/acme/widgets/pulls/89/reviews -f event=COMMENT -f body=hi",
+		"gh api -X POST repos/acme/widgets/pulls/89/comments/123/replies -f body=hi",
+		"gh api -X PATCH repos/acme/widgets/pulls/comments/123 --input -",
+		"gh api -X DELETE /repos/acme/widgets/pulls/comments/123",
+		"gh api -X POST repos/acme/widgets/pulls/89/reviews/5/events -f event=APPROVE",
+		"gh api -X PUT repos/acme/widgets/pulls/89/reviews/5 -f body=x",
+	])("denies '%s'", (cmd) => {
+		const decision = findBuiltinDeny([cmd]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain("assist prs reply");
+	});
+
+	it("denies a review mutation through graphql", () => {
+		expect(
+			findBuiltinDeny([
+				`gh api graphql -f query='mutation{addPullRequestReview(input:{pullRequestId:"PR_1",event:APPROVE}){clientMutationId}}'`,
+			])?.permissionDecision,
+		).toBe("deny");
+	});
+
+	it.each([
+		"gh pr view 89",
+		"gh pr view 89 --comments",
+		"gh api repos/acme/widgets/pulls/89/comments",
+		"gh api --paginate repos/acme/widgets/pulls/89/reviews --jq '.[].id'",
+		"gh api -X GET repos/acme/widgets/pulls/89/comments -f per_page=100",
+		"gh api repos/acme/widgets/pulls/comments/123",
+	])("allows the read-only '%s'", (cmd) => {
+		expect(findBuiltinDeny([cmd])).toBeUndefined();
+	});
+});
+
 describe("findBuiltinDeny close/reopen with a comment", () => {
 	it.each([
 		'gh issue close 310 -R acme/widgets --reason completed --comment "done"',

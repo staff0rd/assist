@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
 const ISSUE_MUTATION =
-	/\bmutation\b[\s\S]*(?:issue|comment|label|assign|reaction|milestone)/i;
+	/\bmutation\b[\s\S]*(?:issue|comment|review|label|assign|reaction|milestone)/i;
 const FILE_REFERENCE = /(?:=@|--input[\s=]+)["']?([^\s"';&|)]+)/g;
 
 export function isGhGraphqlIssueMutation(command: string): boolean {

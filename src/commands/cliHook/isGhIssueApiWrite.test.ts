@@ -112,7 +112,7 @@ describe("isGhIssueApiWrite reads and other endpoints", () => {
 
 	it("leaves writes to other endpoints alone", () => {
 		expect(
-			isGhIssueApiWrite("gh api -X POST repos/acme/widgets/pulls/9/reviews"),
+			isGhIssueApiWrite("gh api -X POST repos/acme/widgets/pulls/9/merge"),
 		).toBe(false);
 		expect(
 			isGhIssueApiWrite("gh api -X PATCH repos/acme/widgets/labels/bug"),
