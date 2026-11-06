@@ -6,7 +6,6 @@ order: 4
 covers:
   - claude:refactor
   - claude:restructure
-  - claude:strip-code-comments
   - claude:test-cover
   - claude:test-review
   - config:restructure.ignore
@@ -46,11 +45,7 @@ assist config set restructure.pin SessionCard
 
 When the plan goes deeper or longer than the limits, pin files to flatten it.
 
-## Removing comments
-
-Run `/strip-code-comments` to remove comments that restate the code, label sections or hold commented-out code, keeping directives, comments that explain something the code can't, and the version comment after a SHA-pinned GitHub Actions `uses:` ref (such as `@<sha> # v4.2.0`). It also adds a commenting policy to the repo's `CLAUDE.md` if there isn't one.
-
-### Approving a comment
+## Approving a comment
 
 Agents can't add code comments by editing a file. When an agent believes one comment genuinely belongs, it asks for it: a single line of up to 50 characters, at a given line. Approve it [with a pin](../hooks-and-permissions/#approving-with-a-pin); refused, the agent has to make the code clearer instead.
 
