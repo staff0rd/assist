@@ -47,6 +47,7 @@ export function PhoneNodesSheetBody({
 			onEdit={(node) => onView({ kind: "edit", node })}
 			onAdd={() => onView({ kind: "add" })}
 			onOpenUpdate={(name) => onView({ kind: "update", name })}
+			onOpenTestflight={() => onView({ kind: "testflight" })}
 		/>
 	);
 }

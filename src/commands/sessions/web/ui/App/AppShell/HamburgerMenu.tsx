@@ -4,7 +4,8 @@ import { hamburgerMenuItems } from "./HamburgerMenu/hamburgerMenuItems";
 import { HamburgerMenuDialogs } from "./HamburgerMenu/HamburgerMenuDialogs";
 import { MenuTriggerButton } from "./HamburgerMenu/MenuTriggerButton";
 import { useMenuAnchor } from "./HamburgerMenu/useMenuAnchor";
-import { type MenuDialog, useMenuDialog } from "./HamburgerMenu/useMenuDialog";
+import { menuItemHandlers } from "./HamburgerMenu/menuItemHandlers";
+import { useMenuDialog } from "./HamburgerMenu/useMenuDialog";
 import { useSelectedPeer } from "./HamburgerMenu/useSelectedPeer";
 import { menuTargetLabels } from "./HamburgerMenu/menuTargetLabels";
 import type { SessionInfo } from "../../types";
@@ -23,10 +24,6 @@ export function HamburgerMenu({
 	const { anchorEl, open, close, openAt, restoreFocus } = useMenuAnchor();
 	const { dialog, showDialog, closeDialog } = useMenuDialog();
 	const peer = useSelectedPeer();
-	const closeAndShow = (next: MenuDialog) => () => {
-		close();
-		showDialog(next);
-	};
 
 	return (
 		<>
@@ -43,15 +40,7 @@ export function HamburgerMenu({
 				{hamburgerMenuItems({
 					mode,
 					...menuTargetLabels(peer),
-					onToggleColorMode: () => {
-						toggle();
-						close();
-					},
-					onShowShortcuts: closeAndShow("shortcuts"),
-					onConnectMobile: close,
-					onFirefoxExtension: close,
-					onRestart: closeAndShow("restart"),
-					onUpdate: closeAndShow("update"),
+					...menuItemHandlers(close, showDialog, toggle),
 				})}
 			</Menu>
 			<HamburgerMenuDialogs

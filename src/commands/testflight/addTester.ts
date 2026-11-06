@@ -1,21 +1,14 @@
-import { resolveOpSecret } from "../ravendb/resolveOpSecret";
 import {
 	type InternalTesterResult,
 	addInternalTester,
 } from "./addInternalTester";
 import { addToBetaGroup } from "./addToBetaGroup";
-import { createAscClient } from "./createAscClient";
-import { createAscToken } from "./createAscToken";
-import { findAppId } from "./findAppId";
+import { type AscConnectOptions, connectAsc } from "./connectAsc";
 import { findBetaGroupId } from "./findBetaGroupId";
 import type { TestflightConfig } from "./readTestflightConfig";
 import { requireInternalGroup } from "./requireInternalGroup";
 
-type AddTesterOptions = {
-	internal?: boolean;
-	readKey?: (reference: string) => string;
-	fetchFn?: typeof fetch;
-};
+type AddTesterOptions = AscConnectOptions & { internal?: boolean };
 
 export async function addTester(
 	config: TestflightConfig,
@@ -25,14 +18,7 @@ export async function addTester(
 	const internalGroup = options.internal
 		? requireInternalGroup(config)
 		: undefined;
-	const privateKey = (options.readKey ?? resolveOpSecret)(config.keyRef);
-	const token = createAscToken({
-		keyId: config.keyId,
-		issuerId: config.issuerId,
-		privateKey,
-	});
-	const client = createAscClient(token, options.fetchFn);
-	const appId = await findAppId(client, config.bundleId);
+	const { client, appId } = await connectAsc(config, options);
 	const groupId = await findBetaGroupId(client, appId, {
 		name: internalGroup ?? config.externalGroup,
 		configKey: internalGroup

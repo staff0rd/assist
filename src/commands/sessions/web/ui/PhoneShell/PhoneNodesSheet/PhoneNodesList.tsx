@@ -7,6 +7,7 @@ import { type NodesSheetStatus, PhoneNodeStatus } from "./PhoneNodeStatus";
 import { PhoneNodeUpdatesGroup } from "./PhoneNodeUpdatesGroup";
 import { PhoneSavedNodes } from "./PhoneSavedNodes";
 import { PhoneSheetHeader } from "./PhoneSheetHeader";
+import { PhoneToolsGroup } from "./PhoneToolsGroup";
 import { PhoneVersions } from "./PhoneVersions";
 
 type Props = {
@@ -17,6 +18,7 @@ type Props = {
 	onAdd: () => void;
 	updates: PhoneNodeUpdates | undefined;
 	onOpenUpdate: (name: string) => void;
+	onOpenTestflight: () => void;
 };
 
 export function PhoneNodesList({
@@ -27,6 +29,7 @@ export function PhoneNodesList({
 	onAdd,
 	updates,
 	onOpenUpdate,
+	onOpenTestflight,
 }: Props) {
 	const { connection } = homeNode;
 	const homeVersion =
@@ -55,6 +58,7 @@ export function PhoneNodesList({
 			{updates && (
 				<PhoneNodeUpdatesGroup updates={updates} onOpen={onOpenUpdate} />
 			)}
+			<PhoneToolsGroup onOpenTestflight={onOpenTestflight} />
 			<PhoneVersions
 				homeName={homeNode.home?.name ?? "Home node"}
 				homeVersion={homeVersion}

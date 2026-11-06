@@ -1,69 +1,8 @@
-import { generateKeyPairSync } from "node:crypto";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { addTester } from "./addTester";
-import type { TestflightConfig } from "./readTestflightConfig";
+import { type AscRoute, ascFixtures } from "./ascFixtures";
 
-const pem = generateKeyPairSync("ec", { namedCurve: "prime256v1" })
-	.privateKey.export({ type: "pkcs8", format: "pem" })
-	.toString();
-
-const config: TestflightConfig = {
-	keyId: "KEY",
-	issuerId: "ISSUER",
-	keyRef: "op://vault/item/key",
-	bundleId: "com.example.app",
-	externalGroup: "Friends",
-};
-
-type Route = { method: string; match: string; status?: number; body: unknown };
-
-function mockFetch(routes: Route[]) {
-	return vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-		const method = init?.method ?? "GET";
-		const decoded = decodeURIComponent(String(url));
-		const route = routes.find(
-			(r) => r.method === method && decoded.includes(r.match),
-		);
-		if (!route) throw new Error(`Unexpected ${method} ${decoded}`);
-		return Response.json(route.body, { status: route.status ?? 200 });
-	});
-}
-
-const appAndGroups: Route[] = [
-	{
-		method: "GET",
-		match: "/v1/apps?",
-		body: {
-			data: [
-				{
-					type: "apps",
-					id: "app1",
-					attributes: { bundleId: "com.example.app" },
-				},
-			],
-		},
-	},
-	{
-		method: "GET",
-		match: "/v1/apps/app1/betaGroups",
-		body: {
-			data: [
-				{
-					type: "betaGroups",
-					id: "g-internal",
-					attributes: { name: "Team", isInternalGroup: true },
-				},
-				{
-					type: "betaGroups",
-					id: "g-ext",
-					attributes: { name: "Friends", isInternalGroup: false },
-				},
-			],
-		},
-	},
-];
-
-const readKey = () => pem;
+const { config, appAndGroups, mockFetch, readKey } = ascFixtures;
 
 function postBodies(fetchFn: ReturnType<typeof mockFetch>) {
 	return fetchFn.mock.calls
@@ -181,7 +120,7 @@ describe("addTester", () => {
 
 describe("addTester --internal", () => {
 	const internalConfig = { ...config, internalGroup: "Team" };
-	const noUser: Route = {
+	const noUser: AscRoute = {
 		method: "GET",
 		match: "/v1/users?",
 		body: { data: [] },

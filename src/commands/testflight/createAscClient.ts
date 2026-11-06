@@ -1,9 +1,12 @@
 import { ascRequest } from "./ascRequest";
 
-type AscResource = {
+type AscLinkage = { type: string; id: string };
+
+export type AscResource = {
 	type: string;
 	id: string;
 	attributes?: Record<string, unknown>;
+	relationships?: Record<string, { data?: AscLinkage[] | AscLinkage | null }>;
 };
 
 type AscListResponse = { data: AscResource[] };

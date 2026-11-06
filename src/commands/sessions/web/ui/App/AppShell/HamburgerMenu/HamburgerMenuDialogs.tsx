@@ -1,6 +1,7 @@
 import { PeerRestartConfirmDialog } from "./HamburgerMenuDialogs/PeerRestartConfirmDialog";
 import { PeerSnackbars } from "../PeerSnackbars";
 import { ShortcutsDialog } from "./HamburgerMenuDialogs/ShortcutsDialog";
+import { TestflightTestersDialog } from "./HamburgerMenuDialogs/TestflightTestersDialog";
 import { RestartConfirmDialog } from "./HamburgerMenuDialogs/RestartConfirmDialog";
 import { UpdateAssistConfirmDialog } from "./HamburgerMenuDialogs/UpdateAssistConfirmDialog";
 import { usePeerRestart } from "./HamburgerMenuDialogs/usePeerRestart";
@@ -29,6 +30,7 @@ export function HamburgerMenuDialogs({
 	return (
 		<>
 			{dialog === "shortcuts" && <ShortcutsDialog onClose={onClose} />}
+			{dialog === "testflight" && <TestflightTestersDialog onClose={onClose} />}
 			{dialog === "restart" && peer && (
 				<PeerRestartConfirmDialog
 					peer={peer}
