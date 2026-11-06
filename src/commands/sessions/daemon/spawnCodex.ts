@@ -1,4 +1,5 @@
 import { buildHarnessCodexArgs } from "../../../shared/buildHarnessCodexArgs";
+import { codexIsolatedHookArgs } from "../../../shared/codexIsolatedHookArgs";
 import { codexSessionEnvArgs } from "../../../shared/codexSessionEnvArgs";
 import { spawnPty } from "./spawnPty";
 
@@ -17,7 +18,13 @@ export function spawnCodex(opts: SpawnOpts = {}) {
 		ASSIST_BACKLOG_ITEM_ID: process.env.ASSIST_BACKLOG_ITEM_ID,
 	});
 	return spawnPty(
-		["codex", ...override.args, ...sessionEnv, ...codexArgs(opts)],
+		[
+			"codex",
+			...codexIsolatedHookArgs,
+			...override.args,
+			...sessionEnv,
+			...codexArgs(opts),
+		],
 		opts.cwd,
 		opts.sessionId,
 		override.env,

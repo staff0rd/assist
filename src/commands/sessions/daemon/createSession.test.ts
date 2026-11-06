@@ -47,7 +47,7 @@ describe("createSession", () => {
 			harness: "codex",
 		});
 
-		expect(spawnedArgs()).toEqual(["codex", "go"]);
+		expect(spawnedArgs()).toEqual(["codex", "--no-daemon", "go"]);
 	});
 
 	it("adds no approvals flag to a pi launch", () => {

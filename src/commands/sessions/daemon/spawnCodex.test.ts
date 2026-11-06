@@ -64,7 +64,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ prompt: "Do the thing", cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", ENV, "Do the thing"],
+			["codex", "--no-daemon", ENV, "Do the thing"],
 			"/repo",
 			"7",
 			{},
@@ -82,14 +82,19 @@ describe("spawnCodex", () => {
 	it("starts a bare idle session with no prompt", () => {
 		spawnCodex({ cwd: "/repo", sessionId: "7" });
 
-		expect(spawnPtyMock).toHaveBeenCalledWith(["codex", ENV], "/repo", "7", {});
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["codex", "--no-daemon", ENV],
+			"/repo",
+			"7",
+			{},
+		);
 	});
 
 	it("starts with no options", () => {
 		spawnCodex();
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", ENV],
+			["codex", "--no-daemon", ENV],
 			undefined,
 			undefined,
 			{},
@@ -100,7 +105,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ resumeSessionId: "conv-1", cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", ENV, "resume", "conv-1"],
+			["codex", "--no-daemon", ENV, "resume", "conv-1"],
 			"/repo",
 			"7",
 			{},
@@ -116,7 +121,7 @@ describe("spawnCodex", () => {
 		});
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", ENV, "resume", "conv-1", "continue"],
+			["codex", "--no-daemon", ENV, "resume", "conv-1", "continue"],
 			"/repo",
 			"7",
 			{},
@@ -133,7 +138,7 @@ describe("spawnCodex", () => {
 			spawnCodex({ prompt: "Do the thing", cwd: "/repo", sessionId: "7" });
 
 			expect(spawnPtyMock).toHaveBeenCalledWith(
-				["codex", ...OVERRIDE_ARGS, ENV, "Do the thing"],
+				["codex", "--no-daemon", ...OVERRIDE_ARGS, ENV, "Do the thing"],
 				"/repo",
 				"7",
 				{ ASSIST_LITELLM_API_KEY: "sk-test" },
@@ -154,7 +159,15 @@ describe("spawnCodex", () => {
 			});
 
 			expect(spawnPtyMock).toHaveBeenCalledWith(
-				["codex", ...OVERRIDE_ARGS, ENV, "resume", "conv-1", "continue"],
+				[
+					"codex",
+					"--no-daemon",
+					...OVERRIDE_ARGS,
+					ENV,
+					"resume",
+					"conv-1",
+					"continue",
+				],
 				"/repo",
 				"7",
 				{ ASSIST_LITELLM_API_KEY: "sk-test" },
@@ -167,7 +180,7 @@ describe("spawnCodex", () => {
 			spawnCodex({ resumeSessionId: "conv-1", cwd: "/repo", sessionId: "7" });
 
 			expect(spawnPtyMock).toHaveBeenCalledWith(
-				["codex", ENV, "resume", "conv-1"],
+				["codex", "--no-daemon", ENV, "resume", "conv-1"],
 				"/repo",
 				"7",
 				{},
@@ -180,6 +193,11 @@ describe("spawnCodex", () => {
 
 		spawnCodex({ cwd: "/repo", sessionId: "7" });
 
-		expect(spawnPtyMock).toHaveBeenCalledWith(["codex", ENV], "/repo", "7", {});
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["codex", "--no-daemon", ENV],
+			"/repo",
+			"7",
+			{},
+		);
 	});
 });

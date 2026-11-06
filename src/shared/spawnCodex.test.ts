@@ -65,7 +65,15 @@ describe("spawnCodex", () => {
 
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
-			[ENV, "-C", "/repo", "--sandbox", "read-only", "Do the thing"],
+			[
+				"--no-daemon",
+				ENV,
+				"-C",
+				"/repo",
+				"--sandbox",
+				"read-only",
+				"Do the thing",
+			],
 			{ env: {} },
 		);
 	});
@@ -82,6 +90,7 @@ describe("spawnCodex", () => {
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
 			[
+				"--no-daemon",
 				ENV,
 				"-C",
 				process.cwd(),
@@ -104,6 +113,7 @@ describe("spawnCodex", () => {
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
 			[
+				"--no-daemon",
 				...OVERRIDE_ARGS,
 				ENV,
 				"-C",
@@ -123,7 +133,15 @@ describe("spawnCodex", () => {
 
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
-			[ENV, "-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
+			[
+				"--no-daemon",
+				ENV,
+				"-C",
+				"/repo",
+				"--sandbox",
+				"workspace-write",
+				"Do the thing",
+			],
 			{ env: {} },
 		);
 	});
@@ -146,7 +164,15 @@ describe("spawnCodex", () => {
 
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
-			[ENV, "-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
+			[
+				"--no-daemon",
+				ENV,
+				"-C",
+				"/repo",
+				"--sandbox",
+				"workspace-write",
+				"Do the thing",
+			],
 			{ env: {} },
 		);
 	});

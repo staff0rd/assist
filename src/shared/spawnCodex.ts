@@ -1,4 +1,5 @@
 import { buildHarnessCodexArgs } from "./buildHarnessCodexArgs";
+import { codexIsolatedHookArgs } from "./codexIsolatedHookArgs";
 import { codexSessionEnvArgs } from "./codexSessionEnvArgs";
 import { harnesses } from "./harnesses";
 import { neutralizeCodexSkillMentions } from "./neutralizeCodexSkillMentions";
@@ -16,6 +17,7 @@ export function spawnCodex(
 	return spawnInherit(
 		harnesses.codex.command,
 		[
+			...codexIsolatedHookArgs,
 			...override.args,
 			...codexSessionEnvArgs(process.env),
 			"-C",
