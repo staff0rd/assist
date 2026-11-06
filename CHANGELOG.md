@@ -1,3 +1,10 @@
+# [0.1072.0](https://github.com/staff0rd/assist/compare/v0.1071.0...v0.1072.0) (2026-11-06)
+
+
+### Features
+
+* prs.reviewAfterRaise config key ([8129696](https://github.com/staff0rd/assist/commit/812969698f14b774010ea8f06bd06d4e92949479))
+
 # [0.1071.0](https://github.com/staff0rd/assist/compare/v0.1070.1...v0.1071.0) (2026-11-06)
 
 
