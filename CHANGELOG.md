@@ -1,3 +1,11 @@
+## [0.1069.3](https://github.com/staff0rd/assist/compare/v0.1069.2...v0.1069.3) (2026-11-06)
+
+
+### Bug Fixes
+
+* devlog stale check on merged tags ([8b943dd](https://github.com/staff0rd/assist/commit/8b943dd71a49824e1296ab09c1c0f87b3c7c1ecb))
+* devlog version current from tags ([1421cc8](https://github.com/staff0rd/assist/commit/1421cc811b4afd3b07397da96436cb4da838ee97))
+
 ## [0.1069.2](https://github.com/staff0rd/assist/compare/v0.1069.1...v0.1069.2) (2026-11-06)
 
 
