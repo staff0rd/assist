@@ -1,3 +1,11 @@
+## [0.1074.6](https://github.com/staff0rd/assist/compare/v0.1074.5...v0.1074.6) (2026-11-06)
+
+
+### Bug Fixes
+
+* honour auto submit on phone questions ([bea7651](https://github.com/staff0rd/assist/commit/bea76510ec4e167350194ffa086b35ab6b5061e6))
+* show failing fetch on Updates page ([7f4a933](https://github.com/staff0rd/assist/commit/7f4a933d5981596471bf6bb26182a073af5c193d))
+
 ## [0.1074.5](https://github.com/staff0rd/assist/compare/v0.1074.4...v0.1074.5) (2026-11-06)
 
 
