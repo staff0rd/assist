@@ -1,3 +1,10 @@
+## [0.1074.5](https://github.com/staff0rd/assist/compare/v0.1074.4...v0.1074.5) (2026-11-06)
+
+
+### Bug Fixes
+
+* read git remote in Codex sandbox ([6295e9f](https://github.com/staff0rd/assist/commit/6295e9f4b7d3512c102ac82456a4d7c0feffcb60))
+
 ## [0.1074.4](https://github.com/staff0rd/assist/compare/v0.1074.3...v0.1074.4) (2026-11-06)
 
 
