@@ -1,3 +1,10 @@
+## [0.1072.1](https://github.com/staff0rd/assist/compare/v0.1072.0...v0.1072.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* patch vulnerable dependencies ([7486c44](https://github.com/staff0rd/assist/commit/7486c446306ff8848634c3d209341e074d70eef6))
+
 # [0.1072.0](https://github.com/staff0rd/assist/compare/v0.1071.0...v0.1072.0) (2026-11-06)
 
 
