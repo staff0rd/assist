@@ -1,3 +1,10 @@
+## [0.1069.1](https://github.com/staff0rd/assist/compare/v0.1069.0...v0.1069.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* refresh docs for recent stories ([4a5c78f](https://github.com/staff0rd/assist/commit/4a5c78ff6b17dcb1e51d942683bc80bb128fabfc))
+
 # [0.1069.0](https://github.com/staff0rd/assist/compare/v0.1068.0...v0.1069.0) (2026-11-06)
 
 
