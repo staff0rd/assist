@@ -8,10 +8,10 @@ export function consumeHeredoc(
 	opIndex: number,
 	current: string[],
 ): StepResult {
-	const delimiter = tokens[opIndex + 2];
+	const delimiter = tokens[opIndex + 1];
 	if (typeof delimiter !== "string") {
 		return { ok: false, error: "unable to parse" };
 	}
 	popFdPrefix(current);
-	return { ok: true, nextIndex: opIndex + 2 };
+	return { ok: true, nextIndex: opIndex + 1 };
 }
