@@ -1,3 +1,10 @@
+# [0.1075.0](https://github.com/staff0rd/assist/compare/v0.1074.6...v0.1075.0) (2026-11-06)
+
+
+### Features
+
+* add assist testflight add command ([c5c7ebd](https://github.com/staff0rd/assist/commit/c5c7ebd3e4840506b3895f49b3169e7b870d517e))
+
 ## [0.1074.6](https://github.com/staff0rd/assist/compare/v0.1074.5...v0.1074.6) (2026-11-06)
 
 
