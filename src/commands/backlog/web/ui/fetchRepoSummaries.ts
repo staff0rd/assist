@@ -33,5 +33,8 @@ export async function fetchRepoSummaries({
 	const res = await apiFetch(withCwd(summaryUrl(knownCwds), cwd, node), {
 		signal,
 	});
-	return res.json();
+	if (!res.ok) throw new Error(`HTTP ${res.status}`);
+	const body: unknown = await res.json();
+	if (!Array.isArray(body)) throw new Error("Unexpected repo summary response");
+	return body;
 }

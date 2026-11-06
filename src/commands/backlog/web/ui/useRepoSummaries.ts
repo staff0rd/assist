@@ -23,7 +23,9 @@ export function useRepoSummaries(): {
 		const controller = new AbortController();
 		fetchRepoSummaries({ cwd, node, knownCwds, signal: controller.signal })
 			.then(setSummaries)
-			.catch(() => {});
+			.catch(() => {
+				if (!controller.signal.aborted) setSummaries([]);
+			});
 		return () => controller.abort();
 	}, [knownCwds, cwd, node]);
 

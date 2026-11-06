@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import type { MergedRepo } from "../../../../mergeRepos";
 import { nodeKey } from "../../../../nodeKey";
 import { type RepoPick, resolveSelectedNode } from "./resolveSelectedNode";
+import { readStoredRepoPick } from "./readStoredRepoPick";
+import { storeRepoPick } from "./storeRepoPick";
 
 export function useSelectedRepo(
 	currentCwd: string,
@@ -9,10 +11,15 @@ export function useSelectedRepo(
 	machine: string,
 	localNode: string | undefined,
 ) {
-	const [pick, setPick] = useState<RepoPick>({ cwd: currentCwd });
+	const [pick, setPick] = useState<RepoPick>(
+		() => readStoredRepoPick() ?? { cwd: currentCwd },
+	);
 	const setSelectedCwd = useCallback(
-		(cwd: string, node?: string, origin?: string) =>
-			setPick({ cwd, node, origin }),
+		(cwd: string, node?: string, origin?: string) => {
+			const next = { cwd, node, origin };
+			setPick(next);
+			storeRepoPick(next);
+		},
 		[],
 	);
 
