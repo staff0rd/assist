@@ -345,7 +345,7 @@ describe("decideCommentGuard", () => {
 				"      uses: makerxstudio/yoke/.github/workflows/review.yml@458b446ce718aef04663555f4762fea3e78fa2a8";
 			const decision = decideCommentGuard(
 				input("Edit", {
-					file_path: ".github/workflows/review-ci.yml",
+					file_path: ".github/workflows/review.yml",
 					old_string: uses,
 					new_string: `${uses} # review-v0.17.1`,
 				}),
