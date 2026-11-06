@@ -1,3 +1,10 @@
+# [0.1070.0](https://github.com/staff0rd/assist/compare/v0.1069.4...v0.1070.0) (2026-11-06)
+
+
+### Features
+
+* default sessions.askQuestion on ([ec52262](https://github.com/staff0rd/assist/commit/ec5226221e693bf6044fbdadf68a80a1d1f11db0))
+
 ## [0.1069.4](https://github.com/staff0rd/assist/compare/v0.1069.3...v0.1069.4) (2026-11-06)
 
 
