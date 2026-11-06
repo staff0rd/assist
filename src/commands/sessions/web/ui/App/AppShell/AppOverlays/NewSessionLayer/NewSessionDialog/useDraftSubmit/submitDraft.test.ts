@@ -44,7 +44,26 @@ describe("submitDraft", () => {
 		);
 	});
 
-	it("keeps autoApprove alongside the node on a forwarded draft", () => {
+	it("opens a Shift+clicked draft with autoApprove on the local node", () => {
+		const l = launchers();
+
+		submitDraft(draft, "claude", { kind: "launch", cwd: "/git/app" }, l, true);
+		submitDraft(draft, "claude", { kind: "launch", cwd: "/git/app" }, l, false);
+
+		expect(l.onCreateAssist).toHaveBeenNthCalledWith(
+			1,
+			["draft", "--once"],
+			"/git/app",
+			{ autoApprove: true, open: true },
+		);
+		expect(l.onCreateAssist).toHaveBeenNthCalledWith(
+			2,
+			["draft", "--once"],
+			"/git/app",
+		);
+	});
+
+	it("keeps autoApprove and open alongside the node on a forwarded draft", () => {
 		const l = launchers();
 
 		submitDraft(
@@ -58,7 +77,7 @@ describe("submitDraft", () => {
 		expect(l.onCreateAssist).toHaveBeenCalledWith(
 			["draft", "--once"],
 			"/git/app",
-			{ node: "pc-windows", autoApprove: true },
+			{ node: "pc-windows", autoApprove: true, open: true },
 		);
 	});
 

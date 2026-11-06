@@ -17,6 +17,7 @@ export type AssistLaunchMeta = {
 	launchedFrom?: string;
 	node?: string;
 	autoApprove?: boolean;
+	open?: boolean;
 };
 
 export function resumeSessionAction(send: SendFn) {

@@ -627,13 +627,14 @@ describe("NewSessionDialog Shift+click auto start", () => {
 	it.each([
 		["draft", ["draft", "--once"]],
 		["bug", ["bug", "--once"]],
-	] as const)("launches %s with Auto start on", (mode, args) => {
+	] as const)("launches %s with Auto start on and opens it", (mode, args) => {
 		const { onCreateAssist } = renderDialog(mode);
 
 		fireEvent.click(submitButton(), { shiftKey: true });
 
 		expect(onCreateAssist).toHaveBeenCalledWith(args, "/git/beta", {
 			autoApprove: true,
+			open: true,
 		});
 	});
 
@@ -670,7 +671,12 @@ describe("NewSessionDialog Shift+click auto start", () => {
 
 		const design = renderDialog("design");
 		fireEvent.click(submitButton(), { shiftKey: true });
-		expect(design.onCreateDesign).toHaveBeenCalledWith("", "/git/beta");
+		expect(design.onCreateDesign).toHaveBeenCalledWith(
+			"",
+			"/git/beta",
+			undefined,
+			true,
+		);
 		expect(design.onCreateAssist).not.toHaveBeenCalled();
 	});
 

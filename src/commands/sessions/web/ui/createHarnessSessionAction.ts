@@ -19,8 +19,8 @@ export function sendCreate(
 }
 
 export function createDesignSessionAction(send: SendFn) {
-	return (prompt: string, cwd?: string, node?: string) =>
-		sendCreate(send, { design: true }, prompt, cwd, node);
+	return (prompt: string, cwd?: string, node?: string, open?: boolean) =>
+		sendCreate(send, { design: true }, prompt, cwd, node, open);
 }
 
 export function createHarnessSessionAction(send: SendFn) {

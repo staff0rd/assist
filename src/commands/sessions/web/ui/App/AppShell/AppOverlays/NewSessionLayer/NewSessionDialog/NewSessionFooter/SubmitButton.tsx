@@ -11,6 +11,7 @@ export type FooterProps = {
 export const FOOTER_HINTS = [
 	["Enter", "start"],
 	["Shift+Enter", "newline"],
+	["Shift+click", "start & open"],
 	["Esc", "close"],
 ] as const;
 

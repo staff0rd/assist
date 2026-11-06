@@ -103,4 +103,20 @@ describe("pendingLaunchFromMessage", () => {
 			pendingLaunchFromMessage({ type: "create", node: "pc", open: true }),
 		).toEqual({ cwd: undefined, title: "New session", node: "pc", open: true });
 	});
+
+	it("carries the open flag of a Shift+clicked assist launch on a remote node", () => {
+		expect(
+			pendingLaunchFromMessage({
+				type: "create-assist",
+				node: "pc",
+				open: true,
+			}),
+		).toEqual({
+			cwd: undefined,
+			title: "New session",
+			named: false,
+			node: "pc",
+			open: true,
+		});
+	});
 });

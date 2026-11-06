@@ -25,6 +25,7 @@ export function pendingLaunchFromMessage(msg: object): NewLaunchInput | null {
 			title: title || "New session",
 			named: !!title,
 			node: m.node,
+			...(m.open && { open: true }),
 		};
 	}
 	return null;
