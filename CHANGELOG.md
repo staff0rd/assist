@@ -1,3 +1,10 @@
+## [0.1069.4](https://github.com/staff0rd/assist/compare/v0.1069.3...v0.1069.4) (2026-11-06)
+
+
+### Bug Fixes
+
+* keep New session Start bottom-right ([39858cc](https://github.com/staff0rd/assist/commit/39858cc471b319ac0fda5ba3b16927475405bec4))
+
 ## [0.1069.3](https://github.com/staff0rd/assist/compare/v0.1069.2...v0.1069.3) (2026-11-06)
 
 
