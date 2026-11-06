@@ -5,7 +5,6 @@ group: Git and GitHub
 order: 2
 covers:
   - config:review.codexModel
-  - skill:review-ci
 screenshots:
   - file: sessions-review-menu.png
     alt: The Review menu on a session with a pull request
@@ -63,4 +62,4 @@ assist config set review.codexModel gpt-5-codex
 
 ## Reviewing in CI
 
-Run `/review-ci` in a repo to have every new pull request reviewed by Claude and Codex in GitHub Actions, through a LiteLLM proxy or Azure AI Foundry. It adds a workflow to the repo and asks which models to use for the two reviewers and the summary. It then gives you a command to run in your own terminal, which asks for the API key and stores the settings on the GitHub repo. Commit the files it adds; the findings arrive as a review on each pull request that isn't a draft.
+Reviewing every pull request with Claude and Codex in GitHub Actions has moved out of assist to [yoke](https://github.com/MakerXStudio/yoke). Follow its instructions to set it up in a repo.
