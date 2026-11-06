@@ -107,6 +107,17 @@ describe("spawnCodex", () => {
 		);
 	});
 
+	it("neutralizes $skill mentions so quoted text cannot load a Codex skill", () => {
+		spawnCodex("Earlier we ran 'codex exec $refine' with $HOME set", {
+			cwd: "/repo",
+		});
+
+		const args = spawnInheritMock.mock.calls[0][1] as string[];
+		expect(args.at(-1)).toBe(
+			"Earlier we ran 'codex exec $⁠refine' with $HOME set",
+		);
+	});
+
 	it("ignores review.codexModel", () => {
 		withConfig({ review: { codexModel: "gpt-5-codex" }, litellm: LITELLM });
 

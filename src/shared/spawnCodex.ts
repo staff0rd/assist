@@ -1,5 +1,6 @@
 import { buildHarnessCodexArgs } from "./buildHarnessCodexArgs";
 import { harnesses } from "./harnesses";
+import { neutralizeCodexSkillMentions } from "./neutralizeCodexSkillMentions";
 import { type SpawnResult, spawnInherit } from "./spawnInherit";
 
 export function spawnCodex(
@@ -19,7 +20,7 @@ export function spawnCodex(
 			cwd,
 			"--sandbox",
 			options.sandbox ?? "workspace-write",
-			prompt,
+			neutralizeCodexSkillMentions(prompt),
 		],
 		{ env: override.env },
 	);
