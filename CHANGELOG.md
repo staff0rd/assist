@@ -1,3 +1,16 @@
+# [0.1068.0](https://github.com/staff0rd/assist/compare/v0.1067.0...v0.1068.0) (2026-11-06)
+
+
+### Bug Fixes
+
+* allow version comments on SHA pins ([b553604](https://github.com/staff0rd/assist/commit/b553604a68319a6e49dc534663c53b974b0fcbfb))
+
+
+### Features
+
+* remove the review-ci skill ([3ee982f](https://github.com/staff0rd/assist/commit/3ee982fd66488b02f4176b4253a42ff6ce8ca8e4))
+* Shift+click Start opens new session ([31ec151](https://github.com/staff0rd/assist/commit/31ec1516f1c6b93f5cc9194400fc377190aa8e63))
+
 # [0.1067.0](https://github.com/staff0rd/assist/compare/v0.1066.0...v0.1067.0) (2026-11-06)
 
 
