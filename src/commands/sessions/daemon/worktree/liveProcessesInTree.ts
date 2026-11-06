@@ -1,5 +1,6 @@
 import { readdirSync, readlinkSync } from "node:fs";
 import { sep } from "node:path";
+import { isCodexAppServer } from "./isCodexAppServer";
 
 export function liveProcessesInTree(
 	treePath: string,
@@ -16,7 +17,11 @@ export function liveProcessesInTree(
 		const pid = Number(entry);
 		if (!Number.isInteger(pid) || pid === process.pid) continue;
 		const cwd = processCwd(`${procRoot}/${entry}/cwd`);
-		if (cwd && (cwd === treePath || cwd.startsWith(treePath + sep)))
+		if (
+			cwd &&
+			(cwd === treePath || cwd.startsWith(treePath + sep)) &&
+			!isCodexAppServer(pid, procRoot)
+		)
 			pids.push(pid);
 	}
 	return pids;

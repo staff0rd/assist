@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readProc } from "./readProc";
 
 export type Occupant = { pid: number; name: string; vscode: boolean };
 
@@ -40,16 +40,4 @@ function parentPid(stat: string | undefined): number | undefined {
 	const fields = stat.slice(stat.lastIndexOf(")") + 2).split(" ");
 	const ppid = Number(fields[1]);
 	return Number.isInteger(ppid) ? ppid : undefined;
-}
-
-function readProc(
-	procRoot: string,
-	pid: number,
-	file: string,
-): string | undefined {
-	try {
-		return readFileSync(`${procRoot}/${pid}/${file}`, "utf8");
-	} catch {
-		return undefined;
-	}
 }
