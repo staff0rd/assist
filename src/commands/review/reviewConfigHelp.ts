@@ -35,9 +35,4 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 			'assist config set review.highLevel.collapsedPaths "**/*.test.*,**/generated/**"',
 		note: "comma-separated globs whose files start collapsed in the high-level changed-files tree; every other file starts expanded (default **/*.test.*,**/generated/**)",
 	},
-	{
-		key: "review.highLevel.slices",
-		setter: "assist config set review.highLevel.slices true",
-		note: "experimental; in an assist session, --high-level has the session agent split the PR into slices (via --slices) and groups the Structure item by slice (default false)",
-	},
 ];

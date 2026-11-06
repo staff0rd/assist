@@ -99,6 +99,17 @@ describe("stripLegacyConfigKeys", () => {
 		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
 	});
 
+	it("drops the retired review.highLevel.slices flag so old configs still parse", () => {
+		const stripped = stripLegacyConfigKeys({
+			review: { highLevel: { uiPaths: ["src/ui/**"], slices: true } },
+		});
+
+		expect(stripped).toEqual({
+			review: { highLevel: { uiPaths: ["src/ui/**"] } },
+		});
+		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
+	});
+
 	it("drops retired keys inside repos entries so old global configs still parse", () => {
 		const stripped = stripLegacyConfigKeys({
 			repos: {

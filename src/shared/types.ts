@@ -154,7 +154,6 @@ const assistConfigShape = {
 					collapsedPaths: z
 						.array(z.string())
 						.default(["**/*.test.*", "**/generated/**"]),
-					slices: z.boolean().default(false),
 				})
 				.optional(),
 		})

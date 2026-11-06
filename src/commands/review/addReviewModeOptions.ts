@@ -12,7 +12,7 @@ export function addReviewModeOptions(command: Command): Command {
 		)
 		.option(
 			"--slices <file>",
-			'With --high-level and review.highLevel.slices on, in an assist session: read the PR\'s slices from a JSON file of [{title, summary, hunks[]}], where hunks are the path#index labels printed when the command refuses without slices. Unknown refs are dropped with a warning, unclaimed hunks go into an "Everything else" slice, and the slices are saved for this head SHA so a reopen reuses them unless --force is passed',
+			'With --high-level, in an assist session: read the PR\'s slices from a JSON file of [{title, summary, hunks[]}], where hunks are the path#index labels printed when the command refuses without slices. Unknown refs are dropped with a warning, unclaimed hunks go into an "Everything else" slice, and the slices are saved for this head SHA so a reopen reuses them unless --force is passed',
 		)
 		.option(
 			"--configure",

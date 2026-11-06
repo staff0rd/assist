@@ -41,7 +41,7 @@ const EXAMPLE = {
 
 export function formatSlicingRequest(hunks: HighLevelHunk[]): string {
 	return [
-		"Slicing required: review.highLevel.slices is on, so this PR must be split into slices before the review opens.",
+		"Slicing required: this PR must be split into slices before the review opens.",
 		"",
 		"Write the slices and the manual testing steps as JSON to a scratch file, then re-run this command with the same arguments plus `--slices <file>`:",
 		"",

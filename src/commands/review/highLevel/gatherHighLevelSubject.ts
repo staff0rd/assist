@@ -27,10 +27,9 @@ export function gatherHighLevelSubject(
 	const fetched = fetchHighLevelFiles(prNumber, slug);
 	const files = capHighLevelPatches(fetched, config.criticalPaths);
 	const head = { repo: slug, headRef: pr.headRef, headSha: pr.headSha };
-	const sliced =
-		slicing && config.slices
-			? gatherHighLevelSlices(head, files, slicing)
-			: undefined;
+	const sliced = slicing
+		? gatherHighLevelSlices(head, files, slicing)
+		: undefined;
 	return {
 		...head,
 		prNumber,

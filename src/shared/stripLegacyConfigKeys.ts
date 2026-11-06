@@ -1,3 +1,5 @@
+import { stripLegacyReviewKeys } from "./stripLegacyReviewKeys";
+
 const LEGACY_SESSIONS_KEYS = [
 	"windowsProjectsRoot",
 	"windowsDaemonHost",
@@ -52,5 +54,6 @@ export function stripLegacyConfigKeys(
 		stripped.worktree = withoutKeys(stripped.worktree, LEGACY_WORKTREE_KEYS);
 	if (stripped.devlog)
 		stripped.devlog = withoutKeys(stripped.devlog, LEGACY_DEVLOG_KEYS);
+	if (stripped.review) stripped.review = stripLegacyReviewKeys(stripped.review);
 	return stripped;
 }
