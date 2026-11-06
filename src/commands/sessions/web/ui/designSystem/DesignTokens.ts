@@ -83,6 +83,7 @@ type DensityTokens = {
 	switch: { width: number; height: number; thumb: number };
 	inputFontSize: number;
 	filterSelectMinWidth: number;
+	doc: { body: number; h1: number; h2: number; h3: number; heading: number };
 	tabBar: {
 		height: number;
 		icon: number;

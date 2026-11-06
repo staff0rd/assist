@@ -7,20 +7,24 @@ const outrankMarkdown = (selector: string) =>
 		.join(", ");
 
 export function slateDocSx(t: Theme) {
-	const { color, radius } = t.tokens;
+	const { color, radius, density } = t.tokens;
+	const { doc } = density;
 	return {
 		px: 2.5,
 		py: 2,
-		fontSize: 14,
+		fontSize: doc.body,
 		lineHeight: 1.6,
 		[outrankMarkdown("")]: { lineHeight: 1.6 },
 		[outrankMarkdown("h1, h2, h3, h4, h5, h6")]: {
-			fontSize: 15,
+			fontSize: doc.heading,
 			fontWeight: 600,
 			lineHeight: 1.4,
 			mt: 2,
 			mb: 1,
 		},
+		[outrankMarkdown("h1")]: { fontSize: doc.h1 },
+		[outrankMarkdown("h2")]: { fontSize: doc.h2 },
+		[outrankMarkdown("h3")]: { fontSize: doc.h3 },
 		[outrankMarkdown("ul, ol")]: { pl: 2.5, mb: 2 },
 		[outrankMarkdown("li")]: { mb: "6px" },
 		[outrankMarkdown("code")]: {
