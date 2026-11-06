@@ -9,7 +9,7 @@ function runGit(cwd: string, args: string[]): { ok: boolean; out: string } {
 		const out = execFileSync(file, argv, {
 			encoding: "utf8",
 			windowsHide: true,
-			stdio: ["pipe", "pipe", "pipe"],
+			stdio: ["ignore", "pipe", "pipe"],
 			...(windows ? {} : { cwd }),
 		}).trim();
 		return { ok: true, out };
