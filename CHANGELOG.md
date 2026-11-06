@@ -1,3 +1,11 @@
+## [0.1076.2](https://github.com/staff0rd/assist/compare/v0.1076.1...v0.1076.2) (2026-11-06)
+
+
+### Bug Fixes
+
+* survive repo summary errors ([5849f57](https://github.com/staff0rd/assist/commit/5849f574c1db451bf08476f667ab749effa247d1))
+* type live cards by slash command ([eb15805](https://github.com/staff0rd/assist/commit/eb15805214af14aec293a027c2ca1991bbb71066))
+
 ## [0.1076.1](https://github.com/staff0rd/assist/compare/v0.1076.0...v0.1076.1) (2026-11-06)
 
 
