@@ -340,6 +340,83 @@ describe("decideCommentGuard", () => {
 			expect(decision).toContain("(#)");
 		});
 
+		it("allows a version comment on a SHA-pinned uses: ref", () => {
+			const uses =
+				"      uses: makerxstudio/yoke/.github/workflows/review.yml@458b446ce718aef04663555f4762fea3e78fa2a8";
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".github/workflows/review-ci.yml",
+					old_string: uses,
+					new_string: `${uses} # review-v0.17.1`,
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("allows a version comment on a SHA-pinned list-item uses: ref", () => {
+			const decision = decideCommentGuard(
+				input("Write", {
+					file_path: ".github/workflows/ci.yml",
+					content:
+						"steps:\n  - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2\n",
+				}),
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("blocks a trailing comment on a tag-pinned uses: ref", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".github/workflows/ci.yml",
+					old_string: "  - uses: actions/checkout@v4",
+					new_string: "  - uses: actions/checkout@v4 # v4.2.2",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("blocks a trailing comment on a branch-pinned uses: ref", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".github/workflows/ci.yml",
+					old_string: "  - uses: actions/checkout@main",
+					new_string: "  - uses: actions/checkout@main # latest",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("blocks a full-line comment above a SHA-pinned uses: ref", () => {
+			const uses =
+				"  - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683";
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".github/workflows/ci.yml",
+					old_string: uses,
+					new_string: `  # check out\n${uses}`,
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("blocks a trailing comment on a non-uses key with a SHA", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".github/workflows/ci.yml",
+					old_string: "  ref: x@11bd71901bbe5b1630ceea73d27597364c9af683",
+					new_string:
+						"  ref: x@11bd71901bbe5b1630ceea73d27597364c9af683 # note",
+				}),
+			);
+
+			expect(decision).toBeDefined();
+		});
+
 		it("does not treat // as a comment in yaml", () => {
 			const decision = decideCommentGuard(
 				input("Edit", {
