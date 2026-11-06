@@ -25,7 +25,7 @@ screenshots:
 
 ## The new-session dialog
 
-The **+** button in the toolbar, :kbd[Mod+N] or :kbd[Alt+N] opens the new-session dialog. Type what you want, pick the repo and a mode, and press :kbd[Enter] (:kbd[Shift+Enter] adds a newline, :kbd[Esc] closes).
+The **+** button in the toolbar, :kbd[Mod+N] or :kbd[Alt+N] opens the new-session dialog. Type what you want, pick the repo and a mode, and press :kbd[Enter] (:kbd[Shift+Enter] adds a newline, :kbd[Esc] closes). A session started while another is open starts in the background; hold :kbd[Shift] as you click the start button to switch to it once it starts.
 
 ::screenshot{file="sessions-new.png"}
 

@@ -40,6 +40,29 @@ screenshots:
           to: text=Save the choice to localStorage
       - type: Store it per user on the server instead, so it follows them between devices
       - click: text=Add to review
+  - file: sessions-question.png
+    alt: A question from the agent in the preview pane, with its options, an Other box and the Answer button
+    route: /sessions
+    scene: previews
+    setup:
+      - question:
+          session: Add a dark mode toggle to the settings page
+          title: Claude is asking a question
+          questions:
+            - question: Where should the Dark mode toggle go on the settings page?
+              header: Placement
+              multiSelect: false
+              options:
+                - label: Next to the theme picker
+                  description: Groups it with the other appearance settings
+                - label: In a new Appearance section
+                  description: Leaves room for more display options later
+    waitFor: text=Where should the Dark mode toggle go
+    viewport:
+      width: 1440
+      height: 720
+    actions:
+      - click: text=Dark mode toggle
   - file: sessions-check.png
     alt: A manual check in the preview pane, with its steps and the Works, Doesn't work and Later phase buttons
     route: /sessions
@@ -158,13 +181,15 @@ Ask the agent to `/ask` about something and it puts a proposal, summary or decis
 
 ## Answering questions
 
-Turn on `assist config set sessions.askQuestion true` and questions the agent asks you open in the pane as a form instead of in the terminal. Pick one option, or several where the question allows it, or choose **Other** and type your own answer, then press **Answer**. **Dismiss** declines to answer.
+Questions the agent asks you open in the pane as a form instead of in the terminal. Pick one option, or several where the question allows it, or choose **Other** and type your own answer, then press **Answer**. In an **Other** box, :kbd[Enter] sends the answers once every question is answered and :kbd[Shift+Enter] adds a new line. **Dismiss** declines to answer.
+
+::screenshot{file="sessions-question.png"}
 
 Turn on **Auto submit** in the pane (`sessions.askQuestionAutoSubmit`) and a form whose questions each take one option is sent as soon as you pick the option that completes it, without pressing **Answer**.
 
 ## Trying a change
 
-With `sessions.askQuestion` on, manual checks open in the pane. Follow the steps, then press **Works** or **Doesn't work**, with an optional note.
+Manual checks open in the pane. Follow the steps, then press **Works** or **Doesn't work**, with an optional note.
 
 During a [backlog run](../backlog-running/), a check that can't be judged yet can wait: press **Later phase** and pick one of the item's later phases, including Review, to move the check there.
 

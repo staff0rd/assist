@@ -48,7 +48,7 @@ When the plan goes deeper or longer than the limits, pin files to flatten it.
 
 ## Removing comments
 
-Run `/strip-code-comments` to remove comments that restate the code, label sections or hold commented-out code, keeping directives and comments that explain something the code can't. It also adds a commenting policy to the repo's `CLAUDE.md` if there isn't one.
+Run `/strip-code-comments` to remove comments that restate the code, label sections or hold commented-out code, keeping directives, comments that explain something the code can't, and the version comment after a SHA-pinned GitHub Actions `uses:` ref (such as `@<sha> # v4.2.0`). It also adds a commenting policy to the repo's `CLAUDE.md` if there isn't one.
 
 ### Approving a comment
 

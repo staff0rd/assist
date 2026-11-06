@@ -19,13 +19,12 @@ covers:
 
 Picking an option carries it out on GitHub; there is nothing left to post afterwards.
 
-| Mode                     | How you decide                                                                   |
-| ------------------------ | -------------------------------------------------------------------------------- |
-| Address Comments         | One thread at a time, each change made before the next question                  |
-| Address Comments (batch) | Every thread up front, then the changes are made together                        |
-| Address Comments (auto)  | The agent decides, asking only about threads it isn't sure of, and sums up after |
+| Mode                    | How you decide                                                                                     |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| Address Comments        | Every thread up front, then each addressed thread gets its own commit and they are pushed together |
+| Address Comments (auto) | The agent decides, asking only about threads it isn't sure of, and sums up after                   |
 
-In a session already on the pull request's branch, run `/review-pr-comments`, with `--batch` or `--auto` for those modes. Add `--announce <number>` to [post the pull request to Slack](../pull-requests/#announcing-in-slack) once every thread is handled.
+In a session already on the pull request's branch, run `/review-pr-comments`, with `--auto` for auto mode. Add `--announce <number>` to [post the pull request to Slack](../pull-requests/#announcing-in-slack) once every thread is handled.
 
 ## Posting review comments
 

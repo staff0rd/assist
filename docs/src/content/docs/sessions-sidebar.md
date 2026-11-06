@@ -59,13 +59,13 @@ Cards are grouped by repo. A repo with one session shows a lone card; two or mor
 
 Starred sessions, and the groups holding them, come first; everything else keeps the order it started in. :kbd[Mod+.] jumps straight to the next session waiting on you, including those with a question or check.
 
-A group you collapse stays where it is, marked with a pin, until you open it or a new session starts in it.
+A group you collapse stays where it is, marked with a pin, until you open it.
 
 The button at the left of the tab row hides the sidebar; the same button then appears in the toolbar to bring it back.
 
 ## Closing a session
 
-The × on a card ends the session. A finished session is dismissed straight away; anything still live asks first, because closing kills its process. A card with nested sessions offers to close just itself or all of them. An agent can also close its own session: [`/close`](../sessions-cli/#slash-commands) has it check its work is finished first.
+The × on a card ends the session. A finished session is dismissed straight away; anything still live asks first, because closing kills its process. A card with nested sessions offers to close just itself or all of them. Hold :kbd[Shift] as you click the × or press :kbd[Enter] to skip the confirmation; on a card with nested sessions this closes all of them. An agent can also close its own session: [`/close`](../sessions-cli/#slash-commands) has it check its work is finished first.
 
 When the session holds unpushed work, closing stops it instead of removing it. The card stays, greyed, with **Restart** and a discard button that either throws the changes away or just drops the card, leaving the files on disk.
 
