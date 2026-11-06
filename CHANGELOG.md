@@ -1,3 +1,10 @@
+## [0.1074.4](https://github.com/staff0rd/assist/compare/v0.1074.3...v0.1074.4) (2026-11-06)
+
+
+### Bug Fixes
+
+* deliver codex hook status to daemon ([db054fd](https://github.com/staff0rd/assist/commit/db054fde2c91582e60eb33c942b19fc7ce01eb94))
+
 ## [0.1074.3](https://github.com/staff0rd/assist/compare/v0.1074.2...v0.1074.3) (2026-11-06)
 
 
