@@ -1,3 +1,10 @@
+## [0.1077.1](https://github.com/staff0rd/assist/compare/v0.1077.0...v0.1077.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* auto advance mixed iOS question forms ([18d3e65](https://github.com/staff0rd/assist/commit/18d3e65908a5b6fd8b3b31f10bbb85598a80ece3))
+
 # [0.1077.0](https://github.com/staff0rd/assist/compare/v0.1076.2...v0.1077.0) (2026-11-06)
 
 
