@@ -1,3 +1,10 @@
+## [0.1076.1](https://github.com/staff0rd/assist/compare/v0.1076.0...v0.1076.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* allow network in Codex sandbox ([b8f6da9](https://github.com/staff0rd/assist/commit/b8f6da92e3b7225f7255938a1b59b8d6bea44bfb))
+
 # [0.1076.0](https://github.com/staff0rd/assist/compare/v0.1075.2...v0.1076.0) (2026-11-06)
 
 
