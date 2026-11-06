@@ -1,3 +1,15 @@
+# [0.1073.0](https://github.com/staff0rd/assist/compare/v0.1072.1...v0.1073.0) (2026-11-06)
+
+
+### Bug Fixes
+
+* clear critical dependency advisories ([27f01b8](https://github.com/staff0rd/assist/commit/27f01b8d2c5cb69d9253c1c50a5e78bc981b59e4))
+
+
+### Features
+
+* Shift skips close menu confirm ([5186e1c](https://github.com/staff0rd/assist/commit/5186e1cc5a5d739b4d8f3497205f804ab1741328))
+
 ## [0.1072.1](https://github.com/staff0rd/assist/compare/v0.1072.0...v0.1072.1) (2026-11-06)
 
 
