@@ -371,6 +371,54 @@ describe("PrPreviewPane inline comments", () => {
 
 			expect(toggle("Post to Slack").checked).toBe(true);
 		});
+
+		const reviewOff: PrPreview = { ...preview, reviewAfter: false };
+
+		it("starts Review PR unchecked when the config default is off, and it can be ticked", () => {
+			const onDecision = vi.fn();
+			render(<PrPreviewPane preview={reviewOff} onDecision={onDecision} />);
+
+			expect(toggle("Review PR").checked).toBe(false);
+			expect(toggle("Post to Slack").checked).toBe(true);
+
+			fireEvent.click(toggle("Review PR"));
+			approve();
+			expect(onDecision).toHaveBeenCalledWith(
+				"approve",
+				expect.objectContaining({ reviewAfter: true }),
+			);
+		});
+
+		it("starts Review PR checked when the config default is on", () => {
+			render(
+				<PrPreviewPane
+					preview={{ ...preview, reviewAfter: true }}
+					onDecision={vi.fn()}
+				/>,
+			);
+
+			expect(toggle("Review PR").checked).toBe(true);
+		});
+
+		it("lets a saved session choice override the config default", () => {
+			localStorage.setItem(
+				"assist:pr-preview-chain:s1",
+				JSON.stringify({
+					savedAt: Date.now(),
+					items: [{ reviewAfter: true, announceAfter: true }],
+				}),
+			);
+
+			render(
+				<PrPreviewPane
+					preview={reviewOff}
+					sessionId="s1"
+					onDecision={vi.fn()}
+				/>,
+			);
+
+			expect(toggle("Review PR").checked).toBe(true);
+		});
 	});
 
 	describe("Draft toggle", () => {

@@ -1,5 +1,6 @@
 import type { PreviewAttachment } from "../../../../../../shared/PreviewAttachment";
 import type { PrDecisionDetails } from "../../../../PrDecisionDetails";
+import type { PrChainDefaults } from "./usePrPane/usePrDecision/initialPrChain";
 
 export type PrPaneOptions = {
 	requestId: string;
@@ -14,7 +15,7 @@ export type PrPaneOptions = {
 	screenshots: boolean;
 	screenshotScope: string | undefined;
 	seededScreenshots: PreviewAttachment[];
-	resolvedDraft: boolean;
+	chainDefaults: PrChainDefaults;
 	initialBody: string;
 	editable: boolean;
 };

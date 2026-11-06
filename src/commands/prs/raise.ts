@@ -1,3 +1,4 @@
+import { loadConfig } from "../../shared/loadConfig";
 import type { CreateOptions } from "./buildCreateArgs";
 import { appendScreenshots } from "./appendScreenshots";
 import { buildValidatedBody } from "./buildValidatedBody";
@@ -36,6 +37,7 @@ export async function raise(
 			body,
 			prNumber: existing,
 			options: resolved,
+			reviewAfter: loadConfig().prs?.reviewAfterRaise ?? true,
 			screenshots,
 		});
 		return;

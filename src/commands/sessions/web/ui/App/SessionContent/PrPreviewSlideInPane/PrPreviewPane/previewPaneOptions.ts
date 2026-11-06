@@ -22,7 +22,10 @@ export function previewPaneOptions(
 		onDecision,
 		screenshotScope: previewScreenshotScope(sessionId, preview.kind),
 		seededScreenshots: preview.screenshots ?? [],
-		resolvedDraft: preview.draft === true,
+		chainDefaults: {
+			draft: preview.draft === true,
+			reviewAfter: preview.reviewAfter ?? true,
+		},
 		initialBody: preview.body,
 	};
 }

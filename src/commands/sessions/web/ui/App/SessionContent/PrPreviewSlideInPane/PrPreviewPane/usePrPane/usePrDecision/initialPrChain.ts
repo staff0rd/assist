@@ -4,10 +4,12 @@ import {
 } from "./loadPersistedPrChain";
 import type { PrPreviewChain } from "../../../../../../PrPreviewChain";
 
+export type PrChainDefaults = Pick<PrPreviewChain, "draft" | "reviewAfter">;
+
 export function initialPrChain(
 	isPr: boolean,
 	sessionId: string | undefined,
-	resolvedDraft: boolean,
+	defaults: PrChainDefaults,
 ): PrPreviewChain {
 	if (!isPr)
 		return {
@@ -19,9 +21,9 @@ export function initialPrChain(
 	prunePersistedPrChains();
 	const saved = loadPersistedPrChain(sessionId);
 	return {
-		reviewAfter: saved?.reviewAfter ?? true,
+		reviewAfter: saved?.reviewAfter ?? defaults.reviewAfter,
 		announceAfter: saved?.announceAfter ?? true,
-		draft: saved?.draft ?? resolvedDraft,
+		draft: saved?.draft ?? defaults.draft,
 		autoMerge: saved?.autoMerge ?? false,
 	};
 }

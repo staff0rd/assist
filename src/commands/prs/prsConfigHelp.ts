@@ -16,6 +16,11 @@ export const prsRaiseConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set prs.draft true",
 		note: "'assist prs raise' creates a draft PR when neither --draft nor --no-draft is passed (default false)",
 	},
+	{
+		key: "prs.reviewAfterRaise",
+		setter: "assist config set prs.reviewAfterRaise false",
+		note: "the PR preview pane's Review PR toggle starts checked (default true)",
+	},
 ];
 
 export const prsConfigHelp: ConfigHelpEntry[] = [

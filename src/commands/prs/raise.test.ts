@@ -368,6 +368,26 @@ describe("raise", () => {
 			delete process.env.ASSIST_SESSION_ID;
 		});
 
+		it.each([
+			[undefined, true],
+			[true, true],
+			[false, false],
+		])(
+			"sends prs.reviewAfterRaise=%s as reviewAfter=%s on the preview",
+			async (reviewAfterRaise, expected) => {
+				mockLoadConfig.mockReturnValue(
+					makeAssistConfig({ prs: { reviewAfterRaise } }),
+				);
+				mockRequestPrDecision.mockResolvedValue({ decision: "approve" });
+
+				await raise({ title: "feat: x", what: "Adds x", why: "Needed x" });
+
+				expect(mockRequestPrDecision).toHaveBeenCalledWith(
+					expect.objectContaining({ reviewAfter: expected }),
+				);
+			},
+		);
+
 		it("places the PR after the UI approves", async () => {
 			mockRequestPrDecision.mockResolvedValue({ decision: "approve" });
 

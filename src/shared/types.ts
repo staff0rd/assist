@@ -137,6 +137,7 @@ const assistConfigShape = {
 			promptJira: z.boolean().default(false),
 			promptGithub: z.boolean().default(false),
 			draft: z.boolean().default(false),
+			reviewAfterRaise: z.boolean().default(true),
 			readingWordsPerMinute: z.number().int().positive().optional(),
 		})
 		.optional(),

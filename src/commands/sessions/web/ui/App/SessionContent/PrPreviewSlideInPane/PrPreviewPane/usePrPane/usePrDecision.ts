@@ -2,7 +2,10 @@ import { useState } from "react";
 import type { PreviewAttachment } from "../../../../../../../shared/PreviewAttachment";
 import type { PrPreviewComment } from "../../../../../../../shared/SessionInfoBase";
 import { clearPersistedComments } from "../PersistedComment";
-import { initialPrChain } from "./usePrDecision/initialPrChain";
+import {
+	initialPrChain,
+	type PrChainDefaults,
+} from "./usePrDecision/initialPrChain";
 import {
 	clearPersistedPrChain,
 	savePersistedPrChain,
@@ -21,7 +24,7 @@ export function usePrDecision(
 	sessionId: string | undefined,
 	onDecision: OnDecision,
 	isPr: boolean,
-	resolvedDraft: boolean,
+	chainDefaults: PrChainDefaults,
 	screenshots: {
 		attachments: () => PreviewAttachment[];
 		clearPersisted: () => void;
@@ -29,7 +32,7 @@ export function usePrDecision(
 	editedBody: () => string | undefined,
 ) {
 	const [chain, setChain] = useState<PrPreviewChain>(() =>
-		initialPrChain(isPr, sessionId, resolvedDraft),
+		initialPrChain(isPr, sessionId, chainDefaults),
 	);
 
 	const chooseChain = (next: PrPreviewChain) => {

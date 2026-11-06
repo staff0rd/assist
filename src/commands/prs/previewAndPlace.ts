@@ -14,6 +14,7 @@ export async function previewAndPlace(args: {
 	body: string;
 	prNumber: number | null;
 	options: CreateOptions;
+	reviewAfter?: boolean;
 	screenshots?: PreviewAttachment[];
 }): Promise<void> {
 	const decision = await awaitPreviewApproval("PR preview", {
@@ -23,6 +24,7 @@ export async function previewAndPlace(args: {
 		body: args.body,
 		prNumber: args.prNumber,
 		draft: args.options.draft === true,
+		reviewAfter: args.reviewAfter,
 		screenshots: await stageScreenshots(args.screenshots),
 	});
 

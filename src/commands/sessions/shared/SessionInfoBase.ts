@@ -44,6 +44,7 @@ export type PrPreview = {
 	itemType?: PreviewItemType;
 	canStart?: boolean;
 	draft?: boolean;
+	reviewAfter?: boolean;
 	metadata?: PreviewMetadata[];
 	screenshots?: PreviewAttachment[];
 };

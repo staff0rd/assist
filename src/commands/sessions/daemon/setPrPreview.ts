@@ -41,7 +41,7 @@ export function setPrPreview(
 		d.draft === true,
 	);
 	daemonLog(
-		`pr-preview set: id=${id} requestId=${d.requestId} kind=${kind} target=${target} screenshots=${preview.screenshots?.length ?? 0}`,
+		`pr-preview set: id=${id} requestId=${d.requestId} kind=${kind} target=${target} reviewAfter=${preview.reviewAfter} screenshots=${preview.screenshots?.length ?? 0}`,
 	);
 	if (autoApprovePreview(sessions, waiters, notify, session)) return;
 	notify();
