@@ -1,5 +1,6 @@
 import { buildHarnessCodexArgs } from "../../../shared/buildHarnessCodexArgs";
 import { codexIsolatedHookArgs } from "../../../shared/codexIsolatedHookArgs";
+import { codexSandboxNetworkArgs } from "../../../shared/codexSandboxNetworkArgs";
 import { codexSessionEnvArgs } from "../../../shared/codexSessionEnvArgs";
 import { spawnPty } from "./spawnPty";
 
@@ -23,6 +24,7 @@ export function spawnCodex(opts: SpawnOpts = {}) {
 			...codexIsolatedHookArgs,
 			...override.args,
 			...sessionEnv,
+			...codexSandboxNetworkArgs,
 			...codexArgs(opts),
 		],
 		opts.cwd,

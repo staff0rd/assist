@@ -31,6 +31,8 @@ vi.mock("../../../shared/codexSessionEnvArgs", () => ({
 
 const ENV = "<session-env>";
 
+const NETWORK = ["-c", "sandbox_workspace_write.network_access=true"];
+
 const LITELLM = { baseUrl: "https://proxy.example/", apiKey: "sk-test" };
 
 const OVERRIDE_ARGS = [
@@ -64,7 +66,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ prompt: "Do the thing", cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, "Do the thing"],
+			["codex", "--no-daemon", ENV, ...NETWORK, "Do the thing"],
 			"/repo",
 			"7",
 			{},
@@ -83,7 +85,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV],
+			["codex", "--no-daemon", ENV, ...NETWORK],
 			"/repo",
 			"7",
 			{},
@@ -94,7 +96,7 @@ describe("spawnCodex", () => {
 		spawnCodex();
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV],
+			["codex", "--no-daemon", ENV, ...NETWORK],
 			undefined,
 			undefined,
 			{},
@@ -105,7 +107,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ resumeSessionId: "conv-1", cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, "resume", "conv-1"],
+			["codex", "--no-daemon", ENV, ...NETWORK, "resume", "conv-1"],
 			"/repo",
 			"7",
 			{},
@@ -121,7 +123,7 @@ describe("spawnCodex", () => {
 		});
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, "resume", "conv-1", "continue"],
+			["codex", "--no-daemon", ENV, ...NETWORK, "resume", "conv-1", "continue"],
 			"/repo",
 			"7",
 			{},
@@ -138,7 +140,14 @@ describe("spawnCodex", () => {
 			spawnCodex({ prompt: "Do the thing", cwd: "/repo", sessionId: "7" });
 
 			expect(spawnPtyMock).toHaveBeenCalledWith(
-				["codex", "--no-daemon", ...OVERRIDE_ARGS, ENV, "Do the thing"],
+				[
+					"codex",
+					"--no-daemon",
+					...OVERRIDE_ARGS,
+					ENV,
+					...NETWORK,
+					"Do the thing",
+				],
 				"/repo",
 				"7",
 				{ ASSIST_LITELLM_API_KEY: "sk-test" },
@@ -164,6 +173,7 @@ describe("spawnCodex", () => {
 					"--no-daemon",
 					...OVERRIDE_ARGS,
 					ENV,
+					...NETWORK,
 					"resume",
 					"conv-1",
 					"continue",
@@ -180,7 +190,7 @@ describe("spawnCodex", () => {
 			spawnCodex({ resumeSessionId: "conv-1", cwd: "/repo", sessionId: "7" });
 
 			expect(spawnPtyMock).toHaveBeenCalledWith(
-				["codex", "--no-daemon", ENV, "resume", "conv-1"],
+				["codex", "--no-daemon", ENV, ...NETWORK, "resume", "conv-1"],
 				"/repo",
 				"7",
 				{},
@@ -194,7 +204,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV],
+			["codex", "--no-daemon", ENV, ...NETWORK],
 			"/repo",
 			"7",
 			{},

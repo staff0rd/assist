@@ -31,6 +31,8 @@ vi.mock("./codexSessionEnvArgs", () => ({
 
 const ENV = "<session-env>";
 
+const NETWORK = ["-c", "sandbox_workspace_write.network_access=true"];
+
 const LITELLM = { baseUrl: "https://proxy.example/", apiKey: "sk-test" };
 
 const OVERRIDE_ARGS = [
@@ -68,6 +70,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
+				...NETWORK,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -92,6 +95,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
+				...NETWORK,
 				"-C",
 				process.cwd(),
 				"--sandbox",
@@ -116,6 +120,7 @@ describe("spawnCodex", () => {
 				"--no-daemon",
 				...OVERRIDE_ARGS,
 				ENV,
+				...NETWORK,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -136,6 +141,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
+				...NETWORK,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -167,6 +173,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
+				...NETWORK,
 				"-C",
 				"/repo",
 				"--sandbox",
