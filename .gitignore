@@ -3,8 +3,6 @@ dist
 books
 .assist-*
 .assist/reviews/
-.assist/HANDOVER.md
-.assist/handovers/
 .assist/activity-*.json
 screenshots
 !docs/public/screenshots
