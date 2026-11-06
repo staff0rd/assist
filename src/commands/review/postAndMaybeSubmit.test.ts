@@ -153,31 +153,7 @@ describe("postAndMaybeSubmit", () => {
 		});
 	});
 
-	describe("when a CI footer is given", () => {
-		it("should end the submitted review body with it", async () => {
-			mockPostFindings.mockReturnValue({ posted: 1, failed: [] });
-
-			await postAndMaybeSubmit(findings, [], "md", {
-				prompt: false,
-				submit: true,
-				ciFooter: "footer",
-			});
-
-			expect(mockSubmitPendingReview).toHaveBeenCalledWith("md\n\nfooter");
-		});
-
-		it("should end a body-only review with it", async () => {
-			mockPostFindings.mockReturnValue({ posted: 0, failed: [] });
-
-			await postAndMaybeSubmit(findings, [carriedFinding], "md", {
-				prompt: false,
-				submit: true,
-				ciFooter: "footer",
-			});
-
-			expect(mockSubmitBodyOnlyReview).toHaveBeenCalledWith("md\n\nfooter");
-		});
-
+	describe("when submitting", () => {
 		it("should submit the pending review a failed line comment left behind", async () => {
 			mockPostFindings.mockReturnValue({
 				posted: 0,
@@ -188,10 +164,9 @@ describe("postAndMaybeSubmit", () => {
 			await postAndMaybeSubmit(findings, [], "md", {
 				prompt: false,
 				submit: true,
-				ciFooter: "footer",
 			});
 
-			expect(mockSubmitPendingReview).toHaveBeenCalledWith("md\n\nfooter");
+			expect(mockSubmitPendingReview).toHaveBeenCalledWith("md");
 			expect(mockSubmitBodyOnlyReview).not.toHaveBeenCalled();
 		});
 
@@ -206,32 +181,12 @@ describe("postAndMaybeSubmit", () => {
 			await postAndMaybeSubmit(findings, [], "md", {
 				prompt: false,
 				submit: true,
-				ciFooter: "footer",
 			});
 
-			expect(mockSubmitBodyOnlyReview).toHaveBeenCalledWith("md\n\nfooter");
+			expect(mockSubmitBodyOnlyReview).toHaveBeenCalledWith("md");
 		});
 
-		it("should throw when the review could not be submitted", async () => {
-			mockPostFindings.mockReturnValue({
-				posted: 0,
-				failed: [rejectedFinding],
-			});
-			mockSubmitPendingReview.mockReturnValue(false);
-			mockSubmitBodyOnlyReview.mockReturnValue(false);
-
-			await expect(
-				postAndMaybeSubmit(findings, [], "md", {
-					prompt: false,
-					submit: true,
-					ciFooter: "footer",
-				}),
-			).rejects.toThrow("could not be submitted");
-		});
-	});
-
-	describe("when no CI footer is given", () => {
-		it("should leave the pending and body-only review bodies unchanged", async () => {
+		it("should use the synthesis summary as the pending and body-only review bodies", async () => {
 			mockPostFindings.mockReturnValueOnce({ posted: 1, failed: [] });
 			await postAndMaybeSubmit(findings, [], "md", {
 				prompt: false,

@@ -67,25 +67,4 @@ describe("runClaudeReviewer", () => {
 		expect(spec?.model).toBeUndefined();
 		expect(spec?.env).toBeUndefined();
 	});
-
-	it("appends the override's args and env and names its model", async () => {
-		stubChild();
-
-		await runClaudeReviewer({
-			name: "claude",
-			reviewDir: "/review",
-			stdin: "prompt",
-			outputPath: "/review/claude.md",
-			override: {
-				args: ["--model", "claude-x"],
-				env: { ANTHROPIC_BASE_URL: "https://proxy" },
-				model: "claude-x",
-			},
-		});
-
-		const spec = runStreamingChildMock.mock.lastCall?.[0];
-		expect(spec?.args.slice(-2)).toEqual(["--model", "claude-x"]);
-		expect(spec?.env).toEqual({ ANTHROPIC_BASE_URL: "https://proxy" });
-		expect(spec?.model).toBe("claude-x");
-	});
 });

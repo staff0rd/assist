@@ -2,7 +2,6 @@ import { buildReviewerStdin } from "./buildReviewerStdin";
 import type { ReviewPaths } from "./buildReviewPaths";
 import type { MultiSpinner } from "./MultiSpinner";
 import type { CodexPlan } from "./planCodexReviewer";
-import type { ReviewerModels } from "./ReviewerModels";
 import { type ReviewJobTarget, recordReviewerRuns } from "./recordReviewerRuns";
 import { runReviewers } from "./runReviewers";
 import type { ReviewerResult } from "./runStreamingChild";
@@ -14,8 +13,6 @@ type Args = {
 	cachedClaude: ReviewerResult | null;
 	codexPlan: CodexPlan;
 	multi: MultiSpinner | undefined;
-	models: ReviewerModels;
-	strict: boolean;
 	job?: ReviewJobTarget;
 };
 
@@ -43,12 +40,11 @@ export async function runAndSynthesise(
 			multi,
 			codexPlan: args.codexPlan,
 			cachedClaude: args.cachedClaude,
-			models: args.models,
 		},
 	);
 	if (args.job) await recordReviewerRuns(fresh, args.job, startedAt);
 	const failures = failed(results);
-	const reason = skipReason(results, failures, args.strict);
+	const reason = skipReason(results, failures);
 	if (reason) {
 		console.error(reason);
 		return { ok: false, failures, slots: results };
@@ -59,6 +55,5 @@ export async function runAndSynthesise(
 		failures,
 		anyFresh,
 		multi,
-		slot: args.models.synthesis,
 	});
 }

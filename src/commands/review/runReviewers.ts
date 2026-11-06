@@ -1,6 +1,5 @@
 import type { MultiSpinner } from "./MultiSpinner";
 import type { CodexPlan } from "./planCodexReviewer";
-import type { ReviewerModels } from "./ReviewerModels";
 import { resolveClaude } from "./resolveClaude";
 import { resolveCodex } from "./resolveCodex";
 import type { ReviewerResult } from "./runStreamingChild";
@@ -15,7 +14,6 @@ type ReviewersOptions = {
 	multi: MultiSpinner | undefined;
 	codexPlan: CodexPlan;
 	cachedClaude: ReviewerResult | null;
-	models: ReviewerModels;
 };
 
 export async function runReviewers(
@@ -31,15 +29,12 @@ export async function runReviewers(
 		stdin: stdinPrompt,
 		cached: options.cachedClaude,
 		multi: options.multi,
-		slot: options.models.claude,
 	});
 	const codexPromise = resolveCodex({
-		reviewDir,
 		codexPath,
 		stdin: stdinPrompt,
 		plan: options.codexPlan,
 		multi: options.multi,
-		slot: options.models.codex,
 	});
 	const results = await Promise.all([claudePromise, codexPromise]);
 	const anyFresh =

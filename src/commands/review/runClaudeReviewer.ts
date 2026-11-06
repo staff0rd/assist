@@ -1,5 +1,4 @@
 import { writeFileSync } from "node:fs";
-import type { CodexModelOverride } from "../litellm/buildCodexProviderArgs";
 import { createClaudeLineHandler } from "./createClaudeLineHandler";
 import { finaliseReviewerRun } from "./finaliseReviewerRun";
 import type { SpinnerHandle } from "./MultiSpinner";
@@ -11,23 +10,17 @@ type ClaudeReviewerSpec = {
 	stdin: string;
 	outputPath: string;
 	spinner?: SpinnerHandle;
-	override?: CodexModelOverride;
 };
 
 export async function runClaudeReviewer(
 	spec: ClaudeReviewerSpec,
 ): Promise<ReviewerResult> {
-	const { spinner, override } = spec;
+	const { spinner } = spec;
 	const command = "claude";
-	const { state, onLine } = createClaudeLineHandler(
-		spec.name,
-		spinner,
-		override?.model,
-	);
+	const { state, onLine } = createClaudeLineHandler(spec.name, spinner);
 	const result = await runStreamingChild({
 		name: spec.name,
 		command,
-		model: override?.model,
 		args: [
 			"-p",
 			"--add-dir",
@@ -35,19 +28,13 @@ export async function runClaudeReviewer(
 			"--output-format",
 			"stream-json",
 			"--verbose",
-			...(override?.args ?? []),
 		],
 		stdin: spec.stdin,
 		quiet: Boolean(spinner),
-		...(override ? { env: override.env } : {}),
 		onLine,
 	});
 	if (result.exitCode === 0 && state.finalText)
 		writeFileSync(spec.outputPath, state.finalText);
-	const finalised = finaliseReviewerRun(
-		{ ...spec, command, model: override?.model },
-		spinner,
-		result,
-	);
+	const finalised = finaliseReviewerRun({ ...spec, command }, spinner, result);
 	return state.usage ? { ...finalised, usage: state.usage } : finalised;
 }

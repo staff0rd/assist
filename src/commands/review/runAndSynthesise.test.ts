@@ -20,14 +20,12 @@ function result(name: string, exitCode: number): ReviewerResult {
 	return { name, outputPath: `/r/${name}.md`, exitCode, stderr: "" };
 }
 
-function run(strict: boolean) {
+function run() {
 	return runAndSynthesise({
 		paths,
 		cachedClaude: null,
 		codexPlan: { kind: "run" },
 		multi: undefined,
-		models: {},
-		strict,
 	});
 }
 
@@ -42,8 +40,8 @@ describe("runAndSynthesise", () => {
 		vi.spyOn(console, "error").mockImplementation(() => {});
 	});
 
-	it("synthesises from the surviving reviewer when not strict", async () => {
-		const outcome = await run(false);
+	it("synthesises from the surviving reviewer", async () => {
+		const outcome = await run();
 
 		expect(outcome.ok).toBe(true);
 		expect(synthesise).toHaveBeenCalled();
@@ -54,13 +52,18 @@ describe("runAndSynthesise", () => {
 		]);
 	});
 
-	it("skips synthesis when any reviewer failed in strict mode", async () => {
+	it("skips synthesis when both reviewers failed", async () => {
 		vi.mocked(synthesise).mockClear();
+		vi.mocked(runReviewers).mockResolvedValue({
+			results: [result("claude", 1), result("codex", 1)],
+			anyFresh: true,
+			fresh: [],
+		});
 
-		const outcome = await run(true);
+		const outcome = await run();
 
 		expect(outcome.ok).toBe(false);
-		expect(outcome.failures.map((f) => f.name)).toEqual(["codex"]);
+		expect(outcome.failures.map((f) => f.name)).toEqual(["claude", "codex"]);
 		expect(synthesise).not.toHaveBeenCalled();
 	});
 });

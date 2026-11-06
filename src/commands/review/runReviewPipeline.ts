@@ -2,7 +2,6 @@ import type { ReviewPaths } from "./buildReviewPaths";
 import { cachedReviewerResult } from "./cachedReviewerResult";
 import { MultiSpinner, type SpinnerHandle } from "./MultiSpinner";
 import { planCodexReviewer } from "./planCodexReviewer";
-import type { ReviewerModels } from "./ReviewerModels";
 import type { ReviewJobTarget } from "./recordReviewerRuns";
 import {
 	type AndSynthesiseOutcome,
@@ -13,8 +12,6 @@ import { reportFailures } from "./reportFailures";
 
 type PipelineOptions = {
 	verbose: boolean;
-	models?: ReviewerModels;
-	strict?: boolean;
 	job?: ReviewJobTarget;
 };
 
@@ -44,10 +41,7 @@ export async function runReviewPipeline(
 	options: PipelineOptions,
 ): Promise<AndSynthesiseOutcome> {
 	const cachedClaude = cachedReviewerResult("claude", paths.claudePath);
-	const codexPlan = await planCodexReviewer(
-		paths.codexPath,
-		options.models?.codex !== undefined,
-	);
+	const codexPlan = await planCodexReviewer(paths.codexPath);
 	const ui = createUi(useSpinnerUi(options.verbose));
 	try {
 		const outcome = await runAndSynthesise({
@@ -55,8 +49,6 @@ export async function runReviewPipeline(
 			cachedClaude,
 			codexPlan,
 			multi: ui.multi,
-			models: options.models ?? {},
-			strict: options.strict ?? false,
 			job: options.job,
 		});
 		finishUi(ui, outcome.ok);

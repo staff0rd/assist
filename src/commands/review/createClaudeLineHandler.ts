@@ -11,14 +11,13 @@ type ClaudeStreamState = {
 export function createClaudeLineHandler(
 	name: string,
 	spinner: SpinnerHandle | undefined,
-	model: string | undefined,
 ): { state: ClaudeStreamState; onLine: (line: string) => void } {
 	const state: ClaudeStreamState = { finalText: "" };
 	const onLine = (line: string) => {
 		const event = parseClaudeEvent(line);
 		if (event.kind === "tool_uses") {
 			for (const use of event.toolUses)
-				reportReviewerToolUse(name, use, spinner, model);
+				reportReviewerToolUse(name, use, spinner);
 			return;
 		}
 		if (event.kind === "final") {

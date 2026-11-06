@@ -9,7 +9,6 @@ const mockChainAfterReview = vi.fn();
 const mockSelectPostableFindings = vi.fn();
 const mockPromptConfirm = vi.fn();
 const mockStillOnReviewedPr = vi.fn();
-const mockSubmitNoFindingsReview = vi.fn();
 
 vi.mock("node:fs", async () =>
 	(
@@ -28,11 +27,6 @@ vi.mock("./selectPostableFindings", () => ({
 
 vi.mock("./postAndMaybeSubmit", () => ({
 	postAndMaybeSubmit: (...args: unknown[]) => mockPostAndMaybeSubmit(...args),
-}));
-
-vi.mock("./submitNoFindingsReview", () => ({
-	submitNoFindingsReview: (...args: unknown[]) =>
-		mockSubmitNoFindingsReview(...args),
 }));
 
 vi.mock("./chainAfterReview", () => ({
@@ -61,7 +55,6 @@ beforeEach(() => {
 		unanchored: [],
 	});
 	mockPostAndMaybeSubmit.mockResolvedValue({ posted: 1, submitted: true });
-	mockSubmitNoFindingsReview.mockReturnValue(true);
 	mockPromptConfirm.mockResolvedValue(true);
 	mockStillOnReviewedPr.mockReturnValue(true);
 });
@@ -109,54 +102,6 @@ describe("postReviewToPr", () => {
 				{ posted: 0, submitted: false },
 				options,
 			);
-		});
-
-		it("should submit no review outside CI", async () => {
-			mockSelectPostableFindings.mockReturnValue({
-				inDiff: [],
-				unanchored: [],
-			});
-
-			await postReviewToPr("synthesis.md", prInfo, options);
-
-			expect(mockSubmitNoFindingsReview).not.toHaveBeenCalled();
-		});
-
-		it("should submit a no-findings review in CI", async () => {
-			mockSelectPostableFindings.mockReturnValue({
-				inDiff: [],
-				unanchored: [{ title: "covered", source: "already-raised" }],
-			});
-			const ciOptions = { ...options, ciFooter: "footer" };
-
-			await postReviewToPr("synthesis.md", prInfo, ciOptions);
-
-			expect(mockPostAndMaybeSubmit).not.toHaveBeenCalled();
-			expect(mockSubmitNoFindingsReview).toHaveBeenCalledWith(
-				"synthesis markdown",
-				"footer",
-			);
-			expect(mockChainAfterReview).toHaveBeenCalledWith(
-				42,
-				{ posted: 0, submitted: true },
-				ciOptions,
-			);
-		});
-
-		it("should throw in CI when the no-findings review could not be submitted", async () => {
-			mockSelectPostableFindings.mockReturnValue({
-				inDiff: [],
-				unanchored: [],
-			});
-			mockSubmitNoFindingsReview.mockReturnValue(false);
-
-			await expect(
-				postReviewToPr("synthesis.md", prInfo, {
-					...options,
-					ciFooter: "footer",
-				}),
-			).rejects.toThrow("could not be submitted");
-			expect(mockChainAfterReview).not.toHaveBeenCalled();
 		});
 
 		it("should not post when the only un-anchorable finding was already raised", async () => {

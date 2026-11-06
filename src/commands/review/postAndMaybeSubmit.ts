@@ -10,7 +10,6 @@ import { withRejectedFindings } from "./withRejectedFindings";
 type PostAndMaybeSubmitOptions = {
 	prompt: boolean;
 	submit: boolean;
-	ciFooter?: string;
 };
 
 export type PostOutcome = {
@@ -41,16 +40,14 @@ export async function postAndMaybeSubmit(
 	console.log(`Posted ${posted} comment(s)${failedSuffix}.`);
 	const withRejected = withRejectedFindings(unanchored, failed);
 	const carried = carriedUnanchoredFindings(withRejected);
-	if (posted === 0 && carried.length === 0 && !options.ciFooter)
+	if (posted === 0 && carried.length === 0)
 		return { posted: 0, submitted: false };
 	const shouldSubmit = await decideSubmit(options);
 	if (shouldSubmit) {
-		const submitted = submitReview(
-			buildReviewBody(markdown, withRejected, options.ciFooter),
-			{ posted, failed: failed.length },
-		);
-		if (!submitted && options.ciFooter)
-			throw new Error("the review could not be submitted to the PR");
+		const submitted = submitReview(buildReviewBody(markdown, withRejected), {
+			posted,
+			failed: failed.length,
+		});
 		return { posted, submitted };
 	}
 	console.log("Leaving the review unsubmitted.");

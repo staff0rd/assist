@@ -1,18 +1,15 @@
 import { buildCodexModelArgs } from "./buildCodexModelArgs";
 import type { MultiSpinner } from "./MultiSpinner";
 import { type CodexPlan, skippedCodexResult } from "./planCodexReviewer";
-import type { SlotModel } from "./ReviewerModels";
 import { reviewerLabel } from "./reviewerLabel";
-import { runSlot } from "./runSlot";
+import { runCodexReviewer } from "./runCodexReviewer";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type Args = {
-	reviewDir: string;
 	codexPath: string;
 	stdin: string;
 	plan: CodexPlan;
 	multi: MultiSpinner | undefined;
-	slot?: SlotModel;
 };
 
 export function resolveCodex(args: Args): Promise<ReviewerResult> {
@@ -20,14 +17,12 @@ export function resolveCodex(args: Args): Promise<ReviewerResult> {
 	if (args.plan.kind === "skipped") {
 		return Promise.resolve(skippedCodexResult(args.codexPath));
 	}
-	const name = args.slot?.label ?? "codex";
-	const override = args.slot?.override ?? buildCodexModelArgs();
+	const override = buildCodexModelArgs();
 	const spinner = args.multi?.create(
-		`${reviewerLabel(name, override.model)} — starting`,
+		`${reviewerLabel("codex", override.model)} — starting`,
 	);
-	return runSlot(args.slot?.harness ?? "codex", {
-		name,
-		reviewDir: args.reviewDir,
+	return runCodexReviewer({
+		name: "codex",
 		stdin: args.stdin,
 		outputPath: args.codexPath,
 		spinner,

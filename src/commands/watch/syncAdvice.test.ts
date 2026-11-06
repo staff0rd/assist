@@ -14,12 +14,6 @@ describe("syncAdvice", () => {
 		]);
 	});
 
-	it("reports changed review-ci bundle sources", () => {
-		expect(syncAdvice(["src/commands/review/postFindings.ts"])).toEqual([
-			"review-ci bundle sources changed",
-		]);
-	});
-
 	it("reports changed settings", () => {
 		expect(syncAdvice(["claude/settings.json"])).toEqual([
 			"claude/settings.json changed",
