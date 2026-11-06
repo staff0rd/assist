@@ -49,4 +49,4 @@ assist update
 
 `assist update` updates assist, whether it was installed from npm or from a git clone.
 
-When the sessions daemon is running, `assist update` restarts it so it loads the new build. Restart the web server yourself, then reload the browser tab.
+When the sessions daemon is running, `assist update` restarts it so it loads the new build. Restart the web server yourself.
