@@ -1,5 +1,3 @@
-import type { ReviewerModels } from "./ReviewerModels";
-
 export type ReviewPrOptions = {
 	prompt?: boolean;
 	submit?: boolean;
@@ -10,10 +8,4 @@ export type ReviewPrOptions = {
 	verbose?: boolean;
 	addressComments?: boolean;
 	announce?: boolean;
-	ci?: {
-		models: ReviewerModels;
-		summaryPath?: string;
-		footer: string;
-		runUrl?: string;
-	};
 };

@@ -84,13 +84,13 @@ describe("sync", () => {
 	});
 
 	it("should keep the skill directories synced from claude/skills", async () => {
-		mockSyncDesign.mockReturnValue(["review-ci"]);
+		mockSyncDesign.mockReturnValue(["deploy-flow"]);
 
 		await sync({ prune: true });
 
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			expect.stringContaining("skills"),
-			["commit", "verify", "review-ci"],
+			["commit", "verify", "deploy-flow"],
 			{ force: false },
 		);
 	});

@@ -51,21 +51,19 @@ describe("syncDesign", () => {
 	});
 
 	it("copies a skill directory with its non-markdown files, replacing stale ones", () => {
-		const source = join(claudeDir, "skills", "review-ci");
+		const source = join(claudeDir, "skills", "deploy-flow");
 		mkdirSync(join(source, "scripts"), { recursive: true });
 		writeFileSync(join(source, "SKILL.md"), "SKILL");
-		writeFileSync(join(source, "review-ci.yml"), "WORKFLOW");
+		writeFileSync(join(source, "workflow.yml"), "WORKFLOW");
 		writeFileSync(join(source, "scripts", "check.mjs"), "CHECK");
-		const target = join(targetBase, "skills", "review-ci");
+		const target = join(targetBase, "skills", "deploy-flow");
 		mkdirSync(target, { recursive: true });
 		writeFileSync(join(target, "stale.mjs"), "OLD");
 
-		expect(syncDesign(claudeDir, targetBase)).toEqual(["review-ci"]);
+		expect(syncDesign(claudeDir, targetBase)).toEqual(["deploy-flow"]);
 
 		expect(readFileSync(join(target, "SKILL.md"), "utf8")).toBe("SKILL");
-		expect(readFileSync(join(target, "review-ci.yml"), "utf8")).toBe(
-			"WORKFLOW",
-		);
+		expect(readFileSync(join(target, "workflow.yml"), "utf8")).toBe("WORKFLOW");
 		expect(readFileSync(join(target, "scripts", "check.mjs"), "utf8")).toBe(
 			"CHECK",
 		);

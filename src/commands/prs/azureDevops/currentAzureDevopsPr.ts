@@ -1,6 +1,5 @@
 import { execFileSync } from "node:child_process";
 import type { AzureDevopsRepo } from "../../../shared/azureDevops/parseAzureDevopsRemote";
-import { getPinnedPr } from "../pinCurrentPr";
 import { getCurrentBranch } from "../shared";
 import type { AzureDevopsPrRef } from "./azureDevopsThreadRequests";
 
@@ -33,7 +32,7 @@ function findPrForBranch(repo: AzureDevopsRepo, branch: string): number {
 }
 
 export function currentAzureDevopsPr(repo: AzureDevopsRepo): AzureDevopsPrRef {
-	const prId = getPinnedPr() ?? findPrForBranch(repo, getCurrentBranch());
+	const prId = findPrForBranch(repo, getCurrentBranch());
 	if (Number.isNaN(prId)) {
 		console.error("Error: No pull request found for the current branch.");
 		process.exit(1);

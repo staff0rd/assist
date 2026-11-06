@@ -1,5 +1,4 @@
 import { execSync } from "node:child_process";
-import { getPinnedPr } from "../prs/pinCurrentPr";
 import { getRepoInfo } from "../prs/shared";
 
 type PrDiffInfo = {
@@ -38,11 +37,6 @@ function fetchRawPr(
 	repo: string,
 	branch: string,
 ): RawPr | undefined {
-	const pinned = getPinnedPr();
-	if (pinned !== undefined)
-		return JSON.parse(
-			runGh(`gh pr view ${pinned} --json ${FIELDS} -R ${org}/${repo}`),
-		);
 	const parsed = JSON.parse(
 		runGh(
 			`gh pr list --state open --head ${branch} --json ${FIELDS} -R ${org}/${repo}`,

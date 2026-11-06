@@ -15,6 +15,5 @@ export function runPostSynthesis(
 		submit: options.submit ?? false,
 		addressComments: options.addressComments ?? false,
 		announce: options.announce ?? false,
-		ciFooter: options.ci?.footer,
 	});
 }

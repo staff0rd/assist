@@ -1,6 +1,5 @@
 import { execSync } from "node:child_process";
 import { getPreferredRemoteRepo } from "./getPreferredRemoteRepo";
-import { currentPrSelector } from "./pinCurrentPr";
 
 export function isGhNotInstalled(error: unknown): boolean {
 	if (error instanceof Error) {
@@ -29,7 +28,7 @@ function viewCurrentPr<T>(fields: string): T {
 	const { org, repo } = getRepoInfo();
 	return JSON.parse(
 		execSync(
-			`gh pr view ${currentPrSelector(getCurrentBranch)} --json ${fields} -R ${org}/${repo}`,
+			`gh pr view ${getCurrentBranch()} --json ${fields} -R ${org}/${repo}`,
 			{
 				encoding: "utf8",
 			},

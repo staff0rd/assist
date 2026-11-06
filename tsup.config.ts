@@ -44,23 +44,6 @@ export default defineConfig({
 			recursive: true,
 		});
 		await build({
-			entryPoints: {
-				init: "src/commands/review/ci/reviewCiInit.ts",
-				check: "src/commands/review/ci/reviewCiCheck.ts",
-				review: "src/commands/review/ci/reviewCiReview.ts",
-			},
-			bundle: true,
-			minify: true,
-			platform: "node",
-			format: "esm",
-			target: "node22",
-			outdir: "claude/skills/review-ci/scripts",
-			outExtension: { ".js": ".mjs" },
-			banner: {
-				js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);',
-			},
-		});
-		await build({
 			entryPoints: ["src/commands/sessions/web/ui/App.tsx"],
 			bundle: true,
 			minify: true,

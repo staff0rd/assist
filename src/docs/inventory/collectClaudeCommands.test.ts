@@ -9,7 +9,7 @@ let dir: string;
 beforeEach(() => {
 	dir = mkdtempSync(join(tmpdir(), "claude-dir-"));
 	mkdirSync(join(dir, "commands"));
-	mkdirSync(join(dir, "skills", "review-ci"), { recursive: true });
+	mkdirSync(join(dir, "skills", "deploy-flow"), { recursive: true });
 	mkdirSync(join(dir, "skills", "empty"));
 });
 
@@ -26,13 +26,13 @@ describe("collectClaudeCommands", () => {
 		writeFileSync(join(dir, "commands", "notes.txt"), "ignored");
 		writeFileSync(join(dir, "skills", "wireframe.md"), "# Wireframe\n");
 		writeFileSync(
-			join(dir, "skills", "review-ci", "SKILL.md"),
-			"---\nname: review-ci\ndescription: Install a review workflow\n---\n",
+			join(dir, "skills", "deploy-flow", "SKILL.md"),
+			"---\nname: deploy-flow\ndescription: Install a deploy workflow\n---\n",
 		);
 
 		expect(collectClaudeCommands(dir)).toEqual([
 			{ id: "claude:commit", description: "Commit relevant files" },
-			{ id: "skill:review-ci", description: "Install a review workflow" },
+			{ id: "skill:deploy-flow", description: "Install a deploy workflow" },
 			{ id: "skill:wireframe", description: "" },
 		]);
 	});
