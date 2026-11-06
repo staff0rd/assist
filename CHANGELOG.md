@@ -1,3 +1,11 @@
+## [0.1074.3](https://github.com/staff0rd/assist/compare/v0.1074.2...v0.1074.3) (2026-11-06)
+
+
+### Bug Fixes
+
+* refresh docs for recent stories ([1b2e22d](https://github.com/staff0rd/assist/commit/1b2e22d20ea92d97fd146072c2b0037a8f1230d6))
+* reset auto-restart on activity ([5f822b3](https://github.com/staff0rd/assist/commit/5f822b3e426627d3dda8df932cbc71f50a2b2f58))
+
 ## [0.1074.2](https://github.com/staff0rd/assist/compare/v0.1074.1...v0.1074.2) (2026-11-06)
 
 
