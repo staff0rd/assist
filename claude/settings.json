@@ -83,8 +83,6 @@
 			"SlashCommand(/test-cover)",
 			"Skill(test-review)",
 			"SlashCommand(/test-review)",
-			"Skill(strip-code-comments)",
-			"SlashCommand(/strip-code-comments)",
 			"Skill(miro)",
 			"SlashCommand(/miro)",
 			"Skill(slack-post)",
