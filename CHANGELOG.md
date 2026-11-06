@@ -1,3 +1,10 @@
+## [0.1075.2](https://github.com/staff0rd/assist/compare/v0.1075.1...v0.1075.2) (2026-11-06)
+
+
+### Bug Fixes
+
+* unwrap preprocess in config schemas ([1a5552a](https://github.com/staff0rd/assist/commit/1a5552a8d2ef91380ee501903df21d75c5d8f72e))
+
 ## [0.1075.1](https://github.com/staff0rd/assist/compare/v0.1075.0...v0.1075.1) (2026-11-06)
 
 
