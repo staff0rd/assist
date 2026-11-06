@@ -42,6 +42,13 @@ const markdownPreviewSchema = z.strictObject({
 	body: z.string().min(1),
 });
 
+const designPreviewSchema = z.strictObject({
+	...previewTarget,
+	url: z.string().url(),
+	title: z.string().min(1),
+	body: z.string().min(1),
+});
+
 const questionPreviewSchema = z.strictObject({
 	...previewTarget,
 	title: z.string().min(1),
@@ -89,6 +96,23 @@ const highLevelReviewSchema = z.strictObject({
 	criticalPaths: z.array(z.string().min(1)).optional(),
 	uiPaths: z.array(z.string().min(1)).optional(),
 	files: z.array(highLevelFileSchema).min(1),
+	slices: z
+		.array(
+			z.strictObject({
+				title: z.string().min(1),
+				summary: z.string(),
+				hunks: z.array(z.string().min(1)).min(1),
+			}),
+		)
+		.optional(),
+	manualTesting: z
+		.strictObject({
+			setup: z.array(z.string()),
+			steps: z.array(
+				z.strictObject({ action: z.string(), expect: z.string() }),
+			),
+		})
+		.optional(),
 });
 
 const backlogItemStepSchema = z.strictObject({
@@ -138,6 +162,7 @@ export const captureSetupStepSchema = z.union([
 	z.strictObject({ transcript: transcriptStepSchema }),
 	z.strictObject({ openPr: openPrStepSchema }),
 	z.strictObject({ preview: markdownPreviewSchema }),
+	z.strictObject({ design: designPreviewSchema }),
 	z.strictObject({ question: questionPreviewSchema }),
 	z.strictObject({ check: checkPreviewSchema }),
 	z.strictObject({ pr: prPreviewSchema }),

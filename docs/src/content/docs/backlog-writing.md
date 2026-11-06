@@ -44,8 +44,6 @@ Start a **draft** session from the [new-session dialog](../sessions-creating/), 
 
 A plan is a list of phases (context windows), each a working slice of the feature with its own tasks. A phase can also list manual checks, things only you can confirm, such as how something looks; the agent running that phase asks you to confirm them before it finishes. Every plan ends with a [review phase](../backlog-running/#the-review-phase).
 
-When the story substantially changes the UI, the agent [designs](../design/) it before proposing: it publishes a design artifact and revises it with you until you're happy, then links it from the item's description and activity.
-
 Mention a Jira key, a GitHub issue or a Slack thread while drafting, and the item is linked to it.
 
 ## Filing a bug
@@ -56,4 +54,8 @@ Start a **bug** session, or run `/bug [description]` with a brief description of
 
 ## Refining an item
 
-**Refine** on an item, or `/refine <id>` in a session, starts a conversation about the item. Tell the agent what to change: its name, description, type, acceptance criteria, plan or linked issue, or feedback to keep as a comment. A change to the plan opens in the preview pane as a diff of its phases for you to approve. A UI-heavy item with no design gets one, and a refinement that substantially changes the UI updates the existing design.
+**Refine** on an item, or `/refine <id>` in a session, starts a conversation about the item. Tell the agent what to change: its name, description, type, acceptance criteria, plan or linked issue, or feedback to keep as a comment. A change to the plan opens in the preview pane as a diff of its phases for you to approve.
+
+## Designing the UI
+
+When a story or bug fix substantially changes the UI, the agent [designs](../design/) it while drafting, filing or refining: it publishes a design artifact and opens it in the [preview pane](../sessions-preview-panes/#reviewing-a-design) for you to approve, revising it after each rejection, then links it from the item's description and activity. Refining a UI-heavy item with no design gets it one, and a refinement that substantially changes the UI updates the existing design.

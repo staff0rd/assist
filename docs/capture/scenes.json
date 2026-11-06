@@ -252,7 +252,40 @@
 						"status": "modified",
 						"patch": "@@ -2,3 +2,4 @@\n \t\"settings.title\": \"Settings\",\n-\t\"settings.theme\": \"Theme\"\n+\t\"settings.theme\": \"Theme\",\n+\t\"settings.darkMode\": \"Dark mode\"\n }"
 					}
-				]
+				],
+				"slices": [
+					{
+						"title": "Dark mode toggle on the settings page",
+						"summary": "Adds a Dark mode checkbox beside the theme picker, with its label.",
+						"hunks": [
+							"src/settings/DarkModeToggle.tsx#0",
+							"src/settings/SettingsPage.tsx#0",
+							"src/i18n/en.json#0"
+						]
+					},
+					{
+						"title": "Remember the colour scheme",
+						"summary": "Saves the chosen scheme and applies it on load.",
+						"hunks": [
+							"src/settings/useColourScheme.ts#0",
+							"src/settings/useColourScheme.test.ts#0"
+						]
+					}
+				],
+				"manualTesting": {
+					"setup": ["Restart the web server"],
+					"steps": [
+						{
+							"action": "Open Settings",
+							"expect": "A Dark mode checkbox sits beside the theme picker"
+						},
+						{
+							"action": "Tick Dark mode",
+							"expect": "The page switches to the dark scheme"
+						},
+						{ "action": "Reload the page", "expect": "It stays dark" }
+					]
+				}
 			}
 		}
 	],

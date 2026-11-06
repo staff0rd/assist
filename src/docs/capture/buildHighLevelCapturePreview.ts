@@ -1,12 +1,13 @@
 import { createHash } from "node:crypto";
 import { buildHighLevelStructure } from "../../commands/review/highLevel/buildHighLevelStructure";
 import { collectHighLevelTests } from "../../commands/review/highLevel/collectHighLevelTests";
-import { evaluateHighLevelChecks } from "../../commands/review/highLevel/evaluateHighLevelChecks";
 import { highLevelPreviewMetadata } from "../../commands/review/highLevel/highLevelPreviewMetadata";
 import { highLevelPreviewPayload } from "../../commands/review/highLevel/highLevelPreviewPayload";
 import { selectCriticalDiffs } from "../../commands/review/highLevel/selectCriticalDiffs";
 import type { CaptureHighLevelReviewStep } from "../captureSetupStepSchema";
+import { captureHighLevelChecks } from "./captureHighLevelChecks";
 import { captureHighLevelConfig } from "./captureHighLevelConfig";
+import { captureHighLevelSlices } from "./captureHighLevelSlices";
 import type { CapturePreview } from "./holdPreviewOpen";
 import { highLevelFile } from "./highLevelFile";
 
@@ -24,14 +25,7 @@ export function buildHighLevelCapturePreview(
 		title: step.title,
 		headRef: step.headRef,
 		headSha: createHash("sha1").update(JSON.stringify(step)).digest("hex"),
-		checks: evaluateHighLevelChecks({
-			body: step.body,
-			linkedIssues: step.linkedIssues ?? [],
-			mergeable: "MERGEABLE",
-			baseRef: "main",
-			changedFiles: files.map((file) => file.path),
-			config,
-		}),
+		checks: captureHighLevelChecks(step, files, config),
 		structure: buildHighLevelStructure(files),
 		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
 		criticalPaths: config.criticalPaths,
@@ -42,6 +36,7 @@ export function buildHighLevelCapturePreview(
 		),
 		testPaths: config.testPaths,
 		collapsedPaths: config.collapsedPaths,
+		...captureHighLevelSlices(step, files),
 	};
 	return {
 		title: `${REPO}#${step.prNumber} — ${step.title}`,

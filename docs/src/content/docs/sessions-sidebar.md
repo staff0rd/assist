@@ -33,16 +33,16 @@ Each card shows a status glyph, the session's title and a line of details.
 
 ::screenshot{file="sessions-sidebar.png"}
 
-| Glyph              | Status                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------- |
-| :status[running]   | Running: the agent is working, or the run is live                                     |
-| :status[verifying] | Running [`assist verify`](../verify/)                                                 |
-| :status[waiting]   | Waiting on you: a reply, a permission prompt or a preview to approve                  |
-| :status[question]  | Waiting on you to [answer a question](../sessions-preview-panes/#answering-questions) |
-| :status[check]     | Waiting on you to [try a change by hand](../sessions-preview-panes/#trying-a-change)  |
-| :status[done]      | Done                                                                                  |
-| :status[error]     | Exited with an error                                                                  |
-| :status[stopped]   | Stopped, holding unpushed work (see [Parallel work](../sessions-parallel-work/))      |
+| Glyph              | Status                                                                                                                                                   |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| :status[running]   | Running: the agent is working, or the run is live                                                                                                        |
+| :status[verifying] | Running [`assist verify`](../verify/)                                                                                                                    |
+| :status[waiting]   | Waiting on you: a reply, a permission prompt or a preview to approve                                                                                     |
+| :status[question]  | Waiting on you to [answer a question](../sessions-preview-panes/#answering-questions)                                                                    |
+| :status[check]     | Waiting on you to [try a change by hand](../sessions-preview-panes/#trying-a-change) or [review a design](../sessions-preview-panes/#reviewing-a-design) |
+| :status[done]      | Done                                                                                                                                                     |
+| :status[error]     | Exited with an error                                                                                                                                     |
+| :status[stopped]   | Stopped, holding unpushed work (see [Parallel work](../sessions-parallel-work/))                                                                         |
 
 The detail line shows the repo, then the session type or, for a backlog run, the phase it is on, followed by any pull request, backlog item and issue it is linked to, and any badges:
 

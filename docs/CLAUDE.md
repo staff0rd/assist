@@ -42,7 +42,7 @@ Setup steps:
 - `gh: { match, json }` — fake `gh` prints `json` when its args contain every `match` string; `"{{ago:<n><m|h|d>}}"` becomes that ISO time ago
 - `sql: <statements>` — run against the capture database
 - `newsFeed: { name, title, items }` — serve an RSS feed of `{ title, hoursAgo, excerpt? }` and `assist news add` it
-- Preview panes, held open on the session with the given `session` prompt until the state changes: `preview: { session, kind: ask|show, title, body }`, `pr: { session, title, what, why, how?, resolves?, prNumber?, draft? }`, `proposal: { session, item }` (an `assist backlog propose` payload), `highLevelReview: { session, prNumber, title, headRef, body, linkedIssues?, criticalPaths?, uiPaths?, files }` with files `{ path, status, content?, patch? }` (an added file's patch is built from `content`)
+- Preview panes, held open on the session with the given `session` prompt until the state changes: `preview: { session, kind: ask|show, title, body }`, `design: { session, url, title, body }`, `pr: { session, title, what, why, how?, resolves?, prNumber?, draft? }`, `proposal: { session, item }` (an `assist backlog propose` payload), `highLevelReview: { session, prNumber, title, headRef, body, linkedIssues?, criticalPaths?, uiPaths?, files, slices?, manualTesting? }` (slices `{ title, summary, hunks: ["<path>#<index>"] }`, as `--slices` takes) with files `{ path, status, content?, patch? }` (an added file's patch is built from `content`)
 
 Screenshots sharing a scene and setup are captured together. Between states sessions are drained, `~/.assist.yml` is restored and the backlog, backups and usage tables are emptied.
 

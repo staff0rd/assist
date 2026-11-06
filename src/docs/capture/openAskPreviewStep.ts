@@ -15,6 +15,15 @@ export async function openAskPreviewStep(
 			body,
 			prNumber: null,
 		});
+	} else if ("design" in step) {
+		const { session, url, title, body } = step.design;
+		await holdPreviewOpen(capture, session, {
+			kind: "design",
+			title,
+			body,
+			prNumber: null,
+			metadata: [{ label: "Design", value: url, url }],
+		});
 	} else if ("question" in step) {
 		const { session, title, questions } = step.question;
 		await holdPreviewOpen(capture, session, {

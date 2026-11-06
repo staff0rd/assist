@@ -104,7 +104,7 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 ## Repos and data
 
 - `assist backlog clone <origin>` clones an item's repo over SSH into `clone.baseDir`.
-- `assist backlog refresh-docs` queues a [Refresh docs](../backlog-docs/) story now for every done story no refresh covers yet, whatever `docs.refreshAfter` is set to.
+- `assist backlog refresh-docs` queues a [Refresh docs](../backlog-docs/) story now for every done story no refresh covers yet, in a repo with `docs.refreshAfter` set, whatever its value.
 - `assist docs unlock` :badge[internal] lets the current phase of a backlog run edit docs pages and screenshots, which are otherwise left to Refresh docs, once you approve. It sends you a pin as a desktop notification. Called by agents whose docs edit was blocked.
 - `assist docs confirm <pin>` :badge[internal] approves that unlock with the pin from the notification. Called by agents whose docs edit was blocked, once you give them the pin.
 - `assist backlog move-repo <old-origin> [new-origin]` moves every item from one repo to another after a rename, the current repo when no new origin is given. `--yes` skips the prompt.

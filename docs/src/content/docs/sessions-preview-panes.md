@@ -8,6 +8,7 @@ covers:
   - claude:show
   - config:sessions.askQuestion
   - config:sessions.askQuestionAutoSubmit
+  - config:prs.reviewAfterRaise
 screenshots:
   - file: sessions-ask.png
     alt: A proposal waiting for approval in the preview pane, with a comment added
@@ -40,6 +41,26 @@ screenshots:
           to: text=Save the choice to localStorage
       - type: Store it per user on the server instead, so it follows them between devices
       - click: text=Add to review
+  - file: sessions-design.png
+    alt: A design waiting for review in the preview pane, with its Open design button and summary
+    route: /sessions
+    scene: previews
+    setup:
+      - design:
+          session: Add a dark mode toggle to the settings page
+          url: https://claude.ai/artifact/LXseEx7cXDjD46uKhA7G2u
+          title: Dark mode settings
+          body: |
+            The settings page with a **Dark mode** checkbox beside the theme picker, shown in both light and dark.
+
+            - The checkbox sits in the existing Appearance group rather than a new section.
+            - Turning it on switches the page straight away, with no Save button.
+    waitFor: text=Dark mode settings
+    viewport:
+      width: 1440
+      height: 720
+    actions:
+      - click: text=Dark mode toggle
   - file: sessions-question.png
     alt: A question from the agent in the preview pane, with its options, an Other box and the Answer button
     route: /sessions
@@ -179,6 +200,12 @@ As in the [diff](../sessions-diff/#commenting), **Cite a broken rule** and **Add
 
 Ask the agent to `/ask` about something and it puts a proposal, summary or decision in the pane and waits. Approve it and the agent goes ahead, acting on any comments you added; reject it and the agent revises it and asks again.
 
+## Reviewing a design
+
+When the agent designs a story or fix, the design opens in the pane with a summary. **Open design** opens it on claude.ai. Approve it, or reject it with comments and the agent revises it and asks again.
+
+::screenshot{file="sessions-design.png"}
+
 ## Answering questions
 
 Questions the agent asks you open in the pane as a form instead of in the terminal. Pick one option, or several where the question allows it, or choose **Other** and type your own answer, then press **Answer**. In an **Other** box, :kbd[Enter] sends the answers once every question is answered and :kbd[Shift+Enter] adds a new line. **Dismiss** declines to answer.
@@ -219,7 +246,7 @@ When the agent raises or edits a [pull request](../pull-requests/), the title an
 - Drop or paste images onto the pane to attach screenshots to the description, and give each a caption and an optional group.
 - **Draft** raises a new pull request as a draft.
 - **Auto-merge (squash)** squash-merges it once its required checks pass.
-- **Review PR** [reviews](../sessions-pr-review/) it once it's raised, then addresses the findings.
+- **Review PR** [reviews](../sessions-pr-review/) it once it's raised, then addresses the findings. It starts ticked unless `prs.reviewAfterRaise` is `false`.
 - **Post to Slack** announces it in Slack at the end.
 
 Issues, issue and pull request comments and Slack posts the agent writes open in the pane the same way, for approval before they are sent.

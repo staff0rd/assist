@@ -15,7 +15,7 @@ covers:
   - config:complexity.ignore
 ---
 
-These commands have an agent tidy a TypeScript codebase: split long files, lay folders out by their imports, remove needless comments and add tests.
+These commands have an agent tidy a TypeScript codebase: split long files, lay folders out by their imports and add tests.
 
 ## Splitting long files
 
