@@ -1,4 +1,5 @@
 import { loadConfig } from "../../shared/loadConfig";
+import { askQuestionEnabled } from "../askQuestion/askQuestionEnabled";
 import { buildAuthoredPhasePrompt } from "./buildAuthoredPhasePrompt";
 import { buildReviewPrompt } from "./buildReviewPrompt";
 import type { BacklogItem, PlanPhase } from "./types";
@@ -17,7 +18,7 @@ export function buildPhasePrompt(
 		worktree?.commitBeforeManualChecks ??
 		false;
 
-	const askCheck = config.sessions?.askQuestion === true;
+	const askCheck = askQuestionEnabled(config);
 	if (phase.name === REVIEW_PHASE_NAME) {
 		return buildReviewPrompt(item, phaseNumber, {
 			commitBeforePhaseEnd,

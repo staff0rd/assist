@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { askQuestionEnabled } from "../askQuestion/askQuestionEnabled";
 import type { AdviceContext } from "./AdviceContext";
 import { verifyRunCommandNames } from "./verifyRunCommandNames";
 
@@ -38,7 +39,7 @@ export const adviceConditions: Record<string, AdviceCondition> = {
 		whenUnmet:
 			"the session was not launched by assist, or sessions.askQuestion is off",
 		matches: ({ assistSession, config }) =>
-			assistSession && config.sessions?.askQuestion === true,
+			assistSession && askQuestionEnabled(config),
 	},
 	typescript: repoFile("tsconfig.json", "a tsconfig.json"),
 	filenameConvention: repoFile(

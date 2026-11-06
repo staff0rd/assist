@@ -301,7 +301,7 @@ const assistConfigShape = {
 				.enum(["draft", "bug", "prompt", "design"])
 				.default("draft"),
 			hotkeys: hotkeysSchema.optional(),
-			askQuestion: z.boolean().default(false),
+			askQuestion: z.boolean().default(true),
 			askQuestionAutoSubmit: z.boolean().default(false),
 		})
 		.optional(),

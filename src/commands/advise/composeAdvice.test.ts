@@ -74,7 +74,12 @@ describe("composeAdvice", () => {
 	it("adds ask-question and ask-check only when sessions.askQuestion is on in an assist session", () => {
 		const askQuestionOn = { sessions: { askQuestion: true } };
 
-		expect(includedNames(contextWith({}, true))).not.toContain("ask-question");
+		expect(
+			includedNames(contextWith({ sessions: { askQuestion: false } }, true)),
+		).not.toContain("ask-question");
+		expect(includedNames(contextWith({}, true))).toEqual(
+			expect.arrayContaining(["ask-check", "ask-question"]),
+		);
 		expect(includedNames(contextWith(askQuestionOn))).not.toContain(
 			"ask-question",
 		);

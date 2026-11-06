@@ -134,7 +134,8 @@ describe("askCheck", () => {
 		],
 		[
 			"when disabled",
-			() => mockLoadConfig.mockReturnValue({}),
+			() =>
+				mockLoadConfig.mockReturnValue({ sessions: { askQuestion: false } }),
 			"sessions.askQuestion",
 		],
 		[

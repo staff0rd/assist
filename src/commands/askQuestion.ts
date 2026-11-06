@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { loadConfig } from "../shared/loadConfig";
+import { askQuestionEnabled } from "./askQuestion/askQuestionEnabled";
 import { formatAskQuestionAnswers } from "./askQuestion/formatAskQuestionAnswers";
 import { rejectLongQuestions } from "./askQuestion/rejectLongQuestions";
 import { readJsonPayload } from "./backlog/readJsonPayload";
@@ -22,7 +23,7 @@ export async function askQuestion(options: { json: string }): Promise<void> {
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId)
 		useBuiltIn("not running in an assist session");
-	if (!loadConfig().sessions?.askQuestion)
+	if (!askQuestionEnabled(loadConfig()))
 		useBuiltIn("assist ask-question is disabled (sessions.askQuestion)");
 	if (!(await isLiveDaemonSession(sessionId)))
 		useBuiltIn(

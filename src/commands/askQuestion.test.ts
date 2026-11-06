@@ -141,7 +141,7 @@ describe("askQuestion", () => {
 	});
 
 	it("tells Claude to use the built-in tool when disabled", async () => {
-		mockLoadConfig.mockReturnValue({});
+		mockLoadConfig.mockReturnValue({ sessions: { askQuestion: false } });
 		stdin({ questions });
 
 		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");

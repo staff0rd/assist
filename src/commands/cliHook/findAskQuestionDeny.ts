@@ -1,4 +1,5 @@
 import { loadConfig } from "../../shared/loadConfig";
+import { askQuestionEnabled } from "../askQuestion/askQuestionEnabled";
 import { inWebSession } from "../sessions/shared/inWebSession";
 import { isLiveDaemonSession } from "../sessions/shared/isLiveDaemonSession";
 import type { HookDecision } from "./resolvePermission";
@@ -7,7 +8,7 @@ export async function findAskQuestionDeny(
 	questionsJson: string,
 ): Promise<HookDecision | undefined> {
 	if (!inWebSession()) return undefined;
-	if (!loadConfig().sessions?.askQuestion) return undefined;
+	if (!askQuestionEnabled(loadConfig())) return undefined;
 	if (!(await isLiveDaemonSession(process.env.ASSIST_SESSION_ID as string)))
 		return undefined;
 	return {
