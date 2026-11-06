@@ -43,14 +43,12 @@ export function runHandler(
 		logRequest(method, url, res.statusCode, Date.now() - startedAt);
 	});
 	Promise.resolve(handler(req, res, port)).catch((error) => {
+		const message = error instanceof Error ? error.message : String(error);
 		console.error(
-			`${new Date().toISOString()} ${method} ${url} failed: ${
-				error instanceof Error ? error.message : String(error)
-			}`,
+			`${new Date().toISOString()} ${method} ${url} failed: ${message}`,
 		);
 		if (!res.headersSent)
 			res.writeHead(500, { "Content-Type": "application/json" });
-		if (!res.writableEnded)
-			res.end(JSON.stringify({ error: "internal error" }));
+		if (!res.writableEnded) res.end(JSON.stringify({ error: message }));
 	});
 }

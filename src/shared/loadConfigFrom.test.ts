@@ -79,6 +79,27 @@ describe("user (db) layer", () => {
 		expect(config.prs?.required).toBe(false);
 	});
 
+	it("ignores keys a newer node added that this version does not know", () => {
+		writeRepoConfigCache(
+			{},
+			{
+				fromNewerNode: { a: 1 },
+				prs: { required: true, fromNewerNode: true },
+			},
+		);
+		const global = writeConfig(base, "");
+
+		const config = loadConfigFrom(clone, global);
+
+		expect(config.prs?.required).toBe(true);
+	});
+
+	it("still rejects unknown keys in the node's own config", () => {
+		const global = writeConfig(base, "notAKey: 1\n");
+
+		expect(() => loadConfigFrom(clone, global)).toThrow();
+	});
+
 	it("concatenates advice.rules with user (db) entries first", () => {
 		const rule = (title: string) => ({ title, text: `${title} text` });
 		writeRepoConfigCache({}, { advice: { rules: [rule("from db")] } });

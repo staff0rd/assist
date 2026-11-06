@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
+import { dropUnknownConfigKeys } from "./dropUnknownConfigKeys";
 import { linkedWorktree } from "./linkedWorktree";
 import { loadRawYaml } from "./loadRawYaml";
 import { mergeRawConfigs } from "./mergeDenyRules";
@@ -48,6 +49,12 @@ export function loadConfigFrom(
 	return assistConfigSchema.parse(loadMergedRawConfig(cwd, globalConfigPath));
 }
 
+function sharedUserLayer(
+	userDb: Record<string, unknown> | undefined,
+): Record<string, unknown> {
+	return userDb ? dropUnknownConfigKeys(userDb) : {};
+}
+
 export function loadMergedRawConfig(
 	cwd: string,
 	globalConfigPath: string = getGlobalConfigPath(),
@@ -57,7 +64,7 @@ export function loadMergedRawConfig(
 	const userDb = readConfigCacheFile().user;
 	warnUnsharedAdviceRules(globalRaw, userDb);
 	const globalWithRepo = mergeRawConfigs(
-		mergeRawConfigs(userDb ?? {}, globalRaw),
+		mergeRawConfigs(sharedUserLayer(userDb), globalRaw),
 		resolveRepoLayer(globalRaw, cwd).override,
 	);
 	const merged = stripLegacyConfigKeys(
