@@ -8,8 +8,7 @@ import {
 } from "./NewSessionFooter/SubmitButton";
 
 const footerSx = (t: Theme) => ({
-	alignItems: "center",
-	flexWrap: "wrap",
+	alignItems: "flex-end",
 	gap: "14px",
 	py: "10px",
 	pl: "18px",
@@ -20,6 +19,16 @@ const footerSx = (t: Theme) => ({
 	fontSize: 12,
 	color: "text.secondary",
 });
+
+const hintsSx = {
+	flex: 1,
+	minWidth: 0,
+	alignSelf: "center",
+	display: "flex",
+	flexWrap: "wrap",
+	columnGap: "14px",
+	rowGap: 0.5,
+} as const;
 
 const kbdSx = (t: Theme) => ({
 	mr: 0.5,
@@ -35,16 +44,19 @@ const kbdSx = (t: Theme) => ({
 export function NewSessionFooter(props: FooterProps) {
 	return (
 		<Stack direction="row" sx={footerSx}>
-			{FOOTER_HINTS.map(([key, action]) => (
-				<span key={key}>
-					<Box component="kbd" sx={kbdSx}>
-						{key}
-					</Box>
-					{action}
-				</span>
-			))}
-			<Box sx={{ flex: 1 }} />
-			<SubmitButton {...props} />
+			<Box data-testid="footer-hints" sx={hintsSx}>
+				{FOOTER_HINTS.map(([key, action]) => (
+					<span key={key}>
+						<Box component="kbd" sx={kbdSx}>
+							{key}
+						</Box>
+						{action}
+					</span>
+				))}
+			</Box>
+			<Box sx={{ flexShrink: 0 }}>
+				<SubmitButton {...props} />
+			</Box>
 		</Stack>
 	);
 }
