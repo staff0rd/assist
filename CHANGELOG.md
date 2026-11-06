@@ -1,3 +1,10 @@
+# [0.1074.0](https://github.com/staff0rd/assist/compare/v0.1073.1...v0.1074.0) (2026-11-06)
+
+
+### Features
+
+* highlight commenting on iOS review ([db529f3](https://github.com/staff0rd/assist/commit/db529f34304f85c392d42ec8d8e6322d27e6638e))
+
 ## [0.1073.1](https://github.com/staff0rd/assist/compare/v0.1073.0...v0.1073.1) (2026-11-06)
 
 
