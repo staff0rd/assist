@@ -1,22 +1,19 @@
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import { tokenBadgeSx } from "../../../../../../../../designSystem/tokenBadgeSx";
-import type { SessionInfo } from "../../../../../../../../types";
-import { usePrStatus } from "../../../../../../../usePrStatus";
 
 const sx = tokenBadgeSx("secondary");
 
 export function PrNumberLink({
-	session,
 	prNumber,
+	url,
 }: {
-	session: SessionInfo;
 	prNumber: number;
+	url?: string;
 }) {
-	const pr = usePrStatus(session.cwd, prNumber, session.status);
 	const label = `#${prNumber}`;
 
-	if (!pr?.url)
+	if (!url)
 		return (
 			<Box component="span" sx={sx}>
 				{label}
@@ -25,7 +22,7 @@ export function PrNumberLink({
 
 	return (
 		<Link
-			href={pr.url}
+			href={url}
 			target="_blank"
 			rel="noopener noreferrer"
 			underline="hover"

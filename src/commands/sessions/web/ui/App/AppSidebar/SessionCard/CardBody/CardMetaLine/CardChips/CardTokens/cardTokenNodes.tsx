@@ -6,13 +6,13 @@ import type { CardToken } from "./cardTokenNodes/CardToken";
 import { PrNumberLink } from "./cardTokenNodes/PrNumberLink";
 import { repoToken } from "./cardTokenNodes/repoToken";
 import { promptIssueToken } from "./cardTokenNodes/promptIssueToken";
-import { reviewTargetPr } from "../../../../../../reviewTargetPr";
 import { sessionType } from "../../../../../../sessionType";
 import type { SessionInfo } from "../../../../../../../types";
 
 export function cardTokenNodes(
 	session: SessionInfo,
 	named: boolean,
+	pr: { number?: number; url?: string },
 	tracker?: ItemTracker,
 ): CardToken[] {
 	const tokens: CardToken[] = [];
@@ -32,12 +32,11 @@ export function cardTokenNodes(
 		tokens.push({ key: "type", node: type });
 	}
 
-	const targetPr = reviewTargetPr(session) ?? session.promptPr;
-	if (targetPr !== undefined)
+	if (pr.number !== undefined)
 		tokens.push({
 			key: "pr",
 			badge: true,
-			node: <PrNumberLink session={session} prNumber={targetPr} />,
+			node: <PrNumberLink prNumber={pr.number} url={pr.url} />,
 		});
 
 	for (const itemId of activityItemIds(activity))
