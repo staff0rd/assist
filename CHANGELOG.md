@@ -1,3 +1,15 @@
+# [0.1066.0](https://github.com/staff0rd/assist/compare/v0.1065.3...v0.1066.0) (2026-11-06)
+
+
+### Bug Fixes
+
+* show branch PR badge on session card ([5accd0a](https://github.com/staff0rd/assist/commit/5accd0a7fac69b4299fa586d7a24cc7681ac5b90))
+
+
+### Features
+
+* token-driven doc pane text sizes ([6cbf2df](https://github.com/staff0rd/assist/commit/6cbf2df81b1fda5c715c4fc2adeb12f6b3775d96))
+
 ## [0.1065.3](https://github.com/staff0rd/assist/compare/v0.1065.2...v0.1065.3) (2026-11-05)
 
 
