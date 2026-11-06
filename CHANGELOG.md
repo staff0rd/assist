@@ -1,3 +1,10 @@
+## [0.1074.1](https://github.com/staff0rd/assist/compare/v0.1074.0...v0.1074.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* stop Codex loading quoted $skills ([956dc02](https://github.com/staff0rd/assist/commit/956dc025ba5cd17e6b57d7b61de35f0109525552))
+
 # [0.1074.0](https://github.com/staff0rd/assist/compare/v0.1073.1...v0.1074.0) (2026-11-06)
 
 
