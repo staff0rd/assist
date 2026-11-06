@@ -1,3 +1,19 @@
+# [0.1069.0](https://github.com/staff0rd/assist/compare/v0.1068.0...v0.1069.0) (2026-11-06)
+
+
+### Bug Fixes
+
+* judge comment edits by full line ([b29b578](https://github.com/staff0rd/assist/commit/b29b578d0c7696d26437e6e29414261d9a0be714))
+* point review-ci docs to yoke ([f43fe27](https://github.com/staff0rd/assist/commit/f43fe27de9406003244b5ac839c419a0c28878f2))
+* re-run release when main moves ([7104caa](https://github.com/staff0rd/assist/commit/7104caab8218b757069cb62e696462a77cffaf19))
+* rename leftover review-ci test fixture ([829f5a9](https://github.com/staff0rd/assist/commit/829f5a97f3dfccf2001e36dc2b36b2daae6de0a2))
+* strip CI-only review pipeline paths ([2b2434e](https://github.com/staff0rd/assist/commit/2b2434e99a05a3952887039b50ed348a0d639bb0))
+
+
+### Features
+
+* Shift+click opens all session modes ([22e7c75](https://github.com/staff0rd/assist/commit/22e7c75e068fc70a014f69dfc6b586ae17c1c029))
+
 # [0.1068.0](https://github.com/staff0rd/assist/compare/v0.1067.0...v0.1068.0) (2026-11-06)
 
 
