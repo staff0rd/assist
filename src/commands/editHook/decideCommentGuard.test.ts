@@ -366,6 +366,49 @@ describe("decideCommentGuard", () => {
 			expect(decision).toBeUndefined();
 		});
 
+		it("allows a version comment when the edit omits the uses: key", () => {
+			const sha = "review.yml@458b446ce718aef04663555f4762fea3e78fa2a8";
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".github/workflows/review-ci.yml",
+					old_string: sha,
+					new_string: `${sha} # review-v0.17.1`,
+				}),
+				`jobs:\n  review:\n    uses: makerxstudio/yoke/.github/workflows/${sha}\n    secrets: inherit\n`,
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("blocks a trailing comment when the edit omits a tag-pinned uses: key", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: ".github/workflows/ci.yml",
+					old_string: "checkout@v4",
+					new_string: "checkout@v4 # v4.2.2",
+				}),
+				"steps:\n  - uses: actions/checkout@v4\n",
+			);
+
+			expect(decision).toBeDefined();
+		});
+
+		it("blocks a comment added after an earlier MultiEdit removes the uses: key", () => {
+			const sha = "checkout@11bd71901bbe5b1630ceea73d27597364c9af683";
+			const decision = decideCommentGuard(
+				input("MultiEdit", {
+					file_path: ".github/workflows/ci.yml",
+					edits: [
+						{ old_string: "uses: actions/", new_string: "ref: actions/" },
+						{ old_string: sha, new_string: `${sha} # v4.2.2` },
+					],
+				}),
+				`steps:\n  - uses: actions/${sha}\n`,
+			);
+
+			expect(decision).toBeDefined();
+		});
+
 		it("blocks a trailing comment on a tag-pinned uses: ref", () => {
 			const decision = decideCommentGuard(
 				input("Edit", {

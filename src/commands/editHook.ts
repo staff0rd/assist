@@ -32,10 +32,7 @@ export async function editHook(): Promise<void> {
 	const input = tryParseInput(await readStdin());
 	if (!input) return;
 
-	const existing =
-		input.tool_name === "Write"
-			? readExisting(input.tool_input.file_path)
-			: undefined;
+	const existing = readExisting(input.tool_input.file_path);
 
 	const reason =
 		decideOverrideGuard(input, existing) ??
