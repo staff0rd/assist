@@ -1,7 +1,9 @@
 import { ListItemButton, Typography } from "@mui/material";
 import type { ScopedRule } from "../../../../../../../../rules/types";
+import { listRowHeight } from "../../../../../designSystem/listRowHeight";
 
 const rowSx = {
+	minHeight: listRowHeight,
 	gap: 1,
 	alignItems: "baseline",
 	borderRadius: 1,

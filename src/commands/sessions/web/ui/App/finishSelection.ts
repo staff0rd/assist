@@ -1,6 +1,6 @@
 import { type Caret, caretFromPoint, orderedRange } from "./caretFromPoint";
 import type { PendingComment } from "./PendingComment";
-import { rangeToOffsets } from "./rangeToOffsets";
+import { pendingFromRange } from "./pendingFromRange";
 import { snapRangeToWords } from "./finishSelection/snapRangeToWords";
 import { skipsSelection } from "./textWalker";
 
@@ -28,10 +28,5 @@ export function finishSelection(
 	anchor: Caret,
 	focus: Caret,
 ): PendingComment | null {
-	const range = snappedRange(anchor, focus);
-	const quote = range.toString().trim();
-	const { start, end } = rangeToOffsets(content, range);
-	if (!quote || start === end) return null;
-	const rect = range.getBoundingClientRect();
-	return { quote, top: rect.bottom, left: rect.left, start, end };
+	return pendingFromRange(content, snappedRange(anchor, focus));
 }

@@ -3,9 +3,11 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { Box, Collapse, ListItemButton, Typography } from "@mui/material";
 import type { ScopedRule } from "../../../../../../../rules/types";
 import type { RuleScope } from "./groupRulesByScope";
+import { listRowHeight } from "../../../../designSystem/listRowHeight";
 import { RuleCitationRow } from "./RuleScopeGroup/RuleCitationRow";
 
 const headerSx = {
+	minHeight: listRowHeight,
 	gap: 0.5,
 	alignItems: "center",
 	borderRadius: 1,

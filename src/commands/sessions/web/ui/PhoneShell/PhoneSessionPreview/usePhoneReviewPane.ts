@@ -2,12 +2,17 @@ import { useState } from "react";
 import { previewPaneOptions } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/previewPaneOptions";
 import { usePrPane } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/usePrPane";
 import type { PhonePreviewProps } from "./PhonePreviewProps";
+import { usePhoneCommentComposer } from "./usePhoneCommentComposer";
 
 export function usePhoneReviewPane({
 	preview,
 	session,
+	sendInput,
 	onDecision,
-}: Pick<PhonePreviewProps, "preview" | "session" | "onDecision">) {
+}: Pick<
+	PhonePreviewProps,
+	"preview" | "session" | "sendInput" | "onDecision"
+>) {
 	const [reason, setReason] = useState("");
 	const [sending, setSending] = useState(false);
 	const options = previewPaneOptions(
@@ -26,6 +31,10 @@ export function usePhoneReviewPane({
 		},
 	);
 	const pane = usePrPane(options);
+	const comments = usePhoneCommentComposer(pane, options.editable, {
+		session,
+		sendInput,
+	});
 	const sent = () =>
 		pane.comments.map((c) => ({ quote: c.quote, note: c.note }));
 
@@ -34,6 +43,7 @@ export function usePhoneReviewPane({
 		pane,
 		reason,
 		setReason,
+		...comments,
 		decisions: {
 			canStart: preview.kind === "backlog-item" && preview.canStart === true,
 			sending,

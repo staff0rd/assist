@@ -6,6 +6,7 @@ import { RuleCitationList } from "./SelectionCommentBody/RuleCitationList";
 import { useScopedRules } from "./SelectionCommentBody/useScopedRules";
 
 export type SelectionCommentBodyProps = {
+	stacked?: boolean;
 	moved?: boolean;
 	editable?: boolean;
 	cwd?: string | undefined;
@@ -22,6 +23,7 @@ export type SelectionCommentBodyProps = {
 export function SelectionCommentBody({
 	quote,
 	open,
+	stacked,
 	moved,
 	editable,
 	cwd,
@@ -50,6 +52,7 @@ export function SelectionCommentBody({
 			)}
 			<CommentNoteForm
 				key={quote}
+				stacked={stacked}
 				unavailable={unavailable}
 				onAdd={onAdd}
 				onQueue={onQueue}

@@ -23,5 +23,13 @@ export function usePreviewSelection() {
 
 	const clear = () => setPending(null);
 
-	return { wrapperRef, contentRef, pending, dragRects, onMouseDown, clear };
+	return {
+		wrapperRef,
+		contentRef,
+		pending,
+		dragRects,
+		onMouseDown,
+		clear,
+		select: setPending,
+	};
 }

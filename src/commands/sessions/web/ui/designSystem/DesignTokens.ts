@@ -72,6 +72,7 @@ export type Density = "desktop" | "touch";
 
 type DensityTokens = {
 	target: number;
+	listRow: number;
 	bar: number;
 	iconButton: {
 		side: number;

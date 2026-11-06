@@ -3,9 +3,9 @@ import Divider from "@mui/material/Divider";
 import type { PrPreview } from "../../../../shared/SessionInfoBase";
 import { PrPreviewHeader } from "../../App/SessionContent/PrPreviewHeader";
 import { PreviewMetadataList } from "../../App/SessionContent/PrPreviewSlideInPane/PreviewMetadataList";
-import { PrPreviewContent } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/PrPreviewContent";
 import { PrPreviewChainToggles } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/PrPreviewFooter/PrPreviewActions/PrPreviewChainToggles";
 import { PhonePreviewDecisions } from "../PhonePreviewDecisions";
+import { PhoneCommentableContent } from "./PhoneCommentableContent";
 import { PhoneRejectReason } from "./PhoneRejectReason";
 import type { usePhoneReviewPane } from "./usePhoneReviewPane";
 
@@ -34,7 +34,7 @@ export function PhoneReviewSheetBody({
 			<PrPreviewHeader preview={preview} draft={pane.chain.draft} />
 			<PreviewMetadataList items={preview.metadata ?? []} />
 			<Divider />
-			<PrPreviewContent pane={pane} screenshots={options.screenshots} />
+			<PhoneCommentableContent review={review} />
 			<Box sx={footerSx}>
 				{options.isPr && (
 					<PrPreviewChainToggles

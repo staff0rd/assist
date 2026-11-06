@@ -235,6 +235,7 @@ export const slateDesign: DesignTokens = {
 	densities: {
 		desktop: {
 			target: 30,
+			listRow: 0,
 			bar: 40,
 			iconButton: { side: 30, icon: 18, smallSide: 26, smallIcon: 16 },
 			button: { minHeight: 30, fontSize: 13, paddingX: 12 },
@@ -247,6 +248,7 @@ export const slateDesign: DesignTokens = {
 		},
 		touch: {
 			target: 48,
+			listRow: 44,
 			bar: 60,
 			iconButton: { side: 48, icon: 30, smallSide: 40, smallIcon: 24 },
 			button: { minHeight: 48, fontSize: 17, paddingX: 20 },
