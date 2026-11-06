@@ -34,12 +34,10 @@ export function selectPostableFindings(
 			`Skipped ${alreadyRaised.length} finding(s) already raised by prior comments.`,
 		);
 	}
-	const carriedUnlocated = unlocated.map(
-		(finding): UnanchoredFinding => ({
-			...finding,
-			reason: "unlocated",
-		}),
-	);
+	const carriedUnlocated = unlocated.map((finding): UnanchoredFinding => ({
+		...finding,
+		reason: "unlocated",
+	}));
 	if (lineBound.length === 0) {
 		console.log("No line-bound findings to comment on.");
 		return { inDiff: [], unanchored: carriedUnlocated };

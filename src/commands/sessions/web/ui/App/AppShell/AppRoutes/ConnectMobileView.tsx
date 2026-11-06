@@ -12,13 +12,11 @@ export function ConnectMobileView() {
 
 	useEffect(() => {
 		fetchTarget()
-			.catch(
-				(error): ConnectMobileTarget => ({
-					ok: false,
-					reason: error instanceof Error ? error.message : String(error),
-					remediation: "Check the web server is running and reload this page",
-				}),
-			)
+			.catch((error): ConnectMobileTarget => ({
+				ok: false,
+				reason: error instanceof Error ? error.message : String(error),
+				remediation: "Check the web server is running and reload this page",
+			}))
 			.then(setTarget);
 	}, []);
 

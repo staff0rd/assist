@@ -6,11 +6,9 @@ export function withRejectedFindings(
 ): UnanchoredFinding[] {
 	return [
 		...unanchored,
-		...rejected.map(
-			(finding): UnanchoredFinding => ({
-				...finding,
-				reason: "comment-rejected",
-			}),
-		),
+		...rejected.map((finding): UnanchoredFinding => ({
+			...finding,
+			reason: "comment-rejected",
+		})),
 	];
 }

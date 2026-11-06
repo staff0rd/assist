@@ -53,13 +53,11 @@ function toNodes(dir: DiffFileTrie, prefix: string): DiffFileTreeNode[] {
 		[...dir.dirs].map(([name, child]) => collapseDir(name, child, prefix)),
 	);
 	const files = byName(
-		dir.files.map(
-			(file): DiffFileTreeFile => ({
-				kind: "file",
-				path: join(prefix, file.name),
-				...file,
-			}),
-		),
+		dir.files.map((file): DiffFileTreeFile => ({
+			kind: "file",
+			path: join(prefix, file.name),
+			...file,
+		})),
 	);
 
 	return [...dirs, ...files];

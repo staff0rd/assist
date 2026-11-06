@@ -36,7 +36,8 @@
 	"overrides": {
 		"lodash": "^4.18.0",
 		"xml2js": "^0.5.0",
-		"uuid": "^11.1.1"
+		"uuid": "^11.1.1",
+		"dompurify": "^3.4.17"
 	},
 	"keywords": [],
 	"author": "",
@@ -118,8 +119,8 @@
 		"jscpd": "^4.0.5",
 		"jsdom": "^29.1.1",
 		"knip": "^5.71.0",
-		"monaco-editor": "^0.56.0",
-		"oxfmt": "^0.54.0",
+		"monaco-editor": "^0.57.0",
+		"oxfmt": "^0.76.0",
 		"oxlint": "^1.69.0",
 		"playwright": "^1.64.1",
 		"qrcode.react": "^4.2.0",

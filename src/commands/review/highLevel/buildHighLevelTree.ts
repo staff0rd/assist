@@ -22,13 +22,11 @@ function nodesOf(at: DirectoryGroup, prefix: string): HighLevelTreeNode[] {
 	const dirs = [...at.dirs].map(([name, child]) =>
 		collapsedDirNode(name, child, prefix),
 	);
-	const files = at.files.map(
-		(file): HighLevelTreeNode => ({
-			kind: "file",
-			name: basename(file.path),
-			...file,
-		}),
-	);
+	const files = at.files.map((file): HighLevelTreeNode => ({
+		kind: "file",
+		name: basename(file.path),
+		...file,
+	}));
 	return [...dirs.sort(byName), ...files.sort(byName)];
 }
 

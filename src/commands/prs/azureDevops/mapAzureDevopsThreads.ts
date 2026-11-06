@@ -44,19 +44,17 @@ export function mapAzureDevopsThreads(
 		.flatMap((thread) =>
 			(thread.comments ?? [])
 				.filter((c) => !c.isDeleted && c.commentType !== "system" && c.content)
-				.map(
-					(c): LineComment => ({
-						type: "line",
-						id: thread.id,
-						threadId: String(thread.id),
-						user: c.author?.displayName ?? c.author?.uniqueName ?? "unknown",
-						path: threadPath(thread),
-						line: threadLine(thread),
-						body: c.content ?? "",
-						diff_hunk: "",
-						html_url: `${prUrl}?discussionId=${thread.id}`,
-						resolved: isResolved(thread.status),
-					}),
-				),
+				.map((c): LineComment => ({
+					type: "line",
+					id: thread.id,
+					threadId: String(thread.id),
+					user: c.author?.displayName ?? c.author?.uniqueName ?? "unknown",
+					path: threadPath(thread),
+					line: threadLine(thread),
+					body: c.content ?? "",
+					diff_hunk: "",
+					html_url: `${prUrl}?discussionId=${thread.id}`,
+					resolved: isResolved(thread.status),
+				})),
 		);
 }

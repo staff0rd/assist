@@ -35,7 +35,7 @@ async function renameSources(cwd: string, path: string): Promise<string[]> {
 		await git(cwd, ["diff", "HEAD", "--name-status", "-z"])
 	).split("\0");
 	const sources: string[] = [];
-	for (let i = 0; i < fields.length; ) {
+	for (let i = 0; i < fields.length;) {
 		const status = fields[i];
 		if (status.startsWith("R")) {
 			if (fields[i + 2] === path) sources.push(fields[i + 1]);

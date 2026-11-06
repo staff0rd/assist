@@ -29,13 +29,11 @@ export function createWrappedLinkProvider(
 				strictUrlRegex,
 			);
 			callback(
-				links.map(
-					(link): ILink => ({
-						range: link.range,
-						text: link.text,
-						activate: handler,
-					}),
-				),
+				links.map((link): ILink => ({
+					range: link.range,
+					text: link.text,
+					activate: handler,
+				})),
 			);
 		},
 	};
