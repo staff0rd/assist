@@ -1,3 +1,18 @@
+# [0.1071.0](https://github.com/staff0rd/assist/compare/v0.1070.1...v0.1071.0) (2026-11-06)
+
+
+### Bug Fixes
+
+* drop stale tab reload note ([37cb4aa](https://github.com/staff0rd/assist/commit/37cb4aaa316f73aab31aad2488009b5015f8b8f4))
+* drop strip-code-comments docs ([7d014b4](https://github.com/staff0rd/assist/commit/7d014b4c954d491e448a38f445dc50d4499e3be8))
+* refresh docs for recent stories ([d50c73f](https://github.com/staff0rd/assist/commit/d50c73f179dc5bd198a64fed1856d2987f2be5c9))
+
+
+### Features
+
+* always slice high-level reviews ([0e1c2d8](https://github.com/staff0rd/assist/commit/0e1c2d8756c17671df3b6b4ae692c0b29534322c)), closes [hi#level](https://github.com/hi/issues/level)
+* remove /strip-code-comments command ([886ab24](https://github.com/staff0rd/assist/commit/886ab247b7f4b788f1666cbd6dbabf09b4f67639))
+
 ## [0.1070.1](https://github.com/staff0rd/assist/compare/v0.1070.0...v0.1070.1) (2026-11-06)
 
 
