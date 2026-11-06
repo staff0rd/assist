@@ -1,3 +1,16 @@
+# [0.1067.0](https://github.com/staff0rd/assist/compare/v0.1066.0...v0.1067.0) (2026-11-06)
+
+
+### Bug Fixes
+
+* gate gh pr comment and review writes ([5f274a6](https://github.com/staff0rd/assist/commit/5f274a6c5489b67f8ca77405061fa850bba11d55))
+* keep SHA-pin version comments ([913bd2e](https://github.com/staff0rd/assist/commit/913bd2e13636162df4bbffc1c6130afb76596db3))
+
+
+### Features
+
+* token-sized PR review dialog text ([b5925c2](https://github.com/staff0rd/assist/commit/b5925c26ddd8e0b7e795768ea3a0fcd36a37e9e4))
+
 # [0.1066.0](https://github.com/staff0rd/assist/compare/v0.1065.3...v0.1066.0) (2026-11-06)
 
 
