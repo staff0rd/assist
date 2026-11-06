@@ -82,7 +82,7 @@ Start it from the toolbar's run menu, or from the start button named after it at
 
 ::screenshot{file="run-dev-server.png"}
 
-Only one dev server runs at a time across a repo's clone and all its worktrees, as they'd fight over the same port. To switch which worktree you're serving, press the start button in a session in that worktree and confirm replacing the running server. This lets you try each agent's work in the browser in turn.
+Only one dev server runs at a time across a repo's clone and all its worktrees, as they'd fight over the same port. To switch which worktree you're serving, press the start button in a session in that worktree to replace the running server. Hold :kbd[Shift] as you press it to skip the confirmation. This lets you try each agent's work in the browser in turn.
 
 Servers that use different ports can run side by side when you give each its own group:
 

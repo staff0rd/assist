@@ -6,6 +6,7 @@ order: 1
 covers:
   - cli:update
   - config:autoUpdate.enabled
+  - config:autoUpdate.restart
   - route:/updates
 screenshots:
   - file: updates-panel.png
@@ -35,6 +36,7 @@ The Updates page opens from the version badge in the dashboard's [status bar](..
 
 - **Restart** on a row restarts that node's daemon and web server onto the new build it has ready. **Restart ready nodes** restarts every node with one ready.
 - **Check now** checks every node for new commits straight away.
+- **Auto-restart** on a row (`autoUpdate.restart`) has that node restart onto a ready build by itself once every agent session on it has been waiting on you for a minute, or there are none.
 - **Pause** stops a node pulling updates until you **Resume** it.
 - **Open fix session** jumps to the session fixing a clone that couldn't fast-forward.
 - Expand a row for that node's update history.

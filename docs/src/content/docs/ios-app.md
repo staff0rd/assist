@@ -90,4 +90,16 @@ Tap **⋯** on a session's screen, or long-press its row in the list, for its ac
 
 ::screenshot{file="ios-app-actions.png"}
 
-Sessions asking you a question sit under **Answer here** at the top of the list, above **Needs you**. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**.
+Sessions asking you a question sit under **Answer here** at the top of the list, above **Needs you**. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**. During a [backlog run](../backlog-running/), **Later phase** moves the check to a later phase of the item instead.
+
+## Starting a session with Siri
+
+Start a session on the home node hands-free, such as from CarPlay, by saying "Hey Siri," then:
+
+| Say                             | Starts                                                               |
+| ------------------------------- | -------------------------------------------------------------------- |
+| "Assist draft" or "Assist idea" | A [`/draft`](../backlog-writing/) session that writes a backlog item |
+| "Assist bug"                    | A `/bug` session that files a bug                                    |
+| "Assist prompt"                 | A plain agent session with what you say as its first prompt          |
+
+"Backlog" works in place of "Assist". Siri asks which repo, then for your note, reads the note back and starts the session when you say yes.

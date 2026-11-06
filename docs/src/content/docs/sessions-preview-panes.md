@@ -41,7 +41,7 @@ screenshots:
       - type: Store it per user on the server instead, so it follows them between devices
       - click: text=Add to review
   - file: sessions-check.png
-    alt: A manual check in the preview pane, with its steps and the Works and Doesn't work buttons
+    alt: A manual check in the preview pane, with its steps and the Works, Doesn't work and Later phase buttons
     route: /sessions
     scene: previews
     setup:
@@ -54,6 +54,11 @@ screenshots:
             - Turn on Dark mode
             - Reload the page
           changed: Adds a Dark mode toggle that saves the choice and applies it on load.
+          laterPhases:
+            - number: 2
+              name: Follow the system colour scheme
+            - number: 3
+              name: Review
     waitFor: text=Toggle switches the theme
     viewport:
       width: 1440
@@ -160,6 +165,8 @@ Turn on **Auto submit** in the pane (`sessions.askQuestionAutoSubmit`) and a for
 ## Trying a change
 
 With `sessions.askQuestion` on, manual checks open in the pane. Follow the steps, then press **Works** or **Doesn't work**, with an optional note.
+
+During a [backlog run](../backlog-running/), a check that can't be judged yet can wait: press **Later phase** and pick one of the item's later phases, including Review, to move the check there.
 
 ::screenshot{file="sessions-check.png"}
 

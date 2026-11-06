@@ -36,7 +36,7 @@ The **+** button in the toolbar, :kbd[Mod+N] or :kbd[Alt+N] opens the new-sessio
 | prompt | A plain agent session with your text as its first prompt. When Codex or pi is available, a menu on this mode picks the harness |
 | design | An interactive Claude session with assist's design system prompt appended                                                      |
 
-Draft and bug need a repo. When the repo isn't cloned on the node you picked, the button offers to clone it first.
+Draft and bug need a repo. When the repo isn't cloned on the node you picked, the button offers to clone it first. Hold :kbd[Shift] as you click **Start draft** or **File bug** and the item the session proposes is approved and its run started.
 
 The dialog opens in `draft` mode. To open it in another mode:
 
@@ -48,6 +48,6 @@ assist config set sessions.newSessionMode prompt
 
 A repo's [run commands](../run-commands/) can run as sessions too, so a dev server's output sits next to the agents using it. When the repo has run commands, the toolbar's run menu starts them.
 
-A run command flagged `server:` is a dev server, and only one may be live per server group across a repo's clone and worktrees. Cards in that repo show a start button, the serving card shows :badge[serving] and a stop button, and starting a second one offers to replace the first. Agents can read a run's output with `/run-logs` (see [Session commands](../sessions-cli/#slash-commands)).
+A run command flagged `server:` is a dev server, and only one may be live per server group across a repo's clone and worktrees. Cards in that repo show a start button, the serving card shows :badge[serving] and a stop button, and starting a second one replaces the first. Hold :kbd[Shift] as you click a start button, a server in the run menu or **Retry** to skip the confirmation. Agents can read a run's output with `/run-logs` (see [Session commands](../sessions-cli/#slash-commands)).
 
 ::screenshot{file="sessions-run.png"}

@@ -51,6 +51,9 @@ const questionPreviewSchema = z.strictObject({
 const checkPreviewSchema = z.strictObject({
 	...previewTarget,
 	...askCheckInputSchema.shape,
+	laterPhases: z
+		.array(z.strictObject({ number: z.number().int(), name: z.string() }))
+		.optional(),
 });
 
 const prPreviewSchema = z.strictObject({
