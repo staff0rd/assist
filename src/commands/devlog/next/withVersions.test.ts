@@ -10,7 +10,7 @@ function commit(hash: string): Commit {
 const commits = [commit("a"), commit("b")];
 
 function packageSource(versionAt: VersionSource["versionAt"]): VersionSource {
-	return { kind: "package", versionAt };
+	return { kind: "package", versionAt, current: () => null };
 }
 
 describe("withVersions from package.json", () => {
@@ -60,7 +60,7 @@ describe("withVersions from tags", () => {
 		};
 		const result = withVersions(
 			commits,
-			{ kind: "tags", versionAt: (h) => versions[h] },
+			{ kind: "tags", versionAt: (h) => versions[h], current: () => null },
 			true,
 		);
 		expect(result.map((c) => c.version)).toEqual(["v0.2.0", null]);
