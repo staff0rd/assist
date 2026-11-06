@@ -34,9 +34,15 @@ export function waitForUpstream(options: WaitOptions): Promise<WatchOutcome> {
 		return Promise.resolve({ kind: "simulated-divergence", upstream });
 
 	const control = watchControlPaths(cwd);
-	fetchQuietly(cwd, intervalMs);
+	const fetchError = fetchQuietly(cwd, intervalMs);
 	if (control && consumeMarker(control.stop))
 		return Promise.resolve({ kind: "interrupted" });
+	if (fetchError)
+		return Promise.resolve({
+			kind: "fetch-failed",
+			upstream,
+			reason: fetchError,
+		});
 	const moved = readMovement(cwd);
 	if (moved) return Promise.resolve({ kind: "moved", upstream, ...moved });
 

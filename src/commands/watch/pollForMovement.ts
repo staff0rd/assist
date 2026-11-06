@@ -1,7 +1,5 @@
+import { checkUpstream } from "./checkUpstream";
 import { consumeMarker } from "./consumeMarker";
-import { consumeSimulatedDivergence } from "./consumeSimulatedDivergence";
-import { fetchQuietly } from "./fetchQuietly";
-import { readMovement } from "./readMovement";
 import type { WatchControlPaths } from "./watchControlPaths";
 import type { WatchOutcome } from "./WatchOutcome";
 
@@ -35,11 +33,8 @@ export function pollForMovement(options: PollOptions): Promise<WatchOutcome> {
 		const onInterrupt = (): void => finish({ kind: "interrupted" });
 
 		const check = (): void => {
-			if (consumeSimulatedDivergence(cwd))
-				return finish({ kind: "simulated-divergence", upstream });
-			fetchQuietly(cwd, intervalMs);
-			const found = readMovement(cwd);
-			if (found) finish({ kind: "moved", upstream, ...found });
+			const outcome = checkUpstream(upstream, intervalMs, cwd);
+			if (outcome) finish(outcome);
 		};
 
 		const ticker = setInterval(check, intervalMs);

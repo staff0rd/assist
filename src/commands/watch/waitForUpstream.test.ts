@@ -172,19 +172,39 @@ describe("waitForUpstream", () => {
 		});
 	});
 
-	it("keeps waiting when a fetch fails", async () => {
+	it("resolves fetch-failed with git's reason when the startup fetch fails", async () => {
+		installGit({
+			onFetch: () => {
+				throw Object.assign(new Error("Command failed: git fetch"), {
+					stderr: Buffer.from(
+						"fatal: could not read Username\nfatal: Authentication failed\n",
+					),
+				});
+			},
+		});
+
+		await expect(wait()).resolves.toEqual({
+			kind: "fetch-failed",
+			upstream: "origin/assist-3",
+			reason: "fatal: could not read Username · fatal: Authentication failed",
+		});
+	});
+
+	it("resolves fetch-failed when a later fetch fails rather than waiting on a stale upstream", async () => {
 		installGit({
 			onFetch: (state) => {
-				if (state.fetches <= 2) throw new Error("network unreachable");
-				state.upstreamSha = "ddd4444";
-				state.behind = 1;
+				if (state.fetches >= 2) throw new Error("network unreachable");
 			},
 		});
 
 		const pending = wait();
-		await vi.advanceTimersByTimeAsync(60_000);
+		await vi.advanceTimersByTimeAsync(30_000);
 
-		await expect(pending).resolves.toMatchObject({ kind: "moved", count: 1 });
+		await expect(pending).resolves.toEqual({
+			kind: "fetch-failed",
+			upstream: "origin/assist-3",
+			reason: "network unreachable",
+		});
 	});
 
 	it("resolves timeout when the branch never moves", async () => {
@@ -209,7 +229,7 @@ describe("waitForUpstream", () => {
 			return outcome;
 		});
 
-		await vi.advanceTimersByTimeAsync(24 * 60 * 60_000);
+		await vi.advanceTimersByTimeAsync(2 * 60 * 60_000);
 		expect(settled).toBe(false);
 
 		git.upstreamSha = "eee5555";

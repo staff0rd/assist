@@ -8,5 +8,6 @@ export type WatchOutcome =
 	  }
 	| { kind: "timeout"; upstream: string; timeout: string }
 	| { kind: "simulated-divergence"; upstream: string }
+	| { kind: "fetch-failed"; upstream: string; reason: string }
 	| { kind: "unavailable"; reason: string }
 	| { kind: "interrupted" };

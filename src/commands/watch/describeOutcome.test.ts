@@ -64,6 +64,19 @@ describe("describeOutcome", () => {
 		});
 	});
 
+	it("exits 5 with git's reason when the fetch fails", () => {
+		expect(
+			describeOutcome({
+				kind: "fetch-failed",
+				upstream: "origin/main",
+				reason: "fatal: Authentication failed",
+			}),
+		).toEqual({
+			exitCode: 5,
+			message: "git fetch for origin/main failed: fatal: Authentication failed",
+		});
+	});
+
 	it("exits 130 when interrupted", () => {
 		expect(describeOutcome({ kind: "interrupted" })).toEqual({
 			exitCode: 130,

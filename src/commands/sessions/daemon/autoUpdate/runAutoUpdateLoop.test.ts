@@ -119,6 +119,30 @@ describe("runAutoUpdateLoop", () => {
 		});
 	});
 
+	it("backs off with the lap's last line when the fetch fails, then pulls once it can fetch again", async () => {
+		const runLap = vi
+			.fn<AutoUpdateDeps["runLap"]>()
+			.mockImplementationOnce(async (onOutput) => {
+				onOutput("waiting on origin/main …\n");
+				onOutput(
+					"\u001b[31mgit fetch for origin/main failed: fatal: Authentication failed\u001b[0m\n",
+				);
+				return exit(5);
+			})
+			.mockImplementationOnce(async () => exit(0));
+		const d = deps({ runLap });
+
+		await runAutoUpdateLoop(d, 2);
+
+		expect(d.enter).toHaveBeenCalledWith("retrying", {
+			reason:
+				"lap 1 exited 5: git fetch for origin/main failed: fatal: Authentication failed",
+		});
+		expect(d.sleep).toHaveBeenCalledWith(RETRY_AFTER_FAILURE_MS);
+		expect(runLap).toHaveBeenCalledTimes(2);
+		expect(d.enter).toHaveBeenLastCalledWith("waiting");
+	});
+
 	it("starts no lap until resumed", async () => {
 		const paused = vi
 			.fn()

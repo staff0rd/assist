@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { gitFailureReason } from "./gitFailureReason";
 
 const MIN_FETCH_TIMEOUT_MS = 60_000;
 
@@ -14,6 +15,6 @@ export function fetchQuietly(
 		});
 		return undefined;
 	} catch (error) {
-		return error instanceof Error ? error.message : String(error);
+		return gitFailureReason(error).replace(/\s*\n\s*/g, " · ");
 	}
 }

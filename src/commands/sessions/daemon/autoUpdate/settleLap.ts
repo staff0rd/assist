@@ -1,3 +1,4 @@
+import { stripAnsi } from "../../../../shared/stripAnsi";
 import { decideLap, type LapEnd } from "../../../watch/decideLap";
 import type { AutoUpdateDeps } from "./AutoUpdateDeps";
 import { backOff } from "./backOff";
@@ -18,6 +19,17 @@ export async function settleLap(
 	if (deps.paused()) deps.note(`lap ${lap} ${how}; paused`);
 	else if (decideLap(end, false).kind === "relaunch")
 		deps.note(`lap ${lap} ${how}; relaunching`);
-	else await backOff(`lap ${lap} ${how}`, deps);
+	else {
+		const why = lastLine(tail);
+		await backOff(`lap ${lap} ${how}${why ? `: ${why}` : ""}`, deps);
+	}
 	return undefined;
+}
+
+function lastLine(text: string): string | undefined {
+	return stripAnsi(text)
+		.split(/\r?\n|\r/)
+		.map((line) => line.trim())
+		.filter(Boolean)
+		.pop();
 }

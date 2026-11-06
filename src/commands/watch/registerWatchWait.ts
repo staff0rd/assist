@@ -7,7 +7,7 @@ export function registerWatchWait(watchCommand: Command): void {
 		watchCommand
 			.command("wait")
 			.description(
-				"Block until the current branch's upstream gains commits, then exit 0 (2 on timeout, 3 when --pull hits genuine divergence, 4 when --build or the post-build sync fails, 1 when waiting is impossible, 130 on interrupt)",
+				"Block until the current branch's upstream gains commits, then exit 0 (2 on timeout, 3 when --pull hits genuine divergence, 4 when --build or the post-build sync fails, 5 when git fetch fails, 1 when waiting is impossible, 130 on interrupt)",
 			)
 			.option(
 				"--interval <duration>",

@@ -21,6 +21,11 @@ export function describeOutcome(outcome: WatchOutcome): OutcomeReport {
 				exitCode: 3,
 				message: `simulated divergence from ${outcome.upstream} (${simulatedDivergenceNote})`,
 			};
+		case "fetch-failed":
+			return {
+				exitCode: 5,
+				message: `git fetch for ${outcome.upstream} failed: ${outcome.reason}`,
+			};
 		case "unavailable":
 			return { exitCode: 1, message: `cannot wait: ${outcome.reason}` };
 		case "interrupted":
