@@ -61,4 +61,45 @@ describe("submitDraft", () => {
 			{ node: "pc-windows", autoApprove: true },
 		);
 	});
+
+	it.each([
+		["claude", "onCreate", []],
+		["codex", "onCreateHarness", ["codex"]],
+	] as const)(
+		"opens a Shift+clicked %s prompt session",
+		(harness, launcher, lead) => {
+			const l = launchers();
+			const prompt = {
+				...draft,
+				mode: "prompt",
+				prompt: "go",
+			} as NewSessionDraft;
+			const target = { kind: "launch", cwd: "/git/app" } as const;
+
+			submitDraft(prompt, harness, target, l, true);
+			submitDraft(
+				{ ...prompt, node: "pc" } as NewSessionDraft,
+				harness,
+				target,
+				l,
+				false,
+			);
+
+			expect(l[launcher]).toHaveBeenNthCalledWith(
+				1,
+				...lead,
+				"go",
+				"/git/app",
+				undefined,
+				true,
+			);
+			expect(l[launcher]).toHaveBeenNthCalledWith(
+				2,
+				...lead,
+				"go",
+				"/git/app",
+				"pc",
+			);
+		},
+	);
 });

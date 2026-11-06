@@ -5,8 +5,8 @@ export function handleCreated(
 	d: WsDispatch,
 ): void {
 	const sessionId = msg.sessionId as string;
-	const title = d.resolvePendingLaunch();
-	const staysInBackground = msg.isNew && d.getActiveId() !== null;
+	const { title, open } = d.resolvePendingLaunch();
+	const staysInBackground = msg.isNew && !open && d.getActiveId() !== null;
 	if (!staysInBackground) {
 		// why: creating/resuming switches the pane back to the live terminal
 		d.setViewingTranscriptSessionId(null);

@@ -97,4 +97,10 @@ describe("pendingLaunchFromMessage", () => {
 			pendingLaunchFromMessage({ type: "create", prompt: "fix the login bug" }),
 		).toEqual({ cwd: undefined, title: "fix the login bug" });
 	});
+
+	it("carries the open flag of a Shift+clicked create", () => {
+		expect(
+			pendingLaunchFromMessage({ type: "create", node: "pc", open: true }),
+		).toEqual({ cwd: undefined, title: "New session", node: "pc", open: true });
+	});
 });

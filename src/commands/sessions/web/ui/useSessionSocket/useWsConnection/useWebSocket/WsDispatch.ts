@@ -1,4 +1,5 @@
 import type { HarnessKind } from "../../../../../../../shared/harnesses";
+import type { ResolvedLaunch } from "../../../PendingLaunch";
 import type { RateLimits } from "../../../../../../../shared/RateLimits";
 import type {
 	HistoricalSession,
@@ -26,7 +27,7 @@ export type WsDispatch = {
 	setError: (message: string) => void;
 	setSuccess: (notice: SuccessNotice) => void;
 	setServerConflict: (conflict: ServerConflict) => void;
-	resolvePendingLaunch: () => string | undefined;
+	resolvePendingLaunch: () => ResolvedLaunch;
 	failPendingLaunch: (message: string) => void;
 	setRateLimits: (limits: RateLimits) => void;
 	setHarnessRateLimits?: (harness: HarnessKind, limits: RateLimits) => void;

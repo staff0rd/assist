@@ -6,6 +6,7 @@ import {
 	type NewLaunchInput,
 	oldestLaunching,
 	type PendingLaunch,
+	type ResolvedLaunch,
 	resolveOldestLaunching,
 } from "../../PendingLaunch";
 import { useLaunchTimeouts } from "./usePendingLaunches/useLaunchTimeouts";
@@ -35,10 +36,13 @@ export function usePendingLaunches() {
 		[update],
 	);
 
-	const resolvePendingLaunch = useCallback(() => {
+	const resolvePendingLaunch = useCallback((): ResolvedLaunch => {
 		const resolved = oldestLaunching(launchesRef.current);
 		update(resolveOldestLaunching);
-		return resolved?.named ? resolved.title : undefined;
+		return {
+			title: resolved?.named ? resolved.title : undefined,
+			open: resolved?.open === true,
+		};
 	}, [update]);
 
 	const failPendingLaunch = useCallback(

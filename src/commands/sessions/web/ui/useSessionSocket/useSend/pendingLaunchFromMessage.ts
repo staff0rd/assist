@@ -8,6 +8,7 @@ export function pendingLaunchFromMessage(msg: object): NewLaunchInput | null {
 		title?: string;
 		design?: boolean;
 		node?: string;
+		open?: boolean;
 	};
 	if (m.type === "create")
 		return {
@@ -15,6 +16,7 @@ export function pendingLaunchFromMessage(msg: object): NewLaunchInput | null {
 			title:
 				m.prompt?.trim() || (m.design ? "New design session" : "New session"),
 			node: m.node,
+			...(m.open && { open: true }),
 		};
 	if (m.type === "create-assist") {
 		const title = m.title?.trim();

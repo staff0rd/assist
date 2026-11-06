@@ -656,10 +656,15 @@ describe("NewSessionDialog Shift+click auto start", () => {
 		expect(onCreateAssist).not.toHaveBeenCalled();
 	});
 
-	it("ignores Shift in prompt and design modes", () => {
+	it("opens a Shift+clicked prompt session without auto-starting an assist launch", () => {
 		const prompt = renderDialog();
 		fireEvent.click(submitButton(), { shiftKey: true });
-		expect(prompt.onCreate).toHaveBeenCalledWith("", "/git/beta");
+		expect(prompt.onCreate).toHaveBeenCalledWith(
+			"",
+			"/git/beta",
+			undefined,
+			true,
+		);
 		expect(prompt.onCreateAssist).not.toHaveBeenCalled();
 		cleanup();
 

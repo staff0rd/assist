@@ -6,6 +6,7 @@ export function sendCreate(
 	prompt: string,
 	cwd?: string,
 	node?: string,
+	open?: boolean,
 ) {
 	send({
 		type: "create",
@@ -13,6 +14,7 @@ export function sendCreate(
 		cwd,
 		...extra,
 		...(node ? { node } : {}),
+		...(open ? { open: true } : {}),
 	});
 }
 
@@ -22,6 +24,11 @@ export function createDesignSessionAction(send: SendFn) {
 }
 
 export function createHarnessSessionAction(send: SendFn) {
-	return (harness: string, prompt: string, cwd?: string, node?: string) =>
-		sendCreate(send, { harness }, prompt, cwd, node);
+	return (
+		harness: string,
+		prompt: string,
+		cwd?: string,
+		node?: string,
+		open?: boolean,
+	) => sendCreate(send, { harness }, prompt, cwd, node, open);
 }

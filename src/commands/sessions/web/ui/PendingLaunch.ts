@@ -4,6 +4,7 @@ export type PendingLaunch = {
 	title: string;
 	named?: boolean;
 	node?: string;
+	open?: boolean;
 	status: "launching" | "error";
 	error?: string;
 	startedAt: number;
@@ -14,7 +15,10 @@ export type NewLaunchInput = {
 	title: string;
 	named?: boolean;
 	node?: string;
+	open?: boolean;
 };
+
+export type ResolvedLaunch = { title?: string; open: boolean };
 
 type NewPendingLaunch = NewLaunchInput & {
 	id: string;
