@@ -10,8 +10,16 @@ export function registerTestflight(program: Command): void {
 
 	const addCommand = cmd
 		.command("add <email>")
-		.description("Add an external tester to the configured beta group")
-		.action((email: string) => testflightAdd(email));
+		.description(
+			"Add a tester to the external beta group, or with --internal invite them to the team and add them to the internal group",
+		)
+		.option(
+			"--internal",
+			"Invite to the App Store Connect team; re-run after they accept to add them to the internal group",
+		)
+		.action((email: string, options: { internal?: boolean }) =>
+			testflightAdd(email, options),
+		);
 
 	configHelp(addCommand, testflightConfigHelp);
 }

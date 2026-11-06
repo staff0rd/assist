@@ -178,3 +178,113 @@ describe("addTester", () => {
 		);
 	});
 });
+
+describe("addTester --internal", () => {
+	const internalConfig = { ...config, internalGroup: "Team" };
+	const noUser: Route = {
+		method: "GET",
+		match: "/v1/users?",
+		body: { data: [] },
+	};
+
+	it("invites an unknown email to the team scoped to the app", async () => {
+		const fetchFn = mockFetch([
+			...appAndGroups,
+			noUser,
+			{ method: "GET", match: "/v1/userInvitations?", body: { data: [] } },
+			{ method: "POST", match: "/v1/userInvitations", status: 201, body: {} },
+		]);
+
+		const result = await addTester(internalConfig, "jane.doe@b.com", {
+			internal: true,
+			readKey,
+			fetchFn,
+		});
+
+		expect(result).toBe("invited");
+		expect(postBodies(fetchFn)).toEqual([
+			{
+				url: "https://api.appstoreconnect.apple.com/v1/userInvitations",
+				body: {
+					data: {
+						type: "userInvitations",
+						attributes: {
+							email: "jane.doe@b.com",
+							firstName: "Jane",
+							lastName: "Doe",
+							roles: ["DEVELOPER"],
+							allAppsVisible: false,
+							provisioningAllowed: false,
+						},
+						relationships: {
+							visibleApps: { data: [{ type: "apps", id: "app1" }] },
+						},
+					},
+				},
+			},
+		]);
+	});
+
+	it("reports a pending invitation without posting", async () => {
+		const fetchFn = mockFetch([
+			...appAndGroups,
+			noUser,
+			{
+				method: "GET",
+				match: "/v1/userInvitations?",
+				body: {
+					data: [
+						{
+							type: "userInvitations",
+							id: "i1",
+							attributes: { email: "A@b.com" },
+						},
+					],
+				},
+			},
+		]);
+
+		const result = await addTester(internalConfig, "a@b.com", {
+			internal: true,
+			readKey,
+			fetchFn,
+		});
+
+		expect(result).toBe("invite-pending");
+		expect(postBodies(fetchFn)).toEqual([]);
+	});
+
+	it("adds a joined team member to the internal group", async () => {
+		const fetchFn = mockFetch([
+			...appAndGroups,
+			{
+				method: "GET",
+				match: "/v1/users?",
+				body: {
+					data: [
+						{ type: "users", id: "u1", attributes: { username: "a@b.com" } },
+					],
+				},
+			},
+			{ method: "GET", match: "/v1/betaTesters?", body: { data: [] } },
+			{ method: "POST", match: "/v1/betaTesters", status: 201, body: {} },
+		]);
+
+		const result = await addTester(internalConfig, "a@b.com", {
+			internal: true,
+			readKey,
+			fetchFn,
+		});
+
+		expect(result).toBe("created");
+		expect(
+			postBodies(fetchFn)[0].body.data.relationships.betaGroups.data,
+		).toEqual([{ type: "betaGroups", id: "g-internal" }]);
+	});
+
+	it("requires testflight.internalGroup", async () => {
+		await expect(
+			addTester(config, "a@b.com", { internal: true, readKey }),
+		).rejects.toThrow(/testflight\.internalGroup is not set/);
+	});
+});

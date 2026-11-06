@@ -1,12 +1,18 @@
 import { resolveOpSecret } from "../ravendb/resolveOpSecret";
-import { type AddTesterResult, addExternalTester } from "./addExternalTester";
+import {
+	type InternalTesterResult,
+	addInternalTester,
+} from "./addInternalTester";
+import { addToBetaGroup } from "./addToBetaGroup";
 import { createAscClient } from "./createAscClient";
 import { createAscToken } from "./createAscToken";
 import { findAppId } from "./findAppId";
 import { findBetaGroupId } from "./findBetaGroupId";
 import type { TestflightConfig } from "./readTestflightConfig";
+import { requireInternalGroup } from "./requireInternalGroup";
 
-type AddTesterDeps = {
+type AddTesterOptions = {
+	internal?: boolean;
 	readKey?: (reference: string) => string;
 	fetchFn?: typeof fetch;
 };
@@ -14,20 +20,27 @@ type AddTesterDeps = {
 export async function addTester(
 	config: TestflightConfig,
 	email: string,
-	deps: AddTesterDeps = {},
-): Promise<AddTesterResult> {
-	const privateKey = (deps.readKey ?? resolveOpSecret)(config.keyRef);
+	options: AddTesterOptions = {},
+): Promise<InternalTesterResult> {
+	const internalGroup = options.internal
+		? requireInternalGroup(config)
+		: undefined;
+	const privateKey = (options.readKey ?? resolveOpSecret)(config.keyRef);
 	const token = createAscToken({
 		keyId: config.keyId,
 		issuerId: config.issuerId,
 		privateKey,
 	});
-	const client = createAscClient(token, deps.fetchFn);
+	const client = createAscClient(token, options.fetchFn);
 	const appId = await findAppId(client, config.bundleId);
 	const groupId = await findBetaGroupId(client, appId, {
-		name: config.externalGroup,
-		configKey: "testflight.externalGroup",
-		internal: false,
+		name: internalGroup ?? config.externalGroup,
+		configKey: internalGroup
+			? "testflight.internalGroup"
+			: "testflight.externalGroup",
+		internal: Boolean(internalGroup),
 	});
-	return addExternalTester(client, groupId, email);
+	return internalGroup
+		? addInternalTester(client, { appId, groupId }, email)
+		: addToBetaGroup(client, groupId, email);
 }

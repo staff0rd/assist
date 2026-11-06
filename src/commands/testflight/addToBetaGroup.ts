@@ -2,7 +2,7 @@ import type { AscClient } from "./createAscClient";
 
 export type AddTesterResult = "created" | "added" | "already-in-group";
 
-export async function addExternalTester(
+export async function addToBetaGroup(
 	client: AscClient,
 	groupId: string,
 	email: string,
