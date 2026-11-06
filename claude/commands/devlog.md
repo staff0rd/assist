@@ -7,7 +7,7 @@ Parse `$ARGUMENTS`: if `--all` is present, enable **catch-up mode** (described b
 
 ## Single-week mode (default)
 
-Run `assist devlog next`. It prints the project `name`, the ISO `week` (e.g. `2026-W33`), its Monday–Sunday `range`, the `dates` of the first and last commits, the `versions` range, and every commit in the week oldest first, each tagged with the version from `package.json` at that commit. No versions are shown when the repo has no real version history (no tags and a version that never changes in the week). It only ever offers completed weeks; if it reports nothing to write, stop.
+Run `assist devlog next`. It prints the project `name`, the ISO `week` (e.g. `2026-W33`), its Monday–Sunday `range`, the `dates` of the first and last commits, the `versions` range, and every commit in the week oldest first, each tagged with its version. Versions come from `package.json` at that commit (as major.minor), except when `package.json` at `HEAD` is behind the latest semver tag: then each commit gets the full version of the earliest semver tag containing it (e.g. `v0.2.0`), and commits not yet in any release tag show no version. No versions are shown when the repo has no real version history (no tags and a version that never changes in the week). It only ever offers completed weeks; if it reports nothing to write, stop.
 
 Decide whether the week is worth an entry:
 

@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { isoWeekRange } from "../isoWeek";
 import type { Commit } from "../types";
-import { getVersionAtCommit } from "../getVersionAtCommit";
+import { resolveVersionSource } from "../resolveVersionSource";
 import { repoHasTags } from "./repoHasTags";
 import { type VersionedCommit, withVersions } from "./withVersions";
+import { printCommits } from "./printCommits";
 
 function versionRange(commits: VersionedCommit[]): string | null {
 	const versions = commits
@@ -19,25 +20,6 @@ function printField(label: string, value: string): void {
 	console.log(`${chalk.bold(`${label}:`)} ${value}`);
 }
 
-function printCommits(
-	commits: VersionedCommit[],
-	ignore: string[],
-	verbose: boolean,
-): void {
-	for (const commit of commits) {
-		const version = commit.version ? ` ${chalk.cyan(commit.version)}` : "";
-		console.log(
-			`  ${chalk.dim(commit.date)} ${chalk.yellow(commit.hash)}${version} ${commit.message}`,
-		);
-		if (!verbose) continue;
-		for (const file of commit.files) {
-			if (!ignore.some((p) => file.startsWith(p))) {
-				console.log(`    ${chalk.dim(file)}`);
-			}
-		}
-	}
-}
-
 type DisplayContext = {
 	repoName: string;
 	ignore: string[];
@@ -49,7 +31,11 @@ export function displayNextEntry(
 	week: string,
 	commits: Commit[],
 ): void {
-	const versioned = withVersions(commits, getVersionAtCommit, repoHasTags());
+	const versioned = withVersions(
+		commits,
+		resolveVersionSource(),
+		repoHasTags(),
+	);
 	const { start, end } = isoWeekRange(week);
 	printField("name", ctx.repoName);
 	printField("week", chalk.bold.blue(week));
