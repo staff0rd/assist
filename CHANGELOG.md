@@ -1,3 +1,15 @@
+# [0.1076.0](https://github.com/staff0rd/assist/compare/v0.1075.2...v0.1076.0) (2026-11-06)
+
+
+### Bug Fixes
+
+* tolerate newer shared config keys ([3adece2](https://github.com/staff0rd/assist/commit/3adece2be0928a1d013f5faaac8cc4a54689ea80))
+
+
+### Features
+
+* add testflight add --internal ([3ad8dc7](https://github.com/staff0rd/assist/commit/3ad8dc795b4531150f88f2afcab95745ef53acdc))
+
 ## [0.1075.2](https://github.com/staff0rd/assist/compare/v0.1075.1...v0.1075.2) (2026-11-06)
 
 
