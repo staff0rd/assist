@@ -38,6 +38,7 @@ export function PhoneSessionAsk({
 			<PhoneSessionQuestion
 				key={question.requestId}
 				sessionId={session.id}
+				cwd={session.cwd}
 				question={question}
 				socket={socket}
 				keyboardOpen={keyboardOpen}

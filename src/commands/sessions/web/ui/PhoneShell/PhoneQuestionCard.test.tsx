@@ -1,12 +1,27 @@
 // @vitest-environment jsdom
 import { ThemeProvider } from "@mui/material/styles";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PrPreview } from "../../../shared/SessionInfoBase";
 import { createDesignTheme } from "../designSystem/createDesignTheme";
 import { PhoneQuestionCard } from "./PhoneQuestionCard";
 
-afterEach(cleanup);
+const toggle = vi.hoisted(() => ({ enabled: false }));
+vi.mock(
+	"../App/SessionContent/PrPreviewSlideInPane/QuestionPane/useAskQuestionAutoSubmit",
+	() => ({
+		useAskQuestionAutoSubmit: () => {
+			const [enabled, setEnabled] = useState(toggle.enabled);
+			return [enabled, setEnabled];
+		},
+	}),
+);
+
+afterEach(() => {
+	cleanup();
+	toggle.enabled = false;
+});
 
 const questions = [
 	{
@@ -29,20 +44,34 @@ const questions = [
 	},
 ];
 
-const preview: PrPreview = {
+const singleSelect = [
+	questions[0]!,
+	{
+		question: "Which repo?",
+		header: "Repo",
+		multiSelect: false,
+		options: [
+			{ label: "assist", description: "" },
+			{ label: "other", description: "" },
+		],
+	},
+];
+
+const previewOf = (qs: typeof questions): PrPreview => ({
 	requestId: "r1",
 	title: "Claude is asking 2 questions",
-	body: JSON.stringify({ questions }),
+	body: JSON.stringify({ questions: qs }),
 	prNumber: null,
 	kind: "question",
-};
+});
 
-function card() {
+function card(qs = questions) {
 	const onDecision = vi.fn();
 	render(
 		<ThemeProvider theme={createDesignTheme("dark")}>
 			<PhoneQuestionCard
-				preview={preview}
+				preview={previewOf(qs)}
+				cwd="/repo"
 				keyboardOpen={false}
 				onDecision={onDecision}
 			/>
@@ -84,6 +113,59 @@ describe("PhoneQuestionCard", () => {
 			}),
 		);
 		expect(button("Sending…").disabled).toBe(true);
+	});
+
+	describe("auto submit", () => {
+		it("advances on a pick and submits on the pick that completes the form", () => {
+			toggle.enabled = true;
+			const onDecision = card(singleSelect);
+
+			fireEvent.click(screen.getByRole("radio", { name: /Split/ }));
+			expect(screen.getByText("2 of 2")).toBeTruthy();
+			expect(onDecision).not.toHaveBeenCalled();
+
+			fireEvent.click(screen.getByRole("radio", { name: /other/ }));
+			expect(onDecision).toHaveBeenCalledOnce();
+			expect(onDecision).toHaveBeenCalledWith(
+				"approve",
+				expect.objectContaining({
+					answers: { "How should I commit?": "Split", "Which repo?": "other" },
+				}),
+			);
+		});
+
+		it("needs Next and Answer when the form has a multi-select question", () => {
+			toggle.enabled = true;
+			const onDecision = card();
+
+			fireEvent.click(screen.getByRole("radio", { name: /Split/ }));
+			expect(screen.getByText("1 of 2")).toBeTruthy();
+			fireEvent.click(button("Next"));
+			fireEvent.click(screen.getByRole("checkbox", { name: /Lint/ }));
+			expect(onDecision).not.toHaveBeenCalled();
+		});
+
+		it("leaves picks alone when off", () => {
+			const onDecision = card(singleSelect);
+
+			fireEvent.click(screen.getByRole("radio", { name: /Split/ }));
+			expect(screen.getByText("1 of 2")).toBeTruthy();
+			fireEvent.click(button("Next"));
+			fireEvent.click(screen.getByRole("radio", { name: /other/ }));
+			expect(onDecision).not.toHaveBeenCalled();
+		});
+
+		it("shows a toggle bound to the setting", () => {
+			card(singleSelect);
+			const toggleSwitch = screen.getByRole("switch", {
+				name: "Auto submit",
+			}) as HTMLInputElement;
+			expect(toggleSwitch.checked).toBe(false);
+
+			fireEvent.click(toggleSwitch);
+			fireEvent.click(screen.getByRole("radio", { name: /Split/ }));
+			expect(screen.getByText("2 of 2")).toBeTruthy();
+		});
 	});
 
 	it("dismisses with a reject decision", () => {
