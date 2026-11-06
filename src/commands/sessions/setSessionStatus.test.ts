@@ -65,6 +65,25 @@ describe("setSessionStatus", () => {
 		});
 	});
 
+	it("skips the hook payload read for a caller that already consumed stdin", async () => {
+		ackMock.mockResolvedValue(undefined);
+
+		await setSessionStatus("waiting", {
+			source: "stop",
+			ack: true,
+			readsClaudeHookInput: false,
+		});
+
+		expect(hookIdMock).not.toHaveBeenCalled();
+		expect(ackMock).toHaveBeenCalledWith({
+			type: "set-status",
+			sessionId: "s1",
+			status: "waiting",
+			source: "stop",
+			ack: true,
+		});
+	});
+
 	describe("when ASSIST_SESSION_ID is absent", () => {
 		it("does not send to the daemon", async () => {
 			delete process.env.ASSIST_SESSION_ID;

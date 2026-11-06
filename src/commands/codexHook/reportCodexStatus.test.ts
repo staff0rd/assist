@@ -20,6 +20,7 @@ describe("reportCodexStatus", () => {
 		expect(mockSetSessionStatus).toHaveBeenCalledWith("running", {
 			source: "prompt",
 			ack: true,
+			readsClaudeHookInput: false,
 		});
 	});
 
@@ -29,6 +30,7 @@ describe("reportCodexStatus", () => {
 		expect(mockSetSessionStatus).toHaveBeenCalledWith("waiting", {
 			source: "stop",
 			ack: true,
+			readsClaudeHookInput: false,
 		});
 	});
 

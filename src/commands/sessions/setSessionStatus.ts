@@ -1,11 +1,13 @@
 import { appendDaemonLog } from "./daemon/appendDaemonLog";
-import { sendToDaemonAwaitAck } from "./daemon/sendToDaemonAwaitAck";
 import { readHookClaudeSessionId } from "./readHookClaudeSessionId";
+import { deliverSetStatus } from "./deliverSetStatus";
 
 const RELIABLE_ATTEMPTS = 3;
-const RETRY_DELAY_MS = 100;
-
-type SetStatusOptions = { source?: string; ack?: boolean };
+type SetStatusOptions = {
+	source?: string;
+	ack?: boolean;
+	readsClaudeHookInput?: boolean;
+};
 
 // why: every set-status awaits the daemon's ack, even a best-effort hint. The
 // daemon greets each connection with the full scrollback replay, so a
@@ -22,9 +24,16 @@ export async function setSessionStatus(
 		sessionId,
 		status,
 		opts.source,
-		await readHookClaudeSessionId(),
+		opts.readsClaudeHookInput === false
+			? undefined
+			: await readHookClaudeSessionId(),
 	);
-	await deliver(sessionId, status, payload, opts.ack ? RELIABLE_ATTEMPTS : 1);
+	await deliverSetStatus(
+		sessionId,
+		status,
+		payload,
+		opts.ack ? RELIABLE_ATTEMPTS : 1,
+	);
 }
 
 function buildPayload(
@@ -42,36 +51,6 @@ function buildPayload(
 	if (source) payload.source = source;
 	payload.ack = true;
 	return payload;
-}
-
-async function deliver(
-	sessionId: string,
-	status: string,
-	payload: Record<string, unknown>,
-	attempts: number,
-): Promise<void> {
-	for (let attempt = 1; attempt <= attempts; attempt++) {
-		try {
-			await sendToDaemonAwaitAck(payload);
-			return;
-		} catch (error) {
-			if (attempt < attempts) {
-				await sleep(RETRY_DELAY_MS);
-				continue;
-			}
-			appendDaemonLog(
-				`set-status delivery failed after ${attempts} attempt${attempts === 1 ? "" : "s"}: id=${sessionId} status=${status}${payload.source ? ` source=${payload.source}` : ""}: ${describeError(error)}`,
-			);
-		}
-	}
-}
-
-function sleep(ms: number): Promise<void> {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function describeError(error: unknown): string {
-	return error instanceof Error ? error.message : String(error);
 }
 
 function logHookFired(

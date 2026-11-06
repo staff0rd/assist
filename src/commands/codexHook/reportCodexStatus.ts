@@ -7,5 +7,9 @@ export async function reportCodexStatus(
 ): Promise<void> {
 	const report = codexStatusFor(event, autoDecided);
 	if (!report) return;
-	await setSessionStatus(report.status, { source: report.source, ack: true });
+	await setSessionStatus(report.status, {
+		source: report.source,
+		ack: true,
+		readsClaudeHookInput: false,
+	});
 }
