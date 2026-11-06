@@ -4,6 +4,7 @@ import {
 	makeAssistConfig,
 } from "../test/mothers/makeAssistConfig";
 import type * as loadConfigMockModule from "../test/mocks/loadConfigMock";
+import { codexSessionEnvArgs } from "./codexSessionEnvArgs";
 import { loadConfig } from "./loadConfig";
 import { spawnCodex } from "./spawnCodex";
 import { spawnInherit } from "./spawnInherit";
@@ -23,6 +24,12 @@ vi.mock("./spawnInherit", () => ({
 }));
 
 const spawnInheritMock = spawnInherit as unknown as ReturnType<typeof vi.fn>;
+
+vi.mock("./codexSessionEnvArgs", () => ({
+	codexSessionEnvArgs: vi.fn(() => ["<session-env>"]),
+}));
+
+const ENV = "<session-env>";
 
 const LITELLM = { baseUrl: "https://proxy.example/", apiKey: "sk-test" };
 
@@ -58,9 +65,15 @@ describe("spawnCodex", () => {
 
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
-			["-C", "/repo", "--sandbox", "read-only", "Do the thing"],
+			[ENV, "-C", "/repo", "--sandbox", "read-only", "Do the thing"],
 			{ env: {} },
 		);
+	});
+
+	it("pins the launching env's session keys into codex's shell env", () => {
+		spawnCodex("Do the thing");
+
+		expect(codexSessionEnvArgs).toHaveBeenCalledWith(process.env);
 	});
 
 	it("defaults to the process cwd and a workspace-write sandbox", () => {
@@ -68,7 +81,14 @@ describe("spawnCodex", () => {
 
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
-			["-C", process.cwd(), "--sandbox", "workspace-write", "Do the thing"],
+			[
+				ENV,
+				"-C",
+				process.cwd(),
+				"--sandbox",
+				"workspace-write",
+				"Do the thing",
+			],
 			{ env: {} },
 		);
 	});
@@ -85,6 +105,7 @@ describe("spawnCodex", () => {
 			"codex",
 			[
 				...OVERRIDE_ARGS,
+				ENV,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -102,7 +123,7 @@ describe("spawnCodex", () => {
 
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
-			["-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
+			[ENV, "-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
 			{ env: {} },
 		);
 	});
@@ -125,7 +146,7 @@ describe("spawnCodex", () => {
 
 		expect(spawnInheritMock).toHaveBeenCalledWith(
 			"codex",
-			["-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
+			[ENV, "-C", "/repo", "--sandbox", "workspace-write", "Do the thing"],
 			{ env: {} },
 		);
 	});

@@ -4,6 +4,10 @@ import { spawnPty } from "./spawnPty";
 
 vi.mock("./spawnPty", () => ({ spawnPty: vi.fn(() => ({ fake: "pty" })) }));
 
+vi.mock("../../../shared/codexSessionEnvArgs", () => ({
+	codexSessionEnvArgs: vi.fn(() => []),
+}));
+
 vi.mock("./ensureHooksSettings", () => ({
 	ensureHooksSettings: vi.fn(() => "/hooks.json"),
 }));

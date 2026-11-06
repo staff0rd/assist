@@ -1,4 +1,5 @@
 import { buildHarnessCodexArgs } from "../../../shared/buildHarnessCodexArgs";
+import { codexSessionEnvArgs } from "../../../shared/codexSessionEnvArgs";
 import { spawnPty } from "./spawnPty";
 
 type SpawnOpts = {
@@ -10,8 +11,13 @@ type SpawnOpts = {
 
 export function spawnCodex(opts: SpawnOpts = {}) {
 	const override = buildHarnessCodexArgs();
+	const sessionEnv = codexSessionEnvArgs({
+		ASSIST_SESSION: "1",
+		ASSIST_SESSION_ID: opts.sessionId,
+		ASSIST_BACKLOG_ITEM_ID: process.env.ASSIST_BACKLOG_ITEM_ID,
+	});
 	return spawnPty(
-		["codex", ...override.args, ...codexArgs(opts)],
+		["codex", ...override.args, ...sessionEnv, ...codexArgs(opts)],
 		opts.cwd,
 		opts.sessionId,
 		override.env,

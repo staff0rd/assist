@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import chalk from "chalk";
-import { isClaudeCode } from "../../../lib/isClaudeCode";
+import { isAgentHarness } from "../../../lib/isAgentHarness";
 import { renderMarkdownTerminal } from "../../../shared/renderMarkdownTerminal";
 import { awaitPreviewApproval } from "../../sessions/shared/awaitPreviewApproval";
 import { formatItemId } from "../formatItemId";
@@ -34,12 +34,12 @@ export async function reviewProposal(
 		return { autostart: decision.autostart === true };
 	}
 
-	if (isClaudeCode() && confirmed) return { autostart: false };
+	if (isAgentHarness() && confirmed) return { autostart: false };
 
 	console.log(chalk.bold(item.name));
 	console.log(renderMarkdownTerminal(body));
 
-	if (!isClaudeCode()) return { autostart: false };
+	if (!isAgentHarness()) return { autostart: false };
 
 	console.log(
 		chalk.yellow(

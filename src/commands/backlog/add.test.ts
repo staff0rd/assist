@@ -17,14 +17,14 @@ vi.mock("../../shared/db/getDb", () => ({
 }));
 
 let remoteOrigin = true;
-let claudeCode = false;
+let agentHarness = false;
 
 vi.mock("./shared", () => ({
 	getOrigin: () => "test",
 }));
 
-vi.mock("../../lib/isClaudeCode", () => ({
-	isClaudeCode: () => claudeCode,
+vi.mock("../../lib/isAgentHarness", () => ({
+	isAgentHarness: () => agentHarness,
 }));
 
 vi.mock("./ensureRemoteOrigin", () => ({
@@ -70,7 +70,7 @@ beforeEach(async () => {
 	({ orm, close } = await createTestDb());
 	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	remoteOrigin = true;
-	claudeCode = false;
+	agentHarness = false;
 	process.exitCode = 0;
 });
 
@@ -111,7 +111,7 @@ describe("add", () => {
 	});
 
 	it("refuses an agent invocation, pointing at propose", async () => {
-		claudeCode = true;
+		agentHarness = true;
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 		await add({ type: "story", name: "Feature", desc: "", ac: [] });
