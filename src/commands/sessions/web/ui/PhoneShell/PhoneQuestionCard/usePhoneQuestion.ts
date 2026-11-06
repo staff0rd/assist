@@ -28,7 +28,7 @@ export function usePhoneQuestion(
 	const auto = usePhoneAutoSubmit({
 		cwd,
 		questions,
-		choices: state.choices,
+		answers: state.answers,
 		onSubmit: answer,
 		onAdvance: (index) => {
 			if (index === page && !last) setPage(page + 1);

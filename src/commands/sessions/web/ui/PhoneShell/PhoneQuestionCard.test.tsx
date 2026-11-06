@@ -134,15 +134,49 @@ describe("PhoneQuestionCard", () => {
 			);
 		});
 
-		it("needs Next and Answer when the form has a multi-select question", () => {
+		it("advances single-select picks but not multi-select ones in a mixed form", () => {
 			toggle.enabled = true;
 			const onDecision = card();
 
 			fireEvent.click(screen.getByRole("radio", { name: /Split/ }));
-			expect(screen.getByText("1 of 2")).toBeTruthy();
-			fireEvent.click(button("Next"));
+			expect(screen.getByText("2 of 2")).toBeTruthy();
 			fireEvent.click(screen.getByRole("checkbox", { name: /Lint/ }));
+			fireEvent.click(screen.getByRole("checkbox", { name: /Test/ }));
 			expect(onDecision).not.toHaveBeenCalled();
+			fireEvent.click(button("Answer"));
+			expect(onDecision).toHaveBeenCalledWith(
+				"approve",
+				expect.objectContaining({
+					answers: {
+						"How should I commit?": "Split",
+						"Which checks?": "Lint, Test",
+					},
+				}),
+			);
+		});
+
+		it("submits a mixed form on the last single-select pick once multi-select is answered", () => {
+			toggle.enabled = true;
+			const onDecision = card([...questions, singleSelect[1]!]);
+
+			fireEvent.click(screen.getByRole("radio", { name: /One commit/ }));
+			expect(screen.getByText("2 of 3")).toBeTruthy();
+			fireEvent.click(screen.getByRole("checkbox", { name: /Lint/ }));
+			expect(screen.getByText("2 of 3")).toBeTruthy();
+			fireEvent.click(button("Next"));
+			fireEvent.click(screen.getByRole("radio", { name: /assist/ }));
+
+			expect(onDecision).toHaveBeenCalledOnce();
+			expect(onDecision).toHaveBeenCalledWith(
+				"approve",
+				expect.objectContaining({
+					answers: {
+						"How should I commit?": "One commit",
+						"Which checks?": "Lint",
+						"Which repo?": "assist",
+					},
+				}),
+			);
 		});
 
 		it("leaves picks alone when off", () => {
