@@ -1,3 +1,10 @@
+# [0.1077.0](https://github.com/staff0rd/assist/compare/v0.1076.2...v0.1077.0) (2026-11-06)
+
+
+### Features
+
+* add TestFlight testers dialog ([25850ed](https://github.com/staff0rd/assist/commit/25850ed29614a531cab264e263d33e9768a1389d))
+
 ## [0.1076.2](https://github.com/staff0rd/assist/compare/v0.1076.1...v0.1076.2) (2026-11-06)
 
 
