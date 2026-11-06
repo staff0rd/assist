@@ -1,3 +1,11 @@
+## [0.1074.2](https://github.com/staff0rd/assist/compare/v0.1074.1...v0.1074.2) (2026-11-06)
+
+
+### Bug Fixes
+
+* pin Codex session env, gate propose ([3c7d39c](https://github.com/staff0rd/assist/commit/3c7d39c332c0c4c12875ce899b30a695b16f5843))
+* run codex off shared app-server ([4a3f12d](https://github.com/staff0rd/assist/commit/4a3f12d9781a9e6bff8f058937b3c4eec12ab859))
+
 ## [0.1074.1](https://github.com/staff0rd/assist/compare/v0.1074.0...v0.1074.1) (2026-11-06)
 
 
