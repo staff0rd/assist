@@ -1,11 +1,8 @@
 import { type MouseEvent, useRef, useState } from "react";
-import {
-	CloseItemDialog,
-	type CloseItemTarget,
-	type ClosingStatus,
-} from "./CloseItemDialog";
+import type { CloseItemTarget } from "./CloseItemDialog";
 import { CloseItemMenu } from "./CloseItemMenu";
 import { CompactPlayButtonGroup } from "./CompactPlayButtonGroup";
+import { useCloseItemFlow } from "./useCloseItemFlow";
 import { useRefineLaunch } from "./useRefineLaunch";
 
 export function CompactPlaySplitButton({
@@ -23,8 +20,8 @@ export function CompactPlaySplitButton({
 }) {
 	const anchorRef = useRef<HTMLButtonElement>(null);
 	const [open, setOpen] = useState(false);
-	const [closing, setClosing] = useState<ClosingStatus | null>(null);
 	const refine = useRefineLaunch(itemId);
+	const closeFlow = useCloseItemFlow(itemId, closeTarget);
 	const stop = (event: MouseEvent) => event.stopPropagation();
 	return (
 		<>
@@ -49,20 +46,13 @@ export function CompactPlaySplitButton({
 					setOpen(false);
 					refine.launch([]);
 				}}
-				onSelect={(status) => {
+				onSelect={(status, skipConfirm) => {
 					setOpen(false);
-					setClosing(status);
+					closeFlow.select(status, skipConfirm);
 				}}
 				stop={stop}
 			/>
-			{closing && (
-				<CloseItemDialog
-					itemId={itemId}
-					status={closing}
-					target={closeTarget}
-					onClose={() => setClosing(null)}
-				/>
-			)}
+			{closeFlow.overlays}
 		</>
 	);
 }

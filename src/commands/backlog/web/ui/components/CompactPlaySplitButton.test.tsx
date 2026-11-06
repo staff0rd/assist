@@ -223,6 +223,87 @@ describe("compact play split button", () => {
 		expect(onCardClick).not.toHaveBeenCalled();
 	});
 
+	it.each([
+		["Mark done", "done"],
+		["Won't do", "wontdo"],
+	])(
+		"shift-clicking %s closes the item without confirming",
+		async (option, status) => {
+			updateItemStatus.mockResolvedValue({});
+			const { onClosed, onCardClick } = renderCompact();
+
+			fireEvent.click(screen.getByRole("button", { name: "More actions" }));
+			fireEvent.click(screen.getByRole("menuitem", { name: option }), {
+				shiftKey: true,
+			});
+
+			expect(screen.queryByRole("dialog")).toBeNull();
+			await waitFor(() => expect(onClosed).toHaveBeenCalled());
+			expect(updateItemStatus).toHaveBeenCalledWith(
+				775,
+				status,
+				"/repo",
+				"peer",
+			);
+			await waitFor(() => expect(screen.queryByRole("menu")).toBeNull());
+			expect(onCardClick).not.toHaveBeenCalled();
+		},
+	);
+
+	it.each([
+		["Mark done", "done"],
+		["Won't do", "wontdo"],
+	])(
+		"Shift+Enter on %s closes the item without confirming",
+		async (option, status) => {
+			updateItemStatus.mockResolvedValue({});
+			const { onClosed } = renderCompact();
+
+			fireEvent.click(screen.getByRole("button", { name: "More actions" }));
+			fireEvent.keyDown(screen.getByRole("menuitem", { name: option }), {
+				key: "Enter",
+				shiftKey: true,
+			});
+
+			await waitFor(() => expect(onClosed).toHaveBeenCalled());
+			expect(screen.queryByRole("dialog")).toBeNull();
+			expect(updateItemStatus).toHaveBeenCalledTimes(1);
+			expect(updateItemStatus).toHaveBeenCalledWith(
+				775,
+				status,
+				"/repo",
+				"peer",
+			);
+		},
+	);
+
+	it("hints that Shift skips confirmation on both close options", () => {
+		renderCompact();
+
+		fireEvent.click(screen.getByRole("button", { name: "More actions" }));
+
+		for (const option of ["Mark done", "Won't do"])
+			expect(screen.getByRole("menuitem", { name: option }).title).toBe(
+				`${option} (Shift skips confirmation)`,
+			);
+	});
+
+	it("shows an error when a shift-click close fails", async () => {
+		updateItemStatus.mockRejectedValue(new Error("boom"));
+		const { onClosed } = renderCompact();
+
+		fireEvent.click(screen.getByRole("button", { name: "More actions" }));
+		fireEvent.click(screen.getByRole("menuitem", { name: "Won't do" }), {
+			shiftKey: true,
+		});
+
+		expect(
+			await screen.findByText("Failed to mark item a775 as won't do"),
+		).toBeTruthy();
+		expect(screen.queryByRole("dialog")).toBeNull();
+		expect(onClosed).not.toHaveBeenCalled();
+	});
+
 	it("shows an error and keeps the dialog usable when the update fails", async () => {
 		updateItemStatus.mockRejectedValue(new Error("boom"));
 		const { onClosed } = renderCompact();

@@ -1,11 +1,9 @@
 import { Divider, Menu, MenuItem } from "@mui/material";
-import type { MouseEvent } from "react";
-import type { ClosingStatus } from "./CloseItemDialog";
+import { type MouseEvent, useRef } from "react";
+import { shiftSkipsConfirmHandlers } from "../../../../sessions/web/ui/App/SessionContent/SessionActionButtons/shiftSkipsConfirmHandlers";
+import { type ClosingStatus, closingLabels } from "./closingLabels";
 
-const options: { status: ClosingStatus; label: string }[] = [
-	{ status: "done", label: "Mark done" },
-	{ status: "wontdo", label: "Won't do" },
-];
+const statuses: ClosingStatus[] = ["done", "wontdo"];
 
 export function CloseItemMenu({
 	anchorEl,
@@ -19,9 +17,10 @@ export function CloseItemMenu({
 	open: boolean;
 	onClose: () => void;
 	onRefine: () => void;
-	onSelect: (status: ClosingStatus) => void;
+	onSelect: (status: ClosingStatus, skipConfirm: boolean) => void;
 	stop: (event: MouseEvent) => void;
 }) {
+	const ignoreMenuItemEnterClick = useRef(false);
 	return (
 		<Menu anchorEl={anchorEl} open={open} onClose={onClose} onClick={stop}>
 			<MenuItem
@@ -33,17 +32,33 @@ export function CloseItemMenu({
 				Refine
 			</MenuItem>
 			<Divider />
-			{options.map(({ status, label }) => (
-				<MenuItem
-					key={status}
-					onClick={(event) => {
-						stop(event);
-						onSelect(status);
-					}}
-				>
-					{label}
-				</MenuItem>
-			))}
+			{statuses.map((status) => {
+				const handlers = shiftSkipsConfirmHandlers(
+					() => onSelect(status, true),
+					() => onSelect(status, false),
+				);
+				return (
+					<MenuItem
+						key={status}
+						title={`${closingLabels[status].action} (Shift skips confirmation)`}
+						onKeyDown={(event) => {
+							handlers.onKeyDown(event);
+							if (event.defaultPrevented)
+								ignoreMenuItemEnterClick.current = true;
+						}}
+						onClick={(event) => {
+							if (ignoreMenuItemEnterClick.current) {
+								ignoreMenuItemEnterClick.current = false;
+								stop(event);
+								return;
+							}
+							handlers.onClick(event);
+						}}
+					>
+						{closingLabels[status].action}
+					</MenuItem>
+				);
+			})}
 		</Menu>
 	);
 }
