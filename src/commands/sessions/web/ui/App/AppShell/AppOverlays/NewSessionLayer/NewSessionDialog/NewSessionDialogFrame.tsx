@@ -17,7 +17,7 @@ export function NewSessionDialogFrame({
 			onClose={onClose}
 			onEntered={onEntered}
 			centered
-			maxWidth="md"
+			paperMaxWidth={(t) => t.tokens.density.newSessionDialogWidth}
 		>
 			<form onSubmit={onSubmit}>{children}</form>
 		</AutoFocusDialog>
