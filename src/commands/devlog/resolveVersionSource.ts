@@ -20,11 +20,12 @@ function gitTags(...args: string[]): string[] {
 
 export function resolveVersionSource(): VersionSource {
 	const headVersion = getVersionAtCommit("HEAD");
-	if (isPackageVersionStale(headVersion, gitTags())) {
+	const mergedTags = gitTags("--merged", "HEAD");
+	if (isPackageVersionStale(headVersion, mergedTags)) {
 		return {
 			kind: "tags",
 			versionAt: (hash) => earliestSemverTag(gitTags("--contains", hash)),
-			current: () => latestSemverTag(gitTags("--merged", "HEAD")),
+			current: () => latestSemverTag(mergedTags),
 		};
 	}
 	return {

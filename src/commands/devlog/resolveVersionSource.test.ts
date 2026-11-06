@@ -42,11 +42,14 @@ describe("resolveVersionSource current", () => {
 		expect(source.current()).toBe("v0.10.0");
 	});
 
-	it("reports no version in tag mode when no semver tag is reachable from HEAD", () => {
-		mockGetVersionAtCommit.mockReturnValue("0.1.0");
-		givenTags(["v0.2.0"], []);
+	it("stays in package mode when the only newer tags are not reachable from HEAD", () => {
+		mockGetVersionAtCommit.mockReturnValue("0.1069.0");
+		givenTags(["v0.1069.0", "v0.1069.2"], ["v0.1069.0"]);
 
-		expect(resolveVersionSource().current()).toBeNull();
+		const source = resolveVersionSource();
+
+		expect(source.kind).toBe("package");
+		expect(source.current()).toBe("v0.1069");
 	});
 
 	it("reports package.json cut to major.minor when it matches the latest tag", () => {
