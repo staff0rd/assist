@@ -34,6 +34,7 @@ import { sessionsConfigHelp } from "./sessions/sessionsConfigHelp";
 import { webConfigHelp } from "./sessions/webConfigHelp";
 import { slackConfigHelp } from "./slack/slackConfigHelp";
 import { sqlConfigHelp } from "./sql/sqlConfigHelp";
+import { testflightConfigHelp } from "./testflight/testflightConfigHelp";
 import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
 import { verifyConfigHelp } from "./verify/verifyConfigHelp";
 
@@ -73,6 +74,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...hotkeysConfigHelp,
 	...slackConfigHelp,
 	...sqlConfigHelp,
+	...testflightConfigHelp,
 	...transcriptConfigHelp,
 	...verifyConfigHelp,
 ];

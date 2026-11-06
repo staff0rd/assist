@@ -52,6 +52,7 @@ import { registerSignal } from "./commands/registerSignal";
 import { registerSlack } from "./commands/registerSlack";
 import { registerSql } from "./commands/registerSql";
 import { registerSync } from "./commands/registerSync";
+import { registerTestflight } from "./commands/registerTestflight";
 import { registerTranscript } from "./commands/registerTranscript";
 import { registerVerify } from "./commands/registerVerify";
 import { registerWatch } from "./commands/registerWatch";
@@ -113,6 +114,7 @@ export const programRegistrars: ((program: Command) => void)[] = [
 	registerAskDesign,
 	registerSlack,
 	registerSql,
+	registerTestflight,
 	registerTranscript,
 	registerWatch,
 	registerSessions,
