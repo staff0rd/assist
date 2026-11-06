@@ -48,8 +48,16 @@ const appAndGroups: Route[] = [
 		match: "/v1/apps/app1/betaGroups",
 		body: {
 			data: [
-				{ type: "betaGroups", id: "g-internal", attributes: { name: "Team" } },
-				{ type: "betaGroups", id: "g-ext", attributes: { name: "Friends" } },
+				{
+					type: "betaGroups",
+					id: "g-internal",
+					attributes: { name: "Team", isInternalGroup: true },
+				},
+				{
+					type: "betaGroups",
+					id: "g-ext",
+					attributes: { name: "Friends", isInternalGroup: false },
+				},
 			],
 		},
 	},
@@ -135,6 +143,19 @@ describe("addTester", () => {
 			}),
 		).rejects.toThrow(
 			'No beta group named "Missing" (testflight.externalGroup). Available groups: Team, Friends',
+		);
+	});
+
+	it("rejects an internal group configured as the external group", async () => {
+		const fetchFn = mockFetch(appAndGroups);
+
+		await expect(
+			addTester({ ...config, externalGroup: "Team" }, "a@b.com", {
+				readKey,
+				fetchFn,
+			}),
+		).rejects.toThrow(
+			'Beta group "Team" (testflight.externalGroup) must be an external group',
 		);
 	});
 

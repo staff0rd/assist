@@ -24,11 +24,10 @@ export async function addTester(
 	});
 	const client = createAscClient(token, deps.fetchFn);
 	const appId = await findAppId(client, config.bundleId);
-	const groupId = await findBetaGroupId(
-		client,
-		appId,
-		config.externalGroup,
-		"testflight.externalGroup",
-	);
+	const groupId = await findBetaGroupId(client, appId, {
+		name: config.externalGroup,
+		configKey: "testflight.externalGroup",
+		internal: false,
+	});
 	return addExternalTester(client, groupId, email);
 }
