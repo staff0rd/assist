@@ -1,5 +1,6 @@
 import type { Activity } from "../../../shared/emitActivity";
 import type { HarnessKind } from "../../../shared/harnesses";
+import type { SessionType } from "./deriveHistoryFields";
 import type { PreviewAttachment } from "./PreviewAttachment";
 import type { RepoGroup } from "./RepoGroup";
 
@@ -91,6 +92,7 @@ export type SessionInfoBase = {
 	activeViewerNode?: string;
 	promptIssue?: string;
 	promptPr?: number;
+	promptType?: SessionType;
 	node?: string;
 	transfer?: SessionTransfer;
 };

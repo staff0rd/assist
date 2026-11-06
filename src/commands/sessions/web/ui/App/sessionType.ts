@@ -23,6 +23,6 @@ export function sessionType(session: SessionInfo): SessionType {
 		case "run":
 			return "run";
 		default:
-			return "prompt";
+			return session.promptType ?? "prompt";
 	}
 }

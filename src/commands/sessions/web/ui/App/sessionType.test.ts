@@ -42,6 +42,15 @@ describe("sessionType", () => {
 		);
 	});
 
+	it("uses the type of a free session's leading slash command", () => {
+		const session = makeSessionInfo({
+			commandType: "claude",
+			harness: "codex",
+			promptType: "bug",
+		});
+		expect(sessionType(session)).toBe("bug");
+	});
+
 	it("treats an unrecognised assist command as a prompt", () => {
 		const session = makeSessionInfo({
 			commandType: "assist",
