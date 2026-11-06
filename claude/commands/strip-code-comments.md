@@ -21,7 +21,7 @@ Write self-documenting code. Do not add comments that restate what the code alre
 
 ## Step 2: Enumerate tracked source files
 
-List git-tracked source files with `git ls-files`. Restrict to source files (e.g. `.ts`, `.tsx`, `.js`, `.jsx`, `.cs`, `.py`, `.go`, `.rs`, `.java`, `.kt`, `.rb`, `.c`, `.h`, `.cpp`, `.css`, `.scss`), plus `#`-comment config and script files: `Dockerfile` (and variants `Dockerfile.*` / `*.dockerfile`), `*.env`, and `*.sh`. Skip generated output, lockfiles, vendored dependencies, and markdown/docs.
+List git-tracked source files with `git ls-files`. Restrict to source files (e.g. `.ts`, `.tsx`, `.js`, `.jsx`, `.cs`, `.py`, `.go`, `.rs`, `.java`, `.kt`, `.rb`, `.c`, `.h`, `.cpp`, `.css`, `.scss`), plus `#`-comment config and script files: `Dockerfile` (and variants `Dockerfile.*` / `*.dockerfile`), `*.env`, `*.sh`, and GitHub workflow and action YAML (`.github/workflows/*.yml` / `.yaml`, `action.yml` / `action.yaml`). Skip generated output, lockfiles, vendored dependencies, and markdown/docs.
 
 For `*.sh` files, leave the leading header block untouched — the contiguous run of shebang, blank, and `#` lines from the top of the file, ending at the first line of code. Only strip violating `#` comments that appear **after** that header block. Dockerfile and `*.env` files have no such allowance; treat every `#` comment as in-scope.
 
@@ -37,6 +37,7 @@ Read each file and remove only comments that violate the policy:
 
 - **Functional directives** that the toolchain acts on: `eslint-disable*`, `@ts-expect-error`, `@ts-ignore`, `oxlint-disable`, `prettier-ignore`, `// @ts-nocheck`, coverage pragmas (`c8 ignore`, `istanbul ignore`), `noqa`, `type: ignore`, `#pragma`, `//go:`-style directives, and similar.
 - **Comments marking a genuine hack or workaround** — anything explaining _why_ non-obvious code exists, including `HACK`/`WORKAROUND`/`FIXME`/`TODO` notes, links to issues, or rationale the code cannot convey on its own.
+- **SHA-pin version comments** — a trailing comment naming the tag/version on a `uses:` line pinned to a commit SHA (e.g. `uses: actions/checkout@<sha> # v4.2.2`).
 - **Doc comments** that form part of an API contract (JSDoc/TSDoc, XML doc comments, docstrings) unless they only restate the signature.
 
 When in doubt, keep the comment. The cost of leaving a borderline comment is far lower than deleting one that carries intent.
