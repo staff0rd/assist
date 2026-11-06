@@ -1,6 +1,7 @@
 import type { RestartTarget } from "../../../../watch/restartRules";
 import type { AutoUpdateLoopState } from "../../../shared/AutoUpdateLoopState";
 import type { PrPreview } from "../../../shared/SessionInfoBase";
+import { isBusy } from "../../../shared/isBusy";
 
 export type LiveSession = {
 	name: string;
@@ -17,12 +18,12 @@ export type AutoRestartInput = {
 	sessions: LiveSession[];
 };
 
-function isBusy(session: LiveSession): boolean {
-	if (session.node !== undefined || session.commandType === "run") return false;
-	if (session.status !== "running") return false;
-	const preview = session.pendingPrPreview;
-	return preview === undefined || preview.kind === "show";
-}
+export type AutoRestartSessions = Pick<AutoRestartInput, "sessions"> & {
+	restartActivity?: string;
+};
+
+export type AutoRestartSnapshot = AutoRestartInput &
+	AutoRestartSessions & { built: string };
 
 export function autoRestartBlocker(
 	input: AutoRestartInput,

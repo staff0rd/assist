@@ -1,16 +1,23 @@
 import { attemptAutoRestart } from "./attemptAutoRestart";
-import type { AutoRestartInput } from "./autoRestartBlocker";
+import type {
+	AutoRestartSessions,
+	AutoRestartSnapshot,
+} from "./autoRestartBlocker";
 import { type AutoRestartTarget, autoRestartTarget } from "./autoRestartTarget";
 import { blockedBy } from "./blockedBy";
 import { createAutoRestartNotes } from "./createAutoRestartNotes";
+import { autoRestartPreflight } from "./autoRestartPreflight";
 
-export const AUTO_RESTART_SETTLE_MS = 60_000;
-
-export type AutoRestartSnapshot = AutoRestartInput & { built: string };
+export { AUTO_RESTART_SETTLE_MS } from "./createAutoRestartNotes";
+export type {
+	AutoRestartSessions,
+	AutoRestartSnapshot,
+} from "./autoRestartBlocker";
 
 type AutoRestartCheckDeps = {
 	enabled: () => boolean;
 	snapshot: () => Promise<AutoRestartSnapshot>;
+	freshSessions: () => Promise<AutoRestartSessions | undefined>;
 	attempted: { get: () => string | undefined; set: (built: string) => void };
 	restart: (target: AutoRestartTarget) => Promise<void>;
 	log: (message: string) => void;
@@ -22,10 +29,15 @@ export function createAutoRestartCheck(deps: AutoRestartCheckDeps) {
 	const now = deps.now ?? Date.now;
 	const notes = createAutoRestartNotes(deps);
 	const { note } = notes;
+	let activity: string | undefined;
 
 	return async function tick(): Promise<void> {
 		if (!deps.enabled()) return note(undefined);
 		const snap = await deps.snapshot();
+		if (snap.restartActivity !== activity) {
+			note(undefined);
+			activity = snap.restartActivity;
+		}
 		if (snap.restart.length === 0) return note(undefined);
 		const target = autoRestartTarget(snap.restart);
 		const blocker = blockedBy(snap, deps.attempted.get());
@@ -34,17 +46,13 @@ export function createAutoRestartCheck(deps: AutoRestartCheckDeps) {
 				`skipped ${target} restart for v${snap.built}: ${blocker}`,
 				blocker,
 			);
-		const at = now();
-		const idleSince = notes.idleSince();
-		if (idleSince === undefined) {
-			note(
-				`${target} restart for v${snap.built} ready; restarting once idle for ${AUTO_RESTART_SETTLE_MS / 1000}s`,
-				`idle · restarting within ${AUTO_RESTART_SETTLE_MS / 1000}s`,
+		if (!notes.settled(now(), target, snap.built)) return;
+		const finalBlocker = await autoRestartPreflight(deps, snap, activity);
+		if (finalBlocker)
+			return note(
+				`skipped ${target} restart for v${snap.built}: ${finalBlocker}`,
+				finalBlocker,
 			);
-			notes.settling(at);
-			return;
-		}
-		if (at - idleSince < AUTO_RESTART_SETTLE_MS) return;
 		note(undefined, "restarting");
 		await attemptAutoRestart(deps, target, snap.built);
 	};

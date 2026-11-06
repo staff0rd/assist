@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
 	AUTO_RESTART_SETTLE_MS,
 	type AutoRestartSnapshot,
+	type AutoRestartSessions,
 	createAutoRestartCheck,
 } from "./createAutoRestartCheck";
 
@@ -19,8 +20,15 @@ function setup(initial: Partial<AutoRestartSnapshot> = {}, enabled = true) {
 	const restart = vi.fn(async () => {});
 	const log = vi.fn();
 	const report = vi.fn();
+	const freshSessions = vi.fn(
+		async (): Promise<AutoRestartSessions | undefined> => ({
+			sessions: snap.sessions,
+			restartActivity: snap.restartActivity,
+		}),
+	);
 	const tick = createAutoRestartCheck({
 		report,
+		freshSessions,
 		enabled: () => enabled,
 		snapshot: async () => snap,
 		attempted: {
@@ -34,6 +42,7 @@ function setup(initial: Partial<AutoRestartSnapshot> = {}, enabled = true) {
 		now: () => clock,
 	});
 	return {
+		freshSessions,
 		tick,
 		restart,
 		log,
@@ -48,6 +57,58 @@ function setup(initial: Partial<AutoRestartSnapshot> = {}, enabled = true) {
 }
 
 describe("createAutoRestartCheck", () => {
+	it("skips session 4 starting at T+59s before the T+65s restart check", async () => {
+		const t = setup({ restart: ["daemon"] });
+		await t.tick();
+		t.advance(59_000);
+		t.freshSessions.mockResolvedValue({
+			sessions: [{ name: "4", status: "running" }],
+			restartActivity: "1:1",
+		});
+		t.advance(6_000);
+		await t.tick();
+		expect(t.restart).not.toHaveBeenCalled();
+		expect(t.log).toHaveBeenCalledWith(
+			"auto-restart: skipped daemon restart for v1.2.0: waiting on 1 running session (4)",
+		);
+	});
+
+	it("resets for activity that finishes between samples, including a removed session", async () => {
+		const t = setup({ restartActivity: "1:0" });
+		await t.tick();
+		t.advance(65_000);
+		t.update({ restartActivity: "1:1" });
+		await t.tick();
+		expect(t.restart).not.toHaveBeenCalled();
+		t.advance(AUTO_RESTART_SETTLE_MS - 1);
+		await t.tick();
+		expect(t.restart).not.toHaveBeenCalled();
+		t.advance(1);
+		await t.tick();
+		expect(t.restart).toHaveBeenCalledTimes(1);
+	});
+
+	it("resets for activity during the snapshot read even if already idle again", async () => {
+		const t = setup({ restartActivity: "1:0" });
+		await t.tick();
+		t.advance(AUTO_RESTART_SETTLE_MS);
+		t.freshSessions.mockResolvedValueOnce({
+			sessions: [],
+			restartActivity: "1:1",
+		});
+		await t.tick();
+		expect(t.restart).not.toHaveBeenCalled();
+	});
+
+	it("does not restart if the final session query fails", async () => {
+		const t = setup();
+		await t.tick();
+		t.advance(AUTO_RESTART_SETTLE_MS);
+		t.freshSessions.mockResolvedValueOnce(undefined);
+		await t.tick();
+		expect(t.restart).not.toHaveBeenCalled();
+		expect(t.report).toHaveBeenLastCalledWith("daemon not reachable");
+	});
 	it("restarts the advised target once idle for the settle window", async () => {
 		const t = setup();
 		await t.tick();
