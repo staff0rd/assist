@@ -1,3 +1,10 @@
+## [0.1075.1](https://github.com/staff0rd/assist/compare/v0.1075.0...v0.1075.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* reject internal group as external ([8fa6ef8](https://github.com/staff0rd/assist/commit/8fa6ef883a5b90ad78341dadc5bf486bad56e75a))
+
 # [0.1075.0](https://github.com/staff0rd/assist/compare/v0.1074.6...v0.1075.0) (2026-11-06)
 
 
