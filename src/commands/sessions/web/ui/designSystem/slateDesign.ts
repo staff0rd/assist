@@ -241,7 +241,7 @@ export const slateDesign: DesignTokens = {
 			switch: { width: 34, height: 20, thumb: 16 },
 			inputFontSize: 13,
 			filterSelectMinWidth: 160,
-			doc: { body: 15, h1: 22, h2: 19, h3: 17, heading: 16 },
+			reviewDialog: { title: 17, item: 15, option: 14 },
 			tabBar: { height: 44, icon: 20, label: 10, badge: 16, insetTrim: 0 },
 		},
 		touch: {
@@ -252,7 +252,7 @@ export const slateDesign: DesignTokens = {
 			switch: { width: 51, height: 31, thumb: 27 },
 			inputFontSize: 16,
 			filterSelectMinWidth: 200,
-			doc: { body: 16, h1: 24, h2: 21, h3: 18, heading: 17 },
+			reviewDialog: { title: 20, item: 17, option: 16 },
 			tabBar: { height: 49, icon: 26, label: 11, badge: 18, insetTrim: 12 },
 		},
 	},

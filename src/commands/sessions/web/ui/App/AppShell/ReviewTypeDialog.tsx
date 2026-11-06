@@ -17,6 +17,7 @@ import {
 } from "../../../../../../shared/reviewOptionFlags";
 import { ReviewOptionToggles } from "../ReviewOptionToggles";
 import { PrActionItems } from "./ReviewTypeDialog/PrActionItems";
+import { reviewTypeDialogSx } from "./ReviewTypeDialog/reviewTypeDialogSx";
 
 export function ReviewTypeDialog({
 	pr,
@@ -31,11 +32,11 @@ export function ReviewTypeDialog({
 
 	return (
 		<Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
-			<DialogTitle sx={{ fontSize: 15 }}>
+			<DialogTitle sx={(t) => reviewTypeDialogSx(t).title}>
 				Review #{pr.number}: {pr.title}
 			</DialogTitle>
 			<DialogContent sx={{ px: 0 }}>
-				<MenuList>
+				<MenuList sx={(t) => reviewTypeDialogSx(t).list}>
 					{reviewButtonModes.map(({ label, args }) => (
 						<MenuItem
 							key={label}
