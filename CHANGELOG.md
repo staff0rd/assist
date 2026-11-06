@@ -1,3 +1,10 @@
+## [0.1070.1](https://github.com/staff0rd/assist/compare/v0.1070.0...v0.1070.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* size New session dialog to footer ([d0a8e8e](https://github.com/staff0rd/assist/commit/d0a8e8eaaa8ae3a8bd196cad7ef00e397066d8a2))
+
 # [0.1070.0](https://github.com/staff0rd/assist/compare/v0.1069.4...v0.1070.0) (2026-11-06)
 
 
