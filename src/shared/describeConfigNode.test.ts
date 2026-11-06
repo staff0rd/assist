@@ -67,6 +67,23 @@ describe("describeConfigNode", () => {
 		});
 	});
 
+	it("describes a z.preprocess-wrapped schema like the unwrapped schema", () => {
+		const inner = z.array(
+			z.strictObject({ name: z.string(), port: z.number().default(1) }),
+		);
+		expect(describeConfigNode(z.preprocess((value) => value, inner))).toEqual(
+			describeConfigNode(inner),
+		);
+	});
+
+	it("describes sessions.links as a list of name/url objects", () => {
+		expect(node("sessions.links").kind).toBe("objectList");
+		expect(fieldNames(objectListItem("sessions.links"))).toEqual([
+			"name",
+			"url",
+		]);
+	});
+
 	it("recurses into a string list nested inside an array element", () => {
 		expect(node("forbiddenStrings[].paths")).toMatchObject({
 			kind: "scalarList",

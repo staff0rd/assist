@@ -18,10 +18,24 @@ export type SchemaNode = {
 		element?: SchemaNode;
 		keyType?: SchemaNode;
 		valueType?: SchemaNode;
+		in?: SchemaNode;
+		out?: SchemaNode;
 	};
 };
 
 const OPTIONAL_TYPES = new Set(["optional", "nullish"]);
+
+function isPreprocess(def: NonNullable<SchemaNode["def"]>): boolean {
+	return def.type === "pipe" && def.in?.def?.type === "transform";
+}
+
+function wrappedNode(node: SchemaNode): SchemaNode | undefined {
+	const def = node.def;
+	if (!def) return undefined;
+	if (WRAPPER_TYPES.has(def.type ?? "")) return def.innerType;
+	if (isPreprocess(def)) return def.out;
+	return undefined;
+}
 
 export function unwrapSchemaNode(node: SchemaNode): {
 	inner: SchemaNode;
@@ -31,16 +45,12 @@ export function unwrapSchemaNode(node: SchemaNode): {
 	let current = node;
 	let defaultValue: unknown;
 	let optional = false;
-	while (
-		current.def &&
-		WRAPPER_TYPES.has(current.def.type ?? "") &&
-		current.def.innerType
-	) {
-		if (current.def.type === "default" && defaultValue === undefined) {
+	for (let next = wrappedNode(current); next; next = wrappedNode(current)) {
+		if (current.def?.type === "default" && defaultValue === undefined) {
 			defaultValue = current.def.defaultValue;
 		}
-		if (OPTIONAL_TYPES.has(current.def.type ?? "")) optional = true;
-		current = current.def.innerType;
+		if (OPTIONAL_TYPES.has(current.def?.type ?? "")) optional = true;
+		current = next;
 	}
 	return { inner: current, defaultValue, optional };
 }
