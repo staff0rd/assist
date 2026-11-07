@@ -16,13 +16,13 @@ import { DiffPanelsProvider } from "../../useDiffPanels";
 beforeEach(() => {
 	vi.stubGlobal(
 		"fetch",
-		vi.fn(async () => ({
-			json: async () => ({
+		vi.fn(async () =>
+			Response.json({
 				new: ["a.ts"],
 				modified: ["b.ts", "c.ts"],
 				deleted: [],
 			}),
-		})),
+		),
 	);
 });
 

@@ -29,8 +29,16 @@ export function usePolledGitStatus(
 				const res = await apiFetch(
 					withNode(`/api/git-status?${diffQuery(cwd, sessionId)}`, node),
 				);
-				const body = await res.json();
-				if (!cancelled) setCounts(body ?? null);
+				if (!res.ok) {
+					if (!cancelled) setCounts(null);
+					return;
+				}
+				const parsed = await res.json().then(
+					(body: ItemStatusCounts | null) => ({ body }),
+					() => undefined,
+				);
+				if (!parsed || cancelled) return;
+				setCounts(parsed.body ?? null);
 			} catch (error) {
 				reportCaughtError(error, "git status counts");
 				if (!cancelled) setCounts(null);
