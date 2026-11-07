@@ -12,6 +12,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import type { PrPreview } from "../../../../shared/SessionInfoBase";
+import { commentColor } from "../../App/commentColor";
 import { createDesignTheme } from "../../designSystem/createDesignTheme";
 import { PhoneSessionPreview } from "../PhoneSessionPreview";
 
@@ -69,8 +70,10 @@ const mark = () =>
 	screen.getByTestId("phone-review-sheet").querySelector("mark.pr-comment");
 
 function selectText(text: string) {
-	const paragraph = sheet().getByText(/idle prompt/);
-	const node = paragraph.firstChild as Text;
+	const paragraph = sheet().getByText(/A pending preview/);
+	const node = [...paragraph.childNodes].find(
+		(n) => n.nodeType === Node.TEXT_NODE && n.textContent?.includes(text),
+	) as Text;
 	const start = (node.textContent ?? "").indexOf(text);
 	const range = document.createRange();
 	range.setStart(node, start);
@@ -132,7 +135,9 @@ describe("phone review sheet comments", () => {
 
 		expect(mark()?.textContent).toBe("looks like");
 		expect((mark() as HTMLElement).dataset.pin).toBe("1");
-		expect(sheet().getByText("1 comment goes with your approval")).toBeTruthy();
+		expect(
+			sheet().getByRole("button", { name: "1 review comment ›" }),
+		).toBeTruthy();
 		fireEvent.click(sheet().getByRole("button", { name: "Approve" }));
 		expect(onDecision).toHaveBeenCalledWith(
 			"approve",
@@ -221,5 +226,71 @@ describe("phone review sheet comments", () => {
 		fireEvent.click(composer().getByText("R1"));
 		vi.advanceTimersByTime(SUBMIT_WAIT_MS);
 		expect(pasted(sendInput)).toContain("breaks rule R1");
+	});
+});
+
+describe("phone review comment list", () => {
+	const list = () => within(screen.getByTestId("phone-review-comments"));
+
+	async function queueTwo() {
+		queue("looks like", "Name the idle state");
+		await waitFor(() =>
+			expect(screen.queryByTestId("phone-comment-composer")).toBe(null),
+		);
+		queue("idle prompt", "Say which prompt");
+		await waitFor(() =>
+			expect(screen.queryByTestId("phone-comment-composer")).toBe(null),
+		);
+		fireEvent.click(
+			sheet().getByRole("button", { name: "2 review comments ›" }),
+		);
+	}
+
+	it("lists queued comments with quotes matching their highlight colours", async () => {
+		renderSheet();
+		await queueTwo();
+		const border = (text: string) =>
+			getComputedStyle(list().getByText(text)).borderLeftColor;
+		const css = (color: string) => {
+			const probe = document.createElement("div");
+			probe.style.color = color;
+			return probe.style.color;
+		};
+		expect(list().getByText("Review comments (2)")).toBeTruthy();
+		expect(list().getByText("Say which prompt")).toBeTruthy();
+		expect(border("looks like")).toBe(css(commentColor(0).solid));
+		expect(border("idle prompt.")).toBe(css(commentColor(1).solid));
+	});
+
+	it("removes a comment and sends the rest with Reject", async () => {
+		const { onDecision } = renderSheet();
+		await queueTwo();
+		fireEvent.click(
+			list().getAllByRole("button", { name: "Remove comment" })[0],
+		);
+		expect(list().getByText("Review comments (1)")).toBeTruthy();
+		expect(list().queryByText("looks like")).toBe(null);
+		fireEvent.click(list().getByRole("button", { name: "Reject" }));
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			expect.objectContaining({
+				comments: [{ quote: "idle prompt.", note: "Say which prompt" }],
+			}),
+		);
+	});
+
+	it("sends the remaining comments with Approve from the sheet", async () => {
+		const { onDecision } = renderSheet();
+		await queueTwo();
+		fireEvent.click(
+			list().getAllByRole("button", { name: "Remove comment" })[1],
+		);
+		fireEvent.click(list().getByRole("button", { name: "Approve" }));
+		expect(onDecision).toHaveBeenCalledWith(
+			"approve",
+			expect.objectContaining({
+				comments: [{ quote: "looks like", note: "Name the idle state" }],
+			}),
+		);
 	});
 });

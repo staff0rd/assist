@@ -47,7 +47,7 @@ export function usePhoneReviewPane({
 		decisions: {
 			canStart: preview.kind === "backlog-item" && preview.canStart === true,
 			sending,
-			onReject: () => pane.onDecide("reject", []),
+			onReject: () => pane.onDecide("reject", sent()),
 			onApprove: () => pane.onDecide("approve", sent()),
 			onApproveAndStart: () => pane.onDecide("approve", sent(), true),
 		},
