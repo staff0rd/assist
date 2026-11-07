@@ -46,7 +46,9 @@ describe("CardActionButtons dismiss visibility", () => {
 		expect(
 			screen.queryByTitle("Dismiss session 3 (Shift skips confirmation)"),
 		).toBeNull();
-		expect(screen.queryByTitle("Restart session 3")).not.toBeNull();
+		expect(
+			screen.queryByTitle("Restart session 3 (Shift skips confirmation)"),
+		).not.toBeNull();
 	});
 
 	it("offers discard only when a stopped card holds undurable work", () => {
@@ -154,7 +156,9 @@ describe("CardActionButtons beside the top bar", () => {
 			{ wrapper: Stars },
 		);
 
-		expect(screen.queryByTitle("Restart session 3")).toBeNull();
+		expect(
+			screen.queryByTitle("Restart session 3 (Shift skips confirmation)"),
+		).toBeNull();
 		expect(screen.queryByTitle("Retry session 3")).toBeNull();
 		expect(screen.queryByLabelText("Star")).toBeNull();
 	});

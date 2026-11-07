@@ -1,9 +1,9 @@
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import { useState } from "react";
 import type { HarnessKind } from "../../../../../shared/harnesses";
 import { harnessLabel } from "../../../../../shared/harnessLabel";
 import { harnessResumesConversation } from "../../../../../shared/harnessResumesConversation";
 import { ConfirmDialog } from "../../../../backlog/web/ui/components/ConfirmDialog";
+import { useShiftSkipConfirm } from "../useShiftSkipConfirm";
 import { ActionButton } from "./ActionButton";
 
 function restartEffect(harness?: HarnessKind): string {
@@ -21,17 +21,15 @@ export function RestartButton({
 	onRestart: () => void;
 	harness?: HarnessKind;
 }) {
-	const [confirming, setConfirming] = useState(false);
+	const { confirming, close, triggerHandlers, withHint } =
+		useShiftSkipConfirm(onRestart);
 	return (
 		<>
 			<ActionButton
 				label="Restart"
-				title={`Restart session ${id}`}
+				title={withHint(`Restart session ${id}`)}
 				icon={<RestartAltIcon sx={{ fontSize: 14 }} />}
-				onClick={(e) => {
-					e.stopPropagation();
-					setConfirming(true);
-				}}
+				{...triggerHandlers}
 			/>
 			{confirming && (
 				<ConfirmDialog
@@ -39,10 +37,10 @@ export function RestartButton({
 					message={`Restart this ${harnessLabel(harness)} session? It ${restartEffect(harness)}, stopping the running process first.`}
 					confirmLabel="Restart"
 					onConfirm={() => {
-						setConfirming(false);
+						close();
 						onRestart();
 					}}
-					onCancel={() => setConfirming(false)}
+					onCancel={close}
 				/>
 			)}
 		</>

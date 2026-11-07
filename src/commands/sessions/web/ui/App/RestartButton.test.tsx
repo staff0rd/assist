@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { RestartButton } from "./RestartButton";
 
 afterEach(cleanup);
@@ -9,7 +9,42 @@ describe("RestartButton", () => {
 	it("names the session id in its tooltip so cards map to daemon.log ids", () => {
 		render(<RestartButton id="54" onRestart={() => {}} />);
 
-		expect(screen.getByRole("button").title).toBe("Restart session 54");
+		expect(screen.getByRole("button").title).toBe(
+			"Restart session 54 (Shift skips confirmation)",
+		);
+	});
+
+	it("restarts without confirming on Shift-click", () => {
+		const onRestart = vi.fn();
+		render(<RestartButton id="54" onRestart={onRestart} />);
+
+		fireEvent.click(screen.getByRole("button"), { shiftKey: true });
+
+		expect(onRestart).toHaveBeenCalledOnce();
+		expect(screen.queryByRole("heading")).toBeNull();
+	});
+
+	it("restarts without confirming on Shift+Enter", () => {
+		const onRestart = vi.fn();
+		render(<RestartButton id="54" onRestart={onRestart} />);
+
+		fireEvent.keyDown(screen.getByRole("button"), {
+			key: "Enter",
+			shiftKey: true,
+		});
+
+		expect(onRestart).toHaveBeenCalledOnce();
+	});
+
+	it("restarts after confirming a plain click", () => {
+		const onRestart = vi.fn();
+		render(<RestartButton id="54" onRestart={onRestart} />);
+
+		fireEvent.click(screen.getByRole("button"));
+		expect(onRestart).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole("button", { name: "Restart" }));
+
+		expect(onRestart).toHaveBeenCalledOnce();
 	});
 
 	it("names the session id in the confirm dialog title", () => {

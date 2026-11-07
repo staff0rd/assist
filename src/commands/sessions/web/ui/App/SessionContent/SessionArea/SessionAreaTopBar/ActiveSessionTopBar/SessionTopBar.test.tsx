@@ -392,7 +392,9 @@ describe("SessionTopBar control cluster", () => {
 			onRetry,
 		});
 
-		expect(screen.getByTitle("Restart session 1")).toBeTruthy();
+		expect(
+			screen.getByTitle("Restart session 1 (Shift skips confirmation)"),
+		).toBeTruthy();
 		expect(screen.getByLabelText("Star")).toBeTruthy();
 		expect(screen.getAllByLabelText("Open in VS Code").length).toBeGreaterThan(
 			0,
@@ -494,7 +496,9 @@ describe("SessionTopBar actions", () => {
 		expect(
 			screen.queryAllByLabelText("Open in VS Code").length,
 		).toBeGreaterThan(0);
-		expect(screen.queryByTitle("Restart session 1")).not.toBeNull();
+		expect(
+			screen.queryByTitle("Restart session 1 (Shift skips confirmation)"),
+		).not.toBeNull();
 		expect(screen.queryByTitle("Retry session 1")).not.toBeNull();
 	});
 
@@ -512,7 +516,9 @@ describe("SessionTopBar actions", () => {
 			onRestart: () => {},
 		});
 
-		expect(screen.queryByTitle("Restart session 1")).toBeNull();
+		expect(
+			screen.queryByTitle("Restart session 1 (Shift skips confirmation)"),
+		).toBeNull();
 	});
 
 	it("closes a running session with the card's dismiss button", () => {
@@ -702,7 +708,9 @@ describe("SessionTopBar action labels", () => {
 		});
 
 		expect(screen.queryByText("Restart")).toBeNull();
-		expect(screen.getByTitle("Restart session 1")).toBeTruthy();
+		expect(
+			screen.getByTitle("Restart session 1 (Shift skips confirmation)"),
+		).toBeTruthy();
 	});
 
 	it("keeps its labels at that same bar width when identity is short", () => {
@@ -724,7 +732,9 @@ describe("SessionTopBar action labels", () => {
 			onRetry,
 		});
 
-		expect(screen.getByTitle("Restart session 1")).toBeTruthy();
+		expect(
+			screen.getByTitle("Restart session 1 (Shift skips confirmation)"),
+		).toBeTruthy();
 		expect(screen.getByLabelText("Star")).toBeTruthy();
 		expect(screen.getAllByLabelText("Open in VS Code").length).toBeGreaterThan(
 			0,

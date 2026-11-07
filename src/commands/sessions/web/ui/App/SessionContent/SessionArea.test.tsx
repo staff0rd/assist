@@ -274,7 +274,9 @@ describe("SessionArea top bar", () => {
 		});
 
 		expect(screen.queryByText("first subtitle")).toBeNull();
-		expect(screen.queryByTitle("Restart session 1")).toBeNull();
+		expect(
+			screen.queryByTitle("Restart session 1 (Shift skips confirmation)"),
+		).toBeNull();
 	});
 
 	it("follows the active session when it changes", () => {
@@ -413,7 +415,9 @@ describe("SessionArea top bar actions", () => {
 			{ lifecycle: { onRestart } },
 		);
 
-		fireEvent.click(screen.getByTitle("Restart session 2"));
+		fireEvent.click(
+			screen.getByTitle("Restart session 2 (Shift skips confirmation)"),
+		);
 		fireEvent.click(screen.getByRole("button", { name: "Restart" }));
 
 		expect(onRestart).toHaveBeenCalledWith("2");

@@ -1,8 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
+import { useShiftSkipConfirm } from "../useShiftSkipConfirm";
 import { DismissConfirmDialog } from "./DismissButton/DismissConfirmDialog";
-import { shiftSkipsConfirmHandlers } from "./SessionContent/SessionActionButtons/shiftSkipsConfirmHandlers";
 import type { ChildDismiss, SessionStatus } from "../types";
 
 export function DismissButton({
@@ -16,20 +15,17 @@ export function DismissButton({
 	onDismiss: () => void;
 	childDismiss?: ChildDismiss;
 }) {
-	const [confirming, setConfirming] = useState(false);
+	const { confirming, close, triggerHandlers, withHint } = useShiftSkipConfirm(
+		childDismiss?.onDismissAll ?? onDismiss,
+		{ needsConfirm: status !== "done" || !!childDismiss },
+	);
 
 	return (
 		<>
 			<IconButton
 				size="small"
-				{...shiftSkipsConfirmHandlers(
-					childDismiss?.onDismissAll ?? onDismiss,
-					() => {
-						if (status === "done" && !childDismiss) onDismiss();
-						else setConfirming(true);
-					},
-				)}
-				title={`Dismiss session ${id} (Shift skips confirmation)`}
+				{...triggerHandlers}
+				title={withHint(`Dismiss session ${id}`)}
 				sx={{ color: "text.disabled", "&:hover": { color: "text.primary" } }}
 			>
 				<CloseIcon sx={{ fontSize: 16 }} />
@@ -38,7 +34,7 @@ export function DismissButton({
 				<DismissConfirmDialog
 					onDismiss={onDismiss}
 					childDismiss={childDismiss}
-					onClose={() => setConfirming(false)}
+					onClose={close}
 				/>
 			)}
 		</>
