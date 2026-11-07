@@ -11,6 +11,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import type { PrPreview } from "../../../shared/SessionInfoBase";
 import { createDesignTheme } from "../designSystem/createDesignTheme";
+import { NodeSelectionContext } from "../useNodeSelectionContext";
+import {
+	type RepoSelection,
+	RepoSelectionContext,
+} from "../useRepoSelectionContext";
 import { PhoneSessionPreview } from "./PhoneSessionPreview";
 
 afterEach(() => {
@@ -110,6 +115,11 @@ describe("PhoneSessionPreview", () => {
 		expect(onDecision.mock.calls[0]?.[1].reason).toBeUndefined();
 	});
 
+	it("shows no node picker with a single node", () => {
+		renderPreview(backlogItem);
+		expect(card().queryByRole("button", { name: "Start on node" })).toBe(null);
+	});
+
 	it("gives show previews only Close", () => {
 		const onDecision = renderPreview({
 			requestId: "r3",
@@ -138,5 +148,121 @@ describe("PhoneSessionPreview", () => {
 		expect(card().queryByRole("button", { name: "Approve" })).toBe(null);
 		fireEvent.click(card().getByRole("button", { name: "Review" }));
 		expect(sheet().getByRole("button", { name: "Extract boxes" })).toBeTruthy();
+	});
+});
+
+const clones: Record<string, string> = {
+	wsl: "/git/repo",
+	win: String.raw`C:\git\repo`,
+};
+
+const repoSelection: RepoSelection = {
+	repos: ["/git/repo"],
+	selectedCwd: "/git/repo",
+	selectedNode: "win",
+	worktreeCwd: "/git/repo",
+	setSelectedCwd: () => {},
+	cloneOn: (_cwd, node) => clones[node ?? "wsl"],
+	originOf: (cwd) => (cwd === "/git/repo" ? "github.com/me/repo" : undefined),
+};
+
+function renderOnNodes(names: string[]) {
+	const onDecision = vi.fn();
+	render(
+		<ThemeProvider theme={createDesignTheme("dark")}>
+			<NodeSelectionContext.Provider
+				value={{
+					nodes: {
+						local: "wsl",
+						links: names
+							.filter((name) => name !== "wsl")
+							.map((name) => ({
+								name,
+								url: `http://${name}:3100`,
+								state: "connected",
+							})),
+					},
+					names,
+					visible: names.length > 1,
+					selected: "wsl",
+					select: () => {},
+				}}
+			>
+				<RepoSelectionContext.Provider value={repoSelection}>
+					<PhoneSessionPreview
+						preview={backlogItem}
+						session={makeSessionInfo({ id: "s1", cwd: "/git/repo" })}
+						keyboardOpen={false}
+						sendInput={vi.fn()}
+						onDecision={onDecision}
+					/>
+				</RepoSelectionContext.Provider>
+			</NodeSelectionContext.Provider>
+		</ThemeProvider>,
+	);
+	return onDecision;
+}
+
+function menuItem(node: string): HTMLElement {
+	const item = screen
+		.getAllByRole("menuitem")
+		.find((element) => element.textContent?.startsWith(node));
+	if (!item) throw new Error(`no menu item for ${node}`);
+	return item;
+}
+
+describe("PhoneSessionPreview node picker", () => {
+	it("defaults to the top nav node and starts the run there", () => {
+		const onDecision = renderOnNodes(["wsl", "win"]);
+
+		expect(
+			card().getByRole("button", { name: "Start on node" }).textContent,
+		).toBe("win");
+		fireEvent.click(card().getByRole("button", { name: "Approve & start" }));
+
+		expect(onDecision).toHaveBeenCalledWith(
+			"approve",
+			expect.objectContaining({
+				autostart: true,
+				startOn: { node: "win", cwd: String.raw`C:\git\repo` },
+			}),
+		);
+	});
+
+	it("starts on another node picked in the sheet, in its clone", () => {
+		const onDecision = renderOnNodes(["wsl", "win"]);
+
+		fireEvent.click(card().getByRole("button", { name: "Review full item" }));
+		fireEvent.click(sheet().getByRole("button", { name: "Start on node" }));
+		fireEvent.click(menuItem("wsl"));
+		fireEvent.click(sheet().getByRole("button", { name: "Approve & start" }));
+
+		expect(onDecision).toHaveBeenCalledWith(
+			"approve",
+			expect.objectContaining({
+				autostart: true,
+				startOn: { node: "wsl", cwd: "/git/repo" },
+			}),
+		);
+	});
+
+	it("disables a node with no clone of the repo", () => {
+		renderOnNodes(["wsl", "win", "mac"]);
+
+		fireEvent.click(card().getByRole("button", { name: "Start on node" }));
+		const mac = menuItem("mac");
+
+		expect(mac.getAttribute("aria-disabled")).toBe("true");
+		expect(mac.textContent).toContain("no clone");
+	});
+
+	it("sends no node on plain Approve", () => {
+		const onDecision = renderOnNodes(["wsl", "win"]);
+
+		fireEvent.click(card().getByRole("button", { name: "Approve" }));
+
+		const details = onDecision.mock.calls[0]?.[1];
+		expect(details.autostart).toBeUndefined();
+		expect(details.startOn).toBeUndefined();
 	});
 });

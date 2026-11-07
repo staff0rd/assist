@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { PreviewStartTarget } from "../../../../shared/PreviewDecision";
 import { previewPaneOptions } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/previewPaneOptions";
 import { usePrPane } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/usePrPane";
 import type { PhonePreviewProps } from "./PhonePreviewProps";
@@ -46,10 +47,12 @@ export function usePhoneReviewPane({
 		...comments,
 		decisions: {
 			canStart: preview.kind === "backlog-item" && preview.canStart === true,
+			cwd: session.cwd,
 			sending,
 			onReject: () => pane.onDecide("reject", sent()),
 			onApprove: () => pane.onDecide("approve", sent()),
-			onApproveAndStart: () => pane.onDecide("approve", sent(), true),
+			onApproveAndStart: (startOn?: PreviewStartTarget) =>
+				pane.onDecide("approve", sent(), startOn ?? true),
 		},
 	};
 }
