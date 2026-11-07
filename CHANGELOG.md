@@ -1,3 +1,10 @@
+## [0.1077.2](https://github.com/staff0rd/assist/compare/v0.1077.1...v0.1077.2) (2026-11-07)
+
+
+### Bug Fixes
+
+* drop phone version banner ([ba712e6](https://github.com/staff0rd/assist/commit/ba712e62d898ee4516cef6c3808986d7607d6569))
+
 ## [0.1077.1](https://github.com/staff0rd/assist/compare/v0.1077.0...v0.1077.1) (2026-11-06)
 
 
