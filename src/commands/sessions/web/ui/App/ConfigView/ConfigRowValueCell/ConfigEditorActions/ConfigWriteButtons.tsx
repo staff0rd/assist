@@ -1,6 +1,6 @@
 import Button from "@mui/material/Button";
-import { useState } from "react";
 import { ConfirmDialog } from "../../../../../../../backlog/web/ui/components/ConfirmDialog";
+import { useShiftSkipConfirm } from "../../../../useShiftSkipConfirm";
 
 type Props = {
 	saving: boolean;
@@ -19,7 +19,9 @@ export function ConfigWriteButtons({
 	onClear,
 	onCancel,
 }: Props) {
-	const [confirmingClear, setConfirmingClear] = useState(false);
+	const { confirming, close, triggerHandlers, withHint } = useShiftSkipConfirm(
+		() => onClear?.(),
+	);
 	return (
 		<>
 			<Button
@@ -38,22 +40,22 @@ export function ConfigWriteButtons({
 					size="small"
 					color="error"
 					disabled={saving}
-					title={clearTitle}
-					onClick={() => setConfirmingClear(true)}
+					title={withHint(clearTitle ?? "Remove this setting")}
+					{...triggerHandlers}
 				>
 					Clear
 				</Button>
 			)}
-			{confirmingClear && onClear && (
+			{confirming && onClear && (
 				<ConfirmDialog
 					title="Clear setting"
 					message={`${clearTitle ?? "Remove this setting"}?`}
 					confirmLabel="Clear"
 					onConfirm={() => {
-						setConfirmingClear(false);
+						close();
 						onClear();
 					}}
-					onCancel={() => setConfirmingClear(false)}
+					onCancel={close}
 				/>
 			)}
 		</>

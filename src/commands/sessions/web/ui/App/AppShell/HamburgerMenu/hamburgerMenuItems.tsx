@@ -7,6 +7,10 @@ import { ConnectMobileMenuItem } from "./hamburgerMenuItems/ConnectMobileMenuIte
 import { FirefoxExtensionMenuItem } from "./hamburgerMenuItems/FirefoxExtensionMenuItem";
 import { IconMenuItem } from "./hamburgerMenuItems/IconMenuItem";
 import { RenderHudMenuItem } from "./hamburgerMenuItems/RenderHudMenuItem";
+import {
+	type ShiftSkipMenuAction,
+	ShiftSkipMenuItem,
+} from "./hamburgerMenuItems/ShiftSkipMenuItem";
 import { TestflightMenuItem } from "./hamburgerMenuItems/TestflightMenuItem";
 
 type HamburgerMenuHandlers = {
@@ -18,8 +22,8 @@ type HamburgerMenuHandlers = {
 	onConnectMobile: () => void;
 	onFirefoxExtension: () => void;
 	onTestflight: () => void;
-	onRestart: () => void;
-	onUpdate: () => void;
+	onRestart: ShiftSkipMenuAction;
+	onUpdate: ShiftSkipMenuAction;
 };
 
 export function hamburgerMenuItems(handlers: HamburgerMenuHandlers) {
@@ -47,17 +51,17 @@ export function hamburgerMenuItems(handlers: HamburgerMenuHandlers) {
 		/>,
 		<TestflightMenuItem key="testflight" onClick={handlers.onTestflight} />,
 		<Divider key="restart-divider" />,
-		<IconMenuItem
+		<ShiftSkipMenuItem
 			key="restart"
 			icon={<RestartAltIcon fontSize="small" />}
 			label={handlers.restartLabel}
-			onClick={handlers.onRestart}
+			action={handlers.onRestart}
 		/>,
-		<IconMenuItem
+		<ShiftSkipMenuItem
 			key="update"
 			icon={<SystemUpdateAltIcon fontSize="small" />}
 			label={handlers.updateLabel}
-			onClick={handlers.onUpdate}
+			action={handlers.onUpdate}
 		/>,
 	];
 }

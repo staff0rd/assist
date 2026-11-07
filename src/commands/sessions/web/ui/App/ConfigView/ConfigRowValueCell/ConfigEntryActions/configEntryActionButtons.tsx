@@ -4,14 +4,15 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import EditIcon from "@mui/icons-material/Edit";
-import type { ReactNode } from "react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 
 type ConfigEntryActionButton = {
 	label: string;
 	title?: string;
 	disabled: boolean;
 	icon: ReactNode;
-	onClick?: () => void;
+	onClick?: (event: MouseEvent<HTMLElement>) => void;
+	onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
 };
 
 export type ConfigEntryActionOptions = {
@@ -31,7 +32,8 @@ export type ConfigEntryActionOptions = {
 	onDuplicate?: () => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
-	onRemove: () => void;
+	onRemove: (event: MouseEvent<HTMLElement>) => void;
+	onRemoveKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
 };
 
 function toggleButton(o: ConfigEntryActionOptions): ConfigEntryActionButton {
@@ -84,6 +86,7 @@ function removeButton(o: ConfigEntryActionOptions): ConfigEntryActionButton {
 		disabled: o.disabled || o.canRemove === false,
 		icon: <CloseIcon fontSize="inherit" />,
 		onClick: o.onRemove,
+		onKeyDown: o.onRemoveKeyDown,
 	};
 }
 

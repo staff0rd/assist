@@ -62,7 +62,9 @@ describe("CardActionButtons dismiss visibility", () => {
 			{ wrapper: Stars },
 		);
 		expect(
-			screen.queryByTitle("Discard changes and remove worktree"),
+			screen.queryByTitle(
+				"Discard changes and remove worktree (Shift skips confirmation)",
+			),
 		).toBeNull();
 
 		rerender(
@@ -80,7 +82,9 @@ describe("CardActionButtons dismiss visibility", () => {
 			</Stars>,
 		);
 		expect(
-			screen.queryByTitle("Discard changes and remove worktree"),
+			screen.queryByTitle(
+				"Discard changes and remove worktree (Shift skips confirmation)",
+			),
 		).not.toBeNull();
 	});
 
@@ -100,7 +104,11 @@ describe("CardActionButtons dismiss visibility", () => {
 			{ wrapper: Stars },
 		);
 
-		fireEvent.click(screen.getByTitle("Discard changes and remove worktree"));
+		fireEvent.click(
+			screen.getByTitle(
+				"Discard changes and remove worktree (Shift skips confirmation)",
+			),
+		);
 
 		expect(screen.queryByText("Discard all changes")).not.toBeNull();
 		expect(
@@ -127,7 +135,9 @@ describe("CardActionButtons dismiss visibility", () => {
 		);
 
 		fireEvent.click(
-			screen.getByTitle("Drop this card and stop tracking its unlanded work"),
+			screen.getByTitle(
+				"Drop this card and stop tracking its unlanded work (Shift skips confirmation)",
+			),
 		);
 
 		expect(screen.queryByText("Stop tracking this work")).not.toBeNull();

@@ -1,13 +1,14 @@
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import type { ReactNode } from "react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 
 type Props = {
 	label: string;
 	disabled: boolean;
 	icon: ReactNode;
 	title?: string;
-	onClick?: () => void;
+	onClick?: (event: MouseEvent<HTMLElement>) => void;
+	onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
 };
 
 export function ConfigActionButton({
@@ -16,6 +17,7 @@ export function ConfigActionButton({
 	icon,
 	title,
 	onClick,
+	onKeyDown,
 }: Props) {
 	if (!onClick) return null;
 	const button = (
@@ -24,6 +26,7 @@ export function ConfigActionButton({
 			aria-label={label}
 			disabled={disabled}
 			onClick={onClick}
+			onKeyDown={onKeyDown}
 		>
 			{icon}
 		</IconButton>

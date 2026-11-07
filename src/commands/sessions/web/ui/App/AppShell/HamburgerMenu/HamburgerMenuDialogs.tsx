@@ -1,31 +1,25 @@
 import { PeerRestartConfirmDialog } from "./HamburgerMenuDialogs/PeerRestartConfirmDialog";
 import { PeerSnackbars } from "../PeerSnackbars";
+import { ErrorSnackbar } from "../../../ErrorSnackbar";
 import { ShortcutsDialog } from "./HamburgerMenuDialogs/ShortcutsDialog";
 import { TestflightTestersDialog } from "./HamburgerMenuDialogs/TestflightTestersDialog";
 import { RestartConfirmDialog } from "./HamburgerMenuDialogs/RestartConfirmDialog";
 import { UpdateAssistConfirmDialog } from "./HamburgerMenuDialogs/UpdateAssistConfirmDialog";
-import { usePeerRestart } from "./HamburgerMenuDialogs/usePeerRestart";
-import { usePeerUpdate } from "./HamburgerMenuDialogs/usePeerUpdate";
+import type { MenuActions } from "./useMenuActions";
 import type { MenuDialog } from "./useMenuDialog";
-import type { SessionInfo } from "../../../types";
-import { useSessionLaunchContext } from "../../../useSessionLaunchContext";
 
 export function HamburgerMenuDialogs({
 	dialog,
 	peer,
-	sessions,
-	reconnecting,
+	actions,
 	onClose,
 }: {
 	dialog: MenuDialog | null;
 	peer: string | undefined;
-	sessions: SessionInfo[];
-	reconnecting: boolean;
+	actions: MenuActions;
 	onClose: () => void;
 }) {
-	const { launchAssist, armUpdateReload } = useSessionLaunchContext();
-	const peerRestart = usePeerRestart();
-	const peerUpdate = usePeerUpdate(sessions);
+	const { localRestart, peerRestart, peerUpdate } = actions;
 
 	return (
 		<>
@@ -39,22 +33,23 @@ export function HamburgerMenuDialogs({
 				/>
 			)}
 			{dialog === "restart" && !peer && (
-				<RestartConfirmDialog reconnecting={reconnecting} onClose={onClose} />
+				<RestartConfirmDialog
+					pending={localRestart.pending}
+					onRestart={() => void localRestart.restart()}
+					onClose={onClose}
+				/>
 			)}
 			{dialog === "update" && (
 				<UpdateAssistConfirmDialog
 					peer={peer}
-					onConfirm={() => {
-						if (peer) {
-							peerUpdate.update(peer);
-							return;
-						}
-						armUpdateReload();
-						launchAssist(["update"]);
-					}}
+					onConfirm={actions.update}
 					onClose={onClose}
 				/>
 			)}
+			<ErrorSnackbar
+				error={localRestart.error}
+				onClose={localRestart.clearError}
+			/>
 			<PeerSnackbars notices={peerRestart} />
 			<PeerSnackbars notices={peerUpdate} />
 		</>

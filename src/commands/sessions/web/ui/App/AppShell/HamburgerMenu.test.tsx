@@ -329,6 +329,38 @@ describe("HamburgerMenu", () => {
 		expect(armUpdateReload).not.toHaveBeenCalled();
 	});
 
+	it("restarts without a confirm on Shift-click", () => {
+		renderMenu(vi.fn());
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		const item = screen.getByText("Restart daemon").closest("li");
+		expect(item?.getAttribute("title")).toBe(
+			"Restart daemon (Shift skips confirmation)",
+		);
+		fireEvent.click(item as HTMLElement, { shiftKey: true });
+
+		expect(screen.queryByRole("button", { name: "Restart" })).toBeNull();
+		expect(fetchMock).toHaveBeenCalledWith(
+			"/api/restart?target=both",
+			expect.objectContaining({ method: "POST" }),
+		);
+	});
+
+	it("updates a peer once without a confirm on Shift+Enter", () => {
+		const launchAssist = vi.fn();
+		renderMenu(launchAssist, () => {}, "win");
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		const item = screen.getByText("Update assist on win").closest("li");
+		fireEvent.keyDown(item as HTMLElement, { key: "Enter", shiftKey: true });
+
+		expect(screen.queryByText("Update assist on win?")).toBeNull();
+		expect(launchAssist).toHaveBeenCalledTimes(1);
+		expect(launchAssist).toHaveBeenCalledWith(["update"], undefined, {
+			node: "win",
+		});
+	});
+
 	it("does not restart when the restart is cancelled", () => {
 		renderMenu(vi.fn());
 

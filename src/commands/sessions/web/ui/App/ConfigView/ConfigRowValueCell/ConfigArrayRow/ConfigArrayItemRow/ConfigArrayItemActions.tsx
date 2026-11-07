@@ -1,11 +1,10 @@
-import { useState } from "react";
 import type { ConfigNode } from "../../../../../../../../../shared/ConfigNode";
 import type { ConfigEntry } from "../../../../../../../../config/readConfigEntries";
 import { ConfigArrayItemRemoveDialog } from "./ConfigArrayItemActions/ConfigArrayItemRemoveDialog";
-import { configArrayItemActionTitles } from "./ConfigArrayItemActions/configArrayItemActionTitles";
+import { configArrayItemActionState } from "./ConfigArrayItemActions/configArrayItemActionState";
 import { ConfigEntryActions } from "../../ConfigEntryActions";
-import { configEntrySummary } from "../../configEntrySummary";
 import type { useConfigArrayRowEditor } from "../useConfigArrayRowEditor";
+import { useShiftSkipConfirm } from "../../../../../useShiftSkipConfirm";
 
 type Props = {
 	entry: ConfigEntry;
@@ -15,20 +14,11 @@ type Props = {
 };
 
 export function ConfigArrayItemActions({ entry, node, index, editor }: Props) {
-	const [confirming, setConfirming] = useState(false);
-	const label = `${entry.key}[${index}]`;
-	const ownerScope = editor.itemAt(index)?.owner?.scope;
-	const canMoveUp = editor.canMove(index, -1);
-	const canMoveDown = editor.canMove(index, 1);
-	const titles = configArrayItemActionTitles({
-		label,
-		summary: configEntrySummary(node, editor.valueOf(index)),
-		ownerScope,
-		repoKey: entry.repoKey,
-		globalConfigFile: entry.globalConfigFile,
-		canMoveUp,
-		canMoveDown,
-	});
+	const remove = () => void editor.remove(index);
+	const { confirming, close, triggerHandlers, withHint } =
+		useShiftSkipConfirm(remove);
+	const { label, canRemove, canMoveUp, canMoveDown, titles } =
+		configArrayItemActionState(entry, node, index, editor);
 
 	return (
 		<>
@@ -36,22 +26,25 @@ export function ConfigArrayItemActions({ entry, node, index, editor }: Props) {
 				label={label}
 				disabled={editor.saving}
 				open={editor.isOpen(index)}
-				titles={titles}
+				titles={
+					canRemove ? { ...titles, remove: withHint(titles.remove) } : titles
+				}
 				canMoveUp={canMoveUp}
 				canMoveDown={canMoveDown}
-				canRemove={ownerScope !== undefined}
+				canRemove={canRemove}
 				onToggle={() => editor.toggle(index)}
 				onDuplicate={() => editor.duplicate(index)}
 				onMoveUp={() => void editor.move(index, -1)}
 				onMoveDown={() => void editor.move(index, 1)}
-				onRemove={() => setConfirming(true)}
+				onRemove={triggerHandlers.onClick}
+				onRemoveKeyDown={triggerHandlers.onKeyDown}
 			/>
 			{confirming && (
 				<ConfigArrayItemRemoveDialog
 					label={label}
 					message={titles.removeConfirm}
-					onConfirm={() => void editor.remove(index)}
-					onCancel={() => setConfirming(false)}
+					onConfirm={remove}
+					onCancel={close}
 				/>
 			)}
 		</>

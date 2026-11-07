@@ -32,12 +32,7 @@ export function CloseItemMenu({
 			</MenuItem>
 			<Divider />
 			{statuses.map((status) => (
-				<CloseStatusMenuItem
-					key={status}
-					status={status}
-					onSelect={onSelect}
-					stop={stop}
-				/>
+				<CloseStatusMenuItem key={status} status={status} onSelect={onSelect} />
 			))}
 		</Menu>
 	);

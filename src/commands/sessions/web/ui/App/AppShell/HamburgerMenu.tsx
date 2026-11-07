@@ -5,6 +5,7 @@ import { HamburgerMenuDialogs } from "./HamburgerMenu/HamburgerMenuDialogs";
 import { MenuTriggerButton } from "./HamburgerMenu/MenuTriggerButton";
 import { useMenuAnchor } from "./HamburgerMenu/useMenuAnchor";
 import { menuItemHandlers } from "./HamburgerMenu/menuItemHandlers";
+import { useMenuActions } from "./HamburgerMenu/useMenuActions";
 import { useMenuDialog } from "./HamburgerMenu/useMenuDialog";
 import { useSelectedPeer } from "./HamburgerMenu/useSelectedPeer";
 import { menuTargetLabels } from "./HamburgerMenu/menuTargetLabels";
@@ -24,6 +25,7 @@ export function HamburgerMenu({
 	const { anchorEl, open, close, openAt, restoreFocus } = useMenuAnchor();
 	const { dialog, showDialog, closeDialog } = useMenuDialog();
 	const peer = useSelectedPeer();
+	const actions = useMenuActions(peer, sessions, reconnecting);
 
 	return (
 		<>
@@ -40,14 +42,13 @@ export function HamburgerMenu({
 				{hamburgerMenuItems({
 					mode,
 					...menuTargetLabels(peer),
-					...menuItemHandlers(close, showDialog, toggle),
+					...menuItemHandlers(close, showDialog, toggle, actions),
 				})}
 			</Menu>
 			<HamburgerMenuDialogs
 				dialog={dialog}
 				peer={peer}
-				sessions={sessions}
-				reconnecting={reconnecting}
+				actions={actions}
 				onClose={closeDialog}
 			/>
 		</>

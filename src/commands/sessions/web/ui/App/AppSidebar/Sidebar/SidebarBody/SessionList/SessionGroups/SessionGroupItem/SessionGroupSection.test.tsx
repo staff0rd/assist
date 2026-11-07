@@ -33,10 +33,10 @@ function renderSection(
 	);
 }
 
+const closeAllName = "Close all sessions in assist (Shift skips confirmation)";
+
 function openCloseDialog() {
-	fireEvent.click(
-		screen.getByRole("button", { name: "Close all sessions in assist" }),
-	);
+	fireEvent.click(screen.getByRole("button", { name: closeAllName }));
 	return screen.getByRole("dialog");
 }
 
@@ -82,6 +82,18 @@ describe("SessionGroupSection", () => {
 		fireEvent.click(within(dialog).getByRole("button", { name: "Close 3" }));
 
 		expect(onDismiss.mock.calls).toEqual([["run"], ["review"], ["fix"]]);
+	});
+
+	it("dismisses every session without a confirm on Shift-click", () => {
+		const onDismiss = vi.fn();
+		renderSection(["run", "review"], onDismiss);
+
+		fireEvent.click(screen.getByRole("button", { name: closeAllName }), {
+			shiftKey: true,
+		});
+
+		expect(screen.queryByRole("dialog")).toBeNull();
+		expect(onDismiss.mock.calls).toEqual([["run"], ["review"]]);
 	});
 
 	it("dismisses nothing when the close is cancelled", () => {

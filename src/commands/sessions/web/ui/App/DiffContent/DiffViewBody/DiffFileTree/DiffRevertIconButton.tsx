@@ -1,7 +1,7 @@
 import UndoOutlined from "@mui/icons-material/UndoOutlined";
 import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
 import { ConfirmDialog } from "../../../../../../../backlog/web/ui/components/ConfirmDialog";
+import { useShiftSkipConfirm } from "../../../../useShiftSkipConfirm";
 
 export function DiffRevertIconButton({
 	label,
@@ -16,18 +16,16 @@ export function DiffRevertIconButton({
 	confirmMessage: string;
 	onConfirm: () => void;
 }) {
-	const [confirming, setConfirming] = useState(false);
+	const { confirming, close, triggerHandlers, withHint } =
+		useShiftSkipConfirm(onConfirm);
 
 	return (
 		<>
 			<IconButton
 				size="small"
 				aria-label={label}
-				title={title}
-				onClick={(event) => {
-					event.stopPropagation();
-					setConfirming(true);
-				}}
+				title={withHint(title)}
+				{...triggerHandlers}
 				sx={{ color: "text.disabled", "&:hover": { color: "error.main" } }}
 			>
 				<UndoOutlined sx={{ fontSize: 16 }} />
@@ -38,10 +36,10 @@ export function DiffRevertIconButton({
 					message={confirmMessage}
 					confirmLabel="Revert"
 					onConfirm={() => {
-						setConfirming(false);
+						close();
 						onConfirm();
 					}}
-					onCancel={() => setConfirming(false)}
+					onCancel={close}
 				/>
 			)}
 		</>

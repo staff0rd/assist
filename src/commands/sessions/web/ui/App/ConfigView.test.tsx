@@ -1340,7 +1340,7 @@ describe("ConfigView", () => {
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
 		).toBe(
-			"Remove worktree.trunk from this repo's assist.yml — falls back to user (node)",
+			"Remove worktree.trunk from this repo's assist.yml — falls back to user (node) (Shift skips confirmation)",
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "user (node)" }));
@@ -1348,7 +1348,7 @@ describe("ConfigView", () => {
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
 		).toBe(
-			"Remove worktree.trunk from ~/.assist.yml (this node only) — falls back to repo (git)",
+			"Remove worktree.trunk from ~/.assist.yml (this node only) — falls back to repo (git) (Shift skips confirmation)",
 		);
 	});
 
@@ -1384,7 +1384,7 @@ describe("ConfigView", () => {
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
 		).toBe(
-			"Remove worktree.trunk from ~/.assist.yml (this node only) — reverts to the schema default",
+			"Remove worktree.trunk from ~/.assist.yml (this node only) — reverts to the schema default (Shift skips confirmation)",
 		);
 
 		fireEvent.click(screen.getByRole("button", { name: "repo (git)" }));
@@ -1458,7 +1458,7 @@ describe("ConfigView", () => {
 		expect(
 			screen.getByRole("button", { name: "Clear" }).getAttribute("title"),
 		).toBe(
-			"Remove worktree.enabled from repos.assist in the shared db (all nodes) — reverts to the schema default",
+			"Remove worktree.enabled from repos.assist in the shared db (all nodes) — reverts to the schema default (Shift skips confirmation)",
 		);
 
 		clearAndConfirm();

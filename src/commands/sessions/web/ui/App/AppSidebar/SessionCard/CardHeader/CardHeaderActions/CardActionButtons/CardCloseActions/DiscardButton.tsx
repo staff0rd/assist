@@ -1,9 +1,9 @@
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import IconButton from "@mui/material/IconButton";
-import { useState } from "react";
 import { ConfirmDialog } from "../../../../../../../../../../backlog/web/ui/components/ConfirmDialog";
 import { StopCardActivation } from "../../../../../../../StopCardActivation";
 import { useServerActionsContext } from "../../../../../../useServerActionsContext";
+import { useShiftSkipConfirm } from "../../../../../../../useShiftSkipConfirm";
 
 export function DiscardButton({
 	id,
@@ -17,7 +17,9 @@ export function DiscardButton({
 	removesTree?: boolean;
 }) {
 	const { onDiscard } = useServerActionsContext();
-	const [confirming, setConfirming] = useState(false);
+	const { confirming, close, triggerHandlers, withHint } = useShiftSkipConfirm(
+		() => onDiscard(id),
+	);
 	const held = reason ? ` (${reason})` : "";
 	const where = path ?? "its working tree";
 
@@ -25,15 +27,12 @@ export function DiscardButton({
 		<>
 			<IconButton
 				size="small"
-				onClick={(e) => {
-					e.stopPropagation();
-					setConfirming(true);
-				}}
-				title={
+				{...triggerHandlers}
+				title={withHint(
 					removesTree
 						? "Discard changes and remove worktree"
-						: "Drop this card and stop tracking its unlanded work"
-				}
+						: "Drop this card and stop tracking its unlanded work",
+				)}
 				sx={{ color: "text.disabled", "&:hover": { color: "error.main" } }}
 			>
 				<DeleteForeverIcon sx={{ fontSize: 16 }} />
@@ -51,10 +50,10 @@ export function DiscardButton({
 						}
 						confirmLabel={removesTree ? "Discard changes" : "Drop card"}
 						onConfirm={() => {
-							setConfirming(false);
+							close();
 							onDiscard(id);
 						}}
-						onCancel={() => setConfirming(false)}
+						onCancel={close}
 					/>
 				</StopCardActivation>
 			)}
