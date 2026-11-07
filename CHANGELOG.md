@@ -1,3 +1,10 @@
+## [0.1082.2](https://github.com/staff0rd/assist/compare/v0.1082.1...v0.1082.2) (2026-11-07)
+
+
+### Bug Fixes
+
+* resume codex wrapper conversations ([8a3a10f](https://github.com/staff0rd/assist/commit/8a3a10f122d6335661d1cf4c1f57d8cbb909e671))
+
 ## [0.1082.1](https://github.com/staff0rd/assist/compare/v0.1082.0...v0.1082.1) (2026-11-07)
 
 
