@@ -3,7 +3,8 @@
 	"plugins": ["typescript", "unicorn", "oxc", "react"],
 	"jsPlugins": [
 		"./oxlint-rules/filenameConvention.ts",
-		"./oxlint-rules/noRawStyleValues.ts"
+		"./oxlint-rules/noRawStyleValues.ts",
+		"./oxlint-rules/requireShiftSkipConfirm.ts"
 	],
 	"categories": {
 		"correctness": "error",
@@ -78,7 +79,24 @@
 				"src/commands/backlog/web/ui/**/*.tsx"
 			],
 			"rules": {
-				"design/no-raw-style-values": "error"
+				"design/no-raw-style-values": "error",
+				"confirm/require-shift-skip-confirm": [
+					"error",
+					{
+						"allow": {
+							"CloneConfirmation.tsx": "opened by a failed launch, not a click",
+							"ServerConflictDialog.tsx": "opened by a port conflict, not a click",
+							"UnsavedChangesPrompt.tsx": "opened by navigating away, not a click",
+							"CloseItemDialog.tsx": "trigger CloseStatusMenuItem holds the hook via useCloseItemFlow",
+							"DismissConfirmDialog.tsx": "trigger DismissButton holds the hook",
+							"MarkDoneConfirmDialog.tsx": "trigger CompleteButton holds the hook",
+							"RestartConfirmDialog.tsx": "trigger ShiftSkipMenuItem holds the Shift-skip",
+							"PeerRestartConfirmDialog.tsx": "trigger ShiftSkipMenuItem holds the Shift-skip",
+							"UpdateAssistConfirmDialog.tsx": "trigger ShiftSkipMenuItem holds the Shift-skip",
+							"ConfigArrayItemRemoveDialog.tsx": "trigger ConfigArrayItemActions holds the hook"
+						}
+					}
+				]
 			}
 		},
 		{

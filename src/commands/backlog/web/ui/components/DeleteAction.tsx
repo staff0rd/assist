@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
-import { useState } from "react";
 import { deleteItem } from "../api";
 import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
+import { useShiftSkipConfirm } from "../../../../sessions/web/ui/useShiftSkipConfirm";
 import { useRepoCwd } from "../useRepoCwd";
 import { ConfirmDialog } from "./ConfirmDialog";
 
@@ -14,23 +14,22 @@ export function DeleteAction({
 }) {
 	const cwd = useRepoCwd();
 	const node = useApiNode();
-	const [confirming, setConfirming] = useState(false);
+	const remove = async () => {
+		await deleteItem(itemId, cwd, node);
+		await onDeleted();
+	};
+	const { confirming, close, triggerHandlers, withHint } = useShiftSkipConfirm(
+		() => void remove(),
+	);
 	return (
 		<>
-			{confirming && (
-				<ConfirmDialog
-					onConfirm={async () => {
-						await deleteItem(itemId, cwd, node);
-						await onDeleted();
-					}}
-					onCancel={() => setConfirming(false)}
-				/>
-			)}
+			{confirming && <ConfirmDialog onConfirm={remove} onCancel={close} />}
 			<Button
 				variant="outlined"
 				color="error"
 				size="small"
-				onClick={() => setConfirming(true)}
+				{...triggerHandlers}
+				title={withHint("Delete item")}
 			>
 				Delete
 			</Button>

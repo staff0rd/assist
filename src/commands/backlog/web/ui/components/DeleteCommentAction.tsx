@@ -1,10 +1,8 @@
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { Alert, IconButton, Snackbar } from "@mui/material";
-import { useState } from "react";
-import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
-import { useRepoCwd } from "../useRepoCwd";
+import { useShiftSkipConfirm } from "../../../../sessions/web/ui/useShiftSkipConfirm";
 import { ConfirmDialog } from "./ConfirmDialog";
-import { deleteComment } from "../deleteComment";
+import { useDeleteComment } from "./useDeleteComment";
 
 const deleteButtonSx = { mt: -0.5, mr: -0.5, color: "text.secondary" } as const;
 
@@ -17,46 +15,41 @@ export function DeleteCommentAction({
 	commentId: number;
 	onDeleted: () => Promise<void>;
 }) {
-	const cwd = useRepoCwd();
-	const node = useApiNode();
-	const [confirming, setConfirming] = useState(false);
-	const [error, setError] = useState<string>();
-	const closeError = () => setError(undefined);
+	const { remove, error, clearError } = useDeleteComment(
+		itemId,
+		commentId,
+		onDeleted,
+	);
+	const { confirming, close, triggerHandlers, withHint } = useShiftSkipConfirm(
+		() => void remove(),
+	);
 	return (
 		<>
 			{confirming && (
 				<ConfirmDialog
 					message="Are you sure you want to delete this comment?"
-					onConfirm={async () => {
-						setConfirming(false);
-						try {
-							await deleteComment(itemId, commentId, cwd, node);
-							await onDeleted();
-						} catch (error) {
-							setError(
-								error instanceof Error
-									? error.message
-									: "Failed to delete comment",
-							);
-						}
+					onConfirm={() => {
+						close();
+						void remove();
 					}}
-					onCancel={() => setConfirming(false)}
+					onCancel={close}
 				/>
 			)}
 			<Snackbar
 				open={error !== undefined}
 				autoHideDuration={6000}
-				onClose={closeError}
+				onClose={clearError}
 			>
-				<Alert severity="error" variant="filled" onClose={closeError}>
+				<Alert severity="error" variant="filled" onClose={clearError}>
 					{error}
 				</Alert>
 			</Snackbar>
 			<IconButton
 				aria-label="Delete comment"
+				title={withHint("Delete comment")}
 				size="small"
 				sx={deleteButtonSx}
-				onClick={() => setConfirming(true)}
+				{...triggerHandlers}
 			>
 				<DeleteOutlinedIcon fontSize="inherit" />
 			</IconButton>
