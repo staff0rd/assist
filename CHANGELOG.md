@@ -1,3 +1,10 @@
+# [0.1079.0](https://github.com/staff0rd/assist/compare/v0.1078.0...v0.1079.0) (2026-11-07)
+
+
+### Features
+
+* name /bug launch in launched notice ([9f69c9f](https://github.com/staff0rd/assist/commit/9f69c9f02f43b4ce7fd695e4719f42a9b8803fa2))
+
 # [0.1078.0](https://github.com/staff0rd/assist/compare/v0.1077.2...v0.1078.0) (2026-11-07)
 
 
