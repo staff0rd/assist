@@ -6,7 +6,6 @@ import { PhoneListNavActions } from "./PhoneListNavActions";
 import { PhoneNavBar } from "./PhoneNavBar";
 import { PhoneNodeChip } from "./PhoneNodeChip";
 import { PhoneSessionGroups } from "./PhoneSessionGroups";
-import { PhoneVersionBanner } from "./PhoneVersionBanner";
 import { PullIndicator } from "./PullIndicator";
 import { usePullToRefresh } from "./usePullToRefresh";
 
@@ -23,7 +22,6 @@ type Props = {
 	reconnecting: boolean;
 	onRefresh: () => void;
 	onOpenNodes?: () => void;
-	onOpenHomeUpdate?: () => void;
 	onNewSession?: () => void;
 };
 
@@ -33,7 +31,6 @@ export function PhoneSessionList({
 	reconnecting,
 	onRefresh,
 	onOpenNodes,
-	onOpenHomeUpdate,
 	onNewSession,
 }: Props) {
 	const bodyRef = useRef<HTMLDivElement | null>(null);
@@ -53,7 +50,6 @@ export function PhoneSessionList({
 				title="Sessions"
 				right={<PhoneListNavActions onNewSession={onNewSession} />}
 			/>
-			<PhoneVersionBanner onOpen={onOpenHomeUpdate} />
 			<Box ref={bodyRef} sx={bodySx}>
 				<PullIndicator pull={pull} refreshing={refreshing} />
 				<PhoneSessionGroups sessions={sessions} localNode={localNode} />

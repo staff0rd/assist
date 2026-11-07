@@ -16,7 +16,7 @@ import { useSessionSocket } from "./useSessionSocket";
 export function PhoneShell() {
 	const socket = useSessionSocket();
 	const viewport = useKeyboardViewport();
-	const sheet = usePhoneNodesSheet(socket.nodes?.local);
+	const sheet = usePhoneNodesSheet();
 	const newSession = useNewSessionSheet();
 	useHealthRecheck(socket.reconnecting);
 	const updates = usePhoneNodeUpdates(
@@ -39,7 +39,6 @@ export function PhoneShell() {
 						socket={socket}
 						keyboardOpen={viewport.keyboardOpen}
 						onOpenNodes={sheet.openList}
-						onOpenHomeUpdate={sheet.openHomeUpdate}
 						onNewSession={newSession.show}
 					/>
 				</PhoneActionsLayer>
