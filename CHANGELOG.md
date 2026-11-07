@@ -1,3 +1,19 @@
+# [0.1078.0](https://github.com/staff0rd/assist/compare/v0.1077.2...v0.1078.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* carry check note through dismissal ([af0d4a0](https://github.com/staff0rd/assist/commit/af0d4a019c0c1da551af4608ae5f3628e4f534d8))
+* keep session on node change ([c04e973](https://github.com/staff0rd/assist/commit/c04e9732e532afec142e7b1f2f23e1db3d0894d4))
+* persist and restore errored sessions ([5712f32](https://github.com/staff0rd/assist/commit/5712f3210cf6bd1a47cde417f91c0521147d50d1))
+* watch report lists pulled commits ([58a2776](https://github.com/staff0rd/assist/commit/58a2776def7105c5b1e7e97c6a564ec496a69821))
+
+
+### Features
+
+* bug button on recent failures ([9aa7447](https://github.com/staff0rd/assist/commit/9aa74473a287e9deb3db44016dc2407b7c0d14de))
+* Shift-click skips Restart confirm ([ec2cc1a](https://github.com/staff0rd/assist/commit/ec2cc1a0da135ef7714d5ac7dfd093265c99d723))
+
 ## [0.1077.2](https://github.com/staff0rd/assist/compare/v0.1077.1...v0.1077.2) (2026-11-07)
 
 
