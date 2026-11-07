@@ -8,13 +8,16 @@ import {
 	clientFailuresPanelSx,
 } from "./clientFailuresBadgeSx";
 import { describeClientFailure } from "./describeClientFailure";
+import { FailureBugButton } from "./FailureBugButton";
 
 export function ClientFailuresPanel({
 	failures,
 	onClear,
+	onLaunched,
 }: {
 	failures: ClientFailure[];
 	onClear: () => void;
+	onLaunched: () => void;
 }) {
 	return (
 		<Box sx={clientFailuresPanelSx} role="region" aria-label="Recent failures">
@@ -37,6 +40,7 @@ export function ClientFailuresPanel({
 								{row.outcome}
 							</span>
 							<span className="duration">{row.duration}</span>
+							<FailureBugButton failure={failure} onLaunched={onLaunched} />
 						</Fragment>
 					);
 				})}

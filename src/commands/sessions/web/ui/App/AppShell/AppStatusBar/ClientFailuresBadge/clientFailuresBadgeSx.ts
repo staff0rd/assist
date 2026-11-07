@@ -36,13 +36,14 @@ export const clientFailuresHeaderSx = {
 export const clientFailuresListSx = {
 	overflow: "auto",
 	display: "grid",
-	gridTemplateColumns: "auto auto minmax(0, 2fr) auto minmax(0, 1.5fr) auto",
+	gridTemplateColumns:
+		"auto auto minmax(0, 2fr) auto minmax(0, 1.5fr) auto auto",
 	gridAutoRows: "max-content",
 	columnGap: 1.5,
 	rowGap: 0.5,
 	px: 1.5,
 	py: 1,
-	alignItems: "baseline",
+	alignItems: "center",
 	"& > span": {
 		overflow: "hidden",
 		textOverflow: "ellipsis",

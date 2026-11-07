@@ -38,6 +38,7 @@ export function ClientFailuresBadge() {
 						clearClientFailures();
 						setAnchorEl(null);
 					}}
+					onLaunched={() => setAnchorEl(null)}
 				/>
 			</Popover>
 		</>
