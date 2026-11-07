@@ -49,7 +49,10 @@ export function savePersistedSessions(sessions: PersistedSession[]): void {
 export function persistLiveSessions(sessions: Map<string, Session>): void {
 	const live = [...sessions.values()].filter(
 		(s) =>
-			(s.pty || s.status === "stopped" || (s.awaitingSeed && s.pendingStart)) &&
+			(s.pty ||
+				s.status === "stopped" ||
+				s.status === "error" ||
+				(s.awaitingSeed && s.pendingStart)) &&
 			s.status !== "done",
 	);
 	savePersistedSessions(live.map(toPersistedSession));

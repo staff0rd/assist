@@ -20,6 +20,8 @@ export function errorSession(
 		pty: null,
 		runName: persisted.runName,
 		runArgs: persisted.runArgs,
+		claudeSessionId: persisted.claudeSessionId,
+		activity: persisted.activity,
 		error,
 		restored: false,
 	};

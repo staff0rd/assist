@@ -1,6 +1,7 @@
 import { assistResumeArgs } from "./assistResumeArgs";
 import type { Session } from "./createSession";
 import { deriveRestoreStatus } from "./deriveRestoreStatus";
+import { errorSession } from "./errorSession";
 import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { relaunchHeldSession } from "./relaunchHeldSession";
@@ -26,6 +27,13 @@ export function restoreSession(
 	const base = restoreBase(id, persisted);
 
 	if (persisted.status === "stopped") return stoppedSession(base, persisted);
+
+	if (persisted.status === "error")
+		return errorSession(
+			id,
+			persisted,
+			persisted.error ?? "Session exited with an error",
+		);
 
 	if (isUpdate(persisted)) return updatedSession(id, persisted);
 

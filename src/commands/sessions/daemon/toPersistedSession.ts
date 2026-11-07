@@ -11,6 +11,7 @@ export function toPersistedSession(session: Session): PersistedSession {
 		commandType: session.commandType,
 		harness: session.harness,
 		status: session.status,
+		error: session.error,
 		cwd: session.cwd ?? process.cwd(),
 		startedAt: session.startedAt,
 		runningMs: accumulatedRunningMs(session),

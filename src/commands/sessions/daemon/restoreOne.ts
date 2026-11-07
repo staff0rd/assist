@@ -18,7 +18,11 @@ export function restoreOne(
 ): string | undefined {
 	try {
 		const id = spawner.spawn((sid) => restoreSession(sid, persisted));
-		logUnresumable(persisted.name, id, sessions.get(id));
+		if (persisted.status === "error")
+			daemonLog(
+				`restored errored session "${persisted.name}" (id ${id}) as its error card; restart resumes ${persisted.claudeSessionId ?? persisted.harnessSessionId ?? "fresh"}`,
+			);
+		else logUnresumable(persisted.name, id, sessions.get(id));
 		return id;
 	} catch (error) {
 		const reason = logRestoreError(persisted, error);
