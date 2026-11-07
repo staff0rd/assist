@@ -30,24 +30,21 @@ function respond(responses: Record<string, string>): void {
 	});
 }
 
-const logArgs = "log -10 --pretty=format:%H%x09%h%x09%ar%x09%s";
+const pretty = "--pretty=format:%H%x09%h%x09%ar%x09%s";
+const logArgs = `log -10 ${pretty}`;
+const rangeArgs = `log ccc3333..HEAD ${pretty}`;
 
 beforeEach(() => {
 	vi.clearAllMocks();
 });
 
 describe("buildWatchReport", () => {
-	it("renders the version, the commit table and the commits new since --from", () => {
+	it("lists only the commits pulled since --from, newest first", () => {
 		respond({
 			"rev-parse --show-toplevel": "/repo",
-			[logArgs]: [
+			[rangeArgs]: [
 				logLine("aaa1111", "2 minutes ago", "feat: newest"),
 				logLine("bbb2222", "1 hour ago", "fix: middle"),
-				logLine("ccc3333", "3 days ago", "chore: oldest"),
-			].join("\n"),
-			"rev-list ccc3333..HEAD": [
-				"aaa1111".padEnd(40, "0"),
-				"bbb2222".padEnd(40, "0"),
 			].join("\n"),
 			"diff --name-only ccc3333..HEAD": "README.md",
 		});
@@ -56,19 +53,48 @@ describe("buildWatchReport", () => {
 
 		expect(report).toContain("**Version** 0.488.2");
 		expect(report).toContain(
-			"| `aaa1111` | 2 minutes ago | feat: newest ← new |",
+			[
+				"| `aaa1111` | 2 minutes ago | feat: newest |",
+				"| `bbb2222` | 1 hour ago | fix: middle |",
+			].join("\n"),
 		);
-		expect(report).toContain("| `bbb2222` | 1 hour ago | fix: middle ← new |");
-		expect(report).toContain("| `ccc3333` | 3 days ago | chore: oldest |");
+		expect(report).not.toContain("ccc3333");
+		expect(report).not.toContain("← new");
 		expect(report).toContain("- none needed");
 		expect(report).toContain("- not needed");
+	});
+
+	it("lists every pulled commit when the pull brings in more than 10", () => {
+		const shas = Array.from({ length: 15 }, (_, index) => `sha${index}`);
+		respond({
+			"rev-parse --show-toplevel": "/repo",
+			[rangeArgs]: shas
+				.map((sha) => logLine(sha, "just now", `feat: ${sha}`))
+				.join("\n"),
+			"diff --name-only ccc3333..HEAD": "README.md",
+		});
+
+		const report = buildWatchReport("ccc3333");
+
+		for (const sha of shas) {
+			expect(report).toContain(`| \`${sha}\` | just now | feat: ${sha} |`);
+		}
+	});
+
+	it("says no new commits when --from is already HEAD", () => {
+		respond({
+			"rev-parse --show-toplevel": "/repo",
+			[rangeArgs]: "",
+			"diff --name-only ccc3333..HEAD": "",
+		});
+
+		expect(buildWatchReport("ccc3333")).toContain("_no new commits_");
 	});
 
 	it("derives the restart advice from the files changed since --from", () => {
 		respond({
 			"rev-parse --show-toplevel": "/repo",
-			[logArgs]: logLine("aaa1111", "just now", "feat: ui and daemon"),
-			"rev-list ccc3333..HEAD": "aaa1111".padEnd(40, "0"),
+			[rangeArgs]: logLine("aaa1111", "just now", "feat: ui and daemon"),
 			"diff --name-only ccc3333..HEAD": [
 				"src/commands/sessions/web/ui/App.tsx",
 				"src/commands/sessions/daemon/lifecycleHandlers.ts",
@@ -86,8 +112,11 @@ describe("buildWatchReport", () => {
 	it("derives the sync advice from the files changed since --from", () => {
 		respond({
 			"rev-parse --show-toplevel": "/repo",
-			[logArgs]: logLine("aaa1111", "just now", "feat: commands and settings"),
-			"rev-list ccc3333..HEAD": "aaa1111".padEnd(40, "0"),
+			[rangeArgs]: logLine(
+				"aaa1111",
+				"just now",
+				"feat: commands and settings",
+			),
 			"diff --name-only ccc3333..HEAD": [
 				"claude/commands/watch.md",
 				"claude/settings.json",
@@ -100,7 +129,7 @@ describe("buildWatchReport", () => {
 		expect(report).toContain("- claude/settings.json changed");
 	});
 
-	it("marks nothing new and asks git for no range when --from is omitted", () => {
+	it("lists the last 10 commits and asks git for no range when --from is omitted", () => {
 		respond({
 			"rev-parse --show-toplevel": "/repo",
 			[logArgs]: logLine("aaa1111", "2 minutes ago", "feat: newest"),
@@ -108,12 +137,12 @@ describe("buildWatchReport", () => {
 
 		const report = buildWatchReport();
 
-		expect(report).not.toContain("← new");
+		expect(report).toContain("| `aaa1111` | 2 minutes ago | feat: newest |");
 		expect(report).toContain("- none needed");
 		expect(report).toContain("- not needed");
 		expect(
 			mockExecFileSync.mock.calls.map((call) => (call[1] as string[])[0]),
-		).not.toContain("rev-list");
+		).not.toContain("diff");
 	});
 
 	it("falls back to an unknown version when package.json cannot be read", () => {

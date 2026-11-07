@@ -1,9 +1,13 @@
 import type { CommitEntry } from "./CommitEntry";
 import { runGit } from "./resolveUpstream";
 
-export function readRecentCommits(count = 10, cwd?: string): CommitEntry[] {
+export function readRecentCommits(from?: string, cwd?: string): CommitEntry[] {
 	const output = runGit(
-		["log", `-${count}`, "--pretty=format:%H%x09%h%x09%ar%x09%s"],
+		[
+			"log",
+			from ? `${from}..HEAD` : "-10",
+			"--pretty=format:%H%x09%h%x09%ar%x09%s",
+		],
 		cwd,
 	);
 

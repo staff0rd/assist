@@ -15,29 +15,25 @@ const commits = [
 	commit("ccc3333", "3 days ago", "chore: oldest"),
 ];
 
+const render = (
+	overrides: Partial<Parameters<typeof renderWatchReport>[0]> = {},
+): string =>
+	renderWatchReport({
+		version: "0.488.2",
+		commits,
+		pulled: false,
+		restarts: [],
+		syncs: [],
+		...overrides,
+	});
+
 describe("renderWatchReport", () => {
 	it("leads with the built version", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [],
-			restarts: [],
-			syncs: [],
-		});
-
-		expect(report.split("\n")[0]).toBe("**Version** 0.488.2");
+		expect(render().split("\n")[0]).toBe("**Version** 0.488.2");
 	});
 
 	it("renders the commits newest-first as a SHA/When/Subject table", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [],
-			restarts: [],
-			syncs: [],
-		});
-
-		expect(report).toContain(
+		expect(render()).toContain(
 			[
 				"| SHA | When | Subject |",
 				"| --- | --- | --- |",
@@ -48,29 +44,32 @@ describe("renderWatchReport", () => {
 		);
 	});
 
-	it("marks only the new commits", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [commits[0].sha, commits[1].sha],
-			restarts: [],
-			syncs: [],
-		});
-
-		expect(report).toContain(
-			"| `aaa1111` | 2 minutes ago | feat: newest ← new |",
+	it("lists every pulled commit without a new marker", () => {
+		const many = Array.from({ length: 12 }, (_, index) =>
+			commit(`sha${index}`, `${index} minutes ago`, `feat: change ${index}`),
 		);
-		expect(report).toContain("| `bbb2222` | 1 hour ago | fix: middle ← new |");
-		expect(report).toContain("| `ccc3333` | 3 days ago | chore: oldest |");
+
+		const report = render({ commits: many, pulled: true });
+
+		for (const entry of many) {
+			expect(report).toContain(
+				`| \`${entry.short}\` | ${entry.when} | ${entry.subject} |`,
+			);
+		}
+		expect(report).not.toContain("← new");
+	});
+
+	it("says no new commits when the pull brought none in", () => {
+		const report = render({ commits: [], pulled: true });
+
+		expect(report).toContain("_no new commits_");
+		expect(report).not.toContain("| SHA |");
 	});
 
 	it("escapes pipes in a subject so the table survives", () => {
-		const report = renderWatchReport({
+		const report = render({
 			version: "0.1.0",
 			commits: [commit("ddd4444", "just now", "fix: pipe | in subject")],
-			newShas: [],
-			restarts: [],
-			syncs: [],
 		});
 
 		expect(report).toContain(
@@ -79,15 +78,11 @@ describe("renderWatchReport", () => {
 	});
 
 	it("lists every restart the pull makes necessary", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [],
+		const report = render({
 			restarts: [
 				"restart the web server, then hard-reload the browser tab",
 				"restart the daemon",
 			],
-			syncs: [],
 		});
 
 		expect(report).toContain(
@@ -101,23 +96,11 @@ describe("renderWatchReport", () => {
 	});
 
 	it("says none needed when no restart is required", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [],
-			restarts: [],
-			syncs: [],
-		});
-
-		expect(report).toContain("**Restarts**\n\n- none needed");
+		expect(render()).toContain("**Restarts**\n\n- none needed");
 	});
 
 	it("lists every reason the pull makes a sync necessary", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [],
-			restarts: [],
+		const report = render({
 			syncs: ["claude/commands changed", "claude/settings.json changed"],
 		});
 
@@ -132,22 +115,11 @@ describe("renderWatchReport", () => {
 	});
 
 	it("says not needed when no sync is required", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [],
-			restarts: [],
-			syncs: [],
-		});
-
-		expect(report).toContain("**Sync**\n\n- not needed");
+		expect(render()).toContain("**Sync**\n\n- not needed");
 	});
 
 	it("renders the Sync section after the Restarts section", () => {
-		const report = renderWatchReport({
-			version: "0.488.2",
-			commits,
-			newShas: [],
+		const report = render({
 			restarts: ["restart the daemon"],
 			syncs: ["claude/settings.json changed"],
 		});
@@ -158,13 +130,7 @@ describe("renderWatchReport", () => {
 	});
 
 	it("handles a repository with no commits", () => {
-		const report = renderWatchReport({
-			version: "0.0.0",
-			commits: [],
-			newShas: [],
-			restarts: [],
-			syncs: [],
-		});
+		const report = render({ version: "0.0.0", commits: [] });
 
 		expect(report).toContain("_no commits_");
 		expect(report).not.toContain("| SHA |");
