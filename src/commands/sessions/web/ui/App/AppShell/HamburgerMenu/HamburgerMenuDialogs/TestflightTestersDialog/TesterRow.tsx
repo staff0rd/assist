@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import { listRowHeight } from "../../../../../designSystem/listRowHeight";
 import { statusPillSx } from "../../../../../designSystem/statusPillSx";
 import type {
@@ -40,19 +41,32 @@ export function TesterRow({
 	email,
 	team,
 	testflight,
+	addToGroup,
 }: {
 	email: string;
 	team?: TeamStatus;
 	testflight: TesterState;
+	addToGroup?: { pending: boolean; disabled: boolean; onClick: () => void };
 }) {
 	return (
 		<Box sx={rowSx} data-testid="tester-row">
 			<Box component="span" sx={emailSx} title={email}>
 				{email}
 			</Box>
-			<Box sx={{ display: "flex", gap: 1 }}>
+			<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 				{team && <StatusPill {...testerPills.team[team]} />}
 				<StatusPill {...testerPills.testflight[testflight]} />
+				{addToGroup && (
+					<Button
+						variant="outlined"
+						size="small"
+						onClick={addToGroup.onClick}
+						disabled={addToGroup.disabled}
+						loading={addToGroup.pending}
+					>
+						Add to group
+					</Button>
+				)}
 			</Box>
 		</Box>
 	);

@@ -61,6 +61,7 @@ import { selfUpdate } from "./selfUpdate";
 import { revertDiffPaths } from "./revertDiffPaths";
 import { newSessionDefaults } from "./newSessionDefaults";
 import { nodeDoctor } from "./nodeDoctor";
+import { postTestflightTester } from "./postTestflightTester";
 import { setConfig } from "./setConfig";
 import { testflightTesters } from "./testflightTesters";
 import { unsetConfig } from "./unsetConfig";
@@ -142,6 +143,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/config/unset": unsetConfig,
 	"GET /api/review/synthesis": getReviewSynthesis,
 	"GET /api/testflight/testers": testflightTesters,
+	"POST /api/testflight/testers": postTestflightTester,
 	"GET /api/updates": updates,
 	"POST /api/updates/control": updatesControl,
 };

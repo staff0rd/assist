@@ -25,6 +25,14 @@ const testers: TestflightTesters = {
 	],
 };
 
+const withJoined: TestflightTesters = {
+	...testers,
+	internal: [
+		{ email: "jo@x.com", team: "joined", testflight: "not-in-group" },
+		{ email: "alex@x.com", team: "pending", testflight: "not-in-group" },
+	],
+};
+
 let fetchMock: ReturnType<typeof vi.fn>;
 
 function respond(status: number, body: unknown) {
@@ -77,6 +85,108 @@ describe("TestflightTestersDialog", () => {
 		expect(await screen.findAllByText("No testers")).toHaveLength(2);
 		expect(screen.queryByRole("alert")).toBeNull();
 		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it("adds an internal tester, toasts the outcome and refreshes", async () => {
+		respond(200, withJoined);
+		render(<TestflightTestersDialog onClose={() => {}} />);
+		await screen.findByText("com.example.app");
+
+		const add = screen.getByRole("button", { name: "Add" });
+		expect((add as HTMLButtonElement).disabled).toBe(true);
+		fireEvent.change(screen.getByLabelText("Tester email"), {
+			target: { value: " new@x.com " },
+		});
+		fireEvent.click(screen.getByRole("switch", { name: "Internal" }));
+
+		let resolve: (res: Response) => void = () => {};
+		fetchMock.mockReturnValueOnce(
+			new Promise<Response>((r) => {
+				resolve = r;
+			}),
+		);
+		fireEvent.click(add);
+		await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+		const [url, init] = fetchMock.mock.calls[1];
+		expect(String(url)).toContain("/api/testflight/testers");
+		expect(init.method).toBe("POST");
+		expect(JSON.parse(init.body)).toEqual({
+			email: "new@x.com",
+			internal: true,
+		});
+		expect((add as HTMLButtonElement).disabled).toBe(true);
+		expect(
+			(
+				screen.getByRole("button", {
+					name: "Add to group",
+				}) as HTMLButtonElement
+			).disabled,
+		).toBe(true);
+
+		respond(200, testers);
+		resolve(
+			Response.json({
+				result: "invited",
+				message: "Sent new@x.com an App Store Connect team invite.",
+				waiting: false,
+			}),
+		);
+		expect(
+			await screen.findByText(
+				"Sent new@x.com an App Store Connect team invite.",
+			),
+		).toBeTruthy();
+		await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+		expect(fetchMock.mock.calls[2][1]?.method).toBeUndefined();
+		expect(
+			(screen.getByLabelText("Tester email") as HTMLInputElement).value,
+		).toBe("");
+	});
+
+	it("adds a joined member to the internal group from their row", async () => {
+		respond(200, withJoined);
+		render(<TestflightTestersDialog onClose={() => {}} />);
+		await screen.findByText("com.example.app");
+
+		expect(
+			screen.getAllByRole("button", { name: "Add to group" }),
+		).toHaveLength(1);
+		respond(200, {
+			result: "created",
+			message: 'Invited jo@x.com to TestFlight group "testers"',
+			waiting: false,
+		});
+		respond(200, testers);
+		fireEvent.click(screen.getByRole("button", { name: "Add to group" }));
+
+		expect(
+			await screen.findByText('Invited jo@x.com to TestFlight group "testers"'),
+		).toBeTruthy();
+		expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({
+			email: "jo@x.com",
+			internal: true,
+		});
+		await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
+	});
+
+	it("shows an add error and keeps the email", async () => {
+		respond(200, testers);
+		render(<TestflightTestersDialog onClose={() => {}} />);
+		await screen.findByText("com.example.app");
+
+		fireEvent.change(screen.getByLabelText("Tester email"), {
+			target: { value: "new@x.com" },
+		});
+		respond(500, { error: "API key lacks the Admin role" });
+		fireEvent.click(screen.getByRole("button", { name: "Add" }));
+
+		expect(
+			await screen.findByText("API key lacks the Admin role"),
+		).toBeTruthy();
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(
+			(screen.getByLabelText("Tester email") as HTMLInputElement).value,
+		).toBe("new@x.com");
 	});
 
 	it("spins the refresh button while reloading", async () => {

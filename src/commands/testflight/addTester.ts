@@ -8,7 +8,7 @@ import { findBetaGroupId } from "./findBetaGroupId";
 import type { TestflightConfig } from "./readTestflightConfig";
 import { requireInternalGroup } from "./requireInternalGroup";
 
-type AddTesterOptions = AscConnectOptions & { internal?: boolean };
+export type AddTesterOptions = AscConnectOptions & { internal?: boolean };
 
 export async function addTester(
 	config: TestflightConfig,

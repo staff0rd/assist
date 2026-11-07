@@ -1,9 +1,8 @@
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import type { TestflightTesters } from "../../../../../../../../testflight/TestflightTesters";
-import { TesterRow } from "./TesterRow";
-import { TesterSection } from "./TesterSection";
+import type { ComponentProps } from "react";
+import { TesterLists } from "./TesterLists";
 
 const alertSx = {
 	mx: 3,
@@ -12,15 +11,13 @@ const alertSx = {
 	overflowWrap: "anywhere",
 } as const;
 
-export function TestersBody({
-	loading,
-	error,
-	testers,
-}: {
+type Props = Omit<ComponentProps<typeof TesterLists>, "testers"> & {
 	loading: boolean;
 	error?: string;
-	testers?: TestflightTesters;
-}) {
+	testers?: ComponentProps<typeof TesterLists>["testers"];
+};
+
+export function TestersBody({ loading, error, testers, ...lists }: Props) {
 	if (error)
 		return (
 			<Alert severity="error" sx={alertSx}>
@@ -33,26 +30,5 @@ export function TestersBody({
 				{loading && <CircularProgress size={24} aria-label="Loading" />}
 			</Box>
 		);
-	return (
-		<Box sx={{ pb: 2 }}>
-			<TesterSection
-				name="Internal"
-				hint="team members · no beta review"
-				empty={testers.internal.length === 0}
-			>
-				{testers.internal.map((person) => (
-					<TesterRow key={person.email} {...person} />
-				))}
-			</TesterSection>
-			<TesterSection
-				name="External"
-				hint="email only · beta review per version"
-				empty={testers.external.length === 0}
-			>
-				{testers.external.map((tester) => (
-					<TesterRow key={tester.email} {...tester} />
-				))}
-			</TesterSection>
-		</Box>
-	);
+	return <TesterLists testers={testers} {...lists} />;
 }

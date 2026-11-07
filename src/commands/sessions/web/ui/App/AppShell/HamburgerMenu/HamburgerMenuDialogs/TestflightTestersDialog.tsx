@@ -2,8 +2,11 @@ import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { AddNoticeToast } from "./TestflightTestersDialog/AddNoticeToast";
+import { AddTesterForm } from "./TestflightTestersDialog/AddTesterForm";
 import { TestersBody } from "./TestflightTestersDialog/TestersBody";
 import { TestersDialogHeader } from "./TestflightTestersDialog/TestersDialogHeader";
+import { useAddTester } from "./TestflightTestersDialog/useAddTester";
 import { useTestflightTesters } from "./TestflightTestersDialog/useTestflightTesters";
 
 export function TestflightTestersDialog({
@@ -17,6 +20,7 @@ export function TestflightTestersDialog({
 	const narrow = useMediaQuery(theme.breakpoints.down("sm"));
 	const sheet = fullScreen ?? narrow;
 	const { loading, error, testers, refresh } = useTestflightTesters();
+	const { add, pending, notice, clearNotice } = useAddTester(refresh);
 
 	return (
 		<Dialog
@@ -34,9 +38,21 @@ export function TestflightTestersDialog({
 				onRefresh={refresh}
 				onClose={onClose}
 			/>
+			<AddTesterForm
+				sheet={sheet}
+				pending={pending !== undefined}
+				onAdd={add}
+			/>
 			<Box sx={{ flex: 1, overflowY: "auto", pt: 1 }}>
-				<TestersBody loading={loading} error={error} testers={testers} />
+				<TestersBody
+					loading={loading}
+					error={error}
+					testers={testers}
+					pending={pending}
+					onAddToGroup={(email) => void add(email, true)}
+				/>
 			</Box>
+			<AddNoticeToast notice={notice} onClose={clearNotice} />
 		</Dialog>
 	);
 }

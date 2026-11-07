@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { TestflightTesters } from "../../../../../../../../testflight/TestflightTesters";
-import { apiFetch } from "../../../../../apiFetch";
+import { testflightJson } from "./testflightJson";
 
 type TestersState = {
 	loading: boolean;
@@ -8,15 +8,7 @@ type TestersState = {
 	testers?: TestflightTesters;
 };
 
-async function fetchTesters(): Promise<TestflightTesters> {
-	const res = await apiFetch("/api/testflight/testers", {
-		capture: false,
-		timeoutMs: 60_000,
-	});
-	const body = await res.json();
-	if (!res.ok) throw new Error(body.error ?? `Request failed (${res.status})`);
-	return body;
-}
+const fetchTesters = () => testflightJson<TestflightTesters>();
 
 export function useTestflightTesters() {
 	const [state, setState] = useState<TestersState>({ loading: true });
