@@ -17,9 +17,9 @@ assist backlog view <id> 2>&1
 
 Display the output so the user can see the current state.
 
-## Step 2: Ask what to refine
+## Step 2: Wait for the refinement
 
-Ask the user what they want to change or improve about this item. Listen for changes to any of:
+End your turn after showing the item and wait for the user to type what they want to refine. Do not ask what to refine — no question, no `assist ask-question` form, no AskUserQuestion prompt — because the user always has to state the refinement and the terminal prompt is already where they do it. Their message may ask for changes to any of:
 
 - **Name** or **description**
 - **Type** (story / bug)
@@ -28,7 +28,7 @@ Ask the user what they want to change or improve about this item. Listen for cha
 - **External tracker** (a Jira key/URL or a GitHub issue reference to associate)
 - **General feedback** that should be captured as a comment
 
-Ask one focused question at a time. Wait for the user's response before continuing.
+Once they have said what to refine, ask follow-up clarifying questions as needed, one focused question at a time, waiting for the user's response before continuing.
 
 ## Step 3: Apply changes
 
