@@ -11,9 +11,10 @@ export function reportPhaseActivity(
 	phase: PlanPhase,
 	claudeSessionId: string,
 	harness?: HarnessKind,
+	resumeSessionId?: string,
 ): void {
 	emitActivity({
 		...backlogPhaseActivity(item, phaseNumber, totalPhases, phase.name),
-		...harnessActivityFields(harness, claudeSessionId),
+		...harnessActivityFields(harness, claudeSessionId, resumeSessionId),
 	});
 }

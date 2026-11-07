@@ -114,15 +114,28 @@ describe("executePhase", () => {
 		);
 	});
 
-	it("rejects Codex resume until conversation resume is supported", async () => {
-		await expect(
-			executePhase(makeBacklogItem({ id: 7 }), 0, phases, {
-				harness: "codex",
-				resumeSessionId: "sess-9",
-			}),
-		).rejects.toThrow("Codex backlog sessions cannot be resumed yet");
+	it("resumes a Codex conversation and reports it as the harness session", async () => {
+		await executePhase(makeBacklogItem({ id: 7 }), 0, phases, {
+			harness: "codex",
+			resumeSessionId: "codex-9",
+		});
 
-		expect(mockSpawnHarness).not.toHaveBeenCalled();
+		expect(mockVerifyResumeConversation).toHaveBeenCalledWith(
+			7,
+			"codex-9",
+			"phase 1/1",
+			"codex",
+		);
+		expect(mockSpawnHarness).toHaveBeenCalledWith("codex", "RESUME_PROMPT", {
+			resumeSessionId: "codex-9",
+			cwd: process.cwd(),
+		});
+		expect(mockEmitActivity).toHaveBeenCalledWith(
+			expect.objectContaining({
+				harness: "codex",
+				harnessSessionId: "codex-9",
+			}),
+		);
 	});
 
 	it("records the phase->session mapping on a fresh launch", async () => {

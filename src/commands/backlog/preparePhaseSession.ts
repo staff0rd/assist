@@ -18,7 +18,12 @@ export async function preparePhaseSession(
 	const claudeSessionId = resumeSessionId ?? randomUUID();
 	if (
 		resumeSessionId &&
-		!(await verifyPhaseResume(item.id, resumeSessionId, phaseLabel))
+		!(await verifyPhaseResume(
+			item.id,
+			resumeSessionId,
+			phaseLabel,
+			spawnOptions?.harness,
+		))
 	) {
 		return undefined;
 	}
@@ -29,6 +34,7 @@ export async function preparePhaseSession(
 		phase,
 		claudeSessionId,
 		spawnOptions?.harness,
+		resumeSessionId,
 	);
 	if (!resumeSessionId) {
 		await persistPhaseSessionId(item.id, phaseIndex, claudeSessionId);

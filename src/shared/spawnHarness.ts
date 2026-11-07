@@ -20,6 +20,7 @@ export function spawnHarness(
 		return spawnCodex(prompt, {
 			cwd: options.cwd,
 			sandbox: options.allowEdits === false ? "read-only" : "workspace-write",
+			resumeSessionId: options.resumeSessionId,
 		});
 	}
 	if (harness === "pi") {

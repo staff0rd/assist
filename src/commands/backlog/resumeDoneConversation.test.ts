@@ -8,14 +8,14 @@ import {
 } from "vitest";
 import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 
-vi.mock("../../shared/spawnClaude", () => ({
-	spawnClaude: vi.fn(),
+vi.mock("../../shared/spawnHarness", () => ({
+	spawnHarness: vi.fn(),
 }));
 
-import { spawnClaude } from "../../shared/spawnClaude";
+import { spawnHarness } from "../../shared/spawnHarness";
 import { resumeDoneConversation } from "./resumeDoneConversation";
 
-const mockSpawnClaude = spawnClaude as unknown as MockInstance;
+const mockSpawnHarness = spawnHarness as unknown as MockInstance;
 
 describe("resumeDoneConversation", () => {
 	beforeEach(() => {
@@ -24,7 +24,7 @@ describe("resumeDoneConversation", () => {
 	});
 
 	it("resumes the Claude session without a nudge prompt", async () => {
-		mockSpawnClaude.mockReturnValue({ done: Promise.resolve(0) });
+		mockSpawnHarness.mockReturnValue({ done: Promise.resolve(0) });
 		const item = makeBacklogItem({ status: "done" });
 
 		const result = await resumeDoneConversation(
@@ -33,14 +33,31 @@ describe("resumeDoneConversation", () => {
 		);
 
 		expect(result).toBe(true);
-		expect(mockSpawnClaude).toHaveBeenCalledWith("", {
+		expect(mockSpawnHarness).toHaveBeenCalledWith("claude", "", {
 			allowEdits: false,
 			resumeSessionId: "sess-1",
+			cwd: process.cwd(),
+		});
+	});
+
+	it("resumes a Codex conversation with the Codex harness", async () => {
+		mockSpawnHarness.mockReturnValue({ done: Promise.resolve(0) });
+		const item = makeBacklogItem({ status: "done" });
+
+		await resumeDoneConversation(
+			{ kind: "resume-done", item, resumeSessionId: "codex-1" },
+			{ harness: "codex" },
+		);
+
+		expect(mockSpawnHarness).toHaveBeenCalledWith("codex", "", {
+			allowEdits: true,
+			resumeSessionId: "codex-1",
+			cwd: process.cwd(),
 		});
 	});
 
 	it("returns false when Claude exits non-zero", async () => {
-		mockSpawnClaude.mockReturnValue({ done: Promise.resolve(1) });
+		mockSpawnHarness.mockReturnValue({ done: Promise.resolve(1) });
 		const item = makeBacklogItem({ status: "done" });
 
 		const result = await resumeDoneConversation({

@@ -1,12 +1,12 @@
-import { resolveHarness } from "../../../shared/harnessLabel";
 import { assistResumeArgs } from "./assistResumeArgs";
 import type { Session } from "./createSession";
 import { interactiveHarnessRespawn } from "./interactiveHarnessRespawn";
 import type { RespawnPlan } from "./interactiveRespawnPlan";
+import { resumableConversationId } from "./resumableConversationId";
 import { spawnPty } from "./spawnPty";
 
 export function respawnPlan(session: Session): RespawnPlan | null {
-	const { commandType, claudeSessionId, cwd, assistArgs } = session;
+	const { commandType, cwd, assistArgs } = session;
 	if (commandType === "claude") return interactiveHarnessRespawn(session);
 	if (commandType === "assist" && assistArgs) {
 		const idle = session.status === "waiting";
@@ -15,10 +15,7 @@ export function respawnPlan(session: Session): RespawnPlan | null {
 				spawnPty(
 					assistResumeArgs({
 						assistArgs,
-						claudeSessionId:
-							resolveHarness(session.harness) === "claude"
-								? claudeSessionId
-								: undefined,
+						resumeSessionId: resumableConversationId(session),
 					}),
 					cwd,
 					session.id,

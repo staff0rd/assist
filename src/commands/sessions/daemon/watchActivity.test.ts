@@ -23,11 +23,15 @@ vi.mock("../../../shared/emitActivity", () => ({
 	reconcileActivity: vi.fn(),
 }));
 
+vi.mock("./applyCodexLaunch", () => ({ applyCodexLaunch: vi.fn() }));
+
 import { existsSync, watch } from "node:fs";
+import { applyCodexLaunch } from "./applyCodexLaunch";
 import { readActivity, reconcileActivity } from "../../../shared/emitActivity";
 import { refreshActivity, watchActivity } from "./watchActivity";
 
 const mockWatch = vi.mocked(watch);
+const mockApplyCodexLaunch = vi.mocked(applyCodexLaunch);
 
 beforeEach(() => {
 	vi.mocked(existsSync).mockReturnValue(false);
@@ -176,6 +180,39 @@ describe("watchActivity", () => {
 
 			expect(session.harness).toBe("codex");
 			expect(session.claudeSessionId).toBeUndefined();
+		});
+
+		it("applies a new codex launch to the session's conversation binding", () => {
+			const activity = {
+				kind: "command" as const,
+				harness: "codex" as const,
+				harnessSessionId: "codex-conv",
+				startedAt: 5,
+			};
+			mockReadActivity.mockReturnValue(activity);
+			const session = makeSession(assistSession);
+
+			triggerRead(session);
+
+			expect(mockApplyCodexLaunch).toHaveBeenCalledWith(
+				session,
+				activity,
+				expect.any(Function),
+			);
+		});
+
+		it("leaves the binding alone when re-reading the restored launch's activity", () => {
+			const activity = {
+				kind: "command" as const,
+				harness: "codex" as const,
+				startedAt: 5,
+			};
+			mockReadActivity.mockReturnValue(activity);
+			const session = makeSession({ ...assistSession, activity });
+
+			triggerRead(session);
+
+			expect(mockApplyCodexLaunch).not.toHaveBeenCalled();
 		});
 	});
 

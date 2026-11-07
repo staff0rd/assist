@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { isPausePending } from "../../backlog/consumePause";
+import { hasCodexRolloutSync } from "../shared/codex/hasCodexRolloutSync";
 import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreSession } from "./restoreSession";
@@ -18,6 +19,10 @@ vi.mock("./spawnPty", () => ({
 
 vi.mock("../shared/findTranscriptPathSync", () => ({
 	findTranscriptPathSync: vi.fn(() => "/transcripts/found.jsonl"),
+}));
+
+vi.mock("../shared/codex/hasCodexRolloutSync", () => ({
+	hasCodexRolloutSync: vi.fn(() => true),
 }));
 
 vi.mock("../../backlog/consumePause", () => ({
@@ -40,11 +45,15 @@ const spawnClaudeMock = spawnClaude as unknown as ReturnType<typeof vi.fn>;
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 const findTranscriptPathSyncMock =
 	findTranscriptPathSync as unknown as ReturnType<typeof vi.fn>;
+const hasCodexRolloutSyncMock = hasCodexRolloutSync as unknown as ReturnType<
+	typeof vi.fn
+>;
 
 describe("restoreSession", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		findTranscriptPathSyncMock.mockReturnValue("/transcripts/found.jsonl");
+		hasCodexRolloutSyncMock.mockReturnValue(true);
 		isPausePendingMock.mockReturnValue(false);
 	});
 
@@ -237,6 +246,74 @@ describe("restoreSession", () => {
 			undefined,
 		);
 		expect(session.status).toBe("running");
+	});
+
+	const codexRefine = (): PersistedSession => ({
+		name: "repo/assist refine a667",
+		commandType: "assist",
+		harness: "codex",
+		status: "running",
+		cwd: "/home/user/repo",
+		startedAt: 123,
+		harnessSessionId: "codex-conv",
+		assistArgs: ["refine", "--once", "--harness", "codex", "a667"],
+	});
+
+	it("relaunches a codex --once wrapper resuming its bound codex conversation", () => {
+		restoreSession("1", codexRefine());
+
+		expect(hasCodexRolloutSyncMock).toHaveBeenCalledWith("codex-conv");
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"assist",
+				"refine",
+				"--once",
+				"--harness",
+				"codex",
+				"a667",
+				"--resume-session",
+				"codex-conv",
+			],
+			"/home/user/repo",
+			"1",
+			undefined,
+		);
+	});
+
+	it("relaunches a codex backlog run resuming its bound codex conversation", () => {
+		restoreSession("1", {
+			...codexRefine(),
+			assistArgs: ["backlog", "run", "295", "--harness", "codex"],
+		});
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"assist",
+				"backlog",
+				"run",
+				"295",
+				"--harness",
+				"codex",
+				"--resume-session",
+				"codex-conv",
+			],
+			"/home/user/repo",
+			"1",
+			undefined,
+		);
+	});
+
+	it("re-runs a codex --once wrapper from its original prompt when no rollout exists", () => {
+		hasCodexRolloutSyncMock.mockReturnValue(false);
+
+		restoreSession("1", codexRefine());
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "refine", "--once", "--harness", "codex", "a667"],
+			"/home/user/repo",
+			"1",
+			undefined,
+		);
 	});
 
 	it("reopens an idle backlog run as waiting, signalling the wrapper to skip the nudge", () => {

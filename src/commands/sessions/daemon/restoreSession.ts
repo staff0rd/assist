@@ -1,20 +1,12 @@
-import { assistResumeArgs } from "./assistResumeArgs";
 import type { Session } from "./createSession";
 import { deriveRestoreStatus } from "./deriveRestoreStatus";
 import { errorSession } from "./errorSession";
-import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { relaunchHeldSession } from "./relaunchHeldSession";
+import { relaunchWrapperSession } from "./relaunchWrapperSession";
 import { restoreBase } from "./restoreBase";
 import { restoreInteractiveSession } from "./restoreInteractiveSession";
-import { restoreResumePlan } from "./restoreResumePlan";
-import { resumedRunEnv } from "./resumedRunEnv";
-import {
-	runningSession,
-	stoppedSession,
-	waitingSession,
-} from "./runningSession";
-import { spawnPty } from "./spawnPty";
+import { stoppedSession } from "./runningSession";
 import { isUpdate, updatedSession } from "./updatedSession";
 import { needsWrapperRelaunch } from "./needsWrapperRelaunch";
 
@@ -45,25 +37,10 @@ export function restoreSession(
 	 * latest discovered sessionId so the wrapper resumes the interrupted phase's
 	 * conversation instead of restarting it from scratch (#300) — unless no
 	 * transcript was ever written for it, in which case there is nothing to resume
-	 * and the command re-runs from its original prompt (a777). */
-	if (needsWrapperRelaunch(persisted)) {
-		const resumesWrittenConversation = hasTranscriptOnDisk(persisted);
-		const plan = restoreResumePlan(
-			persisted,
-			resumesWrittenConversation ? status : "running",
-		);
-		const pty = spawnPty(
-			resumesWrittenConversation
-				? assistResumeArgs(persisted)
-				: assistResumeArgs({ assistArgs: persisted.assistArgs }),
-			persisted.cwd,
-			id,
-			resumedRunEnv(persisted.activity?.itemId, plan),
-		);
-		return plan.idle
-			? waitingSession(base, persisted, pty)
-			: runningSession(base, persisted, pty);
-	}
+	 * and the command re-runs from its original prompt (a777). A Codex wrapper
+	 * resumes its bound `harnessSessionId` rollout the same way. */
+	if (needsWrapperRelaunch(persisted))
+		return relaunchWrapperSession(id, persisted, base, status);
 
 	return restoreInteractiveSession(id, persisted, base, status);
 }

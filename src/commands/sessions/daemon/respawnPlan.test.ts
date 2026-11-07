@@ -15,7 +15,11 @@ vi.mock("./spawnCodex", () => ({ spawnCodex: vi.fn(() => "codex-pty") }));
 vi.mock("./hasTranscriptOnDisk", () => ({
 	hasTranscriptOnDisk: vi.fn(() => true),
 }));
+vi.mock("../shared/codex/hasCodexRolloutSync", () => ({
+	hasCodexRolloutSync: vi.fn(() => true),
+}));
 
+import { hasCodexRolloutSync } from "../shared/codex/hasCodexRolloutSync";
 import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 import { respawnPlan } from "./respawnPlan";
 import { spawnClaude } from "./spawnClaude";
@@ -26,6 +30,7 @@ const mockSpawnClaude = spawnClaude as unknown as MockInstance;
 const mockSpawnPty = spawnPty as unknown as MockInstance;
 const mockSpawnCodex = spawnCodex as unknown as MockInstance;
 const mockHasTranscriptOnDisk = hasTranscriptOnDisk as unknown as MockInstance;
+const mockHasCodexRolloutSync = hasCodexRolloutSync as unknown as MockInstance;
 
 describe("respawnPlan", () => {
 	beforeEach(() => {
@@ -194,8 +199,58 @@ describe("respawnPlan", () => {
 		});
 	});
 
-	describe("for an assist session on a harness that cannot resume", () => {
-		it("relaunches the command without a claude resume flag", () => {
+	describe("for an assist session on codex", () => {
+		const codexWrapper = () =>
+			makeSession({
+				id: "1",
+				cwd: "/repo",
+				commandType: "assist",
+				harness: "codex",
+				assistArgs: ["refine", "--once", "--harness", "codex", "a279"],
+				claudeSessionId: "stale-conv",
+				harnessSessionId: "codex-conv",
+			});
+
+		it("resumes the bound codex conversation", () => {
+			const plan = respawnPlan(codexWrapper()) as NonNullable<
+				ReturnType<typeof respawnPlan>
+			>;
+			plan.spawn();
+
+			expect(mockHasCodexRolloutSync).toHaveBeenCalledWith("codex-conv");
+			expect(mockSpawnPty).toHaveBeenCalledWith(
+				[
+					"assist",
+					"refine",
+					"--once",
+					"--harness",
+					"codex",
+					"a279",
+					"--resume-session",
+					"codex-conv",
+				],
+				"/repo",
+				"1",
+				undefined,
+			);
+		});
+
+		it("re-runs from the original prompt when no rollout exists", () => {
+			mockHasCodexRolloutSync.mockReturnValueOnce(false);
+			const plan = respawnPlan(codexWrapper()) as NonNullable<
+				ReturnType<typeof respawnPlan>
+			>;
+			plan.spawn();
+
+			expect(mockSpawnPty).toHaveBeenCalledWith(
+				["assist", "refine", "--once", "--harness", "codex", "a279"],
+				"/repo",
+				"1",
+				undefined,
+			);
+		});
+
+		it("relaunches the command without a claude resume flag when unbound", () => {
 			const plan = respawnPlan(
 				makeSession({
 					id: "1",

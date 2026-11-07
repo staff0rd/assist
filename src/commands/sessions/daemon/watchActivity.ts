@@ -7,6 +7,7 @@ import {
 } from "../../../shared/emitActivity";
 import type { Session } from "./createSession";
 import { applyActivityToSession } from "./applyActivityToSession";
+import { applyLaunchActivity } from "./applyLaunchActivity";
 import { applyReviewPause } from "./applyReviewPause";
 import { seedRunningMsFromUsage } from "./seedRunningMsFromUsage";
 
@@ -39,7 +40,7 @@ export function watchActivity(
 		timer = null;
 		const activity = readActivity(path);
 		if (!activity) return;
-		applyActivityToSession(session, activity);
+		applyLaunchActivity(session, activity, notify);
 		/* why: a backlog run reports its current phase's Claude session id here, so
 		 * the daemon persists the latest phase's id and can resume it on restart. */
 		if (activity.claudeSessionId) onClaudeSessionId?.(session);

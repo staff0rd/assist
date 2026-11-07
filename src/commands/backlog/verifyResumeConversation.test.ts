@@ -11,6 +11,10 @@ vi.mock("../sessions/shared/findSessionJsonlPath", () => ({
 	findSessionJsonlPath: vi.fn(),
 }));
 
+vi.mock("../sessions/shared/codex/findCodexRolloutPath", () => ({
+	findCodexRolloutPath: vi.fn(),
+}));
+
 vi.mock("../sessions/daemon/appendDaemonLog", () => ({
 	appendDaemonLog: vi.fn(),
 }));
@@ -24,11 +28,13 @@ vi.mock("./shared", () => ({
 }));
 
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
+import { findCodexRolloutPath } from "../sessions/shared/codex/findCodexRolloutPath";
 import { findSessionJsonlPath } from "../sessions/shared/findSessionJsonlPath";
 import { appendComment } from "./appendComment";
 import { verifyResumeConversation } from "./verifyResumeConversation";
 
 const mockFind = findSessionJsonlPath as unknown as MockInstance;
+const mockFindCodex = findCodexRolloutPath as unknown as MockInstance;
 const mockAppendDaemonLog = appendDaemonLog as unknown as MockInstance;
 const mockAppendComment = appendComment as unknown as MockInstance;
 
@@ -60,6 +66,21 @@ describe("verifyResumeConversation", () => {
 			7,
 			expect.stringContaining("Resume failed"),
 		);
+	});
+
+	it("looks up a Codex rollout for a Codex conversation", async () => {
+		mockFindCodex.mockResolvedValueOnce("/codex/rollout-x-codex-1.jsonl");
+
+		const ok = await verifyResumeConversation(
+			7,
+			"codex-1",
+			"phase 1/3",
+			"codex",
+		);
+
+		expect(ok).toBe(true);
+		expect(mockFindCodex).toHaveBeenCalledWith("codex-1");
+		expect(mockFind).not.toHaveBeenCalled();
 	});
 
 	it("still fails cleanly when the comment write throws", async () => {

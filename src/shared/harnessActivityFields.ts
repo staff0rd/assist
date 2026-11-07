@@ -1,10 +1,20 @@
 import type { HarnessKind } from "./harnesses";
 import { resolveHarness } from "./harnessLabel";
 
+type HarnessActivityFields = {
+	harness?: HarnessKind;
+	claudeSessionId?: string;
+	harnessSessionId?: string;
+};
+
 export function harnessActivityFields(
 	harness: HarnessKind | undefined,
 	claudeSessionId: string,
-): { harness?: HarnessKind; claudeSessionId?: string } {
+	resumeSessionId?: string,
+): HarnessActivityFields {
 	const kind = resolveHarness(harness);
-	return kind === "claude" ? { claudeSessionId } : { harness: kind };
+	if (kind === "claude") return { claudeSessionId };
+	return resumeSessionId
+		? { harness: kind, harnessSessionId: resumeSessionId }
+		: { harness: kind };
 }

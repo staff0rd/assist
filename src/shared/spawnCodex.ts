@@ -11,6 +11,7 @@ export function spawnCodex(
 	options: {
 		cwd?: string;
 		sandbox?: "workspace-write" | "read-only";
+		resumeSessionId?: string;
 	} = {},
 ): SpawnResult {
 	const cwd = options.cwd ?? process.cwd();
@@ -26,7 +27,8 @@ export function spawnCodex(
 			cwd,
 			"--sandbox",
 			options.sandbox ?? "workspace-write",
-			neutralizeCodexSkillMentions(prompt),
+			...(options.resumeSessionId ? ["resume", options.resumeSessionId] : []),
+			...(prompt ? [neutralizeCodexSkillMentions(prompt)] : []),
 		],
 		{ env: override.env },
 	);

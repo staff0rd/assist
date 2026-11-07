@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import { CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
 import { setSessionStatus } from "../sessions/setSessionStatus";
-import { assertCodexResumeSupported } from "./assertCodexResumeSupported";
 import { launchPhaseSession } from "./launchPhaseSession";
 import { recordSignalOwner } from "./recordSignalOwner";
 import { type PhaseOutcome, resolvePhaseResult } from "./resolvePhaseResult";
@@ -25,8 +24,6 @@ export async function executePhase(
 			`\n--- Phase ${phaseNumber}/${totalPhases}: ${phase.name} ---\n`,
 		),
 	);
-
-	assertCodexResumeSupported(spawnOptions);
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	process.env.ASSIST_BACKLOG_ITEM_ID = String(item.id);

@@ -81,6 +81,20 @@ describe("spawnCodex", () => {
 		);
 	});
 
+	it("resumes the given conversation with the prompt", () => {
+		spawnCodex("Continue", { cwd: "/repo", resumeSessionId: "codex-1" });
+
+		const args = spawnInheritMock.mock.calls[0][1] as string[];
+		expect(args.slice(-3)).toEqual(["resume", "codex-1", "Continue"]);
+	});
+
+	it("resumes without a prompt when none is given", () => {
+		spawnCodex("", { cwd: "/repo", resumeSessionId: "codex-1" });
+
+		const args = spawnInheritMock.mock.calls[0][1] as string[];
+		expect(args.slice(-2)).toEqual(["resume", "codex-1"]);
+	});
+
 	it("pins the launching env's session keys into codex's shell env", () => {
 		spawnCodex("Do the thing");
 

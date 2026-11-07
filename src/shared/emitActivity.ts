@@ -14,6 +14,7 @@ export const activitySchema = z.object({
 	phaseName: z.string().optional(),
 	totalPhases: z.number().optional(),
 	claudeSessionId: z.string().optional(),
+	harnessSessionId: z.string().optional(),
 	watchState: z.enum(["waiting", "updating"]).optional(),
 	startedAt: z.number(),
 });

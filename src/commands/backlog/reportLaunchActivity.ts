@@ -6,13 +6,13 @@ export function reportLaunchActivity(
 	slashCommand: string,
 	claudeSessionId: string,
 	harness: HarnessKind,
-	item?: { itemId?: number; itemName?: string },
+	item?: { itemId?: number; itemName?: string; resumeSessionId?: string },
 ): void {
 	emitActivity({
 		kind: "command",
 		name: slashCommand,
 		itemId: item?.itemId,
 		itemName: item?.itemName,
-		...harnessActivityFields(harness, claudeSessionId),
+		...harnessActivityFields(harness, claudeSessionId, item?.resumeSessionId),
 	});
 }

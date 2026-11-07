@@ -61,6 +61,16 @@ describe("spawnHarness", () => {
 		expect(mockSpawnPi).not.toHaveBeenCalled();
 	});
 
+	it("passes the resumed conversation to codex", () => {
+		spawnHarness("codex", "Continue", { cwd: "/repo", resumeSessionId: "c-1" });
+
+		expect(mockSpawnCodex).toHaveBeenCalledWith("Continue", {
+			cwd: "/repo",
+			sandbox: "workspace-write",
+			resumeSessionId: "c-1",
+		});
+	});
+
 	it("maps disabled edits to the Codex read-only sandbox", () => {
 		spawnHarness("codex", "/refine a279", {
 			allowEdits: false,

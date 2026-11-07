@@ -50,13 +50,13 @@ function buildProgram(): Command {
 describe("assistResumeArgs", () => {
 	it("appends the resume flag for a command that declares it", () => {
 		expect(
-			assistResumeArgs({ assistArgs: ["draft"], claudeSessionId: "conv-1" }),
+			assistResumeArgs({ assistArgs: ["draft"], resumeSessionId: "conv-1" }),
 		).toEqual(["assist", "draft", "--resume-session", "conv-1"]);
 	});
 
 	it("omits the resume flag for a command that does not declare it", () => {
 		expect(
-			assistResumeArgs({ assistArgs: ["next"], claudeSessionId: "conv-1" }),
+			assistResumeArgs({ assistArgs: ["next"], resumeSessionId: "conv-1" }),
 		).toEqual(["assist", "next"]);
 	});
 
@@ -64,7 +64,7 @@ describe("assistResumeArgs", () => {
 		expect(
 			assistResumeArgs({
 				assistArgs: ["backlog", "web"],
-				claudeSessionId: "conv-1",
+				resumeSessionId: "conv-1",
 			}),
 		).toEqual(["assist", "backlog", "web"]);
 	});
@@ -81,7 +81,7 @@ describe("assistResumeArgs", () => {
 		(...assistArgs: string[]) => {
 			const [, ...args] = assistResumeArgs({
 				assistArgs,
-				claudeSessionId: "conv-1",
+				resumeSessionId: "conv-1",
 			});
 
 			expect(() => buildProgram().parse(args, { from: "user" })).not.toThrow(
