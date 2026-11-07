@@ -32,7 +32,7 @@ export async function assistOptions(
 }
 
 if (typeof document !== "undefined" && document.querySelector("form")) {
-	attachExtensionVersion();
+	void attachExtensionVersion();
 	void assistOptions();
 	void attachUserScriptsGrant();
 	void attachRecordConsoleToggle();
