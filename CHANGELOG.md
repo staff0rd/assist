@@ -1,3 +1,16 @@
+# [0.1085.0](https://github.com/staff0rd/assist/compare/v0.1084.0...v0.1085.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* hold back lone proxy 502s in polls ([9993d89](https://github.com/staff0rd/assist/commit/9993d8951d9d07eacd9c61a637b6869a632b4cc9))
+* nudge codex sessions after restart ([18d0031](https://github.com/staff0rd/assist/commit/18d003162208970f401751151fef91d95803c173))
+
+
+### Features
+
+* harness-neutral review and guards ([be9cc7e](https://github.com/staff0rd/assist/commit/be9cc7ebc5285021a666b2894389b4a9db0e9e96))
+
 # [0.1084.0](https://github.com/staff0rd/assist/compare/v0.1083.0...v0.1084.0) (2026-11-07)
 
 
