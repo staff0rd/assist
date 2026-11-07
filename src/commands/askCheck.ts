@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { applyCheckBump } from "./askCheck/applyCheckBump";
 import { formatAskCheckAnswer } from "./askCheck/formatAskCheckAnswer";
+import { formatCheckDismissal } from "./askCheck/formatCheckDismissal";
 import { rejectLongCheck } from "./askCheck/rejectLongCheck";
 import { requireCheckSession } from "./askCheck/requireCheckSession";
 import { resolveCheckBump } from "./askCheck/resolveCheckBump";
@@ -40,9 +41,7 @@ export async function askCheck(options: {
 	);
 
 	if (decision.decision === "reject") {
-		console.error(
-			"The user dismissed the manual check without a result. Do not assume it passed; ask in chat if the result is essential.",
-		);
+		console.error(formatCheckDismissal(decision.answers));
 		process.exit(1);
 	}
 	const answers = decision.answers ?? {};

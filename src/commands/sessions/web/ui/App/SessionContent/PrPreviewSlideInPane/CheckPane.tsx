@@ -1,12 +1,12 @@
 import { Box, Divider } from "@mui/material";
 import { useMemo } from "react";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
-import { miroDecisionDetails } from "../miroDecisionDetails";
 import { PrPreviewHeader } from "../PrPreviewHeader";
 import { prPreviewPaneSx } from "../prPreviewPaneSx";
 import { CheckActions } from "./CheckPane/CheckActions";
 import { CheckBody } from "./CheckPane/CheckBody";
 import { checkAnswerDetails } from "./CheckPane/checkAnswerDetails";
+import { checkDismissDetails } from "./CheckPane/checkDismissDetails";
 import { parseCheckPreview } from "./CheckPane/parseCheckPreview";
 import type { PrPreviewPaneProps } from "./PrPreviewPaneProps";
 
@@ -30,7 +30,7 @@ export function CheckPane({
 				onResult={(result, note, phase) =>
 					onDecision("approve", checkAnswerDetails(result, note, phase))
 				}
-				onDismiss={() => onDecision("reject", miroDecisionDetails())}
+				onDismiss={(note) => onDecision("reject", checkDismissDetails(note))}
 			/>
 		</Box>
 	);

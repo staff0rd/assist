@@ -15,7 +15,7 @@ export function CheckActions({
 }: {
 	laterPhases: LaterPhase[];
 	onResult: (result: CheckResult, note: string, phase?: number) => void;
-	onDismiss: () => void;
+	onDismiss: (note: string) => void;
 }) {
 	const [note, setNote] = useState("");
 	const primary = usePreviewPrimaryAction();
@@ -32,7 +32,7 @@ export function CheckActions({
 					justifyContent: "flex-end",
 				}}
 			>
-				<Button variant="tonal" onClick={onDismiss}>
+				<Button variant="tonal" onClick={() => onDismiss(note)}>
 					Dismiss
 				</Button>
 				{laterPhases.length > 0 && (

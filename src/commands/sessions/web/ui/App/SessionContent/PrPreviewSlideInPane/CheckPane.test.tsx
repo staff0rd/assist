@@ -102,6 +102,23 @@ describe("CheckPane", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
 
-		expect(onDecision).toHaveBeenCalledWith("reject", expect.anything());
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			expect.not.objectContaining({ answers: expect.anything() }),
+		);
+	});
+
+	it("sends the typed note with a dismissal", () => {
+		const onDecision = pane();
+
+		fireEvent.change(screen.getByRole("textbox"), {
+			target: { value: "  No Mac to hand " },
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			expect.objectContaining({ answers: { note: "No Mac to hand" } }),
+		);
 	});
 });

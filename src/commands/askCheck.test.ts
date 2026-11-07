@@ -287,5 +287,18 @@ describe("askCheck", () => {
 
 		await expect(askCheck({ json: "-" })).rejects.toThrow("process.exit(1)");
 		expect(errored.join("\n")).toContain("dismissed the manual check");
+		expect(errored.join("\n")).not.toContain("Note:");
+	});
+
+	it("prints the note when the user dismisses the check with one", async () => {
+		stdin(check);
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "reject",
+			answers: { note: "No Mac to hand" },
+		});
+
+		await expect(askCheck({ json: "-" })).rejects.toThrow("process.exit(1)");
+		expect(errored.join("\n")).toContain("dismissed the manual check");
+		expect(errored.join("\n")).toContain("Note: No Mac to hand");
 	});
 });
