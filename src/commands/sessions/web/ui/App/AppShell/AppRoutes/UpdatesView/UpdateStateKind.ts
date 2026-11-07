@@ -5,6 +5,7 @@ export type UpdateStateKind =
 	| "retrying"
 	| "paused"
 	| "off"
+	| "failing"
 	| "loading"
 	| "unavailable";
 

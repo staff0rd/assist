@@ -2,6 +2,7 @@ import type { Socket } from "node:net";
 import { createInterface } from "node:readline";
 import { connectToDaemon } from "../daemon/connectToDaemon";
 import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
+import { reExecWebServer } from "./restartMenu/reExecWebServer";
 
 const RECONNECT_MS = 3_000;
 
@@ -19,7 +20,7 @@ async function connect(): Promise<void> {
 		const socket = await connectToDaemon();
 		wire(socket);
 		socket.write(
-			`${JSON.stringify({ type: "subscribe-logs", replay: false })}\n`,
+			`${JSON.stringify({ type: "subscribe-logs", replay: false, webServer: true })}\n`,
 		);
 	} catch {
 		scheduleReconnect();
@@ -41,6 +42,10 @@ function emit(line: string): void {
 		const data = JSON.parse(line);
 		if (data.type === "log" && typeof data.line === "string")
 			console.log(data.line);
+		if (data.type === "restart-webserver") {
+			console.log("restart webserver requested by the daemon");
+			reExecWebServer();
+		}
 	} catch {}
 }
 

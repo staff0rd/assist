@@ -18,6 +18,7 @@ const kindTone = {
 	retrying: "warn",
 	paused: "off",
 	off: "off",
+	failing: "error",
 	loading: "off",
 	unavailable: "error",
 } as const;

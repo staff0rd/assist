@@ -11,7 +11,13 @@ const monoSx = {
 } as const;
 
 export function Versions({ entry }: { entry: NodeUpdateEntry }) {
-	const status = entry.status;
+	const daemon = entry.webFailing?.daemon;
+	const status =
+		entry.status ??
+		(daemon && {
+			running: daemon.version,
+			built: daemon.built ?? daemon.version,
+		});
 	if (!status)
 		return (
 			<Typography variant="caption" color="text.secondary" sx={wideCellSx}>

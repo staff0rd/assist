@@ -4,6 +4,7 @@ import type { NodeUpdateEntry } from "../../../NodeUpdateEntry";
 import { AutoRestartSwitch } from "./AutoRestartSwitch";
 import { OpenFixButton } from "./OpenFixButton";
 import { RestartNodeButton } from "./RestartNodeButton";
+import { RestartWebButton } from "./RestartWebButton";
 import type { UpdateState } from "../UpdateStateKind";
 import type { UpdateActions } from "../useUpdateActions";
 import { canControl } from "../canControl";
@@ -32,6 +33,9 @@ export function RowActions({
 			<AutoRestartSwitch entry={entry} actions={actions} />
 			{state.kind === "ready" && (
 				<RestartNodeButton entry={entry} actions={actions} />
+			)}
+			{state.kind === "failing" && (
+				<RestartWebButton entry={entry} actions={actions} />
 			)}
 			{state.kind === "diverged" && (
 				<OpenFixButton entry={entry} actions={actions} />

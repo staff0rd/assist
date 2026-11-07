@@ -7,12 +7,14 @@ import { useActivateSession } from "../../../../useActivateSession";
 import { useLoopControl } from "./useUpdateActions/useLoopControl";
 import { useNodeRestart } from "./useUpdateActions/useNodeRestart";
 import { useNotices } from "./useUpdateActions/useNotices";
+import { useWebLinkRestart } from "./useUpdateActions/useWebLinkRestart";
 
 export function useUpdateActions(selectSession: (id: string) => void) {
 	const { refresh } = useNodeUpdatesContext();
 	const notices = useNotices();
 	const restarts = useNodeRestart(useLocalRestartContext(), notices, refresh);
 	const loop = useLoopControl(notices, refresh);
+	const web = useWebLinkRestart(notices, refresh);
 	const activate = useActivateSession(selectSession);
 
 	const openFix = useCallback(
@@ -23,7 +25,7 @@ export function useUpdateActions(selectSession: (id: string) => void) {
 		[activate],
 	);
 
-	return { ...restarts, ...loop, openFix, notices };
+	return { ...restarts, ...loop, ...web, openFix, notices };
 }
 
 export type UpdateActions = ReturnType<typeof useUpdateActions>;

@@ -11,6 +11,7 @@ export type AutoUpdateLoopState = {
 export type AutoUpdateReply = {
 	type: "auto-update";
 	version: string;
+	built?: string;
 	startCommit?: string;
 	loop: AutoUpdateLoopState;
 };

@@ -67,6 +67,12 @@ import { testflightTesters } from "./testflightTesters";
 import { unsetConfig } from "./unsetConfig";
 import { updates } from "./updates/updates";
 import { updatesControl } from "./updates/updatesControl";
+import { linkUpdateStatus } from "./updates/linkUpdateStatus";
+import { restartWebViaLink } from "./updates/restartWebViaLink";
+import {
+	LINK_UPDATE_STATUS_PATH,
+	RESTART_WEB_VIA_LINK_PATH,
+} from "../shared/viaDaemonLinkPaths";
 import { uploadPrImage } from "./uploadPrImage";
 import { writeFileContent } from "./writeFileContent";
 import { staticRoutes } from "./staticRoutes";
@@ -146,6 +152,8 @@ const routes: Record<string, Handler> = {
 	"POST /api/testflight/testers": postTestflightTester,
 	"GET /api/updates": updates,
 	"POST /api/updates/control": updatesControl,
+	[`GET ${LINK_UPDATE_STATUS_PATH}`]: linkUpdateStatus,
+	[`POST ${RESTART_WEB_VIA_LINK_PATH}`]: restartWebViaLink,
 };
 
 export const handleRequest = createFallbackHandler(

@@ -2,6 +2,7 @@ import { type IncomingMessage, type ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { findLinkSpec } from "../shared/loadLinkSpecs";
 import { TRACE_HEADER } from "../shared/newTraceId";
+import { viaDaemonLinkPaths } from "../shared/viaDaemonLinkPaths";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { forwardToPeer } from "./forwardToPeer";
 import { isQuietPoll } from "./isQuietPoll";
@@ -21,6 +22,7 @@ function proxyTarget(req: IncomingMessage): ProxyTarget {
 	const url = new URL(req.url ?? "/", "http://localhost");
 	const node = url.searchParams.get("node");
 	if (!url.pathname.startsWith("/api/") || !node) return { kind: "local" };
+	if (viaDaemonLinkPaths.has(url.pathname)) return { kind: "local" };
 	if (arrivedOverLink(req) || node === resolveNodeName())
 		return { kind: "local" };
 	const link = findLinkSpec(node);

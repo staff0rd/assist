@@ -1,5 +1,6 @@
 import type { SessionClient } from "../broadcast";
 import { daemonLog } from "../daemonLog";
+import { awaitLinkReply } from "./awaitLinkReply";
 import { unavailableReason } from "./describeLink";
 import { forwardLinkCreate } from "./forwardLinkCreate";
 import { isLinkCreate } from "./isLinkCreate";
@@ -15,6 +16,7 @@ export function forwardToLink(
 	data: Msg,
 ): void {
 	ctx.relay.lastRequester = client;
+	awaitLinkReply(ctx.relay, data.requestId, client);
 	if (isLinkCreate(data.type)) return forwardLinkCreate(ctx, client, data);
 	const node = ctx.spec.name;
 	const delivered = ctx.greeted && sendToLink(ctx, toPeerMessage(data));

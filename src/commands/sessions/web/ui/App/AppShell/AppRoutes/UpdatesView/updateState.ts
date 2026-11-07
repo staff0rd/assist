@@ -2,6 +2,7 @@ import { formatRelativeTime } from "../../../../formatRelativeTime";
 import { isUpdateReady } from "../../isUpdateReady";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
 import { loopUpdateState } from "./updateState/loopUpdateState";
+import { webFailingState } from "./updateState/webFailingState";
 import { restartLabel } from "./restartLabel";
 import type { UpdateState } from "./UpdateStateKind";
 
@@ -9,6 +10,7 @@ export function updateState(entry: NodeUpdateEntry): UpdateState {
 	const { status } = entry;
 	if (entry.loading)
 		return { kind: "loading", label: "Checking", line: "waiting for node" };
+	if (entry.webFailing) return webFailingState(entry.webFailing);
 	if (!status)
 		return {
 			kind: "unavailable",

@@ -4,6 +4,7 @@ import type { UpdateStateKind } from "../UpdateStateKind";
 const accent: Partial<Record<UpdateStateKind, "warning" | "error">> = {
 	ready: "warning",
 	diverged: "error",
+	failing: "error",
 };
 
 export const nodeUpdateRowSx = (kind: UpdateStateKind) => (t: Theme) => {

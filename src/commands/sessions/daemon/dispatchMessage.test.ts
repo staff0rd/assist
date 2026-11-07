@@ -211,7 +211,7 @@ describe("dispatchMessage", () => {
 
 			dispatchMessage(client, manager, { type: "subscribe-logs" });
 
-			expect(subscribeLogs).toHaveBeenCalledWith(client, true);
+			expect(subscribeLogs).toHaveBeenCalledWith(client, true, false);
 		});
 
 		it("forwards replay: false so the web stream skips buffered history", () => {
@@ -224,9 +224,10 @@ describe("dispatchMessage", () => {
 			dispatchMessage(client, manager, {
 				type: "subscribe-logs",
 				replay: false,
+				webServer: true,
 			});
 
-			expect(subscribeLogs).toHaveBeenCalledWith(client, false);
+			expect(subscribeLogs).toHaveBeenCalledWith(client, false, true);
 		});
 	});
 

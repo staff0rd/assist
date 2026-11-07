@@ -7,6 +7,7 @@ import {
 	type LinkRelayState,
 } from "./LinkRelayState";
 import { relayLinkSessions } from "./relayLinkSessions";
+import { relayReply } from "./relayReply";
 import { relayRunConflict } from "./relayRunConflict";
 import { relayToCreator } from "./relayToCreator";
 import { toNodeSessionId } from "./splitNodeSessionId";
@@ -50,6 +51,8 @@ const relays: Record<string, Relay> = {
 	inbox: (state, msg) => broadcastToViewers(state, msg),
 	"run-conflict": relayRunConflict,
 	history: relayHistory,
+	"auto-update": relayReply,
+	"restart-webserver": relayReply,
 	"user-messages": (state, msg) =>
 		broadcastToViewers(state, { ...msg, sessionId: nsId(state, msg) }),
 	log: (state, msg) => {

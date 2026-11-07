@@ -1,6 +1,6 @@
 import type { HarnessKind } from "../../../shared/harnesses";
 import type { RateLimits } from "../../../shared/RateLimits";
-import { autoUpdateReply } from "./autoUpdate/autoUpdateReply";
+import { handleAutoUpdate } from "./autoUpdate/handleAutoUpdate";
 import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
@@ -13,12 +13,15 @@ import { handleCreateRun } from "./handleCreateRun";
 import { handleDismiss } from "./handleDismiss";
 import { handleOutputRequest } from "./handleOutputRequest";
 import { handleReloadLinks } from "./handleReloadLinks";
+import { handleRestartWebServer } from "./handleRestartWebServer";
 import { handleSetStatus } from "./handleSetStatus";
+import { handleSubscribeLogs } from "./handleSubscribeLogs";
 import { handleTypePrompt } from "./handleTypePrompt";
 import { handleTypePromptToWriter } from "./handleTypePromptToWriter";
 import { inboxHandlers } from "./inbox/inboxHandlers";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import { pinHandlers } from "./pins/pinHandlers";
+import { retryHandlers } from "./retryHandlers";
 import { type Handler, routed } from "./routed";
 import { viewerHandlers } from "./viewerHandlers";
 import { sessionSettingHandlers } from "./sessionSettingHandlers";
@@ -33,13 +36,13 @@ export type { Msg } from "./routed";
 
 export const messageHandlers: Record<string, Handler> = {
 	ping: (client) => sendTo(client, { type: "pong", pid: process.pid }),
-	"subscribe-logs": (client, m, d) =>
-		m.clients.subscribeLogs(client, d.replay !== false),
+	"subscribe-logs": handleSubscribeLogs,
+	"restart-webserver": handleRestartWebServer,
 	"web-log": handleWebLog,
 	hello: handleHelloRequest,
 	output: handleOutputRequest,
 	nodes: (client, m) => m.links.sendNodes(client),
-	"auto-update": (client) => sendTo(client, autoUpdateReply()),
+	"auto-update": handleAutoUpdate,
 	"auto-update-control": handleAutoUpdateControl,
 	"search-history": (client, _m, d) => handleSearchHistory(client, d),
 	...inboxHandlers,
@@ -69,20 +72,7 @@ export const messageHandlers: Record<string, Handler> = {
 	...pinHandlers,
 	"type-prompt": handleTypePrompt,
 	"type-prompt-to-writer": handleTypePromptToWriter,
-	retry: routed((client, m, d) => {
-		const conflict = m.retrySession(d.sessionId as string, d.replace === true);
-		if (conflict)
-			sendTo(client, {
-				type: "run-conflict",
-				sessionId: d.sessionId,
-				existing: conflict,
-			});
-	}),
-	restart: routed((client, m, d) => {
-		const result = m.restart(d.sessionId as string);
-		if (!result.ok && result.reason)
-			sendTo(client, { type: "error", message: result.reason });
-	}),
+	...retryHandlers,
 	dismiss: handleDismiss,
 	discard: routed((_client, m, d) => m.discardSession(d.sessionId as string)),
 	stop: routed((_client, m, d) => m.stopSession(d.sessionId as string)),

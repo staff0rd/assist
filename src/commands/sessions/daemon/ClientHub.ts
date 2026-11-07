@@ -19,6 +19,7 @@ export class ClientHub extends Set<SessionClient> {
 	// why: log delivery is opt-in so browser tabs aren't spammed; only connections that ask via subscribe-logs receive daemonLog lines.
 	private readonly logSubscribers = new Set<SessionClient>();
 	private readonly peers = new Map<SessionClient, string | undefined>();
+	private readonly webServers = new Set<SessionClient>();
 
 	// why: the daemon injects a best-effort persister; left undefined elsewhere so `new ClientHub()` works and broadcasting never depends on it.
 	constructor(
@@ -78,7 +79,8 @@ export class ClientHub extends Set<SessionClient> {
 		return new Set([...this].filter((client) => !this.peers.has(client)));
 	}
 
-	subscribeLogs(client: SessionClient, replay = true): void {
+	subscribeLogs(client: SessionClient, replay = true, webServer = false): void {
+		if (webServer) this.webServers.add(client);
 		// why: replay buffered history before registering, so a line emitted mid-replay isn't sent twice.
 		if (replay) {
 			for (const line of recentDaemonLogLines(!this.isPeer(client))) {
@@ -90,7 +92,13 @@ export class ClientHub extends Set<SessionClient> {
 
 	unsubscribeLogs(client: SessionClient): void {
 		this.logSubscribers.delete(client);
+		this.webServers.delete(client);
 		this.peers.delete(client);
+	}
+
+	restartWebServers(): number {
+		broadcast(this.webServers, { type: "restart-webserver" });
+		return this.webServers.size;
 	}
 
 	// why: bound so it can be handed to setDaemonLogSink as a bare reference.
