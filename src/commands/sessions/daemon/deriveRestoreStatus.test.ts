@@ -1,8 +1,9 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { deriveRestoreStatus } from "./deriveRestoreStatus";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { readTranscriptTailSync } from "../shared/readTranscriptTail";
 import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
+import { findCodexRolloutPathSync } from "../shared/codex/findCodexRolloutPathSync";
 
 vi.mock("../shared/findTranscriptPathSync", () => ({
 	findTranscriptPathSync: vi.fn(),
@@ -12,7 +13,14 @@ vi.mock("../shared/readTranscriptTail", () => ({
 	readTranscriptTailSync: vi.fn(),
 }));
 
+vi.mock("../shared/codex/findCodexRolloutPathSync", () => ({
+	findCodexRolloutPathSync: vi.fn(),
+}));
+
 const findMock = findTranscriptPathSync as unknown as ReturnType<typeof vi.fn>;
+const findRolloutMock = findCodexRolloutPathSync as unknown as ReturnType<
+	typeof vi.fn
+>;
 const readMock = readTranscriptTailSync as unknown as ReturnType<typeof vi.fn>;
 
 function persisted(
@@ -105,5 +113,73 @@ describe("deriveRestoreStatus", () => {
 		expect(deriveRestoreStatus(persisted({ status: undefined }))).toBe(
 			"running",
 		);
+	});
+});
+
+function codex(overrides: Partial<PersistedSession> = {}): PersistedSession {
+	return persisted({
+		harness: "codex",
+		claudeSessionId: undefined,
+		harnessSessionId: "codex-conv",
+		...overrides,
+	});
+}
+
+const event = (type: string) => ({ type: "event_msg", payload: { type } });
+const toolCall = { type: "response_item", payload: { type: "function_call" } };
+
+describe("deriveRestoreStatus for codex sessions", () => {
+	beforeEach(() => vi.clearAllMocks());
+
+	it("reopens running when the rollout's last turn started and never ended", () => {
+		findRolloutMock.mockReturnValue("/codex/rollout-x-codex-conv.jsonl");
+		readMock.mockReturnValue([
+			event("task_started"),
+			toolCall,
+			event("token_count"),
+		]);
+		expect(deriveRestoreStatus(codex({ status: "waiting" }))).toBe("running");
+		expect(findRolloutMock).toHaveBeenCalledWith("codex-conv");
+		expect(findMock).not.toHaveBeenCalled();
+	});
+
+	it("reopens waiting when the rollout's last turn completed", () => {
+		findRolloutMock.mockReturnValue("/codex/rollout-x-codex-conv.jsonl");
+		readMock.mockReturnValue([
+			event("task_started"),
+			toolCall,
+			event("task_complete"),
+		]);
+		expect(deriveRestoreStatus(codex({ status: "running" }))).toBe("waiting");
+	});
+
+	it("reopens waiting when the rollout's last turn was aborted", () => {
+		findRolloutMock.mockReturnValue("/codex/rollout-x-codex-conv.jsonl");
+		readMock.mockReturnValue([event("task_started"), event("turn_aborted")]);
+		expect(deriveRestoreStatus(codex())).toBe("waiting");
+	});
+
+	it("reopens running when the tail holds agent activity but no turn boundary", () => {
+		findRolloutMock.mockReturnValue("/codex/rollout-x-codex-conv.jsonl");
+		readMock.mockReturnValue([toolCall, event("token_count")]);
+		expect(deriveRestoreStatus(codex())).toBe("running");
+	});
+
+	it("reopens waiting for a rollout with no agent activity yet", () => {
+		findRolloutMock.mockReturnValue("/codex/rollout-x-codex-conv.jsonl");
+		readMock.mockReturnValue([{ type: "session_meta", payload: {} }]);
+		expect(deriveRestoreStatus(codex())).toBe("waiting");
+	});
+
+	it("reopens waiting when no rollout can be located", () => {
+		findRolloutMock.mockReturnValue(null);
+		expect(deriveRestoreStatus(codex())).toBe("waiting");
+	});
+
+	it("reopens waiting when no codex session id is bound", () => {
+		expect(deriveRestoreStatus(codex({ harnessSessionId: undefined }))).toBe(
+			"waiting",
+		);
+		expect(findRolloutMock).not.toHaveBeenCalled();
 	});
 });

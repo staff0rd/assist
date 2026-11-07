@@ -5,10 +5,15 @@ import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreSession } from "./restoreSession";
 import { spawnClaude } from "./spawnClaude";
+import { spawnCodex } from "./spawnCodex";
 import { spawnPty } from "./spawnPty";
 
 vi.mock("./spawnClaude", () => ({
 	spawnClaude: vi.fn(() => ({ fake: "pty" })),
+}));
+
+vi.mock("./spawnCodex", () => ({
+	spawnCodex: vi.fn(() => ({ fake: "pty" })),
 }));
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
@@ -43,6 +48,7 @@ const isPausePendingMock = isPausePending as unknown as ReturnType<
 >;
 const spawnClaudeMock = spawnClaude as unknown as ReturnType<typeof vi.fn>;
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
+const spawnCodexMock = spawnCodex as unknown as ReturnType<typeof vi.fn>;
 const findTranscriptPathSyncMock =
 	findTranscriptPathSync as unknown as ReturnType<typeof vi.fn>;
 const hasCodexRolloutSyncMock = hasCodexRolloutSync as unknown as ReturnType<
@@ -301,6 +307,64 @@ describe("restoreSession", () => {
 			"1",
 			undefined,
 		);
+	});
+
+	it("nudges a running codex --once wrapper killed by a daemon restart", () => {
+		const session = restoreSession("1", {
+			...codexRefine(),
+			interrupted: { reason: "daemon-restart", at: 1 },
+		});
+
+		const env = spawnPtyMock.mock.calls[0][3];
+		expect(env.ASSIST_RESUME_IDLE).toBeUndefined();
+		expect(env.ASSIST_RESUME_PROMPT).toContain("daemon restarted");
+		expect(session.status).toBe("running");
+	});
+
+	it("keeps an idle codex --once wrapper idle after a daemon restart", () => {
+		const session = restoreSession("1", {
+			...codexRefine(),
+			status: "waiting",
+			interrupted: { reason: "daemon-restart", at: 1 },
+		});
+
+		expect(spawnPtyMock.mock.calls[0][3]).toEqual({ ASSIST_RESUME_IDLE: "1" });
+		expect(session.status).toBe("waiting");
+	});
+
+	const plainCodex = (status: "running" | "waiting"): PersistedSession => ({
+		name: "repo/codex",
+		commandType: "claude",
+		harness: "codex",
+		status,
+		cwd: "/home/user/repo",
+		startedAt: 123,
+		harnessSessionId: "codex-conv",
+		interrupted: { reason: "daemon-restart", at: 1 },
+	});
+
+	it("nudges a running plain codex session killed by a daemon restart", () => {
+		const session = restoreSession("1", plainCodex("running"));
+
+		expect(spawnCodexMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				resumeSessionId: "codex-conv",
+				prompt: expect.stringContaining("daemon restarted"),
+			}),
+		);
+		expect(session.status).toBe("running");
+	});
+
+	it("resumes an idle plain codex session without a nudge", () => {
+		const session = restoreSession("1", plainCodex("waiting"));
+
+		expect(spawnCodexMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				resumeSessionId: "codex-conv",
+				prompt: undefined,
+			}),
+		);
+		expect(session.status).toBe("waiting");
 	});
 
 	it("re-runs a codex --once wrapper from its original prompt when no rollout exists", () => {
