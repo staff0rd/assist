@@ -1,3 +1,20 @@
+# [0.1081.0](https://github.com/staff0rd/assist/compare/v0.1080.0...v0.1081.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* launch /bug in selected node's clone ([a230982](https://github.com/staff0rd/assist/commit/a230982859a6d174ce4b70f84e39b0416e42bd4a))
+* spin TestFlight refresh while loading ([48417f1](https://github.com/staff0rd/assist/commit/48417f1a898cdb54e4eeb517f72cae5f138bf045))
+
+
+### Features
+
+* drop extension update toast ([157d436](https://github.com/staff0rd/assist/commit/157d4365d151524a71da86714cd71595d2277545))
+* lint confirms for Shift-skip ([71f5d2e](https://github.com/staff0rd/assist/commit/71f5d2ebde8782b0012e4d5be7affbf4af3100d8))
+* phone review comment list ([4c92de0](https://github.com/staff0rd/assist/commit/4c92de0c9d478562b281a49d7f428dd80c9b687f))
+* Shift-click skips more confirms ([999fcbd](https://github.com/staff0rd/assist/commit/999fcbd5ad34df53928d96f5d07df25b5889b2f7))
+* show extension update on options page ([71552fe](https://github.com/staff0rd/assist/commit/71552fe0e2e9c4afc946a18fe09b5c550f6e593f))
+
 # [0.1080.0](https://github.com/staff0rd/assist/compare/v0.1079.0...v0.1080.0) (2026-11-07)
 
 
