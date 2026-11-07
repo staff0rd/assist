@@ -1,19 +1,14 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-
-const execFileAsync = promisify(execFile);
+import type { HarnessKind } from "../../../shared/harnesses";
+import { runOneShotPrompt } from "../../../shared/runOneShotPrompt";
 
 export const SESSION_TITLE_MAX_LENGTH = 48;
 
 export async function generateSessionTitle(
 	prompt: string,
+	harness?: HarnessKind,
 ): Promise<string | undefined> {
 	try {
-		const { stdout } = await execFileAsync(
-			"claude",
-			["-p", "--model", "haiku", buildPrompt(prompt)],
-			{ encoding: "utf8", windowsHide: true, timeout: 30_000 },
-		);
+		const stdout = await runOneShotPrompt(buildPrompt(prompt), { harness });
 		return normaliseTitle(stdout);
 	} catch {
 		return undefined;

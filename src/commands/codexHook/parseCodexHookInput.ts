@@ -2,6 +2,7 @@ type CodexHookInput = {
 	hook_event_name?: string;
 	cwd?: unknown;
 	transcript_path?: unknown;
+	session_id?: unknown;
 	tool_name?: string;
 	tool_input?: { command?: unknown };
 };
@@ -12,6 +13,7 @@ export type ParsedInput = {
 	event: string;
 	cwd?: string;
 	transcriptPath?: string;
+	sessionId?: string;
 	toolName?: string;
 	command?: string;
 };
@@ -29,6 +31,8 @@ export function parseCodexHookInput(raw: string): ParsedInput | undefined {
 		};
 		const transcriptPath = optionalString(data.transcript_path);
 		if (transcriptPath) base.transcriptPath = transcriptPath;
+		const sessionId = optionalString(data.session_id);
+		if (sessionId) base.sessionId = sessionId;
 		const command = data.tool_input?.command;
 		if (typeof command !== "string" || !command.trim()) return base;
 		if (!data.tool_name || !SUPPORTED_TOOLS.has(data.tool_name)) return base;

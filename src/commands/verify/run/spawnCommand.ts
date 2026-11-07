@@ -1,4 +1,5 @@
 import { type ChildProcess, spawn } from "node:child_process";
+import { isAgentHarness } from "../../../lib/isAgentHarness";
 import { expandEnv } from "../../../shared/expandEnv";
 
 let verboseMode = false;
@@ -9,7 +10,7 @@ export function setVerbose(verbose: boolean): void {
 
 function shouldSuppress(quiet?: boolean): boolean {
 	if (verboseMode) return false;
-	return !!quiet || !!process.env.CLAUDECODE;
+	return !!quiet || isAgentHarness();
 }
 
 export function spawnCommand(

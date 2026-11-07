@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { isClaudeCode } from "../../../lib/isClaudeCode";
+import { isAgentHarness } from "../../../lib/isAgentHarness";
 
 export type Style = {
 	cyan: (text: string) => string;
@@ -20,7 +20,7 @@ function colouredState(state: string): string {
 }
 
 export function commentStyle(): Style {
-	if (isClaudeCode()) {
+	if (isAgentHarness()) {
 		return {
 			cyan: plain,
 			bold: plain,

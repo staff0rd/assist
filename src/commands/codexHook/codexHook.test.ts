@@ -15,6 +15,10 @@ vi.mock("../advise/adviceHookPayload", () => ({
 	adviceHookPayload: (cwd: string) => mockAdviceHookPayload(cwd),
 }));
 
+const mockLogDenied = vi.fn();
+vi.mock("../cliHook/logDeniedToolCall", () => ({
+	logDeniedToolCall: (entry: unknown) => mockLogDenied(entry),
+}));
 vi.mock("./reportCodexStatus", () => ({
 	reportCodexStatus: (event: string, autoDecided: boolean) =>
 		mockReportCodexStatus(event, autoDecided),
@@ -149,6 +153,44 @@ describe("codexHook PreToolUse", () => {
 				},
 			}),
 		);
+		spy.mockRestore();
+	});
+
+	it("logs a denied command against the Codex session id", async () => {
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(
+			JSON.stringify({
+				hook_event_name: "PreToolUse",
+				tool_name: "Bash",
+				tool_input: { command: "rm -rf /" },
+				session_id: "codex-thread-1",
+				cwd: "/work/repo",
+			}),
+		);
+		mockMatchesConfigDeny.mockReturnValue({
+			pattern: "rm -rf",
+			message: "Do not use rm -rf",
+		});
+
+		await codexHook();
+
+		expect(mockLogDenied).toHaveBeenCalledWith({
+			tool: "Bash",
+			command: "rm -rf /",
+			repo: "repo",
+			sessionId: "codex-thread-1",
+			denyReason: "Do not use rm -rf",
+		});
+		spy.mockRestore();
+	});
+
+	it("does not log an unrecognised command", async () => {
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(makeInput("some-unknown-binary"));
+
+		await codexHook();
+
+		expect(mockLogDenied).not.toHaveBeenCalled();
 		spy.mockRestore();
 	});
 

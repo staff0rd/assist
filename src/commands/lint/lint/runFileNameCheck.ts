@@ -1,5 +1,6 @@
 import path from "node:path";
 import chalk from "chalk";
+import { isAgentHarness } from "../../../lib/isAgentHarness";
 import { checkFileNames, type FileNameViolation } from "./checkFileNames";
 import { fixFileNameViolations } from "./fixFileNameViolations";
 
@@ -21,7 +22,7 @@ export function runFileNameCheck(fix = false): boolean {
 	const violations = checkFileNames();
 
 	if (violations.length === 0) {
-		if (!process.env.CLAUDECODE) {
+		if (!isAgentHarness()) {
 			console.log(
 				"File name check passed. All PascalCase files contain classes or components.",
 			);

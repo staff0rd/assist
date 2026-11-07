@@ -1,4 +1,4 @@
-import { isClaudeCode } from "../../lib/isClaudeCode";
+import { isAgentHarness } from "../../lib/isAgentHarness";
 import { emitActivity } from "../../shared/emitActivity";
 import { findRepoRoot } from "../../shared/findRepoRoot";
 import type { ReviewOptions } from "./ReviewOptions";
@@ -28,7 +28,7 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	const invokedIn = resolveRepoRoot();
 	if (options.checkoutOnly && options.number)
 		return checkoutPrSession(options.number);
-	if (options.highLevel && options.number && !isClaudeCode())
+	if (options.highLevel && options.number && !isAgentHarness())
 		return checkoutPrSession(
 			options.number,
 			`/review-high-level ${options.number}${options.force ? " --force" : ""}`,

@@ -1,9 +1,6 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
+import { runOneShotPrompt } from "../../shared/runOneShotPrompt";
 import { withSpinner } from "../../shared/withSpinner";
 import { deriveBranchSlug } from "./deriveBranchSlug";
-
-const execFileAsync = promisify(execFile);
 
 export async function generateBranchSlug(description: string): Promise<string> {
 	const fallback = deriveBranchSlug(description);
@@ -15,14 +12,8 @@ export async function generateBranchSlug(description: string): Promise<string> {
 
 async function requestSlug(description: string): Promise<string | undefined> {
 	try {
-		const { stdout } = await withSpinner(
-			"Generating a concise branch name",
-			() =>
-				execFileAsync(
-					"claude",
-					["-p", "--model", "haiku", buildPrompt(description)],
-					{ encoding: "utf8", timeout: 30_000 },
-				),
+		const stdout = await withSpinner("Generating a concise branch name", () =>
+			runOneShotPrompt(buildPrompt(description)),
 		);
 		const slug = stdout
 			.trim()

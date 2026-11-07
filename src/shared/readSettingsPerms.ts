@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { activeHarness } from "../lib/activeHarness";
+import { readCodexRulePerms } from "./readCodexRulePerms";
 
 /** Collect permission entries from all settings layers. */
 export function readSettingsPerms(key: "allow" | "deny"): string[] {
@@ -13,6 +15,7 @@ export function readSettingsPerms(key: "allow" | "deny"): string[] {
 	for (const p of paths) {
 		entries.push(...readPermissionArray(p, key));
 	}
+	if (activeHarness() === "codex") entries.push(...readCodexRulePerms(key));
 	return entries;
 }
 

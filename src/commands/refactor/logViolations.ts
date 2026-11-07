@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { isAgentHarness } from "../../lib/isAgentHarness";
 
 export const DEFAULT_MAX_LINES = 100;
 
@@ -7,7 +8,7 @@ export function logViolations(
 	maxLines: number = DEFAULT_MAX_LINES,
 ): void {
 	if (violations.length === 0) {
-		if (!process.env.CLAUDECODE) {
+		if (!isAgentHarness()) {
 			console.log(`Refactor check passed. No files exceed ${maxLines} lines.`);
 		}
 		return;
@@ -27,7 +28,7 @@ export function logViolations(
 	);
 	console.error(chalk.gray(`    assist refactor ignore <file>\n`));
 
-	if (process.env.CLAUDECODE) {
+	if (isAgentHarness()) {
 		console.error(chalk.cyan(`\n  ## Extracting Code to New Files\n`));
 		console.error(
 			chalk.cyan(

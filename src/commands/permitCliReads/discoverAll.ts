@@ -1,4 +1,4 @@
-import { isClaudeCode } from "../../lib/isClaudeCode";
+import { isAgentHarness } from "../../lib/isAgentHarness";
 import { mapAsync } from "../../shared/mapAsync";
 import { hasSubcommands, parseCommands } from "./parseCommands";
 import { runHelp } from "./runHelp";
@@ -12,7 +12,7 @@ type Progress = { done: number; total: number };
 
 const SAFETY_DEPTH = 10;
 const CONCURRENCY = 8;
-const interactive = !isClaudeCode();
+const interactive = !isAgentHarness();
 
 function showProgress(p: Progress, label: string): void {
 	if (!interactive) return;

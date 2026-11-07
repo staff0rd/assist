@@ -1,3 +1,4 @@
+import { markActiveHarness } from "../lib/activeHarness";
 import { readStdin } from "../lib/readStdin";
 import { adviceHookPayload } from "./advise/adviceHookPayload";
 import { decideCommand } from "./cliHook/decideCommand";
@@ -6,6 +7,7 @@ import {
 	type ParsedInput,
 	parseCodexHookInput,
 } from "./codexHook/parseCodexHookInput";
+import { logCodexDeniedCall } from "./codexHook/logCodexDeniedCall";
 import { relayCodexUsage } from "./codexHook/relayCodexUsage";
 import { reportCodexStatus } from "./codexHook/reportCodexStatus";
 
@@ -47,12 +49,14 @@ function outputFor(input: ParsedInput, decision: HookDecision | undefined) {
 }
 
 export async function codexHook(): Promise<void> {
+	markActiveHarness("codex");
 	const input = parseCodexHookInput(await readStdin());
 	if (!input) return;
 
 	const decision = decide(input);
 	const output = outputFor(input, decision);
 	if (output) console.log(JSON.stringify(output));
+	logCodexDeniedCall(input, decision);
 
 	await reportCodexStatus(input.event, decision !== undefined);
 	await relayCodexUsage(input.event, input.transcriptPath);

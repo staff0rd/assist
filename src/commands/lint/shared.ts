@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { isAgentHarness } from "../../lib/isAgentHarness";
 
 export type LintViolation = {
 	filePath: string;
@@ -22,7 +23,7 @@ export function reportViolations(
 		return false;
 	}
 
-	if (!process.env.CLAUDECODE) {
+	if (!isAgentHarness()) {
 		console.log(successMessage);
 	}
 	return true;

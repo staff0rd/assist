@@ -11,7 +11,10 @@ export function runSessionTitleGeneration(
 ): void {
 	if (session.generatedTitle || session.titleGenerationStarted) return;
 	session.titleGenerationStarted = true;
-	void generateSessionTitle(prompt)
+	const generation = session.harness
+		? generateSessionTitle(prompt, session.harness)
+		: generateSessionTitle(prompt);
+	void generation
 		.then((generated) => {
 			const title = generated ?? fallback;
 			if (!title) {
