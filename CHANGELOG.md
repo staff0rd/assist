@@ -1,3 +1,10 @@
+## [0.1085.1](https://github.com/staff0rd/assist/compare/v0.1085.0...v0.1085.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* name harness in phone reply bar ([ff01ad3](https://github.com/staff0rd/assist/commit/ff01ad35cbfabed9d713f9c7f7e1419a9da70cce))
+
 # [0.1085.0](https://github.com/staff0rd/assist/compare/v0.1084.0...v0.1085.0) (2026-11-07)
 
 
