@@ -100,6 +100,27 @@ screenshots:
       - click: text=Remember the colour scheme
       - click: "[role='tab']:has-text('Tests')"
       - click: "[aria-label='Show the source of restores the saved scheme']"
+  - file: sessions-high-level-slices.png
+    alt: The slice rail with Overview, two slices with their line counts and tick dots, and Everything else
+    route: /sessions
+    scene: high-level-review
+    waitFor: text=Description has a What and a Why
+    viewport:
+      width: 1440
+      height: 900
+    actions:
+      - click: text=High-level review #14
+      - click: "[aria-label='Fill the window with preview']"
+      - click: text=Dark mode toggle on the settings page
+      - click: "[role='tabpanel'] input[type='checkbox']"
+      - click: "[role='tab']:has-text('Tests')"
+      - click: "[role='tabpanel'] input[type='checkbox']"
+      - click: text=Remember the colour scheme
+      - click: "[role='tabpanel'] input[type='checkbox']"
+    crop:
+      - "nav[aria-label='Slices'] > .rail-label"
+      - "nav[aria-label='Slices'] > button:last-child"
+    cropPadding: 16
 ---
 
 A high-level review is a checklist for judging a pull request without reading every line: whether its description is reviewable, whether the shape of the change matches what it says it does, and whether the few files where a mistake is expensive are right. Use it alongside an [adversarial review](../sessions-pr-review/), which does read every line.
@@ -117,6 +138,8 @@ To get back to a review from the **Review** menu, pick **Open high-level review*
 The agent first splits the pull request into slices, each one behaviour with its code, tests and wiring together, and puts whatever no slice claims in **Everything else**. It also writes steps for trying the change by hand. Reviewing the same commit again reuses them.
 
 The rail on the left lists **Overview**, then each slice with its line counts and a dot for each item you've ticked. Pick an entry to see its items as tabs. **Next slice**, or :kbd[\[] and :kbd[\]], moves between entries on the same tab, and :kbd[1] to :kbd[9] pick a tab.
+
+::screenshot{file="sessions-high-level-slices.png"}
 
 ## The checklist
 

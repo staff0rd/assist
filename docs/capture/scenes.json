@@ -251,6 +251,11 @@
 						"path": "src/i18n/en.json",
 						"status": "modified",
 						"patch": "@@ -2,3 +2,4 @@\n \t\"settings.title\": \"Settings\",\n-\t\"settings.theme\": \"Theme\"\n+\t\"settings.theme\": \"Theme\",\n+\t\"settings.darkMode\": \"Dark mode\"\n }"
+					},
+					{
+						"path": "README.md",
+						"status": "modified",
+						"patch": "@@ -1,2 +1,6 @@\n # sandbox\n A sample app for trying out assist.\n+\n+## Settings\n+\n+The settings page has a dark mode toggle.\n"
 					}
 				],
 				"slices": [
