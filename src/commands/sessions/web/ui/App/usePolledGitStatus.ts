@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ItemStatusCounts } from "../../gitStatus";
-import { apiFetch } from "../apiFetch";
-import { reportCaughtError } from "../clientFailures/reportCaughtError";
+import { createProxyBlipGate } from "../createProxyBlipGate";
 import { useApiNode } from "../useApiNode";
 import { withNode } from "../withNode";
 import { diffQuery } from "./diffQuery";
+import { fetchGitStatusCounts } from "./fetchGitStatusCounts";
 
 const POLL_INTERVAL_MS = 5000;
 
@@ -24,25 +24,11 @@ export function usePolledGitStatus(
 			return;
 		}
 		let cancelled = false;
+		const blipGate = createProxyBlipGate();
+		const path = withNode(`/api/git-status?${diffQuery(cwd, sessionId)}`, node);
 		const poll = async () => {
-			try {
-				const res = await apiFetch(
-					withNode(`/api/git-status?${diffQuery(cwd, sessionId)}`, node),
-				);
-				if (!res.ok) {
-					if (!cancelled) setCounts(null);
-					return;
-				}
-				const parsed = await res.json().then(
-					(body: ItemStatusCounts | null) => ({ body }),
-					() => undefined,
-				);
-				if (!parsed || cancelled) return;
-				setCounts(parsed.body ?? null);
-			} catch (error) {
-				reportCaughtError(error, "git status counts");
-				if (!cancelled) setCounts(null);
-			}
+			const polled = await fetchGitStatusCounts(path, blipGate);
+			if (polled && !cancelled) setCounts(polled.counts);
 		};
 		pollRef.current = poll;
 		poll();

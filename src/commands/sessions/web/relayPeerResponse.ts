@@ -13,5 +13,9 @@ export function relayPeerResponse(
 	res.writeHead(status, peer.headers);
 	peer.pipe(res);
 	peer.on("end", done);
-	peer.on("error", done);
+	peer.on("error", (error) => {
+		log(`${status} then failed mid-response: ${error.message}`);
+		res.destroy();
+		done();
+	});
 }

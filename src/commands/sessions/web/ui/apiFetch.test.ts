@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { apiFetch } from "./apiFetch";
 import { recordClientFailure } from "./clientFailures/recordClientFailure";
+import { createProxyBlipGate } from "./createProxyBlipGate";
 
 vi.mock("./clientFailures/recordClientFailure", () => ({
 	recordClientFailure: vi.fn(),
@@ -49,6 +50,67 @@ describe("apiFetch", () => {
 				error: "Bad Gateway",
 				durationMs: expect.any(Number),
 			}),
+		);
+	});
+
+	it("records the server's JSON error and the forward's trace id", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(async () =>
+				Response.json(
+					{ error: "work-win unreachable: connect ECONNREFUSED" },
+					{
+						status: 502,
+						statusText: "Bad Gateway",
+						headers: { "x-assist-trace-id": "ab12cd34" },
+					},
+				),
+			),
+		);
+		const res = await apiFetch("/api/git-status?node=work-win");
+		expect(await res.json()).toEqual({
+			error: "work-win unreachable: connect ECONNREFUSED",
+		});
+		expect(recordMock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				status: 502,
+				error: "work-win unreachable: connect ECONNREFUSED (trace=ab12cd34)",
+			}),
+		);
+	});
+
+	it("falls back to the status text when the body has no error", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(
+				async () =>
+					new Response("<html>oops</html>", {
+						status: 500,
+						statusText: "Internal Server Error",
+					}),
+			),
+		);
+		await apiFetch("/api/items");
+		expect(recordMock).toHaveBeenCalledWith(
+			expect.objectContaining({ error: "Internal Server Error" }),
+		);
+	});
+
+	it("holds back a lone 502 behind a blip gate until it repeats", async () => {
+		const statuses = [502, 200, 502, 504];
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(async () => new Response("{}", { status: statuses.shift() })),
+		);
+		const blipGate = createProxyBlipGate();
+		await apiFetch("/api/git-status?node=mac", { blipGate });
+		await apiFetch("/api/git-status?node=mac", { blipGate });
+		await apiFetch("/api/git-status?node=mac", { blipGate });
+		expect(recordMock).not.toHaveBeenCalled();
+		await apiFetch("/api/git-status?node=mac", { blipGate });
+		expect(recordMock).toHaveBeenCalledTimes(1);
+		expect(recordMock).toHaveBeenCalledWith(
+			expect.objectContaining({ status: 504 }),
 		);
 	});
 

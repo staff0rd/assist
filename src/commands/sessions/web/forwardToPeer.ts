@@ -25,6 +25,7 @@ export function forwardToPeer(
 	const log = (outcome: string) =>
 		console.log(`${label} -> ${outcome} (${Date.now() - started}ms)`);
 	const send = url.protocol === "https:" ? httpsRequest : httpRequest;
+	res.setHeader(TRACE_HEADER, traceId);
 	return new Promise((resolve) => {
 		const upstream = send(
 			url,

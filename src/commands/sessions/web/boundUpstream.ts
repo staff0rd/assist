@@ -9,6 +9,7 @@ export function boundUpstream(
 		upstream.destroy(new Error(`no response after ${timeoutMs}ms`)),
 	);
 	res.on("close", () => {
-		if (!res.writableFinished) upstream.destroy();
+		if (!res.writableFinished)
+			upstream.destroy(new Error("client closed the request"));
 	});
 }

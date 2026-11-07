@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { TRACE_HEADER } from "../shared/newTraceId";
 import { isAppOrigin } from "./isAppOrigin";
 
 export function allowAppOrigin(
@@ -10,6 +11,7 @@ export function allowAppOrigin(
 	if (!pathname.startsWith("/api/") || !isAppOrigin(origin)) return false;
 	res.setHeader("Access-Control-Allow-Origin", origin as string);
 	res.setHeader("Vary", "Origin");
+	res.setHeader("Access-Control-Expose-Headers", TRACE_HEADER);
 	if (req.method !== "OPTIONS") return false;
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
 	res.setHeader(

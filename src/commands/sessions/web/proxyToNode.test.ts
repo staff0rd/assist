@@ -27,6 +27,7 @@ type Seen = { url?: string; linkedFrom?: string; body: string };
 let peer: Server;
 let viewer: Server;
 const seen: Seen[] = [];
+const seenHang = { count: 0 };
 
 function listen(server: Server): Promise<string> {
 	return new Promise((resolve) =>
@@ -54,7 +55,10 @@ beforeAll(async () => {
 	);
 	peer = createServer(async (req, res) => {
 		if (await proxyToNode(req, res)) return;
-		if (req.url?.includes("hang=1")) return;
+		if (req.url?.includes("hang=1")) {
+			seenHang.count++;
+			return;
+		}
 		seen.push({
 			url: req.url,
 			linkedFrom: req.headers["x-assist-linked-from"] as string | undefined,
@@ -163,6 +167,40 @@ describe("proxyToNode", () => {
 		expect(await res.json()).toEqual({
 			error: "pc-windows unreachable: no response after 100ms",
 		});
+	});
+
+	it("logs the failed forward with the trace id it returns to the client", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const res = await fetch(`${viewerUrl}/api/next?hang=1&node=pc-windows`);
+		const lines = log.mock.calls.map((call) => String(call[0]));
+		log.mockRestore();
+		const trace = res.headers.get("x-assist-trace-id");
+		expect(trace).toMatch(/^\w{8}$/);
+		expect(lines).toContainEqual(
+			expect.stringMatching(
+				new RegExp(
+					`^link pc-windows http: GET /api/next trace=${trace} -> failed: no response`,
+				),
+			),
+		);
+	});
+
+	it("logs a forward the client abandons", async () => {
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const controller = new AbortController();
+		const hangsBefore = seenHang.count;
+		const pending = fetch(`${viewerUrl}/api/next?hang=1&node=pc-windows`, {
+			signal: controller.signal,
+		}).catch(() => undefined);
+		await vi.waitFor(() => expect(seenHang.count).toBeGreaterThan(hangsBefore));
+		controller.abort();
+		await pending;
+		await vi.waitFor(() =>
+			expect(log).toHaveBeenCalledWith(
+				expect.stringMatching(/trace=\w+ -> failed: client closed the request/),
+			),
+		);
+		log.mockRestore();
 	});
 
 	it("responds 404 for a node with no link", async () => {
