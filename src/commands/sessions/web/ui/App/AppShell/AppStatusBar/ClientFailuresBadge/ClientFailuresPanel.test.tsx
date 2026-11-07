@@ -3,12 +3,8 @@ import { cleanup, fireEvent, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { renderWithTheme } from "../../../../../../../../test/renderWithTheme";
 import type { ClientFailure } from "../../../../../../shared/ClientFailure";
-import {
-	type RepoSelection,
-	RepoSelectionContext,
-} from "../../../../useRepoSelectionContext";
-import { SessionLaunchContext } from "../../../../useSessionLaunchContext";
 import { ClientFailuresPanel } from "./ClientFailuresPanel";
+import { withFailureBugContexts } from "./withFailureBugContexts";
 
 afterEach(cleanup);
 
@@ -24,37 +20,16 @@ const failure: ClientFailure = {
 };
 
 function renderPanel(origins: Record<string, string>) {
-	const launchAssist = vi.fn();
 	const onLaunched = vi.fn();
-	const selection: RepoSelection = {
-		repos: Object.keys(origins),
-		selectedCwd: "/git/selected",
-		selectedNode: "mac",
-		worktreeCwd: "/git/selected",
-		setSelectedCwd: () => {},
-		cloneOn: (cwd) => cwd,
-		originOf: (cwd) => origins[cwd],
-	};
-	renderWithTheme(
-		<RepoSelectionContext.Provider value={selection}>
-			<SessionLaunchContext.Provider
-				value={{
-					launchAssist,
-					launchAgentInStream: () => {},
-					resumeSession: () => {},
-					armUpdateReload: () => {},
-					activateSession: () => {},
-					sendInput: () => {},
-				}}
-			>
-				<ClientFailuresPanel
-					failures={[failure]}
-					onClear={() => {}}
-					onLaunched={onLaunched}
-				/>
-			</SessionLaunchContext.Provider>
-		</RepoSelectionContext.Provider>,
+	const { ui, launchAssist } = withFailureBugContexts(
+		origins,
+		<ClientFailuresPanel
+			failures={[failure]}
+			onClear={() => {}}
+			onLaunched={onLaunched}
+		/>,
 	);
+	renderWithTheme(ui);
 	return { launchAssist, onLaunched };
 }
 
@@ -73,11 +48,11 @@ describe("ClientFailuresPanel bug button", () => {
 		expect(args[2]).toContain("Status: 504");
 		expect(args[2]).toContain(`Page URL: ${globalThis.location.href}`);
 		expect(cwd).toBe("/git/assist");
-		expect(meta).toEqual({ node: "mac" });
+		expect(meta).toEqual({ node: "mac", title: "Bug: GET /api/git-status" });
 		expect(onLaunched).toHaveBeenCalled();
 	});
 
-	it("disables the button when there is no local clone of assist", () => {
+	it("disables the button with an explaining tooltip when there is no local clone of assist", async () => {
 		const { launchAssist } = renderPanel({
 			"/git/selected": "github.com/someone/else",
 		});
@@ -85,5 +60,10 @@ describe("ClientFailuresPanel bug button", () => {
 		expect((button as HTMLButtonElement).disabled).toBe(true);
 		fireEvent.click(button);
 		expect(launchAssist).not.toHaveBeenCalled();
+
+		fireEvent.mouseOver(button.parentElement as HTMLElement);
+		expect((await screen.findByRole("tooltip")).textContent).toBe(
+			"No local clone of staff0rd/assist to report the bug in",
+		);
 	});
 });

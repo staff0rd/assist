@@ -37,6 +37,7 @@ export function FailureBugButton({
 						);
 						launchAssist(["bug", "--once", prompt], cwd, {
 							node: selectedNode,
+							title: `Bug: ${failure.method} ${failure.path}`,
 						});
 						onLaunched();
 					}}
