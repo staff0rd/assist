@@ -1,3 +1,10 @@
+# [0.1080.0](https://github.com/staff0rd/assist/compare/v0.1079.0...v0.1080.0) (2026-11-07)
+
+
+### Features
+
+* comment from the iOS text menu ([53dd70e](https://github.com/staff0rd/assist/commit/53dd70ebdf05972ca31a4189508c4c3ce768f198))
+
 # [0.1079.0](https://github.com/staff0rd/assist/compare/v0.1078.0...v0.1079.0) (2026-11-07)
 
 
