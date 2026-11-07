@@ -1,3 +1,10 @@
+# [0.1083.0](https://github.com/staff0rd/assist/compare/v0.1082.2...v0.1083.0) (2026-11-07)
+
+
+### Features
+
+* pick node for Approve & start ([02848b0](https://github.com/staff0rd/assist/commit/02848b0f4048fa73bfcf6cbcc0fdd3fd36a5931a))
+
 ## [0.1082.2](https://github.com/staff0rd/assist/compare/v0.1082.1...v0.1082.2) (2026-11-07)
 
 
