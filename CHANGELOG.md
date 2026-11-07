@@ -1,3 +1,10 @@
+## [0.1082.1](https://github.com/staff0rd/assist/compare/v0.1082.0...v0.1082.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* refine waits for terminal input ([9695577](https://github.com/staff0rd/assist/commit/96955772a0f7b9813bab6937fcabc85c190b6c67))
+
 # [0.1082.0](https://github.com/staff0rd/assist/compare/v0.1081.1...v0.1082.0) (2026-11-07)
 
 
