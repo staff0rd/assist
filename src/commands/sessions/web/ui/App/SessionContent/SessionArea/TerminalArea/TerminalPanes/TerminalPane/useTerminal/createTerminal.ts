@@ -2,6 +2,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import { WebglAddon } from "@xterm/addon-webgl";
 import { Terminal } from "@xterm/xterm";
 import { createWrappedLinkProvider } from "./createTerminal/createWrappedLinkProvider";
+import { ignoreMouseTracking } from "./createTerminal/ignoreMouseTracking";
 import type { TerminalLook } from "./terminalTheme";
 
 export type TerminalHandle = {
@@ -25,6 +26,7 @@ export function createTerminal(
 		},
 	});
 
+	const mouseTracking = ignoreMouseTracking(term);
 	const fitAddon = new FitAddon();
 	term.loadAddon(fitAddon);
 	const linkProvider = term.registerLinkProvider(
@@ -57,6 +59,7 @@ export function createTerminal(
 		term,
 		fitAddon,
 		dispose: () => {
+			mouseTracking.dispose();
 			linkProvider.dispose();
 			webgl?.dispose();
 			term.dispose();
