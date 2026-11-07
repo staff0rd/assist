@@ -8,9 +8,11 @@ const listSx = { maxHeight: 220, overflow: "auto" } as const;
 
 export function RuleCitationList({
 	rules,
+	fill,
 	onCite,
 }: {
 	rules: ScopedRule[];
+	fill?: boolean;
 	onCite: (rule: ScopedRule) => void;
 }) {
 	const scopes = useMemo(() => groupRulesByScope(rules), [rules]);
@@ -21,7 +23,7 @@ export function RuleCitationList({
 			<Typography variant="caption" color="text.secondary">
 				Cite a broken rule
 			</Typography>
-			<Box sx={listSx}>
+			<Box sx={fill ? undefined : listSx}>
 				{scopes.map((scope, index) => (
 					<RuleScopeGroup
 						key={scope.source}

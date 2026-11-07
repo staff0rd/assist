@@ -1,6 +1,5 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { CommentSendActions } from "./CommentNoteActions/CommentSendActions";
-import type { CommentNoteActionsProps } from "./CommentNoteActionsProps";
 
 export function CommentNoteActions({
 	disabled,
@@ -10,7 +9,15 @@ export function CommentNoteActions({
 	onAddRule,
 	onCancel,
 	onCollapse,
-}: CommentNoteActionsProps) {
+}: {
+	disabled: boolean;
+	unavailable?: string | undefined;
+	onAdd: () => void;
+	onQueue?: (() => void) | undefined;
+	onAddRule?: (() => void) | undefined;
+	onCancel: () => void;
+	onCollapse?: (() => void) | undefined;
+}) {
 	return (
 		<>
 			{unavailable && (

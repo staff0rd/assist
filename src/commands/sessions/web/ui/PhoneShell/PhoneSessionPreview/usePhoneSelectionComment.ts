@@ -1,7 +1,14 @@
-import { type RefObject, useEffect, useReducer, useState } from "react";
+import {
+	type RefObject,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { snapRangeToWords } from "../../App/finishSelection/snapRangeToWords";
 import type { PendingComment } from "../../App/PendingComment";
 import { pendingFromRange } from "../../App/pendingFromRange";
+import { nativeCommentMenu } from "./nativeCommentMenu";
 
 function selectionWithin(content: HTMLElement | null): Range | null {
 	const selection = document.getSelection();
@@ -16,27 +23,39 @@ export function usePhoneSelectionComment(
 	contentRef: RefObject<HTMLElement | null>,
 	onSelect: (pending: PendingComment) => void,
 ) {
-	const [range, setRange] = useState<Range | null>(null);
-	const [, reposition] = useReducer((n: number) => n + 1, 0);
-
+	const rangeRef = useRef<Range | null>(null);
+	const onSelectRef = useRef(onSelect);
 	useEffect(() => {
-		const onChange = () => setRange(selectionWithin(contentRef.current));
-		document.addEventListener("selectionchange", onChange);
-		document.addEventListener("scroll", reposition, true);
-		return () => {
-			document.removeEventListener("selectionchange", onChange);
-			document.removeEventListener("scroll", reposition, true);
-		};
-	}, [contentRef]);
+		onSelectRef.current = onSelect;
+	});
+	const [selected, setSelected] = useState(false);
 
-	const comment = () => {
+	const track = useCallback((range: Range | null) => {
+		rangeRef.current = range;
+		setSelected(range !== null);
+		nativeCommentMenu.setCommentable(range !== null);
+	}, []);
+
+	const comment = useCallback(() => {
 		const content = contentRef.current;
+		const range = rangeRef.current;
 		if (!range || !content) return;
 		const pending = pendingFromRange(content, snapRangeToWords(range));
 		document.getSelection()?.removeAllRanges();
-		setRange(null);
-		if (pending) onSelect(pending);
-	};
+		track(null);
+		if (pending) onSelectRef.current(pending);
+	}, [contentRef, track]);
 
-	return { rect: range?.getBoundingClientRect() ?? null, comment };
+	useEffect(() => {
+		const onChange = () => track(selectionWithin(contentRef.current));
+		document.addEventListener("selectionchange", onChange);
+		globalThis.addEventListener(nativeCommentMenu.event, comment);
+		return () => {
+			document.removeEventListener("selectionchange", onChange);
+			globalThis.removeEventListener(nativeCommentMenu.event, comment);
+			nativeCommentMenu.setCommentable(false);
+		};
+	}, [contentRef, comment, track]);
+
+	return { showBar: selected && !nativeCommentMenu.available(), comment };
 }

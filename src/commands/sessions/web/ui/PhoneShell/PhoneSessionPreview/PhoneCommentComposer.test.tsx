@@ -64,7 +64,9 @@ function renderSheet() {
 }
 
 const sheet = () => within(screen.getByTestId("phone-review-sheet"));
-const composer = () => within(screen.getByTestId("phone-comment-sheet"));
+const composer = () => within(screen.getByTestId("phone-comment-composer"));
+const mark = () =>
+	screen.getByTestId("phone-review-sheet").querySelector("mark.pr-comment");
 
 function selectText(text: string) {
 	const paragraph = sheet().getByText(/idle prompt/);
@@ -81,35 +83,56 @@ function selectText(text: string) {
 	});
 }
 
+const commentButton = () =>
+	screen.queryByRole("button", { name: "Comment on selection" });
+
 function commentOn(text: string, note: string) {
 	selectText(text);
-	fireEvent.pointerDown(screen.getByRole("button", { name: "Comment" }));
+	fireEvent.pointerDown(commentButton() as HTMLElement);
 	fireEvent.change(composer().getByPlaceholderText("Add a note…"), {
 		target: { value: note },
 	});
+}
+
+function queue(text: string, note: string) {
+	commentOn(text, note);
+	fireEvent.click(composer().getByRole("button", { name: "Add to review" }));
 }
 
 const pasted = (sendInput: ReturnType<typeof vi.fn>) =>
 	sendInput.mock.calls.map(([, data]) => String(data)).join("");
 
 describe("phone review sheet comments", () => {
-	it("offers Comment only while text in the body is selected", () => {
+	it("offers a Comment bar only while text in the body is selected", () => {
 		renderSheet();
-		expect(screen.queryByRole("button", { name: "Comment" })).toBe(null);
+		expect(commentButton()).toBe(null);
 		selectText("idle prompt");
-		expect(screen.getByRole("button", { name: "Comment" })).toBeTruthy();
+		expect(commentButton()).toBeTruthy();
 	});
 
-	it("queues a comment, highlights it and sends it with the decision", () => {
-		const { onDecision } = renderSheet();
-		commentOn("looks like", "Name the idle state");
-		expect(composer().getByText(/looks like/)).toBeTruthy();
-		fireEvent.click(composer().getByRole("button", { name: "Add to review" }));
+	it("uses the native text menu when the app provides one", () => {
+		const postMessage = vi.fn();
+		vi.stubGlobal("webkit", {
+			messageHandlers: { assistSelection: { postMessage } },
+		});
+		renderSheet();
+		selectText("idle prompt");
+		expect(commentButton()).toBe(null);
+		expect(postMessage).toHaveBeenLastCalledWith(true);
 
-		expect(
-			screen.getByTestId("phone-review-sheet").querySelector("mark.pr-comment")
-				?.textContent,
-		).toBe("looks like");
+		act(() => {
+			globalThis.dispatchEvent(new Event("assist:comment-selection"));
+		});
+		expect(composer().getByText(/idle prompt/)).toBeTruthy();
+	});
+
+	it("queues a comment, pins its highlight and sends it with the approval", () => {
+		const { onDecision } = renderSheet();
+		queue("looks like", "Name the idle state");
+
+		expect(mark()?.textContent).toBe("looks like");
+		expect((mark() as HTMLElement).dataset.pin).toBe("1");
+		expect(sheet().getByText("1 comment goes with your approval")).toBeTruthy();
 		fireEvent.click(sheet().getByRole("button", { name: "Approve" }));
 		expect(onDecision).toHaveBeenCalledWith(
 			"approve",
@@ -117,6 +140,57 @@ describe("phone review sheet comments", () => {
 				comments: [{ quote: "looks like", note: "Name the idle state" }],
 			}),
 		);
+	});
+
+	it("undoes a queued comment from the toast", () => {
+		renderSheet();
+		queue("looks like", "Name the idle state");
+		fireEvent.click(screen.getByRole("button", { name: "Undo" }));
+		expect(mark()).toBe(null);
+	});
+
+	it("edits and deletes a queued comment from its highlight", () => {
+		const { onDecision } = renderSheet();
+		queue("looks like", "First note");
+
+		fireEvent.click(mark() as HTMLElement);
+		fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+		fireEvent.change(composer().getByDisplayValue("First note"), {
+			target: { value: "Second note" },
+		});
+		fireEvent.click(composer().getByRole("button", { name: "Save" }));
+		fireEvent.click(sheet().getByRole("button", { name: "Approve" }));
+		expect(onDecision).toHaveBeenLastCalledWith(
+			"approve",
+			expect.objectContaining({
+				comments: [{ quote: "looks like", note: "Second note" }],
+			}),
+		);
+
+		fireEvent.click(mark() as HTMLElement);
+		fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+		expect(mark()).toBe(null);
+	});
+
+	it("opens an existing comment when a selection lands on it", async () => {
+		renderSheet();
+		queue("looks like", "First note");
+		await waitFor(() =>
+			expect(screen.queryByTestId("phone-comment-composer")).toBe(null),
+		);
+		const range = document.createRange();
+		range.selectNodeContents(mark() as HTMLElement);
+		document.getSelection()?.removeAllRanges();
+		document.getSelection()?.addRange(range);
+		act(() => {
+			document.dispatchEvent(new Event("selectionchange"));
+		});
+		fireEvent.pointerDown(commentButton() as HTMLElement);
+
+		expect(screen.queryByTestId("phone-comment-composer")).toBe(null);
+		expect(
+			within(screen.getByTestId("phone-comment-peek")).getByText("First note"),
+		).toBeTruthy();
 	});
 
 	it("sends the quoted note to the agent", () => {
@@ -131,16 +205,19 @@ describe("phone review sheet comments", () => {
 	it("adds a rule from the quote", () => {
 		const { sendInput } = renderSheet();
 		commentOn("idle prompt", "Always name states");
-		fireEvent.click(composer().getByRole("button", { name: "Add rule" }));
+		fireEvent.click(
+			composer().getByRole("button", { name: "Make this a rule…" }),
+		);
 		vi.advanceTimersByTime(SUBMIT_WAIT_MS);
 		expect(pasted(sendInput)).toContain("/add-rule");
 		expect(pasted(sendInput)).toContain("Always name states");
 	});
 
-	it("cites a broken rule", async () => {
+	it("cites a broken rule from the rules page", async () => {
 		const { sendInput } = renderSheet();
 		commentOn("idle prompt", "");
-		await waitFor(() => composer().getByText("R1"));
+		await waitFor(() => composer().getByText("Cite a rule"));
+		fireEvent.click(composer().getByText("Cite a rule"));
 		fireEvent.click(composer().getByText("R1"));
 		vi.advanceTimersByTime(SUBMIT_WAIT_MS);
 		expect(pasted(sendInput)).toContain("breaks rule R1");

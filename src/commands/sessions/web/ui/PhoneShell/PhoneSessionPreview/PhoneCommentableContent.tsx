@@ -1,39 +1,38 @@
 import Box from "@mui/material/Box";
 import { CommentSentSnackbar } from "../../App/CommentSentSnackbar";
 import { PrPreviewContent } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/PrPreviewContent";
-import { PhoneCommentSheet } from "./PhoneCommentSheet";
-import { PhoneSelectionCommentButton } from "./PhoneSelectionCommentButton";
+import { CommentQueuedToast } from "./CommentQueuedToast";
+import { commentableContentSx } from "./PhoneCommentableContent/commentableContentSx";
+import { useHighlightPeek } from "./PhoneCommentableContent/useHighlightPeek";
+import { PhoneCommentComposer } from "./PhoneCommentComposer";
+import { PhoneCommentPeek } from "./PhoneCommentPeek";
+import { PhoneSelectionCommentBar } from "./PhoneSelectionCommentBar";
 import { usePhoneSelectionComment } from "./usePhoneSelectionComment";
 import type { usePhoneReviewPane } from "./usePhoneReviewPane";
-
-const selectableSx = {
-	flex: 1,
-	minHeight: 0,
-	display: "flex",
-	flexDirection: "column",
-	"& .markdown": { userSelect: "text", WebkitUserSelect: "text" },
-} as const;
 
 export function PhoneCommentableContent({
 	review,
 }: {
 	review: ReturnType<typeof usePhoneReviewPane>;
 }) {
-	const { pane, sender } = review;
-	const selection = usePhoneSelectionComment(pane.contentRef, pane.onSelect);
+	const { pane, sender, undo } = review;
+	const { onTap, selectOrOpen, peek } = useHighlightPeek(review);
+	const selection = usePhoneSelectionComment(pane.contentRef, selectOrOpen);
 	return (
 		<>
-			<Box sx={selectableSx}>
+			<Box sx={commentableContentSx} onClick={onTap}>
 				<PrPreviewContent
 					pane={pane}
 					screenshots={review.options.screenshots}
 				/>
 			</Box>
-			<PhoneSelectionCommentButton
-				rect={selection.rect}
+			<PhoneSelectionCommentBar
+				open={selection.showBar}
 				onComment={selection.comment}
 			/>
-			<PhoneCommentSheet {...review.composer} />
+			<PhoneCommentComposer {...review.composer} />
+			<PhoneCommentPeek {...peek} />
+			<CommentQueuedToast {...undo} />
 			<CommentSentSnackbar
 				sessionName={sender.sentTo}
 				onClose={sender.clearSent}

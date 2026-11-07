@@ -31,7 +31,7 @@ export function usePhoneReviewPane({
 		},
 	);
 	const pane = usePrPane(options);
-	const comments = usePhoneCommentComposer(pane, options.editable, {
+	const comments = usePhoneCommentComposer(pane, {
 		session,
 		sendInput,
 	});

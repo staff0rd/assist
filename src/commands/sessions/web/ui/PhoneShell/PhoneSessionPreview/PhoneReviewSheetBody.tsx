@@ -6,6 +6,7 @@ import { PreviewMetadataList } from "../../App/SessionContent/PrPreviewSlideInPa
 import { PrPreviewChainToggles } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/PrPreviewFooter/PrPreviewActions/PrPreviewChainToggles";
 import { PhonePreviewDecisions } from "../PhonePreviewDecisions";
 import { PhoneCommentableContent } from "./PhoneCommentableContent";
+import { PhoneQueuedCommentCount } from "./PhoneQueuedCommentCount";
 import { PhoneRejectReason } from "./PhoneRejectReason";
 import type { usePhoneReviewPane } from "./usePhoneReviewPane";
 
@@ -44,6 +45,7 @@ export function PhoneReviewSheetBody({
 					/>
 				)}
 				<PhoneRejectReason value={review.reason} onChange={review.setReason} />
+				<PhoneQueuedCommentCount count={pane.comments.length} />
 				<PhonePreviewDecisions {...review.decisions} />
 			</Box>
 		</>

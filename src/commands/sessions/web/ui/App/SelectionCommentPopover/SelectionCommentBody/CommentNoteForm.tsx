@@ -1,10 +1,9 @@
 import { TextField } from "@mui/material";
 import { useState } from "react";
-import { noteActionsComponent } from "./CommentNoteForm/noteActionsComponent";
+import { CommentNoteActions } from "./CommentNoteForm/CommentNoteActions";
 import { useCommentNoteSubmit } from "./CommentNoteForm/useCommentNoteSubmit";
 
 export function CommentNoteForm({
-	stacked,
 	unavailable,
 	onAdd,
 	onQueue,
@@ -12,7 +11,6 @@ export function CommentNoteForm({
 	onCancel,
 	onCollapse,
 }: {
-	stacked?: boolean | undefined;
 	unavailable?: string | undefined;
 	onAdd: (note: string) => void;
 	onQueue?: ((note: string) => void) | undefined;
@@ -28,7 +26,6 @@ export function CommentNoteForm({
 		onAdd,
 		onQueue,
 	});
-	const Actions = noteActionsComponent(stacked);
 
 	return (
 		<>
@@ -48,7 +45,7 @@ export function CommentNoteForm({
 					}
 				}}
 			/>
-			<Actions
+			<CommentNoteActions
 				disabled={trimmed.length === 0}
 				unavailable={unavailable}
 				onAdd={submit}

@@ -1,0 +1,26 @@
+export const commentableContentSx = {
+	flex: 1,
+	minHeight: 0,
+	display: "flex",
+	flexDirection: "column",
+	"& .markdown": { userSelect: "text", WebkitUserSelect: "text" },
+	"& .markdown mark.pr-comment": {
+		userSelect: "none",
+		WebkitUserSelect: "none",
+		cursor: "pointer",
+	},
+	"& mark.pr-comment[data-pin]::after": {
+		content: "attr(data-pin)",
+		display: "inline-grid",
+		placeItems: "center",
+		minWidth: 16,
+		height: 16,
+		ml: 0.25,
+		borderRadius: 8,
+		verticalAlign: 2,
+		bgcolor: "text.primary",
+		color: "background.paper",
+		fontSize: 10,
+		fontWeight: 700,
+	},
+} as const;
