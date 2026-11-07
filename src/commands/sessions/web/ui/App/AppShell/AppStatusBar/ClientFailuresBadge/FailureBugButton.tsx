@@ -15,12 +15,13 @@ export function FailureBugButton({
 	failure: ClientFailure;
 	onLaunched: () => void;
 }) {
-	const { repos, originOf, selectedNode } = useRepoSelectionContext();
+	const { repos, originOf, cloneOn, selectedNode } = useRepoSelectionContext();
 	const { launchAssist } = useSessionLaunchContext();
-	const cwd = findAssistClone(repos, originOf);
+	const anyClone = findAssistClone(repos, originOf);
+	const cwd = anyClone && cloneOn(anyClone, selectedNode);
 	const title = cwd
 		? "Report this failure in a /bug session"
-		: "No local clone of staff0rd/assist to report the bug in";
+		: `No local clone of staff0rd/assist${selectedNode ? ` on ${selectedNode}` : ""} to report the bug in`;
 	return (
 		<Tooltip title={title}>
 			<span>

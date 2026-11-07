@@ -9,6 +9,7 @@ import { SessionLaunchContext } from "../../../../useSessionLaunchContext";
 export function withFailureBugContexts(
 	origins: Record<string, string>,
 	children: ReactNode,
+	cloneOn: RepoSelection["cloneOn"] = (cwd) => cwd,
 ) {
 	const launchAssist = vi.fn();
 	const selection: RepoSelection = {
@@ -17,7 +18,7 @@ export function withFailureBugContexts(
 		selectedNode: "mac",
 		worktreeCwd: "/git/selected",
 		setSelectedCwd: () => {},
-		cloneOn: (cwd) => cwd,
+		cloneOn,
 		originOf: (cwd) => origins[cwd],
 	};
 	const ui = (

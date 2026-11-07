@@ -19,7 +19,10 @@ const failure: ClientFailure = {
 	durationMs: 20012,
 };
 
-function renderPanel(origins: Record<string, string>) {
+function renderPanel(
+	origins: Record<string, string>,
+	cloneOn?: Parameters<typeof withFailureBugContexts>[2],
+) {
 	const onLaunched = vi.fn();
 	const { ui, launchAssist } = withFailureBugContexts(
 		origins,
@@ -28,6 +31,7 @@ function renderPanel(origins: Record<string, string>) {
 			onClear={() => {}}
 			onLaunched={onLaunched}
 		/>,
+		cloneOn,
 	);
 	renderWithTheme(ui);
 	return { launchAssist, onLaunched };
@@ -63,7 +67,33 @@ describe("ClientFailuresPanel bug button", () => {
 
 		fireEvent.mouseOver(button.parentElement as HTMLElement);
 		expect((await screen.findByRole("tooltip")).textContent).toBe(
-			"No local clone of staff0rd/assist to report the bug in",
+			"No local clone of staff0rd/assist on mac to report the bug in",
 		);
+	});
+
+	it("launches in the selected node's clone when another node's clone is listed", () => {
+		const { launchAssist } = renderPanel(
+			{ "/home/me/git/assist": "github.com/staff0rd/assist" },
+			(cwd, node) =>
+				cwd === "/home/me/git/assist" && node === "mac"
+					? "/Users/me/git/assist"
+					: undefined,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Report bug" }));
+
+		const [, cwd, meta] = launchAssist.mock.calls[0];
+		expect(cwd).toBe("/Users/me/git/assist");
+		expect(meta.node).toBe("mac");
+	});
+
+	it("disables the button when only another node has an assist clone", () => {
+		const { launchAssist } = renderPanel(
+			{ "/home/me/git/assist": "github.com/staff0rd/assist" },
+			() => undefined,
+		);
+		const button = screen.getByRole("button", { name: "Report bug" });
+		expect((button as HTMLButtonElement).disabled).toBe(true);
+		fireEvent.click(button);
+		expect(launchAssist).not.toHaveBeenCalled();
 	});
 });
