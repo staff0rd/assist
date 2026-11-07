@@ -1,5 +1,4 @@
 import { ErrorSnackbar } from "../../ErrorSnackbar";
-import { ExtensionUpdateToast } from "./AppOverlays/ExtensionUpdateToast";
 import { FilePaletteLayer } from "./AppOverlays/FilePaletteLayer";
 import { LaunchSnackbar } from "./AppOverlays/LaunchSnackbar";
 import { NewSessionLayer } from "./AppOverlays/NewSessionLayer";
@@ -25,7 +24,6 @@ export function AppOverlays({
 				}}
 			/>
 			<ReconnectingIndicator reconnecting={socket.reconnecting} />
-			<ExtensionUpdateToast />
 			<ErrorSnackbar error={socket.error} onClose={socket.clearError} />
 			<LaunchSnackbar
 				notice={socket.success}
