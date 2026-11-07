@@ -1,9 +1,11 @@
 import Box from "@mui/material/Box";
+import type { HarnessKind } from "../../../../../shared/harnesses";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import { PhoneKeyStrip } from "./PhoneKeyStrip";
 import { PhoneReplyBar } from "./PhoneReplyBar";
 
 type Props = {
+	harness?: HarnessKind;
 	waiting: boolean;
 	keyboardOpen: boolean;
 	onKey: (data: string) => void;
@@ -11,6 +13,7 @@ type Props = {
 };
 
 export function PhoneInputDock({
+	harness,
 	waiting,
 	keyboardOpen,
 	onKey,
@@ -29,7 +32,7 @@ export function PhoneInputDock({
 			<Box sx={{ order: keyboardOpen ? 1 : 0 }}>
 				<PhoneKeyStrip waiting={waiting} onKey={onKey} />
 			</Box>
-			<PhoneReplyBar onSend={onSend} />
+			<PhoneReplyBar harness={harness} onSend={onSend} />
 		</Box>
 	);
 }

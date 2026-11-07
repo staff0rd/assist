@@ -4,46 +4,19 @@ import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
 import type { PointerEvent } from "react";
 import { useState } from "react";
-import { raisedBgcolor } from "../designSystem/raisedBgcolor";
-import { touchTarget } from "../designSystem/touchTarget";
-
-const barSx = {
-	flex: "none",
-	display: "flex",
-	alignItems: "flex-end",
-	gap: 1,
-	px: 1.5,
-	py: 1.25,
-	bgcolor: "background.paper",
-} as const;
-
-const fieldSx = {
-	flex: 1,
-	minHeight: touchTarget,
-	px: 1.75,
-	py: 1,
-	borderRadius: "24px",
-	border: 1,
-	borderColor: "divider",
-	bgcolor: "background.default",
-	fontSize: 16,
-	"&.Mui-focused": { borderColor: "primary.main" },
-} as const;
-
-const sendSx = {
-	flex: "none",
-	bgcolor: "primary.main",
-	color: "primary.contrastText",
-	"&:hover": { bgcolor: "primary.main" },
-	"&.Mui-disabled": {
-		bgcolor: raisedBgcolor,
-		color: "text.disabled",
-	},
-} as const;
+import type { HarnessKind } from "../../../../../shared/harnesses";
+import { harnessLabel } from "../../../../../shared/harnessLabel";
+import { phoneReplyBarSx } from "./phoneReplyBarSx";
 
 const keepKeyboardOpen = (e: PointerEvent) => e.preventDefault();
 
-export function PhoneReplyBar({ onSend }: { onSend: (text: string) => void }) {
+export function PhoneReplyBar({
+	harness,
+	onSend,
+}: {
+	harness?: HarnessKind;
+	onSend: (text: string) => void;
+}) {
 	const [text, setText] = useState("");
 	const send = () => {
 		if (!text.trim()) return;
@@ -52,19 +25,19 @@ export function PhoneReplyBar({ onSend }: { onSend: (text: string) => void }) {
 	};
 
 	return (
-		<Box sx={barSx}>
+		<Box sx={phoneReplyBarSx.bar}>
 			<InputBase
 				multiline
 				maxRows={5}
 				value={text}
 				onChange={(e) => setText(e.target.value)}
-				placeholder="Reply to Claude…"
-				sx={fieldSx}
+				placeholder={`Reply to ${harnessLabel(harness)}…`}
+				sx={phoneReplyBarSx.field}
 				inputProps={{ "aria-label": "Reply" }}
 			/>
 			<IconButton
 				aria-label="Send"
-				sx={sendSx}
+				sx={phoneReplyBarSx.send}
 				disabled={!text.trim()}
 				onPointerDown={keepKeyboardOpen}
 				onClick={send}

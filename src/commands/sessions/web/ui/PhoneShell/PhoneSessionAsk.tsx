@@ -51,6 +51,7 @@ export function PhoneSessionAsk({
 		);
 	return (
 		<PhoneInputDock
+			harness={session.harness}
 			waiting={isAwaitingUser(displayStatus(session))}
 			keyboardOpen={keyboardOpen}
 			onKey={io.onKey}
