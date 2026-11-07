@@ -9,6 +9,7 @@ import { saveScreenshot } from "./saveScreenshot";
 import { performAction } from "./performAction";
 import { framePhoneScreenshot } from "./framePhoneScreenshot";
 import { newCaptureContext } from "./newCaptureContext";
+import { routeApiStubs } from "./routeApiStubs";
 
 const SETTLE_MS = 750;
 
@@ -27,6 +28,7 @@ export async function captureScreenshot(
 	browser: Browser,
 	baseUrl: string,
 	screenshot: DocsScreenshot,
+	apiStubs: ReadonlyMap<string, unknown>,
 ): Promise<string[]> {
 	const written: string[] = [];
 	for (const variant of screenshotVariants(screenshot)) {
@@ -36,6 +38,7 @@ export async function captureScreenshot(
 			screenshot,
 			variant.theme,
 		);
+		await routeApiStubs(context, apiStubs);
 		const page = await openPage(context, baseUrl, screenshot);
 		if (screenshot.waitFor) await page.waitForSelector(screenshot.waitFor);
 		for (const action of screenshot.actions ?? [])

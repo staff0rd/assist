@@ -28,7 +28,12 @@ export async function captureScreenshots(
 	try {
 		for (const screenshot of screenshots) {
 			await enterState(setupSteps(screenshot, scenes));
-			const files = await captureScreenshot(browser, url, screenshot);
+			const files = await captureScreenshot(
+				browser,
+				url,
+				screenshot,
+				capture.apiStubs,
+			);
 			console.log(`Captured ${files.join(", ")}`);
 		}
 		if (screenshots.some((s) => s.file === socialCardSource)) {

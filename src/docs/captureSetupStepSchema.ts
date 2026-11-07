@@ -154,6 +154,11 @@ const newsFeedSchema = z.strictObject({
 		.min(1),
 });
 
+const connectMobileSchema = z.strictObject({
+	url: z.string().url(),
+	name: z.string().min(1),
+});
+
 export const captureSetupStepSchema = z.union([
 	z.strictObject({ assist: z.array(z.string().min(1)).min(1) }),
 	z.strictObject({ run: z.string().min(1) }),
@@ -173,6 +178,7 @@ export const captureSetupStepSchema = z.union([
 	z.strictObject({ gh: ghResponseSchema }),
 	z.strictObject({ sql: z.string().min(1) }),
 	z.strictObject({ newsFeed: newsFeedSchema }),
+	z.strictObject({ connectMobile: connectMobileSchema }),
 ]);
 
 export type CaptureSetupStep = z.infer<typeof captureSetupStepSchema>;

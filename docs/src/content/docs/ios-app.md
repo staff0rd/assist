@@ -28,6 +28,14 @@ screenshots:
     actions:
       - click: input[placeholder="https://mac.tail1234.ts.net:3100"]
       - type: https://mac.tail1234.ts.net:3100
+  - file: ios-app-connect-mobile.png
+    alt: The Connect mobile page, with the node's QR code and tailnet URL
+    route: /connect-mobile
+    setup:
+      - connectMobile:
+          url: https://mac.tail1234.ts.net:3100
+          name: mac
+    waitFor: text=https://mac.tail1234.ts.net:3100
   - file: ios-app-nodes.png
     alt: The iOS app's saved nodes, with the home node selected
     route: /
@@ -93,6 +101,8 @@ On first launch, enter the address you open the dashboard at in a browser as the
 ::screenshot{file="ios-app-connect.png"}
 
 To skip typing the address, open **Connect mobile** from the dashboard's menu on that node and scan its QR code with the iPhone camera. The app adds the node and makes it the home node.
+
+::screenshot{file="ios-app-connect-mobile.png"}
 
 ## Switching nodes
 

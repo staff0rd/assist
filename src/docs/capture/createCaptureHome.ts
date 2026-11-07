@@ -1,6 +1,5 @@
 import {
 	copyFileSync,
-	cpSync,
 	mkdtempSync,
 	realpathSync,
 	writeFileSync,
@@ -8,11 +7,11 @@ import {
 import type { Server } from "node:http";
 import type { Socket } from "node:net";
 import { tmpdir } from "node:os";
-import { delimiter, join } from "node:path";
+import { join } from "node:path";
 import type { CaptureNewsFeed } from "../captureSetupStepSchema";
 import { docsPaths } from "../docsPaths";
+import { captureEnv } from "./captureEnv";
 import { cloneCaptureRepos } from "./cloneCaptureRepos";
-import { isolatedEnv } from "./isolatedEnv";
 
 type CapturePeer = {
 	capture: CaptureHome;
@@ -31,6 +30,7 @@ export type CaptureHome = {
 	peers: Map<string, CapturePeer>;
 	linkedPeers: Set<string>;
 	newsFeeds: Map<string, CaptureNewsFeed>;
+	apiStubs: Map<string, unknown>;
 	feedServer?: Server;
 };
 
@@ -42,14 +42,7 @@ export function createCaptureHome(databaseUrl: string): CaptureHome {
 	const home = realpathSync(
 		mkdtempSync(join(socketPathSafeTempDir(), "assist-docs-")),
 	);
-	const bin = join(home, "bin");
-	cpSync(docsPaths.captureBin, bin, { recursive: true });
-	const base = isolatedEnv(home);
-	const env = {
-		...base,
-		PATH: [bin, base.PATH].filter(Boolean).join(delimiter),
-		ASSIST_DATABASE_URL: databaseUrl,
-	};
+	const env = captureEnv(home, databaseUrl);
 	copyFileSync(docsPaths.captureConfig, join(home, ".assist.yml"));
 	writeFileSync(
 		join(home, ".gitconfig"),
@@ -68,5 +61,6 @@ export function createCaptureHome(databaseUrl: string): CaptureHome {
 		peers: new Map(),
 		linkedPeers: new Set(),
 		newsFeeds: new Map(),
+		apiStubs: new Map(),
 	};
 }

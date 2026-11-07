@@ -27,6 +27,7 @@ export function sessionStateTracker(capture: CaptureHome) {
 			});
 			rmSync(join(capture.home, ".fake-gh.json"), { force: true });
 			rmSync(fakeGhResponsesFile(capture), { force: true });
+			capture.apiStubs.clear();
 			copyFileSync(docsPaths.captureConfig, join(capture.home, ".assist.yml"));
 			await resetBacklog(capture);
 		}
