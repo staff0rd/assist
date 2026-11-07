@@ -36,6 +36,18 @@ screenshots:
       - click: "[aria-label='Fill the window with preview']"
       - click: text=Dark mode toggle on the settings page
       - click: "[role='tab']:has-text('Structure')"
+  - file: sessions-high-level-checks.png
+    alt: The Overview checks of a pull request, passing and failing
+    route: /sessions
+    scene: high-level-review
+    waitFor: text=Description has a What and a Why
+    viewport:
+      width: 1440
+      height: 900
+    actions:
+      - click: text=High-level review #14
+      - click: "[aria-label='Fill the window with preview']"
+      - click: "[role='tab']:has-text('Checks')"
   - file: sessions-high-level-manual-testing.png
     alt: The manual testing steps of a pull request under Overview
     route: /sessions
@@ -116,6 +128,9 @@ The rail on the left lists **Overview**, then each slice with its line counts an
   - The pull request links the GitHub issue it resolves.
   - A UI change has a screenshot or video in the description.
   - The pull request has no merge conflicts.
+
+::screenshot{file="sessions-high-level-checks.png"}
+
 - **Manual testing** lists any setup, then numbered steps, each with what to do and what you should see. Links in a step open the page or the file on GitHub.
 
 ::screenshot{file="sessions-high-level-manual-testing.png"}
