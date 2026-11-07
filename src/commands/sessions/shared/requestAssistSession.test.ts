@@ -55,3 +55,21 @@ describe("requestAssistSession", () => {
 		);
 	});
 });
+
+describe("requestAssistSession on a named node", () => {
+	it("targets the node and drops the launcher so the daemon forwards it", async () => {
+		process.env.ASSIST_SESSION_ID = "7";
+
+		await requestAssistSession(["backlog", "run", "a1"], "/win/repo", {
+			node: "win",
+		});
+
+		expect(mockRequestSession).toHaveBeenCalledWith({
+			type: "create-assist",
+			assistArgs: ["backlog", "run", "a1"],
+			cwd: "/win/repo",
+			inPlace: false,
+			node: "win",
+		});
+	});
+});

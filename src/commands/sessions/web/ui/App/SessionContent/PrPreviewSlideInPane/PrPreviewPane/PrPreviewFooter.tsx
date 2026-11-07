@@ -40,7 +40,10 @@ export function PrPreviewFooter({
 				canStart={canStart}
 				onChainChange={onChainChange}
 				onApprove={() => onDecision("approve", sent())}
-				onApproveAndStart={() => onDecision("approve", sent(), true)}
+				cwd={cwd}
+				onApproveAndStart={(startOn) =>
+					onDecision("approve", sent(), startOn ?? true)
+				}
 				onReject={() => onDecision("reject", [])}
 				onRequestChanges={() => onDecision("reject", sent())}
 			/>

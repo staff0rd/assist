@@ -9,6 +9,7 @@ export type PrDecisionDetails = PrPreviewChain &
 		| "reason"
 		| "body"
 		| "autostart"
+		| "startOn"
 		| "selection"
 		| "checklist"
 		| "reviewEvent"

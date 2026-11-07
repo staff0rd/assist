@@ -245,6 +245,24 @@ describe("update-plan inside a web session", () => {
 		);
 	});
 
+	it("starts the run on the node picked beside Approve & start", async () => {
+		await seedItem();
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+			startOn: { node: "win", cwd: String.raw`C:\git\repo` },
+		});
+		mockRequestAssistSession.mockResolvedValue("8");
+
+		await updatePlan("a1", { json: writePayload(restructured) });
+
+		expect(mockRequestAssistSession).toHaveBeenCalledWith(
+			["backlog", "run", "a1"],
+			String.raw`C:\git\repo`,
+			{ node: "win" },
+		);
+	});
+
 	it("adds a single phase through the same call", async () => {
 		await seedItem();
 		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });

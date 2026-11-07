@@ -1,16 +1,22 @@
 import { Button } from "@mui/material";
+import type { PreviewStartTarget } from "../../../../../../../../shared/PreviewDecision";
 import { usePreviewPrimaryAction } from "../../../../../usePreviewPrimaryAction";
+import { StartNodePicker } from "./PrPreviewApproveButtons/StartNodePicker";
+import { useStartNodeChoice } from "./PrPreviewApproveButtons/useStartNodeChoice";
 
 export function PrPreviewApproveButtons({
 	canStart,
+	cwd,
 	onApprove,
 	onApproveAndStart,
 }: {
 	canStart: boolean;
+	cwd?: string | undefined;
 	onApprove: () => void;
-	onApproveAndStart: () => void;
+	onApproveAndStart: (startOn?: PreviewStartTarget) => void;
 }) {
 	const primary = usePreviewPrimaryAction();
+	const startNode = useStartNodeChoice(cwd);
 	return (
 		<>
 			<Button
@@ -21,11 +27,19 @@ export function PrPreviewApproveButtons({
 			>
 				Approve
 			</Button>
+			{canStart && startNode.nodes && startNode.target && (
+				<StartNodePicker
+					nodes={startNode.nodes}
+					options={startNode.options}
+					target={startNode.target}
+					onPick={startNode.pick}
+				/>
+			)}
 			{canStart && (
 				<Button
 					color="primary"
 					variant="contained"
-					onClick={onApproveAndStart}
+					onClick={() => onApproveAndStart(startNode.target)}
 					{...primary}
 				>
 					Approve & start

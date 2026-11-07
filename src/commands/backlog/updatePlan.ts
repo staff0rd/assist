@@ -25,5 +25,5 @@ export async function updatePlan(
 			`Replaced the plan on item ${formatItemId(item.id)} with ${phases.length} phase${phases.length === 1 ? "" : "s"}.`,
 		),
 	);
-	if (approval.autostart) await startProposedRun(item.id);
+	if (approval.autostart) await startProposedRun(item.id, approval.startOn);
 }

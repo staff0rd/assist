@@ -27,6 +27,11 @@ export type PreviewReviewComment = {
 	side?: PreviewReviewSide;
 };
 
+export type PreviewStartTarget = {
+	node: string;
+	cwd: string;
+};
+
 export type PreviewDecisionFields = {
 	reason?: string;
 	comments?: PrPreviewComment[];
@@ -37,6 +42,7 @@ export type PreviewDecisionFields = {
 	draft?: boolean;
 	autoMerge?: boolean;
 	autostart?: boolean;
+	startOn?: PreviewStartTarget;
 	selection?: PreviewSelection;
 	checklist?: PreviewChecklistItem[];
 	reviewEvent?: PreviewReviewEvent;

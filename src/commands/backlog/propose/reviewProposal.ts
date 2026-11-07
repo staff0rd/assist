@@ -6,15 +6,14 @@ import { awaitPreviewApproval } from "../../sessions/shared/awaitPreviewApproval
 import { formatItemId } from "../formatItemId";
 import type { ProposedItem } from "./proposedItemSchema";
 import { renderProposedItem } from "./renderProposedItem";
-
-type ProposalApproval = { autostart: boolean };
+import { type StartApproval, toStartApproval } from "./toStartApproval";
 
 export async function reviewProposal(
 	item: ProposedItem,
 	sessionId: string | undefined,
 	confirmed: boolean,
 	revises?: number,
-): Promise<ProposalApproval | null> {
+): Promise<StartApproval | null> {
 	const body = renderProposedItem(item);
 
 	if (sessionId) {
@@ -31,7 +30,7 @@ export async function reviewProposal(
 			itemType: item.type,
 			canStart: true,
 		});
-		return { autostart: decision.autostart === true };
+		return toStartApproval(decision);
 	}
 
 	if (isAgentHarness() && confirmed) return { autostart: false };

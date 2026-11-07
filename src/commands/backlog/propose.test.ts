@@ -271,6 +271,24 @@ describe("propose inside a web session", () => {
 		);
 	});
 
+	it("starts the run on the node picked beside Approve & start", async () => {
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+			startOn: { node: "win", cwd: String.raw`C:\git\repo` },
+		});
+		mockRequestAssistSession.mockResolvedValue("8");
+
+		await propose({ json: writePayload(bug) });
+
+		const [item] = await allItems();
+		expect(mockRequestAssistSession).toHaveBeenCalledWith(
+			["backlog", "run", `a${item.id}`],
+			String.raw`C:\git\repo`,
+			{ node: "win" },
+		);
+	});
+
 	it("keeps the item and warns when the run fails to start", async () => {
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		mockRequestPreviewDecision.mockResolvedValue({

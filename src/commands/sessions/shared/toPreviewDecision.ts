@@ -2,12 +2,13 @@ import type {
 	PreviewDecision,
 	PreviewDecisionFields,
 	PreviewReviewEvent,
-	PreviewSelection,
 } from "./PreviewDecision";
 import { toAnswers } from "./toAnswers";
 import { toAttachments } from "./toAttachments";
 import { toChecklist } from "./toChecklist";
 import { toReviewComments } from "./toReviewComments";
+import { toStartTarget } from "./toStartTarget";
+import { toSelection } from "./toSelection";
 
 const REVIEW_EVENTS: PreviewReviewEvent[] = [
 	"APPROVE",
@@ -21,16 +22,6 @@ export type DecisionMessage = PreviewDecisionFields & {
 	decision?: string;
 	message?: string;
 };
-
-function toSelection(value: unknown): PreviewSelection | undefined {
-	const selection = value as PreviewSelection | undefined;
-	if (
-		typeof selection?.topLeft !== "string" ||
-		typeof selection.bottomRight !== "string"
-	)
-		return undefined;
-	return { topLeft: selection.topLeft, bottomRight: selection.bottomRight };
-}
 
 export function toPreviewDecision(
 	msg: DecisionMessage,
@@ -47,6 +38,7 @@ export function toPreviewDecision(
 		draft: typeof msg.draft === "boolean" ? msg.draft : undefined,
 		autoMerge: msg.autoMerge === true,
 		autostart: msg.autostart === true,
+		startOn: msg.autostart === true ? toStartTarget(msg.startOn) : undefined,
 		selection: toSelection(msg.selection),
 		checklist: toChecklist(msg.checklist),
 		reviewEvent: REVIEW_EVENTS.find((event) => event === msg.reviewEvent),

@@ -13,6 +13,10 @@ import {
 import type { PrDecisionDetails } from "../../../../../PrDecisionDetails";
 import type { PrPreviewChain } from "../../../../../PrPreviewChain";
 import { previewDecisionDetails } from "./usePrDecision/previewDecisionDetails";
+import {
+	type Autostart,
+	autostartFields,
+} from "./usePrDecision/autostartFields";
 
 type OnDecision = (
 	decision: "approve" | "reject",
@@ -43,7 +47,7 @@ export function usePrDecision(
 	const onDecide = (
 		decision: "approve" | "reject",
 		comments: PrPreviewComment[],
-		autostart = false,
+		autostart: Autostart = false,
 	) => {
 		const approved = decision === "approve";
 		onDecision(decision, {
@@ -54,7 +58,7 @@ export function usePrDecision(
 				approved ? screenshots.attachments() : [],
 				editedBody(),
 			),
-			...(approved && autostart ? { autostart: true } : {}),
+			...autostartFields(approved, autostart),
 		});
 		clearPersistedComments(requestId);
 		if (approved) {

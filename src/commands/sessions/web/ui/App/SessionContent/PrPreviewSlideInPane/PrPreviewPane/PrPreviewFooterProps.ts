@@ -3,6 +3,7 @@ import type { PrPreviewComment } from "../../../../../../shared/SessionInfoBase"
 import type { PendingComment } from "../../../PendingComment";
 import type { PrPreviewChain } from "../../../../PrPreviewChain";
 import type { LocalComment } from "./usePrComments";
+import type { Autostart } from "./usePrPane/usePrDecision/autostartFields";
 
 export type PrPreviewFooterProps = {
 	comments: LocalComment[];
@@ -20,7 +21,7 @@ export type PrPreviewFooterProps = {
 	onDecision: (
 		decision: "approve" | "reject",
 		comments: PrPreviewComment[],
-		autostart?: boolean,
+		autostart?: Autostart,
 	) => void;
 	chain?: PrPreviewChain | undefined;
 	editable: boolean;

@@ -1,4 +1,5 @@
 import { Button, Stack } from "@mui/material";
+import type { PreviewStartTarget } from "../../../../../../../shared/PreviewDecision";
 import type { PrPreviewChain } from "../../../../../PrPreviewChain";
 import { PrPreviewApproveButtons } from "./PrPreviewActions/PrPreviewApproveButtons";
 import { PrPreviewChainToggles } from "./PrPreviewActions/PrPreviewChainToggles";
@@ -10,6 +11,7 @@ export function PrPreviewActions({
 	canStart,
 	onChainChange,
 	onApprove,
+	cwd,
 	onApproveAndStart,
 	onReject,
 	onRequestChanges,
@@ -20,7 +22,8 @@ export function PrPreviewActions({
 	canStart: boolean;
 	onChainChange: (chain: PrPreviewChain) => void;
 	onApprove: () => void;
-	onApproveAndStart: () => void;
+	cwd?: string | undefined;
+	onApproveAndStart: (startOn?: PreviewStartTarget) => void;
 	onReject: () => void;
 	onRequestChanges: () => void;
 }) {
@@ -52,6 +55,7 @@ export function PrPreviewActions({
 			)}
 			<PrPreviewApproveButtons
 				canStart={canStart}
+				cwd={cwd}
 				onApprove={onApprove}
 				onApproveAndStart={onApproveAndStart}
 			/>

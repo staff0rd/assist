@@ -8,6 +8,7 @@ const FORWARDED = [
 	"draft",
 	"autoMerge",
 	"autostart",
+	"startOn",
 	"checklist",
 	"reviewEvent",
 	"reviewComments",

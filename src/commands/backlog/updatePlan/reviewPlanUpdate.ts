@@ -6,13 +6,15 @@ import { formatItemId } from "../formatItemId";
 import type { BacklogItem } from "../types";
 import type { PlanUpdatePhase } from "./planUpdateSchema";
 import { renderPlanUpdate } from "./renderPlanUpdate";
-
-type PlanUpdateApproval = { autostart: boolean };
+import {
+	type StartApproval,
+	toStartApproval,
+} from "../propose/toStartApproval";
 
 export async function reviewPlanUpdate(
 	item: BacklogItem,
 	phases: PlanUpdatePhase[],
-): Promise<PlanUpdateApproval> {
+): Promise<StartApproval> {
 	const body = renderPlanUpdate(item, phases);
 	const sessionId = process.env.ASSIST_SESSION_ID;
 
@@ -27,7 +29,7 @@ export async function reviewPlanUpdate(
 			itemType: item.type,
 			canStart: true,
 		});
-		return { autostart: decision.autostart === true };
+		return toStartApproval(decision);
 	}
 
 	console.log(chalk.bold(item.name));
