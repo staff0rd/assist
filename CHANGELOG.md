@@ -1,3 +1,16 @@
+# [0.1082.0](https://github.com/staff0rd/assist/compare/v0.1081.1...v0.1082.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* restart wedged peer web via daemon link ([b8434d6](https://github.com/staff0rd/assist/commit/b8434d695dbe0f7fc0bd08f0cc3f623969c4c2e6))
+
+
+### Features
+
+* add TestFlight testers from dialog ([3e5898e](https://github.com/staff0rd/assist/commit/3e5898eebb9d1b030069317ef83ad3ff60d300a7))
+* harness-aware one-shots and detection ([5606535](https://github.com/staff0rd/assist/commit/560653547834511af2c3f640a0e7bd8752e50416))
+
 ## [0.1081.1](https://github.com/staff0rd/assist/compare/v0.1081.0...v0.1081.1) (2026-11-07)
 
 
