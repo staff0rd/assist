@@ -19,6 +19,7 @@ export function useAppShell() {
 	);
 	useAdoptRepoCard({
 		selectedCwd: selection.selectedCwd,
+		selectedOrigin: selection.originOf(selection.selectedCwd),
 		selectedCardId: cardId,
 		sessions: socket.sessions,
 		history: socket.history,

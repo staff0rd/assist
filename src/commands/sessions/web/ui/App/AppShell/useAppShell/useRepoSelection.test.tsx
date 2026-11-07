@@ -56,7 +56,12 @@ const history: HistoricalSession[] = [
 	},
 ];
 
-function useShell(activeByRepo: Record<string, string>, cards: SessionInfo[]) {
+function useShell(
+	activeByRepo: Record<string, string>,
+	cards: SessionInfo[],
+	nodeSelection: NodeSelection = singleNode,
+	past: HistoricalSession[] = history,
+) {
 	const [activeId, setActiveId] = useState<string | null>(null);
 	const [viewingTranscriptSessionId, setViewingTranscriptSessionId] = useState<
 		string | null
@@ -73,16 +78,17 @@ function useShell(activeByRepo: Record<string, string>, cards: SessionInfo[]) {
 	const selectedCardId = viewingTranscriptSessionId ?? activeId;
 	const selection = useRepoSelection(
 		"",
-		history,
+		past,
 		selectedCardId,
 		cards,
-		singleNode,
+		nodeSelection,
 	);
 	useAdoptRepoCard({
 		selectedCwd: selection.selectedCwd,
+		selectedOrigin: selection.originOf(selection.selectedCwd),
 		selectedCardId,
 		sessions: cards,
-		history,
+		history: past,
 		activeByRepo,
 		onSelect: selectCard,
 	});
@@ -221,5 +227,54 @@ describe("useRepoSelection", () => {
 		expect(cloneOn(windowsClone, undefined)).toBeUndefined();
 		expect(cloneOn(windowsClone, "pc-windows")).toBe(windowsClone);
 		expect(originOf(windowsClone)).toBe("host/org/remote");
+	});
+
+	describe("with the repo cloned on a linked node", () => {
+		const pcClone = "/pc/live";
+		const pcGroup = { origin: group.origin, clone: pcClone };
+		const pcCard = makeSessionInfo({
+			id: "pc:1",
+			cwd: pcClone,
+			node: "pc",
+			repoGroup: pcGroup,
+		});
+		const pcHistory: HistoricalSession[] = [
+			...history,
+			{
+				sessionId: "pc:past",
+				name: "pc old",
+				project: "proj",
+				cwd: pcClone,
+				node: "pc",
+				timestamp: "2026-01-01",
+				repoGroup: pcGroup,
+			},
+		];
+		const onNode = (selected: string | undefined): NodeSelection => ({
+			nodes: {
+				local: "wsl",
+				links: [{ name: "pc" }],
+			} as NodeSelection["nodes"],
+			names: ["wsl", "pc"],
+			visible: true,
+			selected,
+			select: () => {},
+		});
+
+		it("keeps the selected session when the node selector changes", () => {
+			const activeByRepo = { [clone]: "feature", [pcClone]: "pc:1" };
+			const cards = [...sessions, pcCard];
+			const { result, rerender } = renderHook(
+				({ node }: { node: string | undefined }) =>
+					useShell(activeByRepo, cards, onNode(node), pcHistory),
+				{ initialProps: { node: "wsl" }, wrapper: MemoryRouter },
+			);
+			act(() => result.current.selectCard("feature"));
+
+			rerender({ node: "pc" });
+
+			expect(result.current.selection.selectedCwd).toBe(pcClone);
+			expect(result.current.selectedCardId).toBe("feature");
+		});
 	});
 });

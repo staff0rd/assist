@@ -7,6 +7,7 @@ import { useRouteDeselectsSession } from "../../../useRouteDeselectsSession";
 
 export function useAdoptRepoCard({
 	selectedCwd,
+	selectedOrigin,
 	selectedCardId,
 	sessions,
 	history,
@@ -14,6 +15,7 @@ export function useAdoptRepoCard({
 	onSelect,
 }: {
 	selectedCwd: string;
+	selectedOrigin?: string;
 	selectedCardId: string | null;
 	sessions: SessionInfo[];
 	history: HistoricalSession[];
@@ -22,7 +24,12 @@ export function useAdoptRepoCard({
 }): void {
 	const selected = findActiveSession(selectedCardId, sessions, history);
 	const selectedRepo = selected && repoGroupCwd(selected);
-	const inSelectedRepo = Boolean(selectedRepo && selectedRepo === selectedCwd);
+	const selectedOriginMatches = Boolean(
+		selectedOrigin && selected?.repoGroup?.origin === selectedOrigin,
+	);
+	const inSelectedRepo =
+		Boolean(selectedRepo && selectedRepo === selectedCwd) ||
+		selectedOriginMatches;
 	const candidate = cardForRepo(activeByRepo, selectedCwd, sessions);
 	const lastCardId = useRef(selectedCardId);
 	const deselects = useRouteDeselectsSession();
