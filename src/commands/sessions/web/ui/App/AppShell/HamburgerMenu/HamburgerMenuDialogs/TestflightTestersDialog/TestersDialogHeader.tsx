@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import { safeAreaInsets } from "../../../../../designSystem/safeAreaInsets";
 import { TestersDialogTitle } from "./TestersDialogTitle";
@@ -47,7 +48,11 @@ export function TestersDialogHeader(props: Props) {
 				onClick={props.onRefresh}
 				disabled={props.loading}
 			>
-				<RefreshIcon />
+				{props.loading ? (
+					<CircularProgress size={24} aria-label="Refreshing" />
+				) : (
+					<RefreshIcon />
+				)}
 			</IconButton>
 			{!props.sheet && close}
 		</Box>

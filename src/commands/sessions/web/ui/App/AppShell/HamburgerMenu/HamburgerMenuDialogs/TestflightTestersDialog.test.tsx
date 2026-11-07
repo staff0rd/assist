@@ -4,6 +4,7 @@ import {
 	fireEvent,
 	render,
 	screen,
+	waitFor,
 	within,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -76,5 +77,26 @@ describe("TestflightTestersDialog", () => {
 		expect(await screen.findAllByText("No testers")).toHaveLength(2);
 		expect(screen.queryByRole("alert")).toBeNull();
 		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it("spins the refresh button while reloading", async () => {
+		respond(200, testers);
+		render(<TestflightTestersDialog onClose={() => {}} />);
+		await screen.findByText("com.example.app");
+		expect(screen.queryByLabelText("Refreshing")).toBeNull();
+
+		let resolve: (res: Response) => void = () => {};
+		fetchMock.mockReturnValueOnce(
+			new Promise<Response>((r) => {
+				resolve = r;
+			}),
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
+		expect(screen.getByLabelText("Refreshing")).toBeTruthy();
+
+		resolve(Response.json(testers));
+		await waitFor(() =>
+			expect(screen.queryByLabelText("Refreshing")).toBeNull(),
+		);
 	});
 });
