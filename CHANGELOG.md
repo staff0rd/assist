@@ -1,3 +1,15 @@
+# [0.1084.0](https://github.com/staff0rd/assist/compare/v0.1083.0...v0.1084.0) (2026-11-07)
+
+
+### Bug Fixes
+
+* skip bad git status poll responses ([bc0bb46](https://github.com/staff0rd/assist/commit/bc0bb465ccd29c3bf95d4a1d1b99634fa7507168))
+
+
+### Features
+
+* pick node on phone Approve & start ([8c2672e](https://github.com/staff0rd/assist/commit/8c2672eeea74df4d1a8407400274adc37e41c622))
+
 # [0.1083.0](https://github.com/staff0rd/assist/compare/v0.1082.2...v0.1083.0) (2026-11-07)
 
 
