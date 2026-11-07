@@ -1,3 +1,4 @@
+import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
 import { postReviewComment } from "./postReviewComment";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { getCurrentPrNodeId, isGhNotInstalled } from "./shared";
@@ -8,6 +9,7 @@ function validateBody(body: string): void {
 		console.error('Error: Body must not contain "claude" or "opus"');
 		process.exit(1);
 	}
+	rejectHarnessAttribution("Body", body);
 }
 
 function validateLine(line: number): void {

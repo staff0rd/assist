@@ -1,4 +1,6 @@
+import { activeHarness } from "../lib/activeHarness";
 import { readStdin } from "../lib/readStdin";
+import { harnessLabel, harnessProductLabel } from "../shared/harnessLabel";
 import { loadConfig } from "../shared/loadConfig";
 import { showNotification } from "./notify/showNotification";
 
@@ -21,23 +23,25 @@ export async function notify(): Promise<void> {
 
 	const projectName = cwd?.split(/[/\\]/).pop() ?? "Unknown Project";
 
+	const harness = activeHarness();
+	const agent = harnessLabel(harness);
 	let title: string;
 	let body: string;
 	let sound: string;
 
 	switch (notification_type) {
 		case "permission_prompt":
-			title = "Claude needs permission";
+			title = `${agent} needs permission`;
 			body = `${projectName} - ${message || "Permission required"}`;
 			sound = "Alarm";
 			break;
 		case "idle_prompt":
-			title = "Claude is waiting";
+			title = `${agent} is waiting`;
 			body = `${projectName} - Waiting for your input`;
 			sound = "Reminder";
 			break;
 		default:
-			title = "Claude Code";
+			title = harnessProductLabel(harness);
 			body = message ? `${projectName} - ${message}` : projectName;
 			sound = "Default";
 	}

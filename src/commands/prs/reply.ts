@@ -1,3 +1,4 @@
+import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
 import { azureDevopsRemote } from "../review/azureDevopsRemote";
 import { azureDevopsThreadActions } from "./azureDevops/azureDevopsThreadActions";
 import { replyToComment } from "./replyToComment";
@@ -10,6 +11,7 @@ function validateBody(body: string): void {
 		console.error('Error: Body must not contain "claude" or "opus"');
 		process.exit(1);
 	}
+	rejectHarnessAttribution("Body", body);
 }
 
 export async function reply(commentId: number, body: string): Promise<void> {

@@ -8,6 +8,11 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 		note: "optional; runs the codex reviewer on this model via the LiteLLM proxy (needs litellm.baseUrl and litellm.apiKey)",
 	},
 	{
+		key: "review.synthesisHarness",
+		setter: "assist config set review.synthesisHarness <claude|codex>",
+		note: "harness that consolidates the two reviews (default claude); codex falls back to claude when the codex CLI is not on PATH",
+	},
+	{
 		key: "review.highLevel.criticalPaths",
 		setter:
 			'assist config set review.highLevel.criticalPaths "**/*.graphql,en-AU/translation.json"',

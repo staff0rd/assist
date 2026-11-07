@@ -1,4 +1,5 @@
 import { backlogRefError, findBacklogRefs } from "./findBacklogRefs";
+import { rejectHarnessAttribution } from "./rejectHarnessAttribution";
 
 type ContentLabels = {
 	subject: string;
@@ -21,6 +22,8 @@ export function validateProposedContent(
 		console.error(`Error: ${subject} body must not reference Claude`);
 		process.exit(1);
 	}
+	rejectHarnessAttribution(`${subject} title`, title);
+	rejectHarnessAttribution(`${subject} body`, body);
 
 	const titleBacklogIds = findBacklogRefs(title);
 	if (titleBacklogIds.length > 0) {

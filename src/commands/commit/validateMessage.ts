@@ -1,4 +1,5 @@
 import { backlogRefError, findBacklogRefs } from "../../shared/findBacklogRefs";
+import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
 import type { AssistConfig } from "../../shared/types";
 
 const MAX_MESSAGE_LENGTH = 50;
@@ -10,6 +11,7 @@ export function validateMessage(message: string, config: AssistConfig): void {
 		console.error("Error: Commit message must not reference Claude");
 		process.exit(1);
 	}
+	rejectHarnessAttribution("Commit message", message);
 
 	if (message.includes("\n")) {
 		console.error(

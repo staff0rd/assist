@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { activeHarness } from "../lib/activeHarness";
+import { harnessLabel } from "../shared/harnessLabel";
 import { loadConfig } from "../shared/loadConfig";
 import { askQuestionEnabled } from "./askQuestion/askQuestionEnabled";
 import { formatAskQuestionAnswers } from "./askQuestion/formatAskQuestionAnswers";
@@ -30,10 +32,11 @@ export async function askQuestion(options: { json: string }): Promise<void> {
 			`session ${sessionId} is not live in the assist daemon, so no preview pane can show the form`,
 		);
 
+	const agent = harnessLabel(activeHarness());
 	const title =
 		questions.length === 1
-			? "Claude is asking a question"
-			: `Claude is asking ${questions.length} questions`;
+			? `${agent} is asking a question`
+			: `${agent} is asking ${questions.length} questions`;
 	const decision = await awaitPreviewApproval(
 		title,
 		{

@@ -15,7 +15,7 @@ import { webConfigHelp } from "./webConfigHelp";
 export function registerSessions(program: Command): void {
 	const cmd = program
 		.command("sessions")
-		.description("Web dashboard for Claude Code sessions")
+		.description("Web dashboard for coding agent sessions")
 		.option("--no-open", "Do not open a browser on startup")
 		.action((_options, command) =>
 			sessionsWeb({ port: "3100", open: command.optsWithGlobals().open }),

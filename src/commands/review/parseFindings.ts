@@ -1,36 +1,23 @@
-type Severity = "blocker" | "major" | "minor" | "nit";
+import { type FindingSource, findingSourceValues } from "./findingSourceValues";
 
-type Source =
-	| "confirmed"
-	| "disputed"
-	| "claude-only"
-	| "codex-only"
-	| "already-raised";
+type Severity = "blocker" | "major" | "minor" | "nit";
 
 export type ParsedFinding = {
 	title: string;
 	severity: Severity | null;
-	source: Source | null;
+	source: FindingSource | null;
 	location: string;
 	impact: string;
 	recommendation: string;
 };
 
 const SEVERITIES: readonly Severity[] = ["blocker", "major", "minor", "nit"];
-const SOURCES: readonly Source[] = [
-	"confirmed",
-	"disputed",
-	"claude-only",
-	"codex-only",
-	"already-raised",
-];
-
 function isSeverity(value: string): value is Severity {
 	return (SEVERITIES as readonly string[]).includes(value);
 }
 
-function isSource(value: string): value is Source {
-	return (SOURCES as readonly string[]).includes(value);
+function isSource(value: string): value is FindingSource {
+	return (findingSourceValues as readonly string[]).includes(value);
 }
 
 function extractField(block: string, field: string): string {

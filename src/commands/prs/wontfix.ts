@@ -1,4 +1,5 @@
 import { execSync } from "node:child_process";
+import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
 import { resolveCommentWithReply } from "./resolveCommentWithReply";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { isGhNotInstalled } from "./shared";
@@ -9,6 +10,7 @@ function validateReason(reason: string): void {
 		console.error('Error: Reason must not contain "claude" or "opus"');
 		process.exit(1);
 	}
+	rejectHarnessAttribution("Reason", reason);
 }
 
 function validateShaReferences(reason: string): void {

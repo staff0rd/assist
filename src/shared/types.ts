@@ -144,6 +144,7 @@ const assistConfigShape = {
 	review: z
 		.strictObject({
 			codexModel: z.string().optional(),
+			synthesisHarness: z.enum(["claude", "codex"]).optional(),
 			highLevel: z
 				.strictObject({
 					criticalPaths: z.array(z.string()).default(defaultCriticalPaths),

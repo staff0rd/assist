@@ -4,8 +4,9 @@ import { buildReviewSummary } from "./buildReviewSummary";
 import { buildSynthesisStdin } from "./buildSynthesisStdin";
 import { cachedReviewerResult } from "./cachedReviewerResult";
 import type { MultiSpinner } from "./MultiSpinner";
-import { runClaudeReviewer } from "./runClaudeReviewer";
+import { resolveSynthesisHarness } from "./resolveSynthesisHarness";
 import type { ReviewerResult } from "./runStreamingChild";
+import { runSynthesisReviewer } from "./runSynthesisReviewer";
 
 type SynthesiseOptions = {
 	multi: MultiSpinner | undefined;
@@ -27,9 +28,8 @@ export async function synthesise(
 		printSummary(paths.synthesisPath);
 		return cached;
 	}
-	const spinner = options.multi?.create("synthesis — starting");
-	const result = await runClaudeReviewer({
-		name: "synthesis",
+	const result = await runSynthesisReviewer({
+		harness: resolveSynthesisHarness(),
 		reviewDir: paths.reviewDir,
 		stdin: buildSynthesisStdin(
 			paths.requestPath,
@@ -37,7 +37,7 @@ export async function synthesise(
 			paths.codexPath,
 		),
 		outputPath: paths.synthesisPath,
-		spinner,
+		multi: options.multi,
 	});
 	if (result.exitCode === 0) printSummary(paths.synthesisPath);
 	return result;

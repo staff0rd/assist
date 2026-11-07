@@ -1,4 +1,5 @@
 import { spawnClaude } from "../../shared/spawnClaude";
+import { findingSourceEnum } from "./findingSourceValues";
 
 function buildRefinePrompt(synthesisPath: string): string {
 	return `You are refining a code review synthesis with the user.
@@ -19,7 +20,7 @@ Each finding block must use this exact format so it parses correctly:
 
 ### Finding: <short title>
 - Severity: blocker | major | minor | nit
-- Source: confirmed | disputed | claude-only | codex-only | already-raised
+- Source: ${findingSourceEnum}
 - Location: \`path/to/file.ext:LINE\` or \`n/a\` when not tied to a specific line
 - Impact: one sentence on what could go wrong
 - Recommendation: one or two sentences with a concrete change

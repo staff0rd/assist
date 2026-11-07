@@ -1,3 +1,5 @@
+import { findingSourceEnum } from "./findingSourceValues";
+
 const SYNTHESIS_PROMPT = `You are consolidating two independent code reviews of the same change. The original review request is in request.md. The two reviews are in claude.md and codex.md in the current working directory.
 
 If codex.md does not exist on disk, the codex reviewer was skipped (CLI unavailable). In that case, work from claude.md alone; treat every finding as 'claude-only', do not mark anything 'confirmed' or 'codex-only', and add a note in the Summary that the codex reviewer was skipped.
@@ -16,7 +18,7 @@ For each finding, emit one block in this exact format:
 
 ### Finding: <short title>
 - Severity: blocker | major | minor | nit
-- Source: confirmed | disputed | claude-only | codex-only | already-raised
+- Source: ${findingSourceEnum}
 - Location: \`path/to/file.ext:LINE\` or \`n/a\` when not tied to a specific line
 - Impact: one sentence on what could go wrong
 - Recommendation: one or two sentences with a concrete change

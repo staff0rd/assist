@@ -1,6 +1,6 @@
 When asked to commit, use conventional commits: `fix:` (patch), `feat:` (minor), `feat!:` (major).
 
-When adding read-only CLI or Claude commands, add them to `allowed.cli-reads`.
+When adding read-only CLI commands or agent commands (`claude/commands/`, synced to every installed harness), add them to `allowed.cli-reads`.
 
 Do not edit docs or propose docs changes during development; the Refresh docs backlog item updates them after stories ship. Only change docs when the user explicitly asks (R11).
 

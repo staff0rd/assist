@@ -7,7 +7,7 @@ export function registerSetStatusCommand(cmd: Command): void {
 		cmd
 			.command("set-status <status>")
 			.description(
-				"Report the current session's status to the sessions daemon (used by Claude Code hooks)",
+				"Report the current session's status to the sessions daemon (used by Claude Code and Codex hooks)",
 			)
 			.option(
 				"--source <source>",
@@ -20,6 +20,6 @@ export function registerSetStatusCommand(cmd: Command): void {
 			.action((status, options) =>
 				setSessionStatus(status, { source: options.source, ack: options.ack }),
 			),
-		"Claude hooks",
+		"Claude and Codex hooks",
 	);
 }

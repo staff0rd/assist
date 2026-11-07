@@ -1,4 +1,5 @@
 import { spawnClaude } from "../../shared/spawnClaude";
+import { findingSourceEnum } from "./findingSourceValues";
 
 function buildApplyPrompt(synthesisPath: string): string {
 	return `You are helping the user apply fixes for a code review with each finding decided one at a time.
@@ -7,7 +8,7 @@ Read ${synthesisPath}. It contains a list of findings under the \`## Findings\` 
 
 ### Finding: <short title>
 - Severity: blocker | major | minor | nit
-- Source: confirmed | disputed | claude-only | codex-only | already-raised
+- Source: ${findingSourceEnum}
 - Location: \`path/to/file.ext:LINE\` or \`n/a\` when not tied to a specific line
 - Impact: one sentence on what could go wrong
 - Recommendation: one or two sentences with a concrete change
