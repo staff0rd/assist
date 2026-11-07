@@ -1,3 +1,10 @@
+## [0.1081.1](https://github.com/staff0rd/assist/compare/v0.1081.0...v0.1081.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* select terminal text under mouse mode ([6c68e89](https://github.com/staff0rd/assist/commit/6c68e896eff6bd84d49b224524b8a57b063cfde3))
+
 # [0.1081.0](https://github.com/staff0rd/assist/compare/v0.1080.0...v0.1081.0) (2026-11-07)
 
 
