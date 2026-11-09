@@ -1,3 +1,10 @@
+# [0.1100.0](https://github.com/staff0rd/assist/compare/v0.1099.0...v0.1100.0) (2026-11-09)
+
+
+### Features
+
+* run inbox scans via adapters ([8bed382](https://github.com/staff0rd/assist/commit/8bed382fab7d0e8672f687e2e9e8c4348c1217bb))
+
 # [0.1099.0](https://github.com/staff0rd/assist/compare/v0.1098.0...v0.1099.0) (2026-11-09)
 
 
