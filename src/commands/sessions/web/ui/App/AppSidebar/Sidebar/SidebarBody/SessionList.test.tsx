@@ -7,6 +7,7 @@ import type { PendingLaunch } from "../../../../PendingLaunch";
 import { SessionList } from "./SessionList";
 import type { SessionInfo } from "../../../../types";
 import { StarredSessionsProvider } from "../../../useStarredSessions";
+import { usePruneEmptyGroupCollapse } from "../../usePruneEmptyGroupCollapse";
 import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 import { renderWithTheme as render } from "../../../../../../../../test/renderWithTheme";
 
@@ -40,6 +41,7 @@ function List({
 	const [activeId, setActiveId] = useState<string | null>(
 		sessions[0]?.id ?? null,
 	);
+	usePruneEmptyGroupCollapse(sessions, true);
 	return (
 		<StarredSessionsProvider sessions={[]} setSessionStarred={() => {}}>
 			<SessionList
@@ -195,6 +197,33 @@ describe("SessionList repo group collapse", () => {
 		expect(groupToggle().getAttribute("aria-expanded")).toBe("false");
 		expect(card("g3")).toBeNull();
 		expect(groupToggle().textContent).toContain("3");
+	});
+
+	it("reopens a collapsed group expanded once it empties and re-forms", () => {
+		const members = [
+			makeSessionInfo({ id: "g1", cwd: "/git/assist-2", repoGroup: group }),
+			makeSessionInfo({ id: "g2", cwd: "/git/assist-3", repoGroup: group }),
+		];
+		const other = makeSessionInfo({ id: "o", cwd: "/git/other" });
+		const { rerender } = render(
+			<List sessions={[other, ...members]} onSelect={vi.fn()} />,
+		);
+		fireEvent.click(groupToggle());
+
+		rerender(<List sessions={[other]} onSelect={vi.fn()} />);
+		rerender(
+			<List
+				sessions={[
+					other,
+					makeSessionInfo({ id: "g3", cwd: "/git/assist-4", repoGroup: group }),
+					makeSessionInfo({ id: "g4", cwd: "/git/assist-5", repoGroup: group }),
+				]}
+				onSelect={vi.fn()}
+			/>,
+		);
+
+		expect(groupToggle().getAttribute("aria-expanded")).toBe("true");
+		expect(card("g3")).not.toBeNull();
 	});
 
 	it("skips sessions in a collapsed group when Tab cycling", () => {

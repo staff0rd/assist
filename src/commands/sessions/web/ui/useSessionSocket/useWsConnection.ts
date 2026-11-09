@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { resolveActiveId } from "./useWsConnection/resolveActiveId";
-import type { HistoricalSession, SessionInfo } from "../types";
+import type { HistoricalSession } from "../types";
 import { useActiveId } from "./useWsConnection/useActiveId";
 import { useActiveIdReconciler } from "./useWsConnection/useActiveIdReconciler";
 import { useDaemonState } from "./useWsConnection/useDaemonState";
@@ -14,7 +14,6 @@ import { useTranscriptState } from "./useWsConnection/useTranscriptState";
 import { useWebSocket } from "./useWsConnection/useWebSocket";
 
 export function useWsConnection() {
-	const [sessions, setSessions] = useState<SessionInfo[]>([]);
 	const [history, setHistory] = useState<HistoricalSession[]>([]);
 	const { activeId, setActiveId, getActiveId } = useActiveId();
 	const daemon = useDaemonState();
@@ -25,7 +24,8 @@ export function useWsConnection() {
 	const limits = useRateLimitsState();
 	const { initialized, markInitialized, syncSessions } = useInitialized();
 	const terminals = useTerminalRefs();
-	const handleSessions = useSessionsSync(syncSessions, setSessions);
+	const { sessions, sessionsLoaded, handleSessions } =
+		useSessionsSync(syncSessions);
 
 	const { wsRef, requestHistory, reconnecting } = useWebSocket({
 		handleSessions,
@@ -50,6 +50,7 @@ export function useWsConnection() {
 
 	return {
 		sessions,
+		sessionsLoaded,
 		history,
 		activeId,
 		setActiveId,

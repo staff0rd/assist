@@ -1,6 +1,7 @@
 import { Sidebar } from "./AppSidebar/Sidebar";
 import type { SidebarTab } from "../types";
 import { useJumpToNextWaiting } from "./AppSidebar/useJumpToNextWaiting";
+import { usePruneEmptyGroupCollapse } from "./AppSidebar/usePruneEmptyGroupCollapse";
 import { useRegionFocusHotkeys } from "./AppSidebar/useRegionFocusHotkeys";
 import type { useSessionSocket } from "../useSessionSocket";
 import { useSidebarNavigation } from "./AppSidebar/useSidebarNavigation";
@@ -15,6 +16,7 @@ type Props = {
 
 export function AppSidebar({ socket, tab, onTabChange, collapsed }: Props) {
 	const sessions = useSidebarOrdering(socket.sessions);
+	usePruneEmptyGroupCollapse(socket.sessions, socket.sessionsLoaded);
 	const { handleSelect, handleResume, handleView } = useSidebarNavigation(
 		socket,
 		onTabChange,

@@ -29,12 +29,24 @@ function parseChoices(raw: string): GroupCollapseChoices {
 	}
 }
 
-function setChoice(key: string, choice: GroupCollapseChoice): void {
-	const next = { ...parseChoices(readRaw()), [key]: choice };
+function writeChoices(next: GroupCollapseChoices): void {
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 	} catch {}
 	for (const listener of listeners) listener();
+}
+
+function setChoice(key: string, choice: GroupCollapseChoice): void {
+	writeChoices({ ...parseChoices(readRaw()), [key]: choice });
+}
+
+function removeChoices(keys: string[]): void {
+	const choices = parseChoices(readRaw());
+	const remaining = Object.fromEntries(
+		Object.entries(choices).filter(([key]) => !keys.includes(key)),
+	);
+	if (Object.keys(remaining).length === Object.keys(choices).length) return;
+	writeChoices(remaining);
 }
 
 function subscribe(listener: () => void): () => void {
@@ -48,5 +60,6 @@ export const groupCollapseStore = {
 	getRaw: readRaw,
 	parse: parseChoices,
 	setChoice,
+	removeChoices,
 	subscribe,
 };
