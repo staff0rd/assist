@@ -1,3 +1,10 @@
+## [0.1092.1](https://github.com/staff0rd/assist/compare/v0.1092.0...v0.1092.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* drop truncated /ws frames ([eabf1fe](https://github.com/staff0rd/assist/commit/eabf1fefd796de6d217ec2ee04aba0fdc34a2f81))
+
 # [0.1092.0](https://github.com/staff0rd/assist/compare/v0.1091.0...v0.1092.0) (2026-11-09)
 
 
