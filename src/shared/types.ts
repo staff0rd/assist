@@ -275,6 +275,7 @@ const assistConfigShape = {
 			keyId: z.string().optional(),
 			issuerId: z.string().optional(),
 			keyRef: z.string().optional(),
+			account: z.string().optional(),
 			bundleId: z.string().optional(),
 			externalGroup: z.string().optional(),
 			internalGroup: z.string().optional(),

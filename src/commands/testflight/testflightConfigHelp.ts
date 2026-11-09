@@ -17,6 +17,11 @@ export const testflightConfigHelp: ConfigHelpEntry[] = [
 		note: "1Password reference to the API key .p8 (read via op, never stored)",
 	},
 	{
+		key: "testflight.account",
+		setter: "assist config set testflight.account my.1password.com",
+		note: "1Password account holding keyRef (default: searches every signed-in account)",
+	},
+	{
 		key: "testflight.bundleId",
 		setter: "assist config set testflight.bundleId com.staff0rd.assist",
 		note: "bundle id of the app whose testers are managed",
