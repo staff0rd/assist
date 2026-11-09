@@ -1,3 +1,10 @@
+## [0.1095.4](https://github.com/staff0rd/assist/compare/v0.1095.3...v0.1095.4) (2026-11-09)
+
+
+### Bug Fixes
+
+* show fresh-restart reason in terminal ([6e85690](https://github.com/staff0rd/assist/commit/6e856908a27ef98d658fabce7c25418459fbf2b2))
+
 ## [0.1095.3](https://github.com/staff0rd/assist/compare/v0.1095.2...v0.1095.3) (2026-11-09)
 
 
