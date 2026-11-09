@@ -51,7 +51,12 @@ export function ReviewTypeDialog({
 					<Divider />
 					<ReviewOptionToggles value={options} onChange={setOptions} />
 					<Divider />
-					<PrActionItems pr={pr} onSelect={onSelect} onCancel={onCancel} />
+					<PrActionItems
+						pr={pr}
+						capabilities={capabilities}
+						onSelect={onSelect}
+						onCancel={onCancel}
+					/>
 				</MenuList>
 			</DialogContent>
 			<DialogActions>

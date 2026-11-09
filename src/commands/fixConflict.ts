@@ -1,37 +1,23 @@
-import { randomUUID } from "node:crypto";
-import { emitActivity } from "../shared/emitActivity";
-import { spawnClaude } from "../shared/spawnClaude";
-import { resumeNudge } from "./backlog/resumeNudge";
-import { checkoutPr } from "./review/checkoutPr";
+import { fixConflictFeature } from "../shared/harnessAdapters/prFeatures";
+import type { HarnessKind } from "../shared/harnesses";
+import { launchPrSkill } from "./launchPrSkill";
 
 type FixConflictOptions = {
 	rebase?: boolean;
 	resumeSessionId?: string;
+	harness?: HarnessKind;
 };
 
-function buildPrompt(rebase: boolean): string {
-	return rebase ? "/fix-conflict --rebase" : "/fix-conflict";
-}
-
-export async function fixConflict(
+export function fixConflict(
 	number?: string,
 	options: FixConflictOptions = {},
 ): Promise<void> {
-	const { resumeSessionId } = options;
-	if (number && !resumeSessionId) await checkoutPr(number);
-	const claudeSessionId = resumeSessionId ?? randomUUID();
-	emitActivity({
-		kind: "command",
-		name: "fix-conflict",
-		claudeSessionId,
+	return launchPrSkill({
+		feature: fixConflictFeature,
+		skill: "fix-conflict",
+		args: options.rebase ? "--rebase" : undefined,
+		number,
+		harness: options.harness,
+		resumeSessionId: options.resumeSessionId,
 	});
-	const { done } = spawnClaude(
-		resumeSessionId ? resumeNudge() : buildPrompt(options.rebase === true),
-		{
-			permissionMode: "auto",
-			sessionId: claudeSessionId,
-			resumeSessionId,
-		},
-	);
-	await done;
 }

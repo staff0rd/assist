@@ -1,26 +1,24 @@
-import { randomUUID } from "node:crypto";
-import { emitActivity } from "../shared/emitActivity";
-import { spawnClaude } from "../shared/spawnClaude";
-import { resumeNudge } from "./backlog/resumeNudge";
-import { checkoutPr } from "./review/checkoutPr";
+import { reviewPrCommentsFeature } from "../shared/harnessAdapters/prFeatures";
+import type { HarnessKind } from "../shared/harnesses";
+import { launchPrSkill } from "./launchPrSkill";
 
 type ReviewPrCommentsOptions = {
 	announce?: boolean;
 	auto?: boolean;
 	resumeSessionId?: string;
+	harness?: HarnessKind;
 };
 
-function buildPrompt(
+function buildArgs(
 	number: string | undefined,
 	announce: boolean,
 	options: ReviewPrCommentsOptions,
-): string {
+): string | undefined {
 	const args = [
-		"/review-pr-comments",
 		...(options.auto ? ["--auto"] : []),
 		...(announce ? [`--announce ${number}`] : []),
 	];
-	return args.join(" ");
+	return args.length ? args.join(" ") : undefined;
 }
 
 function validateAnnounce(number: string | undefined, announce: boolean): void {
@@ -34,25 +32,13 @@ export async function reviewPrComments(
 	options: ReviewPrCommentsOptions = {},
 ): Promise<void> {
 	const announce = options.announce === true;
-	const resumeSessionId = options.resumeSessionId;
 	validateAnnounce(number, announce);
-	if (number && !resumeSessionId) await checkoutPr(number);
-	/* why: assign the conversation id up front and report it via activity so the
-	 * daemon binds the card to this transcript rather than guessing via the cwd
-	 * poller, which races concurrent sessions in the same repo (#413). */
-	const claudeSessionId = resumeSessionId ?? randomUUID();
-	emitActivity({
-		kind: "command",
-		name: "review-pr-comments",
-		claudeSessionId,
+	await launchPrSkill({
+		feature: reviewPrCommentsFeature,
+		skill: "review-pr-comments",
+		args: buildArgs(number, announce, options),
+		number,
+		harness: options.harness,
+		resumeSessionId: options.resumeSessionId,
 	});
-	const { done } = spawnClaude(
-		resumeSessionId ? resumeNudge() : buildPrompt(number, announce, options),
-		{
-			permissionMode: "auto",
-			sessionId: claudeSessionId,
-			resumeSessionId,
-		},
-	);
-	await done;
 }

@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { FeatureResolution } from "../../../../../shared/harnessAdapters/types";
 import type { HarnessCapabilities } from "../useHarnessCapabilities";
+import { isAllowedPrArgs } from "../../../../../shared/isAllowedPrArgs";
+import { prActions } from "../../../../../shared/prActions";
 import { reviewModeEntries } from "./reviewModeEntries";
 
 const available: FeatureResolution = { available: true };
@@ -77,5 +79,29 @@ describe("reviewModeEntries", () => {
 		expect(entries.map((e) => e.label)).not.toContain(
 			"Review & refine with Codex",
 		);
+	});
+
+	it("offers fix-conflict and Address Comments per harness from their own features", () => {
+		const entries = reviewModeEntries(
+			capabilities({
+				fixConflict: { claude: available, codex: available },
+				reviewPrComments: { claude: available, codex: unavailable },
+			}),
+			prActions,
+		);
+
+		expect(entries.filter((e) => e.onHarness)).toEqual([
+			{
+				label: "Fix conflicts (merge) with Codex",
+				args: ["fix-conflict", "--harness", "codex"],
+				onHarness: true,
+			},
+			{
+				label: "Fix conflicts (rebase) with Codex",
+				args: ["fix-conflict", "--rebase", "--harness", "codex"],
+				onHarness: true,
+			},
+		]);
+		for (const entry of entries) expect(isAllowedPrArgs(entry.args)).toBe(true);
 	});
 });

@@ -47,12 +47,16 @@ const fixtures: Fixture[] = [
 	},
 ];
 
-const refineArgs = (harness: HarnessKind) => [
-	"refine",
-	"--once",
-	"--harness",
-	harness,
-	"a42",
+const wrappedCommands: [string, (harness: HarnessKind) => string[]][] = [
+	["refine", (harness) => ["refine", "--once", "--harness", harness, "a42"]],
+	[
+		"fix-conflict",
+		(harness) => ["fix-conflict", "--rebase", "--harness", harness, "7"],
+	],
+	[
+		"review-pr-comments",
+		(harness) => ["review-pr-comments", "--auto", "--harness", harness, "7"],
+	],
 ];
 
 describe.each(fixtures)("restart conformance on $harness", (fixture) => {
@@ -60,27 +64,30 @@ describe.each(fixtures)("restart conformance on $harness", (fixture) => {
 		vi.clearAllMocks();
 	});
 
-	it("restarts a wrapped refine session with the explicit harness, resuming only when the adapter can", () => {
-		const plan = respawnPlan(
-			makeSession({
-				id: "s1",
-				commandType: "assist",
-				cwd: "/repo",
-				harness: fixture.harness,
-				assistArgs: refineArgs(fixture.harness),
-				...fixture.identity,
-			}),
-		);
+	it.each(wrappedCommands)(
+		"restarts a wrapped %s session with the explicit harness, resuming only when the adapter can",
+		(_name, assistArgs) => {
+			const plan = respawnPlan(
+				makeSession({
+					id: "s1",
+					commandType: "assist",
+					cwd: "/repo",
+					harness: fixture.harness,
+					assistArgs: assistArgs(fixture.harness),
+					...fixture.identity,
+				}),
+			);
 
-		plan?.spawn();
+			plan?.spawn();
 
-		expect(vi.mocked(spawnPty).mock.calls[0][0]).toEqual([
-			"assist",
-			...refineArgs(fixture.harness),
-			...fixture.wrappedResumeArgs,
-		]);
-		expect(plan?.resumeOutcome?.()).toEqual(fixture.wrappedResume);
-	});
+			expect(vi.mocked(spawnPty).mock.calls[0][0]).toEqual([
+				"assist",
+				...assistArgs(fixture.harness),
+				...fixture.wrappedResumeArgs,
+			]);
+			expect(plan?.resumeOutcome?.()).toEqual(fixture.wrappedResume);
+		},
+	);
 
 	it("restarts a direct session through its own harness, or not at all when it cannot resume", () => {
 		const plan = respawnPlan(

@@ -1,5 +1,6 @@
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import Box from "@mui/material/Box";
+import { prActions } from "../../../../../../shared/prActions";
 import { reviewButtonModes } from "../../../../../../shared/reviewButtonModes";
 import { prLaunchMeta } from "../../App/prLaunchMeta";
 import { reviewModeEntries } from "../../App/reviewModeEntries";
@@ -14,10 +15,7 @@ import { PhoneSheetItem } from "./PhoneSheetItem";
 const reviewModes = reviewButtonModes.filter(
 	(mode) => !mode.args.includes("--high-level"),
 );
-const addressComments = {
-	label: "Address comments",
-	args: ["review-pr-comments"],
-};
+const harnessPrActions = prActions.filter((action) => action.featureId);
 
 type Props = {
 	session: SessionInfo;
@@ -33,7 +31,7 @@ export function PhonePrActions({ session, node, launchAssist, onDone }: Props) {
 
 	const prModes = [
 		...reviewModeEntries(capabilities, reviewModes),
-		addressComments,
+		...reviewModeEntries(capabilities, harnessPrActions),
 	];
 	const meta = {
 		...prLaunchMeta(pr),

@@ -13,6 +13,10 @@ describe("isAllowedPrArgs", () => {
 		["review", "--refine", "--harness", "codex"],
 		["review", "--apply", "--harness", "pi", "--force"],
 		["review", "--high-level", "--harness", "claude"],
+		["review-pr-comments", "--harness", "codex"],
+		["review-pr-comments", "--auto", "--harness", "codex"],
+		["fix-conflict", "--harness", "pi"],
+		["fix-conflict", "--rebase", "--harness", "codex"],
 	])("accepts %j", (...args) => {
 		expect(isAllowedPrArgs(args)).toBe(true);
 	});
@@ -25,6 +29,10 @@ describe("isAllowedPrArgs", () => {
 		[["review", "--force", "--force"]],
 		[["review", "--announce", "--force"]],
 		[["fix-conflict", "--force"]],
+		[["fix-conflict", "--harness", "bogus"]],
+		[["fix-conflict", "--harness", "codex", "--rebase"]],
+		[["review-pr-comments", "--harness", "codex", "--harness", "pi"]],
+		[["review", "--checkout-only", "--harness", "codex"]],
 		[["review", "--harness", "codex"]],
 		[["review", "--no-prompt", "--submit", "--harness", "codex"]],
 		[["review", "--refine", "--harness", "bogus"]],

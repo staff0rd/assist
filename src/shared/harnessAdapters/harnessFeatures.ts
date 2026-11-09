@@ -1,3 +1,4 @@
+import { prFeatures } from "./prFeatures";
 import { reviewFeatures } from "./reviewFeatures";
 import type { HarnessFeature } from "./types";
 
@@ -45,4 +46,5 @@ export const harnessFeatures: HarnessFeature[] = [
 	sessionTitleFeature,
 	usageLimitsFeature,
 	...reviewFeatures,
+	...prFeatures,
 ];

@@ -19,6 +19,9 @@ vi.mock("../shared/spawnClaude", () => ({
 }));
 
 vi.mock("../shared/emitActivity", () => ({ emitActivity: vi.fn() }));
+vi.mock("../shared/harnessAdapters/detectHarness", () => ({
+	detectHarness: () => ({ supported: true }),
+}));
 
 import { fixConflict } from "./fixConflict";
 

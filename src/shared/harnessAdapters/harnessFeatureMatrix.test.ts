@@ -40,6 +40,8 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	reviewCheckout: { claude: true, codex: true, pi: true, fake: true },
 	highLevelReview: { claude: true, codex: true, pi: true, fake: true },
 	highLevelGlobs: { claude: true, codex: true, pi: false, fake: true },
+	fixConflict: { claude: true, codex: true, pi: true, fake: true },
+	reviewPrComments: { claude: true, codex: true, pi: true, fake: true },
 };
 
 const cells = harnessFeatures.flatMap((feature) =>

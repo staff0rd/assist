@@ -19,6 +19,9 @@ vi.mock("../shared/spawnClaude", () => ({
 }));
 
 vi.mock("../shared/emitActivity", () => ({ emitActivity: vi.fn() }));
+vi.mock("../shared/harnessAdapters/detectHarness", () => ({
+	detectHarness: () => ({ supported: true }),
+}));
 
 import { reviewPrComments } from "./reviewPrComments";
 
@@ -36,12 +39,12 @@ describe("reviewPrComments", () => {
 			expect(calls).toEqual(["checkout", "claude"]);
 		});
 
-		it("should start the pass in auto permission mode", async () => {
+		it("should start the pass with edits allowed", async () => {
 			await reviewPrComments("123");
 
 			expect(mockSpawnClaude).toHaveBeenCalledWith(
 				expect.any(String),
-				expect.objectContaining({ permissionMode: "auto" }),
+				expect.objectContaining({ allowEdits: true }),
 			);
 		});
 	});
@@ -88,7 +91,7 @@ describe("reviewPrComments", () => {
 				expect.stringContaining("Continue from where you left off"),
 				expect.objectContaining({
 					resumeSessionId: "conv-1",
-					permissionMode: "auto",
+					allowEdits: true,
 				}),
 			);
 		});
