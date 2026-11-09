@@ -1,3 +1,10 @@
+## [0.1092.3](https://github.com/staff0rd/assist/compare/v0.1092.2...v0.1092.3) (2026-11-09)
+
+
+### Bug Fixes
+
+* drop testflight.account setting ([fe198a6](https://github.com/staff0rd/assist/commit/fe198a683ba13fd36977c5e428a63a6aa9a80680))
+
 ## [0.1092.2](https://github.com/staff0rd/assist/compare/v0.1092.1...v0.1092.2) (2026-11-09)
 
 
