@@ -9,5 +9,6 @@ export function spawnPi(
 	const cwd = options.cwd ?? process.cwd();
 	return spawnInherit(harnesses.pi.command, [...piTerminalArgs, prompt], {
 		cwd,
+		env: { ASSIST_HARNESS: "pi" },
 	});
 }

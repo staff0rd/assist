@@ -1,3 +1,4 @@
+import { editEnforcement } from "./editEnforcement";
 import { prFeatures } from "./prFeatures";
 import { reviewFeatures } from "./reviewFeatures";
 import type { HarnessFeature } from "./types";
@@ -5,19 +6,25 @@ import type { HarnessFeature } from "./types";
 export const refineFeature: HarnessFeature = {
 	id: "refine",
 	label: "Refine",
-	requires: ["skills.native"],
+	requires: ["skills.native", ...editEnforcement],
 };
 
 export const buildFeature: HarnessFeature = {
 	id: "build",
 	label: "Build",
-	requires: [],
+	requires: [...editEnforcement],
 };
 
 export const sessionFeature: HarnessFeature = {
 	id: "session",
 	label: "A new session",
-	requires: [],
+	requires: [...editEnforcement],
+};
+
+const previewQuestionsFeature: HarnessFeature = {
+	id: "previewQuestions",
+	label: "Preview-pane questions",
+	requires: ["intercept.question"],
 };
 
 export const branchSlugFeature: HarnessFeature = {
@@ -52,6 +59,7 @@ export const harnessFeatures: HarnessFeature[] = [
 	sessionTitleFeature,
 	usageLimitsFeature,
 	inboxFeature,
+	previewQuestionsFeature,
 	...reviewFeatures,
 	...prFeatures,
 ];

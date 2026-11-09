@@ -6,6 +6,7 @@ import { type FakeConnectorScript, fakeConnectorRun } from "./fakeConnectorRun";
 import { fakeHarnessCapabilities } from "./fakeHarnessCapabilities";
 import { type FakeHarnessCalls, fakeHarnessCalls } from "./fakeHarnessCalls";
 import { fakeStructuredRun } from "./fakeStructuredRun";
+import { fakeToolOperations } from "./fakeToolOperations";
 
 export function fakeHarnessMock(
 	calls: FakeHarnessCalls = fakeHarnessCalls(),
@@ -20,7 +21,9 @@ export function fakeHarnessMock(
 			idName: "fake conversation id",
 			findResumable: ({ harnessSessionId }) => harnessSessionId,
 			locate: (id) => Promise.resolve(`/fake/${id}.log`),
+			current: () => process.env.FAKE_HARNESS_CONVERSATION_ID,
 		},
+		toolOperations: fakeToolOperations,
 		launchSkill: (skill, args, { cwd }) =>
 			spawnInherit(
 				"fake-harness",

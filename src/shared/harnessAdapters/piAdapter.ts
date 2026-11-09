@@ -4,6 +4,7 @@ import { spawnPi } from "../spawnPi";
 import { buildSlashCommand } from "./buildSlashCommand";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
+import { piToolOperations } from "./piToolOperations";
 import { rejectConnectorRun } from "./rejectConnectorRun";
 import type { HarnessAdapter } from "./types";
 
@@ -24,7 +25,9 @@ export const piAdapter: HarnessAdapter = {
 		idName: "pi conversation id",
 		findResumable: () => undefined,
 		locate: () => Promise.resolve(null),
+		current: () => undefined,
 	},
+	toolOperations: piToolOperations,
 	launchSkill: (skill, args, { cwd }) =>
 		spawnPi(buildSlashCommand(skill, args), { cwd }),
 	launchPrompt: (prompt, { cwd }) => spawnPi(prompt, { cwd }),

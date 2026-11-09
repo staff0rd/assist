@@ -2,9 +2,11 @@ import { spawnCodex as spawnCodexPty } from "../../commands/sessions/daemon/spaw
 import { findCodexRolloutPath } from "../../commands/sessions/shared/codex/findCodexRolloutPath";
 import { hasCodexRolloutSync } from "../../commands/sessions/shared/codex/hasCodexRolloutSync";
 import { harnessLabel } from "../harnessLabel";
+import { readCodexRulePerms } from "../readCodexRulePerms";
 import { spawnCodex } from "../spawnCodex";
 import { codexOneShot } from "./codexOneShot";
 import { codexStructuredRun } from "./codexStructuredRun";
+import { codexToolOperations } from "./codexToolOperations";
 import { offerCodexInstall } from "./offerCodexInstall";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
@@ -26,7 +28,10 @@ export const codexAdapter: HarnessAdapter = {
 				? harnessSessionId
 				: undefined,
 		locate: findCodexRolloutPath,
+		current: () => process.env.CODEX_THREAD_ID || undefined,
 	},
+	toolOperations: codexToolOperations,
+	permissionRules: readCodexRulePerms,
 	launchSkill: (skill, args, { cwd, allowEdits }) =>
 		spawnCodex(args ?? "", { cwd, sandbox: sandbox(allowEdits), skill }),
 	launchPrompt: (prompt, { cwd, allowEdits }) =>

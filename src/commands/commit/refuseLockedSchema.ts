@@ -1,4 +1,5 @@
 import { execSync } from "node:child_process";
+import { currentExecutionIdentity } from "../../shared/currentExecutionIdentity";
 import { getProjectRoot } from "../../shared/loadConfig";
 import { isSchemaLocked } from "../schema/isSchemaLocked";
 import {
@@ -27,12 +28,13 @@ function isStagedSchemaPath(rel: string, root: string): boolean {
 }
 
 export async function refuseLockedSchema(): Promise<void> {
-	if (!process.env.CLAUDECODE) return;
+	const identity = currentExecutionIdentity();
+	if (!identity) return;
 	const root = getProjectRoot();
 	const staged = listStagedFiles().filter((rel) =>
 		isStagedSchemaPath(rel, root),
 	);
-	if (staged.length === 0 || !(await isSchemaLocked())) return;
+	if (staged.length === 0 || !(await isSchemaLocked(identity))) return;
 	console.error(
 		`Error: refusing to commit — staged changes touch database schema files: ${staged.join(", ")}`,
 	);

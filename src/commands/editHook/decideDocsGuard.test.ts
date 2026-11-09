@@ -10,10 +10,17 @@ vi.mock("../../shared/loadConfig", () => ({
 	getProjectRoot: () => "/repo",
 }));
 
-import { decideDocsGuard } from "./decideDocsGuard";
+import { claudeToolOperations } from "../../shared/harnessAdapters/claudeToolOperations";
+import type { ToolOperation } from "../../shared/harnessAdapters/types";
+import { decideDocsGuard as decideWrite } from "./decideDocsGuard";
 
-function input(toolName: string, filePath: string) {
-	return { tool_name: toolName, tool_input: { file_path: filePath } };
+function input(toolName: string, filePath: string): ToolOperation[] {
+	return claudeToolOperations({ toolName, toolInput: { file_path: filePath } });
+}
+
+async function decideDocsGuard(operations: ToolOperation[]) {
+	const [operation] = operations;
+	return operation?.kind === "fileWrite" ? decideWrite(operation) : undefined;
 }
 
 describe("decideDocsGuard", () => {

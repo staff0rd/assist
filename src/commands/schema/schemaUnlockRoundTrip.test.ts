@@ -96,8 +96,10 @@ describe("schema unlock -> confirm round-trip", () => {
 		rmSync(restrictedDir, { recursive: true, force: true });
 	});
 
-	it("does not lock outside Claude Code", async () => {
-		vi.stubEnv("CLAUDECODE", "");
+	it("does not lock outside any harness session", async () => {
+		vi.stubEnv("CLAUDECODE", undefined);
+		vi.stubEnv("CODEX_THREAD_ID", undefined);
+		vi.stubEnv("CODEX_TOOL_CALL_ID", undefined);
 		expect(await isSchemaLocked()).toBe(false);
 	});
 
@@ -151,6 +153,61 @@ describe("schema unlock -> confirm round-trip", () => {
 		expect(await isSchemaLocked()).toBe(false);
 		vi.stubEnv("CLAUDE_CODE_SESSION_ID", "claude-b");
 		expect(await isSchemaLocked()).toBe(true);
+	});
+
+	describe("in Codex", () => {
+		beforeEach(() => {
+			vi.stubEnv("CLAUDECODE", undefined);
+			vi.stubEnv("CLAUDE_CODE_SESSION_ID", undefined);
+			vi.stubEnv("CODEX_THREAD_ID", "thread-a");
+		});
+
+		it("locks schema files and unlocks only this Codex conversation", async () => {
+			expect(await isSchemaLocked()).toBe(true);
+
+			await unlockAndConfirm();
+
+			expect(process.exitCode).toBeUndefined();
+			expect(await isSchemaLocked()).toBe(false);
+			vi.stubEnv("CODEX_THREAD_ID", "thread-b");
+			expect(await isSchemaLocked()).toBe(true);
+		});
+
+		it("records a Codex-scoped phase unlock that Claude cannot reuse", async () => {
+			const id = await addStory();
+			vi.stubEnv("ASSIST_BACKLOG_ITEM_ID", String(id));
+
+			await unlockAndConfirm();
+
+			expect(await unlockRefs()).toEqual([
+				expect.objectContaining({ itemId: id, ref: "phase-1:codex" }),
+			]);
+			expect(await isSchemaLocked()).toBe(false);
+			vi.stubEnv("CODEX_THREAD_ID", undefined);
+			vi.stubEnv("CLAUDECODE", "1");
+			expect(await isSchemaLocked()).toBe(true);
+		});
+
+		it("refuses a pin confirmed from another conversation", async () => {
+			await schemaUnlock();
+			vi.stubEnv("CODEX_THREAD_ID", "thread-b");
+
+			await schemaConfirm(issuedPin());
+
+			expect(process.exitCode).toBe(1);
+			vi.stubEnv("CODEX_THREAD_ID", "thread-a");
+			expect(await isSchemaLocked()).toBe(true);
+		});
+	});
+
+	it("refuses a Claude pin confirmed from a Codex conversation", async () => {
+		await schemaUnlock();
+		vi.stubEnv("CLAUDECODE", undefined);
+		vi.stubEnv("CODEX_THREAD_ID", "claude-a");
+
+		await schemaConfirm(issuedPin());
+
+		expect(process.exitCode).toBe(1);
 	});
 
 	it("fails without a backlog item or Claude session", async () => {

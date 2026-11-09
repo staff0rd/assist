@@ -17,6 +17,14 @@ export const capabilityDefinitions = {
 		"Searches Gmail threads and reads a thread's messages through a connector the harness can call headlessly, e.g. the inbox scan.",
 	"connector.slack.read":
 		"Searches Slack messages and reads a thread through a connector the harness can call headlessly, e.g. the inbox scan.",
+	"intercept.command":
+		"Reports every shell command (compound commands included) to assist before it runs and honours a deny, so the allowlist, restricted paths and docs/schema locks apply to commands.",
+	"intercept.fileRead":
+		"Reports every native file read (or reads only through intercepted shell commands) before it runs and honours a deny, so restricted paths cannot be read.",
+	"intercept.fileWrite":
+		"Reports every native file write or patch, with its target paths and incoming content, before it runs and honours a deny, so the docs and database schema locks hold.",
+	"intercept.question":
+		"Routes the harness's native question tool to the session's preview-pane form, so a question in a web session is answered from the preview pane rather than a terminal prompt it cannot drive. A harness with no native question tool has nothing to route.",
 } as const;
 
 export type CapabilityId = keyof typeof capabilityDefinitions;

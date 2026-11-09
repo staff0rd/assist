@@ -17,4 +17,8 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"tools.restrict": supported,
 	"connector.gmail.read": supported,
 	"connector.slack.read": supported,
+	"intercept.command": supported,
+	"intercept.fileRead": supported,
+	"intercept.fileWrite": supported,
+	"intercept.question": supported,
 };

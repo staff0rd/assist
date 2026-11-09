@@ -8,6 +8,7 @@ import { harnessFeatures } from "./harnessFeatures";
 import { resolveCapability } from "./resolveCapability";
 import { resolveFeature } from "./resolveFeature";
 import type { CapabilityDeclarations, HarnessCapabilitySource } from "./types";
+import { unsupported } from "./unsupported";
 
 const FOLLOW_UP_ITEM = /^a[0-9a-f]+$/;
 
@@ -33,6 +34,7 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	sessionTitle: { claude: true, codex: true, pi: false, fake: true },
 	usageLimits: { claude: true, codex: true, pi: false, fake: true },
 	inbox: { claude: true, codex: false, pi: false, fake: true },
+	previewQuestions: { claude: true, codex: false, pi: true, fake: true },
 	reviewer: { claude: true, codex: true, pi: false, fake: true },
 	reviewSynthesis: { claude: true, codex: true, pi: false, fake: true },
 	reviewRefine: { claude: true, codex: true, pi: true, fake: true },
@@ -102,3 +104,52 @@ describe.each(Object.entries(sources))(
 		});
 	},
 );
+
+describe("enforcement fails closed", () => {
+	const enforced = harnessFeatures.filter((feature) =>
+		feature.requires.some((capability) => capability.startsWith("intercept.")),
+	);
+
+	it.each(["intercept.command", "intercept.fileRead", "intercept.fileWrite"])(
+		"a harness that cannot enforce %s cannot run editing workflows",
+		(capability) => {
+			const blind: HarnessCapabilitySource = {
+				label: "Blind",
+				capabilities: {
+					...fake.capabilities,
+					[capability]: unsupported("cannot intercept", "use another harness"),
+				},
+			};
+			const unavailable = harnessFeatures
+				.filter((feature) => !resolveFeature(feature, blind).available)
+				.map((feature) => feature.id);
+			expect(unavailable).toEqual(
+				expect.arrayContaining([
+					"build",
+					"session",
+					"refine",
+					"reviewApply",
+					"fixConflict",
+					"reviewPrComments",
+				]),
+			);
+			for (const id of unavailable)
+				expect(enforced.map((feature) => feature.id)).toContain(id);
+		},
+	);
+
+	it("a harness that cannot route questions loses only preview-pane questions", () => {
+		const blind: HarnessCapabilitySource = {
+			label: "Blind",
+			capabilities: {
+				...fake.capabilities,
+				"intercept.question": unsupported("cannot intercept", "ask in chat"),
+			},
+		};
+		expect(
+			harnessFeatures
+				.filter((feature) => !resolveFeature(feature, blind).available)
+				.map((feature) => feature.id),
+		).toEqual(["previewQuestions"]);
+	});
+});

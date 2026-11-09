@@ -113,7 +113,10 @@ describe("refuseLockedSchema", () => {
 	});
 
 	it("allows after a session unlock", async () => {
-		const approval = getSchemaSessionApprovalPath("claude-a") as string;
+		const approval = getSchemaSessionApprovalPath({
+			harness: "claude",
+			conversationId: "claude-a",
+		}) as string;
 		mkdirSync(join(approval, ".."), { recursive: true });
 		writeFileSync(approval, "{}");
 		stage("src/shared/db/schema.ts");
@@ -140,8 +143,50 @@ describe("refuseLockedSchema", () => {
 		await expect(refuseLockedSchema()).rejects.toThrow("exit 1");
 	});
 
-	it("allows when CLAUDECODE is unset", async () => {
-		vi.stubEnv("CLAUDECODE", "");
+	describe("in Codex", () => {
+		beforeEach(() => {
+			vi.stubEnv("CLAUDECODE", undefined);
+			vi.stubEnv("CODEX_THREAD_ID", "thread-a");
+		});
+
+		it("refuses a staged schema change with no unlock", async () => {
+			stage("src/shared/db/schema.ts");
+
+			await expect(refuseLockedSchema()).rejects.toThrow("exit 1");
+		});
+
+		it("refuses with only the Claude session's approval", async () => {
+			const approval = getSchemaSessionApprovalPath({
+				harness: "claude",
+				conversationId: "thread-a",
+			}) as string;
+			mkdirSync(join(approval, ".."), { recursive: true });
+			writeFileSync(approval, "{}");
+			stage("src/shared/db/schema.ts");
+
+			await expect(refuseLockedSchema()).rejects.toThrow("exit 1");
+		});
+
+		it("allows after this Codex conversation's unlock", async () => {
+			const approval = getSchemaSessionApprovalPath({
+				harness: "codex",
+				conversationId: "thread-a",
+			}) as string;
+			mkdirSync(join(approval, ".."), { recursive: true });
+			writeFileSync(
+				approval,
+				JSON.stringify({ harness: "codex", conversationId: "thread-a" }),
+			);
+			stage("src/shared/db/schema.ts");
+
+			await expect(refuseLockedSchema()).resolves.toBeUndefined();
+		});
+	});
+
+	it("allows outside any harness session", async () => {
+		vi.stubEnv("CLAUDECODE", undefined);
+		vi.stubEnv("CODEX_THREAD_ID", undefined);
+		vi.stubEnv("CODEX_TOOL_CALL_ID", undefined);
 		stage("src/shared/db/schema.ts");
 
 		await expect(refuseLockedSchema()).resolves.toBeUndefined();

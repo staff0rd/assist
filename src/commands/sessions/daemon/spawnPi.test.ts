@@ -18,6 +18,7 @@ describe("spawnPi", () => {
 			["pi", ...REGULAR_TUI, "Do the thing"],
 			"/repo",
 			"7",
+			{ ASSIST_HARNESS: "pi" },
 		);
 	});
 
@@ -28,6 +29,7 @@ describe("spawnPi", () => {
 			["pi", ...REGULAR_TUI],
 			"/repo",
 			"7",
+			{ ASSIST_HARNESS: "pi" },
 		);
 	});
 
@@ -38,6 +40,7 @@ describe("spawnPi", () => {
 			["pi", ...REGULAR_TUI],
 			undefined,
 			undefined,
+			{ ASSIST_HARNESS: "pi" },
 		);
 	});
 });

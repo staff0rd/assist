@@ -11,8 +11,8 @@ vi.mock("../sessions/shared/isLiveDaemonSession", () => ({
 	isLiveDaemonSession: (id: string) => mockIsLive(id),
 }));
 
+import { claudeToolOperations } from "../../shared/harnessAdapters/claudeToolOperations";
 import { findAskQuestionDeny } from "./findAskQuestionDeny";
-import { tryParseInput } from "./tryParseInput";
 
 const questions = [
 	{
@@ -27,13 +27,7 @@ const questions = [
 ];
 
 function parse(toolInput: Record<string, unknown>) {
-	return tryParseInput(
-		JSON.stringify({
-			hook_event_name: "PreToolUse",
-			tool_name: "AskUserQuestion",
-			tool_input: toolInput,
-		}),
-	);
+	return claudeToolOperations({ toolName: "AskUserQuestion", toolInput });
 }
 
 beforeEach(() => {
@@ -47,17 +41,19 @@ afterEach(() => {
 	vi.unstubAllEnvs();
 });
 
-describe("tryParseInput AskUserQuestion", () => {
-	it("parses the questions as JSON input for assist ask-question", () => {
-		expect(parse({ questions, answers: {} })).toEqual({
-			kind: "question",
-			toolName: "AskUserQuestion",
-			command: JSON.stringify({ questions }),
-		});
+describe("claudeToolOperations AskUserQuestion", () => {
+	it("normalizes the questions into a question operation", () => {
+		expect(parse({ questions, answers: {} })).toEqual([
+			{
+				kind: "question",
+				tool: "AskUserQuestion",
+				questionsJson: JSON.stringify({ questions }),
+			},
+		]);
 	});
 
 	it("ignores input without a questions array", () => {
-		expect(parse({ questions: "nope" })).toBeUndefined();
+		expect(parse({ questions: "nope" })).toEqual([]);
 	});
 });
 

@@ -1,3 +1,4 @@
+import { editEnforcement } from "./editEnforcement";
 import type { HarnessFeature } from "./types";
 
 export const reviewerFeature: HarnessFeature = {
@@ -15,31 +16,31 @@ export const reviewSynthesisFeature: HarnessFeature = {
 export const reviewRefineFeature: HarnessFeature = {
 	id: "reviewRefine",
 	label: "Review & refine",
-	requires: [],
+	requires: [...editEnforcement],
 };
 
 export const reviewApplyFeature: HarnessFeature = {
 	id: "reviewApply",
 	label: "Review & apply",
-	requires: [],
+	requires: [...editEnforcement],
 };
 
 export const reviewBacklogFeature: HarnessFeature = {
 	id: "reviewBacklog",
 	label: "Review & backlog",
-	requires: ["skills.native"],
+	requires: ["skills.native", ...editEnforcement],
 };
 
 export const reviewCheckoutFeature: HarnessFeature = {
 	id: "reviewCheckout",
 	label: "PR checkout session",
-	requires: [],
+	requires: [...editEnforcement],
 };
 
 export const highLevelReviewFeature: HarnessFeature = {
 	id: "highLevelReview",
 	label: "High-level review",
-	requires: ["skills.native"],
+	requires: ["skills.native", ...editEnforcement],
 };
 
 export const highLevelGlobsFeature: HarnessFeature = {

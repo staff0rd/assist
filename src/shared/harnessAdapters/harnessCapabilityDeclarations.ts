@@ -16,6 +16,10 @@ export const harnessCapabilityDeclarations: Record<
 		"tools.restrict": supported,
 		"connector.gmail.read": supported,
 		"connector.slack.read": supported,
+		"intercept.command": supported,
+		"intercept.fileRead": supported,
+		"intercept.fileWrite": supported,
+		"intercept.question": supported,
 	},
 	codex: {
 		"skills.native": supported,
@@ -41,6 +45,14 @@ export const harnessCapabilityDeclarations: Record<
 			"Codex has no verified read-only Slack connector",
 			"run the inbox scan with Claude (assist inbox scan --harness claude)",
 			"a1562",
+		),
+		"intercept.command": supported,
+		"intercept.fileRead": supported,
+		"intercept.fileWrite": supported,
+		"intercept.question": unsupported(
+			"Codex hooks are not verified to report its native request_user_input question tool",
+			"the composed advice tells Codex to ask with assist ask-question; a native Codex question is answered in the terminal",
+			"a1563",
 		),
 	},
 	pi: {
@@ -84,5 +96,9 @@ export const harnessCapabilityDeclarations: Record<
 			"run the inbox scan with Claude (assist inbox scan --harness claude)",
 			"a1562",
 		),
+		"intercept.command": supported,
+		"intercept.fileRead": supported,
+		"intercept.fileWrite": supported,
+		"intercept.question": supported,
 	},
 };

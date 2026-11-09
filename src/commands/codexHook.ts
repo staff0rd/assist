@@ -1,15 +1,19 @@
 import { markActiveHarness } from "../lib/activeHarness";
 import { readStdin } from "../lib/readStdin";
+import { currentExecutionIdentity } from "../shared/currentExecutionIdentity";
+import { codexAdapter } from "../shared/harnessAdapters/codexAdapter";
 import { adviceHookPayload } from "./advise/adviceHookPayload";
-import { decideCommand } from "./cliHook/decideCommand";
 import type { HookDecision } from "./cliHook/resolvePermission";
 import {
 	type ParsedInput,
 	parseCodexHookInput,
 } from "./codexHook/parseCodexHookInput";
-import { logCodexDeniedCall } from "./codexHook/logCodexDeniedCall";
 import { relayCodexUsage } from "./codexHook/relayCodexUsage";
 import { reportCodexStatus } from "./codexHook/reportCodexStatus";
+import { decideToolOperations } from "./toolPolicy/decideToolOperations";
+import { logPolicyDeny } from "./toolPolicy/logPolicyDeny";
+
+const TOOL_EVENTS = new Set(["PreToolUse", "PermissionRequest"]);
 
 function preToolUseOutput(decision: HookDecision) {
 	if (decision.permissionDecision === "allow") return undefined;
@@ -34,11 +38,6 @@ function permissionRequestOutput(decision: HookDecision) {
 	};
 }
 
-function decide(input: ParsedInput): HookDecision | undefined {
-	if (!input.toolName || !input.command) return undefined;
-	return decideCommand(input.toolName, input.command);
-}
-
 function outputFor(input: ParsedInput, decision: HookDecision | undefined) {
 	if (input.event === "SessionStart")
 		return adviceHookPayload(input.cwd ?? process.cwd());
@@ -53,10 +52,15 @@ export async function codexHook(): Promise<void> {
 	const input = parseCodexHookInput(await readStdin());
 	if (!input) return;
 
-	const decision = decide(input);
+	const operations =
+		input.toolCall && TOOL_EVENTS.has(input.event)
+			? codexAdapter.toolOperations(input.toolCall)
+			: [];
+	const identity = currentExecutionIdentity(input.sessionId);
+	const decision = await decideToolOperations(operations, identity);
 	const output = outputFor(input, decision);
 	if (output) console.log(JSON.stringify(output));
-	logCodexDeniedCall(input, decision);
+	logPolicyDeny(operations, decision, identity, input.cwd);
 
 	await reportCodexStatus(input.event, decision !== undefined);
 	await relayCodexUsage(input.event, input.transcriptPath);

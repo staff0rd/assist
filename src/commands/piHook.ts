@@ -1,42 +1,47 @@
+import { markActiveHarness } from "../lib/activeHarness";
 import { readStdin } from "../lib/readStdin";
-import { decideCommand } from "./cliHook/decideCommand";
+import { currentExecutionIdentity } from "../shared/currentExecutionIdentity";
+import type { NativeToolCall } from "../shared/harnessAdapters/types";
+import { piAdapter } from "../shared/harnessAdapters/piAdapter";
+import { decideToolOperations } from "./toolPolicy/decideToolOperations";
+import { logPolicyDeny } from "./toolPolicy/logPolicyDeny";
 
 type PiHookInput = {
-	toolName?: string;
+	toolName?: unknown;
 	command?: unknown;
+	input?: unknown;
 };
 
-const TOOL_MAP: Record<string, string> = {
-	bash: "Bash",
-	powershell: "PowerShell",
-};
-
-type ParsedInput = { toolName: string; command: string };
-
-function parseInput(raw: string): ParsedInput | undefined {
+function parseInput(raw: string): NativeToolCall | undefined {
 	try {
 		const data: PiHookInput = JSON.parse(raw);
-		const command = data.command;
-		if (typeof command !== "string" || !command.trim()) return undefined;
-		const toolName = TOOL_MAP[(data.toolName ?? "bash").toLowerCase()];
-		if (!toolName) return undefined;
-		return { toolName, command: command.trim() };
+		const toolName = typeof data.toolName === "string" ? data.toolName : "bash";
+		const toolInput =
+			data.input && typeof data.input === "object"
+				? (data.input as Record<string, unknown>)
+				: { command: data.command };
+		return { toolName, toolInput };
 	} catch {
 		return undefined;
 	}
 }
 
 export async function piHook(): Promise<void> {
-	const input = parseInput(await readStdin());
-	if (!input) return;
+	markActiveHarness("pi");
+	const call = parseInput(await readStdin());
+	if (!call) return;
+	const operations = piAdapter.toolOperations(call);
+	if (operations.length === 0) return;
 
-	const decision = decideCommand(input.toolName, input.command);
+	const identity = currentExecutionIdentity();
+	const decision = await decideToolOperations(operations, identity);
+	logPolicyDeny(operations, decision, identity);
 	const output = decision
 		? {
 				decision: decision.permissionDecision,
 				reason: decision.permissionDecisionReason,
 			}
-		: { decision: "gate" };
+		: { decision: operations[0].kind === "command" ? "gate" : "allow" };
 
 	console.log(JSON.stringify(output));
 }

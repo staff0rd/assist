@@ -22,7 +22,9 @@ vi.mock("../../shared/loadConfig", () => ({
 	getProjectRoot: () => root,
 }));
 
-import { decideSchemaGuard } from "./decideSchemaGuard";
+import { claudeToolOperations } from "../../shared/harnessAdapters/claudeToolOperations";
+import type { ToolOperation } from "../../shared/harnessAdapters/types";
+import { decideSchemaGuard as decideWrite } from "./decideSchemaGuard";
 
 const TABLE_MODULE = `import { pgTable, text } from "drizzle-orm/pg-core";\nexport const jobRuns = pgTable("job_runs", { kind: text() });\n`;
 
@@ -30,11 +32,16 @@ function input(
 	toolName: string,
 	filePath: string,
 	toolInput: Record<string, unknown> = {},
-) {
-	return {
-		tool_name: toolName,
-		tool_input: { file_path: filePath, ...toolInput },
-	};
+): ToolOperation[] {
+	return claudeToolOperations({
+		toolName,
+		toolInput: { file_path: filePath, ...toolInput },
+	});
+}
+
+async function decideSchemaGuard(operations: ToolOperation[]) {
+	const [operation] = operations;
+	return operation?.kind === "fileWrite" ? decideWrite(operation) : undefined;
 }
 
 describe("decideSchemaGuard", () => {

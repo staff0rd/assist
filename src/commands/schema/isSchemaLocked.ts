@@ -1,22 +1,46 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import { currentExecutionIdentity } from "../../shared/currentExecutionIdentity";
 import { closeDb } from "../../shared/db/getDb";
-import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
+import type { ExecutionIdentity } from "../../shared/harnessAdapters/types";
 import { hasOpenPhaseUnlock } from "../backlog/hasOpenPhaseUnlock";
 import { getSchemaSessionApprovalPath } from "./getSchemaSessionApprovalPath";
 
-function hasSessionApproval(): boolean {
-	const claudeSessionId = process.env.CLAUDE_CODE_SESSION_ID;
-	if (!claudeSessionId) return false;
-	const path = getSchemaSessionApprovalPath(claudeSessionId);
-	return path !== undefined && existsSync(path);
+function approvalMatches(path: string, identity: ExecutionIdentity): boolean {
+	try {
+		const approval: Record<string, unknown> = JSON.parse(
+			readFileSync(path, "utf8"),
+		);
+		const conversation = approval.conversationId ?? approval.claudeSessionId;
+		if (approval.harness !== undefined && approval.harness !== identity.harness)
+			return false;
+		return (
+			conversation === undefined || conversation === identity.conversationId
+		);
+	} catch {
+		return false;
+	}
 }
 
-export async function isSchemaLocked(): Promise<boolean> {
-	if (!process.env.CLAUDECODE) return false;
-	const itemId = resolveSessionItemId();
-	if (itemId === null) return !hasSessionApproval();
+function hasSessionApproval(identity: ExecutionIdentity): boolean {
+	const { harness, conversationId } = identity;
+	if (!conversationId) return false;
+	const path = getSchemaSessionApprovalPath({ harness, conversationId });
+	return (
+		path !== undefined && existsSync(path) && approvalMatches(path, identity)
+	);
+}
+
+export async function isSchemaLocked(
+	identity: ExecutionIdentity | undefined = currentExecutionIdentity(),
+): Promise<boolean> {
+	if (!identity) return false;
+	if (identity.itemId === null) return !hasSessionApproval(identity);
 	try {
-		return !(await hasOpenPhaseUnlock(itemId, "schema-unlock"));
+		return !(await hasOpenPhaseUnlock(
+			identity.itemId,
+			"schema-unlock",
+			identity.harness,
+		));
 	} catch {
 		return true;
 	} finally {

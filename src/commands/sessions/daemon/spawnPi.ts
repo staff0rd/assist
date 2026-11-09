@@ -10,5 +10,5 @@ type SpawnOpts = {
 export function spawnPi(opts: SpawnOpts = {}) {
 	const args = ["pi", ...piTerminalArgs];
 	if (opts.prompt) args.push(opts.prompt);
-	return spawnPty(args, opts.cwd, opts.sessionId);
+	return spawnPty(args, opts.cwd, opts.sessionId, { ASSIST_HARNESS: "pi" });
 }

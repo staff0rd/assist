@@ -1,41 +1,25 @@
-import { mkdirSync, unlinkSync, writeFileSync } from "node:fs";
+import { unlinkSync } from "node:fs";
 import chalk from "chalk";
-import { recordGitRef } from "../../shared/db/recordGitRef";
-import { findPhaseUnlockItem } from "../backlog/findPhaseUnlockItem";
+import { currentExecutionIdentity } from "../../shared/currentExecutionIdentity";
+import type { ExecutionIdentity } from "../../shared/harnessAdapters/types";
 import { sweepRestrictedDir } from "../codeComment/sweepRestrictedDir";
-import { phaseUnlockRef } from "../backlog/phaseUnlockRef";
-import {
-	getSchemaSessionApprovalDir,
-	getSchemaSessionApprovalPath,
-} from "./getSchemaSessionApprovalPath";
+import { approveSchemaUnlock } from "./approveSchemaUnlock";
 import { getSchemaUnlockPinPath } from "./getSchemaUnlockPinPath";
-import { readSchemaUnlockPinState } from "./readSchemaUnlockPinState";
+import {
+	readSchemaUnlockPinState,
+	type SchemaUnlockPinState,
+} from "./readSchemaUnlockPinState";
 
-async function approveItemPhase(itemId: number, phase: number): Promise<void> {
-	const found = await findPhaseUnlockItem(itemId, phase);
-	if (!found) return;
-	await recordGitRef(found.orm, itemId, {
-		kind: "schema-unlock",
-		ref: phaseUnlockRef(phase),
-		title: `Database schema files unlocked by PIN for phase ${phase}`,
-	});
-	console.log(
-		chalk.green(
-			`Approved schema changes for phase ${phase} of ${found.label}. Its sessions may edit and commit database schema files until the item moves on from that phase or is done or won't-do.`,
-		),
-	);
-}
-
-function approveClaudeSession(claudeSessionId: string): void {
-	const path = getSchemaSessionApprovalPath(claudeSessionId);
-	if (!path) return;
-	mkdirSync(getSchemaSessionApprovalDir(), { recursive: true });
-	writeFileSync(path, JSON.stringify({ claudeSessionId }));
-	console.log(
-		chalk.green(
-			`Approved schema changes for Claude session ${claudeSessionId}. It may edit and commit database schema files until the session ends.`,
-		),
-	);
+function scopeMismatch(
+	state: SchemaUnlockPinState,
+	current: ExecutionIdentity | undefined,
+): boolean {
+	if (!current) return false;
+	if (current.harness !== state.harness) return true;
+	return state.kind === "item"
+		? current.itemId !== state.itemId
+		: current.itemId !== null ||
+				current.conversationId !== state.conversationId;
 }
 
 export async function schemaConfirm(pin: string): Promise<void> {
@@ -46,8 +30,15 @@ export async function schemaConfirm(pin: string): Promise<void> {
 		process.exitCode = 1;
 		return;
 	}
+	if (scopeMismatch(state, currentExecutionIdentity())) {
+		console.error(
+			chalk.red(
+				"This pin was issued for a different session. Nothing was approved; confirm it in the session that requested it, or request a new unlock here.",
+			),
+		);
+		process.exitCode = 1;
+		return;
+	}
 	unlinkSync(getSchemaUnlockPinPath(pin));
-
-	if (state.kind === "item") await approveItemPhase(state.itemId, state.phase);
-	else approveClaudeSession(state.claudeSessionId);
+	await approveSchemaUnlock(state);
 }

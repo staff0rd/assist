@@ -36,6 +36,11 @@ vi.mock("../../shared/isApprovedRead", () => ({
 	isApprovedRead: (cmd: string, tool: string) => mockIsApprovedRead(cmd, tool),
 }));
 
+const mockSchemaLocked = vi.fn<(identity: unknown) => Promise<boolean>>();
+vi.mock("../schema/isSchemaLocked", () => ({
+	isSchemaLocked: (identity: unknown) => mockSchemaLocked(identity),
+}));
+
 import { codexHook } from "../codexHook";
 
 function makeInput(
@@ -344,6 +349,53 @@ describe("codexHook status reporting", () => {
 		await codexHook();
 
 		expect(mockReportCodexStatus).toHaveBeenCalledWith("PreToolUse", false);
+		spy.mockRestore();
+	});
+});
+
+describe("codexHook apply_patch", () => {
+	const schemaPatch =
+		"*** Begin Patch\n*** Update File: src/shared/db/schema.ts\n@@\n+export const x = 1;\n*** End Patch";
+
+	function patchInput(locked: boolean) {
+		mockSchemaLocked.mockResolvedValue(locked);
+		mockReadStdin.mockResolvedValue(
+			JSON.stringify({
+				hook_event_name: "PreToolUse",
+				session_id: "thread-a",
+				tool_name: "apply_patch",
+				tool_input: { command: schemaPatch },
+			}),
+		);
+	}
+
+	it("denies a patch to a locked schema file, scoped to the Codex conversation", async () => {
+		const spy = captureOutput();
+		patchInput(true);
+
+		await codexHook();
+
+		const output = JSON.parse(spy.mock.calls[0][0] as string);
+		expect(output.hookSpecificOutput.permissionDecision).toBe("deny");
+		expect(output.hookSpecificOutput.permissionDecisionReason).toContain(
+			"assist schema unlock",
+		);
+		expect(mockSchemaLocked).toHaveBeenCalledWith(
+			expect.objectContaining({ harness: "codex", conversationId: "thread-a" }),
+		);
+		expect(mockLogDenied).toHaveBeenCalledWith(
+			expect.objectContaining({ tool: "apply_patch", sessionId: "thread-a" }),
+		);
+		spy.mockRestore();
+	});
+
+	it("lets the patch through once the schema is unlocked", async () => {
+		const spy = captureOutput();
+		patchInput(false);
+
+		await codexHook();
+
+		expect(spy).not.toHaveBeenCalled();
 		spy.mockRestore();
 	});
 });

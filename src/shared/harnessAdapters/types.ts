@@ -129,6 +129,23 @@ export type ConnectorRun = {
 
 export type ConnectorRunResult = { output: unknown; usage: RunUsage };
 
+export type ToolOperation =
+	| { kind: "command"; tool: string; command: string }
+	| { kind: "fileRead"; tool: string; paths: string[] }
+	| { kind: "fileWrite"; tool: string; path: string; contents: string[] }
+	| { kind: "question"; tool: string; questionsJson: string };
+
+export type ExecutionIdentity = {
+	harness: string;
+	conversationId?: string;
+	itemId: number | null;
+};
+
+export type NativeToolCall = {
+	toolName: string;
+	toolInput: Record<string, unknown>;
+};
+
 export type HarnessAdapter = HarnessCapabilitySource & {
 	kind: string;
 	detect: () => CapabilityStatus;
@@ -136,7 +153,10 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		idName: string;
 		findResumable: (ref: ConversationRef) => string | undefined;
 		locate: (conversationId: string) => Promise<string | null>;
+		current: () => string | undefined;
 	};
+	toolOperations: (call: NativeToolCall) => ToolOperation[];
+	permissionRules?: (key: "allow" | "deny") => string[];
 	launchSkill: (
 		skill: string,
 		args: string | undefined,

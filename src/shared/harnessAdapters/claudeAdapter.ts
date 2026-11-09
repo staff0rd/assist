@@ -8,6 +8,7 @@ import { claudeConnectorProbe } from "./claudeConnectorProbe";
 import { claudeConnectorRun } from "./claudeConnectorRun";
 import { claudeOneShot } from "./claudeOneShot";
 import { claudeStructuredRun } from "./claudeStructuredRun";
+import { claudeToolOperations } from "./claudeToolOperations";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
 import type { HarnessAdapter } from "./types";
@@ -26,7 +27,9 @@ export const claudeAdapter: HarnessAdapter = {
 		findResumable: (ref) =>
 			hasTranscriptOnDisk(ref) ? ref.claudeSessionId : undefined,
 		locate: findSessionJsonlPath,
+		current: () => process.env.CLAUDE_CODE_SESSION_ID || undefined,
 	},
+	toolOperations: claudeToolOperations,
 	launchSkill: (skill, args, { conversationId, allowEdits }) =>
 		spawnClaude(buildSlashCommand(skill, args), {
 			allowEdits: allowEdits ?? true,

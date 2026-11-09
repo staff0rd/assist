@@ -1,25 +1,31 @@
+import type { NativeToolCall } from "../../shared/harnessAdapters/types";
+
 type CodexHookInput = {
 	hook_event_name?: string;
 	cwd?: unknown;
 	transcript_path?: unknown;
 	session_id?: unknown;
-	tool_name?: string;
-	tool_input?: { command?: unknown };
+	tool_name?: unknown;
+	tool_input?: unknown;
 };
-
-const SUPPORTED_TOOLS = new Set(["Bash", "PowerShell"]);
 
 export type ParsedInput = {
 	event: string;
 	cwd?: string;
 	transcriptPath?: string;
 	sessionId?: string;
-	toolName?: string;
-	command?: string;
+	toolCall?: NativeToolCall;
 };
 
 function optionalString(value: unknown): string | undefined {
 	return typeof value === "string" ? value : undefined;
+}
+
+function toolInputOf(value: unknown): Record<string, unknown> {
+	if (typeof value === "string") return { command: value };
+	return value && typeof value === "object"
+		? (value as Record<string, unknown>)
+		: {};
 }
 
 export function parseCodexHookInput(raw: string): ParsedInput | undefined {
@@ -33,10 +39,12 @@ export function parseCodexHookInput(raw: string): ParsedInput | undefined {
 		if (transcriptPath) base.transcriptPath = transcriptPath;
 		const sessionId = optionalString(data.session_id);
 		if (sessionId) base.sessionId = sessionId;
-		const command = data.tool_input?.command;
-		if (typeof command !== "string" || !command.trim()) return base;
-		if (!data.tool_name || !SUPPORTED_TOOLS.has(data.tool_name)) return base;
-		return { ...base, toolName: data.tool_name, command: command.trim() };
+		const toolName = optionalString(data.tool_name);
+		if (!toolName) return base;
+		return {
+			...base,
+			toolCall: { toolName, toolInput: toolInputOf(data.tool_input) },
+		};
 	} catch {
 		return undefined;
 	}
