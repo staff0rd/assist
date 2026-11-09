@@ -34,18 +34,25 @@ export function registerDevlogEntryCommands(devlogCommand: Command): void {
 
 	internalCommand(
 		devlogCommand
-			.command("slack <week>")
+			.command("slack [week]")
 			.description(
-				"Preview a dev entry as a Slack parent message plus a threaded Added/Changed/Fixed reply, printing the channel and approved paths",
+				"List un-posted dev entries oldest first, or preview one week as a Slack parent message plus a threaded Added/Changed/Fixed reply, printing the channel and approved paths",
 			)
-			.action((week: string) => slack(week)),
+			.action((week?: string) => slack(week)),
 		"/devlog",
 	);
 
 	devlogCommand
-		.command("posted <week> <permalink>")
+		.command("posted <week> [permalink]")
 		.description(
-			"Record a dev entry's Slack permalink as slack: in its frontmatter",
+			"Record a dev entry's Slack permalink as slack: in its frontmatter, or slack: skipped with --skip",
 		)
-		.action((week: string, permalink: string) => posted(week, permalink));
+		.option("--skip", "Mark the entry as not to be posted")
+		.action(
+			(
+				week: string,
+				permalink: string | undefined,
+				options: { skip?: boolean },
+			) => posted(week, permalink, options),
+		);
 }

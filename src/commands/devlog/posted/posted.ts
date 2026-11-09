@@ -19,14 +19,28 @@ function readEntry(path: string): string {
 	}
 }
 
-export function posted(week: string, permalink: string): void {
-	if (!isValidWeek(week)) fail("Invalid week. Use YYYY-Www (e.g. 2026-W33)");
-	if (!/^https:\/\/\S+$/.test(permalink.trim())) {
-		fail(`Expected a Slack permalink (https://...), got: ${permalink}`);
+function resolveValue(permalink: string | undefined, skipped: boolean): string {
+	if (skipped) {
+		if (permalink) fail("Pass either a permalink or --skip, not both");
+		return "skipped";
 	}
+	const value = permalink?.trim() ?? "";
+	if (!/^https:\/\/\S+$/.test(value)) {
+		fail(`Expected a Slack permalink (https://...) or --skip, got: ${value}`);
+	}
+	return value;
+}
+
+export function posted(
+	week: string,
+	permalink: string | undefined,
+	options: { skip?: boolean } = {},
+): void {
+	if (!isValidWeek(week)) fail("Invalid week. Use YYYY-Www (e.g. 2026-W33)");
+	const value = resolveValue(permalink, options.skip === true);
 	const path = devEntryPath(getRepoName(), week, resolveDevDir());
-	const updated = setFrontmatterSlack(readEntry(path), permalink.trim());
+	const updated = setFrontmatterSlack(readEntry(path), value);
 	if (updated === null) fail(`${path} has no YAML frontmatter`);
 	writeFileSync(path, updated);
-	console.log(chalk.green(`Recorded slack: ${permalink.trim()} in ${path}`));
+	console.log(chalk.green(`Recorded slack: ${value} in ${path}`));
 }

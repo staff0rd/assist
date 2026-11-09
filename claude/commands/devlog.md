@@ -1,6 +1,6 @@
 ---
 description: Generate the weekly dev entry for the next unwritten ISO week
-allowed_args: "[--all] [--slack-post <week>]"
+allowed_args: "[--all] [--slack-post [week]]"
 ---
 
 Parse `$ARGUMENTS`: if `--slack-post` is present, follow **Posting to Slack** (described below) and do nothing else. If `--all` is present, enable **catch-up mode** (described below). Otherwise, process a single week.
@@ -71,9 +71,18 @@ Loop through every completed unwritten week:
    - **Otherwise**: write the entry as in single-week mode
 4. Go back to step 1
 
-## Posting to Slack (`--slack-post <week>`)
+## Posting to Slack (`--slack-post [week]`)
 
-Post an existing entry for this repo to Slack. If no week follows `--slack-post`, ask the user which week (`YYYY-Www`) to post.
+Post an un-posted entry for this repo to Slack. An entry is un-posted when its frontmatter has no `slack` key.
+
+If a week follows `--slack-post`, post that week. Otherwise choose one first:
+
+- Run `assist devlog slack` with no week. It lists the un-posted weeks oldest first. If it reports none, stop and relay that.
+- If it lists one week, post that week.
+- If it lists several, ask the user which week to post, with the oldest as the first (default) option. Also ask whether to mark the listed weeks older than the chosen one as not to be posted. Never assume either answer.
+- For each week the user chose to mark, run `assist devlog posted <week> --skip`, which writes `slack: skipped`.
+
+Then:
 
 1. Run `assist devlog slack <week>`. It renders the entry as a short parent message plus a threaded reply holding the Added / Changed / Fixed lists, and previews them for approval. If it exits non-zero (no channel configured, no entry, already posted, or a preview rejected), stop and relay its message; post nothing. On a rejection, revise the named working file in place and re-run `assist slack post '<channel>' --parts <working files...>` as `/slack-post` describes.
 2. On approval it prints `Approved for <channel>` and the approved working file paths, `1/2 <path>` for the parent and `2/2 <path>` for the reply (a single path when the entry has no list items). Read those files; post their contents verbatim.

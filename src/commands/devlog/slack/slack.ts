@@ -9,6 +9,7 @@ import { getRepoName } from "../shared";
 import { devlogSlackChannel } from "./devlogSlackChannel";
 import { readDevEntryFile } from "./readDevEntryFile";
 import { renderDevlogSlackParts } from "./renderDevlogSlackParts";
+import { unpostedWeeks } from "./unpostedWeeks";
 
 function fail(message: string): never {
 	console.error(chalk.red(message));
@@ -24,11 +25,26 @@ function writeParts(channel: string, parts: string[]): string[] {
 	});
 }
 
-export async function slack(week: string): Promise<void> {
+function listUnposted(repoName: string, devDir: string): void {
+	const weeks = unpostedWeeks(repoName, devDir);
+	if (weeks.length === 0) {
+		console.log(`No un-posted dev entries for ${repoName}`);
+		return;
+	}
+	console.log(`Un-posted dev entries for ${repoName} (oldest first):`);
+	for (const week of weeks) console.log(week);
+}
+
+export async function slack(week?: string): Promise<void> {
+	const repoName = getRepoName();
+	const devDir = resolveDevDir();
+	if (!week) {
+		listUnposted(repoName, devDir);
+		return;
+	}
 	if (!isValidWeek(week)) fail("Invalid week. Use YYYY-Www (e.g. 2026-W33)");
 	const channel = devlogSlackChannel();
-	const repoName = getRepoName();
-	const path = devEntryPath(repoName, week, resolveDevDir());
+	const path = devEntryPath(repoName, week, devDir);
 	const entry = readDevEntryFile(path);
 	if (!entry) fail(`No dev entry for ${week} at ${path}`);
 	if (entry.slack) fail(`${week} is already posted: slack: ${entry.slack}`);
