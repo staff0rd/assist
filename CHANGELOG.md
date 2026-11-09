@@ -1,3 +1,10 @@
+# [0.1094.0](https://github.com/staff0rd/assist/compare/v0.1093.1...v0.1094.0) (2026-11-09)
+
+
+### Features
+
+* relay UI activity to linked nodes ([a4b6ca3](https://github.com/staff0rd/assist/commit/a4b6ca36286c16c1132af7026a79d8f450173e3e))
+
 ## [0.1093.1](https://github.com/staff0rd/assist/compare/v0.1093.0...v0.1093.1) (2026-11-09)
 
 
