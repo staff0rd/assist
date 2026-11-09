@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { getCwdParam } from "./getCwdParam";
-import { getSessionParam } from "./getSessionParam";
+import { getConversationParam } from "./getConversationParam";
 import { resolveDiffScope } from "./resolveDiffScope";
 import { scopedDiff } from "./scopedDiff";
 
@@ -16,7 +16,7 @@ export async function diff(
 ): Promise<void> {
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
-	const session = getSessionParam(req);
+	const session = getConversationParam(req);
 	try {
 		const scope = await resolveDiffScope(cwd, session, getScopeParam(req));
 		if (!scope) {

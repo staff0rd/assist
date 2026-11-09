@@ -63,7 +63,7 @@ export class SessionIo {
 		if (!id)
 			return {
 				ok: false,
-				message: `No live Claude session shares a directory with the server for ${target.file} or has written anything in ${target.within}`,
+				message: `No live agent session shares a directory with the server for ${target.file} or has written anything in ${target.within}`,
 			};
 		return this.typePrompt(id, text);
 	}

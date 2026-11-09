@@ -107,7 +107,9 @@ describe("diff", () => {
 
 		await request("/api/diff?cwd=%2Frepo&session=sess-1");
 
-		expect(itemChangeSetMock).toHaveBeenCalledWith("/repo", "sess-1");
+		expect(itemChangeSetMock).toHaveBeenCalledWith("/repo", {
+			conversationId: "sess-1",
+		});
 	});
 
 	it("diffs the working tree against HEAD for the uncommitted scope", async () => {

@@ -84,7 +84,23 @@ describe("SessionTopBarDiff", () => {
 
 		expect(openedPanel()).toEqual({
 			cwd: "/git/repo",
-			claudeSessionId: "sess-1",
+			conversation: { conversationId: "sess-1" },
+			scope: "all",
+			mode: "half",
+		});
+	});
+
+	it("scopes a Codex session's diff panel to its bound conversation", () => {
+		renderDiff(
+			{ ...clean, new: ["a.ts"] },
+			{ claudeSessionId: undefined, harness: "codex", harnessSessionId: "t-1" },
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "+1" }));
+
+		expect(openedPanel()).toEqual({
+			cwd: "/git/repo",
+			conversation: { conversationId: "t-1", harness: "codex" },
 			scope: "all",
 			mode: "half",
 		});
@@ -107,7 +123,7 @@ describe("SessionTopBarDiff", () => {
 
 		expect(openedPanel()).toEqual({
 			cwd: "/git/repo",
-			claudeSessionId: "sess-1",
+			conversation: { conversationId: "sess-1" },
 			scope: "branch",
 			mode: "half",
 		});

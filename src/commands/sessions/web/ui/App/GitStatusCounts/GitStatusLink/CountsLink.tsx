@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
-import { useApiNode } from "../../../useApiNode";
-import { useDiffPanels } from "../../useDiffPanels";
+import type { ConversationTarget } from "../../../../../shared/sessionConversationTarget";
+import { useOpenDiffPanel } from "../useOpenDiffPanel";
 import { DiffToggleTooltip } from "./CountsLink/DiffToggleTooltip";
 import { useCountButton } from "./CountsLink/useCountButton";
 import { GitStatusChips, type StatusGroup } from "../GitStatusChips";
@@ -21,7 +21,7 @@ const containerSx = {
 export function CountsLink({
 	panelSessionId,
 	cwd,
-	sessionId,
+	conversation,
 	scope,
 	groups,
 	bracketed,
@@ -30,15 +30,14 @@ export function CountsLink({
 }: {
 	panelSessionId: string;
 	cwd: string;
-	sessionId?: string;
+	conversation?: ConversationTarget;
 	scope: string;
 	groups: StatusGroup[];
 	bracketed?: boolean;
 	toggleChordHint?: boolean;
 	countButton?: boolean;
 }) {
-	const { togglePanel } = useDiffPanels();
-	const node = useApiNode();
+	const openPanel = useOpenDiffPanel(panelSessionId, cwd, conversation);
 	const boxed = useCountButton(panelSessionId, scope, countButton);
 
 	return (
@@ -46,14 +45,7 @@ export function CountsLink({
 			<Link
 				component="button"
 				type="button"
-				onClick={() =>
-					togglePanel(panelSessionId, {
-						cwd,
-						claudeSessionId: sessionId,
-						scope,
-						node,
-					})
-				}
+				onClick={() => openPanel(scope)}
 				variant="caption"
 				underline={boxed ? "none" : "hover"}
 				color="inherit"

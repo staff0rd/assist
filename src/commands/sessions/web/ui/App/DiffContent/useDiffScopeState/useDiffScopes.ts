@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { ConversationTarget } from "../../../../../shared/sessionConversationTarget";
 import type { CommitRef } from "../../../../../../../shared/db/listCommitRefs";
 import { apiFetch } from "../../../apiFetch";
 import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
@@ -14,9 +15,13 @@ type DiffScopes = {
 
 const EMPTY: DiffScopes = { commits: [], branchBase: null, loaded: false };
 
-export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
+export function useDiffScopes(
+	cwd: string,
+	conversation?: ConversationTarget,
+): DiffScopes {
 	const [scopes, setScopes] = useState<DiffScopes>(EMPTY);
 	const node = useApiNode();
+	const query = diffQuery(cwd, conversation);
 
 	useEffect(() => {
 		if (!cwd) {
@@ -26,9 +31,7 @@ export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
 		let cancelled = false;
 		const load = async () => {
 			try {
-				const res = await apiFetch(
-					withNode(`/api/diff-scopes?${diffQuery(cwd, sessionId)}`, node),
-				);
+				const res = await apiFetch(withNode(`/api/diff-scopes?${query}`, node));
 				const body = await res.json();
 				if (!cancelled)
 					setScopes({
@@ -45,7 +48,7 @@ export function useDiffScopes(cwd: string, sessionId?: string): DiffScopes {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, sessionId, node]);
+	}, [cwd, query, node]);
 
 	return scopes;
 }

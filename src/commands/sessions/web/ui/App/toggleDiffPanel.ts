@@ -1,8 +1,10 @@
+import type { ConversationTarget } from "../../../shared/sessionConversationTarget";
+
 export type DiffPanelMode = "half" | "full";
 
 export type DiffPanelTarget = {
 	cwd: string;
-	claudeSessionId?: string;
+	conversation?: ConversationTarget;
 	scope: string;
 	node?: string;
 };

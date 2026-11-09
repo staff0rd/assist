@@ -167,14 +167,14 @@ function stubDoc() {
 
 function Harness({
 	sessions,
-	claudeSessionId,
+	ownerSessionId,
 	sendInput,
 }: {
 	sessions: SessionInfo[];
-	claudeSessionId: string | undefined;
+	ownerSessionId: string | undefined;
 	sendInput: (sessionId: string, data: string) => void;
 }) {
-	const comments = useDiffComments(sessions, claudeSessionId, sendInput);
+	const comments = useDiffComments(sessions, { ownerSessionId }, sendInput);
 	return (
 		<MarkdownPreviewDialog
 			cwd="/repo"
@@ -189,9 +189,9 @@ function Harness({
 
 async function openPreview(
 	sendInput: (sessionId: string, data: string) => void,
-	target: { sessions: SessionInfo[]; claudeSessionId: string | undefined } = {
+	target: { sessions: SessionInfo[]; ownerSessionId: string | undefined } = {
 		sessions: [liveSession],
-		claudeSessionId: "claude-1",
+		ownerSessionId: "daemon-1",
 	},
 ) {
 	stubDoc();
@@ -248,7 +248,7 @@ describe("MarkdownPreviewDialog comments", () => {
 		const sendInput = vi.fn();
 		await openPreview(sendInput, {
 			sessions: [],
-			claudeSessionId: undefined,
+			ownerSessionId: undefined,
 		});
 
 		selectQuote("first paragraph");

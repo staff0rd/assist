@@ -1,4 +1,5 @@
 import type { CommitRef } from "../../../../../../shared/db/listCommitRefs";
+import type { ConversationTarget } from "../../../../shared/sessionConversationTarget";
 import { BRANCH_DIFF_SCOPE, DEFAULT_DIFF_SCOPE } from "../diffScopeOptions";
 import { useDiffScopes } from "./useDiffScopeState/useDiffScopes";
 
@@ -10,10 +11,10 @@ export type DiffScopeState = {
 
 export function useDiffScopeState(
 	cwd: string,
-	sessionId: string | undefined,
+	conversation: ConversationTarget | undefined,
 	requested: string,
 ): DiffScopeState {
-	const { commits, branchBase, loaded } = useDiffScopes(cwd, sessionId);
+	const { commits, branchBase, loaded } = useDiffScopes(cwd, conversation);
 	const unavailableBranch =
 		requested === BRANCH_DIFF_SCOPE && loaded && !branchBase;
 	return {

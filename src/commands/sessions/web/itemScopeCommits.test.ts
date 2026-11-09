@@ -31,25 +31,32 @@ describe("itemScopeCommits", () => {
 		config(true);
 		commits([{ sha: "one", title: "feat: one" }]);
 
-		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([
-			{ sha: "one", title: "feat: one" },
-		]);
-		expect(committedPathsMock).toHaveBeenCalledWith("/repo", "sess-1");
+		expect(
+			await itemScopeCommits("/repo", { conversationId: "sess-1" }),
+		).toEqual([{ sha: "one", title: "feat: one" }]);
+		expect(committedPathsMock).toHaveBeenCalledWith("/repo", {
+			conversationId: "sess-1",
+		});
 	});
 
 	it("lists commits found without a backlog item, such as from the transcript", async () => {
 		config(true);
 		commits([{ sha: "f16e93bc" }]);
 
-		expect(await itemScopeCommits("/repo", "review-sess")).toEqual([
-			{ sha: "f16e93bc" },
-		]);
+		expect(
+			await itemScopeCommits("/repo", {
+				conversationId: "review-sess",
+				harness: "codex",
+			}),
+		).toEqual([{ sha: "f16e93bc" }]);
 	});
 
 	it("lists nothing when the flag is off", async () => {
 		config(false);
 
-		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([]);
+		expect(
+			await itemScopeCommits("/repo", { conversationId: "sess-1" }),
+		).toEqual([]);
 		expect(committedPathsMock).not.toHaveBeenCalled();
 	});
 
@@ -57,7 +64,9 @@ describe("itemScopeCommits", () => {
 		config();
 		commits([{ sha: "one" }]);
 
-		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([{ sha: "one" }]);
+		expect(
+			await itemScopeCommits("/repo", { conversationId: "sess-1" }),
+		).toEqual([{ sha: "one" }]);
 	});
 
 	it("lists the commits when the config cannot be loaded", async () => {
@@ -66,7 +75,9 @@ describe("itemScopeCommits", () => {
 		});
 		commits([{ sha: "one" }]);
 
-		expect(await itemScopeCommits("/repo", "sess-1")).toEqual([{ sha: "one" }]);
+		expect(
+			await itemScopeCommits("/repo", { conversationId: "sess-1" }),
+		).toEqual([{ sha: "one" }]);
 	});
 
 	it("lists nothing without a session", async () => {

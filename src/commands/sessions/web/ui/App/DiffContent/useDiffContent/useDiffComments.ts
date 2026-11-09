@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { addRuleSender } from "../../addRuleSender";
 import { diffCommentSender } from "../../diffCommentSender";
-import { diffCommentTarget } from "./useDiffComments/diffCommentTarget";
+import {
+	type DiffCommentSource,
+	diffCommentTarget,
+} from "./useDiffComments/diffCommentTarget";
 import { fileCommentSender } from "../../fileCommentSender";
 import type { AddRuleRequest } from "../../formatAddRuleCommand";
 import type { DiffComment } from "../../formatDiffComment";
@@ -10,7 +13,7 @@ import type { SessionInfo } from "../../../types";
 
 export function useDiffComments(
 	sessions: SessionInfo[],
-	claudeSessionId: string | undefined,
+	source: DiffCommentSource,
 	sendInput: (sessionId: string, data: string) => void,
 ): {
 	onComment?: (comment: DiffComment) => void;
@@ -21,7 +24,7 @@ export function useDiffComments(
 	clearSent: () => void;
 } {
 	const [sentTo, setSentTo] = useState<string | null>(null);
-	const { session, unavailable } = diffCommentTarget(sessions, claudeSessionId);
+	const { session, unavailable } = diffCommentTarget(sessions, source);
 
 	return {
 		onComment: session

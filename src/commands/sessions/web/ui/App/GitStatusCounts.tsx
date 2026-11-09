@@ -1,3 +1,4 @@
+import type { ConversationTarget } from "../../../shared/sessionConversationTarget";
 import { BranchDiffLink } from "./GitStatusCounts/BranchDiffLink";
 import { GitStatusLink } from "./GitStatusCounts/GitStatusLink";
 import { sessionDiffAffordance } from "./GitStatusCounts/sessionDiffAffordance";
@@ -6,19 +7,21 @@ import { useGitStatusCounts } from "./GitStatusCounts/useGitStatusCounts";
 export function GitStatusCounts({
 	panelSessionId,
 	cwd,
-	sessionId,
+	conversation,
 	offerBranchDiff = false,
 	toggleChordHint = false,
 	countButton = false,
 }: {
 	panelSessionId: string;
 	cwd: string;
-	sessionId?: string;
+	conversation?: ConversationTarget;
 	offerBranchDiff?: boolean;
 	toggleChordHint?: boolean;
 	countButton?: boolean;
 }) {
-	const affordance = sessionDiffAffordance(useGitStatusCounts(cwd, sessionId));
+	const affordance = sessionDiffAffordance(
+		useGitStatusCounts(cwd, conversation),
+	);
 	if (!affordance) return null;
 
 	if (affordance.kind === "branch")
@@ -26,7 +29,7 @@ export function GitStatusCounts({
 			<BranchDiffLink
 				panelSessionId={panelSessionId}
 				cwd={cwd}
-				sessionId={sessionId}
+				conversation={conversation}
 				defaultBranch={affordance.defaultBranch}
 			/>
 		) : null;
@@ -35,7 +38,7 @@ export function GitStatusCounts({
 		<GitStatusLink
 			panelSessionId={panelSessionId}
 			cwd={cwd}
-			sessionId={sessionId}
+			conversation={conversation}
 			groups={affordance.groups}
 			uncommitted={affordance.uncommitted}
 			toggleChordHint={toggleChordHint}

@@ -63,6 +63,24 @@ export const inboxFeature: HarnessFeature = {
 	requires: ["connector.gmail.read", "connector.slack.read", "tools.restrict"],
 };
 
+const diffCommitScopeFeature: HarnessFeature = {
+	id: "diffCommitScope",
+	label: "Session diff commit scopes from the conversation",
+	requires: ["transcript.read"],
+};
+
+const writeAttributionFeature: HarnessFeature = {
+	id: "writeAttribution",
+	label: "Last-writer attribution for docs feedback",
+	requires: ["transcript.read"],
+};
+
+const diffCommentsFeature: HarnessFeature = {
+	id: "diffComments",
+	label: "Diff and file-preview comments",
+	requires: [],
+};
+
 const usageLimitsFeature: HarnessFeature = {
 	id: "usageLimits",
 	label: "Usage limits",
@@ -78,6 +96,9 @@ export const harnessFeatures: HarnessFeature[] = [
 	messagePreviewsFeature,
 	transcriptStatusFeature,
 	transcriptTitleFeature,
+	diffCommitScopeFeature,
+	writeAttributionFeature,
+	diffCommentsFeature,
 	usageLimitsFeature,
 	inboxFeature,
 	previewQuestionsFeature,

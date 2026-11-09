@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { getCwdParam } from "./getCwdParam";
-import { getSessionParam } from "./getSessionParam";
+import { getConversationParam } from "./getConversationParam";
 import { type GitBranchInfo, gitBranchInfo } from "./gitBranchInfo";
 import { groupedCounts } from "./groupedCounts";
 import { itemChangeSet } from "./itemChangeSet";
@@ -22,7 +22,7 @@ export async function gitStatus(
 	if (!cwd) return;
 	try {
 		const branch = await gitBranchInfo(cwd);
-		const changeSet = await itemChangeSet(cwd, getSessionParam(req)).catch(
+		const changeSet = await itemChangeSet(cwd, getConversationParam(req)).catch(
 			() => undefined,
 		);
 		if (!changeSet) {

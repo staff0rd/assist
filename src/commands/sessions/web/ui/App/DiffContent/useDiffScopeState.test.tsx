@@ -17,12 +17,14 @@ function withScopes(body: unknown) {
 	return fetchMock;
 }
 
+const SESSION = { conversationId: "sess-1" };
+
 describe("useDiffScopeState", () => {
 	it("keeps the branch scope when a branch base resolves", async () => {
 		withScopes({ commits: [], branchBase: "origin/main" });
 
 		const { result } = renderHook(() =>
-			useDiffScopeState("/repo", "sess-1", "branch"),
+			useDiffScopeState("/repo", SESSION, "branch"),
 		);
 
 		await waitFor(() => expect(result.current.branchBase).toBe("origin/main"));
@@ -33,7 +35,7 @@ describe("useDiffScopeState", () => {
 		withScopes({ commits: [], branchBase: null });
 
 		const { result } = renderHook(() =>
-			useDiffScopeState("/repo", "sess-1", "branch"),
+			useDiffScopeState("/repo", SESSION, "branch"),
 		);
 
 		await waitFor(() => expect(result.current.scope).toBe("all"));
@@ -43,7 +45,7 @@ describe("useDiffScopeState", () => {
 		withScopes({ commits: [], branchBase: null });
 
 		const { result } = renderHook(() =>
-			useDiffScopeState("/repo", "sess-1", "branch"),
+			useDiffScopeState("/repo", SESSION, "branch"),
 		);
 
 		expect(result.current.scope).toBe("branch");
@@ -56,7 +58,7 @@ describe("useDiffScopeState", () => {
 		});
 
 		const { result } = renderHook(() =>
-			useDiffScopeState("/repo", "sess-1", "uncommitted"),
+			useDiffScopeState("/repo", SESSION, "uncommitted"),
 		);
 
 		await waitFor(() => expect(result.current.commits).toHaveLength(1));

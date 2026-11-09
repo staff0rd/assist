@@ -1,18 +1,19 @@
 import { useCallback } from "react";
+import type { ConversationTarget } from "../../../../../shared/sessionConversationTarget";
 import { diffRevertScope } from "./diffRevertScope";
 import { useDiffRevert } from "./useDiffRevert";
 import { useUncommittedFiles } from "./useUncommittedFiles";
 
 export function useScopedDiffRevert(
 	cwd: string,
-	sessionId: string | undefined,
+	conversation: ConversationTarget | undefined,
 	scope: string,
 	refreshDiff: () => void,
 ) {
 	const enabled = diffRevertScope(scope);
 	const uncommitted = useUncommittedFiles(
 		cwd,
-		sessionId,
+		conversation,
 		enabled.needsUncommittedFiles,
 	);
 	const refreshUncommitted = uncommitted.refresh;

@@ -5,36 +5,25 @@ import { filePath } from "./FileDiff";
 import type { SessionInfo } from "../../types";
 import { useActiveDiffFile } from "./useDiffContent/useActiveDiffFile";
 import { useCollapsedFiles } from "./useDiffContent/useCollapsedFiles";
-import { useDiff } from "./useDiffContent/useDiff";
+import { useConversationDiff } from "./useDiffContent/useConversationDiff";
 import { useDiffComments } from "./useDiffContent/useDiffComments";
+import type { DiffCommentSource } from "./useDiffContent/useDiffComments/diffCommentTarget";
 import { useDiffFileData } from "./useDiffContent/useDiffFileData";
 import { useDiffFilters } from "./useDiffContent/useDiffFilters";
-import { useScopedDiffRevert } from "./useDiffContent/useScopedDiffRevert";
-import { useDiffScopeState } from "./useDiffScopeState";
 import { useDiffTreePanel } from "./useDiffContent/useDiffTreePanel";
 
 export function useDiffContent(
 	cwd: string,
-	sessionId: string | undefined,
+	source: DiffCommentSource,
 	scope: string,
 	sessions: SessionInfo[],
 	sendInput: (sessionId: string, data: string) => void,
 ) {
-	const scopeState = useDiffScopeState(cwd, sessionId, scope);
-	const { diff, loading, error, refresh } = useDiff(
-		cwd,
-		sessionId,
-		scopeState.scope,
-	);
-	const { revert, uncommittedFiles } = useScopedDiffRevert(
-		cwd,
-		sessionId,
-		scopeState.scope,
-		refresh,
-	);
+	const { scopeState, diff, loading, error, revert, uncommittedFiles } =
+		useConversationDiff(cwd, source.conversation, scope);
 	const filters = useDiffFilters();
 	const treePanel = useDiffTreePanel();
-	const comments = useDiffComments(sessions, sessionId, sendInput);
+	const comments = useDiffComments(sessions, source, sendInput);
 	const collapsedFiles = useCollapsedFiles(cwd);
 	const { files, visibleFiles } = useDiffFileData({
 		diff,

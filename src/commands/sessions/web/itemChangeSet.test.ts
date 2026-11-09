@@ -22,7 +22,7 @@ const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 type Repo = Record<string, { parent?: string; paths: string[] }>;
 
 let sessions = 0;
-const nextSession = () => `sess-${++sessions}`;
+const nextSession = () => ({ conversationId: `sess-${++sessions}` });
 
 function config(includeCommittedChanges?: boolean): void {
 	loadConfigFromMock.mockReturnValue({

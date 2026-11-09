@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { sessionConversationTarget } from "../../../../../../shared/sessionConversationTarget";
 import { GitStatusCounts } from "../../../GitStatusCounts";
 import { SessionMetaCaptions } from "./CardDataLine/SessionMetaCaptions";
 import type { SessionInfo } from "../../../../types";
@@ -25,7 +26,7 @@ export function CardDataLine({ session }: { session: SessionInfo }) {
 				<GitStatusCounts
 					panelSessionId={session.id}
 					cwd={session.cwd}
-					sessionId={session.claudeSessionId}
+					conversation={sessionConversationTarget(session)}
 				/>
 			)}
 		</Box>

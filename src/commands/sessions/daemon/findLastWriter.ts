@@ -1,3 +1,5 @@
+import { conversationOf } from "../shared/conversationOf";
+import { readTranscriptTail } from "../shared/readTranscriptTail";
 import { daemonLog } from "./daemonLog";
 import { isLiveAgent } from "./findServerParents";
 import { lastWriteTimes, type WriteTarget } from "./lastWriteTimes";
@@ -15,17 +17,30 @@ function newest(
 		.sort((a, b) => (b[key] ?? 0) - (a[key] ?? 0))[0];
 }
 
+async function sessionWrites(
+	session: Session,
+	target: WriteTarget,
+): Promise<Candidate> {
+	const reader = conversationOf(session)?.reader;
+	const transcript = reader ? await resolveTranscriptPath(session) : null;
+	if (!reader || !transcript) return { id: session.id };
+	const entries = await readTranscriptTail(
+		transcript,
+		Number.POSITIVE_INFINITY,
+	);
+	return {
+		id: session.id,
+		...lastWriteTimes(reader.events(entries), target, session.cwd),
+	};
+}
+
 export async function findLastWriter(
 	sessions: Iterable<Session>,
 	target: WriteTarget,
 ): Promise<string | undefined> {
 	const live = [...sessions].filter(isLiveAgent);
 	const candidates = await Promise.all(
-		live.map(async (session): Promise<Candidate> => {
-			const transcript = await resolveTranscriptPath(session);
-			if (!transcript) return { id: session.id };
-			return { id: session.id, ...(await lastWriteTimes(transcript, target)) };
-		}),
+		live.map((session) => sessionWrites(session, target)),
 	);
 	const writer = newest(candidates, "file") ?? newest(candidates, "within");
 	daemonLog(

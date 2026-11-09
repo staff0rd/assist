@@ -1,6 +1,6 @@
-import * as fs from "node:fs";
 import type { CommitRef } from "../../../shared/db/listCommitRefs";
-import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
+import type { ConversationTarget } from "../shared/sessionConversationTarget";
+import { targetConversationEvents } from "../shared/targetConversationEvents";
 import { execGit } from "./execGit";
 import { parseTranscriptCommitShas } from "./parseTranscriptCommitShas";
 
@@ -26,18 +26,11 @@ async function headCommit(
 
 export async function transcriptCommits(
 	cwd: string,
-	sessionId: string,
+	session: ConversationTarget,
 ): Promise<CommitRef[]> {
-	const transcriptPath = findTranscriptPathSync(cwd, sessionId);
-	if (!transcriptPath) return [];
-	let transcript: string;
-	try {
-		transcript = await fs.promises.readFile(transcriptPath, "utf8");
-	} catch {
-		return [];
-	}
+	const events = await targetConversationEvents(cwd, session);
 	const shas: string[] = [];
-	for (const sha of parseTranscriptCommitShas(transcript)) {
+	for (const sha of parseTranscriptCommitShas(events)) {
 		const full = await headCommit(cwd, sha);
 		if (full && !shas.includes(full)) shas.push(full);
 	}

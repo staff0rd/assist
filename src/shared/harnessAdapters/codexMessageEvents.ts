@@ -2,6 +2,7 @@ import {
 	rolloutPayload,
 	rolloutString,
 } from "../../commands/sessions/shared/codex/parseRolloutEntry";
+import { codexCompletedToolEvents } from "./codexCompletedToolEvents";
 import { codexContentText } from "./codexContentText";
 import type { ConversationEvent } from "./types";
 
@@ -36,7 +37,7 @@ function completedItem(payload: Payload, at?: string): ConversationEvent[] {
 		return message("user", codexContentText(item.content), at);
 	if (item.type === "AgentMessage")
 		return message("assistant", codexContentText(item.content), at);
-	return [];
+	return codexCompletedToolEvents(item, at);
 }
 
 export function codexMessageEvents(

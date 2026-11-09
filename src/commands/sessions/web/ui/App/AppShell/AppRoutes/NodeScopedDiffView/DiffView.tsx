@@ -10,13 +10,13 @@ export function DiffView({
 	sessions: SessionInfo[];
 	sendInput: (sessionId: string, data: string) => void;
 }) {
-	const { cwd, sessionId, scope, setScope } = useDiffTarget();
+	const { cwd, conversation, scope, setScope } = useDiffTarget();
 
 	return (
 		<PageShell maxWidth={false}>
 			<DiffContent
 				cwd={cwd}
-				sessionId={sessionId}
+				conversation={conversation}
 				scope={scope}
 				onScopeChange={setScope}
 				sessions={sessions}

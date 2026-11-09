@@ -32,6 +32,7 @@ export const codexAdapter: HarnessAdapter = {
 		locate: findCodexRolloutPath,
 		current: () => process.env.CODEX_THREAD_ID || undefined,
 		boundId: ({ harnessSessionId }) => harnessSessionId,
+		toRef: (harnessSessionId, cwd) => ({ cwd, harnessSessionId }),
 		discover: resolveCodexSessionId,
 		reader: codexConversationReader,
 	},

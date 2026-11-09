@@ -1,3 +1,4 @@
+import type { ConversationTarget } from "../shared/sessionConversationTarget";
 import { branchDiffBase } from "./branchDiffBase";
 import { itemScopeCommits } from "./itemScopeCommits";
 
@@ -9,7 +10,7 @@ export type DiffScope =
 
 export async function resolveDiffScope(
 	cwd: string,
-	sessionId: string | undefined,
+	session: ConversationTarget | undefined,
 	scope: string | undefined,
 ): Promise<DiffScope | undefined> {
 	if (!scope || scope === "all") return { kind: "all" };
@@ -18,7 +19,7 @@ export async function resolveDiffScope(
 		const base = await branchDiffBase(cwd);
 		return base ? { kind: "branch", base } : undefined;
 	}
-	const commits = await itemScopeCommits(cwd, sessionId);
+	const commits = await itemScopeCommits(cwd, session);
 	if (!commits.some((commit) => commit.sha === scope)) return undefined;
 	return { kind: "commit", sha: scope };
 }

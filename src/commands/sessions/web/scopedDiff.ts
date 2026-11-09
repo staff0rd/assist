@@ -1,3 +1,4 @@
+import type { ConversationTarget } from "../shared/sessionConversationTarget";
 import { execGit } from "./execGit";
 import { type ChangeGroup, itemChangeSet } from "./itemChangeSet";
 import { commitBase } from "./resolveCommit";
@@ -7,7 +8,7 @@ const MAX_DIFF_BYTES = 50 * 1024 * 1024;
 
 export async function scopedDiff(
 	cwd: string,
-	session: string | undefined,
+	session: ConversationTarget | undefined,
 	scope: DiffScope,
 ): Promise<string> {
 	if (scope.kind === "commit") return commitDiff(cwd, scope.sha);
@@ -60,7 +61,7 @@ async function workingTreeDiff(cwd: string): Promise<string> {
 
 async function trackedScopeDiff(
 	cwd: string,
-	session: string | undefined,
+	session: ConversationTarget | undefined,
 	scope: Exclude<DiffScope, { kind: "commit" }>,
 ): Promise<string> {
 	if (scope.kind === "branch") return baseDiff(cwd, scope.base);
@@ -68,7 +69,10 @@ async function trackedScopeDiff(
 	return trackedDiff(cwd, session);
 }
 
-async function trackedDiff(cwd: string, session?: string): Promise<string> {
+async function trackedDiff(
+	cwd: string,
+	session?: ConversationTarget,
+): Promise<string> {
 	const changeSet = await itemChangeSet(cwd, session);
 	if (changeSet) return groupedDiff(cwd, changeSet.groups);
 	return workingTreeDiff(cwd);

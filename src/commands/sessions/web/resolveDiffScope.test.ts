@@ -17,28 +17,40 @@ describe("resolveDiffScope", () => {
 	});
 
 	it("defaults to the whole item when no scope is given", async () => {
-		expect(await resolveDiffScope("/repo", "sess-1", undefined)).toEqual({
+		expect(
+			await resolveDiffScope("/repo", { conversationId: "sess-1" }, undefined),
+		).toEqual({
 			kind: "all",
 		});
 		expect(itemScopeCommitsMock).not.toHaveBeenCalled();
 	});
 
 	it("accepts the all scope without consulting the item", async () => {
-		expect(await resolveDiffScope("/repo", "sess-1", "all")).toEqual({
+		expect(
+			await resolveDiffScope("/repo", { conversationId: "sess-1" }, "all"),
+		).toEqual({
 			kind: "all",
 		});
 		expect(itemScopeCommitsMock).not.toHaveBeenCalled();
 	});
 
 	it("accepts the uncommitted scope without consulting the item", async () => {
-		expect(await resolveDiffScope("/repo", "sess-1", "uncommitted")).toEqual({
+		expect(
+			await resolveDiffScope(
+				"/repo",
+				{ conversationId: "sess-1" },
+				"uncommitted",
+			),
+		).toEqual({
 			kind: "uncommitted",
 		});
 		expect(itemScopeCommitsMock).not.toHaveBeenCalled();
 	});
 
 	it("resolves the branch scope to its merge base", async () => {
-		expect(await resolveDiffScope("/repo", "sess-1", "branch")).toEqual({
+		expect(
+			await resolveDiffScope("/repo", { conversationId: "sess-1" }, "branch"),
+		).toEqual({
 			kind: "branch",
 			base: "base-sha",
 		});
@@ -49,11 +61,15 @@ describe("resolveDiffScope", () => {
 	it("rejects the branch scope when no base resolves", async () => {
 		branchDiffBaseMock.mockResolvedValue(undefined);
 
-		expect(await resolveDiffScope("/repo", "sess-1", "branch")).toBeUndefined();
+		expect(
+			await resolveDiffScope("/repo", { conversationId: "sess-1" }, "branch"),
+		).toBeUndefined();
 	});
 
 	it("accepts a sha the item recorded", async () => {
-		expect(await resolveDiffScope("/repo", "sess-1", "two")).toEqual({
+		expect(
+			await resolveDiffScope("/repo", { conversationId: "sess-1" }, "two"),
+		).toEqual({
 			kind: "commit",
 			sha: "two",
 		});
@@ -61,7 +77,7 @@ describe("resolveDiffScope", () => {
 
 	it("rejects a sha the item did not record", async () => {
 		expect(
-			await resolveDiffScope("/repo", "sess-1", "deadbeef"),
+			await resolveDiffScope("/repo", { conversationId: "sess-1" }, "deadbeef"),
 		).toBeUndefined();
 	});
 

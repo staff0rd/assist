@@ -27,6 +27,7 @@ export const piAdapter: HarnessAdapter = {
 		locate: () => Promise.resolve(null),
 		current: () => undefined,
 		boundId: () => undefined,
+		toRef: (harnessSessionId, cwd) => ({ cwd, harnessSessionId }),
 	},
 	toolOperations: piToolOperations,
 	launchSkill: (skill, args, { cwd }) =>

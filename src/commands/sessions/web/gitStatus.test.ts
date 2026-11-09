@@ -207,7 +207,24 @@ describe("gitStatus", () => {
 
 		await request("/api/git-status?cwd=%2Frepo&session=sess-1");
 
-		expect(itemChangeSetMock).toHaveBeenCalledWith("/repo", "sess-1");
+		expect(itemChangeSetMock).toHaveBeenCalledWith("/repo", {
+			conversationId: "sess-1",
+		});
+	});
+
+	it("scopes the change set to the requested harness's conversation", async () => {
+		withGit(() => "");
+
+		await request("/api/git-status?cwd=%2Frepo&session=thread-1&harness=codex");
+		await request("/api/git-status?cwd=%2Frepo&session=x&harness=bogus");
+
+		expect(itemChangeSetMock).toHaveBeenCalledWith("/repo", {
+			conversationId: "thread-1",
+			harness: "codex",
+		});
+		expect(itemChangeSetMock).toHaveBeenCalledWith("/repo", {
+			conversationId: "x",
+		});
 	});
 
 	it("builds the change set without a session when none is given", async () => {

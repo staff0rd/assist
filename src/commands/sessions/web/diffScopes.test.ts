@@ -57,7 +57,9 @@ describe("diffScopes", () => {
 			],
 			branchBase: null,
 		});
-		expect(itemScopeCommitsMock).toHaveBeenCalledWith("/repo", "sess-1");
+		expect(itemScopeCommitsMock).toHaveBeenCalledWith("/repo", {
+			conversationId: "sess-1",
+		});
 	});
 
 	it("returns no commits when the request carries no session", async () => {

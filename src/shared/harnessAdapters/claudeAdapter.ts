@@ -30,6 +30,7 @@ export const claudeAdapter: HarnessAdapter = {
 		locate: findSessionJsonlPath,
 		current: () => process.env.CLAUDE_CODE_SESSION_ID || undefined,
 		boundId: ({ claudeSessionId }) => claudeSessionId,
+		toRef: (claudeSessionId, cwd) => ({ cwd, claudeSessionId }),
 		reader: claudeConversationReader,
 	},
 	toolOperations: claudeToolOperations,

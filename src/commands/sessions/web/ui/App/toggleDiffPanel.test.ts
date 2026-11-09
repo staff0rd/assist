@@ -7,7 +7,11 @@ import {
 	toggleDiffPanelMode,
 } from "./toggleDiffPanel";
 
-const target = { cwd: "/repo", claudeSessionId: "sess-1", scope: "all" };
+const target = {
+	cwd: "/repo",
+	conversation: { conversationId: "sess-1" },
+	scope: "all",
+};
 
 describe("diff panel mode", () => {
 	it("opens a new panel in half mode", () => {

@@ -1,4 +1,5 @@
 import type { CommitRef } from "../../../shared/db/listCommitRefs";
+import type { ConversationTarget } from "../shared/sessionConversationTarget";
 import { itemCommits } from "./itemCommits";
 import { resolveCommit } from "./resolveCommit";
 import { transcriptCommits } from "./transcriptCommits";
@@ -13,16 +14,16 @@ const CACHE_TTL_MS = 10_000;
 
 export async function committedPaths(
 	cwd: string,
-	sessionId: string,
+	session: ConversationTarget,
 ): Promise<CommittedPaths> {
-	const key = `${cwd} ${sessionId}`;
+	const key = `${cwd} ${session.harness ?? ""}:${session.conversationId}`;
 	const cached = cache.get(key);
 	if (cached && cached.expiresAt > Date.now()) return cached.value;
 
 	const pending = inFlight.get(key);
 	if (pending) return pending;
 
-	const lookup = loadCommittedPaths(cwd, sessionId)
+	const lookup = loadCommittedPaths(cwd, session)
 		.then((value) => {
 			cache.set(key, { value, expiresAt: Date.now() + CACHE_TTL_MS });
 			return value;
@@ -34,13 +35,13 @@ export async function committedPaths(
 
 async function loadCommittedPaths(
 	cwd: string,
-	sessionId: string,
+	session: ConversationTarget,
 ): Promise<CommittedPaths> {
-	const itemCommitRefs = await itemCommits(sessionId);
+	const itemCommitRefs = await itemCommits(session.conversationId);
 	const commits =
 		itemCommitRefs.length > 0
 			? itemCommitRefs
-			: await transcriptCommits(cwd, sessionId);
+			: await transcriptCommits(cwd, session);
 	const bases = new Map<string, string>();
 	for (const commit of commits) {
 		const resolved = await resolveCommit(cwd, commit.sha);

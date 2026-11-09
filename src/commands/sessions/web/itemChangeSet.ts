@@ -1,4 +1,5 @@
 import type { CommitRef } from "../../../shared/db/listCommitRefs";
+import type { ConversationTarget } from "../shared/sessionConversationTarget";
 import { execGit } from "./execGit";
 import { committedPaths } from "./committedPaths";
 import { includesCommittedChanges } from "./includesCommittedChanges";
@@ -9,10 +10,10 @@ type ItemChangeSet = { commits: CommitRef[]; groups: ChangeGroup[] };
 
 export async function itemChangeSet(
 	cwd: string,
-	sessionId?: string,
+	session?: ConversationTarget,
 ): Promise<ItemChangeSet | undefined> {
-	if (!sessionId || !includesCommittedChanges(cwd)) return undefined;
-	const { commits, bases } = await committedPaths(cwd, sessionId);
+	if (!session || !includesCommittedChanges(cwd)) return undefined;
+	const { commits, bases } = await committedPaths(cwd, session);
 	if (bases.size === 0) return undefined;
 
 	const groups = groupByBase(bases);

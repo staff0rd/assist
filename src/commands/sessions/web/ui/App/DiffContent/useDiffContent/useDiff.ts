@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ConversationTarget } from "../../../../../shared/sessionConversationTarget";
 import { apiFetch } from "../../../apiFetch";
 import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
 import { useApiNode } from "../../../useApiNode";
@@ -15,9 +16,10 @@ type DiffState = {
 
 export function useDiff(
 	cwd: string,
-	sessionId?: string,
+	conversation?: ConversationTarget,
 	scope?: string,
 ): DiffState & { refresh: () => void } {
+	const query = diffQuery(cwd, conversation, scope);
 	const [state, setState] = useState<DiffState>({
 		diff: "",
 		loading: true,
@@ -35,9 +37,7 @@ export function useDiff(
 		setState({ diff: "", loading: true, error: false });
 		const poll = async () => {
 			try {
-				const res = await apiFetch(
-					withNode(`/api/diff?${diffQuery(cwd, sessionId, scope)}`, node),
-				);
+				const res = await apiFetch(withNode(`/api/diff?${query}`, node));
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const body = await res.text();
 				if (!cancelled) setState({ diff: body, loading: false, error: false });
@@ -53,7 +53,7 @@ export function useDiff(
 			cancelled = true;
 			clearInterval(id);
 		};
-	}, [cwd, sessionId, scope, node]);
+	}, [cwd, query, node]);
 
 	return { ...state, refresh: useCallback(() => pollRef.current(), []) };
 }

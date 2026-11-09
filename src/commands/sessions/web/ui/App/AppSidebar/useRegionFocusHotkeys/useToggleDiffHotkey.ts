@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { sessionConversationTarget } from "../../../../../shared/sessionConversationTarget";
 import type { SessionInfo } from "../../../types";
 import { useCaptureHotkey } from "../../useCaptureHotkey";
 import { useShortcut } from "../../useShortcut";
@@ -38,7 +39,7 @@ export function useToggleDiffHotkey({
 			if (!panelFor(id))
 				togglePanel(id, {
 					cwd: session.cwd,
-					claudeSessionId: session.claudeSessionId,
+					conversation: sessionConversationTarget(session),
 					scope: "all",
 					node: session.node,
 				});

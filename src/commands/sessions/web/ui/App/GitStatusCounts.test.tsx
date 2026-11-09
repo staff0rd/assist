@@ -51,7 +51,7 @@ function renderCounts(
 				<GitStatusCounts
 					panelSessionId="card-1"
 					cwd="/repo"
-					sessionId="sess-1"
+					conversation={{ conversationId: "sess-1" }}
 					toggleChordHint={toggleChordHint}
 				/>
 				<PanelProbe />
@@ -132,7 +132,7 @@ describe("GitStatusCounts diff panel", () => {
 
 		expect(openedPanel()).toEqual({
 			cwd: "/repo",
-			claudeSessionId: "sess-1",
+			conversation: { conversationId: "sess-1" },
 			scope: "all",
 			mode: "half",
 		});

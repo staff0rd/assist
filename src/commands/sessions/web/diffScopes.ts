@@ -3,15 +3,16 @@ import type { CommitRef } from "../../../shared/db/listCommitRefs";
 import { respondJson } from "../../../shared/web";
 import { defaultBranchRef } from "./defaultBranchRef";
 import { getCwdParam } from "./getCwdParam";
-import { getSessionParam } from "./getSessionParam";
+import type { ConversationTarget } from "../shared/sessionConversationTarget";
+import { getConversationParam } from "./getConversationParam";
 import { itemScopeCommits } from "./itemScopeCommits";
 
 async function scopeCommits(
 	cwd: string,
-	sessionId: string | undefined,
+	session: ConversationTarget | undefined,
 ): Promise<CommitRef[]> {
 	try {
-		return await itemScopeCommits(cwd, sessionId);
+		return await itemScopeCommits(cwd, session);
 	} catch {
 		return [];
 	}
@@ -32,7 +33,7 @@ export async function diffScopes(
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
 	const [commits, base] = await Promise.all([
-		scopeCommits(cwd, getSessionParam(req)),
+		scopeCommits(cwd, getConversationParam(req)),
 		branchBase(cwd),
 	]);
 	respondJson(res, 200, { commits, branchBase: base });

@@ -1,21 +1,20 @@
 import Link from "@mui/material/Link";
+import type { ConversationTarget } from "../../../../shared/sessionConversationTarget";
 import { BRANCH_DIFF_SCOPE } from "../diffScopeOptions";
-import { useApiNode } from "../../useApiNode";
-import { useDiffPanels } from "../useDiffPanels";
+import { useOpenDiffPanel } from "./useOpenDiffPanel";
 
 export function BranchDiffLink({
 	panelSessionId,
 	cwd,
-	sessionId,
+	conversation,
 	defaultBranch,
 }: {
 	panelSessionId: string;
 	cwd: string;
-	sessionId?: string;
+	conversation?: ConversationTarget;
 	defaultBranch: string;
 }) {
-	const { togglePanel } = useDiffPanels();
-	const node = useApiNode();
+	const openPanel = useOpenDiffPanel(panelSessionId, cwd, conversation);
 	const label = `Diff against ${defaultBranch}`;
 
 	return (
@@ -24,14 +23,7 @@ export function BranchDiffLink({
 			type="button"
 			title={label}
 			aria-label={label}
-			onClick={() =>
-				togglePanel(panelSessionId, {
-					cwd,
-					claudeSessionId: sessionId,
-					scope: BRANCH_DIFF_SCOPE,
-					node,
-				})
-			}
+			onClick={() => openPanel(BRANCH_DIFF_SCOPE)}
 			variant="caption"
 			underline="hover"
 			color="inherit"

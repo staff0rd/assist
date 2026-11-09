@@ -1,3 +1,4 @@
+import { sessionConversationTarget } from "../../../../../../../../../shared/sessionConversationTarget";
 import { GitStatusCounts } from "../../../../../../GitStatusCounts";
 import type { SessionInfo } from "../../../../../../../types";
 
@@ -8,7 +9,7 @@ export function SessionTopBarDiff({ session }: { session: SessionInfo }) {
 		<GitStatusCounts
 			panelSessionId={session.id}
 			cwd={session.cwd}
-			sessionId={session.claudeSessionId}
+			conversation={sessionConversationTarget(session)}
 			offerBranchDiff
 			toggleChordHint
 			countButton

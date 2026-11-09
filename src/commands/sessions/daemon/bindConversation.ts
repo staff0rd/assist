@@ -1,6 +1,7 @@
 import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { recordBoundPhaseSession } from "./recordBoundPhaseSession";
 import { rememberSessionTitle } from "./rememberSessionTitle";
 
 const POLL_MS = 1000;
@@ -45,6 +46,7 @@ export function bindConversation(
 			`session ${session.id} bound to ${adapter.label} conversation ${conversationId}`,
 		);
 		rememberSessionTitle(session);
+		void recordBoundPhaseSession(session, conversationId);
 		onBound?.(session);
 		notify();
 	};

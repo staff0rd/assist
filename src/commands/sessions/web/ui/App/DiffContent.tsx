@@ -1,3 +1,4 @@
+import type { ConversationTarget } from "../../../shared/sessionConversationTarget";
 import {
 	DiffClosableLayout,
 	type DiffScrollRegionProps,
@@ -6,13 +7,15 @@ import { diffBodyProps } from "./DiffContent/diffBodyProps";
 import { DiffContentBody } from "./DiffContent/DiffContentBody";
 import { DiffSnackbars } from "./DiffContent/DiffSnackbars";
 import { DiffToolbar } from "./DiffContent/DiffToolbar";
+import { diffToolbarState } from "./DiffContent/diffToolbarState";
 import type { DiffPanelMode } from "./toggleDiffPanel";
 import type { SessionInfo } from "../types";
 import { useDiffContent } from "./DiffContent/useDiffContent";
 
 export function DiffContent({
 	cwd,
-	sessionId,
+	ownerSessionId,
+	conversation,
 	scope,
 	onScopeChange,
 	sessions,
@@ -23,7 +26,8 @@ export function DiffContent({
 	scrollRegionProps,
 }: {
 	cwd: string;
-	sessionId?: string;
+	ownerSessionId?: string;
+	conversation?: ConversationTarget;
 	scope: string;
 	onScopeChange: (scope: string) => void;
 	sessions: SessionInfo[];
@@ -33,7 +37,13 @@ export function DiffContent({
 	onClose?: () => void;
 	scrollRegionProps?: DiffScrollRegionProps;
 }) {
-	const diff = useDiffContent(cwd, sessionId, scope, sessions, sendInput);
+	const diff = useDiffContent(
+		cwd,
+		{ ownerSessionId, conversation },
+		scope,
+		sessions,
+		sendInput,
+	);
 
 	return (
 		<>
@@ -42,13 +52,8 @@ export function DiffContent({
 				scrollRegionProps={scrollRegionProps}
 			>
 				<DiffToolbar
-					{...diff.filters}
-					{...diff.treePanel}
-					{...diff.collapseAll}
-					scope={diff.scopeState}
+					{...diffToolbarState(diff)}
 					onScopeChange={onScopeChange}
-					totals={diff.totals}
-					commentHint={diff.comments.unavailable}
 					mode={mode}
 					onToggleMode={onToggleMode}
 					onClose={onClose}

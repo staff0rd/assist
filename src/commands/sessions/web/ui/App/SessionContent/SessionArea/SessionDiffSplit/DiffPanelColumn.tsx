@@ -35,7 +35,8 @@ export function DiffPanelColumn({
 			<ApiNodeContext.Provider value={panel.node}>
 				<DiffContent
 					cwd={panel.cwd}
-					sessionId={panel.claudeSessionId}
+					ownerSessionId={sessionId}
+					conversation={panel.conversation}
 					scope={panel.scope}
 					onScopeChange={(scope) => setPanelScope(sessionId, scope)}
 					sessions={sessions}

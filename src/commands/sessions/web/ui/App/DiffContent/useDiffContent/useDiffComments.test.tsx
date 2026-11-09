@@ -28,7 +28,7 @@ const comment = {
 describe("useDiffComments", () => {
 	it("names the target session once a comment is sent", () => {
 		const { result } = renderHook(() =>
-			useDiffComments(sessions, "claude-1", vi.fn()),
+			useDiffComments(sessions, { ownerSessionId: "daemon-1" }, vi.fn()),
 		);
 		expect(result.current.sentTo).toBeNull();
 
@@ -39,7 +39,7 @@ describe("useDiffComments", () => {
 
 	it("dismisses the confirmation", () => {
 		const { result } = renderHook(() =>
-			useDiffComments(sessions, "claude-1", vi.fn()),
+			useDiffComments(sessions, { ownerSessionId: "daemon-1" }, vi.fn()),
 		);
 		act(() => result.current.onComment?.(comment));
 
@@ -50,7 +50,7 @@ describe("useDiffComments", () => {
 
 	it("offers no comment handler without a live session", () => {
 		const { result } = renderHook(() =>
-			useDiffComments(sessions, "claude-gone", vi.fn()),
+			useDiffComments(sessions, { ownerSessionId: "gone" }, vi.fn()),
 		);
 
 		expect(result.current.onComment).toBeUndefined();

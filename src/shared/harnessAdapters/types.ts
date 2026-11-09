@@ -185,6 +185,7 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		locate: (conversationId: string) => Promise<string | null>;
 		current: () => string | undefined;
 		boundId: (ref: ConversationRef) => string | undefined;
+		toRef: (conversationId: string, cwd?: string) => ConversationRef;
 		discover?: (cwd: string, sinceMs: number) => Promise<string | null>;
 		reader?: ConversationReader;
 	};

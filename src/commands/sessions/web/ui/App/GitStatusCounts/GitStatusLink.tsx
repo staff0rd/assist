@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import type { ConversationTarget } from "../../../../shared/sessionConversationTarget";
 import { CountsLink } from "./GitStatusLink/CountsLink";
 import type { StatusGroup } from "./GitStatusChips";
 import { StopCardActivation } from "../../StopCardActivation";
@@ -19,7 +20,7 @@ export const GROUPS = [
 export function GitStatusLink({
 	panelSessionId,
 	cwd,
-	sessionId,
+	conversation,
 	groups,
 	uncommitted,
 	toggleChordHint,
@@ -27,7 +28,7 @@ export function GitStatusLink({
 }: {
 	panelSessionId: string;
 	cwd: string;
-	sessionId?: string;
+	conversation?: ConversationTarget;
 	groups: StatusGroup[];
 	uncommitted?: StatusGroup[];
 	toggleChordHint?: boolean;
@@ -40,7 +41,7 @@ export function GitStatusLink({
 					<CountsLink
 						panelSessionId={panelSessionId}
 						cwd={cwd}
-						sessionId={sessionId}
+						conversation={conversation}
 						scope="all"
 						groups={groups}
 						toggleChordHint={toggleChordHint}
@@ -51,7 +52,7 @@ export function GitStatusLink({
 					<CountsLink
 						panelSessionId={panelSessionId}
 						cwd={cwd}
-						sessionId={sessionId}
+						conversation={conversation}
 						scope="uncommitted"
 						groups={uncommitted}
 						bracketed
