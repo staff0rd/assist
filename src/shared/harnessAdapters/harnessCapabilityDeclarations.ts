@@ -10,6 +10,8 @@ export const harnessCapabilityDeclarations: Record<
 		"skills.native": supported,
 		"conversation.resume": supported,
 		"conversation.preassignId": supported,
+		"oneShot.text": supported,
+		"usage.rateLimits": supported,
 	},
 	codex: {
 		"skills.native": supported,
@@ -18,6 +20,8 @@ export const harnessCapabilityDeclarations: Record<
 			"Codex assigns its own conversation id when its rollout starts",
 			"assist binds the Codex conversation id from the rollout after launch",
 		),
+		"oneShot.text": supported,
+		"usage.rateLimits": supported,
 	},
 	pi: {
 		"skills.native": supported,
@@ -29,6 +33,16 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.preassignId": unsupported(
 			"pi does not accept a caller-assigned conversation id",
 			"the session card tracks pi without a conversation id",
+		),
+		"oneShot.text": unsupported(
+			"assist has no headless pi one-shot yet",
+			"the derived fallback is used instead (slug from the description, no generated title); set harness.engine to claude or codex for generated suggestions",
+			"a696",
+		),
+		"usage.rateLimits": unsupported(
+			"pi reports no account rate-limit windows to assist",
+			"pi sessions show no usage windows; Claude and Codex usage is still tracked under their own accounts",
+			"a696",
 		),
 	},
 };

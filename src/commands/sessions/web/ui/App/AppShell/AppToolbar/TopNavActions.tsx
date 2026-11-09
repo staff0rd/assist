@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import type { AssistLaunchMeta } from "../../../createSessionAction";
+import type { AssistLaunchMeta } from "../../../resumeSessionAction";
 import { prLaunchMeta } from "../../prLaunchMeta";
 import { ReviewDropdown } from "./TopNavActions/ReviewDropdown";
 import { ServerRunMenu } from "./TopNavActions/ServerRunMenu";

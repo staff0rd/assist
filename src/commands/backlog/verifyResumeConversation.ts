@@ -1,20 +1,9 @@
 import chalk from "chalk";
-import { resolveHarness } from "../../shared/harnessLabel";
+import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
 import type { HarnessKind } from "../../shared/harnesses";
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
-import { findCodexRolloutPath } from "../sessions/shared/codex/findCodexRolloutPath";
-import { findSessionJsonlPath } from "../sessions/shared/findSessionJsonlPath";
 import { appendComment } from "./appendComment";
 import { getReady } from "./shared";
-
-function findConversation(
-	resumeSessionId: string,
-	harness: HarnessKind | undefined,
-): Promise<string | null> {
-	return resolveHarness(harness) === "codex"
-		? findCodexRolloutPath(resumeSessionId)
-		: findSessionJsonlPath(resumeSessionId);
-}
 
 export async function verifyResumeConversation(
 	itemId: number,
@@ -22,7 +11,8 @@ export async function verifyResumeConversation(
 	phaseLabel: string,
 	harness?: HarnessKind,
 ): Promise<boolean> {
-	if (await findConversation(resumeSessionId, harness)) return true;
+	if (await harnessAdapter(harness).conversation.locate(resumeSessionId))
+		return true;
 
 	const message = `${phaseLabel}: resume found no conversation for session ${resumeSessionId}; phase not advanced`;
 	console.error(chalk.red(`\n${message}`));

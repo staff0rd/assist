@@ -17,7 +17,6 @@ export function AppOverlays({
 			<FilePaletteLayer />
 			<NewSessionLayer
 				launchers={{
-					onCreate: socket.createSession,
 					onCreateDesign: socket.createDesignSession,
 					onCreateHarness: socket.createHarnessSession,
 					onCreateAssist: socket.createAssistSession,

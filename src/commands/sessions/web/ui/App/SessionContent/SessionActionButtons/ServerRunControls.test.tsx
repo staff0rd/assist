@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
-import { createRunAction } from "../../../createSessionAction";
+import { createRunAction } from "../../../resumeSessionAction";
 import { ServerActionsContext } from "../../useServerActionsContext";
 import { useServerRuns } from "../../useServerRuns";
 import { ServerRunControls } from "./ServerRunControls";

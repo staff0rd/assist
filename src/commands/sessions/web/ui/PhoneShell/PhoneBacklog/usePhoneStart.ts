@@ -16,14 +16,12 @@ export function usePhoneStart(
 	const { names, visible } = socket.nodeSelection;
 	const localNode = socket.nodes?.local;
 	const [pickedNode, setPickedNode] = useState(scope.node ?? localNode);
-	const harness = usePhoneHarness();
 	const node =
 		pickedNode && names.includes(pickedNode) ? pickedNode : localNode;
+	const { harnessArgs, ...harness } = usePhoneHarness(node);
 	const cwd = useStartCwd(socket, item.origin, scope, node);
 	const inFlight = runInFlightSession(socket.sessions, item.id);
 	const { launched, latch } = useLaunchLanding(inFlight);
-	const harnessArgs =
-		harness.harness === "claude" ? [] : ["--harness", harness.harness];
 
 	return {
 		...harness,

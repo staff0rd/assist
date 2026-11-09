@@ -1,10 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { createHarnessSessionAction } from "./createHarnessSessionAction";
 import {
-	createSessionAction,
 	dismissSessionAction,
 	restartSessionAction,
-} from "./createSessionAction";
+} from "./resumeSessionAction";
 import { handleClear } from "./useSessionSocket/useWsConnection/useWebSocket/connectWithReconnect/createWsConnection/handleWsMessage/handleClear";
 import { handleOutput } from "./useSessionSocket/useWsConnection/useWebSocket/connectWithReconnect/createWsConnection/handleWsMessage/handleOutput";
 import { handleSnapshot } from "./useSessionSocket/useWsConnection/useWebSocket/connectWithReconnect/createWsConnection/handleWsMessage/handleSnapshot";
@@ -29,32 +28,23 @@ function terminalState() {
 	return { buffers, written, unsubscribe, dispatch };
 }
 
-describe("createSessionAction", () => {
-	it("launches the prompt dropdown's claude session in auto mode", () => {
-		const send = vi.fn();
+describe("createHarnessSessionAction", () => {
+	it.each(["claude", "codex"])(
+		"names the chosen %s harness and asks for the prompt dropdown's auto mode",
+		(harness) => {
+			const send = vi.fn();
 
-		createSessionAction(send)("go", "/git/repo");
+			createHarnessSessionAction(send)(harness, "go", "/git/repo");
 
-		expect(send).toHaveBeenCalledWith({
-			type: "create",
-			prompt: "go",
-			cwd: "/git/repo",
-			auto: true,
-		});
-	});
-
-	it("leaves a codex launch on its own default approvals", () => {
-		const send = vi.fn();
-
-		createHarnessSessionAction(send)("codex", "go", "/git/repo");
-
-		expect(send).toHaveBeenCalledWith({
-			type: "create",
-			prompt: "go",
-			cwd: "/git/repo",
-			harness: "codex",
-		});
-	});
+			expect(send).toHaveBeenCalledWith({
+				type: "create",
+				prompt: "go",
+				cwd: "/git/repo",
+				harness,
+				auto: true,
+			});
+		},
+	);
 });
 
 describe("createAssistSessionAction", () => {

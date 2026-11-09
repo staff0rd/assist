@@ -4,7 +4,6 @@ import { submitDraft } from "./submitDraft";
 
 function launchers() {
 	return {
-		onCreate: vi.fn(),
 		onCreateDesign: vi.fn(),
 		onCreateHarness: vi.fn(),
 		onCreateAssist: vi.fn(),
@@ -82,7 +81,7 @@ describe("submitDraft", () => {
 	});
 
 	it.each([
-		["claude", "onCreate", []],
+		["claude", "onCreateHarness", ["claude"]],
 		["codex", "onCreateHarness", ["codex"]],
 	] as const)(
 		"opens a Shift+clicked %s prompt session",

@@ -1,8 +1,7 @@
-import { harnessChoices } from "../../App/AppShell/AppOverlays/NewSessionLayer/NewSessionDialog/harnessChoices";
+import { useSessionHarness } from "../../App/AppShell/AppOverlays/NewSessionLayer/NewSessionDialog/useSessionHarness";
 import { launchNewSession } from "../../App/AppShell/AppOverlays/NewSessionLayer/launchNewSession";
 import { defaultModeError } from "../../App/AppShell/AppOverlays/NewSessionLayer/useNewSessionDraft/defaultModeError";
 import { useDefaultNewSessionMode } from "../../App/AppShell/AppOverlays/NewSessionLayer/useNewSessionDraft/useDefaultNewSessionMode";
-import { useHarnessCapabilities } from "../../useHarnessCapabilities";
 import type { SessionSocket } from "../../useSessionSocket";
 import { socketLaunchers } from "./socketLaunchers";
 import { usePhoneDraftState } from "./usePhoneDraftState";
@@ -14,8 +13,10 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 	const target = useNodeRepoTarget(socket, draft.node, draft.cwd);
 	const defaultMode = useDefaultNewSessionMode(target.cwd, opens);
 	const mode = draft.mode ?? defaultMode?.mode ?? "prompt";
-	const harnesses = harnessChoices(useHarnessCapabilities());
-	const harness = harnesses.includes(draft.harness) ? draft.harness : "claude";
+	const { harness, harnesses } = useSessionHarness(
+		visible ? target.node : undefined,
+		draft.harness,
+	);
 	const needsRepo = mode === "draft" || mode === "bug";
 	const modeKnown = draft.mode !== undefined || !!defaultMode;
 

@@ -4,7 +4,7 @@ import { reviewButtonModes } from "../../../../../../shared/reviewButtonModes";
 import { prLaunchMeta } from "../../App/prLaunchMeta";
 import { reviewTargetPr } from "../../App/reviewTargetPr";
 import { usePrStatus } from "../../App/usePrStatus";
-import type { AssistLaunchMeta } from "../../createSessionAction";
+import type { AssistLaunchMeta } from "../../resumeSessionAction";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SessionInfo } from "../../types";
 import { PhoneSheetItem } from "./PhoneSheetItem";

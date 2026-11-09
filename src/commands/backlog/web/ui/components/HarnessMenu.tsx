@@ -3,18 +3,6 @@ import type { MouseEvent } from "react";
 
 type HarnessOption = { kind: string; label: string };
 
-export function harnessOptions(capabilities: {
-	exposeCodexActions: boolean;
-	exposePiActions: boolean;
-}): HarnessOption[] {
-	const options: HarnessOption[] = [];
-	if (capabilities.exposeCodexActions)
-		options.push({ kind: "codex", label: "with Codex" });
-	if (capabilities.exposePiActions)
-		options.push({ kind: "pi", label: "with pi" });
-	return options;
-}
-
 export function HarnessMenu({
 	anchorEl,
 	open,

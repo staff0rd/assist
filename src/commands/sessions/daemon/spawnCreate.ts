@@ -1,7 +1,22 @@
+import { formatUnavailable } from "../../../shared/harnessAdapters/formatUnavailable";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
+import { sessionFeature } from "../../../shared/harnessAdapters/harnessFeatures";
+import { resolveFeature } from "../../../shared/harnessAdapters/resolveFeature";
 import type { HarnessKind } from "../../../shared/harnesses";
 import { daemonLog } from "./daemonLog";
 import type { SessionManager } from "./SessionManager";
 import { spawnContextFrom } from "./spawnContextFrom";
+
+function sessionBlocker(harness: HarnessKind | undefined): string | undefined {
+	const adapter = harnessAdapter(harness);
+	const resolution = resolveFeature(sessionFeature, adapter);
+	if (resolution.available) return undefined;
+	return formatUnavailable(
+		sessionFeature.label,
+		adapter.label,
+		resolution.reasons,
+	);
+}
 
 export function spawnCreate(
 	m: SessionManager,
@@ -13,8 +28,13 @@ export function spawnCreate(
 	const auto = d.auto === true;
 	if (design)
 		daemonLog(`create: design session (cwd=${(d.cwd as string) ?? ""})`);
-	if (harness && harness !== "claude")
+	if (harness)
 		daemonLog(`create: ${harness} session (cwd=${(d.cwd as string) ?? ""})`);
+	const blocker = sessionBlocker(harness);
+	if (blocker) {
+		daemonLog(`create: refused, ${blocker.replaceAll("\n", " ")}`);
+		return { error: blocker };
+	}
 	const joinSessionId = design
 		? undefined
 		: (d.joinSessionId as string | undefined);

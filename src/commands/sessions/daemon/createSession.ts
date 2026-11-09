@@ -1,8 +1,7 @@
-import { randomUUID } from "node:crypto";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
+import { preassignedId } from "../../../shared/harnessAdapters/preassignedId";
 import type { HarnessKind } from "../../../shared/harnesses";
-import { createHarnessSession } from "./createHarnessSession";
 import { type ServerRunMeta, serverRunMeta } from "./serverRunMeta";
-import { spawnClaude } from "./spawnClaude";
 import { spawnRun } from "./spawnRun";
 import { startOrHoldPty } from "./startOrHoldPty";
 import type { Session } from "./types";
@@ -23,12 +22,11 @@ export function createSession(
 	id: string,
 	{ prompt, cwd, design, auto, harness, holdPty }: CreateSessionOpts = {},
 ): Session {
-	if (harness && harness !== "claude")
-		return createHarnessSession(id, harness, prompt, cwd, holdPty);
+	const adapter = harnessAdapter(harness);
 	/* why: assign the claude conversation id up front so the card binds to the
 	 * transcript this process writes, not the newest unclaimed .jsonl in the cwd
 	 * (which races concurrent sessions in the same repo) (#413). */
-	const claudeSessionId = randomUUID();
+	const conversationId = preassignedId(adapter);
 	/* why: a session with no initial prompt opens idle, awaiting the user's first
 	 * input — no Claude Code hook fires until they submit, so it must start
 	 * waiting rather than the default running, which would otherwise stick until
@@ -37,20 +35,20 @@ export function createSession(
 		...sessionBase(id, prompt ? "running" : "waiting"),
 		name: `Session ${id}`,
 		commandType: "claude",
+		...adapter.activityIdentity(conversationId),
 		...startOrHoldPty(
 			() =>
-				spawnClaude({
+				adapter.interactive({
 					prompt,
 					cwd,
 					sessionId: id,
-					claudeSessionId,
+					conversationId,
 					design,
 					auto,
 				}),
 			holdPty,
 		),
 		cwd,
-		claudeSessionId,
 		initialPrompt: prompt,
 		design,
 		auto,

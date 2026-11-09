@@ -6,6 +6,8 @@ import {
 	type MockInstance,
 	vi,
 } from "vitest";
+import type * as harnessAdapterModule from "../../shared/harnessAdapters/harnessAdapter";
+import type { HarnessKind } from "../../shared/harnesses";
 import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import type { PlanPhase } from "./types";
 
@@ -17,9 +19,26 @@ vi.mock("../../shared/emitActivity", () => ({
 	emitActivity: vi.fn(),
 }));
 
-vi.mock("../../shared/spawnHarness", () => ({
-	spawnHarness: vi.fn(() => ({ child: {}, done: Promise.resolve(0) })),
+const launches = vi.hoisted(() => ({
+	launchPrompt: vi.fn(),
+	resume: vi.fn(),
 }));
+
+vi.mock(
+	"../../shared/harnessAdapters/harnessAdapter",
+	async (importOriginal) => {
+		const actual = await importOriginal<typeof harnessAdapterModule>();
+		return {
+			harnessAdapter: (kind?: HarnessKind) => ({
+				...actual.harnessAdapter(kind),
+				launchPrompt: (...args: unknown[]) =>
+					launches.launchPrompt(kind ?? "claude", ...args),
+				resume: (...args: unknown[]) =>
+					launches.resume(kind ?? "claude", ...args),
+			}),
+		};
+	},
+);
 
 vi.mock("./buildPhasePrompt", () => ({
 	buildPhasePrompt: vi.fn(() => "PHASE_PROMPT"),
@@ -61,7 +80,6 @@ vi.mock("./recordSignalOwner", () => ({
 }));
 
 import { emitActivity } from "../../shared/emitActivity";
-import { spawnHarness } from "../../shared/spawnHarness";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { executePhase } from "./executePhase";
 import { persistPhaseSession } from "./persistPhaseSession";
@@ -70,7 +88,8 @@ import { resolvePhaseResult } from "./resolvePhaseResult";
 import { verifyResumeConversation } from "./verifyResumeConversation";
 
 const mockEmitActivity = emitActivity as unknown as MockInstance;
-const mockSpawnHarness = spawnHarness as unknown as MockInstance;
+const spawned = () => ({ child: {}, done: Promise.resolve(0) });
+const cwd = process.cwd();
 const mockSetSessionStatus = setSessionStatus as unknown as MockInstance;
 const mockResolvePhaseResult = resolvePhaseResult as unknown as MockInstance;
 const mockPersistPhaseSessionId =
@@ -86,15 +105,18 @@ describe("executePhase", () => {
 		delete process.env.ASSIST_RESUME_IDLE;
 		delete process.env.ASSIST_RESUME_PROMPT;
 		vi.clearAllMocks();
+		launches.launchPrompt.mockImplementation(spawned);
+		launches.resume.mockImplementation(spawned);
 	});
 
 	it("assigns a generated session id to a fresh phase and reports it", async () => {
 		await executePhase(makeBacklogItem({ id: 7 }), 0, phases);
 
-		expect(mockSpawnHarness).toHaveBeenCalledWith("claude", "PHASE_PROMPT", {
-			sessionId: "generated-uuid",
-			cwd: process.cwd(),
-		});
+		expect(launches.launchPrompt).toHaveBeenCalledWith(
+			"claude",
+			"PHASE_PROMPT",
+			{ cwd, allowEdits: undefined, conversationId: "generated-uuid" },
+		);
 		expect(mockEmitActivity).toHaveBeenCalledWith(
 			expect.objectContaining({ claudeSessionId: "generated-uuid" }),
 		);
@@ -105,10 +127,12 @@ describe("executePhase", () => {
 			resumeSessionId: "sess-9",
 		});
 
-		expect(mockSpawnHarness).toHaveBeenCalledWith("claude", "RESUME_PROMPT", {
-			resumeSessionId: "sess-9",
-			cwd: process.cwd(),
-		});
+		expect(launches.resume).toHaveBeenCalledWith(
+			"claude",
+			"sess-9",
+			"RESUME_PROMPT",
+			{ cwd, allowEdits: undefined },
+		);
 		expect(mockEmitActivity).toHaveBeenCalledWith(
 			expect.objectContaining({ claudeSessionId: "sess-9" }),
 		);
@@ -126,10 +150,12 @@ describe("executePhase", () => {
 			"phase 1/1",
 			"codex",
 		);
-		expect(mockSpawnHarness).toHaveBeenCalledWith("codex", "RESUME_PROMPT", {
-			resumeSessionId: "codex-9",
-			cwd: process.cwd(),
-		});
+		expect(launches.resume).toHaveBeenCalledWith(
+			"codex",
+			"codex-9",
+			"RESUME_PROMPT",
+			{ cwd, allowEdits: undefined },
+		);
 		expect(mockEmitActivity).toHaveBeenCalledWith(
 			expect.objectContaining({
 				harness: "codex",
@@ -153,10 +179,11 @@ describe("executePhase", () => {
 			harness: "codex",
 		});
 
-		expect(mockSpawnHarness).toHaveBeenCalledWith("codex", "PHASE_PROMPT", {
-			sessionId: "generated-uuid",
-			cwd: process.cwd(),
-		});
+		expect(launches.launchPrompt).toHaveBeenCalledWith(
+			"codex",
+			"PHASE_PROMPT",
+			{ cwd, allowEdits: undefined, conversationId: "generated-uuid" },
+		);
 	});
 
 	it("does not overwrite the phase->session mapping on resume", async () => {
@@ -222,7 +249,7 @@ describe("executePhase", () => {
 
 	describe("when the phase Claude fails to launch", () => {
 		it("does not push running for work that never starts", async () => {
-			mockSpawnHarness.mockReturnValueOnce({
+			launches.launchPrompt.mockReturnValueOnce({
 				child: {},
 				done: Promise.reject(new Error("spawn failed")),
 			});
@@ -243,7 +270,8 @@ describe("executePhase", () => {
 			});
 
 			expect(result).toEqual({ kind: "abort" });
-			expect(mockSpawnHarness).not.toHaveBeenCalled();
+			expect(launches.launchPrompt).not.toHaveBeenCalled();
+			expect(launches.resume).not.toHaveBeenCalled();
 			expect(mockResolvePhaseResult).not.toHaveBeenCalled();
 			expect(mockSetSessionStatus).not.toHaveBeenCalled();
 		});

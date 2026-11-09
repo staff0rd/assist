@@ -1,4 +1,9 @@
-import { runOneShotPrompt } from "../../shared/runOneShotPrompt";
+import chalk from "chalk";
+import { branchSlugFeature } from "../../shared/harnessAdapters/harnessFeatures";
+import {
+	OneShotUnavailableError,
+	runOneShotPrompt,
+} from "../../shared/runOneShotPrompt";
 import { withSpinner } from "../../shared/withSpinner";
 import { deriveBranchSlug } from "./deriveBranchSlug";
 
@@ -13,7 +18,7 @@ export async function generateBranchSlug(description: string): Promise<string> {
 async function requestSlug(description: string): Promise<string | undefined> {
 	try {
 		const stdout = await withSpinner("Generating a concise branch name", () =>
-			runOneShotPrompt(buildPrompt(description)),
+			runOneShotPrompt(buildPrompt(description), branchSlugFeature),
 		);
 		const slug = stdout
 			.trim()
@@ -21,7 +26,9 @@ async function requestSlug(description: string): Promise<string | undefined> {
 			.replace(/^["'`]|["'`]$/g, "")
 			.trim();
 		return slug || undefined;
-	} catch {
+	} catch (error) {
+		if (error instanceof OneShotUnavailableError)
+			console.error(chalk.dim(`${error.message}\nUsing the derived name.`));
 		return undefined;
 	}
 }

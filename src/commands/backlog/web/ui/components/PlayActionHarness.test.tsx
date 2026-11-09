@@ -11,10 +11,38 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { SessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
 import { PlayAction } from "./PlayAction";
 
-function mockHarness(capabilities: {
+function mockHarness({
+	exposeCodexActions = false,
+	exposePiActions = false,
+}: {
 	exposeCodexActions?: boolean;
 	exposePiActions?: boolean;
 }) {
+	const resolution = (available: boolean) =>
+		available
+			? { available: true }
+			: {
+					available: false,
+					reasons: [
+						{
+							capability: "harness.enabled",
+							reason: "off",
+							remediation: "turn it on",
+						},
+					],
+				};
+	const capabilities = {
+		exposeCodexActions,
+		exposePiActions,
+		engine: "claude",
+		features: {
+			build: {
+				claude: resolution(true),
+				codex: resolution(exposeCodexActions),
+				pi: resolution(exposePiActions),
+			},
+		},
+	};
 	vi.stubGlobal(
 		"fetch",
 		vi.fn().mockResolvedValue({ json: () => Promise.resolve(capabilities) }),
@@ -88,6 +116,39 @@ describe("PlayAction harness dropdown", () => {
 		expect(
 			screen.queryByRole("button", { name: "Build with a different harness" }),
 		).toBeNull();
+	});
+
+	it("offers Claude from the dropdown when the engine is another harness", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				json: () =>
+					Promise.resolve({
+						engine: "codex",
+						features: {
+							build: {
+								claude: { available: true },
+								codex: { available: true },
+							},
+						},
+					}),
+			}),
+		);
+		const launchAssist = vi.fn();
+		renderPlay(launchAssist);
+
+		fireEvent.click(
+			await screen.findByRole("button", {
+				name: "Build with a different harness",
+			}),
+		);
+		expect(screen.queryByRole("menuitem", { name: "with Codex" })).toBeNull();
+		fireEvent.click(screen.getByRole("menuitem", { name: "with Claude" }));
+
+		expect(launchAssist).toHaveBeenCalledWith(
+			["backlog", "run", "a775", "--harness", "claude"],
+			undefined,
+		);
 	});
 
 	it("offers no dropdown on the compact variant even when Codex is exposed", async () => {

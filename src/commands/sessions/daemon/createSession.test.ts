@@ -92,3 +92,44 @@ describe("createSession", () => {
 		expect(spawnPtyMock).not.toHaveBeenCalled();
 	});
 });
+
+describe("createSession launch identity", () => {
+	beforeEach(() => spawnPtyMock.mockClear());
+
+	it("keeps the legacy claude record: a preassigned claudeSessionId and no harness", () => {
+		const session = createSession("3", { prompt: "go", cwd: "/repo" });
+
+		expect(session.harness).toBeUndefined();
+		expect(session.commandType).toBe("claude");
+		expect(session.claudeSessionId).toMatch(/^[0-9a-f-]{36}$/);
+		expect(spawnedArgs()).toEqual(
+			expect.arrayContaining(["--session-id", session.claudeSessionId]),
+		);
+	});
+
+	it.each(["codex", "pi"] as const)(
+		"records %s as the harness and leaves the conversation id to be bound later",
+		(harness) => {
+			const session = createSession("4", {
+				prompt: "go",
+				cwd: "/repo",
+				harness,
+			});
+
+			expect(session.harness).toBe(harness);
+			expect(session.commandType).toBe("claude");
+			expect(session.claudeSessionId).toBeUndefined();
+			expect(session.harnessSessionId).toBeUndefined();
+			expect(session.initialPrompt).toBe("go");
+		},
+	);
+
+	it("opens an unprompted session waiting for the first input", () => {
+		expect(createSession("5", { cwd: "/repo", harness: "codex" }).status).toBe(
+			"waiting",
+		);
+		expect(createSession("6", { prompt: "go", cwd: "/repo" }).status).toBe(
+			"running",
+		);
+	});
+});

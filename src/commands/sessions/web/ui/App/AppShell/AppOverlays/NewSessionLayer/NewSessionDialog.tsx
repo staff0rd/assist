@@ -1,4 +1,4 @@
-import { harnessChoices } from "./NewSessionDialog/harnessChoices";
+import { useSessionHarness } from "./NewSessionDialog/useSessionHarness";
 import type { NewSessionLaunchers } from "./launchNewSession";
 import { NewSessionFields } from "./NewSessionDialog/NewSessionFields";
 import { DraftFooter } from "./NewSessionDialog/DraftFooter";
@@ -9,7 +9,6 @@ import { LoadingFieldset } from "./NewSessionDialog/LoadingFieldset";
 import { NewSessionModeError } from "./NewSessionModeError";
 import type { NewSessionDraft } from "./useNewSessionDraft";
 import { NewSessionDialogFrame } from "./NewSessionDialog/NewSessionDialogFrame";
-import { useHarnessCapabilities } from "../../../../useHarnessCapabilities";
 
 export function NewSessionDialog({
 	draft,
@@ -21,8 +20,7 @@ export function NewSessionDialog({
 	onClose: () => void;
 }) {
 	const focus = useDraftFocus(draft.focus, draft.setFocus);
-	const harnesses = harnessChoices(useHarnessCapabilities());
-	const harness = harnesses.includes(draft.harness) ? draft.harness : "claude";
+	const { harness, harnesses } = useSessionHarness(draft.node, draft.harness);
 	const { target, cloneState } = useDraftRepos(draft.node, draft.cwd);
 
 	const { onSubmit, onSubmitClick } = useDraftSubmit(

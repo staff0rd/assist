@@ -68,13 +68,36 @@ function renderDialog(
 	defaultMode: DefaultMode = "prompt",
 	capabilities = { exposeCodexActions: false, exposePiActions: false },
 ) {
+	const resolution = (available: boolean) =>
+		available
+			? { available: true }
+			: {
+					available: false,
+					reasons: [
+						{ capability: "harness.enabled", reason: "off", remediation: "on" },
+					],
+				};
 	vi.stubGlobal(
 		"fetch",
-		vi.fn(async () => Response.json(capabilities)),
+		vi.fn(async () =>
+			Response.json({
+				...capabilities,
+				engine: "claude",
+				features: {
+					session: {
+						claude: resolution(true),
+						codex: resolution(capabilities.exposeCodexActions),
+						pi: resolution(capabilities.exposePiActions),
+					},
+				},
+			}),
+		),
 	);
 	const onCreate = vi.fn();
 	const onCreateDesign = vi.fn();
-	const onCreateHarness = vi.fn();
+	const onCreateHarness = vi.fn((harness: string, ...rest: unknown[]) => {
+		if (harness === "claude") onCreate(...rest);
+	});
 	const onCreateAssist = vi.fn();
 	const onClose = vi.fn();
 	const setSelectedCwd = vi.fn();
@@ -92,7 +115,6 @@ function renderDialog(
 			<DraftedDialog
 				defaultMode={defaultMode}
 				launchers={{
-					onCreate,
 					onCreateDesign,
 					onCreateHarness,
 					onCreateAssist,
@@ -770,13 +792,12 @@ describe("NewSessionDialog harness selector", () => {
 		expect(onCreate).not.toHaveBeenCalled();
 	});
 
-	it("launches Claude directly when Claude is chosen", async () => {
-		const { onCreate, onCreateHarness } = await renderWithHarnesses();
+	it("launches Claude by name when Claude is chosen", async () => {
+		const { onCreateHarness } = await renderWithHarnesses();
 
 		submitPrompt();
 
-		expect(onCreate).toHaveBeenCalledWith("", "/git/beta");
-		expect(onCreateHarness).not.toHaveBeenCalled();
+		expect(onCreateHarness).toHaveBeenCalledWith("claude", "", "/git/beta");
 	});
 });
 

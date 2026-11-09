@@ -1,5 +1,8 @@
 import chalk from "chalk";
+import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
+import { buildFeature } from "../../shared/harnessAdapters/harnessFeatures";
 import { acquireLock, foreignLockHolder, releaseLock } from "./acquireLock";
+import { launchBlocker } from "./launchBlocker";
 import { ensureStoryBranch } from "./ensureStoryBranch";
 import { formatItemId, parseItemId } from "./formatItemId";
 import { type PreparedRun, prepareRun } from "./prepareRun";
@@ -14,6 +17,16 @@ export async function run(
 	id: string,
 	spawnOptions?: BacklogRunOptions,
 ): Promise<boolean> {
+	const blocker = launchBlocker(
+		harnessAdapter(spawnOptions?.harness),
+		buildFeature,
+		spawnOptions?.resumeSessionId,
+	);
+	if (blocker) {
+		console.error(chalk.red(blocker));
+		process.exitCode = 1;
+		return false;
+	}
 	const itemId = parseItemId(id);
 	const holder = foreignLockHolder(itemId);
 	if (holder) {

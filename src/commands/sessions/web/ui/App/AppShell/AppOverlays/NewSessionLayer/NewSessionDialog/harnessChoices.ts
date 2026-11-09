@@ -1,11 +1,14 @@
+import { resolveHarness } from "../../../../../../../../../shared/harnessLabel";
 import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
+import type { HarnessCapabilities } from "../../../../../useHarnessCapabilities";
 
-export function harnessChoices(capabilities: {
-	exposeCodexActions: boolean;
-	exposePiActions: boolean;
-}): HarnessKind[] {
-	const choices: HarnessKind[] = ["claude"];
-	if (capabilities.exposeCodexActions) choices.push("codex");
-	if (capabilities.exposePiActions) choices.push("pi");
-	return choices;
+export function harnessChoices(
+	capabilities: Pick<HarnessCapabilities, "features">,
+	featureId: string,
+): HarnessKind[] {
+	const resolutions = capabilities.features[featureId] ?? {};
+	const available = (Object.keys(resolutions) as HarnessKind[]).filter(
+		(kind) => resolutions[kind]?.available === true,
+	);
+	return available.length > 0 ? available : [resolveHarness(undefined)];
 }

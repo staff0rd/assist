@@ -1,3 +1,4 @@
+import { isPrimaryUsageAccount } from "../../../../../../shared/harnessAdapters/isPrimaryUsageAccount";
 import { harnessLabel } from "../../../../../../shared/harnessLabel";
 import {
 	FIVE_HOUR_SECONDS,
@@ -31,6 +32,6 @@ export function usagePeakWindow(key: UsageWindowKey): UsagePeakWindowInfo {
 	const parsed = parseUsageWindowKey(key);
 	if (!parsed) return baseWindow.five_hour;
 	const base = baseWindow[parsed.window];
-	if (parsed.harness === "claude") return base;
+	if (isPrimaryUsageAccount(parsed.harness)) return base;
 	return { ...base, label: `${harnessLabel(parsed.harness)} ${base.label}` };
 }

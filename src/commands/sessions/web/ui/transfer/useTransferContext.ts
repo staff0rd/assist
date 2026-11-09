@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { TransferSessionFn } from "../createSessionAction";
+import type { TransferSessionFn } from "../resumeSessionAction";
 import type { NodesState } from "../types";
 
 type TransferActions = {

@@ -1,5 +1,5 @@
 import type { PrSummary } from "../../prList";
-import type { AssistLaunchMeta } from "../createSessionAction";
+import type { AssistLaunchMeta } from "../resumeSessionAction";
 import { formatRelativeTime } from "../formatRelativeTime";
 
 export function prLaunchMeta(pr: PrSummary): AssistLaunchMeta {

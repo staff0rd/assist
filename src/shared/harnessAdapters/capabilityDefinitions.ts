@@ -5,6 +5,10 @@ export const capabilityDefinitions = {
 		"Reopens an existing conversation by id with its history intact, so a daemon restart or `--resume-session` continues the same conversation instead of starting fresh.",
 	"conversation.preassignId":
 		"Accepts a conversation id chosen by assist at launch, so the session card binds to the conversation before the harness writes it rather than discovering the id afterwards.",
+	"oneShot.text":
+		"Answers a single prompt headlessly and returns plain text without opening a tracked conversation, e.g. branch-name and session-title suggestions.",
+	"usage.rateLimits":
+		"Reports account rate-limit windows (5h/7d used percentage and reset time), which assist records under that harness's own usage account and shows in the status bar.",
 } as const;
 
 export type CapabilityId = keyof typeof capabilityDefinitions;

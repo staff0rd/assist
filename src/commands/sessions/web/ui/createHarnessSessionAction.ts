@@ -1,6 +1,6 @@
 type SendFn = (msg: object) => void;
 
-export function sendCreate(
+function sendCreate(
 	send: SendFn,
 	extra: object,
 	prompt: string,
@@ -30,5 +30,5 @@ export function createHarnessSessionAction(send: SendFn) {
 		cwd?: string,
 		node?: string,
 		open?: boolean,
-	) => sendCreate(send, { harness }, prompt, cwd, node, open);
+	) => sendCreate(send, { harness, auto: true }, prompt, cwd, node, open);
 }

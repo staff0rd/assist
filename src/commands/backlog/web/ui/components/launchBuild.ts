@@ -1,4 +1,4 @@
-import type { AssistLaunchMeta } from "../../../../sessions/web/ui/createSessionAction";
+import type { AssistLaunchMeta } from "../../../../sessions/web/ui/resumeSessionAction";
 import { formatItemId } from "../../../formatItemId";
 import type { LaunchAssist } from "./launchClone";
 

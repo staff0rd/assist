@@ -1,9 +1,9 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Button, ButtonGroup } from "@mui/material";
 import { type MouseEvent, useRef, useState } from "react";
-import { useHarnessCapabilities } from "../../../../sessions/web/ui/useHarnessCapabilities";
 import { BuildSegment } from "./BuildSegment";
-import { HarnessMenu, harnessOptions } from "./HarnessMenu";
+import { HarnessMenu } from "./HarnessMenu";
+import { useBuildHarnessOptions } from "./useBuildHarnessOptions";
 
 export function BuildSplitButton({
 	tooltip,
@@ -16,7 +16,7 @@ export function BuildSplitButton({
 	onBuild: () => void;
 	onSelectHarness: (kind: string) => void;
 }) {
-	const options = harnessOptions(useHarnessCapabilities());
+	const options = useBuildHarnessOptions();
 	const anchorRef = useRef<HTMLDivElement>(null);
 	const [open, setOpen] = useState(false);
 	const stop = (event: MouseEvent) => event.stopPropagation();

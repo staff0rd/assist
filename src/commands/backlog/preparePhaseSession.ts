@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
+import { preassignedId } from "../../shared/harnessAdapters/preassignedId";
 import { persistPhaseSession } from "./persistPhaseSession";
 import { persistPhaseSessionId } from "./persistPhaseSessionId";
 import { reportPhaseActivity } from "./reportPhaseActivity";
@@ -15,7 +17,9 @@ export async function preparePhaseSession(
 	spawnOptions?: BacklogRunOptions,
 ): Promise<{ claudeSessionId: string } | undefined> {
 	const resumeSessionId = spawnOptions?.resumeSessionId;
-	const claudeSessionId = resumeSessionId ?? randomUUID();
+	const adapter = harnessAdapter(spawnOptions?.harness);
+	const claudeSessionId =
+		resumeSessionId ?? preassignedId(adapter) ?? randomUUID();
 	if (
 		resumeSessionId &&
 		!(await verifyPhaseResume(
@@ -32,9 +36,7 @@ export async function preparePhaseSession(
 		phaseNumber,
 		totalPhases,
 		phase,
-		claudeSessionId,
-		spawnOptions?.harness,
-		resumeSessionId,
+		adapter.activityIdentity(claudeSessionId, resumeSessionId),
 	);
 	if (!resumeSessionId) {
 		await persistPhaseSessionId(item.id, phaseIndex, claudeSessionId);

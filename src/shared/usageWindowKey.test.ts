@@ -9,6 +9,7 @@ describe("usageWindowKey", () => {
 
 	it("prefixes other harnesses", () => {
 		expect(usageWindowKey("codex", "five_hour")).toBe("codex:five_hour");
+		expect(usageWindowKey("pi", "seven_day")).toBe("pi:seven_day");
 	});
 });
 

@@ -27,6 +27,11 @@ const sources: Record<string, HarnessCapabilitySource> = {
 
 const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	refine: { claude: true, codex: true, pi: true, fake: true },
+	build: { claude: true, codex: true, pi: true, fake: true },
+	session: { claude: true, codex: true, pi: true, fake: true },
+	branchSlug: { claude: true, codex: true, pi: false, fake: true },
+	sessionTitle: { claude: true, codex: true, pi: false, fake: true },
+	usageLimits: { claude: true, codex: true, pi: false, fake: true },
 };
 
 const cells = harnessFeatures.flatMap((feature) =>

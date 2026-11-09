@@ -1,4 +1,7 @@
+import type { IPty } from "node-pty";
 import type { HarnessKind } from "../harnesses";
+
+type InteractivePty = IPty;
 import type { SpawnResult } from "../spawnInherit";
 import type { CapabilityId } from "./capabilityDefinitions";
 
@@ -47,9 +50,23 @@ export type HarnessActivityIdentity = {
 	harnessSessionId?: string;
 };
 
-type LaunchSkillOptions = {
+type LaunchOptions = {
 	conversationId?: string;
 	cwd: string;
+	allowEdits?: boolean;
+};
+
+type ResumeOptions = { cwd: string; allowEdits?: boolean };
+
+export type OneShotOptions = { timeout: number };
+
+type InteractiveLaunch = {
+	sessionId: string;
+	conversationId?: string;
+	prompt?: string;
+	cwd?: string;
+	design?: boolean;
+	auto?: boolean;
 };
 
 export type ConversationRef = {
@@ -64,17 +81,21 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 	conversation: {
 		idName: string;
 		findResumable: (ref: ConversationRef) => string | undefined;
+		locate: (conversationId: string) => Promise<string | null>;
 	};
 	launchSkill: (
 		skill: string,
 		args: string | undefined,
-		options: LaunchSkillOptions,
+		options: LaunchOptions,
 	) => SpawnResult;
+	launchPrompt: (prompt: string, options: LaunchOptions) => SpawnResult;
 	resume: (
 		conversationId: string,
 		nudge: string,
-		options: { cwd: string },
+		options: ResumeOptions,
 	) => SpawnResult;
+	interactive: (launch: InteractiveLaunch) => InteractivePty;
+	oneShot: (prompt: string, options: OneShotOptions) => Promise<string>;
 	activityIdentity: (
 		conversationId: string | undefined,
 		resumedId?: string,

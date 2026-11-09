@@ -1,21 +1,16 @@
-import {
-	beforeEach,
-	describe,
-	expect,
-	it,
-	type MockInstance,
-	vi,
-} from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { HarnessKind } from "../../shared/harnesses";
 import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 
-vi.mock("../../shared/spawnHarness", () => ({
-	spawnHarness: vi.fn(),
+const resume = vi.hoisted(() => vi.fn());
+
+vi.mock("../../shared/harnessAdapters/harnessAdapter", () => ({
+	harnessAdapter: (kind?: HarnessKind) => ({
+		resume: (...args: unknown[]) => resume(kind ?? "claude", ...args),
+	}),
 }));
 
-import { spawnHarness } from "../../shared/spawnHarness";
 import { resumeDoneConversation } from "./resumeDoneConversation";
-
-const mockSpawnHarness = spawnHarness as unknown as MockInstance;
 
 describe("resumeDoneConversation", () => {
 	beforeEach(() => {
@@ -24,7 +19,7 @@ describe("resumeDoneConversation", () => {
 	});
 
 	it("resumes the Claude session without a nudge prompt", async () => {
-		mockSpawnHarness.mockReturnValue({ done: Promise.resolve(0) });
+		resume.mockReturnValue({ done: Promise.resolve(0) });
 		const item = makeBacklogItem({ status: "done" });
 
 		const result = await resumeDoneConversation(
@@ -33,15 +28,14 @@ describe("resumeDoneConversation", () => {
 		);
 
 		expect(result).toBe(true);
-		expect(mockSpawnHarness).toHaveBeenCalledWith("claude", "", {
-			allowEdits: false,
-			resumeSessionId: "sess-1",
+		expect(resume).toHaveBeenCalledWith("claude", "sess-1", "", {
 			cwd: process.cwd(),
+			allowEdits: false,
 		});
 	});
 
-	it("resumes a Codex conversation with the Codex harness", async () => {
-		mockSpawnHarness.mockReturnValue({ done: Promise.resolve(0) });
+	it("resumes a Codex conversation through the Codex adapter", async () => {
+		resume.mockReturnValue({ done: Promise.resolve(0) });
 		const item = makeBacklogItem({ status: "done" });
 
 		await resumeDoneConversation(
@@ -49,15 +43,14 @@ describe("resumeDoneConversation", () => {
 			{ harness: "codex" },
 		);
 
-		expect(mockSpawnHarness).toHaveBeenCalledWith("codex", "", {
-			allowEdits: true,
-			resumeSessionId: "codex-1",
+		expect(resume).toHaveBeenCalledWith("codex", "codex-1", "", {
 			cwd: process.cwd(),
+			allowEdits: true,
 		});
 	});
 
-	it("returns false when Claude exits non-zero", async () => {
-		mockSpawnHarness.mockReturnValue({ done: Promise.resolve(1) });
+	it("returns false when the harness exits non-zero", async () => {
+		resume.mockReturnValue({ done: Promise.resolve(1) });
 		const item = makeBacklogItem({ status: "done" });
 
 		const result = await resumeDoneConversation({

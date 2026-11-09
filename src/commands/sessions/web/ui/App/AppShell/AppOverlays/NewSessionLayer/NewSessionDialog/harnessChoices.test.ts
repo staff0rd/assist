@@ -1,22 +1,43 @@
 import { describe, expect, it } from "vitest";
+import type { FeatureResolution } from "../../../../../../../../../shared/harnessAdapters/types";
 import { harnessChoices } from "./harnessChoices";
 
+const available: FeatureResolution = { available: true };
+const missing: FeatureResolution = {
+	available: false,
+	reasons: [
+		{
+			capability: "harness.detected",
+			reason: "not installed",
+			remediation: "install it",
+		},
+	],
+};
+
 describe("harnessChoices", () => {
-	it("offers claude alone when no other harness is exposed", () => {
-		expect(
-			harnessChoices({ exposeCodexActions: false, exposePiActions: false }),
-		).toEqual(["claude"]);
+	it("offers the default harness while resolutions are loading", () => {
+		expect(harnessChoices({ features: {} }, "session")).toEqual(["claude"]);
 	});
 
-	it("adds codex when codex actions are exposed", () => {
+	it("offers every harness where the feature resolves available", () => {
 		expect(
-			harnessChoices({ exposeCodexActions: true, exposePiActions: false }),
+			harnessChoices(
+				{
+					features: {
+						session: { claude: available, codex: available, pi: missing },
+					},
+				},
+				"session",
+			),
 		).toEqual(["claude", "codex"]);
 	});
 
-	it("adds every exposed harness, claude first", () => {
+	it("omits an undetected default harness when another is available", () => {
 		expect(
-			harnessChoices({ exposeCodexActions: true, exposePiActions: true }),
-		).toEqual(["claude", "codex", "pi"]);
+			harnessChoices(
+				{ features: { build: { claude: missing, codex: available } } },
+				"build",
+			),
+		).toEqual(["codex"]);
 	});
 });

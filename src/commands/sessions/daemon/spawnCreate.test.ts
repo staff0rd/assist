@@ -4,6 +4,18 @@ import { spawnCreate } from "./spawnCreate";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
+const detection = vi.hoisted(() => ({ missing: new Set<string>() }));
+vi.mock("../../../shared/harnessAdapters/detectHarness", () => ({
+	detectHarness: (kind: string) =>
+		detection.missing.has(kind)
+			? {
+					supported: false,
+					reason: `${kind} is not installed`,
+					remediation: `install ${kind}`,
+				}
+			: { supported: true },
+}));
+
 function manager(joined: { sessionId: string } | { reason: string }) {
 	return {
 		spawn: vi.fn(() => "9"),
@@ -96,5 +108,27 @@ describe("spawnCreate", () => {
 			spawnCreate(m, { cwd: "/git/repo", joinSessionId: "3", design: true }),
 		).toBe("9");
 		expect(m.addAgent).not.toHaveBeenCalled();
+	});
+
+	it("refuses an undetected harness before spawning, without falling back", () => {
+		detection.missing.add("codex");
+		const m = manager({ reason: "no such session" });
+
+		const result = spawnCreate(m, { prompt: "go", harness: "codex" });
+
+		expect(result).toEqual({
+			error: expect.stringContaining("A new session is unavailable on Codex"),
+		});
+		expect(m.spawn).not.toHaveBeenCalled();
+		expect(m.addAgent).not.toHaveBeenCalled();
+		detection.missing.clear();
+	});
+
+	it("starts a Codex session with Claude absent", () => {
+		detection.missing.add("claude");
+		const m = manager({ reason: "no such session" });
+
+		expect(spawnCreate(m, { prompt: "go", harness: "codex" })).toBe("9");
+		detection.missing.clear();
 	});
 });

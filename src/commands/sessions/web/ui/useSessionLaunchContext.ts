@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import type { HarnessKind } from "../../../../shared/harnesses";
-import type { AssistLaunchMeta } from "./createSessionAction";
+import type { AssistLaunchMeta } from "./resumeSessionAction";
 
 type SessionLaunch = {
 	launchAssist: (

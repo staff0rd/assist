@@ -4,6 +4,9 @@ import { messageHandlers } from "./messageHandlers";
 import type { SessionManager } from "./SessionManager";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("../../../shared/harnessAdapters/detectHarness", () => ({
+	detectHarness: () => ({ supported: true }),
+}));
 vi.mock("./worktree/prCheckoutHolder", () => ({
 	prCheckoutHolder: async () => undefined,
 }));

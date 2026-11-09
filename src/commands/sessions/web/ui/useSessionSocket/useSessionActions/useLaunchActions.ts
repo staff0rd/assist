@@ -3,10 +3,7 @@ import {
 	createDesignSessionAction,
 	createHarnessSessionAction,
 } from "../../createHarnessSessionAction";
-import {
-	createSessionAction,
-	resumeSessionAction,
-} from "../../createSessionAction";
+import { resumeSessionAction } from "../../resumeSessionAction";
 import { createSessionInStreamAction } from "./useLaunchActions/createSessionInStreamAction";
 import { createAssistSessionAction } from "../../createAssistSessionAction";
 
@@ -14,7 +11,6 @@ type SendFn = (msg: object) => void;
 
 export function useLaunchActions(send: SendFn) {
 	return {
-		createSession: useMemo(() => createSessionAction(send), [send]),
 		createSessionInStream: useMemo(
 			() => createSessionInStreamAction(send),
 			[send],

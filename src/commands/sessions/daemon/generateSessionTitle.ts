@@ -1,5 +1,10 @@
 import type { HarnessKind } from "../../../shared/harnesses";
-import { runOneShotPrompt } from "../../../shared/runOneShotPrompt";
+import { sessionTitleFeature } from "../../../shared/harnessAdapters/harnessFeatures";
+import {
+	OneShotUnavailableError,
+	runOneShotPrompt,
+} from "../../../shared/runOneShotPrompt";
+import { daemonLog } from "./daemonLog";
 
 export const SESSION_TITLE_MAX_LENGTH = 48;
 
@@ -8,9 +13,15 @@ export async function generateSessionTitle(
 	harness?: HarnessKind,
 ): Promise<string | undefined> {
 	try {
-		const stdout = await runOneShotPrompt(buildPrompt(prompt), { harness });
+		const stdout = await runOneShotPrompt(
+			buildPrompt(prompt),
+			sessionTitleFeature,
+			{ harness },
+		);
 		return normaliseTitle(stdout);
-	} catch {
+	} catch (error) {
+		if (error instanceof OneShotUnavailableError)
+			daemonLog(`session title: ${error.message.replaceAll("\n", " ")}`);
 		return undefined;
 	}
 }

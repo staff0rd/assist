@@ -9,7 +9,7 @@ import {
 	setStarredAction,
 	stopSessionAction,
 	transferSessionAction,
-} from "../createSessionAction";
+} from "../resumeSessionAction";
 import { prDecisionAction } from "./useSessionActions/prDecisionAction";
 import { useLaunchActions } from "./useSessionActions/useLaunchActions";
 import { useLifecycleActions } from "./useSessionActions/useLifecycleActions";

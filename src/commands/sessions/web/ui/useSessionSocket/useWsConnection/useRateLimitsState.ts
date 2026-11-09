@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { isPrimaryUsageAccount } from "../../../../../../shared/harnessAdapters/isPrimaryUsageAccount";
 import type { HarnessKind } from "../../../../../../shared/harnesses";
 import type {
 	HarnessRateLimits,
@@ -12,7 +13,7 @@ export function useRateLimitsState() {
 	);
 	const storeHarnessRateLimits = useCallback(
 		(harness: HarnessKind, limits: RateLimits) => {
-			if (harness === "claude") return;
+			if (isPrimaryUsageAccount(harness)) return;
 			setHarnessRateLimits((prev) => ({ ...prev, [harness]: limits }));
 		},
 		[],

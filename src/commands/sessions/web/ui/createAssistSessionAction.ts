@@ -1,4 +1,4 @@
-import type { AssistLaunchMeta } from "./createSessionAction";
+import type { AssistLaunchMeta } from "./resumeSessionAction";
 
 type SendFn = (msg: object) => void;
 

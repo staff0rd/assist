@@ -1,6 +1,5 @@
 import { emitActivity } from "../../shared/emitActivity";
-import { harnessActivityFields } from "../../shared/harnessActivityFields";
-import type { HarnessKind } from "../../shared/harnesses";
+import type { HarnessActivityIdentity } from "../../shared/harnessAdapters/types";
 import { backlogPhaseActivity } from "./backlogPhaseActivity";
 import type { BacklogItem, PlanPhase } from "./types";
 
@@ -9,12 +8,10 @@ export function reportPhaseActivity(
 	phaseNumber: number,
 	totalPhases: number,
 	phase: PlanPhase,
-	claudeSessionId: string,
-	harness?: HarnessKind,
-	resumeSessionId?: string,
+	identity: HarnessActivityIdentity,
 ): void {
 	emitActivity({
 		...backlogPhaseActivity(item, phaseNumber, totalPhases, phase.name),
-		...harnessActivityFields(harness, claudeSessionId, resumeSessionId),
+		...identity,
 	});
 }

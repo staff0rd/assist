@@ -1,4 +1,4 @@
-import type { AssistLaunchMeta } from "../../../../createSessionAction";
+import type { AssistLaunchMeta } from "../../../../resumeSessionAction";
 import { autoStartLabel, type NewSessionMode } from "./newSessionModes";
 
 export function assistMetaFor(

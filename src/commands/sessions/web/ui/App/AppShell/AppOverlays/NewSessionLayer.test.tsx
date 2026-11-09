@@ -45,9 +45,10 @@ function renderAt(path: string) {
 					>
 						<NewSessionLayer
 							launchers={{
-								onCreate,
 								onCreateDesign: vi.fn(),
-								onCreateHarness: vi.fn(),
+								onCreateHarness: (harness: string, ...rest: unknown[]) => {
+									if (harness === "claude") onCreate(...rest);
+								},
 								onCreateAssist,
 							}}
 						/>

@@ -4,7 +4,7 @@ import {
 	dismissSessionAction,
 	restartSessionAction,
 	retrySessionAction,
-} from "../../createSessionAction";
+} from "../../resumeSessionAction";
 import type { DismissOptions } from "../../types";
 
 type SendFn = (msg: object) => void;

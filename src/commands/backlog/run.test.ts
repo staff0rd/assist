@@ -51,6 +51,21 @@ vi.mock("./resumeDoneConversation", () => ({
 	resumeDoneConversation: vi.fn(async () => true),
 }));
 
+const detection = vi.hoisted(() => ({
+	missing: new Set<string>(),
+}));
+
+vi.mock("../../shared/harnessAdapters/detectHarness", () => ({
+	detectHarness: (kind: string) =>
+		detection.missing.has(kind)
+			? {
+					supported: false,
+					reason: `${kind} is not installed`,
+					remediation: `install ${kind}`,
+				}
+			: { supported: true },
+}));
+
 vi.mock("./acquireLock", () => ({
 	acquireLock: vi.fn(),
 	foreignLockHolder: vi.fn(),
@@ -101,6 +116,51 @@ describe("run", () => {
 		vi.clearAllMocks();
 		mockReloadPlan.mockReset();
 		mockLockHolder.mockReturnValue(null);
+		detection.missing.clear();
+	});
+
+	describe("when Build is unavailable on the chosen harness", () => {
+		beforeEach(() => {
+			vi.spyOn(console, "error").mockImplementation(() => {});
+		});
+
+		it("refuses to resume a pi conversation before locking or spawning", async () => {
+			const result = await run("99", {
+				harness: "pi",
+				resumeSessionId: "pi-1",
+			});
+
+			expect(result).toBe(false);
+			expect(console.error).toHaveBeenCalledWith(
+				expect.stringContaining("pi sessions cannot be resumed yet"),
+			);
+			expect(mockAcquireLock).not.toHaveBeenCalled();
+			expect(mockPrepareRun).not.toHaveBeenCalled();
+			expect(mockExecutePhase).not.toHaveBeenCalled();
+			process.exitCode = undefined;
+		});
+
+		it("refuses an undetected harness without falling back to another", async () => {
+			detection.missing.add("codex");
+
+			const result = await run("99", { harness: "codex" });
+
+			expect(result).toBe(false);
+			expect(console.error).toHaveBeenCalledWith(
+				expect.stringContaining("Build is unavailable on Codex"),
+			);
+			expect(mockExecutePhase).not.toHaveBeenCalled();
+			process.exitCode = undefined;
+		});
+
+		it("runs Codex when Claude is not installed", async () => {
+			detection.missing.add("claude");
+			mockPrepareRun.mockReturnValue(undefined);
+
+			await run("99", { harness: "codex" });
+
+			expect(mockPrepareRun).toHaveBeenCalled();
+		});
 	});
 
 	describe("when prepare returns undefined", () => {

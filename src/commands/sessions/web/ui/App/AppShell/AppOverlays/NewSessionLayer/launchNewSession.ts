@@ -1,17 +1,11 @@
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
-import type { AssistLaunchMeta } from "../../../../createSessionAction";
+import type { AssistLaunchMeta } from "../../../../resumeSessionAction";
 import { dispatchMode } from "../../../dispatchMode";
 import { type NewSessionMode, newSessionModes } from "./newSessionModes";
 import { assistMetaFor } from "./assistMetaFor";
 import { createArgsFor } from "./createArgsFor";
 
 export type NewSessionLaunchers = {
-	onCreate: (
-		prompt: string,
-		cwd?: string,
-		node?: string,
-		open?: boolean,
-	) => void;
 	onCreateDesign: (
 		prompt: string,
 		cwd?: string,
@@ -49,8 +43,7 @@ export function launchNewSession(
 	const target = cwd || undefined;
 	const createArgs = createArgsFor(node, open);
 	if (mode === "prompt") {
-		if (harness === "claude") launchers.onCreate(prompt, target, ...createArgs);
-		else launchers.onCreateHarness(harness, prompt, target, ...createArgs);
+		launchers.onCreateHarness(harness, prompt, target, ...createArgs);
 		return;
 	}
 	if (mode === "design") {

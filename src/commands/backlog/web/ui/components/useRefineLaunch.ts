@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useSessionLaunchContext } from "../../../../sessions/web/ui/useSessionLaunchContext";
 import { formatItemId } from "../../../formatItemId";
-import type { AssistLaunchMeta } from "../../../../sessions/web/ui/createSessionAction";
+import type { AssistLaunchMeta } from "../../../../sessions/web/ui/resumeSessionAction";
 import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
 import { useRepoCwd } from "../useRepoCwd";
 

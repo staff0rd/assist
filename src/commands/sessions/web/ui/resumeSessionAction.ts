@@ -1,14 +1,8 @@
 import type { ResizeMode } from "./ResizeFn";
 import type { DismissOptions } from "./types";
-import { sendCreate } from "./createHarnessSessionAction";
 import { viewerId } from "./viewerId";
 
 type SendFn = (msg: object) => void;
-
-export function createSessionAction(send: SendFn) {
-	return (prompt: string, cwd?: string, node?: string, open?: boolean) =>
-		sendCreate(send, { auto: true }, prompt, cwd, node, open);
-}
 
 export type AssistLaunchMeta = {
 	title?: string;
