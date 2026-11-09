@@ -8,25 +8,12 @@ function pick(input: Record<string, unknown>, keys: string[]): string[] {
 		.map(String);
 }
 
-function toolLabel(name: string): string {
-	const match = name.match(/^mcp__claude_ai_([^_]+)__(?:slack_)?(.+)$/);
-	return match ? `${match[1]} ${match[2]}` : name;
-}
-
-export function describeInboxScanTool(
-	name: string,
-	input: unknown,
-): { label: string; detail: string } {
-	const record =
-		input && typeof input === "object"
-			? (input as Record<string, unknown>)
-			: {};
-	const detail = pick(record, [
+export function describeInboxScanTool(input: Record<string, unknown>): string {
+	return pick(input, [
 		"query",
 		"thread_id",
 		"threadId",
 		"channel_id",
 		"message_ts",
 	]).join(" ");
-	return { label: toolLabel(name), detail };
 }

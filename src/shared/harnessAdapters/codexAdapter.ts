@@ -8,6 +8,7 @@ import { codexStructuredRun } from "./codexStructuredRun";
 import { offerCodexInstall } from "./offerCodexInstall";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
+import { rejectConnectorRun } from "./rejectConnectorRun";
 import type { HarnessAdapter } from "./types";
 
 const sandbox = (allowEdits: boolean | undefined) =>
@@ -40,6 +41,7 @@ export const codexAdapter: HarnessAdapter = {
 		spawnCodexPty({ prompt, cwd, sessionId }),
 	oneShot: codexOneShot,
 	structured: codexStructuredRun,
+	connectorRun: rejectConnectorRun("Codex"),
 	offerInstall: offerCodexInstall,
 	activityIdentity: (_conversationId, resumedId) =>
 		resumedId

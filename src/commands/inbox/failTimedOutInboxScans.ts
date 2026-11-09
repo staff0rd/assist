@@ -1,6 +1,6 @@
 import type { BacklogDatabase } from "../../shared/db/Db";
 import { failStaleJobRuns } from "../../shared/db/failStaleJobRuns";
-import { INBOX_SCAN_TIMEOUT_MS } from "./runInboxScanClaude";
+import { INBOX_SCAN_TIMEOUT_MS } from "./inboxConnectorRun";
 
 const GRACE_MS = 5 * 60_000;
 

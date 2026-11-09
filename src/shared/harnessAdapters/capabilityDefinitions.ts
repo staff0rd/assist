@@ -11,6 +11,12 @@ export const capabilityDefinitions = {
 		"Runs a prompt from stdin headlessly in a read-only workspace, streaming tool and token-usage events and saving its final answer to a file, e.g. the code reviewers and review synthesis.",
 	"usage.rateLimits":
 		"Reports account rate-limit windows (5h/7d used percentage and reset time), which assist records under that harness's own usage account and shows in the status bar.",
+	"tools.restrict":
+		"Limits a headless run to an explicit allow-list of tools and denies every other tool, built-in shell and file tools included, so a read-only workflow such as the inbox scan cannot change anything.",
+	"connector.gmail.read":
+		"Searches Gmail threads and reads a thread's messages through a connector the harness can call headlessly, e.g. the inbox scan.",
+	"connector.slack.read":
+		"Searches Slack messages and reads a thread through a connector the harness can call headlessly, e.g. the inbox scan.",
 } as const;
 
 export type CapabilityId = keyof typeof capabilityDefinitions;

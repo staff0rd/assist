@@ -1,10 +1,7 @@
-import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { inboxStatusSummary } from "./inboxStatusSummary";
-import { inboxStore } from "./inboxStore";
+import { ScanControls } from "./ScanControls";
 import { useInboxStatus } from "./useInboxStatus";
 import { useInboxStatusError } from "./useInboxStatusError";
 
@@ -40,19 +37,7 @@ export function InboxHeader() {
 					</Typography>
 				)}
 			</Box>
-			<Tooltip title={scanning ? "A scan is already running" : ""}>
-				<span>
-					<Button
-						variant="outlined"
-						size="small"
-						startIcon={<RefreshIcon />}
-						disabled={scanning}
-						onClick={() => void inboxStore.scan()}
-					>
-						{scanning ? "Scanning…" : "Scan now"}
-					</Button>
-				</span>
-			</Tooltip>
+			<ScanControls scanning={scanning} />
 		</Box>
 	);
 }

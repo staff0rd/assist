@@ -14,4 +14,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"oneShot.text": supported,
 	"oneShot.structured": supported,
 	"usage.rateLimits": supported,
+	"tools.restrict": supported,
+	"connector.gmail.read": supported,
+	"connector.slack.read": supported,
 };

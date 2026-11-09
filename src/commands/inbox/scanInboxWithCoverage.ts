@@ -1,11 +1,11 @@
+import type { HarnessAdapter } from "../../shared/harnessAdapters/types";
 import { addScanUsage } from "./addScanUsage";
 import { buildInboxScanPrompt } from "./buildInboxScanPrompt";
 import { buildInboxThreadsPrompt } from "./buildInboxThreadsPrompt";
 import { emptyScanUsage } from "./emptyScanUsage";
 import type { InboxScanListener, InboxScanUsage } from "./InboxScanEvent";
 import type { FlaggedMessage } from "./inboxScanSchema";
-import { inboxScanTools } from "./inboxScanTools";
-import { type InboxScanPass, runInboxScanClaude } from "./runInboxScanClaude";
+import { type InboxScanPass, runInboxScanPass } from "./runInboxScanPass";
 import { scanUnopenedThreads } from "./scanUnopenedThreads";
 
 export type InboxScanOutput = {
@@ -14,25 +14,33 @@ export type InboxScanOutput = {
 };
 
 export async function scanInboxWithCoverage(
+	adapter: HarnessAdapter,
 	since: Date,
 	listener: InboxScanListener,
 ): Promise<InboxScanOutput> {
 	const runs: InboxScanUsage[] = [];
 	const total = () => runs.reduce(addScanUsage, emptyScanUsage());
-	const run = (pass: InboxScanPass) => {
+	const run = async (pass: InboxScanPass) => {
 		const slot = runs.push(emptyScanUsage()) - 1;
-		return runInboxScanClaude(pass, {
+		const result = await runInboxScanPass(adapter, pass, {
 			...listener,
 			onUsage: (usage) => {
 				runs[slot] = usage;
 				listener.onUsage?.(total());
 			},
 		});
+		runs[slot] = result.usage;
+		return result;
 	};
 
 	const main = await run({
 		prompt: buildInboxScanPrompt(since),
-		allowedTools: inboxScanTools.allowed,
+		tools: [
+			"gmail.searchThreads",
+			"gmail.getThread",
+			"slack.search",
+			"slack.readThread",
+		],
 	});
 	const opened = new Set(main.threads.opened);
 	const followUp = await scanUnopenedThreads(
@@ -40,7 +48,7 @@ export async function scanInboxWithCoverage(
 		(threadIds) =>
 			run({
 				prompt: buildInboxThreadsPrompt(threadIds),
-				allowedTools: [inboxScanTools.gmailGetThread],
+				tools: ["gmail.getThread"],
 			}),
 		listener.onEvent,
 	);

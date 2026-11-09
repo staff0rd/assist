@@ -3,6 +3,10 @@ import type { JobTrigger } from "../../shared/db/jobRuns";
 import { readInboxLastScan } from "../../shared/db/readInboxLastScan";
 import { upsertInboxMessages } from "../../shared/db/upsertInboxMessages";
 import { writeInboxLastScan } from "../../shared/db/writeInboxLastScan";
+import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
+import { inboxFeature } from "../../shared/harnessAdapters/harnessFeatures";
+import { launchBlocker } from "../../shared/harnessAdapters/launchBlocker";
+import type { HarnessAdapter } from "../../shared/harnessAdapters/types";
 import type { InboxScanListener, InboxScanUsage } from "./InboxScanEvent";
 import type { FlaggedMessage } from "./inboxScanSchema";
 import {
@@ -30,6 +34,7 @@ function toRow(message: FlaggedMessage) {
 
 type RunInboxScanOptions = InboxScanListener & {
 	trigger: JobTrigger;
+	adapter?: HarnessAdapter;
 	wrap?: (
 		since: Date,
 		run: () => Promise<InboxScanOutput>,
@@ -38,15 +43,22 @@ type RunInboxScanOptions = InboxScanListener & {
 
 export async function runInboxScan(
 	orm: BacklogDatabase,
-	{ trigger, wrap = (_since, run) => run(), ...listener }: RunInboxScanOptions,
+	{
+		trigger,
+		adapter = harnessAdapter(undefined),
+		wrap = (_since, run) => run(),
+		...listener
+	}: RunInboxScanOptions,
 ): Promise<{ flagged: number; added: number; usage: InboxScanUsage }> {
+	const blocker = launchBlocker(adapter, inboxFeature);
+	if (blocker) throw new Error(blocker);
 	return withInboxScanJob(orm, trigger, listener, async (tracked) => {
 		const startedAt = new Date();
 		const since =
 			(await readInboxLastScan(orm)) ??
 			new Date(startedAt.getTime() - FIRST_SCAN_LOOKBACK_MS);
 		const { messages, usage } = await wrap(since, () =>
-			scanInboxWithCoverage(since, tracked),
+			scanInboxWithCoverage(adapter, since, tracked),
 		);
 		const added = await upsertInboxMessages(orm, messages.map(toRow));
 		await writeInboxLastScan(orm, startedAt);

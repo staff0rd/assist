@@ -32,6 +32,7 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	branchSlug: { claude: true, codex: true, pi: false, fake: true },
 	sessionTitle: { claude: true, codex: true, pi: false, fake: true },
 	usageLimits: { claude: true, codex: true, pi: false, fake: true },
+	inbox: { claude: true, codex: false, pi: false, fake: true },
 	reviewer: { claude: true, codex: true, pi: false, fake: true },
 	reviewSynthesis: { claude: true, codex: true, pi: false, fake: true },
 	reviewRefine: { claude: true, codex: true, pi: true, fake: true },

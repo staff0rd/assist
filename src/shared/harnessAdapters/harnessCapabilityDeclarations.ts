@@ -13,6 +13,9 @@ export const harnessCapabilityDeclarations: Record<
 		"oneShot.text": supported,
 		"oneShot.structured": supported,
 		"usage.rateLimits": supported,
+		"tools.restrict": supported,
+		"connector.gmail.read": supported,
+		"connector.slack.read": supported,
 	},
 	codex: {
 		"skills.native": supported,
@@ -24,6 +27,21 @@ export const harnessCapabilityDeclarations: Record<
 		"oneShot.text": supported,
 		"oneShot.structured": supported,
 		"usage.rateLimits": supported,
+		"tools.restrict": unsupported(
+			"assist cannot yet limit a headless Codex run to an allow-list of connector tools",
+			"run the inbox scan with Claude (assist inbox scan --harness claude)",
+			"a1562",
+		),
+		"connector.gmail.read": unsupported(
+			"Codex has no verified read-only Gmail connector",
+			"run the inbox scan with Claude (assist inbox scan --harness claude)",
+			"a1562",
+		),
+		"connector.slack.read": unsupported(
+			"Codex has no verified read-only Slack connector",
+			"run the inbox scan with Claude (assist inbox scan --harness claude)",
+			"a1562",
+		),
 	},
 	pi: {
 		"skills.native": supported,
@@ -50,6 +68,21 @@ export const harnessCapabilityDeclarations: Record<
 			"pi reports no account rate-limit windows to assist",
 			"pi sessions show no usage windows; Claude and Codex usage is still tracked under their own accounts",
 			"a696",
+		),
+		"tools.restrict": unsupported(
+			"assist cannot limit a headless pi run to an allow-list of tools",
+			"run the inbox scan with Claude (assist inbox scan --harness claude)",
+			"a1562",
+		),
+		"connector.gmail.read": unsupported(
+			"pi has no Gmail connector",
+			"run the inbox scan with Claude (assist inbox scan --harness claude)",
+			"a1562",
+		),
+		"connector.slack.read": unsupported(
+			"pi has no Slack connector",
+			"run the inbox scan with Claude (assist inbox scan --harness claude)",
+			"a1562",
 		),
 	},
 };

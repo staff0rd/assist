@@ -1,4 +1,4 @@
-export type ScanStreamEvent = {
+type ScanStreamEvent = {
 	type?: unknown;
 	model?: unknown;
 	message?: { id?: unknown; content?: unknown; usage?: unknown };

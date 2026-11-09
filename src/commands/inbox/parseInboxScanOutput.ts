@@ -1,12 +1,11 @@
+import { z } from "zod";
 import { type FlaggedMessage, inboxScanSchema } from "./inboxScanSchema";
 
-export function parseInboxScanOutput(stdout: string): FlaggedMessage[] {
-	const result = JSON.parse(stdout) as {
-		is_error?: boolean;
-		result?: string;
-		structured_output?: unknown;
-	};
-	if (result.is_error)
-		throw new Error(`Inbox scan failed: ${result.result ?? "unknown error"}`);
-	return inboxScanSchema.parse(result.structured_output).messages;
+export function parseInboxScanOutput(output: unknown): FlaggedMessage[] {
+	const parsed = inboxScanSchema.safeParse(output);
+	if (!parsed.success)
+		throw new Error(
+			`Inbox scan returned malformed output: ${z.prettifyError(parsed.error)}`,
+		);
+	return parsed.data.messages;
 }

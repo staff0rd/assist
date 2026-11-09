@@ -2,12 +2,14 @@ import type { IPty } from "node-pty";
 import type { HarnessAdapter } from "../../shared/harnessAdapters/types";
 import { supported } from "../../shared/harnessAdapters/unsupported";
 import { spawnInherit } from "../../shared/spawnInherit";
+import { type FakeConnectorScript, fakeConnectorRun } from "./fakeConnectorRun";
 import { fakeHarnessCapabilities } from "./fakeHarnessCapabilities";
 import { type FakeHarnessCalls, fakeHarnessCalls } from "./fakeHarnessCalls";
 import { fakeStructuredRun } from "./fakeStructuredRun";
 
 export function fakeHarnessMock(
 	calls: FakeHarnessCalls = fakeHarnessCalls(),
+	connectorScript?: FakeConnectorScript,
 ): HarnessAdapter {
 	return {
 		kind: "fake",
@@ -46,6 +48,7 @@ export function fakeHarnessMock(
 			return Promise.resolve(`fake answer to ${prompt.length} chars\n`);
 		},
 		structured: fakeStructuredRun(calls.structured),
+		connectorRun: fakeConnectorRun(calls.connector, connectorScript),
 		activityIdentity: (_conversationId, resumedId) =>
 			resumedId ? { harnessSessionId: resumedId } : {},
 	};

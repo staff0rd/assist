@@ -1,13 +1,18 @@
+import { z } from "zod";
 import { describe, expect, it } from "vitest";
-import { buildInboxScanPrompt } from "./buildInboxScanPrompt";
-import { inboxScanTools } from "./inboxScanTools";
-import { parseInboxScanOutput } from "./parseInboxScanOutput";
-import { buildInboxScanArgs } from "./runInboxScanClaude";
+import { inboxScanSchema } from "../../commands/inbox/inboxScanSchema";
+import { buildClaudeConnectorArgs } from "./buildClaudeConnectorArgs";
 
-describe("buildInboxScanArgs", () => {
-	const args = buildInboxScanArgs({
-		prompt: buildInboxScanPrompt(new Date("2026-10-30T00:00:00Z")),
-		allowedTools: inboxScanTools.allowed,
+describe("buildClaudeConnectorArgs", () => {
+	const args = buildClaudeConnectorArgs({
+		prompt: "triage",
+		schema: z.toJSONSchema(inboxScanSchema, { target: "draft-07" }),
+		tools: [
+			"gmail.searchThreads",
+			"gmail.getThread",
+			"slack.search",
+			"slack.readThread",
+		],
 	});
 	const listAfter = (flag: string) => {
 		const start = args.indexOf(flag) + 1;
@@ -15,13 +20,20 @@ describe("buildInboxScanArgs", () => {
 		return args.slice(start, end);
 	};
 
-	it("allows only the read-only Gmail and Slack tools", () => {
+	it("allows only the requested connector tools by their claude.ai names", () => {
 		expect(listAfter("--allowedTools")).toEqual([
 			"mcp__claude_ai_Gmail__search_threads",
 			"mcp__claude_ai_Gmail__get_thread",
 			"mcp__claude_ai_Slack__slack_search_public_and_private",
 			"mcp__claude_ai_Slack__slack_read_thread",
 		]);
+		expect(
+			buildClaudeConnectorArgs({
+				prompt: "p",
+				schema: {},
+				tools: ["gmail.getThread"],
+			}),
+		).not.toContain("mcp__claude_ai_Gmail__search_threads");
 	});
 
 	it("disables built-in tools and denies anything not pre-approved", () => {
@@ -39,33 +51,9 @@ describe("buildInboxScanArgs", () => {
 		expect(args).toContain("--verbose");
 	});
 
-	it("passes a draft-07 schema, the newest draft claude -p validates", () => {
+	it("passes the draft-07 schema, the newest draft claude -p validates", () => {
 		const schema = JSON.parse(args[args.indexOf("--json-schema") + 1]);
 		expect(schema.$schema).toBe("http://json-schema.org/draft-07/schema#");
-	});
-});
-
-describe("parseInboxScanOutput", () => {
-	it("returns the structured messages", () => {
-		const messages = [
-			{
-				source: "slack",
-				messageId: "D1:1.2",
-				sender: "Sam",
-				summary: "Asks when the PR lands",
-				link: "https://slack.com/archives/D1/p12",
-			},
-		];
-		expect(
-			parseInboxScanOutput(
-				JSON.stringify({ is_error: false, structured_output: { messages } }),
-			),
-		).toEqual(messages);
-	});
-
-	it("throws when the run failed", () => {
-		expect(() =>
-			parseInboxScanOutput(JSON.stringify({ is_error: true, result: "boom" })),
-		).toThrow("boom");
+		expect(args.slice(-2)).toEqual(["--", "triage"]);
 	});
 });

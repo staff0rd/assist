@@ -4,6 +4,8 @@ import { findSessionJsonlPath } from "../../commands/sessions/shared/findSession
 import { harnessLabel } from "../harnessLabel";
 import { spawnClaude } from "../spawnClaude";
 import { buildSlashCommand } from "./buildSlashCommand";
+import { claudeConnectorProbe } from "./claudeConnectorProbe";
+import { claudeConnectorRun } from "./claudeConnectorRun";
 import { claudeOneShot } from "./claudeOneShot";
 import { claudeStructuredRun } from "./claudeStructuredRun";
 import { detectHarness } from "./detectHarness";
@@ -13,7 +15,11 @@ import type { HarnessAdapter } from "./types";
 export const claudeAdapter: HarnessAdapter = {
 	kind: "claude",
 	label: harnessLabel("claude"),
-	capabilities: harnessCapabilityDeclarations.claude,
+	capabilities: {
+		...harnessCapabilityDeclarations.claude,
+		"connector.gmail.read": () => claudeConnectorProbe("Gmail"),
+		"connector.slack.read": () => claudeConnectorProbe("Slack"),
+	},
 	detect: () => detectHarness("claude"),
 	conversation: {
 		idName: "claude session id",
@@ -47,5 +53,6 @@ export const claudeAdapter: HarnessAdapter = {
 		}),
 	oneShot: claudeOneShot,
 	structured: claudeStructuredRun,
+	connectorRun: claudeConnectorRun,
 	activityIdentity: (conversationId) => ({ claudeSessionId: conversationId }),
 };

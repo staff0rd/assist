@@ -1,5 +1,5 @@
 import { detectHarness } from "../../../shared/harnessAdapters/detectHarness";
-import { harnessCapabilityDeclarations } from "../../../shared/harnessAdapters/harnessCapabilityDeclarations";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import { harnessFeatures } from "../../../shared/harnessAdapters/harnessFeatures";
 import { resolveFeature } from "../../../shared/harnessAdapters/resolveFeature";
 import type {
@@ -29,7 +29,7 @@ export function harnessFeatureResolutions(config: AssistConfig["harness"]): {
 				harnessOffSwitch(kind, config) ??
 					resolveFeature(feature, {
 						label: harnessLabel(kind),
-						capabilities: harnessCapabilityDeclarations[kind],
+						capabilities: harnessAdapter(kind).capabilities,
 						detect: () => detection.get(kind) ?? { supported: true },
 					}),
 			]),

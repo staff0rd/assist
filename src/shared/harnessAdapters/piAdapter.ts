@@ -4,6 +4,7 @@ import { spawnPi } from "../spawnPi";
 import { buildSlashCommand } from "./buildSlashCommand";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
+import { rejectConnectorRun } from "./rejectConnectorRun";
 import type { HarnessAdapter } from "./types";
 
 function cannotResume(): never {
@@ -32,5 +33,6 @@ export const piAdapter: HarnessAdapter = {
 		spawnPiPty({ prompt, cwd, sessionId }),
 	oneShot: noOneShot,
 	structured: noOneShot,
+	connectorRun: rejectConnectorRun("pi"),
 	activityIdentity: () => ({ harness: "pi" }),
 };

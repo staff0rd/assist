@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { InboxScanResult } from "./createInboxScanParser";
+import type { InboxScanResult } from "./runInboxScanPass";
 import { emptyScanUsage } from "./emptyScanUsage";
 import type { InboxScanEvent } from "./InboxScanEvent";
 import { scanUnopenedThreads } from "./scanUnopenedThreads";

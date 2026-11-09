@@ -1,3 +1,4 @@
+import type { HarnessKind } from "../../../../shared/harnesses";
 import { createScanRunLog } from "./createScanRunLog";
 import { createScheduleTracker } from "./createScheduleTracker";
 import { isScheduledScanDue } from "./isScheduledScanDue";
@@ -14,11 +15,11 @@ export function createInboxScanner() {
 	const schedule = createScheduleTracker();
 	const runLog = createScanRunLog(() => notify("inbox-activity"));
 
-	const scan = async (reason: ScanReason) => {
+	const scan = async (reason: ScanReason, harness?: HarnessKind) => {
 		scanning = true;
 		runLog.begin();
 		notify("inbox");
-		const outcome = await runLoggedInboxScan(reason, runLog);
+		const outcome = await runLoggedInboxScan(reason, runLog, harness);
 		lastError = outcome.ok ? undefined : outcome.error;
 		await runLog.end(outcome);
 		scanning = false;
@@ -40,9 +41,9 @@ export function createInboxScanner() {
 			timer.unref();
 			return () => clearInterval(timer);
 		},
-		scanNow(): boolean {
+		scanNow(harness?: HarnessKind): boolean {
 			if (scanning) return false;
-			void scan("requested");
+			void scan("requested", harness);
 			return true;
 		},
 		status() {

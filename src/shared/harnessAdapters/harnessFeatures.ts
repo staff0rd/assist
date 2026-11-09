@@ -32,6 +32,12 @@ export const sessionTitleFeature: HarnessFeature = {
 	requires: ["oneShot.text"],
 };
 
+export const inboxFeature: HarnessFeature = {
+	id: "inbox",
+	label: "Inbox scan",
+	requires: ["connector.gmail.read", "connector.slack.read", "tools.restrict"],
+};
+
 const usageLimitsFeature: HarnessFeature = {
 	id: "usageLimits",
 	label: "Usage limits",
@@ -45,6 +51,7 @@ export const harnessFeatures: HarnessFeature[] = [
 	branchSlugFeature,
 	sessionTitleFeature,
 	usageLimitsFeature,
+	inboxFeature,
 	...reviewFeatures,
 	...prFeatures,
 ];

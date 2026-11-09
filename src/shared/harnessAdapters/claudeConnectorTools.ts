@@ -1,15 +1,25 @@
+import type { ConnectorTool } from "./types";
+
 const gmail = (tool: string) => `mcp__claude_ai_Gmail__${tool}`;
 const slack = (tool: string) => `mcp__claude_ai_Slack__${tool}`;
 
-export const inboxScanTools = {
-	gmailSearch: gmail("search_threads"),
-	gmailGetThread: gmail("get_thread"),
-	allowed: [
-		gmail("search_threads"),
-		gmail("get_thread"),
-		slack("slack_search_public_and_private"),
-		slack("slack_read_thread"),
-	],
+const nativeNames: Record<ConnectorTool, string> = {
+	"gmail.searchThreads": gmail("search_threads"),
+	"gmail.getThread": gmail("get_thread"),
+	"slack.search": slack("slack_search_public_and_private"),
+	"slack.readThread": slack("slack_read_thread"),
+};
+
+export const claudeConnectorTools = {
+	native: (tool: ConnectorTool): string => nativeNames[tool],
+	fromNative: (name: string): ConnectorTool | undefined =>
+		(Object.keys(nativeNames) as ConnectorTool[]).find(
+			(tool) => nativeNames[tool] === name,
+		),
+	label(name: string): string {
+		const match = name.match(/^mcp__claude_ai_([^_]+)__(?:slack_)?(.+)$/);
+		return match ? `${match[1]} ${match[2]}` : name;
+	},
 	denied: [
 		...[
 			"apply_sensitive_message_label",

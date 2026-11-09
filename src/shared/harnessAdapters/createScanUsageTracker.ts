@@ -1,7 +1,7 @@
-import { parseClaudeUsage } from "../review/parseClaudeUsage";
-import type { TokenUsage } from "../review/TokenUsage";
-import { emptyScanUsage } from "./emptyScanUsage";
-import { scanUsageTokens } from "./scanUsageTokens";
+import { parseClaudeUsage } from "../../commands/review/parseClaudeUsage";
+import type { TokenUsage } from "../../commands/review/TokenUsage";
+import { emptyScanUsage } from "../../commands/inbox/emptyScanUsage";
+import { scanUsageTokens } from "../../commands/inbox/scanUsageTokens";
 
 type ResultFields = { total_cost_usd?: unknown; duration_ms?: unknown };
 

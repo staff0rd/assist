@@ -1,6 +1,8 @@
+import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import { apiFetch } from "../../../../apiFetch";
 import { reportCaughtError } from "../../../../clientFailures/reportCaughtError";
 import { postJson } from "../../../postJson";
+import { postInboxScan } from "./postInboxScan";
 import type { InboxMessage, InboxStatus } from "./types";
 
 let current: InboxMessage[] | undefined;
@@ -62,10 +64,11 @@ async function dismiss(id: string): Promise<void> {
 	}
 }
 
-async function scan(): Promise<void> {
+async function scan(harness?: HarnessKind): Promise<void> {
 	if (status) setStatus({ ...status, scanning: true, lastError: null });
 	try {
-		await postJson("/api/inbox/scan", {}, "Failed to start inbox scan");
+		statusError = undefined;
+		await postInboxScan(harness);
 	} catch (error) {
 		statusError = error instanceof Error ? error.message : String(error);
 		if (status) status = { ...status, scanning: false };

@@ -90,6 +90,45 @@ export type ConversationRef = {
 	harnessSessionId?: string;
 };
 
+export type ConnectorTool =
+	| "gmail.searchThreads"
+	| "gmail.getThread"
+	| "slack.search"
+	| "slack.readThread";
+
+export type RunUsage = {
+	input: number;
+	output: number;
+	cacheRead: number;
+	cacheWrite: number;
+	costUsd: number | null;
+	durationMs: number | null;
+};
+
+export type ConnectorRunEvent =
+	| { type: "model"; model: string }
+	| {
+			type: "toolCall";
+			callId: string;
+			tool?: ConnectorTool;
+			label: string;
+			input: Record<string, unknown>;
+			tokens?: number;
+	  }
+	| { type: "toolResult"; callId: string; text: string }
+	| { type: "text"; text: string; tokens?: number }
+	| { type: "usage"; usage: RunUsage };
+
+export type ConnectorRun = {
+	prompt: string;
+	schema: Record<string, unknown>;
+	tools: ConnectorTool[];
+	timeoutMs: number;
+	onEvent: (event: ConnectorRunEvent) => void;
+};
+
+export type ConnectorRunResult = { output: unknown; usage: RunUsage };
+
 export type HarnessAdapter = HarnessCapabilitySource & {
 	kind: string;
 	detect: () => CapabilityStatus;
@@ -112,6 +151,7 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 	interactive: (launch: InteractiveLaunch) => InteractivePty;
 	oneShot: (prompt: string, options: OneShotOptions) => Promise<string>;
 	structured: (run: StructuredRun) => Promise<ReviewerResult>;
+	connectorRun: (run: ConnectorRun) => Promise<ConnectorRunResult>;
 	offerInstall?: () => Promise<boolean>;
 	activityIdentity: (
 		conversationId: string | undefined,

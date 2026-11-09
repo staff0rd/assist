@@ -1,4 +1,6 @@
 import { getDb } from "../../../../shared/db/getDb";
+import { harnessAdapter } from "../../../../shared/harnessAdapters/harnessAdapter";
+import type { HarnessKind } from "../../../../shared/harnesses";
 import { formatScanUsage } from "../../../inbox/formatScanUsage";
 import type { InboxScanListener } from "../../../inbox/InboxScanEvent";
 import { runInboxScan } from "../../../inbox/runInboxScan";
@@ -13,11 +15,14 @@ export type ScanReason = "scheduled" | "requested";
 export async function runLoggedInboxScan(
 	reason: ScanReason,
 	listener: InboxScanListener,
+	harness?: HarnessKind,
 ): Promise<ScanOutcome> {
-	daemonLog(`inbox: scan started (${reason})`);
+	const adapter = harnessAdapter(harness);
+	daemonLog(`inbox: scan started (${reason}, ${adapter.label})`);
 	try {
 		const { flagged, added, usage } = await runInboxScan(await getDb(), {
 			...listener,
+			adapter,
 			trigger: reason === "scheduled" ? "scheduled" : "manual",
 		});
 		daemonLog(

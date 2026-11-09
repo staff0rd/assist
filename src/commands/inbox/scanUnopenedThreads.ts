@@ -1,5 +1,5 @@
 import { mapAsync } from "../../shared/mapAsync";
-import type { InboxScanResult } from "./createInboxScanParser";
+import type { InboxScanResult } from "./runInboxScanPass";
 import type { InboxScanEvent } from "./InboxScanEvent";
 import type { FlaggedMessage } from "./inboxScanSchema";
 
