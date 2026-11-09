@@ -23,15 +23,15 @@ vi.mock("../../../shared/emitActivity", () => ({
 	reconcileActivity: vi.fn(),
 }));
 
-vi.mock("./applyCodexLaunch", () => ({ applyCodexLaunch: vi.fn() }));
+vi.mock("./applyLateBoundLaunch", () => ({ applyLateBoundLaunch: vi.fn() }));
 
 import { existsSync, watch } from "node:fs";
-import { applyCodexLaunch } from "./applyCodexLaunch";
+import { applyLateBoundLaunch } from "./applyLateBoundLaunch";
 import { readActivity, reconcileActivity } from "../../../shared/emitActivity";
 import { refreshActivity, watchActivity } from "./watchActivity";
 
 const mockWatch = vi.mocked(watch);
-const mockApplyCodexLaunch = vi.mocked(applyCodexLaunch);
+const mockApplyLateBoundLaunch = vi.mocked(applyLateBoundLaunch);
 
 beforeEach(() => {
 	vi.mocked(existsSync).mockReturnValue(false);
@@ -194,10 +194,11 @@ describe("watchActivity", () => {
 
 			triggerRead(session);
 
-			expect(mockApplyCodexLaunch).toHaveBeenCalledWith(
+			expect(mockApplyLateBoundLaunch).toHaveBeenCalledWith(
 				session,
 				activity,
 				expect.any(Function),
+				undefined,
 			);
 		});
 
@@ -212,7 +213,7 @@ describe("watchActivity", () => {
 
 			triggerRead(session);
 
-			expect(mockApplyCodexLaunch).not.toHaveBeenCalled();
+			expect(mockApplyLateBoundLaunch).not.toHaveBeenCalled();
 		});
 	});
 

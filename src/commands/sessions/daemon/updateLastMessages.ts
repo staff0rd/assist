@@ -1,9 +1,12 @@
-import { extractLastAssistantMessage } from "../shared/extractLastAssistantMessage";
-import { extractLastUserMessage } from "../shared/extractLastUserMessage";
+import type { ConversationEvent } from "../../../shared/harnessAdapters/types";
+import { lastMessageText } from "../shared/lastMessageText";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 
 type MessageField = "lastUserMessage" | "lastAssistantMessage";
+
+const USER_MAX_LENGTH = 2048;
+const ASSISTANT_MAX_LENGTH = 500;
 
 function update(
 	session: Session,
@@ -21,19 +24,19 @@ function update(
 
 export function updateLastMessages(
 	session: Session,
-	entries: Record<string, unknown>[],
+	events: ConversationEvent[],
 	notify?: () => void,
 ): void {
 	const user = update(
 		session,
 		"lastUserMessage",
-		extractLastUserMessage(entries),
+		lastMessageText(events, "user", USER_MAX_LENGTH),
 		"user",
 	);
 	const assistant = update(
 		session,
 		"lastAssistantMessage",
-		extractLastAssistantMessage(entries),
+		lastMessageText(events, "assistant", ASSISTANT_MAX_LENGTH),
 		"assistant",
 	);
 	if (user || assistant) notify?.();

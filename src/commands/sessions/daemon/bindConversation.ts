@@ -1,4 +1,4 @@
-import { resolveCodexSessionId } from "../shared/codex/resolveCodexSessionId";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { rememberSessionTitle } from "./rememberSessionTitle";
@@ -9,33 +9,43 @@ const START_SLACK_MS = 5000;
 
 const latestBind = new WeakMap<Session, number>();
 
-export function bindCodexSession(
+export function bindConversation(
 	session: Session,
 	notify: () => void,
 	launchedAt: number = session.startedAt,
+	onBound?: (session: Session) => void,
 ): void {
 	const cwd = session.cwd;
-	if (session.harness !== "codex" || !cwd || session.harnessSessionId) return;
+	const adapter = harnessAdapter(session.harness);
+	const discover = adapter.conversation.discover;
+	if (!discover || !cwd || adapter.conversation.boundId(session)) return;
 
 	const bind = (latestBind.get(session) ?? 0) + 1;
 	latestBind.set(session, bind);
 	const superseded = () =>
-		!!session.harnessSessionId || latestBind.get(session) !== bind;
+		!!adapter.conversation.boundId(session) || latestBind.get(session) !== bind;
 	const since = launchedAt - START_SLACK_MS;
 	let attemptsLeft = MAX_ATTEMPTS;
 
 	const schedule = () => setTimeout(() => void poll(), POLL_MS).unref();
 	const poll = async () => {
 		if (superseded()) return;
-		const sessionId = await resolveCodexSessionId(cwd, since);
+		const conversationId = await discover(cwd, since);
 		if (superseded()) return;
-		if (!sessionId) {
+		if (!conversationId) {
 			if (--attemptsLeft > 0) schedule();
+			else
+				daemonLog(
+					`session ${session.id} found no ${adapter.label} conversation to bind`,
+				);
 			return;
 		}
-		session.harnessSessionId = sessionId;
-		daemonLog(`session ${session.id} bound to codex conversation ${sessionId}`);
+		session.harnessSessionId = conversationId;
+		daemonLog(
+			`session ${session.id} bound to ${adapter.label} conversation ${conversationId}`,
+		);
 		rememberSessionTitle(session);
+		onBound?.(session);
 		notify();
 	};
 

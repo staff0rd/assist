@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../test/mothers/makeSession";
 import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
-import { extractContextAfterReference } from "../summarise/extractContextAfterReference";
-import { extractFirstUserMessage } from "../summarise/extractFirstUserMessage";
+import { readConversationHead } from "../shared/readConversationHead";
+import { contextAfterReference } from "../summarise/contextAfterReference";
+import { firstUserMessage } from "../summarise/firstUserMessage";
 import { daemonLog } from "./daemonLog";
 import { generateSessionTitle } from "./generateSessionTitle";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
@@ -13,27 +14,31 @@ vi.mock("./generateSessionTitle", () => ({
 	generateSessionTitle: vi.fn(async () => "Add dark mode"),
 	SESSION_TITLE_MAX_LENGTH: 48,
 }));
-vi.mock("../summarise/extractFirstUserMessage", () => ({
-	extractFirstUserMessage: vi.fn(() => "please add dark mode to settings"),
+vi.mock("../summarise/firstUserMessage", () => ({
+	firstUserMessage: vi.fn(() => "please add dark mode to settings"),
 }));
-vi.mock("../summarise/extractContextAfterReference", () => ({
-	extractContextAfterReference: vi.fn(
+vi.mock("../summarise/contextAfterReference", () => ({
+	contextAfterReference: vi.fn(
 		() => "saving a client record twice drops the contact email",
 	),
 }));
+vi.mock("../shared/readConversationHead", () => ({
+	readConversationHead: vi.fn(() => []),
+}));
 vi.mock("../shared/findTranscriptPathSync", () => ({
 	findTranscriptPathSync: vi.fn(() => "/projects/repo/abc.jsonl"),
+}));
+vi.mock("../shared/codex/findCodexRolloutPathSync", () => ({
+	findCodexRolloutPathSync: vi.fn(() => "/codex/rollout-x-conv-1.jsonl"),
 }));
 
 const mockGenerate = generateSessionTitle as unknown as ReturnType<
 	typeof vi.fn
 >;
 const mockLog = daemonLog as unknown as ReturnType<typeof vi.fn>;
-const mockExtract = extractFirstUserMessage as unknown as ReturnType<
-	typeof vi.fn
->;
-const mockExtractContext =
-	extractContextAfterReference as unknown as ReturnType<typeof vi.fn>;
+const mockExtract = vi.mocked(firstUserMessage);
+const mockExtractContext = vi.mocked(contextAfterReference);
+const mockReadHead = vi.mocked(readConversationHead);
 const mockFindPath = findTranscriptPathSync as unknown as ReturnType<
 	typeof vi.fn
 >;
@@ -140,9 +145,11 @@ describe("startTranscriptTitleGeneration", () => {
 			startTranscriptTitleGeneration(session, notify);
 			await flush();
 
-			expect(mockExtractContext).toHaveBeenCalledWith(
+			expect(mockReadHead).toHaveBeenCalledWith(
+				expect.anything(),
 				"/projects/repo/abc.jsonl",
 			);
+			expect(mockExtractContext).toHaveBeenCalled();
 			expect(mockExtract).not.toHaveBeenCalled();
 			expect(mockGenerate).toHaveBeenCalledWith(
 				"saving a client record twice drops the contact email",
@@ -189,7 +196,11 @@ describe("startTranscriptTitleGeneration", () => {
 		await flush();
 
 		expect(mockFindPath).toHaveBeenCalledWith("/home/me/repo", "abc");
-		expect(mockExtract).toHaveBeenCalledWith("/projects/repo/abc.jsonl");
+		expect(mockReadHead).toHaveBeenCalledWith(
+			expect.anything(),
+			"/projects/repo/abc.jsonl",
+		);
+		expect(mockExtract).toHaveBeenCalled();
 	});
 
 	it("keeps the Session placeholder when generation fails", async () => {
@@ -220,6 +231,54 @@ describe("startTranscriptTitleGeneration", () => {
 		expect(session.titleGenerationStarted).toBeUndefined();
 	});
 
+	it("titles a blank codex session from its bound rollout", async () => {
+		const session = makeSession({
+			id: "8",
+			commandType: "claude",
+			harness: "codex",
+			cwd: "/home/me/repo",
+			harnessSessionId: "conv-1",
+		});
+
+		startTranscriptTitleGeneration(session, vi.fn());
+		await flush();
+
+		expect(mockReadHead).toHaveBeenCalledWith(
+			expect.objectContaining({ headBytes: expect.any(Number) }),
+			"/codex/rollout-x-conv-1.jsonl",
+		);
+		expect(mockFindPath).not.toHaveBeenCalled();
+		expect(mockGenerate).toHaveBeenCalledWith(
+			"please add dark mode to settings",
+			"codex",
+		);
+		expect(session.generatedTitle).toBe("Add dark mode");
+	});
+
+	it("waits for a codex session's conversation to be bound", () => {
+		startTranscriptTitleGeneration(
+			makeSession({ commandType: "claude", harness: "codex", cwd: "/r" }),
+			vi.fn(),
+		);
+
+		expect(mockReadHead).not.toHaveBeenCalled();
+	});
+
+	it("reads no transcript for a harness without transcript.read", () => {
+		startTranscriptTitleGeneration(
+			makeSession({
+				commandType: "claude",
+				harness: "pi",
+				cwd: "/r",
+				harnessSessionId: "p",
+			}),
+			vi.fn(),
+		);
+
+		expect(mockReadHead).not.toHaveBeenCalled();
+		expect(mockGenerate).not.toHaveBeenCalled();
+	});
+
 	describe("assist card whose prompt was a reference", () => {
 		function referenceCard(overrides: Partial<Session> = {}): Session {
 			return makeSession({
@@ -241,9 +300,7 @@ describe("startTranscriptTitleGeneration", () => {
 			startTranscriptTitleGeneration(session, notify);
 			await flush();
 
-			expect(mockExtractContext).toHaveBeenCalledWith(
-				"/projects/repo/abc.jsonl",
-			);
+			expect(mockExtractContext).toHaveBeenCalled();
 			expect(mockExtract).not.toHaveBeenCalled();
 			expect(mockGenerate).toHaveBeenCalledWith(
 				"saving a client record twice drops the contact email",

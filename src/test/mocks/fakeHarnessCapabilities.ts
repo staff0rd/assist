@@ -11,6 +11,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 		"the fake harness names its own conversations",
 		"none needed; it is a test double",
 	),
+	"transcript.read": supported,
 	"oneShot.text": supported,
 	"oneShot.structured": supported,
 	"usage.rateLimits": supported,

@@ -1,7 +1,7 @@
-import { iterateUserMessages } from "./iterateUserMessages";
+import type { ConversationEvent } from "../../../shared/harnessAdapters/types";
 
 /**
- * Scan session JSONL for backlog item references.
+ * Scan a conversation's normalized events for backlog item references.
  * Returns unique backlog IDs found in the session.
  *
  * Detected patterns (in user messages only). Backlog item ids carry an
@@ -10,11 +10,12 @@ import { iterateUserMessages } from "./iterateUserMessages";
  * - `a<id>` (standalone, word-bounded)
  * - `backlog item a<id>` / `backlog a<id>`
  */
-export function scanSessionBacklogRefs(filePath: string): number[] {
+export function scanSessionBacklogRefs(events: ConversationEvent[]): number[] {
 	const ids = new Set<number>();
 
-	for (const text of iterateUserMessages(filePath, Number.MAX_SAFE_INTEGER)) {
-		for (const id of extractBacklogIds(text)) {
+	for (const event of events) {
+		if (event.kind !== "message" || event.role !== "user") continue;
+		for (const id of extractBacklogIds(event.text)) {
 			ids.add(id);
 		}
 	}

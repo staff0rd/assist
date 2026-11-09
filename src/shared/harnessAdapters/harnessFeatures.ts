@@ -39,6 +39,24 @@ export const sessionTitleFeature: HarnessFeature = {
 	requires: ["oneShot.text"],
 };
 
+const messagePreviewsFeature: HarnessFeature = {
+	id: "messagePreviews",
+	label: "Message previews",
+	requires: ["transcript.read"],
+};
+
+const transcriptStatusFeature: HarnessFeature = {
+	id: "transcriptStatus",
+	label: "Transcript status and restore status",
+	requires: ["transcript.read"],
+};
+
+const transcriptTitleFeature: HarnessFeature = {
+	id: "transcriptTitle",
+	label: "Session title from the transcript",
+	requires: ["transcript.read", "oneShot.text"],
+};
+
 export const inboxFeature: HarnessFeature = {
 	id: "inbox",
 	label: "Inbox scan",
@@ -57,6 +75,9 @@ export const harnessFeatures: HarnessFeature[] = [
 	sessionFeature,
 	branchSlugFeature,
 	sessionTitleFeature,
+	messagePreviewsFeature,
+	transcriptStatusFeature,
+	transcriptTitleFeature,
 	usageLimitsFeature,
 	inboxFeature,
 	previewQuestionsFeature,

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { extractUserMessages } from "./extractUserMessages";
+import { claudeConversationReader } from "../../../shared/harnessAdapters/claudeConversationReader";
+import { userMessageTexts } from "./userMessageTexts";
+
+const extractUserMessages = (entries: Record<string, unknown>[]) =>
+	userMessageTexts(claudeConversationReader.events(entries));
 
 function user(
 	content: unknown,
@@ -8,7 +12,7 @@ function user(
 	return { type: "user", message: { role: "user", content }, ...overrides };
 }
 
-describe("extractUserMessages", () => {
+describe("userMessageTexts over Claude transcript events", () => {
 	it("returns nothing when no prompt was typed", () => {
 		expect(
 			extractUserMessages([{ type: "assistant", message: { content: "hi" } }]),

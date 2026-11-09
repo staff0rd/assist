@@ -2,7 +2,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { watch } from "node:fs";
 import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { makeSession } from "../../../test/mothers/makeSession";
+import { findCodexRolloutPathSync } from "../shared/codex/findCodexRolloutPathSync";
+import { daemonLog } from "./daemonLog";
 import { ensureProjectDirExists } from "./ensureProjectDirExists";
+import { reconcileTranscriptStatus } from "./reconcileTranscriptStatus";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
 import { watchTranscript } from "./watchTranscript";
 
@@ -18,6 +21,11 @@ vi.mock("./ensureProjectDirExists", () => ({
 
 vi.mock("../shared/findTranscriptPathSync", () => ({
 	projectDirForCwd: (cwd: string) => `/projects${cwd}`,
+	findTranscriptPathSync: vi.fn(() => null),
+}));
+
+vi.mock("../shared/codex/findCodexRolloutPathSync", () => ({
+	findCodexRolloutPathSync: vi.fn(),
 }));
 
 vi.mock("./reconcileTranscriptStatus", () => ({
@@ -31,12 +39,18 @@ vi.mock("./startTranscriptTitleGeneration", () => ({
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
 const watchMock = vi.mocked(watch);
-const ensureDirMock = ensureProjectDirExists as unknown as ReturnType<
-	typeof vi.fn
->;
-const titleMock = startTranscriptTitleGeneration as unknown as ReturnType<
-	typeof vi.fn
->;
+const ensureDirMock = vi.mocked(ensureProjectDirExists);
+const titleMock = vi.mocked(startTranscriptTitleGeneration);
+const reconcileMock = vi.mocked(reconcileTranscriptStatus);
+const rolloutMock = vi.mocked(findCodexRolloutPathSync);
+
+function fire(file: string) {
+	const listener = watchMock.mock.calls.at(-1)?.[1] as unknown as (
+		event: string,
+		file: string,
+	) => void;
+	listener("change", file);
+}
 
 describe("watchTranscript", () => {
 	beforeEach(() => {
@@ -59,7 +73,7 @@ describe("watchTranscript", () => {
 			"3",
 		);
 		expect(watchMock).toHaveBeenCalledTimes(1);
-		expect(s.watchedTranscriptId).toBe("phase-1");
+		expect(s.watchedTranscriptId).toBe("claude:phase-1");
 	});
 
 	it("skips binding when the project dir cannot be created", () => {
@@ -72,16 +86,7 @@ describe("watchTranscript", () => {
 		expect(s.watchedTranscriptId).toBeUndefined();
 	});
 
-	it("binds a watcher for the session's current transcript", () => {
-		const s = makeSession({ cwd: "/home/me/repo", claudeSessionId: "phase-1" });
-
-		watchTranscript(s, vi.fn(), vi.fn());
-
-		expect(watchMock).toHaveBeenCalledTimes(1);
-		expect(s.watchedTranscriptId).toBe("phase-1");
-	});
-
-	it("does not re-bind while the claude session id is unchanged", () => {
+	it("does not re-bind while the conversation is unchanged", () => {
 		const s = makeSession({ cwd: "/home/me/repo", claudeSessionId: "phase-1" });
 
 		watchTranscript(s, vi.fn(), vi.fn());
@@ -114,7 +119,84 @@ describe("watchTranscript", () => {
 
 		expect(close).toHaveBeenCalledTimes(1);
 		expect(watchMock).toHaveBeenCalledTimes(2);
-		expect(s.watchedTranscriptId).toBe("phase-2");
+		expect(s.watchedTranscriptId).toBe("claude:phase-2");
 		expect(s.transcriptPath).toBeUndefined();
+	});
+
+	describe("codex sessions", () => {
+		const rollout = "/codex/2026/11/10/rollout-x-conv-1.jsonl";
+
+		it("waits for the conversation to be bound, without a claude id", () => {
+			const s = makeSession({ cwd: "/home/me/repo", harness: "codex" });
+
+			watchTranscript(s, vi.fn(), vi.fn());
+
+			expect(watchMock).not.toHaveBeenCalled();
+			expect(s.claudeSessionId).toBeUndefined();
+		});
+
+		it("watches the bound rollout's directory and reacts only to that file", async () => {
+			rolloutMock.mockReturnValue(rollout);
+			const s = makeSession({
+				cwd: "/home/me/repo",
+				harness: "codex",
+				harnessSessionId: "conv-1",
+			});
+
+			watchTranscript(s, vi.fn(), vi.fn());
+
+			expect(watchMock.mock.calls[0][0]).toBe("/codex/2026/11/10");
+			expect(s.watchedTranscriptId).toBe("codex:conv-1");
+			expect(reconcileMock).toHaveBeenCalledTimes(1);
+
+			vi.useFakeTimers();
+			fire("rollout-other.jsonl");
+			fire("rollout-x-conv-1.jsonl");
+			vi.advanceTimersByTime(200);
+			vi.useRealTimers();
+			expect(reconcileMock).toHaveBeenCalledTimes(2);
+		});
+
+		it("drops the watcher when a fresh launch unbinds the conversation, then rebinds", () => {
+			rolloutMock.mockReturnValue(rollout);
+			const close = vi.fn();
+			watchMock.mockImplementationOnce((() => ({ close })) as never);
+			const s = makeSession({
+				cwd: "/home/me/repo",
+				harness: "codex",
+				harnessSessionId: "conv-1",
+			});
+			watchTranscript(s, vi.fn(), vi.fn());
+
+			s.harnessSessionId = undefined;
+			watchTranscript(s, vi.fn(), vi.fn());
+
+			expect(close).toHaveBeenCalledTimes(1);
+			expect(s.watchedTranscriptId).toBeUndefined();
+
+			rolloutMock.mockReturnValue("/codex/2026/11/10/rollout-y-conv-2.jsonl");
+			s.harnessSessionId = "conv-2";
+			watchTranscript(s, vi.fn(), vi.fn());
+
+			expect(s.watchedTranscriptId).toBe("codex:conv-2");
+		});
+	});
+
+	it("logs once and watches nothing for a harness that cannot read transcripts", () => {
+		const s = makeSession({ id: "9", cwd: "/home/me/repo", harness: "pi" });
+
+		watchTranscript(s, vi.fn(), vi.fn());
+		watchTranscript(s, vi.fn(), vi.fn());
+
+		expect(watchMock).not.toHaveBeenCalled();
+		expect(
+			vi
+				.mocked(daemonLog)
+				.mock.calls.filter(([line]) => line.includes("transcript not read")),
+		).toEqual([
+			[
+				"session 9 transcript not read: assist cannot read pi conversation transcripts yet",
+			],
+		]);
 	});
 });

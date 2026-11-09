@@ -1,5 +1,5 @@
+import { lookupConversation } from "../shared/conversationOf";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
-import { transcriptTailFingerprint } from "../shared/transcriptTailFingerprint";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { resolveTranscriptPath } from "./resolveTranscriptPath";
@@ -8,10 +8,12 @@ import type { OnStatusChange } from "./types";
 export const SUBMIT_GRACE_MS = 5000;
 
 async function turnStarted(session: Session, fingerprint?: string) {
+	const lookup = lookupConversation(session);
+	if (!lookup.readable) return true;
 	const filePath = await resolveTranscriptPath(session);
 	if (!filePath) return true;
 	const entries = await readTranscriptTail(filePath);
-	return (transcriptTailFingerprint(entries) ?? undefined) !== fingerprint;
+	return (lookup.reader.fingerprint(entries) ?? undefined) !== fingerprint;
 }
 
 export function clearPendingSubmit(session: Session): void {

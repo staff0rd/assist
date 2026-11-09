@@ -5,6 +5,7 @@ import { harnessLabel } from "../harnessLabel";
 import { spawnClaude } from "../spawnClaude";
 import { buildSlashCommand } from "./buildSlashCommand";
 import { claudeConnectorProbe } from "./claudeConnectorProbe";
+import { claudeConversationReader } from "./claudeConversationReader";
 import { claudeConnectorRun } from "./claudeConnectorRun";
 import { claudeOneShot } from "./claudeOneShot";
 import { claudeStructuredRun } from "./claudeStructuredRun";
@@ -28,6 +29,8 @@ export const claudeAdapter: HarnessAdapter = {
 			hasTranscriptOnDisk(ref) ? ref.claudeSessionId : undefined,
 		locate: findSessionJsonlPath,
 		current: () => process.env.CLAUDE_CODE_SESSION_ID || undefined,
+		boundId: ({ claudeSessionId }) => claudeSessionId,
+		reader: claudeConversationReader,
 	},
 	toolOperations: claudeToolOperations,
 	launchSkill: (skill, args, { conversationId, allowEdits }) =>

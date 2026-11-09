@@ -10,6 +10,7 @@ export const harnessCapabilityDeclarations: Record<
 		"skills.native": supported,
 		"conversation.resume": supported,
 		"conversation.preassignId": supported,
+		"transcript.read": supported,
 		"oneShot.text": supported,
 		"oneShot.structured": supported,
 		"usage.rateLimits": supported,
@@ -28,6 +29,7 @@ export const harnessCapabilityDeclarations: Record<
 			"Codex assigns its own conversation id when its rollout starts",
 			"assist binds the Codex conversation id from the rollout after launch",
 		),
+		"transcript.read": supported,
 		"oneShot.text": supported,
 		"oneShot.structured": supported,
 		"usage.rateLimits": supported,
@@ -65,6 +67,11 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.preassignId": unsupported(
 			"pi does not accept a caller-assigned conversation id",
 			"the session card tracks pi without a conversation id",
+		),
+		"transcript.read": unsupported(
+			"assist cannot read pi conversation transcripts yet",
+			"pi session cards show no message previews or transcript-derived status and title; pick Claude or Codex for those",
+			"a696",
 		),
 		"oneShot.text": unsupported(
 			"assist has no headless pi one-shot yet",

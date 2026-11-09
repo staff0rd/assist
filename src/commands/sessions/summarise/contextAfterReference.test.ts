@@ -8,7 +8,14 @@ vi.mock("node:fs", async () =>
 	).fsMock(),
 );
 
-import { extractContextAfterReference } from "./extractContextAfterReference";
+import { claudeConversationReader } from "../../../shared/harnessAdapters/claudeConversationReader";
+import { readConversationHead } from "../shared/readConversationHead";
+import { contextAfterReference } from "./contextAfterReference";
+
+function extractContextAfterReference(filePath: string): string | undefined {
+	const events = readConversationHead(claudeConversationReader, filePath);
+	return events && contextAfterReference(events);
+}
 
 const mockOpenSync = vi.mocked(openSync);
 const mockReadSync = vi.mocked(readSync);

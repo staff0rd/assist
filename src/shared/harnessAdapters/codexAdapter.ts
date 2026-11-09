@@ -1,6 +1,8 @@
 import { spawnCodex as spawnCodexPty } from "../../commands/sessions/daemon/spawnCodex";
 import { findCodexRolloutPath } from "../../commands/sessions/shared/codex/findCodexRolloutPath";
 import { hasCodexRolloutSync } from "../../commands/sessions/shared/codex/hasCodexRolloutSync";
+import { resolveCodexSessionId } from "../../commands/sessions/shared/codex/resolveCodexSessionId";
+import { codexConversationReader } from "./codexConversationReader";
 import { harnessLabel } from "../harnessLabel";
 import { readCodexRulePerms } from "../readCodexRulePerms";
 import { spawnCodex } from "../spawnCodex";
@@ -29,6 +31,9 @@ export const codexAdapter: HarnessAdapter = {
 				: undefined,
 		locate: findCodexRolloutPath,
 		current: () => process.env.CODEX_THREAD_ID || undefined,
+		boundId: ({ harnessSessionId }) => harnessSessionId,
+		discover: resolveCodexSessionId,
+		reader: codexConversationReader,
 	},
 	toolOperations: codexToolOperations,
 	permissionRules: readCodexRulePerms,

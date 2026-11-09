@@ -90,6 +90,36 @@ export type ConversationRef = {
 	harnessSessionId?: string;
 };
 
+export type ConversationEvent =
+	| { kind: "message"; role: "user" | "assistant"; text: string; at?: string }
+	| {
+			kind: "tool";
+			tool: string;
+			target: string;
+			operations: ToolOperation[];
+			at?: string;
+	  }
+	| { kind: "toolResult"; text: string; at?: string };
+
+type ConversationLifecycle = {
+	status: "running" | "waiting" | null;
+	asking: boolean;
+};
+
+type TranscriptEntry = Record<string, unknown>;
+
+export type ConversationReader = {
+	headBytes: number;
+	locate: (ref: ConversationRef) => string | null;
+	watchTarget: (ref: ConversationRef) => { dir: string; file: string } | null;
+	events: (entries: TranscriptEntry[]) => ConversationEvent[];
+	lifecycle: (
+		entries: TranscriptEntry[],
+		options?: { permissionActive?: boolean },
+	) => ConversationLifecycle;
+	fingerprint: (entries: TranscriptEntry[]) => string | null;
+};
+
 export type ConnectorTool =
 	| "gmail.searchThreads"
 	| "gmail.getThread"
@@ -154,6 +184,9 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		findResumable: (ref: ConversationRef) => string | undefined;
 		locate: (conversationId: string) => Promise<string | null>;
 		current: () => string | undefined;
+		boundId: (ref: ConversationRef) => string | undefined;
+		discover?: (cwd: string, sinceMs: number) => Promise<string | null>;
+		reader?: ConversationReader;
 	};
 	toolOperations: (call: NativeToolCall) => ToolOperation[];
 	permissionRules?: (key: "allow" | "deny") => string[];

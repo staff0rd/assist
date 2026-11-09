@@ -16,7 +16,7 @@ const DEBOUNCE_MS = 50;
 export function watchActivity(
 	session: Session,
 	notify: () => void,
-	onClaudeSessionId?: (session: Session) => void,
+	onConversation?: (session: Session) => void,
 ): void {
 	if (session.commandType !== "assist" || !session.cwd) return;
 	const path = activityPath(session.id);
@@ -40,10 +40,10 @@ export function watchActivity(
 		timer = null;
 		const activity = readActivity(path);
 		if (!activity) return;
-		applyLaunchActivity(session, activity, notify);
+		applyLaunchActivity(session, activity, notify, onConversation);
 		/* why: a backlog run reports its current phase's Claude session id here, so
 		 * the daemon persists the latest phase's id and can resume it on restart. */
-		if (activity.claudeSessionId) onClaudeSessionId?.(session);
+		if (activity.claudeSessionId) onConversation?.(session);
 		applyReviewPause(session, activity);
 		void seedRunningMsFromUsage(session, notify);
 		notify();

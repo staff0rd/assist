@@ -1,8 +1,9 @@
-import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
+import { conversationOf } from "../shared/conversationOf";
 import { isReferenceOnlyPrompt } from "../shared/isReferenceOnlyPrompt";
+import { readConversationHead } from "../shared/readConversationHead";
 import { sessionTitlePrompt } from "../shared/sessionTitlePrompt";
-import { extractContextAfterReference } from "../summarise/extractContextAfterReference";
-import { extractFirstUserMessage } from "../summarise/extractFirstUserMessage";
+import { contextAfterReference } from "../summarise/contextAfterReference";
+import { firstUserMessage } from "../summarise/firstUserMessage";
 import { daemonLog } from "./daemonLog";
 import { runSessionTitleGeneration } from "./runSessionTitleGeneration";
 import type { Session } from "./types";
@@ -18,13 +19,18 @@ export function startTranscriptTitleGeneration(
 	const source = titleSource(session);
 	if (!source) return;
 
-	const filePath = transcriptPath(session);
+	const conversation = conversationOf(session);
+	if (!conversation) return;
+	const filePath =
+		session.transcriptPath ?? conversation.reader.locate(conversation.ref);
 	if (!filePath) return;
 
+	const events = readConversationHead(conversation.reader, filePath);
+	if (!events) return;
 	const context =
 		source === "after-reference"
-			? extractContextAfterReference(filePath)
-			: extractFirstUserMessage(filePath);
+			? contextAfterReference(events)
+			: firstUserMessage(events);
 	if (!context) return;
 
 	daemonLog(
@@ -42,12 +48,4 @@ function titleSource(session: Session): TitleSource | undefined {
 	const prompt = sessionTitlePrompt(session);
 	if (!prompt || !isReferenceOnlyPrompt(prompt)) return undefined;
 	return "after-reference";
-}
-
-function transcriptPath(session: Session): string | undefined {
-	if (session.transcriptPath) return session.transcriptPath;
-	if (!session.cwd || !session.claudeSessionId) return undefined;
-	return (
-		findTranscriptPathSync(session.cwd, session.claudeSessionId) ?? undefined
-	);
 }

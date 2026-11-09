@@ -1,4 +1,5 @@
-import { extractUserMessages } from "../shared/extractUserMessages";
+import { conversationOf } from "../shared/conversationOf";
+import { userMessageTexts } from "../shared/userMessageTexts";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
 import { type SessionClient, sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
@@ -22,11 +23,14 @@ export async function handleFetchUserMessages(
 ): Promise<void> {
 	const sessionId = data.sessionId as string;
 	const session = findSession(manager, sessionId);
-	const filePath = session ? await resolveTranscriptPath(session) : null;
-	const entries = filePath
-		? await readTranscriptTail(filePath, Number.POSITIVE_INFINITY)
-		: [];
-	const messages = extractUserMessages(entries);
+	const reader = session ? conversationOf(session)?.reader : undefined;
+	const filePath =
+		session && reader ? await resolveTranscriptPath(session) : null;
+	const entries =
+		reader && filePath
+			? await readTranscriptTail(filePath, Number.POSITIVE_INFINITY)
+			: [];
+	const messages = reader ? userMessageTexts(reader.events(entries)) : [];
 	daemonLog(
 		`session ${sessionId} user messages: ${messages.length} from ${filePath ?? "no transcript"}`,
 	);

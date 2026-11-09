@@ -17,10 +17,10 @@ function hasAgentActivity(entries: Record<string, unknown>[]): boolean {
 
 export function deriveCodexRolloutStatus(
 	entries: Record<string, unknown>[],
-): "running" | "waiting" {
+): "running" | "waiting" | null {
 	for (let i = entries.length - 1; i >= 0; i--) {
 		const event = turnEvent(entries[i]);
 		if (event) return event === "started" ? "running" : "waiting";
 	}
-	return hasAgentActivity(entries) ? "running" : "waiting";
+	return hasAgentActivity(entries) ? "running" : null;
 }
