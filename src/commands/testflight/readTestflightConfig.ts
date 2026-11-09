@@ -6,7 +6,6 @@ export type TestflightConfig = {
 	keyId: string;
 	issuerId: string;
 	keyRef: string;
-	account?: string;
 	bundleId: string;
 	externalGroup: string;
 	internalGroup?: string;

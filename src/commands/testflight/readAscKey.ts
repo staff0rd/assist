@@ -16,17 +16,15 @@ function failure(reason: string): TestflightError {
 
 export async function readAscKey(
 	reference: string,
-	account?: string,
 	op: OpRunner = runOp,
 ): Promise<string> {
 	if (!reference.startsWith("op://"))
 		throw new TestflightError(
 			"testflight.keyRef must be a 1Password reference starting with op://",
 		);
-	const accountArgs = account ? ["--account", account] : [];
-	const first = await op(["read", ...accountArgs, reference]);
+	const first = await op(["read", reference]);
 	if (first.ok) return first.stdout.trim();
-	if (account || !first.missing) throw failure(first.error);
+	if (!first.missing) throw failure(first.error);
 
 	const accounts = await listAccounts(op);
 	for (const url of accounts) {
@@ -36,6 +34,6 @@ export async function readAscKey(
 	}
 	const searched = accounts.length ? ` (searched ${accounts.join(", ")})` : "";
 	throw failure(
-		`${first.error}\nThe item was not found in any signed-in 1Password account${searched}. Set the account holding it with: assist config set testflight.account <account>`,
+		`${first.error}\nThe item was not found in any signed-in 1Password account${searched}.`,
 	);
 }

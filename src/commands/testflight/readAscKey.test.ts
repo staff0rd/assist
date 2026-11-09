@@ -27,10 +27,10 @@ function fakeOp(respond: (args: string[]) => OpResult) {
 }
 
 describe("readAscKey", () => {
-	it("passes the configured account to op", async () => {
+	it("reads from the default account when it holds the item", async () => {
 		const { op, calls } = fakeOp(() => ({ ok: true, stdout: "pem\n" }));
-		expect(await readAscKey(ref, "my.1password.com", op)).toBe("pem");
-		expect(calls).toEqual([["read", "--account", "my.1password.com", ref]]);
+		expect(await readAscKey(ref, op)).toBe("pem");
+		expect(calls).toEqual([["read", ref]]);
 	});
 
 	it("searches each signed-in account when the default lacks the item", async () => {
@@ -40,7 +40,7 @@ describe("readAscKey", () => {
 				? { ok: true, stdout: "pem" }
 				: missing;
 		});
-		expect(await readAscKey(ref, undefined, op)).toBe("pem");
+		expect(await readAscKey(ref, op)).toBe("pem");
 		expect(calls.at(-1)).toEqual([
 			"read",
 			"--account",
@@ -53,7 +53,7 @@ describe("readAscKey", () => {
 		const { op } = fakeOp((args) =>
 			args[0] === "account" ? accounts : missing,
 		);
-		const error = readAscKey(ref, undefined, op);
+		const error = readAscKey(ref, op);
 		await expect(error).rejects.toThrow(/isn't an item in the "Private" vault/);
 		await expect(error).rejects.toThrow(
 			/searched makerx\.1password\.com, my\.1password\.com/,
@@ -61,11 +61,13 @@ describe("readAscKey", () => {
 		await expect(error).rejects.not.toThrow(/installed/);
 	});
 
-	it("does not search other accounts when one is configured", async () => {
-		const { op, calls } = fakeOp(() => missing);
-		await expect(readAscKey(ref, "my.1password.com", op)).rejects.toThrow(
-			/isn't an item/,
-		);
+	it("does not search other accounts for a non-missing error", async () => {
+		const { op, calls } = fakeOp(() => ({
+			ok: false,
+			error: "not signed in",
+			missing: false,
+		}));
+		await expect(readAscKey(ref, op)).rejects.toThrow(/not signed in/);
 		expect(calls).toHaveLength(1);
 	});
 });
