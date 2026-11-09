@@ -1,7 +1,6 @@
 import { hasCodexRolloutSync } from "../../commands/sessions/shared/codex/hasCodexRolloutSync";
 import { harnessLabel } from "../harnessLabel";
 import { spawnCodex } from "../spawnCodex";
-import { buildSlashCommand } from "./buildSlashCommand";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
 import type { HarnessAdapter } from "./types";
@@ -19,10 +18,7 @@ export const codexAdapter: HarnessAdapter = {
 				: undefined,
 	},
 	launchSkill: (skill, args, { cwd }) =>
-		spawnCodex(buildSlashCommand(skill, args), {
-			cwd,
-			sandbox: "workspace-write",
-		}),
+		spawnCodex(args ?? "", { cwd, sandbox: "workspace-write", skill }),
 	resume: (conversationId, nudge, { cwd }) =>
 		spawnCodex(nudge, {
 			cwd,

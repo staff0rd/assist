@@ -24,10 +24,14 @@ export function spawnLaunch(
 		request,
 	);
 	const cwd = process.cwd();
-	return resumeSessionId
-		? adapter.resume(resumeSessionId, resumeNudge(), { cwd })
-		: adapter.launchSkill(slashCommand, request.description, {
-				conversationId,
-				cwd,
-			});
+	if (resumeSessionId)
+		return adapter.resume(resumeSessionId, resumeNudge(), { cwd });
+	const [skill, ...inline] = slashCommand.split(" ");
+	const args = [...inline, request.description?.trim()]
+		.filter(Boolean)
+		.join(" ");
+	return adapter.launchSkill(skill, args || undefined, {
+		conversationId,
+		cwd,
+	});
 }

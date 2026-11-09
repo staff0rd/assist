@@ -99,7 +99,7 @@ const fixtures: Fixture[] = [
 		harness: "codex",
 		launch: {
 			command: "codex",
-			argsEnd: ["--sandbox", "workspace-write", "/refine a42"],
+			argsEnd: ["--sandbox", "workspace-write", "$refine a42"],
 		},
 		launchIdentity: { harness: "codex" },
 		resume: {
@@ -118,7 +118,7 @@ const fixtures: Fixture[] = [
 	},
 	{
 		harness: "fake",
-		launch: { command: "fake-harness", argsEnd: ["run", "@refine a42"] },
+		launch: { command: "fake-harness", argsEnd: ["run", "@refine", "a42"] },
 		launchIdentity: {},
 		resume: {
 			spawn: {

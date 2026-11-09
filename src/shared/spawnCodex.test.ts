@@ -177,6 +177,20 @@ describe("spawnCodex", () => {
 		);
 	});
 
+	it("invokes a requested skill with a live $mention while still neutralizing its arguments", () => {
+		spawnCodex("a42 mentions $draft", { cwd: "/repo", skill: "refine" });
+
+		const args = spawnInheritMock.mock.calls[0][1] as string[];
+		expect(args.at(-1)).toBe("$refine a42 mentions $⁠draft");
+	});
+
+	it("invokes a skill with no arguments", () => {
+		spawnCodex("", { cwd: "/repo", skill: "draft" });
+
+		const args = spawnInheritMock.mock.calls[0][1] as string[];
+		expect(args.at(-1)).toBe("$draft");
+	});
+
 	it("ignores review.codexModel", () => {
 		withConfig({ review: { codexModel: "gpt-5-codex" }, litellm: LITELLM });
 

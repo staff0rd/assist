@@ -12,9 +12,16 @@ export function spawnCodex(
 		cwd?: string;
 		sandbox?: "workspace-write" | "read-only";
 		resumeSessionId?: string;
+		skill?: string;
 	} = {},
 ): SpawnResult {
 	const cwd = options.cwd ?? process.cwd();
+	const text = [
+		options.skill && `$${options.skill}`,
+		prompt && neutralizeCodexSkillMentions(prompt),
+	]
+		.filter(Boolean)
+		.join(" ");
 	const override = buildHarnessCodexArgs();
 	return spawnInherit(
 		harnesses.codex.command,
@@ -28,7 +35,7 @@ export function spawnCodex(
 			"--sandbox",
 			options.sandbox ?? "workspace-write",
 			...(options.resumeSessionId ? ["resume", options.resumeSessionId] : []),
-			...(prompt ? [neutralizeCodexSkillMentions(prompt)] : []),
+			...(text ? [text] : []),
 		],
 		{ env: override.env },
 	);
