@@ -7,6 +7,7 @@ import { useNodeSelection } from "./useNodeSelection";
 import { useSend } from "./useSessionSocket/useSend";
 import { useSessionActions } from "./useSessionSocket/useSessionActions";
 import { useTranscriptNavigation } from "./useSessionSocket/useTranscriptNavigation";
+import { viewedLinkedNodes } from "./useSessionSocket/viewedLinkedNodes";
 import { useWsConnection } from "./useSessionSocket/useWsConnection";
 
 export type SessionSocket = ReturnType<typeof useSessionSocket>;
@@ -21,7 +22,8 @@ export function useSessionSocket() {
 	const actions = useSessionActions(send, buffers, handlers);
 	useActiveSelectionSync(activeId, sessions, conn.history, send);
 	useReportRenderedStatus(sessions, send);
-	useReportUserActivity(send);
+	const activeNode = sessions.find((s) => s.id === activeId)?.node;
+	useReportUserActivity(send, viewedLinkedNodes(activeNode, nodeSelection));
 
 	const nav = useTranscriptNavigation(
 		send,

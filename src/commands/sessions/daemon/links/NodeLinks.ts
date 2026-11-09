@@ -75,6 +75,12 @@ export class NodeLinks {
 		return routeToLink(this.links, this.localNode(), client, data);
 	}
 
+	relayUserActivity(nodes: unknown): void {
+		if (!Array.isArray(nodes)) return;
+		for (const node of new Set(nodes))
+			if (typeof node === "string") this.links.get(node)?.relayUserActivity();
+	}
+
 	viewerLeft(client: SessionClient, viewerId: string): void {
 		if (this.clients.isPeer(client)) return;
 		for (const link of this.all()) link.viewerLeft(viewerId);

@@ -6,6 +6,7 @@ import type { HarnessKind } from "../../../shared/harnesses";
 import type { RateLimits } from "../../../shared/RateLimits";
 import { broadcast, type SessionClient, sendTo } from "./broadcast";
 import { recentDaemonLogLines } from "./daemonLog";
+import { UserActivity } from "./UserActivity";
 
 // why: re-exported as ClientHub's companion persister so the daemon wires both from one import, keeping SessionManager under the maintainability gate.
 export { persistUsagePeak } from "./persistUsagePeak";
@@ -20,6 +21,7 @@ export class ClientHub extends Set<SessionClient> {
 	private readonly logSubscribers = new Set<SessionClient>();
 	private readonly peers = new Map<SessionClient, string | undefined>();
 	private readonly webServers = new Set<SessionClient>();
+	readonly userActivity = new UserActivity();
 
 	// why: the daemon injects a best-effort persister; left undefined elsewhere so `new ClientHub()` works and broadcasting never depends on it.
 	constructor(

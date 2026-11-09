@@ -10,6 +10,9 @@ import { SessionManager } from "../SessionManager";
 import type { InProcessPeer } from "./inProcessClient";
 import { inProcessTransport } from "./inProcessTransport";
 import type { LinkSpec } from "./LinkStatus";
+import { autoRestartBlocker } from "../../web/updates/autoRestart/autoRestartBlocker";
+
+const loop = { phase: "waiting" as const, since: "2026-01-01T00:00:00Z" };
 
 const helloName = vi.hoisted(() => ({ current: "pc-windows" }));
 
@@ -571,5 +574,63 @@ describe("a Mac linked to both PC nodes with a reverse link", () => {
 		const settled = macView.received.length + wslView.received.length;
 		await new Promise((resolve) => setTimeout(resolve, 50));
 		expect(macView.received.length + wslView.received.length).toBe(settled);
+	});
+
+	it("relays a viewed node's user activity to that peer only, which holds its auto-restart without re-relaying", async () => {
+		const mac = node("mac", [WSL, WINDOWS]);
+		const wsl = node("pc-wsl", [WINDOWS, { name: "mac", url: "http://mac" }]);
+		const windows = node("pc-windows");
+		const macView = viewer();
+		mac.addClient(macView.client);
+		mac.links.reload();
+		wsl.links.reload();
+		await vi.waitFor(() =>
+			expect(mac.links.nodes().links.map((l) => l.state)).toEqual([
+				"connected",
+				"connected",
+			]),
+		);
+
+		dispatchMessage(macView.client, mac, {
+			type: "user-activity",
+			nodes: ["pc-wsl"],
+		});
+
+		await vi.waitFor(() =>
+			expect(wsl.clients.userActivity.get()).toEqual(expect.any(Number)),
+		);
+		expect(mac.clients.userActivity.get()).toEqual(expect.any(Number));
+		await new Promise((resolve) => setTimeout(resolve, 20));
+		expect(windows.clients.userActivity.get()).toBeUndefined();
+
+		const wslView = viewer();
+		wsl.addClient(wslView.client);
+		const lastUserActivityAt = wslView.received.find(
+			(m) => m.type === "sessions",
+		)?.lastUserActivityAt as number;
+		expect(
+			autoRestartBlocker(
+				{
+					restart: ["daemon"],
+					buildPending: false,
+					loop,
+					sessions: [],
+					lastUserActivityAt,
+				},
+				Date.now(),
+			),
+		).toBe("you're active · restarting 2m after you stop");
+		expect(
+			autoRestartBlocker(
+				{
+					restart: ["daemon"],
+					buildPending: false,
+					loop,
+					sessions: [],
+					lastUserActivityAt,
+				},
+				lastUserActivityAt + 2 * 60_000,
+			),
+		).toBeUndefined();
 	});
 });

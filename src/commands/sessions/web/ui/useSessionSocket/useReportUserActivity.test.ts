@@ -33,6 +33,21 @@ describe("useReportUserActivity", () => {
 		expect(send).toHaveBeenCalledTimes(2);
 	});
 
+	it("names the linked nodes the tab is viewing", () => {
+		const send = vi.fn();
+		const { rerender } = renderHook(
+			({ nodes }) => useReportUserActivity(send, nodes),
+			{ initialProps: { nodes: ["pc-windows"] } },
+		);
+		document.dispatchEvent(new Event("pointerdown"));
+		expect(send).toHaveBeenCalledWith({
+			type: "user-activity",
+			nodes: ["pc-windows"],
+		});
+		rerender({ nodes: [] });
+		expect(send).toHaveBeenCalledTimes(1);
+	});
+
 	it("sends nothing while the tab is hidden or idle", () => {
 		const send = vi.fn();
 		const { unmount } = renderHook(() => useReportUserActivity(send));

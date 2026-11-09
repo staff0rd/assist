@@ -1,7 +1,7 @@
 import type { SessionClient } from "../broadcast";
 import { daemonLog } from "../daemonLog";
 import { createLinkContext } from "./createLinkContext";
-import { describeLink } from "./describeLink";
+import { describeLink, unavailableReason } from "./describeLink";
 import { forwardToLink } from "./forwardToLink";
 import type { LinkContext, NodeLinkDeps } from "./LinkContext";
 import { replayLinkScrollback } from "./LinkRelayState";
@@ -12,8 +12,11 @@ import { reconnectNow } from "./scheduleReconnect";
 import { sendToLink, setLinkState } from "./setLinkState";
 import { disconnectLink } from "./teardownLink";
 
+const ACTIVITY_LOG_GAP_MS = 60_000;
+
 export class NodeLink {
 	private readonly ctx: LinkContext;
+	private lastActivityRelayAt = Number.NEGATIVE_INFINITY;
 
 	constructor(
 		readonly spec: LinkSpec,
@@ -40,6 +43,16 @@ export class NodeLink {
 
 	route(client: SessionClient, data: Record<string, unknown>): void {
 		forwardToLink(this.ctx, client, data);
+	}
+
+	relayUserActivity(now = Date.now()): void {
+		const delivered =
+			this.ctx.greeted && sendToLink(this.ctx, { type: "user-activity" });
+		if (now - this.lastActivityRelayAt > ACTIVITY_LOG_GAP_MS)
+			daemonLog(
+				`link ${this.spec.name} ws: ${delivered ? "relayed" : `DROPPED (${unavailableReason(this.ctx)})`} user-activity`,
+			);
+		this.lastActivityRelayAt = now;
 	}
 
 	viewerLeft(viewerId: string): void {
