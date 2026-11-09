@@ -1,10 +1,35 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
+import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
+import { selectPreviewText } from "../../../../../../../test/selectPreviewText";
+import type { SessionInfo } from "../../../types";
 import { CheckPane } from "./CheckPane";
 
-afterEach(cleanup);
+beforeEach(() => {
+	vi.stubGlobal(
+		"fetch",
+		vi.fn(async () => ({
+			ok: true,
+			status: 200,
+			json: async () => ({ rules: [] }),
+		})),
+	);
+});
+
+afterEach(() => {
+	cleanup();
+	vi.unstubAllGlobals();
+	localStorage.clear();
+});
+
+const liveSession = makeSessionInfo({
+	id: "daemon-1",
+	name: "check-42",
+	commandType: "claude",
+	status: "running",
+});
 
 const preview: PrPreview = {
 	requestId: "r1",
@@ -120,5 +145,62 @@ describe("CheckPane", () => {
 			"reject",
 			expect.objectContaining({ answers: { note: "No Mac to hand" } }),
 		);
+	});
+
+	it("sends a question about a step to the live session and keeps the check open", async () => {
+		const onDecision = vi.fn();
+		const sendInput = vi.fn();
+		render(
+			<CheckPane
+				preview={preview}
+				session={liveSession}
+				sendInput={sendInput}
+				onDecision={onDecision}
+			/>,
+		);
+
+		selectPreviewText(document.body, "PIN appears");
+		fireEvent.change(screen.getByPlaceholderText("Add a note…"), {
+			target: { value: "which Mac?" },
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Send to agent" }));
+
+		const data = sendInput.mock.calls.map(([, chunk]) => chunk).join("");
+		expect(sendInput.mock.calls[0]?.[0]).toBe("daemon-1");
+		expect(data).toContain(
+			'Pending manual check "PIN shows on the Mac", step:2',
+		);
+		expect(data).toContain("PIN appears");
+		expect(data).toContain("which Mac?");
+		expect(onDecision).not.toHaveBeenCalled();
+		expect(await screen.findByText("Question sent to check-42")).toBeTruthy();
+
+		fireEvent.click(screen.getByRole("button", { name: "Works" }));
+		expect(onDecision).toHaveBeenCalledWith(
+			"approve",
+			expect.objectContaining({ answers: { result: "works" } }),
+		);
+	});
+
+	it("shows the unavailable reason when the session is not live", async () => {
+		const sendInput = vi.fn();
+		render(
+			<CheckPane
+				preview={preview}
+				session={{ ...liveSession, status: "stopped" } as SessionInfo}
+				sendInput={sendInput}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		selectPreviewText(document.body, "PIN appears");
+
+		expect(
+			await screen.findByText(
+				"Comments are unavailable — that session is no longer live.",
+			),
+		).toBeTruthy();
+		expect(screen.queryByPlaceholderText("Add a note…")).toBeNull();
+		expect(sendInput).not.toHaveBeenCalled();
 	});
 });

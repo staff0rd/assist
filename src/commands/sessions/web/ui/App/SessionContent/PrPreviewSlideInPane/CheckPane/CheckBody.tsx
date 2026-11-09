@@ -8,7 +8,7 @@ import { Label } from "./Label";
 export function CheckBody({ check }: { check: AskCheckInput }) {
 	const before = check.before ?? [];
 	return (
-		<Stack spacing={2} sx={{ p: 2, flex: 1, minHeight: 0, overflowY: "auto" }}>
+		<Stack spacing={2} sx={{ p: 2 }}>
 			{before.length > 0 && (
 				<Stack spacing={0.75}>
 					<BeforeChips items={before} />

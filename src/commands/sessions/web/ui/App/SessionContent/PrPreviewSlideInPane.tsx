@@ -35,7 +35,14 @@ export function PrPreviewSlideInPane({
 		);
 
 	if (preview.kind === "check")
-		return <CheckPane preview={preview} onDecision={onDecision} />;
+		return (
+			<CheckPane
+				preview={preview}
+				session={session}
+				sendInput={pane.sendInput}
+				onDecision={onDecision}
+			/>
+		);
 
 	if (preview.kind === "high-level-review")
 		return (

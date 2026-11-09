@@ -3,9 +3,11 @@ import { Toast } from "../Toast";
 
 export function CommentSentSnackbar({
 	sessionName,
+	subject = "Comment",
 	onClose,
 }: {
 	sessionName: string | null;
+	subject?: string;
 	onClose: () => void;
 }) {
 	return (
@@ -15,7 +17,7 @@ export function CommentSentSnackbar({
 			onClose={onClose}
 		>
 			<Alert severity="success" variant="filled" onClose={onClose}>
-				{`Comment sent to ${sessionName}`}
+				{`${subject} sent to ${sessionName}`}
 			</Alert>
 		</Toast>
 	);
