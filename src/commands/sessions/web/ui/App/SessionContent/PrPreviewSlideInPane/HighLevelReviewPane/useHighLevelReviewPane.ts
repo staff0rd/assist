@@ -15,7 +15,7 @@ export function useHighLevelReviewPane(
 	session: SessionInfo | undefined,
 	sendInput: ((sessionId: string, data: string) => void) | undefined,
 ) {
-	const { payload, sliced, progress } = useHighLevelPanePayload(preview);
+	const { payload, sliced, progress, head } = useHighLevelPanePayload(preview);
 	const checklist = useHighLevelChecklist(
 		payload.checks,
 		progress,
@@ -28,7 +28,12 @@ export function useHighLevelReviewPane(
 		sendInput,
 	);
 	const diffComments = { ...comments, onQueue: queue.onQueue };
-	usePersistHighLevelProgress(preview.requestId, checklist.items, queue.queued);
+	usePersistHighLevelProgress(
+		preview.requestId,
+		head,
+		checklist.items,
+		queue.queued,
+	);
 	const counts = useMemo(() => highLevelJumpCounts(payload), [payload]);
 
 	return {
@@ -42,5 +47,6 @@ export function useHighLevelReviewPane(
 		sliced,
 		nav,
 		diffComments,
+		head,
 	};
 }

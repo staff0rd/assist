@@ -45,7 +45,7 @@ export function HighLevelReviewPane({
 			<HighLevelReviewFooter
 				pane={pane}
 				onDecision={(decision, details) => {
-					clearPersistedHighLevelProgress(preview.requestId);
+					clearPersistedHighLevelProgress(preview.requestId, pane.head);
 					onDecision(decision, details);
 				}}
 			/>
