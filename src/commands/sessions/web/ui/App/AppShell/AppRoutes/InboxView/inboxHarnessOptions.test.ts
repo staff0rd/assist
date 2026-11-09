@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { inboxHarnessOptions } from "./inboxHarnessOptions";
 
 describe("inboxHarnessOptions", () => {
-	it("offers each other harness, marking unavailable ones with their reasons", () => {
+	it("offers only other harnesses where the inbox scan resolves available", () => {
 		expect(
 			inboxHarnessOptions({
 				exposeCodexActions: true,
@@ -30,14 +30,7 @@ describe("inboxHarnessOptions", () => {
 					},
 				},
 			}),
-		).toEqual([
-			{
-				kind: "codex",
-				label: "Scan with Codex",
-				unavailable: "no Gmail; no allow-list",
-			},
-			{ kind: "pi", label: "Scan with pi" },
-		]);
+		).toEqual([{ kind: "pi", label: "Scan with pi" }]);
 	});
 
 	it("offers nothing before capabilities load", () => {

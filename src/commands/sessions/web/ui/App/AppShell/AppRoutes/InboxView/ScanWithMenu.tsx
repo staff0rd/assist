@@ -1,5 +1,5 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { Button, ListItemText, Menu, MenuItem } from "@mui/material";
+import { Button, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import type { InboxHarnessOption } from "./inboxHarnessOptions";
@@ -36,18 +36,12 @@ export function ScanWithMenu({
 				{options.map((option) => (
 					<MenuItem
 						key={option.kind}
-						disabled={option.unavailable !== undefined}
 						onClick={() => {
 							setAnchor(null);
 							onPick(option.kind);
 						}}
 					>
-						<ListItemText
-							primary={option.label}
-							secondary={
-								option.unavailable && `Unavailable: ${option.unavailable}`
-							}
-						/>
+						{option.label}
 					</MenuItem>
 				))}
 			</Menu>
