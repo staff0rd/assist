@@ -1,10 +1,11 @@
 import type { Socket } from "node:net";
-import { createInterface } from "node:readline";
 import type { WebSocket } from "ws";
 import { connectToDaemon } from "../daemon/connectToDaemon";
 import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
 import { resolveLinkTarget } from "../daemon/links/resolveLinkTarget";
 import { resolveNodeName } from "../shared/resolveNodeName";
+import { forEachCompleteLine } from "./forEachCompleteLine";
+import { withRepoCwd } from "./withRepoCwd";
 
 export type RelayContext = {
 	serverCwd: string;
@@ -43,13 +44,16 @@ async function openDaemonConnection(
 }
 
 function relayDaemonLines(conn: Socket, ws: WebSocket, repoCwd?: string): void {
-	const lines = createInterface({ input: conn });
-	// readline re-emits the socket's 'error' (e.g. ECONNRESET on abrupt
-	// disconnect) and crashes the process if unhandled
-	lines.on("error", () => {});
-	lines.on("line", (line) => {
-		if (ws.readyState === ws.OPEN) ws.send(withRepoCwd(line, repoCwd));
-	});
+	forEachCompleteLine(
+		conn,
+		(line) => {
+			if (ws.readyState === ws.OPEN) ws.send(withRepoCwd(line, repoCwd));
+		},
+		(partial) =>
+			console.log(
+				`ws relay: dropped truncated daemon message (${partial.length} chars) after the daemon connection closed`,
+			),
+	);
 	conn.on("error", () => {});
 	conn.on("close", () => ws.close());
 }
@@ -83,18 +87,4 @@ function targetsLinkedNode(data: Record<string, unknown>): boolean {
 	return (
 		resolveLinkTarget(data, resolveNodeName(), () => true).kind !== "local"
 	);
-}
-
-// The repo the web server was started in is per-client context the daemon
-// doesn't know about.
-function withRepoCwd(line: string, repoCwd?: string): string {
-	if (!repoCwd) return line;
-	try {
-		const data = JSON.parse(line);
-		if (data.type !== "sessions" || data.cwd) return line;
-		data.cwd = repoCwd;
-		return JSON.stringify(data);
-	} catch {
-		return line;
-	}
 }

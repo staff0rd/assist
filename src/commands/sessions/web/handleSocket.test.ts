@@ -107,6 +107,54 @@ describe("handleSocket", () => {
 
 			expect(send).toHaveBeenCalledWith(line);
 		});
+
+		it("drops a large line cut off when the daemon connection closes", async () => {
+			const log = vi.spyOn(console, "log").mockImplementation(() => {});
+			const { conn } = createConn();
+			connectMock.mockResolvedValue(conn);
+			const { ws, send } = createWs();
+			const complete = JSON.stringify({ type: "output", data: "x" });
+			const history = JSON.stringify({
+				type: "history",
+				sessions: Array.from({ length: 5000 }, (_, i) => ({
+					id: `session-${i}`,
+					title: "a".repeat(80),
+				})),
+			});
+
+			handleSocket(ws, ctx);
+			await flush();
+			conn.push(`${complete}\n`);
+			const partial = history.slice(0, 438_436);
+			for (let i = 0; i < partial.length; i += 65_536)
+				conn.push(partial.slice(i, i + 65_536));
+			await flush();
+			conn.push(null);
+			await flush();
+			conn.emit("close");
+			await flush();
+
+			expect(send.mock.calls).toEqual([[complete]]);
+			expect(ws.close).toHaveBeenCalled();
+			expect(log).toHaveBeenCalledOnce();
+			log.mockRestore();
+		});
+
+		it("relays a line split across chunks once it completes", async () => {
+			const { conn } = createConn();
+			connectMock.mockResolvedValue(conn);
+			const { ws, send } = createWs();
+			const line = JSON.stringify({ type: "output", data: "é".repeat(10) });
+			const bytes = Buffer.from(`${line}\n`);
+
+			handleSocket(ws, ctx);
+			await flush();
+			conn.push(bytes.subarray(0, 23));
+			conn.push(bytes.subarray(23));
+			await flush();
+
+			expect(send.mock.calls).toEqual([[line]]);
+		});
 	});
 
 	it("destroys the daemon connection when the browser disconnects", async () => {

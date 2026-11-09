@@ -1,5 +1,6 @@
 import { apiWsUrl } from "../../../../apiUrl";
 import { handleWsMessage } from "./createWsConnection/handleWsMessage";
+import { parseWsFrame } from "./createWsConnection/parseWsFrame";
 import type { WsDispatch } from "../WsDispatch";
 
 type WsLifecycle = {
@@ -20,7 +21,8 @@ export function createWsConnection(
 	};
 
 	ws.onmessage = (e) => {
-		handleWsMessage(JSON.parse(e.data), d);
+		const msg = parseWsFrame(e.data);
+		if (msg) handleWsMessage(msg, d);
 	};
 
 	ws.onclose = () => lifecycle.onClose?.();
