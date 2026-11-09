@@ -1,3 +1,10 @@
+# [0.1098.0](https://github.com/staff0rd/assist/compare/v0.1097.0...v0.1098.0) (2026-11-09)
+
+
+### Features
+
+* relay linked peers' rate limits ([e0b7a6f](https://github.com/staff0rd/assist/commit/e0b7a6fc8d56f8ae19a71058438ed7959a80a031))
+
 # [0.1097.0](https://github.com/staff0rd/assist/compare/v0.1096.0...v0.1097.0) (2026-11-09)
 
 
