@@ -1,3 +1,10 @@
+# [0.1090.0](https://github.com/staff0rd/assist/compare/v0.1089.1...v0.1090.0) (2026-11-09)
+
+
+### Features
+
+* https protocol for server run links ([9822e98](https://github.com/staff0rd/assist/commit/9822e98ade59e34f52c08947ee2297cc23c168d6))
+
 ## [0.1089.1](https://github.com/staff0rd/assist/compare/v0.1089.0...v0.1089.1) (2026-11-09)
 
 
