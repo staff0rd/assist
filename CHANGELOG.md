@@ -1,3 +1,10 @@
+# [0.1097.0](https://github.com/staff0rd/assist/compare/v0.1096.0...v0.1097.0) (2026-11-09)
+
+
+### Features
+
+* run review workflows via adapters ([f1f9077](https://github.com/staff0rd/assist/commit/f1f9077711ee5f3713a7ec3bd0bef5fc8733f7fd))
+
 # [0.1096.0](https://github.com/staff0rd/assist/compare/v0.1095.4...v0.1096.0) (2026-11-09)
 
 
