@@ -19,6 +19,10 @@ vi.mock("../../shared/spawnClaude", () => ({
 	spawnClaude: vi.fn(),
 }));
 
+vi.mock("../../shared/harnessAdapters/detectHarness", () => ({
+	detectHarness: () => ({ supported: true }),
+}));
+
 vi.mock("./next", () => ({
 	next: vi.fn(),
 }));
@@ -54,12 +58,13 @@ vi.mock("./watchForMarker", () => ({
 
 import { emitActivity } from "../../shared/emitActivity";
 import { spawnClaude } from "../../shared/spawnClaude";
-import { buildSlashCommand, launchMode } from "./launchMode";
+import { launchMode } from "./launchMode";
 import { loadItem } from "./loadItem";
 import { next } from "./next";
 import { readSignal } from "./readSignal";
 import { tryRunById } from "./tryRunById";
 import { watchForMarker } from "./watchForMarker";
+import { buildSlashCommand } from "../../shared/harnessAdapters/buildSlashCommand";
 
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;
 const mockNext = next as unknown as MockInstance;
@@ -148,7 +153,6 @@ describe("launchMode", () => {
 				"A restart interrupted this conversation. Continue from where you left off.",
 				{
 					allowEdits: true,
-					sessionId: "draft-456",
 					resumeSessionId: "draft-456",
 				},
 			);

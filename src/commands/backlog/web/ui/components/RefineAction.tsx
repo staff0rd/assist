@@ -1,18 +1,21 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Button, ButtonGroup } from "@mui/material";
 import { type MouseEvent, useRef, useState } from "react";
+import { refineFeature } from "../../../../../shared/harnessAdapters/harnessFeatures";
+import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
 import { useHarnessCapabilities } from "../../../../sessions/web/ui/useHarnessCapabilities";
-import { HarnessMenu, harnessOptions } from "./HarnessMenu";
+import { featureHarnessOptions } from "./featureHarnessOptions";
+import { HarnessMenu } from "./HarnessMenu";
 import { useRefineLaunch } from "./useRefineLaunch";
 
 export function RefineAction({ itemId }: { itemId: number }) {
 	const { launched, launch } = useRefineLaunch(itemId);
-	const capabilities = useHarnessCapabilities();
+	const capabilities = useHarnessCapabilities(useApiNode());
 	const anchorRef = useRef<HTMLDivElement>(null);
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	const stop = (event: MouseEvent) => event.stopPropagation();
-	const options = harnessOptions(capabilities);
+	const options = featureHarnessOptions(capabilities, refineFeature.id);
 
 	return (
 		<>

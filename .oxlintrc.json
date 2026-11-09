@@ -4,7 +4,8 @@
 	"jsPlugins": [
 		"./oxlint-rules/filenameConvention.ts",
 		"./oxlint-rules/noRawStyleValues.ts",
-		"./oxlint-rules/requireShiftSkipConfirm.ts"
+		"./oxlint-rules/requireShiftSkipConfirm.ts",
+		"./oxlint-rules/noHarnessBranches.ts"
 	],
 	"categories": {
 		"correctness": "error",
@@ -66,9 +67,49 @@
 	},
 	"overrides": [
 		{
+			"files": ["src/**/*.ts", "src/**/*.tsx"],
+			"rules": {
+				"harness/no-harness-branches": [
+					"error",
+					{
+						"adapterDirs": ["src/shared/harnessAdapters"],
+						"allow": {
+							"src/shared/spawnHarness.ts": "backlog-run launch dispatch; moves onto the launch contract in a1545 phase 2",
+							"src/shared/runOneShotPrompt.ts": "one-shot dispatch; moves into the adapters' headless operation in a1545 phase 2",
+							"src/shared/harnessActivityFields.ts": "launch identity for backlog runs; replaced by adapter activityIdentity in a1545 phase 2",
+							"src/shared/usageWindowKey.ts": "usage window keys; normalized at adapter boundaries in a1545 phase 2",
+							"src/commands/sessions/web/ui/App/UsageHistoryView/usagePeakWindow.ts": "usage window keys; normalized at adapter boundaries in a1545 phase 2",
+							"src/commands/sessions/web/ui/useSessionSocket/useWsConnection/useRateLimitsState.ts": "rate-limit observations; normalized at adapter boundaries in a1545 phase 2",
+							"handleWsMessage/handleLimits.ts": "rate-limit observations; normalized at adapter boundaries in a1545 phase 2",
+							"src/commands/sessions/daemon/ClientHub.ts": "rate-limit relay; normalized at adapter boundaries in a1545 phase 2",
+							"src/commands/sessions/daemon/createSession.ts": "direct session creation; moves onto the launch contract in a1545 phase 2",
+							"src/commands/sessions/daemon/spawnCreate.ts": "direct session creation; moves onto the launch contract in a1545 phase 2",
+							"src/commands/sessions/web/ui/App/AppShell/AppOverlays/NewSessionLayer/launchNewSession.ts": "new-session launch; moves onto the launch contract in a1545 phase 2",
+							"src/commands/sessions/web/ui/PhoneShell/PhoneBacklog/usePhoneStart.ts": "Build harness menu; moves onto the resolver in a1545 phase 2",
+							"src/commands/backlog/verifyResumeConversation.ts": "backlog-run resume; moves onto the launch/resume contract in a1545 phase 2",
+							"src/commands/backlog/resolveHarness.ts": "parses the --harness flag value into a HarnessKind; not a behaviour branch",
+							"src/commands/review/resolveSynthesisHarness.ts": "review synthesis; generalized in a1545 phase 3",
+							"src/commands/review/runSynthesisReviewer.ts": "review synthesis; generalized in a1545 phase 3",
+							"src/commands/sessions/web/ui/App/AppSidebar/HarnessBadge.tsx": "branding (no badge for the default harness); made harness-neutral in a1545 phase 3",
+							"src/shared/readSettingsPerms.ts": "permission sources; separated from hook transport in a1545 phase 6",
+							"src/commands/sessions/daemon/rememberSessionTitle.ts": "titles from transcripts; normalized conversation events in a1545 phase 7",
+							"src/commands/sessions/daemon/applyLaunchActivity.ts": "conversation binding; adapter identity discovery in a1545 phase 7",
+							"src/commands/sessions/daemon/bindCodexSession.ts": "conversation binding; adapter identity discovery in a1545 phase 7",
+							"src/commands/sessions/daemon/historySearch/transcriptLineTexts.ts": "transcript parsing; normalized conversation events in a1545 phase 7",
+							"src/commands/sessions/daemon/deriveRestoreStatus.ts": "restore status from transcripts; normalized conversation events in a1545 phase 7",
+							"src/commands/sessions/daemon/interactiveHarnessRespawn.ts": "direct-session respawn; harness-aware conversation recovery in a1545 phase 9",
+							"src/commands/sessions/daemon/restoreInteractiveSession.ts": "direct-session restore; harness-aware conversation recovery in a1545 phase 9",
+							"src/commands/sessions/daemon/resumeSession.ts": "direct-session resume; harness-aware conversation recovery in a1545 phase 9"
+						}
+					}
+				]
+			}
+		},
+		{
 			"files": ["**/*.test.ts", "**/*.test.tsx", "**/*.d.ts", "src/index.ts"],
 			"rules": {
-				"local/filename-convention": "off"
+				"local/filename-convention": "off",
+				"harness/no-harness-branches": "off"
 			}
 		},
 		{

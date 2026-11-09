@@ -10,7 +10,7 @@ export function registerRefineCommand(cmd: Command): void {
 		.option("--once", "Exit when the initial task completes")
 		.option(
 			"--harness <kind>",
-			"Coding harness to launch (claude|codex|pi); defaults to the configured harness.engine",
+			"Coding harness to launch (claude|codex|pi); defaults to the configured harness.engine. Exits with the reasons, without launching, when Refine is unavailable on it",
 		)
 		.action(
 			(id: string | undefined, opts: { once?: boolean; harness?: string }) =>

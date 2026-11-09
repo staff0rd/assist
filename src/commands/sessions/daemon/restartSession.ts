@@ -13,12 +13,14 @@ export function restartSession(
 ): boolean {
 	const plan = respawnPlan(session);
 	if (!plan) return false;
-	const via = session.claudeSessionId
+	const fallbackVia = session.claudeSessionId
 		? `resume ${session.claudeSessionId}`
 		: "fresh";
 	const respawn = () => {
 		respawnSession(session, plan.spawn, plan.status, clients, onStatusChange);
-		daemonLog(`session ${session.id} restarted (${via}): ${session.name}`);
+		daemonLog(
+			`session ${session.id} restarted (${plan.via?.() ?? fallbackVia}): ${session.name}`,
+		);
 	};
 
 	const pty = session.pty;

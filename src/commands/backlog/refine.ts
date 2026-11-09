@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import enquirer from "enquirer";
 import { exitOnCancel } from "../../shared/exitOnCancel";
+import { refineFeature } from "../../shared/harnessAdapters/harnessFeatures";
 import { formatItemId, parseItemId } from "./formatItemId";
 import { type LaunchModeOptions, launchMode } from "./launchMode";
 import { typeLabel } from "./list/shared";
@@ -53,6 +54,7 @@ export async function refine(
 
 	await launchMode(`refine ${itemId}`, {
 		...options,
+		feature: refineFeature,
 		itemId: item ? numericId : undefined,
 		itemName: item?.name,
 	});

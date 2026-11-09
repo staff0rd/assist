@@ -11,7 +11,7 @@ type RefineLaunchOpts = {
 };
 
 const HARNESS_FLAG =
-	"Coding harness to launch (claude|codex|pi); defaults to the configured harness.engine";
+	"Coding harness to launch (claude|codex|pi); defaults to the configured harness.engine. Exits with the reasons, without launching, when Refine is unavailable on it";
 
 function runRefine(
 	id: string | undefined,

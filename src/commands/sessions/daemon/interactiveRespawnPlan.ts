@@ -7,6 +7,7 @@ import { spawnClaude } from "./spawnClaude";
 export type RespawnPlan = {
 	spawn: () => Session["pty"];
 	status: Session["status"];
+	via?: () => string;
 };
 
 export function interactiveRespawnPlan(

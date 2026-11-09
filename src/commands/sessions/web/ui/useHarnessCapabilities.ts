@@ -1,34 +1,49 @@
 import { useEffect, useState } from "react";
+import type { FeatureResolution } from "../../../../shared/harnessAdapters/types";
+import type { HarnessKind } from "../../../../shared/harnesses";
 import { apiFetch } from "./apiFetch";
 import { reportCaughtError } from "./clientFailures/reportCaughtError";
+import { withNode } from "./withNode";
 
-export function useHarnessCapabilities(): {
+export type HarnessCapabilities = {
 	exposeCodexActions: boolean;
 	exposePiActions: boolean;
-} {
-	const [exposeCodexActions, setExposeCodexActions] = useState(false);
-	const [exposePiActions, setExposePiActions] = useState(false);
+	engine: HarnessKind;
+	features: Record<string, Partial<Record<HarnessKind, FeatureResolution>>>;
+};
+
+const NONE: HarnessCapabilities = {
+	exposeCodexActions: false,
+	exposePiActions: false,
+	engine: "claude",
+	features: {},
+};
+
+export function useHarnessCapabilities(node?: string): HarnessCapabilities {
+	const [capabilities, setCapabilities] = useState(NONE);
 
 	useEffect(() => {
 		let cancelled = false;
 		void (async () => {
 			try {
-				const res = await apiFetch("/api/harness");
+				const res = await apiFetch(withNode("/api/harness", node));
 				const body = await res.json();
-				if (!cancelled) {
-					setExposeCodexActions(Boolean(body?.exposeCodexActions));
-					setExposePiActions(Boolean(body?.exposePiActions));
-				}
+				if (!cancelled)
+					setCapabilities({
+						exposeCodexActions: Boolean(body?.exposeCodexActions),
+						exposePiActions: Boolean(body?.exposePiActions),
+						engine: body?.engine ?? "claude",
+						features: body?.features ?? {},
+					});
 			} catch (error) {
 				reportCaughtError(error, "harness capabilities");
-				setExposeCodexActions(false);
-				setExposePiActions(false);
+				if (!cancelled) setCapabilities(NONE);
 			}
 		})();
 		return () => {
 			cancelled = true;
 		};
-	}, []);
+	}, [node]);
 
-	return { exposeCodexActions, exposePiActions };
+	return capabilities;
 }

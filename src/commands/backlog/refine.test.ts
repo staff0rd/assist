@@ -23,6 +23,7 @@ vi.mock("./loadBacklogSummaries", () => ({
 	loadBacklogSummaries: vi.fn(),
 }));
 
+import { refineFeature } from "../../shared/harnessAdapters/harnessFeatures";
 import { launchMode } from "./launchMode";
 import { loadItem } from "./loadItem";
 import { refine } from "./refine";
@@ -45,6 +46,7 @@ describe("refine", () => {
 			once: true,
 			itemId: 254,
 			itemName: "Add refine mode button",
+			feature: refineFeature,
 		});
 	});
 
@@ -56,6 +58,7 @@ describe("refine", () => {
 		expect(mockLaunchMode).toHaveBeenCalledWith("refine a999", {
 			itemId: undefined,
 			itemName: undefined,
+			feature: refineFeature,
 		});
 	});
 });

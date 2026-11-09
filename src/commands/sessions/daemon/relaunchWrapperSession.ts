@@ -5,7 +5,7 @@ import type { RestoreStatus } from "./deriveRestoreStatus";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
 import { restoreResumePlan } from "./restoreResumePlan";
-import { resumableConversationId } from "./resumableConversationId";
+import { conversationResumeOutcome } from "./conversationResumeOutcome";
 import { resumedRunEnv } from "./resumedRunEnv";
 import { runningSession, waitingSession } from "./runningSession";
 import { spawnPty } from "./spawnPty";
@@ -16,13 +16,14 @@ export function relaunchWrapperSession(
 	base: ReturnType<typeof restoreBase>,
 	status: RestoreStatus,
 ): Session {
-	const resumeSessionId = resumableConversationId(persisted);
+	const resume = conversationResumeOutcome(persisted);
+	const resumeSessionId = resume.id;
 	const plan = restoreResumePlan(
 		persisted,
 		resumeSessionId ? status : "running",
 	);
 	daemonLog(
-		`session ${id} relaunching wrapper (${resumeSessionId ? `resume ${resumeSessionId}` : "fresh"})`,
+		`session ${id} relaunching wrapper (${resumeSessionId ? `resume ${resumeSessionId}` : `fresh: ${resume.reason}`})`,
 	);
 	const pty = spawnPty(
 		assistResumeArgs({ assistArgs: persisted.assistArgs, resumeSessionId }),

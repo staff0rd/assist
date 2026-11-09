@@ -1,13 +1,13 @@
-import { harnessLabel, resolveHarness } from "../../../shared/harnessLabel";
-import { harnessResumesConversation } from "../../../shared/harnessResumesConversation";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
+import { resolveCapability } from "../../../shared/harnessAdapters/resolveCapability";
 import type { PersistedSession } from "./loadPersistedSessions";
 
 export function unresumableReason(
 	harness: PersistedSession["harness"],
 ): string {
-	if (resolveHarness(harness) === "claude")
-		return "no claude session id was recorded before the daemon stopped, so the conversation cannot be resumed";
-	return harnessResumesConversation(harness)
-		? `no ${harnessLabel(harness)} conversation id was recorded before the daemon stopped, so the conversation cannot be resumed`
-		: `${harnessLabel(harness)} sessions cannot be resumed yet, so the conversation cannot be restored`;
+	const adapter = harnessAdapter(harness);
+	const resume = resolveCapability(adapter.capabilities, "conversation.resume");
+	return resume.supported
+		? `no ${adapter.conversation.idName} was recorded before the daemon stopped, so the conversation cannot be resumed`
+		: `${resume.reason}, so the conversation cannot be restored`;
 }

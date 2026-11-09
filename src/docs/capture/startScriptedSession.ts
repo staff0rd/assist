@@ -1,10 +1,10 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { buildSlashCommand } from "../../commands/backlog/launchMode";
 import type { CaptureSessionStep } from "../captureSetupStepSchema";
 import type { CaptureHome } from "./createCaptureHome";
 import { createCaptureWorktree } from "./createCaptureWorktree";
 import { requestDaemon } from "./requestDaemon";
+import { buildSlashCommand } from "../../shared/harnessAdapters/buildSlashCommand";
 
 function claudePrompt(step: CaptureSessionStep): string {
 	return step.command
