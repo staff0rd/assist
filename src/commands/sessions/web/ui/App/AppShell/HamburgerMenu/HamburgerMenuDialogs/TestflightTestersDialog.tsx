@@ -9,16 +9,9 @@ import { TestersDialogHeader } from "./TestflightTestersDialog/TestersDialogHead
 import { useAddTester } from "./TestflightTestersDialog/useAddTester";
 import { useTestflightTesters } from "./TestflightTestersDialog/useTestflightTesters";
 
-export function TestflightTestersDialog({
-	fullScreen,
-	onClose,
-}: {
-	fullScreen?: boolean;
-	onClose: () => void;
-}) {
+export function TestflightTestersDialog({ onClose }: { onClose: () => void }) {
 	const theme = useTheme();
-	const narrow = useMediaQuery(theme.breakpoints.down("sm"));
-	const sheet = fullScreen ?? narrow;
+	const sheet = useMediaQuery(theme.breakpoints.down("sm"));
 	const { loading, error, testers, refresh } = useTestflightTesters();
 	const { add, pending, notice, clearNotice } = useAddTester(() =>
 		refresh(true),
