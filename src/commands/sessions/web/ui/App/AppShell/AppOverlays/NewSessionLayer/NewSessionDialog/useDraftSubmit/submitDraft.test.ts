@@ -51,13 +51,13 @@ describe("submitDraft", () => {
 
 		expect(l.onCreateAssist).toHaveBeenNthCalledWith(
 			1,
-			["draft", "--once"],
+			["draft", "--once", "--harness", "claude"],
 			"/git/app",
 			{ autoApprove: true, open: true },
 		);
 		expect(l.onCreateAssist).toHaveBeenNthCalledWith(
 			2,
-			["draft", "--once"],
+			["draft", "--once", "--harness", "claude"],
 			"/git/app",
 		);
 	});
@@ -74,7 +74,7 @@ describe("submitDraft", () => {
 		);
 
 		expect(l.onCreateAssist).toHaveBeenCalledWith(
-			["draft", "--once"],
+			["draft", "--once", "--harness", "claude"],
 			"/git/app",
 			{ node: "pc-windows", autoApprove: true, open: true },
 		);

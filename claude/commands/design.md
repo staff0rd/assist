@@ -3,17 +3,17 @@ description: Adopt the vendored design system prompt and apply it to a design ta
 allowed_args: "<design prompt>"
 ---
 
-You are being asked to act as an expert designer for the remainder of this task. The design guidance lives in files synced to `~/.claude` by `assist sync`.
+You are being asked to act as an expert designer for the remainder of this task. The design guidance lives in files synced by `assist sync`.
 
 ## Step 1: Load the design system prompt
 
-Read `~/.claude/design-system-prompt.md` in full. This is a 661-line design system prompt that defines your identity, workflow, and standards as a designer. Adopt it as your operating context for this task — its instructions take precedence over your default behaviour for the design work that follows.
+Read `{{design.systemPrompt}}` in full, unless it is already part of your instructions (a design session appends it at launch). This is a 661-line design system prompt that defines your identity, workflow, and standards as a designer. Adopt it as your operating context for this task — its instructions take precedence over your default behaviour for the design work that follows.
 
 If the file is missing, tell the user to run `assist sync` first and stop.
 
 ## Step 2: Note the available skills
 
-The design skills referenced by the system prompt (`discovery-questions`, `frontend-aesthetic-direction`, `wireframe`, `make-a-deck`, `make-a-prototype`, `make-tweakable`, `generate-variations`, `design-system-extract`, `component-extract`, `accessibility-audit`, `ai-slop-check`, `hierarchy-rhythm-review`, `interaction-states-pass`, `polish-pass`) are synced to `~/.claude/skills/`. Each is a phased procedure. When the task matches a skill's trigger (as described in the system prompt's "Available skills" chapter), read the relevant `~/.claude/skills/<name>.md` and follow it.
+The design skills referenced by the system prompt (`discovery-questions`, `frontend-aesthetic-direction`, `wireframe`, `make-a-deck`, `make-a-prototype`, `make-tweakable`, `generate-variations`, `design-system-extract`, `component-extract`, `accessibility-audit`, `ai-slop-check`, `hierarchy-rhythm-review`, `interaction-states-pass`, `polish-pass`) are synced alongside it. Each is a phased procedure. When the task matches a skill's trigger (as described in the system prompt's "Available skills" chapter), read the relevant `{{design.skill}}` and follow it.
 
 ## Step 3: Apply it to the request
 
@@ -25,9 +25,11 @@ Follow the workflow the system prompt lays out — ask clarifying questions firs
 
 ## Step 4: Deliver as an artifact
 
-The design system prompt is written for a filesystem-based project, so it talks about saving HTML files. In Claude Code the file is the intermediate, not the deliverable: **publish the finished design as an artifact** so the user gets a URL they can open and share. Do not deliver a scratchpad path.
+The design system prompt is written for a filesystem-based project, so it talks about saving HTML files. When you have the `Artifact` tool, the file is the intermediate, not the deliverable: **publish the finished design as an artifact** so the user gets a URL they can open and share. Do not deliver a scratchpad path.
 
 Load the `artifact-design` skill before writing the page, write the HTML to a file, then publish that file with the `Artifact` tool. When iterating, edit the same file and publish again so the URL stays stable. Keep a design on disk only as a working intermediate, or when the user asks for a file specifically.
+
+Without an `Artifact` tool, the HTML file is the deliverable: write it inside the repo (not a temporary directory) and give the user its absolute path. When iterating, edit the same file.
 
 ## Designing a new backlog item's UI change
 
@@ -49,6 +51,7 @@ assist ask-design --url '<artifact-url>' --title '<design title>' --body - < <su
 - **Rejected** (non-zero, printing the reason and comments) — revise the design to address each one, republish to the same artifact URL, and re-run `ask-design` for the next round. Repeat until approved.
 - To revise while a round is still pending, re-run `ask-design` directly; the earlier task exits 0 as superseded — ignore its result.
 - If it prints the design link and exits 0 without `Approved.` (not in an assist web session), ask the user in chat instead and iterate there — editing the same file and republishing to the same URL — until they say they are happy with it.
+- Without an `Artifact` tool there is no artifact URL, and `ask-design` refuses with the reason design review is unavailable on this harness. Review in chat instead: give the user the HTML file's absolute path and iterate on the same file until they say they are happy with it, then skip the link and attach steps below and summarise the design in the item's description.
 
 Keep the artifact's URL and name for the two steps below.
 

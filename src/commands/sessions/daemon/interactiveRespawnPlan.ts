@@ -1,3 +1,4 @@
+import { sessionModeLaunch } from "./sessionModeLaunch";
 import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import { preassignedId } from "../../../shared/harnessAdapters/preassignedId";
 import { resolveCapability } from "../../../shared/harnessAdapters/resolveCapability";
@@ -16,7 +17,7 @@ export function interactiveRespawnPlan(session: Session): RespawnPlan | null {
 	const adapter = harnessAdapter(session.harness);
 	if (!resolveCapability(adapter.capabilities, "conversation.resume").supported)
 		return null;
-	const { cwd, initialPrompt, design, auto } = session;
+	const { cwd, initialPrompt } = session;
 	const resumeId = adapter.conversation.findResumable(session);
 	if (resumeId)
 		return {
@@ -25,8 +26,7 @@ export function interactiveRespawnPlan(session: Session): RespawnPlan | null {
 					resumeId,
 					cwd,
 					sessionId: session.id,
-					design,
-					auto,
+					...sessionModeLaunch(adapter, session),
 				}),
 			status: "waiting",
 		};
@@ -51,8 +51,7 @@ function freshPlan(
 				cwd: session.cwd,
 				sessionId: session.id,
 				conversationId,
-				design: session.design,
-				auto: session.auto,
+				...sessionModeLaunch(adapter, session),
 			});
 		},
 		status: prompt ? "running" : "waiting",

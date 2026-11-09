@@ -7,7 +7,7 @@ export function registerAskDesign(program: Command): void {
 		program
 			.command("ask-design")
 			.description(
-				"Open a claude.ai design artifact in the session's web preview pane for the user to approve or reject, with inline comments, and wait for the decision; prints the link outside a web session",
+				"Open a claude.ai design artifact in the session's web preview pane for the user to approve or reject, with inline comments, and wait for the decision; prints the link outside a web session, and exits with the reasons when design review is unavailable on the running harness (it needs artifact publishing)",
 			)
 			.requiredOption(
 				"--url <artifact-url>",

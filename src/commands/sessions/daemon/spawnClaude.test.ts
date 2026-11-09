@@ -10,10 +10,6 @@ vi.mock("./ensureHooksSettings", () => ({
 	ensureHooksSettings: vi.fn(() => "/hooks.json"),
 }));
 
-vi.mock("./designSystemPromptPath", () => ({
-	designSystemPromptPath: vi.fn(() => "/design-system-prompt.md"),
-}));
-
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 
 describe("spawnClaude", () => {
@@ -95,8 +91,12 @@ describe("spawnClaude", () => {
 		);
 	});
 
-	it("appends the design system prompt and starts in auto mode when design is set", () => {
-		spawnClaude({ prompt: "make it pop", design: true });
+	it("appends a system prompt file and starts in auto mode", () => {
+		spawnClaude({
+			prompt: "make it pop",
+			appendSystemPromptFile: "/design-system-prompt.md",
+			auto: true,
+		});
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
 			[
@@ -114,8 +114,11 @@ describe("spawnClaude", () => {
 		);
 	});
 
-	it("appends the design system prompt for a design session with no prompt", () => {
-		spawnClaude({ design: true });
+	it("appends a system prompt file with no prompt", () => {
+		spawnClaude({
+			appendSystemPromptFile: "/design-system-prompt.md",
+			auto: true,
+		});
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
 			[

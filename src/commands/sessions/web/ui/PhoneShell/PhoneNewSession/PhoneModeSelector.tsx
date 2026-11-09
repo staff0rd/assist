@@ -1,6 +1,9 @@
 import Box from "@mui/material/Box";
 import type { HarnessKind } from "../../../../../../shared/harnesses";
-import type { NewSessionMode } from "../../App/AppShell/AppOverlays/NewSessionLayer/newSessionModes";
+import {
+	harnessFeatureFor,
+	type NewSessionMode,
+} from "../../App/AppShell/AppOverlays/NewSessionLayer/newSessionModes";
 import { PhoneSegmented } from "../PhoneSegmented";
 import type { PhoneNewSession } from "./usePhoneNewSession";
 
@@ -9,7 +12,8 @@ const modeOrder: NewSessionMode[] = ["prompt", "draft", "bug", "design"];
 const modeLabel = (mode: string) => mode[0].toUpperCase() + mode.slice(1);
 
 export function PhoneModeSelector({ form }: { form: PhoneNewSession }) {
-	const showHarness = form.mode === "prompt" && form.harnesses.length > 1;
+	const showHarness =
+		harnessFeatureFor(form.mode) !== undefined && form.harnesses.length > 1;
 	return (
 		<>
 			<PhoneSegmented

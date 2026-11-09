@@ -3,7 +3,7 @@ import {
 	githubAssistModes,
 } from "../../../../shared/githubAssistModes";
 import { requestAssistSession } from "../../shared/requestAssistSession";
-import { requestClaudeSession } from "../../shared/requestClaudeSession";
+import { requestPromptSession } from "../../shared/requestPromptSession";
 
 export function launchPlannedSession(plan: {
 	cwd: string;
@@ -15,5 +15,5 @@ export function launchPlannedSession(plan: {
 				[...githubAssistModes[plan.mode], plan.prompt],
 				plan.cwd,
 			)
-		: requestClaudeSession(plan.prompt, plan.cwd);
+		: requestPromptSession(plan.prompt, plan.cwd);
 }

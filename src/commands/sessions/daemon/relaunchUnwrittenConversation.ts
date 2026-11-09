@@ -1,3 +1,4 @@
+import { sessionModeLaunch } from "./sessionModeLaunch";
 import { resolveCapability } from "../../../shared/harnessAdapters/resolveCapability";
 import type { HarnessAdapter } from "../../../shared/harnessAdapters/types";
 import type { Session } from "./createSession";
@@ -28,8 +29,7 @@ export function relaunchUnwrittenConversation(
 		prompt: persisted.initialPrompt,
 		cwd: persisted.cwd,
 		sessionId: id,
-		design: persisted.design,
-		auto: persisted.auto,
+		...sessionModeLaunch(adapter, persisted),
 	});
 	const idle = persisted.initialPrompt ? false : plan.idle;
 	return {

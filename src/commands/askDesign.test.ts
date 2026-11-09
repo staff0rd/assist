@@ -43,6 +43,20 @@ describe("askDesign", () => {
 		vi.unstubAllEnvs();
 	});
 
+	it("refuses before opening anything inside a harness that cannot publish artifacts", async () => {
+		vi.stubEnv("CLAUDECODE", undefined);
+		vi.stubEnv("CODEX_THREAD_ID", "thread-1");
+
+		await expect(askDesign({ url, title: "Design" })).rejects.toThrow(
+			"process.exit(1)",
+		);
+		expect(errored.join("\n")).toContain(
+			"Design review is unavailable on Codex",
+		);
+		expect(errored.join("\n")).toContain("artifacts.publish");
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
 	it.each([
 		"https://example.com/artifact/abc",
 		"http://claude.ai/artifact/abc",

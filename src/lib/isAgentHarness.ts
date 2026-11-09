@@ -1,6 +1,5 @@
-import { isClaudeCode } from "./isClaudeCode";
-import { isCodex } from "./isCodex";
+import { activeHarness } from "./activeHarness";
 
 export function isAgentHarness(): boolean {
-	return isClaudeCode() || isCodex();
+	return activeHarness() !== undefined;
 }

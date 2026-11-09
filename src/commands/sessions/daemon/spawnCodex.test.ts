@@ -1,3 +1,6 @@
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../../shared/loadConfig";
 import {
@@ -196,6 +199,42 @@ describe("spawnCodex", () => {
 				{},
 			);
 		});
+	});
+
+	it("appends a system prompt file as developer instructions, on resume too", () => {
+		const dir = mkdtempSync(join(tmpdir(), "assist-codex-prompt-"));
+		const file = join(dir, "prompt.md");
+		writeFileSync(file, '# Design\n\nSay "hi" \\ then stop.\n');
+		const expected = [
+			"-c",
+			String.raw`developer_instructions="# Design\n\nSay \"hi\" \\ then stop.\n"`,
+		];
+
+		spawnCodex({ cwd: "/repo", sessionId: "7", appendSystemPromptFile: file });
+		spawnCodex({
+			cwd: "/repo",
+			sessionId: "7",
+			resumeSessionId: "conv-1",
+			appendSystemPromptFile: file,
+		});
+
+		expect(spawnPtyMock.mock.calls[0][0]).toEqual([
+			"codex",
+			"--no-daemon",
+			ENV,
+			...NETWORK,
+			...expected,
+		]);
+		expect(spawnPtyMock.mock.calls[1][0]).toEqual([
+			"codex",
+			"--no-daemon",
+			ENV,
+			...NETWORK,
+			...expected,
+			"resume",
+			"conv-1",
+		]);
+		rmSync(dir, { recursive: true, force: true });
 	});
 
 	it("ignores review.codexModel", () => {

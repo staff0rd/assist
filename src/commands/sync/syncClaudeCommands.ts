@@ -1,6 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { harnesses } from "../../shared/harnesses";
 import { commandToSkill } from "./commandToSkill";
+import { markdownNames } from "./markdownNames";
+import { renderHarnessPaths } from "./renderHarnessPaths";
 
 function replaceFileWithoutFollowingSymlink(
 	file: string,
@@ -25,14 +28,11 @@ export function syncClaudeCommands(
 	targetBase: string,
 ): string[] {
 	const sourceDir = path.join(claudeDir, "commands");
-	const names = fs
-		.readdirSync(sourceDir)
-		.filter((file) => file.endsWith(".md"))
-		.map((file) => path.basename(file, ".md"));
+	const names = markdownNames(sourceDir);
 
 	for (const name of names) {
 		const content = fs.readFileSync(path.join(sourceDir, `${name}.md`), "utf8");
-		writeSkill(targetBase, name, content);
+		writeSkill(targetBase, name, renderHarnessPaths(content, harnesses.claude));
 	}
 
 	console.log(

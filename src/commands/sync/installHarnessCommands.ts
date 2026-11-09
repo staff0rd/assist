@@ -1,6 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { Harness } from "../../shared/harnesses";
+import { renderHarnessPaths } from "./renderHarnessPaths";
 
 export function installHarnessCommands(
 	claudeDir: string,
@@ -18,7 +19,10 @@ export function installHarnessCommands(
 		const content = fs.readFileSync(path.join(commandsSource, file), "utf8");
 		const target = path.join(harness.homeDir, harness.sync.commandDest(name));
 		fs.mkdirSync(path.dirname(target), { recursive: true });
-		fs.writeFileSync(target, transform(name, content));
+		fs.writeFileSync(
+			target,
+			transform(name, renderHarnessPaths(content, harness)),
+		);
 		synced++;
 	}
 

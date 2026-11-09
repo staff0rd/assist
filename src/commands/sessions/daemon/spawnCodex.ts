@@ -2,6 +2,7 @@ import { buildHarnessCodexArgs } from "../../../shared/buildHarnessCodexArgs";
 import { codexIsolatedHookArgs } from "../../../shared/codexIsolatedHookArgs";
 import { codexSandboxNetworkArgs } from "../../../shared/codexSandboxNetworkArgs";
 import { codexSessionEnvArgs } from "../../../shared/codexSessionEnvArgs";
+import { codexDeveloperInstructionsArgs } from "./codexDeveloperInstructionsArgs";
 import { spawnPty } from "./spawnPty";
 
 type SpawnOpts = {
@@ -9,6 +10,7 @@ type SpawnOpts = {
 	resumeSessionId?: string;
 	cwd?: string;
 	sessionId?: string;
+	appendSystemPromptFile?: string;
 };
 
 export function spawnCodex(opts: SpawnOpts = {}) {
@@ -25,6 +27,7 @@ export function spawnCodex(opts: SpawnOpts = {}) {
 			...override.args,
 			...sessionEnv,
 			...codexSandboxNetworkArgs,
+			...codexDeveloperInstructionsArgs(opts.appendSystemPromptFile),
 			...codexArgs(opts),
 		],
 		opts.cwd,

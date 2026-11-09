@@ -1,19 +1,10 @@
-import { readFileSync } from "node:fs";
-import { writtenFilePaths } from "../sessions/shared/writtenFilePaths";
+import type { ConversationEvent } from "../../shared/harnessAdapters/types";
 
-export function sessionWrittenPaths(transcriptPath: string): string[] {
-	let text: string;
-	try {
-		text = readFileSync(transcriptPath, "utf8");
-	} catch {
-		return [];
-	}
+export function sessionWrittenPaths(events: ConversationEvent[]): string[] {
 	const paths = new Set<string>();
-	for (const line of text.split("\n")) {
-		if (!line.includes('"tool_use"')) continue;
-		try {
-			for (const path of writtenFilePaths(JSON.parse(line))) paths.add(path);
-		} catch {}
-	}
+	for (const event of events)
+		if (event.kind === "tool")
+			for (const op of event.operations)
+				if (op.kind === "fileWrite") paths.add(op.path);
 	return [...paths];
 }

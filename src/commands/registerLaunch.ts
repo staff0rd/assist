@@ -1,14 +1,16 @@
 import type { Command } from "commander";
-import { launchMode } from "./backlog/launchMode";
+import {
+	bugFeature,
+	draftFeature,
+} from "../shared/harnessAdapters/harnessFeatures";
 import { next as backlogNext } from "./backlog/next";
 import { registerRefineLaunch } from "./backlog/registerRefineLaunch";
 import { registerFixConflict } from "./registerFixConflict";
 import { registerReviewPrComments } from "./registerReviewPrComments";
-
-type LaunchOpts = { once?: boolean; resumeSession?: string };
+import { registerDescriptionLaunch } from "./registerDescriptionLaunch";
 
 const RESUME_SESSION_FLAG =
-	"Resume an interrupted Claude session (used by the sessions daemon on restart)";
+	"Resume an interrupted harness session by its conversation id (used by the sessions daemon on restart)";
 
 function registerNext(program: Command): void {
 	program
@@ -21,46 +23,24 @@ function registerNext(program: Command): void {
 		);
 }
 
-function registerDescriptionLaunch(
-	program: Command,
-	name: string,
-	slashCommand: string,
-	description: string,
-	alias?: string,
-): void {
-	const command = program
-		.command(name)
-		.argument(
-			"[description]",
-			`Text to forward to the /${slashCommand} slash command`,
-		)
-		.description(description)
-		.option("--once", "Exit when the initial task completes")
-		.option("--resume-session <id>", RESUME_SESSION_FLAG)
-		.action((text: string | undefined, opts: LaunchOpts) =>
-			launchMode(slashCommand, {
-				once: opts.once,
-				description: text,
-				resumeSessionId: opts.resumeSession,
-			}),
-		);
-	if (alias) command.alias(alias);
-}
-
 export function registerLaunch(program: Command): void {
 	registerNext(program);
 	registerDescriptionLaunch(
 		program,
 		"draft",
 		"draft",
-		"Launch Claude in /draft mode, chain into next on /next signal",
+		"Launch a coding harness in /draft mode, chain into next on /next signal",
+		draftFeature,
+		RESUME_SESSION_FLAG,
 		"feat",
 	);
 	registerDescriptionLaunch(
 		program,
 		"bug",
 		"bug",
-		"Launch Claude in /bug mode, chain into next on /next signal",
+		"Launch a coding harness in /bug mode, chain into next on /next signal",
+		bugFeature,
+		RESUME_SESSION_FLAG,
 	);
 	registerReviewPrComments(program, RESUME_SESSION_FLAG);
 	registerFixConflict(program, RESUME_SESSION_FLAG);

@@ -209,7 +209,7 @@ describe("NewSessionLayer draft", { timeout: 20_000 }, () => {
 		fillDraft();
 		fireEvent.keyDown(promptInput(), { key: "Enter" });
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["draft", "--once", "add a thing"],
+			["draft", "--once", "--harness", "claude", "add a thing"],
 			"/git/beta",
 		);
 

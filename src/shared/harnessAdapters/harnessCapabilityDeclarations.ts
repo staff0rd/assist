@@ -11,6 +11,8 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.resume": supported,
 		"conversation.relocate": supported,
 		"conversation.preassignId": supported,
+		"systemPrompt.append": supported,
+		"artifacts.publish": supported,
 		"transcript.read": supported,
 		"oneShot.text": supported,
 		"oneShot.structured": supported,
@@ -30,6 +32,12 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.preassignId": unsupported(
 			"Codex assigns its own conversation id when its rollout starts",
 			"assist binds the Codex conversation id from the rollout after launch",
+		),
+		"systemPrompt.append": supported,
+		"artifacts.publish": unsupported(
+			"Codex has no tool that publishes a claude.ai artifact, and assist ask-design reviews only artifact links",
+			"design in Codex and deliver the HTML file, then review it in chat; start the design session with Claude for preview-pane review rounds",
+			"a1567",
 		),
 		"transcript.read": supported,
 		"oneShot.text": supported,
@@ -74,6 +82,16 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.preassignId": unsupported(
 			"pi does not accept a caller-assigned conversation id",
 			"the session card tracks pi without a conversation id",
+		),
+		"systemPrompt.append": unsupported(
+			"assist has not verified a pi flag that appends a system prompt at launch and on resume",
+			"start design sessions with Claude or Codex, or run /design inside a pi session to read the design prompt from disk",
+			"a696",
+		),
+		"artifacts.publish": unsupported(
+			"pi has no tool that publishes a claude.ai artifact, and assist ask-design reviews only artifact links",
+			"deliver the HTML file and review it in chat; start the design session with Claude for preview-pane review rounds",
+			"a1567",
 		),
 		"transcript.read": unsupported(
 			"assist cannot read pi conversation transcripts yet",

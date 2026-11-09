@@ -195,6 +195,44 @@ describe("create handler", () => {
 	});
 });
 
+describe("create handler for design mode", () => {
+	beforeEach(() => daemonLogMock.mockClear());
+
+	it("spawns a Codex design session", () => {
+		const m = fakeManager();
+		const client = fakeClient();
+
+		messageHandlers.create(client as never, m, {
+			prompt: "make it pop",
+			cwd: "/repo",
+			design: true,
+			harness: "codex",
+		});
+
+		expect(m.spawn).toHaveBeenCalledWith(
+			expect.objectContaining({ design: true, harness: "codex" }),
+			{ launchedFrom: undefined },
+		);
+	});
+
+	it("refuses a pi design session before spawning, with the resolver's reason", () => {
+		const m = fakeManager();
+		const client = fakeClient();
+
+		messageHandlers.create(client as never, m, {
+			prompt: "make it pop",
+			cwd: "/repo",
+			design: true,
+			harness: "pi",
+		});
+
+		expect(m.spawn).not.toHaveBeenCalled();
+		const sent = JSON.parse(client.send.mock.calls[0][0]);
+		expect(sent.message).toContain("Design mode is unavailable on pi");
+		expect(sent.message).toContain("systemPrompt.append");
+	});
+});
+
 describe("create-assist handler", () => {
 	function assistManager() {
 		return {

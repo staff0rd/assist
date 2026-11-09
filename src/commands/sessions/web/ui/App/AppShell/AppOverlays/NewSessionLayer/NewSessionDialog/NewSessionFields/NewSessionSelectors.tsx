@@ -1,12 +1,8 @@
-import { useState } from "react";
 import type { HarnessKind } from "../../../../../../../../../../shared/harnesses";
-import { checkedRadio } from "../checkedRadio";
-import {
-	type NewSessionMode,
-	newSessionModeOrder,
-} from "../../newSessionModes";
+import { newSessionModeOrder } from "../../newSessionModes";
 import { HarnessMenu } from "./NewSessionSelectors/HarnessMenu";
 import { modeOptionLabel } from "./NewSessionSelectors/modeOptionLabel";
+import { useHarnessMenu } from "./NewSessionSelectors/useHarnessMenu";
 import { SegmentedRadioGroup } from "./SegmentedRadioGroup";
 import type { useDraftFocus } from "../useDraftFocus";
 import type { NewSessionDraft } from "../../useNewSessionDraft";
@@ -22,15 +18,7 @@ export function NewSessionSelectors({
 	harnesses: HarnessKind[];
 	focus: ReturnType<typeof useDraftFocus>;
 }) {
-	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
-	const pickHarness = draft.mode === "prompt" && harnesses.length > 1;
-	const openMenu = () =>
-		setMenuAnchor(checkedRadio(focus.modeRef.current) ?? null);
-
-	const changeMode = (mode: string) => {
-		if (pickHarness && mode === "prompt") openMenu();
-		else draft.setMode(mode as NewSessionMode);
-	};
+	const menu = useHarnessMenu(draft, harnesses, focus);
 
 	return (
 		<>
@@ -38,21 +26,22 @@ export function NewSessionSelectors({
 				label="Mode"
 				options={newSessionModeOrder}
 				value={draft.mode}
-				onChange={changeMode}
+				onChange={menu.changeMode}
 				optionLabel={modeOptionLabel(
 					harnesses.length > 1 ? harness : undefined,
+					menu.labelledMode,
 				)}
 				groupRef={focus.modeRef}
 				autoFocus={focus.autoFocus === "mode"}
 				onTrack={focus.trackMode}
-				onToggleRow={pickHarness ? openMenu : undefined}
+				onToggleRow={menu.onToggleRow}
 			/>
 			<HarnessMenu
-				anchor={menuAnchor}
+				anchor={menu.anchor}
 				harness={harness}
 				harnesses={harnesses}
 				onPick={draft.setHarness}
-				onClose={() => setMenuAnchor(null)}
+				onClose={menu.close}
 			/>
 		</>
 	);

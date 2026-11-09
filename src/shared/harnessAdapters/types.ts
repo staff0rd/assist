@@ -81,7 +81,7 @@ type InteractiveLaunch = {
 	resumeId?: string;
 	prompt?: string;
 	cwd?: string;
-	design?: boolean;
+	appendSystemPromptFile?: string;
 	auto?: boolean;
 };
 

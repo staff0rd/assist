@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequestClaudeSession = vi.fn();
 
-vi.mock("../sessions/shared/requestClaudeSession", () => ({
-	requestClaudeSession: (...args: unknown[]) =>
+vi.mock("../sessions/shared/requestPromptSession", () => ({
+	requestPromptSession: (...args: unknown[]) =>
 		mockRequestClaudeSession(...args),
 }));
 

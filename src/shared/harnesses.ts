@@ -10,6 +10,9 @@ export type Harness = {
 	homeDir: string;
 	sync: {
 		commandDest: (name: string) => string;
+		designPromptDest: string;
+		designSkillDest: (name: string) => string;
+		nativeDesignSkills: boolean;
 	};
 };
 
@@ -20,6 +23,9 @@ export const harnesses: Record<HarnessKind, Harness> = {
 		homeDir: path.join(os.homedir(), ".claude"),
 		sync: {
 			commandDest: (name) => path.join("skills", name, "SKILL.md"),
+			designPromptDest: "design-system-prompt.md",
+			designSkillDest: (name) => path.join("skills", `${name}.md`),
+			nativeDesignSkills: false,
 		},
 	},
 	codex: {
@@ -28,6 +34,9 @@ export const harnesses: Record<HarnessKind, Harness> = {
 		homeDir: path.join(os.homedir(), ".codex"),
 		sync: {
 			commandDest: (name) => path.join("skills", name, "SKILL.md"),
+			designPromptDest: path.join("assist", "design-system-prompt.md"),
+			designSkillDest: (name) => path.join("skills", name, "SKILL.md"),
+			nativeDesignSkills: true,
 		},
 	},
 	pi: {
@@ -36,6 +45,10 @@ export const harnesses: Record<HarnessKind, Harness> = {
 		homeDir: path.join(os.homedir(), ".pi", "agent"),
 		sync: {
 			commandDest: (name) => path.join("prompts", `${name}.md`),
+			designPromptDest: path.join("assist", "design-system-prompt.md"),
+			designSkillDest: (name) =>
+				path.join("assist", "design-skills", `${name}.md`),
+			nativeDesignSkills: false,
 		},
 	},
 };

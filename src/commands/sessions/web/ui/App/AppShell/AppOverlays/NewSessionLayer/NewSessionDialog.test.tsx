@@ -89,6 +89,11 @@ function renderDialog(
 						codex: resolution(capabilities.exposeCodexActions),
 						pi: resolution(capabilities.exposePiActions),
 					},
+					design: {
+						claude: resolution(true),
+						codex: resolution(capabilities.exposeCodexActions),
+						pi: resolution(false),
+					},
 				},
 			}),
 		),
@@ -470,7 +475,7 @@ describe("NewSessionDialog mode selector", () => {
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
 
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["bug", "--once"],
+			["bug", "--once", "--harness", "claude"],
 			"/git/alpha",
 		);
 	});
@@ -600,8 +605,8 @@ describe("NewSessionDialog mode selector", () => {
 	});
 
 	it.each([
-		["draft", ["draft", "--once", "add a thing"]],
-		["bug", ["bug", "--once", "add a thing"]],
+		["draft", ["draft", "--once", "--harness", "claude", "add a thing"]],
+		["bug", ["bug", "--once", "--harness", "claude", "add a thing"]],
 	])("launches assist in %s mode in the chosen repo", (mode, args) => {
 		const { onCreate, onCreateAssist } = renderDialog();
 
@@ -622,7 +627,7 @@ describe("NewSessionDialog mode selector", () => {
 		submitPrompt();
 
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["draft", "--once"],
+			["draft", "--once", "--harness", "claude"],
 			"/git/beta",
 		);
 	});
@@ -633,7 +638,11 @@ describe("NewSessionDialog mode selector", () => {
 		fireEvent.change(promptInput(), { target: { value: "a login page" } });
 		submitPrompt();
 
-		expect(onCreateDesign).toHaveBeenCalledWith("a login page", "/git/beta");
+		expect(onCreateDesign).toHaveBeenCalledWith(
+			"claude",
+			"a login page",
+			"/git/beta",
+		);
 		expect(onCreate).not.toHaveBeenCalled();
 		expect(screen.getByRole("button", { name: "Start design" })).toBeTruthy();
 	});
@@ -647,8 +656,8 @@ describe("NewSessionDialog Shift+click auto start", () => {
 	}
 
 	it.each([
-		["draft", ["draft", "--once"]],
-		["bug", ["bug", "--once"]],
+		["draft", ["draft", "--once", "--harness", "claude"]],
+		["bug", ["bug", "--once", "--harness", "claude"]],
 	] as const)("launches %s with Auto start on and opens it", (mode, args) => {
 		const { onCreateAssist } = renderDialog(mode);
 
@@ -666,7 +675,7 @@ describe("NewSessionDialog Shift+click auto start", () => {
 		fireEvent.click(submitButton());
 
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["draft", "--once"],
+			["draft", "--once", "--harness", "claude"],
 			"/git/beta",
 		);
 	});
@@ -694,6 +703,7 @@ describe("NewSessionDialog Shift+click auto start", () => {
 		const design = renderDialog("design");
 		fireEvent.click(submitButton(), { shiftKey: true });
 		expect(design.onCreateDesign).toHaveBeenCalledWith(
+			"claude",
 			"",
 			"/git/beta",
 			undefined,
@@ -726,6 +736,28 @@ describe("NewSessionDialog Shift+click auto start", () => {
 });
 
 describe("NewSessionDialog harness selector", () => {
+	it("offers only the harnesses where design mode resolves and launches the chosen one", async () => {
+		const { onCreateDesign } = await renderWithHarnesses("design");
+		const designSegment = () => screen.getByRole("radio", { name: /^design/ });
+
+		expect(designSegment().textContent).toBe("design · Claude");
+		fireEvent.click(designSegment());
+		expect(
+			within(screen.getByRole("menu", { name: "Harness" }))
+				.getAllByRole("menuitemradio")
+				.map((item) => item.textContent),
+		).toEqual(["Claude", "Codex"]);
+		fireEvent.click(harnessItem("Codex"));
+		fireEvent.change(promptInput(), { target: { value: "a login page" } });
+		submitPrompt();
+
+		expect(onCreateDesign).toHaveBeenCalledWith(
+			"codex",
+			"a login page",
+			"/git/beta",
+		);
+	});
+
 	it("leaves the prompt segment plain when Claude is the only harness", async () => {
 		renderDialog();
 		await act(async () => {});

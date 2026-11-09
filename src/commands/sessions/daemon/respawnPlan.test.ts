@@ -134,7 +134,13 @@ describe("respawnPlan", () => {
 			plan.spawn();
 
 			expect(mockSpawnClaude).toHaveBeenCalledWith(
-				expect.objectContaining({ resumeSessionId: "conv-1", design: true }),
+				expect.objectContaining({
+					resumeSessionId: "conv-1",
+					appendSystemPromptFile: expect.stringMatching(
+						/design-system-prompt\.md$/,
+					),
+					auto: true,
+				}),
 			);
 		});
 	});

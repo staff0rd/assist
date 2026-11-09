@@ -7,6 +7,7 @@ import { createArgsFor } from "./createArgsFor";
 
 export type NewSessionLaunchers = {
 	onCreateDesign: (
+		harness: string,
 		prompt: string,
 		cwd?: string,
 		node?: string,
@@ -47,7 +48,7 @@ export function launchNewSession(
 		return;
 	}
 	if (mode === "design") {
-		launchers.onCreateDesign(prompt, target, ...createArgs);
+		launchers.onCreateDesign(harness, prompt, target, ...createArgs);
 		return;
 	}
 	const assistMeta = assistMetaFor(mode, node, autoApprove, open);
@@ -55,7 +56,11 @@ export function launchNewSession(
 		newSessionModes[mode].sessionMode,
 		cwd,
 		(args, assistCwd) =>
-			launchers.onCreateAssist(args, assistCwd, ...assistMeta),
+			launchers.onCreateAssist(
+				[...args.slice(0, 2), "--harness", harness, ...args.slice(2)],
+				assistCwd,
+				...assistMeta,
+			),
 		() => {},
 		prompt,
 	);

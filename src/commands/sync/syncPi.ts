@@ -1,6 +1,7 @@
 import * as path from "node:path";
 import { stringify } from "yaml";
 import { harnesses, isHarnessAvailable } from "../../shared/harnesses";
+import { installDesignResources } from "./installDesignResources";
 import { installHarnessCommands } from "./installHarnessCommands";
 import { pruneCommands } from "./pruneCommands";
 import type { PruneOptions } from "./pruneTarget";
@@ -37,9 +38,14 @@ export function syncPi(claudeDir: string, options?: PruneOptions): void {
 		commandToPrompt,
 	);
 
+	const designSkills = installDesignResources(claudeDir, harnesses.pi);
+
 	syncPiHooks(path.join(claudeDir, "..", "pi"));
 
 	console.log(`Synced ${synced} prompt(s) to ~/.pi/agent/prompts`);
+	console.log(
+		`Synced the design system prompt and ${designSkills.length} design skill(s) to ~/.pi/agent/assist`,
+	);
 
 	if (!options?.prune) return;
 

@@ -88,11 +88,16 @@ describe("syncCodex", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockIsHarnessAvailable.mockReturnValue(true);
-		mockReaddirSync.mockReturnValue(["refine.md", "notes.txt"] as never);
+		mockReaddirSync.mockImplementation(((dir: string) =>
+			String(dir).endsWith("skills")
+				? ["polish-pass.md"]
+				: ["refine.md", "notes.txt"]) as never);
 		mockReadFileSync.mockImplementation((target) =>
 			String(target).endsWith(path.join("codex", "config.toml"))
 				? '[[hooks.PreToolUse]]\nmatcher = "Bash"\n[[hooks.PreToolUse.hooks]]\ntype = "command"\ncommand = "assist codex-hook"\n\n[[hooks.PermissionRequest]]\n[[hooks.PermissionRequest.hooks]]\ntype = "command"\ncommand = "assist codex-hook"'
-				: "---\ndescription: Refine it\n---\nbody",
+				: String(target).endsWith("polish-pass.md")
+					? "# Polish Pass: End-of-Design Quality Gate\n\nRun it."
+					: "---\ndescription: Refine it\n---\nbody",
 		);
 		mockExistsSync.mockReturnValue(false);
 		mockPruneSkills.mockReturnValue({
@@ -127,7 +132,7 @@ describe("syncCodex", () => {
 
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "skills"),
-			["refine"],
+			["refine", "polish-pass"],
 			{ force: false },
 		);
 	});
@@ -137,7 +142,7 @@ describe("syncCodex", () => {
 
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "skills"),
-			["refine"],
+			["refine", "polish-pass"],
 			{ force: true },
 		);
 	});
@@ -158,6 +163,28 @@ describe("syncCodex", () => {
 		expect(mockMkdirSync).toHaveBeenCalledWith(path.dirname(skillTarget), {
 			recursive: true,
 		});
+	});
+
+	it("installs the design system prompt and design skills as native Codex skills", () => {
+		syncCodex("/claude");
+
+		expect(mockCopyFileSync).toHaveBeenCalledWith(
+			path.join("/claude", "design-system-prompt.md"),
+			path.join(harnesses.codex.homeDir, "assist", "design-system-prompt.md"),
+		);
+		expect(mockWriteFileSync).toHaveBeenCalledWith(
+			path.join(harnesses.codex.homeDir, "skills", "polish-pass", "SKILL.md"),
+			[
+				"---",
+				"name: polish-pass",
+				'description: "Design skill: Polish Pass: End-of-Design Quality Gate. Follow it when the design system prompt\'s Available skills chapter names polish-pass."',
+				"---",
+				"",
+				"# Polish Pass: End-of-Design Quality Gate",
+				"",
+				"Run it.",
+			].join("\n"),
+		);
 	});
 
 	it("registers the codex-hook adapter in ~/.codex/config.toml", () => {

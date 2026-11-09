@@ -7,6 +7,10 @@ export const capabilityDefinitions = {
 		"Continues a conversation from a different working directory than the one it started in, so resuming a session whose worktree was reaped or replaced keeps its history in the replacement worktree.",
 	"conversation.preassignId":
 		"Accepts a conversation id chosen by assist at launch, so the session card binds to the conversation before the harness writes it rather than discovering the id afterwards.",
+	"systemPrompt.append":
+		"Appends a workflow's system prompt (e.g. the vendored design system prompt for design mode) to the harness's own instructions at launch and on resume, so the session adopts it without the agent reading a file first.",
+	"artifacts.publish":
+		"Publishes an HTML page as a shareable claude.ai artifact link, which `assist ask-design` opens in the preview pane for design review rounds.",
 	"transcript.read":
 		"Exposes the conversation's on-disk transcript as normalized events (user and assistant messages, tool calls with their operations, tool results, timestamps and turn lifecycle), so message previews, status reconciliation, restore status and transcript titles work without assist parsing the harness's format.",
 	"oneShot.text":

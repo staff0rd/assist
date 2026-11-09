@@ -16,6 +16,7 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 	const { harness, harnesses } = useSessionHarness(
 		visible ? target.node : undefined,
 		draft.harness,
+		mode,
 	);
 	const needsRepo = mode === "draft" || mode === "bug";
 	const modeKnown = draft.mode !== undefined || !!defaultMode;

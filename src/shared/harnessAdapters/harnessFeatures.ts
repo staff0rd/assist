@@ -9,6 +9,18 @@ export const refineFeature: HarnessFeature = {
 	requires: ["skills.native", ...editEnforcement],
 };
 
+export const draftFeature: HarnessFeature = {
+	id: "draft",
+	label: "Draft",
+	requires: ["skills.native", ...editEnforcement],
+};
+
+export const bugFeature: HarnessFeature = {
+	id: "bug",
+	label: "Bug filing",
+	requires: ["skills.native", ...editEnforcement],
+};
+
 export const buildFeature: HarnessFeature = {
 	id: "build",
 	label: "Build",
@@ -99,6 +111,18 @@ const diffCommentsFeature: HarnessFeature = {
 	requires: [],
 };
 
+export const designFeature: HarnessFeature = {
+	id: "design",
+	label: "Design mode",
+	requires: ["systemPrompt.append", ...editEnforcement],
+};
+
+export const designReviewFeature: HarnessFeature = {
+	id: "designReview",
+	label: "Design review",
+	requires: ["artifacts.publish"],
+};
+
 const usageLimitsFeature: HarnessFeature = {
 	id: "usageLimits",
 	label: "Usage limits",
@@ -107,6 +131,8 @@ const usageLimitsFeature: HarnessFeature = {
 
 export const harnessFeatures: HarnessFeature[] = [
 	refineFeature,
+	draftFeature,
+	bugFeature,
 	buildFeature,
 	sessionFeature,
 	conversationResumeFeature,
@@ -123,6 +149,8 @@ export const harnessFeatures: HarnessFeature[] = [
 	usageLimitsFeature,
 	inboxFeature,
 	previewQuestionsFeature,
+	designFeature,
+	designReviewFeature,
 	...reviewFeatures,
 	...prFeatures,
 ];

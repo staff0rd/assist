@@ -20,7 +20,11 @@ export function NewSessionDialog({
 	onClose: () => void;
 }) {
 	const focus = useDraftFocus(draft.focus, draft.setFocus);
-	const { harness, harnesses } = useSessionHarness(draft.node, draft.harness);
+	const { harness, harnesses } = useSessionHarness(
+		draft.node,
+		draft.harness,
+		draft.mode,
+	);
 	const { target, cloneState } = useDraftRepos(draft.node, draft.cwd);
 
 	const { onSubmit, onSubmitClick } = useDraftSubmit(

@@ -1,3 +1,4 @@
+import { sessionModeLaunch } from "./sessionModeLaunch";
 import type { HarnessAdapter } from "../../../shared/harnessAdapters/types";
 import type { Session } from "./createSession";
 import type { RestoreStatus } from "./deriveRestoreStatus";
@@ -23,8 +24,7 @@ export function restoreConversation(
 		prompt: resumePrompt(plan),
 		cwd: persisted.cwd,
 		sessionId: id,
-		design: persisted.design,
-		auto: persisted.auto,
+		...sessionModeLaunch(adapter, persisted),
 	});
 	return plan.idle
 		? waitingSession(base, persisted, pty)

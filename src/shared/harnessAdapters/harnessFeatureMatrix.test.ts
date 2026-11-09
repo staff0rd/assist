@@ -28,6 +28,8 @@ const sources: Record<string, HarnessCapabilitySource> = {
 
 const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	refine: { claude: true, codex: true, pi: true, fake: true },
+	draft: { claude: true, codex: true, pi: true, fake: true },
+	bug: { claude: true, codex: true, pi: true, fake: true },
 	build: { claude: true, codex: true, pi: true, fake: true },
 	session: { claude: true, codex: true, pi: true, fake: true },
 	conversationResume: { claude: true, codex: true, pi: false, fake: true },
@@ -44,6 +46,8 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	usageLimits: { claude: true, codex: true, pi: false, fake: true },
 	inbox: { claude: true, codex: false, pi: false, fake: true },
 	previewQuestions: { claude: true, codex: false, pi: true, fake: true },
+	design: { claude: true, codex: true, pi: false, fake: true },
+	designReview: { claude: true, codex: false, pi: false, fake: true },
 	reviewer: { claude: true, codex: true, pi: false, fake: true },
 	reviewSynthesis: { claude: true, codex: true, pi: false, fake: true },
 	reviewRefine: { claude: true, codex: true, pi: true, fake: true },

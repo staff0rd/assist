@@ -1,3 +1,4 @@
+import { sessionModeLaunch } from "./sessionModeLaunch";
 import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import { preassignedId } from "../../../shared/harnessAdapters/preassignedId";
 import type { HarnessKind } from "../../../shared/harnesses";
@@ -43,8 +44,7 @@ export function createSession(
 					cwd,
 					sessionId: id,
 					conversationId,
-					design,
-					auto,
+					...sessionModeLaunch(adapter, { design, auto }),
 				}),
 			holdPty,
 		),

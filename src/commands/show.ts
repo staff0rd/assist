@@ -12,7 +12,7 @@ export async function show(options: {
 		console.error("Error: --body is empty; there is nothing to show.");
 		process.exit(1);
 	}
-	refuseSessionFiles(body);
+	await refuseSessionFiles(body);
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId) {
 		console.log(body);

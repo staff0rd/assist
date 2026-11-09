@@ -19,8 +19,13 @@ function sendCreate(
 }
 
 export function createDesignSessionAction(send: SendFn) {
-	return (prompt: string, cwd?: string, node?: string, open?: boolean) =>
-		sendCreate(send, { design: true }, prompt, cwd, node, open);
+	return (
+		harness: string,
+		prompt: string,
+		cwd?: string,
+		node?: string,
+		open?: boolean,
+	) => sendCreate(send, { design: true, harness }, prompt, cwd, node, open);
 }
 
 export function createHarnessSessionAction(send: SendFn) {

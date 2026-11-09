@@ -26,7 +26,7 @@ If the harness provides a structured question tool, ask each question with it â€
 
 ## Step 3: Design the UI change
 
-Read the **Designing a new backlog item's UI change** section of `/design` (`~/.claude/skills/design/SKILL.md`) and follow its Decide and Design and review steps for the story. If it decides the change is not substantial, skip this step silently. Otherwise its link step applies in Step 4 and its attach step in Step 5.
+Read the **Designing a new backlog item's UI change** section of `/design` (`{{skill:design}}`) and follow its Decide and Design and review steps for the story. If it decides the change is not substantial, skip this step silently. Otherwise its link step applies in Step 4 and its attach step in Step 5.
 
 ## Step 4: Compose the item
 

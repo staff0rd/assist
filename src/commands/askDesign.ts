@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { designReviewBlocker } from "./askDesign/designReviewBlocker";
 import { designReviewSessionId } from "./askDesign/designReviewSessionId";
 import { isArtifactUrl } from "./askDesign/isArtifactUrl";
 import { readBodyArgument } from "./prs/readBodyArgument";
@@ -12,6 +13,11 @@ export async function askDesign(options: {
 	title: string;
 	body?: string;
 }): Promise<void> {
+	const blocker = designReviewBlocker();
+	if (blocker) {
+		console.error(blocker);
+		process.exit(1);
+	}
 	if (!isArtifactUrl(options.url)) {
 		console.error(
 			`Error: --url must be a claude.ai artifact link (https://claude.ai/artifact/<id> or https://claude.ai/code/artifact/<id>), got: ${options.url}`,

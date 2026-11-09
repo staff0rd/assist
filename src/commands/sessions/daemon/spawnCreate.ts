@@ -1,13 +1,22 @@
 import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
-import { sessionFeature } from "../../../shared/harnessAdapters/harnessFeatures";
+import {
+	designFeature,
+	sessionFeature,
+} from "../../../shared/harnessAdapters/harnessFeatures";
 import { launchBlocker } from "../../../shared/harnessAdapters/launchBlocker";
 import type { HarnessKind } from "../../../shared/harnesses";
 import { daemonLog } from "./daemonLog";
 import type { SessionManager } from "./SessionManager";
 import { spawnContextFrom } from "./spawnContextFrom";
 
-function sessionBlocker(harness: HarnessKind | undefined): string | undefined {
-	return launchBlocker(harnessAdapter(harness), sessionFeature);
+function sessionBlocker(
+	harness: HarnessKind | undefined,
+	design: boolean,
+): string | undefined {
+	return launchBlocker(
+		harnessAdapter(harness),
+		design ? designFeature : sessionFeature,
+	);
 }
 
 export function spawnCreate(
@@ -30,7 +39,7 @@ export function spawnCreate(
 		if ("sessionId" in joined) return joined.sessionId;
 		return { error: `Can't add an agent: ${joined.reason}.` };
 	}
-	const blocker = sessionBlocker(harness);
+	const blocker = sessionBlocker(harness, design);
 	if (blocker) {
 		daemonLog(`create: refused, ${blocker.replaceAll("\n", " ")}`);
 		return { error: blocker };

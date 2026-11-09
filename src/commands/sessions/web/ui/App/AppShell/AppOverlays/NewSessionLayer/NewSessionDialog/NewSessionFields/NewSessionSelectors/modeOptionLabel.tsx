@@ -3,11 +3,14 @@ import Box from "@mui/material/Box";
 import type { HarnessKind } from "../../../../../../../../../../../shared/harnesses";
 import { harnessLabel } from "../../../../../../../../../../../shared/harnessLabel";
 
-export function modeOptionLabel(harness: HarnessKind | undefined) {
+export function modeOptionLabel(
+	harness: HarnessKind | undefined,
+	labelled: string,
+) {
 	return (option: string) =>
-		option === "prompt" && harness ? (
+		option === labelled && harness ? (
 			<>
-				prompt
+				{option}
 				<Box component="span" sx={{ fontWeight: 400, whiteSpace: "pre" }}>
 					{` · ${harnessLabel(harness)}`}
 				</Box>

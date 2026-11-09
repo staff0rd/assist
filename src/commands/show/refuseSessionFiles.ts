@@ -1,18 +1,24 @@
 import { homedir } from "node:os";
-import { resolveSessionTranscript } from "../sessions/shared/resolveSessionTranscript";
+import { activeHarness } from "../../lib/activeHarness";
+import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
+import { targetConversationEvents } from "../sessions/shared/targetConversationEvents";
 import { findShownSessionFiles } from "./findShownSessionFiles";
 import { sessionWrittenPaths } from "./sessionWrittenPaths";
 
-export function refuseSessionFiles(body: string): void {
-	const claudeSessionId = process.env.CLAUDE_CODE_SESSION_ID;
-	if (!claudeSessionId) return;
-	const transcript = resolveSessionTranscript(claudeSessionId);
-	if (!transcript) return;
-	const shown = findShownSessionFiles(
-		body,
-		sessionWrittenPaths(transcript.path),
-		{ home: homedir(), cwd: process.cwd() },
-	);
+export async function refuseSessionFiles(body: string): Promise<void> {
+	const harness = activeHarness();
+	const conversationId = harness
+		? harnessAdapter(harness).conversation.current()
+		: undefined;
+	if (!conversationId) return;
+	const events = await targetConversationEvents(process.cwd(), {
+		conversationId,
+		harness,
+	});
+	const shown = findShownSessionFiles(body, sessionWrittenPaths(events), {
+		home: homedir(),
+		cwd: process.cwd(),
+	});
 	if (shown.length === 0) return;
 	console.error(
 		[
