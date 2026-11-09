@@ -1,3 +1,11 @@
+# [0.1106.0](https://github.com/staff0rd/assist/compare/v0.1105.1...v0.1106.0) (2026-11-09)
+
+
+### Features
+
+* ask questions on pending checks ([52fa87f](https://github.com/staff0rd/assist/commit/52fa87fbdd5d57fa4410a189ddcf77249d679ef7))
+* keep checks pending on questions ([96c731b](https://github.com/staff0rd/assist/commit/96c731b1d8a335273c1fb51a11c6ce9a76ac8896))
+
 ## [0.1105.1](https://github.com/staff0rd/assist/compare/v0.1105.0...v0.1105.1) (2026-11-09)
 
 
