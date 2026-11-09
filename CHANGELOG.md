@@ -1,3 +1,10 @@
+# [0.1102.0](https://github.com/staff0rd/assist/compare/v0.1101.0...v0.1102.0) (2026-11-09)
+
+
+### Features
+
+* conversation readers per harness ([2791707](https://github.com/staff0rd/assist/commit/2791707169263ff49ef5ec6d509fb2da34f64617))
+
 # [0.1101.0](https://github.com/staff0rd/assist/compare/v0.1100.1...v0.1101.0) (2026-11-09)
 
 
