@@ -1,3 +1,10 @@
+## [0.1095.2](https://github.com/staff0rd/assist/compare/v0.1095.1...v0.1095.2) (2026-11-09)
+
+
+### Bug Fixes
+
+* run pi in regular TUI mode ([b94da6f](https://github.com/staff0rd/assist/commit/b94da6f69bcf96b6d6bb72b2adc45241e4fe4dce))
+
 ## [0.1095.1](https://github.com/staff0rd/assist/compare/v0.1095.0...v0.1095.1) (2026-11-09)
 
 
