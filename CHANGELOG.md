@@ -1,3 +1,10 @@
+## [0.1105.1](https://github.com/staff0rd/assist/compare/v0.1105.0...v0.1105.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* flag relayed person messages ([28a29f7](https://github.com/staff0rd/assist/commit/28a29f71a9a3c4ae960a5407d0a62995bba01109))
+
 # [0.1105.0](https://github.com/staff0rd/assist/compare/v0.1104.0...v0.1105.0) (2026-11-09)
 
 
