@@ -58,6 +58,37 @@ describe("autoRestartBlocker", () => {
 		).toBe("waiting on 1 running session (a)");
 	});
 
+	it("blocks on a session that resumed work over its pending check", () => {
+		expect(
+			autoRestartBlocker(
+				input({
+					sessions: [
+						session({
+							name: "resumed",
+							pendingPrPreview: preview("check"),
+							resumedOverPreview: "r",
+						}),
+					],
+				}),
+			),
+		).toBe("waiting on 1 running session (resumed)");
+	});
+
+	it("passes when the resumed-over preview has been replaced by a new blocking one", () => {
+		expect(
+			autoRestartBlocker(
+				input({
+					sessions: [
+						session({
+							pendingPrPreview: preview("question"),
+							resumedOverPreview: "earlier",
+						}),
+					],
+				}),
+			),
+		).toBeUndefined();
+	});
+
 	it("ignores run sessions and sessions on linked nodes", () => {
 		expect(
 			autoRestartBlocker(

@@ -9,6 +9,7 @@ export type LiveSession = {
 	commandType?: string;
 	node?: string;
 	pendingPrPreview?: PrPreview;
+	resumedOverPreview?: string;
 };
 
 export type AutoRestartInput = {

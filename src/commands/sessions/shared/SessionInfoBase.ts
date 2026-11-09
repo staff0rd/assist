@@ -79,6 +79,7 @@ export type SessionInfoBase = {
 	design?: boolean;
 	pendingPrPreview?: PrPreview;
 	pendingShow?: PrPreview;
+	resumedOverPreview?: string;
 	undurable?: { reason: string; removesTree?: boolean };
 	joinable?: boolean;
 	closing?: boolean;

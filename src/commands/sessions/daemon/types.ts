@@ -93,6 +93,7 @@ export type Session = {
 	usageSeeded?: boolean;
 	pendingPrPreview?: PrPreview;
 	pendingShow?: PrPreview;
+	resumedOverPreview?: string;
 	pendingRestart?: () => void;
 	pendingDismiss?: () => void;
 	pendingStart?: () => Session["pty"];

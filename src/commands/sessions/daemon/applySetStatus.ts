@@ -1,5 +1,6 @@
 import type { Session, SessionStatus } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { markResumedOverPreview } from "./markResumedOverPreview";
 import type { OnStatusChange } from "./types";
 import { clearPendingSubmit } from "./watchSubmitOutcome";
 
@@ -34,5 +35,6 @@ export function applySetStatus(
 	if (opensPrompt(status, source)) session.permissionActive = true;
 	if (status === "running" || source === "stop")
 		session.permissionActive = false;
+	if (status === "running") markResumedOverPreview(session);
 	onStatusChange(session, status);
 }

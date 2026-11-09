@@ -88,4 +88,39 @@ describe("applySetStatus", () => {
 		applySetStatus(sessions, s.id, "running", "posttool", vi.fn());
 		expect(s.permissionActive).toBe(false);
 	});
+
+	it("records that the agent resumed over a pending blocking preview", () => {
+		const pendingPrPreview = {
+			requestId: "check-1",
+			title: "t",
+			body: "",
+			prNumber: null,
+			kind: "check" as const,
+		};
+		const s = makeSession({ status: "running", pendingPrPreview });
+		const sessions = new Map([[s.id, s]]);
+
+		applySetStatus(sessions, s.id, "waiting", "stop", vi.fn());
+		expect(s.resumedOverPreview).toBeUndefined();
+
+		applySetStatus(sessions, s.id, "running", "posttool", vi.fn());
+		expect(s.resumedOverPreview).toBe("check-1");
+	});
+
+	it("does not record a resume over a show preview", () => {
+		const s = makeSession({
+			status: "running",
+			pendingPrPreview: {
+				requestId: "show-1",
+				title: "t",
+				body: "",
+				prNumber: null,
+				kind: "show",
+			},
+		});
+
+		applySetStatus(new Map([[s.id, s]]), s.id, "running", "pretool", vi.fn());
+
+		expect(s.resumedOverPreview).toBeUndefined();
+	});
 });
