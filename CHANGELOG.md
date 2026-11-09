@@ -1,3 +1,10 @@
+# [0.1086.0](https://github.com/staff0rd/assist/compare/v0.1085.2...v0.1086.0) (2026-11-09)
+
+
+### Features
+
+* allow deleting the home node ([af4775a](https://github.com/staff0rd/assist/commit/af4775a4adf7a416bf9a0b4582ecf8f09c34c075))
+
 ## [0.1085.2](https://github.com/staff0rd/assist/compare/v0.1085.1...v0.1085.2) (2026-11-09)
 
 
