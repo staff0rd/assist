@@ -1,3 +1,10 @@
+## [0.1095.3](https://github.com/staff0rd/assist/compare/v0.1095.2...v0.1095.3) (2026-11-09)
+
+
+### Bug Fixes
+
+* quote pi prompt frontmatter ([ee98d6e](https://github.com/staff0rd/assist/commit/ee98d6ed79ab54b84466dbe1ed6b94221fe39b03))
+
 ## [0.1095.2](https://github.com/staff0rd/assist/compare/v0.1095.1...v0.1095.2) (2026-11-09)
 
 
