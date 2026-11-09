@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import chalk from "chalk";
+import { loadConfig } from "../../../shared/loadConfig";
 import { postSlackMessage } from "../../slack/postSlackMessage";
 import { slackWorkingFile } from "../../slack/slackWorkingFile";
 import { devEntryPath } from "../devEntryPath";
@@ -49,7 +50,12 @@ export async function slack(week?: string): Promise<void> {
 	if (!entry) fail(`No dev entry for ${week} at ${path}`);
 	if (entry.slack) fail(`${week} is already posted: slack: ${entry.slack}`);
 
-	const parts = renderDevlogSlackParts(entry, entry.project ?? repoName, week);
+	const parts = renderDevlogSlackParts(
+		entry,
+		entry.project ?? repoName,
+		week,
+		loadConfig().devlog?.url?.trim() || undefined,
+	);
 	if (parts.length === 1) {
 		await postSlackMessage(channel, { body: parts[0] });
 		return;

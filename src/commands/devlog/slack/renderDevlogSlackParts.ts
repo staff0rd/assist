@@ -26,13 +26,24 @@ function renderCounts(entry: DevEntryFile): string | null {
 	return counts.length > 0 ? counts.join(" · ") : null;
 }
 
-function renderParent(entry: DevEntryFile, project: string, week: string) {
+function entryUrl(baseUrl: string, project: string, week: string) {
+	return `${baseUrl.replace(/\/+$/, "")}/${project}/${week.toLowerCase()}`;
+}
+
+function renderParent(
+	entry: DevEntryFile,
+	project: string,
+	week: string,
+	baseUrl?: string,
+) {
 	const lines = [renderHeader(entry, project, week)];
 	if (entry.title) lines.push(`**${entry.title}**`);
 	const blocks = [lines.join("\n")];
 	if (entry.lede) blocks.push(entry.lede);
 	const counts = renderCounts(entry);
 	if (counts) blocks.push(counts);
+	if (baseUrl)
+		blocks.push(`[Read the full entry →](${entryUrl(baseUrl, project, week)})`);
 	return blocks.join("\n\n");
 }
 
@@ -52,8 +63,9 @@ export function renderDevlogSlackParts(
 	entry: DevEntryFile,
 	project: string,
 	week: string,
+	baseUrl?: string,
 ): string[] {
 	const reply = renderReply(entry);
-	const parent = renderParent(entry, project, week);
+	const parent = renderParent(entry, project, week, baseUrl);
 	return reply ? [parent, reply] : [parent];
 }

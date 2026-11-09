@@ -37,6 +37,18 @@ describe("renderDevlogSlackParts", () => {
 		expect(parent.split("\n")[0]).toBe("**yoke · 2026-W43** · 2026-10-19");
 	});
 
+	it("ends the parent with a link to the entry when a base url is given", () => {
+		const [parent] = renderDevlogSlackParts(
+			yoke,
+			"yoke",
+			"2026-W43",
+			"https://staffordwilliams.com/dev/",
+		);
+		expect(parent.split("\n\n").at(-1)).toBe(
+			"[Read the full entry →](https://staffordwilliams.com/dev/yoke/2026-w43)",
+		);
+	});
+
 	it("renders the parent only when the entry has no list items", () => {
 		const parts = renderDevlogSlackParts(
 			{ ...yoke, added: [], changed: undefined },

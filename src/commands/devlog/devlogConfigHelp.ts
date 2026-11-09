@@ -22,6 +22,11 @@ export const devlogConfigHelp: ConfigHelpEntry[] = [
 		note: "Slack channel dev entries are posted to, falling back to slack.channel (used by 'assist devlog slack' and /devlog --slack-post)",
 	},
 	{
+		key: "devlog.url",
+		setter: "assist config set devlog.url https://example.com/dev",
+		note: "base URL of the published dev entries; when set, Slack posts end with a link to <url>/<project>/<yyyy>-wNN",
+	},
+	{
 		key: "devlog.skipWeeks",
 		setter: "assist devlog skip 2026-W33",
 		note: "ISO weeks (YYYY-Www) that get no dev entry; skip writes repo (db)",

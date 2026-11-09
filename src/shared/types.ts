@@ -73,6 +73,7 @@ const assistConfigShape = {
 			dir: z.string().optional(),
 			ignore: z.array(z.string()).optional(),
 			slack: z.string().optional(),
+			url: z.string().optional(),
 			skipWeeks: z
 				.array(z.string().regex(/^\d{4}-W\d{2}$/, "Use YYYY-Www"))
 				.optional(),
