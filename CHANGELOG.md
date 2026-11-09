@@ -1,3 +1,10 @@
+## [0.1095.1](https://github.com/staff0rd/assist/compare/v0.1095.0...v0.1095.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* invoke Codex skills as $skill ([1bb61a3](https://github.com/staff0rd/assist/commit/1bb61a36047adc9547064aaa290b16ead5407617))
+
 # [0.1095.0](https://github.com/staff0rd/assist/compare/v0.1094.0...v0.1095.0) (2026-11-09)
 
 
