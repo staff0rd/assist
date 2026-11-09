@@ -1,3 +1,10 @@
+# [0.1088.0](https://github.com/staff0rd/assist/compare/v0.1087.0...v0.1088.0) (2026-11-09)
+
+
+### Features
+
+* pick un-posted devlog entry to post ([94d943d](https://github.com/staff0rd/assist/commit/94d943da8a1432a39680d3f1f9295c86230120e6))
+
 # [0.1087.0](https://github.com/staff0rd/assist/compare/v0.1086.0...v0.1087.0) (2026-11-09)
 
 
