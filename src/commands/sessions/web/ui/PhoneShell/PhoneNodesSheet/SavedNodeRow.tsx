@@ -26,7 +26,7 @@ export function SavedNodeRow({
 	return (
 		<Box sx={{ display: "flex", alignItems: "stretch" }}>
 			<ButtonBase
-				sx={nodeListSx.item}
+				sx={[nodeListSx.item, { flex: 1, minWidth: 0 }]}
 				onClick={onChoose}
 				aria-current={selected}
 			>
