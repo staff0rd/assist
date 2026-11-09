@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
 import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
@@ -174,6 +180,11 @@ describe("CheckPane", () => {
 		expect(data).toContain("which Mac?");
 		expect(onDecision).not.toHaveBeenCalled();
 		expect(await screen.findByText("Question sent to check-42")).toBeTruthy();
+
+		fireEvent.click(screen.getByRole("button", { name: "Close" }));
+		await waitFor(() =>
+			expect(screen.queryByText("Question sent to check-42")).toBeNull(),
+		);
 
 		fireEvent.click(screen.getByRole("button", { name: "Works" }));
 		expect(onDecision).toHaveBeenCalledWith(
