@@ -1,3 +1,10 @@
+# [0.1087.0](https://github.com/staff0rd/assist/compare/v0.1086.0...v0.1087.0) (2026-11-09)
+
+
+### Features
+
+* post devlog entries to Slack ([8ea3843](https://github.com/staff0rd/assist/commit/8ea3843d32d6f700901c5adb4a3835c430b9e35a))
+
 # [0.1086.0](https://github.com/staff0rd/assist/compare/v0.1085.2...v0.1086.0) (2026-11-09)
 
 
