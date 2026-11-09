@@ -1,3 +1,11 @@
+## [0.1092.2](https://github.com/staff0rd/assist/compare/v0.1092.1...v0.1092.2) (2026-11-09)
+
+
+### Bug Fixes
+
+* keep review progress on daemon restart ([b784d42](https://github.com/staff0rd/assist/commit/b784d428c34db7c62c8e091b57b1ff2294325ab2))
+* read keyRef from any 1Password account ([587e962](https://github.com/staff0rd/assist/commit/587e96264536e68daf777741fe24c71011057564))
+
 ## [0.1092.1](https://github.com/staff0rd/assist/compare/v0.1092.0...v0.1092.1) (2026-11-09)
 
 
