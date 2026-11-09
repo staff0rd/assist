@@ -286,6 +286,32 @@ describe("restoreSession", () => {
 		);
 	});
 
+	it("shows a resumed codex wrapper no restart notice", () => {
+		expect(restoreSession("1", codexRefine()).scrollback).toBe("");
+	});
+
+	it("tells the restored terminal why a pi wrapper relaunched without its conversation", () => {
+		const session = restoreSession("1", {
+			name: "repo/assist refine a42",
+			commandType: "assist",
+			harness: "pi",
+			status: "running",
+			cwd: "/home/user/repo",
+			startedAt: 123,
+			assistArgs: ["refine", "--once", "--harness", "pi", "a42"],
+		});
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "refine", "--once", "--harness", "pi", "a42"],
+			"/home/user/repo",
+			"1",
+			undefined,
+		);
+		expect(session.scrollback).toContain(
+			"Restarted without the previous conversation: pi sessions cannot be resumed yet",
+		);
+	});
+
 	it("relaunches a codex backlog run resuming its bound codex conversation", () => {
 		restoreSession("1", {
 			...codexRefine(),

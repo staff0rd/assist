@@ -1,3 +1,4 @@
+import { announceFreshRestart } from "./announceFreshRestart";
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
@@ -13,13 +14,15 @@ export function restartSession(
 ): boolean {
 	const plan = respawnPlan(session);
 	if (!plan) return false;
-	const fallbackVia = session.claudeSessionId
-		? `resume ${session.claudeSessionId}`
-		: "fresh";
 	const respawn = () => {
 		respawnSession(session, plan.spawn, plan.status, clients, onStatusChange);
+		const resume: { id?: string; reason?: string } = plan.resumeOutcome?.() ?? {
+			id: session.claudeSessionId,
+		};
+		if (resume.reason && session.pty)
+			announceFreshRestart(session, clients, resume.reason);
 		daemonLog(
-			`session ${session.id} restarted (${plan.via?.() ?? fallbackVia}): ${session.name}`,
+			`session ${session.id} restarted (${resume.id ? `resume ${resume.id}` : `fresh${resume.reason ? `: ${resume.reason}` : ""}`}): ${session.name}`,
 		);
 	};
 

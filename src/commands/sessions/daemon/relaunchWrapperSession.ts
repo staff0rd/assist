@@ -1,3 +1,4 @@
+import { announceFreshRestart } from "./announceFreshRestart";
 import { assistResumeArgs } from "./assistResumeArgs";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
@@ -31,7 +32,9 @@ export function relaunchWrapperSession(
 		id,
 		resumedRunEnv(persisted.activity?.itemId, plan),
 	);
-	return plan.idle
+	const session = plan.idle
 		? waitingSession(base, persisted, pty)
 		: runningSession(base, persisted, pty);
+	if (resume.reason) announceFreshRestart(session, new Set(), resume.reason);
+	return session;
 }

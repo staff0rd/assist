@@ -18,7 +18,7 @@ import { spawnPty } from "./spawnPty";
 type Fixture = {
 	harness: HarnessKind;
 	identity: { claudeSessionId?: string; harnessSessionId?: string };
-	wrappedVia: string;
+	wrappedResume: { id: string } | { reason: string };
 	wrappedResumeArgs: string[];
 	direct: "claude" | "codex" | "none";
 };
@@ -27,21 +27,21 @@ const fixtures: Fixture[] = [
 	{
 		harness: "claude",
 		identity: { claudeSessionId: "conv-1" },
-		wrappedVia: "resume conv-1",
+		wrappedResume: { id: "conv-1" },
 		wrappedResumeArgs: ["--resume-session", "conv-1"],
 		direct: "claude",
 	},
 	{
 		harness: "codex",
 		identity: { harnessSessionId: "conv-1" },
-		wrappedVia: "resume conv-1",
+		wrappedResume: { id: "conv-1" },
 		wrappedResumeArgs: ["--resume-session", "conv-1"],
 		direct: "codex",
 	},
 	{
 		harness: "pi",
 		identity: {},
-		wrappedVia: "fresh: pi sessions cannot be resumed yet",
+		wrappedResume: { reason: "pi sessions cannot be resumed yet" },
 		wrappedResumeArgs: [],
 		direct: "none",
 	},
@@ -79,7 +79,7 @@ describe.each(fixtures)("restart conformance on $harness", (fixture) => {
 			...refineArgs(fixture.harness),
 			...fixture.wrappedResumeArgs,
 		]);
-		expect(plan?.via?.()).toBe(fixture.wrappedVia);
+		expect(plan?.resumeOutcome?.()).toEqual(fixture.wrappedResume);
 	});
 
 	it("restarts a direct session through its own harness, or not at all when it cannot resume", () => {

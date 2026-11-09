@@ -232,6 +232,38 @@ describe("restartSession", () => {
 		);
 	});
 
+	it("tells the terminal why a wrapped session restarted without its conversation", () => {
+		const session = makeSession({
+			id: "1",
+			commandType: "assist",
+			status: "done",
+			harness: "pi",
+			assistArgs: ["refine", "--harness", "pi", "a42"],
+			cwd: "/home/user/repo",
+		});
+
+		restartSession(session, new Set(), vi.fn());
+
+		expect(session.scrollback).toContain(
+			"Restarted without the previous conversation: pi sessions cannot be resumed yet",
+		);
+	});
+
+	it("shows no restart notice when the conversation resumes", () => {
+		const session = makeSession({
+			id: "1",
+			commandType: "assist",
+			status: "done",
+			assistArgs: ["refine", "a42"],
+			claudeSessionId: "abc-123",
+			cwd: "/home/user/repo",
+		});
+
+		restartSession(session, new Set(), vi.fn());
+
+		expect(session.scrollback).toBe("");
+	});
+
 	it("does not restart run sessions", () => {
 		const run = makeSession({
 			id: "1",

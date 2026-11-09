@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { ResumeOutcome } from "./conversationResumeOutcome";
 import type { Session } from "./createSession";
 import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 import { rememberSessionTitle } from "./rememberSessionTitle";
@@ -7,7 +8,7 @@ import { spawnClaude } from "./spawnClaude";
 export type RespawnPlan = {
 	spawn: () => Session["pty"];
 	status: Session["status"];
-	via?: () => string;
+	resumeOutcome?: () => ResumeOutcome | undefined;
 };
 
 export function interactiveRespawnPlan(

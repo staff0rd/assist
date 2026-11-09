@@ -3,7 +3,7 @@ import { resolveCapability } from "../../../shared/harnessAdapters/resolveCapabi
 import type { ConversationRef } from "../../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../../shared/harnesses";
 
-type ResumeOutcome =
+export type ResumeOutcome =
 	| { id: string; reason?: undefined }
 	| { id?: undefined; reason: string };
 

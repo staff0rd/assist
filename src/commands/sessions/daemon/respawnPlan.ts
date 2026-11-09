@@ -1,5 +1,8 @@
 import { assistResumeArgs } from "./assistResumeArgs";
-import { conversationResumeOutcome } from "./conversationResumeOutcome";
+import {
+	conversationResumeOutcome,
+	type ResumeOutcome,
+} from "./conversationResumeOutcome";
 import type { Session } from "./createSession";
 import { interactiveHarnessRespawn } from "./interactiveHarnessRespawn";
 import type { RespawnPlan } from "./interactiveRespawnPlan";
@@ -10,11 +13,10 @@ export function respawnPlan(session: Session): RespawnPlan | null {
 	if (commandType === "claude") return interactiveHarnessRespawn(session);
 	if (commandType === "assist" && assistArgs) {
 		const idle = session.status === "waiting";
-		let via = "fresh";
+		let resume: ResumeOutcome | undefined;
 		return {
 			spawn: () => {
-				const resume = conversationResumeOutcome(session);
-				via = resume.id ? `resume ${resume.id}` : `fresh: ${resume.reason}`;
+				resume = conversationResumeOutcome(session);
 				return spawnPty(
 					assistResumeArgs({ assistArgs, resumeSessionId: resume.id }),
 					cwd,
@@ -23,7 +25,7 @@ export function respawnPlan(session: Session): RespawnPlan | null {
 				);
 			},
 			status: idle ? "waiting" : "running",
-			via: () => via,
+			resumeOutcome: () => resume,
 		};
 	}
 	return null;
