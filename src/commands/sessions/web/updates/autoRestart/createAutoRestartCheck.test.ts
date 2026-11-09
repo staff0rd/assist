@@ -24,6 +24,7 @@ function setup(initial: Partial<AutoRestartSnapshot> = {}, enabled = true) {
 		async (): Promise<AutoRestartSessions | undefined> => ({
 			sessions: snap.sessions,
 			restartActivity: snap.restartActivity,
+			lastUserActivityAt: snap.lastUserActivityAt,
 		}),
 	);
 	const tick = createAutoRestartCheck({
@@ -167,6 +168,47 @@ describe("createAutoRestartCheck", () => {
 		t.advance(AUTO_RESTART_SETTLE_MS);
 		await t.tick();
 		expect(t.restart).toHaveBeenCalledTimes(2);
+	});
+
+	it("holds while the user is active, logging once, then restarts after the idle window and settle", async () => {
+		const t = setup({ lastUserActivityAt: 0, idleMinutes: 2 });
+		await t.tick();
+		t.advance(60_000);
+		t.update({ lastUserActivityAt: 60_000 });
+		await t.tick();
+		expect(t.restart).not.toHaveBeenCalled();
+		expect(t.report).toHaveBeenLastCalledWith(
+			"you're active · restarting 2m after you stop",
+		);
+		expect(
+			t.log.mock.calls.filter(([m]) => String(m).includes("you're active")),
+		).toHaveLength(1);
+		t.advance(120_000 - 1);
+		await t.tick();
+		expect(t.report).toHaveBeenLastCalledWith(
+			"you're active · restarting 2m after you stop",
+		);
+		t.advance(1);
+		await t.tick();
+		expect(t.report).toHaveBeenLastCalledWith("idle · restarting within 60s");
+		t.advance(AUTO_RESTART_SETTLE_MS);
+		await t.tick();
+		expect(t.restart).toHaveBeenCalledWith("both");
+	});
+
+	it("skips at the preflight when activity arrives during the settle window", async () => {
+		const t = setup();
+		await t.tick();
+		t.advance(AUTO_RESTART_SETTLE_MS);
+		t.freshSessions.mockResolvedValueOnce({
+			sessions: [],
+			lastUserActivityAt: AUTO_RESTART_SETTLE_MS,
+		});
+		await t.tick();
+		expect(t.restart).not.toHaveBeenCalled();
+		expect(t.report).toHaveBeenLastCalledWith(
+			"you're active · restarting 2m after you stop",
+		);
 	});
 
 	it("logs each skip reason once while it holds", async () => {

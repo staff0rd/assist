@@ -11,4 +11,9 @@ export const autoUpdateConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set autoUpdate.restart true --node",
 		note: "the node's web server applies a ready update itself, restarting the daemon and/or web server once every live agent session has been awaiting the user for a minute (or there are none); skipped while the build is pending, the loop is diverged or paused, and attempted once per built version. Toggle it per node from the Updates page (default off)",
 	},
+	{
+		key: "autoUpdate.idleMinutes",
+		setter: "assist config set autoUpdate.idleMinutes 5 --node",
+		note: "with autoUpdate.restart on, hold the auto-restart until the web UI has seen no pointer, keyboard, wheel or touch input for this many minutes (default 2)",
+	},
 ];

@@ -7,6 +7,7 @@ import { type AutoRestartTarget, autoRestartTarget } from "./autoRestartTarget";
 import { blockedBy } from "./blockedBy";
 import { createAutoRestartNotes } from "./createAutoRestartNotes";
 import { autoRestartPreflight } from "./autoRestartPreflight";
+import { noteSkipped } from "./noteSkipped";
 
 export { AUTO_RESTART_SETTLE_MS } from "./createAutoRestartNotes";
 export type {
@@ -40,19 +41,11 @@ export function createAutoRestartCheck(deps: AutoRestartCheckDeps) {
 		}
 		if (snap.restart.length === 0) return note(undefined);
 		const target = autoRestartTarget(snap.restart);
-		const blocker = blockedBy(snap, deps.attempted.get());
-		if (blocker)
-			return note(
-				`skipped ${target} restart for v${snap.built}: ${blocker}`,
-				blocker,
-			);
+		const blocker = blockedBy(snap, deps.attempted.get(), now());
+		if (noteSkipped(note, target, snap.built, blocker)) return;
 		if (!notes.settled(now(), target, snap.built)) return;
-		const finalBlocker = await autoRestartPreflight(deps, snap, activity);
-		if (finalBlocker)
-			return note(
-				`skipped ${target} restart for v${snap.built}: ${finalBlocker}`,
-				finalBlocker,
-			);
+		const finalBlocker = await autoRestartPreflight(deps, snap, activity, now);
+		if (noteSkipped(note, target, snap.built, finalBlocker)) return;
 		note(undefined, "restarting");
 		await attemptAutoRestart(deps, target, snap.built);
 	};

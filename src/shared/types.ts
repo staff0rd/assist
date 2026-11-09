@@ -198,6 +198,7 @@ const assistConfigShape = {
 		.strictObject({
 			enabled: z.boolean().default(true),
 			restart: z.boolean().default(false),
+			idleMinutes: z.number().positive().default(2),
 		})
 		.optional(),
 	worktree: z

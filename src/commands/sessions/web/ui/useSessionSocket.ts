@@ -2,6 +2,7 @@ export type { SessionInfo } from "./types";
 
 import { useActiveSelectionSync } from "./useSessionSocket/useActiveSelectionSync";
 import { useReportRenderedStatus } from "./useSessionSocket/useReportRenderedStatus";
+import { useReportUserActivity } from "./useSessionSocket/useReportUserActivity";
 import { useNodeSelection } from "./useNodeSelection";
 import { useSend } from "./useSessionSocket/useSend";
 import { useSessionActions } from "./useSessionSocket/useSessionActions";
@@ -20,6 +21,7 @@ export function useSessionSocket() {
 	const actions = useSessionActions(send, buffers, handlers);
 	useActiveSelectionSync(activeId, sessions, conn.history, send);
 	useReportRenderedStatus(sessions, send);
+	useReportUserActivity(send);
 
 	const nav = useTranscriptNavigation(
 		send,

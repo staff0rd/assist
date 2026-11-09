@@ -23,6 +23,7 @@ import { lifecycleHandlers } from "./lifecycleHandlers";
 import { pinHandlers } from "./pins/pinHandlers";
 import { retryHandlers } from "./retryHandlers";
 import { type Handler, routed } from "./routed";
+import { userActivity } from "./userActivity";
 import { viewerHandlers } from "./viewerHandlers";
 import { sessionSettingHandlers } from "./sessionSettingHandlers";
 import { spawnAssistCreate } from "./spawnAssistCreate";
@@ -92,6 +93,7 @@ export const messageHandlers: Record<string, Handler> = {
 	},
 	"pr-preview": (client, m, d) => m.prPreview.set(client, d),
 	"pr-decision": routed((_client, m, d) => m.prPreview.decide(d)),
+	"user-activity": () => userActivity.record(),
 	"ui-status": (_client, _m, d) =>
 		daemonLog(`ui rendered: id=${d.sessionId} status=${d.status}`),
 };

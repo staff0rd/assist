@@ -4,6 +4,7 @@ import { performRestart } from "../../restartWeb";
 import { autoRestartEnabled } from "../autoRestartEnabled";
 import { readRestartState } from "../readRestartState";
 import { autoRestartAttempts } from "./autoRestartAttempts";
+import { autoRestartIdleMinutes } from "./autoRestartIdleMinutes";
 import { autoRestartWait } from "./autoRestartWait";
 import {
 	type AutoRestartSnapshot,
@@ -30,6 +31,8 @@ async function snapshot(installDir: string): Promise<AutoRestartSnapshot> {
 		loop: greeting ? state.reply?.loop : undefined,
 		sessions: greeting?.sessions ?? [],
 		restartActivity: greeting?.restartActivity,
+		lastUserActivityAt: greeting?.lastUserActivityAt,
+		idleMinutes: autoRestartIdleMinutes(installDir),
 	};
 }
 
