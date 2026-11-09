@@ -1,3 +1,10 @@
+## [0.1089.1](https://github.com/staff0rd/assist/compare/v0.1089.0...v0.1089.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* auto-restart waits on resumed agent ([bdef08c](https://github.com/staff0rd/assist/commit/bdef08cb5de1908b5c457da8bdd62f1c132f4613))
+
 # [0.1089.0](https://github.com/staff0rd/assist/compare/v0.1088.0...v0.1089.0) (2026-11-09)
 
 
