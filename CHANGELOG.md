@@ -1,3 +1,10 @@
+# [0.1104.0](https://github.com/staff0rd/assist/compare/v0.1103.0...v0.1104.0) (2026-11-09)
+
+
+### Features
+
+* retire the editing-files advice ([fa29c1e](https://github.com/staff0rd/assist/commit/fa29c1e837facde8efde5061f29454fccbb41a99))
+
 # [0.1103.0](https://github.com/staff0rd/assist/compare/v0.1102.0...v0.1103.0) (2026-11-09)
 
 
