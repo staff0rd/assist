@@ -1,3 +1,10 @@
+# [0.1096.0](https://github.com/staff0rd/assist/compare/v0.1095.4...v0.1096.0) (2026-11-09)
+
+
+### Features
+
+* run one-shots and launches via adapters ([5e4ad9a](https://github.com/staff0rd/assist/commit/5e4ad9a2a76d39d5e4b78c52f0ad594aebd763c4))
+
 ## [0.1095.4](https://github.com/staff0rd/assist/compare/v0.1095.3...v0.1095.4) (2026-11-09)
 
 
