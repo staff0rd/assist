@@ -1,3 +1,10 @@
+# [0.1089.0](https://github.com/staff0rd/assist/compare/v0.1088.0...v0.1089.0) (2026-11-09)
+
+
+### Features
+
+* link devlog Slack post to entry ([f275cd2](https://github.com/staff0rd/assist/commit/f275cd2da44f3fc18bfe5a984c2a05e8bca78093))
+
 # [0.1088.0](https://github.com/staff0rd/assist/compare/v0.1087.0...v0.1088.0) (2026-11-09)
 
 
