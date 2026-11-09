@@ -1,3 +1,10 @@
+# [0.1101.0](https://github.com/staff0rd/assist/compare/v0.1100.1...v0.1101.0) (2026-11-09)
+
+
+### Features
+
+* shared tool policy across harnesses ([d260812](https://github.com/staff0rd/assist/commit/d2608125cd10a2bc36421606eebd2cce933c7020))
+
 ## [0.1100.1](https://github.com/staff0rd/assist/compare/v0.1100.0...v0.1100.1) (2026-11-09)
 
 
