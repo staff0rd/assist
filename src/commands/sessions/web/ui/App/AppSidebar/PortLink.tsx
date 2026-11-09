@@ -1,17 +1,26 @@
 import Link from "@mui/material/Link";
+import type { SessionInfo } from "../../types";
 import { useNodeSelectionContext } from "../../useNodeSelectionContext";
 import { portUrl } from "./portUrl";
 
-export function PortLink({ port, node }: { port: number; node?: string }) {
+export function PortLink({
+	port,
+	node,
+	protocol,
+}: {
+	port: number;
+	node?: string;
+	protocol?: SessionInfo["protocol"];
+}) {
 	const { nodes } = useNodeSelectionContext();
-	const { url, remote } = portUrl(port, node, nodes);
+	const { url, remote } = portUrl(port, node, nodes, protocol);
 	return (
 		<Link
 			href={url}
 			title={
 				remote
 					? `Opens ${url} on ${node}; the dev server must listen on the tailnet (e.g. --host 0.0.0.0)`
-					: undefined
+					: url
 			}
 			target="_blank"
 			rel="noopener noreferrer"

@@ -54,6 +54,7 @@ export type Session = {
 	assistArgs?: string[];
 	server?: boolean;
 	serverPort?: number;
+	serverProtocol?: "http" | "https";
 	serverOrigin?: string;
 	serverGroup?: string;
 	stopping?: boolean;

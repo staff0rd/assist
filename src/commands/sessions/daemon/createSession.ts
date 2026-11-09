@@ -79,6 +79,7 @@ export function createRunSession(
 		cwd,
 		server: serverMeta.server || undefined,
 		serverPort: serverMeta.port,
+		serverProtocol: serverMeta.protocol,
 		serverOrigin: serverMeta.origin,
 		serverGroup: serverMeta.group,
 	};

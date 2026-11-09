@@ -43,6 +43,7 @@ export function restoreServerRun(
 		runArgs: persisted.runArgs,
 		server: true,
 		serverPort: meta.port,
+		serverProtocol: meta.protocol,
 		serverOrigin: meta.origin,
 		serverGroup: meta.group,
 	};

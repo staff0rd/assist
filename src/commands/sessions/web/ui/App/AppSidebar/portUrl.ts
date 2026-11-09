@@ -6,11 +6,15 @@ export function portUrl(
 	port: number,
 	node: string | undefined,
 	nodes: NodesState | null,
+	protocol: "http" | "https" = "http",
 ): PortTarget {
 	const link =
 		node && node !== nodes?.local
 			? nodes?.links.find((l) => l.name === node)
 			: undefined;
-	if (!link) return { url: `http://localhost:${port}`, remote: false };
-	return { url: `http://${new URL(link.url).hostname}:${port}`, remote: true };
+	if (!link) return { url: `${protocol}://localhost:${port}`, remote: false };
+	return {
+		url: `${protocol}://${new URL(link.url).hostname}:${port}`,
+		remote: true,
+	};
 }

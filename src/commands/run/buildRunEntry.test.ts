@@ -59,6 +59,22 @@ describe("buildRunEntry", () => {
 		});
 	});
 
+	it("includes protocol when provided", () => {
+		const entry = buildRunEntry("api", "dotnet", ["run"], {
+			server: true,
+			port: 5001,
+			protocol: "https",
+		});
+		expect(entry).toEqual({
+			name: "api",
+			command: "dotnet",
+			args: ["run"],
+			server: true,
+			port: 5001,
+			protocol: "https",
+		});
+	});
+
 	it("omits cwd when not provided", () => {
 		const entry = buildRunEntry("lint", "eslint", []);
 		expect(entry).not.toHaveProperty("cwd");

@@ -125,6 +125,7 @@ describe("describeConfigNode", () => {
 				"quiet",
 				"server",
 				"port",
+				"protocol",
 			],
 			["link", "prefix"],
 		]);

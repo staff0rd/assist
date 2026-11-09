@@ -43,7 +43,11 @@ export function RemoteServingBanner({
 				{serving.port ? (
 					<>
 						{" "}
-						<PortLink port={serving.port} node={serving.node} />
+						<PortLink
+							port={serving.port}
+							node={serving.node}
+							protocol={serving.protocol}
+						/>
 					</>
 				) : null}
 				{rest}

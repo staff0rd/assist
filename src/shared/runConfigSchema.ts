@@ -19,6 +19,7 @@ export const runConfigSchema = z.strictObject({
 	quiet: z.boolean().optional(),
 	server: z.union([z.boolean(), z.string().min(1)]).optional(),
 	port: z.number().optional(),
+	protocol: z.enum(["http", "https"]).optional(),
 });
 
 export const runLinkSchema = z.strictObject({

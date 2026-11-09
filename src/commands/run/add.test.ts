@@ -289,6 +289,42 @@ describe("add", () => {
 		]);
 	});
 
+	it("writes --protocol https", async () => {
+		setArgv(
+			"api",
+			"dotnet",
+			"run",
+			"--server",
+			"--port",
+			"5001",
+			"--protocol",
+			"https",
+		);
+		mockLoadProjectConfig.mockReturnValue({});
+
+		await add();
+
+		expect(savedRun()).toEqual([
+			{
+				name: "api",
+				command: "dotnet",
+				args: ["run"],
+				server: true,
+				port: 5001,
+				protocol: "https",
+			},
+		]);
+	});
+
+	it("rejects an invalid --protocol", async () => {
+		setArgv("dev", "vite", "--protocol", "ftp");
+		mockLoadProjectConfig.mockReturnValue({});
+
+		await expect(add()).rejects.toThrow("process.exit(1)");
+
+		expect(mockSaveConfig).not.toHaveBeenCalled();
+	});
+
 	it("rejects a non-numeric --port", async () => {
 		setArgv("dev", "vite", "--port", "abc");
 		mockLoadProjectConfig.mockReturnValue({});

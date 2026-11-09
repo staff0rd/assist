@@ -21,6 +21,7 @@ type RetryDeps = {
 function tagServerSession(session: Session, meta: ServerRunMeta): void {
 	session.server = meta.server || undefined;
 	session.serverPort = meta.port;
+	session.serverProtocol = meta.protocol;
 	session.serverOrigin = meta.origin;
 	session.serverGroup = meta.group;
 }

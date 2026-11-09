@@ -11,6 +11,11 @@ const properties: [key: string, flag: string, note: string][] = [
 	["server", "--server [group]", "singleton dev server, optionally grouped"],
 	["port", "--port <port>", "display-only port on the serving card"],
 	[
+		"protocol",
+		"--protocol <http|https>",
+		"protocol of the serving card's port link (default: http)",
+	],
+	[
 		"pre",
 		"--pre <command>",
 		"shell command run before this one (repeatable, runs in order)",

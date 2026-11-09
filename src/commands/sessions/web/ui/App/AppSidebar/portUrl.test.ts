@@ -28,6 +28,23 @@ describe("portUrl", () => {
 		});
 	});
 
+	it("uses https for local and remote sessions when configured", () => {
+		expect(portUrl(5001, undefined, nodes, "https")).toEqual({
+			url: "https://localhost:5001",
+			remote: false,
+		});
+		expect(portUrl(5001, "Work-wsl", nodes, "https")).toEqual({
+			url: "https://work-wsl.tail1234.ts.net:5001",
+			remote: true,
+		});
+	});
+
+	it("defaults to http when no protocol is configured", () => {
+		expect(portUrl(5001, undefined, nodes, undefined).url).toBe(
+			"http://localhost:5001",
+		);
+	});
+
 	it("falls back to localhost when the node is unknown", () => {
 		expect(portUrl(5173, "Other", nodes).url).toBe("http://localhost:5173");
 		expect(portUrl(5173, "Work-wsl", null).url).toBe("http://localhost:5173");

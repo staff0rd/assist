@@ -21,6 +21,10 @@ export function registerRunAdd(runCommand: Command): void {
 		)
 		.option("--port <port>", "Display-only port shown on the serving card")
 		.option(
+			"--protocol <http|https>",
+			"Protocol for the serving card's port link (default: http)",
+		)
+		.option(
 			"--env <KEY=VALUE>",
 			"Environment variable for the command (repeatable)",
 		)

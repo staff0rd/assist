@@ -62,6 +62,7 @@ export type SessionInfoBase = {
 	runName?: string;
 	server?: boolean;
 	port?: number;
+	protocol?: "http" | "https";
 	remoteOrigin?: string;
 	assistArgs?: string[];
 	cwd?: string;
