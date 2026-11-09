@@ -8,6 +8,7 @@ function stateWith(...traceIds: (string | undefined)[]) {
 		viewers: () => new Set(),
 		onSessionsChanged: () => {},
 		onHistoryChanged: () => {},
+		onLimits: () => {},
 	});
 	const clients = traceIds.map((traceId) => {
 		const client: SessionClient = { send: () => {} };

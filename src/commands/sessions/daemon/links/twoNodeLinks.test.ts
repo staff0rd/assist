@@ -265,6 +265,32 @@ describe("two linked nodes", () => {
 		});
 	});
 
+	it("relays a peer's limits to local viewers without echoing them back", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		const windows = node("pc-windows", [WSL]);
+		const wslView = viewer();
+		const windowsView = viewer();
+		wsl.addClient(wslView.client);
+		windows.addClient(windowsView.client);
+		wsl.links.reload();
+		windows.links.reload();
+		await vi.waitFor(() => {
+			expect(wsl.links.nodes().links[0].state).toBe("connected");
+			expect(windows.links.nodes().links[0].state).toBe("connected");
+		});
+		const rateLimits = { five_hour: { used_percentage: 40, resets_at: 100 } };
+		const limits = (v: ReturnType<typeof viewer>) =>
+			v.received.filter((m) => m.type === "limits");
+
+		broadcast(windows.clients, { type: "limits", rateLimits });
+
+		await vi.waitFor(() =>
+			expect(limits(wslView)).toEqual([{ type: "limits", rateLimits }]),
+		);
+		await new Promise((resolve) => setTimeout(resolve, 20));
+		expect(limits(windowsView)).toHaveLength(1);
+	});
+
 	it("drops the peer's cards on disconnect and restores them on reconnect", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		const windows = node("pc-windows");

@@ -46,6 +46,14 @@ export class ClientHub extends Set<SessionClient> {
 		else this.persistPeak?.(rateLimits);
 	}
 
+	relayPeerLimits = (
+		harness: HarnessKind | undefined,
+		rateLimits: RateLimits,
+	): void => {
+		const observation = this.limits.observe(harness, rateLimits);
+		if (observation) broadcast(this.viewers(), observation.message);
+	};
+
 	currentWindows(harness?: HarnessKind): ActiveWindow[] {
 		return this.limits.windows(harness);
 	}

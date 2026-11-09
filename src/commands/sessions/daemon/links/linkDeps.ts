@@ -19,6 +19,7 @@ type LinkCallbacks = Pick<
 	| "onSessionsChanged"
 	| "onStateChanged"
 	| "onHistoryChanged"
+	| "onLimits"
 	| "pins"
 >;
 
@@ -40,6 +41,7 @@ export function linkDeps(
 			"links: history-changed handler",
 			callbacks.onHistoryChanged,
 		),
+		onLimits: guardLinkCallback("links: limits handler", callbacks.onLimits),
 		pins: callbacks.pins,
 		transport: options.transport ?? connectLinkWebSocket,
 		reconnectMs: options.reconnectMs ?? 3_000,

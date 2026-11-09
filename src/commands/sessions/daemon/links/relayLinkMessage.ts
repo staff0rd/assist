@@ -1,3 +1,5 @@
+import type { HarnessKind } from "../../../../shared/harnesses";
+import type { RateLimits } from "../../../../shared/RateLimits";
 import type { HistoricalSession } from "../../shared/parseSessionFile";
 import { daemonLog, relayDaemonLog } from "../daemonLog";
 import { logUnrecognisedType } from "../logUnrecognisedType";
@@ -55,12 +57,17 @@ const relays: Record<string, Relay> = {
 	"restart-webserver": relayReply,
 	"user-messages": (state, msg) =>
 		broadcastToViewers(state, { ...msg, sessionId: nsId(state, msg) }),
+	limits: (state, msg) =>
+		state.onLimits(
+			msg.harness as HarnessKind | undefined,
+			msg.rateLimits as RateLimits,
+		),
 	log: (state, msg) => {
 		if (typeof msg.line === "string") relayDaemonLog(state.node, msg.line);
 	},
 };
 
-const notRelayed = new Set(["limits", "nodes"]);
+const notRelayed = new Set(["nodes"]);
 
 export function relayLinkMessage(state: LinkRelayState, msg: Msg): void {
 	const type = msg.type as string;

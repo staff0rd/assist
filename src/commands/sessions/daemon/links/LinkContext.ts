@@ -10,6 +10,7 @@ export type NodeLinkDeps = {
 	onSessionsChanged: () => void;
 	onStateChanged: () => void;
 	onHistoryChanged: () => void;
+	onLimits: LinkRelayState["onLimits"];
 	pins: PinRelay;
 	transport: LinkTransport;
 	reconnectMs: number;

@@ -9,6 +9,7 @@ import { linkDeps, type NodeLinksOptions } from "./linkDeps";
 import type { NodesMessage } from "./LinkStatus";
 import { NodeLink } from "./NodeLink";
 import { reconcileLinks } from "./reconcileLinks";
+import { relayLinkUserActivity } from "./relayLinkUserActivity";
 import { routeToLink } from "./routeToLink";
 
 export class NodeLinks {
@@ -32,6 +33,7 @@ export class NodeLinks {
 			onSessionsChanged: this.onSessionsChanged,
 			onStateChanged: () => broadcast(this.clients.viewers(), this.nodes()),
 			onHistoryChanged: () => void this.broadcastHistory(),
+			onLimits: this.clients.relayPeerLimits,
 			pins: this.pins,
 		});
 		reconcileLinks(this.links, specs, (spec) => new NodeLink(spec, deps));
@@ -76,9 +78,7 @@ export class NodeLinks {
 	}
 
 	relayUserActivity(nodes: unknown): void {
-		if (!Array.isArray(nodes)) return;
-		for (const node of new Set(nodes))
-			if (typeof node === "string") this.links.get(node)?.relayUserActivity();
+		relayLinkUserActivity(this.links, nodes);
 	}
 
 	viewerLeft(client: SessionClient, viewerId: string): void {

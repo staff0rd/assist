@@ -1,3 +1,5 @@
+import type { HarnessKind } from "../../../../shared/harnesses";
+import type { RateLimits } from "../../../../shared/RateLimits";
 import type { HistoricalSession } from "../../shared/parseSessionFile";
 import { broadcast, type SessionClient, sendTo } from "../broadcast";
 import type { SessionInfo } from "../createSession";
@@ -25,16 +27,17 @@ export type LinkRelayState = {
 	viewers: () => Set<SessionClient>;
 	onSessionsChanged: () => void;
 	onHistoryChanged: () => void;
+	onLimits: (harness: HarnessKind | undefined, rateLimits: RateLimits) => void;
 };
 
 type RelayCallbacks = Pick<
 	LinkRelayState,
-	"viewers" | "onSessionsChanged" | "onHistoryChanged"
+	"viewers" | "onSessionsChanged" | "onHistoryChanged" | "onLimits"
 >;
 
 export function createRelayState(
 	node: string,
-	{ viewers, onSessionsChanged, onHistoryChanged }: RelayCallbacks,
+	{ viewers, onSessionsChanged, onHistoryChanged, onLimits }: RelayCallbacks,
 ): LinkRelayState {
 	return {
 		node,
@@ -47,6 +50,7 @@ export function createRelayState(
 		viewers,
 		onSessionsChanged,
 		onHistoryChanged,
+		onLimits,
 	};
 }
 

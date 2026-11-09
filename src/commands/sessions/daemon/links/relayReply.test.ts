@@ -11,6 +11,7 @@ function setup() {
 		viewers: () => new Set(),
 		onSessionsChanged: () => {},
 		onHistoryChanged: () => {},
+		onLimits: () => {},
 	});
 	const client = (): SessionClient & { sent: string[] } => {
 		const sent: string[] = [];
