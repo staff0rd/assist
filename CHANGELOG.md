@@ -1,3 +1,10 @@
+## [0.1093.1](https://github.com/staff0rd/assist/compare/v0.1093.0...v0.1093.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* drop TestFlight testers from iOS ([f1df997](https://github.com/staff0rd/assist/commit/f1df9974580b3e815686e7533d49632820cae4e5))
+
 # [0.1093.0](https://github.com/staff0rd/assist/compare/v0.1092.4...v0.1093.0) (2026-11-09)
 
 
