@@ -1,3 +1,10 @@
+## [0.1100.1](https://github.com/staff0rd/assist/compare/v0.1100.0...v0.1100.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* hide unavailable inbox harnesses ([fb6cf3a](https://github.com/staff0rd/assist/commit/fb6cf3ac98e7cce2c494258ca5b324a6e820d868))
+
 # [0.1100.0](https://github.com/staff0rd/assist/compare/v0.1099.0...v0.1100.0) (2026-11-09)
 
 
