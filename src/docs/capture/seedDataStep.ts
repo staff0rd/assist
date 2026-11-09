@@ -2,6 +2,7 @@ import type { CaptureSetupStep } from "../captureSetupStepSchema";
 import { addNewsFeed } from "./addNewsFeed";
 import type { CaptureHome } from "./createCaptureHome";
 import { runCaptureSql } from "./runCaptureSql";
+import { seedTestflight } from "./seedTestflight";
 import { writeFakeGhResponse } from "./writeFakeGhResponse";
 
 export async function seedDataStep(
@@ -16,6 +17,7 @@ export async function seedDataStep(
 			ok: true,
 			...step.connectMobile,
 		});
+	else if ("testflight" in step) seedTestflight(capture, step.testflight);
 	else return false;
 	return true;
 }

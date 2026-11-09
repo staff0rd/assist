@@ -8,7 +8,10 @@ import type { Server } from "node:http";
 import type { Socket } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { CaptureNewsFeed } from "../captureSetupStepSchema";
+import type {
+	CaptureNewsFeed,
+	CaptureTestflight,
+} from "../captureSetupStepSchema";
 import { docsPaths } from "../docsPaths";
 import { captureEnv } from "./captureEnv";
 import { cloneCaptureRepos } from "./cloneCaptureRepos";
@@ -32,6 +35,7 @@ export type CaptureHome = {
 	newsFeeds: Map<string, CaptureNewsFeed>;
 	apiStubs: Map<string, unknown>;
 	feedServer?: Server;
+	testflight?: CaptureTestflight;
 };
 
 function socketPathSafeTempDir(): string {

@@ -5,14 +5,36 @@ group: Sessions
 order: 11
 covers:
   - route:/connect-mobile
-  - cli:testflight add
-  - config:testflight.keyId
-  - config:testflight.issuerId
-  - config:testflight.keyRef
-  - config:testflight.bundleId
-  - config:testflight.externalGroup
-  - config:testflight.internalGroup
 screenshots:
+  - file: ios-app-testflight-testers.png
+    alt: The TestFlight testers dialog, listing internal and external testers with their status
+    route: /
+    setup:
+      - testflight:
+          bundleId: com.example.sandbox
+          externalGroup: Friends
+          internalGroup: Team
+          team:
+            - email: sam@example.com
+            - email: alex@example.com
+              pending: true
+          testers:
+            - email: sam@example.com
+              group: internal
+              state: INSTALLED
+            - email: jordan@example.com
+              group: external
+              state: INSTALLED
+            - email: riley@example.com
+              group: external
+              state: ACCEPTED
+            - email: casey@example.com
+              group: external
+              state: INVITED
+    waitFor: "[aria-label='Open menu']"
+    actions:
+      - click: "[aria-label='Open menu']"
+      - click: text=TestFlight testers
   - file: ios-app-sessions.png
     alt: The iOS app session list, with sessions that need you above running ones
     route: /
@@ -77,20 +99,9 @@ The app is distributed through TestFlight. Install [TestFlight](https://apps.app
 
 ## Managing testers
 
-To invite testers to your own build, point assist at your app in App Store Connect with an [API key](https://appstoreconnect.apple.com/access/integrations/api):
+Once your App Store Connect app is [configured](../cli-testflight/#config), open **TestFlight testers** from the dashboard's menu to see each tester's invite and install status. Enter an email and press **Add** to add a tester to the external group. Turn on **Internal** to invite them to your App Store Connect team instead, then add them again once they accept to put them in the internal group.
 
-```bash
-assist config set testflight.keyId <key id>
-assist config set testflight.issuerId <issuer id>
-assist config set testflight.keyRef op://<vault>/<item>/<field>
-assist config set testflight.bundleId <bundle id>
-assist config set testflight.externalGroup <group name>
-assist config set testflight.internalGroup <group name>
-```
-
-`testflight.keyRef` is the 1Password reference to the key's `.p8` file. New testers go into `testflight.externalGroup`; App Store Connect team members go into `testflight.internalGroup`.
-
-Open **TestFlight testers** from the dashboard's menu to see each tester's invite and install status. Enter an email and press **Add** to add a tester to the external group. Turn on **Internal** to invite them to your App Store Connect team instead, then add them again once they accept to put them in the internal group. `assist testflight add <email> [--internal]` does the same from the CLI.
+::screenshot{file="ios-app-testflight-testers.png"}
 
 ## Connecting to a home node
 

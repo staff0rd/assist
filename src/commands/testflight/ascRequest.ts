@@ -1,7 +1,11 @@
 import { formatAscError } from "./formatAscError";
 import { TestflightError } from "./TestflightError";
 
-const BASE_URL = "https://api.appstoreconnect.apple.com";
+function baseUrl(): string {
+	return (
+		process.env.ASSIST_ASC_BASE_URL ?? "https://api.appstoreconnect.apple.com"
+	);
+}
 
 async function send(
 	fetchFn: typeof fetch,
@@ -11,7 +15,7 @@ async function send(
 	body?: unknown,
 ): Promise<Response> {
 	try {
-		return await fetchFn(`${BASE_URL}${path}`, {
+		return await fetchFn(`${baseUrl()}${path}`, {
 			method,
 			headers: {
 				Authorization: `Bearer ${token}`,

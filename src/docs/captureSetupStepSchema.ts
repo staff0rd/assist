@@ -159,6 +159,33 @@ const connectMobileSchema = z.strictObject({
 	name: z.string().min(1),
 });
 
+const testflightSchema = z.strictObject({
+	bundleId: z.string().min(1),
+	externalGroup: z.string().min(1),
+	internalGroup: z.string().min(1).optional(),
+	team: z
+		.array(
+			z.strictObject({
+				email: z.string().email(),
+				pending: z.boolean().optional(),
+			}),
+		)
+		.optional(),
+	testers: z.array(
+		z.strictObject({
+			email: z.string().email(),
+			group: z.enum(["internal", "external"]),
+			state: z.enum([
+				"NOT_INVITED",
+				"INVITED",
+				"ACCEPTED",
+				"INSTALLED",
+				"REVOKED",
+			]),
+		}),
+	),
+});
+
 export const captureSetupStepSchema = z.union([
 	z.strictObject({ assist: z.array(z.string().min(1)).min(1) }),
 	z.strictObject({ run: z.string().min(1) }),
@@ -179,6 +206,7 @@ export const captureSetupStepSchema = z.union([
 	z.strictObject({ sql: z.string().min(1) }),
 	z.strictObject({ newsFeed: newsFeedSchema }),
 	z.strictObject({ connectMobile: connectMobileSchema }),
+	z.strictObject({ testflight: testflightSchema }),
 ]);
 
 export type CaptureSetupStep = z.infer<typeof captureSetupStepSchema>;
@@ -190,3 +218,4 @@ export type CaptureHighLevelFile = z.infer<typeof highLevelFileSchema>;
 export type CaptureBacklogItemStep = z.infer<typeof backlogItemStepSchema>;
 export type CaptureGhResponse = z.infer<typeof ghResponseSchema>;
 export type CaptureNewsFeed = z.infer<typeof newsFeedSchema>;
+export type CaptureTestflight = z.infer<typeof testflightSchema>;

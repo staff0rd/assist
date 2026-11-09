@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+// Stand-in for the 1Password CLI during docs capture. `op read` prints a fresh
+// EC P-256 private key, so the App Store Connect token signs; the capture's
+// fake App Store Connect server never checks it. Every other call fails.
+(async () => {
+	const { generateKeyPairSync } = await import("node:crypto");
+	if (process.argv[2] !== "read") process.exit(1);
+	const { privateKey } = generateKeyPairSync("ec", {
+		namedCurve: "prime256v1",
+	});
+	console.log(privateKey.export({ type: "pkcs8", format: "pem" }).toString());
+})();
