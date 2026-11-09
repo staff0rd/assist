@@ -1,4 +1,5 @@
 import * as path from "node:path";
+import { stringify } from "yaml";
 import { harnesses, isHarnessAvailable } from "../../shared/harnesses";
 import { installHarnessCommands } from "./installHarnessCommands";
 import { pruneCommands } from "./pruneCommands";
@@ -18,15 +19,13 @@ export function commandToPrompt(name: string, content: string): string {
 	const argsMatch = frontmatter.match(/^allowed_args:\s*(.*)$/m);
 	const argumentHint = argsMatch ? unquote(argsMatch[1]) : undefined;
 
-	const header = [
-		"---",
-		`description: ${description}`,
-		...(argumentHint ? [`argument-hint: ${argumentHint}`] : []),
-		"---",
-		"",
-		"",
-	].join("\n");
-	return header + body.replace(/^\r?\n+/, "");
+	const frontmatterYaml = stringify(
+		argumentHint
+			? { description, "argument-hint": argumentHint }
+			: { description },
+		{ lineWidth: 0 },
+	);
+	return `---\n${frontmatterYaml}---\n\n${body.replace(/^\r?\n+/, "")}`;
 }
 
 export function syncPi(claudeDir: string, options?: PruneOptions): void {
