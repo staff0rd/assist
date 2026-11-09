@@ -1,3 +1,11 @@
+## [0.1092.4](https://github.com/staff0rd/assist/compare/v0.1092.3...v0.1092.4) (2026-11-09)
+
+
+### Bug Fixes
+
+* show progress when adding a tester ([eb63c15](https://github.com/staff0rd/assist/commit/eb63c1573d56f257e433c5a444f99270f9963862))
+* strip retired testflight.account key ([e89710b](https://github.com/staff0rd/assist/commit/e89710b14cd83f20b773a321f4a6e6ce4040ca6e))
+
 ## [0.1092.3](https://github.com/staff0rd/assist/compare/v0.1092.2...v0.1092.3) (2026-11-09)
 
 
