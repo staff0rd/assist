@@ -11,8 +11,6 @@ type Props = {
 };
 
 export function PhoneNodeEditor({ homeNode, node, onDone }: Props) {
-	const isHome = !!node && node.url === homeNode.home?.url;
-
 	const save = async (next: SavedNode) => {
 		const clash = homeNode.nodes.some(
 			(n) => n.url === next.url && n.url !== node?.url,
@@ -34,13 +32,12 @@ export function PhoneNodeEditor({ homeNode, node, onDone }: Props) {
 					<Button
 						color="error"
 						size="large"
-						disabled={isHome}
 						onClick={() => {
 							homeNode.removeNode(node.url);
 							onDone();
 						}}
 					>
-						{isHome ? "Switch home node to delete this one" : "Delete node"}
+						Delete node
 					</Button>
 				)}
 			</NodeForm>

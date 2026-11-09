@@ -40,6 +40,8 @@ export async function loadNodeStore(): Promise<NodeStore> {
 export const nodeStore = {
 	saveNodes: (nodes: SavedNode[]) =>
 		Preferences.set({ key: NODES_KEY, value: JSON.stringify(nodes) }),
-	saveHomeUrl: (url: string) =>
-		Preferences.set({ key: HOME_NODE_KEY, value: url }),
+	saveHomeUrl: (url: string | undefined) =>
+		url
+			? Preferences.set({ key: HOME_NODE_KEY, value: url })
+			: Preferences.remove({ key: HOME_NODE_KEY }),
 };

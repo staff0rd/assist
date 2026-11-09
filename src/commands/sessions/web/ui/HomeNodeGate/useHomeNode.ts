@@ -5,6 +5,7 @@ import type { SavedNode } from "./SavedNode";
 import { useHomeConnection } from "./useHomeConnection";
 import { useLoadedNodeStore } from "./useHomeNode/useLoadedNodeStore";
 import { upsert } from "./useHomeNode/upsert";
+import { withoutNode } from "./useHomeNode/withoutNode";
 
 export function useHomeNode() {
 	const [store, setStore] = useLoadedNodeStore();
@@ -15,7 +16,7 @@ export function useHomeNode() {
 		(next: NodeStore) => {
 			setStore(next);
 			void nodeStore.saveNodes(next.nodes);
-			if (next.homeUrl) void nodeStore.saveHomeUrl(next.homeUrl);
+			void nodeStore.saveHomeUrl(next.homeUrl);
 		},
 		[setStore],
 	);
@@ -31,7 +32,7 @@ export function useHomeNode() {
 		});
 
 	const removeNode = (url: string) =>
-		update({ nodes: nodes.filter((n) => n.url !== url), homeUrl });
+		update(withoutNode({ nodes, homeUrl }, url));
 
 	const connectFirstNode = (node: SavedNode, health: NodeHealth) => {
 		conn.markConnected(node.url, health);
