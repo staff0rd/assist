@@ -1,3 +1,10 @@
+# [0.1092.0](https://github.com/staff0rd/assist/compare/v0.1091.0...v0.1092.0) (2026-11-09)
+
+
+### Features
+
+* date range in devlog Slack header ([c498a64](https://github.com/staff0rd/assist/commit/c498a64372cde2a77b2ef184f7721b543c08517f))
+
 # [0.1091.0](https://github.com/staff0rd/assist/compare/v0.1090.0...v0.1091.0) (2026-11-09)
 
 
