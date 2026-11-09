@@ -1,3 +1,10 @@
+# [0.1091.0](https://github.com/staff0rd/assist/compare/v0.1090.0...v0.1091.0) (2026-11-09)
+
+
+### Features
+
+* path for server run links ([85d630c](https://github.com/staff0rd/assist/commit/85d630c0c1c7597a3fcf5ad17e2cde2359afe3ef))
+
 # [0.1090.0](https://github.com/staff0rd/assist/compare/v0.1089.1...v0.1090.0) (2026-11-09)
 
 
