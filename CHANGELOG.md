@@ -1,3 +1,10 @@
+## [0.1085.2](https://github.com/staff0rd/assist/compare/v0.1085.1...v0.1085.2) (2026-11-09)
+
+
+### Bug Fixes
+
+* reopen emptied repo groups expanded ([8facf98](https://github.com/staff0rd/assist/commit/8facf9881f63c77b7d894448f8663dd53bc0b1e6))
+
 ## [0.1085.1](https://github.com/staff0rd/assist/compare/v0.1085.0...v0.1085.1) (2026-11-07)
 
 
