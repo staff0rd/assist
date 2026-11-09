@@ -27,12 +27,12 @@ describe("spawnPi", () => {
 		spawnMock.mockReturnValue({ on: vi.fn() } as never);
 	});
 
-	it("launches pi with the prompt in process.cwd() by default", () => {
+	it("launches pi in regular TUI mode so the web terminal can scroll its history", () => {
 		spawnPi("/refine a696");
 
 		const [command, args, opts] = lastCall();
 		expect(command).toBe("pi");
-		expect(args).toEqual(["/refine a696"]);
+		expect(args).toEqual(["--tui-mode", "regular", "/refine a696"]);
 		expect(opts.cwd).toBe(process.cwd());
 	});
 
@@ -40,7 +40,7 @@ describe("spawnPi", () => {
 		spawnPi("/refine a696", { cwd: "/repo/x" });
 
 		const [, args, opts] = lastCall();
-		expect(args).toEqual(["/refine a696"]);
+		expect(args).toEqual(["--tui-mode", "regular", "/refine a696"]);
 		expect(opts.cwd).toBe("/repo/x");
 	});
 

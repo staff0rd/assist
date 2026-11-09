@@ -112,7 +112,10 @@ const fixtures: Fixture[] = [
 	},
 	{
 		harness: "pi",
-		launch: { command: "pi", argsEnd: ["/refine a42"] },
+		launch: {
+			command: "pi",
+			argsEnd: ["--tui-mode", "regular", "/refine a42"],
+		},
 		launchIdentity: { harness: "pi" },
 		resume: { refusedWith: "pi sessions cannot be resumed yet" },
 	},

@@ -64,7 +64,7 @@ describe("createSession", () => {
 			harness: "pi",
 		});
 
-		expect(spawnedArgs()).toEqual(["pi", "go"]);
+		expect(spawnedArgs()).toEqual(["pi", "--tui-mode", "regular", "go"]);
 	});
 
 	it("still appends the design system prompt for a design launch", () => {

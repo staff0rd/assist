@@ -8,12 +8,14 @@ vi.mock("./spawnPty", () => ({
 
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 
+const REGULAR_TUI = ["--tui-mode", "regular"];
+
 describe("spawnPi", () => {
-	it("starts a fresh interactive session with a prompt", () => {
+	it("starts a fresh interactive session with a prompt, in regular TUI mode so the web terminal can scroll", () => {
 		spawnPi({ prompt: "Do the thing", cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["pi", "Do the thing"],
+			["pi", ...REGULAR_TUI, "Do the thing"],
 			"/repo",
 			"7",
 		);
@@ -22,12 +24,20 @@ describe("spawnPi", () => {
 	it("starts a bare idle session with no prompt", () => {
 		spawnPi({ cwd: "/repo", sessionId: "7" });
 
-		expect(spawnPtyMock).toHaveBeenCalledWith(["pi"], "/repo", "7");
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["pi", ...REGULAR_TUI],
+			"/repo",
+			"7",
+		);
 	});
 
 	it("starts with no options", () => {
 		spawnPi();
 
-		expect(spawnPtyMock).toHaveBeenCalledWith(["pi"], undefined, undefined);
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["pi", ...REGULAR_TUI],
+			undefined,
+			undefined,
+		);
 	});
 });
