@@ -99,6 +99,15 @@ describe("stripLegacyConfigKeys", () => {
 		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
 	});
 
+	it("drops the retired testflight.account key so old configs still parse", () => {
+		const stripped = stripLegacyConfigKeys({
+			testflight: { keyId: "N5YK6FM442", account: "my.1password.com" },
+		});
+
+		expect(stripped).toEqual({ testflight: { keyId: "N5YK6FM442" } });
+		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
+	});
+
 	it("drops the retired review.highLevel.slices flag so old configs still parse", () => {
 		const stripped = stripLegacyConfigKeys({
 			review: { highLevel: { uiPaths: ["src/ui/**"], slices: true } },
