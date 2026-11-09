@@ -44,6 +44,7 @@ export function restoreServerRun(
 		server: true,
 		serverPort: meta.port,
 		serverProtocol: meta.protocol,
+		serverPath: meta.path,
 		serverOrigin: meta.origin,
 		serverGroup: meta.group,
 	};

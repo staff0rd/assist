@@ -16,6 +16,11 @@ const properties: [key: string, flag: string, note: string][] = [
 		"protocol of the serving card's port link (default: http)",
 	],
 	[
+		"path",
+		"--path <path>",
+		"path of the serving card's port link, e.g. /swagger (default: /)",
+	],
+	[
 		"pre",
 		"--pre <command>",
 		"shell command run before this one (repeatable, runs in order)",

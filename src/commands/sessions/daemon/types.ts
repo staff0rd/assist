@@ -55,6 +55,7 @@ export type Session = {
 	server?: boolean;
 	serverPort?: number;
 	serverProtocol?: "http" | "https";
+	serverPath?: string;
 	serverOrigin?: string;
 	serverGroup?: string;
 	stopping?: boolean;

@@ -8,6 +8,7 @@ export type ServerRunMeta = {
 	group?: string;
 	port?: number;
 	protocol?: "http" | "https";
+	path?: string;
 	origin?: string;
 };
 
@@ -24,6 +25,7 @@ export function serverRunMeta(
 			typeof config.server === "string" ? config.server : DEFAULT_SERVER_GROUP,
 		port: config.port,
 		protocol: config.protocol,
+		path: config.path,
 		origin: getCurrentOrigin(dir),
 	};
 }

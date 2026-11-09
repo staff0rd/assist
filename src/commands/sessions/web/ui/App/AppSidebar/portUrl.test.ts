@@ -45,6 +45,26 @@ describe("portUrl", () => {
 		);
 	});
 
+	it("appends the path, adding a missing leading slash", () => {
+		expect(portUrl(5173, undefined, nodes, undefined, "/swagger").url).toBe(
+			"http://localhost:5173/swagger",
+		);
+		expect(portUrl(5173, undefined, nodes, undefined, "swagger").url).toBe(
+			"http://localhost:5173/swagger",
+		);
+	});
+
+	it("combines protocol and path for local and remote sessions", () => {
+		expect(portUrl(5001, undefined, nodes, "https", "/app")).toEqual({
+			url: "https://localhost:5001/app",
+			remote: false,
+		});
+		expect(portUrl(5001, "Work-wsl", nodes, "https", "app")).toEqual({
+			url: "https://work-wsl.tail1234.ts.net:5001/app",
+			remote: true,
+		});
+	});
+
 	it("falls back to localhost when the node is unknown", () => {
 		expect(portUrl(5173, "Other", nodes).url).toBe("http://localhost:5173");
 		expect(portUrl(5173, "Work-wsl", null).url).toBe("http://localhost:5173");

@@ -6,6 +6,7 @@ type RunEntryOptions = Pick<
 	| "server"
 	| "port"
 	| "protocol"
+	| "path"
 	| "env"
 	| "pre"
 	| "filter"
@@ -34,6 +35,7 @@ export function buildRunEntry(
 	if (options?.server !== undefined) entry.server = options.server;
 	if (options?.port !== undefined) entry.port = options.port;
 	if (options?.protocol) entry.protocol = options.protocol;
+	if (options?.path) entry.path = options.path;
 	if (options?.env) entry.env = options.env;
 	if (options?.pre) entry.pre = options.pre;
 	if (options?.filter) entry.filter = options.filter;

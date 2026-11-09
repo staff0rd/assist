@@ -316,6 +316,33 @@ describe("add", () => {
 		]);
 	});
 
+	it("writes --path", async () => {
+		setArgv(
+			"api",
+			"dotnet",
+			"run",
+			"--server",
+			"--port",
+			"5001",
+			"--path",
+			"/swagger",
+		);
+		mockLoadProjectConfig.mockReturnValue({});
+
+		await add();
+
+		expect(savedRun()).toEqual([
+			{
+				name: "api",
+				command: "dotnet",
+				args: ["run"],
+				server: true,
+				port: 5001,
+				path: "/swagger",
+			},
+		]);
+	});
+
 	it("rejects an invalid --protocol", async () => {
 		setArgv("dev", "vite", "--protocol", "ftp");
 		mockLoadProjectConfig.mockReturnValue({});

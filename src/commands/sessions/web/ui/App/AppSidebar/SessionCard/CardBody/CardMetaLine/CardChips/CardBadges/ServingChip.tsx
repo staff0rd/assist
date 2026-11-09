@@ -15,6 +15,7 @@ export function ServingChip({ session }: { session: SessionInfo }) {
 					port={session.port}
 					node={session.node}
 					protocol={session.protocol}
+					urlPath={session.urlPath}
 				/>
 			) : (
 				"serving"

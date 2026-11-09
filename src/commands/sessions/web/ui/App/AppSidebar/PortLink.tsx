@@ -7,13 +7,15 @@ export function PortLink({
 	port,
 	node,
 	protocol,
+	urlPath,
 }: {
 	port: number;
 	node?: string;
 	protocol?: SessionInfo["protocol"];
+	urlPath?: string;
 }) {
 	const { nodes } = useNodeSelectionContext();
-	const { url, remote } = portUrl(port, node, nodes, protocol);
+	const { url, remote } = portUrl(port, node, nodes, protocol, urlPath);
 	return (
 		<Link
 			href={url}

@@ -22,6 +22,7 @@ function tagServerSession(session: Session, meta: ServerRunMeta): void {
 	session.server = meta.server || undefined;
 	session.serverPort = meta.port;
 	session.serverProtocol = meta.protocol;
+	session.serverPath = meta.path;
 	session.serverOrigin = meta.origin;
 	session.serverGroup = meta.group;
 }

@@ -25,6 +25,10 @@ export function registerRunAdd(runCommand: Command): void {
 			"Protocol for the serving card's port link (default: http)",
 		)
 		.option(
+			"--path <path>",
+			"Path for the serving card's port link, e.g. /swagger (default: /)",
+		)
+		.option(
 			"--env <KEY=VALUE>",
 			"Environment variable for the command (repeatable)",
 		)

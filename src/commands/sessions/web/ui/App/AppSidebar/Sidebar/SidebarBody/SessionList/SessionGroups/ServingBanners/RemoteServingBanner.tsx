@@ -47,6 +47,7 @@ export function RemoteServingBanner({
 							port={serving.port}
 							node={serving.node}
 							protocol={serving.protocol}
+							urlPath={serving.urlPath}
 						/>
 					</>
 				) : null}

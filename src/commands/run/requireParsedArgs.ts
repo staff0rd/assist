@@ -23,7 +23,8 @@ function extractAddArgs(addIndex: number) {
 	const cwd = extractOption(filter.remaining, "--cwd");
 	const port = extractOption(cwd.remaining, "--port");
 	const protocol = extractOption(port.remaining, "--protocol");
-	const server = extractOptionalValueFlag(protocol.remaining, "--server");
+	const path = extractOption(protocol.remaining, "--path");
+	const server = extractOptionalValueFlag(path.remaining, "--server");
 	const repo = extractOptionalValueFlag(server.remaining, "--repo");
 	return {
 		name: process.argv[addIndex + 1],
@@ -34,6 +35,7 @@ function extractAddArgs(addIndex: number) {
 			server: server.value,
 			port: parsePort(port.value),
 			protocol: parseProtocol(protocol.value),
+			path: path.value,
 			env: parseEnvPairs(env.values),
 			pre: pre.values.length > 0 ? pre.values : undefined,
 			filter: filter.value,
