@@ -22,7 +22,7 @@ describe("explainAdvice", () => {
 	});
 
 	it("marks an always-on fragment included and gives the reason", () => {
-		const line = lines.find((entry) => entry.includes("editing-files")) ?? "";
+		const line = lines.find((entry) => entry.includes("show-links")) ?? "";
 
 		expect(line).toContain("✓");
 		expect(line).toContain("always included");

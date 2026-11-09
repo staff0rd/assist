@@ -119,6 +119,21 @@ describe("stripLegacyConfigKeys", () => {
 		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
 	});
 
+	it.each([true, false])(
+		"drops the retired advice.sections.editing-files key (%s) so old configs still parse",
+		(value) => {
+			const config = {
+				advice: { sections: { "editing-files": value, markdown: false } },
+			};
+			expect(assistConfigSchema.safeParse(config).success).toBe(false);
+
+			const stripped = stripLegacyConfigKeys(config);
+
+			expect(stripped).toEqual({ advice: { sections: { markdown: false } } });
+			expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
+		},
+	);
+
 	it("drops retired keys inside repos entries so old global configs still parse", () => {
 		const stripped = stripLegacyConfigKeys({
 			repos: {

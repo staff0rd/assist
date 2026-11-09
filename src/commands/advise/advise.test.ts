@@ -30,7 +30,7 @@ describe("advise", () => {
 			cwdFallback: makeRepo("notify:\n  enabled: false\n"),
 		});
 
-		expect(output).toContain("## Editing files");
+		expect(output).toContain("## Writing markdown");
 		expect(logSpy).toHaveBeenCalledWith(output);
 	});
 
@@ -45,7 +45,7 @@ describe("advise", () => {
 		const parsed = JSON.parse(output);
 		expect(parsed.hookSpecificOutput.hookEventName).toBe("SessionStart");
 		expect(parsed.hookSpecificOutput.additionalContext).toContain(
-			"## Editing files",
+			"## Writing markdown",
 		);
 	});
 
@@ -57,7 +57,7 @@ describe("advise", () => {
 		});
 
 		expect(JSON.parse(output).hookSpecificOutput.additionalContext).toContain(
-			"## Editing files",
+			"## Writing markdown",
 		);
 	});
 
@@ -68,7 +68,7 @@ describe("advise", () => {
 		});
 
 		expect(output).not.toContain("# Instructions for this repo");
-		expect(output).toContain("editing-files");
+		expect(output).toContain("show-links");
 		expect(output).toContain("jira is not configured");
 		expect(logSpy).toHaveBeenCalledWith(output);
 	});

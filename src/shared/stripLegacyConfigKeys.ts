@@ -1,3 +1,4 @@
+import { stripLegacyAdviceKeys } from "./stripLegacyAdviceKeys";
 import { stripLegacyReviewKeys } from "./stripLegacyReviewKeys";
 import { stripLegacySectionKeys } from "./stripLegacySectionKeys";
 
@@ -27,6 +28,7 @@ export function stripLegacyConfigKeys(
 		stripped.news = rest;
 	}
 	stripLegacySectionKeys(stripped);
+	if (stripped.advice) stripped.advice = stripLegacyAdviceKeys(stripped.advice);
 	if (stripped.review) stripped.review = stripLegacyReviewKeys(stripped.review);
 	return stripped;
 }
