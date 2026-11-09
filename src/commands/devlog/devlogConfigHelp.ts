@@ -17,6 +17,11 @@ export const devlogConfigHelp: ConfigHelpEntry[] = [
 		note: "globs excluded when grouping commits",
 	},
 	{
+		key: "devlog.slack",
+		setter: 'assist config set devlog.slack "#devlog"',
+		note: "Slack channel dev entries are posted to, falling back to slack.channel (used by 'assist devlog slack' and /devlog --slack-post)",
+	},
+	{
 		key: "devlog.skipWeeks",
 		setter: "assist devlog skip 2026-W33",
 		note: "ISO weeks (YYYY-Www) that get no dev entry; skip writes repo (db)",

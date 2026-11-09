@@ -1,9 +1,9 @@
 ---
 description: Generate the weekly dev entry for the next unwritten ISO week
-allowed_args: "[--all]"
+allowed_args: "[--all] [--slack-post <week>]"
 ---
 
-Parse `$ARGUMENTS`: if `--all` is present, enable **catch-up mode** (described below). Otherwise, process a single week.
+Parse `$ARGUMENTS`: if `--slack-post` is present, follow **Posting to Slack** (described below) and do nothing else. If `--all` is present, enable **catch-up mode** (described below). Otherwise, process a single week.
 
 ## Single-week mode (default)
 
@@ -70,6 +70,16 @@ Loop through every completed unwritten week:
    - **Trivial week**: run `assist devlog skip <week>` without prompting the user
    - **Otherwise**: write the entry as in single-week mode
 4. Go back to step 1
+
+## Posting to Slack (`--slack-post <week>`)
+
+Post an existing entry for this repo to Slack. If no week follows `--slack-post`, ask the user which week (`YYYY-Www`) to post.
+
+1. Run `assist devlog slack <week>`. It renders the entry as a short parent message plus a threaded reply holding the Added / Changed / Fixed lists, and previews them for approval. If it exits non-zero (no channel configured, no entry, already posted, or a preview rejected), stop and relay its message; post nothing. On a rejection, revise the named working file in place and re-run `assist slack post '<channel>' --parts <working files...>` as `/slack-post` describes.
+2. On approval it prints `Approved for <channel>` and the approved working file paths, `1/2 <path>` for the parent and `2/2 <path>` for the reply (a single path when the entry has no list items). Read those files; post their contents verbatim.
+3. Resolve the channel to its id with `mcp__claude_ai_Slack__slack_search_channels` (`channel_types: "public_channel,private_channel"`). If there is no match, or more than one plausible match, ask the user which channel to use.
+4. Post the parent with `mcp__claude_ai_Slack__slack_send_message` and no `thread_ts`. Then post the reply, if any, with `thread_ts` set to the `ts` the parent returned.
+5. Run `assist devlog posted <week> <parent permalink>` with the permalink `slack_send_message` returned for the parent, then report that permalink.
 
 ## Important
 
