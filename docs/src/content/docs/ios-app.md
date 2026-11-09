@@ -96,13 +96,13 @@ Open **TestFlight testers** from the dashboard's menu to see each tester's invit
 
 The node the app connects to is its home node. Before connecting, connect Tailscale on the phone and [link the node over Tailscale](../sessions-linked-nodes/#linking-over-tailscale) so its web server is reachable on your tailnet.
 
-On first launch, enter the address you open the dashboard at in a browser as the **Web server URL**, such as `https://mac.tail1234.ts.net:3100`, and press **Connect**. **Name** is filled in from the host name and labels the node chip at the top of the session list.
-
-::screenshot{file="ios-app-connect.png"}
-
-To skip typing the address, open **Connect mobile** from the dashboard's menu on that node and scan its QR code with the iPhone camera. The app adds the node and makes it the home node.
+Open **Connect mobile** from the dashboard's menu on that node and scan its QR code with the iPhone camera. The app adds the node and makes it the home node.
 
 ::screenshot{file="ios-app-connect-mobile.png"}
+
+To enter the address by hand instead, on first launch enter the address you open the dashboard at in a browser as the **Web server URL**, such as `https://mac.tail1234.ts.net:3100`, and press **Connect**. **Name** is filled in from the host name and labels the node chip at the top of the session list.
+
+::screenshot{file="ios-app-connect.png"}
 
 ## Switching nodes
 
