@@ -1,3 +1,10 @@
+# [0.1095.0](https://github.com/staff0rd/assist/compare/v0.1094.0...v0.1095.0) (2026-11-09)
+
+
+### Features
+
+* resolve Refine per harness ([2afbdb9](https://github.com/staff0rd/assist/commit/2afbdb9bf3bfa40109603621e583ac26cd329e4c))
+
 # [0.1094.0](https://github.com/staff0rd/assist/compare/v0.1093.1...v0.1094.0) (2026-11-09)
 
 
