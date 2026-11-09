@@ -1,3 +1,15 @@
+# [0.1093.0](https://github.com/staff0rd/assist/compare/v0.1092.4...v0.1093.0) (2026-11-09)
+
+
+### Bug Fixes
+
+* keep node edit pencil in view ([0630e4c](https://github.com/staff0rd/assist/commit/0630e4c58472392f1bb7ad7a7ce5534f85a06f2b))
+
+
+### Features
+
+* hold auto-restart while UI is in use ([b7bec31](https://github.com/staff0rd/assist/commit/b7bec3195e954fd85d2f32ddc3475baf65ca3416))
+
 ## [0.1092.4](https://github.com/staff0rd/assist/compare/v0.1092.3...v0.1092.4) (2026-11-09)
 
 
