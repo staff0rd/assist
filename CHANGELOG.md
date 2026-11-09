@@ -1,3 +1,10 @@
+# [0.1103.0](https://github.com/staff0rd/assist/compare/v0.1102.0...v0.1103.0) (2026-11-09)
+
+
+### Features
+
+* harness-neutral diff scopes ([50fecd8](https://github.com/staff0rd/assist/commit/50fecd875993ad409413da08708f33e0e9508352))
+
 # [0.1102.0](https://github.com/staff0rd/assist/compare/v0.1101.0...v0.1102.0) (2026-11-09)
 
 
