@@ -1,33 +1,12 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { listRowHeight } from "../../../../../designSystem/listRowHeight";
 import { statusPillSx } from "../../../../../designSystem/statusPillSx";
 import type {
 	TeamStatus,
 	TesterState,
 } from "../../../../../../../../testflight/TestflightTesters";
 import { testerPills } from "./testerPills";
-
-const rowSx = {
-	display: "flex",
-	alignItems: "center",
-	flexWrap: "wrap",
-	columnGap: 1.5,
-	rowGap: 0.75,
-	px: 3,
-	py: 1,
-	minHeight: listRowHeight,
-	"&:hover": { bgcolor: "action.hover" },
-} as const;
-
-const emailSx = {
-	flex: "1 1 160px",
-	minWidth: 0,
-	fontSize: 14,
-	overflow: "hidden",
-	textOverflow: "ellipsis",
-	whiteSpace: "nowrap",
-} as const;
+import { testerEmailSx as emailSx, testerRowSx as rowSx } from "./testerRowSx";
 
 function StatusPill({ label, color }: { label: string; color: string }) {
 	return (

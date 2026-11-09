@@ -13,7 +13,9 @@ export function useAddTesterForm(
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
 		if (!valid || pending) return;
-		if (await onAdd(email.trim(), internal)) setEmail("");
+		const value = email.trim();
+		setEmail("");
+		if (!(await onAdd(value, internal))) setEmail(value);
 	};
 
 	return { email, setEmail, internal, setInternal, valid, submit };

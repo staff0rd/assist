@@ -7,6 +7,8 @@ export type AddNotice = {
 	severity: "success" | "info" | "error";
 };
 
+export type PendingTester = { email: string; internal: boolean };
+
 const postTester = (email: string, internal: boolean) =>
 	testflightJson<AddTesterOutcome>({
 		method: "POST",
@@ -14,16 +16,16 @@ const postTester = (email: string, internal: boolean) =>
 		body: JSON.stringify({ email, internal }),
 	});
 
-export function useAddTester(onAdded: () => void) {
-	const [pending, setPending] = useState<string>();
+export function useAddTester(reload: () => Promise<void>) {
+	const [pending, setPending] = useState<PendingTester>();
 	const [notice, setNotice] = useState<AddNotice | null>(null);
 
 	const add = async (email: string, internal: boolean): Promise<boolean> => {
-		setPending(email);
+		setPending({ email, internal });
 		try {
 			const { message, waiting } = await postTester(email, internal);
+			await reload();
 			setNotice({ message, severity: waiting ? "info" : "success" });
-			onAdded();
 			return true;
 		} catch (error) {
 			setNotice({

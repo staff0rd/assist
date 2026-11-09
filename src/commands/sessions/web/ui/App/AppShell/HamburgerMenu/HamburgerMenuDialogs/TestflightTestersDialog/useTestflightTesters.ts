@@ -12,9 +12,10 @@ const fetchTesters = () => testflightJson<TestflightTesters>();
 
 export function useTestflightTesters() {
 	const [state, setState] = useState<TestersState>({ loading: true });
-	const refresh = useCallback(() => {
-		setState((prev) => ({ ...prev, loading: true, error: undefined }));
-		fetchTesters().then(
+	const refresh = useCallback((silent = false) => {
+		if (!silent)
+			setState((prev) => ({ ...prev, loading: true, error: undefined }));
+		return fetchTesters().then(
 			(testers) => setState({ loading: false, testers }),
 			(error: unknown) =>
 				setState({
@@ -23,6 +24,8 @@ export function useTestflightTesters() {
 				}),
 		);
 	}, []);
-	useEffect(refresh, [refresh]);
+	useEffect(() => {
+		void refresh();
+	}, [refresh]);
 	return { ...state, refresh };
 }

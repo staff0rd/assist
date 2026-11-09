@@ -20,7 +20,9 @@ export function TestflightTestersDialog({
 	const narrow = useMediaQuery(theme.breakpoints.down("sm"));
 	const sheet = fullScreen ?? narrow;
 	const { loading, error, testers, refresh } = useTestflightTesters();
-	const { add, pending, notice, clearNotice } = useAddTester(refresh);
+	const { add, pending, notice, clearNotice } = useAddTester(() =>
+		refresh(true),
+	);
 
 	return (
 		<Dialog
@@ -35,7 +37,7 @@ export function TestflightTestersDialog({
 				sheet={sheet}
 				bundleId={testers?.bundleId}
 				loading={loading}
-				onRefresh={refresh}
+				onRefresh={() => void refresh()}
 				onClose={onClose}
 			/>
 			<AddTesterForm

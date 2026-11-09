@@ -54,7 +54,8 @@ export function AddTesterForm({
 			<Button
 				type="submit"
 				variant="contained"
-				disabled={!form.valid || pending}
+				disabled={!form.valid && !pending}
+				loading={pending}
 			>
 				Add
 			</Button>
