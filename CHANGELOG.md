@@ -1,3 +1,10 @@
+# [0.1105.0](https://github.com/staff0rd/assist/compare/v0.1104.0...v0.1105.0) (2026-11-09)
+
+
+### Features
+
+* harness-aware worktree recovery ([2c2370c](https://github.com/staff0rd/assist/commit/2c2370c6cee536b8a37c9a7df794722fd228c5b3))
+
 # [0.1104.0](https://github.com/staff0rd/assist/compare/v0.1103.0...v0.1104.0) (2026-11-09)
 
 
