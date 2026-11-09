@@ -19,12 +19,12 @@ const yoke: DevEntryFile = {
 describe("renderDevlogSlackParts", () => {
 	it("renders a short parent and the lists as a threaded reply", () => {
 		expect(renderDevlogSlackParts(yoke, "yoke", "2026-W43")).toEqual([
-			"**yoke · 2026-W43** · v0.1.0 → v0.2.0\n**yoke bootstrap, `/pr` skill**\n\nyoke's first week.\n\n2 added · 1 changed",
+			"**yoke · 19–23 Oct 2026** · v0.1.0 → v0.2.0\n**yoke bootstrap, `/pr` skill**\n\nyoke's first week.\n\n2 added · 1 changed",
 			"**Added**\n- `yoke sync` installs the `/pr` skill\n- `yoke pr raise`\n\n**Changed**\n- Release summary shows the version",
 		]);
 	});
 
-	it("falls back to the date range and collapses an equal range", () => {
+	it("omits versions and collapses a single-day range", () => {
 		const [parent] = renderDevlogSlackParts(
 			{
 				...yoke,
@@ -34,7 +34,22 @@ describe("renderDevlogSlackParts", () => {
 			"yoke",
 			"2026-W43",
 		);
-		expect(parent.split("\n")[0]).toBe("**yoke · 2026-W43** · 2026-10-19");
+		expect(parent.split("\n")[0]).toBe("**yoke · 19 Oct 2026**");
+	});
+
+	it("falls back to the ISO week's Monday to Sunday without commit dates", () => {
+		const [parent] = renderDevlogSlackParts(
+			{
+				...yoke,
+				dates: undefined,
+				versions: { first: "v0.2.0", last: "v0.2.0" },
+			},
+			"yoke",
+			"2026-W44",
+		);
+		expect(parent.split("\n")[0]).toBe(
+			"**yoke · 26 Oct – 1 Nov 2026** · v0.2.0",
+		);
 	});
 
 	it("ends the parent with a link to the entry when a base url is given", () => {
@@ -56,7 +71,7 @@ describe("renderDevlogSlackParts", () => {
 			"2026-W43",
 		);
 		expect(parts).toEqual([
-			"**yoke · 2026-W43** · v0.1.0 → v0.2.0\n**yoke bootstrap, `/pr` skill**\n\nyoke's first week.",
+			"**yoke · 19–23 Oct 2026** · v0.1.0 → v0.2.0\n**yoke bootstrap, `/pr` skill**\n\nyoke's first week.",
 		]);
 	});
 });

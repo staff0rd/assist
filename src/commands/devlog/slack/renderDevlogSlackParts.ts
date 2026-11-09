@@ -1,3 +1,5 @@
+import { isoWeekRange } from "../isoWeek";
+import { formatDateRange } from "./formatDateRange";
 import type { DevEntryFile } from "./readDevEntryFile";
 
 const SECTIONS = [
@@ -6,15 +8,24 @@ const SECTIONS = [
 	["fixed", "Fixed"],
 ] as const;
 
-function range(span: { first?: string; last?: string } | undefined) {
-	if (!span?.first || !span.last) return null;
-	return span.first === span.last ? span.first : `${span.first} → ${span.last}`;
+function versionRange(versions: DevEntryFile["versions"]) {
+	if (!versions?.first || !versions.last) return null;
+	return versions.first === versions.last
+		? versions.first
+		: `${versions.first} → ${versions.last}`;
+}
+
+function dateRange(entry: DevEntryFile, week: string) {
+	const { first, last } = entry.dates ?? {};
+	if (first && last) return formatDateRange(first, last);
+	const { start, end } = isoWeekRange(week);
+	return formatDateRange(start, end);
 }
 
 function renderHeader(entry: DevEntryFile, project: string, week: string) {
-	const span = range(entry.versions) ?? range(entry.dates);
-	const head = `**${project} · ${week}**`;
-	return span ? `${head} · ${span}` : head;
+	const head = `**${project} · ${dateRange(entry, week)}**`;
+	const versions = versionRange(entry.versions);
+	return versions ? `${head} · ${versions}` : head;
 }
 
 function renderCounts(entry: DevEntryFile): string | null {
