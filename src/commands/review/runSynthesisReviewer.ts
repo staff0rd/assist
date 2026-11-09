@@ -1,39 +1,50 @@
-import { buildCodexModelArgs } from "./buildCodexModelArgs";
+import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
+import { launchBlocker } from "../../shared/harnessAdapters/launchBlocker";
+import { reviewSynthesisFeature } from "../../shared/harnessAdapters/reviewFeatures";
+import type { HarnessKind } from "../../shared/harnesses";
 import type { MultiSpinner } from "./MultiSpinner";
-import type { ReviewerHarness } from "./reviewerHarnesses";
+import { DEFAULT_SYNTHESIS_HARNESS } from "./resolveSynthesisHarness";
 import { reviewerLabel } from "./reviewerLabel";
-import { runClaudeReviewer } from "./runClaudeReviewer";
-import { runCodexReviewer } from "./runCodexReviewer";
+import { reviewModel } from "./reviewModel";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type SynthesisSpec = {
-	harness: ReviewerHarness;
+	harness: HarnessKind;
 	reviewDir: string;
 	stdin: string;
 	outputPath: string;
 	multi: MultiSpinner | undefined;
 };
 
+const name = "synthesis";
+
+export function synthesisBlocker(harness: HarnessKind): string | undefined {
+	return launchBlocker(harnessAdapter(harness), reviewSynthesisFeature);
+}
+
 export function runSynthesisReviewer(
 	spec: SynthesisSpec,
 ): Promise<ReviewerResult> {
-	const name = "synthesis";
-	if (spec.harness === "claude")
-		return runClaudeReviewer({
+	const blocker = synthesisBlocker(spec.harness);
+	if (blocker)
+		return Promise.resolve({
 			name,
-			reviewDir: spec.reviewDir,
-			stdin: spec.stdin,
 			outputPath: spec.outputPath,
-			spinner: spec.multi?.create("synthesis — starting"),
+			exitCode: 1,
+			stderr: blocker,
 		});
-	const override = buildCodexModelArgs();
-	return runCodexReviewer({
+	const { multi } = spec;
+	const tag =
+		spec.harness === DEFAULT_SYNTHESIS_HARNESS ? undefined : spec.harness;
+	return harnessAdapter(spec.harness).structured({
 		name,
 		stdin: spec.stdin,
 		outputPath: spec.outputPath,
-		override,
-		spinner: spec.multi?.create(
-			`${reviewerLabel("synthesis", override.model ?? "codex")} — starting`,
-		),
+		readDir: spec.reviewDir,
+		model: reviewModel(spec.harness),
+		spinner:
+			multi &&
+			((model) =>
+				multi.create(`${reviewerLabel(name, model ?? tag)} — starting`)),
 	});
 }

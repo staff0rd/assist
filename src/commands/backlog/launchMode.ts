@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { awaitClaude, CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
+import { awaitHarness, HARNESS_SPAWN_FAILED } from "../../shared/awaitHarness";
 import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
 import type { HarnessFeature } from "../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../shared/harnesses";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { handleLaunchSignal } from "./handleLaunchSignal";
-import { launchBlocker } from "./launchBlocker";
+import { launchBlocker } from "../../shared/harnessAdapters/launchBlocker";
 import { spawnLaunch } from "./spawnLaunch";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
@@ -35,9 +35,9 @@ export async function launchMode(
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	const { child, done } = spawnLaunch(adapter, slashCommand, options ?? {});
 	const marker = watchForMarker(child, { actOnDone: options?.once });
-	const exitCode = await awaitClaude(done, `/${slashCommand}`);
+	const exitCode = await awaitHarness(done, `/${slashCommand}`, adapter.label);
 	stopWatching();
-	if (exitCode === CLAUDE_SPAWN_FAILED) return;
+	if (exitCode === HARNESS_SPAWN_FAILED) return;
 
 	await handleLaunchSignal(slashCommand, options?.once);
 

@@ -12,5 +12,6 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 		"none needed; it is a test double",
 	),
 	"oneShot.text": supported,
+	"oneShot.structured": supported,
 	"usage.rateLimits": supported,
 };

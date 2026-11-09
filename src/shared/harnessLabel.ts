@@ -12,8 +12,10 @@ const HARNESS_PRODUCT_LABELS: Record<HarnessKind, string> = {
 	pi: "pi",
 };
 
+export const legacyDefaultHarness: HarnessKind = "claude";
+
 export function resolveHarness(harness: HarnessKind | undefined): HarnessKind {
-	return harness ?? "claude";
+	return harness ?? legacyDefaultHarness;
 }
 
 export function harnessLabel(harness: HarnessKind | undefined): string {

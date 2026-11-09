@@ -11,7 +11,7 @@ const execFileAsync = promisify(execFile);
 
 export async function codexOneShot(
 	prompt: string,
-	{ timeout }: OneShotOptions,
+	{ timeout, effort = "low", cwd }: OneShotOptions,
 ): Promise<string> {
 	const override = buildHarnessCodexArgs();
 	const run = execFileAsync(
@@ -25,14 +25,14 @@ export async function codexOneShot(
 			"--sandbox",
 			"read-only",
 			"-c",
-			'model_reasoning_effort="low"',
+			`model_reasoning_effort="${effort}"`,
 			prompt,
 		],
 		{
 			encoding: "utf8",
 			windowsHide: true,
 			timeout,
-			cwd: tmpdir(),
+			cwd: cwd ?? tmpdir(),
 			env: envDetachedFromTrackedSession(override.env),
 		},
 	);

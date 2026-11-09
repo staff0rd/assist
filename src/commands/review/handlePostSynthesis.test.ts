@@ -2,9 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockPostReviewToPr = vi.fn();
 const mockAnnouncePr = vi.fn();
-const mockRunRefineSession = vi.fn();
-const mockRunApplySession = vi.fn();
-const mockRunBacklogSession = vi.fn();
+const mockRunReviewSession = vi.fn();
 
 vi.mock("./postReviewToPr", () => ({
 	postReviewToPr: (...args: unknown[]) => mockPostReviewToPr(...args),
@@ -14,19 +12,14 @@ vi.mock("./announcePr", () => ({
 	announcePr: (...args: unknown[]) => mockAnnouncePr(...args),
 }));
 
-vi.mock("./runRefineSession", () => ({
-	runRefineSession: (...args: unknown[]) => mockRunRefineSession(...args),
+vi.mock("./runReviewSession", () => ({
+	runReviewSession: (...args: unknown[]) => mockRunReviewSession(...args),
 }));
 
-vi.mock("./runApplySession", () => ({
-	runApplySession: (...args: unknown[]) => mockRunApplySession(...args),
-}));
-
-vi.mock("./runBacklogSession", () => ({
-	runBacklogSession: (...args: unknown[]) => mockRunBacklogSession(...args),
-}));
-
+import { applySession } from "./applySession";
+import { backlogSession } from "./backlogSession";
 import { handlePostSynthesis } from "./handlePostSynthesis";
+import { refineSession } from "./refineSession";
 
 const prInfo = { prNumber: 42, baseSha: "base", headSha: "head" };
 
@@ -86,8 +79,35 @@ describe("handlePostSynthesis", () => {
 				apply: true,
 			});
 
-			expect(mockRunApplySession).toHaveBeenCalledWith("synthesis.md");
+			expect(mockRunReviewSession).toHaveBeenCalledWith(
+				applySession,
+				"synthesis.md",
+				undefined,
+			);
 			expect(mockAnnouncePr).not.toHaveBeenCalled();
 		});
+	});
+
+	describe("harness selection", () => {
+		it.each([
+			["refine", refineSession],
+			["apply", applySession],
+			["backlog", backlogSession],
+		] as const)(
+			"should launch the %s session on the selected harness",
+			async (mode, session) => {
+				await handlePostSynthesis("synthesis.md", prInfo, {
+					...base,
+					[mode]: true,
+					harness: "codex",
+				});
+
+				expect(mockRunReviewSession).toHaveBeenCalledWith(
+					session,
+					"synthesis.md",
+					"codex",
+				);
+			},
+		);
 	});
 });

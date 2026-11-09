@@ -5,6 +5,7 @@ import { harnessLabel } from "../harnessLabel";
 import { spawnClaude } from "../spawnClaude";
 import { buildSlashCommand } from "./buildSlashCommand";
 import { claudeOneShot } from "./claudeOneShot";
+import { claudeStructuredRun } from "./claudeStructuredRun";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
 import type { HarnessAdapter } from "./types";
@@ -45,5 +46,6 @@ export const claudeAdapter: HarnessAdapter = {
 			auto,
 		}),
 	oneShot: claudeOneShot,
+	structured: claudeStructuredRun,
 	activityIdentity: (conversationId) => ({ claudeSessionId: conversationId }),
 };

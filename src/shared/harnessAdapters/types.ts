@@ -2,6 +2,8 @@ import type { IPty } from "node-pty";
 import type { HarnessKind } from "../harnesses";
 
 type InteractivePty = IPty;
+import type { SpinnerHandle } from "../../commands/review/MultiSpinner";
+import type { ReviewerResult } from "../../commands/review/runStreamingChild";
 import type { SpawnResult } from "../spawnInherit";
 import type { CapabilityId } from "./capabilityDefinitions";
 
@@ -58,7 +60,20 @@ type LaunchOptions = {
 
 type ResumeOptions = { cwd: string; allowEdits?: boolean };
 
-export type OneShotOptions = { timeout: number };
+export type OneShotOptions = {
+	timeout: number;
+	effort?: "low" | "medium";
+	cwd?: string;
+};
+
+export type StructuredRun = {
+	name: string;
+	stdin: string;
+	outputPath: string;
+	readDir: string;
+	model?: string;
+	spinner?: (model: string | undefined) => SpinnerHandle | undefined;
+};
 
 type InteractiveLaunch = {
 	sessionId: string;
@@ -96,6 +111,8 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 	) => SpawnResult;
 	interactive: (launch: InteractiveLaunch) => InteractivePty;
 	oneShot: (prompt: string, options: OneShotOptions) => Promise<string>;
+	structured: (run: StructuredRun) => Promise<ReviewerResult>;
+	offerInstall?: () => Promise<boolean>;
 	activityIdentity: (
 		conversationId: string | undefined,
 		resumedId?: string,

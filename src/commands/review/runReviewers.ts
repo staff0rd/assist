@@ -1,46 +1,26 @@
-import type { MultiSpinner } from "./MultiSpinner";
-import type { CodexPlan } from "./planCodexReviewer";
-import { resolveClaude } from "./resolveClaude";
-import { resolveCodex } from "./resolveCodex";
+import type { PlannedReviewer } from "./planReviewers";
+import {
+	type ReviewerRunContext,
+	runPlannedReviewer,
+} from "./runPlannedReviewer";
 import type { ReviewerResult } from "./runStreamingChild";
 
 type ReviewersOutcome = {
-	results: [ReviewerResult, ReviewerResult];
+	results: ReviewerResult[];
 	anyFresh: boolean;
 	fresh: ReviewerResult[];
 };
 
-type ReviewersOptions = {
-	multi: MultiSpinner | undefined;
-	codexPlan: CodexPlan;
-	cachedClaude: ReviewerResult | null;
-};
-
 export async function runReviewers(
-	reviewDir: string,
-	claudePath: string,
-	codexPath: string,
-	stdinPrompt: string,
-	options: ReviewersOptions,
+	reviewers: PlannedReviewer[],
+	context: ReviewerRunContext,
 ): Promise<ReviewersOutcome> {
-	const claudePromise = resolveClaude({
-		reviewDir,
-		claudePath,
-		stdin: stdinPrompt,
-		cached: options.cachedClaude,
-		multi: options.multi,
-	});
-	const codexPromise = resolveCodex({
-		codexPath,
-		stdin: stdinPrompt,
-		plan: options.codexPlan,
-		multi: options.multi,
-	});
-	const results = await Promise.all([claudePromise, codexPromise]);
-	const anyFresh =
-		options.cachedClaude === null || options.codexPlan.kind !== "cached";
-	const fresh = results.filter((_, i) =>
-		i === 0 ? options.cachedClaude === null : options.codexPlan.kind === "run",
+	const results = await Promise.all(
+		reviewers.map((reviewer) => runPlannedReviewer(reviewer, context)),
 	);
-	return { results, anyFresh, fresh };
+	return {
+		results,
+		anyFresh: reviewers.some(({ plan }) => plan.kind !== "cached"),
+		fresh: results.filter((_, i) => reviewers[i].plan.kind === "run"),
+	};
 }

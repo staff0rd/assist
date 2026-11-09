@@ -31,5 +31,6 @@ export const piAdapter: HarnessAdapter = {
 	interactive: ({ sessionId, prompt, cwd }) =>
 		spawnPiPty({ prompt, cwd, sessionId }),
 	oneShot: noOneShot,
+	structured: noOneShot,
 	activityIdentity: () => ({ harness: "pi" }),
 };

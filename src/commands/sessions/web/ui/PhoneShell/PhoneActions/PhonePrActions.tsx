@@ -2,6 +2,8 @@ import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import Box from "@mui/material/Box";
 import { reviewButtonModes } from "../../../../../../shared/reviewButtonModes";
 import { prLaunchMeta } from "../../App/prLaunchMeta";
+import { reviewModeEntries } from "../../App/reviewModeEntries";
+import { useHarnessCapabilities } from "../../useHarnessCapabilities";
 import { reviewTargetPr } from "../../App/reviewTargetPr";
 import { usePrStatus } from "../../App/usePrStatus";
 import type { AssistLaunchMeta } from "../../resumeSessionAction";
@@ -9,10 +11,13 @@ import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SessionInfo } from "../../types";
 import { PhoneSheetItem } from "./PhoneSheetItem";
 
-const prModes = [
-	...reviewButtonModes.filter((mode) => !mode.args.includes("--high-level")),
-	{ label: "Address comments", args: ["review-pr-comments"] },
-];
+const reviewModes = reviewButtonModes.filter(
+	(mode) => !mode.args.includes("--high-level"),
+);
+const addressComments = {
+	label: "Address comments",
+	args: ["review-pr-comments"],
+};
 
 type Props = {
 	session: SessionInfo;
@@ -23,8 +28,13 @@ type Props = {
 
 export function PhonePrActions({ session, node, launchAssist, onDone }: Props) {
 	const pr = usePrStatus(session.cwd, reviewTargetPr(session), session.status);
+	const capabilities = useHarnessCapabilities(node);
 	if (!pr || !session.cwd) return null;
 
+	const prModes = [
+		...reviewModeEntries(capabilities, reviewModes),
+		addressComments,
+	];
 	const meta = {
 		...prLaunchMeta(pr),
 		inPlace: true,

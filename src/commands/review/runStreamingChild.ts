@@ -27,6 +27,7 @@ export type ReviewerResult = {
 	stdout?: string;
 	elapsedMs?: number;
 	usage?: TokenUsage;
+	skipped?: boolean;
 };
 
 function writeStdinSafely(child: ChildProcess, payload: string): void {

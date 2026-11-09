@@ -9,6 +9,7 @@ import { runHighLevelReview } from "./highLevel/runHighLevelReview";
 import { reviewPr } from "./reviewPr";
 import { startReviewLog } from "./startReviewLog";
 import { validateReviewOptions } from "./validateReviewOptions";
+import { sessionBlocked } from "./sessionBlocked";
 
 function resolveRepoRoot(): string {
 	const repoRoot = findRepoRoot(process.cwd());
@@ -24,15 +25,20 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 			scope: options.scope,
 			answer: options.answer,
 		});
+	if (sessionBlocked(options)) return;
 	startReviewLog();
 	const invokedIn = resolveRepoRoot();
+	const { harness } = options;
 	if (options.checkoutOnly && options.number)
-		return checkoutPrSession(options.number);
+		return checkoutPrSession(options.number, { harness });
 	if (options.highLevel && options.number && !isAgentHarness())
-		return checkoutPrSession(
-			options.number,
-			`/review-high-level ${options.number}${options.force ? " --force" : ""}`,
-		);
+		return checkoutPrSession(options.number, {
+			harness,
+			skill: {
+				name: "review-high-level",
+				args: `${options.number}${options.force ? " --force" : ""}`,
+			},
+		});
 	emitActivity({ kind: "command", name: "review" });
 	const highLevelOptions = { force: options.force, slices: options.slices };
 	if (!options.number)

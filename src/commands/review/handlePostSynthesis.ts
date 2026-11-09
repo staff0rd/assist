@@ -1,8 +1,8 @@
+import type { HarnessKind } from "../../shared/harnesses";
 import { announcePr } from "./announcePr";
+import { postSynthesisSession } from "./postSynthesisSession";
 import { type PrDiffRef, postReviewToPr } from "./postReviewToPr";
-import { runApplySession } from "./runApplySession";
-import { runBacklogSession } from "./runBacklogSession";
-import { runRefineSession } from "./runRefineSession";
+import { runReviewSession } from "./runReviewSession";
 
 type PostSynthesisOptions = {
 	refine: boolean;
@@ -12,25 +12,15 @@ type PostSynthesisOptions = {
 	submit: boolean;
 	addressComments: boolean;
 	announce: boolean;
+	harness?: HarnessKind;
 };
-
-type SessionRunner = (synthesisPath: string) => Promise<void>;
-
-function nonPostingSession(
-	options: PostSynthesisOptions,
-): SessionRunner | null {
-	if (options.backlog) return runBacklogSession;
-	if (options.apply) return runApplySession;
-	if (options.refine) return runRefineSession;
-	return null;
-}
 
 export async function handlePostSynthesis(
 	synthesisPath: string,
 	prInfo: PrDiffRef,
 	options: PostSynthesisOptions,
 ): Promise<void> {
-	const session = nonPostingSession(options);
+	const session = postSynthesisSession(options);
 	if (!session) {
 		await postReviewToPr(synthesisPath, prInfo, {
 			prompt: options.prompt,
@@ -40,6 +30,6 @@ export async function handlePostSynthesis(
 		});
 		return;
 	}
-	await session(synthesisPath);
+	await runReviewSession(session, synthesisPath, options.harness);
 	if (options.announce) await announcePr(prInfo.prNumber);
 }

@@ -1,7 +1,8 @@
-import { spawnClaude } from "../../shared/spawnClaude";
+import { reviewBacklogFeature } from "../../shared/harnessAdapters/reviewFeatures";
+import type { ReviewSession } from "./ReviewSession";
 
-export function buildBacklogPrompt(synthesisPath: string): string {
-	return `/bug add each finding in ${synthesisPath} as a phase
+export function buildBacklogArgs(synthesisPath: string): string {
+	return `add each finding in ${synthesisPath} as a phase
 
 Read ${synthesisPath}. It contains a list of findings under the \`## Findings\` heading, each in a \`### Finding:\` block with Severity, Source, Location, Impact, and Recommendation fields.
 
@@ -16,9 +17,11 @@ Important constraints:
 - Do not stage, commit, or push any changes.`;
 }
 
-export async function runBacklogSession(synthesisPath: string): Promise<void> {
-	const { done } = spawnClaude(buildBacklogPrompt(synthesisPath), {
-		allowEdits: true,
-	});
-	await done;
-}
+export const backlogSession: ReviewSession = {
+	feature: reviewBacklogFeature,
+	launch: (adapter, synthesisPath) =>
+		adapter.launchSkill("bug", buildBacklogArgs(synthesisPath), {
+			cwd: process.cwd(),
+			allowEdits: true,
+		}),
+};

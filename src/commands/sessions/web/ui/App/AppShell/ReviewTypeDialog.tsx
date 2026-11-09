@@ -10,7 +10,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import type { PrSummary } from "../../../prList";
-import { reviewButtonModes } from "../../../../../../shared/reviewButtonModes";
+import { useApiNode } from "../../useApiNode";
+import { useHarnessCapabilities } from "../../useHarnessCapabilities";
+import { reviewModeEntries } from "../reviewModeEntries";
 import {
 	reviewOptionArgs,
 	reviewOptionDefaults,
@@ -29,6 +31,7 @@ export function ReviewTypeDialog({
 	onCancel: () => void;
 }) {
 	const [options, setOptions] = useState(reviewOptionDefaults);
+	const capabilities = useHarnessCapabilities(useApiNode());
 
 	return (
 		<Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
@@ -37,7 +40,7 @@ export function ReviewTypeDialog({
 			</DialogTitle>
 			<DialogContent sx={{ px: 0 }}>
 				<MenuList sx={(t) => reviewTypeDialogSx(t).list}>
-					{reviewButtonModes.map(({ label, args }) => (
+					{reviewModeEntries(capabilities).map(({ label, args }) => (
 						<MenuItem
 							key={label}
 							onClick={() => onSelect([...args, ...reviewOptionArgs(options)])}

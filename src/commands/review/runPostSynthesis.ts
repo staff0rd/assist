@@ -15,5 +15,6 @@ export function runPostSynthesis(
 		submit: options.submit ?? false,
 		addressComments: options.addressComments ?? false,
 		announce: options.announce ?? false,
+		harness: options.harness,
 	});
 }

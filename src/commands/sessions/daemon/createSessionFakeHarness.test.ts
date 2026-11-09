@@ -1,9 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { HarnessAdapter } from "../../../shared/harnessAdapters/types";
-import {
-	type FakeHarnessCalls,
-	fakeHarnessMock,
-} from "../../../test/mocks/fakeHarnessMock";
+import { fakeHarnessMock } from "../../../test/mocks/fakeHarnessMock";
 
 const state = vi.hoisted(() => ({
 	adapter: undefined as HarnessAdapter | undefined,
@@ -14,10 +11,11 @@ vi.mock("../../../shared/harnessAdapters/harnessAdapter", () => ({
 }));
 
 import { createSession } from "./createSession";
+import { fakeHarnessCalls } from "../../../test/mocks/fakeHarnessCalls";
 
 describe("createSession on a fake harness", () => {
 	it("launches through the adapter's interactive operation and records its identity", () => {
-		const calls: FakeHarnessCalls = { interactive: [], oneShot: [] };
+		const calls = fakeHarnessCalls();
 		state.adapter = fakeHarnessMock(calls);
 
 		const session = createSession("7", {
@@ -42,7 +40,7 @@ describe("createSession on a fake harness", () => {
 	});
 
 	it("defers the fake spawn while the pty is held", () => {
-		const calls: FakeHarnessCalls = { interactive: [], oneShot: [] };
+		const calls = fakeHarnessCalls();
 		state.adapter = fakeHarnessMock(calls);
 
 		const session = createSession("8", { cwd: "/repo", holdPty: true });

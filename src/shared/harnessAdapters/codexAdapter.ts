@@ -4,6 +4,8 @@ import { hasCodexRolloutSync } from "../../commands/sessions/shared/codex/hasCod
 import { harnessLabel } from "../harnessLabel";
 import { spawnCodex } from "../spawnCodex";
 import { codexOneShot } from "./codexOneShot";
+import { codexStructuredRun } from "./codexStructuredRun";
+import { offerCodexInstall } from "./offerCodexInstall";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
 import type { HarnessAdapter } from "./types";
@@ -37,6 +39,8 @@ export const codexAdapter: HarnessAdapter = {
 	interactive: ({ sessionId, prompt, cwd }) =>
 		spawnCodexPty({ prompt, cwd, sessionId }),
 	oneShot: codexOneShot,
+	structured: codexStructuredRun,
+	offerInstall: offerCodexInstall,
 	activityIdentity: (_conversationId, resumedId) =>
 		resumedId
 			? { harness: "codex", harnessSessionId: resumedId }

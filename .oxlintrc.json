@@ -75,9 +75,6 @@
 						"adapterDirs": ["src/shared/harnessAdapters"],
 						"allow": {
 							"src/commands/backlog/resolveHarness.ts": "parses the --harness flag value into a HarnessKind; not a behaviour branch",
-							"src/commands/review/resolveSynthesisHarness.ts": "review synthesis; generalized in a1545 phase 3",
-							"src/commands/review/runSynthesisReviewer.ts": "review synthesis; generalized in a1545 phase 3",
-							"src/commands/sessions/web/ui/App/AppSidebar/HarnessBadge.tsx": "branding (no badge for the default harness); made harness-neutral in a1545 phase 3",
 							"src/shared/readSettingsPerms.ts": "permission sources; separated from hook transport in a1545 phase 6",
 							"src/commands/sessions/daemon/rememberSessionTitle.ts": "titles from transcripts; normalized conversation events in a1545 phase 7",
 							"src/commands/sessions/daemon/applyLaunchActivity.ts": "conversation binding; adapter identity discovery in a1545 phase 7",

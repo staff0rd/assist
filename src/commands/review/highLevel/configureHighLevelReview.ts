@@ -29,7 +29,7 @@ export async function configureHighLevelReview(
 	const answers = parseConfigureAnswers(options.answer ?? []);
 	const proposed = answersCoverEveryKey(answers)
 		? NOTHING_PROPOSED
-		: proposeHighLevelGlobs();
+		: await proposeHighLevelGlobs();
 	const current = resolveHighLevelConfig(loadConfig());
 	const questions = buildHighLevelQuestions(
 		{

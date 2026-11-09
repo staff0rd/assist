@@ -11,6 +11,7 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.resume": supported,
 		"conversation.preassignId": supported,
 		"oneShot.text": supported,
+		"oneShot.structured": supported,
 		"usage.rateLimits": supported,
 	},
 	codex: {
@@ -21,6 +22,7 @@ export const harnessCapabilityDeclarations: Record<
 			"assist binds the Codex conversation id from the rollout after launch",
 		),
 		"oneShot.text": supported,
+		"oneShot.structured": supported,
 		"usage.rateLimits": supported,
 	},
 	pi: {
@@ -37,6 +39,11 @@ export const harnessCapabilityDeclarations: Record<
 		"oneShot.text": unsupported(
 			"assist has no headless pi one-shot yet",
 			"the derived fallback is used instead (slug from the description, no generated title); set harness.engine to claude or codex for generated suggestions",
+			"a696",
+		),
+		"oneShot.structured": unsupported(
+			"assist has no headless streaming pi run yet",
+			"pick Claude or Codex for review synthesis (review.synthesisHarness); pi cannot be a reviewer",
 			"a696",
 		),
 		"usage.rateLimits": unsupported(

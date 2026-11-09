@@ -23,8 +23,7 @@ function result(name: string, exitCode: number): ReviewerResult {
 function run() {
 	return runAndSynthesise({
 		paths,
-		cachedClaude: null,
-		codexPlan: { kind: "run" },
+		reviewers: [],
 		multi: undefined,
 	});
 }
@@ -64,6 +63,33 @@ describe("runAndSynthesise", () => {
 
 		expect(outcome.ok).toBe(false);
 		expect(outcome.failures.map((f) => f.name)).toEqual(["claude", "codex"]);
+		expect(synthesise).not.toHaveBeenCalled();
+	});
+
+	it("synthesises from codex alone when the claude reviewer was skipped", async () => {
+		vi.mocked(runReviewers).mockResolvedValue({
+			results: [{ ...result("claude", 0), skipped: true }, result("codex", 0)],
+			anyFresh: true,
+			fresh: [],
+		});
+
+		const outcome = await run();
+
+		expect(outcome.ok).toBe(true);
+		expect(synthesise).toHaveBeenCalled();
+	});
+
+	it("skips synthesis when no reviewer produced a review", async () => {
+		vi.mocked(synthesise).mockClear();
+		vi.mocked(runReviewers).mockResolvedValue({
+			results: [result("claude", 1), { ...result("codex", 0), skipped: true }],
+			anyFresh: true,
+			fresh: [],
+		});
+
+		const outcome = await run();
+
+		expect(outcome.ok).toBe(false);
 		expect(synthesise).not.toHaveBeenCalled();
 	});
 });

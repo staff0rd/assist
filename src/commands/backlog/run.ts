@@ -2,7 +2,7 @@ import chalk from "chalk";
 import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
 import { buildFeature } from "../../shared/harnessAdapters/harnessFeatures";
 import { acquireLock, foreignLockHolder, releaseLock } from "./acquireLock";
-import { launchBlocker } from "./launchBlocker";
+import { launchBlocker } from "../../shared/harnessAdapters/launchBlocker";
 import { ensureStoryBranch } from "./ensureStoryBranch";
 import { formatItemId, parseItemId } from "./formatItemId";
 import { type PreparedRun, prepareRun } from "./prepareRun";

@@ -55,6 +55,7 @@ import {
 	resolveOneShotHarness,
 	runOneShotPrompt,
 } from "./runOneShotPrompt";
+import { fakeHarnessCalls } from "../test/mocks/fakeHarnessCalls";
 
 const mockExecFile = vi.mocked(execFile);
 
@@ -168,7 +169,7 @@ describe("runOneShotPrompt", () => {
 	});
 
 	it("runs a fake harness through its adapter alone", async () => {
-		const calls = { interactive: [], oneShot: [] as string[] };
+		const calls = fakeHarnessCalls();
 		state.fake = fakeHarnessMock(calls);
 		const answer = await runOneShotPrompt("hello", branchSlugFeature, {
 			harness: "fake" as HarnessKind,

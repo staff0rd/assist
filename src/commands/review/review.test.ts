@@ -27,6 +27,26 @@ vi.mock("../../shared/spawnClaude", () => ({
 		mockSpawnClaude(prompt, options),
 }));
 
+const mockSpawnCodex = vi.fn((_prompt: string, _options?: unknown) => ({
+	done: Promise.resolve(0),
+}));
+vi.mock("../../shared/spawnCodex", () => ({
+	spawnCodex: (prompt: string, options?: unknown) =>
+		mockSpawnCodex(prompt, options),
+}));
+
+const state = vi.hoisted(() => ({ missing: new Set<string>() }));
+vi.mock("../../shared/harnessAdapters/detectHarness", () => ({
+	detectHarness: (kind: string) =>
+		state.missing.has(kind)
+			? {
+					supported: false,
+					reason: `${kind} is not installed`,
+					remediation: `install ${kind}`,
+				}
+			: { supported: true },
+}));
+
 vi.mock("./moveToPrCheckoutTree", () => ({
 	moveToPrCheckoutTree: () => mockMoveToPrCheckoutTree(),
 }));
@@ -53,6 +73,7 @@ import { review } from "./review";
 
 beforeEach(() => {
 	vi.clearAllMocks();
+	state.missing.clear();
 	mockExecFileSync.mockReset();
 });
 
@@ -165,9 +186,38 @@ describe("review", () => {
 			const [prompt, options] = mockSpawnClaude.mock.calls[0];
 			expect(prompt).toBe("");
 			expect(options).toMatchObject({
-				permissionMode: "auto",
+				allowEdits: true,
 				sessionId: expect.any(String),
 			});
+		});
+
+		it("should start the session on the selected harness without Claude", async () => {
+			await review({ checkoutOnly: true, number: "123", harness: "codex" });
+
+			expect(mockSpawnClaude).not.toHaveBeenCalled();
+			expect(mockSpawnCodex).toHaveBeenCalledWith("", {
+				cwd: process.cwd(),
+				sandbox: "workspace-write",
+			});
+			expect(mockEmitActivity).toHaveBeenCalledWith({
+				kind: "command",
+				name: "review",
+				harness: "codex",
+			});
+		});
+
+		it("should exit with the reasons before checking out when the harness is unavailable", async () => {
+			state.missing.add("codex");
+
+			await review({ checkoutOnly: true, number: "123", harness: "codex" });
+
+			expect(mockExecFileSync).not.toHaveBeenCalled();
+			expect(mockSpawnCodex).not.toHaveBeenCalled();
+			expect(mockError).toHaveBeenCalledWith(
+				expect.stringContaining("PR checkout session is unavailable on Codex"),
+			);
+			expect(process.exitCode).toBe(1);
+			process.exitCode = undefined;
 		});
 
 		it("should announce the activity under the spawned session's id so the card stays alive", async () => {
@@ -209,7 +259,7 @@ describe("review", () => {
 			const [prompt, options] = mockSpawnClaude.mock.calls[0];
 			expect(prompt).toBe("/review-high-level 123");
 			expect(options).toMatchObject({
-				permissionMode: "auto",
+				allowEdits: true,
 				sessionId: expect.any(String),
 			});
 			expect(mockRunHighLevelReview).not.toHaveBeenCalled();
@@ -221,6 +271,17 @@ describe("review", () => {
 			expect(mockSpawnClaude.mock.calls[0][0]).toBe(
 				"/review-high-level 123 --force",
 			);
+		});
+
+		it("should run the review-high-level skill natively on Codex", async () => {
+			await review({ highLevel: true, number: "123", harness: "codex" });
+
+			expect(mockSpawnClaude).not.toHaveBeenCalled();
+			expect(mockSpawnCodex).toHaveBeenCalledWith("123", {
+				cwd: process.cwd(),
+				sandbox: "workspace-write",
+				skill: "review-high-level",
+			});
 		});
 	});
 

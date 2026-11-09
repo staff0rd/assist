@@ -9,20 +9,23 @@ type ClaudeReviewerSpec = {
 	reviewDir: string;
 	stdin: string;
 	outputPath: string;
+	model?: string;
 	spinner?: SpinnerHandle;
 };
 
 export async function runClaudeReviewer(
 	spec: ClaudeReviewerSpec,
 ): Promise<ReviewerResult> {
-	const { spinner } = spec;
+	const { spinner, model } = spec;
 	const command = "claude";
 	const { state, onLine } = createClaudeLineHandler(spec.name, spinner);
 	const result = await runStreamingChild({
 		name: spec.name,
 		command,
+		model,
 		args: [
 			"-p",
+			...(model ? ["--model", model] : []),
 			"--add-dir",
 			spec.reviewDir,
 			"--output-format",

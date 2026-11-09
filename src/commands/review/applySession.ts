@@ -1,5 +1,6 @@
-import { spawnClaude } from "../../shared/spawnClaude";
+import { reviewApplyFeature } from "../../shared/harnessAdapters/reviewFeatures";
 import { findingSourceEnum } from "./findingSourceValues";
+import type { ReviewSession } from "./ReviewSession";
 
 function buildApplyPrompt(synthesisPath: string): string {
 	return `You are helping the user apply fixes for a code review with each finding decided one at a time.
@@ -29,9 +30,11 @@ Important constraints:
 - When every non-already-raised finding has been decided, briefly summarise what was applied vs skipped and exit.`;
 }
 
-export async function runApplySession(synthesisPath: string): Promise<void> {
-	const { done } = spawnClaude(buildApplyPrompt(synthesisPath), {
-		allowEdits: true,
-	});
-	await done;
-}
+export const applySession: ReviewSession = {
+	feature: reviewApplyFeature,
+	launch: (adapter, synthesisPath) =>
+		adapter.launchPrompt(buildApplyPrompt(synthesisPath), {
+			cwd: process.cwd(),
+			allowEdits: true,
+		}),
+};

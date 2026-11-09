@@ -1,4 +1,4 @@
-import { awaitClaude } from "../../shared/awaitClaude";
+import { awaitHarness } from "../../shared/awaitHarness";
 import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
 import type { HarnessKind } from "../../shared/harnesses";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
@@ -21,7 +21,7 @@ export async function launchPhaseClaude(
 				conversationId: sessionId,
 			});
 	watchForMarker(child);
-	const exitCode = await awaitClaude(done, context);
+	const exitCode = await awaitHarness(done, context, adapter.label);
 	stopWatching();
 	return exitCode;
 }

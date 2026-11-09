@@ -1,3 +1,4 @@
+import { reviewFeatures } from "./reviewFeatures";
 import type { HarnessFeature } from "./types";
 
 export const refineFeature: HarnessFeature = {
@@ -43,4 +44,5 @@ export const harnessFeatures: HarnessFeature[] = [
 	branchSlugFeature,
 	sessionTitleFeature,
 	usageLimitsFeature,
+	...reviewFeatures,
 ];

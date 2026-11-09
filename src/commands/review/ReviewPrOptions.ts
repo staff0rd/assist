@@ -1,3 +1,5 @@
+import type { HarnessKind } from "../../shared/harnesses";
+
 export type ReviewPrOptions = {
 	prompt?: boolean;
 	submit?: boolean;
@@ -8,4 +10,5 @@ export type ReviewPrOptions = {
 	verbose?: boolean;
 	addressComments?: boolean;
 	announce?: boolean;
+	harness?: HarnessKind;
 };

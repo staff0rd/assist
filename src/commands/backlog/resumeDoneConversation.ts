@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { awaitClaude } from "../../shared/awaitClaude";
+import { awaitHarness } from "../../shared/awaitHarness";
 import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
 import { formatItemId } from "./formatItemId";
 import type { DoneResume } from "./prepareRun";
@@ -12,10 +12,10 @@ export async function resumeDoneConversation(
 	const label = `${formatItemId(item.id)}: ${item.name}`;
 	console.log(chalk.green(`Already done: ${label}`));
 	console.log(chalk.dim("Resuming its last conversation\n"));
-	const { done } = harnessAdapter(spawnOptions?.harness).resume(
-		resumeSessionId,
-		"",
-		{ cwd: process.cwd(), allowEdits: spawnOptions?.allowEdits ?? true },
-	);
-	return (await awaitClaude(done, label)) === 0;
+	const adapter = harnessAdapter(spawnOptions?.harness);
+	const { done } = adapter.resume(resumeSessionId, "", {
+		cwd: process.cwd(),
+		allowEdits: spawnOptions?.allowEdits ?? true,
+	});
+	return (await awaitHarness(done, label, adapter.label)) === 0;
 }

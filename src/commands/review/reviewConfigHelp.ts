@@ -10,7 +10,7 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "review.synthesisHarness",
 		setter: "assist config set review.synthesisHarness <claude|codex>",
-		note: "harness that consolidates the two reviews (default claude); codex falls back to claude when the codex CLI is not on PATH",
+		note: "harness that consolidates the two reviews (default claude); when it cannot synthesise (e.g. its CLI is not on PATH) the review exits with the reason before reviewing instead of falling back to another harness",
 	},
 	{
 		key: "review.highLevel.criticalPaths",

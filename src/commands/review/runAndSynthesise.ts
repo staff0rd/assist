@@ -1,7 +1,7 @@
 import { buildReviewerStdin } from "./buildReviewerStdin";
 import type { ReviewPaths } from "./buildReviewPaths";
 import type { MultiSpinner } from "./MultiSpinner";
-import type { CodexPlan } from "./planCodexReviewer";
+import type { PlannedReviewer } from "./planReviewers";
 import { type ReviewJobTarget, recordReviewerRuns } from "./recordReviewerRuns";
 import { runReviewers } from "./runReviewers";
 import type { ReviewerResult } from "./runStreamingChild";
@@ -10,8 +10,7 @@ import { skipReason } from "./skipReason";
 
 type Args = {
 	paths: ReviewPaths;
-	cachedClaude: ReviewerResult | null;
-	codexPlan: CodexPlan;
+	reviewers: PlannedReviewer[];
 	multi: MultiSpinner | undefined;
 	job?: ReviewJobTarget;
 };
@@ -31,17 +30,11 @@ export async function runAndSynthesise(
 ): Promise<AndSynthesiseOutcome> {
 	const { paths, multi } = args;
 	const startedAt = new Date();
-	const { results, anyFresh, fresh } = await runReviewers(
-		paths.reviewDir,
-		paths.claudePath,
-		paths.codexPath,
-		buildReviewerStdin(paths.requestPath),
-		{
-			multi,
-			codexPlan: args.codexPlan,
-			cachedClaude: args.cachedClaude,
-		},
-	);
+	const { results, anyFresh, fresh } = await runReviewers(args.reviewers, {
+		reviewDir: paths.reviewDir,
+		stdin: buildReviewerStdin(paths.requestPath),
+		multi,
+	});
 	if (args.job) await recordReviewerRuns(fresh, args.job, startedAt);
 	const failures = failed(results);
 	const reason = skipReason(results, failures);

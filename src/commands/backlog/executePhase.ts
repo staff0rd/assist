@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { CLAUDE_SPAWN_FAILED } from "../../shared/awaitClaude";
+import { HARNESS_SPAWN_FAILED } from "../../shared/awaitHarness";
 import { setSessionStatus } from "../sessions/setSessionStatus";
 import { launchPhaseSession } from "./launchPhaseSession";
 import { recordSignalOwner } from "./recordSignalOwner";
@@ -50,15 +50,15 @@ export async function executePhase(
 	);
 	/* why: abort the phase loop on a spawn failure rather than surfacing an
 	 * uncaught rejection or retrying a launch that can't succeed */
-	if (exitCode === CLAUDE_SPAWN_FAILED) return { kind: "abort" };
+	if (exitCode === HARNESS_SPAWN_FAILED) return { kind: "abort" };
 
 	/* why: the phase Claude has exited, so its hooks no longer drive the daemon
 	 * card; the driver now works (resolve result, reload plan, spawn the next
 	 * phase) with no claude alive, leaving the card stuck on the last Stop's
 	 * `waiting`. Push `running` explicitly so the card reflects the active driver
 	 * work instead of the daemon guessing from PTY output (#447/#449). This only
-	 * runs once a phase Claude has exited — the review phase keeps its Claude
-	 * alive awaiting input, so awaitClaude blocks above and this never fires,
+	 * runs once a phase harness has exited — the review phase keeps its harness
+	 * alive awaiting input, so awaitHarness blocks above and this never fires,
 	 * leaving its `waiting` intact. */
 	void setSessionStatus("running");
 

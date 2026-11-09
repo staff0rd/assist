@@ -3,14 +3,11 @@ import type { HarnessAdapter } from "../../shared/harnessAdapters/types";
 import { supported } from "../../shared/harnessAdapters/unsupported";
 import { spawnInherit } from "../../shared/spawnInherit";
 import { fakeHarnessCapabilities } from "./fakeHarnessCapabilities";
-
-export type FakeHarnessCalls = {
-	interactive: Parameters<HarnessAdapter["interactive"]>[0][];
-	oneShot: string[];
-};
+import { type FakeHarnessCalls, fakeHarnessCalls } from "./fakeHarnessCalls";
+import { fakeStructuredRun } from "./fakeStructuredRun";
 
 export function fakeHarnessMock(
-	calls: FakeHarnessCalls = { interactive: [], oneShot: [] },
+	calls: FakeHarnessCalls = fakeHarnessCalls(),
 ): HarnessAdapter {
 	return {
 		kind: "fake",
@@ -48,6 +45,7 @@ export function fakeHarnessMock(
 			calls.oneShot.push(prompt);
 			return Promise.resolve(`fake answer to ${prompt.length} chars\n`);
 		},
+		structured: fakeStructuredRun(calls.structured),
 		activityIdentity: (_conversationId, resumedId) =>
 			resumedId ? { harnessSessionId: resumedId } : {},
 	};

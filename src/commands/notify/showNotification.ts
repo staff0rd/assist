@@ -1,5 +1,7 @@
 import notifier from "node-notifier";
+import { activeHarness } from "../../lib/activeHarness";
 import { detectPlatform } from "../../lib/detectPlatform";
+import { harnessProductLabel } from "../../shared/harnessLabel";
 import { showWindowsNotificationFromWsl } from "./showNotification/showWindowsNotificationFromWsl";
 
 type NotificationOptions = {
@@ -29,7 +31,7 @@ export function showNotification(options: NotificationOptions): boolean {
 	};
 
 	if (platform === "windows") {
-		notificationOptions.appID = "Claude Code";
+		notificationOptions.appID = harnessProductLabel(activeHarness());
 	}
 
 	if (platform === "macos") {

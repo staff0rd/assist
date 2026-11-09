@@ -1,9 +1,6 @@
-import { formatUnavailable } from "../../shared/harnessAdapters/formatUnavailable";
-import { resolveFeature } from "../../shared/harnessAdapters/resolveFeature";
-import type {
-	HarnessAdapter,
-	HarnessFeature,
-} from "../../shared/harnessAdapters/types";
+import { formatUnavailable } from "./formatUnavailable";
+import { resolveFeature } from "./resolveFeature";
+import type { HarnessAdapter, HarnessFeature } from "./types";
 
 const plainLaunch: HarnessFeature = {
 	id: "launch",

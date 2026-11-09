@@ -1,9 +1,8 @@
 import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { reviewButtonModes } from "../../../../../../../../../shared/reviewButtonModes";
 import { ReviewOptionToggles } from "../../../../ReviewOptionToggles";
 import { AddressCommentsItems } from "./ReviewButtonMenu/AddressCommentsItems";
+import { ReviewModeItems } from "./ReviewButtonMenu/ReviewModeItems";
 import type { HighLevelReviewAction } from "./useHighLevelReviewAction";
 import type { useReviewLaunch } from "./useReviewLaunch";
 
@@ -31,21 +30,7 @@ export function ReviewButtonMenu({
 			onClose={onClose}
 			onClick={(e) => e.stopPropagation()}
 		>
-			{reviewButtonModes.map((mode) => (
-				<MenuItem
-					key={mode.label}
-					onClick={(e) =>
-						pick(
-							e,
-							highLevel && mode.args.includes("--high-level")
-								? highLevel.run
-								: () => review.launchMode(mode.args),
-						)
-					}
-				>
-					{mode.label}
-				</MenuItem>
-			))}
+			<ReviewModeItems review={review} highLevel={highLevel} pick={pick} />
 			<Divider />
 			<ReviewOptionToggles
 				value={review.options}

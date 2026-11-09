@@ -16,15 +16,15 @@ export function addReviewRunOptions(command: Command): Command {
 		)
 		.option(
 			"--refine",
-			"After synthesis, launch an interactive Claude session to walk through findings instead of posting",
+			"After synthesis, launch an interactive session (on --harness) to walk through findings instead of posting",
 		)
 		.option(
 			"--apply",
-			"After synthesis, launch an interactive Claude session to apply fixes for each finding; applied findings are removed from synthesis, skipped ones remain for a later post",
+			"After synthesis, launch an interactive session (on --harness) to apply fixes for each finding; applied findings are removed from synthesis, skipped ones remain for a later post",
 		)
 		.option(
 			"--backlog",
-			"After synthesis, launch an interactive Claude session running /bug to file all findings as a single backlog item with one phase per finding, instead of posting to the PR",
+			"After synthesis, launch an interactive session (on --harness) running the bug skill to file all findings as a single backlog item with one phase per finding, instead of posting to the PR",
 		)
 		.option(
 			"--address-comments",

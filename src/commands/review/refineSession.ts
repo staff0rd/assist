@@ -1,5 +1,6 @@
-import { spawnClaude } from "../../shared/spawnClaude";
+import { reviewRefineFeature } from "../../shared/harnessAdapters/reviewFeatures";
 import { findingSourceEnum } from "./findingSourceValues";
+import type { ReviewSession } from "./ReviewSession";
 
 function buildRefinePrompt(synthesisPath: string): string {
 	return `You are refining a code review synthesis with the user.
@@ -30,9 +31,11 @@ User-supplied findings should use Source: \`confirmed\`. Use Location \`n/a\` on
 Do not post anything to a PR; only edit ${synthesisPath}. When the user is done, exit.`;
 }
 
-export async function runRefineSession(synthesisPath: string): Promise<void> {
-	const { done } = spawnClaude(buildRefinePrompt(synthesisPath), {
-		allowEdits: true,
-	});
-	await done;
-}
+export const refineSession: ReviewSession = {
+	feature: reviewRefineFeature,
+	launch: (adapter, synthesisPath) =>
+		adapter.launchPrompt(buildRefinePrompt(synthesisPath), {
+			cwd: process.cwd(),
+			allowEdits: true,
+		}),
+};
