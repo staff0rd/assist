@@ -1,3 +1,10 @@
+# [0.1107.0](https://github.com/staff0rd/assist/compare/v0.1106.0...v0.1107.0) (2026-11-09)
+
+
+### Features
+
+* design mode across harnesses ([a996bc5](https://github.com/staff0rd/assist/commit/a996bc5efc2f5666a910305b0246b010d874bbaa))
+
 # [0.1106.0](https://github.com/staff0rd/assist/compare/v0.1105.1...v0.1106.0) (2026-11-09)
 
 
