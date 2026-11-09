@@ -1,3 +1,10 @@
+# [0.1099.0](https://github.com/staff0rd/assist/compare/v0.1098.0...v0.1099.0) (2026-11-09)
+
+
+### Features
+
+* run PR fix/comment skills via adapters ([4f36769](https://github.com/staff0rd/assist/commit/4f36769c58d0881cc9efc435fd1b33c8a23c50d2))
+
 # [0.1098.0](https://github.com/staff0rd/assist/compare/v0.1097.0...v0.1098.0) (2026-11-09)
 
 
