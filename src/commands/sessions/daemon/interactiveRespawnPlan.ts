@@ -1,9 +1,10 @@
-import { randomUUID } from "node:crypto";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
+import { preassignedId } from "../../../shared/harnessAdapters/preassignedId";
+import { resolveCapability } from "../../../shared/harnessAdapters/resolveCapability";
+import type { HarnessAdapter } from "../../../shared/harnessAdapters/types";
 import type { ResumeOutcome } from "./conversationResumeOutcome";
 import type { Session } from "./createSession";
-import { hasTranscriptOnDisk } from "./hasTranscriptOnDisk";
 import { rememberSessionTitle } from "./rememberSessionTitle";
-import { spawnClaude } from "./spawnClaude";
 
 export type RespawnPlan = {
 	spawn: () => Session["pty"];
@@ -11,17 +12,17 @@ export type RespawnPlan = {
 	resumeOutcome?: () => ResumeOutcome | undefined;
 };
 
-export function interactiveRespawnPlan(
-	session: Session,
-	resumes: boolean,
-): RespawnPlan | null {
-	const { claudeSessionId, cwd, initialPrompt, design, auto } = session;
-	if (!resumes) return null;
-	if (claudeSessionId && hasTranscriptOnDisk(session))
+export function interactiveRespawnPlan(session: Session): RespawnPlan | null {
+	const adapter = harnessAdapter(session.harness);
+	if (!resolveCapability(adapter.capabilities, "conversation.resume").supported)
+		return null;
+	const { cwd, initialPrompt, design, auto } = session;
+	const resumeId = adapter.conversation.findResumable(session);
+	if (resumeId)
 		return {
 			spawn: () =>
-				spawnClaude({
-					resumeSessionId: claudeSessionId,
+				adapter.interactive({
+					resumeId,
 					cwd,
 					sessionId: session.id,
 					design,
@@ -29,26 +30,27 @@ export function interactiveRespawnPlan(
 				}),
 			status: "waiting",
 		};
-	if (initialPrompt) return freshClaudePlan(session, initialPrompt, cwd);
-	if (cwd) return freshClaudePlan(session, undefined, cwd);
-	return null;
+	if (!initialPrompt && !cwd) return null;
+	return freshPlan(session, adapter, initialPrompt);
 }
 
-function freshClaudePlan(
+function freshPlan(
 	session: Session,
+	adapter: HarnessAdapter,
 	prompt: string | undefined,
-	cwd: string | undefined,
 ): RespawnPlan {
-	const claudeSessionId = randomUUID();
+	const conversationId = preassignedId(adapter);
 	return {
 		spawn: () => {
-			session.claudeSessionId = claudeSessionId;
+			session.claudeSessionId = undefined;
+			session.harnessSessionId = undefined;
+			Object.assign(session, adapter.activityIdentity(conversationId));
 			rememberSessionTitle(session);
-			return spawnClaude({
+			return adapter.interactive({
 				prompt,
-				cwd,
+				cwd: session.cwd,
 				sessionId: session.id,
-				claudeSessionId,
+				conversationId,
 				design: session.design,
 				auto: session.auto,
 			});

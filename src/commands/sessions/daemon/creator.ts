@@ -22,17 +22,24 @@ export function creator(
 		}
 		sendTo(client, { type: "created", sessionId: result, isNew, traceId });
 	};
+	const fail = (client: SessionClient, d: Msg, error: unknown) => {
+		const reason = error instanceof Error ? error.message : String(error);
+		daemonLog(`${d.type} failed: ${reason}`);
+		reply(client, d, { error: `${d.type} failed: ${reason}` });
+	};
 	return (client, m, d) => {
 		if (m.links.route(client, d)) return;
-		const result = spawn(m, d);
+		let result: SpawnResult | Promise<SpawnResult>;
+		try {
+			result = spawn(m, d);
+		} catch (error) {
+			fail(client, d, error);
+			return;
+		}
 		if (result instanceof Promise)
 			result.then(
 				(resolved) => reply(client, d, resolved),
-				(error: unknown) => {
-					const reason = error instanceof Error ? error.message : String(error);
-					daemonLog(`${d.type} failed: ${reason}`);
-					reply(client, d, { error: `${d.type} failed: ${reason}` });
-				},
+				(error: unknown) => fail(client, d, error),
 			);
 		else reply(client, d, result);
 	};

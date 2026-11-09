@@ -9,8 +9,15 @@ export type FakeHarnessCalls = {
 	oneShot: string[];
 	structured: StructuredRun[];
 	connector: ConnectorRun[];
+	relocate: [conversationId: string, fromCwd: string, toCwd: string][];
 };
 
 export function fakeHarnessCalls(): FakeHarnessCalls {
-	return { interactive: [], oneShot: [], structured: [], connector: [] };
+	return {
+		interactive: [],
+		oneShot: [],
+		structured: [],
+		connector: [],
+		relocate: [],
+	};
 }

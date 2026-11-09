@@ -27,7 +27,7 @@ async function recoverOrphanedWorktrees(
 ): Promise<void> {
 	const accounted = accountedTrees(sessions);
 	const vanished = new Map<string, { path: string; branch: string }[]>();
-	for (const { path, clone } of readWorktreeRegistry()) {
+	for (const { path, clone, harness } of readWorktreeRegistry()) {
 		if (underTempRoot(path)) {
 			forgetWorktree(path);
 			daemonLog(
@@ -44,7 +44,7 @@ async function recoverOrphanedWorktrees(
 			continue;
 		}
 		if (accounted.has(path)) continue;
-		await recoverOrphan(sessions, spawnWith, { path, clone }, notify);
+		await recoverOrphan(sessions, spawnWith, { path, clone, harness }, notify);
 	}
 	for (const [clone, paths] of vanished)
 		await reclaimVanishedWorktrees(clone, paths);

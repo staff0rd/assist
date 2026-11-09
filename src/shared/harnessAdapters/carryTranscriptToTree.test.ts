@@ -1,16 +1,18 @@
 import { copyFileSync, existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as fsMockModule from "../../../../test/mocks/fsMock";
-import { findTranscriptPathSync } from "../../shared/findTranscriptPathSync";
+import { findTranscriptPathSync } from "../../commands/sessions/shared/findTranscriptPathSync";
+import type * as fsMockModule from "../../test/mocks/fsMock";
 import { carryTranscriptToTree } from "./carryTranscriptToTree";
 
 vi.mock("node:fs", async () =>
 	(
-		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
+		await vi.importActual<typeof fsMockModule>("../../test/mocks/fsMock")
 	).fsMock(),
 );
-vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
-vi.mock("../../shared/findTranscriptPathSync", () => ({
+vi.mock("../../commands/sessions/daemon/daemonLog", () => ({
+	daemonLog: vi.fn(),
+}));
+vi.mock("../../commands/sessions/shared/findTranscriptPathSync", () => ({
 	projectDirForCwd: (cwd: string) => `/projects${cwd.replace(/\//g, "-")}`,
 	findTranscriptPathSync: vi.fn(),
 }));

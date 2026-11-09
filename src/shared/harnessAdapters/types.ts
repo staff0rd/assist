@@ -78,6 +78,7 @@ export type StructuredRun = {
 type InteractiveLaunch = {
 	sessionId: string;
 	conversationId?: string;
+	resumeId?: string;
 	prompt?: string;
 	cwd?: string;
 	design?: boolean;
@@ -88,6 +89,13 @@ export type ConversationRef = {
 	cwd?: string;
 	claudeSessionId?: string;
 	harnessSessionId?: string;
+};
+
+export type ConversationLaunch = {
+	cwd: string;
+	launchedAt: number;
+	sinceMs: number;
+	claimed: ReadonlySet<string>;
 };
 
 export type ConversationEvent =
@@ -186,7 +194,8 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		current: () => string | undefined;
 		boundId: (ref: ConversationRef) => string | undefined;
 		toRef: (conversationId: string, cwd?: string) => ConversationRef;
-		discover?: (cwd: string, sinceMs: number) => Promise<string | null>;
+		discover?: (launch: ConversationLaunch) => Promise<string | null>;
+		relocate: (conversationId: string, fromCwd: string, toCwd: string) => void;
 		reader?: ConversationReader;
 	};
 	toolOperations: (call: NativeToolCall) => ToolOperation[];

@@ -10,5 +10,6 @@ export const fakeHarnessConversation: HarnessAdapter["conversation"] = {
 	toRef: (harnessSessionId, cwd) => ({ cwd, harnessSessionId }),
 	discover: () =>
 		Promise.resolve(process.env.FAKE_HARNESS_CONVERSATION_ID ?? null),
+	relocate: () => {},
 	reader: fakeConversationReader,
 };

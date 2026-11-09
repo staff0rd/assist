@@ -1,4 +1,6 @@
 import { basename } from "node:path";
+import type { HarnessKind } from "../../../../shared/harnesses";
+import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { sessionBase } from "../sessionBase";
@@ -6,7 +8,11 @@ import type { SpawnSession } from "../types";
 import type { HeldWork } from "./describeHeldWork";
 import { armStoppedSession } from "./rearmStoppedSessions";
 
-export type OrphanedWorktree = { path: string; clone: string };
+export type OrphanedWorktree = {
+	path: string;
+	clone: string;
+	harness?: HarnessKind;
+};
 
 type RecoveredWorkspace = {
 	orphan: OrphanedWorktree;
@@ -31,7 +37,7 @@ export function resurfaceOrphanedWorktree(
 		return;
 	}
 	daemonLog(
-		`orphaned worktree ${orphan.path} resurfaced as stopped session ${id}: ${reason} (${held.summary})`,
+		`orphaned worktree ${orphan.path} resurfaced as stopped ${sessions.get(id)?.harness ?? "unknown-harness"} session ${id}: ${reason} (${held.summary})`,
 	);
 	const session = sessions.get(id);
 	if (session) armStoppedSession(sessions, session, notify);
@@ -45,6 +51,7 @@ function orphanedSession(id: string, recovered: RecoveredWorkspace): Session {
 		name: `recovered ${basename(orphan.path)}`,
 		subtitle: `${held.summary} in ${orphan.path}`,
 		commandType: "claude",
+		harness: orphan.harness ?? loadConfigFrom(orphan.clone).harness.engine,
 		pty: null,
 		cwd: orphan.path,
 		worktree: { path: orphan.path, clone: orphan.clone },

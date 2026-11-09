@@ -3,8 +3,8 @@ import { join } from "node:path";
 import {
 	findTranscriptPathSync,
 	projectDirForCwd,
-} from "../../shared/findTranscriptPathSync";
-import { daemonLog } from "../daemonLog";
+} from "../../commands/sessions/shared/findTranscriptPathSync";
+import { daemonLog } from "../../commands/sessions/daemon/daemonLog";
 
 export function carryTranscriptToTree(
 	claudeSessionId: string,

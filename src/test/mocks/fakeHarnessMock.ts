@@ -18,7 +18,12 @@ export function fakeHarnessMock(
 		label: "Fake",
 		capabilities: fakeHarnessCapabilities,
 		detect: () => supported,
-		conversation: fakeHarnessConversation,
+		conversation: {
+			...fakeHarnessConversation,
+			relocate: (...args) => {
+				calls.relocate.push(args);
+			},
+		},
 		toolOperations: fakeToolOperations,
 		launchSkill: (skill, args, { cwd }) =>
 			spawnInherit(

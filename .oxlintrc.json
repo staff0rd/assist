@@ -74,10 +74,7 @@
 					{
 						"adapterDirs": ["src/shared/harnessAdapters"],
 						"allow": {
-							"src/commands/backlog/resolveHarness.ts": "parses the --harness flag value into a HarnessKind; not a behaviour branch",
-							"src/commands/sessions/daemon/interactiveHarnessRespawn.ts": "direct-session respawn; harness-aware conversation recovery in a1545 phase 9",
-							"src/commands/sessions/daemon/restoreInteractiveSession.ts": "direct-session restore; harness-aware conversation recovery in a1545 phase 9",
-							"src/commands/sessions/daemon/resumeSession.ts": "direct-session resume; harness-aware conversation recovery in a1545 phase 9"
+							"src/commands/backlog/resolveHarness.ts": "parses the --harness flag value into a HarnessKind; not a behaviour branch"
 						}
 					}
 				]

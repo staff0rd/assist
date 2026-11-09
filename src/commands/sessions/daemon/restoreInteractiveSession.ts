@@ -1,19 +1,15 @@
-import { resolveHarness } from "../../../shared/harnessLabel";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
+import { harnessResumesConversation } from "../../../shared/harnessResumesConversation";
 import type { Session } from "./createSession";
 import type { RestoreStatus } from "./deriveRestoreStatus";
 import { errorSession } from "./errorSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
-import { restoreCodexSession } from "./restoreCodexSession";
+import { restoreConversation } from "./restoreConversation";
 import { restoreServerRun } from "./restoreServerRun";
 import { unresumableReason } from "./unresumableReason";
-import { resumeViaClaude } from "./resumeViaClaude";
 
 type RestoreBase = ReturnType<typeof restoreBase>;
-
-function isCodex(harness: PersistedSession["harness"]): boolean {
-	return resolveHarness(harness) === "codex";
-}
 
 export function restoreInteractiveSession(
 	id: string,
@@ -25,18 +21,13 @@ export function restoreInteractiveSession(
 	 * sessions resume via their discovered sessionId. Pass the same restart nudge
 	 * backlog runs use so the reattached conversation continues the interrupted
 	 * work instead of sitting idle waiting for input (#404). */
+	const adapter = harnessAdapter(persisted.harness);
 	if (
 		persisted.commandType !== "run" &&
-		persisted.claudeSessionId &&
-		resolveHarness(persisted.harness) === "claude"
-	) {
-		return resumeViaClaude(id, persisted, base, status);
-	}
-
-	if (persisted.commandType !== "run" && isCodex(persisted.harness)) {
-		const resumed = restoreCodexSession(id, persisted, base, status);
-		if (resumed) return resumed;
-	}
+		adapter.conversation.boundId(persisted) &&
+		harnessResumesConversation(persisted.harness)
+	)
+		return restoreConversation(adapter, { id, persisted, base }, status);
 
 	/* why: a plain claude session that reaches here has no claudeSessionId to
 	 * `--resume` and no run/assist args to retry, so the conversation is

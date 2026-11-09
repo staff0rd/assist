@@ -4,13 +4,15 @@ import {
 	type ResumeOutcome,
 } from "./conversationResumeOutcome";
 import type { Session } from "./createSession";
-import { interactiveHarnessRespawn } from "./interactiveHarnessRespawn";
-import type { RespawnPlan } from "./interactiveRespawnPlan";
+import {
+	interactiveRespawnPlan,
+	type RespawnPlan,
+} from "./interactiveRespawnPlan";
 import { spawnPty } from "./spawnPty";
 
 export function respawnPlan(session: Session): RespawnPlan | null {
 	const { commandType, cwd, assistArgs } = session;
-	if (commandType === "claude") return interactiveHarnessRespawn(session);
+	if (commandType === "claude") return interactiveRespawnPlan(session);
 	if (commandType === "assist" && assistArgs) {
 		const idle = session.status === "waiting";
 		let resume: ResumeOutcome | undefined;

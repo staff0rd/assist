@@ -21,6 +21,24 @@ export const sessionFeature: HarnessFeature = {
 	requires: [...editEnforcement],
 };
 
+export const conversationResumeFeature: HarnessFeature = {
+	id: "conversationResume",
+	label: "Resuming a conversation",
+	requires: ["conversation.resume"],
+};
+
+export const conversationRecoveryFeature: HarnessFeature = {
+	id: "conversationRecovery",
+	label: "Resuming a conversation in a replacement worktree",
+	requires: ["conversation.resume", "conversation.relocate"],
+};
+
+export const divergenceEscalationFeature: HarnessFeature = {
+	id: "divergenceEscalation",
+	label: "Divergence escalation",
+	requires: [...editEnforcement],
+};
+
 const previewQuestionsFeature: HarnessFeature = {
 	id: "previewQuestions",
 	label: "Preview-pane questions",
@@ -91,6 +109,9 @@ export const harnessFeatures: HarnessFeature[] = [
 	refineFeature,
 	buildFeature,
 	sessionFeature,
+	conversationResumeFeature,
+	conversationRecoveryFeature,
+	divergenceEscalationFeature,
 	branchSlugFeature,
 	sessionTitleFeature,
 	messagePreviewsFeature,

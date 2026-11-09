@@ -4,6 +4,7 @@ import { findSessionJsonlPath } from "../../commands/sessions/shared/findSession
 import { harnessLabel } from "../harnessLabel";
 import { spawnClaude } from "../spawnClaude";
 import { buildSlashCommand } from "./buildSlashCommand";
+import { carryTranscriptToTree } from "./carryTranscriptToTree";
 import { claudeConnectorProbe } from "./claudeConnectorProbe";
 import { claudeConversationReader } from "./claudeConversationReader";
 import { claudeConnectorRun } from "./claudeConnectorRun";
@@ -31,6 +32,7 @@ export const claudeAdapter: HarnessAdapter = {
 		current: () => process.env.CLAUDE_CODE_SESSION_ID || undefined,
 		boundId: ({ claudeSessionId }) => claudeSessionId,
 		toRef: (claudeSessionId, cwd) => ({ cwd, claudeSessionId }),
+		relocate: carryTranscriptToTree,
 		reader: claudeConversationReader,
 	},
 	toolOperations: claudeToolOperations,
@@ -49,11 +51,20 @@ export const claudeAdapter: HarnessAdapter = {
 			allowEdits: allowEdits ?? true,
 			resumeSessionId: conversationId,
 		}),
-	interactive: ({ sessionId, conversationId, prompt, cwd, design, auto }) =>
+	interactive: ({
+		sessionId,
+		conversationId,
+		resumeId,
+		prompt,
+		cwd,
+		design,
+		auto,
+	}) =>
 		spawnClaudePty({
 			prompt,
 			cwd,
 			sessionId,
+			resumeSessionId: resumeId,
 			claudeSessionId: conversationId,
 			design,
 			auto,

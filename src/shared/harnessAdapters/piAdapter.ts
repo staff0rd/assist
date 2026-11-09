@@ -28,14 +28,15 @@ export const piAdapter: HarnessAdapter = {
 		current: () => undefined,
 		boundId: () => undefined,
 		toRef: (harnessSessionId, cwd) => ({ cwd, harnessSessionId }),
+		relocate: cannotResume,
 	},
 	toolOperations: piToolOperations,
 	launchSkill: (skill, args, { cwd }) =>
 		spawnPi(buildSlashCommand(skill, args), { cwd }),
 	launchPrompt: (prompt, { cwd }) => spawnPi(prompt, { cwd }),
 	resume: cannotResume,
-	interactive: ({ sessionId, prompt, cwd }) =>
-		spawnPiPty({ prompt, cwd, sessionId }),
+	interactive: ({ sessionId, resumeId, prompt, cwd }) =>
+		resumeId ? cannotResume() : spawnPiPty({ prompt, cwd, sessionId }),
 	oneShot: noOneShot,
 	structured: noOneShot,
 	connectorRun: rejectConnectorRun("pi"),

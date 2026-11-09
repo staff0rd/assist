@@ -12,6 +12,9 @@ vi.mock("./spawnCodex", () => ({ spawnCodex: vi.fn(() => "codex-pty") }));
 vi.mock("./hasTranscriptOnDisk", () => ({
 	hasTranscriptOnDisk: vi.fn(() => true),
 }));
+vi.mock("../shared/codex/hasCodexRolloutSync", () => ({
+	hasCodexRolloutSync: () => true,
+}));
 vi.mock("../../backlog/buildResumePrompt", () => ({
 	buildResumePrompt: vi.fn(() => "resume nudge"),
 }));

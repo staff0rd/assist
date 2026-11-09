@@ -9,6 +9,7 @@ export const harnessCapabilityDeclarations: Record<
 	claude: {
 		"skills.native": supported,
 		"conversation.resume": supported,
+		"conversation.relocate": supported,
 		"conversation.preassignId": supported,
 		"transcript.read": supported,
 		"oneShot.text": supported,
@@ -25,6 +26,7 @@ export const harnessCapabilityDeclarations: Record<
 	codex: {
 		"skills.native": supported,
 		"conversation.resume": supported,
+		"conversation.relocate": supported,
 		"conversation.preassignId": unsupported(
 			"Codex assigns its own conversation id when its rollout starts",
 			"assist binds the Codex conversation id from the rollout after launch",
@@ -62,6 +64,11 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.resume": unsupported(
 			"pi sessions cannot be resumed yet",
 			"restart starts a fresh pi conversation; pick Claude or Codex to keep the conversation across restarts",
+			"a696",
+		),
+		"conversation.relocate": unsupported(
+			"pi sessions cannot be resumed, so a pi conversation cannot continue in a replacement worktree",
+			"start a fresh session in the replacement worktree; pick Claude or Codex to keep the conversation across worktree replacement",
 			"a696",
 		),
 		"conversation.preassignId": unsupported(

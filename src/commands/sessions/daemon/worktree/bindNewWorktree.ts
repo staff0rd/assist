@@ -1,6 +1,7 @@
 import type { Session } from "../createSession";
 import type { Allocation } from "./allocateTree";
 import { detectExistingWorktree } from "./detectExistingWorktree";
+import { noteWorktreeHarness } from "./noteWorktreeHarness";
 import { seedWorktree } from "./seedWorktree";
 import { refuseUnallocatedStart } from "./refuseUnallocatedStart";
 
@@ -13,6 +14,7 @@ export function bindNewWorktree(
 	if (alloc.kind !== "worktree" || !alloc.cwd || !alloc.clone || !session)
 		return;
 	session.worktree = { path: alloc.cwd, clone: alloc.clone };
+	noteWorktreeHarness(session);
 	if (alloc.created) {
 		session.awaitingSeed = true;
 		const { cwd, clone } = alloc;

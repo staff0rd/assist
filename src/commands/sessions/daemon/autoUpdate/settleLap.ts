@@ -12,7 +12,17 @@ export async function settleLap(
 ): Promise<string | undefined> {
 	const how = end.signal ? `killed by ${end.signal}` : `exited ${end.code}`;
 	if (end.code === DIVERGED_EXIT_CODE) {
-		const held = deps.escalate(tail);
+		let held: string;
+		try {
+			held = deps.escalate(tail);
+		} catch (error) {
+			const reason = error instanceof Error ? error.message : String(error);
+			await backOff(
+				`lap ${lap} ${how} (divergence); escalation refused: ${reason.replaceAll("\n", " ")}`,
+				deps,
+			);
+			return undefined;
+		}
 		deps.note(`lap ${lap} ${how} (divergence); escalated to session ${held}`);
 		return held;
 	}

@@ -72,6 +72,26 @@ describe("runAutoUpdateLoop", () => {
 		]);
 	});
 
+	it("backs off with the resolver's reason when the escalation is refused", async () => {
+		const d = deps({
+			runLap: lapsEnding(exit(3)),
+			escalate: vi.fn(() => {
+				throw new Error(
+					"Divergence escalation is unavailable on Claude:\n  - Claude is not installed",
+				);
+			}),
+		});
+
+		await runAutoUpdateLoop(d, 1);
+
+		expect(d.sleep).toHaveBeenCalledWith(RETRY_AFTER_FAILURE_MS);
+		expect(d.enter).toHaveBeenCalledWith("retrying", {
+			reason: expect.stringContaining(
+				"escalation refused: Divergence escalation is unavailable on Claude:   - Claude is not installed",
+			),
+		});
+	});
+
 	it("holds behind an escalation already live at startup", async () => {
 		const isLive = vi.fn().mockReturnValueOnce(true).mockReturnValue(false);
 		const d = deps({ liveEscalation: () => "4", isLive });

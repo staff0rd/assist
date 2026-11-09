@@ -7,6 +7,7 @@ import {
 export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"skills.native": supported,
 	"conversation.resume": supported,
+	"conversation.relocate": supported,
 	"conversation.preassignId": unsupported(
 		"the fake harness names its own conversations",
 		"none needed; it is a test double",

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import type { Session } from "../createSession";
 import { allocateTree } from "./allocateTree";
-import { carryTranscriptToTree } from "./carryTranscriptToTree";
+import { carryTranscriptToTree } from "../../../../shared/harnessAdapters/carryTranscriptToTree";
 import { worktreeAttributionIncludingReaped } from "./readWorktreeRegistry";
 import { resumeInReplacementTree } from "./resumeInReplacementTree";
 import type { TreeSpawnContext } from "./spawnInTree";
@@ -14,7 +14,7 @@ vi.mock("node:fs", async () =>
 	).fsMock(),
 );
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
-vi.mock("./carryTranscriptToTree", () => ({
+vi.mock("../../../../shared/harnessAdapters/carryTranscriptToTree", () => ({
 	carryTranscriptToTree: vi.fn(),
 }));
 vi.mock("./readWorktreeRegistry", () => ({

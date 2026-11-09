@@ -1,3 +1,6 @@
+import { harnessAdapter } from "../../../../shared/harnessAdapters/harnessAdapter";
+import { sessionFeature } from "../../../../shared/harnessAdapters/harnessFeatures";
+import { launchBlocker } from "../../../../shared/harnessAdapters/launchBlocker";
 import { daemonLog } from "../daemonLog";
 import { joinableStream } from "./joinableStream";
 import type { TreeSpawnContext } from "./spawnInTree";
@@ -15,7 +18,15 @@ export function addAgentToStream(
 		);
 		return joinable;
 	}
+	const harness = request.harness ?? joinable.session.harness;
+	const blocker = launchBlocker(harnessAdapter(harness), sessionFeature);
+	if (blocker) {
+		daemonLog(
+			`create: cannot add an agent to session ${targetId}: ${blocker.replaceAll("\n", " ")}`,
+		);
+		return { reason: blocker };
+	}
 	return {
-		sessionId: spawnIntoStream(ctx, joinable.session, request),
+		sessionId: spawnIntoStream(ctx, joinable.session, { ...request, harness }),
 	};
 }

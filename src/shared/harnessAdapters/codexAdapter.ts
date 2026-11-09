@@ -7,6 +7,7 @@ import { harnessLabel } from "../harnessLabel";
 import { readCodexRulePerms } from "../readCodexRulePerms";
 import { spawnCodex } from "../spawnCodex";
 import { codexOneShot } from "./codexOneShot";
+import { codexRelocate } from "./codexRelocate";
 import { codexStructuredRun } from "./codexStructuredRun";
 import { codexToolOperations } from "./codexToolOperations";
 import { offerCodexInstall } from "./offerCodexInstall";
@@ -34,6 +35,7 @@ export const codexAdapter: HarnessAdapter = {
 		boundId: ({ harnessSessionId }) => harnessSessionId,
 		toRef: (harnessSessionId, cwd) => ({ cwd, harnessSessionId }),
 		discover: resolveCodexSessionId,
+		relocate: codexRelocate,
 		reader: codexConversationReader,
 	},
 	toolOperations: codexToolOperations,
@@ -48,8 +50,8 @@ export const codexAdapter: HarnessAdapter = {
 			sandbox: sandbox(allowEdits),
 			resumeSessionId: conversationId,
 		}),
-	interactive: ({ sessionId, prompt, cwd }) =>
-		spawnCodexPty({ prompt, cwd, sessionId }),
+	interactive: ({ sessionId, resumeId, prompt, cwd }) =>
+		spawnCodexPty({ prompt, cwd, sessionId, resumeSessionId: resumeId }),
 	oneShot: codexOneShot,
 	structured: codexStructuredRun,
 	connectorRun: rejectConnectorRun("Codex"),

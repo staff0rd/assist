@@ -1,8 +1,8 @@
 import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
+import { claimedByOthers } from "./claimedByOthers";
+import { completeBinding } from "./completeBinding";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
-import { recordBoundPhaseSession } from "./recordBoundPhaseSession";
-import { rememberSessionTitle } from "./rememberSessionTitle";
 
 const POLL_MS = 1000;
 const MAX_ATTEMPTS = 120;
@@ -25,30 +25,27 @@ export function bindConversation(
 	latestBind.set(session, bind);
 	const superseded = () =>
 		!!adapter.conversation.boundId(session) || latestBind.get(session) !== bind;
-	const since = launchedAt - START_SLACK_MS;
+	const sinceMs = launchedAt - START_SLACK_MS;
 	let attemptsLeft = MAX_ATTEMPTS;
 
 	const schedule = () => setTimeout(() => void poll(), POLL_MS).unref();
 	const poll = async () => {
 		if (superseded()) return;
-		const conversationId = await discover(cwd, since);
+		const conversationId = await discover({
+			cwd,
+			launchedAt,
+			sinceMs,
+			claimed: claimedByOthers(session),
+		});
 		if (superseded()) return;
-		if (!conversationId) {
-			if (--attemptsLeft > 0) schedule();
-			else
-				daemonLog(
-					`session ${session.id} found no ${adapter.label} conversation to bind`,
-				);
-			return;
-		}
-		session.harnessSessionId = conversationId;
-		daemonLog(
-			`session ${session.id} bound to ${adapter.label} conversation ${conversationId}`,
-		);
-		rememberSessionTitle(session);
-		void recordBoundPhaseSession(session, conversationId);
-		onBound?.(session);
-		notify();
+		if (conversationId && !claimedByOthers(session).has(conversationId)) {
+			const bound = { conversationId, harnessLabel: adapter.label };
+			completeBinding(session, bound, notify, onBound);
+		} else if (--attemptsLeft > 0) schedule();
+		else
+			daemonLog(
+				`session ${session.id} found no ${adapter.label} conversation to bind`,
+			);
 	};
 
 	schedule();
