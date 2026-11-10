@@ -20,7 +20,6 @@ const DESIGN = {
 describe("sessionModeLaunch", () => {
 	it.each([
 		["claude", harnessAdapter("claude")],
-		["codex", harnessAdapter("codex")],
 		["fake", fakeHarnessMock()],
 	])("appends the design prompt on %s", (_kind, adapter) => {
 		expect(sessionModeLaunch(adapter, { design: true })).toEqual(DESIGN);
@@ -32,12 +31,20 @@ describe("sessionModeLaunch", () => {
 		});
 	});
 
-	it("launches without the design prompt and logs why on a harness without design mode", () => {
-		expect(sessionModeLaunch(harnessAdapter("pi"), { design: true })).toEqual({
-			auto: undefined,
-		});
-		expect(vi.mocked(daemonLog)).toHaveBeenCalledWith(
-			expect.stringContaining("Design mode is unavailable on pi"),
-		);
-	});
+	it.each([
+		["pi", "pi"],
+		["codex", "Codex"],
+	] as const)(
+		"launches without the design prompt and logs why on %s",
+		(kind, label) => {
+			expect(sessionModeLaunch(harnessAdapter(kind), { design: true })).toEqual(
+				{
+					auto: undefined,
+				},
+			);
+			expect(vi.mocked(daemonLog)).toHaveBeenCalledWith(
+				expect.stringContaining(`Design mode is unavailable on ${label}`),
+			);
+		},
+	);
 });

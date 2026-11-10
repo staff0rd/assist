@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as declarationsModule from "../../../shared/harnessAdapters/harnessCapabilityDeclarations";
 import type * as harnessesModule from "../../../shared/harnesses";
 import { createSession } from "./createSession";
 import { respawnPlan } from "./respawnPlan";
@@ -29,6 +30,24 @@ vi.mock("../../../shared/harnesses", async () => ({
 	)),
 	isHarnessAvailable: (kind: string) => kind === "codex",
 }));
+vi.mock(
+	"../../../shared/harnessAdapters/harnessCapabilityDeclarations",
+	async () => {
+		const actual = await vi.importActual<typeof declarationsModule>(
+			"../../../shared/harnessAdapters/harnessCapabilityDeclarations",
+		);
+		const declarations = actual.harnessCapabilityDeclarations;
+		return {
+			harnessCapabilityDeclarations: {
+				...declarations,
+				codex: {
+					...declarations.codex,
+					"systemPrompt.append": declarations.claude["systemPrompt.append"],
+				},
+			},
+		};
+	},
+);
 vi.mock("../shared/codex/hasCodexRolloutSync", () => ({
 	hasCodexRolloutSync: () => true,
 }));

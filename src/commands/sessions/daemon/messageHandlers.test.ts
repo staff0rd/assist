@@ -198,7 +198,7 @@ describe("create handler", () => {
 describe("create handler for design mode", () => {
 	beforeEach(() => daemonLogMock.mockClear());
 
-	it("spawns a Codex design session", () => {
+	it("refuses a Codex design session until its launches pass manual testing", () => {
 		const m = fakeManager();
 		const client = fakeClient();
 
@@ -209,10 +209,9 @@ describe("create handler for design mode", () => {
 			harness: "codex",
 		});
 
-		expect(m.spawn).toHaveBeenCalledWith(
-			expect.objectContaining({ design: true, harness: "codex" }),
-			{ launchedFrom: undefined },
-		);
+		expect(m.spawn).not.toHaveBeenCalled();
+		const sent = JSON.parse(client.send.mock.calls[0][0]);
+		expect(sent.message).toContain("Design mode is unavailable on Codex");
 	});
 
 	it("refuses a pi design session before spawning, with the resolver's reason", () => {

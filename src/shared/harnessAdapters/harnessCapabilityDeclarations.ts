@@ -34,7 +34,11 @@ export const harnessCapabilityDeclarations: Record<
 			"Codex assigns its own conversation id when its rollout starts",
 			"assist binds the Codex conversation id from the rollout after launch",
 		),
-		"systemPrompt.append": supported,
+		"systemPrompt.append": unsupported(
+			"Design launches on Codex have not passed manual testing: sessions arrived without the design prompt or stopped before designing anything",
+			"start design sessions with Claude",
+			"a1589",
+		),
 		"tasks.notifyOnExit": unsupported(
 			"Codex runs a background command in an exec session that reports nothing back once the turn ends, so review-high-level never sees the slicing request or the verdict",
 			"run the high-level review on Claude",
