@@ -1,3 +1,10 @@
+# [0.1113.0](https://github.com/staff0rd/assist/compare/v0.1112.11...v0.1113.0) (2026-11-10)
+
+
+### Features
+
+* copy session id from phone sheet ([03066aa](https://github.com/staff0rd/assist/commit/03066aa08927e51c4e761e6e08fd7bbc4952f70e))
+
 ## [0.1112.11](https://github.com/staff0rd/assist/compare/v0.1112.10...v0.1112.11) (2026-11-10)
 
 
