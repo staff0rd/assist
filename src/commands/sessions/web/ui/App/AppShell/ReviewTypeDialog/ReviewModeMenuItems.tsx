@@ -1,5 +1,5 @@
 import { reviewButtonModes } from "../../../../../../../shared/reviewButtonModes";
-import type { HarnessCapabilities } from "../../../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../../../parseHarnessCapabilities";
 import { ReviewMenuRow } from "../../ReviewMenuRow";
 import { reviewModeEntries } from "../../reviewModeEntries";
 

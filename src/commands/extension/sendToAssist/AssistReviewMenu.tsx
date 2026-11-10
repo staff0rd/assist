@@ -1,10 +1,13 @@
-import { MenuItem, MenuList, Paper } from "@mui/material";
+import { MenuList, Paper } from "@mui/material";
 import { type FocusEvent, type KeyboardEvent, useState } from "react";
 import { azureDevopsPrActions } from "../../../shared/azureDevops/azureDevopsPrActions";
 import { prActions } from "../../../shared/prActions";
 import { reviewOptionDefaults } from "../../../shared/reviewOptionFlags";
+import { ReviewMenuRow } from "../../sessions/web/ui/App/ReviewMenuRow";
+import { reviewModeEntries } from "../../sessions/web/ui/App/reviewModeEntries";
 import { popoverPaperSx } from "./popoverPaperSx";
 import { reviewModeItems } from "./reviewModeItems";
+import { useAssistHarness } from "./useAssistHarness";
 
 export function AssistReviewMenu({
 	actionsOnly = false,
@@ -16,6 +19,7 @@ export function AssistReviewMenu({
 	onClose: (restoreFocus: boolean) => void;
 }) {
 	const [options, setOptions] = useState(reviewOptionDefaults);
+	const capabilities = useAssistHarness();
 
 	const onKeyDown = (event: KeyboardEvent) => {
 		if (event.key !== "Escape") return;
@@ -38,14 +42,18 @@ export function AssistReviewMenu({
 				onKeyDown={onKeyDown}
 				onBlur={closeWhenFocusLeaves}
 			>
-				{!actionsOnly && reviewModeItems(options, setOptions, onPick)}
-				{(actionsOnly ? azureDevopsPrActions : prActions).map(
-					({ label, args }) => (
-						<MenuItem key={label} onClick={() => onPick(args)}>
-							{label}
-						</MenuItem>
-					),
-				)}
+				{!actionsOnly &&
+					reviewModeItems(capabilities, options, setOptions, onPick)}
+				{reviewModeEntries(
+					capabilities,
+					actionsOnly ? azureDevopsPrActions : prActions,
+				).map((entry) => (
+					<ReviewMenuRow
+						key={entry.label}
+						entry={entry}
+						onSelect={(_, args) => onPick(args)}
+					/>
+				))}
 			</MenuList>
 		</Paper>
 	);

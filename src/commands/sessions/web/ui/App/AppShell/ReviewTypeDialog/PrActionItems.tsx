@@ -2,7 +2,7 @@ import { Divider, MenuItem } from "@mui/material";
 import { ReviewMenuRow } from "../../ReviewMenuRow";
 import { prActions } from "../../../../../../../shared/prActions";
 import type { PrSummary } from "../../../../prList";
-import type { HarnessCapabilities } from "../../../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../../../parseHarnessCapabilities";
 import { reviewModeEntries } from "../../reviewModeEntries";
 
 export function PrActionItems({

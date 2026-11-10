@@ -1,6 +1,6 @@
 import { harnessLabel } from "../../../../../shared/harnessLabel";
 import type { HarnessKind } from "../../../../../shared/harnesses";
-import type { HarnessCapabilities } from "../../../../sessions/web/ui/useHarnessCapabilities";
+import type { HarnessCapabilities } from "../../../../sessions/web/ui/parseHarnessCapabilities";
 
 export function featureHarnessOptions(
 	capabilities: HarnessCapabilities,

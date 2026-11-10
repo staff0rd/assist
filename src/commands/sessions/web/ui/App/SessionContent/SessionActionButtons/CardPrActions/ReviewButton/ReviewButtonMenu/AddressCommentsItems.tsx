@@ -1,5 +1,5 @@
 import { addressCommentsActions } from "../../../../../../../../../../shared/prActions";
-import type { HarnessCapabilities } from "../../../../../../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../../../../../../parseHarnessCapabilities";
 import { ReviewMenuRow } from "../../../../../ReviewMenuRow";
 import { reviewModeEntries } from "../../../../../reviewModeEntries";
 import type { useReviewLaunch } from "../useReviewLaunch";

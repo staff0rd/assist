@@ -3,7 +3,7 @@ import {
 	type ReviewButtonMode,
 	reviewButtonModes,
 } from "../../../../../shared/reviewButtonModes";
-import type { HarnessCapabilities } from "../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../parseHarnessCapabilities";
 import { reviewHarnessChoices } from "./reviewHarnessChoices";
 
 type HarnessAlternate = { harness: HarnessKind; args: string[] };

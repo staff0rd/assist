@@ -3,7 +3,7 @@ import {
 	legacyDefaultHarness,
 } from "../../../../../../../../shared/harnessLabel";
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
-import type { HarnessCapabilities } from "../../../../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../../../../parseHarnessCapabilities";
 
 export type InboxHarnessOption = { kind: HarnessKind; label: string };
 

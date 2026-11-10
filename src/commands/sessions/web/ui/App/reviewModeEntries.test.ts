@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { FeatureResolution } from "../../../../../shared/harnessAdapters/types";
-import type { HarnessCapabilities } from "../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../parseHarnessCapabilities";
 import { isAllowedPrArgs } from "../../../../../shared/isAllowedPrArgs";
 import { prActions } from "../../../../../shared/prActions";
 import { reviewButtonModes } from "../../../../../shared/reviewButtonModes";

@@ -1,6 +1,6 @@
 import { resolveHarness } from "../../../../../../../../../shared/harnessLabel";
 import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
-import type { HarnessCapabilities } from "../../../../../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../../../../../parseHarnessCapabilities";
 
 export function harnessChoices(
 	capabilities: Pick<HarnessCapabilities, "features">,

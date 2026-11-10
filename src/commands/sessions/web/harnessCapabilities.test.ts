@@ -43,7 +43,7 @@ type Body = {
 
 function run(): [ServerResponse, number, Body] {
 	const res = {} as ServerResponse;
-	harnessCapabilities({} as never, res);
+	harnessCapabilities({ headers: {} } as never, res);
 	return mockRespondJson.mock.lastCall as [ServerResponse, number, Body];
 }
 

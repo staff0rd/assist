@@ -1,6 +1,6 @@
 import type { HarnessKind } from "../../../../../shared/harnesses";
 import type { ReviewButtonMode } from "../../../../../shared/reviewButtonModes";
-import type { HarnessCapabilities } from "../useHarnessCapabilities";
+import type { HarnessCapabilities } from "../parseHarnessCapabilities";
 
 export function reviewHarnessChoices(
 	capabilities: HarnessCapabilities,
