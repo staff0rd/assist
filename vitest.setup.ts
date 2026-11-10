@@ -22,6 +22,10 @@ vi.mock("@testing-library/react", async (importOriginal) => {
 	};
 });
 
+vi.mock("./src/shared/prepareCodexHookTrust", () => ({
+	prepareCodexHookTrust: () => undefined,
+}));
+
 const storeDir = mkdtempSync(join(tmpdir(), "assist-test-store-"));
 process.env.ASSIST_STORE_DIR = storeDir;
 process.env.ASSIST_WATCHER_LOG_DIR = join(storeDir, "watchers");

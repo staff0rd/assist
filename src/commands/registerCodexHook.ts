@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
 import { codexHook } from "./codexHook";
+import { codexHookTrust } from "./codexHook/codexHookTrust";
 
 export function registerCodexHook(program: Command): void {
 	internalCommand(
@@ -11,5 +12,14 @@ export function registerCodexHook(program: Command): void {
 			)
 			.action(() => codexHook()),
 		"Codex's hooks",
+	);
+	internalCommand(
+		program
+			.command("codex-hook-trust")
+			.description(
+				"Record Codex trust for exactly Assist's installed codex-hook definitions, so Codex starts without a hook review; any other hook still needs Codex's normal review",
+			)
+			.action(() => codexHookTrust()),
+		"Assist's Codex launches",
 	);
 }

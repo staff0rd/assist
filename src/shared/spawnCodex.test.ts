@@ -31,6 +31,12 @@ vi.mock("./codexSessionEnvArgs", () => ({
 	codexSessionEnvArgs: vi.fn(() => ["<session-env>"]),
 }));
 
+const prepareTrust = vi.hoisted(() => vi.fn());
+
+vi.mock("./prepareCodexHookTrust", () => ({
+	prepareCodexHookTrust: prepareTrust,
+}));
+
 const ENV = "<session-env>";
 
 const NETWORK = ["-c", "sandbox_workspace_write.network_access=true"];
@@ -61,6 +67,7 @@ function withConfig(config: AssistConfigInput): void {
 describe("spawnCodex", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		prepareTrust.mockReturnValue(undefined);
 		withConfig({});
 	});
 
@@ -212,5 +219,32 @@ describe("spawnCodex", () => {
 			],
 			{ env: {} },
 		);
+	});
+
+	it.each([
+		["a new session", {}],
+		["a resumed session", { resumeSessionId: "codex-1" }],
+	])("prepares Assist's hook trust before launching %s", (_name, extra) => {
+		spawnCodex("Do the thing", { cwd: "/repo", ...extra });
+
+		expect(prepareTrust).toHaveBeenCalledTimes(1);
+		expect(prepareTrust.mock.invocationCallOrder[0]).toBeLessThan(
+			spawnInheritMock.mock.invocationCallOrder[0],
+		);
+	});
+
+	it("still launches with hooks enabled and no trust bypass when preparation fails", () => {
+		const error = vi.spyOn(console, "error").mockImplementation(() => {});
+		prepareTrust.mockReturnValue("Could not trust Assist's Codex hooks: x");
+
+		spawnCodex("Do the thing", { cwd: "/repo" });
+
+		expect(error).toHaveBeenCalledWith(
+			"Could not trust Assist's Codex hooks: x",
+		);
+		const args = spawnInheritMock.mock.calls[0][1] as string[];
+		expect(args.join(" ")).not.toMatch(/bypass-hook-trust|hooks.*=\s*false/);
+		expect(args.at(-1)).toBe("Do the thing");
+		error.mockRestore();
 	});
 });

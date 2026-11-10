@@ -3,6 +3,7 @@ import { codexIsolatedHookArgs } from "./codexIsolatedHookArgs";
 import { codexSandboxNetworkArgs } from "./codexSandboxNetworkArgs";
 import { codexSessionEnvArgs } from "./codexSessionEnvArgs";
 import { harnesses } from "./harnesses";
+import { prepareCodexHookTrust } from "./prepareCodexHookTrust";
 import { neutralizeCodexSkillMentions } from "./neutralizeCodexSkillMentions";
 import { type SpawnResult, spawnInherit } from "./spawnInherit";
 import { trustCodexProject } from "./trustCodexProject";
@@ -18,6 +19,8 @@ export function spawnCodex(
 ): SpawnResult {
 	const cwd = options.cwd ?? process.cwd();
 	trustCodexProject(cwd);
+	const untrusted = prepareCodexHookTrust();
+	if (untrusted) console.error(untrusted);
 	const text = [
 		options.skill && `$${options.skill}`,
 		prompt && neutralizeCodexSkillMentions(prompt),

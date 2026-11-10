@@ -9,6 +9,7 @@ import {
 } from "../../../test/mothers/makeAssistConfig";
 import type * as loadConfigMockModule from "../../../test/mocks/loadConfigMock";
 import { codexSessionEnvArgs } from "../../../shared/codexSessionEnvArgs";
+import { daemonLog } from "./daemonLog";
 import { spawnCodex } from "./spawnCodex";
 import { spawnPty } from "./spawnPty";
 
@@ -22,6 +23,8 @@ vi.mock("../../../shared/loadConfig", async () =>
 
 const mockLoadConfig = vi.mocked(loadConfig);
 
+vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+
 vi.mock("./spawnPty", () => ({
 	spawnPty: vi.fn(() => ({ fake: "pty" })),
 }));
@@ -34,6 +37,12 @@ vi.mock("../../../shared/trustCodexProject", () => ({
 
 vi.mock("../../../shared/codexSessionEnvArgs", () => ({
 	codexSessionEnvArgs: vi.fn(() => ["<session-env>"]),
+}));
+
+const prepareTrust = vi.hoisted(() => vi.fn());
+
+vi.mock("../../../shared/prepareCodexHookTrust", () => ({
+	prepareCodexHookTrust: prepareTrust,
 }));
 
 const ENV = "<session-env>";
@@ -66,6 +75,7 @@ function withConfig(config: AssistConfigInput): void {
 describe("spawnCodex", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		prepareTrust.mockReturnValue(undefined);
 		withConfig({});
 	});
 
@@ -252,5 +262,30 @@ describe("spawnCodex", () => {
 			"7",
 			{},
 		);
+	});
+
+	it.each([
+		["a new session", {}],
+		["a resumed session", { resumeSessionId: "conv-1" }],
+	])("prepares Assist's hook trust before launching %s", (_name, extra) => {
+		spawnCodex({ cwd: "/repo", sessionId: "7", ...extra });
+
+		expect(prepareTrust).toHaveBeenCalledTimes(1);
+		expect(prepareTrust.mock.invocationCallOrder[0]).toBeLessThan(
+			spawnPtyMock.mock.invocationCallOrder[0],
+		);
+	});
+
+	it("still launches with hooks enabled and no trust bypass when preparation fails", () => {
+		prepareTrust.mockReturnValue("Could not trust Assist's Codex hooks: x");
+
+		spawnCodex({ cwd: "/repo", sessionId: "7" });
+
+		expect(daemonLog).toHaveBeenCalledWith(
+			"codex: Could not trust Assist's Codex hooks: x",
+		);
+		const args = spawnPtyMock.mock.calls[0][0] as string[];
+		expect(args.join(" ")).not.toMatch(/bypass-hook-trust|hooks.*=\s*false/);
+		expect(args).toEqual(["codex", "--no-daemon", ENV, ...NETWORK]);
 	});
 });
