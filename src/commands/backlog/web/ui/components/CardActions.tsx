@@ -22,6 +22,7 @@ export function CardActions({
 			{canPlay(item) && (
 				<PlayAction
 					itemId={item.id}
+					origin={item.origin}
 					compact={{
 						currentPhase: item.currentPhase,
 						totalPhases: item.totalPhases,

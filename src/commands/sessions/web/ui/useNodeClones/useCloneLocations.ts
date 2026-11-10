@@ -10,12 +10,12 @@ export const NODE_SEPARATOR = "\0";
 
 export function useCloneLocations(
 	origin: string | undefined,
-	missing: string,
+	missing: string | undefined,
 ): Locations | null {
 	const [locations, setLocations] = useState<Locations | null>(null);
 
 	useEffect(() => {
-		if (!origin || !missing) return;
+		if (!origin || missing === undefined) return;
 		let cancelled = false;
 		fetchLocations(origin, missing.split(NODE_SEPARATOR)).then((entries) => {
 			if (!cancelled)

@@ -9,6 +9,11 @@ const repos: MergedRepo[] = [
 		clones: { "": "/mac/assist", wsl: "/wsl/assist" },
 	},
 	{ key: "/mac/notes", clones: { "": "/mac/notes" } },
+	{
+		key: "github.com/x/notes",
+		origin: "github.com/x/notes",
+		clones: { "": "/mac/notes-web" },
+	},
 ];
 
 describe("resolveStartCwd", () => {
@@ -29,6 +34,24 @@ describe("resolveStartCwd", () => {
 			key: "",
 		};
 		expect(resolveStartCwd(repos, item, "wsl")).toBe("/wsl/assist");
+	});
+
+	it("starts in the item's repo when scoped to another repo", () => {
+		const item = {
+			cwd: "/mac/notes-web",
+			origin: "github.com/x/assist",
+			key: "",
+		};
+		expect(resolveStartCwd(repos, item, "")).toBe("/mac/assist");
+	});
+
+	it("does not fall back to the scoped repo when the item's repo has no clone", () => {
+		const item = {
+			cwd: "/mac/notes-web",
+			origin: "github.com/x/apm",
+			key: "",
+		};
+		expect(resolveStartCwd(repos, item, "")).toBeUndefined();
 	});
 
 	it("is undefined when the node has no clone", () => {

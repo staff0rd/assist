@@ -11,6 +11,7 @@ import type { PlanPhase } from "./types";
 
 vi.mock("./shared", () => ({
 	findOneItem: vi.fn(),
+	getOrigin: vi.fn(() => "github.com/x/assist"),
 	setStatus: vi.fn(),
 }));
 
@@ -42,6 +43,32 @@ describe("prepareRun", () => {
 		mockReconcile.mockImplementation(
 			async (_orm, _item, startPhase: number) => startPhase,
 		);
+	});
+
+	describe("when the item belongs to another repo", () => {
+		it("refuses naming the item's repo without touching the item", async () => {
+			const error = vi.spyOn(console, "error").mockImplementation(() => {});
+			const item = makeBacklogItem({ plan, origin: "github.com/x/apm" });
+			mockFindOneItem.mockReturnValue({ orm: {}, item });
+
+			expect(await prepareRun("1")).toBeUndefined();
+
+			expect(error).toHaveBeenCalledWith(
+				expect.stringContaining("belongs to github.com/x/apm"),
+			);
+			expect(process.exitCode).toBe(1);
+			expect(mockReconcile).not.toHaveBeenCalled();
+			expect(mockSetStatus).not.toHaveBeenCalled();
+			process.exitCode = undefined;
+			error.mockRestore();
+		});
+
+		it("runs when the origin matches ignoring case", async () => {
+			const item = makeBacklogItem({ plan, origin: "github.com/X/Assist" });
+			mockFindOneItem.mockReturnValue({ orm: {}, item });
+
+			expect(await prepareStartPhase("1")).toBe(0);
+		});
 	});
 
 	describe("when item is not found", () => {

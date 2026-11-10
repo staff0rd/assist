@@ -18,6 +18,9 @@ vi.mock("../../../shared/loadConfig", async () =>
 vi.mock("../../../shared/db/getDb", () => ({ getDb: vi.fn() }));
 vi.mock("../../backlog/loadItem", () => ({ loadItem: vi.fn() }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("../../backlog/getCurrentOrigin", () => ({
+	getCurrentOrigin: vi.fn(() => "github.com/x/assist"),
+}));
 
 const plan = [{ name: "Build API", tasks: [] }];
 
@@ -41,6 +44,29 @@ describe("loadProvisionalRunActivity", () => {
 			totalPhases: 2,
 		});
 		expect(daemonLog).not.toHaveBeenCalled();
+	});
+
+	it("skips a run spawned outside the item's repo", async () => {
+		vi.mocked(loadItem).mockResolvedValue(
+			makeBacklogItem({ id: 825, plan, origin: "github.com/x/apm" }),
+		);
+
+		expect(
+			await loadProvisionalRunActivity(825, "/home/u/assist-2"),
+		).toBeUndefined();
+		expect(daemonLog).toHaveBeenCalledWith(
+			expect.stringContaining("skipped: a825 belongs to github.com/x/apm"),
+		);
+	});
+
+	it("seeds a run spawned in the item's repo", async () => {
+		vi.mocked(loadItem).mockResolvedValue(
+			makeBacklogItem({ id: 825, plan, origin: "github.com/x/assist" }),
+		);
+
+		expect(
+			await loadProvisionalRunActivity(825, "/home/u/assist-2"),
+		).toMatchObject({ itemId: 825 });
 	});
 
 	it("skips without a configured database", async () => {

@@ -13,13 +13,14 @@ export type NodeClone =
 export function useNodeClones(
 	cwd: string,
 	nodes: (string | undefined)[],
+	knownOrigin?: string,
 ): (node: string | undefined) => NodeClone {
 	const { cloneOn, originOf } = useRepoSelectionContext();
-	const origin = cwd ? originOf(cwd) : undefined;
-	const missing = nodes
-		.filter((node) => !cwd || !cloneOn(cwd, node))
-		.map((node) => node ?? "")
-		.join(NODE_SEPARATOR);
+	const origin = knownOrigin ?? (cwd ? originOf(cwd) : undefined);
+	const missingNodes = nodes.filter((node) => !cwd || !cloneOn(cwd, node));
+	const missing = missingNodes.length
+		? missingNodes.map((node) => node ?? "").join(NODE_SEPARATOR)
+		: undefined;
 	const locations = useCloneLocations(origin, missing);
 
 	return useCallback(

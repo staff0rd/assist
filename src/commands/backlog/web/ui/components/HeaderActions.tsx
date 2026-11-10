@@ -17,7 +17,7 @@ export function HeaderActions({
 }: Pick<HeaderContentProps, "item" | "onDeleted">) {
 	return (
 		<Stack direction="row" spacing={1}>
-			{canPlay(item) && <PlayAction itemId={item.id} />}
+			{canPlay(item) && <PlayAction itemId={item.id} origin={item.origin} />}
 			<RefineAction itemId={item.id} />
 			<DeleteAction itemId={item.id} onDeleted={onDeleted} />
 		</Stack>

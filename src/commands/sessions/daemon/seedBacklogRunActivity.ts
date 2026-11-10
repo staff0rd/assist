@@ -12,7 +12,7 @@ export async function seedBacklogRunActivity(
 	const itemId = backlogRunItemId(session?.assistArgs);
 	if (!session || itemId === undefined) return;
 	try {
-		const activity = await loadProvisionalRunActivity(itemId);
+		const activity = await loadProvisionalRunActivity(itemId, session.cwd);
 		if (!activity || sessions.get(session.id) !== session) return;
 		if (session.activity) return;
 		const provisional = { ...activity, startedAt: Date.now() };

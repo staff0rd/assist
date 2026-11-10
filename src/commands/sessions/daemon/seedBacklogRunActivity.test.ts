@@ -54,7 +54,7 @@ describe("seedBacklogRunActivity", () => {
 
 		expect(session.pty).toBeNull();
 		expect(session.pendingStart).toBeDefined();
-		expect(loadProvisionalRunActivity).toHaveBeenCalledWith(825);
+		expect(loadProvisionalRunActivity).toHaveBeenCalledWith(825, session.cwd);
 		expect(session.activity).toMatchObject(provisional);
 		expect(writeActivityIfAbsent).toHaveBeenCalledWith(
 			session.id,

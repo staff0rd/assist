@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { formatItemId } from "./formatItemId";
 import { reconcileResumePhase } from "./reconcileResumePhase";
 import { resolvePlan } from "./resolvePlan";
+import { refuseForeignOrigin } from "./refuseForeignOrigin";
 import { findOneItem, setStatus } from "./shared";
 import type { BacklogItem, PlanPhase } from "./types";
 
@@ -25,6 +26,7 @@ export async function prepareRun(
 	if (!found) return undefined;
 
 	const { orm, item } = found;
+	if (refuseForeignOrigin(item)) return undefined;
 	const plan = resolvePlan(item);
 
 	if (item.status === "done") {

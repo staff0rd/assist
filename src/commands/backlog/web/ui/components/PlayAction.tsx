@@ -13,13 +13,15 @@ import { playTooltip } from "./playTooltip";
 
 export function PlayAction({
 	itemId,
+	origin,
 	compact,
 }: {
 	itemId: number;
+	origin?: string;
 	compact?: CloseItemTarget;
 }) {
 	const { launchAssist } = useSessionLaunchContext();
-	const target = useStartTarget();
+	const target = useStartTarget(origin);
 	const inFlight = runInFlightSession(useLiveSessionsContext(), itemId);
 	// Latch on first click so a double-click can't spawn two sessions before
 	// the list refresh flips the item out of the playable state.
