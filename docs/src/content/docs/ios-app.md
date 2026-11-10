@@ -182,7 +182,7 @@ Tap **⋯** on a session's screen, or long-press its row in the list, for its ac
 
 ::screenshot{file="ios-app-actions.png"}
 
-Sessions asking you a question sit under **Answer here** at the top of the list, above **Needs you**. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**. During a [backlog run](../backlog-running/), **Later phase** moves the check to a later phase of the item instead.
+Sessions asking you a question or proposing a backlog item sit under **Answer here** at the top of the list, above **Needs you**. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**. During a [backlog run](../backlog-running/), **Later phase** moves the check to a later phase of the item instead.
 
 ## Reviewing previews
 
