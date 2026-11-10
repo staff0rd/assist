@@ -2,6 +2,15 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ShowPane } from "./ShowPane";
+
+vi.mock(
+	"../../../../../backlog/web/ui/components/renderMermaidDiagram",
+	() => ({
+		renderMermaidDiagram: async (target: HTMLElement) => {
+			target.innerHTML = '<svg data-testid="diagram"></svg>';
+		},
+	}),
+);
 import { PreviewWidthContext } from "./usePreviewWidthContext";
 
 const preview = {
@@ -59,6 +68,32 @@ describe("ShowPane", () => {
 
 		expect(writeText).toHaveBeenNthCalledWith(1, "src/deep/file.ts");
 		expect(writeText).toHaveBeenNthCalledWith(2, "const x = 1;");
+	});
+});
+
+describe("ShowPane mermaid", () => {
+	const mermaidPreview = {
+		...preview,
+		body: "```mermaid\nflowchart LR\n  A --> B\n```\n\n```sh\nls\n```",
+	};
+
+	it("renders a mermaid block as a diagram without a copy button", async () => {
+		const { container } = render(
+			<ShowPane preview={mermaidPreview} onClose={vi.fn()} />,
+		);
+
+		const diagram = await screen.findByTestId("diagram");
+		expect(diagram.closest(".mermaid-diagram")).toBeTruthy();
+		expect(container.textContent).not.toContain("flowchart LR");
+		expect(container.querySelector(".mermaid-diagram .copy-code")).toBeNull();
+	});
+
+	it("keeps copy buttons on other code blocks", () => {
+		render(<ShowPane preview={mermaidPreview} onClose={vi.fn()} />);
+
+		const copies = screen.getAllByRole("button", { name: "Copy" });
+		expect(copies).toHaveLength(1);
+		expect(copies[0].dataset.copy).toBe("ls");
 	});
 });
 

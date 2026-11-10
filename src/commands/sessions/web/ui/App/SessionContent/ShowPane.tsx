@@ -1,7 +1,8 @@
-import { Box, Button, Divider, Stack } from "@mui/material";
+import { Box, Button, Divider, Stack, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { MarkdownHtml } from "../../../../../backlog/web/ui/components/MarkdownHtml";
-import { renderMarkdown } from "../../../../../backlog/web/ui/components/renderMarkdown";
+import { MermaidDiagram } from "../../../../../backlog/web/ui/components/MermaidDiagram";
+import { splitMarkdownSegments } from "../../../../../backlog/web/ui/components/splitMarkdownSegments";
 import type { PrPreview } from "../../../../shared/SessionInfoBase";
 import { PrPreviewHeader } from "./PrPreviewHeader";
 import { prPreviewPaneSx } from "./prPreviewPaneSx";
@@ -16,8 +17,14 @@ export function ShowPane({
 	preview: PrPreview;
 	onClose: () => void;
 }) {
-	const html = useMemo(
-		() => addCopyButtons(renderMarkdown(preview.body)),
+	const mode = useTheme().palette.mode;
+	const segments = useMemo(
+		() =>
+			splitMarkdownSegments(preview.body).map((segment) =>
+				segment.type === "html"
+					? { ...segment, html: addCopyButtons(segment.html) }
+					: segment,
+			),
 		[preview.body],
 	);
 
@@ -26,7 +33,19 @@ export function ShowPane({
 			<PrPreviewHeader preview={preview} draft={false} />
 			<Divider />
 			<Box sx={showBodySx} onClick={copyCodeOnClick}>
-				<MarkdownHtml className="markdown" html={html} />
+				<Box className="markdown">
+					{segments.map((segment) =>
+						segment.type === "mermaid" ? (
+							<MermaidDiagram
+								key={segment.key}
+								source={segment.source}
+								mode={mode}
+							/>
+						) : (
+							<MarkdownHtml key={segment.key} html={segment.html} />
+						),
+					)}
+				</Box>
 			</Box>
 			<Divider />
 			<Stack direction="row" sx={{ p: 2, justifyContent: "flex-end" }}>
