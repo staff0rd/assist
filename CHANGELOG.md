@@ -1,3 +1,10 @@
+# [0.1116.0](https://github.com/staff0rd/assist/compare/v0.1115.0...v0.1116.0) (2026-11-10)
+
+
+### Features
+
+* per-type default session model ([e77bf22](https://github.com/staff0rd/assist/commit/e77bf222eb7018ad5045157e5d2517b881038f64))
+
 # [0.1115.0](https://github.com/staff0rd/assist/compare/v0.1114.0...v0.1115.0) (2026-11-10)
 
 
