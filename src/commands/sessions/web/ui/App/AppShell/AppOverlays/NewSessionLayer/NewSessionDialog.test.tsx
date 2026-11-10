@@ -758,6 +758,25 @@ describe("NewSessionDialog harness selector", () => {
 		);
 	});
 
+	it("keeps design mode when Codex is picked after switching to design", async () => {
+		const { onCreateDesign, onCreateHarness } =
+			await renderWithHarnesses("draft");
+		const designSegment = () => screen.getByRole("radio", { name: /^design/ });
+
+		fireEvent.click(designSegment());
+		fireEvent.click(designSegment());
+		fireEvent.click(harnessItem("Codex"));
+		fireEvent.change(promptInput(), { target: { value: "a login page" } });
+		submitPrompt();
+
+		expect(onCreateHarness).not.toHaveBeenCalled();
+		expect(onCreateDesign).toHaveBeenCalledWith(
+			"codex",
+			"a login page",
+			"/git/beta",
+		);
+	});
+
 	it("leaves the prompt segment plain when Claude is the only harness", async () => {
 		renderDialog();
 		await act(async () => {});
