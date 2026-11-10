@@ -1,6 +1,5 @@
-import MenuItem from "@mui/material/MenuItem";
-import type { HarnessKind } from "../../../../../../../../../../shared/harnesses";
 import type { HarnessCapabilities } from "../../../../../../useHarnessCapabilities";
+import { ReviewMenuRow } from "../../../../../ReviewMenuRow";
 import { reviewModeEntries } from "../../../../../reviewModeEntries";
 import type { HighLevelReviewAction } from "../useHighLevelReviewAction";
 import type { useReviewLaunch } from "../useReviewLaunch";
@@ -10,28 +9,24 @@ export function ReviewModeItems({
 	highLevel,
 	pick,
 	capabilities,
-	harness,
 }: {
 	review: ReturnType<typeof useReviewLaunch>;
 	highLevel?: HighLevelReviewAction | undefined;
 	pick: (e: { stopPropagation: () => void }, run: () => void) => void;
 	capabilities: HarnessCapabilities;
-	harness: HarnessKind;
 }) {
-	return reviewModeEntries(capabilities, undefined, harness).map((entry) => (
-		<MenuItem
+	return reviewModeEntries(capabilities).map((entry) => (
+		<ReviewMenuRow
 			key={entry.label}
-			disabled={entry.disabled}
-			onClick={(e) =>
+			entry={entry}
+			onSelect={(e, args) =>
 				pick(
 					e,
-					highLevel && !entry.onHarness && entry.args.includes("--high-level")
+					highLevel && args === entry.args && args.includes("--high-level")
 						? highLevel.run
-						: () => review.launchMode(entry.args),
+						: () => review.launchMode(args),
 				)
 			}
-		>
-			{entry.label}
-		</MenuItem>
+		/>
 	));
 }

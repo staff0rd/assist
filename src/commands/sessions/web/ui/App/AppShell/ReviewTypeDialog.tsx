@@ -13,10 +13,11 @@ import {
 	reviewOptionArgs,
 	reviewOptionDefaults,
 } from "../../../../../../shared/reviewOptionFlags";
+import { useApiNode } from "../../useApiNode";
+import { useHarnessCapabilities } from "../../useHarnessCapabilities";
 import { ReviewOptionToggles } from "../ReviewOptionToggles";
 import { PrActionItems } from "./ReviewTypeDialog/PrActionItems";
 import { ReviewModeMenuItems } from "./ReviewTypeDialog/ReviewModeMenuItems";
-import { useReviewDialogHarness } from "./ReviewTypeDialog/useReviewDialogHarness";
 import { reviewTypeDialogSx } from "./ReviewTypeDialog/reviewTypeDialogSx";
 
 export function ReviewTypeDialog({
@@ -29,7 +30,7 @@ export function ReviewTypeDialog({
 	onCancel: () => void;
 }) {
 	const [options, setOptions] = useState(reviewOptionDefaults);
-	const harness = useReviewDialogHarness();
+	const capabilities = useHarnessCapabilities(useApiNode());
 
 	return (
 		<Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
@@ -39,7 +40,7 @@ export function ReviewTypeDialog({
 			<DialogContent sx={{ px: 0 }}>
 				<MenuList sx={(t) => reviewTypeDialogSx(t).list}>
 					<ReviewModeMenuItems
-						harness={harness}
+						capabilities={capabilities}
 						onSelect={(args) =>
 							onSelect([...args, ...reviewOptionArgs(options)])
 						}
@@ -49,8 +50,7 @@ export function ReviewTypeDialog({
 					<Divider />
 					<PrActionItems
 						pr={pr}
-						capabilities={harness.capabilities}
-						harness={harness.harness}
+						capabilities={capabilities}
 						onSelect={onSelect}
 						onCancel={onCancel}
 					/>

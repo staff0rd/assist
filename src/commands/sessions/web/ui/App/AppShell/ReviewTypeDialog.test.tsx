@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PrSummary } from "../../../prList";
 import { reviewButtonModes } from "../../../../../../shared/reviewButtonModes";
@@ -18,7 +24,28 @@ function checkbox(label: string): HTMLInputElement {
 	return screen.getByLabelText(label) as HTMLInputElement;
 }
 
-afterEach(cleanup);
+const unavailableOn = {
+	available: false,
+	reasons: [{ capability: "x", reason: "no", remediation: "y" }],
+};
+
+function stubCapabilities(features: Record<string, unknown>) {
+	const fetch = vi.fn(async () =>
+		Response.json({
+			exposeCodexActions: true,
+			exposePiActions: false,
+			engine: "claude",
+			features,
+		}),
+	);
+	vi.stubGlobal("fetch", fetch);
+	return fetch;
+}
+
+afterEach(() => {
+	cleanup();
+	vi.unstubAllGlobals();
+});
 
 describe("ReviewTypeDialog", () => {
 	it("defaults every option toggle off", () => {
@@ -183,49 +210,71 @@ describe("ReviewTypeDialog", () => {
 		open.mockRestore();
 	});
 
-	it("picks a harness once and applies it to every mode that resolves on it", async () => {
-		vi.stubGlobal(
-			"fetch",
-			vi.fn(async () =>
-				Response.json({
-					exposeCodexActions: true,
-					exposePiActions: false,
-					engine: "claude",
-					features: {
-						reviewRefine: {
-							claude: { available: true },
-							codex: { available: true },
-						},
-						reviewApply: {
-							claude: { available: true },
-							codex: {
-								available: false,
-								reasons: [{ capability: "x", reason: "no", remediation: "y" }],
-							},
-						},
-					},
-				}),
-			),
-		);
+	it("runs a row on the engine, or on another harness from its trailing button", async () => {
+		stubCapabilities({
+			reviewRefine: { claude: { available: true }, codex: { available: true } },
+			reviewApply: { claude: { available: true }, codex: unavailableOn },
+		});
 		const onSelect = vi.fn();
 		render(<ReviewTypeDialog pr={pr} onSelect={onSelect} onCancel={vi.fn()} />);
 
-		fireEvent.click(await screen.findByRole("button", { name: "Codex" }));
-
-		expect(screen.queryByText(/with Codex/)).toBeNull();
-		expect(
-			screen
-				.getByText("Review & apply")
-				.closest("li")
-				?.getAttribute("aria-disabled"),
-		).toBe("true");
-		fireEvent.click(screen.getByText("Review & refine"));
-		expect(onSelect).toHaveBeenCalledWith([
+		fireEvent.click(
+			await screen.findByRole("button", {
+				name: "Run Review & refine on Codex",
+			}),
+		);
+		expect(onSelect).toHaveBeenLastCalledWith([
 			"review",
 			"--refine",
 			"--harness",
 			"codex",
 		]);
-		vi.unstubAllGlobals();
+		expect(onSelect).toHaveBeenCalledTimes(1);
+
+		fireEvent.click(screen.getByText("Review & refine"));
+		expect(onSelect).toHaveBeenLastCalledWith(["review", "--refine"]);
+		expect(
+			screen.queryByRole("button", { name: "Run Review & apply on Codex" }),
+		).toBeNull();
+		expect(
+			screen.queryByRole("button", { name: "Run Review on Codex" }),
+		).toBeNull();
+	});
+
+	it("offers Codex on PR actions whose feature resolves on it", async () => {
+		stubCapabilities({
+			fixConflict: { claude: { available: true }, codex: { available: true } },
+		});
+		const onSelect = vi.fn();
+		render(<ReviewTypeDialog pr={pr} onSelect={onSelect} onCancel={vi.fn()} />);
+
+		fireEvent.click(
+			await screen.findByRole("button", {
+				name: "Run Fix conflicts (rebase) on Codex",
+			}),
+		);
+
+		expect(onSelect).toHaveBeenCalledWith([
+			"fix-conflict",
+			"--rebase",
+			"--harness",
+			"codex",
+		]);
+		expect(
+			screen.queryByRole("button", { name: "Run Checkout on Codex" }),
+		).toBeNull();
+	});
+
+	it("shows no harness buttons when only the engine is available", async () => {
+		const fetch = stubCapabilities({
+			reviewRefine: { claude: { available: true }, codex: unavailableOn },
+		});
+		render(<ReviewTypeDialog pr={pr} onSelect={vi.fn()} onCancel={vi.fn()} />);
+
+		await act(async () => {
+			await fetch.mock.results[0]?.value;
+		});
+
+		expect(screen.queryByRole("button", { name: /^Run / })).toBeNull();
 	});
 });
