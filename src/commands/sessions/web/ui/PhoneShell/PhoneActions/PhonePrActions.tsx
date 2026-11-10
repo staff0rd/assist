@@ -1,21 +1,14 @@
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import Box from "@mui/material/Box";
-import { prActions } from "../../../../../../shared/prActions";
-import { reviewButtonModes } from "../../../../../../shared/reviewButtonModes";
 import { prLaunchMeta } from "../../App/prLaunchMeta";
-import { reviewModeEntries } from "../../App/reviewModeEntries";
-import { useHarnessCapabilities } from "../../useHarnessCapabilities";
 import { reviewTargetPr } from "../../App/reviewTargetPr";
 import { usePrStatus } from "../../App/usePrStatus";
 import type { AssistLaunchMeta } from "../../resumeSessionAction";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SessionInfo } from "../../types";
+import { PhoneHarnessPicker } from "./PhoneHarnessPicker";
 import { PhoneSheetItem } from "./PhoneSheetItem";
-
-const reviewModes = reviewButtonModes.filter(
-	(mode) => !mode.args.includes("--high-level"),
-);
-const harnessPrActions = prActions.filter((action) => action.featureId);
+import { usePhonePrModes } from "./usePhonePrModes";
 
 type Props = {
 	session: SessionInfo;
@@ -26,13 +19,9 @@ type Props = {
 
 export function PhonePrActions({ session, node, launchAssist, onDone }: Props) {
 	const pr = usePrStatus(session.cwd, reviewTargetPr(session), session.status);
-	const capabilities = useHarnessCapabilities(node);
+	const { choices, harness, setHarness, modes } = usePhonePrModes(node);
 	if (!pr || !session.cwd) return null;
 
-	const prModes = [
-		...reviewModeEntries(capabilities, reviewModes),
-		...reviewModeEntries(capabilities, harnessPrActions),
-	];
 	const meta = {
 		...prLaunchMeta(pr),
 		inPlace: true,
@@ -42,8 +31,13 @@ export function PhonePrActions({ session, node, launchAssist, onDone }: Props) {
 	return (
 		<>
 			<Box sx={nodeListSx.label}>Pull request #{pr.number}</Box>
+			<PhoneHarnessPicker
+				choices={choices}
+				value={harness}
+				onChange={setHarness}
+			/>
 			<Box sx={nodeListSx.group}>
-				{prModes.map((mode) => (
+				{modes.map((mode) => (
 					<PhoneSheetItem
 						key={mode.label}
 						label={mode.label}

@@ -5,20 +5,18 @@ import {
 	DialogContent,
 	DialogTitle,
 	Divider,
-	MenuItem,
 	MenuList,
 } from "@mui/material";
 import { useState } from "react";
 import type { PrSummary } from "../../../prList";
-import { useApiNode } from "../../useApiNode";
-import { useHarnessCapabilities } from "../../useHarnessCapabilities";
-import { reviewModeEntries } from "../reviewModeEntries";
 import {
 	reviewOptionArgs,
 	reviewOptionDefaults,
 } from "../../../../../../shared/reviewOptionFlags";
 import { ReviewOptionToggles } from "../ReviewOptionToggles";
 import { PrActionItems } from "./ReviewTypeDialog/PrActionItems";
+import { ReviewModeMenuItems } from "./ReviewTypeDialog/ReviewModeMenuItems";
+import { useReviewDialogHarness } from "./ReviewTypeDialog/useReviewDialogHarness";
 import { reviewTypeDialogSx } from "./ReviewTypeDialog/reviewTypeDialogSx";
 
 export function ReviewTypeDialog({
@@ -31,7 +29,7 @@ export function ReviewTypeDialog({
 	onCancel: () => void;
 }) {
 	const [options, setOptions] = useState(reviewOptionDefaults);
-	const capabilities = useHarnessCapabilities(useApiNode());
+	const harness = useReviewDialogHarness();
 
 	return (
 		<Dialog open onClose={onCancel} maxWidth="xs" fullWidth>
@@ -40,20 +38,19 @@ export function ReviewTypeDialog({
 			</DialogTitle>
 			<DialogContent sx={{ px: 0 }}>
 				<MenuList sx={(t) => reviewTypeDialogSx(t).list}>
-					{reviewModeEntries(capabilities).map(({ label, args }) => (
-						<MenuItem
-							key={label}
-							onClick={() => onSelect([...args, ...reviewOptionArgs(options)])}
-						>
-							{label}
-						</MenuItem>
-					))}
+					<ReviewModeMenuItems
+						harness={harness}
+						onSelect={(args) =>
+							onSelect([...args, ...reviewOptionArgs(options)])
+						}
+					/>
 					<Divider />
 					<ReviewOptionToggles value={options} onChange={setOptions} />
 					<Divider />
 					<PrActionItems
 						pr={pr}
-						capabilities={capabilities}
+						capabilities={harness.capabilities}
+						harness={harness.harness}
 						onSelect={onSelect}
 						onCancel={onCancel}
 					/>

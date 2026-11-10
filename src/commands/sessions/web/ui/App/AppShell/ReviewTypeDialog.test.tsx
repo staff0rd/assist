@@ -182,4 +182,50 @@ describe("ReviewTypeDialog", () => {
 		expect(onSelect).not.toHaveBeenCalled();
 		open.mockRestore();
 	});
+
+	it("picks a harness once and applies it to every mode that resolves on it", async () => {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn(async () =>
+				Response.json({
+					exposeCodexActions: true,
+					exposePiActions: false,
+					engine: "claude",
+					features: {
+						reviewRefine: {
+							claude: { available: true },
+							codex: { available: true },
+						},
+						reviewApply: {
+							claude: { available: true },
+							codex: {
+								available: false,
+								reasons: [{ capability: "x", reason: "no", remediation: "y" }],
+							},
+						},
+					},
+				}),
+			),
+		);
+		const onSelect = vi.fn();
+		render(<ReviewTypeDialog pr={pr} onSelect={onSelect} onCancel={vi.fn()} />);
+
+		fireEvent.click(await screen.findByRole("button", { name: "Codex" }));
+
+		expect(screen.queryByText(/with Codex/)).toBeNull();
+		expect(
+			screen
+				.getByText("Review & apply")
+				.closest("li")
+				?.getAttribute("aria-disabled"),
+		).toBe("true");
+		fireEvent.click(screen.getByText("Review & refine"));
+		expect(onSelect).toHaveBeenCalledWith([
+			"review",
+			"--refine",
+			"--harness",
+			"codex",
+		]);
+		vi.unstubAllGlobals();
+	});
 });

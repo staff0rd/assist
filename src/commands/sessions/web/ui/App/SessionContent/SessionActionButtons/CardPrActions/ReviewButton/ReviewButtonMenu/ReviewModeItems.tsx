@@ -1,6 +1,6 @@
 import MenuItem from "@mui/material/MenuItem";
-import { useApiNode } from "../../../../../../useApiNode";
-import { useHarnessCapabilities } from "../../../../../../useHarnessCapabilities";
+import type { HarnessKind } from "../../../../../../../../../../shared/harnesses";
+import type { HarnessCapabilities } from "../../../../../../useHarnessCapabilities";
 import { reviewModeEntries } from "../../../../../reviewModeEntries";
 import type { HighLevelReviewAction } from "../useHighLevelReviewAction";
 import type { useReviewLaunch } from "../useReviewLaunch";
@@ -9,15 +9,19 @@ export function ReviewModeItems({
 	review,
 	highLevel,
 	pick,
+	capabilities,
+	harness,
 }: {
 	review: ReturnType<typeof useReviewLaunch>;
 	highLevel?: HighLevelReviewAction | undefined;
 	pick: (e: { stopPropagation: () => void }, run: () => void) => void;
+	capabilities: HarnessCapabilities;
+	harness: HarnessKind;
 }) {
-	const capabilities = useHarnessCapabilities(useApiNode());
-	return reviewModeEntries(capabilities).map((entry) => (
+	return reviewModeEntries(capabilities, undefined, harness).map((entry) => (
 		<MenuItem
 			key={entry.label}
+			disabled={entry.disabled}
 			onClick={(e) =>
 				pick(
 					e,

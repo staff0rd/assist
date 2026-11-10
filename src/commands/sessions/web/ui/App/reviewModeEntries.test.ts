@@ -3,6 +3,8 @@ import type { FeatureResolution } from "../../../../../shared/harnessAdapters/ty
 import type { HarnessCapabilities } from "../useHarnessCapabilities";
 import { isAllowedPrArgs } from "../../../../../shared/isAllowedPrArgs";
 import { prActions } from "../../../../../shared/prActions";
+import { reviewButtonModes } from "../../../../../shared/reviewButtonModes";
+import { reviewHarnessChoices } from "./reviewHarnessChoices";
 import { reviewModeEntries } from "./reviewModeEntries";
 
 const available: FeatureResolution = { available: true };
@@ -25,83 +27,125 @@ function capabilities(
 }
 
 describe("reviewModeEntries", () => {
-	it("lists only the base modes when no other harness resolves available", () => {
-		const labels = reviewModeEntries(capabilities({})).map((e) => e.label);
+	const caps = capabilities({
+		reviewRefine: { claude: available, codex: available, pi: unavailable },
+		reviewApply: { claude: available, codex: unavailable, pi: available },
+		highLevelReview: { claude: available, codex: available },
+	});
 
-		expect(labels).toEqual([
-			"Review",
-			"Review & refine",
-			"Review & apply",
-			"Review & post",
-			"High-level review",
+	it("lists each mode once, unchanged, on the engine", () => {
+		expect(reviewModeEntries(caps)).toEqual([
+			{ label: "Review", args: ["review"], onHarness: false, disabled: false },
+			{
+				label: "Review & refine",
+				args: ["review", "--refine"],
+				onHarness: false,
+				disabled: false,
+			},
+			{
+				label: "Review & apply",
+				args: ["review", "--apply"],
+				onHarness: false,
+				disabled: false,
+			},
+			{
+				label: "Review & post",
+				args: ["review", "--no-prompt", "--submit"],
+				onHarness: false,
+				disabled: false,
+			},
+			{
+				label: "High-level review",
+				args: ["review", "--high-level"],
+				onHarness: false,
+				disabled: false,
+			},
 		]);
 	});
 
-	it("adds a 'with <harness>' entry per feature where the resolver allows it", () => {
-		const entries = reviewModeEntries(
-			capabilities({
-				reviewRefine: { claude: available, codex: available, pi: unavailable },
-				reviewApply: { claude: available, codex: unavailable, pi: available },
-				highLevelReview: { claude: available, codex: available },
-			}),
-		);
+	it("adds --harness to harness features and disables those the resolver refuses", () => {
+		const entries = reviewModeEntries(caps, undefined, "codex");
 
-		expect(entries.filter((e) => e.onHarness)).toEqual([
+		expect(
+			entries.map(({ label, args, disabled }) => ({ label, args, disabled })),
+		).toEqual([
+			{ label: "Review", args: ["review"], disabled: false },
 			{
-				label: "Review & refine with Codex",
+				label: "Review & refine",
 				args: ["review", "--refine", "--harness", "codex"],
-				onHarness: true,
+				disabled: false,
 			},
 			{
-				label: "Review & apply with pi",
-				args: ["review", "--apply", "--harness", "pi"],
-				onHarness: true,
+				label: "Review & apply",
+				args: ["review", "--apply", "--harness", "codex"],
+				disabled: true,
 			},
 			{
-				label: "High-level review with Codex",
+				label: "Review & post",
+				args: ["review", "--no-prompt", "--submit"],
+				disabled: false,
+			},
+			{
+				label: "High-level review",
 				args: ["review", "--high-level", "--harness", "codex"],
-				onHarness: true,
+				disabled: false,
 			},
 		]);
 	});
 
-	it("offers Claude when the node's engine is another harness", () => {
-		const entries = reviewModeEntries({
-			...capabilities({
-				reviewRefine: { claude: available, codex: available },
-			}),
-			engine: "codex",
-		});
+	it("passes Claude explicitly when the node's engine is another harness", () => {
+		const entries = reviewModeEntries(
+			{ ...caps, engine: "codex" },
+			undefined,
+			"claude",
+		);
 
-		expect(entries.map((e) => e.label)).toContain(
-			"Review & refine with Claude",
-		);
-		expect(entries.map((e) => e.label)).not.toContain(
-			"Review & refine with Codex",
-		);
+		expect(entries[1].args).toEqual([
+			"review",
+			"--refine",
+			"--harness",
+			"claude",
+		]);
 	});
 
-	it("offers fix-conflict and Address Comments per harness from their own features", () => {
+	it("keeps fix-conflict and Address Comments args allowed on another harness", () => {
 		const entries = reviewModeEntries(
 			capabilities({
 				fixConflict: { claude: available, codex: available },
 				reviewPrComments: { claude: available, codex: unavailable },
 			}),
 			prActions,
+			"codex",
 		);
 
-		expect(entries.filter((e) => e.onHarness)).toEqual([
-			{
-				label: "Fix conflicts (merge) with Codex",
-				args: ["fix-conflict", "--harness", "codex"],
-				onHarness: true,
-			},
-			{
-				label: "Fix conflicts (rebase) with Codex",
-				args: ["fix-conflict", "--rebase", "--harness", "codex"],
-				onHarness: true,
-			},
-		]);
 		for (const entry of entries) expect(isAllowedPrArgs(entry.args)).toBe(true);
+		expect(entries.filter((e) => e.disabled).map((e) => e.label)).toEqual([
+			"Address Comments",
+			"Address Comments (auto)",
+		]);
+	});
+});
+
+describe("reviewHarnessChoices", () => {
+	it("offers the engine first, then every harness some mode resolves on", () => {
+		expect(
+			reviewHarnessChoices(
+				capabilities({
+					reviewRefine: {
+						claude: available,
+						codex: available,
+						pi: unavailable,
+					},
+					reviewApply: { claude: available, codex: unavailable, pi: available },
+				}),
+				reviewButtonModes,
+			),
+		).toEqual(["claude", "codex", "pi"]);
+	});
+
+	it("offers only the engine when no other harness resolves", () => {
+		expect(reviewHarnessChoices(capabilities({}), reviewButtonModes)).toEqual([
+			"claude",
+		]);
 	});
 });
