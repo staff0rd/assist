@@ -1,3 +1,10 @@
+# [0.1112.0](https://github.com/staff0rd/assist/compare/v0.1111.0...v0.1112.0) (2026-11-10)
+
+
+### Features
+
+* harness buttons in extension menu ([c526f44](https://github.com/staff0rd/assist/commit/c526f44c4cfffa9337e4251fa2c75a13dcf7ee67))
+
 # [0.1111.0](https://github.com/staff0rd/assist/compare/v0.1110.0...v0.1111.0) (2026-11-10)
 
 
