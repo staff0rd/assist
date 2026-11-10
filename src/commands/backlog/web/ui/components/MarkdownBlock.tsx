@@ -1,9 +1,8 @@
-import { Box, useTheme } from "@mui/material";
 import { useMemo } from "react";
 import { countRender } from "../../../../sessions/web/ui/renderCounters";
 import { MarkdownHtml } from "./MarkdownHtml";
 import { markdownSx, wideMarkdownSx } from "./markdownSx";
-import { MermaidDiagram } from "./MermaidDiagram";
+import { MarkdownSegments } from "./MarkdownSegments";
 import { renderMarkdown } from "./renderMarkdown";
 import { splitMarkdownSegments } from "./splitMarkdownSegments";
 
@@ -16,7 +15,6 @@ export function MarkdownBlock({
 	renderMermaid?: boolean;
 	wide?: boolean;
 }) {
-	const mode = useTheme().palette.mode;
 	countRender("MarkdownBlock");
 	const segments = useMemo(
 		() => (renderMermaid ? splitMarkdownSegments(content) : null),
@@ -33,20 +31,5 @@ export function MarkdownBlock({
 			/>
 		);
 
-	return (
-		<Box className="markdown" sx={sx}>
-			{segments.map((segment) =>
-				segment.type === "mermaid" ? (
-					<MermaidDiagram
-						key={segment.key}
-						source={segment.source}
-						mode={mode}
-						naturalWidth={wide}
-					/>
-				) : (
-					<MarkdownHtml key={segment.key} html={segment.html} />
-				),
-			)}
-		</Box>
-	);
+	return <MarkdownSegments segments={segments} sx={sx} naturalWidth={wide} />;
 }

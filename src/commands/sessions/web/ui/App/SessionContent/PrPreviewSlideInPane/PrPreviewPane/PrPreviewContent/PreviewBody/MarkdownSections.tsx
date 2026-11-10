@@ -5,8 +5,8 @@ import {
 	useLayoutEffect,
 	useMemo,
 } from "react";
-import { MarkdownHtml } from "../../../../../../../../../backlog/web/ui/components/MarkdownHtml";
-import { renderMarkdown } from "../../../../../../../../../backlog/web/ui/components/renderMarkdown";
+import { MarkdownSegments } from "../../../../../../../../../backlog/web/ui/components/MarkdownSegments";
+import { splitMarkdownSegments } from "../../../../../../../../../backlog/web/ui/components/splitMarkdownSegments";
 import {
 	applyHighlights,
 	clearHighlights,
@@ -27,9 +27,9 @@ export function MarkdownSections({
 	ranges: ColoredOffsets[];
 	contentRef: RefObject<HTMLDivElement | null>;
 }) {
-	const html = useMemo(() => renderMarkdown(content), [content]);
-	const trailingHtml = useMemo(
-		() => (trailing ? renderMarkdown(trailing) : ""),
+	const segments = useMemo(() => splitMarkdownSegments(content), [content]);
+	const trailingSegments = useMemo(
+		() => splitMarkdownSegments(trailing ?? ""),
 		[trailing],
 	);
 
@@ -38,14 +38,14 @@ export function MarkdownSections({
 		if (!root) return;
 		clearHighlights(root);
 		applyHighlights(root, ranges);
-	}, [html, trailingHtml, ranges, contentRef]);
+	}, [segments, trailingSegments, ranges, contentRef]);
 
 	return (
 		<Box ref={contentRef}>
-			<MarkdownHtml className="markdown" html={html} />
+			<MarkdownSegments segments={segments} skipDiagramText />
 			{control}
 			{control ? (
-				<MarkdownHtml className="markdown" html={trailingHtml} />
+				<MarkdownSegments segments={trailingSegments} skipDiagramText />
 			) : null}
 		</Box>
 	);

@@ -1,7 +1,7 @@
 import type { Token, TokensList } from "marked";
 import { lexMarkdown, renderMarkdownTokens } from "./renderMarkdown";
 
-type MarkdownSegment =
+export type MarkdownSegment =
 	| { type: "html"; key: string; html: string }
 	| { type: "mermaid"; key: string; source: string };
 

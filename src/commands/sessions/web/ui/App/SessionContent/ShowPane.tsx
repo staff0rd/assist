@@ -1,7 +1,6 @@
-import { Box, Button, Divider, Stack, useTheme } from "@mui/material";
+import { Box, Button, Divider, Stack } from "@mui/material";
 import { useMemo } from "react";
-import { MarkdownHtml } from "../../../../../backlog/web/ui/components/MarkdownHtml";
-import { MermaidDiagram } from "../../../../../backlog/web/ui/components/MermaidDiagram";
+import { MarkdownSegments } from "../../../../../backlog/web/ui/components/MarkdownSegments";
 import { splitMarkdownSegments } from "../../../../../backlog/web/ui/components/splitMarkdownSegments";
 import type { PrPreview } from "../../../../shared/SessionInfoBase";
 import { PrPreviewHeader } from "./PrPreviewHeader";
@@ -17,7 +16,6 @@ export function ShowPane({
 	preview: PrPreview;
 	onClose: () => void;
 }) {
-	const mode = useTheme().palette.mode;
 	const segments = useMemo(
 		() =>
 			splitMarkdownSegments(preview.body).map((segment) =>
@@ -33,19 +31,7 @@ export function ShowPane({
 			<PrPreviewHeader preview={preview} draft={false} />
 			<Divider />
 			<Box sx={showBodySx} onClick={copyCodeOnClick}>
-				<Box className="markdown">
-					{segments.map((segment) =>
-						segment.type === "mermaid" ? (
-							<MermaidDiagram
-								key={segment.key}
-								source={segment.source}
-								mode={mode}
-							/>
-						) : (
-							<MarkdownHtml key={segment.key} html={segment.html} />
-						),
-					)}
-				</Box>
+				<MarkdownSegments segments={segments} />
 			</Box>
 			<Divider />
 			<Stack direction="row" sx={{ p: 2, justifyContent: "flex-end" }}>

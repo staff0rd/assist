@@ -1,22 +1,42 @@
 // @vitest-environment jsdom
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { useRef } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { MarkdownSections } from "./PrPreviewSlideInPane/PrPreviewPane/PrPreviewContent/PreviewBody/MarkdownSections";
+import { contentText } from "./PrPreviewSlideInPane/PrPreviewPane/usePrComments/loadComments/contentText";
 import { ReviewSynthesisDialog } from "./SessionActionButtons/CardPrActions/ViewReviewButton/ReviewSynthesisDialog";
+
+vi.mock(
+	"../../../../../backlog/web/ui/components/renderMermaidDiagram",
+	() => ({
+		renderMermaidDiagram: async (target: HTMLElement) => {
+			target.innerHTML =
+				'<svg data-testid="diagram"><text>Diagram label</text></svg>';
+		},
+	}),
+);
 
 const content =
 	"See [the mock](https://example.com/mock) and [the item](/items/a1006).\n\nSecond paragraph.";
 
 type ColoredOffsets = { start: number; end: number; color: string };
 
+const diagramBody =
+	"Before.\n\n```mermaid\ngraph TD\n  A-->B\n```\n\nAfter text";
+
 const noRanges: ColoredOffsets[] = [];
 
-function Sections({ ranges = noRanges }: { ranges?: ColoredOffsets[] }) {
+function Sections({
+	ranges = noRanges,
+	body = content,
+}: {
+	ranges?: ColoredOffsets[];
+	body?: string;
+}) {
 	const contentRef = useRef<HTMLDivElement | null>(null);
 	return (
 		<MarkdownSections
-			content={content}
+			content={body}
 			control={null}
 			trailing={undefined}
 			ranges={ranges}
@@ -53,6 +73,33 @@ describe("sessions markdown anchors", () => {
 		expect(external?.getAttribute("rel")).toBe("noopener noreferrer");
 		expect(relative?.getAttribute("target")).toBeNull();
 		expect(relative?.getAttribute("rel")).toBeNull();
+	});
+
+	it("renders a mermaid block as a diagram", async () => {
+		const { container } = render(<Sections body={diagramBody} />);
+		await waitFor(() =>
+			expect(container.querySelector('[data-testid="diagram"]')).not.toBeNull(),
+		);
+		expect(container.textContent).not.toContain("graph TD");
+	});
+
+	it("highlights text after a diagram by offsets that skip the diagram", async () => {
+		const { container, rerender } = render(<Sections body={diagramBody} />);
+		await waitFor(() =>
+			expect(container.querySelector('[data-testid="diagram"]')).not.toBeNull(),
+		);
+		const text = contentText(container);
+		expect(text).not.toContain("Diagram label");
+		const start = text.indexOf(" text");
+		rerender(
+			<Sections
+				body={diagramBody}
+				ranges={[{ start, end: start + " text".length, color: "red" }]}
+			/>,
+		);
+		expect(container.querySelector("mark.pr-comment")?.textContent).toBe(
+			" text",
+		);
 	});
 
 	it("keeps review synthesis anchors across a re-render", () => {
