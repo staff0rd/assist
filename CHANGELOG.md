@@ -1,3 +1,16 @@
+# [0.1117.0](https://github.com/staff0rd/assist/compare/v0.1116.0...v0.1117.0) (2026-11-10)
+
+
+### Bug Fixes
+
+* docs list proposals as question ([5c7be1e](https://github.com/staff0rd/assist/commit/5c7be1ed5eeba99def109f5661f0b10143aae923))
+* refresh docs for recent stories ([e834e63](https://github.com/staff0rd/assist/commit/e834e6360dbaed853fbbdac402e0f066bc524b32))
+
+
+### Features
+
+* badge review sessions needing you ([fd591c4](https://github.com/staff0rd/assist/commit/fd591c4e21f2b4ea24d00c1db45e3120808a450d))
+
 # [0.1116.0](https://github.com/staff0rd/assist/compare/v0.1115.0...v0.1116.0) (2026-11-10)
 
 
