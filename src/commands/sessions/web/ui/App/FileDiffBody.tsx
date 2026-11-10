@@ -6,7 +6,7 @@ import {
 	Hunk,
 	type ViewType,
 } from "react-diff-view";
-import { BinaryNotice } from "./FileDiffBody/BinaryNotice";
+import { HunklessNotice } from "./FileDiffBody/HunklessNotice";
 import { useDiffTokens } from "./FileDiffBody/useDiffTokens";
 
 export function FileDiffBody({
@@ -23,7 +23,7 @@ export function FileDiffBody({
 	const tokens = useDiffTokens(file.hunks, path);
 	const hunkHeaders = !renderGap;
 
-	if (file.hunks.length === 0) return <BinaryNotice />;
+	if (file.hunks.length === 0) return <HunklessNotice file={file} />;
 
 	return (
 		<Diff
