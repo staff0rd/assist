@@ -1,3 +1,10 @@
+# [0.1114.0](https://github.com/staff0rd/assist/compare/v0.1113.0...v0.1114.0) (2026-11-10)
+
+
+### Features
+
+* collapse review sessions on phone ([9f75f6b](https://github.com/staff0rd/assist/commit/9f75f6b88692518c19c2f3265844ad4f07b385ed))
+
 # [0.1113.0](https://github.com/staff0rd/assist/compare/v0.1112.11...v0.1113.0) (2026-11-10)
 
 
