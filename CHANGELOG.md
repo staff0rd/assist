@@ -1,3 +1,11 @@
+# [0.1115.0](https://github.com/staff0rd/assist/compare/v0.1114.0...v0.1115.0) (2026-11-10)
+
+
+### Features
+
+* expand context in session diff ([7bb7c06](https://github.com/staff0rd/assist/commit/7bb7c068ffb33e1353ca7f51b1b029e69ad3cfd5))
+* per-type default harness ([c0de24e](https://github.com/staff0rd/assist/commit/c0de24ed56e5c75ce1de451a4e0e2e5300eb1af9))
+
 # [0.1114.0](https://github.com/staff0rd/assist/compare/v0.1113.0...v0.1114.0) (2026-11-10)
 
 
