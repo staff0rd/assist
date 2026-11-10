@@ -2,9 +2,10 @@ import { apiFetch } from "../../../../../apiFetch";
 import { reportCaughtError } from "../../../../../clientFailures/reportCaughtError";
 import { type NewSessionMode, newSessionModes } from "../newSessionModes";
 import { type ModeHarnesses, parseModeHarnesses } from "./parseModeHarnesses";
+import { type ModeModels, parseModeModels } from "./parseModeModels";
 
 export type Outcome =
-	| { mode: NewSessionMode; harnesses: ModeHarnesses }
+	| { mode: NewSessionMode; harnesses: ModeHarnesses; models: ModeModels }
 	| { error: string };
 
 async function failureMessage(res: Response): Promise<string> {
@@ -20,7 +21,11 @@ export async function fetchMode(cwd: string): Promise<Outcome> {
 		if (!res.ok) return { error: await failureMessage(res) };
 		const body = await res.json();
 		if (Object.hasOwn(newSessionModes, body?.mode))
-			return { mode: body.mode, harnesses: parseModeHarnesses(body.harnesses) };
+			return {
+				mode: body.mode,
+				harnesses: parseModeHarnesses(body.harnesses),
+				models: parseModeModels(body.models),
+			};
 		throw new Error(`unknown mode ${JSON.stringify(body?.mode)}`);
 	} catch (error) {
 		reportCaughtError(error, "new-session defaults");

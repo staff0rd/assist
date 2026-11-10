@@ -158,12 +158,14 @@ function promptInput() {
 }
 
 function modeRadio(name: string) {
-	return screen.getByRole("radio", { name });
+	return screen.getByRole("radio", { name: new RegExp(`^${name}\\b`) });
 }
 
 function promptSegment() {
 	return screen.getByRole("radio", { name: /^prompt/ });
 }
+
+const CLAUDE_MODELS = ["Default", "fable", "opus", "sonnet", "haiku"];
 
 function harnessItem(name: string) {
 	return within(screen.getByRole("menu", { name: "Harness" })).getByRole(
@@ -344,7 +346,7 @@ describe("NewSessionDialog mode selector", () => {
 	it("pre-selects prompt mode when it is the default", () => {
 		renderDialog("prompt");
 
-		expect(checkedMode()).toBe("prompt");
+		expect(checkedMode()).toBe("prompt · Claude");
 		expect(promptInput().placeholder).toBe("Enter prompt...");
 		expect(screen.getByRole("button", { name: "Start session" })).toBeTruthy();
 	});
@@ -359,7 +361,7 @@ describe("NewSessionDialog mode selector", () => {
 	it("follows the selected repo's default mode", () => {
 		renderDialog((cwd) => (cwd === "/git/alpha" ? "bug" : "prompt"));
 
-		expect(checkedMode()).toBe("prompt");
+		expect(checkedMode()).toBe("prompt · Claude");
 
 		fireEvent.focus(repoInput());
 		fireEvent.change(repoInput(), { target: { value: "al" } });
@@ -494,7 +496,7 @@ describe("NewSessionDialog mode selector", () => {
 			await new Promise((resolve) => setTimeout(resolve));
 		});
 
-		expect(checkedMode()).toBe("prompt");
+		expect(checkedMode()).toBe("prompt · Claude");
 		expect(document.activeElement).toBe(promptSegment());
 
 		fireEvent.keyDown(promptSegment(), { key: "ArrowRight" });
@@ -509,7 +511,7 @@ describe("NewSessionDialog mode selector", () => {
 		fireEvent.change(repoInput(), { target: { value: "al" } });
 		fireEvent.keyDown(repoInput(), { key: "Tab" });
 
-		expect(checkedMode()).toBe("design");
+		expect(checkedMode()).toBe("design · Claude");
 	});
 
 	it("offers draft, bug, prompt and design modes", () => {
@@ -519,14 +521,14 @@ describe("NewSessionDialog mode selector", () => {
 			within(screen.getByRole("radiogroup", { name: "Mode" }))
 				.getAllByRole("radio")
 				.map((radio) => radio.textContent),
-		).toEqual(["draft", "bug", "prompt", "design"]);
+		).toEqual(["draft", "bug", "prompt · Claude", "design"]);
 	});
 
 	it("switches mode with the left and right arrows and wraps around", () => {
 		renderDialog();
 
 		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowRight" });
-		expect(checkedMode()).toBe("design");
+		expect(checkedMode()).toBe("design · Claude");
 		expect(document.activeElement).toBe(modeRadio("design"));
 
 		fireEvent.keyDown(modeRadio("design"), { key: "ArrowRight" });
@@ -534,27 +536,27 @@ describe("NewSessionDialog mode selector", () => {
 
 		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowLeft" });
 		fireEvent.keyDown(modeRadio("design"), { key: "ArrowLeft" });
-		expect(checkedMode()).toBe("prompt");
+		expect(checkedMode()).toBe("prompt · Claude");
 	});
 
 	it("leaves the mode alone on up and down when no harness row shows", () => {
-		renderDialog();
+		renderDialog("draft");
 
-		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowDown" });
-		fireEvent.keyDown(modeRadio("prompt"), { key: "ArrowUp" });
+		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowDown" });
+		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowUp" });
 
-		expect(checkedMode()).toBe("prompt");
+		expect(checkedMode()).toBe("draft");
 	});
 
 	it("switches to the next mode on Tab", () => {
 		renderDialog("bug");
 
 		fireEvent.keyDown(modeRadio("bug"), { key: "Tab" });
-		expect(checkedMode()).toBe("prompt");
+		expect(checkedMode()).toBe("prompt · Claude");
 		expect(document.activeElement).toBe(modeRadio("prompt"));
 
 		fireEvent.keyDown(modeRadio("prompt"), { key: "Tab" });
-		expect(checkedMode()).toBe("design");
+		expect(checkedMode()).toBe("design · Claude");
 		expect(document.activeElement).toBe(modeRadio("design"));
 	});
 
@@ -565,7 +567,7 @@ describe("NewSessionDialog mode selector", () => {
 			key: "Tab",
 		});
 		expect(notPrevented).toBe(true);
-		expect(checkedMode()).toBe("design");
+		expect(checkedMode()).toBe("design · Claude");
 	});
 
 	it("switches to the previous mode on Shift+Tab", () => {
@@ -748,7 +750,7 @@ describe("NewSessionDialog harness selector", () => {
 			within(screen.getByRole("menu", { name: "Harness" }))
 				.getAllByRole("menuitemradio")
 				.map((item) => item.textContent),
-		).toEqual(["Claude", "Codex"]);
+		).toEqual(["Claude", "Codex", ...CLAUDE_MODELS]);
 		fireEvent.click(harnessItem("Codex"));
 		fireEvent.change(promptInput(), { target: { value: "a login page" } });
 		submitPrompt();
@@ -779,11 +781,11 @@ describe("NewSessionDialog harness selector", () => {
 		);
 	});
 
-	it("leaves the prompt segment plain when Claude is the only harness", async () => {
+	it("names Claude on the prompt segment when it is the only harness, for the model menu", async () => {
 		renderDialog();
 		await act(async () => {});
 
-		expect(modeRadio("prompt").textContent).toBe("prompt");
+		expect(modeRadio("prompt").textContent).toBe("prompt · Claude");
 	});
 
 	it("names the chosen harness on the prompt segment", async () => {
@@ -810,7 +812,7 @@ describe("NewSessionDialog harness selector", () => {
 			within(screen.getByRole("menu", { name: "Harness" }))
 				.getAllByRole("menuitemradio")
 				.map((item) => item.textContent),
-		).toEqual(["Claude", "Codex", "pi"]);
+		).toEqual(["Claude", "Codex", "pi", ...CLAUDE_MODELS]);
 		expect(harnessItem("Claude").getAttribute("aria-checked")).toBe("true");
 
 		fireEvent.click(harnessItem("Codex"));
@@ -901,6 +903,85 @@ describe("NewSessionDialog per-type default harness", () => {
 			"claude",
 			"a page",
 			"/git/beta",
+		);
+	});
+});
+
+describe("NewSessionDialog per-type default model", () => {
+	const configured =
+		(models: LoadedDefaultMode["models"]) => (): LoadedDefaultMode => ({
+			mode: "prompt",
+			harnesses: { prompt: "claude", design: "claude" },
+			models,
+			pending: false,
+		});
+	const designSegment = () => screen.getByRole("radio", { name: /^design/ });
+
+	it("preselects each type's configured model as the type switches", async () => {
+		await renderWithHarnesses(configured({ prompt: "opus", design: "fable" }));
+
+		expect(promptSegment().textContent).toBe("prompt · Claude · opus");
+		fireEvent.click(designSegment());
+		expect(checkedMode()).toBe("design · Claude · fable");
+		fireEvent.click(promptSegment());
+		expect(checkedMode()).toBe("prompt · Claude · opus");
+		fireEvent.click(promptSegment());
+		expect(harnessItem("opus").getAttribute("aria-checked")).toBe("true");
+	});
+
+	it("launches on a hand-picked model and keeps it across type switches", async () => {
+		const { onCreateHarness } = await renderWithHarnesses(
+			configured({ prompt: "opus", design: "fable" }),
+		);
+
+		fireEvent.click(promptSegment());
+		fireEvent.click(harnessItem("sonnet"));
+		fireEvent.click(designSegment());
+		expect(checkedMode()).toBe("design · Claude · sonnet");
+		fireEvent.click(promptSegment());
+		submitPrompt();
+
+		expect(onCreateHarness).toHaveBeenCalledWith(
+			"claude",
+			"",
+			"/git/beta",
+			undefined,
+			false,
+			"sonnet",
+		);
+	});
+
+	it("passes no model when Default is picked", async () => {
+		const { onCreateHarness } = await renderWithHarnesses(
+			configured({ prompt: "opus" }),
+		);
+
+		fireEvent.click(promptSegment());
+		fireEvent.click(harnessItem("Default"));
+		expect(promptSegment().textContent).toBe("prompt · Claude");
+		submitPrompt();
+
+		expect(onCreateHarness).toHaveBeenCalledWith("claude", "", "/git/beta");
+	});
+
+	it("resets the model to Default when the harness changes away from the configured one", async () => {
+		await renderWithHarnesses(configured({ prompt: "opus" }));
+
+		fireEvent.click(promptSegment());
+		fireEvent.click(harnessItem("Codex"));
+
+		expect(promptSegment().textContent).toBe("prompt · Codex");
+		fireEvent.click(promptSegment());
+		expect(harnessItem("Default").getAttribute("aria-checked")).toBe("true");
+	});
+
+	it("lists a configured model outside the built-in set", async () => {
+		await renderWithHarnesses(configured({ prompt: "claude-opus-5-5" }));
+
+		fireEvent.click(promptSegment());
+
+		expect(harnessItem("claude-opus-5-5").getAttribute("aria-checked")).toBe(
+			"true",
 		);
 	});
 });

@@ -19,6 +19,7 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		divergenceEscalation: persisted.divergenceEscalation,
 		design: persisted.design,
 		auto: persisted.auto,
+		model: persisted.model,
 		autoAdvance: restoredAutoAdvance(id, persisted),
 		autoApprove: persisted.autoApprove,
 		reviewStarted: persisted.reviewStarted,

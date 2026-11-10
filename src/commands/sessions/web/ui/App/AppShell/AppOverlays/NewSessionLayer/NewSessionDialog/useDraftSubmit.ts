@@ -1,8 +1,7 @@
 import { type FormEvent, type MouseEvent, useRef } from "react";
-import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
 import type { NewSessionLaunchers } from "../launchNewSession";
 import type { NewSessionDraft } from "../useNewSessionDraft";
-import { submitDraft } from "./useDraftSubmit/submitDraft";
+import { type HarnessLaunch, submitDraft } from "./useDraftSubmit/submitDraft";
 import type { useDraftRepos } from "./useDraftRepos";
 import { useQueuedSubmit } from "./useDraftSubmit/useQueuedSubmit";
 
@@ -10,7 +9,7 @@ type DraftTarget = ReturnType<typeof useDraftRepos>["target"];
 
 export function useDraftSubmit(
 	draft: NewSessionDraft,
-	harness: HarnessKind,
+	harness: HarnessLaunch,
 	target: DraftTarget,
 	launchers: NewSessionLaunchers,
 	onClose: () => void,

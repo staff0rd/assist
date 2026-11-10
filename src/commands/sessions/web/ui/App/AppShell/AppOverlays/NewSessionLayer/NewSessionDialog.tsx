@@ -1,4 +1,4 @@
-import { useSessionHarness } from "./NewSessionDialog/useSessionHarness";
+import { useDraftHarness } from "./NewSessionDialog/useDraftHarness";
 import type { NewSessionLaunchers } from "./launchNewSession";
 import { NewSessionFields } from "./NewSessionDialog/NewSessionFields";
 import { DraftFooter } from "./NewSessionDialog/DraftFooter";
@@ -20,16 +20,12 @@ export function NewSessionDialog({
 	onClose: () => void;
 }) {
 	const focus = useDraftFocus(draft.focus, draft.setFocus);
-	const { harness, harnesses } = useSessionHarness(
-		draft.node,
-		draft.harness,
-		draft.mode,
-	);
+	const { harness, harnesses, model } = useDraftHarness(draft);
 	const { target, cloneState } = useDraftRepos(draft.node, draft.cwd);
 
 	const { onSubmit, onSubmitClick } = useDraftSubmit(
 		draft,
-		harness,
+		{ harness, model: model?.model },
 		target,
 		launchers,
 		onClose,
@@ -46,6 +42,7 @@ export function NewSessionDialog({
 					draft={draft}
 					harness={harness}
 					harnesses={harnesses}
+					model={model}
 					focus={focus}
 					cloneState={cloneState}
 				/>

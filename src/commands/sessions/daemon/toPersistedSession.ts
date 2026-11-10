@@ -26,6 +26,7 @@ export function toPersistedSession(session: Session): PersistedSession {
 		divergenceEscalation: session.divergenceEscalation,
 		design: session.design,
 		auto: session.auto,
+		model: session.model,
 		autoAdvance: session.autoAdvance,
 		autoApprove: session.autoApprove,
 		reviewStarted: session.reviewStarted,

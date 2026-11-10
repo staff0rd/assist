@@ -14,6 +14,7 @@ type SpawnOpts = {
 	cwd?: string;
 	sessionId?: string;
 	appendSystemPromptFile?: string;
+	model?: string;
 };
 
 export function spawnCodex(opts: SpawnOpts = {}) {
@@ -21,7 +22,9 @@ export function spawnCodex(opts: SpawnOpts = {}) {
 	if (trusted) daemonLog(`codex: trusted ${trusted} in config.toml`);
 	const untrusted = prepareCodexHookTrust();
 	if (untrusted) daemonLog(`codex: ${untrusted}`);
-	const override = buildHarnessCodexArgs();
+	const override = opts.model
+		? { args: ["-m", opts.model], env: {} }
+		: buildHarnessCodexArgs();
 	const sessionEnv = codexSessionEnvArgs({
 		ASSIST_SESSION: "1",
 		ASSIST_SESSION_ID: opts.sessionId,

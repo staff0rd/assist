@@ -83,6 +83,7 @@ type InteractiveLaunch = {
 	cwd?: string;
 	appendSystemPromptFile?: string;
 	auto?: boolean;
+	model?: string;
 };
 
 export type ConversationRef = {

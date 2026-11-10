@@ -35,8 +35,8 @@ export const piAdapter: HarnessAdapter = {
 		spawnPi(buildSlashCommand(skill, args), { cwd }),
 	launchPrompt: (prompt, { cwd }) => spawnPi(prompt, { cwd }),
 	resume: cannotResume,
-	interactive: ({ sessionId, resumeId, prompt, cwd }) =>
-		resumeId ? cannotResume() : spawnPiPty({ prompt, cwd, sessionId }),
+	interactive: ({ sessionId, resumeId, prompt, cwd, model }) =>
+		resumeId ? cannotResume() : spawnPiPty({ prompt, cwd, sessionId, model }),
 	oneShot: noOneShot,
 	structured: noOneShot,
 	connectorRun: rejectConnectorRun("pi"),

@@ -29,7 +29,10 @@ const DEFAULT_BACKUP_STALE_AFTER = "32h";
 const DEFAULT_CLONE_DIR = "~/git";
 const harnessKindSchema = z.enum(harnessKinds);
 const sessionTypeDefaultsSchema = z
-	.strictObject({ harness: harnessKindSchema.optional() })
+	.strictObject({
+		harness: harnessKindSchema.optional(),
+		model: z.string().min(1).optional(),
+	})
 	.optional();
 const assistConfigShape = {
 	advice: z

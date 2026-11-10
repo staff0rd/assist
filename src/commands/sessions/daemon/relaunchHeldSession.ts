@@ -56,6 +56,7 @@ function createHeld(
 			design: persisted.design,
 			auto: persisted.auto,
 			harness: persisted.harness,
+			model: persisted.model,
 			holdPty: true,
 		});
 	return undefined;

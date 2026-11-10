@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
 import { ThemeProvider } from "@mui/material/styles";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	within,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDesignTheme } from "../../designSystem/createDesignTheme";
 import type { HistoricalSession } from "../../types";
@@ -9,6 +15,7 @@ import { PhoneNewSessionSheet } from "./PhoneNewSessionSheet";
 
 const configured = vi.hoisted(() => ({
 	harnesses: {} as Record<string, string>,
+	models: {} as Record<string, string>,
 }));
 
 vi.mock(
@@ -17,6 +24,7 @@ vi.mock(
 		useDefaultNewSessionMode: () => ({
 			mode: "prompt",
 			harnesses: configured.harnesses,
+			models: configured.models,
 			pending: false,
 		}),
 	}),
@@ -35,6 +43,7 @@ vi.mock("../../useHarnessCapabilities", () => ({
 afterEach(() => {
 	cleanup();
 	configured.harnesses = {};
+	configured.models = {};
 });
 
 const origin = { origin: "github.com/x/assist" };
@@ -99,6 +108,30 @@ describe("PhoneNewSessionSheet", () => {
 			["draft", "--once", "--harness", "codex"],
 			"/wsl/assist",
 			{ node: "wsl" },
+		);
+	});
+
+	it("preselects prompt's configured model and starts on a hand-picked one", () => {
+		configured.harnesses = { prompt: "claude" };
+		configured.models = { prompt: "opus" };
+		const { socket } = renderSheet();
+		const model = screen.getByRole("radiogroup", { name: "Model" });
+
+		expect(
+			within(model)
+				.getByRole("radio", { name: "opus" })
+				.getAttribute("aria-checked"),
+		).toBe("true");
+		fireEvent.click(within(model).getByRole("radio", { name: "sonnet" }));
+		fireEvent.click(screen.getByRole("button", { name: "Start session" }));
+
+		expect(socket.createHarnessSession).toHaveBeenCalledWith(
+			"claude",
+			"",
+			"/mac/assist",
+			"mac",
+			undefined,
+			"sonnet",
 		);
 	});
 });

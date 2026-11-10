@@ -54,6 +54,23 @@ describe("spawnClaude", () => {
 		);
 	});
 
+	it("launches on the chosen model", () => {
+		spawnClaude({ prompt: "Do the thing", model: "opus" });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			[
+				"claude",
+				"--settings",
+				"/hooks.json",
+				"--model",
+				"opus",
+				"Do the thing",
+			],
+			undefined,
+			undefined,
+		);
+	});
+
 	it("starts a bare session with no options", () => {
 		spawnClaude();
 

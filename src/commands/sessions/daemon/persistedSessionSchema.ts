@@ -26,6 +26,7 @@ export const persistedSessionSchema = z.object({
 	divergenceEscalation: z.boolean().optional(),
 	design: z.boolean().optional(),
 	auto: z.boolean().optional(),
+	model: z.string().optional(),
 	autoAdvance: z.boolean().optional(),
 	autoApprove: z.boolean().optional(),
 	reviewStarted: z.boolean().optional(),

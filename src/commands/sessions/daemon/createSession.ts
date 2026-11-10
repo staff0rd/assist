@@ -2,8 +2,6 @@ import { sessionModeLaunch } from "./sessionModeLaunch";
 import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import { preassignedId } from "../../../shared/harnessAdapters/preassignedId";
 import type { HarnessKind } from "../../../shared/harnesses";
-import { type ServerRunMeta, serverRunMeta } from "./serverRunMeta";
-import { spawnRun } from "./spawnRun";
 import { startOrHoldPty } from "./startOrHoldPty";
 import type { Session } from "./types";
 import { sessionBase } from "./sessionBase";
@@ -16,12 +14,21 @@ export type CreateSessionOpts = {
 	design?: boolean;
 	auto?: boolean;
 	harness?: HarnessKind;
+	model?: string;
 	holdPty?: boolean;
 };
 
 export function createSession(
 	id: string,
-	{ prompt, cwd, design, auto, harness, holdPty }: CreateSessionOpts = {},
+	{
+		prompt,
+		cwd,
+		design,
+		auto,
+		harness,
+		model,
+		holdPty,
+	}: CreateSessionOpts = {},
 ): Session {
 	const adapter = harnessAdapter(harness);
 	/* why: assign the claude conversation id up front so the card binds to the
@@ -44,7 +51,7 @@ export function createSession(
 					cwd,
 					sessionId: id,
 					conversationId,
-					...sessionModeLaunch(adapter, { design, auto }),
+					...sessionModeLaunch(adapter, { design, auto, model }),
 				}),
 			holdPty,
 		),
@@ -52,34 +59,6 @@ export function createSession(
 		initialPrompt: prompt,
 		design,
 		auto,
-	};
-}
-
-export type RunSpawnRequest = {
-	runName: string;
-	runArgs: string[];
-	cwd?: string;
-	meta?: ServerRunMeta;
-};
-
-export function createRunSession(
-	id: string,
-	{ runName, runArgs, cwd, meta }: RunSpawnRequest,
-): Session {
-	const serverMeta = meta ?? serverRunMeta(runName, cwd);
-	return {
-		...sessionBase(id, "running"),
-		name: `run: ${runName}`,
-		commandType: "run",
-		pty: spawnRun({ name: runName, args: runArgs, cwd }),
-		runName,
-		runArgs,
-		cwd,
-		server: serverMeta.server || undefined,
-		serverPort: serverMeta.port,
-		serverProtocol: serverMeta.protocol,
-		serverPath: serverMeta.path,
-		serverOrigin: serverMeta.origin,
-		serverGroup: serverMeta.group,
+		model,
 	};
 }

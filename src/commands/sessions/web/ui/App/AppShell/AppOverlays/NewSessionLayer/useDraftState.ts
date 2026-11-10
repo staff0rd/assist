@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
-import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import { usePersistedPrompt } from "../../../../usePersistedPrompt";
-import type { NewSessionMode } from "./newSessionModes";
+import { useDraftChoices } from "./useDraftChoices";
 
 export type DraftFocus = {
 	field: "prompt" | "repo" | "mode";
@@ -17,34 +16,19 @@ const initialFocus: DraftFocus = {
 
 export function useDraftState() {
 	const [prompt, setPrompt] = usePersistedPrompt("new-session");
-	const [cwd, setCwd] = useState<string>();
-	const [mode, setMode] = useState<NewSessionMode>();
-	const [harness, setHarness] = useState<HarnessKind>();
-	const [node, setNode] = useState<string>();
+	const choices = useDraftChoices();
 	const [focus, setFocus] = useState(initialFocus);
+	const { setCwd, setMode, setHarness, setPickedModel, setNode } = choices;
 
 	const clear = useCallback(() => {
 		setPrompt("");
 		setCwd(undefined);
 		setMode(undefined);
 		setHarness(undefined);
+		setPickedModel(undefined);
 		setNode(undefined);
 		setFocus(initialFocus);
-	}, [setPrompt]);
+	}, [setPrompt, setCwd, setMode, setHarness, setPickedModel, setNode]);
 
-	return {
-		prompt,
-		cwd,
-		mode,
-		harness,
-		node,
-		focus,
-		setPrompt,
-		setNode,
-		setCwd,
-		setMode,
-		setHarness,
-		setFocus,
-		clear,
-	};
+	return { prompt, ...choices, focus, setPrompt, setFocus, clear };
 }

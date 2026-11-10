@@ -23,7 +23,7 @@ describe("submitDraft", () => {
 
 		submitDraft(
 			draft,
-			"claude",
+			{ harness: "claude" },
 			{
 				kind: "clone",
 				prompt: {
@@ -46,8 +46,20 @@ describe("submitDraft", () => {
 	it("opens a Shift+clicked draft with autoApprove on the local node", () => {
 		const l = launchers();
 
-		submitDraft(draft, "claude", { kind: "launch", cwd: "/git/app" }, l, true);
-		submitDraft(draft, "claude", { kind: "launch", cwd: "/git/app" }, l, false);
+		submitDraft(
+			draft,
+			{ harness: "claude" },
+			{ kind: "launch", cwd: "/git/app" },
+			l,
+			true,
+		);
+		submitDraft(
+			draft,
+			{ harness: "claude" },
+			{ kind: "launch", cwd: "/git/app" },
+			l,
+			false,
+		);
 
 		expect(l.onCreateAssist).toHaveBeenNthCalledWith(
 			1,
@@ -67,7 +79,7 @@ describe("submitDraft", () => {
 
 		submitDraft(
 			{ ...draft, node: "pc-windows" } as NewSessionDraft,
-			"claude",
+			{ harness: "claude" },
 			{ kind: "launch", cwd: "/git/app" },
 			l,
 			true,
@@ -94,10 +106,10 @@ describe("submitDraft", () => {
 			} as NewSessionDraft;
 			const target = { kind: "launch", cwd: "/git/app" } as const;
 
-			submitDraft(prompt, harness, target, l, true);
+			submitDraft(prompt, { harness }, target, l, true);
 			submitDraft(
 				{ ...prompt, node: "pc" } as NewSessionDraft,
-				harness,
+				{ harness },
 				target,
 				l,
 				false,
@@ -120,4 +132,24 @@ describe("submitDraft", () => {
 			);
 		},
 	);
+
+	it("launches a prompt session on the chosen model", () => {
+		const l = launchers();
+
+		submitDraft(
+			{ ...draft, mode: "prompt", prompt: "go" } as NewSessionDraft,
+			{ harness: "claude", model: "opus" },
+			{ kind: "launch", cwd: "/git/app" },
+			l,
+		);
+
+		expect(l.onCreateHarness).toHaveBeenCalledWith(
+			"claude",
+			"go",
+			"/git/app",
+			undefined,
+			false,
+			"opus",
+		);
+	});
 });

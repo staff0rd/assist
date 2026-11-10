@@ -45,6 +45,17 @@ describe("spawnCreate", () => {
 		);
 	});
 
+	it("carries the dialog's chosen model through to the spawn request", () => {
+		const m = manager({ reason: "no such session" });
+
+		spawnCreate(m, { cwd: "/git/repo", harness: "claude", model: "opus" });
+
+		expect(m.spawn).toHaveBeenCalledWith(
+			expect.objectContaining({ harness: "claude", model: "opus" }),
+			{ launchedFrom: undefined },
+		);
+	});
+
 	it("carries the prompt dropdown's auto mode through to the spawn request", () => {
 		const m = manager({ reason: "no such session" });
 

@@ -1,23 +1,8 @@
-import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
-import {
-	designFeature,
-	sessionFeature,
-} from "../../../shared/harnessAdapters/harnessFeatures";
-import { launchBlocker } from "../../../shared/harnessAdapters/launchBlocker";
 import type { HarnessKind } from "../../../shared/harnesses";
 import { daemonLog } from "./daemonLog";
 import type { SessionManager } from "./SessionManager";
 import { spawnContextFrom } from "./spawnContextFrom";
-
-function sessionBlocker(
-	harness: HarnessKind | undefined,
-	design: boolean,
-): string | undefined {
-	return launchBlocker(
-		harnessAdapter(harness),
-		design ? designFeature : sessionFeature,
-	);
-}
+import { sessionBlocker } from "./sessionBlocker";
 
 export function spawnCreate(
 	m: SessionManager,
@@ -27,10 +12,13 @@ export function spawnCreate(
 	const harness = d.harness as HarnessKind | undefined;
 	const prompt = d.prompt as string | undefined;
 	const auto = d.auto === true;
+	const model = typeof d.model === "string" && d.model ? d.model : undefined;
 	if (design)
 		daemonLog(`create: design session (cwd=${(d.cwd as string) ?? ""})`);
 	if (harness)
-		daemonLog(`create: ${harness} session (cwd=${(d.cwd as string) ?? ""})`);
+		daemonLog(
+			`create: ${harness} session${model ? ` on ${model}` : ""} (cwd=${(d.cwd as string) ?? ""})`,
+		);
 	const joinSessionId = design
 		? undefined
 		: (d.joinSessionId as string | undefined);
@@ -51,6 +39,7 @@ export function spawnCreate(
 			design,
 			auto,
 			harness,
+			model,
 			inPlace: d.inPlace === true,
 		},
 		spawnContextFrom(d),

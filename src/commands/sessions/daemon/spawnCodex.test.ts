@@ -201,6 +201,22 @@ describe("spawnCodex", () => {
 			);
 		});
 
+		it("passes a chosen model as codex's own flag instead of routing through LiteLLM", () => {
+			withConfig({
+				harness: { engine: "claude", codexModel: "gpt-5-codex" },
+				litellm: LITELLM,
+			});
+
+			spawnCodex({ cwd: "/repo", sessionId: "7", model: "gpt-5.5" });
+
+			expect(spawnPtyMock).toHaveBeenCalledWith(
+				["codex", "--no-daemon", "-m", "gpt-5.5", ENV, ...NETWORK],
+				"/repo",
+				"7",
+				{},
+			);
+		});
+
 		it("launches plain codex when LiteLLM is unconfigured", () => {
 			withConfig({ harness: { engine: "claude", codexModel: "gpt-5-codex" } });
 

@@ -12,9 +12,9 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 	const target = useNodeRepoTarget(socket, draft.node, draft.cwd);
 	const defaultMode = useDefaultNewSessionMode(target.cwd, opens);
 	const mode = draft.mode ?? defaultMode?.mode ?? "prompt";
-	const { harness, harnesses } = usePhoneModeHarness(
+	const { harness, harnesses, model } = usePhoneModeHarness(
 		visible ? target.node : undefined,
-		draft.harness,
+		draft,
 		defaultMode,
 		mode,
 	);
@@ -29,6 +29,7 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 		retryMode: defaultMode?.retry,
 		harness,
 		harnesses,
+		model,
 		nodes: visible ? names : [],
 		links: socket.nodes?.links ?? [],
 		canSubmit: modeKnown && (!needsRepo || !!target.cwd),
@@ -36,6 +37,7 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 			submitPhoneDraft(socket, draft, {
 				mode,
 				harness,
+				model: model?.model,
 				cwd: target.cwd,
 				node: visible ? target.node : undefined,
 			}),

@@ -59,6 +59,7 @@ export const claudeAdapter: HarnessAdapter = {
 		cwd,
 		appendSystemPromptFile,
 		auto,
+		model,
 	}) =>
 		spawnClaudePty({
 			prompt,
@@ -68,6 +69,7 @@ export const claudeAdapter: HarnessAdapter = {
 			claudeSessionId: conversationId,
 			appendSystemPromptFile,
 			auto,
+			model,
 		}),
 	oneShot: claudeOneShot,
 	structured: claudeStructuredRun,

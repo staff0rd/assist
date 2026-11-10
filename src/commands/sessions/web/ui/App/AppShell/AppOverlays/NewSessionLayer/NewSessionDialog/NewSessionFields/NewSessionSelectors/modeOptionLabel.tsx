@@ -1,18 +1,13 @@
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Box from "@mui/material/Box";
-import type { HarnessKind } from "../../../../../../../../../../../shared/harnesses";
-import { harnessLabel } from "../../../../../../../../../../../shared/harnessLabel";
 
-export function modeOptionLabel(
-	harness: HarnessKind | undefined,
-	labelled: string,
-) {
+export function modeOptionLabel(suffix: string | undefined, labelled: string) {
 	return (option: string) =>
-		option === labelled && harness ? (
+		option === labelled && suffix ? (
 			<>
 				{option}
 				<Box component="span" sx={{ fontWeight: 400, whiteSpace: "pre" }}>
-					{` · ${harnessLabel(harness)}`}
+					{` · ${suffix}`}
 				</Box>
 				<ArrowDropDownIcon sx={{ fontSize: 18, mr: -0.75 }} />
 			</>

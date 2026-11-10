@@ -9,6 +9,7 @@ type SpawnOpts = {
 	claudeSessionId?: string;
 	appendSystemPromptFile?: string;
 	auto?: boolean;
+	model?: string;
 };
 
 export function spawnClaude(opts: SpawnOpts = {}) {
@@ -20,6 +21,7 @@ function buildArgs(opts: SpawnOpts): string[] {
 	if (opts.appendSystemPromptFile)
 		base.push("--append-system-prompt-file", opts.appendSystemPromptFile);
 	if (opts.auto) base.push("--permission-mode", "auto");
+	if (opts.model) base.push("--model", opts.model);
 	/* why: resuming replays the existing transcript, so the original prompt is
 	 * already in context; an optional `prompt` here is a short nudge that drives
 	 * the interrupted turn to completion (consistent with backlog runs, #404). */

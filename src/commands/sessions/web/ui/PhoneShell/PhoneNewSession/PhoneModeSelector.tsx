@@ -5,6 +5,7 @@ import {
 	type NewSessionMode,
 } from "../../App/AppShell/AppOverlays/NewSessionLayer/newSessionModes";
 import { PhoneSegmented } from "../PhoneSegmented";
+import { PhoneModelSelector } from "./PhoneModelSelector";
 import type { PhoneNewSession } from "./usePhoneNewSession";
 
 const modeOrder: NewSessionMode[] = ["prompt", "draft", "bug", "design"];
@@ -34,6 +35,7 @@ export function PhoneModeSelector({ form }: { form: PhoneNewSession }) {
 					/>
 				</Box>
 			)}
+			{form.model && <PhoneModelSelector model={form.model} />}
 		</>
 	);
 }

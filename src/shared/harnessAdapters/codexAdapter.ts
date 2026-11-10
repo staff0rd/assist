@@ -50,13 +50,21 @@ export const codexAdapter: HarnessAdapter = {
 			sandbox: sandbox(allowEdits),
 			resumeSessionId: conversationId,
 		}),
-	interactive: ({ sessionId, resumeId, prompt, cwd, appendSystemPromptFile }) =>
+	interactive: ({
+		sessionId,
+		resumeId,
+		prompt,
+		cwd,
+		appendSystemPromptFile,
+		model,
+	}) =>
 		spawnCodexPty({
 			prompt,
 			cwd,
 			sessionId,
 			resumeSessionId: resumeId,
 			appendSystemPromptFile,
+			model,
 		}),
 	oneShot: codexOneShot,
 	structured: codexStructuredRun,

@@ -25,11 +25,13 @@ export const newSessionModes = {
 		placeholder: PLACEHOLDER,
 		submitLabel: "Start session",
 		harnessFeature: sessionFeature.id,
+		picksModel: true,
 	},
 	design: {
 		placeholder: "Describe the design task...",
 		submitLabel: "Start design",
 		harnessFeature: designFeature.id,
+		picksModel: true,
 	},
 } satisfies Record<
 	string,
@@ -39,6 +41,7 @@ export const newSessionModes = {
 		autoStartLabel?: string;
 		sessionMode?: SessionMode;
 		harnessFeature?: string;
+		picksModel?: boolean;
 	}
 >;
 
@@ -52,6 +55,11 @@ export function autoStartLabel(mode: NewSessionMode): string | undefined {
 export function harnessFeatureFor(mode: NewSessionMode): string | undefined {
 	const config = newSessionModes[mode];
 	return "harnessFeature" in config ? config.harnessFeature : undefined;
+}
+
+export function picksModel(mode: NewSessionMode): boolean {
+	const config = newSessionModes[mode];
+	return "picksModel" in config && config.picksModel;
 }
 
 export const newSessionModeOrder = Object.keys(

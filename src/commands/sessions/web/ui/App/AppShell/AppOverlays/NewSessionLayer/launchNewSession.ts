@@ -1,8 +1,7 @@
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import type { AssistLaunchMeta } from "../../../../resumeSessionAction";
-import { dispatchMode } from "../../../dispatchMode";
-import { type NewSessionMode, newSessionModes } from "./newSessionModes";
-import { assistMetaFor } from "./assistMetaFor";
+import type { NewSessionMode } from "./newSessionModes";
+import { launchAssistMode } from "./launchAssistMode";
 import { createArgsFor } from "./createArgsFor";
 
 export type NewSessionLaunchers = {
@@ -12,6 +11,7 @@ export type NewSessionLaunchers = {
 		cwd?: string,
 		node?: string,
 		open?: boolean,
+		model?: string,
 	) => void;
 	onCreateHarness: (
 		harness: string,
@@ -19,6 +19,7 @@ export type NewSessionLaunchers = {
 		cwd?: string,
 		node?: string,
 		open?: boolean,
+		model?: string,
 	) => void;
 	onCreateAssist: (
 		args: string[],
@@ -27,9 +28,10 @@ export type NewSessionLaunchers = {
 	) => void;
 };
 
-type NewSessionLaunch = {
+export type NewSessionLaunch = {
 	mode: NewSessionMode;
 	harness: HarnessKind;
+	model?: string;
 	prompt: string;
 	cwd: string;
 	node?: string;
@@ -38,11 +40,20 @@ type NewSessionLaunch = {
 };
 
 export function launchNewSession(
-	{ mode, harness, prompt, cwd, node, autoApprove, open }: NewSessionLaunch,
+	{
+		mode,
+		harness,
+		model,
+		prompt,
+		cwd,
+		node,
+		autoApprove,
+		open,
+	}: NewSessionLaunch,
 	launchers: NewSessionLaunchers,
 ) {
 	const target = cwd || undefined;
-	const createArgs = createArgsFor(node, open);
+	const createArgs = createArgsFor(node, open, model);
 	if (mode === "prompt") {
 		launchers.onCreateHarness(harness, prompt, target, ...createArgs);
 		return;
@@ -51,17 +62,8 @@ export function launchNewSession(
 		launchers.onCreateDesign(harness, prompt, target, ...createArgs);
 		return;
 	}
-	const assistMeta = assistMetaFor(mode, node, autoApprove, open);
-	dispatchMode(
-		newSessionModes[mode].sessionMode,
-		cwd,
-		(args, assistCwd) =>
-			launchers.onCreateAssist(
-				[...args.slice(0, 2), "--harness", harness, ...args.slice(2)],
-				assistCwd,
-				...assistMeta,
-			),
-		() => {},
-		prompt,
+	launchAssistMode(
+		{ mode, harness, prompt, cwd, node, autoApprove, open },
+		launchers.onCreateAssist,
 	);
 }

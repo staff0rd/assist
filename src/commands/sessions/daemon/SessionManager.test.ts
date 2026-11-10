@@ -4,7 +4,7 @@ import type * as makePtyModule from "../../../test/mothers/makePty";
 import { makeSession } from "../../../test/mothers/makeSession";
 import { releaseLock } from "../../backlog/acquireLock";
 import { createAssistSession } from "./createAssistSession";
-import { createRunSession, createSession, type Session } from "./createSession";
+import { createSession, type Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { SESSION_TITLE_MAX_LENGTH } from "./generateSessionTitle";
 import {
@@ -15,11 +15,10 @@ import { restartSession } from "./restartSession";
 import { restoreSession } from "./restoreSession";
 import { SessionManager } from "./SessionManager";
 import { wirePtyEvents } from "./wirePtyEvents";
+import { createRunSession } from "./createRunSession";
 
-vi.mock("./createSession", () => ({
-	createSession: vi.fn(),
-	createRunSession: vi.fn(),
-}));
+vi.mock("./createSession", () => ({ createSession: vi.fn() }));
+vi.mock("./createRunSession", () => ({ createRunSession: vi.fn() }));
 vi.mock("./resumeSession", () => ({ resumeSession: vi.fn() }));
 vi.mock("./createAssistSession", () => ({ createAssistSession: vi.fn() }));
 vi.mock("./restoreSession", () => ({ restoreSession: vi.fn() }));

@@ -90,6 +90,7 @@ export type Session = {
 	divergenceEscalation?: boolean;
 	design?: boolean;
 	auto?: boolean;
+	model?: string;
 	verifying?: boolean;
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;

@@ -10,8 +10,15 @@ const launches = {
 
 export const harnessDefaultsConfigHelp: ConfigHelpEntry[] = Object.entries(
 	launches,
-).map(([type, launch]) => ({
-	key: `harness.defaults.${type}.harness`,
-	setter: `assist config set harness.defaults.${type}.harness <claude|codex|pi>`,
-	note: `harness for ${launch} when none is picked; unset falls back to harness.engine`,
-}));
+).flatMap(([type, launch]) => [
+	{
+		key: `harness.defaults.${type}.harness`,
+		setter: `assist config set harness.defaults.${type}.harness <claude|codex|pi>`,
+		note: `harness for ${launch} when none is picked; unset falls back to harness.engine`,
+	},
+	{
+		key: `harness.defaults.${type}.model`,
+		setter: `assist config set harness.defaults.${type}.model <model>`,
+		note: `model for ${launch} on the type's harness; unset uses the harness's own default`,
+	},
+]);

@@ -12,10 +12,11 @@ export function useHarnessMenu(
 	draft: NewSessionDraft,
 	harnesses: HarnessKind[],
 	focus: ReturnType<typeof useDraftFocus>,
+	pickModel: boolean,
 ) {
 	const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 	const pickable = harnessFeatureFor(draft.mode) !== undefined;
-	const pickHarness = pickable && harnesses.length > 1;
+	const pickHarness = pickable && (harnesses.length > 1 || pickModel);
 	const open = () => setAnchor(checkedRadio(focus.modeRef.current) ?? null);
 	return {
 		anchor,

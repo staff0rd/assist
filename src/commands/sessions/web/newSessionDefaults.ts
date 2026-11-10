@@ -40,5 +40,5 @@ export function newSessionDefaults(
 		respondJson(res, 422, { error: `Invalid config ${resolved.error}` });
 		return;
 	}
-	respondJson(res, 200, { mode: parsed.data, harnesses: resolved.harnesses });
+	respondJson(res, 200, { mode: parsed.data, ...resolved });
 }

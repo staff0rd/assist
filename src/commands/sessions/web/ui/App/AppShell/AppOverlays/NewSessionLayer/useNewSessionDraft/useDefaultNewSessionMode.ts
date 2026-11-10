@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import type { NewSessionMode } from "../newSessionModes";
 import { fetchMode, type Outcome } from "./fetchMode";
 import type { ModeHarnesses } from "./parseModeHarnesses";
+import type { ModeModels } from "./parseModeModels";
 
 export type LoadedDefaultMode = {
 	mode: NewSessionMode;
 	harnesses: ModeHarnesses;
+	models?: ModeModels;
 	pending: boolean;
 	error?: string;
 	retry?: () => void;
@@ -36,6 +38,7 @@ export function useDefaultNewSessionMode(
 	return {
 		mode: "mode" in outcome ? outcome.mode : "prompt",
 		harnesses: "harnesses" in outcome ? outcome.harnesses : {},
+		models: "models" in outcome ? outcome.models : {},
 		pending:
 			loaded.cwd !== cwd ||
 			loaded.opens !== opens ||

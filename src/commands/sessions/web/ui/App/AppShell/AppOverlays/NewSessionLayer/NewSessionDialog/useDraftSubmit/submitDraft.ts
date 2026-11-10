@@ -9,9 +9,11 @@ import type { useDraftRepos } from "../useDraftRepos";
 
 type DraftTarget = ReturnType<typeof useDraftRepos>["target"];
 
+export type HarnessLaunch = { harness: HarnessKind; model?: string };
+
 export function submitDraft(
 	draft: NewSessionDraft,
-	harness: HarnessKind,
+	{ harness, model }: HarnessLaunch,
 	target: DraftTarget,
 	launchers: NewSessionLaunchers,
 	shiftClicked = false,
@@ -25,6 +27,7 @@ export function submitDraft(
 		{
 			mode: draft.mode,
 			harness,
+			model,
 			prompt: draft.prompt,
 			cwd: target.cwd,
 			node: draft.node,

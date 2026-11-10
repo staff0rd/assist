@@ -15,12 +15,13 @@ export type CreateSpawnRequest = {
 	design?: boolean;
 	auto?: boolean;
 	harness?: HarnessKind;
+	model?: string;
 	inPlace?: boolean;
 };
 
 export function spawnInTree(
 	ctx: TreeSpawnContext,
-	{ prompt, cwd, design, auto, harness, inPlace }: CreateSpawnRequest,
+	{ prompt, cwd, design, auto, harness, model, inPlace }: CreateSpawnRequest,
 	context?: SpawnContext,
 ): string {
 	return allocateAndBind(
@@ -33,6 +34,7 @@ export function spawnInTree(
 				design,
 				auto,
 				harness,
+				model,
 				holdPty: holdUntilSeeded,
 			}),
 		{ inPlace },

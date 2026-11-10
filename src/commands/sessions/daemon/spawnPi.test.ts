@@ -33,6 +33,17 @@ describe("spawnPi", () => {
 		);
 	});
 
+	it("launches on the chosen model", () => {
+		spawnPi({ prompt: "go", model: "anthropic/opus" });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["pi", ...REGULAR_TUI, "--model", "anthropic/opus", "go"],
+			undefined,
+			undefined,
+			{ ASSIST_HARNESS: "pi" },
+		);
+	});
+
 	it("starts with no options", () => {
 		spawnPi();
 

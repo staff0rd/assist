@@ -8,6 +8,7 @@ import type { usePhoneDraftState } from "./usePhoneDraftState";
 type Launch = {
 	mode: NewSessionMode;
 	harness: HarnessKind;
+	model: string | undefined;
 	cwd: string;
 	node: string | undefined;
 };
@@ -24,4 +25,5 @@ export function submitPhoneDraft(
 	draft.setPrompt("");
 	draft.setMode(undefined);
 	draft.setHarness(undefined);
+	draft.setPickedModel(undefined);
 }

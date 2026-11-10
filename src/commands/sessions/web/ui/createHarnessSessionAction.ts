@@ -7,12 +7,14 @@ function sendCreate(
 	cwd?: string,
 	node?: string,
 	open?: boolean,
+	model?: string,
 ) {
 	send({
 		type: "create",
 		prompt: prompt || undefined,
 		cwd,
 		...extra,
+		...(model ? { model } : {}),
 		...(node ? { node } : {}),
 		...(open ? { open: true } : {}),
 	});
@@ -25,7 +27,9 @@ export function createDesignSessionAction(send: SendFn) {
 		cwd?: string,
 		node?: string,
 		open?: boolean,
-	) => sendCreate(send, { design: true, harness }, prompt, cwd, node, open);
+		model?: string,
+	) =>
+		sendCreate(send, { design: true, harness }, prompt, cwd, node, open, model);
 }
 
 export function createHarnessSessionAction(send: SendFn) {
@@ -35,5 +39,7 @@ export function createHarnessSessionAction(send: SendFn) {
 		cwd?: string,
 		node?: string,
 		open?: boolean,
-	) => sendCreate(send, { harness, auto: true }, prompt, cwd, node, open);
+		model?: string,
+	) =>
+		sendCreate(send, { harness, auto: true }, prompt, cwd, node, open, model);
 }

@@ -94,6 +94,29 @@ describe("newSessionDefaults", () => {
 				prompt: "codex",
 				design: "codex",
 			},
+			models: {},
+		});
+	});
+
+	it("returns each dialog type's configured model", () => {
+		writeFileSync(
+			globalConfig,
+			"harness:\n  defaults:\n    draft:\n      model: fable\n    prompt:\n      model: opus\n    run:\n      model: sonnet\n",
+		);
+
+		expect(modeFor(other)).toMatchObject({
+			models: { draft: "fable", prompt: "opus" },
+		});
+	});
+
+	it("names the key when a type's model is invalid", () => {
+		writeFileSync(
+			globalConfig,
+			"harness:\n  defaults:\n    design:\n      model: 3\n",
+		);
+
+		expect(modeFor(other)).toEqual({
+			error: expect.stringContaining("harness.defaults.design.model"),
 		});
 	});
 

@@ -1,24 +1,7 @@
-import { useState } from "react";
-import type { HarnessKind } from "../../../../../../shared/harnesses";
 import { usePersistedPrompt } from "../../usePersistedPrompt";
-import type { NewSessionMode } from "../../App/AppShell/AppOverlays/NewSessionLayer/newSessionModes";
+import { useDraftChoices } from "../../App/AppShell/AppOverlays/NewSessionLayer/useDraftChoices";
 
 export function usePhoneDraftState() {
 	const [prompt, setPrompt] = usePersistedPrompt("phone-new-session");
-	const [mode, setMode] = useState<NewSessionMode>();
-	const [harness, setHarness] = useState<HarnessKind>();
-	const [node, setNode] = useState<string>();
-	const [cwd, setCwd] = useState<string>();
-	return {
-		prompt,
-		mode,
-		harness,
-		node,
-		cwd,
-		setPrompt,
-		setMode,
-		setHarness,
-		setNode,
-		setCwd,
-	};
+	return { prompt, setPrompt, ...useDraftChoices() };
 }

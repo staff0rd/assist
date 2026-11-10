@@ -6,12 +6,7 @@ import { broadcastSessions } from "./broadcastSessions";
 import { SessionIo } from "./SessionIo";
 import { ClientHub, persistUsagePeak } from "./ClientHub";
 import type { AssistSessionMeta } from "./createAssistSession";
-import {
-	createRunSession,
-	type RunSpawnRequest,
-	type Session,
-	type SessionInfo,
-} from "./createSession";
+import type { Session, SessionInfo } from "./createSession";
 import { startAutoUpdate } from "./autoUpdate/startAutoUpdate";
 import { closeSession } from "./closeSession";
 import { drainSessions } from "./drainSessions";
@@ -46,6 +41,7 @@ import {
 	type TreeSpawnContext,
 } from "./worktree/spawnInTree";
 import { resumeInTree } from "./worktree/resumeInTree";
+import { createRunSession, type RunSpawnRequest } from "./createRunSession";
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
