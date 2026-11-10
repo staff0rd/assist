@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
 import { harnesses } from "../../shared/harnesses";
+import { CodexRpcError } from "./CodexRpcError";
 import {
 	type CodexAppServer,
 	createCodexRpcClient,
@@ -38,8 +39,14 @@ export async function openCodexAppServer(
 		});
 	} catch (error) {
 		server.close();
-		throw error;
+		throw startupError(error);
 	}
 	child.stdin.write(`${JSON.stringify({ method: "initialized" })}\n`);
 	return server;
+}
+
+function startupError(error: unknown): unknown {
+	if (error instanceof CodexRpcError) return error;
+	if (!(error instanceof Error) || "code" in error) return error;
+	return new CodexRpcError("initialize", -1, error.message);
 }

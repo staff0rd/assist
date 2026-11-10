@@ -9,7 +9,9 @@ export function watchCodexAppServer(
 		stderr += chunk;
 	});
 	child.on("error", fail);
-	child.stdin.on("error", fail);
+	/* why: a codex that exits at startup also breaks the stdin pipe (EPIPE), and
+	 * that error can arrive first; the exit handler carries the real cause. */
+	child.stdin.on("error", () => {});
 	child.on("exit", (code) =>
 		fail(
 			new Error(
