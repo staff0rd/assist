@@ -1,9 +1,8 @@
+import { isReviewPhase } from "../isReviewPhase";
 import type { SessionInfo } from "../types";
 
-export function reviewPhaseLabel({
-	activity,
-}: SessionInfo): string | undefined {
-	if (activity?.kind !== "backlog" || !activity.phase) return undefined;
-	if (activity.phase !== activity.totalPhases) return undefined;
+export function reviewPhaseLabel(session: SessionInfo): string | undefined {
+	const { activity } = session;
+	if (activity?.kind !== "backlog" || !isReviewPhase(session)) return undefined;
 	return `${activity.phase}/${activity.totalPhases}`;
 }

@@ -1,12 +1,11 @@
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { statusColors } from "../App/statusColors";
 import { statusGlyph } from "../statusGlyph";
 import type { SessionInfo } from "../types";
-import { groupSessionsByStatus } from "./groupSessionsByStatus";
-import { PhoneDoneTally } from "./PhoneDoneTally";
+import { groupSessionsByStatus, needsAttention } from "./groupSessionsByStatus";
 import { phoneEmptySx } from "./phoneEmptySx";
-import { PhoneSessionRow } from "./PhoneSessionRow";
 import { PhoneSessionSection } from "./PhoneSessionSection";
+import { CollapsedSessions } from "./CollapsedSessions";
 
 export function PhoneSessionGroups({
 	sessions,
@@ -15,10 +14,9 @@ export function PhoneSessionGroups({
 	sessions: SessionInfo[];
 	localNode: string | undefined;
 }) {
-	const [doneExpanded, setDoneExpanded] = useState(false);
 	if (sessions.length === 0) return <Box sx={phoneEmptySx}>No sessions</Box>;
 
-	const { questions, needsYou, running, done } =
+	const { questions, needsYou, running, review, done } =
 		groupSessionsByStatus(sessions);
 	return (
 		<>
@@ -39,17 +37,21 @@ export function PhoneSessionGroups({
 				sessions={running}
 				localNode={localNode}
 			/>
-			{done.length > 0 && (
-				<PhoneDoneTally
-					count={done.length}
-					expanded={doneExpanded}
-					onToggle={() => setDoneExpanded((v) => !v)}
-				/>
-			)}
-			{doneExpanded &&
-				done.map((s) => (
-					<PhoneSessionRow key={s.id} session={s} localNode={localNode} />
-				))}
+			<CollapsedSessions
+				label="Review"
+				glyph="◇"
+				glyphColor="primary.main"
+				sessions={review}
+				needsYou={review.filter(needsAttention).length}
+				localNode={localNode}
+			/>
+			<CollapsedSessions
+				label="Done"
+				glyph={statusGlyph.done}
+				glyphColor={statusColors.done}
+				sessions={done}
+				localNode={localNode}
+			/>
 		</>
 	);
 }

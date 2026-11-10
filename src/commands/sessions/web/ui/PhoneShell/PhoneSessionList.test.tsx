@@ -100,4 +100,42 @@ describe("PhoneSessionList", () => {
 		fireEvent.click(screen.getByRole("button", { name: /Done/ }));
 		expect(screen.getAllByTestId("phone-session-row")).toHaveLength(2);
 	});
+
+	it("collapses review-phase sessions into a Review tally between Running and Done", () => {
+		const activity = {
+			kind: "backlog" as const,
+			itemId: 1,
+			startedAt: 0,
+			phase: 2,
+			totalPhases: 2,
+		};
+		renderList([
+			session("run", "running"),
+			session("rev", "running", { activity }),
+			session("blocked", "waiting", { activity }),
+			session("d1", "done", { activity }),
+		]);
+
+		expect(rowTitles()).toEqual([expect.stringContaining("Session run")]);
+		expect(screen.queryByText(/Needs you/)).toBeNull();
+		const buttons = screen.getAllByRole("button", { name: /Review|Done/ });
+		expect(buttons.map((b) => b.textContent)).toEqual([
+			expect.stringMatching(/^◇Review21 needs you/),
+			expect.stringMatching(/^✓Done1/),
+		]);
+
+		fireEvent.click(buttons[0]);
+		expect(rowTitles().slice(1)).toEqual([
+			expect.stringContaining("Session rev"),
+			expect.stringContaining("Session blocked"),
+		]);
+		fireEvent.click(buttons[0]);
+		expect(rowTitles()).toHaveLength(1);
+	});
+
+	it("hides the Review tally when no session is in review", () => {
+		renderList([session("run", "running")]);
+
+		expect(screen.queryByRole("button", { name: /Review/ })).toBeNull();
+	});
 });

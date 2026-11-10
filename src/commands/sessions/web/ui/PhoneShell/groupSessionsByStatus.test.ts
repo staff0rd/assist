@@ -120,4 +120,40 @@ describe("groupSessionsByStatus", () => {
 		expect(ids(groups.questions)).toEqual(["a"]);
 		expect(ids(groups.needsYou)).toEqual([]);
 	});
+
+	it("puts non-done review-phase sessions in Review ahead of their status", () => {
+		const review = {
+			activity: {
+				kind: "backlog" as const,
+				itemId: 1,
+				startedAt: 0,
+				phase: 2,
+				totalPhases: 2,
+			},
+		};
+		const groups = groupSessionsByStatus([
+			session("a", "running", review),
+			session("b", "waiting", review),
+			session("c", "running", {
+				...review,
+				pendingPrPreview: {
+					requestId: "r",
+					title: "Question",
+					body: "",
+					prNumber: null,
+					kind: "question",
+				},
+			}),
+			session("d", "done", review),
+			session("e", "running", {
+				activity: { ...review.activity, phase: 1 },
+			}),
+		]);
+
+		expect(ids(groups.review)).toEqual(["a", "b", "c"]);
+		expect(ids(groups.questions)).toEqual([]);
+		expect(ids(groups.needsYou)).toEqual([]);
+		expect(ids(groups.running)).toEqual(["e"]);
+		expect(ids(groups.done)).toEqual(["d"]);
+	});
 });

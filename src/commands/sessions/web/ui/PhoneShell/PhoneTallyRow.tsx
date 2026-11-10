@@ -3,8 +3,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import type { Theme } from "@mui/material/styles";
-import { statusColors } from "../App/statusColors";
-import { statusGlyph } from "../statusGlyph";
 
 const tallySx = {
 	width: "100%",
@@ -19,25 +17,42 @@ const tallySx = {
 	borderColor: (t: Theme) => t.tokens.color.lineSoft,
 } as const;
 
-export function PhoneDoneTally({
+export function PhoneTallyRow({
+	label,
+	glyph,
+	glyphColor,
 	count,
+	needsYou = 0,
 	expanded,
 	onToggle,
 }: {
+	label: string;
+	glyph: string;
+	glyphColor: string;
 	count: number;
+	needsYou?: number;
 	expanded: boolean;
 	onToggle: () => void;
 }) {
 	return (
 		<ButtonBase sx={tallySx} onClick={onToggle} aria-expanded={expanded}>
 			<Box component="span" sx={{ display: "flex", gap: 1 }}>
-				<Box component="span" sx={{ color: statusColors.done }}>
-					{statusGlyph.done}
+				<Box component="span" sx={{ color: glyphColor }}>
+					{glyph}
 				</Box>
-				Done
+				{label}
 				<Box component="span" sx={{ fontFamily: "fontFamilyMono" }}>
 					{count}
 				</Box>
+				{needsYou > 0 && (
+					<Box
+						component="span"
+						data-testid="tally-needs-you"
+						sx={{ color: "warning.main" }}
+					>
+						{`${needsYou} need${needsYou === 1 ? "s" : ""} you`}
+					</Box>
+				)}
 			</Box>
 			{expanded ? (
 				<ExpandLessIcon fontSize="small" />

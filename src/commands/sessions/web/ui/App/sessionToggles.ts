@@ -1,3 +1,4 @@
+import { isReviewPhase } from "../isReviewPhase";
 import { sessionType } from "./sessionType";
 import type { SessionInfo } from "../types";
 
@@ -22,12 +23,9 @@ export function sessionToggles(session: SessionInfo): SessionToggle[] {
 		});
 	}
 
-	const { activity } = session;
-	if (activity?.kind === "backlog") {
-		const inReviewPhase =
-			activity.phase !== undefined && activity.phase === activity.totalPhases;
+	if (session.activity?.kind === "backlog") {
 		const checked = session.autoAdvance ?? true;
-		if (!inReviewPhase)
+		if (!isReviewPhase(session))
 			toggles.push({
 				key: "autoAdvance",
 				label: "Continue",
