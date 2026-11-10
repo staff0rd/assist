@@ -3,6 +3,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import type { Theme } from "@mui/material/styles";
+import { tokenBadgeSx } from "../designSystem/tokenBadgeSx";
 
 const tallySx = {
 	width: "100%",
@@ -16,6 +17,8 @@ const tallySx = {
 	borderBottom: 1,
 	borderColor: (t: Theme) => t.tokens.color.lineSoft,
 } as const;
+
+const needsYouSx = [tokenBadgeSx("warning"), { alignSelf: "center" }];
 
 export function PhoneTallyRow({
 	label,
@@ -45,11 +48,7 @@ export function PhoneTallyRow({
 					{count}
 				</Box>
 				{needsYou > 0 && (
-					<Box
-						component="span"
-						data-testid="tally-needs-you"
-						sx={{ color: "warning.main" }}
-					>
+					<Box component="span" data-testid="tally-needs-you" sx={needsYouSx}>
 						{`${needsYou} need${needsYou === 1 ? "s" : ""} you`}
 					</Box>
 				)}
