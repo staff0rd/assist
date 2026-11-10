@@ -1,3 +1,10 @@
+## [0.1112.7](https://github.com/staff0rd/assist/compare/v0.1112.6...v0.1112.7) (2026-11-10)
+
+
+### Bug Fixes
+
+* start plan run in the item's repo ([465d7e7](https://github.com/staff0rd/assist/commit/465d7e706804559a428313b6afdc9efea914341c))
+
 ## [0.1112.6](https://github.com/staff0rd/assist/compare/v0.1112.5...v0.1112.6) (2026-11-10)
 
 
