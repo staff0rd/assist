@@ -22,6 +22,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"oneShot.text": supported,
 	"skills.native": supported,
 	"systemPrompt.append": supported,
+	"tasks.notifyOnExit": supported,
 	"tools.restrict": supported,
 	"transcript.read": supported,
 	"usage.rateLimits": supported,

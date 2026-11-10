@@ -28,6 +28,10 @@ vi.mock("./spawnPty", () => ({
 
 const spawnPtyMock = spawnPty as unknown as ReturnType<typeof vi.fn>;
 
+vi.mock("../../../shared/trustCodexProject", () => ({
+	trustCodexProject: vi.fn(),
+}));
+
 vi.mock("../../../shared/codexSessionEnvArgs", () => ({
 	codexSessionEnvArgs: vi.fn(() => ["<session-env>"]),
 }));

@@ -3,7 +3,9 @@ import { codexIsolatedHookArgs } from "../../../shared/codexIsolatedHookArgs";
 import { codexSandboxNetworkArgs } from "../../../shared/codexSandboxNetworkArgs";
 import { codexSessionEnvArgs } from "../../../shared/codexSessionEnvArgs";
 import { codexDeveloperInstructionsArgs } from "./codexDeveloperInstructionsArgs";
+import { daemonLog } from "./daemonLog";
 import { spawnPty } from "./spawnPty";
+import { trustCodexProject } from "../../../shared/trustCodexProject";
 
 type SpawnOpts = {
 	prompt?: string;
@@ -14,6 +16,8 @@ type SpawnOpts = {
 };
 
 export function spawnCodex(opts: SpawnOpts = {}) {
+	const trusted = trustCodexProject(opts.cwd);
+	if (trusted) daemonLog(`codex: trusted ${trusted} in config.toml`);
 	const override = buildHarnessCodexArgs();
 	const sessionEnv = codexSessionEnvArgs({
 		ASSIST_SESSION: "1",

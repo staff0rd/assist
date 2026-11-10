@@ -11,6 +11,8 @@ export const capabilityDefinitions = {
 		"Appends a workflow's system prompt (e.g. the vendored design system prompt for design mode) to the harness's own instructions at launch and on resume, so the session adopts it without the agent reading a file first.",
 	"artifacts.publish":
 		"Publishes an HTML page as a shareable claude.ai artifact link, which `assist ask-design` opens in the preview pane for design review rounds.",
+	"tasks.notifyOnExit":
+		"Runs a shell command in the background after the agent ends its turn and wakes the agent with the command's output when it exits, so a skill such as review-high-level can hand the turn back while an assist command waits on the user.",
 	"transcript.read":
 		"Exposes the conversation's on-disk transcript as normalized events (user and assistant messages, tool calls with their operations, tool results, timestamps and turn lifecycle), so message previews, status reconciliation, restore status and transcript titles work without assist parsing the harness's format.",
 	"oneShot.text":

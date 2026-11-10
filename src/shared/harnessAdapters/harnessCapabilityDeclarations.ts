@@ -12,6 +12,7 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.relocate": supported,
 		"conversation.preassignId": supported,
 		"systemPrompt.append": supported,
+		"tasks.notifyOnExit": supported,
 		"artifacts.publish": supported,
 		"transcript.read": supported,
 		"oneShot.text": supported,
@@ -34,6 +35,11 @@ export const harnessCapabilityDeclarations: Record<
 			"assist binds the Codex conversation id from the rollout after launch",
 		),
 		"systemPrompt.append": supported,
+		"tasks.notifyOnExit": unsupported(
+			"Codex runs a background command in an exec session that reports nothing back once the turn ends, so review-high-level never sees the slicing request or the verdict",
+			"run the high-level review on Claude",
+			"a1573",
+		),
 		"artifacts.publish": unsupported(
 			"Codex has no tool that publishes a claude.ai artifact, and assist ask-design reviews only artifact links",
 			"design in Codex and deliver the HTML file, then review it in chat; start the design session with Claude for preview-pane review rounds",
@@ -87,6 +93,11 @@ export const harnessCapabilityDeclarations: Record<
 			"assist has not verified a pi flag that appends a system prompt at launch and on resume",
 			"start design sessions with Claude or Codex, or run /design inside a pi session to read the design prompt from disk",
 			"a696",
+		),
+		"tasks.notifyOnExit": unsupported(
+			"assist has not verified a pi tool that wakes the agent when a background command exits, so review-high-level would never see the slicing request or the verdict",
+			"run the high-level review on Claude",
+			"a1573",
 		),
 		"artifacts.publish": unsupported(
 			"pi has no tool that publishes a claude.ai artifact, and assist ask-design reviews only artifact links",

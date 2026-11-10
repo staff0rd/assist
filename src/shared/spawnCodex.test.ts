@@ -25,6 +25,8 @@ vi.mock("./spawnInherit", () => ({
 
 const spawnInheritMock = spawnInherit as unknown as ReturnType<typeof vi.fn>;
 
+vi.mock("./trustCodexProject", () => ({ trustCodexProject: vi.fn() }));
+
 vi.mock("./codexSessionEnvArgs", () => ({
 	codexSessionEnvArgs: vi.fn(() => ["<session-env>"]),
 }));

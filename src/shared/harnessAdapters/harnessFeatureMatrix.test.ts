@@ -54,7 +54,7 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	reviewApply: { claude: true, codex: true, pi: true, fake: true },
 	reviewBacklog: { claude: true, codex: true, pi: true, fake: true },
 	reviewCheckout: { claude: true, codex: true, pi: true, fake: true },
-	highLevelReview: { claude: true, codex: true, pi: true, fake: true },
+	highLevelReview: { claude: true, codex: false, pi: false, fake: true },
 	highLevelGlobs: { claude: true, codex: true, pi: false, fake: true },
 	fixConflict: { claude: true, codex: true, pi: true, fake: true },
 	reviewPrComments: { claude: true, codex: true, pi: true, fake: true },

@@ -273,15 +273,16 @@ describe("review", () => {
 			);
 		});
 
-		it("should run the review-high-level skill natively on Codex", async () => {
+		it("should refuse Codex, which never sees the review command exit", async () => {
 			await review({ highLevel: true, number: "123", harness: "codex" });
 
 			expect(mockSpawnClaude).not.toHaveBeenCalled();
-			expect(mockSpawnCodex).toHaveBeenCalledWith("123", {
-				cwd: process.cwd(),
-				sandbox: "workspace-write",
-				skill: "review-high-level",
-			});
+			expect(mockSpawnCodex).not.toHaveBeenCalled();
+			expect(mockError).toHaveBeenCalledWith(
+				expect.stringContaining("High-level review is unavailable on Codex"),
+			);
+			expect(process.exitCode).toBe(1);
+			process.exitCode = undefined;
 		});
 	});
 

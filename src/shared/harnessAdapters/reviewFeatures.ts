@@ -40,7 +40,7 @@ export const reviewCheckoutFeature: HarnessFeature = {
 export const highLevelReviewFeature: HarnessFeature = {
 	id: "highLevelReview",
 	label: "High-level review",
-	requires: ["skills.native", ...editEnforcement],
+	requires: ["skills.native", "tasks.notifyOnExit", ...editEnforcement],
 };
 
 export const highLevelGlobsFeature: HarnessFeature = {

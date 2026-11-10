@@ -5,6 +5,7 @@ import { codexSessionEnvArgs } from "./codexSessionEnvArgs";
 import { harnesses } from "./harnesses";
 import { neutralizeCodexSkillMentions } from "./neutralizeCodexSkillMentions";
 import { type SpawnResult, spawnInherit } from "./spawnInherit";
+import { trustCodexProject } from "./trustCodexProject";
 
 export function spawnCodex(
 	prompt: string,
@@ -16,6 +17,7 @@ export function spawnCodex(
 	} = {},
 ): SpawnResult {
 	const cwd = options.cwd ?? process.cwd();
+	trustCodexProject(cwd);
 	const text = [
 		options.skill && `$${options.skill}`,
 		prompt && neutralizeCodexSkillMentions(prompt),
