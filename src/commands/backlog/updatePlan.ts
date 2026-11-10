@@ -1,10 +1,10 @@
 import chalk from "chalk";
 import { formatItemId } from "./formatItemId";
-import { startProposedRun } from "./propose/startProposedRun";
 import { findOneItem } from "./shared";
 import { readPlanUpdate } from "./updatePlan/readPlanUpdate";
 import { replacePlan } from "./updatePlan/replacePlan";
 import { reviewPlanUpdate } from "./updatePlan/reviewPlanUpdate";
+import { startPlanRun } from "./updatePlan/startPlanRun";
 
 export async function updatePlan(
 	id: string,
@@ -25,5 +25,5 @@ export async function updatePlan(
 			`Replaced the plan on item ${formatItemId(item.id)} with ${phases.length} phase${phases.length === 1 ? "" : "s"}.`,
 		),
 	);
-	if (approval.autostart) await startProposedRun(item.id, approval.startOn);
+	await startPlanRun(item, approval);
 }

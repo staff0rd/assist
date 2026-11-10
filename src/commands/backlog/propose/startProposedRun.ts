@@ -6,12 +6,13 @@ import { formatItemId } from "../formatItemId";
 export function startProposedRun(
 	id: number,
 	startOn?: PreviewStartTarget,
+	cwd: string = process.cwd(),
 ): Promise<void> {
 	const itemId = formatItemId(id);
 	const args = ["backlog", "run", itemId];
 	return startChainedSession(`a backlog run session for ${itemId}`, () =>
 		startOn
 			? requestAssistSession(args, startOn.cwd, { node: startOn.node })
-			: requestAssistSession(args, process.cwd()),
+			: requestAssistSession(args, cwd),
 	);
 }

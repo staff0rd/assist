@@ -23,6 +23,13 @@ const mockFindOneItem = findOneItem as unknown as MockInstance;
 
 vi.mock("./shared", () => ({
 	findOneItem: vi.fn(),
+	getOrigin: () => "test",
+}));
+
+const mockResolveRepoLocation = vi.fn();
+
+vi.mock("./resolveRepoLocation", () => ({
+	resolveRepoLocation: (...args: unknown[]) => mockResolveRepoLocation(...args),
 }));
 
 const mockRequestAssistSession = vi.fn();
@@ -41,10 +48,10 @@ let orm: Db;
 let close: () => Promise<void>;
 let logSpy: MockInstance<typeof console.log>;
 
-async function seedItem(currentPhase?: number): Promise<void> {
+async function seedItem(currentPhase?: number, origin = "test"): Promise<void> {
 	await orm.insert(items).values({
 		id: 1,
-		origin: "test",
+		origin,
 		name: "Bulk plan changes",
 		status: currentPhase === undefined ? "todo" : "in-progress",
 		currentPhase: currentPhase ?? null,
@@ -261,6 +268,44 @@ describe("update-plan inside a web session", () => {
 			["backlog", "run", "a1"],
 			String.raw`C:\git\repo`,
 			{ node: "win" },
+		);
+	});
+
+	it("starts an item from another repo in that repo's clone", async () => {
+		await seedItem(undefined, "github.com/me/other");
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+		});
+		mockResolveRepoLocation.mockReturnValue({ cwd: "/git/other" });
+		mockRequestAssistSession.mockResolvedValue("8");
+
+		await updatePlan("a1", { json: writePayload(restructured) });
+
+		expect(mockResolveRepoLocation).toHaveBeenCalledWith(
+			"github.com/me/other",
+			undefined,
+			expect.any(String),
+		);
+		expect(mockRequestAssistSession).toHaveBeenCalledWith(
+			["backlog", "run", "a1"],
+			"/git/other",
+		);
+	});
+
+	it("starts no run when another repo's item has no clone here", async () => {
+		await seedItem(undefined, "github.com/me/other");
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+		});
+		mockResolveRepoLocation.mockReturnValue({ cloneTarget: "/git/other" });
+
+		await updatePlan("a1", { json: writePayload(restructured) });
+
+		expect(mockRequestAssistSession).not.toHaveBeenCalled();
+		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
+			"Not starting a run: no clone of github.com/me/other was found.",
 		);
 	});
 
