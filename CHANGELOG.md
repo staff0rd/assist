@@ -1,3 +1,10 @@
+## [0.1112.2](https://github.com/staff0rd/assist/compare/v0.1112.1...v0.1112.2) (2026-11-10)
+
+
+### Bug Fixes
+
+* pre-trust Assist's Codex hooks ([044a773](https://github.com/staff0rd/assist/commit/044a773b42d95f1cf117264089c3da24f2ad23ba))
+
 ## [0.1112.1](https://github.com/staff0rd/assist/compare/v0.1112.0...v0.1112.1) (2026-11-10)
 
 
