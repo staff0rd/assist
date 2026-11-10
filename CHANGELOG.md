@@ -1,3 +1,10 @@
+## [0.1112.8](https://github.com/staff0rd/assist/compare/v0.1112.7...v0.1112.8) (2026-11-10)
+
+
+### Bug Fixes
+
+* preview question options without answering ([aa9efe4](https://github.com/staff0rd/assist/commit/aa9efe4bc32b01cc0e547194c3ee360ca8e85024))
+
 ## [0.1112.7](https://github.com/staff0rd/assist/compare/v0.1112.6...v0.1112.7) (2026-11-10)
 
 
