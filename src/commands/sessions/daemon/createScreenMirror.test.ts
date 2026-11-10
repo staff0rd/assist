@@ -30,4 +30,20 @@ describe("createScreenMirror", () => {
 
 		expect(screen.snapshot()).toBe("one\r\ntwo");
 	});
+
+	it("restores SGR mouse encoding alongside mouse tracking", async () => {
+		const screen = createScreenMirror(40, 5);
+		screen.write("\x1b[?1002h\x1b[?1006h");
+		await settle();
+
+		expect(screen.snapshot()).toContain("\x1b[?1002h\x1b[?1006h");
+	});
+
+	it("drops SGR mouse encoding once the app resets it", async () => {
+		const screen = createScreenMirror(40, 5);
+		screen.write("\x1b[?1006h\x1b[?1006l");
+		await settle();
+
+		expect(screen.snapshot()).not.toContain("1006");
+	});
 });
