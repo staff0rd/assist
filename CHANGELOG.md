@@ -1,3 +1,10 @@
+## [0.1112.11](https://github.com/staff0rd/assist/compare/v0.1112.10...v0.1112.11) (2026-11-10)
+
+
+### Bug Fixes
+
+* show GitHub previews as questions ([ba520e9](https://github.com/staff0rd/assist/commit/ba520e99209e5f53db1c31c4b66df06210827b1d))
+
 ## [0.1112.10](https://github.com/staff0rd/assist/compare/v0.1112.9...v0.1112.10) (2026-11-10)
 
 
