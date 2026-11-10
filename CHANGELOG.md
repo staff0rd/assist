@@ -1,3 +1,10 @@
+## [0.1112.4](https://github.com/staff0rd/assist/compare/v0.1112.3...v0.1112.4) (2026-11-10)
+
+
+### Bug Fixes
+
+* explain outdated Codex trust failure ([f5962cf](https://github.com/staff0rd/assist/commit/f5962cfe17ca564f7ef23530ec3f2c950ac067e4))
+
 ## [0.1112.3](https://github.com/staff0rd/assist/compare/v0.1112.2...v0.1112.3) (2026-11-10)
 
 
