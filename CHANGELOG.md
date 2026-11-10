@@ -1,3 +1,10 @@
+## [0.1112.6](https://github.com/staff0rd/assist/compare/v0.1112.5...v0.1112.6) (2026-11-10)
+
+
+### Bug Fixes
+
+* start approved run in the item's repo ([07e3d92](https://github.com/staff0rd/assist/commit/07e3d922f14a41764bc5dd129545c205f0a2cdcc))
+
 ## [0.1112.5](https://github.com/staff0rd/assist/compare/v0.1112.4...v0.1112.5) (2026-11-10)
 
 
