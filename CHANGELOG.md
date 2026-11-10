@@ -1,3 +1,10 @@
+## [0.1112.10](https://github.com/staff0rd/assist/compare/v0.1112.9...v0.1112.10) (2026-11-10)
+
+
+### Bug Fixes
+
+* ignore URLs in AI-mention check ([bceaff4](https://github.com/staff0rd/assist/commit/bceaff4d2a945631e298e76c59189aea05bdc34c))
+
 ## [0.1112.9](https://github.com/staff0rd/assist/compare/v0.1112.8...v0.1112.9) (2026-11-10)
 
 
