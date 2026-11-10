@@ -1,3 +1,10 @@
+# [0.1111.0](https://github.com/staff0rd/assist/compare/v0.1110.0...v0.1111.0) (2026-11-10)
+
+
+### Features
+
+* render mermaid diagrams in /ask ([3a94361](https://github.com/staff0rd/assist/commit/3a94361c23d00c310e003cba05e0ab4c5e1f8122))
+
 # [0.1110.0](https://github.com/staff0rd/assist/compare/v0.1109.0...v0.1110.0) (2026-11-10)
 
 
