@@ -39,6 +39,7 @@ export function QuestionFieldset({
 					choice={choice}
 					onPick={onPick}
 					onPeek={setPeek}
+					peekedLabel={peeked?.label}
 					onPickOther={onPickOther}
 					onOtherText={onOtherText}
 					onSubmit={onSubmit}

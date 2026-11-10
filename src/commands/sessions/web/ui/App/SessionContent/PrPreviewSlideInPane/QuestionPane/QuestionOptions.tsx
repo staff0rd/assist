@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import type { AskQuestion } from "../../../../../../shared/askQuestionInputSchema";
 import type { QuestionChoice } from "./QuestionChoice";
-import { optionRowProps } from "./optionRowProps";
+import { type OptionPeek, optionRowProps } from "./optionRowProps";
 import { QuestionOptionRow } from "./QuestionOptionRow";
 import { QuestionOtherRow } from "./QuestionOtherRow";
 
@@ -11,15 +11,14 @@ export function QuestionOptions({
 	choice,
 	onPick,
 	onPeek,
+	peekedLabel,
 	onPickOther,
 	onOtherText,
 	onSubmit,
-}: {
+}: OptionPeek & {
 	name: string;
 	question: AskQuestion;
 	choice: QuestionChoice;
-	onPick: (label: string) => void;
-	onPeek: (label: string) => void;
 	onPickOther: () => void;
 	onOtherText: (text: string) => void;
 	onSubmit: () => void;
@@ -29,9 +28,11 @@ export function QuestionOptions({
 			{question.options.map((option) => (
 				<QuestionOptionRow
 					key={option.label}
-					{...optionRowProps(name, question, choice, option)}
-					onChange={() => onPick(option.label)}
-					onPeek={option.preview ? () => onPeek(option.label) : undefined}
+					{...optionRowProps(name, question, choice, option, {
+						onPick,
+						onPeek,
+						peekedLabel,
+					})}
 				/>
 			))}
 			<QuestionOtherRow

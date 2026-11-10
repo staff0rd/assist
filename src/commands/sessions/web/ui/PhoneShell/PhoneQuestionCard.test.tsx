@@ -116,6 +116,34 @@ describe("PhoneQuestionCard", () => {
 	});
 
 	describe("auto submit", () => {
+		it("switches the preview between options without submitting", () => {
+			toggle.enabled = true;
+			const onDecision = card([
+				{
+					question: "Which theme?",
+					header: "Theme",
+					multiSelect: false,
+					options: [
+						{ label: "Alpha", description: "", preview: "ALPHA" },
+						{ label: "Beta", description: "", preview: "BETA" },
+						{ label: "Gamma", description: "", preview: "GAMMA" },
+					],
+				},
+			]);
+			const panel = () => screen.getByTestId("phone-question-preview");
+
+			expect(panel().textContent).toBe("PreviewAlphaALPHA");
+			fireEvent.click(button("Preview Beta"));
+			expect(panel().textContent).toBe("PreviewBetaBETA");
+			fireEvent.click(button("Preview Gamma"));
+			expect(panel().textContent).toBe("PreviewGammaGAMMA");
+			expect(button("Preview Gamma").getAttribute("aria-pressed")).toBe("true");
+
+			expect(onDecision).not.toHaveBeenCalled();
+			for (const radio of screen.getAllByRole("radio"))
+				expect((radio as HTMLInputElement).checked).toBe(false);
+		});
+
 		it("advances on a pick and submits on the pick that completes the form", () => {
 			toggle.enabled = true;
 			const onDecision = card(singleSelect);

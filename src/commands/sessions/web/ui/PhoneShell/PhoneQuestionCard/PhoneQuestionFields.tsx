@@ -31,6 +31,8 @@ export function PhoneQuestionFields({
 					onPick(label);
 					setPeek(label);
 				}}
+				onPeek={setPeek}
+				peekedLabel={peeked?.label}
 				onPickOther={onPickOther}
 				onOtherText={onOtherText}
 			/>

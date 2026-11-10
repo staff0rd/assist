@@ -60,6 +60,17 @@ const singleSelect = [
 	},
 ];
 
+const threePreviews = {
+	question: "Which theme?",
+	header: "Theme",
+	multiSelect: false,
+	options: [
+		{ label: "Alpha", description: "First", preview: "ALPHA" },
+		{ label: "Beta", description: "Second", preview: "BETA" },
+		{ label: "Gamma", description: "Third", preview: "GAMMA" },
+	],
+};
+
 function pane(asked: unknown[] = questions) {
 	const onDecision = vi.fn();
 	render(
@@ -123,6 +134,30 @@ describe("QuestionPane", () => {
 	});
 
 	describe("auto submit", () => {
+		it("switches the preview between options without submitting", () => {
+			toggle.enabled = true;
+			const onDecision = pane([threePreviews]);
+
+			expect(screen.getByText("ALPHA")).toBeTruthy();
+			for (const [label, body] of [
+				["Beta", "BETA"],
+				["Gamma", "GAMMA"],
+				["Alpha", "ALPHA"],
+			] as const) {
+				const peek = screen.getByRole("button", { name: `Preview ${label}` });
+				fireEvent.click(peek);
+				expect(screen.getByText(body)).toBeTruthy();
+				expect(peek.getAttribute("aria-pressed")).toBe("true");
+				expect(screen.getAllByText(label).length).toBe(2);
+			}
+			fireEvent.mouseEnter(screen.getByRole("radio", { name: /Gamma/ }));
+			expect(screen.getByText("GAMMA")).toBeTruthy();
+
+			expect(onDecision).not.toHaveBeenCalled();
+			for (const radio of screen.getAllByRole("radio"))
+				expect((radio as HTMLInputElement).checked).toBe(false);
+		});
+
 		it("submits on the pick that completes an all single-select form", () => {
 			toggle.enabled = true;
 			const onDecision = pane(singleSelect);

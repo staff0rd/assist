@@ -1,5 +1,6 @@
 import { Box, Checkbox, Radio, Typography } from "@mui/material";
-import type { ReactNode } from "react";
+import type { QuestionOptionRowProps } from "./QuestionOptionRowProps";
+import { OptionPreviewButton } from "./OptionPreviewButton";
 import { questionOptionRowSx } from "./questionOptionRowSx";
 
 export function QuestionOptionRow({
@@ -10,17 +11,9 @@ export function QuestionOptionRow({
 	description,
 	onChange,
 	onPeek,
+	previewShown = false,
 	children,
-}: {
-	name: string;
-	multiSelect: boolean;
-	checked: boolean;
-	label: string;
-	description?: string;
-	onChange: () => void;
-	onPeek?: () => void;
-	children?: ReactNode;
-}) {
+}: QuestionOptionRowProps) {
 	const Control = multiSelect ? Checkbox : Radio;
 	return (
 		<Box
@@ -49,6 +42,13 @@ export function QuestionOptionRow({
 				)}
 				{children}
 			</Box>
+			{onPeek && (
+				<OptionPreviewButton
+					label={label}
+					shown={previewShown}
+					onPeek={onPeek}
+				/>
+			)}
 		</Box>
 	);
 }
