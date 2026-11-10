@@ -1,3 +1,10 @@
+# [0.1108.0](https://github.com/staff0rd/assist/compare/v0.1107.0...v0.1108.0) (2026-11-10)
+
+
+### Features
+
+* one harness picker in review menus ([fc25a4d](https://github.com/staff0rd/assist/commit/fc25a4d0585a2e26023c0360761ee1e91ae1953e))
+
 # [0.1107.0](https://github.com/staff0rd/assist/compare/v0.1106.0...v0.1107.0) (2026-11-09)
 
 
