@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { upsertManagedBlock } from "./syncCodexHooks";
+import { assistCodexHookKeys } from "./assistCodexHookKeys";
+import { upsertManagedBlock } from "./upsertManagedBlock";
 
 const BODY = '[[hooks.PreToolUse]]\nmatcher = "Bash"';
 
@@ -17,11 +18,15 @@ describe("codex/config.toml", () => {
 		);
 	});
 
-	it("registers every event through the one command, so trust is prompted once", () => {
-		const commands = shipped.match(/^command = .*$/gm) ?? [];
-		expect(new Set(commands)).toEqual(
-			new Set(['command = "assist codex-hook"']),
-		);
+	it("gives each of the six shipped events exactly one handler key to trust", () => {
+		expect([...assistCodexHookKeys("", shipped)]).toEqual([
+			["session_start:0:0", "assist codex-hook"],
+			["user_prompt_submit:0:0", "assist codex-hook"],
+			["pre_tool_use:0:0", "assist codex-hook"],
+			["post_tool_use:0:0", "assist codex-hook"],
+			["permission_request:0:0", "assist codex-hook"],
+			["stop:0:0", "assist codex-hook"],
+		]);
 	});
 });
 
@@ -55,5 +60,30 @@ describe("upsertManagedBlock", () => {
 		const result = upsertManagedBlock(withTrailer, BODY);
 		expect(result).toContain("[profile]");
 		expect(result.split("[[hooks.PreToolUse]]").length - 1).toBe(1);
+	});
+
+	it("moves the trust Codex records inside the block out, so a resync keeps it", () => {
+		const once = upsertManagedBlock("", BODY);
+		const trusted = once.replace(
+			"# <<<",
+			'[hooks.state]\n\n[hooks.state."/h/config.toml:pre_tool_use:0:0"]\ntrusted_hash = "sha256:a"\n\n[projects."/repo"]\ntrust_level = "trusted"\n# <<<',
+		);
+		const result = upsertManagedBlock(trusted, BODY);
+		const end = result.indexOf("# <<< assist codex hooks");
+		expect(result.indexOf('trusted_hash = "sha256:a"')).toBeGreaterThan(end);
+		expect(result.indexOf('[projects."/repo"]')).toBeGreaterThan(end);
+		expect(upsertManagedBlock(result, BODY)).toBe(result);
+	});
+
+	it("does not mistake a changed shipped body for foreign content", () => {
+		const once = upsertManagedBlock("", BODY);
+		const result = upsertManagedBlock(
+			once,
+			'[[hooks.Stop]]\n[[hooks.Stop.hooks]]\ncommand = "assist codex-hook --v2"',
+		);
+		expect(result).not.toContain("PreToolUse");
+		expect(
+			result.trim().endsWith("# <<< assist codex hooks (managed) <<<"),
+		).toBe(true);
 	});
 });

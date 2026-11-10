@@ -25,6 +25,10 @@ const designSkills = readdirSync(join(repoClaudeDir, "skills")).map((file) =>
 	file.replace(/\.md$/, ""),
 );
 
+vi.mock("./trustAssistCodexHooks", () => ({
+	trustAssistCodexHooks: async () => 6,
+}));
+
 vi.mock("../../shared/checkCliAvailable", () => ({
 	checkCliAvailable: (cli: string) => cli === "codex",
 }));
@@ -43,13 +47,13 @@ describe("clean-home sync with only Codex installed", () => {
 		rmSync(home, { recursive: true, force: true });
 	});
 
-	function syncHarnesses() {
-		syncCodex(repoClaudeDir);
+	async function syncHarnesses() {
+		await syncCodex(repoClaudeDir);
 		syncPi(repoClaudeDir);
 	}
 
-	it("installs design mode's prompt and native design skills for Codex", () => {
-		syncHarnesses();
+	it("installs design mode's prompt and native design skills for Codex", async () => {
+		await syncHarnesses();
 
 		expect(
 			readFileSync(
@@ -70,8 +74,8 @@ describe("clean-home sync with only Codex installed", () => {
 		}
 	});
 
-	it("points every synced Codex skill at Codex resources, never ~/.claude", () => {
-		syncHarnesses();
+	it("points every synced Codex skill at Codex resources, never ~/.claude", async () => {
+		await syncHarnesses();
 
 		const skillsDir = join(home, ".codex", "skills");
 		for (const name of readdirSync(skillsDir)) {
@@ -87,8 +91,8 @@ describe("clean-home sync with only Codex installed", () => {
 		).toContain("`~/.codex/skills/design/SKILL.md`");
 	});
 
-	it("registers the Codex hooks and writes nothing for absent harnesses", () => {
-		syncHarnesses();
+	it("registers the Codex hooks and writes nothing for absent harnesses", async () => {
+		await syncHarnesses();
 
 		expect(readFileSync(join(home, ".codex", "config.toml"), "utf8")).toContain(
 			"assist codex-hook",

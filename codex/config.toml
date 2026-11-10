@@ -2,7 +2,8 @@
 # is detected. Registers the assist codex-hook, which auto-approves read-only
 # commands, injects the repo's composed advice at SessionStart, and reports
 # running/waiting status for daemon-tracked sessions.
-# Codex still requires this hook to be trusted once per machine on first run.
+# `assist sync` also records Codex trust for exactly these handlers, so Codex
+# does not stop for hook review; any other hook still needs normal review.
 
 [[hooks.SessionStart]]
 [[hooks.SessionStart.hooks]]

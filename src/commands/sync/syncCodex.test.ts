@@ -19,6 +19,12 @@ const mockMkdirSync = vi.mocked(mkdirSync);
 const mockCopyFileSync = vi.mocked(copyFileSync);
 const mockExistsSync = vi.mocked(existsSync);
 const mockPruneSkills = vi.fn();
+const mockTrustAssistCodexHooks = vi.fn();
+
+vi.mock("./trustAssistCodexHooks", () => ({
+	trustAssistCodexHooks: (...args: unknown[]) =>
+		mockTrustAssistCodexHooks(...args),
+}));
 
 vi.mock("./pruneSkills", () => ({
 	pruneSkills: (...args: unknown[]) => mockPruneSkills(...args),
@@ -100,6 +106,7 @@ describe("syncCodex", () => {
 					: "---\ndescription: Refine it\n---\nbody",
 		);
 		mockExistsSync.mockReturnValue(false);
+		mockTrustAssistCodexHooks.mockResolvedValue(2);
 		mockPruneSkills.mockReturnValue({
 			orphans: [],
 			removed: [],
@@ -112,23 +119,23 @@ describe("syncCodex", () => {
 		vi.clearAllMocks();
 	});
 
-	it("does nothing when codex is not available", () => {
+	it("does nothing when codex is not available", async () => {
 		mockIsHarnessAvailable.mockReturnValue(false);
-		syncCodex("/claude", { prune: true, force: true });
+		await syncCodex("/claude", { prune: true, force: true });
 		expect(mockReaddirSync).not.toHaveBeenCalled();
 		expect(mockWriteFileSync).not.toHaveBeenCalled();
 		expect(mockCopyFileSync).not.toHaveBeenCalled();
 		expect(mockPruneSkills).not.toHaveBeenCalled();
 	});
 
-	it("does not prune without --prune", () => {
-		syncCodex("/claude");
+	it("does not prune without --prune", async () => {
+		await syncCodex("/claude");
 
 		expect(mockPruneSkills).not.toHaveBeenCalled();
 	});
 
-	it("prunes ~/.codex/skills against the synced command names", () => {
-		syncCodex("/claude", { prune: true });
+	it("prunes ~/.codex/skills against the synced command names", async () => {
+		await syncCodex("/claude", { prune: true });
 
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "skills"),
@@ -137,8 +144,8 @@ describe("syncCodex", () => {
 		);
 	});
 
-	it("forwards --force to the skills prune", () => {
-		syncCodex("/claude", { prune: true, force: true });
+	it("forwards --force to the skills prune", async () => {
+		await syncCodex("/claude", { prune: true, force: true });
 
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "skills"),
@@ -147,8 +154,8 @@ describe("syncCodex", () => {
 		);
 	});
 
-	it("writes each command as skills/<name>/SKILL.md, skipping non-md files", () => {
-		syncCodex("/claude");
+	it("writes each command as skills/<name>/SKILL.md, skipping non-md files", async () => {
+		await syncCodex("/claude");
 
 		const skillTarget = path.join(
 			harnesses.codex.homeDir,
@@ -165,8 +172,8 @@ describe("syncCodex", () => {
 		});
 	});
 
-	it("installs the design system prompt and design skills as native Codex skills", () => {
-		syncCodex("/claude");
+	it("installs the design system prompt and design skills as native Codex skills", async () => {
+		await syncCodex("/claude");
 
 		expect(mockCopyFileSync).toHaveBeenCalledWith(
 			path.join("/claude", "design-system-prompt.md"),
@@ -187,8 +194,8 @@ describe("syncCodex", () => {
 		);
 	});
 
-	it("registers the codex-hook adapter in ~/.codex/config.toml", () => {
-		syncCodex("/claude");
+	it("registers the codex-hook adapter in ~/.codex/config.toml", async () => {
+		await syncCodex("/claude");
 
 		const configTarget = path.join(harnesses.codex.homeDir, "config.toml");
 		const write = mockWriteFileSync.mock.calls.find(
@@ -202,8 +209,20 @@ describe("syncCodex", () => {
 		expect(contents).toContain('command = "assist codex-hook"');
 	});
 
-	it("no longer writes ~/.codex/AGENTS.md", () => {
-		syncCodex("/claude");
+	it("trusts exactly the managed block's handler keys after writing them", async () => {
+		await syncCodex("/claude");
+
+		expect(mockTrustAssistCodexHooks).toHaveBeenCalledWith(
+			path.join(harnesses.codex.homeDir, "config.toml"),
+			new Map([
+				["pre_tool_use:0:0", "assist codex-hook"],
+				["permission_request:0:0", "assist codex-hook"],
+			]),
+		);
+	});
+
+	it("no longer writes ~/.codex/AGENTS.md", async () => {
+		await syncCodex("/claude");
 
 		expect(mockCopyFileSync).not.toHaveBeenCalledWith(
 			expect.anything(),

@@ -8,7 +8,10 @@ import { reportPrune } from "./reportPrune";
 import { syncCodexHooks } from "./syncCodexHooks";
 import { commandToSkill } from "./commandToSkill";
 
-export function syncCodex(claudeDir: string, options?: PruneOptions): void {
+export async function syncCodex(
+	claudeDir: string,
+	options?: PruneOptions,
+): Promise<void> {
 	if (!isHarnessAvailable("codex")) return;
 
 	const { total, names } = installHarnessCommands(
@@ -19,7 +22,7 @@ export function syncCodex(claudeDir: string, options?: PruneOptions): void {
 
 	const designSkills = installDesignResources(claudeDir, harnesses.codex);
 
-	syncCodexHooks(path.join(claudeDir, "..", "codex", "config.toml"));
+	await syncCodexHooks(path.join(claudeDir, "..", "codex", "config.toml"));
 
 	console.log(`Synced ${total} skill(s) to ~/.codex/skills`);
 	console.log(
