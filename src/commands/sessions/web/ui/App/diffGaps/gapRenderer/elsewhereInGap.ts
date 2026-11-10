@@ -1,5 +1,5 @@
-import type { HighLevelForeignHunk } from "../../../../../../../review/highLevel/types";
-import type { Gap } from "./gapAt";
+import type { HighLevelForeignHunk } from "../../../../../../review/highLevel/types";
+import type { Gap } from "../gapAt";
 
 export function elsewhereInGap(
 	elsewhere: HighLevelForeignHunk[],

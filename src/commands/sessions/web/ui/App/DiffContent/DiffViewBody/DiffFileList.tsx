@@ -2,10 +2,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { FileData, ViewType } from "react-diff-view";
 import { diffSx } from "../../diffSx";
-import { FileDiff, filePath } from "../FileDiff";
+import { FileDiff } from "../FileDiff";
 import type { AddRuleRequest } from "../../formatAddRuleCommand";
 import type { DiffComment } from "../../formatDiffComment";
 import type { FileComment } from "../../formatFileComment";
+import { filePath } from "../filePath";
 
 export type DiffFileListProps = {
 	files: FileData[];

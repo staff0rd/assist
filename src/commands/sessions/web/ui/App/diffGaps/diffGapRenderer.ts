@@ -1,4 +1,4 @@
-import type { HighLevelForeignHunk } from "../../../../../../../review/highLevel/types";
+import type { HighLevelForeignHunk } from "../../../../../review/highLevel/types";
 import { gapRenderer } from "./gapRenderer";
 import type { GapExpansion } from "./useGapExpansion";
 

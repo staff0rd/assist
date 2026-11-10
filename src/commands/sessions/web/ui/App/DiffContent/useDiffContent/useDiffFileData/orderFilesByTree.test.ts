@@ -4,8 +4,8 @@ import {
 	buildDiffFileTree,
 	type DiffFileTreeNode,
 } from "../../buildDiffFileTree";
-import { filePath } from "../../FileDiff";
 import { orderFilesByTree } from "./orderFilesByTree";
+import { filePath } from "../../filePath";
 
 function file(path: string): FileData {
 	return {

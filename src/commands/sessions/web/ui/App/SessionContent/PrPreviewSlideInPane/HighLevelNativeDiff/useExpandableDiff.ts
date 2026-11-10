@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { type FileData, type HunkData, parseDiff } from "react-diff-view";
 import type { HighLevelFileStatus } from "../../../../../../../review/highLevel/types";
 import { highLevelUnifiedDiff } from "./useExpandableDiff/highLevelUnifiedDiff";
-import { useGapExpansion } from "./useGapExpansion";
+import { useGapExpansion } from "../../../diffGaps/useGapExpansion";
 
 const NO_HUNKS: HunkData[] = [];
 

@@ -1,7 +1,6 @@
 import { collapseAllState } from "./useDiffContent/collapseAllState";
 import { diffEmptyMessage } from "./useDiffContent/diffEmptyMessage";
 import { diffFileTotals } from "./diffFileTotals";
-import { filePath } from "./FileDiff";
 import type { SessionInfo } from "../../types";
 import { useActiveDiffFile } from "./useDiffContent/useActiveDiffFile";
 import { useCollapsedFiles } from "./useDiffContent/useCollapsedFiles";
@@ -11,6 +10,7 @@ import type { DiffCommentSource } from "./useDiffContent/useDiffComments/diffCom
 import { useDiffFileData } from "./useDiffContent/useDiffFileData";
 import { useDiffFilters } from "./useDiffContent/useDiffFilters";
 import { useDiffTreePanel } from "./useDiffContent/useDiffTreePanel";
+import { filePath } from "./filePath";
 
 export function useDiffContent(
 	cwd: string,
@@ -47,6 +47,7 @@ export function useDiffContent(
 		revert,
 		uncommittedFiles,
 		collapseAll: collapseAllState(visiblePaths, collapsedFiles),
+		files,
 		visibleFiles,
 		totals: diffFileTotals(visibleFiles),
 		emptyMessage: diffEmptyMessage(error, files.length),

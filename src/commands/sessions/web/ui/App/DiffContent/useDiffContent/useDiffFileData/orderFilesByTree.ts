@@ -1,7 +1,7 @@
 import type { FileData } from "react-diff-view";
 import { buildDiffFileTree } from "../../buildDiffFileTree";
-import { filePath } from "../../FileDiff";
 import { treeFileKeys } from "../../treeFileKeys";
+import { filePath } from "../../filePath";
 
 export function orderFilesByTree(files: FileData[]): FileData[] {
 	const order = new Map(

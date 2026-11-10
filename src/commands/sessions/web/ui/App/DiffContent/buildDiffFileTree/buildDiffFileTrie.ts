@@ -1,6 +1,6 @@
 import type { FileData } from "react-diff-view";
 import { countDiffFileLines } from "./buildDiffFileTrie/countDiffFileLines";
-import { filePath } from "../FileDiff";
+import { filePath } from "../filePath";
 
 export type DiffFileTrie = {
 	dirs: Map<string, DiffFileTrie>;

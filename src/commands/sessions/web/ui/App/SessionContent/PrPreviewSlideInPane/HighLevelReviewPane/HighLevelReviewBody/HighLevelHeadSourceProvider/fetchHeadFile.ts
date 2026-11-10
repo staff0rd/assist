@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../../../../apiFetch";
+import { splitFileLines } from "../../../../../diffGaps/splitFileLines";
 
 export async function fetchHeadFile(
 	repo: string,
@@ -15,6 +16,5 @@ export async function fetchHeadFile(
 		throw new Error(
 			typeof body.error === "string" ? body.error : `HTTP ${res.status}`,
 		);
-	const lines = body.content.split("\n");
-	return lines.at(-1) === "" ? lines.slice(0, -1) : lines;
+	return splitFileLines(body.content);
 }

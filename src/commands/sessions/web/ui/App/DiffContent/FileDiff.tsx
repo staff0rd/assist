@@ -1,20 +1,15 @@
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import type { FileData } from "react-diff-view";
-import { DiffCommentLayer } from "../DiffCommentLayer";
+import { gapSx } from "../diffGaps/gapSx";
 import { diffFileDomId } from "./diffFileDomId";
-import { FileDiffBody } from "../FileDiffBody";
+import { ExpandableFileBody } from "./FileDiff/ExpandableFileBody";
 import { FileDiffHeader } from "./FileDiffHeader";
 import type { FileDiffProps } from "./FileDiff/FileDiffProps";
 import { isMarkdownPath } from "./FileDiff/isMarkdownPath";
 import { MarkdownPreviewDialog } from "./FileDiff/MarkdownPreviewDialog";
 import { slateFileCardSx } from "./FileDiff/slateFileCardSx";
-
-export function filePath(file: FileData): string {
-	return file.newPath && file.newPath !== "/dev/null"
-		? file.newPath
-		: file.oldPath;
-}
+import { useExpandableFile } from "./FileDiff/useExpandableFile";
+import { filePath } from "./filePath";
 
 export function FileDiff({
 	file,
@@ -29,9 +24,10 @@ export function FileDiff({
 }: FileDiffProps) {
 	const [previewOpen, setPreviewOpen] = useState(false);
 	const path = filePath(file);
+	const { expanded, expansion } = useExpandableFile(file, path);
 
 	return (
-		<Box id={diffFileDomId(path)} sx={[{ mb: 3 }, slateFileCardSx]}>
+		<Box id={diffFileDomId(path)} sx={[{ mb: 3 }, slateFileCardSx, gapSx]}>
 			<FileDiffHeader
 				path={path}
 				collapsed={collapsed}
@@ -53,15 +49,15 @@ export function FileDiff({
 				/>
 			)}
 			{!collapsed && (
-				<DiffCommentLayer
+				<ExpandableFileBody
 					path={path}
 					cwd={cwd}
-					hunks={file.hunks}
+					viewType={viewType}
+					expanded={expanded}
+					expansion={expansion}
 					onComment={onComment}
 					onAddRule={onAddRule}
-				>
-					<FileDiffBody file={file} path={path} viewType={viewType} />
-				</DiffCommentLayer>
+				/>
 			)}
 		</Box>
 	);

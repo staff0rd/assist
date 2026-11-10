@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DiffContent } from "./DiffContent";
 
@@ -11,11 +12,15 @@ vi.mock("./DiffContent/useDiffContent", () => ({
 		collapsedFiles: {},
 		comments: {},
 		revert: {},
+		scopeState: {},
 	}),
 }));
 vi.mock("./DiffContent/DiffToolbar", () => ({ DiffToolbar: () => null }));
 vi.mock("./DiffContent/DiffContentBody", () => ({
 	DiffContentBody: () => null,
+}));
+vi.mock("./DiffContent/DiffHeadSourceProvider", () => ({
+	DiffHeadSourceProvider: ({ children }: { children: ReactNode }) => children,
 }));
 vi.mock("./DiffContent/DiffSnackbars", () => ({ DiffSnackbars: () => null }));
 

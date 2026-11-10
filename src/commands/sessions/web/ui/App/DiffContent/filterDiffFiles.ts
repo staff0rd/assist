@@ -1,5 +1,5 @@
 import type { FileData } from "react-diff-view";
-import { filePath } from "./FileDiff";
+import { filePath } from "./filePath";
 
 export type DiffChangeType =
 	| "all"

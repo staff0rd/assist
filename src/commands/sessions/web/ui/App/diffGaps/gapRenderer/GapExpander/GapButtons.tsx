@@ -33,7 +33,7 @@ export function GapButtons({
 		return (
 			<ButtonBase
 				key={direction}
-				className="high-level-gap-button"
+				className="diff-gap-button"
 				disabled={disabled}
 				onClick={() => onExpand(direction)}
 				aria-label={label(gap, direction)}

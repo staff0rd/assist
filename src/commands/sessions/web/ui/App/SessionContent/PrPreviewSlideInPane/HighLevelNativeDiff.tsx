@@ -9,8 +9,8 @@ import { diffSx } from "../../diffSx";
 import { FileDiffBody } from "../../FileDiffBody";
 import type { HighLevelDiffComments } from "./HighLevelDiffComments";
 import { HighLevelDiffNote } from "./HighLevelDiffNote";
-import { diffGapRenderer } from "./HighLevelNativeDiff/diffGapRenderer";
-import { highLevelGapSx } from "./HighLevelNativeDiff/highLevelGapSx";
+import { diffGapRenderer } from "../../diffGaps/diffGapRenderer";
+import { gapSx } from "../../diffGaps/gapSx";
 import { useExpandableDiff } from "./HighLevelNativeDiff/useExpandableDiff";
 
 export function HighLevelNativeDiff({
@@ -42,7 +42,7 @@ export function HighLevelNativeDiff({
 		);
 
 	return (
-		<Box sx={[diffSx, highLevelGapSx, { pt: 0.5, minWidth: 0 }]}>
+		<Box sx={[diffSx, gapSx, { pt: 0.5, minWidth: 0 }]}>
 			<DiffCommentLayer
 				path={path}
 				cwd={comments?.cwd}

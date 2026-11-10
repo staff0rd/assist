@@ -1,12 +1,13 @@
 import { Box } from "@mui/material";
 import { Decoration } from "react-diff-view";
 import type { Gap, GapDirection } from "../gapAt";
-import { GapButtons } from "./HighLevelGapExpander/GapButtons";
-import { GapStatus } from "./HighLevelGapExpander/GapStatus";
+import { GapButtons } from "./GapExpander/GapButtons";
+import { GapStatus } from "./GapExpander/GapStatus";
 
-export function HighLevelGapExpander({
+export function GapExpander({
 	gap,
 	header,
+	from,
 	elsewhere,
 	disabled,
 	loading,
@@ -16,6 +17,7 @@ export function HighLevelGapExpander({
 }: {
 	gap: Gap;
 	header: string | undefined;
+	from: string | undefined;
 	elsewhere?: string | undefined;
 	disabled: boolean;
 	loading: boolean;
@@ -25,16 +27,17 @@ export function HighLevelGapExpander({
 }) {
 	return (
 		<Decoration
-			className="high-level-gap"
-			gutterClassName="high-level-gap-gutter"
-			contentClassName="high-level-gap-content"
+			className="diff-gap"
+			gutterClassName="diff-gap-gutter"
+			contentClassName="diff-gap-content"
 		>
-			<Box className="high-level-gap-buttons">
+			<Box className="diff-gap-buttons">
 				<GapButtons gap={gap} disabled={disabled} onExpand={onExpand} />
 			</Box>
 			<GapStatus
 				hidden={gap.end === null ? null : gap.end - gap.start}
 				header={header}
+				from={from}
 				elsewhere={elsewhere}
 				loading={loading}
 				error={error}

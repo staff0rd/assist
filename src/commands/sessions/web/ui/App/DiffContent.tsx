@@ -3,8 +3,7 @@ import {
 	DiffClosableLayout,
 	type DiffScrollRegionProps,
 } from "./DiffContent/DiffClosableLayout";
-import { diffBodyProps } from "./DiffContent/diffBodyProps";
-import { DiffContentBody } from "./DiffContent/DiffContentBody";
+import { ExpandableDiffContentBody } from "./DiffContent/ExpandableDiffContentBody";
 import { DiffSnackbars } from "./DiffContent/DiffSnackbars";
 import { DiffToolbar } from "./DiffContent/DiffToolbar";
 import { diffToolbarState } from "./DiffContent/diffToolbarState";
@@ -58,7 +57,7 @@ export function DiffContent({
 					onToggleMode={onToggleMode}
 					onClose={onClose}
 				/>
-				<DiffContentBody {...diffBodyProps(diff, cwd)} />
+				<ExpandableDiffContentBody diff={diff} cwd={cwd} />
 			</DiffClosableLayout>
 			<DiffSnackbars
 				sentTo={diff.comments.sentTo}
