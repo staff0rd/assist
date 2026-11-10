@@ -1,3 +1,10 @@
+## [0.1112.9](https://github.com/staff0rd/assist/compare/v0.1112.8...v0.1112.9) (2026-11-10)
+
+
+### Bug Fixes
+
+* start Play in the item's repo ([b2c4698](https://github.com/staff0rd/assist/commit/b2c4698b91e25e99cdc1aab596bd7ddf119e1c6e))
+
 ## [0.1112.8](https://github.com/staff0rd/assist/compare/v0.1112.7...v0.1112.8) (2026-11-10)
 
 
