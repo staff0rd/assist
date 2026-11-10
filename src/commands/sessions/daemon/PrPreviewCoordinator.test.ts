@@ -123,11 +123,20 @@ describe("PrPreviewCoordinator", () => {
 			...previewMsg("1", "r1"),
 			kind: "backlog-item",
 			canStart: true,
+			startOrigin: "github.com/me/other",
 		});
-		coord.set(makeClient(), { ...previewMsg("2", "r2"), canStart: true });
+		coord.set(makeClient(), {
+			...previewMsg("2", "r2"),
+			canStart: true,
+			startOrigin: "github.com/me/other",
+		});
 
-		expect(sessions.get("1")?.pendingPrPreview?.canStart).toBe(true);
+		expect(sessions.get("1")?.pendingPrPreview).toMatchObject({
+			canStart: true,
+			startOrigin: "github.com/me/other",
+		});
 		expect(sessions.get("2")?.pendingPrPreview?.canStart).toBeUndefined();
+		expect(sessions.get("2")?.pendingPrPreview?.startOrigin).toBeUndefined();
 	});
 
 	it("forwards the autostart choice to the waiting client", () => {

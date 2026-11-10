@@ -9,6 +9,7 @@ export function PrPreviewActions({
 	chain,
 	newPr,
 	canStart,
+	startOrigin,
 	onChainChange,
 	onApprove,
 	cwd,
@@ -20,6 +21,7 @@ export function PrPreviewActions({
 	chain?: PrPreviewChain;
 	newPr: boolean;
 	canStart: boolean;
+	startOrigin?: string | undefined;
 	onChainChange: (chain: PrPreviewChain) => void;
 	onApprove: () => void;
 	cwd?: string | undefined;
@@ -55,6 +57,7 @@ export function PrPreviewActions({
 			)}
 			<PrPreviewApproveButtons
 				canStart={canStart}
+				startOrigin={startOrigin}
 				cwd={cwd}
 				onApprove={onApprove}
 				onApproveAndStart={onApproveAndStart}

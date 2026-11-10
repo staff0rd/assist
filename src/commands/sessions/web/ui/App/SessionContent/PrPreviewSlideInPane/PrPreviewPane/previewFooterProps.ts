@@ -41,6 +41,7 @@ export function previewFooterProps({
 		editable,
 		newPr: isPr && preview.prNumber === null,
 		canStart: preview.kind === "backlog-item" && preview.canStart === true,
+		startOrigin: preview.startOrigin,
 		onChainChange: pane.setChain,
 	};
 }

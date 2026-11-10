@@ -21,6 +21,10 @@ export function buildPrPreview(
 					: "story"
 				: undefined,
 		canStart: kind === "backlog-item" && d.canStart === true ? true : undefined,
+		startOrigin:
+			kind === "backlog-item" && typeof d.startOrigin === "string"
+				? d.startOrigin
+				: undefined,
 		draft: kind === "pr" && prNumber === null ? draft : undefined,
 		reviewAfter:
 			kind === "pr" && typeof d.reviewAfter === "boolean"

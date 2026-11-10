@@ -1,30 +1,25 @@
 import { Divider } from "@mui/material";
 import { PrCommentList } from "./PrPreviewFooter/PrCommentList";
-import { PrPreviewActions } from "./PrPreviewFooter/PrPreviewActions";
+import { PrPreviewFooterActions } from "./PrPreviewFooter/PrPreviewFooterActions";
 import type { PrPreviewFooterProps } from "./PrPreviewFooterProps";
 import { SelectionCommentPopover } from "../../../SelectionCommentPopover";
 
-export function PrPreviewFooter({
-	comments,
-	commentColors,
-	pending,
-	cwd,
-	unavailable,
-	onAdd,
-	onQueue,
-	onCite,
-	onAddRule,
-	onRemove,
-	onCancel,
-	onCollapse,
-	onDecision,
-	chain,
-	editable,
-	newPr,
-	canStart,
-	onChainChange,
-}: PrPreviewFooterProps) {
-	const sent = () => comments.map((c) => ({ quote: c.quote, note: c.note }));
+export function PrPreviewFooter(props: PrPreviewFooterProps) {
+	const {
+		comments,
+		commentColors,
+		pending,
+		cwd,
+		unavailable,
+		onAdd,
+		onQueue,
+		onCite,
+		onAddRule,
+		onRemove,
+		onCancel,
+		onCollapse,
+		editable,
+	} = props;
 	return (
 		<>
 			<PrCommentList
@@ -33,20 +28,7 @@ export function PrPreviewFooter({
 				onRemove={onRemove}
 			/>
 			<Divider />
-			<PrPreviewActions
-				commentCount={comments.length}
-				chain={chain}
-				newPr={newPr}
-				canStart={canStart}
-				onChainChange={onChainChange}
-				onApprove={() => onDecision("approve", sent())}
-				cwd={cwd}
-				onApproveAndStart={(startOn) =>
-					onDecision("approve", sent(), startOn ?? true)
-				}
-				onReject={() => onDecision("reject", [])}
-				onRequestChanges={() => onDecision("reject", sent())}
-			/>
+			<PrPreviewFooterActions {...props} />
 			<SelectionCommentPopover
 				pending={pending}
 				editable={editable}

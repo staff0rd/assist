@@ -4,6 +4,7 @@ import { isAgentHarness } from "../../../lib/isAgentHarness";
 import { renderMarkdownTerminal } from "../../../shared/renderMarkdownTerminal";
 import { awaitPreviewApproval } from "../../sessions/shared/awaitPreviewApproval";
 import { formatItemId } from "../formatItemId";
+import { getOrigin } from "../shared";
 import type { ProposedItem } from "./proposedItemSchema";
 import { renderProposedItem } from "./renderProposedItem";
 import { type StartApproval, toStartApproval } from "./toStartApproval";
@@ -29,6 +30,7 @@ export async function reviewProposal(
 			kind: "backlog-item",
 			itemType: item.type,
 			canStart: true,
+			startOrigin: getOrigin(),
 		});
 		return toStartApproval(decision);
 	}

@@ -28,6 +28,7 @@ export async function reviewPlanUpdate(
 			kind: "backlog-item",
 			itemType: item.type,
 			canStart: true,
+			startOrigin: item.origin,
 		});
 		return toStartApproval(decision);
 	}

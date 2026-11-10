@@ -9,6 +9,7 @@ const startSx = { ...buttonSx, flex: 1.3 } as const;
 
 export function PhonePreviewDecisions({
 	canStart,
+	startOrigin,
 	cwd,
 	sending,
 	onReject,
@@ -16,13 +17,14 @@ export function PhonePreviewDecisions({
 	onApproveAndStart,
 }: {
 	canStart: boolean;
+	startOrigin?: string | undefined;
 	cwd?: string | undefined;
 	sending: boolean;
 	onReject: () => void;
 	onApprove: () => void;
 	onApproveAndStart: (startOn?: PreviewStartTarget) => void;
 }) {
-	const startNode = useStartNodeChoice(cwd);
+	const startNode = useStartNodeChoice(cwd, startOrigin);
 	return (
 		<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
 			{canStart && <PhoneStartNodeRow startNode={startNode} />}

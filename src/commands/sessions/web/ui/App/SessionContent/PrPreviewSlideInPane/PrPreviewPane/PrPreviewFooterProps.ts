@@ -27,5 +27,6 @@ export type PrPreviewFooterProps = {
 	editable: boolean;
 	newPr: boolean;
 	canStart: boolean;
+	startOrigin?: string | undefined;
 	onChainChange: (chain: PrPreviewChain) => void;
 };

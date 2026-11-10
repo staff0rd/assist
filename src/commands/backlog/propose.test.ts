@@ -202,6 +202,7 @@ describe("propose inside a web session", () => {
 				kind: "backlog-item",
 				itemType: "bug",
 				canStart: true,
+				startOrigin: "test",
 				prNumber: null,
 			}),
 		);

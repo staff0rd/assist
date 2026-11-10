@@ -176,6 +176,7 @@ describe("update-plan inside a web session", () => {
 				kind: "backlog-item",
 				prNumber: null,
 				canStart: true,
+				startOrigin: "test",
 			}),
 		);
 		const body = mockRequestPreviewDecision.mock.calls[0][0].body as string;

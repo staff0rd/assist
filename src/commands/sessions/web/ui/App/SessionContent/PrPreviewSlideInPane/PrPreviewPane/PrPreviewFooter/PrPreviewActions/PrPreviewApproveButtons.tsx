@@ -6,17 +6,19 @@ import { useStartNodeChoice } from "./PrPreviewApproveButtons/useStartNodeChoice
 
 export function PrPreviewApproveButtons({
 	canStart,
+	startOrigin,
 	cwd,
 	onApprove,
 	onApproveAndStart,
 }: {
 	canStart: boolean;
+	startOrigin?: string | undefined;
 	cwd?: string | undefined;
 	onApprove: () => void;
 	onApproveAndStart: (startOn?: PreviewStartTarget) => void;
 }) {
 	const primary = usePreviewPrimaryAction();
-	const startNode = useStartNodeChoice(cwd);
+	const startNode = useStartNodeChoice(cwd, startOrigin);
 	return (
 		<>
 			<Button

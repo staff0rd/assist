@@ -17,17 +17,25 @@ const clones: Record<string, string> = {
 	win: String.raw`C:\git\repo`,
 };
 
+const otherClones: Record<string, string> = { wsl: "/git/other" };
+
+const origins: Record<string, string> = {
+	"/git/repo": "github.com/me/repo",
+	"/git/other": "github.com/me/other",
+};
+
 const repoSelection: RepoSelection = {
-	repos: ["/git/repo"],
+	repos: ["/git/repo", "/git/other"],
 	selectedCwd: "/git/repo",
 	selectedNode: "win",
 	worktreeCwd: "/git/repo",
 	setSelectedCwd: () => {},
-	cloneOn: (_cwd, node) => clones[node ?? "wsl"],
-	originOf: (cwd) => (cwd === "/git/repo" ? "github.com/me/repo" : undefined),
+	cloneOn: (cwd, node) =>
+		(cwd === "/git/other" ? otherClones : clones)[node ?? "wsl"],
+	originOf: (cwd) => origins[cwd],
 };
 
-function renderButtons(names: string[]) {
+function renderButtons(names: string[], startOrigin?: string) {
 	const onApproveAndStart = vi.fn();
 	render(
 		<ThemeProvider theme={createDesignTheme("dark")}>
@@ -52,6 +60,7 @@ function renderButtons(names: string[]) {
 				<RepoSelectionContext.Provider value={repoSelection}>
 					<PrPreviewApproveButtons
 						canStart
+						startOrigin={startOrigin}
 						cwd="/git/repo"
 						onApprove={() => {}}
 						onApproveAndStart={onApproveAndStart}
@@ -107,6 +116,58 @@ describe("PrPreviewApproveButtons node picker", () => {
 
 		expect(mac.getAttribute("aria-disabled")).toBe("true");
 		expect(mac.textContent).toContain("no clone");
+	});
+
+	it("starts an item from another repo in that repo's clone", () => {
+		const onApproveAndStart = renderButtons(
+			["wsl", "win"],
+			"github.com/me/other",
+		);
+
+		expect(
+			screen.getByRole("button", { name: "Start on node" }),
+		).toHaveProperty("textContent", "wsl");
+		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+
+		expect(onApproveAndStart).toHaveBeenCalledWith({
+			node: "wsl",
+			cwd: "/git/other",
+		});
+	});
+
+	it("offers nodes by their clone of the item's repo", () => {
+		renderButtons(["wsl", "win"], "github.com/me/other");
+
+		fireEvent.click(screen.getByRole("button", { name: "Start on node" }));
+
+		expect(menuItem("win").getAttribute("aria-disabled")).toBe("true");
+		expect(menuItem("wsl").getAttribute("aria-disabled")).toBeNull();
+	});
+
+	it("starts an item from the session's own repo on the picked node", () => {
+		const onApproveAndStart = renderButtons(
+			["wsl", "win"],
+			"github.com/me/repo",
+		);
+
+		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+
+		expect(onApproveAndStart).toHaveBeenCalledWith({
+			node: "win",
+			cwd: String.raw`C:\git\repo`,
+		});
+	});
+
+	it("sends no node when no clone of the item's repo is known", () => {
+		const onApproveAndStart = renderButtons(
+			["wsl", "win"],
+			"github.com/me/unknown",
+		);
+
+		expect(screen.queryByRole("button", { name: "Start on node" })).toBeNull();
+		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+
+		expect(onApproveAndStart).toHaveBeenCalledWith(undefined);
 	});
 
 	it("shows no picker and sends no node with a single node", () => {

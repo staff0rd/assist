@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { PreviewStartTarget } from "../../../../shared/PreviewDecision";
 import { previewPaneOptions } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/previewPaneOptions";
 import { usePrPane } from "../../App/SessionContent/PrPreviewSlideInPane/PrPreviewPane/usePrPane";
+import { phoneReviewDecisions } from "./phoneReviewDecisions";
 import type { PhonePreviewProps } from "./PhonePreviewProps";
 import { usePhoneCommentComposer } from "./usePhoneCommentComposer";
 
@@ -36,23 +36,12 @@ export function usePhoneReviewPane({
 		session,
 		sendInput,
 	});
-	const sent = () =>
-		pane.comments.map((c) => ({ quote: c.quote, note: c.note }));
-
 	return {
 		options,
 		pane,
 		reason,
 		setReason,
 		...comments,
-		decisions: {
-			canStart: preview.kind === "backlog-item" && preview.canStart === true,
-			cwd: session.cwd,
-			sending,
-			onReject: () => pane.onDecide("reject", sent()),
-			onApprove: () => pane.onDecide("approve", sent()),
-			onApproveAndStart: (startOn?: PreviewStartTarget) =>
-				pane.onDecide("approve", sent(), startOn ?? true),
-		},
+		decisions: phoneReviewDecisions(preview, session.cwd, pane, sending),
 	};
 }

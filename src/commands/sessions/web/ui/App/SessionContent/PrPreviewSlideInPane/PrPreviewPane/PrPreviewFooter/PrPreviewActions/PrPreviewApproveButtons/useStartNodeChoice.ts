@@ -3,14 +3,24 @@ import type { PreviewStartTarget } from "../../../../../../../../../shared/Previ
 import { useNodeSelectionContext } from "../../../../../../../useNodeSelectionContext";
 import { useRepoSelectionContext } from "../../../../../../../useRepoSelectionContext";
 
+function sameOrigin(a: string | undefined, b: string): boolean {
+	return a?.toLowerCase() === b.toLowerCase();
+}
+
 export type StartNodeOption = { name: string; cwd: string | undefined };
 
-export function useStartNodeChoice(cwd: string | undefined) {
+export function useStartNodeChoice(
+	cwd: string | undefined,
+	startOrigin?: string,
+) {
 	const { nodes, names, visible } = useNodeSelectionContext();
-	const { selectedCwd, selectedNode, cloneOn, originOf } =
+	const { repos, selectedCwd, selectedNode, cloneOn, originOf } =
 		useRepoSelectionContext();
 	const [picked, setPicked] = useState<string>();
-	const repoCwd = cwd && originOf(cwd) ? cwd : selectedCwd;
+	const sessionRepoCwd = cwd && originOf(cwd) ? cwd : selectedCwd;
+	const repoCwd = startOrigin
+		? repos.find((repo) => sameOrigin(originOf(repo), startOrigin))
+		: sessionRepoCwd;
 	const options: StartNodeOption[] = names.map((name) => ({
 		name,
 		cwd: repoCwd ? cloneOn(repoCwd, name) : undefined,

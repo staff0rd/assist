@@ -44,6 +44,7 @@ export type PrPreview = {
 	kind?: PreviewKind;
 	itemType?: PreviewItemType;
 	canStart?: boolean;
+	startOrigin?: string;
 	draft?: boolean;
 	reviewAfter?: boolean;
 	metadata?: PreviewMetadata[];
