@@ -4,6 +4,7 @@ import { sessionTitle } from "../../App/sessionTitle";
 import { displayStatus } from "../../displayStatus";
 import type { SessionInfo } from "../../types";
 import { PhoneSheetGrab } from "../PhoneSheetGrab";
+import { PhoneSessionIdCopy } from "./PhoneSessionIdCopy";
 
 const headerSx = { px: 2, pt: 0.75, pb: 1.25 } as const;
 
@@ -34,7 +35,11 @@ export function PhoneActionSheetHeader({
 				<Box sx={{ fontSize: 17, fontWeight: 600 }}>
 					{sessionTitle(session)}
 				</Box>
-				<Box sx={subtitleSx}>{subtitle}</Box>
+				<Box sx={subtitleSx}>
+					{subtitle}
+					{" · "}
+					<PhoneSessionIdCopy id={session.id} />
+				</Box>
 			</Box>
 		</>
 	);
