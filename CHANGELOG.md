@@ -1,3 +1,11 @@
+## [0.1112.5](https://github.com/staff0rd/assist/compare/v0.1112.4...v0.1112.5) (2026-11-10)
+
+
+### Bug Fixes
+
+* forward wheel to mouse-tracking apps ([c0ff6be](https://github.com/staff0rd/assist/commit/c0ff6be5cfd4dd7b373099c57b24535e1135904a))
+* label hunk-less diffs correctly ([7eeadac](https://github.com/staff0rd/assist/commit/7eeadac4e6e877cb8b5b11861a81ff1b6bcb8818))
+
 ## [0.1112.4](https://github.com/staff0rd/assist/compare/v0.1112.3...v0.1112.4) (2026-11-10)
 
 
