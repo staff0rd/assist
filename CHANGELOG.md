@@ -1,3 +1,10 @@
+## [0.1117.1](https://github.com/staff0rd/assist/compare/v0.1117.0...v0.1117.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* Design mode unsupported on Codex ([6cf931d](https://github.com/staff0rd/assist/commit/6cf931d1f6a9f10df86bb5c7783cf56b7296d81d))
+
 # [0.1117.0](https://github.com/staff0rd/assist/compare/v0.1116.0...v0.1117.0) (2026-11-10)
 
 
