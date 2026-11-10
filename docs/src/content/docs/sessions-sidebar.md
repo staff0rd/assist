@@ -59,7 +59,7 @@ Cards are grouped by repo. A repo with one session shows a lone card; two or mor
 
 Starred sessions, and the groups holding them, come first; everything else keeps the order it started in. :kbd[Mod+.] jumps straight to the next session waiting on you, including those with a question or check.
 
-A group you collapse stays where it is, marked with a pin, until you open it.
+A group you collapse stays where it is, marked with a pin, until you open it or its last session closes.
 
 The button at the left of the tab row hides the sidebar; the same button then appears in the toolbar to bring it back.
 

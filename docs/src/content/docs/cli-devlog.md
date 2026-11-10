@@ -10,6 +10,8 @@ covers:
   - cli:devlog skip
   - cli:devlog write
   - cli:devlog repos
+  - cli:devlog slack
+  - cli:devlog posted
 ---
 
 See [Devlog](../devlog/) for writing entries with `/devlog`.
@@ -22,3 +24,5 @@ See [Devlog](../devlog/) for writing entries with `/devlog`.
 - `assist devlog skip <week>` adds a `YYYY-Www` week, such as `2026-W33`, to `devlog.skipWeeks`, so it gets no entry.
 - `assist devlog write` :badge[internal] writes a dev entry from JSON on stdin, after checking it. Called by `/devlog`.
 - `assist devlog repos` lists your GitHub repos pushed to in the last 30 days, with each one's latest dev entry week, and whether its entries are missing, outdated or up to date. `--days <n>` changes the window, and `--all` lists every repo that isn't archived.
+- `assist devlog slack [week]` :badge[internal] lists the entries not yet posted to Slack, oldest first, or opens one week's entry as a Slack message and thread reply in the preview pane. Called by `/devlog --slack-post`.
+- `assist devlog posted <week> [permalink]` records an entry's Slack permalink in its frontmatter, or with `--skip` marks it as not to be posted.

@@ -85,6 +85,53 @@ screenshots:
     actions:
       - click: text=Dark mode toggle
       - click: '[aria-label="Session actions"]'
+  - file: ios-app-preview-card.png
+    alt: A proposed backlog item's card on a session's screen in the iOS app
+    route: /
+    phone: true
+    scene: previews
+    setup:
+      - proposal:
+          session: Add a dark mode toggle to the settings page
+          item:
+            name: Follow the system colour scheme
+            type: story
+            description: The settings page's dark mode toggle should follow the operating system's colour scheme until the user picks one.
+            acceptanceCriteria:
+              - With no saved choice, the page matches the operating system's scheme
+              - Picking a scheme overrides the operating system's from then on
+            phases:
+              - name: Follow the system scheme
+                tasks:
+                  - Read prefers-color-scheme when no choice is saved
+                  - Update the page when the system scheme changes
+    waitFor: text=Dark mode toggle
+    actions:
+      - click: text=Dark mode toggle
+  - file: ios-app-review-sheet.png
+    alt: The iOS app's review sheet showing a proposed backlog item in full
+    route: /
+    phone: true
+    scene: previews
+    setup:
+      - proposal:
+          session: Add a dark mode toggle to the settings page
+          item:
+            name: Follow the system colour scheme
+            type: story
+            description: The settings page's dark mode toggle should follow the operating system's colour scheme until the user picks one.
+            acceptanceCriteria:
+              - With no saved choice, the page matches the operating system's scheme
+              - Picking a scheme overrides the operating system's from then on
+            phases:
+              - name: Follow the system scheme
+                tasks:
+                  - Read prefers-color-scheme when no choice is saved
+                  - Update the page when the system scheme changes
+    waitFor: text=Dark mode toggle
+    actions:
+      - click: text=Dark mode toggle
+      - click: text=Review full item
 ---
 
 :badge[experimental] The iOS app is still being worked out, and its screens and features may change or be removed.
@@ -117,7 +164,7 @@ To enter the address by hand instead, on first launch enter the address you open
 
 ## Switching nodes
 
-Tap the node chip to list your saved nodes. Tap one to make it the home node, the pencil to edit it, or **Add node URL** to save another. The app remembers your choice across launches.
+Tap the node chip to list your saved nodes. Tap one to make it the home node, the pencil to edit or delete it, or **Add node URL** to save another. Deleting the home node makes another saved node the home node, or, if it was the last one, takes you back to connecting a home node. The app remembers your choice across launches.
 
 ::screenshot{file="ios-app-nodes.png"}
 
@@ -136,6 +183,16 @@ Tap **⋯** on a session's screen, or long-press its row in the list, for its ac
 ::screenshot{file="ios-app-actions.png"}
 
 Sessions asking you a question sit under **Answer here** at the top of the list, above **Needs you**. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**. During a [backlog run](../backlog-running/), **Later phase** moves the check to a later phase of the item instead.
+
+## Reviewing previews
+
+When an agent puts something in the [preview pane](../sessions-preview-panes/), such as a proposed backlog item or a pull request, a card on its screen shows what it is, with the same buttons as on the dashboard.
+
+::screenshot{file="ios-app-preview-card.png"}
+
+Tap **Review full item**, or **Review** on other previews, to read the whole of it. Select text there and tap **Comment** to comment on it as in the pane: **Send to agent**, **Add to review**, **Cite a broken rule** or **Add rule**. The comments you've added to the review are listed at the bottom of the sheet, where you can remove any before you approve or reject. With linked nodes, pick the node to run on above **Approve & start**.
+
+::screenshot{file="ios-app-review-sheet.png"}
 
 ## Starting a session with Siri
 

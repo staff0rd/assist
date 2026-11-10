@@ -7,6 +7,7 @@ covers:
   - cli:update
   - config:autoUpdate.enabled
   - config:autoUpdate.restart
+  - config:autoUpdate.idleMinutes
   - route:/updates
 screenshots:
   - file: updates-panel.png
@@ -40,6 +41,12 @@ The Updates page opens from the version badge in the dashboard's [status bar](..
 - **Pause** stops a node pulling updates until you **Resume** it.
 - **Open fix session** jumps to the session fixing a clone that couldn't fast-forward.
 - Expand a row for that node's update history.
+
+While you're using the dashboard, auto-restart holds off, on this node and on any linked node you're viewing, until you've been idle for two minutes. To change how long:
+
+```bash
+assist config set autoUpdate.idleMinutes 5 --node
+```
 
 ## Manual updates
 

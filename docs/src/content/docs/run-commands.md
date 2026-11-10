@@ -37,17 +37,19 @@ assist run add build tsc -p .
 
 The command is started without a shell, so `FOO=bar cmd`, `&&`, pipes and redirects don't work. Use the options instead:
 
-| Option             | Effect                                                                                              |
-| ------------------ | --------------------------------------------------------------------------------------------------- |
-| `--cwd <dir>`      | Working directory, relative to the config file                                                      |
-| `--env KEY=VALUE`  | Sets an environment variable. Repeatable                                                            |
-| `--pre <command>`  | Runs a shell command first. Repeatable, run in order                                                |
-| `--server [group]` | Marks it as a [dev server](#dev-servers)                                                            |
-| `--port <port>`    | The dev server's port, linked from its banner                                                       |
-| `--param <spec>`   | Adds a positional parameter. See below. Repeatable                                                  |
-| `--filter <glob>`  | For a `verify:` command, only runs it when a changed file matches. See [Verify](../verify/)         |
-| `--quiet`          | Hides the output unless the command fails                                                           |
-| `--repo [name]`    | Stores it in **repo (db)** in the database instead of `assist.yml`. See [Config](../config/#scopes) |
+| Option                     | Effect                                                                                              |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
+| `--cwd <dir>`              | Working directory, relative to the config file                                                      |
+| `--env KEY=VALUE`          | Sets an environment variable. Repeatable                                                            |
+| `--pre <command>`          | Runs a shell command first. Repeatable, run in order                                                |
+| `--server [group]`         | Marks it as a [dev server](#dev-servers)                                                            |
+| `--port <port>`            | The dev server's port, linked from its banner                                                       |
+| `--protocol <http\|https>` | The protocol of that link. Defaults to `http`                                                       |
+| `--path <path>`            | A path the link opens, such as `/swagger`                                                           |
+| `--param <spec>`           | Adds a positional parameter. See below. Repeatable                                                  |
+| `--filter <glob>`          | For a `verify:` command, only runs it when a changed file matches. See [Verify](../verify/)         |
+| `--quiet`                  | Hides the output unless the command fails                                                           |
+| `--repo [name]`            | Stores it in **repo (db)** in the database instead of `assist.yml`. See [Config](../config/#scopes) |
 
 Put options after `<command>`. To pass one of these flags to the command itself, quote the whole command: `assist run add build "pnpm --filter web build"`.
 

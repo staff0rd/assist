@@ -23,6 +23,7 @@ covers:
   - cli:status-line
   - cli:prompts
   - cli:codex-hook
+  - cli:codex-hook-trust
   - cli:pi-hook
 ---
 
@@ -50,6 +51,7 @@ See [Agent instructions and permissions](../hooks-and-permissions/) for what the
 - `assist cli-hook` :badge[internal] approves read-only commands and blocks denied ones. With `sessions.askQuestion` on, it also blocks `AskUserQuestion` in dashboard sessions and points the agent at `assist ask-question`. Called by the PreToolUse hook on shell commands, reads and `AskUserQuestion`.
 - `assist edit-hook` :badge[internal] blocks edits that add code comments. Called by the PreToolUse hook on file edits.
 - `assist codex-hook` :badge[internal] approves read-only commands in [Codex](../harnesses/) sessions, starts them with the repo's instructions and keeps their status on the dashboard. Called by Codex's hooks.
+- `assist codex-hook-trust` :badge[internal] trusts assist's own Codex hooks, so Codex starts without asking you to review them. Called when assist launches Codex.
 - `assist pi-hook` :badge[internal] approves read-only commands in [pi](../harnesses/) sessions and blocks denied ones. Called by assist's pi permission-gate extension.
 - `assist code-comment set <file> <line> <text>` :badge[internal] requests a single-line comment of up to 50 characters, sending a pin to your desktop notifications. See [Approving a comment](../code-quality/#approving-a-comment). Called by agents whose edit the comment gate blocked.
 - `assist code-comment confirm <pin>` :badge[internal] adds the comment the pin was issued for. Called by agents whose edit the comment gate blocked.

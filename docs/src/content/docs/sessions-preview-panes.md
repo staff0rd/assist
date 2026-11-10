@@ -136,6 +136,7 @@ screenshots:
     route: /sessions
     scene: previews
     setup:
+      - peer: desktop
       - proposal:
           session: Add a dark mode toggle to the settings page
           item:
@@ -220,6 +221,8 @@ Manual checks open in the pane. Follow the steps, then press **Works** or **Does
 
 During a [backlog run](../backlog-running/), a check that can't be judged yet can wait: press **Later phase** and pick one of the item's later phases, including Review, to move the check there.
 
+If a step is unclear, select the text you're unsure about, type your question and send it. The agent answers in the session, and the check stays open for you to answer.
+
 ::screenshot{file="sessions-check.png"}
 
 ## Showing links and snippets
@@ -236,6 +239,8 @@ When [`/draft`](../backlog/) or [`/bug`](../backlog/) has written an item, the w
 
 - **Approve** adds the item to the backlog.
 - **Approve & start** adds it and starts running it in a new session.
+
+With [linked nodes](../sessions-linked-nodes/), pick the node to run it on beside **Approve & start**. It starts on the node selected in the toolbar unless you pick another.
 
 ## Previewing a pull request
 

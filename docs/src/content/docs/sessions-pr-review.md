@@ -40,6 +40,8 @@ The **Review** menu, also opened by picking a pull request from the toolbar's [P
 | Review & post     | Posted without asking                                                   |
 | High-level review | Opens the [high-level review](../sessions-high-level-review/) checklist |
 
+Clicking a row runs it on your default [harness](../harnesses/). When Codex or pi can also run it, the row has a **Codex** or **pi** button that runs it on that harness instead.
+
 Tick these before picking a mode:
 
 - **Force re-run** ignores an earlier review of the same commit.

@@ -40,9 +40,9 @@ The assist extension for Firefox starts sessions from GitHub, Azure DevOps and G
 
 ## Installing
 
-Open **Firefox extension** from the dashboard's menu, or run `/extension` for a link to the latest build. Open it in Firefox and accept the install prompt; the extension keeps itself up to date. When the connected extension is behind the latest build, the dashboard offers it: press **Install** on the notice to update now.
+Open **Firefox extension** from the dashboard's menu, or run `/extension` for a link to the latest build. Open it in Firefox and accept the install prompt; the extension keeps itself up to date. To update straight away, open the extension's options page, opened by the assist button in Firefox's toolbar, and press **Install** beside the newer version.
 
-It sends to the web server at `http://localhost:3100`. If yours runs elsewhere, change it on the extension's options page, opened by the assist button in Firefox's toolbar.
+It sends to the web server at `http://localhost:3100`. If yours runs elsewhere, change it on the options page.
 
 ## Sending from GitHub
 

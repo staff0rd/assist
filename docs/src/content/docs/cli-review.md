@@ -5,6 +5,7 @@ group: CLI
 order: 7
 covers:
   - cli:review
+  - config:review.synthesisHarness
 ---
 
 ## Commands
@@ -16,3 +17,11 @@ covers:
   - `--force`, `--address-comments` and `--announce` match the menu's options.
   - `--checkout-only` checks the pull request out and leaves an idle agent in it, without reviewing.
   - `--verbose` prints a line per step instead of spinners.
+
+## Config
+
+`review.synthesisHarness` picks the harness, `claude` (the default) or `codex`, that combines the Claude and Codex reviews into one set of findings:
+
+```bash
+assist config set review.synthesisHarness codex
+```

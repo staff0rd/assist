@@ -54,6 +54,8 @@ The dashboard can be driven without the mouse. Most shortcuts are :kbd[Alt] plus
 
 A shortcut whose target is on the Sessions tab switches there first, and a key whose button isn't shown does nothing. While a session's preview pane is open, :kbd[Alt+D] focuses the pane's primary decision button instead of the diff, and pressing it again returns to the terminal.
 
+Hold :kbd[Shift] as you click a button or menu item, or press :kbd[Shift+Enter] on it, to skip its confirmation, such as on **Restart**, **Revert**, closing a group or deleting a backlog item.
+
 The tabs, toolbar buttons and top-bar buttons show their shortcut in their tooltip. The menu's **Keyboard shortcuts** item opens the same sheet as :kbd[Mod+/].
 
 ::screenshot{file="sessions-shortcuts.png"}
