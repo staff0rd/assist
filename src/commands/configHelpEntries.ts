@@ -3,6 +3,7 @@ import { adviceConfigHelp } from "./advise/adviceConfigHelp";
 import { askQuestionConfigHelp } from "./askQuestion/askQuestionConfigHelp";
 import { backlogConfigHelp } from "./backlog/backlogConfigHelp";
 import { harnessConfigHelp } from "./backlog/harnessConfigHelp";
+import { harnessDefaultsConfigHelp } from "./backlog/harnessDefaultsConfigHelp";
 import { inboxConfigHelp } from "./inbox/inboxConfigHelp";
 import { backupConfigHelp } from "./backup/backupConfigHelp";
 import { autoUpdateConfigHelp } from "./sessions/daemon/autoUpdateConfigHelp";
@@ -53,6 +54,7 @@ export const configHelpEntries: ConfigHelpEntry[] = [
 	...devlogConfigHelp,
 	...dotnetConfigHelp,
 	...harnessConfigHelp,
+	...harnessDefaultsConfigHelp,
 	...inboxConfigHelp,
 	...jiraConfigHelp,
 	...litellmConfigHelp,

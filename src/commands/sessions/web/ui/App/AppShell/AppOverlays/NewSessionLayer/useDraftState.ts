@@ -19,7 +19,7 @@ export function useDraftState() {
 	const [prompt, setPrompt] = usePersistedPrompt("new-session");
 	const [cwd, setCwd] = useState<string>();
 	const [mode, setMode] = useState<NewSessionMode>();
-	const [harness, setHarness] = useState<HarnessKind>("claude");
+	const [harness, setHarness] = useState<HarnessKind>();
 	const [node, setNode] = useState<string>();
 	const [focus, setFocus] = useState(initialFocus);
 
@@ -27,6 +27,7 @@ export function useDraftState() {
 		setPrompt("");
 		setCwd(undefined);
 		setMode(undefined);
+		setHarness(undefined);
 		setNode(undefined);
 		setFocus(initialFocus);
 	}, [setPrompt]);

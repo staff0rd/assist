@@ -2,17 +2,18 @@ import type { Command } from "commander";
 import type { HarnessFeature } from "../shared/harnessAdapters/types";
 import { configHelp } from "../shared/configHelp";
 import { harnessConfigHelp } from "./backlog/harnessConfigHelp";
+import { harnessDefaultsConfigHelp } from "./backlog/harnessDefaultsConfigHelp";
 import { launchMode } from "./backlog/launchMode";
 import { resolveHarness } from "./backlog/resolveHarness";
 
 const harnessFlag = (feature: HarnessFeature) =>
-	`Coding harness to launch (claude|codex|pi); defaults to the configured harness.engine. Exits with the reasons, without launching, when ${feature.label} is unavailable on it`;
+	`Coding harness to launch (claude|codex|pi); defaults to the configured harness.defaults.<command>.harness, then harness.engine. Exits with the reasons, without launching, when ${feature.label} is unavailable on it`;
 
 type LaunchOpts = { once?: boolean; resumeSession?: string; harness?: string };
 
 export function registerDescriptionLaunch(
 	program: Command,
-	name: string,
+	name: "draft" | "bug",
 	slashCommand: string,
 	description: string,
 	feature: HarnessFeature,
@@ -34,10 +35,10 @@ export function registerDescriptionLaunch(
 				once: opts.once,
 				description: text,
 				resumeSessionId: opts.resumeSession,
-				harness: resolveHarness(opts.harness),
+				harness: resolveHarness(opts.harness, name),
 				feature,
 			}),
 		);
-	configHelp(command, harnessConfigHelp);
+	configHelp(command, [...harnessConfigHelp, ...harnessDefaultsConfigHelp]);
 	if (alias) command.alias(alias);
 }

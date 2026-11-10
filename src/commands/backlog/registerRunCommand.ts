@@ -1,17 +1,20 @@
 import type { Command } from "commander";
+import { configHelp } from "../../shared/configHelp";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
+import { harnessConfigHelp } from "./harnessConfigHelp";
+import { harnessDefaultsConfigHelp } from "./harnessDefaultsConfigHelp";
 import { resolveHarness } from "./resolveHarness";
 import { run as backlogRun } from "./run";
 
 export function registerRunCommand(cmd: Command): void {
-	cmd
+	const command = cmd
 		.command("run <id>")
 		.description("Run a backlog item's plan phase-by-phase")
 		.option("-w, --write", "Run the harness with write access (default)")
 		.option("--no-write", "Run the harness without write access")
 		.option(
 			"--harness <harness>",
-			"Coding harness to launch (claude|codex|pi); defaults to the configured harness.engine",
+			"Coding harness to launch (claude|codex|pi); defaults to the configured harness.defaults.run.harness, then harness.engine",
 		)
 		.option(
 			"--resume-session <id>",
@@ -33,9 +36,10 @@ export function registerRunCommand(cmd: Command): void {
 				if (!opts.resumeSession) await pullIfConfigured();
 				await backlogRun(id, {
 					allowEdits: opts.write !== false,
-					harness: resolveHarness(opts.harness),
+					harness: resolveHarness(opts.harness, "run"),
 					resumeSessionId: opts.resumeSession,
 				});
 			},
 		);
+	configHelp(command, [...harnessConfigHelp, ...harnessDefaultsConfigHelp]);
 }

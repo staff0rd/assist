@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadMergedRawConfig } from "../../../shared/loadConfigFrom";
 import { assistConfigSchema } from "../../../shared/types";
 import { respondJson } from "../../../shared/web";
+import { resolveDialogHarnesses } from "./newSessionDefaults/resolveDialogHarnesses";
 
 const newSessionModeSchema =
 	assistConfigSchema.shape.sessions.unwrap().shape.newSessionMode;
@@ -34,5 +35,10 @@ export function newSessionDefaults(
 		});
 		return;
 	}
-	respondJson(res, 200, { mode: parsed.data });
+	const resolved = resolveDialogHarnesses(raw);
+	if ("error" in resolved) {
+		respondJson(res, 422, { error: `Invalid config ${resolved.error}` });
+		return;
+	}
+	respondJson(res, 200, { mode: parsed.data, harnesses: resolved.harnesses });
 }

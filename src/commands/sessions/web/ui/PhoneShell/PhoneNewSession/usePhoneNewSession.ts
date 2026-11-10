@@ -1,10 +1,9 @@
-import { useSessionHarness } from "../../App/AppShell/AppOverlays/NewSessionLayer/NewSessionDialog/useSessionHarness";
-import { launchNewSession } from "../../App/AppShell/AppOverlays/NewSessionLayer/launchNewSession";
 import { defaultModeError } from "../../App/AppShell/AppOverlays/NewSessionLayer/useNewSessionDraft/defaultModeError";
 import { useDefaultNewSessionMode } from "../../App/AppShell/AppOverlays/NewSessionLayer/useNewSessionDraft/useDefaultNewSessionMode";
 import type { SessionSocket } from "../../useSessionSocket";
-import { socketLaunchers } from "./socketLaunchers";
+import { submitPhoneDraft } from "./submitPhoneDraft";
 import { usePhoneDraftState } from "./usePhoneDraftState";
+import { usePhoneModeHarness } from "./usePhoneModeHarness";
 import { useNodeRepoTarget } from "./useNodeRepoTarget";
 
 export function usePhoneNewSession(socket: SessionSocket, opens: number) {
@@ -13,9 +12,10 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 	const target = useNodeRepoTarget(socket, draft.node, draft.cwd);
 	const defaultMode = useDefaultNewSessionMode(target.cwd, opens);
 	const mode = draft.mode ?? defaultMode?.mode ?? "prompt";
-	const { harness, harnesses } = useSessionHarness(
+	const { harness, harnesses } = usePhoneModeHarness(
 		visible ? target.node : undefined,
 		draft.harness,
+		defaultMode,
 		mode,
 	);
 	const needsRepo = mode === "draft" || mode === "bug";
@@ -32,20 +32,13 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 		nodes: visible ? names : [],
 		links: socket.nodes?.links ?? [],
 		canSubmit: modeKnown && (!needsRepo || !!target.cwd),
-		submit: () => {
-			launchNewSession(
-				{
-					mode,
-					harness,
-					prompt: draft.prompt,
-					cwd: target.cwd,
-					node: visible ? target.node : undefined,
-				},
-				socketLaunchers(socket),
-			);
-			draft.setPrompt("");
-			draft.setMode(undefined);
-		},
+		submit: () =>
+			submitPhoneDraft(socket, draft, {
+				mode,
+				harness,
+				cwd: target.cwd,
+				node: visible ? target.node : undefined,
+			}),
 	};
 }
 

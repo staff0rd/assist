@@ -6,7 +6,7 @@ import type { NewSessionMode } from "../../App/AppShell/AppOverlays/NewSessionLa
 export function usePhoneDraftState() {
 	const [prompt, setPrompt] = usePersistedPrompt("phone-new-session");
 	const [mode, setMode] = useState<NewSessionMode>();
-	const [harness, setHarness] = useState<HarnessKind>("claude");
+	const [harness, setHarness] = useState<HarnessKind>();
 	const [node, setNode] = useState<string>();
 	const [cwd, setCwd] = useState<string>();
 	return {

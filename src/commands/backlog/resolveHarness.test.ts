@@ -47,4 +47,24 @@ describe("resolveHarness", () => {
 	it("falls back to the configured engine for an unrecognised value", () => {
 		expect(resolveHarness("gpt")).toBe("claude");
 	});
+
+	it("uses the type's configured default harness over the engine", () => {
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				harness: { engine: "claude", defaults: { run: { harness: "codex" } } },
+			}),
+		);
+		expect(resolveHarness(undefined, "run")).toBe("codex");
+		expect(resolveHarness(undefined, "draft")).toBe("claude");
+		expect(resolveHarness(undefined)).toBe("claude");
+	});
+
+	it("lets an explicit harness override the type's default", () => {
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				harness: { engine: "claude", defaults: { bug: { harness: "codex" } } },
+			}),
+		);
+		expect(resolveHarness("pi", "bug")).toBe("pi");
+	});
 });

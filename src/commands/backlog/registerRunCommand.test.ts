@@ -55,10 +55,16 @@ describe("registerRunCommand", () => {
 		});
 	});
 
+	it("resolves the run type's default harness when --harness is omitted", async () => {
+		await parse(["run", "42"]);
+
+		expect(mockResolveHarness).toHaveBeenCalledWith(undefined, "run");
+	});
+
 	it("uses an explicit harness override", async () => {
 		await parse(["run", "42", "--harness", "pi"]);
 
-		expect(mockResolveHarness).toHaveBeenCalledWith("pi");
+		expect(mockResolveHarness).toHaveBeenCalledWith("pi", "run");
 		expect(mockRun).toHaveBeenCalledWith("42", {
 			allowEdits: true,
 			harness: "pi",

@@ -48,12 +48,12 @@ describe("newSessionDefaults", () => {
 			"sessions:\n  newSessionMode: bug\nrepos:\n  apm:\n    sessions:\n      newSessionMode: prompt\n",
 		);
 
-		expect(modeFor(apm)).toEqual({ mode: "prompt" });
-		expect(modeFor(other)).toEqual({ mode: "bug" });
+		expect(modeFor(apm)).toMatchObject({ mode: "prompt" });
+		expect(modeFor(other)).toMatchObject({ mode: "bug" });
 	});
 
 	it("falls back to draft when nothing is set", () => {
-		expect(modeFor(other)).toEqual({ mode: "draft" });
+		expect(modeFor(other)).toMatchObject({ mode: "draft" });
 	});
 
 	it("still resolves the mode when an unrelated nested key is unknown", () => {
@@ -62,13 +62,13 @@ describe("newSessionDefaults", () => {
 			"review:\n  highLevel:\n    futureKey: true\nsessions:\n  newSessionMode: bug\n",
 		);
 
-		expect(modeFor(other)).toEqual({ mode: "bug" });
+		expect(modeFor(other)).toMatchObject({ mode: "bug" });
 	});
 
 	it("falls back to draft beside an unknown key when the mode is unset", () => {
 		writeFileSync(globalConfig, "review:\n  highLevel:\n    futureKey: true\n");
 
-		expect(modeFor(other)).toEqual({ mode: "draft" });
+		expect(modeFor(other)).toMatchObject({ mode: "draft" });
 	});
 
 	it("names the key when the mode itself is invalid", () => {
@@ -76,6 +76,49 @@ describe("newSessionDefaults", () => {
 
 		expect(modeFor(other)).toEqual({
 			error: expect.stringContaining("sessions.newSessionMode"),
+		});
+		expect(mockRespondJson.mock.lastCall?.[1]).toBe(422);
+	});
+
+	it("resolves each dialog type's harness, falling back to harness.engine", () => {
+		writeFileSync(
+			globalConfig,
+			"harness:\n  engine: codex\n  defaults:\n    bug:\n      harness: pi\n    run:\n      harness: claude\n",
+		);
+
+		expect(modeFor(other)).toEqual({
+			mode: "draft",
+			harnesses: {
+				draft: "codex",
+				bug: "pi",
+				prompt: "codex",
+				design: "codex",
+			},
+		});
+	});
+
+	it("applies the selected repo's harness override", () => {
+		writeFileSync(
+			globalConfig,
+			"repos:\n  apm:\n    harness:\n      defaults:\n        design:\n          harness: codex\n",
+		);
+
+		expect(modeFor(apm)).toMatchObject({
+			harnesses: { draft: "claude", design: "codex" },
+		});
+		expect(modeFor(other)).toMatchObject({
+			harnesses: { design: "claude" },
+		});
+	});
+
+	it("names the key when a type's harness is invalid", () => {
+		writeFileSync(
+			globalConfig,
+			"harness:\n  defaults:\n    prompt:\n      harness: gpt\n",
+		);
+
+		expect(modeFor(other)).toEqual({
+			error: expect.stringContaining("harness.defaults.prompt.harness"),
 		});
 		expect(mockRespondJson.mock.lastCall?.[1]).toBe(422);
 	});

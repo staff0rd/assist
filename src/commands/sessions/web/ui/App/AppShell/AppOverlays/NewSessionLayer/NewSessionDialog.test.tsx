@@ -40,9 +40,11 @@ type DefaultMode =
 
 function useInjectedDefault(defaultMode: DefaultMode, cwd: string) {
 	if (typeof defaultMode !== "function")
-		return { mode: defaultMode, pending: false };
+		return { mode: defaultMode, harnesses: {}, pending: false };
 	const loaded = defaultMode(cwd);
-	return typeof loaded === "string" ? { mode: loaded, pending: false } : loaded;
+	return typeof loaded === "string"
+		? { mode: loaded, harnesses: {}, pending: false }
+		: loaded;
 }
 
 function DraftedDialog({
@@ -138,7 +140,7 @@ function renderDialog(
 	};
 }
 
-async function renderWithHarnesses(defaultMode: NewSessionMode = "prompt") {
+async function renderWithHarnesses(defaultMode: DefaultMode = "prompt") {
 	const handlers = renderDialog(defaultMode, {
 		exposeCodexActions: true,
 		exposePiActions: true,
@@ -377,7 +379,7 @@ describe("NewSessionDialog mode selector", () => {
 			);
 			return () => clearTimeout(timer);
 		}, [cwd]);
-		return { mode: loaded.mode, pending: loaded.cwd !== cwd };
+		return { mode: loaded.mode, harnesses: {}, pending: loaded.cwd !== cwd };
 	}
 
 	it("submits an empty prompt in the new repo's prompt default after a single Enter", async () => {
@@ -852,6 +854,57 @@ describe("NewSessionDialog harness selector", () => {
 	});
 });
 
+describe("NewSessionDialog per-type default harness", () => {
+	const configured =
+		(harnesses: LoadedDefaultMode["harnesses"]) => (): LoadedDefaultMode => ({
+			mode: "prompt",
+			harnesses,
+			pending: false,
+		});
+	const designSegment = () => screen.getByRole("radio", { name: /^design/ });
+
+	it("preselects each type's configured harness as the type switches", async () => {
+		await renderWithHarnesses(
+			configured({ prompt: "codex", design: "claude" }),
+		);
+
+		expect(promptSegment().textContent).toBe("prompt · Codex");
+		fireEvent.click(designSegment());
+		expect(checkedMode()).toBe("design · Claude");
+		fireEvent.click(promptSegment());
+		expect(checkedMode()).toBe("prompt · Codex");
+	});
+
+	it("keeps a hand-picked harness across type switches", async () => {
+		await renderWithHarnesses(
+			configured({ prompt: "claude", design: "claude" }),
+		);
+
+		fireEvent.click(promptSegment());
+		fireEvent.click(harnessItem("Codex"));
+		fireEvent.click(designSegment());
+		expect(checkedMode()).toBe("design · Codex");
+		fireEvent.click(promptSegment());
+		expect(checkedMode()).toBe("prompt · Codex");
+	});
+
+	it("falls back to the first available harness when the configured one is unavailable", async () => {
+		const { onCreateDesign } = await renderWithHarnesses(
+			configured({ prompt: "pi", design: "pi" }),
+		);
+
+		fireEvent.click(designSegment());
+		expect(checkedMode()).toBe("design · Claude");
+		fireEvent.change(promptInput(), { target: { value: "a page" } });
+		submitPrompt();
+		expect(onCreateDesign).toHaveBeenCalledWith(
+			"claude",
+			"a page",
+			"/git/beta",
+		);
+	});
+});
+
 describe("NewSessionDialog keyboard", () => {
 	it("puts every control in the Tab order", async () => {
 		await renderWithHarnesses();
@@ -876,6 +929,7 @@ describe("NewSessionDialog keyboard", () => {
 		const retry = vi.fn();
 		renderDialog(() => ({
 			mode: "prompt",
+			harnesses: {},
 			pending: false,
 			error: "HTTP 502",
 			retry,

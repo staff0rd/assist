@@ -7,6 +7,7 @@ import { registerOutputCommand } from "./registerOutputCommand";
 import { registerSetStatusCommand } from "./registerSetStatusCommand";
 import { renameSession } from "./renameSession";
 import { nextConfigHelp } from "./nextConfigHelp";
+import { harnessDefaultsConfigHelp } from "../backlog/harnessDefaultsConfigHelp";
 import { sessionsConfigHelp } from "./sessionsConfigHelp";
 import { web as sessionsWeb } from "./web";
 import { hotkeysConfigHelp } from "./hotkeysConfigHelp";
@@ -59,5 +60,5 @@ export function registerSessions(program: Command): void {
 	registerSetStatusCommand(cmd);
 	registerNodes(cmd);
 
-	configHelp(cmd, sessionsConfigHelp);
+	configHelp(cmd, [...sessionsConfigHelp, ...harnessDefaultsConfigHelp]);
 }

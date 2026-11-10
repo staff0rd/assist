@@ -1,38 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { apiFetch } from "../../../../../apiFetch";
-import { reportCaughtError } from "../../../../../clientFailures/reportCaughtError";
-import { type NewSessionMode, newSessionModes } from "../newSessionModes";
+import type { NewSessionMode } from "../newSessionModes";
+import { fetchMode, type Outcome } from "./fetchMode";
+import type { ModeHarnesses } from "./parseModeHarnesses";
 
 export type LoadedDefaultMode = {
 	mode: NewSessionMode;
+	harnesses: ModeHarnesses;
 	pending: boolean;
 	error?: string;
 	retry?: () => void;
 };
 
-type Outcome = { mode: NewSessionMode } | { error: string };
-
 type Loaded = { cwd: string; opens: number; attempt: number; outcome: Outcome };
-
-async function failureMessage(res: Response): Promise<string> {
-	const status = `HTTP ${res.status}`;
-	const body = await res.json().catch(() => null);
-	return typeof body?.error === "string" ? `${status}: ${body.error}` : status;
-}
-
-async function fetchMode(cwd: string): Promise<Outcome> {
-	try {
-		const query = cwd ? `?cwd=${encodeURIComponent(cwd)}` : "";
-		const res = await apiFetch(`/api/new-session-defaults${query}`);
-		if (!res.ok) return { error: await failureMessage(res) };
-		const body = await res.json();
-		if (Object.hasOwn(newSessionModes, body?.mode)) return { mode: body.mode };
-		throw new Error(`unknown mode ${JSON.stringify(body?.mode)}`);
-	} catch (error) {
-		reportCaughtError(error, "new-session defaults");
-		return { error: error instanceof Error ? error.message : String(error) };
-	}
-}
 
 export function useDefaultNewSessionMode(
 	cwd: string,
@@ -56,6 +35,7 @@ export function useDefaultNewSessionMode(
 	const { outcome } = loaded;
 	return {
 		mode: "mode" in outcome ? outcome.mode : "prompt",
+		harnesses: "harnesses" in outcome ? outcome.harnesses : {},
 		pending:
 			loaded.cwd !== cwd ||
 			loaded.opens !== opens ||

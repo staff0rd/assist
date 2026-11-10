@@ -7,10 +7,18 @@ import type { HistoricalSession } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneNewSessionSheet } from "./PhoneNewSessionSheet";
 
+const configured = vi.hoisted(() => ({
+	harnesses: {} as Record<string, string>,
+}));
+
 vi.mock(
 	"../../App/AppShell/AppOverlays/NewSessionLayer/useNewSessionDraft/useDefaultNewSessionMode",
 	() => ({
-		useDefaultNewSessionMode: () => ({ mode: "prompt", pending: false }),
+		useDefaultNewSessionMode: () => ({
+			mode: "prompt",
+			harnesses: configured.harnesses,
+			pending: false,
+		}),
 	}),
 );
 vi.mock("../../useHarnessCapabilities", () => ({
@@ -18,11 +26,16 @@ vi.mock("../../useHarnessCapabilities", () => ({
 		exposeCodexActions: false,
 		exposePiActions: false,
 		engine: "claude",
-		features: {},
+		features: {
+			draft: { claude: { available: true }, codex: { available: true } },
+		},
 	}),
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	configured.harnesses = {};
+});
 
 const origin = { origin: "github.com/x/assist" };
 const history = [
@@ -72,5 +85,20 @@ describe("PhoneNewSessionSheet", () => {
 			{ node: "wsl" },
 		);
 		expect(onClose).toHaveBeenCalled();
+	});
+
+	it("starts a draft on the draft type's configured harness", () => {
+		configured.harnesses = { draft: "codex" };
+		const { socket } = renderSheet();
+
+		fireEvent.click(screen.getByRole("radio", { name: "Draft" }));
+		fireEvent.click(screen.getByRole("radio", { name: /wsl/ }));
+		fireEvent.click(screen.getByRole("button", { name: "Start draft" }));
+
+		expect(socket.createAssistSession).toHaveBeenCalledWith(
+			["draft", "--once", "--harness", "codex"],
+			"/wsl/assist",
+			{ node: "wsl" },
+		);
 	});
 });

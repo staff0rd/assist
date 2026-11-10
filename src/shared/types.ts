@@ -2,6 +2,7 @@ import { z } from "zod";
 import { adviceFragmentNames } from "./adviceFragmentNames";
 import { defaultCriticalPaths } from "./defaultCriticalPaths";
 import { durationSchema } from "./durationSchema";
+import { harnessKinds } from "./harnessKinds";
 import { hotkeysSchema } from "./hotkeys/hotkeysSchema";
 import { runConfigSchema, runLinkSchema } from "./runConfigSchema";
 import { secretConfigValue } from "./secretConfigValue";
@@ -26,6 +27,10 @@ export const miroExtractSchema = z.strictObject({
 const DEFAULT_BACKUP_DIR = "~/.assist/backups";
 const DEFAULT_BACKUP_STALE_AFTER = "32h";
 const DEFAULT_CLONE_DIR = "~/git";
+const harnessKindSchema = z.enum(harnessKinds);
+const sessionTypeDefaultsSchema = z
+	.strictObject({ harness: harnessKindSchema.optional() })
+	.optional();
 const assistConfigShape = {
 	advice: z
 		.strictObject({
@@ -383,10 +388,19 @@ const assistConfigShape = {
 		.default({ autoConfirm: false }),
 	harness: z
 		.strictObject({
-			engine: z.enum(["claude", "codex", "pi"]).default("claude"),
+			engine: harnessKindSchema.default("claude"),
 			exposeCodexActions: z.boolean().optional(),
 			exposePiActions: z.boolean().optional(),
 			codexModel: z.string().optional(),
+			defaults: z
+				.strictObject({
+					draft: sessionTypeDefaultsSchema,
+					bug: sessionTypeDefaultsSchema,
+					prompt: sessionTypeDefaultsSchema,
+					design: sessionTypeDefaultsSchema,
+					run: sessionTypeDefaultsSchema,
+				})
+				.optional(),
 		})
 		.default({ engine: "claude" }),
 };
