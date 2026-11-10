@@ -6,6 +6,12 @@ type ContentLabels = {
 	context: string;
 };
 
+const URL_PATTERN = /https?:\/\/[^\s<>()[\]"'`]+/gi;
+
+function mentionsClaude(text: string): boolean {
+	return text.replace(URL_PATTERN, "").toLowerCase().includes("claude");
+}
+
 export function validateProposedContent(
 	labels: ContentLabels,
 	title: string,
@@ -13,12 +19,12 @@ export function validateProposedContent(
 ): void {
 	const { subject, context } = labels;
 
-	if (title.toLowerCase().includes("claude")) {
+	if (mentionsClaude(title)) {
 		console.error(`Error: ${subject} title must not reference Claude`);
 		process.exit(1);
 	}
 
-	if (body.toLowerCase().includes("claude")) {
+	if (mentionsClaude(body)) {
 		console.error(`Error: ${subject} body must not reference Claude`);
 		process.exit(1);
 	}

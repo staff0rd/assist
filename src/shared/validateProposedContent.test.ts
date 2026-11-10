@@ -47,6 +47,67 @@ describe("validateProposedContent", () => {
 		});
 	});
 
+	describe("when claude appears only inside a URL", () => {
+		const prototypeLink =
+			"[Prototype](https://claude.ai/design/p/abc123?file=Concept.dc.html&via=share)";
+
+		it("should allow a markdown link in an issue body", () => {
+			expect(() =>
+				validateProposedContent(
+					issueLabels,
+					"Crash on load",
+					`See the ${prototypeLink} for the layout.`,
+				),
+			).not.toThrow();
+		});
+
+		it("should allow a markdown link in a PR body", () => {
+			expect(() =>
+				validateProposedContent(prLabels, "Add feature", prototypeLink),
+			).not.toThrow();
+		});
+
+		it("should allow a bare URL", () => {
+			expect(() =>
+				validateProposedContent(
+					issueLabels,
+					"Crash on load",
+					"Design: https://CLAUDE.ai/design/p/abc123",
+				),
+			).not.toThrow();
+		});
+
+		it("should still reject prose alongside the URL", () => {
+			expect(() =>
+				validateProposedContent(
+					issueLabels,
+					"Crash on load",
+					`Made with Claude, see ${prototypeLink}`,
+				),
+			).toThrow("process.exit");
+		});
+
+		it("should still reject claude in the link text", () => {
+			expect(() =>
+				validateProposedContent(
+					prLabels,
+					"Add feature",
+					"Generated with [Claude Code](https://claude.ai/code)",
+				),
+			).toThrow("process.exit");
+		});
+
+		it("should still reject harness attribution trailers", () => {
+			expect(() =>
+				validateProposedContent(
+					prLabels,
+					"Add feature",
+					`${prototypeLink}\n\nCo-authored-by: Codex <noreply@openai.com>`,
+				),
+			).toThrow("process.exit");
+		});
+	});
+
 	describe("when the content references a backlog item", () => {
 		it("should reject a PR title id", () => {
 			expect(() =>
