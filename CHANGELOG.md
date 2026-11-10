@@ -1,3 +1,10 @@
+# [0.1110.0](https://github.com/staff0rd/assist/compare/v0.1109.0...v0.1110.0) (2026-11-10)
+
+
+### Features
+
+* harness buttons on review menu rows ([07b477c](https://github.com/staff0rd/assist/commit/07b477c720e29ee6bd545b48089437268e0faaae))
+
 # [0.1109.0](https://github.com/staff0rd/assist/compare/v0.1108.0...v0.1109.0) (2026-11-10)
 
 
