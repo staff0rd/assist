@@ -103,4 +103,21 @@ describe("groupSessionsByStatus", () => {
 		expect(ids(groups.questions)).toEqual(["a"]);
 		expect(ids(groups.needsYou)).toEqual([]);
 	});
+
+	it("puts a session waiting on a github-issue preview in Answer here", () => {
+		const groups = groupSessionsByStatus([
+			session("a", "running", {
+				pendingPrPreview: {
+					requestId: "r",
+					title: "Issue",
+					body: "",
+					prNumber: null,
+					kind: "github-issue",
+				},
+			}),
+		]);
+
+		expect(ids(groups.questions)).toEqual(["a"]);
+		expect(ids(groups.needsYou)).toEqual([]);
+	});
 });

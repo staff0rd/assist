@@ -24,6 +24,20 @@ describe("displayStatus", () => {
 			).toBe("question");
 	});
 
+	it.each([
+		"github-issue",
+		"github-issue-edit",
+		"github-issue-comment",
+		"pr-comment",
+	] as const)("reads question while a %s preview is pending", (kind) => {
+		for (const status of ["running", "waiting"] satisfies SessionStatus[])
+			expect(
+				displayStatus(
+					makeSessionInfo({ status, pendingPrPreview: { ...preview, kind } }),
+				),
+			).toBe("question");
+	});
+
 	it("reads waiting while a preview sits unreviewed", () => {
 		expect(
 			displayStatus(

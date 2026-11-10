@@ -1,5 +1,14 @@
 import type { SessionInfo, SessionStatus } from "./types";
 
+const QUESTION_KINDS = new Set<string | undefined>([
+	"question",
+	"backlog-item",
+	"github-issue",
+	"github-issue-edit",
+	"github-issue-comment",
+	"pr-comment",
+]);
+
 export type DisplayStatus = SessionStatus | "idle" | "question" | "check";
 
 export function displayStatus(session: SessionInfo): DisplayStatus {
@@ -9,8 +18,7 @@ export function displayStatus(session: SessionInfo): DisplayStatus {
 		preview.kind !== "show" &&
 		(session.status === "running" || session.status === "waiting")
 	) {
-		if (preview.kind === "question" || preview.kind === "backlog-item")
-			return "question";
+		if (QUESTION_KINDS.has(preview.kind)) return "question";
 		if (preview.kind === "check" || preview.kind === "design") return "check";
 		return "waiting";
 	}
