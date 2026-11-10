@@ -1,3 +1,10 @@
+## [0.1112.1](https://github.com/staff0rd/assist/compare/v0.1112.0...v0.1112.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* Codex worktree trust, review gate ([c2ea916](https://github.com/staff0rd/assist/commit/c2ea91604105c9bcd292b00a0d1048e4082e18bd))
+
 # [0.1112.0](https://github.com/staff0rd/assist/compare/v0.1111.0...v0.1112.0) (2026-11-10)
 
 
