@@ -1,3 +1,11 @@
+## [0.1121.1](https://github.com/staff0rd/assist/compare/v0.1121.0...v0.1121.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* comment gate block comment label ([50ecc6e](https://github.com/staff0rd/assist/commit/50ecc6ee70f9dba68c1e5d379b1a8551eb029c36))
+* sync never clobbers unowned files ([5355893](https://github.com/staff0rd/assist/commit/5355893e539226caae81c9fee2c4a352cf0cf76b))
+
 # [0.1121.0](https://github.com/staff0rd/assist/compare/v0.1120.2...v0.1121.0) (2026-11-11)
 
 
