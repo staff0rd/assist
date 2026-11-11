@@ -7,13 +7,19 @@ import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
 import { readUserConfig } from "../../shared/db/readUserConfig";
 import { updateUserConfig } from "../../shared/db/updateUserConfig";
+import { listRepoConfigs } from "../../shared/db/listRepoConfigs";
 import { readUserConfigCache } from "../../shared/readUserConfigCache";
+import { seedRepoConfigs } from "../../test/mothers/seedRepoConfigs";
 import { addUserRule } from "./addUserRule";
 
 let orm: Db;
 
 vi.mock("../../shared/db/getDb", () => ({
 	getDb: () => Promise.resolve(orm),
+}));
+
+vi.mock("../backlog/getCurrentOrigin", () => ({
+	getCurrentOrigin: () => "github.com/org/assist",
 }));
 
 describe("addUserRule", () => {
@@ -105,6 +111,79 @@ describe("addUserRule", () => {
 			expect(readUserConfigCache()).toEqual(expected);
 			expect(() => readFileSync(globalConfigPath)).toThrow();
 		});
+	});
+
+	describe("--repo", () => {
+		it("appends to the current repo's advice.rules in repo (db)", async () => {
+			await seedRepoConfigs(orm, {
+				"github.com/org/assist": {
+					commit: { push: true },
+					advice: { rules: [{ title: "First", text: "Existing rule" }] },
+				},
+			});
+
+			await addUserRule(
+				"Give the direct URL",
+				{ title: "Links", repo: true },
+				globalConfigPath,
+			);
+
+			expect(await listRepoConfigs(orm)).toEqual({
+				"github.com/org/assist": {
+					commit: { push: true },
+					advice: {
+						rules: [
+							{ title: "First", text: "Existing rule" },
+							{ title: "Links", text: "Give the direct URL" },
+						],
+					},
+				},
+			});
+			expect(console.log).toHaveBeenCalledWith(
+				expect.stringContaining("repo (db): github.com/org/assist"),
+			);
+			expect(await readUserConfig(orm)).toEqual({});
+		});
+
+		it("appends to the named repo's block", async () => {
+			await seedRepoConfigs(orm, {
+				"github.com/org/other": {
+					advice: { rules: [{ title: "First", text: "Existing rule" }] },
+				},
+			});
+
+			await addUserRule(
+				"Give the direct URL",
+				{ title: "Links", repo: "github.com/org/other" },
+				globalConfigPath,
+			);
+
+			expect(await listRepoConfigs(orm)).toEqual({
+				"github.com/org/other": {
+					advice: {
+						rules: [
+							{ title: "First", text: "Existing rule" },
+							{ title: "Links", text: "Give the direct URL" },
+						],
+					},
+				},
+			});
+		});
+	});
+
+	it.each([
+		[{ title: "Links", repo: true, scope: "." }, "--scope"],
+		[{ title: "Links", repo: true, user: true }, "--user, --repo"],
+		[{ title: "Links", repo: "other", node: true }, "--node, --repo"],
+		[{ repo: true }, "--title"],
+	])("rejects %o naming %s", async (options, conflict) => {
+		await addUserRule("Give the direct URL", options, globalConfigPath);
+
+		expect(process.exitCode).toBe(1);
+		expect(console.error).toHaveBeenCalledWith(
+			expect.stringContaining(conflict),
+		);
+		expect(await listRepoConfigs(orm)).toEqual({});
 	});
 
 	it.each([

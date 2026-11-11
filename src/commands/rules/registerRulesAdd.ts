@@ -8,6 +8,7 @@ type RulesAddOptions = {
 	title?: string;
 	user?: boolean;
 	node?: boolean;
+	repo?: boolean | string;
 };
 
 export function registerRulesAdd(rulesCommand: Command): void {
@@ -33,8 +34,12 @@ export function registerRulesAdd(rulesCommand: Command): void {
 				"--node",
 				"As --user, but append to advice.rules in user (node), this node's ~/.assist.yml",
 			)
+			.option(
+				"--repo [name]",
+				"As --user, but append to advice.rules in repo (db), the shared per-repo override every node sees, for the current repo or the named one",
+			)
 			.action((text: string, options: RulesAddOptions) =>
-				options.user || options.node
+				options.user || options.node || options.repo !== undefined
 					? addUserRule(text, options)
 					: addRule(text, options),
 			),
