@@ -1752,6 +1752,7 @@ describe("ConfigView", () => {
 		fireEvent.click(chip);
 		expect(screen.queryByText("commit.pull")).toBeNull();
 		expect(screen.getByText("backup.dir")).toBeTruthy();
+		expect(screen.getByRole("button", { name: "repo (git) (2)" })).toBeTruthy();
 
 		fireEvent.click(chip);
 		expect(screen.getByText("commit.pull")).toBeTruthy();
