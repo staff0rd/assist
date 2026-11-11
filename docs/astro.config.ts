@@ -14,6 +14,7 @@ import { iconPlugin } from "../src/docs/starlight/iconPlugin";
 import { screenshotsPlugin } from "../src/docs/starlight/screenshotsPlugin";
 import { statusPlugin } from "../src/docs/starlight/statusPlugin";
 import { docsDescription } from "../src/docs/docsDescription";
+import { goatCounterHead } from "../src/docs/starlight/goatCounterHead";
 
 const base = normalizeBasePath(process.env.DOCS_BASE_PATH ?? "/");
 const sidebar = docsSidebar();
@@ -96,6 +97,9 @@ export default defineConfig({
 					},
 				},
 				{ tag: "meta", attrs: { name: "twitter:image", content: ogImage } },
+				...goatCounterHead(
+					preview ? undefined : process.env.DOCS_GOATCOUNTER_CODE,
+				),
 			],
 			routeMiddleware: [
 				"./src/homeRouteData.ts",

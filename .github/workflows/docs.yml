@@ -41,6 +41,7 @@ jobs:
       - name: Build
         env:
           DOCS_BASE_PATH: /assist
+          DOCS_GOATCOUNTER_CODE: ${{ vars.DOCS_GOATCOUNTER_CODE }}
         run: |
           npm run docs:build
           mkdir site
