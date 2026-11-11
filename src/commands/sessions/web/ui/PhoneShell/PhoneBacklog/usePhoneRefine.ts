@@ -2,12 +2,11 @@ import { useState } from "react";
 import { refineFeature } from "../../../../../../shared/harnessAdapters/harnessFeatures";
 import type { HarnessKind } from "../../../../../../shared/harnesses";
 import { formatItemId } from "../../../../../backlog/formatItemId";
-import { refineItemId } from "../../../../../backlog/refineItemId";
 import type { HarnessCapabilities } from "../../parseHarnessCapabilities";
 import type { AssistLaunchMeta } from "../../resumeSessionAction";
-import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { useLaunchLanding } from "./useLaunchLanding";
+import { refinesItem } from "./refinesItem";
 
 type RefineTarget = {
 	cwd?: string;
@@ -15,12 +14,6 @@ type RefineTarget = {
 	harness: HarnessKind;
 	capabilities: HarnessCapabilities;
 };
-
-function refineSessionIds(sessions: SessionInfo[], itemId: number): string[] {
-	return sessions
-		.filter((session) => refineItemId(session.assistArgs) === itemId)
-		.map((session) => session.id);
-}
 
 export function usePhoneRefine(
 	socket: Pick<SessionSocket, "sessions" | "createAssistSession">,
@@ -31,7 +24,7 @@ export function usePhoneRefine(
 	const created = existing
 		? socket.sessions.find(
 				(session) =>
-					refineItemId(session.assistArgs) === itemId &&
+					refinesItem(session, itemId, { cwd, node }) &&
 					!existing.includes(session.id),
 			)
 		: undefined;
@@ -44,13 +37,16 @@ export function usePhoneRefine(
 		launched,
 		refine: () => {
 			if (launched || !cwd || !supported) return;
-			setExisting(refineSessionIds(socket.sessions, itemId));
+			setExisting(
+				socket.sessions
+					.filter((session) => refinesItem(session, itemId, { cwd, node }))
+					.map((session) => session.id),
+			);
 			latch();
-			const harnessArgs =
-				harness === capabilities.engine ? [] : ["--harness", harness];
 			const meta: [AssistLaunchMeta?] = node ? [{ node }] : [];
+			// The repo's own harness.engine can differ from the capabilities endpoint's, so the harness is always explicit.
 			socket.createAssistSession(
-				["refine", "--once", ...harnessArgs, formatItemId(itemId)],
+				["refine", "--once", "--harness", harness, formatItemId(itemId)],
 				cwd,
 				...meta,
 			);

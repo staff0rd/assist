@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { ThemeProvider } from "@mui/material/styles";
 import {
+	act,
 	cleanup,
 	fireEvent,
 	render,
@@ -16,9 +17,11 @@ import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneBacklogItemScreen } from "./PhoneBacklogItemScreen";
 
 let capabilities: HarnessCapabilities;
+let peerCapabilities: HarnessCapabilities | undefined;
 
 vi.mock("../../useHarnessCapabilities", () => ({
-	useHarnessCapabilities: () => capabilities,
+	useHarnessCapabilities: (node?: string) =>
+		node === "pc" && peerCapabilities ? peerCapabilities : capabilities,
 }));
 
 function withFeatures(
@@ -53,6 +56,7 @@ const storyItem = {
 
 beforeEach(() => {
 	item = storyItem;
+	peerCapabilities = undefined;
 	capabilities = withFeatures({
 		build: { claude: available, codex: available },
 		refine: { claude: available, codex: available },
@@ -65,6 +69,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	cleanup();
+	vi.useRealTimers();
 	vi.unstubAllGlobals();
 });
 
@@ -79,10 +84,30 @@ function socketWith(sessions: SessionInfo[]) {
 	} as unknown as SessionSocket;
 }
 
-function screenFor(socket: SessionSocket) {
+function linkedSocketWith(sessions: SessionInfo[]) {
+	return {
+		...socketWith(sessions),
+		nodeSelection: { names: ["mac", "pc"], visible: true },
+	} as SessionSocket;
+}
+
+const peerPath = "/backlog/a7?cwd=/pc/assist&node=pc";
+
+function session(
+	id: string,
+	assistArgs: string[],
+	extra: Partial<SessionInfo> = {},
+): SessionInfo {
+	return { id, status: "running", assistArgs, ...extra } as SessionInfo;
+}
+
+function screenFor(
+	socket: SessionSocket,
+	path = "/backlog/a7?cwd=/mac/assist",
+) {
 	return (
 		<ThemeProvider theme={createDesignTheme("dark")}>
-			<MemoryRouter initialEntries={["/backlog/a7?cwd=/mac/assist"]}>
+			<MemoryRouter initialEntries={[path]}>
 				<Routes>
 					<Route
 						path="backlog/:itemId"
@@ -146,7 +171,7 @@ describe("PhoneBacklogItemScreen", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Refining…" }));
 		expect(socket.createAssistSession).toHaveBeenCalledTimes(1);
 		expect(socket.createAssistSession).toHaveBeenCalledWith(
-			["refine", "--once", "a7"],
+			["refine", "--once", "--harness", "claude", "a7"],
 			"/mac/assist",
 		);
 
@@ -174,7 +199,7 @@ describe("PhoneBacklogItemScreen", () => {
 		expect(screen.queryByText("session screen")).toBeNull();
 	});
 
-	it("passes the picked harness when it is not the engine", async () => {
+	it("passes the picked harness", async () => {
 		const socket = socketWith([]);
 		render(screenFor(socket));
 
@@ -194,7 +219,7 @@ describe("PhoneBacklogItemScreen", () => {
 		fireEvent.click(await screen.findByRole("button", { name: "Refine" }));
 		expect(screen.queryByRole("button", { name: /^Start/ })).toBeNull();
 		expect(socket.createAssistSession).toHaveBeenCalledWith(
-			["refine", "--once", "a7"],
+			["refine", "--once", "--harness", "claude", "a7"],
 			"/mac/assist",
 		);
 	});
@@ -209,5 +234,112 @@ describe("PhoneBacklogItemScreen", () => {
 		screen.getByText("Refine unavailable with claude on mac");
 		fireEvent.click(refine);
 		expect(socket.createAssistSession).not.toHaveBeenCalled();
+	});
+
+	it("refines on a linked node and lands only in that node's refinement", async () => {
+		const socket = linkedSocketWith([]);
+		const { rerender } = render(screenFor(socket, peerPath));
+
+		fireEvent.click(await screen.findByRole("button", { name: "Refine" }));
+		expect(socket.createAssistSession).toHaveBeenCalledWith(
+			["refine", "--once", "--harness", "claude", "a7"],
+			"/pc/assist",
+			{ node: "pc" },
+		);
+
+		const args = ["refine", "--once", "--harness", "claude", "a7"];
+		const local = session("local", args, { cwd: "/pc/assist" });
+		rerender(
+			screenFor({ ...socket, sessions: [local] } as SessionSocket, peerPath),
+		);
+		await screen.findByRole("button", { name: "Refining…" });
+		expect(screen.queryByText("session screen")).toBeNull();
+
+		const remote = session("pc:r1", args, { cwd: "/pc/assist", node: "pc" });
+		rerender(
+			screenFor(
+				{ ...socket, sessions: [local, remote] } as SessionSocket,
+				peerPath,
+			),
+		);
+		await waitFor(() => screen.getByText("session screen"));
+	});
+
+	it("starts on a linked node", async () => {
+		const socket = linkedSocketWith([]);
+		render(screenFor(socket, peerPath));
+
+		fireEvent.click(
+			await screen.findByRole("button", { name: "Start phase 2" }),
+		);
+		expect(socket.createAssistSession).toHaveBeenCalledWith(
+			["backlog", "run", "a7"],
+			"/pc/assist",
+			{ node: "pc" },
+		);
+	});
+
+	it("gates Refine on the linked node's harness support", async () => {
+		peerCapabilities = withFeatures({
+			build: { claude: available, codex: available },
+			refine: { codex: available },
+		});
+		const socket = linkedSocketWith([]);
+		render(screenFor(socket, peerPath));
+
+		const refine = await screen.findByRole("button", { name: "Refine" });
+		expect(refine).toHaveProperty("disabled", true);
+		screen.getByText("Refine unavailable with claude on pc");
+
+		fireEvent.click(screen.getByRole("radio", { name: "codex" }));
+		fireEvent.click(screen.getByRole("button", { name: "Refine" }));
+		expect(socket.createAssistSession).toHaveBeenCalledWith(
+			["refine", "--once", "--harness", "codex", "a7"],
+			"/pc/assist",
+			{ node: "pc" },
+		);
+	});
+
+	it("blocks Refine and Start when the repo is not cloned on the picked node", async () => {
+		const socket = linkedSocketWith([]);
+		render(screenFor(socket));
+
+		fireEvent.click(await screen.findByRole("radio", { name: "pc" }));
+		screen.getByText("Not cloned on pc");
+		const refine = screen.getByRole("button", { name: "Refine" });
+		expect(refine).toHaveProperty("disabled", true);
+		expect(
+			screen.getByRole("button", { name: "Start phase 2" }),
+		).toHaveProperty("disabled", true);
+		fireEvent.click(refine);
+		expect(socket.createAssistSession).not.toHaveBeenCalled();
+	});
+
+	it("allows a retry when the refinement never appears", async () => {
+		const socket = socketWith([]);
+		render(screenFor(socket));
+
+		const refine = await screen.findByRole("button", { name: "Refine" });
+		vi.useFakeTimers();
+		fireEvent.click(refine);
+		screen.getByRole("button", { name: "Refining…" });
+		act(() => {
+			vi.advanceTimersByTime(20_000);
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Refine" }));
+		expect(socket.createAssistSession).toHaveBeenCalledTimes(2);
+	});
+
+	it("keeps waiting for the refinement when an implementation run starts", async () => {
+		const socket = socketWith([]);
+		const { rerender } = render(screenFor(socket));
+
+		fireEvent.click(await screen.findByRole("button", { name: "Refine" }));
+		const run = session("run", ["backlog", "run", "a7"]);
+		rerender(screenFor({ ...socket, sessions: [run] } as SessionSocket));
+
+		await screen.findByRole("button", { name: "Open session" });
+		screen.getByRole("button", { name: "Refining…" });
+		expect(screen.queryByText("session screen")).toBeNull();
 	});
 });
