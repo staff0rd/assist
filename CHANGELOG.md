@@ -1,3 +1,10 @@
+## [0.1128.1](https://github.com/staff0rd/assist/compare/v0.1128.0...v0.1128.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* show <node>:<id> in output help ([cb07378](https://github.com/staff0rd/assist/commit/cb0737821dca7eb883bd487a397499d86a33c3aa))
+
 # [0.1128.0](https://github.com/staff0rd/assist/compare/v0.1127.3...v0.1128.0) (2026-11-11)
 
 
