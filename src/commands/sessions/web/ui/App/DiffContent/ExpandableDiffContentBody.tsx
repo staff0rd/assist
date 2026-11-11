@@ -14,6 +14,7 @@ export function ExpandableDiffContentBody({
 		<DiffHeadSourceProvider
 			cwd={cwd}
 			scope={diff.scopeState.scope}
+			conversation={diff.conversation}
 			files={diff.files}
 		>
 			<DiffContentBody {...diffBodyProps(diff, cwd)} />

@@ -101,7 +101,12 @@ function Harness({
 }) {
 	const files = useStableDiffFiles(diff);
 	return (
-		<DiffHeadSourceProvider cwd="/repo" scope={scope} files={files}>
+		<DiffHeadSourceProvider
+			cwd="/repo"
+			scope={scope}
+			conversation={{ conversationId: "conv-1", harness: "claude" }}
+			files={files}
+		>
 			{files.map((file) => (
 				<FileDiff
 					key={filePath(file)}
@@ -239,12 +244,43 @@ describe("session diff gap expansion", () => {
 		expect(screen.queryByRole("button", { name: /^Show / })).toBeNull();
 	});
 
-	it("shows no expanders in a single-commit scope", () => {
+	it("expands a single-commit scope from the file as of that commit", async () => {
+		const fetchMock = serveFiles({ "a.ts": head("c") });
 		render(
 			<Harness diff={modified("a.ts", 30, "const X = 0;")} scope="abc1234" />,
 		);
 
-		expect(screen.queryByRole("button", { name: /^Show / })).toBeNull();
+		fireEvent.click(
+			fileCard("a.ts").getByRole("button", { name: "Show 20 lines above" }),
+		);
+
+		await waitFor(() => expect(rowText("a.ts", "const c7 = 7;")).toBeTruthy());
+		expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
+			"/api/file?cwd=%2Frepo&path=a.ts&commit=abc1234&session=conv-1&harness=claude",
+		);
+	});
+
+	it("does not reuse working-tree content after switching to a commit scope", async () => {
+		const fetchMock = serveFiles({ "a.ts": head("x") });
+		const diff = modified("a.ts", 30, "const X = 0;");
+		const { rerender } = render(<Harness diff={diff} />);
+		fireEvent.click(
+			fileCard("a.ts").getByRole("button", { name: "Show 20 lines above" }),
+		);
+		await waitFor(() => expect(rowText("a.ts", "const x7 = 7;")).toBeTruthy());
+
+		fetchMock.mockResolvedValueOnce(
+			Response.json({ content: head("c"), mtimeMs: 0 }),
+		);
+		await act(async () =>
+			rerender(<Harness diff={`${diff}\n`} scope="abc1234" />),
+		);
+		fireEvent.click(
+			fileCard("a.ts").getByRole("button", { name: "Show 20 lines above" }),
+		);
+
+		await waitFor(() => expect(rowText("a.ts", "const c7 = 7;")).toBeTruthy());
+		expect(String(fetchMock.mock.calls[1]?.[0])).toContain("commit=abc1234");
 	});
 
 	it("shows the error with a retry when the file is too large, then loads on retry", async () => {

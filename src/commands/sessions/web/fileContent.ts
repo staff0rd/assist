@@ -1,9 +1,11 @@
 import { readFile, stat } from "node:fs/promises";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
+import {
+	MAX_FILE_BYTES,
+	respondCommitFile,
+} from "./fileContent/respondCommitFile";
 import { getFileTarget } from "./getFileTarget";
-
-const MAX_FILE_BYTES = 2 * 1024 * 1024;
 
 export async function fileContent(
 	req: IncomingMessage,
@@ -11,6 +13,13 @@ export async function fileContent(
 ): Promise<void> {
 	const resolved = getFileTarget(req, res);
 	if (!resolved) return;
+	const commit = new URL(req.url ?? "/", "http://localhost").searchParams.get(
+		"commit",
+	);
+	if (commit) {
+		await respondCommitFile(req, res, resolved, commit);
+		return;
+	}
 	try {
 		const info = await stat(resolved.target);
 		if (!info.isFile()) {

@@ -1,5 +1,5 @@
 import { splitFileLines } from "../../diffGaps/splitFileLines";
-import { fetchFileContent } from "../../fetchFileContent";
+import { type FileRevision, fetchFileContent } from "../../fetchFileContent";
 
 const failures = {
 	absent: "the file is missing",
@@ -8,12 +8,13 @@ const failures = {
 	loading: "the request failed",
 };
 
-export async function fetchWorkingTreeLines(
+export async function fetchFileLines(
 	cwd: string,
 	path: string,
 	node: string | undefined,
+	revision?: FileRevision,
 ): Promise<string[]> {
-	const state = await fetchFileContent(cwd, path, node);
+	const state = await fetchFileContent(cwd, path, node, revision);
 	if (state.status !== "ready") throw new Error(failures[state.status]);
 	return splitFileLines(state.content);
 }

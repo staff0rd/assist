@@ -38,6 +38,7 @@ export function useDiffContent(
 	);
 	return {
 		scopeState,
+		conversation: source.conversation,
 		loading,
 		filters,
 		treePanel,
