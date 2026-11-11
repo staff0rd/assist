@@ -5,6 +5,7 @@ type PreviewWidth = {
 	mode: DiffPanelMode;
 	full: boolean;
 	stacked?: boolean;
+	flipping?: boolean;
 	onToggleMode?: () => void;
 };
 

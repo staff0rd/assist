@@ -11,11 +11,13 @@ export function PrPreviewTerminalColumn({
 	open,
 	full,
 	stacked,
+	flipping,
 	children,
 }: {
 	open: boolean;
 	full: boolean;
 	stacked: boolean;
+	flipping: boolean;
 	children: ReactNode;
 }) {
 	const size = terminalSize(open, full);
@@ -28,7 +30,7 @@ export function PrPreviewTerminalColumn({
 				flexShrink: 0,
 				...(stacked ? { width: "100%", height: size } : { width: size }),
 				overflow: "hidden",
-				transition: `${axis} ${SPLIT_MS}ms ${SPLIT_EASE}`,
+				transition: flipping ? "none" : `${axis} ${SPLIT_MS}ms ${SPLIT_EASE}`,
 			}}
 		>
 			{children}

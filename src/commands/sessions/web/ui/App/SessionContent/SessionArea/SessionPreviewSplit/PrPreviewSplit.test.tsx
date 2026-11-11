@@ -61,6 +61,7 @@ beforeEach(() => {
 
 afterEach(() => {
 	cleanup();
+	vi.unstubAllGlobals();
 	Reflect.deleteProperty(globalThis, "ResizeObserver");
 });
 
@@ -126,6 +127,30 @@ describe("PrPreviewSplit", () => {
 		resizeTo(1200);
 		expect(terminalStyle().width).toBe("50%");
 		expect(screen.getByLabelText("Fill the window with preview")).toBeTruthy();
+	});
+
+	it("snaps both halves without a transition on the frame the layout flips", () => {
+		const frames: FrameRequestCallback[] = [];
+		vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) =>
+			frames.push(cb),
+		);
+		vi.stubGlobal("cancelAnimationFrame", () => {});
+		const flushFrame = () =>
+			act(() => {
+				for (const cb of frames.splice(0)) cb(0);
+			});
+		renderSplit(preview());
+		resizeTo(1200);
+		expect(paneStyle().transition).not.toBe("none");
+
+		resizeTo(999);
+		expect(terminalStyle().transition).toBe("none");
+		expect(paneStyle().transition).toBe("none");
+
+		flushFrame();
+		flushFrame();
+		expect(terminalStyle().transition).toContain("height");
+		expect(paneStyle().transition).toContain("transform");
 	});
 
 	it("stacks a show over the review and keeps the review mounted", () => {

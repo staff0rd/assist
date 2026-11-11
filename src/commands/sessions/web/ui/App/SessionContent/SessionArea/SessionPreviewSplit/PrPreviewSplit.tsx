@@ -1,15 +1,14 @@
 import Box from "@mui/material/Box";
-import { type ReactNode, useRef } from "react";
+import type { ReactNode } from "react";
 import type { PrPreview } from "../../../../../../shared/SessionInfoBase";
 import type { PrDecisionDetails } from "../../../../PrDecisionDetails";
 import { PreviewWidthContext } from "../../usePreviewWidthContext";
 import { PrPreviewSlideIn } from "./PrPreviewSplit/PrPreviewSlideIn";
 import { PrPreviewTerminalColumn } from "./PrPreviewSplit/PrPreviewTerminalColumn";
 import type { SessionInfo } from "../../../../types";
-import { usePreviewWidth } from "./PrPreviewSplit/usePreviewWidth";
 import { useRetainedPreview } from "./PrPreviewSplit/useRetainedPreview";
 import { splitContainerSx } from "./PrPreviewSplit/splitContainerSx";
-import { useStackedSplit } from "./PrPreviewSplit/useStackedSplit";
+import { usePreviewLayout } from "./PrPreviewSplit/usePreviewLayout";
 
 type OnDecision = (
 	requestId: string,
@@ -37,14 +36,17 @@ export function PrPreviewSplit({
 	children: ReactNode;
 }) {
 	const { rendered, onExited } = useRetainedPreview(preview);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const stacked = useStackedSplit(containerRef);
-	const width = usePreviewWidth(rendered, stacked);
+	const { containerRef, width } = usePreviewLayout(rendered);
 	const open = preview !== null;
 
 	return (
-		<Box ref={containerRef} sx={splitContainerSx(stacked)}>
-			<PrPreviewTerminalColumn open={open} full={width.full} stacked={stacked}>
+		<Box ref={containerRef} sx={splitContainerSx(width.stacked)}>
+			<PrPreviewTerminalColumn
+				open={open}
+				full={width.full}
+				stacked={width.stacked}
+				flipping={width.flipping}
+			>
 				{children}
 			</PrPreviewTerminalColumn>
 			<PreviewWidthContext.Provider value={width}>
