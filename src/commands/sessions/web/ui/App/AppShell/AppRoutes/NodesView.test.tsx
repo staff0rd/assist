@@ -328,22 +328,31 @@ describe("NodesView", () => {
 			expect(screen.queryByRole("dialog")).toBeNull();
 		});
 
-		it("shows the probe's error inline and links nothing", async () => {
-			probeResponse = () =>
-				Response.json(
-					{ error: "win is already linked at http://win:3100" },
-					{ status: 422 },
-				);
+		it.each([
+			"mac is this node; enter another machine's URL",
+			"win is already linked at http://win:3100",
+			"old runs an older link protocol (3, this node 4); run assist update on old first",
+		])("shows refusal inline and allows checking again: %s", async (error) => {
+			probeResponse = () => Response.json({ error }, { status: 422 });
 			const dialog = openDialog();
 			fireEvent.click(dialog.getByRole("button", { name: "Check" }));
-			expect((await dialog.findByRole("alert")).textContent).toContain(
-				"win is already linked at http://win:3100",
-			);
-			expect(dialog.getByRole("button", { name: "Check" })).toBeTruthy();
+			expect((await dialog.findByRole("alert")).textContent).toContain(error);
+			const retry = dialog.getByRole("button", { name: "Check again" });
+			expect(dialog.queryByLabelText("Found node")).toBeNull();
 			expect(fetchMock).not.toHaveBeenCalledWith(
 				"/api/nodes/link",
 				expect.anything(),
 			);
+			probeResponse = () =>
+				Response.json({
+					name: "pc-linux",
+					version: "0.1126.0",
+					url: "https://pc-linux:3100",
+				});
+			fireEvent.click(retry);
+			await dialog.findByRole("button", { name: "Link pc-linux" });
+			expect(dialog.queryByRole("alert", { name: error })).toBeNull();
+			expect(dialog.queryByText(error)).toBeNull();
 		});
 
 		it("goes back to Check when the URL is edited after a probe", async () => {

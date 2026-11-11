@@ -76,6 +76,7 @@ describe("postNodeProbe", () => {
 	it("refuses this node", async () => {
 		reply({ nodeName: "mac", protocol: PROTOCOL_VERSION });
 		const sent = await probe({ url: "http://localhost:3100" });
+		expect(sent.status).toBe(422);
 		expect(sent.body).toEqual({
 			error: "mac is this node; enter another machine's URL",
 		});
@@ -84,8 +85,17 @@ describe("postNodeProbe", () => {
 	it("refuses an already linked node", async () => {
 		reply({ nodeName: "win", protocol: PROTOCOL_VERSION });
 		const sent = await probe({ url: "http://other:3100" });
+		expect(sent.status).toBe(422);
 		expect(sent.body).toEqual({
 			error: "win is already linked at http://win:3100",
+		});
+	});
+
+	it("refuses an already linked URL even when the peer reports a different name", async () => {
+		reply({ nodeName: "renamed-win", protocol: PROTOCOL_VERSION });
+		expect(await probe({ url: "http://win:3100/" })).toEqual({
+			status: 422,
+			body: { error: "win is already linked at http://win:3100" },
 		});
 	});
 
@@ -97,9 +107,9 @@ describe("postNodeProbe", () => {
 		});
 		const sent = await probe({ url: "http://old:3100" });
 		expect(sent.status).toBe(422);
-		expect((sent.body as { error: string }).error).toMatch(
-			/^old runs an older link protocol/,
-		);
+		expect(sent.body).toEqual({
+			error: `old runs an older link protocol (${PROTOCOL_VERSION - 1}, this node ${PROTOCOL_VERSION}); run assist update on old first`,
+		});
 	});
 
 	it("refuses a URL that is not http(s)", async () => {

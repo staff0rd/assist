@@ -6,10 +6,12 @@ import { submitLabel } from "./submitLabel";
 export function AddNodeActions({
 	step,
 	hasUrl,
+	error,
 	onCancel,
 }: {
 	step: AddNodeStep;
 	hasUrl: boolean;
+	error: string | null;
 	onCancel: () => void;
 }) {
 	const busy = step.kind === "checking" || step.kind === "linking";
@@ -17,7 +19,7 @@ export function AddNodeActions({
 		<DialogActions>
 			<Button onClick={onCancel}>Cancel</Button>
 			<Button type="submit" variant="contained" disabled={busy || !hasUrl}>
-				{submitLabel(step)}
+				{step.kind === "idle" && error ? "Check again" : submitLabel(step)}
 			</Button>
 		</DialogActions>
 	);

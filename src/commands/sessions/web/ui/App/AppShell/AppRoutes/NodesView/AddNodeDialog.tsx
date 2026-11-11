@@ -48,7 +48,12 @@ export function AddNodeDialog({
 						<ProbeOutcome step={step} error={error} />
 					</Stack>
 				</DialogContent>
-				<AddNodeActions step={step} hasUrl={!!url.trim()} onCancel={onClose} />
+				<AddNodeActions
+					step={step}
+					error={error}
+					hasUrl={!!url.trim()}
+					onCancel={onClose}
+				/>
 			</Box>
 		</Dialog>
 	);
