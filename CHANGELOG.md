@@ -1,3 +1,20 @@
+# [0.1128.0](https://github.com/staff0rd/assist/compare/v0.1127.3...v0.1128.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* read linked-node session output ([7c39b3d](https://github.com/staff0rd/assist/commit/7c39b3dafa1df0266b10d199560a01ad4631c2b5))
+* replace stale assist hooks on sync ([38c287a](https://github.com/staff0rd/assist/commit/38c287a95c40e95b0c4c3b537f572da9832327fb))
+* scope phone refine to node and repo ([7af13e8](https://github.com/staff0rd/assist/commit/7af13e867590c4acabd0f234471773269b7c025c))
+
+
+### Features
+
+* allow sync.* keys in user (db) ([52ceee1](https://github.com/staff0rd/assist/commit/52ceee14c09575ed6030f62953c8e790f38aa189))
+* filter /config keys by scope ([8d5c670](https://github.com/staff0rd/assist/commit/8d5c67007024ee4c81faf7e88c117cf958dc4403))
+* refine items from phone item details ([9deea75](https://github.com/staff0rd/assist/commit/9deea757ce123843415c555910e8d13787394526))
+* show issue link state on GitHub ([d0fa1ac](https://github.com/staff0rd/assist/commit/d0fa1ac9d55a2ae424ef718000d91a4e51517cab))
+
 ## [0.1127.3](https://github.com/staff0rd/assist/compare/v0.1127.2...v0.1127.3) (2026-11-11)
 
 
