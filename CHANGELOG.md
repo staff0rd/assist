@@ -1,3 +1,10 @@
+## [0.1127.2](https://github.com/staff0rd/assist/compare/v0.1127.1...v0.1127.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* select installed run harness ([58deeda](https://github.com/staff0rd/assist/commit/58deeda7be498c370a8882e53d08b44af6496dc3))
+
 ## [0.1127.1](https://github.com/staff0rd/assist/compare/v0.1127.0...v0.1127.1) (2026-11-11)
 
 
