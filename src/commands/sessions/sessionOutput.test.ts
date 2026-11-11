@@ -66,14 +66,13 @@ describe("sessionOutput", () => {
 		expect(printed()).toEqual(["b", "c"]);
 	});
 
-	it("rejects a linked-node session id without asking the daemon", async () => {
-		await sessionOutput("win:3", { lines: "200" });
+	it("asks the daemon for a linked-node session id", async () => {
+		requestMock.mockResolvedValue({ scrollback: "a\nb\nc\n" });
 
-		expect(requestMock).not.toHaveBeenCalled();
-		expect(console.error).toHaveBeenCalledWith(
-			"Session win:3 is on a linked node; reading linked-node sessions is not supported yet",
-		);
-		expect(process.exitCode).toBe(1);
+		await sessionOutput("win:3", { lines: "2" });
+
+		expect(requestMock).toHaveBeenCalledWith({ sessionId: "win:3" });
+		expect(printed()).toEqual(["b", "c"]);
 	});
 
 	it("targets the default server group for the current repo's origin", async () => {

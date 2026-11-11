@@ -55,6 +55,12 @@ const relays: Record<string, Relay> = {
 	history: relayHistory,
 	"auto-update": relayReply,
 	"restart-webserver": relayReply,
+	"session-output": (state, msg) =>
+		relayReply(state, {
+			...msg,
+			sessionId:
+				typeof msg.sessionId === "string" ? nsId(state, msg) : undefined,
+		}),
 	"user-messages": (state, msg) =>
 		broadcastToViewers(state, { ...msg, sessionId: nsId(state, msg) }),
 	limits: (state, msg) =>

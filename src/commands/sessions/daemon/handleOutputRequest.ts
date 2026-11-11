@@ -1,41 +1,21 @@
 import { sendTo } from "./broadcast";
-import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
-import { latestServerRun } from "./latestServerRun";
+import { routeOutputToLink } from "./links/routeOutputToLink";
 import type { Handler } from "./routed";
-import type { SessionManager } from "./SessionManager";
+import { resolveOutputTarget } from "./resolveOutputTarget";
 
-type ServerTarget = { origin: string; group: string };
-
-type ResolvedTarget =
-	| { sessionId: string; exited?: "done" | "error" }
-	| { error: string };
-
-function resolveTarget(
-	m: SessionManager,
-	d: Record<string, unknown>,
-): ResolvedTarget {
-	const server = d.server as ServerTarget | undefined;
-	if (!server) return { sessionId: d.sessionId as string };
-	let run: Session | undefined;
-	m.update((sessions) => {
-		run = latestServerRun(sessions, server.origin, server.group);
-		return false;
-	});
-	if (!run)
-		return {
-			error: `No live server run for ${server.origin} (${server.group})`,
-		};
-	return run.status === "done" || run.status === "error"
-		? { sessionId: run.id, exited: run.status }
-		: { sessionId: run.id };
-}
-
-export const handleOutputRequest: Handler = (client, m, d) => {
-	const target = resolveTarget(m, d);
+export const handleOutputRequest: Handler = (client, m, request) => {
+	const d = routeOutputToLink(client, m.links, request);
+	if (!d) return;
+	const target = resolveOutputTarget(m, d);
+	const requestId = d.requestId;
 	if ("error" in target) {
 		daemonLog(`output requested: ${target.error}`);
-		sendTo(client, { type: "session-output", error: target.error });
+		sendTo(client, {
+			type: "session-output",
+			error: target.error,
+			requestId,
+		});
 		return;
 	}
 	const { sessionId, exited } = target;
@@ -54,7 +34,8 @@ export const handleOutputRequest: Handler = (client, m, d) => {
 					type: "session-output",
 					sessionId,
 					error: `No session ${sessionId} on this node`,
+					requestId,
 				}
-			: { type: "session-output", sessionId, scrollback, exited },
+			: { type: "session-output", sessionId, scrollback, exited, requestId },
 	);
 };

@@ -21,8 +21,6 @@ function resolveTarget(
 			},
 		};
 	if (!sessionId) return "Pass a session id or --server [group]";
-	if (sessionId.includes(":"))
-		return `Session ${sessionId} is on a linked node; reading linked-node sessions is not supported yet`;
 	return { sessionId };
 }
 

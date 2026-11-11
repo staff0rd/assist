@@ -240,6 +240,55 @@ describe("two linked nodes", () => {
 		create.mockRestore();
 	});
 
+	it("reads a linked session's scrollback over the link", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		const windows = node("pc-windows");
+		addSession(windows, "3");
+		windows.update((sessions) => {
+			(sessions.get("3") as { scrollback: string }).scrollback = "hello\n";
+			return false;
+		});
+		const view = viewer();
+		wsl.links.reload();
+		await vi.waitFor(() =>
+			expect(wsl.links.nodes().links[0].state).toBe("connected"),
+		);
+
+		dispatchMessage(view.client, wsl, {
+			type: "output",
+			sessionId: "pc-windows:3",
+			requestId: "r1",
+		});
+
+		await vi.waitFor(() =>
+			expect(view.received).toContainEqual({
+				type: "session-output",
+				sessionId: "pc-windows:3",
+				scrollback: "hello\n",
+				requestId: "r1",
+			}),
+		);
+	});
+
+	it.each([
+		["an unknown node", "pc-mac:1", "pc-mac is not a linked node"],
+		["a disconnected link", "pc-windows:3", "pc-windows link is"],
+	])("names the link state when reading from %s", (_, sessionId, reason) => {
+		const wsl = node("pc-wsl", [{ name: "pc-windows", url: "http://gone" }]);
+		const view = viewer();
+		wsl.links.reload();
+
+		dispatchMessage(view.client, wsl, { type: "output", sessionId });
+
+		expect(view.received).toEqual([
+			{
+				type: "session-output",
+				sessionId,
+				error: expect.stringContaining(reason),
+			},
+		]);
+	});
+
 	it("never re-exports linked sessions under symmetric linking", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		const windows = node("pc-windows", [WSL]);
