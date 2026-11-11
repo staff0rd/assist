@@ -56,7 +56,7 @@ describe("syncSettings", () => {
 
 		const result = readTarget();
 		expect(result.enabledPlugins).toEqual({ "my-plugin": true });
-		expect(result.permissions).toEqual({ allow: ["Read"] });
+		expect(result.permissions).toEqual({ allow: ["Bash", "Read"] });
 	});
 
 	it("preserves arbitrary marketplace keys absent from the repo source", async () => {
@@ -84,16 +84,110 @@ describe("syncSettings", () => {
 		expect(readTarget().enabledPlugins).toEqual({ "my-plugin": true });
 	});
 
-	it("lets the repo source win for keys it defines", async () => {
-		writeSource({ permissions: { allow: ["Read"] } });
+	it("overwrites a scalar only when the repo source ships that key", async () => {
+		writeSource({ statusLine: { type: "command", command: "assist" } });
 		writeTarget({
-			permissions: { allow: ["Bash"] },
-			enabledPlugins: { "my-plugin": true },
+			statusLine: { type: "command", command: "mine", padding: 2 },
+			autoMemoryEnabled: true,
 		});
 
 		await syncSettings(claudeDir, targetBase, { yes: true });
 
-		expect(readTarget().permissions).toEqual({ allow: ["Read"] });
+		expect(readTarget()).toEqual({
+			statusLine: { type: "command", command: "assist", padding: 2 },
+			autoMemoryEnabled: true,
+		});
+	});
+
+	const assistHook = {
+		matcher: "Bash",
+		hooks: [{ type: "command", command: "assist cli-hook" }],
+	};
+	const assistSettings = {
+		env: { ASSIST: "1" },
+		hooks: { PreToolUse: [assistHook] },
+		permissions: { allow: ["Skill(verify)"], deny: ["SendFeedback"] },
+	};
+	const userHook = {
+		matcher: "Bash",
+		hooks: [{ type: "command", command: "my-guard" }],
+	};
+	const userSettings = {
+		env: { MINE: "x" },
+		hooks: {
+			PreToolUse: [userHook],
+			PostToolUse: [
+				{ matcher: "", hooks: [{ type: "command", command: "a" }] },
+			],
+			Stop: [{ matcher: "", hooks: [{ type: "command", command: "b" }] }],
+		},
+		permissions: {
+			allow: ["Bash(ls:*)"],
+			deny: ["Bash(rm:*)"],
+			ask: ["Bash(git push:*)"],
+			additionalDirectories: ["/work"],
+			defaultMode: "acceptEdits",
+		},
+	};
+
+	it("keeps user permissions, hooks under every event and env vars", async () => {
+		writeSource(assistSettings);
+		writeTarget(userSettings);
+
+		await syncSettings(claudeDir, targetBase, { yes: true });
+
+		expect(readTarget()).toEqual({
+			env: { MINE: "x", ASSIST: "1" },
+			hooks: {
+				PreToolUse: [userHook, assistHook],
+				PostToolUse: userSettings.hooks.PostToolUse,
+				Stop: userSettings.hooks.Stop,
+			},
+			permissions: {
+				allow: ["Bash(ls:*)", "Skill(verify)"],
+				deny: ["Bash(rm:*)", "SendFeedback"],
+				ask: ["Bash(git push:*)"],
+				additionalDirectories: ["/work"],
+				defaultMode: "acceptEdits",
+			},
+		});
+	});
+
+	it("is idempotent across repeated syncs", async () => {
+		writeSource(assistSettings);
+		writeTarget(userSettings);
+
+		await syncSettings(claudeDir, targetBase, { yes: true });
+		const first = readFileSync(join(targetBase, "settings.json"), "utf8");
+		await syncSettings(claudeDir, targetBase);
+		const second = readFileSync(join(targetBase, "settings.json"), "utf8");
+
+		expect(second).toBe(first);
+		expect(mockPromptConfirm).not.toHaveBeenCalled();
+	});
+
+	it("does not duplicate entries that differ only in key order", async () => {
+		const reordered = {
+			hooks: [{ command: "assist cli-hook", type: "command" }],
+			matcher: "Bash",
+		};
+		writeSource({ hooks: { PreToolUse: [assistHook] } });
+		writeTarget({ hooks: { PreToolUse: [reordered] } });
+
+		await syncSettings(claudeDir, targetBase, { yes: true });
+
+		expect(readTarget().hooks).toEqual({ PreToolUse: [reordered] });
+	});
+
+	it("shows the merged result in the diff and keeps the file when declined", async () => {
+		writeSource({ permissions: { allow: ["Read"] } });
+		writeTarget({ permissions: { allow: ["Bash"] } });
+		mockPromptConfirm.mockResolvedValue(false);
+
+		await syncSettings(claudeDir, targetBase);
+
+		expect(logged()).toContain('"Read"');
+		expect(readTarget()).toEqual({ permissions: { allow: ["Bash"] } });
 	});
 
 	it("writes the source verbatim when no target exists", async () => {

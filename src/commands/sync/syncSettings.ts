@@ -3,6 +3,7 @@ import * as path from "node:path";
 import chalk from "chalk";
 import { promptConfirm } from "../../shared/promptConfirm";
 import { printDiff } from "../../utils/printDiff";
+import { mergeSettings } from "./mergeSettings";
 import { printAutoConfirmHint } from "./printAutoConfirmHint";
 
 export async function syncSettings(
@@ -21,7 +22,7 @@ export async function syncSettings(
 	const preservedUserSettings = targetExists ? JSON.parse(targetContent) : {};
 
 	const mergedContent = JSON.stringify(
-		{ ...preservedUserSettings, ...sourceSettings },
+		mergeSettings(preservedUserSettings, sourceSettings),
 		null,
 		"\t",
 	);
@@ -40,7 +41,7 @@ export async function syncSettings(
 				printAutoConfirmHint();
 
 				const confirm = await promptConfirm(
-					chalk.red("Overwrite existing settings.json?"),
+					chalk.red("Write merged settings.json?"),
 					false,
 				);
 
@@ -53,5 +54,5 @@ export async function syncSettings(
 	}
 
 	fs.writeFileSync(target, mergedContent);
-	console.log("Copied settings.json to ~/.claude/settings.json");
+	console.log("Merged settings.json into ~/.claude/settings.json");
 }
