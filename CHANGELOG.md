@@ -1,3 +1,10 @@
+## [0.1127.3](https://github.com/staff0rd/assist/compare/v0.1127.2...v0.1127.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* route Codex native questions ([8a487f6](https://github.com/staff0rd/assist/commit/8a487f60dc9a4aa97a079f53fe7c281409833f6c))
+
 ## [0.1127.2](https://github.com/staff0rd/assist/compare/v0.1127.1...v0.1127.2) (2026-11-11)
 
 
