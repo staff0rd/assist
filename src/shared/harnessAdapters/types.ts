@@ -56,6 +56,7 @@ type LaunchOptions = {
 	conversationId?: string;
 	cwd: string;
 	allowEdits?: boolean;
+	model?: string;
 };
 
 type ResumeOptions = { cwd: string; allowEdits?: boolean };

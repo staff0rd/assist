@@ -1,6 +1,5 @@
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import { harnessModels } from "../../../../../../../../shared/harnessModels";
-import { type NewSessionMode, picksModel } from "./newSessionModes";
 
 export type ModelPick = { harness: HarnessKind; model?: string };
 
@@ -11,13 +10,11 @@ export type SessionModel = {
 };
 
 export function sessionModel(
-	mode: NewSessionMode,
 	harness: HarnessKind,
 	picked: ModelPick | undefined,
 	configured: ModelPick | undefined,
 	setPicked: (pick: ModelPick) => void,
-): SessionModel | undefined {
-	if (!picksModel(mode)) return undefined;
+): SessionModel {
 	const configuredModel =
 		configured?.harness === harness ? configured.model : undefined;
 	const model = picked?.harness === harness ? picked.model : configuredModel;

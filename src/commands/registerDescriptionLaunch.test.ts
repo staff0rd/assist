@@ -10,7 +10,12 @@ vi.mock("./backlog/resolveHarness", () => ({
 	resolveHarness: vi.fn((value?: string) => value ?? "codex"),
 }));
 
+vi.mock("./backlog/resolveModel", () => ({
+	resolveModel: vi.fn((value?: string | false) => value || undefined),
+}));
+
 import { launchMode } from "./backlog/launchMode";
+import { resolveModel } from "./backlog/resolveModel";
 import { resolveHarness } from "./backlog/resolveHarness";
 import { registerDescriptionLaunch } from "./registerDescriptionLaunch";
 
@@ -44,5 +49,27 @@ describe("registerDescriptionLaunch", () => {
 			"draft",
 			expect.objectContaining({ harness: "pi" }),
 		);
+	});
+
+	it("resolves the type's model for the resolved harness", async () => {
+		await parse("bug", ["--model", "opus"]);
+
+		expect(resolveModel).toHaveBeenCalledWith("opus", "bug", "codex");
+		expect(launchMode).toHaveBeenCalledWith(
+			"bug",
+			expect.objectContaining({ model: "opus" }),
+		);
+	});
+
+	it("passes --no-model through as no model", async () => {
+		await parse("draft", ["--no-model"]);
+
+		expect(resolveModel).toHaveBeenCalledWith(false, "draft", "codex");
+	});
+
+	it("leaves the model unset when neither flag is given", async () => {
+		await parse("draft", []);
+
+		expect(resolveModel).toHaveBeenCalledWith(undefined, "draft", "codex");
 	});
 });

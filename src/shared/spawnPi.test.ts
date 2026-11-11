@@ -55,4 +55,17 @@ describe("spawnPi", () => {
 		expect(opts.env).not.toHaveProperty("CLAUDE_CODE_CHILD_SESSION");
 		vi.unstubAllEnvs();
 	});
+
+	it("passes a chosen model before the prompt", () => {
+		spawnPi("/draft x", { model: "sonnet" });
+
+		const [, args] = lastCall();
+		expect(args).toEqual([
+			"--tui-mode",
+			"regular",
+			"--model",
+			"sonnet",
+			"/draft x",
+		]);
+	});
 });

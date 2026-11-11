@@ -18,7 +18,6 @@ export function usePhoneModeHarness(
 		mode,
 	);
 	const model = sessionModel(
-		mode,
 		harness,
 		draft.pickedModel,
 		configuredModel(defaultMode, mode),

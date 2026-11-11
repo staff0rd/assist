@@ -5,11 +5,17 @@ import { harnessConfigHelp } from "./backlog/harnessConfigHelp";
 import { harnessDefaultsConfigHelp } from "./backlog/harnessDefaultsConfigHelp";
 import { launchMode } from "./backlog/launchMode";
 import { resolveHarness } from "./backlog/resolveHarness";
+import { resolveModel } from "./backlog/resolveModel";
 
 const harnessFlag = (feature: HarnessFeature) =>
 	`Coding harness to launch (claude|codex|pi); defaults to the configured harness.defaults.<command>.harness, then harness.engine. Exits with the reasons, without launching, when ${feature.label} is unavailable on it`;
 
-type LaunchOpts = { once?: boolean; resumeSession?: string; harness?: string };
+type LaunchOpts = {
+	once?: boolean;
+	resumeSession?: string;
+	harness?: string;
+	model?: string | false;
+};
 
 export function registerDescriptionLaunch(
 	program: Command,
@@ -30,15 +36,22 @@ export function registerDescriptionLaunch(
 		.option("--once", "Exit when the initial task completes")
 		.option("--resume-session <id>", resumeFlag)
 		.option("--harness <kind>", harnessFlag(feature))
-		.action((text: string | undefined, opts: LaunchOpts) =>
-			launchMode(slashCommand, {
+		.option(
+			"--model <model>",
+			`Model to launch the harness with; defaults to harness.defaults.${name}.model while the ${name} type's harness is used`,
+		)
+		.option("--no-model", "Launch with the harness's own default model")
+		.action((text: string | undefined, opts: LaunchOpts) => {
+			const harness = resolveHarness(opts.harness, name);
+			return launchMode(slashCommand, {
 				once: opts.once,
 				description: text,
 				resumeSessionId: opts.resumeSession,
-				harness: resolveHarness(opts.harness, name),
+				harness,
+				model: resolveModel(opts.model, name, harness),
 				feature,
-			}),
-		);
+			});
+		});
 	configHelp(command, [...harnessConfigHelp, ...harnessDefaultsConfigHelp]);
 	if (alias) command.alias(alias);
 }

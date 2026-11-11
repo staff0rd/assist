@@ -2,7 +2,7 @@ import type { HarnessKind } from "../../shared/harnesses";
 import { loadConfig } from "../../shared/loadConfig";
 import type { AssistConfig } from "../../shared/types";
 
-type HarnessDefaultsType = keyof NonNullable<
+export type HarnessDefaultsType = keyof NonNullable<
 	AssistConfig["harness"]["defaults"]
 >;
 

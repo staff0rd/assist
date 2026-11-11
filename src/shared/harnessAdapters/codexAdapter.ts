@@ -40,10 +40,15 @@ export const codexAdapter: HarnessAdapter = {
 	},
 	toolOperations: codexToolOperations,
 	permissionRules: readCodexRulePerms,
-	launchSkill: (skill, args, { cwd, allowEdits }) =>
-		spawnCodex(args ?? "", { cwd, sandbox: sandbox(allowEdits), skill }),
-	launchPrompt: (prompt, { cwd, allowEdits }) =>
-		spawnCodex(prompt, { cwd, sandbox: sandbox(allowEdits) }),
+	launchSkill: (skill, args, { cwd, allowEdits, model }) =>
+		spawnCodex(args ?? "", {
+			cwd,
+			sandbox: sandbox(allowEdits),
+			skill,
+			model,
+		}),
+	launchPrompt: (prompt, { cwd, allowEdits, model }) =>
+		spawnCodex(prompt, { cwd, sandbox: sandbox(allowEdits), model }),
 	resume: (conversationId, nudge, { cwd, allowEdits }) =>
 		spawnCodex(nudge, {
 			cwd,

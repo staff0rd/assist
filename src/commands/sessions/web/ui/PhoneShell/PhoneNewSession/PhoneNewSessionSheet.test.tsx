@@ -89,7 +89,7 @@ describe("PhoneNewSessionSheet", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Start draft" }));
 
 		expect(socket.createAssistSession).toHaveBeenCalledWith(
-			["draft", "--once", "--harness", "claude", "Phone drafts"],
+			["draft", "--once", "--harness", "claude", "--no-model", "Phone drafts"],
 			"/wsl/assist",
 			{ node: "wsl" },
 		);
@@ -105,7 +105,7 @@ describe("PhoneNewSessionSheet", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Start draft" }));
 
 		expect(socket.createAssistSession).toHaveBeenCalledWith(
-			["draft", "--once", "--harness", "codex"],
+			["draft", "--once", "--harness", "codex", "--no-model"],
 			"/wsl/assist",
 			{ node: "wsl" },
 		);

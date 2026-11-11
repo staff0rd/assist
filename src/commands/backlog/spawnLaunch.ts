@@ -9,6 +9,7 @@ type LaunchRequest = {
 	itemId?: number;
 	itemName?: string;
 	resumeSessionId?: string;
+	model?: string;
 };
 
 export function spawnLaunch(
@@ -33,5 +34,6 @@ export function spawnLaunch(
 	return adapter.launchSkill(skill, args || undefined, {
 		conversationId,
 		cwd,
+		model: request.model,
 	});
 }

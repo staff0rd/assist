@@ -15,6 +15,7 @@ export function spawnCodex(
 		sandbox?: "workspace-write" | "read-only";
 		resumeSessionId?: string;
 		skill?: string;
+		model?: string;
 	} = {},
 ): SpawnResult {
 	const cwd = options.cwd ?? process.cwd();
@@ -27,7 +28,10 @@ export function spawnCodex(
 	]
 		.filter(Boolean)
 		.join(" ");
-	const override = buildHarnessCodexArgs();
+	const override =
+		options.model && !options.resumeSessionId
+			? { args: ["-m", options.model], env: {} }
+			: buildHarnessCodexArgs();
 	return spawnInherit(
 		harnesses.codex.command,
 		[

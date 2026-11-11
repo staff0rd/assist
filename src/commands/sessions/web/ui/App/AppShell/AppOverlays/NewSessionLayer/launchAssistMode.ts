@@ -7,6 +7,7 @@ export function launchAssistMode(
 	{
 		mode,
 		harness,
+		model,
 		prompt,
 		cwd,
 		node,
@@ -16,12 +17,19 @@ export function launchAssistMode(
 	onCreateAssist: NewSessionLaunchers["onCreateAssist"],
 ) {
 	const assistMeta = assistMetaFor(mode, node, autoApprove, open);
+	const modelArgs = model ? ["--model", model] : ["--no-model"];
 	dispatchMode(
 		newSessionModes[mode].sessionMode,
 		cwd,
 		(args, assistCwd) =>
 			onCreateAssist(
-				[...args.slice(0, 2), "--harness", harness, ...args.slice(2)],
+				[
+					...args.slice(0, 2),
+					"--harness",
+					harness,
+					...modelArgs,
+					...args.slice(2),
+				],
 				assistCwd,
 				...assistMeta,
 			),

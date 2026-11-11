@@ -12,13 +12,14 @@ export async function launchPhaseClaude(
 ): Promise<number | null> {
 	const adapter = harnessAdapter(harness);
 	const cwd = process.cwd();
-	const { allowEdits, resumeSessionId, sessionId } = spawnOptions;
+	const { allowEdits, resumeSessionId, sessionId, model } = spawnOptions;
 	const { child, done } = resumeSessionId
 		? adapter.resume(resumeSessionId, prompt, { cwd, allowEdits })
 		: adapter.launchPrompt(prompt, {
 				cwd,
 				allowEdits,
 				conversationId: sessionId,
+				model,
 			});
 	watchForMarker(child);
 	const exitCode = await awaitHarness(done, context, adapter.label);

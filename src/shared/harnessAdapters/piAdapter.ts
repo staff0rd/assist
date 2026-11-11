@@ -31,9 +31,9 @@ export const piAdapter: HarnessAdapter = {
 		relocate: cannotResume,
 	},
 	toolOperations: piToolOperations,
-	launchSkill: (skill, args, { cwd }) =>
-		spawnPi(buildSlashCommand(skill, args), { cwd }),
-	launchPrompt: (prompt, { cwd }) => spawnPi(prompt, { cwd }),
+	launchSkill: (skill, args, { cwd, model }) =>
+		spawnPi(buildSlashCommand(skill, args), { cwd, model }),
+	launchPrompt: (prompt, { cwd, model }) => spawnPi(prompt, { cwd, model }),
 	resume: cannotResume,
 	interactive: ({ sessionId, resumeId, prompt, cwd, model }) =>
 		resumeId ? cannotResume() : spawnPiPty({ prompt, cwd, sessionId, model }),

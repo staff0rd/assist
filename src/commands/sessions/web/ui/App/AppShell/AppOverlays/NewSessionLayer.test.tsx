@@ -88,7 +88,7 @@ function fillDraft() {
 	fireEvent.focus(repoInput());
 	fireEvent.change(repoInput(), { target: { value: "beta" } });
 	fireEvent.keyDown(repoInput(), { key: "Tab" });
-	fireEvent.click(screen.getByRole("radio", { name: "draft" }));
+	fireEvent.click(screen.getByRole("radio", { name: /^draft/ }));
 }
 
 describe("NewSessionLayer ?new", () => {
@@ -96,7 +96,7 @@ describe("NewSessionLayer ?new", () => {
 		renderAt("/?new");
 
 		expect(await screen.findByRole("textbox", { name: "Prompt" })).toBeTruthy();
-		expect(checkedMode()).toBe("bug");
+		expect(checkedMode()).toBe("bug · Claude");
 	});
 
 	it("strips the new param with a replace", async () => {
@@ -114,7 +114,7 @@ describe("NewSessionLayer ?new", () => {
 		await screen.findByRole("textbox", { name: "Prompt" });
 		expect(promptInput().value).toBe("Issue #4: fix it");
 		expect(promptInput().selectionStart).toBe(16);
-		expect(checkedMode()).toBe("bug");
+		expect(checkedMode()).toBe("bug · Claude");
 	});
 
 	it("targets the repo from the newCwd param and strips it", async () => {
@@ -158,7 +158,7 @@ describe("NewSessionLayer draft", { timeout: 20_000 }, () => {
 		await openDialog();
 		expect(promptInput().value).toBe("add a thing");
 		expect(repoInput().value).toBe("beta");
-		expect(checkedMode()).toBe("draft");
+		expect(checkedMode()).toBe("draft · Claude");
 	});
 
 	it("restores the prompt caret after the dialog is dismissed", async () => {
@@ -192,13 +192,13 @@ describe("NewSessionLayer draft", { timeout: 20_000 }, () => {
 		renderAt("/sessions");
 
 		await openDialog();
-		fireEvent.click(screen.getByRole("radio", { name: "draft" }));
-		screen.getByRole("radio", { name: "draft" }).focus();
+		fireEvent.click(screen.getByRole("radio", { name: /^draft/ }));
+		screen.getByRole("radio", { name: /^draft/ }).focus();
 		fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 
 		await openDialog();
 		expect(document.activeElement).toBe(
-			screen.getByRole("radio", { name: "draft" }),
+			screen.getByRole("radio", { name: /^draft/ }),
 		);
 	});
 
@@ -209,14 +209,14 @@ describe("NewSessionLayer draft", { timeout: 20_000 }, () => {
 		fillDraft();
 		fireEvent.keyDown(promptInput(), { key: "Enter" });
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["draft", "--once", "--harness", "claude", "add a thing"],
+			["draft", "--once", "--harness", "claude", "--no-model", "add a thing"],
 			"/git/beta",
 		);
 
 		await openDialog();
 		expect(promptInput().value).toBe("");
 		expect(repoInput().value).toBe("alpha");
-		expect(checkedMode()).toBe("bug");
+		expect(checkedMode()).toBe("bug · Claude");
 		expect(document.activeElement).toBe(promptInput());
 	});
 });

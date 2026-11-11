@@ -354,7 +354,7 @@ describe("NewSessionDialog mode selector", () => {
 	it("pre-selects the configured default mode", () => {
 		renderDialog("bug");
 
-		expect(checkedMode()).toBe("bug");
+		expect(checkedMode()).toBe("bug · Claude");
 		expect(screen.getByRole("button", { name: "File bug" })).toBeTruthy();
 	});
 
@@ -367,7 +367,7 @@ describe("NewSessionDialog mode selector", () => {
 		fireEvent.change(repoInput(), { target: { value: "al" } });
 		fireEvent.keyDown(repoInput(), { key: "Tab" });
 
-		expect(checkedMode()).toBe("bug");
+		expect(checkedMode()).toBe("bug · Claude");
 	});
 
 	function useLoadedDefault(cwd: string) {
@@ -479,7 +479,7 @@ describe("NewSessionDialog mode selector", () => {
 		fireEvent.keyDown(repoInput(), { key: "Enter" });
 
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["bug", "--once", "--harness", "claude"],
+			["bug", "--once", "--harness", "claude", "--no-model"],
 			"/git/alpha",
 		);
 	});
@@ -532,20 +532,11 @@ describe("NewSessionDialog mode selector", () => {
 		expect(document.activeElement).toBe(modeRadio("design"));
 
 		fireEvent.keyDown(modeRadio("design"), { key: "ArrowRight" });
-		expect(checkedMode()).toBe("draft");
+		expect(checkedMode()).toBe("draft · Claude");
 
 		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowLeft" });
 		fireEvent.keyDown(modeRadio("design"), { key: "ArrowLeft" });
 		expect(checkedMode()).toBe("prompt · Claude");
-	});
-
-	it("leaves the mode alone on up and down when no harness row shows", () => {
-		renderDialog("draft");
-
-		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowDown" });
-		fireEvent.keyDown(modeRadio("draft"), { key: "ArrowUp" });
-
-		expect(checkedMode()).toBe("draft");
 	});
 
 	it("switches to the next mode on Tab", () => {
@@ -574,7 +565,7 @@ describe("NewSessionDialog mode selector", () => {
 		renderDialog("bug");
 
 		fireEvent.keyDown(modeRadio("bug"), { key: "Tab", shiftKey: true });
-		expect(checkedMode()).toBe("draft");
+		expect(checkedMode()).toBe("draft · Claude");
 		expect(document.activeElement).toBe(modeRadio("draft"));
 	});
 
@@ -586,7 +577,7 @@ describe("NewSessionDialog mode selector", () => {
 			shiftKey: true,
 		});
 		expect(notPrevented).toBe(true);
-		expect(checkedMode()).toBe("draft");
+		expect(checkedMode()).toBe("draft · Claude");
 	});
 
 	it("updates the placeholder and submit label to follow the mode", () => {
@@ -609,8 +600,14 @@ describe("NewSessionDialog mode selector", () => {
 	});
 
 	it.each([
-		["draft", ["draft", "--once", "--harness", "claude", "add a thing"]],
-		["bug", ["bug", "--once", "--harness", "claude", "add a thing"]],
+		[
+			"draft",
+			["draft", "--once", "--harness", "claude", "--no-model", "add a thing"],
+		],
+		[
+			"bug",
+			["bug", "--once", "--harness", "claude", "--no-model", "add a thing"],
+		],
 	])("launches assist in %s mode in the chosen repo", (mode, args) => {
 		const { onCreate, onCreateAssist } = renderDialog();
 
@@ -631,7 +628,7 @@ describe("NewSessionDialog mode selector", () => {
 		submitPrompt();
 
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["draft", "--once", "--harness", "claude"],
+			["draft", "--once", "--harness", "claude", "--no-model"],
 			"/git/beta",
 		);
 	});
@@ -660,8 +657,8 @@ describe("NewSessionDialog Shift+click auto start", () => {
 	}
 
 	it.each([
-		["draft", ["draft", "--once", "--harness", "claude"]],
-		["bug", ["bug", "--once", "--harness", "claude"]],
+		["draft", ["draft", "--once", "--harness", "claude", "--no-model"]],
+		["bug", ["bug", "--once", "--harness", "claude", "--no-model"]],
 	] as const)("launches %s with Auto start on and opens it", (mode, args) => {
 		const { onCreateAssist } = renderDialog(mode);
 
@@ -679,7 +676,7 @@ describe("NewSessionDialog Shift+click auto start", () => {
 		fireEvent.click(submitButton());
 
 		expect(onCreateAssist).toHaveBeenCalledWith(
-			["draft", "--once", "--harness", "claude"],
+			["draft", "--once", "--harness", "claude", "--no-model"],
 			"/git/beta",
 		);
 	});
@@ -973,6 +970,27 @@ describe("NewSessionDialog per-type default model", () => {
 		expect(promptSegment().textContent).toBe("prompt · Codex");
 		fireEvent.click(promptSegment());
 		expect(harnessItem("Default").getAttribute("aria-checked")).toBe("true");
+	});
+
+	it("launches draft and bug with their configured model as --model", async () => {
+		const { onCreateAssist } = await renderWithHarnesses(
+			(): LoadedDefaultMode => ({
+				mode: "draft",
+				harnesses: { draft: "claude", bug: "claude" },
+				models: { draft: "fable", bug: "opus" },
+				pending: false,
+			}),
+		);
+
+		expect(checkedMode()).toBe("draft · Claude · fable");
+		fireEvent.click(modeRadio("bug"));
+		expect(checkedMode()).toBe("bug · Claude · opus");
+		fireEvent.keyDown(modeRadio("bug"), { key: "Enter" });
+
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			["bug", "--once", "--harness", "claude", "--model", "opus"],
+			"/git/beta",
+		);
 	});
 
 	it("lists a configured model outside the built-in set", async () => {

@@ -6,6 +6,7 @@ export type SpawnClaudeOptions = {
 	permissionMode?: "auto";
 	sessionId?: string;
 	resumeSessionId?: string;
+	model?: string;
 };
 
 export function withoutResumeSession(
@@ -33,6 +34,9 @@ export function spawnClaude(
 		options.permissionMode ?? (options.allowEdits ? "auto" : undefined);
 	if (permissionMode) {
 		args.push("--permission-mode", permissionMode);
+	}
+	if (options.model && !options.resumeSessionId) {
+		args.push("--model", options.model);
 	}
 	return spawnInherit("claude", args);
 }

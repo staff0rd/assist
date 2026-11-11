@@ -133,4 +133,29 @@ describe("withoutResumeSession", () => {
 			allowEdits: true,
 		});
 	});
+
+	it("passes a chosen model to a fresh session", () => {
+		spawnClaude("do the thing", { sessionId: "new-1", model: "opus" });
+
+		expect(spawnedArgs()).toEqual([
+			...SETTINGS,
+			"--session-id",
+			"new-1",
+			"do the thing",
+			"--model",
+			"opus",
+		]);
+	});
+
+	it("passes no model flag when none is chosen", () => {
+		spawnClaude("do the thing");
+
+		expect(spawnedArgs()).not.toContain("--model");
+	});
+
+	it("keeps a resumed session on its own model", () => {
+		spawnClaude("", { resumeSessionId: "old-1", model: "opus" });
+
+		expect(spawnedArgs()).not.toContain("--model");
+	});
 });

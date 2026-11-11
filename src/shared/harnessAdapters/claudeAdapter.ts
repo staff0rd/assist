@@ -36,15 +36,17 @@ export const claudeAdapter: HarnessAdapter = {
 		reader: claudeConversationReader,
 	},
 	toolOperations: claudeToolOperations,
-	launchSkill: (skill, args, { conversationId, allowEdits }) =>
+	launchSkill: (skill, args, { conversationId, allowEdits, model }) =>
 		spawnClaude(buildSlashCommand(skill, args), {
 			allowEdits: allowEdits ?? true,
 			sessionId: conversationId,
+			model,
 		}),
-	launchPrompt: (prompt, { conversationId, allowEdits }) =>
+	launchPrompt: (prompt, { conversationId, allowEdits, model }) =>
 		spawnClaude(prompt, {
 			allowEdits: allowEdits ?? true,
 			sessionId: conversationId,
+			model,
 		}),
 	resume: (conversationId, nudge, { allowEdits }) =>
 		spawnClaude(nudge, {

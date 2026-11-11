@@ -247,4 +247,30 @@ describe("spawnCodex", () => {
 		expect(args.at(-1)).toBe("Do the thing");
 		error.mockRestore();
 	});
+
+	it("passes a chosen model as codex's own flag instead of LiteLLM routing", () => {
+		withConfig({
+			harness: { engine: "claude", codexModel: "gpt-5-codex" },
+			litellm: LITELLM,
+		});
+
+		spawnCodex("Do the thing", { cwd: "/repo", model: "o3" });
+
+		expect(spawnInheritMock).toHaveBeenCalledWith(
+			"codex",
+			[
+				"--no-daemon",
+				"-m",
+				"o3",
+				ENV,
+				...NETWORK,
+				"-C",
+				"/repo",
+				"--sandbox",
+				"workspace-write",
+				"Do the thing",
+			],
+			{ env: {} },
+		);
+	});
 });

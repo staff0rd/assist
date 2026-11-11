@@ -63,7 +63,7 @@ export function launchNewSession(
 		return;
 	}
 	launchAssistMode(
-		{ mode, harness, prompt, cwd, node, autoApprove, open },
+		{ mode, harness, model, prompt, cwd, node, autoApprove, open },
 		launchers.onCreateAssist,
 	);
 }

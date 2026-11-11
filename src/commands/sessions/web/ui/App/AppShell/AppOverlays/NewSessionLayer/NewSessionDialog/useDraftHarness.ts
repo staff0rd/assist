@@ -9,7 +9,6 @@ export function useDraftHarness(draft: NewSessionDraft) {
 		draft.mode,
 	);
 	const model = sessionModel(
-		draft.mode,
 		harness,
 		draft.pickedModel,
 		draft.configuredModel,

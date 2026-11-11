@@ -4,6 +4,7 @@ import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { harnessConfigHelp } from "./harnessConfigHelp";
 import { harnessDefaultsConfigHelp } from "./harnessDefaultsConfigHelp";
 import { resolveHarness } from "./resolveHarness";
+import { resolveModel } from "./resolveModel";
 import { run as backlogRun } from "./run";
 
 export function registerRunCommand(cmd: Command): void {
@@ -17,6 +18,11 @@ export function registerRunCommand(cmd: Command): void {
 			"Coding harness to launch (claude|codex|pi); defaults to the configured harness.defaults.run.harness, then harness.engine",
 		)
 		.option(
+			"--model <model>",
+			"Model to launch the harness with; defaults to harness.defaults.run.model while the run type's harness is used",
+		)
+		.option("--no-model", "Launch with the harness's own default model")
+		.option(
 			"--resume-session <id>",
 			"Resume an interrupted Claude session for the current phase (used by the sessions daemon on restart)",
 		)
@@ -26,6 +32,7 @@ export function registerRunCommand(cmd: Command): void {
 				opts: {
 					write?: boolean;
 					harness?: string;
+					model?: string | false;
 					resumeSession?: string;
 				},
 			) => {
@@ -34,9 +41,11 @@ export function registerRunCommand(cmd: Command): void {
 				 * under that in-flight conversation, and a pull failure would abort
 				 * the restore entirely. Only pull on a fresh run. */
 				if (!opts.resumeSession) await pullIfConfigured();
+				const harness = resolveHarness(opts.harness, "run");
 				await backlogRun(id, {
 					allowEdits: opts.write !== false,
-					harness: resolveHarness(opts.harness, "run"),
+					harness,
+					model: resolveModel(opts.model, "run", harness),
 					resumeSessionId: opts.resumeSession,
 				});
 			},

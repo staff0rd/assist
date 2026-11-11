@@ -16,6 +16,7 @@ export type LaunchModeOptions = {
 	itemName?: string;
 	resumeSessionId?: string;
 	harness?: HarnessKind;
+	model?: string;
 	feature?: HarnessFeature;
 };
 

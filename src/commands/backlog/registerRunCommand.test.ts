@@ -16,18 +16,30 @@ vi.mock("./run", () => ({
 	run: vi.fn().mockResolvedValue(true),
 }));
 
-vi.mock("./resolveHarness", () => ({
-	resolveHarness: vi.fn((value?: string) => value ?? "codex"),
-}));
+vi.mock("../../shared/loadConfig", async () =>
+	(
+		await vi.importActual<typeof loadConfigMockModule>(
+			"../../test/mocks/loadConfigMock",
+		)
+	).loadConfigMock(),
+);
 
+import { loadConfig } from "../../shared/loadConfig";
 import { pullIfConfigured } from "../../shared/pullIfConfigured";
+import {
+	type AssistConfigInput,
+	makeAssistConfig,
+} from "../../test/mothers/makeAssistConfig";
+import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
 import { registerRunCommand } from "./registerRunCommand";
-import { resolveHarness } from "./resolveHarness";
 import { run } from "./run";
 
 const mockPull = pullIfConfigured as unknown as MockInstance;
 const mockRun = run as unknown as MockInstance;
-const mockResolveHarness = resolveHarness as unknown as MockInstance;
+
+function withHarness(harness: AssistConfigInput["harness"]): void {
+	vi.mocked(loadConfig).mockReturnValue(makeAssistConfig({ harness }));
+}
 
 function buildCommand(): Command {
 	const program = new Command();
@@ -42,6 +54,7 @@ async function parse(args: string[]): Promise<void> {
 describe("registerRunCommand", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		withHarness({ engine: "codex" });
 	});
 
 	it("pulls before a fresh run", async () => {
@@ -51,23 +64,74 @@ describe("registerRunCommand", () => {
 		expect(mockRun).toHaveBeenCalledWith("42", {
 			allowEdits: true,
 			harness: "codex",
+			model: undefined,
 			resumeSessionId: undefined,
 		});
 	});
 
-	it("resolves the run type's default harness when --harness is omitted", async () => {
+	describe("harness.defaults.run", () => {
+		beforeEach(() =>
+			withHarness({
+				engine: "claude",
+				defaults: { run: { harness: "codex", model: "gpt-5" } },
+			}),
+		);
+
+		it("launches with the run type's harness and model when no flags are given", async () => {
+			await parse(["run", "42"]);
+
+			expect(mockRun).toHaveBeenCalledWith(
+				"42",
+				expect.objectContaining({ harness: "codex", model: "gpt-5" }),
+			);
+		});
+
+		it("lets --model override the configured model", async () => {
+			await parse(["run", "42", "--model", "o3"]);
+
+			expect(mockRun).toHaveBeenCalledWith(
+				"42",
+				expect.objectContaining({ harness: "codex", model: "o3" }),
+			);
+		});
+
+		it("drops the configured model when --harness picks another harness", async () => {
+			await parse(["run", "42", "--harness", "claude"]);
+
+			expect(mockRun).toHaveBeenCalledWith(
+				"42",
+				expect.objectContaining({ harness: "claude", model: undefined }),
+			);
+		});
+
+		it("passes no model with --no-model", async () => {
+			await parse(["run", "42", "--no-model"]);
+
+			expect(mockRun).toHaveBeenCalledWith(
+				"42",
+				expect.objectContaining({ harness: "codex", model: undefined }),
+			);
+		});
+	});
+
+	it("passes no model when the run type has none configured", async () => {
+		withHarness({ engine: "claude", defaults: { run: { harness: "pi" } } });
+
 		await parse(["run", "42"]);
 
-		expect(mockResolveHarness).toHaveBeenCalledWith(undefined, "run");
+		expect(mockRun).toHaveBeenCalledWith(
+			"42",
+			expect.objectContaining({ harness: "pi", model: undefined }),
+		);
 	});
 
 	it("uses an explicit harness override", async () => {
 		await parse(["run", "42", "--harness", "pi"]);
 
-		expect(mockResolveHarness).toHaveBeenCalledWith("pi", "run");
 		expect(mockRun).toHaveBeenCalledWith("42", {
 			allowEdits: true,
 			harness: "pi",
+			model: undefined,
 			resumeSessionId: undefined,
 		});
 	});
@@ -104,6 +168,7 @@ describe("registerRunCommand", () => {
 		expect(mockRun).toHaveBeenCalledWith("42", {
 			allowEdits: true,
 			harness: "codex",
+			model: undefined,
 			resumeSessionId: "sess-123",
 		});
 	});
