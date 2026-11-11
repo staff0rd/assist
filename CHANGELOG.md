@@ -1,3 +1,16 @@
+# [0.1124.0](https://github.com/staff0rd/assist/compare/v0.1123.0...v0.1124.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* codex asks questions in chat ([14bffee](https://github.com/staff0rd/assist/commit/14bffee3261bbf1da0567d91748f29e96138836b))
+* codex manual checks asked in chat ([bcba929](https://github.com/staff0rd/assist/commit/bcba9297d7e6db49c4d2fec052bc10d6649486d2))
+
+
+### Features
+
+* nodes page with live state and remove ([52be788](https://github.com/staff0rd/assist/commit/52be788ac1bf9ee0cf06cf5a02a0d20fe0faa271))
+
 # [0.1123.0](https://github.com/staff0rd/assist/compare/v0.1122.0...v0.1123.0) (2026-11-11)
 
 
