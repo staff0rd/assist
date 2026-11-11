@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { InvalidItemIdError } from "./commands/backlog/formatItemId";
 import { MiroExtractError } from "./commands/miro/MiroExtractError";
 import { MissingRunCwdError } from "./commands/run/resolveRunCwd";
+import { DatabaseConnectionError } from "./shared/db/DatabaseConnectionError";
 import { MissingDatabaseUrlError } from "./shared/db/MissingDatabaseUrlError";
 import { UnknownRepoConfigError } from "./shared/resolveNamedRepoWriteLabel";
 import { AmbiguousRepoConfigError } from "./shared/resolveRepoOverride";
@@ -13,7 +14,8 @@ export function reportCliError(error: unknown): void {
 		error instanceof UnknownRepoConfigError ||
 		error instanceof MissingRunCwdError ||
 		error instanceof MiroExtractError ||
-		error instanceof MissingDatabaseUrlError
+		error instanceof MissingDatabaseUrlError ||
+		error instanceof DatabaseConnectionError
 	) {
 		console.error(chalk.red(error.message));
 	} else {

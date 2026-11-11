@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { isDbBackedConfigKey } from "./dbBackedConfigKeys";
+import { defaultsToNode } from "./defaultsToNode";
 import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { resolveRepoUnsetTarget } from "./resolveRepoUnsetTarget";
 import { unsetDbBackedConfigKey } from "./unsetDbBackedConfigKey";
@@ -26,7 +27,7 @@ export async function configUnset(
 		key: resolved.key,
 		useRepo: resolved.useRepo,
 		repoName: resolved.repoName,
-		node: options.node ?? false,
+		node: defaultsToNode(resolved.key, options),
 		user: options.user ?? false,
 	});
 }

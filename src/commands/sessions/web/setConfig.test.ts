@@ -302,34 +302,48 @@ describe("setConfig", () => {
 		});
 	});
 
-	it("replaces the stored secret when a new value is supplied", async () => {
-		writeFileSync(paths.repoConfig, "database:\n  url: postgres://old\n");
-
-		const [status] = await post({
+	it("refuses database.url in repo (git), naming user (node)", async () => {
+		writeFileSync(paths.repoConfig, "commit:\n  push: false\n");
+		const [status, payload] = await post({
 			key: "database.url",
 			value: "postgres://new",
 			cwd: paths.repo,
 			scope: "project",
 		});
 
+		expect(status).toBe(400);
+		expect(payload.error).toContain("is a user (node)-only key");
+		expect(readYaml(paths.repoConfig)).toEqual({ commit: { push: false } });
+	});
+
+	it("replaces the stored secret when a new value is supplied", async () => {
+		writeFileSync(paths.globalConfig, "database:\n  url: postgres://old\n");
+
+		const [status] = await post({
+			key: "database.url",
+			value: "postgres://new",
+			cwd: paths.repo,
+			scope: "global",
+		});
+
 		expect(status).toBe(200);
-		expect(readYaml(paths.repoConfig)).toEqual({
+		expect(readYaml(paths.globalConfig)).toEqual({
 			database: { url: "postgres://new" },
 		});
 	});
 
 	it("keeps the stored secret when a scalar secret row is saved untouched", async () => {
-		writeFileSync(paths.repoConfig, "database:\n  url: postgres://old\n");
+		writeFileSync(paths.globalConfig, "database:\n  url: postgres://old\n");
 
 		const [status] = await post({
 			key: "database.url",
 			value: REDACTED_SECRET,
 			cwd: paths.repo,
-			scope: "project",
+			scope: "global",
 		});
 
 		expect(status).toBe(200);
-		expect(readYaml(paths.repoConfig)).toEqual({
+		expect(readYaml(paths.globalConfig)).toEqual({
 			database: { url: "postgres://old" },
 		});
 	});

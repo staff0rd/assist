@@ -71,11 +71,7 @@ describe("readConfigEntries", () => {
 
 	it("limits the writable scopes of global-only and node-only keys", () => {
 		expect(entryFor("sync.autoConfirm").writableScopes).toEqual(["global"]);
-		expect(entryFor("database.url").writableScopes).toEqual([
-			"project",
-			"repo",
-			"global",
-		]);
+		expect(entryFor("database.url").writableScopes).toEqual(["global"]);
 		expect(entryFor("commit.push").writableScopes).toBeUndefined();
 	});
 

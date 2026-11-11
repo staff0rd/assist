@@ -228,16 +228,13 @@ describe("configUnset", () => {
 	});
 
 	describe("global-only keys", () => {
-		it("should reject sync.autoConfirm without --node", () => {
-			const mockExit = vi
-				.spyOn(process, "exit")
-				.mockImplementation(() => undefined as never);
+		it("should unset sync.autoConfirm from user (node) without a scope flag", () => {
+			mockLoadGlobalConfigRaw.mockReturnValue({ sync: { autoConfirm: true } });
 
 			configUnset("sync.autoConfirm");
 
-			expect(mockExit).toHaveBeenCalledWith(1);
+			expect(mockSaveGlobalConfig).toHaveBeenCalled();
 			expect(mockSaveConfig).not.toHaveBeenCalled();
-			mockExit.mockRestore();
 		});
 	});
 

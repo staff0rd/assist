@@ -123,15 +123,39 @@ describe("configSet", () => {
 	});
 
 	describe("global-only keys", () => {
-		it("should reject sync.autoConfirm without --node", () => {
+		it("should write sync.autoConfirm to user (node) without a scope flag", () => {
+			configSet("sync.autoConfirm", "true");
+
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
+				sync: { autoConfirm: true },
+			});
+			expect(mockSaveConfig).not.toHaveBeenCalled();
+		});
+
+		it("should write database.url to user (node) without a scope flag", () => {
+			configSet("database.url", "postgresql://u:secret@localhost:1/x");
+
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
+				database: { url: "postgresql://u:secret@localhost:1/x" },
+			});
+			expect(mockSaveConfig).not.toHaveBeenCalled();
+		});
+
+		it("should refuse database.url with --repo, naming user (node)", async () => {
 			const mockExit = vi
 				.spyOn(process, "exit")
 				.mockImplementation(() => undefined as never);
+			const mockError = vi
+				.spyOn(console, "error")
+				.mockImplementation(() => undefined);
 
-			configSet("sync.autoConfirm", "true");
+			await configSet("database.url", "postgresql://u:p@h/x", { repo: true });
 
 			expect(mockExit).toHaveBeenCalledWith(1);
+			expect(mockError.mock.calls.flat().join("\n")).toContain("user (node)");
+			expect(await sharedRepos()).toEqual({});
 			mockExit.mockRestore();
+			mockError.mockRestore();
 		});
 
 		it("should allow sync.autoConfirm with --node", () => {

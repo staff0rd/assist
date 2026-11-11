@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { describeDatabaseUrlSource } from "../../shared/db/describeDatabaseUrlSource";
 import { describeConfigLeaves } from "../../shared/describeConfigLeaves";
 import { loadConfig } from "../../shared/loadConfig";
 import { assistConfigSchema } from "../../shared/types";
@@ -35,6 +36,8 @@ function printValue(
 	console.log(
 		formatOutput(options.reveal ? value : maskConfigKeySecrets(key, value)),
 	);
+	if (key === "database" || key.startsWith("database."))
+		console.error(chalk.dim(`from ${describeDatabaseUrlSource()}`));
 }
 
 function formatOutput(value: unknown): string {

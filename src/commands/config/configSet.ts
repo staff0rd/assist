@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { coerceCliConfigValue } from "./coerceCliConfigValue";
 import { isDbBackedConfigKey } from "./dbBackedConfigKeys";
+import { defaultsToNode } from "./defaultsToNode";
 import { exitWithConfigErrors } from "./exitWithConfigErrors";
 import { resolveRepoTarget } from "./resolveRepoTarget";
 import { setDbBackedConfigKey } from "./setDbBackedConfigKey";
@@ -28,7 +29,7 @@ export async function configSet(
 	await setFileConfigKey(
 		{
 			...resolved,
-			node: options.node ?? false,
+			node: defaultsToNode(resolved.key, options),
 			user: options.user ?? false,
 		},
 		coercion.value,

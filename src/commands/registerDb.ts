@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { toDatabaseConnectionError } from "../shared/db/DatabaseConnectionError";
 import { createPool } from "../shared/db/getDb";
 import { applyMigrations } from "../shared/db/migrations/applyMigrations";
 import { getMigrationStatus } from "../shared/db/migrations/getMigrationStatus";
@@ -18,6 +19,8 @@ async function withPool(
 	const pool = createPool();
 	try {
 		await fn(pgExecutor(pool));
+	} catch (error) {
+		throw toDatabaseConnectionError(error);
 	} finally {
 		await pool.end();
 	}
