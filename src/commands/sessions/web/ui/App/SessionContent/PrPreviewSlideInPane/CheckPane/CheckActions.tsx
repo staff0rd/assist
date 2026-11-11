@@ -1,10 +1,7 @@
 import { Button, Stack } from "@mui/material";
 import { useState } from "react";
-import type {
-	CheckResult,
-	LaterPhase,
-} from "../../../../../../shared/askCheckInputSchema";
 import { usePreviewPrimaryAction } from "../../../usePreviewPrimaryAction";
+import type { CheckActionsProps } from "./CheckActionsProps";
 import { CheckNoteField } from "./CheckNoteField";
 import { LaterPhaseButton } from "./LaterPhaseButton";
 
@@ -12,11 +9,7 @@ export function CheckActions({
 	laterPhases,
 	onResult,
 	onDismiss,
-}: {
-	laterPhases: LaterPhase[];
-	onResult: (result: CheckResult, note: string, phase?: number) => void;
-	onDismiss: (note: string) => void;
-}) {
+}: CheckActionsProps) {
 	const [note, setNote] = useState("");
 	const primary = usePreviewPrimaryAction();
 	return (

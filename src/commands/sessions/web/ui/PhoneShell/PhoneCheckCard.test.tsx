@@ -110,4 +110,32 @@ describe("PhoneCheckCard", () => {
 			}),
 		);
 	});
+
+	it("dismisses without a note and disables every action", () => {
+		const onDecision = card();
+
+		fireEvent.click(button("Dismiss"));
+
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			expect.not.objectContaining({ answers: expect.anything() }),
+		);
+		for (const name of ["Dismiss", "Works", "Doesn't work"]) {
+			expect(button(name).disabled).toBe(true);
+		}
+	});
+
+	it("dismisses with the trimmed note", () => {
+		const onDecision = card();
+
+		fireEvent.change(screen.getByRole("textbox", { name: "Note" }), {
+			target: { value: "  not now \n" },
+		});
+		fireEvent.click(button("Dismiss"));
+
+		expect(onDecision).toHaveBeenCalledWith(
+			"reject",
+			expect.objectContaining({ answers: { note: "not now" } }),
+		);
+	});
 });

@@ -6,8 +6,7 @@ import { prPreviewPaneSx } from "../prPreviewPaneSx";
 import { CheckActions } from "./CheckPane/CheckActions";
 import { CheckBody } from "./CheckPane/CheckBody";
 import { CheckCommentLayer } from "./CheckPane/CheckCommentLayer";
-import { checkAnswerDetails } from "./CheckPane/checkAnswerDetails";
-import { checkDismissDetails } from "./CheckPane/checkDismissDetails";
+import { checkDecisionHandlers } from "./CheckPane/checkDecisionHandlers";
 import { parseCheckPreview } from "./CheckPane/parseCheckPreview";
 import { useHighLevelDiffComments } from "./HighLevelReviewPane/useHighLevelReviewPane/useHighLevelDiffComments";
 import type { PrPreviewPaneProps } from "./PrPreviewPaneProps";
@@ -39,10 +38,7 @@ export function CheckPane({
 			<Divider />
 			<CheckActions
 				laterPhases={check.laterPhases}
-				onResult={(result, note, phase) =>
-					onDecision("approve", checkAnswerDetails(result, note, phase))
-				}
-				onDismiss={(note) => onDecision("reject", checkDismissDetails(note))}
+				{...checkDecisionHandlers(onDecision)}
 			/>
 			<CommentSentSnackbar
 				sessionName={sentTo}

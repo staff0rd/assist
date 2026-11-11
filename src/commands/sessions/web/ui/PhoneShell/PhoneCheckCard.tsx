@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { useMemo } from "react";
 import type { PrPreview } from "../../../shared/SessionInfoBase";
-import { checkAnswerDetails } from "../App/SessionContent/PrPreviewSlideInPane/CheckPane/checkAnswerDetails";
+import { checkDecisionHandlers } from "../App/SessionContent/PrPreviewSlideInPane/CheckPane/checkDecisionHandlers";
 import { parseCheckPreview } from "../App/SessionContent/PrPreviewSlideInPane/CheckPane/parseCheckPreview";
 import type { QuestionDecision } from "../App/SessionContent/PrPreviewSlideInPane/QuestionPane/useQuestionPreview";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
@@ -43,9 +43,7 @@ export function PhoneCheckCard({
 			<Box sx={{ flex: 1 }} />
 			<PhoneCheckActions
 				laterPhases={check.laterPhases}
-				onResult={(result, note, phase) =>
-					onDecision("approve", checkAnswerDetails(result, note, phase))
-				}
+				{...checkDecisionHandlers(onDecision)}
 			/>
 		</Box>
 	);
