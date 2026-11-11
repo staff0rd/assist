@@ -15,11 +15,11 @@ export function adviceFragments(): void {
 	reportVerifyProblems(
 		[
 			verifySection(
-				"Shipped in claude/advice but missing from adviceFragmentNames (add them, or advice.sections cannot name them)",
+				"Shipped in agent/advice but missing from adviceFragmentNames (add them, or advice.sections cannot name them)",
 				[...shipped].filter((name) => !declared.has(name)),
 			),
 			verifySection(
-				"Listed in adviceFragmentNames but no longer shipped in claude/advice (remove them)",
+				"Listed in adviceFragmentNames but no longer shipped in agent/advice (remove them)",
 				[...declared].filter((name) => !shipped.has(name)),
 			),
 			verifySection(

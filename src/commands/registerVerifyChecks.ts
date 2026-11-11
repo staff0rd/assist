@@ -40,7 +40,7 @@ const checks = [
 	{
 		name: "advice-fragments",
 		description:
-			"Check adviceFragmentNames matches the fragments shipped in claude/advice, so advice.sections can name every one",
+			"Check adviceFragmentNames matches the fragments shipped in agent/advice, so advice.sections can name every one",
 		action: adviceFragments,
 	},
 	{
