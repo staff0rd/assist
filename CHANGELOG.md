@@ -1,3 +1,10 @@
+# [0.1119.0](https://github.com/staff0rd/assist/compare/v0.1118.2...v0.1119.0) (2026-11-11)
+
+
+### Features
+
+* expand phone Review tally by default ([34167cf](https://github.com/staff0rd/assist/commit/34167cf9e57f09419049c3f4a3fd57cd072c1f29))
+
 ## [0.1118.2](https://github.com/staff0rd/assist/compare/v0.1118.1...v0.1118.2) (2026-11-11)
 
 
