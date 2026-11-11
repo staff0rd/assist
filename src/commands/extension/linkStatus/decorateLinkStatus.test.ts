@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { decorateLinkStatus } from "./decorateLinkStatus";
 
 const ISSUE = "https://github.com/org/repo/issues/1087";
+const PULL = "https://github.com/org/repo/pull/42/";
 
 function stubStates(result: unknown) {
 	const sendMessage = vi.fn().mockResolvedValue(result);
@@ -57,8 +58,39 @@ describe("decorateLinkStatus", () => {
 		expect(send).toHaveBeenCalledTimes(1);
 	});
 
-	it("leaves the link untouched when the lookup fails", async () => {
-		stubStates({ ok: false, message: "unreachable" });
+	it.each([
+		["pr-open", "Open pull request", "--fgColor-open"],
+		["pr-draft", "Draft pull request", "--fgColor-muted"],
+		["pr-merged", "Merged pull request", "--fgColor-done"],
+		["pr-closed", "Closed pull request", "--fgColor-closed"],
+	])("decorates a %s pull request link", async (state, label, color) => {
+		const send = stubStates({ ok: true, states: { "org/repo#42": state } });
+		const anchor = render(`<a href="${PULL}">fix</a>`);
+		await decorate();
+		expect(send).toHaveBeenCalledWith({
+			type: "assist-link-status",
+			refs: [{ owner: "org", repo: "repo", number: 42 }],
+		});
+		expect(anchor.querySelector("svg")?.getAttribute("aria-label")).toBe(label);
+		expect(anchor.style.color).toContain(color);
+	});
+
+	it.each([
+		["the lookup fails", { ok: false, message: "unreachable" }],
+		["the ref is unresolved", { ok: true, states: {} }],
+		["the state is unknown", { ok: true, states: { "org/repo#1087": "x" } }],
+	])("leaves the link untouched when %s", async (_, result) => {
+		stubStates(result);
+		const anchor = render(`<a href="${ISSUE}">#1087</a>`);
+		await decorate();
+		expect(anchor.querySelector("svg")).toBeNull();
+		expect(anchor.getAttribute("style")).toBeNull();
+	});
+
+	it("leaves the link untouched when the background is unreachable", async () => {
+		vi.stubGlobal("browser", {
+			runtime: { sendMessage: vi.fn().mockRejectedValue(new Error("gone")) },
+		});
 		const anchor = render(`<a href="${ISSUE}">#1087</a>`);
 		await decorate();
 		expect(anchor.querySelector("svg")).toBeNull();

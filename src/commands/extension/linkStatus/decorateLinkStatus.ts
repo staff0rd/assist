@@ -1,7 +1,7 @@
 import { linkRefKey } from "../../sessions/web/linkStatus/linkRefKey";
 import type { LinkRef } from "../../sessions/web/linkStatus/LinkState";
 import { applyLinkState, clearLinkState } from "./applyLinkState";
-import { parseIssueLink } from "./parseIssueLink";
+import { parseItemLink } from "./parseItemLink";
 import { requestLinkStatus } from "./requestLinkStatus";
 
 const LINK_SELECTOR = ".markdown-body a[href], .js-issue-title a[href]";
@@ -20,7 +20,7 @@ function collectPending(): Map<string, PendingRef> {
 		anchor.dataset.assistLinkStatus = anchor.href;
 		const ref = anchor.matches(NATIVE_SELECTOR)
 			? null
-			: parseIssueLink(anchor.href);
+			: parseItemLink(anchor.href);
 		if (!ref) continue;
 		const key = linkRefKey(ref);
 		const entry = pending.get(key) ?? { ref, anchors: [] };
