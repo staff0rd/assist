@@ -1,3 +1,16 @@
+# [0.1121.0](https://github.com/staff0rd/assist/compare/v0.1120.2...v0.1121.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* edit hook honours comment ignore ([f9449ce](https://github.com/staff0rd/assist/commit/f9449ce82c39eef45b8357af8055ecdefc1c9b2d))
+
+
+### Features
+
+* opt-in sync.preferences layer ([df1fbe2](https://github.com/staff0rd/assist/commit/df1fbe2500659736ef09f3475a836ffa129f04ab))
+* project skills in slash type-ahead ([ef15a2f](https://github.com/staff0rd/assist/commit/ef15a2f7e56ea63aca7be1ee60736a7d9cd3bada))
+
 ## [0.1120.2](https://github.com/staff0rd/assist/compare/v0.1120.1...v0.1120.2) (2026-11-11)
 
 
