@@ -1,3 +1,10 @@
+## [0.1118.1](https://github.com/staff0rd/assist/compare/v0.1118.0...v0.1118.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* phone Start uses run default harness ([eb104da](https://github.com/staff0rd/assist/commit/eb104dae534af6aef0a9cce886c601b73c14dbb0))
+
 # [0.1118.0](https://github.com/staff0rd/assist/compare/v0.1117.1...v0.1118.0) (2026-11-11)
 
 
