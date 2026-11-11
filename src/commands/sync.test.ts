@@ -58,7 +58,7 @@ describe("sync", () => {
 		vi.mocked(existsSync).mockReturnValue(false);
 		vi.mocked(readFileSync).mockReturnValue("");
 		mockLoadConfig.mockReturnValue(
-			makeAssistConfig({ sync: { autoConfirm: false } }),
+			makeAssistConfig({ sync: { autoConfirm: false, preferences: false } }),
 		);
 		const emptyPrune = { orphans: [], removed: [], skipped: [], unmanaged: [] };
 		mockPruneCommands.mockReturnValue(emptyPrune);
@@ -167,13 +167,13 @@ describe("sync", () => {
 		expect(mockSyncSettings).toHaveBeenCalledWith(
 			expect.any(String),
 			expect.any(String),
-			{ yes: false },
+			{ yes: false, preferences: false },
 		);
 	});
 
 	it("should pass yes=true when autoConfirm is true", async () => {
 		mockLoadConfig.mockReturnValue(
-			makeAssistConfig({ sync: { autoConfirm: true } }),
+			makeAssistConfig({ sync: { autoConfirm: true, preferences: false } }),
 		);
 
 		await sync();
@@ -181,13 +181,13 @@ describe("sync", () => {
 		expect(mockSyncSettings).toHaveBeenCalledWith(
 			expect.any(String),
 			expect.any(String),
-			{ yes: true },
+			{ yes: true, preferences: false },
 		);
 	});
 
 	it("should prefer explicit --yes flag over config", async () => {
 		mockLoadConfig.mockReturnValue(
-			makeAssistConfig({ sync: { autoConfirm: false } }),
+			makeAssistConfig({ sync: { autoConfirm: false, preferences: false } }),
 		);
 
 		await sync({ yes: true });
@@ -195,13 +195,13 @@ describe("sync", () => {
 		expect(mockSyncSettings).toHaveBeenCalledWith(
 			expect.any(String),
 			expect.any(String),
-			{ yes: true },
+			{ yes: true, preferences: false },
 		);
 	});
 
 	it("should use autoConfirm when --yes is not provided", async () => {
 		mockLoadConfig.mockReturnValue(
-			makeAssistConfig({ sync: { autoConfirm: true } }),
+			makeAssistConfig({ sync: { autoConfirm: true, preferences: false } }),
 		);
 
 		await sync({});
@@ -209,7 +209,21 @@ describe("sync", () => {
 		expect(mockSyncSettings).toHaveBeenCalledWith(
 			expect.any(String),
 			expect.any(String),
-			{ yes: true },
+			{ yes: true, preferences: false },
+		);
+	});
+
+	it("passes sync.preferences through to syncSettings", async () => {
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ sync: { autoConfirm: false, preferences: true } }),
+		);
+
+		await sync();
+
+		expect(mockSyncSettings).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.any(String),
+			{ yes: false, preferences: true },
 		);
 	});
 });

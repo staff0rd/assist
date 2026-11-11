@@ -218,6 +218,49 @@ describe("syncSettings", () => {
 		expect(logged()).not.toContain(autoConfirmHintCommand);
 	});
 
+	describe("preferences layer", () => {
+		beforeEach(() => {
+			writeSource({ permissions: { allow: ["Read"] } });
+			writeFileSync(
+				join(claudeDir, "preferences.json"),
+				JSON.stringify({
+					autoMemoryEnabled: false,
+					env: { CLAUDE_AFK_TIMEOUT_MS: "1" },
+					permissions: { deny: ["SendFeedback"] },
+				}),
+			);
+			writeTarget({
+				env: { USER_VAR: "x" },
+				permissions: { allow: ["Bash"], deny: ["Write"] },
+			});
+		});
+
+		it("is not applied by default", async () => {
+			await syncSettings(claudeDir, targetBase, { yes: true });
+
+			expect(readTarget()).toEqual({
+				env: { USER_VAR: "x" },
+				permissions: { allow: ["Bash", "Read"], deny: ["Write"] },
+			});
+		});
+
+		it("is deep-merged after the required layer when enabled", async () => {
+			await syncSettings(claudeDir, targetBase, {
+				yes: true,
+				preferences: true,
+			});
+
+			expect(readTarget()).toEqual({
+				autoMemoryEnabled: false,
+				env: { USER_VAR: "x", CLAUDE_AFK_TIMEOUT_MS: "1" },
+				permissions: {
+					allow: ["Bash", "Read"],
+					deny: ["Write", "SendFeedback"],
+				},
+			});
+		});
+	});
+
 	function logged(): string {
 		return logs.join("\n");
 	}

@@ -8,6 +8,11 @@ export const rootConfigHelp: Record<string, ConfigHelpEntry[]> = {
 			setter: autoConfirmHintCommand,
 			note: "skip the settings.json overwrite prompt",
 		},
+		{
+			key: "sync.preferences",
+			setter: "assist config set sync.preferences true --node",
+			note: "also merge assist's author preferences (claude/preferences.json) into settings.json",
+		},
 	],
 	commit: [
 		{

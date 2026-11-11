@@ -1,0 +1,14 @@
+{
+	"autoMemoryEnabled": false,
+	"feedbackDrafts": "off",
+	"attribution": {
+		"commit": "",
+		"pr": ""
+	},
+	"env": {
+		"CLAUDE_AFK_TIMEOUT_MS": "2147483647"
+	},
+	"permissions": {
+		"deny": ["SendFeedback"]
+	}
+}

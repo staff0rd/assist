@@ -1,13 +1,4 @@
 {
-	"autoMemoryEnabled": false,
-	"feedbackDrafts": "off",
-	"attribution": {
-		"commit": "",
-		"pr": ""
-	},
-	"env": {
-		"CLAUDE_AFK_TIMEOUT_MS": "2147483647"
-	},
 	"statusLine": {
 		"type": "command",
 		"command": "assist status-line"
@@ -92,7 +83,6 @@
 			"Bash(ls ~/.assist/pr-comments:*)",
 			"Read(~/.assist/pr-comments/**)",
 			"WebFetch(domain:staffordwilliams.com)"
-		],
-		"deny": ["SendFeedback"]
+		]
 	}
 }

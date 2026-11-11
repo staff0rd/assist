@@ -5,17 +5,15 @@ import { promptConfirm } from "../../shared/promptConfirm";
 import { printDiff } from "../../utils/printDiff";
 import { mergeSettings } from "./mergeSettings";
 import { printAutoConfirmHint } from "./printAutoConfirmHint";
+import { readSourceSettings } from "./readSourceSettings";
 
 export async function syncSettings(
 	claudeDir: string,
 	targetBase: string,
-	options?: { yes?: boolean },
+	options?: { yes?: boolean; preferences?: boolean },
 ): Promise<void> {
-	const source = path.join(claudeDir, "settings.json");
 	const target = path.join(targetBase, "settings.json");
-
-	const sourceContent = fs.readFileSync(source, "utf8");
-	const sourceSettings = JSON.parse(sourceContent);
+	const sourceSettings = readSourceSettings(claudeDir, options?.preferences);
 
 	const targetExists = fs.existsSync(target);
 	const targetContent = targetExists ? fs.readFileSync(target, "utf8") : "";

@@ -387,8 +387,9 @@ const assistConfigShape = {
 	sync: z
 		.strictObject({
 			autoConfirm: z.boolean().default(false),
+			preferences: z.boolean().default(false),
 		})
-		.default({ autoConfirm: false }),
+		.default({ autoConfirm: false, preferences: false }),
 	harness: z
 		.strictObject({
 			engine: harnessKindSchema.default("claude"),

@@ -28,7 +28,10 @@ export async function sync(
 
 	const commandNames = syncClaudeCommands(claudeDir, targetBase);
 	const skillDirNames = syncDesign(claudeDir, targetBase);
-	await syncSettings(claudeDir, targetBase, { yes });
+	await syncSettings(claudeDir, targetBase, {
+		yes,
+		preferences: config.sync.preferences,
+	});
 	await syncCodex(claudeDir, prune);
 	syncPi(claudeDir, prune);
 	reportRetiredAgentsFiles();

@@ -1,4 +1,8 @@
-const GLOBAL_ONLY_KEYS = ["sync.autoConfirm", "inbox.intervalMinutes"];
+const GLOBAL_ONLY_KEYS = [
+	"sync.autoConfirm",
+	"sync.preferences",
+	"inbox.intervalMinutes",
+];
 const GLOBAL_ONLY_ROOTS = ["database"];
 
 export function isGlobalOnlyConfigKey(key: string): boolean {
