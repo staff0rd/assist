@@ -1,3 +1,10 @@
+# [0.1129.0](https://github.com/staff0rd/assist/compare/v0.1128.2...v0.1129.0) (2026-11-11)
+
+
+### Features
+
+* show pull request link state ([da37590](https://github.com/staff0rd/assist/commit/da375906f98b66b65ddc89ed0330d03f907aefd4))
+
 ## [0.1128.2](https://github.com/staff0rd/assist/compare/v0.1128.1...v0.1128.2) (2026-11-11)
 
 
