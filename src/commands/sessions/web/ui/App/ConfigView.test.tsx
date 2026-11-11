@@ -558,7 +558,7 @@ describe("ConfigView", () => {
 		);
 	});
 
-	it("forces a global write for a global-only key", async () => {
+	it("offers user (node) and user (db) for a user-wide key and saves to user (db)", async () => {
 		const fetchMock = stubApi(
 			[
 				{
@@ -566,11 +566,11 @@ describe("ConfigView", () => {
 					type: "boolean",
 					value: false,
 					source: "global",
-					writableScopes: ["global"],
+					writableScopes: ["global", "user"],
 					node: node("sync.autoConfirm"),
 				},
 			],
-			{ ok: true, status: 200, body: { target: "global" } },
+			{ ok: true, status: 200, body: { target: "user (db)" } },
 		);
 		renderView("/repo/one");
 
@@ -580,24 +580,15 @@ describe("ConfigView", () => {
 		fireEvent.click(
 			screen.getByRole("button", { name: "Edit sync.autoConfirm" }),
 		);
-		const project = screen.getByRole("button", { name: "repo (git)" });
-		expect(project.hasAttribute("disabled")).toBe(true);
-		expect(
-			screen
-				.getByRole("button", { name: "repo (db)" })
-				.hasAttribute("disabled"),
-		).toBe(true);
-		expect(
-			screen
-				.getByRole("button", { name: "user (db)" })
-				.hasAttribute("disabled"),
-		).toBe(true);
-		expect(
-			screen
-				.getByRole("button", { name: "user (node)" })
-				.getAttribute("aria-pressed"),
-		).toBe("true");
+		const scopeButton = (name: string) => screen.getByRole("button", { name });
+		expect(scopeButton("repo (git)").hasAttribute("disabled")).toBe(true);
+		expect(scopeButton("repo (db)").hasAttribute("disabled")).toBe(true);
+		expect(scopeButton("user (node)").getAttribute("aria-pressed")).toBe(
+			"true",
+		);
+		expect(scopeButton("user (db)").hasAttribute("disabled")).toBe(false);
 
+		fireEvent.click(scopeButton("user (db)"));
 		fireEvent.click(screen.getByLabelText("sync.autoConfirm value"));
 		fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
@@ -606,7 +597,7 @@ describe("ConfigView", () => {
 				key: "sync.autoConfirm",
 				value: true,
 				cwd: "/repo/one",
-				scope: "global",
+				scope: "user",
 			}),
 		);
 	});
@@ -1173,7 +1164,7 @@ describe("ConfigView", () => {
 					type: "boolean",
 					value: true,
 					source: "global",
-					writableScopes: ["global"],
+					writableScopes: ["global", "user"],
 					node: node("sync.autoConfirm"),
 				},
 			],

@@ -142,7 +142,7 @@ describe("writeConfigKeys", () => {
 		expect(result).toEqual({
 			ok: false,
 			errors: [
-				`"sync.autoConfirm" is a user (node)-only key. Set it with 'assist config set sync.autoConfirm <value> --node'`,
+				`"sync.autoConfirm" can't be stored per repo. Set it in user (node) with --node or in user (db) with --user`,
 			],
 		});
 		expect(mockSaveConfig).not.toHaveBeenCalled();

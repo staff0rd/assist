@@ -5,6 +5,7 @@ import {
 	saveGlobalConfig,
 } from "../../shared/loadConfig";
 import { isGlobalOnlyConfigKey } from "./isGlobalOnlyConfigKey";
+import { notPerRepoKeyMessage } from "./notPerRepoKeyMessage";
 import { setNestedValue } from "./setNestedValue";
 import { validateConfig } from "./validateConfig";
 
@@ -29,9 +30,7 @@ export function applyConfigSet(
 	if (!global && isGlobalOnlyConfigKey(key)) {
 		return {
 			ok: false,
-			errors: [
-				`"${key}" is a user (node)-only key. Use --node to set it in ~/.assist.yml`,
-			],
+			errors: [notPerRepoKeyMessage(key, "Set")],
 		};
 	}
 	const raw = global

@@ -70,8 +70,14 @@ describe("readConfigEntries", () => {
 	});
 
 	it("limits the writable scopes of global-only and node-only keys", () => {
-		expect(entryFor("sync.autoConfirm").writableScopes).toEqual(["global"]);
+		expect(entryFor("sync.autoConfirm").writableScopes).toEqual([
+			"global",
+			"user",
+		]);
 		expect(entryFor("database.url").writableScopes).toEqual(["global"]);
+		expect(entryFor("inbox.intervalMinutes").writableScopes).toEqual([
+			"global",
+		]);
 		expect(entryFor("commit.push").writableScopes).toBeUndefined();
 	});
 

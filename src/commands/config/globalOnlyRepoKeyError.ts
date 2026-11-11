@@ -1,4 +1,5 @@
 import { isGlobalOnlyConfigKey } from "./isGlobalOnlyConfigKey";
+import { notPerRepoKeyMessage } from "./notPerRepoKeyMessage";
 
 export function globalOnlyRepoKeyError(
 	key: string,
@@ -7,8 +8,6 @@ export function globalOnlyRepoKeyError(
 	if (!isGlobalOnlyConfigKey(key)) return undefined;
 	return {
 		ok: false,
-		errors: [
-			`"${key}" is a user (node)-only key. ${verb} it in ~/.assist.yml with --node rather than in repo (db)`,
-		],
+		errors: [notPerRepoKeyMessage(key, verb)],
 	};
 }

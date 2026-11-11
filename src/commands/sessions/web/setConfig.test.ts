@@ -28,6 +28,7 @@ import { join } from "node:path";
 import { createTestDb } from "../../../shared/db/createTestDb";
 import type { Db } from "../../../shared/db/Db";
 import { listRepoConfigs } from "../../../shared/db/listRepoConfigs";
+import { readUserConfig } from "../../../shared/db/readUserConfig";
 import { readRepoConfigCache } from "../../../shared/readRepoConfigCache";
 import { REDACTED_SECRET } from "../../../shared/redactConfigSecrets";
 import { writeRepoConfigCache } from "../../../shared/writeRepoConfigCache";
@@ -312,7 +313,7 @@ describe("setConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("is a user (node)-only key");
+		expect(payload.error).toContain("can't be stored per repo");
 		expect(readYaml(paths.repoConfig)).toEqual({ commit: { push: false } });
 	});
 
@@ -520,7 +521,7 @@ describe("setConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("is a user (node)-only key");
+		expect(payload.error).toContain("can't be stored per repo");
 		expect(readFileSync(paths.repoConfig, "utf8")).toBe(
 			"commit:\n  push: false\n",
 		);
@@ -653,8 +654,34 @@ describe("setConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("is a user (node)-only key");
+		expect(payload.error).toContain("can't be stored per repo");
 		expect(await listRepoConfigs(orm)).toEqual({});
+	});
+
+	it("writes a sync.* key to user (db), not the global yml", async () => {
+		const [status, payload] = await post({
+			key: "sync.autoConfirm",
+			value: true,
+			cwd: paths.repo,
+			scope: "user",
+		});
+
+		expect(status).toBe(200);
+		expect(payload.target).toBe("user");
+		expect(await readUserConfig(orm)).toEqual({ sync: { autoConfirm: true } });
+		expect(readYaml(paths.globalConfig)).toEqual({ commit: { pull: false } });
+	});
+
+	it("rejects database.url in user (db)", async () => {
+		const [status] = await post({
+			key: "database.url",
+			value: "postgres://x",
+			cwd: paths.repo,
+			scope: "user",
+		});
+
+		expect(status).toBe(400);
+		expect(await readUserConfig(orm)).toEqual({});
 	});
 
 	it("replaces news.feeds in the database, not the global yml", async () => {

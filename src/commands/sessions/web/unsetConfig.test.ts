@@ -28,6 +28,8 @@ import { join } from "node:path";
 import { createTestDb } from "../../../shared/db/createTestDb";
 import type { Db } from "../../../shared/db/Db";
 import { listRepoConfigs } from "../../../shared/db/listRepoConfigs";
+import { readUserConfig } from "../../../shared/db/readUserConfig";
+import { updateUserConfig } from "../../../shared/db/updateUserConfig";
 import { readRepoConfigCache } from "../../../shared/readRepoConfigCache";
 import { writeRepoConfigCache } from "../../../shared/writeRepoConfigCache";
 import { seedRepoConfigs } from "../../../test/mothers/seedRepoConfigs";
@@ -172,7 +174,7 @@ describe("unsetConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("is a user (node)-only key");
+		expect(payload.error).toContain("can't be stored per repo");
 		expect(readFileSync(paths.repoConfig, "utf8")).toBe(
 			"sync:\n  autoConfirm: true\n",
 		);
@@ -303,9 +305,26 @@ describe("unsetConfig", () => {
 		});
 
 		expect(status).toBe(400);
-		expect(payload.error).toContain("is a user (node)-only key");
+		expect(payload.error).toContain("can't be stored per repo");
 		expect(await listRepoConfigs(orm)).toEqual({
 			repo: { commit: { push: true } },
 		});
+	});
+
+	it("unsets a sync.* key from user (db)", async () => {
+		await updateUserConfig(orm, () => ({
+			ok: true,
+			config: { sync: { autoConfirm: true } },
+			result: undefined,
+		}));
+
+		const [status] = await post({
+			key: "sync.autoConfirm",
+			cwd: paths.repo,
+			scope: "user",
+		});
+
+		expect(status).toBe(200);
+		expect(await readUserConfig(orm)).toEqual({});
 	});
 });

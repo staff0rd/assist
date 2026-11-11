@@ -5,6 +5,7 @@ import {
 	saveGlobalConfig,
 } from "../../shared/loadConfig";
 import { isGlobalOnlyConfigKey } from "./isGlobalOnlyConfigKey";
+import { notPerRepoKeyMessage } from "./notPerRepoKeyMessage";
 import { unsetNestedValue } from "./unsetNestedValue";
 import { validateConfig } from "./validateConfig";
 
@@ -21,9 +22,7 @@ export function applyConfigUnset(
 	if (!global && isGlobalOnlyConfigKey(key)) {
 		return {
 			ok: false,
-			errors: [
-				`"${key}" is a user (node)-only key. Use --node to unset it in ~/.assist.yml`,
-			],
+			errors: [notPerRepoKeyMessage(key, "Unset")],
 		};
 	}
 	const target = global ? "global" : "project";

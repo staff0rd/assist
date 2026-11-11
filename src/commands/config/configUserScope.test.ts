@@ -44,8 +44,22 @@ describe("config set/unset --user", () => {
 	});
 
 	it.each([
+		["sync.autoConfirm", { autoConfirm: true }],
+		["sync.preferences", { preferences: true }],
+	])(
+		"sets and unsets the user-wide key %s in user (db)",
+		async (key, stored) => {
+			await configSet(key, "true", { user: true });
+			expect(await readUserConfig(orm)).toEqual({ sync: stored });
+
+			await configUnset(key, { user: true });
+			expect(await readUserConfig(orm)).toEqual({});
+		},
+	);
+
+	it.each([
 		["database.url", "postgres://x"],
-		["sync.autoConfirm", "true"],
+		["inbox.intervalMinutes", "5"],
 	])("rejects the node-only key %s, naming user (node)", async (key, value) => {
 		const { errors } = captureExit();
 

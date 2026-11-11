@@ -5,6 +5,7 @@ import { repoConfigSchema } from "../../shared/types";
 import { applyConfigWrites } from "./applyConfigWrites";
 import type { ConfigKeyWrite } from "./ConfigKeyWrite";
 import { isGlobalOnlyConfigKey } from "./isGlobalOnlyConfigKey";
+import { notPerRepoKeyMessage } from "./notPerRepoKeyMessage";
 import { resolveSharedRepoBlock } from "./resolveSharedRepoBlock";
 import { saveSharedRepoBlock } from "./saveSharedRepoBlock";
 
@@ -23,10 +24,7 @@ export async function writeConfigKeys(
 	if (globalOnly.length > 0) {
 		return {
 			ok: false,
-			errors: globalOnly.map(
-				(write) =>
-					`"${write.key}" is a user (node)-only key. Set it with 'assist config set ${write.key} <value> --node'`,
-			),
+			errors: globalOnly.map((write) => notPerRepoKeyMessage(write.key, "Set")),
 		};
 	}
 	if (scope === "repo") return writeRepoBlock(writes, cwd);
