@@ -17,7 +17,7 @@ afterEach(() => {
 	rmSync(dir, { recursive: true, force: true });
 });
 
-describe("collectClaudeCommands", () => {
+describe("collectAgentCommands", () => {
 	it("lists commands, flat skills and directory skills with descriptions", () => {
 		writeFileSync(
 			join(dir, "commands", "commit.md"),
