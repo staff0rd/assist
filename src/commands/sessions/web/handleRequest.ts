@@ -62,6 +62,7 @@ import { selfUpdate } from "./selfUpdate";
 import { revertDiffPaths } from "./revertDiffPaths";
 import { newSessionDefaults } from "./newSessionDefaults";
 import { nodeDoctor } from "./nodeDoctor";
+import { postNodeUnlink } from "./nodes/postNodeUnlink";
 import { postTestflightTester } from "./postTestflightTester";
 import { setConfig } from "./setConfig";
 import { testflightTesters } from "./testflightTesters";
@@ -111,6 +112,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/pr-preview/image": previewImage,
 	"POST /api/restart": restartWeb,
 	"GET /api/node-doctor": nodeDoctor,
+	"POST /api/nodes/unlink": postNodeUnlink,
 	"POST /api/self-update": selfUpdate,
 	"GET /api/github-url": githubUrl,
 	"GET /api/github-file": githubFileContent,

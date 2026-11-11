@@ -63,6 +63,7 @@ function renderMenu(
 							path="/connect-mobile"
 							element={<div>connect mobile page</div>}
 						/>
+						<Route path="/nodes" element={<div>nodes page</div>} />
 					</Routes>
 				</SessionLaunchContext.Provider>
 			</NodeSelectionContext.Provider>
@@ -253,6 +254,15 @@ describe("HamburgerMenu", () => {
 		fireEvent.click(screen.getByText("Connect mobile"));
 
 		expect(screen.getByText("connect mobile page")).toBeTruthy();
+	});
+
+	it("navigates to the nodes page from the menu", () => {
+		renderMenu(vi.fn());
+
+		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+		fireEvent.click(screen.getByText("Nodes"));
+
+		expect(screen.getByText("nodes page")).toBeTruthy();
 	});
 
 	it("opens the keyboard shortcuts sheet from the menu", () => {

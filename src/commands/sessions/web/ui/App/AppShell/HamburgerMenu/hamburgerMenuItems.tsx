@@ -3,9 +3,9 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 import Divider from "@mui/material/Divider";
 import { ColorModeIcon } from "./hamburgerMenuItems/ColorModeIcon";
-import { ConnectMobileMenuItem } from "./hamburgerMenuItems/ConnectMobileMenuItem";
 import { FirefoxExtensionMenuItem } from "./hamburgerMenuItems/FirefoxExtensionMenuItem";
 import { IconMenuItem } from "./hamburgerMenuItems/IconMenuItem";
+import { navigationMenuItems } from "./hamburgerMenuItems/navigationMenuItems";
 import { RenderHudMenuItem } from "./hamburgerMenuItems/RenderHudMenuItem";
 import {
 	type ShiftSkipMenuAction,
@@ -19,7 +19,7 @@ type HamburgerMenuHandlers = {
 	updateLabel: string;
 	onToggleColorMode: () => void;
 	onShowShortcuts: () => void;
-	onConnectMobile: () => void;
+	onNavigate: () => void;
 	onFirefoxExtension: () => void;
 	onTestflight: () => void;
 	onRestart: ShiftSkipMenuAction;
@@ -41,10 +41,7 @@ export function hamburgerMenuItems(handlers: HamburgerMenuHandlers) {
 			label="Keyboard shortcuts"
 			onClick={handlers.onShowShortcuts}
 		/>,
-		<ConnectMobileMenuItem
-			key="connect-mobile"
-			onClose={handlers.onConnectMobile}
-		/>,
+		...navigationMenuItems(handlers.onNavigate),
 		<FirefoxExtensionMenuItem
 			key="firefox-extension"
 			onClose={handlers.onFirefoxExtension}

@@ -1,25 +1,20 @@
 import chalk from "chalk";
-import { isDaemonRunning } from "../daemon/connectToDaemon";
-import { sendToDaemonAwaitAck } from "../daemon/sendToDaemonAwaitAck";
+import { reloadDaemonLinks } from "./reloadDaemonLinks";
 
 export async function notifyDaemonLinks(): Promise<void> {
-	if (!(await isDaemonRunning())) {
+	const result = await reloadDaemonLinks();
+	if (result.kind === "not-running")
 		console.log(
 			chalk.yellow(
 				"The sessions daemon is not running; it loads the links when it starts.",
 			),
 		);
-		return;
-	}
-	try {
-		await sendToDaemonAwaitAck({ type: "reload-links" });
+	else if (result.kind === "reloaded")
 		console.log(chalk.dim("The sessions daemon reloaded its links."));
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
+	else
 		console.log(
 			chalk.yellow(
-				`Could not notify the sessions daemon (${message}); run \`assist daemon restart\` to apply the change.`,
+				`Could not notify the sessions daemon (${result.message}); run \`assist daemon restart\` to apply the change.`,
 			),
 		);
-	}
 }

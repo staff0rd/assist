@@ -159,6 +159,16 @@ describe("proxyToNode", () => {
 		).toBe("local");
 	});
 
+	it("serves /api/nodes/ routes locally even with a linked node", async () => {
+		expect(
+			await (
+				await fetch(`${viewerUrl}/api/nodes/unlink?node=pc-windows`, {
+					method: "POST",
+				})
+			).text(),
+		).toBe("local");
+	});
+
 	it("fails a peer request that never responds with a 502", async () => {
 		const log = vi.spyOn(console, "log").mockImplementation(() => {});
 		const res = await fetch(`${viewerUrl}/api/next?hang=1&node=pc-windows`);

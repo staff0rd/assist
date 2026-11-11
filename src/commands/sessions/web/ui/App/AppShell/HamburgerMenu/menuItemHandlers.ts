@@ -21,7 +21,7 @@ export function menuItemHandlers(
 			close();
 		},
 		onShowShortcuts: closeAndShow("shortcuts"),
-		onConnectMobile: close,
+		onNavigate: close,
 		onFirefoxExtension: close,
 		onTestflight: closeAndShow("testflight"),
 		onRestart: {

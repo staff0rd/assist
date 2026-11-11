@@ -8,6 +8,7 @@ import { NodeScopedFileView } from "./AppRoutes/NodeScopedFileView";
 import { InboxView } from "./AppRoutes/InboxView";
 import { NewsView } from "./AppRoutes/NewsView";
 import { NextView } from "./AppRoutes/NextView";
+import { NodesView } from "./AppRoutes/NodesView";
 import { ReleasesView } from "../ReleasesView";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
@@ -50,6 +51,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 						path="updates"
 						element={<UpdatesView selectSession={socket.selectSession} />}
 					/>
+					<Route path="nodes" element={<NodesView />} />
 					<Route path="diff" element={<NodeScopedDiffView socket={socket} />} />
 					<Route path="file" element={<NodeScopedFileView socket={socket} />} />
 					<Route path="*" element={<Navigate to="/sessions" replace />} />
