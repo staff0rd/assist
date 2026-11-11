@@ -1,3 +1,10 @@
+## [0.1126.1](https://github.com/staff0rd/assist/compare/v0.1126.0...v0.1126.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* keep ready nodes collapsed ([fe85aa3](https://github.com/staff0rd/assist/commit/fe85aa3abdc725bd57793258603f912b43bf208e))
+
 # [0.1126.0](https://github.com/staff0rd/assist/compare/v0.1125.0...v0.1126.0) (2026-11-11)
 
 
