@@ -21,6 +21,8 @@ import { useWebserverRestart } from "../useWebserverRestart";
 import { NodesView } from "./NodesView";
 
 let unlinkResponse: () => Response;
+let probeResponse: () => Response;
+let linkResponse: () => Response;
 let fetchMock: ReturnType<typeof vi.fn>;
 
 function status(
@@ -107,10 +109,21 @@ function view(nodes: NodesState) {
 beforeEach(() => {
 	unlinkResponse = () =>
 		Response.json({ ok: true, daemon: { kind: "reloaded" } });
+	probeResponse = () =>
+		Response.json({
+			name: "pc-linux",
+			version: "0.1126.0",
+			url: "https://pc-linux:3100",
+		});
+	linkResponse = () =>
+		Response.json({ ok: true, daemon: { kind: "reloaded" } });
+	const routes: Record<string, () => Response> = {
+		"/api/nodes/unlink": () => unlinkResponse(),
+		"/api/nodes/probe": () => probeResponse(),
+		"/api/nodes/link": () => linkResponse(),
+	};
 	fetchMock = vi.fn(async (url: string) =>
-		url === "/api/nodes/unlink"
-			? unlinkResponse()
-			: Response.json({ history: [] }),
+		(routes[url] ?? (() => Response.json({ history: [] })))(),
 	);
 	vi.stubGlobal("fetch", fetchMock);
 });
@@ -271,5 +284,94 @@ describe("NodesView", () => {
 			).toBeTruthy(),
 		);
 		expect(row("win")).toBeTruthy();
+	});
+
+	describe("Add node", () => {
+		function openDialog() {
+			render(view({ local: "mac", links: [win] }));
+			fireEvent.click(screen.getByRole("button", { name: "Add node" }));
+			const dialog = screen.getByRole("dialog", { name: "Add node" });
+			fireEvent.change(within(dialog).getByLabelText("Web server URL"), {
+				target: { value: "https://pc-linux:3100" },
+			});
+			return within(dialog);
+		}
+
+		it("checks the URL, shows the found node, then links it", async () => {
+			const dialog = openDialog();
+			fireEvent.click(dialog.getByRole("button", { name: "Check" }));
+			const link = await dialog.findByRole("button", {
+				name: "Link pc-linux",
+			});
+			expect(fetchMock).toHaveBeenCalledWith(
+				"/api/nodes/probe",
+				expect.objectContaining({
+					body: JSON.stringify({ url: "https://pc-linux:3100" }),
+				}),
+			);
+			expect(dialog.getByLabelText("Found node").textContent).toContain(
+				"assist 0.1126.0",
+			);
+			fireEvent.click(link);
+			await waitFor(() =>
+				expect(screen.getByText("Linked pc-linux")).toBeTruthy(),
+			);
+			expect(fetchMock).toHaveBeenCalledWith(
+				"/api/nodes/link",
+				expect.objectContaining({
+					body: JSON.stringify({
+						name: "pc-linux",
+						url: "https://pc-linux:3100",
+					}),
+				}),
+			);
+			expect(screen.queryByRole("dialog")).toBeNull();
+		});
+
+		it("shows the probe's error inline and links nothing", async () => {
+			probeResponse = () =>
+				Response.json(
+					{ error: "win is already linked at http://win:3100" },
+					{ status: 422 },
+				);
+			const dialog = openDialog();
+			fireEvent.click(dialog.getByRole("button", { name: "Check" }));
+			expect((await dialog.findByRole("alert")).textContent).toContain(
+				"win is already linked at http://win:3100",
+			);
+			expect(dialog.getByRole("button", { name: "Check" })).toBeTruthy();
+			expect(fetchMock).not.toHaveBeenCalledWith(
+				"/api/nodes/link",
+				expect.anything(),
+			);
+		});
+
+		it("goes back to Check when the URL is edited after a probe", async () => {
+			const dialog = openDialog();
+			fireEvent.click(dialog.getByRole("button", { name: "Check" }));
+			await dialog.findByRole("button", { name: "Link pc-linux" });
+			fireEvent.change(dialog.getByLabelText("Web server URL"), {
+				target: { value: "https://other:3100" },
+			});
+			expect(dialog.getByRole("button", { name: "Check" })).toBeTruthy();
+			expect(dialog.queryByLabelText("Found node")).toBeNull();
+		});
+
+		it("says the daemon picks the link up when it is not running", async () => {
+			linkResponse = () =>
+				Response.json({ ok: true, daemon: { kind: "not-running" } });
+			const dialog = openDialog();
+			fireEvent.click(dialog.getByRole("button", { name: "Check" }));
+			fireEvent.click(
+				await dialog.findByRole("button", { name: "Link pc-linux" }),
+			);
+			await waitFor(() =>
+				expect(
+					screen.getByText(
+						"Linked pc-linux. The daemon picks the change up when it starts.",
+					),
+				).toBeTruthy(),
+			);
+		});
 	});
 });

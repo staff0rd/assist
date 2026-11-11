@@ -1,25 +1,27 @@
 import type { UpdateActions } from "../nodeUpdates/useUpdateActions";
 
-type RemovalNotices = {
+export type ExtraNotices = {
 	back: string | null;
 	clearBack: () => void;
 	error: string | null;
 	clearError: () => void;
 };
 
-export function pageNotices(actions: UpdateActions, removal: RemovalNotices) {
+export function pageNotices(actions: UpdateActions, extras: ExtraNotices[]) {
 	const { notices, localError, clearLocalError } = actions;
+	const firstOf = (key: "back" | "error") =>
+		extras.find((extra) => extra[key])?.[key] ?? null;
 	return {
-		back: removal.back ?? notices.back,
+		back: firstOf("back") ?? notices.back,
 		clearBack: () => {
 			notices.clearBack();
-			removal.clearBack();
+			for (const extra of extras) extra.clearBack();
 		},
-		error: removal.error ?? notices.error ?? localError,
+		error: firstOf("error") ?? notices.error ?? localError,
 		clearError: () => {
 			notices.clearError();
 			clearLocalError();
-			removal.clearError();
+			for (const extra of extras) extra.clearError();
 		},
 	};
 }

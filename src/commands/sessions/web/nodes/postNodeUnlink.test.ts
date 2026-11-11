@@ -1,5 +1,3 @@
-import type { IncomingMessage, ServerResponse } from "node:http";
-import { Readable } from "node:stream";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ReloadLinksResult } from "../../nodes/reloadDaemonLinks";
 
@@ -15,24 +13,8 @@ vi.mock("../../nodes/reloadDaemonLinks", () => ({
 	reloadDaemonLinks: () => reloadDaemonLinks(),
 }));
 
+import { jsonExchange } from "./jsonExchange";
 import { postNodeUnlink } from "./postNodeUnlink";
-
-function request(body: string): IncomingMessage {
-	return Readable.from([Buffer.from(body)]) as unknown as IncomingMessage;
-}
-
-function response() {
-	const sent: { status?: number; body?: unknown } = {};
-	const res = {
-		writeHead: (status: number) => {
-			sent.status = status;
-		},
-		end: (body: string) => {
-			sent.body = JSON.parse(body);
-		},
-	} as unknown as ServerResponse;
-	return { res, sent };
-}
 
 const win = { name: "win", url: "http://win:3100" };
 const mac = { name: "mac", url: "http://mac:3100" };
@@ -46,8 +28,8 @@ beforeEach(() => {
 
 describe("postNodeUnlink", () => {
 	it("writes the links without the node and reloads the daemon's links", async () => {
-		const { res, sent } = response();
-		await postNodeUnlink(request(JSON.stringify({ name: "win" })), res);
+		const { req, res, sent } = jsonExchange({ name: "win" });
+		await postNodeUnlink(req, res);
 		expect(writeLinks).toHaveBeenCalledWith([mac]);
 		expect(reloadDaemonLinks).toHaveBeenCalled();
 		expect(sent).toEqual({
@@ -58,15 +40,15 @@ describe("postNodeUnlink", () => {
 
 	it("still writes the links and reports when the daemon is not running", async () => {
 		reloadDaemonLinks.mockResolvedValue({ kind: "not-running" });
-		const { res, sent } = response();
-		await postNodeUnlink(request(JSON.stringify({ name: "win" })), res);
+		const { req, res, sent } = jsonExchange({ name: "win" });
+		await postNodeUnlink(req, res);
 		expect(writeLinks).toHaveBeenCalledWith([mac]);
 		expect(sent.body).toEqual({ ok: true, daemon: { kind: "not-running" } });
 	});
 
 	it("refuses an unknown node without writing", async () => {
-		const { res, sent } = response();
-		await postNodeUnlink(request(JSON.stringify({ name: "nope" })), res);
+		const { req, res, sent } = jsonExchange({ name: "nope" });
+		await postNodeUnlink(req, res);
 		expect(writeLinks).not.toHaveBeenCalled();
 		expect(reloadDaemonLinks).not.toHaveBeenCalled();
 		expect(sent).toEqual({
@@ -76,8 +58,8 @@ describe("postNodeUnlink", () => {
 	});
 
 	it("refuses a body without a name", async () => {
-		const { res, sent } = response();
-		await postNodeUnlink(request("not json"), res);
+		const { req, res, sent } = jsonExchange("not json");
+		await postNodeUnlink(req, res);
 		expect(sent.status).toBe(400);
 		expect(readLinks).not.toHaveBeenCalled();
 	});

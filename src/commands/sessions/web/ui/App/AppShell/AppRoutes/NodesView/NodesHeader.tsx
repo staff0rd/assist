@@ -8,9 +8,11 @@ import { nodesSummary } from "./nodesSummary";
 export function NodesHeader({
 	rows,
 	actions,
+	onAddNode,
 }: {
 	rows: NodeRowData[];
 	actions: UpdateActions;
+	onAddNode: () => void;
 }) {
 	const trusted = rows.flatMap((row) => (row.entry ? [row.entry] : []));
 	return (
@@ -31,7 +33,11 @@ export function NodesHeader({
 					{nodesSummary(rows)}
 				</Typography>
 			</Box>
-			<NodesHeaderActions entries={trusted} actions={actions} />
+			<NodesHeaderActions
+				entries={trusted}
+				actions={actions}
+				onAddNode={onAddNode}
+			/>
 		</Box>
 	);
 }

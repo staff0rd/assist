@@ -2,6 +2,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useState } from "react";
+import { AddNodeButton } from "./AddNodeButton";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
 import { canControl } from "../nodeUpdates/canControl";
 import { updateState } from "../nodeUpdates/updateState";
@@ -10,9 +11,11 @@ import type { UpdateActions } from "../nodeUpdates/useUpdateActions";
 export function NodesHeaderActions({
 	entries,
 	actions,
+	onAddNode,
 }: {
 	entries: NodeUpdateEntry[];
 	actions: UpdateActions;
+	onAddNode: () => void;
 }) {
 	const [checking, setChecking] = useState(false);
 	const [restarting, setRestarting] = useState(false);
@@ -47,6 +50,7 @@ export function NodesHeaderActions({
 			>
 				{ready ? `Restart ready (${ready})` : "Restart ready"}
 			</Button>
+			<AddNodeButton onClick={onAddNode} />
 		</Box>
 	);
 }

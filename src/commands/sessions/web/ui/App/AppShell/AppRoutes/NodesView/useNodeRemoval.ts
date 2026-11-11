@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { NodesState } from "../../../../types";
-import { removedNotice } from "./removedNotice";
-import { requestNodeUnlink } from "./requestNodeUnlink";
+import { linksChangedNotice } from "./linksChangedNotice";
+import { type DaemonReload, postNodesApi } from "./postNodesApi";
 
 type Removed = { from: NodesState | null; names: ReadonlySet<string> };
 
@@ -16,12 +16,15 @@ export function useNodeRemoval(nodes: NodesState | null) {
 	const remove = useCallback(
 		async (name: string) => {
 			try {
-				const daemon = await requestNodeUnlink(name);
+				const { daemon } = await postNodesApi<{ daemon: DaemonReload }>(
+					"unlink",
+					{ name },
+				);
 				setRemoved((prev) => ({
 					from: nodes,
 					names: new Set(prev.from === nodes ? prev.names : []).add(name),
 				}));
-				setBack(removedNotice(name, daemon));
+				setBack(linksChangedNotice(`Removed ${name}`, daemon));
 			} catch (error) {
 				setError(
 					`Could not remove ${name}: ${error instanceof Error ? error.message : String(error)}`,

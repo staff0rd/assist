@@ -3,26 +3,18 @@ import { respondJson } from "../../../../shared/web";
 import { readLinks } from "../../nodes/readLinks";
 import { reloadDaemonLinks } from "../../nodes/reloadDaemonLinks";
 import { writeLinks } from "../../nodes/writeLinks";
-import { readJsonBody } from "../readJsonBody";
-
-async function readName(req: IncomingMessage): Promise<string | null> {
-	try {
-		const { name } = ((await readJsonBody(req)) ?? {}) as { name?: unknown };
-		return typeof name === "string" && name ? name : null;
-	} catch {
-		return null;
-	}
-}
+import { readBodyFields } from "./readBodyFields";
 
 export async function postNodeUnlink(
 	req: IncomingMessage,
 	res: ServerResponse,
 ): Promise<void> {
-	const name = await readName(req);
-	if (!name) {
+	const fields = await readBodyFields(req, ["name"]);
+	if (!fields) {
 		respondJson(res, 400, { error: "Missing node name" });
 		return;
 	}
+	const { name } = fields;
 	const links = await readLinks();
 	const remaining = links.filter((link) => link.name !== name);
 	if (remaining.length === links.length) {

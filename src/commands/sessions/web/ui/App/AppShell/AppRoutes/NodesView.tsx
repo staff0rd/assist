@@ -8,6 +8,7 @@ import { NodeRow } from "./NodesView/NodeRow";
 import { NodesHeader } from "./NodesView/NodesHeader";
 import { nodeRows } from "./NodesView/nodeRows";
 import { pageNotices } from "./NodesView/pageNotices";
+import { useAddNodeDialog } from "./NodesView/useAddNodeDialog";
 import { useNodeRemoval } from "./NodesView/useNodeRemoval";
 
 export function NodesView({
@@ -19,6 +20,7 @@ export function NodesView({
 	const { entries } = useNodeUpdatesContext();
 	const actions = useUpdateActions(selectSession);
 	const removal = useNodeRemoval(nodes);
+	const adding = useAddNodeDialog();
 	const rows = nodes
 		? nodeRows(nodes, entries, removal.removed, globalThis.location.origin)
 		: [];
@@ -26,7 +28,9 @@ export function NodesView({
 	return (
 		<PageShell
 			loading={!nodes}
-			header={<NodesHeader rows={rows} actions={actions} />}
+			header={
+				<NodesHeader rows={rows} actions={actions} onAddNode={adding.open} />
+			}
 		>
 			<Paper variant="outlined" component="section" aria-label="Nodes">
 				{rows.map((row) => (
@@ -38,7 +42,10 @@ export function NodesView({
 					/>
 				))}
 			</Paper>
-			<PeerSnackbars notices={pageNotices(actions, removal.notices)} />
+			{adding.dialog}
+			<PeerSnackbars
+				notices={pageNotices(actions, [removal.notices, adding.notices])}
+			/>
 		</PageShell>
 	);
 }
