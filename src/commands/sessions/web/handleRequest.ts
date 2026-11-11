@@ -45,6 +45,7 @@ import { newsNavConfig } from "./newsNavConfig";
 import { nextItems } from "./next/nextItems";
 import { nextPickup } from "./next/nextPickup";
 import { listScopedRules } from "./listScopedRules";
+import { slashCommands } from "./slashCommands/slashCommands";
 import { listUsageHistory } from "./listUsageHistory";
 import { listUsageItems } from "./listUsageItems";
 import { listUsageJobs } from "./listUsageJobs";
@@ -122,6 +123,7 @@ const routes: Record<string, Handler> = {
 	"GET /api/files": listFiles,
 	"GET /api/history/search": historySearch,
 	"GET /api/rules": listScopedRules,
+	"GET /api/slash-commands": slashCommands,
 	"GET /api/jira-site": jiraSite,
 	"GET /api/harness": harnessCapabilities,
 	"GET /api/hotkeys": hotkeyBindings,

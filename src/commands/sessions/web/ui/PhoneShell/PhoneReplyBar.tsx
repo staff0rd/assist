@@ -1,49 +1,53 @@
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
-import type { PointerEvent } from "react";
-import { useState } from "react";
 import type { HarnessKind } from "../../../../../shared/harnesses";
 import { harnessLabel } from "../../../../../shared/harnessAdapters/harnessLabel";
+import type { SlashCommand } from "../../slashCommands/readSlashCommands";
+import { PhoneReplySend } from "./PhoneReplySend";
+import { PhoneSlashSuggestions } from "./PhoneSlashSuggestions/PhoneSlashSuggestions";
+import { useSlashReply } from "./PhoneSlashSuggestions/useSlashReply";
 import { phoneReplyBarSx } from "./phoneReplyBarSx";
-
-const keepKeyboardOpen = (e: PointerEvent) => e.preventDefault();
 
 export function PhoneReplyBar({
 	harness,
+	commands = [],
 	onSend,
 }: {
 	harness?: HarnessKind;
+	commands?: SlashCommand[];
 	onSend: (text: string) => void;
 }) {
-	const [text, setText] = useState("");
+	const reply = useSlashReply(commands);
+	const { text, suggestions } = reply;
 	const send = () => {
 		if (!text.trim()) return;
 		onSend(text);
-		setText("");
+		reply.clear();
 	};
 
 	return (
-		<Box sx={phoneReplyBarSx.bar}>
-			<InputBase
-				multiline
-				maxRows={5}
-				value={text}
-				onChange={(e) => setText(e.target.value)}
-				placeholder={`Reply to ${harnessLabel(harness)}…`}
-				sx={phoneReplyBarSx.field}
-				inputProps={{ "aria-label": "Reply" }}
-			/>
-			<IconButton
-				aria-label="Send"
-				sx={phoneReplyBarSx.send}
-				disabled={!text.trim()}
-				onPointerDown={keepKeyboardOpen}
-				onClick={send}
-			>
-				<ArrowUpwardIcon fontSize="small" />
-			</IconButton>
-		</Box>
+		<>
+			{suggestions && (
+				<PhoneSlashSuggestions
+					matches={suggestions.matches}
+					query={suggestions.query}
+					onPick={reply.pick}
+				/>
+			)}
+			<Box sx={phoneReplyBarSx.bar}>
+				<InputBase
+					multiline
+					maxRows={5}
+					value={text}
+					inputRef={reply.inputRef}
+					onChange={(e) => reply.edit(e.target)}
+					onSelect={(e) => reply.trackCursor(e.target as HTMLTextAreaElement)}
+					placeholder={`Reply to ${harnessLabel(harness)}…`}
+					sx={phoneReplyBarSx.field}
+					inputProps={{ "aria-label": "Reply" }}
+				/>
+				<PhoneReplySend disabled={!text.trim()} onSend={send} />
+			</Box>
+		</>
 	);
 }

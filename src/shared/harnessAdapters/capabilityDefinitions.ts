@@ -39,6 +39,8 @@ export const capabilityDefinitions = {
 		"Reports each native edit's removed and added text (old and new strings, or patch hunks) to assist's edit guards before it runs and honours a deny, so the maintainability-override guard and the comment guard can block edits that add an override marker or a code comment.",
 	"intercept.question":
 		"Routes the harness's native question tool to the session's preview-pane form, so a question in a web session is answered from the preview pane rather than a terminal prompt it cannot drive. A harness with no native question tool has nothing to route.",
+	"slashCommands.suggest":
+		"Lists the harness's user and project skills and commands from its home and project dirs, so the phone reply bar can suggest them as the user types a `/` word.",
 } as const;
 
 export type CapabilityId = keyof typeof capabilityDefinitions;

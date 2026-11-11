@@ -27,6 +27,7 @@ export const harnessCapabilityDeclarations: Record<
 		"intercept.fileWrite": supported,
 		"intercept.editDiff": supported,
 		"intercept.question": supported,
+		"slashCommands.suggest": supported,
 	},
 	codex: {
 		"skills.native": supported,
@@ -83,6 +84,10 @@ export const harnessCapabilityDeclarations: Record<
 			"Codex hooks are not verified to report its native request_user_input question tool",
 			"the composed advice tells Codex to ask with assist ask-question; a native Codex question is answered in the terminal",
 			"a1563",
+		),
+		"slashCommands.suggest": unsupported(
+			"assist reads skills and commands only from Claude's home and project dirs",
+			"type the Codex skill name in full in the phone reply bar",
 		),
 	},
 	pi: {
@@ -165,5 +170,9 @@ export const harnessCapabilityDeclarations: Record<
 			"a1592",
 		),
 		"intercept.question": supported,
+		"slashCommands.suggest": unsupported(
+			"assist reads skills and commands only from Claude's home and project dirs",
+			"type the pi prompt name in full in the phone reply bar",
+		),
 	},
 };
