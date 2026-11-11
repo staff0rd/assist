@@ -5,7 +5,11 @@ import { sessionOutput } from "./sessionOutput";
 export function registerOutputCommand(cmd: Command): void {
 	internalCommand(
 		cmd
-			.command("output [session-id]")
+			.command("output")
+			.argument(
+				"[session-id]",
+				"Local session id, or <node>:<id> for a session on a linked node (read over the node link)",
+			)
 			.description(
 				"Print a snapshot of a session's output with ANSI codes stripped",
 			)
