@@ -1,3 +1,10 @@
+## [0.1121.2](https://github.com/staff0rd/assist/compare/v0.1121.1...v0.1121.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* prune files from pre-manifest syncs ([4e0a6a3](https://github.com/staff0rd/assist/commit/4e0a6a32659f853a5f9a3fef56d7928f9cad6d0f))
+
 ## [0.1121.1](https://github.com/staff0rd/assist/compare/v0.1121.0...v0.1121.1) (2026-11-11)
 
 
