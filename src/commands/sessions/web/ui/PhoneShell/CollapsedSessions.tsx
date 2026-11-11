@@ -6,6 +6,7 @@ import { PhoneTallyRow } from "./PhoneTallyRow";
 export function CollapsedSessions({
 	sessions,
 	localNode,
+	defaultExpanded = false,
 	...tally
 }: {
 	sessions: SessionInfo[];
@@ -14,8 +15,9 @@ export function CollapsedSessions({
 	glyph: string;
 	glyphColor: string;
 	needsYou?: number;
+	defaultExpanded?: boolean;
 }) {
-	const [expanded, setExpanded] = useState(false);
+	const [expanded, setExpanded] = useState(defaultExpanded);
 	if (sessions.length === 0) return null;
 	return (
 		<>

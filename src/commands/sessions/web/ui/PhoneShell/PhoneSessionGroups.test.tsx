@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { ThemeProvider } from "@mui/material/styles";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it } from "vitest";
 import { createDesignTheme } from "../designSystem/createDesignTheme";
@@ -86,5 +86,30 @@ describe("PhoneSessionGroups Review tally", () => {
 		renderGroups([review("r1", "running"), review("r2", "running")]);
 
 		expect(screen.queryByTestId("tally-needs-you")).toBeNull();
+	});
+});
+
+describe("PhoneSessionGroups tally expansion", () => {
+	it("starts Review expanded and collapses it on tap", () => {
+		renderGroups([review("r", "running")]);
+
+		const tally = screen.getByRole("button", { name: /Review/ });
+		expect(tally.getAttribute("aria-expanded")).toBe("true");
+		expect(screen.getByText("Session r")).toBeTruthy();
+
+		fireEvent.click(tally);
+		expect(tally.getAttribute("aria-expanded")).toBe("false");
+		expect(screen.queryByText("Session r")).toBeNull();
+
+		fireEvent.click(tally);
+		expect(screen.getByText("Session r")).toBeTruthy();
+	});
+
+	it("starts Done collapsed", () => {
+		renderGroups([review("d", "done", { activity: undefined })]);
+
+		const tally = screen.getByRole("button", { name: /Done/ });
+		expect(tally.getAttribute("aria-expanded")).toBe("false");
+		expect(screen.queryByText("Session d")).toBeNull();
 	});
 });

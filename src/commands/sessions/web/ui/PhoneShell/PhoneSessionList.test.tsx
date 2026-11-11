@@ -116,7 +116,11 @@ describe("PhoneSessionList", () => {
 			session("d1", "done", { activity }),
 		]);
 
-		expect(rowTitles()).toEqual([expect.stringContaining("Session run")]);
+		expect(rowTitles()).toEqual([
+			expect.stringContaining("Session run"),
+			expect.stringContaining("Session rev"),
+			expect.stringContaining("Session blocked"),
+		]);
 		expect(screen.queryByText(/Needs you/)).toBeNull();
 		const buttons = screen.getAllByRole("button", { name: /Review|Done/ });
 		expect(buttons.map((b) => b.textContent)).toEqual([
@@ -125,12 +129,9 @@ describe("PhoneSessionList", () => {
 		]);
 
 		fireEvent.click(buttons[0]);
-		expect(rowTitles().slice(1)).toEqual([
-			expect.stringContaining("Session rev"),
-			expect.stringContaining("Session blocked"),
-		]);
-		fireEvent.click(buttons[0]);
 		expect(rowTitles()).toHaveLength(1);
+		fireEvent.click(buttons[0]);
+		expect(rowTitles()).toHaveLength(3);
 	});
 
 	it("hides the Review tally when no session is in review", () => {

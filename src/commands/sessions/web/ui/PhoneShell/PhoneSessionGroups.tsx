@@ -44,6 +44,7 @@ export function PhoneSessionGroups({
 				sessions={review}
 				needsYou={review.filter(needsAttention).length}
 				localNode={localNode}
+				defaultExpanded
 			/>
 			<CollapsedSessions
 				label="Done"
