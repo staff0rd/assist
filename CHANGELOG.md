@@ -1,3 +1,12 @@
+# [0.1122.0](https://github.com/staff0rd/assist/compare/v0.1121.2...v0.1122.0) (2026-11-11)
+
+
+### Features
+
+* /add-rule honours scope flags ([5655b8c](https://github.com/staff0rd/assist/commit/5655b8c7c318d842ee397a23e45a2206d12f00a5))
+* dismiss on phone manual-check card ([22a6100](https://github.com/staff0rd/assist/commit/22a6100ed42395a67d81a646475eb16f0ce879ff))
+* rules add --repo for repo (db) ([57a3f4d](https://github.com/staff0rd/assist/commit/57a3f4d01809b5dfa6cf192f3a4133a57b8c3472))
+
 ## [0.1121.2](https://github.com/staff0rd/assist/compare/v0.1121.1...v0.1121.2) (2026-11-11)
 
 
