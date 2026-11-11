@@ -1,3 +1,16 @@
+# [0.1126.0](https://github.com/staff0rd/assist/compare/v0.1125.0...v0.1126.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* autoConfirm no longer skips overwrite ([3c36c91](https://github.com/staff0rd/assist/commit/3c36c91e36f5f439f018725fdb8371b7fcc83162))
+* no slide when preview layout flips ([0a08773](https://github.com/staff0rd/assist/commit/0a087739961e49b38d3cf4e669b57f91687c1b47))
+
+
+### Features
+
+* merge updates into the nodes page ([0a2d68c](https://github.com/staff0rd/assist/commit/0a2d68c2d073d4d044cd46360ba51908bc469d50))
+
 # [0.1125.0](https://github.com/staff0rd/assist/compare/v0.1124.0...v0.1125.0) (2026-11-11)
 
 
