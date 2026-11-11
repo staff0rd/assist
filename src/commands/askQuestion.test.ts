@@ -82,6 +82,18 @@ describe("askQuestion", () => {
 		vi.unstubAllEnvs();
 	});
 
+	it("opens the preview on Codex and returns its answer without exit notifications", async () => {
+		mockActiveHarness.mockReturnValue("codex");
+		stdin({ questions: [questions[0]] });
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			answers: { "Which layout?": "Compact" },
+		});
+		await askQuestion({ json: "-" });
+		expect(mockRequestPreviewDecision).toHaveBeenCalled();
+		expect(logged.join("\n")).toContain("Compact");
+	});
+
 	it.each([
 		["no questions", { questions: [] }, "at least 1 question"],
 		[
@@ -163,18 +175,6 @@ describe("askQuestion", () => {
 		expect(mockIsLive).toHaveBeenCalledWith("s1");
 		expect(errored.join("\n")).toContain("not live");
 		expect(errored.join("\n")).toContain("AskUserQuestion");
-		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
-	});
-
-	it("tells Codex to ask in chat because it cannot wait for the answer", async () => {
-		mockActiveHarness.mockReturnValue("codex");
-		stdin({ questions });
-
-		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
-		const error = errored.join("\n");
-		expect(error).toContain("unavailable on Codex");
-		expect(error).toContain("tasks.notifyOnExit");
-		expect(error).toContain("ask the user these questions in chat");
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 	});
 

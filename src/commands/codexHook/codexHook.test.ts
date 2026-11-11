@@ -1,3 +1,4 @@
+import asyncQuestionHook from "../../shared/harnessAdapters/fixtures/codexAsyncQuestionHook.json";
 import type * as loadConfigModule from "../../shared/loadConfig";
 import questionHook from "../../shared/harnessAdapters/fixtures/codexQuestionHook.json";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -167,6 +168,40 @@ describe("codexHook PreToolUse", () => {
 				),
 			}),
 		);
+		spy.mockRestore();
+	});
+
+	it("redirects the captured async question with valid preview input", async () => {
+		vi.stubEnv("ASSIST_SESSION", "1");
+		vi.stubEnv("ASSIST_SESSION_ID", "probe-session");
+		mockIsLive.mockResolvedValue(true);
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(JSON.stringify(asyncQuestionHook));
+		await codexHook();
+		const output = JSON.parse(
+			spy.mock.calls[0][0] as string,
+		).hookSpecificOutput;
+		expect(output.permissionDecision).toBe("deny");
+		expect(output.permissionDecisionReason).toContain(
+			"assist ask-question --json - < <file>",
+		);
+		expect(
+			JSON.parse(
+				output.permissionDecisionReason.split("The input to write:\n")[1],
+			),
+		).toEqual({
+			questions: [
+				{
+					question: "Pick probe color",
+					header: "Question",
+					multiSelect: false,
+					options: [
+						{ label: "Red", description: "" },
+						{ label: "Blue", description: "" },
+					],
+				},
+			],
+		});
 		spy.mockRestore();
 	});
 

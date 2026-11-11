@@ -1,3 +1,4 @@
+import { codexAsyncQuestionOperation } from "./codexAsyncQuestionOperation";
 import type { NativeToolCall, ToolOperation } from "./types";
 import { patchWrites } from "./patchWrites";
 import { patchText } from "./patchText";
@@ -37,7 +38,8 @@ export function codexToolOperations({
 			? [...operations, ...patchWrites(toolName, command)]
 			: operations;
 	}
-	if (!PATCH_TOOLS.has(toolName)) return [];
+	if (!PATCH_TOOLS.has(toolName))
+		return codexAsyncQuestionOperation({ toolName, toolInput });
 	const patch = patchText(toolInput);
 	if (patch) return patchWrites(toolName, patch);
 	const { file_path: path, content } = toolInput;

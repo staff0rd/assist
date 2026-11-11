@@ -80,7 +80,7 @@ export const harnessCapabilityDeclarations: Record<
 			"the shared policy still applies the allowlist, restricted paths and docs/schema locks; run work that must keep those guards on Claude",
 			"a1592",
 		),
-		// codex-cli 0.167.1 reports request_user_input via PreToolUse; captured in codexQuestionHook.json and replayed through codexHook.
+		// codex-cli 0.167.1 reports request_user_input and selectable request_user_input_async via PreToolUse; captured in question fixtures and replayed through codexHook.
 		"intercept.question": supported,
 		"slashCommands.suggest": unsupported(
 			"assist reads skills and commands only from Claude's home and project dirs",
