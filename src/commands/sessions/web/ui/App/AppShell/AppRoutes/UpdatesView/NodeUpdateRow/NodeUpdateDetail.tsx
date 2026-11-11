@@ -5,6 +5,7 @@ import type { UpdateState } from "../UpdateStateKind";
 import type { UpdateActions } from "../useUpdateActions";
 import { Advice } from "./NodeUpdateDetail/Advice";
 import { History } from "./NodeUpdateDetail/History";
+import { useLiveHistory } from "./NodeUpdateDetail/useLiveHistory";
 
 export function NodeUpdateDetail({
 	entry,
@@ -15,6 +16,7 @@ export function NodeUpdateDetail({
 	state: UpdateState;
 	actions: UpdateActions;
 }) {
+	const history = useLiveHistory(entry);
 	return (
 		<Box
 			sx={{
@@ -29,7 +31,7 @@ export function NodeUpdateDetail({
 			<Typography variant="caption" color="text.secondary">
 				History · ~/.assist/watchers/
 			</Typography>
-			<History lines={entry.status?.history ?? []} />
+			<History lines={history} />
 		</Box>
 	);
 }
