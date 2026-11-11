@@ -179,6 +179,30 @@ describe("syncSettings", () => {
 		expect(readTarget().hooks).toEqual({ PreToolUse: [reordered] });
 	});
 
+	it("replaces an assist hook entry whose matcher changed and keeps user hooks", async () => {
+		const editHook = (matcher: string) => ({
+			matcher,
+			hooks: [{ type: "command", command: "assist edit-hook" }],
+		});
+		const userOwned = {
+			matcher: "Edit",
+			hooks: [{ type: "command", command: "my-formatter" }],
+		};
+		const current = editHook("Edit|Write|MultiEdit|NotebookEdit");
+		writeSource({ hooks: { PreToolUse: [assistHook, current] } });
+		writeTarget({
+			hooks: {
+				PreToolUse: [assistHook, editHook("Edit|Write|MultiEdit"), userOwned],
+			},
+		});
+
+		await syncSettings(claudeDir, targetBase, { yes: true });
+
+		expect(readTarget().hooks).toEqual({
+			PreToolUse: [assistHook, userOwned, current],
+		});
+	});
+
 	it("shows the merged result in the diff and keeps the file when declined", async () => {
 		writeSource({ permissions: { allow: ["Read"] } });
 		writeTarget({ permissions: { allow: ["Bash"] } });

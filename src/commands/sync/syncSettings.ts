@@ -5,6 +5,7 @@ import { promptConfirm } from "../../shared/promptConfirm";
 import { printDiff } from "../../utils/printDiff";
 import { mergeSettings } from "./mergeSettings";
 import { printAutoConfirmHint } from "./printAutoConfirmHint";
+import { pruneStaleAssistHooks } from "./pruneStaleAssistHooks";
 import { readSourceSettings } from "./readSourceSettings";
 
 export async function syncSettings(
@@ -20,7 +21,10 @@ export async function syncSettings(
 	const preservedUserSettings = targetExists ? JSON.parse(targetContent) : {};
 
 	const mergedContent = JSON.stringify(
-		mergeSettings(preservedUserSettings, sourceSettings),
+		mergeSettings(
+			pruneStaleAssistHooks(preservedUserSettings, sourceSettings),
+			sourceSettings,
+		),
 		null,
 		"\t",
 	);

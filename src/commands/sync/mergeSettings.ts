@@ -1,18 +1,7 @@
+import { canonical } from "./canonical";
+import { isPlainObject } from "./isPlainObject";
+
 type Json = unknown;
-
-function isPlainObject(value: Json): value is Record<string, Json> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function canonical(value: Json): string {
-	if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
-	if (isPlainObject(value))
-		return `{${Object.keys(value)
-			.sort()
-			.map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`)
-			.join(",")}}`;
-	return JSON.stringify(value);
-}
 
 function unionArrays(user: Json[], assist: Json[]): Json[] {
 	const seen = new Set(user.map(canonical));
