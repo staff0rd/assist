@@ -1,3 +1,10 @@
+## [0.1128.2](https://github.com/staff0rd/assist/compare/v0.1128.1...v0.1128.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* route async Codex questions ([a9b443c](https://github.com/staff0rd/assist/commit/a9b443c615cd67470f27db69b61c76f00b5880e5))
+
 ## [0.1128.1](https://github.com/staff0rd/assist/compare/v0.1128.0...v0.1128.1) (2026-11-11)
 
 
