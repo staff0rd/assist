@@ -7,11 +7,11 @@ import { markdownNames } from "./markdownNames";
 import { renderHarnessPaths } from "./renderHarnessPaths";
 
 export function syncClaudeCommands(
-	claudeDir: string,
+	agentDir: string,
 	targetBase: string,
 	files: SyncFiles,
 ): string[] {
-	const sourceDir = path.join(claudeDir, "commands");
+	const sourceDir = path.join(agentDir, "commands");
 	const names = markdownNames(sourceDir);
 
 	for (const name of names) {

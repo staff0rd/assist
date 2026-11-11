@@ -5,7 +5,7 @@ import { parse } from "yaml";
 import { commandToPrompt } from "./syncPi";
 import { splitFrontmatter } from "./splitFrontmatter";
 
-const commandsDir = path.resolve("claude/commands");
+const commandsDir = path.resolve("agent/commands");
 const commands = readdirSync(commandsDir).filter((f) => f.endsWith(".md"));
 
 function frontmatterOf(prompt: string): unknown {

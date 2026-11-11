@@ -102,7 +102,7 @@ flowchart LR
 
 ### What `/draft` controls
 
-The `/draft` skill (`claude/commands/draft.md`) is where the workflow is authored. It defines:
+The `/draft` skill (`agent/commands/draft.md`) is where the workflow is authored. It defines:
 
 - **Acceptance criteria** — shown to the agent in every phase prompt
 - **Phase names and tasks** — the specific work the agent will do

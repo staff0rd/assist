@@ -3,19 +3,19 @@ import * as path from "node:path";
 import type { SyncFiles } from "./createSyncFiles";
 
 export function syncDesign(
-	claudeDir: string,
+	agentDir: string,
 	targetBase: string,
 	files: SyncFiles,
 ): string[] {
 	files.write(
 		path.join(targetBase, "design-system-prompt.md"),
-		fs.readFileSync(path.join(claudeDir, "design-system-prompt.md"), "utf8"),
+		fs.readFileSync(path.join(agentDir, "design-system-prompt.md"), "utf8"),
 	);
 	console.log(
 		"Copied design-system-prompt.md to ~/.claude/design-system-prompt.md",
 	);
 
-	const skillsSource = path.join(claudeDir, "skills");
+	const skillsSource = path.join(agentDir, "skills");
 	const skillsTarget = path.join(targetBase, "skills");
 
 	const entries = fs

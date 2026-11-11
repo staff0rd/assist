@@ -21,8 +21,8 @@ vi.mock("node:os", async () => {
 	return { ...actual, homedir: () => env.home };
 });
 
-const repoClaudeDir = resolve(__dirname, "..", "..", "..", "claude");
-const designSkills = readdirSync(join(repoClaudeDir, "skills")).map((file) =>
+const repoAgentDir = resolve(__dirname, "..", "..", "..", "agent");
+const designSkills = readdirSync(join(repoAgentDir, "skills")).map((file) =>
 	file.replace(/\.md$/, ""),
 );
 
@@ -50,8 +50,8 @@ describe("clean-home sync with only Codex installed", () => {
 
 	async function syncHarnesses() {
 		const files = createSyncFiles([]);
-		await syncCodex(repoClaudeDir, files);
-		syncPi(repoClaudeDir, files);
+		await syncCodex(repoAgentDir, files);
+		syncPi(repoAgentDir, files);
 	}
 
 	it("installs design mode's prompt and native design skills for Codex", async () => {
@@ -62,9 +62,7 @@ describe("clean-home sync with only Codex installed", () => {
 				join(home, ".codex", "assist", "design-system-prompt.md"),
 				"utf8",
 			),
-		).toBe(
-			readFileSync(join(repoClaudeDir, "design-system-prompt.md"), "utf8"),
-		);
+		).toBe(readFileSync(join(repoAgentDir, "design-system-prompt.md"), "utf8"));
 		for (const name of designSkills) {
 			const skill = readFileSync(
 				join(home, ".codex", "skills", name, "SKILL.md"),

@@ -13,27 +13,27 @@ import { createSyncFiles } from "./createSyncFiles";
 import { syncDesign } from "./syncDesign";
 
 describe("syncDesign", () => {
-	let claudeDir: string;
+	let agentDir: string;
 	let targetBase: string;
 
 	beforeEach(() => {
 		vi.spyOn(console, "log").mockImplementation(() => {});
-		claudeDir = mkdtempSync(join(tmpdir(), "assist-design-source-"));
+		agentDir = mkdtempSync(join(tmpdir(), "assist-design-source-"));
 		targetBase = mkdtempSync(join(tmpdir(), "assist-design-target-"));
-		writeFileSync(join(claudeDir, "design-system-prompt.md"), "DESIGN PROMPT");
-		mkdirSync(join(claudeDir, "skills"));
-		writeFileSync(join(claudeDir, "skills", "polish-pass.md"), "POLISH");
-		writeFileSync(join(claudeDir, "skills", "wireframe.md"), "WIRE");
+		writeFileSync(join(agentDir, "design-system-prompt.md"), "DESIGN PROMPT");
+		mkdirSync(join(agentDir, "skills"));
+		writeFileSync(join(agentDir, "skills", "polish-pass.md"), "POLISH");
+		writeFileSync(join(agentDir, "skills", "wireframe.md"), "WIRE");
 	});
 
 	afterEach(() => {
-		rmSync(claudeDir, { recursive: true, force: true });
+		rmSync(agentDir, { recursive: true, force: true });
 		rmSync(targetBase, { recursive: true, force: true });
 		vi.restoreAllMocks();
 	});
 
 	it("copies the design system prompt into the target base", () => {
-		syncDesign(claudeDir, targetBase, createSyncFiles([]));
+		syncDesign(agentDir, targetBase, createSyncFiles([]));
 
 		expect(
 			readFileSync(join(targetBase, "design-system-prompt.md"), "utf8"),
@@ -41,7 +41,7 @@ describe("syncDesign", () => {
 	});
 
 	it("copies every design skill into the target skills directory", () => {
-		syncDesign(claudeDir, targetBase, createSyncFiles([]));
+		syncDesign(agentDir, targetBase, createSyncFiles([]));
 
 		expect(
 			readFileSync(join(targetBase, "skills", "polish-pass.md"), "utf8"),
@@ -52,7 +52,7 @@ describe("syncDesign", () => {
 	});
 
 	it("copies a skill directory with its non-markdown files, replacing stale ones", () => {
-		const source = join(claudeDir, "skills", "deploy-flow");
+		const source = join(agentDir, "skills", "deploy-flow");
 		mkdirSync(join(source, "scripts"), { recursive: true });
 		writeFileSync(join(source, "SKILL.md"), "SKILL");
 		writeFileSync(join(source, "workflow.yml"), "WORKFLOW");
@@ -61,9 +61,9 @@ describe("syncDesign", () => {
 		mkdirSync(target, { recursive: true });
 		writeFileSync(join(target, "stale.mjs"), "OLD");
 
-		expect(
-			syncDesign(claudeDir, targetBase, createSyncFiles([target])),
-		).toEqual(["deploy-flow", "polish-pass.md", "wireframe.md"]);
+		expect(syncDesign(agentDir, targetBase, createSyncFiles([target]))).toEqual(
+			["deploy-flow", "polish-pass.md", "wireframe.md"],
+		);
 
 		expect(readFileSync(join(target, "SKILL.md"), "utf8")).toBe("SKILL");
 		expect(readFileSync(join(target, "workflow.yml"), "utf8")).toBe("WORKFLOW");
@@ -74,17 +74,17 @@ describe("syncDesign", () => {
 	});
 
 	it("skips a source dir with no SKILL.md", () => {
-		mkdirSync(join(claudeDir, "skills", "leftover", "scripts"), {
+		mkdirSync(join(agentDir, "skills", "leftover", "scripts"), {
 			recursive: true,
 		});
 		writeFileSync(
-			join(claudeDir, "skills", "leftover", "scripts", "x.mjs"),
+			join(agentDir, "skills", "leftover", "scripts", "x.mjs"),
 			"X",
 		);
 
-		expect(
-			syncDesign(claudeDir, targetBase, createSyncFiles([])),
-		).not.toContain("leftover");
+		expect(syncDesign(agentDir, targetBase, createSyncFiles([]))).not.toContain(
+			"leftover",
+		);
 		expect(existsSync(join(targetBase, "skills", "leftover"))).toBe(false);
 	});
 
@@ -92,24 +92,21 @@ describe("syncDesign", () => {
 		mkdirSync(join(targetBase, "skills"));
 		writeFileSync(join(targetBase, "skills", "projects.json"), "{}");
 
-		syncDesign(claudeDir, targetBase, createSyncFiles([]));
+		syncDesign(agentDir, targetBase, createSyncFiles([]));
 
 		expect(existsSync(join(targetBase, "skills", "projects.json"))).toBe(true);
 	});
 
 	it("leaves a user-authored design file and skill dir until confirmed", async () => {
-		mkdirSync(join(claudeDir, "skills", "deploy-flow"));
-		writeFileSync(
-			join(claudeDir, "skills", "deploy-flow", "SKILL.md"),
-			"SKILL",
-		);
+		mkdirSync(join(agentDir, "skills", "deploy-flow"));
+		writeFileSync(join(agentDir, "skills", "deploy-flow", "SKILL.md"), "SKILL");
 		mkdirSync(join(targetBase, "skills", "deploy-flow"), { recursive: true });
 		writeFileSync(join(targetBase, "skills", "deploy-flow", "mine.md"), "MINE");
 		writeFileSync(join(targetBase, "skills", "wireframe.md"), "MY WIREFRAME");
 		writeFileSync(join(targetBase, "design-system-prompt.md"), "MY PROMPT");
 		const files = createSyncFiles([]);
 
-		syncDesign(claudeDir, targetBase, files);
+		syncDesign(agentDir, targetBase, files);
 		await files.finish(true);
 
 		expect(

@@ -249,7 +249,7 @@ describe("watchWait --build sync", () => {
 	});
 
 	it("syncs after the build when the pulled range touched synced files", async () => {
-		mockChangedPaths.mockReturnValue(["claude/commands/watch.md"]);
+		mockChangedPaths.mockReturnValue(["agent/commands/watch.md"]);
 
 		await run({ build: true });
 
@@ -274,7 +274,7 @@ describe("watchWait --build sync", () => {
 	});
 
 	it("keeps a failed sync pending so a later lap retries it", async () => {
-		mockChangedPaths.mockReturnValue(["claude/commands/watch.md"]);
+		mockChangedPaths.mockReturnValue(["agent/commands/watch.md"]);
 		mockRunPostBuildSync.mockResolvedValue({
 			kind: "failed",
 			exitCode: 1,
@@ -303,7 +303,7 @@ describe("watchWait --build sync", () => {
 	});
 
 	it("keeps the sync pending when the build fails before it can run", async () => {
-		mockChangedPaths.mockReturnValue(["claude/commands/watch.md"]);
+		mockChangedPaths.mockReturnValue(["agent/commands/watch.md"]);
 		mockRunWatchBuild.mockResolvedValue({
 			kind: "failed",
 			exitCode: 1,
@@ -316,7 +316,7 @@ describe("watchWait --build sync", () => {
 	});
 
 	it("does not sync when the build failed", async () => {
-		mockChangedPaths.mockReturnValue(["claude/commands/watch.md"]);
+		mockChangedPaths.mockReturnValue(["agent/commands/watch.md"]);
 		mockRunWatchBuild.mockResolvedValue({
 			kind: "failed",
 			exitCode: 1,
@@ -330,7 +330,7 @@ describe("watchWait --build sync", () => {
 	});
 
 	it("does not sync without --build", async () => {
-		mockChangedPaths.mockReturnValue(["claude/commands/watch.md"]);
+		mockChangedPaths.mockReturnValue(["agent/commands/watch.md"]);
 
 		await run();
 

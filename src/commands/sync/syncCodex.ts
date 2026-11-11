@@ -10,26 +10,22 @@ import { commandToSkill } from "./commandToSkill";
 import type { SyncFiles } from "./createSyncFiles";
 
 export async function syncCodex(
-	claudeDir: string,
+	agentDir: string,
 	files: SyncFiles,
 	options?: PruneOptions,
 ): Promise<void> {
 	if (!isHarnessAvailable("codex")) return;
 
 	const { total, names } = installHarnessCommands(
-		claudeDir,
+		agentDir,
 		harnesses.codex,
 		commandToSkill,
 		files,
 	);
 
-	const designSkills = installDesignResources(
-		claudeDir,
-		harnesses.codex,
-		files,
-	);
+	const designSkills = installDesignResources(agentDir, harnesses.codex, files);
 
-	await syncCodexHooks(path.join(claudeDir, "..", "codex", "config.toml"));
+	await syncCodexHooks(path.join(agentDir, "..", "codex", "config.toml"));
 
 	console.log(`Synced ${total} skill(s) to ~/.codex/skills`);
 	console.log(

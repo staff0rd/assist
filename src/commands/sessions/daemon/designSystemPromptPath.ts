@@ -5,5 +5,5 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function designSystemPromptPath(): string {
-	return path.join(__dirname, "..", "claude", "design-system-prompt.md");
+	return path.join(__dirname, "..", "agent", "design-system-prompt.md");
 }

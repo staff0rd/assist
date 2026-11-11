@@ -118,14 +118,14 @@ describe("buildWatchReport", () => {
 				"feat: commands and settings",
 			),
 			"diff --name-only ccc3333..HEAD": [
-				"claude/commands/watch.md",
+				"agent/commands/watch.md",
 				"claude/settings.json",
 			].join("\n"),
 		});
 
 		const report = buildWatchReport("ccc3333");
 
-		expect(report).toContain("- claude/commands changed");
+		expect(report).toContain("- agent/commands changed");
 		expect(report).toContain("- claude/settings.json changed");
 	});
 

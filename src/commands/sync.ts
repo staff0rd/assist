@@ -24,6 +24,7 @@ export async function sync(
 	const yes = options?.yes ?? config.sync.autoConfirm;
 	const prune = { prune: options?.prune, force: options?.force };
 
+	const agentDir = path.join(__dirname, "..", "agent");
 	const claudeDir = path.join(__dirname, "..", "claude");
 	const targetBase = path.join(os.homedir(), ".claude");
 
@@ -31,14 +32,14 @@ export async function sync(
 		...syncManifest.load(),
 		...retiredOwnedPaths(),
 	]);
-	const commandNames = syncClaudeCommands(claudeDir, targetBase, files);
-	const designSkillNames = syncDesign(claudeDir, targetBase, files);
+	const commandNames = syncClaudeCommands(agentDir, targetBase, files);
+	const designSkillNames = syncDesign(agentDir, targetBase, files);
 	await syncSettings(claudeDir, targetBase, {
 		yes,
 		preferences: config.sync.preferences,
 	});
-	await syncCodex(claudeDir, files, prune);
-	syncPi(claudeDir, files, prune);
+	await syncCodex(agentDir, files, prune);
+	syncPi(agentDir, files, prune);
 	reportRetiredAgentsFiles();
 
 	pruneClaude(targetBase, [...commandNames, ...designSkillNames], prune, files);

@@ -15,7 +15,7 @@ const designPrompt = resolve(
 	"..",
 	"..",
 	"..",
-	"claude",
+	"agent",
 	"design-system-prompt.md",
 );
 

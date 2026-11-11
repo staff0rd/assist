@@ -83,7 +83,7 @@ describe("sync", () => {
 		);
 	});
 
-	it("should keep the skill directories synced from claude/skills", async () => {
+	it("should keep the skill directories synced from agent/skills", async () => {
 		mockSyncDesign.mockReturnValue(["deploy-flow"]);
 
 		await sync({ prune: true });

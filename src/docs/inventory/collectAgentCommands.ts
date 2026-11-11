@@ -25,9 +25,9 @@ function markdownItems(dir: string, prefix: string): InventoryItem[] {
 	});
 }
 
-export function collectClaudeCommands(claudeDir: string): InventoryItem[] {
+export function collectAgentCommands(agentDir: string): InventoryItem[] {
 	return [
-		...markdownItems(join(claudeDir, "commands"), "claude"),
-		...markdownItems(join(claudeDir, "skills"), "skill"),
+		...markdownItems(join(agentDir, "commands"), "claude"),
+		...markdownItems(join(agentDir, "skills"), "skill"),
 	];
 }

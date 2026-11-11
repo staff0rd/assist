@@ -101,14 +101,14 @@ describe("renderWatchReport", () => {
 
 	it("lists every reason the pull makes a sync necessary", () => {
 		const report = render({
-			syncs: ["claude/commands changed", "claude/settings.json changed"],
+			syncs: ["agent/commands changed", "claude/settings.json changed"],
 		});
 
 		expect(report).toContain(
 			[
 				"**Sync**",
 				"",
-				"- claude/commands changed",
+				"- agent/commands changed",
 				"- claude/settings.json changed",
 			].join("\n"),
 		);

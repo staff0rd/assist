@@ -5,7 +5,7 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 
 export const docsPaths = {
 	repoRoot,
-	claudeDir: join(repoRoot, "claude"),
+	agentDir: join(repoRoot, "agent"),
 	appRoutes: join(
 		repoRoot,
 		"src/commands/sessions/web/ui/App/AppShell/AppRoutes.tsx",

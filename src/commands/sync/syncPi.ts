@@ -31,22 +31,22 @@ export function commandToPrompt(name: string, content: string): string {
 }
 
 export function syncPi(
-	claudeDir: string,
+	agentDir: string,
 	files: SyncFiles,
 	options?: PruneOptions,
 ): void {
 	if (!isHarnessAvailable("pi")) return;
 
 	const { synced, names } = installHarnessCommands(
-		claudeDir,
+		agentDir,
 		harnesses.pi,
 		commandToPrompt,
 		files,
 	);
 
-	const designSkills = installDesignResources(claudeDir, harnesses.pi, files);
+	const designSkills = installDesignResources(agentDir, harnesses.pi, files);
 
-	syncPiHooks(path.join(claudeDir, "..", "pi"));
+	syncPiHooks(path.join(agentDir, "..", "pi"));
 
 	console.log(`Synced ${synced} prompt(s) to ~/.pi/agent/prompts`);
 	console.log(

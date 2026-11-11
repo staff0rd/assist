@@ -18,20 +18,20 @@ const PR = "---\ndescription: Raise a PR\n---\n\nPR BODY\n";
 const COMMIT = "---\ndescription: Commit\n---\n\nCOMMIT BODY\n";
 
 describe("syncClaudeCommands", () => {
-	let claudeDir: string;
+	let agentDir: string;
 	let targetBase: string;
 
 	beforeEach(() => {
 		vi.spyOn(console, "log").mockImplementation(() => {});
-		claudeDir = mkdtempSync(join(tmpdir(), "assist-cmd-source-"));
+		agentDir = mkdtempSync(join(tmpdir(), "assist-cmd-source-"));
 		targetBase = mkdtempSync(join(tmpdir(), "assist-cmd-target-"));
-		mkdirSync(join(claudeDir, "commands"));
-		writeFileSync(join(claudeDir, "commands", "pr.md"), PR);
-		writeFileSync(join(claudeDir, "commands", "commit.md"), COMMIT);
+		mkdirSync(join(agentDir, "commands"));
+		writeFileSync(join(agentDir, "commands", "pr.md"), PR);
+		writeFileSync(join(agentDir, "commands", "commit.md"), COMMIT);
 	});
 
 	afterEach(() => {
-		rmSync(claudeDir, { recursive: true, force: true });
+		rmSync(agentDir, { recursive: true, force: true });
 		rmSync(targetBase, { recursive: true, force: true });
 		vi.restoreAllMocks();
 	});
@@ -40,7 +40,7 @@ describe("syncClaudeCommands", () => {
 		join(targetBase, "skills", name, "SKILL.md");
 
 	it("writes every command as a personal skill", () => {
-		syncClaudeCommands(claudeDir, targetBase, createSyncFiles([]));
+		syncClaudeCommands(agentDir, targetBase, createSyncFiles([]));
 
 		expect(readFileSync(skillFile("pr"), "utf8")).toBe(
 			'---\nname: pr\ndescription: "Raise a PR"\n---\n\nPR BODY\n',
@@ -51,10 +51,10 @@ describe("syncClaudeCommands", () => {
 	});
 
 	it("returns the synced command names, ignoring non-.md files", () => {
-		writeFileSync(join(claudeDir, "commands", "notes.txt"), "x");
+		writeFileSync(join(agentDir, "commands", "notes.txt"), "x");
 
 		expect(
-			syncClaudeCommands(claudeDir, targetBase, createSyncFiles([])).sort(),
+			syncClaudeCommands(agentDir, targetBase, createSyncFiles([])).sort(),
 		).toEqual(["commit", "pr"]);
 	});
 
@@ -63,7 +63,7 @@ describe("syncClaudeCommands", () => {
 		writeFileSync(join(targetBase, "commands", "pr.md"), PR);
 		writeFileSync(join(targetBase, "commands", "mine.md"), "MINE");
 
-		syncClaudeCommands(claudeDir, targetBase, createSyncFiles([]));
+		syncClaudeCommands(agentDir, targetBase, createSyncFiles([]));
 
 		expect(existsSync(join(targetBase, "commands", "pr.md"))).toBe(false);
 		expect(existsSync(join(targetBase, "commands", "mine.md"))).toBe(true);
@@ -76,7 +76,7 @@ describe("syncClaudeCommands", () => {
 		writeFileSync(join(targetBase, "commands", "pr.md"), "MY PR COMMAND");
 		const files = createSyncFiles([]);
 
-		syncClaudeCommands(claudeDir, targetBase, files);
+		syncClaudeCommands(agentDir, targetBase, files);
 		await files.finish(true);
 
 		expect(readFileSync(skillFile("commit"), "utf8")).toBe("MY COMMIT SKILL");
@@ -93,7 +93,7 @@ describe("syncClaudeCommands", () => {
 		writeFileSync(skillFile("commit"), "OLD ASSIST VERSION");
 
 		syncClaudeCommands(
-			claudeDir,
+			agentDir,
 			targetBase,
 			createSyncFiles([skillFile("commit")]),
 		);
@@ -108,7 +108,7 @@ describe("syncClaudeCommands", () => {
 		symlinkSync(linkTarget, skillFile("pr"));
 
 		syncClaudeCommands(
-			claudeDir,
+			agentDir,
 			targetBase,
 			createSyncFiles([skillFile("pr")]),
 		);

@@ -9,11 +9,11 @@ vi.mock("../../../shared/harnessAdapters/detectHarness", () => ({
 	detectHarness: () => ({ supported: true }),
 }));
 vi.mock("./designSystemPromptPath", () => ({
-	designSystemPromptPath: () => "/pkg/claude/design-system-prompt.md",
+	designSystemPromptPath: () => "/pkg/agent/design-system-prompt.md",
 }));
 
 const DESIGN = {
-	appendSystemPromptFile: "/pkg/claude/design-system-prompt.md",
+	appendSystemPromptFile: "/pkg/agent/design-system-prompt.md",
 	auto: true,
 };
 

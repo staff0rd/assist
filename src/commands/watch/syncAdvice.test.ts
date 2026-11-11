@@ -3,14 +3,14 @@ import { syncAdvice } from "./syncAdvice";
 
 describe("syncAdvice", () => {
 	it("reports a changed command", () => {
-		expect(syncAdvice(["claude/commands/watch.md", "README.md"])).toEqual([
-			"claude/commands changed",
+		expect(syncAdvice(["agent/commands/watch.md", "README.md"])).toEqual([
+			"agent/commands changed",
 		]);
 	});
 
 	it("reports a changed skill", () => {
-		expect(syncAdvice(["claude/skills/design/SKILL.md"])).toEqual([
-			"claude/skills changed",
+		expect(syncAdvice(["agent/skills/design/SKILL.md"])).toEqual([
+			"agent/skills changed",
 		]);
 	});
 
@@ -21,8 +21,8 @@ describe("syncAdvice", () => {
 	});
 
 	it("reports a changed design system prompt", () => {
-		expect(syncAdvice(["claude/design-system-prompt.md"])).toEqual([
-			"claude/design-system-prompt.md changed",
+		expect(syncAdvice(["agent/design-system-prompt.md"])).toEqual([
+			"agent/design-system-prompt.md changed",
 		]);
 	});
 
@@ -43,10 +43,10 @@ describe("syncAdvice", () => {
 			syncAdvice([
 				"pi/status-driver.ts",
 				"claude/settings.json",
-				"claude/commands/sync.md",
+				"agent/commands/sync.md",
 			]),
 		).toEqual([
-			"claude/commands changed",
+			"agent/commands changed",
 			"claude/settings.json changed",
 			"pi sources changed",
 		]);

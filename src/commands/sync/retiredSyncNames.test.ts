@@ -3,15 +3,15 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { retiredSyncNames } from "./retiredSyncNames";
 
-const claudeDir = join(import.meta.dirname, "..", "..", "..", "claude");
+const agentDir = join(import.meta.dirname, "..", "..", "..", "agent");
 
 describe("retiredSyncNames", () => {
 	it("names nothing assist still ships", () => {
 		const shipped = [
-			...readdirSync(join(claudeDir, "commands")).map((file) =>
+			...readdirSync(join(agentDir, "commands")).map((file) =>
 				file.replace(/\.md$/, ""),
 			),
-			...readdirSync(join(claudeDir, "skills")),
+			...readdirSync(join(agentDir, "skills")),
 		];
 
 		expect(

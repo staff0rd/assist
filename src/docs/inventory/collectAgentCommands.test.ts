@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { collectClaudeCommands } from "./collectClaudeCommands";
+import { collectAgentCommands } from "./collectAgentCommands";
 
 let dir: string;
 
@@ -30,7 +30,7 @@ describe("collectClaudeCommands", () => {
 			"---\nname: deploy-flow\ndescription: Install a deploy workflow\n---\n",
 		);
 
-		expect(collectClaudeCommands(dir)).toEqual([
+		expect(collectAgentCommands(dir)).toEqual([
 			{ id: "claude:commit", description: "Commit relevant files" },
 			{ id: "skill:deploy-flow", description: "Install a deploy workflow" },
 			{ id: "skill:wireframe", description: "" },

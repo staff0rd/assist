@@ -5,12 +5,12 @@ import type { SyncFiles } from "./createSyncFiles";
 import { renderHarnessPaths } from "./renderHarnessPaths";
 
 export function installHarnessCommands(
-	claudeDir: string,
+	agentDir: string,
 	harness: Harness,
 	transform: (name: string, content: string) => string,
 	files: SyncFiles,
 ): { total: number; synced: number; names: string[] } {
-	const commandsSource = path.join(claudeDir, "commands");
+	const commandsSource = path.join(agentDir, "commands");
 	const sourceFiles = fs.readdirSync(commandsSource);
 	const names: string[] = [];
 	for (const file of sourceFiles) {
