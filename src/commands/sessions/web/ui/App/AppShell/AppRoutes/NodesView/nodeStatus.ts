@@ -49,8 +49,7 @@ function linkStatus(link: LinkStatus): NodeStatus | undefined {
 
 function updateStatus(entry: NodeUpdateEntry): NodeStatus {
 	const state = updateState(entry);
-	if (state.kind === "ready")
-		return { ...state, action: "restart", attention: "warning" };
+	if (state.kind === "ready") return { ...state, action: "restart" };
 	if (state.kind === "failing")
 		return { ...state, action: "web", attention: "error" };
 	if (state.kind === "diverged")
@@ -74,5 +73,5 @@ export function nodeStatus(
 }
 
 export function needsAttention(status: NodeStatus): boolean {
-	return status.attention !== undefined || status.action !== undefined;
+	return status.attention !== undefined;
 }

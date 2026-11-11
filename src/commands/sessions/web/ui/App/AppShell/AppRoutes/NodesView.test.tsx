@@ -190,6 +190,16 @@ describe("NodesView", () => {
 		).toBeTruthy();
 		expect(within(row("old")).getByText("assist update")).toBeTruthy();
 		expect(
+			within(row("win")).queryByRole("region", { name: "Updates" }),
+		).toBeNull();
+	});
+
+	it("shows a ready node's advice once its chevron is opened", () => {
+		render(view({ local: "mac", links: [win] }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Show details for win" }),
+		);
+		expect(
 			within(row("win")).getByText(/is built but not running/),
 		).toBeTruthy();
 	});
