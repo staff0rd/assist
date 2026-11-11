@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PrPreview } from "../../../../../../shared/SessionInfoBase";
 import { PrPreviewSplit } from "./PrPreviewSplit";
 
@@ -15,6 +21,49 @@ function preview(overrides: Partial<PrPreview> = {}): PrPreview {
 	};
 }
 
+let observers: ResizeObserverCallback[] = [];
+
+class TestResizeObserver {
+	constructor(private callback: ResizeObserverCallback) {
+		observers.push(callback);
+	}
+	observe() {}
+	disconnect() {}
+}
+
+function resizeTo(width: number) {
+	act(() => {
+		for (const callback of observers)
+			callback(
+				[{ contentRect: { width } } as ResizeObserverEntry],
+				{} as ResizeObserver,
+			);
+	});
+}
+
+function terminalStyle() {
+	return getComputedStyle(
+		screen.getByTestId("terminal").parentElement as HTMLElement,
+	);
+}
+
+function paneStyle() {
+	return getComputedStyle(
+		document.querySelector('[aria-hidden="false"]') as HTMLElement,
+	);
+}
+
+beforeEach(() => {
+	observers = [];
+	globalThis.ResizeObserver =
+		TestResizeObserver as unknown as typeof ResizeObserver;
+});
+
+afterEach(() => {
+	cleanup();
+	Reflect.deleteProperty(globalThis, "ResizeObserver");
+});
+
 function renderSplit(value: PrPreview) {
 	render(
 		<PrPreviewSplit preview={value} onDecision={vi.fn()}>
@@ -24,8 +73,6 @@ function renderSplit(value: PrPreview) {
 	const terminal = screen.getByTestId("terminal").parentElement as HTMLElement;
 	return () => getComputedStyle(terminal).width;
 }
-
-afterEach(cleanup);
 
 describe("PrPreviewSplit", () => {
 	it.each([
@@ -46,6 +93,39 @@ describe("PrPreviewSplit", () => {
 
 		fireEvent.click(screen.getByLabelText("Show terminal beside preview"));
 		expect(terminalWidth()).toBe("50%");
+	});
+
+	it("sits beside the terminal at 1000px", () => {
+		renderSplit(preview());
+		resizeTo(1000);
+		expect(terminalStyle().width).toBe("50%");
+		expect(paneStyle().width).toBe("50%");
+		expect(paneStyle().top).toBe("0px");
+	});
+
+	it("stacks below the terminal under 1000px and fills on full", () => {
+		renderSplit(preview());
+		resizeTo(999);
+		expect(terminalStyle().height).toBe("50%");
+		expect(terminalStyle().width).toBe("100%");
+		expect(paneStyle().height).toBe("50%");
+		expect(paneStyle().left).toBe("0px");
+
+		fireEvent.click(screen.getByLabelText("Fill the window with preview"));
+		expect(terminalStyle().height).toBe("0%");
+		expect(paneStyle().height).toBe("100%");
+
+		fireEvent.click(screen.getByLabelText("Show terminal above preview"));
+		expect(terminalStyle().height).toBe("50%");
+	});
+
+	it("switches layout live when resized across 1000px", () => {
+		renderSplit(preview());
+		resizeTo(999);
+		expect(terminalStyle().height).toBe("50%");
+		resizeTo(1200);
+		expect(terminalStyle().width).toBe("50%");
+		expect(screen.getByLabelText("Fill the window with preview")).toBeTruthy();
 	});
 
 	it("stacks a show over the review and keeps the review mounted", () => {

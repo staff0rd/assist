@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import type { ReactNode } from "react";
 import { SPLIT_EASE, SPLIT_MS } from "./slideInSx";
 
-function terminalWidth(open: boolean, full: boolean) {
+function terminalSize(open: boolean, full: boolean) {
 	if (!open) return "100%";
 	return full ? "0%" : "50%";
 }
@@ -10,19 +10,25 @@ function terminalWidth(open: boolean, full: boolean) {
 export function PrPreviewTerminalColumn({
 	open,
 	full,
+	stacked,
 	children,
 }: {
 	open: boolean;
 	full: boolean;
+	stacked: boolean;
 	children: ReactNode;
 }) {
+	const size = terminalSize(open, full);
+	const axis = stacked ? "height" : "width";
 	return (
 		<Box
 			sx={{
 				display: "flex",
-				width: terminalWidth(open, full),
+				minHeight: 0,
+				flexShrink: 0,
+				...(stacked ? { width: "100%", height: size } : { width: size }),
 				overflow: "hidden",
-				transition: `width ${SPLIT_MS}ms ${SPLIT_EASE}`,
+				transition: `${axis} ${SPLIT_MS}ms ${SPLIT_EASE}`,
 			}}
 		>
 			{children}

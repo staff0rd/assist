@@ -7,14 +7,16 @@ export function DiffModeToggle({
 	mode,
 	onToggleMode,
 	subject = "diff",
+	placement = "beside",
 }: {
 	mode: DiffPanelMode;
 	onToggleMode: () => void;
 	subject?: string;
+	placement?: "beside" | "above";
 }) {
 	const full = mode === "full";
 	const label = full
-		? `Show terminal beside ${subject}`
+		? `Show terminal ${placement} ${subject}`
 		: `Fill the window with ${subject}`;
 	const Icon = full ? CloseFullscreenIcon : OpenInFullIcon;
 

@@ -4,6 +4,7 @@ import type { DiffPanelMode } from "../toggleDiffPanel";
 type PreviewWidth = {
 	mode: DiffPanelMode;
 	full: boolean;
+	stacked?: boolean;
 	onToggleMode?: () => void;
 };
 
