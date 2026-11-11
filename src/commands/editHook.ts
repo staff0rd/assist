@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { markActiveHarness } from "../lib/activeHarness";
 import { readStdin } from "../lib/readStdin";
+import { loadConfig } from "../shared/loadConfig";
 import { currentExecutionIdentity } from "../shared/currentExecutionIdentity";
 import { claudeAdapter } from "../shared/harnessAdapters/claudeAdapter";
 import { decideCommentGuard } from "./editHook/decideCommentGuard";
@@ -59,7 +60,11 @@ export async function editHook(): Promise<void> {
 
 	const reason =
 		decideOverrideGuard(input, existing) ??
-		decideCommentGuard(input, existing) ??
+		decideCommentGuard(
+			input,
+			existing,
+			loadConfig().blockCodeComments?.ignore,
+		) ??
 		(await decidePolicy(input));
 	if (!reason) return;
 

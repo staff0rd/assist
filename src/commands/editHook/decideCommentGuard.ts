@@ -1,3 +1,4 @@
+import { isCommentGateIgnored } from "../../shared/isCommentGateIgnored";
 import { isGeneratedCsharpFile } from "../../shared/isGeneratedCsharpFile";
 import { type EditHookInput } from "./decideOverrideGuard";
 import { introducedComments } from "./introducedComments";
@@ -20,9 +21,12 @@ function denyReason(marker: string): string {
 export function decideCommentGuard(
 	input: EditHookInput,
 	existingContent?: string,
+	ignoreGlobs: string[] = [],
 ): string | undefined {
 	const { file_path, content } = input.tool_input;
 	if (isGeneratedCsharpFile(file_path, content)) return undefined;
+	if (file_path && isCommentGateIgnored(file_path, ignoreGlobs))
+		return undefined;
 
 	const gate = selectCommentExtractor(file_path);
 	if (!gate) return undefined;

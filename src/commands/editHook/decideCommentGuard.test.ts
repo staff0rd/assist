@@ -1,4 +1,7 @@
-import { describe, expect, it } from "vitest";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { decideCommentGuard } from "./decideCommentGuard";
 import { type EditHookInput } from "./decideOverrideGuard";
 
@@ -929,6 +932,47 @@ describe("decideCommentGuard", () => {
 			);
 
 			expect(decision).toBeUndefined();
+		});
+	});
+
+	describe("blockCodeComments.ignore", () => {
+		let repo: string;
+
+		beforeEach(() => {
+			repo = fs.mkdtempSync(path.join(os.tmpdir(), "comment-guard-"));
+			fs.mkdirSync(path.join(repo, ".git"));
+		});
+
+		afterEach(() => {
+			fs.rmSync(repo, { recursive: true, force: true });
+		});
+
+		function docCommentEdit(relativePath: string): EditHookInput {
+			return input("Edit", {
+				file_path: path.join(repo, relativePath),
+				old_string: "const a = 1;",
+				new_string: "/** explains a */\nconst a = 1;",
+			});
+		}
+
+		it("allows a comment in a file matched relative to the repo root", () => {
+			const decision = decideCommentGuard(
+				docCommentEdit("src/contracts/a.ts"),
+				undefined,
+				["src/contracts/**"],
+			);
+
+			expect(decision).toBeUndefined();
+		});
+
+		it("still denies a comment in a file the globs do not match", () => {
+			const decision = decideCommentGuard(
+				docCommentEdit("src/other/a.ts"),
+				undefined,
+				["src/contracts/**"],
+			);
+
+			expect(decision).toBeDefined();
 		});
 	});
 });

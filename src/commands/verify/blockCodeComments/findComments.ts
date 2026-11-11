@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
-import { minimatch } from "minimatch";
 import { Project } from "ts-morph";
+import { isCommentGateIgnored } from "../../../shared/isCommentGateIgnored";
 import { isHashCommentFile } from "../../../shared/isHashCommentFile";
 import {
 	type CommentFinding,
@@ -37,7 +37,7 @@ function shouldScan(file: string, ignoreGlobs: string[]): boolean {
 		!isHashCommentFile(file)
 	)
 		return false;
-	if (ignoreGlobs.some((glob) => minimatch(file, glob))) return false;
+	if (isCommentGateIgnored(file, ignoreGlobs)) return false;
 	return fs.existsSync(file);
 }
 
