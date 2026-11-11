@@ -12,7 +12,7 @@ const ACTIONS: Record<HotkeyName, string> = {
 	toggleDiff:
 		"open / close the diff panel, or focus the preview pane's primary action",
 	focusRepoPicker: "focus the toolbar repo picker",
-	openUpdates: "open the version / updates page",
+	openUpdates: "open the nodes page (version and updates)",
 	openConfig: "open the config page",
 	openMenu: "open the hamburger menu",
 	focusAddAgent: "focus the top bar's add agent button",

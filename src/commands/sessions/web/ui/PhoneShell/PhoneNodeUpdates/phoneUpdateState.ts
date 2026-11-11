@@ -1,4 +1,4 @@
-import { updateState } from "../../App/AppShell/AppRoutes/UpdatesView/updateState";
+import { updateState } from "../../App/AppShell/AppRoutes/nodeUpdates/updateState";
 import { isUpdateReady } from "../../App/AppShell/isUpdateReady";
 import type { NodeUpdateEntry } from "../../App/AppShell/NodeUpdateEntry";
 import type { NodeDotTone } from "../../HomeNodeGate/NodeDot";

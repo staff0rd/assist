@@ -8,12 +8,11 @@ import { NodeScopedFileView } from "./AppRoutes/NodeScopedFileView";
 import { InboxView } from "./AppRoutes/InboxView";
 import { NewsView } from "./AppRoutes/NewsView";
 import { NextView } from "./AppRoutes/NextView";
-import { NodesView } from "./AppRoutes/NodesView";
+import { nodesRoutes } from "./AppRoutes/nodesRoutes";
 import { ReleasesView } from "../ReleasesView";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
 import { SessionContent } from "../SessionContent";
-import { UpdatesView } from "./AppRoutes/UpdatesView";
 import { UsageHistoryView } from "../UsageHistoryView";
 import type { SessionSocket } from "../../useSessionSocket";
 import { BacklogContent } from "./AppRoutes/BacklogContent";
@@ -47,11 +46,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					<Route path="backups" element={<BackupsView />} />
 					<Route path="config" element={<ConfigView />} />
 					<Route path="connect-mobile" element={<ConnectMobileView />} />
-					<Route
-						path="updates"
-						element={<UpdatesView selectSession={socket.selectSession} />}
-					/>
-					<Route path="nodes" element={<NodesView />} />
+					{nodesRoutes(socket.selectSession)}
 					<Route path="diff" element={<NodeScopedDiffView socket={socket} />} />
 					<Route path="file" element={<NodeScopedFileView socket={socket} />} />
 					<Route path="*" element={<Navigate to="/sessions" replace />} />

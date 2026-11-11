@@ -12,7 +12,7 @@ function renderBadge() {
 		<MemoryRouter initialEntries={["/sessions"]}>
 			<VersionBadge />
 			<Routes>
-				<Route path="/updates" element={<div>updates page</div>} />
+				<Route path="/nodes" element={<div>nodes page</div>} />
 				<Route path="/sessions" element={<div>sessions page</div>} />
 			</Routes>
 		</MemoryRouter>,
@@ -22,15 +22,15 @@ function renderBadge() {
 afterEach(cleanup);
 
 describe("VersionBadge", () => {
-	it("navigates to the updates page on Alt+Q", () => {
+	it("navigates to the nodes page on Alt+Q", () => {
 		renderBadge();
 
 		fireEvent.keyDown(document.body, { code: "KeyQ", altKey: true });
 
-		expect(screen.getByText("updates page")).toBeTruthy();
+		expect(screen.getByText("nodes page")).toBeTruthy();
 	});
 
-	it("follows a remapped updates chord", () => {
+	it("follows a remapped nodes chord", () => {
 		renderBadge();
 		act(() =>
 			hotkeyBindingsStore.set({
@@ -41,14 +41,14 @@ describe("VersionBadge", () => {
 
 		try {
 			fireEvent.keyDown(document.body, { code: "KeyQ", altKey: true });
-			expect(screen.queryByText("updates page")).toBeNull();
+			expect(screen.queryByText("nodes page")).toBeNull();
 
 			fireEvent.keyDown(document.body, {
 				code: "KeyU",
 				ctrlKey: true,
 				altKey: true,
 			});
-			expect(screen.getByText("updates page")).toBeTruthy();
+			expect(screen.getByText("nodes page")).toBeTruthy();
 		} finally {
 			hotkeyBindingsStore.set(defaultHotkeys);
 		}

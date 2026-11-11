@@ -14,9 +14,9 @@ import { versionBadgeSx } from "./VersionBadge/versionBadgeSx";
 export function VersionBadge() {
 	const { entries } = useNodeUpdatesContext();
 	const navigate = useNavigate();
-	const openUpdates = useCallback(() => navigate("/updates"), [navigate]);
+	const openNodes = useCallback(() => navigate("/nodes"), [navigate]);
 	const { matches, chords } = useShortcut("openUpdates");
-	useCaptureHotkey(matches, openUpdates);
+	useCaptureHotkey(matches, openNodes);
 	if (!assistVersion) return null;
 	const ready = entries.filter(isUpdateReady).length;
 	return (
@@ -24,11 +24,11 @@ export function VersionBadge() {
 			<Tooltip
 				describeChild
 				placement="top-end"
-				title={<ChordTooltipTitle label="Updates" chords={chords} />}
+				title={<ChordTooltipTitle label="Nodes" chords={chords} />}
 			>
 				<ButtonBase
 					component={Link}
-					to="/updates"
+					to="/nodes"
 					aria-label={
 						ready
 							? `Updates: ${ready} node${ready > 1 ? "s have" : " has"} an update ready`

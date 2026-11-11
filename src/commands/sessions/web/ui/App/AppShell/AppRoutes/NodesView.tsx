@@ -1,41 +1,44 @@
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import { useNodeSelectionContext } from "../../../useNodeSelectionContext";
 import { PageShell } from "../../PageShell";
 import { PeerSnackbars } from "../PeerSnackbars";
-import { LinkedNodeRow } from "./NodesView/LinkedNodeRow";
-import { NoLinkedNodes } from "./NodesView/NoLinkedNodes";
-import { nodesSummary } from "./NodesView/nodesSummary";
-import { ThisNodeRow } from "./NodesView/ThisNodeRow";
+import { useNodeUpdatesContext } from "../useNodeUpdatesContext";
+import { useUpdateActions } from "./nodeUpdates/useUpdateActions";
+import { NodeRow } from "./NodesView/NodeRow";
+import { NodesHeader } from "./NodesView/NodesHeader";
+import { nodeRows } from "./NodesView/nodeRows";
+import { pageNotices } from "./NodesView/pageNotices";
 import { useNodeRemoval } from "./NodesView/useNodeRemoval";
 
-export function NodesView() {
+export function NodesView({
+	selectSession,
+}: {
+	selectSession: (id: string) => void;
+}) {
 	const { nodes } = useNodeSelectionContext();
-	const { removed, remove, notices } = useNodeRemoval(nodes);
-	const links = (nodes?.links ?? []).filter((link) => !removed.has(link.name));
+	const { entries } = useNodeUpdatesContext();
+	const actions = useUpdateActions(selectSession);
+	const removal = useNodeRemoval(nodes);
+	const rows = nodes
+		? nodeRows(nodes, entries, removal.removed, globalThis.location.origin)
+		: [];
 
 	return (
 		<PageShell
 			loading={!nodes}
-			header={
-				<>
-					<Typography variant="h5" component="h1">
-						Nodes
-					</Typography>
-					<Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-						{nodesSummary(links)}
-					</Typography>
-				</>
-			}
+			header={<NodesHeader rows={rows} actions={actions} />}
 		>
 			<Paper variant="outlined" component="section" aria-label="Nodes">
-				{nodes && <ThisNodeRow name={nodes.local} />}
-				{links.length === 0 && <NoLinkedNodes />}
-				{links.map((link) => (
-					<LinkedNodeRow key={link.name} link={link} onRemove={remove} />
+				{rows.map((row) => (
+					<NodeRow
+						key={row.name}
+						row={row}
+						actions={actions}
+						onRemove={removal.remove}
+					/>
 				))}
 			</Paper>
-			<PeerSnackbars notices={notices} />
+			<PeerSnackbars notices={pageNotices(actions, removal.notices)} />
 		</PageShell>
 	);
 }

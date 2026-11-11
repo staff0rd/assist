@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { restartLabel } from "../../App/AppShell/AppRoutes/UpdatesView/restartLabel";
+import { restartLabel } from "../../App/AppShell/AppRoutes/nodeUpdates/restartLabel";
 import type { NodeUpdateEntry } from "../../App/AppShell/NodeUpdateEntry";
 import { PhoneSheetButton } from "../PhoneSheetButton";
 import { phoneUpdateNoteSx } from "./phoneUpdateNoteSx";

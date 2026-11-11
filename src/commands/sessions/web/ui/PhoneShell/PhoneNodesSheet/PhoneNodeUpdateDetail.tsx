@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import { updateState } from "../../App/AppShell/AppRoutes/UpdatesView/updateState";
+import { updateState } from "../../App/AppShell/AppRoutes/nodeUpdates/updateState";
 import type { NodeUpdateEntry } from "../../App/AppShell/NodeUpdateEntry";
 import { phoneUpdateState } from "../PhoneNodeUpdates/phoneUpdateState";
 import type { PhoneNodeUpdates } from "../PhoneNodeUpdates/usePhoneNodeUpdates";

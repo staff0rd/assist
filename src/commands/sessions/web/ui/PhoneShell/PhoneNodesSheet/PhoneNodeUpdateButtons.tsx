@@ -1,4 +1,4 @@
-import { canControl } from "../../App/AppShell/AppRoutes/UpdatesView/canControl";
+import { canControl } from "../../App/AppShell/AppRoutes/nodeUpdates/canControl";
 import type { NodeUpdateEntry } from "../../App/AppShell/NodeUpdateEntry";
 import type { phoneUpdateState } from "../PhoneNodeUpdates/phoneUpdateState";
 import { PhoneSheetButton } from "../PhoneSheetButton";

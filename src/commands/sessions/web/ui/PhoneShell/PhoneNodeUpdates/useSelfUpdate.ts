@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { Notices } from "../../App/AppShell/AppRoutes/UpdatesView/useUpdateActions/useNotices";
+import type { Notices } from "../../App/AppShell/AppRoutes/nodeUpdates/useUpdateActions/useNotices";
 import { awaitNodeStatus } from "../../App/AppShell/awaitNodeStatus";
 import type { NodeUpdateEntry } from "../../App/AppShell/NodeUpdateEntry";
 import { postSelfUpdate } from "../../App/AppShell/postSelfUpdate";

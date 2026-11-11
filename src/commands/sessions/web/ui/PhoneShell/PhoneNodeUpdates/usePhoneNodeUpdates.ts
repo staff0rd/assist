@@ -1,8 +1,8 @@
 import { useNodeUpdates } from "../../App/AppShell/AppShellProviders/useNodeUpdates";
-import { useLoopControl } from "../../App/AppShell/AppRoutes/UpdatesView/useUpdateActions/useLoopControl";
-import { useNodeRestart } from "../../App/AppShell/AppRoutes/UpdatesView/useUpdateActions/useNodeRestart";
+import { useLoopControl } from "../../App/AppShell/AppRoutes/nodeUpdates/useUpdateActions/useLoopControl";
+import { useNodeRestart } from "../../App/AppShell/AppRoutes/nodeUpdates/useUpdateActions/useNodeRestart";
 import { useWebserverRestart } from "../../App/AppShell/useWebserverRestart";
-import { useNotices } from "../../App/AppShell/AppRoutes/UpdatesView/useUpdateActions/useNotices";
+import { useNotices } from "../../App/AppShell/AppRoutes/nodeUpdates/useUpdateActions/useNotices";
 import type { NodeSelection } from "../../useNodeSelection";
 import { latestVersion } from "./latestVersion";
 import { useSelfUpdate } from "./useSelfUpdate";

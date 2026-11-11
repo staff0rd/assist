@@ -7,20 +7,49 @@ import {
 	waitFor,
 	within,
 } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { LinkStatus } from "../../../../../daemon/links/LinkStatus";
+import type { NodeUpdateStatus } from "../../../../../shared/NodeUpdateStatus";
 import type { NodesState } from "../../../types";
 import { NodeSelectionContext } from "../../../useNodeSelectionContext";
+import type { NodeUpdateEntry } from "../NodeUpdateEntry";
+import { LocalRestartContext } from "../useLocalRestartContext";
+import { NodeUpdatesContext } from "../useNodeUpdatesContext";
+import { useWebserverRestart } from "../useWebserverRestart";
 import { NodesView } from "./NodesView";
 
+let unlinkResponse: () => Response;
 let fetchMock: ReturnType<typeof vi.fn>;
+
+function status(
+	name: string,
+	overrides: Partial<NodeUpdateStatus> = {},
+): NodeUpdateEntry {
+	return {
+		name,
+		local: name === "mac",
+		status: {
+			nodeName: name,
+			installDir: "/git/assist",
+			running: "0.1123.0",
+			built: "0.1123.0",
+			restart: [],
+			daemonReachable: true,
+			autoRestart: false,
+			loop: { phase: "waiting", since: new Date().toISOString() },
+			history: [],
+			...overrides,
+		},
+	};
+}
 
 const win: LinkStatus = {
 	name: "win",
 	url: "http://win:3100",
 	state: "connected",
-	peerVersion: "0.1123.0",
+	peerVersion: "0.1122.0",
 };
 const devbox: LinkStatus = {
 	name: "devbox",
@@ -36,6 +65,21 @@ const old: LinkStatus = {
 	protocol: 4,
 };
 
+const entries = [
+	status("mac"),
+	status("win", { running: "0.1122.0", restart: ["daemon"] }),
+	status("devbox", { built: "0.1124.0", restart: ["daemon"] }),
+];
+
+function RestartProvider({ children }: { children: ReactNode }) {
+	const web = useWebserverRestart("webserver", false);
+	return (
+		<LocalRestartContext.Provider value={web}>
+			{children}
+		</LocalRestartContext.Provider>
+	);
+}
+
 function view(nodes: NodesState) {
 	return (
 		<MemoryRouter>
@@ -48,18 +92,26 @@ function view(nodes: NodesState) {
 					select: () => {},
 				}}
 			>
-				<NodesView />
+				<NodeUpdatesContext.Provider
+					value={{ entries, loading: false, refresh: () => {} }}
+				>
+					<RestartProvider>
+						<NodesView selectSession={() => {}} />
+					</RestartProvider>
+				</NodeUpdatesContext.Provider>
 			</NodeSelectionContext.Provider>
 		</MemoryRouter>
 	);
 }
 
-function respond(body: unknown, status = 200) {
-	fetchMock.mockResolvedValue(Response.json(body, { status }));
-}
-
 beforeEach(() => {
-	fetchMock = vi.fn();
+	unlinkResponse = () =>
+		Response.json({ ok: true, daemon: { kind: "reloaded" } });
+	fetchMock = vi.fn(async (url: string) =>
+		url === "/api/nodes/unlink"
+			? unlinkResponse()
+			: Response.json({ history: [] }),
+	);
 	vi.stubGlobal("fetch", fetchMock);
 });
 
@@ -72,31 +124,83 @@ function row(name: string) {
 	return screen.getByRole("article", { name });
 }
 
+function summary(name: string) {
+	return within(row(name).firstElementChild as HTMLElement);
+}
+
+function openMenu(name: string) {
+	fireEvent.click(
+		within(row(name)).getByRole("button", { name: `More actions for ${name}` }),
+	);
+	return screen.getByRole("menu");
+}
+
+function removeVia(name: string) {
+	fireEvent.click(within(openMenu(name)).getByText("Remove node…"));
+	const confirm = screen.getByRole("group", {
+		name: `Confirm removing ${name}`,
+	});
+	fireEvent.click(within(confirm).getByRole("button", { name: "Remove" }));
+}
+
 describe("NodesView", () => {
-	it("lists this node first without a Remove action, then each link's state", () => {
+	it("lists this node first, tagged and without Remove, then each linked node", () => {
 		render(view({ local: "mac", links: [win, devbox, old] }));
-		const rows = screen.getAllByRole("article");
-		expect(rows.map((r) => r.getAttribute("aria-label"))).toEqual([
-			"mac",
-			"win",
-			"devbox",
-			"old",
-		]);
+		expect(
+			screen.getAllByRole("article").map((r) => r.getAttribute("aria-label")),
+		).toEqual(["mac", "win", "devbox", "old"]);
 		expect(within(row("mac")).getByText("This node")).toBeTruthy();
-		expect(within(row("mac")).queryByText("Remove")).toBeNull();
-		expect(within(row("win")).getByText("Connected")).toBeTruthy();
-		expect(within(row("win")).getByText("assist 0.1123.0")).toBeTruthy();
+		expect(within(openMenu("mac")).queryByText("Remove node…")).toBeNull();
 	});
 
-	it("shows a disconnected node's last error and points version-blocked nodes at Updates", () => {
-		render(view({ local: "mac", links: [devbox, old] }));
+	it("shows one chip per row with a link problem outranking the update state", () => {
+		render(view({ local: "mac", links: [win, devbox, old] }));
+		expect(summary("mac").getByText("Up to date")).toBeTruthy();
+		expect(summary("win").getByText("Restart to update")).toBeTruthy();
+		expect(summary("devbox").getByText("Disconnected")).toBeTruthy();
+		expect(summary("devbox").queryByText("Restart to update")).toBeNull();
+		expect(summary("old").getByText("Link blocked")).toBeTruthy();
+	});
+
+	it("offers one contextual action and keeps pause and auto-restart in the menu", () => {
+		render(view({ local: "mac", links: [win] }));
 		expect(
-			within(row("devbox")).getByText("connect ECONNREFUSED 100.88.4.12:3100"),
+			within(row("win")).getAllByRole("button", { name: "Restart" }),
+		).toHaveLength(1);
+		const menu = openMenu("win");
+		expect(within(menu).getByText("Pause updates")).toBeTruthy();
+		expect(within(menu).getByText("Auto-restart")).toBeTruthy();
+		expect(within(menu).getByText("Remove node…")).toBeTruthy();
+	});
+
+	it("opens the detail by itself for nodes needing attention only", () => {
+		render(view({ local: "mac", links: [win, devbox, old] }));
+		expect(
+			within(row("mac")).queryByRole("region", { name: "Connection" }),
+		).toBeNull();
+		const devboxRow = within(row("devbox"));
+		expect(
+			devboxRow.getByText("connect ECONNREFUSED 100.88.4.12:3100"),
 		).toBeTruthy();
-		expect(within(row("old")).getByText(/older link protocol/)).toBeTruthy();
 		expect(
-			within(row("old")).getByRole("link", { name: "Updates page" }),
-		).toHaveProperty("href", expect.stringMatching(/\/updates$/));
+			devboxRow.getByText("Update state comes back when the link reconnects."),
+		).toBeTruthy();
+		expect(
+			within(row("old")).getByText(/runs an older link protocol/),
+		).toBeTruthy();
+		expect(within(row("old")).getByText("assist update")).toBeTruthy();
+		expect(
+			within(row("win")).getByText(/is built but not running/),
+		).toBeTruthy();
+	});
+
+	it("opens a calm node's detail from its chevron", () => {
+		render(view({ local: "mac", links: [] }));
+		fireEvent.click(
+			screen.getByRole("button", { name: "Show details for mac" }),
+		);
+		expect(within(row("mac")).getByText("Connection")).toBeTruthy();
+		expect(within(row("mac")).getByText("Updates")).toBeTruthy();
 	});
 
 	it("updates as link states change", () => {
@@ -104,23 +208,23 @@ describe("NodesView", () => {
 		rerender(
 			view({ local: "mac", links: [{ ...win, state: "disconnected" }] }),
 		);
-		expect(within(row("win")).getByText("Disconnected")).toBeTruthy();
+		expect(summary("win").getByText("Disconnected")).toBeTruthy();
 	});
 
-	it("asks for inline confirmation and keeps the node on Keep", () => {
+	it("keeps the node when Keep is chosen", () => {
 		render(view({ local: "mac", links: [win] }));
-		fireEvent.click(screen.getByRole("button", { name: "Remove win" }));
+		fireEvent.click(within(openMenu("win")).getByText("Remove node…"));
 		fireEvent.click(screen.getByRole("button", { name: "Keep" }));
-		expect(fetchMock).not.toHaveBeenCalled();
-		expect(screen.getByRole("button", { name: "Remove win" })).toBeTruthy();
+		expect(fetchMock).not.toHaveBeenCalledWith(
+			"/api/nodes/unlink",
+			expect.anything(),
+		);
+		expect(row("win")).toBeTruthy();
 	});
 
 	it("unlinks the node on confirm, drops its row and toasts", async () => {
-		respond({ ok: true, daemon: { kind: "reloaded" } });
 		render(view({ local: "mac", links: [win, devbox] }));
-		fireEvent.click(screen.getByRole("button", { name: "Remove win" }));
-		const confirm = screen.getByRole("group", { name: "Confirm removing win" });
-		fireEvent.click(within(confirm).getByRole("button", { name: "Remove" }));
+		removeVia("win");
 		await waitFor(() => expect(screen.getByText("Removed win")).toBeTruthy());
 		expect(fetchMock).toHaveBeenCalledWith(
 			"/api/nodes/unlink",
@@ -133,10 +237,10 @@ describe("NodesView", () => {
 	});
 
 	it("says the daemon picks the change up when it is not running", async () => {
-		respond({ ok: true, daemon: { kind: "not-running" } });
+		unlinkResponse = () =>
+			Response.json({ ok: true, daemon: { kind: "not-running" } });
 		render(view({ local: "mac", links: [win] }));
-		fireEvent.click(screen.getByRole("button", { name: "Remove win" }));
-		fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+		removeVia("win");
 		await waitFor(() =>
 			expect(
 				screen.getByText(
@@ -147,10 +251,10 @@ describe("NodesView", () => {
 	});
 
 	it("keeps the row and shows the error when the unlink fails", async () => {
-		respond({ error: "No link named win" }, 404);
+		unlinkResponse = () =>
+			Response.json({ error: "No link named win" }, { status: 404 });
 		render(view({ local: "mac", links: [win] }));
-		fireEvent.click(screen.getByRole("button", { name: "Remove win" }));
-		fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+		removeVia("win");
 		await waitFor(() =>
 			expect(
 				screen.getByText("Could not remove win: No link named win"),
