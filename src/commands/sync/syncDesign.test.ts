@@ -9,6 +9,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createSyncFiles } from "./createSyncFiles";
 import { syncDesign } from "./syncDesign";
 
 describe("syncDesign", () => {
@@ -32,7 +33,7 @@ describe("syncDesign", () => {
 	});
 
 	it("copies the design system prompt into the target base", () => {
-		syncDesign(claudeDir, targetBase);
+		syncDesign(claudeDir, targetBase, createSyncFiles([]));
 
 		expect(
 			readFileSync(join(targetBase, "design-system-prompt.md"), "utf8"),
@@ -40,7 +41,7 @@ describe("syncDesign", () => {
 	});
 
 	it("copies every design skill into the target skills directory", () => {
-		syncDesign(claudeDir, targetBase);
+		syncDesign(claudeDir, targetBase, createSyncFiles([]));
 
 		expect(
 			readFileSync(join(targetBase, "skills", "polish-pass.md"), "utf8"),
@@ -60,7 +61,9 @@ describe("syncDesign", () => {
 		mkdirSync(target, { recursive: true });
 		writeFileSync(join(target, "stale.mjs"), "OLD");
 
-		expect(syncDesign(claudeDir, targetBase)).toEqual(["deploy-flow"]);
+		expect(
+			syncDesign(claudeDir, targetBase, createSyncFiles([target])),
+		).toEqual(["deploy-flow"]);
 
 		expect(readFileSync(join(target, "SKILL.md"), "utf8")).toBe("SKILL");
 		expect(readFileSync(join(target, "workflow.yml"), "utf8")).toBe("WORKFLOW");
@@ -74,8 +77,37 @@ describe("syncDesign", () => {
 		mkdirSync(join(targetBase, "skills"));
 		writeFileSync(join(targetBase, "skills", "projects.json"), "{}");
 
-		syncDesign(claudeDir, targetBase);
+		syncDesign(claudeDir, targetBase, createSyncFiles([]));
 
 		expect(existsSync(join(targetBase, "skills", "projects.json"))).toBe(true);
+	});
+
+	it("leaves a user-authored design file and skill dir until confirmed", async () => {
+		mkdirSync(join(claudeDir, "skills", "deploy-flow"));
+		writeFileSync(
+			join(claudeDir, "skills", "deploy-flow", "SKILL.md"),
+			"SKILL",
+		);
+		mkdirSync(join(targetBase, "skills", "deploy-flow"), { recursive: true });
+		writeFileSync(join(targetBase, "skills", "deploy-flow", "mine.md"), "MINE");
+		writeFileSync(join(targetBase, "skills", "wireframe.md"), "MY WIREFRAME");
+		writeFileSync(join(targetBase, "design-system-prompt.md"), "MY PROMPT");
+		const files = createSyncFiles([]);
+
+		syncDesign(claudeDir, targetBase, files);
+		await files.finish(true);
+
+		expect(
+			readFileSync(join(targetBase, "skills", "wireframe.md"), "utf8"),
+		).toBe("MY WIREFRAME");
+		expect(
+			readFileSync(join(targetBase, "design-system-prompt.md"), "utf8"),
+		).toBe("MY PROMPT");
+		expect(
+			existsSync(join(targetBase, "skills", "deploy-flow", "mine.md")),
+		).toBe(true);
+		expect(
+			readFileSync(join(targetBase, "skills", "polish-pass.md"), "utf8"),
+		).toBe("POLISH");
 	});
 });

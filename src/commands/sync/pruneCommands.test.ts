@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { createSyncFiles } from "./createSyncFiles";
 import { pruneCommands } from "./pruneCommands";
 
 function seedTarget(...entries: string[]): string {
@@ -16,12 +17,15 @@ function seedTarget(...entries: string[]): string {
 	return targetDir;
 }
 
+const ownsAll = { owns: () => true, forget: () => {} };
+
 describe("pruneCommands", () => {
 	it("reports nothing when every command file matches a source name", () => {
 		const targetDir = seedTarget("commit.md", "verify.md");
 
 		const result = pruneCommands(targetDir, ["commit", "verify"], {
 			force: false,
+			owner: ownsAll,
 		});
 
 		expect(result).toEqual({
@@ -35,7 +39,10 @@ describe("pruneCommands", () => {
 	it("lists orphans without removing them when not forced", () => {
 		const targetDir = seedTarget("commit.md", "review-comments.md");
 
-		const result = pruneCommands(targetDir, ["commit"], { force: false });
+		const result = pruneCommands(targetDir, ["commit"], {
+			force: false,
+			owner: ownsAll,
+		});
 
 		expect(result.orphans).toEqual(["review-comments.md"]);
 		expect(result.removed).toEqual([]);
@@ -50,7 +57,10 @@ describe("pruneCommands", () => {
 			"next-backlog-item.md",
 		);
 
-		const result = pruneCommands(targetDir, ["commit"], { force: true });
+		const result = pruneCommands(targetDir, ["commit"], {
+			force: true,
+			owner: ownsAll,
+		});
 
 		expect(result.orphans).toEqual([
 			"associate-jira.md",
@@ -68,7 +78,10 @@ describe("pruneCommands", () => {
 	it("never removes subdirectories or non-md files", () => {
 		const targetDir = seedTarget("commit.md", "notes.txt", "archive/");
 
-		const result = pruneCommands(targetDir, ["commit"], { force: true });
+		const result = pruneCommands(targetDir, ["commit"], {
+			force: true,
+			owner: ownsAll,
+		});
 
 		expect(result.unmanaged.sort()).toEqual(["archive", "notes.txt"]);
 		expect(result.orphans).toEqual([]);
@@ -80,6 +93,7 @@ describe("pruneCommands", () => {
 	it("returns an empty result when the target dir does not exist", () => {
 		const result = pruneCommands(join(tmpdir(), "prune-commands-missing"), [], {
 			force: true,
+			owner: ownsAll,
 		});
 
 		expect(result).toEqual({
@@ -88,5 +102,16 @@ describe("pruneCommands", () => {
 			skipped: [],
 			unmanaged: [],
 		});
+	});
+
+	it("never removes a command file sync did not write", () => {
+		const targetDir = seedTarget("notes.md", "retired.md");
+		const owner = createSyncFiles([join(targetDir, "retired.md")]);
+
+		const result = pruneCommands(targetDir, [], { force: true, owner });
+
+		expect(result.unmanaged).toEqual(["notes.md"]);
+		expect(result.removed).toEqual(["retired.md"]);
+		expect(existsSync(join(targetDir, "notes.md"))).toBe(true);
 	});
 });

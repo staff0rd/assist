@@ -79,7 +79,7 @@ describe("sync", () => {
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			expect.stringContaining("skills"),
 			["commit", "verify"],
-			{ force: false },
+			{ force: false, owner: expect.anything() },
 		);
 	});
 
@@ -91,7 +91,7 @@ describe("sync", () => {
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			expect.stringContaining("skills"),
 			["commit", "verify", "deploy-flow"],
-			{ force: false },
+			{ force: false, owner: expect.anything() },
 		);
 	});
 
@@ -106,7 +106,7 @@ describe("sync", () => {
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			expect.stringContaining("skills"),
 			["commit"],
-			{ force: false },
+			{ force: false, owner: expect.anything() },
 		);
 	});
 
@@ -116,7 +116,7 @@ describe("sync", () => {
 		expect(mockPruneCommands).toHaveBeenCalledWith(
 			expect.stringContaining("commands"),
 			[],
-			{ force: false },
+			{ force: false, owner: expect.anything() },
 		);
 	});
 
@@ -126,39 +126,55 @@ describe("sync", () => {
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			expect.stringContaining("skills"),
 			["commit", "verify"],
-			{ force: true },
+			{ force: true, owner: expect.anything() },
 		);
 		expect(mockPruneCommands).toHaveBeenCalledWith(
 			expect.stringContaining("commands"),
 			[],
-			{ force: true },
+			{ force: true, owner: expect.anything() },
 		);
 	});
 
 	it("should forward the prune flags to the codex and pi syncs", async () => {
 		await sync({ prune: true, force: true });
 
-		expect(mockSyncCodex).toHaveBeenCalledWith(expect.any(String), {
-			prune: true,
-			force: true,
-		});
-		expect(mockSyncPi).toHaveBeenCalledWith(expect.any(String), {
-			prune: true,
-			force: true,
-		});
+		expect(mockSyncCodex).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.anything(),
+			{
+				prune: true,
+				force: true,
+			},
+		);
+		expect(mockSyncPi).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.anything(),
+			{
+				prune: true,
+				force: true,
+			},
+		);
 	});
 
 	it("should tell the codex and pi syncs not to prune by default", async () => {
 		await sync();
 
-		expect(mockSyncCodex).toHaveBeenCalledWith(expect.any(String), {
-			prune: undefined,
-			force: undefined,
-		});
-		expect(mockSyncPi).toHaveBeenCalledWith(expect.any(String), {
-			prune: undefined,
-			force: undefined,
-		});
+		expect(mockSyncCodex).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.anything(),
+			{
+				prune: undefined,
+				force: undefined,
+			},
+		);
+		expect(mockSyncPi).toHaveBeenCalledWith(
+			expect.any(String),
+			expect.anything(),
+			{
+				prune: undefined,
+				force: undefined,
+			},
+		);
 	});
 
 	it("should pass yes=false when autoConfirm is false and no --yes flag", async () => {

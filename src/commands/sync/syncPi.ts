@@ -3,6 +3,7 @@ import { stringify } from "yaml";
 import { harnesses, isHarnessAvailable } from "../../shared/harnesses";
 import { installDesignResources } from "./installDesignResources";
 import { installHarnessCommands } from "./installHarnessCommands";
+import type { SyncFiles } from "./createSyncFiles";
 import { pruneCommands } from "./pruneCommands";
 import type { PruneOptions } from "./pruneTarget";
 import { reportPrune } from "./reportPrune";
@@ -29,16 +30,21 @@ export function commandToPrompt(name: string, content: string): string {
 	return `---\n${frontmatterYaml}---\n\n${body.replace(/^\r?\n+/, "")}`;
 }
 
-export function syncPi(claudeDir: string, options?: PruneOptions): void {
+export function syncPi(
+	claudeDir: string,
+	files: SyncFiles,
+	options?: PruneOptions,
+): void {
 	if (!isHarnessAvailable("pi")) return;
 
 	const { synced, names } = installHarnessCommands(
 		claudeDir,
 		harnesses.pi,
 		commandToPrompt,
+		files,
 	);
 
-	const designSkills = installDesignResources(claudeDir, harnesses.pi);
+	const designSkills = installDesignResources(claudeDir, harnesses.pi, files);
 
 	syncPiHooks(path.join(claudeDir, "..", "pi"));
 
@@ -53,7 +59,10 @@ export function syncPi(claudeDir: string, options?: PruneOptions): void {
 
 	reportPrune(
 		"~/.pi/agent/prompts",
-		pruneCommands(path.join(harnesses.pi.homeDir, "prompts"), names, { force }),
+		pruneCommands(path.join(harnesses.pi.homeDir, "prompts"), names, {
+			force,
+			owner: files,
+		}),
 		force,
 	);
 }

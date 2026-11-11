@@ -7,9 +7,11 @@ import type { PruneOptions } from "./pruneTarget";
 import { reportPrune } from "./reportPrune";
 import { syncCodexHooks } from "./syncCodexHooks";
 import { commandToSkill } from "./commandToSkill";
+import type { SyncFiles } from "./createSyncFiles";
 
 export async function syncCodex(
 	claudeDir: string,
+	files: SyncFiles,
 	options?: PruneOptions,
 ): Promise<void> {
 	if (!isHarnessAvailable("codex")) return;
@@ -18,9 +20,14 @@ export async function syncCodex(
 		claudeDir,
 		harnesses.codex,
 		commandToSkill,
+		files,
 	);
 
-	const designSkills = installDesignResources(claudeDir, harnesses.codex);
+	const designSkills = installDesignResources(
+		claudeDir,
+		harnesses.codex,
+		files,
+	);
 
 	await syncCodexHooks(path.join(claudeDir, "..", "codex", "config.toml"));
 
@@ -38,7 +45,7 @@ export async function syncCodex(
 		pruneSkills(
 			path.join(harnesses.codex.homeDir, "skills"),
 			[...names, ...designSkills],
-			{ force },
+			{ force, owner: files },
 		),
 		force,
 	);

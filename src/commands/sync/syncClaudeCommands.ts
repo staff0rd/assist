@@ -2,37 +2,29 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { harnesses } from "../../shared/harnesses";
 import { commandToSkill } from "./commandToSkill";
+import type { SyncFiles } from "./createSyncFiles";
 import { markdownNames } from "./markdownNames";
 import { renderHarnessPaths } from "./renderHarnessPaths";
-
-function replaceFileWithoutFollowingSymlink(
-	file: string,
-	content: string,
-): void {
-	fs.rmSync(file, { force: true });
-	fs.writeFileSync(file, content);
-}
-
-function writeSkill(targetBase: string, name: string, content: string): void {
-	const skillDir = path.join(targetBase, "skills", name);
-	fs.mkdirSync(skillDir, { recursive: true });
-	replaceFileWithoutFollowingSymlink(
-		path.join(skillDir, "SKILL.md"),
-		commandToSkill(name, content),
-	);
-	fs.rmSync(path.join(targetBase, "commands", `${name}.md`), { force: true });
-}
 
 export function syncClaudeCommands(
 	claudeDir: string,
 	targetBase: string,
+	files: SyncFiles,
 ): string[] {
 	const sourceDir = path.join(claudeDir, "commands");
 	const names = markdownNames(sourceDir);
 
 	for (const name of names) {
 		const content = fs.readFileSync(path.join(sourceDir, `${name}.md`), "utf8");
-		writeSkill(targetBase, name, renderHarnessPaths(content, harnesses.claude));
+		const rendered = renderHarnessPaths(content, harnesses.claude);
+		files.write(
+			path.join(targetBase, "skills", name, "SKILL.md"),
+			commandToSkill(name, rendered),
+		);
+		files.remove(path.join(targetBase, "commands", `${name}.md`), [
+			content,
+			rendered,
+		]);
 	}
 
 	console.log(

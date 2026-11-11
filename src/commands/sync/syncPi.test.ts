@@ -37,6 +37,9 @@ vi.mock("node:fs", async () =>
 );
 
 import { harnesses } from "../../shared/harnesses";
+import { createSyncFiles } from "./createSyncFiles";
+
+const files = createSyncFiles([]);
 import { commandToPrompt, syncPi } from "./syncPi";
 
 describe("commandToPrompt", () => {
@@ -111,7 +114,7 @@ describe("syncPi", () => {
 
 	it("does nothing when pi is not available", () => {
 		mockIsHarnessAvailable.mockReturnValue(false);
-		syncPi("/claude", { prune: true, force: true });
+		syncPi("/claude", files, { prune: true, force: true });
 		expect(mockReaddirSync).not.toHaveBeenCalled();
 		expect(mockWriteFileSync).not.toHaveBeenCalled();
 		expect(mockCopyFileSync).not.toHaveBeenCalled();
@@ -119,33 +122,33 @@ describe("syncPi", () => {
 	});
 
 	it("does not prune without --prune", () => {
-		syncPi("/claude");
+		syncPi("/claude", files);
 
 		expect(mockPruneCommands).not.toHaveBeenCalled();
 	});
 
 	it("prunes ~/.pi/agent/prompts against the synced command names", () => {
-		syncPi("/claude", { prune: true });
+		syncPi("/claude", files, { prune: true });
 
 		expect(mockPruneCommands).toHaveBeenCalledWith(
 			path.join(harnesses.pi.homeDir, "prompts"),
 			["refine"],
-			{ force: false },
+			{ force: false, owner: files },
 		);
 	});
 
 	it("forwards --force to the prompts prune", () => {
-		syncPi("/claude", { prune: true, force: true });
+		syncPi("/claude", files, { prune: true, force: true });
 
 		expect(mockPruneCommands).toHaveBeenCalledWith(
 			path.join(harnesses.pi.homeDir, "prompts"),
 			["refine"],
-			{ force: true },
+			{ force: true, owner: files },
 		);
 	});
 
 	it("writes each command as prompts/<name>.md, skipping non-md files", () => {
-		syncPi("/claude");
+		syncPi("/claude", files);
 
 		const promptTarget = path.join(
 			harnesses.pi.homeDir,
@@ -160,13 +163,13 @@ describe("syncPi", () => {
 			recursive: true,
 		});
 		const wrote = mockWriteFileSync.mock.calls.filter(([target]) =>
-			String(target).endsWith(".md"),
+			String(target).startsWith(path.dirname(promptTarget)),
 		);
 		expect(wrote).toHaveLength(1);
 	});
 
 	it("no longer writes ~/.pi/agent/AGENTS.md", () => {
-		syncPi("/claude");
+		syncPi("/claude", files);
 
 		expect(mockCopyFileSync).not.toHaveBeenCalledWith(
 			expect.anything(),
@@ -175,7 +178,7 @@ describe("syncPi", () => {
 	});
 
 	it("installs the advice extension from the pi source dir", () => {
-		syncPi("/claude");
+		syncPi("/claude", files);
 
 		expect(mockCopyFileSync).toHaveBeenCalledWith(
 			path.join("/claude", "..", "pi", "advice.ts"),
@@ -184,7 +187,7 @@ describe("syncPi", () => {
 	});
 
 	it("installs the permission-gate and status-driver extensions from the pi source dir", () => {
-		syncPi("/claude");
+		syncPi("/claude", files);
 
 		expect(mockCopyFileSync).toHaveBeenCalledWith(
 			path.join("/claude", "..", "pi", "permission-gate.ts"),

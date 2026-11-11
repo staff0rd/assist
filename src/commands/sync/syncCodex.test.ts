@@ -45,6 +45,9 @@ vi.mock("node:fs", async () =>
 );
 
 import { harnesses } from "../../shared/harnesses";
+import { createSyncFiles } from "./createSyncFiles";
+
+const files = createSyncFiles([]);
 import { syncCodex } from "./syncCodex";
 import { commandToSkill } from "./commandToSkill";
 
@@ -121,7 +124,7 @@ describe("syncCodex", () => {
 
 	it("does nothing when codex is not available", async () => {
 		mockIsHarnessAvailable.mockReturnValue(false);
-		await syncCodex("/claude", { prune: true, force: true });
+		await syncCodex("/claude", files, { prune: true, force: true });
 		expect(mockReaddirSync).not.toHaveBeenCalled();
 		expect(mockWriteFileSync).not.toHaveBeenCalled();
 		expect(mockCopyFileSync).not.toHaveBeenCalled();
@@ -129,33 +132,33 @@ describe("syncCodex", () => {
 	});
 
 	it("does not prune without --prune", async () => {
-		await syncCodex("/claude");
+		await syncCodex("/claude", files);
 
 		expect(mockPruneSkills).not.toHaveBeenCalled();
 	});
 
 	it("prunes ~/.codex/skills against the synced command names", async () => {
-		await syncCodex("/claude", { prune: true });
+		await syncCodex("/claude", files, { prune: true });
 
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "skills"),
 			["refine", "polish-pass"],
-			{ force: false },
+			{ force: false, owner: files },
 		);
 	});
 
 	it("forwards --force to the skills prune", async () => {
-		await syncCodex("/claude", { prune: true, force: true });
+		await syncCodex("/claude", files, { prune: true, force: true });
 
 		expect(mockPruneSkills).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "skills"),
 			["refine", "polish-pass"],
-			{ force: true },
+			{ force: true, owner: files },
 		);
 	});
 
 	it("writes each command as skills/<name>/SKILL.md, skipping non-md files", async () => {
-		await syncCodex("/claude");
+		await syncCodex("/claude", files);
 
 		const skillTarget = path.join(
 			harnesses.codex.homeDir,
@@ -173,11 +176,11 @@ describe("syncCodex", () => {
 	});
 
 	it("installs the design system prompt and design skills as native Codex skills", async () => {
-		await syncCodex("/claude");
+		await syncCodex("/claude", files);
 
-		expect(mockCopyFileSync).toHaveBeenCalledWith(
-			path.join("/claude", "design-system-prompt.md"),
+		expect(mockWriteFileSync).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "assist", "design-system-prompt.md"),
+			expect.any(String),
 		);
 		expect(mockWriteFileSync).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "skills", "polish-pass", "SKILL.md"),
@@ -195,7 +198,7 @@ describe("syncCodex", () => {
 	});
 
 	it("registers the codex-hook adapter in ~/.codex/config.toml", async () => {
-		await syncCodex("/claude");
+		await syncCodex("/claude", files);
 
 		const configTarget = path.join(harnesses.codex.homeDir, "config.toml");
 		const write = mockWriteFileSync.mock.calls.find(
@@ -210,7 +213,7 @@ describe("syncCodex", () => {
 	});
 
 	it("trusts exactly the managed block's handler keys after writing them", async () => {
-		await syncCodex("/claude");
+		await syncCodex("/claude", files);
 
 		expect(mockTrustAssistCodexHooks).toHaveBeenCalledWith(
 			path.join(harnesses.codex.homeDir, "config.toml"),
@@ -222,7 +225,7 @@ describe("syncCodex", () => {
 	});
 
 	it("no longer writes ~/.codex/AGENTS.md", async () => {
-		await syncCodex("/claude");
+		await syncCodex("/claude", files);
 
 		expect(mockCopyFileSync).not.toHaveBeenCalledWith(
 			expect.anything(),

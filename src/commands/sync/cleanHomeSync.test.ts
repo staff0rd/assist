@@ -8,6 +8,7 @@ import {
 import type * as osModule from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createSyncFiles } from "./createSyncFiles";
 import { syncCodex } from "./syncCodex";
 import { syncPi } from "./syncPi";
 
@@ -48,8 +49,9 @@ describe("clean-home sync with only Codex installed", () => {
 	});
 
 	async function syncHarnesses() {
-		await syncCodex(repoClaudeDir);
-		syncPi(repoClaudeDir);
+		const files = createSyncFiles([]);
+		await syncCodex(repoClaudeDir, files);
+		syncPi(repoClaudeDir, files);
 	}
 
 	it("installs design mode's prompt and native design skills for Codex", async () => {
