@@ -1,17 +1,18 @@
 ---
 description: Capture a new CLAUDE.md rule from a review comment
-allowed_args: "[quoted text, file and note from the comment pane]"
+allowed_args: "[quoted text, file and note from the comment pane] [--repo [name] | --user | --node]"
 ---
 
 You are turning a review comment into a written rule in a `CLAUDE.md` file, so the same mistake is caught next time. `$ARGUMENTS` carries what the comment pane sent: an optional `File:` line, the quoted text in a fenced block, and the reviewer's note.
 
 ## Step 1: Read what you were given
 
-Pull three things out of `$ARGUMENTS`:
+Pull these out of `$ARGUMENTS`:
 
 - **File** — the path the selection came from, if a `File:` line is present. The document preview pane has no path, so it may be missing.
 - **Quote** — the selected text, the concrete example of the rule being broken.
 - **Note** — the reviewer's words, the substance of the rule.
+- **Scope flag** — a `--repo` (optionally followed by a repo name), `--user` or `--node` in the arguments. It is an instruction about where the rule goes, not part of the note: strip it from the note before wording the rule.
 
 If `$ARGUMENTS` is empty, ask the user what rule they want to add and skip to Step 3.
 
@@ -25,9 +26,14 @@ Ask the user a clarifying question only when the note is genuinely too vague to 
 
 ## Step 3: Work out the scope
 
-The scope is the directory whose `CLAUDE.md` gets the rule, or `user (db)`. Infer it — do not ask by default:
+The scope is the directory whose `CLAUDE.md` gets the rule, or `advice.rules` in `repo (db)`, `user (db)` or `user (node)`.
+
+If Step 1 found a scope flag, it fixes the scope: `--repo [name]` is `repo (db)` (for the named repo when one follows), `--user` is `user (db)`, `--node` is `user (node)`. Use it as given — do not infer a different scope or second-guess it — and go to Step 4.
+
+Otherwise infer it — do not ask by default:
 
 - If the rule is about agent conduct that holds in every repo rather than about this repo's code or docs (e.g. "give the URL, not a nav path", "don't ask for sign-off in chat"), the scope is **`user (db)`**: it goes to `advice.rules` in the shared db and reaches every session in every repo on every node. A rule that only makes sense for this repo's files, conventions or tooling never goes there. Use `user (node)` (this node's `~/.assist.yml`) only when the user asks for the rule to stay on this node.
+- If the rule is about agent conduct specific to this repo (how to work in it, its tooling or workflow) and should reach every node working on it, but is not a convention about the repo's code or docs that belongs in a checked-in `CLAUDE.md`, the scope is **`repo (db)`**: it goes to `advice.rules` in the shared per-repo override that every node sees for this repo.
 - With a file path, the default is the nearest `CLAUDE.md` walking up from that file's directory to the repo root. `assist rules list <path>` shows what is already in scope there, which tells you where sibling rules live.
 - If the note is clearly about a kind of document that lives in one directory (and the file sits in it), that directory's `CLAUDE.md` is the scope — pass `--scope <dir>/CLAUDE.md` to create it there when it does not exist yet.
 - If the rule plainly applies repo-wide, use the root `CLAUDE.md`.
@@ -49,14 +55,14 @@ For a `user (db)` rule, pass `--user` instead of `--scope` (the two can't be com
 assist rules add '<rule text>' --title '<title>' --user 2>&1
 ```
 
-It appends the rule to `advice.rules` in `user (db)` with no R-code. For `user (node)`, pass `--node` instead of `--user`.
+It appends the rule to `advice.rules` in `user (db)` with no R-code. For `user (node)`, pass `--node` instead of `--user`. For `repo (db)`, pass `--repo` (or `--repo <name>` when the flag named a repo) instead; it appends to `advice.rules` in that repo's `repo (db)` block.
 
 Use single quotes around the rule text to avoid shell escaping issues.
 
-Show the command output — it names the allocated code (or, for a `user (db)` or `user (node)` rule, the title) and where it went — then tell the user in one line which rule was added and where.
+Show the command output — it names the allocated code (or, for an `advice.rules` rule, the title) and where it went — then tell the user in one line which rule was added and where.
 
 ## Step 5: Fix what broke it
 
-The rule exists because something broke it, so the quoted text is now a live violation. Rectify it in the same pass, without being asked: edit the quoted text in the file the `File:` line named, so it follows the rule you just wrote. Where there was no `File:` line, fix the draft or the text the quote came from. A `user (db)` or `user (node)` rule is no exception: the quoted violation still gets fixed, even though the rule went to `advice.rules` rather than a file in this repo.
+The rule exists because something broke it, so the quoted text is now a live violation. Rectify it in the same pass, without being asked: edit the quoted text in the file the `File:` line named, so it follows the rule you just wrote. Where there was no `File:` line, fix the draft or the text the quote came from. An `advice.rules` rule (`repo (db)`, `user (db)` or `user (node)`) is no exception: the quoted violation still gets fixed, even though the rule went to `advice.rules` rather than a file in this repo.
 
 Fix the instance you were given. Do not sweep the rest of the repo for other violations of the new rule unless the user asks for that.
