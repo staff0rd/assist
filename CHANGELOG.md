@@ -1,3 +1,10 @@
+## [0.1120.1](https://github.com/staff0rd/assist/compare/v0.1120.0...v0.1120.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* keep database.* in user (node) ([722128b](https://github.com/staff0rd/assist/commit/722128b2d44a84f8d578074e2fdeac2b2320e49a))
+
 # [0.1120.0](https://github.com/staff0rd/assist/compare/v0.1119.0...v0.1120.0) (2026-11-11)
 
 
