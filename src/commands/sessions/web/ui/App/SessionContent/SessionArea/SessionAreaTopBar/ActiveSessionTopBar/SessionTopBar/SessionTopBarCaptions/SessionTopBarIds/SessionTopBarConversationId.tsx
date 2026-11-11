@@ -3,7 +3,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import type { HarnessKind } from "../../../../../../../../../../../../shared/harnesses";
-import { harnessProductLabel } from "../../../../../../../../../../../../shared/harnessLabel";
+import { harnessProductLabel } from "../../../../../../../../../../../../shared/harnessAdapters/harnessLabel";
 import { topBarIdSx } from "./topBarIdSx";
 import { useCopyFeedback } from "../../../../../../../useCopyFeedback";
 

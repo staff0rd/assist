@@ -26,6 +26,14 @@ vi.mock("./src/shared/prepareCodexHookTrust", () => ({
 	prepareCodexHookTrust: () => undefined,
 }));
 
+vi.mock("./src/shared/harnessAdapters/codexHookProbe", () => ({
+	codexHookProbe: () => ({ supported: true }),
+}));
+
+vi.mock("./src/shared/harnessAdapters/piExtensionProbe", () => ({
+	piExtensionProbe: () => ({ supported: true }),
+}));
+
 const storeDir = mkdtempSync(join(tmpdir(), "assist-test-store-"));
 process.env.ASSIST_STORE_DIR = storeDir;
 process.env.ASSIST_WATCHER_LOG_DIR = join(storeDir, "watchers");

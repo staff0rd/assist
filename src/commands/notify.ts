@@ -1,6 +1,9 @@
 import { activeHarness } from "../lib/activeHarness";
 import { readStdin } from "../lib/readStdin";
-import { harnessLabel, harnessProductLabel } from "../shared/harnessLabel";
+import {
+	harnessLabel,
+	harnessProductLabel,
+} from "../shared/harnessAdapters/harnessLabel";
 import { loadConfig } from "../shared/loadConfig";
 import { showNotification } from "./notify/showNotification";
 

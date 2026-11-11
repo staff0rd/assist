@@ -1,5 +1,5 @@
 import type { HarnessKind } from "../../shared/harnesses";
-import { harnessLabel } from "../../shared/harnessLabel";
+import { harnessLabel } from "../../shared/harnessAdapters/harnessLabel";
 
 export function schemaHarnessLabel(harness: string): string {
 	return harnessLabel(harness as HarnessKind);

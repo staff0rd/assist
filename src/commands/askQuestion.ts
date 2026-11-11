@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { activeHarness } from "../lib/activeHarness";
-import { harnessLabel } from "../shared/harnessLabel";
+import { harnessLabel } from "../shared/harnessAdapters/harnessLabel";
 import { loadConfig } from "../shared/loadConfig";
 import { askQuestionEnabled } from "./askQuestion/askQuestionEnabled";
 import { formatAskQuestionAnswers } from "./askQuestion/formatAskQuestionAnswers";

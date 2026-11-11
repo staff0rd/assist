@@ -1,6 +1,8 @@
 import { editEnforcement } from "./editEnforcement";
+import { editGuardFeatures } from "./editGuardFeatures";
 import { prFeatures } from "./prFeatures";
 import { reviewFeatures } from "./reviewFeatures";
+import { transcriptFeatures } from "./transcriptFeatures";
 import type { HarnessFeature } from "./types";
 
 export const refineFeature: HarnessFeature = {
@@ -107,8 +109,14 @@ const writeAttributionFeature: HarnessFeature = {
 
 const diffCommentsFeature: HarnessFeature = {
 	id: "diffComments",
-	label: "Diff and file-preview comments",
+	label: "Diff panel and file-preview comments",
 	requires: [],
+};
+
+const diffLinkCommentsFeature: HarnessFeature = {
+	id: "diffLinkComments",
+	label: "Comments from a standalone /diff link",
+	requires: ["conversation.id"],
 };
 
 export const designFeature: HarnessFeature = {
@@ -146,6 +154,7 @@ export const harnessFeatures: HarnessFeature[] = [
 	diffCommitScopeFeature,
 	writeAttributionFeature,
 	diffCommentsFeature,
+	diffLinkCommentsFeature,
 	usageLimitsFeature,
 	inboxFeature,
 	previewQuestionsFeature,
@@ -153,4 +162,6 @@ export const harnessFeatures: HarnessFeature[] = [
 	designReviewFeature,
 	...reviewFeatures,
 	...prFeatures,
+	...transcriptFeatures,
+	...editGuardFeatures,
 ];

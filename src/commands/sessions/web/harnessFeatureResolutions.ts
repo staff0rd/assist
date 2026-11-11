@@ -6,7 +6,7 @@ import type {
 	CapabilityStatus,
 	FeatureResolution,
 } from "../../../shared/harnessAdapters/types";
-import { harnessLabel } from "../../../shared/harnessLabel";
+import { harnessLabel } from "../../../shared/harnessAdapters/harnessLabel";
 import { type HarnessKind, harnesses } from "../../../shared/harnesses";
 import type { AssistConfig } from "../../../shared/types";
 import { harnessOffSwitch } from "./harnessOffSwitch";

@@ -1,9 +1,10 @@
 import { spawnPi as spawnPiPty } from "../../commands/sessions/daemon/spawnPi";
-import { harnessLabel } from "../harnessLabel";
+import { harnessLabel } from "./harnessLabel";
 import { spawnPi } from "../spawnPi";
 import { buildSlashCommand } from "./buildSlashCommand";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
+import { piExtensionProbe } from "./piExtensionProbe";
 import { piToolOperations } from "./piToolOperations";
 import { rejectConnectorRun } from "./rejectConnectorRun";
 import type { HarnessAdapter } from "./types";
@@ -19,7 +20,12 @@ function noOneShot(): never {
 export const piAdapter: HarnessAdapter = {
 	kind: "pi",
 	label: harnessLabel("pi"),
-	capabilities: harnessCapabilityDeclarations.pi,
+	capabilities: {
+		...harnessCapabilityDeclarations.pi,
+		"intercept.command": piExtensionProbe,
+		"intercept.fileRead": piExtensionProbe,
+		"intercept.fileWrite": piExtensionProbe,
+	},
 	detect: () => detectHarness("pi"),
 	conversation: {
 		idName: "pi conversation id",

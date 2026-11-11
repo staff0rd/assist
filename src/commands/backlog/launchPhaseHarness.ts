@@ -4,7 +4,7 @@ import type { HarnessKind } from "../../shared/harnesses";
 import type { SpawnClaudeOptions } from "../../shared/spawnClaude";
 import { stopWatching, watchForMarker } from "./watchForMarker";
 
-export async function launchPhaseClaude(
+export async function launchPhaseHarness(
 	prompt: string,
 	spawnOptions: SpawnClaudeOptions,
 	context: string,

@@ -1,4 +1,4 @@
-import { resolveHarness } from "../../../../../../../../../shared/harnessLabel";
+import { resolveHarness } from "../../../../../../../../../shared/harnessAdapters/harnessLabel";
 import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
 import type { HarnessCapabilities } from "../../../../../parseHarnessCapabilities";
 

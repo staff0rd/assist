@@ -2,7 +2,7 @@ import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import type { Theme } from "@mui/material/styles";
-import { harnessLabel } from "../../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../../shared/harnessAdapters/harnessLabel";
 import type { ReviewModeEntry } from "../../App/reviewModeEntries";
 import { touchTarget } from "../../designSystem/touchTarget";
 import { PhoneSheetItem } from "./PhoneSheetItem";

@@ -1,5 +1,5 @@
 import type { HarnessKind } from "../harnesses";
-import { resolveHarness } from "../harnessLabel";
+import { resolveHarness } from "./harnessLabel";
 import { claudeAdapter } from "./claudeAdapter";
 import { codexAdapter } from "./codexAdapter";
 import { piAdapter } from "./piAdapter";

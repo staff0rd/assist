@@ -38,6 +38,23 @@ const fixtures: Record<string, string> = {
 	return kind === "claude-code" || kind === "assist";
 }
 `,
+	"harnessMap.ts": `export const thresholds = { claude: 1, "codex": 2, pi: 3 };
+`,
+	"singleKey.ts": `export const options = { claude: true, other: 1 };
+`,
+	"harnessDefault.ts": `export function f(harness?: string, kind = "codex") {
+	return [harness ?? "claude", harness || "pi", kind];
+}
+`,
+	"returnsHarness.ts": `export function f(claude: boolean) {
+	if (claude) return "claude";
+	return undefined;
+}
+`,
+	"otherDefault.ts": `export function f(name?: string) {
+	return name ?? "assist";
+}
+`,
 	"allowedBranch.ts": `export function f(harness: string) {
 	return harness === "claude";
 }
@@ -112,7 +129,21 @@ describe("harness/no-harness-branches", () => {
 		expect(hits("switchBranch.ts")).toBe(2);
 	});
 
+	it("fires on an object keyed by harness names", () => {
+		expect(hits("harnessMap.ts")).toBe(1);
+	});
+
+	it("fires on each concrete-harness default", () => {
+		expect(hits("harnessDefault.ts")).toBe(3);
+	});
+
+	it("fires on returning a concrete harness", () => {
+		expect(hits("returnsHarness.ts")).toBe(1);
+	});
+
 	it.each([
+		"singleKey.ts",
+		"otherDefault.ts",
 		"sessionType.ts",
 		"otherLiteral.ts",
 		"allowedBranch.ts",

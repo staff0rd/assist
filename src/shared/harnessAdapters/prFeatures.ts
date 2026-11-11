@@ -13,7 +13,21 @@ export const reviewPrCommentsFeature: HarnessFeature = {
 	requires: ["skills.native", ...editEnforcement],
 };
 
+export const addressCommentsChainFeature: HarnessFeature = {
+	id: "addressCommentsChain",
+	label: "Address comments chained by review --address-comments",
+	requires: reviewPrCommentsFeature.requires,
+};
+
+const reviewPrCommentsQuestionsFeature: HarnessFeature = {
+	id: "reviewPrCommentsQuestions",
+	label: "Address comments' per-thread preview-pane questions",
+	requires: ["intercept.question"],
+};
+
 export const prFeatures: HarnessFeature[] = [
 	fixConflictFeature,
 	reviewPrCommentsFeature,
+	addressCommentsChainFeature,
+	reviewPrCommentsQuestionsFeature,
 ];

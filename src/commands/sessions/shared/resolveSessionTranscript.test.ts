@@ -1,120 +1,112 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { claudeConversationReader } from "../../../shared/harnessAdapters/claudeConversationReader";
+import { codexConversationReader } from "../../../shared/harnessAdapters/codexConversationReader";
+import type { ConversationReader } from "../../../shared/harnessAdapters/types";
+
+vi.mock("./locateConversation", () => ({ locateConversation: vi.fn() }));
+
+import { locateConversation } from "./locateConversation";
 import { resolveSessionTranscript } from "./resolveSessionTranscript";
 
 const SESSION_ID = "991a1fde-669f-43f0-9b30-60892465b411";
+const mockLocate = vi.mocked(locateConversation);
 
-let projectsRoot: string;
-
-function writeTranscript(
-	projectDir: string,
-	sessionId: string,
-	lines: unknown[],
-): string {
-	const dir = join(projectsRoot, projectDir);
-	mkdirSync(dir, { recursive: true });
-	const filePath = join(dir, `${sessionId}.jsonl`);
+function located(reader: ConversationReader, lines: unknown[]) {
+	const filePath = join(
+		mkdtempSync(join(tmpdir(), "session-transcript-")),
+		`${SESSION_ID}.jsonl`,
+	);
 	writeFileSync(
 		filePath,
 		`${lines.map((l) => JSON.stringify(l)).join("\n")}\n`,
 	);
+	mockLocate.mockResolvedValue({ reader, filePath });
 	return filePath;
 }
 
-function userLine(text: string, timestamp: string) {
-	return {
-		type: "user",
-		sessionId: SESSION_ID,
-		cwd: "/home/dev/other-repo",
-		timestamp,
-		message: { content: text },
-	};
-}
+const claudeUser = (text: string) => ({
+	type: "user",
+	sessionId: SESSION_ID,
+	message: { content: text },
+});
 
 describe("resolveSessionTranscript", () => {
-	beforeEach(() => {
-		projectsRoot = mkdtempSync(join(tmpdir(), "session-transcript-"));
-	});
+	beforeEach(() => mockLocate.mockReset());
 
-	afterEach(() => {
-		rmSync(projectsRoot, { recursive: true, force: true });
-	});
-
-	it("resolves a transcript under a project directory for another repo", () => {
-		mkdirSync(join(projectsRoot, "-home-dev-assist"), { recursive: true });
-		const filePath = writeTranscript("-home-dev-other-repo", SESSION_ID, [
-			userLine("Fix the flaky test", "2026-08-10T01:00:00.000Z"),
+	it("resolves a Claude transcript and names it after the first prompt", async () => {
+		const filePath = located(claudeConversationReader, [
+			claudeUser("Fix the flaky test"),
 		]);
 
-		const resolved = resolveSessionTranscript(SESSION_ID, projectsRoot);
-
-		expect(resolved?.path).toBe(filePath);
-		expect(resolved?.prompt).toBe("Fix the flaky test");
+		expect(await resolveSessionTranscript(SESSION_ID)).toEqual({
+			path: filePath,
+			prompt: "Fix the flaky test",
+		});
+		expect(mockLocate).toHaveBeenCalledWith(SESSION_ID);
 	});
 
-	it("returns undefined when no transcript exists for the session", () => {
-		writeTranscript("-home-dev-assist", "another-session", [
-			userLine("Something else", "2026-08-10T01:00:00.000Z"),
+	it("resolves a Codex rollout through its reader", async () => {
+		const filePath = located(codexConversationReader, [
+			{ type: "session_meta", payload: { id: SESSION_ID } },
+			{
+				type: "event_msg",
+				payload: { type: "user_message", message: "Tidy the README" },
+			},
 		]);
 
-		expect(resolveSessionTranscript(SESSION_ID, projectsRoot)).toBeUndefined();
+		expect(await resolveSessionTranscript(SESSION_ID)).toEqual({
+			path: filePath,
+			prompt: "Tidy the README",
+		});
 	});
 
-	it("returns undefined when the projects root does not exist", () => {
-		expect(
-			resolveSessionTranscript(SESSION_ID, join(projectsRoot, "missing")),
-		).toBeUndefined();
+	it("returns undefined when no harness holds the conversation", async () => {
+		mockLocate.mockResolvedValue(undefined);
+		expect(await resolveSessionTranscript(SESSION_ID)).toBeUndefined();
 	});
 
-	it("strips command markers from the prompt", () => {
-		writeTranscript("-home-dev-assist", SESSION_ID, [
-			userLine(
-				"<command-name>/verify</command-name><command-args></command-args>Run the checks",
-				"2026-08-10T02:00:00.000Z",
-			),
-		]);
-
-		expect(resolveSessionTranscript(SESSION_ID, projectsRoot)?.prompt).toBe(
-			"Run the checks",
-		);
-	});
-
-	it("names a slash-command session after the command and its args", () => {
-		writeTranscript("-home-dev-assist", SESSION_ID, [
-			userLine(
+	it("names a slash-command session after the command and its args", async () => {
+		located(claudeConversationReader, [
+			claudeUser(
 				"<command-message>bug</command-message>\n<command-name>/bug</command-name>\n<command-args>no hyperlink preview on hover</command-args>",
-				"2026-08-10T02:00:00.000Z",
 			),
 		]);
 
-		expect(resolveSessionTranscript(SESSION_ID, projectsRoot)?.prompt).toBe(
+		expect((await resolveSessionTranscript(SESSION_ID))?.prompt).toBe(
 			"/bug no hyperlink preview on hover",
 		);
 	});
 
-	it("names an argument-free slash-command session after the command", () => {
-		writeTranscript("-home-dev-assist", SESSION_ID, [
-			userLine(
+	it("names an argument-free slash-command session after the command", async () => {
+		located(claudeConversationReader, [
+			claudeUser(
 				"<command-name>/verify</command-name><command-args></command-args>",
-				"2026-08-10T02:00:00.000Z",
 			),
 		]);
 
-		expect(resolveSessionTranscript(SESSION_ID, projectsRoot)?.prompt).toBe(
+		expect((await resolveSessionTranscript(SESSION_ID))?.prompt).toBe(
 			"/verify",
 		);
 	});
 
-	it("omits the prompt a transcript without user messages cannot supply", () => {
-		writeTranscript("-home-dev-assist", SESSION_ID, [
+	it("caps the prompt at 80 characters", async () => {
+		located(claudeConversationReader, [claudeUser("x".repeat(120))]);
+		expect((await resolveSessionTranscript(SESSION_ID))?.prompt).toHaveLength(
+			80,
+		);
+	});
+
+	it("omits the prompt a transcript without user messages cannot supply", async () => {
+		const filePath = located(claudeConversationReader, [
 			{ type: "summary", summary: "no prompts here" },
 		]);
 
-		const resolved = resolveSessionTranscript(SESSION_ID, projectsRoot);
-
-		expect(resolved?.path).toContain(`${SESSION_ID}.jsonl`);
-		expect(resolved?.prompt).toBeUndefined();
+		expect(await resolveSessionTranscript(SESSION_ID)).toEqual({
+			path: filePath,
+			prompt: undefined,
+		});
 	});
 });

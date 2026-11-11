@@ -1,5 +1,5 @@
 import { type HarnessKind, harnesses, isHarnessAvailable } from "../harnesses";
-import { harnessLabel } from "../harnessLabel";
+import { harnessLabel } from "./harnessLabel";
 import type { CapabilityStatus } from "./types";
 import { supported, unsupported } from "./unsupported";
 

@@ -1,6 +1,6 @@
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import type { HarnessKind } from "../../../../../shared/harnesses";
-import { harnessLabel } from "../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../shared/harnessAdapters/harnessLabel";
 import { harnessResumesConversation } from "../../../../../shared/harnessResumesConversation";
 import { ConfirmDialog } from "../../../../backlog/web/ui/components/ConfirmDialog";
 import { useShiftSkipConfirm } from "../useShiftSkipConfirm";

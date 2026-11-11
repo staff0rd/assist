@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
-import { legacyDefaultHarness } from "../../shared/harnessLabel";
+import { legacyDefaultHarness } from "../../shared/harnessAdapters/harnessLabel";
 import {
 	getSchemaSessionApprovalPath,
 	type SchemaSessionScope,

@@ -1,6 +1,6 @@
 import { harnessUsageAccounts } from "./harnessAdapters/harnessUsageAccounts";
 import type { HarnessKind } from "./harnesses";
-import { resolveHarness } from "./harnessLabel";
+import { resolveHarness } from "./harnessAdapters/harnessLabel";
 
 export type RateLimitWindow = "five_hour" | "seven_day";
 

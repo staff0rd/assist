@@ -7,6 +7,7 @@ import {
 } from "../../commands/sessions/shared/codex/parseRolloutEntry";
 import { codexMessageEvents } from "./codexMessageEvents";
 import { codexToolEvents } from "./codexToolEvents";
+import { codexUnrecognisedShapes } from "./codexUnrecognisedShapes";
 import type { ConversationEvent, ConversationReader } from "./types";
 
 type Entry = Record<string, unknown>;
@@ -47,4 +48,5 @@ export const codexConversationReader: ConversationReader = {
 		asking: false,
 	}),
 	fingerprint,
+	unrecognised: codexUnrecognisedShapes,
 };

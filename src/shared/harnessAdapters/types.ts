@@ -128,6 +128,7 @@ export type ConversationReader = {
 		options?: { permissionActive?: boolean },
 	) => ConversationLifecycle;
 	fingerprint: (entries: TranscriptEntry[]) => string | null;
+	unrecognised?: (entries: TranscriptEntry[]) => string[];
 };
 
 export type ConnectorTool =
@@ -199,6 +200,7 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		discover?: (launch: ConversationLaunch) => Promise<string | null>;
 		relocate: (conversationId: string, fromCwd: string, toCwd: string) => void;
 		reader?: ConversationReader;
+		interruptedTasks?: (ref: ConversationRef) => string[];
 	};
 	toolOperations: (call: NativeToolCall) => ToolOperation[];
 	permissionRules?: (key: "allow" | "deny") => string[];

@@ -27,6 +27,7 @@ export async function handlePostSynthesis(
 			submit: options.submit,
 			addressComments: options.addressComments,
 			announce: options.announce,
+			harness: options.harness,
 		});
 		return;
 	}

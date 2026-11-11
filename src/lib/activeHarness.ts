@@ -1,6 +1,5 @@
+import { harnessEnvironmentMarkers } from "../shared/harnessAdapters/harnessEnvironmentMarkers";
 import { type HarnessKind, harnesses } from "../shared/harnesses";
-import { isClaudeCode } from "./isClaudeCode";
-import { isCodex } from "./isCodex";
 
 let declaredByHookEntryPoint: HarnessKind | undefined;
 
@@ -17,7 +16,8 @@ function declaredByLaunch(): HarnessKind | undefined {
 
 export function activeHarness(): HarnessKind | undefined {
 	if (declaredByHookEntryPoint) return declaredByHookEntryPoint;
-	if (isClaudeCode()) return "claude";
-	if (isCodex()) return "codex";
-	return declaredByLaunch();
+	const detected = (
+		Object.keys(harnessEnvironmentMarkers) as HarnessKind[]
+	).find((kind) => harnessEnvironmentMarkers[kind]?.());
+	return detected ?? declaredByLaunch();
 }

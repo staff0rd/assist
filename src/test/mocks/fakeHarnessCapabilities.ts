@@ -8,6 +8,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"artifacts.publish": supported,
 	"connector.gmail.read": supported,
 	"connector.slack.read": supported,
+	"conversation.id": supported,
 	"conversation.preassignId": unsupported(
 		"the fake harness names its own conversations",
 		"none needed; it is a test double",
@@ -16,6 +17,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"conversation.resume": supported,
 	"intercept.command": supported,
 	"intercept.fileRead": supported,
+	"intercept.editDiff": supported,
 	"intercept.fileWrite": supported,
 	"intercept.question": supported,
 	"oneShot.structured": supported,

@@ -6,6 +6,7 @@ import {
 } from "../../commands/sessions/shared/findTranscriptPathSync";
 import { transcriptTailFingerprint } from "../../commands/sessions/shared/transcriptTailFingerprint";
 import { claudeEntryEvents } from "./claudeEntryEvents";
+import { claudeUnrecognisedShapes } from "./claudeUnrecognisedShapes";
 import type { ConversationReader } from "./types";
 
 export const claudeConversationReader: ConversationReader = {
@@ -24,4 +25,5 @@ export const claudeConversationReader: ConversationReader = {
 		asking: awaitsQuestionAnswer(entries),
 	}),
 	fingerprint: transcriptTailFingerprint,
+	unrecognised: claudeUnrecognisedShapes,
 };

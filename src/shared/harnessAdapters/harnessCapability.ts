@@ -1,5 +1,5 @@
 import type { HarnessKind } from "../harnesses";
-import { resolveHarness } from "../harnessLabel";
+import { resolveHarness } from "./harnessLabel";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
 import { resolveCapability } from "./resolveCapability";
 import type { CapabilityId } from "./capabilityDefinitions";

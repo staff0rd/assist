@@ -4,7 +4,7 @@ import {
 	harnessLabel,
 	legacyDefaultHarness,
 	resolveHarness,
-} from "../../../../../../shared/harnessLabel";
+} from "../../../../../../shared/harnessAdapters/harnessLabel";
 import { tokenBadgeSx } from "../../designSystem/tokenBadgeSx";
 
 const sx = tokenBadgeSx("neutral");

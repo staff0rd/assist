@@ -5,6 +5,8 @@ export const capabilityDefinitions = {
 		"Reopens an existing conversation by id with its history intact, so a daemon restart or `--resume-session` continues the same conversation instead of starting fresh.",
 	"conversation.relocate":
 		"Continues a conversation from a different working directory than the one it started in, so resuming a session whose worktree was reaped or replaced keeps its history in the replacement worktree.",
+	"conversation.id":
+		"Gives every conversation a stable id that assist records on the session, so a standalone link such as a /diff page can find the session that owns it.",
 	"conversation.preassignId":
 		"Accepts a conversation id chosen by assist at launch, so the session card binds to the conversation before the harness writes it rather than discovering the id afterwards.",
 	"systemPrompt.append":
@@ -33,6 +35,8 @@ export const capabilityDefinitions = {
 		"Reports every native file read (or reads only through intercepted shell commands) before it runs and honours a deny, so restricted paths cannot be read.",
 	"intercept.fileWrite":
 		"Reports every native file write or patch, with its target paths and incoming content, before it runs and honours a deny, so the docs and database schema locks hold.",
+	"intercept.editDiff":
+		"Reports each native edit's removed and added text (old and new strings, or patch hunks) to assist's edit guards before it runs and honours a deny, so the maintainability-override guard and the comment guard can block edits that add an override marker or a code comment.",
 	"intercept.question":
 		"Routes the harness's native question tool to the session's preview-pane form, so a question in a web session is answered from the preview pane rather than a terminal prompt it cannot drive. A harness with no native question tool has nothing to route.",
 } as const;

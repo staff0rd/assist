@@ -4,6 +4,7 @@ import { blockCodeComments } from "./verify/blockCodeComments";
 import { configKeys } from "./verify/configKeys";
 import { forbiddenStrings } from "./verify/forbiddenStrings";
 import { hardcodedColors } from "./verify/hardcodedColors";
+import { harnessFollowUps } from "./verify/harnessFollowUps";
 import { migrations } from "./verify/migrations";
 import { noVenv } from "./verify/noVenv";
 
@@ -47,6 +48,12 @@ const checks = [
 		description:
 			"Check DB migrations are sequentially numbered, append-only, and gate destructive DDL behind an acknowledgement marker",
 		action: migrations,
+	},
+	{
+		name: "harness-follow-ups",
+		description:
+			"Check every follow-up item named by an unsupported harness capability exists and is still open",
+		action: harnessFollowUps,
 	},
 ];
 

@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { contextLevel } from "../shared/contextLevel";
+import { contextLevel } from "../shared/harnessAdapters/contextLevel";
 
 export function colorizePercent(pct: number): string {
 	const label = `${Math.round(pct)}%`;

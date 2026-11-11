@@ -1,7 +1,7 @@
 import {
 	harnessLabel,
 	legacyDefaultHarness,
-} from "../../../../../../../../shared/harnessLabel";
+} from "../../../../../../../../shared/harnessAdapters/harnessLabel";
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
 import type { HarnessCapabilities } from "../../../../parseHarnessCapabilities";
 

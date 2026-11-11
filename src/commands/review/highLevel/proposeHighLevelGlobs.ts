@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { harnessLabel } from "../../../shared/harnessLabel";
+import { harnessLabel } from "../../../shared/harnessAdapters/harnessLabel";
 import { highLevelGlobsFeature } from "../../../shared/harnessAdapters/reviewFeatures";
 import {
 	OneShotUnavailableError,

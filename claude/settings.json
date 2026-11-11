@@ -31,7 +31,7 @@
 				"hooks": [{ "type": "command", "command": "assist cli-hook" }]
 			},
 			{
-				"matcher": "Edit|Write|MultiEdit",
+				"matcher": "Edit|Write|MultiEdit|NotebookEdit",
 				"hooks": [{ "type": "command", "command": "assist edit-hook" }]
 			}
 		],

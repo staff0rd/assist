@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { harnessLabel } from "../../../../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../../../../shared/harnessAdapters/harnessLabel";
 import { harnessRateLimitsTooltipSx } from "./HarnessRateLimitsTooltip/harnessRateLimitsTooltipSx";
 import type { HarnessLimitGroup } from "./harnessLimitGroups";
 import { RateLimitTooltipList } from "./RateLimitTooltipList";

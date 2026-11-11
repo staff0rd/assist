@@ -1,4 +1,4 @@
-import { harnessLabel } from "../../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../../shared/harnessAdapters/harnessLabel";
 import type {
 	HarnessRateLimits,
 	RateLimits,

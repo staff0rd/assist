@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import { recordGitRef } from "../../shared/db/recordGitRef";
-import { gitRefUrl } from "../../shared/gitRefUrl";
-import { resolveSessionTranscript } from "../sessions/shared/resolveSessionTranscript";
+import { activityLink } from "./activityLink";
 import { formatItemId } from "./formatItemId";
 import { findOneItem } from "./shared";
 import { gitRefKindSchema } from "./types";
@@ -35,19 +34,10 @@ export async function addActivity(
 	}
 
 	const { orm, item } = found;
-	const transcript =
-		parsedKind.data === "session" ? resolveSessionTranscript(ref) : undefined;
-	const url =
-		options.url ??
-		(parsedKind.data === "branch" || parsedKind.data === "commit"
-			? gitRefUrl(parsedKind.data, ref)
-			: transcript?.path);
-
 	await recordGitRef(orm, item.id, {
 		kind: parsedKind.data,
 		ref,
-		title: options.title ?? transcript?.prompt,
-		url,
+		...(await activityLink(parsedKind.data, ref, options)),
 		state: options.state,
 	});
 

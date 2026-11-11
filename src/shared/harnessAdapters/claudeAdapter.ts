@@ -1,11 +1,12 @@
 import { hasTranscriptOnDisk } from "../../commands/sessions/daemon/hasTranscriptOnDisk";
 import { spawnClaude as spawnClaudePty } from "../../commands/sessions/daemon/spawnClaude";
 import { findSessionJsonlPath } from "../../commands/sessions/shared/findSessionJsonlPath";
-import { harnessLabel } from "../harnessLabel";
+import { harnessLabel } from "./harnessLabel";
 import { spawnClaude } from "../spawnClaude";
 import { buildSlashCommand } from "./buildSlashCommand";
 import { carryTranscriptToTree } from "./carryTranscriptToTree";
 import { claudeConnectorProbe } from "./claudeConnectorProbe";
+import { claudeInterruptedTasks } from "./claudeInterruptedTasks";
 import { claudeConversationReader } from "./claudeConversationReader";
 import { claudeConnectorRun } from "./claudeConnectorRun";
 import { claudeOneShot } from "./claudeOneShot";
@@ -34,6 +35,7 @@ export const claudeAdapter: HarnessAdapter = {
 		toRef: (claudeSessionId, cwd) => ({ cwd, claudeSessionId }),
 		relocate: carryTranscriptToTree,
 		reader: claudeConversationReader,
+		interruptedTasks: claudeInterruptedTasks,
 	},
 	toolOperations: claudeToolOperations,
 	launchSkill: (skill, args, { conversationId, allowEdits, model }) =>

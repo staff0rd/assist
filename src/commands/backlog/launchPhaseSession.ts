@@ -1,5 +1,5 @@
 import { buildPhasePrompt } from "./buildPhasePrompt";
-import { launchPhaseClaude } from "./launchPhaseClaude";
+import { launchPhaseHarness } from "./launchPhaseHarness";
 import { resumeNudge } from "./resumeNudge";
 import type { BacklogItem, BacklogRunOptions, PlanPhase } from "./types";
 
@@ -14,7 +14,7 @@ export function launchPhaseSession(
 	const harness = spawnOptions?.harness;
 	const { harness: _harness, ...phaseOptions } = spawnOptions ?? {};
 	const resumeSessionId = phaseOptions.resumeSessionId;
-	return launchPhaseClaude(
+	return launchPhaseHarness(
 		resumeSessionId
 			? resumeNudge()
 			: buildPhasePrompt(item, phaseNumber, phase),

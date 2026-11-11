@@ -9,6 +9,10 @@ type AstNode = {
 	property?: AstNode;
 	discriminant?: AstNode;
 	cases?: AstNode[];
+	key?: AstNode;
+	computed?: boolean;
+	properties?: AstNode[];
+	argument?: AstNode | null;
 };
 
 type NoHarnessBranchesOptions = {
@@ -48,6 +52,15 @@ const harnessLiteral = (
 		? node.value
 		: undefined;
 
+const harnessKey = (node: AstNode, harnesses: string[]): string | undefined => {
+	if (node.type !== "Property" || node.computed || !node.key) return undefined;
+	const key = node.key;
+	const name = key.type === "Identifier" ? key.name : key.value;
+	return typeof name === "string" && harnesses.includes(name)
+		? name
+		: undefined;
+};
+
 const isSessionType = (node: AstNode | undefined): boolean =>
 	(node?.type === "Identifier" && node.name === sessionTypeField) ||
 	(node?.type === "MemberExpression" &&
@@ -64,6 +77,10 @@ export const noHarnessBranches = {
 		messages: {
 			harnessBranch:
 				'Branch on harness "{{harness}}" outside src/shared/harnessAdapters/ — declare a capability on the adapters and resolve it (resolveFeature / harnessCapability), or move this into the adapter. Pre-existing branches are listed in the rule\'s "allow" option with the phase that removes them.',
+			harnessMap:
+				'Object keyed by harness names ({{harness}}) outside src/shared/harnessAdapters/ — move the per-harness values onto the adapters, or list the file in the rule\'s "allow" option with a reason.',
+			harnessDefault:
+				'Picks concrete harness "{{harness}}" (a default or detection result) outside src/shared/harnessAdapters/ — resolve the default harness through the adapters (e.g. detectHarness / the configured engine), or list the file in the rule\'s "allow" option with a reason.',
 		},
 		schema: [
 			{
@@ -84,8 +101,11 @@ export const noHarnessBranches = {
 		if (Object.keys(options.allow ?? {}).some((s) => matchesSuffix(path, s)))
 			return {};
 		const harnesses = options.harnesses ?? defaultHarnesses;
-		const report = (node: AstNode, harness: string) =>
-			context.report({ node, messageId: "harnessBranch", data: { harness } });
+		const report = (
+			node: AstNode,
+			harness: string,
+			messageId = "harnessBranch",
+		) => context.report({ node, messageId, data: { harness } });
 
 		return {
 			BinaryExpression(node: AstNode) {
@@ -97,6 +117,25 @@ export const noHarnessBranches = {
 				const other = left ? node.right : node.left;
 				if (isSessionType(other)) return;
 				report(node, harness);
+			},
+			ObjectExpression(node: AstNode) {
+				const keys = (node.properties ?? [])
+					.map((property) => harnessKey(property, harnesses))
+					.filter((key): key is string => key !== undefined);
+				if (keys.length >= 2) report(node, keys.join(", "), "harnessMap");
+			},
+			LogicalExpression(node: AstNode) {
+				if (!["??", "||"].includes(node.operator ?? "")) return;
+				const harness = harnessLiteral(node.right, harnesses);
+				if (harness) report(node, harness, "harnessDefault");
+			},
+			ReturnStatement(node: AstNode) {
+				const harness = harnessLiteral(node.argument, harnesses);
+				if (harness) report(node, harness, "harnessDefault");
+			},
+			AssignmentPattern(node: AstNode) {
+				const harness = harnessLiteral(node.right, harnesses);
+				if (harness) report(node, harness, "harnessDefault");
 			},
 			SwitchStatement(node: AstNode) {
 				if (isSessionType(node.discriminant)) return;

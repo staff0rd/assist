@@ -121,6 +121,13 @@ run:
       - src/index.ts
       - verify
       - config-keys
+  - name: verify:harness-follow-ups
+    command: npx
+    args:
+      - tsx
+      - src/index.ts
+      - verify
+      - harness-follow-ups
   - name: docs:coverage
     command: npx
     args:

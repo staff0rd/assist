@@ -3,7 +3,8 @@ import { findCodexRolloutPath } from "../../commands/sessions/shared/codex/findC
 import { hasCodexRolloutSync } from "../../commands/sessions/shared/codex/hasCodexRolloutSync";
 import { resolveCodexSessionId } from "../../commands/sessions/shared/codex/resolveCodexSessionId";
 import { codexConversationReader } from "./codexConversationReader";
-import { harnessLabel } from "../harnessLabel";
+import { codexHookProbe } from "./codexHookProbe";
+import { harnessLabel } from "./harnessLabel";
 import { readCodexRulePerms } from "../readCodexRulePerms";
 import { spawnCodex } from "../spawnCodex";
 import { codexOneShot } from "./codexOneShot";
@@ -22,7 +23,12 @@ const sandbox = (allowEdits: boolean | undefined) =>
 export const codexAdapter: HarnessAdapter = {
 	kind: "codex",
 	label: harnessLabel("codex"),
-	capabilities: harnessCapabilityDeclarations.codex,
+	capabilities: {
+		...harnessCapabilityDeclarations.codex,
+		"intercept.command": codexHookProbe,
+		"intercept.fileRead": codexHookProbe,
+		"intercept.fileWrite": codexHookProbe,
+	},
 	detect: () => detectHarness("codex"),
 	conversation: {
 		idName: "Codex conversation id",

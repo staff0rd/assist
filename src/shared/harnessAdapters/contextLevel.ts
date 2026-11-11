@@ -1,4 +1,4 @@
-import type { HarnessKind } from "./harnesses";
+import type { HarnessKind } from "../harnesses";
 import { resolveHarness } from "./harnessLabel";
 
 type ContextLevel = "red" | "yellow" | "dim";

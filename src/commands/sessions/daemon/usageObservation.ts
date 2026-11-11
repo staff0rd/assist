@@ -1,7 +1,7 @@
 import { harnessCapability } from "../../../shared/harnessAdapters/harnessCapability";
 import { isPrimaryUsageAccount } from "../../../shared/harnessAdapters/isPrimaryUsageAccount";
 import type { HarnessKind } from "../../../shared/harnesses";
-import { resolveHarness } from "../../../shared/harnessLabel";
+import { resolveHarness } from "../../../shared/harnessAdapters/harnessLabel";
 import type { RateLimits } from "../../../shared/RateLimits";
 
 type UsageObservation = {

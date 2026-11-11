@@ -1,5 +1,5 @@
 import type { HarnessKind } from "../../../../../../../../shared/harnesses";
-import { harnessModels } from "../../../../../../../../shared/harnessModels";
+import { harnessModels } from "../../../../../../../../shared/harnessAdapters/harnessModels";
 
 export type ModelPick = { harness: HarnessKind; model?: string };
 

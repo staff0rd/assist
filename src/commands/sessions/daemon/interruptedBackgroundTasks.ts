@@ -1,16 +1,16 @@
-import { findTranscriptPathSync } from "../shared/findTranscriptPathSync";
-import { readTranscriptTailSync } from "../shared/readTranscriptTail";
-import { unfinishedBackgroundTasks } from "../shared/unfinishedBackgroundTasks";
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
+import { interruptedTaskRestoreFeature } from "../../../shared/harnessAdapters/transcriptFeatures";
+import { resolveCapability } from "../../../shared/harnessAdapters/resolveCapability";
 import type { PersistedSession } from "./loadPersistedSessions";
 
 export function interruptedBackgroundTasks(
 	persisted: PersistedSession,
 ): string[] {
-	if (!persisted.claudeSessionId) return [];
-	const filePath = findTranscriptPathSync(
-		persisted.cwd,
-		persisted.claudeSessionId,
+	const adapter = harnessAdapter(persisted.harness);
+	const restorable = interruptedTaskRestoreFeature.requires.every(
+		(capability) =>
+			resolveCapability(adapter.capabilities, capability).supported,
 	);
-	if (!filePath) return [];
-	return unfinishedBackgroundTasks(readTranscriptTailSync(filePath));
+	if (!restorable) return [];
+	return adapter.conversation.interruptedTasks?.(persisted) ?? [];
 }

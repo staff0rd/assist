@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import type { HarnessKind } from "../../shared/harnesses";
 import { promptConfirm } from "../../shared/promptConfirm";
 import { carriedUnanchoredFindings } from "./carriedUnanchoredFindings";
 import { chainAfterReview } from "./chainAfterReview";
@@ -12,6 +13,7 @@ type PostReviewOptions = {
 	submit: boolean;
 	addressComments: boolean;
 	announce: boolean;
+	harness?: HarnessKind;
 };
 
 export type PrDiffRef = {

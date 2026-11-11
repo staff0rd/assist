@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { fakeHarnessMock } from "../../test/mocks/fakeHarnessMock";
-import { harnessLabel } from "../harnessLabel";
+import { harnessLabel } from "./harnessLabel";
 import { type HarnessKind, harnesses } from "../harnesses";
 import { capabilityDefinitions } from "./capabilityDefinitions";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
@@ -43,6 +43,7 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	diffCommitScope: { claude: true, codex: true, pi: false, fake: true },
 	writeAttribution: { claude: true, codex: true, pi: false, fake: true },
 	diffComments: { claude: true, codex: true, pi: true, fake: true },
+	diffLinkComments: { claude: true, codex: true, pi: false, fake: true },
 	usageLimits: { claude: true, codex: true, pi: false, fake: true },
 	inbox: { claude: true, codex: false, pi: false, fake: true },
 	previewQuestions: { claude: true, codex: false, pi: true, fake: true },
@@ -58,6 +59,24 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	highLevelGlobs: { claude: true, codex: true, pi: false, fake: true },
 	fixConflict: { claude: true, codex: true, pi: true, fake: true },
 	reviewPrComments: { claude: true, codex: true, pi: true, fake: true },
+	addressCommentsChain: { claude: true, codex: true, pi: true, fake: true },
+	reviewPrCommentsQuestions: {
+		claude: true,
+		codex: false,
+		pi: true,
+		fake: true,
+	},
+	historyTranscript: { claude: true, codex: true, pi: false, fake: true },
+	activitySessionEnrichment: {
+		claude: true,
+		codex: true,
+		pi: false,
+		fake: true,
+	},
+	interruptedTaskRestore: { claude: true, codex: false, pi: false, fake: true },
+	overrideGuard: { claude: true, codex: false, pi: false, fake: true },
+	commentGuard: { claude: true, codex: false, pi: false, fake: true },
+	notebookEdits: { claude: true, codex: true, pi: true, fake: true },
 };
 
 const cells = harnessFeatures.flatMap((feature) =>
@@ -144,6 +163,7 @@ describe("enforcement fails closed", () => {
 					"reviewApply",
 					"fixConflict",
 					"reviewPrComments",
+					"addressCommentsChain",
 				]),
 			);
 			for (const id of unavailable)
@@ -163,6 +183,6 @@ describe("enforcement fails closed", () => {
 			harnessFeatures
 				.filter((feature) => !resolveFeature(feature, blind).available)
 				.map((feature) => feature.id),
-		).toEqual(["previewQuestions"]);
+		).toEqual(["previewQuestions", "reviewPrCommentsQuestions"]);
 	});
 });

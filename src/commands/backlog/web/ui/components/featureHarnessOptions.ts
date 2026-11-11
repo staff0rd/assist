@@ -1,4 +1,4 @@
-import { harnessLabel } from "../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../shared/harnessAdapters/harnessLabel";
 import type { HarnessKind } from "../../../../../shared/harnesses";
 import type { HarnessCapabilities } from "../../../../sessions/web/ui/parseHarnessCapabilities";
 

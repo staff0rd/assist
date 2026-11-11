@@ -1,4 +1,4 @@
-import { legacyDefaultHarness } from "../../shared/harnessLabel";
+import { legacyDefaultHarness } from "../../shared/harnessAdapters/harnessLabel";
 
 export function phaseUnlockSuffix(harness?: string): string {
 	return !harness || harness === legacyDefaultHarness ? "" : `:${harness}`;

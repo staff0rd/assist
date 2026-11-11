@@ -1,4 +1,4 @@
-import type { HarnessKind } from "./harnesses";
+import type { HarnessKind } from "../harnesses";
 
 const HARNESS_LABELS: Record<HarnessKind, string> = {
 	claude: "Claude",

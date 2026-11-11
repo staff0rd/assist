@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { legacyDefaultHarness } from "../../shared/harnessLabel";
+import { legacyDefaultHarness } from "../../shared/harnessAdapters/harnessLabel";
 import { getRestrictedDir } from "../codeComment/getRestrictedDir";
 
 const SESSION_ID = /^[\w-]+$/;

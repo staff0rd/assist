@@ -1,7 +1,7 @@
 import notifier from "node-notifier";
 import { activeHarness } from "../../lib/activeHarness";
 import { detectPlatform } from "../../lib/detectPlatform";
-import { harnessProductLabel } from "../../shared/harnessLabel";
+import { harnessProductLabel } from "../../shared/harnessAdapters/harnessLabel";
 import { showWindowsNotificationFromWsl } from "./showNotification/showWindowsNotificationFromWsl";
 
 type NotificationOptions = {

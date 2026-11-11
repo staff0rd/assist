@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { Fragment } from "react";
-import { harnessLabel } from "../../../../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../../../../shared/harnessAdapters/harnessLabel";
 import type { HarnessLimitGroup } from "./harnessLimitGroups";
 import { chromeSecondary } from "./limitLevelChromeColor";
 import { RateLimitChips } from "./RateLimitChips";

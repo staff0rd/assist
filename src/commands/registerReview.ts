@@ -24,7 +24,7 @@ export function registerReview(program: Command): void {
 		)
 		.option(
 			"--harness <kind>",
-			"Coding harness (claude|codex|pi) for the interactive session that --refine, --apply, --backlog, --checkout-only or --high-level starts; defaults to the configured harness.engine. Exits with the reasons, before checking out or reviewing, when that session is unavailable on it. Reviewers and synthesis are not affected (see review.synthesisHarness)",
+			"Coding harness (claude|codex|pi) for the interactive session that --refine, --apply, --backlog, --checkout-only or --high-level starts, and for the Address Comments session --address-comments chains; defaults to the configured harness.engine. Exits with the reasons, before checking out or reviewing, when that session is unavailable on it. Reviewers and synthesis are not affected (see review.synthesisHarness)",
 		);
 	internalCommand(
 		addReviewModeOptions(addReviewRunOptions(reviewCommand)).action(

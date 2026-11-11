@@ -1,5 +1,6 @@
 import type { FeatureResolution } from "../../../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../../../shared/harnesses";
+import { legacyDefaultHarness } from "../../../../shared/harnessAdapters/harnessLabel";
 
 export type HarnessCapabilities = {
 	exposeCodexActions: boolean;
@@ -12,8 +13,8 @@ export type HarnessCapabilities = {
 export const noHarnessCapabilities: HarnessCapabilities = {
 	exposeCodexActions: false,
 	exposePiActions: false,
-	engine: "claude",
-	runHarness: "claude",
+	engine: legacyDefaultHarness,
+	runHarness: legacyDefaultHarness,
 	features: {},
 };
 
@@ -22,8 +23,8 @@ export function parseHarnessCapabilities(body: unknown): HarnessCapabilities {
 	return {
 		exposeCodexActions: Boolean(value.exposeCodexActions),
 		exposePiActions: Boolean(value.exposePiActions),
-		engine: value.engine ?? "claude",
-		runHarness: value.runHarness ?? value.engine ?? "claude",
+		engine: value.engine ?? legacyDefaultHarness,
+		runHarness: value.runHarness ?? value.engine ?? legacyDefaultHarness,
 		features: value.features ?? {},
 	};
 }

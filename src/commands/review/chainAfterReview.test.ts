@@ -30,7 +30,11 @@ describe("chainAfterReview", () => {
 				announce: true,
 			});
 
-			expect(mockChainAddressComments).toHaveBeenCalledWith(42, true);
+			expect(mockChainAddressComments).toHaveBeenCalledWith(
+				42,
+				true,
+				undefined,
+			);
 			expect(mockAnnouncePr).not.toHaveBeenCalled();
 		});
 
@@ -40,8 +44,22 @@ describe("chainAfterReview", () => {
 				announce: false,
 			});
 
-			expect(mockChainAddressComments).toHaveBeenCalledWith(42, false);
+			expect(mockChainAddressComments).toHaveBeenCalledWith(
+				42,
+				false,
+				undefined,
+			);
 			expect(mockAnnouncePr).not.toHaveBeenCalled();
+		});
+
+		it("should chain Address Comments on the review's harness", async () => {
+			await chainAfterReview(42, POSTED, {
+				addressComments: true,
+				announce: false,
+				harness: "codex",
+			});
+
+			expect(mockChainAddressComments).toHaveBeenCalledWith(42, false, "codex");
 		});
 
 		it("should announce directly when Address Comments was not asked for", async () => {

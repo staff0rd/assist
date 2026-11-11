@@ -1,4 +1,4 @@
-import { contextLevel } from "../../../../../shared/contextLevel";
+import { contextLevel } from "../../../../../shared/harnessAdapters/contextLevel";
 import type { HarnessKind } from "../../../../../shared/harnesses";
 import type { DisplayStatus } from "../displayStatus";
 

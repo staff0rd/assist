@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import MenuItem from "@mui/material/MenuItem";
 import type { MouseEvent } from "react";
-import { harnessLabel } from "../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../shared/harnessAdapters/harnessLabel";
 import { reviewAlternateSx } from "./reviewAlternateSx";
 import type { ReviewModeEntry } from "./reviewModeEntries";
 import { reviewRowKeyDown } from "./reviewRowKeyDown";

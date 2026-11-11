@@ -3,6 +3,7 @@ import { readTranscriptTail } from "../shared/readTranscriptTail";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
+import { reportUnrecognisedShapes } from "./reportUnrecognisedShapes";
 import { resolveTranscriptPath } from "./resolveTranscriptPath";
 import { updateLastMessages } from "./updateLastMessages";
 
@@ -31,6 +32,7 @@ export async function reconcileTranscriptStatus(
 		return;
 	session.transcriptFingerprint = fingerprint ?? undefined;
 
+	reportUnrecognisedShapes(session, reader, entries);
 	updateLastMessages(session, reader.events(entries), notify);
 
 	if (isFinished(session)) return;

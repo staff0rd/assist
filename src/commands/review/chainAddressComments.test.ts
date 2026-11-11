@@ -42,6 +42,16 @@ describe("chainAddressComments", () => {
 		);
 	});
 
+	it("runs the Address Comments session on the review's harness", async () => {
+		await chainAddressComments(42, true, "codex");
+
+		expect(mockRequestAssistSession).toHaveBeenCalledWith(
+			["review-pr-comments", "42", "--harness", "codex", "--announce"],
+			process.cwd(),
+			{ inPlace: true },
+		);
+	});
+
 	describe("when not running inside an assist session", () => {
 		it("should not request a session", async () => {
 			delete process.env.ASSIST_SESSION;

@@ -74,7 +74,12 @@
 					{
 						"adapterDirs": ["src/shared/harnessAdapters"],
 						"allow": {
-							"src/commands/backlog/resolveHarness.ts": "parses the --harness flag value into a HarnessKind; not a behaviour branch"
+							"src/commands/backlog/resolveHarness.ts": "parses the --harness flag value into a HarnessKind; not a behaviour branch",
+							"src/shared/harnesses.ts": "the harness registry itself: each HarnessKind's command, home directory and sync destinations",
+							"src/commands/review/reviewerHarnesses.ts": "names the two fixed structured-run reviewers and the words that identify each reviewer's output",
+							"src/commands/review/reviewerSlots.ts": "maps each fixed reviewer to its output path from buildReviewPaths",
+							"src/commands/sessions/web/harnessOffSwitch.ts": "maps each optional harness to its harness.expose*Actions config key",
+							"src/commands/roam/postRoamActivity.ts": "keys are Roam activity app ids (claude-code, codex, pi), not harness kinds"
 						}
 					}
 				]

@@ -56,7 +56,7 @@ beforeEach(async () => {
 	logSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 	process.exitCode = undefined;
 	mockFindOneItem.mockImplementation(async () => ({ orm, item: { id: 1 } }));
-	mockResolve.mockReturnValue(undefined);
+	mockResolve.mockResolvedValue(undefined);
 });
 
 afterEach(async () => {
@@ -69,7 +69,7 @@ afterEach(async () => {
 
 describe("addActivity", () => {
 	it("fills a session title and transcript path from the transcript", async () => {
-		mockResolve.mockReturnValue({
+		mockResolve.mockResolvedValue({
 			path: `/home/dev/.claude/projects/-home-dev-other/${SESSION_ID}.jsonl`,
 			prompt: "Fix the flaky test",
 		});
@@ -97,7 +97,7 @@ describe("addActivity", () => {
 	});
 
 	it("prefers an explicit title over the resolved prompt", async () => {
-		mockResolve.mockReturnValue({
+		mockResolve.mockResolvedValue({
 			path: "/transcripts/session.jsonl",
 			prompt: "Fix the flaky test",
 		});

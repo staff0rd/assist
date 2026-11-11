@@ -10,6 +10,7 @@ export const harnessCapabilityDeclarations: Record<
 		"skills.native": supported,
 		"conversation.resume": supported,
 		"conversation.relocate": supported,
+		"conversation.id": supported,
 		"conversation.preassignId": supported,
 		"systemPrompt.append": supported,
 		"tasks.notifyOnExit": supported,
@@ -24,12 +25,14 @@ export const harnessCapabilityDeclarations: Record<
 		"intercept.command": supported,
 		"intercept.fileRead": supported,
 		"intercept.fileWrite": supported,
+		"intercept.editDiff": supported,
 		"intercept.question": supported,
 	},
 	codex: {
 		"skills.native": supported,
 		"conversation.resume": supported,
 		"conversation.relocate": supported,
+		"conversation.id": supported,
 		"conversation.preassignId": unsupported(
 			"Codex assigns its own conversation id when its rollout starts",
 			"assist binds the Codex conversation id from the rollout after launch",
@@ -71,6 +74,11 @@ export const harnessCapabilityDeclarations: Record<
 		"intercept.command": supported,
 		"intercept.fileRead": supported,
 		"intercept.fileWrite": supported,
+		"intercept.editDiff": unsupported(
+			"assist's maintainability-override and comment guards run only in Claude's edit hook, so Codex patches are not checked for override markers or new code comments",
+			"the shared policy still applies the allowlist, restricted paths and docs/schema locks; run work that must keep those guards on Claude",
+			"a1592",
+		),
 		"intercept.question": unsupported(
 			"Codex hooks are not verified to report its native request_user_input question tool",
 			"the composed advice tells Codex to ask with assist ask-question; a native Codex question is answered in the terminal",
@@ -87,6 +95,11 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.relocate": unsupported(
 			"pi sessions cannot be resumed, so a pi conversation cannot continue in a replacement worktree",
 			"start a fresh session in the replacement worktree; pick Claude or Codex to keep the conversation across worktree replacement",
+			"a696",
+		),
+		"conversation.id": unsupported(
+			"assist records no conversation id for pi sessions",
+			"comment from the session's own diff panel; a standalone /diff link cannot find a pi session",
 			"a696",
 		),
 		"conversation.preassignId": unsupported(
@@ -146,6 +159,11 @@ export const harnessCapabilityDeclarations: Record<
 		"intercept.command": supported,
 		"intercept.fileRead": supported,
 		"intercept.fileWrite": supported,
+		"intercept.editDiff": unsupported(
+			"assist's maintainability-override and comment guards run only in Claude's edit hook, so pi edits and writes are not checked for override markers or new code comments",
+			"the shared policy still applies the allowlist, restricted paths and docs/schema locks; run work that must keep those guards on Claude",
+			"a1592",
+		),
 		"intercept.question": supported,
 	},
 };

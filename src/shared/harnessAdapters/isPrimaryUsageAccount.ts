@@ -1,5 +1,5 @@
 import type { HarnessKind } from "../harnesses";
-import { resolveHarness } from "../harnessLabel";
+import { resolveHarness } from "./harnessLabel";
 import { harnessUsageAccounts } from "./harnessUsageAccounts";
 
 export function isPrimaryUsageAccount(

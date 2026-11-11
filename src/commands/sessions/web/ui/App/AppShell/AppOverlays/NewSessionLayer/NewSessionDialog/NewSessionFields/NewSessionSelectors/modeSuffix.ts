@@ -1,5 +1,5 @@
 import type { HarnessKind } from "../../../../../../../../../../../shared/harnesses";
-import { harnessLabel } from "../../../../../../../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../../../../../../../shared/harnessAdapters/harnessLabel";
 import type { SessionModel } from "../../../sessionModel";
 
 export function modeSuffix(

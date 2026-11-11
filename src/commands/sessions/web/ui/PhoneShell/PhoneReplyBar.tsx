@@ -5,7 +5,7 @@ import InputBase from "@mui/material/InputBase";
 import type { PointerEvent } from "react";
 import { useState } from "react";
 import type { HarnessKind } from "../../../../../shared/harnesses";
-import { harnessLabel } from "../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../shared/harnessAdapters/harnessLabel";
 import { phoneReplyBarSx } from "./phoneReplyBarSx";
 
 const keepKeyboardOpen = (e: PointerEvent) => e.preventDefault();

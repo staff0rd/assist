@@ -1,110 +1,110 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { claudeConversationReader as reader } from "./claudeConversationReader";
 
-const at = "2026-11-10T00:00:00.000Z";
-const user = (content: unknown, extra: Record<string, unknown> = {}) => ({
-	type: "user",
-	timestamp: at,
-	uuid: `u-${JSON.stringify(content).length}`,
-	message: { role: "user", content },
-	...extra,
-});
-const assistant = (
-	content: unknown[],
-	stop_reason: string | null = "end_turn",
-) => ({
-	type: "assistant",
-	timestamp: at,
-	uuid: `a-${JSON.stringify(content).length}`,
-	message: { role: "assistant", content, stop_reason },
-});
+const fixture = (name: string): Record<string, unknown>[] =>
+	readFileSync(new URL(`fixtures/${name}`, import.meta.url), "utf8")
+		.split("\n")
+		.filter(Boolean)
+		.map((line) => JSON.parse(line));
+
+const transcript = fixture("claudeTranscript.jsonl");
+const excluded = fixture("claudeExcluded.jsonl");
+const askedAt = transcript.findIndex(
+	(entry) =>
+		JSON.stringify(entry).includes('"name":"AskUserQuestion"') &&
+		entry.type === "assistant",
+);
+const answeredTurn = transcript.findIndex(
+	(entry) =>
+		entry.type === "assistant" &&
+		(entry.message as { content: { type: string }[] }).content[0].type ===
+			"text",
+);
 
 describe("claudeConversationReader", () => {
-	it("normalizes prompts, replies, tool calls with operations and results", () => {
-		expect(
-			reader.events([
-				user("please fix it"),
-				assistant(
-					[
-						{ type: "text", text: "On it." },
-						{
-							type: "tool_use",
-							id: "t1",
-							name: "Write",
-							input: { file_path: "/r/a.ts", content: "x" },
-						},
-					],
-					"tool_use",
-				),
-				user([{ type: "tool_result", tool_use_id: "t1", content: "ok" }]),
-			]),
-		).toEqual([
-			{ kind: "message", role: "user", text: "please fix it", at },
-			{ kind: "message", role: "assistant", text: "On it.", at },
-			{
-				kind: "tool",
-				tool: "Write",
-				target: "/r/a.ts",
-				operations: [
-					{
-						kind: "fileWrite",
-						tool: "Write",
-						path: "/r/a.ts",
-						contents: ["x"],
-					},
-				],
-				at,
-			},
-			{ kind: "toolResult", text: "ok", at },
+	it("normalizes a captured session's prompts, replies, tool calls and results", () => {
+		const events = reader.events(transcript);
+		expect(events.map(({ kind }) => kind)).toEqual([
+			"message",
+			"tool",
+			"toolResult",
+			"message",
+			"tool",
+			"toolResult",
+			"tool",
+			"toolResult",
 		]);
+		expect(events[0]).toEqual({
+			kind: "message",
+			role: "user",
+			text: "/refine a1339",
+			at: "2026-10-30T11:32:31.287Z",
+		});
+		expect(events[1]).toMatchObject({
+			kind: "tool",
+			tool: "Bash",
+			operations: [{ kind: "command", tool: "Bash" }],
+		});
+		expect(events[3]).toMatchObject({ kind: "message", role: "assistant" });
+		expect(events[4]).toMatchObject({
+			tool: "AskUserQuestion",
+			operations: [{ kind: "question" }],
+		});
+		expect(events[6]).toMatchObject({
+			tool: "Edit",
+			target: expect.stringMatching(/assist-phone\.html$/),
+			operations: [
+				{
+					kind: "fileWrite",
+					path: expect.stringMatching(/assist-phone\.html$/),
+				},
+			],
+		});
 	});
 
-	it("excludes replayed system content, meta, sidechain, interrupts and task notifications", () => {
-		expect(
-			reader.events([
-				user("<system-reminder>advice</system-reminder>"),
-				user("skill body", { isMeta: true }),
-				user("side", { isSidechain: true }),
-				user("[Request interrupted by user]"),
-				user("<task-notification>done</task-notification>", {
-					origin: { kind: "task-notification" },
-				}),
-				user([{ type: "tool_result", content: "boom", is_error: true }]),
-			]),
-		).toEqual([]);
-	});
-
-	it("renders a slash command prompt as typed", () => {
-		expect(
-			reader.events([
-				user(
-					"<command-name>/refine</command-name><command-args>a12</command-args>",
-				),
-			]),
-		).toEqual([{ kind: "message", role: "user", text: "/refine a12", at }]);
+	it("excludes captured replayed system content, meta, sidechain, interrupts, task notifications and failed results", () => {
+		expect(excluded.length).toBeGreaterThan(0);
+		expect(reader.events(excluded)).toEqual([]);
 	});
 
 	it("reports a pending question as asking and a finished turn as waiting", () => {
-		const asked = [
-			user("go"),
-			assistant(
-				[{ type: "tool_use", id: "q", name: "AskUserQuestion", input: {} }],
-				"tool_use",
-			),
-		];
-		expect(reader.lifecycle(asked)).toEqual({
+		expect(reader.lifecycle(transcript.slice(0, askedAt + 1))).toEqual({
 			status: "waiting",
 			asking: true,
 		});
-		expect(
-			reader.lifecycle([user("go"), assistant([{ type: "text", text: "ok" }])]),
-		).toEqual({ status: "waiting", asking: false });
-		expect(reader.lifecycle([user("go")]).status).toBe("running");
+		expect(reader.lifecycle(transcript.slice(0, answeredTurn + 1))).toEqual({
+			status: "waiting",
+			asking: false,
+		});
+		expect(reader.lifecycle(transcript.slice(0, 9)).status).toBe("running");
 	});
 
 	it("changes its fingerprint as the transcript grows", () => {
-		const first = reader.fingerprint([user("go")]);
-		expect(reader.fingerprint([user("go"), assistant([])])).not.toBe(first);
+		const first = reader.fingerprint(transcript.slice(0, answeredTurn));
+		expect(reader.fingerprint(transcript.slice(0, answeredTurn + 1))).not.toBe(
+			first,
+		);
+	});
+
+	it("recognises every entry shape in captured sessions", () => {
+		expect(reader.unrecognised?.([...transcript, ...excluded])).toEqual([]);
+	});
+
+	it("reports unknown entry types and content blocks once each", () => {
+		const [prompt] = transcript.filter((entry) => entry.type === "user");
+		expect(
+			reader.unrecognised?.([
+				...transcript,
+				{ type: "hologram", timestamp: "2026-11-10T00:00:00.000Z" },
+				{ type: "hologram" },
+				{
+					...prompt,
+					message: { role: "user", content: [{ type: "video" }] },
+				},
+				{ type: "assistant", message: { content: { type: "text" } } },
+			]),
+		).toEqual(["hologram", "user/video", "assistant/content"]);
 	});
 
 	it("binds to the claude session id under the cwd's project dir", () => {

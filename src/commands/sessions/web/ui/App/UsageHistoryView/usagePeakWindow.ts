@@ -1,5 +1,5 @@
 import { isPrimaryUsageAccount } from "../../../../../../shared/harnessAdapters/isPrimaryUsageAccount";
-import { harnessLabel } from "../../../../../../shared/harnessLabel";
+import { harnessLabel } from "../../../../../../shared/harnessAdapters/harnessLabel";
 import {
 	FIVE_HOUR_SECONDS,
 	SEVEN_DAY_SECONDS,
