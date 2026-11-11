@@ -1,7 +1,7 @@
 import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
-import { configScopeNames } from "../../../../../config/configScopeNames";
 import type { ConfigSource } from "../../../../../config/resolveConfigSources";
+import { configSourceLabel } from "./configSourceLabel";
 
 const DESCRIPTIONS: Record<ConfigSource, string> = {
 	project: "Set in this repo's assist.yml (repo (git), every node)",
@@ -47,7 +47,7 @@ export function ConfigSourceChip({
 							? "warning"
 							: "primary"
 				}
-				label={source === "default" ? "default" : configScopeNames[source]}
+				label={configSourceLabel(source)}
 			/>
 		</Tooltip>
 	);

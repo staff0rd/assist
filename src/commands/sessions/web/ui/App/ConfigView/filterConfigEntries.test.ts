@@ -1,14 +1,19 @@
 import { describe, expect, it } from "vitest";
 import type { ConfigEntry } from "../../../../../config/readConfigEntries";
+import type { ConfigSource } from "../../../../../config/resolveConfigSources";
 import { filterConfigEntries } from "./filterConfigEntries";
 
-function entry(key: string, note?: string): ConfigEntry {
-	return { key, type: "string", value: undefined, source: "default", note };
+function entry(
+	key: string,
+	note?: string,
+	source: ConfigSource = "default",
+): ConfigEntry {
+	return { key, type: "string", value: undefined, source, note };
 }
 
 const entries = [
-	entry("commit.pull", "Rebase onto the remote first"),
-	entry("backup.dir"),
+	entry("commit.pull", "Rebase onto the remote first", "project"),
+	entry("backup.dir", undefined, "repo"),
 	entry("sessions.daemonPort", "Port the listener binds to"),
 ];
 
@@ -56,5 +61,28 @@ describe("filterConfigEntries", () => {
 		expect(filterConfigEntries(entries, "backup").map((e) => e.key)).toEqual([
 			"backup.dir",
 		]);
+	});
+
+	it("keeps only entries whose effective source is selected", () => {
+		expect(
+			filterConfigEntries(entries, "", new Set(["project", "default"])).map(
+				(e) => e.key,
+			),
+		).toEqual(["commit.pull", "sessions.daemonPort"]);
+	});
+
+	it("returns every entry when no scope is selected", () => {
+		expect(filterConfigEntries(entries, "", new Set())).toEqual(entries);
+	});
+
+	it("requires both the search and the scope to match", () => {
+		expect(
+			filterConfigEntries(entries, "port", new Set(["default"])).map(
+				(e) => e.key,
+			),
+		).toEqual(["sessions.daemonPort"]);
+		expect(filterConfigEntries(entries, "commit", new Set(["repo"]))).toEqual(
+			[],
+		);
 	});
 });

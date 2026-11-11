@@ -1737,4 +1737,46 @@ describe("ConfigView", () => {
 			screen.queryByRole("button", { name: "Edit sql.connections" }),
 		).toBeNull();
 	});
+
+	it("shows only repo (git) keys when loaded with ?scope=project", async () => {
+		stubEntries(filterableEntries);
+		renderView("/repo", "/config?scope=project");
+
+		await waitFor(() => expect(screen.getByText("commit.pull")).toBeTruthy());
+		expect(screen.getByText("commit.push")).toBeTruthy();
+		expect(screen.queryByText("backup.dir")).toBeNull();
+		expect(
+			screen
+				.getByRole("button", { name: "repo (git) (2)" })
+				.getAttribute("aria-pressed"),
+		).toBe("true");
+	});
+
+	it("toggles a scope chip to narrow and restore the rows", async () => {
+		stubEntries(filterableEntries);
+		renderView();
+
+		await waitFor(() => expect(screen.getByText("backup.dir")).toBeTruthy());
+		const chip = screen.getByRole("button", { name: "user (node) (1)" });
+		fireEvent.click(chip);
+		expect(screen.queryByText("commit.pull")).toBeNull();
+		expect(screen.getByText("backup.dir")).toBeTruthy();
+
+		fireEvent.click(chip);
+		expect(screen.getByText("commit.pull")).toBeTruthy();
+	});
+
+	it("names the search and scopes when nothing matches both", async () => {
+		stubEntries(filterableEntries);
+		renderView("/repo", "/config?scope=global,user");
+
+		await waitFor(() => expect(screen.getByText("backup.dir")).toBeTruthy());
+		fireEvent.change(keyFilter(), { target: { value: "commit" } });
+
+		expect(
+			screen.getByText(
+				"No keys or descriptions match “commit” in user (node), user (db).",
+			),
+		).toBeTruthy();
+	});
 });
