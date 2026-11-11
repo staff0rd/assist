@@ -1,11 +1,11 @@
 type AssistJsonReply = { error?: string; cwd?: string; message?: string };
 
-export async function postAssistJson(
+export async function postAssistJson<T extends object = AssistJsonReply>(
 	server: string,
 	path: string,
 	body: unknown,
 ): Promise<
-	{ ok: true; data: AssistJsonReply } | { ok: false; message: string }
+	{ ok: true; data: T & { error?: string } } | { ok: false; message: string }
 > {
 	let response: Response;
 	try {
@@ -17,7 +17,9 @@ export async function postAssistJson(
 	} catch {
 		return { ok: false, message: `assist web server unreachable at ${server}` };
 	}
-	const data = (await response.json().catch(() => ({}))) as AssistJsonReply;
+	const data = (await response.json().catch(() => ({}))) as T & {
+		error?: string;
+	};
 	if (!response.ok)
 		return {
 			ok: false,

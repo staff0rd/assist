@@ -1,5 +1,6 @@
 import { answerBrowserProbes } from "./browserLink/answerBrowserProbes";
 import { attachGmailMessageButtons } from "./gmail/attachGmailMessageButtons";
+import { decorateLinkStatus } from "./linkStatus/decorateLinkStatus";
 import { attachAssistButtons } from "./sendToAssist/attachAssistButtons";
 import { attachAssistHeaderButtons } from "./sendToAssist/attachAssistHeaderButtons";
 import { attachAzureDevopsHeaderButton } from "./sendToAssist/attachAzureDevopsHeaderButton";
@@ -24,6 +25,7 @@ export function criteriaContentScript(): void {
 	watchGithubPage(() => {
 		attachAssistButtons();
 		attachAssistHeaderButtons();
+		decorateLinkStatus();
 	});
 }
 

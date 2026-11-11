@@ -2,6 +2,8 @@ import { connectBrowserLink } from "../browserLink/connectBrowserLink";
 import { storeConsoleEntries } from "../consoleCapture/storeConsoleEntries";
 import { isDocsFeedbackMessage } from "../docsFeedback/isDocsFeedbackMessage";
 import { postDocsFeedback } from "../docsFeedback/postDocsFeedback";
+import { fetchLinkStatus } from "../linkStatus/fetchLinkStatus";
+import { isLinkStatusMessage } from "../linkStatus/isLinkStatusMessage";
 import { assistServerUrl } from "./assistServerUrl";
 import { fetchAssistClones } from "./fetchAssistClones";
 import { fetchAssistHarness } from "./fetchAssistHarness";
@@ -23,6 +25,10 @@ export function assistBackground(): void {
 		if (isDocsFeedbackMessage(message))
 			return assistServerUrl().then((server) =>
 				postDocsFeedback(server, message),
+			);
+		if (isLinkStatusMessage(message))
+			return assistServerUrl().then((server) =>
+				fetchLinkStatus(server, message),
 			);
 		return undefined;
 	});

@@ -39,6 +39,7 @@ import { listInbox } from "./inbox/listInbox";
 import { scanInbox } from "./inbox/scanInbox";
 import { hotkeyBindings } from "./hotkeyBindings";
 import { jiraSite } from "./jiraSite";
+import { linkStatus } from "./linkStatus/linkStatus";
 import { listFiles } from "./listFiles";
 import { listNewsItems } from "./listNewsItems";
 import { newsNavConfig } from "./newsNavConfig";
@@ -107,6 +108,8 @@ const routes: Record<string, Handler> = {
 	"OPTIONS /api/sessions/review-from-github": sessionFromGithubPreflight,
 	"POST /api/sessions/docs-feedback": docsFeedback,
 	"OPTIONS /api/sessions/docs-feedback": sessionFromGithubPreflight,
+	"POST /api/link-status": linkStatus,
+	"OPTIONS /api/link-status": sessionFromGithubPreflight,
 	"POST /api/browser": browserRelay,
 	"POST /api/client-errors": clientErrors,
 	"POST /api/open-in-code": openInCode,
