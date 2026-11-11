@@ -1,3 +1,10 @@
+# [0.1125.0](https://github.com/staff0rd/assist/compare/v0.1124.0...v0.1125.0) (2026-11-11)
+
+
+### Features
+
+* stack preview below narrow terminal ([c0f037d](https://github.com/staff0rd/assist/commit/c0f037d547ce9ace2ac3dacf5173267abc32b55b))
+
 # [0.1124.0](https://github.com/staff0rd/assist/compare/v0.1123.0...v0.1124.0) (2026-11-11)
 
 
