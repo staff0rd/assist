@@ -1,3 +1,10 @@
+# [0.1127.0](https://github.com/staff0rd/assist/compare/v0.1126.1...v0.1127.0) (2026-11-11)
+
+
+### Features
+
+* add nodes by URL from the nodes page ([7677043](https://github.com/staff0rd/assist/commit/7677043ed528ec829f4880303f061a4da08eb8f2))
+
 ## [0.1126.1](https://github.com/staff0rd/assist/compare/v0.1126.0...v0.1126.1) (2026-11-11)
 
 
