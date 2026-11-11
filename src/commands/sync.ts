@@ -21,7 +21,8 @@ export async function sync(
 	options?: PruneOptions & { yes?: boolean },
 ): Promise<void> {
 	const config = loadConfig();
-	const yes = options?.yes ?? config.sync.autoConfirm;
+	const settingsYes = options?.yes ?? config.sync.autoConfirm;
+	const conflictsYes = options?.yes ?? false;
 	const prune = { prune: options?.prune, force: options?.force };
 
 	const agentDir = path.join(__dirname, "..", "agent");
@@ -35,7 +36,7 @@ export async function sync(
 	const commandNames = syncClaudeCommands(agentDir, targetBase, files);
 	const designSkillNames = syncDesign(agentDir, targetBase, files);
 	await syncSettings(claudeDir, targetBase, {
-		yes,
+		yes: settingsYes,
 		preferences: config.sync.preferences,
 	});
 	await syncCodex(agentDir, files, prune);
@@ -44,5 +45,5 @@ export async function sync(
 
 	pruneClaude(targetBase, [...commandNames, ...designSkillNames], prune, files);
 
-	await files.finish(yes);
+	await files.finish(conflictsYes);
 }

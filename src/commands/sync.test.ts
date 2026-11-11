@@ -11,10 +11,16 @@ const mockPruneCommands = vi.fn();
 const mockPruneSkills = vi.fn();
 const mockSyncCodex = vi.fn();
 const mockSyncPi = vi.fn();
+const mockResolveSyncConflicts = vi.fn();
 const mockLoadConfig = vi.mocked(loadConfig);
 
 vi.mock("./sync/syncCodex", () => ({
 	syncCodex: (...args: unknown[]) => mockSyncCodex(...args),
+}));
+
+vi.mock("./sync/resolveSyncConflicts", () => ({
+	resolveSyncConflicts: (...args: unknown[]) =>
+		mockResolveSyncConflicts(...args),
 }));
 
 vi.mock("./sync/syncPi", () => ({
@@ -64,6 +70,7 @@ describe("sync", () => {
 		mockPruneCommands.mockReturnValue(emptyPrune);
 		mockPruneSkills.mockReturnValue(emptyPrune);
 		mockSyncDesign.mockReturnValue([]);
+		mockResolveSyncConflicts.mockResolvedValue([]);
 	});
 
 	it("should not prune when --prune is not passed", async () => {
@@ -240,6 +247,28 @@ describe("sync", () => {
 			expect.any(String),
 			expect.any(String),
 			{ yes: false, preferences: true },
+		);
+	});
+
+	it("still offers to overwrite unowned files when autoConfirm is true", async () => {
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({ sync: { autoConfirm: true, preferences: false } }),
+		);
+
+		await sync();
+
+		expect(mockResolveSyncConflicts).toHaveBeenCalledWith(
+			expect.any(Array),
+			false,
+		);
+	});
+
+	it("leaves unowned files in place with an explicit --yes", async () => {
+		await sync({ yes: true });
+
+		expect(mockResolveSyncConflicts).toHaveBeenCalledWith(
+			expect.any(Array),
+			true,
 		);
 	});
 });
