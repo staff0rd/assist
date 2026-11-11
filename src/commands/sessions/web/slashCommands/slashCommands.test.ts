@@ -12,8 +12,8 @@ vi.mock("../../../../shared/harnesses", () => ({
 	harnesses: { claude: { homeDir: "/home/me/.claude" } },
 }));
 
-vi.mock("./readSlashCommands", () => ({
-	readSlashCommands: (...args: unknown[]) => mockRead(...args),
+vi.mock("./listSlashCommands", () => ({
+	listSlashCommands: (...args: unknown[]) => mockRead(...args),
 }));
 
 import { slashCommands } from "./slashCommands";
@@ -32,12 +32,12 @@ describe("slashCommands", () => {
 		mockRead.mockReturnValue([{ name: "draft", scope: "user" }]);
 	});
 
-	it("lists the Claude home's user skills and commands", () => {
+	it("lists the Claude home's and the cwd's skills and commands", () => {
 		expect(request("cwd=/repo")).toEqual([
 			200,
 			{ commands: [{ name: "draft", scope: "user" }] },
 		]);
-		expect(mockRead).toHaveBeenCalledWith("/home/me/.claude", "user");
+		expect(mockRead).toHaveBeenCalledWith("/home/me/.claude", "/repo");
 	});
 
 	it("rejects a request without cwd", () => {

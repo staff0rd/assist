@@ -2,11 +2,12 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { harnesses } from "../../../../shared/harnesses";
 import { respondJson } from "../../../../shared/web";
 import { getCwdParam } from "../getCwdParam";
-import { readSlashCommands } from "./readSlashCommands";
+import { listSlashCommands } from "./listSlashCommands";
 
 export function slashCommands(req: IncomingMessage, res: ServerResponse): void {
-	if (!getCwdParam(req, res)) return;
+	const cwd = getCwdParam(req, res);
+	if (!cwd) return;
 	respondJson(res, 200, {
-		commands: readSlashCommands(harnesses.claude.homeDir, "user"),
+		commands: listSlashCommands(harnesses.claude.homeDir, cwd),
 	});
 }
