@@ -17,7 +17,7 @@ export function launchPhaseSession(
 	return launchPhaseHarness(
 		resumeSessionId
 			? resumeNudge()
-			: buildPhasePrompt(item, phaseNumber, phase),
+			: buildPhasePrompt(item, phaseNumber, phase, harness),
 		resumeSessionId
 			? phaseOptions
 			: { ...phaseOptions, sessionId: claudeSessionId },

@@ -84,4 +84,16 @@ describe("buildPhasePrompt", () => {
 			COMMIT_LINE,
 		);
 	});
+
+	it("raises manual checks with ask-check on Claude but in chat on Codex", () => {
+		loadConfigMock.mockReturnValue(makeAssistConfig());
+		const checked: PlanPhase = { ...phase, manualChecks: ["it works"] };
+
+		expect(buildPhasePrompt(makeBacklogItem(), 1, checked, "claude")).toContain(
+			"assist ask-check",
+		);
+		const codex = buildPhasePrompt(makeBacklogItem(), 1, checked, "codex");
+		expect(codex).not.toContain("ask-check");
+		expect(codex).toContain("- it works");
+	});
 });
