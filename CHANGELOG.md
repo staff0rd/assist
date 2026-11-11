@@ -1,3 +1,11 @@
+# [0.1118.0](https://github.com/staff0rd/assist/compare/v0.1117.1...v0.1118.0) (2026-11-11)
+
+
+### Features
+
+* expand context in commit diff scope ([1829f6d](https://github.com/staff0rd/assist/commit/1829f6dee60f67c3a21bee3bd5df89a2a2174df3))
+* per-type model for draft, bug, run ([57cbd0b](https://github.com/staff0rd/assist/commit/57cbd0bdbb50e7ca1b1cc929cfe6b6d83c20c6ed))
+
 ## [0.1117.1](https://github.com/staff0rd/assist/compare/v0.1117.0...v0.1117.1) (2026-11-10)
 
 
