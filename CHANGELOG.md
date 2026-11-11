@@ -1,3 +1,10 @@
+## [0.1118.2](https://github.com/staff0rd/assist/compare/v0.1118.1...v0.1118.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* close harness matrix gaps ([22bc106](https://github.com/staff0rd/assist/commit/22bc106b5d44641b7cafdb643fe7ee3f6da5a397))
+
 ## [0.1118.1](https://github.com/staff0rd/assist/compare/v0.1118.0...v0.1118.1) (2026-11-11)
 
 
