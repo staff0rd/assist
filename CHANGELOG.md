@@ -1,3 +1,15 @@
+# [0.1123.0](https://github.com/staff0rd/assist/compare/v0.1122.0...v0.1123.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* live-update watcher history pane ([5d3a83b](https://github.com/staff0rd/assist/commit/5d3a83bdd1a58d6426dca0ae9bf6ad5a4aec0ce7))
+
+
+### Features
+
+* goatcounter analytics on docs site ([85fd8c2](https://github.com/staff0rd/assist/commit/85fd8c2bba7fd497c3f052b08a49608182d8edd7))
+
 # [0.1122.0](https://github.com/staff0rd/assist/compare/v0.1121.2...v0.1122.0) (2026-11-11)
 
 
