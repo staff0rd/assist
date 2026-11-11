@@ -15,7 +15,7 @@ export function registerRunCommand(cmd: Command): void {
 		.option("--no-write", "Run the harness without write access")
 		.option(
 			"--harness <harness>",
-			"Coding harness to launch (claude|codex|pi); defaults to the configured harness.defaults.run.harness, then harness.engine",
+			"Coding harness to launch (claude|codex|pi); defaults to the configured harness.defaults.run.harness, then harness.engine, then an installed harness when neither is configured",
 		)
 		.option(
 			"--model <model>",

@@ -8,6 +8,13 @@ import {
 	vi,
 } from "vitest";
 
+vi.mock("../../shared/loadConfigFrom", () => ({
+	loadMergedRawConfig: vi.fn(() => ({})),
+}));
+vi.mock("../../shared/checkCliAvailable", () => ({
+	checkCliAvailable: vi.fn((command: string) => command === "codex"),
+}));
+
 vi.mock("../../shared/pullIfConfigured", () => ({
 	pullIfConfigured: vi.fn(),
 }));
@@ -55,6 +62,15 @@ describe("registerRunCommand", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		withHarness({ engine: "codex" });
+	});
+
+	it("replays the web Build and phone Start command on a node without Claude", async () => {
+		withHarness({});
+		await parse(["run", "42"]);
+		expect(mockRun).toHaveBeenCalledWith(
+			"42",
+			expect.objectContaining({ harness: "codex" }),
+		);
 	});
 
 	it("pulls before a fresh run", async () => {
