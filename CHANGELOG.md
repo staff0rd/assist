@@ -1,3 +1,10 @@
+## [0.1127.1](https://github.com/staff0rd/assist/compare/v0.1127.0...v0.1127.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* retry refused node checks ([f0d59ab](https://github.com/staff0rd/assist/commit/f0d59abf36d7150da2c3bd2a24c42bb6e9766acf))
+
 # [0.1127.0](https://github.com/staff0rd/assist/compare/v0.1126.1...v0.1127.0) (2026-11-11)
 
 
