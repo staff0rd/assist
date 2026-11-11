@@ -59,6 +59,12 @@ const previewQuestionsFeature: HarnessFeature = {
 	requires: ["intercept.question"],
 };
 
+export const previewAnswerWaitFeature: HarnessFeature = {
+	id: "previewAnswerWait",
+	label: "Waiting on a preview-pane answer",
+	requires: ["tasks.notifyOnExit"],
+};
+
 export const branchSlugFeature: HarnessFeature = {
 	id: "branchSlug",
 	label: "Branch name suggestion",
@@ -158,6 +164,7 @@ export const harnessFeatures: HarnessFeature[] = [
 	usageLimitsFeature,
 	inboxFeature,
 	previewQuestionsFeature,
+	previewAnswerWaitFeature,
 	designFeature,
 	designReviewFeature,
 	...reviewFeatures,

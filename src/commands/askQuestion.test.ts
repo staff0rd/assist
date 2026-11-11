@@ -4,6 +4,11 @@ const mockRequestPreviewDecision = vi.fn();
 const mockReadStdin = vi.fn();
 const mockLoadConfig = vi.fn();
 const mockIsLive = vi.fn();
+const mockActiveHarness = vi.fn();
+
+vi.mock("../lib/activeHarness", () => ({
+	activeHarness: () => mockActiveHarness(),
+}));
 
 vi.mock("./sessions/shared/isLiveDaemonSession", () => ({
 	isLiveDaemonSession: (id: string) => mockIsLive(id),
@@ -70,6 +75,7 @@ describe("askQuestion", () => {
 		vi.stubEnv("ASSIST_SESSION_ID", "s1");
 		mockLoadConfig.mockReturnValue({ sessions: { askQuestion: true } });
 		mockIsLive.mockResolvedValue(true);
+		mockActiveHarness.mockReturnValue("claude");
 	});
 
 	afterEach(() => {
@@ -158,6 +164,29 @@ describe("askQuestion", () => {
 		expect(errored.join("\n")).toContain("not live");
 		expect(errored.join("\n")).toContain("AskUserQuestion");
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
+	it("tells Codex to ask in chat because it cannot wait for the answer", async () => {
+		mockActiveHarness.mockReturnValue("codex");
+		stdin({ questions });
+
+		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
+		const error = errored.join("\n");
+		expect(error).toContain("unavailable on Codex");
+		expect(error).toContain("tasks.notifyOnExit");
+		expect(error).toContain("ask the user these questions in chat");
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
+	it("opens the form on Claude", async () => {
+		stdin({ questions });
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await askQuestion({ json: "-" });
+
+		expect(mockRequestPreviewDecision).toHaveBeenCalledWith(
+			expect.objectContaining({ title: "Claude is asking 2 questions" }),
+		);
 	});
 
 	it("sends a question preview and prints the built-in result text", async () => {

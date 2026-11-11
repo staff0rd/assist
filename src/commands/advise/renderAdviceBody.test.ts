@@ -9,6 +9,7 @@ function contextWith(raw: Record<string, unknown>): AdviceContext {
 		config: assistConfigSchema.parse(raw),
 		rootDir: "/repo",
 		assistSession: false,
+		previewAnswerWait: true,
 	};
 }
 

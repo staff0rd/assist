@@ -44,8 +44,8 @@ export const harnessCapabilityDeclarations: Record<
 			"a1589",
 		),
 		"tasks.notifyOnExit": unsupported(
-			"Codex runs a background command in an exec session that reports nothing back once the turn ends, so review-high-level never sees the slicing request or the verdict",
-			"run the high-level review on Claude",
+			"Codex runs a background command in an exec session that reports nothing back once the turn ends, so an agent that ends its turn never sees a command that waits on the user, such as review-high-level's verdict or an assist ask-question answer",
+			"run the high-level review on Claude; Codex asks its questions in chat",
 			"a1573",
 		),
 		"artifacts.publish": unsupported(
@@ -82,7 +82,7 @@ export const harnessCapabilityDeclarations: Record<
 		),
 		"intercept.question": unsupported(
 			"Codex hooks are not verified to report its native request_user_input question tool",
-			"the composed advice tells Codex to ask with assist ask-question; a native Codex question is answered in the terminal",
+			"Codex asks its questions in chat; a native Codex question is answered in the terminal",
 			"a1563",
 		),
 		"slashCommands.suggest": unsupported(
@@ -117,8 +117,8 @@ export const harnessCapabilityDeclarations: Record<
 			"a696",
 		),
 		"tasks.notifyOnExit": unsupported(
-			"assist has not verified a pi tool that wakes the agent when a background command exits, so review-high-level would never see the slicing request or the verdict",
-			"run the high-level review on Claude",
+			"assist has not verified a pi tool that wakes the agent when a background command exits, so an agent that ends its turn would never see a command that waits on the user, such as review-high-level's verdict or an assist ask-question answer",
+			"run the high-level review on Claude; pi routes its native question tool to the preview pane instead of assist ask-question",
 			"a1573",
 		),
 		"artifacts.publish": unsupported(

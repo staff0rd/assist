@@ -1,4 +1,5 @@
 import { findConfigUp, loadConfigFrom } from "../../shared/loadConfigFrom";
+import { previewAnswerWaitBlocker } from "../askQuestion/previewAnswerWaitBlocker";
 import type { AdviceContext } from "./AdviceContext";
 
 export function adviceContextFor(
@@ -9,5 +10,6 @@ export function adviceContextFor(
 		config: loadConfigFrom(cwd),
 		rootDir: findConfigUp(cwd)?.rootDir ?? cwd,
 		assistSession: env.ASSIST_SESSION === "1",
+		previewAnswerWait: previewAnswerWaitBlocker() === undefined,
 	};
 }

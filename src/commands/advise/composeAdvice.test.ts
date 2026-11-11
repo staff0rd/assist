@@ -15,11 +15,13 @@ const fragments = loadAdviceFragments();
 function contextWith(
 	raw: Record<string, unknown>,
 	assistSession = false,
+	previewAnswerWait = true,
 ): AdviceContext {
 	return {
 		config: assistConfigSchema.parse(raw),
 		rootDir: "/repo",
 		assistSession,
+		previewAnswerWait,
 	};
 }
 
@@ -90,6 +92,14 @@ describe("composeAdvice", () => {
 		);
 	});
 
+	it("drops ask-question and ask-check when the harness cannot wait for the answer", () => {
+		const names = includedNames(contextWith({}, true, false));
+
+		expect(names).toContain("ask");
+		expect(names).not.toContain("ask-question");
+		expect(names).not.toContain("ask-check");
+	});
+
 	it("states the ask rules unconditionally in an assist session", () => {
 		const markdown = composeAdvice(
 			contextWith({ sessions: { askQuestion: true } }, true),
@@ -157,6 +167,7 @@ describe("composeAdvice", () => {
 			config: assistConfigSchema.parse({}),
 			rootDir: dir,
 			assistSession: false,
+			previewAnswerWait: true,
 		});
 
 		expect(bare).not.toContain("refactor");

@@ -7,6 +7,7 @@ const context = {
 	config: assistConfigSchema.parse({}),
 	rootDir: "/repo",
 	assistSession: false,
+	previewAnswerWait: true,
 };
 
 function fragment(name: string, when: string): AdviceFragment {

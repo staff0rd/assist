@@ -35,11 +35,12 @@ export const adviceConditions: Record<string, AdviceCondition> = {
 		matches: ({ assistSession }) => assistSession,
 	},
 	askQuestion: {
-		whenMet: "sessions.askQuestion is on in an assist-launched session",
+		whenMet:
+			"sessions.askQuestion is on in an assist-launched session whose harness wakes the agent when the answer arrives",
 		whenUnmet:
-			"the session was not launched by assist, or sessions.askQuestion is off",
-		matches: ({ assistSession, config }) =>
-			assistSession && askQuestionEnabled(config),
+			"the session was not launched by assist, sessions.askQuestion is off, or the harness cannot wake the agent when the answer arrives",
+		matches: ({ assistSession, config, previewAnswerWait }) =>
+			assistSession && previewAnswerWait && askQuestionEnabled(config),
 	},
 	typescript: repoFile("tsconfig.json", "a tsconfig.json"),
 	filenameConvention: repoFile(

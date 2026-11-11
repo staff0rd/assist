@@ -1,5 +1,6 @@
 import { loadConfig } from "../../shared/loadConfig";
 import { askQuestionEnabled } from "../askQuestion/askQuestionEnabled";
+import { previewAnswerWaitBlocker } from "../askQuestion/previewAnswerWaitBlocker";
 import { isLiveDaemonSession } from "../sessions/shared/isLiveDaemonSession";
 
 function askInChat(reason: string): never {
@@ -13,6 +14,8 @@ export async function requireCheckSession(): Promise<string> {
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId)
 		askInChat("not running in an assist session");
+	const blocker = previewAnswerWaitBlocker();
+	if (blocker) askInChat(blocker.replaceAll("\n", " "));
 	if (!askQuestionEnabled(loadConfig()))
 		askInChat("assist ask-check is disabled (sessions.askQuestion)");
 	if (!(await isLiveDaemonSession(sessionId)))

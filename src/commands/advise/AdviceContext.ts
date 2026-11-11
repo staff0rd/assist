@@ -4,4 +4,5 @@ export type AdviceContext = {
 	config: AssistConfig;
 	rootDir: string;
 	assistSession: boolean;
+	previewAnswerWait: boolean;
 };

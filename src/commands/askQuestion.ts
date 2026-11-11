@@ -1,19 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { activeHarness } from "../lib/activeHarness";
 import { harnessLabel } from "../shared/harnessAdapters/harnessLabel";
-import { loadConfig } from "../shared/loadConfig";
-import { askQuestionEnabled } from "./askQuestion/askQuestionEnabled";
 import { formatAskQuestionAnswers } from "./askQuestion/formatAskQuestionAnswers";
 import { rejectLongQuestions } from "./askQuestion/rejectLongQuestions";
+import { requireQuestionSession } from "./askQuestion/requireQuestionSession";
 import { readJsonPayload } from "./backlog/readJsonPayload";
 import { askQuestionInputSchema } from "./sessions/shared/askQuestionInputSchema";
 import { awaitPreviewApproval } from "./sessions/shared/awaitPreviewApproval";
-import { isLiveDaemonSession } from "./sessions/shared/isLiveDaemonSession";
-
-function useBuiltIn(reason: string): never {
-	console.error(`Error: ${reason}; use the built-in AskUserQuestion tool.`);
-	process.exit(1);
-}
 
 export async function askQuestion(options: { json: string }): Promise<void> {
 	const { questions } = await readJsonPayload(
@@ -22,15 +15,7 @@ export async function askQuestion(options: { json: string }): Promise<void> {
 		"AskUserQuestion input",
 	);
 	rejectLongQuestions(questions);
-	const sessionId = process.env.ASSIST_SESSION_ID;
-	if (process.env.ASSIST_SESSION !== "1" || !sessionId)
-		useBuiltIn("not running in an assist session");
-	if (!askQuestionEnabled(loadConfig()))
-		useBuiltIn("assist ask-question is disabled (sessions.askQuestion)");
-	if (!(await isLiveDaemonSession(sessionId)))
-		useBuiltIn(
-			`session ${sessionId} is not live in the assist daemon, so no preview pane can show the form`,
-		);
+	const sessionId = await requireQuestionSession();
 
 	const agent = harnessLabel(activeHarness());
 	const title =

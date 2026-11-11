@@ -10,6 +10,7 @@ const lines = explainAdvice(
 		config: assistConfigSchema.parse({}),
 		rootDir: "/repo",
 		assistSession: false,
+		previewAnswerWait: true,
 	},
 	fragments,
 ).split("\n");

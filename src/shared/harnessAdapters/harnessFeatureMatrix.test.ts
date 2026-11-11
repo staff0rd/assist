@@ -47,6 +47,7 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	usageLimits: { claude: true, codex: true, pi: false, fake: true },
 	inbox: { claude: true, codex: false, pi: false, fake: true },
 	previewQuestions: { claude: true, codex: false, pi: true, fake: true },
+	previewAnswerWait: { claude: true, codex: false, pi: false, fake: true },
 	design: { claude: true, codex: false, pi: false, fake: true },
 	designReview: { claude: true, codex: false, pi: false, fake: true },
 	reviewer: { claude: true, codex: true, pi: false, fake: true },
