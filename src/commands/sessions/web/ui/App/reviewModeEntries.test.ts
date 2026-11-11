@@ -22,6 +22,7 @@ function capabilities(
 		exposeCodexActions: true,
 		exposePiActions: true,
 		engine: "claude",
+		runHarness: "claude",
 		features,
 	};
 }

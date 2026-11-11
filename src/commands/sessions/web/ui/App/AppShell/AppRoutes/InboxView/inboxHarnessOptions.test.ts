@@ -8,6 +8,7 @@ describe("inboxHarnessOptions", () => {
 				exposeCodexActions: true,
 				exposePiActions: true,
 				engine: "codex",
+				runHarness: "codex",
 				features: {
 					inbox: {
 						claude: { available: true },
@@ -39,6 +40,7 @@ describe("inboxHarnessOptions", () => {
 				exposeCodexActions: false,
 				exposePiActions: false,
 				engine: "claude",
+				runHarness: "claude",
 				features: {},
 			}),
 		).toEqual([]);

@@ -5,6 +5,7 @@ export type HarnessCapabilities = {
 	exposeCodexActions: boolean;
 	exposePiActions: boolean;
 	engine: HarnessKind;
+	runHarness: HarnessKind;
 	features: Record<string, Partial<Record<HarnessKind, FeatureResolution>>>;
 };
 
@@ -12,6 +13,7 @@ export const noHarnessCapabilities: HarnessCapabilities = {
 	exposeCodexActions: false,
 	exposePiActions: false,
 	engine: "claude",
+	runHarness: "claude",
 	features: {},
 };
 
@@ -21,6 +23,7 @@ export function parseHarnessCapabilities(body: unknown): HarnessCapabilities {
 		exposeCodexActions: Boolean(value.exposeCodexActions),
 		exposePiActions: Boolean(value.exposePiActions),
 		engine: value.engine ?? "claude",
+		runHarness: value.runHarness ?? value.engine ?? "claude",
 		features: value.features ?? {},
 	};
 }

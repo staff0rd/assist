@@ -19,6 +19,7 @@ vi.mock("../../useHarnessCapabilities", () => ({
 		exposeCodexActions: false,
 		exposePiActions: false,
 		engine: "claude",
+		runHarness: "claude",
 		features: {},
 	}),
 }));

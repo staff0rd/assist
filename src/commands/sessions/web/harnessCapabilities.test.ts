@@ -38,6 +38,7 @@ type Body = {
 	exposeCodexActions: boolean;
 	exposePiActions: boolean;
 	engine: string;
+	runHarness: string;
 	features: Record<string, Record<string, Resolution>>;
 };
 
@@ -122,5 +123,16 @@ describe("harnessCapabilities", () => {
 		);
 		mockIsHarnessAvailable.mockReturnValue(true);
 		expect(run()[2].engine).toBe("codex");
+	});
+
+	it("resolves the run harness from harness.defaults.run, then the engine", () => {
+		mockIsHarnessAvailable.mockReturnValue(true);
+		expect(run()[2].runHarness).toBe("claude");
+		mockLoadConfig.mockReturnValue(
+			makeAssistConfig({
+				harness: { engine: "claude", defaults: { run: { harness: "codex" } } },
+			}),
+		);
+		expect(run()[2].runHarness).toBe("codex");
 	});
 });

@@ -15,6 +15,7 @@ export function harnessCapabilities(
 		exposeCodexActions: detected.codex,
 		exposePiActions: detected.pi,
 		engine: config.engine,
+		runHarness: config.defaults?.run?.harness ?? config.engine,
 		features,
 	});
 }
