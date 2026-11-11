@@ -7,10 +7,9 @@ import { PhoneNavBar } from "../PhoneNavBar";
 import { phoneEmptySx } from "../phoneEmptySx";
 import type { BacklogItemScope } from "./backlogItemPath";
 import { PhoneItemBody } from "./PhoneItemBody";
-import { PhoneStartBar } from "./PhoneStartBar";
+import { PhoneItemActions } from "./PhoneItemActions";
 import { usePhoneBacklogItem } from "./usePhoneBacklogItem";
 import { usePhoneStart } from "./usePhoneStart";
-import { canPlay } from "../../../../../backlog/web/ui/components/canPlay";
 
 function LoadedItem({
 	socket,
@@ -25,7 +24,7 @@ function LoadedItem({
 	return (
 		<>
 			<PhoneItemBody item={item} scope={scope} />
-			{canPlay(item) && <PhoneStartBar item={item} start={start} />}
+			<PhoneItemActions item={item} start={start} />
 		</>
 	);
 }

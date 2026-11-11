@@ -14,16 +14,18 @@ const barSx = {
 
 export function PhoneBottomBar({
 	children,
-	button,
+	buttons,
 }: {
 	children?: ReactNode;
-	button: ButtonProps;
+	buttons: ButtonProps[];
 }) {
 	return (
 		<Box sx={barSx}>
 			{children}
 			<Box sx={{ pb: 1 }}>
-				<PhoneSheetButton {...button} />
+				{buttons.map((button) => (
+					<PhoneSheetButton key={String(button.children)} {...button} />
+				))}
 			</Box>
 		</Box>
 	);
